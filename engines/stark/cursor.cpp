@@ -60,10 +60,9 @@ void Cursor::setCursorType(CursorType type) {
 		_cursorImage = nullptr;
 		return;
 	}
-	StaticProvider *staticProvider = StarkServices::instance().staticProvider;
 
 	// TODO: This is just a quick solution to get anything drawn.
-	_cursorImage = staticProvider->getCursorImage(_currentCursorType);
+	_cursorImage = StarkStaticProvider->getCursorImage(_currentCursorType);
 }
 
 void Cursor::setCursorImage(VisualImageXMG *image) {

@@ -79,8 +79,7 @@ void UserInterface::init() {
 }
 
 void UserInterface::update() {
-	StaticProvider *staticProvider = StarkServices::instance().staticProvider;
-	staticProvider->onGameLoop();
+	StarkStaticProvider->onGameLoop();
 
 	// Check for UI mouse overs
 	for (uint i = 0; i < _windows.size(); i++) {

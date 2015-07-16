@@ -64,10 +64,7 @@ void AnimScript::onGameLoop() {
 		return;
 	}
 
-	Global *global = StarkServices::instance().global;
-	Common::RandomSource *randomSource = StarkServices::instance().randomSource;
-
-	while (_msecsToNextUpdate <= (int32)global->getMillisecondsPerGameloop()) {
+	while (_msecsToNextUpdate <= (int32)StarkGlobal->getMillisecondsPerGameloop()) {
 		AnimScriptItem *item = _items[_nextItemIndex];
 		_msecsToNextUpdate += item->getDuration();
 
@@ -87,13 +84,13 @@ void AnimScript::onGameLoop() {
 			uint32 startFrame = item->getOperand() >> 16;
 			uint32 endFrame = item->getOperand() & 0xFFFF;
 
-			uint32 frame = randomSource->getRandomNumberRng(startFrame, endFrame);
+			uint32 frame = StarkRandomSource->getRandomNumberRng(startFrame, endFrame);
 			_anim->selectFrame(frame);
 			goToNextItem();
 			break;
 		}
 		case AnimScriptItem::kSleepRandomDuration: {
-			uint duration = randomSource->getRandomNumber(item->getOperand());
+			uint duration = StarkRandomSource->getRandomNumber(item->getOperand());
 			_msecsToNextUpdate += duration;
 			goToNextItem();
 			break;
@@ -107,7 +104,7 @@ void AnimScript::onGameLoop() {
 		}
 	}
 
-	_msecsToNextUpdate -= global->getMillisecondsPerGameloop();
+	_msecsToNextUpdate -= StarkGlobal->getMillisecondsPerGameloop();
 }
 
 void AnimScript::setCurrentIndex(uint32 index) {

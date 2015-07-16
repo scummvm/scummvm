@@ -111,42 +111,32 @@ bool Console::Cmd_DumpArchive(int argc, const char **argv) {
 }
 
 bool Console::Cmd_DumpRoot(int argc, const char **argv) {
-	Global *global = StarkServices::instance().global;
-
-	global->getRoot()->print();
+	StarkGlobal->getRoot()->print();
 
 	return true;
 }
 
 bool Console::Cmd_DumpGlobal(int argc, const char **argv) {
-	Global *global = StarkServices::instance().global;
-
-	global->getLevel()->print();
+	StarkGlobal->getLevel()->print();
 
 	return true;
 }
 
 bool Console::Cmd_DumpStatic(int argc, const char **argv) {
-	StaticProvider *staticProvider = StarkServices::instance().staticProvider;
-
-	staticProvider->getLevel()->print();
+	StarkStaticProvider->getLevel()->print();
 
 	return true;
 }
 
 bool Console::Cmd_DumpLevel(int argc, const char **argv) {
-	Global *global = StarkServices::instance().global;
-
-	global->getCurrent()->getLevel()->print();
+	StarkGlobal->getCurrent()->getLevel()->print();
 
 	return true;
 }
 
 bool Console::Cmd_DumpKnowledge(int argc, const char **argv) {
-	Global *global = StarkServices::instance().global;
-
-	Resources::Level *level = global->getCurrent()->getLevel();
-	Resources::Location *location = global->getCurrent()->getLocation();
+	Resources::Level *level = StarkGlobal->getCurrent()->getLevel();
+	Resources::Location *location = StarkGlobal->getCurrent()->getLocation();
 	Common::Array<Resources::Knowledge*> knowledge = level->listChildrenRecursive<Resources::Knowledge>();
 	knowledge.insert_at(knowledge.size(), location->listChildrenRecursive<Resources::Knowledge>());
 	Common::Array<Resources::Knowledge*>::iterator it;
@@ -164,10 +154,8 @@ bool Console::Cmd_ChangeKnowledge(int argc, const char **argv) {
 		index = atoi(argv[1]);
 		type = argv[2][0];
 		if (type == 'b' || type == 'i') {
-			Global *global = StarkServices::instance().global;
-
-			Resources::Level *level = global->getCurrent()->getLevel();
-			Resources::Location *location = global->getCurrent()->getLocation();
+			Resources::Level *level = StarkGlobal->getCurrent()->getLevel();
+			Resources::Location *location = StarkGlobal->getCurrent()->getLocation();
 			Common::Array<Resources::Knowledge*> knowledgeArr = level->listChildrenRecursive<Resources::Knowledge>();
 			knowledgeArr.insert_at(knowledgeArr.size(), location->listChildrenRecursive<Resources::Knowledge>());
 			if (index < knowledgeArr.size() ) {
@@ -196,10 +184,8 @@ bool Console::Cmd_ChangeKnowledge(int argc, const char **argv) {
 }
 
 bool Console::Cmd_ListScripts(int argc, const char **argv) {
-	Global *global = StarkServices::instance().global;
-
-	Resources::Level *level = global->getCurrent()->getLevel();
-	Resources::Location *location = global->getCurrent()->getLocation();
+	Resources::Level *level = StarkGlobal->getCurrent()->getLevel();
+	Resources::Location *location = StarkGlobal->getCurrent()->getLocation();
 	Common::Array<Resources::Script*> scriptArr = level->listChildrenRecursive<Resources::Script>();
 	scriptArr.insert_at(scriptArr.size(), location->listChildrenRecursive<Resources::Script>());
 	Common::Array<Resources::Script*>::iterator it;
@@ -215,14 +201,13 @@ bool Console::Cmd_EnableScript(int argc, const char **argv) {
 
 	if (argc >= 2) {
 		index = atoi(argv[1]);
-		Global *global = StarkServices::instance().global;
 
 		bool value = true;
 		if (argc >= 3) {
 			value = atoi(argv[2]);
 		}
-		Resources::Level *level = global->getCurrent()->getLevel();
-		Resources::Location *location = global->getCurrent()->getLocation();
+		Resources::Level *level = StarkGlobal->getCurrent()->getLevel();
+		Resources::Location *location = StarkGlobal->getCurrent()->getLocation();
 		Common::Array<Resources::Script*> scriptArr = level->listChildrenRecursive<Resources::Script>();
 		scriptArr.insert_at(scriptArr.size(), location->listChildrenRecursive<Resources::Script>());
 		if (index < scriptArr.size() ) {
@@ -247,14 +232,13 @@ bool Console::Cmd_ForceScript(int argc, const char **argv) {
 
 	if (argc >= 2) {
 		index = atoi(argv[1]);
-		Global *global = StarkServices::instance().global;
 
 		bool value = true;
 		if (argc >= 3) {
 			value = atoi(argv[2]);
 		}
-		Resources::Level *level = global->getCurrent()->getLevel();
-		Resources::Location *location = global->getCurrent()->getLocation();
+		Resources::Level *level = StarkGlobal->getCurrent()->getLevel();
+		Resources::Location *location = StarkGlobal->getCurrent()->getLocation();
 		Common::Array<Resources::Script*> scriptArr = level->listChildrenRecursive<Resources::Script>();
 		scriptArr.insert_at(scriptArr.size(), location->listChildrenRecursive<Resources::Script>());
 		if (index < scriptArr.size() ) {
@@ -278,16 +262,13 @@ bool Console::Cmd_ForceScript(int argc, const char **argv) {
 
 
 bool Console::Cmd_DumpLocation(int argc, const char **argv) {
-	Global *global = StarkServices::instance().global;
-
-	global->getCurrent()->getLocation()->print();
+	StarkGlobal->getCurrent()->getLocation()->print();
 
 	return true;
 }
 
 bool Console::Cmd_ListInventory(int argc, const char **argv) {
-	Global *global = StarkServices::instance().global;
-	global->printInventory(argc != 2);
+	StarkGlobal->printInventory(argc != 2);
 
 	return true;
 }
@@ -299,8 +280,7 @@ bool Console::Cmd_EnableInventoryItem(int argc, const char **argv) {
 		debugPrintf("changeLocation [level] [location]\n");
 		return true;
 	}
-	Global *global = StarkServices::instance().global;
-	global->enableInventoryItem(atoi(argv[1]));
+	StarkGlobal->enableInventoryItem(atoi(argv[1]));
 	return true;
 }
 
@@ -309,8 +289,8 @@ bool Console::Cmd_ListLocations(int argc, const char **argv) {
 	ArchiveLoader *archiveLoader = new ArchiveLoader();
 
 	// Temporarily replace the global archive loader with our instance
-	ArchiveLoader *gameArchiveLoader = StarkServices::instance().archiveLoader;
-	StarkServices::instance().archiveLoader = archiveLoader;
+	ArchiveLoader *gameArchiveLoader = StarkArchiveLoader;
+	StarkArchiveLoader = archiveLoader;
 
 	archiveLoader->load("x.xarc");
 	Resources::Root *root = archiveLoader->useRoot<Resources::Root>("x.xarc");
@@ -344,7 +324,7 @@ bool Console::Cmd_ListLocations(int argc, const char **argv) {
 	}
 
 	// Restore the global archive loader
-	StarkServices::instance().archiveLoader = gameArchiveLoader;
+	StarkArchiveLoader = gameArchiveLoader;
 
 	delete archiveLoader;
 
@@ -362,8 +342,7 @@ bool Console::Cmd_ChangeLocation(int argc, const char **argv) {
 	uint levelIndex = strtol(argv[1] , nullptr, 16);
 	uint locationIndex = strtol(argv[2] , nullptr, 16);
 
-	ResourceProvider *resourceProvider = StarkServices::instance().resourceProvider;
-	resourceProvider->requestLocationChange(levelIndex, locationIndex);
+	StarkResourceProvider->requestLocationChange(levelIndex, locationIndex);
 
 	return false;
 }
@@ -378,8 +357,7 @@ bool Console::Cmd_ChangeChapter(int argc, const char **argv) {
 
 	uint32 value = atoi(argv[1]);
 
-	Global *global = StarkServices::instance().global;
-	global->setCurrentChapter(value);
+	StarkGlobal->setCurrentChapter(value);
 
 	return true;
 }
@@ -391,8 +369,7 @@ bool Console::Cmd_SelectDialogOption(int argc, const char **argv) {
 		debugPrintf("selectDialogOption [option]\n");
 		return true;
 	}
-	DialogPlayer *dialogPlayer = StarkServices::instance().dialogPlayer;
-	dialogPlayer->selectOption(atoi(argv[1]));
+	StarkDialogPlayer->selectOption(atoi(argv[1]));
 
 	return false;
 }
@@ -405,8 +382,7 @@ bool Console::Cmd_Location(int argc, const char **argv) {
 		return true;
 	}
 
-	Global *global = StarkServices::instance().global;
-	Current *current = global->getCurrent();
+	Current *current = StarkGlobal->getCurrent();
 
 	debugPrintf("location: %02x %02x\n", current->getLevel()->getIndex(), current->getLocation()->getIndex());
 
@@ -421,8 +397,7 @@ bool Console::Cmd_Chapter(int argc, const char **argv) {
 		return true;
 	}
 
-	Global *global = StarkServices::instance().global;
-	int32 value = global->getCurrentChapter();
+	int32 value = StarkGlobal->getCurrentChapter();
 
 	debugPrintf("chapter: %d\n", value);
 

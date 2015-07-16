@@ -51,8 +51,6 @@ Common::String OpenGLSActorRenderer::faceHash(const FaceNode *face) const {
 }
 
 void OpenGLSActorRenderer::render(Gfx::Driver *gfx, const Math::Vector3d position, float direction) {
-	Scene *scene = StarkServices::instance().scene;
-
 	if (_meshIsDirty) {
 		// Update the OpenGL Buffer Objects if required
 		clearVertices();
@@ -65,8 +63,8 @@ void OpenGLSActorRenderer::render(Gfx::Driver *gfx, const Math::Vector3d positio
 	gfx->set3DMode();
 
 	Math::Matrix4 model = getModelMatrix(position, direction);
-	Math::Matrix4 view = scene->getViewMatrix();
-	Math::Matrix4 projection = scene->getProjectionMatrix();
+	Math::Matrix4 view = StarkScene->getViewMatrix();
+	Math::Matrix4 projection = StarkScene->getProjectionMatrix();
 
 	Math::Matrix4 mvp = projection * view * model;
 	mvp.transpose();

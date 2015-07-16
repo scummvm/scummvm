@@ -50,10 +50,8 @@ GameWindow::GameWindow(Gfx::Driver *gfx, Cursor *cursor, ActionMenu *actionMenu,
 }
 
 void GameWindow::onRender() {
-	Global *global = StarkServices::instance().global;
-
 	// List the items to render
-	_renderEntries = global->getCurrent()->getLocation()->listRenderEntries();
+	_renderEntries = StarkGlobal->getCurrent()->getLocation()->listRenderEntries();
 
 	// Render all the scene items
 	Gfx::RenderEntryArray::iterator element = _renderEntries.begin();
@@ -67,10 +65,7 @@ void GameWindow::onRender() {
 }
 
 void GameWindow::onMouseMove(const Common::Point &pos) {
-	GameInterface *game = StarkServices::instance().gameInterface;
-	Global *global = StarkServices::instance().global;
-
-	_renderEntries = global->getCurrent()->getLocation()->listRenderEntries();
+	_renderEntries = StarkGlobal->getCurrent()->getLocation()->listRenderEntries();
 
 	int16 selectedInventoryItem = _inventory->getSelectedInventoryItem();
 	int16 singlePossibleAction = -1;
@@ -80,7 +75,7 @@ void GameWindow::onMouseMove(const Common::Point &pos) {
 	Common::String mouseHint;
 
 	if (selectedInventoryItem != -1) {
-		VisualImageXMG *cursorImage = game->getCursorImage(selectedInventoryItem);
+		VisualImageXMG *cursorImage = StarkGameInterface->getCursorImage(selectedInventoryItem);
 		_cursor->setCursorImage(cursorImage);
 	} else if (_objectUnderCursor) {
 		switch (singlePossibleAction) {
@@ -97,12 +92,12 @@ void GameWindow::onMouseMove(const Common::Point &pos) {
 				_cursor->setCursorType(Cursor::kHand);
 				break;
 			default:
-				VisualImageXMG *cursorImage = game->getCursorImage(singlePossibleAction);
+				VisualImageXMG *cursorImage = StarkGameInterface->getCursorImage(singlePossibleAction);
 				_cursor->setCursorImage(cursorImage);
 				break;
 		}
 
-		mouseHint = game->getItemTitle(_objectUnderCursor, true, _objectRelativePosition);
+		mouseHint = StarkGameInterface->getItemTitle(_objectUnderCursor, true, _objectRelativePosition);
 	} else {
 		// Not an object
 		_cursor->setCursorType(Cursor::kDefault);
@@ -111,8 +106,6 @@ void GameWindow::onMouseMove(const Common::Point &pos) {
 }
 
 void GameWindow::onClick(const Common::Point &pos) {
-	GameInterface *game = StarkServices::instance().gameInterface;
-
 	_actionMenu->close();
 
 	int16 selectedInventoryItem = _inventory->getSelectedInventoryItem();
@@ -122,13 +115,13 @@ void GameWindow::onClick(const Common::Point &pos) {
 
 	if (_objectUnderCursor) {
 		if (singlePossibleAction != -1) {
-			game->itemDoActionAt(_objectUnderCursor, singlePossibleAction, _objectRelativePosition);
+			StarkGameInterface->itemDoActionAt(_objectUnderCursor, singlePossibleAction, _objectRelativePosition);
 		} else if (selectedInventoryItem == -1) {
 			_actionMenu->open(_objectUnderCursor, _objectRelativePosition);
 		}
 	} else {
 		// The walk code expects unscaled absolute mouse coordinates
-		game->walkTo(_cursor->getMousePosition(true));
+		StarkGameInterface->walkTo(_cursor->getMousePosition(true));
 	}
 }
 
@@ -143,8 +136,6 @@ void GameWindow::onRightClick(const Common::Point &pos) {
 }
 
 void GameWindow::checkObjectAtPos(Common::Point pos, int16 selectedInventoryItem, int16 &singlePossibleAction) {
-	GameInterface *game = StarkServices::instance().gameInterface;
-
 	_objectUnderCursor = nullptr;
 	singlePossibleAction = -1;
 
@@ -157,24 +148,24 @@ void GameWindow::checkObjectAtPos(Common::Point pos, int16 selectedInventoryItem
 		}
 	}
 
-	if (!_objectUnderCursor || !game->itemHasActionAt(_objectUnderCursor, _objectRelativePosition, -1)) {
+	if (!_objectUnderCursor || !StarkGameInterface->itemHasActionAt(_objectUnderCursor, _objectRelativePosition, -1)) {
 		// Only consider items with runnable scripts
 		_objectUnderCursor = nullptr;
 		return;
 	}
 
-	int32 defaultAction = game->itemGetDefaultActionAt(_objectUnderCursor, _objectRelativePosition);
+	int32 defaultAction = StarkGameInterface->itemGetDefaultActionAt(_objectUnderCursor, _objectRelativePosition);
 	if (defaultAction != -1) {
 		// Use the default action if there is one
 		singlePossibleAction = defaultAction;
 	} else if (selectedInventoryItem != -1) {
 		// Use the selected inventory item if there is one
-		if (game->itemHasActionAt(_objectUnderCursor, _objectRelativePosition, selectedInventoryItem)) {
+		if (StarkGameInterface->itemHasActionAt(_objectUnderCursor, _objectRelativePosition, selectedInventoryItem)) {
 			singlePossibleAction = selectedInventoryItem;
 		}
 	} else {
 		// Otherwise, use stock actions
-		Resources::ActionArray actionsPossible = game->getStockActionsPossibleForObject(_objectUnderCursor, _objectRelativePosition);
+		Resources::ActionArray actionsPossible = StarkGameInterface->getStockActionsPossibleForObject(_objectUnderCursor, _objectRelativePosition);
 
 		if (actionsPossible.size() == 1) {
 			singlePossibleAction = actionsPossible[0];

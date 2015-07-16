@@ -48,9 +48,6 @@ void ResourceReference::addPathElement(Resources::Type type, uint16 index) {
 }
 
 Resources::Object *ResourceReference::resolve() const {
-	ResourceProvider *resourceProvider = StarkServices::instance().resourceProvider;
-	Global *global = StarkServices::instance().global;
-
 	Resources::Object *resource = nullptr;
 	for (uint i = 0; i < _path.size(); i++) {
 		PathElement element = _path[i];
@@ -58,13 +55,13 @@ Resources::Object *ResourceReference::resolve() const {
 		switch (element.getType().get()) {
 		case Resources::Type::kLevel:
 			if (element.getIndex()) {
-				resource = resourceProvider->getLevel(element.getIndex());
+				resource = StarkResourceProvider->getLevel(element.getIndex());
 			} else {
-				resource = global->getLevel();
+				resource = StarkGlobal->getLevel();
 			}
 			break;
 		case Resources::Type::kLocation:
-			resource = resourceProvider->getLocation(resource->getIndex(), element.getIndex());
+			resource = StarkResourceProvider->getLocation(resource->getIndex(), element.getIndex());
 			break;
 		default:
 			resource = resource->findChildWithIndex(element.getType(), element.getIndex());

@@ -43,10 +43,9 @@ DialogPanel::DialogPanel(Gfx::Driver *gfx, Cursor *cursor) :
 
 	_visible = true;
 
-	StaticProvider *staticProvider = StarkServices::instance().staticProvider;
 	// TODO: Un-hardcode
-	_activeBackGroundTexture = staticProvider->getCursorImage(20);
-	_passiveBackGroundTexture = staticProvider->getCursorImage(21);
+	_activeBackGroundTexture = StarkStaticProvider->getCursorImage(20);
+	_passiveBackGroundTexture = StarkStaticProvider->getCursorImage(21);
 }
 
 DialogPanel::~DialogPanel() {
@@ -77,17 +76,16 @@ void DialogPanel::onRender() {
 	}
 
 	// Update the dialog engine
-	DialogPlayer *dialogPlayer = StarkServices::instance().dialogPlayer;
-	dialogPlayer->update();
+	StarkDialogPlayer->update();
 
 	// Check if a new speech can be played
-	if (dialogPlayer->isSpeechReady()) {
-		_currentSpeech = dialogPlayer->acquireReadySpeech();
+	if (StarkDialogPlayer->isSpeechReady()) {
+		_currentSpeech = StarkDialogPlayer->acquireReadySpeech();
 		_currentSpeech->playSound();
 		updateSubtitleVisual();
 	}
 
-	if (_options.empty() && dialogPlayer->areOptionsAvailable()) {
+	if (_options.empty() && StarkDialogPlayer->areOptionsAvailable()) {
 		updateDialogOptions();
 	}
 
@@ -117,8 +115,7 @@ void DialogPanel::updateSubtitleVisual() {
 void DialogPanel::updateDialogOptions() {
 	clearOptions();
 
-	DialogPlayer *dialogPlayer = StarkServices::instance().dialogPlayer;
-	Common::Array<DialogPlayer::Option> options = dialogPlayer->listOptions();
+	Common::Array<DialogPlayer::Option> options = StarkDialogPlayer->listOptions();
 
 	int pos = 0;
 	for (uint i = 0; i < options.size(); i++) {
@@ -148,8 +145,7 @@ void DialogPanel::onClick(const Common::Point &pos) {
 	if (!_options.empty() && _options.size() > 0) {
 		for (uint i = 0; i < _options.size(); i++) {
 			if (_options[i]->containsPoint(pos)) {
-				DialogPlayer *dialogPlayer = StarkServices::instance().dialogPlayer;
-				dialogPlayer->selectOption(i);
+				StarkDialogPlayer->selectOption(i);
 
 				clearOptions();
 				return;

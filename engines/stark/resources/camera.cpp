@@ -73,8 +73,7 @@ void Camera::onEnterLocation() {
 	Object::onEnterLocation();
 
 	// Setup the camera
-	Scene *scene = StarkServices::instance().scene;
-	scene->initCamera(_position, _lookDirection, _fov, _viewSize, _nearClipPlane, _farClipPlane);
+	StarkScene->initCamera(_position, _lookDirection, _fov, _viewSize, _nearClipPlane, _farClipPlane);
 
 	// Scroll the camera to its initial position
 	Location *location = findParent<Location>();

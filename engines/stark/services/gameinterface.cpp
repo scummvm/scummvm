@@ -51,8 +51,7 @@ GameInterface::~GameInterface() {
 }
 
 void GameInterface::skipCurrentSpeeches() {
-	Global *global = StarkServices::instance().global;
-	Current *current = global->getCurrent();
+	Current *current = StarkGlobal->getCurrent();
 
 	if (!current) {
 		return; // No current location, nothing to do
@@ -60,7 +59,7 @@ void GameInterface::skipCurrentSpeeches() {
 
 	// Get all speeches
 	Common::Array<Resources::Speech *> speeches;
-	speeches.push_back(global->getLevel()->listChildrenRecursive<Resources::Speech>());
+	speeches.push_back(StarkGlobal->getLevel()->listChildrenRecursive<Resources::Speech>());
 	speeches.push_back(current->getLevel()->listChildrenRecursive<Resources::Speech>());
 	speeches.push_back(current->getLocation()->listChildrenRecursive<Resources::Speech>());
 
@@ -74,8 +73,7 @@ void GameInterface::skipCurrentSpeeches() {
 }
 
 void GameInterface::scrollLocation(int32 dX, int32 dY) {
-	Global *global = StarkServices::instance().global;
-	Current *current = global->getCurrent();
+	Current *current = StarkGlobal->getCurrent();
 
 	if (!current) {
 		return; // No current location, nothing to do
@@ -90,14 +88,12 @@ void GameInterface::scrollLocation(int32 dX, int32 dY) {
 }
 
 void GameInterface::walkTo(const Common::Point &mouse) {
-	Global *global = StarkServices::instance().global;
-	Scene *scene = StarkServices::instance().scene;
-
-	Resources::Floor *floor = global->getCurrent()->getFloor();
-	Resources::MeshItem *april = global->getCurrent()->getInteractive();
+	Resources::Floor *floor = StarkGlobal->getCurrent()->getFloor();
+	Resources::MeshItem *april = StarkGlobal->getCurrent()->getInteractive();
 
 	Math::Vector3d origin, direction, intersection;
-	scene->makeRayFromMouse(mouse, origin, direction);
+	StarkScene->makeRayFromMouse(mouse, origin, direction);
+
 	int32 floorFace = floor->findFaceHitByRay(origin, direction, intersection);
 	if (april && floorFace >= 0) {
 		// TODO: Complete, for now we just teleport to the target location
@@ -108,8 +104,7 @@ void GameInterface::walkTo(const Common::Point &mouse) {
 
 VisualImageXMG *GameInterface::getActionImage(uint32 itemIndex, bool active) {
 	// Lookup the action's item in the inventory
-	Global *global = StarkServices::instance().global;
-	Resources::KnowledgeSet *inventory = global->getLevel()->findChildWithSubtype<Resources::KnowledgeSet>(Resources::KnowledgeSet::kInventory, true);
+	Resources::KnowledgeSet *inventory = StarkGlobal->getLevel()->findChildWithSubtype<Resources::KnowledgeSet>(Resources::KnowledgeSet::kInventory, true);
 
 	// Get the visual for the action
 	Resources::InventoryItem *action = inventory->findChildWithIndex<Resources::InventoryItem>(itemIndex);
@@ -120,8 +115,7 @@ VisualImageXMG *GameInterface::getActionImage(uint32 itemIndex, bool active) {
 
 VisualImageXMG *GameInterface::getCursorImage(uint32 itemIndex) {
 	// Lookup the item's item in the inventory
-	Global *global = StarkServices::instance().global;
-	Resources::KnowledgeSet *inventory = global->getLevel()->findChildWithSubtype<Resources::KnowledgeSet>(Resources::KnowledgeSet::kInventory, true);
+	Resources::KnowledgeSet *inventory = StarkGlobal->getLevel()->findChildWithSubtype<Resources::KnowledgeSet>(Resources::KnowledgeSet::kInventory, true);
 
 	// Get the visual for the item
 	Resources::InventoryItem *item = inventory->findChildWithIndex<Resources::InventoryItem>(itemIndex);

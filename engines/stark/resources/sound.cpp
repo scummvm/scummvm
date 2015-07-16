@@ -53,13 +53,10 @@ Sound::Sound(Object *parent, byte subType, uint16 index, const Common::String &n
 }
 
 Audio::RewindableAudioStream *Sound::makeAudioStream() {
-	// Get the archive loader service
-	ArchiveLoader *archiveLoader = StarkServices::instance().archiveLoader;
-
 	Audio::RewindableAudioStream *audioStream = nullptr;
 
 	// First try the .iss / isn files
-	Common::SeekableReadStream *stream = archiveLoader->getExternalFile(_filename, _archiveName);
+	Common::SeekableReadStream *stream = StarkArchiveLoader->getExternalFile(_filename, _archiveName);
 	if (stream) {
 		audioStream = Formats::makeISSStream(stream, DisposeAfterUse::YES);
 	}
@@ -72,7 +69,7 @@ Audio::RewindableAudioStream *Sound::makeAudioStream() {
 			filename = Common::String(_filename.c_str(), _filename.size() - 4) + ".ovs";
 		}
 
-		stream = archiveLoader->getExternalFile(filename, _archiveName);
+		stream = StarkArchiveLoader->getExternalFile(filename, _archiveName);
 		if (stream) {
 			audioStream = Audio::makeVorbisStream(stream, DisposeAfterUse::YES);
 		}

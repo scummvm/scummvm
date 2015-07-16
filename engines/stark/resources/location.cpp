@@ -70,8 +70,6 @@ Common::Point Location::getScrollPosition() const {
 }
 
 void Location::setScrollPosition(const Common::Point &position) {
-	Scene *scene = StarkServices::instance().scene;
-
 	_scroll.x = CLIP<int16>(position.x, 0, _maxScroll.x);
 	_scroll.y = CLIP<int16>(position.y, 0, _maxScroll.y);
 
@@ -84,7 +82,7 @@ void Location::setScrollPosition(const Common::Point &position) {
 	// Reconfigure the camera
 	Common::Rect viewport(640, 365);
 	viewport.translate(_scroll.x, _scroll.y);
-	scene->scrollCamera(viewport);
+	StarkScene->scrollCamera(viewport);
 }
 
 void Location::printData() {

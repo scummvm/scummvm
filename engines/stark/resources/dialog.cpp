@@ -131,8 +131,6 @@ Dialog::Topic::Topic() :
 }
 
 int32 Dialog::Topic::getNextReplyIndex() const {
-	Global *global = StarkServices::instance().global;
-
 	uint32 nextIndex = _currentReplyIndex + 1;
 
 	if (nextIndex >= _replies.size()) {
@@ -146,7 +144,7 @@ int32 Dialog::Topic::getNextReplyIndex() const {
 		}
 	}
 
-	uint32 currentChapter = global->getCurrentChapter();
+	uint32 currentChapter = StarkGlobal->getCurrentChapter();
 
 	// Skip replies from previous chapters
 	while (_replies[nextIndex]._maxChapter < currentChapter && nextIndex < _replies.size()) {

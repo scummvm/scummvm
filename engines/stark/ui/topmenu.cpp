@@ -40,13 +40,12 @@ TopMenu::TopMenu(Gfx::Driver *gfx, Cursor *cursor) :
 	_position = Common::Rect(Gfx::Driver::kOriginalWidth, Gfx::Driver::kTopBorderHeight);
 	_visible = true;
 
-	StaticProvider *staticProvider = StarkServices::instance().staticProvider;
 	// TODO: The animations on these should be driven by the engine internally, so we probably shouldn't be holding
 	// image references here?
 	// TODO:  Unhardcode
-	_inventoryButton = new Button("Inventory", staticProvider->getUIItem(StaticProvider::kInventory), Common::Point(0, 0));
-	_exitButton = new Button("Exit", staticProvider->getUIItem(StaticProvider::kQuit), Common::Point(600, 0));
-	_diaryButton = new Button("Diary", staticProvider->getUIItem(StaticProvider::kDiaryNormal), Common::Point(560, 0));
+	_inventoryButton = new Button("Inventory", StarkStaticProvider->getUIItem(StaticProvider::kInventory), Common::Point(0, 0));
+	_exitButton = new Button("Exit", StarkStaticProvider->getUIItem(StaticProvider::kQuit), Common::Point(600, 0));
+	_diaryButton = new Button("Diary", StarkStaticProvider->getUIItem(StaticProvider::kDiaryNormal), Common::Point(560, 0));
 }
 
 TopMenu::~TopMenu() {
@@ -81,11 +80,11 @@ void TopMenu::onClick(const Common::Point &pos) {
 
 	if (_exitButton->containsPoint(pos)) {
 		// TODO: Ask
-		StarkServices::instance().userInterface->notifyShouldExit();
+		StarkUserInterface->notifyShouldExit();
 	}
 
 	if (_inventoryButton->containsPoint(pos)) {
-		StarkServices::instance().userInterface->notifyShouldOpenInventory();
+		StarkUserInterface->notifyShouldOpenInventory();
 	}
 }
 

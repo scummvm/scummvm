@@ -203,12 +203,9 @@ void AnimVideo::readData(Formats::XRCReadStream *stream) {
 
 void AnimVideo::onAllLoaded() {
 	if (!_smacker) {
-		ArchiveLoader *archiveLoader = StarkServices::instance().archiveLoader;
-		Gfx::Driver *gfx = StarkServices::instance().gfx;
+		Common::SeekableReadStream *stream = StarkArchiveLoader->getExternalFile(_smackerFile, _archiveName);
 
-		Common::SeekableReadStream *stream = archiveLoader->getExternalFile(_smackerFile, _archiveName);
-
-		_smacker = new VisualSmacker(gfx);
+		_smacker = new VisualSmacker(StarkGfx);
 		_smacker->load(stream);
 	}
 }
@@ -222,8 +219,7 @@ void AnimVideo::onGameLoop() {
 		return;
 	}
 
-	Global *global = StarkServices::instance().global;
-	_smacker->update(global->getMillisecondsPerGameloop());
+	_smacker->update(StarkGlobal->getMillisecondsPerGameloop());
 }
 
 Visual *AnimVideo::getVisual() {
@@ -268,8 +264,7 @@ AnimSkeleton::AnimSkeleton(Object *parent, byte subType, uint16 index, const Com
 				_seletonAnim(nullptr),
 				_currentTime(0),
 				_totalTime(0) {
-	Gfx::Driver *gfx = StarkServices::instance().gfx;
-	_visual = gfx->createActorRenderer();
+	_visual = StarkGfx->createActorRenderer();
 }
 
 void AnimSkeleton::applyToItem(Item *item) {
@@ -324,10 +319,7 @@ void AnimSkeleton::readData(Formats::XRCReadStream *stream) {
 }
 
 void AnimSkeleton::onPostRead() {
-	// Get the archive loader service
-	ArchiveLoader *archiveLoader = StarkServices::instance().archiveLoader;
-
-	ArchiveReadStream *stream = archiveLoader->getFile(_animFilename, _archiveName);
+	ArchiveReadStream *stream = StarkArchiveLoader->getFile(_animFilename, _archiveName);
 
 	_seletonAnim = new SkeletonAnim();
 	_seletonAnim->createFromStream(stream);
@@ -346,9 +338,7 @@ void AnimSkeleton::onGameLoop() {
 	Anim::onGameLoop();
 
 	if (isInUse() && _totalTime) {
-		Global *global = StarkServices::instance().global;
-
-		_currentTime = (_currentTime + global->getMillisecondsPerGameloop()) % _totalTime;
+		_currentTime = (_currentTime + StarkGlobal->getMillisecondsPerGameloop()) % _totalTime;
 		_visual->setTime(_currentTime);
 	}
 }

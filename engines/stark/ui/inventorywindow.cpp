@@ -48,8 +48,7 @@ InventoryWindow::InventoryWindow(Gfx::Driver *gfx, Cursor *cursor, ActionMenu *a
 	_position = Common::Rect(Gfx::Driver::kGameViewportWidth, Gfx::Driver::kGameViewportHeight);
 	_position.translate(0, Gfx::Driver::kTopBorderHeight);
 
-	StaticProvider *staticProvider = StarkServices::instance().staticProvider;
-	Resources::Anim *backgroundAnim = staticProvider->getUIItem(StaticProvider::kInventoryBg);
+	Resources::Anim *backgroundAnim = StarkStaticProvider->getUIItem(StaticProvider::kInventoryBg);
 	_backgroundTexture = backgroundAnim->getVisual()->get<VisualImageXMG>();
 
 	// Center the background in the window
@@ -93,8 +92,7 @@ Common::Rect InventoryWindow::getItemRect(uint32 slot, VisualImageXMG *image) co
 }
 
 void InventoryWindow::onRender() {
-	Global *global = StarkServices::instance().global;
-	_renderEntries = global->getInventory()->getInventoryRenderEntries();
+	_renderEntries = StarkGlobal->getInventory()->getInventoryRenderEntries();
 
 	_backgroundTexture->render(Common::Point(_backgroundRect.left, _backgroundRect.top), false);
 	
@@ -109,8 +107,6 @@ void InventoryWindow::onRender() {
 }
 
 void InventoryWindow::checkObjectAtPos(Common::Point pos, Resources::ItemVisual **item, int16 selectedInventoryItem, int16 &singlePossibleAction) {
-	GameInterface *game = StarkServices::instance().gameInterface;
-
 	*item = nullptr;
 	singlePossibleAction = -1;
 
@@ -132,14 +128,14 @@ void InventoryWindow::checkObjectAtPos(Common::Point pos, Resources::ItemVisual 
 
 	if (selectedInventoryItem == -1) {
 		Resources::ActionArray actionsPossible;
-		actionsPossible = game->getStockActionsPossibleForObject(*item);
+		actionsPossible = StarkGameInterface->getStockActionsPossibleForObject(*item);
 
 		if (actionsPossible.empty()) {
 			// The item can still be taken
 			singlePossibleAction = Resources::PATTable::kActionUse;
 		}
 	} else {
-		if (game->itemHasAction(*item, selectedInventoryItem)) {
+		if (StarkGameInterface->itemHasAction(*item, selectedInventoryItem)) {
 			singlePossibleAction = selectedInventoryItem;
 		}
 	}
@@ -158,15 +154,12 @@ void InventoryWindow::onMouseMove(const Common::Point &pos) {
 			_cursor->setCursorType(Cursor::kDefault);
 		}
 	} else {
-		GameInterface *game = StarkServices::instance().gameInterface;
-        VisualImageXMG *cursorImage = game->getCursorImage(_selectedInventoryItem);
+        VisualImageXMG *cursorImage = StarkGameInterface->getCursorImage(_selectedInventoryItem);
 		_cursor->setCursorImage(cursorImage);
 	}
 }
 
 void InventoryWindow::onClick(const Common::Point &pos) {
-	GameInterface *game = StarkServices::instance().gameInterface;
-
 	_actionMenu->close();
 
 	Resources::ItemVisual *clickedItem = nullptr;
@@ -180,7 +173,7 @@ void InventoryWindow::onClick(const Common::Point &pos) {
 			if (clickedItemAction == Resources::PATTable::kActionUse) {
 				setSelectedInventoryItem(clickedItem->getIndex());
 			} else {
-				game->itemDoAction(clickedItem, clickedItemAction);
+				StarkGameInterface->itemDoAction(clickedItem, clickedItemAction);
 			}
 		} else {
 			// Multiple actions are possible

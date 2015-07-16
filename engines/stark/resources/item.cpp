@@ -453,8 +453,7 @@ void FloorPositionedItem::setFloorFaceIndex(int32 faceIndex) {
 }
 
 void FloorPositionedItem::placeOnBookmark(Bookmark *target) {
-	Global *global = StarkServices::instance().global;
-	Floor *floor = global->getCurrent()->getFloor();
+	Floor *floor = StarkGlobal->getCurrent()->getFloor();
 
 	_position3D = target->getPosition();
 
@@ -474,8 +473,7 @@ void FloorPositionedItem::setDirection(uint direction) {
 }
 
 float FloorPositionedItem::getSortKey() const {
-	Global *global = StarkServices::instance().global;
-	Floor *floor = global->getCurrent()->getFloor();
+	Floor *floor = StarkGlobal->getCurrent()->getFloor();
 
 	if (_floorFaceIndex == -1) {
 //		warning("Undefined floor face index for item '%s'", getName().c_str());

@@ -126,8 +126,6 @@ void Script::enable(bool value) {
 }
 
 bool Script::shouldExecute(uint32 callMode) {
-	Global *global = StarkServices::instance().global;
-
 	if ((!isEnabled() && isOnBegin()) || !_nextCommand) {
 		return false; // Don't execute disabled scripts
 	}
@@ -163,7 +161,7 @@ bool Script::shouldExecute(uint32 callMode) {
 		return false; // Wrong script type
 	}
 
-	uint32 currentChapter = global->getCurrentChapter();
+	uint32 currentChapter = StarkGlobal->getCurrentChapter();
 	if (currentChapter < _minChapter || currentChapter >= _maxChapter) {
 		return false; // Wrong chapter
 	}
@@ -178,8 +176,7 @@ bool Script::isSuspended() {
 void Script::updateSuspended() {
 	if (_pauseTimeLeft >= 0) {
 		// Decrease the remaining pause time
-		Global *global = StarkServices::instance().global;
-		_pauseTimeLeft -= global->getMillisecondsPerGameloop();
+		_pauseTimeLeft -= StarkGlobal->getMillisecondsPerGameloop();
 	} else {
 		_pauseTimeLeft = -1;
 	}
@@ -188,16 +185,14 @@ void Script::updateSuspended() {
 		// Check if the suspending resource is still active
 		switch (_suspendingResource->getType().get()) {
 		case Type::kDialog: {
-			DialogPlayer *dialogPlayer = StarkServices::instance().dialogPlayer;
-			if (!dialogPlayer->isRunning()) {
+			if (!StarkDialogPlayer->isRunning()) {
 				// Resume the script execution if the dialog is complete
 				_suspendingResource = nullptr;
 			}
 			break;
 		}
 		case Type::kFMV: {
-			UserInterface *ui = StarkServices::instance().userInterface;
-			if (!ui->isPlayingFMV()) {
+			if (!StarkUserInterface->isPlayingFMV()) {
 				// Resume the script execution if the dialog is complete
 				_suspendingResource = nullptr;
 			}

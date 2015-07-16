@@ -33,12 +33,11 @@ namespace Stark {
 ClickText::ClickText(const Common::String &text, Common::Point pos)
 	: _position(pos),
 	  _text(text) {
-	Gfx::Driver *gfx = StarkServices::instance().gfx;
-	_visualPassive = new VisualText(gfx);
+	_visualPassive = new VisualText(StarkGfx);
 	_visualPassive->setText(_text);
 	_visualPassive->setColor(0xFFFF0000);
 
-	_visualActive = new VisualText(gfx);
+	_visualActive = new VisualText(StarkGfx);
 	_visualActive->setText(_text);
 	_visualActive->setColor(0xFF00FF00);
 

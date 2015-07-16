@@ -64,8 +64,7 @@ void Speech::stop() {
 }
 
 bool Speech::characterIsApril() const {
-	Global *global = StarkServices::instance().global;
-	int32 aprilCharacterIndex = global->getApril()->getCharacterIndex();
+	int32 aprilCharacterIndex = StarkGlobal->getApril()->getCharacterIndex();
 	return _character == aprilCharacterIndex;
 }
 

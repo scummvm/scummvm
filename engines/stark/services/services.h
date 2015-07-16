@@ -75,6 +75,18 @@ public:
 	UserInterface *userInterface;
 };
 
+/** Shortcuts for accessing the services. */
+#define StarkArchiveLoader		StarkServices::instance().archiveLoader
+#define StarkDialogPlayer		StarkServices::instance().dialogPlayer
+#define StarkGfx                StarkServices::instance().gfx
+#define StarkGlobal             StarkServices::instance().global
+#define StarkResourceProvider   StarkServices::instance().resourceProvider
+#define StarkRandomSource       StarkServices::instance().randomSource
+#define StarkScene              StarkServices::instance().scene
+#define StarkStaticProvider     StarkServices::instance().staticProvider
+#define StarkGameInterface      StarkServices::instance().gameInterface
+#define StarkUserInterface      StarkServices::instance().userInterface
+
 } // End of namespace Stark
 
 #endif // STARK_SERVICES_SERVICES_H

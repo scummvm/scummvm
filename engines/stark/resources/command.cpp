@@ -196,10 +196,8 @@ Command *Command::opScriptCall(Script *script, const ResourceReference &scriptRe
 }
 
 Command *Command::opDialogCall(Script *script, const ResourceReference &dialogRef, int32 suspend) {
-	DialogPlayer *dialogPlayer = StarkServices::instance().dialogPlayer;
-
 	Dialog *dialog = dialogRef.resolve<Dialog>();
-	dialogPlayer->run(dialog);
+	StarkDialogPlayer->run(dialog);
 
 	if (suspend) {
 		script->suspend(dialog);
@@ -216,12 +214,10 @@ Command *Command::opSetInteractiveMode(bool enabled) {
 }
 
 Command *Command::opLocationGoTo(const Common::String &level, const Common::String &location, const ResourceReference &bookmarkRef, int32 direction) {
-	ResourceProvider *resourceProvider = StarkServices::instance().resourceProvider;
-
 	uint levelIndex = strtol(level.c_str(), nullptr, 16);
 	uint locationIndex = strtol(location.c_str(), nullptr, 16);
-	resourceProvider->requestLocationChange(levelIndex, locationIndex);
-	resourceProvider->setNextLocationPosition(bookmarkRef, direction);
+	StarkResourceProvider->requestLocationChange(levelIndex, locationIndex);
+	StarkResourceProvider->setNextLocationPosition(bookmarkRef, direction);
 
 	return nullptr;
 }
@@ -251,8 +247,7 @@ Command *Command::opGameLoop(int32 unknown) {
 }
 
 Command *Command::opPauseRandom(Script *script, const ResourceReference &ref) {
-	Common::RandomSource *randomSource = StarkServices::instance().randomSource;
-	float randomFactor = randomSource->getRandomNumber(10000) / 10000.0;
+	float randomFactor = StarkRandomSource->getRandomNumber(10000) / 10000.0;
 
 	Knowledge *duration = ref.resolve<Knowledge>();
 	script->pause(randomFactor * duration->getIntegerValue());
@@ -262,18 +257,20 @@ Command *Command::opPauseRandom(Script *script, const ResourceReference &ref) {
 
 Command *Command::opExit2DLocation(Script *script) {
 	warning("(TODO: Implement) Exit 2D Location");
-	StarkServices::instance().resourceProvider->returnToPushedLocation();
+
+	StarkResourceProvider->returnToPushedLocation();
+
 	return nullptr;
 }
 
 Command *Command::opGoto2DLocation(const Common::String &level, const Common::String &location) {
-	ResourceProvider *resourceProvider = StarkServices::instance().resourceProvider;
-
 	warning("TODO: Implement) opGoto2DLocation");
 	// TODO: This needs to be handled differently, to allow exiting.
+
 	uint levelIndex = strtol(level.c_str(), nullptr, 16);
 	uint locationIndex = strtol(location.c_str(), nullptr, 16);
-	resourceProvider->pushAndChangeLocation(levelIndex, locationIndex);
+	StarkResourceProvider->pushAndChangeLocation(levelIndex, locationIndex);
+
 	return nullptr;
 }
 
@@ -398,9 +395,9 @@ Command *Command::opShowPlay(Script *script, const ResourceReference &ref, int32
 	assert(_arguments.size() == 3);
 	Speech *speechObj = ref.resolve<Speech>();
 	assert(speechObj->getType().get() == Type::kSpeech);
-	DialogPlayer *dialogPlayer = StarkServices::instance().dialogPlayer;
-	dialogPlayer->playSingle(speechObj);
 	warning("(TODO: Implement) opShowPlay(%s %d) %s : %s", speechObj->getName().c_str(), suspend, speechObj->getPhrase().c_str(), ref.describe().c_str());
+
+	StarkDialogPlayer->playSingle(speechObj);
 
 	if (suspend) {
 		script->suspend(speechObj);
@@ -507,7 +504,7 @@ Command *Command::opScrollSet(const ResourceReference &scrollRef) {
 Command *Command::opPlayFullMotionVideo(Script *script, const ResourceReference &movieRef, int32 unknown) {
 	FMV *movie =  movieRef.resolve<FMV>();
 	warning("(TODO: Implement) opPlayFullMotionVideo(%s) : %s - %d", movie->getName().c_str(), movieRef.describe().c_str(), unknown);
-	StarkServices::instance().userInterface->notifyFMVRequest(movie->getFilename());
+	StarkUserInterface->notifyFMVRequest(movie->getFilename());
 	// TODO: Is this unconditional suspension?
 	script->suspend(movie);
 	return this; // Stay on the same command while suspended
@@ -598,8 +595,7 @@ Command *Command::opSpeakWithoutTalking(Script *script, const ResourceReference 
 	warning("(TODO: Implement) opSpeakWithoutTalking(%s, %d) : %s", speech->getName().c_str(), suspend, speechRef.describe().c_str());
 
 	// TODO: Complete
-	DialogPlayer *dialogPlayer = StarkServices::instance().dialogPlayer;
-	dialogPlayer->playSingle(speech);
+	StarkDialogPlayer->playSingle(speech);
 
 	if (suspend) {
 		script->suspend(speech);
@@ -663,8 +659,7 @@ Command *Command::opIsScriptActive(const ResourceReference &scriptRef) {
 }
 
 Command *Command::opIsRandom(int32 chance) {
-	Common::RandomSource *randomSource = StarkServices::instance().randomSource;
-	int32 value = randomSource->getRandomNumber(100);
+	int32 value = StarkRandomSource->getRandomNumber(100);
 
 	return nextCommandIf(value < chance);
 }

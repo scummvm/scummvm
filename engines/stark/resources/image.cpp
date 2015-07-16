@@ -180,13 +180,9 @@ void ImageSub23::initVisual() {
 		return; // No file to load
 	}
 
-	// Get the archive loader service
-	ArchiveLoader *archiveLoader = StarkServices::instance().archiveLoader;
-	Gfx::Driver *gfx = StarkServices::instance().gfx;
+	Common::ReadStream *stream = StarkArchiveLoader->getFile(_filename, _archiveName);
 
-	Common::ReadStream *stream = archiveLoader->getFile(_filename, _archiveName);
-
-	VisualImageXMG *xmg = new VisualImageXMG(gfx);
+	VisualImageXMG *xmg = new VisualImageXMG(StarkGfx);
 	xmg->load(stream);
 	xmg->setHotSpot(_hotspot);
 
