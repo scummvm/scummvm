@@ -104,7 +104,7 @@ void WidgetTalk::load() {
 	// Place the window centered above the player
 	Common::Point pt;
 	int scaleVal = scene.getScaleVal(people[HOLMES]._position);
-	pt.x = people[HOLMES]._position.x / FIXED_INT_MULTIPLIER;
+	pt.x = people[HOLMES]._position.x / FIXED_INT_MULTIPLIER - _bounds.width() / 2;
 
 	if (scaleVal == SCALE_THRESHOLD) {
 		pt.x += people[0].frameWidth() / 2;
