@@ -217,7 +217,7 @@ void WidgetTalk::handleEvents() {
 		if (Common::Rect(_bounds.left, _bounds.top + 5, _bounds.right - 3, _bounds.bottom - 5).contains(mousePos)) {
 			if (_scroll) {
 				// Disregard the scrollbar when setting the statement number
-				if (Common::Rect(_bounds.right - BUTTON_SIZE - 6, _bounds.top + 3, _bounds.right - 3, _bounds.bottom - 3).contains(mousePos))
+				if (!Common::Rect(_bounds.right - BUTTON_SIZE, _bounds.top, _bounds.right, _bounds.bottom).contains(mousePos))
 					_selector = (mousePos.y - _bounds.top - 5) / (_surface.fontHeight() + 1) + _talkScrollIndex;
 			} else {
 				_selector = (mousePos.y - _bounds.top - 5) / (_surface.fontHeight() + 1);
@@ -225,7 +225,7 @@ void WidgetTalk::handleEvents() {
 
 			// Now translate the line number of the displayed line into the appropriate
 			// Statement number or set it to 255 to indicate no Statement selected
-			if (_selector < (int)_statementLines.size())
+			if (_selector >= 0 && _selector < (int)_statementLines.size())
 				_selector = _statementLines[_selector]._num;
 			else
 				_selector = -1;
