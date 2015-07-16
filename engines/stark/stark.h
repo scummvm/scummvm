@@ -59,19 +59,19 @@ public:
 
 protected:
 	// Engine APIs
-	virtual Common::Error run();
-	virtual GUI::Debugger *getDebugger() { return (GUI::Debugger *)_console; }
-	bool hasFeature(EngineFeature f) const;
-	bool canLoadGameStateCurrently();
-	bool canSaveGameStateCurrently();
-	Common::Error loadGameState(int slot);
-	Common::Error saveGameState(int slot, const Common::String &desc);
-	bool isDemo();
+	virtual Common::Error run() override;
+	virtual GUI::Debugger *getDebugger() override { return (GUI::Debugger *)_console; }
+	bool hasFeature(EngineFeature f) const override;
+	bool canLoadGameStateCurrently() override;
+	bool canSaveGameStateCurrently() override;
+	Common::Error loadGameState(int slot) override;
+	Common::Error saveGameState(int slot, const Common::String &desc) override;
 
 private:
 	void mainLoop();
 	void updateDisplayScene();
 	void setStartupLocation();
+	bool isDemo();
 
 	Gfx::Driver *_gfx;
 	Console *_console;
