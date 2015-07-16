@@ -87,8 +87,6 @@ void WidgetTalk::getTalkWindowSize() {
 void WidgetTalk::load() {
 	TattooPeople &people = *(TattooPeople *)_vm->_people;
 	TattooScene &scene = *(TattooScene *)_vm->_scene;
-	TattooUserInterface &ui = *(TattooUserInterface *)_vm->_ui;
-	ImageFile &images = *ui._interfaceImages;
 
 	// Figure out the window size
 	getTalkWindowSize();
