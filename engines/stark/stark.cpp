@@ -133,13 +133,8 @@ Common::Error StarkEngine::run() {
 	// Initialize the UI
 	_userInterface->init();
 
-	// Start us up at the house of all worlds
-	_global->setCurrentChapter(0);
-	if (isDemo()) {
-		_resourceProvider->requestLocationChange(0x4f, 0x00);
-	} else {
-		_resourceProvider->requestLocationChange(0x45, 0x00);
-	}
+	// Set the startup location, ie the House of All Worlds by default
+	setStartupLocation();
 
 	// Start running
 	mainLoop();
@@ -148,6 +143,27 @@ Common::Error StarkEngine::run() {
 	_resourceProvider->shutdown();
 
 	return Common::kNoError;
+}
+
+void StarkEngine::setStartupLocation() {
+	if (ConfMan.hasKey("startup_chapter")) {
+		_global->setCurrentChapter(ConfMan.getInt("startup_chapter"));
+	} else {
+		_global->setCurrentChapter(0);
+	}
+
+	if (ConfMan.hasKey("startup_level") && ConfMan.hasKey("startup_location")) {
+		uint levelIndex = strtol(ConfMan.get("startup_level").c_str(), nullptr, 16);
+		uint locationIndex = strtol(ConfMan.get("startup_location").c_str(), nullptr, 16);
+		_resourceProvider->requestLocationChange(levelIndex, locationIndex);
+	} else {
+		if (isDemo()) {
+			_resourceProvider->requestLocationChange(0x4f, 0x00);
+		} else {
+			// Start us up at the house of all worlds
+			_resourceProvider->requestLocationChange(0x45, 0x00);
+		}
+	}
 }
 
 void StarkEngine::mainLoop() {

@@ -71,6 +71,7 @@ protected:
 private:
 	void mainLoop();
 	void updateDisplayScene();
+	void setStartupLocation();
 
 	Gfx::Driver *_gfx;
 	Console *_console;
