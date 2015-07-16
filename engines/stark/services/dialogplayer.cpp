@@ -79,8 +79,25 @@ Common::Array<DialogPlayer::Option> DialogPlayer::listOptions() const {
 	return _options;
 }
 
+void DialogPlayer::removeLastOnlyOption() {
+	int32 lastOnlyOptionIndex = -1;
+
+	for (uint i = 0; i < _options.size(); i++) {
+		Resources::Dialog::Topic *topic = _options[i]._topic;
+		Resources::Dialog::Reply *reply = topic->getReply(_options[i]._replyIndex);
+		if (reply->isLastOnly()) {
+			lastOnlyOptionIndex = i;
+			break;
+		}
+	}
+
+	if (lastOnlyOptionIndex >= 0) {
+		_options.remove_at(lastOnlyOptionIndex);
+	}
+}
+
 void DialogPlayer::buildOptions() {
-	Common::Array<Resources::Dialog::Topic *> availableTopics = _currentDialog->listAvailableTopics();
+	Resources::Dialog::TopicArray availableTopics = _currentDialog->listAvailableTopics();
 
 	// TODO: This is very minimal, complete
 
@@ -92,7 +109,14 @@ void DialogPlayer::buildOptions() {
 		option._caption = availableTopics[i]->getCaption();
 		option._replyIndex = availableTopics[i]->getNextReplyIndex();
 
-		_options.push_back(option);
+		Resources::Dialog::Reply *reply = availableTopics[i]->getReply(option._replyIndex);
+		if (reply->checkCondition()) {
+			_options.push_back(option);
+		}
+	}
+
+	if (_options.size() > 1) {
+		removeLastOnlyOption();
 	}
 
 	if (_options.size() == 1) {

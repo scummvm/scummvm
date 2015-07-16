@@ -110,7 +110,7 @@ void Dialog::printData() {
 	}
 }
 
-Common::Array<Dialog::Topic *> Dialog::listAvailableTopics() {
+Dialog::TopicArray Dialog::listAvailableTopics() {
 	Common::Array<Dialog::Topic *> topics;
 
 	for (uint i = 0; i < _topics.size(); i++) {
@@ -182,12 +182,8 @@ Dialog::Reply *Dialog::Topic::startReply(uint32 index) {
 	return reply;
 }
 
-Dialog::Reply *Dialog::Topic::getCurrentReply() {
-	if (_currentReplyIndex < 0) {
-		return nullptr;
-	}
-
-	return &_replies[_currentReplyIndex];
+Dialog::Reply *Dialog::Topic::getReply(uint32 index) {
+	return &_replies[index];
 }
 
 Common::String Dialog::Topic::getCaption() const {
@@ -251,6 +247,22 @@ Speech *Dialog::Reply::getCurrentSpeech() {
 	}
 
 	return _lines[_nextSpeechIndex].resolve<Speech>();
+}
+
+bool Dialog::Reply::checkCondition() const {
+	switch (_conditionType) {
+		case kConditionTypeAlways:
+			return true;
+		case kConditionTypeNoOtherOptions:
+			return true; // Will be removed from to the options later if some other options are available
+		default:
+			warning("Unimplemented dialog reply condition %d", _conditionType);
+			return true;
+	}
+}
+
+bool Dialog::Reply::isLastOnly() const {
+	return _conditionType == kConditionTypeNoOtherOptions;
 }
 
 Dialog *Dialog::getNextDialog(Dialog::Reply *reply) {

@@ -86,6 +86,9 @@ protected:
 	/** Build a list of available dialog options */
 	void buildOptions();
 
+	/** Removes the last only option from the options list */
+	void removeLastOnlyOption();
+
 	/** Initiate the next action after the end of a reply */
 	void onReplyEnd();
 

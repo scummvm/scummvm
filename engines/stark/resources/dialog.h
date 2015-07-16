@@ -62,6 +62,15 @@ public:
 	public:
 		Reply();
 
+		enum ConditionType {
+			kConditionTypeAlways         = 0,
+			kConditionTypeNoOtherOptions = 1,
+			kConditionType3              = 3,
+			kConditionType4              = 4,
+			kConditionType5              = 5,
+			kConditionType6              = 6
+		};
+
 		/** Start playing the reply. Sets the current line to the first one */
 		void start();
 
@@ -70,6 +79,12 @@ public:
 
 		/** Obtain the Speech resource for the current line, or null if the reply has ended */
 		Speech *getCurrentSpeech();
+
+		/** Evaluates the reply's condition */
+		bool checkCondition() const;
+
+		/** Should this reply only be made available when there are no other options left? */
+		bool isLastOnly() const;
 
 	private:
 		// Static data
@@ -107,8 +122,8 @@ public:
 		/** Select a reply from its index */
 		Reply *startReply(uint32 index);
 
-		/** Returns the selected reply, or null if no reply is selected */
-		Reply *getCurrentReply();
+		/** Get the reply with the specified index */
+		Reply *getReply(uint32 index);
 
 	private:
 		Common::Array<Reply> _replies;
@@ -119,11 +134,13 @@ public:
 		friend class Dialog;
 	};
 
+	typedef Common::Array<Topic *> TopicArray;
+
 	// Resource API
 	void readData(Formats::XRCReadStream *stream) override;
 
 	/** List the currently available topics for this Dialog */
-	Common::Array<Topic *> listAvailableTopics();
+	TopicArray listAvailableTopics();
 
 	/** Obtain the Dialog which should be played at the outcome of this one, if any */
 	Dialog *getNextDialog(Dialog::Reply *reply);
