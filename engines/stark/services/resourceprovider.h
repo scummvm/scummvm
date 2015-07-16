@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef STARK_RESOURCE_PROVIDER_H
-#define STARK_RESOURCE_PROVIDER_H
+#ifndef STARK_SERVICES_RESOURCE_PROVIDER_H
+#define STARK_SERVICES_RESOURCE_PROVIDER_H
 
 #include "common/list.h"
 
@@ -116,4 +116,4 @@ private:
 
 } // End of namespace Stark
 
-#endif // STARK_RESOURCE_PROVIDER_H
+#endif // STARK_SERVICES_RESOURCE_PROVIDER_H

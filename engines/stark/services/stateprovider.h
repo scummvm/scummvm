@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef STARK_STATE_PROVIDER_H
-#define STARK_STATE_PROVIDER_H
+#ifndef STARK_SERVICES_STATE_PROVIDER_H
+#define STARK_SERVICES_STATE_PROVIDER_H
 
 #include "common/hashmap.h"
 #include "common/serializer.h"
@@ -109,4 +109,4 @@ private:
 
 } // End of namespace Stark
 
-#endif // STARK_STATE_PROVIDER_H
+#endif // STARK_SERVICES_STATE_PROVIDER_H

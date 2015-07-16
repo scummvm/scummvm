@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef STARK_UI_H
-#define STARK_UI_H
+#ifndef STARK_SERVICES_USER_INTERFACE_H
+#define STARK_SERVICES_USER_INTERFACE_H
 
 #include "common/scummsys.h"
 #include "common/str-array.h"
@@ -74,4 +74,4 @@ private:
 
 } // End of namespace Stark
 
-#endif // STARK_UI_H
+#endif // STARK_SERVICES_USER_INTERFACE_H

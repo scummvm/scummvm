@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef STARK_STATIC_PROVIDER_H
-#define STARK_STATIC_PROVIDER_H
+#ifndef STARK_SERVICES_STATIC_PROVIDER_H
+#define STARK_SERVICES_STATIC_PROVIDER_H
 
 #include "common/array.h"
 #include "common/scummsys.h"
@@ -83,4 +83,4 @@ private:
 
 } // End of namespace Stark
 
-#endif // STARK_STATIC_PROVIDER_H
+#endif // STARK_SERVICES_STATIC_PROVIDER_H

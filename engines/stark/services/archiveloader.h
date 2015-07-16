@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef STARK_ARCHIVE_LOADER_H
-#define STARK_ARCHIVE_LOADER_H
+#ifndef STARK_SERVICES_ARCHIVE_LOADER_H
+#define STARK_SERVICES_ARCHIVE_LOADER_H
 
 #include "common/list.h"
 #include "common/str.h"
@@ -128,4 +128,4 @@ T *ArchiveLoader::useRoot(const Common::String &archiveName) {
 
 } // End of namespace Stark
 
-#endif // STARK_ARCHIVE_LOADER_H
+#endif // STARK_SERVICES_ARCHIVE_LOADER_H
