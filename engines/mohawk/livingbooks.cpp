@@ -3791,7 +3791,7 @@ LBMovieItem::~LBMovieItem() {
 void LBMovieItem::update() {
 	if (_playing) {
 		VideoHandle videoHandle = _vm->_video->findVideoHandle(_resourceId);
-		if (videoHandle == NULL_VID_HANDLE || _vm->_video->endOfVideo(videoHandle))
+		if (!videoHandle || videoHandle->endOfVideo())
 			done(true);
 	}
 

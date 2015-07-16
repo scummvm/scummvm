@@ -493,7 +493,9 @@ void RivenScript::changeStack(uint16 op, uint16 argc, uint16 *argv) {
 
 // Command 28: disable a movie
 void RivenScript::disableMovie(uint16 op, uint16 argc, uint16 *argv) {
-	_vm->_video->disableMovieRiven(argv[0]);
+	VideoHandle handle = _vm->_video->findVideoHandleRiven(argv[0]);
+	if (handle)
+		handle->setEnabled(false);
 }
 
 // Command 29: disable all movies
@@ -503,7 +505,9 @@ void RivenScript::disableAllMovies(uint16 op, uint16 argc, uint16 *argv) {
 
 // Command 31: enable a movie
 void RivenScript::enableMovie(uint16 op, uint16 argc, uint16 *argv) {
-	_vm->_video->enableMovieRiven(argv[0]);
+	VideoHandle handle = _vm->_video->findVideoHandleRiven(argv[0]);
+	if (handle)
+		handle->setEnabled(true);
 }
 
 // Command 32: play foreground movie - blocking (movie_id)

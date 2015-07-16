@@ -303,9 +303,9 @@ void Channelwood::o_bridgeToggle(uint16 op, uint16 var, uint16 argc, uint16 *arg
 
 	// Toggle bridge state
 	if (_state.waterPumpBridgeState)
-		_vm->_video->setVideoBounds(bridge, Audio::Timestamp(0, 3050, 600), Audio::Timestamp(0, 6100, 600));
+		bridge->setBounds(Audio::Timestamp(0, 3050, 600), Audio::Timestamp(0, 6100, 600));
 	else
-		_vm->_video->setVideoBounds(bridge, Audio::Timestamp(0, 0, 600), Audio::Timestamp(0, 3050, 600));
+		bridge->setBounds(Audio::Timestamp(0, 0, 600), Audio::Timestamp(0, 3050, 600));
 
 	_vm->_video->waitUntilMovieEnds(bridge);
 }
@@ -321,9 +321,9 @@ void Channelwood::o_pipeExtend(uint16 op, uint16 var, uint16 argc, uint16 *argv)
 
 	// Toggle pipe state
 	if (_state.pipeState)
-		_vm->_video->setVideoBounds(pipe, Audio::Timestamp(0, 3040, 600), Audio::Timestamp(0, 6080, 600));
+		pipe->setBounds(Audio::Timestamp(0, 3040, 600), Audio::Timestamp(0, 6080, 600));
 	else
-		_vm->_video->setVideoBounds(pipe, Audio::Timestamp(0, 0, 600), Audio::Timestamp(0, 3040, 600));
+		pipe->setBounds(Audio::Timestamp(0, 0, 600), Audio::Timestamp(0, 3040, 600));
 
 	_vm->_video->waitUntilMovieEnds(pipe);
 	_vm->_sound->resumeBackgroundMyst();
