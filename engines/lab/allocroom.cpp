@@ -168,26 +168,21 @@ static void *getCurMem(uint16 Size) {
 	return Ptr;
 }
 
-
-
-
-
 /*****************************************************************************/
 /* Grabs a chunk of memory from the room buffer, and manages it for a        */
 /* particular room.                                                          */
 /*****************************************************************************/
 void allocRoom(void **Ptr, uint16 size, uint16 roomNum) {
 	uint16 rMarker;
-	bool doit = true;
 
 	if (1 & size)  /* Memory is required to be even aligned */
 		size++;
 
 	rMarker = 0;
 
-	while ((rMarker < MAXMARKERS) && doit) {
+	while ((rMarker < MAXMARKERS)) {
 		if (RoomMarkers[rMarker].RoomNum == roomNum)
-			doit = false;
+			break;
 		else
 			rMarker++;
 	}
