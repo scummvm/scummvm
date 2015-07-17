@@ -45,7 +45,6 @@ WidgetTalk::WidgetTalk(SherlockEngine *vm) : WidgetBase(vm) {
 
 void WidgetTalk::getTalkWindowSize() {
 	TattooTalk &talk = *(TattooTalk *)_vm->_talk;
-	const char *const NUM_STR = "19.";
 	int width, height;
 
 	// See how many statements are going to be available
@@ -55,24 +54,15 @@ void WidgetTalk::getTalkWindowSize() {
 			++numStatements;
 	}
 
-	// Figure out the width, allowing room for both the text and the statement numbers on the side
 	width = SHERLOCK_SCREEN_WIDTH * 2 / 3;
-	int n = (numStatements < 10) ? 1 : 0;
-	width -= _surface.stringWidth(NUM_STR + n) + _surface.widestChar() / 2 + 9;
 
-	// Now that we have a width, split up the text into individual lines
-	int numLines = 0;
-	for (uint idx = 0; idx < talk._statements.size(); ++idx) {
-		Common::StringArray statementLines;
-		if (talk._statements[idx]._talkMap != -1) {
-			splitLines(talk._statements[idx]._statement, statementLines, width, 999);
-			numLines += statementLines.size();
-		}
-	}
+	// Split up the questions into separate strings for each line
+	_bounds = Common::Rect(width, 1);
+	setStatementLines();
 
 	// Make sure that the window does not get too big
-	if (numLines < 7) {
-		height = (_surface.fontHeight() + 1) * numLines + 9;
+	if (_statementLines.size() < 7) {
+		height = (_surface.fontHeight() + 1) * _statementLines.size() + 9;
 		_scroll = false;
 	} else {
 		// Set up the height to a constrained amount, and add extra width for the scrollbar
