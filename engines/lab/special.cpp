@@ -363,22 +363,22 @@ static void doTileScroll(uint16 col, uint16 row, uint16 scrolltype) {
 	uint16 counter;
 
 	if (scrolltype == LEFTSCROLL) {
-		dX =  VGAScaleXs(5);
-		sx =  VGAScaleXs(5);
+		dX =  VGAScaleX(5);
+		sx =  VGAScaleX(5);
 		last = 6;
 	} else if (scrolltype == RIGHTSCROLL) {
-		dX = VGAScaleXs(-5);
-		dx = VGAScaleXs(-5);
+		dX = VGAScaleX(-5);
+		dx = VGAScaleX(-5);
 		sx =  VGAScaleX(5);
 		last = 6;
 	} else if (scrolltype == UPSCROLL) {
-		dY =  VGAScaleYs(5);
-		sy =  VGAScaleYs(5);
+		dY =  VGAScaleY(5);
+		sy =  VGAScaleY(5);
 		last = 5;
 	} else if (scrolltype == DOWNSCROLL) {
-		dY = VGAScaleYs(-5);
-		dy = VGAScaleYs(-5);
-		sy =  VGAScaleYs(5);
+		dY = VGAScaleY(-5);
+		dy = VGAScaleY(-5);
+		sy =  VGAScaleY(5);
 		last = 5;
 	}
 
@@ -437,9 +437,6 @@ static void changeTile(uint16 col, uint16 row) {
 	}
 
 	if (scrolltype != -1) {
-		/* NYI:
-		    readPict("Music:Click", true);
-		 */
 		doTileScroll(col, row, scrolltype);
 
 #if defined(LABDEMO)
@@ -933,6 +930,8 @@ extern uint16 RoomNum, Direction;
 bool saveRestoreGame() {
 	bool isOK = false;
 
+	//g_lab->showMainMenu();
+
 	// The original had one screen for saving/loading. We have two.
 	// Ask the user which screen to use.
 	GUI::MessageDialog saveOrLoad(_("Would you like to save or restore a game?"), _("Save"), _("Restore"));
@@ -990,17 +989,18 @@ Image *MonButton, *AltMonButton, *MonQuit, *AltMonQuit, *MonBack, *AltMonBack,
 /*****************************************************************************/
 static void getMonImages() {
 	byte **buffer;
+	uint32 bufferSize;
 
 	resetBuffer();
 
-	buffer = g_music->newOpen("P:MonImage");
+	buffer = g_music->newOpen("P:MonImage", bufferSize);
 
 	if (!buffer)
 		return;
 
 	readImage(buffer, &MonButton);
 
-	stealBufMem(sizeOfFile("P:MonImage"));  /* Trick: protects the memory where the buttons are so they won't be over-written */
+	stealBufMem(bufferSize);  /* Trick: protects the memory where the buttons are so they won't be over-written */
 }
 
 
@@ -1150,7 +1150,7 @@ static void processMonitor(char *ntext, bool isinteractive, uint16 x1, uint16 y1
 					TestCPtr = CPtr;
 					MouseY = 64 + (MouseY / MonGadHeight) * 42;
 					MouseX = 101;
-					setCurCloseAbs(MouseX, MouseY, &CPtr);
+					setCurClose(MouseX, MouseY, &CPtr, true);
 
 					if (TestCPtr != CPtr) {
 						LastCPtr[depth] = TestCPtr;

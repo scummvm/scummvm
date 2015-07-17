@@ -42,8 +42,6 @@ extern uint32 VGABytesPerPage;
 
 /*
    extern int32             ReadSoFar;
-   extern bool          ReadIsDone,
-                        ReadIsError;
  */
 extern byte **startoffile;
 

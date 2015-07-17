@@ -61,53 +61,22 @@ uint16 scaleY(uint16 y) {
 /*****************************************************************************/
 /* Scales the VGA cords to SVGA if necessary; otherwise, returns VGA cords.  */
 /*****************************************************************************/
-uint16 VGAScaleX(uint16 x) {
+int16 VGAScaleX(int16 x) {
 	if (IsHiRes)
 		return (x * 2);
 	else
 		return x;
 }
 
-
-
-
 /*****************************************************************************/
 /* Scales the VGA cords to SVGA if necessary; otherwise, returns VGA cords.  */
 /*****************************************************************************/
-uint16 VGAScaleY(uint16 y) {
+int16 VGAScaleY(int16 y) {
 	if (IsHiRes)
 		return ((y * 12) / 5);
 	else
 		return y;
 }
-
-
-
-/*****************************************************************************/
-/* Scales the VGA cords to SVGA if necessary; otherwise, returns VGA cords.  */
-/*****************************************************************************/
-int16 VGAScaleXs(int16 x) {
-	if (IsHiRes)
-		return (x * 2);
-	else
-		return x;
-}
-
-
-
-
-/*****************************************************************************/
-/* Scales the VGA cords to SVGA if necessary; otherwise, returns VGA cords.  */
-/*****************************************************************************/
-int16 VGAScaleYs(int16 y) {
-	if (IsHiRes)
-		return ((y * 12) / 5);
-	else
-		return y;
-}
-
-
-
 
 uint16 SVGACord(uint16 cord) {
 	if (IsHiRes)

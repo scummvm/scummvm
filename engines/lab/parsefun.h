@@ -45,53 +45,29 @@ bool parse(const char *InputFile);
 /* From allocRoom.c */
 
 bool initRoomBuffer();
-
 void freeRoomBuffer();
-
 void allocRoom(void **Ptr, uint16 Size, uint16 RoomNum);
 
 /* From ReadParse.c */
 
 bool readRoomData(const char *fileName);
-
 bool readInventory(const char *fileName);
-
-char *numtostr(char *text, uint16 Num);
-
 bool readViews(uint16 RoomNum, const char *Path);
 
 
 /* From ProcessRoom.c */
 
 ViewDataPtr getViewData(uint16 RoomNum, uint16 Direction);
-
 char *getPictName(CloseDataPtr *LCPtr);
-
 void drawDirection(CloseDataPtr LCPtr);
-
 bool processArrow(uint16 *Direction, uint16 Arrow);
-
-void setCurCloseAbs(uint16 x, uint16 y, CloseDataPtr *cptr);
-
-void setCurClose(uint16 x, uint16 y, CloseDataPtr *cptr);
-
+void setCurClose(uint16 x, uint16 y, CloseDataPtr *cptr, bool useAbsoluteCoords = false);
 bool takeItem(uint16 x, uint16 y, CloseDataPtr *cptr);
-
 bool doActionRule(int16 x, int16 y, int16 action, int16 RoomNum, CloseDataPtr *LCPtr);
-
 bool doOperateRule(int16 x, int16 y, int16 ItemNum, CloseDataPtr *LCPtr);
-
 bool doGoForward(CloseDataPtr *LCPtr);
-
 bool doTurn(uint16 from, uint16 to, CloseDataPtr *LCPtr);
-
 bool doMainView(CloseDataPtr *LCPtr);
-
-/*
-   bool doConditions(int16           x,
-                     int16           y,
-                     CloseDataPtr *LCPtr);
- */
 
 } // End of namespace Lab
 

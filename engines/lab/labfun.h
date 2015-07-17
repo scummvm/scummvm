@@ -244,10 +244,8 @@ public:
 
 uint16 scaleX(uint16 x);
 uint16 scaleY(uint16 y);
-uint16 VGAScaleX(uint16 x);
-uint16 VGAScaleY(uint16 y);
-int16 VGAScaleXs(int16 x);
-int16 VGAScaleYs(int16 y);
+int16 VGAScaleX(int16 x);
+int16 VGAScaleY(int16 y);
 uint16 SVGACord(uint16 cord);
 uint16 VGAUnScaleX(uint16 x);
 uint16 VGAUnScaleY(uint16 y);

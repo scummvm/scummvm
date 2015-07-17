@@ -234,12 +234,6 @@ void drawDirection(CloseDataPtr LCPtr) {
 	else if (Direction == WEST)
 		strcat(Message, FACINGWEST);
 
-	/*
-	   numtostr(test, RoomNum);
-	   strcat(Message, ", ");
-	   strcat(Message, test);
-	 */
-
 	drawMessage(Message);
 }
 
@@ -307,37 +301,12 @@ bool processArrow(uint16 *direction, uint16 Arrow) {
 }
 
 /*****************************************************************************/
-/* Sets the current close up data, but uses absolute cords.                  */
-/*****************************************************************************/
-void setCurCloseAbs(uint16 x, uint16 y, CloseDataPtr *cptr) {
-	ViewDataPtr VPtr;
-	CloseDataPtr LCPtr;
-
-	if (*cptr == NULL) {
-		VPtr = getViewData(RoomNum, Direction);
-		LCPtr = VPtr->closeUps;
-	} else
-		LCPtr = (*cptr)->SubCloseUps;
-
-
-	while (LCPtr != NULL) {
-		if ((x >= LCPtr->x1) && (y >= LCPtr->y1) &&
-		        (x <= LCPtr->x2) && (y <= LCPtr->y2) &&
-		        (LCPtr->GraphicName)) {
-			*cptr = LCPtr;
-			return;
-		}
-
-		LCPtr = LCPtr->NextCloseUp;
-	}
-}
-
-/*****************************************************************************/
 /* Sets the current close up data.                                           */
 /*****************************************************************************/
-void setCurClose(uint16 x, uint16 y, CloseDataPtr *cptr) {
+void setCurClose(uint16 x, uint16 y, CloseDataPtr *cptr, bool useAbsoluteCoords) {
 	ViewDataPtr VPtr;
 	CloseDataPtr LCPtr;
+	uint16 x1, y1, x2, y2;
 
 	if (*cptr == NULL) {
 		VPtr = getViewData(RoomNum, Direction);
@@ -345,11 +314,20 @@ void setCurClose(uint16 x, uint16 y, CloseDataPtr *cptr) {
 	} else
 		LCPtr = (*cptr)->SubCloseUps;
 
-
 	while (LCPtr != NULL) {
-		if ((x >= scaleX(LCPtr->x1)) && (y >= scaleY(LCPtr->y1)) &&
-		        (x <= scaleX(LCPtr->x2)) && (y <= scaleY(LCPtr->y2)) &&
-		        (LCPtr->GraphicName)) {
+		if (!useAbsoluteCoords) {
+			x1 = LCPtr->x1;
+			y1 = LCPtr->y1;
+			x2 = LCPtr->x2;
+			y2 = LCPtr->y2;
+		} else {
+			x1 = scaleX(LCPtr->x1);
+			y1 = scaleY(LCPtr->y1);
+			x2 = scaleX(LCPtr->x2);
+			y2 = scaleY(LCPtr->y2);
+		}
+
+		if (x >= x1 && y >= y1 && x <= x2 && y <= y2 && LCPtr->GraphicName) {
 			*cptr = LCPtr;
 			return;
 		}
