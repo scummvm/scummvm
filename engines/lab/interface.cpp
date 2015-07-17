@@ -28,6 +28,7 @@
  *
  */
 
+#include "lab/labfun.h"
 #include "lab/stddefines.h"
 #include "lab/interface.h"
 #include "lab/timing.h"
@@ -43,6 +44,8 @@ Common::KeyState _keyPressed;
 
 Gadget *createButton(uint16 x, uint16 y, uint16 id, uint16 key, Image *im, Image *imalt) {
 	Gadget *gptr;
+
+	x = VGAScaleX(x);
 
 	if ((gptr = new Gadget())) {
 		gptr->x = x;

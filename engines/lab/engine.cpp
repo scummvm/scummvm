@@ -263,45 +263,45 @@ bool setUpScreens() {
 	y = VGAScaleY(173) - SVGACord(2);
 
 	if (g_lab->getPlatform() == Common::kPlatformWindows) {
-		MoveGadgetList = createButton(VGAScaleX(1), y, 0, 't', MoveImages[0], MoveImages[1]);
+		MoveGadgetList = createButton(1, y, 0, 't', MoveImages[0], MoveImages[1]);
 		curgad = MoveGadgetList;
-		curgad->NextGadget = createButton(VGAScaleX(33), y, 1, 'm', MoveImages[2], MoveImages[3]);
+		curgad->NextGadget = createButton(33, y, 1, 'm', MoveImages[2], MoveImages[3]);
 		curgad = curgad->NextGadget;
-		curgad->NextGadget = createButton(VGAScaleX(65), y, 2, 'o', MoveImages[4], MoveImages[5]);
+		curgad->NextGadget = createButton(65, y, 2, 'o', MoveImages[4], MoveImages[5]);
 		curgad = curgad->NextGadget;
-		curgad->NextGadget = createButton(VGAScaleX(97), y, 3, 'c', MoveImages[6], MoveImages[7]);
+		curgad->NextGadget = createButton(97, y, 3, 'c', MoveImages[6], MoveImages[7]);
 		curgad = curgad->NextGadget;
-		curgad->NextGadget = createButton(VGAScaleX(129), y, 4, 'l', MoveImages[8], MoveImages[9]);
+		curgad->NextGadget = createButton(129, y, 4, 'l', MoveImages[8], MoveImages[9]);
 		curgad = curgad->NextGadget;
-		curgad->NextGadget = createButton(VGAScaleX(161), y, 5, 'i', MoveImages[12], MoveImages[13]);
+		curgad->NextGadget = createButton(161, y, 5, 'i', MoveImages[12], MoveImages[13]);
 		curgad = curgad->NextGadget;
-		curgad->NextGadget = createButton(VGAScaleX(193), y, 6, VKEY_LTARROW, MoveImages[14], MoveImages[15]);
+		curgad->NextGadget = createButton(193, y, 6, VKEY_LTARROW, MoveImages[14], MoveImages[15]);
 		curgad = curgad->NextGadget;
-		curgad->NextGadget = createButton(VGAScaleX(225), y, 7, VKEY_UPARROW, MoveImages[16], MoveImages[17]);
+		curgad->NextGadget = createButton(225, y, 7, VKEY_UPARROW, MoveImages[16], MoveImages[17]);
 		curgad = curgad->NextGadget;
-		curgad->NextGadget = createButton(VGAScaleX(257), y, 8, VKEY_RTARROW, MoveImages[18], MoveImages[19]);
+		curgad->NextGadget = createButton(257, y, 8, VKEY_RTARROW, MoveImages[18], MoveImages[19]);
 		curgad = curgad->NextGadget;
-		curgad->NextGadget = createButton(VGAScaleX(289), y, 9, 'p', MoveImages[10], MoveImages[11]);
+		curgad->NextGadget = createButton(289, y, 9, 'p', MoveImages[10], MoveImages[11]);
 	} else {
-		MoveGadgetList = createButton(VGAScaleX(1), y, 0, 0, MoveImages[0], MoveImages[1]);
+		MoveGadgetList = createButton(1, y, 0, 0, MoveImages[0], MoveImages[1]);
 		curgad = MoveGadgetList;
-		curgad->NextGadget = createButton(VGAScaleX(33), y, 1, 0, MoveImages[2], MoveImages[3]);
+		curgad->NextGadget = createButton(33, y, 1, 0, MoveImages[2], MoveImages[3]);
 		curgad = curgad->NextGadget;
-		curgad->NextGadget = createButton(VGAScaleX(65), y, 2, 0, MoveImages[4], MoveImages[5]);
+		curgad->NextGadget = createButton(65, y, 2, 0, MoveImages[4], MoveImages[5]);
 		curgad = curgad->NextGadget;
-		curgad->NextGadget = createButton(VGAScaleX(97), y, 3, 0, MoveImages[6], MoveImages[7]);
+		curgad->NextGadget = createButton(97, y, 3, 0, MoveImages[6], MoveImages[7]);
 		curgad = curgad->NextGadget;
-		curgad->NextGadget = createButton(VGAScaleX(129), y, 4, 0, MoveImages[8], MoveImages[9]);
+		curgad->NextGadget = createButton(129, y, 4, 0, MoveImages[8], MoveImages[9]);
 		curgad = curgad->NextGadget;
-		curgad->NextGadget = createButton(VGAScaleX(161), y, 5, 0, MoveImages[12], MoveImages[13]);
+		curgad->NextGadget = createButton(161, y, 5, 0, MoveImages[12], MoveImages[13]);
 		curgad = curgad->NextGadget;
-		curgad->NextGadget = createButton(VGAScaleX(193), y, 6, 0, MoveImages[14], MoveImages[15]);
+		curgad->NextGadget = createButton(193, y, 6, 0, MoveImages[14], MoveImages[15]);
 		curgad = curgad->NextGadget;
-		curgad->NextGadget = createButton(VGAScaleX(225), y, 7, 0, MoveImages[16], MoveImages[17]);
+		curgad->NextGadget = createButton(225, y, 7, 0, MoveImages[16], MoveImages[17]);
 		curgad = curgad->NextGadget;
-		curgad->NextGadget = createButton(VGAScaleX(257), y, 8, 0, MoveImages[18], MoveImages[19]);
+		curgad->NextGadget = createButton(257, y, 8, 0, MoveImages[18], MoveImages[19]);
 		curgad = curgad->NextGadget;
-		curgad->NextGadget = createButton(VGAScaleX(289), y, 9, 0, MoveImages[10], MoveImages[11]);
+		curgad->NextGadget = createButton(289, y, 9, 0, MoveImages[10], MoveImages[11]);
 	}
 
 	file = openPartial("P:Inv");
@@ -321,37 +321,37 @@ bool setUpScreens() {
 		for (counter = 0; counter < 10; counter++)
 			readImage(buffer, &(InvImages[counter]));
 
-		InvGadgetList = createButton(VGAScaleX(24), y, 0, 'm', InvImages[0], InvImages[1]);
+		InvGadgetList = createButton(24, y, 0, 'm', InvImages[0], InvImages[1]);
 		curgad = InvGadgetList;
-		curgad->NextGadget = createButton(VGAScaleX(56), y, 1, 'g', InvImages[2], InvImages[3]);
+		curgad->NextGadget = createButton(56, y, 1, 'g', InvImages[2], InvImages[3]);
 		curgad = curgad->NextGadget;
-		curgad->NextGadget = createButton(VGAScaleX(94), y, 2, 'u', InvImages[4], InvImages[5]);
+		curgad->NextGadget = createButton(94, y, 2, 'u', InvImages[4], InvImages[5]);
 		curgad = curgad->NextGadget;
-		curgad->NextGadget = createButton(VGAScaleX(126), y, 3, 'l', MoveImages[8], MoveImages[9]);
+		curgad->NextGadget = createButton(126, y, 3, 'l', MoveImages[8], MoveImages[9]);
 		curgad = curgad->NextGadget;
-		curgad->NextGadget = createButton(VGAScaleX(164), y, 4, VKEY_LTARROW, MoveImages[14], MoveImages[15]);
+		curgad->NextGadget = createButton(164, y, 4, VKEY_LTARROW, MoveImages[14], MoveImages[15]);
 		curgad = curgad->NextGadget;
-		curgad->NextGadget = createButton(VGAScaleX(196), y, 5, VKEY_RTARROW, MoveImages[18], MoveImages[19]);
+		curgad->NextGadget = createButton(196, y, 5, VKEY_RTARROW, MoveImages[18], MoveImages[19]);
 		curgad = curgad->NextGadget;
-		curgad->NextGadget = createButton(VGAScaleX(234), y, 6, 'b', InvImages[6], InvImages[7]);
+		curgad->NextGadget = createButton(234, y, 6, 'b', InvImages[6], InvImages[7]);
 		curgad = curgad->NextGadget;
-		curgad->NextGadget = createButton(VGAScaleX(266), y, 7, 'f', InvImages[8], InvImages[9]);
+		curgad->NextGadget = createButton(266, y, 7, 'f', InvImages[8], InvImages[9]);
 		curgad = curgad->NextGadget;
 	} else {
 		for (counter = 0; counter < 6; counter++)
 			readImage(buffer, &(InvImages[counter]));
 
-		InvGadgetList = createButton(VGAScaleX(58), y, 0, 0, InvImages[0], InvImages[1]);
+		InvGadgetList = createButton(58, y, 0, 0, InvImages[0], InvImages[1]);
 		curgad = InvGadgetList;
-		curgad->NextGadget = createButton(VGAScaleX(90), y, 1, 0, InvImages[2], InvImages[3]);
+		curgad->NextGadget = createButton(90, y, 1, 0, InvImages[2], InvImages[3]);
 		curgad = curgad->NextGadget;
-		curgad->NextGadget = createButton(VGAScaleX(128), y, 2, 0, InvImages[4], InvImages[5]);
+		curgad->NextGadget = createButton(128, y, 2, 0, InvImages[4], InvImages[5]);
 		curgad = curgad->NextGadget;
-		curgad->NextGadget = createButton(VGAScaleX(160), y, 3, 0, MoveImages[8], MoveImages[9]);
+		curgad->NextGadget = createButton(160, y, 3, 0, MoveImages[8], MoveImages[9]);
 		curgad = curgad->NextGadget;
-		curgad->NextGadget = createButton(VGAScaleX(198), y, 4, 0, MoveImages[14], MoveImages[15]);
+		curgad->NextGadget = createButton(198, y, 4, 0, MoveImages[14], MoveImages[15]);
 		curgad = curgad->NextGadget;
-		curgad->NextGadget = createButton(VGAScaleX(230), y, 5, 0, MoveImages[18], MoveImages[19]);
+		curgad->NextGadget = createButton(230, y, 5, 0, MoveImages[18], MoveImages[19]);
 		curgad = curgad->NextGadget;
 	}
 
