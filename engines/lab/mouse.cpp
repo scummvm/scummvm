@@ -37,7 +37,6 @@
 namespace Lab {
 
 extern bool IsHiRes;
-extern uint32 VGAScreenWidth, VGAScreenHeight;
 
 static bool LeftClick = false;
 static bool RightClick = false;
@@ -65,7 +64,6 @@ static byte MouseData[] = {1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
 #define MOUSE_WIDTH 10
 #define MOUSE_HEIGHT 15
 
-static bool gadhit    = false;
 static Gadget *hitgad = NULL;
 
 /*****************************************************************************/
@@ -81,7 +79,6 @@ static Gadget *checkGadgetHit(Gadget *gadlist, uint16 x, uint16 y) {
 		        (y <= (gadlist->y + gadlist->Im->Height)) &&
 		        !(GADGETOFF & gadlist->GadgetFlags)) {
 			if (IsHiRes) {
-				gadhit = true;
 				hitgad = gadlist;
 			} else {
 				VGAStorePage();
@@ -116,47 +113,36 @@ void attachGadgetList(Gadget *GadList) {
 	ScreenGadgetList = GadList;
 }
 
-static Gadget *TempGad;
+void mouseHandler(int32 flag, int32 mouseX, int32 mouseY) {
+	if (NumHidden >= 2)
+		return;
 
-
-void mouse_handler(int32 flag, int32 mouseX, int32 mouseY) {
 	if (!IsHiRes)
 		mouseX /= 2;
 
-	if (flag & 0x01) { /* mouse Move */
-	}
-
-	if ((flag & 0x02) && (NumHidden < 2)) { /* Left mouse button click */
+	if (flag & 0x02) { /* Left mouse button click */
+		Gadget *tmp = NULL;
 		if (ScreenGadgetList)
-			TempGad = checkGadgetHit(ScreenGadgetList, mouseX, mouseY);
+			tmp = checkGadgetHit(ScreenGadgetList, mouseX, mouseY);
+
+		if (tmp)
+			LastGadgetHit = tmp;
 		else
-			TempGad = NULL;
-
-		if (TempGad) {
-			LastGadgetHit = TempGad;
-		} else {
 			LeftClick = true;
-		}
 	}
 
-	if ((flag & 0x08) && (NumHidden < 2)) { /* Right mouse button click */
+	if (flag & 0x08) /* Right mouse button click */
 		RightClick = true;
-	}
 }
-
-
-
 
 void updateMouse() {
 	uint16 counter;
 	bool doUpdateDisplay = false;
 
-	if (!MouseHidden) {
+	if (!MouseHidden)
 		doUpdateDisplay = true;
-	}
 
-	if (gadhit) {
-		gadhit = false;
+	if (hitgad) {
 		mouseHide();
 		drawImage(hitgad->ImAlt, hitgad->x, hitgad->y);
 		mouseShow();
@@ -168,6 +154,7 @@ void updateMouse() {
 		drawImage(hitgad->Im, hitgad->x, hitgad->y);
 		mouseShow();
 		doUpdateDisplay = true;
+		hitgad = NULL;
 	}
 
 	if (doUpdateDisplay)
@@ -175,21 +162,15 @@ void updateMouse() {
 }
 
 
-
-
 /*****************************************************************************/
 /* Initializes the mouse.                                                    */
 /*****************************************************************************/
-bool initMouse() {
+void initMouse() {
 	g_system->setMouseCursor(MouseData, MOUSE_WIDTH, MOUSE_HEIGHT, 0, 0, 0);
 	g_system->showMouse(false);
 
 	mouseMove(0, 0);
-
-	return true;
 }
-
-
 
 
 /*****************************************************************************/
@@ -237,8 +218,6 @@ void mouseXY(uint16 *x, uint16 *y) {
 }
 
 
-
-
 /*****************************************************************************/
 /* Moves the mouse to new co-ordinates.                                      */
 /*****************************************************************************/
@@ -248,12 +227,9 @@ void mouseMove(uint16 x, uint16 y) {
 
 	g_system->warpMouse(x, y);
 
-	if (!MouseHidden) {
+	if (!MouseHidden)
 		WSDL_ProcessInput(0);
-	}
 }
-
-
 
 
 /*****************************************************************************/

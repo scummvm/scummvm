@@ -135,12 +135,12 @@ void WSDL_ProcessInput(bool can_delay) {
 			switch (event.type) {
 			case Common::EVENT_RBUTTONDOWN:
 				flags |= 8;
-				mouse_handler(flags, g_MouseX, g_MouseY);
+				mouseHandler(flags, g_MouseX, g_MouseY);
 				break;
 
 			case Common::EVENT_LBUTTONDOWN:
 				flags |= 2;
-				mouse_handler(flags, g_MouseX, g_MouseY);
+				mouseHandler(flags, g_MouseX, g_MouseY);
 				break;
 
 			case Common::EVENT_MOUSEMOVE:
@@ -167,7 +167,7 @@ void WSDL_ProcessInput(bool can_delay) {
 				}
 
 				if (!lastMouseAtEdge || !g_MouseAtEdge)
-					mouse_handler(1, g_MouseX, g_MouseY);
+					mouseHandler(1, g_MouseX, g_MouseY);
 
 				break;
 

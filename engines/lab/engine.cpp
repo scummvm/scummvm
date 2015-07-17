@@ -1400,9 +1400,7 @@ void LabEngine::go() {
 		mem = mem && setUpScreens();
 	}
 
-	if (!initMouse()) {
-		return;
-	}
+	initMouse();
 
 	mem = mem && initRoomBuffer() &&
 	      initLabText();

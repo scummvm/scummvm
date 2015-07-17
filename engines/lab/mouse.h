@@ -37,7 +37,7 @@ namespace Lab {
 
 struct Gadget;
 
-bool initMouse();
+void initMouse();
 
 void updateMouse();
 
@@ -55,7 +55,7 @@ Gadget *mouseGadget();
 
 void attachGadgetList(Gadget *GadList);
 
-void mouse_handler(int32 flag, int32 mouseX, int32 mouseY);
+void mouseHandler(int32 flag, int32 mouseX, int32 mouseY);
 
 } // End of namespace Lab
 
