@@ -60,6 +60,8 @@ public:
 	bool hasFeature(EngineFeature f) const;
 	Common::String generateSaveFileName(uint slot);
 
+	//void showMainMenu();
+
 	LargeSet *_conditions, *_roomsFound;
 
 private:

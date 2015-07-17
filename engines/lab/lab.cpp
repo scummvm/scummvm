@@ -28,12 +28,15 @@
  *
  */
 
+#include "common/config-manager.h"
 #include "common/debug-channels.h"
 #include "common/scummsys.h"
 #include "common/error.h"
 #include "common/fs.h"
 #include "common/rect.h"
 
+#include "engines/dialogs.h"
+#include "engines/engine.h"
 #include "engines/util.h"
 
 #include "gui/message.h"
@@ -50,6 +53,12 @@ LabEngine *g_lab;
 LabEngine::LabEngine(OSystem *syst, const ADGameDescription *gameDesc)
  : Engine(syst), _gameDescription(gameDesc), _extraGameFeatures(0) {
 	g_lab = this;
+
+	//const Common::FSNode gameDataDir(ConfMan.get("path"));
+	//SearchMan.addSubDirectoryMatching(gameDataDir, "game");
+	//SearchMan.addSubDirectoryMatching(gameDataDir, "game/pict");
+	//SearchMan.addSubDirectoryMatching(gameDataDir, "game/spict");
+	//SearchMan.addSubDirectoryMatching(gameDataDir, "music");
 }
 
 LabEngine::~LabEngine() {
@@ -107,5 +116,9 @@ Common::Error LabEngine::run() {
 Common::String LabEngine::generateSaveFileName(uint slot) {
 	return Common::String::format("%s.%03u", _targetName.c_str(), slot);
 }
+
+/*void LabEngine::showMainMenu() {
+
+}*/
 
 } // End of namespace Lab
