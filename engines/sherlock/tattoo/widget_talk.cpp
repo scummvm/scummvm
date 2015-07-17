@@ -296,11 +296,12 @@ void WidgetTalk::handleEvents() {
 	}
 
 	if (events._released || events._rightReleased || keycode == Common::KEYCODE_ESCAPE || hotkey) {
+		events.clearEvents();
 		_dialogTimer = 0;
 		ui._scrollHighlight = SH_NONE;
 
 		// See if they want to close the menu (click outside the window or Escape pressed)
-		if ((_outsideMenu && _bounds.contains(mousePos)) || keycode == Common::KEYCODE_ESCAPE) {
+		if ((_outsideMenu && !_bounds.contains(mousePos)) || keycode == Common::KEYCODE_ESCAPE) {
 			if (keycode == Common::KEYCODE_ESCAPE)
 				_selector = -1;
 
