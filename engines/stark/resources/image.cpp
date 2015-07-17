@@ -103,11 +103,7 @@ void Image::printData() {
 	}
 }
 
-bool Image::polygonContainsPoint(Common::Point point) {
-	return (indexForPoint(point) != -1);
-}
-
-int Image::indexForPoint(Common::Point point) {
+int Image::indexForPoint(const Common::Point &point) const {
 	Math::Vector2d prevPoint;
 	Math::Segment2d testLine(Math::Vector2d(point.x, point.y), Math::Vector2d(-1, -1));
 	int intersectCount = 0;

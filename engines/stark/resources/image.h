@@ -64,10 +64,8 @@ public:
 	/** Initialize the renderable for the image */
 	virtual Visual *getVisual();
 
-	bool polygonContainsPoint(Common::Point point);
-
 	/** Get the pat-table index for a given point */
-	int indexForPoint(Common::Point);
+	int indexForPoint(const Common::Point &point) const;
 protected:
 	void printData() override;
 

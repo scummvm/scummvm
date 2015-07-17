@@ -105,8 +105,7 @@ public:
 	/** Obtain the purpose of this anim */
 	uint32 getUsage() const;
 
-	virtual bool containsPoint(Common::Point point) { return false; }
-	virtual int indexForPoint(Common::Point point) { return -1; }
+	virtual int indexForPoint(const Common::Point &point) const { return -1; }
 protected:
 	virtual void printData() override;
 
@@ -131,9 +130,8 @@ public:
 	// Anim API
 	void selectFrame(uint32 frameIndex) override;
 	Visual *getVisual() override;
+	int indexForPoint(const Common::Point &point) const override;
 
-	bool containsPoint(Common::Point point);
-	int indexForPoint(Common::Point point);
 protected:
 	void printData() override;
 

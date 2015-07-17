@@ -70,7 +70,7 @@ public:
 		kTextBackgroundPassive = 21
 	};
 
-	// TODO: This is awaiting subItem2-too.
+	// TODO: Check
 	Resources::Anim *getUIItem(StaticItems stockAnim);
 
 private:

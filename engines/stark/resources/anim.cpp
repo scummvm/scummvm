@@ -141,14 +141,7 @@ void AnimImages::printData() {
 	debug("field_3C: %f", _field_3C);
 }
 
-bool AnimImages::containsPoint(Common::Point point) {
-	if (_currentFrameImage) {
-		return _currentFrameImage->polygonContainsPoint(point);
-	}
-	return false;
-}
-
-int AnimImages::indexForPoint(Common::Point point) {
+int AnimImages::indexForPoint(const Common::Point &point) const {
 	if (_currentFrameImage) {
 		return _currentFrameImage->indexForPoint(point);
 	}

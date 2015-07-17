@@ -310,9 +310,6 @@ void Script::printData() {
 }
 
 void Script::saveLoad(ResourceSerializer *serializer) {
-	if (!serializer->matchBytes("SCRIPT", 9)) {
-		error("Couldn't fint the correct save header");
-	}
 	serializer->syncAsSint32LE(_enabled);
 }
 

@@ -56,12 +56,9 @@ int32 Knowledge::getIntegerValue() {
 }
 
 void Knowledge::saveLoad(ResourceSerializer *serializer) {
-	if (!serializer->matchBytes("KNOWLEDGE", 9)) {
-		error("Couldn't fint the correct save header");
-	}
 	serializer->syncAsSint32LE(_integerValue);
 	serializer->syncAsSint32LE(_booleanValue);
-	// TODO: Do we need to synch the reference?
+	// TODO: Sync the reference
 }
 
 void Knowledge::readData(Formats::XRCReadStream *stream) {

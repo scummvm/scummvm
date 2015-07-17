@@ -301,7 +301,6 @@ Common::Error StarkEngine::loadGameState(int slot) {
 	_resourceProvider->shutdown();
 	_resourceProvider->initGlobal();
 
-	//TODO: Restore to the correct location
 	_resourceProvider->requestLocationChange(levelIndex, locationIndex);
 
 	return Common::kNoError;

@@ -120,7 +120,7 @@ public:
 	void setEnabled(bool enabled) override;
 
 	/** Get the hotspot index for an item relative position */
-	int getHotspotIndexForPoint(Common::Point point);
+	int getHotspotIndexForPoint(const Common::Point &point);
 
 	/** Obtain the title for one of the item's hotspots */
 	Common::String getHotspotTitle(uint32 hotspotIndex);

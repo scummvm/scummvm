@@ -104,9 +104,6 @@ void Item::printData() {
 }
 
 void Item::saveLoad(ResourceSerializer *serializer) {
-	if (!serializer->matchBytes("ITEM", 9)) {
-		error("Couldn't fint the correct save header");
-	}
 	serializer->syncAsSint32LE(_enabled);
 }
 
@@ -184,7 +181,7 @@ Visual *ItemVisual::getVisual() {
 	return anim->getVisual();
 }
 
-int ItemVisual::getHotspotIndexForPoint(Common::Point point) {
+int ItemVisual::getHotspotIndexForPoint(const Common::Point &point) {
 	// TODO: This breaks rather weirdly on subtype 6 and 10
 	Anim *anim = getAnim();
 	if (anim) {
