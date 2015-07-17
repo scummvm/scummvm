@@ -219,7 +219,7 @@ static uint16 mapScaleY(uint16 y) {
 /*****************************************************************************/
 static bool loadMapData() {
 	byte **buffer, Temp[5];
-	int32 Size;
+	uint32 Size;
 	Gadget *gptr;
 	uint16 counter;
 
@@ -228,9 +228,8 @@ static bool loadMapData() {
 	if (!getFont("P:Map.fon", BigMsgFont))
 		BigMsgFont = MsgFont;
 
-	Size = sizeOfFile("P:MapImage");
 	resetBuffer();  /* Make images load into start of buffer */
-	buffer = g_music->newOpen("P:MapImage");
+	buffer = g_music->newOpen("P:MapImage", Size);
 
 	if (!buffer)
 		return false;
@@ -279,8 +278,9 @@ static bool loadMapData() {
 		counter++;
 	}
 
-	buffer = g_music->newOpen("Lab:Maps");
-	stealBufMem(sizeOfFile("Lab:Maps"));  /* Freeze the memory for the maps */
+	uint32 bufferSize;
+	buffer = g_music->newOpen("Lab:Maps", bufferSize);
+	stealBufMem(bufferSize);  /* Freeze the memory for the maps */
 	readBlock(Temp, 4L, buffer);
 	Temp[4] = 0;
 

@@ -208,8 +208,6 @@ static bool LastTooLong = false;
 /* Draws the message for the room.                                            */
 /******************************************************************************/
 static void drawRoomMessage(uint16 CurInv, CloseDataPtr cptr) {
-	char text[250], ManyText[8], *ManyPtr;
-
 	if (LastTooLong) {
 		LastTooLong = false;
 		return;
@@ -220,12 +218,8 @@ static void drawRoomMessage(uint16 CurInv, CloseDataPtr cptr) {
 			if ((CurInv == LAMPNUM) && g_lab->_conditions->in(LAMPON))  /* LAB: Labyrith specific */
 				drawMessage(LAMPONMSG);
 			else if (Inventory[CurInv].Many > 1) {
-				ManyPtr = numtostr(ManyText, Inventory[CurInv].Many);
-				strcpy(text, Inventory[CurInv].name);
-				strcat(text, "  (");
-				strcat(text, ManyPtr);
-				strcat(text, ")");
-				drawMessage(text);
+				Common::String roomMessage = Common::String(Inventory[CurInv].name) + "  (" + Common::String::format("%d", Inventory[CurInv].Many) + ")";
+				drawMessage(roomMessage.c_str());
 			} else
 				drawMessage(Inventory[CurInv].name);
 		}
@@ -249,17 +243,12 @@ bool setUpScreens() {
 		return false;
 
 	/* Loads in the graphics for the movement control panel */
-	MovePanelBufferSize = sizeOfFile("P:Control");
-
-	if (MovePanelBufferSize == 0L)
-		return false;
-
-	if (!(MovePanelBuffer = (byte *)calloc(MovePanelBufferSize, 1)))
-		return false;
-
 	Common::File *file = openPartial("P:Control");
-
 	if (!file)
+		return false;
+
+	MovePanelBufferSize = file->size();
+	if (!MovePanelBufferSize || !(MovePanelBuffer = (byte *)calloc(MovePanelBufferSize, 1)))
 		return false;
 
 	file->read(MovePanelBuffer, MovePanelBufferSize);
@@ -315,17 +304,12 @@ bool setUpScreens() {
 		curgad->NextGadget = createButton(VGAScaleX(289), y, 9, 0, MoveImages[10], MoveImages[11]);
 	}
 
-	InvPanelBufferSize = sizeOfFile("P:Inv");
-
-	if (InvPanelBufferSize == 0L)
-		return false;
-
-	if (!(InvPanelBuffer = (byte *)calloc(InvPanelBufferSize, 1)))
-		return false;
-
 	file = openPartial("P:Inv");
-
 	if (!file)
+		return false;
+
+	InvPanelBufferSize = file->size();
+	if (!InvPanelBufferSize || !(InvPanelBuffer = (byte *)calloc(InvPanelBufferSize, 1)))
 		return false;
 
 	file->read(InvPanelBuffer, InvPanelBufferSize);
@@ -413,18 +397,12 @@ void eatMessages() {
 
 	do {
 		Msg = getMsg();
-
-		if (Msg) {
+		if (Msg)
 			replyMsg((void *) Msg);
-		}
 	} while (Msg);
 
 	return;
 }
-
-
-
-
 
 static uint16 lastmusicroom = 1;
 

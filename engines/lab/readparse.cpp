@@ -181,58 +181,6 @@ bool readInventory(const char *fileName) {
 	return true;
 }
 
-
-
-
-
-
-/*****************************************************************************/
-/* Converts a number to a string.                                            */
-/*****************************************************************************/
-char *numtostr(char *text, uint16 Num) {
-	uint16 Counter = 0;
-
-	if (Num == 0) {
-		text[0] = '0';
-		text[1] = 0;
-		return text;
-	}
-
-	strcpy(text, "00000");
-
-	if (Num >= 10000) {
-		text[0] = (Num / 10000) + '0';
-		Num -= (Num / 10000) * 10000;
-	}
-
-	if (Num >= 1000) {
-		text[1] = (Num / 1000) + '0';
-		Num -= (Num / 1000) * 1000;
-	}
-
-	if (Num >= 100) {
-		text[2] = (Num / 100) + '0';
-		Num -= (Num / 100) * 100;
-	}
-
-	if (Num >= 10) {
-		text[3] = (Num / 10) + '0';
-		Num -= (Num / 10) * 10;
-	}
-
-	text[4] = Num + '0';
-	text[5] = 0;
-
-	while (text[Counter] == '0')
-		Counter++;
-
-	return (&text[Counter]);
-}
-
-
-
-
-
 /*****************************************************************************/
 /* Reads in a list of conditions.                                            */
 /*****************************************************************************/
@@ -257,9 +205,6 @@ static int16 *readConditions(byte **file) {
 
 	return ptr;
 }
-
-
-
 
 /*****************************************************************************/
 /* Reads in some CloseUp data.                                               */
@@ -417,16 +362,13 @@ static bool readRule(RulePtr *RPtr, byte **file) {
 /* Reads in the views of a room.                                             */
 /*****************************************************************************/
 bool readViews(uint16 RoomNum, const char *Path) {
-	char Temp[10], *RoomString, fileName[250];
+	Common::String fileName = Common::String(Path) + Common::String::format("%d", RoomNum);
+	char Temp[10];
 	byte **file;
 
 	allocroom = RoomNum;
 
-	RoomString = numtostr(Temp, RoomNum);
-	strcpy(fileName, Path);
-	strcat(fileName, RoomString);
-
-	if ((file = g_music->newOpen(fileName)) != NULL) {
+	if ((file = g_music->newOpen(fileName.c_str())) != NULL) {
 		readBlock(Temp, 4L, file);
 		Temp[4] = '\0';
 

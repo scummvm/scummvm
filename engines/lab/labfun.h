@@ -70,9 +70,7 @@ struct SaveGameHeader {
 /* Reads in pictures */
 
 bool readPict(const char *filename, bool PlayOnce);
-
 bool readMusic(const char *filename);
-
 byte *readPictToMem(const char *filename, uint16 x, uint16 y);
 
 /* Window text stuff */
@@ -100,31 +98,23 @@ uint32 flowTextToMem(Image *DestIm, void *font,     /* the TextAttr pointer */
                      uint16 y1, uint16 x2, uint16 y2, const char *text); /* The text itself */
 
 void drawMessage(const char *text);
-
 void longDrawMessage(const char *text);
-
 bool readFont(char *filename, void *font, void *data);
 
 /* The Wipes */
 
 void doWipe(uint16 WipeType, CloseDataPtr *CPtr, char *filename);
 
-
 /* Double Buffer stuff */
 
 void newFlipViews(void *scrPtr, uint16 *newpal, uint16 numcolors);
-
 void flipViews(void *scrPtr);
-
-
-
 
 /*----------------------------*/
 /*----- From Interface.c -----*/
 /*----------------------------*/
 
 Gadget *addGadButton(uint16 x, uint16 y, void *UpImage, void *DownImage, uint16 id);
-
 void gadgetsOnOff(void *gptr, void *win, int32 num, bool on);
 
 /*----------------------*/
@@ -133,21 +123,14 @@ void gadgetsOnOff(void *gptr, void *win, int32 num, bool on);
 
 void introSequence();
 
-
-
 /*----------------------*/
 /*----- From Lab.c -----*/
 /*----------------------*/
 
 void eatMessages();
-
 bool setUpScreens();
-
 void drawPanel();
-
 bool quitPlaying();
-
-
 
 /*---------------------------*/
 /*------ From LabFile.c -----*/
@@ -156,52 +139,32 @@ bool quitPlaying();
 uint32 sizeOfFile(const char *name);
 
 /* Buffer a whole file */
-
 byte **isBuffered(const char *fileName);
-
-byte **openFile(const char *name);
-
+byte **openFile(const char *name, uint32 &size);
 void readBlock(void *Buffer, uint32 Size, byte **File);
-
 char readChar(char **File);
-
 void skip(byte **File, uint32 skip);
-
 void resetBuffer();
-
 bool initBuffer(uint32 BufSize, bool IsGraphicsMem);
-
 void freeBuffer();
 
-
 /* Functions that borrow memory from the buffer */
-
 bool allocFile(void **Ptr, uint32 Size, const char *fileName);
-
 void *stealBufMem(int32 Size);
-
 void freeAllStolenMem();
 
 
 /* Read chunks of a file */
-
-
 Common::File *openPartial(const char *name);
-
 void closePartial(int32 File);
-
 
 /*---------------------------*/
 /*------ From LabText.c -----*/
 /*---------------------------*/
 
 bool initLabText();
-
 void freeLabText();
-
 void decrypt(byte *text);
-
-
 
 /*---------------------------*/
 /*----- From LabMusic.c -----*/
@@ -214,6 +177,7 @@ public:
 	Music();
 
 	byte **newOpen(const char *name);
+	byte **newOpen(const char *name, uint32 &size);
 	bool initMusic();
 	void freeMusic();
 	void fillUpMusic(bool doit);
@@ -264,17 +228,11 @@ extern Music *g_music;
 class LargeSet {
 public:
     LargeSet(uint16 last);
-
     ~LargeSet();
-
     bool in(uint16 element);
-
     void inclElement(uint16 element);
-
     void exclElement(uint16 element);
-
     bool readInitialConditions(const char *fileName);
-
 public:
     uint16 _lastElement;
     uint16 *_array;
@@ -285,54 +243,31 @@ public:
 /*---------------------------*/
 
 uint16 scaleX(uint16 x);
-
 uint16 scaleY(uint16 y);
-
 uint16 VGAScaleX(uint16 x);
-
 uint16 VGAScaleY(uint16 y);
-
 int16 VGAScaleXs(int16 x);
-
 int16 VGAScaleYs(int16 y);
-
 uint16 SVGACord(uint16 cord);
-
 uint16 VGAUnScaleX(uint16 x);
-
 uint16 VGAUnScaleY(uint16 y);
-
 char *translateFileName(const char *filename);
-
-
 
 /*---------------------------*/
 /*-------- From Map.c -------*/
 /*---------------------------*/
 
 void fade(bool fadein, uint16 res);
-
 void setAmigaPal(uint16 *pal, uint16 numcolors);
-
 char *getText(const char *filename);
-
 bool getFont(const char *filename, TextFont *textfont);
-
 void readImage(byte **buffer, Image **im);
-
 void doMap(uint16 CurRoom);
-
 void doJournal();
-
 void doNotes();
-
 void doWestPaper();
-
 void doMonitor(char *background, char *textfile, bool isinteractive, uint16 x1, uint16 y1, uint16 x2, uint16 y2);
-
 bool saveRestoreGame();
-
-
 
 /*--------------------------*/
 /*----- From saveGame.c ----*/
@@ -340,7 +275,6 @@ bool saveRestoreGame();
 
 bool saveGame(uint16 RoomNum, uint16 Direction, uint16 Quarters, int slot, Common::String desc);
 bool loadGame(uint16 *RoomNum, uint16 *Direction, uint16 *Quarters, int slot);
-
 bool readSaveGameHeader(Common::InSaveFile *in, SaveGameHeader &header);
 
 /*--------------------------*/
@@ -348,13 +282,9 @@ bool readSaveGameHeader(Common::InSaveFile *in, SaveGameHeader &header);
 /*--------------------------*/
 
 void showCombination(const char *filename);
-
 void mouseCombination(uint16 x, uint16 y);
-
 void showTile(const char *filename, bool showsolution);
-
 void mouseTile(uint16 x, uint16 y);
-
 void inner_main();
 
 } // End of namespace Lab

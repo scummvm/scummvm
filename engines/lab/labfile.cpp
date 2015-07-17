@@ -203,7 +203,7 @@ bool allocFile(void **Ptr, uint32 Size, const char *fileName) {
 /*****************************************************************************/
 /* Reads a file into memory.                                                 */
 /*****************************************************************************/
-byte **openFile(const char *name) {
+byte **openFile(const char *name, uint32 &size) {
 	byte *buf;
 
 	Common::File file;
@@ -215,7 +215,7 @@ byte **openFile(const char *name) {
 		return NULL;
 	}
 
-	uint32 size = file.size();
+	size = file.size();
 
 	buf = (byte *)malloc(size);
 

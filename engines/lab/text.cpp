@@ -41,10 +41,9 @@ namespace Lab {
 bool openFontMem(const char *TextFontPath, struct TextFont *tf, byte *fontbuffer) {
 	byte **file = NULL;
 	char header[5];
-	int32 filesize, headersize = 4L + 2L + 256 * 3 + 4L;
+	uint32 filesize, headersize = 4L + 2L + 256 * 3 + 4L;
 
-	filesize = sizeOfFile(TextFontPath);
-	file = g_music->newOpen(TextFontPath);
+	file = g_music->newOpen(TextFontPath, filesize);
 
 	if ((file != NULL) && (filesize > headersize)) {
 		header[4] = 0;
@@ -76,11 +75,10 @@ bool openFontMem(const char *TextFontPath, struct TextFont *tf, byte *fontbuffer
 bool openFont(const char *TextFontPath, struct TextFont **tf) {
 	byte **file = NULL;
 	char header[5];
-	int32 filesize, headersize = 4L + 2L + 256 * 3 + 4L;
+	uint32 filesize, headersize = 4L + 2L + 256 * 3 + 4L;
 
 	if ((*tf = (TextFont *)calloc(sizeof(struct TextFont), 1))) {
-		filesize = sizeOfFile(TextFontPath);
-		file = g_music->newOpen(TextFontPath);
+		file = g_music->newOpen(TextFontPath, filesize);
 
 		if ((file != NULL) && (filesize > headersize)) {
 			header[4] = 0;
