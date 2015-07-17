@@ -64,29 +64,19 @@ bool unDIFFMemory(byte *Dest,       /* Where to Un-DIFF               */
                                                    (1, 2 or 4 bytes)              */
 
 bool VUnDIFFMemory(byte *Dest, byte *diff, uint16 HeaderSize, uint16 CopySize, uint16 bytesperrow);
-
 void runLengthDecode(byte *Dest, byte *Source);
-
 void VRunLengthDecode(byte *Dest, byte *Source, uint16 bytesperrow);
 
 /* readDiff.c */
 
 void blackScreen();
-
 void blackAllScreen();
-
 void whiteScreen();
-
 bool readDiff(bool playonce);
-
 void diffNextFrame();
-
 void readSound();
-
 void stopDiff();
-
 void stopDiffEnd();
-
 void stopSound();
 
 } // End of namespace Lab

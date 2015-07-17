@@ -115,17 +115,11 @@ extern Common::KeyState _keyPressed;
 
 
 Gadget *createButton(uint16 x, uint16 y, uint16 id, uint16 key, Image *im, Image *imalt);
-
 void freeButtonList(void *gptrlist);
-
 void drawGadgetList(Gadget *gadlist);
-
 void ghoastGadget(Gadget *curgad, uint16 pencolor);
-
 void unGhoastGadget(Gadget *curgad);
-
 IntuiMessage *getMsg();
-
 void replyMsg(void *Msg);
 
 } // End of namespace Lab

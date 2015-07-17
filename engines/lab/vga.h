@@ -42,63 +42,36 @@ struct Image {
 };
 
 void setPage(uint16 PageNum);
-
 void VGAStorePage();
-
 void VGARestorePage();
-
 bool createScreen(bool HiRes);
-
 void waitTOF();
-
 void quickWaitTOF();
-
 byte *getVGABaseAddr();
-
 void ungetVGABaseAddr();
-
 void writeColorReg(byte *buf, uint16 regnum);
-
 void writeColorRegs(byte *buf, uint16 first, uint16 numreg);
-
 void writeColorRegsSmooth(byte *buf, uint16 first, uint16 numreg);
-
 void VGASetPal(void *cmap, uint16 numcolors);
 
 /*---------- Drawing Routines ----------*/
 
 void drawImage(Image *Im, uint16 x, uint16 y);
-
 void drawMaskImage(Image *Im, uint16 x, uint16 y);
-
 void readScreenImage(Image *Im, uint16 x, uint16 y);
-
 void bltBitMap(Image *ImSource, uint16 xs, uint16 ys, Image *ImDest, uint16 xd, uint16 yd, uint16 width, uint16 height);
-
 void scrollDisplayX(int16 dx, uint16 x1, uint16 y1, uint16 x2, uint16 y2);
-
 void scrollDisplayY(int16 dy, uint16 x1, uint16 y1, uint16 x2, uint16 y2);
-
 void setAPen(uint16 pennum);
-
 void drawHLine(uint16 x, uint16 y1, uint16 y2);
-
 void drawVLine(uint16 x1, uint16 y, uint16 x2);
-
 void rectFill(uint16 x1, uint16 y1, uint16 x2, uint16 y2);
-
 void ghoastRect(uint16 pencolor, uint16 x1, uint16 y1, uint16 x2, uint16 y2);
-
 void WSDL_UpdateScreen();
-
 void WSDL_IgnoreUpdateDisplay(int state);
-
 void WSDL_GetMousePos(int *x, int *y);
-
 uint16 WSDL_GetNextChar();
-
 bool WSDL_HasNextChar();
-
 void WSDL_ProcessInput(bool can_delay);
 
 } // End of namespace Lab
