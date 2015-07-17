@@ -85,11 +85,17 @@ Common::Rational VideoEntry::getRate() const {
 	return _video->getRate();
 }
 
-void VideoEntry::setBounds(const Audio::Timestamp &start, const Audio::Timestamp &end) {
+void VideoEntry::center() {
 	assert(_video);
-	_start = start;
-	_video->setEndTime(end);
-	_video->seek(start);
+	_x = (g_system->getWidth() - _video->getWidth()) / 2;
+	_y = (g_system->getHeight() - _video->getHeight()) / 2;
+}
+
+void VideoEntry::setBounds(const Audio::Timestamp &startTime, const Audio::Timestamp &endTime) {
+	assert(_video);
+	_start = startTime;
+	_video->setEndTime(endTime);
+	_video->seek(startTime);
 }
 
 void VideoEntry::seek(const Audio::Timestamp &time) {
@@ -105,6 +111,31 @@ void VideoEntry::setRate(const Common::Rational &rate) {
 void VideoEntry::pause(bool isPaused) {
 	assert(_video);
 	_video->pauseVideo(isPaused);
+}
+
+void VideoEntry::start() {
+	assert(_video);
+	_video->start();
+}
+
+void VideoEntry::stop() {
+	assert(_video);
+	_video->stop();
+}
+
+bool VideoEntry::isPlaying() const {
+	assert(_video);
+	return _video->isPlaying();
+}
+
+int VideoEntry::getVolume() const {
+	assert(_video);
+	return _video->getVolume();
+}
+
+void VideoEntry::setVolume(int volume) {
+	assert(_video);
+	_video->setVolume(CLIP(volume, 0, 255));
 }
 
 VideoHandle::VideoHandle(VideoEntryPtr ptr) : _ptr(ptr) {
@@ -144,8 +175,7 @@ void VideoManager::playMovieBlocking(const Common::String &fileName, uint16 x, u
 	if (!ptr)
 		return;
 
-	ptr->setX(x);
-	ptr->setY(y);
+	ptr->moveTo(x, y);
 
 	// Clear screen if requested
 	if (clearScreen) {
@@ -153,6 +183,7 @@ void VideoManager::playMovieBlocking(const Common::String &fileName, uint16 x, u
 		_vm->_system->updateScreen();
 	}
 
+	ptr->start();
 	waitUntilMovieEnds(ptr);
 }
 
@@ -167,9 +198,8 @@ void VideoManager::playMovieBlockingCentered(const Common::String &fileName, boo
 		_vm->_system->updateScreen();
 	}
 
-	ptr->setX((_vm->_system->getWidth() - ptr->_video->getWidth()) / 2);
-	ptr->setY((_vm->_system->getHeight() - ptr->_video->getHeight()) / 2);
-
+	ptr->center();
+	ptr->start();
 	waitUntilMovieEnds(ptr);
 }
 
@@ -242,51 +272,21 @@ void VideoManager::delayUntilMovieEnds(VideoHandle videoHandle) {
 	removeEntry(videoHandle._ptr);
 }
 
-VideoHandle VideoManager::playMovie(const Common::String &fileName, int16 x, int16 y, bool loop) {
+VideoHandle VideoManager::playMovie(const Common::String &fileName) {
 	VideoEntryPtr ptr = open(fileName);
 	if (!ptr)
 		return VideoHandle();
 
-	ptr->setLooping(loop);
-
-	// Center x if requested
-	// FIXME: Move to a playMovieCentered()
-	if (x < 0)
-		ptr->setX((_vm->_system->getWidth() - ptr->_video->getWidth()) / 2);
-	else
-		ptr->setX(x);
-
-	// Center y if requested
-	// FIXME: Move to a playMovieCentered()
-	if (y < 0)
-		ptr->setY((_vm->_system->getHeight() - ptr->_video->getHeight()) / 2);
-	else
-		ptr->setY(y);
-
+	ptr->start();
 	return ptr;
 }
 
-VideoHandle VideoManager::playMovie(uint16 id, int16 x, int16 y, bool loop) {
+VideoHandle VideoManager::playMovie(uint16 id) {
 	VideoEntryPtr ptr = open(id);
 	if (!ptr)
 		return VideoHandle();
 
-	ptr->setLooping(loop);
-
-	// Center x if requested
-	// FIXME: Move to a playMovieCentered()
-	if (x < 0)
-		ptr->setX((_vm->_system->getWidth() - ptr->_video->getWidth()) / 2);
-	else
-		ptr->setX(x);
-
-	// Center y if requested
-	// FIXME: Move to a playMovieCentered()
-	if (y < 0)
-		ptr->setY((_vm->_system->getHeight() - ptr->_video->getHeight()) / 2);
-	else
-		ptr->setY(y);
-
+	ptr->start();
 	return ptr;
 }
 
@@ -422,11 +422,12 @@ VideoHandle VideoManager::playMovieRiven(uint16 id) {
 		if (_mlstRecords[i].code == id) {
 			debug(1, "Play tMOV %d (non-blocking) at (%d, %d) %s, Volume = %d", _mlstRecords[i].movieID, _mlstRecords[i].left, _mlstRecords[i].top, _mlstRecords[i].loop != 0 ? "looping" : "non-looping", _mlstRecords[i].volume);
 
-			VideoEntryPtr ptr = open(_mlstRecords[i].movieID, _mlstRecords[i].volume);
+			VideoEntryPtr ptr = open(_mlstRecords[i].movieID);
 			if (ptr) {
-				ptr->setX(_mlstRecords[i].left);
-				ptr->setY(_mlstRecords[i].top);
+				ptr->moveTo(_mlstRecords[i].left, _mlstRecords[i].top);
 				ptr->setLooping(_mlstRecords[i].loop != 0);
+				ptr->setVolume(_mlstRecords[i].volume);
+				ptr->start();
 			}
 
 			return ptr;
@@ -440,9 +441,10 @@ void VideoManager::playMovieBlockingRiven(uint16 id) {
 	for (uint16 i = 0; i < _mlstRecords.size(); i++) {
 		if (_mlstRecords[i].code == id) {
 			debug(1, "Play tMOV %d (blocking) at (%d, %d), Volume = %d", _mlstRecords[i].movieID, _mlstRecords[i].left, _mlstRecords[i].top, _mlstRecords[i].volume);
-			VideoEntryPtr ptr = open(_mlstRecords[i].movieID, _mlstRecords[i].volume);
-			ptr->setX(_mlstRecords[i].left);
-			ptr->setY(_mlstRecords[i].top);
+			VideoEntryPtr ptr = open(_mlstRecords[i].movieID);
+			ptr->moveTo(_mlstRecords[i].left, _mlstRecords[i].top);
+			ptr->setVolume(_mlstRecords[i].volume);
+			ptr->start();
 			waitUntilMovieEnds(ptr);
 			return;
 		}
@@ -462,7 +464,7 @@ void VideoManager::disableAllMovies() {
 		(*it)->setEnabled(false);
 }
 
-VideoEntryPtr VideoManager::open(uint16 id, int volume) {
+VideoEntryPtr VideoManager::open(uint16 id) {
 	// If this video is already playing, return that handle
 	VideoHandle oldHandle = findVideoHandle(id);
 	if (oldHandle._ptr)
@@ -473,9 +475,6 @@ VideoEntryPtr VideoManager::open(uint16 id, int volume) {
 	video->setChunkBeginOffset(_vm->getResourceOffset(ID_TMOV, id));
 	video->loadStream(_vm->getResource(ID_TMOV, id));
 
-	// Set the volume
-	video->setVolume(CLIP(volume, 0, 255));
-
 	// Create the entry
 	VideoEntryPtr entry(new VideoEntry(video, id));
 
@@ -485,13 +484,10 @@ VideoEntryPtr VideoManager::open(uint16 id, int volume) {
 	// Add it to the video list
 	_videos.push_back(entry);
 
-	// Start the video
-	entry->_video->start();
-
 	return entry;
 }
 
-VideoEntryPtr VideoManager::open(const Common::String &fileName, int volume) {
+VideoEntryPtr VideoManager::open(const Common::String &fileName) {
 	// If this video is already playing, return that entry
 	VideoHandle oldHandle = findVideoHandle(fileName);
 	if (oldHandle._ptr)
@@ -509,9 +505,6 @@ VideoEntryPtr VideoManager::open(const Common::String &fileName, int volume) {
 		return VideoEntryPtr();
 	}
 
-	// Set the volume
-	video->setVolume(CLIP(volume, 0, 255));
-
 	// Create the entry
 	VideoEntryPtr entry(new VideoEntry(video, fileName));
 
@@ -520,9 +513,6 @@ VideoEntryPtr VideoManager::open(const Common::String &fileName, int volume) {
 
 	// Add it to the video list
 	_videos.push_back(entry);
-
-	// Start the video
-	entry->_video->start();
 
 	return entry;
 }

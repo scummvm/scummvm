@@ -299,7 +299,11 @@ bool Channelwood::pipeChangeValve(bool open, uint16 mask) {
 void Channelwood::o_bridgeToggle(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Bridge rise / skink video", op);
 
-	VideoHandle bridge = _vm->_video->playMovie(_vm->wrapMovieFilename("bridge", kChannelwoodStack), 292, 203);
+	VideoHandle bridge = _vm->_video->playMovie(_vm->wrapMovieFilename("bridge", kChannelwoodStack));
+	if (!bridge)
+		error("Failed to open 'bridge' movie");
+
+	bridge->moveTo(292, 203);
 
 	// Toggle bridge state
 	if (_state.waterPumpBridgeState)
@@ -317,7 +321,11 @@ void Channelwood::o_pipeExtend(uint16 op, uint16 var, uint16 argc, uint16 *argv)
 	debugC(kDebugScript, "\tsoundId: %d", soundId);
 
 	_vm->_sound->replaceSoundMyst(soundId);
-	VideoHandle pipe = _vm->_video->playMovie(_vm->wrapMovieFilename("pipebrid", kChannelwoodStack), 267, 170);
+	VideoHandle pipe = _vm->_video->playMovie(_vm->wrapMovieFilename("pipebrid", kChannelwoodStack));
+	if (!pipe)
+		error("Failed to open 'pipebrid' movie");
+
+	pipe->moveTo(267, 170);
 
 	// Toggle pipe state
 	if (_state.pipeState)
@@ -605,23 +613,29 @@ void Channelwood::o_hologramMonitor(uint16 op, uint16 var, uint16 argc, uint16 *
 
 		_vm->_video->stopVideos();
 
+		VideoHandle handle;
+
 		switch (button) {
 		case 0:
-			_vm->_video->playMovie(_vm->wrapMovieFilename("monalgh", kChannelwoodStack), 227, 70);
+			handle = _vm->_video->playMovie(_vm->wrapMovieFilename("monalgh", kChannelwoodStack));
 			break;
 		case 1:
-			_vm->_video->playMovie(_vm->wrapMovieFilename("monamth", kChannelwoodStack), 227, 70);
+			handle = _vm->_video->playMovie(_vm->wrapMovieFilename("monamth", kChannelwoodStack));
 			break;
 		case 2:
-			_vm->_video->playMovie(_vm->wrapMovieFilename("monasirs", kChannelwoodStack), 227, 70);
+			handle = _vm->_video->playMovie(_vm->wrapMovieFilename("monasirs", kChannelwoodStack));
 			break;
 		case 3:
-			_vm->_video->playMovie(_vm->wrapMovieFilename("monsmsg", kChannelwoodStack), 227, 70);
+			handle = _vm->_video->playMovie(_vm->wrapMovieFilename("monsmsg", kChannelwoodStack));
 			break;
 		default:
 			warning("Opcode %d Control Variable Out of Range", op);
 			break;
 		}
+
+		// Move the video to the right location
+		if (handle)
+			handle->moveTo(227, 70);
 	}
 }
 

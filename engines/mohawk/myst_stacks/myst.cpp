@@ -1133,10 +1133,13 @@ void Myst::o_clockWheelsExecute(uint16 op, uint16 var, uint16 argc, uint16 *argv
 		_vm->_system->delayMillis(500);
 
 		// Gears rise up
-		VideoHandle gears = _vm->_video->playMovie(_vm->wrapMovieFilename("gears", kMystStack), 305, 33);
+		VideoHandle gears = _vm->_video->playMovie(_vm->wrapMovieFilename("gears", kMystStack));
+		if (!gears)
+			error("Failed to open gears movie");
+
+		gears->moveTo(305, 33);
 		gears->setBounds(Audio::Timestamp(0, 0, 600), Audio::Timestamp(0, 650, 600));
 		_vm->_video->waitUntilMovieEnds(gears);
-
 
 		_state.clockTowerBridgeOpen = 1;
 		_vm->redrawArea(12);
@@ -1145,7 +1148,11 @@ void Myst::o_clockWheelsExecute(uint16 op, uint16 var, uint16 argc, uint16 *argv
 		_vm->_system->delayMillis(500);
 
 		// Gears sink down
-		VideoHandle gears = _vm->_video->playMovie(_vm->wrapMovieFilename("gears", kMystStack), 305, 33);
+		VideoHandle gears = _vm->_video->playMovie(_vm->wrapMovieFilename("gears", kMystStack));
+		if (!gears)
+			error("Failed to open gears movie");
+
+		gears->moveTo(305, 33);
 		gears->setBounds(Audio::Timestamp(0, 700, 600), Audio::Timestamp(0, 1300, 600));
 		_vm->_video->waitUntilMovieEnds(gears);
 
@@ -1189,14 +1196,22 @@ void Myst::o_imagerPlayButton(uint16 op, uint16 var, uint16 argc, uint16 *argv) 
 		if (_state.imagerActive) {
 			// Mountains disappearing
 			Common::String file = _vm->wrapMovieFilename("vltmntn", kMystStack);
-			VideoHandle mountain = _vm->_video->playMovie(file, 159, 96, false);
+			VideoHandle mountain = _vm->_video->playMovie(file);
+			if (!mountain)
+				error("Failed to open '%s'", file.c_str());
+
+			mountain->moveTo(159, 96);
 			mountain->setBounds(Audio::Timestamp(0, 11180, 600), Audio::Timestamp(0, 16800, 600));
 
 			_state.imagerActive = 0;
 		} else {
 			// Mountains appearing
 			Common::String file = _vm->wrapMovieFilename("vltmntn", kMystStack);
-			VideoHandle mountain = _vm->_video->playMovie(file, 159, 96, false);
+			VideoHandle mountain = _vm->_video->playMovie(file);
+			if (!mountain)
+				error("Failed to open '%s'", file.c_str());
+
+			mountain->moveTo(159, 96);
 			mountain->setBounds(Audio::Timestamp(0, 0, 600), Audio::Timestamp(0, 11180, 600));
 
 			_state.imagerActive = 1;
@@ -1902,9 +1917,17 @@ Common::Rational Myst::boilerComputeGaugeRate(uint16 pressure, uint32 delay) {
 void Myst::boilerResetGauge(const Common::Rational &rate) {
 	if (!_cabinGaugeMovie || _cabinGaugeMovie->endOfVideo()) {
 		if (_vm->getCurCard() == 4098) {
-			_cabinGaugeMovie = _vm->_video->playMovie(_vm->wrapMovieFilename("cabingau", kMystStack), 243, 96);
+			_cabinGaugeMovie = _vm->_video->playMovie(_vm->wrapMovieFilename("cabingau", kMystStack));
+			if (!_cabinGaugeMovie)
+				error("Failed to open cabingau movie");
+
+			_cabinGaugeMovie->moveTo(243, 96);
 		} else {
-			_cabinGaugeMovie = _vm->_video->playMovie(_vm->wrapMovieFilename("cabcgfar", kMystStack), 254, 136);
+			_cabinGaugeMovie = _vm->_video->playMovie(_vm->wrapMovieFilename("cabcgfar", kMystStack));
+			if (!_cabinGaugeMovie)
+				error("Failed to open cabingau movie");
+
+			_cabinGaugeMovie->moveTo(254, 136);
 		}
 	}
 
@@ -2244,12 +2267,21 @@ void Myst::rocketCheckSolution() {
 
 		// Book appearing
 		Common::String movieFile = _vm->wrapMovieFilename("selenbok", kMystStack);
-		_rocketLinkBook = _vm->_video->playMovie(movieFile, 224, 41);
+		_rocketLinkBook = _vm->_video->playMovie(movieFile);
+		if (!_rocketLinkBook)
+			error("Failed to open '%s'", movieFile.c_str());
+
+		_rocketLinkBook->moveTo(224, 41);
 		_rocketLinkBook->setBounds(Audio::Timestamp(0, 0, 600), Audio::Timestamp(0, 660, 600));
 		_vm->_video->waitUntilMovieEnds(_rocketLinkBook);
 
 		// Book looping closed
-		_rocketLinkBook = _vm->_video->playMovie(movieFile, 224, 41, true);
+		_rocketLinkBook = _vm->_video->playMovie(movieFile);
+		if (!_rocketLinkBook)
+			error("Failed to open '%s'", movieFile.c_str());
+
+		_rocketLinkBook->moveTo(224, 41);
+		_rocketLinkBook->setLooping(true);
 		_rocketLinkBook->setBounds(Audio::Timestamp(0, 660, 600), Audio::Timestamp(0, 3500, 600));
 
 		_tempVar = 1;
@@ -2887,7 +2919,11 @@ void Myst::clockGearForwardOneStep(uint16 gear) {
 
 	// Set video bounds
 	uint16 gearPosition = _clockGearsPositions[gear] - 1;
-	_clockGearsVideos[gear] = _vm->_video->playMovie(_vm->wrapMovieFilename(videos[gear], kMystStack), x[gear], y[gear]);
+	_clockGearsVideos[gear] = _vm->_video->playMovie(_vm->wrapMovieFilename(videos[gear], kMystStack));
+	if (!_clockGearsVideos[gear])
+		error("Failed to open %s movie", videos[gear]);
+
+	_clockGearsVideos[gear]->moveTo(x[gear], y[gear]);
 	_clockGearsVideos[gear]->setBounds(
 			Audio::Timestamp(0, startTime[gearPosition], 600),
 			Audio::Timestamp(0, endTime[gearPosition], 600));
@@ -2900,7 +2936,11 @@ void Myst::clockWeightDownOneStep() {
 
 	// Set video bounds
 	if (updateVideo) {
-		_clockWeightVideo = _vm->_video->playMovie(_vm->wrapMovieFilename("cl1wlfch", kMystStack) , 124, 0);
+		_clockWeightVideo = _vm->_video->playMovie(_vm->wrapMovieFilename("cl1wlfch", kMystStack));
+		if (!_clockWeightVideo)
+			error("Failed to open cl1wlfch movie");
+
+		_clockWeightVideo->moveTo(124, 0);
 		_clockWeightVideo->setBounds(
 				Audio::Timestamp(0, _clockWeightPosition, 600),
 				Audio::Timestamp(0, _clockWeightPosition + 246, 600));
@@ -2954,7 +2994,11 @@ void Myst::clockGearsCheckSolution() {
 
 		// Make weight go down
 		_vm->_sound->replaceSoundMyst(9113);
-		_clockWeightVideo = _vm->_video->playMovie(_vm->wrapMovieFilename("cl1wlfch", kMystStack) , 124, 0);
+		_clockWeightVideo = _vm->_video->playMovie(_vm->wrapMovieFilename("cl1wlfch", kMystStack));
+		if (!_clockWeightVideo)
+			error("Failed to open cl1wlfch movie");
+
+		_clockWeightVideo->moveTo(124, 0);
 		_clockWeightVideo->setBounds(
 				Audio::Timestamp(0, _clockWeightPosition, 600),
 				Audio::Timestamp(0, 2214, 600));
@@ -2966,7 +3010,7 @@ void Myst::clockGearsCheckSolution() {
 		_vm->_sound->replaceSoundMyst(7113);
 
 		// Gear opening video
-		_vm->_video->playMovieBlocking(_vm->wrapMovieFilename("cl1wggat", kMystStack) , 195, 225);
+		_vm->_video->playMovieBlocking(_vm->wrapMovieFilename("cl1wggat", kMystStack), 195, 225);
 		_state.gearsOpen = 1;
 		_vm->redrawArea(40);
 
@@ -3022,7 +3066,11 @@ void Myst::clockReset() {
 		_vm->_sound->replaceSoundMyst(7113);
 
 		// Gear closing movie
-		VideoHandle handle = _vm->_video->playMovie(_vm->wrapMovieFilename("cl1wggat", kMystStack) , 195, 225);
+		VideoHandle handle = _vm->_video->playMovie(_vm->wrapMovieFilename("cl1wggat", kMystStack));
+		if (!handle)
+			error("Failed to open cl1wggat movie");
+
+		handle->moveTo(195, 225);
 		handle->seek(handle->getDuration());
 		handle->setRate(-1);
 		_vm->_video->waitUntilMovieEnds(handle);
@@ -3036,7 +3084,11 @@ void Myst::clockReset() {
 }
 
 void Myst::clockResetWeight() {
-	_clockWeightVideo = _vm->_video->playMovie(_vm->wrapMovieFilename("cl1wlfch", kMystStack) , 124, 0);
+	_clockWeightVideo = _vm->_video->playMovie(_vm->wrapMovieFilename("cl1wlfch", kMystStack));
+	if (!_clockWeightVideo)
+		error("Failed to open cl1wlfch movie");
+
+	_clockWeightVideo->moveTo(124, 0);
 
 	// Play the movie backwards, weight going up
 	_clockWeightVideo->seek(Audio::Timestamp(0, _clockWeightPosition, 600));
@@ -3055,7 +3107,11 @@ void Myst::clockResetGear(uint16 gear) {
 	// Set video bounds, gears going to 3
 	uint16 gearPosition = _clockGearsPositions[gear] - 1;
 	if (gearPosition != 2) {
-		_clockGearsVideos[gear] = _vm->_video->playMovie(_vm->wrapMovieFilename(videos[gear], kMystStack), x[gear], y[gear]);
+		_clockGearsVideos[gear] = _vm->_video->playMovie(_vm->wrapMovieFilename(videos[gear], kMystStack));
+		if (!_clockGearsVideos[gear])
+			error("Failed to open gears movie");
+
+		_clockGearsVideos[gear]->moveTo(x[gear], y[gear]);
 		_clockGearsVideos[gear]->setBounds(
 				Audio::Timestamp(0, time[gearPosition], 600),
 				Audio::Timestamp(0, time[2], 600));
@@ -3400,8 +3456,11 @@ void Myst::gullsFly1_run() {
 			else
 				x = _vm->_rnd->getRandomNumber(160) + 260;
 
-			_vm->_video->playMovie(_vm->wrapMovieFilename(gulls[video], kMystStack), x, 0);
+			VideoHandle handle = _vm->_video->playMovie(_vm->wrapMovieFilename(gulls[video], kMystStack));
+			if (!handle)
+				error("Failed to open gulls movie");
 
+			handle->moveTo(x, 0);
 			_gullsNextTime = time + _vm->_rnd->getRandomNumber(16667) + 13334;
 		}
 	}
@@ -3546,8 +3605,11 @@ void Myst::gullsFly2_run() {
 	if (time > _gullsNextTime) {
 		uint16 video = _vm->_rnd->getRandomNumber(3);
 		if (video != 3) {
-			_vm->_video->playMovie(_vm->wrapMovieFilename(gulls[video], kMystStack), 424, 0);
-
+			VideoHandle handle = _vm->_video->playMovie(_vm->wrapMovieFilename(gulls[video], kMystStack));
+			if (!handle)
+				error("Failed to open gulls movie");
+	
+			handle->moveTo(424, 0);
 			_gullsNextTime = time + _vm->_rnd->getRandomNumber(16667) + 13334;
 		}
 	}
@@ -3578,14 +3640,24 @@ void Myst::o_boilerMovies_init(uint16 op, uint16 var, uint16 argc, uint16 *argv)
 
 void Myst::boilerFireInit() {
 	if (_vm->getCurCard() == 4098) {
-		_cabinFireMovie = _vm->_video->playMovie(_vm->wrapMovieFilename("cabfire", kMystStack), 240, 279, true);
+		_cabinFireMovie = _vm->_video->playMovie(_vm->wrapMovieFilename("cabfire", kMystStack));
+		if (!_cabinFireMovie)
+				error("Failed to open cabfire movie");
+
+		_cabinFireMovie->moveTo(240, 279);
+		_cabinFireMovie->setLooping(true);
 		_cabinFireMovie->pause(true);
 
 		_vm->redrawArea(305);
 		boilerFireUpdate(true);
 	} else {
 		if (_state.cabinPilotLightLit == 1 && _state.cabinValvePosition >= 1) {
-			_cabinFireMovie = _vm->_video->playMovie(_vm->wrapMovieFilename("cabfirfr", kMystStack), 254, 244, true);
+			_cabinFireMovie = _vm->_video->playMovie(_vm->wrapMovieFilename("cabfirfr", kMystStack));
+			if (!_cabinFireMovie)
+				error("Failed to open cabfirfr movie");
+
+			_cabinFireMovie->moveTo(254, 244);
+			_cabinFireMovie->setLooping(true);
 		}
 	}
 }
@@ -3610,9 +3682,17 @@ void Myst::boilerFireUpdate(bool init) {
 
 void Myst::boilerGaugeInit() {
 	if (_vm->getCurCard() == 4098) {
-		_cabinGaugeMovie = _vm->_video->playMovie(_vm->wrapMovieFilename("cabingau", kMystStack), 243, 96);
+		_cabinGaugeMovie = _vm->_video->playMovie(_vm->wrapMovieFilename("cabingau", kMystStack));
+		if (!_cabinFireMovie)
+			error("Failed to open cabingau movie");
+
+		_cabinFireMovie->moveTo(243, 96);
 	} else {
-		_cabinGaugeMovie = _vm->_video->playMovie(_vm->wrapMovieFilename("cabcgfar", kMystStack), 254, 136);
+		_cabinGaugeMovie = _vm->_video->playMovie(_vm->wrapMovieFilename("cabcgfar", kMystStack));
+		if (!_cabinFireMovie)
+			error("Failed to open cabcgfar movie");
+
+		_cabinFireMovie->moveTo(254, 136);
 	}
 
 	Audio::Timestamp frame;
@@ -3678,16 +3758,25 @@ void Myst::greenBook_run() {
 		_vm->_sound->stopSound();
 		_vm->_sound->pauseBackgroundMyst();
 
+		VideoHandle book = _vm->_video->playMovie(file);
+		if (!book)
+			error("Failed to open '%s'", file.c_str());
+
+		book->moveTo(314, 76);
+
 		if (_globals.ending != 4) {
 			_tempVar = 2;
-			_vm->_video->playMovie(file, 314, 76);
 		} else {
-			VideoHandle book = _vm->_video->playMovie(file, 314, 76, true);
 			book->setBounds(Audio::Timestamp(0, loopStart, 600), Audio::Timestamp(0, loopEnd, 600));
+			book->setLooping(true);
 			_tempVar = 0;
 		}
 	} else if (_tempVar == 2 && !_vm->_video->isVideoPlaying()) {
-		VideoHandle book = _vm->_video->playMovie(file, 314, 76);
+		VideoHandle book = _vm->_video->playMovie(file);
+		if (!book)
+			error("Failed to open '%s'", file.c_str());
+
+		book->moveTo(314, 76);
 		book->setBounds(Audio::Timestamp(0, loopStart, 600), Audio::Timestamp(0, loopEnd, 600));
 		book->setLooping(true);
 		_tempVar = 0;
@@ -3712,8 +3801,11 @@ void Myst::gullsFly3_run() {
 		if (video != 3) {
 			uint16 x = _vm->_rnd->getRandomNumber(280) + 135;
 
-			_vm->_video->playMovie(_vm->wrapMovieFilename(gulls[video], kMystStack), x, 0);
+			VideoHandle handle = _vm->_video->playMovie(_vm->wrapMovieFilename(gulls[video], kMystStack));
+			if (!handle)
+				error("Failed to open gulls movie");
 
+			handle->moveTo(x, 0);
 			_gullsNextTime = time + _vm->_rnd->getRandomNumber(16667) + 13334;
 		}
 	}

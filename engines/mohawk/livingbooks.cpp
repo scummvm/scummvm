@@ -3802,8 +3802,11 @@ bool LBMovieItem::togglePlaying(bool playing, bool restart) {
 	if (playing) {
 		if ((_loaded && _enabled && _globalEnabled) || _phase == kLBPhaseNone) {
 			debug("toggled video for phase %d", _phase);
-			_vm->_video->playMovie(_resourceId, _rect.left, _rect.top);
+			VideoHandle handle = _vm->_video->playMovie(_resourceId);
+			if (!handle)
+				error("Failed to open tMOV %d", _resourceId);
 
+			handle->moveTo(_rect.left, _rect.top);
 			return true;
 		}
 	}

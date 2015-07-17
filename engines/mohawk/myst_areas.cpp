@@ -224,7 +224,13 @@ VideoHandle MystResourceType6::playMovie() {
 
 	// If the video is not running, play it
 	if (!handle || handle->endOfVideo()) {
-		handle = _vm->_video->playMovie(_videoFile, _left, _top, _loop);
+		handle = _vm->_video->playMovie(_videoFile);
+		if (!handle)
+			error("Failed to open '%s'", _videoFile.c_str());
+
+		handle->moveTo(_left, _top);
+		handle->setLooping(_loop != 0);
+
 		if (_direction == -1) {
 			handle->seek(handle->getDuration());
 			handle->setRate(-1);

@@ -159,9 +159,19 @@ public:
 	void setY(uint16 y) { _y = y; }
 
 	/**
+	 * Move the video to the specified coordinates
+	 */
+	void moveTo(uint16 x, uint16 y) { setX(x); setY(y); }
+
+	/**
+	 * Center the video on the screen
+	 */
+	void center();
+
+	/**
 	 * Set the start time when using video bounds
 	 */
-	void setStart(const Audio::Timestamp &start) { _start = start; }
+	void setStart(const Audio::Timestamp &time) { _start = time; }
 
 	/**
 	 * Set the video to loop (true) or not (false)
@@ -178,7 +188,7 @@ public:
 	 *
 	 * This automatically seeks to the start time
 	 */
-	void setBounds(const Audio::Timestamp &start, const Audio::Timestamp &end);
+	void setBounds(const Audio::Timestamp &startTime, const Audio::Timestamp &endTime);
 
 	/**
 	 * Seek to the given time
@@ -194,6 +204,31 @@ public:
 	 * Pause the video
 	 */
 	void pause(bool isPaused);
+
+	/**
+	 * Start playing the video
+	 */
+	void start();
+
+	/**
+	 * Stop playing the video
+	 */
+	void stop();
+
+	/**
+	 * Is the video playing?
+	 */
+	bool isPlaying() const;
+
+	/**
+	 * Get the volume of the video
+	 */
+	int getVolume() const;
+
+	/**
+	 * Set the volume of the video
+	 */
+	void setVolume(int volume);
 
 private:
 	// Non-changing variables
@@ -274,8 +309,8 @@ public:
 	// Generic movie functions
 	void playMovieBlocking(const Common::String &filename, uint16 x = 0, uint16 y = 0, bool clearScreen = false);
 	void playMovieBlockingCentered(const Common::String &filename, bool clearScreen = true);
-	VideoHandle playMovie(const Common::String &filename, int16 x = -1, int16 y = -1, bool loop = false);
-	VideoHandle playMovie(uint16 id, int16 x = -1, int16 y = -1, bool loop = false);
+	VideoHandle playMovie(const Common::String &filename);
+	VideoHandle playMovie(uint16 id);
 	bool updateMovies();
 	void pauseVideos();
 	void resumeVideos();
@@ -309,8 +344,8 @@ private:
 	VideoList _videos;
 
 	// Utility functions for managing entries
-	VideoEntryPtr open(uint16 id, int volume = 0xFF);
-	VideoEntryPtr open(const Common::String &fileName, int volume = 0xFF);
+	VideoEntryPtr open(uint16 id);
+	VideoEntryPtr open(const Common::String &fileName);
 	
 	VideoList::iterator findEntry(VideoEntryPtr ptr);
 	void removeEntry(VideoEntryPtr ptr);
