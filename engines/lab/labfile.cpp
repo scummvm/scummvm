@@ -35,7 +35,6 @@
 namespace Lab {
 
 #define MAXREADSIZE 30720L
-#define DMABUGSIZE  0     /* The number of bytes the DMA driver might screw */
 /* NOTE: set to 0 for non-CDTV machines.          */
 
 
@@ -46,7 +45,6 @@ byte **startoffile = &startoffilestorage;
 static uint32 buffersize, realbuffersize;
 
 int32 ReadSoFar;
-bool ReadIsError, ReadIsDone;
 
 /*****************************************************************************/
 /* Returns the size of a file.                                               */
@@ -145,19 +143,14 @@ static void *getCurMemLabFile(uint32 size) {
 /* Checks if a file is already buffered.                                     */
 /*****************************************************************************/
 byte **isBuffered(const char *fileName) {
-	uint16 RMarker;
-
 	if (fileName == NULL)
 		return NULL;
 
-	RMarker = 0;
-
-	while (RMarker < MAXMARKERS) {
-		if (strcmp(FileMarkers[RMarker].name, fileName) == 0) {
-			*startoffile = (byte *) FileMarkers[RMarker].Start;
+	for (int i = 0; i < MAXMARKERS; i++) {
+		if (strcmp(FileMarkers[i].name, fileName) == 0) {
+			*startoffile = (byte *)FileMarkers[i].Start;
 			return startoffile;
-		} else
-			RMarker++;
+		}
 	}
 
 	return NULL;
@@ -173,8 +166,6 @@ byte **isBuffered(const char *fileName) {
 bool allocFile(void **Ptr, uint32 Size, const char *fileName) {
 	uint16 RMarker;
 	byte **temp;
-
-	Size += DMABUGSIZE;
 
 	if (1 & Size)  /* Memory is required to be even aligned */
 		Size++;
@@ -221,8 +212,6 @@ byte **openFile(const char *name) {
 	if (!file.isOpen()) {
 		warning("Cannot open file %s", translateFileName(name));
 
-		ReadIsError = true;
-		ReadIsDone  = true;
 		return NULL;
 	}
 
@@ -336,14 +325,8 @@ void freeBuffer() {
 /* Clears all the buffers.                                                   */
 /*****************************************************************************/
 static void flushBuffers() {
-	uint16 RMarker;
-
-	RMarker = 0;
-
-	while (RMarker < MAXMARKERS) {
-		freeFile(RMarker);
-		RMarker++;
-	}
+	for (int i = 0; i < MAXMARKERS; i++)
+		freeFile(i);
 }
 
 
@@ -353,8 +336,6 @@ static void flushBuffers() {
 /*****************************************************************************/
 void *stealBufMem(int32 Size) {
 	void *Mem;
-
-	Size += DMABUGSIZE;
 
 	flushBuffers();
 	Mem = buffer;

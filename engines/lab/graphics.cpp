@@ -48,7 +48,6 @@ extern char diffcmap[256 * 3], lastcmap[256 * 3];
 extern bool IsBM, NoFlip, nopalchange;
 
 extern int32 ReadSoFar;
-extern bool ReadIsDone, ReadIsError;
 extern bool DoBlack, stopsound;
 extern bool IsHiRes;
 extern TextFont *MsgFont;
@@ -74,8 +73,6 @@ bool readPict(const char *filename, bool PlayOnce) {
 	stopDiff();
 
 	ReadSoFar  = 0L;
-	ReadIsDone = false;
-	ReadIsError = false;
 
 	file = g_music->newOpen(filename);
 
@@ -132,8 +129,6 @@ byte *readPictToMem(const char *filename, uint16 x, uint16 y) {
 	stopDiff();
 
 	ReadSoFar  = 0L;
-	ReadIsDone = false;
-	ReadIsError = false;
 
 	allocFile((void **)&Mem, (int32) x * (int32) y, "Bitmap");
 	CurMem = Mem;
