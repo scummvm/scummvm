@@ -65,78 +65,77 @@ static void setString(char **string) {
 /* Initializes everything for the Labyrinth text stuff                       */
 /*****************************************************************************/
 bool initLabText() {
-	if ((SizeOfMemChunk = sizeOfFile(LABTEXTFILE)))
-		if ((BeginOfMemChunk = (char *)calloc(SizeOfMemChunk, 1))) {
-			Common::File *file = openPartial(LABTEXTFILE);
+	Common::File *file = openPartial(LABTEXTFILE);
+	if (!file)
+		return false;
 
-			if (file) {
-				file->read(BeginOfMemChunk, SizeOfMemChunk);
-				file->close();
+	SizeOfMemChunk = file->size();
+	if (!SizeOfMemChunk || !(BeginOfMemChunk = (char *)calloc(SizeOfMemChunk, 1)))
+		return false;
 
-				CurPlace = BeginOfMemChunk;
+	file->read(BeginOfMemChunk, SizeOfMemChunk);
+	file->close();
 
-				setString(&LOWERFLOORS);
-				setString(&MIDDLEFLOORS);
-				setString(&UPPERFLOORS);
-				setString(&MEDMAZEFLOORS);
-				setString(&HEDGEMAZEFLOORS);
-				setString(&SURMAZEFLOORS);
-				setString(&CARNIVALFLOOR);
-				setString(&SURMAZEMSG);
+	CurPlace = BeginOfMemChunk;
 
-				setString(&FACINGNORTH);
-				setString(&FACINGEAST);
-				setString(&FACINGSOUTH);
-				setString(&FACINGWEST);
+	setString(&LOWERFLOORS);
+	setString(&MIDDLEFLOORS);
+	setString(&UPPERFLOORS);
+	setString(&MEDMAZEFLOORS);
+	setString(&HEDGEMAZEFLOORS);
+	setString(&SURMAZEFLOORS);
+	setString(&CARNIVALFLOOR);
+	setString(&SURMAZEMSG);
 
-				setString(&LAMPONMSG);
+	setString(&FACINGNORTH);
+	setString(&FACINGEAST);
+	setString(&FACINGSOUTH);
+	setString(&FACINGWEST);
 
-				setString(&TURNLEFT);
-				setString(&TURNRIGHT);
-				setString(&GOFORWARDDIR);
-				setString(&NOPATH);
-				setString(&TAKEITEM);
+	setString(&LAMPONMSG);
 
-				setString(&SAVETEXT);
-				setString(&LOADTEXT);
-				setString(&BOOKMARKTEXT);
-				setString(&PERSONALTEXT);
-				setString(&DISKTEXT);
+	setString(&TURNLEFT);
+	setString(&TURNRIGHT);
+	setString(&GOFORWARDDIR);
+	setString(&NOPATH);
+	setString(&TAKEITEM);
 
-				setString(&SAVEBOOK);
-				setString(&RESTOREBOOK);
-				setString(&SAVEFLASH);
-				setString(&RESTOREFLASH);
-				setString(&SAVEDISK);
-				setString(&RESTOREDISK);
-				setString(&NODISKINDRIVE);
-				setString(&WRITEPROTECTED);
-				setString(&SELECTDISK);
+	setString(&SAVETEXT);
+	setString(&LOADTEXT);
+	setString(&BOOKMARKTEXT);
+	setString(&PERSONALTEXT);
+	setString(&DISKTEXT);
 
-				setString(&FORMATFLOPPY);
-				setString(&FORMATTING);
+	setString(&SAVEBOOK);
+	setString(&RESTOREBOOK);
+	setString(&SAVEFLASH);
+	setString(&RESTOREFLASH);
+	setString(&SAVEDISK);
+	setString(&RESTOREDISK);
+	setString(&NODISKINDRIVE);
+	setString(&WRITEPROTECTED);
+	setString(&SELECTDISK);
 
-				setString(&NOTHING);
-				setString(&USEONWHAT);
-				setString(&TAKEWHAT);
-				setString(&MOVEWHAT);
-				setString(&OPENWHAT);
-				setString(&CLOSEWHAT);
-				setString(&LOOKWHAT);
+	setString(&FORMATFLOPPY);
+	setString(&FORMATTING);
 
-				setString(&USEMAP);
-				setString(&USEJOURNAL);
-				setString(&TURNLAMPON);
-				setString(&TURNLAMPOFF);
-				setString(&USEWHISKEY);
-				setString(&USEPITH);
-				setString(&USEHELMET);
+	setString(&NOTHING);
+	setString(&USEONWHAT);
+	setString(&TAKEWHAT);
+	setString(&MOVEWHAT);
+	setString(&OPENWHAT);
+	setString(&CLOSEWHAT);
+	setString(&LOOKWHAT);
 
-				return true;
-			}
-		}
+	setString(&USEMAP);
+	setString(&USEJOURNAL);
+	setString(&TURNLAMPON);
+	setString(&TURNLAMPOFF);
+	setString(&USEWHISKEY);
+	setString(&USEPITH);
+	setString(&USEHELMET);
 
-	return false;
+	return true;
 }
 
 
