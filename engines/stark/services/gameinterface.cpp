@@ -128,7 +128,7 @@ bool GameInterface::itemHasAction(Resources::ItemVisual *item, int32 action) {
 	if (action != -1) {
 		return item->canPerformAction(action, 0);
 	} else {
-		Resources::ActionArray actions = getActionsPossibleForObject(item);
+		Resources::ActionArray actions = listActionsPossibleForObject(item);
 		return !actions.empty();
 	}
 }
@@ -138,7 +138,7 @@ bool GameInterface::itemHasActionAt(Resources::ItemVisual *item, const Common::P
 	if (action != -1) {
 		return item->canPerformAction(action, hotspotIndex);
 	} else {
-		Resources::ActionArray actions = getActionsPossibleForObject(item, position);
+		Resources::ActionArray actions = listActionsPossibleForObjectAt(item, position);
 		return !actions.empty();
 	}
 }
@@ -149,25 +149,21 @@ int32 GameInterface::itemGetDefaultActionAt(Resources::ItemVisual *item, const C
 	return table->getDefaultAction();
 }
 
-bool GameInterface::itemDoAction(Resources::ItemVisual *item, uint32 action) {
-	return item->doAction(action, 0);
+void GameInterface::itemDoAction(Resources::ItemVisual *item, uint32 action) {
+	item->doAction(action, 0);
 }
 
-bool GameInterface::itemDoActionAt(Resources::ItemVisual *item, uint32 action, const Common::Point &position) {
+void GameInterface::itemDoActionAt(Resources::ItemVisual *item, uint32 action, const Common::Point &position) {
 	int32 hotspotIndex = item->getHotspotIndexForPoint(position);
-	return item->doAction(action, hotspotIndex);
+	item->doAction(action, hotspotIndex);
 }
 
-Common::String GameInterface::getItemTitle(Resources::ItemVisual *item, bool local, const Common::Point &pos) {
-	int32 hotspotIndex = 0;
-	if (local) {
-		hotspotIndex = item->getHotspotIndexForPoint(pos);
-	}
-
+Common::String GameInterface::getItemTitleAt(Resources::ItemVisual *item, const Common::Point &pos) {
+	int32 hotspotIndex = item->getHotspotIndexForPoint(pos);
 	return item->getHotspotTitle(hotspotIndex);
 }
 
-Resources::ActionArray GameInterface::getActionsPossibleForObject(Resources::ItemVisual *item) {
+Resources::ActionArray GameInterface::listActionsPossibleForObject(Resources::ItemVisual *item) {
 	if (item == nullptr) {
 		return Resources::ActionArray();
 	}
@@ -176,7 +172,8 @@ Resources::ActionArray GameInterface::getActionsPossibleForObject(Resources::Ite
 	return table->listPossibleActions();
 }
 
-Resources::ActionArray GameInterface::getActionsPossibleForObject(Resources::ItemVisual *item, const Common::Point &pos) {
+Resources::ActionArray GameInterface::listActionsPossibleForObjectAt(Resources::ItemVisual *item,
+                                                                     const Common::Point &pos) {
 	if (item == nullptr) {
 		return Resources::ActionArray();
 	}
@@ -191,8 +188,8 @@ Resources::ActionArray GameInterface::getActionsPossibleForObject(Resources::Ite
 	return table->listPossibleActions();
 }
 
-Resources::ActionArray GameInterface::getStockActionsPossibleForObject(Resources::ItemVisual *item) {
-	Resources::ActionArray actions = getActionsPossibleForObject(item);
+Resources::ActionArray GameInterface::listStockActionsPossibleForObject(Resources::ItemVisual *item) {
+	Resources::ActionArray actions = listActionsPossibleForObject(item);
 
 	Resources::ActionArray stockActions;
 	for (uint i = 0; i < actions.size(); i++) {
@@ -204,8 +201,9 @@ Resources::ActionArray GameInterface::getStockActionsPossibleForObject(Resources
 	return stockActions;
 }
 
-Resources::ActionArray GameInterface::getStockActionsPossibleForObject(Resources::ItemVisual *item, const Common::Point &pos) {
-	Resources::ActionArray actions = getActionsPossibleForObject(item, pos);
+Resources::ActionArray GameInterface::listStockActionsPossibleForObjectAt(Resources::ItemVisual *item,
+                                                                          const Common::Point &pos) {
+	Resources::ActionArray actions = listActionsPossibleForObjectAt(item, pos);
 
 	Resources::ActionArray stockActions;
 	for (uint i = 0; i < actions.size(); i++) {

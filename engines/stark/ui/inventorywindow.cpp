@@ -128,7 +128,7 @@ void InventoryWindow::checkObjectAtPos(Common::Point pos, Resources::ItemVisual 
 
 	if (selectedInventoryItem == -1) {
 		Resources::ActionArray actionsPossible;
-		actionsPossible = StarkGameInterface->getStockActionsPossibleForObject(*item);
+		actionsPossible = StarkGameInterface->listStockActionsPossibleForObject(*item);
 
 		if (actionsPossible.empty()) {
 			// The item can still be taken

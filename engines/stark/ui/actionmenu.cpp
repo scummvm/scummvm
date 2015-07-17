@@ -78,9 +78,9 @@ void ActionMenu::open(Resources::ItemVisual *item, const Common::Point &itemRela
 
 	Resources::ActionArray possible;
 	if (_fromInventory) {
-		possible = StarkGameInterface->getActionsPossibleForObject(_item);
+		possible = StarkGameInterface->listActionsPossibleForObject(_item);
 	} else {
-		possible = StarkGameInterface->getActionsPossibleForObject(_item, _itemRelativePos);
+		possible = StarkGameInterface->listActionsPossibleForObjectAt(_item, _itemRelativePos);
 	}
 
 	for (uint i = 0; i < possible.size(); i++) {

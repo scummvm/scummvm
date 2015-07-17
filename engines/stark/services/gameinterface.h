@@ -23,8 +23,6 @@
 #ifndef STARK_SERVICES_GAME_INTERFACE_H
 #define STARK_SERVICES_GAME_INTERFACE_H
 
-#include "engines/stark/gfx/renderentry.h"
-
 #include "engines/stark/resources/pattable.h"
 
 #include "common/scummsys.h"
@@ -32,19 +30,10 @@
 
 namespace Stark {
 
-class ActionMenu;
-class Cursor;
 class VisualImageXMG;
 
 namespace Resources {
-class Item;
-class Object;
-}
-
-namespace Gfx {
-class Driver;
-class Texture;
-class RenderEntry;
+class ItemVisual;
 }
 
 /**
@@ -67,21 +56,27 @@ public:
 	VisualImageXMG *getActionImage(uint32 itemIndex, bool active);
 	VisualImageXMG *getCursorImage(uint32 itemIndex);
 
+	/** Can the item be used for an action. -1 for all actions */
 	bool itemHasAction(Resources::ItemVisual *item, int32 action);
 	bool itemHasActionAt(Resources::ItemVisual *item, const Common::Point &position, int32 action);
 
+	/** Get the item's default action */
 	int32 itemGetDefaultActionAt(Resources::ItemVisual *item, const Common::Point &position);
 
-	bool itemDoAction(Resources::ItemVisual *item, uint32 action);
-	bool itemDoActionAt(Resources::ItemVisual *item, uint32 action, const Common::Point &position);
+	/** Do an action on the item */
+	void itemDoAction(Resources::ItemVisual *item, uint32 action);
+	void itemDoActionAt(Resources::ItemVisual *item, uint32 action, const Common::Point &position);
 
-	Common::String getItemTitle(Resources::ItemVisual *object, bool local, const Common::Point &pos);
+	/** Get the item's name */
+	Common::String getItemTitleAt(Resources::ItemVisual *object, const Common::Point &pos);
 
-	Resources::ActionArray getActionsPossibleForObject(Resources::ItemVisual *item);
-	Resources::ActionArray getActionsPossibleForObject(Resources::ItemVisual *item, const Common::Point &pos);
+	/** List the actions available for an item in the current game state */
+	Resources::ActionArray listActionsPossibleForObject(Resources::ItemVisual *item);
+	Resources::ActionArray listActionsPossibleForObjectAt(Resources::ItemVisual *item, const Common::Point &pos);
 
-	Resources::ActionArray getStockActionsPossibleForObject(Resources::ItemVisual *item);
-	Resources::ActionArray getStockActionsPossibleForObject(Resources::ItemVisual *item, const Common::Point &pos);
+	/** List the stock actions available for an item in the current game state (hand, mouth, eye) */
+	Resources::ActionArray listStockActionsPossibleForObject(Resources::ItemVisual *item);
+	Resources::ActionArray listStockActionsPossibleForObjectAt(Resources::ItemVisual *item, const Common::Point &pos);
 };
 
 } // End of namespace Stark

@@ -97,7 +97,7 @@ void GameWindow::onMouseMove(const Common::Point &pos) {
 				break;
 		}
 
-		mouseHint = StarkGameInterface->getItemTitle(_objectUnderCursor, true, _objectRelativePosition);
+		mouseHint = StarkGameInterface->getItemTitleAt(_objectUnderCursor, _objectRelativePosition);
 	} else {
 		// Not an object
 		_cursor->setCursorType(Cursor::kDefault);
@@ -165,7 +165,8 @@ void GameWindow::checkObjectAtPos(Common::Point pos, int16 selectedInventoryItem
 		}
 	} else {
 		// Otherwise, use stock actions
-		Resources::ActionArray actionsPossible = StarkGameInterface->getStockActionsPossibleForObject(_objectUnderCursor, _objectRelativePosition);
+		Resources::ActionArray actionsPossible = StarkGameInterface->listStockActionsPossibleForObjectAt(
+				_objectUnderCursor, _objectRelativePosition);
 
 		if (actionsPossible.size() == 1) {
 			singlePossibleAction = actionsPossible[0];
