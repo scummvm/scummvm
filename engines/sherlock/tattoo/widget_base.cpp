@@ -251,28 +251,26 @@ void WidgetBase::handleScrollbarEvents(int index, int pageSize, int count) {
 	if ((!events._pressed && !events._rightReleased) || !_scroll)
 		return;
 
-	Common::Rect r(_bounds.right - BUTTON_SIZE - 3, _bounds.top, _bounds.right - 3, _bounds.bottom - 6);
+	Common::Rect r(_bounds.right - BUTTON_SIZE - 3, _bounds.top + 3, _bounds.right - 3, _bounds.bottom - 3);
 
 	// Calculate the Scroll Position bar
-	int barHeight = pageSize * (r.height() - BUTTON_SIZE * 2) / count;
-	barHeight = CLIP(barHeight, BUTTON_SIZE, r.height() - BUTTON_SIZE * 2);
+	int barHeight = (_bounds.height() - BUTTON_SIZE * 2) * pageSize / count;
+	barHeight = CLIP(barHeight, BUTTON_SIZE, _bounds.height() - BUTTON_SIZE * 2);
+	int barY = (r.height() - BUTTON_SIZE * 2 - barHeight) * index / pageSize + r.top + BUTTON_SIZE;
 
-	int barY = (count <= pageSize) ? 3 + BUTTON_SIZE : (r.height() - BUTTON_SIZE * 2 - barHeight) * FIXED_INT_MULTIPLIER 
-		/ (count - pageSize) * index / FIXED_INT_MULTIPLIER + 3 + BUTTON_SIZE;
-
-	if (Common::Rect(r.left, r.top + 3, r.left + BUTTON_SIZE, r.top + BUTTON_SIZE + 3).contains(mousePos))
+	if (Common::Rect(r.left, r.top, r.right, r.top + BUTTON_SIZE).contains(mousePos))
 		// Mouse on scroll up button
 		ui._scrollHighlight = SH_SCROLL_UP;
-	else if (Common::Rect(r.left, r.top + BUTTON_SIZE + 3, r.left + BUTTON_SIZE, barY - BUTTON_SIZE - 3).contains(mousePos))
+	else if (Common::Rect(r.left, r.top + BUTTON_SIZE, r.right, barY).contains(mousePos))
 		// Mouse on paging up area (the area of the vertical bar above the thumbnail)
 		ui._scrollHighlight = SH_PAGE_UP;
-	else if (Common::Rect(r.left, r.top + barY, r.left + BUTTON_SIZE, r.top + barY + barHeight).contains(mousePos))
+	else if (Common::Rect(r.left, barY, r.right, barY + barHeight).contains(mousePos))
 		// Mouse on scrollbar thumb
 		ui._scrollHighlight = SH_THUMBNAIL;
-	else if (Common::Rect(r.left, r.top + barY + barHeight, r.left + BUTTON_SIZE, r.bottom - BUTTON_SIZE + 3).contains(mousePos))
+	else if (Common::Rect(r.left, barY + barHeight, r.right, r.bottom - BUTTON_SIZE).contains(mousePos))
 		// Mouse on paging down area (the area of the vertical bar below the thumbnail)
 		ui._scrollHighlight = SH_PAGE_DOWN;
-	else if (Common::Rect(r.left, r.bottom - BUTTON_SIZE + 3, r.left + BUTTON_SIZE, r.bottom).contains(mousePos))
+	else if (Common::Rect(r.left, r.bottom - BUTTON_SIZE, r.right, r.bottom).contains(mousePos))
 		// Mouse on scroll down button
 		ui._scrollHighlight = SH_SCROLL_DOWN;
 }
