@@ -201,6 +201,7 @@ void TattooTalk::talkInterface(const byte *&str) {
 
 void TattooTalk::showTalk() {
 	TattooPeople &people = *(TattooPeople *)_vm->_people;
+	TattooUserInterface &ui = *(TattooUserInterface *)_vm->_ui;
 
 	_sequenceStack.clear();
 	people.setListenSequence(_talkTo, 129);
@@ -208,6 +209,9 @@ void TattooTalk::showTalk() {
 	_talkWidget.load();
 	_talkWidget.summonWindow();
 	_talkWidget.refresh();
+
+	if (ui._menuMode != MESSAGE_MODE)
+		ui._menuMode = TALK_MODE;
 }
 
 OpcodeReturn TattooTalk::cmdSwitchSpeaker(const byte *&str) {
