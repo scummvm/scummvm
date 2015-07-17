@@ -270,8 +270,6 @@ static void NReadPict(const char *Filename, bool PlayOnce) {
 }
 
 
-//#define ALL_LOGOS
-
 /*****************************************************************************/
 /* Does the introduction sequence for Labyrinth.                             */
 /*****************************************************************************/
@@ -299,7 +297,10 @@ void introSequence() {
 	g_music->initMusic();
 
 	nopalchange = true;
-	NReadPict("TNDcycle2.pic", true);
+	if (g_lab->getPlatform() != Common::kPlatformWindows)
+		NReadPict("TNDcycle.pic", true);
+	else
+		NReadPict("TNDcycle2.pic", true);
 	nopalchange = false;
 
 	FadePalette = Palette;
