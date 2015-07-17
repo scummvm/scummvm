@@ -28,6 +28,8 @@
  *
  */
 
+#include "common/str.h"
+
 #include "lab/stddefines.h"
 
 namespace Lab {
@@ -45,9 +47,6 @@ uint16 scaleX(uint16 x) {
 		return (uint16)((x * 8) / 9);
 }
 
-
-
-
 /*****************************************************************************/
 /* Scales the y co-ordinates to that of the new display.  In the room parser */
 /* file, co-ordinates are set up on a 368x336 display.                       */
@@ -58,9 +57,6 @@ uint16 scaleY(uint16 y) {
 	else
 		return ((y * 10) / 24);
 }
-
-
-
 
 /*****************************************************************************/
 /* Scales the VGA cords to SVGA if necessary; otherwise, returns VGA cords.  */
@@ -120,9 +116,6 @@ uint16 SVGACord(uint16 cord) {
 		return 0;
 }
 
-
-
-
 /*****************************************************************************/
 /* Converts SVGA cords to VGA if necessary, otherwise returns VGA cords.     */
 /*****************************************************************************/
@@ -133,9 +126,6 @@ uint16 VGAUnScaleX(uint16 x) {
 		return x;
 }
 
-
-
-
 /*****************************************************************************/
 /* Converts SVGA cords to VGA if necessary, otherwise returns VGA cords.     */
 /*****************************************************************************/
@@ -145,29 +135,6 @@ uint16 VGAUnScaleY(uint16 y) {
 	else
 		return y;
 }
-
-
-/*****************************************************************************/
-/* Checks to see if all the characters in the second string are at the start */
-/* of the first.                                                             */
-/*****************************************************************************/
-static bool strstart(const char **Source, const char *Start) {
-	uint16 len1, len2, counter;
-
-	len1 = strlen(*Source);
-	len2 = strlen(Start);
-
-	if (len1 < len2)
-		return false;
-
-	for (counter = 0; counter < len2; counter++)
-		if ((*Source)[counter] != Start[counter])
-			return false;
-
-	(*Source) += len2;
-	return true;
-}
-
 
 static char NewFileName[255];
 
@@ -180,40 +147,32 @@ static char NewFileName[255];
 /* attention to one file at a time, it would be fine to have one variable    */
 /* not on the stack which is used to store the new filename.                 */
 /*****************************************************************************/
-static void mystrupr(char *s) {
-	char c;
-
-	while ((c = *s) != 0)
-		*s++ = toupper(c);
-}
-
 char *translateFileName(const char *filename) {
-	char tempfilename[255];
-	char *dot;
+	Common::String fileNameStr = filename;
+	fileNameStr.toUppercase();
+	Common::String fileNameStrFinal;
 
-	strcpy(tempfilename, filename);
-	mystrupr(tempfilename);
-
-	*NewFileName = 0;
-	filename = tempfilename;
-
-	if (strstart(&filename, "P:")) {
+	if (fileNameStr.hasPrefix("P:")) {
 		if (IsHiRes)
-			strcat(NewFileName, "GAME/SPICT/");
+			fileNameStrFinal = "GAME/SPICT/";
 		else
-			strcat(NewFileName, "GAME/PICT/");
-	} else if (strstart(&filename, "LAB:"))
-		strcat(NewFileName, "GAME/");
-	else if (strstart(&filename, "MUSIC:"))
-		strcat(NewFileName, "GAME/MUSIC/");
+			fileNameStrFinal = "GAME/PICT/";
+	} else if (fileNameStr.hasPrefix("LAB:"))
+		fileNameStrFinal = "GAME/";
+	else if (fileNameStr.hasPrefix("MUSIC:"))
+		fileNameStrFinal = "GAME/MUSIC/";
 
-	strcat(NewFileName, filename);
+	if (fileNameStr.contains(':')) {
+		while (fileNameStr[0] != ':') {
+			fileNameStr.deleteChar(0);
+		}
 
-	dot = strrchr(NewFileName, '.');
-
-	if (dot != NewFileName && dot != NULL && dot[4] != '/') { // Linux may start with '.'
-		dot[4] = 0; // Back to the days of 8.3, even if your OS was never DOSish!!
+		fileNameStr.deleteChar(0);
 	}
+
+	fileNameStrFinal += fileNameStr;
+
+	strcpy(NewFileName, fileNameStrFinal.c_str());
 
 	return NewFileName;
 }

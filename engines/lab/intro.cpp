@@ -364,7 +364,7 @@ void introSequence() {
 	blackAllScreen();
 	g_music->fillUpMusic(true);
 
-	getFont("P:Map.font", msgfont);
+	getFont("P:Map.fon", msgfont);
 
 	nopalchange = true;
 	NReadPict("Intro.1", true);

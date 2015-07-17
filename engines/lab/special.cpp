@@ -1193,7 +1193,7 @@ void doMonitor(char *background, char *textfile, bool isinteractive, uint16 x1, 
 
 	BigMsgFont = &bmfont;
 
-	if (!getFont("P:Map.font", BigMsgFont)) {
+	if (!getFont("P:Map.fon", BigMsgFont)) {
 		freeAllStolenMem();
 		BigMsgFont = NULL;
 		return;
