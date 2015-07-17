@@ -40,11 +40,16 @@ VisualImageXMG::VisualImageXMG(Gfx::Driver *gfx) :
 		Visual(TYPE),
 		_gfx(gfx),
 		_texture(nullptr),
+		_surface(nullptr),
 		_width(0),
 		_height(0) {
 }
 
 VisualImageXMG::~VisualImageXMG() {
+	if (_surface) {
+		_surface->free();
+	}
+	delete _surface;
 	delete _texture;
 }
 
@@ -56,18 +61,21 @@ void VisualImageXMG::load(Common::ReadStream *stream) {
 	delete _texture;
 
 	// Decode the XMG
-	Graphics::Surface *surface = Formats::XMGDecoder::decode(stream);
-	_width = surface->w;
-	_height = surface->h;
-	_texture = _gfx->createTexture(surface);
-
-	surface->free();
-	delete surface;
+	_surface = Formats::XMGDecoder::decode(stream);
+	_width = _surface->w;
+	_height = _surface->h;
+	_texture = _gfx->createTexture(_surface);
 }
 
 void VisualImageXMG::render(const Common::Point &position, bool useOffset) {
 	Common::Point drawPos = useOffset ? position - _hotspot : position;
 	_gfx->drawSurface(_texture, drawPos);
+}
+
+bool VisualImageXMG::isPointSolid(const Common::Point &point) const {
+	// Maybe implement this method in some other way to avoid having to keep the surface in memory
+	const uint32 *ptr = (const uint32 *) _surface->getBasePtr(point.x, point.y);
+	return ((*ptr) & 0xFF000000) == 0xFF000000;
 }
 
 } // End of namespace Stark

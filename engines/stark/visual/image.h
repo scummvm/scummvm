@@ -26,6 +26,10 @@
 #include "common/stream.h"
 #include "engines/stark/visual/visual.h"
 
+namespace Graphics {
+struct Surface;
+}
+
 namespace Stark {
 
 /**
@@ -45,6 +49,9 @@ public:
 	void setHotSpot(const Common::Point &hotspot);
 	Common::Point getHotspot() const { return _hotspot; }
 
+	/** Perform a transparency hit test on an image point */
+	bool isPointSolid(const Common::Point &point) const;
+
 	int getWidth() const { return _width; }
 	int getHeight() const { return _height; }
 private:
@@ -52,6 +59,7 @@ private:
 	int _height;
 	Gfx::Driver *_gfx;
 	Gfx::Texture *_texture;
+	Graphics::Surface *_surface;
 	Common::Point _hotspot;
 };
 
