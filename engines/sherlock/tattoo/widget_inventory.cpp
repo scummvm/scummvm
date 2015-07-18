@@ -251,6 +251,7 @@ void WidgetInventoryTooltip::handleEvents() {
 
 WidgetInventoryVerbs::WidgetInventoryVerbs(SherlockEngine *vm, WidgetInventory *owner) : 
 		WidgetBase(vm), _owner(owner) {
+	_invVerbSelect = _oldInvVerbSelect = -1;
 }
 
 void WidgetInventoryVerbs::load() {
@@ -333,7 +334,7 @@ void WidgetInventoryVerbs::load() {
 	// Set up bounds for the menu
 	_bounds = Common::Rect(width + _surface.widestChar() * 2 + 6,
 		(_surface.fontHeight() + 7) * _inventCommands.size() + 3);
-	_bounds.moveTo(mousePos.x + _bounds.width() / 2, mousePos.y + _bounds.height() / 2);
+	_bounds.moveTo(mousePos.x - _bounds.width() / 2, mousePos.y - _bounds.height() / 2);
 
 	// Create the surface
 	_surface.create(_bounds.width(), _bounds.height());
@@ -356,6 +357,8 @@ void WidgetInventoryVerbs::load() {
 				(_surface.fontHeight() + 7) * (idx + 1) - 1));
 		}
 	}
+
+	summonWindow();
 }
 
 void WidgetInventoryVerbs::handleEvents() {
@@ -366,85 +369,121 @@ void WidgetInventoryVerbs::handleEvents() {
 	TattooUserInterface &ui = *(TattooUserInterface *)_vm->_ui;
 	TattooEngine &vm = *(TattooEngine *)_vm;
 
+	// Handle changing highlighted verb entry
+	highlightControls();
+
 	// See if they want to close the menu (by clicking outside the menu)
 	Common::Rect innerBounds = _bounds;
 	innerBounds.grow(-3);
 
-	if (_outsideMenu && !innerBounds.contains(mousePos)) {
-		banishWindow();
-		_owner->_invVerbMode = 0;
-	} else if (innerBounds.contains(mousePos)) {
-		_outsideMenu = false;
+	if (events._released || events._rightReleased || ui._keyState.keycode == Common::KEYCODE_ESCAPE) {
+		ui._scrollHighlight = SH_NONE;
 
-		// Check if they are trying to solve the Foolscap puzzle, or looking at the completed puzzle
-		bool doHangman = !inv[_owner->_invSelect]._name.compareToIgnoreCase(FIXED(Inv6)) &&
-			!_inventCommands[_owner->_invVerbSelect].compareToIgnoreCase(FIXED(Solve));
-		doHangman |= (!inv[_owner->_invSelect]._name.compareToIgnoreCase(FIXED(Inv6)) || !inv[_owner->_invSelect]._name.compareToIgnoreCase(FIXED(Inv7)))
-			&& _inventCommands[_owner->_invVerbSelect].compareToIgnoreCase(FIXED(Look)) && vm.readFlags(299);
-
-		if (doHangman) {
-			// Close the entire Inventory and return to Standard Mode
+		if (_outsideMenu && !innerBounds.contains(mousePos)) {
 			banishWindow();
 			_owner->_invVerbMode = 0;
+		}
+		else if (innerBounds.contains(mousePos)) {
+			_outsideMenu = false;
 
-			_owner->_tooltipWidget.banishWindow();
-			banishWindow();
-			inv.freeInv();
+			// Check if they are trying to solve the Foolscap puzzle, or looking at the completed puzzle
+			bool doHangman = !inv[_owner->_invSelect]._name.compareToIgnoreCase(FIXED(Inv6)) &&
+				!_inventCommands[_invVerbSelect].compareToIgnoreCase(FIXED(Solve));
+			doHangman |= (!inv[_owner->_invSelect]._name.compareToIgnoreCase(FIXED(Inv6)) || !inv[_owner->_invSelect]._name.compareToIgnoreCase(FIXED(Inv7)))
+				&& _inventCommands[_invVerbSelect].compareToIgnoreCase(FIXED(Look)) && vm.readFlags(299);
 
-			events.clearEvents();
-			events.setCursor(ARROW);
-			ui._menuMode = scene._labTableScene ? LAB_MODE : STD_MODE;
+			if (doHangman) {
+				// Close the entire Inventory and return to Standard Mode
+				banishWindow();
+				_owner->_invVerbMode = 0;
 
-			scene.doBgAnim();
-			vm.doHangManPuzzle();
-		} else if (_owner->_invVerbSelect == 0) {
-			// They have released the mouse on the Look Verb command, so Look at the inventory item
-			ui._invLookFlag = true;
-			inv.freeInv();
-			ui._windowOpen = false;
-			ui._lookPos = mousePos;
-			ui.printObjectDesc(inv[_owner->_invSelect]._examine, true);
-		} else {
-			// Clear the window
-			banishWindow();
-			_owner->_invVerbMode = 3;
-			ui._oldBgFound = -1;
-
-			// See if the selected Verb with the selected Iventory Item, is to be used by itself
-			if (!_inventCommands[_owner->_invVerbSelect].compareToIgnoreCase(inv[_owner->_invSelect]._verb._verb) ||
-				!inv[_owner->_invSelect]._verb._target.compareToIgnoreCase("*SELF")) {
+				_owner->_tooltipWidget.banishWindow();
+				banishWindow();
 				inv.freeInv();
 
-				ui._menuMode = scene._labTableScene ? LAB_MODE : STD_MODE;
 				events.clearEvents();
-				ui.checkAction(inv[_owner->_invSelect]._verb, 2000);
+				events.setCursor(ARROW);
+				ui._menuMode = scene._labTableScene ? LAB_MODE : STD_MODE;
+
+				scene.doBgAnim();
+				vm.doHangManPuzzle();
+			}
+			else if (_invVerbSelect == 0) {
+				// They have released the mouse on the Look Verb command, so Look at the inventory item
+				ui._invLookFlag = true;
+				inv.freeInv();
+				ui._windowOpen = false;
+				ui._lookPos = mousePos;
+				ui.printObjectDesc(inv[_owner->_invSelect]._examine, true);
 			}
 			else {
-				_owner->_invVerb = _inventCommands[_owner->_invVerbSelect];
+				// Clear the window
+				banishWindow();
+				_owner->_invVerbMode = 3;
+				ui._oldBgFound = -1;
+
+				// See if the selected Verb with the selected Iventory Item, is to be used by itself
+				if (!_inventCommands[_invVerbSelect].compareToIgnoreCase(inv[_owner->_invSelect]._verb._verb) ||
+					!inv[_owner->_invSelect]._verb._target.compareToIgnoreCase("*SELF")) {
+					inv.freeInv();
+
+					ui._menuMode = scene._labTableScene ? LAB_MODE : STD_MODE;
+					events.clearEvents();
+					ui.checkAction(inv[_owner->_invSelect]._verb, 2000);
+				}
+				else {
+					_owner->_invVerb = _inventCommands[_invVerbSelect];
+				}
+			}
+
+			// If we are still in Inventory Mode, setup the graphic to float in front of the mouse cursor
+			if (ui._menuMode == INV_MODE) {
+				ImageFrame &imgFrame = (*inv._invShapes[_owner->_invSelect - inv._invIndex])[0];
+				_owner->_invGraphicBounds = Common::Rect(imgFrame._width, imgFrame._height);
+				_owner->_invGraphicBounds.moveTo(mousePos.x - _owner->_invGraphicBounds.width() / 2,
+					mousePos.y - _owner->_invGraphicBounds.height() / 2);
+
+				// Constrain it to the screen
+				if (_owner->_invGraphicBounds.left < 0)
+					_owner->_invGraphicBounds.moveTo(0, _owner->_invGraphicBounds.top);
+				if (_owner->_invGraphicBounds.top < 0)
+					_owner->_invGraphicBounds.moveTo(_owner->_invGraphicBounds.left, 0);
+				if (_owner->_invGraphicBounds.right > SHERLOCK_SCREEN_WIDTH)
+					_owner->_invGraphicBounds.moveTo(SHERLOCK_SCREEN_WIDTH - _owner->_invGraphicBounds.width(), _owner->_invGraphicBounds.top);
+				if (_owner->_invGraphicBounds.bottom > SHERLOCK_SCREEN_HEIGHT)
+					_owner->_invGraphicBounds.moveTo(_owner->_invGraphicBounds.left, SHERLOCK_SCREEN_HEIGHT - _owner->_invGraphicBounds.height());
+
+				// Make a copy of the inventory image
+				_owner->_invGraphic.create(imgFrame._width, imgFrame._height);
+				_owner->_invGraphic.blitFrom(imgFrame, Common::Point(0, 0));
 			}
 		}
+	}
+}
 
-		// If we are still in Inventory Mode, setup the graphic to float in front of the mouse cursor
-		if (ui._menuMode == INV_MODE) {
-			ImageFrame &imgFrame = (*inv._invShapes[_owner->_invSelect - inv._invIndex])[0];
-			_owner->_invGraphicBounds = Common::Rect(imgFrame._width, imgFrame._height);
-			_owner->_invGraphicBounds.moveTo(mousePos.x - _owner->_invGraphicBounds.width() / 2,
-				mousePos.y - _owner->_invGraphicBounds.height() / 2);
+void WidgetInventoryVerbs::highlightControls() {
+	Events &events = *_vm->_events;
+	Common::Point mousePos = events.mousePos();
 
-			// Constrain it to the screen
-			if (_owner->_invGraphicBounds.left < 0)
-				_owner->_invGraphicBounds.moveTo(0, _owner->_invGraphicBounds.top);
-			if (_owner->_invGraphicBounds.top < 0)
-				_owner->_invGraphicBounds.moveTo(_owner->_invGraphicBounds.left, 0);
-			if (_owner->_invGraphicBounds.right > SHERLOCK_SCREEN_WIDTH)
-				_owner->_invGraphicBounds.moveTo(SHERLOCK_SCREEN_WIDTH - _owner->_invGraphicBounds.width(), _owner->_invGraphicBounds.top);
-			if (_owner->_invGraphicBounds.bottom > SHERLOCK_SCREEN_HEIGHT)
-				_owner->_invGraphicBounds.moveTo(_owner->_invGraphicBounds.left, SHERLOCK_SCREEN_HEIGHT - _owner->_invGraphicBounds.height());
+	Common::Rect innerBounds = _bounds;
+	innerBounds.grow(-3);
 
-			// Make a copy of the inventory image
-			_owner->_invGraphic.create(imgFrame._width, imgFrame._height);
-			_owner->_invGraphic.blitFrom(imgFrame, Common::Point(0, 0));
+	// Set the highlighted verb
+	_invVerbSelect = -1;
+	if (innerBounds.contains(mousePos))
+		_invVerbSelect = (mousePos.y - _bounds.top - 3) / (_surface.fontHeight() + 7);
+
+	// See if the highlighted verb has changed
+	if (_invVerbSelect != _oldInvVerbSelect) {
+		// Draw the list again, with the new highlighting
+		for (uint idx = 0; idx < _inventCommands.size(); ++idx) {
+			byte color = (idx == _invVerbSelect) ? COMMAND_HIGHLIGHTED : INFO_TOP;
+			_surface.writeString(_inventCommands[idx], Common::Point(
+				(_bounds.width() - _surface.stringWidth(_inventCommands[idx])) / 2,
+				(_surface.fontHeight() + 7) * idx + 5), color);
 		}
+
+		_oldInvVerbSelect = _invVerbSelect;
 	}
 }
 
@@ -456,7 +495,6 @@ WidgetInventory::WidgetInventory(SherlockEngine *vm) : WidgetBase(vm),
 	_invVerbMode = 0;
 	_invSelect = _oldInvSelect = -1;
 	_selector = _oldSelector = -1;
-	_invVerbSelect = _oldInvVerbSelect = -1;
 	_dialogTimer = -1;
 	_swapItems = false;
 }
@@ -584,10 +622,10 @@ void WidgetInventory::handleEvents() {
 		ui._scrollHighlight = SH_NONE;
 
 		// See if they have a Verb List open for an Inventry Item
-		if (_invVerbMode == 1) {
-			_verbList.handleEvents();
+		if (_invVerbMode == 1)
+			return;
 
-		} else if (_invVerbMode == 3) {
+		if (_invVerbMode == 3) {
 			// Selecting object after inventory verb has been selected
 			_tooltipWidget.banishWindow();
 			_invGraphic.free();
@@ -669,7 +707,7 @@ void WidgetInventory::handleEvents() {
 					// See if they right clicked on an item
 					if (events._rightReleased) {
 						_invVerbMode = 1;
-						_oldInvVerbSelect = -1;
+						_verbList._oldInvVerbSelect = -1;
 						_tooltipWidget.banishWindow();
 
 						// Keep track of the name of the inventory object so we can check it against the target fields 

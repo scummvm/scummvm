@@ -66,6 +66,10 @@ private:
 	WidgetInventory *_owner;
 	Common::StringArray _inventCommands;
 	Common::String _action;
+
+	void highlightControls();
+public:
+	int _invVerbSelect, _oldInvVerbSelect;
 public:
 	WidgetInventoryVerbs(SherlockEngine *vm, WidgetInventory *owner);
 	virtual ~WidgetInventoryVerbs() {}
@@ -84,7 +88,6 @@ class WidgetInventory: public WidgetBase {
 private:
 	int _invVerbMode;
 	int _selector, _oldSelector;
-	int _invVerbSelect, _oldInvVerbSelect;
 	int _invSelect, _oldInvSelect;
 	int _dialogTimer;
 	WidgetInventoryTooltip _tooltipWidget;
