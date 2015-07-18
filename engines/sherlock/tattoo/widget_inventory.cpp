@@ -382,8 +382,7 @@ void WidgetInventoryVerbs::handleEvents() {
 		if (_outsideMenu && !innerBounds.contains(mousePos)) {
 			banishWindow();
 			_owner->_invVerbMode = 0;
-		}
-		else if (innerBounds.contains(mousePos)) {
+		} else if (innerBounds.contains(mousePos)) {
 			_outsideMenu = false;
 
 			// Check if they are trying to solve the Foolscap puzzle, or looking at the completed puzzle
@@ -407,16 +406,14 @@ void WidgetInventoryVerbs::handleEvents() {
 
 				scene.doBgAnim();
 				vm.doHangManPuzzle();
-			}
-			else if (_invVerbSelect == 0) {
+			} else if (_invVerbSelect == 0) {
 				// They have released the mouse on the Look Verb command, so Look at the inventory item
 				ui._invLookFlag = true;
 				inv.freeInv();
 				ui._windowOpen = false;
 				ui._lookPos = mousePos;
 				ui.printObjectDesc(inv[_owner->_invSelect]._examine, true);
-			}
-			else {
+			} else {
 				// Clear the window
 				banishWindow();
 				_owner->_invVerbMode = 3;
@@ -430,32 +427,31 @@ void WidgetInventoryVerbs::handleEvents() {
 					ui._menuMode = scene._labTableScene ? LAB_MODE : STD_MODE;
 					events.clearEvents();
 					ui.checkAction(inv[_owner->_invSelect]._verb, 2000);
-				}
-				else {
+				} else {
 					_owner->_invVerb = _inventCommands[_invVerbSelect];
 				}
-			}
 
-			// If we are still in Inventory Mode, setup the graphic to float in front of the mouse cursor
-			if (ui._menuMode == INV_MODE) {
-				ImageFrame &imgFrame = (*inv._invShapes[_owner->_invSelect - inv._invIndex])[0];
-				_owner->_invGraphicBounds = Common::Rect(imgFrame._width, imgFrame._height);
-				_owner->_invGraphicBounds.moveTo(mousePos.x - _owner->_invGraphicBounds.width() / 2,
-					mousePos.y - _owner->_invGraphicBounds.height() / 2);
+				// If we are still in Inventory Mode, setup the graphic to float in front of the mouse cursor
+				if (ui._menuMode == INV_MODE) {
+					ImageFrame &imgFrame = (*inv._invShapes[_owner->_invSelect - inv._invIndex])[0];
+					_owner->_invGraphicBounds = Common::Rect(imgFrame._width, imgFrame._height);
+					_owner->_invGraphicBounds.moveTo(mousePos.x - _owner->_invGraphicBounds.width() / 2,
+						mousePos.y - _owner->_invGraphicBounds.height() / 2);
 
-				// Constrain it to the screen
-				if (_owner->_invGraphicBounds.left < 0)
-					_owner->_invGraphicBounds.moveTo(0, _owner->_invGraphicBounds.top);
-				if (_owner->_invGraphicBounds.top < 0)
-					_owner->_invGraphicBounds.moveTo(_owner->_invGraphicBounds.left, 0);
-				if (_owner->_invGraphicBounds.right > SHERLOCK_SCREEN_WIDTH)
-					_owner->_invGraphicBounds.moveTo(SHERLOCK_SCREEN_WIDTH - _owner->_invGraphicBounds.width(), _owner->_invGraphicBounds.top);
-				if (_owner->_invGraphicBounds.bottom > SHERLOCK_SCREEN_HEIGHT)
-					_owner->_invGraphicBounds.moveTo(_owner->_invGraphicBounds.left, SHERLOCK_SCREEN_HEIGHT - _owner->_invGraphicBounds.height());
+					// Constrain it to the screen
+					if (_owner->_invGraphicBounds.left < 0)
+						_owner->_invGraphicBounds.moveTo(0, _owner->_invGraphicBounds.top);
+					if (_owner->_invGraphicBounds.top < 0)
+						_owner->_invGraphicBounds.moveTo(_owner->_invGraphicBounds.left, 0);
+					if (_owner->_invGraphicBounds.right > SHERLOCK_SCREEN_WIDTH)
+						_owner->_invGraphicBounds.moveTo(SHERLOCK_SCREEN_WIDTH - _owner->_invGraphicBounds.width(), _owner->_invGraphicBounds.top);
+					if (_owner->_invGraphicBounds.bottom > SHERLOCK_SCREEN_HEIGHT)
+						_owner->_invGraphicBounds.moveTo(_owner->_invGraphicBounds.left, SHERLOCK_SCREEN_HEIGHT - _owner->_invGraphicBounds.height());
 
-				// Make a copy of the inventory image
-				_owner->_invGraphic.create(imgFrame._width, imgFrame._height);
-				_owner->_invGraphic.blitFrom(imgFrame, Common::Point(0, 0));
+					// Make a copy of the inventory image
+					_owner->_invGraphic.create(imgFrame._width, imgFrame._height);
+					_owner->_invGraphic.blitFrom(imgFrame, Common::Point(0, 0));
+				}
 			}
 		}
 	}
