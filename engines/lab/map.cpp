@@ -59,20 +59,15 @@ extern uint16 RoomNum;
 /*****************************************************************************/
 void setAmigaPal(uint16 *pal, uint16 numcolors) {
 	byte vgapal[16 * 3];
-	uint16 counter, vgacount;
+	uint16 vgacount = 0;
 
 	if (numcolors > 16)
 		numcolors = 16;
 
-	vgacount = 0;
-
-	for (counter = 0; counter < numcolors; counter++) {
-		vgapal[vgacount]   = (byte)(((pal[counter] & 0xf00) >> 8) << 2);
-		vgacount++;
-		vgapal[vgacount] = (byte)(((pal[counter] & 0x0f0) >> 4) << 2);
-		vgacount++;
-		vgapal[vgacount] = (byte)(((pal[counter] & 0x00f)) << 2);
-		vgacount++;
+	for (uint16 counter = 0; counter < numcolors; counter++) {
+		vgapal[vgacount++] = (byte)(((pal[counter] & 0xf00) >> 8) << 2);
+		vgapal[vgacount++] = (byte)(((pal[counter] & 0x0f0) >> 4) << 2);
+		vgapal[vgacount++] = (byte)(((pal[counter] & 0x00f)) << 2);
 	}
 
 	writeColorRegsSmooth(vgapal, 0, 16);
@@ -83,18 +78,39 @@ void setAmigaPal(uint16 *pal, uint16 numcolors) {
 /* Gets a font from disk and puts it into temporary memory.                  */
 /*****************************************************************************/
 bool getFont(const char *filename, TextFont *textfont) {
-	byte *fontbuffer;
+	byte **file = NULL;
+	char header[5];
+	uint32 filesize, headersize = 4L + 2L + 256 * 3 + 4L;
 
-	fontbuffer = (byte *)stealBufMem(sizeOfFile(filename) - (sizeof(TextFont) + 4));
+	file = g_music->newOpen(filename, filesize);
 	g_music->checkMusic();
 
-	if (fontbuffer == NULL)
-		return false;
+	if ((file != NULL) && (filesize > headersize)) {
+		byte *fontbuffer = (byte *)stealBufMem(filesize - (sizeof(TextFont) + 4));
+		if (!fontbuffer)
+			return false;
 
-	return openFontMem(filename, textfont, fontbuffer);
+		header[4] = 0;
+		readBlock(&header, 4L, file);
+
+		if (strcmp(header, "VGAF") == 0) {
+			textfont->DataLength = filesize - headersize;
+			readBlock(&(textfont->Height), 2L, file);
+			swapUShortPtr(&(textfont->Height), 1);
+
+			readBlock(textfont->Widths, 256L, file);
+			readBlock(textfont->Offsets, 256L * 2L, file);
+			swapUShortPtr(textfont->Offsets, 256);
+
+			skip(file, 4L);
+			textfont->data = fontbuffer;
+			readBlock(textfont->data, textfont->DataLength, file);
+			return true;
+		}
+	}
+
+	return false;
 }
-
-
 
 
 /*****************************************************************************/

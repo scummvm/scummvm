@@ -44,29 +44,6 @@ static byte *buffer = NULL, *realbufferstart = NULL, *startoffilestorage = NULL;
 byte **startoffile = &startoffilestorage;
 static uint32 buffersize, realbuffersize;
 
-int32 ReadSoFar;
-
-/*****************************************************************************/
-/* Returns the size of a file.                                               */
-/*****************************************************************************/
-uint32 sizeOfFile(const char *name) {
-	Common::File file;
-
-	file.open(translateFileName(name));
-	if (!file.isOpen()) {
-		warning("Cannot open file %s", translateFileName(name));
-
-		return 0;
-	}
-	uint32 size = file.size();
-	file.close();
-
-	return size;
-}
-
-
-
-
 /*-------------------- Routines that buffer a whole file --------------------*/
 
 

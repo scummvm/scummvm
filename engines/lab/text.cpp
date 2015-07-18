@@ -36,40 +36,6 @@
 namespace Lab {
 
 /*****************************************************************************/
-/* Opens up a font from disk, but uses buffer memory to store it in.         */
-/*****************************************************************************/
-bool openFontMem(const char *TextFontPath, struct TextFont *tf, byte *fontbuffer) {
-	byte **file = NULL;
-	char header[5];
-	uint32 filesize, headersize = 4L + 2L + 256 * 3 + 4L;
-
-	file = g_music->newOpen(TextFontPath, filesize);
-
-	if ((file != NULL) && (filesize > headersize)) {
-		header[4] = 0;
-		readBlock(&header, 4L, file);
-
-		if (strcmp(header, "VGAF") == 0) {
-			tf->DataLength = filesize - headersize;
-			readBlock(&(tf->Height), 2L, file);
-			swapUShortPtr(&(tf->Height), 1);
-
-			readBlock(tf->Widths, 256L, file);
-			readBlock(tf->Offsets, 256L * 2L, file);
-			swapUShortPtr(tf->Offsets, 256);
-
-			skip(file, 4L);
-			tf->data = fontbuffer;
-			readBlock(tf->data, tf->DataLength, file);
-			return true;
-		}
-	}
-
-	return false;
-}
-
-
-/*****************************************************************************/
 /* Opens up a font from disk.                                                */
 /*****************************************************************************/
 bool openFont(const char *TextFontPath, struct TextFont **tf) {
@@ -145,10 +111,7 @@ uint16 textLength(struct TextFont *tf, const char *text, uint16 numchars) {
 /* Returns the height of a specified font.                                   */
 /*****************************************************************************/
 uint16 textHeight(struct TextFont *tf) {
-	if (tf)
-		return tf->Height;
-	else
-		return 0;
+	return (tf) ? tf->Height : 0;
 }
 
 
@@ -177,8 +140,7 @@ void text(struct TextFont *tf, uint16 x, uint16 y, uint16 color, const char *tex
 
 		if (tf->Widths[(uint)*text]) {
 			cdata = tf->data + tf->Offsets[(uint)*text];
-			bwidth = *cdata;
-			cdata++;
+			bwidth = *cdata++;
 			VGATemp = VGACur;
 			VGATempLine = VGACur;
 
@@ -187,49 +149,14 @@ void text(struct TextFont *tf, uint16 x, uint16 y, uint16 color, const char *tex
 				templeft = LeftInSegment;
 
 				for (cols = 0; cols < bwidth; cols++) {
-					data = *cdata;
-					cdata++;
+					data = *cdata++;
 
 					if (data && (templeft >= 8)) {
-						if (0x80 & data)
-							*VGATemp = color;
-
-						VGATemp++;
-
-						if (0x40 & data)
-							*VGATemp = color;
-
-						VGATemp++;
-
-						if (0x20 & data)
-							*VGATemp = color;
-
-						VGATemp++;
-
-						if (0x10 & data)
-							*VGATemp = color;
-
-						VGATemp++;
-
-						if (0x08 & data)
-							*VGATemp = color;
-
-						VGATemp++;
-
-						if (0x04 & data)
-							*VGATemp = color;
-
-						VGATemp++;
-
-						if (0x02 & data)
-							*VGATemp = color;
-
-						VGATemp++;
-
-						if (0x01 & data)
-							*VGATemp = color;
-
-						VGATemp++;
+						for (int i = 7; i >= 0; i--) {
+							if ((1 << i) & data)
+								*VGATemp = color;
+							VGATemp++;
+						}
 
 						templeft -= 8;
 					} else if (data) {

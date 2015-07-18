@@ -136,8 +136,6 @@ bool quitPlaying();
 /*------ From LabFile.c -----*/
 /*---------------------------*/
 
-uint32 sizeOfFile(const char *name);
-
 /* Buffer a whole file */
 byte **isBuffered(const char *fileName);
 byte **openFile(const char *name, uint32 &size);
