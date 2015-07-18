@@ -61,24 +61,40 @@ public:
 	virtual void handleEvents();
 };
 
+class WidgetInventoryVerbs : public WidgetBase {
+private:
+	WidgetInventory *_owner;
+	Common::StringArray _inventCommands;
+	Common::String _action;
+public:
+	WidgetInventoryVerbs(SherlockEngine *vm, WidgetInventory *owner);
+	virtual ~WidgetInventoryVerbs() {}
+
+	void load();
+
+	/**
+	 * Handle updating the tooltip state
+	 */
+	virtual void handleEvents();
+};
+
 class WidgetInventory: public WidgetBase {
 	friend class WidgetInventoryTooltip;
+	friend class WidgetInventoryVerbs;
 private:
 	int _invVerbMode;
-	int _invSelect, _oldInvSelect;
 	int _selector, _oldSelector;
 	int _invVerbSelect, _oldInvVerbSelect;
+	int _invSelect, _oldInvSelect;
 	int _dialogTimer;
-	Common::StringArray _inventCommands;
 	WidgetInventoryTooltip _tooltipWidget;
-	Common::String _invVerb;
-	Common::String _invTarget;
-	Common::String _action;
+	WidgetInventoryVerbs _verbList;
 	Common::Rect _invGraphicBounds;
 	Surface _invGraphic;
 	bool _swapItems;
-	Common::Rect _menuBounds, _oldMenuBounds;
 	Surface _menuSurface;
+	Common::String _invTarget;
+	Common::String _invVerb;
 
 	/**
 	 * Draw the bars within the dialog
