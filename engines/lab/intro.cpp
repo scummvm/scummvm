@@ -81,8 +81,6 @@ void introEatMessages() {
 			        ((Msg->Class == RAWKEY) && (Msg->Code == 27))
 				)
 				QuitIntro = true;
-
-			replyMsg(Msg);
 		}
 	}
 }
@@ -110,7 +108,7 @@ static void doPictText(const char *Filename, bool isscreen) {
 		g_music->fillUpMusic(true);
 		timedelay = 35;
 	} else {
-		g_music->newCheckMusic();
+		g_music->checkMusic();
 		timedelay = 7;
 	}
 
@@ -162,7 +160,7 @@ static void doPictText(const char *Filename, bool isscreen) {
 		Msg = getMsg();
 
 		if (Msg == NULL) {
-			g_music->newCheckMusic();
+			g_music->checkMusic();
 			diffNextFrame();
 
 			getTime(&secs, &micros);
@@ -184,7 +182,6 @@ static void doPictText(const char *Filename, bool isscreen) {
 			Class     = Msg->Class;
 			Qualifier = Msg->Qualifier;
 			Code      = Msg->Code;
-			replyMsg(Msg);
 
 			if (((Class == MOUSEBUTTONS) && (IEQUALIFIER_RBUTTON & Qualifier)) ||
 			        ((Class == RAWKEY) && (Code == 27))) {
@@ -238,13 +235,13 @@ static void doPictText(const char *Filename, bool isscreen) {
 void musicDelay() {
 	int16 counter;
 
-	g_music->newCheckMusic();
+	g_music->checkMusic();
 
 	if (QuitIntro)
 		return;
 
 	for (counter = 0; counter < 20; counter++) {
-		g_music->newCheckMusic();
+		g_music->checkMusic();
 		waitTOF();
 		waitTOF();
 		waitTOF();
@@ -256,7 +253,7 @@ void musicDelay() {
 static void NReadPict(const char *Filename, bool PlayOnce) {
 	Common::String finalFileName = "P:Intro/";
 
-	g_music->newCheckMusic();
+	g_music->checkMusic();
 	introEatMessages();
 
 	if (QuitIntro)
@@ -285,10 +282,12 @@ void introSequence() {
 		NReadPict("EA3", true);
 	} else {
 		NReadPict("WYRMKEEP", true);
-		for (counter = 0; counter < 4; counter++) {
+		// Wait 4 seconds
+		for (counter = 0; counter < 4 * 1000 / 10; counter++) {
+			introEatMessages();
 			if (QuitIntro)
 				break;
-			microDelay(1, 0);
+			g_system->delayMillis(10);
 		}
 	}
 
@@ -314,14 +313,14 @@ void introSequence() {
 		                   (diffcmap[counter * 3 + 2] >> 2);
 	}
 
-	g_music->newCheckMusic();
+	g_music->checkMusic();
 	fade(true, 0);
 
 	for (int times = 0; times < 150; times++) {
 		if (QuitIntro)
 			break;
 
-		g_music->newCheckMusic();
+		g_music->checkMusic();
 		uint16 temp = Palette[2];
 
 		for (counter = 2; counter < 15; counter++)
@@ -336,7 +335,7 @@ void introSequence() {
 	fade(false, 0);
 	blackAllScreen();
 
-	g_music->newCheckMusic();
+	g_music->checkMusic();
 
 	NReadPict("Title.A", true);
 	NReadPict("AB", true);
@@ -360,7 +359,7 @@ void introSequence() {
 
 	g_music->newOpen("p:Intro/Intro.1");  /* load the picture into the buffer */
 
-	g_music->newCheckMusic();
+	g_music->checkMusic();
 	blackAllScreen();
 	g_music->fillUpMusic(true);
 
@@ -415,7 +414,7 @@ void introSequence() {
 			for (counter1 = (8 * 3); counter1 < (255 * 3); counter1++)
 				diffcmap[counter1] = 255 - diffcmap[counter1];
 
-			g_music->newCheckMusic();
+			g_music->checkMusic();
 			waitTOF();
 			VGASetPal(diffcmap, 256);
 			waitTOF();

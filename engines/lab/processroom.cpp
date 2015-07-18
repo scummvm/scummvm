@@ -206,9 +206,6 @@ char *getPictName(CloseDataPtr *LCPtr) {
 /*****************************************************************************/
 void drawDirection(CloseDataPtr LCPtr) {
 	char Message[250];
-	/*
-	   char test[15];
-	 */
 
 	if (LCPtr != NULL) {
 		if (LCPtr->Message) {
@@ -378,7 +375,7 @@ static void doActions(ActionPtr APtr, CloseDataPtr *LCPtr) {
 	uint32 StartSecs, StartMicros, CurSecs, CurMicros;
 
 	while (APtr) {
-		g_music->newCheckMusic();
+		g_music->checkMusic();
 
 		switch (APtr->ActionType) {
 		case PLAYSOUND:
@@ -547,7 +544,7 @@ static void doActions(ActionPtr APtr, CloseDataPtr *LCPtr) {
 			WSDL_UpdateScreen();
 
 			while (1) {
-				g_music->newCheckMusic();
+				g_music->checkMusic();
 				diffNextFrame();
 				getTime(&CurSecs, &CurMicros);
 

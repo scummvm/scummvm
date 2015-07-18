@@ -207,8 +207,4 @@ IntuiMessage *getMsg() {
 		return NULL;
 }
 
-void replyMsg(void *Msg) {
-	return;
-}
-
 } // End of namespace Lab

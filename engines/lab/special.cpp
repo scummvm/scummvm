@@ -171,10 +171,6 @@ static void changeCombination(uint16 number) {
 	display.Width     = VGAScreenWidth;
 	display.Height    = VGAScreenHeight;
 
-	/* NYI:
-	   readPict("Music:Thunk", true);
-	 */
-
 	for (counter = 1; counter <= (Images[combnum]->Height / 2); counter++) {
 		if (IsHiRes) {
 			if (counter & 1)
@@ -725,7 +721,7 @@ static void drawJournalText() {
 	char *CurText = journaltext;
 
 	while (DrawingToPage < JPage) {
-		g_music->newCheckMusic();
+		g_music->checkMusic();
 		CurText = (char *)(journaltext + CharsDrawn);
 		CharsDrawn += flowText(BigMsgFont, -2, 2, 0, false, false, false, false, VGAScaleX(52), VGAScaleY(32), VGAScaleX(152), VGAScaleY(148), CurText);
 
@@ -846,13 +842,11 @@ static void processJournal() {
 		Msg = (IntuiMessage *) getMsg();
 
 		if (Msg == NULL) {
-			g_music->newCheckMusic();
+			g_music->checkMusic();
 		} else {
 			Class     = Msg->Class;
 			Qualifier = Msg->Qualifier;
 			GadID     = Msg->Code;
-
-			replyMsg((void *) Msg);
 
 			if (((Class == MOUSEBUTTONS) && (IEQUALIFIER_RBUTTON & Qualifier)) ||
 			        ((Class == RAWKEY) && (GadID == 27)))
@@ -1047,7 +1041,7 @@ static void drawMonText(char *text, uint16 x1, uint16 y1, uint16 x2, uint16 y2, 
 	}
 
 	while (DrawingToPage < monpage) {
-		g_music->newCheckMusic();
+		g_music->checkMusic();
 		CurText = (char *)(text + CharsDrawn);
 		CharsDrawn += flowText(BigMsgFont, yspacing, 0, 0, false, false, false, false, x1, y1, x2, y2, CurText);
 		lastpage = (*CurText == 0);
@@ -1105,15 +1099,13 @@ static void processMonitor(char *ntext, bool isinteractive, uint16 x1, uint16 y1
 		Msg = getMsg();
 
 		if (Msg == NULL) {
-			g_music->newCheckMusic();
+			g_music->checkMusic();
 		} else {
 			Class     = Msg->Class;
 			Qualifier = Msg->Qualifier;
 			MouseX    = Msg->MouseX;
 			MouseY    = Msg->MouseY;
 			Code      = Msg->Code;
-
-			replyMsg(Msg);
 
 			if (((Class == MOUSEBUTTONS) && (IEQUALIFIER_RBUTTON & Qualifier)) ||
 			        ((Class == RAWKEY) && (Code == 27)))
@@ -1242,15 +1234,13 @@ void doTrialBlock() {
 		Msg = getMsg();
 
 		if (Msg == NULL) {
-			g_music->newCheckMusic();
+			g_music->checkMusic();
 		} else {
 			Class     = Msg->Class;
 			Qualifier = Msg->Qualifier;
 			MouseX    = Msg->MouseX;
 			MouseY    = Msg->MouseY;
 			Code      = Msg->Code;
-
-			replyMsg(Msg);
 
 			if (((Class == MOUSEBUTTONS) && (IEQUALIFIER_RBUTTON & Qualifier)) ||
 			        ((Class == RAWKEY) && (Code == 27)))

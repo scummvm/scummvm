@@ -46,7 +46,7 @@ struct DIFFHeader {
 
 struct BitMap {
 	uint16 BytesPerRow, Rows;
-	byte Flags, Depth;
+	byte Flags;
 	byte *Planes[16];
 };
 

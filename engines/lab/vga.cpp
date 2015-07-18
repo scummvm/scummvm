@@ -38,11 +38,8 @@
 
 namespace Lab {
 
-//static uint16 NotInRefresh = 0;
-
 uint32 VGAScreenWidth = 320UL,
               VGAScreenHeight = 200UL,
-              VGAPages        = 1UL,
               VGABytesPerPage = 65536UL;
 
 byte *VGABASEADDRESS = 0;
@@ -76,7 +73,6 @@ bool createScreen(bool HiRes) {
 		VGAScreenWidth  = 320;
 		VGAScreenHeight = 200;
 	}
-	VGAPages        = 1;
 	VGABytesPerPage = VGAScreenWidth * VGAScreenHeight;
 
 	g_DisplayBuffer = (byte *)malloc(VGABytesPerPage);

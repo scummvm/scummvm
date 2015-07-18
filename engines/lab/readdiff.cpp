@@ -40,9 +40,6 @@ namespace Lab {
 extern BitMap *DispBitMap, *DrawBitMap;
 extern uint32 VGABytesPerPage;
 
-/*
-   extern int32             ReadSoFar;
- */
 extern byte **startoffile;
 
 static bool PlayOnce = false, changedscreen;
@@ -258,10 +255,6 @@ void diffNextFrame() {
 			break;
 
 		case 26L:
-			/* NYI: This don't work no more
-			   memcpy((void *) DrawBitMap->Planes[CurBit],
-			   (void *) DispBitMap->Planes[CurBit],  (uint16) (diffheight*diffwidth));
-			 */
 			CurBit++;
 			break;
 
@@ -443,11 +436,6 @@ void stopDiff() {
 	if (IsPlaying) {
 		StopPlaying = true;
 
-		/* NYI:
-		    while (IsPlaying)
-		      waitTOF();
-		 */
-
 		if (IsAnim)
 			blackScreen();
 	}
@@ -463,7 +451,7 @@ void stopDiffEnd() {
 		StopPlayingEnd = true;
 
 		while (IsPlaying) {
-			g_music->newCheckMusic();
+			g_music->checkMusic();
 			diffNextFrame();
 		}
 	}

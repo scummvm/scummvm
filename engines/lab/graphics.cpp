@@ -47,7 +47,6 @@ extern BitMap RawDiffBM;
 extern char diffcmap[256 * 3], lastcmap[256 * 3];
 extern bool IsBM, NoFlip, nopalchange;
 
-extern int32 ReadSoFar;
 extern bool DoBlack, stopsound;
 extern bool IsHiRes;
 extern TextFont *MsgFont;
@@ -62,7 +61,7 @@ extern const char *CurFileName;
 /*---------------------------------------------------------------------------*/
 
 
-extern uint32 VGAScreenWidth, VGAScreenHeight, VGAPages, VGABytesPerPage;
+extern uint32 VGAScreenWidth, VGAScreenHeight, VGABytesPerPage;
 
 /*****************************************************************************/
 /* Reads in a picture into the dest bitmap.                                  */
@@ -71,8 +70,6 @@ bool readPict(const char *filename, bool PlayOnce) {
 	byte **file = NULL;
 
 	stopDiff();
-
-	ReadSoFar  = 0L;
 
 	file = g_music->newOpen(filename);
 
@@ -86,7 +83,6 @@ bool readPict(const char *filename, bool PlayOnce) {
 	DispBitMap->BytesPerRow = VGAScreenWidth;
 	DispBitMap->Rows        = VGAScreenHeight;
 	DispBitMap->Flags       = BITMAPF_VIDEO;
-	DispBitMap->Depth       = VGAPages;
 
 	readDiff(PlayOnce);
 
@@ -128,8 +124,6 @@ byte *readPictToMem(const char *filename, uint16 x, uint16 y) {
 
 	stopDiff();
 
-	ReadSoFar  = 0L;
-
 	allocFile((void **)&Mem, (int32) x * (int32) y, "Bitmap");
 	CurMem = Mem;
 
@@ -141,7 +135,6 @@ byte *readPictToMem(const char *filename, uint16 x, uint16 y) {
 	DispBitMap->BytesPerRow = x;
 	DispBitMap->Rows        = y;
 	DispBitMap->Flags       = 0;
-	DispBitMap->Depth       = VGAPages;
 	DispBitMap->Planes[0] = CurMem;
 	DispBitMap->Planes[1] = DispBitMap->Planes[0] + 0x10000;
 	DispBitMap->Planes[2] = DispBitMap->Planes[1] + 0x10000;
@@ -423,70 +416,6 @@ void drawMessage(const char *str) {
 #define READFIRSTFRAME 6
 #define READNEXTFRAME  7
 
-
-
-
-/*****************************************************************************/
-/* Copies memory from one location to another 64 bytes at a time.            */
-/*****************************************************************************/
-void copyLong64(uint32 *Dest, uint32 *Source, uint32 Many64) {
-	while (Many64) {
-		*Dest = *Source;
-		Dest++;
-		Source++;
-		*Dest = *Source;
-		Dest++;
-		Source++;
-		*Dest = *Source;
-		Dest++;
-		Source++;
-		*Dest = *Source;
-		Dest++;
-		Source++;
-		*Dest = *Source;
-		Dest++;
-		Source++;
-		*Dest = *Source;
-		Dest++;
-		Source++;
-		*Dest = *Source;
-		Dest++;
-		Source++;
-		*Dest = *Source;
-		Dest++;
-		Source++;
-		*Dest = *Source;
-		Dest++;
-		Source++;
-		*Dest = *Source;
-		Dest++;
-		Source++;
-		*Dest = *Source;
-		Dest++;
-		Source++;
-		*Dest = *Source;
-		Dest++;
-		Source++;
-		*Dest = *Source;
-		Dest++;
-		Source++;
-		*Dest = *Source;
-		Dest++;
-		Source++;
-		*Dest = *Source;
-		Dest++;
-		Source++;
-		*Dest = *Source;
-		Dest++;
-		Source++;
-
-		Many64--;
-	}
-}
-
-
-
-
 /*****************************************************************************/
 /* Scrolls the display to black.                                             */
 /*****************************************************************************/
@@ -516,7 +445,7 @@ static void doScrollBlack() {
 	nheight = height;
 
 	while (nheight) {
-		g_music->newCheckMusic();
+		g_music->checkMusic();
 
 		if (!IsHiRes)
 			waitTOF();
@@ -541,7 +470,7 @@ static void doScrollBlack() {
 			size -= copysize;
 
 			setPage(CurPage);
-			copyLong64(BaseAddr, (uint32 *) tempmem, copysize >> 6);
+			memcpy(BaseAddr, tempmem, copysize);
 			tempmem += copysize;
 			CurPage++;
 		}
@@ -596,7 +525,7 @@ static void copyPage(uint16 width, uint16 height, uint16 nheight, uint16 startli
 		size -= copysize;
 
 		setPage(CurPage);
-		copyLong64(BaseAddr + (OffSet >> 2), (uint32 *) mem, copysize >> 6);
+		memcpy(BaseAddr + (OffSet >> 2), mem, copysize);
 		mem += copysize;
 		CurPage++;
 		OffSet = 0;
@@ -618,7 +547,7 @@ static void doScrollWipe(char *filename) {
 	height = VGAScaleY(149) + SVGACord(2);
 
 	while (g_music->isSoundEffectActive()) {
-		g_music->newCheckMusic();
+		g_music->checkMusic();
 		waitTOF();
 	}
 
@@ -633,7 +562,7 @@ static void doScrollWipe(char *filename) {
 	nheight = height;
 
 	while (onrow < headerdata.y) {
-		g_music->newCheckMusic();
+		g_music->checkMusic();
 
 		if ((by > nheight) && nheight)
 			by = nheight;
@@ -694,7 +623,7 @@ static void doScrollBounce() {
 	int startline = headerdata.y - height - 1;
 
 	for (int counter = 0; counter < 5; counter++) {
-		g_music->newCheckMusic();
+		g_music->checkMusic();
 		startline -= newby[counter];
 		copyPage(width, height, 0, startline, mem);
 
@@ -703,7 +632,7 @@ static void doScrollBounce() {
 	}
 
 	for (int counter = 8; counter > 0; counter--) {
-		g_music->newCheckMusic();
+		g_music->checkMusic();
 		startline += newby1[counter - 1];
 		copyPage(width, height, 0, startline, mem);
 

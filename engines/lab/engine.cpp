@@ -397,8 +397,6 @@ void eatMessages() {
 
 	do {
 		Msg = getMsg();
-		if (Msg)
-			replyMsg((void *) Msg);
 	} while (Msg);
 
 	return;
@@ -787,7 +785,7 @@ static void mainGameLoop() {
 		if (Msg == NULL) { /* Does music load and next animation frame when you've run out of messages */
 			GotMessage = false;
 			checkRoomMusic();
-			g_music->newCheckMusic();
+			g_music->checkMusic();
 			diffNextFrame();
 
 			if (FollowingCrumbs) {
@@ -829,8 +827,6 @@ static void mainGameLoop() {
 			MouseX    = Msg->MouseX;
 			MouseY    = Msg->MouseY;
 			GadID     = Msg->GadgetID;
-
-			replyMsg((void *) Msg);
 
 			FollowingCrumbs = false;
 
@@ -893,11 +889,9 @@ from_crumbs:
 						Msg = getMsg();
 
 						if (Msg == NULL) { /* Does music load and next animation frame when you've run out of messages */
-							g_music->newCheckMusic();
+							g_music->checkMusic();
 							diffNextFrame();
 						} else {
-							replyMsg((void *) Msg);    /* Can't do this in non-IBM versions */
-
 							if (Msg->Class == RAWKEY) {
 								if ((Msg->Code == 'Y') || (Msg->Code == 'y') || (Msg->Code == 'Q') || (Msg->Code == 'q')) {
 									doit = true;
@@ -1406,7 +1400,7 @@ void LabEngine::go() {
 		readPict("P:End/L2In.1", true);
 
 		for (counter = 0; counter < 120; counter++) {
-			g_music->newCheckMusic();
+			g_music->checkMusic();
 			waitTOF();
 		}
 
@@ -1415,7 +1409,7 @@ void LabEngine::go() {
 
 		warning("STUB: waitForPress");
 		while (!1) { // 1 means ignore SDL_ProcessInput calls
-			g_music->newCheckMusic();
+			g_music->checkMusic();
 			diffNextFrame();
 			waitTOF();
 		}

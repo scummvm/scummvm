@@ -142,15 +142,9 @@ void readImage(byte **buffer, Image **im) {
 }
 
 
-
-
-
-
 /*---------------------------------------------------------------------------*/
 /*------------------------------ The Map stuff ------------------------------*/
 /*---------------------------------------------------------------------------*/
-
-
 
 extern RoomData *Rooms;
 extern const char *ViewPath;
@@ -620,7 +614,7 @@ static void drawMap(uint16 CurRoom, uint16 CurMsg, uint16 Floor, bool fadeout, b
 	}
 
 	if ((Maps[CurRoom].PageNumber == Floor)   /* Makes sure the X is drawn in corridors */
-	        && g_lab->_roomsFound->in(CurRoom) /* NOTE: this here on purpose just in case there's some wierd condition, like the surreal maze where there are no rooms */
+	        && g_lab->_roomsFound->in(CurRoom) /* NOTE: this here on purpose just in case there's some weird condition, like the surreal maze where there are no rooms */
 	        && Maps[CurRoom].x)
 		drawRoom(CurRoom, true);
 
@@ -664,38 +658,28 @@ static void drawMap(uint16 CurRoom, uint16 CurMsg, uint16 Floor, bool fadeout, b
 	}
 
 
-	/* LAB: Labyrinth specific code */
-	sptr = NULL;
-
 	switch (Floor) {
 	case LOWERFLOOR:
 		sptr = LOWERFLOORS;
 		break;
-
 	case MIDDLEFLOOR:
 		sptr = MIDDLEFLOORS;
 		break;
-
 	case UPPERFLOOR:
 		sptr = UPPERFLOORS;
 		break;
-
 	case MEDMAZEFLOOR:
 		sptr = MEDMAZEFLOORS;
 		break;
-
 	case HEDGEMAZEFLOOR:
 		sptr = HEDGEMAZEFLOORS;
 		break;
-
 	case SURMAZEFLOOR:
 		sptr = SURMAZEFLOORS;
 		break;
-
 	case CARNIVAL:
 		sptr = CARNIVALFLOOR;
 		break;
-
 	default:
 		sptr = NULL;
 		break;
@@ -734,7 +718,7 @@ void processMap(uint16 CurRoom) {
 		Msg = getMsg();
 
 		if (Msg == NULL) {
-			g_music->newCheckMusic();
+			g_music->checkMusic();
 
 			if (place <= 14) {
 				newcolor[0] = 14 << 2;
@@ -888,17 +872,6 @@ void processMap(uint16 CurRoom) {
 }
 
 
-
-/*****************************************************************************/
-/* Cleans up behind itself.                                                  */
-/*****************************************************************************/
-void mapCleanUp() {
-	freeAllStolenMem();
-}
-
-
-
-
 /*****************************************************************************/
 /* Does the map processing.                                                  */
 /*****************************************************************************/
@@ -929,7 +902,7 @@ void doMap(uint16 CurRoom) {
 	mouseHide();
 	setAPen(0);
 	rectFill(0, 0, VGAScreenWidth - 1, VGAScreenHeight - 1);
-	mapCleanUp();
+	freeAllStolenMem();
 	blackAllScreen();
 	mouseShow();
 	WSDL_UpdateScreen();

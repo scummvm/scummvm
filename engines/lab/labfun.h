@@ -184,7 +184,6 @@ public:
 	void updateMusic();
 	uint16 getPlayingBufferCount();
 	void checkMusic();
-	void newCheckMusic();
 	void closeMusic();
 	void setMusic(bool on);
 	void resumeBackMusic();
