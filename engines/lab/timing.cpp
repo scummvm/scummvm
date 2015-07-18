@@ -105,24 +105,8 @@ void anyTimeDiff(uint32 sec1, uint32 micros1, uint32 sec2, uint32 micros2, uint3
 /*****************************************************************************/
 void timeDiff(uint32 sec, uint32 micros, uint32 *diffSec, uint32 *diffMicros) {
 	uint32 curSec, curMicros;
-
-	*diffSec    = 0;
-	*diffMicros = 0;
-
 	getTime(&curSec, &curMicros);
-
-	if (curSec > sec)  /* Already passed the time */
-		return;
-	else if ((curSec == sec) && (curMicros >= micros))  /* Already passed the time */
-		return;
-
-	if (curMicros > micros) {
-		*diffSec    = sec - curSec - 1;
-		*diffMicros = (ONESECOND - curMicros) + micros;
-	} else {
-		*diffSec    = sec - curSec;
-		*diffMicros = micros - curMicros;
-	}
+	anyTimeDiff(curSec, curMicros, sec, micros, diffSec, diffMicros);
 }
 
 /*****************************************************************************/
