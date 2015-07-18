@@ -45,7 +45,6 @@ TattooUserInterface::TattooUserInterface(SherlockEngine *vm): UserInterface(vm),
 	_arrowZone = _oldArrowZone = -1;
 	_activeObj = -1;
 	_cAnimFramePause = 0;
-	_widget = nullptr;
 	_scrollHighlight = SH_NONE;
 	_mask = _mask1 = nullptr;
 	_maskCounter = 0;
@@ -160,7 +159,6 @@ void TattooUserInterface::printObjectDesc(const Common::String &str, bool firstT
 		events.setCursor(MAGNIFY);
 		int savedSelector = _selector;
 
-		freeMenu();
 		if (!_invLookFlag)
 			_windowOpen = false;
 
@@ -267,9 +265,9 @@ void TattooUserInterface::handleInput() {
 	if (!events.isCursorVisible())
 		_keyState.keycode = Common::KEYCODE_INVALID;
 
-	// If there's an active widget/window, let it do event processing
-	if (_widget)
-		_widget->handleEvents();
+	// If there's any active widgets/windows, let the most recently open one do event processing
+	if (!_widgets.empty())
+		_widgets.back()->handleEvents();
 
 	// Handle input depending on what mode we're in
 	switch (_menuMode) {
@@ -294,9 +292,11 @@ void TattooUserInterface::drawInterface(int bufferNum) {
 	Screen &screen = *_vm->_screen;
 	TattooEngine &vm = *(TattooEngine *)_vm;
 
-	if (_widget)
-		_widget->draw();
+	// Draw any active on-screen widgets
+	for (Common::List<WidgetBase *>::iterator i = _widgets.begin(); i != _widgets.end(); ++i)
+		(*i)->draw();
 
+	// Handle drawing credits
 	if (vm._creditsActive)
 		vm.drawCredits();
 
@@ -316,9 +316,9 @@ void TattooUserInterface::doBgAnimRestoreUI() {
 	TattooScene &scene = *((TattooScene *)_vm->_scene);
 	Screen &screen = *_vm->_screen;
 
-	// If there is any on-screen widget, then erase it
-	if (_widget)
-		_widget->erase();
+	// If there are any on-screen widgets, then erase them
+	for (Common::List<WidgetBase *>::iterator i = _widgets.begin(); i != _widgets.end(); ++i)
+		(*i)->erase();
 
 	// If there is a Text Tag being display, restore the area underneath it
 	_tooltipWidget.erase();
@@ -573,13 +573,6 @@ void TattooUserInterface::pickUpObject(int objNum) {
 
 void TattooUserInterface::doQuitMenu() {
 	// TODO
-}
-
-void TattooUserInterface::freeMenu() {
-	if (_widget != nullptr) {
-		_widget->banishWindow();
-		_widget = nullptr;
-	}
 }
 
 void TattooUserInterface::putMessage(const char *formatStr, ...) {
@@ -844,9 +837,14 @@ void TattooUserInterface::drawDialogRect(Surface &s, const Common::Rect &r, bool
 }
 
 void TattooUserInterface::banishWindow(bool slideUp) {
-	if (_widget != nullptr)
-		_widget->banishWindow();
-	_widget = nullptr;
+	if (!_widgets.empty())
+		_widgets.back()->banishWindow();
+}
+
+void TattooUserInterface::freeMenu() {
+	for (Common::List<WidgetBase *>::iterator i = _widgets.begin(); i != _widgets.end(); ++i)
+		(*i)->erase();
+	_widgets.clear();
 }
 
 void TattooUserInterface::clearWindow() {

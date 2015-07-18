@@ -24,6 +24,7 @@
 #define SHERLOCK_TATTOO_UI_H
 
 #include "common/scummsys.h"
+#include "common/list.h"
 #include "sherlock/saveload.h"
 #include "sherlock/screen.h"
 #include "sherlock/user_interface.h"
@@ -53,7 +54,7 @@ private:
 	WidgetSceneTooltip _tooltipWidget;
 	WidgetVerbs _verbsWidget;
 	WidgetMessage _messageWidget;
-	WidgetBase *_widget;
+	Common::List<WidgetBase *> _widgets;
 	byte _lookupTable[PALETTE_COUNT];
 	byte _lookupTable1[PALETTE_COUNT];
 private:

@@ -35,7 +35,7 @@ WidgetBase::WidgetBase(SherlockEngine *vm) : _vm(vm) {
 
 void WidgetBase::summonWindow() {
 	TattooUserInterface &ui = *(TattooUserInterface *)_vm->_ui;
-	ui._widget = this;
+	ui._widgets.push_back(this);
 	_outsideMenu = false;
 
 	draw();
@@ -46,7 +46,7 @@ void WidgetBase::banishWindow() {
 
 	erase();
 	_surface.free();
-	ui._widget = nullptr;
+	ui._widgets.remove(this);
 }
 
 void WidgetBase::erase() {
