@@ -363,18 +363,42 @@ void MohawkEngine_LivingBooks::destroyPage() {
 	_focus = NULL;
 }
 
-// Replace any colons (originally a slash) with an underscore.
-static Common::String replaceColons(const Common::String &in) {
+// Replace any colons (originally a slash) with another character
+static Common::String replaceColons(const Common::String &in, char replace) {
 	Common::String out;
 
 	for (uint32 i = 0; i < in.size(); i++) {
 		if (in[i] == ':')
-			out += '_';
+			out += replace;
 		else
 			out += in[i];
 	}
 
 	return out;
+}
+
+// Helper function to assist in opening pages
+static bool tryOpenPage(Archive *archive, const Common::String &fileName) {
+	// Try the plain file name first
+	if (archive->openFile(fileName))
+		return true;
+
+	// No colons, then bail out
+	if (!fileName.contains(':'))
+		return false;
+
+	// Try replacing colons with underscores (in case the original was
+	// a Mac version and had slashes not as a separator).
+	if (archive->openFile(replaceColons(fileName, '_')))
+		return true;
+
+	// Try replacing colons with slashes (in case the original was a Mac
+	// version and had slashes as a separator).
+	if (archive->openFile(replaceColons(fileName, '/')))
+		return true;
+
+	// Failed to open the archive
+	return false;
 }
 
 bool MohawkEngine_LivingBooks::loadPage(LBMode mode, uint page, uint subpage) {
@@ -423,11 +447,8 @@ bool MohawkEngine_LivingBooks::loadPage(LBMode mode, uint page, uint subpage) {
 		warning("ignoring 'killgag' for filename '%s'", filename.c_str());
 	}
 
-	// Try opening the file first, then fallback on replacing colons with underscore
-	// after. This means that it will work out of the box for ie. Mac OS X where
-	// the colon stands for a forward slash, and fallback on underscore everywhere.
 	Archive *pageArchive = createArchive();
-	if (!filename.empty() && (pageArchive->openFile(filename) || (filename.contains(':') && pageArchive->openFile(replaceColons(filename))))) {
+	if (!filename.empty() && tryOpenPage(pageArchive, filename)) {
 		_page = new LBPage(this);
 		_page->open(pageArchive, 1000);
 	} else {
@@ -3903,7 +3924,7 @@ void LBProxyItem::load() {
 
 	debug(1, "LBProxyItem loading archive '%s' with id %d", filename.c_str(), baseId);
 	Archive *pageArchive = _vm->createArchive();
-	if (!pageArchive->openFile(filename))
+	if (!tryOpenPage(pageArchive, filename))
 		error("failed to open archive '%s' (for proxy '%s')", filename.c_str(), _desc.c_str());
 	_page = new LBPage(_vm);
 	_page->open(pageArchive, baseId);
