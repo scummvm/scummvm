@@ -133,10 +133,10 @@ void ManholeEgaSoundDecompressor::update3() {
 		_sample2 += _sample1;
 }
 
-void decompressSound(byte *source, byte *dest, uint16 chunkSize, uint16 chunkCount, SoundEnergyArray *soundEnergyArray) {
+void decompressSound(byte *source, byte *dest, uint16 chunkSize, uint16 chunkCount, SoundEnergyArray *soundEnergyArray, SoundDecoderData *soundDecoderData) {
 
-	int16 prevSample = 0, workSample = 0;
-	byte soundBuffer[1025];
+	int16 prevSample, workSample;
+	byte* soundBuffer;
 	byte deltaSoundBuffer[1024];
 	int16 soundBuffer2[16];
 	byte deltaType, type;
@@ -158,6 +158,15 @@ void decompressSound(byte *source, byte *dest, uint16 chunkSize, uint16 chunkCou
 
 	if (soundEnergyArray)
 		soundEnergyArray->clear();
+
+	if (soundDecoderData) {
+		soundBuffer = soundDecoderData->_soundBuffer;
+		prevSample = soundDecoderData->_prevSample;
+	} else {
+		soundBuffer = new byte[1025];
+		memset(soundBuffer, 0x80, 1025);
+		prevSample = 0;
+	}
 
 	while (chunkCount--) {
 		deltaType = (*source) >> 6;
@@ -255,9 +264,13 @@ void decompressSound(byte *source, byte *dest, uint16 chunkSize, uint16 chunkCou
 		prevSample = workSample;
 		memcpy(dest, soundBuffer, chunkSize);
 		dest += chunkSize;
-
 	}
 
+	if (soundDecoderData) {
+		soundDecoderData->_prevSample = prevSample;
+	} else {
+		delete[] soundBuffer;
+	}
 }
 
 } // End of namespace Made
