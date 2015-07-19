@@ -201,7 +201,7 @@ void ScreenEffects::startBlendedPalette(byte *palette, byte *newPalette, int col
 }
 
 void ScreenEffects::stepBlendedPalette() {
-	if (_blendedPaletteStatus._active && _blendedPaletteStatus._value < _blendedPaletteStatus._maxValue) {
+	if (_blendedPaletteStatus._active && _blendedPaletteStatus._value <= _blendedPaletteStatus._maxValue) {
 		setBlendedPalette(_blendedPaletteStatus._palette, _blendedPaletteStatus._newPalette,
 			_blendedPaletteStatus._colorCount, _blendedPaletteStatus._value, _blendedPaletteStatus._maxValue);
 		if (_blendedPaletteStatus._value == _blendedPaletteStatus._maxValue)
