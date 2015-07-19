@@ -39,40 +39,37 @@ void WidgetText::load(const Common::String &str, int speaker) {
 	TattooUserInterface &ui = *(TattooUserInterface *)_vm->_ui;
 	Common::StringArray lines;
 
-	// If bounds for a window have not yet been calculated, figure them out
-	if (_surface.empty()) {
-		int width = SHERLOCK_SCREEN_WIDTH / 3;
-		int height;
+	int width = SHERLOCK_SCREEN_WIDTH / 3;
+	int height;
 
-		for (;;) {
-			splitLines(str, lines, width - _surface.widestChar() * 2, 100);
-			height = (screen.fontHeight() + 1) * lines.size() + 9;
+	for (;;) {
+		splitLines(str, lines, width - _surface.widestChar() * 2, 100);
+		height = (screen.fontHeight() + 1) * lines.size() + 9;
 
-			if ((width - _surface.widestChar() * 2 > height * 3 / 2) || (width - _surface.widestChar() * 2
-					> SHERLOCK_SCREEN_WIDTH * 3 / 4))
-				break;
+		if ((width - _surface.widestChar() * 2 > height * 3 / 2) || (width - _surface.widestChar() * 2
+				> SHERLOCK_SCREEN_WIDTH * 3 / 4))
+			break;
 
-			width += (width / 4);
-		}
+		width += (width / 4);
+	}
 
-		// See if it's only a single line long
-		if (height == _surface.fontHeight() + 10) {
-			width = _surface.widestChar() * 2 + 6;
+	// See if it's only a single line long
+	if (height == _surface.fontHeight() + 10) {
+		width = _surface.widestChar() * 2 + 6;
 			
-			const char *strP = str.c_str();
-			while (*strP && (*strP < talk._opcodes[OP_SWITCH_SPEAKER] || *strP == talk._opcodes[OP_NULL]))
-				width += _surface.charWidth(*strP++);
-		}
+		const char *strP = str.c_str();
+		while (*strP && (*strP < talk._opcodes[OP_SWITCH_SPEAKER] || *strP == talk._opcodes[OP_NULL]))
+			width += _surface.charWidth(*strP++);
+	}
 
-		_bounds = Common::Rect(width, height);
+	_bounds = Common::Rect(width, height);
 		
-		if (speaker == -1) {
-			// No speaker specified, so center window on look position
-			_bounds.translate(ui._lookPos.x - width / 2, ui._lookPos.y - height / 2);
-		} else {
-			// Speaker specified, so center the window above them
-			centerWindowOnSpeaker(speaker);
-		}
+	if (speaker == -1) {
+		// No speaker specified, so center window on look position
+		_bounds.translate(ui._lookPos.x - width / 2, ui._lookPos.y - height / 2);
+	} else {
+		// Speaker specified, so center the window above them
+		centerWindowOnSpeaker(speaker);
 	}
 
 	render(str);
