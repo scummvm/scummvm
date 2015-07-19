@@ -242,6 +242,11 @@ void decompressSound(byte *source, byte *dest, uint16 chunkSize, uint16 chunkCou
 		}
 
 		if (deltaType > 0) {
+			// NB: The original did not add this extra value at the end (as far
+			// as I can tell), and so technically read past the filled part of
+			// soundBuffer.
+			soundBuffer[workChunkSize] = soundBuffer[workChunkSize - 1];
+
 			if (deltaType == 1) {
 				for (i = 0; i < chunkSize - 1; i += 2) {
 					l = i / 2;
