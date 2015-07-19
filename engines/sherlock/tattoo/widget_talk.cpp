@@ -320,6 +320,7 @@ void WidgetTalk::handleEvents() {
 				journal.record(talk._converseNum, _selector);
 			talk._talkHistory[talk._converseNum][_selector] = true;
 
+			banishWindow();
 			talk._speaker = _vm->readFlags(FLAG_PLAYER_IS_HOLMES) ? HOLMES : WATSON;
 			_scroll = false;
 			const byte *msg = (const byte *)talk._statements[_selector]._statement.c_str();
