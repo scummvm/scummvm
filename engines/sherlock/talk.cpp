@@ -925,7 +925,16 @@ int Talk::waitForMore(int delay) {
 
 			if (events.kbHit()) {
 				Common::KeyState keyState = events.getKey();
-				if (Common::isPrint(keyState.ascii))
+				if (keyState.keycode == Common::KEYCODE_ESCAPE) {
+					if (IS_ROSE_TATTOO && static_cast<Tattoo::TattooEngine *>(_vm)->_runningProlog) {
+						// Skip out of the introduction
+						_vm->setFlags(-76);
+						_vm->setFlags(396);
+						scene._goToScene = 1;
+					}
+					break;
+
+				} else if (Common::isPrint(keyState.ascii))
 					key2 = keyState.keycode;
 			}
 

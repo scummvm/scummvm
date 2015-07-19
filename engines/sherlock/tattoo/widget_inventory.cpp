@@ -382,9 +382,9 @@ void WidgetInventoryVerbs::handleEvents() {
 
 	if (events._released || events._rightReleased || ui._keyState.keycode == Common::KEYCODE_ESCAPE) {
 		ui._scrollHighlight = SH_NONE;
+		banishWindow();
 
 		if (_outsideMenu && !innerBounds.contains(mousePos) || ui._keyState.keycode == Common::KEYCODE_ESCAPE) {
-			banishWindow();
 			_owner->_invVerbMode = 0;
 		} else if (innerBounds.contains(mousePos)) {
 			_outsideMenu = false;
@@ -397,11 +397,9 @@ void WidgetInventoryVerbs::handleEvents() {
 
 			if (doHangman) {
 				// Close the entire Inventory and return to Standard Mode
-				banishWindow();
 				_owner->_invVerbMode = 0;
 
 				_owner->_tooltipWidget.banishWindow();
-				banishWindow();
 				inv.freeInv();
 
 				events.clearEvents();
@@ -418,8 +416,6 @@ void WidgetInventoryVerbs::handleEvents() {
 				ui._lookPos = mousePos;
 				ui.printObjectDesc(inv[_owner->_invSelect]._examine, true);
 			} else {
-				// Clear the window
-				banishWindow();
 				_owner->_invVerbMode = 3;
 				ui._oldBgFound = -1;
 
