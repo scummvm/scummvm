@@ -576,7 +576,7 @@ int main(int argc, char *argv[]) {
 		globalWarnings.push_back("-fno-exceptions");
 		globalWarnings.push_back("-fcheck-new");
 
-		provider = new CreateProjectTool::XCodeProvider(globalWarnings, projectWarnings);
+		provider = new CreateProjectTool::XcodeProvider(globalWarnings, projectWarnings);
 		break;
 	}
 

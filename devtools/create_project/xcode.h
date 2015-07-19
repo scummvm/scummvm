@@ -30,9 +30,9 @@
 
 namespace CreateProjectTool {
 
-class XCodeProvider : public ProjectProvider {
+class XcodeProvider : public ProjectProvider {
 public:
-	XCodeProvider(StringList &global_warnings, std::map<std::string, StringList> &project_warnings, const int version = 0);
+	XcodeProvider(StringList &global_warnings, std::map<std::string, StringList> &project_warnings, const int version = 0);
 
 protected:
 
@@ -168,7 +168,7 @@ private:
 		PropertyList properties;		// List of object properties, including output configuration
 
 		// Constructs an object and add a default type property
-		Object(XCodeProvider *objectParent, std::string objectId, std::string objectName, std::string objectType, std::string objectRefType = "", std::string objectComment = "")
+		Object(XcodeProvider *objectParent, std::string objectId, std::string objectName, std::string objectType, std::string objectRefType = "", std::string objectComment = "")
 		    : id(objectId), name(objectName), refType(objectRefType), comment(objectComment), parent(objectParent) {
 			assert(objectParent);
 			assert(!objectId.empty());
@@ -211,7 +211,7 @@ private:
 
 	// Slight hack, to allow Group access to parent.
 	protected:
-		XCodeProvider *parent;
+		XcodeProvider *parent;
 	private:
 		// Returns the type property (should always be the first in the properties map)
 		std::string getType() {
@@ -267,7 +267,7 @@ private:
 		std::string _treeName;
 		void addChildInternal(const std::string &id, const std::string &comment);
 	public:
-		Group(XCodeProvider *objectParent, const std::string &groupName, const std::string &uniqueName, const std::string &path);
+		Group(XcodeProvider *objectParent, const std::string &groupName, const std::string &uniqueName, const std::string &path);
 		void addChildFile(const std::string &name);
 		void addChildByHash(const std::string &hash, const std::string &name);
 		// Should be passed the hash for the entry

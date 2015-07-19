@@ -92,7 +92,7 @@ bool producesObjectFileOnOSX(const std::string &fileName) {
 		return false;
 }
 
-XCodeProvider::Group::Group(XCodeProvider *objectParent, const std::string &groupName, const std::string &uniqueName, const std::string &path) : Object(objectParent, uniqueName, groupName, "PBXGroup", "", groupName) {
+XcodeProvider::Group::Group(XcodeProvider *objectParent, const std::string &groupName, const std::string &uniqueName, const std::string &path) : Object(objectParent, uniqueName, groupName, "PBXGroup", "", groupName) {
 	addProperty("name", name, "", SettingsNoValue|SettingsQuoteVariable);
 	addProperty("sourceTree", "<group>", "", SettingsNoValue|SettingsQuoteVariable);
 	
@@ -103,7 +103,7 @@ XCodeProvider::Group::Group(XCodeProvider *objectParent, const std::string &grou
 	_treeName = uniqueName;
 }
 
-void XCodeProvider::Group::ensureChildExists(const std::string &name) {
+void XcodeProvider::Group::ensureChildExists(const std::string &name) {
 	std::map<std::string, Group*>::iterator it = _childGroups.find(name);
 	if (it == _childGroups.end()) {
 		Group *child = new Group(parent, name, this->_treeName + '/' + name, name);
@@ -113,7 +113,7 @@ void XCodeProvider::Group::ensureChildExists(const std::string &name) {
 	}
 }
 
-void XCodeProvider::Group::addChildInternal(const std::string &id, const std::string &comment) {
+void XcodeProvider::Group::addChildInternal(const std::string &id, const std::string &comment) {
 	if (properties.find("children") == properties.end()) {
 		Property children;
 		children.hasOrder = true;
@@ -131,11 +131,11 @@ void XCodeProvider::Group::addChildInternal(const std::string &id, const std::st
 
 }
 
-void XCodeProvider::Group::addChildGroup(const Group* group) {
+void XcodeProvider::Group::addChildGroup(const Group* group) {
 	addChildInternal(parent->getHash(group->_treeName), group->_treeName);
 }
 
-void XCodeProvider::Group::addChildFile(const std::string &name) {
+void XcodeProvider::Group::addChildFile(const std::string &name) {
 	std::string id = "FileReference_" + _treeName + "/" + name;
 	addChildInternal(parent->getHash(id), name);
 	FileProperty property = FileProperty(name, name, name, "\"<group>\"");
@@ -146,17 +146,17 @@ void XCodeProvider::Group::addChildFile(const std::string &name) {
 	}
 }
 
-void XCodeProvider::Group::addChildByHash(const std::string &hash, const std::string &name) {
+void XcodeProvider::Group::addChildByHash(const std::string &hash, const std::string &name) {
 	addChildInternal(hash, name);
 }
 
-XCodeProvider::Group *XCodeProvider::Group::getChildGroup(const std::string &name) {
+XcodeProvider::Group *XcodeProvider::Group::getChildGroup(const std::string &name) {
 	std::map<std::string, Group*>::iterator it = _childGroups.find(name);
 	assert(it != _childGroups.end());
 	return it->second;
 }
 
-XCodeProvider::Group *XCodeProvider::touchGroupsForPath(const std::string &path) {
+XcodeProvider::Group *XcodeProvider::touchGroupsForPath(const std::string &path) {
 	if (_rootSourceGroup == nullptr) {
 		assert (path == _projectRoot);
 		_rootSourceGroup = new Group(this, "Sources", path, path);
@@ -178,7 +178,7 @@ XCodeProvider::Group *XCodeProvider::touchGroupsForPath(const std::string &path)
 	}
 }
 
-void XCodeProvider::addFileReference(const std::string &id, const std::string &name, FileProperty properties) {
+void XcodeProvider::addFileReference(const std::string &id, const std::string &name, FileProperty properties) {
 	Object *fileRef = new Object(this, id, name, "PBXFileReference", "PBXFileReference", name);
 	if (!properties.fileEncoding.empty()) fileRef->addProperty("fileEncoding", properties.fileEncoding, "", SettingsNoValue);
 	if (!properties.lastKnownFileType.empty()) fileRef->addProperty("lastKnownFileType", properties.lastKnownFileType, "", SettingsNoValue|SettingsQuoteVariable);
@@ -189,7 +189,7 @@ void XCodeProvider::addFileReference(const std::string &id, const std::string &n
 	_fileReference.flags = SettingsSingleItem;
 }
 
-void XCodeProvider::addProductFileReference(const std::string &id, const std::string &name) {
+void XcodeProvider::addProductFileReference(const std::string &id, const std::string &name) {
 	Object *fileRef = new Object(this, id, name, "PBXFileReference", "PBXFileReference", name);
 	fileRef->addProperty("explicitFileType", "compiled.mach-o.executable", "", SettingsNoValue|SettingsQuoteVariable);
 	fileRef->addProperty("includeInIndex", "0", "", SettingsNoValue);
@@ -199,7 +199,7 @@ void XCodeProvider::addProductFileReference(const std::string &id, const std::st
 	_fileReference.flags = SettingsSingleItem;
 }
 
-void XCodeProvider::addBuildFile(const std::string &id, const std::string &name, const std::string &fileRefId, const std::string &comment) {
+void XcodeProvider::addBuildFile(const std::string &id, const std::string &name, const std::string &fileRefId, const std::string &comment) {
 
 	Object *buildFile = new Object(this, id, name, "PBXBuildFile", "PBXBuildFile", comment);
 	buildFile->addProperty("fileRef", fileRefId, name, SettingsNoValue);
@@ -207,12 +207,12 @@ void XCodeProvider::addBuildFile(const std::string &id, const std::string &name,
 	_buildFile.flags = SettingsSingleItem;
 }
 
-XCodeProvider::XCodeProvider(StringList &global_warnings, std::map<std::string, StringList> &project_warnings, const int version)
+XcodeProvider::XcodeProvider(StringList &global_warnings, std::map<std::string, StringList> &project_warnings, const int version)
 	: ProjectProvider(global_warnings, project_warnings, version) {
 	_rootSourceGroup = NULL;
 }
 
-void XCodeProvider::createWorkspace(const BuildSetup &setup) {
+void XcodeProvider::createWorkspace(const BuildSetup &setup) {
 	// Create project folder
 	std::string workspace = setup.outputDir + '/' + PROJECT_NAME ".xcodeproj";
 	createDirectory(workspace);
@@ -238,7 +238,7 @@ void XCodeProvider::createWorkspace(const BuildSetup &setup) {
 
 // We are done with constructing all the object graph and we got through every project, output the main project file
 // (this is kind of a hack since other providers use separate project files)
-void XCodeProvider::createOtherBuildFiles(const BuildSetup &setup) {
+void XcodeProvider::createOtherBuildFiles(const BuildSetup &setup) {
 	// This needs to be done at the end when all build files have been accounted for
 	setupSourcesBuildPhase();
 
@@ -246,7 +246,7 @@ void XCodeProvider::createOtherBuildFiles(const BuildSetup &setup) {
 }
 
 // Store information about a project here, for use at the end
-void XCodeProvider::createProjectFile(const std::string &, const std::string &, const BuildSetup &setup, const std::string &moduleDir,
+void XcodeProvider::createProjectFile(const std::string &, const std::string &, const BuildSetup &setup, const std::string &moduleDir,
                                       const StringList &includeList, const StringList &excludeList) {
 	std::string modulePath;
 	if (!moduleDir.compare(0, setup.srcDir.size(), setup.srcDir)) {
@@ -265,7 +265,7 @@ void XCodeProvider::createProjectFile(const std::string &, const std::string &, 
 //////////////////////////////////////////////////////////////////////////
 // Main Project file
 //////////////////////////////////////////////////////////////////////////
-void XCodeProvider::ouputMainProjectFile(const BuildSetup &setup) {
+void XcodeProvider::ouputMainProjectFile(const BuildSetup &setup) {
 	std::ofstream project((setup.outputDir + '/' + PROJECT_NAME ".xcodeproj" + '/' + "project.pbxproj").c_str());
 	if (!project)
 		error("Could not open \"" + setup.outputDir + '/' + PROJECT_NAME ".xcodeproj" + '/' + "project.pbxproj\" for writing");
@@ -305,7 +305,7 @@ void XCodeProvider::ouputMainProjectFile(const BuildSetup &setup) {
 //////////////////////////////////////////////////////////////////////////
 // Files
 //////////////////////////////////////////////////////////////////////////
-void XCodeProvider::writeFileListToProject(const FileNode &dir, std::ofstream &projectFile, const int indentation,
+void XcodeProvider::writeFileListToProject(const FileNode &dir, std::ofstream &projectFile, const int indentation,
                                            const StringList &duplicate, const std::string &objPrefix, const std::string &filePrefix) {
 
 	// Ensure that top-level groups are generated for i.e. engines/
@@ -327,7 +327,7 @@ void XCodeProvider::writeFileListToProject(const FileNode &dir, std::ofstream &p
 //////////////////////////////////////////////////////////////////////////
 // Setup functions
 //////////////////////////////////////////////////////////////////////////
-void XCodeProvider::setupCopyFilesBuildPhase() {
+void XcodeProvider::setupCopyFilesBuildPhase() {
 	// Nothing to do here
 }
 
@@ -342,7 +342,7 @@ void XCodeProvider::setupCopyFilesBuildPhase() {
  *
  * (each native target has different build rules)
  */
-void XCodeProvider::setupFrameworksBuildPhase() {
+void XcodeProvider::setupFrameworksBuildPhase() {
 	_frameworksBuildPhase.comment = "PBXFrameworksBuildPhase";
 
 	// Just use a hardcoded id for the Frameworks-group
@@ -506,7 +506,7 @@ void XCodeProvider::setupFrameworksBuildPhase() {
 #endif
 }
 
-void XCodeProvider::setupNativeTarget() {
+void XcodeProvider::setupNativeTarget() {
 	_nativeTarget.comment = "PBXNativeTarget";
 
 	// Just use a hardcoded id for the Products-group
@@ -547,7 +547,7 @@ void XCodeProvider::setupNativeTarget() {
 	_groups.add(productsGroup);
 }
 
-void XCodeProvider::setupProject() {
+void XcodeProvider::setupProject() {
 	_project.comment = "PBXProject";
 
 	Object *project = new Object(this, "PBXProject", "PBXProject", "PBXProject", "", "Project object");
@@ -589,7 +589,7 @@ void XCodeProvider::setupProject() {
 	_project.add(project);
 }
 
-void XCodeProvider::setupResourcesBuildPhase() {
+void XcodeProvider::setupResourcesBuildPhase() {
 	_resourcesBuildPhase.comment = "PBXResourcesBuildPhase";
 
 	// Setup resource file properties
@@ -666,7 +666,7 @@ void XCodeProvider::setupResourcesBuildPhase() {
 	}
 }
 
-void XCodeProvider::setupSourcesBuildPhase() {
+void XcodeProvider::setupSourcesBuildPhase() {
 	_sourcesBuildPhase.comment = "PBXSourcesBuildPhase";
 
 	// Setup source file properties
@@ -700,7 +700,7 @@ void XCodeProvider::setupSourcesBuildPhase() {
 }
 
 // Setup all build configurations
-void XCodeProvider::setupBuildConfiguration() {
+void XcodeProvider::setupBuildConfiguration() {
 
 	_buildConfiguration.comment = "XCBuildConfiguration";
 	_buildConfiguration.flags = SettingsAsList;
@@ -956,7 +956,7 @@ void XCodeProvider::setupBuildConfiguration() {
 //////////////////////////////////////////////////////////////////////////
 
 // Setup global defines
-void XCodeProvider::setupDefines(const BuildSetup &setup) {
+void XcodeProvider::setupDefines(const BuildSetup &setup) {
 
 	for (StringList::const_iterator i = setup.defines.begin(); i != setup.defines.end(); ++i) {
 		if (*i == "HAVE_NASM")	// Not supported on Mac (TODO: change how it's handled in main class or add it only in MSVC/CodeBlocks providers?)
@@ -977,7 +977,7 @@ void XCodeProvider::setupDefines(const BuildSetup &setup) {
 //////////////////////////////////////////////////////////////////////////
 
 // TODO use md5 to compute a file hash (and fall back to standard key generation if not passed a file)
-std::string XCodeProvider::getHash(std::string key) {
+std::string XcodeProvider::getHash(std::string key) {
 
 #if DEBUG_XCODE_HASH
 	return key;
@@ -997,7 +997,7 @@ std::string XCodeProvider::getHash(std::string key) {
 
 bool isSeparator (char s) { return (s == '-'); }
 
-std::string XCodeProvider::newHash() const {
+std::string XcodeProvider::newHash() const {
 	std::string hash = createUUID();
 
 	// Remove { and - from UUID and resize to 96-bits uppercase hex string
@@ -1029,7 +1029,7 @@ std::string replace(std::string input, const std::string find, std::string repla
 	return input;
 }
 
-std::string XCodeProvider::writeProperty(const std::string &variable, Property &prop, int flags) const {
+std::string XcodeProvider::writeProperty(const std::string &variable, Property &prop, int flags) const {
 	std::string output;
 
 	output += (flags & SettingsSingleItem ? "" : "\t\t\t") + variable + " = ";
@@ -1060,13 +1060,13 @@ std::string XCodeProvider::writeProperty(const std::string &variable, Property &
 	return output;
 }
 
-std::string XCodeProvider::writeSetting(const std::string &variable, std::string value, std::string comment, int flags, int indent) const {
+std::string XcodeProvider::writeSetting(const std::string &variable, std::string value, std::string comment, int flags, int indent) const {
 	return writeSetting(variable, Setting(value, comment, flags, indent));
 }
 
 // Heavily modified (not in a good way) function, imported from the QMake
 // XCode project generator pbuilder_pbx.cpp, writeSettings() (under LGPL 2.1)
-std::string XCodeProvider::writeSetting(const std::string &variable, const Setting &setting) const {
+std::string XcodeProvider::writeSetting(const std::string &variable, const Setting &setting) const {
 	std::string output;
 	const std::string quote = (setting.flags & SettingsNoQuote) ? "" : "\"";
 	const std::string escape_quote = quote.empty() ? "" : "\\" + quote;
