@@ -230,6 +230,10 @@ void WidgetInventoryTooltip::handleEvents() {
 		return;
 	}
 
+	if (_owner->_invVerbMode == 3)
+		// Adjust tooltip to be above the inventory item being shown above the standard cursor
+		mousePos.y -= events._hotspotPos.y;
+
 	// Update the position of the tooltip
 	int xs = CLIP(mousePos.x - _bounds.width() / 2, 0, SHERLOCK_SCENE_WIDTH - _bounds.width());
 	int ys = CLIP(mousePos.y - _bounds.height(), 0, SHERLOCK_SCREEN_HEIGHT - _bounds.height());

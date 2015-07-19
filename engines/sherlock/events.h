@@ -59,6 +59,7 @@ public:
 	bool _oldRightButton;
 	bool _firstPress;
 	Common::Stack<Common::KeyState> _pendingKeys;
+	Common::Point _hotspotPos;
 public:
 	Events(SherlockEngine *vm);
 	~Events();
