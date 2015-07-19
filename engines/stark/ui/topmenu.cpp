@@ -55,7 +55,7 @@ TopMenu::~TopMenu() {
 }
 
 void TopMenu::onRender() {
-	_widgetsVisible = isMouseInside();
+	_widgetsVisible = isMouseInside() && StarkUserInterface->isInteractive();
 
 	if (!_widgetsVisible) {
 		return;
@@ -67,14 +67,22 @@ void TopMenu::onRender() {
 }
 
 void TopMenu::onMouseMove(const Common::Point &pos) {
-	if (_widgetsVisible) {
-		_cursor->setCursorType(Cursor::kActive);
-		_cursor->setMouseHint(getMouseHintAtPosition(pos));
+	if (_widgetsVisible && StarkUserInterface->isInteractive()) {
+		if (_exitButton->containsPoint(pos) || _inventoryButton->containsPoint(pos)) {
+			_cursor->setCursorType(Cursor::kActive);
+			_cursor->setMouseHint(getMouseHintAtPosition(pos));
+		} else {
+			_cursor->setCursorType(Cursor::kDefault);
+			_cursor->setMouseHint("");
+		}
+	} else {
+		_cursor->setCursorType(Cursor::kPassive);
+		_cursor->setMouseHint("");
 	}
 }
 
 void TopMenu::onClick(const Common::Point &pos) {
-	if (!_widgetsVisible) {
+	if (!_widgetsVisible || !StarkUserInterface->isInteractive()) {
 		return;
 	}
 

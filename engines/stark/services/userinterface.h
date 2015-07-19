@@ -41,10 +41,14 @@ class FMVPlayer;
 class GameWindow;
 class Window;
 
+/**
+ * Facade object for interacting with the user interface from the rest of the engine
+ */
 class UserInterface {
 public:
 	UserInterface(Gfx::Driver *gfx, Cursor *cursor);
 	virtual ~UserInterface();
+	
 	void init();
 	void update();
 	void render();
@@ -56,6 +60,12 @@ public:
 	bool isPlayingFMV() const;
 	void stopPlayingFMV();
 	bool shouldExit() { return _exitGame; }
+
+	/** Can the player interact with the game world? */
+	bool isInteractive() const;
+
+	/** Allow or forbid interaction with the game world */
+	void setInteractive(bool interactive);
 
 private:
 	ActionMenu *_actionMenu;
@@ -70,6 +80,8 @@ private:
 	Gfx::Driver *_gfx;
 	Cursor *_cursor;
 	bool _exitGame;
+
+	bool _interactive;
 };
 
 } // End of namespace Stark

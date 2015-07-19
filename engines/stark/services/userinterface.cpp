@@ -49,7 +49,8 @@ UserInterface::UserInterface(Gfx::Driver *gfx, Cursor *cursor) :
 	_exitGame(false),
 	_fmvPlayer(nullptr),
 	_actionMenu(nullptr),
-	_gameWindow(nullptr)
+	_gameWindow(nullptr),
+	_interactive(true)
 	{
 }
 
@@ -135,6 +136,14 @@ void UserInterface::render() {
 	for (int i = _windows.size() - 1; i >= 0; i--) {
 		_windows[i]->render();
 	}
+}
+
+bool UserInterface::isInteractive() const {
+	return _interactive;
+}
+
+void UserInterface::setInteractive(bool interactive) {
+	_interactive = interactive;
 }
 
 } // End of namespace Stark

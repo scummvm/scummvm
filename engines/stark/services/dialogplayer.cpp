@@ -41,6 +41,8 @@ DialogPlayer::~DialogPlayer() {}
 void DialogPlayer::run(Resources::Dialog *dialog) {
 	reset();
 
+	StarkUserInterface->setInteractive(false);
+
 	_currentDialog = dialog;
 	buildOptions();
 }
@@ -164,6 +166,7 @@ void DialogPlayer::onReplyEnd() {
 	} else {
 		// Quit the dialog
 		reset();
+		StarkUserInterface->setInteractive(true);
 	}
 }
 

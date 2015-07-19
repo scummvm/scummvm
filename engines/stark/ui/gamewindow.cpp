@@ -33,6 +33,7 @@
 #include "engines/stark/services/services.h"
 #include "engines/stark/services/staticprovider.h"
 #include "engines/stark/services/gameinterface.h"
+#include "engines/stark/services/userinterface.h"
 
 #include "engines/stark/ui/actionmenu.h"
 #include "engines/stark/ui/inventorywindow.h"
@@ -66,6 +67,13 @@ void GameWindow::onRender() {
 
 void GameWindow::onMouseMove(const Common::Point &pos) {
 	_renderEntries = StarkGlobal->getCurrent()->getLocation()->listRenderEntries();
+
+	if (!StarkUserInterface->isInteractive()) {
+		_objectUnderCursor = nullptr;
+		_cursor->setCursorType(Cursor::kPassive);
+		_cursor->setMouseHint("");
+		return;
+	}
 
 	int16 selectedInventoryItem = _inventory->getSelectedInventoryItem();
 	int16 singlePossibleAction = -1;
@@ -106,6 +114,10 @@ void GameWindow::onMouseMove(const Common::Point &pos) {
 }
 
 void GameWindow::onClick(const Common::Point &pos) {
+	if (!StarkUserInterface->isInteractive()) {
+		return;
+	}
+
 	_actionMenu->close();
 
 	int16 selectedInventoryItem = _inventory->getSelectedInventoryItem();
@@ -126,6 +138,10 @@ void GameWindow::onClick(const Common::Point &pos) {
 }
 
 void GameWindow::onRightClick(const Common::Point &pos) {
+	if (!StarkUserInterface->isInteractive()) {
+		return;
+	}
+
 	int16 selectedInventoryItem = _inventory->getSelectedInventoryItem();
 
 	if (selectedInventoryItem == -1) {

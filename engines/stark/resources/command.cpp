@@ -208,8 +208,8 @@ Command *Command::opDialogCall(Script *script, const ResourceReference &dialogRe
 }
 
 Command *Command::opSetInteractiveMode(bool enabled) {
-	assert(_arguments.size() == 2);
-	warning("(TODO: Implement) opSetInteractiveMode(%d)", enabled);
+	StarkUserInterface->setInteractive(enabled);
+
 	return nextCommand();
 }
 
