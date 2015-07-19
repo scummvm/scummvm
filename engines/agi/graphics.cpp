@@ -72,6 +72,7 @@ static const uint8 egaPalette[16 * 3] = {
  * from Donald Duck's Playground (1986) to Manhunter II (1989).
  * 16 RGB colors. 3 bits per color component.
  */
+#if 0
 static const uint8 atariStAgiPalette[16 * 3] = {
 	0x0, 0x0, 0x0,
 	0x0, 0x0, 0x7,
@@ -90,6 +91,7 @@ static const uint8 atariStAgiPalette[16 * 3] = {
 	0x7, 0x7, 0x4,
 	0x7, 0x7, 0x7
 };
+#endif
 
 /**
  * Second generation Apple IIGS AGI palette.
@@ -109,6 +111,8 @@ static const uint8 atariStAgiPalette[16 * 3] = {
  * 3.001 (Black Cauldron        v1.0O 1989-02-24 (CE))
  * 3.003 (Gold Rush!            v1.0M 1989-02-28 (CE))
  */
+#if 0
+// FIXME: Identical to amigaAgiPaletteV2
 static const uint8 appleIIgsAgiPaletteV2[16 * 3] = {
 	0x0, 0x0, 0x0,
 	0x0, 0x0, 0xF,
@@ -127,6 +131,7 @@ static const uint8 appleIIgsAgiPaletteV2[16 * 3] = {
 	0xE, 0xE, 0x0,
 	0xF, 0xF, 0xF
 };
+#endif
 
 /**
  * First generation Amiga & Apple IIGS AGI palette.
