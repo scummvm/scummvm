@@ -300,7 +300,7 @@ void WidgetTalk::handleEvents() {
 
 			for (int idx = 1; idx < MAX_CHARACTERS; ++idx) {
 				if (people[idx]._type == CHARACTER) {
-					while (people[idx]._pathStack.empty())
+					while (!people[idx]._pathStack.empty())
 						people[idx].pullNPCPath();
 				}
 			}
