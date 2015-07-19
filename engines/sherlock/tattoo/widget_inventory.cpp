@@ -384,7 +384,7 @@ void WidgetInventoryVerbs::handleEvents() {
 		ui._scrollHighlight = SH_NONE;
 		banishWindow();
 
-		if (_outsideMenu && !innerBounds.contains(mousePos) || ui._keyState.keycode == Common::KEYCODE_ESCAPE) {
+		if ((_outsideMenu && !innerBounds.contains(mousePos)) || ui._keyState.keycode == Common::KEYCODE_ESCAPE) {
 			_owner->_invVerbMode = 0;
 		} else if (innerBounds.contains(mousePos)) {
 			_outsideMenu = false;
@@ -472,7 +472,7 @@ void WidgetInventoryVerbs::highlightControls() {
 	// See if the highlighted verb has changed
 	if (_invVerbSelect != _oldInvVerbSelect) {
 		// Draw the list again, with the new highlighting
-		for (uint idx = 0; idx < _inventCommands.size(); ++idx) {
+		for (int idx = 0; idx < (int)_inventCommands.size(); ++idx) {
 			byte color = (idx == _invVerbSelect) ? COMMAND_HIGHLIGHTED : INFO_TOP;
 			_surface.writeString(_inventCommands[idx], Common::Point(
 				(_bounds.width() - _surface.stringWidth(_inventCommands[idx])) / 2,
