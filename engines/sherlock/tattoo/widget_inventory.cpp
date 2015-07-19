@@ -275,7 +275,7 @@ void WidgetInventoryVerbs::load() {
 
 		if (obj._type != INVALID && obj._type != HIDDEN) {
 			for (int useNum = 0; useNum < 6; ++useNum) {
-				if (obj._use[useNum]._verb.hasPrefix("*") &&
+				if (!obj._use[useNum]._verb.hasPrefix("*") &&
 					!obj._use[useNum]._target.compareToIgnoreCase(inv[_owner->_invSelect]._name)) {
 					// Make sure the Verb is not already in the list
 					bool found1 = false;
