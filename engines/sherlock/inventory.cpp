@@ -47,6 +47,7 @@ void InventoryItem::synchronize(Serializer &s) {
 	s.syncString(_name);
 	s.syncString(_description);
 	s.syncString(_examine);
+	_verb.synchronize(s);
 }
 
 /*----------------------------------------------------------------*/
