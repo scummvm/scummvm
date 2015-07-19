@@ -69,7 +69,7 @@ public:
 		kBonesMesh              = 32,
 		kScroll                 = 33,
 		kFMV                    = 34,
-		kLipSynch               = 35,
+		kLipSync                = 35,
 		kAnimScriptBonesTrigger = 36,
 		kString                 = 37,
 		kTextureSet             = 38

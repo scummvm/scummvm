@@ -36,6 +36,7 @@ MODULE_OBJS := \
 	resources/layer.o \
 	resources/level.o \
 	resources/light.o \
+	resources/lipsync.o \
 	resources/location.o \
 	resources/object.o \
 	resources/pattable.o \

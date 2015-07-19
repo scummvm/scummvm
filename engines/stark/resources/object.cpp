@@ -76,7 +76,7 @@ const char *Type::getName() const {
 			{ Type::kBonesMesh,              "BonesMesh"              },
 			{ Type::kScroll,                 "Scroll"                 },
 			{ Type::kFMV,                    "FMV"                    },
-			{ Type::kLipSynch,               "LipSynch"               },
+			{ Type::kLipSync,                "LipSynch"               },
 			{ Type::kAnimScriptBonesTrigger, "AnimScriptBonesTrigger" },
 			{ Type::kString,                 "String"                 },
 			{ Type::kTextureSet,             "TextureSet"             }

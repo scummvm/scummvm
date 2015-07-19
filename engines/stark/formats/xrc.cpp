@@ -43,8 +43,8 @@
 #include "engines/stark/resources/layer.h"
 #include "engines/stark/resources/level.h"
 #include "engines/stark/resources/light.h"
+#include "engines/stark/resources/lipsync.h"
 #include "engines/stark/resources/location.h"
-#include "engines/stark/resources/object.h"
 #include "engines/stark/resources/pattable.h"
 #include "engines/stark/resources/root.h"
 #include "engines/stark/resources/script.h"
@@ -270,6 +270,9 @@ Resources::Object *XRCReader::createResource(XRCReadStream *stream, Resources::O
 	case Resources::Type::kFMV:
 		resource = new Resources::FMV(parent, subType, index, name);
 		break;
+	case Resources::Type::kLipSync:
+		resource = new Resources::LipSync(parent, subType, index, name);
+        break;
 	case Resources::Type::kTextureSet:
 		resource = new Resources::TextureSet(parent, subType, index, name);
 		break;
