@@ -583,6 +583,7 @@ void TattooUserInterface::putMessage(const char *formatStr, ...) {
 	va_end(args);
 
 	// Open the message widget
+	_menuMode = MESSAGE_MODE;
 	_messageWidget.load(str, 25);
 	_messageWidget.summonWindow();
 }

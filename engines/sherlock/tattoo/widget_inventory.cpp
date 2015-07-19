@@ -430,10 +430,10 @@ void WidgetInventoryVerbs::handleEvents() {
 					ImageFrame &imgFrame = (*inv._invShapes[_owner->_invSelect - inv._invIndex])[0];
 					events.setCursor(ARROW, imgFrame._frame);
 
-					// Close the inventory dialog as well, then add the tooltip directly to the UI
-					// so that it will receive events even though the inventory dialog is now closed
-					_owner->close();
-					_owner->_tooltipWidget.summonWindow();
+					// Close the inventory dialog without banishing it, so it can keep getting events
+					// to handle tooltips and actually making the selection of what object to use them item on
+					inv.freeInv();
+					_owner->_surface.free();
 				}
 			}
 		}
@@ -607,10 +607,7 @@ void WidgetInventory::handleEvents() {
 		if (_invVerbMode == 3) {
 			// Selecting object after inventory verb has been selected
 			_tooltipWidget.banishWindow();
-			inv.freeInv();
-
-			ui._menuMode = scene._labTableScene ? LAB_MODE : STD_MODE;
-			events.clearEvents();
+			close();
 
 			if (ui._keyState.keycode != Common::KEYCODE_ESCAPE) {
 				// If user pointed at an item, use the selected inventory item with this item
@@ -641,8 +638,6 @@ void WidgetInventory::handleEvents() {
 		} else if ((_outsideMenu && !_bounds.contains(mousePos)) || ui._keyState.keycode == Common::KEYCODE_ESCAPE) {
 			// Want to close the window (clicked outside of it). So close the window and return to Standard 
 			close();
-			events.setCursor(ARROW);
-			ui._menuMode = scene._labTableScene ? LAB_MODE : STD_MODE;
 
 		} else if (_bounds.contains(mousePos)) {
 			// Mouse button was released inside the inventory window
@@ -751,10 +746,15 @@ void WidgetInventory::erase() {
 void WidgetInventory::close() {
 	Events &events = *_vm->_events;
 	Inventory &inv = *_vm->_inventory;
+	TattooScene &scene = *(TattooScene *)_vm->_scene;
+	TattooUserInterface &ui = *(TattooUserInterface *)_vm->_ui;
 
 	banishWindow();
 	inv.freeInv();
 	events.clearEvents();
+
+	events.setCursor(ARROW);
+	ui._menuMode = scene._labTableScene ? LAB_MODE : STD_MODE;
 }
 
 } // End of namespace Tattoo
