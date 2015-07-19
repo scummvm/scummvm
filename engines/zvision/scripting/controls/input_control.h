@@ -51,15 +51,12 @@ private:
 
 	Common::String _currentInputText;
 	bool _textChanged;
-	uint _cursorOffset;
 	bool _enterPressed;
 	bool _readOnly;
 
 	int16 _txtWidth;
 	int16 _maxTxtWidth;
 	Video::VideoDecoder *_animation;
-	int32 _frameDelay;
-	int16 _frame;
 
 public:
 	void focus() {

@@ -171,9 +171,6 @@ private:
 
 	bool _isOpen;
 
-	// points to a MIDI channel for each of the new voice channels
-	byte _voiceChannelMapping[AGOS_ADLIB_VOICES_COUNT];
-
 	// stores information about all FM voice channels
 	ChannelEntry _channels[AGOS_ADLIB_VOICES_COUNT];
 

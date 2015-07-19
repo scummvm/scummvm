@@ -269,7 +269,6 @@ public:
 	bool execute();
 
 private:
-	uint32 _animationKey;
 	uint32 _controlKey;
 	uint32 _x1;
 	uint32 _y1;

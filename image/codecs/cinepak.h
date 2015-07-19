@@ -91,7 +91,6 @@ private:
 
 	byte *_ditherPalette;
 	bool _dirtyPalette;
-	byte *_rgbLookup;
 	byte *_colorMap;
 	DitherType _ditherType;
 
