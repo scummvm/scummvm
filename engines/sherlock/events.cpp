@@ -99,6 +99,38 @@ void Events::setCursor(const Graphics::Surface &src, int hotspotX, int hotspotY)
 	showCursor();
 }
 
+void Events::setCursor(CursorId cursorId, const Graphics::Surface &surface) {
+	_cursorId = cursorId;
+
+	int hotspotX, hotspotY;
+	if (cursorId == MAGNIFY) {
+		hotspotX = 8;
+		hotspotY = 8;
+	} else {
+		hotspotX = 0;
+		hotspotY = 0;
+	}
+
+	// Get the standard cursor frame
+	Graphics::Surface &surface2 = (*_cursorImages)[cursorId]._frame;
+
+	// Form a single surface containing both frames
+	int maxWidth = MAX(surface.w, surface2.w);
+	Graphics::Surface s;
+	s.create(maxWidth, surface.h + surface2.h, Graphics::PixelFormat::createFormatCLUT8());
+	s.fillRect(Common::Rect(0, 0, maxWidth, surface.h + surface2.h), TRANSPARENCY);
+
+	s.copyRectToSurface(surface, (maxWidth - surface.w) / 2, 0, Common::Rect(0, 0, surface.w, surface.h));
+	s.copyRectToSurface(surface2, (maxWidth - surface2.w) / 2, surface.h, Common::Rect(0, 0, surface2.w, surface2.h));
+
+	// Adjust hotspot position
+	hotspotX += (maxWidth - surface2.w) / 2;
+	hotspotY += surface.h;
+
+	// Set the cursor
+	setCursor(s, hotspotX, hotspotY);
+}
+
 void Events::animateCursorIfNeeded() {
 	if (_cursorId >= WAIT && _cursorId < (WAIT + 3)) {
 		CursorId newId = (_cursorId == WAIT + 2) ? WAIT : (CursorId)((int)_cursorId + 1);

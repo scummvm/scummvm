@@ -79,6 +79,11 @@ public:
 	void setCursor(const Graphics::Surface &src, int hotspotX = 0, int hotspotY = 0);
 
 	/**
+	 * Set both a standard cursor as well as an inventory item above it
+	 */
+	void setCursor(CursorId cursorId, const Graphics::Surface &surface);
+
+	/**
 	 * Animates the mouse cursor if the Wait cursor is showing
 	 */
 	void animateCursorIfNeeded();

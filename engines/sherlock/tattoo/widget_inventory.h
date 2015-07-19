@@ -65,7 +65,6 @@ class WidgetInventoryVerbs : public WidgetBase {
 private:
 	WidgetInventory *_owner;
 	Common::StringArray _inventCommands;
-	Common::String _action;
 
 	void highlightControls();
 public:
@@ -92,12 +91,9 @@ private:
 	int _dialogTimer;
 	WidgetInventoryTooltip _tooltipWidget;
 	WidgetInventoryVerbs _verbList;
-	Common::Rect _invGraphicBounds;
-	Surface _invGraphic;
 	bool _swapItems;
 	Surface _menuSurface;
 	Common::String _invTarget;
-	Common::String _invVerb;
 
 	/**
 	 * Draw the bars within the dialog
@@ -119,12 +115,20 @@ public:
 	WidgetInventory(SherlockEngine *vm);
 	virtual ~WidgetInventory() {}
 
+	/**
+	 * Load the inventory window
+	 */
 	void load(int mode);
 
 	/**
 	 * Draw the inventory on the surface
 	 */
 	void drawInventory();
+
+	/**
+	 * Close the window
+	 */
+	void close();
 
 	/**
 	 * Handle events whilst the widget is on-screen
