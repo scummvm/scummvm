@@ -119,8 +119,6 @@ public:
 	int _maskCounter;
 	ImageFile *_interfaceImages;
 	WidgetText _textWidget;
-	Common::String _action;
-	Common::String _verb;
 public:
 	TattooUserInterface(SherlockEngine *vm);
 	virtual ~TattooUserInterface();

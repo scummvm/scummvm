@@ -122,17 +122,6 @@ void WidgetInventoryTooltip::handleEvents() {
 	Common::String strWith = fixedText.getText(kFixedText_With);
 	Common::String strUse = fixedText.getText(kFixedText_Use);
 
-	// If there's a floating graphic for a selected inventory item, update it's bounds
-	if (_owner->_invVerbMode == 2 || _owner->_invVerbMode == 3) {
-		_oldInvGraphicBounds = _invGraphicBounds;
-
-		// Set the New position of the graphic
-		int xp = CLIP(mousePos.x - _invGraphicBounds.width() / 2, 0, SHERLOCK_SCENE_WIDTH - _invGraphicBounds.width());
-		int yp = CLIP(mousePos.y - _invGraphicBounds.height() / 2, 0, SHERLOCK_SCREEN_HEIGHT - _invGraphicBounds.height());
-
-		_invGraphicBounds.moveTo(xp, yp);
-	}
-
 	// If we are using an inventory item on an object in the room, display the appropriate text above the mouse cursor
 	if (_owner->_invVerbMode == 3) {
 		select = ui._bgFound;
@@ -147,18 +136,18 @@ void WidgetInventoryTooltip::handleEvents() {
 					if (_vm->getLanguage() == Common::GR_GRE) {
 
 						if (!_owner->_swapItems)
-							str = Common::String::format("%s %s %s %s", ui._action.c_str(), obj._description.c_str(), 
-								inv[_owner->_invSelect]._name.c_str(), ui._verb.c_str());
+							str = Common::String::format("%s %s %s %s", _owner->_action.c_str(), obj._description.c_str(), 
+								inv[_owner->_invSelect]._name.c_str(), _owner->_verb.c_str());
 						else
-							str = Common::String::format("%s %s %s %s", ui._action.c_str(), inv[_owner->_invSelect]._name.c_str(), 
-								obj._description.c_str(), ui._verb.c_str());
+							str = Common::String::format("%s %s %s %s", _owner->_action.c_str(), inv[_owner->_invSelect]._name.c_str(), 
+								obj._description.c_str(), _owner->_verb.c_str());
 					} else {
 						if (_owner->_swapItems)
-							str = Common::String::format("%s %s %s %s", ui._verb.c_str(), obj._description.c_str(), ui._action.c_str(), 
+							str = Common::String::format("%s %s %s %s", _owner->_verb.c_str(), obj._description.c_str(), _owner->_action.c_str(), 
 								inv[_owner->_invSelect]._name.c_str());
 						else
-							str = Common::String::format("%s %s %s %s", ui._verb.c_str(), inv[_owner->_invSelect]._name.c_str(), 
-								ui._action.c_str(), obj._description.c_str());
+							str = Common::String::format("%s %s %s %s", _owner->_verb.c_str(), inv[_owner->_invSelect]._name.c_str(), 
+								_owner->_action.c_str(), obj._description.c_str());
 					}
 				}
 			} else {
@@ -167,19 +156,19 @@ void WidgetInventoryTooltip::handleEvents() {
 				if (!person._description.empty() && !person._description.hasPrefix(" ")) {
 					if (_vm->getLanguage() == Common::GR_GRE) {
 						if (!_owner->_swapItems)
-							str = Common::String::format("%s %s %s %s", ui._action.c_str(), person._description.c_str(),
-								inv[_owner->_invSelect]._name.c_str(), ui._verb.c_str());
+							str = Common::String::format("%s %s %s %s", _owner->_action.c_str(), person._description.c_str(),
+								inv[_owner->_invSelect]._name.c_str(), _owner->_verb.c_str());
 						else
-							str = Common::String::format("%s %s %s %s", ui._action.c_str(), inv[_owner->_invSelect]._name.c_str(),
-								person._description.c_str(), ui._verb.c_str());
+							str = Common::String::format("%s %s %s %s", _owner->_action.c_str(), inv[_owner->_invSelect]._name.c_str(),
+								person._description.c_str(), _owner->_verb.c_str());
 					} else {
 
 						if (_owner->_swapItems)
-							str = Common::String::format("%s %s %s %s", ui._verb.c_str(), person._description.c_str(),
-								ui._action.c_str(), inv[_owner->_invSelect]._name.c_str());
+							str = Common::String::format("%s %s %s %s", _owner->_verb.c_str(), person._description.c_str(),
+								_owner->_action.c_str(), inv[_owner->_invSelect]._name.c_str());
 						else
-							str = Common::String::format("%s %s %s %s", ui._verb.c_str(),
-								inv[_owner->_invSelect]._name.c_str(), ui._action.c_str(), person._description.c_str());
+							str = Common::String::format("%s %s %s %s", _owner->_verb.c_str(),
+								inv[_owner->_invSelect]._name.c_str(), _owner->_action.c_str(), person._description.c_str());
 					}
 				}
 			}
@@ -267,7 +256,7 @@ void WidgetInventoryVerbs::load() {
 	_inventCommands.push_back(FIXED(Look));
 
 	// Default the Action word to "with"
-	ui._action = _vm->getLanguage() == Common::GR_GRE ? "" : FIXED(With);
+	_owner->_action = _vm->getLanguage() == Common::GR_GRE ? "" : FIXED(With);
 
 	// Search all the bgshapes for any matching Target Fields
 	for (uint idx = 0; idx < scene._bgShapes.size(); ++idx) {
@@ -293,7 +282,7 @@ void WidgetInventoryVerbs::load() {
 								if (!scumm_strnicmp(obj._use[useNum]._names[nameNum].c_str(), "*VSWAP", 6))
 									_owner->_swapItems = true;
 								else
-									ui._action = Common::String(obj._use[useNum]._names[nameNum].c_str() + 2);
+									_owner->_action = Common::String(obj._use[useNum]._names[nameNum].c_str() + 2);
 							}
 						}
 					}
@@ -428,7 +417,7 @@ void WidgetInventoryVerbs::handleEvents() {
 					events.clearEvents();
 					ui.checkAction(inv[_owner->_invSelect]._verb, 2000);
 				} else {
-					ui._verb = _inventCommands[_invVerbSelect];
+					_owner->_verb = _inventCommands[_invVerbSelect];
 				}
 
 				// If we are still in Inventory Mode, setup the graphic to float in front of the mouse cursor
@@ -437,8 +426,10 @@ void WidgetInventoryVerbs::handleEvents() {
 					ImageFrame &imgFrame = (*inv._invShapes[_owner->_invSelect - inv._invIndex])[0];
 					events.setCursor(ARROW, imgFrame._frame);
 
-					// Close the inventory dialog as well
+					// Close the inventory dialog as well, then add the tooltip directly to the UI
+					// so that it will receive events even though the inventory dialog is now closed
 					_owner->close();
+					_owner->_tooltipWidget.summonWindow();
 				}
 			}
 		}
@@ -623,7 +614,7 @@ void WidgetInventory::handleEvents() {
 				if (ui._bgFound != -1) {
 					if (ui._personFound) {
 						for (int idx = 0; idx < 2; ++idx) {
-							if (!people[ui._bgFound - 1000]._use[idx]._verb.compareToIgnoreCase(ui._verb) &&
+							if (!people[ui._bgFound - 1000]._use[idx]._verb.compareToIgnoreCase(_verb) &&
 								!people[ui._bgFound - 1000]._use[idx]._target.compareToIgnoreCase(_invTarget)) {
 								ui.checkAction(people[ui._bgFound - 1000]._use[idx], ui._bgFound);
 								found = true;
@@ -631,7 +622,7 @@ void WidgetInventory::handleEvents() {
 						}
 					} else {
 						for (int idx = 0; idx < 6; ++idx) {
-							if (!ui._bgShape->_use[idx]._verb.compareToIgnoreCase(ui._verb) &&
+							if (!ui._bgShape->_use[idx]._verb.compareToIgnoreCase(_verb) &&
 									!ui._bgShape->_use[idx]._target.compareToIgnoreCase(_invTarget)) {
 								ui.checkAction(ui._bgShape->_use[idx], ui._bgFound);
 								found = true;
@@ -647,6 +638,7 @@ void WidgetInventory::handleEvents() {
 			// Want to close the window (clicked outside of it). So close the window and return to Standard 
 			close();
 			events.setCursor(ARROW);
+			ui._menuMode = scene._labTableScene ? LAB_MODE : STD_MODE;
 
 		} else if (_bounds.contains(mousePos)) {
 			// Mouse button was released inside the inventory window
@@ -755,14 +747,10 @@ void WidgetInventory::erase() {
 void WidgetInventory::close() {
 	Events &events = *_vm->_events;
 	Inventory &inv = *_vm->_inventory;
-	TattooScene &scene = *(TattooScene *)_vm->_scene;
-	TattooUserInterface &ui = *(TattooUserInterface *)_vm->_ui;
 
 	banishWindow();
 	inv.freeInv();
-
 	events.clearEvents();
-	ui._menuMode = scene._labTableScene ? LAB_MODE : STD_MODE;
 }
 
 } // End of namespace Tattoo

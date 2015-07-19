@@ -40,7 +40,6 @@ class WidgetInventory;
 class WidgetInventoryTooltip: public WidgetTooltipBase {
 private:
 	WidgetInventory *_owner;
-	Common::Rect _oldInvGraphicBounds, _invGraphicBounds;
 protected:
 	/**
 	* Overriden from base class, since tooltips have a completely transparent background
@@ -111,6 +110,8 @@ private:
 	void highlightControls();
 public:
 	int _invMode;
+	Common::String _action;
+	Common::String _verb;
 public:
 	WidgetInventory(SherlockEngine *vm);
 	virtual ~WidgetInventory() {}
