@@ -264,7 +264,7 @@ static const char *const fixedTextDE_ActionPick[] = {
 	"Diese Blumen geh\224ren Penny",
 	"Sie ist doch viel zu jung f\201r Dich!",
 	"Ich denke, Du stehst mehr auf M\204dchen ?",
-	"Staatseigentum - Nur für den Dienstgebrauch !"
+	"Staatseigentum - Nur f\201r den Dienstgebrauch !"
 };
 
 static const char *const fixedTextES_ActionPick[] = {
@@ -291,8 +291,8 @@ static const char *const fixedTextDE_ActionUse[] = {
 	"Nein, das geht wirklich nicht",
 	"Tja keinerlei Wirkung",
 	"Da kommst du nicht dran",
-	"Na gut, die Tür sieht jetzt gr\224\341er aus. Zufrieden?",
-	"Türen sind Nichtraucher!"
+	"Na gut, die T\201r sieht jetzt gr\224\341er aus. Zufrieden?",
+	"T\201ren sind Nichtraucher!"
 };
 
 static const char *const fixedTextES_ActionUse[] = {
