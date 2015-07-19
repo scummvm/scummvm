@@ -222,6 +222,7 @@ void TattooUserInterface::doJournal() {
 void TattooUserInterface::reset() {
 	UserInterface::reset();
 	_lookPos = Common::Point(SHERLOCK_SCREEN_WIDTH / 2, SHERLOCK_SCREEN_HEIGHT / 2);
+	_tooltipWidget.setText("");
 }
 
 void TattooUserInterface::handleInput() {
