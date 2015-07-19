@@ -376,10 +376,14 @@ void WidgetInventoryVerbs::handleEvents() {
 	Common::Rect innerBounds = _bounds;
 	innerBounds.grow(-3);
 
+	// Flag is they started pressing outside of the menu
+	if (events._firstPress && !_bounds.contains(mousePos))
+		_outsideMenu = true;
+
 	if (events._released || events._rightReleased || ui._keyState.keycode == Common::KEYCODE_ESCAPE) {
 		ui._scrollHighlight = SH_NONE;
 
-		if (_outsideMenu && !innerBounds.contains(mousePos)) {
+		if (_outsideMenu && !innerBounds.contains(mousePos) || ui._keyState.keycode == Common::KEYCODE_ESCAPE) {
 			banishWindow();
 			_owner->_invVerbMode = 0;
 		} else if (innerBounds.contains(mousePos)) {
