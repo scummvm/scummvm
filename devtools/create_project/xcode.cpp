@@ -157,7 +157,7 @@ XcodeProvider::Group *XcodeProvider::Group::getChildGroup(const std::string &nam
 }
 
 XcodeProvider::Group *XcodeProvider::touchGroupsForPath(const std::string &path) {
-	if (_rootSourceGroup == nullptr) {
+	if (_rootSourceGroup == NULL) {
 		assert (path == _projectRoot);
 		_rootSourceGroup = new Group(this, "Sources", path, path);
 		_groups.add(_rootSourceGroup);
