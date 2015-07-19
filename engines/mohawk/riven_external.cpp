@@ -2573,26 +2573,47 @@ void RivenExternal::xt7500_checkmarbles(uint16 argc, uint16 *argv) {
 
 void RivenExternal::xt7600_setupmarbles(uint16 argc, uint16 *argv) {
 	// Draw the small marbles when we're a step away from the waffle
-	uint16 baseBitmapId = _vm->findResourceID(ID_TBMP, "*tsmallred");
+
+	// Convert from marble X coordinate to screen X coordinate
+	static const uint16 xPosOffsets[] = {
+		246, 245, 244, 243, 243, 241, 240, 240, 239, 238, 237, 237, 236, 235, 234, 233, 232, 231, 230, 229, 228, 227, 226, 226, 225
+	};
+
+	// Convert from marble Y coordinate to screen Y coordinate
+	static const uint16 yPosOffsets[] = {
+		261, 263, 265, 267, 268, 270, 272, 274, 276, 278, 281, 284, 285, 288, 290, 293, 295, 298, 300, 303, 306, 309, 311, 314, 316
+	};
+
+	// Handle spacing for y coordinates due to the angle
+	static const double yAdjusts[] = {
+		4.56, 4.68, 4.76, 4.84, 4.84, 4.96, 5.04, 5.04, 5.12, 5.2, 5.28, 5.28, 5.36, 5.44, 5.4, 5.6, 5.72, 5.8, 5.88, 5.96, 6.04, 6.12, 6.2, 6.2, 6.28
+	};
+
+	// Waffle state of 0 is up, 1 down
 	bool waffleDown = _vm->_vars["twaffle"] != 0;
 
 	// Note that each of the small marble images is exactly 4x2
+	// The original seems to scale the marble images from extras.mhk, but
+	// we're using the pre-scaled images in the stack.
+	uint16 baseBitmapId = _vm->findResourceID(ID_TBMP, "*tsmallred");
 
 	for (uint16 i = 0; i < kMarbleCount; i++) {
-		uint32 &var = _vm->_vars[s_marbleNames[i]];
+		uint32 var = _vm->_vars[s_marbleNames[i]];
 
 		if (var == 0) {
 			// The marble is still in its initial place
 			// (Note that this is still drawn even if the waffle is down)
-			int marbleX = 376 + i * 2;
-			int marbleY = 253 + i * 4;
-			_vm->_gfx->copyImageToScreen(baseBitmapId + i, marbleX, marbleY, marbleX + kSmallMarbleWidth, marbleY + kSmallMarbleHeight);
+			static const uint16 defaultX[] = { 375, 377, 379, 381, 383, 385 };
+			static const uint16 defaultY[] = { 253, 257, 261, 265, 268, 273 };
+			_vm->_gfx->copyImageToScreen(baseBitmapId + i, defaultX[i], defaultY[i], defaultX[i] + kSmallMarbleWidth, defaultY[i] + kSmallMarbleHeight);
 		} else if (waffleDown) {
 			// The marble is on the grid and the waffle is down
 			// (Nothing to draw here)
 		} else {
 			// The marble is on the grid and the waffle is up
-			// TODO: Draw them onto the grid
+			int marbleX = (int)round(getMarbleX(var) * yAdjusts[getMarbleY(var)] + xPosOffsets[getMarbleY(var)]);
+			int marbleY = yPosOffsets[getMarbleY(var)];
+			_vm->_gfx->copyImageToScreen(baseBitmapId + i, marbleX, marbleY, marbleX + kSmallMarbleWidth, marbleY + kSmallMarbleHeight);
 		}
 	}
 }
