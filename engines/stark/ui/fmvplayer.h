@@ -47,7 +47,6 @@ public:
 	FMVPlayer(Gfx::Driver *gfx, Cursor *cursor);
 	virtual ~FMVPlayer();
 	void play(const Common::String &name);
-	bool isPlaying();
 	void stop();
 
 protected:
@@ -56,6 +55,8 @@ protected:
 	void onClick(const Common::Point &pos) override {};
 
 private:
+	bool isPlaying();
+
 	Video::BinkDecoder *_decoder;
 	Gfx::Texture *_texture;
 };

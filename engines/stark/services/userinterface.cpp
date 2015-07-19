@@ -50,7 +50,8 @@ UserInterface::UserInterface(Gfx::Driver *gfx, Cursor *cursor) :
 	_fmvPlayer(nullptr),
 	_actionMenu(nullptr),
 	_gameWindow(nullptr),
-	_interactive(true)
+	_interactive(true),
+	_currentScreen(kScreenGame)
 	{
 }
 
@@ -64,48 +65,69 @@ UserInterface::~UserInterface() {
 }
 
 void UserInterface::init() {
+	// Game screen windows
 	_topMenu = new TopMenu(_gfx, _cursor);
 	_dialogPanel = new DialogPanel(_gfx, _cursor);
-	_fmvPlayer = new FMVPlayer(_gfx, _cursor);
 	_actionMenu = new ActionMenu(_gfx, _cursor);
 	_inventoryWindow = new InventoryWindow(_gfx, _cursor, _actionMenu);
 	_actionMenu->setInventory(_inventoryWindow);
 	_gameWindow = new GameWindow(_gfx, _cursor, _actionMenu, _inventoryWindow);
 
-	_windows.push_back(_actionMenu);
-	_windows.push_back(_inventoryWindow);
-	_windows.push_back(_gameWindow);
-	_windows.push_back(_topMenu);
-	_windows.push_back(_dialogPanel);
+	_gameScreenWindows.push_back(_actionMenu);
+	_gameScreenWindows.push_back(_inventoryWindow);
+	_gameScreenWindows.push_back(_gameWindow);
+	_gameScreenWindows.push_back(_topMenu);
+	_gameScreenWindows.push_back(_dialogPanel);
+
+	// FMV Screen window
+	_fmvPlayer = new FMVPlayer(_gfx, _cursor);
 }
 
 void UserInterface::update() {
 	StarkStaticProvider->onGameLoop();
 
 	// Check for UI mouse overs
-	for (uint i = 0; i < _windows.size(); i++) {
-		if (_windows[i]->isVisible() && _windows[i]->isMouseInside()) {
-			_windows[i]->handleMouseMove();
-			return;
-		}
+	switch (_currentScreen) {
+		case kScreenGame:
+			for (uint i = 0; i < _gameScreenWindows.size(); i++) {
+				if (_gameScreenWindows[i]->isVisible() && _gameScreenWindows[i]->isMouseInside()) {
+					_gameScreenWindows[i]->handleMouseMove();
+					return;
+				}
+			}
+	        break;
+		default: // Nothing goes here
+			break;
 	}
 }
 
 void UserInterface::handleClick() {
-	for (uint i = 0; i < _windows.size(); i++) {
-		if (_windows[i]->isMouseInside()) {
-			_windows[i]->handleClick();
-			return;
-		}
+	switch (_currentScreen) {
+		case kScreenGame:
+			for (uint i = 0; i < _gameScreenWindows.size(); i++) {
+				if (_gameScreenWindows[i]->isMouseInside()) {
+					_gameScreenWindows[i]->handleClick();
+					return;
+				}
+			}
+	        break;
+		default: // Nothing goes here
+			break;
 	}
 }
 
 void UserInterface::handleRightClick() {
-	for (uint i = 0; i < _windows.size(); i++) {
-		if (_windows[i]->isMouseInside()) {
-			_windows[i]->handleRightClick();
-			return;
-		}
+	switch (_currentScreen) {
+		case kScreenGame:
+			for (uint i = 0; i < _gameScreenWindows.size(); i++) {
+				if (_gameScreenWindows[i]->isMouseInside()) {
+					_gameScreenWindows[i]->handleRightClick();
+					return;
+				}
+			}
+			break;
+		default: // Nothing goes here
+			break;
 	}
 }
 
@@ -114,27 +136,44 @@ void UserInterface::notifyShouldOpenInventory() {
 	_inventoryWindow->open();
 }
 
-void UserInterface::notifyFMVRequest(const Common::String &name) {
+void UserInterface::requestFMVPlayback(const Common::String &name) {
+	// TODO: Save the current screen so that it can be restored when the playback ends
+	changeScreen(kScreenFMV);
+
 	_fmvPlayer->play(name);
 }
 
-bool UserInterface::isPlayingFMV() const {
-	return _fmvPlayer->isPlaying();
+void UserInterface::onFMVStopped() {
+	// TODO: Restore the previous screen
+	changeScreen(kScreenGame);
 }
 
-void UserInterface::stopPlayingFMV() {
-	_fmvPlayer->stop();
+void UserInterface::changeScreen(Screen screen) {
+	_currentScreen = screen;
+}
+
+bool UserInterface::isInGameScreen() const {
+	return _currentScreen == kScreenGame;
+}
+
+void UserInterface::skipFMV() {
+	if (_currentScreen == kScreenFMV) {
+		_fmvPlayer->stop();
+	}
 }
 
 void UserInterface::render() {
-	// TODO: Unify with the other windows
-	if (_fmvPlayer->isPlaying()) {
-		_fmvPlayer->render();
-		return;
-	}
-
-	for (int i = _windows.size() - 1; i >= 0; i--) {
-		_windows[i]->render();
+	switch (_currentScreen) {
+		case kScreenGame:
+			for (int i = _gameScreenWindows.size() - 1; i >= 0; i--) {
+				_gameScreenWindows[i]->render();
+			}
+			break;
+		case kScreenFMV:
+			_fmvPlayer->render();
+			break;
+		default: // Nothing goes here
+			break;
 	}
 }
 

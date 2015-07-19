@@ -43,12 +43,20 @@ class Window;
 
 /**
  * Facade object for interacting with the user interface from the rest of the engine
+ *
+ * @todo: perhaps move all window management to a new class
+ * @todo: perhaps introduce a 'Screen' class or just a window with sub-windows for the game screen
  */
 class UserInterface {
 public:
 	UserInterface(Gfx::Driver *gfx, Cursor *cursor);
 	virtual ~UserInterface();
-	
+
+	enum Screen {
+		kScreenGame,
+		kScreenFMV
+	};
+
 	void init();
 	void update();
 	void render();
@@ -56,10 +64,22 @@ public:
 	void handleRightClick();
 	void notifyShouldExit() { _exitGame = true; }
 	void notifyShouldOpenInventory();
-	void notifyFMVRequest(const Common::String &name);
-	bool isPlayingFMV() const;
-	void stopPlayingFMV();
 	bool shouldExit() { return _exitGame; }
+
+	/** Start playing a FMV */
+	void requestFMVPlayback(const Common::String &name);
+
+	/** FMV playback has just ended */
+	void onFMVStopped();
+
+	/** Abort the currently playing FMV, if any */
+	void skipFMV();
+
+	/** Set the currently displayed screen */
+	void changeScreen(Screen screen);
+
+	/** Is the game screen currently displayed? */
+	bool isInGameScreen() const;
 
 	/** Can the player interact with the game world? */
 	bool isInteractive() const;
@@ -68,19 +88,24 @@ public:
 	void setInteractive(bool interactive);
 
 private:
+	// Game Screen windows
 	ActionMenu *_actionMenu;
-	FMVPlayer *_fmvPlayer;
 	DialogPanel *_dialogPanel;
 	InventoryWindow *_inventoryWindow;
 	TopMenu *_topMenu;
 	GameWindow *_gameWindow;
 
-	Common::Array<Window *> _windows;
+	// Game screen windows array
+	Common::Array<Window *> _gameScreenWindows;
+
+	// FMV screen window
+	FMVPlayer *_fmvPlayer;
 
 	Gfx::Driver *_gfx;
 	Cursor *_cursor;
 	bool _exitGame;
 
+	Screen _currentScreen;
 	bool _interactive;
 };
 

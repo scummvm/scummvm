@@ -192,10 +192,8 @@ void Script::updateSuspended() {
 			break;
 		}
 		case Type::kFMV: {
-			if (!StarkUserInterface->isPlayingFMV()) {
-				// Resume the script execution if the dialog is complete
-				_suspendingResource = nullptr;
-			}
+			// Scripts are not running during an FMV, if we are here, then it has stopped playing
+			_suspendingResource = nullptr;
 			break;
 		}
 		case Type::kSoundItem: {

@@ -504,7 +504,7 @@ Command *Command::opScrollSet(const ResourceReference &scrollRef) {
 Command *Command::opPlayFullMotionVideo(Script *script, const ResourceReference &movieRef, int32 unknown) {
 	FMV *movie =  movieRef.resolve<FMV>();
 	warning("(TODO: Implement) opPlayFullMotionVideo(%s) : %s - %d", movie->getName().c_str(), movieRef.describe().c_str(), unknown);
-	StarkUserInterface->notifyFMVRequest(movie->getFilename());
+	StarkUserInterface->requestFMVPlayback(movie->getFilename());
 	// TODO: Is this unconditional suspension?
 	script->suspend(movie);
 	return this; // Stay on the same command while suspended

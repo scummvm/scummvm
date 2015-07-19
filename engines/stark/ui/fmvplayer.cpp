@@ -29,6 +29,7 @@
 
 #include "engines/stark/services/archiveloader.h"
 #include "engines/stark/services/services.h"
+#include "engines/stark/services/userinterface.h"
 
 namespace Stark {
 
@@ -62,13 +63,16 @@ void FMVPlayer::play(const Common::String &name) {
 }
 
 void FMVPlayer::onRender() {
-	// TODO: Refactor this.
-	if (_decoder->isPlaying()) {
+	// TODO: Refactor this into an update method
+	if (isPlaying()) {
 		if (_decoder->needsUpdate()) {
 			const Graphics::Surface *decodedSurface = _decoder->decodeNextFrame();
 			_texture->update(decodedSurface);
 		}
+	} else {
+		stop();
 	}
+
 	_gfx->drawSurface(_texture, Common::Point(0, Gfx::Driver::kTopBorderHeight));
 }
 
@@ -78,6 +82,7 @@ bool FMVPlayer::isPlaying() {
 
 void FMVPlayer::stop() {
 	_decoder->stop();
+	StarkUserInterface->onFMVStopped();
 }
 
 

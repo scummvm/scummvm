@@ -184,7 +184,7 @@ void StarkEngine::mainLoop() {
 				} else if (e.kbd.keycode == Common::KEYCODE_ESCAPE) {
 					_gameInterface->skipCurrentSpeeches();
 					// Quick-hack for now.
-					_userInterface->stopPlayingFMV();
+					_userInterface->skipFMV();
 				} else {
 					//handleChars(event.type, event.kbd.keycode, event.kbd.flags, event.kbd.ascii);
 				}
@@ -232,18 +232,18 @@ void StarkEngine::updateDisplayScene() {
 	// Clear the screen
 	_gfx->clearScreen();
 
-	// Avoid drawing the game engine, as well as updating while FMVs play,
-	// TODO: this can probably be refactored to stalling the script that triggered the FMV.
-	if (!_userInterface->isPlayingFMV()) {
+	// Only update the world resources when on the game screen
+	if (_userInterface->isInGameScreen()) {
 		// Update the game resources
 		_global->getLevel()->onGameLoop();
 		_global->getCurrent()->getLevel()->onGameLoop();
 		_global->getCurrent()->getLocation()->onGameLoop();
-
-		// Render the current scene
-		// Update the UI state before displaying the scene
-		_userInterface->update();
 	}
+
+	// Render the current scene
+	// Update the UI state before displaying the scene
+	_userInterface->update();
+
 	// Tell the UI to render, and update implicitly, if this leads to new mouse-over events.
 	_userInterface->render();
 
