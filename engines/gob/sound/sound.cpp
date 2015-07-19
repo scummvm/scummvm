@@ -234,7 +234,7 @@ bool Sound::adlibLoadADL(const char *fileName) {
 		return false;
 
 	if (!_adlPlayer)
-		_adlPlayer = new ADLPlayer(*_vm->_mixer);
+		_adlPlayer = new ADLPlayer();
 
 	debugC(1, kDebugSound, "AdLib: Loading ADL data (\"%s\")", fileName);
 
@@ -256,7 +256,7 @@ bool Sound::adlibLoadADL(byte *data, uint32 size, int index) {
 		return false;
 
 	if (!_adlPlayer)
-		_adlPlayer = new ADLPlayer(*_vm->_mixer);
+		_adlPlayer = new ADLPlayer();
 
 	debugC(1, kDebugSound, "AdLib: Loading ADL data (%d)", index);
 
@@ -749,7 +749,7 @@ void Sound::createMDYPlayer() {
 	delete _adlPlayer;
 	_adlPlayer = 0;
 
-	_mdyPlayer = new MUSPlayer(*_vm->_mixer);
+	_mdyPlayer = new MUSPlayer();
 }
 
 void Sound::createADLPlayer() {
@@ -759,7 +759,7 @@ void Sound::createADLPlayer() {
 	delete _mdyPlayer;
 	_mdyPlayer= 0;
 
-	_adlPlayer = new ADLPlayer(*_vm->_mixer);
+	_adlPlayer = new ADLPlayer();
 }
 
 } // End of namespace Gob

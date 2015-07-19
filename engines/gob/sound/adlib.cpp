@@ -115,7 +115,7 @@ const uint16 AdLib::kHihatParams    [kParamCount] = {
 	  0,  1,  0, 15, 11,  0,  7,  5,  0,  0,  0,  0,  0,  0   };
 
 
-AdLib::AdLib(Audio::Mixer &mixer, int callbackFreq) : _mixer(&mixer), _opl(0),
+AdLib::AdLib(int callbackFreq) : _opl(0),
 	_toPoll(0), _repCount(0), _first(true), _playing(false), _ended(true), _volume(0) {
 
 	initFreqs();

@@ -28,7 +28,7 @@
 
 namespace Gob {
 
-ADLPlayer::ADLPlayer(Audio::Mixer &mixer) : AdLib(mixer, 1000),
+ADLPlayer::ADLPlayer() : AdLib(1000),
 	_songData(0), _songDataSize(0), _playPos(0) {
 
 }

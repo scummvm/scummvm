@@ -37,7 +37,7 @@ namespace Gob {
 /** Base class for a player of an AdLib music format. */
 class AdLib {
 public:
-	AdLib(Audio::Mixer &mixer, int callbackFrequency);
+	AdLib(int callbackFrequency);
 	virtual ~AdLib();
 
 	bool isPlaying() const;    ///< Are we currently playing?
@@ -225,14 +225,11 @@ private:
 	static const uint16 kHihatParams    [kParamCount];
 
 
-	Audio::Mixer *_mixer;
 	OPL::OPL *_opl;
 
 	Common::Mutex _mutex;
 
 	int _volume;
-
-	uint32 _rate;
 
 	uint32 _toPoll;
 

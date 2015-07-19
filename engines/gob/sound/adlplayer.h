@@ -36,7 +36,7 @@ namespace Gob {
 /** A player for Coktel Vision's ADL music format. */
 class ADLPlayer : public AdLib {
 public:
-	ADLPlayer(Audio::Mixer &mixer);
+	ADLPlayer();
 	~ADLPlayer();
 
 	bool load(Common::SeekableReadStream &adl);
