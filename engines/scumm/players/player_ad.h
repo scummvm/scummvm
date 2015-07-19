@@ -26,7 +26,6 @@
 #include "scumm/music.h"
 
 #include "audio/audiostream.h"
-#include "audio/mixer.h"
 
 #include "common/mutex.h"
 
@@ -43,7 +42,7 @@ class ScummEngine;
  */
 class Player_AD : public MusicEngine {
 public:
-	Player_AD(ScummEngine *scumm, Audio::Mixer *mixer);
+	Player_AD(ScummEngine *scumm);
 	virtual ~Player_AD();
 
 	// MusicEngine API
@@ -62,7 +61,6 @@ public:
 private:
 	ScummEngine *const _vm;
 	Common::Mutex _mutex;
-	Audio::Mixer *const _mixer;
 
 	void setupVolume();
 	int _musicVolume;
