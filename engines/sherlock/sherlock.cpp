@@ -128,7 +128,7 @@ Common::Error SherlockEngine::run() {
 	// If requested, load a savegame instead of showing the intro
 	if (ConfMan.hasKey("save_slot")) {
 		int saveSlot = ConfMan.getInt("save_slot");
-		if (saveSlot >= 1 && saveSlot <= MAX_SAVEGAME_SLOTS)
+		if (saveSlot >= 0 && saveSlot <= MAX_SAVEGAME_SLOTS)
 			_loadGameSlot = saveSlot;
 	}
 
