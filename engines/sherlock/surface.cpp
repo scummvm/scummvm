@@ -112,7 +112,7 @@ void Surface::transBlitFrom(const Surface &src, const Common::Point &pt,
 
 void Surface::transBlitFrom(const Graphics::Surface &src, const Common::Point &pt,
 		bool flipped, int overrideColor, int scaleVal) {
-	if (scaleVal == 256) {
+	if (scaleVal == SCALE_THRESHOLD) {
 		transBlitFromUnscaled(src, pt, flipped, overrideColor);
 		return;
 	}
@@ -120,8 +120,11 @@ void Surface::transBlitFrom(const Graphics::Surface &src, const Common::Point &p
 	int scaleX = SCALE_THRESHOLD * SCALE_THRESHOLD / scaleVal;
 	int scaleY = scaleX;
 	int scaleXCtr = 0, scaleYCtr = 0;
+	int destX, destY;
+	int xCtr, yCtr;
+	int maxX = pt.x;
 
-	for (int yCtr = 0, destY = pt.y; yCtr < src.h && destY < this->h(); ++yCtr) {
+	for (yCtr = 0, destY = pt.y; yCtr < src.h && destY < this->h(); ++yCtr) {
 		// Handle skipping lines if Y scaling
 		scaleYCtr += scaleY;
 		
@@ -134,7 +137,7 @@ void Surface::transBlitFrom(const Graphics::Surface &src, const Common::Point &p
 				byte *pDest = (byte *)getBasePtr(pt.x, destY);
 				scaleXCtr = 0;
 
-				for (int xCtr = 0, destX = pt.x; xCtr < src.w && destX < this->w(); ++xCtr) {
+				for (xCtr = 0, destX = pt.x; xCtr < src.w && destX < this->w(); ++xCtr) {
 					// Handle horizontal scaling
 					scaleXCtr += scaleX;
 
@@ -149,6 +152,7 @@ void Surface::transBlitFrom(const Graphics::Surface &src, const Common::Point &p
 						++destX;
 					}
 
+					maxX = MAX(maxX, destX);
 					pSrc = pSrc + (flipped ? -1 : 1);
 				}
 			}
@@ -156,6 +160,9 @@ void Surface::transBlitFrom(const Graphics::Surface &src, const Common::Point &p
 			++destY;
 		}
 	}
+
+	// Mark the affected area
+	addDirtyRect(Common::Rect(pt.x, pt.y, maxX, destY));
 }
 
 void Surface::transBlitFromUnscaled(const Graphics::Surface &src, const Common::Point &pt,
