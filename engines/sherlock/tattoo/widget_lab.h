@@ -38,7 +38,8 @@ private:
 	Object *_labObject;
 
 	/**
-	 * Display tooltips of using one lab item on another
+	 * Display tooltips of an object being dragged along with any object the dragged
+	 * object is currently over
 	 */
 	void displayLabNames();
 public:

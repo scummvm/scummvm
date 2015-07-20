@@ -21,6 +21,7 @@
  */
 
 #include "sherlock/tattoo/widget_lab.h"
+#include "sherlock/tattoo/tattoo_fixed_text.h"
 #include "sherlock/tattoo/tattoo_user_interface.h"
 #include "sherlock/tattoo/tattoo.h"
 
@@ -157,7 +158,27 @@ void WidgetLab::handleEvents() {
 }
 
 void WidgetLab::displayLabNames() {
+	TattooUserInterface &ui = *(TattooUserInterface *)_vm->_ui;
 
+	// See if thay are pointing at a different object and we need to change the tooltip
+	if (ui._bgFound != ui._oldBgFound) {
+		// See if there is a new object to be displayed
+		if (ui._bgFound == -1) {
+			ui._tooltipWidget.setText("");
+		} else {
+			Common::String str = Common::String::format("%s %s %s %s", FIXED(Use), _labObject->_description.c_str(),
+				FIXED(With), ui._bgShape->_description);
+
+			// Make sure that the Object has a name
+			if (!ui._bgShape->_description.empty() && !ui._bgShape->_description.hasPrefix(" ")) {
+				ui._tooltipWidget.setText(str);
+			} else {
+				ui._tooltipWidget.setText("");
+			}
+		}
+	}
+
+	ui._oldArrowZone = ui._arrowZone;
 }
 
 } // End of namespace Tattoo
