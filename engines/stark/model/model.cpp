@@ -20,17 +20,15 @@
  *
  */
 
-#include "engines/stark/actor.h"
+#include "engines/stark/model/model.h"
 
 #include "engines/stark/services/archiveloader.h"
-#include "engines/stark/skeleton.h"
+#include "engines/stark/model/skeleton.h"
 #include "engines/stark/gfx/texture.h"
-
-#include "common/stream.h"
 
 namespace Stark {
 
-Actor::Actor() :
+Model::Model() :
 		_skeleton(nullptr),
 		_textureSet(nullptr),
 		_u1(0),
@@ -38,7 +36,7 @@ Actor::Actor() :
 
 }
 
-Actor::~Actor() {
+Model::~Model() {
 	for (Common::Array<MaterialNode *>::iterator it = _materials.begin(); it != _materials.end(); ++it)
 		delete *it;
 
@@ -49,7 +47,7 @@ Actor::~Actor() {
 		delete _skeleton;
 }
 
-void Actor::readFromStream(ArchiveReadStream *stream) {
+void Model::readFromStream(ArchiveReadStream *stream) {
 	uint32 id = stream->readUint32LE();
 	if (id != 4) {
 		error("Wrong magic 1 while reading actor '%d'", id);
@@ -137,12 +135,12 @@ void Actor::readFromStream(ArchiveReadStream *stream) {
 	}
 }
 
-void Actor::setAnim(SkeletonAnim *anim)
+void Model::setAnim(SkeletonAnim *anim)
 {
 	_skeleton->setAnim(anim);
 }
 
-void Actor::setTextureSet(Gfx::TextureSet *texture) {
+void Model::setTextureSet(Gfx::TextureSet *texture) {
 	_textureSet = texture;
 }
 

@@ -20,71 +20,61 @@
  *
  */
 
-#ifndef STARK_SKELETON_H
-#define STARK_SKELETON_H
-
-#include "common/array.h"
-#include "common/str.h"
+#ifndef STARK_MODEL_SKELETON_ANIM_H
+#define STARK_MODEL_SKELETON_ANIM_H
 
 #include "math/quat.h"
 #include "math/vector3d.h"
+#include "common/array.h"
 
 namespace Stark {
 
 class ArchiveReadStream;
-class SkeletonAnim;
 
-class BoneNode {
+class AnimKey {
 public:
-	BoneNode() : _parent(-1) { }
-	~BoneNode() { }
-	Common::String _name;
-	float _u1;
-	Common::Array<uint32> _children;
-	int _parent;
-	int _idx;
+	uint32 _time;
+	Math::Quaternion _rot;
+	Math::Vector3d _pos;
+};
 
-	Math::Vector3d _animPos;
-	Math::Quaternion _animRot;
+class AnimNode {
+public:
+	~AnimNode() {
+		for (Common::Array<AnimKey *>::iterator it = _keys.begin(); it != _keys.end(); ++it)
+			delete *it;
+	}
+
+	uint32 _bone;
+	Common::Array<AnimKey *> _keys;
 };
 
 /**
- * Skeleton manager to load and store skeletal information about an actor
+ * Data structure responsible for skeletal animation of an actor object.
  */
-class Skeleton {
+class SkeletonAnim {
 public:
-	Skeleton();
-	~Skeleton();
+	SkeletonAnim();
+	~SkeletonAnim();
+
+	void createFromStream(ArchiveReadStream *stream);
 
 	/**
-	 * Increment the skeleton timestamp, and apply bone animations if required
+	 * Get the interpolated bone coordinate for a given bone at a given animation timestamp
 	 */
-	void animate(uint32 time);
+	void getCoordForBone(uint32 time, int boneIdx, Math::Vector3d &pos, Math::Quaternion &rot);
 
 	/**
-	 * Start reading animation data from the specified stream
+	 * Get total animation length (in ms)
 	 */
-	void setAnim(SkeletonAnim *anim);
-
-	/**
-	 * Create skeleton object from the specified stream
-	 */
-	void readFromStream(ArchiveReadStream *stream);
-
-	/**
-	 * Obtain the list of bones
-	 */
-	const Common::Array<BoneNode *> getBones();
+	uint32 getLength() const { return _time; }
 
 private:
-	void setNode(uint32 time, BoneNode *bone, const BoneNode *parent);
+	uint32 _id, _ver, _u1, _u2, _time;
 
-	Common::Array<BoneNode *> _bones;
-	SkeletonAnim *_anim;
-
-	uint32 _lastTime;
+	Common::Array<AnimNode *> _anims;
 };
 
 } // End of namespace Stark
 
-#endif // STARK_SKELETON_H
+#endif // STARK_MODEL_SKELETON_ANIM_H

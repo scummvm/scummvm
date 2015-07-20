@@ -20,8 +20,9 @@
  *
  */
 
-#include "engines/stark/actor.h"
 #include "engines/stark/resources/bonesmesh.h"
+
+#include "engines/stark/model/model.h"
 #include "engines/stark/services/archiveloader.h"
 #include "engines/stark/services/services.h"
 #include "engines/stark/formats/xrc.h"
@@ -30,12 +31,12 @@ namespace Stark {
 namespace Resources {
 
 BonesMesh::~BonesMesh() {
-	delete _actor;
+	delete _model;
 }
 
 BonesMesh::BonesMesh(Object *parent, byte subType, uint16 index, const Common::String &name) :
 				Object(parent, subType, index, name),
-				_actor(nullptr) {
+				_model(nullptr) {
 	_type = TYPE;
 }
 
@@ -47,14 +48,14 @@ void BonesMesh::readData(Formats::XRCReadStream *stream) {
 void BonesMesh::onPostRead() {
 	ArchiveReadStream *stream = StarkArchiveLoader->getFile(_filename, _archiveName);
 
-	_actor = new Actor();
-	_actor->readFromStream(stream);
+	_model = new Model();
+	_model->readFromStream(stream);
 
 	delete stream;
 }
 
-Actor *BonesMesh::getActor() {
-	return _actor;
+Model *BonesMesh::getModel() {
+	return _model;
 }
 
 void BonesMesh::printData() {

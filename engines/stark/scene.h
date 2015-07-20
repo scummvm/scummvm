@@ -23,14 +23,10 @@
 #ifndef STARK_SCENE_H
 #define STARK_SCENE_H
 
-#include "common/array.h"
 #include "common/rect.h"
 
 #include "math/matrix4.h"
 #include "math/vector3d.h"
-
-#include "engines/stark/actor.h"
-#include "engines/stark/gfx/renderentry.h"
 
 namespace Stark {
 

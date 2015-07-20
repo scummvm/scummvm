@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef STARK_ACTOR_H
-#define STARK_ACTOR_H
+#ifndef STARK_MODEL_MODEL_H
+#define STARK_MODEL_MODEL_H
 
 #include "common/array.h"
 #include "common/str.h"
@@ -102,12 +102,12 @@ public:
 
 
 /**
- * Base object for handling 3D actors
+ * A 3D Model
  */
-class Actor {
+class Model {
 public:
-	Actor();
-	~Actor();
+	Model();
+	~Model();
 
 	/**
 	 * Try and initialise object from the specified stream
@@ -142,4 +142,4 @@ private:
 
 } // End of namespace Stark
 
-#endif // STARK_ACTOR_H
+#endif // STARK_MODEL_MODEL_H

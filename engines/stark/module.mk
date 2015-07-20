@@ -1,7 +1,6 @@
 MODULE := engines/stark
 
 MODULE_OBJS := \
-	actor.o \
 	console.o \
 	cursor.o \
 	detection.o \
@@ -16,6 +15,9 @@ MODULE_OBJS := \
 	formats/xarc.o \
 	formats/xmg.o \
 	formats/xrc.o \
+	model/model.o \
+	model/skeleton.o \
+	model/skeleton_anim.o \
 	resources/anim.o \
 	resources/animhierarchy.o \
 	resources/animscript.o \
@@ -57,8 +59,6 @@ MODULE_OBJS := \
 	services/stateprovider.o \
 	services/staticprovider.o \
 	services/userinterface.o \
-	skeleton.o \
-	skeleton_anim.o \
 	stark.o \
 	ui/actionmenu.o \
 	ui/button.o \

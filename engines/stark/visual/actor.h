@@ -36,7 +36,7 @@ namespace Gfx {
 class TextureSet;
 }
 
-class Actor;
+class Model;
 class FaceNode;
 class SkeletonAnim;
 
@@ -48,7 +48,7 @@ public:
 	VisualActor();
 	virtual ~VisualActor();
 
-	void setMesh(Actor *mesh);
+	void setModel(Model *model);
 	void setAnim(SkeletonAnim *anim);
 	void setTexture(Gfx::TextureSet *texture);
 	void setTime(uint32 time);
@@ -56,7 +56,7 @@ public:
 	virtual void render(Gfx::Driver *gfx, const Math::Vector3d position, float direction) = 0;
 
 protected:
-	Actor *_actor;
+	Model *_model;
 	uint32 _time;
 	bool _meshIsDirty;
 

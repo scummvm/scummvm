@@ -22,8 +22,8 @@
 
 #include "engines/stark/visual/actor.h"
 
-#include "engines/stark/actor.h"
-#include "engines/stark/skeleton.h"
+#include "engines/stark/model/model.h"
+#include "engines/stark/model/skeleton.h"
 #include "engines/stark/gfx/driver.h"
 #include "engines/stark/gfx/texture.h"
 
@@ -31,7 +31,7 @@ namespace Stark {
 
 VisualActor::VisualActor() :
 		Visual(TYPE),
-		_actor(nullptr),
+		_model(nullptr),
 		_time(0),
 		_meshIsDirty(true) {
 }
@@ -39,21 +39,21 @@ VisualActor::VisualActor() :
 VisualActor::~VisualActor() {
 }
 
-void VisualActor::setMesh(Actor *mesh) {
-	if (_actor == mesh) {
+void VisualActor::setModel(Model *model) {
+	if (_model == model) {
 		return; // Nothing to do
 	}
 
-	_actor = mesh;
+	_model = model;
 	_meshIsDirty = true;
 }
 
 void VisualActor::setAnim(SkeletonAnim *anim) {
-	_actor->setAnim(anim);
+	_model->setAnim(anim);
 }
 
 void VisualActor::setTexture(Gfx::TextureSet *texture) {
-	_actor->setTextureSet(texture);
+	_model->setTextureSet(texture);
 }
 
 void VisualActor::setTime(uint32 time) {
@@ -70,7 +70,7 @@ Math::Matrix4 VisualActor::getModelMatrix(const Math::Vector3d& position, float 
 	rot1.buildAroundX(90);
 
 	Math::Matrix4 rot2;
-	rot2.buildAroundY(90 - (_actor->getFacingDirection() + direction));
+	rot2.buildAroundY(90 - (_model->getFacingDirection() + direction));
 
 	model = model * posMatrix * rot1 * rot2;
 

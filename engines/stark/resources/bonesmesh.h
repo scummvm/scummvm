@@ -29,7 +29,7 @@
 
 namespace Stark {
 
-class Actor;
+class Model;
 namespace Formats {
 class XRCReadStream;
 }
@@ -51,7 +51,7 @@ public:
 	void onPostRead() override;
 
 	/** Obtain the mesh object */
-	Actor *getActor();
+	Model *getModel();
 
 protected:
 	void printData() override;
@@ -59,7 +59,7 @@ protected:
 	Common::String _filename;
 	Common::String _archiveName;
 
-	Actor *_actor;
+	Model *_model;
 };
 
 } // End of namespace Resources

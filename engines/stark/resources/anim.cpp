@@ -33,7 +33,7 @@
 #include "engines/stark/services/archiveloader.h"
 #include "engines/stark/services/global.h"
 #include "engines/stark/services/services.h"
-#include "engines/stark/skeleton_anim.h"
+#include "engines/stark/model/skeleton_anim.h"
 #include "engines/stark/visual/actor.h"
 #include "engines/stark/visual/smacker.h"
 
@@ -268,7 +268,7 @@ void AnimSkeleton::applyToItem(Item *item) {
 	BonesMesh *mesh = actor->findBonesMesh();
 	TextureSet *texture = actor->findTextureSet(TextureSet::kTextureNormal);
 
-	_visual->setMesh(mesh->getActor());
+	_visual->setModel(mesh->getModel());
 	_visual->setTexture(texture->getTexture());
 	_visual->setAnim(_seletonAnim);
 }
