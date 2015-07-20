@@ -199,14 +199,6 @@ void StarkEngine::mainLoop() {
 			} else if (e.type == Common::EVENT_RBUTTONDOWN) {
 				_userInterface->handleRightClick();
 			}
-			/*if (event.type == Common::EVENT_KEYDOWN || event.type == Common::EVENT_KEYUP) {
-				handleControls(event.type, event.kbd.keycode, event.kbd.flags, event.kbd.ascii);
-			}*/
-			// Check for "Hard" quit"
-			//if (e.type == Common::EVENT_QUIT)
-			//	return;
-			/*if (event.type == Common::EVENT_SCREEN_CHANGED)
-				_refreshDrawNeeded = true;*/
 		}
 
 		if (_resourceProvider->hasLocationChangeRequest()) {
