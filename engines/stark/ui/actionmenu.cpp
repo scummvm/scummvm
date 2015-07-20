@@ -45,8 +45,7 @@ namespace Stark {
  
 ActionMenu::ActionMenu(Gfx::Driver *gfx, Cursor *cursor) :
 		Window(gfx, cursor) {
-	// TODO: Shouldn't use a function called getCursorImage for this, also unhardcode
-	_background = StarkStaticProvider->getCursorImage(5);
+	_background = StarkStaticProvider->getUIElement(StaticProvider::kActionMenuBg);
 
 	_unscaled = true;
 	_item = nullptr;

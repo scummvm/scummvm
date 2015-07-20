@@ -33,22 +33,25 @@
 
 namespace Stark {
 
-Button::Button(const Common::String &text, Resources::Anim *image, Common::Point pos)
+Button::Button(const Common::String &text, StaticProvider::UIElement stockElement, Common::Point pos)
 	: _position(pos),
-	  _image(image),
+	  _stockElement(stockElement),
 	  _text(text) {
 }
 
 void Button::render() {
-	_image->getVisual()->get<VisualImageXMG>()->render(_position, false);
+	VisualImageXMG *image = StarkStaticProvider->getUIElement(_stockElement);
+	image->render(_position, false);
 }
 
 bool Button::containsPoint(Common::Point point) {
+	VisualImageXMG *image = StarkStaticProvider->getUIElement(_stockElement);
+
 	Common::Rect r;
 	r.left = _position.x;
 	r.top = _position.y;
-	r.setWidth(_image->getVisual()->get<VisualImageXMG>()->getWidth());
-	r.setHeight(_image->getVisual()->get<VisualImageXMG>()->getHeight());
+	r.setWidth(image->getWidth());
+	r.setHeight(image->getHeight());
 	return r.contains(point);
 }
 

@@ -40,12 +40,9 @@ TopMenu::TopMenu(Gfx::Driver *gfx, Cursor *cursor) :
 	_position = Common::Rect(Gfx::Driver::kOriginalWidth, Gfx::Driver::kTopBorderHeight);
 	_visible = true;
 
-	// TODO: The animations on these should be driven by the engine internally, so we probably shouldn't be holding
-	// image references here?
-	// TODO:  Unhardcode
-	_inventoryButton = new Button("Inventory", StarkStaticProvider->getUIItem(StaticProvider::kInventory), Common::Point(0, 0));
-	_exitButton = new Button("Exit", StarkStaticProvider->getUIItem(StaticProvider::kQuit), Common::Point(600, 0));
-	_diaryButton = new Button("Diary", StarkStaticProvider->getUIItem(StaticProvider::kDiaryNormal), Common::Point(560, 0));
+	_inventoryButton = new Button("Inventory", StaticProvider::kInventory, Common::Point(0, 0));
+	_exitButton = new Button("Exit", StaticProvider::kQuit, Common::Point(600, 0));
+	_diaryButton = new Button("Diary",StaticProvider::kDiaryNormal, Common::Point(560, 0));
 }
 
 TopMenu::~TopMenu() {

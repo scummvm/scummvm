@@ -108,6 +108,7 @@ int Image::indexForPoint(const Common::Point &point) const {
 	Math::Segment2d testLine(Math::Vector2d(point.x, point.y), Math::Vector2d(-1, -1));
 	int intersectCount = 0;
 	// TODO: This doesn't necessarily get the innermost polygon
+	// TODO: Clean up
 	int index = -1;
 	for (uint32 i = 0; i < _polygons.size(); i++) {
 		intersectCount = 0;

@@ -61,7 +61,6 @@ void Cursor::setCursorType(CursorType type) {
 		return;
 	}
 
-	// TODO: This is just a quick solution to get anything drawn.
 	_cursorImage = StarkStaticProvider->getCursorImage(_currentCursorType);
 }
 

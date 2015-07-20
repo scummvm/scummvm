@@ -26,7 +26,6 @@
 
 #include "engines/stark/gfx/driver.h"
 
-#include "engines/stark/resources/anim.h"
 #include "engines/stark/resources/knowledgeset.h"
 #include "engines/stark/resources/item.h"
 #include "engines/stark/resources/pattable.h"
@@ -48,8 +47,7 @@ InventoryWindow::InventoryWindow(Gfx::Driver *gfx, Cursor *cursor, ActionMenu *a
 	_position = Common::Rect(Gfx::Driver::kGameViewportWidth, Gfx::Driver::kGameViewportHeight);
 	_position.translate(0, Gfx::Driver::kTopBorderHeight);
 
-	Resources::Anim *backgroundAnim = StarkStaticProvider->getUIItem(StaticProvider::kInventoryBg);
-	_backgroundTexture = backgroundAnim->getVisual()->get<VisualImageXMG>();
+	_backgroundTexture = StarkStaticProvider->getUIElement(StaticProvider::kInventoryBg);
 
 	// Center the background in the window
 	_backgroundRect = Common::Rect(_backgroundTexture->getWidth(), _backgroundTexture->getHeight());

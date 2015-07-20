@@ -47,6 +47,16 @@ class StaticProvider {
 public:
 	StaticProvider(ArchiveLoader *archiveLoader, Global *global);
 
+	enum UIElement {
+		kInventoryBg = 4,
+		kActionMenuBg = 5,
+		kQuit = 8,
+		kDiaryNormal = 15,
+		kInventory = 16,
+		kTextBackgroundActive = 20,
+		kTextBackgroundPassive = 21
+	};
+
 	/** Load the static level archive */
 	void init();
 
@@ -59,19 +69,11 @@ public:
 	/** Obtain the static level */
 	Resources::Level *getLevel() const { return _level; }
 
-	VisualImageXMG *getCursorImage(uint32 stockAnim);
+	/** Get an image for a static cursor */
+	VisualImageXMG *getCursorImage(uint32 cursor);
 
-	enum StaticItems {
-		kInventoryBg = 4,
-		kQuit = 8,
-		kDiaryNormal = 15,
-		kInventory = 16,
-		kTextBackgroundActive = 20,
-		kTextBackgroundPassive = 21
-	};
-
-	// TODO: Check
-	Resources::Anim *getUIItem(StaticItems stockAnim);
+	/** Get an image for a static UI element */
+	VisualImageXMG *getUIElement(UIElement element);
 
 private:
 	ArchiveLoader *_archiveLoader;

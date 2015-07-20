@@ -43,9 +43,8 @@ DialogPanel::DialogPanel(Gfx::Driver *gfx, Cursor *cursor) :
 
 	_visible = true;
 
-	// TODO: Un-hardcode
-	_activeBackGroundTexture = StarkStaticProvider->getCursorImage(20);
-	_passiveBackGroundTexture = StarkStaticProvider->getCursorImage(21);
+	_activeBackGroundTexture = StarkStaticProvider->getUIElement(StaticProvider::kTextBackgroundActive);
+	_passiveBackGroundTexture = StarkStaticProvider->getUIElement(StaticProvider::kTextBackgroundPassive);
 }
 
 DialogPanel::~DialogPanel() {

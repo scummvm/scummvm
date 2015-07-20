@@ -23,6 +23,8 @@
 #ifndef STARK_UI_BUTTON_H
 #define STARK_UI_BUTTON_H
 
+#include "engines/stark/services/staticprovider.h"
+
 #include "common/scummsys.h"
 #include "common/rect.h"
 #include "common/str.h"
@@ -36,11 +38,11 @@ class Anim;
 }
 
 class Button {
-	Resources::Anim *_image;
+	StaticProvider::UIElement _stockElement;
 	Common::Point _position;
 	Common::String _text;
 public:
-	Button(const Common::String &text, Resources::Anim *image, Common::Point pos);
+	Button(const Common::String &text, StaticProvider::UIElement stockElement, Common::Point pos);
 	void setPosition(Common::Point pos) { _position = pos; }
 	void render();
 	bool containsPoint(Common::Point point);

@@ -66,13 +66,13 @@ void StaticProvider::shutdown() {
 	_archiveLoader->unloadUnused();
 }
 
-VisualImageXMG *StaticProvider::getCursorImage(uint32 stockAnim) {
-	Resources::Anim *anim = _stockAnims[stockAnim];
+VisualImageXMG *StaticProvider::getCursorImage(uint32 cursor) {
+	Resources::Anim *anim = _stockAnims[cursor];
 	return anim->getVisual()->get<VisualImageXMG>();
 }
 
-Resources::Anim *StaticProvider::getUIItem(StaticItems stockAnim) {
-	return _stockAnims[stockAnim];
+VisualImageXMG *StaticProvider::getUIElement(UIElement element) {
+	return getCursorImage(element);
 }
 
 } // End of namespace Stark

@@ -505,8 +505,10 @@ Command *Command::opPlayFullMotionVideo(Script *script, const ResourceReference 
 	FMV *movie =  movieRef.resolve<FMV>();
 	warning("(TODO: Implement) opPlayFullMotionVideo(%s) : %s - %d", movie->getName().c_str(), movieRef.describe().c_str(), unknown);
 	StarkUserInterface->requestFMVPlayback(movie->getFilename());
-	// TODO: Is this unconditional suspension?
+
+	// Unconditional suspension
 	script->suspend(movie);
+
 	return this; // Stay on the same command while suspended
 }
 
