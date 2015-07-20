@@ -33,14 +33,13 @@ class VisualText;
 
 class ClickText {
 public:
-	ClickText(const Common::String &text, Common::Point pos);
+	ClickText(const Common::String &text, uint32 color);
 	~ClickText();
 
-	void setPosition(Common::Point pos) { _position = pos; }
+	void setPosition(const Common::Point &pos) { _position = pos; }
 	void render();
-	bool containsPoint(Common::Point point);
-	void handleMouseOver();
-	void setPassive() { _curVisual = _visualPassive; }
+	bool containsPoint(const Common::Point &point) const;
+	void handleMouseMove(const Common::Point &point);
 	int getHeight() const { return _bbox.height(); }
 
 private:
@@ -50,6 +49,7 @@ private:
 	Common::Point _position;
 	Common::String _text;
 	Common::Rect _bbox;
+	uint32 _color;
 };
 
 } // End of namespace Stark

@@ -30,12 +30,12 @@
 
 namespace Stark {
 
-ClickText::ClickText(const Common::String &text, Common::Point pos)
-	: _position(pos),
-	  _text(text) {
+ClickText::ClickText(const Common::String &text, uint32 color) :
+		_text(text),
+		_color(color) {
 	_visualPassive = new VisualText(StarkGfx);
 	_visualPassive->setText(_text);
-	_visualPassive->setColor(0xFFFF0000);
+	_visualPassive->setColor(_color);
 
 	_visualActive = new VisualText(StarkGfx);
 	_visualActive->setText(_text);
@@ -54,14 +54,18 @@ void ClickText::render() {
 	_curVisual->render(_position);
 }
 
-bool ClickText::containsPoint(Common::Point point) {
+bool ClickText::containsPoint(const Common::Point &point) const {
 	Common::Rect r = _bbox;
 	r.translate(_position.x, _position.y);
 	return r.contains(point);
 }
 
-void ClickText::handleMouseOver() {
-	_curVisual = _visualActive;
+void ClickText::handleMouseMove(const Common::Point &point) {
+	if (containsPoint(point)) {
+		_curVisual = _visualActive;
+	} else {
+		_curVisual = _visualPassive;
+	}
 }
 
 } // End of namespace Stark

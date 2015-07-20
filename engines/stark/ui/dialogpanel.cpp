@@ -116,9 +116,11 @@ void DialogPanel::updateDialogOptions() {
 
 	Common::Array<DialogPlayer::Option> options = StarkDialogPlayer->listOptions();
 
-	int pos = 0;
+	int pos = 10;
 	for (uint i = 0; i < options.size(); i++) {
-		ClickText *text = new ClickText(options[i]._caption, Common::Point(0, pos));
+		ClickText *text = new ClickText(options[i]._caption, _aprilColor);
+		text->setPosition(Common::Point(10, pos));
+
 		_options.push_back(text);
 		pos += text->getHeight();
 		// TODO: Add buttons?
@@ -131,11 +133,7 @@ void DialogPanel::updateDialogOptions() {
 void DialogPanel::onMouseMove(const Common::Point &pos) {
 	if (!_options.empty() && _options.size() > 0) {
 		for (uint i = 0; i < _options.size(); i++) {
-			if (_options[i]->containsPoint(pos)) {
-				_options[i]->handleMouseOver();
-			} else {
-				_options[i]->setPassive();
-			}
+			_options[i]->handleMouseMove(pos);
 		}
 	}
 }
