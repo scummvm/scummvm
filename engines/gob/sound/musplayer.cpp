@@ -27,7 +27,7 @@
 
 namespace Gob {
 
-MUSPlayer::MUSPlayer(Audio::Mixer &mixer) : AdLib(mixer, 60),
+MUSPlayer::MUSPlayer() : AdLib(60),
 	_songData(0), _songDataSize(0), _playPos(0), _songID(0) {
 
 }

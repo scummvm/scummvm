@@ -40,7 +40,7 @@ namespace Gob {
  */
 class MUSPlayer : public AdLib {
 public:
-	MUSPlayer(Audio::Mixer &mixer);
+	MUSPlayer();
 	~MUSPlayer();
 
 	/** Load the instruments (.SND or .TBR) */

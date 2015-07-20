@@ -27,6 +27,7 @@
 #include "scumm/saveload.h"
 
 #include "audio/fmopl.h"
+#include "audio/mixer.h"
 
 #include "common/textconsole.h"
 #include "common/config-manager.h"
@@ -35,8 +36,8 @@ namespace Scumm {
 
 #define AD_CALLBACK_FREQUENCY 472
 
-Player_AD::Player_AD(ScummEngine *scumm, Audio::Mixer *mixer)
-	: _vm(scumm), _mixer(mixer) {
+Player_AD::Player_AD(ScummEngine *scumm)
+	: _vm(scumm) {
 	_opl2 = OPL::Config::create();
 	if (!_opl2->init()) {
 		error("Could not initialize OPL2 emulator");

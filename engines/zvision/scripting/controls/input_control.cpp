@@ -43,7 +43,6 @@ InputControl::InputControl(ZVision *engine, uint32 key, Common::SeekableReadStre
 	  _nextTabstop(0),
 	  _focused(false),
 	  _textChanged(false),
-	  _cursorOffset(0),
 	  _enterPressed(false),
 	  _readOnly(false),
 	  _txtWidth(0),
