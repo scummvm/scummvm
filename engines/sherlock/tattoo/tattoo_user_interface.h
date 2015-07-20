@@ -52,8 +52,6 @@ private:
 	int _scriptZone;
 	int _cAnimFramePause;
 	WidgetInventory _inventoryWidget;
-	WidgetSceneTooltip _tooltipWidget;
-	WidgetVerbs _verbsWidget;
 	WidgetMessage _messageWidget;
 	Common::List<WidgetBase *> _widgets;
 	byte _lookupTable[PALETTE_COUNT];
@@ -110,6 +108,8 @@ public:
 	ImageFile *_interfaceImages;
 	WidgetText _textWidget;
 	WidgetLab _labWidget;
+	WidgetVerbs _verbsWidget;
+	WidgetSceneTooltip _tooltipWidget;
 public:
 	TattooUserInterface(SherlockEngine *vm);
 	virtual ~TattooUserInterface();

@@ -25,6 +25,7 @@
 
 #include "common/scummsys.h"
 #include "sherlock/tattoo/widget_base.h"
+#include "sherlock/objects.h"
 
 namespace Sherlock {
 
@@ -33,6 +34,13 @@ class SherlockEngine;
 namespace Tattoo {
 
 class WidgetLab: public WidgetBase {
+private:
+	Object *_labObject;
+
+	/**
+	 * Display tooltips of using one lab item on another
+	 */
+	void displayLabNames();
 public:
 	Common::String _remainingText;
 public:
