@@ -101,6 +101,9 @@ bool TattooScene::loadScene(const Common::String &filename) {
 		// Set the menu/ui mode and whether we're in a lab table close-up scene
 		_labTableScene = _currentScene > 91 && _currentScene < 100;
 		ui._menuMode = _labTableScene ? LAB_MODE : STD_MODE;
+
+		if (_labTableScene)
+			ui._labWidget.summonWindow();
 	}
 
 	return result;

@@ -29,6 +29,7 @@
 #include "sherlock/screen.h"
 #include "sherlock/user_interface.h"
 #include "sherlock/tattoo/widget_inventory.h"
+#include "sherlock/tattoo/widget_lab.h"
 #include "sherlock/tattoo/widget_text.h"
 #include "sherlock/tattoo/widget_tooltip.h"
 #include "sherlock/tattoo/widget_verbs.h"
@@ -77,17 +78,6 @@ private:
 	 * Handle input while the verb menu is open
 	 */
 	void doVerbControl();
-	
-	/**
-	 * Handles input when the player is in the Lab Table scene
-	 */
-	void doLabControl();
-
-	/**
-	 * If the mouse cursor is point at the cursor, then display the name of the object on the screen.
-	 * If there is no object being pointed it, clear any previously displayed name
-	 */
-	void displayObjectNames();
 
 	/**
 	 * Set up to display the Files menu
@@ -119,6 +109,7 @@ public:
 	int _maskCounter;
 	ImageFile *_interfaceImages;
 	WidgetText _textWidget;
+	WidgetLab _labWidget;
 public:
 	TattooUserInterface(SherlockEngine *vm);
 	virtual ~TattooUserInterface();
@@ -196,6 +187,12 @@ public:
 	 * Draws all the dialog rectangles for any items that need them
 	 */
 	void drawDialogRect(Surface &s, const Common::Rect &r, bool raised);
+
+	/**
+	 * If the mouse cursor is point at the cursor, then display the name of the object on the screen.
+	 * If there is no object being pointed it, clear any previously displayed name
+	 */
+	void displayObjectNames();
 public:
 	/**
 	 * Resets the user interface

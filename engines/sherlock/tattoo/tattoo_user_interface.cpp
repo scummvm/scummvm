@@ -30,7 +30,8 @@ namespace Sherlock {
 namespace Tattoo {
 
 TattooUserInterface::TattooUserInterface(SherlockEngine *vm): UserInterface(vm),
-		_inventoryWidget(vm), _messageWidget(vm), _textWidget(vm), _tooltipWidget(vm), _verbsWidget(vm) {
+		_inventoryWidget(vm), _messageWidget(vm), _textWidget(vm), _tooltipWidget(vm), _verbsWidget(vm),
+		_labWidget(vm) {
 	Common::fill(&_lookupTable[0], &_lookupTable[PALETTE_COUNT], 0);
 	Common::fill(&_lookupTable1[0], &_lookupTable1[PALETTE_COUNT], 0);
 	_scrollSize = 0;
@@ -223,6 +224,7 @@ void TattooUserInterface::reset() {
 	UserInterface::reset();
 	_lookPos = Common::Point(SHERLOCK_SCREEN_WIDTH / 2, SHERLOCK_SCREEN_HEIGHT / 2);
 	_tooltipWidget.setText("");
+	_widgets.clear();
 }
 
 void TattooUserInterface::handleInput() {
@@ -280,9 +282,6 @@ void TattooUserInterface::handleInput() {
 		break;
 	case FILES_MODE:
 		doFileControl();
-		break;
-	case LAB_MODE:
-		doLabControl();
 		break;
 	default:
 		break;
@@ -357,7 +356,6 @@ void TattooUserInterface::doStandardControl() {
 	Events &events = *_vm->_events;
 	People &people = *_vm->_people;
 	TattooScene &scene = *(TattooScene *)_vm->_scene;
-	Screen &screen = *_vm->_screen;
 	Talk &talk = *_vm->_talk;
 	Common::Point mousePos = events.mousePos();
 	bool noDesc = false;
@@ -526,10 +524,6 @@ void TattooUserInterface::doLookControl() {
 
 void TattooUserInterface::doFileControl() {
 	warning("TODO: ui control (file)");
-}
-
-void TattooUserInterface::doLabControl() {
-	warning("TODO: ui control (lab)");
 }
 
 void TattooUserInterface::displayObjectNames() {
