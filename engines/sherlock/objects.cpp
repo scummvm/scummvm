@@ -508,6 +508,10 @@ int BaseObject::checkNameForCodes(const Common::String &name, FixedTextActionId 
 			break;
 		}
 
+		case 'V':
+			// Do nothing for Verb codes. This is only a flag for Inventory syntax
+			break;
+
 		default:
 			if (ch >= '0' && ch <= '9') {
 				scene._goToScene = atoi(name.c_str() + 1);

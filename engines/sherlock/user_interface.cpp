@@ -179,7 +179,7 @@ void UserInterface::checkAction(ActionType &action, int objNum, FixedTextActionI
 			}
 
 			// Unless we're leaving the scene, print a "Done" message unless the printed flag has been set
-			if (scene._goToScene != 1 && !printed && !talk._talkToAbort) {
+			if (IS_SERRATED_SCALPEL && scene._goToScene != 1 && !printed && !talk._talkToAbort) {
 				_infoFlag = true;
 				clearInfo();
 				screen.print(Common::Point(0, INFO_LINE + 1), COL_INFO_FOREGROUND, "Done...");
