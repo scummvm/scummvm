@@ -569,7 +569,7 @@ static bool loadJournalData() {
 		return false;
 	}
 
-	g_music->checkMusic();
+	g_music->updateMusic();
 
 	strcpy(filename, "Lab:Rooms/j0");
 	bridge = g_lab->_conditions->in(BRIDGE0) || g_lab->_conditions->in(BRIDGE1);
@@ -652,7 +652,7 @@ static void drawJournalText() {
 	char *CurText = journaltext;
 
 	while (DrawingToPage < JPage) {
-		g_music->checkMusic();
+		g_music->updateMusic();
 		CurText = (char *)(journaltext + CharsDrawn);
 		CharsDrawn += flowText(BigMsgFont, -2, 2, 0, false, false, false, false, VGAScaleX(52), VGAScaleY(32), VGAScaleX(152), VGAScaleY(148), CurText);
 
@@ -672,7 +672,7 @@ static void drawJournalText() {
 		CharsDrawn += flowTextToMem(&JBackImage, BigMsgFont, -2, 2, 0, false, false, false, true, VGAScaleX(52), VGAScaleY(32), VGAScaleX(152), VGAScaleY(148), CurText);
 	}
 
-	g_music->checkMusic();
+	g_music->updateMusic();
 	CurText = (char *)(journaltext + CharsDrawn);
 	lastpage = (*CurText == 0);
 	flowTextToMem(&JBackImage, BigMsgFont, -2, 2, 0, false, false, false, true, VGAScaleX(171), VGAScaleY(32), VGAScaleX(271), VGAScaleY(148), CurText);
@@ -711,7 +711,7 @@ static void turnPage(bool FromLeft) {
 static void drawJournal(uint16 wipenum, bool needFade) {
 	mouseHide();
 
-	g_music->checkMusic();
+	g_music->updateMusic();
 
 	if (!GotBackImage)
 		JBackImage.ImageData = loadBackPict("P:Journal.pic", true);
@@ -760,11 +760,11 @@ static void processJournal() {
 	uint16 Qualifier, GadID;
 
 	while (1) {
-		g_music->checkMusic();  /* Make sure we check the music at least after every message */
+		g_music->updateMusic();  /* Make sure we check the music at least after every message */
 		Msg = (IntuiMessage *) getMsg();
 
 		if (Msg == NULL) {
-			g_music->checkMusic();
+			g_music->updateMusic();
 		} else {
 			Class     = Msg->Class;
 			Qualifier = Msg->Qualifier;
@@ -813,7 +813,7 @@ void doJournal() {
 	ScreenImage = JBackImage;
 	ScreenImage.ImageData = getVGABaseAddr();
 
-	g_music->checkMusic();
+	g_music->updateMusic();
 	loadJournalData();
 
 	drawJournal(0, true);
@@ -936,7 +936,7 @@ static void drawMonText(char *text, uint16 x1, uint16 y1, uint16 x2, uint16 y2, 
 	}
 
 	while (DrawingToPage < monpage) {
-		g_music->checkMusic();
+		g_music->updateMusic();
 		CurText = (char *)(text + CharsDrawn);
 		CharsDrawn += flowText(BigMsgFont, yspacing, 0, 0, false, false, false, false, x1, y1, x2, y2, CurText);
 		lastpage = (*CurText == 0);
@@ -990,11 +990,11 @@ static void processMonitor(char *ntext, bool isinteractive, uint16 x1, uint16 y1
 			}
 		}
 
-		g_music->checkMusic();  /* Make sure we check the music at least after every message */
+		g_music->updateMusic();  /* Make sure we check the music at least after every message */
 		Msg = getMsg();
 
 		if (Msg == NULL) {
-			g_music->checkMusic();
+			g_music->updateMusic();
 		} else {
 			Class     = Msg->Class;
 			Qualifier = Msg->Qualifier;
@@ -1122,11 +1122,11 @@ void doTrialBlock() {
 	memcpy(g_CommonPalette, diffcmap, 3 * 256);
 
 	while (1) {
-		g_music->checkMusic();  /* Make sure we check the music at least after every message */
+		g_music->updateMusic();  /* Make sure we check the music at least after every message */
 		Msg = getMsg();
 
 		if (Msg == NULL) {
-			g_music->checkMusic();
+			g_music->updateMusic();
 		} else {
 			Class     = Msg->Class;
 			Qualifier = Msg->Qualifier;
