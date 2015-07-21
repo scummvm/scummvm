@@ -725,6 +725,17 @@ int TattooScene::findBgShape(const Common::Point &pt) {
 
 	int result = Scene::findBgShape(pt);
 	if (result == -1) {
+		if (_labTableScene) {
+			// Check for SOLID objects in the lab scene
+			for (int idx = (int)_bgShapes.size() - 1; idx >= 0; --idx) {
+				Object &o = _bgShapes[idx];
+				if (o._type != INVALID && o._type != NO_SHAPE && o._type != HIDDEN && o._aType == SOLID) {
+					if (o.getNewBounds().contains(pt))
+						return idx;
+				}
+			}
+		}
+
 		// No shape found, so check whether a character is highlighted
 		for (int idx = 1; idx < MAX_CHARACTERS && result == -1; ++idx) {
 			Person &person = people[idx];
