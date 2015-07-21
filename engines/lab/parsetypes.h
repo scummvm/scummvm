@@ -201,10 +201,10 @@ struct MapData {
 #pragma pack(pop)
 #endif
 
-typedef struct {
+struct CrumbData {
 	uint16 RoomNum;
 	uint16 Direction;
-} CrumbData;
+};
 
 #define MAX_CRUMBS          128
 
