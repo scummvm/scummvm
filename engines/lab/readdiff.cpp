@@ -186,8 +186,6 @@ void diffNextFrame() {
 
 		switch (header) {
 		case 8L:
-			memcpy(lastcmap, diffcmap, 256 * 3);
-
 			readBlock(diffcmap, size, difffile);
 			IsPal = true;
 			break;
@@ -196,7 +194,7 @@ void diffNextFrame() {
 			RawDiffBM.Planes[CurBit] = *difffile;
 
 			if (IsBM)
-				skip(difffile, size);
+				(*difffile) += size;
 			else {
 				readBlock(DrawBitMap->Planes[CurBit], size, difffile);
 			}
@@ -205,29 +203,29 @@ void diffNextFrame() {
 			break;
 
 		case 11L:
-			skip(difffile, 4L);
+			(*difffile) += 4;
 			runLengthDecode(DrawBitMap->Planes[CurBit], *difffile);
 			CurBit++;
-			skip(difffile, size - 4);
+			(*difffile) += size - 4;
 			break;
 
 		case 12L:
-			skip(difffile, 4L);
+			(*difffile) += 4;
 			VRunLengthDecode(DrawBitMap->Planes[CurBit], *difffile, DrawBitMap->BytesPerRow);
 			CurBit++;
-			skip(difffile, size - 4);
+			(*difffile) += size - 4;
 			break;
 
 		case 20L:
 			unDiff(DrawBitMap->Planes[CurBit], DispBitMap->Planes[CurBit], *difffile, DrawBitMap->BytesPerRow, false);
 			CurBit++;
-			skip(difffile, size);
+			(*difffile) += size;
 			break;
 
 		case 21L:
 			unDiff(DrawBitMap->Planes[CurBit], DispBitMap->Planes[CurBit], *difffile, DrawBitMap->BytesPerRow, true);
 			CurBit++;
-			skip(difffile, size);
+			(*difffile) += size;
 			break;
 
 		case 25L:
@@ -249,14 +247,15 @@ void diffNextFrame() {
 
 			size -= 8L;
 
-			skip(difffile, 4L);
+
+			(*difffile) += 4;
 			readBlock(&samplespeed, 2L, difffile);
 			swapUShortPtr(&samplespeed, 1);
-			skip(difffile, 2L);
+			(*difffile) += 2;
 
 			byte *music = *difffile;
 			uint32 musicsize = size;
-			skip(difffile, size);
+			(*difffile) += size;
 
 			g_music->playSoundEffect(samplespeed, musicsize, music);
 			break;
@@ -292,7 +291,7 @@ void diffNextFrame() {
 			break;
 
 		default:
-			skip(difffile, size);
+			(*difffile) += size;
 			break;
 		}
 	}
@@ -372,7 +371,7 @@ void playDiff() {
 		readBlock(&headerdata.Machine, 2, difffile);
 		readBlock(&headerdata.Flags, 4, difffile);
 
-		skip(difffile, size - 18);
+		(*difffile) += size - 18;
 
 		swapUShortPtr(&headerdata.Version, 3);
 		swapULong(&headerdata.BufferSize);
@@ -454,6 +453,7 @@ bool readDiff(bool playonce) {
 	return true;
 }
 
+
 void readSound(bool waitTillFinished) {
 	uint32 header_ = 0, size_;
 	uint16 samplespeed_;
@@ -483,7 +483,7 @@ void readSound(bool waitTillFinished) {
 	swapULong(&size_);
 
 	if (header_ == 0)
-		skip(difffile_, size_);
+		(*difffile_) += size_;
 	else
 		return;
 
@@ -505,15 +505,15 @@ void readSound(bool waitTillFinished) {
 
 			size_ -= 8L;
 
-			skip(difffile_, 4L);
+			(*difffile_) += 4;
 			readBlock(&samplespeed_, 2L, difffile_);
 			swapUShortPtr(&samplespeed_, 1);
 
-			skip(difffile_, 2L);
+			(*difffile_) += 2;
 
 			byte *music = *difffile_;
 			uint32 musicsize = size_;
-			skip(difffile_, size_);
+			(*difffile_) += size_;
 
 			g_music->playSoundEffect(samplespeed_, musicsize, music);
 		} else if (header_ == 65535L) {
@@ -524,7 +524,7 @@ void readSound(bool waitTillFinished) {
 				}
 			}
 		} else
-			skip(difffile_, size_);
+			(*difffile_) += size_;
 	}
 }
 
