@@ -22,8 +22,6 @@
 
 #include "engines/stark/services/gameinterface.h"
 
-#include "engines/stark/gfx/driver.h"
-
 #include "engines/stark/resources/knowledgeset.h"
 #include "engines/stark/resources/level.h"
 #include "engines/stark/resources/location.h"

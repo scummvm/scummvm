@@ -25,7 +25,6 @@
 
 #include "common/rect.h"
 #include "common/scummsys.h"
-#include "engines/stark/gfx/renderentry.h"
 
 namespace Stark {
 

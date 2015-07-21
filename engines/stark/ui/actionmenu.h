@@ -23,8 +23,6 @@
 #ifndef STARK_UI_ACTIONMENU_H
 #define STARK_UI_ACTIONMENU_H
 
-#include "engines/stark/gfx/renderentry.h"
-
 #include "engines/stark/ui/window.h"
 
 namespace Stark {

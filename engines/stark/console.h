@@ -23,8 +23,6 @@
 #ifndef CONSOLE_H_
 #define CONSOLE_H_
 
-#include "common/debug.h"
-
 #include "gui/debugger.h"
 
 namespace Stark {

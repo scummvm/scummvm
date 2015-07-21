@@ -23,9 +23,6 @@
 #ifndef STARK_DEBUG_H
 #define STARK_DEBUG_H
 
-#include "common/debug.h"
-#include "common/debug-channels.h"
-
 enum {
 	kDebugArchive = 1 << 0,
 	kDebugXMG = 1 << 1,

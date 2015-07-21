@@ -23,9 +23,8 @@
 #ifndef STARK_UI_WINDOW_H
 #define STARK_UI_WINDOW_H
 
+#include "common/array.h"
 #include "common/rect.h"
-
-#include "engines/stark/cursor.h"
 
 namespace Stark {
 

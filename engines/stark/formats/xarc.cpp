@@ -26,6 +26,7 @@
 #include "engines/stark/formats/xarc.h"
 #include "engines/stark/debug.h"
 
+#include "common/debug.h"
 #include "common/file.h"
 #include "common/substream.h"
 

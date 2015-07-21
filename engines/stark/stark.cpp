@@ -40,6 +40,7 @@
 #include "engines/stark/gfx/driver.h"
 
 #include "common/config-manager.h"
+#include "common/debug-channels.h"
 #include "common/events.h"
 #include "common/random.h"
 #include "common/savefile.h"

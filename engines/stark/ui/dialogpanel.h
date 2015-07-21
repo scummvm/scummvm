@@ -23,7 +23,6 @@
 #ifndef STARK_UI_DIALOG_PANEL_H
 #define STARK_UI_DIALOG_PANEL_H
 
-#include <engines/stark/resources/speech.h>
 #include "engines/stark/ui/window.h"
 
 #include "common/scummsys.h"
@@ -37,6 +36,10 @@ namespace Stark {
 class VisualImageXMG;
 class VisualText;
 class ClickText;
+
+namespace Resources {
+class Speech;
+}
 
 class DialogPanel : public Window {
 public:

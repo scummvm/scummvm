@@ -26,10 +26,7 @@
 
 #include "engines/stark/gfx/driver.h"
 
-#include "engines/stark/resources/pattable.h"
-
 #include "engines/stark/services/services.h"
-#include "engines/stark/services/gameinterface.h"
 
 namespace Stark {
  

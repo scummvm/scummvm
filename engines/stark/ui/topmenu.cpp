@@ -21,12 +21,14 @@
  */
 
 #include "engines/stark/ui/topmenu.h"
+
+#include "engines/stark/cursor.h"
+
 #include "engines/stark/ui/button.h"
 
 #include "engines/stark/gfx/driver.h"
 
 #include "engines/stark/services/services.h"
-#include "engines/stark/services/staticprovider.h"
 #include "engines/stark/services/userinterface.h"
 
 #include "engines/stark/visual/image.h"
@@ -42,7 +44,7 @@ TopMenu::TopMenu(Gfx::Driver *gfx, Cursor *cursor) :
 
 	_inventoryButton = new Button("Inventory", StaticProvider::kInventory, Common::Point(0, 0));
 	_exitButton = new Button("Exit", StaticProvider::kQuit, Common::Point(600, 0));
-	_diaryButton = new Button("Diary",StaticProvider::kDiaryNormal, Common::Point(560, 0));
+	_diaryButton = new Button("Diary", StaticProvider::kDiaryNormal, Common::Point(560, 0));
 }
 
 TopMenu::~TopMenu() {

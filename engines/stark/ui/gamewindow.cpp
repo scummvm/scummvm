@@ -22,6 +22,8 @@
 
 #include "engines/stark/ui/gamewindow.h"
 
+#include "engines/stark/cursor.h"
+
 #include "engines/stark/gfx/driver.h"
 
 #include "engines/stark/resources/anim.h"

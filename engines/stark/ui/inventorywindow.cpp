@@ -22,6 +22,8 @@
 
 #include "engines/stark/ui/inventorywindow.h"
 
+#include "engines/stark/cursor.h"
+
 #include "engines/stark/ui/actionmenu.h"
 
 #include "engines/stark/gfx/driver.h"

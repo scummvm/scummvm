@@ -25,6 +25,8 @@
 
 #include "engines/stark/gfx/driver.h"
 
+#include "engines/stark/resources/speech.h"
+
 #include "engines/stark/services/services.h"
 #include "engines/stark/services/staticprovider.h"
 #include "engines/stark/services/dialogplayer.h"

@@ -22,11 +22,6 @@
 
 #include "engines/stark/ui/button.h"
 
-#include "engines/stark/gfx/driver.h"
-#include "engines/stark/visual/visual.h"
-
-#include "engines/stark/resources/anim.h"
-
 #include "engines/stark/services/services.h"
 
 #include "engines/stark/visual/image.h"

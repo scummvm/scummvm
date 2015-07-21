@@ -22,8 +22,6 @@
 
 #include "engines/stark/ui/clicktext.h"
 
-#include "engines/stark/gfx/driver.h"
-
 #include "engines/stark/services/services.h"
 
 #include "engines/stark/visual/text.h"
