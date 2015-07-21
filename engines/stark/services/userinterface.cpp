@@ -136,6 +136,10 @@ void UserInterface::notifyShouldOpenInventory() {
 	_inventoryWindow->open();
 }
 
+void UserInterface::selectInventoryItem(uint16 itemIndex) {
+	_inventoryWindow->setSelectedInventoryItem(itemIndex);
+}
+
 void UserInterface::requestFMVPlayback(const Common::String &name) {
 	// TODO: Save the current screen so that it can be restored when the playback ends
 	changeScreen(kScreenFMV);

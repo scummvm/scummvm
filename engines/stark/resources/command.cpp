@@ -93,6 +93,8 @@ Command *Command::execute(uint32 callMode, Script *script) {
 		return opItemLookAt(_arguments[1].referenceValue, _arguments[2].referenceValue, _arguments[3].intValue, _arguments[4].intValue);
 	case kItemEnable:
 		return opItemEnable(_arguments[1].referenceValue, _arguments[2].intValue);
+	case kItemSelectInInventory:
+		return opItemSelectInInventory(_arguments[1].referenceValue);
 	case kItemSetActivity:
 		return opItemSetActivity(_arguments[1].referenceValue, _arguments[2].intValue, _arguments[3].intValue);
 	case kUseAnimHierarchy:
@@ -348,6 +350,13 @@ Command *Command::opItemSetActivity(const ResourceReference &itemRef, int32 unkn
 	assert(_arguments.size() == 4);
 	Object *itemObj = itemRef.resolve<Object>();
 	warning("(TODO: Implement) opSetActivity(%s, %d, %d) : %s", itemObj->getName().c_str(), unknown1, unknown2, itemRef.describe().c_str());
+
+	return nextCommand();
+}
+
+Command *Command::opItemSelectInInventory(const ResourceReference &itemRef) {
+	InventoryItem *item = itemRef.resolve<InventoryItem>();
+	StarkUserInterface->selectInventoryItem(item->getIndex());
 
 	return nextCommand();
 }
