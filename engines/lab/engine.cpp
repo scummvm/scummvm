@@ -78,11 +78,7 @@ extern char *LAMPONMSG, *TURNLEFT, *TURNRIGHT;
 extern char *GOFORWARDDIR, *NOPATH, *TAKEITEM, *USEONWHAT, *TAKEWHAT, *MOVEWHAT, *OPENWHAT, *CLOSEWHAT, *LOOKWHAT, *NOTHING, *USEMAP, *USEJOURNAL, *TURNLAMPON, *TURNLAMPOFF, *USEWHISKEY, *USEPITH, *USEHELMET;
 
 
-#define BIGBUFFERSIZE 850000L
-#define SMALLBUFFERSIZE 250000L
-
-static uint32 BUFFERSIZE = BIGBUFFERSIZE;
-
+#define BUFFERSIZE 850000L
 
 /* LAB: Labyrinth specific code for the special puzzles */
 #define SPECIALLOCK         100
@@ -444,25 +440,36 @@ static bool doCloseUp(CloseDataPtr cptr) {
 		lutertmargin = 128;
 	}
 
-	if ((cptr->CloseUpType == MUSEUMMONITOR) || (cptr->CloseUpType == LIBRARYMONITOR) ||
-	        (cptr->CloseUpType == WINDOWMONITOR))
+	switch (cptr->CloseUpType) {
+	case MUSEUMMONITOR:
+	case LIBRARYMONITOR:
+	case WINDOWMONITOR:
 		doMonitor(cptr->GraphicName, cptr->Message, false, monltmargin, montopmargin, monrtmargin, 165);
-	else if (cptr->CloseUpType == GRAMAPHONEMONITOR)
+		break;
+	case GRAMAPHONEMONITOR:
 		doMonitor(cptr->GraphicName, cptr->Message, false, monltmargin, montopmargin, 171, 165);
-	else if (cptr->CloseUpType == UNICYCLEMONITOR)
+		break;
+	case UNICYCLEMONITOR:
 		doMonitor(cptr->GraphicName, cptr->Message, false, 100, montopmargin, monrtmargin, 165);
-	else if (cptr->CloseUpType == STATUEMONITOR)
+		break;
+	case STATUEMONITOR:
 		doMonitor(cptr->GraphicName, cptr->Message, false, 117, montopmargin, monrtmargin, 165);
-	else if (cptr->CloseUpType == TALISMANMONITOR)
+		break;
+	case TALISMANMONITOR:
 		doMonitor(cptr->GraphicName, cptr->Message, false, monltmargin, montopmargin, 184, 165);
-	else if (cptr->CloseUpType == LUTEMONITOR)
+		break;
+	case LUTEMONITOR:
 		doMonitor(cptr->GraphicName, cptr->Message, false, monltmargin, montopmargin, lutertmargin, 165);
-	else if (cptr->CloseUpType == CLOCKMONITOR)
+		break;
+	case CLOCKMONITOR:
 		doMonitor(cptr->GraphicName, cptr->Message, false, monltmargin, montopmargin, 206, 165);
-	else if (cptr->CloseUpType == TERMINALMONITOR)
+		break;
+	case TERMINALMONITOR:
 		doMonitor(cptr->GraphicName, cptr->Message, true, monltmargin, montopmargin, monrtmargin, 165);
-	else
+		break;
+	default:
 		return false;
+	}
 
 	CurFileName = " ";
 	drawPanel();
@@ -778,14 +785,14 @@ static void mainGameLoop() {
 			}
 		}
 
-		g_music->checkMusic();  /* Make sure we check the music at least after every message */
+		g_music->updateMusic();  /* Make sure we check the music at least after every message */
 		interfaceOn();
 		Msg = getMsg();
 
 		if (Msg == NULL) { /* Does music load and next animation frame when you've run out of messages */
 			GotMessage = false;
 			checkRoomMusic();
-			g_music->checkMusic();
+			g_music->updateMusic();
 			diffNextFrame();
 
 			if (FollowingCrumbs) {
@@ -885,11 +892,11 @@ from_crumbs:
 					interfaceOff();
 
 					while (1) {
-						g_music->checkMusic();  /* Make sure we check the music at least after every message */
+						g_music->updateMusic();  /* Make sure we check the music at least after every message */
 						Msg = getMsg();
 
 						if (Msg == NULL) { /* Does music load and next animation frame when you've run out of messages */
-							g_music->checkMusic();
+							g_music->updateMusic();
 							diffNextFrame();
 						} else {
 							if (Msg->Class == RAWKEY) {
@@ -1400,7 +1407,7 @@ void LabEngine::go() {
 		readPict("P:End/L2In.1", true);
 
 		for (counter = 0; counter < 120; counter++) {
-			g_music->checkMusic();
+			g_music->updateMusic();
 			waitTOF();
 		}
 
@@ -1409,7 +1416,7 @@ void LabEngine::go() {
 
 		warning("STUB: waitForPress");
 		while (!1) { // 1 means ignore SDL_ProcessInput calls
-			g_music->checkMusic();
+			g_music->updateMusic();
 			diffNextFrame();
 			waitTOF();
 		}
