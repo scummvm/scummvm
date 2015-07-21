@@ -167,7 +167,7 @@ void WidgetLab::displayLabNames() {
 			ui._tooltipWidget.setText("");
 		} else {
 			Common::String str = Common::String::format("%s %s %s %s", FIXED(Use), _labObject->_description.c_str(),
-				FIXED(With), ui._bgShape->_description);
+				FIXED(With), ui._bgShape->_description.c_str());
 
 			// Make sure that the Object has a name
 			if (!ui._bgShape->_description.empty() && !ui._bgShape->_description.hasPrefix(" ")) {
