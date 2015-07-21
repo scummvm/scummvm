@@ -108,7 +108,8 @@ void WidgetLab::handleEvents() {
 							scene.toggleObject(_labObject->_use[idx]._names[nameNum]);
 					}
 				}
-			} else if (ui._bgShape->_name.compareToIgnoreCase("Exit")) {
+			} else if (!ui._bgShape->_name.compareToIgnoreCase("Exit")) {
+				// Eexecut the Exit button's script, which will leave the scene
 				ui.lookAtObject();
 			}
 		} else {
