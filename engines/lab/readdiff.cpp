@@ -37,38 +37,23 @@
 
 namespace Lab {
 
-extern BitMap *DispBitMap, *DrawBitMap;
-extern uint32 VGABytesPerPage;
-
-extern byte **startoffile;
-
 static bool PlayOnce = false, changedscreen;
+static uint32 header, size, processed = 0L, WaitSec = 0L, WaitMicros = 0L, DelayMicros = 0L;
+static uint16 CurBit = 0, framenumber = 0, samplespeed, numchunks = 1;
+static byte *Buffer, temp[5];
+static bool FirstThru = true, donepal = false;
+static byte *storagefordifffile, **difffile = &storagefordifffile;
+static byte *start;
+static uint32 diffwidth, diffheight;
+static byte blackbuffer[256 * 3];
+static byte *mstart;
 
-bool NoFlip         = false,  /* Don't flip the new picture to front  */
-     DoBlack        = false,     /* Black the screen before new picture  */
+bool DoBlack        = false,     /* Black the screen before new picture  */
      nopalchange    = false,     /* Don't change the palette.            */
      IsBM           = false,     /* Just fill in the RawDIFFBM structure */
-     hidemouse      = false,     /* Don't set the mouse colors           */
      stopsound      = false,
-     soundplaying   = false,
-     screenbuffer   = false,
-     waitForEffect     = false, /* Wait for each sound effect to finish
-                                                                                                      before coninuing.                    */
-                      mwaitForEffect    = false;
-
-uint16 DataBytesPerRow;
-
-#define CONTINUOUS      0xFFFF
-
-DIFFHeader headerdata;
-
-
-
-/*------ Stuff for the animation task. -----*/
-
-static byte *start;
-
-static uint32 diffwidth, diffheight;
+     waitForEffect  = false;     /* Wait for each sound effect to finish
+                                   before coninuing.                    */
 
 static bool continuous,
 	IsPlaying      = false,
@@ -77,11 +62,16 @@ static bool continuous,
 	IsAnim         = false,
 	IsPal          = false;
 
-char diffcmap[256 * 3], lastcmap[256 * 3];
-
+uint16 DataBytesPerRow;
+DIFFHeader headerdata;
+char diffcmap[256 * 3];
 BitMap RawDiffBM;
 
+extern BitMap *DispBitMap, *DrawBitMap;
+extern uint32 VGABytesPerPage;
+extern byte **startoffile;
 
+#define CONTINUOUS      0xFFFF
 
 
 /*****************************************************************************/
@@ -100,8 +90,6 @@ void unDiff(byte *NewBuf, byte *OldBuf, byte *DiffData, uint16 bytesperrow, bool
 		unDIFFMemory(NewBuf, DiffData, 1, buftype + 1);
 }
 
-
-static byte blackbuffer[256 * 3];
 
 /*****************************************************************************/
 /* Changes the front screen to black.                                        */
@@ -131,14 +119,6 @@ void blackAllScreen() {
 	g_system->delayMillis(32);
 }
 
-
-
-/* For Play Diff */
-static uint32 header, size, processed = 0L, WaitSec    = 0L, WaitMicros = 0L, DelayMicros = 0L;
-static uint16 CurBit = 0, framenumber = 0, samplespeed, numchunks = 1;
-static byte *Buffer, temp[5];
-static bool FirstThru = true, donepal   = false;
-static byte *storagefordifffile, * *difffile = &storagefordifffile;
 
 void diffNextFrame() {
 	if (header == 65535)  /* Already done. */
@@ -473,10 +453,6 @@ bool readDiff(bool playonce) {
 	playDiff();
 	return true;
 }
-
-
-static byte *mstart;
-
 
 void readSound(bool waitTillFinished) {
 	uint32 header_ = 0, size_;
