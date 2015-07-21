@@ -833,8 +833,15 @@ void TattooUserInterface::drawDialogRect(Surface &s, const Common::Rect &r, bool
 }
 
 void TattooUserInterface::banishWindow(bool slideUp) {
+	TattooScene &scene = *(TattooScene *)_vm->_scene;
 	if (!_widgets.empty())
 		_widgets.back()->banishWindow();
+
+	if (scene._labTableScene && !_labWidget.active()) {
+		// In the lab table scene, so ensure 
+		_labWidget.summonWindow();
+		_menuMode = LAB_MODE;
+	}
 }
 
 void TattooUserInterface::freeMenu() {

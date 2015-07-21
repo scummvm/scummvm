@@ -33,6 +33,11 @@ WidgetLab::WidgetLab(SherlockEngine *vm) : WidgetBase(vm) {
 	_labObject = nullptr;
 }
 
+void WidgetLab::summonWindow() {
+	WidgetBase::summonWindow();
+	_labObject = nullptr;
+}
+
 void WidgetLab::handleEvents() {
 	Events &events = *_vm->_events;
 	Scene &scene = *_vm->_scene;
@@ -140,7 +145,8 @@ void WidgetLab::handleEvents() {
 					_labObject = ui._bgShape;
 
 					// Set the mouse cursor to the object
-					events.setCursor(_labObject->_imageFrame->_frame, 0, 0);
+					Graphics::Surface &img = _labObject->_imageFrame->_frame;
+					events.setCursor(img, img.w / 2, img.h / 2);
 
 					// Hide this object until they are done with it (releasing it)
 					_labObject->toggleHidden();

@@ -403,9 +403,10 @@ void Talk::talkTo(const Common::String &filename) {
 
 				if (!ui._lookScriptFlag) {
 					ui.drawInterface(2);
-					ui.banishWindow();
-					ui._windowBounds.top = CONTROLS_Y1;
 					ui._menuMode = STD_MODE;
+					ui._windowBounds.top = CONTROLS_Y1;
+
+					ui.banishWindow();
 				}
 
 				break;

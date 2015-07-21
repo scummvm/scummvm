@@ -57,6 +57,17 @@ void WidgetBase::banishWindow() {
 	ui._widgets.remove(this);
 }
 
+bool WidgetBase::active() const {
+	TattooUserInterface &ui = *(TattooUserInterface *)_vm->_ui;
+	for (Common::List<WidgetBase *>::iterator i = ui._widgets.begin(); i != ui._widgets.end(); ++i) {
+		if ((*i) == this)
+			return true;
+	}
+
+	return false;
+}
+
+
 void WidgetBase::erase() {
 	Screen &screen = *_vm->_screen;
 

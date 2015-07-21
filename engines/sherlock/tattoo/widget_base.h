@@ -83,6 +83,11 @@ public:
 	virtual ~WidgetBase() {}
 
 	/**
+	 * Returns true if the given widget is active in the user interface's widget list
+	 */
+	bool active() const;
+
+	/**
 	 * Erase any previous display of the widget on the screen
 	 */
 	virtual void erase();

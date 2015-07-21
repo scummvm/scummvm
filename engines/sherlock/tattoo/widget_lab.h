@@ -49,6 +49,11 @@ public:
 	virtual ~WidgetLab() {}
 
 	/**
+	 * Summon the window
+	 */
+	virtual void summonWindow();
+
+	/**
 	 * Handle event processing
 	 */
 	virtual void handleEvents();
