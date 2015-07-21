@@ -35,20 +35,16 @@
 
 namespace Lab {
 
+/* Global parser data */
+
 #define MAXSTRINGLENGTH 250
 
 static bool UseMemory = false;
-
-
-
-/* Global parser data */
+static uint16 allocroom;
 
 extern RoomData *Rooms;
 extern InventoryData *Inventory;
 extern uint16 NumInv, ManyRooms, HighestCondition, Direction;
-
-static uint16 allocroom;
-
 
 static bool rallocate(void **Ptr, uint32 Size) {
 	if (UseMemory)
@@ -104,8 +100,6 @@ bool readRoomData(const char *fileName) {
 }
 
 
-
-
 /*****************************************************************************/
 /* Reads in a NULL terminated string, and allocates memory for it.           */
 /*****************************************************************************/
@@ -132,7 +126,6 @@ static bool readString(char **string, byte **file) {
 
 	return false;
 }
-
 
 
 /*****************************************************************************/
@@ -244,8 +237,6 @@ static bool readCloseUps(CloseDataPtr *CPtr, uint16 depth, byte **file) {
 }
 
 
-
-
 /*****************************************************************************/
 /* Reads in a View.                                                          */
 /*****************************************************************************/
@@ -258,7 +249,7 @@ static bool readView(ViewDataPtr *VPtr, byte **file) {
 		readBlock(&c, 1L, file);
 
 		if (c == 1) {
-			if (rallocate((void **) VPtr, sizeof(viewData))) {
+			if (rallocate((void **)VPtr, sizeof(viewData))) {
 				(*VPtr)->closeUps = NULL;
 				(*VPtr)->NextCondition = NULL;
 
@@ -273,14 +264,14 @@ static bool readView(ViewDataPtr *VPtr, byte **file) {
 				readCloseUps(&((*VPtr)->closeUps), 0, file);
 
 				VPtr = &((*VPtr)->NextCondition);
-			} else
+			}
+			else
 				return false;
-		} else
+		}
+		else
 			return true;
 	}
 }
-
-
 
 
 /*****************************************************************************/
@@ -321,9 +312,6 @@ static bool readAction(ActionPtr *APtr, byte **file) {
 }
 
 
-
-
-
 /*****************************************************************************/
 /* Reads in a rule.                                                          */
 /*****************************************************************************/
@@ -355,14 +343,11 @@ static bool readRule(RulePtr *RPtr, byte **file) {
 }
 
 
-
-
-
 /*****************************************************************************/
 /* Reads in the views of a room.                                             */
 /*****************************************************************************/
-bool readViews(uint16 RoomNum, const char *Path) {
-	Common::String fileName = Common::String(Path) + Common::String::format("%d", RoomNum);
+bool readViews(uint16 RoomNum) {
+	Common::String fileName = "LAB:Rooms/" + Common::String::format("%d", RoomNum);
 	char Temp[10];
 	byte **file;
 
@@ -378,18 +363,13 @@ bool readViews(uint16 RoomNum, const char *Path) {
 		readString(&(Rooms[RoomNum].RoomMsg), file);
 
 		readView(&Rooms[RoomNum].NorthView, file);
-		g_music->checkMusic();
-
 		readView(&Rooms[RoomNum].SouthView, file);
-		g_music->checkMusic();
-
 		readView(&Rooms[RoomNum].EastView, file);
-		g_music->checkMusic();
-
 		readView(&Rooms[RoomNum].WestView, file);
-		g_music->checkMusic();
 
 		readRule(&Rooms[RoomNum].RuleList, file);
+
+		g_music->updateMusic();
 
 		return true;
 	} else
