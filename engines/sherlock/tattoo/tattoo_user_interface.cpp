@@ -238,6 +238,10 @@ void TattooUserInterface::handleInput() {
 	_vm->_canLoadSave = false;
 	_keyState.keycode = Common::KEYCODE_INVALID;
 
+	// Check for credits starting
+	if (_vm->readFlags(3000) && !vm._creditsActive)
+		vm.initCredits();
+
 	// Check the mouse positioning
 	if (events.isCursorVisible())
 		_bgFound = scene.findBgShape(mousePos);

@@ -39,13 +39,14 @@ TattooEngine::TattooEngine(OSystem *syst, const SherlockGameDescription *gameDes
 	_fastMode = false;
 	_allowFastMode = true;
 	_transparentMenus = true;
+	_creditSpeed = 4;
 }
 
 TattooEngine::~TattooEngine() {
 }
 
 void TattooEngine::showOpening() {
-	// TODO
+	// No implementation - opening is done using in-game scenes
 }
 
 void TattooEngine::initialize() {
@@ -158,16 +159,171 @@ void TattooEngine::loadInventory() {
 	inv.push_back(InventoryItem(0, inv8, invDesc8, "_LANT02I"));
 }
 
+void TattooEngine::initCredits() {
+	Common::SeekableReadStream *stream = _res->load("credits.txt");
+	int spacing = _screen->fontHeight() * 2;
+	int yp = _screen->h();
+
+	_creditsActive = true;
+	_creditLines.clear();
+
+	while (stream->pos() < stream->size()) {
+		Common::String line = stream->readLine();
+
+		if (line.hasPrefix("Scroll Speed")) {
+			const char *p = line.c_str() + 12;
+			while ((*p < '0') || (*p > '9'))
+				p++;
+			
+			_creditSpeed = atoi(p);
+		} else if (line.hasPrefix("Y Spacing")) {
+			const char *p = line.c_str() + 12;
+			while ((*p < '0') || (*p > '9'))
+				p++;
+
+			spacing = atoi(p) + _screen->fontHeight() + 1;
+		} else {
+			int width = _screen->stringWidth(line) + 2;
+
+			_creditLines.push_back(CreditLine(line, Common::Point((_screen->w() - width) / 2 + 1, yp), width));
+			yp += spacing;
+		}
+	}
+
+	// Post-processing for finding split lines
+	for (int l = 0; l < (int)_creditLines.size(); ++l) {
+		CreditLine &cl = _creditLines[l];
+		const char *p = strchr(cl._line.c_str(), '-');
+
+		if (p != nullptr && p[1] == '>') {
+			cl._line2 = Common::String(p + 3);
+			cl._line = Common::String(cl._line.c_str(), p);
+			
+			int width = cl._width;
+			int width1 = _screen->stringWidth(cl._line);
+			int width2 = _screen->stringWidth(cl._line2);
+
+			int c = 1;
+			for (int l1 = l + 1; l1 < (int)_creditLines.size(); ++l1) {
+				if ((p = strchr(_creditLines[l1]._line.c_str(), '-')) != nullptr) {
+					if (p[1] == '>') {
+						Common::String line1 = Common::String(_creditLines[l1]._line.c_str(), p);
+						Common::String line2 = Common::String(p + 3);
+
+						width1 = MAX(width1, _screen->stringWidth(line1));
+
+						if (_screen->stringWidth(line2) > width2)
+							width2 = _screen->stringWidth(line2);
+						++c;
+					} else {
+						break;
+					}
+				} else {
+					break;
+				}
+			}
+
+			width = width1 + width2 + _screen->widestChar();
+			width1 += _screen->widestChar();
+
+			for (int l1 = l; l1 < l + c; ++l1) {
+				_creditLines[l1]._width = width;
+				_creditLines[l1]._xOffset = width1;
+			}
+
+			l += c - 1;
+		}
+	}
+
+	delete stream;
+}
+
 void TattooEngine::drawCredits() {
-	// TODO
+	Common::Rect screenRect(0, 0, _screen->w(), _screen->h());
+
+	for (uint idx = 0; idx < _creditLines.size() && _creditLines[idx]._position.y < _screen->h(); ++idx) {
+		if (screenRect.contains(_creditLines[idx]._position)) {
+			if (_creditLines[idx]._position.x >= 65536) {
+				int x1 = _creditLines[idx]._position.x;
+				int x2 = x1 + _creditLines[idx]._xOffset;
+				const Common::String &line1 = _creditLines[idx]._line;
+				const Common::String &line2 = _creditLines[idx]._line2;
+
+				_screen->writeString(line1, Common::Point(x1 - 1, _creditLines[idx]._position.y - 1), 0);
+				_screen->writeString(line1, Common::Point(x1, _creditLines[idx]._position.y - 1), 0);
+				_screen->writeString(line1, Common::Point(x1 + 1, _creditLines[idx]._position.y - 1), 0);
+
+				_screen->writeString(line1, Common::Point(x1 - 1, _creditLines[idx]._position.y), 0);
+				_screen->writeString(line1, Common::Point(x1 + 1, _creditLines[idx]._position.y), 0);
+
+				_screen->writeString(line1, Common::Point(x1 - 1, _creditLines[idx]._position.y + 1), 0);
+				_screen->writeString(line1, Common::Point(x1, _creditLines[idx]._position.y + 1), 0);
+				_screen->writeString(line1, Common::Point(x1 + 1, _creditLines[idx]._position.y + 1), 0);
+
+				_screen->writeString(line1, Common::Point(x1, _creditLines[idx]._position.y), INFO_TOP);
+
+				_screen->writeString(line2, Common::Point(x2 - 1, _creditLines[idx]._position.y - 1), 0);
+				_screen->writeString(line2, Common::Point(x2, _creditLines[idx]._position.y - 1), 0);
+				_screen->writeString(line2, Common::Point(x2 + 1, _creditLines[idx]._position.y - 1), 0);
+
+				_screen->writeString(line2, Common::Point(x2 - 1, _creditLines[idx]._position.y), 0);
+				_screen->writeString(line2, Common::Point(x2 + 1, _creditLines[idx]._position.y), 0);
+
+				_screen->writeString(line2, Common::Point(x2 - 1, _creditLines[idx]._position.y + 1), 0);
+				_screen->writeString(line2, Common::Point(x2, _creditLines[idx]._position.y + 1), 0);
+				_screen->writeString(line2, Common::Point(x2 + 1, _creditLines[idx]._position.y + 1), 0);
+
+				_screen->writeString(line2, Common::Point(x2, _creditLines[idx]._position.y), INFO_TOP);
+			} else {
+				_screen->writeString(_creditLines[idx]._line, Common::Point(_creditLines[idx]._position.x - 1, _creditLines[idx]._position.y - 1), 0);
+				_screen->writeString(_creditLines[idx]._line, Common::Point(_creditLines[idx]._position.x, _creditLines[idx]._position.y - 1), 0);
+				_screen->writeString(_creditLines[idx]._line, Common::Point(_creditLines[idx]._position.x + 1, _creditLines[idx]._position.y - 1), 0);
+
+				_screen->writeString(_creditLines[idx]._line, Common::Point(_creditLines[idx]._position.x - 1, _creditLines[idx]._position.y), 0);
+				_screen->writeString(_creditLines[idx]._line, Common::Point(_creditLines[idx]._position.x + 1, _creditLines[idx]._position.y), 0);
+
+				_screen->writeString(_creditLines[idx]._line, Common::Point(_creditLines[idx]._position.x - 1, _creditLines[idx]._position.y + 1), 0);
+				_screen->writeString(_creditLines[idx]._line, Common::Point(_creditLines[idx]._position.x, _creditLines[idx]._position.y + 1), 0);
+				_screen->writeString(_creditLines[idx]._line, Common::Point(_creditLines[idx]._position.x + 1, _creditLines[idx]._position.y + 1), 0);
+
+				_screen->writeString(_creditLines[idx]._line, Common::Point(_creditLines[idx]._position.x, _creditLines[idx]._position.y), INFO_TOP);
+			}
+		}
+	}
 }
 
 void TattooEngine::blitCredits() {
-	// TODO
+	Common::Rect screenRect(0, -_creditSpeed, _screen->w(), _screen->h() + _creditSpeed);
+
+	for (uint idx = 0; idx < _creditLines.size(); ++idx) {
+		if (screenRect.contains(_creditLines[idx]._position)) {
+			Common::Rect r(_creditLines[idx]._width, _screen->fontHeight() + 2);
+			r.moveTo(_creditLines[idx]._position.x, _creditLines[idx]._position.y - 1);
+
+			_screen->restoreBackground(r);
+		}
+
+		_creditLines[idx]._position.y -= _creditSpeed;
+	}
 }
 
 void TattooEngine::eraseCredits() {
-	// TODO
+	Common::Rect screenRect(0, -_creditSpeed, _screen->w(), _screen->h() + _creditSpeed);
+
+	for (uint idx = 0; idx = _creditLines.size(); ++idx) {
+		if (screenRect.contains(_creditLines[idx]._position)) {
+			Common::Rect r(_creditLines[idx]._width, _screen->fontHeight() + 2);
+			r.moveTo(_creditLines[idx]._position.x, _creditLines[idx]._position.y - 1 + _creditSpeed);
+
+			_screen->restoreBackground(r);
+		}
+	}
+
+	if (!screenRect.contains(_creditLines[_creditLines.size() - 1]._position)) {
+		_creditLines.clear();
+		_creditsActive = false;
+		setFlags(!3000);
+	}
 }
 
 void TattooEngine::doHangManPuzzle() {
