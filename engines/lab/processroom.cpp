@@ -116,7 +116,7 @@ ViewDataPtr getViewData(uint16 roomNum, uint16 direction) {
 		VPtr = &Rooms[roomNum].WestView;
 
 	if (*VPtr == NULL)
-		readViews(roomNum, ViewPath);
+		readViews(roomNum);
 
 	ViewPtr = *VPtr;
 
@@ -187,9 +187,7 @@ static CloseDataPtr findCPtrMatch(CloseDataPtr Main, CloseDataPtr List) {
 /* Returns the current picture name.                                         */
 /*****************************************************************************/
 char *getPictName(CloseDataPtr *LCPtr) {
-	ViewDataPtr ViewPtr;
-
-	ViewPtr = getViewData(RoomNum, Direction);
+	ViewDataPtr ViewPtr = getViewData(RoomNum, Direction);
 
 	if (*LCPtr != NULL) {
 		*LCPtr = findCPtrMatch(*LCPtr, ViewPtr->closeUps);
@@ -675,7 +673,7 @@ static bool doActionRuleSub(int16 action, int16 roomNum, CloseDataPtr LCPtr, Clo
 		RPtr = Rooms[roomNum].RuleList;
 
 		if ((RPtr == NULL) && (roomNum == 0)) {
-			readViews(roomNum, ViewPath);
+			readViews(roomNum);
 			RPtr = Rooms[roomNum].RuleList;
 		}
 
@@ -737,7 +735,7 @@ static bool doOperateRuleSub(int16 ItemNum, int16 roomNum, CloseDataPtr LCPtr, C
 			RPtr = Rooms[roomNum].RuleList;
 
 			if ((RPtr == NULL) && (roomNum == 0)) {
-				readViews(roomNum, ViewPath);
+				readViews(roomNum);
 				RPtr = Rooms[roomNum].RuleList;
 			}
 

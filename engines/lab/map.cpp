@@ -855,7 +855,7 @@ void processMap(uint16 CurRoom) {
 
 					if (OldMsg != CurMsg) {
 						if (Rooms[CurMsg].RoomMsg == NULL)
-							readViews(CurMsg, ViewPath);
+							readViews(CurMsg);
 
 						if ((sptr = Rooms[CurMsg].RoomMsg)) {
 							mouseHide();

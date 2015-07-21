@@ -52,7 +52,7 @@ void allocRoom(void **Ptr, uint16 Size, uint16 RoomNum);
 
 bool readRoomData(const char *fileName);
 bool readInventory(const char *fileName);
-bool readViews(uint16 RoomNum, const char *Path);
+bool readViews(uint16 RoomNum);
 
 
 /* From ProcessRoom.c */
