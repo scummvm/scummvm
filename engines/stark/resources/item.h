@@ -220,6 +220,7 @@ public:
 
 	// Item API
 	Gfx::RenderEntry *getRenderEntry(const Common::Point &positionOffset) override;
+	void setEnabled(bool enabled) override;
 
 	/** Obtain an action menu icon */
 	Visual *getActionVisual(bool active) const;

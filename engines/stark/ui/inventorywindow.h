@@ -47,7 +47,7 @@ public:
 	void open();
 	void close();
 
-	void setSelectedInventoryItem(uint16 selectedInventoryItem);
+	void setSelectedInventoryItem(int16 selectedInventoryItem);
 	int16 getSelectedInventoryItem() const;
 
 protected:

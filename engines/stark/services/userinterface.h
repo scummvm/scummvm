@@ -87,8 +87,10 @@ public:
 	/** Allow or forbid interaction with the game world */
 	void setInteractive(bool interactive);
 
+	int16 getSelectedInventoryItem() const;
+
 	/** Set the selected inventory item */
-	void selectInventoryItem(uint16 itemIndex);
+	void selectInventoryItem(int16 itemIndex);
 
 private:
 	// Game Screen windows

@@ -136,7 +136,15 @@ void UserInterface::notifyShouldOpenInventory() {
 	_inventoryWindow->open();
 }
 
-void UserInterface::selectInventoryItem(uint16 itemIndex) {
+int16 UserInterface::getSelectedInventoryItem() const {
+	if (_inventoryWindow) {
+		return _inventoryWindow->getSelectedInventoryItem();
+	} else {
+		return -1;
+	}
+}
+
+void UserInterface::selectInventoryItem(int16 itemIndex) {
 	_inventoryWindow->setSelectedInventoryItem(itemIndex);
 }
 

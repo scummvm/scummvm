@@ -22,8 +22,6 @@
 
 #include "engines/stark/resources/item.h"
 
-#include "common/debug.h"
-
 #include "engines/stark/formats/xrc.h"
 #include "engines/stark/gfx/renderentry.h"
 
@@ -38,6 +36,7 @@
 #include "engines/stark/services/global.h"
 #include "engines/stark/services/services.h"
 #include "engines/stark/services/stateprovider.h"
+#include "engines/stark/services/userinterface.h"
 
 namespace Stark {
 namespace Resources {
@@ -337,6 +336,16 @@ Gfx::RenderEntry *InventoryItem::getRenderEntry(const Common::Point &positionOff
 	}
 
 	return _renderEntry;
+}
+
+void InventoryItem::setEnabled(bool enabled) {
+	Item::setEnabled(enabled);
+
+	// Deselect the item in the inventory when removing it
+	int16 selectedInventoryItem = StarkUserInterface->getSelectedInventoryItem();
+	if (!enabled && selectedInventoryItem == getIndex()) {
+		StarkUserInterface->selectInventoryItem(-1);
+	}
 }
 
 Visual *InventoryItem::getActionVisual(bool active) const {

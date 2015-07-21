@@ -63,7 +63,7 @@ void InventoryWindow::close() {
 	_visible = false;
 }
 
-void InventoryWindow::setSelectedInventoryItem(uint16 selectedInventoryItem) {
+void InventoryWindow::setSelectedInventoryItem(int16 selectedInventoryItem) {
 	_selectedInventoryItem = selectedInventoryItem;
 }
 
