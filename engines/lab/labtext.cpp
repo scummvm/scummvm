@@ -154,12 +154,8 @@ void freeLabText() {
 /* Decrypts a chunk of text.                                                 */
 /*****************************************************************************/
 void decrypt(byte *text) {
-	if (text == NULL)
-		return;
-
-	while (*text != '\0') {
-		(*text) -= (byte)95;
-		text++;
+	while (text && *text != '\0') {
+		*text++ -= (byte)95;
 	}
 }
 
