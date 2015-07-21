@@ -44,8 +44,8 @@ BitMap bit1, bit2, *DispBitMap = &bit1, *DrawBitMap = &bit1;
 
 
 extern BitMap RawDiffBM;
-extern char diffcmap[256 * 3], lastcmap[256 * 3];
-extern bool IsBM, NoFlip, nopalchange;
+extern char diffcmap[256 * 3];
+extern bool IsBM, nopalchange;
 
 extern bool DoBlack, stopsound;
 extern bool IsHiRes;
@@ -435,9 +435,9 @@ static void doScrollBlack() {
 	Im.Width = width;
 	Im.Height = height;
 	Im.ImageData = mem;
-	g_music->fillUpMusic(true);
+	g_music->updateMusic();
 	readScreenImage(&Im, 0, 0);
-	g_music->fillUpMusic(true);
+	g_music->updateMusic();
 
 	BaseAddr = (uint32 *) getVGABaseAddr();
 
@@ -445,7 +445,7 @@ static void doScrollBlack() {
 	nheight = height;
 
 	while (nheight) {
-		g_music->checkMusic();
+		g_music->updateMusic();
 
 		if (!IsHiRes)
 			waitTOF();
@@ -547,7 +547,7 @@ static void doScrollWipe(char *filename) {
 	height = VGAScaleY(149) + SVGACord(2);
 
 	while (g_music->isSoundEffectActive()) {
-		g_music->checkMusic();
+		g_music->updateMusic();
 		waitTOF();
 	}
 
@@ -557,12 +557,12 @@ static void doScrollWipe(char *filename) {
 	IsBM = false;
 	mem = RawDiffBM.Planes[0];
 
-	g_music->fillUpMusic(true);
+	g_music->updateMusic();
 	by      = VGAScaleX(3);
 	nheight = height;
 
 	while (onrow < headerdata.y) {
-		g_music->checkMusic();
+		g_music->updateMusic();
 
 		if ((by > nheight) && nheight)
 			by = nheight;
@@ -619,11 +619,11 @@ static void doScrollBounce() {
 	int height = VGAScaleY(149) + SVGACord(2);
 	byte *mem = RawDiffBM.Planes[0];
 
-	g_music->fillUpMusic(true);
+	g_music->updateMusic();
 	int startline = headerdata.y - height - 1;
 
 	for (int counter = 0; counter < 5; counter++) {
-		g_music->checkMusic();
+		g_music->updateMusic();
 		startline -= newby[counter];
 		copyPage(width, height, 0, startline, mem);
 
@@ -632,7 +632,7 @@ static void doScrollBounce() {
 	}
 
 	for (int counter = 8; counter > 0; counter--) {
-		g_music->checkMusic();
+		g_music->updateMusic();
 		startline += newby1[counter - 1];
 		copyPage(width, height, 0, startline, mem);
 
