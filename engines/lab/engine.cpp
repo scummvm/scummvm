@@ -69,7 +69,7 @@ int     followCrumbs();
 void    mayShowCrumbIndicator();
 void    mayShowCrumbIndicatorOff();
 
-bool Alternate = false, ispal = false, noupdatediff = false, MainDisplay = true, QuitLab = false, DoNotReset = false;
+bool Alternate = false, ispal = false, noupdatediff = false, MainDisplay = true, QuitLab = false;
 
 extern const char *NewFileName;  /* When ProcessRoom.c decides to change the filename
                                     of the current picture. */
@@ -116,11 +116,6 @@ extern char *GOFORWARDDIR, *NOPATH, *TAKEITEM, *USEONWHAT, *TAKEWHAT, *MOVEWHAT,
 #define LIBRARYMONITOR       80
 #define TERMINALMONITOR      81
 #define LEVERSMONITOR        82
-
-
-#define CLOWNROOM           123
-#define DIMROOM              80
-
 
 
 static byte *MovePanelBuffer, *InvPanelBuffer;
@@ -397,27 +392,6 @@ void eatMessages() {
 
 	return;
 }
-
-static uint16 lastmusicroom = 1;
-
-
-/******************************************************************************/
-/* Checks the music that should be playing in a particular room.              */
-/******************************************************************************/
-static void checkRoomMusic() {
-	if ((lastmusicroom == RoomNum) || !g_music->_musicOn)
-		return;
-
-	if (RoomNum == CLOWNROOM)
-		g_music->changeMusic("Music:Laugh");
-	else if (RoomNum == DIMROOM)
-		g_music->changeMusic("Music:Rm81");
-	else if (!DoNotReset)
-		g_music->resetMusic();
-
-	lastmusicroom = RoomNum;
-}
-
 
 /******************************************************************************/
 /* Checks whether the close up is one of the special case closeups.           */
@@ -791,7 +765,7 @@ static void mainGameLoop() {
 
 		if (Msg == NULL) { /* Does music load and next animation frame when you've run out of messages */
 			GotMessage = false;
-			checkRoomMusic();
+			g_music->checkRoomMusic();
 			g_music->updateMusic();
 			diffNextFrame();
 

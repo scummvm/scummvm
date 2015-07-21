@@ -44,26 +44,18 @@ namespace Lab {
 
 /* Global parser data */
 
+#define NOFILE         "no file"
+
 RoomData *Rooms;
 InventoryData *Inventory;
 uint16 NumInv, RoomNum, ManyRooms, HighestCondition, Direction;
-
-extern char *FACINGNORTH, *FACINGEAST, *FACINGSOUTH, *FACINGWEST;
-extern bool LongWinInFront;
-
-#define NOFILE         "no file"
-
-extern const char *CurFileName;
-
-const char *ViewPath = "LAB:Rooms/";
-
 const char *NewFileName;
 
-extern bool DoNotDrawMessage;
-extern bool NoFlip, IsBM, noupdatediff, waitForEffect, mwaitForEffect, QuitLab, soundplaying, MusicOn, DoBlack, DoNotReset;
+extern bool DoNotDrawMessage, IsBM, noupdatediff, QuitLab, MusicOn, DoBlack, LongWinInFront;
 extern char diffcmap[256 * 3];
-
+extern const char *CurFileName;
 extern CloseDataPtr CPtr;
+extern char *FACINGNORTH, *FACINGEAST, *FACINGSOUTH, *FACINGWEST;
 
 /*****************************************************************************/
 /* Generates a random number.                                                */
@@ -373,26 +365,26 @@ static void doActions(ActionPtr APtr, CloseDataPtr *LCPtr) {
 	uint32 StartSecs, StartMicros, CurSecs, CurMicros;
 
 	while (APtr) {
-		g_music->checkMusic();
+		g_music->updateMusic();
 
 		switch (APtr->ActionType) {
 		case PLAYSOUND:
-			mwaitForEffect = true; /* Plays a sound, but waits for it to be done before continuing */
 			g_music->_loopSoundEffect = false;
-			readMusic((char *)APtr->Data);
-			mwaitForEffect = false;
+			g_music->_waitTillFinished = true;
+			readMusic((char *)APtr->Data, true);
+			g_music->_waitTillFinished = false;
 			break;
 
 		case PLAYSOUNDB:
-			mwaitForEffect = false; /* Plays a sound in the background. */
 			g_music->_loopSoundEffect = false;
-			readMusic((char *)APtr->Data);
+			g_music->_waitTillFinished = false;
+			readMusic((char *)APtr->Data, false);
 			break;
 
 		case PLAYSOUNDCONT:
 			g_music->_doNotFilestopSoundEffect = true;
 			g_music->_loopSoundEffect = true;
-			readMusic((char *)APtr->Data);
+			readMusic((char *)APtr->Data, g_music->_waitTillFinished);
 			break;
 
 		case SHOWDIFF:
@@ -542,7 +534,7 @@ static void doActions(ActionPtr APtr, CloseDataPtr *LCPtr) {
 			WSDL_UpdateScreen();
 
 			while (1) {
-				g_music->checkMusic();
+				g_music->updateMusic();
 				diffNextFrame();
 				getTime(&CurSecs, &CurMicros);
 
@@ -563,16 +555,16 @@ static void doActions(ActionPtr APtr, CloseDataPtr *LCPtr) {
 
 		case CHANGEMUSIC:
 			g_music->changeMusic((const char *)APtr->Data);
-			DoNotReset = true;
+			g_music->setMusicReset(false);
 			break;
 
 		case RESETMUSIC:
 			g_music->resetMusic();
-			DoNotReset = false;
+			g_music->setMusicReset(true);
 			break;
 
 		case FILLMUSIC:
-			g_music->fillUpMusic(true);
+			g_music->updateMusic();
 			break;
 
 		case WAITSOUND:

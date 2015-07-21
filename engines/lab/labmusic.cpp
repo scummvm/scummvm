@@ -40,10 +40,13 @@
 namespace Lab {
 
 #define MUSICBUFSIZE   (2 * 65536L)
-
 #define SAMPLESPEED    15000L
 
+#define CLOWNROOM           123
+#define DIMROOM              80
+
 Music *g_music;
+extern uint16 RoomNum;	// TODO: Move into a class
 
 Music::Music() {
 	_file = 0;
@@ -60,6 +63,9 @@ Music::Music() {
 	_loopSoundEffect = false;
 	_queuingAudioStream = NULL;
 	_doNotFilestopSoundEffect = false;
+	_lastMusicRoom = 1;
+	_doReset = true;
+	_waitTillFinished = false;
 }
 
 /*****************************************************************************/
@@ -141,15 +147,6 @@ void Music::fillbuffer(byte *musicBuffer) {
 		_file->seek(0);
 		_leftinfile = _file->size();
 	}
-}
-
-/*****************************************************************************/
-/* Fills up the buffers that have already been played if necessary; if doit  */
-/* is set to TRUE then it will fill up all empty buffers.  Otherwise, it     */
-/* Check if there are MINBUFFERS or less buffers that are playing.           */
-/*****************************************************************************/
-void Music::fillUpMusic(bool doit) {
-	updateMusic();
 }
 
 /*****************************************************************************/
@@ -241,18 +238,6 @@ void Music::resumeBackMusic() {
 }
 
 /*****************************************************************************/
-/* Checks to see if need to fill buffers fill of music.                      */
-/*****************************************************************************/
-void Music::checkMusic() {
-	updateMusic();
-
-	if (!_musicOn)
-		return;
-
-	fillUpMusic(false);
-}
-
-/*****************************************************************************/
 /* Turns the music on and off.                                               */
 /*****************************************************************************/
 void Music::setMusic(bool on) {
@@ -266,6 +251,23 @@ void Music::setMusic(bool on) {
 		updateMusic();
 	} else
 		_musicOn = on;
+}
+
+/******************************************************************************/
+/* Checks the music that should be playing in a particular room.              */
+/******************************************************************************/
+void Music::checkRoomMusic() {
+	if ((_lastMusicRoom == RoomNum) || !_musicOn)
+		return;
+
+	if (RoomNum == CLOWNROOM)
+		g_music->changeMusic("Music:Laugh");
+	else if (RoomNum == DIMROOM)
+		g_music->changeMusic("Music:Rm81");
+	else if (_doReset)
+		g_music->resetMusic();
+
+	_lastMusicRoom = RoomNum;
 }
 
 /*****************************************************************************/
@@ -348,14 +350,14 @@ byte **Music::newOpen(const char *name, uint32 &size) {
 
 	if (_musicOn) {
 		updateMusic();
-		fillUpMusic(true);
+		updateMusic();
 	}
 
 	if (!_doNotFilestopSoundEffect && isSoundEffectActive())
 		stopSoundEffect();
 
 	file = openFile(name, size);
-	checkMusic();
+	updateMusic();
 	return file;
 }
 
