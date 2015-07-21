@@ -58,6 +58,7 @@ extern CrumbData BreadCrumbs[MAX_CRUMBS];
 extern uint16 NumCrumbs;
 extern bool DroppingCrumbs;
 extern bool FollowingCrumbs;
+extern char *getPictName(CloseDataPtr *LCPtr);
 
 void writeSaveGameHeader(Common::OutSaveFile *out, const Common::String &saveName) {
 	out->writeUint32BE(SAVEGAME_ID);
@@ -127,8 +128,6 @@ bool readSaveGameHeader(Common::InSaveFile *in, SaveGameHeader &header) {
 
 	return true;
 }
-
-extern char *getPictName(CloseDataPtr *LCPtr);
 
 /*****************************************************************************/
 /* Writes the game out to disk.                                              */

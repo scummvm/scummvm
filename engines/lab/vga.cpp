@@ -38,6 +38,9 @@
 
 namespace Lab {
 
+static byte curvgapal[256 * 3];
+static unsigned char curapen = 0;
+
 uint32 VGAScreenWidth = 320UL,
               VGAScreenHeight = 200UL,
               VGABytesPerPage = 65536UL;
@@ -58,6 +61,7 @@ uint16 g_NextKeyIn = 0;
 uint16 g_KeyBuf[64];
 uint16 g_NextKeyOut = 0;
 bool g_MouseAtEdge = false;
+byte *TempScrollData;
 
 /*****************************************************************************/
 /* Sets up either a low-res or a high-res 256 color screen.                  */
@@ -244,8 +248,6 @@ void WSDL_SetColors(byte *buf, uint16 first, uint16 numreg, uint16 slow) {
 	if (slow)
     	waitTOF();
 }
-
-static byte curvgapal[256 * 3];
 
 /*****************************************************************************/
 /* Writes any number of the 256 color registers.                             */
@@ -467,9 +469,6 @@ void readScreenImage(Image *Im, uint16 x, uint16 y) {
 	}
 }
 
-
-
-
 /*****************************************************************************/
 /* Blits a piece of one image to another.                                    */
 /* NOTE: for our purposes, assumes that ImDest is to be in VGA memory.       */
@@ -514,8 +513,6 @@ void bltBitMap(Image *ImSource, uint16 xs, uint16 ys, Image *ImDest,
 		}
 	}
 }
-
-byte *TempScrollData;
 
 /*****************************************************************************/
 /* Scrolls the display in the x direction by blitting.                       */
@@ -602,8 +599,6 @@ void scrollDisplayY(int16 dy, uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
 		rectFill(x1, y2 + dy + 1, x2, y2);
 	}
 }
-
-static unsigned char curapen = 0;
 
 /*****************************************************************************/
 /* Sets the pen number to use on all the drawing operations.                 */

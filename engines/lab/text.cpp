@@ -35,6 +35,8 @@
 
 namespace Lab {
 
+extern uint32 VGAScreenWidth, VGABytesPerPage;
+
 /*****************************************************************************/
 /* Opens up a font from disk.                                                */
 /*****************************************************************************/
@@ -59,7 +61,7 @@ bool openFont(const char *TextFontPath, struct TextFont **tf) {
 				readBlock((*tf)->Offsets, 256L * 2L, file);
 				swapUShortPtr((*tf)->Offsets, 256);
 
-				skip(file, 4L);
+				(*file) += 4;
 
 				if (((*tf)->data = (byte *)calloc((*tf)->DataLength, 1))) {
 					readBlock((*tf)->data, (*tf)->DataLength, file);
@@ -75,7 +77,6 @@ bool openFont(const char *TextFontPath, struct TextFont **tf) {
 	return false;
 }
 
-
 /*****************************************************************************/
 /* Closes a font and frees all memory associated with it.                    */
 /*****************************************************************************/
@@ -87,8 +88,6 @@ void closeFont(struct TextFont *tf) {
 		free(tf);
 	}
 }
-
-
 
 /*****************************************************************************/
 /* Returns the length of a text in the specified font.                       */
@@ -113,11 +112,6 @@ uint16 textLength(struct TextFont *tf, const char *text, uint16 numchars) {
 uint16 textHeight(struct TextFont *tf) {
 	return (tf) ? tf->Height : 0;
 }
-
-
-
-extern uint32 VGAScreenWidth, VGABytesPerPage;
-
 
 /*****************************************************************************/
 /* Draws the text to the screen.                                             */
