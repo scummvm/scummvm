@@ -47,26 +47,69 @@
 
 namespace Lab {
 
-extern bool nopalchange, DoBlack, IsHiRes;
+static uint16 MonGadHeight = 1;
+static uint16 hipal[20];
 
+// Combination lock rules
+static Image *Images[10];
+byte combination[6] = { 0, 0, 0, 0, 0, 0 }, solution[] = { 0, 4, 0, 8, 7, 2 };
+static uint16 combx[] = { 45, 83, 129, 166, 211, 248 };
+
+static TextFont *BigMsgFont;
+static TextFont bmfont;
+static char *journaltext, *journaltexttitle;
+static uint16 JPage = 0;
+static bool lastpage = false;
+static Image *JCancel, *JCancelAlt, *JLeft, *JLeftAlt, *JRight, *JRightAlt, JBackImage, ScreenImage;
+static uint16 JGadX[3] = { 80, 144, 194 }, JGadY[3] = { 162, 164, 162 };
+static Gadget ForwardG, CancelG, BackG;
+static bool GotBackImage = false;
+static uint16 monpage;
+static const char *TextFileName;
+
+Image *MonButton, *AltMonButton, *MonQuit, *AltMonQuit, *MonBack, *AltMonBack,
+*MonDown, *AltMonDown, *MonUp, *AltMonUp;
+
+// Tile puzzle rules
+Image *Tiles[16];
+uint16 CurTile[4][4] = {
+	{ 1, 5, 9, 13 },
+	{ 2, 6, 10, 14 },
+	{ 3, 7, 11, 15 },
+	{ 4, 8, 12, 0 }
+}, TileSolution[4][4] = {
+	{ 7, 1, 8, 3 },
+	{ 2, 11, 15, 4 },
+	{ 9, 5, 14, 6 },
+	{ 10, 13, 12, 0 }
+};
+
+extern TextFont *MsgFont;
+extern uint16 *FadePalette;
+extern bool nopalchange, DoBlack, IsHiRes;
 extern BitMap *DispBitMap, *DrawBitMap;
 extern char diffcmap[3 * 256];
-
 extern uint32 VGAScreenWidth, VGAScreenHeight;
-
+extern byte *TempScrollData;
+extern CloseDataPtr CPtr;
+extern InventoryData *Inventory;
+extern uint16 RoomNum, Direction;
 
 #define COMBINATIONUNLOCKED  130
 #define BRICKOPEN            115
-
-
-static uint16 hipal[20];
-extern uint16 *FadePalette;
-
 #define INCL(BITSET,BIT) ((BITSET) |= (BIT))
-
 #define SETBIT(BITSET,BITNUM)   INCL(BITSET, (1 << (BITNUM)))
-
 #define INBIT(BITSET,BITNUM)    ( ((1 << (BITNUM)) & (BITSET)) > 0 )
+#define LEFTSCROLL     1
+#define RIGHTSCROLL    2
+#define UPSCROLL       3
+#define DOWNSCROLL     4
+#define BRIDGE0   148
+#define BRIDGE1   104
+#define DIRTY     175
+#define NONEWS    135
+#define NOCLEAN   152
+#define QUARTERNUM           30
 
 
 static byte *loadBackPict(const char *fileName, bool tomem) {
@@ -92,24 +135,6 @@ static byte *loadBackPict(const char *fileName, bool tomem) {
 	return res;
 }
 
-
-
-/*----------------------------------------------------------------------------*/
-/*-------------------------- Combination Lock Rules --------------------------*/
-/*----------------------------------------------------------------------------*/
-
-
-
-
-static Image *Images[10];
-
-
-byte combination[6] = {0, 0, 0, 0, 0, 0}, solution[] = {0, 4, 0, 8, 7, 2};
-
-static uint16 combx[] = {45, 83, 129, 166, 211, 248};
-
-
-
 /*****************************************************************************/
 /* Draws the images of the combination lock to the display bitmap.           */
 /*****************************************************************************/
@@ -119,9 +144,6 @@ static void doCombination() {
 	for (counter = 0; counter <= 5; counter++)
 		drawImage(Images[combination[counter]], VGAScaleX(combx[counter]), VGAScaleY(65));
 }
-
-
-extern byte *TempScrollData;
 
 /*****************************************************************************/
 /* Reads in a backdrop picture.                                              */
@@ -197,9 +219,6 @@ static void changeCombination(uint16 number) {
 }
 
 
-
-
-
 /*****************************************************************************/
 /* Processes mouse clicks and changes the combination.                       */
 /*****************************************************************************/
@@ -228,26 +247,6 @@ void mouseCombination(uint16 x, uint16 y) {
 		changeCombination(number);
 	}
 }
-
-
-
-/*----------------------------------------------------------------------------*/
-/*----------------------------- Tile Puzzle Rules ----------------------------*/
-/*----------------------------------------------------------------------------*/
-
-Image *Tiles[16];
-uint16 CurTile[4] [4] = {
-	{ 1, 5,  9, 13 },
-	{ 2, 6, 10, 14 },
-	{ 3, 7, 11, 15 },
-	{ 4, 8, 12,  0 }
-}, TileSolution[4] [4] = {
-	{ 7,   1,  8,  3 },
-	{ 2,  11, 15,  4 },
-	{ 9,   5, 14,  6 },
-	{ 10, 13, 12,  0}
-};
-
 
 /*****************************************************************************/
 /* Draws the images of the combination lock to the display bitmap.           */
@@ -291,9 +290,6 @@ static void doTile(bool showsolution) {
 	}
 }
 
-
-
-
 /*****************************************************************************/
 /* Reads in a backdrop picture.                                              */
 /*****************************************************************************/
@@ -329,16 +325,6 @@ void showTile(const char *filename, bool showsolution) {
 	VGASetPal(diffcmap, 256);
 }
 
-
-
-#define LEFTSCROLL     1
-#define RIGHTSCROLL    2
-#define UPSCROLL       3
-#define DOWNSCROLL     4
-
-
-
-
 static void scrollRaster(int16 dx, int16 dy, uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
 	if (dx)
 		scrollDisplayX(dx, x1, y1, x2, y2);
@@ -346,9 +332,6 @@ static void scrollRaster(int16 dx, int16 dy, uint16 x1, uint16 y1, uint16 x2, ui
 	if (dy)
 		scrollDisplayY(dy, x1, y1, x2, y2);
 }
-
-
-
 
 /*****************************************************************************/
 /* Does the scrolling for the tiles on the tile puzzle.                      */
@@ -390,8 +373,6 @@ static void doTileScroll(uint16 col, uint16 row, uint16 scrolltype) {
 		y1 += dY;
 	}
 }
-
-
 
 /*****************************************************************************/
 /* Changes the combination number of one of the slots                        */
@@ -468,9 +449,6 @@ static void changeTile(uint16 col, uint16 row) {
 }
 
 
-
-
-
 /*****************************************************************************/
 /* Processes mouse clicks and changes the combination.                       */
 /*****************************************************************************/
@@ -487,15 +465,6 @@ void mouseTile(uint16 x, uint16 y) {
 	if ((x < 4) && (y < 4))
 		changeTile(x, y);
 }
-
-
-/*---------------------------------------------------------------------------*/
-/*------------------------ Does the detective notes. ------------------------*/
-/*---------------------------------------------------------------------------*/
-
-extern TextFont *MsgFont;
-static TextFont *BigMsgFont;
-static TextFont bmfont;
 
 
 /*****************************************************************************/
@@ -520,14 +489,6 @@ void doNotes() {
 	VGASetPal(diffcmap, 256);
 	freeAllStolenMem();
 }
-
-
-
-
-/*---------------------------------------------------------------------------*/
-/*---------------------- Does the Old West newspaper.  ----------------------*/
-/*---------------------------------------------------------------------------*/
-
 
 
 /*****************************************************************************/
@@ -590,34 +551,6 @@ void doWestPaper() {
 	VGASetPal(diffcmap, 256);
 	freeAllStolenMem();
 }
-
-
-
-
-/*---------------------------------------------------------------------------*/
-/*---------------------------- The Journal stuff ----------------------------*/
-/*---------------------------------------------------------------------------*/
-
-
-#define BRIDGE0   148
-#define BRIDGE1   104
-#define DIRTY     175
-#define NONEWS    135
-#define NOCLEAN   152
-
-
-static char *journaltext, *journaltexttitle;
-static uint16 JPage = 0;
-
-static bool lastpage = false;
-
-static Image *JCancel, *JCancelAlt, *JLeft, *JLeftAlt, *JRight, *JRightAlt, JBackImage, ScreenImage;
-
-static uint16 JGadX[3] = {80, 144, 194}, JGadY[3] = {162, 164, 162};
-static Gadget ForwardG, CancelG, BackG;
-
-
-
 
 /*****************************************************************************/
 /* Loads in the data for the journal.                                        */
@@ -710,8 +643,6 @@ static bool loadJournalData() {
 	return true;
 }
 
-
-
 /*****************************************************************************/
 /* Draws the text to the back journal screen to the appropriate Page number  */
 /*****************************************************************************/
@@ -750,9 +681,6 @@ static void drawJournalText() {
 	lastpage = lastpage || (*CurText == 0);
 }
 
-
-
-
 /*****************************************************************************/
 /* Does the turn page wipe.                                                  */
 /*****************************************************************************/
@@ -776,9 +704,6 @@ static void turnPage(bool FromLeft) {
 	}
 }
 
-
-
-static bool GotBackImage = false;
 
 /*****************************************************************************/
 /* Draws the journal from page x.                                            */
@@ -826,9 +751,6 @@ static void drawJournal(uint16 wipenum, bool needFade) {
 	nopalchange = false;
 }
 
-
-
-
 /*****************************************************************************/
 /* Processes user input.                                                     */
 /*****************************************************************************/
@@ -870,8 +792,6 @@ static void processJournal() {
 		}
 	}
 }
-
-
 
 /*****************************************************************************/
 /* Does the journal processing.                                              */
@@ -916,11 +836,6 @@ void doJournal() {
 	ungetVGABaseAddr();
 }
 
-#define QUARTERNUM           30
-
-extern InventoryData *Inventory;
-extern uint16 RoomNum, Direction;
-
 bool saveRestoreGame() {
 	bool isOK = false;
 
@@ -961,23 +876,6 @@ bool saveRestoreGame() {
 	return isOK;
 }
 
-/*---------------------------------------------------------------------------*/
-/*--------------------------- The Monitors stuff ----------------------------*/
-/*---------------------------------------------------------------------------*/
-
-
-extern CloseDataPtr CPtr;
-
-static uint16 monpage;
-static const char *TextFileName;
-
-
-Image *MonButton, *AltMonButton, *MonQuit, *AltMonQuit, *MonBack, *AltMonBack,
-		*MonDown, *AltMonDown, *MonUp, *AltMonUp;
-
-
-
-
 /*****************************************************************************/
 /* Makes sure that the buttons are in memory.                                */
 /*****************************************************************************/
@@ -996,9 +894,6 @@ static void getMonImages() {
 
 	stealBufMem(bufferSize);  /* Trick: protects the memory where the buttons are so they won't be over-written */
 }
-
-
-static uint16 MonGadHeight = 1;
 
 
 /*****************************************************************************/
@@ -1153,9 +1048,6 @@ static void processMonitor(char *ntext, bool isinteractive, uint16 x1, uint16 y1
 		}
 	}
 }
-
-
-
 
 /*****************************************************************************/
 /* Does what's necessary for the monitor.                                    */
