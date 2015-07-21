@@ -322,37 +322,11 @@ bool VUnDIFFMemory(byte *Dest, byte *diff, uint16 HeaderSize, uint16 CopySize, u
 
 		else
 			return false;
-	}
-	/*
-	   else if (HeaderSize == 2)
-	   {
-	    if (CopySize == 1)
-	      VUnDIFFWordByte(Dest, diff, bytesperrow);
-
-	    else if (CopySize == 2)
-	      VUnDIFFWordWord(Dest, diff, bytesperrow);
-
-	    else if (CopySize == 4)
-	      VUnDIFFWordLong(Dest, diff, bytesperrow);
-
-	    else
-	      return false;
-	   }
-	 */
-	else
+	} else
 		return (false);
 
 	return true;
 }
-
-
-
-
-
-/*---------------------------- Runlength Decodes ----------------------------*/
-
-
-
 
 
 /*****************************************************************************/

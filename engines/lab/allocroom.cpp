@@ -40,15 +40,11 @@ namespace Lab {
 #define MAXMARKERS     10
 
 extern RoomData *Rooms;
-extern uint16 ManyRooms;
-
 
 typedef struct {
 	uint16 RoomNum;
 	void *Start0, *End0, *Start1, *End1;
 } RoomMarker;
-
-
 
 static RoomMarker RoomMarkers[MAXMARKERS];
 static void *RoomBuffer = NULL;

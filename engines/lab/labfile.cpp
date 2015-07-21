@@ -34,10 +34,6 @@
 
 namespace Lab {
 
-#define MAXREADSIZE 30720L
-/* NOTE: set to 0 for non-CDTV machines.          */
-
-
 
 static byte *buffer = NULL, *realbufferstart = NULL, *startoffilestorage = NULL;
 
@@ -46,14 +42,7 @@ static uint32 buffersize, realbuffersize;
 
 /*-------------------- Routines that buffer a whole file --------------------*/
 
-
-
-/*----- divides up and manages the buffer -----*/
-
-
-
 #define MAXMARKERS        15
-
 
 
 struct FileMarker {
@@ -182,7 +171,6 @@ bool allocFile(void **Ptr, uint32 Size, const char *fileName) {
 /*****************************************************************************/
 byte **openFile(const char *name, uint32 &size) {
 	byte *buf;
-
 	Common::File file;
 
 	file.open(translateFileName(name));
@@ -195,10 +183,8 @@ byte **openFile(const char *name, uint32 &size) {
 	size = file.size();
 
 	buf = (byte *)malloc(size);
-
-	if (!buf) {
+	if (!buf)
 		error("Unable to allocate %d bytes file file %s", size, name);
-	}
 
 	*startoffile = buf;
 
@@ -208,7 +194,6 @@ byte **openFile(const char *name, uint32 &size) {
 }
 
 
-
 /*****************************************************************************/
 /* Reads a block of memory.                                                  */
 /*****************************************************************************/
@@ -216,30 +201,6 @@ void readBlock(void *Buffer, uint32 Size, byte **File) {
 	memcpy(Buffer, *File, (size_t) Size);
 	(*File) += Size;
 }
-
-
-
-/*****************************************************************************/
-/* Reads on character.                                                       */
-/*****************************************************************************/
-char readChar(char **File) {
-	char c = **File;
-
-	(*File)++;
-	return c;
-}
-
-
-
-
-/*****************************************************************************/
-/* Skips a chunk of memory.                                                  */
-/*****************************************************************************/
-void skip(byte **File, uint32 skip) {
-	(*File) += skip;
-}
-
-
 
 /*****************************************************************************/
 /* Resets the internal buffers to empty.                                     */

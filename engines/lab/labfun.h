@@ -140,8 +140,6 @@ bool quitPlaying();
 byte **isBuffered(const char *fileName);
 byte **openFile(const char *name, uint32 &size);
 void readBlock(void *Buffer, uint32 Size, byte **File);
-char readChar(char **File);
-void skip(byte **File, uint32 skip);
 void resetBuffer();
 bool initBuffer(uint32 BufSize, bool IsGraphicsMem);
 void freeBuffer();
@@ -280,7 +278,6 @@ void showCombination(const char *filename);
 void mouseCombination(uint16 x, uint16 y);
 void showTile(const char *filename, bool showsolution);
 void mouseTile(uint16 x, uint16 y);
-void inner_main();
 
 } // End of namespace Lab
 
