@@ -158,7 +158,7 @@ void diffNextFrame() {
 		if (CurBit >= numchunks) {
 			mouseShow();
 
-			if (!NoFlip && !IsBM) {
+			if (!IsBM) {
 				if (headerdata.fps) {
 					waitForTime(WaitSec, WaitMicros);
 					addCurTime(0L, DelayMicros, &WaitSec, &WaitMicros);
@@ -451,12 +451,11 @@ void stopDiffEnd() {
 		StopPlayingEnd = true;
 
 		while (IsPlaying) {
-			g_music->checkMusic();
+			g_music->updateMusic();
 			diffNextFrame();
 		}
 	}
 }
-
 
 
 /*****************************************************************************/
@@ -465,8 +464,6 @@ void stopDiffEnd() {
 void stopSound() {
 	stopsound = true;
 }
-
-
 
 /*****************************************************************************/
 /* Reads in a DIFF file.                                                     */
@@ -478,16 +475,13 @@ bool readDiff(bool playonce) {
 }
 
 
-
 static byte *mstart;
 
 
-void readSound() {
+void readSound(bool waitTillFinished) {
 	uint32 header_ = 0, size_;
 	uint16 samplespeed_;
-//  uint16 numchunks = 1;
 	char temp_[5];
-//  bool        FirstThru = true;
 	byte *storagefordifffile_, **difffile_ = &storagefordifffile_;
 
 	mstart = *startoffile;            /* Make a copy of the pointer to the start of the file    */
@@ -526,7 +520,7 @@ void readSound() {
 		swapULong(&size_);
 
 		if ((header_ == 30) || (header_ == 31)) {
-			if (mwaitForEffect) {
+			if (waitTillFinished) {
 				while (g_music->isSoundEffectActive()) {
 					g_music->updateMusic();
 					waitTOF();
@@ -547,7 +541,7 @@ void readSound() {
 
 			g_music->playSoundEffect(samplespeed_, musicsize, music);
 		} else if (header_ == 65535L) {
-			if (mwaitForEffect) {
+			if (waitTillFinished) {
 				while (g_music->isSoundEffectActive()) {
 					g_music->updateMusic();
 					waitTOF();

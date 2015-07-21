@@ -97,17 +97,13 @@ bool readPict(const char *filename, bool PlayOnce) {
 /*****************************************************************************/
 /* Reads in a music file.  Ignores any graphics.                             */
 /*****************************************************************************/
-bool readMusic(const char *filename) {
-	byte **file = NULL;
-
-	file = g_music->newOpen(filename);
-
-	if (file == NULL) {
+bool readMusic(const char *filename, bool waitTillFinished) {
+	byte **file = g_music->newOpen(filename);
+	if (!file)
 		return false;
-	}
 
 	DoBlack = false;
-	readSound();
+	readSound(waitTillFinished);
 
 	return true;
 }
@@ -346,14 +342,13 @@ void createBox(uint16 y2) {
 
 
 
-int32 longcharsdrawn = 0L;
 bool LastMessageLong = false;
 
-void longDrawMessage(const char *str) {
+int32 longDrawMessage(const char *str) {
 	char NewText[512];
 
 	if (str == NULL)
-		return;
+		return 0;
 
 	attachGadgetList(NULL);
 	mouseHide();
@@ -366,8 +361,9 @@ void longDrawMessage(const char *str) {
 	}
 
 	createBox(198);
-	longcharsdrawn = flowText(MsgFont, 0, 1, 7, false, true, true, true, VGAScaleX(6), VGAScaleY(155), VGAScaleX(313), VGAScaleY(195), str);
 	mouseShow();
+
+	return flowText(MsgFont, 0, 1, 7, false, true, true, true, VGAScaleX(6), VGAScaleY(155), VGAScaleX(313), VGAScaleY(195), str);
 }
 
 

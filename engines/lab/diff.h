@@ -74,7 +74,7 @@ void blackAllScreen();
 void whiteScreen();
 bool readDiff(bool playonce);
 void diffNextFrame();
-void readSound();
+void readSound(bool waitTillFinished);
 void stopDiff();
 void stopDiffEnd();
 void stopSound();

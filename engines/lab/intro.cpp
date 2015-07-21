@@ -124,8 +124,7 @@ static void doPictText(const char *Filename, bool isscreen) {
 				Drawn = flowText(msgfont, (!IsHiRes) * -1, 5, 7, false, false, true, true, VGAScaleX(14), VGAScaleY(11), VGAScaleX(306), VGAScaleY(189), (char *)curplace);
 				fade(true, 0);
 			} else {
-				longDrawMessage((char *)curplace);
-				Drawn = longcharsdrawn;
+				Drawn = longDrawMessage((char *)curplace);
 			}
 
 			curplace += Drawn;

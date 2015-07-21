@@ -70,7 +70,7 @@ struct SaveGameHeader {
 /* Reads in pictures */
 
 bool readPict(const char *filename, bool PlayOnce);
-bool readMusic(const char *filename);
+bool readMusic(const char *filename, bool waitTillFinished);
 byte *readPictToMem(const char *filename, uint16 x, uint16 y);
 
 /* Window text stuff */
@@ -98,7 +98,7 @@ uint32 flowTextToMem(Image *DestIm, void *font,     /* the TextAttr pointer */
                      uint16 y1, uint16 x2, uint16 y2, const char *text); /* The text itself */
 
 void drawMessage(const char *text);
-void longDrawMessage(const char *text);
+int32 longDrawMessage(const char *text);
 bool readFont(char *filename, void *font, void *data);
 
 /* The Wipes */
@@ -176,17 +176,16 @@ public:
 	byte **newOpen(const char *name, uint32 &size);
 	bool initMusic();
 	void freeMusic();
-	void fillUpMusic(bool doit);
 	void updateMusic();
 	uint16 getPlayingBufferCount();
-	void checkMusic();
 	void closeMusic();
 	void setMusic(bool on);
 	void resumeBackMusic();
 	void pauseBackMusic();
 	void changeMusic(const char *newmusic);
+	void checkRoomMusic();
 	void resetMusic();
-	
+	void setMusicReset(bool reset) { _doReset = reset; }
 	void playSoundEffect(uint16 SampleSpeed, uint32 Length, void *Data);
 	void stopSoundEffect();
 	bool isSoundEffectActive() const;
@@ -194,6 +193,9 @@ public:
 	bool _winmusic, _doNotFilestopSoundEffect;
 	bool _musicOn;
 	bool _loopSoundEffect;
+	bool _waitTillFinished;
+	uint16 _lastMusicRoom ;
+	bool _doReset;
 
 private:
 	void fillbuffer(byte *musicBuffer);
