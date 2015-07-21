@@ -83,7 +83,7 @@ bool getFont(const char *filename, TextFont *textfont) {
 	uint32 filesize, headersize = 4L + 2L + 256 * 3 + 4L;
 
 	file = g_music->newOpen(filename, filesize);
-	g_music->checkMusic();
+	g_music->updateMusic();
 
 	if ((file != NULL) && (filesize > headersize)) {
 		byte *fontbuffer = (byte *)stealBufMem(filesize - (sizeof(TextFont) + 4));
@@ -102,7 +102,7 @@ bool getFont(const char *filename, TextFont *textfont) {
 			readBlock(textfont->Offsets, 256L * 2L, file);
 			swapUShortPtr(textfont->Offsets, 256);
 
-			skip(file, 4L);
+			(*file) += 4;
 			textfont->data = fontbuffer;
 			readBlock(textfont->data, textfont->DataLength, file);
 			return true;
@@ -120,7 +120,7 @@ char *getText(const char *filename) {
 	bool dodecrypt;
 	byte **tfile;
 
-	g_music->checkMusic();
+	g_music->updateMusic();
 	dodecrypt = (isBuffered(filename) == NULL);
 	tfile = g_music->newOpen(filename);
 
@@ -624,7 +624,7 @@ static void drawMap(uint16 CurRoom, uint16 CurMsg, uint16 Floor, bool fadeout, b
 		        && g_lab->_roomsFound->in(drawroom)
 		        && Maps[drawroom].x) {
 			drawRoom(drawroom, (bool)(drawroom == CurRoom));
-			g_music->checkMusic();
+			g_music->updateMusic();
 		}
 	}
 
@@ -729,11 +729,11 @@ void processMap(uint16 CurRoom) {
 	CurFloor = Maps[CurRoom].PageNumber;
 
 	while (1) {
-		g_music->checkMusic();  /* Make sure we check the music at least after every message */
+		g_music->updateMusic();  /* Make sure we check the music at least after every message */
 		Msg = getMsg();
 
 		if (Msg == NULL) {
-			g_music->checkMusic();
+			g_music->updateMusic();
 
 			if (place <= 14) {
 				newcolor[0] = 14 << 2;
@@ -893,7 +893,7 @@ void processMap(uint16 CurRoom) {
 void doMap(uint16 CurRoom) {
 	FadePalette = AmigaMapPalette;
 
-	g_music->checkMusic();
+	g_music->updateMusic();
 	loadMapData();
 	blackAllScreen();
 

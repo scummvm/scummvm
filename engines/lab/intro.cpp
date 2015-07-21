@@ -39,24 +39,12 @@
 namespace Lab {
 
 static TextFont filler, *msgfont = &filler;
-
-extern bool nopalchange, hidemouse, DoBlack, NoFlip, IsHiRes;
-
-extern char diffcmap[256 * 3];
-
-extern uint32 VGAScreenWidth, VGAScreenHeight;
-
-
-extern uint16 *FadePalette;
-
-static uint16 Palette[16] = {
-	0x0000, 0x0855, 0x0FF9, 0x0EE7, 0x0ED5, 0x0DB4, 0x0CA2, 0x0C91, 0x0B80, 0x0B80, 0x0B91, 0x0CA2, 0x0CB3, 0x0DC4, 0x0DD6, 0x0EE7
-};
-
-
 static bool QuitIntro = false, IntroDoBlack;
-extern int32 longcharsdrawn;
 
+extern bool nopalchange, DoBlack, IsHiRes;
+extern char diffcmap[256 * 3];
+extern uint32 VGAScreenWidth, VGAScreenHeight;
+extern uint16 *FadePalette;
 
 
 /******************************************************************************/
@@ -105,10 +93,10 @@ static void doPictText(const char *Filename, bool isscreen) {
 	strcat(filename, Filename);
 
 	if (isscreen) {
-		g_music->fillUpMusic(true);
+		g_music->updateMusic();
 		timedelay = 35;
 	} else {
-		g_music->checkMusic();
+		g_music->updateMusic();
 		timedelay = 7;
 	}
 
@@ -160,7 +148,7 @@ static void doPictText(const char *Filename, bool isscreen) {
 		Msg = getMsg();
 
 		if (Msg == NULL) {
-			g_music->checkMusic();
+			g_music->updateMusic();
 			diffNextFrame();
 
 			getTime(&secs, &micros);
@@ -235,13 +223,13 @@ static void doPictText(const char *Filename, bool isscreen) {
 void musicDelay() {
 	int16 counter;
 
-	g_music->checkMusic();
+	g_music->updateMusic();
 
 	if (QuitIntro)
 		return;
 
 	for (counter = 0; counter < 20; counter++) {
-		g_music->checkMusic();
+		g_music->updateMusic();
 		waitTOF();
 		waitTOF();
 		waitTOF();
@@ -253,7 +241,7 @@ void musicDelay() {
 static void NReadPict(const char *Filename, bool PlayOnce) {
 	Common::String finalFileName = "P:Intro/";
 
-	g_music->checkMusic();
+	g_music->updateMusic();
 	introEatMessages();
 
 	if (QuitIntro)
@@ -272,6 +260,10 @@ static void NReadPict(const char *Filename, bool PlayOnce) {
 /*****************************************************************************/
 void introSequence() {
 	uint16 counter, counter1;
+	
+	uint16 Palette[16] = {
+		0x0000, 0x0855, 0x0FF9, 0x0EE7, 0x0ED5, 0x0DB4, 0x0CA2, 0x0C91, 0x0B80, 0x0B80, 0x0B91, 0x0CA2, 0x0CB3, 0x0DC4, 0x0DD6, 0x0EE7
+	};
 
 	DoBlack = true;
 
@@ -313,14 +305,14 @@ void introSequence() {
 		                   (diffcmap[counter * 3 + 2] >> 2);
 	}
 
-	g_music->checkMusic();
+	g_music->updateMusic();
 	fade(true, 0);
 
 	for (int times = 0; times < 150; times++) {
 		if (QuitIntro)
 			break;
 
-		g_music->checkMusic();
+		g_music->updateMusic();
 		uint16 temp = Palette[2];
 
 		for (counter = 2; counter < 15; counter++)
@@ -335,7 +327,7 @@ void introSequence() {
 	fade(false, 0);
 	blackAllScreen();
 
-	g_music->checkMusic();
+	g_music->updateMusic();
 
 	NReadPict("Title.A", true);
 	NReadPict("AB", true);
@@ -359,9 +351,9 @@ void introSequence() {
 
 	g_music->newOpen("p:Intro/Intro.1");  /* load the picture into the buffer */
 
-	g_music->checkMusic();
+	g_music->updateMusic();
 	blackAllScreen();
-	g_music->fillUpMusic(true);
+	g_music->updateMusic();
 
 	getFont("P:Map.fon", msgfont);
 
@@ -382,7 +374,7 @@ void introSequence() {
 	freeAllStolenMem();
 
 	blackAllScreen();
-	g_music->fillUpMusic(true);
+	g_music->updateMusic();
 
 	IntroDoBlack = true;
 	NReadPict("Station1", true);
@@ -414,7 +406,7 @@ void introSequence() {
 			for (counter1 = (8 * 3); counter1 < (255 * 3); counter1++)
 				diffcmap[counter1] = 255 - diffcmap[counter1];
 
-			g_music->checkMusic();
+			g_music->updateMusic();
 			waitTOF();
 			VGASetPal(diffcmap, 256);
 			waitTOF();
@@ -479,8 +471,6 @@ void introSequence() {
 		rectFill(0, 0, VGAScreenWidth - 1, VGAScreenHeight - 1);
 		DoBlack = true;
 	}
-
-	hidemouse = false;
 }
 
 } // End of namespace Lab
