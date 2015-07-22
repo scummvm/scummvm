@@ -61,9 +61,16 @@ AmazonEngine::AmazonEngine(OSystem *syst, const AccessGameDescription *gameDesc)
 	_helpTbl[1] = _help2;
 	_helpTbl[2] = _help3;
 
+	_chapter = 0;
+	_rawInactiveX = _rawInactiveY = 0;
+	_inactiveYOff = 0;
+	_hintLevel = 0;
+	_updateChapter = 0;
+	_oldTitleChapter = 0;
+	_iqValue = 0;
+
 	_chapterCells.push_back(CellIdent(0, 96, 17));
 	_inactive._spritesPtr = nullptr;
-	_inactive._altSpritesPtr = nullptr;
 	_inactive._flags = _inactive._frameNumber = _inactive._offsetY = 0;
 	_inactive._position = Common::Point(0, 0);
 }
@@ -532,8 +539,8 @@ void AmazonEngine::startChapter(int chapter) {
 		_sound->freeSounds();
 
 		if (isCD()) {
-			_sound->_soundTable.push_back(SoundEntry(_sound->loadSound(115, 0), 1));
-			_sound->_soundTable.push_back(SoundEntry(_sound->loadSound(115, 1), 1));
+			_sound->loadSoundTable(0, 115, 0);
+			_sound->loadSoundTable(1, 115, 1);
 			_sound->playSound(0);
 			_sound->playSound(1);
 
@@ -562,7 +569,7 @@ void AmazonEngine::startChapter(int chapter) {
 
 	// Show chapter screen
 	_files->loadScreen(96, 15);
-	_buffer2.copyFrom(*_screen);
+	_buffer2.blitFrom(*_screen);
 
 	const int *chapImg = &CHAPTER_TABLE[_chapter - 1][0];
 	_screen->plotImage(_objectsTable[0], _chapter - 1,
@@ -593,14 +600,14 @@ void AmazonEngine::startChapter(int chapter) {
 
 	_screen->clearBuffer();
 	_files->loadScreen(96, 16);
-	_buffer2.copyFrom(*_screen);
+	_buffer2.blitFrom(*_screen);
 	_screen->plotImage(_objectsTable[0], chapImg[0], Common::Point(90, 7));
 
 	_midi->newMusic(7, 1);
 	_midi->newMusic(34, 0);
 
 	_screen->forceFadeIn();
-	_buffer2.copyFrom(*_screen);
+	_buffer2.blitFrom(*_screen);
 
 	_fonts._charSet._lo = 1;
 	_fonts._charSet._hi = 10;
@@ -680,7 +687,7 @@ void AmazonEngine::dead(int deathId) {
 		_files->_setPaletteFlag = false;
 		_files->loadScreen(94, 0);
 		_files->_setPaletteFlag = true;
-		_buffer2.copyFrom(*_screen);
+		_buffer2.blitFrom(*_screen);
 
 		if (!isDemo() || deathId != 10) {
 			for (int i = 0; i < 3; ++i) {

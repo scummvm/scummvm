@@ -38,7 +38,7 @@ public:
 	void stop();
 	bool isPlaying();
 protected:
-	Audio::SeekableAudioStream *_stream;
+	Audio::RewindableAudioStream *_stream;
 	Audio::SoundHandle _handle;
 	// Keep the filename for debugging purposes
 	Common::String _filename;

@@ -64,6 +64,7 @@ InventoryManager::InventoryManager(AccessEngine *vm) : Manager(vm) {
 	_startAboutItem = 0;
 	_startTravelItem = 0;
 	_iconDisplayFlag = true;
+	_boxNum = 0;
 
 	const char *const *names;
 	const int *combineP;

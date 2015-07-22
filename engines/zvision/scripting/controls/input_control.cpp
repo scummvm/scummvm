@@ -39,16 +39,14 @@ namespace ZVision {
 
 InputControl::InputControl(ZVision *engine, uint32 key, Common::SeekableReadStream &stream)
 	: Control(engine, key, CONTROL_INPUT),
+	  _background(0),
 	  _nextTabstop(0),
 	  _focused(false),
 	  _textChanged(false),
-	  _cursorOffset(0),
 	  _enterPressed(false),
 	  _readOnly(false),
 	  _txtWidth(0),
-	  _animation(NULL),
-	  _frameDelay(0),
-	  _frame(-1) {
+	  _animation(NULL) {
 	// Loop until we find the closing brace
 	Common::String line = stream.readLine();
 	_engine->getScriptManager()->trimCommentsAndWhiteSpace(&line);
@@ -80,13 +78,13 @@ InputControl::InputControl(ZVision *engine, uint32 key, Common::SeekableReadStre
 
 			sscanf(values.c_str(), "%u", &fontFormatNumber);
 
-			_stringInit.readAllStyle(_engine->getStringManager()->getTextLine(fontFormatNumber));
+			_stringInit.readAllStyles(_engine->getStringManager()->getTextLine(fontFormatNumber));
 		} else if (param.matchString("chooser_init_string", true)) {
 			uint fontFormatNumber;
 
 			sscanf(values.c_str(), "%u", &fontFormatNumber);
 
-			_stringChooserInit.readAllStyle(_engine->getStringManager()->getTextLine(fontFormatNumber));
+			_stringChooserInit.readAllStyles(_engine->getStringManager()->getTextLine(fontFormatNumber));
 		} else if (param.matchString("next_tabstop", true)) {
 			sscanf(values.c_str(), "%u", &_nextTabstop);
 		} else if (param.matchString("cursor_dimensions", true)) {
@@ -96,11 +94,10 @@ InputControl::InputControl(ZVision *engine, uint32 key, Common::SeekableReadStre
 		} else if (param.matchString("cursor_animation", true)) {
 			char fileName[25];
 
-			sscanf(values.c_str(), "%25s %*u", fileName);
+			sscanf(values.c_str(), "%24s %*u", fileName);
 
 			_animation = _engine->loadAnimation(fileName);
-			_frame = -1;
-			_frameDelay = 0;
+			_animation->start();
 		} else if (param.matchString("focus", true)) {
 			_focused = true;
 			_engine->getScriptManager()->setFocusControlKey(_key);
@@ -112,6 +109,15 @@ InputControl::InputControl(ZVision *engine, uint32 key, Common::SeekableReadStre
 		_engine->getScriptManager()->trimCommentsAndWhiteSpace(&line);
 		getParams(line, param, values);
 	}
+
+	_maxTxtWidth = _textRectangle.width();
+	if (_animation)
+		_maxTxtWidth -= _animation->getWidth();
+}
+
+InputControl::~InputControl() {
+	_background->free();
+	delete _background;
 }
 
 bool InputControl::onMouseUp(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos) {
@@ -194,36 +200,42 @@ bool InputControl::process(uint32 deltaTimeInMillis) {
 	if (_engine->getScriptManager()->getStateFlag(_key) & Puzzle::DISABLED)
 		return false;
 
+	if (!_background) {
+		_background = _engine->getRenderManager()->getBkgRect(_textRectangle);
+	}
+
 	// First see if we need to render the text
 	if (_textChanged) {
 		// Blit the text using the RenderManager
 
 		Graphics::Surface txt;
-		txt.create(_textRectangle.width(), _textRectangle.height(), _engine->_pixelFormat);
+		txt.copyFrom(*_background);
+
+		int32 oldTxtWidth = _txtWidth;
 
 		if (!_readOnly || !_focused)
-			_txtWidth = _engine->getTextRenderer()->drawTxt(_currentInputText, _stringInit, txt);
+			_txtWidth = _engine->getTextRenderer()->drawText(_currentInputText, _stringInit, txt);
 		else
-			_txtWidth = _engine->getTextRenderer()->drawTxt(_currentInputText, _stringChooserInit, txt);
+			_txtWidth = _engine->getTextRenderer()->drawText(_currentInputText, _stringChooserInit, txt);
 
-		_engine->getRenderManager()->blitSurfaceToBkg(txt, _textRectangle.left, _textRectangle.top);
+		if (_readOnly || _txtWidth <= _maxTxtWidth)
+			_engine->getRenderManager()->blitSurfaceToBkg(txt, _textRectangle.left, _textRectangle.top);
+		else {
+			// Assume the last character caused the overflow.
+			_currentInputText.deleteLastChar();
+			_txtWidth = oldTxtWidth;
+		}
 
 		txt.free();
 	}
 
 	if (_animation && !_readOnly && _focused) {
-		bool needDraw = true;// = _textChanged;
-		_frameDelay -= deltaTimeInMillis;
-		if (_frameDelay <= 0) {
-			_frame = (_frame + 1) % _animation->getFrameCount();
-			_frameDelay = 1000.0 / _animation->getDuration().framerate();
-			needDraw = true;
-		}
+		if (_animation->endOfVideo())
+			_animation->rewind();
 
-		if (needDraw) {
-			_animation->seekToFrame(_frame);
+		if (_animation->needsUpdate()) {
 			const Graphics::Surface *srf = _animation->decodeNextFrame();
-			uint32 xx = _textRectangle.left + _txtWidth;
+			int16 xx = _textRectangle.left + _txtWidth;
 			if (xx >= _textRectangle.left + (_textRectangle.width() - (int16)_animation->getWidth()))
 				xx = _textRectangle.left + _textRectangle.width() - (int16)_animation->getWidth();
 			_engine->getRenderManager()->blitSurfaceToBkg(*srf, xx, _textRectangle.top);

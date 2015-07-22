@@ -32,6 +32,7 @@ namespace ZVision {
 
 // Forward declaration of ZVision. This file is included before ZVision is declared
 class ZVision;
+class ScriptManager;
 class ValueSlot;
 
 /**
@@ -40,7 +41,7 @@ class ValueSlot;
   */
 class ResultAction {
 public:
-	ResultAction(ZVision *engine, int32 slotkey) : _engine(engine), _slotKey(slotkey) {}
+	ResultAction(ZVision *engine, int32 slotkey);
 	virtual ~ResultAction() {}
 	/**
 	 * This is called by the script system whenever a Puzzle's criteria are found to be true.
@@ -53,6 +54,7 @@ public:
 	virtual bool execute() = 0;
 protected:
 	ZVision *_engine;
+	ScriptManager *_scriptManager;
 	int32 _slotKey;
 };
 
@@ -124,14 +126,6 @@ private:
 	uint8 _action;
 };
 
-class ActionDebug : public ResultAction {
-public:
-	ActionDebug(ZVision *engine, int32 slotkey, const Common::String &line);
-	bool execute();
-
-private:
-};
-
 class ActionDelayRender : public ResultAction {
 public:
 	ActionDelayRender(ZVision *engine, int32 slotkey, const Common::String &line);
@@ -148,15 +142,6 @@ public:
 
 private:
 	uint32 _key;
-};
-
-class ActionDisableVenus : public ResultAction {
-public:
-	ActionDisableVenus(ZVision *engine, int32 slotkey, const Common::String &line);
-	bool execute();
-
-private:
-	int32 _key;
 };
 
 class ActionDisplayMessage : public ResultAction {
@@ -241,7 +226,7 @@ public:
 private:
 	Common::String _fileName;
 	bool _loop;
-	byte _volume;
+	ValueSlot *_volume;
 	bool _universe;
 	bool _midi;
 	int8 _note;
@@ -284,7 +269,6 @@ public:
 	bool execute();
 
 private:
-	uint32 _animationKey;
 	uint32 _controlKey;
 	uint32 _x1;
 	uint32 _y1;
@@ -338,7 +322,7 @@ private:
 	uint16 _unk2;
 };
 
-// TODO: See if this exists in ZGI. It doesn't in ZNem
+// Only used by ZGI (locations cd6e, cd6k, dg2f, dg4e, dv1j)
 class ActionUnloadAnimation : public ResultAction {
 public:
 	ActionUnloadAnimation(ZVision *engine, int32 slotkey, const Common::String &line);
@@ -395,15 +379,6 @@ public:
 
 private:
 	Common::String _fileName;
-};
-
-class ActionSetVenus : public ResultAction {
-public:
-	ActionSetVenus(ZVision *engine, int32 slotkey, const Common::String &line);
-	bool execute();
-
-private:
-	int32 _key;
 };
 
 class ActionStop : public ResultAction {

@@ -23,13 +23,13 @@
 #ifndef LIGHTFX_H_INCLUDED
 #define LIGHTFX_H_INCLUDED
 
-#include "zvision/graphics/effect.h"
+#include "zvision/graphics/graphics_effect.h"
 
 namespace ZVision {
 
 class ZVision;
 
-class LightFx : public Effect {
+class LightFx : public GraphicsEffect {
 public:
 
 	LightFx(ZVision *engine, uint32 key, Common::Rect region, bool ported, EffectMap *Map, int8 delta, int8 minD = -127, int8 maxD = 127);

@@ -72,6 +72,7 @@ void Control::parsePanoramaControl(ZVision *engine, Common::SeekableReadStream &
 	renderTable->generateRenderTable();
 }
 
+// Only used in Zork Nemesis, handles tilt controls (ZGI doesn't have a tilt view)
 void Control::parseTiltControl(ZVision *engine, Common::SeekableReadStream &stream) {
 	RenderTable *renderTable = engine->getRenderManager()->getRenderTable();
 	renderTable->setRenderState(RenderTable::TILT);

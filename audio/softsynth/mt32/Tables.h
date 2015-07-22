@@ -20,24 +20,11 @@
 
 namespace MT32Emu {
 
-// Sample rate to use in mixing. With the progress of development, we've found way too many thing dependent.
-// In order to achieve further advance in emulation accuracy, sample rate made fixed throughout the emulator.
-// The output from the synth is supposed to be resampled to convert the sample rate.
-const unsigned int SAMPLE_RATE = 32000;
-
-// MIDI interface data transfer rate in samples. Used to simulate the transfer delay.
-const double MIDI_DATA_TRANSFER_RATE = (double)SAMPLE_RATE / 31250.0 * 8.0;
-
-const float CM32L_REVERB_TO_LA32_ANALOG_OUTPUT_GAIN_FACTOR = 0.68f;
-
-const int MIDDLEC = 60;
-
-class Synth;
-
 class Tables {
 private:
 	Tables();
 	Tables(Tables &);
+	~Tables() {}
 
 public:
 	static const Tables &getInstance();

@@ -114,12 +114,18 @@ PaintControl::PaintControl(ZVision *engine, uint32 key, Common::SeekableReadStre
 PaintControl::~PaintControl() {
 	// Clear the state value back to 0
 	//_engine->getScriptManager()->setStateValue(_key, 0);
-	if (_paint)
+	if (_paint) {
+		_paint->free();
 		delete _paint;
-	if (_brush)
+	}
+	if (_brush) {
+		_brush->free();
 		delete _brush;
-	if (_bkg)
+	}
+	if (_bkg) {
+		_bkg->free();
 		delete _bkg;
+	}
 }
 
 bool PaintControl::onMouseUp(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos) {

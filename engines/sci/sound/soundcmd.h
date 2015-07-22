@@ -63,7 +63,7 @@ public:
 	void printPlayList(Console *con);
 	void printSongInfo(reg_t obj, Console *con);
 
-	void processPlaySound(reg_t obj);
+	void processPlaySound(reg_t obj, bool playBed);
 	void processStopSound(reg_t obj, bool sampleFinishedPlaying);
 	void initSoundResource(MusicEntry *newSound);
 

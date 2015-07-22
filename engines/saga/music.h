@@ -61,6 +61,7 @@ public:
 protected:
 	MusicType _driverType;
 	bool _isGM;
+	bool _milesAudioMode;
 };
 
 class Music {
@@ -78,6 +79,8 @@ public:
 
 	void setVolume(int volume, int time = 1);
 	int getVolume() { return _currentVolume; }
+
+	bool isAdlib() const { return _player->isAdlib(); }
 
 	Common::Array<int32> _songTable;
 

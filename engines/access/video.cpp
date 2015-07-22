@@ -27,10 +27,21 @@ namespace Access {
 
 VideoPlayer::VideoPlayer(AccessEngine *vm) : Manager(vm) {
 	_vidSurface = nullptr;
+	_videoData = nullptr;
+	_startCoord = nullptr;
+
+	_frameCount = 0;
+	_xCount = 0;
+	_scanCount = 0;
+	_frameSize = 0;
 	_videoFrame = 0;
 	_soundFlag = false;
 	_soundFrame = 0;
-	_videoData = nullptr;
+	_videoEnd = false;
+
+	_header._frameCount = 0;
+	_header._width = _header._height = 0;
+	_header._flags = VIDEOFLAG_NONE;
 }
 
 VideoPlayer::~VideoPlayer() {

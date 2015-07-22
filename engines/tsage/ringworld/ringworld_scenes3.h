@@ -283,7 +283,7 @@ public:
 	Action15 _action15;
 	Action16 _action16;
 	Action17 _action17;
-	int _sitFl;
+	bool _sitFl;
 	SceneArea _area1, _area2, _area3, _area4;
 
 	Scene2100();

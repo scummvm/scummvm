@@ -124,8 +124,8 @@ void CharManager::loadChar(int charId) {
 		_vm->_screen->fadeIn();
 	}
 
-	_vm->_buffer1.copyFrom(*_vm->_screen);
-	_vm->_buffer2.copyFrom(*_vm->_screen);
+	_vm->_buffer1.blitFrom(*_vm->_screen);
+	_vm->_buffer2.blitFrom(*_vm->_screen);
 	_vm->_screen->setDisplayScan();
 
 	if (_charFlag != 2 && _charFlag != 3) {

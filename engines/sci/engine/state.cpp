@@ -92,6 +92,10 @@ void EngineState::reset(bool isRestoring) {
 		abortScriptProcessing = kAbortNone;
 	}
 
+	// reset delayed restore game functionality
+	_delayedRestoreGame = false;
+	_delayedRestoreGameId = 0;
+
 	executionStackBase = 0;
 	_executionStackPosChanged = false;
 	stack_base = 0;
@@ -205,7 +209,7 @@ static kLanguage charToLanguage(const char c) {
 
 Common::String SciEngine::getSciLanguageString(const Common::String &str, kLanguage requestedLanguage, kLanguage *secondaryLanguage, uint16 *languageSplitter) const {
 	kLanguage foundLanguage = K_LANG_NONE;
-	const byte *textPtr = (byte *)str.c_str();
+	const byte *textPtr = (const byte *)str.c_str();
 	byte curChar = 0;
 	byte curChar2 = 0;
 	

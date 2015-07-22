@@ -672,11 +672,6 @@ void Scene::drawContent(int minPri, int maxPri, bool drawBg) {
 
 	debug(1, "_bigPict: %d objlist: %d", _bigPictureArray1Count, _picObjList.size());
 
-	for (uint i = 0; i < _picObjList.size(); i++) {
-		debug(1, "%d: %d", i, ((PictureObject *)_picObjList[i])->_priority);
-	}
-
-
 	if (drawBg && _bigPictureArray1Count && _picObjList.size()) {
 
 		_bigPictureArray[0][0]->getDimensions(&point);
@@ -743,7 +738,6 @@ void Scene::drawContent(int minPri, int maxPri, bool drawBg) {
 	for (uint i = 1; i < _picObjList.size(); i++) {
 		PictureObject *obj = (PictureObject *)_picObjList[i];
 
-		debug(8, "pri: %d", obj->_priority);
 		if (obj->_priority < minPri || obj->_priority >= maxPri)
 			continue;
 

@@ -1232,7 +1232,7 @@ MessageQueue *MovGraph::method50(StaticANIObject *ani, MovArr *movarr, int stati
 		return 0;
 
 	uint idx;
-	int movidx;
+	int movidx = 0;
 	bool done = false;
 
 	for (idx = 0; idx <= _items.size() && !done; idx++) {

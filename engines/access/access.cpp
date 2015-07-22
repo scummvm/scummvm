@@ -41,6 +41,7 @@ AccessEngine::AccessEngine(OSystem *syst, const AccessGameDescription *gameDesc)
 	_events = nullptr;
 	_files = nullptr;
 	_inventory = nullptr;
+	_midi = nullptr;
 	_player = nullptr;
 	_room = nullptr;
 	_screen = nullptr;
@@ -91,6 +92,10 @@ AccessEngine::AccessEngine(OSystem *syst, const AccessGameDescription *gameDesc)
 	_vidX = _vidY = 0;
 	_cheatFl = false;
 	_restartFl = false;
+	_printEnd = 0;
+	for (int i = 0; i < 100; i++)
+		_objectsTable[i] = nullptr;
+	_clearSummaryFlag = false;
 
 	for (int i = 0; i < 60; i++)
 		TRAVEL[i] = 0;
@@ -252,12 +257,13 @@ void AccessEngine::speakText(ASurface *s, const Common::String &msg) {
 			_events->clearEvents();
 			while (!shouldQuit()) {
 				_sound->freeSounds();
-				Resource *sound = _sound->loadSound(_narateFile + 99, _sndSubFile);
-				_sound->_soundTable.push_back(SoundEntry(sound, 1));
+				_sound->loadSoundTable(0, _narateFile + 99, _sndSubFile);
 				_sound->playSound(0);
-				_scripts->cmdFreeSound();
 
-				_events->pollEvents();
+				while(_sound->isSFXPlaying() && !shouldQuit())
+					_events->pollEvents();
+
+				_scripts->cmdFreeSound();
 
 				if (_events->isKeyMousePressed()) {
 					_sndSubFile += soundsLeft;
@@ -286,9 +292,11 @@ void AccessEngine::speakText(ASurface *s, const Common::String &msg) {
 		Resource *res = _sound->loadSound(_narateFile + 99, _sndSubFile);
 		_sound->_soundTable.push_back(SoundEntry(res, 1));
 		_sound->playSound(0);
-		_scripts->cmdFreeSound();
 
-		_events->pollEvents();
+		while(_sound->isSFXPlaying() && !shouldQuit())
+			_events->pollEvents();
+
+		_scripts->cmdFreeSound();
 
 		if (_events->_leftButton) {
 			_events->debounceLeft();

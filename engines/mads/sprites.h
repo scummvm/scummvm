@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -202,12 +202,12 @@ class SpriteSets : public Common::Array<SpriteAsset *> {
 private:
 	MADSEngine *_vm;
 public:
-	int _assetCount;
-
+	SpriteAsset *_uiSprites;
+public:
 	/**
 	 * Constructor
 	 */
-	SpriteSets(MADSEngine *vm) : _vm(vm), _assetCount(0) {}
+	SpriteSets(MADSEngine *vm) : _vm(vm), _uiSprites(nullptr) {}
 
 	/**
 	 * Destructor
@@ -233,6 +233,8 @@ public:
 	 * Remove an asset from the list
 	 */
 	void remove(int idx);
+
+	SpriteAsset *&operator[](int idx);
 };
 
 } // End of namespace MADS

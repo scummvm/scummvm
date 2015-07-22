@@ -135,13 +135,13 @@ int AgiLoader_v2::unloadResource(int t, int n) {
  */
 uint8 *AgiLoader_v2::loadVolRes(struct AgiDir *agid) {
 	uint8 *data = NULL;
-	char x[MAXPATHLEN], *path;
+	char x[6];
 	Common::File fp;
 	unsigned int sig;
+	Common::String path;
 
-	sprintf(x, "vol.%i", agid->volume);
-	path = x;
-	debugC(3, kDebugLevelResources, "Vol res: path = %s", path);
+	path = Common::String::format("vol.%i", agid->volume);
+	debugC(3, kDebugLevelResources, "Vol res: path = %s", path.c_str());
 
 	if (agid->offset != _EMPTY && fp.open(path)) {
 		debugC(3, kDebugLevelResources, "loading resource at offset %d", agid->offset);

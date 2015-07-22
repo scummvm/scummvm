@@ -15,26 +15,27 @@ Table of Contents:
  * 2.1 Reporting Bugs
 3.0) Supported Games
  * 3.1 Copy Protection
- * 3.2 Commodore64 games notes
- * 3.3 Maniac Mansion NES notes
- * 3.4 Macintosh games notes
- * 3.5 Multi-CD games notes
- * 3.6 The Curse of Monkey Island notes
- * 3.7 Broken Sword games notes
- * 3.8 Beneath a Steel Sky notes
- * 3.9 Flight of the Amazon Queen notes
- * 3.10 Gobliiins notes
- * 3.11 Inherit the Earth: Quest for the Orb notes
- * 3.12 Simon the Sorcerer notes
- * 3.13 The Feeble Files notes
- * 3.14 The Legend of Kyrandia notes
- * 3.15 Sierra AGI games Predictive Input Dialog notes
- * 3.16 Mickey's Space Adventure notes
- * 3.17 Winnie the Pooh notes
- * 3.18 Troll's Tale notes
- * 3.19 Dragon History notes
- * 3.20 Simultaneous speech and subtitles in Sierra SCI games
- * 3.21 Known Problems
+ * 3.2 Day of the Tentacle notes
+ * 3.3 Commodore64 games notes
+ * 3.4 Maniac Mansion NES notes
+ * 3.5 Macintosh games notes
+ * 3.6 Multi-CD games notes
+ * 3.7 The Curse of Monkey Island notes
+ * 3.8 Broken Sword games notes
+ * 3.9 Beneath a Steel Sky notes
+ * 3.10 Flight of the Amazon Queen notes
+ * 3.11 Gobliiins notes
+ * 3.12 Inherit the Earth: Quest for the Orb notes
+ * 3.13 Simon the Sorcerer notes
+ * 3.14 The Feeble Files notes
+ * 3.15 The Legend of Kyrandia notes
+ * 3.16 Sierra AGI games Predictive Input Dialog notes
+ * 3.17 Mickey's Space Adventure notes
+ * 3.18 Winnie the Pooh notes
+ * 3.19 Troll's Tale notes
+ * 3.20 Dragon History notes
+ * 3.21 Simultaneous speech and subtitles in Sierra SCI games
+ * 3.22 Known Problems
 4.0) Supported Platforms
 5.0) Running ScummVM
  * 5.1 Command Line Options
@@ -200,7 +201,7 @@ SCUMM Games by LucasArts:
      The Dig                                     [dig]
      The Curse of Monkey Island                  [comi]
 
-AGI Games by Sierra:
+AGI and preAGI Games by Sierra:
      The Black Cauldron                          [bc]
      Gold Rush!                                  [goldrush]
      King's Quest I                              [kq1]
@@ -217,6 +218,9 @@ AGI Games by Sierra:
      Space Quest I: The Sarien Encounter         [sq1]
      Space Quest II: Vohaul's Revenge            [sq2]
      Fanmade Games                               [agi-fanmade]
+     Mickey's Space Adventure                    [mickey]
+     Troll's Tale                                [troll]
+     Winnie the Pooh in the Hundred Acre Wood    [winnie]
 
 AGOS Games by Adventuresoft/Horrorsoft:
      Elvira - Mistress of the Dark               [elvira1]
@@ -235,6 +239,13 @@ AGOS Games by Adventuresoft/Horrorsoft:
          - Swampy Adventures                     [swampy]
      The Feeble Files                            [feeble]
 
+Composer Games by Animation Magic:
+     Darby the Dragon                            [darby]
+     Gregory and the Hot Air Balloon             [gregory]
+     Magic Tales: Liam Finds a Story             [liam]
+     The Princess and the Crab                   [princess]
+     Sleeping Cub's Test of Courage              [sleepingcub]
+
 GOB Games by Coktel Vision:
      Bambou le sauveur de la jungle              [bambou]
      Bargon Attack                               [bargon]
@@ -250,6 +261,22 @@ GOB Games by Coktel Vision:
      Urban Runner                                [urban]
      Ween: The Prophecy                          [ween]
 
+Living Books Games:
+     Aesop's Fables: The Tortoise and the Hare   [tortoise]
+     Arthur's Birthday                           [arthurbday]
+     Arthur's Teacher Trouble                    [arthur]
+     Dr. Seuss's ABC                             [seussabc]
+     Green Eggs and Ham                          [greeneggs]
+     Harry and the Haunted House                 [harryhh]
+     Just Grandma and Me                         [grandma]
+     Little Monster at School                    [lilmonster]
+     Ruff's Bone                                 [ruff]
+     Sheila Rae, the Brave                       [sheila]
+     Stellaluna                                  [stellaluna]
+     The Berenstain Bears Get in a Fight         [bearfight]
+     The Berenstain Bears in the Dark            [beardark]
+     The New Kid on the Block                    [newkid]
+
 MADE Games by Activision:
      Leather Goddesses of Phobos 2               [lgop2]
      Return to Zork                              [rtz]
@@ -257,34 +284,106 @@ MADE Games by Activision:
      The Manhole                                 [manhole]
 
 Other Games:
+     3 Skulls of the Toltecs                     [toltecs]
+     Blue Force                                  [blueforce]
      Beneath a Steel Sky                         [sky]
      Broken Sword: The Shadow of the Templars    [sword1]
      Broken Sword II: The Smoking Mirror         [sword2]
+     Bud Tucker in Double Trouble                [tucker]
      Cruise for a Corpse                         [cruise]
      Discworld                                   [dw]
      Discworld 2: Missing Presumed ...!?         [dw2]
      Dragon History                              [draci]
      Drascula: The Vampire Strikes Back          [drascula]
+     DreamWeb                                    [dreamweb]
      Eye of the Beholder                         [eob]
      Eye of the Beholder II: The Legend of
          Darkmoon                                [eob2]
      Flight of the Amazon Queen                  [queen]
      Future Wars                                 [fw]
+     Hopkins FBI                                 [hopkins]
+     Hugo's House of Horrors                     [hugo1]
+     Hugo 2: Whodunit?                           [hugo2]
+     Hugo 3: Jungle of Doom                      [hugo3]
+     I Have No Mouth, and I Must Scream          [ihnm]
      Inherit the Earth: Quest for the Orb        [ite]
      Nippon Safes Inc.                           [nippon]
      Lands of Lore: The Throne of Chaos          [lol]
+     Lure of the Temptress                       [lure]
+     Mortville Manor                             [mortevielle]
+     Nippon Safes Inc.                           [nippon]
+     Ringworld: Revenge Of The Patriarch         [ringworld]
+     Return to Ringworld                         [ringworld2]
+     Sfinx                                       [sfinx]
+     Soltys                                      [soltys]
+     TeenAgent                                   [teenagent]
      The Journeyman Project: Pegasus Prime       [pegasus]
      The Legend of Kyrandia                      [kyra1]
      The Legend of Kyrandia: The Hand of Fate    [kyra2]
      The Legend of Kyrandia: Malcolm's Revenge   [kyra3]
+     The 7th Guest                               [t7g]
+     The Neverhood                               [neverhood]
+     Tony Tough and the Night of Roasted Moths   [tony]
+     Toonstruck                                  [toon]
      Touche: The Adventures of the Fifth
          Musketeer                               [touche]
+     Voyeur                                      [voyeur]
+
+SCI Games by Sierra Entertainment:
+     Castle of Dr. Brain                         [castlebrain]
+     Codename: ICEMAN                            [iceman]
+     Conquests of Camelot                        [camelot]
+     Conquests of the Longbow                    [longbow]
+     EcoQuest: The Search for Cetus              [ecoquest]
+     EcoQuest 2: Lost Secret of the Rainforest   [ecoquest2]
+     Freddy Pharkas: Frontier Pharmacist         [freddypharkas]
+     Hoyle's Book of Games 1                     [hoyle1]
+     Hoyle's Book of Games 2                     [hoyle2]
+     Hoyle's Book of Games 3                     [hoyle3]
+     Hoyle Classic Card Games                    [hoyle4]
+     Jones in the Fast Lane                      [jones]
+     King's Quest I                              [kq1sci]
+     King's Quest IV                             [kq4sci]
+     King's Quest V                              [kq5]
+     King's Quest VI                             [kq6]
+     Laura Bow: The Colonel's Bequest            [laurabow]
+     Laura Bow 2: The Dagger of Amon Ra          [laurabow2]
+     Leisure Suit Larry 1                        [lsl1sci]
+     Leisure Suit Larry 2                        [lsl2]
+     Leisure Suit Larry 3                        [lsl3]
+     Leisure Suit Larry 5                        [lsl5]
+     Leisure Suit Larry 6                        [lsl6]
+     Mixed-up Fairy Tales                        [fairytales]
+     Mixed-up Mother Goose                       [mothergoose]
+     Pepper's Adventures in Time                 [pepper]
+     Police Quest 1                              [pq1sci]
+     Police Quest 2                              [pq2]
+     Police Quest 3                              [pq3]
+     Quest for Glory 1/Hero's Quest              [qfg1]
+     Quest for Glory 1                           [qfg1vga]
+     Quest for Glory 2                           [qfg2]
+     Quest for Glory 3                           [qfg3]
+     Slater & Charlie Go Camping                 [slater]
+     Space Quest I                               [sq1sci]
+     Space Quest III                             [sq3]
+     Space Quest IV                              [sq4]
+     Space Quest V                               [sq5]
+     The Island of Dr. Brain                     [islandbrain]
+
+Wintermute Games:
+     Chivalry is Not Dead                        [chivalry]
+
+Z-Vision Games by Activision:
+     Zork Nemesis: The Forbidden Lands           [znemesis]
+     Zork: Grand Inquisitor                      [zgi]
 
 SCUMM Games by Humongous Entertainment:
      Backyard Baseball                           [baseball]
      Backyard Baseball 2001                      [baseball2001]
      Backyard Baseball 2003                      [baseball2003]
      Backyard Football                           [football]
+     Backyard Football 2002                      [football2002]
+     Bear Stormin'                               [brstorm]
      Big Thinkers First Grade                    [thinker1]
      Big Thinkers Kindergarten                   [thinkerk]
      Blue's 123 Time Activities                  [Blues123Time]
@@ -309,6 +408,7 @@ SCUMM Games by Humongous Entertainment:
      Let's Explore the Airport with Buzzy        [airport]
      Let's Explore the Farm with Buzzy           [farm]
      Let's Explore the Jungle with Buzzy         [jungle]
+     Pajama Sam: Games to Play on Any Day        [pjgames]
      Pajama Sam 1: No Need to Hide When It's
          Dark Outside                            [pajama]
      Pajama Sam 2: Thunder and Lightning
@@ -333,38 +433,20 @@ SCUMM Games by Humongous Entertainment:
      SPY Fox in Cheese Chase                     [chase]
      SPY Fox in Hold the Mustard                 [mustard]
 
-Living Books Games:
-     Aesop's Fables: The Tortoise and the Hare   [tortoise]
-     Arthur's Birthday                           [arthurbday]
-     Arthur's Teacher Trouble                    [arthur]
-     Dr. Seuss's ABC                             [seussabc]
-     Green Eggs and Ham                          [greeneggs]
-     Harry and the Haunted House                 [harryhh]
-     Just Grandma and Me                         [grandma]
-     Little Monster at School                    [lilmonster]
-     Ruff's Bone                                 [ruff]
-     Sheila Rae, the Brave                       [sheila]
-     Stellaluna                                  [stellaluna]
-     The Berenstain Bears Get in a Fight         [bearfight]
-     The Berenstain Bears in the Dark            [beardark]
-     The New Kid on the Block                    [newkid]
-
 The following games should load, but are not yet fully playable. Play
 these at your own risk, and please do not file bug reports about them.
 If you want the latest updates on game compatibility, visit our web site
 and view the compatibility chart.
 
-     Backyard Football 2002                      [football2002]
      Backyard Soccer                             [soccer]
      Backyard Soccer MLS                         [soccermls]
      Backyard Soccer 2004                        [soccer2004]
      Blue's Treasure Hunt                        [BluesTreasureHunt]
-     Pajama Sam: Games to Play on Any Day        [pjgames]
 
 The following games are based on the SCUMM engine, but NOT supported
 by ScummVM (yet):
 
-     Other Humongous Entertainment games
+     Moonbase Commander
 
 Please be aware that the engines may contain bugs and unimplemented
 features that sometimes make it impossible to finish the game. Save
@@ -410,7 +492,29 @@ ScummVM will skip copy protection in the following games:
   * Zak McKracken and the Alien Mindbenders
 
 
-3.2) Commodore64 games notes:
+3.2) Day of the Tentacle notes:
+---- --------------------------
+
+At one point in the game, you come across a computer that allows you
+to play the original Maniac Mansion as an easter egg. ScummVM supports
+this, with a few caveats:
+
+ScummVM will scan your configuration file for a game that's in a
+'Maniac' sub-folder of your Day of the Tentacle folder. If you've
+copied the data files from the CD version, this should already be the
+case but you have to add the game to ScummVM as well.
+
+To return to Day of the Tentacle, press F5 and select "Return to
+Launcher".
+
+This means that you could in theory use any game as the easter egg.
+Indeed, there is a "secret" configuration setting, "easter_egg", to
+override the ID of the game to run. Be aware, though, that not all
+games support returning to the launcher, and setting it up to use Day
+of the Tentacle itself as the easter egg game is not recommended.
+
+
+3.3) Commodore64 games notes:
 ---- ------------------------
 Both Maniac Mansion and Zak McKracken run but Maniac Mansion is not yet
 playable. Simply name the D64 disks "maniac1.d64" and "maniac2.d64"
@@ -424,7 +528,7 @@ to Commodore64. We recommend using the much simpler approach described
 in the previous paragraph.
 
 
-3.3) Maniac Mansion NES notes:
+3.4) Maniac Mansion NES notes:
 ---- -------------------------
 Supported versions are English GB (E), French (F), German (G), Italian (I),
 Swedish (SW) and English US (U). ScummVM requires just the PRG section
@@ -453,7 +557,7 @@ section. To do so use the 'extract_mm_nes' utility from the tools
 package.
 
 
-3.4) Macintosh games notes:
+3.5) Macintosh games notes:
 ---- ----------------------
 All LucasArts SCUMM based adventures, except COMI, also exist in versions
 for the Macintosh. ScummVM can use most (all?) of them, however, in some
@@ -481,7 +585,7 @@ disk see:
   http://wiki.scummvm.org/index.php/HOWTO-Mac_Games
 
 
-3.5) Multi-CD games notes:
+3.6) Multi-CD games notes:
 ---- ---------------------
 In general, ScummVM does not deal very well with Multi-CD games. This is
 because ScummVM assumes everything about a game can be found in one
@@ -496,7 +600,7 @@ files. Usually, when a file appears on more than one CD you can pick
 either of them.
 
 
-3.6) The Curse of Monkey Island notes:
+3.7) The Curse of Monkey Island notes:
 ---- ---------------------------------
 For this game, you will need the comi.la0, comi.la1 and comi.la2 files.
 The comi.la0 file can be found on either CD, but since they are
@@ -508,7 +612,7 @@ two CDs. Some of the files appear on both CDs, but again they're
 identical.
 
 
-3.7) Broken Sword games notes:
+3.8) Broken Sword games notes:
 ---- -------------------------
 The instructions for the Broken Sword games are for the Sold-Out
 Software versions, with each game on two CDs, since these were the
@@ -517,7 +621,7 @@ them. Hopefully they are general enough to be useful to other releases
 as well.
 
 
-3.7.1) Broken Sword games cutscenes:
+3.8.1) Broken Sword games cutscenes:
 ------ -----------------------------
 The cutscenes for the Broken Sword games have a bit of a history (see
 the next section, if you are interested), but in general all you need to
@@ -558,7 +662,7 @@ currently does not work when running PlayStation videos. (Broken Sword
 II already has subtitles; no extra work is needed for them.)
 
 
-3.7.2) Broken Sword games cutscenes, in retrospect:
+3.8.2) Broken Sword games cutscenes, in retrospect:
 ------ --------------------------------------------
 The original releases of the Broken Sword games used RAD Game Tools's
 Smacker(tm) format. As RAD was unwilling to open the older legacy
@@ -583,7 +687,7 @@ decoding MPEG movies added a lot of complexity, and they didn't look as
 good as the Smacker and DXA versions anyway.
 
 
-3.7.3) Broken Sword:
+3.8.3) Broken Sword:
 ------ -------------
 For this game, you will need all of the files from the clusters
 directories on both CDs. For the Windows and Macintosh versions, you
@@ -600,7 +704,7 @@ makes little difference. The PlayStation version requires tunes.dat and
 tunes.tab.
 
 
-3.7.4) Broken Sword II:
+3.8.4) Broken Sword II:
 ------ ----------------
 For this game, you will need all of the files from the clusters
 directories on both CDs. (Actually, a few of them may not be strictly
@@ -615,7 +719,7 @@ In addition, you will need the cd.inf and, optionally, the startup.inf
 files from the sword2 directory on CD 1.
 
 
-3.8) Beneath a Steel Sky notes:
+3.9) Beneath a Steel Sky notes:
 ---- --------------------------
 Starting with ScummVM 0.8.0 you need the additional 'SKY.CPT' file to
 run Beneath a Steel Sky.
@@ -626,7 +730,7 @@ files (SKY.DNR, SKY.DSK), in your extrapath, or in the directory where
 your ScummVM executable resides.
 
 
-3.9) Flight of the Amazon Queen notes:
+3.10) Flight of the Amazon Queen notes:
 ---- ---------------------------------
 In order to use a non-freeware version of Flight of the Amazon Queen
 (from original CD), you will need to place the 'queen.tbl' file
@@ -641,7 +745,7 @@ specific version, and thus removing the run-time dependency on the
 sound effects with MP3, OGG or FLAC.
 
 
-3.10) Gobliiins notes:
+3.11) Gobliiins notes:
 ----- ----------------
 The CD versions of the Gobliiins series contain one big audio track
 which you need to rip (see the section on using compressed audio files)
@@ -651,7 +755,7 @@ track and its volume is therefore changed with the music volume control
 as well.
 
 
-3.11) Inherit the Earth: Quest for the Orb notes:
+3.12) Inherit the Earth: Quest for the Orb notes:
 ----- -------------------------------------------
 In order to run the Mac OS X Wyrmkeep re-release of the game you will
 need to copy over data from the CD to your hard disk. If you're on a PC
@@ -671,14 +775,14 @@ format, as they should include both resource and data forks. Copy all
 'ITE *' files.
 
 
-3.12) Simon the Sorcerer 1 and 2 notes:
+3.13) Simon the Sorcerer 1 and 2 notes:
 ----- ---------------------------------
 If you have the dual version of Simon the Sorcerer 1 or 2 on CD, you
 will find the Windows version in the main directory of the CD and the
 DOS version in the DOS directory of the CD.
 
 
-3.13) The Feeble Files notes:
+3.14) The Feeble Files notes:
 ----- -----------------------
 If you have the Windows version of The Feeble Files, there are several
 things to note.
@@ -696,7 +800,7 @@ Rename voices.wav on CD3 to voices3.wav
 Rename voices.wav on CD4 to voices4.wav
 
 
-3.14) The Legend of Kyrandia notes:
+3.15) The Legend of Kyrandia notes:
 ----- -----------------------------
 To run The Legend of Kyrandia under ScummVM you need the 'kyra.dat'
 file. The file should always be included in official ScummVM packages.
@@ -707,7 +811,7 @@ thus you only need to grab it in case ScummVM complains about the file
 being missing.
 
 
-3.15) Sierra AGI games Predictive Input Dialog notes:
+3.16) Sierra AGI games Predictive Input Dialog notes:
 ----- -----------------------------------------------
 The Predictive Input Dialog is a ScummVM aid for running AGI engine
 games (which notoriously require command line input) on devices with
@@ -761,7 +865,7 @@ naturally mapping the functionality to the numeric keypad. Also, the
 dialog's buttons can be navigated with the arrow and the enter keys.
 
 
-3.16) Mickey's Space Adventure notes:
+3.17) Mickey's Space Adventure notes:
 ----- -------------------------------
 To run Mickey's Space Adventure under ScummVM, the original executable
 of the game (mickey.exe) is needed together with the game's data files.
@@ -776,7 +880,7 @@ game's screen to change location, similar to many adventure games, which
 is simpler and more straightforward than moving around using the menu.
 
 
-3.17) Winnie the Pooh notes:
+3.18) Winnie the Pooh notes:
 ----- ----------------------
 It is possible to import saved games from the original interpreter of the
 game into ScummVM.
@@ -791,14 +895,14 @@ game's screen to change location, similar to many adventure games, which
 is simpler and more straightforward than moving around using the menu.
 
 
-3.18) Troll's Tale notes:
+3.19) Troll's Tale notes:
 ----- -------------------
 The original game came in a PC booter disk, therefore it is necessary to
 dump the contents of that disk in an image file and name it "troll.img"
 to be able to play the game under ScummVM.
 
 
-3.19) Dragon History notes:
+3.20) Dragon History notes:
 ----- ---------------------
 There are 4 language variants of the game: Czech, English, Polish and
 German.  Each of them is distributed in a separate archive.  The only
@@ -816,7 +920,7 @@ All game files and the walkthrough can be downloaded from
 http://www.ucw.cz/draci-historie/index-en.html
 
 
-3.20) Simultaneous speech and subtitles in Sierra SCI games:
+3.21) Simultaneous speech and subtitles in Sierra SCI games:
 ----- ------------------------------------------------------
 Certain CD versions of Sierra SCI games had both speech and text
 resources. Some have an option to toggle between the two, but there are
@@ -864,7 +968,7 @@ Space Quest 4 CD:
     options dialog, or via ScummVM's audio options.
 
 
-3.21) Known Problems:
+3.22) Known Problems:
 ----- ---------------
 This release has the following known problems. There is no need to
 report them, although patches to fix them are welcome. If you discover a
@@ -909,7 +1013,11 @@ site, please see the section on reporting bugs.
   Inherit the Earth: Quest for the Orb
     - Amiga versions aren't supported
 
-  Simon the Sorcerer 1:
+  Lure of the Temptress
+    - No Roland MT-32 support
+    - Sound support is incomplete and doesn't sound like original
+
+ Simon the Sorcerer 1:
     - Subtitles aren't available in the English and German CD versions
       as they are missing the majority of subtitles.
 
@@ -1244,6 +1352,7 @@ Engines which currently support returning to the Launcher are:
     TOUCHE
     TSAGE
     TUCKER
+    ZVISION
 
 
 5.5) Hotkeys:
@@ -1408,6 +1517,26 @@ other games.
     t                      - Switch between 'Voice only',
                              'Voice and Text' and 'Text only'
 
+  Zork: Grand Inquisitor
+    Ctrl-s                 - Save
+    Ctrl-r                 - Restore
+    Ctrl-q                 - Quit
+    Ctrl-p                 - Preferences
+    F1                     - Help
+    F5                     - Inventory
+    F6                     - Spellbook
+    F7                     - Score
+    F8                     - Put away current object/forget spell
+    F9                     - Extract coin (must have the coin bag)
+    Space                  - Skips movies
+
+  Zork Nemesis: The Forbidden Lands
+    Ctrl-s                 - Save
+    Ctrl-r                 - Restore
+    Ctrl-q                 - Quit
+    Ctrl-p                 - Preferences
+    Space                  - Skips movies
+
 Note that using Ctrl-f or Ctrl-g is not recommended: games can crash
 when being run faster than their normal speed, as scripts will lose
 synchronisation.
@@ -1527,6 +1656,7 @@ Where 'xxx' is exact the saved game slot (ie 001) under ScummVM
        TOUCHE
        TSAGE
        TUCKER
+       ZVISION
 
 --save-slot/-x:
 
@@ -1559,6 +1689,7 @@ Where 'xxx' is exact the saved game slot (ie 001) under ScummVM
        TOUCHE
        TSAGE
        TUCKER
+       ZVISION
 
 
 7.0) Music and Sound:
@@ -2137,6 +2268,10 @@ Sierra games using the AGI engine add the following non-standard keywords:
 
     originalsaveload   bool     If true, the original save/load screens are
                                 used instead of the enhanced ScummVM ones
+    altamigapalette    bool     Use an alternative palette, common for all
+                                Amiga games. This was the old behavior
+    mousesupport       bool     Enables mouse support. Allows to use mouse
+                                for movement and in game menus
 
 Sierra games using the SCI engine add the following non-standard keywords:
 
@@ -2148,6 +2283,12 @@ Sierra games using the SCI engine add the following non-standard keywords:
     native_fb01        bool     If true, the music driver for an IBM Music
                                 Feature card or a Yamaha FB-01 FM synth module
                                 is used for MIDI output
+    use_cdaudio        bool     Use CD audio instead of in-game audio,
+                                when available
+    windows_cursors    bool     Use the Windows cursors (smaller and monochrome)
+                                instead of the DOS ones (King's Quest 6)
+    silver_cursors     bool     Use the alternate set of silver cursors,
+                                instead of the normal golden ones (Space Quest 4)
 
 Broken Sword II adds the following non-standard keywords:
 
@@ -2240,6 +2381,27 @@ The 7th Guest adds the following non-standard keyword:
                                 normal speed, to avoid music synchronization
                                 issues
 
+Zork Nemesis: The Forbidden Lands adds the following non-standard keywords:
+
+    originalsaveload   bool     If true, the original save/load screens are
+                                used instead of the enhanced ScummVM ones
+    doublefps          bool     If true, game FPS are increased from 30 to 60
+    venusenabled       bool     If true, the in-game Venus help system is
+                                enabled
+    noanimwhileturning bool     If true, animations are disabled while turning
+                                in panoramic mode
+
+Zork: Grand Inquisitor adds the following non-standard keywords:
+
+    originalsaveload   bool     If true, the original save/load screens are
+                                used instead of the enhanced ScummVM ones
+    doublefps          bool     If true, game FPS are increased from 30 to 60
+    noanimwhileturning bool     If true, animations are disabled while turning
+                                in panoramic mode
+    mpegmovies         bool     If true, the hires MPEG movies are used in the
+                                DVD version of the game, instead of the lowres
+                                AVI ones
+
 
 8.2) Custom game options that can be toggled via the GUI
 ---- ---------------------------------------------------
@@ -2308,9 +2470,11 @@ debug messages (see http://www.sysinternals.com/ntw2k/freeware/debugview.shtml).
     * Type "./configure" in the ScummVM directory.
     * You can now type 'make' to create a command line binary.
     * To get a version you can run from Finder, type 'make bundle' which
-      will create ScummVM.app (this only works out of the box if you
-      installed SDL into /sw (as happens if you are using Fink). If you
-      have installed SDL in another way, you will have to edit ports.mk).
+      will create ScummVM.app (this tries to detect where the static libraries
+      are installed, which should work in most cases, but if it doesn't you
+      will need to specify this path with --with-staticlib-prefix= when calling
+      configure - for example "./configure --with-staticlib-prefix=/Users/foo"
+      if the libraries are in /Users/foo/lib).
     * For more information refer to:
       http://wiki.scummvm.org/index.php/Compiling_ScummVM/MacOS_X_Crosscompiling
 

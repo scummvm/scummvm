@@ -30,7 +30,7 @@
 namespace ZVision {
 
 LightFx::LightFx(ZVision *engine, uint32 key, Common::Rect region, bool ported, EffectMap *Map, int8 delta, int8 minD, int8 maxD):
-	Effect(engine, key, region, ported) {
+	GraphicsEffect(engine, key, region, ported) {
 	_map = Map;
 	_delta = delta;
 	_up = true;
@@ -59,10 +59,10 @@ const Graphics::Surface *LightFx::draw(const Graphics::Surface &srcSubRect) {
 
 	if (_pos < 0) {
 		uint8 cc = ((-_pos) & 0x1F) << 3;
-		dcolor = _engine->_pixelFormat.RGBToColor(cc, cc, cc);
+		dcolor = _engine->_resourcePixelFormat.RGBToColor(cc, cc, cc);
 	} else {
 		uint8 cc = (_pos & 0x1F) << 3;
-		dcolor = _engine->_pixelFormat.RGBToColor(cc, cc, cc);
+		dcolor = _engine->_resourcePixelFormat.RGBToColor(cc, cc, cc);
 	}
 
 	for (uint16 j = 0; j < _surface.h; j++) {

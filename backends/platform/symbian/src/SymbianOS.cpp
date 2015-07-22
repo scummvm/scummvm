@@ -63,6 +63,8 @@ OSystem_SDL_Symbian::OSystem_SDL_Symbian()
 
 void OSystem_SDL_Symbian::init() {
 	_RFs = &CEikonEnv::Static()->FsSession();
+	// Use iconless window: it uses the EScummVM.aif file for the icon.
+	_window = new SdlIconlessWindow();
 	_fsFactory = new SymbianFilesystemFactory();
 	OSystem_SDL::init();
 }
@@ -109,7 +111,7 @@ void OSystem_SDL_Symbian::initBackend() {
 		_mixerManager->init();
 	}
 	if (_graphicsManager == 0)
-		_graphicsManager = new SymbianSdlGraphicsManager(_eventSource);
+		_graphicsManager = new SymbianSdlGraphicsManager(_eventSource, _window);
 
 	// Call parent implementation of this method
 	OSystem_SDL::initBackend();
@@ -169,10 +171,6 @@ Common::String OSystem_SDL_Symbian::getDefaultConfigFileName() {
 	strcpy(configFile, Symbian::GetExecutablePath());
 	strcat(configFile, DEFAULT_CONFIG_FILE);
 	return configFile;
-}
-
-void OSystem_SDL_Symbian::setupIcon() {
-	// Don't for Symbian: it uses the EScummVM.aif file for the icon.
 }
 
 RFs& OSystem_SDL_Symbian::FsSession() {

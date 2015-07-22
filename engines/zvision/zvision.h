@@ -24,7 +24,6 @@
 #ifndef ZVISION_ZVISION_H
 #define ZVISION_ZVISION_H
 
-#include "zvision/detection.h"
 #include "zvision/core/clock.h"
 #include "zvision/file/search_manager.h"
 
@@ -41,6 +40,16 @@ namespace Video {
 class VideoDecoder;
 }
 
+/**
+ * This is the namespace of the ZVision engine.
+ *
+ * Status of this engine: complete
+ *
+ * Games using this engine:
+ * - Zork Nemesis: The Forbidden Lands
+ * - Zork: Grand Inquisitor
+ *
+ */
 namespace ZVision {
 
 struct ZVisionGameDescription;
@@ -56,6 +65,33 @@ class TextRenderer;
 class Subtitle;
 class MidiManager;
 
+enum {
+	WINDOW_WIDTH = 640,
+	WINDOW_HEIGHT = 480,
+
+	HIRES_WINDOW_WIDTH = 800,
+	HIRES_WINDOW_HEIGHT = 600,
+
+	// Zork Nemesis working window sizes
+	ZNM_WORKING_WINDOW_WIDTH = 512,
+	ZNM_WORKING_WINDOW_HEIGHT = 320,
+
+	// ZGI working window sizes
+	ZGI_WORKING_WINDOW_WIDTH = 640,
+	ZGI_WORKING_WINDOW_HEIGHT = 344,
+
+	ROTATION_SCREEN_EDGE_OFFSET = 60,
+	MAX_ROTATION_SPEED = 400, // Pixels per second
+
+	KEYBUF_SIZE = 20
+};
+
+enum ZVisionGameId {
+	GID_NONE = 0,
+	GID_NEMESIS = 1,
+	GID_GRANDINQUISITOR = 2
+};
+
 class ZVision : public Engine {
 public:
 	ZVision(OSystem *syst, const ZVisionGameDescription *gameDesc);
@@ -68,27 +104,10 @@ public:
 	 * edges of this Rectangle
 	 */
 	Common::Rect _workingWindow;
-	const Graphics::PixelFormat _pixelFormat;
+	const Graphics::PixelFormat _resourcePixelFormat;
+	const Graphics::PixelFormat _screenPixelFormat;
 
 private:
-	enum {
-		WINDOW_WIDTH = 640,
-		WINDOW_HEIGHT = 480,
-
-		// Zork nemesis working window sizes
-		ZNM_WORKING_WINDOW_WIDTH  = 512,
-		ZNM_WORKING_WINDOW_HEIGHT = 320,
-
-		// ZGI working window sizes
-		ZGI_WORKING_WINDOW_WIDTH  = 640,
-		ZGI_WORKING_WINDOW_HEIGHT = 344,
-
-		ROTATION_SCREEN_EDGE_OFFSET = 60,
-		MAX_ROTATION_SPEED = 400, // Pixels per second
-
-		KEYBUF_SIZE = 20
-	};
-
 	Console *_console;
 	const ZVisionGameDescription *_gameDescription;
 
@@ -101,12 +120,12 @@ private:
 	ScriptManager *_scriptManager;
 	RenderManager *_renderManager;
 	CursorManager *_cursorManager;
-	SaveManager *_saveManager;
 	StringManager *_stringManager;
-	MenuHandler *_menu;
 	SearchManager *_searchManager;
 	TextRenderer *_textRenderer;
 	MidiManager *_midiManager;
+	SaveManager *_saveManager;
+	MenuHandler *_menu;
 
 	// Clock
 	Clock _clock;
@@ -117,18 +136,23 @@ private:
 	// To prevent allocation every time we process events
 	Common::Event _event;
 
-	int _rendDelay;
+	int _frameRenderDelay;
+	int _renderedFrameCount;
+	int _fps;
 	int16 _mouseVelocity;
-	int16 _kbdVelocity;
-	bool _halveDelay;
+	int16 _keyboardVelocity;
+	bool _doubleFPS;
 	bool _videoIsPlaying;
 
-	uint8 _cheatBuff[KEYBUF_SIZE];
+	uint8 _cheatBuffer[KEYBUF_SIZE];
+
 public:
-	uint32 getFeatures() const;
-	Common::Language getLanguage() const;
 	Common::Error run();
 	void pauseEngineIntern(bool pause);
+
+	ZVisionGameId getGameId() const;
+	Common::Language getLanguage() const;
+	uint32 getFeatures() const;
 
 	ScriptManager *getScriptManager() const {
 		return _scriptManager;
@@ -154,14 +178,32 @@ public:
 	MidiManager *getMidiManager() const {
 		return _midiManager;
 	}
+	MenuHandler *getMenuHandler() const {
+		return _menu;
+	}
+
 	Common::RandomSource *getRandomSource() const {
 		return _rnd;
 	}
-	ZVisionGameId getGameId() const {
-		return _gameDescription->gameId;
+	int16 getKeyboardVelocity() const {
+		return _keyboardVelocity;
+	}
+	int16 getMouseVelocity() const {
+		return _mouseVelocity;
 	}
 
 	uint8 getZvisionKey(Common::KeyCode scummKeyCode);
+
+	void startClock() {
+		_clock.start();
+	}
+
+	void stopClock() {
+		_clock.stop();
+	}
+
+	void initScreen();
+	void initHiresScreen();
 
 	/**
 	 * Play a video until it is finished. This is a blocking call. It will call
@@ -175,28 +217,23 @@ public:
 	void playVideo(Video::VideoDecoder &videoDecoder, const Common::Rect &destRect = Common::Rect(0, 0, 0, 0), bool skippable = true, Subtitle *sub = NULL);
 	Video::VideoDecoder *loadAnimation(const Common::String &fileName);
 
-	void rotateTo(int16 to, int16 time);
-
 	Common::String generateSaveFileName(uint slot);
-	Common::String generateAutoSaveFileName();
-
-	bool askQuestion(const Common::String &str);
-	void delayedMessage(const Common::String &str, uint16 milsecs);
-	void timedMessage(const Common::String &str, uint16 milsecs);
 
 	void setRenderDelay(uint);
 	bool canRender();
+	static void fpsTimerCallback(void *refCon);
+	void fpsTimer();
+	int getFPS() const {
+		return _fps;
+	}
+
+	GUI::Debugger *getDebugger();
+	void syncSoundSettings();
 
 	void loadSettings();
 	void saveSettings();
 
-	void menuBarEnable(uint16 menus);
-	uint16 getMenuBarEnable();
-
 	bool ifQuit();
-
-	void checkBorders();
-	void showDebugMsg(const Common::String &msg, int16 delay = 3000);
 
 	// Engine features
 	bool hasFeature(EngineFeature f) const;
@@ -204,6 +241,7 @@ public:
 	bool canSaveGameStateCurrently();
 	Common::Error loadGameState(int slot);
 	Common::Error saveGameState(int slot, const Common::String &desc);
+
 private:
 	void initialize();
 	void initFonts();
@@ -214,7 +252,6 @@ private:
 	void processEvents();
 
 	void onMouseMove(const Common::Point &pos);
-	void updateRotation();
 
 	void registerDefaultSettings();
 	void shortKeys(Common::Event);

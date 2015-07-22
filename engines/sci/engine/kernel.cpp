@@ -432,57 +432,66 @@ static const SignatureDebugType signatureDebugTypeList[] = {
 	{ 0,                      NULL }
 };
 
-static void kernelSignatureDebugType(const uint16 type) {
+static void kernelSignatureDebugType(Common::String &signatureDetailsStr, const uint16 type) {
 	bool firstPrint = true;
 
 	const SignatureDebugType *list = signatureDebugTypeList;
 	while (list->typeCheck) {
 		if (type & list->typeCheck) {
 			if (!firstPrint)
-				debugN(", ");
-			debugN("%s", list->text);
+//				debugN(", ");
+				signatureDetailsStr += ", ";
+//			debugN("%s", list->text);
+//			signatureDetailsStr += signatureDetailsStr.format("%s", list->text);
+			signatureDetailsStr += list->text;
 			firstPrint = false;
 		}
 		list++;
 	}
 }
 
-// Shows kernel call signature and current arguments for debugging purposes
-void Kernel::signatureDebug(const uint16 *sig, int argc, const reg_t *argv) {
+// Create string, that holds the details of a kernel call signature and current arguments
+//  For debugging purposes
+void Kernel::signatureDebug(Common::String &signatureDetailsStr, const uint16 *sig, int argc, const reg_t *argv) {
 	int argnr = 0;
+
+	// add ERROR: to debug output
+	debugN("ERROR:");
+
 	while (*sig || argc) {
-		debugN("parameter %d: ", argnr++);
+		// add leading spaces for additional parameters
+		signatureDetailsStr += signatureDetailsStr.format("parameter %d: ", argnr++);
 		if (argc) {
 			reg_t parameter = *argv;
-			debugN("%04x:%04x (", PRINT_REG(parameter));
+			signatureDetailsStr += signatureDetailsStr.format("%04x:%04x (", PRINT_REG(parameter));
 			int regType = findRegType(parameter);
 			if (regType)
-				kernelSignatureDebugType(regType);
+				kernelSignatureDebugType(signatureDetailsStr, regType);
 			else
-				debugN("unknown type of %04x:%04x", PRINT_REG(parameter));
-			debugN(")");
+				signatureDetailsStr += signatureDetailsStr.format("unknown type of %04x:%04x", PRINT_REG(parameter));
+			signatureDetailsStr += ")";
 			argv++;
 			argc--;
 		} else {
-			debugN("not passed");
+			signatureDetailsStr += "not passed";
 		}
 		if (*sig) {
 			const uint16 signature = *sig;
 			if ((signature & SIG_MAYBE_ANY) == SIG_MAYBE_ANY) {
-				debugN(", may be any");
+				signatureDetailsStr += ", may be any";
 			} else {
-				debugN(", should be ");
-				kernelSignatureDebugType(signature);
+				signatureDetailsStr += ", should be ";
+				kernelSignatureDebugType(signatureDetailsStr, signature);
 			}
 			if (signature & SIG_IS_OPTIONAL)
-				debugN(" (optional)");
+				signatureDetailsStr += " (optional)";
 			if (signature & SIG_NEEDS_MORE)
-				debugN(" (needs more)");
+				signatureDetailsStr += " (needs more)";
 			if (signature & SIG_MORE_MAY_FOLLOW)
-				debugN(" (more may follow)");
+				signatureDetailsStr += " (more may follow)";
 			sig++;
 		}
-		debugN("\n");
+		signatureDetailsStr += "\n";
 	}
 }
 

@@ -67,14 +67,14 @@ public:
 	}
 
 	/**
-	 * Pause the clock. Any future delta times will take this pause into account.
-	 * Has no effect if the clock is already paused.
-	 */
+	* Un-pause the clock.
+	* Has no effect if the clock is already un-paused.
+	*/
 	void start();
 
 	/**
-	 * Un-pause the clock.
-	 * Has no effect if the clock is already un-paused.
+	 * Pause the clock. Any future delta times will take this pause into account.
+	 * Has no effect if the clock is already paused.
 	 */
 	void stop();
 };

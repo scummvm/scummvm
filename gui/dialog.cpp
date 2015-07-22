@@ -219,7 +219,7 @@ void Dialog::handleMouseWheel(int x, int y, int direction) {
 	if (!w)
 		w = _focusedWidget;
 	if (w)
-		w->handleMouseWheel(x, y, direction);
+		w->handleMouseWheel(x - (w->getAbsX() - _x), y - (w->getAbsY() - _y), direction);
 }
 
 void Dialog::handleKeyDown(Common::KeyState state) {

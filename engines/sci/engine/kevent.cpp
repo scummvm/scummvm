@@ -24,9 +24,10 @@
 
 #include "sci/sci.h"
 #include "sci/engine/features.h"
-#include "sci/engine/state.h"
-#include "sci/engine/selector.h"
 #include "sci/engine/kernel.h"
+#include "sci/engine/savegame.h"
+#include "sci/engine/selector.h"
+#include "sci/engine/state.h"
 #include "sci/console.h"
 #include "sci/debug.h"	// for g_debug_simulated_key
 #include "sci/event.h"
@@ -71,8 +72,14 @@ reg_t kGetEvent(EngineState *s, int argc, reg_t *argv) {
 		g_debug_simulated_key = 0;
 		return make_reg(0, 1);
 	}
-
+	
 	curEvent = g_sci->getEventManager()->getSciEvent(mask);
+
+	if (s->_delayedRestoreGame) {
+		// delayed restore game from ScummVM menu got triggered
+		gamestate_delayedrestore(s);
+		return NULL_REG;
+	}
 
 	// For a real event we use its associated mouse position
 	mousePos = curEvent.mousePos;

@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -426,7 +426,7 @@ void TextView::doFrame() {
 			scene._textDisplay.expire(tl._textDisplayIndex);
 
 		tl._pos.y--;
-		if (tl._pos.y < 0) {
+		if (tl._pos.y + _font->getHeight() < 0) {
 			_textLines.remove_at(i);
 		} else {
 			tl._textDisplayIndex = scene._textDisplay.add(tl._pos.x, tl._pos.y,
@@ -484,6 +484,7 @@ AnimationView::AnimationView(MADSEngine *vm) : MenuView(vm) {
 	_animFrameNumber = 0;
 	_nextCyclingActive = false;
 	_sceneInfo = SceneInfo::init(_vm);
+	_scrollFrameCtr = 0;
 
 	load();
 }
@@ -543,16 +544,26 @@ void AnimationView::doFrame() {
 			scriptDone();
 		} else {
 			scene._frameStartTime = 0;
+			scene._spriteSlots.clear();
 			loadNextResource();
 		}
 	} else if (_currentAnimation->getCurrentFrame() == 1) {
 		scene._cyclingActive = _nextCyclingActive;
 	}
 
+	if (_currentAnimation && (++_scrollFrameCtr >= _currentAnimation->_header._scrollTicks)) {
+		_scrollFrameCtr = 0;
+		scroll();
+	}
+
 	if (_currentAnimation) {
 		++scene._frameStartTime;
 		_currentAnimation->update();
 		_redrawFlag = true;
+
+		if (_currentAnimation->freeFlag())
+			// We don't want the sprites removed after the last animation frame
+			scene._spriteSlots.clear();
 	}
 }
 
@@ -636,6 +647,21 @@ void AnimationView::loadNextResource() {
 	scene.initPaletteAnimation(paletteCycles, _nextCyclingActive && !_vm->_game->_fx);
 }
 
+void AnimationView::scroll() {
+	Scene &scene = _vm->_game->_scene;
+	Common::Point pt = _currentAnimation->_header._scrollPosition;
+
+	if (pt.x != 0) {
+		scene._backgroundSurface.scrollX(pt.x);
+		scene._spriteSlots.fullRefresh();
+	}
+
+	if (pt.y != 0) {
+		scene._backgroundSurface.scrollY(pt.y);
+		scene._spriteSlots.fullRefresh();
+	}
+}
+
 void AnimationView::scriptDone() {
 	_breakFlag = true;
 	_vm->_dialogs->_pendingDialog = DIALOG_MAIN_MENU;
@@ -656,6 +682,10 @@ void AnimationView::processLines() {
 			if (c != '\r' && c != '\0')
 				_currentLine += c;
 		}
+
+		// Check for comment line
+		if (_currentLine.hasPrefix("#"))
+			continue;
 
 		// Process the line
 		while (!_currentLine.empty()) {

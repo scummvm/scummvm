@@ -56,7 +56,7 @@ public:
 
 	void gfxPutBlock(int x1, int y1, int x2, int y2);
 
-	void putTextCharacter(int, int, int, unsigned char, int, int, bool checkerboard = false, const uint8 *font = curFont);
+	void putTextCharacter(int, int, int, unsigned char, int, int, bool checkerboard = false, const uint8 *font = fontData_Sierra);
 	void shakeScreen(int);
 	void shakeStart();
 	void shakeEnd();

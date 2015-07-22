@@ -58,7 +58,7 @@ enum CursorIndex {
  */
 class CursorManager {
 public:
-	CursorManager(ZVision *engine, const Graphics::PixelFormat *pixelFormat);
+	CursorManager(ZVision *engine, const Graphics::PixelFormat pixelFormat);
 
 private:
 	static const int NUM_CURSORS = 18;
@@ -67,7 +67,7 @@ private:
 	ZorkCursor _cursors[NUM_CURSORS + 2][2];
 
 	ZVision *_engine;
-	const Graphics::PixelFormat *_pixelFormat;
+	const Graphics::PixelFormat _pixelFormat;
 	bool _cursorIsPushed;
 	int _item;
 	int _lastitem;

@@ -24,9 +24,10 @@
 
 #include "base/plugins.h"
 
+#include "engines/advancedDetector.h"
+
 #include "zvision/zvision.h"
-#include "zvision/detection.h"
-#include "zvision/core/save_manager.h"
+#include "zvision/file/save_manager.h"
 #include "zvision/scripting/script_manager.h"
 
 #include "common/translation.h"
@@ -36,143 +37,43 @@
 
 namespace ZVision {
 
+struct ZVisionGameDescription {
+	ADGameDescription desc;
+	ZVisionGameId gameId;
+};
+
+ZVisionGameId ZVision::getGameId() const {
+	return _gameDescription->gameId;
+}
+Common::Language ZVision::getLanguage() const {
+	return _gameDescription->desc.language;
+}
 uint32 ZVision::getFeatures() const {
 	return _gameDescription->desc.flags;
 }
 
-Common::Language ZVision::getLanguage() const {
-	return _gameDescription->desc.language;
-}
-
 } // End of namespace ZVision
 
-static const PlainGameDescriptor zVisionGames[] = {
-	{"zvision",  "ZVision Game"},
-	{"znemesis", "Zork Nemesis: The Forbidden Lands"},
-	{"zgi",      "Zork: Grand Inquisitor"},
-	{0, 0}
-};
-
-namespace ZVision {
-
-static const ZVisionGameDescription gameDescriptions[] = {
-
-	{
-		// Zork Nemesis English version
-		{
-			"znemesis",
-			0,
-			AD_ENTRY1s("CSCR.ZFS", "88226e51a205d2e50c67a5237f3bd5f2", 2397741),
-			Common::EN_ANY,
-			Common::kPlatformDOS,
-			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NONE)
-		},
-		GID_NEMESIS
-	},
-
-	{
-		// Zork Nemesis English demo version
-		{
-			"znemesis",
-			"Demo",
-			AD_ENTRY1s("SCRIPTS.ZFS", "64f1e881394e9462305104f99513c833", 380539),
-			Common::EN_ANY,
-			Common::kPlatformWindows,
-			ADGF_DEMO,
-			GUIO1(GUIO_NONE)
-		},
-		GID_NEMESIS
-	},
-
-	{
-		// Zork Grand Inquisitor English CD version
-		{
-			"zgi",
-			"CD",
-			AD_ENTRY1s("SCRIPTS.ZFS", "81efd40ecc3d22531e211368b779f17f", 8336944),
-			Common::EN_ANY,
-			Common::kPlatformWindows,
-			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NONE)
-		},
-		GID_GRANDINQUISITOR
-	},
-
-	{
-		// Zork Grand Inquisitor English demo version
-		{
-			"zgi",
-			"Demo",
-			AD_ENTRY1s("SCRIPTS.ZFS", "71a2494fd2fb999347deb13401e9b998", 304239),
-			Common::EN_ANY,
-			Common::kPlatformWindows,
-			ADGF_DEMO,
-			GUIO1(GUIO_NONE)
-		},
-		GID_GRANDINQUISITOR
-	},
-
-	{
-		// Zork Grand Inquisitor English DVD version
-		{
-			"zgi",
-			"DVD",
-			AD_ENTRY1s("SCRIPTS.ZFS", "03157a3399513bfaaf8dc6d5ab798b36", 8433326),
-			Common::EN_ANY,
-			Common::kPlatformWindows,
-			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NONE)
-		},
-		GID_GRANDINQUISITOR
-	},
-
-	{
-		AD_TABLE_END_MARKER,
-		GID_NONE
-	}
-};
-
-} // End of namespace ZVision
-
-static const char *directoryGlobs[] = {
-	"znemscr",
-	0
-};
-
-static const ExtraGuiOption ZVisionExtraGuiOption = {
-	_s("Use original save/load screens"),
-	_s("Use the original save/load screens, instead of the ScummVM ones"),
-	"originalsaveload",
-	false
-};
-
-static const ExtraGuiOption ZVisionExtraGuiOption2 = {
-	_s("Double FPS"),
-	_s("Halve the update delay"),
-	"doublefps",
-	false
-};
+#include "zvision/detection_tables.h"
 
 class ZVisionMetaEngine : public AdvancedMetaEngine {
 public:
-	ZVisionMetaEngine() : AdvancedMetaEngine(ZVision::gameDescriptions, sizeof(ZVision::ZVisionGameDescription), zVisionGames) {
+	ZVisionMetaEngine() : AdvancedMetaEngine(ZVision::gameDescriptions, sizeof(ZVision::ZVisionGameDescription), ZVision::zVisionGames, ZVision::optionsList) {
 		_maxScanDepth = 2;
-		_directoryGlobs = directoryGlobs;
+		_directoryGlobs = ZVision::directoryGlobs;
 		_singleid = "zvision";
 	}
 
 	virtual const char *getName() const {
-		return "ZVision";
+		return "Z-Vision";
 	}
 
 	virtual const char *getOriginalCopyright() const {
-		return "ZVision Activision (C) 1996";
+		return "Z-Vision (C) 1996 Activision";
 	}
 
 	virtual bool hasFeature(MetaEngineFeature f) const;
 	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
-	virtual const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const;
 	SaveStateList listSaves(const char *target) const;
 	virtual int getMaximumSaveSlot() const;
 	void removeSaveState(const char *target, int slot) const;
@@ -202,7 +103,7 @@ Common::Error ZVision::ZVision::loadGameState(int slot) {
 }
 
 Common::Error ZVision::ZVision::saveGameState(int slot, const Common::String &desc) {
-	_saveManager->saveGame(slot, desc);
+	_saveManager->saveGame(slot, desc, false);
 	return Common::kNoError;
 }
 
@@ -221,13 +122,6 @@ bool ZVisionMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADG
 		*engine = new ZVision::ZVision(syst, gd);
 	}
 	return gd != 0;
-}
-
-const ExtraGuiOptions ZVisionMetaEngine::getExtraGuiOptions(const Common::String &target) const {
-	ExtraGuiOptions options;
-	options.push_back(ZVisionExtraGuiOption);
-	options.push_back(ZVisionExtraGuiOption2);
-	return options;
 }
 
 SaveStateList ZVisionMetaEngine::listSaves(const char *target) const {
@@ -307,6 +201,11 @@ SaveStateDescriptor ZVisionMetaEngine::querySaveMetaInfos(const char *target, in
 
 	    if (successfulRead) {
 	        SaveStateDescriptor desc(slot, header.saveName);
+
+			// Do not allow save slot 0 (used for auto-saving) to be deleted or
+			// overwritten.
+			desc.setDeletableFlag(slot != 0);
+			desc.setWriteProtectedFlag(slot == 0);
 
 	        desc.setThumbnail(header.thumbnail);
 

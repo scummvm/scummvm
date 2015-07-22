@@ -32,7 +32,7 @@ enum {
 
 class OPGraphicsManager : public SurfaceSdlGraphicsManager {
 public:
-	OPGraphicsManager(SdlEventSource *sdlEventSource);
+	OPGraphicsManager(SdlEventSource *sdlEventSource, SdlWindow *window);
 
 	bool loadGFXMode();
 	void unloadGFXMode();

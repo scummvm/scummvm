@@ -1048,8 +1048,11 @@ MessageQueue *StaticANIObject::changeStatics1(int msgNum) {
 		if (_flags & 1)
 			_messageQueueId = mq->_id;
 	} else {
-		if (!queueMessageQueue(mq))
+		if (!queueMessageQueue(mq)) {
+			delete mq;
+
 			return 0;
+		}
 
 		g_fp->_globalMessageQueueList->addMessageQueue(mq);
 	}
@@ -1592,6 +1595,12 @@ Movement::Movement(Movement *src, int *oldIdxs, int newSize, StaticANIObject *an
 			newSize = src->_dynamicPhases.size() + 1;
 	} else {
 		newSize = src->_dynamicPhases.size();
+	}
+
+	if (!newSize) {
+		warning("Movement::Movement: newSize = 0");
+
+		return;
 	}
 
 	_framePosOffsets = (Common::Point **)calloc(newSize, sizeof(Common::Point *));

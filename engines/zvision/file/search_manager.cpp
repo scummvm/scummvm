@@ -62,19 +62,6 @@ SearchManager::~SearchManager() {
 	_archList.clear();
 }
 
-void SearchManager::addPatch(const Common::String &src, const Common::String &dst) {
-	Common::String lowerCaseName = dst;
-	lowerCaseName.toLowercase();
-
-	SearchManager::MatchList::iterator it = _files.find(lowerCaseName);
-
-	if (it != _files.end()) {
-		lowerCaseName = src;
-		lowerCaseName.toLowercase();
-		_files[lowerCaseName] = it->_value;
-	}
-}
-
 void SearchManager::addFile(const Common::String &name, Common::Archive *arch) {
 	bool addArch = true;
 	Common::List<Common::Archive *>::iterator it = _archList.begin();
@@ -147,9 +134,10 @@ bool SearchManager::hasFile(const Common::String &name) {
 	return false;
 }
 
-void SearchManager::loadZix(const Common::String &name) {
+bool SearchManager::loadZix(const Common::String &name) {
 	Common::File file;
-	file.open(name);
+	if (!file.open(name))
+		return false;
 
 	Common::String line;
 
@@ -160,7 +148,7 @@ void SearchManager::loadZix(const Common::String &name) {
 	}
 
 	if (file.eos())
-		return;
+		error("Corrupt ZIX file: %s", name.c_str());
 
 	Common::Array<Common::Archive *> archives;
 
@@ -169,37 +157,47 @@ void SearchManager::loadZix(const Common::String &name) {
 		line.trim();
 		if (line.matchString("----------*", true))
 			break;
-		else if (line.matchString("DIR:*", true)) {
-			Common::String path(line.c_str() + 5);
+		else if (line.matchString("DIR:*", true) || line.matchString("CD0:*", true) || line.matchString("CD1:*", true) || line.matchString("CD2:*", true)) {
 			Common::Archive *arc;
-			char tempPath[128];
-			strcpy(tempPath, path.c_str());
-			for (uint i = 0; i < path.size(); i++)
-				if (tempPath[i] == '\\')
-					tempPath[i] = '/';
 
-			path = Common::String(tempPath);
+			Common::String path(line.c_str() + 5);
+			for (uint i = 0; i < path.size(); i++)
+				if (path[i] == '\\')
+					path.setChar('/', i);
+
+			// Check if NEMESIS.ZIX/MEDIUM.ZIX refers to the znemesis folder, and
+			// check the game root folder instead
+			if (path.hasPrefix("znemesis/"))
+				path = Common::String(path.c_str() + 9);
+
+			// Check if INQUIS.ZIX refers to the ZGI folder, and check the game
+			// root folder instead
+			if (path.hasPrefix("zgi/"))
+				path = Common::String(path.c_str() + 4);
+			if (path.hasPrefix("zgi_e/"))
+				path = Common::String(path.c_str() + 6);
+
 			if (path.size() && path[0] == '.')
 				path.deleteChar(0);
 			if (path.size() && path[0] == '/')
 				path.deleteChar(0);
+			if (path.size() && path.hasSuffix("/"))
+				path.deleteLastChar();
 
-			if (path.matchString("*.zfs", true))
-				arc = new ZfsArchive(path);
-			else {
-				if (path.size()) {
-					if (path[path.size() - 1] == '\\' || path[path.size() - 1] == '/')
-						path.deleteLastChar();
-					if (path.size())
-						for (Common::List<Common::String>::iterator it = _dirList.begin(); it != _dirList.end(); ++it)
-							if (path.equalsIgnoreCase(*it)) {
-								path = *it;
-								break;
-							}
+			// Handle paths in case-sensitive file systems (bug #6775)
+			if (path.size()) {
+				for (Common::List<Common::String>::iterator it = _dirList.begin(); it != _dirList.end(); ++it) {
+					if (path.equalsIgnoreCase(*it)) {
+						path = *it;
+						break;
+					}
 				}
+			}
 
+			if (path.matchString("*.zfs", true)) {
+				arc = new ZfsArchive(path);
+			} else {
 				path = Common::String::format("%s/%s", _root.c_str(), path.c_str());
-
 				arc = new Common::FSDirectory(path);
 			}
 			archives.push_back(arc);
@@ -207,7 +205,7 @@ void SearchManager::loadZix(const Common::String &name) {
 	}
 
 	if (file.eos())
-		return;
+		error("Corrupt ZIX file: %s", name.c_str());
 
 	while (!file.eos()) {
 		line = file.readLine();
@@ -220,6 +218,8 @@ void SearchManager::loadZix(const Common::String &name) {
 			}
 		}
 	}
+
+	return true;
 }
 
 void SearchManager::addDir(const Common::String &name) {
@@ -265,13 +265,20 @@ void SearchManager::addDir(const Common::String &name) {
 
 void SearchManager::listDirRecursive(Common::List<Common::String> &_list, const Common::FSNode &fsNode, int depth) {
 	Common::FSList fsList;
-	if ( fsNode.getChildren(fsList) ) {
+	if (fsNode.getChildren(fsList)) {
 
 		_list.push_back(fsNode.getPath());
 
 		if (depth > 1)
 			for (Common::FSList::const_iterator it = fsList.begin(); it != fsList.end(); ++it)
 				listDirRecursive(_list, *it, depth - 1);
+	}
+}
+
+void SearchManager::listMembersWithExtension(MatchList &fileList, Common::String extension) {
+	for (SearchManager::MatchList::iterator it = _files.begin(); it != _files.end(); ++it) {
+		if (it->_key.hasSuffix(extension))
+			fileList[it->_key] = it->_value;
 	}
 }
 

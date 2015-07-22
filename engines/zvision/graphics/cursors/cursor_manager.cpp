@@ -37,7 +37,7 @@ const char *CursorManager::_cursorNames[NUM_CURSORS] = { "active", "arrow", "bac
                                                          "hright", "hup", "idle", "leftarrow", "rightarrow", "suggest_surround", "suggest_tilt", "turnaround", "zuparrow"
                                                        };
 
-const char *CursorManager::_zgiCursorFileNames[NUM_CURSORS] = { "g0gbc011.zcr", "g0gac001.zcr", "g0gac021.zcr", "g0gac031.zcr", "g0gac041.zcr", "g0gac051.zcr", "g0gac061.zcr", "g0gac071.zcr", "g0gac081.zcr",
+const char *CursorManager::_zgiCursorFileNames[NUM_CURSORS] = { "g0gbc011.zcr", "g0gac011.zcr", "g0gac021.zcr", "g0gac031.zcr", "g0gac041.zcr", "g0gac051.zcr", "g0gac061.zcr", "g0gac071.zcr", "g0gac081.zcr",
                                                                 "g0gac091.zcr", "g0gac101.zcr", "g0gac011.zcr", "g0gac111.zcr", "g0gac121.zcr", "g0gac131.zcr", "g0gac141.zcr", "g0gac151.zcr", "g0gac161.zcr"
                                                               };
 
@@ -45,7 +45,7 @@ const char *CursorManager::_zNemCursorFileNames[NUM_CURSORS] = { "00act", "arrow
                                                                  "hright", "hup", "00idle", "left", "right", "ssurr", "stilt", "turn", "up"
                                                                };
 
-CursorManager::CursorManager(ZVision *engine, const Graphics::PixelFormat *pixelFormat)
+CursorManager::CursorManager(ZVision *engine, const Graphics::PixelFormat pixelFormat)
 	: _engine(engine),
 	  _pixelFormat(pixelFormat),
 	  _cursorIsPushed(false),
@@ -55,6 +55,11 @@ CursorManager::CursorManager(ZVision *engine, const Graphics::PixelFormat *pixel
 	for (int i = 0; i < NUM_CURSORS; i++) {
 		if (_engine->getGameId() == GID_NEMESIS) {
 			Common::String name;
+			if (i == 1) {
+				// Cursors "arrowa.zcr" and "arrowb.zcr" are missing
+				_cursors[i][0] = _cursors[i][1] = ZorkCursor();
+				continue;
+			}
 			name = Common::String::format("%sa.zcr", _zNemCursorFileNames[i]);
 			_cursors[i][0] = ZorkCursor(_engine, name); // Up cursor
 			name = Common::String::format("%sb.zcr", _zNemCursorFileNames[i]);
@@ -106,7 +111,7 @@ void CursorManager::initialize() {
 }
 
 void CursorManager::changeCursor(const ZorkCursor &cursor) {
-	CursorMan.replaceCursor(cursor.getSurface(), cursor.getWidth(), cursor.getHeight(), cursor.getHotspotX(), cursor.getHotspotY(), cursor.getKeyColor(), false, _pixelFormat);
+	CursorMan.replaceCursor(cursor.getSurface(), cursor.getWidth(), cursor.getHeight(), cursor.getHotspotX(), cursor.getHotspotY(), cursor.getKeyColor(), false, &_pixelFormat);
 }
 
 void CursorManager::cursorDown(bool pushed) {
@@ -119,31 +124,30 @@ void CursorManager::cursorDown(bool pushed) {
 }
 
 void CursorManager::changeCursor(int id) {
-	int _id = id;
-
-	if (_item &&
-	        (_id == CursorIndex_Active ||
-	         _id == CursorIndex_Idle ||
-	         _id == CursorIndex_HandPu)) {
-
-		if (_id == CursorIndex_Idle)
-			_id = CursorIndex_ItemIdle;
-		else
-			_id = CursorIndex_ItemAct;
+	if (_item && (id == CursorIndex_Active ||
+	              id == CursorIndex_Idle ||
+	              id == CursorIndex_HandPu)) {
+		if (id == CursorIndex_Idle) {
+			id = CursorIndex_ItemIdle;
+		} else {
+			id = CursorIndex_ItemAct;
+		}
 	}
 
-	if (_currentCursor != _id ||
-	        ((_id == CursorIndex_ItemAct || _id == CursorIndex_ItemIdle) && _lastitem != _item)) {
-		_currentCursor = _id;
+	if (_currentCursor != id || ((id == CursorIndex_ItemAct || id == CursorIndex_ItemIdle) && _lastitem != _item)) {
+		_currentCursor = id;
 		_lastitem = _item;
 		changeCursor(_cursors[_currentCursor][_cursorIsPushed]);
 	}
 }
 
 int CursorManager::getCursorId(const Common::String &name) {
-	for (int i = 0; i < NUM_CURSORS; i++)
-		if (name.equals(_cursorNames[i]))
+	for (int i = 0; i < NUM_CURSORS; i++) {
+		if (name.equals(_cursorNames[i])) {
 			return i;
+		}
+	}
+
 	return CursorIndex_Idle;
 }
 

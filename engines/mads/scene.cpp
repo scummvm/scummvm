@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -52,7 +52,7 @@ Scene::Scene(MADSEngine *vm)
 	_activeAnimation = nullptr;
 	_textSpacing = -1;
 	_frameStartTime = 0;
-	_layer = LAYER_GUI;
+	_mode = SCREENMODE_VGA;
 	_lookFlag = false;
 	_bandsRange = 0;
 	_scaleRange = 0;
@@ -500,14 +500,12 @@ void  Scene::drawElements(ScreenTransition transitionType, bool surfaceFlag) {
 	_dirtyAreas.copy(&_backgroundSurface, &_vm->_screen, _posAdjust);
 
 	// Handle dirty areas for foreground objects
-	if (_vm->getGameID() == GType_RexNebular)	// TODO: Implement for V2 games
-		_spriteSlots.setDirtyAreas();
+	_spriteSlots.setDirtyAreas();
 	_textDisplay.setDirtyAreas2();
 	_dirtyAreas.merge(1, DIRTY_AREAS_SIZE);
 
 	// Draw sprites that have changed
-	if (_vm->getGameID() == GType_RexNebular)	// TODO: Implement for V2 games
-		_spriteSlots.drawSprites(&_sceneSurface);
+	_spriteSlots.drawSprites(&_sceneSurface);
 
 	// Draw text elements onto the view
 	_textDisplay.draw(&_vm->_screen);
@@ -592,12 +590,14 @@ void Scene::doSceneStep() {
 }
 
 void Scene::checkKeyboard() {
-	if (_vm->_events->isKeyPressed()) {
-		Common::Event evt = _vm->_events->_pendingKeys.pop();
+	EventsManager &events = *_vm->_events;
+
+	if (events.isKeyPressed()) {
+		Common::KeyState evt = events.getKey();
 		_vm->_game->handleKeypress(evt);
 	}
 
-	if ((_vm->_events->_mouseStatus & 3) == 3 && _vm->_game->_player._stepEnabled) {
+	if ((events._mouseStatus & 3) == 3 && _vm->_game->_player._stepEnabled) {
 		_reloadSceneFlag = true;
 		_vm->_dialogs->_pendingDialog = DIALOG_GAME_MENU;
 		_action.clear();
@@ -664,6 +664,7 @@ void Scene::freeCurrentScene() {
 	}
 
 	_vm->_palette->_paletteUsage.load(nullptr);
+	_cyclingActive = false;
 	_hotspots.clear();
 	_backgroundSurface.free();
 	_depthSurface.free();

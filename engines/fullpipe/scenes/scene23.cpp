@@ -299,14 +299,14 @@ void sceneHandler23_pushButton(ExCommand *cmd) {
 					MessageQueue *mq = getCurrSceneSc2MotionController()->method34(g_fp->_aniMan, 276, 438, 1, ST_MAN_RIGHT);
 
 					if (mq) {
-						mq->addExCommandToEnd(cmd->createClone());;
+						mq->addExCommandToEnd(cmd->createClone());
 
 						postExCommand(g_fp->_aniMan->_id, 2, 276, 438, 0, -1);
 					}
 				} else {
 					MessageQueue *mq = new MessageQueue(g_fp->_currentScene->getMessageQueueById(QU_SC23_TOCALENDAR), 0, 0);
 
-					mq->addExCommandToEnd(cmd->createClone());;
+					mq->addExCommandToEnd(cmd->createClone());
 					mq->setFlags(mq->getFlags() | 1);
 					mq->chain(0);
 				}

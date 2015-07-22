@@ -23,13 +23,14 @@
 #ifndef ZVISION_FOG_H
 #define ZVISION_FOG_H
 
-#include "zvision/graphics/effect.h"
+#include "zvision/graphics/graphics_effect.h"
 
 namespace ZVision {
 
 class ZVision;
 
-class FogFx : public Effect {
+// Used by Zork: Nemesis for the mixing chamber gas effect in the gas puzzle (location tt5e, when the blinds are down)
+class FogFx : public GraphicsEffect {
 public:
 
 	FogFx(ZVision *engine, uint32 key, Common::Rect region, bool ported, EffectMap *Map, const Common::String &clouds);

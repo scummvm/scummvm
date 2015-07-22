@@ -150,10 +150,12 @@ void Animation::drawFrame(Graphics::Surface &surface, int32 frame, int16 xx, int
 	if (_numFrames == 0)
 		return;
 
-	if (_frames[frame]._ref != -1)
-		frame = _frames[frame]._ref;
+	int16 dataFrame = frame;
 
-	if (!_frames[frame]._data)
+	if (_frames[frame]._ref != -1)
+		dataFrame = _frames[frame]._ref;
+
+	if (!_frames[dataFrame]._data)
 		return;
 
 	int16 rectX = _frames[frame]._x2 - _frames[frame]._x1;
@@ -194,7 +196,7 @@ void Animation::drawFrame(Graphics::Surface &surface, int32 frame, int16 xx, int
 		return;
 
 	int32 destPitch = surface.pitch;
-	uint8 *srcRow = _frames[frame]._data + offsX + (_frames[frame]._x2 - _frames[frame]._x1) * offsY;
+	uint8 *srcRow = _frames[dataFrame]._data + offsX + (_frames[frame]._x2 - _frames[frame]._x1) * offsY;
 	uint8 *curRow = (uint8 *)surface.getBasePtr(xx + _x1 + _frames[frame]._x1 + offsX, yy + _frames[frame]._y1 + _y1 + offsY);
 	for (int16 y = 0; y < rectY; y++) {
 		uint8 *cur = curRow;
@@ -216,8 +218,12 @@ void Animation::drawFrameWithMask(Graphics::Surface &surface, int32 frame, int16
 
 void Animation::drawFrameWithMaskAndScale(Graphics::Surface &surface, int32 frame, int16 xx, int16 yy, int32 zz, Picture *mask, int32 scale) {
 	debugC(5, kDebugAnim, "drawFrameWithMaskAndScale(surface, %d, %d, %d, %d, mask, %d)", frame, xx, yy, zz, scale);
+	
+	int16 dataFrame = frame;
+
 	if (_frames[frame]._ref != -1)
-		frame = _frames[frame]._ref;
+		dataFrame = _frames[frame]._ref;
+
 	int16 rectX = _frames[frame]._x2 - _frames[frame]._x1;
 	int16 rectY = _frames[frame]._y2 - _frames[frame]._y1;
 
@@ -235,7 +241,7 @@ void Animation::drawFrameWithMaskAndScale(Graphics::Surface &surface, int32 fram
 
 	int32 destPitch = surface.pitch;
 	int32 destPitchMask = mask->getWidth();
-	uint8 *c = _frames[frame]._data;
+	uint8 *c = _frames[dataFrame]._data;
 	uint8 *curRow = (uint8 *)surface.getPixels();
 	uint8 *curRowMask = mask->getDataPtr();
 
@@ -287,9 +293,6 @@ int16 Animation::getFrameWidth(int32 frame) {
 	if ((frame < 0) || (frame >= _numFrames))
 		return 0;
 
-	if (_frames[frame]._ref != -1)
-		frame = _frames[frame]._ref;
-
 	return _frames[frame]._x2 - _frames[frame]._x1;
 }
 
@@ -297,9 +300,6 @@ int16 Animation::getFrameHeight(int32 frame) {
 	debugC(4, kDebugAnim, "getFrameHeight(%d)", frame);
 	if (frame < 0 || frame >= _numFrames)
 		return 0;
-
-	if (_frames[frame]._ref != -1)
-		frame = _frames[frame]._ref;
 
 	return _frames[frame]._y2 - _frames[frame]._y1;
 }
@@ -323,8 +323,10 @@ void Animation::drawFontFrame(Graphics::Surface &surface, int32 frame, int16 xx,
 	if (_numFrames == 0)
 		return;
 
+	int16 dataFrame = frame;
+
 	if (_frames[frame]._ref != -1)
-		frame = _frames[frame]._ref;
+		dataFrame = _frames[frame]._ref;
 
 	int16 rectX = _frames[frame]._x2 - _frames[frame]._x1;
 	int16 rectY = _frames[frame]._y2 - _frames[frame]._y1;
@@ -345,7 +347,7 @@ void Animation::drawFontFrame(Graphics::Surface &surface, int32 frame, int16 xx,
 		return;
 
 	int32 destPitch = surface.pitch;
-	uint8 *c = _frames[frame]._data;
+	uint8 *c = _frames[dataFrame]._data;
 	uint8 *curRow = (uint8 *)surface.getBasePtr(xx + _x1 + _frames[frame]._x1, yy + _frames[frame]._y1 + _y1);
 	for (int16 y = 0; y < rectY; y++) {
 		unsigned char *cur = curRow;

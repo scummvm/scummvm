@@ -34,6 +34,7 @@ namespace Video {
 
 namespace ZVision {
 
+// Only used in Zork Nemesis, handles movies where the player needs to click on something (mj7g, vw3g)
 class HotMovControl : public Control {
 public:
 	HotMovControl(ZVision *engine, uint32 key, Common::SeekableReadStream &stream);
@@ -41,9 +42,6 @@ public:
 
 private:
 	int32  _framesCount;
-	int32  _frameTime;
-	int32  _curFrame;
-	int32  _lastRenderedFrame;
 	int32  _cycle;
 	int32  _cyclesCount;
 	Video::VideoDecoder *_animation;
@@ -55,7 +53,6 @@ public:
 	bool process(uint32 deltaTimeInMillis);
 
 private:
-	void renderFrame(uint frameNumber);
 	void readHsFile(const Common::String &fileName);
 };
 

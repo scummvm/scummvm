@@ -46,7 +46,7 @@ struct FileIdent {
 struct CellIdent : FileIdent {
 	byte _cell;
 
-	CellIdent() {}
+	CellIdent();
 	CellIdent(int cell, int fileNum, int subfile);
 };
 

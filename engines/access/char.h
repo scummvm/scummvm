@@ -51,11 +51,8 @@ private:
 	void charMenu();
 public:
 	Common::Array<CharEntry> _charTable;
-	int _converseMode;
 	int _charFlag;
 
-	// Fields that are included in savegames
-	int _conversation;
 public:
 	CharManager(AccessEngine *vm);
 

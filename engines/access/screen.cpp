@@ -56,6 +56,7 @@ Screen::Screen(AccessEngine *vm) : _vm(vm) {
 
 	_bufferBytesWide = _vWindowBytesWide = this->w;
 	_vWindowLinesTall = this->h;
+	_vWindowWidth = _vWindowHeight = 0;
 	_clipWidth = _vWindowBytesWide - 1;
 	_clipHeight = _vWindowLinesTall - 1;
 	_startCycle = 0;
@@ -198,7 +199,7 @@ void Screen::forceFadeIn() {
 		for (int idx = 0; idx < PALETTE_SIZE; ++idx, ++srcP, ++destP) {
 			if (*destP != *srcP) {
 				repeatFlag = true;
-				*destP = MAX((int)*destP + FADE_AMOUNT, (int)*srcP);
+				*destP = MIN((int)*destP + FADE_AMOUNT, (int)*srcP);
 			}
 		}
 
@@ -281,19 +282,19 @@ void Screen::drawBox() {
 	ASurface::drawBox();
 }
 
-void Screen::transCopyFrom(ASurface *src, const Common::Point &destPos) {
+void Screen::transBlitFrom(ASurface *src, const Common::Point &destPos) {
 	addDirtyRect(Common::Rect(destPos.x, destPos.y, destPos.x + src->w, destPos.y + src->h));
-	ASurface::transCopyFrom(src, destPos);
+	ASurface::transBlitFrom(src, destPos);
 }
 
-void Screen::transCopyFrom(ASurface *src, const Common::Rect &bounds) {
+void Screen::transBlitFrom(ASurface *src, const Common::Rect &bounds) {
 	addDirtyRect(bounds);
-	ASurface::transCopyFrom(src, bounds);
+	ASurface::transBlitFrom(src, bounds);
 }
 
-void Screen::copyFrom(Graphics::Surface &src) {
+void Screen::blitFrom(Graphics::Surface &src) {
 	addDirtyRect(Common::Rect(0, 0, src.w, src.h));
-	ASurface::copyFrom(src);
+	ASurface::blitFrom(src);
 }
 
 void Screen::copyBuffer(Graphics::Surface *src) {

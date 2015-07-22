@@ -106,8 +106,8 @@ void CampScene::mWhileDoOpen() {
 
 	_vm->_files->_setPaletteFlag = false;
 	_vm->_files->loadScreen(1, 2);
-	_vm->_buffer2.copyFrom(*_vm->_screen);
-	_vm->_buffer1.copyFrom(*_vm->_screen);
+	_vm->_buffer2.blitFrom(*_vm->_screen);
+	_vm->_buffer1.blitFrom(*_vm->_screen);
 
 	// Load animation data
 	_vm->_animation->freeAnimationData();
@@ -317,8 +317,8 @@ void Opening::doTitle() {
 	_vm->_events->hideCursor();
 
 	if (!_vm->isDemo()) {
-		_vm->_sound->queueSound(0, 98, 30);
-		_vm->_sound->queueSound(1, 98, 8);
+		_vm->_sound->loadSoundTable(0, 98, 30);
+		_vm->_sound->loadSoundTable(1, 98, 8);
 
 		_vm->_files->_setPaletteFlag = false;
 		_vm->_files->loadScreen(0, 3);
@@ -326,40 +326,27 @@ void Opening::doTitle() {
 		_vm->_buffer2.copyFrom(*_vm->_screen);
 		_vm->_buffer1.copyFrom(*_vm->_screen);
 		screen.forceFadeIn();
-		_vm->_sound->playSound(1);
 
-		// WORKAROUND: This delay has been added to replace original game delay that
-		// came from loading resources, since nowadays it would be too fast to be visible
-		// nowadays to be visible.
-		_vm->_events->_vbCount = 70;
-		while (!_vm->shouldQuit() && _vm->_events->_vbCount > 0)
-			_vm->_events->pollEventsAndWait();
-		if (_vm->shouldQuit())
-			return;
+		_vm->_sound->playSound(1, true);
 
 		Resource *spriteData = _vm->_files->loadFile(0, 2);
 		_vm->_objectsTable[0] = new SpriteResource(_vm, spriteData);
 		delete spriteData;
 
-		_vm->_sound->playSound(1);
-
 		_vm->_files->_setPaletteFlag = false;
 		_vm->_files->loadScreen(0, 4);
-		_vm->_sound->playSound(1);
 
 		_vm->_buffer2.copyFrom(*_vm->_screen);
 		_vm->_buffer1.copyFrom(*_vm->_screen);
-		_vm->_sound->playSound(1);
 
 		const int COUNTDOWN[6] = { 2, 0x80, 1, 0x7d, 0, 0x87 };
 		for (_pCount = 0; _pCount < 3 && !_vm->shouldQuit(); ++_pCount) {
-			_vm->_buffer2.copyFrom(_vm->_buffer1);
+			_vm->_buffer2.blitFrom(_vm->_buffer1);
 			int id = COUNTDOWN[_pCount * 2];
 			int xp = COUNTDOWN[_pCount * 2 + 1];
 			_vm->_buffer2.plotImage(_vm->_objectsTable[0], id, Common::Point(xp, 71));
 			_vm->_buffer2.copyTo(_vm->_screen);
 
-			_vm->_sound->playSound(1);
 			_vm->_events->_vbCount = 70;
 			while (!_vm->shouldQuit() && _vm->_events->_vbCount > 0 && !_skipStart) {
 				_vm->_events->pollEventsAndWait();
@@ -371,6 +358,7 @@ void Opening::doTitle() {
 			return;
 
 		_vm->_sound->stopSound();
+		_vm->_sound->checkSoundQueue(); // HACK: Clear sound 1 from the queue
 		_vm->_sound->playSound(0);
 		screen.forceFadeOut();
 		_vm->_events->_vbCount = 100;
@@ -385,11 +373,11 @@ void Opening::doTitle() {
 
 		_vm->_files->_setPaletteFlag = false;
 		_vm->_files->loadScreen(0, 5);
-		_vm->_buffer2.copyFrom(*_vm->_screen);
-		_vm->_buffer1.copyFrom(*_vm->_screen);
+		_vm->_buffer2.blitFrom(*_vm->_screen);
+		_vm->_buffer1.blitFrom(*_vm->_screen);
 		screen.forceFadeIn();
 		_vm->_midi->newMusic(1, 0);
-		_vm->_events->_vbCount = 700;
+		_vm->_events->_vbCount = 950;
 		while (!_vm->shouldQuit() && (_vm->_events->_vbCount > 0) && !_vm->_events->isKeyMousePressed()) {
 			_vm->_events->pollEventsAndWait();
 		}
@@ -493,55 +481,62 @@ void Opening::doTent() {
 	_vm->_screen->setDisplayScan();
 	_vm->_screen->forceFadeOut();
 	_vm->_events->hideCursor();
-	_vm->_sound->_soundTable.push_back(SoundEntry(_vm->_sound->loadSound(98, 39), 1));
-	_vm->_sound->_soundTable.push_back(SoundEntry(_vm->_sound->loadSound(98, 14), 1));
-	_vm->_sound->_soundTable.push_back(SoundEntry(_vm->_sound->loadSound(98, 15), 1));
-	_vm->_sound->_soundTable.push_back(SoundEntry(_vm->_sound->loadSound(98, 16), 1));
-	_vm->_sound->_soundTable.push_back(SoundEntry(_vm->_sound->loadSound(98, 31), 2));
-	_vm->_sound->_soundTable.push_back(SoundEntry(_vm->_sound->loadSound(98, 52), 2));
+	_vm->_sound->loadSoundTable(0, 98, 39);
+	_vm->_sound->loadSoundTable(1, 98, 14);
+	_vm->_sound->loadSoundTable(2, 98, 15);
+	_vm->_sound->loadSoundTable(3, 98, 16);
+	_vm->_sound->loadSoundTable(4, 98, 31, 2);
+	_vm->_sound->loadSoundTable(5, 98, 52, 2);
 	_vm->_sound->playSound(0);
 
 	_vm->_files->_setPaletteFlag = false;
 	_vm->_files->loadScreen(2, 0);
-	_vm->_buffer2.copyFrom(*_vm->_screen);
-	_vm->_buffer1.copyFrom(*_vm->_screen);
+	_vm->_buffer2.blitFrom(*_vm->_screen);
+	_vm->_buffer1.blitFrom(*_vm->_screen);
 	_vm->_screen->forceFadeIn();
 
 	_vm->_video->setVideo(_vm->_screen, Common::Point(126, 73), FileIdent(2, 1), 10);
+	int previousFrame = -1;
 	while (!_vm->shouldQuit() && !_vm->_video->_videoEnd) {
 		_vm->_video->playVideo();
-		if ((_vm->_video->_videoFrame == 32) || (_vm->_video->_videoFrame == 34))
-			_vm->_sound->playSound(4);
-		else if (_vm->_video->_videoFrame == 36) {
-			if (step != 2) {
-				_vm->_sound->playSound(2);
-				step = 2;
-			}
-		} else if (_vm->_video->_videoFrame == 18) {
-			if (step != 1) {
-				_vm->_midi->newMusic(73, 1);
-				_vm->_midi->newMusic(11, 0);
-				step = 1;
-				_vm->_sound->playSound(1);
+		if (previousFrame != _vm->_video->_videoFrame) {
+			previousFrame = _vm->_video->_videoFrame;
+
+			if ((_vm->_video->_videoFrame == 32) || (_vm->_video->_videoFrame == 34))
+				_vm->_sound->playSound(4);
+			else if (_vm->_video->_videoFrame == 36) {
+				if (step != 2) {
+					_vm->_sound->playSound(2);
+					step = 2;
+				}
+			} else if (_vm->_video->_videoFrame == 18) {
+				if (step != 1) {
+					_vm->_midi->newMusic(73, 1);
+					_vm->_midi->newMusic(11, 0);
+					step = 1;
+					_vm->_sound->playSound(1);
+				}
 			}
 		}
-
 		_vm->_events->pollEventsAndWait();
 	}
 
 	_vm->_sound->playSound(5);
 	_vm->_video->setVideo(_vm->_screen, Common::Point(43, 11), FileIdent(2, 2), 10);
+	previousFrame = -1;
 	while (!_vm->shouldQuit() && !_vm->_video->_videoEnd) {
 		_vm->_video->playVideo();
-		if (_vm->_video->_videoFrame == 26) {
-			_vm->_sound->playSound(5);
-		} else if (_vm->_video->_videoFrame == 15) {
-			if (step !=3) {
-				_vm->_sound->playSound(3);
-				step = 3;
+		if (previousFrame != _vm->_video->_videoFrame) {
+			previousFrame = _vm->_video->_videoFrame;
+			if (_vm->_video->_videoFrame == 26) {
+				_vm->_sound->playSound(5);
+			} else if (_vm->_video->_videoFrame == 15) {
+				if (step !=3) {
+					_vm->_sound->playSound(3);
+					step = 3;
+				}
 			}
 		}
-
 		_vm->_events->pollEventsAndWait();
 	}
 
@@ -1035,7 +1030,7 @@ void Guard::setHorizontalCode() {
 
 	if (_bottomRight.x < screen._orgX1)
 		_gCode2 |= 8;
-	else if (_bottomRight.y > screen._orgX2)
+	else if (_bottomRight.x > screen._orgX2)
 		_gCode2 |= 2;
 }
 
@@ -1276,8 +1271,8 @@ void Cast::doCast(int param1) {
 
 	_vm->_files->_setPaletteFlag = false;
 	_vm->_files->loadScreen(58, 1);
-	_vm->_buffer2.copyFrom(*_vm->_screen);
-	_vm->_buffer1.copyFrom(*_vm->_screen);
+	_vm->_buffer2.blitFrom(*_vm->_screen);
+	_vm->_buffer1.blitFrom(*_vm->_screen);
 
 	_xTrack = 0;
 	_yTrack = -6;
@@ -1319,7 +1314,7 @@ void Cast::doCast(int param1) {
 	while (!_vm->shouldQuit()) {
 		_vm->_images.clear();
 		pan();
-		_vm->_buffer2.copyFrom(_vm->_buffer1);
+		_vm->_buffer2.blitFrom(_vm->_buffer1);
 		_vm->_newRects.clear();
 		_vm->plotList();
 		_vm->copyBlocks();
@@ -1371,6 +1366,18 @@ River::River(AmazonEngine *vm) : PannedScene(vm) {
 	_deathCount = 0;
 	_oldScrollCol = 0;
 	_maxHits = 0;
+	_mapPtr = nullptr;
+	_canoeMoveCount = 0;
+	_canoeVXPos = 0;
+	_canoeFrame = 0;
+	_canoeDir = 0;
+	_canoeLane = 0;
+	_canoeYPos = 0;
+	_hitCount = 0;
+	_riverIndex = 0;
+	_topList = _botList = nullptr;
+	_deathType = 0;
+	_hitSafe = 0;
 }
 
 void River::setRiverPan() {
@@ -1410,7 +1417,7 @@ void River::initRiver() {
 
 	_vm->_files->_setPaletteFlag = false;
 	_vm->_files->loadScreen(95, 4);
-	_vm->_buffer2.copyFrom(*_vm->_screen);
+	_vm->_buffer2.blitFrom(*_vm->_screen);
 
 	screen.restorePalette();
 	screen.setBufferScan();
@@ -1480,11 +1487,11 @@ void River::initRiver() {
 	_maxHits = 2 - _vm->_riverFlag;
 	_saveRiver = false;
 
-	Font &font2 = _vm->_fonts._font2;
-	font2._fontColors[0] = 0;
-	font2._fontColors[1] = 33;
-	font2._fontColors[2] = 34;
-	font2._fontColors[3] = 35;
+	// Set font colors for drawing using font2
+	Font::_fontColors[0] = 0;
+	Font::_fontColors[1] = 33;
+	Font::_fontColors[2] = 34;
+	Font::_fontColors[3] = 35;
 }
 
 void River::resetPositions() {
@@ -1510,8 +1517,6 @@ void River::checkRiverPan() {
 }
 
 bool River::riverJumpTest() {
-	Screen &screen = *_vm->_screen;
-
 	if (_vm->_scrollCol == 120 || _vm->_scrollCol == 60 || _vm->_scrollCol == 0) {
 		int val = *++_mapPtr;
 		if (val == 0xFF)
@@ -1744,7 +1749,7 @@ void River::mWhileDownRiver() {
 	screen.savePalette();
 	if (!_vm->isDemo())
 		_vm->_files->loadScreen(95, 4);
-	_vm->_buffer2.copyFrom(*_vm->_screen);
+	_vm->_buffer2.blitFrom(*_vm->_screen);
 	screen.restorePalette();
 	screen.setPalette();
 	screen.setBufferScan();
@@ -1909,7 +1914,6 @@ void River::synchronize(Common::Serializer &s) {
 	if (_vm->_player->_roomNumber == 45) {
 		if (s.isSaving()) {
 			// Set river properties to be saved out
-			Screen &screen = *_vm->_screen;
 			_rScrollRow = _vm->_scrollRow;
 			_rScrollCol = _vm->_scrollCol;
 			_rScrollX = _vm->_scrollX;

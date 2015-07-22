@@ -28,8 +28,9 @@
 #include "zvision/graphics/cursors/cursor_manager.h"
 #include "zvision/graphics/render_manager.h"
 #include "zvision/scripting/script_manager.h"
-#include "zvision/core/menu.h"
+#include "zvision/scripting/menu.h"
 #include "zvision/sound/zork_raw.h"
+#include "zvision/text/string_manager.h"
 
 #include "common/events.h"
 #include "common/system.h"
@@ -39,23 +40,50 @@
 
 namespace ZVision {
 
+void ZVision::pushKeyToCheatBuf(uint8 key) {
+	for (int i = 0; i < KEYBUF_SIZE - 1; i++)
+		_cheatBuffer[i] = _cheatBuffer[i + 1];
+
+	_cheatBuffer[KEYBUF_SIZE - 1] = key;
+}
+
+bool ZVision::checkCode(const char *code) {
+	int codeLen = strlen(code);
+
+	if (codeLen > KEYBUF_SIZE)
+		return false;
+
+	for (int i = 0; i < codeLen; i++)
+		if (code[i] != _cheatBuffer[KEYBUF_SIZE - codeLen + i] && code[i] != '?')
+			return false;
+
+	return true;
+}
+
+uint8 ZVision::getBufferedKey(uint8 pos) {
+	if (pos >= KEYBUF_SIZE)
+		return 0;
+	else
+		return _cheatBuffer[KEYBUF_SIZE - pos - 1];
+}
+
 void ZVision::shortKeys(Common::Event event) {
 	if (event.kbd.hasFlags(Common::KBD_CTRL)) {
 		switch (event.kbd.keycode) {
 		case Common::KEYCODE_s:
-			if (getMenuBarEnable() & menuBar_Save)
+			if (_menu->getEnable() & kMenubarSave)
 				_scriptManager->changeLocation('g', 'j', 's', 'e', 0);
 			break;
 		case Common::KEYCODE_r:
-			if (getMenuBarEnable() & menuBar_Restore)
+			if (_menu->getEnable() & kMenubarRestore)
 				_scriptManager->changeLocation('g', 'j', 'r', 'e', 0);
 			break;
 		case Common::KEYCODE_p:
-			if (getMenuBarEnable() & menuBar_Settings)
+			if (_menu->getEnable() & kMenubarSettings)
 				_scriptManager->changeLocation('g', 'j', 'p', 'e', 0);
 			break;
 		case Common::KEYCODE_q:
-			if (getMenuBarEnable() & menuBar_Exit)
+			if (_menu->getEnable() & kMenubarExit)
 				ifQuit();
 			break;
 		default:
@@ -65,16 +93,21 @@ void ZVision::shortKeys(Common::Event event) {
 }
 
 void ZVision::cheatCodes(uint8 key) {
+	Location loc = _scriptManager->getCurrentLocation();
+	// Do not process cheat codes while in the game menus
+	if (loc.world == 'g' && loc.room == 'j')
+		return;
+
 	pushKeyToCheatBuf(key);
 
 	if (getGameId() == GID_GRANDINQUISITOR) {
 		if (checkCode("IMNOTDEAF")) {
 			// Unknown cheat
-			showDebugMsg(Common::String::format("IMNOTDEAF cheat or debug, not implemented"));
+			_renderManager->showDebugMsg(Common::String::format("IMNOTDEAF cheat or debug, not implemented"));
 		}
 
 		if (checkCode("3100OPB")) {
-			showDebugMsg(Common::String::format("Current location: %c%c%c%c",
+			_renderManager->showDebugMsg(Common::String::format("Current location: %c%c%c%c",
 			                                    _scriptManager->getStateValue(StateKey_World),
 			                                    _scriptManager->getStateValue(StateKey_Room),
 			                                    _scriptManager->getStateValue(StateKey_Node),
@@ -91,9 +124,9 @@ void ZVision::cheatCodes(uint8 key) {
 		}
 
 		// There are 3 more cheats in script files:
-		// - "EAT ME": gjcr.scr
-		// - "WHOAMI": hp1e.scr
-		// - "HUISOK": uh1f.scr
+		// - "WHOAMI": gjcr.scr
+		// - "HUISOK": hp1e.scr
+		// - "EAT ME": uh1f.scr
 	} else if (getGameId() == GID_NEMESIS) {
 		if (checkCode("CHLOE")) {
 			_scriptManager->changeLocation('t', 'm', '2', 'g', 0);
@@ -101,7 +134,7 @@ void ZVision::cheatCodes(uint8 key) {
 		}
 
 		if (checkCode("77MASSAVE")) {
-			showDebugMsg(Common::String::format("Current location: %c%c%c%c",
+			_renderManager->showDebugMsg(Common::String::format("Current location: %c%c%c%c",
 			                                    _scriptManager->getStateValue(StateKey_World),
 			                                    _scriptManager->getStateValue(StateKey_Room),
 			                                    _scriptManager->getStateValue(StateKey_Node),
@@ -118,9 +151,8 @@ void ZVision::cheatCodes(uint8 key) {
 		}
 
 		if (checkCode("HELLOSAILOR")) {
-			Location loc = _scriptManager->getCurrentLocation();
 			Audio::AudioStream *soundStream;
-			if (loc.world == 'v' && loc.room == 'b' && loc.node == '1' && loc.view == '0') {
+			if (loc == "vb10") {
 				soundStream = makeRawZorkStream("v000hpta.raw", this);
 			} else {
 				soundStream = makeRawZorkStream("v000hnta.raw", this);
@@ -130,14 +162,17 @@ void ZVision::cheatCodes(uint8 key) {
 		}
 	}
 
-	if (checkCode("FRAME"))
-		showDebugMsg(Common::String::format("FPS: ???, not implemented"));
-
-	if (checkCode("XYZZY"))
-		_scriptManager->setStateValue(StateKey_DebugCheats, 1 - _scriptManager->getStateValue(StateKey_DebugCheats));
+	if (checkCode("FRAME")) {
+		Common::String fpsStr = Common::String::format("FPS: %d", getFPS());
+		_renderManager->showDebugMsg(fpsStr);
+	}
 
 	if (checkCode("COMPUTERARCH"))
-		showDebugMsg(Common::String::format("COMPUTERARCH: var-viewer not implemented"));
+		_renderManager->showDebugMsg("COMPUTERARCH: var-viewer not implemented");
+
+	// This cheat essentially toggles the GOxxxx cheat below
+	if (checkCode("XYZZY"))
+		_scriptManager->setStateValue(StateKey_DebugCheats, 1 - _scriptManager->getStateValue(StateKey_DebugCheats));
 
 	if (_scriptManager->getStateValue(StateKey_DebugCheats) == 1)
 		if (checkCode("GO????"))
@@ -145,6 +180,11 @@ void ZVision::cheatCodes(uint8 key) {
 			                               getBufferedKey(2),
 			                               getBufferedKey(1),
 			                               getBufferedKey(0), 0);
+
+	// Show the Venus screen when "?" or "/" is pressed while inside the temple world
+	if (_scriptManager->getStateValue(StateKey_VenusEnable) == 1)
+		if (getBufferedKey(0) == 0xBF && _scriptManager->getStateValue(StateKey_World) == 't')
+			_scriptManager->changeLocation('g', 'j', 'h', 'e', 0);
 }
 
 void ZVision::processEvents() {
@@ -194,19 +234,24 @@ void ZVision::processEvents() {
 			case Common::KEYCODE_LEFT:
 			case Common::KEYCODE_RIGHT:
 				if (_renderManager->getRenderTable()->getRenderState() == RenderTable::PANORAMA)
-					_kbdVelocity = (_event.kbd.keycode == Common::KEYCODE_LEFT ?
-					                -_scriptManager->getStateValue(StateKey_KbdRotateSpeed) :
-					                _scriptManager->getStateValue(StateKey_KbdRotateSpeed)) * 2;
+					_keyboardVelocity = (_event.kbd.keycode == Common::KEYCODE_LEFT ?
+					                     -_scriptManager->getStateValue(StateKey_KbdRotateSpeed) :
+					                     _scriptManager->getStateValue(StateKey_KbdRotateSpeed)) * 2;
 				break;
 
 			case Common::KEYCODE_UP:
 			case Common::KEYCODE_DOWN:
 				if (_renderManager->getRenderTable()->getRenderState() == RenderTable::TILT)
-					_kbdVelocity = (_event.kbd.keycode == Common::KEYCODE_UP ?
-					                -_scriptManager->getStateValue(StateKey_KbdRotateSpeed) :
-					                _scriptManager->getStateValue(StateKey_KbdRotateSpeed)) * 2;
+					_keyboardVelocity = (_event.kbd.keycode == Common::KEYCODE_UP ?
+					                     -_scriptManager->getStateValue(StateKey_KbdRotateSpeed) :
+					                     _scriptManager->getStateValue(StateKey_KbdRotateSpeed)) * 2;
 				break;
 
+			case Common::KEYCODE_F10: {
+				Common::String fpsStr = Common::String::format("FPS: %d", getFPS());
+				_renderManager->showDebugMsg(fpsStr);
+				}
+				break;
 			default:
 				break;
 			}
@@ -226,12 +271,12 @@ void ZVision::processEvents() {
 			case Common::KEYCODE_LEFT:
 			case Common::KEYCODE_RIGHT:
 				if (_renderManager->getRenderTable()->getRenderState() == RenderTable::PANORAMA)
-					_kbdVelocity = 0;
+					_keyboardVelocity = 0;
 				break;
 			case Common::KEYCODE_UP:
 			case Common::KEYCODE_DOWN:
 				if (_renderManager->getRenderTable()->getRenderState() == RenderTable::TILT)
-					_kbdVelocity = 0;
+					_keyboardVelocity = 0;
 				break;
 			default:
 				break;
@@ -279,26 +324,33 @@ void ZVision::onMouseMove(const Common::Point &pos) {
 	//               |
 	//               ^
 
-	if (_workingWindow.contains(pos)) {
-		cursorWasChanged = _scriptManager->onMouseMove(pos, imageCoord);
+	// Clip the horizontal mouse position to the working window
+	Common::Point clippedPos = pos;
+	clippedPos.x = CLIP<int16>(pos.x, _workingWindow.left + 1, _workingWindow.right - 1);
+
+	if (_workingWindow.contains(clippedPos)) {
+		cursorWasChanged = _scriptManager->onMouseMove(clippedPos, imageCoord);
 
 		RenderTable::RenderState renderState = _renderManager->getRenderTable()->getRenderState();
 		if (renderState == RenderTable::PANORAMA) {
-			if (pos.x >= _workingWindow.left && pos.x < _workingWindow.left + ROTATION_SCREEN_EDGE_OFFSET) {
+			if (clippedPos.x >= _workingWindow.left && clippedPos.x < _workingWindow.left + ROTATION_SCREEN_EDGE_OFFSET) {
 
 				int16 mspeed = _scriptManager->getStateValue(StateKey_RotateSpeed) >> 4;
-				if (mspeed <= 0)
-					mspeed = 400 >> 4;
-				_mouseVelocity  = (((pos.x - (ROTATION_SCREEN_EDGE_OFFSET + _workingWindow.left)) << 7) / ROTATION_SCREEN_EDGE_OFFSET * mspeed) >> 7;
+				if (mspeed <= 0) {
+					mspeed = 25;
+				}
+				_mouseVelocity  = MIN(((Common::Rational(mspeed, ROTATION_SCREEN_EDGE_OFFSET) * (clippedPos.x - _workingWindow.left)) - mspeed).toInt(), -1);
+
 
 				_cursorManager->changeCursor(CursorIndex_Left);
 				cursorWasChanged = true;
-			} else if (pos.x <= _workingWindow.right && pos.x > _workingWindow.right - ROTATION_SCREEN_EDGE_OFFSET) {
+			} else if (clippedPos.x <= _workingWindow.right && clippedPos.x > _workingWindow.right - ROTATION_SCREEN_EDGE_OFFSET) {
 
 				int16 mspeed = _scriptManager->getStateValue(StateKey_RotateSpeed) >> 4;
-				if (mspeed <= 0)
-					mspeed = 400 >> 4;
-				_mouseVelocity  = (((pos.x - (_workingWindow.right - ROTATION_SCREEN_EDGE_OFFSET)) << 7) / ROTATION_SCREEN_EDGE_OFFSET * mspeed) >> 7;
+				if (mspeed <= 0) {
+					mspeed = 25;
+				}
+				_mouseVelocity  = MAX((Common::Rational(mspeed, ROTATION_SCREEN_EDGE_OFFSET) * (clippedPos.x - _workingWindow.right + ROTATION_SCREEN_EDGE_OFFSET)).toInt(), 1);
 
 				_cursorManager->changeCursor(CursorIndex_Right);
 				cursorWasChanged = true;
@@ -306,21 +358,23 @@ void ZVision::onMouseMove(const Common::Point &pos) {
 				_mouseVelocity = 0;
 			}
 		} else if (renderState == RenderTable::TILT) {
-			if (pos.y >= _workingWindow.top && pos.y < _workingWindow.top + ROTATION_SCREEN_EDGE_OFFSET) {
+			if (clippedPos.y >= _workingWindow.top && clippedPos.y < _workingWindow.top + ROTATION_SCREEN_EDGE_OFFSET) {
 
 				int16 mspeed = _scriptManager->getStateValue(StateKey_RotateSpeed) >> 4;
-				if (mspeed <= 0)
-					mspeed = 400 >> 4;
-				_mouseVelocity  = (((pos.y - (_workingWindow.top + ROTATION_SCREEN_EDGE_OFFSET)) << 7) / ROTATION_SCREEN_EDGE_OFFSET * mspeed) >> 7;
+				if (mspeed <= 0) {
+					mspeed = 25;
+				}
+				_mouseVelocity  = MIN(((Common::Rational(mspeed, ROTATION_SCREEN_EDGE_OFFSET) * (pos.y - _workingWindow.top)) - mspeed).toInt(), -1);
 
 				_cursorManager->changeCursor(CursorIndex_UpArr);
 				cursorWasChanged = true;
-			} else if (pos.y <= _workingWindow.bottom && pos.y > _workingWindow.bottom - ROTATION_SCREEN_EDGE_OFFSET) {
+			} else if (clippedPos.y <= _workingWindow.bottom && clippedPos.y > _workingWindow.bottom - ROTATION_SCREEN_EDGE_OFFSET) {
 
 				int16 mspeed = _scriptManager->getStateValue(StateKey_RotateSpeed) >> 4;
-				if (mspeed <= 0)
-					mspeed = 400 >> 4;
-				_mouseVelocity  = (((pos.y - (_workingWindow.bottom - ROTATION_SCREEN_EDGE_OFFSET)) << 7) / ROTATION_SCREEN_EDGE_OFFSET * mspeed) >> 7;
+				if (mspeed <= 0) {
+					mspeed = 25;
+				}
+				_mouseVelocity = MAX((Common::Rational(MAX_ROTATION_SPEED, ROTATION_SCREEN_EDGE_OFFSET) * (pos.y - _workingWindow.bottom + ROTATION_SCREEN_EDGE_OFFSET)).toInt(), 1);
 
 				_cursorManager->changeCursor(CursorIndex_DownArr);
 				cursorWasChanged = true;
@@ -439,6 +493,14 @@ uint8 ZVision::getZvisionKey(Common::KeyCode scummKeyCode) {
 	}
 
 	return 0;
+}
+
+bool ZVision::ifQuit() {
+	if (_renderManager->askQuestion(_stringManager->getTextLine(StringManager::ZVISION_STR_EXITPROMT))) {
+		quitGame();
+		return true;
+	}
+	return false;
 }
 
 } // End of namespace ZVision

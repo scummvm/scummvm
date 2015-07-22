@@ -122,6 +122,11 @@ ScriptInterpreter::ScriptInterpreter(MadeEngine *vm) : _vm(vm) {
 	_functions = new ScriptFunctions(_vm);
 	_functions->setupExternalsTable();
 
+	_localStackPos = 0;
+	_runningScriptObjectIndex = 0;
+	_codeBase = nullptr;
+	_codeIp = nullptr;
+
 #undef COMMAND
 }
 

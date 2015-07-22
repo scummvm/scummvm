@@ -192,9 +192,9 @@ static const SAGAGameDescription gameDescriptions[] = {
 			ADGF_DEMO,
 			GUIO1(GUIO_NOSPEECH)
 		},
-		GID_ITE, // Game id
-		GF_OLD_ITE_DOS, // features
-		ITE_DEFAULT_SCENE, // Starting scene number
+		GID_ITE,
+		GF_ITE_DOS_DEMO,
+		ITE_DEFAULT_SCENE,
 		&ITEDemo_Resources,
 		ARRAYSIZE(ITEDEMO_GameFonts),
 		ITEDEMO_GameFonts,
@@ -380,6 +380,33 @@ static const SAGAGameDescription gameDescriptions[] = {
 	{ NULL, 0, NULL, 0}
 			},
 			Common::EN_ANY,
+			Common::kPlatformUnknown,
+			ADGF_CD,
+			GUIO0()
+		},
+		GID_ITE,
+		0,
+		ITE_DEFAULT_SCENE,
+		&ITE_Resources,
+		ARRAYSIZE(ITE_GameFonts),
+		ITE_GameFonts,
+		NULL,
+	},
+
+	// Inherit the earth - German Wyrmkeep combined Windows/Mac/Linux CD
+
+	// Supplied by user nicode in bug #6428.
+	// Contains voices.rsc instead of "Inherit the Earth Voices".
+	{
+		{
+			"ite",
+			"Multi-OS CD Version",
+			{
+	{"ite.rsc",						GAME_RESOURCEFILE,					"420e09cfdbb4db12baefd4bc81d8e154", 8925349},
+	{"scripts.rsc",					GAME_SCRIPTFILE,					"a891405405edefc69c9d6c420c868b84", -1},
+	{ NULL, 0, NULL, 0}
+			},
+			Common::DE_DEU,
 			Common::kPlatformUnknown,
 			ADGF_CD,
 			GUIO0()

@@ -248,9 +248,9 @@ bool MystConsole::Cmd_PlayMovie(int argc, const char **argv) {
 		return true;
 	}
 
-	int8 stackNum = 0;
-
+	Common::String fileName;
 	if (argc == 3 || argc > 4) {
+		int8 stackNum = 0;
 		for (byte i = 1; i <= ARRAYSIZE(mystStackNames); i++)
 			if (!scumm_stricmp(argv[2], mystStackNames[i - 1])) {
 				stackNum = i;
@@ -261,16 +261,27 @@ bool MystConsole::Cmd_PlayMovie(int argc, const char **argv) {
 			debugPrintf("\'%s\' is not a stack name!\n", argv[2]);
 			return true;
 		}
+
+		fileName = _vm->wrapMovieFilename(argv[1], stackNum - 1);
+	} else {
+		fileName = argv[1];
 	}
 
-	if (argc == 2)
-		_vm->_video->playMovie(argv[1], 0, 0);
-	else if (argc == 3)
-		_vm->_video->playMovie(_vm->wrapMovieFilename(argv[1], stackNum - 1), 0, 0);
-	else if (argc == 4)
-		_vm->_video->playMovie(argv[1], atoi(argv[2]), atoi(argv[3]));
-	else
-		_vm->_video->playMovie(_vm->wrapMovieFilename(argv[1], stackNum - 1), atoi(argv[3]), atoi(argv[4]));
+	VideoHandle handle = _vm->_video->playMovie(fileName);
+	if (!handle) {
+		debugPrintf("Failed to open movie '%s'\n", fileName.c_str());
+		return true;
+	}
+
+	if (argc == 4) {
+		handle->setX(atoi(argv[2]));
+		handle->setY(atoi(argv[3]));
+	} else if (argc > 4) {
+		handle->setX(atoi(argv[3]));
+		handle->setY(atoi(argv[4]));
+	} else {
+		handle->center();
+	}
 
 	return false;
 }

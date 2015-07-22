@@ -371,8 +371,8 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 	{
 		GAMEOPTION_EGA_UNDITHER,
 		{
-			_s("EGA undithering"),
-			_s("Enable undithering in EGA games"),
+			_s("Skip EGA dithering pass (full color backgrounds)"),
+			_s("Skip dithering pass in EGA games, graphics are shown with full colors"),
 			"disable_dithering",
 			false
 		}
@@ -791,22 +791,9 @@ void SciMetaEngine::removeSaveState(const char *target, int slot) const {
 }
 
 Common::Error SciEngine::loadGameState(int slot) {
-	Common::String fileName = Common::String::format("%s.%03d", _targetName.c_str(), slot);
-	Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
-	Common::SeekableReadStream *in = saveFileMan->openForLoading(fileName);
-
-	if (in) {
-		// found a savegame file
-		gamestate_restore(_gamestate, in);
-		delete in;
-	}
-
-	if (_gamestate->r_acc != make_reg(0, 1)) {
-		return Common::kNoError;
-	} else {
-		warning("Restoring gamestate '%s' failed", fileName.c_str());
-		return Common::kUnknownError;
-	}
+	_gamestate->_delayedRestoreGameId = slot;
+	_gamestate->_delayedRestoreGame = true;
+	return Common::kNoError;
 }
 
 Common::Error SciEngine::saveGameState(int slot, const Common::String &desc) {
@@ -834,16 +821,12 @@ Common::Error SciEngine::saveGameState(int slot, const Common::String &desc) {
 	return Common::kNoError;
 }
 
-// Before enabling the load option in the ScummVM menu, the main game loop must
-// have run at least once. When the game loop runs, kGameIsRestarting is invoked,
-// thus the speed throttler is initialized. Hopefully fixes bug #3565505.
-
 bool SciEngine::canLoadGameStateCurrently() {
-	return !_gamestate->executionStackBase && (_gamestate->_throttleLastTime > 0 || _gamestate->_throttleTrigger);
+	return !_gamestate->executionStackBase;
 }
 
 bool SciEngine::canSaveGameStateCurrently() {
-	return !_gamestate->executionStackBase && (_gamestate->_throttleLastTime > 0 || _gamestate->_throttleTrigger);
+	return !_gamestate->executionStackBase;
 }
 
 } // End of namespace Sci

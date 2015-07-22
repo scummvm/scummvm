@@ -67,7 +67,7 @@ private:
 	bool _currentControl;
 
 	uint8 *_keyStates;
-	uint32 keyCodeToVKey(Common::Event *event);
+	uint32 keyCodeToVKey(Common::Event *event); //TODO, add more mappings
 	Common::KeyCode vKeyToKeyCode(uint32 vkey); //TODO, reimplement using ScummVM-backend
 };
 

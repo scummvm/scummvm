@@ -23,7 +23,15 @@
 #ifndef AUDIO_FMOPL_H
 #define AUDIO_FMOPL_H
 
+#include "audio/audiostream.h"
+
+#include "common/func.h"
+#include "common/ptr.h"
 #include "common/scummsys.h"
+
+namespace Audio {
+class SoundHandle;
+}
 
 namespace Common {
 class String;
@@ -71,6 +79,12 @@ public:
 	static DriverId parse(const Common::String &name);
 
 	/**
+	 * @return The driver description for the given id or 0 in case it is not
+	 *         available.
+	 */
+	static const EmulatorDescription *findDriver(DriverId id);
+
+	/**
 	 * Detects a driver for the specific type.
 	 *
 	 * @return Returns a valid driver id on success, -1 otherwise.
@@ -92,6 +106,14 @@ private:
 	static const EmulatorDescription _drivers[];
 };
 
+/**
+ * The type of the OPL timer callback functor.
+ */
+typedef Common::Functor0<void> TimerCallback;
+
+/**
+ * A representation of a Yamaha OPL chip.
+ */
 class OPL {
 private:
 	static bool _hasInstance;
@@ -102,10 +124,9 @@ public:
 	/**
 	 * Initializes the OPL emulator.
 	 *
-	 * @param rate	output sample rate
 	 * @return		true on success, false on failure
 	 */
-	virtual bool init(int rate) = 0;
+	virtual bool init() = 0;
 
 	/**
 	 * Reinitializes the OPL emulator
@@ -140,6 +161,101 @@ public:
 	virtual void writeReg(int r, int v) = 0;
 
 	/**
+	 * Start the OPL with callbacks.
+	 */
+	void start(TimerCallback *callback, int timerFrequency = kDefaultCallbackFrequency);
+
+	/**
+	 * Stop the OPL
+	 */
+	void stop();
+
+	/**
+	 * Change the callback frequency. This must only be called from a
+	 * timer proc.
+	 */
+	virtual void setCallbackFrequency(int timerFrequency) = 0;
+
+	enum {
+		/**
+		 * The default callback frequency that start() uses
+		 */
+		kDefaultCallbackFrequency = 250
+	};
+
+protected:
+	/**
+	 * Start the callbacks.
+	 */
+	virtual void startCallbacks(int timerFrequency) = 0;
+
+	/**
+	 * Stop the callbacks.
+	 */
+	virtual void stopCallbacks() = 0;
+
+	/**
+	 * The functor for callbacks.
+	 */
+	Common::ScopedPtr<TimerCallback> _callback;
+};
+
+/**
+ * An OPL that represents a real OPL, as opposed to an emulated one.
+ *
+ * This will use an actual timer instead of using one calculated from
+ * the number of samples in an AudioStream::readBuffer call.
+ */
+class RealOPL : public OPL {
+public:
+	RealOPL();
+	virtual ~RealOPL();
+
+	// OPL API
+	void setCallbackFrequency(int timerFrequency);
+
+protected:
+	// OPL API
+	void startCallbacks(int timerFrequency);
+	void stopCallbacks();
+
+private:
+	static void timerProc(void *refCon);
+	void onTimer();
+
+	uint _baseFreq;
+	uint _remainingTicks;
+
+	enum {
+		kMaxFreq = 100
+	};
+};
+
+/**
+ * An OPL that represents an emulated OPL.
+ *
+ * This will send callbacks based on the number of samples
+ * decoded in readBuffer().
+ */
+class EmulatedOPL : public OPL, protected Audio::AudioStream {
+public:
+	EmulatedOPL();
+	virtual ~EmulatedOPL();
+
+	// OPL API
+	void setCallbackFrequency(int timerFrequency);
+
+	// AudioStream API
+	int readBuffer(int16 *buffer, const int numSamples);
+	int getRate() const;
+	bool endOfData() const { return false; }
+
+protected:
+	// OPL API
+	void startCallbacks(int timerFrequency);
+	void stopCallbacks();
+
+	/**
 	 * Read up to 'length' samples.
 	 *
 	 * Data will be in native endianess, 16 bit per sample, signed.
@@ -149,33 +265,21 @@ public:
 	 * So if you request 4 samples from a stereo OPL, you will get
 	 * a total of two left channel and two right channel samples.
 	 */
-	virtual void readBuffer(int16 *buffer, int length) = 0;
+	virtual void generateSamples(int16 *buffer, int numSamples) = 0;
 
-	/**
-	 * Returns whether the setup OPL mode is stereo or not
-	 */
-	virtual bool isStereo() const = 0;
+private:
+	int _baseFreq;
+
+	enum {
+		FIXP_SHIFT = 16
+	};
+
+	int _nextTick;
+	int _samplesPerTick;
+
+	Audio::SoundHandle *_handle;
 };
 
 } // End of namespace OPL
-
-// Legacy API
-// !You should not write any new code using the legacy API!
-typedef OPL::OPL FM_OPL;
-
-void OPLDestroy(FM_OPL *OPL);
-
-void OPLResetChip(FM_OPL *OPL);
-void OPLWrite(FM_OPL *OPL, int a, int v);
-unsigned char OPLRead(FM_OPL *OPL, int a);
-void OPLWriteReg(FM_OPL *OPL, int r, int v);
-void YM3812UpdateOne(FM_OPL *OPL, int16 *buffer, int length);
-
-/**
- * Legacy factory to create an AdLib (OPL2) chip.
- *
- * !You should not write any new code using the legacy API!
- */
-FM_OPL *makeAdLibOPL(int rate);
 
 #endif

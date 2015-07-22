@@ -310,9 +310,7 @@ Animation *AnimationManager::setAnimation(int animId) {
 	anim->_countdownTicks = anim->_initialTicks;
 	anim->_frameNumber = 0;
 
-	anim->_currentLoopCount = (anim->_type != 3 && anim->_type != 4) ? 0 :
-		anim->_loopCount;
-	anim->_field10 = 0;
+	anim->_currentLoopCount = (anim->_type != 3 && anim->_type != 4) ? 0 : anim->_loopCount;
 
 	return anim;
 }

@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -152,7 +152,7 @@ void Scene201::enter() {
 	int idx = _scene->_dynamicHotspots.add(NOUN_BIRDS, 209, _globals._sequenceIndexes[4], Common::Rect(0, 0, 0, 0));
 	_scene->_dynamicHotspots.setPosition(idx, Common::Point(186, 81), FACING_NORTH);
 
-	if ((_scene->_priorSceneId == 202) || (_scene->_priorSceneId == -1)) {
+	if ((_scene->_priorSceneId == 202) || (_scene->_priorSceneId == RETURNING_FROM_LOADING)) {
 		_game._player._playerPos = Common::Point(165, 152);
 	} else {
 		_game._player._playerPos = Common::Point(223, 149);
@@ -165,16 +165,16 @@ void Scene201::enter() {
 		int sepChar = (_globals[kSexOfRex] == SEX_MALE) ? 't' : 'u';
 		// Guess values. What is the default value used by the compiler?
 		int suffixNum = -1;
-		int abortTimers = -1;
+		int endTrigger = -1;
 		switch(_globals[kTeleporterCommand]) {
 		case 1:
 			suffixNum = 3;
-			abortTimers = 76;
+			endTrigger = 76;
 			_globals[kTeleporterUnderstood] = true;
 			break;
 		case 2:
 			suffixNum = 1;
-			abortTimers = 77;
+			endTrigger = 77;
 			break;
 		case 3:
 			_game._player._visible = true;
@@ -183,12 +183,12 @@ void Scene201::enter() {
 			break;
 		case 4:
 			suffixNum = 2;
-			abortTimers = 78;
+			endTrigger = 78;
 			break;
 		}
 		_globals[kTeleporterCommand] = 0;
 		if (suffixNum >= 0)
-			_scene->loadAnimation(formAnimName(sepChar, suffixNum), abortTimers);
+			_scene->loadAnimation(formAnimName(sepChar, suffixNum), endTrigger);
 	}
 
 	if ((_scene->_priorSceneId == 202) && (_globals[kMeteorologistStatus] == METEOROLOGIST_PRESENT) && !_scene->_roomChanged) {
@@ -430,7 +430,7 @@ void Scene202::enter() {
 	if (_scene->_priorSceneId == 201) {
 		_game._player._playerPos = Common::Point(190, 91);
 		_game._player._facing = FACING_SOUTH;
-	} else if (_scene->_priorSceneId != -2) {
+	} else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
 		_game._player._playerPos = Common::Point(178, 152);
 		_game._player._facing = FACING_NORTH;
 	}
@@ -446,7 +446,7 @@ void Scene202::enter() {
 	_game.loadQuoteSet(0x5C, 0x5D, 0x5E, 0x5F, 0x60, 0x62, 0x63, 0x64, 0x65, 0x66, 0x61, 0);
 	_activeMsgFl = false;
 
-	if (_scene->_priorSceneId == -2) {
+	if (_scene->_priorSceneId == RETURNING_FROM_DIALOG) {
 		if (_waitingMeteoFl) {
 			_globals._sequenceIndexes[9] = _scene->_sequences.startCycle(_globals._spriteIndexes[9], false, 1);
 			_game._player._visible = false;
@@ -556,7 +556,7 @@ void Scene202::step() {
 	case 90:
 		_vm->_sound->command(41);
 		_scene->_sequences.remove(_globals._sequenceIndexes[10]);
-		_globals._sequenceIndexes[9] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[9], true, 6, 1, 0, 0);
+		_globals._sequenceIndexes[9] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[9], true, 6, 1, 0, 0);
 		_scene->_sequences.setPosition(_globals._sequenceIndexes[9], Common::Point(247, 82));
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[9], 1);
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[9], SEQUENCE_TRIGGER_EXPIRE, 0, 91);
@@ -811,7 +811,7 @@ void Scene202::actions() {
 			} else {
 				_game._player._stepEnabled = false;
 				_game._player._visible = false;
-				_globals._sequenceIndexes[7] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[7], false, 3, 2, 0, 0);
+				_globals._sequenceIndexes[7] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[7], false, 3, 2, 0, 0);
 				_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[7]);
 				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[7], SEQUENCE_TRIGGER_SPRITE, 6, 1);
 				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[7], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
@@ -1044,7 +1044,7 @@ void Scene203::enter() {
 	} else if (_scene->_priorSceneId == 209) {
 		_game._player._playerPos = Common::Point(308, 117);
 		_game._player._facing = FACING_WEST;
-	} else if (_scene->_priorSceneId != -2) {
+	} else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
 		_game._player._playerPos = Common::Point(155, 152);
 		_game._player._facing = FACING_NORTH;
 	}
@@ -1152,8 +1152,9 @@ void Scene205::setup() {
 }
 
 Scene205::Scene205(MADSEngine *vm) : Scene2xx(vm) {
-	_lastFishTime = 0;
-	_chickenTime = 0;
+	_lastFishTime = _scene->_frameStartTime;
+	_chickenTime = _scene->_frameStartTime;
+
 	_beingKicked = false;
 	_kernelMessage = -1;
 }
@@ -1161,8 +1162,6 @@ Scene205::Scene205(MADSEngine *vm) : Scene2xx(vm) {
 void Scene205::synchronize(Common::Serializer &s) {
 	Scene2xx::synchronize(s);
 
-	s.syncAsUint32LE(_lastFishTime);
-	s.syncAsUint32LE(_chickenTime);
 	s.syncAsByte(_beingKicked);
 	s.syncAsSint16LE(_kernelMessage);
 }
@@ -1191,7 +1190,6 @@ void Scene205::enter() {
 	_scene->_sequences.setDepth(_globals._sequenceIndexes[5], 11);
 
 	if (!_game._visitedScenes._sceneRevisited) {
-		_lastFishTime = _scene->_frameStartTime;
 		_globals._sequenceIndexes[6] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[6], false, 7, 1, 0, 0);
 		idx = _scene->_dynamicHotspots.add(269, 13, _globals._sequenceIndexes[6], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(49, 86), FACING_NORTH);
@@ -1224,7 +1222,7 @@ void Scene205::enter() {
 			Common::Rect(195, 99, 264, 134), 13, 2, 0xFDFC, 60,
 			108, 108, 109, 109, 110, 110, 111, 108, 0);
 
-	if (_scene->_priorSceneId != -2)
+	if (_scene->_priorSceneId != RETURNING_FROM_DIALOG)
 		_game._player._playerPos = Common::Point(99, 152);
 
 	if (_globals[kSexOfRex] != SEX_MALE) {
@@ -1448,8 +1446,9 @@ Scene207::Scene207(MADSEngine *vm) : Scene2xx(vm) {
 	_eyeFl = false;
 	_spiderHotspotId = -1;
 	_vultureHotspotId = -1;
-	_spiderTime = 0;
-	_vultureTime = 0;
+
+	_spiderTime = _game._player._priorTimer;
+	_vultureTime = _game._player._priorTimer;
 }
 
 void Scene207::synchronize(Common::Serializer &s) {
@@ -1461,8 +1460,6 @@ void Scene207::synchronize(Common::Serializer &s) {
 
 	s.syncAsSint32LE(_spiderHotspotId);
 	s.syncAsSint32LE(_vultureHotspotId);
-	s.syncAsSint32LE(_spiderTime);
-	s.syncAsSint32LE(_vultureTime);
 }
 
 void Scene207::setup() {
@@ -1500,8 +1497,7 @@ void Scene207::enter() {
 	_spiderFl = (var2 & 1);
 
 	if (_vultureFl) {
-		_globals._sequenceIndexes[1] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[1], false, 30, 0, 0, 400);
-		_vultureTime = _game._player._priorTimer;
+		_globals._sequenceIndexes[1] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[1], false, 30, 0, 0, 400);
 		_vultureHotspotId = _scene->_dynamicHotspots.add(389, 13, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(_vultureHotspotId, Common::Point(254, 94), FACING_WEST);
 	}
@@ -1509,7 +1505,6 @@ void Scene207::enter() {
 	if (_spiderFl) {
 		_globals._sequenceIndexes[4] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[4], false, 7, 1, 0, 0);
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[4], -1, -1);
-		_spiderTime = _game._player._priorTimer;
 		_spiderHotspotId = _scene->_dynamicHotspots.add(333, 13, _globals._sequenceIndexes[4], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(_spiderHotspotId, Common::Point(59, 132), FACING_SOUTH);
 	}
@@ -1521,7 +1516,7 @@ void Scene207::enter() {
 	} else if (_scene->_priorSceneId == 214) {
 		_game._player._playerPos = Common::Point(164, 117);
 		_game._player._facing = FACING_SOUTH;
-	} else if (_scene->_priorSceneId != -2) {
+	} else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
 		_game._player._playerPos = Common::Point(305, 131);
 	}
 
@@ -1549,11 +1544,17 @@ void Scene207::moveSpider() {
 }
 
 void Scene207::step() {
-	if (!_vultureFl)
-		moveVulture();
+	Player &player = _game._player;
 
-	if (_spiderFl)
-		moveSpider();
+	if (_vultureFl) {
+		if (((int32)player._priorTimer - _vultureTime) > 1700)
+			moveVulture();
+	}
+
+	if (_spiderFl) {
+		if (((int32)player._priorTimer - _spiderTime) > 800)
+			moveSpider();
+	}
 
 	if (_game._trigger == 70) {
 		_globals._sequenceIndexes[6] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[6], false, 10, 0, 0, 0);
@@ -1685,18 +1686,18 @@ void Scene208::updateTrap() {
 	}
 
 	switch (_globals[kLeavesStatus]) {
-	case 0: {
+	case LEAVES_ON_GROUND: {
 		_globals._sequenceIndexes[2] = _scene->_sequences.startCycle(_globals._spriteIndexes[2], false, 1);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 15);
 		int idx = _scene->_dynamicHotspots.add(NOUN_PILE_OF_LEAVES, VERB_WALKTO, _globals._sequenceIndexes[2], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(60, 152), FACING_NORTH);
 		}
 		break;
-	case 2: {
+	case LEAVES_ON_TRAP: {
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 15);
 		_globals._sequenceIndexes[3] = _scene->_sequences.startCycle(_globals._spriteIndexes[3], false, 1);
 		_scene->_hotspots.activate(NOUN_DEEP_PIT, false);
-		int idx = _scene->_dynamicHotspots.add(NOUN_LEAF_COVERED_PIT, VERB_WALKTO, _globals._sequenceIndexes[2], Common::Rect(0, 0, 0, 0));
+		int idx = _scene->_dynamicHotspots.add(NOUN_LEAF_COVERED_PIT, VERB_WALKTO, _globals._sequenceIndexes[3], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(100, 146), FACING_NORTH);
 		_scene->_dynamicHotspots[idx]._articleNumber = PREP_ON;
 		}
@@ -1727,7 +1728,7 @@ void Scene208::enter() {
 	} else if (_scene->_priorSceneId == 209) {
 		_game._player._playerPos = Common::Point(307, 123);
 		_game._player._facing = FACING_WEST;
-	} else if (_scene->_priorSceneId != -2) {
+	} else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
 		_game._player._playerPos = Common::Point(162, 149);
 		_game._player._facing = FACING_NORTH;
 	}
@@ -1745,7 +1746,8 @@ void Scene208::enter() {
 }
 
 void Scene208::step() {
-	if (_boundingFl && (_rhotundaTime <= _scene->_activeAnimation->getCurrentFrame())) {
+	if (_boundingFl && _scene->_activeAnimation &&
+			(_rhotundaTime <= _scene->_activeAnimation->getCurrentFrame())) {
 		_rhotundaTime = _scene->_activeAnimation->getCurrentFrame();
 
 		if (_rhotundaTime == 125)
@@ -1794,7 +1796,6 @@ void Scene208::preActions() {
 }
 
 void Scene208::subAction(int mode) {
-
 	switch (_game._trigger) {
 	case 0: {
 		_game._player._stepEnabled = false;
@@ -1802,21 +1803,21 @@ void Scene208::subAction(int mode) {
 		_globals._sequenceIndexes[5] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[5], false, 6, 1, 0, 0);
 		_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[5]);
 
-		int abortVal;
+		int endTrigger;
 		if ((mode == 1) || (mode == 2))
-			abortVal = 1;
+			endTrigger = 1;
 		else
-			abortVal = 2;
+			endTrigger = 2;
 
-		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[5], SEQUENCE_TRIGGER_EXPIRE, 0, abortVal);
+		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[5], SEQUENCE_TRIGGER_EXPIRE, 0, endTrigger);
 		}
 		break;
 	case 1: {
-		int oldVal = _globals._sequenceIndexes[5];
-		_globals._sequenceIndexes[5] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[6], false, 12, 3, 0, 0);
+		int oldSeq = _globals._sequenceIndexes[5];
+		_globals._sequenceIndexes[5] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[5], false, 12, 3, 0, 0);
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[5], 3, 4);
 		_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[5]);
-		_scene->_sequences.updateTimeout(_globals._sequenceIndexes[5], oldVal);
+		_scene->_sequences.updateTimeout(_globals._sequenceIndexes[5], oldSeq);
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[5], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
 		_vm->_sound->command(20);
 		}
@@ -2157,7 +2158,7 @@ void Scene209::handleLookRight() {
 	switch (_game._trigger) {
 	case 151:
 		_scene->_sequences.remove(_globals._sequenceIndexes[3]);
-		_globals._sequenceIndexes[3] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[3], false, 8, 2, 0, 0);
+		_globals._sequenceIndexes[3] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[3], false, 8, 2, 0, 0);
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[3], 8, 14);
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_EXPIRE, 0, 152);
 		break;
@@ -2224,7 +2225,7 @@ void Scene209::handleGetBinoculars() {
 
 	case 162: {
 		int oldIdx = _globals._sequenceIndexes[3];
-		_globals._sequenceIndexes[3] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[3], false, 8, 6, 0, 0);
+		_globals._sequenceIndexes[3] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[3], false, 8, 6, 0, 0);
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[3], 23, 25);
 		_scene->_sequences.updateTimeout(_globals._sequenceIndexes[3], oldIdx);
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_EXPIRE, 0, 163);
@@ -2233,7 +2234,7 @@ void Scene209::handleGetBinoculars() {
 
 	case 163: {
 		int oldIdx = _globals._sequenceIndexes[3];
-		_globals._sequenceIndexes[3] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[3], false, 8, 0, 0, 0);
+		_globals._sequenceIndexes[3] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[3], false, 8, 0, 0, 0);
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[3], 23, 24);
 		_scene->_sequences.updateTimeout(_globals._sequenceIndexes[3], oldIdx);
 		_scene->_sequences.addTimer(8, 164);
@@ -2257,7 +2258,7 @@ void Scene209::handleBinocularBlink() {
 	case 167: {
 		int oldIdx = _globals._sequenceIndexes[3];
 		_scene->_sequences.remove(_globals._sequenceIndexes[3]);
-		_globals._sequenceIndexes[3] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[3], false, 8, 2, 0, 0);
+		_globals._sequenceIndexes[3] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[3], false, 8, 2, 0, 0);
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[3], 23, 25);
 		_scene->_sequences.updateTimeout(_globals._sequenceIndexes[3], oldIdx);
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_EXPIRE, 0, 168);
@@ -2266,7 +2267,7 @@ void Scene209::handleBinocularBlink() {
 
 	case 168: {
 		int oldIdx = _globals._sequenceIndexes[3];
-		_globals._sequenceIndexes[3] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[3], false, 8, 0, 0, 0);
+		_globals._sequenceIndexes[3] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[3], false, 8, 0, 0, 0);
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[3], 23, 24);
 		_scene->_sequences.updateTimeout(_globals._sequenceIndexes[3], oldIdx);
 		_scene->_sequences.addTimer(30, 169);
@@ -2286,7 +2287,7 @@ void Scene209::handleBinocularScan() {
 	case 171: {
 		int oldIdx = _globals._sequenceIndexes[3];
 		_scene->_sequences.remove(_globals._sequenceIndexes[3]);
-		_globals._sequenceIndexes[3] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[3], false, 12, 2, 0, 0);
+		_globals._sequenceIndexes[3] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[3], false, 12, 2, 0, 0);
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[3], 43, 45);
 		_scene->_sequences.updateTimeout(_globals._sequenceIndexes[3], oldIdx);
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_EXPIRE, 0, 172);
@@ -2298,10 +2299,10 @@ void Scene209::handleBinocularScan() {
 		int randAction = _vm->getRandomNumber(1,2);
 		switch (randAction) {
 		case 1:
-			_globals._sequenceIndexes[3] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[3], false, 12, 2, 0, 0);
+			_globals._sequenceIndexes[3] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[3], false, 12, 2, 0, 0);
 			break;
 		case 2:
-			_globals._sequenceIndexes[3] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[3], false, 12, 4, 0, 0);
+			_globals._sequenceIndexes[3] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[3], false, 12, 4, 0, 0);
 			break;
 		}
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[3], 23, 25);
@@ -2312,7 +2313,7 @@ void Scene209::handleBinocularScan() {
 
 	case 173: {
 		int oldIdx = _globals._sequenceIndexes[3];
-		_globals._sequenceIndexes[3] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[3], false, 12, 2, 0, 0);
+		_globals._sequenceIndexes[3] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[3], false, 12, 2, 0, 0);
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[3], 26, 30);
 		_scene->_sequences.updateTimeout(_globals._sequenceIndexes[3], oldIdx);
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_EXPIRE, 0, 174);
@@ -2321,7 +2322,7 @@ void Scene209::handleBinocularScan() {
 
 	case 174: {
 		int oldIdx = _globals._sequenceIndexes[3];
-		_globals._sequenceIndexes[3] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[3], false, 12, 0, 0, 0);
+		_globals._sequenceIndexes[3] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[3], false, 12, 0, 0, 0);
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[3], 23, 24);
 		_scene->_sequences.updateTimeout(_globals._sequenceIndexes[3], oldIdx);
 		_scene->_sequences.addTimer(60, 175);
@@ -2407,7 +2408,7 @@ void Scene209::handleTongue() {
 	case 185: {
 		_vm->_sound->command(18);
 		int oldIdx = _globals._sequenceIndexes[3];
-		_globals._sequenceIndexes[3] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[3], false, 6, 20, 0, 0);
+		_globals._sequenceIndexes[3] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[3], false, 6, 20, 0, 0);
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[3], 38, 39);
 		_scene->_sequences.updateTimeout(_globals._sequenceIndexes[3], oldIdx);
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_EXPIRE, 0, 186);
@@ -2527,7 +2528,7 @@ void Scene209::handleMonkeyEating() {
 
 	case 200: {
 		int oldIdx = _globals._sequenceIndexes[4];
-		_globals._sequenceIndexes[4] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[4], false, 10, 10, 0, 0);
+		_globals._sequenceIndexes[4] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[4], false, 10, 10, 0, 0);
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[4], 15, 16);
 		_scene->_sequences.updateTimeout(_globals._sequenceIndexes[4], oldIdx);
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[4], SEQUENCE_TRIGGER_EXPIRE, 0, 201);
@@ -2556,14 +2557,14 @@ void Scene209::handleMonkeyEating() {
 
 	case 204:
 		_scene->_sequences.remove(_globals._sequenceIndexes[4]);
-		_globals._sequenceIndexes[4] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[4], false, 10, 8, 0, 0);
+		_globals._sequenceIndexes[4] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[4], false, 10, 8, 0, 0);
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[4], 18, 19);
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[4], SEQUENCE_TRIGGER_EXPIRE, 0, 205);
 		break;
 
 	case 205: {
 		int oldIdx = _globals._sequenceIndexes[4];
-		_globals._sequenceIndexes[4] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[4], false, 10, 8, 0, 0);
+		_globals._sequenceIndexes[4] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[4], false, 10, 8, 0, 0);
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[4], 20, 21);
 		_scene->_sequences.updateTimeout(_globals._sequenceIndexes[4], oldIdx);
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[4], SEQUENCE_TRIGGER_EXPIRE, 0, 206);
@@ -2588,7 +2589,7 @@ void Scene209::handleMonkeyEating() {
 		 _scene->_kernelMessages.setQuoted(msgIndex, 4, true);
 
 		 int oldIdx = _globals._sequenceIndexes[4];
-		_globals._sequenceIndexes[4] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[4], false, 15, 4, 0, 0);
+		_globals._sequenceIndexes[4] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[4], false, 15, 4, 0, 0);
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[4], 26, 27);
 		_scene->_sequences.updateTimeout(_globals._sequenceIndexes[4], oldIdx);
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[4], SEQUENCE_TRIGGER_EXPIRE, 0, 208);
@@ -2598,7 +2599,7 @@ void Scene209::handleMonkeyEating() {
 	case 208: {
 		_scene->_kernelMessages.add(Common::Point(180, 39), 0xFDFC, 0, 0, 90, _game.getQuote(131));
 		int oldIdx = _globals._sequenceIndexes[4];
-		_globals._sequenceIndexes[4] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[4], false, 10, 4, 0, 0);
+		_globals._sequenceIndexes[4] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[4], false, 10, 4, 0, 0);
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[4], 28, 29);
 		_scene->_sequences.updateTimeout(_globals._sequenceIndexes[4], oldIdx);
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[4], SEQUENCE_TRIGGER_EXPIRE, 0, 209);
@@ -2837,6 +2838,7 @@ void Scene209::enter() {
 	_globals._spriteIndexes[5] = _scene->_sprites.addSprites(formAnimName('m', 3));
 	_globals._spriteIndexes[6] = _scene->_sprites.addSprites(formAnimName('m', 6));
 	_globals._spriteIndexes[7] = _scene->_sprites.addSprites(formAnimName('m', 8));
+	_globals._spriteIndexes[11] = _scene->_sprites.addSprites("*RXMBD_2");
 
 	_game.loadQuoteSet(0x82, 0x83, 0x84, 0x9C, 0x97, 0x95, 0x99, 0x9E, 0x98, 0x9B, 0xA0, 0x96, 0x9F,
 		0x8B, 0x8C, 0x8D, 0x8E, 0x8F, 0x91, 0x92, 0x93, 0x94, 0x89, 0x85, 0x8A, 0x86, 0x87, 0x88, 0);
@@ -2854,7 +2856,7 @@ void Scene209::enter() {
 	if (_scene->_priorSceneId == 208) {
 		_game._player._playerPos = Common::Point(11, 121);
 		_game._player._facing = FACING_EAST;
-	} else if (_scene->_priorSceneId != -2) {
+	} else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
 		_game._player._playerPos = Common::Point(28, 121);
 		_game._player._facing = FACING_SOUTH;
 	}
@@ -3438,10 +3440,9 @@ void Scene209::actions() {
 	if (_action.isAction(VERB_TAKE, NOUN_PLANT_STALK) && (_game._trigger || _game._objects.isInRoom(OBJ_PLANT_STALK))) {
 		switch (_game._trigger) {
 		case 0:
-			_globals._spriteIndexes[11] = _scene->_sprites.addSprites("*RXMBD_2");
 			_game._player._stepEnabled = false;
 			_game._player._visible = false;
-			_globals._sequenceIndexes[11] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[11], false, 3, 2, 0, 0);
+			_globals._sequenceIndexes[11] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[11], false, 3, 2, 0, 0);
 			_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[11]);
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[11], SEQUENCE_TRIGGER_SPRITE, 4, 1);
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[11], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
@@ -3460,7 +3461,6 @@ void Scene209::actions() {
 			break;
 
 		case 3:
-			_scene->_sprites.remove(_globals._spriteIndexes[11]);
 			break;
 		}
 		_action._inProgress = false;
@@ -3473,7 +3473,7 @@ void Scene209::actions() {
 			_globals._spriteIndexes[10] = _scene->_sprites.addSprites("*RXMBD_8");
 			_game._player._stepEnabled = false;
 			_game._player._visible = false;
-			_globals._sequenceIndexes[10] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[10], false, 3, 2, 0, 0);
+			_globals._sequenceIndexes[10] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[10], false, 3, 2, 0, 0);
 			_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[10]);
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[10], SEQUENCE_TRIGGER_SPRITE, 4, 1);
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[10], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
@@ -4173,7 +4173,7 @@ void Scene210::enter() {
 		_game._player._playerPos = Common::Point(168, 128);
 		_game._player._facing = FACING_SOUTH;
 		_globals[kCurtainOpen] = true;
-	} else if (_scene->_priorSceneId != -2)
+	} else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG)
 		_game._player._playerPos = Common::Point(308, 132);
 
 	if (!_globals[kCurtainOpen]) {
@@ -4210,7 +4210,7 @@ void Scene210::enter() {
 	_twinkleAnimationType = 0;
 	_twinklesCurrentFrame = 0;
 
-	if (_scene->_priorSceneId != -2) {
+	if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
 		_shouldMoveHead = false;
 		_shouldFaceRex = false;
 		_shouldTalk = false;
@@ -4647,7 +4647,7 @@ void Scene211::enter() {
 		_game._player._visible = false;
 		_scene->loadAnimation(formAnimName('A', -1), 100);
 		_scene->_activeAnimation->setCurrentFrame(169);
-	} else if (_scene->_priorSceneId != -2) {
+	} else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
 		_game._player._playerPos = Common::Point(310, 31);
 		_game._player._facing = FACING_SOUTHWEST;
 	}
@@ -4905,7 +4905,7 @@ void Scene212::enter() {
 	if (_scene->_priorSceneId == 208) {
 		_game._player._playerPos = Common::Point(195, 85);
 		_game._player._facing = FACING_SOUTH;
-	} else if (_scene->_priorSceneId != -2) {
+	} else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
 		_game._player._playerPos = Common::Point(67, 117);
 		_game._player._facing = FACING_NORTHEAST;
 	}
@@ -5061,7 +5061,7 @@ void Scene214::enter() {
 		_scene->_hotspots.activate(NOUN_BLOWGUN, false);
 	}
 
-	if (_scene->_priorSceneId != -2)
+	if (_scene->_priorSceneId != RETURNING_FROM_DIALOG)
 		_game._player._playerPos = Common::Point(191, 152);
 
 	sceneEntrySound();
@@ -5257,7 +5257,7 @@ void Scene215::enter() {
 		_game._player._stepEnabled = false;
 		_globals._sequenceIndexes[3] = _scene->_sequences.startCycle(_globals._spriteIndexes[3], false, 1);
 		_scene->_sequences.addTimer(120, 70);
-	} else if (_scene->_priorSceneId != -2) {
+	} else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
 		_game._player._playerPos = Common::Point(204, 152);
 		_game._player._facing = FACING_NORTH;
 	}
@@ -5290,7 +5290,7 @@ void Scene215::actions() {
 				if (_globals[kSexOfRex] == REX_MALE) {
 					_game._player._visible = false;
 					_game._player._stepEnabled = false;
-					_globals._sequenceIndexes[2] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[2], false, 6, 2, 0, 0);
+					_globals._sequenceIndexes[2] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[2], false, 6, 2, 0, 0);
 					_scene->_sequences.setAnimRange(_globals._sequenceIndexes[2], 1, 4);
 					_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[2]);
 					_scene->_sequences.addSubEntry(_globals._sequenceIndexes[2], SEQUENCE_TRIGGER_LOOP, 0, 1);

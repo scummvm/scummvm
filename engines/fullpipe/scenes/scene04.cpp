@@ -949,7 +949,7 @@ void sceneHandler04_springWobble() {
 	if (g_vars->scene04_bottleWeight < newdelta)
 		g_vars->scene04_springOffset--;
 
-	if ((oldDynIndex > g_vars->scene04_bottleWeight && newdelta > g_vars->scene04_bottleWeight) || newdelta <= g_vars->scene04_bottleWeight) {
+	if ((oldDynIndex <= g_vars->scene04_bottleWeight && newdelta > g_vars->scene04_bottleWeight) || newdelta <= g_vars->scene04_bottleWeight) {
 		g_vars->scene04_springDelay++;
 
 		if (g_vars->scene04_springOffset && g_vars->scene04_springDelay > 1) {
@@ -960,6 +960,8 @@ void sceneHandler04_springWobble() {
 
 	Common::Point point;
 
+	int oldpos = g_vars->scene04_spring->getCurrDimensions(point)->y - oldDynIndex;
+
 	if (g_vars->scene04_dynamicPhaseIndex) {
 		if (!g_vars->scene04_spring->_movement)
 			g_vars->scene04_spring->startAnim(MV_SPR_LOWER, 0, -1);
@@ -969,8 +971,9 @@ void sceneHandler04_springWobble() {
 		g_vars->scene04_spring->changeStatics2(ST_SPR_UP);
 	}
 
-	if (g_vars->scene04_dynamicPhaseIndex != oldDynIndex)
-		sceneHandler04_bottleUpdateObjects(oldDynIndex - g_vars->scene04_dynamicPhaseIndex);
+	if (g_vars->scene04_dynamicPhaseIndex != oldDynIndex) {
+		sceneHandler04_bottleUpdateObjects(oldpos - (g_vars->scene04_spring->getCurrDimensions(point)->y - g_vars->scene04_dynamicPhaseIndex));
+	}
 }
 
 void sceneHandler04_leaveScene() {

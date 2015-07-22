@@ -2597,7 +2597,11 @@ void ScummEngine_v6::o6_kernelSetFunctions() {
 		fadeIn(args[1]);
 		break;
 	case 8:
-		startManiac();
+		if (startManiac()) {
+			// This is so that the surprised exclamation happens
+			// after we return to the game again, not before.
+			o6_breakHere();
+		}
 		break;
 	case 9:
 		killAllScriptsExceptCurrent();

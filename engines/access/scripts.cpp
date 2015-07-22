@@ -29,10 +29,12 @@ namespace Access {
 
 Scripts::Scripts(AccessEngine *vm) : Manager(vm) {
 	_resource = nullptr;
+	_specialFunction = -1;
 	_data = nullptr;
 	_sequence = 0;
 	_endFlag = false;
 	_returnCode = 0;
+	_scriptCommand = 0;
 	_choice = 0;
 	_choiceStart = 0;
 	_charsOrg = Common::Point(0, 0);
@@ -162,7 +164,7 @@ void Scripts::charLoop() {
 	_sequence = 2000;
 	searchForSequence();
 	_vm->_images.clear();
-	_vm->_buffer2.copyFrom(_vm->_buffer1);
+	_vm->_buffer2.blitFrom(_vm->_buffer1);
 	_vm->_newRects.clear();
 
 	executeScript();
@@ -993,7 +995,7 @@ void Scripts::cmdFreeSound() {
 				charLoop();
 
 			_vm->_events->pollEvents();
-		} while (!_vm->shouldQuit() && sound._playingSound);
+		} while (!_vm->shouldQuit() && sound.isSFXPlaying());
 
 		// Free the sounds
 		while (sound._soundTable.size() > 0) {

@@ -396,12 +396,6 @@ void OSystem_Android::initBackend() {
 	EventsBaseBackend::initBackend();
 }
 
-void OSystem_Android::addPluginDirectories(Common::FSList &dirs) const {
-	ENTER();
-
-	JNI::getPluginDirectories(dirs);
-}
-
 bool OSystem_Android::hasFeature(Feature f) {
 	return (f == kFeatureFullscreenMode ||
 			f == kFeatureAspectRatioCorrection ||
@@ -599,11 +593,5 @@ Common::String OSystem_Android::getSystemProperty(const char *name) const {
 
 	return Common::String(value, len);
 }
-
-#ifdef DYNAMIC_MODULES
-void AndroidPluginProvider::addCustomDirectories(Common::FSList &dirs) const {
-	((OSystem_Android *)g_system)->addPluginDirectories(dirs);
-}
-#endif
 
 #endif

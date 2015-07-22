@@ -30,9 +30,9 @@
 
 namespace CreateProjectTool {
 
-class XCodeProvider : public ProjectProvider {
+class XcodeProvider : public ProjectProvider {
 public:
-	XCodeProvider(StringList &global_warnings, std::map<std::string, StringList> &project_warnings, const int version = 0);
+	XcodeProvider(StringList &global_warnings, std::map<std::string, StringList> &project_warnings, const int version = 0);
 
 protected:
 
@@ -45,7 +45,6 @@ protected:
 
 	void writeFileListToProject(const FileNode &dir, std::ofstream &projectFile, const int indentation,
 	                            const StringList &duplicate, const std::string &objPrefix, const std::string &filePrefix);
-
 private:
 	enum {
 		SettingsAsList        = 0x01,
@@ -169,7 +168,7 @@ private:
 		PropertyList properties;		// List of object properties, including output configuration
 
 		// Constructs an object and add a default type property
-		Object(XCodeProvider *objectParent, std::string objectId, std::string objectName, std::string objectType, std::string objectRefType = "", std::string objectComment = "")
+		Object(XcodeProvider *objectParent, std::string objectId, std::string objectName, std::string objectType, std::string objectRefType = "", std::string objectComment = "")
 		    : id(objectId), name(objectName), refType(objectRefType), comment(objectComment), parent(objectParent) {
 			assert(objectParent);
 			assert(!objectId.empty());
@@ -210,9 +209,10 @@ private:
 			return output;
 		}
 
+	// Slight hack, to allow Group access to parent.
+	protected:
+		XcodeProvider *parent;
 	private:
-		XCodeProvider *parent;
-
 		// Returns the type property (should always be the first in the properties map)
 		std::string getType() {
 			assert(!properties.empty());
@@ -258,6 +258,36 @@ private:
 		}
 	};
 
+	// A class to maintain a folder-reference group-hierarchy, which together with the functionality below
+	// allows for breaking up sub-paths into a chain of groups. This helps with merging engines into the
+	// overall group-layout.
+	class Group : public Object {
+		int _childOrder;
+		std::map<std::string, Group *> _childGroups;
+		std::string _treeName;
+		void addChildInternal(const std::string &id, const std::string &comment);
+	public:
+		Group(XcodeProvider *objectParent, const std::string &groupName, const std::string &uniqueName, const std::string &path);
+		void addChildFile(const std::string &name);
+		void addChildByHash(const std::string &hash, const std::string &name);
+		// Should be passed the hash for the entry
+		void addChildGroup(const Group* group);
+		void ensureChildExists(const std::string &name);
+		Group *getChildGroup(const std::string &name);
+		std::string getHashRef() const { return parent->getHash(id); }
+	};
+
+	// The path used by the root-source group
+	std::string _projectRoot;
+	// The base source group, currently also re-purposed for containing the various support-groups.
+	Group *_rootSourceGroup;
+	// Helper function to create the chain of groups for the various subfolders. Necessary as
+	// create_project likes to start in engines/
+	Group *touchGroupsForPath(const std::string &path);
+	// Functionality for adding file-refs and build-files, as Group-objects need to be able to do this.
+	void addFileReference(const std::string &id, const std::string &name, FileProperty properties);
+	void addProductFileReference(const std::string &id, const std::string &name);
+	void addBuildFile(const std::string &id, const std::string &name, const std::string &fileRefId, const std::string &comment);
 	// All objects
 	std::map<std::string, std::string> _hashDictionnary;
 	ValueList _defines;

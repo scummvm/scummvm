@@ -20,7 +20,7 @@
  *
  */
 
-//#define ENABLE_XCODE
+#define ENABLE_XCODE
 
 // HACK to allow building with the SDL backend on MinGW
 // see bug #1800764 "TOOLS: MinGW tools building broken"
@@ -125,6 +125,7 @@ int main(int argc, char *argv[]) {
 
 	ProjectType projectType = kProjectNone;
 	int msvcVersion = 9;
+	bool useSDL2 = false;
 
 	// Parse command line arguments
 	using std::cout;
@@ -267,6 +268,8 @@ int main(int argc, char *argv[]) {
 			setup.devTools = true;
 		} else if (!std::strcmp(argv[i], "--tests")) {
 			setup.tests = true;
+		} else if (!std::strcmp(argv[i], "--sdl2")) {
+			useSDL2 = true;
 		} else {
 			std::cerr << "ERROR: Unknown parameter \"" << argv[i] << "\"\n";
 			return -1;
@@ -333,9 +336,20 @@ int main(int argc, char *argv[]) {
 	setup.defines.splice(setup.defines.begin(), featureDefines);
 
 	// Windows only has support for the SDL backend, so we hardcode it here (along with winmm)
-	setup.defines.push_back("WIN32");
+	if (projectType != kProjectXcode) {
+		setup.defines.push_back("WIN32");
+	} else {
+		setup.defines.push_back("POSIX");
+		setup.defines.push_back("MACOSX"); // This will break iOS, but allows OS X to catch up on browser_osx.
+	}
 	setup.defines.push_back("SDL_BACKEND");
-	setup.libraries.push_back("sdl");
+	if (!useSDL2) {
+		cout << "\nLinking to SDL 1.2\n\n";
+		setup.libraries.push_back("sdl");
+	} else {
+		cout << "\nLinking to SDL 2.0\n\n";
+		setup.libraries.push_back("sdl2");
+	}
 	setup.libraries.push_back("winmm");
 
 	// Add additional project-specific library
@@ -401,7 +415,6 @@ int main(int argc, char *argv[]) {
 		globalWarnings.push_back("-Wwrite-strings");
 		// The following are not warnings at all... We should consider adding them to
 		// a different list of parameters.
-		globalWarnings.push_back("-fno-rtti");
 		globalWarnings.push_back("-fno-exceptions");
 		globalWarnings.push_back("-fcheck-new");
 
@@ -563,7 +576,7 @@ int main(int argc, char *argv[]) {
 		globalWarnings.push_back("-fno-exceptions");
 		globalWarnings.push_back("-fcheck-new");
 
-		provider = new CreateProjectTool::XCodeProvider(globalWarnings, projectWarnings);
+		provider = new CreateProjectTool::XcodeProvider(globalWarnings, projectWarnings);
 		break;
 	}
 
@@ -645,6 +658,9 @@ void displayHelp(const char *exe) {
 	        "Optional features settings:\n"
 	        " --enable-<name>          enable inclusion of the feature \"name\"\n"
 	        " --disable-<name>         disable inclusion of the feature \"name\"\n"
+			"\n"
+			"SDL settings:\n"
+			" --sdl2                   link to SDL 2.0, instead of SDL 1.2\n"
 	        "\n"
 	        " There are the following features available:\n"
 	        "\n";
@@ -1027,7 +1043,7 @@ bool producesObjectFile(const std::string &fileName) {
 	std::string n, ext;
 	splitFilename(fileName, n, ext);
 
-	if (ext == "cpp" || ext == "c" || ext == "asm")
+	if (ext == "cpp" || ext == "c" || ext == "asm" || ext == "m" || ext == "mm")
 		return true;
 	else
 		return false;
@@ -1267,8 +1283,9 @@ void ProjectProvider::createProject(BuildSetup &setup) {
 	for (UUIDMap::const_iterator i = _uuidMap.begin(); i != _uuidMap.end(); ++i) {
 		if (i->first == setup.projectName)
 			continue;
-
+		// Retain the files between engines if we're creating a single project
 		in.clear(); ex.clear();
+
 		const std::string moduleDir = setup.srcDir + targetFolder + i->first;
 
 		createModuleList(moduleDir, setup.defines, setup.testDirs, in, ex);
@@ -1278,7 +1295,6 @@ void ProjectProvider::createProject(BuildSetup &setup) {
 	if (setup.tests) {
 		// Create the main project file.
 		in.clear(); ex.clear();
-
 		createModuleList(setup.srcDir + "/backends", setup.defines, setup.testDirs, in, ex);
 		createModuleList(setup.srcDir + "/backends/platform/sdl", setup.defines, setup.testDirs, in, ex);
 		createModuleList(setup.srcDir + "/base", setup.defines, setup.testDirs, in, ex);
@@ -1293,7 +1309,6 @@ void ProjectProvider::createProject(BuildSetup &setup) {
 	} else if (!setup.devTools) {
 		// Last but not least create the main project file.
 		in.clear(); ex.clear();
-
 		// File list for the Project file
 		createModuleList(setup.srcDir + "/backends", setup.defines, setup.testDirs, in, ex);
 		createModuleList(setup.srcDir + "/backends/platform/sdl", setup.defines, setup.testDirs, in, ex);

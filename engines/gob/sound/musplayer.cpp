@@ -27,7 +27,7 @@
 
 namespace Gob {
 
-MUSPlayer::MUSPlayer(Audio::Mixer &mixer) : AdLib(mixer),
+MUSPlayer::MUSPlayer() : AdLib(60),
 	_songData(0), _songDataSize(0), _playPos(0), _songID(0) {
 
 }
@@ -41,15 +41,6 @@ void MUSPlayer::unload() {
 
 	unloadSND();
 	unloadMUS();
-}
-
-uint32 MUSPlayer::getSampleDelay(uint16 delay) const {
-	if (delay == 0)
-		return 0;
-
-	uint32 freq = (_ticksPerBeat * _tempo) / 60;
-
-	return ((uint32)delay * getSamplesPerSecond()) / freq;
 }
 
 void MUSPlayer::skipToTiming() {
@@ -66,8 +57,12 @@ uint32 MUSPlayer::pollMusic(bool first) {
 		return 0;
 	}
 
-	if (first)
-		return getSampleDelay(*_playPos++);
+	if (first) {
+		// Set the timer frequency on first run.
+		// Do not set it in rewind() for thread safety reasons.
+		setTimerFrequency((_ticksPerBeat * _tempo) / 60);
+		return *_playPos++;
+	}
 
 	uint16 delay = 0;
 	while (delay == 0) {
@@ -100,6 +95,7 @@ uint32 MUSPlayer::pollMusic(bool first) {
 				uint32 denom = *_playPos++;
 
 				_tempo = _baseTempo * num + ((_baseTempo * denom) >> 7);
+				setTimerFrequency((_ticksPerBeat * _tempo) / 60);
 
 				_playPos++;
 			} else {
@@ -182,7 +178,7 @@ uint32 MUSPlayer::pollMusic(bool first) {
 			delay += *_playPos++;
 	}
 
-	return getSampleDelay(delay);
+	return delay;
 }
 
 void MUSPlayer::rewind() {

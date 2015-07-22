@@ -27,7 +27,7 @@
 #include "common/textconsole.h"
 
 #include "audio/fmopl.h"
-#include "audio/softsynth/emumidi.h"
+#include "audio/mididrv.h"
 
 #include "sci/resource.h"
 #include "sci/sound/drivers/mididriver.h"
@@ -43,29 +43,30 @@ namespace Sci {
 // FIXME: We don't seem to be sending the polyphony init data, so disable this for now
 #define ADLIB_DISABLE_VOICE_MAPPING
 
-class MidiDriver_AdLib : public MidiDriver_Emulated {
+class MidiDriver_AdLib : public MidiDriver {
 public:
 	enum {
 		kVoices = 9,
 		kRhythmKeys = 62
 	};
 
-	MidiDriver_AdLib(Audio::Mixer *mixer) : MidiDriver_Emulated(mixer), _playSwitch(true), _masterVolume(15), _rhythmKeyMap(0), _opl(0) { }
+	MidiDriver_AdLib(Audio::Mixer *mixer) :_playSwitch(true), _masterVolume(15), _rhythmKeyMap(0), _opl(0), _isOpen(false) { }
 	virtual ~MidiDriver_AdLib() { }
 
 	// MidiDriver
+	int open() { return -1; } // Dummy implementation (use openAdLib)
 	int openAdLib(bool isSCI0);
 	void close();
 	void send(uint32 b);
 	MidiChannel *allocateChannel() { return NULL; }
 	MidiChannel *getPercussionChannel() { return NULL; }
+	bool isOpen() const { return _isOpen; }
+	uint32 getBaseTempo() { return 1000000 / OPL::OPL::kDefaultCallbackFrequency; }
 
-	// AudioStream
-	bool isStereo() const { return _stereo; }
-	int getRate() const { return _mixer->getOutputRate(); }
+	// MidiDriver
+	void setTimerCallback(void *timerParam, Common::TimerManager::TimerProc timerProc);
 
-	// MidiDriver_Emulated
-	void generateSamples(int16 *buf, int len);
+	void onTimer();
 
 	void setVolume(byte volume);
 	void playSwitch(bool play);
@@ -133,12 +134,16 @@ private:
 	bool _stereo;
 	bool _isSCI0;
 	OPL::OPL *_opl;
+	bool _isOpen;
 	bool _playSwitch;
 	int _masterVolume;
 	Channel _channels[MIDI_CHANNELS];
 	AdLibVoice _voices[kVoices];
 	byte *_rhythmKeyMap;
 	Common::Array<AdLibPatch> _patches;
+
+	Common::TimerManager::TimerProc _adlibTimerProc;
+	void *_adlibTimerParam;
 
 	void loadInstrument(const byte *ins);
 	void voiceOn(int voice, int note, int velocity);
@@ -215,14 +220,12 @@ static const int ym3812_note[13] = {
 };
 
 int MidiDriver_AdLib::openAdLib(bool isSCI0) {
-	int rate = _mixer->getOutputRate();
-
 	_stereo = STEREO;
 
 	debug(3, "ADLIB: Starting driver in %s mode", (isSCI0 ? "SCI0" : "SCI1"));
 	_isSCI0 = isSCI0;
 
-	_opl = OPL::Config::create(isStereo() ? OPL::Config::kDualOpl2 : OPL::Config::kOpl2);
+	_opl = OPL::Config::create(_stereo ? OPL::Config::kDualOpl2 : OPL::Config::kOpl2);
 
 	// Try falling back to mono, thus plain OPL2 emualtor, when no Dual OPL2 is available.
 	if (!_opl && _stereo) {
@@ -233,22 +236,24 @@ int MidiDriver_AdLib::openAdLib(bool isSCI0) {
 	if (!_opl)
 		return -1;
 
-	_opl->init(rate);
+	if (!_opl->init()) {
+		delete _opl;
+		_opl = nullptr;
+		return -1;
+	}
 
 	setRegister(0xBD, 0);
 	setRegister(0x08, 0);
 	setRegister(0x01, 0x20);
 
-	MidiDriver_Emulated::open();
+	_isOpen = true;
 
-	_mixer->playStream(Audio::Mixer::kPlainSoundType, &_mixerSoundHandle, this, -1, _mixer->kMaxChannelVolume, 0, DisposeAfterUse::NO);
+	_opl->start(new Common::Functor0Mem<void, MidiDriver_AdLib>(this, &MidiDriver_AdLib::onTimer));
 
 	return 0;
 }
 
 void MidiDriver_AdLib::close() {
-	_mixer->stopHandle(_mixerSoundHandle);
-
 	delete _opl;
 	delete[] _rhythmKeyMap;
 }
@@ -325,10 +330,14 @@ void MidiDriver_AdLib::send(uint32 b) {
 	}
 }
 
-void MidiDriver_AdLib::generateSamples(int16 *data, int len) {
-	if (isStereo())
-		len <<= 1;
-	_opl->readBuffer(data, len);
+void MidiDriver_AdLib::setTimerCallback(void *timerParam, Common::TimerManager::TimerProc timerProc) {
+	_adlibTimerProc = timerProc;
+	_adlibTimerParam = timerParam;
+}
+
+void MidiDriver_AdLib::onTimer() {
+	if (_adlibTimerProc)
+		(*_adlibTimerProc)(_adlibTimerParam);
 
 	// Increase the age of the notes
 	for (int i = 0; i < kVoices; i++) {
@@ -684,7 +693,7 @@ void MidiDriver_AdLib::setVelocityReg(int regOffset, int velocity, int kbScaleLe
 	if (!_playSwitch)
 		velocity = 0;
 
-	if (isStereo()) {
+	if (_stereo) {
 		int velLeft = velocity;
 		int velRight = velocity;
 
@@ -734,7 +743,7 @@ void MidiDriver_AdLib::setRegister(int reg, int value, int channels) {
 		_opl->write(0x221, value);
 	}
 
-	if (isStereo()) {
+	if (_stereo) {
 		if (channels & kRightChannel) {
 			_opl->write(0x222, reg);
 			_opl->write(0x223, value);

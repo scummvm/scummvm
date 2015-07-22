@@ -209,6 +209,11 @@ Console::Console(SciEngine *engine) : GUI::Debugger(),
 	registerCmd("bpe",				WRAP_METHOD(Console, cmdBreakpointFunction));		// alias
 	// VM
 	registerCmd("script_steps",		WRAP_METHOD(Console, cmdScriptSteps));
+	registerCmd("script_objects",   WRAP_METHOD(Console, cmdScriptObjects));
+	registerCmd("scro",             WRAP_METHOD(Console, cmdScriptObjects));
+	registerCmd("script_strings",   WRAP_METHOD(Console, cmdScriptStrings));
+	registerCmd("scrs",             WRAP_METHOD(Console, cmdScriptStrings));
+	registerCmd("script_said",      WRAP_METHOD(Console, cmdScriptSaid));
 	registerCmd("vm_varlist",			WRAP_METHOD(Console, cmdVMVarlist));
 	registerCmd("vmvarlist",			WRAP_METHOD(Console, cmdVMVarlist));				// alias
 	registerCmd("vl",					WRAP_METHOD(Console, cmdVMVarlist));				// alias
@@ -660,10 +665,33 @@ bool Console::cmdRegisters(int argc, const char **argv) {
 	return true;
 }
 
+bool Console::parseResourceNumber36(const char *userParameter, uint16 &resourceNumber, uint32 &resourceTuple) {
+	int userParameterLen = strlen(userParameter);
+	
+	if (userParameterLen != 10) {
+		debugPrintf("Audio36/Sync36 resource numbers must be specified as RRRNNVVCCS\n");
+		debugPrintf("where RRR is the resource number/map\n");
+		debugPrintf("      NN is the noun\n");
+		debugPrintf("      VV is the verb\n");
+		debugPrintf("      CC is the cond\n");
+		debugPrintf("      S  is the seq\n");
+		return false;
+	}
+
+	// input: RRRNNVVCCS
+	resourceNumber = strtol(Common::String(userParameter, 3).c_str(), 0, 36);
+	uint16 noun = strtol(Common::String(userParameter + 3, 2).c_str(), 0, 36);
+	uint16 verb = strtol(Common::String(userParameter + 5, 2).c_str(), 0, 36);
+	uint16 cond = strtol(Common::String(userParameter + 7, 2).c_str(), 0, 36);
+	uint16 seq = strtol(Common::String(userParameter + 9, 1).c_str(), 0, 36);
+	resourceTuple = ((noun & 0xff) << 24) | ((verb & 0xff) << 16) | ((cond & 0xff) << 8) | (seq & 0xff);
+	return true;
+}
+
 bool Console::cmdDiskDump(int argc, const char **argv) {
-	int resNumFrom = 0;
-	int resNumTo = 0;
-	int resNumCur = 0;
+	bool resourceAll = false;
+	uint16 resourceNumber = 0;
+	uint32 resourceTuple = 0;
 
 	if (argc != 3) {
 		debugPrintf("Dumps the specified resource to disk as a patch file\n");
@@ -673,40 +701,88 @@ bool Console::cmdDiskDump(int argc, const char **argv) {
 		return true;
 	}
 
-	if (strcmp(argv[2], "*") == 0) {
-		resNumFrom = 0;
-		resNumTo   = 65535;
-	} else {
-		resNumFrom = atoi(argv[2]);
-		resNumTo   = resNumFrom;
+	ResourceType resourceType = parseResourceType(argv[1]);
+	if (resourceType == kResourceTypeInvalid) {
+		debugPrintf("Resource type '%s' is not valid\n", argv[1]);
+		return true;
 	}
 
-	ResourceType res = parseResourceType(argv[1]);
-
-	if (res == kResourceTypeInvalid)
-		debugPrintf("Resource type '%s' is not valid\n", argv[1]);
-	else {
-		for (resNumCur = resNumFrom; resNumCur <= resNumTo; resNumCur++) {
-			Resource *resource = _engine->getResMan()->findResource(ResourceId(res, resNumCur), 0);
-			if (resource) {
-				char outFileName[50];
-				sprintf(outFileName, "%s.%03d", getResourceTypeName(res), resNumCur);
-				Common::DumpFile *outFile = new Common::DumpFile();
-				outFile->open(outFileName);
-				resource->writeToStream(outFile);
-				outFile->finalize();
-				outFile->close();
-				delete outFile;
-				debugPrintf("Resource %s.%03d (located in %s) has been dumped to disk\n", argv[1], resNumCur, resource->getResourceLocation().c_str());
-			} else {
-				if (resNumFrom == resNumTo) {
-					debugPrintf("Resource %s.%03d not found\n", argv[1], resNumCur);
-				}
+	if (strcmp(argv[2], "*") == 0) {
+		resourceAll = true;
+	} else {
+		switch (resourceType) {
+		case kResourceTypeAudio36:
+		case kResourceTypeSync36:
+			if (!parseResourceNumber36(argv[2], resourceNumber, resourceTuple)) {
+				return true;
 			}
+			break;
+		default:
+			resourceNumber = atoi(argv[2]);
+			break;
 		}
 	}
 
+	if (resourceType == kResourceTypeInvalid) {
+		debugPrintf("Resource type '%s' is not valid\n", argv[1]);
+		return true;
+	}
+
+	if (resourceAll) {
+		// "*" used, dump everything of that type
+		Common::List<ResourceId> resources = _engine->getResMan()->listResources(resourceType, -1);
+		Common::sort(resources.begin(), resources.end());
+
+		Common::List<ResourceId>::iterator itr;
+		for (itr = resources.begin(); itr != resources.end(); ++itr) {
+			resourceNumber = itr->getNumber();
+			resourceTuple = itr->getTuple();
+			cmdDiskDumpWorker(resourceType, resourceNumber, resourceTuple);
+		}
+	} else {
+		// id was given, dump only this resource
+		cmdDiskDumpWorker(resourceType, resourceNumber, resourceTuple);
+	}
+
 	return true;
+}
+
+void Console::cmdDiskDumpWorker(ResourceType resourceType, int resourceNumber, uint32 resourceTuple) {
+	const char *resourceTypeName = getResourceTypeName(resourceType);
+	ResourceId resourceId;
+	Resource *resource = NULL;
+	char outFileName[50];
+	
+	switch (resourceType) {
+	case kResourceTypeAudio36:
+	case kResourceTypeSync36: {
+		resourceId = ResourceId(resourceType, resourceNumber, resourceTuple);
+		resource = _engine->getResMan()->findResource(resourceId, 0);
+		sprintf(outFileName, "%s", resourceId.toPatchNameBase36().c_str());
+		// patch filename is: [type:1 char] [map:3 chars] [noun:2 chars] [verb:2 chars] "." [cond: 2 chars] [seq:1 char]
+		//  e.g. "@5EG0000.014"
+		break;
+	}
+	default:
+		resourceId = ResourceId(resourceType, resourceNumber);
+		resource = _engine->getResMan()->findResource(resourceId, 0);
+		sprintf(outFileName, "%s.%03d", resourceTypeName, resourceNumber);
+		// patch filename is: [resourcetype].[resourcenumber]
+		//  e.g. "Script.0"
+		break;
+	}
+
+	if (resource) {
+		Common::DumpFile *outFile = new Common::DumpFile();
+		outFile->open(outFileName);
+		resource->writeToStream(outFile);
+		outFile->finalize();
+		outFile->close();
+		delete outFile;
+		debugPrintf("Resource %s (located in %s) has been dumped to disk\n", outFileName, resource->getResourceLocation().c_str());
+	} else {
+		debugPrintf("Resource %s not found\n", outFileName);
+	}
 }
 
 bool Console::cmdHexDump(int argc, const char **argv) {
@@ -745,6 +821,77 @@ bool Console::cmdResourceId(int argc, const char **argv) {
 	int id = atoi(argv[1]);
 	debugPrintf("%s.%d (0x%x)\n", getResourceTypeName((ResourceType)(id >> 11)), id & 0x7ff, id & 0x7ff);
 
+	return true;
+}
+
+bool Console::cmdList(int argc, const char **argv) {
+	int selectedMapNumber = -1;
+	Common::List<ResourceId> resources;
+	Common::List<ResourceId>::iterator itr;
+	int displayCount = 0;
+	int currentMap = -1;
+
+	if (argc < 2) {
+		debugPrintf("Lists all the resources of a given type\n");
+		cmdResourceTypes(argc, argv);
+		return true;
+	}
+
+	ResourceType resourceType = parseResourceType(argv[1]);
+	if (resourceType == kResourceTypeInvalid) {
+		debugPrintf("Unknown resource type: '%s'\n", argv[1]);
+		return true;
+	}
+
+	switch (resourceType) {
+	case kResourceTypeAudio36:
+	case kResourceTypeSync36:
+		if (argc != 3) {
+			debugPrintf("Please specify map number (-1: all maps)\n");
+			return true;
+		}
+		selectedMapNumber = atoi(argv[2]);
+		resources = _engine->getResMan()->listResources(resourceType, selectedMapNumber);
+		Common::sort(resources.begin(), resources.end());
+
+		for (itr = resources.begin(); itr != resources.end(); ++itr) {
+			const uint16 map = itr->getNumber();
+			const uint32 resourceTuple = itr->getTuple();
+			const uint16 noun = (resourceTuple >> 24) & 0xff;
+			const uint16 verb = (resourceTuple >> 16) & 0xff;
+			const uint16 cond = (resourceTuple >> 8) & 0xff;
+			const uint16 seq = resourceTuple & 0xff;
+
+			if (currentMap != map) {
+				if (displayCount % 3)
+					debugPrintf("\n");
+				debugPrintf("Map %04x (%i):\n", map, map);
+				currentMap = map;
+				displayCount = 0;
+			}
+			
+			if (displayCount % 3 == 0)
+				debugPrintf("  ");
+
+			debugPrintf("%02x %02x %02x %02x (%3i %3i %3i %3i)    ", noun, verb, cond, seq, noun, verb, cond, seq);
+
+			if (++displayCount % 3 == 0)
+				debugPrintf("\n");
+		}
+		break;
+	default:
+		resources = _engine->getResMan()->listResources(resourceType);
+		Common::sort(resources.begin(), resources.end());
+
+		for (itr = resources.begin(); itr != resources.end(); ++itr) {
+			debugPrintf("%8i", itr->getNumber());
+			if (++displayCount % 10 == 0)
+				debugPrintf("\n");
+		}
+		break;
+	}
+
+	debugPrintf("\n");
 	return true;
 }
 
@@ -1119,52 +1266,6 @@ bool Console::cmdMapInstrument(int argc, const char **argv) {
 		for (Mt32ToGmMapList::iterator it = Mt32dynamicMappings->begin(); it != end; ++it) {
 			debugPrintf("\"%s\" -> %d / %d\n", (*it).name, (*it).gmInstr, (*it).gmRhythmKey);
 		}
-	}
-
-	return true;
-}
-
-bool Console::cmdList(int argc, const char **argv) {
-	if (argc < 2) {
-		debugPrintf("Lists all the resources of a given type\n");
-		cmdResourceTypes(argc, argv);
-		return true;
-	}
-
-
-	ResourceType res = parseResourceType(argv[1]);
-	if (res == kResourceTypeInvalid)
-		debugPrintf("Unknown resource type: '%s'\n", argv[1]);
-	else {
-		int number = -1;
-
-		if ((res == kResourceTypeAudio36) || (res == kResourceTypeSync36)) {
-			if (argc != 3) {
-				debugPrintf("Please specify map number (-1: all maps)\n");
-				return true;
-			}
-			number = atoi(argv[2]);
-		}
-
-		Common::List<ResourceId> resources = _engine->getResMan()->listResources(res, number);
-		Common::sort(resources.begin(), resources.end());
-
-		int cnt = 0;
-		Common::List<ResourceId>::iterator itr;
-		for (itr = resources.begin(); itr != resources.end(); ++itr) {
-			if (number == -1) {
-				debugPrintf("%8i", itr->getNumber());
-				if (++cnt % 10 == 0)
-					debugPrintf("\n");
-			} else if (number == (int)itr->getNumber()) {
-				const uint32 tuple = itr->getTuple();
-				debugPrintf("(%3i, %3i, %3i, %3i)   ", (tuple >> 24) & 0xff, (tuple >> 16) & 0xff,
-							(tuple >> 8) & 0xff, tuple & 0xff);
-				if (++cnt % 4 == 0)
-					debugPrintf("\n");
-			}
-		}
-		debugPrintf("\n");
 	}
 
 	return true;
@@ -2172,6 +2273,7 @@ bool Console::cmdStartSound(int argc, const char **argv) {
 		return true;
 	}
 
+	// TODO: Maybe also add a playBed option.
 	g_sci->_soundCmd->startNewSound(number);
 	return cmdExit(0, 0);
 }
@@ -2198,9 +2300,10 @@ bool Console::cmdToggleSound(int argc, const char **argv) {
 	Common::String newState = argv[2];
 	newState.toLowercase();
 
-	if (newState == "play")
-		g_sci->_soundCmd->processPlaySound(id);
-	else if (newState == "stop")
+	if (newState == "play") {
+		// Maybe also have a 'playbed' option. (Second argument to processPlaySound.)
+		g_sci->_soundCmd->processPlaySound(id, false);
+	} else if (newState == "stop")
 		g_sci->_soundCmd->processStopSound(id, false);
 	else
 		debugPrintf("New state can either be 'play' or 'stop'");
@@ -2730,6 +2833,186 @@ bool Console::cmdScriptSteps(int argc, const char **argv) {
 	return true;
 }
 
+bool Console::cmdScriptObjects(int argc, const char **argv) {
+	int curScriptNr = -1;
+
+	if (argc < 2) {
+		debugPrintf("Shows all objects inside a specified script.\n");
+		debugPrintf("Usage: %s <script number>\n", argv[0]);
+		debugPrintf("Example: %s 999\n", argv[0]);
+		debugPrintf("<script number> may be * to show objects inside all loaded scripts\n");
+		return true;
+	}
+	
+	if (strcmp(argv[1], "*") == 0) {
+		// get said-strings of all currently loaded scripts
+		curScriptNr = -1;
+	} else {
+		curScriptNr = atoi(argv[1]);
+	}
+
+	printOffsets(curScriptNr, SCI_SCR_OFFSET_TYPE_OBJECT);
+	return true;
+}
+
+bool Console::cmdScriptStrings(int argc, const char **argv) {
+	int curScriptNr = -1;
+
+	if (argc < 2) {
+		debugPrintf("Shows all strings inside a specified script.\n");
+		debugPrintf("Usage: %s <script number>\n", argv[0]);
+		debugPrintf("Example: %s 999\n", argv[0]);
+		debugPrintf("<script number> may be * to show strings inside all loaded scripts\n");
+		return true;
+	}
+	
+	if (strcmp(argv[1], "*") == 0) {
+		// get strings of all currently loaded scripts
+		curScriptNr = -1;
+	} else {
+		curScriptNr = atoi(argv[1]);
+	}
+
+	printOffsets(curScriptNr, SCI_SCR_OFFSET_TYPE_STRING);
+	return true;
+}
+
+bool Console::cmdScriptSaid(int argc, const char **argv) {
+	int curScriptNr = -1;
+
+	if (argc < 2) {
+		debugPrintf("Shows all said-strings inside a specified script.\n");
+		debugPrintf("Usage: %s <script number>\n", argv[0]);
+		debugPrintf("Example: %s 999\n", argv[0]);
+		debugPrintf("<script number> may be * to show said-strings inside all loaded scripts\n");
+		return true;
+	}
+	
+	if (strcmp(argv[1], "*") == 0) {
+		// get said-strings of all currently loaded scripts
+		curScriptNr = -1;
+	} else {
+		curScriptNr = atoi(argv[1]);
+	}
+
+	printOffsets(curScriptNr, SCI_SCR_OFFSET_TYPE_SAID);
+	return true;
+}
+
+void Console::printOffsets(int scriptNr, uint16 showType) {
+	SegManager *segMan = _engine->_gamestate->_segMan;
+	Vocabulary *vocab = _engine->_vocabulary;
+	SegmentId curSegmentNr;
+	Common::List<SegmentId> segmentNrList;
+
+	SegmentType curSegmentType = SEG_TYPE_INVALID;
+	SegmentObj *curSegmentObj = NULL;
+	Script *curScriptObj = NULL;
+	const byte *curScriptData = NULL;
+
+	segmentNrList.clear();
+	if (scriptNr < 0) {
+		// get offsets of all currently loaded scripts
+		for (curSegmentNr = 0; curSegmentNr < segMan->_heap.size(); curSegmentNr++) {
+			curSegmentObj = segMan->_heap[curSegmentNr];
+			if (curSegmentObj && curSegmentObj->getType() == SEG_TYPE_SCRIPT) {
+				segmentNrList.push_back(curSegmentNr);
+			}
+		}
+
+	} else {
+		curSegmentNr = segMan->getScriptSegment(scriptNr);
+		if (!curSegmentNr) {
+			debugPrintf("Script %d is currently not loaded/available\n", scriptNr);
+			return;
+		}
+		segmentNrList.push_back(curSegmentNr);
+	}
+
+	const offsetLookupArrayType *scriptOffsetLookupArray;
+	offsetLookupArrayType::const_iterator arrayIterator;
+	int showTypeCount = 0;
+
+	reg_t objectPos;
+	const char *objectNamePtr = NULL;
+	const byte *stringPtr = NULL;
+	const byte *saidPtr = NULL;
+
+	Common::List<SegmentId>::iterator it;
+	const Common::List<SegmentId>::iterator end = segmentNrList.end();
+
+	for (it = segmentNrList.begin(); it != end; it++) {
+		curSegmentNr = *it;
+		// get object of this segment
+		curSegmentObj = segMan->getSegmentObj(curSegmentNr);
+		if (!curSegmentObj)
+			continue;
+
+		curSegmentType = curSegmentObj->getType();
+		if (curSegmentType != SEG_TYPE_SCRIPT) // safety check
+			continue;
+
+		curScriptObj = (Script *)curSegmentObj;
+		debugPrintf("=== SCRIPT %d inside Segment %d ===\n", curScriptObj->getScriptNumber(), curSegmentNr);
+		debugN("=== SCRIPT %d inside Segment %d ===\n", curScriptObj->getScriptNumber(), curSegmentNr);
+
+		// now print the list
+		scriptOffsetLookupArray = curScriptObj->getOffsetArray();
+		curScriptData = curScriptObj->getBuf();
+		showTypeCount = 0;
+
+		for (arrayIterator = scriptOffsetLookupArray->begin(); arrayIterator != scriptOffsetLookupArray->end(); arrayIterator++) {
+			if (arrayIterator->type == showType) {
+				switch (showType) {
+				case SCI_SCR_OFFSET_TYPE_OBJECT:
+					objectPos = make_reg(curSegmentNr, arrayIterator->offset);
+					objectNamePtr = segMan->getObjectName(objectPos);
+					debugPrintf(" %03d:%04x: %s\n", arrayIterator->id, arrayIterator->offset, objectNamePtr);
+					debugN(" %03d:%04x: %s\n", arrayIterator->id, arrayIterator->offset, objectNamePtr);
+					break;
+				case SCI_SCR_OFFSET_TYPE_STRING:
+					stringPtr = curScriptData + arrayIterator->offset;
+					debugPrintf(" %03d:%04x: '%s' (size %d)\n", arrayIterator->id, arrayIterator->offset, stringPtr, arrayIterator->stringSize);
+					debugN(" %03d:%04x: '%s' (size %d)\n", arrayIterator->id, arrayIterator->offset, stringPtr, arrayIterator->stringSize);
+					break;
+				case SCI_SCR_OFFSET_TYPE_SAID:
+					saidPtr = curScriptData + arrayIterator->offset;
+					debugPrintf(" %03d:%04x:\n", arrayIterator->id, arrayIterator->offset);
+					debugN(" %03d:%04x: ", arrayIterator->id, arrayIterator->offset);
+					vocab->debugDecipherSaidBlock(saidPtr);
+					debugN("\n");
+					break;
+				default:
+					break;
+				}
+				showTypeCount++;
+			}
+		}
+
+		if (showTypeCount == 0) {
+			switch (showType) {
+			case SCI_SCR_OFFSET_TYPE_OBJECT:
+				debugPrintf(" no objects\n");
+				debugN(" no objects\n");
+				break;
+			case SCI_SCR_OFFSET_TYPE_STRING:
+				debugPrintf(" no strings\n");
+				debugN(" no strings\n");
+				break;
+			case SCI_SCR_OFFSET_TYPE_SAID:
+				debugPrintf(" no said-strings\n");
+				debugN(" no said-strings\n");
+				break;
+			default:
+				break;
+			}
+		}
+
+		debugPrintf("\n");
+		debugN("\n");
+	}
+}
+
 bool Console::cmdBacktrace(int argc, const char **argv) {
 	debugPrintf("Call stack (current base: 0x%x):\n", _engine->_gamestate->executionStackBase);
 	Common::List<ExecStack>::const_iterator iter;
@@ -3209,6 +3492,7 @@ bool Console::cmdSend(int argc, const char **argv) {
 		// We call run_engine explictly so we can restore the value of r_acc
 		// after execution.
 		run_vm(_engine->_gamestate);
+		_engine->_gamestate->xs = old_xstack;
 
 	}
 

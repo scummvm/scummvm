@@ -226,6 +226,11 @@ bool Character::walkTo(int16 newPosX, int16 newPosY) {
 					}
 
 					setFacing(getFacingFromDirection(smoothDx, smoothDy));
+					if (_currentWalkStamp != localWalkStamp) {
+						// another walkTo was started in setFacing, we need to cancel this one.
+						return false;
+					}
+
 					playWalkAnim(0, 0);
 				}
 

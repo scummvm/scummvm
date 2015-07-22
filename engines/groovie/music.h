@@ -134,6 +134,8 @@ private:
 	// Output music type
 	uint8 _musicType;
 
+	bool _milesAudioMode;
+
 	// Timbres
 	class Timbre {
 	public:

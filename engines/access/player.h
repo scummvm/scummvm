@@ -79,7 +79,6 @@ public:
 	SpriteResource *_playerSprites;
 	// Fields in original Player structure
 	byte *_manPal1;
-	byte *_monData;
 	int *_walkOffRight;
 	int *_walkOffLeft;
 	int *_walkOffUp;

@@ -76,7 +76,7 @@ EventsManager::EventsManager(VoyeurEngine *vm) : _intPtr(_gameData),
 
 	_leftClick = _rightClick = false;
 	_mouseClicked = _newMouseClicked = false;
-	_newLeftClick = _newRightClick = false;;
+	_newLeftClick = _newRightClick = false;
 
 	_videoDead = 0;
 
@@ -403,7 +403,7 @@ void EventsManager::vDoCycleInt() {
 					int palIndex = READ_LE_UINT16(pSrc);
 					pPal[palIndex * 3] = pSrc[3];
 					pPal[palIndex * 3 + 1] = pSrc[4];
-					pPal[palIndex * 3 + 1] = pSrc[5];
+					pPal[palIndex * 3 + 2] = pSrc[5];
 					pSrc += 6;
 
 					if ((int16)READ_LE_UINT16(pSrc) >= 0) {

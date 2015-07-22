@@ -123,7 +123,7 @@ void MoviePlayer::update() {
 		if (_decoder.endOfVideo()) {
 			// Movie complete, so unload the movie
 			unloadMovie();
-		} else {
+		} else if (_decoder.needsUpdate()) {
 			const Graphics::Surface *s = _decoder.decodeNextFrame();
 			if (s) {
 				// Transfer the next frame

@@ -94,11 +94,11 @@ public:
 
 	virtual void drawBox();
 
-	virtual void transCopyFrom(ASurface *src, const Common::Point &destPos);
+	virtual void transBlitFrom(ASurface *src, const Common::Point &destPos);
 
-	virtual void transCopyFrom(ASurface *src, const Common::Rect &bounds);
+	virtual void transBlitFrom(ASurface *src, const Common::Rect &bounds);
 
-	virtual void copyFrom(Graphics::Surface &src);
+	virtual void blitFrom(Graphics::Surface &src);
 
 	virtual void copyBuffer(Graphics::Surface *src);
 

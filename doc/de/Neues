@@ -2,6 +2,60 @@ Umfangreichere Änderungsaufzeichnungen des neusten experimentellen Codes finden
 Sie auf Englisch unter:
         https://github.com/scummvm/scummvm/commits/
 
+1.8.0 (??.??.????)
+ Neue Spiele:
+   - Unterstützung für Rex Nebular and the Cosmic Gender Bender hinzugefügt.
+   - Unterstützung für Sfinx hinzugefügt.
+   - Unterstützung für Zork Nemesis: The Forbidden Lands hinzugefügt.
+   - Unterstützung für Zork: Grand Inquisitor hinzugefügt.
+
+ Allgemein:
+   - Code für Munt-MT-32-Emulation auf Version 1.5.0 aktualisiert.
+
+ 3 Skulls of the Toltecs:
+   - Unterstützung für AdLib-Musik verbessert.
+
+ AGI:
+   - Es ist nun möglich, die Maus-Unterstützung zu deaktivieren (außer bei
+Amiga-Versionen und Fan-Spielen, die eine Maus benötigen).
+   - Fehlerhafte Lautstärke-Dämpfung im PCjr-Sound-Code behoben (Fehler #6858).
+
+ AGOS:
+   - Arpeggio-Effekt in der Musik der Amiga-Version von Elvira 1 repariert.
+   - Lade- und Speicherfortschritt in der PC-Version von Waxworks repariert.
+   - Verb-Feld in der Amiga-Version von Simon the Sorcerer 1 repariert.
+   - Accolade AdLib- und MT32-Treiber für folgende Spiele hinzugefügt:
+     Elvira 1, Elvira 2, Waxworks und Simon the Sorcerer 1 (Demoversion)
+
+ Baphomets Fluch 1:
+   - Erkennung der Byte-Reihenfolge der Sprachausgabe auf Big-Endian-Systemen
+     für die Macintosh-Version (Fehler #6720) repariert.
+   - Absturz beim Neuladen eines Spiels aus dem Hauptmenü heraus, während sich
+     das Spiel in der Szene am Bull's Head Hill befindet, behoben
+     (Fehler #6728). Dieser Fehler trat womöglich auch in anderen Szenen auf.
+
+ MADE:
+   - Unterstützung für AdLib-Musik in Return to Zork verbessert.
+
+ SAGA:
+   - Unterstützung für AdLib-Musik verbessert.
+
+ SCI:
+   - Behandlung der Musik-Priorität extrem verbessert.
+   - Viele Fehler in den originalen Skripten behoben, die auch bei
+     Verwendung des originalen Interpreters auftreten:
+	 KQ6 (Sprache und Untertitel), LSL5, QfG1 (EGA), QfG (VGA), QfG2, QfG3,
+       SQ1, SQ4 (CD)
+   - Rückkehr aus dem ScummVM-Menü im Spiel sollte nun immer funktionieren.
+   - Verbesserte Unterstützung für japanische PC-9801-Spiele
+
+ SCUMM:
+   - Es ist nun möglich, Maniac Mansion innerhalb von Day of the
+     Tentacle zu spielen. Bitte Liesmich-Datei für weitere Details lesen.
+
+ Tinsel:
+   - Unterstützung für AdLib-Musik in Discworld 1 verbessert.
+
 1.7.0 (21.07.2014)
  Neue Spiele:
    - Unterstützung für Chivalry is Not Dead hinzugefügt.
@@ -11,17 +65,27 @@ Sie auf Englisch unter:
    - Unterstützung für Voyeur hinzugefügt.
 
  Allgemein:
-   - Munt-MT-32-Emulationscode zu Version 1.3.0 aktualisiert.
+   - Munt-MT-32-Emulationscode zu Version 1.4.0 aktualisiert.
    - Von unseren eigenen JPEG- und PNG-Dekodieren zu libjpeg(-turbo) und libpng
      gewechselt, welche schneller sind und mehr Bilder verarbeiten können.
      (HINWEIS: Der Wechsel zu libpng fand bereits in Version 1.6.0 statt, wurde
      jedoch nicht in der Datei NEUES erwähnt.)
+   - Allgemeine Ausgabe für OpenGL (ES) hinzugefügt (basierend auf
+     GSoC-Aufgabe).
+   - Die Benutzeroberfläche kann jetzt mit 32 Bit Farbentiefe gerendert werden.
+   - Das Kompilierungssystem wurde baukastenartiger gemacht, damit es einfacher
+     ist, neue Engines hinzuzufügen.
+
+ SDL:
+   - OpenGL-Grafikmodus hinzugefügt, der auf unserer allgemeinen OpenGL-Ausgabe
+     basiert. Damit ist Grafikausgabe in beliebiger Größe möglich. Dieser
+     unterstützt jedoch nicht Spezialfilter wie AdvMAME, HQ usw.
 
  AGOS:
    - Unterstützung für Mausrad bei Inventar und Spielstandliste hinzugefügt.
    - Anzeige der Interaktionsverben in Simon the Sorcerer 2 aktiviert.
    - Fehler bei Loyalitätseinstufung in englischer 4CD-Version von
-     Floyd - Es gibt noch Helden beseitigt. (Dies war offensichtlich ein Fehler
+     Floyd – Es gibt noch Helden beseitigt. (Dies war offensichtlich ein Fehler
      im ursprünglichen Spiel. Es ist zurzeit nicht bekannt, ob noch weitere
      Versionen hiervon betroffen sind.)
 
@@ -41,6 +105,11 @@ Sie auf Englisch unter:
    - Option für einen Brutalo-Modus zu ScummVM-Menü hinzugefügt.
    - Fehler beseitigt, durch welchen die Musik manchmal vorzeitig zu spielen
      aufhörte.
+
+ Pegasus:
+   - Mehrere seltene Abstürze und Störungen beseitigt
+   - Mehrere Fehler beseitigt, die aus der ausführbaren Datei des Originalspiels
+     übernommen wurden.
 
  SCI:
    - Unterstützung für die detailreicheren RAVE-Lippensynchronisationsdaten in
@@ -62,9 +131,30 @@ SCUMM:
    - AdLib-Unterstützung für Loom und Indiana Jones and the Last Crusade
      verbessert. Dadurch klingen Geräusch-Effekte wie beispielsweise von der
      Schreibmaschine und vom Wasserfall wie im Original.
+   - Unterstützung für Steam-Versionen von Indiana Jones and the Last Crusade,
+     Indiana Jones and the Fate of Atlantis, Loom und The Dig hinzugefügt.
+     Sowohl Windows- als auch Macintosh-Versionen werden unterstützt.
+
+ TONY:
+   - Spielstände von Tony Tough funktionieren nun auf Big-Endian-Systemen.
 
  Tinsel:
    - Discworld 1 und 2 stürzen nicht mehr auf Big-Endian-Systemen ab.
+
+ Android-Portierung:
+   - Experimentelle Unterstützung für die OUYA-Konsole hinzugefügt.
+
+ PS2-Portierung:
+   - Konfigurierbare TV-Modi hinzugefügt: NTSC und PAL.
+   - Konfigurierbare Grafikmodi hinzugefügt: SDTV stufenweise, SDTV
+     Zeilensprung, EDTV stufenweise und VESA.
+   - Konfigurierbare Option für zu verwendende Festplattenpartition hinzugefügt
+   - Konfigurierbare Option für zu verwendende IP-Adresse hinzugefügt.
+   - Konfigurierbare Option zum Aktivieren und Deaktivieren von
+     USB-Massenspeichergeräten hinzugefügt.
+
+ Tizen-Portierung:
+   - Die BADA-Portierung wurde mit Tizen zusammengeführt/aktualisiert.
 
 1.6.0 (31.05.2013)
  Neue Spiele:
@@ -555,7 +645,7 @@ SCUMM:
    - Unterstützung für King's Quest VI (hohe und niedrige Auflösung)
      hinzugefügt.
    - Unterstützung für Laura Bow: The Colonel's Bequest hinzugefügt.
-   - Unterstützung für Laura Bow 2: The Dagger of Amon Ra hinzugefügt.
+   - Unterstützung für Laura Bow 2: Der Dolch des Amon Ra hinzugefügt.
    - Unterstützung für Leisure Suit Larry 1 (SCI-Remake) (EGA und VGA)
      hinzugefügt.
    - Unterstützung für Leisure Suit Larry 2 hinzugefügt.

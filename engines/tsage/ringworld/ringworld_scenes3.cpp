@@ -494,7 +494,7 @@ void Scene2100::Action1::signal() {
 			setDelay(1);
 		else {
 			setAction(&scene->_sequenceManager, this, 2102, &g_globals->_player, NULL);
-			scene->_sitFl = 0;
+			scene->_sitFl = false;
 		}
 		break;
 	case 1: {
@@ -1548,6 +1548,7 @@ Scene2100::Scene2100() :
 	_area3._pt = Common::Point(200, 75);
 	_area4.setup(2153, 1, 1, OBJECT_TRANSLATOR);
 	_area4._pt = Common::Point(237, 77);
+	_sitFl = false;
 }
 
 void Scene2100::postInit(SceneObjectList *OwnerList) {
@@ -1688,7 +1689,7 @@ void Scene2100::postInit(SceneObjectList *OwnerList) {
 	g_globals->_player._moveDiff.x = 4;
 	g_globals->_player.changeZoom(-1);
 	g_globals->_player.disableControl();
-	_sitFl = 0;
+	_sitFl = false;
 
 	switch (g_globals->_sceneManager._previousScene) {
 	case 2120:
@@ -1824,7 +1825,7 @@ void Scene2100::postInit(SceneObjectList *OwnerList) {
 		g_globals->_player.fixPriority(152);
 		g_globals->_player.setStrip(2);
 
-		_sitFl = 1;
+		_sitFl = true;
 
 		_object4.postInit();
 		_object4.setVisage(2102);
@@ -1858,7 +1859,7 @@ void Scene2100::postInit(SceneObjectList *OwnerList) {
 			g_globals->_player.fixPriority(152);
 			g_globals->_player.setStrip(2);
 
-			_sitFl = 1;
+			_sitFl = true;
 			setAction(&_action16);
 		}
 		break;
@@ -1932,12 +1933,12 @@ void Scene2100::stripCallback(int v) {
 void Scene2100::signal() {
 	switch (_sceneMode) {
 	case 2101:
-		_sitFl = 1;
+		_sitFl = true;
 		g_globals->_player._uiEnabled = true;
 		g_globals->_events.setCursor(CURSOR_USE);
 		break;
 	case 2102:
-		_sitFl = 0;
+		_sitFl = false;
 		g_globals->_player.enableControl();
 		break;
 	case 2103:
@@ -5789,6 +5790,7 @@ Scene2320::Scene2320() :
 	_area3._pt = Common::Point(200, 75);
 	_area4.setup(2153, 1, 1, 10);
 	_area4._pt = Common::Point(237, 77);
+	_hotspotPtr = nullptr;
 }
 
 void Scene2320::postInit(SceneObjectList *OwnerList) {

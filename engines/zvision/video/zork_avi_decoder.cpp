@@ -39,17 +39,34 @@ Video::AVIDecoder::AVIAudioTrack *ZorkAVIDecoder::createAudioTrack(Video::AVIDec
 }
 
 void ZorkAVIDecoder::ZorkAVIAudioTrack::queueSound(Common::SeekableReadStream *stream) {
+	bool updateCurChunk = true;
 	if (_audStream) {
 		if (_wvInfo.tag == kWaveFormatZorkPCM) {
 			assert(_wvInfo.size == 8);
 			RawChunkStream::RawChunk chunk = decoder->readNextChunk(stream);
 			delete stream;
 
-			if (chunk.data)
-				_audStream->queueBuffer((byte *)chunk.data, chunk.size, DisposeAfterUse::YES, Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN | Audio::FLAG_STEREO);
+			if (chunk.data) {
+				byte flags = Audio::FLAG_16BITS | Audio::FLAG_STEREO;
+#ifdef SCUMM_LITTLE_ENDIAN
+				// RawChunkStream produces native endianness int16
+				flags |= Audio::FLAG_LITTLE_ENDIAN;
+#endif
+				_audStream->queueBuffer((byte *)chunk.data, chunk.size, DisposeAfterUse::YES, flags);
+			}
 		} else {
+			updateCurChunk = false;
 			AVIAudioTrack::queueSound(stream);
 		}
+	} else {
+		delete stream;
+	}
+
+	// The superclass always updates _curChunk, whether or not audio has
+	// been queued, so we should do that too. Unless the superclass already
+	// has done it for us.
+	if (updateCurChunk) {
+		_curChunk++;
 	}
 }
 

@@ -842,8 +842,8 @@ CodeCommandInfo generalCommandInfo[NUM_GENERAL_COMMANDS] = {
 	{ "bottom", &LBCode::cmdBottom },
 	// 0x10
 	{ "right", &LBCode::cmdRight },
-	{ "xpos", 0 },
-	{ "ypos", 0 },
+	{ "xpos", &LBCode::cmdXPos },
+	{ "ypos", &LBCode::cmdYPos },
 	{ "playFrom", 0 },
 	{ "move", &LBCode::cmdMove },
 	{ 0, 0 },
@@ -852,13 +852,13 @@ CodeCommandInfo generalCommandInfo[NUM_GENERAL_COMMANDS] = {
 	{ "resetDragParams", 0 },
 	{ "enableRollover", &LBCode::cmdUnimplemented /* FIXME */ },
 	{ "setCursor", 0 },
-	{ "width", 0 },
-	{ "height", 0 },
+	{ "width", &LBCode::cmdWidth },
+	{ "height", &LBCode::cmdHeight },
 	{ "getFrameBounds", 0 }, // also "getFrameRect"
 	{ "traceRect", 0 },
 	{ "sqrt", 0 },
 	// 0x20
-	{ "deleteVar", 0 },
+	{ "deleteVar", &LBCode::cmdDeleteVar },
 	{ "saveVars", 0 },
 	{ "scriptLink", 0 },
 	{ "setViewOrigin", &LBCode::cmdUnimplemented },
@@ -1131,6 +1131,38 @@ void LBCode::cmdRight(const Common::Array<LBValue> &params) {
 	_stack.push(rect.right);
 }
 
+void LBCode::cmdXPos(const Common::Array<LBValue> &params) {
+	if (params.size() != 1)
+		error("too many parameters (%d) to xpos", params.size());
+
+	Common::Point point = params[0].toPoint();
+	_stack.push(point.x);
+}
+
+void LBCode::cmdYPos(const Common::Array<LBValue> &params) {
+	if (params.size() != 1)
+		error("too many parameters (%d) to ypos", params.size());
+
+	Common::Point point = params[0].toPoint();
+	_stack.push(point.y);
+}
+
+void LBCode::cmdWidth(const Common::Array<LBValue> &params) {
+	if (params.size() > 1)
+		error("too many parameters (%d) to width", params.size());
+
+	Common::Rect rect = getRectFromParams(params);
+	_stack.push(rect.width());
+}
+
+void LBCode::cmdHeight(const Common::Array<LBValue> &params) {
+	if (params.size() > 1)
+		error("too many parameters (%d) to height", params.size());
+
+	Common::Rect rect = getRectFromParams(params);
+	_stack.push(rect.height());
+}
+
 void LBCode::cmdMove(const Common::Array<LBValue> &params) {
 	if (params.size() != 1 && params.size() != 2)
 		error("incorrect number of parameters (%d) to move", params.size());
@@ -1261,6 +1293,14 @@ void LBCode::cmdGetProperty(const Common::Array<LBValue> &params) {
 	}
 
 	_stack.push(target->_variables[name]);
+}
+
+void LBCode::cmdDeleteVar(const Common::Array<LBValue> &params) {
+	if (params.size() != 1)
+		error("incorrect number of parameters (%d) to deleteVar", params.size());
+
+	const Common::String &string = params[0].toString();
+	_vm->_variables.erase(string);
 }
 
 void LBCode::cmdExec(const Common::Array<LBValue> &params) {
@@ -1706,6 +1746,10 @@ uint LBCode::parseCode(const Common::String &source) {
 		if (token != ' ' && token != '(' && wasFunction)
 			error("while parsing script '%s', encountered incomplete function call", source.c_str());
 
+		// Skip C++-style comments
+		if (token == '/' && lookahead == '/')
+			break;
+
 		// First, we check for simple operators.
 		for (uint i = 0; i < NUM_LB_OPERATORS; i++) {
 			if (token != operators[i].token)
@@ -1736,6 +1780,7 @@ uint LBCode::parseCode(const Common::String &source) {
 		switch (token) {
 		// whitespace
 		case ' ':
+		case '\t':
 			// ignore
 			break;
 		// literal string

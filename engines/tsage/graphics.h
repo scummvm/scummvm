@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef RING_GRAPHICS_H
-#define RING_GRAPHICS_H
+#ifndef TSAGE_GRAPHICS_H
+#define TSAGE_GRAPHICS_H
 
 #include "tsage/events.h"
 #include "tsage/saveload.h"

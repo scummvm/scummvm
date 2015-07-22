@@ -131,6 +131,10 @@ public:
 	VirtualIndexFile *_virtualIndexFile;
 #endif
 
+	// see detection.cpp / SciEngine::loadGameState()
+	bool _delayedRestoreGame;  // boolean, that triggers delayed restore (triggered by ScummVM menu)
+	int _delayedRestoreGameId; // the saved game id, that it supposed to get restored (triggered by ScummVM menu)
+
 	uint _chosenQfGImportItem; // Remembers the item selected in QfG import rooms
 
 	bool _cursorWorkaroundActive; // Refer to GfxCursor::setPosition()

@@ -654,16 +654,25 @@ void SaveLoadChooserGrid::open() {
 
 			// In case there was a gap found use the slot.
 			if (lastSlot + 1 < curSlot) {
-				_nextFreeSaveSlot = lastSlot + 1;
-				break;
+				// Check that the save slot can be used for user saves.
+				SaveStateDescriptor desc = _metaEngine->querySaveMetaInfos(_target.c_str(), lastSlot + 1);
+				if (!desc.getWriteProtectedFlag()) {
+					_nextFreeSaveSlot = lastSlot + 1;
+					break;
+				}
 			}
 
 			lastSlot = curSlot;
 		}
 
 		// Use the next available slot otherwise.
-		if (_nextFreeSaveSlot == -1 && lastSlot + 1 < _metaEngine->getMaximumSaveSlot()) {
-			_nextFreeSaveSlot = lastSlot + 1;
+		const int maxSlot = _metaEngine->getMaximumSaveSlot();
+		for (int i = lastSlot; _nextFreeSaveSlot == -1 && i < maxSlot; ++i) {
+			// Check that the save slot can be used for user saves.
+			SaveStateDescriptor desc = _metaEngine->querySaveMetaInfos(_target.c_str(), i + 1);
+			if (!desc.getWriteProtectedFlag()) {
+				_nextFreeSaveSlot = i + 1;
+			}
 		}
 	}
 

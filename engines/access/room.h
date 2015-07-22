@@ -128,7 +128,6 @@ public:
 	int _playFieldWidth;
 	int _playFieldHeight;
 	byte *_tile;
-	int _tileSize;
 	int _selectCommand;
 	bool _conFlag;
 	int _rMouse[10][2];

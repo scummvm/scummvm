@@ -49,7 +49,6 @@ Player::Player(AccessEngine *vm) : Manager(vm), ImageEntry() {
 	_playerSprites1 = nullptr;
 	_manPal1 = nullptr;
 	_frameNumber = 0;
-	_monData = nullptr;
 	_rawTempL = 0;
 	_rawXTemp = 0;
 	_rawYTempL = 0;
@@ -74,6 +73,12 @@ Player::Player(AccessEngine *vm) : Manager(vm), ImageEntry() {
 	_playerDirection = NONE;
 	_xFlag = _yFlag = 0;
 	_inactiveYOff = 0;
+
+	_sideWalkMin = _sideWalkMax = 0;
+	_upWalkMin = _upWalkMax = 0;
+	_downWalkMin = _downWalkMax = 0;
+	_diagUpWalkMin = _diagUpWalkMax = 0;
+	_diagDownWalkMin = _diagDownWalkMax = 0;
 	_walkOffRight = _walkOffLeft = nullptr;
 	_walkOffUp = _walkOffDown = nullptr;
 	_walkOffUR = _walkOffDR = nullptr;
@@ -410,7 +415,7 @@ void Player::walkUpLeft() {
 	tempL = _rawPlayerLow.y - _vm->_screen->_scaleTable2[walkOffset];
 	_rawYTempL = (byte)tempL;
 	_rawYTemp = _rawPlayer.y - _vm->_screen->_scaleTable1[walkOffset] -
-		(tempL < 0 ? 1 : 0);;
+		(tempL < 0 ? 1 : 0);
 
 	if (_vm->_room->codeWalls()) {
 		plotCom2();

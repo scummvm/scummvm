@@ -391,18 +391,13 @@ Audio::RewindableAudioStream *AudioPlayer::getAudioStream(uint32 number, uint32 
 		} else if (audioRes->size > 4 && READ_BE_UINT32(audioRes->data) == MKTAG('F','O','R','M')) {
 			// AIFF detected
 			Common::SeekableReadStream *waveStream = new Common::MemoryReadStream(audioRes->data, audioRes->size, DisposeAfterUse::NO);
+			Audio::RewindableAudioStream *rewindStream = Audio::makeAIFFStream(waveStream, DisposeAfterUse::YES);
+			audioSeekStream = dynamic_cast<Audio::SeekableAudioStream *>(rewindStream);
 
-			// Calculate samplelen from AIFF header
-			int waveSize = 0, waveRate = 0;
-			byte waveFlags = 0;
-			bool ret = Audio::loadAIFFFromStream(*waveStream, waveSize, waveRate, waveFlags);
-			if (!ret)
-				error("Failed to load AIFF from stream");
-
-			*sampleLen = (waveFlags & Audio::FLAG_16BITS ? waveSize >> 1 : waveSize) * 60 / waveRate;
-
-			waveStream->seek(0, SEEK_SET);
-			audioStream = Audio::makeAIFFStream(waveStream, DisposeAfterUse::YES);
+			if (!audioSeekStream) {
+				warning("AIFF file is not seekable");
+				delete rewindStream;
+			}
 		} else if (audioRes->size > 14 && READ_BE_UINT16(audioRes->data) == 1 && READ_BE_UINT16(audioRes->data + 2) == 1
 				&& READ_BE_UINT16(audioRes->data + 4) == 5 && READ_BE_UINT32(audioRes->data + 10) == 0x00018051) {
 			// Mac snd detected

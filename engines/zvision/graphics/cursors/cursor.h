@@ -39,7 +39,6 @@ namespace ZVision {
 class ZorkCursor {
 public:
 	ZorkCursor();
-	ZorkCursor(const Common::String &fileName);
 	ZorkCursor(ZVision *engine, const Common::String &fileName);
 	ZorkCursor(const ZorkCursor &other);
 	~ZorkCursor();

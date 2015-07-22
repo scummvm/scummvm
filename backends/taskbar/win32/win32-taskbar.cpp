@@ -48,9 +48,6 @@
 
 #include <shlobj.h>
 
-// For HWND
-#include <SDL_syswm.h>
-
 #include "common/scummsys.h"
 
 #include "backends/taskbar/win32/win32-taskbar.h"
@@ -62,7 +59,7 @@
 // System.Title property key, values taken from http://msdn.microsoft.com/en-us/library/bb787584.aspx
 const PROPERTYKEY PKEY_Title = { /* fmtid = */ { 0xF29F85E0, 0x4FF9, 0x1068, { 0xAB, 0x91, 0x08, 0x00, 0x2B, 0x27, 0xB3, 0xD9 } }, /* propID = */ 2 };
 
-Win32TaskbarManager::Win32TaskbarManager() : _taskbar(NULL), _count(0), _icon(NULL) {
+Win32TaskbarManager::Win32TaskbarManager(SdlWindow *window) : _window(window), _taskbar(NULL), _count(0), _icon(NULL) {
 	// Do nothing if not running on Windows 7 or later
 	if (!isWin7OrLater())
 		return;
@@ -408,12 +405,15 @@ LPWSTR Win32TaskbarManager::ansiToUnicode(const char *s) {
 
 HWND Win32TaskbarManager::getHwnd() {
 	SDL_SysWMinfo wmi;
-	SDL_VERSION(&wmi.version);
-
-	if(!SDL_GetWMInfo(&wmi))
+	if (_window->getSDLWMInformation(&wmi)) {
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+		return wmi.info.win.window;
+#else
+		return wmi.window;
+#endif
+	} else {
 		return NULL;
-
-	return wmi.window;
+	}
 }
 
 #endif

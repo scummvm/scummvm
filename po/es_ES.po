@@ -1,5 +1,5 @@
 # Spanish translation for ScummVM.
-# Copyright (C) 2010-2014 ScummVM Team
+# Copyright (C) 2010-2015 The ScummVM Team
 # This file is distributed under the same license as the ScummVM package.
 # Tomás Maidagan, 2011.
 #
@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2014-10-04 00:58+0100\n"
+"POT-Creation-Date: 2015-06-30 20:57+0100\n"
 "PO-Revision-Date: 2014-07-06 20:39+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -53,10 +53,11 @@ msgstr "Arriba"
 
 #: gui/browser.cpp:75 gui/chooser.cpp:46 gui/KeysDialog.cpp:43
 #: gui/launcher.cpp:351 gui/massadd.cpp:95 gui/options.cpp:1239
+#: gui/recorderdialog.cpp:70 gui/recorderdialog.cpp:156
 #: gui/saveload-dialog.cpp:216 gui/saveload-dialog.cpp:276
-#: gui/saveload-dialog.cpp:547 gui/saveload-dialog.cpp:922
+#: gui/saveload-dialog.cpp:547 gui/saveload-dialog.cpp:931
 #: gui/themebrowser.cpp:55 gui/fluidsynth-dialog.cpp:152
-#: engines/engine.cpp:452 backends/platform/wii/options.cpp:48
+#: engines/engine.cpp:483 backends/platform/wii/options.cpp:48
 #: backends/events/default/default-events.cpp:196
 #: backends/events/default/default-events.cpp:218
 #: engines/drascula/saveload.cpp:49 engines/parallaction/saveload.cpp:274
@@ -69,9 +70,9 @@ msgid "Choose"
 msgstr "Aceptar"
 
 #: gui/gui-manager.cpp:117 backends/keymapper/remap-dialog.cpp:53
-#: engines/scumm/help.cpp:125 engines/scumm/help.cpp:140
-#: engines/scumm/help.cpp:165 engines/scumm/help.cpp:191
-#: engines/scumm/help.cpp:209
+#: engines/scumm/help.cpp:126 engines/scumm/help.cpp:141
+#: engines/scumm/help.cpp:166 engines/scumm/help.cpp:192
+#: engines/scumm/help.cpp:210
 msgid "Close"
 msgstr "Cerrar"
 
@@ -87,7 +88,7 @@ msgstr "Mostrar el teclado"
 msgid "Remap keys"
 msgstr "Asignar teclas"
 
-#: gui/gui-manager.cpp:131 base/main.cpp:326 engines/scumm/help.cpp:86
+#: gui/gui-manager.cpp:131 base/main.cpp:326 engines/scumm/help.cpp:87
 msgid "Toggle fullscreen"
 msgstr "Activar/Desactivar pantalla completa"
 
@@ -101,13 +102,13 @@ msgstr "Asignar"
 
 #: gui/KeysDialog.cpp:42 gui/launcher.cpp:352 gui/launcher.cpp:1048
 #: gui/launcher.cpp:1052 gui/massadd.cpp:92 gui/options.cpp:1240
-#: gui/saveload-dialog.cpp:923 gui/fluidsynth-dialog.cpp:153
-#: engines/engine.cpp:371 engines/engine.cpp:382
+#: gui/saveload-dialog.cpp:932 gui/fluidsynth-dialog.cpp:153
+#: engines/engine.cpp:402 engines/engine.cpp:413
 #: backends/platform/wii/options.cpp:47
 #: backends/platform/wince/CELauncherDialog.cpp:54
 #: engines/agos/animation.cpp:558 engines/drascula/saveload.cpp:49
-#: engines/groovie/script.cpp:399 engines/parallaction/saveload.cpp:274
-#: engines/scumm/dialogs.cpp:193 engines/scumm/scumm.cpp:1825
+#: engines/groovie/script.cpp:408 engines/parallaction/saveload.cpp:274
+#: engines/scumm/dialogs.cpp:193 engines/scumm/scumm.cpp:1834
 #: engines/scumm/players/player_v3m.cpp:130
 #: engines/scumm/players/player_v5m.cpp:108 engines/sky/compact.cpp:131
 #: engines/sky/compact.cpp:141 engines/sword1/animation.cpp:524
@@ -477,7 +478,7 @@ msgstr ""
 
 #: gui/launcher.cpp:793 gui/launcher.cpp:941 gui/launcher.cpp:1000
 #: gui/fluidsynth-dialog.cpp:217
-#: backends/events/symbiansdl/symbiansdl-events.cpp:184
+#: backends/events/symbiansdl/symbiansdl-events.cpp:186
 #: backends/platform/wince/CEActionsPocket.cpp:326
 #: backends/platform/wince/CEActionsSmartphone.cpp:287
 #: backends/platform/wince/CELauncherDialog.cpp:83
@@ -487,7 +488,7 @@ msgstr "Sí"
 
 #: gui/launcher.cpp:793 gui/launcher.cpp:941 gui/launcher.cpp:1000
 #: gui/fluidsynth-dialog.cpp:217
-#: backends/events/symbiansdl/symbiansdl-events.cpp:184
+#: backends/events/symbiansdl/symbiansdl-events.cpp:186
 #: backends/platform/wince/CEActionsPocket.cpp:326
 #: backends/platform/wince/CEActionsSmartphone.cpp:287
 #: backends/platform/wince/CELauncherDialog.cpp:83
@@ -523,6 +524,14 @@ msgstr "Este juego no permite cargar partidas desde el lanzador."
 msgid "ScummVM could not find any engine capable of running the selected game!"
 msgstr ""
 "¡ScummVM no ha podido encontrar ningún motor capaz de ejecutar el juego!"
+
+#: gui/launcher.cpp:1159
+msgid "Mass Add..."
+msgstr "Añadir varios..."
+
+#: gui/launcher.cpp:1161
+msgid "Record..."
+msgstr ""
 
 #: gui/massadd.cpp:79 gui/massadd.cpp:82
 msgid "... progress ..."
@@ -622,7 +631,7 @@ msgid "Special dithering modes supported by some games"
 msgstr "Modos especiales de expansión compatibles con algunos juegos"
 
 #: gui/options.cpp:760
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2249
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2298
 msgid "Fullscreen mode"
 msgstr "Pantalla completa"
 
@@ -944,6 +953,43 @@ msgstr ""
 "El tema seleccionado no es compatible con el idioma actual. Si quieres usar "
 "este tema debes cambiar a otro idioma primero."
 
+#: gui/recorderdialog.cpp:64
+msgid "Recorder or Playback Gameplay"
+msgstr ""
+
+#: gui/recorderdialog.cpp:69 gui/recorderdialog.cpp:156
+#: gui/saveload-dialog.cpp:220 gui/saveload-dialog.cpp:276
+msgid "Delete"
+msgstr "Borrar"
+
+#: gui/recorderdialog.cpp:71
+msgid "Record"
+msgstr ""
+
+#: gui/recorderdialog.cpp:72
+#, fuzzy
+msgid "Playback"
+msgstr "Jugar"
+
+#: gui/recorderdialog.cpp:74
+msgid "Edit"
+msgstr ""
+
+#: gui/recorderdialog.cpp:86 gui/recorderdialog.cpp:243
+#: gui/recorderdialog.cpp:253
+msgid "Author: "
+msgstr ""
+
+#: gui/recorderdialog.cpp:87 gui/recorderdialog.cpp:244
+#: gui/recorderdialog.cpp:254
+msgid "Notes: "
+msgstr ""
+
+#: gui/recorderdialog.cpp:155
+#, fuzzy
+msgid "Do you really want to delete this record?"
+msgstr "¿Seguro que quieres borrar esta partida?"
+
 #: gui/saveload-dialog.cpp:167
 msgid "List view"
 msgstr "Modo lista"
@@ -964,23 +1010,19 @@ msgstr "No hay hora guardada"
 msgid "No playtime saved"
 msgstr "No hay tiempo guardado"
 
-#: gui/saveload-dialog.cpp:220 gui/saveload-dialog.cpp:276
-msgid "Delete"
-msgstr "Borrar"
-
 #: gui/saveload-dialog.cpp:275
 msgid "Do you really want to delete this saved game?"
 msgstr "¿Seguro que quieres borrar esta partida?"
 
-#: gui/saveload-dialog.cpp:385 gui/saveload-dialog.cpp:875
+#: gui/saveload-dialog.cpp:385 gui/saveload-dialog.cpp:884
 msgid "Date: "
 msgstr "Fecha: "
 
-#: gui/saveload-dialog.cpp:389 gui/saveload-dialog.cpp:881
+#: gui/saveload-dialog.cpp:389 gui/saveload-dialog.cpp:890
 msgid "Time: "
 msgstr "Hora: "
 
-#: gui/saveload-dialog.cpp:395 gui/saveload-dialog.cpp:889
+#: gui/saveload-dialog.cpp:395 gui/saveload-dialog.cpp:898
 msgid "Playtime: "
 msgstr "Tiempo: "
 
@@ -996,19 +1038,19 @@ msgstr "Siguiente"
 msgid "Prev"
 msgstr "Anterior"
 
-#: gui/saveload-dialog.cpp:739
+#: gui/saveload-dialog.cpp:748
 msgid "New Save"
 msgstr "Guardar"
 
-#: gui/saveload-dialog.cpp:739
+#: gui/saveload-dialog.cpp:748
 msgid "Create a new save game"
 msgstr "Guarda una nueva partida"
 
-#: gui/saveload-dialog.cpp:868
+#: gui/saveload-dialog.cpp:877
 msgid "Name: "
 msgstr "Nombre:"
 
-#: gui/saveload-dialog.cpp:940
+#: gui/saveload-dialog.cpp:949
 #, c-format
 msgid "Enter a description for slot %d:"
 msgstr "Introduce una descripción para la ranura %d:"
@@ -1161,7 +1203,7 @@ msgstr "Saltar frase"
 msgid "Error running game:"
 msgstr "Error al ejecutar el juego:"
 
-#: base/main.cpp:536
+#: base/main.cpp:554
 msgid "Could not find any engine capable of running the selected game"
 msgstr "No se ha podido encontrar ningún motor capaz de ejecutar el juego"
 
@@ -1278,7 +1320,7 @@ msgstr "~V~olver al lanzador"
 #: engines/dialogs.cpp:116 engines/agi/saveload.cpp:803
 #: engines/cruise/menu.cpp:212 engines/drascula/saveload.cpp:336
 #: engines/dreamweb/saveload.cpp:261 engines/neverhood/menumodule.cpp:873
-#: engines/pegasus/pegasus.cpp:377 engines/sci/engine/kfile.cpp:758
+#: engines/pegasus/pegasus.cpp:377 engines/sci/engine/kfile.cpp:759
 #: engines/toltecs/menu.cpp:281 engines/tsage/scenes.cpp:598
 msgid "Save game:"
 msgstr "Guardar partida"
@@ -1291,7 +1333,7 @@ msgstr "Guardar partida"
 #: engines/agi/saveload.cpp:803 engines/cruise/menu.cpp:212
 #: engines/drascula/saveload.cpp:336 engines/dreamweb/saveload.cpp:261
 #: engines/neverhood/menumodule.cpp:873 engines/pegasus/pegasus.cpp:377
-#: engines/sci/engine/kfile.cpp:758 engines/scumm/dialogs.cpp:188
+#: engines/sci/engine/kfile.cpp:759 engines/scumm/dialogs.cpp:188
 #: engines/toltecs/menu.cpp:281 engines/tsage/scenes.cpp:598
 msgid "Save"
 msgstr "Guardar"
@@ -1330,23 +1372,23 @@ msgstr "~C~ancelar"
 msgid "~K~eys"
 msgstr "~T~eclas"
 
-#: engines/engine.cpp:245
+#: engines/engine.cpp:276
 msgid "Could not initialize color format."
 msgstr "No se ha podido iniciar el formato de color."
 
-#: engines/engine.cpp:253
+#: engines/engine.cpp:284
 msgid "Could not switch to video mode: '"
 msgstr "No se ha podido cambiar al modo de video: '"
 
-#: engines/engine.cpp:262
+#: engines/engine.cpp:293
 msgid "Could not apply aspect ratio setting."
 msgstr "No se ha podido aplicar el ajuste de corrección de aspecto"
 
-#: engines/engine.cpp:267
+#: engines/engine.cpp:298
 msgid "Could not apply fullscreen setting."
 msgstr "No se ha podido aplicar el ajuste de pantalla completa."
 
-#: engines/engine.cpp:367
+#: engines/engine.cpp:398
 msgid ""
 "You appear to be playing this game directly\n"
 "from the CD. This is known to cause problems,\n"
@@ -1360,7 +1402,7 @@ msgstr ""
 "copiar los archivos del juego al disco duro.\n"
 "Consulta el archivo README para más detalles."
 
-#: engines/engine.cpp:378
+#: engines/engine.cpp:409
 msgid ""
 "This game has audio tracks in its disk. These\n"
 "tracks need to be ripped from the disk using\n"
@@ -1374,7 +1416,7 @@ msgstr ""
 "poder escuchar la música del juego.\n"
 "Consulta el archivo README para más detalles."
 
-#: engines/engine.cpp:436
+#: engines/engine.cpp:467
 #, c-format
 msgid ""
 "Gamestate load failed (%s)! Please consult the README for basic information, "
@@ -1384,7 +1426,7 @@ msgstr ""
 "README para encontrar información básica e instrucciones sobre cómo obtener "
 "más ayuda."
 
-#: engines/engine.cpp:449
+#: engines/engine.cpp:480
 msgid ""
 "WARNING: The game you are about to start is not yet fully supported by "
 "ScummVM. As such, it is likely to be unstable, and any saves you make might "
@@ -1394,7 +1436,7 @@ msgstr ""
 "ScummVM. Por lo tanto, puede que sea inestable, y que las partidas que "
 "guardes no funcionen en versiones futuras de ScummVM."
 
-#: engines/engine.cpp:452
+#: engines/engine.cpp:483
 msgid "Start anyway"
 msgstr "Jugar aun así"
 
@@ -1604,11 +1646,11 @@ msgstr "Modo Touchpad activado."
 msgid "Touchpad mode disabled."
 msgstr "Modo Touchpad desactivado."
 
-#: backends/platform/maemo/maemo.cpp:209
+#: backends/platform/maemo/maemo.cpp:208
 msgid "Click Mode"
 msgstr "Modo clic"
 
-#: backends/platform/maemo/maemo.cpp:215
+#: backends/platform/maemo/maemo.cpp:214
 #: backends/platform/symbian/src/SymbianActions.cpp:42
 #: backends/platform/wince/CEActionsPocket.cpp:60
 #: backends/platform/wince/CEActionsSmartphone.cpp:43
@@ -1616,11 +1658,11 @@ msgstr "Modo clic"
 msgid "Left Click"
 msgstr "Clic izquierdo"
 
-#: backends/platform/maemo/maemo.cpp:218
+#: backends/platform/maemo/maemo.cpp:217
 msgid "Middle Click"
 msgstr "Clic central"
 
-#: backends/platform/maemo/maemo.cpp:221
+#: backends/platform/maemo/maemo.cpp:220
 #: backends/platform/symbian/src/SymbianActions.cpp:43
 #: backends/platform/wince/CEActionsSmartphone.cpp:44
 #: backends/platform/tizen/form.cpp:267
@@ -1657,19 +1699,19 @@ msgctxt "lowres"
 msgid "Normal (no scaling)"
 msgstr "Normal"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2148
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2197
 msgid "Enabled aspect ratio correction"
 msgstr "Activar la corrección de aspecto"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2154
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2203
 msgid "Disabled aspect ratio correction"
 msgstr "Desactivar la corrección de aspecto"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2209
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2258
 msgid "Active graphics filter:"
 msgstr "Filtro de gráficos activo:"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2251
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2300
 msgid "Windowed mode"
 msgstr "Modo ventana"
 
@@ -1728,8 +1770,8 @@ msgstr "Modo rápido"
 #: backends/platform/wince/CEActionsPocket.cpp:44
 #: backends/platform/wince/CEActionsSmartphone.cpp:52
 #: backends/events/default/default-events.cpp:218
-#: engines/scumm/dialogs.cpp:192 engines/scumm/help.cpp:82
-#: engines/scumm/help.cpp:84
+#: engines/scumm/dialogs.cpp:192 engines/scumm/help.cpp:83
+#: engines/scumm/help.cpp:85
 msgid "Quit"
 msgstr "Salir"
 
@@ -1749,7 +1791,7 @@ msgstr "Teclado virtual"
 msgid "Key mapper"
 msgstr "Asignación de teclas"
 
-#: backends/events/symbiansdl/symbiansdl-events.cpp:184
+#: backends/events/symbiansdl/symbiansdl-events.cpp:186
 msgid "Do you want to quit ?"
 msgstr "¿Quieres salir?"
 
@@ -2085,34 +2127,56 @@ msgstr "Clic activado"
 msgid "Clicking Disabled"
 msgstr "Clic desactivado"
 
-#: engines/agi/detection.cpp:142 engines/drascula/detection.cpp:302
+#: engines/agi/detection.cpp:147 engines/drascula/detection.cpp:302
 #: engines/dreamweb/detection.cpp:47 engines/neverhood/detection.cpp:160
 #: engines/sci/detection.cpp:394 engines/toltecs/detection.cpp:200
-#: engines/zvision/detection.cpp:103
+#: engines/zvision/detection.cpp:246
 msgid "Use original save/load screens"
 msgstr "Usar pantallas de guardar/cargar originales"
 
-#: engines/agi/detection.cpp:143 engines/drascula/detection.cpp:303
+#: engines/agi/detection.cpp:148 engines/drascula/detection.cpp:303
 #: engines/dreamweb/detection.cpp:48 engines/neverhood/detection.cpp:161
 #: engines/sci/detection.cpp:395 engines/toltecs/detection.cpp:201
-#: engines/zvision/detection.cpp:104
+#: engines/zvision/detection.cpp:247
 msgid "Use the original save/load screens, instead of the ScummVM ones"
 msgstr ""
 "Utilizar las pantallas de guardar/cargar originales, en vez de las de ScummVM"
 
+#: engines/agi/detection.cpp:157
+#, fuzzy
+msgid "Use an alternative palette"
+msgstr ""
+"Usa una introducción alternativa para el juego (solo para la versión CD)"
+
+#: engines/agi/detection.cpp:158
+msgid ""
+"Use an alternative palette, common for all Amiga games. This was the old "
+"behavior"
+msgstr ""
+
+#: engines/agi/detection.cpp:167
+#, fuzzy
+msgid "Mouse support"
+msgstr "Permitir omisiones"
+
+#: engines/agi/detection.cpp:168
+msgid ""
+"Enables mouse support. Allows to use mouse for movement and in game menus."
+msgstr ""
+
 #: engines/agi/saveload.cpp:816 engines/drascula/saveload.cpp:349
 #: engines/dreamweb/saveload.cpp:169 engines/neverhood/menumodule.cpp:886
-#: engines/sci/engine/kfile.cpp:857 engines/toltecs/menu.cpp:256
+#: engines/sci/engine/kfile.cpp:858 engines/toltecs/menu.cpp:256
 msgid "Restore game:"
 msgstr "Cargar partida:"
 
 #: engines/agi/saveload.cpp:816 engines/drascula/saveload.cpp:349
 #: engines/dreamweb/saveload.cpp:169 engines/neverhood/menumodule.cpp:886
-#: engines/sci/engine/kfile.cpp:857 engines/toltecs/menu.cpp:256
+#: engines/sci/engine/kfile.cpp:858 engines/toltecs/menu.cpp:256
 msgid "Restore"
 msgstr "Cargar"
 
-#: engines/agos/saveload.cpp:160 engines/scumm/scumm.cpp:2368
+#: engines/agos/saveload.cpp:160 engines/scumm/scumm.cpp:2377
 #, c-format
 msgid ""
 "Failed to load game state from file:\n"
@@ -2123,7 +2187,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:195 engines/scumm/scumm.cpp:2361
+#: engines/agos/saveload.cpp:195 engines/scumm/scumm.cpp:2370
 #, c-format
 msgid ""
 "Failed to save game state to file:\n"
@@ -2134,7 +2198,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:203 engines/scumm/scumm.cpp:2379
+#: engines/agos/saveload.cpp:203 engines/scumm/scumm.cpp:2388
 #, c-format
 msgid ""
 "Successfully saved game state in file:\n"
@@ -2150,12 +2214,12 @@ msgstr ""
 msgid "Cutscene file '%s' not found!"
 msgstr "No se ha encontrado el vídeo '%s'"
 
-#: engines/cge/detection.cpp:105 engines/cge2/detection.cpp:81
+#: engines/cge/detection.cpp:105 engines/cge2/detection.cpp:101
 #, fuzzy
 msgid "Color Blind Mode"
 msgstr "Modo clic"
 
-#: engines/cge/detection.cpp:106 engines/cge2/detection.cpp:82
+#: engines/cge/detection.cpp:106 engines/cge2/detection.cpp:102
 msgid "Enable Color Blind Mode by default"
 msgstr ""
 
@@ -2207,7 +2271,7 @@ msgstr "Velocidad rápida de vídeos"
 msgid "Play movies at an increased speed"
 msgstr "Reproducir vídeos a mayor velocidad"
 
-#: engines/groovie/script.cpp:399
+#: engines/groovie/script.cpp:408
 msgid "Failed to save game"
 msgstr "Fallo al guardar la partida"
 
@@ -2507,12 +2571,12 @@ msgstr ""
 "Usa una introducción alternativa para el juego (solo para la versión CD)"
 
 #: engines/sci/detection.cpp:374
-msgid "EGA undithering"
-msgstr "Difuminado EGA"
+msgid "Skip EGA dithering pass (full color backgrounds)"
+msgstr ""
 
 #: engines/sci/detection.cpp:375
-msgid "Enable undithering in EGA games"
-msgstr "Activar difuminado en los juegos EGA"
+msgid "Skip dithering pass in EGA games, graphics are shown with full colors"
+msgstr ""
 
 #: engines/sci/detection.cpp:384
 msgid "Prefer digital sound effects"
@@ -2585,12 +2649,14 @@ msgstr "Juego pausado. Pulsa Espacio para continuar."
 #. "Moechten Sie wirklich neu starten?  (J/N)J"
 #. Will react to J as 'Yes'
 #: engines/scumm/dialogs.cpp:183
-msgid "Are you sure you want to restart?  (Y/N)"
+#, fuzzy
+msgid "Are you sure you want to restart?  (Y/N)Y"
 msgstr "¿Seguro que quieres reiniciar?  (S/N)S"
 
 #. I18N: you may specify 'Yes' symbol at the end of the line. See previous comment
 #: engines/scumm/dialogs.cpp:185
-msgid "Are you sure you want to quit?  (Y/N)"
+#, fuzzy
+msgid "Are you sure you want to quit?  (Y/N)Y"
 msgstr "¿Seguro que quieres salir?  (S/N)S"
 
 #: engines/scumm/dialogs.cpp:190
@@ -2678,516 +2744,541 @@ msgstr "Práctica"
 msgid "Expert"
 msgstr "Experto"
 
-#: engines/scumm/help.cpp:73
+#: engines/scumm/help.cpp:74
 msgid "Common keyboard commands:"
 msgstr "Comandos básicos de teclado:"
 
-#: engines/scumm/help.cpp:74
+#: engines/scumm/help.cpp:75
 msgid "Save / Load dialog"
 msgstr "Pantalla de guardar / cargar"
 
-#: engines/scumm/help.cpp:76
+#: engines/scumm/help.cpp:77
 msgid "Skip line of text"
 msgstr "Saltar frase"
 
-#: engines/scumm/help.cpp:77
+#: engines/scumm/help.cpp:78
 msgid "Esc"
 msgstr "Esc"
 
-#: engines/scumm/help.cpp:77
+#: engines/scumm/help.cpp:78
 msgid "Skip cutscene"
 msgstr "Saltar escena"
 
-#: engines/scumm/help.cpp:78
+#: engines/scumm/help.cpp:79
 msgid "Space"
 msgstr "Espacio"
 
-#: engines/scumm/help.cpp:78
+#: engines/scumm/help.cpp:79
 msgid "Pause game"
 msgstr "Pausar el juego"
 
-#: engines/scumm/help.cpp:79 engines/scumm/help.cpp:84
-#: engines/scumm/help.cpp:95 engines/scumm/help.cpp:96
-#: engines/scumm/help.cpp:97 engines/scumm/help.cpp:98
-#: engines/scumm/help.cpp:99 engines/scumm/help.cpp:100
-#: engines/scumm/help.cpp:101 engines/scumm/help.cpp:102
+#: engines/scumm/help.cpp:80 engines/scumm/help.cpp:85
+#: engines/scumm/help.cpp:96 engines/scumm/help.cpp:97
+#: engines/scumm/help.cpp:98 engines/scumm/help.cpp:99
+#: engines/scumm/help.cpp:100 engines/scumm/help.cpp:101
+#: engines/scumm/help.cpp:102 engines/scumm/help.cpp:103
 msgid "Ctrl"
 msgstr "Ctrl"
 
-#: engines/scumm/help.cpp:79
+#: engines/scumm/help.cpp:80
 msgid "Load game state 1-10"
 msgstr "Cargar partida 1-10"
 
-#: engines/scumm/help.cpp:80 engines/scumm/help.cpp:84
-#: engines/scumm/help.cpp:86 engines/scumm/help.cpp:100
-#: engines/scumm/help.cpp:101 engines/scumm/help.cpp:102
+#: engines/scumm/help.cpp:81 engines/scumm/help.cpp:85
+#: engines/scumm/help.cpp:87 engines/scumm/help.cpp:101
+#: engines/scumm/help.cpp:102 engines/scumm/help.cpp:103
 msgid "Alt"
 msgstr "Alt"
 
-#: engines/scumm/help.cpp:80
+#: engines/scumm/help.cpp:81
 msgid "Save game state 1-10"
 msgstr "Guardar partida 1-10"
 
-#: engines/scumm/help.cpp:86 engines/scumm/help.cpp:89
+#: engines/scumm/help.cpp:87 engines/scumm/help.cpp:90
 msgid "Enter"
 msgstr "Enter"
 
-#: engines/scumm/help.cpp:87
+#: engines/scumm/help.cpp:88
 msgid "Music volume up / down"
 msgstr "Subir / Bajar el volumen de la música"
 
-#: engines/scumm/help.cpp:88
+#: engines/scumm/help.cpp:89
 msgid "Text speed slower / faster"
 msgstr "Aumentar / Disminuir la vel. de texto"
 
-#: engines/scumm/help.cpp:89
+#: engines/scumm/help.cpp:90
 msgid "Simulate left mouse button"
 msgstr "Simular botón izquierdo del ratón"
 
-#: engines/scumm/help.cpp:90
+#: engines/scumm/help.cpp:91
 msgid "Tab"
 msgstr "Tab"
 
-#: engines/scumm/help.cpp:90
+#: engines/scumm/help.cpp:91
 msgid "Simulate right mouse button"
 msgstr "Simular botón derecho del ratón"
 
-#: engines/scumm/help.cpp:93
+#: engines/scumm/help.cpp:94
 msgid "Special keyboard commands:"
 msgstr "Comandos especiales de teclado:"
 
-#: engines/scumm/help.cpp:94
+#: engines/scumm/help.cpp:95
 msgid "Show / Hide console"
 msgstr "Mostrar / Ocultar consola"
 
-#: engines/scumm/help.cpp:95
+#: engines/scumm/help.cpp:96
 msgid "Start the debugger"
 msgstr "Iniciar debugger"
 
-#: engines/scumm/help.cpp:96
+#: engines/scumm/help.cpp:97
 msgid "Show memory consumption"
 msgstr "Mostrar consumo de memoria"
 
-#: engines/scumm/help.cpp:97
+#: engines/scumm/help.cpp:98
 msgid "Run in fast mode (*)"
 msgstr "Ejecutar en modo rápido (*)"
 
-#: engines/scumm/help.cpp:98
+#: engines/scumm/help.cpp:99
 msgid "Run in really fast mode (*)"
 msgstr "Ejecutar en modo muy rápido (*)"
 
-#: engines/scumm/help.cpp:99
+#: engines/scumm/help.cpp:100
 msgid "Toggle mouse capture"
 msgstr "Activar/Desactivar captura de ratón"
 
-#: engines/scumm/help.cpp:100
+#: engines/scumm/help.cpp:101
 msgid "Switch between graphics filters"
 msgstr "Alternar entre filtros gráficos"
 
-#: engines/scumm/help.cpp:101
+#: engines/scumm/help.cpp:102
 msgid "Increase / Decrease scale factor"
 msgstr "Aumentar / Disminuir factor de escalado"
 
-#: engines/scumm/help.cpp:102
+#: engines/scumm/help.cpp:103
 msgid "Toggle aspect-ratio correction"
 msgstr "Activar/Desactivar corrección de aspecto"
 
-#: engines/scumm/help.cpp:107
+#: engines/scumm/help.cpp:108
 msgid "* Note that using ctrl-f and"
 msgstr "* No se recomienda utilizar"
 
-#: engines/scumm/help.cpp:108
+#: engines/scumm/help.cpp:109
 msgid "  ctrl-g are not recommended"
 msgstr "  ctrl-f y ctrl-g, ya que pueden"
 
-#: engines/scumm/help.cpp:109
+#: engines/scumm/help.cpp:110
 msgid "  since they may cause crashes"
 msgstr "  provocar cuelgues o un"
 
-#: engines/scumm/help.cpp:110
+#: engines/scumm/help.cpp:111
 msgid "  or incorrect game behavior."
 msgstr "  funcionamiento incorrecto del juego."
 
-#: engines/scumm/help.cpp:114
+#: engines/scumm/help.cpp:115
 msgid "Spinning drafts on the keyboard:"
 msgstr "Tejer hechizos con el teclado:"
 
-#: engines/scumm/help.cpp:116
+#: engines/scumm/help.cpp:117
 msgid "Main game controls:"
 msgstr "Controles básicos:"
 
-#: engines/scumm/help.cpp:121 engines/scumm/help.cpp:136
-#: engines/scumm/help.cpp:161
+#: engines/scumm/help.cpp:122 engines/scumm/help.cpp:137
+#: engines/scumm/help.cpp:162
 msgid "Push"
 msgstr "Empujar"
 
-#: engines/scumm/help.cpp:122 engines/scumm/help.cpp:137
-#: engines/scumm/help.cpp:162
+#: engines/scumm/help.cpp:123 engines/scumm/help.cpp:138
+#: engines/scumm/help.cpp:163
 msgid "Pull"
 msgstr "Tirar"
 
-#: engines/scumm/help.cpp:123 engines/scumm/help.cpp:138
-#: engines/scumm/help.cpp:163 engines/scumm/help.cpp:197
-#: engines/scumm/help.cpp:207
+#: engines/scumm/help.cpp:124 engines/scumm/help.cpp:139
+#: engines/scumm/help.cpp:164 engines/scumm/help.cpp:198
+#: engines/scumm/help.cpp:208
 msgid "Give"
 msgstr "Dar"
 
-#: engines/scumm/help.cpp:124 engines/scumm/help.cpp:139
-#: engines/scumm/help.cpp:164 engines/scumm/help.cpp:190
-#: engines/scumm/help.cpp:208
+#: engines/scumm/help.cpp:125 engines/scumm/help.cpp:140
+#: engines/scumm/help.cpp:165 engines/scumm/help.cpp:191
+#: engines/scumm/help.cpp:209
 msgid "Open"
 msgstr "Abrir"
 
-#: engines/scumm/help.cpp:126
+#: engines/scumm/help.cpp:127
 msgid "Go to"
 msgstr "Ir a"
 
-#: engines/scumm/help.cpp:127
+#: engines/scumm/help.cpp:128
 msgid "Get"
 msgstr "Coger"
 
-#: engines/scumm/help.cpp:128 engines/scumm/help.cpp:152
-#: engines/scumm/help.cpp:170 engines/scumm/help.cpp:198
-#: engines/scumm/help.cpp:213 engines/scumm/help.cpp:224
-#: engines/scumm/help.cpp:250
+#: engines/scumm/help.cpp:129 engines/scumm/help.cpp:153
+#: engines/scumm/help.cpp:171 engines/scumm/help.cpp:199
+#: engines/scumm/help.cpp:214 engines/scumm/help.cpp:225
+#: engines/scumm/help.cpp:251
 msgid "Use"
 msgstr "Usar"
 
-#: engines/scumm/help.cpp:129 engines/scumm/help.cpp:141
+#: engines/scumm/help.cpp:130 engines/scumm/help.cpp:142
 msgid "Read"
 msgstr "Leer"
 
-#: engines/scumm/help.cpp:130 engines/scumm/help.cpp:147
+#: engines/scumm/help.cpp:131 engines/scumm/help.cpp:148
 msgid "New kid"
 msgstr "Cambiar personaje"
 
-#: engines/scumm/help.cpp:131 engines/scumm/help.cpp:153
-#: engines/scumm/help.cpp:171
+#: engines/scumm/help.cpp:132 engines/scumm/help.cpp:154
+#: engines/scumm/help.cpp:172
 msgid "Turn on"
 msgstr "Encender"
 
-#: engines/scumm/help.cpp:132 engines/scumm/help.cpp:154
-#: engines/scumm/help.cpp:172
+#: engines/scumm/help.cpp:133 engines/scumm/help.cpp:155
+#: engines/scumm/help.cpp:173
 msgid "Turn off"
 msgstr "Apagar"
 
-#: engines/scumm/help.cpp:142 engines/scumm/help.cpp:167
-#: engines/scumm/help.cpp:194
+#: engines/scumm/help.cpp:143 engines/scumm/help.cpp:168
+#: engines/scumm/help.cpp:195
 msgid "Walk to"
 msgstr "Ir a"
 
-#: engines/scumm/help.cpp:143 engines/scumm/help.cpp:168
-#: engines/scumm/help.cpp:195 engines/scumm/help.cpp:210
-#: engines/scumm/help.cpp:227
+#: engines/scumm/help.cpp:144 engines/scumm/help.cpp:169
+#: engines/scumm/help.cpp:196 engines/scumm/help.cpp:211
+#: engines/scumm/help.cpp:228
 msgid "Pick up"
 msgstr "Recoger"
 
-#: engines/scumm/help.cpp:144 engines/scumm/help.cpp:169
+#: engines/scumm/help.cpp:145 engines/scumm/help.cpp:170
 msgid "What is"
 msgstr "Qué es"
 
-#: engines/scumm/help.cpp:146
+#: engines/scumm/help.cpp:147
 msgid "Unlock"
 msgstr "Abrir con llave"
 
-#: engines/scumm/help.cpp:149
+#: engines/scumm/help.cpp:150
 msgid "Put on"
 msgstr "Ponerse"
 
-#: engines/scumm/help.cpp:150
+#: engines/scumm/help.cpp:151
 msgid "Take off"
 msgstr "Quitarse"
 
-#: engines/scumm/help.cpp:156
+#: engines/scumm/help.cpp:157
 msgid "Fix"
 msgstr "Arreglar"
 
-#: engines/scumm/help.cpp:158
+#: engines/scumm/help.cpp:159
 msgid "Switch"
 msgstr "Cambiar"
 
-#: engines/scumm/help.cpp:166 engines/scumm/help.cpp:228
+#: engines/scumm/help.cpp:167 engines/scumm/help.cpp:229
 msgid "Look"
 msgstr "Mirar"
 
-#: engines/scumm/help.cpp:173 engines/scumm/help.cpp:223
+#: engines/scumm/help.cpp:174 engines/scumm/help.cpp:224
 msgid "Talk"
 msgstr "Hablar"
 
-#: engines/scumm/help.cpp:174
+#: engines/scumm/help.cpp:175
 msgid "Travel"
 msgstr "Viajar"
 
-#: engines/scumm/help.cpp:175
+#: engines/scumm/help.cpp:176
 msgid "To Henry / To Indy"
 msgstr "Henry / Indy"
 
 #. I18N: These are different musical notes
-#: engines/scumm/help.cpp:179
+#: engines/scumm/help.cpp:180
 msgid "play C minor on distaff"
 msgstr "Tocar do menor con el bastón"
 
-#: engines/scumm/help.cpp:180
+#: engines/scumm/help.cpp:181
 msgid "play D on distaff"
 msgstr "Tocar re con el bastón"
 
-#: engines/scumm/help.cpp:181
+#: engines/scumm/help.cpp:182
 msgid "play E on distaff"
 msgstr "Tocar mi con el bastón"
 
-#: engines/scumm/help.cpp:182
+#: engines/scumm/help.cpp:183
 msgid "play F on distaff"
 msgstr "Tocar fa con el bastón"
 
-#: engines/scumm/help.cpp:183
+#: engines/scumm/help.cpp:184
 msgid "play G on distaff"
 msgstr "Tocar sol con el bastón"
 
-#: engines/scumm/help.cpp:184
+#: engines/scumm/help.cpp:185
 msgid "play A on distaff"
 msgstr "Tocar la con el bastón"
 
-#: engines/scumm/help.cpp:185
+#: engines/scumm/help.cpp:186
 msgid "play B on distaff"
 msgstr "Tocar si con el bastón"
 
-#: engines/scumm/help.cpp:186
+#: engines/scumm/help.cpp:187
 msgid "play C major on distaff"
 msgstr "Tocar do mayor con el bastón"
 
-#: engines/scumm/help.cpp:192 engines/scumm/help.cpp:214
+#: engines/scumm/help.cpp:193 engines/scumm/help.cpp:215
 msgid "puSh"
 msgstr "Empujar"
 
-#: engines/scumm/help.cpp:193 engines/scumm/help.cpp:215
+#: engines/scumm/help.cpp:194 engines/scumm/help.cpp:216
 msgid "pull (Yank)"
 msgstr "Tirar"
 
-#: engines/scumm/help.cpp:196 engines/scumm/help.cpp:212
-#: engines/scumm/help.cpp:248
+#: engines/scumm/help.cpp:197 engines/scumm/help.cpp:213
+#: engines/scumm/help.cpp:249
 msgid "Talk to"
 msgstr "Hablar con"
 
-#: engines/scumm/help.cpp:199 engines/scumm/help.cpp:211
+#: engines/scumm/help.cpp:200 engines/scumm/help.cpp:212
 msgid "Look at"
 msgstr "Mirar"
 
-#: engines/scumm/help.cpp:200
+#: engines/scumm/help.cpp:201
 msgid "turn oN"
 msgstr "Encender"
 
-#: engines/scumm/help.cpp:201
+#: engines/scumm/help.cpp:202
 msgid "turn oFf"
 msgstr "Apagar"
 
-#: engines/scumm/help.cpp:217
+#: engines/scumm/help.cpp:218
 msgid "KeyUp"
 msgstr "Arriba"
 
-#: engines/scumm/help.cpp:217
+#: engines/scumm/help.cpp:218
 msgid "Highlight prev dialogue"
 msgstr "Seleccionar diálogo anterior"
 
-#: engines/scumm/help.cpp:218
+#: engines/scumm/help.cpp:219
 msgid "KeyDown"
 msgstr "Abajo"
 
-#: engines/scumm/help.cpp:218
+#: engines/scumm/help.cpp:219
 msgid "Highlight next dialogue"
 msgstr "Seleccionar diálogo siguiente"
 
-#: engines/scumm/help.cpp:222
+#: engines/scumm/help.cpp:223
 msgid "Walk"
 msgstr "Caminar"
 
-#: engines/scumm/help.cpp:225 engines/scumm/help.cpp:234
-#: engines/scumm/help.cpp:241 engines/scumm/help.cpp:249
+#: engines/scumm/help.cpp:226 engines/scumm/help.cpp:235
+#: engines/scumm/help.cpp:242 engines/scumm/help.cpp:250
 msgid "Inventory"
 msgstr "Inventario"
 
-#: engines/scumm/help.cpp:226
+#: engines/scumm/help.cpp:227
 msgid "Object"
 msgstr "Objeto"
 
-#: engines/scumm/help.cpp:229
+#: engines/scumm/help.cpp:230
 msgid "Black and White / Color"
 msgstr "Blanco y negro / Color"
 
-#: engines/scumm/help.cpp:232
+#: engines/scumm/help.cpp:233
 msgid "Eyes"
 msgstr "Ojos"
 
-#: engines/scumm/help.cpp:233
+#: engines/scumm/help.cpp:234
 msgid "Tongue"
 msgstr "Lengua"
 
-#: engines/scumm/help.cpp:235
+#: engines/scumm/help.cpp:236
 msgid "Punch"
 msgstr "Puñetazo"
 
-#: engines/scumm/help.cpp:236
+#: engines/scumm/help.cpp:237
 msgid "Kick"
 msgstr "Patada"
 
-#: engines/scumm/help.cpp:239 engines/scumm/help.cpp:247
+#: engines/scumm/help.cpp:240 engines/scumm/help.cpp:248
 msgid "Examine"
 msgstr "Examinar"
 
-#: engines/scumm/help.cpp:240
+#: engines/scumm/help.cpp:241
 msgid "Regular cursor"
 msgstr "Cursor normal"
 
 #. I18N: Comm is a communication device
-#: engines/scumm/help.cpp:243
+#: engines/scumm/help.cpp:244
 msgid "Comm"
 msgstr "Comm"
 
-#: engines/scumm/help.cpp:246
+#: engines/scumm/help.cpp:247
 msgid "Save / Load / Options"
 msgstr "Guardar / Cargar / Opciones"
 
-#: engines/scumm/help.cpp:255
+#: engines/scumm/help.cpp:256
 msgid "Other game controls:"
 msgstr "Otros controles:"
 
-#: engines/scumm/help.cpp:257 engines/scumm/help.cpp:267
+#: engines/scumm/help.cpp:258 engines/scumm/help.cpp:268
 msgid "Inventory:"
 msgstr "Inventario:"
 
-#: engines/scumm/help.cpp:258 engines/scumm/help.cpp:274
+#: engines/scumm/help.cpp:259 engines/scumm/help.cpp:275
 msgid "Scroll list up"
 msgstr "Subir"
 
-#: engines/scumm/help.cpp:259 engines/scumm/help.cpp:275
+#: engines/scumm/help.cpp:260 engines/scumm/help.cpp:276
 msgid "Scroll list down"
 msgstr "Bajar"
 
-#: engines/scumm/help.cpp:260 engines/scumm/help.cpp:268
+#: engines/scumm/help.cpp:261 engines/scumm/help.cpp:269
 msgid "Upper left item"
 msgstr "Objeto superior izquierdo"
 
-#: engines/scumm/help.cpp:261 engines/scumm/help.cpp:270
+#: engines/scumm/help.cpp:262 engines/scumm/help.cpp:271
 msgid "Lower left item"
 msgstr "Objeto inferior izquierdo"
 
-#: engines/scumm/help.cpp:262 engines/scumm/help.cpp:271
+#: engines/scumm/help.cpp:263 engines/scumm/help.cpp:272
 msgid "Upper right item"
 msgstr "Objeto superior derecho"
 
-#: engines/scumm/help.cpp:263 engines/scumm/help.cpp:273
+#: engines/scumm/help.cpp:264 engines/scumm/help.cpp:274
 msgid "Lower right item"
 msgstr "Objeto inferior derecho"
 
-#: engines/scumm/help.cpp:269
+#: engines/scumm/help.cpp:270
 msgid "Middle left item"
 msgstr "Objeto izquierdo del medio"
 
-#: engines/scumm/help.cpp:272
+#: engines/scumm/help.cpp:273
 msgid "Middle right item"
 msgstr "Objeto derecho del medio"
 
-#: engines/scumm/help.cpp:279 engines/scumm/help.cpp:284
+#: engines/scumm/help.cpp:280 engines/scumm/help.cpp:285
 msgid "Switching characters:"
 msgstr "Cambiar personaje:"
 
-#: engines/scumm/help.cpp:281
+#: engines/scumm/help.cpp:282
 msgid "Second kid"
 msgstr "Segundo chaval"
 
-#: engines/scumm/help.cpp:282
+#: engines/scumm/help.cpp:283
 msgid "Third kid"
 msgstr "Tercer chaval"
 
-#: engines/scumm/help.cpp:294
+#: engines/scumm/help.cpp:292
+#, fuzzy
+msgid "Toggle Inventory/IQ Points display"
+msgstr "Activar/Desactivar pantalla de datos"
+
+#: engines/scumm/help.cpp:293
+msgid "Toggle Keyboard/Mouse Fighting (*)"
+msgstr ""
+
+#: engines/scumm/help.cpp:295
+msgid "* Keyboard Fighting is always on,"
+msgstr ""
+
+#: engines/scumm/help.cpp:296
+msgid "  so despite the in-game message this"
+msgstr ""
+
+#: engines/scumm/help.cpp:297
+msgid "  actually toggles Mouse Fighting Off/On"
+msgstr ""
+
+#: engines/scumm/help.cpp:304
 msgid "Fighting controls (numpad):"
 msgstr "Controles de lucha (tecl. num.):"
 
-#: engines/scumm/help.cpp:295 engines/scumm/help.cpp:296
-#: engines/scumm/help.cpp:297
+#: engines/scumm/help.cpp:305 engines/scumm/help.cpp:306
+#: engines/scumm/help.cpp:307
 msgid "Step back"
 msgstr "Retroceder"
 
-#: engines/scumm/help.cpp:298
+#: engines/scumm/help.cpp:308
 msgid "Block high"
 msgstr "Bloqueo alto"
 
-#: engines/scumm/help.cpp:299
+#: engines/scumm/help.cpp:309
 msgid "Block middle"
 msgstr "Bloqueo medio"
 
-#: engines/scumm/help.cpp:300
+#: engines/scumm/help.cpp:310
 msgid "Block low"
 msgstr "Bloqueo bajo"
 
-#: engines/scumm/help.cpp:301
+#: engines/scumm/help.cpp:311
 msgid "Punch high"
 msgstr "Puñetazo alto"
 
-#: engines/scumm/help.cpp:302
+#: engines/scumm/help.cpp:312
 msgid "Punch middle"
 msgstr "Puñetazo medio"
 
-#: engines/scumm/help.cpp:303
+#: engines/scumm/help.cpp:313
 msgid "Punch low"
 msgstr "Puñetazo bajo"
 
-#: engines/scumm/help.cpp:306
+#: engines/scumm/help.cpp:315
+msgid "Sucker punch"
+msgstr ""
+
+#: engines/scumm/help.cpp:318
 msgid "These are for Indy on left."
 msgstr "Válidos cuando Indy está a la izquierda."
 
-#: engines/scumm/help.cpp:307
+#: engines/scumm/help.cpp:319
 msgid "When Indy is on the right,"
 msgstr "Cuando Indy está a la derecha,"
 
-#: engines/scumm/help.cpp:308
+#: engines/scumm/help.cpp:320
 msgid "7, 4, and 1 are switched with"
 msgstr "7, 4 y 1 se cambian por"
 
-#: engines/scumm/help.cpp:309
+#: engines/scumm/help.cpp:321
 msgid "9, 6, and 3, respectively."
 msgstr "9, 6 y 3, respectivamente."
 
-#: engines/scumm/help.cpp:316
+#: engines/scumm/help.cpp:328
 msgid "Biplane controls (numpad):"
 msgstr "Controles del biplano (tecl. num.)"
 
-#: engines/scumm/help.cpp:317
+#: engines/scumm/help.cpp:329
 msgid "Fly to upper left"
 msgstr "Volar arriba y a la izquierda"
 
-#: engines/scumm/help.cpp:318
+#: engines/scumm/help.cpp:330
 msgid "Fly to left"
 msgstr "Volar a la izquierda"
 
-#: engines/scumm/help.cpp:319
+#: engines/scumm/help.cpp:331
 msgid "Fly to lower left"
 msgstr "Volar abajo y a la izquierda"
 
-#: engines/scumm/help.cpp:320
+#: engines/scumm/help.cpp:332
 msgid "Fly upwards"
 msgstr "Volar arriba"
 
-#: engines/scumm/help.cpp:321
+#: engines/scumm/help.cpp:333
 msgid "Fly straight"
 msgstr "Volar recto"
 
-#: engines/scumm/help.cpp:322
+#: engines/scumm/help.cpp:334
 msgid "Fly down"
 msgstr "Volar abajo"
 
-#: engines/scumm/help.cpp:323
+#: engines/scumm/help.cpp:335
 msgid "Fly to upper right"
 msgstr "Volar arriba y a la derecha"
 
-#: engines/scumm/help.cpp:324
+#: engines/scumm/help.cpp:336
 msgid "Fly to right"
 msgstr "Volar a la derecha"
 
-#: engines/scumm/help.cpp:325
+#: engines/scumm/help.cpp:337
 msgid "Fly to lower right"
 msgstr "Volar abajo y a la derecha"
 
-#: engines/scumm/scumm.cpp:1823
+#: engines/scumm/scumm.cpp:1832
 #, c-format
 msgid ""
 "Native MIDI support requires the Roland Upgrade from LucasArts,\n"
@@ -3196,11 +3287,12 @@ msgstr ""
 "El soporte MIDI nativo requiere la actualización Roland de LucasArts,\n"
 "pero %s no está disponible. Se usará AdLib."
 
-#: engines/scumm/scumm.cpp:2594
+#: engines/scumm/scumm.cpp:2644
+#, fuzzy
 msgid ""
-"Usually, Maniac Mansion would start now. But ScummVM doesn't do that yet. To "
-"play it, go to 'Add Game' in the ScummVM start menu and select the 'Maniac' "
-"directory inside the Tentacle game directory."
+"Usually, Maniac Mansion would start now. But for that to work, the game "
+"files for Maniac Mansion have to be in the 'Maniac' directory inside the "
+"Tentacle game directory, and the game has to be added to ScummVM."
 msgstr ""
 "Maniac Mansion debería arrancar en este momento, pero ScummVM aún no lo "
 "permite. Para jugar, ve a 'Añadir juego' en el menú de inicio de ScummVM y "
@@ -3343,6 +3435,48 @@ msgstr ""
 msgid "Show the current number of frames per second in the upper left corner"
 msgstr ""
 
+#: engines/zvision/detection.cpp:256
+msgid "Double FPS"
+msgstr ""
+
+#: engines/zvision/detection.cpp:257
+msgid "Increase game FPS from 30 to 60"
+msgstr ""
+
+#: engines/zvision/detection.cpp:266
+#, fuzzy
+msgid "Enable Venus"
+msgstr "Activar el modo helio"
+
+#: engines/zvision/detection.cpp:267
+msgid "Enable the Venus help system"
+msgstr ""
+
+#: engines/zvision/detection.cpp:276
+msgid "Disable animation while turning"
+msgstr ""
+
+#: engines/zvision/detection.cpp:277
+msgid "Disable animation while turning in panoramic mode"
+msgstr ""
+
+#: engines/zvision/detection.cpp:286
+msgid "Use the hires MPEG movies"
+msgstr ""
+
+#: engines/zvision/detection.cpp:287
+#, fuzzy
+msgid ""
+"Use the hires MPEG movies of the DVD version, instead of the lowres AVI ones"
+msgstr ""
+"Usar los cursores plateados alternativos, en vez de los dorados normales"
+
+#~ msgid "EGA undithering"
+#~ msgstr "Difuminado EGA"
+
+#~ msgid "Enable undithering in EGA games"
+#~ msgstr "Activar difuminado en los juegos EGA"
+
 #~ msgid "MPEG-2 cutscenes found but ScummVM has been built without MPEG-2"
 #~ msgstr ""
 #~ "Se han encontrado vídeos MPEG-2, pero se ha compilado ScummVM sin MPEG-2"
@@ -3350,9 +3484,6 @@ msgstr ""
 #~ msgctxt "lowres"
 #~ msgid "Mass Add..."
 #~ msgstr "Añad. varios"
-
-#~ msgid "Mass Add..."
-#~ msgstr "Añadir varios..."
 
 #~ msgid ""
 #~ "Turns off General MIDI mapping for games with Roland MT-32 soundtrack"
