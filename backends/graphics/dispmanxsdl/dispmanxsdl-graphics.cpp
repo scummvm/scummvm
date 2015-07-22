@@ -564,6 +564,12 @@ bool DispmanXSdlGraphicsManager::handleScalerHotkeys(Common::KeyCode key) {
 	return true;
 }
 
+bool DispmanXSdlGraphicsManager::hasFeature(OSystem::Feature f) {
+	if (f == OSystem::kFeatureFullscreenMode) {
+		return false;
+	}
+}
+
 void DispmanXSdlGraphicsManager::setFullscreenMode(bool enable) {
 	_videoMode.fullscreen = enable;
 }

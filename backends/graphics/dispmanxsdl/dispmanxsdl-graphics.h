@@ -38,6 +38,7 @@ public:
 	void setFullscreenMode(bool enable);
 	void setAspectRatioCorrection(bool enable);
 	void clearOverlay();
+	bool hasFeature(OSystem::Feature f);
 protected:
 	// Raspberry Pi Dispmanx API
 	void dispmanXSetup(int width, int height);
