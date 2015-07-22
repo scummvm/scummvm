@@ -127,6 +127,11 @@ MODULE_OBJS += \
 	mixer/sdl13/sdl13-mixer.o
 endif
 
+ifdef RASPBERRYPI
+MODULE_OBJS += \
+	graphics/dispmanxsdl/dispmanxsdl-graphics.o
+endif
+
 ifeq ($(BACKEND),tizen)
 MODULE_OBJS += \
 	timer/tizen/timer.o
@@ -191,11 +196,6 @@ MODULE_OBJS += \
 	plugins/psp/psp-provider.o \
 	saves/psp/psp-saves.o \
 	timer/psp/timer.o
-endif
-
-ifeq ($(BACKEND),raspberrypi)
-MODULE_OBJS += \
-	graphics/dispmanxsdl/dispmanxsdl-graphics.o
 endif
 
 ifeq ($(BACKEND),samsungtv)

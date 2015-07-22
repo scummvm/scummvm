@@ -31,22 +31,22 @@ struct dispmanxPage;
 class DispmanXSdlGraphicsManager : public SurfaceSdlGraphicsManager {
 public:
 	DispmanXSdlGraphicsManager(SdlEventSource *sdlEventSource);
-	~DispmanXSdlGraphicsManager(); 
+	~DispmanXSdlGraphicsManager();
 	bool loadGFXMode();
 	void internUpdateScreen();
 	bool handleScalerHotkeys(Common::KeyCode key);
 	void setFullscreenMode(bool enable);
 	void setAspectRatioCorrection(bool enable);
 	void clearOverlay();
-protected:	
+protected:
 	// Raspberry Pi Dispmanx API
-	void DispmanXSetup(int width, int height);
-	void DispmanXInit();
-	void DispmanXUpdate();
-	struct dispmanxPage *DispmanXGetFreePage();
-	void DispmanXFreeResources();
-	void DispmanXVideoQuit();
-	struct dispvarsStruct *_dispvars;
+	void dispmanXSetup(int width, int height);
+	void dispmanXInit();
+	void dispmanXUpdate();
+	dispmanxPage *dispmanXGetFreePage();
+	void dispmanXFreeResources();
+	void dispmanXVideoQuit();
+	dispvarsStruct *_dispvars;
 };
 
 #endif /* BACKENDS_GRAPHICS_SDL_DISPMANX_H */

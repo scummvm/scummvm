@@ -20,7 +20,7 @@
  *
  */
 
-//Needed for Raspberry Pi header incussion
+// Needed for Raspberry Pi header inclusion
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
 #include "common/scummsys.h"
@@ -34,12 +34,12 @@
 
 #include <bcm_host.h>
 
-struct dispvarsStruct { 
+struct dispvarsStruct {
 	DISPMANX_DISPLAY_HANDLE_T display;
 	DISPMANX_UPDATE_HANDLE_T update;
 	DISPMANX_ELEMENT_HANDLE_T element;
 	VC_IMAGE_TYPE_T pixFormat;
-	VC_DISPMANX_ALPHA_T alpha;    
+	VC_DISPMANX_ALPHA_T alpha;
 
 	VC_RECT_T bmpRect;
 	VC_RECT_T srcRect;
@@ -52,13 +52,13 @@ struct dispvarsStruct {
 	bool aspectRatioCorrection;
 	void *pixmem;
 
-	int numpages;	
-	struct dispmanxPage *pages;
-	struct dispmanxPage *currentPage;
+	int numpages;
+	dispmanxPage *pages;
+	dispmanxPage *currentPage;
 	int pageflipPending;
 
-	pthread_cond_t vsyncCondition;	
-	pthread_mutex_t vsyncCondMutex;	
+	pthread_cond_t vsyncCondition;
+	pthread_mutex_t vsyncCondMutex;
 	pthread_mutex_t pendingMutex;
 
 	SDL_Surface *fscreen;
@@ -71,31 +71,31 @@ struct dispmanxPage {
 	// isolating the access to it's "used" flag.
 	pthread_mutex_t pageUsedMutex;
 
-	// This field will allow us to access the 
+	// This field will allow us to access the
 	// main dispvars struct, for the vsync cb.
-	struct dispvarsStruct *dispvars;	
+	struct dispvarsStruct *dispvars;
 };
 
 DispmanXSdlGraphicsManager::DispmanXSdlGraphicsManager(SdlEventSource *sdlEventSource)
  : SurfaceSdlGraphicsManager(sdlEventSource) {
 	_dispvars = new(dispvarsStruct);
-	DispmanXInit();
+	dispmanXInit();
 }
 
 DispmanXSdlGraphicsManager::~DispmanXSdlGraphicsManager() {
-	DispmanXVideoQuit();
+	dispmanXVideoQuit();
 	delete(_dispvars);
 }
 
-void DispmanXSdlGraphicsManager::DispmanXInit() {
+void DispmanXSdlGraphicsManager::dispmanXInit() {
 	_dispvars->screen = 0;
 	_dispvars->vcImagePtr = 0;
 	_dispvars->numpages = 3;
 	_dispvars->pages = (struct dispmanxPage *)calloc(_dispvars->numpages, sizeof(struct dispmanxPage));
-	_dispvars->pageflipPending = 0;	
+	_dispvars->pageflipPending = 0;
 	_dispvars->currentPage = NULL;
 	_dispvars->pixFormat = VC_IMAGE_RGB565;
-	
+
 	/* Transparency disabled */
 	_dispvars->alpha.flags = DISPMANX_FLAGS_ALPHA_FIXED_ALL_PIXELS;
 	_dispvars->alpha.opacity = 255;
@@ -104,20 +104,20 @@ void DispmanXSdlGraphicsManager::DispmanXInit() {
 
 	// Init each page's variables
 	for (int i = 0; i < _dispvars->numpages; i++) {
-		_dispvars->pages[i].used = false;   
-		_dispvars->pages[i].dispvars = _dispvars;   
+		_dispvars->pages[i].used = false;
+		_dispvars->pages[i].dispvars = _dispvars;
 		_dispvars->pages[i].resource = 0;
-		pthread_mutex_init(&_dispvars->pages[i].pageUsedMutex, NULL); 
+		pthread_mutex_init(&_dispvars->pages[i].pageUsedMutex, NULL);
 	}
 
 	// Initialize the other mutex and condition variables
 	pthread_cond_init(&_dispvars->vsyncCondition, NULL);
 	pthread_mutex_init(&_dispvars->pendingMutex, NULL);
 	pthread_mutex_init(&_dispvars->vsyncCondMutex, NULL);
-	
+
 	// Before we call any vc_* function, we need to call this one.
 	bcm_host_init();
-	
+
 	_dispvars->display = vc_dispmanx_display_open(_dispvars->screen);
 	graphics_get_display_size(_dispvars->display, &_dispvars->dispmanxWidth, &_dispvars->dispmanxHeight);
 
@@ -125,24 +125,24 @@ void DispmanXSdlGraphicsManager::DispmanXInit() {
 	_dispvars->fscreen = NULL;
 }
 
-void DispmanXSdlGraphicsManager::DispmanXSetup(int srcWidth, int srcHeight) {
+void DispmanXSdlGraphicsManager::dispmanXSetup(int srcWidth, int srcHeight) {
 	unsigned int dstWidth, dstHeight, dstXpos, dstYpos;
 
 	// If we have an element, we have to free it along with it's resources.
 	if (_dispvars->element) {
-		DispmanXFreeResources();
+		dispmanXFreeResources();
 	}
 
 	// We do this for 2 bytes per pixel which is default on the Rpi.
 	_dispvars->pitch  = srcWidth * 2;
 	if (_dispvars->aspectRatioCorrection) {
 		float aspect = ((float)srcWidth / (float)srcHeight);
-		dstWidth  = _dispvars->dispmanxHeight * aspect;	
+		dstWidth  = _dispvars->dispmanxHeight * aspect;
 	} else {
-		dstWidth  = _dispvars->dispmanxWidth;	
+		dstWidth  = _dispvars->dispmanxWidth;
 	}
 	dstHeight = _dispvars->dispmanxHeight;
-	
+
 	// If we obtain a scaled image width that is bigger than the physical screen width,
 	// then we keep the physical screen width as our maximun width.
 	if (dstWidth > _dispvars->dispmanxWidth) {
@@ -155,11 +155,11 @@ void DispmanXSdlGraphicsManager::DispmanXSetup(int srcWidth, int srcHeight) {
 	// Remember we have to transfer the whole bitmap even if we would have
 	// interest in a part of it! Blitting is done by the GPU.
 	vc_dispmanx_rect_set(&_dispvars->dstRect, dstXpos, dstYpos, dstWidth, dstHeight);
-	vc_dispmanx_rect_set(&_dispvars->bmpRect, 0, 0, srcWidth, srcHeight);	
-	vc_dispmanx_rect_set(&_dispvars->srcRect, 0, 0, srcWidth << 16, srcHeight << 16);	
+	vc_dispmanx_rect_set(&_dispvars->bmpRect, 0, 0, srcWidth, srcHeight);
+	vc_dispmanx_rect_set(&_dispvars->srcRect, 0, 0, srcWidth << 16, srcHeight << 16);
 
 	for (int i = 0; i < _dispvars->numpages; i++) {
-		_dispvars->pages[i].resource = vc_dispmanx_resource_create(_dispvars->pixFormat, 
+		_dispvars->pages[i].resource = vc_dispmanx_resource_create(_dispvars->pixFormat,
 			srcWidth, srcHeight, &(_dispvars->vcImagePtr));
 	}
 
@@ -167,20 +167,20 @@ void DispmanXSdlGraphicsManager::DispmanXSetup(int srcWidth, int srcHeight) {
 	_dispvars->update = vc_dispmanx_update_start(0);
 
 	_dispvars->element = vc_dispmanx_element_add(
-		_dispvars->update,_dispvars->display, 0, 
-		&_dispvars->dstRect, 0, 
+		_dispvars->update,_dispvars->display, 0,
+		&_dispvars->dstRect, 0,
 		&_dispvars->srcRect, DISPMANX_PROTECTION_NONE,
 		&_dispvars->alpha, 0, (DISPMANX_TRANSFORM_T)0);
 
 	vc_dispmanx_update_submit_sync(_dispvars->update);
 }
 
-void DispmanXVSyncCallback (DISPMANX_UPDATE_HANDLE_T u, void *arg) {
+void dispmanXVSyncCallback (DISPMANX_UPDATE_HANDLE_T u, void *arg) {
 	struct dispmanxPage *page = (struct dispmanxPage*)arg;
 	struct dispvarsStruct *dispvars = page->dispvars;
 
 	// Marking the page as free must be done before the signaling
-	// so when the update function continues (it won't continue until we signal) 
+	// so when the update function continues (it won't continue until we signal)
 	// we can chose this page as free.
 	if (dispvars->currentPage) {
 		pthread_mutex_lock(&dispvars->currentPage->pageUsedMutex);
@@ -195,46 +195,46 @@ void DispmanXVSyncCallback (DISPMANX_UPDATE_HANDLE_T u, void *arg) {
 	// caused this callback becomes the visible one
 	dispvars->currentPage = page;
 
-	// These two things must be isolated "atomically" to avoid getting 
+	// These two things must be isolated "atomically" to avoid getting
 	// a false positive in the pending_mutex test in update function.
 	pthread_mutex_lock(&dispvars->pendingMutex);
 
-	dispvars->pageflipPending--;	
+	dispvars->pageflipPending--;
 	pthread_cond_signal(&dispvars->vsyncCondition);
 
 	pthread_mutex_unlock(&dispvars->pendingMutex);
 }
 
-void DispmanXSdlGraphicsManager::DispmanXUpdate() {	
-	// Wait until last issued flip completes to get a free page. Also, 
+void DispmanXSdlGraphicsManager::dispmanXUpdate() {
+	// Wait until last issued flip completes to get a free page. Also,
 	// dispmanx doesn't support issuing more than one pageflip.
 	pthread_mutex_lock(&_dispvars->pendingMutex);
 
 	if (_dispvars->pageflipPending > 0) {
 		pthread_cond_wait(&_dispvars->vsyncCondition, &_dispvars->pendingMutex);
 	}
-	
+
 	pthread_mutex_unlock(&_dispvars->pendingMutex);
 
-	struct dispmanxPage *page = DispmanXGetFreePage();
+	struct dispmanxPage *page = dispmanXGetFreePage();
 
 	// Frame blitting
 	vc_dispmanx_resource_write_data(page->resource, _dispvars->pixFormat,
 		_dispvars->pitch, _dispvars->pixmem, &_dispvars->bmpRect);
-	
+
 	// Issue a page flip at the next vblank interval (will be done at vsync anyway).
 	_dispvars->update = vc_dispmanx_update_start(0);
 
 	vc_dispmanx_element_change_source(_dispvars->update, _dispvars->element,
 		page->resource);
-	vc_dispmanx_update_submit(_dispvars->update, &DispmanXVSyncCallback, page);
-	
+	vc_dispmanx_update_submit(_dispvars->update, &dispmanXVSyncCallback, page);
+
 	pthread_mutex_lock(&_dispvars->pendingMutex);
-	_dispvars->pageflipPending++;	
+	_dispvars->pageflipPending++;
 	pthread_mutex_unlock(&_dispvars->pendingMutex);
 }
 
-struct dispmanxPage *DispmanXSdlGraphicsManager::DispmanXGetFreePage(void) {
+struct dispmanxPage *DispmanXSdlGraphicsManager::dispmanXGetFreePage(void) {
 	struct dispmanxPage *page = NULL;
 
 	while (!page)
@@ -265,8 +265,8 @@ struct dispmanxPage *DispmanXSdlGraphicsManager::DispmanXGetFreePage(void) {
 	return page;
 }
 
-void DispmanXSdlGraphicsManager::DispmanXFreeResources(void) {
-	// What if we run into the vsync cb code after freeing the resources? 
+void DispmanXSdlGraphicsManager::dispmanXFreeResources(void) {
+	// What if we run into the vsync cb code after freeing the resources?
 	pthread_mutex_lock(&_dispvars->pendingMutex);
 	if (_dispvars->pageflipPending > 0)
 	{
@@ -274,7 +274,7 @@ void DispmanXSdlGraphicsManager::DispmanXFreeResources(void) {
 	}
 	pthread_mutex_unlock(&_dispvars->pendingMutex);
 
-	for (int i = 0; i < _dispvars->numpages; i++) { 
+	for (int i = 0; i < _dispvars->numpages; i++) {
 		vc_dispmanx_resource_delete(_dispvars->pages[i].resource);
 		_dispvars->pages[i].resource = 0;
 		_dispvars->pages[i].used = false;
@@ -282,37 +282,37 @@ void DispmanXSdlGraphicsManager::DispmanXFreeResources(void) {
 
 	_dispvars->update = vc_dispmanx_update_start(0);
 	vc_dispmanx_element_remove(_dispvars->update, _dispvars->element);
-	vc_dispmanx_update_submit_sync(_dispvars->update);		
+	vc_dispmanx_update_submit_sync(_dispvars->update);
 	// We use this on the setup function to know if we have to free resources and element.
 	_dispvars->element = 0;
 }
 
-void DispmanXSdlGraphicsManager::DispmanXVideoQuit() {
+void DispmanXSdlGraphicsManager::dispmanXVideoQuit() {
 	// This also waits for pending flips to complete, that's needed before
 	// we destroy the mutexes and condition.
-	DispmanXFreeResources();
-	
-	// Destroy the mutexes and conditions	
+	dispmanXFreeResources();
+
+	// Destroy the mutexes and conditions
 	for (int i = 0; i < _dispvars->numpages; i++) {
-		pthread_mutex_destroy(&_dispvars->pages[i].pageUsedMutex); 
+		pthread_mutex_destroy(&_dispvars->pages[i].pageUsedMutex);
 	}
 	pthread_mutex_destroy(&_dispvars->pendingMutex);
 	pthread_mutex_destroy(&_dispvars->vsyncCondMutex);
-	pthread_cond_destroy(&_dispvars->vsyncCondition);		
+	pthread_cond_destroy(&_dispvars->vsyncCondition);
 
 	free(_dispvars->pages);
 
-	// Close display and deinit 
+	// Close display and deinit
 	vc_dispmanx_display_close(_dispvars->display);
 	bcm_host_deinit();
 }
 
 bool DispmanXSdlGraphicsManager::loadGFXMode() {
 	_forceFull = true;
-	
-	// In DispmanX, we manage aspect ratio correction, so for scummvm it's always disabled.
+
+	// In dispmanX, we manage aspect ratio correction, so for scummvm it's always disabled.
 	_videoMode.aspectRatioCorrection = false;
-	
+
 	_videoMode.overlayWidth = _videoMode.screenWidth;
 	_videoMode.overlayHeight = _videoMode.screenHeight;
 	_videoMode.hardwareWidth = _videoMode.screenWidth;
@@ -332,7 +332,7 @@ bool DispmanXSdlGraphicsManager::loadGFXMode() {
 			error("allocating _screen failed");
 	// Avoid having SDL_SRCALPHA set even if we supplied an alpha-channel in the format.
 	SDL_SetAlpha(_screen, 0, 255);
-	
+
 	// We set our own default palette to all black.
 	SDL_SetColors(_screen, _currentPalette, 0, 256);
 
@@ -340,23 +340,23 @@ bool DispmanXSdlGraphicsManager::loadGFXMode() {
 	// Create the surface that contains the scaled graphics in 16 bit mode
 	//
 
-	DispmanXSetup(_videoMode.screenWidth, _videoMode.screenHeight);	
-	
+	dispmanXSetup(_videoMode.screenWidth, _videoMode.screenHeight);
+
 	_hwscreen = SDL_CreateRGBSurface(SDL_SWSURFACE, _videoMode.hardwareWidth, _videoMode.hardwareHeight, 16,
 		0, 0, 0, 0);
 
 	// This is just so SDL 1.x input is initialized. Only once!
-	if (_dispvars->fscreen == NULL)		
+	if (_dispvars->fscreen == NULL)
 		_dispvars->fscreen = SDL_SetVideoMode(_videoMode.hardwareWidth, _videoMode.hardwareHeight, 16, SDL_FULLSCREEN);
 	if (_hwscreen == NULL) {
 		// Don't use error here because we don't have access to the debug console
-		warning("Allocating surface for DispmanX rendering _hwscreen failed");
+		warning("Allocating surface for dispmanX rendering _hwscreen failed");
 		g_system->quit();
 	}
 
 	// We render to dispmanx resources from _hwscreen pixels array
 	_dispvars->pixmem = _hwscreen->pixels;
-	
+
 	_overlayscreen = SDL_CreateRGBSurface(SDL_SWSURFACE, _videoMode.overlayWidth, _videoMode.overlayHeight,
 						16,
 						_hwscreen->format->Rmask,
@@ -401,7 +401,7 @@ bool DispmanXSdlGraphicsManager::loadGFXMode() {
 
 void DispmanXSdlGraphicsManager::clearOverlay() {
 	//assert(_transactionMode == kTransactionNone);
-	
+
 	Common::StackLock lock(_graphicsMutex);	// Lock the mutex until this function ends
 
 	if (!_overlayVisible)
@@ -436,7 +436,7 @@ void DispmanXSdlGraphicsManager::internUpdateScreen() {
 		(_mouseNeedsRedraw && _mouseBackup.y <= _currentShakePos)) {
 		SDL_Rect blackrect = {0, 0, (Uint16)(_videoMode.screenWidth * _videoMode.scaleFactor), (Uint16)(_newShakePos * _videoMode.scaleFactor)};
 
-		if (_videoMode.aspectRatioCorrection && !_overlayVisible)
+		if (_dispvars->aspectRatioCorrection && !_overlayVisible)
 			blackrect.h = real2Aspect(blackrect.h - 1) + 1;
 
 		SDL_FillRect(_hwscreen, &blackrect, 0);
@@ -535,7 +535,7 @@ void DispmanXSdlGraphicsManager::internUpdateScreen() {
 		// Finally, blit all our changes to the screen
 		if (!_displayDisabled) {
 			SDL_UpdateRects(_hwscreen, _numDirtyRects, _dirtyRectList);
-			DispmanXUpdate();
+			dispmanXUpdate();
 		}
 	}
 
@@ -548,9 +548,7 @@ bool DispmanXSdlGraphicsManager::handleScalerHotkeys(Common::KeyCode key) {
 
 	// Ctrl-Alt-a toggles aspect ratio correction
 	if (key == 'a') {
-		beginGFXTransaction();
-			setFeatureState(OSystem::kFeatureAspectRatioCorrection, !_dispvars->aspectRatioCorrection);
-		endGFXTransaction();
+		setFeatureState(OSystem::kFeatureAspectRatioCorrection, !_dispvars->aspectRatioCorrection);
 #ifdef USE_OSD
 		char buffer[128];
 		if (_dispvars->aspectRatioCorrection)
@@ -574,11 +572,11 @@ void DispmanXSdlGraphicsManager::setAspectRatioCorrection(bool enable) {
 	Common::StackLock lock(_graphicsMutex);
 	// We simply take note on what's the aspect ratio correction activation state.
 	_dispvars->aspectRatioCorrection = enable;
-	
-	// If we have a videomode setup already, call DispmanXSetup() again so aspect ratio
-	// correction activation/deactivation works from the menu. 
+
+	// If we have a videomode setup already, call dispmanXSetup() again so aspect ratio
+	// correction activation/deactivation works from the menu.
 	if (_oldVideoMode.setup && _dispvars->aspectRatioCorrection == enable) {
-		DispmanXSetup(_videoMode.screenWidth, _videoMode.screenHeight);	
+		dispmanXSetup(_videoMode.screenWidth, _videoMode.screenHeight);
 	}
 }
 

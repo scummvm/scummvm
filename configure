@@ -1052,9 +1052,9 @@ for ac_option in $@; do
 	--disable-libunity)       _libunity=no    ;;
 	--enable-opengl)          _opengl=yes     ;;
 	--disable-opengl)         _opengl=no      ;;
-	--enable-dispmanx)	  _dispmanx=yes   ;;
-	--disable-dispmanx)	  _dispmanx=no    ;;
-	--enable-bink)            _bink=yes       ;;
+        --enable-dispmanx)        _dispmanx=yes   ;;
+        --disable-dispmanx)       _dispmanx=no    ;;
+        --enable-bink)            _bink=yes       ;;
 	--disable-bink)           _bink=no        ;;
 	--enable-verbose-build)   _verbose_build=yes ;;
 	--enable-plugins)         _dynamic_modules=yes ;;
@@ -1304,7 +1304,6 @@ raspberrypi)
 	_host_os=linux
 	_host_cpu=arm
 	_host_alias=arm-linux-gnueabihf
-	_backend=raspberrypi
 	;;
 caanoo)
 	_host_os=gph-linux
@@ -2549,6 +2548,17 @@ if test -n "$_host"; then
 			_seq_midi=no
 			_port_mk="backends/platform/dingux/dingux.mk"
 			;;
+		raspberrypi)
+			# We should have setup raspberrypi-sdl-config with modified prefix as part of 
+			# the cross-building enviroment.	
+			_savegame_timestamp=no
+			_eventrec=no
+			_build_scalers=no
+			_build_hq_scalers=no
+			# It makes no sense to have both GL and dispmanx rendering support.
+			_opengl=no
+			_opengles=no
+			;;
 		dreamcast)
 			DEFINES="$DEFINES -DDISABLE_DEFAULT_SAVEFILEMANAGER"
 			DEFINES="$DEFINES -DDISABLE_TEXT_CONSOLE"
@@ -2993,6 +3003,8 @@ case $_backend in
 		LIBS="$LIBS -Wl,-Map,mapfile.txt"
 		;;
 	raspberrypi)
+		LIBS="$LIBS -L$RPI_ROOT/usr/lib"
+		LIBS="$LIBS -L$RPI_ROOT/usr/lib/arm-linux-gnueabihf"
 		;;
 	samsungtv)
 		DEFINES="$DEFINES -DSAMSUNGTV"
@@ -3127,23 +3139,6 @@ case $_backend in
 			_savegame_timestamp=no
 		fi
 		;;
-esac
-
-#
-# In raspberry Pi, we don't use find_sdlconfig since we could be crosscompiling, but still we use SDL
-#
-case $_backend in
-	raspberrypi)
-		INCLUDES="$INCLUDES -I$RPI_ROOTDIR/usr/include/SDL -D_GNU_SOURCE=1 -D_REENTRANT"
-		LIBS="$LIBS -L$RPI_ROOTDIR/usr/lib -L$RPI_ROOTDIR/usr/lib/arm-linux-gnueabihf -lSDL"
-		DEFINES="$DEFINES -DSDL_BACKEND"
-		add_line_to_config_mk "SDL_BACKEND = 1"
-		_16bit=yes
-		_savegame_timestamp=no
-		_eventrec=no
-		_build_scalers=no
-		_build_hq_scalers=no	
-	;;
 esac
 
 #
@@ -4083,8 +4078,8 @@ define_in_config_if_yes "$_opengles" "USE_GLES"
 if test "$_dispmanx" = "yes" ; then
 		echocheck "DispmanX graphics"
 		_use_dispmanx=no
-		DISPMANX_CXXFLAGS="-I$RPI_ROOTDIR/opt/vc/include -I$RPI_ROOTDIR/opt/vc/include/interface/vmcs_host/linux/ -I$RPI_ROOTDIR/opt/vc/include/interface/vcos/pthreads -mfpu=vfp -mfloat-abi=hard -I$RPI_ROOTDIR/opt/rpi_root/usr/include/SDL"
-		DISPMANX_LIBS="--sysroot=$RPI_ROOTDIR -L$RPI_ROOTDIR/usr/lib -L$RPI_ROOTDIR/opt/vc/lib -lbcm_host -lvcos -lvchiq_arm"
+		DISPMANX_CXXFLAGS="-I$RPI_ROOT/opt/vc/include -I$RPI_ROOT/opt/vc/include/interface/vmcs_host/linux/ -I$RPI_ROOT/opt/vc/include/interface/vcos/pthreads -I$RPI_ROOT/opt/rpi_root/usr/include/SDL"
+		DISPMANX_LIBS="--sysroot=$RPI_ROOT -L$RPI_ROOT/usr/lib -L$RPI_ROOT/opt/vc/lib -lbcm_host -lvcos -lvchiq_arm"
 		cat > $TMPC << EOF
 #include <bcm_host.h>
 
@@ -4096,11 +4091,8 @@ EOF
 		if test "$_use_dispmanx" = "yes"; then
 			CXXFLAGS="$CXXFLAGS $DISPMANX_CXXFLAGS"
 			LIBS="$LIBS $DISPMANX_LIBS"
-			MODULES="$MODULES backends/platform/sdl"
 			DEFINES="$DEFINES -DRASPBERRYPI"
 			add_line_to_config_mk 'RASPBERRYPI = 1'
-			_opengl=no
-			_opengles=no
 			echo $_use_dispmanx
 		fi
 fi

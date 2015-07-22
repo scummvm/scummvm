@@ -8,7 +8,7 @@ This version of ScummVM is specially tailored to use DispmanX, the native 2D
 API on the Raspberry Pi. The idea is that scaling and drawing on a double
 buffer with a non-blocking vsync wait is all done using the on-board VideoCore
 hardware, thus using only a small fraction of the CPU ScummVM uses when ran
-on a clunky, software-scaled and desynced X11 enviroment using the X11 API.
+on a clunky, software-scaled and desynced X11 environment using the X11 API.
 Thus, running this version under an X11 session is not supported.
 
 Requirements
@@ -77,7 +77,7 @@ Local compilation would simply consist of the "standard" GNU/Linux building proc
 
 cd <sources_dir>
 
-./configure ./configure --backend=raspberrypi -disable-debug --enable-release 
+./configure --backend=raspberrypi -disable-debug --enable-release 
 --enable-optimizations --disable-mt32emu --disable-flac --disable-mad --disable-vorbis 
 --disable-tremor --disable-fluidsynth --disable-taskbar --disable-timidity --disable-alsa
 
@@ -86,7 +86,7 @@ make
 ¡¡It will be an SLOW process, taking several hours to complete, unless you
 are running distcc against a fast compilation server!!
 
-2) If we wandt to build by cross-compiling on a GNU/Linux X86-based computer,
+2) If we want to build by cross-compiling on a GNU/Linux X86-based computer,
 we can find concise instructions for this can be found on the ScummVM wiki:
 
 http://wiki.scummvm.org/index.php/Compiling_ScummVM/RPI 
