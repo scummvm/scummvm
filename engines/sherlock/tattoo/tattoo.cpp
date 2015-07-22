@@ -25,6 +25,7 @@
 #include "sherlock/tattoo/tattoo_fixed_text.h"
 #include "sherlock/tattoo/tattoo_resources.h"
 #include "sherlock/tattoo/tattoo_scene.h"
+#include "sherlock/tattoo/tattoo_user_interface.h"
 #include "sherlock/tattoo/widget_base.h"
 #include "sherlock/people.h"
 
@@ -81,7 +82,22 @@ void TattooEngine::initialize() {
 }
 
 void TattooEngine::startScene() {
+	TattooUserInterface &ui = *(TattooUserInterface *)_ui;
+
 	switch (_scene->_goToScene) {
+	case 7:
+	case 8:
+	case 18:
+	case 53:
+	case 68:
+		// Load overlay mask(s) for the scene
+		ui._mask = new ImageFile(Common::String::format("res%02d.msk", _scene->_goToScene));
+		if (_scene->_goToScene == 8)
+			ui._mask1 = new ImageFile("res08a.msk");
+		else if (_scene->_goToScene == 18 || _scene->_goToScene == 68)
+			ui._mask1 = new ImageFile("res08a.msk");
+		break;
+
 	case OVERHEAD_MAP:
 	case OVERHEAD_MAP2:
 		// Show the map
