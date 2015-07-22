@@ -394,7 +394,7 @@ void TattooEngine::doHangManPuzzle() {
 		lines[line].x += paperBounds.left;
 		lines[line].y += paperBounds.top;
 
-		for (int i = 0; i <= numWide; ++i)
+		for (i = 0; i <= numWide; ++i)
 			answers[line][i] = 0;
 	}
 
@@ -518,6 +518,9 @@ void TattooEngine::doHangManPuzzle() {
 
 				case Common::KEYCODE_DELETE:
 					answers[line][i] = ' ';
+					break;
+
+				default:
 					break;
 				}
 			}

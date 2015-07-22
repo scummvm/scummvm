@@ -648,7 +648,6 @@ void TattooUserInterface::setupBGArea(const byte cMap[PALETTE_SIZE]) {
 	}
 }
 
-
 void TattooUserInterface::doBgAnimEraseBackground() {
 	TattooEngine &vm = *((TattooEngine *)_vm);
 	People &people = *_vm->_people;
