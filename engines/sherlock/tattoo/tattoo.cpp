@@ -240,6 +240,7 @@ void TattooEngine::initCredits() {
 
 void TattooEngine::drawCredits() {
 	Common::Rect screenRect(0, 0, _screen->w(), _screen->h());
+	Surface &bb1 = _screen->_backBuffer1;
 
 	for (uint idx = 0; idx < _creditLines.size() && _creditLines[idx]._position.y < _screen->h(); ++idx) {
 		if (screenRect.contains(_creditLines[idx]._position)) {
@@ -249,44 +250,44 @@ void TattooEngine::drawCredits() {
 				const Common::String &line1 = _creditLines[idx]._line;
 				const Common::String &line2 = _creditLines[idx]._line2;
 
-				_screen->writeString(line1, Common::Point(x1 - 1, _creditLines[idx]._position.y - 1), 0);
-				_screen->writeString(line1, Common::Point(x1, _creditLines[idx]._position.y - 1), 0);
-				_screen->writeString(line1, Common::Point(x1 + 1, _creditLines[idx]._position.y - 1), 0);
+				bb1.writeString(line1, Common::Point(x1 - 1, _creditLines[idx]._position.y - 1), 0);
+				bb1.writeString(line1, Common::Point(x1, _creditLines[idx]._position.y - 1), 0);
+				bb1.writeString(line1, Common::Point(x1 + 1, _creditLines[idx]._position.y - 1), 0);
 
-				_screen->writeString(line1, Common::Point(x1 - 1, _creditLines[idx]._position.y), 0);
-				_screen->writeString(line1, Common::Point(x1 + 1, _creditLines[idx]._position.y), 0);
+				bb1.writeString(line1, Common::Point(x1 - 1, _creditLines[idx]._position.y), 0);
+				bb1.writeString(line1, Common::Point(x1 + 1, _creditLines[idx]._position.y), 0);
 
-				_screen->writeString(line1, Common::Point(x1 - 1, _creditLines[idx]._position.y + 1), 0);
-				_screen->writeString(line1, Common::Point(x1, _creditLines[idx]._position.y + 1), 0);
-				_screen->writeString(line1, Common::Point(x1 + 1, _creditLines[idx]._position.y + 1), 0);
+				bb1.writeString(line1, Common::Point(x1 - 1, _creditLines[idx]._position.y + 1), 0);
+				bb1.writeString(line1, Common::Point(x1, _creditLines[idx]._position.y + 1), 0);
+				bb1.writeString(line1, Common::Point(x1 + 1, _creditLines[idx]._position.y + 1), 0);
 
-				_screen->writeString(line1, Common::Point(x1, _creditLines[idx]._position.y), INFO_TOP);
+				bb1.writeString(line1, Common::Point(x1, _creditLines[idx]._position.y), INFO_TOP);
 
-				_screen->writeString(line2, Common::Point(x2 - 1, _creditLines[idx]._position.y - 1), 0);
-				_screen->writeString(line2, Common::Point(x2, _creditLines[idx]._position.y - 1), 0);
-				_screen->writeString(line2, Common::Point(x2 + 1, _creditLines[idx]._position.y - 1), 0);
+				bb1.writeString(line2, Common::Point(x2 - 1, _creditLines[idx]._position.y - 1), 0);
+				bb1.writeString(line2, Common::Point(x2, _creditLines[idx]._position.y - 1), 0);
+				bb1.writeString(line2, Common::Point(x2 + 1, _creditLines[idx]._position.y - 1), 0);
 
-				_screen->writeString(line2, Common::Point(x2 - 1, _creditLines[idx]._position.y), 0);
-				_screen->writeString(line2, Common::Point(x2 + 1, _creditLines[idx]._position.y), 0);
+				bb1.writeString(line2, Common::Point(x2 - 1, _creditLines[idx]._position.y), 0);
+				bb1.writeString(line2, Common::Point(x2 + 1, _creditLines[idx]._position.y), 0);
 
-				_screen->writeString(line2, Common::Point(x2 - 1, _creditLines[idx]._position.y + 1), 0);
-				_screen->writeString(line2, Common::Point(x2, _creditLines[idx]._position.y + 1), 0);
-				_screen->writeString(line2, Common::Point(x2 + 1, _creditLines[idx]._position.y + 1), 0);
+				bb1.writeString(line2, Common::Point(x2 - 1, _creditLines[idx]._position.y + 1), 0);
+				bb1.writeString(line2, Common::Point(x2, _creditLines[idx]._position.y + 1), 0);
+				bb1.writeString(line2, Common::Point(x2 + 1, _creditLines[idx]._position.y + 1), 0);
 
-				_screen->writeString(line2, Common::Point(x2, _creditLines[idx]._position.y), INFO_TOP);
+				bb1.writeString(line2, Common::Point(x2, _creditLines[idx]._position.y), INFO_TOP);
 			} else {
-				_screen->writeString(_creditLines[idx]._line, Common::Point(_creditLines[idx]._position.x - 1, _creditLines[idx]._position.y - 1), 0);
-				_screen->writeString(_creditLines[idx]._line, Common::Point(_creditLines[idx]._position.x, _creditLines[idx]._position.y - 1), 0);
-				_screen->writeString(_creditLines[idx]._line, Common::Point(_creditLines[idx]._position.x + 1, _creditLines[idx]._position.y - 1), 0);
+				bb1.writeString(_creditLines[idx]._line, Common::Point(_creditLines[idx]._position.x - 1, _creditLines[idx]._position.y - 1), 0);
+				bb1.writeString(_creditLines[idx]._line, Common::Point(_creditLines[idx]._position.x, _creditLines[idx]._position.y - 1), 0);
+				bb1.writeString(_creditLines[idx]._line, Common::Point(_creditLines[idx]._position.x + 1, _creditLines[idx]._position.y - 1), 0);
 
-				_screen->writeString(_creditLines[idx]._line, Common::Point(_creditLines[idx]._position.x - 1, _creditLines[idx]._position.y), 0);
-				_screen->writeString(_creditLines[idx]._line, Common::Point(_creditLines[idx]._position.x + 1, _creditLines[idx]._position.y), 0);
+				bb1.writeString(_creditLines[idx]._line, Common::Point(_creditLines[idx]._position.x - 1, _creditLines[idx]._position.y), 0);
+				bb1.writeString(_creditLines[idx]._line, Common::Point(_creditLines[idx]._position.x + 1, _creditLines[idx]._position.y), 0);
 
-				_screen->writeString(_creditLines[idx]._line, Common::Point(_creditLines[idx]._position.x - 1, _creditLines[idx]._position.y + 1), 0);
-				_screen->writeString(_creditLines[idx]._line, Common::Point(_creditLines[idx]._position.x, _creditLines[idx]._position.y + 1), 0);
-				_screen->writeString(_creditLines[idx]._line, Common::Point(_creditLines[idx]._position.x + 1, _creditLines[idx]._position.y + 1), 0);
+				bb1.writeString(_creditLines[idx]._line, Common::Point(_creditLines[idx]._position.x - 1, _creditLines[idx]._position.y + 1), 0);
+				bb1.writeString(_creditLines[idx]._line, Common::Point(_creditLines[idx]._position.x, _creditLines[idx]._position.y + 1), 0);
+				bb1.writeString(_creditLines[idx]._line, Common::Point(_creditLines[idx]._position.x + 1, _creditLines[idx]._position.y + 1), 0);
 
-				_screen->writeString(_creditLines[idx]._line, Common::Point(_creditLines[idx]._position.x, _creditLines[idx]._position.y), INFO_TOP);
+				bb1.writeString(_creditLines[idx]._line, Common::Point(_creditLines[idx]._position.x, _creditLines[idx]._position.y), INFO_TOP);
 			}
 		}
 	}
@@ -300,7 +301,7 @@ void TattooEngine::blitCredits() {
 			Common::Rect r(_creditLines[idx]._width, _screen->fontHeight() + 2);
 			r.moveTo(_creditLines[idx]._position.x, _creditLines[idx]._position.y - 1);
 
-			_screen->restoreBackground(r);
+			_screen->slamRect(r);
 		}
 
 		_creditLines[idx]._position.y -= _creditSpeed;
@@ -310,16 +311,16 @@ void TattooEngine::blitCredits() {
 void TattooEngine::eraseCredits() {
 	Common::Rect screenRect(0, -_creditSpeed, _screen->w(), _screen->h() + _creditSpeed);
 
-	for (uint idx = 0; idx = _creditLines.size(); ++idx) {
+	for (uint idx = 0; idx < _creditLines.size(); ++idx) {
 		if (screenRect.contains(_creditLines[idx]._position)) {
-			Common::Rect r(_creditLines[idx]._width, _screen->fontHeight() + 2);
+			Common::Rect r(_creditLines[idx]._width, _screen->fontHeight() + 3);
 			r.moveTo(_creditLines[idx]._position.x, _creditLines[idx]._position.y - 1 + _creditSpeed);
 
 			_screen->restoreBackground(r);
 		}
 	}
 
-	if (!screenRect.contains(_creditLines[_creditLines.size() - 1]._position)) {
+	if (_creditLines[_creditLines.size() - 1]._position.y < -_creditSpeed) {
 		_creditLines.clear();
 		_creditsActive = false;
 		setFlags(!3000);
