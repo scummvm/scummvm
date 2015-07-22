@@ -260,7 +260,7 @@ void TattooEngine::drawCredits() {
 
 	for (uint idx = 0; idx < _creditLines.size() && _creditLines[idx]._position.y < _screen->h(); ++idx) {
 		if (screenRect.contains(_creditLines[idx]._position)) {
-			if (_creditLines[idx]._position.x >= 65536) {
+			if (!_creditLines[idx]._line2.empty()) {
 				int x1 = _creditLines[idx]._position.x;
 				int x2 = x1 + _creditLines[idx]._xOffset;
 				const Common::String &line1 = _creditLines[idx]._line;
@@ -394,7 +394,7 @@ void TattooEngine::doHangManPuzzle() {
 		lines[line].x += paperBounds.left;
 		lines[line].y += paperBounds.top;
 
-		for (i = 0; i <= numWide; ++i)
+		for (i = 0; i <= (size_t)numWide; ++i)
 			answers[line][i] = 0;
 	}
 
