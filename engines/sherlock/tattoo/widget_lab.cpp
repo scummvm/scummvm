@@ -114,7 +114,7 @@ void WidgetLab::handleEvents() {
 					}
 				}
 			} else if (!ui._bgShape->_name.compareToIgnoreCase("Exit")) {
-				// Eexecut the Exit button's script, which will leave the scene
+				// Execute the Exit button's script, which will leave the scene
 				ui.lookAtObject();
 			}
 		} else {
