@@ -83,7 +83,11 @@ static const char *const FIXED_TEXT_ENGLISH[] = {
 	"points",
 	"Hit",
 	"Double",
-	"Triple"
+	"Triple",
+
+	"Apply",
+	"Water",
+	"Heat"
 };
 
 TattooFixedText::TattooFixedText(SherlockEngine *vm) : FixedText(vm) {

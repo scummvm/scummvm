@@ -83,7 +83,11 @@ enum FixedTextId {
 	kFixedText_Points,
 	kFixedText_Hit,
 	kFixedText_Double,
-	kFixedText_Triple
+	kFixedText_Triple,
+
+	kFixedText_Apply,
+	kFixedText_Water,
+	kFixedText_Heat
 };
 
 class TattooFixedText: public FixedText {

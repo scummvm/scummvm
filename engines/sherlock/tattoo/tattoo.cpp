@@ -328,7 +328,228 @@ void TattooEngine::eraseCredits() {
 }
 
 void TattooEngine::doHangManPuzzle() {
-	// TODO
+	char answers[3][10];
+	Common::Point lines[3];
+	const char *solutions[3];
+	int numWide, spacing;
+	ImageFile *paper;
+	Common::Point cursorPos;
+	byte cursorColor = 254;
+	bool solved = false;
+	bool done = false;
+	bool flag = false;
+	size_t i = 0;
+
+	switch (getLanguage()) {
+	case Common::FR_FRA:
+		lines[0] = Common::Point(34, 210);
+		lines[1] = Common::Point(72, 242);
+		lines[2] = Common::Point(34, 276);
+		numWide = 8;
+		spacing = 19;
+		paper = new ImageFile("paperf.vgs");
+		break;
+
+	case Common::DE_DEU:
+		lines[0] = Common::Point(44, 73);
+		lines[1] = Common::Point(56, 169);
+		lines[2] = Common::Point(47, 256);
+		numWide = 7;
+		spacing = 19;
+		paper = new ImageFile("paperg.vgs");
+		break;
+
+	default:
+		// English
+		lines[0] = Common::Point(65, 84);
+		lines[1] = Common::Point(65, 159);
+		lines[2] = Common::Point(75, 234);
+		numWide = 5;
+		spacing = 20;
+		paper = new ImageFile("paper.vgs");
+		break;
+	}
+	
+	ImageFrame &paperFrame = (*paper)[0];
+	Common::Rect paperBounds(paperFrame._width, paperFrame._height);
+	paperBounds.moveTo((_screen->w() - paperFrame._width) / 2, (_screen->h() - paperFrame._height) / 2);
+
+	for (int line = 0; line<3; ++line) {
+		lines[line].x += paperBounds.left;
+		lines[line].y += paperBounds.top;
+
+		for (int i = 0; i <= numWide; ++i)
+			answers[line][i] = 0;
+	}
+
+	_screen->_backBuffer1.blitFrom(paperFrame, Common::Point(paperBounds.left + _screen->_currentScroll.x, 0));
+
+	// If they have already solved the puzzle, put the answer on the graphic
+	if (readFlags(299)) {
+		for (int line = 0; line < 3; ++line) {
+			cursorPos.y = lines[line].y - _screen->fontHeight() - 2;
+
+			for (i = 0; i < strlen(solutions[line]); ++i) {
+				cursorPos.x = lines[line].x + 8 - _screen->widestChar() / 2 + i * spacing;
+				_screen->gPrint(Common::Point(cursorPos.x + _screen->widestChar() / 2 - 
+					_screen->charWidth(solutions[line][i]) / 2, cursorPos.y), 0, "%c", solutions[line][i]);
+			}
+		}
+	}
+
+	_screen->slamRect(paperBounds);
+	cursorPos = Common::Point(lines[0].x + 8 - _screen->widestChar() / 2, lines[0].y - _screen->fontHeight() - 2);
+	int line = 0;
+
+	// If they have not solved the puzzle, let them solve it here
+	if (!readFlags(299)) {
+		do {
+			while (!_events->kbHit()) {
+				// See if a key or a mouse button is pressed
+				_events->pollEventsAndWait();
+				_events->setButtonState();
+
+				flag = !flag;
+				if (flag) {
+					_screen->_backBuffer1.fillRect(Common::Rect(cursorPos.x + _screen->_currentScroll.x, cursorPos.y, 
+						cursorPos.x + _screen->widestChar() + _screen->_currentScroll.x - 1, cursorPos.y + _screen->fontHeight() - 1), cursorColor);
+					if (answers[line][i])
+						_screen->gPrint(Common::Point(cursorPos.x + _screen->widestChar() / 2 - _screen->charWidth(answers[line][i]) / 2, 
+							cursorPos.y), 0, "%c", answers[line][i]);
+					_screen->slamArea(cursorPos.x, cursorPos.y, _screen->widestChar(), _screen->fontHeight());
+				} else {
+					_screen->setDisplayBounds(Common::Rect(cursorPos.x + _screen->_currentScroll.x, cursorPos.y, 
+						cursorPos.x + _screen->widestChar() + _screen->_currentScroll.x, cursorPos.y + _screen->fontHeight()));
+					_screen->_backBuffer->blitFrom(paperFrame, Common::Point(paperBounds.left + _screen->_currentScroll.x, paperBounds.top));
+					_screen->resetDisplayBounds();
+
+					if (answers[line][i])
+						_screen->gPrint(Common::Point(cursorPos.x + _screen->widestChar() / 2 - _screen->charWidth(answers[line][i]) / 2, 
+							cursorPos.y), 0, "%c", answers[line][i]);
+					_screen->slamArea(cursorPos.x, cursorPos.y, _screen->widestChar(), _screen->fontHeight());
+				}
+
+				if (!_events->kbHit())
+					_events->wait(2);
+			}
+
+			if (_events->kbHit()) {
+				Common::KeyState keyState = _events->getKey();
+
+				if (((toupper(keyState.ascii) >= 'A') && (toupper(keyState.ascii) <= 'Z')) ||
+					((keyState.ascii >= 128) && ((keyState.ascii <= 168) || (keyState.ascii == 225)))) {
+					answers[line][i] = keyState.ascii;
+					keyState.keycode = Common::KEYCODE_RIGHT;
+				}
+
+				_screen->setDisplayBounds(Common::Rect(cursorPos.x + _screen->_currentScroll.x, cursorPos.y, 
+					cursorPos.x + _screen->widestChar() + _screen->_currentScroll.x, cursorPos.y + _screen->fontHeight()));
+				_screen->_backBuffer->blitFrom(paperFrame, Common::Point(paperBounds.left + _screen->_currentScroll.x, paperBounds.top));
+				_screen->resetDisplayBounds();
+
+				if (answers[line][i])
+					_screen->gPrint(Common::Point(cursorPos.x + _screen->widestChar() / 2 - _screen->charWidth(answers[line][i]) / 2,
+						cursorPos.y), 0, "%c", answers[line][i]);
+				_screen->slamArea(cursorPos.x, cursorPos.y, _screen->widestChar(), _screen->fontHeight());
+
+				switch (keyState.keycode) {
+				case Common::KEYCODE_ESCAPE:
+					done = true;
+					break;
+
+				case Common::KEYCODE_UP:
+				case Common::KEYCODE_KP8:
+					if (line) {
+						line--;
+						if (i >= strlen(solutions[line]))
+							i = strlen(solutions[line]) - 1;
+					}
+					break;
+
+				case Common::KEYCODE_DOWN:
+				case Common::KEYCODE_KP2:
+					if (line < 2) {
+						++line;
+						if (i >= strlen(solutions[line]))
+							i = strlen(solutions[line]) - 1;
+					}
+					break;
+
+				case Common::KEYCODE_BACKSPACE:
+				case Common::KEYCODE_LEFT:
+				case Common::KEYCODE_KP4:
+					if (i)
+						--i;
+					else if (line) {
+						--line;
+						
+						i = strlen(solutions[line]) - 1;
+					}
+
+					if (keyState.keycode == Common::KEYCODE_BACKSPACE)
+						answers[line][i] = ' ';
+					break;
+
+				case Common::KEYCODE_RIGHT:
+				case Common::KEYCODE_KP6:
+					if (i < strlen(solutions[line]) - 1)
+						i++;
+					else if (line < 2) {
+						++line;
+						i = 0;
+					}
+					break;
+
+				case Common::KEYCODE_DELETE:
+					answers[line][i] = ' ';
+					break;
+				}
+			}
+
+			cursorPos.x = lines[line].x + 8 - _screen->widestChar() / 2 + i * spacing;
+			cursorPos.y = lines[line].y - _screen->fontHeight() - 2;
+
+			// See if all of their anwers are correct
+			if (!scumm_stricmp(answers[0], solutions[0]) && !scumm_stricmp(answers[1], solutions[1]) && 
+					!scumm_stricmp(answers[2], solutions[2])) {
+				done = true;
+				solved = true;
+			}
+		} while (!done && !shouldQuit());
+	} else {
+		// They have already solved the puzzle, so just display the solution and wait for a mouse or key click
+		do {
+			_events->pollEventsAndWait();
+			_events->setButtonState();
+
+			if ((_events->kbHit()) || (_events->_released) || (_events->_rightReleased)) {
+				done = true;
+				_events->clearEvents();
+			}
+		} while (!done && !shouldQuit());
+	}
+
+	delete paper;
+	_screen->_backBuffer1.blitFrom(_screen->_backBuffer2, Common::Point(paperBounds.left + _screen->_currentScroll.x, paperBounds.top),
+		Common::Rect(paperBounds.left + _screen->_currentScroll.x, paperBounds.top,
+		paperBounds.right + _screen->_currentScroll.x, paperBounds.bottom));
+	_scene->doBgAnim();
+
+	_screen->slamArea(paperBounds.left + _screen->_currentScroll.x, paperBounds.top,
+		paperBounds.width(), paperBounds.height());
+
+	// Don't call the talk files if the puzzle has already been solved
+	if (readFlags(299))
+		return;
+
+	// If they solved the puzzle correctly, set the solved flag and run the appropriate talk scripts
+	if (solved) {
+		_talk->talkTo("SLVE12S.TLK");
+		_talk->talkTo("WATS12X.TLK");
+		setFlags(299);
+	} else {
+		_talk->talkTo("HOLM12X.TLK");
+	}
 }
 
 } // End of namespace Tattoo
