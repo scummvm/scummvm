@@ -350,8 +350,8 @@ void TattooScene::doBgAnim() {
 
 	ui.drawInterface();
 
-	if (vm._creditsActive)
-		vm.blitCredits();
+	if (ui._creditsWidget.active())
+		ui._creditsWidget.blitCredits();
 
 	if (!vm._fastMode)
 		events.wait(3);

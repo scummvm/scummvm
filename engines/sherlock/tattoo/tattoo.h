@@ -25,6 +25,7 @@
 
 #include "sherlock/sherlock.h"
 #include "sherlock/tattoo/tattoo_darts.h"
+#include "sherlock/tattoo/widget_hangman.h"
 
 namespace Sherlock {
 
@@ -51,21 +52,10 @@ enum {
 	FLAG_ALT_MAP_MUSIC		= 525
 };
 
-struct CreditLine {
-	Common::Point _position;
-	int _xOffset;
-	int _width;
-	Common::String _line, _line2;
-
-	CreditLine(const Common::String &line, const Common::Point &pt, int width) :
-		_line(line), _position(pt), _width(width), _xOffset(0) {}
-};
-
 class TattooEngine : public SherlockEngine {
 private:
 	Darts _darts;
-	Common::Array<CreditLine> _creditLines;
-	int _creditSpeed;
+	WidgetHangman _hangmanWidget;
 
 	/**
 	 * Loads the initial palette for the game
@@ -89,33 +79,12 @@ protected:
 	 */
 	virtual void startScene();
 public:
-	bool _creditsActive;
 	bool _runningProlog;
 	bool _fastMode, _allowFastMode;
 	bool _transparentMenus;
 public:
 	TattooEngine(OSystem *syst, const SherlockGameDescription *gameDesc);
 	virtual ~TattooEngine();
-
-	/**
-	 * Initialize and load credit data for display
-	 */
-	void initCredits();
-
-	/**
-	 * Draw credits on the screen
-	 */
-	void drawCredits();
-
-	/**
-	 * Blit the drawn credits to the screen
-	 */
-	void blitCredits();
-
-	/**
-	 * Erase any area of the screen covered by credits
-	 */
-	void eraseCredits();
 
 	void doHangManPuzzle();
 };

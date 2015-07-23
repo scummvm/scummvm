@@ -28,6 +28,7 @@
 #include "sherlock/saveload.h"
 #include "sherlock/screen.h"
 #include "sherlock/user_interface.h"
+#include "sherlock/tattoo/widget_credits.h"
 #include "sherlock/tattoo/widget_inventory.h"
 #include "sherlock/tattoo/widget_lab.h"
 #include "sherlock/tattoo/widget_text.h"
@@ -106,10 +107,11 @@ public:
 	Common::Point _maskOffset;
 	int _maskCounter;
 	ImageFile *_interfaceImages;
-	WidgetText _textWidget;
+	WidgetCredits _creditsWidget;
 	WidgetLab _labWidget;
-	WidgetVerbs _verbsWidget;
+	WidgetText _textWidget;
 	WidgetSceneTooltip _tooltipWidget;
+	WidgetVerbs _verbsWidget;
 public:
 	TattooUserInterface(SherlockEngine *vm);
 	virtual ~TattooUserInterface();

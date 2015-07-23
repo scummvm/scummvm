@@ -31,7 +31,7 @@ namespace Tattoo {
 
 TattooUserInterface::TattooUserInterface(SherlockEngine *vm): UserInterface(vm),
 		_inventoryWidget(vm), _messageWidget(vm), _textWidget(vm), _tooltipWidget(vm), _verbsWidget(vm),
-		_labWidget(vm) {
+		_labWidget(vm), _creditsWidget(vm) {
 	Common::fill(&_lookupTable[0], &_lookupTable[PALETTE_COUNT], 0);
 	Common::fill(&_lookupTable1[0], &_lookupTable1[PALETTE_COUNT], 0);
 	_scrollSize = 0;
@@ -239,8 +239,8 @@ void TattooUserInterface::handleInput() {
 	_keyState.keycode = Common::KEYCODE_INVALID;
 
 	// Check for credits starting
-	if (_vm->readFlags(3000) && !vm._creditsActive)
-		vm.initCredits();
+	if (_vm->readFlags(3000) && !_creditsWidget.active())
+		_creditsWidget.initCredits();
 
 	// Check the mouse positioning
 	if (events.isCursorVisible())
@@ -294,15 +294,14 @@ void TattooUserInterface::handleInput() {
 
 void TattooUserInterface::drawInterface(int bufferNum) {
 	Screen &screen = *_vm->_screen;
-	TattooEngine &vm = *(TattooEngine *)_vm;
 
 	// Draw any active on-screen widgets
 	for (Common::List<WidgetBase *>::iterator i = _widgets.begin(); i != _widgets.end(); ++i)
 		(*i)->draw();
 
 	// Handle drawing credits
-	if (vm._creditsActive)
-		vm.drawCredits();
+	if (_creditsWidget.active())
+		_creditsWidget.drawCredits();
 
 	// Bring the widgets to the screen
 	if (_mask != nullptr)
@@ -649,7 +648,6 @@ void TattooUserInterface::setupBGArea(const byte cMap[PALETTE_SIZE]) {
 }
 
 void TattooUserInterface::doBgAnimEraseBackground() {
-	TattooEngine &vm = *((TattooEngine *)_vm);
 	People &people = *_vm->_people;
 	Scene &scene = *_vm->_scene;
 	Screen &screen = *_vm->_screen;
@@ -714,8 +712,8 @@ void TattooUserInterface::doBgAnimEraseBackground() {
 		}
 
 		// If credits are active, erase the area they cover
-		if (vm._creditsActive)
-			vm.eraseCredits();
+		if (_creditsWidget.active())
+			_creditsWidget.eraseCredits();
 	}
 
 	for (uint idx = 0; idx < scene._bgShapes.size(); ++idx) {

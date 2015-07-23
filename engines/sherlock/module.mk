@@ -33,6 +33,8 @@ MODULE_OBJS = \
 	tattoo/tattoo_talk.o \
 	tattoo/tattoo_user_interface.o \
 	tattoo/widget_base.o \
+	tattoo/widget_credits.o \
+	tattoo/widget_hangman.o \
 	tattoo/widget_inventory.o \
 	tattoo/widget_lab.o \
 	tattoo/widget_talk.o \
