@@ -288,7 +288,28 @@ void MidiPlayer::send(uint32 b) {
 		return;
 
 	if (_musicMode != kMusicModeDisabled) {
-		// Send directly to Accolade/Miles Audio driver
+		// Handle volume control for Simon1 output.
+		if (_musicMode == kMusicModeSimon1) {
+			// The driver does not support any volume control, thus we simply
+			// scale the velocities on note on for now.
+			// TODO: We should probably handle this at output level at some
+			// point. Then we can allow volume changes to affect already
+			// playing notes too. For now this simple change allows us to
+			// have some simple volume control though.
+			if ((b & 0xF0) == 0x90) {
+				byte volume = (b >> 16) & 0x7F;
+
+				if (_current == &_sfx) {
+					volume = volume * _sfxVolume / 255;
+				} else if (_current == &_music) {
+					volume = volume * _musicVolume / 255;
+				}
+
+				b = (b & 0xFF00FFFF) | (volume << 16);
+			}
+		}
+
+		// Send directly to Accolade/Miles/Simon1 Audio driver
 		_driver->send(b);
 		return;
 	}
