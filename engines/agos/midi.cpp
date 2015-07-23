@@ -238,23 +238,16 @@ int MidiPlayer::open(int gameType, bool isDemo) {
 			_map_mt32_to_gm = false;
 			_nativeMT32 = false;
 
-			// Load instrument data.
-			Common::File ibk;
-
-			if (ibk.open("MT_FM.IBK")) {
-				if (ibk.readUint32BE() == 0x49424b1a) {
-					byte *instrumentData = new byte[128 * 16];
-					if (ibk.read(instrumentData, 128 * 16) == 128 * 16) {
-						_driver = new MidiDriver_Simon1_AdLib(instrumentData);
-						ret = _driver->open();
-						if (ret == 0) {
-							_driver->setTimerCallback(this, &onTimer);
-							_driver->send(0xB0, 0x67, 0x01);
-							return 0;
-						}
-					}
-				}
+			_driver = createMidiDriverSimon1AdLib("MT_FM.IBK");
+			if (_driver && _driver->open() == 0) {
+				_driver->setTimerCallback(this, &onTimer);
+				// Like the original, we enable the rhythm support by default.
+				_driver->send(0xB0, 0x67, 0x01);
+				return 0;
 			}
+
+			delete _driver;
+			_driver = nullptr;
 		}
 
 		_musicMode = kMusicModeDisabled;

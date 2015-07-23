@@ -111,6 +111,8 @@ private:
 	static const RhythmMap _rhythmMap[39];
 };
 
+MidiDriver *createMidiDriverSimon1AdLib(const char *instrumentFilename);
+
 } // End of namespace AGOS
 
 #endif

@@ -24,6 +24,7 @@
 
 #include "common/textconsole.h"
 #include "common/util.h"
+#include "common/file.h"
 
 namespace AGOS {
 
@@ -490,5 +491,26 @@ const MidiDriver_Simon1_AdLib::RhythmMap MidiDriver_Simon1_AdLib::_rhythmMap[39]
 	{  0,   0,   0 },
 	{ 13, 125, 100 }
 };
+
+MidiDriver *createMidiDriverSimon1AdLib(const char *instrumentFilename) {
+	// Load instrument data.
+	Common::File ibk;
+
+	if (!ibk.open(instrumentFilename)) {
+		return nullptr;
+	}
+
+	if (ibk.readUint32BE() != 0x49424b1a) {
+		return nullptr;
+	}
+
+	byte *instrumentData = new byte[128 * 16];
+	if (ibk.read(instrumentData, 128 * 16) != 128 * 16) {
+		delete[] instrumentData;
+		return nullptr;
+	}
+
+	return new MidiDriver_Simon1_AdLib(instrumentData);
+}
 
 } // End of namespace AGOS
