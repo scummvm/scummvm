@@ -645,8 +645,6 @@ void Room::executeCommand(int commandId) {
 			walkCursor();
 			return;
 		case 8: {
-			EventsManager &events = *_vm->_events;
-
 			events.forceSetCursor(CURSOR_CROSSHAIRS);
 			_vm->_scripts->_sequence = 10000;
 			_vm->_scripts->searchForSequence();
