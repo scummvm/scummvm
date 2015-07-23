@@ -53,8 +53,6 @@ MidiPlayer::MidiPlayer() {
 	_driver = 0;
 	_map_mt32_to_gm = false;
 
-	_adlibPatches = NULL;
-
 	_adLibMusic = false;
 	_enable_sfx = true;
 	_current = 0;
@@ -84,7 +82,6 @@ MidiPlayer::~MidiPlayer() {
 	}
 	_driver = NULL;
 	clearConstructs();
-	unloadAdlibPatches();
 }
 
 int MidiPlayer::open(int gameType, bool isDemo) {
@@ -278,12 +275,6 @@ int MidiPlayer::open(int gameType, bool isDemo) {
 	if (_nativeMT32)
 		_driver->property(MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
 
-	/* Disabled due to not sounding right, and low volume level
-	if (gameType == GType_SIMON1 && MidiDriver::getMusicType(dev) == MT_ADLIB) {
-			loadAdlibPatches();
-	}
-	*/
-
 	_map_mt32_to_gm = (gameType != GType_SIMON2 && !_nativeMT32);
 
 	ret = _driver->open();
@@ -319,10 +310,8 @@ void MidiPlayer::send(uint32 b) {
 		else if (_current == &_music)
 			volume = volume * _musicVolume / 255;
 		b = (b & 0xFF00FFFF) | (volume << 16);
-	} else if ((b & 0xF0) == 0xC0) {
-		if (_map_mt32_to_gm && !_adlibPatches) {
-			b = (b & 0xFFFF00FF) | (MidiDriver::_mt32ToGm[(b >> 8) & 0xFF] << 8);
-		}
+	} else if ((b & 0xF0) == 0xC0 && _map_mt32_to_gm) {
+		b = (b & 0xFFFF00FF) | (MidiDriver::_mt32ToGm[(b >> 8) & 0xFF] << 8);
 	} else if ((b & 0xFFF0) == 0x007BB0) {
 		// Only respond to an All Notes Off if this channel
 		// has already been allocated.
@@ -353,16 +342,7 @@ void MidiPlayer::send(uint32 b) {
 			else if (_current == &_music)
 				_current->channel[9]->volume(_current->volume[9] * _musicVolume / 255);
 		}
-
-		if ((b & 0xF0) == 0xC0 && _adlibPatches) {
-			// NOTE: In the percussion channel, this function is a
-			//       no-op. Any percussion instruments you hear may
-			//       be the stock ones from adlib.cpp.
-			_driver->sysEx_customInstrument(_current->channel[channel]->getNumber(), 'ADL ', _adlibPatches + 30 * ((b >> 8) & 0xFF));
-		} else {
-			_current->channel[channel]->send(b);
-		}
-
+		_current->channel[channel]->send(b);
 		if ((b & 0xFFF0) == 0x79B0) {
 			// We have received a "Reset All Controllers" message
 			// and passed it on to the MIDI driver. This may or may
@@ -571,47 +551,6 @@ void MidiPlayer::resetVolumeTable() {
 		if (_driver)
 			_driver->send(((_musicVolume >> 1) << 16) | 0x7B0 | i);
 	}
-}
-
-void MidiPlayer::loadAdlibPatches() {
-	Common::File ibk;
-
-	if (!ibk.open("mt_fm.ibk"))
-		return;
-
-	if (ibk.readUint32BE() == 0x49424b1a) {
-		_adlibPatches = new byte[128 * 30];
-		byte *ptr = _adlibPatches;
-
-		memset(_adlibPatches, 0, 128 * 30);
-
-		for (int i = 0; i < 128; i++) {
-			byte instr[16];
-
-			ibk.read(instr, 16);
-
-			ptr[0] = instr[0];   // Modulator Sound Characteristics
-			ptr[1] = instr[2];   // Modulator Scaling/Output Level
-			ptr[2] = ~instr[4];  // Modulator Attack/Decay
-			ptr[3] = ~instr[6];  // Modulator Sustain/Release
-			ptr[4] = instr[8];   // Modulator Wave Select
-			ptr[5] = instr[1];   // Carrier Sound Characteristics
-			ptr[6] = instr[3];   // Carrier Scaling/Output Level
-			ptr[7] = ~instr[5];  // Carrier Attack/Delay
-			ptr[8] = ~instr[7];  // Carrier Sustain/Release
-			ptr[9] = instr[9];   // Carrier Wave Select
-			ptr[10] = instr[10]; // Feedback/Connection
-
-			// The remaining six bytes are reserved for future use
-
-			ptr += 30;
-		}
-	}
-}
-
-void MidiPlayer::unloadAdlibPatches() {
-	delete[] _adlibPatches;
-	_adlibPatches = NULL;
 }
 
 static const int simon1_gmf_size[] = {
