@@ -54,7 +54,7 @@ public:
 };
 
 /**
- * Resources::Resource state provider.
+ * Resource state provider.
  *
  * Maintains a serialized version of the state of the resource trees.
  */

@@ -79,12 +79,13 @@ void GameWindow::onMouseMove(const Common::Point &pos) {
 
 	int16 selectedInventoryItem = _inventory->getSelectedInventoryItem();
 	int16 singlePossibleAction = -1;
+	bool defaultAction = false;
 
-	checkObjectAtPos(pos, selectedInventoryItem, singlePossibleAction);
+	checkObjectAtPos(pos, selectedInventoryItem, singlePossibleAction, defaultAction);
 
 	Common::String mouseHint;
 
-	if (selectedInventoryItem != -1) {
+	if (selectedInventoryItem != -1 && !defaultAction) {
 		VisualImageXMG *cursorImage = StarkGameInterface->getCursorImage(selectedInventoryItem);
 		_cursor->setCursorImage(cursorImage);
 	} else if (_objectUnderCursor) {
@@ -124,8 +125,9 @@ void GameWindow::onClick(const Common::Point &pos) {
 
 	int16 selectedInventoryItem = _inventory->getSelectedInventoryItem();
 	int16 singlePossibleAction = -1;
+	bool defaultAction;
 
-	checkObjectAtPos(pos, selectedInventoryItem, singlePossibleAction);
+	checkObjectAtPos(pos, selectedInventoryItem, singlePossibleAction, defaultAction);
 
 	if (_objectUnderCursor) {
 		if (singlePossibleAction != -1) {
@@ -153,9 +155,10 @@ void GameWindow::onRightClick(const Common::Point &pos) {
 	}
 }
 
-void GameWindow::checkObjectAtPos(Common::Point pos, int16 selectedInventoryItem, int16 &singlePossibleAction) {
+void GameWindow::checkObjectAtPos(Common::Point pos, int16 selectedInventoryItem, int16 &singlePossibleAction, bool &isDefaultAction) {
 	_objectUnderCursor = nullptr;
 	singlePossibleAction = -1;
+	isDefaultAction = false;
 
 	// Render entries are sorted from the farthest to the camera to the nearest
 	// Loop in reverse order
@@ -176,6 +179,7 @@ void GameWindow::checkObjectAtPos(Common::Point pos, int16 selectedInventoryItem
 	if (defaultAction != -1) {
 		// Use the default action if there is one
 		singlePossibleAction = defaultAction;
+		isDefaultAction = true;
 	} else if (selectedInventoryItem != -1) {
 		// Use the selected inventory item if there is one
 		if (StarkGameInterface->itemHasActionAt(_objectUnderCursor, _objectRelativePosition, selectedInventoryItem)) {
