@@ -23,7 +23,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fixed arpeggio effect used in music of Amiga version of Elvira 1.
    - Fixed loading and saving progress in the PC version of Waxworks.
    - Fixed verb area been removed in Amiga versions of Simon the Sorcerer 1.
-   - Added Accolade AdLib & MT32 music drivers for the games:
+   - Added Accolade AdLib & MT-32 music drivers for the games:
      Elvira 1, Elvira 2, Waxworks and Simon the Sorcerer 1 demo.
    - Added Simon the Sorcerer 1 AdLib output. This vastly improves the AdLib
      output and makes it closer to the original.
