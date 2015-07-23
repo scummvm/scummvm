@@ -29,6 +29,7 @@
 #include "agos/midi.h"
 
 #include "agos/drivers/accolade/mididriver.h"
+#include "agos/drivers/simon1/adlib.h"
 // Miles Audio for Simon 2
 #include "audio/miles.h"
 
@@ -109,6 +110,8 @@ int MidiPlayer::open(int gameType, bool isDemo) {
 		if (isDemo) {
 			_musicMode = kMusicModeAccolade;
 			accoladeDriverFilename = "MUSIC.DRV";
+		} else if (Common::File::exists("MT_FM.IBK")) {
+			_musicMode = kMusicModeSimon1;
 		}
 		break;
 	case GType_SIMON2:
@@ -229,6 +232,35 @@ int MidiPlayer::open(int gameType, bool isDemo) {
 			_driver->setTimerCallback(this, &onTimer);
 		}
 		return 0;
+	}
+
+	case kMusicModeSimon1: {
+		// This only handles the original AdLib driver of Simon1.
+		if (musicType == MT_ADLIB) {
+			_adLibMusic = true;
+			_map_mt32_to_gm = false;
+			_nativeMT32 = false;
+
+			// Load instrument data.
+			Common::File ibk;
+
+			if (ibk.open("MT_FM.IBK")) {
+				if (ibk.readUint32BE() == 0x49424b1a) {
+					byte *instrumentData = new byte[128 * 16];
+					if (ibk.read(instrumentData, 128 * 16) == 128 * 16) {
+						_driver = new MidiDriver_Simon1_AdLib(instrumentData);
+						ret = _driver->open();
+						if (ret == 0) {
+							_driver->setTimerCallback(this, &onTimer);
+							_driver->send(0xB0, 0x67, 0x01);
+							return 0;
+						}
+					}
+				}
+			}
+		}
+
+		_musicMode = kMusicModeDisabled;
 	}
 
 	default:

@@ -36,7 +36,8 @@ namespace AGOS {
 enum kMusicMode {
 	kMusicModeDisabled = 0,
 	kMusicModeAccolade = 1,
-	kMusicModeMilesAudio
+	kMusicModeMilesAudio = 2,
+	kMusicModeSimon1 = 3
 };
 
 struct MusicInfo {
