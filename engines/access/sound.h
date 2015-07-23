@@ -56,6 +56,7 @@ private:
 	void playSound(Resource *res, int priority, bool loop);
 public:
 	Common::Array<SoundEntry> _soundTable;
+	bool _playingSound;
 public:
 	SoundManager(AccessEngine *vm, Audio::Mixer *mixer);
 	~SoundManager();
@@ -84,6 +85,7 @@ private:
 
 public:
 	Resource *_music;
+	bool _byte1F781;
 
 public:
 	MusicManager(AccessEngine *vm);

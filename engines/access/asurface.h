@@ -95,6 +95,12 @@ public:
 
 	virtual void drawRect();
 
+	virtual void drawLine(int x1, int y1, int x2, int y2, int col);
+
+	virtual void drawLine();
+
+	virtual void drawBox();
+	
 	virtual void transBlitFrom(ASurface *src, const Common::Point &destPos);
 
 	virtual void transBlitFrom(ASurface *src, const Common::Rect &bounds);

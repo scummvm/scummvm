@@ -39,10 +39,99 @@ Scripts::Scripts(AccessEngine *vm) : Manager(vm) {
 	_choiceStart = 0;
 	_charsOrg = Common::Point(0, 0);
 	_texsOrg = Common::Point(0, 0);
+	setOpcodes();
 }
 
 Scripts::~Scripts() {
 	freeScriptData();
+}
+
+void Scripts::setOpcodes() {
+	COMMAND_LIST[0] = &Scripts::cmdObject;
+	COMMAND_LIST[1] = &Scripts::cmdEndObject;
+	COMMAND_LIST[2] = &Scripts::cmdJumpLook;
+	COMMAND_LIST[3] = &Scripts::cmdJumpHelp;
+	COMMAND_LIST[4] = &Scripts::cmdJumpGet;
+	COMMAND_LIST[5] = &Scripts::cmdJumpMove;
+	COMMAND_LIST[6] = &Scripts::cmdJumpUse;
+	COMMAND_LIST[7] = &Scripts::cmdJumpTalk;
+	COMMAND_LIST[8] = &Scripts::cmdNull;
+	COMMAND_LIST[9] = &Scripts::cmdPrint_v1;
+	COMMAND_LIST[10] = &Scripts::cmdRetPos;
+	COMMAND_LIST[11] = &Scripts::cmdAnim;
+	COMMAND_LIST[12] = &Scripts::cmdSetFlag;
+	COMMAND_LIST[13] = &Scripts::cmdCheckFlag;
+	COMMAND_LIST[14] = &Scripts::cmdGoto;
+	COMMAND_LIST[15] = &Scripts::cmdAddScore;
+	COMMAND_LIST[16] = &Scripts::cmdSetInventory;
+	COMMAND_LIST[17] = &Scripts::cmdCheckInventory;
+	COMMAND_LIST[18] = &Scripts::cmdSetTex;
+	COMMAND_LIST[19] = &Scripts::cmdNewRoom;
+	COMMAND_LIST[20] = &Scripts::cmdConverse;
+	COMMAND_LIST[21] = &Scripts::cmdCheckFrame;
+	COMMAND_LIST[22] = &Scripts::cmdCheckAnim;
+	COMMAND_LIST[23] = &Scripts::cmdSnd;
+	COMMAND_LIST[24] = &Scripts::cmdRetNeg;
+	COMMAND_LIST[25] = &Scripts::cmdRetPos;
+	COMMAND_LIST[26] = &Scripts::cmdCheckLoc;
+	COMMAND_LIST[27] = &Scripts::cmdSetAnim;
+	COMMAND_LIST[28] = &Scripts::cmdDispInv_v1;
+	COMMAND_LIST[29] = &Scripts::cmdSetAbout;
+	COMMAND_LIST[30] = &Scripts::cmdSetTimer;
+	COMMAND_LIST[31] = &Scripts::cmdCheckTimer;
+	COMMAND_LIST[32] = &Scripts::cmdSetTravel;
+	COMMAND_LIST[33] = &Scripts::cmdJumpGoto;
+	COMMAND_LIST[34] = &Scripts::cmdSetVideo;
+	COMMAND_LIST[35] = &Scripts::cmdPlayVideo;
+	COMMAND_LIST[36] = &Scripts::cmdPlotImage;
+	COMMAND_LIST[37] = &Scripts::cmdSetDisplay;
+	COMMAND_LIST[38] = &Scripts::cmdSetBuffer;
+	COMMAND_LIST[39] = &Scripts::cmdSetScroll;
+	COMMAND_LIST[40] = &Scripts::cmdSaveRect;
+	COMMAND_LIST[41] = &Scripts::cmdVideoEnded;
+	COMMAND_LIST[42] = &Scripts::cmdSetBufVid;
+	COMMAND_LIST[43] = &Scripts::cmdPlayBufVid;
+	COMMAND_LIST[44] = &Scripts::cmdRemoveLast;
+	COMMAND_LIST[45] = &Scripts::cmdDoTravel;
+	COMMAND_LIST[46] = &Scripts::cmdCheckAbout;
+	COMMAND_LIST[47] = &Scripts::cmdSpecial;
+	COMMAND_LIST[48] = &Scripts::cmdSetCycle;
+	COMMAND_LIST[49] = &Scripts::cmdCycle;
+	COMMAND_LIST[50] = &Scripts::cmdCharSpeak;
+	COMMAND_LIST[51] = &Scripts::cmdTexSpeak;
+	COMMAND_LIST[52] = &Scripts::cmdTexChoice;
+	COMMAND_LIST[53] = &Scripts::cmdWait;
+	COMMAND_LIST[54] = &Scripts::cmdSetConPos;
+	COMMAND_LIST[55] = &Scripts::cmdCheckVFrame;
+	COMMAND_LIST[56] = &Scripts::cmdJumpChoice;
+	COMMAND_LIST[57] = &Scripts::cmdReturnChoice;
+	COMMAND_LIST[58] = &Scripts::cmdClearBlock;
+	COMMAND_LIST[59] = &Scripts::cmdLoadSound;
+	COMMAND_LIST[60] = &Scripts::cmdFreeSound;
+	COMMAND_LIST[61] = &Scripts::cmdSetVideoSound;
+	COMMAND_LIST[62] = &Scripts::cmdPlayVideoSound;
+	COMMAND_LIST[63] = &Scripts::cmdPrintWatch;
+	COMMAND_LIST[64] = &Scripts::cmdDispAbout;
+	COMMAND_LIST[65] = &Scripts::cmdPushLocation;
+	COMMAND_LIST[66] = &Scripts::cmdCheckTravel;
+	COMMAND_LIST[67] = &Scripts::cmdBlock;
+	COMMAND_LIST[68] = &Scripts::cmdPlayerOff;
+	COMMAND_LIST[69] = &Scripts::cmdPlayerOn;
+	COMMAND_LIST[70] = &Scripts::cmdDead;
+	COMMAND_LIST[71] = &Scripts::cmdFadeOut;
+	COMMAND_LIST[72] = &Scripts::cmdEndVideo;
+	COMMAND_LIST[73] = &Scripts::cmdHelp_v1;
+}
+
+void Scripts::setOpcodes_v2() {
+	COMMAND_LIST[9] = &Scripts::cmdPrint_v2;
+	COMMAND_LIST[15] = &Scripts::cmdSetInventory;
+	COMMAND_LIST[28] = &Scripts::cmdDispInv_v2;
+	COMMAND_LIST[29] = &Scripts::cmdSetTimer;
+	COMMAND_LIST[32] = &Scripts::cmdJumpGoto;
+	COMMAND_LIST[40] = &Scripts::cmdVideoEnded;
+	COMMAND_LIST[45] = COMMAND_LIST[46] = &Scripts::cmdSpecial;
+	COMMAND_LIST[63] = COMMAND_LIST[64] = COMMAND_LIST[66] = COMMAND_LIST[67] = &Scripts::cmdPushLocation;
 }
 
 void Scripts::setScript(Resource *res, bool restartFlag) {
@@ -86,6 +175,50 @@ void Scripts::charLoop() {
 	_endFlag = endFlag;
 }
 
+void Scripts::clearWatch() {
+	_vm->_events->hideCursor();
+	_vm->_screen->_orgX1 = 128;
+	_vm->_screen->_orgY1 = 57;
+	_vm->_screen->_orgX2 = 228;
+	_vm->_screen->_orgY2 = 106;
+	_vm->_screen->_lColor = 0;
+	_vm->_screen->drawRect();
+
+	_vm->_events->showCursor();
+}
+
+void Scripts::printWatch() {
+	_vm->_fonts._charSet._lo = 8;
+	_vm->_fonts._charSet._hi = 2;
+	_vm->_fonts._charFor._lo = 2;
+	_vm->_fonts._charFor._hi = 255;
+
+	_vm->_screen->_maxChars = 19;
+	_vm->_screen->_printOrg = Common::Point(128, 58);
+	_vm->_screen->_printStart = Common::Point(128, 58);
+	clearWatch();
+
+	Common::String msg = readString();
+	Common::String line = "";
+	int width = 0;
+	bool lastLine;
+	do {
+		lastLine = _vm->_fonts._font2.getLine(msg, _vm->_screen->_maxChars * 6, line, width);
+		// Draw the text
+		_vm->_bubbleBox->PRINTSTR(line);
+
+		_vm->_screen->_printOrg.y += 6;
+		_vm->_screen->_printOrg.x = _vm->_screen->_printStart.x;
+
+		if (_vm->_screen->_printOrg.y == 106) {
+			_vm->_events->waitKeyMouse();
+			clearWatch();
+			_vm->_screen->_printOrg.y = _vm->_screen->_printStart.y;
+		}
+	} while (!lastLine);
+	_vm->_events->waitKeyMouse();
+}
+
 void Scripts::findNull() {
 	// No implementation required in ScummVM, the strings in the script files are already skipped by the use of readByte()
 }
@@ -109,37 +242,7 @@ int Scripts::executeScript() {
 	return _returnCode;
 }
 
-typedef void(Scripts::*ScriptMethodPtr)();
-
 void Scripts::executeCommand(int commandIndex) {
-	static const ScriptMethodPtr COMMAND_LIST[] = {
-		&Scripts::cmdObject, &Scripts::cmdEndObject, &Scripts::cmdJumpLook,
-		&Scripts::cmdJumpHelp, &Scripts::cmdJumpGet, &Scripts::cmdJumpMove,
-		&Scripts::cmdJumpUse, &Scripts::cmdJumpTalk, &Scripts::cmdNull,
-		&Scripts::cmdPrint, &Scripts::cmdRetPos, &Scripts::cmdAnim,
-		&Scripts::cmdSetFlag, &Scripts::cmdCheckFlag, &Scripts::cmdGoto,
-		&Scripts::cmdAddScore, &Scripts::cmdSetInventory, &Scripts::cmdCheckInventory,
-		&Scripts::cmdSetTex, &Scripts::cmdNewRoom, &Scripts::cmdConverse,
-		&Scripts::cmdCheckFrame, &Scripts::cmdCheckAnim, &Scripts::cmdSnd,
-		&Scripts::cmdRetNeg, &Scripts::cmdRetPos, &Scripts::cmdCheckLoc,
-		&Scripts::cmdSetAnim, &Scripts::cmdDispInv, &Scripts::cmdSetAbout,
-		&Scripts::cmdSetTimer, &Scripts::cmdCheckTimer, &Scripts::cmdSetTravel,
-		&Scripts::cmdJumpGoto, &Scripts::cmdSetVideo, &Scripts::cmdPlayVideo,
-		&Scripts::cmdPlotImage, &Scripts::cmdSetDisplay, &Scripts::cmdSetBuffer,
-		&Scripts::cmdSetScroll, &Scripts::cmdSaveRect, &Scripts::cmdVideoEnded,
-		&Scripts::cmdSetBufVid, &Scripts::cmdPlayBufVid, &Scripts::cmdRemoveLast,
-		&Scripts::cmdDoTravel, &Scripts::cmdCheckAbout, &Scripts::cmdSpecial,
-		&Scripts::cmdSetCycle, &Scripts::cmdCycle, &Scripts::cmdCharSpeak,
-		&Scripts::cmdTexSpeak, &Scripts::cmdTexChoice, &Scripts::cmdWait,
-		&Scripts::cmdSetConPos, &Scripts::cmdCheckVFrame, &Scripts::cmdJumpChoice,
-		&Scripts::cmdReturnChoice, &Scripts::cmdClearBlock, &Scripts::cmdLoadSound,
-		&Scripts::cmdFreeSound, &Scripts::cmdSetVideoSound, &Scripts::cmdPlayVideoSound,
-		&Scripts::cmdPrintWatch, &Scripts::cmdDispAbout, &Scripts::cmdPushLocation,
-		&Scripts::cmdCheckTravel, &Scripts::cmdBlock, &Scripts::cmdPlayerOff,
-		&Scripts::cmdPlayerOn, &Scripts::cmdDead, &Scripts::cmdFadeOut,
-		&Scripts::cmdEndVideo
-	};
-
 	(this->*COMMAND_LIST[commandIndex])();
 }
 
@@ -198,18 +301,36 @@ void Scripts::cmdNull() {
 
 #define PRINT_TIMER 25
 
-void Scripts::cmdPrint() {
+void Scripts::cmdPrint_v2() {
 	// Get a text line for display
 	Common::String msg = readString();
 	printString(msg);
 }
 
-void Scripts::printString(const Common::String &msg) {
+void Scripts::doCmdPrint_v1(Common::String msg) {
 	_vm->_screen->_printOrg = Common::Point(20, 42);
-	_vm->_screen->_printStart = Common::Point(20, 42);
-	_vm->_timers[PRINT_TIMER]._timer = 50;
-	_vm->_timers[PRINT_TIMER]._initTm = 50;
-	++_vm->_timers[PRINT_TIMER]._flag;
+	_vm->_screen->_printStart = Common::Point(20, 32);
+	_vm->_bubbleBox->placeBubble(msg);
+	_vm->_events->waitKeyMouse();
+	_vm->_events->hideCursor();
+	_vm->_screen->restoreBlock();
+	_vm->_events->showCursor();
+	findNull();
+}
+
+void Scripts::cmdPrint_v1() {
+	Common::String msg = readString();
+	doCmdPrint_v1(msg);
+}
+
+void Scripts::printString(const Common::String &msg) {
+	if (_vm->getGameID() != GType_MartianMemorandum) {
+		_vm->_screen->_printOrg = Common::Point(20, 42);
+		_vm->_screen->_printStart = Common::Point(20, 42);
+		_vm->_timers[PRINT_TIMER]._timer = 50;
+		_vm->_timers[PRINT_TIMER]._initTm = 50;
+		++_vm->_timers[PRINT_TIMER]._flag;
+	}
 
 	// Display the text in a bubble, and wait for a keypress or mouse click
 	_vm->_bubbleBox->placeBubble(msg);
@@ -268,11 +389,6 @@ void Scripts::cmdGoto() {
 }
 
 void Scripts::cmdAddScore() {
-	if (!_vm->isDemo()) {
-		cmdSetInventory();
-		return;
-	}
-
 	_data->skip(1);
 }
 
@@ -338,8 +454,8 @@ void Scripts::cmdNewRoom() {
 	cmdRetPos();
 }
 
-void Scripts::cmdConverse() {
-	_vm->_conversation = _data->readUint16LE();
+void Scripts::converse1(int val) {
+	_vm->_conversation = val;
 	_vm->_room->clearRoom();
 	_vm->freeChar();
 	_vm->_char->loadChar(_vm->_conversation);
@@ -353,6 +469,11 @@ void Scripts::cmdConverse() {
 	if (_vm->_screen->_vesaMode) {
 		_vm->_converseMode = 1;
 	}
+}
+
+void Scripts::cmdConverse() {
+	int val = _data->readUint16LE();
+	converse1(val);
 }
 
 void Scripts::cmdCheckFrame() {
@@ -409,17 +530,19 @@ void Scripts::cmdSetAnim() {
 		_vm->_animation->setAnimTimer(anim);
 }
 
-void Scripts::cmdDispInv() {
+void Scripts::cmdDispInv_v1() {
+	_vm->_inventory->displayInv();
+}
+
+void Scripts::cmdDispInv_v2() {
 	_vm->_inventory->newDisplayInv();
 }
 
 void Scripts::cmdSetAbout() {
-	if (!_vm->isDemo()) {
-		cmdSetTimer();
-		return;
-	}
-
-	error("TODO: DEMO - cmdSetAbout");
+	int idx = _data->readByte();
+	int val = _data->readByte();
+	_vm->ASK[idx] = val;
+	_vm->_startAboutBox = _vm->_startAboutItem = 0;
 }
 
 void Scripts::cmdSetTimer() {
@@ -461,11 +584,10 @@ void Scripts::cmdCheckTimer() {
 }
 
 void Scripts::cmdSetTravel() {
-	if (!_vm->isDemo()) {
-		cmdJumpGoto();
-		return;
-	}
-	error("TODO: DEMO - cmdSetTravel");
+	int idx = _data->readByte();
+	int dest = _data->readByte();
+	_vm->TRAVEL[idx] = dest;
+	_vm->STARTTRAVELITEM = _vm->STARTTRAVELBOX = 0;
 }
 
 void Scripts::cmdJumpGoto() {
@@ -517,11 +639,11 @@ void Scripts::cmdSetScroll() {
 }
 
 void Scripts::cmdSaveRect() {
-	if (!_vm->isDemo()) {
-		cmdVideoEnded();
-		return;
-	}
-	error("TODO: DEMO - cmdSaveRect");
+	int x = _vm->_screen->_lastBoundsX;
+	int y = _vm->_screen->_lastBoundsY;
+	int w = _vm->_screen->_lastBoundsW;
+	int h = _vm->_screen->_lastBoundsH;
+	_vm->_newRects.push_back(Common::Rect(x, y, x + w, x + h));
 }
 
 void Scripts::cmdVideoEnded() {
@@ -553,19 +675,81 @@ void Scripts::cmdRemoveLast() {
 }
 
 void Scripts::cmdDoTravel() {
-	if (!_vm->isDemo()) {
-		cmdSpecial();
+	while (true) {
+		_vm->_travelBox->getList(Martian::TRAVDATA, _vm->TRAVEL);
+		int btnSelected = 0;
+		int boxX = _vm->_travelBox->doBox_v1(_vm->STARTTRAVELITEM, _vm->STARTTRAVELBOX, btnSelected);
+		_vm->STARTTRAVELITEM = _vm->BOXDATASTART;
+		_vm->STARTTRAVELBOX = _vm->BOXSELECTY;
+
+		if (boxX == -1)
+			btnSelected = 2;
+
+		if (btnSelected != 2) {
+			int idx = _vm->_travelBox->_tempListIdx[boxX];
+			if (Martian::_byte1EEB5[idx] != _vm->_byte26CB5) {
+				_vm->_bubbleBox->_bubbleTitle = "TRAVEL";
+				_vm->_bubbleBox->PRINTSTR("YOU CAN'T GET THERE FROM HERE.");
+				continue;
+			}
+			if (_vm->_player->_roomNumber != idx) {
+				_vm->_player->_roomNumber = idx;
+				_vm->_room->_function = FN_CLEAR1;
+				if (Martian::TRAVEL_POS[idx][0] == -1) {
+					_vm->_player->_roomNumber = idx;
+					_vm->_room->_conFlag = true;
+					_vm->_scripts->converse1(Martian::TRAVEL_POS[idx][1]);
+					return;
+				}
+				_vm->_player->_rawPlayer = Common::Point(Martian::TRAVEL_POS[idx][0], Martian::TRAVEL_POS[idx][1]);
+				cmdRetPos();
+				return;
+			}
+		}
+
+		if (_vm->_player->_roomNumber == -1)
+			continue;
+
 		return;
 	}
-	error("TODO: DEMO - cmdDoTravel");
+}
+
+void Scripts::cmdHelp_v1() {
+	int idx = 0;
+	for (int i = 0; i < 40; i++) {
+		byte c = _data->readByte();
+		if (c != 0xFF) {
+			Common::String tmpStr = c + readString();
+			if (Martian::HELP[i]) {
+				_vm->_helpBox->_tempList[idx] = tmpStr;
+				_vm->_helpBox->_tempListIdx[idx] = i;
+				++idx;
+			}
+		} else
+			break;
+	}
+	_vm->_helpBox->_tempList[idx] = "";
+
+	int btnSelected = 0;
+	int boxX = _vm->_helpBox->doBox_v1(0, 0, btnSelected);
+
+	if (boxX == -1)
+		btnSelected = 2;
+
+	if (btnSelected != 2)
+		_vm->_useItem = _vm->_helpBox->_tempListIdx[boxX];
+	else
+		_vm->_useItem = -1;
 }
 
 void Scripts::cmdCheckAbout() {
-	if (!_vm->isDemo()) {
-		cmdSpecial();
-		return;
-	}
-	error("TODO: DEMO - cmdCheckAbout");
+	int idx = _data->readSint16LE();
+	int val = _data->readSint16LE();
+
+	if (_vm->ASK[idx] == val)
+		cmdGoto();
+	else
+		_data->skip(2);
 }
 
 void Scripts::cmdSpecial() {
@@ -574,7 +758,7 @@ void Scripts::cmdSpecial() {
 	int p2 = _data->readUint16LE();
 
 	if (_specialFunction == 1) {
-		if (_vm->_establishTable[p2] == 1)
+		if (_vm->_establishTable[p2])
 			return;
 
 		_vm->_screen->savePalette();
@@ -616,33 +800,48 @@ void Scripts::cmdCharSpeak() {
 void Scripts::cmdTexSpeak() {
 	_vm->_screen->_printOrg = _texsOrg;
 	_vm->_screen->_printStart = _texsOrg;
-	_vm->_screen->_maxChars = 20;
+	_vm->_screen->_maxChars = (_vm->getGameID() == GType_MartianMemorandum) ? 23 : 20;
 
 	byte v;
 	Common::String tmpStr = "";
 	while ((v = _data->readByte()) != 0)
 		tmpStr += (char)v;
 
-	_vm->_bubbleBox->_bubbleDisplStr = Common::String("JASON");
+	if (_vm->getGameID() == GType_MartianMemorandum)
+		_vm->_bubbleBox->_bubbleDisplStr = Common::String("TEX");
+	else
+		_vm->_bubbleBox->_bubbleDisplStr = Common::String("JASON");
+
 	_vm->_bubbleBox->placeBubble1(tmpStr);
 	findNull();
 }
 
 #define BTN_COUNT 6
 void Scripts::cmdTexChoice() {
-	static const int BTN_RANGES[BTN_COUNT][2] = {
-		{ 0, 76 }, { 77, 154 }, { 155, 232 }, { 233, 276 }, { 0, 0 },
-		{ 277, 319 }
+	// MM is defining 2 times the last range in the original.
+	static const int BTN_RANGES_v1[BTN_COUNT][2] = {
+		{ 0, 60 }, { 64, 124 }, { 129, 192 }, { 194, 227 }, { 233, 292 }, { 297, 319 }
 	};
+
+	static const int BTN_RANGES_v2[BTN_COUNT][2] = {
+		{ 0, 76 }, { 77, 154 }, { 155, 232 }, { 233, 276 }, { 0, 0 }, { 277, 319 }
+	};
+
 
 	_vm->_oldRects.clear();
 	_choiceStart = _data->pos() - 1;
 	_vm->_fonts._charSet._lo = 1;
 	_vm->_fonts._charSet._hi = 8;
-	_vm->_fonts._charFor._lo = 55;
 	_vm->_fonts._charFor._hi = 255;
+	
+	if (_vm->getGameID() == GType_MartianMemorandum) {
+		_vm->_fonts._charFor._lo = 247;
+		_vm->_screen->_maxChars = 23;
+	} else {
+		_vm->_fonts._charFor._lo = 55;
+		_vm->_screen->_maxChars = 20;
+	}
 
-	_vm->_screen->_maxChars = 20;
 	_vm->_screen->_printOrg = _texsOrg;
 	_vm->_screen->_printStart = _texsOrg;
 
@@ -659,7 +858,7 @@ void Scripts::cmdTexChoice() {
 
 	Common::Array<Common::Rect> responseCoords;
 	responseCoords.push_back(_vm->_bubbleBox->_bounds);
-	_vm->_screen->_printOrg.y = _vm->_bubbleBox->_bounds.bottom + 11;
+	_vm->_screen->_printOrg.y = _vm->_bubbleBox->_bounds.bottom + ((_vm->getGameID() == GType_MartianMemorandum) ? 20 : 11);
 
 	findNull();
 
@@ -672,7 +871,7 @@ void Scripts::cmdTexChoice() {
 		_vm->_bubbleBox->calcBubble(tmpStr);
 		_vm->_bubbleBox->printBubble(tmpStr);
 		responseCoords.push_back(_vm->_bubbleBox->_bounds);
-		_vm->_screen->_printOrg.y = _vm->_bubbleBox->_bounds.bottom + 11;
+		_vm->_screen->_printOrg.y = _vm->_bubbleBox->_bounds.bottom + ((_vm->getGameID() == GType_MartianMemorandum) ? 20 : 11);
 	}
 
 	findNull();
@@ -687,7 +886,7 @@ void Scripts::cmdTexChoice() {
 		_vm->_bubbleBox->calcBubble(tmpStr);
 		_vm->_bubbleBox->printBubble(tmpStr);
 		responseCoords.push_back(_vm->_bubbleBox->_bounds);
-		_vm->_screen->_printOrg.y = _vm->_bubbleBox->_bounds.bottom + 11;
+		_vm->_screen->_printOrg.y = _vm->_bubbleBox->_bounds.bottom + ((_vm->getGameID() == GType_MartianMemorandum) ? 20 : 11);
 	}
 
 	findNull();
@@ -702,11 +901,13 @@ void Scripts::cmdTexChoice() {
 
 		_vm->_bubbleBox->_bubbleDisplStr = _vm->_bubbleBox->_bubbleTitle;
 		if (_vm->_events->_leftButton) {
-			if (_vm->_events->_mouseRow >= 22) {
+			if (_vm->_events->_mouseRow >= ((_vm->getGameID() == GType_MartianMemorandum) ? 23 : 22)) {
 				_vm->_events->debounceLeft();
 				int x = _vm->_events->_mousePos.x;
 				for (int i = 0; i < BTN_COUNT; i++) {
-					if ((x >= BTN_RANGES[i][0]) && (x < BTN_RANGES[i][1])) {
+					if (((_vm->getGameID() == GType_MartianMemorandum) && (x >= BTN_RANGES_v1[i][0]) && (x < BTN_RANGES_v1[i][1])) 
+					||  ((_vm->getGameID() == GType_Amazon) && (x >= BTN_RANGES_v2[i][0]) && (x < BTN_RANGES_v2[i][1]))) {
+
 						choice = i;
 						break;
 					}
@@ -827,39 +1028,46 @@ void Scripts::cmdPlayVideoSound() {
 }
 
 void Scripts::cmdPrintWatch() {
-	if (!_vm->isDemo()) {
-		cmdPushLocation();
-		return;
-	}
-	error("TODO: DEMO - cmdPrintWatch");
+	printWatch();
+	findNull();
 }
 
 void Scripts::cmdDispAbout() {
-	if (!_vm->isDemo()) {
-		cmdPushLocation();
-		return;
-	}
-	error("TODO: DEMO - cmdDispAbout");
+	_vm->_travelBox->getList(Martian::ASKTBL, _vm->ASK);
+	int btnSelected = 0;
+	int boxX = _vm->_aboutBox->doBox_v1(_vm->_startAboutItem, _vm->_startAboutBox, btnSelected);
+	_vm->_startAboutItem = _vm->BOXDATASTART;
+	_vm->_startAboutBox = _vm->BOXSELECTY;
+
+	if (boxX == -1)
+		btnSelected = 2;
+
+	if (btnSelected == 2)
+		_vm->_useItem = -1;
+	else
+		_vm->_useItem = _vm->_travelBox->_tempListIdx[boxX];		
 }
 
 void Scripts::cmdPushLocation() {
-	error("TODO cmdPushLocation");
+	_choiceStart = _data->pos() - 1;
 }
 
 void Scripts::cmdCheckTravel() {
-	if (!_vm->isDemo()) {
-		cmdPushLocation();
-		return;
-	}
-	error("TODO: DEMO - cmdCheckTravel");
+	int idx = _data->readSint16LE();
+	int val = _data->readUint16LE();
+
+	if (_vm->TRAVEL[idx] == val)
+		cmdGoto();
+	else
+		_data->skip(2);
 }
 
 void Scripts::cmdBlock() {
-	if (!_vm->isDemo()) {
-		cmdPushLocation();
-		return;
-	}
-	error("TODO: DEMO - cmdBlock");
+	error("TODO: cmdBlock");
+	/*int val1 = */_data->readSint16LE();
+	/*int val2 = */_data->readUint16LE();
+	/*int val3 = */_data->readSint16LE();
+	/*int val4 = */_data->readUint16LE();
 }
 
 void Scripts::cmdPlayerOff() {

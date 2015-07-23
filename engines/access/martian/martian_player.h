@@ -20,19 +20,29 @@
  *
  */
 
-#ifndef ACCESS_RESOURCES_H
-#define ACCESS_RESOURCES_H
+#ifndef ACCESS_MARTIAN_PLAYER_H
+#define ACCESS_MARTIAN_PLAYER_H
 
 #include "common/scummsys.h"
+#include "access/player.h"
 
 namespace Access {
 
-extern const byte INITIAL_PALETTE[18 * 3];
+namespace Martian {
 
-extern const char *const GENERAL_MESSAGES[];
+class MartianEngine;
 
-extern const int INVCOORDS[][4];
+class MartianPlayer : public Player {
+private:
+	MartianEngine *_game;
+public:
+	MartianPlayer(AccessEngine *vm);
+	Resource *_texPal;
+	virtual void load();
+};
+
+} // End of namespace Martian
 
 } // End of namespace Access
 
-#endif /* ACCESS_RESOURCES_H */
+#endif /* ACCESS_MARTIAN_PLAYER_H */

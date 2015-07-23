@@ -45,6 +45,19 @@ struct RiverStruct {
 extern const char *const FILENAMES[];
 extern const char *const FILENAMES_DEMO[];
 
+extern const int SIDEOFFR[];
+extern const int SIDEOFFL[];
+extern const int SIDEOFFU[];
+extern const int SIDEOFFD[];
+extern const int DIAGOFFURX[];
+extern const int DIAGOFFURY[];
+extern const int DIAGOFFDRX[];
+extern const int DIAGOFFDRY[];
+extern const int DIAGOFFULX[];
+extern const int DIAGOFFULY[];
+extern const int DIAGOFFDLX[];
+extern const int DIAGOFFDLY[];
+
 extern const byte *const CURSORS[10];
 
 extern const int TRAVEL_POS[][2];
@@ -138,11 +151,11 @@ extern const int HELP1COORDS[2][4];
 extern const int RIVER1OBJ[23][4];
 
 extern const int CAST_END_OBJ[26][4];
-
 extern const int CAST_END_OBJ1[4][4];
 
-} // End of namespace Amazon
+extern const int RMOUSE[10][2];
 
+} // End of namespace Amazon
 } // End of namespace Access
 
 #endif /* ACCESS_AMAZON_RESOURCES_H */

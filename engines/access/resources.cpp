@@ -46,24 +46,6 @@ const byte INITIAL_PALETTE[18 * 3] = {
 	0x00, 0x00, 0x00
 };
 
-const int SIDEOFFR[] = { 5, 5, 5, 5, 5, 5, 5, 5, 0 };
-const int SIDEOFFL[] = { 5, 5, 5, 5, 5, 5, 5, 5, 0 };
-const int SIDEOFFU[] = { 2, 2, 2, 2, 2, 2, 2, 2, 0 };
-const int SIDEOFFD[] = { 2, 2, 2, 2, 2, 2, 2, 2, 0 };
-const int DIAGOFFURX[] = { 4, 5, 2, 2, 3, 4, 2, 2, 0 };
-const int DIAGOFFURY[] = { 2, 3, 2, 2, 2, 3, 1, 1, 0 };
-const int DIAGOFFDRX[] = { 4, 5, 4, 3, 5, 4, 5, 1, 0 };
-const int DIAGOFFDRY[] = { 3, 2, 1, 2, 2, 1, 2, 1, 0 };
-const int DIAGOFFULX[] = { 4, 5, 4, 3, 3, 2, 2, 2, 0 };
-const int DIAGOFFULY[] = { 3, 3, 1, 2, 2, 1, 1, 1, 0 };
-const int DIAGOFFDLX[] = { 4, 5, 3, 3, 5, 4, 6, 1, 0 };
-const int DIAGOFFDLY[] = { 2, 2, 1, 2, 3, 1, 2, 1, 0 };
-
-const int RMOUSE[10][2] = {
-	{ 0, 35 }, { 0, 0 }, { 36, 70 }, { 71, 106 }, { 107, 141 },
-	{ 142, 177 }, { 178, 212 }, { 213, 248 }, { 249, 283 }, { 284, 318 }
-};
-
 const char *const GENERAL_MESSAGES[] = {
 	"LOOKING THERE REVEALS NOTHING OF INTEREST.", // LOOK_MESSAGE
 	"THAT DOESN'T OPEN.",               // OPEN_MESSAGE

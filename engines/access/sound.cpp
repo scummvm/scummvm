@@ -200,6 +200,7 @@ MusicManager::MusicManager(AccessEngine *vm) : _vm(vm) {
 	_tempMusic = nullptr;
 	_isLooping = false;
 	_driver = nullptr;
+	_byte1F781 = false;
 
 	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_MT32);
 	MusicType musicType = MidiDriver::getMusicType(dev);
@@ -212,13 +213,17 @@ MusicManager::MusicManager(AccessEngine *vm) : _vm(vm) {
 	//
 	switch (musicType) {
 	case MT_ADLIB: {
-		Resource   *midiDrvResource = _vm->_files->loadFile(92, 1);
-		Common::MemoryReadStream *adLibInstrumentStream = new Common::MemoryReadStream(midiDrvResource->data(), midiDrvResource->_size);
+		if (_vm->getGameID() == GType_Amazon) {
+			Resource   *midiDrvResource = _vm->_files->loadFile(92, 1);
+			Common::MemoryReadStream *adLibInstrumentStream = new Common::MemoryReadStream(midiDrvResource->data(), midiDrvResource->_size);
 
-		_driver = Audio::MidiDriver_Miles_AdLib_create("", "", adLibInstrumentStream);
+			_driver = Audio::MidiDriver_Miles_AdLib_create("", "", adLibInstrumentStream);
 
-		delete midiDrvResource;
-		delete adLibInstrumentStream;
+			delete midiDrvResource;
+			delete adLibInstrumentStream;
+		} else {
+			MidiPlayer::createDriver();
+		}
 		break;
 	}
 	case MT_MT32:
