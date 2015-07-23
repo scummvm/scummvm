@@ -142,8 +142,6 @@ public:
 
 	void fill(uint16 color);
 
-	void maskArea(const ImageFrame &src, const Common::Point &pt);
-
 	/**
 	 * Clear the surface
 	 */

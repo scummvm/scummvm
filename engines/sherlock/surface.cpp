@@ -299,9 +299,4 @@ void Surface::writeFancyString(const Common::String &str, const Common::Point &p
 	writeString(str, Common::Point(pt.x + 1, pt.y + 1), overrideColor2);
 }
 
-void Surface::maskArea(const ImageFrame &src, const Common::Point &pt) {
-	// TODO
-	error("TODO: maskArea");
-}
-
 } // End of namespace Sherlock

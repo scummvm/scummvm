@@ -103,7 +103,7 @@ public:
 	Common::KeyState _keyState;
 	Common::Point _lookPos;
 	ScrollHighlight _scrollHighlight;
-	ImageFile *_mask, *_mask1;
+	Common::SeekableReadStream *_mask, *_mask1;
 	Common::Point _maskOffset;
 	int _maskCounter;
 	ImageFile *_interfaceImages;
@@ -179,6 +179,13 @@ public:
 	void doBgAnimEraseBackground();
 
 	void drawMaskArea(bool mode);
+
+	/**
+	 * Takes the data passed in the image and apply it to the surface at the given position.
+	 * The src mask data is encoded with a different color for each item. To highlight one,
+	 the runs that do not match the highlight number will be darkened
+	 */
+	void maskArea(Common::SeekableReadStream &mask, const Common::Point &pt);
 
 	/**
 	 * Translate a given area of the back buffer to greyscale shading

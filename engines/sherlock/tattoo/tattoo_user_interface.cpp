@@ -750,42 +750,69 @@ void TattooUserInterface::doBgAnimEraseBackground() {
 
 void TattooUserInterface::drawMaskArea(bool mode) {
 	Scene &scene = *_vm->_scene;
-	Screen &screen = *_vm->_screen;
 	int xp = mode ? _maskOffset.x : 0;
 
 	if (_mask != nullptr) {
 		switch (scene._currentScene) {
 		case 7:
-			screen._backBuffer1.maskArea((*_mask)[0], Common::Point(_maskOffset.x - SHERLOCK_SCREEN_WIDTH, 110));
-			screen._backBuffer1.maskArea((*_mask)[0], Common::Point(_maskOffset.x, 110));
-			screen._backBuffer1.maskArea((*_mask)[0], Common::Point(_maskOffset.x + SHERLOCK_SCREEN_WIDTH, 110));
+			maskArea(*_mask, Common::Point(_maskOffset.x - SHERLOCK_SCREEN_WIDTH, 110));
+			maskArea(*_mask, Common::Point(_maskOffset.x, 110));
+			maskArea(*_mask, Common::Point(_maskOffset.x + SHERLOCK_SCREEN_WIDTH, 110));
 			break;
 
 		case 8:
-			screen._backBuffer1.maskArea((*_mask)[0], Common::Point(_maskOffset.x - SHERLOCK_SCREEN_WIDTH, 180));
-			screen._backBuffer1.maskArea((*_mask)[0], Common::Point(_maskOffset.x, 180));
-			screen._backBuffer1.maskArea((*_mask)[0], Common::Point(_maskOffset.x + SHERLOCK_SCREEN_WIDTH, 180));
+			maskArea(*_mask, Common::Point(_maskOffset.x - SHERLOCK_SCREEN_WIDTH, 180));
+			maskArea(*_mask, Common::Point(_maskOffset.x, 180));
+			maskArea(*_mask, Common::Point(_maskOffset.x + SHERLOCK_SCREEN_WIDTH, 180));
 			if (!_vm->readFlags(880))
-				screen._backBuffer1.maskArea((*_mask1)[0], Common::Point(940, 300));
+				maskArea(*_mask1, Common::Point(940, 300));
 			break;
 
 		case 18:
-			screen._backBuffer1.maskArea((*_mask)[0], Common::Point(xp, 203));
+			maskArea(*_mask, Common::Point(xp, 203));
 			if (!_vm->readFlags(189))
-				screen._backBuffer1.maskArea((*_mask1)[0], Common::Point(124 + xp, 239));
+				maskArea(*_mask1, Common::Point(124 + xp, 239));
 			break;
 
 		case 53:
-			screen._backBuffer1.maskArea((*_mask)[0], Common::Point(_maskOffset.x, 110));
+			maskArea(*_mask, Common::Point(_maskOffset.x, 110));
 			if (mode)
-				screen._backBuffer1.maskArea((*_mask)[0], Common::Point(_maskOffset.x - SHERLOCK_SCREEN_WIDTH, 110));
+				maskArea(*_mask, Common::Point(_maskOffset.x - SHERLOCK_SCREEN_WIDTH, 110));
 			break;
 
 		case 68:
-			screen._backBuffer1.maskArea((*_mask)[0], Common::Point(xp, 203));
-			screen._backBuffer1.maskArea((*_mask1)[0], Common::Point(124 + xp, 239));
+			maskArea(*_mask, Common::Point(xp, 203));
+			maskArea(*_mask1, Common::Point(124 + xp, 239));
 			break;
 		}
+	}
+}
+
+void TattooUserInterface::maskArea(Common::SeekableReadStream &mask, const Common::Point &pt) {
+	Screen &screen = *_vm->_screen;
+	Surface &bb1 = screen._backBuffer1;
+	mask.seek(0);
+	int xSize = mask.readUint16LE();
+	int ySize = mask.readUint16LE();
+	int pixel, len, xp, yp;
+
+	for (yp = 0; yp < ySize; ++yp) {
+		byte *ptr = bb1.getBasePtr(pt.x, pt.y + yp);
+
+		for (xp = 0; xp < xSize;) {
+			// The mask data consists of pairs of pixel/lengths, where all non-zero pixels means that the
+			// given pixel on the back buffer is darkened (the mask pixel value isn't otherwise used)
+			pixel = mask.readByte();
+			len = mask.readByte();
+
+			for (; len > 0; --len, ++xp, ++ptr) {
+				if (pixel && (pt.x + xp) >= screen._currentScroll.x && (pt.x + xp) < (screen._currentScroll.x + SHERLOCK_SCREEN_WIDTH)) {
+					*ptr = _lookupTable1[*ptr];
+				}
+			}
+		}
+
+		assert(xp == xSize);
 	}
 }
 
@@ -793,7 +820,7 @@ void TattooUserInterface::makeBGArea(const Common::Rect &r) {
 	Screen &screen = *_vm->_screen;
 
 	for (int yp = r.top; yp < r.bottom; ++yp) {
-		byte *ptr = screen._backBuffer1.getBasePtr(r.left, yp);
+		byte *ptr = screen._backBuffer1.getBasePtr(r.left + screen._currentScroll.x, yp);
 
 		for (int xp = r.left; xp < r.right; ++xp, ++ptr)
 			*ptr = _lookupTable[*ptr];
