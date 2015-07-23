@@ -31,7 +31,7 @@ namespace Tattoo {
 
 TattooUserInterface::TattooUserInterface(SherlockEngine *vm): UserInterface(vm),
 		_inventoryWidget(vm), _messageWidget(vm), _textWidget(vm), _tooltipWidget(vm), _verbsWidget(vm),
-		_labWidget(vm), _creditsWidget(vm) {
+		_labWidget(vm), _creditsWidget(vm), _optionsWidget(vm) {
 	Common::fill(&_lookupTable[0], &_lookupTable[PALETTE_COUNT], 0);
 	Common::fill(&_lookupTable1[0], &_lookupTable1[PALETTE_COUNT], 0);
 	_scrollSize = 0;
@@ -406,8 +406,7 @@ void TattooUserInterface::doStandardControl() {
 
 	case Common::KEYCODE_F4:
 		// Display options
-		freeMenu();
-		doControls();
+		_optionsWidget.summonWindow();
 		return;
 
 	case Common::KEYCODE_F10:
@@ -562,7 +561,7 @@ void TattooUserInterface::doInventory(int mode) {
 }
 
 void TattooUserInterface::doControls() {
-	// TODO
+	_optionsWidget.load();
 }
 
 void TattooUserInterface::pickUpObject(int objNum) {

@@ -31,6 +31,7 @@
 #include "sherlock/tattoo/widget_credits.h"
 #include "sherlock/tattoo/widget_inventory.h"
 #include "sherlock/tattoo/widget_lab.h"
+#include "sherlock/tattoo/widget_options.h"
 #include "sherlock/tattoo/widget_text.h"
 #include "sherlock/tattoo/widget_tooltip.h"
 #include "sherlock/tattoo/widget_verbs.h"
@@ -109,6 +110,7 @@ public:
 	ImageFile *_interfaceImages;
 	WidgetCredits _creditsWidget;
 	WidgetLab _labWidget;
+	WidgetOptions _optionsWidget;
 	WidgetText _textWidget;
 	WidgetSceneTooltip _tooltipWidget;
 	WidgetVerbs _verbsWidget;

@@ -422,7 +422,6 @@ void TattooMap::showCloseUp(int closeUpNum) {
 	}
 
 	// Handle final drawing of closeup
-	// TODO: Handle scrolling
 	Common::Rect r(SHERLOCK_SCREEN_WIDTH / 2 - pic[0]._width / 2, SHERLOCK_SCREEN_HEIGHT / 2 - pic[0]._height / 2,
 		SHERLOCK_SCREEN_WIDTH / 2 - pic[0]._width / 2 + pic[0]._width,
 		SHERLOCK_SCREEN_HEIGHT / 2 - pic[0]._height / 2 + pic[0]._height);
