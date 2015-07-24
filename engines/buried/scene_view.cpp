@@ -59,7 +59,6 @@ SceneViewWindow::SceneViewWindow(BuriedEngine *vm, Window *parent) : Window(vm, 
 	_asyncMovieStartFrame = 0;
 	_loopAsyncMovie = false;
 	_paused = false;
-	_useWaitCursor = false;
 	_cycleEnabled = ((FrameWindow *)(_parent->getParent()))->isFrameCyclingDefault();
 	_disableArthur = false;
 	_demoSoundEffectHandle = -1;
@@ -1489,7 +1488,7 @@ bool SceneViewWindow::getCurrentSceneLocation(Location &location) {
 }
 
 bool SceneViewWindow::playSynchronousAnimation(int animationID) {
-	_useWaitCursor = true;
+	Cursor oldCursor = _vm->_gfx->setCursor(kCursorWait);
 
 	Common::Array<AnimEvent> animDatabase = getAnimationDatabase(_currentScene->_staticData.location.timeZone, _currentScene->_staticData.location.environment);
 
@@ -1556,12 +1555,12 @@ bool SceneViewWindow::playSynchronousAnimation(int animationID) {
 		return false;
 
 	delete animationMovie;
-	_useWaitCursor = false;
+	_vm->_gfx->setCursor(oldCursor);
 	return true;
 }
 
 bool SceneViewWindow::playSynchronousAnimationExtern(int animationID) {
-	_useWaitCursor = true;
+	Cursor oldCursor = _vm->_gfx->setCursor(kCursorWait);
 
 	VideoWindow *animationMovie = new VideoWindow(_vm, this);
 	Common::String fileName = _vm->getFilePath(animationID);
@@ -1603,12 +1602,12 @@ bool SceneViewWindow::playSynchronousAnimationExtern(int animationID) {
 		return false;
 
 	delete animationMovie;
-	_useWaitCursor = false;
+	_vm->_gfx->setCursor(oldCursor);
 	return true;
 }
 
 bool SceneViewWindow::playPlacedSynchronousAnimation(int animationID, int left, int top) {
-	_useWaitCursor = true;
+	Cursor oldCursor = _vm->_gfx->setCursor(kCursorWait);
 
 	Common::Array<AnimEvent> animDatabase = getAnimationDatabase(_currentScene->_staticData.location.timeZone, _currentScene->_staticData.location.environment);
 
@@ -1677,12 +1676,12 @@ bool SceneViewWindow::playPlacedSynchronousAnimation(int animationID, int left, 
 		return false;
 
 	delete animationMovie;
-	_useWaitCursor = false;
+	_vm->_gfx->setCursor(oldCursor);
 	return true;
 }
 
 bool SceneViewWindow::playClippedSynchronousAnimation(int animationID, int left, int top, int right, int bottom) {
-	_useWaitCursor = true;
+	Cursor oldCursor = _vm->_gfx->setCursor(kCursorWait);
 
 	Common::Array<AnimEvent> animDatabase = getAnimationDatabase(_currentScene->_staticData.location.timeZone, _currentScene->_staticData.location.environment);
 
@@ -1754,7 +1753,7 @@ bool SceneViewWindow::playClippedSynchronousAnimation(int animationID, int left,
 		return false;
 
 	delete animationMovie;
-	_useWaitCursor = false;
+	_vm->_gfx->setCursor(oldCursor);
 	return true;
 }
 
@@ -2546,11 +2545,6 @@ void SceneViewWindow::onTimer(uint timer) {
 }
 
 bool SceneViewWindow::onSetCursor(uint message) {
-	if (_useWaitCursor) {
-		_vm->_gfx->setCursor(kCursorWait);
-		return true;
-	}
-
 	// Check the scene cursor callback function to see if we need to change the cursor
 	int newCursor = (int)kCursorArrow;
 	if (_currentScene)
