@@ -165,7 +165,7 @@ void MartianEngine::doSpecial5(int param1) {
 }
 
 void MartianEngine::playGame() {
-	// Initialize Amazon game-specific objects
+	// Initialize Martian Memorandum game-specific objects
 	initObjects();
 
 	// Setup the game
