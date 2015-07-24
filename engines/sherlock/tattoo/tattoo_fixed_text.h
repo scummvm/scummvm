@@ -87,7 +87,18 @@ enum FixedTextId {
 
 	kFixedText_Apply,
 	kFixedText_Water,
-	kFixedText_Heat
+	kFixedText_Heat,
+	kFixedText_LoadGame,
+	kFixedText_SaveGame,
+	kFixedText_Music,
+	kFixedText_SoundEffects,
+	kFixedText_Voices,
+	kFixedText_TextWindows,
+	kFixedText_TransparentMenus,
+	kFixedText_ChangeFont,
+	kFixedText_Off,
+	kFixedText_On,
+	kFixedText_Quit
 };
 
 class TattooFixedText: public FixedText {

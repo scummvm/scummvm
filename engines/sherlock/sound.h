@@ -59,6 +59,7 @@ public:
 	bool _soundPlaying;
 	bool *_soundIsOn;
 	byte *_digiBuf;
+	int _soundVolume;
 
 	Common::String _talkSoundFile;
 public:

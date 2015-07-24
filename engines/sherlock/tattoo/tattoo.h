@@ -82,6 +82,7 @@ public:
 	bool _runningProlog;
 	bool _fastMode, _allowFastMode;
 	bool _transparentMenus;
+	bool _textWindowsOn;
 public:
 	TattooEngine(OSystem *syst, const SherlockGameDescription *gameDesc);
 	virtual ~TattooEngine();

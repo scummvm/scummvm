@@ -87,7 +87,17 @@ static const char *const FIXED_TEXT_ENGLISH[] = {
 
 	"Apply",
 	"Water",
-	"Heat"
+	"Heat",
+	"Load Game",
+	"Save Game",
+	"Music",
+	"Sound Effects",
+	"Voices",
+	"Text Windows",
+	"Transparent Menus",
+	"Change Font Style",
+	"Off",
+	"On"
 };
 
 TattooFixedText::TattooFixedText(SherlockEngine *vm) : FixedText(vm) {

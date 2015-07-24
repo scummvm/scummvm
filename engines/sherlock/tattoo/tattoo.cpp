@@ -39,6 +39,7 @@ TattooEngine::TattooEngine(OSystem *syst, const SherlockGameDescription *gameDes
 	_fastMode = false;
 	_allowFastMode = true;
 	_transparentMenus = true;
+	_textWindowsOn = true;
 }
 
 TattooEngine::~TattooEngine() {

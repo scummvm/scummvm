@@ -207,6 +207,10 @@ void WidgetBase::makeInfoArea() {
 	makeInfoArea(_surface);
 }
 
+void WidgetBase::drawDialogRect(const Common::Rect &r, bool raised) {
+	static_cast<TattooUserInterface *>(_vm->_ui)->drawDialogRect(_surface, r, raised);
+}
+
 void WidgetBase::checkTabbingKeys(int numOptions) {
 }
 

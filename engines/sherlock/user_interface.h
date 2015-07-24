@@ -53,7 +53,8 @@ enum MenuMode {
 	// Rose Tattoo specific
 	LAB_MODE		= 20,
 	MESSAGE_MODE	= 21,
-	VERB_MODE		= 22
+	VERB_MODE		= 22,
+	OPTION_MODE		= 23
 };
 
 class UserInterface {

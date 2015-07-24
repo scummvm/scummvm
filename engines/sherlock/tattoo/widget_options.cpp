@@ -22,20 +22,174 @@
 
 #include "sherlock/tattoo/widget_options.h"
 #include "sherlock/tattoo/tattoo.h"
+#include "sherlock/tattoo/tattoo_fixed_text.h"
+#include "sherlock/tattoo/tattoo_user_interface.h"
 
 namespace Sherlock {
 
 namespace Tattoo {
 
 WidgetOptions::WidgetOptions(SherlockEngine *vm) : WidgetBase(vm) {
+	_midiSliderX = _digiSliderX = 0;
+	_selector = _oldSelector = -1;
 }
 
 void WidgetOptions::load() {
+	Events &events = *_vm->_events;
+	Music &music = *_vm->_music;
+	Sound &sound = *_vm->_sound;
+	Common::Point mousePos = events.mousePos();
 
+	// Set bounds for the dialog
+	Common::String widestString = Common::String::format("%s %s", FIXED(TransparentMenus), FIXED(Off));
+	_bounds = Common::Rect(_surface.stringWidth(widestString) + _surface.widestChar() * 2 + 6,
+		(_surface.fontHeight() + 7) * 11 + 3);
+	_bounds.moveTo(mousePos.x - _bounds.width() / 2, mousePos.y - _bounds.height() / 2);
+
+	// Get slider positions
+	_midiSliderX = music._musicVolume * (_bounds.width() - _surface.widestChar() * 2) / 255 + _surface.widestChar();
+	_digiSliderX = sound._soundVolume * (_bounds.width() - _surface.widestChar() * 2) / 255 + _surface.widestChar();
+
+	// Setup the dialog
+	_surface.create(_bounds.width(), _bounds.height());
+	render();
 }
 
 void WidgetOptions::handleEvents() {
 	Events &events = *_vm->_events;
+	// TODO
+}
+
+void WidgetOptions::render(OptionRenderMode mode) {
+	TattooEngine &vm = *(TattooEngine *)_vm;
+	Music &music = *_vm->_music;
+	Sound &sound = *_vm->_sound;
+	TattooUserInterface &ui = *(TattooUserInterface *)_vm->_ui;
+	ImageFile &images = *ui._interfaceImages;
+	const char *const OFF_ON[2] = { FIXED(Off), FIXED(On) };
+
+	// Draw the border if necessary
+	if (mode == OP_ALL) {
+		_surface.fill(TRANSPARENCY);
+		makeInfoArea();
+
+		int yp = _surface.fontHeight() + 7;
+		for (int idx = 0; idx < 7; ++idx) {
+			_surface.transBlitFrom(images[4], Common::Point(0, yp - 1));
+			_surface.transBlitFrom(images[5], Common::Point(_surface.w() - images[5]._width, yp - 1));
+			_surface.hLine(3, yp, _surface.w() - 4, INFO_TOP);
+			_surface.hLine(3, yp + 1, _surface.w() - 4, INFO_MIDDLE);
+			_surface.hLine(3, yp + 2, _surface.w() - 4, INFO_BOTTOM);
+
+			yp += _surface.fontHeight() + 7;
+			if (idx == 1)
+				yp += _surface.fontHeight() + 7;
+			else if (idx == 2)
+				yp += (_surface.fontHeight() + 7) * 2;
+		}
+	}
+
+	// Now go through and display all the items that can be highlighted
+	for (int idx = 0, yp = 5; idx < 11; ++idx, yp += _surface.fontHeight() + 7) {
+		if (mode == OP_ALL || idx == _selector || idx == _oldSelector) {
+			if (mode == OP_NAMES)
+				_surface.fillRect(Common::Rect(4, yp, _surface.w() - 5, yp + _surface.fontHeight() - 1), TRANSPARENCY);
+			byte color = (idx == _selector) ? COMMAND_HIGHLIGHTED : INFO_TOP;
+			Common::String str;
+
+			switch (idx) {
+			case 0:
+				str = FIXED(LoadGame);
+				break;
+
+			case 1:
+				str = FIXED(SaveGame);
+				break;
+
+			case 2:
+				str = Common::String::format("%s %s", FIXED(Music), OFF_ON[music._musicOn]);
+				break;
+
+			case 3: {
+				int num = (_surface.fontHeight() + 4) & 0xfe;
+				int sliderY = yp + num / 2 - 8;
+
+				_surface.fillRect(Common::Rect(4, sliderY - (num - 6) / 2, _surface.w() - 5, 
+					sliderY - (num - 6) / 2 + num - 1), TRANSPARENCY);
+				_surface.fillRect(Common::Rect(_surface.widestChar(), sliderY + 2, 
+					_surface.w() - _surface.widestChar() - 1, sliderY + 3), INFO_MIDDLE);
+				drawDialogRect(Common::Rect(_surface.widestChar(), sliderY, _surface.w() - _surface.widestChar() * 2, 6));
+				
+				_surface.fillRect(Common::Rect(_midiSliderX - 1, sliderY - (num - 6) / 2 + 2, 
+					_midiSliderX + 1, sliderY - (num - 6) / 2 + num - 3), INFO_MIDDLE);
+				drawDialogRect(Common::Rect(_midiSliderX - 3, sliderY - (num - 6) / 2, 7, num));
+	
+				if (_midiSliderX - 4 > _surface.widestChar())
+					_surface.fillRect(Common::Rect(_midiSliderX - 4, sliderY, _midiSliderX - 4, sliderY + 4), INFO_BOTTOM);
+				if (_midiSliderX + 4 < _surface.w() - _surface.widestChar())
+					_surface.fillRect(Common::Rect(_midiSliderX + 4, sliderY, _midiSliderX + 4, sliderY + 4), INFO_BOTTOM);
+				break;
+			}
+
+			case 4:
+				str = Common::String::format("%s %s", FIXED(SoundEffects), OFF_ON[sound._digitized]);
+				break;
+
+			case 5:
+				str = Common::String::format("%s %s", FIXED(Voices), OFF_ON[sound._voices]);
+				break;
+
+			case 6: {
+				int num = (_surface.fontHeight() + 4) & 0xfe;
+				int sliderY = yp + num / 2 - 8;
+
+				_surface.fillRect(Common::Rect(4, sliderY - (num - 6) / 2, _surface.w() - 5, 
+					sliderY - (num - 6) / 2 + num - 1), TRANSPARENCY);
+				_surface.fillRect(Common::Rect(_surface.widestChar(), sliderY + 2, _surface.w() - _surface.widestChar() - 1, 
+					sliderY + 3), INFO_MIDDLE);
+				drawDialogRect(Common::Rect(_surface.widestChar(), sliderY, _surface.w() - _surface.widestChar() * 2, 6));
+				_surface.fillRect(Common::Rect(_digiSliderX - 1, sliderY - (num - 6) / 2 + 2, _digiSliderX + 1, 
+					sliderY - (num - 6) / 2 + num - 3), INFO_MIDDLE);
+				drawDialogRect(Common::Rect(_digiSliderX - 3, sliderY - (num - 6) / 2, 7, num));
+				if (_digiSliderX - 4 > _surface.widestChar())
+					_surface.fillRect(Common::Rect(_digiSliderX - 4, sliderY, _digiSliderX - 4, sliderY + 4), INFO_BOTTOM);
+				if (_digiSliderX + 4 < _surface.w() - _surface.widestChar())
+					_surface.fillRect(Common::Rect(_digiSliderX + 4, sliderY, _digiSliderX + 4, sliderY + 4), INFO_BOTTOM);
+				break;
+			}
+
+			case 7:
+				if (!sound._voices) {
+					color = INFO_BOTTOM;
+					str = Common::String::format("%s %s", FIXED(TextWindows), FIXED(On));
+				} else {
+					str = Common::String::format("%s %s", FIXED(TextWindows), OFF_ON[vm._textWindowsOn]);
+				}
+				break;
+
+			case 8:
+				str = FIXED(ChangeFont);
+				break;
+
+			case 9:
+				str = Common::String::format("%s %s", FIXED(TransparentMenus), OFF_ON[vm._transparentMenus]);
+				break;
+
+			case 10:
+				str = FIXED(Quit);
+				break;
+
+			default:
+				break;
+			}
+
+			// Unless we're doing one of the Slider Controls, print the text for the line
+			if (idx != 3 && idx != 6) {
+				int xp = (_surface.w() - _surface.stringWidth(str)) / 2;
+				_surface.writeString(str, Common::Point(xp, yp), color);
+			}
+		}
+	}
 }
 
 } // End of namespace Tattoo

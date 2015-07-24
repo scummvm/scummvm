@@ -561,6 +561,7 @@ void TattooUserInterface::doInventory(int mode) {
 }
 
 void TattooUserInterface::doControls() {
+	_menuMode = OPTION_MODE;
 	_optionsWidget.load();
 }
 

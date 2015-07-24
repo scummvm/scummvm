@@ -65,6 +65,11 @@ protected:
 	void makeInfoArea();
 
 	/**
+	 * Draw a dialog rectangle
+	 */
+	void drawDialogRect(const Common::Rect &r, bool raised = true);
+
+	/**
 	 * Draw the scrollbar for the dialog
 	 */
 	void drawScrollBar(int index, int pageSize, int count);
