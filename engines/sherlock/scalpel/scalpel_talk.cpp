@@ -432,7 +432,7 @@ OpcodeReturn ScalpelTalk::cmdMoveMouse(const byte *&str) {
 	Events &events = *_vm->_events;
 
 	++str;
-	events.moveMouse(Common::Point((str[0] - 1) * 256 + str[1] - 1, str[2]));
+	events.warpMouse(Common::Point((str[0] - 1) * 256 + str[1] - 1, str[2]));
 	if (_talkToAbort)
 		return RET_EXIT;
 	str += 3;

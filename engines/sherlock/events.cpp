@@ -157,10 +157,6 @@ bool Events::isCursorVisible() const {
 	return CursorMan.isVisible();
 }
 
-void Events::moveMouse(const Common::Point &pt) {
-	g_system->warpMouse(pt.x, pt.y);
-}
-
 void Events::pollEvents() {
 	checkForNextFrameCounter();
 
@@ -208,7 +204,14 @@ void Events::pollEventsAndWait() {
 }
 
 void Events::warpMouse(const Common::Point &pt) {
-	g_system->warpMouse(pt.x, pt.y);
+	Common::Point p = pt - _vm->_screen->_currentScroll;
+	g_system->warpMouse(p.x, p.y);
+}
+
+void Events::warpMouse() {
+	Screen &screen = *_vm->_screen;
+	warpMouse(Common::Point(screen._currentScroll.x + SHERLOCK_SCREEN_WIDTH / 2,
+		screen._currentScroll.y + SHERLOCK_SCREEN_HEIGHT / 2));
 }
 
 bool Events::checkForNextFrameCounter() {

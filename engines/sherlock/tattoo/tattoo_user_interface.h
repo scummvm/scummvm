@@ -32,6 +32,7 @@
 #include "sherlock/tattoo/widget_inventory.h"
 #include "sherlock/tattoo/widget_lab.h"
 #include "sherlock/tattoo/widget_options.h"
+#include "sherlock/tattoo/widget_quit.h"
 #include "sherlock/tattoo/widget_text.h"
 #include "sherlock/tattoo/widget_tooltip.h"
 #include "sherlock/tattoo/widget_verbs.h"
@@ -55,6 +56,7 @@ private:
 	int _cAnimFramePause;
 	WidgetInventory _inventoryWidget;
 	WidgetMessage _messageWidget;
+	WidgetQuit _quitWidget;
 	Common::List<WidgetBase *> _widgets;
 	byte _lookupTable[PALETTE_COUNT];
 	byte _lookupTable1[PALETTE_COUNT];
@@ -83,11 +85,6 @@ private:
 	 * Set up to display the Files menu
 	 */
 	void initFileMenu();
-
-	/**
-	 * Handle displaying the quit menu
-	 */
-	void doQuitMenu();
 
 	/**
 	 * Free any active menu
@@ -159,6 +156,11 @@ public:
 	 * Handle the display of the options/setup menu
 	 */
 	void doControls();
+
+	/**
+	 * Handle the display of the quit menu
+	 */
+	void doQuitMenu();
 
 	/**
 	 * Pick up the selected object

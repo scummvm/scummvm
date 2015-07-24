@@ -35,18 +35,18 @@ WidgetQuit::WidgetQuit(SherlockEngine *vm) : WidgetBase(vm) {
 }
 
 void WidgetQuit::show() {
-	Screen &screen = *_vm->_screen;
+	Events &events = *_vm->_events;
 	TattooUserInterface &ui = *(TattooUserInterface *)_vm->_ui;
 	ImageFile &images = *ui._interfaceImages;
+	Common::Point mousePos = events.mousePos();
 	const char *YES = FIXED(Yes);
 	const char *NO = FIXED(No);
 
 	// Set up the display area
 	_bounds = Common::Rect(_surface.stringWidth(FIXED(AreYouSureYou)) + _surface.widestChar() * 2,
 		(_surface.fontHeight() + 7) * 4);
-	_bounds.moveTo((SHERLOCK_SCREEN_WIDTH - _bounds.width()) / 2 + screen._currentScroll.x,
-		SHERLOCK_SCREEN_HEIGHT - _bounds.height() - 100);
-	
+	_bounds.moveTo(mousePos.x - _bounds.width() / 2, mousePos.y - _bounds.height() / 2);
+
 	// Create the surface
 	_surface.create(_bounds.width(), _bounds.height());
 	_surface.fill(TRANSPARENCY);
@@ -72,6 +72,7 @@ void WidgetQuit::show() {
 	}
 
 	ui._menuMode = QUIT_MODE;
+	summonWindow();
 }
 
 void WidgetQuit::handleEvents() {
@@ -81,7 +82,7 @@ void WidgetQuit::handleEvents() {
 	Common::Rect btn1Rect(_bounds.left, _bounds.top + (_surface.fontHeight() + 4) * 2 + 3, _bounds.right,
 		_bounds.top + (_surface.fontHeight() + 4) * 2 + 3 + _surface.fontHeight() + 7);
 	Common::Rect btn2Rect(_bounds.left, _bounds.top + (_surface.fontHeight() + 4) * 2 + _surface.fontHeight() + 10,
-		_bounds.right, _bounds.top + (_surface.fontHeight() + 4) * 2 + 3 + _surface.fontHeight() + 7);
+		_bounds.right, _bounds.top + (_surface.fontHeight() + 4) * 2 + 10 + _surface.fontHeight() * 2 + 7);
 
 	if (talk._talkToAbort)
 		return;
@@ -152,12 +153,9 @@ void WidgetQuit::handleEvents() {
 		_select = -1;
 		_outsideMenu = false;
 
-		if (btn2Rect.contains(mousePos)) {
-			close();
-		} else if (btn1Rect.contains(mousePos)) {
-			close();
+		close();
+		if (btn1Rect.contains(mousePos))
 			_vm->quitGame();
-		}
 	}
 }
 

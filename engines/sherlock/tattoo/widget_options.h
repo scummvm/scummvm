@@ -25,7 +25,6 @@
 
 #include "common/scummsys.h"
 #include "sherlock/tattoo/widget_base.h"
-#include "sherlock/tattoo/widget_quit.h"
 
 namespace Sherlock {
 
@@ -42,7 +41,6 @@ class WidgetOptions : public WidgetBase {
 private:
 	int _midiSliderX, _digiSliderX;
 	int _selector, _oldSelector;
-	WidgetQuit _quitWidget;
 
 	/**
 	 * Render the contents of the dialog onto the widget's surface

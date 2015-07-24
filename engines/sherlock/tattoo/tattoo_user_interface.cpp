@@ -31,7 +31,7 @@ namespace Tattoo {
 
 TattooUserInterface::TattooUserInterface(SherlockEngine *vm): UserInterface(vm),
 		_inventoryWidget(vm), _messageWidget(vm), _textWidget(vm), _tooltipWidget(vm), _verbsWidget(vm),
-		_labWidget(vm), _creditsWidget(vm), _optionsWidget(vm) {
+		_labWidget(vm), _creditsWidget(vm), _optionsWidget(vm), _quitWidget(vm) {
 	Common::fill(&_lookupTable[0], &_lookupTable[PALETTE_COUNT], 0);
 	Common::fill(&_lookupTable1[0], &_lookupTable1[PALETTE_COUNT], 0);
 	_scrollSize = 0;
@@ -404,12 +404,14 @@ void TattooUserInterface::doStandardControl() {
 
 	case Common::KEYCODE_F4:
 		// Display options
-		_optionsWidget.summonWindow();
+		events.warpMouse();
+		_optionsWidget.load();
 		return;
 
 	case Common::KEYCODE_F10:
 		// Quit menu
 		freeMenu();
+		events.warpMouse();
 		doQuitMenu();
 		return;
 
@@ -559,7 +561,6 @@ void TattooUserInterface::doInventory(int mode) {
 }
 
 void TattooUserInterface::doControls() {
-	_menuMode = OPTION_MODE;
 	_optionsWidget.load();
 }
 
@@ -568,7 +569,7 @@ void TattooUserInterface::pickUpObject(int objNum) {
 }
 
 void TattooUserInterface::doQuitMenu() {
-	// TODO
+	_quitWidget.show();
 }
 
 void TattooUserInterface::putMessage(const char *formatStr, ...) {
@@ -818,7 +819,7 @@ void TattooUserInterface::makeBGArea(const Common::Rect &r) {
 	Screen &screen = *_vm->_screen;
 
 	for (int yp = r.top; yp < r.bottom; ++yp) {
-		byte *ptr = screen._backBuffer1.getBasePtr(r.left + screen._currentScroll.x, yp);
+		byte *ptr = screen._backBuffer1.getBasePtr(r.left, yp);
 
 		for (int xp = r.left; xp < r.right; ++xp, ++ptr)
 			*ptr = _lookupTable[*ptr];

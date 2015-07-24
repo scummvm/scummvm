@@ -30,7 +30,7 @@ namespace Sherlock {
 
 namespace Tattoo {
 
-WidgetOptions::WidgetOptions(SherlockEngine *vm) : WidgetBase(vm), _quitWidget(vm) {
+WidgetOptions::WidgetOptions(SherlockEngine *vm) : WidgetBase(vm) {
 	_midiSliderX = _digiSliderX = 0;
 	_selector = _oldSelector = -1;
 }
@@ -39,6 +39,7 @@ void WidgetOptions::load() {
 	Events &events = *_vm->_events;
 	Music &music = *_vm->_music;
 	Sound &sound = *_vm->_sound;
+	TattooUserInterface &ui = *(TattooUserInterface *)_vm->_ui;
 	Common::Point mousePos = events.mousePos();
 
 	// Set bounds for the dialog
@@ -54,6 +55,9 @@ void WidgetOptions::load() {
 	// Setup the dialog
 	_surface.create(_bounds.width(), _bounds.height());
 	render();
+
+	summonWindow();
+	ui._menuMode = OPTION_MODE;
 }
 
 void WidgetOptions::handleEvents() {
@@ -234,7 +238,7 @@ void WidgetOptions::handleEvents() {
 		case 10:
 			// Quit
 			banishWindow();
-			_quitWidget.show();
+			ui.doQuitMenu();
 			break;
 
 		default:
@@ -303,11 +307,12 @@ void WidgetOptions::render(OptionRenderMode mode) {
 					sliderY - (num - 6) / 2 + num - 1), TRANSPARENCY);
 				_surface.fillRect(Common::Rect(_surface.widestChar(), sliderY + 2, 
 					_surface.w() - _surface.widestChar() - 1, sliderY + 3), INFO_MIDDLE);
-				drawDialogRect(Common::Rect(_surface.widestChar(), sliderY, _surface.w() - _surface.widestChar() * 2, 6));
+				drawDialogRect(Common::Rect(_surface.widestChar(), sliderY, _surface.w() - _surface.widestChar(), sliderY + 6));
 				
 				_surface.fillRect(Common::Rect(_midiSliderX - 1, sliderY - (num - 6) / 2 + 2, 
 					_midiSliderX + 1, sliderY - (num - 6) / 2 + num - 3), INFO_MIDDLE);
-				drawDialogRect(Common::Rect(_midiSliderX - 3, sliderY - (num - 6) / 2, 7, num));
+				drawDialogRect(Common::Rect(_midiSliderX - 3, sliderY - (num - 6) / 2, 
+					_midiSliderX + 4, sliderY - (num - 6) / 2 + num));
 	
 				if (_midiSliderX - 4 > _surface.widestChar())
 					_surface.fillRect(Common::Rect(_midiSliderX - 4, sliderY, _midiSliderX - 4, sliderY + 4), INFO_BOTTOM);
@@ -332,10 +337,11 @@ void WidgetOptions::render(OptionRenderMode mode) {
 					sliderY - (num - 6) / 2 + num - 1), TRANSPARENCY);
 				_surface.fillRect(Common::Rect(_surface.widestChar(), sliderY + 2, _surface.w() - _surface.widestChar() - 1, 
 					sliderY + 3), INFO_MIDDLE);
-				drawDialogRect(Common::Rect(_surface.widestChar(), sliderY, _surface.w() - _surface.widestChar() * 2, 6));
+				drawDialogRect(Common::Rect(_surface.widestChar(), sliderY, _surface.w() - _surface.widestChar(), sliderY + 6));
 				_surface.fillRect(Common::Rect(_digiSliderX - 1, sliderY - (num - 6) / 2 + 2, _digiSliderX + 1, 
 					sliderY - (num - 6) / 2 + num - 3), INFO_MIDDLE);
-				drawDialogRect(Common::Rect(_digiSliderX - 3, sliderY - (num - 6) / 2, 7, num));
+				drawDialogRect(Common::Rect(_digiSliderX - 3, sliderY - (num - 6) / 2, _digiSliderX + 4, 
+					sliderY - (num - 6) / 2 + num));
 				if (_digiSliderX - 4 > _surface.widestChar())
 					_surface.fillRect(Common::Rect(_digiSliderX - 4, sliderY, _digiSliderX - 4, sliderY + 4), INFO_BOTTOM);
 				if (_digiSliderX + 4 < _surface.w() - _surface.widestChar())

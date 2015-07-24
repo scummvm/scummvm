@@ -92,7 +92,7 @@ int TattooMap::show() {
 	// Load the custom mouse cursors for the map
 	ImageFile cursors("omouse.vgs");
 	events.setCursor(cursors[0]._frame);
-	events.warpMouse(Common::Point(SHERLOCK_SCREEN_WIDTH / 2, SHERLOCK_SCREEN_HEIGHT / 2));
+	events.warpMouse();
 
 	// Load the data for the map
 	_iconImages = new ImageFile("mapicons.vgs");

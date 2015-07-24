@@ -110,11 +110,6 @@ public:
 	bool isCursorVisible() const;
 
 	/**
-	 * Move the mouse
-	 */
-	void moveMouse(const Common::Point &pt);
-
-	/**
 	 * Check for any pending events
 	 */
 	void pollEvents();
@@ -129,6 +124,11 @@ public:
 	 * Move the mouse cursor
 	 */
 	void warpMouse(const Common::Point &pt);
+
+	/**
+	* Move the mouse cursor to the center of the screen
+	*/
+	void warpMouse();
 
 	/**
 	 * Get the current mouse position
