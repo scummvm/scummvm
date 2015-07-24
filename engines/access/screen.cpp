@@ -119,7 +119,9 @@ void Screen::setManPalette() {
 
 void Screen::setIconPalette() {
 	if (_vm->getGameID() == GType_MartianMemorandum) {
-		Common::copy(Martian::ICON_DATA, Martian::ICON_DATA + 0x1B, _rawPalette + 741);
+		for (int i = 0; i < 0x1B; i++) {
+			_rawPalette[741 + i] = VGA_COLOR_TRANS(Martian::ICON_DATA[i]);
+		}
 	}
 }
 
