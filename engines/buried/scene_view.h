@@ -187,9 +187,6 @@ private:
 
 	Common::String _lastAICommentFileName;
 
-	bool _useWaitCursor;
-	int _oldCursorForWait;
-
 	// Special sound handling for the demo
 	uint _demoSoundTimer;
 	int _demoSoundEffectHandle;
