@@ -114,7 +114,9 @@ void Screen::setInitialPalettte() {
 }
 
 void Screen::setManPalette() {
-	Common::copy(_vm->_screen->_manPal, _vm->_screen->_manPal + 0x42, _rawPalette + 672);
+	for (int i = 0; i < 0x42; i++) {
+		_rawPalette[672 + i] = VGA_COLOR_TRANS(_manPal[i]);
+	}
 }
 
 void Screen::setIconPalette() {
