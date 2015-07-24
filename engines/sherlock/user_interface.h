@@ -54,7 +54,8 @@ enum MenuMode {
 	LAB_MODE		= 20,
 	MESSAGE_MODE	= 21,
 	VERB_MODE		= 22,
-	OPTION_MODE		= 23
+	OPTION_MODE		= 23,
+	QUIT_MODE		= 24
 };
 
 class UserInterface {

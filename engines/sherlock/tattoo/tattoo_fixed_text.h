@@ -98,7 +98,11 @@ enum FixedTextId {
 	kFixedText_ChangeFont,
 	kFixedText_Off,
 	kFixedText_On,
-	kFixedText_Quit
+	kFixedText_Quit,
+	kFixedText_AreYouSureYou,
+	kFixedText_WishToQuit,
+	kFixedText_Yes,
+	kFixedText_No
 };
 
 class TattooFixedText: public FixedText {

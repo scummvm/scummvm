@@ -97,7 +97,12 @@ static const char *const FIXED_TEXT_ENGLISH[] = {
 	"Transparent Menus",
 	"Change Font Style",
 	"Off",
-	"On"
+	"On",
+	"Quit",
+	"Are you sure you",
+	"wish to Quit ?",
+	"Yes",
+	"No"
 };
 
 TattooFixedText::TattooFixedText(SherlockEngine *vm) : FixedText(vm) {
