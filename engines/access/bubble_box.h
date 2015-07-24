@@ -44,10 +44,10 @@ private:
 	int _charCol, _rowOff;
 	Common::Point _fileStart;
 	Common::Point _fileOff;
-	int BOXSTARTX, BOXSTARTY;
-	int BOXENDX, BOXENDY;
-	int BICONSTARTX, BICONSTARTY;
-	int BOXPSTARTX, BOXPSTARTY;
+	int boxStartX, boxStartY;
+	int _boxEndX, _boxEndY;
+	int _bIconStartX, _bIconStartY;
+	int _boxPStartX, _boxPStartY;
 
 	void displayBoxData();
 	void drawSelectBox();
@@ -104,8 +104,8 @@ public:
 
 	int doBox_v1(int item, int box, int &btnSelected);
 	void getList(const char *const data[], int *flags);
-	void SETCURSORPOS(int posX, int posY);
-	void PRINTSTR(Common::String msg);
+	void setCursorPos(int posX, int posY);
+	void printString(Common::String msg);
 };
 
 } // End of namespace Access

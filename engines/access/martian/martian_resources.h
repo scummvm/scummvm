@@ -38,7 +38,7 @@ extern const int SIDEOFFD[];
 
 extern const byte *const CURSORS[4];
 
-extern const int TRAVEL_POS[][2];
+extern const int _travelPos[][2];
 
 extern const int INVENTORY_SIZE;
 extern const char *const INVENTORY_NAMES[];
@@ -60,7 +60,7 @@ extern const byte ICON_DATA[];
 extern const int RMOUSE[10][2];
 
 extern byte HELP[];
-extern const char *const ASKTBL[];
+extern const char *const _askTBL[];
 extern const char *const TRAVDATA[];
 
 extern const byte DEATH_SCREENS[];

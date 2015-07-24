@@ -209,20 +209,20 @@ public:
 
 	// Fields used by MM
 	// TODO: Refactor
-	int TRAVEL[60];
-	int ASK[40];
-	int STARTTRAVELITEM;
-	int STARTTRAVELBOX;
+	int _travel[60];
+	int _ask[40];
+	int _startTravelItem;
+	int _startTravelBox;
 	int _startAboutItem;
 	int _startAboutBox;
-	int BOXDATASTART;
-	bool BOXDATAEND;
-	int BOXSELECTY;
-	int BOXSELECTYOLD;
-	int NUMBLINES;
+	int _boxDataStart;
+	bool _boxDataEnd;
+	int _boxSelectY;
+	int _boxSelectYOld;
+	int _numLines;
 	byte _byte26CB5;
-	int BCNT;
-	byte *TEMPLIST;
+	int _bcnt;
+	byte *_tempList;
 	int _pictureTaken;
 	//
 

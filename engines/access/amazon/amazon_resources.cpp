@@ -326,7 +326,7 @@ const byte *const CURSORS[10] = {
 	MOUSE0, MOUSE1, MOUSE2, MOUSE3, CURSEYE, CURSHAND, CURSGET, CURSCLIMB, CURSTALK, CURSHELP
 };
 
-const int TRAVEL_POS[][2] = {
+const int _travelPos[][2] = {
 	{ -1, 0 },
 	{ 228, 117 },
 	{ 28, 98 },

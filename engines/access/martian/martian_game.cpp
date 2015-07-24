@@ -68,20 +68,20 @@ void MartianEngine::initVariables() {
 		_timers.push_back(te);
 	}
 
-	_player->_playerX = _player->_rawPlayer.x = TRAVEL_POS[_player->_roomNumber][0];
-	_player->_playerY = _player->_rawPlayer.y = TRAVEL_POS[_player->_roomNumber][1];
+	_player->_playerX = _player->_rawPlayer.x = _travelPos[_player->_roomNumber][0];
+	_player->_playerY = _player->_rawPlayer.y = _travelPos[_player->_roomNumber][1];
 	_room->_selectCommand = -1;
 	_events->setNormalCursor(CURSOR_CROSSHAIRS);
 	_mouseMode = 0;
 	_numAnimTimers = 0;
 
 	for (int i = 0; i < 60; i++)
-		TRAVEL[i] = 0;
-	TRAVEL[7] = 1;
+		_travel[i] = 0;
+	_travel[7] = 1;
 
 	for (int i = 0; i < 40; i++)
-		ASK[i] = 0;
-	ASK[33] = 1;
+		_ask[i] = 0;
+	_ask[33] = 1;
 }
 
 void MartianEngine::setNoteParams() {
@@ -114,7 +114,7 @@ void MartianEngine::displayNote(const Common::String &msg) {
 	bool lastLine = false;
 	do {
 		lastLine = _fonts._font1.getLine(lines, _screen->_maxChars * 6, line, width);
-		_bubbleBox->PRINTSTR(line);
+		_bubbleBox->printString(line);
 		_screen->_printOrg = Common::Point(_screen->_printStart.x, _screen->_printOrg.y + 6);
 
 		if (_screen->_printOrg.y == 196) {
@@ -303,8 +303,8 @@ void MartianEngine::setupGame() {
 
 	// Set player room and position
 	_player->_roomNumber = 7;
-	_player->_playerX = _player->_rawPlayer.x = TRAVEL_POS[_player->_roomNumber][0];
-	_player->_playerY = _player->_rawPlayer.y = TRAVEL_POS[_player->_roomNumber][1];
+	_player->_playerX = _player->_rawPlayer.x = _travelPos[_player->_roomNumber][0];
+	_player->_playerY = _player->_rawPlayer.y = _travelPos[_player->_roomNumber][1];
 }
 
 void MartianEngine::showDeathText(Common::String msg) {
@@ -314,7 +314,7 @@ void MartianEngine::showDeathText(Common::String msg) {
 	do {
 		lastLine = _fonts._font2.getLine(msg, _screen->_maxChars * 6, line, width);
 		// Draw the text
-		_bubbleBox->PRINTSTR(line);
+		_bubbleBox->printString(line);
 
 		_screen->_printOrg.y += 6;
 		_screen->_printOrg.x = _screen->_printStart.x;

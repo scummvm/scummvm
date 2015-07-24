@@ -98,19 +98,19 @@ AccessEngine::AccessEngine(OSystem *syst, const AccessGameDescription *gameDesc)
 	_clearSummaryFlag = false;
 
 	for (int i = 0; i < 60; i++)
-		TRAVEL[i] = 0;
-	STARTTRAVELITEM = STARTTRAVELBOX = 0;
+		_travel[i] = 0;
+	_startTravelItem = _startTravelBox = 0;
 	for (int i = 0; i < 33; i++)
-		ASK[i];
+		_ask[i];
 	_startAboutItem = _startAboutBox = 0;
 	_byte26CB5 = 0;
-	BCNT = 0;
-	BOXDATASTART = 0;
-	BOXDATAEND = false;
-	BOXSELECTY = 0;
-	BOXSELECTYOLD = -1;
-	NUMBLINES = 0;
-	TEMPLIST = nullptr;
+	_bcnt = 0;
+	_boxDataStart = 0;
+	_boxDataEnd = false;
+	_boxSelectY = 0;
+	_boxSelectYOld = -1;
+	_numLines = 0;
+	_tempList = nullptr;
 	_pictureTaken = 0;
 
 	_vidEnd = false;

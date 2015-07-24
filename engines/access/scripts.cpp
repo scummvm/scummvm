@@ -205,7 +205,7 @@ void Scripts::printWatch() {
 	do {
 		lastLine = _vm->_fonts._font2.getLine(msg, _vm->_screen->_maxChars * 6, line, width);
 		// Draw the text
-		_vm->_bubbleBox->PRINTSTR(line);
+		_vm->_bubbleBox->printString(line);
 
 		_vm->_screen->_printOrg.y += 6;
 		_vm->_screen->_printOrg.x = _vm->_screen->_printStart.x;
@@ -541,7 +541,7 @@ void Scripts::cmdDispInv_v2() {
 void Scripts::cmdSetAbout() {
 	int idx = _data->readByte();
 	int val = _data->readByte();
-	_vm->ASK[idx] = val;
+	_vm->_ask[idx] = val;
 	_vm->_startAboutBox = _vm->_startAboutItem = 0;
 }
 
@@ -586,8 +586,8 @@ void Scripts::cmdCheckTimer() {
 void Scripts::cmdSetTravel() {
 	int idx = _data->readByte();
 	int dest = _data->readByte();
-	_vm->TRAVEL[idx] = dest;
-	_vm->STARTTRAVELITEM = _vm->STARTTRAVELBOX = 0;
+	_vm->_travel[idx] = dest;
+	_vm->_startTravelItem = _vm->_startTravelBox = 0;
 }
 
 void Scripts::cmdJumpGoto() {
@@ -676,11 +676,11 @@ void Scripts::cmdRemoveLast() {
 
 void Scripts::cmdDoTravel() {
 	while (true) {
-		_vm->_travelBox->getList(Martian::TRAVDATA, _vm->TRAVEL);
+		_vm->_travelBox->getList(Martian::TRAVDATA, _vm->_travel);
 		int btnSelected = 0;
-		int boxX = _vm->_travelBox->doBox_v1(_vm->STARTTRAVELITEM, _vm->STARTTRAVELBOX, btnSelected);
-		_vm->STARTTRAVELITEM = _vm->BOXDATASTART;
-		_vm->STARTTRAVELBOX = _vm->BOXSELECTY;
+		int boxX = _vm->_travelBox->doBox_v1(_vm->_startTravelItem, _vm->_startTravelBox, btnSelected);
+		_vm->_startTravelItem = _vm->_boxDataStart;
+		_vm->_startTravelBox = _vm->_boxSelectY;
 
 		if (boxX == -1)
 			btnSelected = 2;
@@ -688,20 +688,20 @@ void Scripts::cmdDoTravel() {
 		if (btnSelected != 2) {
 			int idx = _vm->_travelBox->_tempListIdx[boxX];
 			if (Martian::_byte1EEB5[idx] != _vm->_byte26CB5) {
-				_vm->_bubbleBox->_bubbleTitle = "TRAVEL";
-				_vm->_bubbleBox->PRINTSTR("YOU CAN'T GET THERE FROM HERE.");
+				_vm->_bubbleBox->_bubbleTitle = "_travel";
+				_vm->_bubbleBox->printString("YOU CAN'T GET THERE FROM HERE.");
 				continue;
 			}
 			if (_vm->_player->_roomNumber != idx) {
 				_vm->_player->_roomNumber = idx;
 				_vm->_room->_function = FN_CLEAR1;
-				if (Martian::TRAVEL_POS[idx][0] == -1) {
+				if (Martian::_travelPos[idx][0] == -1) {
 					_vm->_player->_roomNumber = idx;
 					_vm->_room->_conFlag = true;
-					_vm->_scripts->converse1(Martian::TRAVEL_POS[idx][1]);
+					_vm->_scripts->converse1(Martian::_travelPos[idx][1]);
 					return;
 				}
-				_vm->_player->_rawPlayer = Common::Point(Martian::TRAVEL_POS[idx][0], Martian::TRAVEL_POS[idx][1]);
+				_vm->_player->_rawPlayer = Common::Point(Martian::_travelPos[idx][0], Martian::_travelPos[idx][1]);
 				cmdRetPos();
 				return;
 			}
@@ -746,7 +746,7 @@ void Scripts::cmdCheckAbout() {
 	int idx = _data->readSint16LE();
 	int val = _data->readSint16LE();
 
-	if (_vm->ASK[idx] == val)
+	if (_vm->_ask[idx] == val)
 		cmdGoto();
 	else
 		_data->skip(2);
@@ -1033,11 +1033,11 @@ void Scripts::cmdPrintWatch() {
 }
 
 void Scripts::cmdDispAbout() {
-	_vm->_travelBox->getList(Martian::ASKTBL, _vm->ASK);
+	_vm->_travelBox->getList(Martian::_askTBL, _vm->_ask);
 	int btnSelected = 0;
 	int boxX = _vm->_aboutBox->doBox_v1(_vm->_startAboutItem, _vm->_startAboutBox, btnSelected);
-	_vm->_startAboutItem = _vm->BOXDATASTART;
-	_vm->_startAboutBox = _vm->BOXSELECTY;
+	_vm->_startAboutItem = _vm->_boxDataStart;
+	_vm->_startAboutBox = _vm->_boxSelectY;
 
 	if (boxX == -1)
 		btnSelected = 2;
@@ -1056,7 +1056,7 @@ void Scripts::cmdCheckTravel() {
 	int idx = _data->readSint16LE();
 	int val = _data->readUint16LE();
 
-	if (_vm->TRAVEL[idx] == val)
+	if (_vm->_travel[idx] == val)
 		cmdGoto();
 	else
 		_data->skip(2);

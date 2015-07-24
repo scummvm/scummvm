@@ -60,7 +60,7 @@ extern const int DIAGOFFDLY[];
 
 extern const byte *const CURSORS[10];
 
-extern const int TRAVEL_POS[][2];
+extern const int _travelPos[][2];
 
 extern const int OVEROFFR[];
 extern const int OVEROFFL[];

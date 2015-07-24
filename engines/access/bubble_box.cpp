@@ -35,10 +35,10 @@ BubbleBox::BubbleBox(AccessEngine *vm, Access::BoxType type, int x, int y, int w
 	_btnId2 = val3;
 	_btnX2 = val4;
 	_btnId3 = _btnX3 = 0; // Unused in MM and Amazon?
-	BOXSTARTX = BOXSTARTY = 0;
-	BICONSTARTX = BICONSTARTY = 0;
-	BOXENDX = BOXENDY = 0;
-	BOXPSTARTX = BOXPSTARTY = 0;
+	boxStartX = boxStartY = 0;
+	_bIconStartX = _bIconStartY = 0;
+	_boxEndX = _boxEndY = 0;
+	_boxPStartX = _boxPStartY = 0;
 	// Unused in AGoE
 	for (int i = 0; i < 60; i++) {
 		_tempList[i] = "";
@@ -169,7 +169,7 @@ void BubbleBox::printBubble_v1(const Common::String &msg) {
 		Font &font2 = _vm->_fonts._font2;
 		lastLine = font2.getLine(s, _vm->_screen->_maxChars * 6, line, width);
 		// Draw the text
-		PRINTSTR(line);
+		printString(line);
 
 		// Move print position
 		_vm->_screen->_printOrg.y += 6;
@@ -324,18 +324,18 @@ void BubbleBox::doBox(int item, int box) {
 	delete icons;
 }
 
-void BubbleBox::SETCURSORPOS(int posX, int posY) {
+void BubbleBox::setCursorPos(int posX, int posY) {
 	_vm->_screen->_printStart = _vm->_screen->_printOrg = Common::Point((posX << 3) + _rowOff, posY << 3);
-	warning("Missing call to SETCURSOR");
+	warning("Missing call to setCursorPos");
 }
 
-void BubbleBox::PRINTSTR(Common::String msg) {
-	warning("TODO: Proper implementation of PRINTSTR");
+void BubbleBox::printString(Common::String msg) {
+	warning("TODO: Proper implementation of printString");
 	_vm->_fonts._font1.drawString(_vm->_screen, msg, _vm->_screen->_printOrg);
 }
 
 void BubbleBox::displayBoxData() {
-	_vm->BOXDATAEND = false;
+	_vm->_boxDataEnd = false;
 	_rowOff = 2;
 	_vm->_fonts._charFor._lo = 0xF7;
 	_vm->_fonts._charFor._hi = 0xFF;
@@ -345,46 +345,46 @@ void BubbleBox::displayBoxData() {
 
 	int idx = 0;
 	if ((_type == TYPE_1) || (_type == TYPE_3)) {
-		_vm->BCNT = 0;
+		_vm->_bcnt = 0;
 
 		if (_tempList[idx].size() == 0) {
-			_vm->BOXDATAEND = true;
+			_vm->_boxDataEnd = true;
 			return;
 		}
 
 		_vm->_events->hideCursor();
 
-		_vm->_screen->_orgX1 = BOXSTARTX;
-		_vm->_screen->_orgX2 = BOXENDX;
-		_vm->_screen->_orgY1 = BOXSTARTY;
-		_vm->_screen->_orgY2 = BOXENDY;
+		_vm->_screen->_orgX1 = boxStartX;
+		_vm->_screen->_orgX2 = _boxEndX;
+		_vm->_screen->_orgY1 = boxStartY;
+		_vm->_screen->_orgY2 = _boxEndY;
 		_vm->_screen->_lColor = 0xFA;
 		_vm->_screen->drawRect();
 		_vm->_events->showCursor();
 	}
 	
 	_vm->_events->hideCursor();
-	int oldPStartY = BOXPSTARTY;
-	++BOXPSTARTY;
+	int oldPStartY = _boxPStartY;
+	++_boxPStartY;
 
-	idx += _vm->BOXDATASTART;
+	idx += _vm->_boxDataStart;
 
 	while (true) {
-		SETCURSORPOS(BOXPSTARTX, BOXPSTARTY);
-		PRINTSTR(_tempList[idx]);
+		setCursorPos(_boxPStartX, _boxPStartY);
+		printString(_tempList[idx]);
 
 		++idx;
-		++BOXPSTARTY;
-		++_vm->BCNT;
+		++_boxPStartY;
+		++_vm->_bcnt;
 		if (_tempList[idx].size() == 0) {
-			BOXPSTARTY = oldPStartY;
+			_boxPStartY = oldPStartY;
 			_vm->_events->showCursor();
-			_vm->BOXDATAEND = true;
+			_vm->_boxDataEnd = true;
 			return;
 		}
 
-		if (_vm->BCNT == _vm->NUMBLINES) {
-			BOXPSTARTY = oldPStartY;
+		if (_vm->_bcnt == _vm->_numLines) {
+			_boxPStartY = oldPStartY;
 			_vm->_events->showCursor();
 			return;
 		}
@@ -395,29 +395,29 @@ void BubbleBox::drawSelectBox() {
 	if (_tempList[0].size() == 0)
 		return;
 
-	if (((_type != TYPE_1) && (_type != TYPE_3)) || !_vm->BCNT)
+	if (((_type != TYPE_1) && (_type != TYPE_3)) || !_vm->_bcnt)
 		return;
 
-	if (_vm->BOXSELECTYOLD != -1) {
+	if (_vm->_boxSelectYOld != -1) {
 		_vm->_events->hideCursor();
 		_vm->_screen->_lColor = 0xFA;
 
-		int val = _vm->BOXSELECTYOLD + BOXPSTARTY + 1;
+		int val = _vm->_boxSelectYOld + _boxPStartY + 1;
 		_vm->_screen->_orgY1 = (val << 3) + 2;
 		_vm->_screen->_orgY2 = _vm->_screen->_orgY1 + 7;
-		_vm->_screen->_orgX1 = BOXSTARTX;
-		_vm->_screen->_orgX2 = BOXENDX;
+		_vm->_screen->_orgX1 = boxStartX;
+		_vm->_screen->_orgX2 = _boxEndX;
 		_vm->_screen->drawBox();
 		_vm->_events->showCursor();
 	}
 
 	_vm->_events->hideCursor();
-	_vm->BOXSELECTYOLD = _vm->BOXSELECTY;
-	int val = BOXPSTARTY + _vm->BOXSELECTY + 1;
+	_vm->_boxSelectYOld = _vm->_boxSelectY;
+	int val = _boxPStartY + _vm->_boxSelectY + 1;
 	_vm->_screen->_orgY1 = (val << 3) + 2;
 	_vm->_screen->_orgY2 = _vm->_screen->_orgY1 + 7;
-	_vm->_screen->_orgX1 = BOXSTARTX;
-	_vm->_screen->_orgX2 = BOXENDX;
+	_vm->_screen->_orgX1 = boxStartX;
+	_vm->_screen->_orgX2 = _boxEndX;
 	_vm->_screen->_lColor = 0xFE;
 	_vm->_screen->drawBox();
 	_vm->_events->showCursor();
@@ -477,9 +477,9 @@ int BubbleBox::doBox_v1(int item, int box, int &btnSelected) {
 	delete iconData;
 
 	// Draw upper border
-	_vm->BCNT = (_vm->_screen->_orgX2 - _vm->_screen->_orgX1) >> 4;
+	_vm->_bcnt = (_vm->_screen->_orgX2 - _vm->_screen->_orgX1) >> 4;
 	int oldX = _vm->_screen->_orgX1;
-	for ( ;_vm->BCNT > 0; --_vm->BCNT) {
+	for ( ;_vm->_bcnt > 0; --_vm->_bcnt) {
 		_vm->_screen->plotImage(icons, 16, Common::Point(_vm->_screen->_orgX1, _vm->_screen->_orgY1));
 		_vm->_screen->_orgX1 += 16;
 	}
@@ -489,7 +489,7 @@ int BubbleBox::doBox_v1(int item, int box, int &btnSelected) {
 	_vm->_screen->_orgY2 = _vm->_screen->_orgY1 + 8;
 	_vm->_screen->_lColor = 0xF9;
 
-	BOXSTARTY = _vm->_screen->_orgY2 + 1;
+	boxStartY = _vm->_screen->_orgY2 + 1;
 	_vm->_screen->_orgY2 = oldY;
 
 	int tmpX = 0;
@@ -501,15 +501,15 @@ int BubbleBox::doBox_v1(int item, int box, int &btnSelected) {
 		if (_type == TYPE_3)
 			_vm->_screen->_orgY1 -= 8;
 		_vm->_screen->drawRect();
-		tmpX = BICONSTARTX = _vm->_screen->_orgX1;
+		tmpX = _bIconStartX = _vm->_screen->_orgX1;
 
-		BOXSTARTX = tmpX + 1;
-		tmpY = BOXENDY = _vm->_screen->_orgY1;
+		boxStartX = tmpX + 1;
+		tmpY = _boxEndY = _vm->_screen->_orgY1;
 
 		if (_type == TYPE_3)
-			BICONSTARTY = tmpY + 9;
+			_bIconStartY = tmpY + 9;
 		else
-			BICONSTARTY = tmpY + 1;
+			_bIconStartY = tmpY + 1;
 
 		if (_type == TYPE_3) {
 			_fileStart = Common::Point((tmpX + 2) >> 3, (tmpY + 2) >> 3);
@@ -519,10 +519,10 @@ int BubbleBox::doBox_v1(int item, int box, int &btnSelected) {
 				++_fileStart.y;
 			}
 			_fileOff.y = _rowOff = rowOff;
-			SETCURSORPOS(_fileStart.x, _fileStart.y);
+			setCursorPos(_fileStart.x, _fileStart.y);
 			_vm->_fonts._charFor._lo = 0xF7;
 			_vm->_fonts._charFor._hi = 0;
-			PRINTSTR("FILE:           ");
+			printString("FILE:           ");
 			_vm->_fonts._charFor._hi = 0xFF;
 		}
 		_vm->_screen->_orgY1 = oldY;
@@ -536,7 +536,7 @@ int BubbleBox::doBox_v1(int item, int box, int &btnSelected) {
 		_vm->_screen->_orgY2 -= 8;
 		_btnUpPos.right = _btnDownPos.right = _vm->_screen->_orgX2;
 		_btnUpPos.left = _btnDownPos.left = _vm->_screen->_orgX1 = _vm->_screen->_orgX2 - 8;
-		BOXENDX = _vm->_screen->_orgX1 - 1;
+		_boxEndX = _vm->_screen->_orgX1 - 1;
 		_vm->_screen->drawBox();
 
 		_vm->_screen->_orgY1 += 6;
@@ -582,8 +582,8 @@ int BubbleBox::doBox_v1(int item, int box, int &btnSelected) {
 	int newX = _bounds.top >> 3;
 	newX = (len - newX) / 2;
 
-	BOXPSTARTX = _bounds.left >> 3;
-	newX += BOXPSTARTX;
+	_boxPStartX = _bounds.left >> 3;
+	newX += _boxPStartX;
 
 	int newY = _bounds.top >> 3;
 	int bp = _bounds.top - (newY << 3) + 1;
@@ -593,9 +593,9 @@ int BubbleBox::doBox_v1(int item, int box, int &btnSelected) {
 	}
 
 	_rowOff = bp;
-	retval_ = BOXPSTARTY = newY;
+	retval_ = _boxPStartY = newY;
 
-	SETCURSORPOS(newX, newY);
+	setCursorPos(newX, newY);
 
 	_vm->_fonts._charFor._lo = 0xFF;
 	_vm->_fonts._font1.drawString(_vm->_screen, _bubbleDisplStr, _vm->_screen->_printOrg);
@@ -619,31 +619,31 @@ int BubbleBox::doBox_v1(int item, int box, int &btnSelected) {
 	int ICON3X = 0;
 	if (_btnId1) {
 		ICON1T = _btnId1;
-		ICON1X = BICONSTARTX + _btnX1;
-		ICON1Y = BICONSTARTY;
+		ICON1X = _bIconStartX + _btnX1;
+		ICON1Y = _bIconStartY;
 		_vm->_screen->plotImage(icons, ICON1T + 10, Common::Point(ICON1X, ICON1Y));
 
 		if (_btnId2) {
 			ICON2T = _btnId2;
-			ICON2X = BICONSTARTX + _btnX2;
-			_vm->_screen->plotImage(icons, ICON2T + 10, Common::Point(ICON2X, BICONSTARTY));
+			ICON2X = _bIconStartX + _btnX2;
+			_vm->_screen->plotImage(icons, ICON2T + 10, Common::Point(ICON2X, _bIconStartY));
 
 			if (_btnId3) {
 				ICON3T = _btnId3;
-				ICON3X = BICONSTARTX + _btnX3;
-				_vm->_screen->plotImage(icons, ICON3T + 10, Common::Point(ICON3X, BICONSTARTY));
+				ICON3X = _bIconStartX + _btnX3;
+				_vm->_screen->plotImage(icons, ICON3T + 10, Common::Point(ICON3X, _bIconStartY));
 			}
 		}
 	}
 	
 	_vm->_screen->restoreScreen();
-	_vm->BOXDATASTART = _startItem;
-	_vm->BOXSELECTYOLD = -1;
-	_vm->BOXSELECTY = _startBox;
+	_vm->_boxDataStart = _startItem;
+	_vm->_boxSelectYOld = -1;
+	_vm->_boxSelectY = _startBox;
 
-	_vm->NUMBLINES = (_bounds.bottom >> 3) - 2;
+	_vm->_numLines = (_bounds.bottom >> 3) - 2;
 	if (_type == TYPE_3)
-		--_vm->NUMBLINES;
+		--_vm->_numLines;
 
 	_vm->_events->showCursor();
 	displayBoxData();
@@ -657,30 +657,30 @@ int BubbleBox::doBox_v1(int item, int box, int &btnSelected) {
 		if (((_type == TYPE_1) || (_type != TYPE_3)) && (_vm->_timers[2]._flag == 0)) {
 			++_vm->_timers[2]._flag;
 			if (_btnUpPos.contains(_vm->_events->_mousePos)) {
-				if (_vm->BCNT) {
-					if (_vm->BOXSELECTY != 0) {
-						--_vm->BOXSELECTY;
+				if (_vm->_bcnt) {
+					if (_vm->_boxSelectY != 0) {
+						--_vm->_boxSelectY;
 						drawSelectBox();
-					} else if (_vm->BOXDATASTART != 0) {
-						--_vm->BOXDATASTART;
+					} else if (_vm->_boxDataStart != 0) {
+						--_vm->_boxDataStart;
 						displayBoxData();
 						drawSelectBox();
 					}
 				}
 				continue;
 			} else if (_btnDownPos.contains(_vm->_events->_mousePos)) {
-				if (_vm->BCNT) {
-					if (_vm->BCNT == _vm->NUMBLINES) {
-						if (_vm->BCNT != _vm->BOXSELECTY + 1) {
-							++_vm->BOXSELECTY;
+				if (_vm->_bcnt) {
+					if (_vm->_bcnt == _vm->_numLines) {
+						if (_vm->_bcnt != _vm->_boxSelectY + 1) {
+							++_vm->_boxSelectY;
 							drawSelectBox();
-						} else if (!_vm->BOXDATAEND) {
-							++_vm->BOXDATASTART;
+						} else if (!_vm->_boxDataEnd) {
+							++_vm->_boxDataStart;
 							displayBoxData();
 							drawSelectBox();
 						}
-					} else if (_vm->BCNT != _vm->BOXSELECTY + 1) {
-						++_vm->BOXSELECTY;
+					} else if (_vm->_bcnt != _vm->_boxSelectY + 1) {
+						++_vm->_boxSelectY;
 						drawSelectBox();
 					}
 				}
@@ -688,19 +688,19 @@ int BubbleBox::doBox_v1(int item, int box, int &btnSelected) {
 			}
 		}
 
-		if ((_vm->_events->_mousePos.x >= BOXSTARTX) && (_vm->_events->_mousePos.x <= BOXENDX)
-		&&  (_vm->_events->_mousePos.y >= BOXSTARTY) && (_vm->_events->_mousePos.y <= BOXENDY)) {
-			int val = (_vm->_events->_mousePos.x >> 3) - BOXPSTARTY;
-			if (val > _vm->BCNT)
+		if ((_vm->_events->_mousePos.x >= boxStartX) && (_vm->_events->_mousePos.x <= _boxEndX)
+		&&  (_vm->_events->_mousePos.y >= boxStartY) && (_vm->_events->_mousePos.y <= _boxEndY)) {
+			int val = (_vm->_events->_mousePos.x >> 3) - _boxPStartY;
+			if (val > _vm->_bcnt)
 				continue;
 			--val;
 			if (_type == TYPE_3)
 				_vm->_boxSelect = val;
 			else {
 				btnSelected = 1;
-				if (_vm->BOXSELECTY == val)
+				if (_vm->_boxSelectY == val)
 					break;
-				_vm->BOXSELECTY = val;
+				_vm->_boxSelectY = val;
 				_vm->_events->debounceLeft();
 				drawSelectBox();
 				continue;
@@ -740,10 +740,10 @@ int BubbleBox::doBox_v1(int item, int box, int &btnSelected) {
 	_vm->_screen->restoreBlock();
 	_vm->_events->showCursor();
 	_vm->_events->debounceLeft();
-	if (_vm->BCNT == 0)
+	if (_vm->_bcnt == 0)
 		retval_ = -1;
 	else
-		retval_ = _vm->BOXDATASTART + _vm->BOXSELECTY;
+		retval_ = _vm->_boxDataStart + _vm->_boxSelectY;
 	return retval_;
 }
 

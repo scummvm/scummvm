@@ -134,7 +134,7 @@ const byte MOUSE3[] = {
 };
 const byte *const CURSORS[4] = { MOUSE0, MOUSE1, MOUSE2, MOUSE3 };
 
-const int TRAVEL_POS[][2] = {
+const int _travelPos[][2] = {
 	{ -1, 0 },
 	{ 228, 117 },
 	{ 28, 98 },
@@ -765,7 +765,7 @@ const char *const TRAVDATA[] = {
 	"COOPER BRADBURY", nullptr
 };
 
-const char *const ASKTBL[] = {
+const char *const _askTBL[] = {
 	"NONE", "MARSHALL ALEXANDER", "TERRAFORM CORP.", "COLLIER STANTON", "ROCKWELL BACHE",
 	"JOCQUES SPARROW", "NORA DESMOND ALEXANDER", "GALACTIC PICTURES", "LAWRENCE BARKLEY", "TMS",
 	"MAC MALDEN", "STANTON EXPEDITION", "LOWELL PERCIVAL", "CHANTAL VARGAS", "RICK LOGAN",

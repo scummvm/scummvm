@@ -226,8 +226,8 @@ int InventoryManager::displayInv() {
 
 	int btnSelected = 0;
 	int boxX = _vm->_invBox->doBox_v1(_startInvItem, _startInvBox, btnSelected);
-	_startInvItem = _vm->BOXDATASTART;
-	_startInvBox= _vm->BOXSELECTY;
+	_startInvItem = _vm->_boxDataStart;
+	_startInvBox = _vm->_boxSelectY;
 
 	if (boxX == -1)
 		btnSelected = 2;
