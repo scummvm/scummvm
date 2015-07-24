@@ -204,6 +204,16 @@ public:
 	 * If there is no object being pointed it, clear any previously displayed name
 	 */
 	void displayObjectNames();
+
+	/**
+	 * Show the load game dialog, and allow the user to load a game
+	 */
+	void loadGame();
+
+	/**
+	 * Show the save game dialog, and allow the user to save the game
+	 */
+	void saveGame();
 public:
 	/**
 	 * Resets the user interface

@@ -87,7 +87,15 @@ public:
 	TattooEngine(OSystem *syst, const SherlockGameDescription *gameDesc);
 	virtual ~TattooEngine();
 
+	/**
+	 * Shows the hangman puzzle
+	 */
 	void doHangManPuzzle();
+
+	/**
+	 * Save the game configuration
+	 */
+	void saveConfig() {}
 };
 
 } // End of namespace Tattoo

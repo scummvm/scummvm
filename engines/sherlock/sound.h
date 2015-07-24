@@ -99,6 +99,8 @@ public:
 	void freeDigiSound();
 
 	Audio::SoundHandle getFreeSoundHandle();
+
+	void setVolume(int volume);
 };
 
 } // End of namespace Sherlock

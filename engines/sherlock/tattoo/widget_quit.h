@@ -20,12 +20,11 @@
  *
  */
 
-#ifndef SHERLOCK_TATTOO_WIDGET_OPTIONS_H
-#define SHERLOCK_TATTOO_WIDGET_OPTIONS_H
+#ifndef SHERLOCK_TATTOO_WIDGET_QUIT_H
+#define SHERLOCK_TATTOO_WIDGET_QUIT_H
 
 #include "common/scummsys.h"
 #include "sherlock/tattoo/widget_base.h"
-#include "sherlock/tattoo/widget_quit.h"
 
 namespace Sherlock {
 
@@ -33,39 +32,15 @@ class SherlockEngine;
 
 namespace Tattoo {
 
-enum OptionRenderMode { OP_ALL = 0, OP_CONTENTS = 1, OP_NAMES = 2};
-
-/**
- * Handles displaying the options dialog
- */
-class WidgetOptions : public WidgetBase {
-private:
-	int _midiSliderX, _digiSliderX;
-	int _selector, _oldSelector;
-	WidgetQuit _quitWidget;
-
-	/**
-	 * Render the contents of the dialog onto the widget's surface
-	 */
-	void render(OptionRenderMode mode = OP_ALL);
-
-	/**
-	 * Close the dialog
-	 */
-	void close();
+class WidgetQuit: public WidgetBase {
 public:
-	WidgetOptions(SherlockEngine *vm);
-	virtual ~WidgetOptions() {}
+	WidgetQuit(SherlockEngine *vm) : WidgetBase(vm) {}
+	virtual ~WidgetQuit() {}
 
 	/**
-	 * Load and then display the options dialog
+	 * Prompt the user whether to quit
 	 */
-	void load();
-
-	/**
-	 * Handle event processing
-	 */
-	virtual void handleEvents();
+	void show();
 };
 
 } // End of namespace Tattoo

@@ -38,6 +38,7 @@ MODULE_OBJS = \
 	tattoo/widget_inventory.o \
 	tattoo/widget_lab.o \
 	tattoo/widget_options.o \
+	tattoo/widget_quit.o \
 	tattoo/widget_talk.o \
 	tattoo/widget_text.o \
 	tattoo/widget_tooltip.o \

@@ -266,5 +266,9 @@ Audio::SoundHandle Sound::getFreeSoundHandle() {
 	error("getFreeSoundHandle: No sound handle found");
 }
 
+void Sound::setVolume(int volume) {
+	warning("TODO: setVolume - %d", volume);
+}
+
 } // End of namespace Sherlock
 

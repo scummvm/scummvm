@@ -374,15 +374,13 @@ void TattooUserInterface::doStandardControl() {
 	case Common::KEYCODE_F5:
 		// Save game
 		freeMenu();
-		_fileMode = SAVEMODE_SAVE;
-		initFileMenu();
+		saveGame();
 		return;
 
 	case Common::KEYCODE_F7:
 		// Load game
 		freeMenu();
-		_fileMode = SAVEMODE_LOAD;
-		initFileMenu();
+		loadGame();
 		return;
 
 	case Common::KEYCODE_F1:
@@ -880,6 +878,16 @@ void TattooUserInterface::freeMenu() {
 
 void TattooUserInterface::clearWindow() {
 	banishWindow();
+}
+
+void TattooUserInterface::loadGame() {
+	_fileMode = SAVEMODE_LOAD;
+	// TODO
+}
+
+void TattooUserInterface::saveGame() {
+	_fileMode = SAVEMODE_SAVE;
+	// TODO
 }
 
 } // End of namespace Tattoo

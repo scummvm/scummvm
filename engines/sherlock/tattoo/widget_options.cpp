@@ -23,13 +23,14 @@
 #include "sherlock/tattoo/widget_options.h"
 #include "sherlock/tattoo/tattoo.h"
 #include "sherlock/tattoo/tattoo_fixed_text.h"
+#include "sherlock/tattoo/tattoo_scene.h"
 #include "sherlock/tattoo/tattoo_user_interface.h"
 
 namespace Sherlock {
 
 namespace Tattoo {
 
-WidgetOptions::WidgetOptions(SherlockEngine *vm) : WidgetBase(vm) {
+WidgetOptions::WidgetOptions(SherlockEngine *vm) : WidgetBase(vm), _quitWidget(vm) {
 	_midiSliderX = _digiSliderX = 0;
 	_selector = _oldSelector = -1;
 }
@@ -56,8 +57,192 @@ void WidgetOptions::load() {
 }
 
 void WidgetOptions::handleEvents() {
+	TattooEngine &vm = *(TattooEngine *)_vm;
 	Events &events = *_vm->_events;
-	// TODO
+	Music &music = *_vm->_music;
+	Screen &screen = *_vm->_screen;
+	Sound &sound = *_vm->_sound;
+	Talk &talk = *_vm->_talk;
+	TattooUserInterface &ui = *(TattooUserInterface *)_vm->_ui;
+	Common::Point mousePos = events.mousePos();
+
+	if (talk._talkToAbort) {
+		sound.stopSound();
+		return;
+	}
+
+	// Flag if they started pressing outside the window
+	if (events._firstPress && !_bounds.contains(mousePos))
+		_outsideMenu = true;
+
+	if (events.kbHit()) {
+		ui._keyState = events.getKey();
+
+		// Emulate a mouse release if Enter or Space Bar is pressed
+		if (ui._keyState.keycode == Common::KEYCODE_RETURN || ui._keyState.keycode == Common::KEYCODE_SPACE) {
+			events._pressed  = events._oldButtons = false;
+			events._released = true;
+		} else if (ui._keyState.keycode == Common::KEYCODE_ESCAPE) {
+			close();
+			return;
+		} else {
+			checkTabbingKeys(11);
+		}
+	}
+
+	// Check highlighting the various controls
+	if (_bounds.contains(mousePos)) {
+		_selector = (mousePos.y - _bounds.top) / (_surface.fontHeight() + 7);
+
+		// If one of the sliders has been selected, & the mouse is not pressed, reset the selector to -1
+		if ((_selector == 3 || _selector == 6) && !events._pressed)
+			_selector = -1;
+	} else {
+		_selector = -1;
+		if (_outsideMenu && (events._released || events._rightReleased)) {
+			close();
+			return;
+		}
+	}
+
+	// If the selected control has changed, redraw the dialog contents
+	if (_selector != _oldSelector)
+		render(OP_CONTENTS);
+	_oldSelector = _selector;
+
+	// Adjust the Volume Sliders (if neccessary) here
+	switch (_selector) {
+	case 3: {
+		// Set Music Volume
+		_midiSliderX = mousePos.x - _bounds.left;
+		if (_midiSliderX < _surface.widestChar())
+			_midiSliderX = _surface.widestChar();
+		else
+			if (_midiSliderX > _bounds.width() - _surface.widestChar())
+				_midiSliderX = _bounds.width() - _surface.widestChar();
+
+		int temp = music._musicVolume;
+		music._musicVolume = (_midiSliderX - _surface.widestChar()) * 127 / (_bounds.width() - _surface.widestChar() * 2);
+		if (music._musicVolume != temp) {
+			music.setMIDIVolume(music._musicVolume);
+			vm.saveConfig();
+		}
+
+		render(OP_NAMES);
+		break;
+	}
+
+	case 6: {
+		// Set Digitized Volume
+		_digiSliderX = mousePos.x - _bounds.left;
+		if (_digiSliderX < _surface.widestChar())
+			_digiSliderX = _surface.widestChar();
+		else if (_digiSliderX > _bounds.width() - _surface.widestChar())
+			_digiSliderX = _bounds.width() - _surface.widestChar();
+
+		int temp = sound._soundVolume;
+		sound._soundVolume = (_digiSliderX - _surface.widestChar()) * 15 / (_bounds.width() - _surface.widestChar() * 2);
+		if (sound._soundVolume != temp) {
+			sound.setVolume(sound._soundVolume);
+			vm.saveConfig();
+		}
+
+		render(OP_NAMES);
+		break;
+	}
+
+	default:
+		break;
+	}
+
+	// Option selected
+	if (events._released || events._rightReleased) {
+		_outsideMenu = false;
+		int temp = _selector;
+		_selector = 255;
+
+		switch (temp) {
+		case 0:
+			// Load Game
+			close();
+			ui.loadGame();
+			break;
+
+		case 1:
+			// Save Game
+			close();
+			ui.saveGame();
+			break;
+
+		case 2:
+			// Toggle Music
+			music._musicOn = !music._musicOn;
+			if (!music._musicOn)
+				music.stopMusic();
+			else
+				music.startSong();
+
+			render(OP_NAMES);
+			vm.saveConfig();
+			break;
+
+		case 4:
+			// Toggle Sound Effects
+			sound.stopSound();
+			sound._digitized = !sound._digitized;
+
+			render(OP_NAMES);
+			vm.saveConfig();
+			break;
+
+		case 5:
+			// Toggle Voices
+			sound._voices = !sound._voices;
+
+			render(OP_NAMES);
+			vm.saveConfig();
+			break;
+			
+		case 7:
+			// Toggle Text Windows
+			vm._textWindowsOn = !vm._textWindowsOn;
+
+			render(OP_NAMES);
+			vm.saveConfig();
+			break;
+
+		case 8: {
+			// New Font Style
+			int fontNumber = screen.fontNumber() + 1;
+			if (fontNumber == 7)
+				fontNumber = 0;
+			screen.setFont(fontNumber);
+
+			render(OP_CONTENTS);
+			vm.saveConfig();
+			break;
+		}
+
+		case 9:
+			// Toggle Transparent Menus
+			vm._transparentMenus = !vm._transparentMenus;
+
+			render(OP_CONTENTS);
+			vm.saveConfig();
+			break;
+
+		case 10:
+			// Quit
+			banishWindow();
+			_quitWidget.show();
+			break;
+
+		default:
+			break;
+		}
+		
+		_oldSelector = -1;
+	}
 }
 
 void WidgetOptions::render(OptionRenderMode mode) {
@@ -190,6 +375,14 @@ void WidgetOptions::render(OptionRenderMode mode) {
 			}
 		}
 	}
+}
+
+void WidgetOptions::close() {
+	TattooScene &scene = *(TattooScene *)_vm->_scene;
+	TattooUserInterface &ui = *(TattooUserInterface *)_vm->_ui;
+	
+	banishWindow();
+	ui._menuMode = scene._labTableScene ? LAB_MODE : STD_MODE;
 }
 
 } // End of namespace Tattoo
