@@ -2549,8 +2549,8 @@ if test -n "$_host"; then
 			_port_mk="backends/platform/dingux/dingux.mk"
 			;;
 		raspberrypi)
-			# We should have setup raspberrypi-sdl-config with modified prefix as part of 
-			# the cross-building enviroment.	
+			# For proper cross-compilation, we assume that the cross-building environment provides 
+			# an sdl-config executable with modified prefix pointing to $RPI_ROOT/usr.
 			_savegame_timestamp=no
 			_eventrec=no
 			_build_scalers=no

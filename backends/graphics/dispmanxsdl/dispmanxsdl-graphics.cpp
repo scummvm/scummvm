@@ -175,7 +175,7 @@ void DispmanXSdlGraphicsManager::dispmanXSetup(int srcWidth, int srcHeight) {
 	vc_dispmanx_update_submit_sync(_dispvars->update);
 }
 
-void dispmanXVSyncCallback (DISPMANX_UPDATE_HANDLE_T u, void *arg) {
+void dispmanXVSyncCallback(DISPMANX_UPDATE_HANDLE_T u, void *arg) {
 	struct dispmanxPage *page = (struct dispmanxPage*)arg;
 	struct dispvarsStruct *dispvars = page->dispvars;
 
@@ -237,12 +237,10 @@ void DispmanXSdlGraphicsManager::dispmanXUpdate() {
 struct dispmanxPage *DispmanXSdlGraphicsManager::dispmanXGetFreePage(void) {
 	struct dispmanxPage *page = NULL;
 
-	while (!page)
-	{
+	while (!page) {
 		// Try to find a free page
 		for (int i = 0; i < _dispvars->numpages; ++i) {
-			if (!_dispvars->pages[i].used)
-			{
+			if (!_dispvars->pages[i].used) {
 				page = (_dispvars->pages) + i;
 				break;
 			}
@@ -328,8 +326,9 @@ bool DispmanXSdlGraphicsManager::loadGFXMode() {
 		((1 << _screenFormat.gBits()) - 1) << _screenFormat.gShift ,
 		((1 << _screenFormat.bBits()) - 1) << _screenFormat.bShift ,
 		((1 << _screenFormat.aBits()) - 1) << _screenFormat.aShift );
-		if (_screen == NULL)
-			error("allocating _screen failed");
+	if (_screen == NULL)
+		error("allocating _screen failed");
+
 	// Avoid having SDL_SRCALPHA set even if we supplied an alpha-channel in the format.
 	SDL_SetAlpha(_screen, 0, 255);
 
