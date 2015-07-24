@@ -380,7 +380,7 @@ void AmazonScripts::executeSpecial(int commandIndex, int param1, int param2) {
 typedef void(AmazonScripts::*AmazonScriptMethodPtr)();
 
 void AmazonScripts::executeCommand(int commandIndex) {
-	static const AmazonScriptMethodPtr COMMAND_LIST[] = {
+	static const AmazonScriptMethodPtr AMAZON_COMMAND_LIST[] = {
 		&AmazonScripts::cmdHelp_v2, &AmazonScripts::cmdCycleBack,
 		&AmazonScripts::cmdChapter, &AmazonScripts::cmdSetHelp,
 		&AmazonScripts::cmdCenterPanel, &AmazonScripts::cmdMainPanel,
@@ -388,7 +388,7 @@ void AmazonScripts::executeCommand(int commandIndex) {
 	};
 
 	if (commandIndex >= 73)
-		(this->*COMMAND_LIST[commandIndex - 73])();
+		(this->*AMAZON_COMMAND_LIST[commandIndex - 73])();
 	else
 		Scripts::executeCommand(commandIndex);
 }
