@@ -155,6 +155,8 @@ public:
 	bool startEnvironmentAmbient(int oldTimeZone = -1, int oldEnvironment = -1, int timeZone = -1, int environment = -1, bool fade = true);
 	bool checkCustomAICommentDependencies(const Location &commentLocation, const AIComment &commentData);
 
+	const SceneBase *getCurrentScene() const { return _currentScene; }
+
 private:
 	Graphics::Surface *_preBuffer;
 	SceneBase *_currentScene;
