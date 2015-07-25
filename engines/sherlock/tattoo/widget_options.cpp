@@ -37,23 +37,9 @@ WidgetOptions::WidgetOptions(SherlockEngine *vm) : WidgetBase(vm) {
 
 void WidgetOptions::load() {
 	Events &events = *_vm->_events;
-	Music &music = *_vm->_music;
-	Sound &sound = *_vm->_sound;
 	TattooUserInterface &ui = *(TattooUserInterface *)_vm->_ui;
-	Common::Point mousePos = events.mousePos();
+	_centerPos = events.mousePos();
 
-	// Set bounds for the dialog
-	Common::String widestString = Common::String::format("%s %s", FIXED(TransparentMenus), FIXED(Off));
-	_bounds = Common::Rect(_surface.stringWidth(widestString) + _surface.widestChar() * 2 + 6,
-		(_surface.fontHeight() + 7) * 11 + 3);
-	_bounds.moveTo(mousePos.x - _bounds.width() / 2, mousePos.y - _bounds.height() / 2);
-
-	// Get slider positions
-	_midiSliderX = music._musicVolume * (_bounds.width() - _surface.widestChar() * 2) / 255 + _surface.widestChar();
-	_digiSliderX = sound._soundVolume * (_bounds.width() - _surface.widestChar() * 2) / 255 + _surface.widestChar();
-
-	// Setup the dialog
-	_surface.create(_bounds.width(), _bounds.height());
 	render();
 
 	summonWindow();
@@ -127,7 +113,7 @@ void WidgetOptions::handleEvents() {
 				_midiSliderX = _bounds.width() - _surface.widestChar();
 
 		int temp = music._musicVolume;
-		music._musicVolume = (_midiSliderX - _surface.widestChar()) * 127 / (_bounds.width() - _surface.widestChar() * 2);
+		music._musicVolume = (_midiSliderX - _surface.widestChar()) * 255 / (_bounds.width() - _surface.widestChar() * 2);
 		if (music._musicVolume != temp) {
 			music.setMIDIVolume(music._musicVolume);
 			vm.saveConfig();
@@ -146,7 +132,7 @@ void WidgetOptions::handleEvents() {
 			_digiSliderX = _bounds.width() - _surface.widestChar();
 
 		int temp = sound._soundVolume;
-		sound._soundVolume = (_digiSliderX - _surface.widestChar()) * 15 / (_bounds.width() - _surface.widestChar() * 2);
+		sound._soundVolume = (_digiSliderX - _surface.widestChar()) * 255 / (_bounds.width() - _surface.widestChar() * 2);
 		if (sound._soundVolume != temp) {
 			sound.setVolume(sound._soundVolume);
 			vm.saveConfig();
@@ -165,7 +151,7 @@ void WidgetOptions::handleEvents() {
 		events.clearEvents();
 		_outsideMenu = false;
 		int temp = _selector;
-		_selector = 255;
+		_selector = -1;
 
 		switch (temp) {
 		case 0:
@@ -224,7 +210,7 @@ void WidgetOptions::handleEvents() {
 				fontNumber = 0;
 			screen.setFont(fontNumber);
 
-			render(OP_CONTENTS);
+			render(OP_ALL);
 			vm.saveConfig();
 			break;
 		}
@@ -233,7 +219,7 @@ void WidgetOptions::handleEvents() {
 			// Toggle Transparent Menus
 			vm._transparentMenus = !vm._transparentMenus;
 
-			render(OP_CONTENTS);
+			render(OP_NAMES);
 			vm.saveConfig();
 			break;
 
@@ -253,17 +239,32 @@ void WidgetOptions::handleEvents() {
 
 void WidgetOptions::render(OptionRenderMode mode) {
 	TattooEngine &vm = *(TattooEngine *)_vm;
+	Events &events = *_vm->_events;
 	Music &music = *_vm->_music;
 	Sound &sound = *_vm->_sound;
 	TattooUserInterface &ui = *(TattooUserInterface *)_vm->_ui;
+	Common::Point mousePos = events.mousePos();
 	ImageFile &images = *ui._interfaceImages;
 	const char *const OFF_ON[2] = { FIXED(Off), FIXED(On) };
 
 	// Draw the border if necessary
 	if (mode == OP_ALL) {
+		// Set bounds for the dialog
+		Common::String widestString = Common::String::format("%s %s", FIXED(TransparentMenus), FIXED(Off));
+		_bounds = Common::Rect(_surface.stringWidth(widestString) + _surface.widestChar() * 2 + 6,
+			(_surface.fontHeight() + 7) * 11 + 3);
+		_bounds.moveTo(_centerPos.x - _bounds.width() / 2, _centerPos.y - _bounds.height() / 2);
+
+		// Get slider positions
+		_midiSliderX = music._musicVolume * (_bounds.width() - _surface.widestChar() * 2) / 255 + _surface.widestChar();
+		_digiSliderX = sound._soundVolume * (_bounds.width() - _surface.widestChar() * 2) / 255 + _surface.widestChar();
+
+		// Setup the dialog
+		_surface.create(_bounds.width(), _bounds.height());
 		_surface.fill(TRANSPARENCY);
 		makeInfoArea();
 
+		// Draw the lines separating options in the dialog
 		int yp = _surface.fontHeight() + 7;
 		for (int idx = 0; idx < 7; ++idx) {
 			_surface.transBlitFrom(images[4], Common::Point(0, yp - 1));

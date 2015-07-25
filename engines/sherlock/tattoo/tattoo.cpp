@@ -20,6 +20,7 @@
  *
  */
 
+#include "common/config-manager.h"
 #include "engines/util.h"
 #include "sherlock/tattoo/tattoo.h"
 #include "sherlock/tattoo/tattoo_fixed_text.h"
@@ -176,6 +177,21 @@ void TattooEngine::loadInventory() {
 
 void TattooEngine::doHangManPuzzle() {
 	_hangmanWidget.show();
+}
+
+void TattooEngine::loadConfig() {
+	SherlockEngine::loadConfig();
+
+	_transparentMenus = ConfMan.getBool("transparent_windows");
+	_textWindowsOn = ConfMan.getBool("text_windows");
+}
+
+void TattooEngine::saveConfig() {
+	SherlockEngine::saveConfig();
+
+	ConfMan.setBool("transparent_windows", _transparentMenus);
+	ConfMan.setBool("text_windows", _textWindowsOn);
+	ConfMan.flushToDisk();
 }
 
 } // End of namespace Tattoo

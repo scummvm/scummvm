@@ -41,6 +41,7 @@ class WidgetOptions : public WidgetBase {
 private:
 	int _midiSliderX, _digiSliderX;
 	int _selector, _oldSelector;
+	Common::Point _centerPos;
 
 	/**
 	 * Render the contents of the dialog onto the widget's surface

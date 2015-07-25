@@ -87,11 +87,6 @@ private:
 	 * Handle all player input
 	 */
 	void handleInput();
-
-	/**
-	 * Load game configuration esttings
-	 */
-	void loadConfig();
 protected:
 	/**
 	 * Does basic initialization of the game engine
@@ -106,6 +101,11 @@ protected:
 	 * Returns a list of features the game itself supports
 	 */
 	virtual bool hasFeature(EngineFeature f) const;
+
+	/**
+	 * Load game configuration esttings
+	 */
+	virtual void loadConfig();
 public:
 	const SherlockGameDescription *_gameDescription;
 	Animation *_animation;
@@ -166,6 +166,11 @@ public:
 	virtual void syncSoundSettings();
 
 	/**
+	 * Saves game configuration information
+	 */
+	virtual void saveConfig();
+
+	/**
 	 * Returns whether the version is a demo
 	 */
 	virtual bool isDemo() const;
@@ -208,11 +213,6 @@ public:
 	 * @remarks		We don't use the global setFlags method because we don't want to check scene flags
 	 */
 	void setFlagsDirect(int flagNum);
-
-	/**
-	 * Saves game configuration information
-	 */
-	void saveConfig();
 
 	/**
 	 * Synchronize the data for a savegame

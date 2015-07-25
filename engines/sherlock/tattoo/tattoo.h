@@ -78,6 +78,11 @@ protected:
 	 * Starting a scene within the game
 	 */
 	virtual void startScene();
+
+	/**
+	 * Load configuration options
+	 */
+	virtual void loadConfig();
 public:
 	bool _runningProlog;
 	bool _fastMode, _allowFastMode;
@@ -95,7 +100,7 @@ public:
 	/**
 	 * Save the game configuration
 	 */
-	void saveConfig() {}
+	virtual void saveConfig();
 };
 
 } // End of namespace Tattoo

@@ -130,7 +130,8 @@ static const SherlockGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_UNSTABLE,
-			GUIO0()
+			GUIO4(GAMEOPTION_ORIGINAL_SAVES, GAMEOPTION_HELP_STYLE, GAMEOPTION_TEXT_WINDOWS,
+				GAMEOPTION_TRANSPARENT_WINDOWS)
 		},
 		GType_RoseTattoo
 	},
@@ -145,7 +146,8 @@ static const SherlockGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_UNSTABLE,
-			GUIO0()
+			GUIO4(GAMEOPTION_ORIGINAL_SAVES, GAMEOPTION_HELP_STYLE, GAMEOPTION_TEXT_WINDOWS,
+				GAMEOPTION_TRANSPARENT_WINDOWS)
 		},
 		GType_RoseTattoo,
 	},
@@ -160,7 +162,8 @@ static const SherlockGameDescription gameDescriptions[] = {
   			Common::DE_DEU,
 			Common::kPlatformDOS,
 			ADGF_UNSTABLE,
-			GUIO0()
+			GUIO4(GAMEOPTION_ORIGINAL_SAVES, GAMEOPTION_HELP_STYLE, GAMEOPTION_TEXT_WINDOWS,
+				GAMEOPTION_TRANSPARENT_WINDOWS)
 		},
 		GType_RoseTattoo,
 	},
