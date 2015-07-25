@@ -32,13 +32,6 @@
 
 namespace Sherlock {
 
-static const int FS_TRANS[8] = {
-	Scalpel::STOP_UP, Scalpel::STOP_UPRIGHT, Scalpel::STOP_RIGHT, Scalpel::STOP_DOWNRIGHT, 
-	Scalpel::STOP_DOWN, Scalpel::STOP_DOWNLEFT, Scalpel::STOP_LEFT, Scalpel::STOP_UPLEFT
-};
-
-/*----------------------------------------------------------------*/
-
 BgFileHeader::BgFileHeader() {
 	_numStructs = -1;
 	_numImages = -1;
@@ -1198,7 +1191,11 @@ void Scene::transitionToScene() {
 		// Note: If a savegame was just loaded, then the data is already correct.
 		// Otherwise, this is a linked scene or entrance info, and must be translated
 		if (hSavedFacing < 8 && !saves._justLoaded) {
-			hSavedFacing = FS_TRANS[hSavedFacing];
+			if (IS_ROSE_TATTOO)
+				hSavedFacing = Tattoo::FS_TRANS[hSavedFacing];
+			else			
+				hSavedFacing = Scalpel::FS_TRANS[hSavedFacing];
+			
 			hSavedPos.x *= FIXED_INT_MULTIPLIER;
 			hSavedPos.y *= FIXED_INT_MULTIPLIER;
 		}

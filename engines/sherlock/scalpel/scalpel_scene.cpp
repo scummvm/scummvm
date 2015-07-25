@@ -34,6 +34,12 @@ namespace Sherlock {
 
 namespace Scalpel {
 
+const int FS_TRANS[8] = {
+	STOP_UP, STOP_UPRIGHT, STOP_RIGHT, STOP_DOWNRIGHT, STOP_DOWN, STOP_DOWNLEFT, STOP_LEFT, STOP_UPLEFT
+};
+
+/*----------------------------------------------------------------*/
+
 bool ScalpelScene::loadScene(const Common::String &filename) {
 	ScalpelMap &map = *(ScalpelMap *)_vm->_map;
 	bool result = Scene::loadScene(filename);

@@ -31,6 +31,12 @@ namespace Sherlock {
 
 namespace Tattoo {
 
+const int FS_TRANS[8] = {
+	STOP_UP, STOP_UPRIGHT, STOP_RIGHT, STOP_DOWNRIGHT, STOP_DOWN, STOP_DOWNLEFT, STOP_LEFT, STOP_UPLEFT
+};
+
+/*----------------------------------------------------------------*/
+
 struct ShapeEntry {
 	Object *_shape;
 	TattooPerson *_person;

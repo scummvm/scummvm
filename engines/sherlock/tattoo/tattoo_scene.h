@@ -31,6 +31,8 @@ namespace Sherlock {
 
 namespace Tattoo {
 
+extern const int FS_TRANS[8];
+
 enum {
 	STARTING_GAME_SCENE = 1,  STARTING_INTRO_SCENE = 91, OVERHEAD_MAP2 = 90, OVERHEAD_MAP = 100
 };
