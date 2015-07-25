@@ -51,6 +51,8 @@ public:
 
 class WidgetTooltip: public WidgetTooltipBase {
 public:
+	int _offsetY;
+public:
 	WidgetTooltip(SherlockEngine *vm);
 	virtual ~WidgetTooltip() {}
 

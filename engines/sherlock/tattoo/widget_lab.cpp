@@ -72,6 +72,8 @@ void WidgetLab::handleEvents() {
 			noDesc = true;
 		}
 
+		events.setCursor(ARROW);
+
 		if (events._rightReleased) {
 			// If the player is dragging an object around, restore it to its previous location and reset the cursor
 			if (_labObject) {
@@ -132,35 +134,34 @@ void WidgetLab::handleEvents() {
 							scene.toggleObject(_labObject->_use[idx]._names[nameNum]);
 					}
 				}
-
-				events.setCursor(ARROW);
 			}
 		}
-	} else if (events._pressed) {
-		if (!_labObject) {
-			// If the mouse is over an object and the object is not SOLID, then we need to pick this object
-			// up so the player can move it around
-			if (ui._bgFound != -1) {
-				// Check if the object is set as SOLID, you can't pick up Solid items
-				if (ui._bgShape->_aType != SOLID && ui._bgShape->_type != NO_SHAPE) {
-					// Save a reference to the object about to be dragged
-					_labObject = ui._bgShape;
 
-					// Set the mouse cursor to the object
-					Graphics::Surface &img = _labObject->_imageFrame->_frame;
-					Common::Point cursorOffset = mousePos - _labObject->_position;					
-					events.setCursor(ARROW, cursorOffset, img);
-					warning("%d,%d", cursorOffset.x, cursorOffset.y);//**DEBUG****
+		_labObject = nullptr;
+		ui._tooltipWidget._offsetY = 0;
+	} else if (events._pressed && !_labObject) {
+		// If the mouse is over an object and the object is not SOLID, then we need to pick this object
+		// up so the player can move it around
+		if (ui._bgFound != -1) {
+			// Check if the object is set as SOLID, you can't pick up Solid items
+			if (ui._bgShape->_aType != SOLID && ui._bgShape->_type != NO_SHAPE) {
+				// Save a reference to the object about to be dragged
+				_labObject = ui._bgShape;
 
-					// Hide this object until they are done with it (releasing it)
-					_labObject->toggleHidden();
+				// Set the mouse cursor to the object
+				Graphics::Surface &img = _labObject->_imageFrame->_frame;
+				Common::Point cursorOffset = mousePos - _labObject->_position;					
+				events.setCursor(ARROW, cursorOffset, img);
+				ui._tooltipWidget._offsetY = cursorOffset.y;
 
-					// Toggle any other objects (like shadows) tied to this object
-					for (int idx = 0; idx < 6; ++idx) {
-						if (!_labObject->_use[idx]._target.compareToIgnoreCase("Toggle")) {
-							for (int nameNum = 0; nameNum < 4; ++nameNum)
-								scene.toggleObject(_labObject->_use[idx]._names[nameNum]);
-						}
+				// Hide this object until they are done with it (releasing it)
+				_labObject->toggleHidden();
+
+				// Toggle any other objects (like shadows) tied to this object
+				for (int idx = 0; idx < 6; ++idx) {
+					if (!_labObject->_use[idx]._target.compareToIgnoreCase("Toggle")) {
+						for (int nameNum = 0; nameNum < 4; ++nameNum)
+							scene.toggleObject(_labObject->_use[idx]._names[nameNum]);
 					}
 				}
 			}

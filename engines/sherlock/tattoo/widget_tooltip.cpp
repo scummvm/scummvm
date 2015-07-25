@@ -68,7 +68,7 @@ void WidgetTooltipBase::erase() {
 
 /*----------------------------------------------------------------*/
 
-WidgetTooltip::WidgetTooltip(SherlockEngine *vm) : WidgetTooltipBase (vm) {
+WidgetTooltip::WidgetTooltip(SherlockEngine *vm) : WidgetTooltipBase (vm), _offsetY(0) {
 }
 
 void WidgetTooltip::setText(const Common::String &str) {
@@ -143,7 +143,7 @@ void WidgetTooltip::setText(const Common::String &str) {
 
 		// Set the initial display position for the tooltip text
 		int tagX = mousePos.x - width / 2;
-		int tagY = mousePos.y - height;
+		int tagY = mousePos.y - height - _offsetY;
 
 		_bounds = Common::Rect(tagX, tagY, tagX + width, tagY + height);
 	} else {
@@ -161,7 +161,7 @@ void WidgetTooltip::handleEvents() {
 
 	// Set the new position for the tooltip
 	int xp = mousePos.x - _bounds.width() / 2;
-	int yp = mousePos.y - _bounds.height();
+	int yp = mousePos.y - _bounds.height() - _offsetY;
 
 	_bounds.moveTo(xp, yp);
 }
@@ -202,11 +202,9 @@ void WidgetSceneTooltip::handleEvents() {
 
 		ui._oldBgFound = ui._bgFound;
 	} else {
-
 		// Set the new position for the tooltip
 		int tagX = CLIP(mousePos.x - _bounds.width() / 2, 0, SHERLOCK_SCREEN_WIDTH - _bounds.width());
-		int tagY = MAX(mousePos.y - _bounds.height(), 0);
-
+		int tagY = MAX(mousePos.y - _bounds.height() - _offsetY, 0);
 		_bounds.moveTo(tagX, tagY);
 	}
 
