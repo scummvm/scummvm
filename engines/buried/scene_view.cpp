@@ -1008,7 +1008,7 @@ bool SceneViewWindow::playTransition(const DestinationScene &destinationData, in
 }
 
 bool SceneViewWindow::videoTransition(const Location &location, DestinationScene destinationData, int navFrame) {
-	Cursor oldCursor = _vm->_gfx->setCursor(kCursorWait);
+	TempCursorChange cursorChange(kCursorWait);
 
 	_paused = true;
 	bool audioStream = true;
@@ -1084,7 +1084,6 @@ bool SceneViewWindow::videoTransition(const Location &location, DestinationScene
 		delete newBackground;
 	}
 
-	_vm->_gfx->setCursor(oldCursor);
 	_paused = false;
 
 	return true;
@@ -1092,7 +1091,7 @@ bool SceneViewWindow::videoTransition(const Location &location, DestinationScene
 
 bool SceneViewWindow::walkTransition(const Location &location, const DestinationScene &destinationData, int navFrame) {
 	_paused = true;
-	Cursor oldCursor = _vm->_gfx->setCursor(kCursorWait);
+	TempCursorChange cursorChange(kCursorWait);
 	Graphics::Surface *newBackground = 0;
 
 	if (navFrame >= 0) {
@@ -1144,7 +1143,6 @@ bool SceneViewWindow::walkTransition(const Location &location, const Destination
 	delete newBackground;
 
 	_walkMovie->showWindow(kWindowHide);
-	_vm->_gfx->setCursor(oldCursor);
 	_paused = false;
 
 	return true;
@@ -1156,7 +1154,7 @@ bool SceneViewWindow::pushTransition(Graphics::Surface *curBackground, Graphics:
 		return false;
 
 	// Change the cursor to an hourglass
-	Cursor oldCursor = _vm->_gfx->setCursor(kCursorWait);
+	TempCursorChange cursorChange(kCursorWait);
 	_useScenePaint = false;
 
 	switch (direction) {
@@ -1206,7 +1204,6 @@ bool SceneViewWindow::pushTransition(Graphics::Surface *curBackground, Graphics:
 		break;
 	}
 
-	_vm->_gfx->setCursor(oldCursor);
 	_useScenePaint = true;
 	return true;
 }
@@ -1229,7 +1226,7 @@ bool SceneViewWindow::slideInTransition(Graphics::Surface *newBackground, int di
 		return false;
 
 	// Change the cursor to an hourglass
-	Cursor oldCursor = _vm->_gfx->setCursor(kCursorWait);
+	TempCursorChange cursorChange(kCursorWait);
 
 	switch (direction) {
 	case 0: // Push down
@@ -1270,7 +1267,6 @@ bool SceneViewWindow::slideInTransition(Graphics::Surface *newBackground, int di
 		break;
 	}
 
-	_vm->_gfx->setCursor(oldCursor);
 	return true;
 }
 
@@ -1280,7 +1276,7 @@ bool SceneViewWindow::slideOutTransition(Graphics::Surface *newBackground, int d
 		return false;
 
 	// Change the cursor to an hourglass
-	Cursor oldCursor = _vm->_gfx->setCursor(kCursorWait);
+	TempCursorChange cursorChange(kCursorWait);
 
 	Graphics::Surface curBackground;
 	curBackground.copyFrom(*_preBuffer);
@@ -1324,7 +1320,6 @@ bool SceneViewWindow::slideOutTransition(Graphics::Surface *newBackground, int d
 
 	curBackground.free();
 	_useScenePaint = true;
-	_vm->_gfx->setCursor(oldCursor);
 	return true;
 }
 
@@ -1488,7 +1483,7 @@ bool SceneViewWindow::getCurrentSceneLocation(Location &location) {
 }
 
 bool SceneViewWindow::playSynchronousAnimation(int animationID) {
-	Cursor oldCursor = _vm->_gfx->setCursor(kCursorWait);
+	TempCursorChange cursorChange(kCursorWait);
 
 	Common::Array<AnimEvent> animDatabase = getAnimationDatabase(_currentScene->_staticData.location.timeZone, _currentScene->_staticData.location.environment);
 
@@ -1549,12 +1544,11 @@ bool SceneViewWindow::playSynchronousAnimation(int animationID) {
 	if (_currentScene && _currentScene->movieCallback(this, animationMovie.get(), animationID, MOVIE_STOPPED) == SC_FALSE)
 		return false;
 
-	_vm->_gfx->setCursor(oldCursor);
 	return true;
 }
 
 bool SceneViewWindow::playSynchronousAnimationExtern(int animationID) {
-	Cursor oldCursor = _vm->_gfx->setCursor(kCursorWait);
+	TempCursorChange cursorChange(kCursorWait);
 
 	Common::ScopedPtr<VideoWindow> animationMovie(new VideoWindow(_vm, this));
 	Common::String fileName = _vm->getFilePath(animationID);
@@ -1590,12 +1584,11 @@ bool SceneViewWindow::playSynchronousAnimationExtern(int animationID) {
 	if (_currentScene && _currentScene->movieCallback(this, animationMovie.get(), animationID, MOVIE_STOPPED) == SC_FALSE)
 		return false;
 
-	_vm->_gfx->setCursor(oldCursor);
 	return true;
 }
 
 bool SceneViewWindow::playPlacedSynchronousAnimation(int animationID, int left, int top) {
-	Cursor oldCursor = _vm->_gfx->setCursor(kCursorWait);
+	TempCursorChange cursorChange(kCursorWait);
 
 	Common::Array<AnimEvent> animDatabase = getAnimationDatabase(_currentScene->_staticData.location.timeZone, _currentScene->_staticData.location.environment);
 
@@ -1658,12 +1651,11 @@ bool SceneViewWindow::playPlacedSynchronousAnimation(int animationID, int left, 
 	if (_currentScene && _currentScene->movieCallback(this, animationMovie.get(), animationID, MOVIE_STOPPED) == SC_FALSE)
 		return false;
 
-	_vm->_gfx->setCursor(oldCursor);
 	return true;
 }
 
 bool SceneViewWindow::playClippedSynchronousAnimation(int animationID, int left, int top, int right, int bottom) {
-	Cursor oldCursor = _vm->_gfx->setCursor(kCursorWait);
+	TempCursorChange cursorChange(kCursorWait);
 
 	Common::Array<AnimEvent> animDatabase = getAnimationDatabase(_currentScene->_staticData.location.timeZone, _currentScene->_staticData.location.environment);
 
@@ -1729,7 +1721,6 @@ bool SceneViewWindow::playClippedSynchronousAnimation(int animationID, int left,
 	if (_currentScene && _currentScene->movieCallback(this, animationMovie.get(), animationID, MOVIE_STOPPED) == SC_FALSE)
 		return false;
 
-	_vm->_gfx->setCursor(oldCursor);
 	return true;
 }
 
@@ -2455,9 +2446,8 @@ void SceneViewWindow::onKeyUp(const Common::KeyState &key, uint flags) {
 	case Common::KEYCODE_SPACE:
 		if (((GameUIWindow *)_parent)->_inventoryWindow->isItemInInventory(kItemBioChipAI) && _globalFlags.bcCloakingEnabled != 1) {
 			if (!_lastAICommentFileName.empty() && !_vm->_sound->isAsynchronousAICommentPlaying()) {
-				Cursor oldCursor = _vm->_gfx->setCursor(kCursorWait);
+				TempCursorChange cursorChange(kCursorWait);
 				_vm->_sound->playAsynchronousAIComment(_lastAICommentFileName);
-				_vm->_gfx->setCursor(oldCursor);
 			}
 			return;
 		}
