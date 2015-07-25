@@ -1315,9 +1315,9 @@ int ArrowGodHead::timerCallback(Window *viewWindow) {
 		if (lastStartedTimer > 0 && g_system->getMillis() > (lastStartedTimer + WAR_GOD_HEAD_TIMER_VALUE)) {
 			((SceneViewWindow *)viewWindow)->setGlobalFlagDWord(offsetof(GlobalFlags, myAGHeadAOpenedTime) + i * 4, 0);
 
-			if (i == _headID) {
-				Cursor oldCursor = _vm->_gfx->setCursor(kCursorWait);
+			TempCursorChange cursorChange(kCursorWait);
 
+			if (i == _headID) {
 				byte status = ((SceneViewWindow *)viewWindow)->getGlobalFlagByte(offsetof(GlobalFlags, myAGHeadAStatus) + i);
 
 				if (status & 1) {
@@ -1366,10 +1366,7 @@ int ArrowGodHead::timerCallback(Window *viewWindow) {
 				}
 
 				((GameUIWindow *)viewWindow->getParent())->_bioChipRightWindow->sceneChanged();
-				_vm->_gfx->setCursor(oldCursor);
 			} else {
-				Cursor oldCursor = _vm->_gfx->setCursor(kCursorWait);
-
 				byte status = ((SceneViewWindow *)viewWindow)->getGlobalFlagByte(offsetof(GlobalFlags, myAGHeadAStatus) + i);
 
 				if (status & 1) {
@@ -1407,8 +1404,6 @@ int ArrowGodHead::timerCallback(Window *viewWindow) {
 					else if (_staticData.location.node == 2)
 						_vm->_sound->playSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, 11), 96);
 				}
-
-				_vm->_gfx->setCursor(oldCursor);
 			}
 		}
 	}
@@ -1588,7 +1583,7 @@ int ArrowGodDepthChange::timerCallback(Window *viewWindow) {
 				i == 0 || (((SceneViewWindow *)viewWindow)->getGlobalFlags().generalWalkthroughMode == 1 && i == 1) ||
 				(((SceneViewWindow *)viewWindow)->getGlobalFlagByte(offsetof(GlobalFlags, myAGHeadAStatus) + i) == 2 && i == 3))) {
 			((SceneViewWindow *)viewWindow)->setGlobalFlagDWord(offsetof(GlobalFlags, myAGHeadAOpenedTime) + i * 4, 0);
-			Cursor oldCursor = _vm->_gfx->setCursor(kCursorWait);
+			TempCursorChange cursorChange(kCursorWait);
 			byte status = ((SceneViewWindow *)viewWindow)->getGlobalFlagByte(offsetof(GlobalFlags, myAGHeadAStatus) + i);
 
 			if (status & 1) {
@@ -1600,7 +1595,6 @@ int ArrowGodDepthChange::timerCallback(Window *viewWindow) {
 			}
 
 			((GameUIWindow *)viewWindow->getParent())->_bioChipRightWindow->sceneChanged();
-			_vm->_gfx->setCursor(oldCursor);
 		}
 	}
 
