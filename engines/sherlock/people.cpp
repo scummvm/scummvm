@@ -301,32 +301,4 @@ void People::clearTalking() {
 	}
 }
 
-void People::synchronize(Serializer &s) {
-	s.syncAsByte(_holmesOn);
-
-	if (IS_SERRATED_SCALPEL) {
-		s.syncAsSint16LE(_data[HOLMES]->_position.x);
-		s.syncAsSint16LE(_data[HOLMES]->_position.y);
-		s.syncAsSint16LE(_data[HOLMES]->_sequenceNumber);
-	} else {
-		for (uint idx = 0; idx < _data.size(); ++idx) {
-			Person &p = *_data[idx];
-			s.syncAsSint16LE(p._position.x);
-			s.syncAsSint16LE(p._position.y);
-			s.syncAsSint16LE(p._sequenceNumber);
-			s.syncAsSint16LE(p._type);
-			s.syncString(p._walkVGSName);
-			s.syncString(p._description);
-			s.syncString(p._examine);
-		}
-	}
-
-	s.syncAsSint16LE(_holmesQuotient);
-
-	if (s.isLoading()) {
-		_savedPos = _data[HOLMES]->_position;
-		_savedPos._facing = _data[HOLMES]->_sequenceNumber;
-	}
-}
-
 } // End of namespace Sherlock
