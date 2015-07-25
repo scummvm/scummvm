@@ -227,15 +227,13 @@ void JumpBiochipViewWindow::onLButtonUp(const Common::Point &point, uint flags) 
 			break;
 		case REGION_JUMP:
 			if (_jumpButton.contains(point)) {
-				Cursor oldCursor = _vm->_gfx->setCursor(kCursorWait);
+				TempCursorChange cursorChange(kCursorWait);
 
 				SceneViewWindow *sceneViewWindow = (SceneViewWindow *)getParent()->getParent();
 				int curSelection = _curSelection;
-				GraphicsManager *gfx = _vm->_gfx;
 
 				((GameUIWindow *)getParent()->getParent()->getParent())->_bioChipRightWindow->destroyBioChipViewWindow();
 				sceneViewWindow->timeSuitJump(curSelection);
-				gfx->setCursor(oldCursor);
 				return;
 			}
 			break;

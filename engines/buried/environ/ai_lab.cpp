@@ -643,8 +643,7 @@ IceteroidMineControls::IceteroidMineControls(BuriedEngine *vm, Window *viewWindo
 
 int IceteroidMineControls::mouseUp(Window *viewWindow, const Common::Point &pointLocation) {
 	if (_mineButton.contains(pointLocation) && ((SceneViewWindow *)viewWindow)->getGlobalFlags().aiIceMined < 255) {
-		GraphicsManager *gfx = _vm->_gfx;
-		Cursor oldCursor = gfx->setCursor(kCursorWait);
+		TempCursorChange cursorChange(kCursorWait);
 
 		// Update the amount of ice mined
 		((SceneViewWindow *)viewWindow)->getGlobalFlags().aiIceMined++;
@@ -662,8 +661,6 @@ int IceteroidMineControls::mouseUp(Window *viewWindow, const Common::Point &poin
 		destinationData.transitionLength = -1;
 		((SceneViewWindow *)viewWindow)->moveToDestination(destinationData);
 
-		// Reset the cursor
-		gfx->setCursor(oldCursor);
 		return SC_TRUE;
 	}
 
@@ -812,7 +809,7 @@ int IceteroidDispenserControls::mouseDown(Window *viewWindow, const Common::Poin
 int IceteroidDispenserControls::mouseUp(Window *viewWindow, const Common::Point &pointLocation) {
 	if (_oxygenHandle.contains(pointLocation)) {
 		if (((SceneViewWindow *)viewWindow)->getGlobalFlags().aiOxygenReserves > 0 || ((SceneViewWindow *)viewWindow)->getGlobalFlags().aiICProcessedOxygen == 1) {
-			Cursor oldCursor = _vm->_gfx->setCursor(kCursorWait);
+			TempCursorChange cursorChange(kCursorWait);
 
 			// Reset the flags
 			if (((SceneViewWindow *)viewWindow)->getGlobalFlags().aiICProcessedOxygen == 0)
@@ -833,8 +830,6 @@ int IceteroidDispenserControls::mouseUp(Window *viewWindow, const Common::Point 
 			else
 				text = "Emergency oxygen reserves refilled.";
 			((SceneViewWindow *)viewWindow)->displayLiveText(text, false);
-
-			_vm->_gfx->setCursor(oldCursor);
 		} else {
 			// Play voiceover informing the player the oxygen needs to be refilled
 			_vm->_sound->playSynchronousSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, 12));
@@ -844,10 +839,9 @@ int IceteroidDispenserControls::mouseUp(Window *viewWindow, const Common::Point 
 	}
 
 	if (_fillHandle.contains(pointLocation) && ((SceneViewWindow *)viewWindow)->getGlobalFlags().aiICWaterInFillHandle > 0) {
-		Cursor oldCursor = _vm->_gfx->setCursor(kCursorWait);
+		TempCursorChange cursorChange(kCursorWait);
 		((SceneViewWindow *)viewWindow)->getGlobalFlags().aiICWaterInFillHandle = 2;
 		((SceneViewWindow *)viewWindow)->playSynchronousAnimation(17);
-		_vm->_gfx->setCursor(oldCursor);
 		return SC_TRUE;
 	}
 
@@ -1600,7 +1594,7 @@ int NexusEnd::postEnterRoom(Window *viewWindow, const Location &priorLocation) {
 
 		// Play Arthur's comments
 
-		Cursor oldCursor = _vm->_gfx->setCursor(kCursorWait);
+		TempCursorChange cursorChange(kCursorWait);
 
 		((GameUIWindow *)viewWindow->getParent())->_bioChipRightWindow->_forceComment = true;
 		((GameUIWindow *)viewWindow->getParent())->_bioChipRightWindow->invalidateWindow(false);
@@ -1615,7 +1609,6 @@ int NexusEnd::postEnterRoom(Window *viewWindow, const Location &priorLocation) {
 		((GameUIWindow *)viewWindow->getParent())->_bioChipRightWindow->invalidateWindow(false);
 		_vm->_sound->playSynchronousSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, 12));
 		_vm->_sound->playSynchronousSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, 13));
-		_vm->_gfx->setCursor(oldCursor);
 	}
 
 	return SC_TRUE;

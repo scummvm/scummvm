@@ -200,7 +200,7 @@ void BurnedLetterViewWindow::onLButtonUp(const Common::Point &point, uint flags)
 
 		// Only draw if transitions are enabled
 		if (offset != 189) {
-			Cursor oldCursor = _vm->_gfx->setCursor(kCursorWait);
+			TempCursorChange cursorChange(kCursorWait);
 
 			Graphics::Surface *newFrame = _stillFrames->getFrameCopy(_curView);
 		
@@ -216,8 +216,6 @@ void BurnedLetterViewWindow::onLButtonUp(const Common::Point &point, uint flags)
 
 			newFrame->free();
 			delete newFrame;
-
-			_vm->_gfx->setCursor(oldCursor);
 		}
 
 		_rebuildPage = true;
@@ -232,7 +230,7 @@ void BurnedLetterViewWindow::onLButtonUp(const Common::Point &point, uint flags)
 
 		// Only draw if transitions are enabled
 		if (offset != 189) {
-			Cursor oldCursor = _vm->_gfx->setCursor(kCursorWait);
+			TempCursorChange cursorChange(kCursorWait);
 
 			Graphics::Surface *newFrame = _stillFrames->getFrameCopy(_curView);
 
@@ -248,8 +246,6 @@ void BurnedLetterViewWindow::onLButtonUp(const Common::Point &point, uint flags)
 
 			newFrame->free();
 			delete newFrame;
-
-			_vm->_gfx->setCursor(oldCursor);
 		}
 
 		_rebuildPage = true;
