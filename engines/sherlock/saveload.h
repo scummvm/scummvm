@@ -87,7 +87,6 @@ protected:
 public:
 	Common::StringArray _savegames;
 	int _savegameIndex;
-	SaveMode _envMode;
 	bool _justLoaded;
 public:
 	static SaveManager *init(SherlockEngine *vm, const Common::String &target);

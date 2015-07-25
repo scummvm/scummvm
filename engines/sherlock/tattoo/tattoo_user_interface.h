@@ -29,6 +29,7 @@
 #include "sherlock/screen.h"
 #include "sherlock/user_interface.h"
 #include "sherlock/tattoo/widget_credits.h"
+#include "sherlock/tattoo/widget_files.h"
 #include "sherlock/tattoo/widget_inventory.h"
 #include "sherlock/tattoo/widget_lab.h"
 #include "sherlock/tattoo/widget_options.h"
@@ -51,9 +52,9 @@ class TattooUserInterface : public UserInterface {
 	friend class WidgetBase;
 private:
 	int _lockoutTimer;
-	SaveMode _fileMode;
 	int _scriptZone;
 	int _cAnimFramePause;
+	WidgetFiles _filesWidget;
 	WidgetInventory _inventoryWidget;
 	WidgetMessage _messageWidget;
 	WidgetQuit _quitWidget;

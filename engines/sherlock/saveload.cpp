@@ -46,7 +46,6 @@ SaveManager *SaveManager::init(SherlockEngine *vm, const Common::String &target)
 SaveManager::SaveManager(SherlockEngine *vm, const Common::String &target) :
 		_vm(vm), _target(target) {
 	_saveThumb = nullptr;
-	_envMode = SAVEMODE_NONE;
 	_justLoaded = false;
 	_savegameIndex = 0;
 }

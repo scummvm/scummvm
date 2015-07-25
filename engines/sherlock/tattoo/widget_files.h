@@ -20,51 +20,43 @@
  *
  */
 
-#ifndef SHERLOCK_SCALPEL_SAVELOAD_H
-#define SHERLOCK_SCALPEL_SAVELOAD_H
+#ifndef SHERLOCK_TATTOO_WIDGET_FILES_H
+#define SHERLOCK_TATTOO_WIDGET_FILES_H
 
+#include "common/scummsys.h"
+#include "sherlock/tattoo/widget_base.h"
 #include "sherlock/saveload.h"
 
 namespace Sherlock {
 
-namespace Scalpel {
+class SherlockEngine;
 
-extern const int ENV_POINTS[6][3];
+namespace Tattoo {
 
-class ScalpelSaveManager: public SaveManager {
+class WidgetFiles: public WidgetBase {
+private:
+	SaveMode _fileMode;
+
+	/**
+	 * Close the dialog
+	 */
+	void close();
 public:
-	SaveMode _envMode;
-public:
-	ScalpelSaveManager(SherlockEngine *vm, const Common::String &target);
-	virtual ~ScalpelSaveManager() {}
+	WidgetFiles(SherlockEngine *vm);
+	virtual ~WidgetFiles() {}
 
 	/**
-	 * Shows the in-game dialog interface for loading and saving games
+	 * Prompt the user whether to quit
 	 */
-	void drawInterface();
+	void show(SaveMode mode);
 
 	/**
-	 * Return the index of the button the mouse is over, if any
+	 * Handle event processing
 	 */
-	int getHighlightedButton() const;
-
-	/**
-	 * Handle highlighting buttons
-	 */
-	void highlightButtons(int btnIndex);
-
-	/**
-	 * Make sure that the selected savegame is on-screen
-	 */
-	bool checkGameOnScreen(int slot);
-
-	/**
-	 * Prompts the user to enter a description in a given slot
-	 */
-	bool promptForDescription(int slot);
+	virtual void handleEvents();
 };
 
-} // End of namespace Scalpel
+} // End of namespace Tattoo
 
 } // End of namespace Sherlock
 
