@@ -104,6 +104,7 @@ void WidgetOptions::handleEvents() {
 	} else {
 		_selector = -1;
 		if (_outsideMenu && (events._released || events._rightReleased)) {
+			events.clearEvents();
 			close();
 			return;
 		}
@@ -161,6 +162,7 @@ void WidgetOptions::handleEvents() {
 
 	// Option selected
 	if (events._released || events._rightReleased) {
+		events.clearEvents();
 		_outsideMenu = false;
 		int temp = _selector;
 		_selector = 255;

@@ -79,26 +79,26 @@ void WidgetQuit::handleEvents() {
 	Events &events = *_vm->_events;
 	Talk &talk = *_vm->_talk;
 	Common::Point mousePos = events.mousePos();
-	Common::Rect btn1Rect(_bounds.left, _bounds.top + (_surface.fontHeight() + 4) * 2 + 3, _bounds.right,
+	Common::Rect yesRect(_bounds.left, _bounds.top + (_surface.fontHeight() + 4) * 2 + 3, _bounds.right,
 		_bounds.top + (_surface.fontHeight() + 4) * 2 + 3 + _surface.fontHeight() + 7);
-	Common::Rect btn2Rect(_bounds.left, _bounds.top + (_surface.fontHeight() + 4) * 2 + _surface.fontHeight() + 10,
+	Common::Rect noRect(_bounds.left, _bounds.top + (_surface.fontHeight() + 4) * 2 + _surface.fontHeight() + 10,
 		_bounds.right, _bounds.top + (_surface.fontHeight() + 4) * 2 + 10 + _surface.fontHeight() * 2 + 7);
 
 	if (talk._talkToAbort)
 		return;
+
+	// Determine the highlighted item
+	_select = -1;
+	if (yesRect.contains(mousePos))
+		_select = 1;
+	else if (noRect.contains(mousePos))
+		_select = 0;
 
 	if (events.kbHit()) {
 		Common::KeyState keyState = events.getKey();
 
 		switch (keyState.keycode) {
 		case Common::KEYCODE_TAB:
-			_select = -1;
-
-			if (btn1Rect.contains(mousePos))
-				_select = 1;
-			else if (btn2Rect.contains(mousePos))
-				_select = 0;
-
 			// If the mouse is not over any of the options, move the mouse so that it points to the first option
 			if (_select == -1)
 				events.warpMouse(Common::Point(_bounds.right - 10, _bounds.top + (_surface.fontHeight() + 4) * 2
@@ -126,15 +126,8 @@ void WidgetQuit::handleEvents() {
 		}
 	}
 
-	// Check for highlight
-	_select = -1;
-	if (btn1Rect.contains(mousePos))
-		_select = 0;
-	else if (btn2Rect.contains(mousePos))
-		_select = 1;
-
+	// Check for change of the highlighted item
 	if (_select != _oldSelect) {
-		// Highlight changed, 
 		byte color = (_select == 1) ? COMMAND_HIGHLIGHTED : INFO_TOP;
 		int yp = (_surface.fontHeight() + 4) * 2 + 8;
 		_surface.writeString(FIXED(Yes), Common::Point((_surface.w() - _surface.stringWidth(FIXED(Yes))) / 2, yp), color);
@@ -150,11 +143,10 @@ void WidgetQuit::handleEvents() {
 		_outsideMenu = true;
 
 	if (events._released || events._rightReleased) {
-		_select = -1;
-		_outsideMenu = false;
-
+		events.clearEvents();
 		close();
-		if (btn1Rect.contains(mousePos))
+		if (_select == 1)
+			// Yes selected
 			_vm->quitGame();
 	}
 }

@@ -44,6 +44,7 @@ private:
 	uint32 _priorFrameTime;
 	ImageFile *_cursorImages;
 	int _mouseButtons;
+	Common::Point _mousePos;
 
 	/**
 	 * Check whether it's time to display the next screen frame
@@ -133,7 +134,7 @@ public:
 	/**
 	 * Get the current mouse position
 	 */
-	Common::Point screenMousePos() const;
+	Common::Point screenMousePos() const { return _mousePos; }
 
 	/**
 	 * Get the current mouse position within the scene, adjusted by the scroll position

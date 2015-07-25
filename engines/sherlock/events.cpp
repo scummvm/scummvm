@@ -162,7 +162,9 @@ void Events::pollEvents() {
 
 	Common::Event event;
 	while (g_system->getEventManager()->pollEvent(event)) {
-		// Handle keypress
+		_mousePos = event.mouse;
+
+		// Handle events
 		switch (event.type) {
 		case Common::EVENT_QUIT:
 		case Common::EVENT_RTL:
@@ -204,14 +206,18 @@ void Events::pollEventsAndWait() {
 }
 
 void Events::warpMouse(const Common::Point &pt) {
-	Common::Point p = pt - _vm->_screen->_currentScroll;
-	g_system->warpMouse(p.x, p.y);
+	_mousePos = pt - _vm->_screen->_currentScroll;	
+	g_system->warpMouse(_mousePos.x, _mousePos.y);
 }
 
 void Events::warpMouse() {
 	Screen &screen = *_vm->_screen;
 	warpMouse(Common::Point(screen._currentScroll.x + SHERLOCK_SCREEN_WIDTH / 2,
 		screen._currentScroll.y + SHERLOCK_SCREEN_HEIGHT / 2));
+}
+
+Common::Point Events::mousePos() const {
+	return _vm->_screen->_currentScroll + _mousePos;
 }
 
 bool Events::checkForNextFrameCounter() {
@@ -231,14 +237,6 @@ bool Events::checkForNextFrameCounter() {
 	}
 
 	return false;
-}
-
-Common::Point Events::screenMousePos() const {
-	return g_system->getEventManager()->getMousePos();
-}
-
-Common::Point Events::mousePos() const {
-	return screenMousePos() + _vm->_screen->_currentScroll;
 }
 
 Common::KeyState Events::getKey() {
