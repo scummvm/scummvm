@@ -22,6 +22,7 @@
 
 #include "sherlock/tattoo/widget_base.h"
 #include "sherlock/tattoo/tattoo.h"
+#include "sherlock/tattoo/tattoo_scene.h"
 #include "sherlock/tattoo/tattoo_talk.h"
 #include "sherlock/tattoo/tattoo_user_interface.h"
 
@@ -55,6 +56,14 @@ void WidgetBase::banishWindow() {
 	erase();
 	_surface.free();
 	ui._widgets.remove(this);
+}
+
+void WidgetBase::close() {
+	TattooScene &scene = *(TattooScene *)_vm->_scene;
+	TattooUserInterface &ui = *(TattooUserInterface *)_vm->_ui;
+
+	banishWindow();
+	ui._menuMode = scene._labTableScene ? LAB_MODE : STD_MODE;
 }
 
 bool WidgetBase::active() const {

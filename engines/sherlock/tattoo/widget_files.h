@@ -33,16 +33,32 @@ class SherlockEngine;
 
 namespace Tattoo {
 
-class WidgetFiles: public WidgetBase {
+class WidgetFiles: public WidgetBase, public SaveManager {
 private:
+	SherlockEngine *_vm;
 	SaveMode _fileMode;
+
+	/**
+	 * Render the dialog
+	 */
+	void render();
 
 	/**
 	 * Close the dialog
 	 */
 	void close();
+
+	/**
+	 * Show the ScummVM Save Game dialog
+	 */
+	void showScummVMSaveDialog();
+	
+	/**
+	 * Show the ScummVM Load Game dialog
+	 */
+	void showScummVMRestoreDialog();
 public:
-	WidgetFiles(SherlockEngine *vm);
+	WidgetFiles(SherlockEngine *vm, const Common::String &target);
 	virtual ~WidgetFiles() {}
 
 	/**

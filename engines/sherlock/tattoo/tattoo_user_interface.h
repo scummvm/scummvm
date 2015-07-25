@@ -54,7 +54,6 @@ private:
 	int _lockoutTimer;
 	int _scriptZone;
 	int _cAnimFramePause;
-	WidgetFiles _filesWidget;
 	WidgetInventory _inventoryWidget;
 	WidgetMessage _messageWidget;
 	WidgetQuit _quitWidget;

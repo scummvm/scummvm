@@ -386,14 +386,6 @@ void WidgetOptions::render(OptionRenderMode mode) {
 	}
 }
 
-void WidgetOptions::close() {
-	TattooScene &scene = *(TattooScene *)_vm->_scene;
-	TattooUserInterface &ui = *(TattooUserInterface *)_vm->_ui;
-	
-	banishWindow();
-	ui._menuMode = scene._labTableScene ? LAB_MODE : STD_MODE;
-}
-
 } // End of namespace Tattoo
 
 } // End of namespace Sherlock

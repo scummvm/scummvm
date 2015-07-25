@@ -80,6 +80,11 @@ protected:
 	void handleScrollbarEvents(int index, int pageSize, int count);
 
 	/**
+	 * Close the dialog
+	 */
+	void close();
+
+	/**
 	 * Handle drawing the background on the area the widget is going to cover
 	 */
 	virtual void drawBackground();

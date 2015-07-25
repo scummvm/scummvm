@@ -31,7 +31,7 @@ namespace Tattoo {
 
 TattooUserInterface::TattooUserInterface(SherlockEngine *vm): UserInterface(vm),
 		_inventoryWidget(vm), _messageWidget(vm), _textWidget(vm), _tooltipWidget(vm), _verbsWidget(vm),
-		_labWidget(vm), _creditsWidget(vm), _optionsWidget(vm), _quitWidget(vm), _filesWidget(vm) {
+		_labWidget(vm), _creditsWidget(vm), _optionsWidget(vm), _quitWidget(vm) {
 	Common::fill(&_lookupTable[0], &_lookupTable[PALETTE_COUNT], 0);
 	Common::fill(&_lookupTable1[0], &_lookupTable1[PALETTE_COUNT], 0);
 	_scrollSize = 0;
@@ -881,11 +881,13 @@ void TattooUserInterface::clearWindow() {
 }
 
 void TattooUserInterface::loadGame() {
-	_filesWidget.show(SAVEMODE_LOAD);
+	WidgetFiles &files = *(WidgetFiles *)_vm->_saves;
+	files.show(SAVEMODE_LOAD);
 }
 
 void TattooUserInterface::saveGame() {
-	_filesWidget.show(SAVEMODE_SAVE);
+	WidgetFiles &files = *(WidgetFiles *)_vm->_saves;
+	files.show(SAVEMODE_SAVE);
 }
 
 } // End of namespace Tattoo

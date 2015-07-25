@@ -35,11 +35,6 @@ namespace Tattoo {
 class WidgetQuit: public WidgetBase {
 private:
 	int _select, _oldSelect;
-
-	/**
-	 * Close the dialog
-	 */
-	void close();
 public:
 	WidgetQuit(SherlockEngine *vm);
 	virtual ~WidgetQuit() {}

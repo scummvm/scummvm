@@ -23,7 +23,6 @@
 #include "sherlock/tattoo/widget_quit.h"
 #include "sherlock/tattoo/tattoo.h"
 #include "sherlock/tattoo/tattoo_fixed_text.h"
-#include "sherlock/tattoo/tattoo_scene.h"
 #include "sherlock/tattoo/tattoo_user_interface.h"
 
 namespace Sherlock {
@@ -149,14 +148,6 @@ void WidgetQuit::handleEvents() {
 			// Yes selected
 			_vm->quitGame();
 	}
-}
-
-void WidgetQuit::close() {
-	TattooScene &scene = *(TattooScene *)_vm->_scene;
-	TattooUserInterface &ui = *(TattooUserInterface *)_vm->_ui;
-
-	banishWindow();
-	ui._menuMode = scene._labTableScene ? LAB_MODE : STD_MODE;
 }
 
 } // End of namespace Tattoo

@@ -24,6 +24,7 @@
 #include "sherlock/surface.h"
 #include "sherlock/sherlock.h"
 #include "sherlock/scalpel/scalpel_saveload.h"
+#include "sherlock/tattoo/widget_files.h"
 #include "common/system.h"
 #include "graphics/scaler.h"
 #include "graphics/thumbnail.h"
@@ -40,7 +41,7 @@ SaveManager *SaveManager::init(SherlockEngine *vm, const Common::String &target)
 	if (vm->getGameID() == GType_SerratedScalpel)
 		return new Scalpel::ScalpelSaveManager(vm, target);
 	else
-		return new SaveManager(vm, target);
+		return new Tattoo::WidgetFiles(vm, target);
 }
 
 SaveManager::SaveManager(SherlockEngine *vm, const Common::String &target) :

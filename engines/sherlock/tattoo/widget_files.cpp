@@ -20,6 +20,8 @@
  *
  */
 
+#include "common/translation.h"
+#include "gui/saveload.h"
 #include "sherlock/tattoo/widget_files.h"
 #include "sherlock/tattoo/tattoo.h"
 #include "sherlock/tattoo/tattoo_fixed_text.h"
@@ -30,7 +32,9 @@ namespace Sherlock {
 
 namespace Tattoo {
 
-WidgetFiles::WidgetFiles(SherlockEngine *vm) : WidgetBase(vm) {
+WidgetFiles::WidgetFiles(SherlockEngine *vm, const Common::String &target) :
+		SaveManager(vm, target), WidgetBase(vm), _vm(vm) {
+	_fileMode = SAVEMODE_NONE;
 }
 
 void WidgetFiles::show(SaveMode mode) {
@@ -38,7 +42,55 @@ void WidgetFiles::show(SaveMode mode) {
 	TattooUserInterface &ui = *(TattooUserInterface *)_vm->_ui;
 	Common::Point mousePos = events.mousePos();
 
-	_fileMode = mode;
+	if (_vm->_showOriginalSavesDialog) {
+		// Render and display the file dialog
+		_fileMode = mode;
+		render();
+
+		summonWindow();
+		ui._menuMode = FILES_MODE;
+	} else if (mode == SAVEMODE_LOAD) {
+		showScummVMRestoreDialog();
+	} else {
+		showScummVMSaveDialog();
+	}
+}
+
+void WidgetFiles::showScummVMSaveDialog() {
+	GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
+
+	int slot = dialog->runModalWithCurrentTarget();
+	if (slot >= 0) {
+		Common::String desc = dialog->getResultString();
+
+		if (desc.empty()) {
+			// create our own description for the saved game, the user didn't enter it
+			desc = dialog->createDefaultSaveDescription(slot);
+		}
+
+		_vm->saveGameState(slot, desc);
+	}
+
+	close();
+	delete dialog;
+}
+
+void WidgetFiles::showScummVMRestoreDialog() {
+	GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Restore game:"), _("Restore"), false);
+	int slot = dialog->runModalWithCurrentTarget();
+	close();
+	delete dialog;
+
+	if (slot >= 0) {
+		_vm->loadGameState(slot);
+	}
+}
+
+void WidgetFiles::render() {
+	Events &events = *_vm->_events;
+	Common::Point mousePos = events.mousePos();
+
+	createSavegameList();
 
 	// Set up the display area
 	_bounds = Common::Rect(_surface.stringWidth(FIXED(AreYouSureYou)) + _surface.widestChar() * 2,
@@ -49,10 +101,6 @@ void WidgetFiles::show(SaveMode mode) {
 	_surface.create(_bounds.width(), _bounds.height());
 	_surface.fill(TRANSPARENCY);
 	makeInfoArea();
-
-
-	ui._menuMode = FILES_MODE;
-	summonWindow();
 }
 
 void WidgetFiles::handleEvents() {

@@ -47,11 +47,6 @@ private:
 	 * Render the contents of the dialog onto the widget's surface
 	 */
 	void render(OptionRenderMode mode = OP_ALL);
-
-	/**
-	 * Close the dialog
-	 */
-	void close();
 public:
 	WidgetOptions(SherlockEngine *vm);
 	virtual ~WidgetOptions() {}
