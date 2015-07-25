@@ -130,6 +130,19 @@ private:
 	Common::SeekableReadStream *findMSGothicStream() const;
 };
 
+/**
+ * RAII method of changing a cursor temporarily and reset
+ * to the previous one on destruction.
+ */
+class TempCursorChange {
+public:
+	TempCursorChange(Cursor cursor);
+	~TempCursorChange();
+
+private:
+	Cursor _prevCursor;
+};
+
 } // End of namespace Buried
 
 #endif
