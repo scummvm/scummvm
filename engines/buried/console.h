@@ -25,9 +25,12 @@
 
 #include "gui/debugger.h"
 
+#include "buried/navdata.h"
+
 namespace Buried {
 
 class BuriedEngine;
+class FrameWindow;
 
 class BuriedConsole : public GUI::Debugger {
 public:
@@ -36,9 +39,29 @@ public:
 
 	bool cmdGiveItem(int argc, const char **argv);
 	bool cmdRemoveItem(int argc, const char **argv);
+	bool cmdJumpEntry(int argc, const char **argv);
+	bool cmdCurLocation(int argc, const char **argv);
+
+protected:
+	void postEnter();
 
 private:
 	BuriedEngine *_vm;
+
+	struct JumpEntry {
+		Common::String timeZoneName;
+		Common::String locationName;
+		Location location;
+	};
+
+	typedef Common::Array<JumpEntry> JumpEntryList;
+	JumpEntryList _jumpEntryList;
+	void loadJumpEntryList();
+
+	FrameWindow *getFrameWindow();
+	bool isPlaying() { return getFrameWindow() != 0; }
+
+	Location _jump;
 };
 
 } // End of namespace Buried
