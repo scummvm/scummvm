@@ -38,13 +38,12 @@ void WidgetBase::summonWindow() {
 	TattooUserInterface &ui = *(TattooUserInterface *)_vm->_ui;
 
 	// Double-check that the same widget isn't added twice
-	for (Common::List<WidgetBase *>::iterator i = ui._widgets.begin(); i != ui._widgets.end(); ++i) {
-		if ((*i) == this)
-			error("Tried to add a widget twice");
-	}
+	if (ui._widgets.contains(this))
+		error("Tried to add a widget multiple times");
 
 	// Add widget to the screen
-	ui._widgets.push_back(this);
+	if (!ui._fixedWidgets.contains(this))
+		ui._widgets.push_back(this);
 	_outsideMenu = false;
 
 	draw();

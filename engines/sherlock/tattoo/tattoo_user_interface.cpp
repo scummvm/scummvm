@@ -29,9 +29,20 @@ namespace Sherlock {
 
 namespace Tattoo {
 
+bool WidgetList::contains(const WidgetBase *item) const {
+	for (const_iterator i = begin(); i != end(); ++i) {
+		if ((*i) == item)
+			return true;
+	}
+
+	return false;
+}
+
+/*-------------------------------------------------------------------------*/
+
 TattooUserInterface::TattooUserInterface(SherlockEngine *vm): UserInterface(vm),
-		_inventoryWidget(vm), _messageWidget(vm), _textWidget(vm), _tooltipWidget(vm), _verbsWidget(vm),
-		_labWidget(vm), _creditsWidget(vm), _optionsWidget(vm), _quitWidget(vm) {
+		_inventoryWidget(vm), _messageWidget(vm), _textWidget(vm), _tooltipWidget(vm), 
+		_verbsWidget(vm), _creditsWidget(vm), _optionsWidget(vm), _quitWidget(vm) {
 	Common::fill(&_lookupTable[0], &_lookupTable[PALETTE_COUNT], 0);
 	Common::fill(&_lookupTable1[0], &_lookupTable1[PALETTE_COUNT], 0);
 	_scrollSize = 0;
@@ -224,6 +235,7 @@ void TattooUserInterface::reset() {
 	_lookPos = Common::Point(SHERLOCK_SCREEN_WIDTH / 2, SHERLOCK_SCREEN_HEIGHT / 2);
 	_tooltipWidget.setText("");
 	_widgets.clear();
+	_fixedWidgets.clear();
 }
 
 void TattooUserInterface::handleInput() {
@@ -274,6 +286,8 @@ void TattooUserInterface::handleInput() {
 	// If there's any active widgets/windows, let the most recently open one do event processing
 	if (!_widgets.empty())
 		_widgets.back()->handleEvents();
+	else if (!_fixedWidgets.empty())
+		_fixedWidgets.back()->handleEvents();
 
 	// Handle input depending on what mode we're in
 	switch (_menuMode) {
@@ -295,10 +309,13 @@ void TattooUserInterface::drawInterface(int bufferNum) {
 	Screen &screen = *_vm->_screen;
 
 	// Draw any active on-screen widgets
+	for (Common::List<WidgetBase *>::iterator i = _fixedWidgets.begin(); i != _fixedWidgets.end(); ++i)
+		(*i)->draw();
 	for (Common::List<WidgetBase *>::iterator i = _widgets.begin(); i != _widgets.end(); ++i)
 		(*i)->draw();
 
 	// Handle drawing credits
+	// TODO: See if credits are only shown on a single screen. If so, _fixedWidgets could be used
 	if (_creditsWidget.active())
 		_creditsWidget.drawCredits();
 
@@ -320,6 +337,8 @@ void TattooUserInterface::doBgAnimRestoreUI() {
 
 	// If there are any on-screen widgets, then erase them
 	for (Common::List<WidgetBase *>::iterator i = _widgets.begin(); i != _widgets.end(); ++i)
+		(*i)->erase();
+	for (Common::List<WidgetBase *>::iterator i = _fixedWidgets.begin(); i != _fixedWidgets.end(); ++i)
 		(*i)->erase();
 
 	// If there is a Text Tag being display, restore the area underneath it
@@ -859,15 +878,8 @@ void TattooUserInterface::drawDialogRect(Surface &s, const Common::Rect &r, bool
 }
 
 void TattooUserInterface::banishWindow(bool slideUp) {
-	TattooScene &scene = *(TattooScene *)_vm->_scene;
 	if (!_widgets.empty())
 		_widgets.back()->banishWindow();
-
-	if (scene._labTableScene && !_labWidget.active()) {
-		// In the lab table scene, so ensure 
-		_labWidget.summonWindow();
-		_menuMode = LAB_MODE;
-	}
 }
 
 void TattooUserInterface::freeMenu() {
@@ -888,6 +900,11 @@ void TattooUserInterface::loadGame() {
 void TattooUserInterface::saveGame() {
 	WidgetFiles &files = *(WidgetFiles *)_vm->_saves;
 	files.show(SAVEMODE_SAVE);
+}
+
+void TattooUserInterface::addFixedWidget(WidgetBase *widget) {
+	_fixedWidgets.push_back(widget);
+	widget->summonWindow();
 }
 
 } // End of namespace Tattoo

@@ -25,6 +25,7 @@
 
 #include "common/scummsys.h"
 #include "sherlock/scene.h"
+#include "sherlock/tattoo/widget_lab.h"
 
 namespace Sherlock {
 
@@ -46,6 +47,8 @@ struct SceneTripEntry {
 
 class TattooScene : public Scene {
 private:
+	WidgetLab _labWidget;
+
 	void doBgAnimCheckCursor();
 
 	/**

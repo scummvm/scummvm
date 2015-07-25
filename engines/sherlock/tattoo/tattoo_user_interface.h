@@ -31,7 +31,6 @@
 #include "sherlock/tattoo/widget_credits.h"
 #include "sherlock/tattoo/widget_files.h"
 #include "sherlock/tattoo/widget_inventory.h"
-#include "sherlock/tattoo/widget_lab.h"
 #include "sherlock/tattoo/widget_options.h"
 #include "sherlock/tattoo/widget_quit.h"
 #include "sherlock/tattoo/widget_text.h"
@@ -48,6 +47,11 @@ class WidgetBase;
 
 enum ScrollHighlight { SH_NONE = 0, SH_SCROLL_UP = 1, SH_PAGE_UP = 2, SH_THUMBNAIL = 3, SH_PAGE_DOWN = 4, SH_SCROLL_DOWN = 5 };
 
+class WidgetList : public Common::List <WidgetBase *> {
+public:
+	bool contains(const WidgetBase *item) const;
+};
+
 class TattooUserInterface : public UserInterface {
 	friend class WidgetBase;
 private:
@@ -57,7 +61,8 @@ private:
 	WidgetInventory _inventoryWidget;
 	WidgetMessage _messageWidget;
 	WidgetQuit _quitWidget;
-	Common::List<WidgetBase *> _widgets;
+	WidgetList _fixedWidgets;
+	WidgetList _widgets;
 	byte _lookupTable[PALETTE_COUNT];
 	byte _lookupTable1[PALETTE_COUNT];
 private:
@@ -106,7 +111,6 @@ public:
 	int _maskCounter;
 	ImageFile *_interfaceImages;
 	WidgetCredits _creditsWidget;
-	WidgetLab _labWidget;
 	WidgetOptions _optionsWidget;
 	WidgetText _textWidget;
 	WidgetSceneTooltip _tooltipWidget;
@@ -216,6 +220,12 @@ public:
 	 * Show the save game dialog, and allow the user to save the game
 	 */
 	void saveGame();
+
+	/**
+	 * Add a widget to the current scene to be executed if there are no active widgets in the
+	 * main _widgets list
+	 */
+	void addFixedWidget(WidgetBase *widget);
 public:
 	/**
 	 * Resets the user interface

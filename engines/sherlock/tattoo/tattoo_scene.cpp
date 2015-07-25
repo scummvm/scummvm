@@ -49,7 +49,7 @@ static bool sortImagesY(const ShapeEntry &s1, const ShapeEntry &s2) {
 
 /*----------------------------------------------------------------*/
 
-TattooScene::TattooScene(SherlockEngine *vm) : Scene(vm) {
+TattooScene::TattooScene(SherlockEngine *vm) : Scene(vm), _labWidget(vm) {
 	_labTableScene = false;
 }
 
@@ -103,7 +103,7 @@ bool TattooScene::loadScene(const Common::String &filename) {
 		ui._menuMode = _labTableScene ? LAB_MODE : STD_MODE;
 
 		if (_labTableScene)
-			ui._labWidget.summonWindow();
+			ui.addFixedWidget(&_labWidget);
 	}
 
 	return result;
