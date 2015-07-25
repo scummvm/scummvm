@@ -101,36 +101,48 @@ void Events::setCursor(const Graphics::Surface &src, int hotspotX, int hotspotY)
 	showCursor();
 }
 
-void Events::setCursor(CursorId cursorId, const Graphics::Surface &surface) {
+void Events::setCursor(CursorId cursorId, const Common::Point &cursorPos, const Graphics::Surface &surface) {
 	_cursorId = cursorId;
 
-	int hotspotX, hotspotY;
-	if (cursorId == MAGNIFY) {
-		hotspotX = 8;
-		hotspotY = 8;
-	} else {
-		hotspotX = 0;
-		hotspotY = 0;
-	}
-
 	// Get the standard cursor frame
-	Graphics::Surface &surface2 = (*_cursorImages)[cursorId]._frame;
+	Graphics::Surface &cursorImg = (*_cursorImages)[cursorId]._frame;
+
+	// If the X pos for the cursor image is -100, this is a special value to indicate
+	// the cursor should be horizontally centered
+	Common::Point cursorPt = cursorPos;
+	if (cursorPos.x == -100)
+		cursorPt.x = (surface.w - cursorImg.w) / 2;
+
+	// Figure total bounds needed for cursor image and passed image
+	Common::Rect bounds(surface.w, surface.h);
+	bounds.extend(Common::Rect(cursorPt.x, cursorPt.y, cursorPt.x + cursorImg.w, cursorPt.y + cursorImg.h));
+	Common::Rect r = bounds;
+	r.moveTo(0, 0);
 
 	// Form a single surface containing both frames
-	int maxWidth = MAX(surface.w, surface2.w);
 	Graphics::Surface s;
-	s.create(maxWidth, surface.h + surface2.h, Graphics::PixelFormat::createFormatCLUT8());
-	s.fillRect(Common::Rect(0, 0, maxWidth, surface.h + surface2.h), TRANSPARENCY);
+	s.create(r.width(), r.height(), Graphics::PixelFormat::createFormatCLUT8());
+	s.fillRect(r, TRANSPARENCY);
 
-	s.copyRectToSurface(surface, (maxWidth - surface.w) / 2, 0, Common::Rect(0, 0, surface.w, surface.h));
-	s.copyRectToSurface(surface2, (maxWidth - surface2.w) / 2, surface.h, Common::Rect(0, 0, surface2.w, surface2.h));
+	// Draw the passed image
+	Common::Point drawPos;
+	if (cursorPt.x < 0)
+		drawPos.x = -cursorPt.x;
+	if (cursorPt.y < 0)
+		drawPos.y = -cursorPt.y;
+	s.copyRectToSurface(surface, drawPos.x, drawPos.y, Common::Rect(0, 0, surface.w, surface.h));
 
-	// Adjust hotspot position
-	hotspotX += (maxWidth - surface2.w) / 2;
-	hotspotY += surface.h;
+	// Draw the cursor image
+	drawPos = Common::Point(MAX(cursorPt.x, (int16)0), MAX(cursorPt.y, (int16)0));
+	s.copyRectToSurface(cursorImg, drawPos.x, drawPos.y, Common::Rect(0, 0, cursorImg.w, cursorImg.h));
 
+	// Set up hotspot position for cursor, adjusting for cursor image's position within the surface
+	Common::Point hotspot;
+	if (cursorId == MAGNIFY)
+		hotspot = Common::Point(8, 8);
+	hotspot += drawPos;
 	// Set the cursor
-	setCursor(s, hotspotX, hotspotY);
+	setCursor(s, hotspot.x, hotspot.y);
 }
 
 void Events::animateCursorIfNeeded() {
@@ -139,7 +151,6 @@ void Events::animateCursorIfNeeded() {
 		setCursor(newId);
 	}
 }
-
 
 void Events::showCursor() {
 	CursorMan.showMouse(true);

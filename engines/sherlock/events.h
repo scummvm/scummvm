@@ -83,7 +83,7 @@ public:
 	/**
 	 * Set both a standard cursor as well as an inventory item above it
 	 */
-	void setCursor(CursorId cursorId, const Graphics::Surface &surface);
+	void setCursor(CursorId cursorId, const Common::Point &cursorPos, const Graphics::Surface &surface);
 
 	/**
 	 * Animates the mouse cursor if the Wait cursor is showing

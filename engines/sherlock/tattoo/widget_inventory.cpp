@@ -428,7 +428,7 @@ void WidgetInventoryVerbs::handleEvents() {
 				if (ui._menuMode == INV_MODE) {
 					// Add the inventory item to the cursor
 					ImageFrame &imgFrame = (*inv._invShapes[_owner->_invSelect - inv._invIndex])[0];
-					events.setCursor(ARROW, imgFrame._frame);
+					events.setCursor(ARROW, Common::Point(-100, imgFrame._height), imgFrame._frame);
 
 					// Close the inventory dialog without banishing it, so it can keep getting events
 					// to handle tooltips and actually making the selection of what object to use them item on

@@ -42,6 +42,8 @@ void WidgetLab::handleEvents() {
 	Events &events = *_vm->_events;
 	Scene &scene = *_vm->_scene;
 	TattooUserInterface &ui = *(TattooUserInterface *)_vm->_ui;
+	Common::Point mousePos = events.mousePos();
+
 	WidgetBase::handleEvents();
 	bool noDesc = false;
 
@@ -146,7 +148,9 @@ void WidgetLab::handleEvents() {
 
 					// Set the mouse cursor to the object
 					Graphics::Surface &img = _labObject->_imageFrame->_frame;
-					events.setCursor(img, img.w / 2, img.h / 2);
+					Common::Point cursorOffset = mousePos - _labObject->_position;					
+					events.setCursor(ARROW, cursorOffset, img);
+					warning("%d,%d", cursorOffset.x, cursorOffset.y);//**DEBUG****
 
 					// Hide this object until they are done with it (releasing it)
 					_labObject->toggleHidden();
