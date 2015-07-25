@@ -1105,6 +1105,15 @@ void TattooPerson::walkHolmesToNPC() {
 	}
 }
 
+void TattooPerson::centerScreenOnPerson() {
+	Screen &screen = *_vm->_screen;
+	TattooUserInterface &ui = *(TattooUserInterface *)_vm->_ui;
+
+	ui._targetScroll.x = CLIP(_position.x / FIXED_INT_MULTIPLIER - SHERLOCK_SCREEN_WIDTH / 2,
+		0, screen._backBuffer1.w() - SHERLOCK_SCREEN_WIDTH);
+	screen._currentScroll = ui._targetScroll;
+}
+
 /*----------------------------------------------------------------*/
 
 TattooPeople::TattooPeople(SherlockEngine *vm) : People(vm) {

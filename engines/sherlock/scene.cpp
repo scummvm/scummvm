@@ -1207,15 +1207,6 @@ void Scene::transitionToScene() {
 		// Standard info, so set it
 		people[HOLMES]._position = hSavedPos;
 		people[HOLMES]._sequenceNumber = hSavedFacing;
-
-		if (saves._justLoaded && IS_ROSE_TATTOO) {
-			Tattoo::TattooUserInterface &ui = *(Tattoo::TattooUserInterface *)_vm->_ui;
-
-			// For scrolling scenes, make sure the player is on-screen
-			ui._targetScroll.x = CLIP(people[HOLMES]._position.x / FIXED_INT_MULTIPLIER -
-				SHERLOCK_SCREEN_WIDTH / 8 - 250, 0, screen._backBuffer1.w() - SHERLOCK_SCREEN_WIDTH);
-			screen._currentScroll = ui._targetScroll;
-		}
 	} else {
 		// It's canimation information
 		cAnimNum = hSavedFacing - 101;
@@ -1229,6 +1220,11 @@ void Scene::transitionToScene() {
 		// Prevent Holmes from being drawn
 		people[HOLMES]._position = Common::Point(0, 0);
 	}
+
+	// If the scene is capable of scrolling, set the current scroll so that whoever has control 
+	// of the scroll code is in the middle of the screen
+	if (screen._backBuffer1.w() > SHERLOCK_SCREEN_WIDTH)
+		people[people._walkControl].centerScreenOnPerson();
 
 	for (uint objIdx = 0; objIdx < _bgShapes.size(); ++objIdx) {
 		Object &obj = _bgShapes[objIdx];

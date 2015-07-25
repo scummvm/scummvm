@@ -176,6 +176,12 @@ public:
 	 */
 	void synchronize(Serializer &s);
 
+
+	/**
+	 * Walk Holmes to the NPC
+	 */
+	void walkHolmesToNPC();
+
 	/**
 	 * This adjusts the sprites position, as well as it's animation sequence:
 	 */
@@ -207,9 +213,9 @@ public:
 	virtual void setObjTalkSequence(int seq);
 
 	/**
-	 * Walk Holmes to the NPC
+	 * Center the visible screen so that the person is in the center of the screen
 	 */
-	void walkHolmesToNPC();
+	virtual void centerScreenOnPerson();
 };
 
 class TattooPeople : public People {
