@@ -38,6 +38,7 @@
 #include "buried/video_window.h"
 #include "buried/environ/scene_base.h"
 
+#include "common/ptr.h"
 #include "common/stream.h"
 #include "common/system.h"
 #include "graphics/surface.h"
@@ -714,7 +715,7 @@ bool SceneViewWindow::timeSuitJump(int destination) {
 	((GameUIWindow *)_parent)->_bioChipRightWindow->changeCurrentBioChip(kItemBioChipJump);
 
 	// Play the movie
-	VideoWindow *jumpMovie = new VideoWindow(_vm, ((GameUIWindow *)_parent)->_bioChipRightWindow);
+	Common::ScopedPtr<VideoWindow> jumpMovie(new VideoWindow(_vm, ((GameUIWindow *)_parent)->_bioChipRightWindow));
 	if (!jumpMovie->openVideo(_vm->getFilePath(IDS_BC_JUMP_MOVIE_FILENAME)))
 		error("Failed to play small jump movie");
 
@@ -746,9 +747,8 @@ bool SceneViewWindow::timeSuitJump(int destination) {
 	// Make sure the interface sound has stopped
 	_vm->_sound->stopInterfaceSound();
 
-	delete jumpMovie;
 	_vm->_sound->timerCallback();
-	jumpMovie = new VideoWindow(_vm, this);
+	jumpMovie.reset(new VideoWindow(_vm, this));
 
 	Common::String fileName;
 	switch (destination) {
@@ -790,7 +790,7 @@ bool SceneViewWindow::timeSuitJump(int destination) {
 		return true;
 
 	_vm->_sound->restart();
-	delete jumpMovie;
+	jumpMovie.reset();
 
 	// Initialize the time zone and environment
 	initializeTimeZoneAndEnvironment(this, newLocation.timeZone, -1);
@@ -844,7 +844,7 @@ bool SceneViewWindow::timeSuitJump(int destination) {
 	_vm->_sound->timerCallback();
 
 	// Time to show and play the right-hand small movie to the mid point, with proper sound
-	jumpMovie = new VideoWindow(_vm, ((GameUIWindow *)_parent)->_bioChipRightWindow);
+	jumpMovie.reset(new VideoWindow(_vm, ((GameUIWindow *)_parent)->_bioChipRightWindow));
 
 	if (!jumpMovie->openVideo(_vm->getFilePath(IDS_BC_JUMP_MOVIE_FILENAME)))
 		error("Failed to play small jump movie");
@@ -877,7 +877,7 @@ bool SceneViewWindow::timeSuitJump(int destination) {
 	_vm->_sound->stopInterfaceSound();
 
 	// Destroy the movie
-	delete jumpMovie;
+	jumpMovie.reset();
 
 	// Repaint the BioChip view window
 	((GameUIWindow *)_parent)->_bioChipRightWindow->invalidateWindow(false);
@@ -1052,7 +1052,7 @@ bool SceneViewWindow::videoTransition(const Location &location, DestinationScene
 		newBackground = getStillFrameCopy(navFrame);
 
 	// Open the movie
-	VideoWindow *animationMovie = new VideoWindow(_vm, this);
+	Common::ScopedPtr<VideoWindow> animationMovie(new VideoWindow(_vm, this));
 
 	Common::String fileName = _vm->getFilePath(_currentScene->_staticData.location.timeZone, _currentScene->_staticData.location.environment, destinationData.transitionData);
 	if (!animationMovie->openVideo(fileName))
@@ -1073,7 +1073,7 @@ bool SceneViewWindow::videoTransition(const Location &location, DestinationScene
 	if (_vm->shouldQuit())
 		return true;
 
-	delete animationMovie;
+	animationMovie.reset();
 
 	if (audioStream)
 		_vm->_sound->restart();
@@ -1504,7 +1504,7 @@ bool SceneViewWindow::playSynchronousAnimation(int animationID) {
 	if (!found)
 		return false;
 
-	VideoWindow *animationMovie = new VideoWindow(_vm, this);
+	Common::ScopedPtr<VideoWindow> animationMovie(new VideoWindow(_vm, this));
 	Common::String fileName = _vm->getFilePath(_currentScene->_staticData.location.timeZone, _currentScene->_staticData.location.environment, animDatabase[i].fileNameID);
 	if (!animationMovie->openVideo(fileName))
 		error("Failed to open video '%s'", fileName.c_str());
@@ -1513,11 +1513,8 @@ bool SceneViewWindow::playSynchronousAnimation(int animationID) {
 	if (_globalFlags.bcTranslateEnabled == 1 && animDatabase[i].audioStreamCount > 1)
 		animationMovie->setAudioTrack(2);
 
-	if (_currentScene && _currentScene->movieCallback(this, animationMovie, animationID, MOVIE_START) == SC_FALSE) {
-		// FIXME: Nah, why bother to free the movie
-		// (Probably, this is never hit)
+	if (_currentScene && _currentScene->movieCallback(this, animationMovie.get(), animationID, MOVIE_START) == SC_FALSE)
 		return false;
-	}
 
 	animationMovie->seekToFrame(animDatabase[i].startFrame);
 	animationMovie->enableWindow(false);
@@ -1539,10 +1536,8 @@ bool SceneViewWindow::playSynchronousAnimation(int animationID) {
 		_vm->_sound->timerCallback();
 	}
 
-	if (_vm->shouldQuit()) {
-		delete animationMovie;
+	if (_vm->shouldQuit())
 		return true;
-	}
 
 	_vm->removeMouseMessages(this);
 	_vm->removeKeyboardMessages(this);
@@ -1551,10 +1546,9 @@ bool SceneViewWindow::playSynchronousAnimation(int animationID) {
 	if (animDatabase[i].audioStreamCount > 0)
 		_vm->_sound->restart();
 
-	if (_currentScene && _currentScene->movieCallback(this, animationMovie, animationID, MOVIE_STOPPED) == SC_FALSE)
+	if (_currentScene && _currentScene->movieCallback(this, animationMovie.get(), animationID, MOVIE_STOPPED) == SC_FALSE)
 		return false;
 
-	delete animationMovie;
 	_vm->_gfx->setCursor(oldCursor);
 	return true;
 }
@@ -1562,16 +1556,13 @@ bool SceneViewWindow::playSynchronousAnimation(int animationID) {
 bool SceneViewWindow::playSynchronousAnimationExtern(int animationID) {
 	Cursor oldCursor = _vm->_gfx->setCursor(kCursorWait);
 
-	VideoWindow *animationMovie = new VideoWindow(_vm, this);
+	Common::ScopedPtr<VideoWindow> animationMovie(new VideoWindow(_vm, this));
 	Common::String fileName = _vm->getFilePath(animationID);
 	if (!animationMovie->openVideo(fileName))
 		error("Failed to open video '%s'", fileName.c_str());
 
-	if (_currentScene && _currentScene->movieCallback(this, animationMovie, animationID, MOVIE_START) == SC_FALSE) {
-		// FIXME: Nah, why bother to free the movie
-		// (Probably, this is never hit)
+	if (_currentScene && _currentScene->movieCallback(this, animationMovie.get(), animationID, MOVIE_START) == SC_FALSE)
 		return false;
-	}
 
 	animationMovie->enableWindow(false);
 	animationMovie->showWindow(kWindowShow);
@@ -1589,19 +1580,16 @@ bool SceneViewWindow::playSynchronousAnimationExtern(int animationID) {
 		_vm->_sound->timerCallback();
 	}
 
-	if (_vm->shouldQuit()) {
-		delete animationMovie;
+	if (_vm->shouldQuit())
 		return true;
-	}
 
 	_vm->_sound->restart();
 	_vm->removeMouseMessages(this);
 	_vm->removeKeyboardMessages(this);
 
-	if (_currentScene && _currentScene->movieCallback(this, animationMovie, animationID, MOVIE_STOPPED) == SC_FALSE)
+	if (_currentScene && _currentScene->movieCallback(this, animationMovie.get(), animationID, MOVIE_STOPPED) == SC_FALSE)
 		return false;
 
-	delete animationMovie;
 	_vm->_gfx->setCursor(oldCursor);
 	return true;
 }
@@ -1623,7 +1611,7 @@ bool SceneViewWindow::playPlacedSynchronousAnimation(int animationID, int left, 
 	if (!found)
 		return false;
 
-	VideoWindow *animationMovie = new VideoWindow(_vm, this);
+	Common::ScopedPtr<VideoWindow> animationMovie(new VideoWindow(_vm, this));
 	Common::String fileName = _vm->getFilePath(_currentScene->_staticData.location.timeZone, _currentScene->_staticData.location.environment, animDatabase[i].fileNameID);
 	if (!animationMovie->openVideo(fileName))
 		error("Failed to open video '%s'", fileName.c_str());
@@ -1634,11 +1622,8 @@ bool SceneViewWindow::playPlacedSynchronousAnimation(int animationID, int left, 
 	if (_globalFlags.bcTranslateEnabled == 1 && animDatabase[i].audioStreamCount > 1)
 		animationMovie->setAudioTrack(2);
 
-	if (_currentScene && _currentScene->movieCallback(this, animationMovie, animationID, MOVIE_START) == SC_FALSE) {
-		// FIXME: Nah, why bother to free the movie
-		// (Probably, this is never hit)
+	if (_currentScene && _currentScene->movieCallback(this, animationMovie.get(), animationID, MOVIE_START) == SC_FALSE)
 		return false;
-	}
 
 	animationMovie->seekToFrame(animDatabase[i].startFrame);
 	animationMovie->enableWindow(false);
@@ -1660,10 +1645,8 @@ bool SceneViewWindow::playPlacedSynchronousAnimation(int animationID, int left, 
 		_vm->_sound->timerCallback();
 	}
 
-	if (_vm->shouldQuit()) {
-		delete animationMovie;
+	if (_vm->shouldQuit())
 		return true;
-	}
 
 	_vm->removeMouseMessages(this);
 	_vm->removeKeyboardMessages(this);
@@ -1672,10 +1655,9 @@ bool SceneViewWindow::playPlacedSynchronousAnimation(int animationID, int left, 
 	if (animDatabase[i].audioStreamCount > 0)
 		_vm->_sound->restart();
 
-	if (_currentScene && _currentScene->movieCallback(this, animationMovie, animationID, MOVIE_STOPPED) == SC_FALSE)
+	if (_currentScene && _currentScene->movieCallback(this, animationMovie.get(), animationID, MOVIE_STOPPED) == SC_FALSE)
 		return false;
 
-	delete animationMovie;
 	_vm->_gfx->setCursor(oldCursor);
 	return true;
 }
@@ -1697,7 +1679,7 @@ bool SceneViewWindow::playClippedSynchronousAnimation(int animationID, int left,
 	if (!found)
 		return false;
 
-	VideoWindow *animationMovie = new VideoWindow(_vm, this);
+	Common::ScopedPtr<VideoWindow> animationMovie(new VideoWindow(_vm, this));
 	Common::String fileName = _vm->getFilePath(_currentScene->_staticData.location.timeZone, _currentScene->_staticData.location.environment, animDatabase[i].fileNameID);
 	if (!animationMovie->openVideo(fileName))
 		error("Failed to open video '%s'", fileName.c_str());
@@ -1711,11 +1693,8 @@ bool SceneViewWindow::playClippedSynchronousAnimation(int animationID, int left,
 	if (_globalFlags.bcTranslateEnabled == 1 && animDatabase[i].audioStreamCount > 1)
 		animationMovie->setAudioTrack(2);
 
-	if (_currentScene && _currentScene->movieCallback(this, animationMovie, animationID, MOVIE_START) == SC_FALSE) {
-		// FIXME: Nah, why bother to free the movie
-		// (Probably, this is never hit)
+	if (_currentScene && _currentScene->movieCallback(this, animationMovie.get(), animationID, MOVIE_START) == SC_FALSE)
 		return false;
-	}
 
 	animationMovie->seekToFrame(animDatabase[i].startFrame);
 	animationMovie->enableWindow(false);
@@ -1737,10 +1716,8 @@ bool SceneViewWindow::playClippedSynchronousAnimation(int animationID, int left,
 		_vm->_sound->timerCallback();
 	}
 
-	if (_vm->shouldQuit()) {
-		delete animationMovie;
+	if (_vm->shouldQuit())
 		return true;
-	}
 
 	_vm->removeMouseMessages(this);
 	_vm->removeKeyboardMessages(this);
@@ -1749,10 +1726,9 @@ bool SceneViewWindow::playClippedSynchronousAnimation(int animationID, int left,
 	if (animDatabase[i].audioStreamCount > 0)
 		_vm->_sound->restart();
 
-	if (_currentScene && _currentScene->movieCallback(this, animationMovie, animationID, MOVIE_STOPPED) == SC_FALSE)
+	if (_currentScene && _currentScene->movieCallback(this, animationMovie.get(), animationID, MOVIE_STOPPED) == SC_FALSE)
 		return false;
 
-	delete animationMovie;
 	_vm->_gfx->setCursor(oldCursor);
 	return true;
 }
