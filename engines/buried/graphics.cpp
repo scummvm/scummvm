@@ -873,4 +873,12 @@ void GraphicsManager::drawEllipse(const Common::Rect &rect, uint32 color) {
 	}
 }
 
+TempCursorChange::TempCursorChange(Cursor cursor) {
+	_prevCursor = static_cast<BuriedEngine*>(g_engine)->_gfx->setCursor(cursor);
+}
+
+TempCursorChange::~TempCursorChange() {
+	static_cast<BuriedEngine*>(g_engine)->_gfx->setCursor(_prevCursor);
+}
+
 } // End of namespace Buried
