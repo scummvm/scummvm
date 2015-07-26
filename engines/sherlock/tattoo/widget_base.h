@@ -75,9 +75,19 @@ protected:
 	void drawScrollBar(int index, int pageSize, int count);
 
 	/**
+	 * Draw a scrollbar for the dialog in a specified area
+	 */
+	void drawScrollBar(int index, int pageSize, int count, const Common::Rect &r);
+
+	/**
 	 * Handles any events when the mouse is on the scrollbar
 	 */
 	void handleScrollbarEvents(int index, int pageSize, int count);
+
+	/**
+	 * Handles any events when the mouse is on the scrollbar
+	 */
+	void handleScrollbarEvents(int index, int pageSize, int count, const Common::Rect &r);
 
 	/**
 	 * Close the dialog

@@ -87,11 +87,6 @@ private:
 	void doVerbControl();
 
 	/**
-	 * Set up to display the Files menu
-	 */
-	void initFileMenu();
-
-	/**
 	 * Free any active menu
 	 */
 	void freeMenu();

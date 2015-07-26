@@ -297,9 +297,6 @@ void TattooUserInterface::handleInput() {
 	case LOOK_MODE:
 		doLookControl();
 		break;
-	case FILES_MODE:
-		doFileControl();
-		break;
 	default:
 		break;
 	}
@@ -542,10 +539,6 @@ void TattooUserInterface::doLookControl() {
 	}
 }
 
-void TattooUserInterface::doFileControl() {
-	warning("TODO: ui control (file)");
-}
-
 void TattooUserInterface::displayObjectNames() {
 	Events &events = *_vm->_events;
 	Scene &scene = *_vm->_scene;
@@ -562,10 +555,6 @@ void TattooUserInterface::displayObjectNames() {
 
 	_tooltipWidget.handleEvents();
 	_oldArrowZone = _arrowZone;
-}
-
-void TattooUserInterface::initFileMenu() {
-	// TODO
 }
 
 void TattooUserInterface::doInventory(int mode) {

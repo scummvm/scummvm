@@ -32,9 +32,13 @@ namespace Sherlock {
 
 namespace Tattoo {
 
+#define FILES_LINES_COUNT 5
+
 WidgetFiles::WidgetFiles(SherlockEngine *vm, const Common::String &target) :
 		SaveManager(vm, target), WidgetBase(vm), _vm(vm) {
 	_fileMode = SAVEMODE_NONE;
+	_selector = _oldSelector = -1;
+	savegameIndex = 0;
 }
 
 void WidgetFiles::show(SaveMode mode) {
@@ -45,7 +49,19 @@ void WidgetFiles::show(SaveMode mode) {
 	if (_vm->_showOriginalSavesDialog) {
 		// Render and display the file dialog
 		_fileMode = mode;
-		render();
+		ui._menuMode = FILES_MODE;
+		_selector = _oldSelector = -1;
+		_scroll = true;
+		createSavegameList();
+
+		// Set up the display area
+		_bounds = Common::Rect(SHERLOCK_SCREEN_WIDTH * 2 / 3, (_surface.fontHeight() + 1) * 
+			(FILES_LINES_COUNT + 1) + 17);
+		_bounds.moveTo(mousePos.x - _bounds.width() / 2, mousePos.y - _bounds.height() / 2);
+
+		// Create the surface and render it's contents
+		_surface.create(_bounds.width(), _bounds.height());
+		render(RENDER_ALL);
 
 		summonWindow();
 		ui._menuMode = FILES_MODE;
@@ -86,34 +102,88 @@ void WidgetFiles::showScummVMRestoreDialog() {
 	}
 }
 
-void WidgetFiles::render() {
-	Events &events = *_vm->_events;
-	Common::Point mousePos = events.mousePos();
+void WidgetFiles::render(FilesRenderMode mode) {
+	TattooUserInterface &ui = *(TattooUserInterface *)_vm->_ui;
+	ImageFile &images = *ui._interfaceImages;
+	byte color;
 
-	createSavegameList();
+	if (mode == OP_ALL) {
+		_surface.fill(TRANSPARENCY);
+		makeInfoArea();
 
-	// Set up the display area
-	_bounds = Common::Rect(_surface.stringWidth(FIXED(AreYouSureYou)) + _surface.widestChar() * 2,
-		(_surface.fontHeight() + 7) * 4);
-	_bounds.moveTo(mousePos.x - _bounds.width() / 2, mousePos.y - _bounds.height() / 2);
+		switch (_fileMode) {
+		case SAVEMODE_LOAD:
+			_surface.writeString(FIXED(LoadGame),
+				Common::Point((_surface.w() - _surface.stringWidth(FIXED(LoadGame))) / 2, 5), INFO_TOP);
+			break;
 
-	// Create the surface
-	_surface.create(_bounds.width(), _bounds.height());
-	_surface.fill(TRANSPARENCY);
-	makeInfoArea();
+		case SAVEMODE_SAVE:
+			_surface.writeString(FIXED(SaveGame),
+				Common::Point((_surface.w() - _surface.stringWidth(FIXED(SaveGame))) / 2, 5), INFO_TOP);
+			break;
+
+		default:
+			break;
+		}
+
+		_surface.hLine(3, _surface.fontHeight() + 7, _surface.w() - 4, INFO_TOP);
+		_surface.hLine(3, _surface.fontHeight() + 8, _surface.w() - 4, INFO_MIDDLE);
+		_surface.hLine(3, _surface.fontHeight() + 9, _surface.w() - 4, INFO_BOTTOM);
+		_surface.transBlitFrom(images[4], Common::Point(0, _surface.fontHeight() + 6));
+		_surface.transBlitFrom(images[5], Common::Point(_surface.w() - images[5]._width, _surface.fontHeight() + 6));
+
+		int xp = _surface.w() - BUTTON_SIZE - 6;
+		_surface.vLine(xp, _surface.fontHeight() + 10, _bounds.height() - 4, INFO_TOP);
+		_surface.vLine(xp + 1, _surface.fontHeight() + 10, _bounds.height() - 4, INFO_MIDDLE);
+		_surface.vLine(xp + 2, _surface.fontHeight() + 10, _bounds.height() - 4, INFO_BOTTOM);
+		_surface.transBlitFrom(images[6], Common::Point(xp - 1, _surface.fontHeight() + 8));
+		_surface.transBlitFrom(images[7], Common::Point(xp - 1, _bounds.height() - 4));
+	}
+
+	int xp = _surface.stringWidth("00.") + _surface.widestChar() + 5;
+	int yp = _surface.fontHeight() + 14;
+	
+	for (int idx = _savegameIndex; idx < (_savegameIndex + FILES_LINES_COUNT); ++idx) {
+		if (OP_NAMES || idx == _selector || idx == _oldSelector) {
+			if (idx == _selector && mode != OP_ALL)
+				color = COMMAND_HIGHLIGHTED;
+			else
+				color = INFO_TOP;
+
+			if (mode == RENDER_NAMES_AND_SCROLLBAR)
+				_surface.fillRect(Common::Rect(4, yp, _surface.w() - BUTTON_SIZE - 9, yp + _surface.fontHeight() - 1), TRANSPARENCY);
+			
+			Common::String numStr = Common::String::format("%d.", idx + 1);
+			_surface.writeString(numStr, Common::Point(_surface.widestChar(), yp), color);
+			_surface.writeString(_savegames[idx], Common::Point(xp, yp), color);
+		}
+
+		yp += _surface.fontHeight() + 1;
+	}
+
+	// Draw the Scrollbar if neccessary
+	if (mode != RENDER_NAMES) {
+		Common::Rect scrollRect(BUTTON_SIZE, _bounds.height() - _surface.fontHeight() - 16);
+		scrollRect.moveTo(_bounds.width() - BUTTON_SIZE - 3, _surface.fontHeight() + 13);
+		drawScrollBar(_savegameIndex, FILES_LINES_COUNT, _savegames.size(), scrollRect);
+	}
 }
 
 void WidgetFiles::handleEvents() {
 	//Events &events = *_vm->_events;
-
-}
-
-void WidgetFiles::close() {
-	TattooScene &scene = *(TattooScene *)_vm->_scene;
 	TattooUserInterface &ui = *(TattooUserInterface *)_vm->_ui;
 
-	banishWindow();
-	ui._menuMode = scene._labTableScene ? LAB_MODE : STD_MODE;
+	// Handle scrollbar events
+	ScrollHighlight oldHighlight = ui._scrollHighlight;	
+	Common::Rect scrollRect(BUTTON_SIZE, _bounds.height() - _surface.fontHeight() - 16);
+	scrollRect.moveTo(_bounds.right - BUTTON_SIZE - 3, _bounds.top + _surface.fontHeight() + 13);
+	handleScrollbarEvents(_savegameIndex, FILES_LINES_COUNT, _savegames.size(), scrollRect);
+
+	// If the highlight has changed, redraw the scrollbar
+	if (ui._scrollHighlight != oldHighlight)
+		render(RENDER_NAMES_AND_SCROLLBAR);
+
+	// TODO
 }
 
 } // End of namespace Tattoo

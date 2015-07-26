@@ -223,15 +223,18 @@ void WidgetBase::checkTabbingKeys(int numOptions) {
 }
 
 void WidgetBase::drawScrollBar(int index, int pageSize, int count) {
-	TattooUserInterface &ui = *(TattooUserInterface *)_vm->_ui;
-	bool raised;
-
-	// Fill the area with transparency
 	Common::Rect r(BUTTON_SIZE, _bounds.height() - 6);
 	r.moveTo(_bounds.width() - BUTTON_SIZE - 3, 3);
+	drawScrollBar(index, pageSize, count, r);
+}
+
+void WidgetBase::drawScrollBar(int index, int pageSize, int count, const Common::Rect &r) {
+	TattooUserInterface &ui = *(TattooUserInterface *)_vm->_ui;
+
+	// Fill the area with transparency
 	_surface.fillRect(r, TRANSPARENCY);
 
-	raised = ui._scrollHighlight != 1;
+	bool raised = ui._scrollHighlight != 1;
 	_surface.fillRect(Common::Rect(r.left + 2, r.top + 2, r.right - 2, r.top + BUTTON_SIZE - 2), INFO_MIDDLE);
 	ui.drawDialogRect(_surface, Common::Rect(r.left, r.top, r.left + BUTTON_SIZE, r.top + BUTTON_SIZE), raised);
 
@@ -269,6 +272,10 @@ void WidgetBase::drawScrollBar(int index, int pageSize, int count) {
 }
 
 void WidgetBase::handleScrollbarEvents(int index, int pageSize, int count) {
+	handleScrollbarEvents(index, pageSize, count, Common::Rect(_bounds.right - BUTTON_SIZE - 3, _bounds.top + 3, _bounds.right - 3, _bounds.bottom - 3));
+}
+
+void WidgetBase::handleScrollbarEvents(int index, int pageSize, int count, const Common::Rect &r) {
 	Events &events = *_vm->_events;
 	TattooUserInterface &ui = *(TattooUserInterface *)_vm->_ui;
 	Common::Point mousePos = events.mousePos();
@@ -281,8 +288,6 @@ void WidgetBase::handleScrollbarEvents(int index, int pageSize, int count) {
 
 	if ((!events._pressed && !events._rightReleased) || !_scroll)
 		return;
-
-	Common::Rect r(_bounds.right - BUTTON_SIZE - 3, _bounds.top + 3, _bounds.right - 3, _bounds.bottom - 3);
 
 	// Calculate the Scroll Position bar
 	int barHeight = (_bounds.height() - BUTTON_SIZE * 2) * pageSize / count;

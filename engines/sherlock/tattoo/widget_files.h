@@ -33,20 +33,19 @@ class SherlockEngine;
 
 namespace Tattoo {
 
+enum FilesRenderMode { RENDER_ALL, RENDER_NAMES, RENDER_NAMES_AND_SCROLLBAR };
+
 class WidgetFiles: public WidgetBase, public SaveManager {
 private:
 	SherlockEngine *_vm;
 	SaveMode _fileMode;
+	int _selector, _oldSelector;
+	int savegameIndex;
 
 	/**
 	 * Render the dialog
 	 */
-	void render();
-
-	/**
-	 * Close the dialog
-	 */
-	void close();
+	void render(FilesRenderMode mode);
 
 	/**
 	 * Show the ScummVM Save Game dialog
