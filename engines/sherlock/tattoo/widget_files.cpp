@@ -150,7 +150,7 @@ void WidgetFiles::render(FilesRenderMode mode) {
 				color = INFO_TOP;
 
 			if (mode == RENDER_NAMES_AND_SCROLLBAR)
-				_surface.fillRect(Common::Rect(4, yp, _surface.w() - BUTTON_SIZE - 9, yp + _surface.fontHeight() - 1), TRANSPARENCY);
+				_surface.fillRect(Common::Rect(4, yp, _surface.w() - BUTTON_SIZE - 9, yp + _surface.fontHeight()), TRANSPARENCY);
 			
 			Common::String numStr = Common::String::format("%d.", idx + 1);
 			_surface.writeString(numStr, Common::Point(_surface.widestChar(), yp), color);

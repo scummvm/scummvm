@@ -330,21 +330,8 @@ void WidgetBase::handleScrolling(int &scrollIndex, int pageSize, int max) {
 			yp = CLIP(yp, r.top + BUTTON_SIZE + 3, r.bottom - BUTTON_SIZE - 3);
 
 			// Calculate the line number that corresponds to the position that the mouse is on the scrollbar
-			int lineNum = (yp - _bounds.top - BUTTON_SIZE - 3) * 100 / (_bounds.height() - BUTTON_SIZE * 2 - 6)
-				* max / 100 - 3;
-
-			// If the new position would place part of the text outsidethe text window, adjust it so it doesn't
-			if (lineNum < 0)
-				lineNum = 0;
-			else if (lineNum + pageSize > max) {
-				lineNum = max - pageSize;
-
-				// Make sure it's not below zero now
-				if (lineNum < 0)
-					lineNum = 0;
-			}
-
-			scrollIndex = lineNum;
+			int lineNum = (yp - r.top - BUTTON_SIZE - 3) * (max - pageSize) / (r.height() - BUTTON_SIZE * 2 - 6);
+			scrollIndex = CLIP(lineNum, 0, max - pageSize);
 		}
 
 		// Get the current frame so we can check the scroll timer against it
