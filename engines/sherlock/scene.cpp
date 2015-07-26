@@ -1052,10 +1052,10 @@ void Scene::loadSceneSounds() {
 
 void Scene::checkSceneStatus() {
 	if (_sceneStats[_currentScene][MAX_BGSHAPES]) {
-		for (uint idx = 0; idx < 64; ++idx) {
+		for (int idx = 0; idx < MAX_BGSHAPES; ++idx) {
 			bool flag = _sceneStats[_currentScene][idx];
 
-			if (idx < _bgShapes.size()) {
+			if (idx < (int)_bgShapes.size()) {
 				Object &obj = _bgShapes[idx];
 
 				if (flag) {
@@ -1085,7 +1085,7 @@ void Scene::saveSceneStatus() {
 	}
 
 	// Flag scene as having been visited
-	_sceneStats[_currentScene][64] = true;
+	_sceneStats[_currentScene][MAX_BGSHAPES] = true;
 }
 
 void Scene::checkSceneFlags(bool flag) {
