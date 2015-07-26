@@ -403,8 +403,14 @@ void Talk::talkTo(const Common::String &filename) {
 
 				if (!ui._lookScriptFlag) {
 					ui.drawInterface(2);
-					ui._menuMode = STD_MODE;
-					ui._windowBounds.top = CONTROLS_Y1;
+
+					if (IS_SERRATED_SCALPEL) {
+						ui._menuMode = STD_MODE;
+						ui._windowBounds.top = CONTROLS_Y1;
+					} else {
+						ui._menuMode = static_cast<Tattoo::TattooScene *>(_vm->_scene)->_labTableScene ?
+							LAB_MODE : STD_MODE;
+					}
 
 					ui.banishWindow();
 				}
