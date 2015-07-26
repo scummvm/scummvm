@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.7.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2015-06-30 20:57+0100\n"
-"PO-Revision-Date: 2014-02-27 21:43+0100\n"
+"POT-Creation-Date: 2015-07-26 18:48+0200\n"
+"PO-Revision-Date: 2015-07-26 18:51+0200\n"
 "Last-Translator: Zbynìk Schwarz <zbynek.schwarz@gmail.com>\n"
 "Language-Team: \n"
 "Language: Cesky\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
 "X-Poedit-SourceCharset: iso-8859-2\n"
-"X-Generator: Poedit 1.6.4\n"
+"X-Generator: Poedit 1.8.3\n"
 "X-Poedit-Basepath: ..\n"
 
 #: gui/about.cpp:94
@@ -59,8 +59,8 @@ msgstr "Jít nahoru"
 #: gui/recorderdialog.cpp:70 gui/recorderdialog.cpp:156
 #: gui/saveload-dialog.cpp:216 gui/saveload-dialog.cpp:276
 #: gui/saveload-dialog.cpp:547 gui/saveload-dialog.cpp:931
-#: gui/themebrowser.cpp:55 gui/fluidsynth-dialog.cpp:152
-#: engines/engine.cpp:483 backends/platform/wii/options.cpp:48
+#: gui/themebrowser.cpp:55 gui/fluidsynth-dialog.cpp:152 engines/engine.cpp:483
+#: backends/platform/wii/options.cpp:48
 #: backends/events/default/default-events.cpp:196
 #: backends/events/default/default-events.cpp:218
 #: engines/drascula/saveload.cpp:49 engines/parallaction/saveload.cpp:274
@@ -531,7 +531,7 @@ msgstr "Hromadné Pøidání..."
 
 #: gui/launcher.cpp:1161
 msgid "Record..."
-msgstr ""
+msgstr "Nahrát..."
 
 #: gui/massadd.cpp:79 gui/massadd.cpp:82
 msgid "... progress ..."
@@ -949,7 +949,7 @@ msgstr ""
 
 #: gui/recorderdialog.cpp:64
 msgid "Recorder or Playback Gameplay"
-msgstr ""
+msgstr "Nahrávat nebo pøehrát hru"
 
 #: gui/recorderdialog.cpp:69 gui/recorderdialog.cpp:156
 #: gui/saveload-dialog.cpp:220 gui/saveload-dialog.cpp:276
@@ -958,31 +958,29 @@ msgstr "Smazat"
 
 #: gui/recorderdialog.cpp:71
 msgid "Record"
-msgstr ""
+msgstr "Nahrát"
 
 #: gui/recorderdialog.cpp:72
-#, fuzzy
 msgid "Playback"
-msgstr "Hrát"
+msgstr "Pøehrát"
 
 #: gui/recorderdialog.cpp:74
 msgid "Edit"
-msgstr ""
+msgstr "Upravit"
 
 #: gui/recorderdialog.cpp:86 gui/recorderdialog.cpp:243
 #: gui/recorderdialog.cpp:253
 msgid "Author: "
-msgstr ""
+msgstr "Autor:"
 
 #: gui/recorderdialog.cpp:87 gui/recorderdialog.cpp:244
 #: gui/recorderdialog.cpp:254
 msgid "Notes: "
-msgstr ""
+msgstr "Poznámky:"
 
 #: gui/recorderdialog.cpp:155
-#, fuzzy
 msgid "Do you really want to delete this record?"
-msgstr "Opravdu chcete tuto ulo¾enou hru vymazat"
+msgstr "Opravdu chcete tento záznam smazat?"
 
 #: gui/saveload-dialog.cpp:167
 msgid "List view"
@@ -1761,9 +1759,8 @@ msgstr "Rychlý re¾im"
 #: backends/platform/symbian/src/SymbianActions.cpp:52
 #: backends/platform/wince/CEActionsPocket.cpp:44
 #: backends/platform/wince/CEActionsSmartphone.cpp:52
-#: backends/events/default/default-events.cpp:218
-#: engines/scumm/dialogs.cpp:192 engines/scumm/help.cpp:83
-#: engines/scumm/help.cpp:85
+#: backends/events/default/default-events.cpp:218 engines/scumm/dialogs.cpp:192
+#: engines/scumm/help.cpp:83 engines/scumm/help.cpp:85
 msgid "Quit"
 msgstr "Ukonèit"
 
@@ -2036,7 +2033,7 @@ msgstr ""
 
 #: backends/events/default/default-events.cpp:196
 msgid "Do you really want to return to the Launcher?"
-msgstr "Opravdu se chcete vrátit tuto do Spou¹tìèe?"
+msgstr "Opravdu se chcete vrátit do Spou¹tìèe?"
 
 #: backends/events/default/default-events.cpp:196
 msgid "Launcher"
@@ -2135,25 +2132,27 @@ msgid "Use the original save/load screens, instead of the ScummVM ones"
 msgstr "Pou¾ít pùvodní obrazovky naètení/ulo¾ení místo ze ScummVM"
 
 #: engines/agi/detection.cpp:157
-#, fuzzy
 msgid "Use an alternative palette"
-msgstr "Pou¾ít jinou verzi úvodu (Pouze verze CD)"
+msgstr "Pou¾ít jinou paletu"
 
 #: engines/agi/detection.cpp:158
 msgid ""
 "Use an alternative palette, common for all Amiga games. This was the old "
 "behavior"
 msgstr ""
+"Pou¾ít alternativní paletu, bì¾né pro hry Amiga. Toto byl pùvodní starý "
+"standard"
 
 #: engines/agi/detection.cpp:167
-#, fuzzy
 msgid "Mouse support"
-msgstr "Podpora pøeskoèení"
+msgstr "Podpora my¹i"
 
 #: engines/agi/detection.cpp:168
 msgid ""
 "Enables mouse support. Allows to use mouse for movement and in game menus."
 msgstr ""
+"Povolí podporu my¹i. Umo¾ní pou¾ít my¹ pro pohyb a pro ovládání herních "
+"nabídek."
 
 #: engines/agi/saveload.cpp:816 engines/drascula/saveload.cpp:349
 #: engines/dreamweb/saveload.cpp:169 engines/neverhood/menumodule.cpp:886
@@ -2206,13 +2205,12 @@ msgid "Cutscene file '%s' not found!"
 msgstr "Soubor videa '%s' nenalezen'"
 
 #: engines/cge/detection.cpp:105 engines/cge2/detection.cpp:101
-#, fuzzy
 msgid "Color Blind Mode"
-msgstr "Re¾im kliknutí"
+msgstr "Re¾im pro barvoslepé"
 
 #: engines/cge/detection.cpp:106 engines/cge2/detection.cpp:102
 msgid "Enable Color Blind Mode by default"
-msgstr ""
+msgstr "Standardnì zapínat re¾im pro barvoslepé"
 
 #: engines/drascula/saveload.cpp:47
 msgid ""
@@ -2268,11 +2266,11 @@ msgstr "Nelze ulo¾it hru."
 
 #: engines/hopkins/detection.cpp:76 engines/hopkins/detection.cpp:86
 msgid "Gore Mode"
-msgstr ""
+msgstr "Povolit násilné scény"
 
 #: engines/hopkins/detection.cpp:77 engines/hopkins/detection.cpp:87
 msgid "Enable Gore Mode when available"
-msgstr ""
+msgstr "Povolit násilné scény, jsou-li dostupné"
 
 #. I18N: Studio audience adds an applause and cheering sounds whenever
 #. Malcolm makes a joke.
@@ -2404,6 +2402,12 @@ msgid ""
 "Do you wish to use this save game file with ScummVM?\n"
 "\n"
 msgstr ""
+"V cestì va¹í hry byl nalezen následující soubor s ulo¾enou hrou:\n"
+"\n"
+"%s %s\n"
+"\n"
+"Chcete tento soubor pou¾ít v ScummVM?\n"
+"\n"
 
 #: engines/kyra/saveload_eob.cpp:590
 #, c-format
@@ -2411,6 +2415,8 @@ msgid ""
 "A save game file was found in the specified slot %d. Overwrite?\n"
 "\n"
 msgstr ""
+"V urèené pozici %d byl nalezen soubor s ulo¾enou hrou. Pøepsat?\n"
+"\n"
 
 #: engines/kyra/saveload_eob.cpp:623
 #, c-format
@@ -2422,6 +2428,10 @@ msgid ""
 "'import_savefile'.\n"
 "\n"
 msgstr ""
+"%d pùvodních souborù s ulo¾enou hrou bylo úspì¹nì importováno do\n"
+"ScummVM. Pokud chcete pozdìji toto uèinit znovu ruènì, je tøeba otevøít\n"
+"ladící konzoli ScummVM a pou¾ít pøíkaz 'import_savefile'.\n"
+"\n"
 
 #. I18N: Option for fast scene switching
 #: engines/mohawk/dialogs.cpp:92 engines/mohawk/dialogs.cpp:167
@@ -2560,11 +2570,12 @@ msgstr "Pou¾ít jinou verzi úvodu (Pouze verze CD)"
 
 #: engines/sci/detection.cpp:374
 msgid "Skip EGA dithering pass (full color backgrounds)"
-msgstr ""
+msgstr "Pøekoèit prùchod rozkladu barev EGA (pozadí v plných barvách)"
 
 #: engines/sci/detection.cpp:375
 msgid "Skip dithering pass in EGA games, graphics are shown with full colors"
 msgstr ""
+"Pøeskoèit prùchod rozkladu barev EGA, obraze je zobrazen v plných barvách"
 
 #: engines/sci/detection.cpp:384
 msgid "Prefer digital sound effects"
@@ -2635,13 +2646,11 @@ msgstr "Hra Pozastavena. Stisknìte MEZERNÍK pro pokraèování."
 #. "Moechten Sie wirklich neu starten?  (J/N)J"
 #. Will react to J as 'Yes'
 #: engines/scumm/dialogs.cpp:183
-#, fuzzy
 msgid "Are you sure you want to restart?  (Y/N)Y"
 msgstr "Jste si jisti, ¾e chcete restartovat? (A/N)A"
 
 #. I18N: you may specify 'Yes' symbol at the end of the line. See previous comment
 #: engines/scumm/dialogs.cpp:185
-#, fuzzy
 msgid "Are you sure you want to quit?  (Y/N)Y"
 msgstr "Jste si jisti, ¾e chcete odejít?  (A/N)A"
 
@@ -3151,25 +3160,24 @@ msgid "Third kid"
 msgstr "Tøetí dítì"
 
 #: engines/scumm/help.cpp:292
-#, fuzzy
 msgid "Toggle Inventory/IQ Points display"
-msgstr "Pøepnout centrální datovou obrazovku"
+msgstr "Pøepínat zobrazení inventáøe/chytrostních bodù"
 
 #: engines/scumm/help.cpp:293
 msgid "Toggle Keyboard/Mouse Fighting (*)"
-msgstr ""
+msgstr "Pøepínat bojování pomocí kláves/my¹i (*)"
 
 #: engines/scumm/help.cpp:295
 msgid "* Keyboard Fighting is always on,"
-msgstr ""
+msgstr "* Bojování pomocí klávesnice je v¾dy zapnuto,"
 
 #: engines/scumm/help.cpp:296
 msgid "  so despite the in-game message this"
-msgstr ""
+msgstr " tak¾e nehledì a to, co øíká hra,"
 
 #: engines/scumm/help.cpp:297
 msgid "  actually toggles Mouse Fighting Off/On"
-msgstr ""
+msgstr " toto ve skuteènosti ovládá bojování s my¹í"
 
 #: engines/scumm/help.cpp:304
 msgid "Fighting controls (numpad):"
@@ -3206,7 +3214,7 @@ msgstr "Udeøit dolù"
 
 #: engines/scumm/help.cpp:315
 msgid "Sucker punch"
-msgstr ""
+msgstr "Neèekaná rána"
 
 #: engines/scumm/help.cpp:318
 msgid "These are for Indy on left."
@@ -3218,7 +3226,7 @@ msgstr "Kdy¾ je Indy napravo,"
 
 #: engines/scumm/help.cpp:320
 msgid "7, 4, and 1 are switched with"
-msgstr "71 4 a 1 jsou zamìnìny s"
+msgstr "7, 4 a 1 jsou zamìnìny s"
 
 #: engines/scumm/help.cpp:321
 msgid "9, 6, and 3, respectively."
@@ -3274,27 +3282,30 @@ msgstr ""
 "ale %s chybí. Místo toho je pou¾it AdLib."
 
 #: engines/scumm/scumm.cpp:2644
-#, fuzzy
 msgid ""
 "Usually, Maniac Mansion would start now. But for that to work, the game "
 "files for Maniac Mansion have to be in the 'Maniac' directory inside the "
 "Tentacle game directory, and the game has to be added to ScummVM."
 msgstr ""
-"Normálnì by teï Maniac Mansion byl spu¹tìn. Ale ScummVM toto zatím nedìlá. "
-"Abyste toto mohli hrát, pøejdìte do 'Pøidat Hru' v poèáteèním menu ScummVM a "
-"vyberte adresáø 'Maniac' uvnitø herního adresáøe Tentacle."
+"Normálnì by teï byl spu¹tìn Maniac Mansion. Ale aby toto mohlo fungovat, "
+"musí být soubory se hrou umístìny do slo¾ky 'Maniac' uvnitø slo¾ky se hrou "
+"Tentacle a hra musí být pøidána do ScummVM."
 
 #: engines/scumm/players/player_v3m.cpp:129
 msgid ""
 "Could not find the 'Loom' Macintosh executable to read the\n"
 "instruments from. Music will be disabled."
 msgstr ""
+"Nelze najít spustitelný soubor 'Loom' pro Macintosh z jeho¾\n"
+"mají být naèteny hudební nástroje. Hudba bude zakázána."
 
 #: engines/scumm/players/player_v5m.cpp:107
 msgid ""
 "Could not find the 'Monkey Island' Macintosh executable to read the\n"
 "instruments from. Music will be disabled."
 msgstr ""
+"Nelze najít spustitelný soubor 'Monkey Island' pro Macintosh z\n"
+"jeho¾ mají být naèteny hudební nástroje. Hudba bude zakázána."
 
 #: engines/sky/compact.cpp:130
 msgid ""
@@ -3406,52 +3417,67 @@ msgstr ""
 
 #: engines/wintermute/detection.cpp:58
 msgid "Show FPS-counter"
-msgstr ""
+msgstr "Zobrazit poèítadlo FPS"
 
 #: engines/wintermute/detection.cpp:59
 msgid "Show the current number of frames per second in the upper left corner"
-msgstr ""
+msgstr "Zobrazit souèasný poèet snímkù za sekundu v horním levém rohu"
 
 #: engines/zvision/detection.cpp:256
 msgid "Double FPS"
-msgstr ""
+msgstr "Dvojité snímky za sekundu"
 
 #: engines/zvision/detection.cpp:257
 msgid "Increase game FPS from 30 to 60"
-msgstr ""
+msgstr "Zvý¹it herní snímky za sekundu z 30 na 60"
 
 #: engines/zvision/detection.cpp:266
-#, fuzzy
 msgid "Enable Venus"
-msgstr "Zapnout héliový re¾im"
+msgstr "Povolit Venus"
 
 #: engines/zvision/detection.cpp:267
 msgid "Enable the Venus help system"
-msgstr ""
+msgstr "Povolit systém nápovìdy Venus"
 
 #: engines/zvision/detection.cpp:276
 msgid "Disable animation while turning"
-msgstr ""
+msgstr "Zakázat animaci pøi otáèení"
 
 #: engines/zvision/detection.cpp:277
 msgid "Disable animation while turning in panoramic mode"
-msgstr ""
+msgstr "Zakázat animaci pøi otáèení v panoramatickém re¾imu"
 
 #: engines/zvision/detection.cpp:286
 msgid "Use the hires MPEG movies"
-msgstr ""
+msgstr "Pou¾ít videa MPEG ve vysokém rozli¹ení"
 
 #: engines/zvision/detection.cpp:287
-#, fuzzy
 msgid ""
 "Use the hires MPEG movies of the DVD version, instead of the lowres AVI ones"
-msgstr "Pou¾ít alternativní sadu støíbrných kurzorù místo standardních zlatých"
+msgstr ""
+"Pou¾ít videa MPEG ve vysokém rozli¹ení pocházející z DVD verze, namísto "
+"videí AVI v nízkém rozli¹ení."
 
 #~ msgid "EGA undithering"
 #~ msgstr "Nerozkládání EGA"
 
 #~ msgid "Enable undithering in EGA games"
 #~ msgstr "Povolit nerozkládání v EGA hrách"
+
+#~ msgid "Are you sure you want to restart?  (Y/N)"
+#~ msgstr "Jste si jisti, ¾e chcete restartovat? (A/N)A"
+
+#~ msgid "Are you sure you want to quit?  (Y/N)"
+#~ msgstr "Jste si jisti, ¾e chcete odejít?  (A/N)A"
+
+#~ msgid ""
+#~ "Usually, Maniac Mansion would start now. But ScummVM doesn't do that yet. "
+#~ "To play it, go to 'Add Game' in the ScummVM start menu and select the "
+#~ "'Maniac' directory inside the Tentacle game directory."
+#~ msgstr ""
+#~ "Normálnì by teï Maniac Mansion byl spu¹tìn. Ale ScummVM toto zatím "
+#~ "nedìlá. Abyste toto mohli hrát, pøejdìte do 'Pøidat Hru' v poèáteèním "
+#~ "menu ScummVM a vyberte adresáø 'Maniac' uvnitø herního adresáøe Tentacle."
 
 #~ msgid "MPEG-2 cutscenes found but ScummVM has been built without MPEG-2"
 #~ msgstr "Videa MPEG-2 nalezena, ale ScummVM byl sestaven bez MPEG-2"
