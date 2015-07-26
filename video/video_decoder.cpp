@@ -284,7 +284,7 @@ uint32 VideoDecoder::getTimeToNextFrame() const {
 
 bool VideoDecoder::endOfVideo() const {
 	for (TrackList::const_iterator it = _tracks.begin(); it != _tracks.end(); it++)
-		if (!(*it)->endOfTrack() && (!isPlaying() || (*it)->getTrackType() != Track::kTrackTypeVideo || !_endTimeSet || ((VideoTrack *)*it)->getNextFrameStartTime() < (uint)_endTime.msecs()))
+		if (!(*it)->endOfTrack() && ((*it)->getTrackType() != Track::kTrackTypeVideo || !_endTimeSet || ((VideoTrack *)*it)->getNextFrameStartTime() < (uint)_endTime.msecs()))
 			return false;
 
 	return true;
@@ -896,7 +896,7 @@ bool VideoDecoder::hasFramesLeft() const {
 	// This is only used for needsUpdate() atm so that setEndTime() works properly
 	// And unlike endOfVideoTracks(), this takes into account _endTime
 	for (TrackList::const_iterator it = _tracks.begin(); it != _tracks.end(); it++)
-		if ((*it)->getTrackType() == Track::kTrackTypeVideo && !(*it)->endOfTrack() && (!isPlaying() || !_endTimeSet || ((VideoTrack *)*it)->getNextFrameStartTime() < (uint)_endTime.msecs()))
+		if ((*it)->getTrackType() == Track::kTrackTypeVideo && !(*it)->endOfTrack() && (!_endTimeSet || ((VideoTrack *)*it)->getNextFrameStartTime() < (uint)_endTime.msecs()))
 			return true;
 
 	return false;
