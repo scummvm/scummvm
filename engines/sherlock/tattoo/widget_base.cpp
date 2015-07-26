@@ -59,11 +59,13 @@ void WidgetBase::banishWindow() {
 }
 
 void WidgetBase::close() {
+	Events &events = *_vm->_events;
 	TattooScene &scene = *(TattooScene *)_vm->_scene;
 	TattooUserInterface &ui = *(TattooUserInterface *)_vm->_ui;
 
 	banishWindow();
 	ui._menuMode = scene._labTableScene ? LAB_MODE : STD_MODE;
+	events.clearEvents();
 }
 
 bool WidgetBase::active() const {

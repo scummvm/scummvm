@@ -388,13 +388,13 @@ void TattooUserInterface::doStandardControl() {
 	switch (_keyState.keycode) {
 	case Common::KEYCODE_F5:
 		// Save game
-		freeMenu();
+		events.warpMouse();
 		saveGame();
 		return;
 
 	case Common::KEYCODE_F7:
 		// Load game
-		freeMenu();
+		events.warpMouse();
 		loadGame();
 		return;
 

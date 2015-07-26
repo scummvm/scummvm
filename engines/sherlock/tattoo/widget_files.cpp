@@ -166,8 +166,11 @@ void WidgetFiles::render(FilesRenderMode mode) {
 }
 
 void WidgetFiles::handleEvents() {
-	//Events &events = *_vm->_events;
+	Events &events = *_vm->_events;
+	TattooScene &scene = *(TattooScene *)_vm->_scene;
 	TattooUserInterface &ui = *(TattooUserInterface *)_vm->_ui;
+	Common::Point mousePos = events.mousePos();
+	Common::KeyState keyState = ui._keyState;
 
 	// Handle scrollbar events
 	ScrollHighlight oldHighlight = ui._scrollHighlight;	
@@ -176,11 +179,74 @@ void WidgetFiles::handleEvents() {
 	int oldScrollIndex = _savegameIndex;
 	handleScrolling(_savegameIndex, FILES_LINES_COUNT, _savegames.size());
 
-	// Only redraw the window if the the scrollbar position has changed
-	if (ui._scrollHighlight != oldHighlight || oldScrollIndex != _savegameIndex)
-		render(RENDER_NAMES_AND_SCROLLBAR);
+	// See if the mouse is pointing at any filenames in the window
+	if (Common::Rect(_bounds.left, _bounds.top + _surface.fontHeight() + 14,
+			_bounds.right - BUTTON_SIZE - 5, _bounds.bottom - 5).contains(mousePos)) {
+		_selector = (mousePos.y - _bounds.top - _surface.fontHeight() - 14) / (_surface.fontHeight() + 1) +
+			_savegameIndex;
+	} else {
+		_selector = -1;
+	}
 
-	// TODO
+	// Check for the Tab key
+	if (keyState.keycode == Common::KEYCODE_TAB) {
+		// If the mouse is not over any of the filenames, move the mouse so that it points to the first one
+		if (_selector == -1) {
+			events.warpMouse(Common::Point(_bounds.right - BUTTON_SIZE - 20,
+				_bounds.top + _surface.fontHeight() * 2 + 8));
+		} else {
+			// See if we're doing Tab or Shift Tab
+			if (keyState.flags & Common::KBD_SHIFT) {
+				// We're doing Shift Tab
+				if (_selector == _savegameIndex)
+					_selector = _savegameIndex + 4;
+				else
+					--_selector;
+			} else {
+				// We're doing Tab
+				++_selector;
+				if (_selector >= _savegameIndex + 5)
+					_selector = _savegameIndex;
+			}
+
+			events.warpMouse(Common::Point(mousePos.x, _bounds.top + _surface.fontHeight() * 2
+				+ 8 + (_selector - _savegameIndex) * (_surface.fontHeight() + 1)));
+		}
+	}
+
+	// Only redraw the window if the the scrollbar position has changed
+	if (ui._scrollHighlight != oldHighlight || oldScrollIndex != _savegameIndex || _selector != _oldSelector)
+		render(RENDER_NAMES_AND_SCROLLBAR);
+	_oldSelector = _selector;
+
+	if (events._firstPress && !_bounds.contains(mousePos))
+		_outsideMenu = true;
+
+	if (events._released || events._rightReleased || keyState.keycode == Common::KEYCODE_ESCAPE) {
+		ui._scrollHighlight = SH_NONE;
+
+		if (_outsideMenu && !_bounds.contains(mousePos)) {
+			close();
+		} else {
+			_outsideMenu = false;
+
+			if (_selector != -1) {
+				if (_fileMode = SAVEMODE_LOAD) {
+					// We're in Load Mode
+					_vm->loadGameState(_selector);
+				} else if (_fileMode == SAVEMODE_SAVE) {
+					// We're in Save Mode
+					if (getFilename())
+						_vm->saveGameState(_selector, _savegames[_selector]);
+					close();
+				}
+			}
+		}
+	}
+}
+
+bool WidgetFiles::getFilename() {
+	return false;
 }
 
 Common::Rect WidgetFiles::getScrollBarBounds() const {
