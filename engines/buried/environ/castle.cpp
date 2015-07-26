@@ -83,6 +83,8 @@ int TopOfTowerGuardEncounter::paint(Window *viewWindow, Graphics::Surface *preBu
 class TowerStairsGuardEncounter : public SceneBase {
 public:
 	TowerStairsGuardEncounter(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+	int postEnterRoom(Window *viewWindow, const Location &priorLocation);
+	int preExitRoom(Window *viewWindow, const Location &newLocation);
 	int timerCallback(Window *viewWindow);
 
 private:
@@ -113,6 +115,23 @@ int TowerStairsGuardEncounter::timerCallback(Window *viewWindow) {
 		}
 	}
 
+	return SC_TRUE;
+}
+
+int TowerStairsGuardEncounter::postEnterRoom(Window *viewWindow, const Location &priorLocation) {
+	// Force enable frame cycling
+	((SceneViewWindow *)viewWindow)->forceEnableCycling(true);
+
+	// Disable frame caching
+	((SceneViewWindow *)viewWindow)->enableCycleFrameCache(false);
+
+	// Force open the video
+	((SceneViewWindow *)viewWindow)->changeCycleFrameMovie(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, SF_CYCLES));
+	return SC_TRUE;
+}
+
+int TowerStairsGuardEncounter::preExitRoom(Window *viewWindow, const Location &newLocation) {
+	((SceneViewWindow *)viewWindow)->forceEnableCycling(false);
 	return SC_TRUE;
 }
 
@@ -313,6 +332,7 @@ int KeepFinalWallClimb::timerCallback(Window *viewWindow) {
 class KingsStudyGuard : public SceneBase {
 public:
 	KingsStudyGuard(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+	int preExitRoom(Window *viewWindow, const Location &priorLocation);
 	int postExitRoom(Window *viewWindow, const Location &priorLocation);
 	int postEnterRoom(Window *viewWindow, const Location &priorLocation);
 	int timerCallback(Window *viewWindow);
@@ -322,6 +342,11 @@ KingsStudyGuard::KingsStudyGuard(BuriedEngine *vm, Window *viewWindow, const Loc
 		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
 }
 
+int KingsStudyGuard::preExitRoom(Window *viewWindow, const Location &newLocation) {
+	((SceneViewWindow *)viewWindow)->forceEnableCycling(false);
+	return SC_TRUE;
+}
+
 int KingsStudyGuard::postExitRoom(Window *viewWindow, const Location &newLocation) {
 	if (_staticData.location.timeZone == newLocation.timeZone)
 		_vm->_sound->playSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, 14));
@@ -329,6 +354,15 @@ int KingsStudyGuard::postExitRoom(Window *viewWindow, const Location &newLocatio
 }
 
 int KingsStudyGuard::postEnterRoom(Window *viewWindow, const Location &priorLocation) {
+	// Force enable frame cycling
+	((SceneViewWindow *)viewWindow)->forceEnableCycling(true);
+
+	// Disable frame caching
+	((SceneViewWindow *)viewWindow)->enableCycleFrameCache(false);
+
+	// Force open the video
+	((SceneViewWindow *)viewWindow)->changeCycleFrameMovie(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, SF_CYCLES));
+
 	// Display warning
 	((SceneViewWindow *)viewWindow)->displayLiveText(_vm->getString(IDS_HUMAN_PRESENCE_3METERS));
 	return SC_TRUE;
