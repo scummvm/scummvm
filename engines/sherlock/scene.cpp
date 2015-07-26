@@ -207,11 +207,12 @@ Scene *Scene::init(SherlockEngine *vm) {
 
 Scene::Scene(SherlockEngine *vm): _vm(vm) {
 	_sceneStats = new bool *[SCENES_COUNT];
-	_sceneStats[0] = new bool[SCENES_COUNT * 65];
-	Common::fill(&_sceneStats[0][0], &_sceneStats[0][SCENES_COUNT * 65], false);
+	_sceneStats[0] = new bool[SCENES_COUNT * (MAX_BGSHAPES + 1)];
+	Common::fill(&_sceneStats[0][0], &_sceneStats[0][SCENES_COUNT * (MAX_BGSHAPES + 1)], false);
 	for (int idx = 1; idx < SCENES_COUNT; ++idx) {
-		_sceneStats[idx] = _sceneStats[idx - 1] + 65;
+		_sceneStats[idx] = _sceneStats[idx - 1] + (MAX_BGSHAPES + 1);
 	}
+
 	_currentScene = -1;
 	_goToScene = -1;
 	_loadingSavedGame = false;
@@ -1050,7 +1051,7 @@ void Scene::loadSceneSounds() {
 }
 
 void Scene::checkSceneStatus() {
-	if (_sceneStats[_currentScene][64]) {
+	if (_sceneStats[_currentScene][MAX_BGSHAPES]) {
 		for (uint idx = 0; idx < 64; ++idx) {
 			bool flag = _sceneStats[_currentScene][idx];
 
@@ -1076,7 +1077,7 @@ void Scene::checkSceneStatus() {
 
 void Scene::saveSceneStatus() {
 	// Flag any objects for the scene that have been altered
-	int count = MIN((int)_bgShapes.size(), 64);
+	int count = MIN((int)_bgShapes.size(), MAX_BGSHAPES);
 	for (int idx = 0; idx < count; ++idx) {
 		Object &obj = _bgShapes[idx];
 		_sceneStats[_currentScene][idx] = obj._type == HIDDEN || obj._type == REMOVE
@@ -1380,7 +1381,7 @@ void Scene::synchronize(Serializer &s) {
 	}
 
 	for (int sceneNum = 0; sceneNum < SCENES_COUNT; ++sceneNum) {
-		for (int flag = 0; flag < 65; ++flag) {
+		for (int flag = 0; flag <= MAX_BGSHAPES; ++flag) {
 			s.syncAsByte(_sceneStats[sceneNum][flag]);
 		}
 	}
