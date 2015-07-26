@@ -268,7 +268,7 @@ void SaveManager::synchronize(Serializer &s) {
 	if (screen.fontNumber() != oldFont)
 		journal.resetPosition();
 
-	_justLoaded = true;
+	_justLoaded = s.isLoading();
 }
 
 bool SaveManager::isSlotEmpty(int slot) const {
