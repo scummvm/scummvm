@@ -289,7 +289,7 @@ public:
 	 * Attempts to find a background shape within the passed bounds. If found,
 	 * it will return the shape number, or -1 on failure.
 	 */
-	virtual int findBgShape(const Common::Point &pt);
+	virtual int findBgShape(const Common::Point &pt) = 0;
 
 	/**
 	 * Synchronize the data for a savegame

@@ -89,6 +89,12 @@ public:
 	 *		A negative playRate can also be specified to play the animation in reverse
 	 */
 	virtual int startCAnim(int cAnimNum, int playRate = 1);
+
+	/**
+	 * Attempts to find a background shape within the passed bounds. If found,
+	 * it will return the shape number, or -1 on failure.
+	 */
+	virtual int findBgShape(const Common::Point &pt);
 };
 
 } // End of namespace Scalpel

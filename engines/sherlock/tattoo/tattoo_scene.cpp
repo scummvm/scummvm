@@ -724,46 +724,47 @@ void TattooScene::setNPCPath(int npc) {
 
 int TattooScene::findBgShape(const Common::Point &pt) {
 	People &people = *_vm->_people;
+	UserInterface &ui = *_vm->_ui;
 
 	if (!_doBgAnimDone)
 		// New frame hasn't been drawn yet
 		return -1;
 
-	int result = Scene::findBgShape(pt);
-	if (result == -1) {
-		if (_labTableScene) {
-			// Check for SOLID objects in the lab scene
-			for (int idx = (int)_bgShapes.size() - 1; idx >= 0; --idx) {
-				Object &o = _bgShapes[idx];
-				if (o._type != INVALID && o._type != NO_SHAPE && o._type != HIDDEN && o._aType == SOLID) {
-					if (o.getNewBounds().contains(pt))
-						return idx;
-				}
-			}
-		}
 
-		// No shape found, so check whether a character is highlighted
-		for (int idx = 1; idx < MAX_CHARACTERS && result == -1; ++idx) {
-			Person &person = people[idx];
+	for (int idx = (int)_bgShapes.size() - 1; idx >= 0; --idx) {
+		Object &o = _bgShapes[idx];
 
-			if (person._type == CHARACTER) {
-				int scaleVal = getScaleVal(person._position);
-				Common::Rect charRect;
-
-				if (scaleVal == SCALE_THRESHOLD)
-					charRect = Common::Rect(person.frameWidth(), person.frameHeight());
-				else
-					charRect = Common::Rect(person._imageFrame->sDrawXSize(scaleVal), person._imageFrame->sDrawYSize(scaleVal));
-				charRect.moveTo(person._position.x / FIXED_INT_MULTIPLIER, person._position.y / FIXED_INT_MULTIPLIER
-					- charRect.height());
-
-				if (charRect.contains(pt))
-					result = 1000 + idx;
-			}
+		if (o._type != INVALID && o._type != NO_SHAPE && o._type != HIDDEN && 
+				(o._aType <= PERSON || (ui._menuMode == LAB_MODE && o._aType == SOLID))) {
+			if (o.getNewBounds().contains(pt))
+				return idx;
+		} else if (o._type == NO_SHAPE) {
+			if (o.getNoShapeBounds().contains(pt))
+				return idx;
 		}
 	}
 
-	return result;
+	// If no shape found, so check whether a character is highlighted
+	for (int idx = 1; idx < MAX_CHARACTERS; ++idx) {
+		Person &person = people[idx];
+
+		if (person._type == CHARACTER) {
+			int scaleVal = getScaleVal(person._position);
+			Common::Rect charRect;
+
+			if (scaleVal == SCALE_THRESHOLD)
+				charRect = Common::Rect(person.frameWidth(), person.frameHeight());
+			else
+				charRect = Common::Rect(person._imageFrame->sDrawXSize(scaleVal), person._imageFrame->sDrawYSize(scaleVal));
+			charRect.moveTo(person._position.x / FIXED_INT_MULTIPLIER, person._position.y / FIXED_INT_MULTIPLIER
+				- charRect.height());
+
+			if (charRect.contains(pt))
+				return 1000 + idx;
+		}
+	}
+
+	return -1;
 }
 
 void TattooScene::synchronize(Serializer &s) {

@@ -1340,26 +1340,6 @@ Exit *Scene::checkForExit(const Common::Rect &r) {
 	return nullptr;
 }
 
-int Scene::findBgShape(const Common::Point &pt) {
-	if (!_doBgAnimDone)
-		// New frame hasn't been drawn yet
-		return -1;
-
-	for (int idx = (int)_bgShapes.size() - 1; idx >= 0; --idx) {
-		Object &o = _bgShapes[idx];
-		if (o._type != INVALID && o._type != NO_SHAPE && o._type != HIDDEN
-			&& o._aType <= PERSON) {
-			if (o.getNewBounds().contains(pt))
-				return idx;
-		} else if (o._type == NO_SHAPE) {
-			if (o.getNoShapeBounds().contains(pt))
-				return idx;
-		}
-	}
-
-	return -1;
-}
-
 int Scene::checkForZones(const Common::Point &pt, int zoneType) {
 	int matches = 0;
 
