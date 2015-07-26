@@ -123,77 +123,12 @@ void WidgetTalk::handleEvents() {
 	ScrollHighlight oldHighlight = ui._scrollHighlight;
 	handleScrollbarEvents(_talkScrollIndex, NUM_VISIBLE_TALK_LINES, _statementLines.size());
 
-	// If the highlight has changed, redraw the scrollbar
-	if (ui._scrollHighlight != oldHighlight)
+	int oldScrollIndex = _talkScrollIndex;
+	handleScrolling(_talkScrollIndex, NUM_VISIBLE_TALK_LINES, _statementLines.size());
+
+	// Only redraw the window if the the scrollbar position has changed
+	if (ui._scrollHighlight != oldHighlight || oldScrollIndex != _talkScrollIndex)
 		render(HL_SCROLLBAR_ONLY);
-
-	if (ui._scrollHighlight != SH_NONE || keycode == Common::KEYCODE_HOME || keycode == Common::KEYCODE_END
-			|| keycode == Common::KEYCODE_PAGEUP || keycode == Common::KEYCODE_PAGEDOWN) {
-		int scrollIndex = _talkScrollIndex;
-
-		// Check for the scrollbar
-		if (ui._scrollHighlight == SH_THUMBNAIL) {
-			int yp = mousePos.y;
-			yp = CLIP(yp, _bounds.top + BUTTON_SIZE + 3, _bounds.bottom - BUTTON_SIZE - 3);
-
-			// Calculate the line number that corresponds to the position that the mouse is on the scrollbar
-			int lineNum = (yp - _bounds.top - BUTTON_SIZE - 3) * 100 / (_bounds.height() - BUTTON_SIZE * 2 - 6)
-				* _statementLines.size() / 100 - 3;
-
-			// If the new position would place part of the text outsidethe text window, adjust it so it doesn't
-			if (lineNum < 0)
-				lineNum = 0;
-			else if (lineNum + NUM_VISIBLE_TALK_LINES > (int)_statementLines.size()) {
-				lineNum = (int)_statementLines.size() - NUM_VISIBLE_TALK_LINES;
-
-				// Make sure it's not below zero now
-				if (lineNum < 0)
-					lineNum = 0;
-			}
-
-			_talkScrollIndex = lineNum;
-		}
-
-		// Get the current frame so we can check the scroll timer against it
-		uint32 frameNum = events.getFrameCounter();
-
-		if (frameNum > _dialogTimer) {
-			// Set the timeout for the next scroll if the mouse button remains held down
-			_dialogTimer = (_dialogTimer == 0) ? frameNum + NUM_VISIBLE_TALK_LINES : frameNum + 1;
-
-			// Check for Scroll Up
-			if (ui._scrollHighlight == SH_SCROLL_UP && _talkScrollIndex)
-				--_talkScrollIndex;
-
-			// Check for Page Up
-			if ((ui._scrollHighlight == SH_PAGE_UP || keycode == Common::KEYCODE_PAGEUP) && _talkScrollIndex)
-				_talkScrollIndex -= NUM_VISIBLE_TALK_LINES;
-
-			// Check for Page Down
-			if ((ui._scrollHighlight == SH_PAGE_DOWN || keycode == Common::KEYCODE_PAGEDOWN) 
-					&& (_talkScrollIndex + NUM_VISIBLE_TALK_LINES < (int)_statementLines.size())) {
-				_talkScrollIndex += 6;
-				if (_talkScrollIndex + NUM_VISIBLE_TALK_LINES >(int)_statementLines.size())
-					_talkScrollIndex = _statementLines.size() - NUM_VISIBLE_TALK_LINES;
-			}
-
-			// Check for Scroll Down
-			if (ui._scrollHighlight == SH_SCROLL_DOWN && (_talkScrollIndex + NUM_VISIBLE_TALK_LINES < (int)_statementLines.size()))
-				_talkScrollIndex++;
-		}
-
-		if (keycode == Common::KEYCODE_END)
-			_talkScrollIndex = _statementLines.size() - NUM_VISIBLE_TALK_LINES;
-
-		if (_talkScrollIndex < 0 || keycode == Common::KEYCODE_HOME)
-			_talkScrollIndex = 0;
-
-		// Only redraw the window if the the scrollbar position has changed
-		if (scrollIndex != _talkScrollIndex) {
-			_surface.fillRect(Common::Rect(4, 5, _surface.w() - BUTTON_SIZE - 8, _surface.h() - 4), TRANSPARENCY);
-			render(HL_NO_HIGHLIGHTING);
-		}
-	}
 
 	// Flag if they started pressing outside of the window
 	if (events._firstPress && !_bounds.contains(mousePos))

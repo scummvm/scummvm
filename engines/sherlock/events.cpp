@@ -251,7 +251,38 @@ bool Events::checkForNextFrameCounter() {
 }
 
 Common::KeyState Events::getKey() {
-	return _pendingKeys.pop();
+	Common::KeyState keyState = _pendingKeys.pop();
+
+	switch (keyState.keycode) {
+	case Common::KEYCODE_KP1:
+		keyState.keycode = Common::KEYCODE_END;
+		break;
+	case Common::KEYCODE_KP2:
+		keyState.keycode = Common::KEYCODE_DOWN;
+		break;
+	case Common::KEYCODE_KP3:
+		keyState.keycode = Common::KEYCODE_PAGEDOWN;
+		break;
+	case Common::KEYCODE_KP4:
+		keyState.keycode = Common::KEYCODE_LEFT;
+		break;
+	case Common::KEYCODE_KP6:
+		keyState.keycode = Common::KEYCODE_RIGHT;
+		break;
+	case Common::KEYCODE_KP7:
+		keyState.keycode = Common::KEYCODE_HOME;
+		break;
+	case Common::KEYCODE_KP8:
+		keyState.keycode = Common::KEYCODE_UP;
+		break;
+	case Common::KEYCODE_KP9:
+		keyState.keycode = Common::KEYCODE_PAGEUP;
+		break;
+	default:
+		break;
+	}
+
+	return keyState;
 }
 
 void Events::clearEvents() {

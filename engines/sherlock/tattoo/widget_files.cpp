@@ -38,7 +38,6 @@ WidgetFiles::WidgetFiles(SherlockEngine *vm, const Common::String &target) :
 		SaveManager(vm, target), WidgetBase(vm), _vm(vm) {
 	_fileMode = SAVEMODE_NONE;
 	_selector = _oldSelector = -1;
-	savegameIndex = 0;
 }
 
 void WidgetFiles::show(SaveMode mode) {
@@ -162,11 +161,8 @@ void WidgetFiles::render(FilesRenderMode mode) {
 	}
 
 	// Draw the Scrollbar if neccessary
-	if (mode != RENDER_NAMES) {
-		Common::Rect scrollRect(BUTTON_SIZE, _bounds.height() - _surface.fontHeight() - 16);
-		scrollRect.moveTo(_bounds.width() - BUTTON_SIZE - 3, _surface.fontHeight() + 13);
-		drawScrollBar(_savegameIndex, FILES_LINES_COUNT, _savegames.size(), scrollRect);
-	}
+	if (mode != RENDER_NAMES)
+		drawScrollBar(_savegameIndex, FILES_LINES_COUNT, _savegames.size());
 }
 
 void WidgetFiles::handleEvents() {
@@ -175,15 +171,23 @@ void WidgetFiles::handleEvents() {
 
 	// Handle scrollbar events
 	ScrollHighlight oldHighlight = ui._scrollHighlight;	
-	Common::Rect scrollRect(BUTTON_SIZE, _bounds.height() - _surface.fontHeight() - 16);
-	scrollRect.moveTo(_bounds.right - BUTTON_SIZE - 3, _bounds.top + _surface.fontHeight() + 13);
-	handleScrollbarEvents(_savegameIndex, FILES_LINES_COUNT, _savegames.size(), scrollRect);
+	handleScrollbarEvents(_savegameIndex, FILES_LINES_COUNT, _savegames.size());
 
-	// If the highlight has changed, redraw the scrollbar
-	if (ui._scrollHighlight != oldHighlight)
+	int oldScrollIndex = _savegameIndex;
+	handleScrolling(_savegameIndex, FILES_LINES_COUNT, _savegames.size());
+
+	// Only redraw the window if the the scrollbar position has changed
+	if (ui._scrollHighlight != oldHighlight || oldScrollIndex != _savegameIndex)
 		render(RENDER_NAMES_AND_SCROLLBAR);
 
 	// TODO
+}
+
+Common::Rect WidgetFiles::getScrollBarBounds() const {
+	Common::Rect scrollRect(BUTTON_SIZE, _bounds.height() - _surface.fontHeight() - 16);
+	scrollRect.moveTo(_bounds.width() - BUTTON_SIZE - 3, _surface.fontHeight() + 13);
+
+	return scrollRect;
 }
 
 } // End of namespace Tattoo

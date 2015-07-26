@@ -40,7 +40,6 @@ private:
 	SherlockEngine *_vm;
 	SaveMode _fileMode;
 	int _selector, _oldSelector;
-	int savegameIndex;
 
 	/**
 	 * Render the dialog
@@ -56,6 +55,11 @@ private:
 	 * Show the ScummVM Load Game dialog
 	 */
 	void showScummVMRestoreDialog();
+
+	/**
+	 * Return the area of a widget that the scrollbar will be drawn in
+	 */
+	virtual Common::Rect getScrollBarBounds() const;
 public:
 	WidgetFiles(SherlockEngine *vm, const Common::String &target);
 	virtual ~WidgetFiles() {}
