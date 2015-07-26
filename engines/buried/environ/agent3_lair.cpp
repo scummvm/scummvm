@@ -43,6 +43,7 @@ class LairEntry : public SceneBase {
 public:
 	LairEntry(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
 	int postEnterRoom(Window *viewWindow, const Location &priorLocation);
+	int preExitRoom(Window *viewWindow, const Location &newLocation);
 	int timerCallback(Window *viewWindow);
 	int onCharacter(Window *viewWindow, const Common::KeyState &character);
 
@@ -54,7 +55,6 @@ private:
 	int _passwordIndex;
 	uint32 _stepDelay;
 	uint32 _rawStepDelay;
-	bool _flickerOn;
 };
 
 LairEntry::LairEntry(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
@@ -65,18 +65,19 @@ LairEntry::LairEntry(BuriedEngine *vm, Window *viewWindow, const LocationStaticD
 	_passwordIndex = 0;
 	_stepDelay = 0;
 	_rawStepDelay = 15000;
-	_flickerOn = ((SceneViewWindow *)viewWindow)->getCyclingStatus();
-	((SceneViewWindow *)viewWindow)->enableCycling(true);
-
-	// Force load the cycle file
-	((SceneViewWindow *)viewWindow)->changeCycleFrameMovie(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, SF_CYCLES));
 }
 
 int LairEntry::postEnterRoom(Window *viewWindow, const Location &priorLocation) {
-	if (((SceneViewWindow *)viewWindow)->getGlobalFlags().alRestoreSkipAgent3Initial == 1) {
-		// Disable frame caching
-		((SceneViewWindow *)viewWindow)->enableCycleFrameCache(false);
+	// Force enable frame cycling
+	((SceneViewWindow *)viewWindow)->forceEnableCycling(true);
 
+	// Disable frame caching
+	((SceneViewWindow *)viewWindow)->enableCycleFrameCache(false);
+
+	// Force open the video
+	((SceneViewWindow *)viewWindow)->changeCycleFrameMovie(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, SF_CYCLES));
+
+	if (((SceneViewWindow *)viewWindow)->getGlobalFlags().alRestoreSkipAgent3Initial == 1) {
 		// Start new secondary ambient
 		_vm->_sound->setSecondaryAmbientSound(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, 14), 64);
 
@@ -94,13 +95,6 @@ int LairEntry::postEnterRoom(Window *viewWindow, const Location &priorLocation) 
 
 		return SC_TRUE;
 	}
-
-	// Disable frame caching
-	((SceneViewWindow *)viewWindow)->enableCycleFrameCache(false);
-
-	// Turn on flicker
-	_flickerOn = ((SceneViewWindow *)viewWindow)->getCyclingStatus();
-	((SceneViewWindow *)viewWindow)->enableCycling(true);
 
 	// Empty the input queue
 	_vm->removeMouseMessages(viewWindow);
@@ -199,6 +193,11 @@ int LairEntry::postEnterRoom(Window *viewWindow, const Location &priorLocation) 
 	return SC_TRUE;
 }
 
+int LairEntry::preExitRoom(Window *viewWindow, const Location &newLocation) {
+	((SceneViewWindow *)viewWindow)->forceEnableCycling(false);
+	return SC_TRUE;
+}
+
 int LairEntry::timerCallback(Window *viewWindow) {
 	SceneBase::timerCallback(viewWindow);
 
@@ -251,7 +250,7 @@ int LairEntry::timerCallback(Window *viewWindow) {
 			_vm->_sound->setAmbientSound();
 			_vm->_sound->setSecondaryAmbientSound();
 			((SceneViewWindow *)viewWindow)->playSynchronousAnimation(13);
-			((SceneViewWindow *)viewWindow)->enableCycling(_flickerOn);
+			((SceneViewWindow *)viewWindow)->forceEnableCycling(false);
 			((SceneViewWindow *)viewWindow)->showDeathScene(20);
 			break;
 		case 5: {
@@ -273,9 +272,7 @@ int LairEntry::timerCallback(Window *viewWindow) {
 			newScene.transitionData = 15;
 			newScene.transitionStartFrame = -1;
 			newScene.transitionLength = -1;
-			bool flickerOn = _flickerOn;
 			((SceneViewWindow *)viewWindow)->moveToDestination(newScene);
-			((SceneViewWindow *)viewWindow)->enableCycling(flickerOn);
 			break;
 		}
 		}

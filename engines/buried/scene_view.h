@@ -86,7 +86,9 @@ public:
 	bool enableCycleFrameCache(bool enable);
 	bool flushCycleFrameCache();
 	bool enableCycling(bool enable);
-	bool getCyclingStatus() { return _cycleEnabled; }
+	bool forceEnableCycling(bool enable);
+	bool getCyclingStatus() const { return _cycleEnabled; }
+	bool isCyclingEnabled() const { return _cycleEnabled || _forceCycleEnabled; }
 	bool closeCycleFrameMovie();
 
 	int getGlobalFlag(int offset);
@@ -174,7 +176,7 @@ private:
 	int _currentAmbient;
 	bool _useScenePaint;
 	bool _useSprite;
-	bool _cycleEnabled;
+	bool _cycleEnabled, _forceCycleEnabled;
 	uint _timer;
 
 	bool _infoWindowDisplayed;
@@ -193,6 +195,8 @@ private:
 	uint _demoSoundTimer;
 	int _demoSoundEffectHandle;
 	void startDemoAmbientSound();
+
+	void handleCyclingChange();
 
 	bool initializeTimeZoneAndEnvironment(Window *viewWindow, int timeZone, int environment);
 	SceneBase *constructSceneObject(Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);

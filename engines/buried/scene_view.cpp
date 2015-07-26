@@ -61,6 +61,7 @@ SceneViewWindow::SceneViewWindow(BuriedEngine *vm, Window *parent) : Window(vm, 
 	_loopAsyncMovie = false;
 	_paused = false;
 	_cycleEnabled = ((FrameWindow *)(_parent->getParent()))->isFrameCyclingDefault();
+	_forceCycleEnabled = false;
 	_disableArthur = false;
 	_demoSoundEffectHandle = -1;
 
@@ -377,7 +378,7 @@ bool SceneViewWindow::jumpToScene(const Location &newLocation) {
 
 	_currentScene = newScene;
 
-	if (_cycleEnabled && newSceneStaticData.cycleStartFrame == -1)
+	if (isCyclingEnabled() && newSceneStaticData.cycleStartFrame == -1)
 		flushCycleFrameCache();
 
 	invalidateWindow(false);
@@ -458,7 +459,7 @@ bool SceneViewWindow::jumpToSceneRestore(const Location &newLocation) {
 
 	_currentScene = newScene;
 
-	if (_cycleEnabled && newSceneStaticData.cycleStartFrame == -1)
+	if (isCyclingEnabled() && newSceneStaticData.cycleStartFrame == -1)
 		flushCycleFrameCache();
 
 	if (_currentScene->preEnterRoom(this, passedLocation) == SC_END_PROCESSING)
@@ -624,7 +625,7 @@ bool SceneViewWindow::moveToDestination(const DestinationScene &destinationData)
 	_currentScene = newScene;
 
 	// If this scene has no cycle frames, flush the cycle frame cache
-	if (_cycleEnabled && newSceneStaticData.cycleStartFrame == -1)
+	if (isCyclingEnabled() && newSceneStaticData.cycleStartFrame == -1)
 		flushCycleFrameCache();
 
 	// Call the pre-enter function, exiting this function if SC_END_PROCESSING is returned
@@ -828,7 +829,7 @@ bool SceneViewWindow::timeSuitJump(int destination) {
 	_currentScene = newScene;
 
 	// If this scene has no cycle frames, flush the cycle frame cache
-	if (_cycleEnabled && newSceneStaticData.cycleStartFrame == -1)
+	if (isCyclingEnabled() && newSceneStaticData.cycleStartFrame == -1)
 		flushCycleFrameCache();
 
 	// Update navigation buttons, if not cloaked
@@ -1329,8 +1330,9 @@ bool SceneViewWindow::changeStillFrameMovie(const Common::String &fileName) {
 
 bool SceneViewWindow::changeCycleFrameMovie(const Common::String &fileName) {
 	// Only continue if cycling is enabled
-	if (!_cycleEnabled)
+	if (!isCyclingEnabled()) {
 		return false;
+	}
 
 	if (((FrameWindow *)(_parent->getParent()))->isFrameCachingAllowed())
 		return _cycleFrames->open(fileName, 5);
@@ -1347,21 +1349,21 @@ const Graphics::Surface *SceneViewWindow::getStillFrame(int frameIndex) {
 }
 
 Graphics::Surface *SceneViewWindow::getCycleFrameCopy(int frameIndex) {
-	if (!_cycleEnabled)
+	if (!isCyclingEnabled())
 		return 0;
 
 	return _cycleFrames->getFrameCopy(frameIndex);
 }
 
 const Graphics::Surface *SceneViewWindow::getCycleFrame(int frameIndex) {
-	if (!_cycleEnabled)
+	if (!isCyclingEnabled())
 		return 0;
 
 	return _cycleFrames->getFrame(frameIndex);
 }
 
 bool SceneViewWindow::enableCycleFrameCache(bool enable) {
-	if (!_cycleEnabled)
+	if (!isCyclingEnabled())
 		return false;
 
 	_cycleFrames->enableFrameCache(enable);
@@ -1369,20 +1371,34 @@ bool SceneViewWindow::enableCycleFrameCache(bool enable) {
 }
 
 bool SceneViewWindow::flushCycleFrameCache() {
-	if (!_cycleEnabled)
+	if (!isCyclingEnabled())
 		return false;
 
 	return _cycleFrames->flushFrameCache();
 }
 
 bool SceneViewWindow::enableCycling(bool enable) {
-	// Do nothing if nothing changed
-	if (_cycleEnabled == enable)
-		return true;
-
+	bool oldStatus = isCyclingEnabled();
 	_cycleEnabled = enable;
 
-	if (enable) {
+	if (oldStatus != isCyclingEnabled())
+		handleCyclingChange();
+
+	return true;
+}
+
+bool SceneViewWindow::forceEnableCycling(bool enable) {
+	bool oldStatus = isCyclingEnabled();
+	_forceCycleEnabled = enable;
+
+	if (oldStatus != isCyclingEnabled())
+		handleCyclingChange();
+
+	return true;
+}
+
+void SceneViewWindow::handleCyclingChange() {
+	if (isCyclingEnabled()) {
 		// Re-enabling -> set up the cycle movie again
 		if (_currentScene) {
 			const LocationStaticData &staticData = _currentScene->_staticData;
@@ -1391,11 +1407,9 @@ bool SceneViewWindow::enableCycling(bool enable) {
 		}
 	} else {
 		// Disabling -> close the cycle movie
-		flushCycleFrameCache();
+		_cycleFrames->flushFrameCache();
 		_cycleFrames->close();
 	}
-
-	return true;
 }
 
 bool SceneViewWindow::closeCycleFrameMovie() {
