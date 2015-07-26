@@ -1376,13 +1376,25 @@ bool SceneViewWindow::flushCycleFrameCache() {
 }
 
 bool SceneViewWindow::enableCycling(bool enable) {
+	// Do nothing if nothing changed
+	if (_cycleEnabled == enable)
+		return true;
+
 	_cycleEnabled = enable;
 
-	if (!enable) {
+	if (enable) {
+		// Re-enabling -> set up the cycle movie again
+		if (_currentScene) {
+			const LocationStaticData &staticData = _currentScene->_staticData;
+			if (staticData.cycleStartFrame >= 0)
+				changeCycleFrameMovie(_vm->getFilePath(staticData.location.timeZone, staticData.location.environment, SF_CYCLES));
+		}
+	} else {
+		// Disabling -> close the cycle movie
 		flushCycleFrameCache();
 		_cycleFrames->close();
 	}
-	
+
 	return true;
 }
 
