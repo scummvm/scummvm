@@ -49,6 +49,9 @@ void TattooJournal::show() {
 	Screen &screen = *_vm->_screen;
 	TattooUserInterface &ui = *(TattooUserInterface *)_vm->_ui;
 	byte palette[PALETTE_SIZE];
+	
+	Common::Point oldScroll = screen._currentScroll;
+	screen._currentScroll = Common::Point(0, 0);
 
 	// Load journal images
 	_journalImages = new ImageFile("journal.vgs");
@@ -95,6 +98,9 @@ void TattooJournal::show() {
 
 	// Free the images
 	delete _journalImages;
+
+	// Reset back to whatever scroll was active for the screen
+	screen._currentScroll = oldScroll;
 }
 
 void TattooJournal::handleKeyboardEvents() {
