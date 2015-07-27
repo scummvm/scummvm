@@ -35,7 +35,7 @@ BubbleBox::BubbleBox(AccessEngine *vm, Access::BoxType type, int x, int y, int w
 	_btnId2 = val3;
 	_btnX2 = val4;
 	_btnId3 = _btnX3 = 0; // Unused in MM and Amazon?
-	boxStartX = boxStartY = 0;
+	_boxStartX = _boxStartY = 0;
 	_bIconStartX = _bIconStartY = 0;
 	_boxEndX = _boxEndY = 0;
 	_boxPStartX = _boxPStartY = 0;
@@ -99,7 +99,7 @@ void BubbleBox::calcBubble(const Common::String &msg) {
 	Common::Point printStart = _vm->_screen->_printStart;
 
 	// Figure out maximum width allowed
-	if (_type == TYPE_4) {
+	if (_type == kBoxTypeFileDialog) {
 		_vm->_fonts._printMaxX = 110;
 	} else {
 		_vm->_fonts._printMaxX = _vm->_fonts._font2.stringWidth(_bubbleDisplStr);
@@ -121,7 +121,7 @@ void BubbleBox::calcBubble(const Common::String &msg) {
 		_vm->_screen->_printOrg.x = _vm->_screen->_printStart.x;
 	} while (!lastLine);
 
-	if (_type == TYPE_4)
+	if (_type == kBoxTypeFileDialog)
 		++_vm->_screen->_printOrg.y += 6;
 
 	// Determine the width for the area
@@ -132,12 +132,12 @@ void BubbleBox::calcBubble(const Common::String &msg) {
 
 	// Determine the height for area
 	int y = _vm->_screen->_printOrg.y + 6;
-	if (_type == TYPE_4)
+	if (_type == kBoxTypeFileDialog)
 		y += 6;
 	int height = y - bounds.top;
 	bounds.setHeight(height);
 
-	height -= (_type == TYPE_4) ? 30 : 24;
+	height -= (_type == kBoxTypeFileDialog) ? 30 : 24;
 	if (height >= 0)
 		bounds.setHeight(bounds.height() + 13 - (height % 13));
 
@@ -198,7 +198,7 @@ void BubbleBox::printBubble_v2(const Common::String &msg) {
 		font2._fontColors[3] = 29;
 
 		int xp = _vm->_screen->_printOrg.x;
-		if (_type == TYPE_4)
+		if (_type == kBoxTypeFileDialog)
 			xp = (_bounds.width() - width) / 2 + _bounds.left - 4;
 
 		// Draw the text
@@ -240,7 +240,7 @@ void BubbleBox::doBox(int item, int box) {
 	fonts._charSet._lo = 1;
 	fonts._charSet._hi = 0;
 
-	if (_type == TYPE_4) {
+	if (_type == kBoxTypeFileDialog) {
 		fonts._charFor._lo = 0xFF;
 		error("TODO: filename listing");
 		return;
@@ -258,7 +258,7 @@ void BubbleBox::doBox(int item, int box) {
 	_vm->_screen->_orgY2 = _bounds.bottom;
 	_vm->_screen->_lColor = 1;
 
-	int h = _bounds.height() - (_type == TYPE_4 ? 30 : 24);
+	int h = _bounds.height() - (_type == kBoxTypeFileDialog ? 30 : 24);
 	int ySize = (h < 0) ? 0 : (h + 12) / 13;
 	int w = _bounds.width() - 24;
 	int xSize = (w < 0) ? 0 : (w + 19) / 20;
@@ -275,21 +275,21 @@ void BubbleBox::doBox(int item, int box) {
 	screen.plotImage(icons, 21, Common::Point(xp, screen._orgY1));
 
 	// Draw images to form the bottom border
-	yp = screen._orgY2 - (_type == TYPE_4 ? 18 : 12);
-	screen.plotImage(icons, (_type == TYPE_4) ? 72 : 22,
+	yp = screen._orgY2 - (_type == kBoxTypeFileDialog ? 18 : 12);
+	screen.plotImage(icons, (_type == kBoxTypeFileDialog) ? 72 : 22,
 		Common::Point(screen._orgX1, yp));
 	xp = screen._orgX1 + 12;
-	yp += (_type == TYPE_4) ? 4 : 8;
+	yp += (_type == kBoxTypeFileDialog) ? 4 : 8;
 
 	for (int x = 0; x < xSize; ++x, xp += 20) {
-		screen.plotImage(icons, (_type == TYPE_4 ? 62 : 34) + x,
+		screen.plotImage(icons, (_type == kBoxTypeFileDialog ? 62 : 34) + x,
 			Common::Point(xp, yp));
 	}
 
-	yp = screen._orgY2 - (_type == TYPE_4 ? 18 : 12);
-	screen.plotImage(icons, (_type == TYPE_4) ? 73 : 23, Common::Point(xp, yp));
+	yp = screen._orgY2 - (_type == kBoxTypeFileDialog ? 18 : 12);
+	screen.plotImage(icons, (_type == kBoxTypeFileDialog) ? 73 : 23, Common::Point(xp, yp));
 
-	if (_type == TYPE_4) {
+	if (_type == kBoxTypeFileDialog) {
 		// Further stuff for filename dialog
 		error("TODO: Box type 4");
 	}
@@ -354,9 +354,9 @@ void BubbleBox::displayBoxData() {
 
 		_vm->_events->hideCursor();
 
-		_vm->_screen->_orgX1 = boxStartX;
+		_vm->_screen->_orgX1 = _boxStartX;
 		_vm->_screen->_orgX2 = _boxEndX;
-		_vm->_screen->_orgY1 = boxStartY;
+		_vm->_screen->_orgY1 = _boxStartY;
 		_vm->_screen->_orgY2 = _boxEndY;
 		_vm->_screen->_lColor = 0xFA;
 		_vm->_screen->drawRect();
@@ -405,7 +405,7 @@ void BubbleBox::drawSelectBox() {
 		int val = _vm->_boxSelectYOld + _boxPStartY + 1;
 		_vm->_screen->_orgY1 = (val << 3) + 2;
 		_vm->_screen->_orgY2 = _vm->_screen->_orgY1 + 7;
-		_vm->_screen->_orgX1 = boxStartX;
+		_vm->_screen->_orgX1 = _boxStartX;
 		_vm->_screen->_orgX2 = _boxEndX;
 		_vm->_screen->drawBox();
 		_vm->_events->showCursor();
@@ -416,7 +416,7 @@ void BubbleBox::drawSelectBox() {
 	int val = _boxPStartY + _vm->_boxSelectY + 1;
 	_vm->_screen->_orgY1 = (val << 3) + 2;
 	_vm->_screen->_orgY2 = _vm->_screen->_orgY1 + 7;
-	_vm->_screen->_orgX1 = boxStartX;
+	_vm->_screen->_orgX1 = _boxStartX;
 	_vm->_screen->_orgX2 = _boxEndX;
 	_vm->_screen->_lColor = 0xFE;
 	_vm->_screen->drawBox();
@@ -489,7 +489,7 @@ int BubbleBox::doBox_v1(int item, int box, int &btnSelected) {
 	_vm->_screen->_orgY2 = _vm->_screen->_orgY1 + 8;
 	_vm->_screen->_lColor = 0xF9;
 
-	boxStartY = _vm->_screen->_orgY2 + 1;
+	_boxStartY = _vm->_screen->_orgY2 + 1;
 	_vm->_screen->_orgY2 = oldY;
 
 	int tmpX = 0;
@@ -503,7 +503,7 @@ int BubbleBox::doBox_v1(int item, int box, int &btnSelected) {
 		_vm->_screen->drawRect();
 		tmpX = _bIconStartX = _vm->_screen->_orgX1;
 
-		boxStartX = tmpX + 1;
+		_boxStartX = tmpX + 1;
 		tmpY = _boxEndY = _vm->_screen->_orgY1;
 
 		if (_type == TYPE_3)
@@ -688,8 +688,8 @@ int BubbleBox::doBox_v1(int item, int box, int &btnSelected) {
 			}
 		}
 
-		if ((_vm->_events->_mousePos.x >= boxStartX) && (_vm->_events->_mousePos.x <= _boxEndX)
-		&&  (_vm->_events->_mousePos.y >= boxStartY) && (_vm->_events->_mousePos.y <= _boxEndY)) {
+		if ((_vm->_events->_mousePos.x >= _boxStartX) && (_vm->_events->_mousePos.x <= _boxEndX)
+		&&  (_vm->_events->_mousePos.y >= _boxStartY) && (_vm->_events->_mousePos.y <= _boxEndY)) {
 			int val = (_vm->_events->_mousePos.x >> 3) - _boxPStartY;
 			if (val > _vm->_bcnt)
 				continue;
