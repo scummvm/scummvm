@@ -30,6 +30,12 @@
 
 namespace Sherlock {
 
+static const int TATTOO_LINE_SPACING[17] = {
+	21, 21, 20, 21, 20, 21, 20, 21, 20, 21, 20, 21, 20, 20, 20, 20, 21
+};
+
+/*----------------------------------------------------------------*/
+
 Journal *Journal::init(SherlockEngine *vm) {
 	if (vm->getGameID() == GType_SerratedScalpel)
 		return new Scalpel::ScalpelJournal(vm);
@@ -283,8 +289,8 @@ bool Journal::drawJournal(int direction, int howFar) {
 
 		if (inc) {
 			// Move to next line
+			yp += IS_SERRATED_SCALPEL ? 13 : TATTOO_LINE_SPACING[lineNum];
 			++lineNum;
-			yp += 13;
 		}
 	} while (lineNum < LINES_PER_PAGE && !endFlag);
 
