@@ -239,11 +239,9 @@ void WidgetOptions::handleEvents() {
 
 void WidgetOptions::render(OptionRenderMode mode) {
 	TattooEngine &vm = *(TattooEngine *)_vm;
-	Events &events = *_vm->_events;
 	Music &music = *_vm->_music;
 	Sound &sound = *_vm->_sound;
 	TattooUserInterface &ui = *(TattooUserInterface *)_vm->_ui;
-	Common::Point mousePos = events.mousePos();
 	ImageFile &images = *ui._interfaceImages;
 	const char *const OFF_ON[2] = { FIXED(Off), FIXED(On) };
 

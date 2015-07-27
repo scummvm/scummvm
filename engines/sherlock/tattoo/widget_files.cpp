@@ -106,7 +106,7 @@ void WidgetFiles::render(FilesRenderMode mode) {
 	ImageFile &images = *ui._interfaceImages;
 	byte color;
 
-	if (mode == OP_ALL) {
+	if (mode == RENDER_ALL) {
 		_surface.fill(TRANSPARENCY);
 		makeInfoArea();
 
@@ -144,7 +144,7 @@ void WidgetFiles::render(FilesRenderMode mode) {
 	
 	for (int idx = _savegameIndex; idx < (_savegameIndex + FILES_LINES_COUNT); ++idx) {
 		if (OP_NAMES || idx == _selector || idx == _oldSelector) {
-			if (idx == _selector && mode != OP_ALL)
+			if (idx == _selector && mode != RENDER_ALL)
 				color = COMMAND_HIGHLIGHTED;
 			else
 				color = INFO_TOP;
@@ -230,7 +230,7 @@ void WidgetFiles::handleEvents() {
 			_outsideMenu = false;
 
 			if (_selector != -1) {
-				if (_fileMode = SAVEMODE_LOAD) {
+				if (_fileMode == SAVEMODE_LOAD) {
 					// We're in Load Mode
 					_vm->loadGameState(_selector);
 				} else if (_fileMode == SAVEMODE_SAVE) {
@@ -363,6 +363,9 @@ bool WidgetFiles::getFilename() {
 					pt.x -= _surface.charWidth(filename[index - 1]);
 					--index;
 				}
+				break;
+
+			default:
 				break;
 			}
 		} else if (keyState.keycode == Common::KEYCODE_INSERT) {
