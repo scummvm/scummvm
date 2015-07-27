@@ -683,6 +683,37 @@ void Journal::loadJournalFile(bool alreadyLoaded) {
 	}
 }
 
+void Journal::record(int converseNum, int statementNum, bool replyOnly) {
+	int saveIndex = _index;
+	int saveSub = _sub;
+
+	if (IS_3DO) {
+		// there seems to be no journal in the 3DO version
+		return;
+	}
+
+	// Record the entry into the list
+	_journal.push_back(JournalEntry(converseNum, statementNum, replyOnly));
+	_index = _journal.size() - 1;
+
+	// Load the text for the new entry to get the number of lines it will have
+	loadJournalFile(true);
+
+	// Restore old state
+	_index = saveIndex;
+	_sub = saveSub;
+
+	// If new lines were added to the ournal, update the total number of lines
+	// the journal continues
+	if (!_lines.empty()) {
+		_maxPage += _lines.size();
+	} else {
+		// No lines in entry, so remove the new entry from the journal
+		_journal.remove_at(_journal.size() - 1);
+	}
+}
+
+
 void Journal::synchronize(Serializer &s) {
 	s.syncAsSint16LE(_index);
 	s.syncAsSint16LE(_sub);

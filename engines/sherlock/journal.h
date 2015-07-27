@@ -79,6 +79,12 @@ public:
 	bool drawJournal(int direction, int howFar);
 
 	/**
+	 * Records statements that are said, in the order which they are said. The player
+	 * can then read the journal to review them
+	 */
+	void record(int converseNum, int statementNum, bool replyOnly = false);
+
+	/**
 	 * Synchronize the data for a savegame
 	 */
 	void synchronize(Serializer &s);
@@ -87,12 +93,6 @@ public:
 	 * Draw the journal background, frame, and interface buttons
 	 */
 	virtual void drawFrame() = 0;
-
-	/**
-	 * Records statements that are said, in the order which they are said. The player
-	 * can then read the journal to review them
-	 */
-	virtual void record(int converseNum, int statementNum, bool replyOnly = false) {}
 
 	/**
 	 * Reset viewing position to the start of the journal

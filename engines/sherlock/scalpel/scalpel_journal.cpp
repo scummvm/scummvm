@@ -60,46 +60,9 @@ static const int SEARCH_POINTS[3][3] = {
 /*----------------------------------------------------------------*/
 
 ScalpelJournal::ScalpelJournal(SherlockEngine *vm) : Journal(vm) {
-	// Initialize fields
-	_maxPage = 0;
-	_index = 0;
-	_sub = 0;
-	_up = _down = false;
-	_page = 1;
-
 	if (_vm->_interactiveFl) {
 		// Load the journal directory and location names
 		loadLocations();
-	}
-}
-
-void ScalpelJournal::record(int converseNum, int statementNum, bool replyOnly) {
-	int saveIndex = _index;
-	int saveSub = _sub;
-
-	if (IS_3DO) {
-		// there seems to be no journal in the 3DO version
-		return;
-	}
-
-	// Record the entry into the list
-	_journal.push_back(JournalEntry(converseNum, statementNum, replyOnly));
-	_index = _journal.size() - 1;
-
-	// Load the text for the new entry to get the number of lines it will have
-	loadJournalFile(true);
-
-	// Restore old state
-	_index = saveIndex;
-	_sub = saveSub;
-
-	// If new lines were added to the ournal, update the total number of lines
-	// the journal continues
-	if (!_lines.empty()) {
-		_maxPage += _lines.size();
-	} else {
-		// No lines in entry, so remove the new entry from the journal
-		_journal.remove_at(_journal.size() - 1);
 	}
 }
 

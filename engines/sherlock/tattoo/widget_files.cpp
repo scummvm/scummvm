@@ -167,7 +167,6 @@ void WidgetFiles::render(FilesRenderMode mode) {
 
 void WidgetFiles::handleEvents() {
 	Events &events = *_vm->_events;
-	TattooScene &scene = *(TattooScene *)_vm->_scene;
 	TattooUserInterface &ui = *(TattooUserInterface *)_vm->_ui;
 	Common::Point mousePos = events.mousePos();
 	Common::KeyState keyState = ui._keyState;
