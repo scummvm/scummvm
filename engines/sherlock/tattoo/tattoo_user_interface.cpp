@@ -65,6 +65,8 @@ TattooUserInterface::TattooUserInterface(SherlockEngine *vm): UserInterface(vm),
 
 TattooUserInterface::~TattooUserInterface() {
 	delete _interfaceImages;
+	delete _mask;
+	delete _mask1;
 }
 
 void TattooUserInterface::initScrollVars() {

@@ -247,11 +247,6 @@ public:
 	void selectScene();
 
 	/**
-	 * Fres all the graphics and other dynamically allocated data for the scene
-	 */
-	void freeScene();
-
-	/**
 	 * Check the scene's objects against the game flags. If false is passed,
 	 * it means the scene has just been loaded. A value of true means that the scene
 	 * is in use (ie. not just loaded)
@@ -279,6 +274,11 @@ public:
 	 * Check which zone the the given position is located in.
 	 */
 	int whichZone(const Common::Point &pt);
+
+	/**
+	 * Fres all the graphics and other dynamically allocated data for the scene
+	 */
+	virtual void freeScene();
 
 	/**
 	 * Returns the index of the closest zone to a given point.

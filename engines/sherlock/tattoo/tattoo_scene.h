@@ -118,6 +118,11 @@ public:
 	int getScaleVal(const Point32 &pt);
 
 	/**
+	 * Fres all the graphics and other dynamically allocated data for the scene
+	 */
+	virtual void freeScene();
+
+	/**
 	 * Draw all objects and characters.
 	 */
 	virtual void doBgAnim();

@@ -177,8 +177,8 @@ void WidgetBase::restrictToScreen() {
 		_bounds.moveTo(screen._currentScroll.x, _bounds.top);
 	if (_bounds.top < 0)
 		_bounds.moveTo(_bounds.left, 0);
-	if (_bounds.right > screen._backBuffer1.w())
-		_bounds.moveTo(screen._backBuffer1.w() - _bounds.width(), _bounds.top);
+	if (_bounds.right > (screen._currentScroll.x + SHERLOCK_SCREEN_WIDTH))
+		_bounds.moveTo(screen._currentScroll.x + SHERLOCK_SCREEN_WIDTH - _bounds.width(), _bounds.top);
 	if (_bounds.bottom > screen._backBuffer1.h())
 		_bounds.moveTo(_bounds.left, screen._backBuffer1.h() - _bounds.height());
 }

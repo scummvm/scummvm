@@ -292,6 +292,15 @@ void TattooScene::checkBgShapes() {
 	}
 }
 
+void TattooScene::freeScene() {
+	TattooUserInterface &ui = *(TattooUserInterface *)_vm->_ui;
+	Scene::freeScene();
+
+	delete ui._mask;
+	delete ui._mask1;
+	ui._mask = ui._mask1 = nullptr;
+}
+
 void TattooScene::doBgAnimCheckCursor() {
 	Events &events = *_vm->_events;
 	TattooUserInterface &ui = *(TattooUserInterface *)_vm->_ui;
