@@ -37,7 +37,6 @@ private:
 	MartianEngine *_game;
 public:
 	MartianPlayer(AccessEngine *vm);
-	Resource *_texPal;
 	virtual void load();
 };
 
