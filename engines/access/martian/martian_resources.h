@@ -55,7 +55,7 @@ extern const int SIDEOFFU[];
 extern const int SIDEOFFD[];
 
 extern const byte CREDIT_DATA[];
-extern const byte ICON_DATA[];
+extern const byte ICON_PALETTE[];
 
 extern const int RMOUSE[10][2];
 

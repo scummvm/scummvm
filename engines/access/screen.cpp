@@ -122,7 +122,7 @@ void Screen::setManPalette() {
 void Screen::setIconPalette() {
 	if (_vm->getGameID() == GType_MartianMemorandum) {
 		for (int i = 0; i < 0x1B; i++) {
-			_rawPalette[741 + i] = VGA_COLOR_TRANS(Martian::ICON_DATA[i]);
+			_rawPalette[741 + i] = VGA_COLOR_TRANS(Martian::ICON_PALETTE[i]);
 		}
 	}
 }
