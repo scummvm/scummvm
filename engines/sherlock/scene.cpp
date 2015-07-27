@@ -245,9 +245,6 @@ void Scene::selectScene() {
 	ui._windowOpen = ui._infoFlag = false;
 	ui._menuMode = STD_MODE;
 
-	// Free any previous scene
-	freeScene();
-
 	// Load the scene
 	Common::String sceneFile = Common::String::format("res%02d", _goToScene);
 	// _rrmName gets set during loadScene()
