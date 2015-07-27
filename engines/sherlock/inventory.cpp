@@ -142,30 +142,29 @@ int Inventory::putItemInInventory(Object &obj) {
 		_vm->setFlags(obj._pickupFlag);
 
 	for (int useNum = 0; useNum < USE_COUNT; ++useNum) {
-		if (obj._use[useNum]._target.equalsIgnoreCase("*PICKUP*")) {
-			pickupFound = true;
+		if (!obj._use[useNum]._target.equalsIgnoreCase("*PICKUP*"))
+			continue;
+		pickupFound = true;
 
-			for (int namesNum = 0; namesNum < NAMES_COUNT; ++namesNum) {
-				for (uint bgNum = 0; bgNum < scene._bgShapes.size(); ++bgNum) {
-					Object &bgObj = scene._bgShapes[bgNum];
-					if (obj._use[useNum]._names[namesNum].equalsIgnoreCase(bgObj._name)) {
-						copyToInventory(bgObj);
-						if (bgObj._pickupFlag)
-							_vm->setFlags(bgObj._pickupFlag);
+		for (int namesNum = 0; namesNum < NAMES_COUNT; ++namesNum) {
+			for (uint bgNum = 0; bgNum < scene._bgShapes.size(); ++bgNum) {
+				Object &bgObj = scene._bgShapes[bgNum];
+				if (!obj._use[useNum]._names[namesNum].equalsIgnoreCase(bgObj._name))
+					continue;
+				copyToInventory(bgObj);
+				if (bgObj._pickupFlag)
+					_vm->setFlags(bgObj._pickupFlag);
 
-						if (bgObj._type == ACTIVE_BG_SHAPE || bgObj._type == NO_SHAPE || bgObj._type == HIDE_SHAPE) {
-							if (bgObj._imageFrame == nullptr || bgObj._frameNumber < 0)
-								// No shape to erase, so flag as hidden
-								bgObj._type = INVALID;
-							else
-								bgObj._type = REMOVE;
-						} else if (bgObj._type == HIDDEN) {
-							bgObj._type = INVALID;
-						}
-
-						++matches;
-					}
+				if (bgObj._type == ACTIVE_BG_SHAPE || bgObj._type == NO_SHAPE || bgObj._type == HIDE_SHAPE) {
+					if (bgObj._imageFrame == nullptr || bgObj._frameNumber < 0)
+						// No shape to erase, so flag as hidden
+						bgObj._type = INVALID;
+					else
+						bgObj._type = REMOVE;
+				} else if (bgObj._type == HIDDEN) {
+					bgObj._type = INVALID;
 				}
+				++matches;
 			}
 		}
 	}
