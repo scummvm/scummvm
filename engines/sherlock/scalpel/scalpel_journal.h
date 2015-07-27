@@ -35,9 +35,6 @@ namespace Sherlock {
 
 namespace Scalpel {
 
-#define JOURNAL_MAX_WIDTH 230
-#define JOURNAL_MAX_CHARS 80
-
 enum JournalButton {
 	BTN_NONE, BTN_EXIT, BTN_BACK10, BTN_UP, BTN_DOWN, BTN_AHEAD110, BTN_SEARCH,
 	BTN_FIRST_PAGE, BTN_LAST_PAGE, BTN_PRINT_TEXT

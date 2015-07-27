@@ -25,6 +25,7 @@
 #include "sherlock/scalpel/scalpel_fixed_text.h"
 #include "sherlock/scalpel/scalpel_journal.h"
 #include "sherlock/tattoo/tattoo.h"
+#include "sherlock/tattoo/tattoo_fixed_text.h"
 #include "sherlock/tattoo/tattoo_journal.h"
 
 namespace Sherlock {
@@ -39,7 +40,7 @@ Journal *Journal::init(SherlockEngine *vm) {
 Journal::Journal(SherlockEngine *vm) : _vm(vm) {
 	_up = _down = false;
 	_index = 0;
-	_page = 0;
+	_page = 1;
 	_maxPage = 0;
 	_sub = 0;
 }
@@ -49,7 +50,8 @@ bool Journal::drawJournal(int direction, int howFar) {
 	FixedText &fixedText = *_vm->_fixedText;
 	Screen &screen = *_vm->_screen;
 	Talk &talk = *_vm->_talk;
-	int yp = 37;
+	int topLineY = IS_SERRATED_SCALPEL ? 37 : 103 - screen.charHeight('A');
+	int yp = topLineY;
 	int startPage = _page;
 	bool endJournal = false;
 	bool firstOccurance = true;
@@ -85,7 +87,11 @@ bool Journal::drawJournal(int direction, int howFar) {
 		if (direction)
 			drawFrame();
 
-		screen.gPrint(Common::Point(235, 21), COL_PEN_COLOR, "Page %d", _page);
+		if (IS_SERRATED_SCALPEL)
+			screen.gPrint(Common::Point(235, 21), COL_PEN_COLOR, fixedText.getText(Scalpel::kFixedText_Journal_Page), _page);
+		else
+			screen.gPrint(Common::Point(530, 72), COL_PEN_COLOR, fixedText.getText(Tattoo::kFixedText_Page), _page);
+
 		return false;
 	}
 
@@ -203,9 +209,10 @@ bool Journal::drawJournal(int direction, int howFar) {
 		drawFrame();
 	}
 
-	Common::String fixedText_Page = IS_SERRATED_SCALPEL ? fixedText.getText(Scalpel::kFixedText_Journal_Page) : "TODO";
-
-	screen.gPrint(Common::Point(235, 21), COL_PEN_COLOR, fixedText_Page.c_str(), _page);
+	if (IS_SERRATED_SCALPEL)
+		screen.gPrint(Common::Point(235, 21), COL_PEN_COLOR, fixedText.getText(Scalpel::kFixedText_Journal_Page), _page);
+	else
+		screen.gPrint(Common::Point(530, 72), COL_PEN_COLOR, fixedText.getText(Tattoo::kFixedText_Page), _page);
 
 	temp = _sub;
 	savedIndex = _index;
@@ -216,7 +223,7 @@ bool Journal::drawJournal(int direction, int howFar) {
 
 		// If there wasn't any line to print at the top of the page, we won't need to
 		// increment the y position
-		if (_lines[temp].empty() && yp == 37)
+		if (_lines[temp].empty() && yp == topLineY)
 			inc = false;
 
 		// If there's a searched for keyword in the line, it will need to be highlighted
@@ -232,30 +239,30 @@ bool Journal::drawJournal(int direction, int howFar) {
 				Common::String lineStart(_lines[temp].c_str(), matchP);
 				if (lineStart.hasPrefix("@")) {
 					width = screen.stringWidth(lineStart.c_str() + 1);
-					screen.gPrint(Common::Point(53, yp), 15, "%s", lineStart.c_str() + 1);
+					screen.gPrint(Common::Point(JOURNAL_LEFT_X, yp), 15, "%s", lineStart.c_str() + 1);
 				} else {
 					width = screen.stringWidth(lineStart.c_str());
-					screen.gPrint(Common::Point(53, yp), COL_PEN_COLOR, "%s", lineStart.c_str());
+					screen.gPrint(Common::Point(JOURNAL_LEFT_X, yp), COL_PEN_COLOR, "%s", lineStart.c_str());
 				 }
 
 				// Print out the found keyword
 				Common::String lineMatch(matchP, matchP + _find.size());
 				byte fgColor = IS_SERRATED_SCALPEL ? (byte)Scalpel::INV_FOREGROUND : (byte)Tattoo::INV_FOREGROUND;
-				screen.gPrint(Common::Point(53 + width, yp), fgColor, "%s", lineMatch.c_str());
+				screen.gPrint(Common::Point(JOURNAL_LEFT_X + width, yp), fgColor, "%s", lineMatch.c_str());
 				width += screen.stringWidth(lineMatch.c_str());
 
 				// Print remainder of line
-				screen.gPrint(Common::Point(53 + width, yp), COL_PEN_COLOR, "%s", matchP + _find.size());
+				screen.gPrint(Common::Point(JOURNAL_LEFT_X + width, yp), COL_PEN_COLOR, "%s", matchP + _find.size());
 			} else if (_lines[temp].hasPrefix("@")) {
-				screen.gPrint(Common::Point(53, yp), 15, "%s", _lines[temp].c_str() + 1);
+				screen.gPrint(Common::Point(JOURNAL_LEFT_X, yp), 15, "%s", _lines[temp].c_str() + 1);
 			} else {
-				screen.gPrint(Common::Point(53, yp), COL_PEN_COLOR, "%s", _lines[temp].c_str());
+				screen.gPrint(Common::Point(JOURNAL_LEFT_X, yp), COL_PEN_COLOR, "%s", _lines[temp].c_str());
 			}
 		} else {
 			if (_lines[temp].hasPrefix("@")) {
-				screen.gPrint(Common::Point(53, yp), 15, "%s", _lines[temp].c_str() + 1);
+				screen.gPrint(Common::Point(JOURNAL_LEFT_X, yp), 15, "%s", _lines[temp].c_str() + 1);
 			} else {
-				screen.gPrint(Common::Point(53, yp), COL_PEN_COLOR, "%s", _lines[temp].c_str());
+				screen.gPrint(Common::Point(JOURNAL_LEFT_X, yp), COL_PEN_COLOR, "%s", _lines[temp].c_str());
 			}
 		}
 

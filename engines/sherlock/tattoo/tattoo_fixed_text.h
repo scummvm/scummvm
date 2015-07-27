@@ -58,6 +58,7 @@ enum FixedTextId {
 	kFixedText_NoEffect,
 	kFixedText_NothingToSay,
 
+	kFixedText_Page,
 	kFixedText_CloseJournal,
 	kFixedText_SearchJournal,
 	kFixedText_SaveJournal,
