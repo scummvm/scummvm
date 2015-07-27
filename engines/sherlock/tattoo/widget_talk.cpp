@@ -128,7 +128,7 @@ void WidgetTalk::handleEvents() {
 
 	// Only redraw the window if the the scrollbar position has changed
 	if (ui._scrollHighlight != oldHighlight || oldScrollIndex != _talkScrollIndex)
-		render(HL_SCROLLBAR_ONLY);
+		render(HL_NO_HIGHLIGHTING);
 
 	// Flag if they started pressing outside of the window
 	if (events._firstPress && !_bounds.contains(mousePos))
@@ -385,6 +385,9 @@ void WidgetTalk::render(Highlight highlightMode) {
 		for (uint idx = _talkScrollIndex; idx < _statementLines.size() && yp < (_bounds.height() - _surface.fontHeight()); ++idx) {
 			if (highlightMode == HL_NO_HIGHLIGHTING || _statementLines[idx]._num == _selector ||
 					_statementLines[idx]._num == _oldSelector) {
+				// Erase the line contents
+				_surface.fillRect(Common::Rect(3, yp, _surface.w() - BUTTON_SIZE - 3, yp + _surface.fontHeight()), TRANSPARENCY);
+
 				// Different coloring based on whether the option has been previously chosen or not
 				color = (!talk._talkHistory[talk._converseNum][_statementLines[idx]._num]) ?
 					INFO_TOP : INFO_BOTTOM;
