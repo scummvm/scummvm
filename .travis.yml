@@ -1,0 +1,39 @@
+language:
+  - cpp
+
+sudo: false
+
+addons:
+  apt:
+    packages:
+    - g++ make
+    - libsdl1.2-dev
+    - libjpeg62-turbo-dev
+    - libmpeg2-4-dev
+    - libogg-dev
+    - libvorbis-dev
+    - libflac-dev
+    - libmad0-dev
+    - libpng-dev
+    - libtheora-dev
+    - libfaad-dev
+    - libfluidsynth-dev
+    - libfreetype6-dev
+    - zlib1g-dev
+
+branches:
+ only:
+   - master
+
+compiler:
+  - gcc
+  - clang
+
+os:
+  - linux
+
+script:
+  - ./configure --enable-all-engines
+  - make
+  - make test
+  - make devtools
