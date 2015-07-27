@@ -138,11 +138,11 @@ void Player::load() {
 }
 
 void Player::loadTexPalette() {
-	Resource *_texPal = _vm->_files->loadFile("TEXPAL.COL");
-	int size = _texPal->_size;
+	Resource *texPal = _vm->_files->loadFile("TEXPAL.COL");
+	int size = texPal->_size;
 	assert(size == 768);
 	_manPal1 = new byte[size];
-	memcpy(_manPal1, _texPal->data(), size);	
+	memcpy(_manPal1, texPal->data(), size);	
 }
 
 void Player::loadSprites(const Common::String &name) {
