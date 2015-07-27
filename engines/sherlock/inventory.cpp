@@ -94,8 +94,8 @@ void Inventory::loadGraphics() {
 	for (int idx = _invIndex; (idx < _holdings) && (idx - _invIndex) < (int)_invShapes.size(); ++idx) {
 		// Get the name of the item to be displayed, figure out its accompanying
 		// .VGS file with its picture, and then load it
-		int invNum = findInv((*this)[idx]._name);
-		Common::String filename = Common::String::format("item%02d.vgs", invNum + 1);
+		const int invNum = findInv((*this)[idx]._name);
+		const Common::String &filename = Common::String::format("item%02d.vgs", invNum + 1);
 
 		if (!IS_3DO) {
 			// PC
@@ -239,7 +239,6 @@ void Inventory::synchronize(Serializer &s) {
 
 	for (uint idx = 0; idx < size(); ++idx) {
 		(*this)[idx].synchronize(s);
-
 	}
 }
 

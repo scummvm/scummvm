@@ -235,7 +235,7 @@ void WidgetBase::drawScrollBar(int index, int pageSize, int count) {
 	TattooUserInterface &ui = *(TattooUserInterface *)_vm->_ui;
 
 	// Fill the area with transparency
-	Common::Rect r = getScrollBarBounds();
+	const Common::Rect &r = getScrollBarBounds();
 	_surface.fillRect(r, TRANSPARENCY);
 
 	bool raised = ui._scrollHighlight != 1;
@@ -269,7 +269,7 @@ void WidgetBase::drawScrollBar(int index, int pageSize, int count) {
 	// Draw the scroll position bar
 	int barHeight = (r.height() - BUTTON_SIZE * 2) * pageSize / count;
 	barHeight = CLIP(barHeight, BUTTON_SIZE, r.height() - BUTTON_SIZE * 2);
-	int barY = r.top + BUTTON_SIZE + (r.height() - BUTTON_SIZE * 2 - barHeight) * index / (count - pageSize);
+	const int barY = r.top + BUTTON_SIZE + (r.height() - BUTTON_SIZE * 2 - barHeight) * index / (count - pageSize);
 
 	_surface.fillRect(Common::Rect(r.left + 2, barY + 2, r.right - 2, barY + barHeight - 3), INFO_MIDDLE);
 	ui.drawDialogRect(_surface, Common::Rect(r.left, barY, r.right, barY + barHeight), true);
@@ -278,7 +278,7 @@ void WidgetBase::drawScrollBar(int index, int pageSize, int count) {
 void WidgetBase::handleScrollbarEvents(int index, int pageSize, int count) {
 	Events &events = *_vm->_events;
 	TattooUserInterface &ui = *(TattooUserInterface *)_vm->_ui;
-	Common::Point mousePos = events.mousePos();
+	const Common::Point &mousePos = events.mousePos();
 
 	// If they have selected the sollbar, return with the Scroll Bar Still selected
 	if ((events._pressed || events._released) && ui._scrollHighlight == SH_THUMBNAIL)
@@ -295,7 +295,7 @@ void WidgetBase::handleScrollbarEvents(int index, int pageSize, int count) {
 	// Calculate the Scroll Position bar
 	int barHeight = (r.height() - BUTTON_SIZE * 2) * pageSize / count;
 	barHeight = CLIP(barHeight, BUTTON_SIZE, r.height() - BUTTON_SIZE * 2);
-	int barY = r.top + BUTTON_SIZE + (r.height() - BUTTON_SIZE * 2 - barHeight) * index / (count - pageSize);
+	const int barY = r.top + BUTTON_SIZE + (r.height() - BUTTON_SIZE * 2 - barHeight) * index / (count - pageSize);
 
 	if (Common::Rect(r.left, r.top, r.right, r.top + BUTTON_SIZE).contains(mousePos))
 		// Mouse on scroll up button
@@ -317,8 +317,8 @@ void WidgetBase::handleScrollbarEvents(int index, int pageSize, int count) {
 void WidgetBase::handleScrolling(int &scrollIndex, int pageSize, int max) {
 	Events &events = *_vm->_events;
 	TattooUserInterface &ui = *(TattooUserInterface *)_vm->_ui;
-	Common::KeyCode keycode = ui._keyState.keycode;
-	Common::Point mousePos = events.mousePos();
+	const Common::KeyCode keycode = ui._keyState.keycode;
+	const Common::Point &mousePos = events.mousePos();
 
 	Common::Rect r = getScrollBarBounds();
 	r.translate(_bounds.left, _bounds.top);
