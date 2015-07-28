@@ -409,7 +409,7 @@ void TattooJournal::loadLocations() {
 			locNumStr += line[i];
 			i++;
 		}
-		locNum = atoi(locNumStr.c_str());
+		locNum = atoi(locNumStr.c_str()) - 1;
 
 		// Skip the dot, spaces and initial quotation mark
 		while (line[i] == ' ' || line[i] == '.' || line[i] == '\"')

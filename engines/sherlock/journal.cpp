@@ -245,7 +245,7 @@ bool Journal::drawJournal(int direction, int howFar) {
 				Common::String lineStart(_lines[temp].c_str(), matchP);
 				if (lineStart.hasPrefix("@")) {
 					width = screen.stringWidth(lineStart.c_str() + 1);
-					screen.gPrint(Common::Point(JOURNAL_LEFT_X, yp), 15, "%s", lineStart.c_str() + 1);
+					screen.gPrint(Common::Point(JOURNAL_LEFT_X, yp), COL_PEN_HIGHLIGHT, "%s", lineStart.c_str() + 1);
 				} else {
 					width = screen.stringWidth(lineStart.c_str());
 					screen.gPrint(Common::Point(JOURNAL_LEFT_X, yp), COL_PEN_COLOR, "%s", lineStart.c_str());
@@ -260,13 +260,13 @@ bool Journal::drawJournal(int direction, int howFar) {
 				// Print remainder of line
 				screen.gPrint(Common::Point(JOURNAL_LEFT_X + width, yp), COL_PEN_COLOR, "%s", matchP + _find.size());
 			} else if (_lines[temp].hasPrefix("@")) {
-				screen.gPrint(Common::Point(JOURNAL_LEFT_X, yp), 15, "%s", _lines[temp].c_str() + 1);
+				screen.gPrint(Common::Point(JOURNAL_LEFT_X, yp), COL_PEN_HIGHLIGHT, "%s", _lines[temp].c_str() + 1);
 			} else {
 				screen.gPrint(Common::Point(JOURNAL_LEFT_X, yp), COL_PEN_COLOR, "%s", _lines[temp].c_str());
 			}
 		} else {
 			if (_lines[temp].hasPrefix("@")) {
-				screen.gPrint(Common::Point(JOURNAL_LEFT_X, yp), 15, "%s", _lines[temp].c_str() + 1);
+				screen.gPrint(Common::Point(JOURNAL_LEFT_X, yp), COL_PEN_HIGHLIGHT, "%s", _lines[temp].c_str() + 1);
 			} else {
 				screen.gPrint(Common::Point(JOURNAL_LEFT_X, yp), COL_PEN_COLOR, "%s", _lines[temp].c_str());
 			}

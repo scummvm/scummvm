@@ -72,6 +72,7 @@ enum GameType {
 
 #define COL_INFO_FOREGROUND (IS_SERRATED_SCALPEL ? (byte)Scalpel::INFO_FOREGROUND : (byte)Tattoo::INFO_FOREGROUND)
 #define COL_PEN_COLOR (IS_SERRATED_SCALPEL ? (byte)Scalpel::PEN_COLOR : (byte)Tattoo::PEN_COLOR)
+#define COL_PEN_HIGHLIGHT (IS_SERRATED_SCALPEL ? 15 : 129)
 
 struct SherlockGameDescription;
 
