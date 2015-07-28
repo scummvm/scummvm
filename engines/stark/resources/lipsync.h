@@ -52,7 +52,6 @@ protected:
 	void printData() override;
 
 	Common::Array<char> _shapes;
-	Common::String _unkString;
 };
 
 } // End of namespace Resources
