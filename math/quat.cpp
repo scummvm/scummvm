@@ -173,9 +173,13 @@ Matrix4 Quaternion::toMatrix() const {
 	return dst;
 }
 
-Quaternion Quaternion::inverse() {
-	normalize();
-	return Quaternion(-x(), -y(), -z(), w());
+Quaternion Quaternion::inverse() const {
+	Quaternion q = *this;
+	q.normalize();
+	q.x() = -q.x();
+	q.y() = -q.y();
+	q.z() = -q.z();
+	return q;
 }
 
 Vector3d Quaternion::directionVector(const int col) const {

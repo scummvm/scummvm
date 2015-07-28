@@ -181,7 +181,7 @@ public:
 	 * Make a new Quaternion that's the inverse of this Quaternion
 	 * @return		The resulting Quaternion
 	 */
-	Quaternion inverse();
+	Quaternion inverse() const;
 
 	/**
 	 * Slerps between this quaternion and to by factor t
