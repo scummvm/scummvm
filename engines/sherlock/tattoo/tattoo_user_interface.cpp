@@ -229,7 +229,7 @@ void TattooUserInterface::doJournal() {
 
 	screen._backBuffer1.blitFrom(screen._backBuffer2);
 	scene.updateBackground();
-	screen.slamArea(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT);
+	screen.slamArea(screen._currentScroll.x, screen._currentScroll.y, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT);
 }
 
 void TattooUserInterface::reset() {
