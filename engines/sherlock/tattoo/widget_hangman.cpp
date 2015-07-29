@@ -162,7 +162,6 @@ void WidgetHangman::show() {
 					break;
 
 				case Common::KEYCODE_UP:
-				case Common::KEYCODE_KP8:
 					if (line) {
 						line--;
 						if (i >= strlen(solutions[line]))
@@ -171,7 +170,6 @@ void WidgetHangman::show() {
 					break;
 
 				case Common::KEYCODE_DOWN:
-				case Common::KEYCODE_KP2:
 					if (line < 2) {
 						++line;
 						if (i >= strlen(solutions[line]))
@@ -181,7 +179,6 @@ void WidgetHangman::show() {
 
 				case Common::KEYCODE_BACKSPACE:
 				case Common::KEYCODE_LEFT:
-				case Common::KEYCODE_KP4:
 					if (i)
 						--i;
 					else if (line) {
@@ -195,7 +192,6 @@ void WidgetHangman::show() {
 					break;
 
 				case Common::KEYCODE_RIGHT:
-				case Common::KEYCODE_KP6:
 					if (i < strlen(solutions[line]) - 1)
 						i++;
 					else if (line < 2) {

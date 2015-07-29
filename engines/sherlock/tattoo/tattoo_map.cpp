@@ -162,26 +162,22 @@ int TattooMap::show() {
 
 			switch (keyState.keycode) {
 			case Common::KEYCODE_HOME:
-			case Common::KEYCODE_KP7:
 				_targetScroll.x = 0;
 				_targetScroll.y = 0;
 				break;
 
 			case Common::KEYCODE_END:
-			case Common::KEYCODE_KP1:
 				_targetScroll.x = screen._backBuffer1.w() - SHERLOCK_SCREEN_WIDTH;
 				_targetScroll.y = screen._backBuffer1.h() - SHERLOCK_SCREEN_HEIGHT;
 				break;
 
 			case Common::KEYCODE_PAGEUP:
-			case Common::KEYCODE_KP9:
 				_targetScroll.y -= SHERLOCK_SCREEN_HEIGHT;
 				if (_targetScroll.y < 0)
 					_targetScroll.y = 0;
 				break;
 
 			case Common::KEYCODE_PAGEDOWN:
-			case Common::KEYCODE_KP3:
 				_targetScroll.y += SHERLOCK_SCREEN_HEIGHT;
 				if (_targetScroll.y > (screen._backBuffer1.h() - SHERLOCK_SCREEN_HEIGHT))
 					_targetScroll.y = screen._backBuffer1.h() - SHERLOCK_SCREEN_HEIGHT;

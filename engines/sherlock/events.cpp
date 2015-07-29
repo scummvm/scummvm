@@ -278,6 +278,9 @@ Common::KeyState Events::getKey() {
 	case Common::KEYCODE_KP9:
 		keyState.keycode = Common::KEYCODE_PAGEUP;
 		break;
+	case Common::KEYCODE_KP_ENTER:
+		keyState.keycode = Common::KEYCODE_RETURN;
+		break;
 	default:
 		break;
 	}

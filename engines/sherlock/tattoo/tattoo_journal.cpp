@@ -135,7 +135,7 @@ void TattooJournal::handleKeyboardEvents() {
 			events.warpMouse(Common::Point(r.left + (r.width() / 3) * (_selector + 1) - 10, mousePos.y));
 		}
 
-	} else if (keyState.keycode == Common::KEYCODE_PAGEUP || keyState.keycode == Common::KEYCODE_KP9) {
+	} else if (keyState.keycode == Common::KEYCODE_PAGEUP) {
 		// See if they have Shift held down to go forward 10 pages
 		if (keyState.flags & Common::KBD_SHIFT) {
 			if (_page > 1) {
@@ -160,7 +160,7 @@ void TattooJournal::handleKeyboardEvents() {
 			}
 		}
 
-	} else if (keyState.keycode == Common::KEYCODE_PAGEDOWN || keyState.keycode == Common::KEYCODE_KP3) {
+	} else if (keyState.keycode == Common::KEYCODE_PAGEDOWN) {
 		if (keyState.flags & Common::KBD_SHIFT) {
 			if (_down) {
 				// Scroll down 10 Pages
@@ -185,7 +185,7 @@ void TattooJournal::handleKeyboardEvents() {
 			}
 		}
 
-	} else if (keyState.keycode == Common::KEYCODE_HOME || keyState.keycode == Common::KEYCODE_KP7) {
+	} else if (keyState.keycode == Common::KEYCODE_HOME) {
 		// Scroll to start of journal
 		if (_page > 1) {
 			// Go to the beginning of the journal
@@ -201,7 +201,7 @@ void TattooJournal::handleKeyboardEvents() {
 			_wait = false;
 		}
 
-	} else if (keyState.keycode == Common::KEYCODE_END || keyState.keycode == Common::KEYCODE_KP1) {
+	} else if (keyState.keycode == Common::KEYCODE_END) {
 		// Scroll to end of journal
 		if (_down) {
 			// Go to the end of the journal
@@ -211,7 +211,7 @@ void TattooJournal::handleKeyboardEvents() {
 
 			_wait = false;
 		}
-	} else if (keyState.keycode == Common::KEYCODE_RETURN || keyState.keycode == Common::KEYCODE_KP_ENTER) {
+	} else if (keyState.keycode == Common::KEYCODE_RETURN) {
 		events._pressed = false;
 		events._released = true;
 		events._oldButtons = 0;
