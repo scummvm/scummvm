@@ -24,5 +24,5 @@ void main()
 	vec3 b2 = qrot(boneRotation[int(bone2)], position2) + bonePosition[int(bone2)];
 	vec3 pos = mix(b2, b1, boneWeight);
 
-	gl_Position = mvp * vec4(pos.x, pos.y, -pos.z, 1.0);
+	gl_Position = mvp * vec4(pos.x, pos.y, pos.z, 1.0);
 }

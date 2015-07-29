@@ -61,8 +61,6 @@ void VisualActor::setTime(uint32 time) {
 }
 
 Math::Matrix4 VisualActor::getModelMatrix(const Math::Vector3d& position, float direction) {
-	Math::Matrix4 model;
-
 	Math::Matrix4 posMatrix;
 	posMatrix.setPosition(position);
 
@@ -72,9 +70,11 @@ Math::Matrix4 VisualActor::getModelMatrix(const Math::Vector3d& position, float 
 	Math::Matrix4 rot2;
 	rot2.buildAroundY(90 - (_model->getFacingDirection() + direction));
 
-	model = model * posMatrix * rot1 * rot2;
+	Math::Matrix4 scale;
+	scale.setValue(2, 2, -1.0f);
 
-	return model;
+	return posMatrix * rot1 * rot2 * scale;
+
 }
 
 } // End of namespace Stark
