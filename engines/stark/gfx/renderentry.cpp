@@ -120,6 +120,19 @@ bool RenderEntry::containsPoint(const Common::Point &position, Common::Point &re
 	return false;
 }
 
+bool RenderEntry::intersectRay(const Math::Ray &ray) const {
+	if (!_visual || !_clickable) {
+		return false;
+	}
+
+	VisualActor *actor = _visual->get<VisualActor>();
+	if (actor) {
+		return actor->intersectRay(ray, _position3D, _direction3D);
+	}
+
+	return false;
+}
+
 VisualImageXMG *RenderEntry::getImage() const {
 	return _visual->get<VisualImageXMG>();
 }

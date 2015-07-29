@@ -74,7 +74,17 @@ Math::Matrix4 VisualActor::getModelMatrix(const Math::Vector3d& position, float 
 	scale.setValue(2, 2, -1.0f);
 
 	return posMatrix * rot1 * rot2 * scale;
+}
 
+bool VisualActor::intersectRay(const Math::Ray &ray, const Math::Vector3d position, float direction) {
+	Math::Matrix4 inverseModelMatrix = getModelMatrix(position, direction);
+	inverseModelMatrix.inverse();
+
+	// Build an object local ray from the world ray
+	Math::Ray localRay = ray;
+	localRay.transform(inverseModelMatrix);
+
+	return _model->intersectRay(localRay);
 }
 
 } // End of namespace Stark

@@ -26,6 +26,7 @@
 #include "common/array.h"
 #include "common/str.h"
 
+#include "math/ray.h"
 #include "math/vector3d.h"
 
 namespace Stark {
@@ -38,6 +39,7 @@ class ArchiveReadStream;
 class Skeleton;
 class SkeletonAnim;
 
+class BoneNode;
 
 class VertNode {
 public:
@@ -130,7 +132,13 @@ public:
 	 */
 	void setTextureSet(Gfx::TextureSet *textureSet);
 
+	/** Perform a collision test with a ray */
+	bool intersectRay(const Math::Ray &ray) const;
+
 private:
+	void buildBonesBoundingBoxes();
+	void buildBoneBoundingBox(BoneNode *bone) const;
+
 	uint32 _u1;
 	float _facingDirection;
 

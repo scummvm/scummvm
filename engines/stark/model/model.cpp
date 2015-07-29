@@ -26,6 +26,8 @@
 #include "engines/stark/model/skeleton.h"
 #include "engines/stark/gfx/texture.h"
 
+#include "math/aabb.h"
+
 namespace Stark {
 
 Model::Model() :
@@ -133,6 +135,8 @@ void Model::readFromStream(ArchiveReadStream *stream) {
 
 		_meshes.push_back(node);
 	}
+
+	buildBonesBoundingBoxes();
 }
 
 void Model::setAnim(SkeletonAnim *anim)
@@ -142,6 +146,51 @@ void Model::setAnim(SkeletonAnim *anim)
 
 void Model::setTextureSet(Gfx::TextureSet *texture) {
 	_textureSet = texture;
+}
+
+void Model::buildBonesBoundingBoxes() {
+	const Common::Array<BoneNode *> &bones = _skeleton->getBones();
+
+	for (uint i = 0; i < bones.size(); i++) {
+		buildBoneBoundingBox(bones[i]);
+	}
+}
+
+void Model::buildBoneBoundingBox(BoneNode *bone) const {
+	bone->_boundingBox.reset();
+
+	// Add all the vertices with a non zero weight for the bone to the bone's bounding box
+	for (uint i = 0; i < _meshes.size(); i++) {
+		MeshNode *mesh = _meshes[i];
+
+		for (uint j = 0; j < mesh->_faces.size(); j++) {
+			FaceNode *face = mesh->_faces[j];
+
+			for (uint k = 0; k < face->_verts.size(); k++) {
+				VertNode *vert = face->_verts[k];
+
+				if (vert->_bone1 == bone->_idx) {
+					bone->_boundingBox.expand(vert->_pos1);
+				}
+
+				if (vert->_bone2 == bone->_idx) {
+					bone->_boundingBox.expand(vert->_pos2);
+				}
+			}
+		}
+	}
+}
+
+bool Model::intersectRay(const Math::Ray &ray) const {
+	const Common::Array<BoneNode *> &bones = _skeleton->getBones();
+
+	for (uint i = 0; i < bones.size(); i++) {
+		if (bones[i]->intersectRay(ray)) {
+			return true;
+		}
+	}
+
+	return false;
 }
 
 } // End of namespace Stark

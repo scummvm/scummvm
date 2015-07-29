@@ -281,6 +281,11 @@ Visual *AnimSkeleton::getVisual() {
 	return _visual;
 }
 
+int AnimSkeleton::indexForPoint(const Common::Point &point) const {
+	// Skeleton anims only have one hotspot
+	return 0;
+}
+
 void AnimSkeleton::readData(Formats::XRCReadStream *stream) {
 	Anim::readData(stream);
 

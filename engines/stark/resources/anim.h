@@ -205,6 +205,7 @@ public:
 	void applyToItem(Item *item) override;
 	void removeFromItem(Item *item) override;
 	Visual *getVisual() override;
+	int indexForPoint(const Common::Point &point) const override;
 
 protected:
 	void printData() override;

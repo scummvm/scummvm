@@ -25,8 +25,6 @@
 #include "engines/stark/model/skeleton_anim.h"
 #include "engines/stark/services/archiveloader.h"
 
-#include "common/stream.h"
-
 namespace Stark {
 
 Skeleton::Skeleton() :
@@ -98,4 +96,11 @@ void Skeleton::animate(uint32 time) {
 	}
 }
 
+bool BoneNode::intersectRay(const Math::Ray &ray) const {
+	Math::Ray localRay = ray;
+	localRay.translate(-_animPos);
+	localRay.rotate(_animRot.inverse());
+
+	return localRay.intersectAABB(_boundingBox);
+}
 } // End of namespace Stark

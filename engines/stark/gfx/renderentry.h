@@ -27,6 +27,7 @@
 #include "common/rect.h"
 #include "common/str.h"
 
+#include "math/ray.h"
 #include "math/vector3d.h"
 
 namespace Stark {
@@ -61,7 +62,17 @@ public:
 	/** Obtain the underlying image visual, if any */
 	VisualImageXMG *getImage() const;
 
+	/**
+	 * Mouse picking test for 2D items
+	 *
+	 * @param position game window coordinates to test
+	 * @param relativePosition successful hit item relative coordinates
+	 * @return successful hit
+	 */
 	bool containsPoint(const Common::Point &position, Common::Point &relativePosition) const;
+
+	/** Mouse picking test for 3D items */
+	bool intersectRay(const Math::Ray &ray) const;
 
 	/** Compare two render entries by their sort keys */
 	static bool compare(const RenderEntry *x, const RenderEntry *y);

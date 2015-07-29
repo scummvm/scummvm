@@ -26,7 +26,9 @@
 #include "common/array.h"
 #include "common/str.h"
 
+#include "math/aabb.h"
 #include "math/quat.h"
+#include "math/ray.h"
 #include "math/vector3d.h"
 
 namespace Stark {
@@ -38,14 +40,21 @@ class BoneNode {
 public:
 	BoneNode() : _parent(-1) { }
 	~BoneNode() { }
+
+	/** Perform a collision test with the ray */
+	bool intersectRay(const Math::Ray &ray) const;
+
 	Common::String _name;
 	float _u1;
 	Common::Array<uint32> _children;
 	int _parent;
-	int _idx;
+	uint32 _idx;
 
 	Math::Vector3d _animPos;
 	Math::Quaternion _animRot;
+
+	/** Bone space bounding box */
+	Math::AABB _boundingBox;
 };
 
 /**

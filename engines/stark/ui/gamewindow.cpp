@@ -23,6 +23,7 @@
 #include "engines/stark/ui/gamewindow.h"
 
 #include "engines/stark/cursor.h"
+#include "engines/stark/scene.h"
 
 #include "engines/stark/gfx/driver.h"
 
@@ -160,10 +161,13 @@ void GameWindow::checkObjectAtPos(Common::Point pos, int16 selectedInventoryItem
 	singlePossibleAction = -1;
 	isDefaultAction = false;
 
+	Math::Ray ray = StarkScene->makeRayFromMouse(_cursor->getMousePosition(true));
+
 	// Render entries are sorted from the farthest to the camera to the nearest
 	// Loop in reverse order
 	for (int i = _renderEntries.size() - 1; i >= 0; i--) {
-		if (_renderEntries[i]->containsPoint(pos, _objectRelativePosition)) {
+		if (_renderEntries[i]->containsPoint(pos, _objectRelativePosition)
+		    || _renderEntries[i]->intersectRay(ray)) {
 			_objectUnderCursor = _renderEntries[i]->getOwner();
 			break;
 		}
