@@ -26,6 +26,7 @@
 #include "common/array.h"
 #include "common/str.h"
 
+#include "math/ray.h"
 #include "math/vector3d.h"
 
 #include "engines/stark/resources/object.h"
@@ -78,7 +79,7 @@ public:
 	 * @param intersection The intersection between the ray and the floor. Only valid when the return value is true.
 	 * @return -1 if no face contains the point, the hit face index otherwise
 	 */
-	int32 findFaceHitByRay(const Math::Vector3d &origin, const Math::Vector3d &direction, Math::Vector3d &intersection) const;
+	int32 findFaceHitByRay(const Math::Ray &ray, Math::Vector3d &intersection) const;
 
 	/** Obtain the distance to the camera for a face */
 	float getDistanceFromCamera(uint32 faceIndex) const;

@@ -92,7 +92,7 @@ void Scene::computeClippingRect(float *xmin, float *xmax, float *ymin, float *ym
 	if (ymax) *ymax = ymaxValue;
 }
 
-void Scene::makeRayFromMouse(const Common::Point &mouse, Math::Vector3d &origin, Math::Vector3d &direction) const {
+Math::Ray Scene::makeRayFromMouse(const Common::Point &mouse) const {
 	Common::Rect gameViewport = _gfx->gameViewport();
 
 	Math::Vector4d in;
@@ -110,9 +110,11 @@ void Scene::makeRayFromMouse(const Common::Point &mouse, Math::Vector3d &origin,
 
 	Math::Vector4d out = A.transform(in);
 
-	origin = _cameraPosition;
-	direction.set(out.x(), out.y(), out.z());
+	Math::Vector3d origin = _cameraPosition;
+	Math::Vector3d direction = Math::Vector3d(out.x(), out.y(), out.z());
 	direction.normalize();
+
+	return Math::Ray(origin, direction);
 }
 
 } // End of namespace Stark

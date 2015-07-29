@@ -89,10 +89,10 @@ void GameInterface::walkTo(const Common::Point &mouse) {
 	Resources::Floor *floor = StarkGlobal->getCurrent()->getFloor();
 	Resources::MeshItem *april = StarkGlobal->getCurrent()->getInteractive();
 
-	Math::Vector3d origin, direction, intersection;
-	StarkScene->makeRayFromMouse(mouse, origin, direction);
+	Math::Ray mouseRay = StarkScene->makeRayFromMouse(mouse);
 
-	int32 floorFace = floor->findFaceHitByRay(origin, direction, intersection);
+	Math::Vector3d intersection;
+	int32 floorFace = floor->findFaceHitByRay(mouseRay, intersection);
 	if (april && floorFace >= 0) {
 		// TODO: Complete, for now we just teleport to the target location
 		april->setPosition3D(intersection);
