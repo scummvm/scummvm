@@ -245,8 +245,10 @@ void TattooMap::loadData() {
 		do {
 			c = stream->readByte();
 			if (stream->pos() >= stream->size())
-				return;
+				break;
 		} while (c < '0' || c > '9');
+		if (stream->pos() >= stream->size())
+			break;
 
 		// Get the scene number
 		Common::String locStr;

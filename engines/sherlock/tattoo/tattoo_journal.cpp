@@ -61,6 +61,7 @@ void TattooJournal::show() {
 	stream->read(palette, PALETTE_SIZE);
 	screen.translatePalette(palette);
 	ui.setupBGArea(palette);
+	delete stream;
 
 	// Set screen to black, and set background
 	screen._backBuffer1.blitFrom((*_journalImages)[0], Common::Point(0, 0));
