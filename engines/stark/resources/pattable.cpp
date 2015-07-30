@@ -21,6 +21,7 @@
  */
 
 #include "engines/stark/resources/pattable.h"
+#include "engines/stark/resources/item.h"
 #include "engines/stark/resources/script.h"
 
 #include "engines/stark/formats/xrc.h"
@@ -44,31 +45,96 @@ void PATTable::readData(Formats::XRCReadStream *stream) {
 
 		entry._actionType = stream->readSint32LE();
 		entry._scriptIndex = stream->readSint32LE();
+		entry._script = nullptr;
 
-		_entries.push_back(entry);
+		_ownEntries.push_back(entry);
 	}
 
 	_defaultAction = stream->readSint32LE();
 }
 
 void PATTable::printData() {
-	for (uint i = 0; i < _entries.size(); i++) {
-		debug("entry[%d].actionType: %d", i, _entries[i]._actionType);
-		debug("entry[%d].scriptIndex: %d", i, _entries[i]._scriptIndex);
+	for (uint i = 0; i < _ownEntries.size(); i++) {
+		debug("entry[%d].actionType: %d", i, _ownEntries[i]._actionType);
+		debug("entry[%d].scriptIndex: %d", i, _ownEntries[i]._scriptIndex);
 	}
 	debug("defaultAction: %d", _defaultAction);
+}
+
+void PATTable::onAllLoaded() {
+	Object::onAllLoaded();
+
+	_itemEntries.clear();
+	addOwnEntriesToItemEntries();
+}
+
+void PATTable::onEnterLocation() {
+	Object::onEnterLocation();
+
+	_itemEntries.clear();
+
+	// Add our own entries to the list of available actions
+	addOwnEntriesToItemEntries();
+
+	// If the PAT's owning item has a template, find it
+	ItemTemplate *itemTemplate = findItemTemplate();
+
+	// Add the item template actions to the list of available actions
+	if (itemTemplate) {
+		PATTable *templatePAT = itemTemplate->findChild<PATTable>();
+
+		Common::Array<Entry> templateEntries = templatePAT->listItemEntries();
+		for (uint i = 0; i < templateEntries.size(); i++) {
+			if (!_itemEntries.contains(templateEntries[i]._actionType)) {
+				_itemEntries[templateEntries[i]._actionType] = templateEntries[i];
+			}
+		}
+	}
+}
+
+ItemTemplate *PATTable::findItemTemplate() {
+	Item *parent = findParent<Item>();
+
+	ItemTemplate *itemTemplate = nullptr;
+	if (parent->getSubType() == Item::kItemMesh) {
+		MeshItem *item = Object::cast<MeshItem>(parent);
+		itemTemplate = item->getItemTemplate();
+
+	} else if (parent->getSubType() == Item::kItemLevelTemplate) {
+		LevelItemTemplate *item = Object::cast<LevelItemTemplate>(parent);
+		itemTemplate = item->getItemTemplate();
+	}
+
+	return itemTemplate;
+}
+
+void PATTable::addOwnEntriesToItemEntries() {
+	for (uint i = 0; i < _ownEntries.size(); i++) {
+		if (_ownEntries[i]._scriptIndex != -1) {
+			Entry entry = _ownEntries[i];
+			entry._script = findChildWithIndex<Script>(_ownEntries[i]._scriptIndex);
+			_itemEntries[entry._actionType] = entry;
+		}
+	}
+}
+
+Common::Array<PATTable::Entry> PATTable::listItemEntries() const {
+	Common::Array<PATTable::Entry> entries;
+
+	for (EntryMap::const_iterator it = _itemEntries.begin(); it != _itemEntries.end(); it++) {
+		entries.push_back(it->_value);
+	}
+
+	return entries;
 }
 
 ActionArray PATTable::listPossibleActions() const {
 	ActionArray actions;
 
-	for (uint i = 0; i < _entries.size(); i++) {
-		if (_entries[i]._scriptIndex != -1) {
-			// Check the script can be launched
-			Script *script = findChildWithIndex<Script>(_entries[i]._scriptIndex);
-			if (script->shouldExecute(Script::kCallModePlayerAction)) {
-				actions.push_back(_entries[i]._actionType);
-			}
+	for (EntryMap::const_iterator it = _itemEntries.begin(); it != _itemEntries.end(); it++) {
+		// Check the script can be launched
+		if (it->_value._script->shouldExecute(Script::kCallModePlayerAction)) {
+			actions.push_back(it->_key);
 		}
 	}
 
@@ -76,12 +142,10 @@ ActionArray PATTable::listPossibleActions() const {
 }
 
 bool PATTable::canPerformAction(uint32 action) const {
-	for (uint i = 0; i < _entries.size(); i++) {
-		if (_entries[i]._actionType == action && _entries[i]._scriptIndex != -1) {
-			Script *script = findChildWithIndex<Script>(_entries[i]._scriptIndex);
-			return script->shouldExecute(Script::kCallModePlayerAction);
-		}
+	if (_itemEntries.contains(action)) {
+		return _itemEntries[action]._script->shouldExecute(Script::kCallModePlayerAction);
 	}
+
 	return false;
 }
 
@@ -94,11 +158,9 @@ int32 PATTable::getDefaultAction() const {
 }
 
 bool PATTable::runScriptForAction(uint32 action) {
-	for (uint i = 0; i < _entries.size(); i++) {
-		if (_entries[i]._actionType == action) {
-			Script *script = findChildWithIndex<Script>(_entries[i]._scriptIndex);
-			script->execute(Script::kCallModePlayerAction);
-		}
+	if (_itemEntries.contains(action)) {
+		_itemEntries[action]._script->execute(Script::kCallModePlayerAction);
+		return true;
 	}
 
 	return false;

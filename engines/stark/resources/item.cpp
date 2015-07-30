@@ -431,6 +431,10 @@ AnimHierarchy *LevelItemTemplate::findStockAnimHierarchy() {
 	}
 }
 
+ItemTemplate *LevelItemTemplate::getItemTemplate() const {
+	return _referencedItem;
+}
+
 void LevelItemTemplate::printData() {
 	ItemTemplate::printData();
 
@@ -694,6 +698,10 @@ Gfx::RenderEntry *MeshItem::getRenderEntry(const Common::Point &positionOffset) 
 	}
 
 	return _renderEntry;
+}
+
+ItemTemplate *MeshItem::getItemTemplate() const {
+	return _referencedItem;
 }
 
 void MeshItem::printData() {

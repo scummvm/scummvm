@@ -251,6 +251,9 @@ public:
 	TextureSet *findTextureSet(uint32 textureType) override;
 	AnimHierarchy *findStockAnimHierarchy() override;
 
+	/** Get the item's level or global template if any */
+	ItemTemplate *getItemTemplate() const;
+
 protected:
 	void printData() override;
 
@@ -342,6 +345,9 @@ public:
 
 	/** Obtain the texture to use to render the item */
 	TextureSet *findTextureSet(uint32 textureType);
+
+	/** Get the item's level or global template if any */
+	ItemTemplate *getItemTemplate() const;
 
 	/** Update the item's animation after a texture / mesh change */
 	void updateAnim();

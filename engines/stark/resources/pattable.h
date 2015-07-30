@@ -24,6 +24,7 @@
 #define STARK_RESOURCES_PAT_TABLE_H
 
 #include "common/str.h"
+#include "common/hashmap.h"
 
 #include "engines/stark/resources/object.h"
 
@@ -36,6 +37,7 @@ class XRCReadStream;
 namespace Resources {
 
 class Script;
+class ItemTemplate;
 
 typedef Common::Array<uint32> ActionArray;
 
@@ -53,6 +55,11 @@ public:
 	PATTable(Object *parent, byte subType, uint16 index, const Common::String &name);
 	virtual ~PATTable();
 
+	// Resource API
+	void readData(Formats::XRCReadStream *stream) override;
+	void onAllLoaded() override;
+	void onEnterLocation() override;
+
 	ActionArray listPossibleActions() const;
 
 	bool runScriptForAction(uint32 action);
@@ -62,19 +69,26 @@ public:
 	/** If a default action is available, only it can be executed */
 	int32 getDefaultAction() const;
 
-	// Resource API
-	void readData(Formats::XRCReadStream *stream) override;
-
 protected:
 	struct Entry {
 		uint32 _actionType;
 		int32 _scriptIndex;
+		Script *_script;
 	};
+
+	typedef Common::HashMap<uint32, Entry> EntryMap;
+
+	void addOwnEntriesToItemEntries();
+	Common::Array<Entry> listItemEntries() const;
+	ItemTemplate *findItemTemplate();
+
 
 	void printData() override;
 
-	Common::Array<Entry> _entries;
+	Common::Array<Entry> _ownEntries;
+	EntryMap _itemEntries;
 	int32 _defaultAction;
+
 };
 
 } // End of namespace Resources
