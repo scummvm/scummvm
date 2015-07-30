@@ -170,9 +170,9 @@ void TattooEngine::loadInventory() {
 	inv.push_back(InventoryItem(0, inv5, invDesc5, "_ITEM05A"));
 
 	// Hidden items
-	inv.push_back(InventoryItem(0, inv6, invDesc6, "_PAP212D", solve));
-	inv.push_back(InventoryItem(0, inv7, invDesc7, "_PAP212I"));
-	inv.push_back(InventoryItem(0, inv8, invDesc8, "_LANT02I"));
+	inv.push_back(InventoryItem(295, inv6, invDesc6, "_PAP212D", solve));
+	inv.push_back(InventoryItem(294, inv7, invDesc7, "_PAP212I"));
+	inv.push_back(InventoryItem(818, inv8, invDesc8, "_LANT02I"));
 }
 
 void TattooEngine::doHangManPuzzle() {

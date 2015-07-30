@@ -1377,7 +1377,7 @@ void Scene::synchronize(Serializer &s) {
 		_loadingSavedGame = true;
 	}
 
-	for (int sceneNum = 0; sceneNum < SCENES_COUNT; ++sceneNum) {
+	for (int sceneNum = 1; sceneNum < SCENES_COUNT; ++sceneNum) {
 		for (int flag = 0; flag <= MAX_BGSHAPES; ++flag) {
 			s.syncAsByte(_sceneStats[sceneNum][flag]);
 		}
