@@ -99,6 +99,7 @@ void TattooJournal::show() {
 
 	// Free the images
 	delete _journalImages;
+	_journalImages = nullptr;
 
 	// Reset back to whatever scroll was active for the screen
 	screen._currentScroll = oldScroll;
@@ -155,7 +156,7 @@ void TattooJournal::handleKeyboardEvents() {
 				// Scroll Up 1 page
 				drawJournal(1, LINES_PER_PAGE);
 				drawScrollBar();
-				show();
+				drawJournal(0, 0);
 				screen.slamArea(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT);
 				_wait = false;
 			}
@@ -179,7 +180,7 @@ void TattooJournal::handleKeyboardEvents() {
 				// Scroll down 1 page
 				drawJournal(2, LINES_PER_PAGE);
 				drawScrollBar();
-				show();
+				drawJournal(0, 0);
 				screen.slamArea(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT);
 
 				_wait = false;
@@ -273,7 +274,7 @@ void TattooJournal::handleButtons() {
 					else
 						drawJournal(1, 10 * LINES_PER_PAGE);
 					drawScrollBar();
-					show();
+					drawJournal(0, 0);
 					screen.slamArea(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT);
 					_wait = false;
 				}
