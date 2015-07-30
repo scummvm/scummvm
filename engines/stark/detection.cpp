@@ -66,6 +66,21 @@ static const ADGameDescription gameDescriptions[] = {
 	},
 
 	// The Longest Journey
+	// GOG edition
+	{
+		"tlj", "GOG", {
+			// TODO: Fill file sizes and chapters.ini's MD5
+			{"x.xarc", 0, "a0559457126caadab0cadac02d35f26f", 3032},
+			{"chapters.ini", 0, "5b5a1f1dd2297d9ce0d3d12216d5d2c5", 485},
+			{NULL, 0, NULL, 0}
+		},
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_NO_FLAGS,
+		GUIO_NONE
+	},
+
+	// The Longest Journey
 	// English Old Demo
 	{
 		"tlj", "Old Demo", {
