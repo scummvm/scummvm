@@ -67,7 +67,7 @@ void SaveManager::createSavegameList() {
 
 	SaveStateList saveList = getSavegameList(_target);
 	for (uint idx = 0; idx < saveList.size(); ++idx) {
-		int slot = saveList[idx].getSaveSlot() - 1;
+		int slot = saveList[idx].getSaveSlot();
 		if (slot >= 0 && slot < MAX_SAVEGAME_SLOTS)
 			_savegames[slot] = saveList[idx].getDescription();
 	}
