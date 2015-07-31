@@ -228,7 +228,7 @@ public:
 
 		char slot[3];
 		for (Common::StringArray::const_iterator filename = filenames.begin(); filename != filenames.end(); ++filename) {
-			// Extract the slot nomber from the filename
+			// Extract the slot number from the filename
 			slot[0] = filename->c_str()[5];
 			slot[1] = filename->c_str()[6];
 			slot[2] = '\0';

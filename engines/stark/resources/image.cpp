@@ -104,36 +104,42 @@ void Image::printData() {
 }
 
 int Image::indexForPoint(const Common::Point &point) const {
-	Math::Vector2d prevPoint;
-	Math::Segment2d testLine(Math::Vector2d(point.x, point.y), Math::Vector2d(-1, -1));
-	int intersectCount = 0;
 	// TODO: This doesn't necessarily get the innermost polygon
-	// TODO: Clean up
 	int index = -1;
 	for (uint32 i = 0; i < _polygons.size(); i++) {
-		intersectCount = 0;
-		for (uint32 j = 0; j < _polygons[i].size(); j++) {
-			Math::Vector2d curPoint = Math::Vector2d(_polygons[i][j].x, _polygons[i][j].y);
-			if (j == 0) {
-				// Special case the line created between the last point and the first
-				if (_polygons[i].size() > 1) {
-					prevPoint = Math::Vector2d(_polygons[i][_polygons[i].size() - 1].x, _polygons[i][_polygons[i].size() - 1].y);
-				} else {
-					break;
-				}
-			}
-			Math::Segment2d l(prevPoint, curPoint);
-			if (l.intersectsSegment(testLine, nullptr)) {
-				intersectCount++;
-			}
-			prevPoint = curPoint;
-		}
-		if (intersectCount % 2 != 0) {
+		if (isPointInPolygon(_polygons[i], point)) {
 			index = i;
 		}
 	}
 
 	return index;
+}
+
+bool Image::isPointInPolygon(const Polygon &polygon, const Common::Point &point) const {
+	if (polygon.size() <= 1) {
+		return false; // Empty polygon
+	}
+
+	// A ray cast from the point
+	Math::Segment2d testLine(Math::Vector2d(point.x, point.y), Math::Vector2d(-100, -100));
+
+	// Special case the line created between the last point and the first
+	Math::Vector2d prevPoint = Math::Vector2d(polygon.back().x, polygon.back().y);
+
+	// Count the intersections of the ray with the polygon's edges
+	int intersectCount = 0;
+	for (uint32 j = 0; j < polygon.size(); j++) {
+		Math::Vector2d curPoint = Math::Vector2d(polygon[j].x, polygon[j].y);
+
+		if (Math::Segment2d(prevPoint, curPoint).intersectsSegment(testLine, nullptr)) {
+			intersectCount++;
+		}
+
+		prevPoint = curPoint;
+	}
+
+	// If the ray crosses the polygon an odd number of times, the point is inside the polygon
+	return intersectCount % 2 != 0;
 }
 
 ImageSub23::~ImageSub23() {

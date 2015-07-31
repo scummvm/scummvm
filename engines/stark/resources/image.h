@@ -68,6 +68,7 @@ public:
 	int indexForPoint(const Common::Point &point) const;
 protected:
 	void printData() override;
+	bool isPointInPolygon(const Polygon &polygon, const Common::Point &point) const;
 
 	Common::String _filename;
 	Common::String _archiveName;
