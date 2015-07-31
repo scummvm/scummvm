@@ -97,6 +97,15 @@ Item *Item::getSceneInstance() {
 	return this;
 }
 
+Common::String Item::getHotspotTitle(uint32 hotspotIndex) const {
+	PATTable *table = findChildWithIndex<PATTable>(hotspotIndex);
+	if (table) {
+		return table->getName();
+	} else {
+		return getName();
+	}
+}
+
 void Item::printData() {
 	debug("enabled: %d", _enabled);
 	debug("character: %d", _characterIndex);
@@ -203,15 +212,6 @@ bool ItemVisual::doAction(uint32 action, uint32 hotspotIndex) {
 	return false;
 }
 
-Common::String ItemVisual::getHotspotTitle(uint32 hotspotIndex) {
-	PATTable *table = findChildWithIndex<PATTable>(hotspotIndex);
-	if (table) {
-		return table->getName();
-	} else {
-		return getName();
-	}
-}
-
 ItemTemplate::~ItemTemplate() {
 }
 
@@ -254,6 +254,14 @@ Item *ItemTemplate::getSceneInstance() {
 	}
 
 	return nullptr;
+}
+
+Common::String ItemTemplate::getHotspotTitle(uint32 hotspotIndex) const {
+	if (_referencedItem) {
+		return _referencedItem->getHotspotTitle(hotspotIndex);
+	}
+
+	return Item::getHotspotTitle(hotspotIndex);
 }
 
 void ItemTemplate::setBonesMesh(int32 index) {
@@ -698,6 +706,14 @@ Gfx::RenderEntry *MeshItem::getRenderEntry(const Common::Point &positionOffset) 
 	}
 
 	return _renderEntry;
+}
+
+Common::String MeshItem::getHotspotTitle(uint32 hotspotIndex) const {
+	if (_referencedItem) {
+		return _referencedItem->getHotspotTitle(hotspotIndex);
+	}
+
+	return Item::getHotspotTitle(hotspotIndex);
 }
 
 ItemTemplate *MeshItem::getItemTemplate() const {
