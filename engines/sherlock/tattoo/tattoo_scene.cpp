@@ -368,9 +368,6 @@ void TattooScene::doBgAnim() {
 	if (ui._creditsWidget.active())
 		ui._creditsWidget.blitCredits();
 
-	if (!vm._fastMode)
-		events.wait(3);
-
 	if (screen._flushScreen) {
 		screen.slamArea(screen._currentScroll.x, screen._currentScroll.y, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT);
 		screen._flushScreen = false;
@@ -379,6 +376,13 @@ void TattooScene::doBgAnim() {
 	screen._flushScreen = false;
 	_doBgAnimDone = true;
 	ui._drawMenu = false;
+
+	// Handle drawing the text tooltip if necessary
+	if (ui._menuMode == STD_MODE || ui._menuMode == LAB_MODE)
+		ui._tooltipWidget.draw();
+
+	if (!vm._fastMode)
+		events.wait(3);
 
 	for (int idx = 1; idx < MAX_CHARACTERS; ++idx) {
 		if (people[idx]._updateNPCPath)

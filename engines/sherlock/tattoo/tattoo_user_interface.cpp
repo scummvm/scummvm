@@ -321,13 +321,6 @@ void TattooUserInterface::drawInterface(int bufferNum) {
 	// Bring the widgets to the screen
 	if (_mask != nullptr)
 		screen._flushScreen = true;
-
-	if (screen._flushScreen)
-		screen.blockMove();
-
-	// Handle drawing the text tooltip if necessary
-	if (_menuMode == STD_MODE || _menuMode == LAB_MODE)
-		_tooltipWidget.draw();
 }
 
 void TattooUserInterface::doBgAnimRestoreUI() {
