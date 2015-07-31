@@ -655,7 +655,9 @@ void TattooUserInterface::doBgAnimEraseBackground() {
 	static const int16 OFFSETS[16] = { -1, -2, -3, -3, -2, -1, -1, 0, 1, 2, 3, 3, 2, 1, 0, 0 };
 
 	if (_mask != nullptr) {
-		screen.slamArea(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT);
+		// Since a mask is active, restore the screen from the secondary back buffer prior to applying the mask
+		screen._backBuffer1.blitFrom(screen._backBuffer2, screen._currentScroll, Common::Rect(screen._currentScroll.x, 0, 
+			screen._currentScroll.x + SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT));
 
 		switch (scene._currentScene) {
 		case 7:
