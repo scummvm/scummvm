@@ -377,9 +377,14 @@ void TattooScene::doBgAnim() {
 	_doBgAnimDone = true;
 	ui._drawMenu = false;
 
-	// Handle drawing the text tooltip if necessary
+	// Handle drawing tooltips
 	if (ui._menuMode == STD_MODE || ui._menuMode == LAB_MODE)
 		ui._tooltipWidget.draw();
+	if (!ui._postRenderWidgets.empty()) {
+		for (WidgetList::iterator i = ui._postRenderWidgets.begin(); i != ui._postRenderWidgets.end(); ++i)
+			(*i)->draw();
+		ui._postRenderWidgets.clear();
+	}
 
 	if (!vm._fastMode)
 		events.wait(3);

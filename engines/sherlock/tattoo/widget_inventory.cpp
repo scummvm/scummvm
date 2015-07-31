@@ -122,6 +122,12 @@ void WidgetInventoryTooltip::handleEvents() {
 	Common::String strWith = fixedText.getText(kFixedText_With);
 	Common::String strUse = fixedText.getText(kFixedText_Use);
 
+	// Register the tooltip for requiring post-rendering drawing, since we draw directly to the screen if a scene
+	// mask is active, since the initial draw to the screen will be covered by the mask rendering
+	if (ui._mask) {
+		ui._postRenderWidgets.push_back(this);
+	}
+
 	// If we are using an inventory item on an object in the room, display the appropriate text above the mouse cursor
 	if (_owner->_invVerbMode == 3) {
 		select = ui._bgFound;

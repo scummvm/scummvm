@@ -110,6 +110,7 @@ public:
 	WidgetText _textWidget;
 	WidgetSceneTooltip _tooltipWidget;
 	WidgetVerbs _verbsWidget;
+	WidgetList _postRenderWidgets;
 public:
 	TattooUserInterface(SherlockEngine *vm);
 	virtual ~TattooUserInterface();
