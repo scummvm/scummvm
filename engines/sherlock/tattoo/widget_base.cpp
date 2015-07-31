@@ -269,7 +269,8 @@ void WidgetBase::drawScrollBar(int index, int pageSize, int count) {
 	// Draw the scroll position bar
 	int barHeight = (r.height() - BUTTON_SIZE * 2) * pageSize / count;
 	barHeight = CLIP(barHeight, BUTTON_SIZE, r.height() - BUTTON_SIZE * 2);
-	int barY = r.top + BUTTON_SIZE + (r.height() - BUTTON_SIZE * 2 - barHeight) * index / (count - pageSize);
+	int barY = (count <= pageSize) ? r.top + BUTTON_SIZE : r.top + BUTTON_SIZE + 
+		(r.height() - BUTTON_SIZE * 2 - barHeight) * index / (count - pageSize);
 
 	_surface.fillRect(Common::Rect(r.left + 2, barY + 2, r.right - 2, barY + barHeight - 3), INFO_MIDDLE);
 	ui.drawDialogRect(_surface, Common::Rect(r.left, barY, r.right, barY + barHeight), true);
