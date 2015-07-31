@@ -59,8 +59,8 @@ void TattooJournal::show() {
 	// Load palette
 	Common::SeekableReadStream *stream = res.load("journal.pal");
 	stream->read(palette, PALETTE_SIZE);
-	screen.translatePalette(palette);
 	ui.setupBGArea(palette);
+	screen.translatePalette(palette);
 	delete stream;
 
 	// Set screen to black, and set background

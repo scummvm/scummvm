@@ -594,8 +594,7 @@ void TattooUserInterface::setupBGArea(const byte cMap[PALETTE_SIZE]) {
 	// to darker as the palette numbers go up. The last palette entry in that run is specified by _bgColor
 	byte *p = &_lookupTable[0];
 	for (int idx = 0; idx < PALETTE_COUNT; ++idx)
-		*p++ = BG_GREYSCALE_RANGE_END - ((cMap[idx * 3] / 4) * 30 + (cMap[idx * 3 + 1] / 4) * 59 + 
-			(cMap[idx * 3 + 2] / 4) * 11) / 480;
+		*p++ = BG_GREYSCALE_RANGE_END - (cMap[idx * 3] * 30 + cMap[idx * 3 + 1] * 59 + cMap[idx * 3 + 2] * 11) / 480;
 
 	// If we're going to a scene with a haze special effect, initialize the translate table to lighten the colors
 	if (_mask != nullptr) {
@@ -605,23 +604,23 @@ void TattooUserInterface::setupBGArea(const byte cMap[PALETTE_SIZE]) {
 			int r, g, b;
 			switch (scene._currentScene) {
 			case 8:
-				r = cMap[idx * 3] / 5;
+				r = cMap[idx * 3] * 4 / 5;
 				g = cMap[idx * 3 + 1] * 3 / 4;
 				b = cMap[idx * 3 + 2] * 3 / 4;
 				break;
 
 			case 18:
 			case 68:
-				r = cMap[idx * 3] / 3;
-				g = cMap[idx * 3 + 1] / 3;
-				b = cMap[idx * 3 + 2] / 3;
+				r = cMap[idx * 3] * 4 / 3;
+				g = cMap[idx * 3 + 1] * 4 / 3;
+				b = cMap[idx * 3 + 2] * 4 / 3;
 				break;
 
 			case 7:
 			case 53:
-				r = cMap[idx * 3] / 3;
-				g = cMap[idx * 3 + 1] / 3;
-				b = cMap[idx * 3 + 2] / 3;
+				r = cMap[idx * 3] * 4 / 3;
+				g = cMap[idx * 3 + 1] * 4 / 3;
+				b = cMap[idx * 3 + 2] * 4 / 3;
 				break;
 			
 			default:
@@ -633,8 +632,8 @@ void TattooUserInterface::setupBGArea(const byte cMap[PALETTE_SIZE]) {
 			int cd = 99999;
 
 			for (int pal = 0; pal < PALETTE_COUNT; ++pal) {
-				int d = (r - cMap[pal * 3] / 4) * (r - cMap[pal * 3] / 4) + (g - cMap[pal * 3 + 1] / 4) * (g - cMap[pal * 3 + 1] / 4)
-					+ (b - cMap[pal * 3 + 2] / 4) * (b - cMap[pal * 3 + 2] / 4);
+				int d = (r - cMap[pal * 3]) * (r - cMap[pal * 3]) + (g - cMap[pal * 3 + 1]) * (g - cMap[pal * 3 + 1]) + 
+					(b - cMap[pal * 3 + 2]) * (b - cMap[pal * 3 + 2]);
 
 				if (d < cd) {
 					c = pal;

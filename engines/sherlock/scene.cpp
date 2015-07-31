@@ -363,9 +363,8 @@ bool Scene::loadScene(const Common::String &filename) {
 				// Handle initializing the palette
 				screen.initPaletteFade(bgHeader._bytesWritten);
 				rrmStream->read(screen._cMap, PALETTE_SIZE);
-				screen.translatePalette(screen._cMap);
-
 				paletteLoaded();
+				screen.translatePalette(screen._cMap);
 
 				// Read in background
 				if (_compressed) {
