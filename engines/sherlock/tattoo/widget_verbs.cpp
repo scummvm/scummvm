@@ -196,10 +196,11 @@ void WidgetVerbs::handleEvents() {
 					// Call the Routine to turn on the Commands for this Object
 					load(!noDesc);
 				} else {
-					// Free the current menu graphics & erase the menu
+					// Close the window and clear the events
 					banishWindow();
+					events.clearEvents();
 
-					// See if we're in a Lab Table Room
+					// Reset the active UI mode
 					ui._menuMode = scene._labTableScene ? LAB_MODE : STD_MODE;
 				}
 			}
