@@ -87,7 +87,6 @@ private:
 	int _invVerbMode;
 	int _selector, _oldSelector;
 	int _invSelect, _oldInvSelect;
-	int _dialogTimer;
 	WidgetInventoryTooltip _tooltipWidget;
 	WidgetInventoryVerbs _verbList;
 	bool _swapItems;

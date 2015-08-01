@@ -34,6 +34,7 @@ namespace Tattoo {
 #define INVENTORY_XSIZE 70			// Width of the box that surrounds inventory items
 #define INVENTORY_YSIZE 70			// Height of the box that surrounds inventory items
 #define MAX_INV_COMMANDS 10			// Maximum elements in dialog
+#define NUM_INV_PER_LINE 4			// Number of inentory items per line in the dialog
 
 WidgetInventoryTooltip::WidgetInventoryTooltip(SherlockEngine *vm, WidgetInventory *owner) : 
 		WidgetTooltipBase(vm), _owner(owner) {
@@ -480,7 +481,6 @@ WidgetInventory::WidgetInventory(SherlockEngine *vm) : WidgetBase(vm),
 	_invVerbMode = 0;
 	_invSelect = _oldInvSelect = -1;
 	_selector = _oldSelector = -1;
-	_dialogTimer = -1;
 	_swapItems = false;
 }
 
@@ -500,7 +500,7 @@ void WidgetInventory::load(int mode) {
 	_invVerbMode = 0;
 	_invSelect = _oldInvSelect = -1;
 	_selector = _oldSelector = -1;
-	_dialogTimer = -1;
+	_scroll = true;
 
 	if (mode == 0) {
 		banishWindow();
@@ -574,7 +574,8 @@ void WidgetInventory::drawInventory() {
 		}
 	}
 
-	drawScrollBar(inv._invIndex, NUM_INVENTORY_SHOWN, inv._holdings);
+	drawScrollBar(inv._invIndex / NUM_INV_PER_LINE, NUM_INVENTORY_SHOWN / NUM_INV_PER_LINE, 
+		(inv._holdings + NUM_INV_PER_LINE - 1) / NUM_INV_PER_LINE);
 }
 
 void WidgetInventory::handleEvents() {
@@ -586,10 +587,34 @@ void WidgetInventory::handleEvents() {
 	TattooUserInterface &ui = *(TattooUserInterface *)_vm->_ui;
 	Common::Point mousePos = events.mousePos();
 
-	if (_invVerbMode == 1)
+	if (_invVerbMode == 1) {
 		checkTabbingKeys(MAX_INV_COMMANDS);
-	else if (_invVerbMode == 0)
+	} else if (_invVerbMode == 0) {
 		checkInvTabbingKeys();
+
+		// Handle scrollbar events
+		int oldScrollIndex = inv._invIndex / NUM_INV_PER_LINE;
+		int invIndex = inv._invIndex / NUM_INV_PER_LINE;
+
+		ScrollHighlight oldHighlight = ui._scrollHighlight;
+		handleScrollbarEvents(invIndex, NUM_INVENTORY_SHOWN / NUM_INV_PER_LINE, 
+			(inv._holdings + NUM_INV_PER_LINE - 1) / NUM_INV_PER_LINE);
+
+		handleScrolling(invIndex, NUM_INVENTORY_SHOWN / NUM_INV_PER_LINE, 
+			(inv._holdings + NUM_INV_PER_LINE - 1) / NUM_INV_PER_LINE);
+
+		if (oldScrollIndex != invIndex) {
+			// Starting visible item index has changed, so set the index and reload inventory graphics
+			inv._invIndex = invIndex * NUM_INV_PER_LINE;
+			inv.freeGraphics();
+			inv.loadGraphics();
+		}
+
+		if (ui._scrollHighlight != oldHighlight || oldScrollIndex != invIndex) {
+			drawInventory();
+			return;
+		}
+	}
 
 	if (_invVerbMode != 1)
 		_tooltipWidget.handleEvents();
@@ -603,7 +628,6 @@ void WidgetInventory::handleEvents() {
 
 	// See if they released a mouse button button
 	if (events._released || events._rightReleased || ui._keyState.keycode == Common::KEYCODE_ESCAPE) {
-		_dialogTimer = -1;
 		ui._scrollHighlight = SH_NONE;
 
 		// See if they have a Verb List open for an Inventry Item
