@@ -980,9 +980,8 @@ bool ActionStreamVideo::execute() {
 		// TODO: Enable once AC3 support is implemented
 		if (!_engine->getSearchManager()->hasFile(_fileName))	// Check for the regular video
 			return true;
-		warning("The hires videos of the DVD version of ZGI aren't supported yet, using lowres");
-		//_fileName = hiresFileName;
-		//switchToHires = true;
+		_fileName = hiresFileName;
+		switchToHires = true;
 	} else if (!_engine->getSearchManager()->hasFile(_fileName))
 		return true;
 #else
