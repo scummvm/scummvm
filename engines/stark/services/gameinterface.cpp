@@ -88,12 +88,15 @@ void GameInterface::scrollLocation(int32 dX, int32 dY) {
 void GameInterface::walkTo(const Common::Point &mouse) {
 	Resources::Floor *floor = StarkGlobal->getCurrent()->getFloor();
 	Resources::MeshItem *april = StarkGlobal->getCurrent()->getInteractive();
+	if (!floor || !april) {
+		return;
+	}
 
 	Math::Ray mouseRay = StarkScene->makeRayFromMouse(mouse);
 
 	Math::Vector3d intersection;
 	int32 floorFace = floor->findFaceHitByRay(mouseRay, intersection);
-	if (april && floorFace >= 0) {
+	if (floorFace >= 0) {
 		// TODO: Complete, for now we just teleport to the target location
 		april->setPosition3D(intersection);
 		april->setFloorFaceIndex(floorFace);
