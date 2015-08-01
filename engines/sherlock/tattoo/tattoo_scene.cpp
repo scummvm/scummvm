@@ -748,21 +748,21 @@ int TattooScene::findBgShape(const Common::Point &pt) {
 		// New frame hasn't been drawn yet
 		return -1;
 
-
-	for (int idx = (int)_bgShapes.size() - 1; idx >= 0; --idx) {
+	int result = -1;
+	for (int idx = (int)_bgShapes.size() - 1; idx >= 0 && result == -1; --idx) {
 		Object &o = _bgShapes[idx];
 
 		if (o._type != INVALID && o._type != NO_SHAPE && o._type != HIDDEN && 
 				(o._aType <= PERSON || (ui._menuMode == LAB_MODE && o._aType == SOLID))) {
 			if (o.getNewBounds().contains(pt))
-				return idx;
+				result = idx;
 		} else if (o._type == NO_SHAPE) {
 			if (o.getNoShapeBounds().contains(pt))
-				return idx;
+				result = idx;
 		}
 	}
 
-	// If no shape found, so check whether a character is highlighted
+	// Now check for the mouse being over an NPC. If so, it overrides any found bg object
 	for (int idx = 1; idx < MAX_CHARACTERS; ++idx) {
 		Person &person = people[idx];
 
@@ -778,11 +778,11 @@ int TattooScene::findBgShape(const Common::Point &pt) {
 				- charRect.height());
 
 			if (charRect.contains(pt))
-				return 1000 + idx;
+				result = 1000 + idx;
 		}
 	}
 
-	return -1;
+	return result;
 }
 
 void TattooScene::synchronize(Serializer &s) {
