@@ -971,7 +971,14 @@ void TattooPerson::synchronize(Serializer &s) {
 	s.syncAsSint32LE(_position.x);
 	s.syncAsSint32LE(_position.y);
 	s.syncAsSint16LE(_sequenceNumber);
-	s.syncAsSint16LE(_type);
+
+	if (s.isSaving()) {
+		SpriteType type = (_type == INVALID && _walkLoaded) ? HIDDEN_CHARACTER : _type;
+		s.syncAsSint16LE(type);
+	} else {
+		s.syncAsSint16LE(_type);
+	}
+
 	s.syncString(_walkVGSName);
 	s.syncString(_description);
 	s.syncString(_examine);
