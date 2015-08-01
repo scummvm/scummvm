@@ -180,8 +180,8 @@ void WidgetInventoryTooltip::handleEvents() {
 			}
 		}
 	} else {
-		Common::Rect r = _owner->_bounds;
-		r.grow(-3);
+		const Common::Rect &b = _owner->_bounds;
+		Common::Rect r(b.left + 3, b.top + 3, b.right - 3 - BUTTON_SIZE, b.bottom - 3);
 
 		if (r.contains(mousePos)) {
 			select = (mousePos.x - r.left) / (INVENTORY_XSIZE + 3) + NUM_INVENTORY_SHOWN / 2 *
