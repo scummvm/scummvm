@@ -94,6 +94,11 @@ bool Anim::isInUse() {
 	return _refCount > 0;
 }
 
+int Anim::getPointHotspotIndex(const Common::Point &point) const {
+	// Most anim types only have one hotspot
+	return 0;
+}
+
 void Anim::printData() {
 	debug("usage: %d", _usage);
 	debug("numFrames: %d", _numFrames);
@@ -141,7 +146,7 @@ void AnimImages::printData() {
 	debug("field_3C: %f", _field_3C);
 }
 
-int AnimImages::indexForPoint(const Common::Point &point) const {
+int AnimImages::getPointHotspotIndex(const Common::Point &point) const {
 	if (_currentFrameImage) {
 		return _currentFrameImage->indexForPoint(point);
 	}
@@ -223,7 +228,7 @@ Visual *AnimVideo::getVisual() {
 
 void AnimVideo::updateSmackerPosition() {
 	int frame = _smacker->getFrameNumber();
-	if (frame != -1 && frame < _positions.size()) {
+	if (frame != -1 && frame < (int) _positions.size()) {
 		_smacker->setPosition(_positions[frame]);
 	}
 }
@@ -288,11 +293,6 @@ void AnimSkeleton::removeFromItem(Item *item) {
 
 Visual *AnimSkeleton::getVisual() {
 	return _visual;
-}
-
-int AnimSkeleton::indexForPoint(const Common::Point &point) const {
-	// Skeleton anims only have one hotspot
-	return 0;
 }
 
 void AnimSkeleton::readData(Formats::XRCReadStream *stream) {

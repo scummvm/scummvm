@@ -49,7 +49,8 @@ public:
 	int getHeight() const;
 
 	int getFrameNumber() const;
-	void setPosition(Common::Point pos) { _position = pos; }
+	Common::Point getPosition() const { return _position; }
+	void setPosition(const Common::Point &pos) { _position = pos; }
 private:
 	Video::SmackerDecoder *_smacker;
 

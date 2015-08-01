@@ -193,7 +193,7 @@ int ItemVisual::getHotspotIndexForPoint(const Common::Point &point) {
 	// TODO: This breaks rather weirdly on subtype 6 and 10
 	Anim *anim = getAnim();
 	if (anim) {
-		return anim->indexForPoint(point);
+		return anim->getPointHotspotIndex(point);
 	}
 	return -1;
 }
@@ -518,8 +518,8 @@ void FloorPositionedImageItem::readData(Formats::XRCReadStream *stream) {
 Gfx::RenderEntry *FloorPositionedImageItem::getRenderEntry(const Common::Point &positionOffset) {
 	if (_enabled) {
 		Visual *visual = getVisual();
-
 		_renderEntry->setVisual(visual);
+
 		if (getAnim() && getAnim()->getSubType() == Anim::kAnimVideo) {
 			// AnimVideos override the _position, but still need to move according to scroll-offsets
 			_renderEntry->setPosition(positionOffset);
@@ -558,9 +558,14 @@ void ImageItem::readData(Formats::XRCReadStream *stream) {
 Gfx::RenderEntry *ImageItem::getRenderEntry(const Common::Point &positionOffset) {
 	if (_enabled) {
 		Visual *visual = getVisual();
-
 		_renderEntry->setVisual(visual);
-		_renderEntry->setPosition(_position - positionOffset);
+
+		if (getAnim() && getAnim()->getSubType() == Anim::kAnimVideo) {
+			// AnimVideos override the _position, but still need to move according to scroll-offsets
+			_renderEntry->setPosition(positionOffset);
+		} else {
+			_renderEntry->setPosition(_position - positionOffset);
+		}
 	} else {
 		_renderEntry->setVisual(nullptr);
 	}

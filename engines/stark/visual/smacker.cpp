@@ -61,8 +61,8 @@ void VisualSmacker::load(Common::SeekableReadStream *stream) {
 }
 
 void VisualSmacker::render(const Common::Point &position) {
-	// TODO: Do we actually use the position argument in any case?
-	_gfx->drawSurface(_texture, _position - position);
+	// The position argument contains the scroll offset
+	_gfx->drawSurface(_texture, _position );
 }
 
 void VisualSmacker::update(uint32 delta) {

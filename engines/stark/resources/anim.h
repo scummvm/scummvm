@@ -105,7 +105,8 @@ public:
 	/** Obtain the purpose of this anim */
 	uint32 getUsage() const;
 
-	virtual int indexForPoint(const Common::Point &point) const { return -1; }
+	/** Return the hotspot index for a point given in relative coordinates */
+	virtual int getPointHotspotIndex(const Common::Point &point) const;
 protected:
 	virtual void printData() override;
 
@@ -130,7 +131,7 @@ public:
 	// Anim API
 	void selectFrame(uint32 frameIndex) override;
 	Visual *getVisual() override;
-	int indexForPoint(const Common::Point &point) const override;
+	int getPointHotspotIndex(const Common::Point &point) const override;
 
 protected:
 	void printData() override;
@@ -208,7 +209,6 @@ public:
 	void applyToItem(Item *item) override;
 	void removeFromItem(Item *item) override;
 	Visual *getVisual() override;
-	int indexForPoint(const Common::Point &point) const override;
 
 protected:
 	void printData() override;
