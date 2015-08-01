@@ -31,6 +31,10 @@ namespace Video {
 	class SmackerDecoder;
 }
 
+namespace Graphics {
+struct Surface;
+}
+
 namespace Stark {
 
 class VisualSmacker : public Visual {
@@ -45,6 +49,9 @@ public:
 	void render(const Common::Point &position);
 	bool isDone();
 
+	/** Perform a transparency hit test on a point */
+	bool isPointSolid(const Common::Point &point) const;
+
 	int getWidth() const;
 	int getHeight() const;
 
@@ -53,6 +60,7 @@ public:
 	void setPosition(const Common::Point &pos) { _position = pos; }
 private:
 	Video::SmackerDecoder *_smacker;
+	const Graphics::Surface *_surface;
 
 	Common::Point _position;
 	Gfx::Driver *_gfx;

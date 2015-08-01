@@ -37,6 +37,7 @@ namespace Stark {
 VisualSmacker::VisualSmacker(Gfx::Driver *gfx) :
 		Visual(TYPE),
 		_gfx(gfx),
+		_surface(nullptr),
 		_texture(nullptr),
 		_smacker(nullptr),
 		_position(0, 0) {
@@ -72,18 +73,18 @@ void VisualSmacker::update() {
 	}
 
 	if (_smacker->needsUpdate()) {
-		const Graphics::Surface *surface = _smacker->decodeNextFrame();
+		_surface = _smacker->decodeNextFrame();
 		const byte *palette = _smacker->getPalette();
 
 		// Convert the surface to RGBA
 		Graphics::Surface *convertedSurface = new Graphics::Surface();
-		convertedSurface->create(surface->w, surface->h, Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
+		convertedSurface->create(_surface->w, _surface->h, Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
 
-		for (int y = 0; y < surface->h; y++) {
-			const byte *srcRow = (const byte *)surface->getBasePtr(0, y);
+		for (int y = 0; y < _surface->h; y++) {
+			const byte *srcRow = (const byte *)_surface->getBasePtr(0, y);
 			uint32 *dstRow = (uint32 *)convertedSurface->getBasePtr(0, y);
 
-			for (int x = 0; x < surface->w; x++) {
+			for (int x = 0; x < _surface->w; x++) {
 				byte index = *srcRow++;
 
 				byte r = palette[index * 3];
@@ -103,8 +104,23 @@ void VisualSmacker::update() {
 
 		convertedSurface->free();
 		delete convertedSurface;
-
 	}
+}
+
+bool VisualSmacker::isPointSolid(const Common::Point &point) const {
+	if (!_smacker || !_surface) {
+		return false;
+	}
+
+	const byte *ptr = (const byte *)_surface->getBasePtr(point.x, point.y);
+	const byte *palette = _smacker->getPalette();
+
+	byte r = palette[*ptr * 3];
+	byte g = palette[*ptr * 3 + 1];
+	byte b = palette[*ptr * 3 + 2];
+
+	// Cyan is the transparent color
+	return r != 0x00 || g != 0xFF || b != 0xFF;
 }
 
 int VisualSmacker::getFrameNumber() const {

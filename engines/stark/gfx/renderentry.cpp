@@ -113,9 +113,9 @@ bool RenderEntry::containsPoint(const Common::Point &position, Common::Point &re
 		Common::Rect smackerRect = Common::Rect(smacker->getWidth(), smacker->getHeight());
 		smackerRect.translate(smackerPosition.x, smackerPosition.y);
 
-		if (smackerRect.contains(position)) {
-			relativePosition.x = position.x - smackerRect.left;
-			relativePosition.y = position.y - smackerRect.top;
+		relativePosition.x = position.x - smackerRect.left;
+		relativePosition.y = position.y - smackerRect.top;
+		if (smackerRect.contains(position) && smacker->isPointSolid(relativePosition)) {
 			return true;
 		}
 	}
