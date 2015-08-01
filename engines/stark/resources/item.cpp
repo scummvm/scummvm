@@ -98,7 +98,7 @@ Item *Item::getSceneInstance() {
 }
 
 Common::String Item::getHotspotTitle(uint32 hotspotIndex) const {
-	PATTable *table = findChildWithIndex<PATTable>(hotspotIndex);
+	PATTable *table = findChildWithOrder<PATTable>(hotspotIndex);
 	if (table) {
 		return table->getName();
 	} else {
@@ -199,12 +199,12 @@ int ItemVisual::getHotspotIndexForPoint(const Common::Point &point) {
 }
 
 bool ItemVisual::canPerformAction(uint32 action, uint32 hotspotIndex) {
-	PATTable *table = findChildWithIndex<PATTable>(hotspotIndex);
+	PATTable *table = findChildWithOrder<PATTable>(hotspotIndex);
 	return table && table->canPerformAction(action);
 }
 
 bool ItemVisual::doAction(uint32 action, uint32 hotspotIndex) {
-	PATTable *table = findChildWithIndex<PATTable>(hotspotIndex);
+	PATTable *table = findChildWithOrder<PATTable>(hotspotIndex);
 	if (table && table->canPerformAction(action)) {
 		return table->runScriptForAction(action);
 	}

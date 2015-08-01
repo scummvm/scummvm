@@ -179,7 +179,7 @@ void Object::print(uint depth) {
 	for (uint i = 0; i < depth; i++) {
 		description += "-";
 	}
-	description += Common::String::format(" %s - %s - (sub=%d, order=%d)", type.c_str(), _name.c_str(), _subType, _index);
+	description += Common::String::format(" %s - %s - (sub=%d, index=%d)", type.c_str(), _name.c_str(), _subType, _index);
 
 	// Print the resource description
 	debug("%s ", description.c_str());
@@ -200,6 +200,22 @@ Object *Object::findChildWithIndex(Type type, uint16 index, int subType) const {
 				&& _children[i]->getIndex() == index) {
 			// Found a matching child
 			return _children[i];
+		}
+	}
+
+	return nullptr;
+}
+
+Object *Object::findChildWithOrder(Type type, uint16 order, int subType) const {
+	uint16 count = 0;
+	for (uint i = 0; i < _children.size(); i++) {
+		if (_children[i]->getType() == type
+		    && (_children[i]->getSubType() == subType || subType == -1)) {
+			if (count == order) {
+				// Found a matching child
+				return _children[i];
+			}
+			count++;
 		}
 	}
 

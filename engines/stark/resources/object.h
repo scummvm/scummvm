@@ -223,6 +223,9 @@ public:
 	/** Find a child resource matching the specified type, index and subtype */
 	Object *findChildWithIndex(Type type, uint16 index, int subType = -1) const;
 
+	/** Find a child resource matching the specified type, order in the children list and subtype */
+	Object *findChildWithOrder(Type type, uint16 order, int subType = -1) const;
+
 	/** Find a child matching the template parameter type */
 	template<class T>
 	T *findChild(bool mustBeUnique = true);
@@ -234,6 +237,10 @@ public:
 	/** Find a child matching the template parameter type and the specified index */
 	template<class T>
 	T *findChildWithIndex(uint16 index, int subType = -1) const;
+
+	/** Find a child matching the template parameter type, order in the children list and subtype */
+	template<class T>
+	T *findChildWithOrder(uint16 order, int subType = -1) const;
 
 	/** List children matching the template parameter type and the specified subtype */
 	template<class T>
@@ -365,6 +372,11 @@ T *Object::findChildWithSubtype(int subType, bool mustBeUnique) {
 template <class T>
 T *Object::findChildWithIndex(uint16 index, int subType) const {
 	return Object::cast<T>(findChildWithIndex(T::TYPE, index, subType));
+}
+
+template <class T>
+T *Object::findChildWithOrder(uint16 order, int subType) const {
+	return Object::cast<T>(findChildWithOrder(T::TYPE, order, subType));
 }
 
 } // End of namespace Resources

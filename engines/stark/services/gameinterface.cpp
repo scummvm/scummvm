@@ -143,8 +143,12 @@ bool GameInterface::itemHasActionAt(Resources::ItemVisual *item, const Common::P
 
 int32 GameInterface::itemGetDefaultActionAt(Resources::ItemVisual *item, const Common::Point &position) {
 	int32 hotspotIndex = item->getHotspotIndexForPoint(position);
-	Resources::PATTable *table = item->findChildWithIndex<Resources::PATTable>(hotspotIndex);
-	return table->getDefaultAction();
+	Resources::PATTable *table = item->findChildWithOrder<Resources::PATTable>(hotspotIndex);
+	if (table) {
+		return table->getDefaultAction();
+	} else {
+		return -1;
+	}
 }
 
 void GameInterface::itemDoAction(Resources::ItemVisual *item, uint32 action) {
@@ -166,8 +170,12 @@ Resources::ActionArray GameInterface::listActionsPossibleForObject(Resources::It
 		return Resources::ActionArray();
 	}
 
-	Resources::PATTable *table = item->findChildWithIndex<Resources::PATTable>(0);
-	return table->listPossibleActions();
+	Resources::PATTable *table = item->findChildWithOrder<Resources::PATTable>(0);
+	if (table) {
+		return table->listPossibleActions();
+	} else {
+		return Resources::ActionArray();
+	}
 }
 
 Resources::ActionArray GameInterface::listActionsPossibleForObjectAt(Resources::ItemVisual *item,
@@ -182,8 +190,12 @@ Resources::ActionArray GameInterface::listActionsPossibleForObjectAt(Resources::
 		return Resources::ActionArray();
 	}
 
-	Resources::PATTable *table = item->findChildWithIndex<Resources::PATTable>(index);
-	return table->listPossibleActions();
+	Resources::PATTable *table = item->findChildWithOrder<Resources::PATTable>(index);
+	if (table) {
+		return table->listPossibleActions();
+	} else {
+		return Resources::ActionArray();
+	}
 }
 
 Resources::ActionArray GameInterface::listStockActionsPossibleForObject(Resources::ItemVisual *item) {
