@@ -422,16 +422,16 @@ int Darts::doPowerBar(const Common::Point &pt, byte color, int goToPower, bool i
 	return MIN(idx * 100 / DARTBARSIZE, 100);
 }
 
-bool Darts::dartHit() {
+int Darts::dartHit() {
 	Events &events = *_vm->_events;
 
 	// Process pending events
 	events.pollEventsAndWait();
 
 	if (events.kbHit()) {
-		// Key was pressed, so discard it and return true
-		events.clearKeyboard();
-		return true;
+		// Key was pressed, so return it
+		Common::KeyState keyState = events.getKey();
+		return keyState.keycode;
 	}
 
 	_oldDartButtons = events._pressed;

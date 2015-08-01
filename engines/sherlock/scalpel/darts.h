@@ -97,7 +97,7 @@ private:
 	/**
 	 * Returns true if a mouse button or key is pressed.
 	 */
-	bool dartHit();
+	int dartHit();
 	
 	/**
 	 * Return the score of the given location on the dart-board
