@@ -397,6 +397,10 @@ void BaseObject::setObjSequence(int seq, bool wait) {
 	Scene &scene = *_vm->_scene;
 	int checkFrame = _allow ? MAX_FRAME : FRAMES_END;
 
+	if (IS_ROSE_TATTOO && (seq == -1 || seq == 255))
+		// This means goto beginning
+		seq = 0;
+
 	if (seq >= 128) {
 		// Loop the sequence until the count exceeded
 		seq -= 128;
