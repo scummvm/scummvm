@@ -41,7 +41,7 @@ public:
 	virtual ~VisualSmacker();
 
 	void load(Common::SeekableReadStream *stream);
-	void update(uint32 delta);
+	void update();
 	void render(const Common::Point &position);
 	bool isDone();
 

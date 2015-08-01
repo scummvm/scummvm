@@ -218,7 +218,7 @@ void AnimVideo::onGameLoop() {
 		return;
 	}
 
-	_smacker->update(StarkGlobal->getMillisecondsPerGameloop());
+	_smacker->update();
 	updateSmackerPosition();
 }
 

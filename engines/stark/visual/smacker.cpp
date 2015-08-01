@@ -57,7 +57,7 @@ void VisualSmacker::load(Common::SeekableReadStream *stream) {
 
 	_texture = _gfx->createTexture();
 
-	update(0);
+	update();
 }
 
 void VisualSmacker::render(const Common::Point &position) {
@@ -65,7 +65,7 @@ void VisualSmacker::render(const Common::Point &position) {
 	_gfx->drawSurface(_texture, _position );
 }
 
-void VisualSmacker::update(uint32 delta) {
+void VisualSmacker::update() {
 	if (_smacker->endOfVideo()) {
 		_smacker->rewind();
 		_smacker->start();
