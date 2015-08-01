@@ -23,9 +23,15 @@
 #ifndef VIDEO_MPEGPS_DECODER_H
 #define VIDEO_MPEGPS_DECODER_H
 
+#include "common/inttypes.h"
 #include "common/hashmap.h"
 #include "graphics/surface.h"
 #include "video/video_decoder.h"
+
+#ifdef USE_A52
+extern "C" {
+#include <a52dec/a52.h>
+}
 
 namespace Audio {
 class PacketizedAudioStream;
@@ -124,6 +130,29 @@ private:
 
 	private:
 		Audio::PacketizedAudioStream *_audStream;
+	};
+#endif
+
+#ifdef USE_A52
+	class AC3AudioTrack : public AudioTrack, public MPEGStream {
+	public:
+		AC3AudioTrack(Common::SeekableReadStream *firstPacket);
+		~AC3AudioTrack();
+
+		bool sendPacket(Common::SeekableReadStream *packet, uint32 pts, uint32 dts);
+		StreamType getStreamType() const { return kStreamTypeAudio; }
+
+	protected:
+		Audio::AudioStream *getAudioStream() const;
+
+	private:
+		Audio::QueuingAudioStream *_audStream;
+		a52_state_t *_a52State;
+		int _sampleRate;
+		int _packetLength;
+
+		void initStream(Common::SeekableReadStream *packet);
+		void decodeAC3Data(Common::SeekableReadStream *packet);
 	};
 #endif
 

@@ -109,13 +109,22 @@ void MPEGPSDecoder::readNextPacket() {
 				packet->seek(0);
 
 				// TODO: Handling of these types (as needed)
-
+				bool handled = false;
 				const char *typeName;
 
 				switch (streamType) {
-				case kPrivateStreamAC3:
+				case kPrivateStreamAC3: {
 					typeName = "AC-3";
+
+#ifdef USE_A52
+					handled = true;
+					AC3AudioTrack *ac3Track = new AC3AudioTrack(packet);
+					stream = ac3Track;
+					_streamMap[startCode] = ac3Track;
+					addTrack(ac3Track);
+#endif
 					break;
+				}
 				case kPrivateStreamDTS:
 					typeName = "DTS";
 					break;
@@ -130,10 +139,12 @@ void MPEGPSDecoder::readNextPacket() {
 					break;
 				}
 
-				warning("Unhandled DVD private stream: %s", typeName);
+				if (!handled) {
+					warning("Unhandled DVD private stream: %s", typeName);
 
-				// Make it 0 so we don't get the warning twice
-				_streamMap[startCode] = 0;
+					// Make it 0 so we don't get the warning twice
+					_streamMap[startCode] = 0;
+				}
 			} else if (startCode >= 0x1E0 && startCode <= 0x1EF) {
 				// Video stream
 				// TODO: Multiple video streams
@@ -528,6 +539,99 @@ bool MPEGPSDecoder::MPEGAudioTrack::sendPacket(Common::SeekableReadStream *packe
 
 Audio::AudioStream *MPEGPSDecoder::MPEGAudioTrack::getAudioStream() const {
 	return _audStream;
+}
+
+#endif
+
+#ifdef USE_A52
+
+MPEGPSDecoder::AC3AudioTrack::AC3AudioTrack(Common::SeekableReadStream *firstPacket) {
+	// In theory, I should pass mm_accel() to a52_init(), but I don't know
+	// where that's supposed to be defined.
+	_a52State = a52_init(0);
+
+	initStream(firstPacket);
+	if (_sampleRate >= 0) {
+		_audStream = Audio::makeQueuingAudioStream(_sampleRate, true);
+		decodeAC3Data(firstPacket);
+	} else {
+		_audStream = 0;
+		firstPacket->seek(0);
+	}
+}
+
+MPEGPSDecoder::AC3AudioTrack::~AC3AudioTrack() {
+	delete _audStream;
+	a52_free(_a52State);
+}
+
+bool MPEGPSDecoder::AC3AudioTrack::sendPacket(Common::SeekableReadStream *packet, uint32 pts, uint32 dts) {
+	if (_audStream) {
+		initStream(packet);
+		decodeAC3Data(packet);
+	}
+	delete packet;
+	return true;
+}
+
+Audio::AudioStream *MPEGPSDecoder::AC3AudioTrack::getAudioStream() const {
+	return _audStream;
+}
+
+void MPEGPSDecoder::AC3AudioTrack::initStream(Common::SeekableReadStream *packet) {
+	byte buf[7];
+
+	_sampleRate = -1;
+
+	// Probably not very efficient, but hopefully we never do more than a
+	// few iterations of this loop.
+	for (uint i = 0; i < packet->size() - sizeof(buf); i++) {
+		int flags, bitRate;
+
+		packet->seek(i, SEEK_SET);
+		packet->read(buf, sizeof(buf));
+
+		_packetLength = a52_syncinfo(buf, &flags, &_sampleRate, &bitRate);
+
+		if (_packetLength > 0) {
+			break;
+		}
+	}
+}
+
+void MPEGPSDecoder::AC3AudioTrack::decodeAC3Data(Common::SeekableReadStream *packet) {
+	// This doesn't work since _packetLength is often longer than the,
+	// stream, which may go a long way towards explaining all the Valgrind
+	// errors I'm getting. Not to mention that the output sounds nothing
+	// at all like what I want.
+	byte *buf = new byte[_packetLength];
+	packet->read(buf, _packetLength);
+
+	int flags = A52_STEREO | A52_ADJUST_LEVEL;
+	sample_t level = 32767;
+	int bias = 0;
+
+	if (a52_frame(_a52State, buf, &flags, &level, bias) == 0) {
+		int16 *outputBuffer = (int16 *)malloc(6 * 512 * sizeof(int16));
+		int16 *outputPtr = outputBuffer;
+		int outputLength = 0;
+		for (int i = 0; i < 6; i++) {
+			if (a52_block(_a52State)) {
+				sample_t *samples = a52_samples(_a52State);
+				for (int j = 0; j < 256; j++) {
+					outputPtr[j * 2] = (int16)samples[j];
+					outputPtr[j * 2 + 1] = (int16)samples[256 + j];
+				}
+				outputPtr += 512;
+				outputLength += 1024;
+			}
+		}
+		if (outputLength > 0) {
+			_audStream->queueBuffer((byte *)outputBuffer, outputLength, DisposeAfterUse::YES, Audio::FLAG_STEREO);
+		}
+	}
+
+	delete[] buf;
 }
 
 #endif
