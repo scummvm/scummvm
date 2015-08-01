@@ -362,6 +362,9 @@ void TattooUserInterface::doScroll() {
 		if (screen._currentScroll.x < _targetScroll.x)
 			screen._currentScroll.x = _targetScroll.x;
 	}
+
+	// Reset the default look position to the center of the new screen area
+	_lookPos = screen._currentScroll + Common::Point(SHERLOCK_SCREEN_WIDTH / 2, SHERLOCK_SCREEN_HEIGHT / 2);
 }
 
 void TattooUserInterface::doStandardControl() {

@@ -1119,6 +1119,9 @@ void TattooPerson::centerScreenOnPerson() {
 	ui._targetScroll.x = CLIP(_position.x / FIXED_INT_MULTIPLIER - SHERLOCK_SCREEN_WIDTH / 2,
 		0, screen._backBuffer1.w() - SHERLOCK_SCREEN_WIDTH);
 	screen._currentScroll = ui._targetScroll;
+
+	// Reset the default look position to the center of the screen
+	ui._lookPos = screen._currentScroll + Common::Point(SHERLOCK_SCREEN_WIDTH / 2, SHERLOCK_SCREEN_HEIGHT / 2);
 }
 
 /*----------------------------------------------------------------*/
