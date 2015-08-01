@@ -84,7 +84,7 @@ bool TattooScene::loadScene(const Common::String &filename) {
 	}
 
 	// Set the NPC paths for the scene
-	setNPCPath(0);
+	setNPCPath(WATSON);
 
 	// Handle loading music for the scene
 	if (music._musicOn) {
@@ -724,7 +724,7 @@ void TattooScene::setNPCPath(int npc) {
 		return;
 
 	people[npc].clearNPC();
-	people[npc]._name = Common::String::format("WATS%.2dA", _currentScene);
+	people[npc]._npcName = Common::String::format("WATS%.2dA", _currentScene);
 
 	// If we're in the middle of a script that will continue once the scene is loaded,
 	// return without calling the path script
