@@ -98,8 +98,8 @@ SavedNPCPath::SavedNPCPath() {
 	_lookHolmes = false;
 }
 
-SavedNPCPath::SavedNPCPath(byte path[MAX_NPC_PATH], int npcIndex, int npcPause, const Common::Point &walkDest,
-	int npcFacing, bool lookHolmes) : _npcIndex(npcIndex), _npcPause(npcPause), _walkDest(walkDest),
+SavedNPCPath::SavedNPCPath(byte path[MAX_NPC_PATH], int npcIndex, int npcPause, const Point32 &position,
+	int npcFacing, bool lookHolmes) : _npcIndex(npcIndex), _npcPause(npcPause), _position(position),
 		_npcFacing(npcFacing), _lookHolmes(lookHolmes) {
 	Common::copy(&path[0], &path[MAX_NPC_PATH], &_path[0]);
 }
@@ -847,13 +847,12 @@ void TattooPerson::pullNPCPath() {
 
 	// Handle the first case if the NPC was paused
 	if (_npcPause) {
-		_walkDest = Common::Point(path._walkDest.x / FIXED_INT_MULTIPLIER, path._walkDest.y / FIXED_INT_MULTIPLIER);
 		_npcFacing = path._npcFacing;
 		_lookHolmes = path._lookHolmes;
 
-		// See if the NPC was moved
-		if (_walkDest.x != (_position.x / FIXED_INT_MULTIPLIER) ||
-				_walkDest.y != (_position.y / FIXED_INT_MULTIPLIER)) {
+		// See if the NPC has moved from where they originally were
+		if (path._position != _position) {
+			_walkDest = Point32(path._position.x / FIXED_INT_MULTIPLIER, path._position.y / FIXED_INT_MULTIPLIER);
 			goAllTheWay();
 			_npcPause = 0;
 			_npcIndex -= 3;

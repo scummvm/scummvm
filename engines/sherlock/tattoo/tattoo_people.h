@@ -88,12 +88,12 @@ struct SavedNPCPath {
 	byte _path[MAX_NPC_PATH];
 	int _npcIndex;
 	int _npcPause;
-	Common::Point _walkDest;
+	Point32 _position;
 	int _npcFacing;
 	bool _lookHolmes;
 
 	SavedNPCPath();
-	SavedNPCPath(byte path[MAX_NPC_PATH], int npcIndex, int npcPause, const Common::Point &walkDest,
+	SavedNPCPath(byte path[MAX_NPC_PATH], int npcIndex, int npcPause, const Point32 &position,
 		int npcFacing, bool lookHolmes);
 };
 
