@@ -23,22 +23,56 @@
 #ifndef SHERLOCK_TATTOO_HANGMAN_H
 #define SHERLOCK_TATTOO_HANGMAN_H
 
+#include "sherlock/tattoo/widget_base.h"
+#include "sherlock/image_file.h"
+
 namespace Sherlock {
 
 namespace Tattoo {
 
 class TattooEngine;
 
-class WidgetHangman {
+class WidgetHangman: public WidgetBase {
 private:
-	TattooEngine *_vm;
+	ImageFile *_images;
+	Common::Point _lines[3];
+	char _answers[3][10];
+	const char *_solutions[3];
+	int _numWide;
+	int _spacing;
+	Common::Point _cursorPos;
+	int _blinkCounter;
+	bool _blinkFlag;
+	int _lineNum, _charNum;
+	bool _solved;
+
+	/**
+	 * Handle keyboard events
+	 */
+	void handleKeyboardEvents();
+
+	/**
+	 * Restore the background for the current line/horiz position
+	 */
+	void restoreChar();
 public:
-	WidgetHangman(TattooEngine *vm) : _vm(vm) {}
+	WidgetHangman(TattooEngine *vm);
+	virtual ~WidgetHangman();
 
 	/**
 	 * Show the hangman puzzle
 	 */
 	void show();
+
+	/**
+	 * Close the window
+	 */
+	void close();
+
+	/**
+	* Handle events whilst the widget is on-screen
+	*/
+	virtual void handleEvents();
 };
 
 } // End of namespace Tattoo

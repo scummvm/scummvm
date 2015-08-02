@@ -928,6 +928,7 @@ int Talk::waitForMore(int delay) {
 			events._released = true;
 		} else {
 			// See if there's been a button press
+			events.pollEventsAndWait();
 			events.setButtonState();
 
 			if (events.kbHit()) {
