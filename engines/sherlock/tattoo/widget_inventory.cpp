@@ -393,7 +393,7 @@ void WidgetInventoryVerbs::handleEvents() {
 			bool doFoolscap = !inv[_owner->_invSelect]._name.compareToIgnoreCase(FIXED(Inv6)) &&
 				!_inventCommands[_invVerbSelect].compareToIgnoreCase(FIXED(Solve));
 			doFoolscap |= (!inv[_owner->_invSelect]._name.compareToIgnoreCase(FIXED(Inv6)) || !inv[_owner->_invSelect]._name.compareToIgnoreCase(FIXED(Inv7)))
-				&& _inventCommands[_invVerbSelect].compareToIgnoreCase(FIXED(Look)) && vm.readFlags(299);
+				&& !_inventCommands[_invVerbSelect].compareToIgnoreCase(FIXED(Look)) && vm.readFlags(299);
 
 			if (doFoolscap) {
 				// Close the entire Inventory and return to Standard Mode
