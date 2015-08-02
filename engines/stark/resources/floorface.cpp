@@ -129,6 +129,19 @@ float FloorFace::getDistanceFromCamera() const {
 	return _distanceFromCamera;
 }
 
+int16 FloorFace::getVertexIndex(int32 index) const {
+	assert(index < 3);
+	return _indices[index];
+}
+
+void FloorFace::addEdge(FloorEdge *edge) {
+	_edges.push_back(edge);
+}
+
+Common::Array<FloorEdge *> FloorFace::getEdges() const {
+	return _edges;
+}
+
 void FloorFace::readData(Formats::XRCReadStream *stream) {
 	for (uint i = 0; i < ARRAYSIZE(_indices); i++) {
 		_indices[i] = stream->readSint16LE();

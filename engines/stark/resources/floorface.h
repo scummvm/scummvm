@@ -39,6 +39,8 @@ class XRCReadStream;
 
 namespace Resources {
 
+class FloorEdge;
+
 /**
  * A floor face is a 3D triangle used to build the floor
  */
@@ -71,12 +73,23 @@ public:
 	/** Obtain the distance to the camera */
 	float getDistanceFromCamera() const;
 
+	/** Get one of the three vertex indices from the face */
+	int16 getVertexIndex(int32 index) const;
+
+	/** Add an edge to the triangle edge list */
+	void addEdge(FloorEdge *edge);
+
+	/** Get the triangle's edge list */
+	Common::Array<FloorEdge *> getEdges() const;
+
 protected:
 	void readData(Formats::XRCReadStream *stream) override;
 	void printData() override;
 
 	int16 _indices[3];
 	Math::Vector3d _vertices[3];
+
+	Common::Array<FloorEdge *> _edges; // Owned by Floor
 
 	float _distanceFromCamera;
 	float _unk2;

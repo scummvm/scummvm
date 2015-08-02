@@ -38,8 +38,8 @@ Floor::Floor(Object *parent, byte subType, uint16 index, const Common::String &n
 Floor::~Floor() {
 }
 
-Math::Vector3d Floor::getVertex(uint32 indice) const {
-	return _vertices[indice];
+Math::Vector3d Floor::getVertex(uint32 index) const {
+	return _vertices[index];
 }
 
 int32 Floor::findFaceContainingPoint(const Math::Vector3d &point) const {
@@ -72,11 +72,15 @@ float Floor::getDistanceFromCamera(uint32 faceIndex) const {
 	return face->getDistanceFromCamera();
 }
 
+FloorFace *Floor::getFace(uint32 index) const {
+	return _faces[index];
+}
+
 void Floor::readData(Formats::XRCReadStream *stream) {
 	_facesCount = stream->readUint32LE();
-	uint32 positionsCount = stream->readUint32LE();
+	uint32 vertexCount = stream->readUint32LE();
 
-	for (uint i = 0; i < positionsCount; i++) {
+	for (uint i = 0; i < vertexCount; i++) {
 		Math::Vector3d v = stream->readVector3();
 		_vertices.push_back(v);
 	}
@@ -86,6 +90,56 @@ void Floor::onAllLoaded() {
 	Object::onAllLoaded();
 
 	_faces = listChildren<FloorFace>();
+
+	buildEdgeList();
+}
+
+void Floor::buildEdgeList() {
+	_edges.clear();
+
+	// Add the triangle edges from all our faces
+	for (uint i = 0; i < _faces.size(); i++) {
+		addFaceEdgeToList(i, 2, 0);
+		addFaceEdgeToList(i, 0, 1);
+		addFaceEdgeToList(i, 1, 2);
+	}
+
+	// Add the edges to their faces
+	for (uint i = 0; i < _edges.size(); i++) {
+		int32 faceIndex1 = _edges[i].getFaceIndex1();
+		int32 faceIndex2 = _edges[i].getFaceIndex2();
+
+		if (faceIndex1 >= 0) {
+			_faces[faceIndex1]->addEdge(&_edges[i]);
+		}
+
+		if (faceIndex2 >= 0) {
+			_faces[faceIndex2]->addEdge(&_edges[i]);
+		}
+	}
+
+	// Build a list of neighbours for each edge
+	for (uint i = 0; i < _edges.size(); i++) {
+		_edges[i].buildNeighbours(this);
+		_edges[i].computeMiddle(this);
+	}
+}
+
+void Floor::addFaceEdgeToList(uint32 faceIndex, uint32 index1, uint32 index2) {
+	uint32 vertexIndex1 = _faces[faceIndex]->getVertexIndex(index1);
+	uint32 vertexIndex2 = _faces[faceIndex]->getVertexIndex(index2);
+	uint32 startIndex = MIN(vertexIndex1, vertexIndex2);
+	uint32 endIndex = MAX(vertexIndex1, vertexIndex2);
+
+	// Check if we already have an edge with the same vertices
+	for (uint i = 0; i < _edges.size(); i++) {
+		if (_edges[i].hasVertices(startIndex, endIndex)) {
+			_edges[i].setOtherFace(faceIndex);
+			return;
+		}
+	}
+
+	_edges.push_back(FloorEdge(startIndex, endIndex, faceIndex));
 }
 
 void Floor::printData() {
@@ -95,6 +149,56 @@ void Floor::printData() {
 	for (uint i = 0; i < _vertices.size(); i++) {
 		debug << i << ": " << _vertices[i] << "\n";
 	}
+}
+
+FloorEdge::FloorEdge(uint16 vertexIndex1, uint16 vertexIndex2, uint32 faceIndex1) :
+        _vertexIndex1(vertexIndex1),
+        _vertexIndex2(vertexIndex2),
+        _faceIndex1(faceIndex1),
+        _faceIndex2(-1) {
+}
+
+bool FloorEdge::hasVertices(uint16 vertexIndex1, uint16 vertexIndex2) const {
+	return _vertexIndex1 == vertexIndex1 && _vertexIndex2 == vertexIndex2;
+}
+
+void FloorEdge::setOtherFace(uint32 faceIndex) {
+	_faceIndex2 = faceIndex;
+}
+
+void FloorEdge::buildNeighbours(const Floor *floor) {
+	_neighbours.clear();
+
+	if (_faceIndex1 >= 0) {
+		addNeighboursFromFace(floor->getFace(_faceIndex1));
+	}
+
+	if (_faceIndex2 >= 0) {
+		addNeighboursFromFace(floor->getFace(_faceIndex2));
+	}
+}
+
+void FloorEdge::addNeighboursFromFace(const FloorFace *face) {
+	Common::Array<FloorEdge *> faceEdges = face->getEdges();
+	for (uint i = 0; i < faceEdges.size(); i++) {
+		if (faceEdges[i] != this) {
+			_neighbours.push_back(faceEdges[i]);
+		}
+	}
+}
+
+void FloorEdge::computeMiddle(const Floor *floor) {
+	Math::Vector3d vertex1 = floor->getVertex(_vertexIndex1);
+	Math::Vector3d vertex2 = floor->getVertex(_vertexIndex2);
+	_middle = (vertex1 + vertex2) / 2.0;
+}
+
+int32 FloorEdge::getFaceIndex1() const {
+	return _faceIndex1;
+}
+
+int32 FloorEdge::getFaceIndex2() const {
+	return _faceIndex2;
 }
 
 } // End of namespace Resources
