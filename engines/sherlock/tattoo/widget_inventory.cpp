@@ -407,7 +407,7 @@ void WidgetInventoryVerbs::handleEvents() {
 				ui._menuMode = scene._labTableScene ? LAB_MODE : STD_MODE;
 
 				scene.doBgAnim();
-				vm.doHangManPuzzle();
+				vm.doFoolscapPuzzle();
 			} else if (_invVerbSelect == 0) {
 				// They have released the mouse on the Look Verb command, so Look at the inventory item
 				ui._invLookFlag = true;
@@ -733,7 +733,7 @@ void WidgetInventory::handleEvents() {
 							ui._menuMode = scene._labTableScene ? LAB_MODE : STD_MODE;
 
 							scene.doBgAnim();
-							vm.doHangManPuzzle();
+							vm.doFoolscapPuzzle();
 						} else {
 							ui._invLookFlag = true;
 							inv.freeInv();

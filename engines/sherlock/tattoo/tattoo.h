@@ -25,7 +25,7 @@
 
 #include "sherlock/sherlock.h"
 #include "sherlock/tattoo/tattoo_darts.h"
-#include "sherlock/tattoo/widget_hangman.h"
+#include "sherlock/tattoo/widget_foolscap.h"
 
 namespace Sherlock {
 
@@ -55,7 +55,7 @@ enum {
 class TattooEngine : public SherlockEngine {
 private:
 	Darts _darts;
-	WidgetHangman _hangmanWidget;
+	WidgetFoolscap _foolscapWidget;
 
 	/**
 	 * Loads the initial palette for the game
@@ -93,9 +93,9 @@ public:
 	virtual ~TattooEngine();
 
 	/**
-	 * Shows the hangman puzzle
+	 * Shows the foolscap puzzle
 	 */
-	void doHangManPuzzle();
+	void doFoolscapPuzzle();
 
 	/**
 	 * Save the game configuration

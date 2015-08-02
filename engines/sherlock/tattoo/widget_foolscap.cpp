@@ -20,7 +20,7 @@
  *
  */
 
-#include "sherlock/tattoo/widget_hangman.h"
+#include "sherlock/tattoo/widget_foolscap.h"
 #include "sherlock/tattoo/tattoo_fixed_text.h"
 #include "sherlock/tattoo/tattoo_scene.h"
 #include "sherlock/tattoo/tattoo_user_interface.h"
@@ -30,7 +30,7 @@ namespace Sherlock {
 
 namespace Tattoo {
 
-WidgetHangman::WidgetHangman(TattooEngine *vm) : WidgetBase(vm) {
+WidgetFoolscap::WidgetFoolscap(TattooEngine *vm) : WidgetBase(vm) {
 	for (int idx = 0; idx < 3; ++idx)
 		Common::fill(&_answers[idx][0], &_answers[idx][10], 0);
 	_images = nullptr;
@@ -42,11 +42,11 @@ WidgetHangman::WidgetHangman(TattooEngine *vm) : WidgetBase(vm) {
 	_solved = false;
 }
 
-WidgetHangman::~WidgetHangman() {
+WidgetFoolscap::~WidgetFoolscap() {
 	delete _images;
 }
 
-void WidgetHangman::show() {
+void WidgetFoolscap::show() {
 	Screen &screen = *_vm->_screen;
 	TattooUserInterface &ui = *(TattooUserInterface *)_vm->_ui;
 
@@ -122,7 +122,7 @@ void WidgetHangman::show() {
 	ui._menuMode = FOOLSCAP_MODE;
 } 
 
-void WidgetHangman::handleEvents() {
+void WidgetFoolscap::handleEvents() {
 	Events &events = *_vm->_events;
 	Screen &screen = *_vm->_screen;
 	TattooUserInterface &ui = *(TattooUserInterface *)_vm->_ui;
@@ -174,7 +174,7 @@ void WidgetHangman::handleEvents() {
 	}
 }
 
-void WidgetHangman::handleKeyboardEvents() {
+void WidgetFoolscap::handleKeyboardEvents() {
 	Screen &screen = *_vm->_screen;
 	TattooUserInterface &ui = *(TattooUserInterface *)_vm->_ui;
 	Common::KeyState keyState = ui._keyState;
@@ -258,14 +258,14 @@ void WidgetHangman::handleKeyboardEvents() {
 	}
 }
 
-void WidgetHangman::restoreChar() {
+void WidgetFoolscap::restoreChar() {
 	Screen &screen = *_vm->_screen;
 	ImageFrame &bgFrame = (*_images)[0];
 	_surface.blitFrom(bgFrame, _cursorPos, Common::Rect(_cursorPos.x, _cursorPos.y,
 		_cursorPos.x + screen.widestChar(), _cursorPos.y + screen.fontHeight()));
 }
 
-void WidgetHangman::close() {
+void WidgetFoolscap::close() {
 	TattooScene &scene = *(TattooScene *)_vm->_scene;
 	Talk &talk = *_vm->_talk;
 	TattooUserInterface &ui = *(TattooUserInterface *)_vm->_ui;

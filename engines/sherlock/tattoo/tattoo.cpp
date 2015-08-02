@@ -35,7 +35,7 @@ namespace Sherlock {
 namespace Tattoo {
 
 TattooEngine::TattooEngine(OSystem *syst, const SherlockGameDescription *gameDesc) :
-		SherlockEngine(syst, gameDesc), _darts(this), _hangmanWidget(this) {
+		SherlockEngine(syst, gameDesc), _darts(this), _foolscapWidget(this) {
 	_runningProlog = false;
 	_fastMode = false;
 	_allowFastMode = true;
@@ -175,8 +175,8 @@ void TattooEngine::loadInventory() {
 	inv.push_back(InventoryItem(818, inv8, invDesc8, "_LANT02I"));
 }
 
-void TattooEngine::doHangManPuzzle() {
-	_hangmanWidget.show();
+void TattooEngine::doFoolscapPuzzle() {
+	_foolscapWidget.show();
 }
 
 void TattooEngine::loadConfig() {

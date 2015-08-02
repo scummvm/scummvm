@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef SHERLOCK_TATTOO_HANGMAN_H
-#define SHERLOCK_TATTOO_HANGMAN_H
+#ifndef SHERLOCK_TATTOO_FOOLSCAP_H
+#define SHERLOCK_TATTOO_FOOLSCAP_H
 
 #include "sherlock/tattoo/widget_base.h"
 #include "sherlock/image_file.h"
@@ -32,7 +32,7 @@ namespace Tattoo {
 
 class TattooEngine;
 
-class WidgetHangman: public WidgetBase {
+class WidgetFoolscap: public WidgetBase {
 private:
 	ImageFile *_images;
 	Common::Point _lines[3];
@@ -56,8 +56,8 @@ private:
 	 */
 	void restoreChar();
 public:
-	WidgetHangman(TattooEngine *vm);
-	virtual ~WidgetHangman();
+	WidgetFoolscap(TattooEngine *vm);
+	virtual ~WidgetFoolscap();
 
 	/**
 	 * Show the hangman puzzle

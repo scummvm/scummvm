@@ -35,7 +35,7 @@ MODULE_OBJS = \
 	tattoo/widget_base.o \
 	tattoo/widget_credits.o \
 	tattoo/widget_files.o \
-	tattoo/widget_hangman.o \
+	tattoo/widget_foolscap.o \
 	tattoo/widget_inventory.o \
 	tattoo/widget_lab.o \
 	tattoo/widget_options.o \
