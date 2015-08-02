@@ -191,7 +191,7 @@ void SherlockEngine::sceneLoop() {
 }
 
 void SherlockEngine::handleInput() {
-	_canLoadSave = _ui->_menuMode == STD_MODE;
+	_canLoadSave = _ui->_menuMode == STD_MODE || _ui->_menuMode == LAB_MODE;
 	_events->pollEventsAndWait();
 	_canLoadSave = false;
 
