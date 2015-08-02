@@ -60,7 +60,7 @@ public:
 	virtual ~WidgetFoolscap();
 
 	/**
-	 * Show the hangman puzzle
+	 * Show the foolscap puzzle
 	 */
 	void show();
 

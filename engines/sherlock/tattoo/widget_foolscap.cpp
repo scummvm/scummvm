@@ -107,12 +107,15 @@ void WidgetFoolscap::show() {
 	if (_vm->readFlags(299)) {
 		Common::Point cursorPos;
 		for (int line = 0; line < 3; ++line) {
-			cursorPos.y = _lines[_lineNum].y - screen.fontHeight() - 2;
+			cursorPos.y = _lines[line].y - screen.fontHeight() - 2;
 
-			for (uint idx = 0; idx < strlen(_solutions[_lineNum]); ++idx) {
-				cursorPos.x = _lines[_lineNum].x + 8 - screen.widestChar() / 2 + idx * _spacing;
-				screen.gPrint(Common::Point(cursorPos.x + screen.widestChar() / 2 -
-					screen.charWidth(_solutions[_lineNum][idx]) / 2, cursorPos.y), 0, "%c", _solutions[_lineNum][idx]);
+			for (uint idx = 0; idx < strlen(_solutions[line]); ++idx) {
+				cursorPos.x = _lines[line].x + 8 - screen.widestChar() / 2 + idx * _spacing;
+				char c = _solutions[line][idx];
+
+				Common::String str = Common::String::format("%c", c);
+				_surface.writeString(str, Common::Point(cursorPos.x + screen.widestChar() / 2
+					- screen.charWidth(c) / 2, cursorPos.y), 0);
 			}
 		}
 	}
@@ -253,7 +256,7 @@ void WidgetFoolscap::handleKeyboardEvents() {
 	// See if all of their anwers are correct
 	if (!scumm_stricmp(_answers[0], _solutions[0]) && !scumm_stricmp(_answers[1], _solutions[1])
 			&& !scumm_stricmp(_answers[2], _solutions[2])) {
-		_solved;
+		_solved = true;
 		close();
 	}
 }

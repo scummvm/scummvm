@@ -390,23 +390,20 @@ void WidgetInventoryVerbs::handleEvents() {
 			_outsideMenu = false;
 
 			// Check if they are trying to solve the Foolscap puzzle, or looking at the completed puzzle
-			bool doHangman = !inv[_owner->_invSelect]._name.compareToIgnoreCase(FIXED(Inv6)) &&
+			bool doFoolscap = !inv[_owner->_invSelect]._name.compareToIgnoreCase(FIXED(Inv6)) &&
 				!_inventCommands[_invVerbSelect].compareToIgnoreCase(FIXED(Solve));
-			doHangman |= (!inv[_owner->_invSelect]._name.compareToIgnoreCase(FIXED(Inv6)) || !inv[_owner->_invSelect]._name.compareToIgnoreCase(FIXED(Inv7)))
+			doFoolscap |= (!inv[_owner->_invSelect]._name.compareToIgnoreCase(FIXED(Inv6)) || !inv[_owner->_invSelect]._name.compareToIgnoreCase(FIXED(Inv7)))
 				&& _inventCommands[_invVerbSelect].compareToIgnoreCase(FIXED(Look)) && vm.readFlags(299);
 
-			if (doHangman) {
+			if (doFoolscap) {
 				// Close the entire Inventory and return to Standard Mode
 				_owner->_invVerbMode = 0;
 
 				_owner->_tooltipWidget.banishWindow();
+				_owner->banishWindow();
 				inv.freeInv();
 
 				events.clearEvents();
-				events.setCursor(ARROW);
-				ui._menuMode = scene._labTableScene ? LAB_MODE : STD_MODE;
-
-				scene.doBgAnim();
 				vm.doFoolscapPuzzle();
 			} else if (_invVerbSelect == 0) {
 				// They have released the mouse on the Look Verb command, so Look at the inventory item
