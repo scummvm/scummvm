@@ -526,7 +526,7 @@ void TattooPerson::walkToCoords(const Point32 &destPos, int destDir) {
 		people._allowWalkAbort = true;
 	} else {
 		// Clear the path Variables
-		_npcIndex = _npcPause;
+		_npcIndex = _npcPause = 0;
 		Common::fill(_npcPath, _npcPath + 100, 0);
 		_npcFacing = destDir;
 	}
