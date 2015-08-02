@@ -50,11 +50,6 @@ private:
 	void blitFrom(const Graphics::Surface &src);
 
 	/**
-	 * Draws a surface at a given position within this surface
-	 */
-	void blitFrom(const Graphics::Surface &src, const Common::Point &pt);
-
-	/**
 	 * Draws a sub-section of a surface at a given position within this surface
 	 */
 	void blitFrom(const Graphics::Surface &src, const Common::Point &pt, const Common::Rect &srcBounds);
@@ -111,6 +106,11 @@ public:
 	 * Copy a sub-area of a source image frame into this surface at a given position
 	 */
 	void blitFrom(const ImageFrame &src, const Common::Point &pt, const Common::Rect &srcBounds);
+
+	/**
+	 * Draws a surface at a given position within this surface
+	 */
+	void blitFrom(const Graphics::Surface &src, const Common::Point &pt);
 
 	/**
 	 * Draws an image frame at a given position within this surface with transparency
@@ -174,6 +174,7 @@ public:
 	inline byte *getPixels() { return (byte *)_surface.getPixels(); }
 	inline byte *getBasePtr(int x, int y) { return (byte *)_surface.getBasePtr(x, y); }
 	inline const byte *getBasePtr(int x, int y) const { return (const byte *)_surface.getBasePtr(x, y); }
+	inline Graphics::Surface &getRawSurface() { return _surface; }
 	inline void hLine(int x, int y, int x2, uint32 color) { _surface.hLine(x, y, x2, color); }
 	inline void vLine(int x, int y, int y2, uint32 color) { _surface.vLine(x, y, y2, color); }
 };
