@@ -43,6 +43,7 @@ class TattooTalk : public Talk {
 private:
 	WidgetTalk _talkWidget;
 
+	OpcodeReturn cmdCallTalkFile(const byte *&str);
 	OpcodeReturn cmdSwitchSpeaker(const byte *&str);
 	OpcodeReturn cmdMouseOnOff(const byte *&str);
 	OpcodeReturn cmdGotoScene(const byte *&str);

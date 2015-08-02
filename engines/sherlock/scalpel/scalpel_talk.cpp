@@ -839,6 +839,41 @@ void ScalpelTalk::showTalk() {
 	}
 }
 
+OpcodeReturn ScalpelTalk::cmdCallTalkFile(const byte *&str) {
+	Common::String tempString;
+
+	++str;
+	for (int idx = 0; idx < 8 && str[idx] != '~'; ++idx)
+		tempString += str[idx];
+	str += 8;
+
+	int scriptCurrentIndex = str - _scriptStart;
+
+	// Save the current script position and new talk file
+	if (_scriptStack.size() < 9) {
+		ScriptStackEntry rec1;
+		rec1._name = _scriptName;
+		rec1._currentIndex = scriptCurrentIndex;
+		rec1._select = _scriptSelect;
+		_scriptStack.push(rec1);
+
+		// Push the new talk file onto the stack
+		ScriptStackEntry rec2;
+		rec2._name = tempString;
+		rec2._currentIndex = 0;
+		rec2._select = 100;
+		_scriptStack.push(rec2);
+	} else {
+		error("Script stack overflow");
+	}
+
+	_scriptMoreFlag = 1;
+	_endStr = true;
+	_wait = 0;
+
+	return RET_SUCCESS;
+}
+
 } // End of namespace Scalpel
 
 } // End of namespace Sherlock

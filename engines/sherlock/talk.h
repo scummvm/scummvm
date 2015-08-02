@@ -208,7 +208,6 @@ protected:
 	OpcodeReturn cmdAddItemToInventory(const byte *&str);
 	OpcodeReturn cmdAdjustObjectSequence(const byte *&str);
 	OpcodeReturn cmdBanishWindow(const byte *&str);
-	OpcodeReturn cmdCallTalkFile(const byte *&str);
 	OpcodeReturn cmdDisableEndKey(const byte *&str);
 	OpcodeReturn cmdEnableEndKey(const byte *&str);
 	OpcodeReturn cmdEndTextWindow(const byte *&str);
