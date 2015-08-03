@@ -31,9 +31,10 @@ namespace Sherlock {
 namespace Tattoo {
 
 WidgetFoolscap::WidgetFoolscap(TattooEngine *vm) : WidgetBase(vm) {
-	for (int idx = 0; idx < 3; ++idx)
+	for (int idx = 0; idx < 3; ++idx) {
 		Common::fill(&_answers[idx][0], &_answers[idx][10], 0);
-	Common::fill(&_solutions[0], &_solutions[3], nullptr);
+		_solutions[idx] = nullptr;
+	}
 	_images = nullptr;
 	_numWide = 0;
 	_spacing = 0;
