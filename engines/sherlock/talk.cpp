@@ -342,6 +342,11 @@ void Talk::talkTo(const Common::String &filename) {
 			Statement &statement = _statements[select];
 			doScript(_statements[select]._reply);
 
+			if (IS_ROSE_TATTOO) {
+				for (int idx = 0; idx < MAX_CHARACTERS; ++idx)
+					people[idx]._misc = 0;
+			}
+
 			if (_talkToAbort)
 				return;
 
@@ -401,20 +406,17 @@ void Talk::talkTo(const Common::String &filename) {
 			} else {
 				freeTalkVars();
 
-				if (!ui._lookScriptFlag) {
-					ui.drawInterface(2);
-
-					if (IS_SERRATED_SCALPEL) {
+				if (IS_SERRATED_SCALPEL) {
+					if (!ui._lookScriptFlag) {
+						ui.drawInterface(2);
 						ui._menuMode = STD_MODE;
 						ui._windowBounds.top = CONTROLS_Y1;
-					} else {
-						ui._menuMode = static_cast<Tattoo::TattooScene *>(_vm->_scene)->_labTableScene ?
-							LAB_MODE : STD_MODE;
 					}
-
-					ui.banishWindow();
+				} else {
+					ui._menuMode = static_cast<Tattoo::TattooScene *>(_vm->_scene)->_labTableScene ? LAB_MODE : STD_MODE;
 				}
 
+				ui.banishWindow();
 				break;
 			}
 		}

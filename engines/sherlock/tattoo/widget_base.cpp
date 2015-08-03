@@ -45,6 +45,8 @@ void WidgetBase::summonWindow() {
 	// Add widget to the screen
 	if (!ui._fixedWidgets.contains(this))
 		ui._widgets.push_back(this);
+	ui._windowOpen = true;
+
 	_outsideMenu = false;
 
 	draw();
@@ -56,6 +58,7 @@ void WidgetBase::banishWindow() {
 	erase();
 	_surface.free();
 	ui._widgets.remove(this);
+	ui._windowOpen = false;
 }
 
 void WidgetBase::close() {
