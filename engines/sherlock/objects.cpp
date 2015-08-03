@@ -356,6 +356,10 @@ bool BaseObject::checkEndOfSequence() {
 			// Determine next sequence to use
 			int seq = _sequences[_frameNumber + 1];
 
+			// If the object has been turned off, we're going nowhere
+			if (IS_ROSE_TATTOO && (_type == HIDE_SHAPE || _type == HIDDEN || _type == REMOVE))
+				return false;
+
 			if (seq == 99) {
 				--_frameNumber;
 				screen._backBuffer1.transBlitFrom(*_imageFrame, _position);
