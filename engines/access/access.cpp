@@ -101,7 +101,7 @@ AccessEngine::AccessEngine(OSystem *syst, const AccessGameDescription *gameDesc)
 		_travel[i] = 0;
 	_startTravelItem = _startTravelBox = 0;
 	for (int i = 0; i < 33; i++)
-		_ask[i];
+		_ask[i] = 0;
 	_startAboutItem = _startAboutBox = 0;
 	_byte26CB5 = 0;
 	_bcnt = 0;
