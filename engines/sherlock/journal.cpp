@@ -644,7 +644,6 @@ void Journal::loadJournalFile(bool alreadyLoaded) {
 					replyP++;
 					while (replyP[0] && replyP[0] != opcodes[OP_NPC_DESC_ON_OFF])
 						replyP++;
-					replyP++;
 				} else if (
 					c == opcodes[OP_SET_NPC_INFO_LINE])
 					replyP += replyP[1] + 2;
