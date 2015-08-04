@@ -593,12 +593,12 @@ void MPEGPSDecoder::AC3AudioTrack::initStream(Common::SeekableReadStream *packet
 		packet->seek(i, SEEK_SET);
 		packet->read(buf, sizeof(buf));
 
-		int packetLength = a52_syncinfo(buf, &flags, &_sampleRate, &bitRate);
-
-		if (packetLength > 0) {
+		if (a52_syncinfo(buf, &flags, &_sampleRate, &bitRate) > 0) {
 			break;
 		}
 	}
+
+	packet->seek(0, SEEK_SET);
 }
 
 enum {
