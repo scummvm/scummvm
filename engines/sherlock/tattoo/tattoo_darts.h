@@ -55,6 +55,7 @@ private:
 	bool _oldDartButtons;
 	int _handX;
 	Common::Point _handSize;
+	bool _escapePressed;
 
 	/**
 	 * Initialize game variables

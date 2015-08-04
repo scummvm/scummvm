@@ -68,6 +68,7 @@ Darts::Darts(SherlockEngine *vm) : _vm(vm) {
 	_oldDartButtons = false;
 	_handX = 0;
 	_compPlay = 1;
+	_escapePressed = false;
 }
 
 void Darts::playDarts(GameType gameType) {
@@ -208,12 +209,9 @@ void Darts::playDarts(GameType gameType) {
 			events.clearEvents();
 
 			if ((playerNum == 0 && _compPlay == 1) || _compPlay == 0 || done) {
-				if (events.kbHit()) {
-					Common::KeyState keyState = events.getKey();
-					if (keyState.keycode == Common::KEYCODE_ESCAPE) {
-						done = true;
-						idx = 10;
-					}
+				if (_escapePressed) {
+					done = true;
+					idx = 10;
 				}
 			} else {
 				events.wait(20);
@@ -245,6 +243,7 @@ void Darts::playDarts(GameType gameType) {
 
 void Darts::initDarts() {
 	_dartInfo = Common::Rect(430, 245, 430 + 205, 245 + 150);
+	_escapePressed = false;
 
 	if (_gameType == GAME_CRICKET) {
 		_dartInfo = Common::Rect(430, 245, 430 + 205, 245 + 150);
@@ -406,6 +405,9 @@ bool Darts::dartHit() {
 
 	// Keyboard check
 	if (events.kbHit()) {
+		if (events.getKey().keycode == Common::KEYCODE_ESCAPE)
+			_escapePressed = true;
+
 		events.clearEvents();
 		return true;
 	}
@@ -889,6 +891,8 @@ int Darts::throwDart(int dartNum, int computer) {
 		// Wait for a hit
 		while (!dartHit() && !_vm->shouldQuit())
 			;
+		if (_escapePressed)
+			return 0;
 	} else {
 		events.wait(1);
 	}
@@ -907,7 +911,12 @@ int Darts::throwDart(int dartNum, int computer) {
 	}
 
 	horiz = drawHand(targetPos.x, computer);
+	if (_escapePressed)
+		return 0;
+
 	height = doPowerBar(Common::Point(DART_BAR_VX, DART_HEIGHT_Y), DART_COLOR_FORE, targetPos.y, 1);
+	if (_escapePressed)
+		return 0;
 
 	// Invert height
 	height = 101 - height;
