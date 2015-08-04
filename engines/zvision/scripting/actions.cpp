@@ -977,9 +977,6 @@ bool ActionStreamVideo::execute() {
 	hiresFileName.setChar('b', hiresFileName.size() - 1);
 
 	if (_scriptManager->getStateValue(StateKey_MPEGMovies) == 1 &&_engine->getSearchManager()->hasFile(hiresFileName)) {
-		// TODO: Enable once AC3 support is implemented
-		if (!_engine->getSearchManager()->hasFile(_fileName))	// Check for the regular video
-			return true;
 		_fileName = hiresFileName;
 		switchToHires = true;
 	} else if (!_engine->getSearchManager()->hasFile(_fileName))
