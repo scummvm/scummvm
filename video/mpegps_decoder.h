@@ -148,8 +148,11 @@ private:
 	private:
 		Audio::QueuingAudioStream *_audStream;
 		a52_state_t *_a52State;
+		uint32 _frameSize;
+		byte _inBuf[4096];
+		byte *_inBufPtr;
+		int _flags;
 		int _sampleRate;
-		int _packetLength;
 
 		void initStream(Common::SeekableReadStream *packet);
 		void decodeAC3Data(Common::SeekableReadStream *packet);
