@@ -63,6 +63,24 @@ public:
 	/** Check if the edge has the same vertices as the parameters */
 	bool hasVertices(uint16 vertexIndex1, uint16 vertexIndex2) const;
 
+	/** List the edge neighbour edges in the floor */
+	Common::Array<FloorEdge *> getNeighbours() const;
+
+	/**
+	 * Computes the cost for going to a neighbour edge
+	 *
+	 * This is used for pathfinding. The cost is equal to the distance
+	 * between the middle of both edges
+	 */
+	float costTo(const FloorEdge *other) const;
+
+	/**
+	 * Get the edge position
+	 *
+	 * This is the middle of the edge
+	 */
+	Math::Vector3d getPosition() const;
+
 	int32 getFaceIndex1() const;
 	int32 getFaceIndex2() const;
 private:

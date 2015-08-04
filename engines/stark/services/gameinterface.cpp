@@ -22,12 +22,15 @@
 
 #include "engines/stark/services/gameinterface.h"
 
+#include "engines/stark/movement/shortestpath.h"
+
 #include "engines/stark/resources/knowledgeset.h"
 #include "engines/stark/resources/level.h"
 #include "engines/stark/resources/location.h"
 #include "engines/stark/resources/speech.h"
 
 #include "engines/stark/resources/floor.h"
+#include "engines/stark/resources/floorface.h"
 #include "engines/stark/resources/script.h"
 #include "engines/stark/resources/item.h"
 
@@ -94,13 +97,35 @@ void GameInterface::walkTo(const Common::Point &mouse) {
 
 	Math::Ray mouseRay = StarkScene->makeRayFromMouse(mouse);
 
-	Math::Vector3d intersection;
-	int32 floorFace = floor->findFaceHitByRay(mouseRay, intersection);
-	if (floorFace >= 0) {
-		// TODO: Complete, for now we just teleport to the target location
-		april->setPosition3D(intersection);
-		april->setFloorFaceIndex(floorFace);
+	Math::Vector3d destinationPosition;
+	int32 destinationFloorFaceIndex = floor->findFaceHitByRay(mouseRay, destinationPosition);
+	if (destinationFloorFaceIndex < 0) {
+		return;
 	}
+
+	Resources::FloorFace *destinationFloorFace = floor->getFace(destinationFloorFaceIndex);
+	Resources::FloorEdge *destinationFloorEdge = destinationFloorFace->findNearestEdge(destinationPosition);
+
+	Math::Vector3d startPosition = april->getPosition3D();
+	int32 startFloorFaceIndex = april->getFloorFaceIndex();
+	Resources::FloorFace *startFloorFace = floor->getFace(startFloorFaceIndex);
+	Resources::FloorEdge *startFloorEdge = startFloorFace->findNearestEdge(startPosition);
+
+	ShortestPath pathSearch;
+	ShortestPath::NodeList edgePath = pathSearch.search(startFloorEdge, destinationFloorEdge);
+
+	Common::Debug debug = streamDbg();
+	debug << "start: " << startPosition << "\n";
+
+	for (ShortestPath::NodeList::const_iterator it = edgePath.begin(); it != edgePath.end(); it++) {
+		debug << "step: " << (*it)->getPosition() << "\n";
+	}
+
+	debug << "destination: " << destinationPosition << "\n";
+
+	// TODO: Complete, for now we just teleport to the target location
+	april->setPosition3D(destinationPosition);
+	april->setFloorFaceIndex(destinationFloorFaceIndex);
 }
 
 VisualImageXMG *GameInterface::getActionImage(uint32 itemIndex, bool active) {

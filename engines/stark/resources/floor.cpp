@@ -166,6 +166,19 @@ void FloorEdge::setOtherFace(uint32 faceIndex) {
 	_faceIndex2 = faceIndex;
 }
 
+Common::Array<FloorEdge *> FloorEdge::getNeighbours() const {
+	return _neighbours;
+}
+
+float FloorEdge::costTo(const FloorEdge *other) const {
+	Math::Vector3d v = _middle - other->_middle;
+	return v.getMagnitude();
+}
+
+Math::Vector3d FloorEdge::getPosition() const {
+	return _middle;
+}
+
 void FloorEdge::buildNeighbours(const Floor *floor) {
 	_neighbours.clear();
 

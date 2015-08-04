@@ -82,6 +82,13 @@ public:
 	/** Get the triangle's edge list */
 	Common::Array<FloorEdge *> getEdges() const;
 
+	/**
+	 * Find the edge closest to a point
+	 *
+	 * Distance are compared using the middle point of each edge of the face
+	 */
+	FloorEdge *findNearestEdge(const Math::Vector3d &point) const;
+
 protected:
 	void readData(Formats::XRCReadStream *stream) override;
 	void printData() override;

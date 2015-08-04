@@ -458,6 +458,10 @@ FloorPositionedItem::FloorPositionedItem(Object *parent, byte subType, uint16 in
 		_floorFaceIndex(-1) {
 }
 
+Math::Vector3d FloorPositionedItem::getPosition3D() const {
+	return _position3D;
+}
+
 void FloorPositionedItem::setPosition3D(const Math::Vector3d &position) {
 	_position3D = position;
 }

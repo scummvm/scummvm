@@ -142,6 +142,22 @@ Common::Array<FloorEdge *> FloorFace::getEdges() const {
 	return _edges;
 }
 
+FloorEdge *FloorFace::findNearestEdge(const Math::Vector3d &point) const {
+	float minDistance = -1;
+	FloorEdge *edge = nullptr;
+
+	for (uint i = 0; i < _edges.size(); i++) {
+		float distance = (point - _edges[i]->getPosition()).getSquareMagnitude();
+
+		if (!edge || distance < minDistance) {
+			minDistance = distance;
+			edge = _edges[i];
+		}
+	}
+
+	return edge;
+}
+
 void FloorFace::readData(Formats::XRCReadStream *stream) {
 	for (uint i = 0; i < ARRAYSIZE(_indices); i++) {
 		_indices[i] = stream->readSint16LE();

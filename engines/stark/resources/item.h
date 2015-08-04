@@ -275,6 +275,8 @@ public:
 	/** Move the item to a bookmarked position */
 	void placeOnBookmark(Bookmark *target);
 
+	/** Get the item position */
+	Math::Vector3d getPosition3D() const;
 	/** Move the item */
 	void setPosition3D(const Math::Vector3d &position);
 
