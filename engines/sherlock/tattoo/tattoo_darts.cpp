@@ -85,6 +85,10 @@ void Darts::playDarts(GameType gameType) {
 	screen.setFont(7);
 	_spacing = screen.fontHeight() + 2;
 
+	// Load dart graphics and initialize values
+	loadDarts();
+	initDarts();
+
 	while (!_vm->shouldQuit()) {
 		roundStart = score = (playerNum == 0) ? _score1 : _score2;
 
@@ -236,7 +240,7 @@ void Darts::playDarts(GameType gameType) {
 }
 
 void Darts::initDarts() {
-	_dartInfo = Common::Rect(430, 50, 430 + 205, 50 + 330);
+	_dartInfo = Common::Rect(430, 245, 430 + 205, 245 + 150);
 
 	if (_gameType == GAME_CRICKET) {
 		_dartInfo = Common::Rect(430, 245, 430 + 205, 245 + 150);
@@ -295,7 +299,7 @@ void Darts::loadDarts() {
 	_dartBoard = new ImageFile("DartBd.vgs");
 
 	// Load and set the palette
-	Common::SeekableReadStream *stream = res.load("DartBoard.pal");
+	Common::SeekableReadStream *stream = res.load("DartBd.pal");
 	stream->read(palette, PALETTE_SIZE);
 	screen.translatePalette(palette);
 	screen.setPalette(palette);
@@ -328,7 +332,7 @@ void Darts::showNames(int playerNum) {
 		STATUS_INFO_X + 50, STATUS_INFO_Y + _spacing + 3), color);
 
 	color = playerNum == 1 ? PLAYER_COLOR : DART_COLOR_FORE;
-	screen.print(Common::Point(STATUS_INFO_X, STATUS_INFO_Y), 0, "%s", _opponent.c_str());
+	screen.print(Common::Point(STATUS2_INFO_X, STATUS_INFO_Y), 0, "%s", _opponent.c_str());
 	screen._backBuffer1.fillRect(Common::Rect(STATUS2_INFO_X, STATUS_INFO_Y + _spacing + 1, 
 		STATUS2_INFO_X + 50, STATUS_INFO_Y + _spacing + 3), color);
 	screen.fillRect(Common::Rect(STATUS2_INFO_X, STATUS_INFO_Y + _spacing + 1,
@@ -409,34 +413,33 @@ bool Darts::dartHit() {
 int Darts::doPowerBar(const Common::Point &pt, byte color, int goToPower, int orientation) {
 	Events &events = *_vm->_events;
 	Screen &screen = *_vm->_screen;
-	int x = 0;
+	int idx = 0;
 
 	events.clearEvents();
 	events.delay(100);
 
 	while (!_vm->shouldQuit()) {
-		if (x >= DART_BAR_SIZE)
+		if (idx >= DART_BAR_SIZE)
 			break;
 
-		if ((goToPower - 1) == x)
+		if ((goToPower - 1) == idx)
 			break;
 		else if (goToPower == 0) {
 			if (dartHit())
 				break;
 		}
 
-		screen._backBuffer1.fillRect(Common::Rect(pt.x, pt.y + DART_BAR_SIZE - 1 - x,
-			pt.x + 8, pt.y + DART_BAR_SIZE - 2 - x), color);
-		screen._backBuffer1.transBlitFrom((*_dartGraphics)[0], Common::Point(pt.x - 1, pt.y - 1));
-		screen.slamArea(pt.x, pt.y + DART_BAR_SIZE - 1 - x, 8, 2);
+		screen._backBuffer1.hLine(pt.x, pt.y - 1 - idx, pt.x + 8, color);
+	//	screen._backBuffer1.transBlitFrom((*_dartGraphics)[0], Common::Point(pt.x - 1, pt.y - 1));
+		screen.slamArea(pt.x, pt.y + DART_BAR_SIZE - 1 - idx, 8, 2);
 
-		if (!(x % 8))
+		if (!(idx % 8))
 			events.wait(1);
 
-		x += 1;
+		++idx;
 	}
 
-	return MIN(x * 100 / DART_BAR_SIZE, 100);
+	return MIN(idx * 100 / DART_BAR_SIZE, 100);
 }
 
 int Darts::drawHand(int goToPower, int computer) {
@@ -879,7 +882,7 @@ int Darts::throwDart(int dartNum, int computer) {
 
 	if (!computer) {
 		// Wait for a hit
-		while (!dartHit())
+		while (!dartHit() && !_vm->shouldQuit())
 			;
 	} else {
 		events.wait(1);
