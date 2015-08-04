@@ -72,6 +72,7 @@ Darts::Darts(SherlockEngine *vm) : _vm(vm) {
 
 void Darts::playDarts(GameType gameType) {
 	Events &events = *_vm->_events;
+	Scene &scene = *_vm->_scene;
 	Screen &screen = *_vm->_screen;
 	int oldFontType = screen.fontNumber();
 	int playerNum = 0;
@@ -89,7 +90,7 @@ void Darts::playDarts(GameType gameType) {
 	loadDarts();
 	initDarts();
 
-	while (!_vm->shouldQuit()) {
+	while (!done && !_vm->shouldQuit()) {
 		roundStart = score = (playerNum == 0) ? _score1 : _score2;
 
 		showNames(playerNum);
@@ -237,6 +238,9 @@ void Darts::playDarts(GameType gameType) {
 	closeDarts();
 	screen.fadeToBlack();
 	screen.setFont(oldFontType);
+
+	// Flag to return to the Billard's Academy scene
+	scene._goToScene = 26;
 }
 
 void Darts::initDarts() {
@@ -390,7 +394,7 @@ void Darts::erasePowerBars() {
 	Screen &screen = *_vm->_screen;
 
 	// Erase the old power bars and replace them with empty ones
-	screen.fillRect(Common::Rect(DART_BAR_VX, DART_HEIGHT_Y, DART_BAR_VX + 9, DART_HEIGHT_Y + DART_BAR_SIZE), 0);
+	screen._backBuffer1.fillRect(Common::Rect(DART_BAR_VX, DART_HEIGHT_Y, DART_BAR_VX + 9, DART_HEIGHT_Y + DART_BAR_SIZE), 0);
 	screen._backBuffer1.transBlitFrom((*_dartGraphics)[0], Common::Point(DART_BAR_VX - 1, DART_HEIGHT_Y - 1));
 	screen.slamArea(DART_BAR_VX - 1, DART_HEIGHT_Y - 1, 10, DART_BAR_SIZE + 2);
 }
