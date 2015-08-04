@@ -126,6 +126,7 @@ void Darts::playDarts(GameType gameType) {
 			// it entirely if you don't want to play all the way through it
 			if (_escapePressed) {
 				gameOver = true;
+				done = true;
 				playerNum = 0;
 			}
 				
@@ -219,7 +220,7 @@ void Darts::playDarts(GameType gameType) {
 			if ((playerNum == 0 && _compPlay == 1) || _compPlay == 0 || done) {
 				if (_escapePressed) {
 					done = true;
-					idx = 10;
+					break;
 				}
 			} else {
 				events.wait(20);
@@ -240,6 +241,13 @@ void Darts::playDarts(GameType gameType) {
 			screen.blitFrom(screen._backBuffer2);
 		}
 	}
+
+	// Wait for a keypress
+	do {
+		events.pollEventsAndWait();
+		events.setButtonState();
+	} while (!_vm->shouldQuit() && !events.kbHit() && !events._pressed);
+	events.clearEvents();
 
 	closeDarts();
 	screen.fadeToBlack();

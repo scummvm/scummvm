@@ -325,7 +325,7 @@ bool Events::delay(uint32 time, bool interruptable) {
 		while (!_vm->shouldQuit() && g_system->getMillis() < delayEnd) {
 			pollEventsAndWait();
 
-			if (interruptable && (kbHit() || _pressed)) {
+			if (interruptable && (kbHit() || _mouseButtons)) {
 				clearEvents();
 				return false;
 			}
