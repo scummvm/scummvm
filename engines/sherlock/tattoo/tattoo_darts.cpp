@@ -122,6 +122,14 @@ void Darts::playDarts(GameType gameType) {
 				score = (playerNum == 0) ? _score1 : _score2;
 			}
 
+			// Special case for ScummVM: I'm making pressing Escape to exit out of the Darts game as a way to skip
+			// it entirely if you don't want to play all the way through it
+			if (_escapePressed) {
+				gameOver = true;
+				playerNum = 0;
+			}
+				
+
 			if (_gameType == GAME_301) {
 				if (playerNum == 0)
 					_score1 = score;
