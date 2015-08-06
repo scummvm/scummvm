@@ -266,7 +266,7 @@ AnimSkeleton::AnimSkeleton(Object *parent, byte subType, uint16 index, const Com
 				Anim(parent, subType, index, name),
 				_castsShadow(true),
 				_field_48(0),
-				_field_4C(100),
+				_moveDistance(100),
 				_field_6C(1),
 				_seletonAnim(nullptr),
 				_currentTime(0),
@@ -304,10 +304,10 @@ void AnimSkeleton::readData(Formats::XRCReadStream *stream) {
 	stream->readString(); // Skipped in the original
 
 	_field_48 = stream->readUint32LE();
-	_field_4C = stream->readUint32LE();
+	_moveDistance = stream->readUint32LE();
 
-	  if (_field_4C < 1) {
-		_field_4C = 100;
+	  if (_moveDistance < 1) {
+		_moveDistance = 100;
 	}
 
 	if (stream->isDataLeft()) {
@@ -356,7 +356,7 @@ void AnimSkeleton::printData() {
 	debug("filename: %s", _animFilename.c_str());
 	debug("castsShadow: %d", _castsShadow);
 	debug("field_48: %d", _field_48);
-	debug("field_4C: %d", _field_4C);
+	debug("moveDistance: %d", _moveDistance);
 	debug("field_6C: %d", _field_6C);
 }
 

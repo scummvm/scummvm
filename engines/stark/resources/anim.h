@@ -217,7 +217,7 @@ protected:
 	Common::String _archiveName;
 	Common::String _animFilename;
 	uint32 _field_48;
-	uint32 _field_4C;
+	uint32 _moveDistance;
 	uint32 _field_6C;
 
 	uint32 _totalTime;
