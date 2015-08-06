@@ -108,6 +108,7 @@ enum FixedTextId {
 
 class TattooFixedText: public FixedText {
 private:
+	const char *const *_fixedText;
 public:
 	TattooFixedText(SherlockEngine *vm);
 	virtual ~TattooFixedText() {}
