@@ -555,8 +555,9 @@ MPEGPSDecoder::AC3AudioTrack::AC3AudioTrack(Common::SeekableReadStream *firstPac
 		_audStream = Audio::makeQueuingAudioStream(_sampleRate, true);
 	} else {
 		_audStream = 0;
-		firstPacket->seek(0);
 	}
+
+	firstPacket->seek(0);
 
 	_inBufPtr = _inBuf;
 	_flags = 0;
@@ -580,8 +581,12 @@ Audio::AudioStream *MPEGPSDecoder::AC3AudioTrack::getAudioStream() const {
 	return _audStream;
 }
 
+enum {
+	HEADER_SIZE = 7
+};
+
 void MPEGPSDecoder::AC3AudioTrack::initStream(Common::SeekableReadStream *packet) {
-	byte buf[7];
+	byte buf[HEADER_SIZE];
 
 	_sampleRate = -1;
 
@@ -597,13 +602,7 @@ void MPEGPSDecoder::AC3AudioTrack::initStream(Common::SeekableReadStream *packet
 			break;
 		}
 	}
-
-	packet->seek(0, SEEK_SET);
 }
-
-enum {
-	HEADER_SIZE = 7
-};
 
 void MPEGPSDecoder::AC3AudioTrack::decodeAC3Data(Common::SeekableReadStream *packet) {
 	// Skip the DVD code
