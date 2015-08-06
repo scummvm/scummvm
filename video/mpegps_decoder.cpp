@@ -606,6 +606,11 @@ enum {
 };
 
 void MPEGPSDecoder::AC3AudioTrack::decodeAC3Data(Common::SeekableReadStream *packet) {
+	// Skip the DVD code
+	packet->readUint32LE();
+	if (packet->eos())
+		return;
+
 	while (packet->pos() < packet->size()) {
 		uint32 leftSize = packet->size() - packet->pos();
 		uint32 len = _inBufPtr - _inBuf;
