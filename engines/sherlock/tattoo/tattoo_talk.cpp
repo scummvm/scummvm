@@ -862,13 +862,21 @@ OpcodeReturn TattooTalk::cmdWalkHomesAndNPCToCoords(const byte *&str) {
 		person.pushNPCPath();
 	person._npcMoved = true;
 
+	// Get destination position and facing for Holmes
 	int xp = (str[0] - 1) * 256 + str[1] - 1;
 	if (xp > 16384)
 		xp = -1 * (xp - 16384);
 	int yp = (str[2] - 1) * 256 + str[3] - 1;
+	PositionFacing holmesDest(xp * FIXED_INT_MULTIPLIER, yp * FIXED_INT_MULTIPLIER, DIRECTION_CONVERSION[str[4] - 1]);
 
-	person.walkToCoords(Point32(xp * FIXED_INT_MULTIPLIER, yp * FIXED_INT_MULTIPLIER),
-		DIRECTION_CONVERSION[str[4] - 1]);
+	// Get destination position and facing for specified NPC
+	xp = (str[5] - 1) * 256 + str[6] - 1;
+	if (xp > 16384)
+		xp = -1 * (xp - 16384);
+	yp = (str[7] - 1) * 256 + str[8] - 1;
+	PositionFacing npcDest(xp * FIXED_INT_MULTIPLIER, yp * FIXED_INT_MULTIPLIER, DIRECTION_CONVERSION[str[9] - 1]);
+
+	person.walkBothToCoords(holmesDest, npcDest);
 
 	if (_talkToAbort)
 		return RET_EXIT;

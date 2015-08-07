@@ -183,6 +183,11 @@ public:
 	void walkHolmesToNPC();
 
 	/**
+	 * Walk both the specified character and Holmes to specified destination positions
+	 */
+	void walkBothToCoords(const PositionFacing &holmesDest, const PositionFacing &npcDest);
+
+	/**
 	 * This adjusts the sprites position, as well as it's animation sequence:
 	 */
 	virtual void adjustSprite();

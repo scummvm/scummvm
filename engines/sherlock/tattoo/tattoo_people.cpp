@@ -1111,6 +1111,75 @@ void TattooPerson::walkHolmesToNPC() {
 	}
 }
 
+void TattooPerson::walkBothToCoords(const PositionFacing &holmesDest, const PositionFacing &npcDest) {
+	Events &events = *_vm->_events;
+	TattooPeople &people = *(TattooPeople *)_vm->_people;
+	Scene &scene = *_vm->_scene;
+	Talk &talk = *_vm->_talk;
+	TattooPerson &holmes = people[HOLMES];
+	bool holmesStopped = false, npcStopped = false;
+
+	// Save the current cursor and change to the wait cursor
+	CursorId oldCursor = events.getCursor();
+	events.setCursor(WAIT);
+
+	holmes._centerWalk = false;
+	_centerWalk = false;
+
+	// Start Holmes walking to his dest
+	holmes._walkDest = Common::Point(holmesDest.x / FIXED_INT_MULTIPLIER + 10, holmesDest.y / FIXED_INT_MULTIPLIER);
+	people._allowWalkAbort = true;
+	holmes.goAllTheWay();
+
+	// Start the NPC walking to their dest
+	_walkDest = Common::Point(npcDest.x / FIXED_INT_MULTIPLIER + 10, npcDest.y / FIXED_INT_MULTIPLIER);
+	goAllTheWay();
+
+	// Clear the path variables
+	_npcIndex = _npcPause = 0;
+	Common::fill(&_npcPath[0], &_npcPath[100], 0);
+	_npcFacing = npcDest._facing;
+
+	// Now loop until both stop walking
+	do {
+		events.pollEvents();
+		scene.doBgAnim();
+
+		if (!holmes._walkCount && !holmesStopped) {
+			// Holmes finished walking
+			holmesStopped = true;
+
+			// Ensure Holmes is on the exact destination spot
+			holmes._position = holmesDest;
+			holmes._sequenceNumber = holmesDest._facing;
+			holmes.gotoStand();
+		}
+
+		if (!_walkCount && !npcStopped) {
+			// NPC finished walking
+			npcStopped = true;
+
+			// Ensure NPC is on the exact destination spot
+			_position = npcDest;
+			_sequenceNumber = npcDest._facing;
+			gotoStand();
+		}
+
+	} while (!_vm->shouldQuit() && (holmes._walkCount || _walkCount));
+
+	holmes._centerWalk = true;
+	_centerWalk = true;
+
+	// Do one last frame draw so that the lsat person to stop will be drawn in their final position
+	scene.doBgAnim();
+
+	_updateNPCPath = true;
+
+	if (!talk._talkToAbort)
+		// Restore original mouse cursor
+		events.setCursor(oldCursor);
+}
+
 void TattooPerson::centerScreenOnPerson() {
 	Screen &screen = *_vm->_screen;
 	TattooUserInterface &ui = *(TattooUserInterface *)_vm->_ui;
