@@ -306,12 +306,8 @@ OpcodeReturn TattooTalk::cmdNextSong(const byte *&str) {
 	// Get the name of the next song to play
 	++str;
 	music._nextSongName = "";
-	for (int idx = 0; idx < 8; ++idx) {
-		if (str[idx] != '~')
-			music._nextSongName += str[idx];
-		else
-			break;
-	}
+	for (int idx = 0; idx < 8 && str[idx] != '~'; ++idx)
+		music._nextSongName += str[idx];
 	str += 7;
 
 	return RET_SUCCESS;
@@ -385,12 +381,8 @@ OpcodeReturn TattooTalk::cmdPlaySong(const byte *&str) {
 	// Get the name of the song to play
 	music._currentSongName = "";
 	str++;
-	for (int idx = 0; idx < 8; ++idx) {
-		if (str[idx] != '~')
-			music._currentSongName += str[idx];
-		else
-			break;
-	}
+	for (int idx = 0; idx < 8 && str[idx + 1] != '~'; ++idx)
+		music._currentSongName += str[idx];
 	str += 7;
 
 	// Play the song
@@ -628,23 +620,16 @@ OpcodeReturn TattooTalk::cmdSetNPCVerb(const byte *&str) {
 	TattooPeople &people = *(TattooPeople *)_vm->_people;
 	Common::String &verb = people[npcNum]._use[verbNum]._verb;
 
-	for (int x = 0; x < 12; x++) {
-		if (str[x + 1] != '~')
-			verb.setChar(str[x + 1], x);
-		else
-			verb.setChar(0, x);
-	}
+	// Get the verb name
+	verb = "";
+	for (int idx = 0; idx < 12 && str[idx + 1] != '~'; ++idx)
+		verb += str[idx + 1];
 
-	verb.setChar(0, 11);
+	// Strip off any trailing whitespace
+	while (verb.hasSuffix(" "))
+		verb.deleteLastChar();
 
-	uint len = verb.size() - 1;
-	while (verb[len] == ' ' && len)
-		len--;
-	verb.setChar(0, len + 1);
-	if (verb != " ")
-		verb.clear();
 	str += 12;
-
 	return RET_SUCCESS;
 }
 
@@ -666,18 +651,13 @@ OpcodeReturn TattooTalk::cmdSetNPCVerbScript(const byte *&str) {
 	int verbNum = *++str - 1;
 	TattooPeople &people = *(TattooPeople *)_vm->_people;
 	UseType &useType = people[npcNum]._use[verbNum];
+	
 	Common::String &name = useType._names[0];
-	name.setChar('*', 0);
-	name.setChar('C', 1);
+	name = "*C";
 
-	for (int x = 0; x < 8; x++) {
-		if (str[x + 1] != '~')
-			name.setChar(str[x + 1], x + 2);
-		else
-			name.setChar(0, x + 2);
-	}
+	for (int idx = 0; idx < 8 && str[idx + 1] != '~'; ++idx)
+		name += str[idx + 1];
 
-	name.setChar(0, 11);
 	useType._cAnimNum = 99;
 	useType._cAnimSpeed = 1;
 	str += 8;
@@ -691,21 +671,14 @@ OpcodeReturn TattooTalk::cmdSetNPCVerbTarget(const byte *&str) {
 	TattooPeople &people = *(TattooPeople *)_vm->_people;
 	Common::String &target = people[npcNum]._use[verbNum]._target;
 
-	for (int x = 0; x < 12; x++) {
-		if (str[x + 1] != '~')
-			target.setChar(str[x + 1], x);
-		else
-			target.setChar(0, x);
-	}
+	target = "";
+	for (int idx = 0; idx < 12 && str[idx + 1] != '~'; ++idx)
+		target += str[idx + 1];
 
-	target.setChar(0, 11);
+	while (target.hasSuffix(" "))
+		target.deleteLastChar();
 
-	uint len = target.size() - 1;
-	while (target[len] == ' ' && len)
-		len--;
-	target.setChar(0, len + 1);
 	str += 12;
-
 	return RET_SUCCESS;
 }
 
@@ -716,14 +689,10 @@ OpcodeReturn TattooTalk::cmdSetNPCWalkGraphics(const byte *&str) {
 
 	// Build up walk library name for the given NPC
 	person._walkVGSName = "";
-	for (int idx = 0; idx < 8; ++idx) {
-		if (str[idx + 1] != '~')
-			person._walkVGSName += str[idx + 1];
-		else
-			break;
-	}
-	person._walkVGSName += ".VGS";
+	for (int idx = 0; idx < 8 && str[idx + 1] != '~'; ++idx)
+		person._walkVGSName += str[idx + 1];
 
+	person._walkVGSName += ".VGS";
 	people._forceWalkReload = true;
 	str += 8;
 
