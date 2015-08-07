@@ -109,16 +109,23 @@ inline byte Fonts::translateChar(byte c) {
 		return 0; // translate to first actual character
 	case 225:
 		// This was done in the German interpreter
-		// happens when talking to the kid in the 2nd room
-		return 135; // special handling for 0xE1
-	default:
-		if (c >= 0x80) { // German SH1 version did this
-			c--;
+		// SH1: happens, when talking to the kid in the 2nd room
+		// SH2: happens, when looking at the newspaper right at the start in the backalley
+		// Special handling for 0xE1 (German Sharp-S character)
+		if (IS_ROSE_TATTOO) {
+			return 136; // it got translated to this for SH2
 		}
-		// Spanish SH1 did this (reverse engineered code)
-		//if ((c >= 0xA0) && (c <= 0xAD) || (c == 0x82)) {
-		//	c--;
-		//}
+		return 135; // and this for SH1
+	default:
+		if (IS_SERRATED_SCALPEL) {
+			if (c >= 0x80) { // German SH1 version did this, but not German SH2
+				c--;
+			}
+			// Spanish SH1 did this (reverse engineered code)
+			//if ((c >= 0xA0) && (c <= 0xAD) || (c == 0x82)) {
+			//	c--;
+			//}
+		}
 		assert(c > 32); // anything above space is allowed
 		return c - 33;
 	}
