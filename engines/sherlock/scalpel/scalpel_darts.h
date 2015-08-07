@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef SHERLOCK_DARTS_H
-#define SHERLOCK_DARTS_H
+#ifndef SHERLOCK_SCALPEL_DARTS_H
+#define SHERLOCK_SCALPEL_DARTS_H
 
 #include "sherlock/image_file.h"
 

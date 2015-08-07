@@ -20,7 +20,7 @@
  *
  */
 
-#include "sherlock/scalpel/darts.h"
+#include "sherlock/scalpel/scalpel_darts.h"
 #include "sherlock/scalpel/scalpel.h"
 
 namespace Sherlock {

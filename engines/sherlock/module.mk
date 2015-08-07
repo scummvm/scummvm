@@ -1,13 +1,13 @@
 MODULE := engines/sherlock
 
 MODULE_OBJS = \
-	scalpel/darts.o \
 	scalpel/scalpel.o \
 	scalpel/3do/movie_decoder.o \
 	scalpel/drivers/adlib.o \
 	scalpel/drivers/mt32.o \
 	scalpel/tsage/logo.o \
 	scalpel/tsage/resources.o \
+	scalpel/scalpel_darts.o \
 	scalpel/scalpel_debugger.o \
 	scalpel/scalpel_fixed_text.o \
 	scalpel/scalpel_inventory.o \

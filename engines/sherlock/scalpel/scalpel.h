@@ -24,7 +24,7 @@
 #define SHERLOCK_SCALPEL_H
 
 #include "sherlock/sherlock.h"
-#include "sherlock/scalpel/darts.h"
+#include "sherlock/scalpel/scalpel_darts.h"
 
 namespace Sherlock {
 
