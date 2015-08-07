@@ -403,7 +403,7 @@ OpcodeReturn TattooTalk::cmdPlaySong(const byte *&str) {
 }
 
 OpcodeReturn TattooTalk::cmdRestorePeopleSequence(const byte *&str) {
-	int npcNum = *++str;
+	int npcNum = *++str - 1;
 	TattooPeople &people = *(TattooPeople *)_vm->_people;
 	TattooPerson &person = people[npcNum];
 	person._misc = 0;
@@ -560,7 +560,7 @@ OpcodeReturn TattooTalk::cmdSetNPCPathPauseLookingHolmes(const byte *&str) {
 }
 
 OpcodeReturn TattooTalk::cmdSetNPCPosition(const byte *&str) {
-	int npcNum = *++str;
+	int npcNum = *++str - 1;
 	++str;
 	TattooPeople &people = *(TattooPeople *)_vm->_people;
 	TattooPerson &person = people[npcNum];
@@ -710,7 +710,7 @@ OpcodeReturn TattooTalk::cmdSetNPCVerbTarget(const byte *&str) {
 }
 
 OpcodeReturn TattooTalk::cmdSetNPCWalkGraphics(const byte *&str) {
-	int npcNum = *++str;
+	int npcNum = *++str - 1;
 	TattooPeople &people = *(TattooPeople *)_vm->_people;
 	Person &person = people[npcNum];
 
