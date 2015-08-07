@@ -173,6 +173,7 @@ TattooTalk::TattooTalk(SherlockEngine *vm) : Talk(vm), _talkWidget(vm) {
 		(OpcodeMethod)&TattooTalk::cmdSetNPCVerbScript,
 		nullptr,
 		(OpcodeMethod)&TattooTalk::cmdRestorePeopleSequence,
+		nullptr,
 		(OpcodeMethod)&TattooTalk::cmdSetNPCVerbTarget,
 		(OpcodeMethod)&TattooTalk::cmdTurnSoundsOff
 	};
