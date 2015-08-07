@@ -339,7 +339,8 @@ void Talk::talkTo(const Common::String &filename) {
 			_scriptSelect = select;
 			_speaker = _talkTo;
 
-			Statement &statement = _statements[select];
+			// Make a copy of the statement (in case the script frees the statement list), and then execute it
+			Statement statement = _statements[select];
 			doScript(_statements[select]._reply);
 
 			if (IS_ROSE_TATTOO) {
