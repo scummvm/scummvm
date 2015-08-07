@@ -537,12 +537,13 @@ void ScalpelTalk::talkWait(const byte *&str) {
 	}
 }
 
-void ScalpelTalk::talk3DOMovieTrigger(int subIndex) {
-	if (!IS_3DO) {
-		// No 3DO? No movie!
-		return;
-	}
+void ScalpelTalk::switchSpeaker(int subIndex) {
+	// If it's the 3DO, pass on to start the actor's conversation movie
+	if (IS_3DO)
+		talk3DOMovieTrigger(subIndex);
+}
 
+void ScalpelTalk::talk3DOMovieTrigger(int subIndex) {
 	// Find out a few things that we need
 	int userSelector = _vm->_ui->_selector;
 	int scriptSelector = _scriptSelect;

@@ -251,14 +251,14 @@ protected:
 	virtual void talkWait(const byte *&str);
 
 	/**
-	 * Trigger to play a 3DO talk dialog movie
-	 */
-	virtual void talk3DOMovieTrigger(int subIndex) {};
-	
-	/**
 	 * Show the talk display
 	 */
 	virtual void showTalk() = 0;
+
+	/**
+	 * Called when the active speaker is switched
+	 */
+	virtual void switchSpeaker(int subIndex) {}
 public:
 	TalkSequence _talkSequenceStack[TALK_SEQUENCE_STACK_SIZE];
 	Common::Array<Statement> _statements;

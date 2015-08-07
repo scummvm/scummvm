@@ -63,10 +63,11 @@ protected:
 	 */
 	virtual void talkWait(const byte *&str);
 
+
 	/**
-	 * Trigger to play a 3DO talk dialog movie
+	 * Called when the active speaker is switched
 	 */
-	virtual void talk3DOMovieTrigger(int subIndex);
+	virtual void switchSpeaker(int subIndex);
 
 	/**
 	 * Show the talk display
@@ -91,6 +92,11 @@ public:
 	 * Prints a single conversation option in the interface window
 	 */
 	int talkLine(int lineNum, int stateNum, byte color, int lineY, bool slamIt);
+
+	/**
+	 * Trigger to play a 3DO talk dialog movie
+	 */
+	void talk3DOMovieTrigger(int subIndex);
 };
 
 } // End of namespace Scalpel

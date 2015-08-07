@@ -27,6 +27,7 @@
 #include "sherlock/scalpel/scalpel_people.h"
 #include "sherlock/scalpel/scalpel_saveload.h"
 #include "sherlock/scalpel/scalpel_screen.h"
+#include "sherlock/scalpel/scalpel_talk.h"
 #include "sherlock/scalpel/settings.h"
 #include "sherlock/scalpel/scalpel.h"
 #include "sherlock/sherlock.h"
@@ -1483,7 +1484,7 @@ void ScalpelUserInterface::doTalkControl() {
 	ScalpelPeople &people = *(ScalpelPeople *)_vm->_people;
 	ScalpelScreen &screen = *(ScalpelScreen *)_vm->_screen;
 	Sound &sound = *_vm->_sound;
-	Talk &talk = *_vm->_talk;
+	ScalpelTalk &talk = *(ScalpelTalk *)_vm->_talk;
 	Common::Point mousePos = events.mousePos();
 
 	_key = _oldKey = -1;
@@ -1645,8 +1646,9 @@ void ScalpelUserInterface::doTalkControl() {
 				sound._speechOn = false;
 			}
 
-			// Trigger to play 3DO movie
-			talk.talk3DOMovieTrigger(0);
+			if (IS_3DO)
+				// Trigger to play 3DO movie
+				talk.talk3DOMovieTrigger(0);
 
 			talk.waitForMore(talk._statements[_selector]._statement.size());
 			if (talk._talkToAbort)

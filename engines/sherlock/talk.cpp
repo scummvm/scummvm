@@ -823,7 +823,7 @@ void Talk::doScript(const Common::String &script) {
 		}
 	}
 
-	bool   trigger3DOMovie = true;
+	bool  speakerSwitched = true;
 	uint16 subIndex = 1;
 
 	do {
@@ -844,12 +844,12 @@ void Talk::doScript(const Common::String &script) {
 				return;
 			case RET_CONTINUE:
 				continue;
-			case OP_SWITCH_SPEAKER:
-				trigger3DOMovie = true;
-				break;
 			default:
 				break;
 			}
+
+			if (c == _opcodes[OP_SWITCH_SPEAKER])
+				speakerSwitched = true;
 
 			++str;
 		} else {
@@ -869,12 +869,10 @@ void Talk::doScript(const Common::String &script) {
 			_openTalkWindow = false;
 		}
 
-		if ((_wait) && (trigger3DOMovie)) {
-			// Trigger to play 3DO movie
-			talk3DOMovieTrigger(subIndex);
-
-			trigger3DOMovie = false; // wait for next switch speaker opcode
-			subIndex++;
+		if ((_wait) && (speakerSwitched)) {
+			switchSpeaker(subIndex);
+			speakerSwitched = false;
+			++subIndex;
 		}
 
 		if (_wait)
