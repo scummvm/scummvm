@@ -24,6 +24,7 @@
 
 #include "engines/stark/formats/xrc.h"
 #include "engines/stark/gfx/renderentry.h"
+#include "engines/stark/movement/movement.h"
 
 #include "engines/stark/resources/anim.h"
 #include "engines/stark/resources/animhierarchy.h"
@@ -62,19 +63,33 @@ Object *Item::construct(Object *parent, byte subType, uint16 index, const Common
 	}
 }
 
-Item::~Item() {
-}
-
 Item::Item(Object *parent, byte subType, uint16 index, const Common::String &name) :
 				Object(parent, subType, index, name),
 				_enabled(true),
-				_characterIndex(0) {
+				_characterIndex(0),
+				_movement(nullptr) {
 	_type = TYPE;
+}
+
+Item::~Item() {
+	delete _movement;
 }
 
 void Item::readData(Formats::XRCReadStream *stream) {
 	_enabled = stream->readBool();
 	_characterIndex = stream->readSint32LE();
+}
+
+void Item::onGameLoop() {
+	Object::onGameLoop();
+
+	if (_enabled && _movement) {
+		_movement->onGameLoop();
+
+		if (_movement->hasEnded()) {
+			setMovement(nullptr);
+		}
+	}
 }
 
 bool Item::isEnabled() const {
@@ -104,6 +119,15 @@ Common::String Item::getHotspotTitle(uint32 hotspotIndex) const {
 	} else {
 		return getName();
 	}
+}
+
+void Item::setMovement(Movement *movement) {
+	if (_movement && !_movement->hasEnded()) {
+		_movement->stop();
+	}
+
+	delete _movement;
+	_movement = movement;
 }
 
 void Item::printData() {

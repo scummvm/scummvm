@@ -33,6 +33,7 @@
 
 namespace Stark {
 
+class Movement;
 class Visual;
 
 namespace Gfx {
@@ -79,6 +80,7 @@ public:
 
 	// Resource API
 	virtual void readData(Formats::XRCReadStream *stream) override;
+	virtual void onGameLoop() override;
 	void saveLoad(ResourceSerializer *serializer) override;
 
 	/** Is the item present in the scene */
@@ -98,11 +100,15 @@ public:
 
 	/** Obtain the title for one of the item's hotspots */
 	virtual Common::String getHotspotTitle(uint32 hotspotIndex) const;
+
+	/** Replace the current movement with an other */
+	void setMovement(Movement *movement);
 protected:
 	void printData() override;
 
 	bool _enabled;
 	int32 _characterIndex;
+	Movement *_movement;
 };
 
 /**

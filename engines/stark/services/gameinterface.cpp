@@ -22,7 +22,7 @@
 
 #include "engines/stark/services/gameinterface.h"
 
-#include "engines/stark/movement/shortestpath.h"
+#include "engines/stark/movement/walk.h"
 
 #include "engines/stark/resources/knowledgeset.h"
 #include "engines/stark/resources/level.h"
@@ -103,29 +103,11 @@ void GameInterface::walkTo(const Common::Point &mouse) {
 		return;
 	}
 
-	Resources::FloorFace *destinationFloorFace = floor->getFace(destinationFloorFaceIndex);
-	Resources::FloorEdge *destinationFloorEdge = destinationFloorFace->findNearestEdge(destinationPosition);
+	Walk *walk = new Walk(april);
+	walk->setDestination(destinationPosition);
+	walk->start();
 
-	Math::Vector3d startPosition = april->getPosition3D();
-	int32 startFloorFaceIndex = april->getFloorFaceIndex();
-	Resources::FloorFace *startFloorFace = floor->getFace(startFloorFaceIndex);
-	Resources::FloorEdge *startFloorEdge = startFloorFace->findNearestEdge(startPosition);
-
-	ShortestPath pathSearch;
-	ShortestPath::NodeList edgePath = pathSearch.search(startFloorEdge, destinationFloorEdge);
-
-	Common::Debug debug = streamDbg();
-	debug << "start: " << startPosition << "\n";
-
-	for (ShortestPath::NodeList::const_iterator it = edgePath.begin(); it != edgePath.end(); it++) {
-		debug << "step: " << (*it)->getPosition() << "\n";
-	}
-
-	debug << "destination: " << destinationPosition << "\n";
-
-	// TODO: Complete, for now we just teleport to the target location
-	april->setPosition3D(destinationPosition);
-	april->setFloorFaceIndex(destinationFloorFaceIndex);
+	april->setMovement(walk);
 }
 
 VisualImageXMG *GameInterface::getActionImage(uint32 itemIndex, bool active) {

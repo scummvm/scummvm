@@ -18,7 +18,9 @@ MODULE_OBJS := \
 	model/model.o \
 	model/skeleton.o \
 	model/skeleton_anim.o \
+	movement/movement.o \
 	movement/shortestpath.o \
+	movement/walk.o \
 	resources/anim.o \
 	resources/animhierarchy.o \
 	resources/animscript.o \
