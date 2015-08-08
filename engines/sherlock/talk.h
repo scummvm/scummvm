@@ -256,6 +256,11 @@ protected:
 	virtual void showTalk() = 0;
 
 	/**
+	 * Called when a character being spoken to has no talk options to display
+	 */
+	virtual void nothingToSay() = 0;
+
+	/**
 	 * Called when the active speaker is switched
 	 */
 	virtual void switchSpeaker(int subIndex) {}

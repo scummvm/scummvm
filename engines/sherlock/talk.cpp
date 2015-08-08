@@ -468,8 +468,15 @@ void Talk::talk(int objNum) {
 			break;
 		}
 	}
-	if (select == -1)
-		error("No entry matched all required flags");
+
+	if (select == -1) {
+		freeTalkVars();
+		if (!scumm_strnicmp(talkFilename.c_str(), "PATH", 4))
+			error("No entries found to execute in path file");
+
+		nothingToSay();
+		return;
+	}
 
 	// See if the statement is a stealth mode reply
 	Statement &statement = _statements[select];

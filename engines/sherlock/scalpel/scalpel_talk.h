@@ -63,11 +63,15 @@ protected:
 	 */
 	virtual void talkWait(const byte *&str);
 
-
 	/**
 	 * Called when the active speaker is switched
 	 */
 	virtual void switchSpeaker(int subIndex);
+
+	/**
+	 * Called when a character being spoken to has no talk options to display
+	 */
+	virtual void nothingToSay();
 
 	/**
 	 * Show the talk display

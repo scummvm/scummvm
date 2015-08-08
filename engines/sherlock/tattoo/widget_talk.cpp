@@ -311,7 +311,7 @@ void WidgetTalk::handleEvents() {
 
 						if (select == -1) {
 							talk.freeTalkVars();
-							ui.putMessage("%s", FIXED(NothingToSay));
+							talk.nothingToSay();
 							return;
 						}
 

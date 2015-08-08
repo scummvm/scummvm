@@ -537,6 +537,10 @@ void ScalpelTalk::talkWait(const byte *&str) {
 	}
 }
 
+void ScalpelTalk::nothingToSay() {
+	error("Character had no talk options available");
+}
+
 void ScalpelTalk::switchSpeaker(int subIndex) {
 	// If it's the 3DO, pass on to start the actor's conversation movie
 	if (IS_3DO)

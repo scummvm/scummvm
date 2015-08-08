@@ -21,6 +21,7 @@
  */
 
 #include "sherlock/tattoo/tattoo_talk.h"
+#include "sherlock/tattoo/tattoo_fixed_text.h"
 #include "sherlock/tattoo/tattoo_people.h"
 #include "sherlock/tattoo/tattoo_scene.h"
 #include "sherlock/tattoo/tattoo_user_interface.h"
@@ -198,6 +199,11 @@ void TattooTalk::talkInterface(const byte *&str) {
 	ui._textWidget.load(Common::String((const char *)s, (const char *)str), _speaker);
 	ui._textWidget.summonWindow();
 	_wait = true;
+}
+
+void TattooTalk::nothingToSay() {
+	TattooUserInterface &ui = *(TattooUserInterface *)_vm->_ui;
+	ui.putMessage("%s", FIXED(NothingToSay));
 }
 
 void TattooTalk::showTalk() {

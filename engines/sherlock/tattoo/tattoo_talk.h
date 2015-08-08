@@ -87,6 +87,11 @@ protected:
 	virtual void talkInterface(const byte *&str);
 
 	/**
+	 * Called when a character being spoken to has no talk options to display
+	 */
+	virtual void nothingToSay();
+
+	/**
 	 * Show the talk display
 	 */
 	virtual void showTalk();
