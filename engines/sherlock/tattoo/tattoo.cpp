@@ -194,6 +194,11 @@ void TattooEngine::saveConfig() {
 	ConfMan.flushToDisk();
 }
 
+bool TattooEngine::canSaveGameStateCurrently() {
+	TattooUserInterface &ui = *(TattooUserInterface *)_ui;
+	return _canLoadSave && !ui._creditsWidget.active();
+}
+
 } // End of namespace Tattoo
 
 } // End of namespace Sherlock

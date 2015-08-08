@@ -101,6 +101,11 @@ public:
 	 * Save the game configuration
 	 */
 	virtual void saveConfig();
+
+	/**
+	 * Returns true if the game can be saved
+	 */
+	virtual bool canSaveGameStateCurrently();
 };
 
 } // End of namespace Tattoo
