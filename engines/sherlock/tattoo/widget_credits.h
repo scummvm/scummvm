@@ -62,6 +62,11 @@ public:
 	void initCredits();
 
 	/**
+	 * Closes down credits display
+	 */
+	void close();
+
+	/**
 	 * Draw credits on the screen
 	 */
 	void drawCredits();

@@ -113,6 +113,11 @@ void WidgetCredits::initCredits() {
 	delete stream;
 }
 
+void WidgetCredits::close() {
+	_creditsActive = false;
+	_creditLines.clear();
+}
+
 void WidgetCredits::drawCredits() {
 	Screen &screen = *_vm->_screen;
 	Common::Rect screenRect(0, 0, screen.w(), screen.h());
@@ -199,9 +204,9 @@ void WidgetCredits::eraseCredits() {
 	}
 
 	if (_creditLines[_creditLines.size() - 1]._position.y < -_creditSpeed) {
+		// Completely finished credits display. Note that the credits will still remain flagged as active,
+		// so that the user interface knows not to allow and standard scene interaction
 		_creditLines.clear();
-		_creditsActive = false;
-		_vm->setFlags(!3000);
 	}
 }
 

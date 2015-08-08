@@ -787,10 +787,14 @@ int TattooScene::findBgShape(const Common::Point &pt) {
 
 void TattooScene::synchronize(Serializer &s) {
 	TattooEngine &vm = *(TattooEngine *)_vm;
+	TattooUserInterface &ui = *(TattooUserInterface *)_vm->_ui;
 	Scene::synchronize(s);
 
-	if (s.isLoading())
+	if (s.isLoading()) {
+		// In case we were showing the intro prologue or the ending credits, stop them
 		vm._runningProlog = false;
+		ui._creditsWidget.close();
+	}
 }
 
 int TattooScene::closestZone(const Common::Point &pt) {
