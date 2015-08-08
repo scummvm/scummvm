@@ -378,6 +378,17 @@ void TattooUserInterface::doStandardControl() {
 	if (vm._runningProlog)
 		return;
 
+	// When the end credits are active, any press will open the ScummVM global main menu
+	if (_creditsWidget.active()) {
+		if (_keyState.keycode || events._released || events._rightReleased) {
+			vm._canLoadSave = true;
+			vm.openMainMenuDialog();
+			vm._canLoadSave = false;
+		}
+
+		return;
+	}
+
 	// Display the names of any Objects the cursor is pointing at
 	displayObjectNames();
 
