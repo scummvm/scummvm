@@ -57,6 +57,7 @@ static const char *const FIXED_TEXT_ENGLISH[] = {
 	"with",
 	"No effect...",
 	"This person has nothing to say at the moment",
+	"Picked up",
 
 	"Page %d",
 	"Close Journal", 

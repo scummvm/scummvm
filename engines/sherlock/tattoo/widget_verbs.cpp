@@ -209,6 +209,7 @@ void WidgetVerbs::handleEvents() {
 			// Mouse is within the menu
 			// Erase the menu
 			banishWindow();
+			events.clearEvents();
 
 			// See if they are activating the Look Command
 			if (!_verbCommands[_selector].compareToIgnoreCase(strLook)) {

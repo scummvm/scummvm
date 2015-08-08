@@ -21,6 +21,7 @@
  */
 
 #include "sherlock/tattoo/tattoo_user_interface.h"
+#include "sherlock/tattoo/tattoo_fixed_text.h"
 #include "sherlock/tattoo/tattoo_journal.h"
 #include "sherlock/tattoo/tattoo_scene.h"
 #include "sherlock/tattoo/tattoo.h"
@@ -567,7 +568,60 @@ void TattooUserInterface::doControls() {
 }
 
 void TattooUserInterface::pickUpObject(int objNum) {
-	// TOOD
+	Inventory &inv = *_vm->_inventory;
+	Scene &scene = *_vm->_scene;
+	Talk &talk = *_vm->_talk;
+	Object &obj = scene._bgShapes[objNum];
+	bool printed = false;
+	int verbField = -1;
+
+	// Find which Verb field to use for pick up data
+	for (int idx = 0; idx < 6; ++idx) {
+		if (!scumm_stricmp(obj._use[idx]._target.c_str(), "*PICKUP"))
+			verbField = idx;
+	}
+
+	if (verbField != -1) {
+		if (obj._use[verbField]._cAnimNum)
+			scene.startCAnim(obj._use[verbField]._cAnimNum - 1);
+	}
+
+	if (!talk._talkToAbort) {
+		if (obj._type == NO_SHAPE)
+			obj._type = INVALID;
+		else
+			// Erase shape
+			obj._type = REMOVE;
+	} else {
+		return;
+	}
+
+	if (verbField != -1) {
+		for (int idx = 0; idx < 4 && !talk._talkToAbort; ++idx) {
+			if (obj.checkNameForCodes(obj._use[verbField]._names[idx])) {
+				if (!talk._talkToAbort)
+					printed = true;
+			}
+		}
+	}
+
+	if (talk._talkToAbort)
+		return;
+
+	// Add the item to the player's inventory
+	inv.putItemInInventory(obj);
+
+	if (!printed) {
+		Common::String desc = obj._description;
+		desc.setChar(tolower(desc[0]), 0);
+
+		putMessage("%s %s", FIXED(PickedUp), desc.c_str());
+	}
+
+	if (_menuMode != TALK_MODE && _menuMode != MESSAGE_MODE) {
+		_menuMode = STD_MODE;
+		_keyState.keycode = Common::KEYCODE_INVALID;
+	}
 }
 
 void TattooUserInterface::doQuitMenu() {
