@@ -28,8 +28,6 @@
 
 namespace Sherlock {
 
-#define MAX_PASSWORD 40
-
 class SherlockEngine;
 
 namespace Tattoo {
@@ -37,7 +35,7 @@ namespace Tattoo {
 class WidgetPassword: public WidgetBase {
 private:
 	Common::Point _cursorPos;
-	char _password[MAX_PASSWORD + 1];
+	Common::String _password;
 	int _index;
 	bool _blinkFlag;
 	int _blinkCounter;
