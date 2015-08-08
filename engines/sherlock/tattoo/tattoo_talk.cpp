@@ -111,7 +111,7 @@ const byte TATTOO_OPCODES[] = {
 
 /*----------------------------------------------------------------*/
 
-TattooTalk::TattooTalk(SherlockEngine *vm) : Talk(vm), _talkWidget(vm) {
+TattooTalk::TattooTalk(SherlockEngine *vm) : Talk(vm), _talkWidget(vm), _passwordWidget(vm) {
 	static OpcodeMethod OPCODE_METHODS[] = {
 		(OpcodeMethod)&TattooTalk::cmdSwitchSpeaker,
 
@@ -379,7 +379,11 @@ OpcodeReturn TattooTalk::cmdNPCLabelSet(const byte *&str) {
 	return RET_SUCCESS;
 }
 
-OpcodeReturn TattooTalk::cmdPassword(const byte *&str) { error("TODO: script opcode (cmdPassword)"); }
+OpcodeReturn TattooTalk::cmdPassword(const byte *&str) {
+	_vm->_ui->clearWindow();
+	_passwordWidget.show();
+	return RET_EXIT;
+}
 
 OpcodeReturn TattooTalk::cmdPlaySong(const byte *&str) { 
 	Music &music = *_vm->_music;

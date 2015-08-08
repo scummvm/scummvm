@@ -344,8 +344,10 @@ void WidgetTalk::handleEvents() {
 									people[idx].pullNPCPath();
 						}
 
-						ui.banishWindow();
-						ui._menuMode = scene._labTableScene ? LAB_MODE : STD_MODE;
+						if (ui._menuMode != PASSWORD_MODE) {
+							ui.banishWindow();
+							ui._menuMode = scene._labTableScene ? LAB_MODE : STD_MODE;
+						}
 						break;
 					}
 				} else {

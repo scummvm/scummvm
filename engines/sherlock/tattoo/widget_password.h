@@ -20,67 +20,42 @@
  *
  */
 
-#ifndef SHERLOCK_TATTOO_WIDGET_TALK_H
-#define SHERLOCK_TATTOO_WIDGET_TALK_H
+#ifndef SHERLOCK_TATTOO_WIDGET_PASSWORD_H
+#define SHERLOCK_TATTOO_WIDGET_PASSWORD_H
 
 #include "common/scummsys.h"
 #include "sherlock/tattoo/widget_base.h"
 
 namespace Sherlock {
 
+#define MAX_PASSWORD 40
+
 class SherlockEngine;
 
 namespace Tattoo {
 
-enum Highlight { HL_NO_HIGHLIGHTING, HL_CHANGED_HIGHLIGHTS, HL_SCROLLBAR_ONLY };
-
-/**
- * Handles displaying a dialog with conversation options the player can select from
- */
-class WidgetTalk: public WidgetBase {
-	struct StatementLine {
-		Common::String _line;
-		int _num;
-
-		StatementLine() : _num(0) {}
-		StatementLine(const Common::String &line, int num) : _line(line), _num(num) {}
-	};
+class WidgetPassword: public WidgetBase {
 private:
-	int _talkScrollIndex;
-	Common::Array<StatementLine> _statementLines;
-	int _selector, _oldSelector;
-	int _talkTextX;
-	uint32 _dialogTimer;
+	Common::Point _cursorPos;
+	char _password[MAX_PASSWORD + 1];
+	int _index;
+	bool _blinkFlag;
+	int _blinkCounter;
+	byte _cursorColor;
+	bool _insert;
 
 	/**
-	 * Get the needed size for a talk window
+	 * Close the window and check if the entered password is correct
 	 */
-	void getTalkWindowSize();
-
-	/**
-	 * Re-renders the contenst of the window to the widget's surface
-	 */
-	void render(Highlight highlightMode);
-
-	/**
-	 * This initializes the _statementLines array, which contains the talk options split up line
-	 * by line, as well as which statement a particular line is part of.
-	 */
-	void setStatementLines();
+	void close();
 public:
-	WidgetTalk(SherlockEngine *vm);
-	virtual ~WidgetTalk() {}
+	WidgetPassword(SherlockEngine *vm);
+	virtual ~WidgetPassword() {}
 
 	/**
-	 * Figures out how many lines the available talk lines will take up, and opens a text window
-	 * of appropriate size
+	 * Show the password entry window
 	 */
-	void load();
-
-	/**
-	 * Refresh the talk display
-	 */
-	void refresh();
+	void show();
 
 	/**
 	 * Handle event processing

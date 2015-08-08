@@ -104,7 +104,9 @@ enum FixedTextId {
 	kFixedText_AreYouSureYou,
 	kFixedText_WishToQuit,
 	kFixedText_Yes,
-	kFixedText_No
+	kFixedText_No,
+	kFixedText_EnterPassword,
+	kFixedText_CorrectPassword
 };
 
 class TattooFixedText: public FixedText {
