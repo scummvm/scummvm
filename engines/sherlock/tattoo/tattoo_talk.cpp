@@ -382,7 +382,7 @@ OpcodeReturn TattooTalk::cmdPlaySong(const byte *&str) {
 	// Get the name of the song to play
 	music._currentSongName = "";
 	str++;
-	for (int idx = 0; idx < 8 && str[idx + 1] != '~'; ++idx)
+	for (int idx = 0; idx < 8 && str[idx] != '~'; ++idx)
 		music._currentSongName += str[idx];
 	str += 7;
 
