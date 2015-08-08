@@ -96,8 +96,8 @@ ItemTemplate *PATTable::findItemTemplate() {
 	Item *parent = findParent<Item>();
 
 	ItemTemplate *itemTemplate = nullptr;
-	if (parent->getSubType() == Item::kItemMesh) {
-		MeshItem *item = Object::cast<MeshItem>(parent);
+	if (parent->getSubType() == Item::kItemModel) {
+		ModelItem *item = Object::cast<ModelItem>(parent);
 		itemTemplate = item->getItemTemplate();
 
 	} else if (parent->getSubType() == Item::kItemLevelTemplate) {

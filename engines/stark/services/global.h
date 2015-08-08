@@ -32,7 +32,7 @@ namespace Resources {
 class Camera;
 class Floor;
 class GlobalItemTemplate;
-class MeshItem;
+class ModelItem;
 class KnowledgeSet;
 class Level;
 class Location;
@@ -56,18 +56,18 @@ public:
 	Resources::Location *getLocation() const { return _location; }
 	Resources::Floor *getFloor() const { return _floor; }
 	Resources::Camera *getCamera() const { return _camera; }
-	Resources::MeshItem *getInteractive() const { return _interactive; }
+	Resources::ModelItem *getInteractive() const { return _interactive; }
 
 	void setLevel(Resources::Level *level) { _level = level; }
 	void setLocation(Resources::Location *location) { _location = location; }
 	void setFloor(Resources::Floor *floor) { _floor = floor; }
 	void setCamera(Resources::Camera *camera) { _camera = camera; }
-	void setInteractive(Resources::MeshItem *interactive) { _interactive = interactive; }
+	void setInteractive(Resources::ModelItem *interactive) { _interactive = interactive; }
 
 private:
 	Resources::Level *_level;
 	Resources::Location *_location;
-	Resources::MeshItem *_interactive;
+	Resources::ModelItem *_interactive;
 	Resources::Floor *_floor;
 	Resources::Camera *_camera;
 };

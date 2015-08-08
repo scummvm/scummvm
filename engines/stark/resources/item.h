@@ -69,7 +69,7 @@ public:
 		kItemAnimatedProp = 6,
 		kItemBackgroundElement = 7,
 		kItemBackground = 8,
-		kItemMesh = 10
+		kItemModel = 10
 	};
 
 	/** Item factory */
@@ -326,14 +326,14 @@ protected:
 };
 
 /**
- * Mesh item
+ * Model item
  *
  * Used to draw characters
  */
-class MeshItem : public FloorPositionedItem {
+class ModelItem : public FloorPositionedItem {
 public:
-	MeshItem(Object *parent, byte subType, uint16 index, const Common::String &name);
-	virtual ~MeshItem();
+	ModelItem(Object *parent, byte subType, uint16 index, const Common::String &name);
+	virtual ~ModelItem();
 
 	// Resource API
 	void readData(Formats::XRCReadStream *stream) override;

@@ -56,8 +56,8 @@ Object *Item::construct(Object *parent, byte subType, uint16 index, const Common
 	case kItemBackgroundElement:
 	case kItemBackground:
 		return new ImageItem(parent, subType, index, name);
-	case kItemMesh:
-		return new MeshItem(parent, subType, index, name);
+	case kItemModel:
+		return new ModelItem(parent, subType, index, name);
 	default:
 		error("Unknown item subtype %d", subType);
 	}
@@ -165,7 +165,7 @@ void ItemVisual::onAllLoaded() {
 
 	_renderEntry->setClickable(_clickable);
 
-	if (_subType != kItemMesh) {
+	if (_subType != kItemModel) {
 		setAnimKind(Anim::kActionUsagePassive);
 	}
 
@@ -302,7 +302,7 @@ void ItemTemplate::setTexture(int32 index, uint32 textureType) {
 	}
 
 	// Reset the animation to apply the changes
-	MeshItem *sceneInstance = Resources::Object::cast<Resources::MeshItem>(getSceneInstance());
+	ModelItem *sceneInstance = Resources::Object::cast<Resources::ModelItem>(getSceneInstance());
 	sceneInstance->updateAnim();
 }
 
@@ -608,10 +608,10 @@ void ImageItem::printData() {
 	debug("position: x %d, y %d", _position.x, _position.y);
 }
 
-MeshItem::~MeshItem() {
+ModelItem::~ModelItem() {
 }
 
-MeshItem::MeshItem(Object *parent, byte subType, uint16 index, const Common::String &name) :
+ModelItem::ModelItem(Object *parent, byte subType, uint16 index, const Common::String &name) :
 		FloorPositionedItem(parent, subType, index, name),
 		_meshIndex(-1),
 		_textureNormalIndex(-1),
@@ -619,13 +619,13 @@ MeshItem::MeshItem(Object *parent, byte subType, uint16 index, const Common::Str
 		_referencedItem(nullptr) {
 }
 
-void MeshItem::readData(Formats::XRCReadStream *stream) {
+void ModelItem::readData(Formats::XRCReadStream *stream) {
 	FloorPositionedItem::readData(stream);
 
 	_reference = stream->readResourceReference();
 }
 
-void MeshItem::onAllLoaded() {
+void ModelItem::onAllLoaded() {
 	FloorPositionedItem::onAllLoaded();
 
 	BonesMesh *bonesMesh = findChild<BonesMesh>();
@@ -649,7 +649,7 @@ void MeshItem::onAllLoaded() {
 	}
 }
 
-void MeshItem::onEnterLocation() {
+void ModelItem::onEnterLocation() {
 	FloorPositionedItem::onEnterLocation();
 
 	if (_referencedItem) {
@@ -659,7 +659,7 @@ void MeshItem::onEnterLocation() {
 	setAnimKind(Anim::kActorUsageIdle);
 }
 
-void MeshItem::setBonesMesh(int32 index) {
+void ModelItem::setBonesMesh(int32 index) {
 	_meshIndex = index;
 
 	if (_meshIndex != -1) {
@@ -667,7 +667,7 @@ void MeshItem::setBonesMesh(int32 index) {
 	}
 }
 
-BonesMesh *MeshItem::findBonesMesh() {
+BonesMesh *ModelItem::findBonesMesh() {
 	// Prefer retrieving the mesh from the anim hierarchy
 	BonesMesh *bonesMesh = _animHierarchy->findBonesMesh();
 
@@ -683,7 +683,7 @@ BonesMesh *MeshItem::findBonesMesh() {
 	return bonesMesh;
 }
 
-void MeshItem::setTexture(int32 index, uint32 textureType) {
+void ModelItem::setTexture(int32 index, uint32 textureType) {
 	if (textureType == TextureSet::kTextureNormal) {
 		_textureNormalIndex = index;
 	} else if (textureType == TextureSet::kTextureFace) {
@@ -693,7 +693,7 @@ void MeshItem::setTexture(int32 index, uint32 textureType) {
 	}
 }
 
-TextureSet *MeshItem::findTextureSet(uint32 textureType) {
+TextureSet *ModelItem::findTextureSet(uint32 textureType) {
 	// Prefer retrieving the mesh from the anim hierarchy
 	TextureSet *textureSet = _animHierarchy->findTextureSet(textureType);
 
@@ -719,7 +719,7 @@ TextureSet *MeshItem::findTextureSet(uint32 textureType) {
 	return textureSet;
 }
 
-void MeshItem::updateAnim() {
+void ModelItem::updateAnim() {
 	Anim *anim = getAnim();
 	if (anim && anim->getSubType() == Anim::kAnimSkeleton) {
 		anim->removeFromItem(this);
@@ -727,7 +727,7 @@ void MeshItem::updateAnim() {
 	}
 }
 
-Gfx::RenderEntry *MeshItem::getRenderEntry(const Common::Point &positionOffset) {
+Gfx::RenderEntry *ModelItem::getRenderEntry(const Common::Point &positionOffset) {
 	if (_enabled) {
 		Visual *visual = getVisual();
 
@@ -746,7 +746,7 @@ Gfx::RenderEntry *MeshItem::getRenderEntry(const Common::Point &positionOffset) 
 	return _renderEntry;
 }
 
-Common::String MeshItem::getHotspotTitle(uint32 hotspotIndex) const {
+Common::String ModelItem::getHotspotTitle(uint32 hotspotIndex) const {
 	if (_referencedItem) {
 		return _referencedItem->getHotspotTitle(hotspotIndex);
 	}
@@ -754,11 +754,11 @@ Common::String MeshItem::getHotspotTitle(uint32 hotspotIndex) const {
 	return Item::getHotspotTitle(hotspotIndex);
 }
 
-ItemTemplate *MeshItem::getItemTemplate() const {
+ItemTemplate *ModelItem::getItemTemplate() const {
 	return _referencedItem;
 }
 
-void MeshItem::printData() {
+void ModelItem::printData() {
 	FloorPositionedItem::printData();
 
 	debug("reference: %s", _reference.describe().c_str());

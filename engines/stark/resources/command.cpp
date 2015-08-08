@@ -558,16 +558,16 @@ Command *Command::opActivateTexture(const ResourceReference &textureRef) {
 	TextureSet *texture = textureRef.resolve<TextureSet>();
 	Item *item = texture->findParent<Item>();
 
-	if (!item || (item->getSubType() != Item::kItemGlobalTemplate && item->getSubType() != Item::kItemLevelTemplate && item->getSubType() != Item::kItemMesh)) {
+	if (!item || (item->getSubType() != Item::kItemGlobalTemplate && item->getSubType() != Item::kItemLevelTemplate && item->getSubType() != Item::kItemModel)) {
 		return nextCommand();
 	}
 
-	if (item->getSubType() == Item::kItemMesh) {
-		MeshItem *item10 = Object::cast<MeshItem>(item);
-		item10->setTexture(texture->getIndex(), texture->getSubType());
+	if (item->getSubType() == Item::kItemModel) {
+		ModelItem *modelItem = Object::cast<ModelItem>(item);
+		modelItem->setTexture(texture->getIndex(), texture->getSubType());
 	} else {
-		ItemTemplate *item13 = Object::cast<ItemTemplate>(item);
-		item13->setTexture(texture->getIndex(), texture->getSubType());
+		ItemTemplate *templateItem = Object::cast<ItemTemplate>(item);
+		templateItem->setTexture(texture->getIndex(), texture->getSubType());
 	}
 
 	return nextCommand();
@@ -577,16 +577,16 @@ Command *Command::opActivateMesh(const ResourceReference &meshRef) {
 	BonesMesh *mesh = meshRef.resolve<BonesMesh>();
 	Item *item = mesh->findParent<Item>();
 
-	if (!item || (item->getSubType() != Item::kItemGlobalTemplate && item->getSubType() != Item::kItemLevelTemplate && item->getSubType() != Item::kItemMesh)) {
+	if (!item || (item->getSubType() != Item::kItemGlobalTemplate && item->getSubType() != Item::kItemLevelTemplate && item->getSubType() != Item::kItemModel)) {
 		return nextCommand();
 	}
 
-	if (item->getSubType() == Item::kItemMesh) {
-		MeshItem *item10 = Object::cast<MeshItem>(item);
-		item10->setBonesMesh(mesh->getIndex());
+	if (item->getSubType() == Item::kItemModel) {
+		ModelItem *modelItem = Object::cast<ModelItem>(item);
+		modelItem->setBonesMesh(mesh->getIndex());
 	} else {
-		ItemTemplate *item13 = Object::cast<ItemTemplate>(item);
-		item13->setBonesMesh(mesh->getIndex());
+		ItemTemplate *templateItem = Object::cast<ItemTemplate>(item);
+		templateItem->setBonesMesh(mesh->getIndex());
 	}
 
 	return nextCommand();

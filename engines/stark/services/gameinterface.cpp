@@ -90,7 +90,7 @@ void GameInterface::scrollLocation(int32 dX, int32 dY) {
 
 void GameInterface::walkTo(const Common::Point &mouse) {
 	Resources::Floor *floor = StarkGlobal->getCurrent()->getFloor();
-	Resources::MeshItem *april = StarkGlobal->getCurrent()->getInteractive();
+	Resources::ModelItem *april = StarkGlobal->getCurrent()->getInteractive();
 	if (!floor || !april) {
 		return;
 	}

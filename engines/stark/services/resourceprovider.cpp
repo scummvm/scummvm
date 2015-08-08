@@ -224,7 +224,7 @@ void ResourceProvider::performLocationChange() {
 
 	if (current->getLocation()->has3DLayer()) {
 		// Fetch the scene item for April
-		current->setInteractive(Resources::Object::cast<Resources::MeshItem>(_global->getApril()->getSceneInstance()));
+		current->setInteractive(Resources::Object::cast<Resources::ModelItem>(_global->getApril()->getSceneInstance()));
 	}
 
 	setAprilInitialPosition();
@@ -263,7 +263,7 @@ void ResourceProvider::setAprilInitialPosition() {
 	}
 
 	Current *current = _global->getCurrent();
-	Resources::MeshItem *april = current->getInteractive();
+	Resources::ModelItem *april = current->getInteractive();
 	if (!april) {
 		return; // No character
 	}
