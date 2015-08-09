@@ -51,19 +51,25 @@ Math::Vector3d Line3d::middle() const {
 
 bool Line3d::intersectLine2d(const Line3d &other, Math::Vector3d *pos, bool useXZ) {
 
-	float denom, nume_a;
+	float denom, nume_a, nume_b;
 	if (useXZ) {
 		denom = ((other._end.z() - other._begin.z()) * (_end.x() - _begin.x())) -
 		((other._end.x() - other._begin.x()) * (_end.z() - _begin.z()));
 
 		nume_a = ((other._end.x() - other._begin.x()) * (_begin.z() - other._begin.z())) -
 		((other._end.z() - other._begin.z()) * (_begin.x() - other._begin.x()));
+
+		nume_b = ((_end.x() - _begin.x()) * (_begin.z() - other._begin.z())) -
+		((_end.z() - _begin.z()) * (_begin.x() - other._begin.x()));
 	} else {
 		denom = ((other._end.y() - other._begin.y()) * (_end.x() - _begin.x())) -
 		((other._end.x() - other._begin.x()) * (_end.y() - _begin.y()));
 
 		nume_a = ((other._end.x() - other._begin.x()) * (_begin.y() - other._begin.y())) -
 		((other._end.y() - other._begin.y()) * (_begin.x() - other._begin.x()));
+
+		nume_b = ((_end.x() - _begin.x()) * (_begin.y() - other._begin.y())) -
+		((_end.y() - _begin.y()) * (_begin.x() - other._begin.x()));
 	}
 
 	if (denom == 0.0f) {
@@ -71,8 +77,9 @@ bool Line3d::intersectLine2d(const Line3d &other, Math::Vector3d *pos, bool useX
 	}
 
 	float ua = nume_a / denom;
+	float ub = nume_b / denom;
 
-	if (ua < 0 || ua > 1)
+	if (ua < 0 || ua > 1 || ub < 0 || ub > 1)
 		return false;
 
 	// Get the intersection point.
