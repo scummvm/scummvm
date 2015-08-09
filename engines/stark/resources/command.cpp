@@ -29,6 +29,7 @@
 #include "engines/stark/resources/animscript.h"
 #include "engines/stark/resources/bookmark.h"
 #include "engines/stark/resources/bonesmesh.h"
+#include "engines/stark/resources/camera.h"
 #include "engines/stark/resources/dialog.h"
 #include "engines/stark/resources/floorfield.h"
 #include "engines/stark/resources/fmv.h"
@@ -41,6 +42,7 @@
 
 #include "engines/stark/services/services.h"
 #include "engines/stark/services/dialogplayer.h"
+#include "engines/stark/services/global.h"
 #include "engines/stark/services/resourceprovider.h"
 #include "engines/stark/services/userinterface.h"
 
@@ -549,7 +551,11 @@ Command *Command::opItem3DRunTo(const ResourceReference &itemRef, const Resource
 Command *Command::opItemPlaceDirection(const ResourceReference &itemRef, int32 direction) {
 	FloorPositionedItem *item = itemRef.resolve<FloorPositionedItem>();
 
-	item->setDirection(abs(direction) % 360);
+	Current *current = StarkGlobal->getCurrent();
+	Camera *camera = current->getCamera();
+	float cameraAngle = camera->getHorizontalAngle();
+
+	item->setDirection(abs(direction + cameraAngle) % 360);
 
 	return nextCommand();
 }

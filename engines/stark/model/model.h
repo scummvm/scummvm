@@ -120,7 +120,6 @@ public:
 	const Common::Array<MaterialNode *> &getMaterials() const { return _materials; }
 	Skeleton *getSkeleton() const { return _skeleton; }
 	const Gfx::TextureSet *getTextureSet() const { return _textureSet; }
-	float getFacingDirection() const { return _facingDirection; }
 
 	/**
 	 * Load animation data from the specified stream
@@ -140,7 +139,7 @@ private:
 	void buildBoneBoundingBox(BoneNode *bone) const;
 
 	uint32 _u1;
-	float _facingDirection;
+	float _u2;
 
 	Common::Array<MaterialNode *> _materials;
 	Common::Array<MeshNode *> _meshes;

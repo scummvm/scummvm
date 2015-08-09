@@ -34,7 +34,7 @@ Model::Model() :
 		_skeleton(nullptr),
 		_textureSet(nullptr),
 		_u1(0),
-		_facingDirection(0.0) {
+		_u2(0.0) {
 
 }
 
@@ -67,7 +67,7 @@ void Model::readFromStream(ArchiveReadStream *stream) {
 		error("Wrong magic 2 while reading actor '%d'", id2);
 	}
 
-	_facingDirection = stream->readFloat();
+	_u2 = stream->readFloat();
 
 	uint32 numMaterials = stream->readUint32LE();
 

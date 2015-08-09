@@ -58,6 +58,9 @@ public:
 	/** Define the near and far clip planes distances */
 	void setClipPlanes(float near, float far);
 
+	/** Compute the angle between the X vector and the look at direction in the horizontal plane */
+	float getHorizontalAngle() const;
+
 protected:
 	void readData(Formats::XRCReadStream *stream) override;
 	void printData() override;
