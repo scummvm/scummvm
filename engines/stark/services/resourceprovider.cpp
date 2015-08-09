@@ -258,10 +258,6 @@ void ResourceProvider::setNextLocationPosition(const ResourceReference &bookmark
 }
 
 void ResourceProvider::setAprilInitialPosition() {
-	if (_nextPositionBookmarkReference.empty()) {
-		return; // No target location
-	}
-
 	Current *current = _global->getCurrent();
 	Resources::ModelItem *april = current->getInteractive();
 	if (!april) {
@@ -269,9 +265,14 @@ void ResourceProvider::setAprilInitialPosition() {
 	}
 
 	// Set the initial location for April
-	Resources::Bookmark *position = _nextPositionBookmarkReference.resolve<Resources::Bookmark>();
+	if (!_nextPositionBookmarkReference.empty()) {
+		Resources::Bookmark *position = _nextPositionBookmarkReference.resolve<Resources::Bookmark>();
+		april->placeOnBookmark(position);
+	} else {
+		// No target location provided, place April on the first floor face
+		april->placeDefaultPosition();
+	}
 
-	april->placeOnBookmark(position);
 	april->setDirection(_nextDirection);
 
 	_nextPositionBookmarkReference = ResourceReference();

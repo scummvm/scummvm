@@ -282,6 +282,9 @@ public:
 	/** Move the item to a bookmarked position */
 	void placeOnBookmark(Bookmark *target);
 
+	/** Place the item on the center of the first floor face */
+	void placeDefaultPosition();
+
 	/** Get the item position */
 	Math::Vector3d getPosition3D() const;
 	/** Move the item */

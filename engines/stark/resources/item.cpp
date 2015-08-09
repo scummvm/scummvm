@@ -31,6 +31,7 @@
 #include "engines/stark/resources/bonesmesh.h"
 #include "engines/stark/resources/bookmark.h"
 #include "engines/stark/resources/floor.h"
+#include "engines/stark/resources/floorface.h"
 #include "engines/stark/resources/pattable.h"
 #include "engines/stark/resources/textureset.h"
 
@@ -512,6 +513,19 @@ void FloorPositionedItem::placeOnBookmark(Bookmark *target) {
 	} else {
 		warning("Item '%s' has been place out of the floor field", getName().c_str());
 	}
+}
+
+void FloorPositionedItem::placeDefaultPosition() {
+	Floor *floor = StarkGlobal->getCurrent()->getFloor();
+	FloorFace *face = floor->getFace(0);
+
+	_position3D = face->getCenter();
+
+	// Find the floor face index the item is on
+	setFloorFaceIndex(0);
+
+	// Set the z coordinate using the floor height at that position
+	floor->computePointHeightInFace(_position3D, 0);
 }
 
 void FloorPositionedItem::setDirection(uint direction) {

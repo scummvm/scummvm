@@ -89,6 +89,9 @@ public:
 	 */
 	FloorEdge *findNearestEdge(const Math::Vector3d &point) const;
 
+	/** Get the point at the center of the face's triangle */
+	Math::Vector3d getCenter() const;
+
 protected:
 	void readData(Formats::XRCReadStream *stream) override;
 	void printData() override;

@@ -158,6 +158,10 @@ FloorEdge *FloorFace::findNearestEdge(const Math::Vector3d &point) const {
 	return edge;
 }
 
+Math::Vector3d FloorFace::getCenter() const {
+	return (_vertices[0] + _vertices[1] + _vertices[2]) / 3.0;
+}
+
 void FloorFace::readData(Formats::XRCReadStream *stream) {
 	for (uint i = 0; i < ARRAYSIZE(_indices); i++) {
 		_indices[i] = stream->readSint16LE();
