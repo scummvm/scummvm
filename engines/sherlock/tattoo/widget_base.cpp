@@ -236,7 +236,6 @@ Common::Rect WidgetBase::getScrollBarBounds() const {
 
 void WidgetBase::drawScrollBar(int index, int pageSize, int count) {
 	TattooUserInterface &ui = *(TattooUserInterface *)_vm->_ui;
-	ImageFile &imgaes = *ui._interfaceImages;
 
 	// Fill the area with transparency
 	Common::Rect r = getScrollBarBounds();
