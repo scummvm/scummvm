@@ -76,6 +76,26 @@ FloorFace *Floor::getFace(uint32 index) const {
 	return _faces[index];
 }
 
+bool Floor::isSegmentInside(const Math::Line3d &segment) const {
+	// The segment is inside the floor if at least one of its extremities is,
+	// and it does not cross any floor border
+
+	int32 beginFace = findFaceContainingPoint(segment.begin());
+	if (beginFace < 0) {
+		// The segment begin point is not on the floor
+		return false;
+	}
+
+	for (uint i = 0; i < _edges.size(); i++) {
+		const FloorEdge &edge = _edges[i];
+		if (edge.isFloorBorder() && edge.intersectsSegment(this, segment)) {
+			return false;
+		}
+	}
+
+	return true;
+}
+
 void Floor::readData(Formats::XRCReadStream *stream) {
 	_facesCount = stream->readUint32LE();
 	uint32 vertexCount = stream->readUint32LE();
@@ -212,6 +232,18 @@ int32 FloorEdge::getFaceIndex1() const {
 
 int32 FloorEdge::getFaceIndex2() const {
 	return _faceIndex2;
+}
+
+bool FloorEdge::isFloorBorder() const {
+	return _faceIndex2 == -1;
+}
+
+bool FloorEdge::intersectsSegment(const Floor *floor, const Math::Line3d &segment) const {
+	Math::Vector3d vertex1 = floor->getVertex(_vertexIndex1);
+	Math::Vector3d vertex2 = floor->getVertex(_vertexIndex2);
+	Math::Line3d edgeSement = Math::Line3d(vertex1, vertex2);
+
+	return edgeSement.intersectLine2d(segment, nullptr, false);
 }
 
 } // End of namespace Resources

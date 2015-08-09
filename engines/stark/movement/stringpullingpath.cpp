@@ -20,46 +20,39 @@
  *
  */
 
-#ifndef STARK_MOVEMENT_WALK_H
-#define STARK_MOVEMENT_WALK_H
+#include "engines/stark/movement/stringpullingpath.h"
 
-#include "engines/stark/movement/movement.h"
+#include "engines/stark/resources/floor.h"
 
-#include "math/vector3d.h"
+#include "engines/stark/services/global.h"
+#include "engines/stark/services/services.h"
+
+#include "math/line3d.h"
 
 namespace Stark {
 
-class StringPullingPath;
+void StringPullingPath::addStep(const Math::Vector3d &position) {
+	_steps.push_back(position);
+}
 
-/**
- * Make an item walk / run to its destination on the current
- * location's floor
- */
-class Walk : public Movement {
-public:
-	Walk(Resources::FloorPositionedItem *item);
-	virtual ~Walk();
+void StringPullingPath::reset() {
+	_steps.clear();
+	_targetStep = 1;
+}
 
-	// Movement API
-	void start() override;
-	void onGameLoop() override;
+Math::Vector3d StringPullingPath::computeWalkTarget(const Math::Vector3d &fromPosition) {
+	Current *current = StarkGlobal->getCurrent();
+	Resources::Floor *floor = current->getFloor();
 
-	/**
-	 * Set the destination
-	 */
-	void setDestination(const Math::Vector3d &destination);
+	for (uint i = _targetStep + 1; i < _steps.size(); i++) {
+		Math::Line3d testSegment = Math::Line3d(fromPosition, _steps[i]);
+		if (!floor->isSegmentInside(testSegment)) {
+			break;
+		}
 
-private:
-	float computeDistancePerGameLoop() const;
-	uint computeDirectionAngle(const Math::Vector3d &direction) const;
+		_targetStep = i;
+	}
 
-	StringPullingPath *_path;
-
-	Math::Vector3d _destination;
-
-	void updatePath() const;
-};
-
+	return _steps[_targetStep];
+}
 } // End of namespace Stark
-
-#endif // STARK_MOVEMENT_WALK_H

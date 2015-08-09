@@ -79,11 +79,17 @@ ShortestPath::NodeList ShortestPath::rebuildPath(const Resources::FloorEdge *sta
 	const Resources::FloorEdge *current = goal;
 	path.push_front(goal);
 
-	while (current != start) {
+	while (current && current != start) {
 		current = cameFrom[current];
 		path.push_front(current);
 	}
 
+	if (current != start) {
+		// No path has been found from start to goal
+		return NodeList();
+	}
+
+	path.push_front(start);
 	return path;
 }
 

@@ -20,46 +20,37 @@
  *
  */
 
-#ifndef STARK_MOVEMENT_WALK_H
-#define STARK_MOVEMENT_WALK_H
+#ifndef STARK_MOVEMENT_STRING_PULLING_PATH_H
+#define STARK_MOVEMENT_STRING_PULLING_PATH_H
 
-#include "engines/stark/movement/movement.h"
+#include "common/array.h"
 
 #include "math/vector3d.h"
 
 namespace Stark {
 
-class StringPullingPath;
-
 /**
- * Make an item walk / run to its destination on the current
- * location's floor
+ * Store a path and allow to walk along it smoothly
+ *
+ * The base principle of the string pulling algorithm is to skip steps
+ * if it is possible to walk directly to a later step in straight line.
  */
-class Walk : public Movement {
+class StringPullingPath {
 public:
-	Walk(Resources::FloorPositionedItem *item);
-	virtual ~Walk();
+	/** Append a step to the path */
+	void addStep(const Math::Vector3d &position);
 
-	// Movement API
-	void start() override;
-	void onGameLoop() override;
+	/** Reset the steps, and the current target on the path */
+	void reset();
 
-	/**
-	 * Set the destination
-	 */
-	void setDestination(const Math::Vector3d &destination);
+	/** Move the walk target forward according to the position */
+	Math::Vector3d computeWalkTarget(const Math::Vector3d &fromPosition);
 
 private:
-	float computeDistancePerGameLoop() const;
-	uint computeDirectionAngle(const Math::Vector3d &direction) const;
-
-	StringPullingPath *_path;
-
-	Math::Vector3d _destination;
-
-	void updatePath() const;
+	Common::Array<Math::Vector3d> _steps;
+	int32 _targetStep;
 };
 
 } // End of namespace Stark
 
-#endif // STARK_MOVEMENT_WALK_H
+#endif // STARK_MOVEMENT_STRING_PULLING_PATH_H

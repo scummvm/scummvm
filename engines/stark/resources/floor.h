@@ -26,6 +26,7 @@
 #include "common/array.h"
 #include "common/str.h"
 
+#include "math/line3d.h"
 #include "math/ray.h"
 #include "math/vector3d.h"
 
@@ -80,6 +81,12 @@ public:
 	 * This is the middle of the edge
 	 */
 	Math::Vector3d getPosition() const;
+
+	/** Is this edge on the floor border? */
+	bool isFloorBorder() const;
+
+	/** Does the segment intersect the edge in the 2D plane? */
+	bool intersectsSegment(const Floor *floor, const Math::Line3d &segment) const;
 
 	int32 getFaceIndex1() const;
 	int32 getFaceIndex2() const;
@@ -140,6 +147,9 @@ public:
 
 	/** Get a floor face by its index */
 	FloorFace *getFace(uint32 index) const;
+
+	/** Check if the segment is entirely inside the floor */
+	bool isSegmentInside(const Math::Line3d &segment) const;
 
 protected:
 	void readData(Formats::XRCReadStream *stream) override;
