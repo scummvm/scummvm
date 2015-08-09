@@ -293,7 +293,8 @@ void WidgetBase::handleScrollbarEvents(int index, int pageSize, int count) {
 	// Calculate the Scroll Position bar
 	int barHeight = (r.height() - BUTTON_SIZE * 2) * pageSize / count;
 	barHeight = CLIP(barHeight, BUTTON_SIZE, r.height() - BUTTON_SIZE * 2);
-	int barY = r.top + BUTTON_SIZE + (r.height() - BUTTON_SIZE * 2 - barHeight) * index / (count - pageSize);
+	int barY = (count <= pageSize) ? r.top + BUTTON_SIZE : r.top + BUTTON_SIZE +
+		(r.height() - BUTTON_SIZE * 2 - barHeight) * index / (count - pageSize);
 
 	if (Common::Rect(r.left, r.top, r.right, r.top + BUTTON_SIZE).contains(mousePos))
 		// Mouse on scroll up button
