@@ -160,8 +160,9 @@ class StreamingImageFile {
 private:
 	int _frameNumber;
 	Common::SeekableReadStream *_stream;
-	bool _compressed;
 	byte _buffer[STREAMING_BUFFER_SIZE];
+	bool _compressed;
+	bool _active;
 public:
 	ImageFrame _imageFrame;
 
@@ -189,12 +190,12 @@ public:
 	/**
 	 * Get the next frame of the file
 	 */
-	void getNextFrame();
+	bool getNextFrame();
 
 	/**
 	 * Returns whether there are any remaining frames or not
 	 */
-	bool active() const { return _stream != nullptr && _stream->pos() < _stream->size(); }
+	bool active() const { return _active; }
 
 	/**
 	 * Return the current frame number

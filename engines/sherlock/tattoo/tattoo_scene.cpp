@@ -663,9 +663,10 @@ int TattooScene::startCAnim(int cAnimNum, int playRate) {
 
 	_activeCAnim.load(animStream, _compressed);
 
-	while (_activeCAnim.active() && !_vm->shouldQuit()) {
+	while (!_vm->shouldQuit()) {
 		// Get the next frame
-		_activeCAnim.getNextFrame();
+		if (!_activeCAnim.getNextFrame())
+			break;
 
 		// Draw the frame
 		doBgAnim();
