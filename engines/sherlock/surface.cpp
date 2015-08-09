@@ -101,7 +101,8 @@ void Surface::blitFrom(const Surface &src, const Common::Point &pt, const Common
 
 void Surface::transBlitFrom(const ImageFrame &src, const Common::Point &pt,
 		bool flipped, int overrideColor, int scaleVal) {
-	transBlitFrom(src._frame, pt + src._offset, flipped, overrideColor, scaleVal);
+	Common::Point drawPt(pt.x + src.sDrawXOffset(scaleVal), pt.y + src.sDrawYOffset(scaleVal));
+	transBlitFrom(src._frame, drawPt, flipped, overrideColor, scaleVal);
 }
 
 void Surface::transBlitFrom(const Surface &src, const Common::Point &pt,
