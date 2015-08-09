@@ -247,10 +247,12 @@ void WidgetFiles::handleEvents() {
 bool WidgetFiles::getFilename() {
 	Events &events = *_vm->_events;
 	TattooScene &scene = *(TattooScene *)_vm->_scene;
+	Screen &screen = *_vm->_screen;
 	Talk &talk = *_vm->_talk;
 	int index = 0;
 	int done = 0;
-	bool flag = false;
+	bool blinkFlag = false;
+	int blinkCountdown = 0;
 	int width;
 	int cursorColor = 192;
 	byte color, textColor;
@@ -260,22 +262,19 @@ bool WidgetFiles::getFilename() {
 	Common::Point pt(_surface.stringWidth("00.") + _surface.widestChar() + 5,
 		_surface.fontHeight() + 14 + (_selector - _savegameIndex) * (_surface.fontHeight() + 1));
 	
-	Common::String str = Common::String::format("%d.", _selector + 1);
-	_surface.writeString(str, Common::Point(_surface.widestChar(), pt.y), COMMAND_HIGHLIGHTED);
+	Common::String numStr = Common::String::format("%d.", _selector + 1);
+	_surface.writeString(numStr, Common::Point(_surface.widestChar(), pt.y), COMMAND_HIGHLIGHTED);
 
-	Common::String saveFile = _savegames[_selector];	
-	Common::String filename = _savegames[_selector];
-	_savegames[_selector] = "";
+	Common::String filename = _savegames[_selector];	
 
 	if (isSlotEmpty(_selector)) {
 		index = 0;
 		_surface.fillRect(Common::Rect(pt.x, pt.y, _bounds.right - BUTTON_SIZE - 9, pt.y + _surface.fontHeight() - 1), TRANSPARENCY);
+		filename = "";
 	} else {
-		index = saveFile.size();
-		_surface.writeString(saveFile, pt, COMMAND_HIGHLIGHTED);
-		pt.x = _surface.stringWidth("00.") + _surface.stringWidth(saveFile) + _surface.widestChar() + 5;
-		
-		//filename[index] = 32;
+		index = filename.size();
+		_surface.writeString(filename, pt, COMMAND_HIGHLIGHTED);
+		pt.x = _surface.stringWidth("00.") + _surface.stringWidth(filename) + _surface.widestChar() + 5;
 	}
 
 	do {
@@ -284,13 +283,11 @@ bool WidgetFiles::getFilename() {
 		if (talk._talkToAbort)
 			return false;
 
-		if (filename[index]) {
-			str = Common::String::format("%c", filename[index]);
-			width = _surface.charWidth(filename[index]);
-		} else {
-			width = 7;
-		}
+		char currentChar = (index == (int)filename.size()) ? ' ' : filename[index];
+		Common::String charString = Common::String::format("%c", currentChar);
+		width = screen.charWidth(currentChar);
 
+		// Wait for keypress
 		while (!events.kbHit()) {
 			events.pollEventsAndWait();
 			events.setButtonState();
@@ -300,19 +297,21 @@ bool WidgetFiles::getFilename() {
 			if (talk._talkToAbort)
 				return false;
 
-			flag = !flag;
-			if (flag) {
-				textColor = 236;
-				color = cursorColor;
-			} else {
-				textColor = COMMAND_HIGHLIGHTED;
-				color = TRANSPARENCY;
+			if (--blinkCountdown <= 0) {
+				blinkCountdown = 3;
+				blinkFlag = !blinkFlag;
+				if (blinkFlag) {
+					textColor = 236;
+					color = cursorColor;
+				} else {
+					textColor = COMMAND_HIGHLIGHTED;
+					color = TRANSPARENCY;
+				}
+
+				_surface.fillRect(Common::Rect(pt.x, pt.y, pt.x + width, pt.y + _surface.fontHeight()), color);
+				if (currentChar != ' ')
+					_surface.writeString(charString, pt, textColor);
 			}
-
-			_surface.fillRect(Common::Rect(pt.x, pt.y, pt.x + width, pt.y + _surface.fontHeight()), color);
-			if (filename[index])
-				_surface.writeString(str, pt, textColor);
-
 			if (_vm->shouldQuit())
 				return false;
 		}
@@ -320,14 +319,14 @@ bool WidgetFiles::getFilename() {
 		Common::KeyState keyState = events.getKey();
 		if (keyState.keycode == Common::KEYCODE_BACKSPACE && index > 0) {
 			pt.x -= _surface.charWidth(filename[index - 1]);
-			
+			--index;
+
 			if (insert) {
 				filename.deleteChar(index);
 			} else {
-				filename.setChar(' ', index - 1);
+				filename.setChar(' ', index);
 			}
 
-			--index;
 			_surface.fillRect(Common::Rect(pt.x, pt.y, _surface.w() - BUTTON_SIZE - 9, pt.y + _surface.fontHeight() - 1), TRANSPARENCY);
 			_surface.writeString(filename.c_str() + index, pt, COMMAND_HIGHLIGHTED);
 
@@ -336,8 +335,8 @@ bool WidgetFiles::getFilename() {
 				|| (keyState.keycode == Common::KEYCODE_HOME && index > 0)
 				|| (keyState.keycode == Common::KEYCODE_END)) {
 			_surface.fillRect(Common::Rect(pt.x, pt.y, pt.x + width, pt.y + _surface.fontHeight()), TRANSPARENCY);
-			if (filename[index])
-				_surface.writeString(str, pt, COMMAND_HIGHLIGHTED);
+			if (currentChar)
+				_surface.writeString(charString, pt, COMMAND_HIGHLIGHTED);
 
 			switch (keyState.keycode) {
 			case Common::KEYCODE_LEFT:
@@ -385,25 +384,22 @@ bool WidgetFiles::getFilename() {
 			done = 1;
 
 		} else if (keyState.keycode == Common::KEYCODE_ESCAPE) {
-			filename = saveFile;
 			_selector = -1;
 			render(RENDER_NAMES_AND_SCROLLBAR);
 			done = -1;
 		}
 
-		if ((keyState.keycode >= ' ') && ((keyState.keycode <= 168) || (keyState.keycode == 225)) && (index < 50)) {
-			if (pt.x + _surface.charWidth(keyState.keycode) < _surface.w() - BUTTON_SIZE - 20) {
-				if (insert) {
-					int temp = strlen(filename.c_str() + index) - 1;
-					if (temp)
-						filename.deleteChar(index);
-				}
+		if ((keyState.ascii >= ' ') && ((keyState.ascii <= 168) || (keyState.ascii == 225)) && (index < 50)) {
+			if (pt.x + _surface.charWidth(keyState.ascii) < _surface.w() - BUTTON_SIZE - 20) {
+				if (insert)
+					filename.insertChar(keyState.ascii, index);
+				else
+					filename.setChar(keyState.ascii, index);
 
-				filename.insertChar(keyState.ascii, index);
 				_surface.fillRect(Common::Rect(pt.x, pt.y, _bounds.width() - BUTTON_SIZE - 9, 
 					pt.y + _surface.fontHeight() - 1), TRANSPARENCY);
 				_surface.writeString(filename.c_str() + index, pt, COMMAND_HIGHLIGHTED);
-				pt.x += _surface.charWidth(keyState.keycode);
+				pt.x += _surface.charWidth(keyState.ascii);
 				++index;
 			}
 		}
@@ -415,7 +411,7 @@ bool WidgetFiles::getFilename() {
 		return false;
 
 	if (done == 1)
-		_savegames[_selector] = saveFile;
+		_savegames[_selector] = filename;
 
 	return done == 1;
 }
