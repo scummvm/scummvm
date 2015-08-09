@@ -210,6 +210,9 @@ public:
 	void removeFromItem(Item *item) override;
 	Visual *getVisual() override;
 
+	/** Get the anim movement speed in units per seconds */
+	uint32 getMovementSpeed() const;
+
 protected:
 	void printData() override;
 
@@ -217,7 +220,7 @@ protected:
 	Common::String _archiveName;
 	Common::String _animFilename;
 	uint32 _field_48;
-	uint32 _moveDistance;
+	uint32 _movementSpeed;
 	uint32 _field_6C;
 
 	uint32 _totalTime;

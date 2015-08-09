@@ -48,6 +48,10 @@ public:
 	void setDestination(const Math::Vector3d &destination);
 
 private:
+	Math::Vector3d computeWalkDirection(const Math::Vector3d &fromPosition);
+	float computeDistancePerGameLoop() const;
+	uint computeDirectionAngle(const Math::Vector3d &direction) const;
+
 	Math::Vector3d _destination;
 };
 

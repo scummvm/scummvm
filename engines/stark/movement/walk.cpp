@@ -27,6 +27,7 @@
 #include "engines/stark/services/global.h"
 #include "engines/stark/services/services.h"
 
+#include "engines/stark/resources/anim.h"
 #include "engines/stark/resources/item.h"
 #include "engines/stark/resources/floor.h"
 #include "engines/stark/resources/floorface.h"
@@ -66,18 +67,70 @@ void Walk::start() {
 	}
 
 	debug << "destination: " << _destination << "\n";
+
+	_item->setAnimKind(Resources::Anim::kActorUsageWalk);
 }
 
 void Walk::onGameLoop() {
 	Resources::Floor *floor = StarkGlobal->getCurrent()->getFloor();
 
-	// TODO: Complete, for now we just teleport to the target location
-	_item->setPosition3D(_destination);
+	// Get the direction to walk into
+	Math::Vector3d currentPosition = _item->getPosition3D();
+	Math::Vector3d direction = computeWalkDirection(currentPosition);
 
-	int32 destinationFloorFaceIndex = floor->findFaceContainingPoint(_destination);
-	_item->setFloorFaceIndex(destinationFloorFaceIndex);
+	// Compute the new position using the distance per gameloop
+	float distancePerGameloop = computeDistancePerGameLoop();
+	Math::Vector3d newPosition = currentPosition + direction * distancePerGameloop;
 
-	_ended = true;
+	// Update the new position's height according to the floor
+	int32 newFloorFaceIndex = floor->findFaceContainingPoint(newPosition);
+	if (newFloorFaceIndex >= 0) {
+		floor->computePointHeightInFace(newPosition, newFloorFaceIndex);
+	} else {
+		warning("Item %s is walking off the floor", _item->getName().c_str());
+	}
+
+	// Update the item's properties
+	_item->setPosition3D(newPosition);
+	_item->setDirection(computeDirectionAngle(direction));
+	_item->setFloorFaceIndex(newFloorFaceIndex);
+
+	// Check if we are close enough to the destination to stop
+	float distanceToDestination = (_destination - currentPosition).getMagnitude();
+	if (distanceToDestination < distancePerGameloop) {
+		_item->setAnimKind(Resources::Anim::kActorUsageIdle);
+		stop();
+	}
+}
+
+uint Walk::computeDirectionAngle(const Math::Vector3d &direction) const {
+	Math::Vector3d direction2d = direction;
+	direction2d.z() = 0.0;
+
+	Math::Angle directionAngle = Math::Vector3d::angle(direction2d, Math::Vector3d(1.0, 0.0, 0.0));
+	Math::Vector3d cross = Math::Vector3d::crossProduct(direction2d, Math::Vector3d(1.0, 0.0, 0.0));
+	if (cross.z() < 0) {
+		directionAngle = 360 - directionAngle;
+	}
+
+	return directionAngle.getDegrees();
+}
+
+float Walk::computeDistancePerGameLoop() const {
+	Resources::AnimSkeleton *anim = Resources::Object::cast<Resources::AnimSkeleton>(_item->getAnim());
+	float distancePerGameloop = anim->getMovementSpeed() * StarkGlobal->getMillisecondsPerGameloop() / 1000.0;
+
+	return distancePerGameloop;
+}
+
+Math::Vector3d Walk::computeWalkDirection(const Math::Vector3d &fromPosition) {
+	Math::Vector3d direction;
+
+	// TODO: Complete, for now we walk straight to the destination
+	direction = _destination - fromPosition;
+	direction.normalize();
+
+	return direction;
 }
 
 void Walk::setDestination(const Math::Vector3d &destination) {

@@ -199,7 +199,7 @@ void ItemVisual::printData() {
 	debug("clickable: %d", _clickable);
 }
 
-Anim *ItemVisual::getAnim() {
+Anim *ItemVisual::getAnim() const {
 	return _animHierarchy->getCurrentAnim();
 }
 

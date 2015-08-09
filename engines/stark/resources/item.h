@@ -140,11 +140,12 @@ public:
 	/** Define the current animation kind for the item */
 	void setAnimKind(int32 usage);
 
+	/** Get the currently playing animation */
+	Anim *getAnim() const;
 protected:
 	// Resource API
 	void printData() override;
 
-	Anim *getAnim();
 	Visual *getVisual();
 
 	Gfx::RenderEntry *_renderEntry;
