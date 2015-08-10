@@ -102,9 +102,9 @@ class Myst3Engine : public Engine {
 
 protected:
 	// Engine APIs
-	virtual Common::Error run();
-	virtual void syncSoundSettings();
-	virtual GUI::Debugger *getDebugger() { return (GUI::Debugger *)_console; }
+	virtual Common::Error run() override;
+	virtual void syncSoundSettings() override;
+	virtual GUI::Debugger *getDebugger() override { return (GUI::Debugger *)_console; }
 public:
 	GameState *_state;
 	Scene *_scene;
@@ -124,7 +124,7 @@ public:
 	Myst3Engine(OSystem *syst, const Myst3GameDescription *version);
 	virtual ~Myst3Engine();
 
-	bool hasFeature(EngineFeature f) const;
+	bool hasFeature(EngineFeature f) const override;
 	Common::Platform getPlatform() const;
 	Common::Language getDefaultLanguage() const;
 	bool isMonolingual() const;
@@ -231,9 +231,6 @@ private:
 	void closeArchives();
 
 	bool isInventoryVisible();
-
-	void transitionDraw(TransitionType type, Graphics::Surface *source);
-	void transitionDrawStep(TransitionType type, uint32 *target, uint targetPitch, uint32 *source, uint sourcePitch, uint32 *destination, uint destinationPitch, uint destinationHeight, uint completion);
 
 	void interactWithHoveredElement(bool lookOnly);
 	void processEventForGamepad(const Common::Event &event);
