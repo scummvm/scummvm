@@ -32,6 +32,7 @@
 #include "audio/mixer.h"
 
 namespace Audio {
+class PacketizedAudioStream;
 class QueuingAudioStream;
 }
 
@@ -241,8 +242,9 @@ protected:
 		AVIStreamHeader _audsHeader;
 		PCMWaveFormat _wvInfo;
 		Audio::Mixer::SoundType _soundType;
-		Audio::QueuingAudioStream *_audStream;
-		Audio::QueuingAudioStream *createAudioStream();
+		Audio::QueuingAudioStream *_queueStream;
+		Audio::PacketizedAudioStream *_packetStream;
+		void createAudioStream();
 		uint32 _curChunk;
 	};
 
