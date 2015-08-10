@@ -30,6 +30,10 @@
 
 #include "audio/timestamp.h"
 
+namespace Common {
+class SeekableReadStream;
+}
+
 namespace Audio {
 
 /**
@@ -366,6 +370,30 @@ Timestamp convertTimeToStreamPos(const Timestamp &where, int rate, bool isStereo
  * @param disposeAfterUse Whether the parent stream object should be destroyed on destruction of the returned stream
  */
 AudioStream *makeLimitingAudioStream(AudioStream *parentStream, const Timestamp &length, DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES);
+
+/**
+ * An AudioStream designed to work in terms of packets.
+ *
+ * It is similar in concept to QueuingAudioStream, but does not
+ * necessarily rely on the data from each queued AudioStream
+ * being separate.
+ */
+class PacketizedAudioStream : public virtual AudioStream {
+public:
+	virtual ~PacketizedAudioStream() {}
+
+	/**
+	 * Queue the next packet to be decoded.
+	 */
+	virtual void queuePacket(Common::SeekableReadStream *data) = 0;
+
+	/**
+	 * Mark this stream as finished. That is, signal that no further data
+	 * will be queued to it. Only after this has been done can this
+	 * stream ever 'end'.
+	 */
+	virtual void finish() = 0;
+};
 
 } // End of namespace Audio
 
