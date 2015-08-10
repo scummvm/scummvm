@@ -25,7 +25,9 @@
 #ifdef USE_MAD
 
 #include "common/debug.h"
+#include "common/mutex.h"
 #include "common/ptr.h"
+#include "common/queue.h"
 #include "common/stream.h"
 #include "common/substream.h"
 #include "common/textconsole.h"
@@ -51,9 +53,9 @@ public:
 	BaseMP3Stream();
 	virtual ~BaseMP3Stream();
 
-	bool endOfData() const		{ return _state == MP3_STATE_EOS; }
-	bool isStereo() const		{ return MAD_NCHANNELS(&_frame.header) == 2; }
-	int getRate() const			{ return _frame.header.samplerate; }
+	bool endOfData() const { return _state == MP3_STATE_EOS; }
+	bool isStereo() const { return _channels == 2; }
+	int getRate() const { return _rate; }
 
 protected:
 	void decodeMP3Data(Common::ReadStream &stream);
@@ -80,6 +82,9 @@ protected:
 	mad_frame _frame;
 	mad_synth _synth;
 
+	uint _channels;
+	uint _rate;
+
 	enum {
 		BUFFER_SIZE = 5 * 8192
 	};
@@ -88,11 +93,10 @@ protected:
 	byte _buf[BUFFER_SIZE + MAD_BUFFER_GUARD];
 };
 
-class MP3Stream : public BaseMP3Stream, public SeekableAudioStream {
+class MP3Stream : private BaseMP3Stream, public SeekableAudioStream {
 public:
 	MP3Stream(Common::SeekableReadStream *inStream,
 	               DisposeAfterUse::Flag dispose);
-	virtual ~MP3Stream() {}
 
 	int readBuffer(int16 *buffer, const int numSamples);
 	bool seek(const Timestamp &where);
@@ -105,6 +109,26 @@ protected:
 
 private:
 	static Common::SeekableReadStream *skipID3(Common::SeekableReadStream *stream, DisposeAfterUse::Flag dispose);
+};
+
+class PacketizedMP3Stream : private BaseMP3Stream, public PacketizedAudioStream {
+public:
+	PacketizedMP3Stream(Common::SeekableReadStream &firstPacket);
+	PacketizedMP3Stream(uint channels, uint rate);
+	~PacketizedMP3Stream();
+
+	// AudioStream API
+	int readBuffer(int16 *buffer, const int numSamples);
+	bool endOfStream() const;
+
+	// PacketizedAudioStream API
+	void queuePacket(Common::SeekableReadStream *packet);
+	void finish();
+
+private:
+	Common::Mutex _mutex;
+	Common::Queue<Common::SeekableReadStream *> _queue;
+	bool _finished;
 };
 
 
@@ -329,8 +353,11 @@ MP3Stream::MP3Stream(Common::SeekableReadStream *inStream, DisposeAfterUse::Flag
 	_inStream->seek(0);
 
 	// Decode the first chunk of data. This is necessary so that _frame
-	// is setup and isStereo() and getRate() return correct results.
+	// is setup and we can retrieve channels/rate.
 	decodeMP3Data(*_inStream);
+
+	_channels = MAD_NCHANNELS(&_frame.header);
+	_rate = _frame.header.samplerate;
 }
 
 int MP3Stream::readBuffer(int16 *buffer, const int numSamples) {
@@ -388,6 +415,91 @@ Common::SeekableReadStream *MP3Stream::skipID3(Common::SeekableReadStream *strea
 	return new Common::SeekableSubReadStream(stream, offset, stream->size(), dispose);
 }
 
+PacketizedMP3Stream::PacketizedMP3Stream(Common::SeekableReadStream &firstPacket) :
+		BaseMP3Stream(),
+		_finished(false) {
+
+	// Load some data to get the channels/rate
+	_queue.push(&firstPacket);
+	decodeMP3Data(firstPacket);
+	_channels = MAD_NCHANNELS(&_frame.header);
+	_rate = _frame.header.samplerate;
+
+	// Clear everything
+	deinitStream();
+	_state = MP3_STATE_INIT;
+	_queue.clear();
+}
+
+PacketizedMP3Stream::PacketizedMP3Stream(uint channels, uint rate) :
+		BaseMP3Stream(),
+		_finished(false) {
+	_channels = channels;
+	_rate = rate;
+}
+
+PacketizedMP3Stream::~PacketizedMP3Stream() {
+	while (!_queue.empty()) {
+		delete _queue.front();
+		_queue.pop();
+	}
+}
+
+int PacketizedMP3Stream::readBuffer(int16 *buffer, const int numSamples) {
+	int samples = 0;
+
+	while (samples < numSamples) {
+		Common::StackLock lock(_mutex);
+
+		// Empty? Bail out for now
+		if (_queue.empty())
+			return samples;
+
+		Common::SeekableReadStream *packet = _queue.front();
+
+		if (_state == MP3_STATE_INIT) {
+			// Initialize everything
+			decodeMP3Data(*packet);
+		} else if (_state == MP3_STATE_EOS) {
+			// Reset the end-of-stream setting
+			_state = MP3_STATE_READY;
+		}
+
+		samples += fillBuffer(*packet, buffer + samples, numSamples - samples);
+
+		// If the stream is done, kill it
+		if (packet->pos() >= packet->size()) {
+			_queue.pop();
+			delete packet;
+		}
+	}
+
+	return samples;
+}
+
+bool PacketizedMP3Stream::endOfStream() const {
+	if (!endOfData())
+		return false;
+
+	// Lock the mutex
+	Common::StackLock lock(_mutex);
+	if (!_queue.empty())
+		return false;
+
+	return _finished;
+}
+
+void PacketizedMP3Stream::queuePacket(Common::SeekableReadStream *packet) {
+	Common::StackLock lock(_mutex);
+	assert(!_finished);
+	_queue.push(packet);
+}
+
+void PacketizedMP3Stream::finish() {
+	Common::StackLock lock(_mutex);
+	_finished = true;
+}
+
 
 #pragma mark -
 #pragma mark --- MP3 factory functions ---
@@ -415,6 +527,15 @@ SeekableAudioStream *makeMP3Stream(
 		return s;
 	}
 }
+
+PacketizedAudioStream *makePacketizedMP3Stream(Common::SeekableReadStream &firstPacket) {
+	return new PacketizedMP3Stream(firstPacket);
+}
+
+PacketizedAudioStream *makePacketizedMP3Stream(uint channels, uint rate) {
+	return new PacketizedMP3Stream(channels, rate);
+}
+
 
 } // End of namespace Audio
 
