@@ -40,6 +40,11 @@ public:
 	Math::Vector3d end() const;
 	Math::Vector3d middle() const;
 
+	/**
+	 * Check if this line segment intersects with another line segment
+	 *
+	 * The check is done in either a XY or a XZ 2D plane.
+	 */
 	bool intersectLine2d(const Line3d &other, Math::Vector3d *pos, bool useXZ);
 
 	Line3d& operator=(const Line3d &other);
