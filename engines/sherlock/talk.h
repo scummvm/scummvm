@@ -185,7 +185,6 @@ protected:
 	Common::Stack<SequenceEntry> _sequenceStack;
 	Common::Stack<ScriptStackEntry> _scriptStack;
 	Common::Array<TalkHistoryEntry> _talkHistory;
-	int _speaker;
 	int _talkIndex;
 	int _scriptSelect;
 	int _talkStealth;
@@ -276,6 +275,7 @@ public:
 	bool _moreTalkUp, _moreTalkDown;
 	int _converseNum;
 	const byte *_opcodes;
+	int _speaker;
 public:
 	static Talk *init(SherlockEngine *vm);
 	virtual ~Talk() {}

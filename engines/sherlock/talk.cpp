@@ -571,6 +571,10 @@ void Talk::loadTalkFile(const Common::String &filename) {
 	Common::String talkFile = chP ? Common::String(filename.c_str(), chP) + ".tlk" :
 		Common::String(filename.c_str(), filename.c_str() + 7) + ".tlk";
 
+	// Create the base of the sound filename used for talking in Rose Tattoo
+	if (IS_ROSE_TATTOO && _scriptMoreFlag != 1)
+		sound._talkSoundFile = filename + ".";
+
 	// Open the talk file for reading
 	Common::SeekableReadStream *talkStream = res.load(talkFile);
 	_converseNum = res.resourceIndex();
@@ -924,8 +928,13 @@ int Talk::waitForMore(int delay) {
 		events.setCursor(ui._lookScriptFlag ? MAGNIFY : ARROW);
 	}
 
+	if (sound._speechOn && !sound._talkSoundFile.empty()) {
+		sound.playSpeech(sound._talkSoundFile);
+		sound._talkSoundFile.setChar(sound._talkSoundFile.lastChar() + 1, sound._talkSoundFile.size() - 1);
+	}
+
 	do {
-		if (sound._speechOn && !*sound._soundIsOn)
+		if (IS_SERRATED_SCALPEL && sound._speechOn && !*sound._soundIsOn)
 			people._portrait._frameNumber = -1;
 
 		scene.doBgAnim();
@@ -991,6 +1000,7 @@ int Talk::waitForMore(int delay) {
 	default:
 		break;
 	}
+
 
 	sound._speechOn = false;
 	events.setCursor(_talkToAbort ? ARROW : oldCursor);

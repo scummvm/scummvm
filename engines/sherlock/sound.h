@@ -47,6 +47,7 @@ private:
 	Audio::Mixer *_mixer;
 	Audio::SoundHandle _scalpelEffectsHandle;
 	Audio::SoundHandle _tattooEffectsHandle[MAX_MIXER_CHANNELS];
+	Audio::SoundHandle _speechHandle;
 	int _curPriority;
 
 	byte decodeSample(byte sample, byte& reference, int16& scale);
@@ -57,6 +58,7 @@ public:
 	bool _speechOn;
 	bool _diskSoundPlaying;
 	bool _soundPlaying;
+	bool _speechPlaying;
 	bool *_soundIsOn;
 	byte *_digiBuf;
 	int _soundVolume;
@@ -101,6 +103,21 @@ public:
 	Audio::SoundHandle getFreeSoundHandle();
 
 	void setVolume(int volume);
+
+	/**
+	 * Play a specified voice resource
+	 */
+	void playSpeech(const Common::String &name);
+
+	/**
+	 * Stop any currently playing speech
+	 */
+	void stopSpeech();
+
+	/**
+	 * Returns true if speech is currently playing
+	 */
+	bool isSpeechPlaying();
 };
 
 } // End of namespace Sherlock

@@ -25,7 +25,7 @@
 #include "sherlock/tattoo/tattoo_people.h"
 #include "sherlock/tattoo/tattoo_scene.h"
 #include "sherlock/tattoo/tattoo_user_interface.h"
-#include "sherlock/sherlock.h"
+#include "sherlock/tattoo/tattoo.h"
 #include "sherlock/screen.h"
 
 namespace Sherlock {
@@ -184,8 +184,14 @@ TattooTalk::TattooTalk(SherlockEngine *vm) : Talk(vm), _talkWidget(vm), _passwor
 }
 
 void TattooTalk::talkInterface(const byte *&str) {
+	TattooEngine &vm = *(TattooEngine *)_vm;
+	Sound &sound = *_vm->_sound;
+	Talk &talk = *_vm->_talk;
 	TattooUserInterface &ui = *(TattooUserInterface *)_vm->_ui;
 	const byte *s = str;
+
+	if (!vm._textWindowsOn && sound._speechOn && talk._speaker != -1)
+		return;
 
 	// Move to past the end of the text string
 	_charCount = 0;

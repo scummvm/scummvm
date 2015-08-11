@@ -57,6 +57,7 @@ Sound::Sound(SherlockEngine *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mixer) {
 	_voices = 0;
 	_diskSoundPlaying = false;
 	_soundPlaying = false;
+	_speechPlaying = false;
 	_soundIsOn = &_soundPlaying;
 	_curPriority = 0;
 	_digiBuf = nullptr;
@@ -174,15 +175,6 @@ bool Sound::playSound(const Common::String &name, WaitType waitType, int priorit
 
 			free(data);
 
-#if 0
-			// Debug : used to dump files
-			Common::DumpFile outFile;
-			outFile.open(filename);
-			outFile.write(decoded, (size - 2) * 2);
-			outFile.flush();
-			outFile.close();
-#endif
-
 			audioStream = Audio::makeRawStream(decoded, (size - 2) * 2, rate, Audio::FLAG_UNSIGNED, DisposeAfterUse::YES);
 		} else {
 			audioStream = Audio::makeWAVStream(stream, DisposeAfterUse::YES);
@@ -268,6 +260,30 @@ Audio::SoundHandle Sound::getFreeSoundHandle() {
 
 void Sound::setVolume(int volume) {
 	warning("TODO: setVolume - %d", volume);
+}
+
+void Sound::playSpeech(const Common::String &name) {
+	Resources &res = *_vm->_res;
+	Scene &scene = *_vm->_scene;
+	stopSpeech();
+
+	Common::String libraryName = Common::String::format("speech%02d.lib", scene._currentScene);
+	res.addToCache(libraryName);
+
+	// TODO: Doesn't seem to be WAV files. Need to find out what format it is..
+	Common::SeekableReadStream *stream = res.load(name, libraryName);
+	Audio::AudioStream *audioStream = Audio::makeWAVStream(stream, DisposeAfterUse::YES);
+	_mixer->playStream(Audio::Mixer::kSpeechSoundType, &_speechHandle, audioStream, -1, Audio::Mixer::kMaxChannelVolume);
+	_speechPlaying = true;
+}
+
+void Sound::stopSpeech() {
+	_mixer->stopHandle(_speechHandle);
+}
+
+bool Sound::isSpeechPlaying() {
+	_speechOn = _mixer->isSoundHandleActive(_speechHandle);
+	return _speechPlaying;
 }
 
 } // End of namespace Sherlock

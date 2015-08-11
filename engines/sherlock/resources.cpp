@@ -116,6 +116,10 @@ Resources::Resources(SherlockEngine *vm) : _vm(vm), _cache(vm) {
 }
 
 void Resources::addToCache(const Common::String &filename) {
+	// Return immediately if the library has already been loaded
+	if (_indexes.contains(filename))
+		return;
+	
 	_cache.load(filename);
 
 	// Check to see if the file is a library
@@ -217,6 +221,10 @@ bool Resources::exists(const Common::String &filename) const {
 void Resources::loadLibraryIndex(const Common::String &libFilename,
 		Common::SeekableReadStream *stream, bool isNewStyle) {
 	uint32 offset, nextOffset;
+
+	// Return immediately if the library has already been loaded
+	if (_indexes.contains(libFilename))
+		return;
 
 	// Create an index entry
 	_indexes[libFilename] = LibraryIndex();
