@@ -272,7 +272,7 @@ void Sound::playSpeech(const Common::String &name) {
 
 	// TODO: Doesn't seem to be WAV files. Need to find out what format it is..
 	Common::SeekableReadStream *stream = res.load(name, libraryName);
-	Audio::AudioStream *audioStream = Audio::makeWAVStream(stream, DisposeAfterUse::YES);
+	Audio::AudioStream *audioStream = Audio::makeRawStream(stream, 11025, Audio::FLAG_UNSIGNED);
 	_mixer->playStream(Audio::Mixer::kSpeechSoundType, &_speechHandle, audioStream, -1, Audio::Mixer::kMaxChannelVolume);
 	_speechPlaying = true;
 }
@@ -282,7 +282,7 @@ void Sound::stopSpeech() {
 }
 
 bool Sound::isSpeechPlaying() {
-	_speechOn = _mixer->isSoundHandleActive(_speechHandle);
+	_speechPlaying = _mixer->isSoundHandleActive(_speechHandle);
 	return _speechPlaying;
 }
 
