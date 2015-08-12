@@ -41,6 +41,15 @@ Video::AVIDecoder::AVIAudioTrack *ZorkAVIDecoder::createAudioTrack(Video::AVIDec
 	return new ZorkAVIAudioTrack(sHeader, wvInfo, _soundType);
 }
 
+ZorkAVIDecoder::ZorkAVIAudioTrack::ZorkAVIAudioTrack(const AVIStreamHeader &streamHeader, const PCMWaveFormat &waveFormat, Audio::Mixer::SoundType soundType) :
+		Video::AVIDecoder::AVIAudioTrack(streamHeader, waveFormat, soundType), _queueStream(0), _decoder(waveFormat.channels == 2) {
+}
+
+void ZorkAVIDecoder::ZorkAVIAudioTrack::createAudioStream() {
+	_queueStream = Audio::makeQueuingAudioStream(_wvInfo.samplesPerSec, _wvInfo.channels == 2);
+	_audioStream = _queueStream;
+}
+
 void ZorkAVIDecoder::ZorkAVIAudioTrack::queueSound(Common::SeekableReadStream *stream) {			
 	RawChunkStream::RawChunk chunk = _decoder.readNextChunk(stream);
 	delete stream;

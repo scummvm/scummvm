@@ -278,7 +278,9 @@ void AVIDecoder::handleStreamHeader(uint32 size) {
 		if (wvInfo.channels == 2)
 			sHeader.sampleSize /= 2;
 
-		addTrack(createAudioTrack(sHeader, wvInfo));
+		AVIAudioTrack *track = createAudioTrack(sHeader, wvInfo);
+		track->createAudioStream();
+		addTrack(track);
 	}
 
 	// Ensure that we're at the end of the chunk
@@ -841,40 +843,18 @@ void AVIDecoder::AVIVideoTrack::setDither(const byte *palette) {
 }
 
 AVIDecoder::AVIAudioTrack::AVIAudioTrack(const AVIStreamHeader &streamHeader, const PCMWaveFormat &waveFormat, Audio::Mixer::SoundType soundType)
-		: _audsHeader(streamHeader), _wvInfo(waveFormat), _soundType(soundType), _curChunk(0) {
-	createAudioStream();
+		: _audsHeader(streamHeader), _wvInfo(waveFormat), _soundType(soundType), _audioStream(0), _packetStream(0), _curChunk(0) {
 }
 
 AVIDecoder::AVIAudioTrack::~AVIAudioTrack() {
-	delete _queueStream;
-	delete _packetStream;
+	delete _audioStream;
 }
 
 void AVIDecoder::AVIAudioTrack::queueSound(Common::SeekableReadStream *stream) {
-	if (_packetStream) {
+	if (_packetStream)
 		_packetStream->queuePacket(stream);
-	} else if (_queueStream) {
-		if (_wvInfo.tag == kWaveFormatPCM) {
-			byte flags = 0;
-			if (_audsHeader.sampleSize == 2)
-				flags |= Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN;
-			else
-				flags |= Audio::FLAG_UNSIGNED;
-
-			if (_wvInfo.channels == 2)
-				flags |= Audio::FLAG_STEREO;
-
-			_queueStream->queueAudioStream(Audio::makeRawStream(stream, _wvInfo.samplesPerSec, flags, DisposeAfterUse::YES), DisposeAfterUse::YES);
-		} else if (_wvInfo.tag == kWaveFormatMSADPCM) {
-			_queueStream->queueAudioStream(Audio::makeADPCMStream(stream, DisposeAfterUse::YES, stream->size(), Audio::kADPCMMS, _wvInfo.samplesPerSec, _wvInfo.channels, _wvInfo.blockAlign), DisposeAfterUse::YES);
-		} else if (_wvInfo.tag == kWaveFormatMSIMAADPCM) {
-			_queueStream->queueAudioStream(Audio::makeADPCMStream(stream, DisposeAfterUse::YES, stream->size(), Audio::kADPCMMSIma, _wvInfo.samplesPerSec, _wvInfo.channels, _wvInfo.blockAlign), DisposeAfterUse::YES);
-		} else if (_wvInfo.tag == kWaveFormatDK3) {
-			_queueStream->queueAudioStream(Audio::makeADPCMStream(stream, DisposeAfterUse::YES, stream->size(), Audio::kADPCMDK3, _wvInfo.samplesPerSec, _wvInfo.channels, _wvInfo.blockAlign), DisposeAfterUse::YES);
-		}
-	} else {
+	else
 		delete stream;
-	}
 
 	_curChunk++;
 }
@@ -899,8 +879,7 @@ void AVIDecoder::AVIAudioTrack::skipAudio(const Audio::Timestamp &time, const Au
 }
 
 void AVIDecoder::AVIAudioTrack::resetStream() {
-	delete _queueStream;
-	delete _packetStream;
+	delete _audioStream;
 	createAudioStream();
 	_curChunk = 0;
 }
@@ -910,33 +889,50 @@ bool AVIDecoder::AVIAudioTrack::rewind() {
 	return true;
 }
 
-Audio::AudioStream *AVIDecoder::AVIAudioTrack::getAudioStream() const {
-	if (_packetStream)
-		return _packetStream;
-
-	return _queueStream;
-}
-
 void AVIDecoder::AVIAudioTrack::createAudioStream() {
-	_queueStream = 0;
 	_packetStream = 0;
 
-	if (_wvInfo.tag == kWaveFormatPCM || _wvInfo.tag == kWaveFormatMSADPCM || _wvInfo.tag == kWaveFormatMSIMAADPCM || _wvInfo.tag == kWaveFormatDK3) {
-		// For now, a QueuingAudioStream will be created
-	} else if (_wvInfo.tag == kWaveFormatMP3) {
-		// MPEG audio
+	switch (_wvInfo.tag) {
+	case kWaveFormatPCM: {
+		byte flags = 0;
+		if (_audsHeader.sampleSize == 2)
+			flags |= Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN;
+		else
+			flags |= Audio::FLAG_UNSIGNED;
+
+		if (_wvInfo.channels == 2)
+			flags |= Audio::FLAG_STEREO;
+
+		_packetStream = Audio::makePacketizedRawStream(_wvInfo.samplesPerSec, flags);
+		break;
+	}
+	case kWaveFormatMSADPCM:
+		_packetStream = Audio::makePacketizedADPCMStream(Audio::kADPCMMS, _wvInfo.samplesPerSec, _wvInfo.channels, _wvInfo.blockAlign);
+		break;
+	case kWaveFormatMSIMAADPCM:
+		_packetStream = Audio::makePacketizedADPCMStream(Audio::kADPCMMSIma, _wvInfo.samplesPerSec, _wvInfo.channels, _wvInfo.blockAlign);
+		break;
+	case kWaveFormatDK3:
+		_packetStream = Audio::makePacketizedADPCMStream(Audio::kADPCMDK3, _wvInfo.samplesPerSec, _wvInfo.channels, _wvInfo.blockAlign);
+		break;
+	case kWaveFormatMP3:
 #ifdef USE_MAD
 		_packetStream = Audio::makePacketizedMP3Stream(_wvInfo.channels, _wvInfo.samplesPerSec);
 #else
 		warning("AVI MP3 stream found, but no libmad support compiled in");
 #endif
-	} else if (_wvInfo.tag != kWaveFormatNone) {
-		// No supported format
+		break;
+	case kWaveFormatNone:
+		break;
+	default:
 		warning("Unsupported AVI audio format %d", _wvInfo.tag);
+		break;
 	}
 
-	if (!_packetStream)
-		_queueStream = Audio::makeQueuingAudioStream(_wvInfo.samplesPerSec, _wvInfo.channels == 2);
+	if (_packetStream)
+		_audioStream = _packetStream;
+	else
+		_audioStream = Audio::makeNullAudioStream();
 }
 
 AVIDecoder::TrackStatus::TrackStatus() : track(0), chunkSearchOffset(0) {
