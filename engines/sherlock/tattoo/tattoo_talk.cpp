@@ -186,11 +186,10 @@ TattooTalk::TattooTalk(SherlockEngine *vm) : Talk(vm), _talkWidget(vm), _passwor
 void TattooTalk::talkInterface(const byte *&str) {
 	TattooEngine &vm = *(TattooEngine *)_vm;
 	Sound &sound = *_vm->_sound;
-	Talk &talk = *_vm->_talk;
 	TattooUserInterface &ui = *(TattooUserInterface *)_vm->_ui;
 	const byte *s = str;
 
-	if (!vm._textWindowsOn && sound._speechOn && talk._speaker != -1)
+	if (!vm._textWindowsOn && sound._speechOn && _speaker != -1)
 		return;
 
 	// Move to past the end of the text string

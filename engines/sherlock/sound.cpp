@@ -267,10 +267,24 @@ void Sound::playSpeech(const Common::String &name) {
 	Scene &scene = *_vm->_scene;
 	stopSpeech();
 
+	// Figure out which speech library to use
 	Common::String libraryName = Common::String::format("speech%02d.lib", scene._currentScene);
+	if ((!scumm_strnicmp(name.c_str(), "SLVE12S", 7)) || (!scumm_strnicmp(name.c_str(), "WATS12X", 7))
+			|| (!scumm_strnicmp(name.c_str(), "HOLM12X", 7)))
+		libraryName = "SPEECH12.LIB";
+
+	// If the speech library file doesn't even exist, then we can't play anything
+	Common::File f;
+	if (!f.exists(libraryName))
+		return;
+
+	// Ensure the given library is in the cache
 	res.addToCache(libraryName);
 
-	// TODO: Doesn't seem to be WAV files. Need to find out what format it is..
+	if (!res.exists(name))
+		// No voice resource for the given name, so we have nothing to play
+		return;
+
 	Common::SeekableReadStream *stream = res.load(name, libraryName);
 	Audio::AudioStream *audioStream = Audio::makeRawStream(stream, 11025, Audio::FLAG_UNSIGNED);
 	_mixer->playStream(Audio::Mixer::kSpeechSoundType, &_speechHandle, audioStream, -1, Audio::Mixer::kMaxChannelVolume);
@@ -279,6 +293,7 @@ void Sound::playSpeech(const Common::String &name) {
 
 void Sound::stopSpeech() {
 	_mixer->stopHandle(_speechHandle);
+	_speechPlaying = false;
 }
 
 bool Sound::isSpeechPlaying() {
