@@ -395,6 +395,44 @@ public:
 	virtual void finish() = 0;
 };
 
+/**
+ * A PacketizedAudioStream that works closer to a QueuingAudioStream.
+ * It queues individual packets as whole AudioStream to an internal
+ * QueuingAudioStream. This is used for writing quick wrappers against
+ * e.g. RawStream, which can be made into PacketizedAudioStreams with
+ * little effort.
+ */
+class StatelessPacketizedAudioStream : public PacketizedAudioStream {
+public:
+	StatelessPacketizedAudioStream(uint rate, uint channels) :
+		_rate(rate), _channels(channels), _stream(makeQueuingAudioStream(rate, channels == 2)) {}
+	virtual ~StatelessPacketizedAudioStream() {}
+
+	// AudioStream API
+	bool isStereo() const { return _channels == 2; }
+	int getRate() const { return _rate; }
+	int readBuffer(int16 *data, const int numSamples) { return _stream->readBuffer(data, numSamples); }
+	bool endOfData() const { return _stream->endOfData(); }
+	bool endOfStream() const { return _stream->endOfStream(); }
+
+	// PacketizedAudioStream API
+	void queuePacket(Common::SeekableReadStream *data) { _stream->queueAudioStream(makeStream(data)); }
+	void finish() { _stream->finish(); }
+
+	uint getChannels() const { return _channels; }
+
+protected:
+	/**
+	 * Make the AudioStream for a given packet
+	 */
+	virtual AudioStream *makeStream(Common::SeekableReadStream *data) = 0;
+
+private:
+	uint _rate;
+	uint _channels;
+	Common::ScopedPtr<QueuingAudioStream> _stream;
+};
+
 } // End of namespace Audio
 
 #endif
