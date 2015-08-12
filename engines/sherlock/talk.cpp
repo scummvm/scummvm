@@ -928,7 +928,8 @@ int Talk::waitForMore(int delay) {
 		events.setCursor(ui._lookScriptFlag ? MAGNIFY : ARROW);
 	}
 
-	if (sound._speechOn && !sound._talkSoundFile.empty()) {
+	// Handle playing any speech associated with the text being displayed
+	if (IS_ROSE_TATTOO && sound._speechOn) {
 		sound.playSpeech(sound._talkSoundFile);
 		sound._talkSoundFile.setChar(sound._talkSoundFile.lastChar() + 1, sound._talkSoundFile.size() - 1);
 	}
@@ -1002,7 +1003,7 @@ int Talk::waitForMore(int delay) {
 	}
 
 
-	sound._speechOn = false;
+	sound.stopSpeech();
 	events.setCursor(_talkToAbort ? ARROW : oldCursor);
 	events._pressed = events._released = false;
 
