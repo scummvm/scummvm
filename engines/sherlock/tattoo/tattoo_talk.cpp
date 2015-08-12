@@ -189,6 +189,7 @@ void TattooTalk::talkInterface(const byte *&str) {
 	TattooUserInterface &ui = *(TattooUserInterface *)_vm->_ui;
 	const byte *s = str;
 
+	_wait = 1;
 	if (!vm._textWindowsOn && sound._speechOn && _speaker != -1)
 		return;
 
@@ -203,7 +204,6 @@ void TattooTalk::talkInterface(const byte *&str) {
 	ui.banishWindow();
 	ui._textWidget.load(Common::String((const char *)s, (const char *)str), _speaker);
 	ui._textWidget.summonWindow();
-	_wait = true;
 }
 
 void TattooTalk::nothingToSay() {

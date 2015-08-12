@@ -56,7 +56,6 @@ public:
 	int _voices;
 	bool _soundOn;
 	bool _speechOn;
-	bool _diskSoundPlaying;
 	bool _soundPlaying;
 	bool _speechPlaying;
 	bool *_soundIsOn;

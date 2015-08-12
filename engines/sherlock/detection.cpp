@@ -63,7 +63,6 @@ static const PlainGameDescriptor sherlockGames[] = {
 #define GAMEOPTION_PORTRAITS_ON		GUIO_GAMEOPTIONS4
 #define GAMEOPTION_WINDOW_STYLE		GUIO_GAMEOPTIONS5
 #define GAMEOPTION_TRANSPARENT_WINDOWS		GUIO_GAMEOPTIONS6
-#define GAMEOPTION_TEXT_WINDOWS		GUIO_GAMEOPTIONS7
 
 static const ADExtraGuiOptionsMap optionsList[] = {
 	{
@@ -122,16 +121,6 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			_s("Transparent windows"),
 			_s("Show windows with a partially transparent background"),
 			"transparent_windows",
-			true
-		}
-	},
-
-	{
-		GAMEOPTION_TEXT_WINDOWS,
-		{
-			_s("Text windows"),
-			_s("Show text windows during conversations"),
-			"text_windows",
 			true
 		}
 	},

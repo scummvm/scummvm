@@ -922,6 +922,7 @@ int Talk::waitForMore(int delay) {
 	UserInterface &ui = *_vm->_ui;
 	CursorId oldCursor = events.getCursor();
 	int key2 = 254;
+	bool playingSpeech = false;
 
 	// Unless we're in stealth mode, show the appropriate cursor
 	if (!_talkStealth) {
@@ -932,6 +933,7 @@ int Talk::waitForMore(int delay) {
 	if (IS_ROSE_TATTOO && sound._speechOn) {
 		sound.playSpeech(sound._talkSoundFile);
 		sound._talkSoundFile.setChar(sound._talkSoundFile.lastChar() + 1, sound._talkSoundFile.size() - 1);
+		playingSpeech = sound.isSpeechPlaying();
 	}
 
 	do {
@@ -975,7 +977,7 @@ int Talk::waitForMore(int delay) {
 			--delay;
 
 		// If there are voices playing, reset delay so that they keep playing
-		if (sound._voices == 2 && *sound._soundIsOn)
+		if ((sound._voices == 2 && *sound._soundIsOn) || (playingSpeech && !sound.isSpeechPlaying()))
 			delay = 0;
 	} while (!_vm->shouldQuit() && key2 == 254 && (delay || (sound._voices == 2 && *sound._soundIsOn))
 		&& !events._released && !events._rightReleased);
@@ -984,8 +986,8 @@ int Talk::waitForMore(int delay) {
 	if (sound._voices == 2)
 		sound._voices = 1;
 
-	if (delay > 0 && sound._diskSoundPlaying)
-		sound.stopSndFuncPtr(0, 0);
+	if (delay > 0 && sound.isSpeechPlaying())
+		sound.stopSpeech();
 
 	// Adjust _talkStealth mode:
 	// mode 1 - It was by a pause without stealth being on before the pause, so reset back to 0

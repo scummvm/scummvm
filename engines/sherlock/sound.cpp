@@ -55,7 +55,6 @@ static const uint8 creativeADPCM_AdjustMap[64] = {
 Sound::Sound(SherlockEngine *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mixer) {
 	_digitized = false;
 	_voices = 0;
-	_diskSoundPlaying = false;
 	_soundPlaying = false;
 	_speechPlaying = false;
 	_soundIsOn = &_soundPlaying;
@@ -92,7 +91,8 @@ Sound::Sound(SherlockEngine *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mixer) {
 
 void Sound::syncSoundSettings() {
 	_digitized = !ConfMan.getBool("mute");
-	_voices = !ConfMan.getBool("mute") && !ConfMan.getBool("speech_mute") ? 1 : 0;
+	_speechOn = !ConfMan.getBool("mute") && !ConfMan.getBool("speech_mute");
+	_voices = _speechOn ? 1 : 0;
 }
 
 void Sound::loadSound(const Common::String &name, int priority) {
@@ -191,7 +191,6 @@ bool Sound::playSound(const Common::String &name, WaitType waitType, int priorit
 	_curPriority = priority;
 
 	if (waitType == WAIT_RETURN_IMMEDIATELY) {
-		_diskSoundPlaying = true;
 		return true;
 	}
 
@@ -245,7 +244,6 @@ void Sound::stopSndFuncPtr(int v1, int v2) {
 void Sound::freeDigiSound() {
 	delete[] _digiBuf;
 	_digiBuf = nullptr;
-	_diskSoundPlaying = false;
 	_soundPlaying = false;
 }
 

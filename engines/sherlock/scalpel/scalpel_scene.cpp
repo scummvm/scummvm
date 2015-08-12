@@ -169,7 +169,6 @@ void ScalpelScene::checkBgShapes() {
 void ScalpelScene::doBgAnimCheckCursor() {
 	Inventory &inv = *_vm->_inventory;
 	Events &events = *_vm->_events;
-	Sound &sound = *_vm->_sound;
 	UserInterface &ui = *_vm->_ui;
 	Common::Point mousePos = events.mousePos();
 	events.animateCursorIfNeeded();
@@ -192,11 +191,6 @@ void ScalpelScene::doBgAnimCheckCursor() {
 		} else {
 			events.setCursor(ARROW);
 		}
-	}
-
-	if (sound._diskSoundPlaying && !*sound._soundIsOn) {
-		// Loaded sound just finished playing
-		sound.freeDigiSound();
 	}
 }
 
