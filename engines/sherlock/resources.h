@@ -125,7 +125,7 @@ public:
 	/**
 	 * Loads a specific resource from a given library file
 	 */
-	Common::SeekableReadStream *load(const Common::String &filename, const Common::String &libraryFile);
+	Common::SeekableReadStream *load(const Common::String &filename, const Common::String &libraryFile, bool suppressErrors = false);
 
 	/**
 	 * Returns true if the given file exists on disk or in the cache

@@ -281,14 +281,13 @@ void Sound::playSpeech(const Common::String &name) {
 	// Ensure the given library is in the cache
 	res.addToCache(libraryName);
 
-	if (!res.exists(name))
-		// No voice resource for the given name, so we have nothing to play
-		return;
+	Common::SeekableReadStream *stream = res.load(name, libraryName, true);
+	Audio::AudioStream *audioStream = !stream ? nullptr : Audio::makeRawStream(stream, 11025, Audio::FLAG_UNSIGNED);
 
-	Common::SeekableReadStream *stream = res.load(name, libraryName);
-	Audio::AudioStream *audioStream = Audio::makeRawStream(stream, 11025, Audio::FLAG_UNSIGNED);
-	_mixer->playStream(Audio::Mixer::kSpeechSoundType, &_speechHandle, audioStream, -1, Audio::Mixer::kMaxChannelVolume);
-	_speechPlaying = true;
+	if (audioStream) {
+		_mixer->playStream(Audio::Mixer::kSpeechSoundType, &_speechHandle, audioStream, -1, Audio::Mixer::kMaxChannelVolume);
+		_speechPlaying = true;
+	}
 }
 
 void Sound::stopSpeech() {
