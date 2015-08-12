@@ -221,4 +221,24 @@ SeekableAudioStream *makeRawStream(const byte *buffer, uint32 size,
 	return makeRawStream(new Common::MemoryReadStream(buffer, size, disposeAfterUse), rate, flags, DisposeAfterUse::YES);
 }
 
+class PacketizedRawStream : public StatelessPacketizedAudioStream {
+public:
+	PacketizedRawStream(int rate, byte flags) :
+		StatelessPacketizedAudioStream(rate, ((flags & FLAG_STEREO) != 0) ? 2 : 1), _flags(flags) {}
+
+protected:
+	AudioStream *makeStream(Common::SeekableReadStream *data);
+
+private:
+	byte _flags;
+};
+
+AudioStream *PacketizedRawStream::makeStream(Common::SeekableReadStream *data) {
+	return makeRawStream(data, getRate(), _flags);
+}
+
+PacketizedAudioStream *makePacketizedRawStream(int rate, byte flags) {
+	return new PacketizedRawStream(rate, flags);
+}
+
 } // End of namespace Audio
