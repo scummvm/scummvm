@@ -433,6 +433,12 @@ private:
 	Common::ScopedPtr<QueuingAudioStream> _stream;
 };
 
+/**
+ * Create an AudioStream that plays nothing and immediately returns that
+ * endOfStream() has been reached.
+ */
+AudioStream *makeNullAudioStream();
+
 } // End of namespace Audio
 
 #endif
