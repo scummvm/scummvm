@@ -1637,13 +1637,12 @@ void ScalpelUserInterface::doTalkControl() {
 			people.setTalking(0);
 
 			if (!talk._statements[_selector]._voiceFile.empty() && sound._voices) {
-				sound.playSound(talk._statements[_selector]._voiceFile, WAIT_RETURN_IMMEDIATELY);
+				sound.playSpeech(talk._statements[_selector]._voiceFile);
 
 				// Set voices as an indicator for waiting
 				sound._voices = 2;
-				sound._speechOn = *sound._soundIsOn;
 			} else {
-				sound._speechOn = false;
+				sound._speechPlaying = false;
 			}
 
 			if (IS_3DO)

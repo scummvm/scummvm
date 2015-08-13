@@ -57,9 +57,7 @@ Sound::Sound(SherlockEngine *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mixer) {
 	_voices = 0;
 	_soundPlaying = false;
 	_speechPlaying = false;
-	_soundIsOn = &_soundPlaying;
 	_curPriority = 0;
-	_digiBuf = nullptr;
 	_soundVolume = 255;
 
 	_soundOn = true;
@@ -242,8 +240,6 @@ void Sound::stopSndFuncPtr(int v1, int v2) {
 }
 
 void Sound::freeDigiSound() {
-	delete[] _digiBuf;
-	_digiBuf = nullptr;
 	_soundPlaying = false;
 }
 
@@ -264,6 +260,11 @@ void Sound::playSpeech(const Common::String &name) {
 	Resources &res = *_vm->_res;
 	Scene &scene = *_vm->_scene;
 	stopSpeech();
+
+	// TODO: Technically Scalpel has an sfx command which I've set to call this method because it sets the
+	// _voice variable as if it were speech. Need to do a play-through of Scalpel and see if it's ever called.
+	// If so, will need to enhance this method to handle the Serrated Scalpel voice resources
+	assert(IS_ROSE_TATTOO);
 
 	// Figure out which speech library to use
 	Common::String libraryName = Common::String::format("speech%02d.lib", scene._currentScene);

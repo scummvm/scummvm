@@ -937,7 +937,7 @@ int Talk::waitForMore(int delay) {
 	}
 
 	do {
-		if (IS_SERRATED_SCALPEL && sound._speechOn && !*sound._soundIsOn)
+		if (IS_SERRATED_SCALPEL && sound._speechOn && !sound.isSpeechPlaying())
 			people._portrait._frameNumber = -1;
 
 		scene.doBgAnim();
@@ -976,10 +976,9 @@ int Talk::waitForMore(int delay) {
 		if ((delay > 0 && !ui._invLookFlag && !ui._lookScriptFlag) || _talkStealth)
 			--delay;
 
-		// If there are voices playing, reset delay so that they keep playing
-		if ((sound._voices == 2 && *sound._soundIsOn) || (playingSpeech && !sound.isSpeechPlaying()))
+		if (playingSpeech && !sound.isSpeechPlaying())
 			delay = 0;
-	} while (!_vm->shouldQuit() && key2 == 254 && (delay || (sound._voices == 2 && *sound._soundIsOn))
+	} while (!_vm->shouldQuit() && key2 == 254 && (delay || (playingSpeech && sound.isSpeechPlaying()))
 		&& !events._released && !events._rightReleased);
 
 	// If voices was set 2 to indicate a voice file was place, then reset it back to 1

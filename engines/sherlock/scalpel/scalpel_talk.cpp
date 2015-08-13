@@ -487,11 +487,10 @@ OpcodeReturn ScalpelTalk::cmdSfxCommand(const byte *&str) {
 	if (sound._voices) {
 		for (int idx = 0; idx < 8 && str[idx] != '~'; ++idx)
 			tempString += str[idx];
-		sound.playSound(tempString, WAIT_RETURN_IMMEDIATELY);
+		sound.playSpeech(tempString);
 
 		// Set voices to wait for more
 		sound._voices = 2;
-		sound._speechOn = (*sound._soundIsOn);
 	}
 
 	_wait = 1;
