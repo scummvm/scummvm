@@ -189,16 +189,17 @@ void TattooTalk::talkInterface(const byte *&str) {
 	TattooUserInterface &ui = *(TattooUserInterface *)_vm->_ui;
 	const byte *s = str;
 
-	_wait = 1;
-	if (!vm._textWindowsOn && sound._speechOn && _speaker != -1)
-		return;
-
 	// Move to past the end of the text string
+	_wait = 1;
 	_charCount = 0;
 	while ((*str < TATTOO_OPCODES[0] || *str == TATTOO_OPCODES[OP_NULL]) && *str) {
 		++_charCount;
 		++str;
 	}
+
+	// If speech is on, and text windows (subtitles) are off, then don't show the text window
+	if (!vm._textWindowsOn && sound._speechOn && _speaker != -1)
+		return;
 
 	// Display the text window
 	ui.banishWindow();
