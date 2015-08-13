@@ -75,17 +75,15 @@ void FloorFace::computePointHeight(Math::Vector3d &point) const {
 					+ _vertices[0].x() * (_vertices[1].y() - _vertices[2].y())
 					+ _vertices[1].x() * _vertices[2].y());
 
-	int32 sign = area < 0 ? -1 : 1;
-
 	float s = (_vertices[0].y() * _vertices[2].x() - _vertices[0].x() * _vertices[2].y()
 			+ (_vertices[2].y() - _vertices[0].y()) * point.x()
 			+ (_vertices[0].x() - _vertices[2].x()) * point.y())
-					* sign / (2.0 * area);
+					/ (2.0 * area);
 
 	float t = (_vertices[0].x() * _vertices[1].y() - _vertices[0].y() * _vertices[1].x()
 			+ (_vertices[0].y() - _vertices[1].y()) * point.x()
 			+ (_vertices[1].x() - _vertices[0].x()) * point.y())
-					* sign / (2.0 * area);
+					/ (2.0 * area);
 
 	// Compute the Z coordinate of the point
 	float pointZ = (1.0 - s - t) * _vertices[0].z() + s * _vertices[1].z() + t * _vertices[2].z();
