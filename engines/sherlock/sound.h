@@ -50,7 +50,16 @@ private:
 	Audio::SoundHandle _speechHandle;
 	int _curPriority;
 
+	/**
+	 * Decode a sound sample
+	 */
 	byte decodeSample(byte sample, byte& reference, int16& scale);
+
+	/**
+	 * Handle playing a sound or speech
+	 */
+	bool playSoundResource(const Common::String &name, const Common::String &libFilename,
+		Audio::Mixer::SoundType soundType, Audio::SoundHandle &handle, int volume);
 public:
 	bool _digitized;
 	int _voices;

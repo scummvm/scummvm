@@ -121,7 +121,6 @@ byte Sound::decodeSample(byte sample, byte &reference, int16 &scale) {
 }
 
 bool Sound::playSound(const Common::String &name, WaitType waitType, int priority, const char *libraryFilename) {
-	Resources &res = *_vm->_res;
 	stopSound();
 
 	Common::String filename = name;
@@ -142,49 +141,10 @@ bool Sound::playSound(const Common::String &name, WaitType waitType, int priorit
 		}
 	}
 
-	Common::String libFilename(libraryFilename);
-	Common::SeekableReadStream *stream = libFilename.empty() ? res.load(filename) : res.load(filename, libFilename);
+	Audio::SoundHandle soundHandle = (IS_SERRATED_SCALPEL) ? _scalpelEffectsHandle : getFreeSoundHandle();
+	if (!playSoundResource(filename, libraryFilename, Audio::Mixer::kPlainSoundType, soundHandle, Audio::Mixer::kMaxChannelVolume))
+		error("Could not find sound resource - %s", filename.c_str());
 
-	Audio::AudioStream *audioStream;
-
-	if (!IS_3DO) {
-		if (IS_SERRATED_SCALPEL) {
-			stream->skip(2);
-			int size = stream->readUint32BE();
-			int rate = stream->readUint16BE();
-			byte *data = (byte *)malloc(size);
-			byte *ptr = data;
-			stream->read(ptr, size);
-			delete stream;
-
-			assert(size > 2);
-
-			byte *decoded = (byte *)malloc((size - 1) * 2);
-
-			// Holmes uses Creative ADPCM 4-bit data
-			int counter = 0;
-			byte reference = ptr[0];
-			int16 scale = 0;
-
-			for(int i = 1; i < size; i++) {
-				decoded[counter++] = decodeSample((ptr[i]>>4)&0x0f, reference, scale);
-				decoded[counter++] = decodeSample((ptr[i]>>0)&0x0f, reference, scale);
-			}
-
-			free(data);
-
-			audioStream = Audio::makeRawStream(decoded, (size - 2) * 2, rate, Audio::FLAG_UNSIGNED, DisposeAfterUse::YES);
-		} else {
-			audioStream = Audio::makeWAVStream(stream, DisposeAfterUse::YES);
-		}
-	} else {
-		// 3DO: AIFF file
-		audioStream = Audio::makeAIFFStream(stream, DisposeAfterUse::YES);
-	}
-
-	Audio::SoundHandle effectsHandle = (IS_SERRATED_SCALPEL) ? _scalpelEffectsHandle : getFreeSoundHandle();
-
-	_mixer->playStream(Audio::Mixer::kPlainSoundType, &effectsHandle, audioStream, -1,  Audio::Mixer::kMaxChannelVolume);
 	_soundPlaying = true;
 	_curPriority = priority;
 
@@ -200,10 +160,10 @@ bool Sound::playSound(const Common::String &name, WaitType waitType, int priorit
 			retval = false;
 			break;
 		}
-	} while (!_vm->shouldQuit() && _mixer->isSoundHandleActive(effectsHandle));
+	} while (!_vm->shouldQuit() && _mixer->isSoundHandleActive(soundHandle));
 
 	_soundPlaying = false;
-	_mixer->stopHandle(effectsHandle);
+	_mixer->stopHandle(soundHandle);
 
 	return retval;
 }
@@ -280,13 +240,8 @@ void Sound::playSpeech(const Common::String &name) {
 	// Ensure the given library is in the cache
 	res.addToCache(libraryName);
 
-	Common::SeekableReadStream *stream = res.load(name, libraryName, true);
-	Audio::AudioStream *audioStream = !stream ? nullptr : Audio::makeRawStream(stream, 11025, Audio::FLAG_UNSIGNED);
-
-	if (audioStream) {
-		_mixer->playStream(Audio::Mixer::kSpeechSoundType, &_speechHandle, audioStream, -1, Audio::Mixer::kMaxChannelVolume);
+	if (playSoundResource(name, libraryName, Audio::Mixer::kSpeechSoundType, _speechHandle, Audio::Mixer::kMaxChannelVolume))
 		_speechPlaying = true;
-	}
 }
 
 void Sound::stopSpeech() {
@@ -297,6 +252,56 @@ void Sound::stopSpeech() {
 bool Sound::isSpeechPlaying() {
 	_speechPlaying = _mixer->isSoundHandleActive(_speechHandle);
 	return _speechPlaying;
+}
+
+bool Sound::playSoundResource(const Common::String &name, const Common::String &libFilename,
+		Audio::Mixer::SoundType soundType, Audio::SoundHandle &handle, int volume) {
+	Resources &res = *_vm->_res;
+	Common::SeekableReadStream *stream = libFilename.empty() ? res.load(name) : res.load(name, libFilename, true);
+	if (!stream)
+		return false;
+
+	Audio::AudioStream *audioStream;
+	if (IS_ROSE_TATTOO && soundType == Audio::Mixer::kSpeechSoundType) {
+		audioStream = Audio::makeRawStream(stream, 11025, Audio::FLAG_UNSIGNED);
+	} else if (IS_3DO) {
+		// 3DO: AIFF file
+		audioStream = Audio::makeAIFFStream(stream, DisposeAfterUse::YES);
+	} else if (IS_SERRATED_SCALPEL) {
+		stream->skip(2);
+		int size = stream->readUint32BE();
+		int rate = stream->readUint16BE();
+		byte *data = (byte *)malloc(size);
+		byte *ptr = data;
+		stream->read(ptr, size);
+		delete stream;
+
+		assert(size > 2);
+
+		byte *decoded = (byte *)malloc((size - 1) * 2);
+
+		// Holmes uses Creative ADPCM 4-bit data
+		int counter = 0;
+		byte reference = ptr[0];
+		int16 scale = 0;
+
+		for (int i = 1; i < size; i++) {
+			decoded[counter++] = decodeSample((ptr[i] >> 4) & 0x0f, reference, scale);
+			decoded[counter++] = decodeSample((ptr[i] >> 0) & 0x0f, reference, scale);
+		}
+
+		free(data);
+
+		audioStream = Audio::makeRawStream(decoded, (size - 2) * 2, rate, Audio::FLAG_UNSIGNED, DisposeAfterUse::YES);
+	} else {
+		audioStream = Audio::makeWAVStream(stream, DisposeAfterUse::YES);
+	}
+
+	if (!audioStream)
+		return false;
+
+	_mixer->playStream(soundType, &handle, audioStream, -1, volume);
+	return true;
 }
 
 } // End of namespace Sherlock
