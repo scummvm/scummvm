@@ -377,7 +377,6 @@ void Darts::erasePowerBars() {
 int Darts::doPowerBar(const Common::Point &pt, byte color, int goToPower, bool isVertical) {
 	Events &events = *_vm->_events;
 	Screen &screen = *_vm->_screen;
-	Music &music = *_vm->_music;
 	bool done;
 	int idx = 0;
 
