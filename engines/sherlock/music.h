@@ -112,8 +112,6 @@ public:
 	 */
 	void stopMusic();
 	
-	void waitTimerRoland(uint time);
-
 	bool isPlaying();
 	uint32 getCurrentPosition();
 

@@ -412,15 +412,6 @@ bool Music::playMusic(const Common::String &name) {
 		stream->read(midiMusicData, midiMusicDataSize);
 		delete stream;
 
-		// for dumping the music tracks
-#if 0
-		Common::DumpFile outFile;
-		outFile.open(name + ".RAW");
-		outFile.write(data, stream->size());
-		outFile.flush();
-		outFile.close();
-#endif
-
 		if (midiMusicDataSize < 14) {
 			warning("Music: not enough data in music file");
 			delete[] midiMusicData;
@@ -502,6 +493,8 @@ bool Music::playMusic(const Common::String &name) {
 		}
 		_mixer->playStream(Audio::Mixer::kMusicSoundType, &_digitalMusicHandle, musicStream);
 	}
+
+	_musicPlaying = true;
 	return true;
 }
 
@@ -510,12 +503,7 @@ void Music::stopMusic() {
 }
 
 void Music::startSong() {
-	if (!_musicOn)
-		return;
-
-	// TODO
-	warning("TODO: Sound::startSong");
-	_musicPlaying = true;
+	// No implementation needed for ScummVM
 }
 
 void Music::freeSong() {
@@ -528,11 +516,6 @@ void Music::freeSong() {
 	}
 
 	_musicPlaying = false;
-}
-
-void Music::waitTimerRoland(uint time) {
-	// TODO
-	warning("TODO: Sound::waitTimerRoland");
 }
 
 bool Music::isPlaying() {

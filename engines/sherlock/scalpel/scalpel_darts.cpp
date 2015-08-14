@@ -382,10 +382,7 @@ int Darts::doPowerBar(const Common::Point &pt, byte color, int goToPower, bool i
 	int idx = 0;
 
 	events.clearEvents();
-	if (music._musicOn)
-		music.waitTimerRoland(10);
-	else
-		events.delay(100);
+	events.delay(100);
 
 	// Display loop
 	do {
@@ -410,10 +407,7 @@ int Darts::doPowerBar(const Common::Point &pt, byte color, int goToPower, bool i
 			screen.slamArea(pt.x + idx, pt.y, 1, 8);
 		}
 
-		if (music._musicOn) {
-			if (!(idx % 3))
-				music.waitTimerRoland(1);
-		} else if (!(idx % 8))
+		if (!(idx % 8))
 			events.wait(1);
 	
 		++idx;
