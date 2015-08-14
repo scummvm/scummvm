@@ -391,7 +391,7 @@ int Darts::doPowerBar(const Common::Point &pt, byte color, int goToPower, bool i
 			// Reached target power for a computer player
 			done = true;
 		else if (goToPower == 0) {
-			// Check for pres
+			// Check for press
 			if (dartHit())
 				done = true;
 		}
