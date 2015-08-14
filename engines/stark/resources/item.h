@@ -50,6 +50,7 @@ class Anim;
 class AnimHierarchy;
 class BonesMesh;
 class Bookmark;
+class Script;
 class TextureSet;
 
 /**
@@ -103,12 +104,23 @@ public:
 
 	/** Replace the current movement with an other */
 	void setMovement(Movement *movement);
+
+	/**
+	 * Set the script waiting for the item's movement to complete.
+	 *
+	 * This script will be updated with the outcome of the movement
+	 * (completion or abortion)
+	 */
+	void setMovementSuspendedScript(Script *script);
+
 protected:
 	void printData() override;
 
 	bool _enabled;
 	int32 _characterIndex;
+
 	Movement *_movement;
+	Script *_movementSuspendedScript;
 };
 
 /**

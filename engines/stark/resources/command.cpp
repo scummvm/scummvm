@@ -26,11 +26,14 @@
 
 #include "engines/stark/formats/xrc.h"
 
+#include "engines/stark/movement/walk.h"
+
 #include "engines/stark/resources/animscript.h"
 #include "engines/stark/resources/bookmark.h"
 #include "engines/stark/resources/bonesmesh.h"
 #include "engines/stark/resources/camera.h"
 #include "engines/stark/resources/dialog.h"
+#include "engines/stark/resources/floor.h"
 #include "engines/stark/resources/floorfield.h"
 #include "engines/stark/resources/fmv.h"
 #include "engines/stark/resources/item.h"
@@ -74,7 +77,7 @@ Command *Command::execute(uint32 callMode, Script *script) {
 	case kScriptPause:
 		return opScriptPause(script, _arguments[1].referenceValue);
 	case kWalkTo:
-		return opWalkTo(_arguments[1].intValue, _arguments[2].referenceValue, _arguments[3].intValue);
+		return opWalkTo(script, _arguments[2].referenceValue, _arguments[3].intValue);
 	case kGameLoop:
 		return opGameLoop(_arguments[1].intValue);
 	case kScriptPauseRandom:
@@ -90,7 +93,7 @@ Command *Command::execute(uint32 callMode, Script *script) {
 	case kItem3DPlaceOn:
 		return opItem3DPlaceOn(_arguments[1].referenceValue, _arguments[2].referenceValue);
 	case kItem3DWalkTo:
-		return opItem3DWalkTo(_arguments[1].referenceValue, _arguments[2].referenceValue, _arguments[3].intValue);
+		return opItem3DWalkTo(script, _arguments[1].referenceValue, _arguments[2].referenceValue, _arguments[3].intValue);
 	case kItemLookAt:
 		return opItemLookAt(_arguments[1].referenceValue, _arguments[2].referenceValue, _arguments[3].intValue, _arguments[4].intValue);
 	case kItemEnable:
@@ -234,12 +237,29 @@ Command *Command::opScriptPause(Script *script, const ResourceReference &duratio
 	return this; // Stay on this command while the script is suspended
 }
 
-Command *Command::opWalkTo(int32 unknown, const ResourceReference &bookmarkRef, int32 unknown2) {
-	assert(_arguments.size() == 4);
-	Object *target = bookmarkRef.resolve<Object>();
-	warning("(TODO: Implement) opWalkTo(%d %s %d) : %s", unknown, target->getName().c_str(), unknown2, bookmarkRef.describe().c_str());
+Command *Command::opWalkTo(Script *script, const ResourceReference &objectRef, int32 suspend) {
+	Resources::ModelItem *april = StarkGlobal->getCurrent()->getInteractive();
 
-	return nextCommand();
+	Math::Vector3d destinationPosition = getObjectPosition(objectRef, nullptr);
+	Math::Vector3d currentPosition = april->getPosition3D();
+
+	if (destinationPosition == currentPosition) {
+		return nextCommandIf(true);
+	}
+
+	Walk *walk = new Walk(april);
+	walk->setDestination(destinationPosition);
+	walk->start();
+
+	april->setMovement(walk);
+
+	if (suspend) {
+		script->suspend(april);
+		april->setMovementSuspendedScript(script);
+		return this; // Stay on the same command while suspended
+	} else {
+		return nextCommandIf(false);
+	}
 }
 
 Command *Command::opGameLoop(int32 unknown) {
@@ -290,28 +310,58 @@ Command *Command::opFadeScene(int32 unknown1, int32 unknown2, int32 unknown3) {
 	return nextCommand();
 }
 
+Math::Vector3d Command::getObjectPosition(const ResourceReference &targetRef, int32 *floorFace) {
+	Object *target = targetRef.resolve<Object>();
+	Floor *floor = StarkGlobal->getCurrent()->getFloor();
+
+	Math::Vector3d position;
+	switch (target->getType().get()) {
+		case Type::kBookmark: {
+			Bookmark *bookmark = Object::cast<Bookmark>(target);
+			position = bookmark->getPosition();
+
+			if (floorFace) {
+				*floorFace = floor->findFaceContainingPoint(position);
+			}
+
+	        break;
+		}
+		default:
+			warning("Unimplemented getObjectPosition target type %s", target->getType().getName());
+	}
+
+	return position;
+}
+
 Command *Command::opItem3DPlaceOn(const ResourceReference &itemRef, const ResourceReference &targetRef) {
 	FloorPositionedItem *item = itemRef.resolve<FloorPositionedItem>();
-	Object *target = targetRef.resolve<Object>();
 
-	switch (target->getType().get()) {
-	case Type::kBookmark:
-		item->placeOnBookmark(Object::cast<Bookmark>(target));
-		break;
-	default:
-		warning("Unimplemented op3DPlaceOn target type %s", target->getType().getName());
-	}
+	int32 targetFace = -1;
+	Math::Vector3d targetPosition = getObjectPosition(targetRef, &targetFace);
+
+	item->setPosition3D(targetPosition);
+	item->setFloorFaceIndex(targetFace);
 
 	return nextCommand();
 }
 
-Command *Command::opItem3DWalkTo(const ResourceReference &itemRef, const ResourceReference &targetRef, int32 unknown) {
-	assert(_arguments.size() == 4);
-	Object *item = itemRef.resolve<Object>();
-	Object *target = targetRef.resolve<Object>();
-	warning("(TODO: Implement) opItem3DWalkTo(%s, %s, %d), %s : %s", item->getName().c_str(), target->getName().c_str(), unknown, itemRef.describe().c_str(), targetRef.describe().c_str());
+Command *Command::opItem3DWalkTo(Script *script, const ResourceReference &itemRef, const ResourceReference &targetRef, bool suspend) {
+	FloorPositionedItem *item = itemRef.resolve<FloorPositionedItem>();
+	Math::Vector3d targetPosition = getObjectPosition(targetRef, nullptr);
 
-	return nextCommand();
+	Walk *walk = new Walk(item);
+	walk->setDestination(targetPosition);
+	walk->start();
+
+	item->setMovement(walk);
+
+	if (suspend) {
+		script->suspend(item);
+		item->setMovementSuspendedScript(script);
+		return this; // Stay on the same command while suspended
+	} else {
+		return nextCommand();
+	}
 }
 
 Command *Command::opItemLookAt(const ResourceReference &itemRef1, const ResourceReference &itemRef2, int32 unknown1, int32 unknown2) {

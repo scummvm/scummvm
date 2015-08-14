@@ -50,7 +50,8 @@ Script::Script(Object *parent, byte subType, uint16 index, const Common::String 
 				_enabled(false),
 				_nextCommand(nullptr),
 				_pauseTimeLeft(-1),
-				_suspendingResource(nullptr) {
+				_suspendingResource(nullptr),
+				_resumeStatus(kResumeSuspend) {
 	_type = TYPE;
 }
 
@@ -181,6 +182,8 @@ void Script::updateSuspended() {
 		_pauseTimeLeft = -1;
 	}
 
+	bool commandChanged = false;
+
 	if (_suspendingResource) {
 		// Check if the suspending resource is still active
 		switch (_suspendingResource->getType().get()) {
@@ -212,12 +215,33 @@ void Script::updateSuspended() {
 			}
 			break;
 		}
+		case Type::kItem: {
+			if (_nextCommand->getSubType() == Command::kWalkTo) {
+				if (_resumeStatus == kResumeComplete) {
+					// Resume the script execution once the item has stopped its movement
+					_suspendingResource = nullptr;
+					_nextCommand = _nextCommand->nextCommandIf(false);
+					commandChanged = true;
+				} else if (_resumeStatus == kResumeAbort) {
+					// Resume the script execution once the item has stopped its movement
+					_suspendingResource = nullptr;
+					_nextCommand = _nextCommand->nextCommandIf(true);
+					commandChanged = true;
+				}
+			} else {
+				if (_resumeStatus != kResumeSuspend) {
+					// Resume the script execution once the item has stopped its movement
+					_suspendingResource = nullptr;
+				}
+			}
+			break;
+		}
 		default:
 			error("Unhandled suspending resource type %s", _suspendingResource->getType().getName());
 		}
 	}
 
-	if (!isSuspended()) {
+	if (!isSuspended() && !commandChanged) {
 		// Resume to the next command
 		goToNextCommand();
 	}
@@ -229,6 +253,11 @@ void Script::pause(int32 msecs) {
 
 void Script::suspend(Object *cause) {
 	_suspendingResource = cause;
+	_resumeStatus = kResumeSuspend;
+}
+
+void Script::setResumeStatus(ResumeStatus status) {
+	_resumeStatus = status;
 }
 
 void Script::goToNextCommand() {

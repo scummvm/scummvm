@@ -26,6 +26,8 @@
 #include "common/array.h"
 #include "common/str.h"
 
+#include "math/vector3d.h"
+
 #include "engines/stark/resources/object.h"
 #include "engines/stark/resourcereference.h"
 
@@ -166,12 +168,14 @@ protected:
 
 	Command *resolveArgumentSiblingReference(const Argument &argument);
 
+	Math::Vector3d getObjectPosition(const ResourceReference &targetRef, int32 *floorFace);
+
 	Command *opScriptBegin();
 	Command *opScriptCall(Script *script, const ResourceReference &scriptRef, int32 synchronous);
 	Command *opDialogCall(Script *script, const ResourceReference &dialogRef, int32 suspend);
 	Command *opSetInteractiveMode(bool enabled);
 	Command *opLocationGoTo(const Common::String &level, const Common::String &location, const ResourceReference &bookmarkRef, int32 direction);
-	Command *opWalkTo(int32 unknown, const ResourceReference &bookmarkRef, int32 unknown2);
+	Command *opWalkTo(Script *script, const ResourceReference &objectRef, int32 suspend);
 	Command *opGameLoop(int32 unknown);
 	Command *opScriptPause(Script *script, const ResourceReference &durationRef);
 	Command *opPauseRandom(Script *script, const ResourceReference &itemRef);
@@ -180,7 +184,8 @@ protected:
 	Command *opRumbleScene(int32 unknown1, int32 unknown2);
 	Command *opFadeScene(int32 unknown1, int32 unknown2, int32 unknown3);
 	Command *opItem3DPlaceOn(const ResourceReference &itemRef, const ResourceReference &targetRef);
-	Command *opItem3DWalkTo(const ResourceReference &itemRef, const ResourceReference &targetRef, int32 unknown);
+	Command *opItem3DWalkTo(Script *script, const ResourceReference &itemRef, const ResourceReference &targetRef,
+	                                 bool suspend);
 	Command *opItemLookAt(const ResourceReference &itemRef, const ResourceReference &itemRef2, int32 unknown, int32 unknown2);
 	Command *opItemEnable(const ResourceReference &itemRef, int32 enable);
 	Command *opItemSetActivity(const ResourceReference &itemRef, int32 unknown1, int32 unknown2);

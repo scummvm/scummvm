@@ -33,6 +33,7 @@
 #include "engines/stark/resources/floor.h"
 #include "engines/stark/resources/floorface.h"
 #include "engines/stark/resources/pattable.h"
+#include "engines/stark/resources/script.h"
 #include "engines/stark/resources/textureset.h"
 
 #include "engines/stark/services/global.h"
@@ -68,7 +69,8 @@ Item::Item(Object *parent, byte subType, uint16 index, const Common::String &nam
 				Object(parent, subType, index, name),
 				_enabled(true),
 				_characterIndex(0),
-				_movement(nullptr) {
+				_movement(nullptr),
+				_movementSuspendedScript(nullptr) {
 	_type = TYPE;
 }
 
@@ -98,6 +100,10 @@ bool Item::isEnabled() const {
 }
 
 void Item::setEnabled(bool enabled) {
+	if (_enabled && !enabled) {
+		setMovement(nullptr);
+	}
+
 	_enabled = enabled;
 }
 
@@ -123,12 +129,25 @@ Common::String Item::getHotspotTitle(uint32 hotspotIndex) const {
 }
 
 void Item::setMovement(Movement *movement) {
+	if (_movementSuspendedScript) {
+		if (_movement &&  _movement->hasEnded()) {
+			_movementSuspendedScript->setResumeStatus(Script::kResumeComplete);
+		} else {
+			_movementSuspendedScript->setResumeStatus(Script::kResumeAbort);
+		}
+		_movementSuspendedScript = nullptr;
+	}
+
 	if (_movement && !_movement->hasEnded()) {
 		_movement->stop();
 	}
 
 	delete _movement;
 	_movement = movement;
+}
+
+void Item::setMovementSuspendedScript(Script *script) {
+	_movementSuspendedScript = script;
 }
 
 void Item::printData() {
@@ -508,9 +527,7 @@ void FloorPositionedItem::placeOnBookmark(Bookmark *target) {
 	setFloorFaceIndex(floor->findFaceContainingPoint(_position3D));
 
 	// Set the z coordinate using the floor height at that position
-	if (_floorFaceIndex >= 0) {
-		floor->computePointHeightInFace(_position3D, _floorFaceIndex);
-	} else {
+	if (_floorFaceIndex < 0) {
 		warning("Item '%s' has been place out of the floor field", getName().c_str());
 	}
 }

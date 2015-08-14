@@ -83,6 +83,12 @@ public:
 		kCallModeDialogAnswer = 6
 	};
 
+	enum ResumeStatus {
+		kResumeComplete,
+		kResumeAbort,
+		kResumeSuspend
+	};
+
 	Script(Object *parent, byte subType, uint16 index, const Common::String &name);
 	virtual ~Script();
 
@@ -132,6 +138,9 @@ public:
 	 */
 	void addReturnObject(Object *object);
 
+	/** Set the outcome of a suspension (completion or abortion) */
+	void setResumeStatus(ResumeStatus status);
+
 protected:
 	void printData() override;
 
@@ -151,6 +160,7 @@ protected:
 
 	int32 _pauseTimeLeft;
 	Object *_suspendingResource;
+	ResumeStatus _resumeStatus;
 
 	Common::Array<Object *> _returnObjects;
 };

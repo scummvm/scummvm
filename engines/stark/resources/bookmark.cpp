@@ -24,6 +24,11 @@
 
 #include "engines/stark/formats/xrc.h"
 
+#include "engines/stark/resources/floor.h"
+
+#include "engines/stark/services/global.h"
+#include "engines/stark/services/services.h"
+
 namespace Stark {
 namespace Resources {
 
@@ -36,7 +41,14 @@ Bookmark::Bookmark(Object *parent, byte subType, uint16 index, const Common::Str
 }
 
 Math::Vector3d Bookmark::getPosition() const {
-	return _position;
+	Floor *floor = StarkGlobal->getCurrent()->getFloor();
+
+	Math::Vector3d position = _position;
+
+	int32 floorFaceIndex = floor->findFaceContainingPoint(position);
+	floor->computePointHeightInFace(position, floorFaceIndex);
+
+	return position;
 }
 
 void Bookmark::readData(Formats::XRCReadStream *stream) {
