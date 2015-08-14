@@ -165,9 +165,9 @@ Command *Command::execute(uint32 callMode, Script *script) {
 	case kIsRandom:
 		return opIsRandom(_arguments[2].intValue);
 	case kIsOnPlace:
-		return opIsOnPlace(_arguments[0].intValue, _arguments[1].intValue, _arguments[2].referenceValue, _arguments[3].referenceValue);
+		return opIsOnPlace(_arguments[2].referenceValue, _arguments[3].referenceValue);
 	case kIsOnNearPlace:
-		return opIsOnNearPlace(_arguments[0].intValue, _arguments[1].intValue, _arguments[2].referenceValue, _arguments[3].referenceValue, _arguments[4].intValue);
+		return opIsOnNearPlace(_arguments[2].referenceValue, _arguments[3].referenceValue, _arguments[4].intValue);
 	case kIsAnimPlaying:
 		return opIsAnimPlaying(_arguments[0].intValue, _arguments[1].intValue, _arguments[2].referenceValue);
 	case kIsAnimAtTime:
@@ -731,22 +731,22 @@ Command *Command::opIsRandom(int32 chance) {
 	return nextCommandIf(value < chance);
 }
 
-Command *Command::opIsOnPlace(int branch1, int branch2, const ResourceReference &itemRef, const ResourceReference &position) {
-	assert(_arguments.size() == 4);
-	Object *itemObj = itemRef.resolve<Object>();
-	Object *positionObj = position.resolve<Object>();
-	warning("(TODO: Implement) opIsOnPlace(%d, %d, %s, %s) %s : %s", branch1, branch2, itemObj->getName().c_str(), positionObj->getName().c_str(), itemRef.describe().c_str(), position.describe().c_str());
-	// TODO: Verify how this logic actually should be handled
-	return nextCommandIf(false);
+Command *Command::opIsOnPlace(const ResourceReference &itemRef, const ResourceReference &positionRef) {
+	FloorPositionedItem *item = itemRef.resolve<FloorPositionedItem>();
+
+	Math::Vector3d itemPostion = item->getPosition3D();
+	Math::Vector3d testPosition = getObjectPosition(positionRef, nullptr);
+
+	return nextCommandIf(itemPostion == testPosition);
 }
 
-Command *Command::opIsOnNearPlace(int branch1, int branch2, const ResourceReference &itemRef, const ResourceReference &position, int32 unknown) {
-	assert(_arguments.size() == 5);
-	Object *itemObj = itemRef.resolve<Object>();
-	Object *positionObj = position.resolve<Object>();
-	warning("(TODO: Implement) opIsOnPlace(%d, %d, %s, %s, %d) %s : %s", branch1, branch2, itemObj->getName().c_str(), positionObj->getName().c_str(), unknown, itemRef.describe().c_str(), position.describe().c_str());
-	// TODO: Verify how this logic actually should be handled
-	return nextCommandIf(true);
+Command *Command::opIsOnNearPlace(const ResourceReference &itemRef, const ResourceReference &positionRef, int32 testDistance) {
+	FloorPositionedItem *item = itemRef.resolve<FloorPositionedItem>();
+
+	Math::Vector3d itemPostion = item->getPosition3D();
+	Math::Vector3d testPosition = getObjectPosition(positionRef, nullptr);
+
+	return nextCommandIf(itemPostion.getDistanceTo(testPosition) < testDistance);
 }
 
 Command *Command::opIsAnimPlaying(int branch1, int branch2, const ResourceReference &animRef) {

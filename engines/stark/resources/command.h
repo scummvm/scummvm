@@ -184,8 +184,7 @@ protected:
 	Command *opRumbleScene(int32 unknown1, int32 unknown2);
 	Command *opFadeScene(int32 unknown1, int32 unknown2, int32 unknown3);
 	Command *opItem3DPlaceOn(const ResourceReference &itemRef, const ResourceReference &targetRef);
-	Command *opItem3DWalkTo(Script *script, const ResourceReference &itemRef, const ResourceReference &targetRef,
-	                                 bool suspend);
+	Command *opItem3DWalkTo(Script *script, const ResourceReference &itemRef, const ResourceReference &targetRef, bool suspend);
 	Command *opItemLookAt(const ResourceReference &itemRef, const ResourceReference &itemRef2, int32 unknown, int32 unknown2);
 	Command *opItemEnable(const ResourceReference &itemRef, int32 enable);
 	Command *opItemSetActivity(const ResourceReference &itemRef, int32 unknown1, int32 unknown2);
@@ -221,8 +220,8 @@ protected:
 	Command *opIsIntegerLower(const ResourceReference &knowledgeRef, int32 value);
 	Command *opIsScriptActive(const ResourceReference &scriptRef);
 	Command *opIsRandom(int32 chance);
-	Command *opIsOnNearPlace(int branch1, int branch2, const ResourceReference &itemRef, const ResourceReference &position, int32 unknown);
-	Command *opIsOnPlace(int branch1, int branch2, const ResourceReference &itemRef, const ResourceReference &position);
+	Command *opIsOnNearPlace(const ResourceReference &itemRef, const ResourceReference &positionRef, int32 testDistance);
+	Command *opIsOnPlace(const ResourceReference &itemRef, const ResourceReference &positionRef);
 	Command *opIsAnimPlaying(int branch1, int branch2, const ResourceReference &animRef);
 	Command *opIsAnimAtTime(int branch1, int branch2, const ResourceReference &animRef, int32 time);
 	
