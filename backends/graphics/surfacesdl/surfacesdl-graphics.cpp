@@ -579,10 +579,10 @@ void SurfaceSdlGraphicsManager::drawOverlayOpenGL() {
 
 void SurfaceSdlGraphicsManager::drawSideTexturesOpenGL() {
 	if (_fullscreen && _lockAspectRatio) {
-		const Math::Vector2d nudge(1.0/float(_screen->w), 0);
+		const Math::Vector2d nudge(1.0 / float(_screen->w), 0);
 		if (_sideTextures[0] != nullptr) {
 			float left = _gameRect.getBottomLeft().getX() - (float(_screen->h) / float(_sideTextures[0]->getHeight())) * _sideTextures[0]->getWidth() / float(_screen->w);
-			drawTexture(*_sideTextures[0], Math::Vector2d(left,0.0), _gameRect.getBottomLeft() + nudge, true);
+			drawTexture(*_sideTextures[0], Math::Vector2d(left, 0.0), _gameRect.getBottomLeft() + nudge, true);
 		}
 
 		if (_sideTextures[1] != nullptr) {

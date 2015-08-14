@@ -318,7 +318,6 @@ Common::Error GrimEngine::run() {
 	g_driver->setupScreen(640, 480, fullscreen);
 	g_driver->loadEmergFont();
 
-
 	if (getGameType() == GType_MONKEY4 && SearchMan.hasFile("AMWI.m4b")) {
 		// Play EMI Mac Aspyr logo
 		playAspyrLogo();
