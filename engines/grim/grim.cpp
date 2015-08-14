@@ -38,6 +38,8 @@
 #include "gui/gui-manager.h"
 #include "gui/message.h"
 
+#include "image/png.h"
+
 #include "engines/engine.h"
 
 #include "engines/grim/md5check.h"
@@ -68,13 +70,6 @@
 #include "engines/grim/emi/sound/emisound.h"
 
 #include "engines/grim/lua/lua.h"
-
-#ifdef SDL_BACKEND
-#include "image/png.h"
-#include "backends/platform/sdl/sdl.h"
-#include "backends/graphics/sdl/sdl-graphics.h"
-#include "backends/graphics/surfacesdl/surfacesdl-graphics.h"
-#endif
 
 namespace Grim {
 
@@ -676,10 +671,7 @@ void GrimEngine::drawNormalMode() {
 	if (_setupChanged) {
 		cameraPostChangeHandle(_currSet->getSetup());
 		_setupChanged = false;
-#ifdef SDL_BACKEND
-		warning("Looking for side texture for '%s'", _currSet->getCurrSetup()->_name.c_str());
 		setSideTextures(_currSet->getCurrSetup()->_name.c_str());
-#endif
 	}
 
 	// Draw actors
@@ -1388,7 +1380,6 @@ void GrimEngine::pauseEngineIntern(bool pause) {
 }
 
 
-#ifdef SDL_BACKEND
 Graphics::Surface *loadPNG(const Common::String &filename) {
 	Image::PNGDecoder d;
 	Common::SeekableReadStream *s = SearchMan.createReadStreamForMember(filename);
@@ -1402,13 +1393,16 @@ Graphics::Surface *loadPNG(const Common::String &filename) {
 }
 
 void GrimEngine::setSideTextures(const Common::String &setup) {
+	if (! g_system->hasFeature(OSystem::kFeatureSideTextures))
+			return;
 	Graphics::Surface *t1 = loadPNG(Common::String::format("%s_left.png", setup.c_str()));
 	Graphics::Surface *t2 = loadPNG(Common::String::format("%s_right.png", setup.c_str()));
-	OSystem_SDL *sys = (OSystem_SDL *) g_system;
-	SurfaceSdlGraphicsManager *ssgm = dynamic_cast<SurfaceSdlGraphicsManager *>(sys->getGraphicsManager());
-	ssgm->setSideTextures(t1, t2);
+	g_system->suggestSideTextures(t1, t2);
+	t1->free();
+	t2->free();
+	delete t1;
+	delete t2;
 }
-#endif
 
 
 void GrimEngine::debugLua(const Common::String &str) {
