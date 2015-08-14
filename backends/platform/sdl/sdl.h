@@ -77,6 +77,11 @@ public:
 	virtual Audio::Mixer *getMixer();
 	virtual Common::TimerManager *getTimerManager();
 
+	// ResidualVM specific code
+	virtual bool hasFeature(Feature f);
+	// ResidualVM specific code
+	virtual void suggestSideTextures(Graphics::Surface *left,
+	                                 Graphics::Surface *right) override;
 protected:
 	bool _inited;
 	bool _initedSDL;

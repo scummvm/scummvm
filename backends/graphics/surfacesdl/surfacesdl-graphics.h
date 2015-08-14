@@ -113,9 +113,12 @@ public:
 	virtual int16 getOverlayHeight() { return _overlayHeight; }
 	virtual int16 getOverlayWidth() { return _overlayWidth; }
 	void closeOverlay(); // ResidualVM specific method
-#ifdef SDL_BACKEND
+
+	/* Render the passed Surfaces besides the game texture.
+	 * This is used for widescreen support in the Grim engine.
+	 * Note: we must copy the Surfaces, as they are free()d after this call.
+	 */
 	virtual void setSideTextures(Graphics::Surface *left, Graphics::Surface *right);
-#endif
 
 	virtual bool showMouse(bool visible);
 	virtual void warpMouse(int x, int y);
