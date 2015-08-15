@@ -151,7 +151,7 @@ bool Script::shouldExecute(uint32 callMode) {
 			return false; // Disabled parent
 		}
 	} else if (_scriptType == kScriptTypePassiveDialog) {
-		if (callMode != kCallModeDialogCreateSelections || callMode != kCallModeDialogAnswer) {
+		if (callMode != kCallModeDialogCreateSelections && callMode != kCallModeDialogAnswer) {
 			return false; // Wrong call mode for this script
 		}
 	} else if (_scriptType == kScriptTypeOnPlayerAction) {
