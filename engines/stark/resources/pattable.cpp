@@ -23,6 +23,9 @@
 #include "engines/stark/resources/pattable.h"
 #include "engines/stark/resources/item.h"
 #include "engines/stark/resources/script.h"
+#include "engines/stark/resources/string.h"
+
+#include "engines/stark/services/stateprovider.h"
 
 #include "engines/stark/formats/xrc.h"
 
@@ -34,7 +37,8 @@ PATTable::~PATTable() {
 
 PATTable::PATTable(Object *parent, byte subType, uint16 index, const Common::String &name) :
 				Object(parent, subType, index, name),
-				_defaultAction(-1) {
+				_defaultAction(-1),
+				_tooltipOverrideIndex(-1) {
 	_type = TYPE;
 }
 
@@ -89,6 +93,15 @@ void PATTable::onEnterLocation() {
 				_itemEntries[templateEntries[i]._actionType] = templateEntries[i];
 			}
 		}
+	}
+}
+
+void PATTable::saveLoad(ResourceSerializer *serializer) {
+	serializer->syncAsSint32LE(_tooltipOverrideIndex);
+
+	if (serializer->isLoading() && _tooltipOverrideIndex >= 0) {
+		String *string = findChildWithIndex<String>(_tooltipOverrideIndex);
+		setTooltip(string);
 	}
 }
 
@@ -164,6 +177,11 @@ bool PATTable::runScriptForAction(uint32 action) {
 	}
 
 	return false;
+}
+
+void PATTable::setTooltip(String *string) {
+	_name = string->getName();
+	_tooltipOverrideIndex = string->getIndex();
 }
 
 } // End of namespace Resources

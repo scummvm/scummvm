@@ -109,6 +109,7 @@ public:
 
 	    kKnowledgeAssignNegatedBool = 126,
 		kEnableDiaryEntry = 127,
+		kPATChangeTooltip = 128,
 
 		kChangeSound = 129,
 
@@ -210,6 +211,7 @@ protected:
 	Command *opScrollSet(const ResourceReference &scrollRef);
 	Command *opPlayFullMotionVideo(Script *script, const ResourceReference &movieRef, int32 unknown);
 	Command *opEnableDiaryEntry(const ResourceReference &knowledgeRef);
+    Command *opPATChangeTooltip(const ResourceReference &patRef, const ResourceReference &stringRef);
 	Command *opChangeSound(const ResourceReference &soundRef, int32 unknown1, int32 unknown2, int32 unknown3, int32 unknown4);
 	Command *opItem3DRunTo(const ResourceReference &itemRef, const ResourceReference &bookmarkRef, int32 unknown);
 	Command *opItemPlaceDirection(const ResourceReference &itemRef, int32 direction);

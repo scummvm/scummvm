@@ -41,6 +41,7 @@
 #include "engines/stark/resources/script.h"
 #include "engines/stark/resources/sound.h"
 #include "engines/stark/resources/speech.h"
+#include "engines/stark/resources/string.h"
 #include "engines/stark/resources/textureset.h"
 
 #include "engines/stark/services/services.h"
@@ -50,6 +51,7 @@
 #include "engines/stark/services/userinterface.h"
 
 #include "common/random.h"
+#include "pattable.h"
 
 namespace Stark {
 namespace Resources {
@@ -136,6 +138,8 @@ Command *Command::execute(uint32 callMode, Script *script) {
 		return opPlayFullMotionVideo(script, _arguments[1].referenceValue, _arguments[2].intValue);
 	case kEnableDiaryEntry:
 		return opEnableDiaryEntry(_arguments[1].referenceValue);
+	case kPATChangeTooltip:
+		return opPATChangeTooltip(_arguments[1].referenceValue, _arguments[2].referenceValue);
 	case kChangeSound:
 		return opChangeSound(_arguments[1].referenceValue, _arguments[2].intValue, _arguments[3].intValue, _arguments[4].intValue, _arguments[5].intValue);
 	case kItem3DRunTo:
@@ -601,6 +605,15 @@ Command *Command::opEnableDiaryEntry(const ResourceReference &knowledgeRef) {
 	assert(_arguments.size() == 2);
 	Knowledge *entry = knowledgeRef.resolve<Knowledge>();
 	warning("(TODO: Implement) opEnableDiaryEntry(%s) : %s", entry->getName().c_str(), knowledgeRef.describe().c_str());
+
+	return nextCommand();
+}
+
+Command *Command::opPATChangeTooltip(const ResourceReference &patRef, const ResourceReference &stringRef) {
+	PATTable *entry = patRef.resolve<PATTable>();
+	String *string = stringRef.resolve<String>();
+
+	entry->setTooltip(string);
 
 	return nextCommand();
 }

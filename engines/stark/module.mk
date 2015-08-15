@@ -51,6 +51,7 @@ MODULE_OBJS := \
 	resources/scroll.o \
 	resources/sound.o \
 	resources/speech.o \
+	resources/string.o \
 	resources/textureset.o \
 	resourcereference.o \
 	scene.o \

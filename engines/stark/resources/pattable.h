@@ -37,6 +37,7 @@ class XRCReadStream;
 namespace Resources {
 
 class Script;
+class String;
 class ItemTemplate;
 
 typedef Common::Array<uint32> ActionArray;
@@ -48,8 +49,7 @@ public:
 	enum ActionType {
 		kActionUse  = 1,
 		kActionLook = 2,
-		kActionTalk = 3,
-		kActionExit = 7
+		kActionTalk = 3
 	};
 
 	PATTable(Object *parent, byte subType, uint16 index, const Common::String &name);
@@ -59,6 +59,7 @@ public:
 	void readData(Formats::XRCReadStream *stream) override;
 	void onAllLoaded() override;
 	void onEnterLocation() override;
+    void saveLoad(ResourceSerializer *serializer) override;
 
 	ActionArray listPossibleActions() const;
 
@@ -68,6 +69,9 @@ public:
 
 	/** If a default action is available, only it can be executed */
 	int32 getDefaultAction() const;
+
+	/** Replace the PAT tooltip with the name of a string resource */
+	void setTooltip(String *string);
 
 protected:
 	struct Entry {
@@ -88,7 +92,7 @@ protected:
 	Common::Array<Entry> _ownEntries;
 	EntryMap _itemEntries;
 	int32 _defaultAction;
-
+	int32 _tooltipOverrideIndex;
 };
 
 } // End of namespace Resources

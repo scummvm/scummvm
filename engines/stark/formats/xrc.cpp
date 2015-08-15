@@ -51,6 +51,7 @@
 #include "engines/stark/resources/scroll.h"
 #include "engines/stark/resources/speech.h"
 #include "engines/stark/resources/sound.h"
+#include "engines/stark/resources/string.h"
 #include "engines/stark/resources/textureset.h"
 #include "engines/stark/resourcereference.h"
 
@@ -272,6 +273,9 @@ Resources::Object *XRCReader::createResource(XRCReadStream *stream, Resources::O
 		break;
 	case Resources::Type::kLipSync:
 		resource = new Resources::LipSync(parent, subType, index, name);
+        break;
+	case Resources::Type::kString:
+		resource = new Resources::String(parent, subType, index, name);
         break;
 	case Resources::Type::kTextureSet:
 		resource = new Resources::TextureSet(parent, subType, index, name);
