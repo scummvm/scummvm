@@ -411,7 +411,7 @@ void Screen::flushImage(ImageFrame *frame, const Common::Point &pt, int16 *xp, i
 
 void Screen::flushScaleImage(ImageFrame *frame, const Common::Point &pt, int16 *xp, int16 *yp,
 		int16 *width, int16 *height, int scaleVal) {
-	Common::Point imgPos = pt + frame->_offset;
+	Common::Point imgPos(pt.x + frame->sDrawXOffset(scaleVal), pt.y + frame->sDrawYOffset(scaleVal));
 	Common::Rect newBounds(imgPos.x, imgPos.y, imgPos.x + frame->sDrawXSize(scaleVal), 
 		imgPos.y + frame->sDrawYSize(scaleVal));
 	Common::Rect oldBounds(*xp, *yp, *xp + *width, *yp + *height);
