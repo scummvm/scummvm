@@ -560,6 +560,13 @@ float FloorPositionedItem::getSortKey() const {
 	return floor->getDistanceFromCamera(_floorFaceIndex);
 }
 
+void FloorPositionedItem::saveLoad(ResourceSerializer *serializer) {
+	ItemVisual::saveLoad(serializer);
+	serializer->syncAsVector3d(_position3D);
+	serializer->syncAsFloat(_direction3D);
+	serializer->syncAsSint32LE(_floorFaceIndex);
+}
+
 FloorPositionedImageItem::~FloorPositionedImageItem() {
 }
 

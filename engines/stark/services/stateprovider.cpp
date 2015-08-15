@@ -231,4 +231,19 @@ void StateProvider::writeStateToStream(Common::WriteStream *stream) {
 	}
 }
 
+ResourceSerializer::ResourceSerializer(Common::SeekableReadStream *in, Common::WriteStream *out) :
+		Common::Serializer(in, out) {
+}
+
+void ResourceSerializer::syncAsFloat(float &value) {
+	// TODO: Change this to something more portable
+	syncBytes((byte *) &value, sizeof(float));
+}
+
+void ResourceSerializer::syncAsVector3d(Math::Vector3d &value) {
+	syncAsFloat(value.x());
+	syncAsFloat(value.y());
+	syncAsFloat(value.z());
+}
+
 } // End of namespace Stark

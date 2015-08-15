@@ -29,6 +29,8 @@
 #include "common/stream.h"
 #include "common/substream.h"
 
+#include "math/mathfwd.h"
+
 namespace Stark {
 
 namespace Resources {
@@ -47,10 +49,10 @@ public:
 
 class ResourceSerializer : public Common::Serializer {
 public:
-	ResourceSerializer(Common::SeekableReadStream *in, Common::WriteStream *out) :
-		Common::Serializer(in, out) {
+	ResourceSerializer(Common::SeekableReadStream *in, Common::WriteStream *out);
 
-	}
+	void syncAsFloat(float &value);
+	void syncAsVector3d(Math::Vector3d &value);
 };
 
 /**

@@ -291,6 +291,9 @@ public:
 	FloorPositionedItem(Object *parent, byte subType, uint16 index, const Common::String &name);
 	virtual ~FloorPositionedItem();
 
+	// Object API
+	void saveLoad(ResourceSerializer *serializer) override;
+
 	/** Move the item to a bookmarked position */
 	void placeOnBookmark(Bookmark *target);
 
