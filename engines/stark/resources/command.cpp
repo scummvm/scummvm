@@ -154,6 +154,8 @@ Command *Command::execute(uint32 callMode, Script *script) {
 		return opIsOnFloorField(_arguments[2].referenceValue, _arguments[3].referenceValue);
 	case kIsItemEnabled:
 		return opIsItemEnabled(_arguments[2].referenceValue);
+	case kIsScriptEnabled:
+		return opIsScriptEnabled(_arguments[2].referenceValue);
 	case kIsSet:
 		return opIsSet(_arguments[2].referenceValue);
 	case kIsIntegerInRange:
@@ -708,6 +710,12 @@ Command *Command::opIsItemEnabled(const ResourceReference &itemRef) {
 	Item *itemObj = itemRef.resolve<Item>();
 
 	return nextCommandIf(itemObj->isEnabled());
+}
+
+Command *Command::opIsScriptEnabled(const ResourceReference &scriptRef) {
+	Script *script = scriptRef.resolve<Script>();
+
+	return nextCommandIf(script->isEnabled());
 }
 
 Command *Command::opIsSet(const ResourceReference &knowledgeRef) {

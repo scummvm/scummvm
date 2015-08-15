@@ -124,6 +124,7 @@ public:
 		kIsOnFloorField = 162,
 		kIsItemEnabled = 163,
 
+		kIsScriptEnabled = 165,
 		kIsSet = 166,
 
 		kIsIntegerInRange = 170,
@@ -218,6 +219,7 @@ protected:
 	Command *opSpeakWithoutTalking(Script *script, const ResourceReference &speechRef, int32 unknown);
 	Command *opIsOnFloorField(const ResourceReference &itemRef, const ResourceReference &floorFieldRef);
 	Command *opIsItemEnabled(const ResourceReference &itemRef);
+	Command *opIsScriptEnabled(const ResourceReference &scriptRef);
 	Command *opIsSet(const ResourceReference &knowledgeRef);
 	Command *opIsIntegerInRange(const ResourceReference &knowledgeRef, int32 min, int32 max);
 	Command *opIsIntegerAbove(const ResourceReference &knowledgeRef, int32 value);
