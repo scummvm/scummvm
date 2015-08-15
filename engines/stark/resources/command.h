@@ -95,6 +95,8 @@ public:
 		kEnableFloorField = 103,
 		kPlayAnimScriptItem = 104,
 
+		kKnowledgeAssignBool = 107,
+
 		kSoundPlay = 112,
 
 		kLookDirection = 118,
@@ -105,6 +107,7 @@ public:
 		kScrollSet = 122,
 		kPlayFullMotionVideo = 123,
 
+	    kKnowledgeAssignNegatedBool = 126,
 		kEnableDiaryEntry = 127,
 
 		kChangeSound = 129,
@@ -197,6 +200,8 @@ protected:
 	Command *opSetInteger(const ResourceReference &knowledgeRef, int32 value);
 	Command *opEnableFloorField(const ResourceReference &floorFieldRef, int32 value);
 	Command *opPlayAnimScriptItem(Script *script, const ResourceReference &animScriptItemRef, int32 pause);
+	Command *opKnowledgeAssignBool(const ResourceReference &knowledgeRef1, const ResourceReference &knowledgeRef2);
+	Command *opKnowledgeAssignNegatedBool(const ResourceReference &knowledgeRef1, const ResourceReference &knowledgeRef2);
 	Command *opSoundPlay(Script *script, const ResourceReference &soundRef, int32 suspend);
 	Command *opLookDirection(const ResourceReference &itemRef, int32 unknown1, int32 unknown2);
 	Command *opStopPlayingSound(const ResourceReference &soundRef);

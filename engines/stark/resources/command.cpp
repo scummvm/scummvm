@@ -118,6 +118,10 @@ Command *Command::execute(uint32 callMode, Script *script) {
 		return opEnableFloorField(_arguments[1].referenceValue, _arguments[2].intValue);
 	case kPlayAnimScriptItem:
 		return opPlayAnimScriptItem(script, _arguments[1].referenceValue, _arguments[2].intValue);
+	case kKnowledgeAssignBool:
+		return opKnowledgeAssignBool(_arguments[1].referenceValue, _arguments[2].referenceValue);
+	case kKnowledgeAssignNegatedBool:
+		return opKnowledgeAssignNegatedBool(_arguments[1].referenceValue, _arguments[2].referenceValue);
 	case kSoundPlay:
 		return opSoundPlay(script, _arguments[1].referenceValue, _arguments[2].intValue);
 	case kLookDirection:
@@ -516,6 +520,24 @@ Command *Command::opPlayAnimScriptItem(Script *script, const ResourceReference &
 	animScript->setCurrentIndex(animScriptItemObj->getIndex());
 	// TODO: If pause is true, pause the script for the duration of the anim
 	warning("(TODO: Implement) opPlayAnimScriptItem(%s, %d) : %s", animScriptItemObj->getName().c_str(), pause, animScriptItemRef.describe().c_str());
+	return nextCommand();
+}
+
+Command *Command::opKnowledgeAssignBool(const ResourceReference &knowledgeRef1, const ResourceReference &knowledgeRef2) {
+	Knowledge *src = knowledgeRef1.resolve<Knowledge>();
+	Knowledge *dst = knowledgeRef2.resolve<Knowledge>();
+
+	dst->setBooleanValue(src->getBooleanValue());
+
+	return nextCommand();
+}
+
+Command *Command::opKnowledgeAssignNegatedBool(const ResourceReference &knowledgeRef1, const ResourceReference &knowledgeRef2) {
+	Knowledge *src = knowledgeRef1.resolve<Knowledge>();
+	Knowledge *dst = knowledgeRef2.resolve<Knowledge>();
+
+	dst->setBooleanValue(!src->getBooleanValue());
+
 	return nextCommand();
 }
 
