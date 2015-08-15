@@ -37,6 +37,7 @@ class XRCReadStream;
 namespace Resources {
 
 class Speech;
+class Script;
 
 /**
  * A dialog between two characters.
@@ -143,7 +144,10 @@ public:
 	TopicArray listAvailableTopics();
 
 	/** Obtain the Dialog which should be played at the outcome of this one, if any */
-	Dialog *getNextDialog(Dialog::Reply *reply);
+	Dialog *getNextDialog(Reply *reply);
+
+	/** Obtain the Script which should be executed after this dialog, if any */
+	Script *getNextScript(Reply *reply);
 
 protected:
 	void printData() override;

@@ -281,5 +281,13 @@ Dialog *Dialog::getNextDialog(Dialog::Reply *reply) {
 	return _parent->findChildWithIndex<Dialog>(reply->_nextDialogIndex);
 }
 
+Script *Dialog::getNextScript(Dialog::Reply *reply) {
+	if (reply->_nextScriptReference.empty()) {
+		return nullptr;
+	}
+
+	return reply->_nextScriptReference.resolve<Script>();
+}
+
 } // End of namespace Resources
 } // End of namespace Stark

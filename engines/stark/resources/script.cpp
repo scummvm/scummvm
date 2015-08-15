@@ -319,6 +319,11 @@ void Script::resumeCallerExecution(Object *callerObject) {
 			_nextCommand = callerCommand->nextCommand();
 			break;
 		}
+		case Type::kDialog: {
+			Dialog *callerDialog = Object::cast<Dialog>(callerObject);
+			StarkDialogPlayer->resume(callerDialog);
+			break;
+		}
 		default:
 			error("Unhandled caller object type %s", callerObject->getType().getName());
 	}

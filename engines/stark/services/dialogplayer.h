@@ -82,6 +82,9 @@ public:
 	/** List the currently available dialog options */
 	Common::Array<DialogPlayer::Option> listOptions() const;
 
+	/** Resume the dialog after it was interrupted to run a script */
+	void resume(Resources::Dialog *dialog);
+
 protected:
 	/** Build a list of available dialog options */
 	void buildOptions();

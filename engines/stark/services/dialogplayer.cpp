@@ -24,6 +24,7 @@
 #include "engines/stark/services/services.h"
 #include "engines/stark/services/userinterface.h"
 
+#include "engines/stark/resources/script.h"
 #include "engines/stark/resources/speech.h"
 
 namespace Stark {
@@ -157,11 +158,13 @@ void DialogPlayer::selectOption(uint32 index) {
 }
 
 void DialogPlayer::onReplyEnd() {
+	Resources::Script *nextScript = _currentDialog->getNextScript(_currentReply);
 	Resources::Dialog *nextDialog = _currentDialog->getNextDialog(_currentReply);
 
-	//TODO: Complete
-
-	if (nextDialog) {
+	if (nextScript) {
+		nextScript->addReturnObject(_currentDialog);
+		nextScript->execute(Resources::Script::kCallModeDialogCreateSelections);
+	} else if (nextDialog) {
 		run(nextDialog);
 	} else {
 		// Quit the dialog
@@ -201,6 +204,20 @@ void DialogPlayer::update() {
 		} else {
 			onReplyEnd();
 		}
+	}
+}
+
+void DialogPlayer::resume(Resources::Dialog *dialog) {
+	// If this is triggered the some save and restore of the dialog player needs to be done
+	assert(_currentDialog == dialog);
+
+	Resources::Dialog *nextDialog = _currentDialog->getNextDialog(_currentReply);
+	 if (nextDialog) {
+		run(nextDialog);
+	} else {
+		// Quit the dialog
+		reset();
+		StarkUserInterface->setInteractive(true);
 	}
 }
 
