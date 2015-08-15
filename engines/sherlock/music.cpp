@@ -574,8 +574,9 @@ bool Music::waitUntilMSec(uint32 msecTarget, uint32 msecMax, uint32 additionalDe
 	}
 }
 
-void Music::setMIDIVolume(int volume) {
-	warning("TODO: Music::setMIDIVolume");
+void Music::setMusicVolume(int volume) {
+	_musicVolume = volume;
+	_vm->_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, volume);
 }
 
 } // End of namespace Sherlock

@@ -94,7 +94,6 @@ bool TattooScene::loadScene(const Common::String &filename) {
 		// If it's a new song, then start it up
 		if (music._currentSongName.compareToIgnoreCase(music._nextSongName)) {
 			if (music.loadSong(music._nextSongName)) {
-				music.setMIDIVolume(music._musicVolume);
 				if (music._musicOn)
 					music.startSong();
 			}

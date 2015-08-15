@@ -142,7 +142,7 @@ bool Sound::playSound(const Common::String &name, WaitType waitType, int priorit
 	}
 
 	Audio::SoundHandle soundHandle = (IS_SERRATED_SCALPEL) ? _scalpelEffectsHandle : getFreeSoundHandle();
-	if (!playSoundResource(filename, libraryFilename, Audio::Mixer::kPlainSoundType, soundHandle, Audio::Mixer::kMaxChannelVolume))
+	if (!playSoundResource(filename, libraryFilename, Audio::Mixer::kSFXSoundType, soundHandle))
 		error("Could not find sound resource - %s", filename.c_str());
 
 	_soundPlaying = true;
@@ -194,11 +194,6 @@ void Sound::stopSound() {
 	}
 }
 
-void Sound::stopSndFuncPtr(int v1, int v2) {
-	// TODO
-	warning("TODO: Sound::stopSndFuncPtr");
-}
-
 void Sound::freeDigiSound() {
 	_soundPlaying = false;
 }
@@ -240,7 +235,7 @@ void Sound::playSpeech(const Common::String &name) {
 	// Ensure the given library is in the cache
 	res.addToCache(libraryName);
 
-	if (playSoundResource(name, libraryName, Audio::Mixer::kSpeechSoundType, _speechHandle, Audio::Mixer::kMaxChannelVolume))
+	if (playSoundResource(name, libraryName, Audio::Mixer::kSpeechSoundType, _speechHandle))
 		_speechPlaying = true;
 }
 
@@ -255,7 +250,7 @@ bool Sound::isSpeechPlaying() {
 }
 
 bool Sound::playSoundResource(const Common::String &name, const Common::String &libFilename,
-		Audio::Mixer::SoundType soundType, Audio::SoundHandle &handle, int volume) {
+		Audio::Mixer::SoundType soundType, Audio::SoundHandle &handle) {
 	Resources &res = *_vm->_res;
 	Common::SeekableReadStream *stream = libFilename.empty() ? res.load(name) : res.load(name, libFilename, true);
 	if (!stream)
@@ -300,7 +295,7 @@ bool Sound::playSoundResource(const Common::String &name, const Common::String &
 	if (!audioStream)
 		return false;
 
-	_mixer->playStream(soundType, &handle, audioStream, -1, volume);
+	_mixer->playStream(soundType, &handle, audioStream, -1, Audio::Mixer::kMaxChannelVolume);
 	return true;
 }
 

@@ -112,10 +112,9 @@ void WidgetOptions::handleEvents() {
 			if (_midiSliderX > _bounds.width() - _surface.widestChar())
 				_midiSliderX = _bounds.width() - _surface.widestChar();
 
-		int temp = music._musicVolume;
-		music._musicVolume = (_midiSliderX - _surface.widestChar()) * 255 / (_bounds.width() - _surface.widestChar() * 2);
-		if (music._musicVolume != temp) {
-			music.setMIDIVolume(music._musicVolume);
+		int newVolume = (_midiSliderX - _surface.widestChar()) * 255 / (_bounds.width() - _surface.widestChar() * 2);
+		if (newVolume != music._musicVolume) {
+			music.setMusicVolume(newVolume);
 			vm.saveConfig();
 		}
 

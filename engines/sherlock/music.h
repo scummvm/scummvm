@@ -120,7 +120,7 @@ public:
 	/**
 	 * Sets the volume of the MIDI music with a value ranging from 0 to 127
 	 */
-	void setMIDIVolume(int volume);
+	void setMusicVolume(int volume);
 };
 
 } // End of namespace Sherlock

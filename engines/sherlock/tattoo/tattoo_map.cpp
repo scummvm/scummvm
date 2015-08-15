@@ -81,7 +81,6 @@ int TattooMap::show() {
 			song = "Cue7";
 
 		if (music.loadSong(song)) {
-			music.setMIDIVolume(music._musicVolume);
 			if (music._musicOn)
 				music.startSong();
 		}

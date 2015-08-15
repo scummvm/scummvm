@@ -59,7 +59,7 @@ private:
 	 * Handle playing a sound or speech
 	 */
 	bool playSoundResource(const Common::String &name, const Common::String &libFilename,
-		Audio::Mixer::SoundType soundType, Audio::SoundHandle &handle, int volume);
+		Audio::Mixer::SoundType soundType, Audio::SoundHandle &handle);
 public:
 	bool _digitized;
 	int _voices;
@@ -103,7 +103,6 @@ public:
 	 */
 	void stopSound();
 
-	void stopSndFuncPtr(int v1, int v2);
 	void freeDigiSound();
 
 	Audio::SoundHandle getFreeSoundHandle();
