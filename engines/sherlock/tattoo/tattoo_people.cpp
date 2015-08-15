@@ -32,6 +32,7 @@ namespace Tattoo {
 
 #define FACING_PLAYER 16
 #define NUM_ADJUSTED_WALKS 21
+#define CHARACTERS_INDEX 256
 
 struct AdjustWalk {
 	char _vgsName[9];
@@ -1207,7 +1208,7 @@ void TattooPeople::setListenSequence(int speaker, int sequenceNum) {
 		return;
 
 	int objNum = findSpeaker(speaker);
-	if (objNum < 256 && objNum != -1) {
+	if (objNum < CHARACTERS_INDEX && objNum != -1) {
 		// See if the Object has to wait for an Abort Talk Code
 		Object &obj = scene._bgShapes[objNum];
 		if (obj.hasAborts())
@@ -1215,7 +1216,7 @@ void TattooPeople::setListenSequence(int speaker, int sequenceNum) {
 		else
 			obj.setObjTalkSequence(sequenceNum);
 	} else if (objNum != -1) {
-		objNum -= 256;
+		objNum -= CHARACTERS_INDEX;
 		TattooPerson &person = (*this)[objNum];
 
 		int newDir = person._sequenceNumber;
@@ -1292,7 +1293,7 @@ void TattooPeople::setTalkSequence(int speaker, int sequenceNum) {
 		return;
 
 	int objNum = people.findSpeaker(speaker);
-	if (objNum != -1 && objNum < 256) {
+	if (objNum != -1 && objNum < CHARACTERS_INDEX) {
 		Object &obj = scene._bgShapes[objNum];
 
 		// See if the Object has to wait for an Abort Talk Code
@@ -1303,9 +1304,8 @@ void TattooPeople::setTalkSequence(int speaker, int sequenceNum) {
 		else {
 			obj.setObjTalkSequence(sequenceNum);
 		}
-	}
-	else if (objNum != -1) {
-		objNum -= 256;
+	} else if (objNum != -1) {
+		objNum -= CHARACTERS_INDEX;
 		TattooPerson &person = people[objNum];
 		int newDir = person._sequenceNumber;
 
@@ -1381,8 +1381,10 @@ int TattooPeople::findSpeaker(int speaker) {
 		bool flag = _vm->readFlags(FLAG_PLAYER_IS_HOLMES);
 
 		if (_data[HOLMES]->_type == CHARACTER && ((speaker == HOLMES && flag) || (speaker == WATSON && !flag)))
-			return -1;
+			// Return the offset index for the first character
+			return 0 + CHARACTERS_INDEX;
 
+		// Otherwise, scan through the list of the remaining characters to find a name match
 		for (uint idx = 1; idx < _data.size(); ++idx) {
 			TattooPerson &p = (*this)[idx];
 
@@ -1390,7 +1392,7 @@ int TattooPeople::findSpeaker(int speaker) {
 				Common::String name(p._name.c_str(), p._name.c_str() + 4);
 
 				if (name.equalsIgnoreCase(portrait) && p._npcName[4] >= '0' && p._npcName[4] <= '9')
-					return idx + 256;
+					return idx + CHARACTERS_INDEX;
 			}
 		}
 	}
