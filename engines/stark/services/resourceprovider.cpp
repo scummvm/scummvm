@@ -192,12 +192,16 @@ void ResourceProvider::requestLocationChange(uint16 level, uint16 location) {
 }
 
 void ResourceProvider::performLocationChange() {
-	if (_global->getCurrent()) {
-		// Exit the previous location
-		Current *previous = _global->getCurrent();
+	Current *current = _locations.back();
+	Current *previous = _global->getCurrent();
+	bool levelChanged = !previous || previous->getLevel() != current->getLevel();
 
+	// Exit the previous location
+	if (previous) {
 		// Trigger location change scripts
-		runLocationChangeScripts(previous->getLevel(), Resources::Script::kCallModeExitLocation);
+		if (levelChanged) {
+			runLocationChangeScripts(previous->getLevel(), Resources::Script::kCallModeExitLocation);
+		}
 		runLocationChangeScripts(previous->getLocation(), Resources::Script::kCallModeExitLocation);
 
 		// Resources lifecycle update
@@ -207,7 +211,6 @@ void ResourceProvider::performLocationChange() {
 	}
 
 	// Set the new current location
-	Current *current = _locations.back();
 	_global->setCurrent(current);
 
 	if (_restoreCurrentState) {
@@ -230,7 +233,9 @@ void ResourceProvider::performLocationChange() {
 	setAprilInitialPosition();
 
 	// Trigger location change scripts
-	runLocationChangeScripts(current->getLevel(), Resources::Script::kCallModeEnterLocation);
+	if (levelChanged) {
+		runLocationChangeScripts(current->getLevel(), Resources::Script::kCallModeEnterLocation);
+	}
 	runLocationChangeScripts(current->getLocation(), Resources::Script::kCallModeEnterLocation);
 
 	purgeOldLocations();
