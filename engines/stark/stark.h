@@ -91,6 +91,10 @@ private:
 	UserInterface *_userInterface;
 	Cursor *_cursor;
 	Scene *_scene;
+
+	// Double click handling
+	static const uint _doubleClickDelay = 500; // ms
+	uint _lastClickTime;
 };
 
 } // End of namespace Stark

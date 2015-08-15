@@ -36,7 +36,8 @@
 namespace Stark {
 
 Walk::Walk(Resources::FloorPositionedItem *item) :
-	Movement(item) {
+	Movement(item),
+	_running(false) {
 	_path = new StringPullingPath();
 }
 
@@ -48,8 +49,7 @@ void Walk::start() {
 	Movement::start();
 
 	updatePath();
-
-	_item->setAnimKind(Resources::Anim::kActorUsageWalk);
+	changeItemAnim();
 }
 
 void Walk::updatePath() const {
@@ -140,6 +140,19 @@ float Walk::computeDistancePerGameLoop() const {
 
 void Walk::setDestination(const Math::Vector3d &destination) {
 	_destination = destination;
+}
+
+void Walk::setRunning() {
+	_running = true;
+	changeItemAnim();
+}
+
+void Walk::changeItemAnim() {
+	if (_running) {
+		_item->setAnimKind(Resources::Anim::kActorUsageRun);
+	} else {
+		_item->setAnimKind(Resources::Anim::kActorUsageWalk);
+	}
 }
 
 } // End of namespace Stark

@@ -105,6 +105,9 @@ public:
 	/** Replace the current movement with an other */
 	void setMovement(Movement *movement);
 
+	/** Get the current movement if any */
+	Movement *getMovement() const;
+
 	/**
 	 * Set the script waiting for the item's movement to complete.
 	 *
@@ -151,6 +154,9 @@ public:
 
 	/** Define the current animation kind for the item */
 	void setAnimKind(int32 usage);
+
+	/** Get the current animation kind */
+	int32 getAnimKind() const;
 
 	/** Get the currently playing animation */
 	Anim *getAnim() const;

@@ -64,7 +64,8 @@ StarkEngine::StarkEngine(OSystem *syst, const ADGameDescription *gameDesc) :
 		_resourceProvider(nullptr),
 		_randomSource(nullptr),
 		_dialogPlayer(nullptr),
-		_userInterface(nullptr) {
+		_userInterface(nullptr),
+		_lastClickTime(0) {
 	_mixer->setVolumeForSoundType(Audio::Mixer::kPlainSoundType, 127);
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, ConfMan.getInt("speech_volume"));
@@ -197,6 +198,10 @@ void StarkEngine::mainLoop() {
 				_cursor->setMousePosition(e.mouse);
 			} else if (e.type == Common::EVENT_LBUTTONDOWN) {
 				_userInterface->handleClick();
+				if (_system->getMillis() - _lastClickTime < _doubleClickDelay) {
+					_userInterface->handleDoubleClick();
+				}
+				_lastClickTime = _system->getMillis();
 			} else if (e.type == Common::EVENT_RBUTTONDOWN) {
 				_userInterface->handleRightClick();
 			}

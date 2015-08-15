@@ -77,6 +77,12 @@ public:
 	/** List the stock actions available for an item in the current game state (hand, mouth, eye) */
 	Resources::ActionArray listStockActionsPossibleForObject(Resources::ItemVisual *item);
 	Resources::ActionArray listStockActionsPossibleForObjectAt(Resources::ItemVisual *item, const Common::Point &pos);
+
+	/** Check if April is doing a walk movement */
+    bool isAprilWalking() const;
+
+	/** Make April run if she is walking */
+    void setAprilRunning();
 };
 
 } // End of namespace Stark

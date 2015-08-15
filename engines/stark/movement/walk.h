@@ -44,20 +44,25 @@ public:
 	void start() override;
 	void onGameLoop() override;
 
-	/**
-	 * Set the destination
-	 */
+	/** Set the destination */
 	void setDestination(const Math::Vector3d &destination);
+
+	/** Set the running flag */
+	void setRunning();
 
 private:
 	float computeDistancePerGameLoop() const;
 	uint computeDirectionAngle(const Math::Vector3d &direction) const;
+
+	void changeItemAnim();
 
 	StringPullingPath *_path;
 
 	Math::Vector3d _destination;
 
 	void updatePath() const;
+
+	bool _running;
 };
 
 } // End of namespace Stark

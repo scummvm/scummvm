@@ -236,4 +236,36 @@ Resources::ActionArray GameInterface::listStockActionsPossibleForObjectAt(Resour
 }
 
 
+bool GameInterface::isAprilWalking() const {
+	Current *current = StarkGlobal->getCurrent();
+	if (!current) {
+		return false;
+	}
+
+	Resources::ModelItem *april = current->getInteractive();
+	if (!april) {
+		return false;
+	}
+
+	Movement *movement = april->getMovement();
+	if (!movement) {
+		return false;
+	}
+
+	Walk *walk = dynamic_cast<Walk *>(movement);
+	if (!walk) {
+		return false;
+	}
+
+	return !walk->hasEnded();
+}
+
+void GameInterface::setAprilRunning() {
+	Current *current = StarkGlobal->getCurrent();
+	Resources::ModelItem *april = current->getInteractive();
+	Movement *movement = april->getMovement();
+	Walk *walk = dynamic_cast<Walk *>(movement);
+	walk->setRunning();
+}
+
 } // End of namespace Stark

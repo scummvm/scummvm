@@ -156,6 +156,16 @@ void GameWindow::onRightClick(const Common::Point &pos) {
 	}
 }
 
+void GameWindow::onDoubleClick(const Common::Point &pos) {
+	if (!StarkUserInterface->isInteractive()) {
+		return;
+	}
+
+	if (StarkGameInterface->isAprilWalking()) {
+		StarkGameInterface->setAprilRunning();
+	}
+}
+
 void GameWindow::checkObjectAtPos(Common::Point pos, int16 selectedInventoryItem, int16 &singlePossibleAction, bool &isDefaultAction) {
 	_objectUnderCursor = nullptr;
 	singlePossibleAction = -1;

@@ -131,6 +131,21 @@ void UserInterface::handleRightClick() {
 	}
 }
 
+void UserInterface::handleDoubleClick() {
+	switch (_currentScreen) {
+		case kScreenGame:
+			for (uint i = 0; i < _gameScreenWindows.size(); i++) {
+				if (_gameScreenWindows[i]->isMouseInside()) {
+					_gameScreenWindows[i]->handleDoubleClick();
+					return;
+				}
+			}
+	        break;
+		default: // Nothing goes here
+			break;
+	}
+}
+
 void UserInterface::notifyShouldOpenInventory() {
 	// Make the inventory update its contents.
 	_inventoryWindow->open();

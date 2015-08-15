@@ -98,4 +98,14 @@ void Window::handleRightClick() {
 	}
 }
 
+void Window::handleDoubleClick() {
+	if (!_visible) {
+		return;
+	}
+
+	if (isMouseInside()) {
+		onDoubleClick(getRelativeMousePosition());
+	}
+}
+
 } // End of namespace Stark

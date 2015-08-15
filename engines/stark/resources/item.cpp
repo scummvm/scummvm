@@ -128,6 +128,10 @@ Common::String Item::getHotspotTitle(uint32 hotspotIndex) const {
 	}
 }
 
+Movement *Item::getMovement() const {
+	return _movement;
+}
+
 void Item::setMovement(Movement *movement) {
 	if (_movementSuspendedScript) {
 		if (_movement &&  _movement->hasEnded()) {
@@ -202,6 +206,10 @@ void ItemVisual::setEnabled(bool enabled) {
 	} else {
 		_animHierarchy->unselectItemAnim(this);
 	}
+}
+
+int32 ItemVisual::getAnimKind() const {
+	return _currentAnimKind;
 }
 
 void ItemVisual::setAnimKind(int32 usage) {

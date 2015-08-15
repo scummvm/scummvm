@@ -62,6 +62,7 @@ public:
 	void render();
 	void handleClick();
 	void handleRightClick();
+	void handleDoubleClick();
 	void notifyShouldExit() { _exitGame = true; }
 	void notifyShouldOpenInventory();
 	bool shouldExit() { return _exitGame; }
