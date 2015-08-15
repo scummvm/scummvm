@@ -61,6 +61,7 @@ BaseObject::BaseObject() {
 	_images = nullptr;
 	_imageFrame = nullptr;
 	_sequenceNumber = 0;
+	_startSeq = 0;
 	_walkCount = 0;
 	_allow = 0;
 	_frameNumber = 0;
@@ -428,10 +429,9 @@ void BaseObject::setObjSequence(int seq, bool wait) {
 			if (_frameNumber >= checkFrame)
 				_frameNumber = 0;
 
-			// For Rose Tattoo, save the starting frame for new sequences in the _sequenceNumber field,
-			// to make it easier to reset back for repeats
+			// For Rose Tattoo, save the starting frame for new sequences
 			if (IS_ROSE_TATTOO)
-				_sequenceNumber = _frameNumber;
+				_startSeq = _frameNumber;
 
 			_seqCounter = 0;
 			if (_sequences[_frameNumber] == 0)
@@ -441,9 +441,10 @@ void BaseObject::setObjSequence(int seq, bool wait) {
 		} else {
 			// Find beginning of sequence
 			if (IS_ROSE_TATTOO) {
-				// Use the sequence number as the index to reset the sequence back to
-				_frameNumber = _sequenceNumber;
+				// Use the saved start of the sequence to reset the frame
+				_frameNumber = _startSeq;
 			} else {
+				// For Scalpel, scan backwards from the end of the sequence to find it's start
 				do {
 					--_frameNumber;
 				} while (_frameNumber > 0 && _sequences[_frameNumber] != 0);
