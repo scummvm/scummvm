@@ -94,6 +94,9 @@ public:
 	void selectInventoryItem(int16 itemIndex);
 
 private:
+	typedef void (Window::*WindowHandler)();
+	void dispatchEvent(WindowHandler handler);
+
 	// Game Screen windows
 	ActionMenu *_actionMenu;
 	DialogPanel *_dialogPanel;

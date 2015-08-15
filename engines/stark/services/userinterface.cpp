@@ -87,60 +87,37 @@ void UserInterface::update() {
 	StarkStaticProvider->onGameLoop();
 
 	// Check for UI mouse overs
-	switch (_currentScreen) {
-		case kScreenGame:
-			for (uint i = 0; i < _gameScreenWindows.size(); i++) {
-				if (_gameScreenWindows[i]->isVisible() && _gameScreenWindows[i]->isMouseInside()) {
-					_gameScreenWindows[i]->handleMouseMove();
-					return;
-				}
-			}
-	        break;
-		default: // Nothing goes here
-			break;
-	}
+	dispatchEvent(&Window::handleMouseMove);
 }
 
 void UserInterface::handleClick() {
-	switch (_currentScreen) {
-		case kScreenGame:
-			for (uint i = 0; i < _gameScreenWindows.size(); i++) {
-				if (_gameScreenWindows[i]->isMouseInside()) {
-					_gameScreenWindows[i]->handleClick();
-					return;
-				}
-			}
-	        break;
-		default: // Nothing goes here
-			break;
-	}
+	dispatchEvent(&Window::handleClick);
 }
 
 void UserInterface::handleRightClick() {
-	switch (_currentScreen) {
-		case kScreenGame:
-			for (uint i = 0; i < _gameScreenWindows.size(); i++) {
-				if (_gameScreenWindows[i]->isMouseInside()) {
-					_gameScreenWindows[i]->handleRightClick();
-					return;
-				}
-			}
-			break;
-		default: // Nothing goes here
-			break;
-	}
+	dispatchEvent(&Window::handleRightClick);
 }
 
 void UserInterface::handleDoubleClick() {
+	dispatchEvent(&Window::handleDoubleClick);
+}
+
+void UserInterface::dispatchEvent(WindowHandler handler) {
 	switch (_currentScreen) {
 		case kScreenGame:
 			for (uint i = 0; i < _gameScreenWindows.size(); i++) {
 				if (_gameScreenWindows[i]->isMouseInside()) {
-					_gameScreenWindows[i]->handleDoubleClick();
+					(*_gameScreenWindows[i].*handler)();
 					return;
 				}
 			}
-	        break;
+			break;
+		case kScreenFMV:
+			if (_fmvPlayer->isMouseInside()) {
+				(*_fmvPlayer.*handler)();
+				return;
+			}
+			break;
 		default: // Nothing goes here
 			break;
 	}
