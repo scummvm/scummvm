@@ -492,6 +492,7 @@ void BaseObject::setObjSequence(int seq, bool wait) {
 	if (idx >= checkFrame)
 		idx = 0;
 	_frameNumber = idx;
+	_startSeq = idx;
 
 	if (wait) {
 		seqCc = idx;

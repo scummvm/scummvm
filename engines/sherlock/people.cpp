@@ -197,6 +197,7 @@ void People::reset() {
 		
 		p._imageFrame = nullptr;
 		p._frameNumber = 1;
+		p._startSeq = 0;
 		p._delta = Point32(0, 0);
 		p._oldPosition = Common::Point(0, 0);
 		p._oldSize = Common::Point(0, 0);
