@@ -23,9 +23,12 @@
 #include "engines/stark/resources/dialog.h"
 
 #include "engines/stark/formats/xrc.h"
+#include "engines/stark/resources/knowledge.h"
+#include "engines/stark/resources/script.h"
 #include "engines/stark/resources/speech.h"
-#include "engines/stark/services/services.h"
+
 #include "engines/stark/services/global.h"
+#include "engines/stark/services/services.h"
 
 namespace Stark {
 namespace Resources {
@@ -253,6 +256,13 @@ bool Dialog::Reply::checkCondition() const {
 			return true;
 		case kConditionTypeNoOtherOptions:
 			return true; // Will be removed from to the options later if some other options are available
+		case kConditionTypeRunScriptCheckValue: {
+			Script *conditionScript = _conditionScriptReference.resolve<Script>();
+			conditionScript->execute(Resources::Script::kCallModeDialogAnswer);
+
+			Knowledge *condition = _conditionReference.resolve<Knowledge>();
+			return condition->getBooleanValue();
+		}
 		default:
 			warning("Unimplemented dialog reply condition %d", _conditionType);
 			return true;

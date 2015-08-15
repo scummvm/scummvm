@@ -63,12 +63,12 @@ public:
 		Reply();
 
 		enum ConditionType {
-			kConditionTypeAlways         = 0,
-			kConditionTypeNoOtherOptions = 1,
-			kConditionType3              = 3,
-			kConditionType4              = 4,
-			kConditionType5              = 5,
-			kConditionType6              = 6
+			kConditionTypeAlways              = 0,
+			kConditionTypeNoOtherOptions      = 1,
+			kConditionType3                   = 3,
+			kConditionType4                   = 4,
+			kConditionType5                   = 5,
+			kConditionTypeRunScriptCheckValue = 6
 		};
 
 		/** Start playing the reply. Sets the current line to the first one */
