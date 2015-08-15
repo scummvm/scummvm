@@ -921,7 +921,7 @@ void TattooPerson::checkWalkGraphics() {
 	// See if we're already using Alternate Graphics
 	if (_altSeq) {
 		// See if the VGS file called for is different than the alternate graphics already loaded
-		if (!_walkSequences[_sequenceNumber]._vgsName.compareToIgnoreCase(_walkSequences[_altSeq - 1]._vgsName)) {
+		if (_walkSequences[_sequenceNumber]._vgsName.compareToIgnoreCase(_walkSequences[_altSeq - 1]._vgsName)) {
 			// Different AltGraphics, Free the old ones
 			freeAltGraphics();
 		}
