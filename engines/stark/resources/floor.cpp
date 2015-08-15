@@ -191,8 +191,7 @@ Common::Array<FloorEdge *> FloorEdge::getNeighbours() const {
 }
 
 float FloorEdge::costTo(const FloorEdge *other) const {
-	Math::Vector3d v = _middle - other->_middle;
-	return v.getMagnitude();
+	return _middle.getDistanceTo(other->_middle);
 }
 
 Math::Vector3d FloorEdge::getPosition() const {

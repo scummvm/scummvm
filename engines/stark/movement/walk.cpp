@@ -92,8 +92,7 @@ void Walk::onGameLoop() {
 	float distancePerGameloop = computeDistancePerGameLoop();
 	Math::Vector3d newPosition;
 
-	float distanceToTarget = (target - currentPosition).getMagnitude();
-	if (distanceToTarget > distancePerGameloop) {
+	if (currentPosition.getDistanceTo(target) > distancePerGameloop) {
 		newPosition = currentPosition + direction * distancePerGameloop;
 	} else {
 		newPosition = target;
@@ -113,8 +112,7 @@ void Walk::onGameLoop() {
 	_item->setFloorFaceIndex(newFloorFaceIndex);
 
 	// Check if we are close enough to the destination to stop
-	float distanceToDestination = (_destination - newPosition).getMagnitude();
-	if (distanceToDestination < distancePerGameloop) {
+	if (newPosition.getDistanceTo(_destination) < distancePerGameloop) {
 		_item->setAnimKind(Resources::Anim::kActorUsageIdle);
 		stop();
 	}
