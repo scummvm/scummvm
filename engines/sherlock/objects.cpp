@@ -105,14 +105,14 @@ bool BaseObject::hasAborts() const {
 		// If we've started checking and we've encountered another Talk or Listen Sequence Code,
 		// then we're done checking this sequence because this is where it would repeat
 		if (startChecking && (v == TALK_SEQ_CODE || v == TALK_LISTEN_CODE))
-			return false;
+			break;
 
 		// See if we've found the beginning of a Talk Sequence
 		if ((v == TALK_SEQ_CODE && seqNum < 128) || (v == TALK_LISTEN_CODE && seqNum >= 128)) {
 			// If checking was already on and we came across one of these codes, then there couldn't
 			// have been an Allow Talk Interrupt code in the sequence we were checking, so we're done.
 			if (startChecking)
-				return false;
+				break;
 
 			seqNum--;
 			// See if we're at the correct Talk Sequence Number
@@ -133,7 +133,7 @@ bool BaseObject::hasAborts() const {
 		}
 	} while (idx < _seqSize);
 
-	return true;
+	return false;
 }
 
 void BaseObject::checkObject() {
