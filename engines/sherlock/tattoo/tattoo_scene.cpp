@@ -346,7 +346,7 @@ void TattooScene::doBgAnim() {
 		if (people[idx]._type == CHARACTER)
 			people[idx].checkSprite();
 	}
-
+	
 	for (uint idx = 0; idx < _bgShapes.size(); ++idx) {
 		if (_bgShapes[idx]._type == ACTIVE_BG_SHAPE)
 			_bgShapes[idx].checkObject();

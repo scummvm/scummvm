@@ -60,6 +60,7 @@ BaseObject::BaseObject() {
 	_sequences = nullptr;
 	_images = nullptr;
 	_imageFrame = nullptr;
+	_sequenceNumber = 0;
 	_walkCount = 0;
 	_allow = 0;
 	_frameNumber = 0;
@@ -427,6 +428,11 @@ void BaseObject::setObjSequence(int seq, bool wait) {
 			if (_frameNumber >= checkFrame)
 				_frameNumber = 0;
 
+			// For Rose Tattoo, save the starting frame for new sequences in the _sequenceNumber field,
+			// to make it easier to reset back for repeats
+			if (IS_ROSE_TATTOO)
+				_sequenceNumber = _frameNumber;
+
 			_seqCounter = 0;
 			if (_sequences[_frameNumber] == 0)
 				seq = _sequences[_frameNumber + 1];
@@ -434,12 +440,17 @@ void BaseObject::setObjSequence(int seq, bool wait) {
 				return;
 		} else {
 			// Find beginning of sequence
-			do {
-				--_frameNumber;
-			} while (_frameNumber > 0 && _sequences[_frameNumber] != 0);
+			if (IS_ROSE_TATTOO) {
+				// Use the sequence number as the index to reset the sequence back to
+				_frameNumber = _sequenceNumber;
+			} else {
+				do {
+					--_frameNumber;
+				} while (_frameNumber > 0 && _sequences[_frameNumber] != 0);
 
-			if (_frameNumber != 0)
-				_frameNumber += 2;
+				if (_frameNumber != 0)
+					_frameNumber += 2;
+			}
 
 			return;
 		}
@@ -452,10 +463,28 @@ void BaseObject::setObjSequence(int seq, bool wait) {
 	int seqCc = 0;
 
 	while (seqCc < seq && idx < checkFrame) {
-		++idx;
-		if (_sequences[idx] == 0) {
-			++seqCc;
-			idx += 2;
+		if (IS_SERRATED_SCALPEL) {
+			++idx;
+
+			if (_sequences[idx] == 0) {
+				++seqCc;
+				idx += 2;
+			}
+		} else {
+			byte s = _sequences[idx];
+
+			if (s == 0) {
+				++seqCc;
+				++idx;
+			} else if (s == MOVE_CODE || s == TELEPORT_CODE) {
+				idx += 4;
+			} else if (s == CALL_TALK_CODE) {
+				idx += 8;
+			} else if (s == HIDE_CODE) {
+				idx += 2;
+			}
+
+			++idx;
 		}
 	}
 
@@ -589,7 +618,7 @@ void Sprite::clear() {
 	_imageFrame = nullptr;
 	_walkCount = 0;
 	_allow = 0;
-	_frameNumber = _sequenceNumber = 0;
+	_frameNumber = 0;
 	_position.x = _position.y = 0;
 	_delta.x = _delta.y = 0;
 	_oldPosition.x = _oldPosition.y = 0;
@@ -943,7 +972,6 @@ void UseType::synchronize(Serializer &s) {
 /*----------------------------------------------------------------*/
 
 Object::Object(): BaseObject() {
-	_sequenceNumber = 0;
 	_sequenceOffset = 0;
 	_pickup = 0;
 	_defaultCommand = 0;
