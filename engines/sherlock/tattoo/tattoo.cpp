@@ -183,7 +183,7 @@ void TattooEngine::loadConfig() {
 	SherlockEngine::loadConfig();
 
 	_transparentMenus = ConfMan.getBool("transparent_windows");
-	_textWindowsOn = ConfMan.getBool("subtitles");
+	_textWindowsOn = ConfMan.getBool("subtitles") || !_sound->_speechOn;
 }
 
 void TattooEngine::saveConfig() {

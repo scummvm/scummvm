@@ -141,6 +141,7 @@ void Talk::talkTo(const Common::String &filename) {
 	People &people = *_vm->_people;
 	Scene &scene = *_vm->_scene;
 	Screen &screen = *_vm->_screen;
+	Sound &sound = *_vm->_sound;
 	UserInterface &ui = *_vm->_ui;
 	Common::Rect savedBounds = screen.getDisplayBounds();
 	bool abortFlag = false;
@@ -338,6 +339,10 @@ void Talk::talkTo(const Common::String &filename) {
 			clearSequences();
 			_scriptSelect = select;
 			_speaker = _talkTo;
+
+			// Set up the talk file extension
+			if (IS_ROSE_TATTOO && sound._speechOn && _scriptMoreFlag != 1)
+				sound._talkSoundFile += Common::String::format("%02dB", select + 1);
 
 			// Make a copy of the statement (in case the script frees the statement list), and then execute it
 			Statement statement = _statements[select];
