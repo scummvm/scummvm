@@ -201,7 +201,7 @@ void TattooEngine::saveConfig() {
 
 bool TattooEngine::canSaveGameStateCurrently() {
 	TattooUserInterface &ui = *(TattooUserInterface *)_ui;
-	return _canLoadSave && !ui._creditsWidget.active();
+	return _canLoadSave && !ui._creditsWidget.active() && !_runningProlog;
 }
 
 } // End of namespace Tattoo
