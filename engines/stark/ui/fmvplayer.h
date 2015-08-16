@@ -51,8 +51,8 @@ public:
 
 protected:
 	void onRender() override;
-	void onMouseMove(const Common::Point &pos) override {};
-	void onClick(const Common::Point &pos) override {};
+	void onMouseMove(const Common::Point &pos) override {}
+	void onClick(const Common::Point &pos) override {}
 
 private:
 	bool isPlaying();

@@ -46,7 +46,7 @@ class Driver;
 class RenderEntry {
 public:
 	RenderEntry(Resources::ItemVisual *owner, const Common::String &name);
-	virtual ~RenderEntry() {};
+	virtual ~RenderEntry() {}
 
 	void render(Driver *gfx);
 
