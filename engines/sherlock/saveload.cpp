@@ -201,6 +201,7 @@ void SaveManager::createThumbnail() {
 }
 
 void SaveManager::loadGame(int slot) {
+	Events &events = *_vm->_events;
 	Common::InSaveFile *saveFile = g_system->getSavefileManager()->openForLoading(
 		generateSaveName(slot));
 	if (!saveFile)
@@ -222,9 +223,11 @@ void SaveManager::loadGame(int slot) {
 	synchronize(s);
 
 	delete saveFile;
+	events.clearEvents();
 }
 
 void SaveManager::saveGame(int slot, const Common::String &name) {
+	Events &events = *_vm->_events;
 	Common::OutSaveFile *out = g_system->getSavefileManager()->openForSaving(
 		generateSaveName(slot));
 
@@ -239,6 +242,7 @@ void SaveManager::saveGame(int slot, const Common::String &name) {
 
 	out->finalize();
 	delete out;
+	events.clearEvents();
 }
 
 Common::String SaveManager::generateSaveName(int slot) {

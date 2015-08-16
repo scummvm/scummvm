@@ -968,20 +968,18 @@ void TattooPerson::checkWalkGraphics() {
 }
 
 void TattooPerson::synchronize(Serializer &s) {
-	s.syncAsSint32LE(_position.x);
-	s.syncAsSint32LE(_position.y);
-	s.syncAsSint32LE(_delta.x);
-	s.syncAsSint32LE(_delta.y);
-	s.syncAsSint16LE(_sequenceNumber);
-	s.syncAsSint16LE(_walkCount);
-
 	if (s.isSaving()) {
 		SpriteType type = (_type == INVALID && _walkLoaded) ? HIDDEN_CHARACTER : _type;
 		s.syncAsSint16LE(type);
 	} else {
+		if (_walkCount)
+			gotoStand();
+
 		s.syncAsSint16LE(_type);
 	}
 
+	s.syncAsSint32LE(_position.x);
+	s.syncAsSint32LE(_position.y);
 	s.syncString(_walkVGSName);
 	s.syncString(_description);
 	s.syncString(_examine);
@@ -992,9 +990,6 @@ void TattooPerson::synchronize(Serializer &s) {
 	s.syncAsSint32LE(_npcPause);
 	s.syncAsByte(_lookHolmes);
 	s.syncAsByte(_updateNPCPath);
-	
-	// Walk to list
-	_walkTo.synchronize(s);
 
 	// Verbs
 	for (int idx = 0; idx < 2; ++idx)

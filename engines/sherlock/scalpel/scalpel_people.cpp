@@ -371,15 +371,11 @@ Common::Point ScalpelPerson::getSourcePoint() const {
 }
 
 void ScalpelPerson::synchronize(Serializer &s) {
+	if (_walkCount)
+		gotoStand();
+
 	s.syncAsSint32LE(_position.x);
 	s.syncAsSint32LE(_position.y);
-	s.syncAsSint32LE(_delta.x);
-	s.syncAsSint32LE(_delta.y);
-	s.syncAsSint16LE(_sequenceNumber);
-	s.syncAsSint16LE(_walkCount);
-
-	// Walk to list
-	_walkTo.synchronize(s);
 }
 
 /*----------------------------------------------------------------*/

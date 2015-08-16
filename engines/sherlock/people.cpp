@@ -64,40 +64,6 @@ const char *const WALK_LIB_NAMES[NUM_IN_WALK_LIB] = {
 
 /*----------------------------------------------------------------*/
 
-void PointQueue::push(const Common::Point &pt) {
-	_impl.push_back(pt);
-}
-
-Common::Point PointQueue::pop() {
-	Common::Point tmp = front();
-	_impl.pop_front();
-	return tmp;
-}
-
-void PointQueue::synchronize(Common::Serializer &s) {
-	int count = _impl.size();
-	s.syncAsUint16LE(count);
-
-	if (s.isSaving()) {
-		for (Common::List<Common::Point>::iterator i = _impl.begin(); i != _impl.end(); ++i) {
-			Common::Point &pt = *i;
-			s.syncAsSint16LE(pt.x);
-			s.syncAsSint16LE(pt.y);
-		}
-	} else {
-		int xp, yp;
-
-		_impl.clear();
-		for (int idx = 0; idx < count; ++idx) {
-			s.syncAsSint16LE(xp);
-			s.syncAsSint16LE(yp);
-			_impl.push_back(Common::Point(xp, yp));
-		}
-	}
-}
-
-/*----------------------------------------------------------------*/
-
 Person::Person() : Sprite() {
 	_walkLoaded = false;
 	_oldWalkSequence = -1;
@@ -219,25 +185,19 @@ void People::reset() {
 
 		if (IS_SERRATED_SCALPEL) {
 			p._type = CHARACTER;
-			p._sequenceNumber = (int)Tattoo::STOP_DOWNRIGHT;
 			p._position = Point32(100 * FIXED_INT_MULTIPLIER, 110 * FIXED_INT_MULTIPLIER);
 		} else if (!talk._scriptMoreFlag && !saves._justLoaded) {
 			p._type = (idx == 0) ? CHARACTER : INVALID;
-			p._sequenceNumber = (int)Scalpel::STOP_DOWNRIGHT;
 			p._position = Point32(36 * FIXED_INT_MULTIPLIER, 29 * FIXED_INT_MULTIPLIER);
 			p._use[0]._verb = "";
 			p._use[1]._verb = "";
 		}
 
-		if (!saves._justLoaded) {
-			p._walkCount = 0;
-			p._walkTo.clear();
-			p._delta = Point32(0, 0);
-		}
-
+		p._sequenceNumber = IS_SERRATED_SCALPEL ? (int)Tattoo::STOP_DOWNRIGHT : (int)Tattoo::STOP_DOWNRIGHT;
 		p._imageFrame = nullptr;
 		p._frameNumber = 1;
 		p._startSeq = 0;
+		p._delta = Point32(0, 0);
 		p._oldPosition = Common::Point(0, 0);
 		p._oldSize = Common::Point(0, 0);
 		p._misc = 0;
@@ -258,6 +218,8 @@ void People::reset() {
 		p._adjust = Common::Point(0, 0);
 
 		// Load the default walk sequences
+		p._walkCount = 0;
+		p._walkTo.clear();
 		p._oldWalkSequence = -1;
 		p._walkSequences.clear();
 		if (IS_SERRATED_SCALPEL) {
