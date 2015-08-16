@@ -98,6 +98,11 @@ void TattooEngine::startScene() {
 			ui._mask1 = _res->load("res08a.msk");
 		break;
 
+	case STARTING_INTRO_SCENE:
+		// Disable input so that the intro can't be skipped until the game's logo has been shown
+		ui._lockoutTimer = STARTUP_KEYS_DISABLED_DELAY;
+		break;
+
 	case OVERHEAD_MAP:
 	case OVERHEAD_MAP2:
 		// Show the map

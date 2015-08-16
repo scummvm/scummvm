@@ -41,7 +41,10 @@ namespace Sherlock {
 
 namespace Tattoo {
 
-#define BUTTON_SIZE 15				// Button width/height
+// Button width/height
+#define BUTTON_SIZE 15				
+// How long to play the intro before it can be skipped
+#define STARTUP_KEYS_DISABLED_DELAY 200
 
 class WidgetBase;
 
@@ -55,7 +58,6 @@ public:
 class TattooUserInterface : public UserInterface {
 	friend class WidgetBase;
 private:
-	int _lockoutTimer;
 	int _scriptZone;
 	int _cAnimFramePause;
 	WidgetInventory _inventoryWidget;
@@ -104,6 +106,7 @@ public:
 	Common::SeekableReadStream *_mask, *_mask1;
 	Common::Point _maskOffset;
 	int _maskCounter;
+	int _lockoutTimer;
 	ImageFile *_interfaceImages;
 	WidgetCredits _creditsWidget;
 	WidgetOptions _optionsWidget;
