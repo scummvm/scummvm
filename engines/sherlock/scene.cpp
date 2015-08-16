@@ -1200,13 +1200,15 @@ void Scene::transitionToScene() {
 
 	int cAnimNum = -1;
 
-	if (hSavedFacing < 101) {
-		// Standard info, so set it
-		people[HOLMES]._position = hSavedPos;
-		people[HOLMES]._sequenceNumber = hSavedFacing;
-	} else {
-		// It's canimation information
-		cAnimNum = hSavedFacing - 101;
+	if (!saves._justLoaded) {
+		if (hSavedFacing < 101) {
+			// Standard info, so set it
+			people[HOLMES]._position = hSavedPos;
+			people[HOLMES]._sequenceNumber = hSavedFacing;
+		} else {
+			// It's canimation information
+			cAnimNum = hSavedFacing - 101;
+		}
 	}
 
 	// Reset positioning for next load
