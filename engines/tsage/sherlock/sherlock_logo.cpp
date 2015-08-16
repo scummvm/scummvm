@@ -20,6 +20,7 @@
  *
  */
 
+#ifdef TSAGE_SHERLOCK_ENABLED
 #include "tsage/sherlock/sherlock_logo.h"
 #include "tsage/scenes.h"
 #include "tsage/tsage.h"
@@ -354,3 +355,5 @@ void SherlockLogoScene::finish() {
 } // End of namespace Sherlock
 
 } // End of namespace TsAGE
+
+#endif

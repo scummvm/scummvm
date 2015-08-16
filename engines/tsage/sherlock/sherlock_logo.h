@@ -20,6 +20,7 @@
  *
  */
 
+#ifdef TSAGE_SHERLOCK_ENABLED
 #ifndef TSAGE_SHERLOCK_LOGO_H
 #define TSAGE_SHERLOCK_LOGO_H
 
@@ -75,4 +76,5 @@ public:
 
 } // End of namespace TsAGE
 
+#endif
 #endif

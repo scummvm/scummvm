@@ -112,10 +112,12 @@ void TSageEngine::initialize() {
 		// Reset all global variables
 		R2_GLOBALS.reset();
 	} else if (g_vm->getGameID() == GType_Sherlock1) {
+#ifdef TSAGE_SHERLOCK_ENABLED
 		g_resourceManager->addLib("SF3.RLB");
 		g_globals = new Globals();
 	
 		return;
+#endif
 	}
 
 	g_globals->gfxManager().setDefaults();
