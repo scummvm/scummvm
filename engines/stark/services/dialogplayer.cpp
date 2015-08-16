@@ -32,6 +32,8 @@ namespace Stark {
 DialogPlayer::DialogPlayer() :
 		_currentDialog(nullptr),
 		_currentReply(nullptr),
+		_interruptedDialog(nullptr),
+		_interruptedReply(nullptr),
 		_speechReady(false),
 		_singleSpeech(nullptr),
 		_optionsAvailable(false) {
@@ -56,7 +58,7 @@ void DialogPlayer::playSingle(Resources::Speech *speech) {
 }
 
 bool DialogPlayer::isRunning() {
-	return _currentDialog != nullptr;
+	return _currentDialog != nullptr || _interruptedDialog != nullptr;
 }
 
 bool DialogPlayer::isSpeechReady() const {
@@ -162,6 +164,11 @@ void DialogPlayer::onReplyEnd() {
 	Resources::Dialog *nextDialog = _currentDialog->getNextDialog(_currentReply);
 
 	if (nextScript) {
+		// Save the dialog player's state before running the script,
+		// so that we can restore it when the script ends.
+		// The script might run another dialog.
+		saveToInterruptionSlot();
+
 		nextScript->addReturnObject(_currentDialog);
 		nextScript->execute(Resources::Script::kCallModeDialogCreateSelections);
 	} else if (nextDialog) {
@@ -208,8 +215,10 @@ void DialogPlayer::update() {
 }
 
 void DialogPlayer::resume(Resources::Dialog *dialog) {
-	// If this is triggered the some save and restore of the dialog player needs to be done
-	assert(_currentDialog == dialog);
+	assert(_interruptedDialog == dialog);
+
+	// Restore our state from before running the script
+	restoreFromInterruptionSlot();
 
 	Resources::Dialog *nextDialog = _currentDialog->getNextDialog(_currentReply);
 	 if (nextDialog) {
@@ -221,4 +230,15 @@ void DialogPlayer::resume(Resources::Dialog *dialog) {
 	}
 }
 
+void DialogPlayer::saveToInterruptionSlot() {
+	_interruptedDialog = _currentDialog;
+	_interruptedReply = _currentReply;
+}
+
+void DialogPlayer::restoreFromInterruptionSlot() {
+	_currentDialog = _interruptedDialog;
+	_currentReply = _interruptedReply;
+	_interruptedDialog = nullptr;
+	_interruptedReply = nullptr;
+}
 } // End of namespace Stark

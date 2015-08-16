@@ -98,8 +98,14 @@ protected:
 	/** Clear the currently running dialog */
 	void reset();
 
+	void saveToInterruptionSlot();
+	void restoreFromInterruptionSlot();
+
 	Resources::Dialog *_currentDialog;
 	Resources::Dialog::Reply *_currentReply;
+
+	Resources::Dialog *_interruptedDialog;
+	Resources::Dialog::Reply *_interruptedReply;
 
 	Resources::Speech *_singleSpeech;
 
