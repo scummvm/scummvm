@@ -370,6 +370,18 @@ Common::Point ScalpelPerson::getSourcePoint() const {
 		_position.y / FIXED_INT_MULTIPLIER);
 }
 
+void ScalpelPerson::synchronize(Serializer &s) {
+	s.syncAsSint32LE(_position.x);
+	s.syncAsSint32LE(_position.y);
+	s.syncAsSint32LE(_delta.x);
+	s.syncAsSint32LE(_delta.y);
+	s.syncAsSint16LE(_sequenceNumber);
+	s.syncAsSint16LE(_walkCount);
+
+	// Walk to list
+	_walkTo.synchronize(s);
+}
+
 /*----------------------------------------------------------------*/
 
 ScalpelPeople::ScalpelPeople(SherlockEngine *vm) : People(vm) {
@@ -436,11 +448,9 @@ void ScalpelPeople::setTalking(int speaker) {
 }
 
 void ScalpelPeople::synchronize(Serializer &s) {
-	s.syncAsByte(_holmesOn);
-	s.syncAsSint32LE(_data[HOLMES]->_position.x);
-	s.syncAsSint32LE(_data[HOLMES]->_position.y);
-	s.syncAsSint16LE(_data[HOLMES]->_sequenceNumber);
+	(*this)[HOLMES].synchronize(s);
 	s.syncAsSint16LE(_holmesQuotient);
+	s.syncAsByte(_holmesOn);
 
 	if (s.isLoading()) {
 		_savedPos = _data[HOLMES]->_position;

@@ -56,6 +56,21 @@ struct PersonData {
 		_name(name), _portrait(portrait), _stillSequences(stillSequences), _talkSequences(talkSequences) {}
 };
 
+class PointQueue {
+private:
+	Common::List<Common::Point> _impl;
+public:
+	PointQueue() : _impl() {}
+
+	bool empty() const { return _impl.empty(); }
+	void clear() { _impl.clear(); }
+	Common::Point &front() { return _impl.front(); }
+	const Common::Point &front() const { return _impl.front(); }
+	void push(const Common::Point &pt);
+	Common::Point pop();
+	void synchronize(Common::Serializer &s);
+};
+
 class Person : public Sprite {
 protected:
 	/**
@@ -63,7 +78,7 @@ protected:
 	 */
 	virtual Common::Point getSourcePoint() const = 0;
 public:
-	Common::Queue<Common::Point> _walkTo;
+	PointQueue _walkTo;
 	int _srcZone, _destZone;
 	bool _walkLoaded;
 	Common::String _portrait;

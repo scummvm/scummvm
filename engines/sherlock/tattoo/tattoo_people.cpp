@@ -970,7 +970,10 @@ void TattooPerson::checkWalkGraphics() {
 void TattooPerson::synchronize(Serializer &s) {
 	s.syncAsSint32LE(_position.x);
 	s.syncAsSint32LE(_position.y);
+	s.syncAsSint32LE(_delta.x);
+	s.syncAsSint32LE(_delta.y);
 	s.syncAsSint16LE(_sequenceNumber);
+	s.syncAsSint16LE(_walkCount);
 
 	if (s.isSaving()) {
 		SpriteType type = (_type == INVALID && _walkLoaded) ? HIDDEN_CHARACTER : _type;
@@ -991,32 +994,7 @@ void TattooPerson::synchronize(Serializer &s) {
 	s.syncAsByte(_updateNPCPath);
 	
 	// Walk to list
-	uint count = _walkTo.size();
-	s.syncAsUint16LE(count);
-	if (s.isLoading()) {
-		// Load path
-		for (uint idx = 0; idx < count; ++idx) {
-			int xp = 0, yp = 0;
-			s.syncAsSint16LE(xp);
-			s.syncAsSint16LE(yp);
-			_walkTo.push(Common::Point(xp, yp));
-		}
-	} else {
-		// Save path
-		Common::Array<Common::Point> path;
-
-		// Save the points of the path
-		for (uint idx = 0; idx < count; ++idx) {
-			Common::Point pt = _walkTo.pop();
-			s.syncAsSint16LE(pt.x);
-			s.syncAsSint16LE(pt.y);
-			path.push_back(pt);
-		}
-
-		// Re-add the pending points back to the _walkTo queue
-		for (uint idx = 0; idx < count; ++idx)
-			_walkTo.push(path[idx]);
-	}
+	_walkTo.synchronize(s);
 
 	// Verbs
 	for (int idx = 0; idx < 2; ++idx)

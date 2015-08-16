@@ -47,6 +47,11 @@ public:
 	virtual ~ScalpelPerson() {}
 
 	/**
+	 * Synchronize the data for a savegame
+	 */
+	virtual void synchronize(Serializer &s);
+
+	/**
 	* This adjusts the sprites position, as well as it's animation sequence:
 	*/
 	virtual void adjustSprite();
