@@ -158,8 +158,8 @@ byte *GfxOpenGL::setupScreen(int screenW, int screenH, bool fullscreen) {
 
 	GLfloat ambientSource[] = { 0.0f, 0.0f, 0.0f, 1.0f };
 	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, ambientSource);
-	GLfloat specularReflectance[] = { 0.3f, 0.3f, 0.3f, 1.0f };
-	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, specularReflectance);
+	GLfloat diffuseReflectance[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+	glMaterialfv(GL_FRONT, GL_DIFFUSE, diffuseReflectance);
 
 	if (g_grim->getGameType() == GType_GRIM) {
 		glPolygonOffset(-6.0, -6.0);
@@ -972,17 +972,17 @@ void GfxOpenGL::setupLight(Light *light, int lightId) {
 	}
 
 	glEnable(GL_LIGHTING);
-	GLfloat diffuse[] = { 0.0f, 0.0f, 0.0f, 1.0f };
-	GLfloat specular[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+	GLfloat lightColor[] = { 0.0f, 0.0f, 0.0f, 1.0f };
 	GLfloat lightPos[] = { 0.0f, 0.0f, 0.0f, 1.0f };
 	GLfloat lightDir[] = { 0.0f, 0.0f, -1.0f };
 	GLfloat cutoff = 180.0f;
 	GLfloat spot_exp = 0.0f;
+	GLfloat q_attenuation = 1.0f;
 
-	GLfloat intensity = light->_intensity;
-	diffuse[0] = ((GLfloat)light->_color.getRed() / 15.0f) * intensity;
-	diffuse[1] = ((GLfloat)light->_color.getGreen() / 15.0f) * intensity;
-	diffuse[2] = ((GLfloat)light->_color.getBlue() / 15.0f) * intensity;
+	GLfloat intensity = light->_intensity / 15.0f;
+	lightColor[0] = (GLfloat)light->_color.getRed() * intensity;
+	lightColor[1] = (GLfloat)light->_color.getGreen() * intensity;
+	lightColor[2] = (GLfloat)light->_color.getBlue() * intensity;
 
 	if (light->_type == Light::Omni) {
 		lightPos[0] = light->_pos.x();
@@ -1000,21 +1000,18 @@ void GfxOpenGL::setupLight(Light *light, int lightId) {
 		lightDir[0] = light->_dir.x();
 		lightDir[1] = light->_dir.y();
 		lightDir[2] = light->_dir.z();
-		specular[0] = diffuse[0];
-		specular[1] = diffuse[1];
-		specular[2] = diffuse[2];
 		spot_exp = 2.0f;
 		cutoff = light->_penumbraangle;
+		q_attenuation = 0.0f;
 	}
 
 	glDisable(GL_LIGHT0 + lightId);
-	glLightfv(GL_LIGHT0 + lightId, GL_DIFFUSE, diffuse);
-	glLightfv(GL_LIGHT0 + lightId, GL_SPECULAR, specular);
+	glLightfv(GL_LIGHT0 + lightId, GL_DIFFUSE, lightColor);
 	glLightfv(GL_LIGHT0 + lightId, GL_POSITION, lightPos);
 	glLightfv(GL_LIGHT0 + lightId, GL_SPOT_DIRECTION, lightDir);
 	glLightf(GL_LIGHT0 + lightId, GL_SPOT_EXPONENT, spot_exp);
 	glLightf(GL_LIGHT0 + lightId, GL_SPOT_CUTOFF, cutoff);
-	glLightf(GL_LIGHT0 + lightId, GL_QUADRATIC_ATTENUATION, 0.2f);
+	glLightf(GL_LIGHT0 + lightId, GL_QUADRATIC_ATTENUATION, q_attenuation);
 	glEnable(GL_LIGHT0 + lightId);
 }
 

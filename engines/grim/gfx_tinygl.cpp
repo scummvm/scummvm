@@ -103,6 +103,8 @@ byte *GfxTinyGL::setupScreen(int screenW, int screenH, bool fullscreen) {
 
 	TGLfloat ambientSource[] = { 0.0f, 0.0f, 0.0f, 1.0f };
 	tglLightModelfv(TGL_LIGHT_MODEL_AMBIENT, ambientSource);
+	TGLfloat diffuseReflectance[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+	tglMaterialfv(TGL_FRONT, TGL_DIFFUSE, diffuseReflectance);
 
 	// we now generate a buffer (id 1), which we will use as a backing buffer, where the actors' clean buffers
 	// will blit to. everu frame this will be blitted to screen, but the actors' buffers will be blitted to
@@ -894,11 +896,13 @@ void GfxTinyGL::setupLight(Light *light, int lightId) {
 	float lightPos[] = { 0.0f, 0.0f, 0.0f, 1.0f };
 	float lightDir[] = { 0.0f, 0.0f, -1.0f };
 	float cutoff = 180.0f;
+	float spot_exp = 0.0f;
+	float q_attenuation = 1.0f;
 
-	float intensity = light->_intensity / 1.3f;
-	lightColor[0] = ((float)light->_color.getRed() / 15.0f) * intensity;
-	lightColor[1] = ((float)light->_color.getGreen() / 15.0f) * intensity;
-	lightColor[2] = ((float)light->_color.getBlue() / 15.0f) * intensity;
+	float intensity = light->_intensity / 15.0f;
+	lightColor[0] = (float)light->_color.getRed() * intensity;
+	lightColor[1] = (float)light->_color.getGreen() * intensity;
+	lightColor[2] = (float)light->_color.getBlue() * intensity;
 
 	if (light->_type == Light::Omni) {
 		lightPos[0] = light->_pos.x();
@@ -916,18 +920,18 @@ void GfxTinyGL::setupLight(Light *light, int lightId) {
 		lightDir[0] = light->_dir.x();
 		lightDir[1] = light->_dir.y();
 		lightDir[2] = light->_dir.z();
-		/* FIXME: TGL_SPOT_CUTOFF should be light->_penumbraangle, but there
-		   seems to be a bug in tinygl as it renders differently from OpenGL.
-		   Reproducing: turn off all lights (comment out), go to scene "al",
-		   and walk along left wall under the lamp. */
-		cutoff = 90.0f;
+		spot_exp = 2.0f;
+		cutoff = light->_penumbraangle;
+		q_attenuation = 0.0f;
 	}
 
 	tglDisable(TGL_LIGHT0 + lightId);
 	tglLightfv(TGL_LIGHT0 + lightId, TGL_DIFFUSE, lightColor);
 	tglLightfv(TGL_LIGHT0 + lightId, TGL_POSITION, lightPos);
 	tglLightfv(TGL_LIGHT0 + lightId, TGL_SPOT_DIRECTION, lightDir);
+	tglLightf(TGL_LIGHT0 + lightId, TGL_SPOT_EXPONENT, spot_exp);
 	tglLightf(TGL_LIGHT0 + lightId, TGL_SPOT_CUTOFF, cutoff);
+	tglLightf(TGL_LIGHT0 + lightId, TGL_QUADRATIC_ATTENUATION, q_attenuation);
 	tglEnable(TGL_LIGHT0 + lightId);
 }
 

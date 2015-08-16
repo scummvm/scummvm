@@ -118,7 +118,7 @@ void glopLight(GLContext *c, GLParam *p) {
 		l->spot_direction.X = v.X;
 		l->spot_direction.Y = v.Y;
 		l->spot_direction.Z = v.Z;
-		l->norm_spot_direction = l->spot_direction;
+		c->matrix_stack_ptr[0]->transform3x3(l->spot_direction, l->norm_spot_direction);
 		l->norm_spot_direction.normalize();
 		break;
 	case TGL_SPOT_EXPONENT:
