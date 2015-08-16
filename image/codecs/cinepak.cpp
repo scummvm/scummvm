@@ -433,9 +433,11 @@ const Graphics::Surface *CinepakDecoder::decodeFrame(Common::SeekableReadStream 
 			for (uint16 j = 0; j < 256; j++) {
 				_curFrame.strips[i].v1_codebook[j] = _curFrame.strips[i - 1].v1_codebook[j];
 				_curFrame.strips[i].v4_codebook[j] = _curFrame.strips[i - 1].v4_codebook[j];
-				memcpy(_curFrame.strips[i].v1_dither, _curFrame.strips[i - 1].v1_dither, 256 * 4 * 4 * 4);
-				memcpy(_curFrame.strips[i].v4_dither, _curFrame.strips[i - 1].v4_dither, 256 * 4 * 4 * 4);
 			}
+
+			// Copy the QuickTime dither tables
+			memcpy(_curFrame.strips[i].v1_dither, _curFrame.strips[i - 1].v1_dither, 256 * 4 * 4 * 4);
+			memcpy(_curFrame.strips[i].v4_dither, _curFrame.strips[i - 1].v4_dither, 256 * 4 * 4 * 4);
 		}
 
 		_curFrame.strips[i].id = stream.readUint16BE();

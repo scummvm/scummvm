@@ -54,10 +54,11 @@ bool AIFFTrack::openSound(const Common::String &filename, const Common::String &
 		return false;
 	}
 	_soundName = soundName;
-	Audio::SeekableAudioStream *aiffStream = Audio::makeAIFFStream(file, DisposeAfterUse::YES);
+	Audio::RewindableAudioStream *aiffStream = Audio::makeAIFFStream(file, DisposeAfterUse::YES);
+	Audio::SeekableAudioStream *seekStream = dynamic_cast<Audio::SeekableAudioStream *>(aiffStream);
 	_stream = aiffStream;
 	if (start)
-		aiffStream->seek(*start);
+		seekStream->seek(*start);
 	if (!_stream)
 		return false;
 	_handle = new Audio::SoundHandle();

@@ -56,6 +56,10 @@ FFT::FFT(int bits, int inverse) : _bits(bits), _inverse(inverse) {
 }
 
 FFT::~FFT() {
+	for (int i = 0; i < ARRAYSIZE(_cosTables); i++) {
+		delete _cosTables[i];
+	}
+
 	delete[] _revTab;
 	delete[] _expTab;
 	delete[] _tmpBuf;

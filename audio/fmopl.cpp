@@ -22,21 +22,33 @@
 
 #include "audio/fmopl.h"
 
+#include "audio/mixer.h"
 #include "audio/softsynth/opl/dosbox.h"
 #include "audio/softsynth/opl/mame.h"
 
 #include "common/config-manager.h"
+#include "common/system.h"
 #include "common/textconsole.h"
+#include "common/timer.h"
 #include "common/translation.h"
 
 namespace OPL {
+
+// Factory functions
+
+#ifdef USE_ALSA
+namespace ALSA {
+	OPL *create(Config::OplType type);
+} // End of namespace ALSA
+#endif // USE_ALSA
 
 // Config implementation
 
 enum OplEmulator {
 	kAuto = 0,
 	kMame = 1,
-	kDOSBox = 2
+	kDOSBox = 2,
+	kALSA = 3
 };
 
 OPL::OPL() {
@@ -51,6 +63,9 @@ const Config::EmulatorDescription Config::_drivers[] = {
 #ifndef DISABLE_DOSBOX_OPL
 	{ "db", _s("DOSBox OPL emulator"), kDOSBox, kFlagOpl2 | kFlagDualOpl2 | kFlagOpl3 },
 #endif
+#ifdef USE_ALSA
+	{ "alsa", _s("ALSA Direct FM"), kALSA, kFlagOpl2 | kFlagDualOpl2 | kFlagOpl3 },
+#endif
 	{ 0, 0, 0, 0 }
 };
 
@@ -61,6 +76,15 @@ Config::DriverId Config::parse(const Common::String &name) {
 	}
 
 	return -1;
+}
+
+const Config::EmulatorDescription *Config::findDriver(DriverId id) {
+	for (int i = 0; _drivers[i].name; ++i) {
+		if (_drivers[i].id == id)
+			return &_drivers[i];
+	}
+
+	return 0;
 }
 
 Config::DriverId Config::detect(OplType type) {
@@ -80,12 +104,21 @@ Config::DriverId Config::detect(OplType type) {
 	}
 
 	DriverId drv = parse(ConfMan.get("opl_driver"));
+	if (drv == kAuto) {
+		// Since the "auto" can be explicitly set for a game, and this
+		// driver shows up in the GUI as "<default>", check if there is
+		// a global setting for it before resorting to auto-detection.
+		drv = parse(ConfMan.get("opl_driver", Common::ConfigManager::kApplicationDomain));
+	}
 
 	// When a valid driver is selected, check whether it supports
 	// the requested OPL chip.
 	if (drv != -1 && drv != kAuto) {
+		const EmulatorDescription *driverDesc = findDriver(drv);
 		// If the chip is supported, just use the driver.
-		if ((flags & _drivers[drv].flags)) {
+		if (!driverDesc) {
+			warning("The selected OPL driver %d could not be found", drv);
+		} else if ((flags & driverDesc->flags)) {
 			return drv;
 		} else {
 			// Else we will output a warning and just
@@ -145,6 +178,11 @@ OPL *Config::create(DriverId driver, OplType type) {
 		return new DOSBox::OPL(type);
 #endif
 
+#ifdef USE_ALSA
+	case kALSA:
+		return ALSA::create(type);
+#endif
+
 	default:
 		warning("Unsupported OPL emulator %d", driver);
 		// TODO: Maybe we should add some dummy emulator too, which just outputs
@@ -153,43 +191,143 @@ OPL *Config::create(DriverId driver, OplType type) {
 	}
 }
 
+void OPL::start(TimerCallback *callback, int timerFrequency) {
+	_callback.reset(callback);
+	startCallbacks(timerFrequency);
+}
+
+void OPL::stop() {
+	stopCallbacks();
+	_callback.reset();
+}
+
 bool OPL::_hasInstance = false;
 
-} // End of namespace OPL
-
-void OPLDestroy(FM_OPL *OPL) {
-	delete OPL;
+RealOPL::RealOPL() : _baseFreq(0), _remainingTicks(0) {
 }
 
-void OPLResetChip(FM_OPL *OPL) {
-	OPL->reset();
+RealOPL::~RealOPL() {
+	// Stop callbacks, just in case. If it's still playing at this
+	// point, there's probably a bigger issue, though. The subclass
+	// needs to call stop() or the pointer can still use be used in
+	// the mixer thread at the same time.
+	stop();
 }
 
-void OPLWrite(FM_OPL *OPL, int a, int v) {
-	OPL->write(a, v);
+void RealOPL::setCallbackFrequency(int timerFrequency) {
+	stopCallbacks();
+	startCallbacks(timerFrequency);
 }
 
-unsigned char OPLRead(FM_OPL *OPL, int a) {
-	return OPL->read(a);
+void RealOPL::startCallbacks(int timerFrequency) {
+	_baseFreq = timerFrequency;
+	assert(_baseFreq > 0);
+
+	// We can't request more a timer faster than 100Hz. We'll handle this by calling
+	// the proc multiple times in onTimer() later on.
+	if (timerFrequency > kMaxFreq)
+		timerFrequency = kMaxFreq;
+
+	_remainingTicks = 0;
+	g_system->getTimerManager()->installTimerProc(timerProc, 1000000 / timerFrequency, this, "RealOPL");
 }
 
-void OPLWriteReg(FM_OPL *OPL, int r, int v) {
-	OPL->writeReg(r, v);
+void RealOPL::stopCallbacks() {
+	g_system->getTimerManager()->removeTimerProc(timerProc);
+	_baseFreq = 0;
+	_remainingTicks = 0;
 }
 
-void YM3812UpdateOne(FM_OPL *OPL, int16 *buffer, int length) {
-	OPL->readBuffer(buffer, length);
+void RealOPL::timerProc(void *refCon) {
+	static_cast<RealOPL *>(refCon)->onTimer();
 }
 
-FM_OPL *makeAdLibOPL(int rate) {
-	FM_OPL *opl = OPL::Config::create();
+void RealOPL::onTimer() {
+	uint callbacks = 1;
 
-	if (opl) {
-		if (!opl->init(rate)) {
-			delete opl;
-			opl = 0;
-		}
+	if (_baseFreq > kMaxFreq) {
+		// We run faster than our max, so run the callback multiple
+		// times to approximate the actual timer callback frequency.
+		uint totalTicks = _baseFreq + _remainingTicks;		
+		callbacks = totalTicks / kMaxFreq;
+		_remainingTicks = totalTicks % kMaxFreq;
 	}
 
-	return opl;
+	// Call the callback multiple times. The if is on the inside of the
+	// loop in case the callback removes itself.
+	for (uint i = 0; i < callbacks; i++)
+		if (_callback && _callback->isValid())
+			(*_callback)();
 }
+
+EmulatedOPL::EmulatedOPL() :
+	_nextTick(0),
+	_samplesPerTick(0),
+	_baseFreq(0),
+	_handle(new Audio::SoundHandle()) {
+}
+
+EmulatedOPL::~EmulatedOPL() {
+	// Stop callbacks, just in case. If it's still playing at this
+	// point, there's probably a bigger issue, though. The subclass
+	// needs to call stop() or the pointer can still use be used in
+	// the mixer thread at the same time.
+	stop();
+
+	delete _handle;
+}
+
+int EmulatedOPL::readBuffer(int16 *buffer, const int numSamples) {
+	const int stereoFactor = isStereo() ? 2 : 1;
+	int len = numSamples / stereoFactor;
+	int step;
+
+	do {
+		step = len;
+		if (step > (_nextTick >> FIXP_SHIFT))
+			step = (_nextTick >> FIXP_SHIFT);
+
+		generateSamples(buffer, step * stereoFactor);
+
+		_nextTick -= step << FIXP_SHIFT;
+		if (!(_nextTick >> FIXP_SHIFT)) {
+			if (_callback && _callback->isValid())
+				(*_callback)();
+
+			_nextTick += _samplesPerTick;
+		}
+
+		buffer += step * stereoFactor;
+		len -= step;
+	} while (len);
+
+	return numSamples;
+}
+
+int EmulatedOPL::getRate() const {
+	return g_system->getMixer()->getOutputRate();
+}
+
+void EmulatedOPL::startCallbacks(int timerFrequency) {
+	setCallbackFrequency(timerFrequency);
+	g_system->getMixer()->playStream(Audio::Mixer::kPlainSoundType, _handle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
+}
+
+void EmulatedOPL::stopCallbacks() {
+	g_system->getMixer()->stopHandle(*_handle);
+}
+
+void EmulatedOPL::setCallbackFrequency(int timerFrequency) {
+	_baseFreq = timerFrequency;
+	assert(_baseFreq != 0);
+
+	int d = getRate() / _baseFreq;
+	int r = getRate() % _baseFreq;
+
+	// This is equivalent to (getRate() << FIXP_SHIFT) / BASE_FREQ
+	// but less prone to arithmetic overflow.
+
+	_samplesPerTick = (d << FIXP_SHIFT) + (r << FIXP_SHIFT) / _baseFreq;
+}
+
+} // End of namespace OPL

@@ -24,16 +24,19 @@
  * The code in this file is based on information found at
  * http://www.borg.com/~jglatt/tech/aiff.htm
  *
- * We currently only implement uncompressed AIFF. If we ever need AIFF-C, SoX
- * (http://sox.sourceforge.net) may be a good place to start from.
+ * Also partially based on libav's aiffdec.c
  */
 
+#include "common/debug.h"
 #include "common/endian.h"
 #include "common/stream.h"
+#include "common/substream.h"
 #include "common/textconsole.h"
 
+#include "audio/audiostream.h"
 #include "audio/decoders/aiff.h"
 #include "audio/decoders/raw.h"
+#include "audio/decoders/3do.h"
 
 namespace Audio {
 
@@ -62,23 +65,34 @@ uint32 readExtended(Common::SeekableReadStream &stream) {
 	return mantissa;
 }
 
-bool loadAIFFFromStream(Common::SeekableReadStream &stream, int &size, int &rate, byte &flags) {
-	byte buf[4];
+// AIFF versions
+static const uint32 kVersionAIFF = MKTAG('A', 'I', 'F', 'F');
+static const uint32 kVersionAIFC = MKTAG('A', 'I', 'F', 'C');
 
-	stream.read(buf, 4);
-	if (memcmp(buf, "FORM", 4) != 0) {
-		warning("loadAIFFFromStream: No 'FORM' header");
-		return false;
+// Codecs
+static const uint32 kCodecPCM = MKTAG('N', 'O', 'N', 'E'); // very original
+
+RewindableAudioStream *makeAIFFStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse) {
+	if (stream->readUint32BE() != MKTAG('F', 'O', 'R', 'M')) {
+		warning("makeAIFFStream: No 'FORM' header");
+
+		if (disposeAfterUse == DisposeAfterUse::YES)
+			delete stream;
+
+		return 0;
 	}
 
-	stream.readUint32BE();
+	stream->readUint32BE(); // file size
 
-	// This could be AIFC, but we don't handle that case.
+	uint32 version = stream->readUint32BE();
 
-	stream.read(buf, 4);
-	if (memcmp(buf, "AIFF", 4) != 0) {
-		warning("loadAIFFFromStream: No 'AIFF' header");
-		return false;
+	if (version != kVersionAIFF && version != kVersionAIFC) {
+		warning("makeAIFFStream: No 'AIFF' or 'AIFC' header");
+
+		if (disposeAfterUse == DisposeAfterUse::YES)
+			delete stream;
+
+		return 0;
 	}
 
 	// From here on, we only care about the COMM and SSND chunks, which are
@@ -87,95 +101,131 @@ bool loadAIFFFromStream(Common::SeekableReadStream &stream, int &size, int &rate
 	bool foundCOMM = false;
 	bool foundSSND = false;
 
-	uint16 numChannels = 0, bitsPerSample = 0;
-	uint32 numSampleFrames = 0, offset = 0, blockSize = 0, soundOffset = 0;
+	uint16 channels = 0, bitsPerSample = 0;
+	uint32 blockAlign = 0, rate = 0;
+	uint32 codec = kCodecPCM; // AIFF default
+	Common::SeekableReadStream *dataStream = 0;
 
-	while (!(foundCOMM && foundSSND) && !stream.err() && !stream.eos()) {
-		uint32 length, pos;
+	while (!(foundCOMM && foundSSND) && !stream->err() && !stream->eos()) {
+		uint32 tag = stream->readUint32BE();
+		uint32 length = stream->readUint32BE();
+		uint32 pos = stream->pos();
 
-		stream.read(buf, 4);
-		length = stream.readUint32BE();
-		pos = stream.pos();
+		if (stream->eos() || stream->err())
+			break;
 
-		if (memcmp(buf, "COMM", 4) == 0) {
+		switch (tag) {
+		case MKTAG('C', 'O', 'M', 'M'):
 			foundCOMM = true;
-			numChannels = stream.readUint16BE();
-			numSampleFrames = stream.readUint32BE();
-			bitsPerSample = stream.readUint16BE();
-			rate = readExtended(stream);
-			size = numSampleFrames * numChannels * (bitsPerSample / 8);
-		} else if (memcmp(buf, "SSND", 4) == 0) {
+			channels = stream->readUint16BE();
+			/* frameCount = */ stream->readUint32BE();
+			bitsPerSample = stream->readUint16BE();
+			rate = readExtended(*stream);
+
+			if (version == kVersionAIFC)
+				codec = stream->readUint32BE();
+			break;
+		case MKTAG('S', 'S', 'N', 'D'):
 			foundSSND = true;
-			offset = stream.readUint32BE();
-			blockSize = stream.readUint32BE();
-			soundOffset = stream.pos();
+			/* uint32 offset = */ stream->readUint32BE();
+			blockAlign = stream->readUint32BE();
+			dataStream = new Common::SeekableSubReadStream(stream, stream->pos(), stream->pos() + length - 8, disposeAfterUse);
+			break;
+		case MKTAG('F', 'V', 'E', 'R'):
+			switch (stream->readUint32BE()) {
+			case 0:
+				version = kVersionAIFF;
+				break;
+			case 0xA2805140:
+				version = kVersionAIFC;
+				break;
+			default:
+				warning("Unknown AIFF version chunk version");
+				break;
+			}
+			break;
+		case MKTAG('w', 'a', 'v', 'e'):
+			warning("Found unhandled AIFF-C extra data chunk");
+
+			if (!dataStream && disposeAfterUse == DisposeAfterUse::YES)
+				delete stream;
+
+			delete dataStream;
+			return 0;
+		default:
+			debug(1, "Skipping AIFF '%s' chunk", tag2str(tag));
+			break; 
 		}
 
-		stream.seek(pos + length);
+		stream->seek(pos + length + (length & 1)); // ensure we're also word-aligned
 	}
 
 	if (!foundCOMM) {
-		warning("loadAIFFFromStream: Cound not find 'COMM' chunk");
-		return false;
+		warning("makeAIFFStream: Cound not find 'COMM' chunk");
+
+		if (!dataStream && disposeAfterUse == DisposeAfterUse::YES)
+			delete stream;
+
+		delete dataStream;
+		return 0;
 	}
 
 	if (!foundSSND) {
-		warning("loadAIFFFromStream: Cound not find 'SSND' chunk");
-		return false;
+		warning("makeAIFFStream: Cound not find 'SSND' chunk");
+
+		if (disposeAfterUse == DisposeAfterUse::YES)
+			delete stream;
+
+		return 0;
 	}
 
 	// We only implement a subset of the AIFF standard.
 
-	if (numChannels < 1 || numChannels > 2) {
-		warning("loadAIFFFromStream: Only 1 or 2 channels are supported, not %d", numChannels);
-		return false;
-	}
-
-	if (bitsPerSample != 8 && bitsPerSample != 16) {
-		warning("loadAIFFFromStream: Only 8 or 16 bits per sample are supported, not %d", bitsPerSample);
-		return false;
-	}
-
-	if (offset != 0 || blockSize != 0) {
-		warning("loadAIFFFromStream: Block-aligned data is not supported");
-		return false;
-	}
-
-	// Samples are always signed, and big endian.
-
-	flags = 0;
-	if (bitsPerSample == 16)
-		flags |= Audio::FLAG_16BITS;
-	if (numChannels == 2)
-		flags |= Audio::FLAG_STEREO;
-
-	stream.seek(soundOffset);
-
-	// Stream now points at the sample data
-
-	return true;
-}
-
-SeekableAudioStream *makeAIFFStream(Common::SeekableReadStream *stream,
-	DisposeAfterUse::Flag disposeAfterUse) {
-	int size, rate;
-	byte *data, flags;
-
-	if (!loadAIFFFromStream(*stream, size, rate, flags)) {
-		if (disposeAfterUse == DisposeAfterUse::YES)
-			delete stream;
+	if (channels < 1 || channels > 2) {
+		warning("makeAIFFStream: Only 1 or 2 channels are supported, not %d", channels);
+		delete dataStream;
 		return 0;
 	}
 
-	data = (byte *)malloc(size);
-	assert(data);
-	stream->read(data, size);
+	// Seek to the start of dataStream, required for at least FileStream
+	dataStream->seek(0);
 
-	if (disposeAfterUse == DisposeAfterUse::YES)
-		delete stream;
+	switch (codec) {
+	case kCodecPCM:
+	case MKTAG('t', 'w', 'o', 's'):
+	case MKTAG('s', 'o', 'w', 't'): {
+		// PCM samples are always signed.
+		byte rawFlags = 0;
+		if (bitsPerSample == 16)
+			rawFlags |= Audio::FLAG_16BITS;
+		if (channels == 2)
+			rawFlags |= Audio::FLAG_STEREO;
+		if (codec == MKTAG('s', 'o', 'w', 't'))
+			rawFlags |= Audio::FLAG_LITTLE_ENDIAN;
 
-	// Since we allocated our own buffer for the data, we must specify DisposeAfterUse::YES.
-	return makeRawStream(data, size, rate, flags);
+		return makeRawStream(dataStream, rate, rawFlags); 
+	}
+	case MKTAG('i', 'm', 'a', '4'):
+		// TODO: Use QT IMA ADPCM
+		warning("Unhandled AIFF-C QT IMA ADPCM compression");
+		break;
+	case MKTAG('Q', 'D', 'M', '2'):
+		// TODO: Need to figure out how to integrate this
+		// (But hopefully never needed)
+		warning("Unhandled AIFF-C QDM2 compression"); 
+		break;
+	case MKTAG('A', 'D', 'P', '4'):
+		// ADP4 on 3DO
+		return make3DO_ADP4AudioStream(dataStream, rate, channels == 2);
+	case MKTAG('S', 'D', 'X', '2'):
+		// SDX2 on 3DO
+		return make3DO_SDX2AudioStream(dataStream, rate, channels == 2);
+	default:
+		warning("Unhandled AIFF-C compression tag '%s'", tag2str(codec));
+	}
+
+	delete dataStream;
+	return 0;
 }
 
 } // End of namespace Audio
