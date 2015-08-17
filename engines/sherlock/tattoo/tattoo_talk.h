@@ -100,6 +100,12 @@ protected:
 public:
 	TattooTalk(SherlockEngine *vm);
 	virtual ~TattooTalk() {}
+
+	/**
+	 * Pulls a background object sequence from the sequence stack and restore's the
+	 * object's sequence
+	 */
+	virtual void pullSequence();
 };
 
 } // End of namespace Tattoo

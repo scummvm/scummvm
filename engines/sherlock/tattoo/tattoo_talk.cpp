@@ -897,6 +897,57 @@ OpcodeReturn TattooTalk::cmdCallTalkFile(const byte *&str) {
 	return RET_SUCCESS;
 }
 
+void TattooTalk::pullSequence() {
+	People &people = *_vm->_people;
+
+	for (int idx = 0; idx < TALK_SEQUENCE_STACK_SIZE; ++idx) {
+		TalkSequence &ts = _talkSequenceStack[idx];
+
+		// Check for an entry in this slot
+		if (ts._obj) {
+			Object &o = *ts._obj;
+			
+			// See if we're not supposed to restore it until an Allow Talk Interrupt
+			if (ts._obj->hasAborts()) {
+				ts._obj->_gotoSeq = -1;
+				ts._obj->_restoreSlot = idx;
+			} else {
+				// Restore the object's sequence information immediately
+				o._frameNumber = ts._frameNumber;
+				o._sequenceNumber = ts._sequenceNumber;
+				o._seqStack = ts._seqStack;
+				o._seqTo = ts._seqTo;
+				o._seqCounter = ts._seqCounter;
+				o._seqCounter2 = ts._seqCounter2;
+				o._gotoSeq = 0;
+				o._talkSeq = 0;
+
+				// Flag the slot as free again
+				ts._obj = nullptr;
+			}
+		}
+	}
+
+	// Handle restoring any character positioning
+	for (int idx = 0; idx < MAX_CHARACTERS; ++idx) {
+		Person &person = people[idx];
+
+		if (person._type == CHARACTER && !person._walkSequences.empty() && person._sequenceNumber >= TALK_UPRIGHT
+				&& person._sequenceNumber <= LISTEN_UPLEFT) {
+			person.gotoStand();
+
+			bool done = false;
+			do {
+				person.checkSprite();
+				for (int frameNum = 0; frameNum < person._frameNumber; ++frameNum) {
+					if (person._walkSequences[person._sequenceNumber]._sequences[frameNum] == 0)
+						done = true;
+				}
+			} while (!done);
+		}
+	}
+}
+
 } // End of namespace Tattoo
 
 } // End of namespace Sherlock

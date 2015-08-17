@@ -640,28 +640,6 @@ void Talk::clearSequences() {
 	_sequenceStack.clear();
 }
 
-void Talk::pullSequence() {
-	Scene &scene = *_vm->_scene;
-
-	if (_sequenceStack.empty() || IS_ROSE_TATTOO)
-		return;
-
-	SequenceEntry seq = _sequenceStack.pop();
-	if (seq._objNum != -1) {
-		Object &obj = scene._bgShapes[seq._objNum];
-
-		if (obj._seqSize < MAX_TALK_SEQUENCES) {
-			warning("Tried to restore too few frames");
-		} else {
-			for (int idx = 0; idx < MAX_TALK_SEQUENCES; ++idx)
-				obj._sequences[idx] = seq._sequences[idx];
-
-			obj._frameNumber = seq._frameNumber;
-			obj._seqTo = seq._seqTo;
-		}
-	}
-}
-
 void Talk::pushSequence(int speaker) {
 	People &people = *_vm->_people;
 	Scene &scene = *_vm->_scene;

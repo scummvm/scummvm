@@ -330,12 +330,6 @@ public:
 	 * Clears the stack of pending object sequences associated with speakers in the scene
 	 */
 	void clearSequences();
-	
-	/**
-	 * Pulls a background object sequence from the sequence stack and restore's the
-	 * object's sequence
-	 */
-	void pullSequence();
 
 	/**
 	 * Push the sequence of a background object that's an NPC that needs to be
@@ -378,6 +372,12 @@ public:
 	 * Prints a single conversation option in the interface window
 	 */
 	virtual int talkLine(int lineNum, int stateNum, byte color, int lineY, bool slamIt) { return 0; }
+	
+	/**
+	 * Pulls a background object sequence from the sequence stack and restore's the
+	 * object's sequence
+	 */
+	virtual void pullSequence() = 0;
 };
 
 } // End of namespace Sherlock

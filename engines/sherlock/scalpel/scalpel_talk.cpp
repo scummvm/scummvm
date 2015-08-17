@@ -878,6 +878,28 @@ OpcodeReturn ScalpelTalk::cmdCallTalkFile(const byte *&str) {
 	return RET_SUCCESS;
 }
 
+void ScalpelTalk::pullSequence() {
+	Scene &scene = *_vm->_scene;
+
+	if (_sequenceStack.empty())
+		return;
+
+	SequenceEntry seq = _sequenceStack.pop();
+	if (seq._objNum != -1) {
+		Object &obj = scene._bgShapes[seq._objNum];
+
+		if (obj._seqSize < MAX_TALK_SEQUENCES) {
+			warning("Tried to restore too few frames");
+		} else {
+			for (int idx = 0; idx < MAX_TALK_SEQUENCES; ++idx)
+				obj._sequences[idx] = seq._sequences[idx];
+
+			obj._frameNumber = seq._frameNumber;
+			obj._seqTo = seq._seqTo;
+		}
+	}
+}
+
 } // End of namespace Scalpel
 
 } // End of namespace Sherlock
