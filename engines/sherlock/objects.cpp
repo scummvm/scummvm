@@ -180,6 +180,7 @@ void BaseObject::checkObject() {
 			if (IS_ROSE_TATTOO && v == ALLOW_TALK_CODE) {
 				if (_gotoSeq) {
 					setObjTalkSequence(_gotoSeq);
+					_gotoSeq = 0;
 				} else {
 					++_frameNumber;
 				}
