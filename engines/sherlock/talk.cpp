@@ -578,7 +578,7 @@ void Talk::loadTalkFile(const Common::String &filename) {
 
 	// Create the base of the sound filename used for talking in Rose Tattoo
 	if (IS_ROSE_TATTOO && _scriptMoreFlag != 1)
-		sound._talkSoundFile = filename + ".";
+		sound._talkSoundFile = Common::String(filename.c_str(), filename.c_str() + 7) + ".";
 
 	// Open the talk file for reading
 	Common::SeekableReadStream *talkStream = res.load(talkFile);
