@@ -1370,7 +1370,7 @@ int TattooPeople::findSpeaker(int speaker) {
 		}
 	}
 
-	return -1;
+	return result;
 }
 
 void TattooPeople::synchronize(Serializer &s) {
