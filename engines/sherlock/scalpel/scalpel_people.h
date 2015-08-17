@@ -110,6 +110,17 @@ public:
 	 * Load the walking images for Sherlock
 	 */
 	virtual bool loadWalk();
+
+	/**
+	 * If the specified speaker is a background object, it will set it so that it uses 
+	 * the Listen Sequence (specified by the sequence number). If the current sequence 
+	 * has an Allow Talk Code in it, the _gotoSeq field will be set so that the object 
+	 * begins listening as soon as it hits the Allow Talk Code. If there is no Abort Code, 
+	 * the Listen Sequence will begin immediately.
+	 * @param speaker		Who is speaking
+	 * @param sequenceNum	Which listen sequence to use
+	 */
+	virtual void setListenSequence(int speaker, int sequenceNum = 1);
 };
 
 } // End of namespace Scalpel

@@ -500,7 +500,7 @@ void Talk::talk(int objNum) {
 			Object &obj = scene._bgShapes[objNum];
 			clearSequences();
 			pushSequence(_talkTo);
-			setStillSeq(_talkTo);
+			people.setListenSequence(_talkTo, 129);
 
 			events.setCursor(WAIT);
 			if (obj._lookPosition.y != 0)
@@ -521,7 +521,7 @@ void Talk::talk(int objNum) {
 			Object &obj = scene._bgShapes[objNum];
 			clearSequences();
 			pushSequence(_talkTo);
-			setStillSeq(_talkTo);
+			people.setListenSequence(_talkTo, 129);
 
 			events.setCursor(WAIT);
 			if (obj._lookPosition.y != 0)
@@ -692,36 +692,6 @@ void Talk::pushTalkSequence(Object *obj) {
 	}
 
 	error("Ran out of talk sequence stack space");
-}
-
-void Talk::setStillSeq(int speaker) {
-	People &people = *_vm->_people;
-	Scene &scene = *_vm->_scene;
-
-	// Don't bother doing anything if no specific speaker is specified
-	if (speaker == -1)
-		return;
-
-	if (speaker) {
-		int objNum = people.findSpeaker(speaker);
-		if (objNum != -1) {
-			Object &obj = scene._bgShapes[objNum];
-
-			if (obj._seqSize < MAX_TALK_SEQUENCES) {
-				warning("Tried to copy too few still frames");
-			} else {
-				for (uint idx = 0; idx < MAX_TALK_SEQUENCES; ++idx) {
-					obj._sequences[idx] = people._characters[speaker]._stillSequences[idx];
-					if (idx > 0 && !people._characters[speaker]._talkSequences[idx] &&
-							!people._characters[speaker]._talkSequences[idx - 1])
-						break;
-				}
-
-				obj._frameNumber = 0;
-				obj._seqTo = 0;
-			}
-		}
-	}
 }
 
 void Talk::doScript(const Common::String &script) {

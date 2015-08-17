@@ -321,12 +321,6 @@ public:
 	void loadTalkFile(const Common::String &filename);
 
 	/**
-	 * Change the sequence of a background object corresponding to a given speaker.
-	 * The new sequence will display the character as "listening"
-	 */
-	void setStillSeq(int speaker);
-
-	/**
 	 * Clears the stack of pending object sequences associated with speakers in the scene
 	 */
 	void clearSequences();

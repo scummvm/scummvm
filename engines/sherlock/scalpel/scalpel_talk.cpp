@@ -806,6 +806,7 @@ int ScalpelTalk::talkLine(int lineNum, int stateNum, byte color, int lineY, bool
 
 void ScalpelTalk::showTalk() {
 	FixedText &fixedText = *_vm->_fixedText;
+	People &people = *_vm->_people;
 	ScalpelScreen &screen = *(ScalpelScreen *)_vm->_screen;
 	ScalpelUserInterface &ui = *(ScalpelUserInterface *)_vm->_ui;
 	Common::String fixedText_Exit = fixedText.getText(kFixedText_Window_Exit);
@@ -813,7 +814,7 @@ void ScalpelTalk::showTalk() {
 
 	clearSequences();
 	pushSequence(_talkTo);
-	setStillSeq(_talkTo);
+	people.setListenSequence(_talkTo);
 
 	ui._selector = ui._oldSelector = -1;
 
