@@ -948,6 +948,15 @@ void TattooTalk::pullSequence() {
 	}
 }
 
+bool TattooTalk::isSequencesEmpty() const {
+	for (int idx = 0; idx < TALK_SEQUENCE_STACK_SIZE; ++idx) {
+		if (_talkSequenceStack[idx]._obj)
+			return false;
+	}
+
+	return true;
+}
+
 } // End of namespace Tattoo
 
 } // End of namespace Sherlock

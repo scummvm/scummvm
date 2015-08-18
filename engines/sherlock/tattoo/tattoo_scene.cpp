@@ -22,6 +22,7 @@
 
 #include "sherlock/tattoo/tattoo_scene.h"
 #include "sherlock/tattoo/tattoo_people.h"
+#include "sherlock/tattoo/tattoo_talk.h"
 #include "sherlock/tattoo/tattoo_user_interface.h"
 #include "sherlock/tattoo/tattoo.h"
 #include "sherlock/events.h"
@@ -292,12 +293,17 @@ void TattooScene::checkBgShapes() {
 }
 
 void TattooScene::freeScene() {
+	TattooTalk &talk = *(TattooTalk *)_vm->_talk;
 	TattooUserInterface &ui = *(TattooUserInterface *)_vm->_ui;
 	Scene::freeScene();
 
+	// Delete any scene overlays that were used by the scene
 	delete ui._mask;
 	delete ui._mask1;
 	ui._mask = ui._mask1 = nullptr;
+
+	// Ensure that there wasn't anything left on the talk stack, since their _obj pointers will no longer be valid
+	assert(talk.isSequencesEmpty());
 }
 
 void TattooScene::doBgAnimCheckCursor() {

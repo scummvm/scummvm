@@ -106,6 +106,11 @@ public:
 	 * object's sequence
 	 */
 	virtual void pullSequence();
+
+	/**
+	 * Returns true if the script stack is empty
+	 */
+	virtual bool isSequencesEmpty() const;
 };
 
 } // End of namespace Tattoo

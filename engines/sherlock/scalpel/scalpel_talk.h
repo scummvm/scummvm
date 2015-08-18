@@ -107,6 +107,11 @@ public:
 	 * object's sequence
 	 */
 	virtual void pullSequence();
+
+	/**
+	 * Returns true if the script stack is empty
+	 */
+	virtual bool isSequencesEmpty() const { return _scriptStack.empty(); }
 };
 
 } // End of namespace Scalpel

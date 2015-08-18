@@ -337,11 +337,6 @@ public:
 	void pushTalkSequence(Object *obj);
 
 	/**
-	 * Returns true if the script stack is empty
-	 */
-	bool isSequencesEmpty() const { return _scriptStack.empty(); }
-
-	/**
 	 * Pops an entry off of the script stack
 	 */
 	void popStack();
@@ -372,6 +367,11 @@ public:
 	 * object's sequence
 	 */
 	virtual void pullSequence() = 0;
+
+	/**
+	 * Returns true if the script stack is empty
+	 */
+	virtual bool isSequencesEmpty() const = 0;
 };
 
 } // End of namespace Sherlock

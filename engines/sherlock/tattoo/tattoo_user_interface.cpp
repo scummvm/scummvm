@@ -378,6 +378,9 @@ void TattooUserInterface::doStandardControl() {
 	if (vm._runningProlog)
 		return;
 
+	// There shouldn't be anything left on the talk sequence stack since we're back in control
+	assert(talk.isSequencesEmpty());
+
 	// When the end credits are active, any press will open the ScummVM global main menu
 	if (_creditsWidget.active()) {
 		if (_keyState.keycode || events._released || events._rightReleased) {
