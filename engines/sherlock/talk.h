@@ -307,7 +307,7 @@ public:
 	 * interface window for the conversation and passes on control to give the
 	 * player a list of options to make a selection from
 	 */
-	void talk(int objNum);
+	void initTalk(int objNum);
 
 	/**
 	 * Clear loaded talk data

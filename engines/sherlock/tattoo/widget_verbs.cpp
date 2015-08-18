@@ -225,7 +225,7 @@ void WidgetVerbs::handleEvents() {
 
 			} else if (!_verbCommands[_selector].compareToIgnoreCase(strTalk)) {
 				// Talk command is being activated
-				talk.talk(ui._activeObj);
+				talk.initTalk(ui._activeObj);
 				ui._activeObj = -1;
 			
 			} else if (!_verbCommands[_selector].compareToIgnoreCase(strJournal)) {

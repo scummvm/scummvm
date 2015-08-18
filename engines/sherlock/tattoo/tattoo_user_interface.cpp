@@ -477,7 +477,7 @@ void TattooUserInterface::doStandardControl() {
 			_menuMode = VERB_MODE;
 		} else if (_personFound || (_bgFound != -1 && _bgFound < 1000 && _bgShape->_aType == PERSON)) {
 			// The object found is a person (the default for people is TALK)
-			talk.talk(_bgFound);
+			talk.initTalk(_bgFound);
 			_activeObj = -1;
 		} else if (!noDesc) {
 			// Either call the code to Look at it's Examine Field or call the Exit animation

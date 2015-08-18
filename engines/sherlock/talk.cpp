@@ -452,7 +452,7 @@ void Talk::talkTo(const Common::String &filename) {
 	events.setCursor(ARROW);
 }
 
-void Talk::talk(int objNum) {
+void Talk::initTalk(int objNum) {
 	Events &events = *_vm->_events;
 	People &people = *_vm->_people;
 	Scene &scene = *_vm->_scene;

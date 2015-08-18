@@ -276,7 +276,7 @@ void ScalpelUserInterface::handleInput() {
 			}
 
 			if (events._released && personFound)
-				talk.talk(_bgFound);
+				talk.initTalk(_bgFound);
 			else if (personFound)
 				lookScreen(pt);
 			else if (_bgFound < 1000)
