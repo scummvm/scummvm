@@ -301,9 +301,6 @@ void TattooScene::freeScene() {
 	delete ui._mask;
 	delete ui._mask1;
 	ui._mask = ui._mask1 = nullptr;
-
-	// Ensure that there wasn't anything left on the talk stack, since their _obj pointers will no longer be valid
-	assert(talk.isSequencesEmpty());
 }
 
 void TattooScene::doBgAnimCheckCursor() {

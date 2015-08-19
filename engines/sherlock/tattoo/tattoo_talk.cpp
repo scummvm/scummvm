@@ -983,6 +983,12 @@ bool TattooTalk::isSequencesEmpty() const {
 	return true;
 }
 
+void TattooTalk::clearSequences() {
+	for (int idx = 0; idx < TALK_SEQUENCE_STACK_SIZE; ++idx) {
+		_sequenceStack[idx]._obj = nullptr;
+	}
+}
+
 } // End of namespace Tattoo
 
 } // End of namespace Sherlock

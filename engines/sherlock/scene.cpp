@@ -278,6 +278,7 @@ void Scene::freeScene() {
 
 	_vm->_ui->clearWindow();
 	_vm->_talk->freeTalkVars();
+	_vm->_talk->clearSequences();
 	_vm->_inventory->freeInv();
 	_vm->_music->freeSong();
 	_vm->_sound->freeLoadedSounds();

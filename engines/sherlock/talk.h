@@ -323,7 +323,7 @@ public:
 	/**
 	 * Clears the stack of pending object sequences associated with speakers in the scene
 	 */
-	virtual void clearSequences() {}
+	virtual void clearSequences() = 0;
 
 	/**
 	 * Pops an entry off of the script stack

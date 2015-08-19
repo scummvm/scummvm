@@ -195,8 +195,12 @@ void Talk::talkTo(const Common::String &filename) {
 		}
 	}
 
-	while (!isSequencesEmpty())
+	if (IS_ROSE_TATTOO) {
 		pullSequence();
+	} else {
+		while (!isSequencesEmpty())
+			pullSequence();
+	}
 
 	if (IS_SERRATED_SCALPEL) {
 		// Restore any pressed button

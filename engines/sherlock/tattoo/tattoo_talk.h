@@ -119,6 +119,11 @@ public:
 	 * Returns true if the script stack is empty
 	 */
 	virtual bool isSequencesEmpty() const;
+
+	/**
+	 * Clears the stack of pending object sequences associated with speakers in the scene
+	 */
+	virtual void clearSequences();
 };
 
 } // End of namespace Tattoo
