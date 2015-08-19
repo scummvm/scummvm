@@ -1271,7 +1271,7 @@ void TattooPeople::setTalkSequence(int speaker, int sequenceNum) {
 
 		// See if the Object has to wait for an Abort Talk Code
 		if (obj.hasAborts()) {
-			talk.pushTalkSequence(&obj);
+			talk.pushSequenceEntry(&obj);
 			obj._gotoSeq = sequenceNum;
 		}
 		else {

@@ -37,6 +37,8 @@ namespace Sherlock {
 
 namespace Tattoo {
 
+#define TALK_SEQUENCE_STACK_SIZE 20
+
 class WidgetTalk;
 
 class TattooTalk : public Talk {
@@ -44,6 +46,7 @@ class TattooTalk : public Talk {
 private:
 	WidgetTalk _talkWidget;
 	WidgetPassword _passwordWidget;
+	SequenceEntry _sequenceStack[TALK_SEQUENCE_STACK_SIZE];
 
 	OpcodeReturn cmdCallTalkFile(const byte *&str);
 	OpcodeReturn cmdSwitchSpeaker(const byte *&str);
@@ -102,10 +105,15 @@ public:
 	virtual ~TattooTalk() {}
 
 	/**
+	 * Push the details of a passed object onto the saved sequences stack
+	 */
+	virtual void pushSequenceEntry(Object *obj);
+
+	/**
 	 * Pulls a background object sequence from the sequence stack and restore's the
 	 * object's sequence
 	 */
-	virtual void pullSequence();
+	virtual void pullSequence(int slot = -1);
 
 	/**
 	 * Returns true if the script stack is empty

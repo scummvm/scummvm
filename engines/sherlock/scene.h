@@ -220,7 +220,7 @@ public:
 	Common::String _comments;
 	Common::Array<char> _descText;
 	Common::Array<Common::Rect> _zones;
-	Common::Array<Object> _bgShapes;
+	ObjectArray _bgShapes;
 	Common::Array<CAnim> _cAnim;
 	Common::Array<byte> _sequenceBuffer;
 	Common::Array<SceneImage> _images;

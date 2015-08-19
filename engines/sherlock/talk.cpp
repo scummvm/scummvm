@@ -36,8 +36,11 @@ namespace Sherlock {
 
 SequenceEntry::SequenceEntry() {
 	_objNum = 0;
-	_frameNumber = 0;
+	_obj = nullptr;
+	_seqStack = 0;
 	_seqTo = 0;
+	_sequenceNumber = _frameNumber = 0;
+	_seqCounter = _seqCounter2 = 0;
 }
 
 /*----------------------------------------------------------------*/
@@ -83,17 +86,6 @@ void Statement::load(Common::SeekableReadStream &s, bool isRoseTattoo) {
 
 TalkHistoryEntry::TalkHistoryEntry() {
 	Common::fill(&_data[0], &_data[16], false);
-}
-
-/*----------------------------------------------------------------*/
-
-TalkSequence::TalkSequence() {
-	_obj = nullptr;
-	_frameNumber = 0;
-	_sequenceNumber = 0;
-	_seqStack = 0;
-	_seqTo = 0;
-	_seqCounter = _seqCounter2 = 0;
 }
 
 /*----------------------------------------------------------------*/
@@ -203,7 +195,7 @@ void Talk::talkTo(const Common::String &filename) {
 		}
 	}
 
-	while (!_sequenceStack.empty())
+	while (!isSequencesEmpty())
 		pullSequence();
 
 	if (IS_SERRATED_SCALPEL) {
@@ -636,62 +628,16 @@ void Talk::setTalkMap() {
 	}
 }
 
-void Talk::clearSequences() {
-	_sequenceStack.clear();
-}
-
 void Talk::pushSequence(int speaker) {
 	People &people = *_vm->_people;
 	Scene &scene = *_vm->_scene;
 
 	// Only proceed if a speaker is specified
-	if (speaker == -1 || IS_ROSE_TATTOO)
-		return;
-
-	SequenceEntry seqEntry;
-	if (!speaker) {
-		seqEntry._objNum = -1;
-	} else {
-		seqEntry._objNum = people.findSpeaker(speaker);
-
-		if (seqEntry._objNum != -1) {
-			Object &obj = scene._bgShapes[seqEntry._objNum];
-			for (uint idx = 0; idx < MAX_TALK_SEQUENCES; ++idx)
-				seqEntry._sequences.push_back(obj._sequences[idx]);
-
-			seqEntry._frameNumber = obj._frameNumber;
-			seqEntry._seqTo = obj._seqTo;
-		}
+	if (speaker != -1) {
+		int objNum = people.findSpeaker(speaker);
+		if (objNum != -1)
+			pushSequenceEntry(&scene._bgShapes[objNum]);
 	}
-
-	_sequenceStack.push(seqEntry);
-	if (_scriptStack.size() >= 5)
-		error("script stack overflow");
-}
-
-void Talk::pushTalkSequence(Object *obj) {
-	// Check if the shape is already on the stack
-	for (uint idx = 0; idx < TALK_SEQUENCE_STACK_SIZE; ++idx) {
-		if (_talkSequenceStack[idx]._obj == obj)
-			return;
-	}
-
-	// Find a free slot and save the details in it
-	for (uint idx = 0; idx < TALK_SEQUENCE_STACK_SIZE; ++idx) {
-		TalkSequence &ts = _talkSequenceStack[idx];
-		if (ts._obj == nullptr) {
-			ts._obj = obj;
-			ts._frameNumber = obj->_frameNumber;
-			ts._sequenceNumber = obj->_sequenceNumber;
-			ts._seqStack = obj->_seqStack;
-			ts._seqTo = obj->_seqTo;
-			ts._seqCounter = obj->_seqCounter;
-			ts._seqCounter2 = obj->_seqCounter2;
-			return;
-		}
-	}
-
-	error("Ran out of talk sequence stack space");
 }
 
 void Talk::doScript(const Common::String &script) {
@@ -744,10 +690,15 @@ void Talk::doScript(const Common::String &script) {
 		// Need to switch speakers?
 		if (str[0] == _opcodes[OP_SWITCH_SPEAKER]) {
 			_speaker = str[1] - 1;
-			str += IS_SERRATED_SCALPEL ? 2 : 3;
 
-			pullSequence();
-			pushSequence(_speaker);
+			if (IS_SERRATED_SCALPEL) {
+				str += 2;
+				pullSequence();
+				pushSequence(_speaker);
+			} else {
+				str += 3;
+			}
+
 			people.setTalkSequence(_speaker);
 		} else {
 			people.setTalkSequence(_speaker);

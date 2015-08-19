@@ -879,7 +879,26 @@ OpcodeReturn ScalpelTalk::cmdCallTalkFile(const byte *&str) {
 	return RET_SUCCESS;
 }
 
-void ScalpelTalk::pullSequence() {
+void ScalpelTalk::pushSequenceEntry(Object *obj) {
+	Scene &scene = *_vm->_scene;
+	SequenceEntry seqEntry;
+	seqEntry._objNum = scene._bgShapes.indexOf(*obj);
+
+	if (seqEntry._objNum != -1) {
+		Object &obj = scene._bgShapes[seqEntry._objNum];
+		for (uint idx = 0; idx < MAX_TALK_SEQUENCES; ++idx)
+			seqEntry._sequences.push_back(obj._sequences[idx]);
+
+		seqEntry._frameNumber = obj._frameNumber;
+		seqEntry._seqTo = obj._seqTo;
+	}
+
+	_sequenceStack.push(seqEntry);
+	if (_scriptStack.size() >= 5)
+		error("script stack overflow");
+}
+
+void ScalpelTalk::pullSequence(int slot) {
 	Scene &scene = *_vm->_scene;
 
 	if (_sequenceStack.empty())
@@ -899,6 +918,10 @@ void ScalpelTalk::pullSequence() {
 			obj._seqTo = seq._seqTo;
 		}
 	}
+}
+
+void ScalpelTalk::clearSequences() {
+	_sequenceStack.clear();
 }
 
 } // End of namespace Scalpel

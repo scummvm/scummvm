@@ -216,7 +216,6 @@ void TattooTalk::showTalk() {
 	TattooPeople &people = *(TattooPeople *)_vm->_people;
 	TattooUserInterface &ui = *(TattooUserInterface *)_vm->_ui;
 
-	_sequenceStack.clear();
 	people.setListenSequence(_talkTo, 129);
 
 	_talkWidget.load();
@@ -897,33 +896,60 @@ OpcodeReturn TattooTalk::cmdCallTalkFile(const byte *&str) {
 	return RET_SUCCESS;
 }
 
-void TattooTalk::pullSequence() {
+void TattooTalk::pushSequenceEntry(Object *obj) {
+	// Check if the shape is already on the stack
+	for (uint idx = 0; idx < TALK_SEQUENCE_STACK_SIZE; ++idx) {
+		if (_sequenceStack[idx]._obj == obj)
+			return;
+	}
+
+	// Find a free slot and save the details in it
+	for (uint idx = 0; idx < TALK_SEQUENCE_STACK_SIZE; ++idx) {
+		SequenceEntry &seq = _sequenceStack[idx];
+		if (seq._obj == nullptr) {
+			seq._obj = obj;
+			seq._frameNumber = obj->_frameNumber;
+			seq._sequenceNumber = obj->_sequenceNumber;
+			seq._seqStack = obj->_seqStack;
+			seq._seqTo = obj->_seqTo;
+			seq._seqCounter = obj->_seqCounter;
+			seq._seqCounter2 = obj->_seqCounter2;
+			return;
+		}
+	}
+
+	error("Ran out of talk sequence stack space");
+}
+
+void TattooTalk::pullSequence(int slot) {
 	People &people = *_vm->_people;
 
 	for (int idx = 0; idx < TALK_SEQUENCE_STACK_SIZE; ++idx) {
-		TalkSequence &ts = _talkSequenceStack[idx];
+		SequenceEntry &seq = _sequenceStack[idx];
+		if (slot != -1 && idx != slot)
+			continue;
 
 		// Check for an entry in this slot
-		if (ts._obj) {
-			Object &o = *ts._obj;
+		if (seq._obj) {
+			Object &o = *seq._obj;
 			
 			// See if we're not supposed to restore it until an Allow Talk Interrupt
-			if (ts._obj->hasAborts()) {
-				ts._obj->_gotoSeq = -1;
-				ts._obj->_restoreSlot = idx;
+			if (seq._obj->hasAborts()) {
+				seq._obj->_gotoSeq = -1;
+				seq._obj->_restoreSlot = idx;
 			} else {
 				// Restore the object's sequence information immediately
-				o._frameNumber = ts._frameNumber;
-				o._sequenceNumber = ts._sequenceNumber;
-				o._seqStack = ts._seqStack;
-				o._seqTo = ts._seqTo;
-				o._seqCounter = ts._seqCounter;
-				o._seqCounter2 = ts._seqCounter2;
+				o._frameNumber = seq._frameNumber;
+				o._sequenceNumber = seq._sequenceNumber;
+				o._seqStack = seq._seqStack;
+				o._seqTo = seq._seqTo;
+				o._seqCounter = seq._seqCounter;
+				o._seqCounter2 = seq._seqCounter2;
 				o._gotoSeq = 0;
 				o._talkSeq = 0;
 
 				// Flag the slot as free again
-				ts._obj = nullptr;
+				seq._obj = nullptr;
 			}
 		}
 	}
@@ -950,7 +976,7 @@ void TattooTalk::pullSequence() {
 
 bool TattooTalk::isSequencesEmpty() const {
 	for (int idx = 0; idx < TALK_SEQUENCE_STACK_SIZE; ++idx) {
-		if (_talkSequenceStack[idx]._obj)
+		if (_sequenceStack[idx]._obj)
 			return false;
 	}
 

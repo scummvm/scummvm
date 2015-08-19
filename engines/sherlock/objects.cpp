@@ -1228,26 +1228,16 @@ void Object::setObjTalkSequence(int seq) {
 
 	// See if we're supposed to restore the object's sequence from the talk sequence stack
 	if (seq == -1) {
-		TalkSequence &ts = talk._talkSequenceStack[_restoreSlot];
 		if (_seqTo != 0)
 			_sequences[_frameNumber] = _seqTo;
-		_frameNumber = ts._frameNumber;
-		_sequenceNumber = ts._sequenceNumber;
-		_seqStack = ts._seqStack;
-		_seqTo = ts._seqTo;
-		_seqCounter = ts._seqCounter;
-		_seqCounter2 = ts._seqCounter2;
-		_talkSeq = 0;
 
-		// Flag this slot as free again
-		ts._obj = nullptr;
-
+		talk.pullSequence(_restoreSlot);
 		return;
 	}
 
 	assert(_type != CHARACTER);
 
-	talk.pushTalkSequence(this);
+	talk.pushSequenceEntry(this);
 	int talkSeqNum = seq;
 
 	// Find where the talk sequence data begins in the object

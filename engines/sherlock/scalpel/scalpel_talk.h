@@ -37,6 +37,8 @@ namespace Scalpel {
 
 class ScalpelTalk : public Talk {
 private:
+	Common::Stack<SequenceEntry> _sequenceStack;
+
 	OpcodeReturn cmdSwitchSpeaker(const byte *&str);
 	OpcodeReturn cmdAssignPortraitLocation(const byte *&str);
 	OpcodeReturn cmdGotoScene(const byte *&str);
@@ -103,15 +105,25 @@ public:
 	void talk3DOMovieTrigger(int subIndex);
 
 	/**
+	 * Push the details of a passed object onto the saved sequences stack
+	 */
+	virtual void pushSequenceEntry(Object *obj);
+
+	/**
 	 * Pulls a background object sequence from the sequence stack and restore's the
 	 * object's sequence
 	 */
-	virtual void pullSequence();
+	virtual void pullSequence(int slot = -1);
 
 	/**
 	 * Returns true if the script stack is empty
 	 */
 	virtual bool isSequencesEmpty() const { return _scriptStack.empty(); }
+
+	/**
+	 * Clears the stack of pending object sequences associated with speakers in the scene
+	 */
+	virtual void clearSequences();
 };
 
 } // End of namespace Scalpel
