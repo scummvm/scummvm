@@ -209,6 +209,8 @@ Common::SeekableReadStream *Resources::load(const Common::String &filename, cons
 	if (!libIndex.contains(filename)) {
 		if (!suppressErrors)
 			error("Could not find resource - %s", filename.c_str());
+
+		delete libStream;
 		return nullptr;
 	}
 
