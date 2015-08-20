@@ -687,7 +687,8 @@ void Talk::doScript(const Common::String &script) {
 		_talkStealth = 2;
 		_speaker |= SPEAKER_REMOVE;
 	} else {
-		pushSequence(_speaker);
+		if (IS_SERRATED_SCALPEL)
+			pushSequence(_speaker);
 		if (IS_SERRATED_SCALPEL || ui._windowOpen)
 			ui.clearWindow();
 
