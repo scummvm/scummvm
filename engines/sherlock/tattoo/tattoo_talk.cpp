@@ -934,7 +934,7 @@ void TattooTalk::pullSequence(int slot) {
 			Object &o = *seq._obj;
 			
 			// See if we're not supposed to restore it until an Allow Talk Interrupt
-			if (seq._obj->hasAborts()) {
+			if (slot == -1 && seq._obj->hasAborts()) {
 				seq._obj->_gotoSeq = -1;
 				seq._obj->_restoreSlot = idx;
 			} else {
