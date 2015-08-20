@@ -193,7 +193,7 @@ void People::reset() {
 			p._use[1]._verb = "";
 		}
 
-		p._sequenceNumber = IS_SERRATED_SCALPEL ? (int)Tattoo::STOP_DOWNRIGHT : (int)Tattoo::STOP_DOWNRIGHT;
+		p._sequenceNumber = IS_SERRATED_SCALPEL ? (int)Scalpel::STOP_DOWNRIGHT : (int)Tattoo::STOP_DOWNRIGHT;
 		p._imageFrame = nullptr;
 		p._frameNumber = 1;
 		p._startSeq = 0;
