@@ -2611,7 +2611,7 @@ void RivenExternal::xt7600_setupmarbles(uint16 argc, uint16 *argv) {
 			// (Nothing to draw here)
 		} else {
 			// The marble is on the grid and the waffle is up
-			int marbleX = (int)round(getMarbleX(var) * yAdjusts[getMarbleY(var)] + xPosOffsets[getMarbleY(var)]);
+			int marbleX = (int)floor(getMarbleX(var) * yAdjusts[getMarbleY(var)] + xPosOffsets[getMarbleY(var)] + 0.5);
 			int marbleY = yPosOffsets[getMarbleY(var)];
 			_vm->_gfx->copyImageToScreen(baseBitmapId + i, marbleX, marbleY, marbleX + kSmallMarbleWidth, marbleY + kSmallMarbleHeight);
 		}
