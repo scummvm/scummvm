@@ -246,12 +246,29 @@ void TattooJournal::handleButtons() {
 	Events &events = *_vm->_events;
 	Screen &screen = *_vm->_screen;
 	uint32 frameCounter = events.getFrameCounter();
+	Common::Point mousePos = events.mousePos();
 
 	// If they're dragging the scrollbar thumb, keep it selected whilst the button is being held
-	if ((events._pressed || events._released) && _selector == JH_THUMBNAIL)
-		return;
+	if ((events._pressed || events._released) && _selector == JH_THUMBNAIL) {
+		// FIgure out the left of the scrollbar scroll area and paging data
+		const int scrollingWidth = JOURNAL_BAR_WIDTH - BUTTON_SIZE * 2 - 6;
+		const int scrollingLeft = (SHERLOCK_SCREEN_WIDTH - JOURNAL_BAR_WIDTH) / 2 + BUTTON_SIZE + 3;
+		const int numPages = (_maxPage + LINES_PER_PAGE - 1) / LINES_PER_PAGE - 1;
+		const int barWidth = CLIP(scrollingWidth / numPages, BUTTON_SIZE, JOURNAL_BAR_WIDTH - BUTTON_SIZE * 2 - 6);
 
-	if (_selector != JH_NONE && events._pressed) {
+		const int scrollOffset = mousePos.x - scrollingLeft;
+		const int page = scrollOffset * FIXED_INT_MULTIPLIER / ((scrollingWidth - barWidth) * (FIXED_INT_MULTIPLIER / (numPages - 1))) + 1;
+
+		if (page != _page) {
+			if (page < _page)
+				drawJournal(1, (_page - page) * LINES_PER_PAGE);
+			else
+				drawJournal(2, (page - _page) * LINES_PER_PAGE);
+			drawScrollBar();
+			screen.slamArea(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT);
+			_wait = false;
+		}
+	} else if (_selector != JH_NONE && events._pressed) {
 		if (frameCounter >= _scrollingTimer) {
 			// Set next scrolling time
 			_scrollingTimer = frameCounter + 6;
@@ -532,38 +549,43 @@ void TattooJournal::highlightJournalControls(bool slamIt) {
 	Common::Point mousePos = events.mousePos();
 	Common::Rect r(JOURNAL_BAR_WIDTH, BUTTON_SIZE + screen.fontHeight() + 13);
 	r.moveTo((SHERLOCK_SCREEN_WIDTH - r.width()) / 2, SHERLOCK_SCREEN_HEIGHT - r.height());
-		
-	// Calculate the Scroll Position Bar
-	int numPages = (_maxPage + LINES_PER_PAGE - 1) / LINES_PER_PAGE - 1;
-	int barWidth = (r.width() - BUTTON_SIZE * 2 - 6) / numPages;
-	barWidth = CLIP(barWidth, BUTTON_SIZE, r.width() - BUTTON_SIZE * 2 - 6);
-
-	int barX = (numPages <= 1) ? r.left + 3 + BUTTON_SIZE : (r.width() - BUTTON_SIZE * 2 - 6 - barWidth)
-		* FIXED_INT_MULTIPLIER / (numPages - 1) * (_page - 1) / FIXED_INT_MULTIPLIER + r.left + 3 + BUTTON_SIZE;
-
-	// See if the mouse is over any of the Journal Controls
-	Common::Rect bounds(r.left, r.top, r.right - 3, r.top + screen.fontHeight() + 7);
-	_selector = JH_NONE;
-	if (bounds.contains(mousePos))
-		_selector = (mousePos.x - r.left) / (r.width() / 3);
 	
-	else if (events._pressed && mousePos.y >= (r.top + screen.fontHeight() + 10)
-			&& mousePos.y < (screen.fontHeight() + 10 + BUTTON_SIZE)) {
-		if (mousePos.x >= r.left && mousePos.x < (r.left + BUTTON_SIZE))
-			// Press on the Scroll Left button
-			_selector = JH_SCROLL_LEFT;
-		else if (mousePos.x >= (r.left + BUTTON_SIZE + 3) && mousePos.x < barX)
-			// Press on area to the left of the thumb, for scrolling back 10 pages
-			_selector = JH_PAGE_LEFT;
-		else if (mousePos.x >= (barX + barWidth) && mousePos.x < (r.right - BUTTON_SIZE - 3))
-			// Press on area to the right of the thumb, for scrolling forward 10 pages
-			_selector = JH_PAGE_RIGHT;
-		else if (mousePos.x >= (r.right - BUTTON_SIZE) && mousePos.x < r.right)
-			// Press of the Scroll Right button
-			_selector = JH_SCROLL_RIGHT;
-		else if (mousePos.x >= barX && mousePos.x < (barX + barWidth))
-			// Mouse on thumbnail
-			_selector = JH_THUMBNAIL;
+	if ((events._pressed || events._released) && _selector == JH_THUMBNAIL) {
+		if (events._released)
+			_selector = JH_NONE;
+	} else {
+		// Calculate the Scroll Position Bar
+		int numPages = (_maxPage + LINES_PER_PAGE - 1) / LINES_PER_PAGE - 1;
+		int barWidth = (r.width() - BUTTON_SIZE * 2 - 6) / numPages;
+		barWidth = CLIP(barWidth, BUTTON_SIZE, r.width() - BUTTON_SIZE * 2 - 6);
+
+		int barX = (numPages <= 1) ? r.left + 3 + BUTTON_SIZE : (r.width() - BUTTON_SIZE * 2 - 6 - barWidth)
+			* FIXED_INT_MULTIPLIER / (numPages - 1) * (_page - 1) / FIXED_INT_MULTIPLIER + r.left + 3 + BUTTON_SIZE;
+
+		// See if the mouse is over any of the Journal Controls
+		Common::Rect bounds(r.left, r.top, r.right - 3, r.top + screen.fontHeight() + 7);
+		_selector = JH_NONE;
+		if (bounds.contains(mousePos))
+			_selector = (mousePos.x - r.left) / (r.width() / 3);
+	
+		else if (events._pressed && mousePos.y >= (r.top + screen.fontHeight() + 10)
+				&& mousePos.y < (r.top + screen.fontHeight() + 10 + BUTTON_SIZE)) {
+			if (mousePos.x >= r.left && mousePos.x < (r.left + BUTTON_SIZE))
+				// Press on the Scroll Left button
+				_selector = JH_SCROLL_LEFT;
+			else if (mousePos.x >= (r.left + BUTTON_SIZE + 3) && mousePos.x < barX)
+				// Press on area to the left of the thumb, for scrolling back 10 pages
+				_selector = JH_PAGE_LEFT;
+			else if (mousePos.x >= (barX + barWidth) && mousePos.x < (r.right - BUTTON_SIZE - 3))
+				// Press on area to the right of the thumb, for scrolling forward 10 pages
+				_selector = JH_PAGE_RIGHT;
+			else if (mousePos.x >= (r.right - BUTTON_SIZE) && mousePos.x < r.right)
+				// Press of the Scroll Right button
+				_selector = JH_SCROLL_RIGHT;
+			else if (mousePos.x >= barX && mousePos.x < (barX + barWidth))
+				// Mouse on thumbnail
+				_selector = JH_THUMBNAIL;
+		}
 	}
 
 	// See if the Search was selected, but is not available
