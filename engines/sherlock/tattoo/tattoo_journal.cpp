@@ -34,7 +34,7 @@ namespace Tattoo {
 
 TattooJournal::TattooJournal(SherlockEngine *vm) : Journal(vm) {
 	_journalImages = nullptr;
-	_selector = _oldSelector = 0;
+	_selector = _oldSelector = JH_NONE;
 	_wait = false;
 	_exitJournal = false;
 	_scrollingTimer = 0;
@@ -121,16 +121,16 @@ void TattooJournal::handleKeyboardEvents() {
 		r.moveTo((SHERLOCK_SCREEN_WIDTH - r.width()) / 2, SHERLOCK_SCREEN_HEIGHT - r.height());
 
 		// See if mouse is over any of the journal controls
-		_selector = -1;
+		_selector = JH_NONE;
 		if (Common::Rect(r.left + 3, r.top + 3, r.right - 3, r.top + screen.fontHeight() + 4).contains(mousePos))
 			_selector = (mousePos.x - r.left) / (r.width() / 3);
 
 		// If the mouse is not over an option, move the mouse to that it points to the first option
-		if (_selector == -1) {
+		if (_selector == JH_NONE) {
 			events.warpMouse(Common::Point(r.left + r.width() / 3 - 10, r.top + screen.fontHeight() + 2));
 		} else {
-			if (_selector == 0)
-				_selector = 2;
+			if (_selector == JH_CLOSE)
+				_selector = JH_PRINT;
 			else
 				--_selector;
 
@@ -224,16 +224,16 @@ void TattooJournal::handleKeyboardEvents() {
 		r.moveTo((SHERLOCK_SCREEN_WIDTH - r.width()) / 2, SHERLOCK_SCENE_HEIGHT - r.height());
 
 		// See if the mouse is over any of the journal controls
-		_selector = -1;
+		_selector = JH_NONE;
 		if (Common::Rect(r.left + 3, r.top + 3, r.right - 3, r.top + screen.fontHeight() + 4).contains(mousePos))
 			_selector = (mousePos.x - r.left) / (r.width() / 3);
 
 		// If the mouse is not over any of the options, move the mouse so that it points to the first option
-		if (_selector == -1) {
+		if (_selector == JH_NONE) {
 			events.warpMouse(Common::Point(r.left + r.width() / 3 - 10, r.top + screen.fontHeight() + 2));
 		} else {
-			if (_selector == 2)
-				_selector = 0;
+			if (_selector == JH_PRINT)
+				_selector = JH_NONE;
 			else
 				++_selector;
 
@@ -247,14 +247,18 @@ void TattooJournal::handleButtons() {
 	Screen &screen = *_vm->_screen;
 	uint32 frameCounter = events.getFrameCounter();
 
-	if (_selector != -1 && events._pressed) {
+	// If they're dragging the scrollbar thumb, keep it selected whilst the button is being held
+	if ((events._pressed || events._released) && _selector == JH_THUMBNAIL)
+		return;
+
+	if (_selector != JH_NONE && events._pressed) {
 		if (frameCounter >= _scrollingTimer) {
 			// Set next scrolling time
 			_scrollingTimer = frameCounter + 6;
-
+			
 			// Handle different scrolling actions
 			switch (_selector) {
-			case 3:
+			case JH_SCROLL_LEFT:
 				// Scroll left (1 page back)
 				if (_page > 1) {
 					// Scroll Up
@@ -265,7 +269,7 @@ void TattooJournal::handleButtons() {
 				}
 				break;
 
-			case 4:
+			case JH_PAGE_LEFT:
 				// Page left (10 pages back)
 				if (_page > 1) {
 					// Scroll Up 10 Pages if possible
@@ -280,7 +284,7 @@ void TattooJournal::handleButtons() {
 				}
 				break;
 
-			case 5:
+			case JH_PAGE_RIGHT:
 				// Page right (10 pages ahead)
 				if (_down) {
 					// Scroll Down 10 Pages
@@ -294,7 +298,7 @@ void TattooJournal::handleButtons() {
 				}
 				break;
 
-			case 6:
+			case JH_SCROLL_RIGHT:
 				// Scroll right (1 Page Ahead)
 				if (_down) {
 					// Scroll Down
@@ -315,11 +319,11 @@ void TattooJournal::handleButtons() {
 		_scrollingTimer = 0;
 
 		switch (_selector) {
-		case 0:
+		case JH_CLOSE:
 			_exitJournal = true;
 			break;
 
-		case 1: {
+		case JH_SEARCH: {
 			// Search Journal
 			disableControls();
 
@@ -354,7 +358,7 @@ void TattooJournal::handleButtons() {
 			break;
 		}
 
-		case 2:
+		case JH_PRINT:
 			// Print Journal - not implemented in ScummVM
 			break;
 
@@ -530,7 +534,7 @@ void TattooJournal::highlightJournalControls(bool slamIt) {
 	r.moveTo((SHERLOCK_SCREEN_WIDTH - r.width()) / 2, SHERLOCK_SCREEN_HEIGHT - r.height());
 		
 	// Calculate the Scroll Position Bar
-	int numPages = (_maxPage + LINES_PER_PAGE) / LINES_PER_PAGE;
+	int numPages = (_maxPage + LINES_PER_PAGE - 1) / LINES_PER_PAGE - 1;
 	int barWidth = (r.width() - BUTTON_SIZE * 2 - 6) / numPages;
 	barWidth = CLIP(barWidth, BUTTON_SIZE, r.width() - BUTTON_SIZE * 2 - 6);
 
@@ -539,52 +543,50 @@ void TattooJournal::highlightJournalControls(bool slamIt) {
 
 	// See if the mouse is over any of the Journal Controls
 	Common::Rect bounds(r.left, r.top, r.right - 3, r.top + screen.fontHeight() + 7);
-	_selector = -1;
+	_selector = JH_NONE;
 	if (bounds.contains(mousePos))
 		_selector = (mousePos.x - r.left) / (r.width() / 3);
 	
-	else if (events._pressed) {
-		if (Common::Rect(r.left, r.top + screen.fontHeight() + 10, r.left + BUTTON_SIZE, r.top +
-				screen.fontHeight() + 10 + BUTTON_SIZE).contains(mousePos))
+	else if (events._pressed && mousePos.y >= (r.top + screen.fontHeight() + 10)
+			&& mousePos.y < (screen.fontHeight() + 10 + BUTTON_SIZE)) {
+		if (mousePos.x >= r.left && mousePos.x < (r.left + BUTTON_SIZE))
 			// Press on the Scroll Left button
-			_selector = 3;
-		else if (Common::Rect(r.left + BUTTON_SIZE + 3, r.top + screen.fontHeight() + 10,
-				r.left + BUTTON_SIZE + 3 + (barX - r.left - BUTTON_SIZE - 3), r.top + screen.fontHeight() + 
-				10 + BUTTON_SIZE).contains(mousePos))
-			// Press on the Page Left button
-			_selector = 4;
-		else if (Common::Rect(barX + barWidth, r.top + screen.fontHeight() + 10, 
-				barX + barWidth + (r.right - BUTTON_SIZE - 3 - barX - barWidth),
-				r.top + screen.fontHeight() + 10 + BUTTON_SIZE).contains(mousePos))
-			// Press on the Page Right button
-			_selector = 5;
-		else if (Common::Rect(r.right - BUTTON_SIZE - 3, r.top + screen.fontHeight() + 10, r.right - 3, 
-				r.top + screen.fontHeight() + 10 + BUTTON_SIZE).contains(mousePos))
+			_selector = JH_SCROLL_LEFT;
+		else if (mousePos.x >= (r.left + BUTTON_SIZE + 3) && mousePos.x < barX)
+			// Press on area to the left of the thumb, for scrolling back 10 pages
+			_selector = JH_PAGE_LEFT;
+		else if (mousePos.x >= (barX + barWidth) && mousePos.x < (r.right - BUTTON_SIZE - 3))
+			// Press on area to the right of the thumb, for scrolling forward 10 pages
+			_selector = JH_PAGE_RIGHT;
+		else if (mousePos.x >= (r.right - BUTTON_SIZE) && mousePos.x < r.right)
 			// Press of the Scroll Right button
-			_selector = 6;
-		}
+			_selector = JH_SCROLL_RIGHT;
+		else if (mousePos.x >= barX && mousePos.x < (barX + barWidth))
+			// Mouse on thumbnail
+			_selector = JH_THUMBNAIL;
+	}
 
 	// See if the Search was selected, but is not available
-	if (_journal.empty() && (_selector == 1 || _selector == 2))
-		_selector = -1;
+	if (_journal.empty() && (_selector == JH_SEARCH || _selector == JH_PRINT))
+		_selector = JH_NONE;
 
-	if (_selector == 4 && _oldSelector == 5)
-		_selector = 5;
-	else if (_selector == 5 && _oldSelector == 4)
-		_selector = 4;
+	if (_selector == JH_PAGE_LEFT && _oldSelector == JH_PAGE_RIGHT)
+		_selector = JH_PAGE_RIGHT;
+	else if (_selector == JH_PAGE_RIGHT && _oldSelector == JH_PAGE_LEFT)
+		_selector = JH_PAGE_LEFT;
 
 	// See if they're pointing at a different control
 	if (_selector != _oldSelector) {
 		// Print the Journal commands
 		int xp = r.left + r.width() / 6;
-		byte color = (_selector == 0) ? COMMAND_HIGHLIGHTED : INFO_TOP;
+		byte color = (_selector == JH_CLOSE) ? COMMAND_HIGHLIGHTED : INFO_TOP;
 
 		screen.gPrint(Common::Point(xp - screen.stringWidth(FIXED(CloseJournal)) / 2, r.top + 5),
 			color, "%s", FIXED(CloseJournal));
 		xp += r.width() / 3;
 
 		if (!_journal.empty())
-			color = (_selector == 1) ? COMMAND_HIGHLIGHTED : INFO_TOP;
+			color = (_selector == JH_SEARCH) ? COMMAND_HIGHLIGHTED : INFO_TOP;
 		else
 			color = INFO_BOTTOM;
 		screen.gPrint(Common::Point(xp - screen.stringWidth(FIXED(SearchJournal)) / 2, r.top + 5),
@@ -614,7 +616,7 @@ void TattooJournal::highlightSearchControls(bool slamIt) {
 	const char *SEARCH_COMMANDS[3] = { FIXED(AbortSearch), FIXED(SearchBackwards), FIXED(SearchForwards) };
 
 	// See if the mouse is over any of the Journal Controls
-	_selector = -1;
+	_selector = JH_NONE;
 	if (Common::Rect(r.left + 3, r.top + 3, r.right - 3, r.top + 7 + screen.fontHeight()).contains(mousePos))
 		_selector = (mousePos.x - r.left) / (r.width() / 3);
 
@@ -647,7 +649,7 @@ void TattooJournal::drawScrollBar() {
 	r.moveTo((SHERLOCK_SCREEN_WIDTH - r.width()) / 2, SHERLOCK_SCREEN_HEIGHT - r.height());
 
 	// Calculate the Scroll Position Bar
-	int numPages = (_maxPage + LINES_PER_PAGE) / LINES_PER_PAGE;
+	int numPages = (_maxPage + LINES_PER_PAGE - 1) / LINES_PER_PAGE - 1;
 	int barWidth = (r.width() - BUTTON_SIZE * 2 - 6) / numPages;
 	barWidth = CLIP(barWidth, BUTTON_SIZE, r.width() - BUTTON_SIZE * 2 - 6);
 	int barX;
@@ -662,7 +664,7 @@ void TattooJournal::drawScrollBar() {
 
 	// Draw the scroll bar here
 	// Draw the Scroll Left button
-	raised = _selector != 3;
+	raised = _selector != JH_SCROLL_LEFT;
 	screen._backBuffer1.fillRect(Common::Rect(r.left, r.top + screen.fontHeight() + 12, r.left + BUTTON_SIZE,
 		r.top + screen.fontHeight() + BUTTON_SIZE + 9), INFO_MIDDLE);
 	ui.drawDialogRect(screen._backBuffer1, Common::Rect(r.left + 3, r.top + screen.fontHeight() + 10, r.left + 3 + BUTTON_SIZE, 
@@ -679,7 +681,7 @@ void TattooJournal::drawScrollBar() {
 		r.top + screen.fontHeight() + 13 + BUTTON_SIZE / 2, color);
 
 	// Draw the Scroll Right button
-	raised = _selector != 6;
+	raised = _selector != JH_SCROLL_RIGHT;
 	screen._backBuffer1.fillRect(Common::Rect(r.right - BUTTON_SIZE - 1, r.top + screen.fontHeight() + 12, 
 		r.right - 5, r.top + screen.fontHeight() + BUTTON_SIZE + 9), INFO_MIDDLE);
 	ui.drawDialogRect(screen._backBuffer1, Common::Rect(r.right - BUTTON_SIZE - 3, r.top + screen.fontHeight() + 10, r.right - 3,
@@ -833,22 +835,22 @@ int TattooJournal::getFindName(bool printError) {
 				r.moveTo((SHERLOCK_SCREEN_WIDTH - r.width()) / 2, (SHERLOCK_SCREEN_HEIGHT - r.height()) / 2);
 
 				// See if the mouse is over any of the journal controls
-				_selector = -1;
+				_selector = JH_NONE;
 				if (Common::Rect(r.left + 3, r.top + 3, r.right - 3, r.top + screen.fontHeight() + 4).contains(mousePos))
 					_selector = (mousePos.x - r.left) / (r.width() / 3);
 
 				// If the mouse is not over any of the options, move the mouse so that it points to the first option
-				if (_selector == -1) {
+				if (_selector == JH_NONE) {
 					events.warpMouse(Common::Point(r.left + r.width() / 3, r.top + screen.fontHeight() + 2));
 				} else {
 					if (keyState.keycode & Common::KBD_SHIFT) {
-						if (_selector == 0)
-							_selector = 2;
+						if (_selector == JH_CLOSE)
+							_selector = JH_PRINT;
 						else
 							--_selector;
 					} else {
-						if (_selector == 2)
-							_selector = 0;
+						if (_selector == JH_PRINT)
+							_selector = JH_CLOSE;
 						else
 							++_selector;
 					}
@@ -872,15 +874,14 @@ int TattooJournal::getFindName(bool printError) {
 		}
 
 		if (events._released || events._rightReleased) {
-			switch (_selector)
-			{
-			case 0:
+			switch (_selector) {
+			case JH_CLOSE:
 				done = -1;
 				break;
-			case 1:
+			case JH_SEARCH:
 				done = 2;
 				break;
-			case 2:
+			case JH_PRINT:
 				done = 1;
 				break;
 			default:

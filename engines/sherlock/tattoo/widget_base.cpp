@@ -277,7 +277,7 @@ void WidgetBase::handleScrollbarEvents(int index, int pageSize, int count) {
 	TattooUserInterface &ui = *(TattooUserInterface *)_vm->_ui;
 	Common::Point mousePos = events.mousePos();
 
-	// If they have selected the sollbar, return with the Scroll Bar Still selected
+	// If they're dragging the scrollbar thumb, keep it selected whilst the button is being held
 	if ((events._pressed || events._released) && ui._scrollHighlight == SH_THUMBNAIL)
 		return;
 

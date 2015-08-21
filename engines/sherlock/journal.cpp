@@ -153,10 +153,7 @@ bool Journal::drawJournal(int direction, int howFar) {
 		// or a searched for keyword is found
 		for (temp = 0; (temp < (howFar / LINES_PER_PAGE)) && !endJournal && !searchSuccessful; ++temp) {
 			// Handle animating mouse cursor
-			int cursorNum = (int)events.getCursor() + 1;
-			if (cursorNum >(WAIT + 2))
-				cursorNum = WAIT;
-			events.setCursor((CursorId)cursorNum);
+			events.animateCursorIfNeeded();
 
 			lineNum = 0;
 			savedIndex = _index;
