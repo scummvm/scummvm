@@ -885,12 +885,11 @@ void ScalpelTalk::pushSequenceEntry(Object *obj) {
 	seqEntry._objNum = scene._bgShapes.indexOf(*obj);
 
 	if (seqEntry._objNum != -1) {
-		Object &obj = scene._bgShapes[seqEntry._objNum];
 		for (uint idx = 0; idx < MAX_TALK_SEQUENCES; ++idx)
-			seqEntry._sequences.push_back(obj._sequences[idx]);
+			seqEntry._sequences.push_back(obj->_sequences[idx]);
 
-		seqEntry._frameNumber = obj._frameNumber;
-		seqEntry._seqTo = obj._seqTo;
+		seqEntry._frameNumber = obj->_frameNumber;
+		seqEntry._seqTo = obj->_seqTo;
 	}
 
 	_sequenceStack.push(seqEntry);
