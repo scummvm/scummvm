@@ -293,7 +293,6 @@ void TattooScene::checkBgShapes() {
 }
 
 void TattooScene::freeScene() {
-	TattooTalk &talk = *(TattooTalk *)_vm->_talk;
 	TattooUserInterface &ui = *(TattooUserInterface *)_vm->_ui;
 	Scene::freeScene();
 
