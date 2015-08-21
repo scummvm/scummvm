@@ -84,6 +84,12 @@ public:
 	 * Reset viewing position to the start of the journal
 	 */
 	virtual void resetPosition();
+
+	/**
+	 * Records statements that are said, in the order which they are said. The player
+	 * can then read the journal to review them
+	 */
+	virtual void record(int converseNum, int statementNum, bool replyOnly = false);
 };
 
 } // End of namespace Scalpel

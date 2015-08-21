@@ -625,6 +625,12 @@ void ScalpelJournal::resetPosition() {
 	_page = 1;
 }
 
+void ScalpelJournal::record(int converseNum, int statementNum, bool replyOnly) {
+	// there seems to be no journal in the 3DO version
+	if (!IS_3DO)
+		Journal::record(converseNum, statementNum, replyOnly);
+}
+
 } // End of namespace Scalpel
 
 } // End of namespace Sherlock

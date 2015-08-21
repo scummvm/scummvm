@@ -94,6 +94,12 @@ public:
 	 * Draw the journal background, frame, and interface buttons
 	 */
 	virtual void drawFrame();
+
+	/**
+	 * Records statements that are said, in the order which they are said. The player
+	 * can then read the journal to review them
+	 */
+	virtual void record(int converseNum, int statementNum, bool replyOnly = false);
 };
 
 } // End of namespace Tattoo

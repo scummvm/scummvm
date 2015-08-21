@@ -903,6 +903,14 @@ int TattooJournal::getFindName(bool printError) {
 	return result;
 }
 
+void TattooJournal::record(int converseNum, int statementNum, bool replyOnly) {
+	TattooEngine &vm = *(TattooEngine *)_vm;
+
+	// Only record activity in the Journal if the player is Holmes (i.e. we're paast the prologoue)
+	if (_vm->readFlags(FLAG_PLAYER_IS_HOLMES) && !vm._runningProlog)
+		Journal::record(converseNum, statementNum, replyOnly);
+}
+
 } // End of namespace Tattoo
 
 } // End of namespace Sherlock
