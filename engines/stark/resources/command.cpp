@@ -26,6 +26,7 @@
 
 #include "engines/stark/formats/xrc.h"
 
+#include "engines/stark/movement/turn.h"
 #include "engines/stark/movement/walk.h"
 
 #include "engines/stark/resources/animscript.h"
@@ -97,7 +98,7 @@ Command *Command::execute(uint32 callMode, Script *script) {
 	case kItem3DWalkTo:
 		return opItem3DWalkTo(script, _arguments[1].referenceValue, _arguments[2].referenceValue, _arguments[3].intValue);
 	case kItemLookAt:
-		return opItemLookAt(_arguments[1].referenceValue, _arguments[2].referenceValue, _arguments[3].intValue, _arguments[4].intValue);
+		return opItemLookAt(script, _arguments[1].referenceValue, _arguments[2].referenceValue, _arguments[3].intValue,	_arguments[4].intValue);
 	case kItemEnable:
 		return opItemEnable(_arguments[1].referenceValue, _arguments[2].intValue);
 	case kItemSelectInInventory:
@@ -126,8 +127,8 @@ Command *Command::execute(uint32 callMode, Script *script) {
 		return opKnowledgeAssignNegatedBool(_arguments[1].referenceValue, _arguments[2].referenceValue);
 	case kSoundPlay:
 		return opSoundPlay(script, _arguments[1].referenceValue, _arguments[2].intValue);
-	case kLookDirection:
-		return opLookDirection(_arguments[1].referenceValue, _arguments[2].intValue, _arguments[3].intValue);
+	case kItemLookDirection:
+		return opItemLookDirection(script, _arguments[1].referenceValue, _arguments[2].intValue, _arguments[3].intValue);
 	case kStopPlayingSound:
 		return opStopPlayingSound(_arguments[1].referenceValue);
 	case kGoLayer:
@@ -250,7 +251,7 @@ Command *Command::opScriptPause(Script *script, const ResourceReference &duratio
 Command *Command::opWalkTo(Script *script, const ResourceReference &objectRef, int32 suspend) {
 	Resources::ModelItem *april = StarkGlobal->getCurrent()->getInteractive();
 
-	Math::Vector3d destinationPosition = getObjectPosition(objectRef, nullptr);
+	Math::Vector3d destinationPosition = getObjectPosition(objectRef);
 	Math::Vector3d currentPosition = april->getPosition3D();
 
 	if (destinationPosition == currentPosition) {
@@ -336,6 +337,16 @@ Math::Vector3d Command::getObjectPosition(const ResourceReference &targetRef, in
 
 	        break;
 		}
+		case Type::kItem: {
+			FloorPositionedItem *item = Object::cast<FloorPositionedItem>(target);
+			position = item->getPosition3D();
+
+			if (floorFace) {
+				*floorFace = item->getFloorFaceIndex();
+			}
+
+			break;
+		}
 		default:
 			warning("Unimplemented getObjectPosition target type %s", target->getType().getName());
 	}
@@ -357,7 +368,7 @@ Command *Command::opItem3DPlaceOn(const ResourceReference &itemRef, const Resour
 
 Command *Command::opItem3DWalkTo(Script *script, const ResourceReference &itemRef, const ResourceReference &targetRef, bool suspend) {
 	FloorPositionedItem *item = itemRef.resolve<FloorPositionedItem>();
-	Math::Vector3d targetPosition = getObjectPosition(targetRef, nullptr);
+	Math::Vector3d targetPosition = getObjectPosition(targetRef);
 
 	Walk *walk = new Walk(item);
 	walk->setDestination(targetPosition);
@@ -374,13 +385,26 @@ Command *Command::opItem3DWalkTo(Script *script, const ResourceReference &itemRe
 	}
 }
 
-Command *Command::opItemLookAt(const ResourceReference &itemRef1, const ResourceReference &itemRef2, int32 unknown1, int32 unknown2) {
-	assert(_arguments.size() == 5);
-	Object *item1 = itemRef1.resolve<Object>();
-	Object *item2 = itemRef2.resolve<Object>();
-	warning("(TODO: Implement) opItemLookAt(%s, %s, %d, %d), %s : %s", item1->getName().c_str(), item2->getName().c_str(), unknown1, unknown2, itemRef1.describe().c_str(), itemRef2.describe().c_str());
+Command *Command::opItemLookAt(Script *script, const ResourceReference &itemRef, const ResourceReference &objRef, bool suspend, int32 unknown) {
+	FloorPositionedItem *item = itemRef.resolve<FloorPositionedItem>();
+	Math::Vector3d currentPosition = item->getPosition3D();
 
-	return nextCommand();
+	Math::Vector3d targetPosition = getObjectPosition(objRef);
+	Math::Vector3d targetDirection = targetPosition - currentPosition;
+
+	Turn *movement = new Turn(item);
+	movement->setTargetDirection(targetDirection);
+	movement->start();
+
+	item->setMovement(movement);
+
+	if (suspend) {
+		script->suspend(item);
+		item->setMovementSuspendedScript(script);
+		return this; // Stay on the same command while suspended
+	} else {
+		return nextCommand();
+	}
 }
 
 Command *Command::opItemEnable(const ResourceReference &itemRef, int32 enable) {
@@ -559,12 +583,33 @@ Command *Command::opSoundPlay(Script *script, const ResourceReference &soundRef,
 	}
 }
 
-Command *Command::opLookDirection(const ResourceReference &itemRef, int32 unknown1, int32 unknown2) {
-	assert(_arguments.size() == 4);
-	Object *itemObj = itemRef.resolve<Object>();
-	warning("(TODO: Implement) opLookDirection(%s %d %d) : %s", itemObj->getName().c_str(), unknown1, unknown2, itemRef.describe().c_str());
+Command *Command::opItemLookDirection(Script *script, const ResourceReference &itemRef, int32 direction, bool suspend) {
+	FloorPositionedItem *item = itemRef.resolve<FloorPositionedItem>();
 
-	return nextCommand();
+	Current *current = StarkGlobal->getCurrent();
+	Camera *camera = current->getCamera();
+	float cameraAngle = camera->getHorizontalAngle();
+	float targetAngle = abs(direction + cameraAngle) % 360;
+
+	Math::Matrix3 rot;
+	rot.buildAroundZ(-targetAngle);
+
+	Math::Vector3d directionVector(1.0, 0.0, 0.0);
+	rot.transformVector(&directionVector);
+
+	Turn *movement = new Turn(item);
+	movement->setTargetDirection(directionVector);
+	movement->start();
+
+	item->setMovement(movement);
+
+	if (suspend) {
+		script->suspend(item);
+		item->setMovementSuspendedScript(script);
+		return this; // Stay on the same command while suspended
+	} else {
+		return nextCommand();
+	}
 }
 
 Command *Command::opStopPlayingSound(const ResourceReference &soundRef) {
@@ -778,7 +823,7 @@ Command *Command::opIsOnPlace(const ResourceReference &itemRef, const ResourceRe
 	FloorPositionedItem *item = itemRef.resolve<FloorPositionedItem>();
 
 	Math::Vector3d itemPostion = item->getPosition3D();
-	Math::Vector3d testPosition = getObjectPosition(positionRef, nullptr);
+	Math::Vector3d testPosition = getObjectPosition(positionRef);
 
 	return nextCommandIf(itemPostion == testPosition);
 }
@@ -787,7 +832,7 @@ Command *Command::opIsOnNearPlace(const ResourceReference &itemRef, const Resour
 	FloorPositionedItem *item = itemRef.resolve<FloorPositionedItem>();
 
 	Math::Vector3d itemPostion = item->getPosition3D();
-	Math::Vector3d testPosition = getObjectPosition(positionRef, nullptr);
+	Math::Vector3d testPosition = getObjectPosition(positionRef);
 
 	return nextCommandIf(itemPostion.getDistanceTo(testPosition) < testDistance);
 }

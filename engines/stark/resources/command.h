@@ -99,7 +99,7 @@ public:
 
 		kSoundPlay = 112,
 
-		kLookDirection = 118,
+		kItemLookDirection = 118,
 
 		kStopPlayingSound = 119,
 		kGoLayer = 120,
@@ -173,7 +173,7 @@ protected:
 
 	Command *resolveArgumentSiblingReference(const Argument &argument);
 
-	Math::Vector3d getObjectPosition(const ResourceReference &targetRef, int32 *floorFace);
+	Math::Vector3d getObjectPosition(const ResourceReference &targetRef, int32 *floorFace = nullptr);
 
 	Command *opScriptBegin();
 	Command *opScriptCall(Script *script, const ResourceReference &scriptRef, int32 synchronous);
@@ -190,7 +190,7 @@ protected:
 	Command *opFadeScene(int32 unknown1, int32 unknown2, int32 unknown3);
 	Command *opItem3DPlaceOn(const ResourceReference &itemRef, const ResourceReference &targetRef);
 	Command *opItem3DWalkTo(Script *script, const ResourceReference &itemRef, const ResourceReference &targetRef, bool suspend);
-	Command *opItemLookAt(const ResourceReference &itemRef, const ResourceReference &itemRef2, int32 unknown, int32 unknown2);
+	Command *opItemLookAt(Script *script, const ResourceReference &itemRef, const ResourceReference &objRef, bool suspend, int32 unknown);
 	Command *opItemEnable(const ResourceReference &itemRef, int32 enable);
 	Command *opItemSetActivity(const ResourceReference &itemRef, int32 unknown1, int32 unknown2);
 	Command *opItemSelectInInventory(const ResourceReference &itemRef);
@@ -205,7 +205,7 @@ protected:
 	Command *opKnowledgeAssignBool(const ResourceReference &knowledgeRef1, const ResourceReference &knowledgeRef2);
 	Command *opKnowledgeAssignNegatedBool(const ResourceReference &knowledgeRef1, const ResourceReference &knowledgeRef2);
 	Command *opSoundPlay(Script *script, const ResourceReference &soundRef, int32 suspend);
-	Command *opLookDirection(const ResourceReference &itemRef, int32 unknown1, int32 unknown2);
+	Command *opItemLookDirection(Script *script, const ResourceReference &itemRef, int32 direction, bool suspend);
 	Command *opStopPlayingSound(const ResourceReference &soundRef);
 	Command *opGoLayer(const ResourceReference &layerRef);
 	Command *opScrollSet(const ResourceReference &scrollRef);
