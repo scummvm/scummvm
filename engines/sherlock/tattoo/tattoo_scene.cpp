@@ -45,9 +45,12 @@ struct ShapeEntry {
 	int _yp;
 	int _objNum;
 
-	ShapeEntry(TattooPerson *person, int yp) : _shape(nullptr), _person(person), _yp(yp), _isAnimation(false), _objNum(-1) {}
-	ShapeEntry(Object *shape, int yp, int objNum) : _shape(shape), _person(nullptr), _yp(yp), _isAnimation(false), _objNum(objNum) {}
-	ShapeEntry(int yp) : _shape(nullptr), _person(nullptr), _yp(yp), _isAnimation(true), _objNum(-1) {}
+	ShapeEntry(TattooPerson *person, int yp, int npcIndex) : 
+		_shape(nullptr), _person(person), _yp(yp), _isAnimation(false), _objNum(npcIndex + 1000) {}
+	ShapeEntry(Object *shape, int yp, int objNum) :
+		_shape(shape), _person(nullptr), _yp(yp), _isAnimation(false), _objNum(objNum) {}
+	ShapeEntry(int yp) : 
+		_shape(nullptr), _person(nullptr), _yp(yp), _isAnimation(true), _objNum(-1) {}
 };
 typedef Common::List<ShapeEntry> ShapeList;
 
@@ -170,7 +173,7 @@ void TattooScene::drawAllShapes() {
 	// Queue all active characters for drawing
 	for (int idx = 0; idx < MAX_CHARACTERS; ++idx) {
 		if (people[idx]._type == CHARACTER && people[idx]._walkLoaded)
-			shapeList.push_back(ShapeEntry(&people[idx], people[idx]._position.y / FIXED_INT_MULTIPLIER));
+			shapeList.push_back(ShapeEntry(&people[idx], people[idx]._position.y / FIXED_INT_MULTIPLIER, idx));
 	}
 
 	// Sort the list

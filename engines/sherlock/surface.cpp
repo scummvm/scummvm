@@ -101,20 +101,29 @@ void Surface::blitFrom(const Surface &src, const Common::Point &pt, const Common
 
 void Surface::transBlitFrom(const ImageFrame &src, const Common::Point &pt,
 		bool flipped, int overrideColor, int scaleVal) {
-	Common::Point drawPt(pt.x + src.sDrawXOffset(scaleVal), pt.y + src.sDrawYOffset(scaleVal));
-	transBlitFrom(src._frame, drawPt, flipped, overrideColor, scaleVal);
+	// Since a frame with offsets needs to have the offsets scaled as well, set up a srcBounds that has
+	// the offset as negative left and top amounts accordingly, so the actual frame will be draw at
+	// the correct scaled starting position
+	Common::Rect srcBounds(-src._offset.x, -src._offset.y, src._width, src._height);
+	transBlitFrom(src._frame, pt, srcBounds, flipped, overrideColor, scaleVal);
 }
 
 void Surface::transBlitFrom(const Surface &src, const Common::Point &pt,
 		bool flipped, int overrideColor, int scaleVal) {
 	const Graphics::Surface &s = src._surface;
-	transBlitFrom(s, pt, flipped, overrideColor, scaleVal);
+	transBlitFrom(s, pt, Common::Rect(0, 0, src.w(), src.h()), flipped, overrideColor, scaleVal);
 }
 
 void Surface::transBlitFrom(const Graphics::Surface &src, const Common::Point &pt,
 		bool flipped, int overrideColor, int scaleVal) {
+	transBlitFrom(src, pt, Common::Rect(0, 0, src.w, src.h), flipped, overrideColor, scaleVal);
+}
+
+void Surface::transBlitFrom(const Graphics::Surface &src, const Common::Point &destPos,
+		const Common::Rect &srcBounds, bool flipped, int overrideColor, int scaleVal) {
 	if (scaleVal == SCALE_THRESHOLD) {
-		transBlitFromUnscaled(src, pt, flipped, overrideColor);
+		transBlitFromUnscaled(src, Common::Point(destPos.x - srcBounds.left, destPos.y - srcBounds.top), 
+			flipped, overrideColor);
 		return;
 	}
 
@@ -123,22 +132,22 @@ void Surface::transBlitFrom(const Graphics::Surface &src, const Common::Point &p
 	int scaleXCtr = 0, scaleYCtr = 0;
 	int destX, destY;
 	int xCtr, yCtr;
-	int maxX = pt.x;
+	int maxX = destPos.x;
 
-	for (yCtr = 0, destY = pt.y; yCtr < src.h && destY < this->h(); ++yCtr) {
+	for (yCtr = srcBounds.top, destY = destPos.y; yCtr < srcBounds.bottom && destY < this->h(); ++yCtr) {
 		// Handle skipping lines if Y scaling
 		scaleYCtr += scaleY;
 		
 		while (scaleYCtr >= SCALE_THRESHOLD && destY < this->h()) {
 			scaleYCtr -= SCALE_THRESHOLD;
 
-			if (destY >= 0) {
+			if (destY >= 0 && yCtr >= 0 && yCtr < src.h) {
 				// Handle drawing the line
-				const byte *pSrc = (const byte *)src.getBasePtr(flipped ? src.w - 1 : 0, yCtr);
-				byte *pDest = (byte *)getBasePtr(pt.x, destY);
+				const byte *pSrc = (const byte *)src.getBasePtr(flipped ? srcBounds.right - 1 : srcBounds.left, yCtr);
+				byte *pDest = (byte *)getBasePtr(destPos.x, destY);
 				scaleXCtr = 0;
 
-				for (xCtr = 0, destX = pt.x; xCtr < src.w && destX < this->w(); ++xCtr) {
+				for (xCtr = srcBounds.left, destX = destPos.x; xCtr < src.w && destX < this->w(); ++xCtr) {
 					// Handle horizontal scaling
 					scaleXCtr += scaleX;
 
@@ -146,7 +155,7 @@ void Surface::transBlitFrom(const Graphics::Surface &src, const Common::Point &p
 						scaleXCtr -= SCALE_THRESHOLD;
 
 						// Only handle on-screen pixels
-						if (destX >= 0 && *pSrc != TRANSPARENCY)
+						if (destX >= 0 && xCtr >= 0 && xCtr < src.w && *pSrc != TRANSPARENCY)
 							*pDest = *pSrc;
 
 						++pDest;
@@ -163,7 +172,7 @@ void Surface::transBlitFrom(const Graphics::Surface &src, const Common::Point &p
 	}
 
 	// Mark the affected area
-	addDirtyRect(Common::Rect(pt.x, pt.y, maxX, destY));
+	addDirtyRect(Common::Rect(destPos.x, destPos.y, maxX, destY));
 }
 
 void Surface::transBlitFromUnscaled(const Graphics::Surface &src, const Common::Point &pt,
