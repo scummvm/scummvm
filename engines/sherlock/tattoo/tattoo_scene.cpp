@@ -43,15 +43,16 @@ struct ShapeEntry {
 	TattooPerson *_person;
 	bool _isAnimation;
 	int _yp;
+	int _objNum;
 
-	ShapeEntry(TattooPerson *person, int yp) : _shape(nullptr), _person(person), _yp(yp), _isAnimation(false) {}
-	ShapeEntry(Object *shape, int yp) : _shape(shape), _person(nullptr), _yp(yp), _isAnimation(false) {}
-	ShapeEntry(int yp) : _shape(nullptr), _person(nullptr), _yp(yp), _isAnimation(true) {}
+	ShapeEntry(TattooPerson *person, int yp) : _shape(nullptr), _person(person), _yp(yp), _isAnimation(false), _objNum(-1) {}
+	ShapeEntry(Object *shape, int yp, int objNum) : _shape(shape), _person(nullptr), _yp(yp), _isAnimation(false), _objNum(objNum) {}
+	ShapeEntry(int yp) : _shape(nullptr), _person(nullptr), _yp(yp), _isAnimation(true), _objNum(-1) {}
 };
 typedef Common::List<ShapeEntry> ShapeList;
 
 static bool sortImagesY(const ShapeEntry &s1, const ShapeEntry &s2) {
-	return s1._yp <= s2._yp;
+	return s1._yp < s2._yp || (s1._yp == s2._yp && s1._objNum < s2._objNum);
 }
 
 /*----------------------------------------------------------------*/
@@ -149,10 +150,10 @@ void TattooScene::drawAllShapes() {
 		if (obj._type == ACTIVE_BG_SHAPE && (obj._misc == NORMAL_BEHIND || obj._misc == NORMAL_FORWARD)) {
 			if (obj._scaleVal == SCALE_THRESHOLD)
 				shapeList.push_back(ShapeEntry(&obj, obj._position.y + obj._imageFrame->_offset.y +
-					obj._imageFrame->_height));
+					obj._imageFrame->_height, idx));
 			else
 				shapeList.push_back(ShapeEntry(&obj, obj._position.y + obj._imageFrame->sDrawYOffset(obj._scaleVal) +
-					obj._imageFrame->sDrawYSize(obj._scaleVal)));
+					obj._imageFrame->sDrawYSize(obj._scaleVal), idx));
 		}
 	}
 
