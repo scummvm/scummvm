@@ -68,7 +68,7 @@ protected:
 	/**
 	 * Called when the active speaker is switched
 	 */
-	virtual void switchSpeaker(int subIndex);
+	virtual void switchSpeaker();
 
 	/**
 	 * Called when a character being spoken to has no talk options to display

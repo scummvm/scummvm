@@ -540,10 +540,10 @@ void ScalpelTalk::nothingToSay() {
 	error("Character had no talk options available");
 }
 
-void ScalpelTalk::switchSpeaker(int subIndex) {
+void ScalpelTalk::switchSpeaker() {
 	// If it's the 3DO, pass on to start the actor's conversation movie
 	if (IS_3DO)
-		talk3DOMovieTrigger(subIndex);
+		talk3DOMovieTrigger(_3doSpeechIndex++);
 }
 
 void ScalpelTalk::talk3DOMovieTrigger(int subIndex) {

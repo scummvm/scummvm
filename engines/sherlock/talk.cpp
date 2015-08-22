@@ -113,6 +113,7 @@ Talk::Talk(SherlockEngine *vm) : _vm(vm) {
 	_scriptSaveIndex = -1;
 	_opcodes = nullptr;
 	_opcodeTable = nullptr;
+	_3doSpeechIndex = -1;
 
 	_charCount = 0;
 	_line = 0;
@@ -575,6 +576,8 @@ void Talk::loadTalkFile(const Common::String &filename) {
 	// Create the base of the sound filename used for talking in Rose Tattoo
 	if (IS_ROSE_TATTOO && _scriptMoreFlag != 1)
 		sound._talkSoundFile = Common::String(filename.c_str(), filename.c_str() + 7) + ".";
+	else if (IS_3DO)
+		_3doSpeechIndex = 1;
 
 	// Open the talk file for reading
 	Common::SeekableReadStream *talkStream = res.load(talkFile);
@@ -744,9 +747,6 @@ void Talk::doScript(const Common::String &script) {
 		}
 	}
 
-	bool  speakerSwitched = true;
-	uint16 subIndex = 1;
-
 	do {
 		Common::String tempString;
 		_wait = 0;
@@ -769,9 +769,6 @@ void Talk::doScript(const Common::String &script) {
 				break;
 			}
 
-			if (c == _opcodes[OP_SWITCH_SPEAKER])
-				speakerSwitched = true;
-
 			++str;
 		} else {
 			// Handle drawing the talk interface with the text
@@ -788,12 +785,6 @@ void Talk::doScript(const Common::String &script) {
 
 			ui._windowOpen = true;
 			_openTalkWindow = false;
-		}
-
-		if ((_wait) && (speakerSwitched)) {
-			switchSpeaker(subIndex);
-			speakerSwitched = false;
-			++subIndex;
 		}
 
 		if (_wait)
@@ -839,11 +830,12 @@ int Talk::waitForMore(int delay) {
 	}
 
 	// Handle playing any speech associated with the text being displayed
-	if (IS_ROSE_TATTOO && sound._speechOn) {
+	switchSpeaker();
+	if (sound._speechOn && IS_ROSE_TATTOO) {
 		sound.playSpeech(sound._talkSoundFile);
 		sound._talkSoundFile.setChar(sound._talkSoundFile.lastChar() + 1, sound._talkSoundFile.size() - 1);
-		playingSpeech = sound.isSpeechPlaying();
 	}
+	playingSpeech = sound.isSpeechPlaying();
 
 	do {
 		if (IS_SERRATED_SCALPEL && sound._speechOn && !sound.isSpeechPlaying())
