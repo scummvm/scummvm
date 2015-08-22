@@ -21,6 +21,7 @@ MODULE_OBJS := \
 	movement/movement.o \
 	movement/shortestpath.o \
 	movement/stringpullingpath.o \
+	movement/turn.o \
 	movement/walk.o \
 	resources/anim.o \
 	resources/animhierarchy.o \
