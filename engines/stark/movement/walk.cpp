@@ -37,7 +37,8 @@ namespace Stark {
 
 Walk::Walk(Resources::FloorPositionedItem *item) :
 	Movement(item),
-	_running(false) {
+	_running(false),
+	_turnDirection(kTurnNone) {
 	_path = new StringPullingPath();
 }
 
@@ -80,22 +81,45 @@ void Walk::updatePath() const {
 void Walk::onGameLoop() {
 	Resources::Floor *floor = StarkGlobal->getCurrent()->getFloor();
 
-	// Get the direction to walk into
+	// Get the target to walk to
 	Math::Vector3d currentPosition = _item->getPosition3D();
 	Math::Vector3d target = _path->computeWalkTarget(currentPosition);
-	Math::Vector3d direction;
 
-	direction = target - currentPosition;
+	// Compute the direction to walk into
+	Math::Vector3d direction = target - currentPosition;
+	direction.z() = 0;
 	direction.normalize();
 
-	// Compute the new position using the distance per gameloop
-	float distancePerGameloop = computeDistancePerGameLoop();
-	Math::Vector3d newPosition;
+	// Compute the angle with the current character direction
+	Math::Vector3d currentDirection = _item->getDirectionVector();
+	float directionDeltaAngle = computeAngleBetweenVectorsXYPlane(currentDirection, direction);
 
-	if (currentPosition.getDistanceTo(target) > distancePerGameloop) {
-		newPosition = currentPosition + direction * distancePerGameloop;
+	// If the angle between the current direction and the new one is too high,
+	// make the character turn on itself until the angle is low enough
+	if (ABS(directionDeltaAngle) > _defaultTurnAngleSpeed + 0.1f) {
+		_turnDirection = directionDeltaAngle < 0 ? kTurnLeft : kTurnRight;
 	} else {
-		newPosition = target;
+		_turnDirection = kTurnNone;
+	}
+
+	float distancePerGameloop = computeDistancePerGameLoop();
+
+	Math::Vector3d newPosition;
+	if (_turnDirection == kTurnNone) {
+		// Compute the new position using the distance per gameloop
+		if (currentPosition.getDistanceTo(target) > distancePerGameloop) {
+			newPosition = currentPosition + direction * distancePerGameloop;
+		} else {
+			newPosition = target;
+		}
+	} else {
+		// The character does not change position when it is turning
+		newPosition = currentPosition;
+		direction = currentDirection;
+
+		Math::Matrix3 rot;
+		rot.buildAroundZ(_turnDirection == kTurnLeft ? -_defaultTurnAngleSpeed : _defaultTurnAngleSpeed);
+		rot.transformVector(&direction);
 	}
 
 	// Update the new position's height according to the floor
@@ -108,27 +132,15 @@ void Walk::onGameLoop() {
 
 	// Update the item's properties
 	_item->setPosition3D(newPosition);
-	_item->setDirection(computeDirectionAngle(direction));
+	_item->setDirection(computeAngleBetweenVectorsXYPlane(direction, Math::Vector3d(1.0, 0.0, 0.0)));
 	_item->setFloorFaceIndex(newFloorFaceIndex);
 
 	// Check if we are close enough to the destination to stop
 	if (newPosition.getDistanceTo(_destination) < distancePerGameloop) {
-		_item->setAnimKind(Resources::Anim::kActorUsageIdle);
 		stop();
 	}
-}
 
-uint Walk::computeDirectionAngle(const Math::Vector3d &direction) const {
-	Math::Vector3d direction2d = direction;
-	direction2d.z() = 0.0;
-
-	Math::Angle directionAngle = Math::Vector3d::angle(direction2d, Math::Vector3d(1.0, 0.0, 0.0));
-	Math::Vector3d cross = Math::Vector3d::crossProduct(direction2d, Math::Vector3d(1.0, 0.0, 0.0));
-	if (cross.z() < 0) {
-		directionAngle = 360 - directionAngle;
-	}
-
-	return directionAngle.getDegrees();
+	changeItemAnim();
 }
 
 float Walk::computeDistancePerGameLoop() const {
@@ -148,7 +160,11 @@ void Walk::setRunning() {
 }
 
 void Walk::changeItemAnim() {
-	if (_running) {
+	if (_ended) {
+		_item->setAnimKind(Resources::Anim::kActorUsageIdle);
+	} else if (_turnDirection != kTurnNone) {
+		_item->setAnimKind(Resources::Anim::kActorUsageIdle);
+	} else if (_running) {
 		_item->setAnimKind(Resources::Anim::kActorUsageRun);
 	} else {
 		_item->setAnimKind(Resources::Anim::kActorUsageWalk);

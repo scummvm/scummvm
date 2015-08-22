@@ -23,6 +23,8 @@
 #ifndef STARK_MOVEMENT_MOVEMENT_H
 #define STARK_MOVEMENT_MOVEMENT_H
 
+#include "math/vector3d.h"
+
 namespace Stark {
 
 namespace Resources {
@@ -58,6 +60,16 @@ public:
 	bool hasEnded() const;
 
 protected:
+	enum TurnDirection {
+		kTurnNone,
+		kTurnLeft,
+		kTurnRight
+	};
+
+	const float _defaultTurnAngleSpeed = 18.0; // Degrees per gameloop
+
+	float computeAngleBetweenVectorsXYPlane(const Math::Vector3d &v1, const Math::Vector3d &v2) const;
+
 	bool _ended;
 	Resources::FloorPositionedItem *_item;
 };

@@ -44,4 +44,20 @@ bool Movement::hasEnded() const {
 	return _ended;
 }
 
+float Movement::computeAngleBetweenVectorsXYPlane(const Math::Vector3d &v1, const Math::Vector3d &v2) const {
+	Math::Vector3d v1XY = v1;
+	v1XY.z() = 0.0;
+
+	Math::Vector3d v2XY = v2;
+	v2XY.z() = 0.0;
+
+	Math::Angle angle = Math::Vector3d::angle(v1XY, v2XY);
+	Math::Vector3d cross = Math::Vector3d::crossProduct(v1XY, v2XY);
+	if (cross.z() < 0) {
+		angle = -angle;
+	}
+
+	return angle.getDegrees();
+}
+
 } // End of namespace Stark

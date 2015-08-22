@@ -25,8 +25,6 @@
 
 #include "engines/stark/movement/movement.h"
 
-#include "math/vector3d.h"
-
 namespace Stark {
 
 class StringPullingPath;
@@ -52,17 +50,16 @@ public:
 
 private:
 	float computeDistancePerGameLoop() const;
-	uint computeDirectionAngle(const Math::Vector3d &direction) const;
 
 	void changeItemAnim();
+	void updatePath() const;
 
 	StringPullingPath *_path;
 
 	Math::Vector3d _destination;
 
-	void updatePath() const;
-
 	bool _running;
+	TurnDirection _turnDirection;
 };
 
 } // End of namespace Stark

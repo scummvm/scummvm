@@ -553,7 +553,17 @@ void FloorPositionedItem::placeDefaultPosition() {
 	floor->computePointHeightInFace(_position3D, 0);
 }
 
-void FloorPositionedItem::setDirection(uint direction) {
+Math::Vector3d FloorPositionedItem::getDirectionVector() const {
+	Math::Matrix3 rot;
+	rot.buildAroundZ(-_direction3D);
+
+	Math::Vector3d direction(1.0, 0.0, 0.0);
+	rot.transformVector(&direction);
+
+	return direction;
+}
+
+void FloorPositionedItem::setDirection(float direction) {
 	_direction3D = direction;
 }
 

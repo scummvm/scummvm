@@ -316,8 +316,11 @@ public:
 	/** Change the face the item is standing on */
 	void setFloorFaceIndex(int32 faceIndex);
 
+	/** Get a vector pointing in the same direction as the item */
+	Math::Vector3d getDirectionVector() const;
+
 	/** Set the direction the item faces */
-	void setDirection(uint direction);
+	void setDirection(float direction);
 
 	/** Obtain the sort value for the item, used to compute the draw order */
 	float getSortKey() const;
