@@ -49,6 +49,9 @@ public:
 	/** Write the reference to a stream */
 	void saveToStream(Common::WriteStream *stream);
 
+	/** Make the reference point to the specified object */
+	void buildFromResource(Resources::Object *resource);
+
 	/** Resolve the reference to the actual resource */
 	template <class T>
 	T* resolve() const;

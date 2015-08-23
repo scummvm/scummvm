@@ -349,4 +349,14 @@ void ResourceProvider::shutdown() {
 	_archiveLoader->unloadUnused();
 }
 
+Resources::Level *ResourceProvider::getLevelFromLocation(Resources::Location *location) {
+	for (CurrentList::const_iterator it = _locations.begin(); it != _locations.end(); it++) {
+		if ((*it)->getLocation() == location) {
+			return (*it)->getLevel();
+		}
+	}
+
+	return nullptr;
+}
+
 } // End of namespace Stark

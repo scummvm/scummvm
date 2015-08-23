@@ -86,6 +86,9 @@ public:
 	/** Obtain the root resource for a loaded location */
 	Resources::Location *getLocation(uint16 level, uint16 location);
 
+	/** Get the parent level from a currently loaded location */
+	Resources::Level *getLevelFromLocation(Resources::Location *location);
+
 private:
 	void pushCurrentLocation();
 	void popCurrentLocation();

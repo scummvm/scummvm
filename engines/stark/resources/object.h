@@ -313,6 +313,9 @@ T *Object::findParent() {
 	}
 }
 
+template<>
+Object *Object::findParent();
+
 template <class T>
 Common::Array<T *> Object::listChildren(int subType) {
 	Common::Array<T *> list;

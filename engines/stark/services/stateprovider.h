@@ -56,7 +56,25 @@ public:
 	void syncAsFloat(float &value);
 	void syncAsVector3d(Math::Vector3d &value);
 	void syncAsResourceReference(ResourceReference &reference);
+
+	template<typename T>
+	void syncAsResourceReference(T **object);
 };
+
+template<typename T>
+void ResourceSerializer::syncAsResourceReference(T **object) {
+	assert(object);
+
+	if (isLoading()) {
+		ResourceReference reference;
+		reference.loadFromStream(_loadStream);
+		*object = reference.resolve<T>();
+	} else {
+		ResourceReference reference;
+		reference.buildFromResource(*object);
+		reference.saveToStream(_saveStream);
+	}
+}
 
 /**
  * Resource state provider.

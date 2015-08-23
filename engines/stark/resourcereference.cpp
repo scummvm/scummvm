@@ -86,6 +86,29 @@ Common::String ResourceReference::describe() const {
 	return desc;
 }
 
+void ResourceReference::buildFromResource(Resources::Object *resource) {
+	Common::Array<PathElement> reversePath;
+	while (resource && resource->getType() != Resources::Type::kRoot) {
+		reversePath.push_back(PathElement(resource->getType(), resource->getIndex()));
+
+		switch (resource->getType().get()) {
+			case Resources::Type::kLocation: {
+				Resources::Location *location = Resources::Object::cast<Resources::Location>(resource);
+				resource = StarkResourceProvider->getLevelFromLocation(location);
+				break;
+			}
+			default:
+				resource = resource->findParent<Resources::Object>();
+				break;
+		}
+	}
+
+	_path.clear();
+	for (int i = reversePath.size() - 1; i >= 0; i--) {
+		_path.push_back(reversePath[i]);
+	}
+}
+
 void ResourceReference::loadFromStream(Common::ReadStream *stream) {
 	_path.clear();
 

@@ -241,6 +241,11 @@ Common::Array<Object *> Object::listChildren<Object>(int subType) {
 	return list;
 }
 
+template<>
+Object *Object::findParent() {
+	return _parent;
+}
+
 void Object::addChild(Object *child) {
 	_children.push_back(child);
 }
