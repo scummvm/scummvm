@@ -220,33 +220,37 @@ int ImageFrame::sDrawYSize(int scaleVal) const {
 }
 
 int ImageFrame::sDrawXOffset(int scaleVal) const {
-	int xOffset = _offset.x;
-	if (!scaleVal)
-		++scaleVal;
+	if (scaleVal == SCALE_THRESHOLD)
+		return _offset.x;
 
-	if (scaleVal >= SCALE_THRESHOLD && xOffset)
-		--xOffset;
+	int width = _offset.x;
+	int scale = scaleVal == 0 ? 1 : scaleVal;
 
-	xOffset = xOffset * SCALE_THRESHOLD / scaleVal;
 	if (scaleVal >= SCALE_THRESHOLD)
-		++xOffset;
+		--width;
 
-	return xOffset;
+	int result = width * SCALE_THRESHOLD / scale;
+	if (scaleVal > SCALE_THRESHOLD)
+		++result;
+
+	return result;
 }
 
 int ImageFrame::sDrawYOffset(int scaleVal) const {
-	int yOffset = _offset.y;
-	if (!scaleVal)
-		++scaleVal;
+	if (scaleVal == SCALE_THRESHOLD)
+		return _offset.y;
 
-	if (scaleVal >= SCALE_THRESHOLD && yOffset)
-		--yOffset;
+	int height = _offset.y;
+	int scale = scaleVal == 0 ? 1 : scaleVal;
 
-	yOffset = yOffset * SCALE_THRESHOLD / scaleVal;
 	if (scaleVal >= SCALE_THRESHOLD)
-		++yOffset;
+		--height;
 
-	return yOffset;
+	int result = height * SCALE_THRESHOLD / scale;
+	if (scaleVal > SCALE_THRESHOLD)
+		++result;
+
+	return result;
 }
 
 // *******************************************************
