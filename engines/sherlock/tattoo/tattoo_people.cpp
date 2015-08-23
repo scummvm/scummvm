@@ -1010,6 +1010,9 @@ void TattooPerson::walkHolmesToNPC() {
 	TattooPerson &holmes = people[HOLMES];
 	int facing;
 
+	// Save the character's details
+	pushNPCPath();
+
 	// If the NPC is moving, stop him at his current position
 	if (_walkCount) {
 		// Reset the facing so the NPC will stop facing the direction he was going,
