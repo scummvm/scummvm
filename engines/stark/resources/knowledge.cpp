@@ -58,7 +58,7 @@ int32 Knowledge::getIntegerValue() {
 void Knowledge::saveLoad(ResourceSerializer *serializer) {
 	serializer->syncAsSint32LE(_integerValue);
 	serializer->syncAsSint32LE(_booleanValue);
-	// TODO: Sync the reference
+	serializer->syncAsResourceReference(_referenceValue);
 }
 
 void Knowledge::readData(Formats::XRCReadStream *stream) {
