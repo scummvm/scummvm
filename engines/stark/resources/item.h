@@ -50,6 +50,7 @@ class Anim;
 class AnimHierarchy;
 class BonesMesh;
 class Bookmark;
+class ItemVisual;
 class Script;
 class TextureSet;
 
@@ -97,7 +98,7 @@ public:
 	virtual Gfx::RenderEntry *getRenderEntry(const Common::Point &positionOffset);
 
 	/** Obtain the concrete instance of an item template */
-	virtual Item *getSceneInstance();
+	virtual ItemVisual *getSceneInstance() = 0;
 
 	/** Obtain the title for one of the item's hotspots */
 	virtual Common::String getHotspotTitle(uint32 hotspotIndex) const;
@@ -142,6 +143,7 @@ public:
 
 	// Item API
 	void setEnabled(bool enabled) override;
+	ItemVisual *getSceneInstance() override;
 
 	/** Get the hotspot index for an item relative position */
 	int getHotspotIndexForPoint(const Common::Point &point);
@@ -187,7 +189,7 @@ public:
 	void onAllLoaded() override;
 
 	// Item API
-	Item *getSceneInstance() override;
+	ItemVisual *getSceneInstance() override;
 	Common::String getHotspotTitle(uint32 hotspotIndex) const override;
 
 	/** Obtain the bone mesh to use to render the item */

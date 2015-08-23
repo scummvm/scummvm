@@ -115,10 +115,6 @@ Gfx::RenderEntry *Item::getRenderEntry(const Common::Point &positionOffset) {
 	return nullptr;
 }
 
-Item *Item::getSceneInstance() {
-	return this;
-}
-
 Common::String Item::getHotspotTitle(uint32 hotspotIndex) const {
 	PATTable *table = findChildWithOrder<PATTable>(hotspotIndex);
 	if (table) {
@@ -206,6 +202,10 @@ void ItemVisual::setEnabled(bool enabled) {
 	} else {
 		_animHierarchy->unselectItemAnim(this);
 	}
+}
+
+ItemVisual *ItemVisual::getSceneInstance() {
+	return this;
 }
 
 int32 ItemVisual::getAnimKind() const {
@@ -300,7 +300,7 @@ void ItemTemplate::setInstanciatedItem(Item *instance) {
 	_instanciatedItem = instance;
 }
 
-Item *ItemTemplate::getSceneInstance() {
+ItemVisual *ItemTemplate::getSceneInstance() {
 	if (_instanciatedItem) {
 		return _instanciatedItem->getSceneInstance();
 	}
