@@ -29,6 +29,8 @@
 #include "engines/stark/movement/turn.h"
 #include "engines/stark/movement/walk.h"
 
+#include "engines/stark/resources/anim.h"
+#include "engines/stark/resources/animhierarchy.h"
 #include "engines/stark/resources/animscript.h"
 #include "engines/stark/resources/bookmark.h"
 #include "engines/stark/resources/bonesmesh.h"
@@ -39,6 +41,7 @@
 #include "engines/stark/resources/fmv.h"
 #include "engines/stark/resources/item.h"
 #include "engines/stark/resources/knowledge.h"
+#include "engines/stark/resources/pattable.h"
 #include "engines/stark/resources/script.h"
 #include "engines/stark/resources/sound.h"
 #include "engines/stark/resources/speech.h"
@@ -52,7 +55,6 @@
 #include "engines/stark/services/userinterface.h"
 
 #include "common/random.h"
-#include "pattable.h"
 
 namespace Stark {
 namespace Resources {
@@ -448,9 +450,14 @@ Command *Command::opItemSelectInInventory(const ResourceReference &itemRef) {
 }
 
 Command *Command::opUseAnimHierachy(const ResourceReference &animHierRef) {
-	assert(_arguments.size() == 2);
-	Object *animHier = animHierRef.resolve<Object>();
-	warning("(TODO: Implement) opUseAnimHierarchy(%s) : %s", animHier->getName().c_str(), animHierRef.describe().c_str());
+	AnimHierarchy *animHier = animHierRef.resolve<AnimHierarchy>();
+	Item *item = animHier->findParent<Item>();
+
+	item->setAnimHierarchy(animHier);
+
+	// TODO: Only set the anim usage if the next opcode is not going to do it
+	ItemVisual *sceneItem = item->getSceneInstance();
+	sceneItem->setAnimKind(Anim::kActorUsageIdle);
 
 	return nextCommand();
 }

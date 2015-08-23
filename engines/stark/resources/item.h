@@ -117,6 +117,9 @@ public:
 	 */
 	void setMovementSuspendedScript(Script *script);
 
+	/** Set the currently active anim hierachy */
+	virtual void setAnimHierarchy(AnimHierarchy *animHierarchy) = 0;
+
 protected:
 	void printData() override;
 
@@ -140,10 +143,12 @@ public:
 	// Resource API
 	virtual void readData(Formats::XRCReadStream *stream) override;
 	virtual void onAllLoaded() override;
+	virtual void saveLoad(ResourceSerializer *serializer) override;
 
 	// Item API
 	void setEnabled(bool enabled) override;
 	ItemVisual *getSceneInstance() override;
+	void setAnimHierarchy(AnimHierarchy *animHierarchy) override;
 
 	/** Get the hotspot index for an item relative position */
 	int getHotspotIndexForPoint(const Common::Point &point);
@@ -162,6 +167,7 @@ public:
 
 	/** Get the currently playing animation */
 	Anim *getAnim() const;
+
 protected:
 	// Resource API
 	void printData() override;
@@ -191,6 +197,7 @@ public:
 	// Item API
 	ItemVisual *getSceneInstance() override;
 	Common::String getHotspotTitle(uint32 hotspotIndex) const override;
+	void setAnimHierarchy(AnimHierarchy *animHierarchy) override;
 
 	/** Obtain the bone mesh to use to render the item */
 	virtual BonesMesh *findBonesMesh() = 0;
@@ -200,6 +207,9 @@ public:
 
 	/** Obtain the animation hierarchy to fetch animations from */
 	virtual AnimHierarchy *findStockAnimHierarchy() = 0;
+
+	/** Define the anim hierarchy to be persisted across locations */
+	void setStockAnimHierachy(AnimHierarchy *animHierarchy);
 
 	/** Change the item's mesh */
 	void setBonesMesh(int32 index);

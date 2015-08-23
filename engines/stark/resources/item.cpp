@@ -194,6 +194,16 @@ void ItemVisual::onAllLoaded() {
 	}
 }
 
+void ItemVisual::saveLoad(ResourceSerializer *serializer) {
+	Item::saveLoad(serializer);
+
+	serializer->syncAsResourceReference(&_animHierarchy);
+
+	if (serializer->isLoading() && _animHierarchy) {
+		setAnimHierarchy(_animHierarchy);
+	}
+}
+
 void ItemVisual::setEnabled(bool enabled) {
 	Item::setEnabled(enabled);
 
@@ -229,6 +239,14 @@ void ItemVisual::printData() {
 
 Anim *ItemVisual::getAnim() const {
 	return _animHierarchy->getCurrentAnim();
+}
+
+void ItemVisual::setAnimHierarchy(AnimHierarchy *animHierarchy) {
+	if (_animHierarchy) {
+		_animHierarchy->unselectItemAnim(this);
+	}
+
+	_animHierarchy = animHierarchy;
 }
 
 Visual *ItemVisual::getVisual() {
@@ -316,6 +334,16 @@ Common::String ItemTemplate::getHotspotTitle(uint32 hotspotIndex) const {
 	return Item::getHotspotTitle(hotspotIndex);
 }
 
+void ItemTemplate::setStockAnimHierachy(AnimHierarchy *animHierarchy) {
+	Object *animHierarchyParent = animHierarchy->findParent<Object>();
+
+	if (animHierarchyParent == this) {
+		_animHierarchyIndex = animHierarchy->getIndex();
+	} else {
+		_animHierarchyIndex = -1;
+	}
+}
+
 void ItemTemplate::setBonesMesh(int32 index) {
 	_meshIndex = index;
 }
@@ -332,6 +360,14 @@ void ItemTemplate::setTexture(int32 index, uint32 textureType) {
 	// Reset the animation to apply the changes
 	ModelItem *sceneInstance = Resources::Object::cast<Resources::ModelItem>(getSceneInstance());
 	sceneInstance->updateAnim();
+}
+
+void ItemTemplate::setAnimHierarchy(AnimHierarchy *animHierarchy) {
+	setStockAnimHierachy(animHierarchy);
+
+	if (_instanciatedItem) {
+		_instanciatedItem->setAnimHierarchy(animHierarchy);
+	}
 }
 
 GlobalItemTemplate::~GlobalItemTemplate() {
