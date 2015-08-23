@@ -1062,7 +1062,7 @@ void ScalpelEngine::startScene() {
 	_mapResult = _scene->_goToScene;
 }
 
-void ScalpelEngine::eraseMirror12() {
+void ScalpelEngine::eraseBrumwellMirror() {
 	Common::Point pt((*_people)[HOLMES]._position.x / FIXED_INT_MULTIPLIER, (*_people)[HOLMES]._position.y / FIXED_INT_MULTIPLIER);
 
 	// If player is in range of the mirror, then restore background from the secondary back buffer
@@ -1072,7 +1072,7 @@ void ScalpelEngine::eraseMirror12() {
 	}
 }
 
-void ScalpelEngine::doMirror12() {
+void ScalpelEngine::doBrumwellMirror() {
 	People &people = *_people;
 	Person &player = people[HOLMES];
 
@@ -1147,7 +1147,7 @@ void ScalpelEngine::doMirror12() {
 	}
 }
 
-void ScalpelEngine::flushMirror12() {
+void ScalpelEngine::flushBrumwellMirror() {
 	Common::Point pt((*_people)[HOLMES]._position.x / FIXED_INT_MULTIPLIER, (*_people)[HOLMES]._position.y / FIXED_INT_MULTIPLIER);
 
 	// If player is in range of the mirror, then draw the entire mirror area to the screen
