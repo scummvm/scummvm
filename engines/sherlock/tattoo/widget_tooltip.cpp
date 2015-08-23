@@ -191,6 +191,10 @@ void WidgetSceneTooltip::handleEvents() {
 				// Get the description string
 				str = (ui._bgFound < 1000) ? scene._bgShapes[ui._bgFound]._description :
 					people[ui._bgFound - 1000]._description;
+
+				// WORKAORUND: On the train ride to Cambridge, don't show any tooltips
+				if (scene._currentScene == TRAIN_RIDE)
+					str = "";
 			} else {
 				// Get the exit zone description
 				str = scene._exits[ui._arrowZone]._dest;
