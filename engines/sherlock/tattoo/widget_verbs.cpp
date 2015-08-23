@@ -90,10 +90,10 @@ void WidgetVerbs::load(bool objectsOn) {
 
 			// Add any extra active verbs from the object's verb list
 			for (int idx = 0; idx < 6; ++idx) {
-				if (!ui._bgShape->_use[idx]._verb.empty() && !ui._bgShape->_use[idx]._verb.hasPrefix(" ") &&
-						(ui._bgShape->_use[idx]._target.empty() || ui._bgShape->_use[idx]._target.hasPrefix("*") ||
-						ui._bgShape->_use[idx]._target.hasPrefix(" "))) {
-					_verbCommands.push_back(ui._bgShape->_use[idx]._verb);
+				UseType &use = ui._bgShape->_use[idx];
+				if (!use._verb.empty() && !use._verb.hasPrefix(" ") && !use._verb.hasPrefix("*") &&
+					(use._target.empty() || use._target.hasPrefix("*") || use._target.hasPrefix(" "))) {
+					_verbCommands.push_back(use._verb);
 				}
 			}
 		}
