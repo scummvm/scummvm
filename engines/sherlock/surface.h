@@ -60,11 +60,6 @@ private:
 	void transBlitFromUnscaled(const Graphics::Surface &src, const Common::Point &pt, bool flipped, 
 		int overrideColor);
 
-	/**
-	 * Draws a surface at a given position within this surface with transparency
-	 */
-	void transBlitFrom(const Graphics::Surface &src, const Common::Point &destPos, const Common::Rect &srcBounds,
-		bool flipped = false, int overrideColor = 0, int scaleVal = SCALE_THRESHOLD);
 protected:
 	Graphics::Surface _surface;
 
@@ -121,19 +116,19 @@ public:
 	 * Draws an image frame at a given position within this surface with transparency
 	 */
 	void transBlitFrom(const ImageFrame &src, const Common::Point &pt,
-		bool flipped = false, int overrideColor = 0, int scaleVal = SCALE_THRESHOLD);
+		bool flipped = false, int overrideColor = 0, int scaleVal = 256);
 	
 	/**
 	* Draws a surface at a given position within this surface with transparency
 	*/
 	void transBlitFrom(const Surface &src, const Common::Point &pt,
-		bool flipped = false, int overrideColor = 0, int scaleVal = SCALE_THRESHOLD);
+		bool flipped = false, int overrideColor = 0, int scaleVal = 256);
 
 	/**
 	 * Draws a surface at a given position within this surface with transparency
 	 */
 	void transBlitFrom(const Graphics::Surface &src, const Common::Point &pt,
-		bool flipped = false, int overrideColor = 0, int scaleVal = SCALE_THRESHOLD);
+		bool flipped = false, int overrideColor = 0, int scaleVal = 256);
 
 	/**
 	 * Fill a given area of the surface with a given color
