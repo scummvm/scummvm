@@ -43,19 +43,21 @@ struct ShapeEntry {
 	TattooPerson *_person;
 	bool _isAnimation;
 	int _yp;
-	int _objNum;
+	int _ordering;
 
-	ShapeEntry(TattooPerson *person, int yp, int npcIndex) : 
-		_shape(nullptr), _person(person), _yp(yp), _isAnimation(false), _objNum(npcIndex + 1000) {}
-	ShapeEntry(Object *shape, int yp, int objNum) :
-		_shape(shape), _person(nullptr), _yp(yp), _isAnimation(false), _objNum(objNum) {}
-	ShapeEntry(int yp) : 
-		_shape(nullptr), _person(nullptr), _yp(yp), _isAnimation(true), _objNum(-1) {}
+	ShapeEntry(TattooPerson *person, int yp, int ordering) :
+		_shape(nullptr), _person(person), _yp(yp), _isAnimation(false), _ordering(ordering) {}
+	ShapeEntry(Object *shape, int yp, int ordering) :
+		_shape(shape), _person(nullptr), _yp(yp), _isAnimation(false), _ordering(ordering) {}
+	ShapeEntry(int yp, int ordering) : 
+		_shape(nullptr), _person(nullptr), _yp(yp), _isAnimation(true), _ordering(ordering) {}
 };
 typedef Common::List<ShapeEntry> ShapeList;
 
 static bool sortImagesY(const ShapeEntry &s1, const ShapeEntry &s2) {
-	return s1._yp < s2._yp || (s1._yp == s2._yp && s1._objNum < s2._objNum);
+	// Objects are order by the calculated Y position first and then, when both are equal,
+	// by the order in which the entries were added
+	return s1._yp < s2._yp || (s1._yp == s2._yp && s1._ordering < s2._ordering);
 }
 
 /*----------------------------------------------------------------*/
@@ -123,6 +125,7 @@ void TattooScene::drawAllShapes() {
 	TattooPeople &people = *(TattooPeople *)_vm->_people;
 	Screen &screen = *_vm->_screen;
 	ShapeList shapeList;
+	int ordering = 0;
 
 	// Draw all objects and animations that are set to behind
 	screen.setDisplayBounds(Common::Rect(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT));
@@ -153,10 +156,10 @@ void TattooScene::drawAllShapes() {
 		if (obj._type == ACTIVE_BG_SHAPE && (obj._misc == NORMAL_BEHIND || obj._misc == NORMAL_FORWARD)) {
 			if (obj._scaleVal == SCALE_THRESHOLD)
 				shapeList.push_back(ShapeEntry(&obj, obj._position.y + obj._imageFrame->_offset.y +
-					obj._imageFrame->_height, idx));
+					obj._imageFrame->_height, ordering++));
 			else
 				shapeList.push_back(ShapeEntry(&obj, obj._position.y + obj._imageFrame->sDrawYOffset(obj._scaleVal) +
-					obj._imageFrame->sDrawYSize(obj._scaleVal), idx));
+					obj._imageFrame->sDrawYSize(obj._scaleVal), ordering++));
 		}
 	}
 
@@ -164,16 +167,16 @@ void TattooScene::drawAllShapes() {
 	if (_activeCAnim.active() && (_activeCAnim._zPlacement == NORMAL_BEHIND || _activeCAnim._zPlacement == NORMAL_FORWARD)) {
 		if (_activeCAnim._scaleVal == SCALE_THRESHOLD)
 			shapeList.push_back(ShapeEntry(_activeCAnim._position.y + _activeCAnim._imageFrame._offset.y +
-				_activeCAnim._imageFrame._height));
+				_activeCAnim._imageFrame._height, ordering++));
 		else
 			shapeList.push_back(ShapeEntry(_activeCAnim._position.y + _activeCAnim._imageFrame.sDrawYOffset(_activeCAnim._scaleVal) +
-				_activeCAnim._imageFrame.sDrawYSize(_activeCAnim._scaleVal)));
+				_activeCAnim._imageFrame.sDrawYSize(_activeCAnim._scaleVal), ordering++));
 	}
 
 	// Queue all active characters for drawing
 	for (int idx = 0; idx < MAX_CHARACTERS; ++idx) {
 		if (people[idx]._type == CHARACTER && people[idx]._walkLoaded)
-			shapeList.push_back(ShapeEntry(&people[idx], people[idx]._position.y / FIXED_INT_MULTIPLIER, idx));
+			shapeList.push_back(ShapeEntry(&people[idx], people[idx]._position.y / FIXED_INT_MULTIPLIER, ordering++));
 	}
 
 	// Sort the list
