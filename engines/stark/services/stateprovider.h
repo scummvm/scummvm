@@ -31,6 +31,8 @@
 
 #include "math/mathfwd.h"
 
+#include "engines/stark/resourcereference.h"
+
 namespace Stark {
 
 namespace Resources {
@@ -53,6 +55,7 @@ public:
 
 	void syncAsFloat(float &value);
 	void syncAsVector3d(Math::Vector3d &value);
+	void syncAsResourceReference(ResourceReference &reference);
 };
 
 /**

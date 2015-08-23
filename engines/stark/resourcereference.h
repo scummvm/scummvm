@@ -43,7 +43,11 @@ public:
 
 	Common::String describe() const;
 
-	void addPathElement(Resources::Type type, uint16 index);
+	/** Read the reference from a stream */
+	void loadFromStream(Common::ReadStream *stream);
+
+	/** Write the reference to a stream */
+	void saveToStream(Common::WriteStream *stream);
 
 	/** Resolve the reference to the actual resource */
 	template <class T>
@@ -53,6 +57,7 @@ public:
 	bool empty() const;
 
 private:
+	void addPathElement(Resources::Type type, uint16 index);
 	Resources::Object *resolve() const;
 
 	class PathElement {

@@ -246,4 +246,12 @@ void ResourceSerializer::syncAsVector3d(Math::Vector3d &value) {
 	syncAsFloat(value.z());
 }
 
+void ResourceSerializer::syncAsResourceReference(ResourceReference &reference) {
+	if (isLoading()) {
+		reference.loadFromStream(_loadStream);
+	} else {
+		reference.saveToStream(_saveStream);
+	}
+}
+
 } // End of namespace Stark

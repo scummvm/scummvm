@@ -88,14 +88,7 @@ Resources::Type XRCReadStream::readResourceType() {
 
 ResourceReference XRCReadStream::readResourceReference() {
 	ResourceReference reference;
-
-	uint32 pathSize = readUint32LE();
-	for (uint i = 0; i < pathSize; i++) {
-		Resources::Type type = readResourceType();
-		uint16 index = readUint16LE();
-
-		reference.addPathElement(type, index);
-	}
+	reference.loadFromStream(this);
 
 	return reference;
 }

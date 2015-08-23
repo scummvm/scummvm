@@ -86,4 +86,28 @@ Common::String ResourceReference::describe() const {
 	return desc;
 }
 
+void ResourceReference::loadFromStream(Common::ReadStream *stream) {
+	_path.clear();
+
+	uint32 pathSize = stream->readUint32LE();
+	for (uint i = 0; i < pathSize; i++) {
+		byte rawType = stream->readByte();
+		Resources::Type type = Resources::Type((Resources::Type::ResourceType) (rawType));
+		uint16 index = stream->readUint16LE();
+
+		addPathElement(type, index);
+	}
+}
+
+void ResourceReference::saveToStream(Common::WriteStream *stream) {
+	stream->writeUint32LE(_path.size());
+	for (uint i = 0; i < _path.size(); i++) {
+		byte rawType = _path[i].getType().get();
+		uint16 index = _path[i].getIndex();
+
+		stream->writeByte(rawType);
+		stream->writeUint16LE(index);
+	}
+}
+
 } // End of namespace Stark
