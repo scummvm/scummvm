@@ -243,7 +243,7 @@ void WidgetTalk::handleEvents() {
 			banishWindow();
 			ui._menuMode = scene._labTableScene ? LAB_MODE : STD_MODE;
 
-			if (scene._currentScene == 52)
+			if (scene._currentScene == WEARY_PUNT)
 				callParrotFile = true;
 		}
 

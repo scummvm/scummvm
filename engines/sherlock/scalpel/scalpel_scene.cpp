@@ -225,7 +225,7 @@ void ScalpelScene::doBgAnim() {
 				_canimShapes[idx].checkObject();
 		}
 
-		if (_currentScene == 12)
+		if (_currentScene == DRAWING_ROOM)
 			vm.eraseMirror12();
 
 		// Restore the back buffer from the back buffer 2 in the changed area
@@ -297,7 +297,7 @@ void ScalpelScene::doBgAnim() {
 	// Flag the bg shapes which need to be redrawn
 	checkBgShapes();
 
-	if (_currentScene == 12)
+	if (_currentScene == DRAWING_ROOM)
 		vm.doMirror12();
 
 	// Draw all active shapes which are behind the person
@@ -407,7 +407,7 @@ void ScalpelScene::doBgAnim() {
 			}
 		}
 
-		if (_currentScene == 12)
+		if (_currentScene == DRAWING_ROOM)
 			vm.flushMirror12();
 
 		for (uint idx = 0; idx < _bgShapes.size(); ++idx) {

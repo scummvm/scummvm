@@ -22,6 +22,7 @@
 
 #include "sherlock/tattoo/widget_tooltip.h"
 #include "sherlock/tattoo/tattoo_map.h"
+#include "sherlock/tattoo/tattoo_scene.h"
 #include "sherlock/tattoo/tattoo_user_interface.h"
 #include "sherlock/tattoo/tattoo.h"
 
@@ -184,7 +185,7 @@ void WidgetSceneTooltip::handleEvents() {
 			Common::String str;
 			if (ui._bgFound != -1) {
 				// Clear the Arrow Zone fields so it won't think we're displaying an Arrow Zone cursor
-				if (scene._currentScene != 90)  // RRR Take out the cludge for room 90
+				if (scene._currentScene != OVERHEAD_MAP2)
 					ui._arrowZone = ui._oldArrowZone = -1;
 
 				// Get the description string

@@ -556,7 +556,7 @@ void TattooUserInterface::displayObjectNames() {
 	Common::Point mousePos = events.mousePos();
 	_arrowZone = -1;
 
-	if (_bgFound == -1 || scene._currentScene == 90) {
+	if (_bgFound == -1 || scene._currentScene == OVERHEAD_MAP2) {
 		for (uint idx = 0; idx < scene._exits.size() && _arrowZone == -1; ++idx) {
 			Exit &exit = scene._exits[idx];
 			if (exit.contains(mousePos))
