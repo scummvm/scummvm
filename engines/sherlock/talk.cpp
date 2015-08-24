@@ -1064,6 +1064,7 @@ OpcodeReturn Talk::cmdPauseWithoutControl(const byte *&str) {
 		events.setButtonState();
 	}
 
+	_endStr = false;
 	return RET_SUCCESS;
 }
 
