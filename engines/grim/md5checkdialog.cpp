@@ -21,6 +21,7 @@
  */
 
 #include "common/system.h"
+#include "common/translation.h"
 
 #include "gui/gui-manager.h"
 #include "gui/ThemeEval.h"
@@ -37,9 +38,9 @@ MD5CheckDialog::MD5CheckDialog() :
 	const int screenW = g_system->getOverlayWidth();
 	const int screenH = g_system->getOverlayHeight();
 
-	Common::String message =
+	Common::String message = _(
 		"ResidualVM will now verify the game data files, to make sure you have the best gaming experience.\n"
-		"This may take a while, please wait.\nSuccessive runs will not check them again.";
+		"This may take a while, please wait.\nSuccessive runs will not check them again.");
 
 	// First, determine the size the dialog needs. For this we have to break
 	// down the string into lines, and taking the maximum of their widths.

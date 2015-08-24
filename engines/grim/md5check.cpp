@@ -22,6 +22,7 @@
 
 #include "common/file.h"
 #include "common/md5.h"
+#include "common/translation.h"
 
 #include "gui/error.h"
 
@@ -542,17 +543,17 @@ bool MD5Check::advanceCheck(int *pos, int *total) {
 	if (file.open(sum.filename)) {
 		Common::String md5 = Common::computeStreamMD5AsString(file);
 		if (!checkMD5(sum, md5.c_str())) {
-			warning("'%s' may be corrupted. MD5: '%s'", sum.filename, md5.c_str());
-			GUI::displayErrorDialog(Common::String::format("The game data file %s may be corrupted.\nIf you are sure it is "
+			warning(_("'%s' may be corrupted. MD5: '%s'"), sum.filename, md5.c_str());
+			GUI::displayErrorDialog(Common::String::format(_("The game data file %s may be corrupted.\nIf you are sure it is "
 									"not please provide the ResidualVM team the following code, along with the file name, the language and a "
-									"description of your game version (i.e. dvd-box or jewelcase):\n%s", sum.filename, md5.c_str()).c_str());
+									"description of your game version (i.e. dvd-box or jewelcase):\n%s"), sum.filename, md5.c_str()).c_str());
 			return false;
 		}
 	} else {
-		warning("Could not open %s for checking", sum.filename);
-		GUI::displayErrorDialog(Common::String::format("Could not open the file %s for checking.\nIt may be missing or "
+		warning(_("Could not open %s for checking"), sum.filename);
+		GUI::displayErrorDialog(Common::String::format(_("Could not open the file %s for checking.\nIt may be missing or "
 								"you may not have the rights to open it.\nGo to http://wiki.residualvm.org/index.php/Datafiles to see a list "
-								"of the needed files.", sum.filename).c_str());
+								"of the needed files."), sum.filename).c_str());
 		return false;
 	}
 
