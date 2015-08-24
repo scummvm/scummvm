@@ -16,6 +16,9 @@ gui/options.cpp
 gui/predictivedialog.cpp
 gui/recorderdialog.cpp
 gui/saveload-dialog.cpp
+gui/predictivedialog.cpp
+gui/recorderdialog.cpp
+gui/saveload-dialog.cpp
 gui/themebrowser.cpp
 gui/ThemeEngine.cpp
 gui/widget.cpp
