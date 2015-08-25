@@ -279,4 +279,4 @@ Common::Error SherlockEngine::saveGameState(int slot, const Common::String &desc
 	return Common::kNoError;
 }
 
-} // End of namespace Comet
+} // End of namespace Sherlock
