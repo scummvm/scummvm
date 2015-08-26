@@ -1,0 +1,40 @@
+#!/usr/bin/env perl
+
+use strict;
+use warnings;
+use Data::Printer;
+use Tie::IxHash;
+use open qw(:std :utf8);
+
+sub readPOT {
+	my ($fn) = @_;
+	open my $fh, "<", $fn or die "Could not open $fn: $!";
+	local $/ = "";
+
+	my %ids;
+	tie %ids, 'Tie::IxHash';
+	my $ret = { ids => \%ids, header => scalar <$fh> };
+
+	while (defined (my $block = <$fh>)) {
+		my ($context) = $block =~ /msgctxt "(.+)"/ || "(none)";
+		my ($msgid) = $block =~ /msgid "(.*)"/;
+		if (! length $msgid) {
+			($msgid) = $block =~ /msgid ""(.*?)^msgstr/sm;
+			$msgid =~ s/"\n"//;
+		}
+		$ids{"$context/$msgid"} = $block;
+	}
+
+	return $ret;
+}
+
+my ($derivedfn, $mainfn) = @ARGV;
+
+my $main = readPOT $mainfn;
+my $derived = readPOT $derivedfn;
+
+open my $out, ">", $derivedfn or die "Cannot open $derivedfn for writing: $!";
+print $out $derived->{header};
+for my $key (keys %{$derived->{ids}}) {
+	print $out $derived->{ids}{$key} unless exists $main->{ids}{$key};
+}
