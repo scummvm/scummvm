@@ -2,19 +2,26 @@
 
 gui/about.cpp
 gui/browser.cpp
+gui/browser_osx.mm
 gui/chooser.cpp
 gui/error.cpp
+gui/editrecorddialog.cpp
+gui/fluidsynth-dialog.cpp
 gui/gui-manager.cpp
 gui/KeysDialog.h
 gui/KeysDialog.cpp
 gui/launcher.cpp
 gui/massadd.cpp
+gui/onscreendialog.cpp
 gui/options.cpp
+gui/recorderdialog.cpp
+gui/saveload-dialog.cpp
+gui/predictivedialog.cpp
+gui/recorderdialog.cpp
 gui/saveload-dialog.cpp
 gui/themebrowser.cpp
 gui/ThemeEngine.cpp
 gui/widget.cpp
-gui/fluidsynth-dialog.cpp
 
 base/main.cpp
 
@@ -30,11 +37,7 @@ audio/mididrv.cpp
 audio/musicplugin.cpp
 audio/null.h
 audio/null.cpp
-audio/softsynth/adlib.cpp
-audio/softsynth/appleiigs.cpp
-audio/softsynth/sid.cpp
 audio/softsynth/mt32.cpp
-audio/softsynth/pcspk.cpp
 
 backends/keymapper/remap-dialog.cpp
 backends/midi/windows.cpp

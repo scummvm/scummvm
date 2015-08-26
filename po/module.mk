@@ -8,7 +8,7 @@ updatepot:
 	xgettext -f - -D $(srcdir) -d residualvm --c++ -k_ -k_s -k_c:1,2c -k_sc:1,2c --add-comments=I18N\
 		-kDECLARE_TRANSLATION_ADDITIONAL_CONTEXT:1,2c -o $(POTFILE) \
 		--copyright-holder="ResidualVM Team" --package-name=ResidualVM \
-		--package-version=$(VERSION) --msgid-bugs-address=residualvm-devel@lists.sf.net -o $(POTFILE)_
+		--package-version=$(VERSION) --msgid-bugs-address=https://github.com/residualvm/residualvm/issues -o $(POTFILE)_
 
 	sed -e 's/SOME DESCRIPTIVE TITLE/LANGUAGE translation for ResidualVM/' \
 		-e 's/UTF-8/CHARSET/' -e 's/PACKAGE/ResidualVM/' $(POTFILE)_ > $(POTFILE).new
