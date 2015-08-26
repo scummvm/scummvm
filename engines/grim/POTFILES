@@ -1,3 +1,4 @@
 engines/grim/md5check.cpp
 engines/grim/md5checkdialog.cpp
+engines/grim/resource.cpp
 
