@@ -100,6 +100,11 @@ void WidgetText::centerWindowOnSpeaker(int speaker) {
 
 		// Check each NPC to see if they are the one that is talking
 		for (int idx = 1; idx < MAX_CHARACTERS; ++idx) {
+			// WORKAROUND: Fixes an original game bug where the positioning for Watson's dialogs
+			// during conversations at the Park Lake lake scene is in the incorrect position
+			if (speaker == 1 && scene._currentScene == 30)
+				continue;
+
 			if (people[idx]._type == CHARACTER) {
 				if (!scumm_strnicmp(people[idx]._npcName.c_str(), people._characters[speaker]._portrait, 4)) {
 					// Place the window above the player
