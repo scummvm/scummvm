@@ -492,6 +492,7 @@ freddi	Freddi Fish 1: The Case of the Missing Kelp Seeds
 	5ebb57234b2fe5c5dff641e00184ad81	-1	fr	Windows	HE 73	-	-	gist974
 	cf8ef3a1fb483c5c4b1c584d1167b2c4	-1	de	Windows	HE 73	-	-	Oncer
 	1f2e62b5a9c50589fc342285a6bb3a27	-1	he	Windows	HE 73	-	-	e_orz
+	64a22be96d679018696e5c8d3ca8b71d	26375	jp	Windows	HE 73	-	-	sev
 	507bb360688dc4180fdf0d7597352a69	26402	se	Windows	HE 73	-	-	Sven Arvidsson
 	df047cc4792150f601290357566d36a6	-1	us	All	HE 90	Updated	-	khalek
 	e44ea295a3f8fe4f41983080dab1e9ce	-1	fr	Mac	HE 90	Updated	-	ThierryFR
