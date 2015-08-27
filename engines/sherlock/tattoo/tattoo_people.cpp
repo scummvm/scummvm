@@ -1486,7 +1486,7 @@ const Common::Point TattooPeople::restrictToZone(int zoneId, const Common::Point
 	else if (destPos.x < r.left && r.top < destPos.y && destPos.y < r.bottom)
 		return Common::Point(r.left, destPos.y);
 	else if (destPos.x > r.right && r.top < destPos.y && destPos.y < r.bottom)
-		return Common::Point(r.bottom, destPos.y);
+		return Common::Point(r.right, destPos.y);
 
 	// Find which corner of the zone the point is closet to
 	if (destPos.x <= r.left) {
