@@ -84,6 +84,16 @@ public:
 	virtual ~ScalpelTalk() {}
 
 	/**
+	 * Called whenever a conversation or item script needs to be run. For standard conversations,
+	 * it opens up a description window similar to how 'talk' does, but shows a 'reply' directly
+	 * instead of waiting for a statement option.
+	 * @remarks		It seems that at some point, all item scripts were set up to use this as well.
+	 *	In their case, the conversation display is simply suppressed, and control is passed on to
+	 *	doScript to implement whatever action is required.
+	 */
+	virtual void talkTo(const Common::String filename);
+
+	/**
 	 * Draws the interface for conversation display
 	 */
 	void drawInterface();

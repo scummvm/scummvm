@@ -171,6 +171,18 @@ ScalpelTalk::ScalpelTalk(SherlockEngine *vm) : Talk(vm) {
 
 }
 
+void ScalpelTalk::talkTo(const Common::String filename) {
+	ScalpelUserInterface &ui = *(ScalpelUserInterface *)_vm->_ui;
+
+	Talk::talkTo(filename);
+
+	if (filename == "Tube59c") {
+		// WORKAROUND: Original game bug causes the results of testing the powdery substance
+		// to disappear too quickly. Introduce a delay to allow it to be properly displayed
+		ui._menuCounter = 30;
+	}
+}
+
 void ScalpelTalk::talkInterface(const byte *&str) {
 	FixedText &fixedText = *_vm->_fixedText;
 	People &people = *_vm->_people;

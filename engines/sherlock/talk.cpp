@@ -127,7 +127,7 @@ Talk::Talk(SherlockEngine *vm) : _vm(vm) {
 	_talkHistory.resize(IS_ROSE_TATTOO ? 1500 : 500);
 }
 
-void Talk::talkTo(const Common::String &filename) {
+void Talk::talkTo(const Common::String filename) {
 	Events &events = *_vm->_events;
 	Inventory &inv = *_vm->_inventory;
 	Journal &journal = *_vm->_journal;
@@ -440,12 +440,6 @@ void Talk::talkTo(const Common::String &filename) {
 	// previous script can continue
 	popStack();
 
-	if (IS_SERRATED_SCALPEL && filename == "Tube59c") {
-		// WORKAROUND: Original game bug causes the results of testing the powdery substance
-		// to disappear too quickly. Introduce a delay to allow it to be properly displayed
-		ui._menuCounter = 30;
-	}
-
 	events.setCursor(ARROW);
 }
 
@@ -647,7 +641,7 @@ void Talk::pushSequence(int speaker) {
 	}
 }
 
-void Talk::doScript(const Common::String script) {
+void Talk::doScript(const Common::String &script) {
 	People &people = *_vm->_people;
 	Scene &scene = *_vm->_scene;
 	Screen &screen = *_vm->_screen;

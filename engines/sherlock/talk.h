@@ -283,13 +283,13 @@ public:
 	 *	In their case, the conversation display is simply suppressed, and control is passed on to
 	 *	doScript to implement whatever action is required.
 	 */
-	void talkTo(const Common::String &filename);
+	virtual void talkTo(const Common::String filename);
 
 	/**
 	 * Parses a reply for control codes and display text. The found text is printed within
 	 * the text window, handles delays, animations, and animating portraits.
 	 */
-	void doScript(const Common::String script);
+	void doScript(const Common::String &script);
 
 	/**
 	 * Main method for handling conversations when a character to talk to has been

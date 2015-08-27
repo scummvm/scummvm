@@ -183,6 +183,10 @@ TattooTalk::TattooTalk(SherlockEngine *vm) : Talk(vm), _talkWidget(vm), _passwor
 	_opcodeTable = OPCODE_METHODS;
 }
 
+void TattooTalk::talkTo(const Common::String filename) {
+	Talk::talkTo(filename);
+}
+
 void TattooTalk::talkInterface(const byte *&str) {
 	TattooEngine &vm = *(TattooEngine *)_vm;
 	Sound &sound = *_vm->_sound;
