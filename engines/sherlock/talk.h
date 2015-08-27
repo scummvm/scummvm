@@ -289,7 +289,7 @@ public:
 	 * Parses a reply for control codes and display text. The found text is printed within
 	 * the text window, handles delays, animations, and animating portraits.
 	 */
-	void doScript(const Common::String &script);
+	void doScript(const Common::String script);
 
 	/**
 	 * Main method for handling conversations when a character to talk to has been

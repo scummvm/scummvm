@@ -647,7 +647,7 @@ void Talk::pushSequence(int speaker) {
 	}
 }
 
-void Talk::doScript(const Common::String &script) {
+void Talk::doScript(const Common::String script) {
 	People &people = *_vm->_people;
 	Scene &scene = *_vm->_scene;
 	Screen &screen = *_vm->_screen;
