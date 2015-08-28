@@ -995,6 +995,8 @@ void TattooPerson::synchronize(Serializer &s) {
 	s.syncAsSint32LE(_npcPause);
 	s.syncAsByte(_lookHolmes);
 	s.syncAsByte(_updateNPCPath);
+	if (s.isLoading())
+		_npcIndex = 0;
 
 	// Verbs
 	for (int idx = 0; idx < 2; ++idx)
