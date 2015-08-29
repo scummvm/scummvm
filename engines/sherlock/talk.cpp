@@ -1048,6 +1048,8 @@ OpcodeReturn Talk::cmdPauseWithoutControl(const byte *&str) {
 	Scene &scene = *_vm->_scene;
 	++str;
 
+	events.incWaitCounter();
+
 	for (int idx = 0; idx < (str[0] - 1); ++idx) {
 		scene.doBgAnim();
 		if (_talkToAbort)
@@ -1057,6 +1059,8 @@ OpcodeReturn Talk::cmdPauseWithoutControl(const byte *&str) {
 		events.pollEvents();
 		events.setButtonState();
 	}
+
+	events.decWaitCounter();
 
 	_endStr = false;
 	return RET_SUCCESS;

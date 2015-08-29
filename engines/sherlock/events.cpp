@@ -43,6 +43,7 @@ Events::Events(SherlockEngine *vm): _vm(vm) {
 	_rightPressed = _rightReleased = false;
 	_oldButtons = _oldRightButton = false;
 	_firstPress = false;
+	_waitCounter = 0;
 
 	if (_vm->_interactiveFl)
 		loadCursors("rmouse.vgs");
@@ -67,7 +68,7 @@ void Events::loadCursors(const Common::String &filename) {
 }
 
 void Events::setCursor(CursorId cursorId) {
-	if (cursorId == _cursorId)
+	if (cursorId == _cursorId || _waitCounter > 0)
 		return;
 
 	int hotspotX, hotspotY;
@@ -359,6 +360,16 @@ void Events::setButtonState() {
 bool Events::checkInput() {
 	setButtonState();
 	return kbHit() || _pressed || _released || _rightPressed || _rightReleased;
+}
+
+void Events::incWaitCounter() {
+	setCursor(WAIT);
+	++_waitCounter;		
+}
+
+void Events::decWaitCounter() {
+	assert(_waitCounter > 0);
+	--_waitCounter;
 }
 
 } // End of namespace Sherlock
