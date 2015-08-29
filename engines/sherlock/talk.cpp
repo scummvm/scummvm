@@ -671,6 +671,7 @@ void Talk::doScript(const Common::String &script) {
 			Tattoo::TattooPerson &p = (*(Tattoo::TattooPeople *)_vm->_people)[idx];
 			p._savedNpcSequence = p._sequenceNumber;
 			p._savedNpcFrame = p._frameNumber;
+			p._resetNPCPath = true;
 		}
 	}
 
