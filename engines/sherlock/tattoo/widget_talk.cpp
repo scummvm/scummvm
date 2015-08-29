@@ -303,7 +303,7 @@ void WidgetTalk::handleEvents() {
 						int select = -1;
 						_selector = _oldSelector = -1;
 
-						// Find the first statement that has all it's flags set correctly
+						// Find the first statement that has all its flags set correctly
 						for (uint idx = 0; idx < talk._statements.size() && select == -1; ++select) {
 							if (!talk._statements[idx]._talkMap)
 								select = idx;
@@ -441,7 +441,7 @@ void WidgetTalk::setStatementLines() {
 	_statementLines.clear();
 
 	for (uint statementNum = 0; statementNum < talk._statements.size(); ++statementNum) {
-		// See if this statment meets all of it's flag requirements
+		// See if this statment meets all of its flag requirements
 		if (talk._statements[statementNum]._talkMap != -1) {
 			// Get the next statement text to process
 			Common::String str = talk._statements[statementNum]._statement;

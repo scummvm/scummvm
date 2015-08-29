@@ -41,7 +41,7 @@ WidgetInventoryTooltip::WidgetInventoryTooltip(SherlockEngine *vm, WidgetInvento
 }
 
 void WidgetInventoryTooltip::setText(const Common::String &str) {
-	// If no text specified, erase any previously displayed tooltip and free it's surface
+	// If no text specified, erase any previously displayed tooltip and free its surface
 	if (str.empty()) {
 		erase();
 		_surface.free();

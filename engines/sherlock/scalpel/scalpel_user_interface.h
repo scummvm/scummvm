@@ -84,7 +84,7 @@ private:
 	void lookScreen(const Common::Point &pt);
 
 	/**
-	 * Gets the item in the inventory the mouse is on and display's it's description
+	 * Gets the item in the inventory the mouse is on and display's its description
 	 */
 	void lookInv();
 

@@ -188,7 +188,7 @@ public:
 	void walkBothToCoords(const PositionFacing &holmesDest, const PositionFacing &npcDest);
 
 	/**
-	 * This adjusts the sprites position, as well as it's animation sequence:
+	 * This adjusts the sprites position, as well as its animation sequence:
 	 */
 	virtual void adjustSprite();
 

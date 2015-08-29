@@ -52,7 +52,7 @@ public:
 	virtual void synchronize(Serializer &s);
 
 	/**
-	* This adjusts the sprites position, as well as it's animation sequence:
+	* This adjusts the sprites position, as well as its animation sequence:
 	*/
 	virtual void adjustSprite();
 

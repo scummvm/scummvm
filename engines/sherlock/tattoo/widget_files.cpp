@@ -58,7 +58,7 @@ void WidgetFiles::show(SaveMode mode) {
 			(FILES_LINES_COUNT + 1) + 17);
 		_bounds.moveTo(mousePos.x - _bounds.width() / 2, mousePos.y - _bounds.height() / 2);
 
-		// Create the surface and render it's contents
+		// Create the surface and render its contents
 		_surface.create(_bounds.width(), _bounds.height());
 		render(RENDER_ALL);
 

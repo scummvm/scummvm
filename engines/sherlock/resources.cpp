@@ -64,7 +64,7 @@ void Cache::load(const Common::String &name, Common::SeekableReadStream &stream)
 
 	// Check whether the file is compressed
 	if (signature == MKTAG('L', 'Z', 'V', 26)) {
-		// It's compressed, so decompress the file and store it's data in the cache entry
+		// It's compressed, so decompress the file and store its data in the cache entry
 		Common::SeekableReadStream *decompressed = _vm->_res->decompress(stream);
 		cacheEntry.resize(decompressed->size());
 		decompressed->read(&cacheEntry[0], decompressed->size());
@@ -200,7 +200,7 @@ Common::SeekableReadStream *Resources::load(const Common::String &filename, cons
 	// Open up the library for access
 	Common::SeekableReadStream *libStream = load(libraryFile);
 
-	// Check if the library has already had it's index read, and if not, load it
+	// Check if the library has already had its index read, and if not, load it
 	if (!_indexes.contains(libraryFile))
 		loadLibraryIndex(libraryFile, libStream, false);
 	LibraryIndex &libIndex = _indexes[libraryFile];

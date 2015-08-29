@@ -88,7 +88,7 @@ private:
 	int _resourceIndex;
 
 	/**
-	 * Reads in the index from a library file, and caches it's index for later use
+	 * Reads in the index from a library file, and caches its index for later use
 	 */
 	void loadLibraryIndex(const Common::String &libFilename, Common::SeekableReadStream *stream, bool isNewStyle);
 public:
@@ -96,7 +96,7 @@ public:
 
 	/**
 	 * Adds the specified file to the cache. If it's a library file, takes care of
-	 * loading it's index for future use
+	 * loading its index for future use
 	 */
 	void addToCache(const Common::String &filename);
 	
@@ -113,7 +113,7 @@ public:
 	bool isInCache(const Common::String &filename) const { return _cache.isCached(filename); }
 
 	/**
-	 * Checks the passed stream, and if is compressed, deletes it and replaces it with it's uncompressed data
+	 * Checks the passed stream, and if is compressed, deletes it and replaces it with its uncompressed data
 	 */
 	void decompressIfNecessary(Common::SeekableReadStream *&stream);
 
@@ -133,7 +133,7 @@ public:
 	bool exists(const Common::String &filename) const;
 
 	/**
-	 * Returns the index of the last loaded resource in it's given library file.
+	 * Returns the index of the last loaded resource in its given library file.
 	 * This will be used primarily when loading talk files, so the engine can
 	 * update the given conversation number in the journal
 	 */

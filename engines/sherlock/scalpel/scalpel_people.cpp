@@ -315,8 +315,8 @@ void ScalpelPerson::setWalking() {
 	}
 
 	// See if the new walk sequence is the same as the old. If it's a new one,
-	// we need to reset the frame number to zero so it's animation starts at
-	// it's beginning. Otherwise, if it's the same sequence, we can leave it
+	// we need to reset the frame number to zero so its animation starts at
+	// its beginning. Otherwise, if it's the same sequence, we can leave it
 	// as is, so it keeps the animation going at wherever it was up to
 	if (_sequenceNumber != _oldWalkSequence)
 		_frameNumber = 0;

@@ -342,7 +342,7 @@ void TattooUserInterface::doBgAnimRestoreUI() {
 	if (scene._activeCAnim.active())
 		screen.restoreBackground(scene._activeCAnim._oldBounds);
 
-	// If a canimation just ended, remove it's graphics from the backbuffer
+	// If a canimation just ended, remove its graphics from the backbuffer
 	if (scene._activeCAnim._removeBounds.width() > 0)
 		screen.restoreBackground(scene._activeCAnim._removeBounds);
 }
@@ -481,7 +481,7 @@ void TattooUserInterface::doStandardControl() {
 			talk.initTalk(_bgFound);
 			_activeObj = -1;
 		} else if (!noDesc) {
-			// Either call the code to Look at it's Examine Field or call the Exit animation
+			// Either call the code to Look at its Examine Field or call the Exit animation
 			// if the object is an exit, specified by the first four characters of the name being "EXIT"
 			Common::String name = _personFound ? people[_bgFound - 1000]._name : _bgShape->_name;
 			if (!name.hasPrefix("EXIT")) {
