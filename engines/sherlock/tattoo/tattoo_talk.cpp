@@ -184,7 +184,22 @@ TattooTalk::TattooTalk(SherlockEngine *vm) : Talk(vm), _talkWidget(vm), _passwor
 }
 
 void TattooTalk::talkTo(const Common::String filename) {
+	Events &events = *_vm->_events;
+	TattooUserInterface &ui = *(TattooUserInterface *)_vm->_ui;
+
+	// WORKAROUND: Keep wait cursor active until very end of the cutscene of the monkey
+	// stealing the cap, which is finished by calling the 30cuend script
+	if (filename == "wilb29a")
+		events.incWaitCounter();
+
 	Talk::talkTo(filename);
+
+	if (filename == "wilb29a")
+		ui._menuMode = TALK_MODE;
+	if (filename == "30cuend") {
+		events.decWaitCounter();
+		events.setCursor(ARROW);
+	}
 }
 
 void TattooTalk::talkInterface(const byte *&str) {
