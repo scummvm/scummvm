@@ -640,7 +640,7 @@ OpcodeReturn TattooTalk::cmdSetNPCTalkFile(const byte *&str) {
 		memset(person._npcPath, 0, 100);
 	}
 
-	person._npcPath[person._npcIndex] = 3;
+	person._npcPath[person._npcIndex] = NPCPATH_SET_TALK_FILE;
 	for (int i = 1; i <= 8; i++)
 		person._npcPath[person._npcIndex + i] = str[i];
 
