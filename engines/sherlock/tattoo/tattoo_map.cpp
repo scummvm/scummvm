@@ -427,7 +427,7 @@ void TattooMap::showCloseUp(int closeUpNum) {
 	screen._backBuffer1.transBlitFrom(pic[0], Common::Point(r.left, r.top));
 	screen.slamRect(oldBounds);
 	screen.slamRect(r);
-	events.wait(2);
+	events.wait(60);
 }
 
 } // End of namespace Tattoo
