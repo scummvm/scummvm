@@ -87,6 +87,19 @@ Debugger::~Debugger() {
 
 
 // Initialisation Functions
+int Debugger::getCharsPerLine() {
+#ifndef USE_TEXT_CONSOLE_FOR_DEBUGGER
+	const int charsPerLine = _debuggerDialog->getCharsPerLine();
+#elif defined(USE_READLINE)
+	int charsPerLine, rows;
+	rl_get_screen_size(&rows, &charsPerLine);
+#else
+	// Can we do better?
+	const int charsPerLine = 80;
+#endif
+	return charsPerLine;
+}
+
 int Debugger::debugPrintf(const char *format, ...) {
 	va_list	argptr;
 
@@ -99,6 +112,36 @@ int Debugger::debugPrintf(const char *format, ...) {
 #endif
 	va_end (argptr);
 	return count;
+}
+
+void Debugger::debugPrintColumns(const Common::StringArray &list) {
+	uint maxLength = 0;
+	uint i, j;
+
+	for (i = 0; i < list.size(); i++) {
+		if (list[i].size() > maxLength)
+			maxLength = list[i].size();
+	}
+
+	uint charsPerLine = getCharsPerLine();
+	uint columnWidth = maxLength + 2;
+	uint columns = charsPerLine / columnWidth;
+
+	uint lines = list.size() / columns;
+
+	if (list.size() % columns)
+		lines++;
+
+
+	for (i = 0; i < lines; i++) {
+		for (j = 0; j < columns; j++) {
+			uint pos = i + j * lines;
+			if (pos < list.size()) {
+				debugPrintf("%*s", -columnWidth, list[pos].c_str());
+			}
+		}
+		debugPrintf("\n");
+	}
 }
 
 void Debugger::preEnter() {
@@ -447,15 +490,7 @@ bool Debugger::cmdExit(int argc, const char **argv) {
 // Print a list of all registered commands (and variables, if any),
 // nicely word-wrapped.
 bool Debugger::cmdHelp(int argc, const char **argv) {
-#ifndef USE_TEXT_CONSOLE_FOR_DEBUGGER
-	const int charsPerLine = _debuggerDialog->getCharsPerLine();
-#elif defined(USE_READLINE)
-	int charsPerLine, rows;
-	rl_get_screen_size(&rows, &charsPerLine);
-#else
-	// Can we do better?
-	const int charsPerLine = 80;
-#endif
+	const int charsPerLine = getCharsPerLine();
 	int width, size;
 	uint i;
 
