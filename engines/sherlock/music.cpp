@@ -20,6 +20,7 @@
  *
  */
 
+#include "common/algorithm.h"
 #include "common/config-manager.h"
 #include "common/mutex.h"
 #include "sherlock/sherlock.h"
@@ -577,6 +578,16 @@ bool Music::waitUntilMSec(uint32 msecTarget, uint32 msecMax, uint32 additionalDe
 void Music::setMusicVolume(int volume) {
 	_musicVolume = volume;
 	_vm->_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, volume);
+}
+
+void Music::getSongNames(Common::StringArray &songs) {
+	songs.clear();
+	if (IS_SERRATED_SCALPEL) {
+		for (int i = 0; i < ARRAYSIZE(SONG_NAMES); i++) {
+			songs.push_back(SONG_NAMES[i]);
+		}
+	}
+	Common::sort(songs.begin(), songs.end());
 }
 
 } // End of namespace Sherlock

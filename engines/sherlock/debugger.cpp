@@ -29,6 +29,7 @@
 #include "audio/mixer.h"
 #include "audio/decoders/aiff.h"
 #include "audio/decoders/wave.h"
+#include "common/str-array.h"
 
 namespace Sherlock {
 
@@ -45,8 +46,9 @@ Debugger::Debugger(SherlockEngine *vm) : GUI::Debugger(), _vm(vm) {
 	registerCmd("continue",	     WRAP_METHOD(Debugger, cmdExit));
 	registerCmd("scene",         WRAP_METHOD(Debugger, cmdScene));
 	registerCmd("song",          WRAP_METHOD(Debugger, cmdSong));
+	registerCmd("songs",         WRAP_METHOD(Debugger, cmdListSongs));
 	registerCmd("dumpfile",      WRAP_METHOD(Debugger, cmdDumpFile));
-	registerCmd("locations",	 WRAP_METHOD(Debugger, cmdLocations));
+	registerCmd("locations",     WRAP_METHOD(Debugger, cmdLocations));
 }
 
 void Debugger::postEnter() {
@@ -87,15 +89,29 @@ bool Debugger::cmdScene(int argc, const char **argv) {
 
 bool Debugger::cmdSong(int argc, const char **argv) {
 	if (argc != 2) {
-		debugPrintf("Format: song <room>\n");
+		debugPrintf("Format: song <name>\n");
 		return true;
 	}
 
-	if (!_vm->_music->loadSong(strToInt(argv[1]))) {
-		debugPrintf("Invalid song number.\n");
-		return true;
+	Common::StringArray songs;
+	_vm->_music->getSongNames(songs);
+
+	for (uint i = 0; i < songs.size(); i++) {
+		if (songs[i].equalsIgnoreCase(argv[1])) {
+			_vm->_music->loadSong(songs[i]);
+			return false;
+		}
 	}
-	return false;
+
+	debugPrintf("Invalid song. Use the 'songs' command to see which ones are available.\n");
+	return true;
+}
+
+bool Debugger::cmdListSongs(int argc, const char **argv) {
+	Common::StringArray songs;
+	_vm->_music->getSongNames(songs);
+	debugPrintColumns(songs);
+	return true;
 }
 
 bool Debugger::cmdDumpFile(int argc, const char **argv) {

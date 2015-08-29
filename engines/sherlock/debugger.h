@@ -50,6 +50,11 @@ private:
 	bool cmdSong(int argc, const char **argv);
 
 	/**
+	 * Lists all available songs
+	 */
+	bool cmdListSongs(int argc, const char **argv);
+
+	/**
 	 * Dumps a file to disk
 	 */
 	bool cmdDumpFile(int argc, const char **argv);

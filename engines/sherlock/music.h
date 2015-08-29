@@ -31,6 +31,7 @@
 #include "audio/audiostream.h"
 #include "audio/mixer.h"
 #include "common/mutex.h"
+#include "common/str-array.h"
 
 namespace Sherlock {
 
@@ -121,9 +122,13 @@ public:
 	 * Sets the volume of the MIDI music with a value ranging from 0 to 127
 	 */
 	void setMusicVolume(int volume);
+
+	/**
+	 * Gets the names of all the songs in the game. Used by the debugger.
+	 */
+	void getSongNames(Common::StringArray &songs);
 };
 
 } // End of namespace Sherlock
 
 #endif
-
