@@ -314,6 +314,14 @@ int Resources::resourceIndex() const {
 	return _resourceIndex;
 }
 
+void Resources::getResourceNames(const Common::String &libraryFile, Common::StringArray &names) {
+	addToCache(libraryFile);
+	LibraryIndex &libIndex = _indexes[libraryFile];
+	for (LibraryIndex::iterator i = libIndex.begin(); i != libIndex.end(); ++i) {
+		names.push_back(i->_key);
+	}
+}
+
 Common::SeekableReadStream *Resources::decompress(Common::SeekableReadStream &source) {
 	// This variation can't be used by Rose Tattoo, since compressed resources include the input size,
 	// not the output size. Which means their decompression has to be done via passed buffers

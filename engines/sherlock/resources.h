@@ -29,6 +29,7 @@
 #include "common/hash-str.h"
 #include "common/rect.h"
 #include "common/str.h"
+#include "common/str-array.h"
 #include "common/stream.h"
 #include "graphics/surface.h"
 
@@ -138,6 +139,11 @@ public:
 	 * update the given conversation number in the journal
 	 */
 	int resourceIndex() const;
+
+	/**
+	 * Produces a list of all resource names within a file. Used by the debugger.
+	 */
+	void getResourceNames(const Common::String &libraryFile, Common::StringArray &names);
 
 	/**
 	 * Decompresses LZW compressed data
