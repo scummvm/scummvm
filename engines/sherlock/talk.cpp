@@ -1089,7 +1089,9 @@ OpcodeReturn Talk::cmdRunCAnimation(const byte *&str) {
 		return RET_EXIT;
 
 	// Check if next character is changing side or changing portrait
-	if (_charCount && (str[1] == _opcodes[OP_SWITCH_SPEAKER] || str[1] == _opcodes[OP_ASSIGN_PORTRAIT_LOCATION]))
+	_wait = 0;
+	if (_charCount && (str[1] == _opcodes[OP_SWITCH_SPEAKER] ||
+			(IS_SERRATED_SCALPEL && str[1] == _opcodes[OP_ASSIGN_PORTRAIT_LOCATION])))
 		_wait = 1;
 
 	return RET_SUCCESS;
