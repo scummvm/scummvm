@@ -69,7 +69,7 @@ int TattooMap::show() {
 		}
 	}
 
-	if (music._midiOption) {
+	if (music._musicOn) {
 		// See if Holmes or Watson is the active character	
 		Common::String song;
 		if (_vm->readFlags(FLAG_PLAYER_IS_HOLMES))
@@ -81,8 +81,7 @@ int TattooMap::show() {
 			song = "Cue7";
 
 		if (music.loadSong(song)) {
-			if (music._musicOn)
-				music.startSong();
+			music.startSong();
 		}
 	}
 
