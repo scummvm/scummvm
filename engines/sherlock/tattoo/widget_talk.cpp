@@ -347,6 +347,7 @@ void WidgetTalk::handleEvents() {
 						if (ui._menuMode != PASSWORD_MODE) {
 							ui.banishWindow();
 							ui._menuMode = scene._labTableScene ? LAB_MODE : STD_MODE;
+							events.setCursor(ARROW);
 						}
 						break;
 					}
