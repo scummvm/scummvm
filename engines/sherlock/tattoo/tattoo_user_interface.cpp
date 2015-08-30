@@ -270,17 +270,18 @@ void TattooUserInterface::handleInput() {
 	if (events.kbHit()) {
 		_keyState = events.getKey();
 
-		if (_keyState.keycode == Common::KEYCODE_s && vm._allowFastMode)
-			vm._fastMode = !vm._fastMode;
-
-		else if (_keyState.keycode == Common::KEYCODE_l && _bgFound != -1) {
-			// Beging used for testing that Look dialogs work
-			lookAtObject();
-
-		} else if (_keyState.keycode == Common::KEYCODE_ESCAPE && vm._runningProlog && !_lockoutTimer) {
+		if (_keyState.keycode == Common::KEYCODE_ESCAPE && vm._runningProlog && !_lockoutTimer) {
 			vm.setFlags(-76);
 			vm.setFlags(396);
 			scene._goToScene = STARTING_GAME_SCENE;
+		} else if (_menuMode == STD_MODE) {
+			if (_keyState.keycode == Common::KEYCODE_s && vm._allowFastMode) {
+				vm._fastMode = !vm._fastMode;
+
+			} else if (_keyState.keycode == Common::KEYCODE_l && _bgFound != -1) {
+				// Beging used for testing that Look dialogs work
+				lookAtObject();
+			}
 		}
 	}
 
