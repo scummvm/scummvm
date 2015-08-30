@@ -47,6 +47,7 @@ Debugger::Debugger(SherlockEngine *vm) : GUI::Debugger(), _vm(vm) {
 	registerCmd("scene",         WRAP_METHOD(Debugger, cmdScene));
 	registerCmd("song",          WRAP_METHOD(Debugger, cmdSong));
 	registerCmd("songs",         WRAP_METHOD(Debugger, cmdListSongs));
+	registerCmd("listfiles",     WRAP_METHOD(Debugger, cmdListFiles));
 	registerCmd("dumpfile",      WRAP_METHOD(Debugger, cmdDumpFile));
 	registerCmd("locations",     WRAP_METHOD(Debugger, cmdLocations));
 }
@@ -111,6 +112,17 @@ bool Debugger::cmdListSongs(int argc, const char **argv) {
 	Common::StringArray songs;
 	_vm->_music->getSongNames(songs);
 	debugPrintColumns(songs);
+	return true;
+}
+
+bool Debugger::cmdListFiles(int argc, const char **argv) {
+	if (argc != 2) {
+		debugPrintf("Format: listfiles <resource file>\n");
+		return true;
+	}
+	Common::StringArray files;
+	_vm->_res->getResourceNames(Common::String(argv[1]), files);
+	debugPrintColumns(files);
 	return true;
 }
 

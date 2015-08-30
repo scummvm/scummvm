@@ -55,6 +55,11 @@ private:
 	bool cmdListSongs(int argc, const char **argv);
 
 	/**
+	 * Lists all files in a library (use at your own risk)
+	 */
+	bool cmdListFiles(int argc, const char **argv);
+
+	/**
 	 * Dumps a file to disk
 	 */
 	bool cmdDumpFile(int argc, const char **argv);
