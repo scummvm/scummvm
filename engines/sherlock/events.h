@@ -46,7 +46,7 @@ private:
 	int _mouseButtons;
 	Common::Point _mousePos;
 	int _waitCounter;
-	int _frameRate;
+	uint _frameRate;
 
 	/**
 	 * Check whether it's time to display the next screen frame
