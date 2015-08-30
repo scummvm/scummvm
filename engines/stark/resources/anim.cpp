@@ -171,7 +171,7 @@ AnimVideo::AnimVideo(Object *parent, byte subType, uint16 index, const Common::S
 				_smacker(nullptr),
 				_field_4C(-1),
 				_field_50(0),
-				_field_7C(0) {
+				_loop(false) {
 }
 
 void AnimVideo::readData(Formats::XRCReadStream *stream) {
@@ -189,7 +189,7 @@ void AnimVideo::readData(Formats::XRCReadStream *stream) {
 		_sizes.push_back(stream->readRect());
 	}
 
-	_field_7C = stream->readUint32LE();
+	_loop = stream->readBool();
 	_field_4C = stream->readSint32LE();
 
 	if (stream->isDataLeft()) {
@@ -254,7 +254,7 @@ void AnimVideo::printData() {
 
 	debug("field_4C: %d", _field_4C);
 	debug("field_50: %d", _field_50);
-	debug("field_7C: %d", _field_7C);
+	debug("loop: %d", _loop);
 }
 
 AnimSkeleton::~AnimSkeleton() {

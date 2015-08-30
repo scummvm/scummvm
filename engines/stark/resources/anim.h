@@ -188,7 +188,7 @@ protected:
 
 	int32 _field_4C;
 	uint32 _field_50;
-	uint32 _field_7C;
+	bool _loop;
 };
 
 /**
