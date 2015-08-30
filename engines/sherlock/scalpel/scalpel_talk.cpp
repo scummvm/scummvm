@@ -211,8 +211,7 @@ void ScalpelTalk::talkInterface(const byte *&str) {
 		if (ui._windowOpen) {
 			screen.print(Common::Point(16, _yp), TALK_FOREGROUND, "%s",
 				people._characters[_speaker & 127]._name);
-		}
-		else {
+		} else {
 			screen.gPrint(Common::Point(16, _yp - 1), TALK_FOREGROUND, "%s",
 				people._characters[_speaker & 127]._name);
 			_openTalkWindow = true;
@@ -234,8 +233,7 @@ void ScalpelTalk::talkInterface(const byte *&str) {
 			--idx;
 			--_charCount;
 		}
-	}
-	else {
+	} else {
 		_endStr = true;
 	}
 
@@ -254,17 +252,14 @@ void ScalpelTalk::talkInterface(const byte *&str) {
 	if (_speaker != -1) {
 		if (ui._windowOpen) {
 			screen.print(Common::Point(16, _yp), COMMAND_FOREGROUND, "%s", lineStr.c_str());
-		}
-		else {
+		} else {
 			screen.gPrint(Common::Point(16, _yp - 1), COMMAND_FOREGROUND, "%s", lineStr.c_str());
 			_openTalkWindow = true;
 		}
-	}
-	else {
+	} else {
 		if (ui._windowOpen) {
 			screen.print(Common::Point(16, _yp), COMMAND_FOREGROUND, "%s", lineStr.c_str());
-		}
-		else {
+		} else {
 			screen.gPrint(Common::Point(16, _yp - 1), COMMAND_FOREGROUND, "%s", lineStr.c_str());
 			_openTalkWindow = true;
 		}

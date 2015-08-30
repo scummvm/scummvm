@@ -399,7 +399,6 @@ void Talk::talkTo(const Common::String filename) {
 					if (_talkTo != -1 && !_talkHistory[_converseNum][select])
 						journal.record(_converseNum, select, true);
 					_talkHistory[_converseNum][select] = true;
-
 				}
 
 				ui._key = ui._oldKey = Scalpel::COMMANDS[TALK_MODE - 1];

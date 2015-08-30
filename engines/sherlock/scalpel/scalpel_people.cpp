@@ -469,8 +469,7 @@ void ScalpelPeople::setTalkSequence(int speaker, int sequenceNum) {
 
 			if (obj._seqSize < MAX_TALK_SEQUENCES) {
 				warning("Tried to copy too many talk frames");
-			}
-			else {
+			} else {
 				for (int idx = 0; idx < MAX_TALK_SEQUENCES; ++idx) {
 					obj._sequences[idx] = people._characters[speaker]._talkSequences[idx];
 					if (idx > 0 && !obj._sequences[idx] && !obj._sequences[idx - 1])

@@ -732,8 +732,7 @@ int ScalpelScene::findBgShape(const Common::Point &pt) {
 			&& o._aType <= PERSON) {
 			if (o.getNewBounds().contains(pt))
 				return idx;
-		}
-		else if (o._type == NO_SHAPE) {
+		} else if (o._type == NO_SHAPE) {
 			if (o.getNoShapeBounds().contains(pt))
 				return idx;
 		}

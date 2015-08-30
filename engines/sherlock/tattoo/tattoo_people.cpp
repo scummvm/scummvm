@@ -1283,8 +1283,7 @@ void TattooPeople::setTalkSequence(int speaker, int sequenceNum) {
 		if (obj.hasAborts()) {
 			talk.pushSequenceEntry(&obj);
 			obj._gotoSeq = sequenceNum;
-		}
-		else {
+		} else {
 			obj.setObjTalkSequence(sequenceNum);
 		}
 	} else if (objNum != -1) {
