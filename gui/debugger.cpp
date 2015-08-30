@@ -132,7 +132,8 @@ void Debugger::debugPrintColumns(const Common::StringArray &list) {
 	if (list.size() % columns)
 		lines++;
 
-
+	// This won't always use all available columns, but even if it did the
+	// number of lines should be the same so that's good enough.
 	for (i = 0; i < lines; i++) {
 		for (j = 0; j < columns; j++) {
 			uint pos = i + j * lines;
