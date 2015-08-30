@@ -25,33 +25,25 @@
 
 #include "common/list.h"
 #include "common/rect.h"
-#include "common/serializer.h"
 #include "sherlock/surface.h"
 #include "sherlock/resources.h"
+#include "sherlock/saveload.h"
 
 namespace Sherlock {
 
 #define PALETTE_SIZE 768
 #define PALETTE_COUNT 256
 #define VGA_COLOR_TRANS(x) ((x) * 255 / 63)
+#define BG_GREYSCALE_RANGE_END 229
 
 enum {
+	BLACK				= 0,
 	INFO_BLACK			= 1,
-	INFO_FOREGROUND		= 11,
-	INFO_BACKGROUND		= 1,
 	BORDER_COLOR		= 237,
-	INV_FOREGROUND		= 14,
-	INV_BACKGROUND		= 1,
-	COMMAND_HIGHLIGHTED	= 10,
-	COMMAND_FOREGROUND	= 15,
 	COMMAND_BACKGROUND	= 4,
-	COMMAND_NULL		= 248,
-	BUTTON_TOP			= 233,
-	BUTTON_MIDDLE		= 244,
-	BUTTON_BOTTOM		= 248,
+	BUTTON_BACKGROUND	= 235,
 	TALK_FOREGROUND		= 12,
-	TALK_NULL			= 16,
-	PEN_COLOR			= 250
+	TALK_NULL			= 16
 };
 
 class SherlockEngine;
@@ -59,18 +51,13 @@ class SherlockEngine;
 class Screen : public Surface {
 private:
 	SherlockEngine *_vm;
-	int _fontNumber;
 	Common::List<Common::Rect> _dirtyRects;
 	uint32 _transitionSeed;
-	ImageFile *_font;
-	int _fontHeight;
 	Surface _sceneSurface;
 
 	// Rose Tattoo fields
 	int _fadeBytesRead, _fadeBytesToRead;
 	int _oldFadePercent;
-	byte _lookupTable[PALETTE_COUNT];
-	byte _lookupTable1[PALETTE_COUNT];
 private:
 	/**
 	 * Merges together overlapping dirty areas of the screen
@@ -81,11 +68,6 @@ private:
 	 * Returns the union of two dirty area rectangles
 	 */
 	bool unionRectangle(Common::Rect &destRect, const Common::Rect &src1, const Common::Rect &src2);
-
-	/**
-	 * Draws the given string into the back buffer using the images stored in _font
-	 */
-	void writeString(const Common::String &str, const Common::Point &pt, byte color);
 protected:
 	/**
 	 * Adds a rectangle to the list of modified areas of the screen during the
@@ -99,22 +81,22 @@ public:
 	byte _cMap[PALETTE_SIZE];
 	byte _sMap[PALETTE_SIZE];
 	byte _tMap[PALETTE_SIZE];
-	int _currentScroll, _targetScroll;
-	int _scrollSize, _scrollSpeed;
 	bool _flushScreen;
+	Common::Point _currentScroll;
 public:
+	static Screen *init(SherlockEngine *vm);
 	Screen(SherlockEngine *vm);
 	virtual ~Screen();
-
-	/**
-	 * Set the font to use for writing text on the screen
-	 */
-	void setFont(int fontNumber);
 
 	/**
 	 * Handles updating any dirty areas of the screen Surface object to the physical screen
 	 */
 	void update();
+
+	/**
+	 * Makes the whole screen dirty, Hack for 3DO movie playing
+	 */
+	void makeAllDirty();
 
 	/**
 	 * Return the currently active palette
@@ -150,6 +132,13 @@ public:
 	 * Transition to the surface from _backBuffer using a vertical transition
 	 */
 	void verticalTransition();
+
+	/**
+	 * Fade backbuffer 1 into screen (3DO RGB!)
+	 */
+	void fadeIntoScreen3DO(int speed);
+
+	void blitFrom3DOcolorLimit(uint16 color);
 
 	/**
 	 * Prints the text passed onto the back buffer at the given position and color.
@@ -192,41 +181,24 @@ public:
 		int16 *width, int16 *height, int scaleVal);
 
 	/**
-	 * Returns the width of a string in pixels
+	 * Variation of flushImage/flushScaleImage that takes in and updates a rect
 	 */
-	int stringWidth(const Common::String &str);
+	void flushImage(ImageFrame *frame, const Common::Point &pt, Common::Rect &newBounds, int scaleVal);
 
 	/**
-	 * Returns the width of a character in pixels
+	 * Copies data from the back buffer to the screen
 	 */
-	int charWidth(char c);
+	void blockMove(const Common::Rect &r);
+
+	/**
+	 * Copies the entire screen from the back buffer
+	 */
+	void blockMove();
 
 	/**
 	 * Fills an area on the back buffer, and then copies it to the screen
 	 */
 	void vgaBar(const Common::Rect &r, int color);
-
-	/**
-	 * Draws a button for use in the inventory, talk, and examine dialogs.
-	 */
-	void makeButton(const Common::Rect &bounds, int textX, const Common::String &str);
-
-	/**
-	 * Prints an interface command with the first letter highlighted to indicate
-	 * what keyboard shortcut is associated with it
-	 */
-	void buttonPrint(const Common::Point &pt, byte color, bool slamIt, const Common::String &str);
-
-	/**
-	 * Draw a panel in the back buffer with a raised area effect around the edges
-	 */
-	void makePanel(const Common::Rect &r);
-
-	/**
-	 * Draw a field in the back buffer with a raised area effect around the edges,
-	 * suitable for text input.
-	 */
-	void makeField(const Common::Rect &r);
 
 	/**
 	 * Sets the active back buffer pointer to a restricted sub-area of the first back buffer
@@ -243,21 +215,21 @@ public:
 	 */
 	Common::Rect getDisplayBounds();
 
-	int fontNumber() const { return _fontNumber; }
-
 	/**
 	 * Synchronize the data for a savegame
 	 */
-	void synchronize(Common::Serializer &s);
+	void synchronize(Serializer &s);
+
+	/**
+	 * Draws the given string into the back buffer using the images stored in _font
+	 */
+	virtual void writeString(const Common::String &str, const Common::Point &pt, byte overrideColor);
+
 
 	// Rose Tattoo specific methods
 	void initPaletteFade(int bytesToRead);
 
 	int fadeRead(Common::SeekableReadStream &stream, byte *buf, int totalSize);
-
-	void setupBGArea(const byte cMap[PALETTE_SIZE]);
-
-	void initScrollVars();
 
 	/**
 	 * Translate a palette from 6-bit RGB values to full 8-bit values suitable for passing

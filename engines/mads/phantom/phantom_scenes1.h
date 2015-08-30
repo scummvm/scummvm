@@ -53,6 +53,21 @@ public:
 	Scene1xx(MADSEngine *vm) : PhantomScene(vm) {}
 };
 
+class Scene101 : public Scene1xx {
+private:
+	// TODO
+
+public:
+	Scene101(MADSEngine *vm);
+	virtual void synchronize(Common::Serializer &s);
+
+	virtual void setup();
+	virtual void enter();
+	virtual void step();
+	virtual void preActions();
+	virtual void actions();
+};
+
 class Scene102 : public Scene1xx {
 private:
 	bool _animRunningFl;

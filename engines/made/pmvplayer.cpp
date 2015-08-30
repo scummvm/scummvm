@@ -118,6 +118,8 @@ bool PmvPlayer::play(const char *filename) {
 	// get it to work well?
 	_audioStream = Audio::makeQueuingAudioStream(soundFreq, false);
 
+	SoundDecoderData *soundDecoderData = new SoundDecoderData();
+
 	while (!_vm->shouldQuit() && !_aborted && !_fd->eos() && frameNumber < frameCount) {
 
 		int32 frameTime = _vm->_system->getMillis();
@@ -153,7 +155,7 @@ bool PmvPlayer::play(const char *filename) {
 
 			soundSize = chunkCount * chunkSize;
 			soundData = (byte *)malloc(soundSize);
-			decompressSound(audioData + 8, soundData, chunkSize, chunkCount);
+			decompressSound(audioData + 8, soundData, chunkSize, chunkCount, NULL, soundDecoderData);
 			_audioStream->queueBuffer(soundData, soundSize, DisposeAfterUse::YES, Audio::FLAG_UNSIGNED);
 		}
 
@@ -213,6 +215,7 @@ bool PmvPlayer::play(const char *filename) {
 
 	}
 
+	delete soundDecoderData;
 	delete[] frameData;
 
 	_audioStream->finish();

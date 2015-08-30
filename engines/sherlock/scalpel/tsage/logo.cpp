@@ -156,11 +156,13 @@ ScalpelEngine *Object::_vm;
 
 Object::Object() {
 	_vm = nullptr;
-	_isAnimating = false;
+	_isAnimating = _finished = false;
 	_frame = 0;
 	_numFrames = 0;
 	_frameChange = 0;
 	_angle = _changeCtr = 0;
+	_walkStartFrame = 0;
+	_majorDiff = _minorDiff = 0;
 }
 
 void Object::setVisage(int visage, int strip) {
@@ -221,8 +223,15 @@ void Object::update() {
 	Screen &screen = *_vm->_screen;
 
 	if (_visage.isLoaded()) {
-		if (isMoving())
-			move();
+		if (isMoving()) {
+			uint32 currTime = _vm->_events->getFrameCounter();
+			if (_walkStartFrame <= currTime) {
+				int moveRate = 10;
+				int frameInc = 60 / moveRate;
+				_walkStartFrame = currTime + frameInc;
+				move();
+			}
+		}
 		
 		if (_isAnimating) {
 			if (_frame < _visage.getFrameCount())
@@ -304,7 +313,6 @@ bool Object::isMoving() const {
 void Object::move() {
 	Common::Point currPos = _position;
 	Common::Point moveDiff(5, 3);
-	int yDiff = 0;
 	int percent = 100;
 
 	if (dontMove())
@@ -335,9 +343,7 @@ void Object::move() {
 
 		currPos.y += ySign;
 		_majorDiff -= ABS(xAmount);
-
-	}
-	else {
+	} else {
 		int yAmount = _moveSign.y * moveDiff.y * percent / 100;
 		if (!yAmount)
 			yAmount = _moveSign.y;
@@ -387,14 +393,15 @@ bool Logo::show(ScalpelEngine *vm) {
 	while (!logo->finished()) {
 		logo->nextFrame();
 
-		events.wait(2);
-		events.setButtonState();
-
 		// Erase areas from previous frame, and update and re-draw objects
 		for (int idx = 0; idx < 4; ++idx)
 			logo->_objects[idx].erase();
 		for (int idx = 0; idx < 4; ++idx)
 			logo->_objects[idx].update();
+
+		events.delay(10);
+		events.setButtonState();
+		++logo->_frameCounter;
 
 		interrupted = vm->shouldQuit() || events.kbHit() || events._pressed;
 		if (interrupted) {
@@ -412,8 +419,21 @@ Logo::Logo(ScalpelEngine *vm) : _vm(vm), _lib("sf3.rlb") {
 	Object::_vm = vm;
 	Visage::_tLib = &_lib;
 
+	_finished = false;
+
 	// Initialize counter
 	_counter = 0;
+
+	// Initialize wait frame counters
+	_waitFrames = 0;
+	_waitStartFrame = 0;
+
+	// Initialize animation counters
+	_animateObject = 0;
+	_animateStartFrame = 0;
+	_animateFrameDelay = 0;
+	_animateFrames = NULL;
+	_animateFrame = 0;
 	
 	// Save a copy of the original palette
 	_vm->_screen->getPalette(_originalPalette);
@@ -437,11 +457,54 @@ Logo::~Logo() {
 }
 
 bool Logo::finished() const {
-	return _counter >= 442;
+	return _finished;
 }
+
+const AnimationFrame handFrames[] = {
+	{  1,  33,  91 }, {  2,  44, 124 }, {  3,  64, 153 }, {  4,  87, 174 },
+	{  5, 114, 191 }, {  6, 125, 184 }, {  7, 154, 187 }, {  8, 181, 182 },
+	{  9, 191, 167 }, { 10, 190, 150 }, { 11, 182, 139 }, { 11, 170, 130 },
+	{ 11, 158, 121 }, {  0,   0,   0 }
+};
+
+const AnimationFrame companyFrames[] = {
+	{  1, 155,  94 }, {  2, 155,  94 }, {  3, 155,  94 }, {  4, 155,  94 },
+	{  5, 155,  94 }, {  6, 155,  94 }, {  7, 155,  94 }, {  8, 155,  94 },
+	{  0,   0,   0 }
+};
 
 void Logo::nextFrame() {
 	Screen &screen = *_vm->_screen;
+
+	if (_waitFrames) {
+		uint32 currFrame = _frameCounter;
+		if (currFrame - _waitStartFrame < _waitFrames) {
+			return;
+		}
+		_waitStartFrame = 0;
+		_waitFrames = 0;
+	}
+
+	if (_animateFrames) {
+		uint32 currFrame = _frameCounter;
+		if (currFrame > _animateStartFrame + _animateFrameDelay) {
+			AnimationFrame animationFrame = _animateFrames[_animateFrame];
+			if (animationFrame.frame) {
+				_objects[_animateObject]._frame = animationFrame.frame;
+				_objects[_animateObject]._position = Common::Point(animationFrame.x, animationFrame.y);
+				_animateStartFrame += _animateFrameDelay;
+				_animateFrame++;
+			} else {
+				_animateObject = 0;
+				_animateFrameDelay = 0;
+				_animateFrames = NULL;
+				_animateStartFrame = 0;
+				_animateFrame = 0;
+			}
+		}
+		if (_animateFrames)
+			return;
+	}
 
 	switch (_counter++) {
 	case 0:
@@ -480,160 +543,87 @@ void Logo::nextFrame() {
 			// Fade out the background but keep the shapes visible
 			fade(_palette2);
 			screen._backBuffer1.clear();
-			screen.clear();
 		}
+		waitFrames(10);
 		break;
 
-	case 13: {
+	case 4:
 		// Load the new palette
 		byte palette[PALETTE_SIZE];
 		Common::copy(&_palette2[0], &_palette2[PALETTE_SIZE], &palette[0]);
 		_lib.getPalette(palette, 12);
+		screen.clear();
 		screen.setPalette(palette);
-		break;
-	}
 
-	case 14:
+		// Morph into the EA logo
 		_objects[0].setVisage(12, 1);
 		_objects[0]._frame = 1;
 		_objects[0]._numFrames = 7;
+		_objects[0].setAnimMode(true);
 		_objects[0]._position = Common::Point(170, 142);
 		_objects[0].setDestination(Common::Point(158, 71));
 		break;
 
-	case 15:
+	case 5:
 		// Wait until the logo has expanded upwards to form EA logo
 		if (_objects[0].isMoving())
 			--_counter;
 		break;
 
-	case 16:
+	case 6:
 		fade(_palette3, 40);
 		break;
 
-	case 20:
+	case 7:
 		// Show the 'Electronic Arts' company name
 		_objects[1].setVisage(14, 1);
 		_objects[1]._frame = 1;
 		_objects[1]._position = Common::Point(152, 98);
+		waitFrames(120);
 		break;
 
-	case 140:
+	case 8:
 		// Start sequence of positioning and size hand cursor in an arc
 		_objects[2].setVisage(18, 1);
-		_objects[2]._frame = 1;
-		_objects[2]._position = Common::Point(33, 91);
+		startAnimation(2, 5, &handFrames[0]);
 		break;
 
-	case 145:
-		_objects[2]._frame = 2;
-		_objects[2]._position = Common::Point(44, 124);
-		break;
-
-	case 150:
-		_objects[2]._frame = 3;
-		_objects[2]._position = Common::Point(64, 153);
-		break;
-
-	case 155:
-		_objects[2]._frame = 4;
-		_objects[2]._position = Common::Point(87, 174);
-		break;
-
-	case 160:
-		_objects[2]._frame = 5;
-		_objects[2]._position = Common::Point(114, 191);
-		break;
-
-	case 165:
-		_objects[2]._frame = 6;
-		_objects[2]._position = Common::Point(125, 184);
-		break;
-
-	case 170:
-		_objects[2]._frame = 7;
-		_objects[2]._position = Common::Point(154, 187);
-		break;
-
-	case 175:
-		_objects[2]._frame = 8;
-		_objects[2]._position = Common::Point(181, 182);
-		break;
-
-	case 180:
-		_objects[2]._frame = 9;
-		_objects[2]._position = Common::Point(191, 167);
-		break;
-
-	case 185:
-		_objects[2]._frame = 10;
-		_objects[2]._position = Common::Point(190, 150);
-		break;
-
-	case 190:
-		_objects[2]._frame = 11;
-		_objects[2]._position = Common::Point(182, 139);
-		break;
-
-	case 195:
-		_objects[2]._frame = 11;
-		_objects[2]._position = Common::Point(170, 130);
-		break;
-
-	case 200:
-		_objects[2]._frame = 11;
-		_objects[2]._position = Common::Point(158, 121);
-		break;
-
-	case 205:
+	case 9:
 		// Show a highlighting of the company name
+		_objects[1].remove();
+		_objects[2].erase();
 		_objects[2].remove();
 		_objects[3].setVisage(19, 1);
-		_objects[3]._position = Common::Point(155, 94);
+		startAnimation(3, 8, &companyFrames[0]);
 		break;
 
-	case 213:
-		_objects[3]._frame = 2;
-		_objects[3]._position = Common::Point(155, 94);
+	case 10:
+		waitFrames(180);
 		break;
 
-	case 221:
-		_objects[1].remove();
-		break;
-
-	case 222:
-		_objects[3]._frame = 3;
-		_objects[3]._position = Common::Point(155, 94);
-		break;
-
-	case 230:
-		_objects[3]._frame = 4;
-		_objects[3]._position = Common::Point(155, 94);
-		break;
-
-	case 238:
-		_objects[3]._frame = 5;
-		_objects[3]._position = Common::Point(155, 94);
-		break;
-
-	case 246:
-		_objects[3]._frame = 6;
-		_objects[3]._position = Common::Point(155, 94);
-		break;
-
-	case 254:
-		_objects[3]._frame = 7;
-		_objects[3]._position = Common::Point(155, 94);
-		break;
-
-	case 262:
-		_objects[3]._frame = 8;
-		_objects[3]._position = Common::Point(155, 94);
+	case 11:
+		_finished = true;
 		break;
 
 	default:
 		break;
 	}
+}
+
+void Logo::waitFrames(uint frames) {
+	_waitFrames = frames;
+	_waitStartFrame = _frameCounter;
+}
+
+void Logo::startAnimation(uint object, uint frameDelay, const AnimationFrame *frames) {
+	_animateObject = object;
+	_animateFrameDelay = frameDelay;
+	_animateFrames = frames;
+	_animateStartFrame = _frameCounter;
+	_animateFrame = 1;
+
+	_objects[object]._frame = frames[0].frame;
+	_objects[object]._position = Common::Point(frames[0].x, frames[0].y);
 }
 
 void Logo::loadBackground() {

@@ -866,15 +866,13 @@ void Scene::loadSceneDescriptor(uint32 resourceId) {
 
 	_sceneDescription.reset();
 
-	if (resourceId == 0) {
+	if (resourceId == 0)
 		return;
-	}
 
 	_vm->_resource->loadResource(_sceneContext, resourceId, sceneDescriptorData);
+	ByteArrayReadStreamEndian readS(sceneDescriptorData, _sceneContext->isBigEndian());
 
-	if (sceneDescriptorData.size() == 16) {
-		ByteArrayReadStreamEndian readS(sceneDescriptorData, _sceneContext->isBigEndian());
-
+	if (sceneDescriptorData.size() == 14 || sceneDescriptorData.size() == 16) {
 		_sceneDescription.flags = readS.readSint16();
 		_sceneDescription.resourceListResourceId = readS.readSint16();
 		_sceneDescription.endSlope = readS.readSint16();
@@ -882,7 +880,10 @@ void Scene::loadSceneDescriptor(uint32 resourceId) {
 		_sceneDescription.scriptModuleNumber = readS.readUint16();
 		_sceneDescription.sceneScriptEntrypointNumber = readS.readUint16();
 		_sceneDescription.startScriptEntrypointNumber = readS.readUint16();
-		_sceneDescription.musicResourceId = readS.readSint16();
+		if (sceneDescriptorData.size() == 16)
+			_sceneDescription.musicResourceId = readS.readSint16();
+	} else {
+		warning("Scene::loadSceneDescriptor: Unknown scene descriptor data size (%d)", sceneDescriptorData.size());
 	}
 }
 

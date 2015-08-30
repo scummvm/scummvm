@@ -33,7 +33,6 @@
 
 #include "zvision/sound/zork_raw.h"
 #include "zvision/zvision.h"
-#include "zvision/detection.h"
 
 namespace ZVision {
 
@@ -136,7 +135,8 @@ int RawChunkStream::readBuffer(int16 *buffer, Common::SeekableReadStream *stream
 	return bytesRead;
 }
 
-const SoundParams RawZorkStream::_zNemSoundParamLookupTable[32] = {{'0', 0x1F40, false, false, false},
+const SoundParams RawZorkStream::_zNemSoundParamLookupTable[32] = {
+	{'0', 0x1F40, false, false, false},
 	{'1', 0x1F40, true, false, false},
 	{'2', 0x1F40, false, false, true},
 	{'3', 0x1F40, true, false, true},
@@ -170,7 +170,8 @@ const SoundParams RawZorkStream::_zNemSoundParamLookupTable[32] = {{'0', 0x1F40,
 	{'x', 0xAC44, true, true, true}
 };
 
-const SoundParams RawZorkStream::_zgiSoundParamLookupTable[24] = {{'4', 0x2B11, false, false, false},
+const SoundParams RawZorkStream::_zgiSoundParamLookupTable[24] = {
+	{'4', 0x2B11, false, false, false},
 	{'5', 0x2B11, true, false, false},
 	{'6', 0x2B11, false, false, true},
 	{'7', 0x2B11, true, false, true},

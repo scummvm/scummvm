@@ -128,6 +128,7 @@ public:
 	void refreshInventory();
 
 	int newDisplayInv();
+	int displayInv();
 
 	/**
 	* Synchronize savegame data

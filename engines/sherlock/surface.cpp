@@ -28,11 +28,11 @@
 
 namespace Sherlock {
 
-Surface::Surface(uint16 width, uint16 height) : _freePixels(true) {
+Surface::Surface(uint16 width, uint16 height) : Fonts(), _freePixels(true) {
 	create(width, height);
 }
 
-Surface::Surface() : _freePixels(false) {
+Surface::Surface() : Fonts(), _freePixels(false) {
 }
 
 Surface::~Surface() {
@@ -44,8 +44,16 @@ void Surface::create(uint16 width, uint16 height) {
 	if (_freePixels)
 		_surface.free();
 
-	_surface.create(width, height, Graphics::PixelFormat::createFormatCLUT8());
+	if (_vm->getPlatform() == Common::kPlatform3DO) {
+		_surface.create(width, height, Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0));
+	} else {
+		_surface.create(width, height, Graphics::PixelFormat::createFormatCLUT8());
+	}
 	_freePixels = true;
+}
+
+Graphics::PixelFormat Surface::getPixelFormat() {
+	return _surface.format;
 }
 
 void Surface::blitFrom(const Surface &src) {
@@ -92,17 +100,51 @@ void Surface::blitFrom(const Surface &src, const Common::Point &pt, const Common
 }
 
 void Surface::transBlitFrom(const ImageFrame &src, const Common::Point &pt,
-		bool flipped, int overrideColor) {
-	transBlitFrom(src._frame, pt + src._offset, flipped, overrideColor);
+		bool flipped, int overrideColor, int scaleVal) {
+	Common::Point drawPt(pt.x + src.sDrawXOffset(scaleVal), pt.y + src.sDrawYOffset(scaleVal));
+	transBlitFrom(src._frame, drawPt, flipped, overrideColor, scaleVal);
 }
 
 void Surface::transBlitFrom(const Surface &src, const Common::Point &pt,
-		bool flipped, int overrideColor) {
+		bool flipped, int overrideColor, int scaleVal) {
 	const Graphics::Surface &s = src._surface;
-	transBlitFrom(s, pt, flipped, overrideColor);
+	transBlitFrom(s, pt, flipped, overrideColor, scaleVal);
 }
 
 void Surface::transBlitFrom(const Graphics::Surface &src, const Common::Point &pt,
+		bool flipped, int overrideColor, int scaleVal) {
+	if (scaleVal == SCALE_THRESHOLD) {
+		transBlitFromUnscaled(src, pt, flipped, overrideColor);
+		return;
+	}
+
+	int destWidth = src.w * SCALE_THRESHOLD / scaleVal;
+	int destHeight = src.h * SCALE_THRESHOLD / scaleVal;
+
+	// Loop through drawing output lines
+	for (int destY = pt.y, scaleYCtr = 0; destY < (pt.y + destHeight); ++destY, scaleYCtr += scaleVal) {
+		if (destY < 0 || destY >= this->h())
+			continue;
+		const byte *srcLine = (const byte *)src.getBasePtr(0, scaleYCtr / SCALE_THRESHOLD);
+		byte *destLine = (byte *)getBasePtr(pt.x, destY);
+
+		// Loop through drawing individual rows
+		for (int xCtr = 0, scaleXCtr = 0; xCtr < destWidth; ++xCtr, scaleXCtr += scaleVal) {
+			int destX = pt.x + xCtr;
+			if (destX < 0 || destX >= this->w())
+				continue;
+
+			byte srcVal = srcLine[flipped ? src.w - scaleXCtr / SCALE_THRESHOLD - 1 : scaleXCtr / SCALE_THRESHOLD];
+			if (srcVal != TRANSPARENCY)
+				destLine[xCtr] = srcVal;
+		}
+	}
+
+	// Mark the affected area
+	addDirtyRect(Common::Rect(pt.x, pt.y, pt.x + destWidth, pt.y + destHeight));
+}
+
+void Surface::transBlitFromUnscaled(const Graphics::Surface &src, const Common::Point &pt,
 		bool flipped, int overrideColor) {
 	Common::Rect drawRect(0, 0, src.w, src.h);
 	Common::Rect destRect(pt.x, pt.y, pt.x + src.w, pt.y + src.h);
@@ -120,19 +162,42 @@ void Surface::transBlitFrom(const Graphics::Surface &src, const Common::Point &p
 	addDirtyRect(Common::Rect(destPt.x, destPt.y, destPt.x + drawRect.width(),
 		destPt.y + drawRect.height()));
 
-	// Draw loop
-	const int TRANSPARENCY = 0xFF;
-	for (int yp = 0; yp < drawRect.height(); ++yp) {
-		const byte *srcP = (const byte *)src.getBasePtr(
-			flipped ? drawRect.right - 1 : drawRect.left, drawRect.top + yp);
-		byte *destP = (byte *)getBasePtr(destPt.x, destPt.y + yp);
+	switch (src.format.bytesPerPixel) {
+	case 1:
+		// 8-bit palettized: Draw loop
+		assert(_surface.format.bytesPerPixel == 1); // Security check
+		for (int yp = 0; yp < drawRect.height(); ++yp) {
+			const byte *srcP = (const byte *)src.getBasePtr(
+				flipped ? drawRect.right - 1 : drawRect.left, drawRect.top + yp);
+			byte *destP = (byte *)getBasePtr(destPt.x, destPt.y + yp);
 
-		for (int xp = 0; xp < drawRect.width(); ++xp, ++destP) {
-			if (*srcP != TRANSPARENCY)
-				*destP = overrideColor ? overrideColor : *srcP;
+			for (int xp = 0; xp < drawRect.width(); ++xp, ++destP) {
+				if (*srcP != TRANSPARENCY)
+					*destP = overrideColor ? overrideColor : *srcP;
 
-			srcP = flipped ? srcP - 1 : srcP + 1;
+				srcP = flipped ? srcP - 1 : srcP + 1;
+			}
 		}
+		break;
+	case 2:
+		// 3DO 15-bit RGB565: Draw loop
+		assert(_surface.format.bytesPerPixel == 2); // Security check
+		for (int yp = 0; yp < drawRect.height(); ++yp) {
+			const uint16 *srcP = (const uint16 *)src.getBasePtr(
+				flipped ? drawRect.right - 1 : drawRect.left, drawRect.top + yp);
+			uint16 *destP = (uint16 *)getBasePtr(destPt.x, destPt.y + yp);
+
+			for (int xp = 0; xp < drawRect.width(); ++xp, ++destP) {
+				if (*srcP) // RGB 0, 0, 0 -> transparent on 3DO
+					*destP = *srcP; // overrideColor ? overrideColor : *srcP;
+
+				srcP = flipped ? srcP - 1 : srcP + 1;
+			}
+		}
+		break;
+	default:
+		error("Surface: unsupported bytesperpixel");
+		break;
 	}
 }
 
@@ -143,6 +208,10 @@ void Surface::fillRect(int x1, int y1, int x2, int y2, byte color) {
 void Surface::fillRect(const Common::Rect &r, byte color) {
 	_surface.fillRect(r, color);
 	addDirtyRect(r);
+}
+
+void Surface::fill(uint16 color) {
+	_surface.fillRect(Common::Rect(_surface.w, _surface.h), color);
 }
 
 bool Surface::clip(Common::Rect &srcBounds, Common::Rect &destBounds) {
@@ -185,17 +254,28 @@ void Surface::free() {
 	}
 }
 
-void Surface::setPixels(byte *pixels, int width, int height) {
-	_surface.format = Graphics::PixelFormat::createFormatCLUT8();
-	_surface.w = _surface.pitch = width;
+void Surface::setPixels(byte *pixels, int width, int height, Graphics::PixelFormat pixelFormat) {
+	_surface.format = pixelFormat;
+	_surface.w = width;
 	_surface.h = height;
+	_surface.pitch = width * pixelFormat.bytesPerPixel;
 	_surface.setPixels(pixels);
 }
 
-void Surface::maskArea(const ImageFrame &src, const Common::Point &pt, int scrollX) {
-	// TODO
-	error("TODO: maskArea");
+void Surface::writeString(const Common::String &str, const Common::Point &pt, byte overrideColor) {
+	Fonts::writeString(this, str, pt, overrideColor);
 }
 
+void Surface::writeFancyString(const Common::String &str, const Common::Point &pt, byte overrideColor1, byte overrideColor2) {
+	writeString(str, Common::Point(pt.x, pt.y), overrideColor1);
+	writeString(str, Common::Point(pt.x + 1, pt.y), overrideColor1);
+	writeString(str, Common::Point(pt.x + 2, pt.y), overrideColor1);
+	writeString(str, Common::Point(pt.x, pt.y + 1), overrideColor1);
+	writeString(str, Common::Point(pt.x + 2, pt.y + 1), overrideColor1);
+	writeString(str, Common::Point(pt.x, pt.y + 2), overrideColor1);
+	writeString(str, Common::Point(pt.x + 1, pt.y + 2), overrideColor1);
+	writeString(str, Common::Point(pt.x + 2, pt.y + 2), overrideColor1);
+	writeString(str, Common::Point(pt.x + 1, pt.y + 1), overrideColor2);
+}
 
 } // End of namespace Sherlock

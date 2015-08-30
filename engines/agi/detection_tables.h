@@ -850,6 +850,7 @@ static const AGIGameDescription gameDescriptions[] = {
 	FANMADE("Tex McPhilip 3 - A Destiny of Sin (Demo v0.25)", "992d12031a486ad84e592ff5d7c9d782"),
 	FANMADE("The 13th Disciple (v1.00)", "887719ad59afce9a41ec057dbb73ad73"),
 	FANMADE("The Adventures of a Crazed Hermit", "6e3086cbb794d3299a9c5a9792295511"),
+	FANMADE("The Gourd of the Beans", "246f4d94946afb547482d44a53616d06"),
 	FANMADE("The Grateful Dead", "c2146631afacf8cb455ce24f3d2d46e7"),
 	FANMADE("The Legend of Shay-Larah 1 - The Lost Prince", "04e720c8e30c9cf12db22ea14a24a3dd"),
 	FANMADE("The Legend of Zelda: The Fungus of Time (Demo v1.00)", "dcaf8166ceb62a3d9b9aea7f3b197c09"),

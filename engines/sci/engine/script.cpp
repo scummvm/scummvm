@@ -121,8 +121,8 @@ void Script::load(int script_nr, ResourceManager *resMan, ScriptPatcher *scriptP
 		//
 		// TODO: Remove this once such a mechanism is in place
 		if (script->size > 65535)
-			error("TODO: SCI script %d is over 64KB - it's %d bytes long. This can't "
-			      "be handled at the moment, thus stopping", script_nr, script->size);
+			warning("TODO: SCI script %d is over 64KB - it's %d bytes long. This can't "
+			      "be fully handled at the moment", script_nr, script->size);
 	}
 
 	uint extraLocalsWorkaround = 0;
@@ -1086,9 +1086,14 @@ void Script::initializeObjectsSci3(SegManager *segMan, SegmentId segmentId) {
 	const byte *seeker = getSci3ObjectsPointer();
 
 	while (READ_SCI11ENDIAN_UINT16(seeker) == SCRIPT_OBJECT_MAGIC_NUMBER) {
-		reg_t reg = make_reg(segmentId, seeker - _buf);
-		Object *obj = scriptObjInit(reg);
+		// We call setSegment and setOffset directly here, instead of using
+		// make_reg, as in large scripts, seeker - _buf can be larger than
+		// a 16-bit integer
+		reg_t reg;
+		reg.setSegment(segmentId);
+		reg.setOffset(seeker - _buf);
 
+		Object *obj = scriptObjInit(reg);
 		obj->setSuperClassSelector(segMan->getClassAddress(obj->getSuperClassSelector().getOffset(), SCRIPT_GET_LOCK, 0));
 		seeker += READ_SCI11ENDIAN_UINT16(seeker + 2);
 	}

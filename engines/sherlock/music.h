@@ -27,40 +27,61 @@
 #include "audio/midiparser.h"
 //#include "audio/mididrv.h"
 #include "sherlock/scalpel/drivers/mididriver.h"
+// for 3DO digital music
+#include "audio/audiostream.h"
+#include "audio/mixer.h"
+#include "common/mutex.h"
+#include "common/str-array.h"
 
 namespace Sherlock {
 
 class SherlockEngine;
 
 class MidiParser_SH : public MidiParser {
+public:
+	MidiParser_SH();
+	~MidiParser_SH();
+
 protected:
-	virtual void parseNextEvent(EventInfo &info);
+	Common::Mutex _mutex;
+	void parseNextEvent(EventInfo &info);
 
 	uint8 _beats;
 	uint8 _lastEvent;
 	byte *_data;
 	byte *_trackEnd;
+
 public:
-	MidiParser_SH();
-	virtual bool loadMusic(byte *data, uint32 size);
+	bool loadMusic(byte *musData, uint32 musSize);
+	virtual void unloadMusic();
+
+private:
+	byte  *_musData;
+	uint32 _musDataSize;
 };
 
 class Music {
 private:
 	SherlockEngine *_vm;
 	Audio::Mixer *_mixer;
-	MidiParser_SH _midiParser;
-	MidiDriver *_driver;
-
+	MidiParser *_midiParser;
+	MidiDriver *_midiDriver;
+	Audio::SoundHandle _digitalMusicHandle;
+	MusicType _musicType;
+	
+	/**
+	 * Play the specified music resource
+	 */
+	bool playMusic(const Common::String &name);
 public:
 	bool _musicPlaying;
 	bool _musicOn;
-
-private:
-	MusicType _musicType;
-
+	int _musicVolume;
+	bool _midiOption;
+	Common::String _currentSongName, _nextSongName;
 public:
 	Music(SherlockEngine *vm, Audio::Mixer *mixer);
+	~Music();
 
 	/**
 	 * Saves sound-related settings
@@ -86,21 +107,28 @@ public:
 	 * Free any currently loaded song
 	 */
 	void freeSong();
-	
-	/**
-	 * Play the specified music resource
-	 */
-	bool playMusic(const Common::String &name);
 
 	/**
 	 * Stop playing the music
 	 */
 	void stopMusic();
 	
-	void waitTimerRoland(uint time);
+	bool isPlaying();
+	uint32 getCurrentPosition();
+
+	bool waitUntilMSec(uint32 msecTarget, uint32 maxMSec, uint32 additionalDelay, uint32 noMusicDelay);
+
+	/**
+	 * Sets the volume of the MIDI music with a value ranging from 0 to 127
+	 */
+	void setMusicVolume(int volume);
+
+	/**
+	 * Gets the names of all the songs in the game. Used by the debugger.
+	 */
+	void getSongNames(Common::StringArray &songs);
 };
 
 } // End of namespace Sherlock
 
 #endif
-

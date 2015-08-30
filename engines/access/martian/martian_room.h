@@ -39,6 +39,9 @@ private:
 	MartianEngine *_game;
 
 	void roomSet();
+
+	int _byte26CD2[30];
+	int _byte26CBC[10];
 protected:
 	virtual void loadRoom(int roomNumber);
 
@@ -51,8 +54,6 @@ public:
 	MartianRoom(AccessEngine *vm);
 
 	virtual ~MartianRoom();
-
-	virtual void loadRoomData(const byte *roomData) { warning("TODO - loadRoomData"); }
 
 	virtual void init4Quads() { }
 

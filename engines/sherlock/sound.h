@@ -39,26 +39,37 @@ enum WaitType {
 	WAIT_RETURN_IMMEDIATELY = 0, WAIT_FINISH = 1, WAIT_KBD_OR_FINISH = 2
 };
 
+#define MAX_MIXER_CHANNELS 10
+
 class Sound {
 private:
 	SherlockEngine *_vm;
 	Audio::Mixer *_mixer;
-	Audio::SoundHandle _effectsHandle;
+	Audio::SoundHandle _scalpelEffectsHandle;
+	Audio::SoundHandle _tattooEffectsHandle[MAX_MIXER_CHANNELS];
+	Audio::SoundHandle _speechHandle;
 	int _curPriority;
 
+	/**
+	 * Decode a sound sample
+	 */
 	byte decodeSample(byte sample, byte& reference, int16& scale);
+
+	/**
+	 * Handle playing a sound or speech
+	 */
+	bool playSoundResource(const Common::String &name, const Common::String &libFilename,
+		Audio::Mixer::SoundType soundType, Audio::SoundHandle &handle);
 public:
 	bool _digitized;
 	int _voices;
 	bool _soundOn;
 	bool _speechOn;
-	bool _diskSoundPlaying;
 	bool _soundPlaying;
-	bool *_soundIsOn;
-	byte *_digiBuf;
-	bool _midiDrvLoaded;
-	Common::String _currentSongName, _nextSongName;
-	int _musicVolume;
+	bool _speechPlaying;
+	int _soundVolume;
+
+	Common::String _talkSoundFile;
 public:
 	Sound(SherlockEngine *vm, Audio::Mixer *mixer);
 
@@ -92,9 +103,26 @@ public:
 	 */
 	void stopSound();
 
-	void stopSndFuncPtr(int v1, int v2);
 	void freeDigiSound();
-	void setMIDIVolume(int volume);
+
+	Audio::SoundHandle getFreeSoundHandle();
+
+	void setVolume(int volume);
+
+	/**
+	 * Play a specified voice resource
+	 */
+	void playSpeech(const Common::String &name);
+
+	/**
+	 * Stop any currently playing speech
+	 */
+	void stopSpeech();
+
+	/**
+	 * Returns true if speech is currently playing
+	 */
+	bool isSpeechPlaying();
 };
 
 } // End of namespace Sherlock

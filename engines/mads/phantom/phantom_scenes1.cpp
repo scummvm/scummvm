@@ -42,6 +42,92 @@ void Scene1xx::sceneEntrySound() {
 
 /*------------------------------------------------------------------------*/
 
+Scene101::Scene101(MADSEngine *vm) : Scene1xx(vm) {
+
+}
+
+void Scene101::synchronize(Common::Serializer &s) {
+	Scene1xx::synchronize(s);
+
+}
+
+void Scene101::setup() {
+	//setPlayerSpritesPrefix();
+	setAAName();
+}
+
+void Scene101::enter() {
+	// TODO
+
+	if (_globals[kCurrentYear] == 1993) {
+		_globals._spriteIndexes[0] = _scene->_sprites.addSprites(formAnimName('z', -1));
+		// TODO
+		//_scene->_sequences.setDepth(_globals._sequenceIndexes[0], 14);
+	} else {
+		// TODO
+	}
+
+	// TODO
+}
+
+void Scene101::step() {
+	// TODO
+}
+
+void Scene101::preActions() {
+	if (_action.isAction(VERB_EXIT_TO, NOUN_ORCHESTRA_PIT)) {
+		// TODO: Handle Brie
+		_game._player._walkOffScreenSceneId = 102;
+	} else if (_action.isAction(VERB_EXIT_TO, NOUN_GRAND_FOYER)) {
+		// TODO: Handle Brie
+		_game._player._walkOffScreenSceneId = 202;
+	} else if (_action.isAction(VERB_TAKE, NOUN_MONSIEUR_BRIE)) {
+		_vm->_dialogs->show(10121);
+	} else if (_action.isAction(VERB_TALK_TO, NOUN_MONSIEUR_BRIE)) {
+		if (_globals[kBrieTalkStatus] == 2)
+			_game._player._needToWalk = false;
+	}
+
+	// TODO
+}
+
+void Scene101::actions() {
+	// TODO: Brie conversation
+
+	// TODO: Look around
+
+	if (_action.isAction(VERB_LOOK) || _action.isAction(VERB_LOOK_AT)) {
+		if (_action.isObject(NOUN_AISLE)) {
+			_vm->_dialogs->show(10112);
+		} else if (_action.isObject(NOUN_CHANDELIER)) {
+			_vm->_dialogs->show(10113);
+		} else if (_action.isObject(NOUN_BACK_WALL)) {
+			_vm->_dialogs->show(10114);
+		} else if (_action.isObject(NOUN_SIDE_WALL)) {
+			_vm->_dialogs->show(10115);
+		} else if (_action.isObject(NOUN_SEATS)) {
+			// TODO: Finish this
+			_vm->_dialogs->show(10116);
+		} else if (_action.isObject(NOUN_GRAND_FOYER)) {
+			_vm->_dialogs->show(10117);
+		} else if (_action.isObject(NOUN_ORCHESTRA_PIT)) {
+			_vm->_dialogs->show(10118);
+		} else if (_action.isObject(NOUN_MONSIEUR_BRIE)) {
+			_vm->_dialogs->show(10120);
+		}
+
+		_game._player._stepEnabled = true;
+	} else if (_action.isAction(VERB_TALK_TO, NOUN_MONSIEUR_BRIE)) {
+		if (_globals[kBrieTalkStatus] == 2)
+			_vm->_dialogs->show(10122);
+		_game._player._stepEnabled = true;
+	} else if (_action.isAction(VERB_TAKE, NOUN_MONSIEUR_BRIE)) {
+		_game._player._stepEnabled = true;
+	}
+}
+
+/*------------------------------------------------------------------------*/
+
 Scene102::Scene102(MADSEngine *vm) : Scene1xx(vm) {
 	_animRunningFl = false;
 }
@@ -60,22 +146,34 @@ void Scene102::setup() {
 void Scene102::enter() {
 	_animRunningFl = false;
 
-	// TODO: Load sprite series
+	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('x', 0));
+	_globals._spriteIndexes[3] = _scene->_sprites.addSprites("*RAL86");
+
+	if (_globals[kCurrentYear] == 1993) {
+		_globals._spriteIndexes[0] = _scene->_sprites.addSprites(formAnimName('z', -1));
+		// TODO
+		//_scene->_sequences.setDepth(_globals._sequenceIndexes[0], 14);
+	} else {
+		// TODO
+	}
 
 	if (_scene->_priorSceneId == 101) {
 		_game._player._playerPos = Common::Point(97, 79);
 		_game._player._facing = FACING_SOUTHEAST;
 		// TODO
+		_game._player.walk(Common::Point(83, 87), FACING_SOUTHEAST);
+		_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 14);
 	} else if (_scene->_priorSceneId == 104) {
 		// Player fell from pit -> death
 		// TODO
 	} else if (_scene->_priorSceneId == 103 || _scene->_priorSceneId != -1) {
 		_game._player._playerPos = Common::Point(282, 145);
 		_game._player._facing = FACING_WEST;
-		// TODO: Door closing animation
 		_animRunningFl = true;
+		// TODO: Door closing animation
 	} else if (_scene->_priorSceneId == -1) {
 		// TODO
+		_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 14);
 	}
 
 	sceneEntrySound();
@@ -109,6 +207,8 @@ void Scene102::actions() {
 		if (_animRunningFl) {
 			// TODO
 		} else {
+			_scene->_nextSceneId = 103;		// FIXME: temporary HACK - remove!
+
 			switch (_game._trigger) {
 			case 70:	// try again
 			case 0:

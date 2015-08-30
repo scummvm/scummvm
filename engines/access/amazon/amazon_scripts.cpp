@@ -33,6 +33,8 @@ namespace Amazon {
 
 AmazonScripts::AmazonScripts(AccessEngine *vm) : Scripts(vm) {
 	_game = (AmazonEngine *)_vm;
+
+	setOpcodes_v2();
 }
 
 void AmazonScripts::cLoop() {
@@ -378,20 +380,20 @@ void AmazonScripts::executeSpecial(int commandIndex, int param1, int param2) {
 typedef void(AmazonScripts::*AmazonScriptMethodPtr)();
 
 void AmazonScripts::executeCommand(int commandIndex) {
-	static const AmazonScriptMethodPtr COMMAND_LIST[] = {
-		&AmazonScripts::cmdHelp, &AmazonScripts::cmdCycleBack,
+	static const AmazonScriptMethodPtr AMAZON_COMMAND_LIST[] = {
+		&AmazonScripts::cmdHelp_v2, &AmazonScripts::cmdCycleBack,
 		&AmazonScripts::cmdChapter, &AmazonScripts::cmdSetHelp,
 		&AmazonScripts::cmdCenterPanel, &AmazonScripts::cmdMainPanel,
 		&AmazonScripts::CMDRETFLASH
 	};
 
 	if (commandIndex >= 73)
-		(this->*COMMAND_LIST[commandIndex - 73])();
+		(this->*AMAZON_COMMAND_LIST[commandIndex - 73])();
 	else
 		Scripts::executeCommand(commandIndex);
 }
 
-void AmazonScripts::cmdHelp() {
+void AmazonScripts::cmdHelp_v2() {
 	Common::String helpMessage = readString();
 
 	if (_game->_helpLevel == 0) {

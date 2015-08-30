@@ -23,31 +23,30 @@
 #include "sherlock/saveload.h"
 #include "sherlock/surface.h"
 #include "sherlock/sherlock.h"
+#include "sherlock/scalpel/scalpel_saveload.h"
+#include "sherlock/tattoo/widget_files.h"
 #include "common/system.h"
 #include "graphics/scaler.h"
 #include "graphics/thumbnail.h"
 
 namespace Sherlock {
 
-const int ENV_POINTS[6][3] = {
-	{ 41, 80, 61 },		// Exit
-	{ 81, 120, 101 },	// Load
-	{ 121, 160, 141 },	// Save
-	{ 161, 200, 181 },	// Up
-	{ 201, 240, 221 },	// Down
-	{ 241, 280, 261 }	// Quit
-};
-
-static const char *const EMPTY_SAVEGAME_SLOT = "-EMPTY-";
+const char *const EMPTY_SAVEGAME_SLOT = "-EMPTY-";
 static const char *const SAVEGAME_STR = "SHLK";
 #define SAVEGAME_STR_SIZE 4
 
 /*----------------------------------------------------------------*/
 
+SaveManager *SaveManager::init(SherlockEngine *vm, const Common::String &target) {
+	if (vm->getGameID() == GType_SerratedScalpel)
+		return new Scalpel::ScalpelSaveManager(vm, target);
+	else
+		return new Tattoo::WidgetFiles(vm, target);
+}
+
 SaveManager::SaveManager(SherlockEngine *vm, const Common::String &target) :
 		_vm(vm), _target(target) {
 	_saveThumb = nullptr;
-	_envMode = SAVEMODE_NONE;
 	_justLoaded = false;
 	_savegameIndex = 0;
 }
@@ -59,54 +58,6 @@ SaveManager::~SaveManager() {
 	}
 }
 
-void SaveManager::drawInterface() {
-	Screen &screen = *_vm->_screen;
-	UserInterface &ui = *_vm->_ui;
-
-	// Create a list of savegame slots
-	createSavegameList();
-
-	screen._backBuffer1.fillRect(Common::Rect(0, CONTROLS_Y, SHERLOCK_SCREEN_WIDTH, CONTROLS_Y + 10), BORDER_COLOR);
-	screen._backBuffer1.fillRect(Common::Rect(0, CONTROLS_Y + 10, 2, SHERLOCK_SCREEN_HEIGHT), BORDER_COLOR);
-	screen._backBuffer1.fillRect(Common::Rect(318, CONTROLS_Y + 10, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT), BORDER_COLOR);
-	screen._backBuffer1.fillRect(Common::Rect(0, 199, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT), BORDER_COLOR);
-	screen._backBuffer1.fillRect(Common::Rect(2, CONTROLS_Y + 10, SHERLOCK_SCREEN_WIDTH - 2, SHERLOCK_SCREEN_HEIGHT - 2), INV_BACKGROUND);
-
-	screen.makeButton(Common::Rect(ENV_POINTS[0][0], CONTROLS_Y, ENV_POINTS[0][1], CONTROLS_Y + 10),
-		ENV_POINTS[0][2] - screen.stringWidth("Exit") / 2, "Exit");
-	screen.makeButton(Common::Rect(ENV_POINTS[1][0], CONTROLS_Y, ENV_POINTS[1][1], CONTROLS_Y + 10),
-		ENV_POINTS[1][2] - screen.stringWidth("Load") / 2, "Load");
-	screen.makeButton(Common::Rect(ENV_POINTS[2][0], CONTROLS_Y, ENV_POINTS[2][1], CONTROLS_Y + 10),
-		ENV_POINTS[2][2] - screen.stringWidth("Save") / 2, "Save");
-	screen.makeButton(Common::Rect(ENV_POINTS[3][0], CONTROLS_Y, ENV_POINTS[3][1], CONTROLS_Y + 10),
-		ENV_POINTS[3][2] - screen.stringWidth("Up") / 2, "Up");
-	screen.makeButton(Common::Rect(ENV_POINTS[4][0], CONTROLS_Y, ENV_POINTS[4][1], CONTROLS_Y + 10),
-		ENV_POINTS[4][2] - screen.stringWidth("Down") / 2, "Down");
-	screen.makeButton(Common::Rect(ENV_POINTS[5][0], CONTROLS_Y, ENV_POINTS[5][1], CONTROLS_Y + 10),
-		ENV_POINTS[5][2] - screen.stringWidth("Quit") / 2, "Quit");
-
-	if (!_savegameIndex)
-		screen.buttonPrint(Common::Point(ENV_POINTS[3][2], CONTROLS_Y), COMMAND_NULL, 0, "Up");
-
-	if (_savegameIndex == MAX_SAVEGAME_SLOTS - ONSCREEN_FILES_COUNT)
-		screen.buttonPrint(Common::Point(ENV_POINTS[4][2], CONTROLS_Y), COMMAND_NULL, 0, "Down");
-
-	for (int idx = _savegameIndex; idx < _savegameIndex + ONSCREEN_FILES_COUNT; ++idx) {
-		screen.gPrint(Common::Point(6, CONTROLS_Y + 11 + (idx - _savegameIndex) * 10),
-			INV_FOREGROUND, "%d.", idx + 1);
-		screen.gPrint(Common::Point(24, CONTROLS_Y + 11 + (idx - _savegameIndex) * 10),
-			INV_FOREGROUND, "%s", _savegames[idx].c_str());
-	}
-
-	if (!ui._slideWindows) {
-		screen.slamRect(Common::Rect(0, CONTROLS_Y, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT));
-	} else {
-		ui.summonWindow();
-	}
-
-	_envMode = SAVEMODE_NONE;
-}
-
 void SaveManager::createSavegameList() {
 	Screen &screen = *_vm->_screen;
 
@@ -116,7 +67,7 @@ void SaveManager::createSavegameList() {
 
 	SaveStateList saveList = getSavegameList(_target);
 	for (uint idx = 0; idx < saveList.size(); ++idx) {
-		int slot = saveList[idx].getSaveSlot() - 1;
+		int slot = saveList[idx].getSaveSlot();
 		if (slot >= 0 && slot < MAX_SAVEGAME_SLOTS)
 			_savegames[slot] = saveList[idx].getDescription();
 	}
@@ -153,7 +104,9 @@ SaveStateList SaveManager::getSavegameList(const Common::String &target) {
 			Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(*file);
 
 			if (in) {
-				readSavegameHeader(in, header);
+				if (!readSavegameHeader(in, header))
+					continue;
+
 				saveList.push_back(SaveStateDescriptor(slot, header._saveName));
 
 				header._thumbnail->free();
@@ -176,7 +129,7 @@ bool SaveManager::readSavegameHeader(Common::InSaveFile *in, SherlockSavegameHea
 		return false;
 
 	header._version = in->readByte();
-	if (header._version > SHERLOCK_SAVEGAME_VERSION)
+	if (header._version < MINIMUM_SAVEGAME_VERSION || header._version > CURRENT_SAVEGAME_VERSION)
 		return false;
 
 	// Read in the string
@@ -204,7 +157,7 @@ void SaveManager::writeSavegameHeader(Common::OutSaveFile *out, SherlockSavegame
 	// Write out a savegame header
 	out->write(SAVEGAME_STR, SAVEGAME_STR_SIZE + 1);
 
-	out->writeByte(SHERLOCK_SAVEGAME_VERSION);
+	out->writeByte(CURRENT_SAVEGAME_VERSION);
 
 	// Write savegame name
 	out->write(header._saveName.c_str(), header._saveName.size());
@@ -236,56 +189,19 @@ void SaveManager::createThumbnail() {
 		delete _saveThumb;
 	}
 
-	uint8 thumbPalette[PALETTE_SIZE];
-	_vm->_screen->getPalette(thumbPalette);
 	_saveThumb = new Graphics::Surface();
-	::createThumbnail(_saveThumb, (const byte *)_vm->_screen->getPixels(), SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT, thumbPalette);
-}
 
-int SaveManager::getHighlightedButton() const {
-	Common::Point pt = _vm->_events->mousePos();
-
-	for (int idx = 0; idx < 6; ++idx) {
-		if (pt.x > ENV_POINTS[idx][0] && pt.x < ENV_POINTS[idx][1] && pt.y > CONTROLS_Y
-				&& pt.y < (CONTROLS_Y + 10))
-			return idx;
+	if (!IS_3DO) {
+		uint8 thumbPalette[PALETTE_SIZE];
+		_vm->_screen->getPalette(thumbPalette);
+		::createThumbnail(_saveThumb, (const byte *)_vm->_screen->getPixels(), SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT, thumbPalette);
+	} else {
+		::createThumbnailFromScreen(_saveThumb);
 	}
-
-	return -1;
-}
-
-void SaveManager::highlightButtons(int btnIndex) {
-	Screen &screen = *_vm->_screen;
-	byte color = (btnIndex == 0) ? COMMAND_HIGHLIGHTED : COMMAND_FOREGROUND;
-
-	screen.buttonPrint(Common::Point(ENV_POINTS[0][2], CONTROLS_Y), color, 1, "Exit");
-
-	if ((btnIndex == 1) || ((_envMode == SAVEMODE_LOAD) && (btnIndex != 2)))
-		screen.buttonPrint(Common::Point(ENV_POINTS[1][2], CONTROLS_Y), COMMAND_HIGHLIGHTED, true, "Load");
-	else
-		screen.buttonPrint(Common::Point(ENV_POINTS[1][2], CONTROLS_Y), COMMAND_FOREGROUND, true, "Load");
-
-	if ((btnIndex == 2) || ((_envMode == SAVEMODE_SAVE) && (btnIndex != 1)))
-		screen.buttonPrint(Common::Point(ENV_POINTS[2][2], CONTROLS_Y), COMMAND_HIGHLIGHTED, true, "Save");
-	else
-		screen.buttonPrint(Common::Point(ENV_POINTS[2][2], CONTROLS_Y), COMMAND_FOREGROUND, true, "Save");
-
-	if (btnIndex == 3 && _savegameIndex)
-		screen.buttonPrint(Common::Point(ENV_POINTS[3][2], CONTROLS_Y), COMMAND_HIGHLIGHTED, true, "Up");
-	else
-		if (_savegameIndex)
-			screen.buttonPrint(Common::Point(ENV_POINTS[3][2], CONTROLS_Y), COMMAND_FOREGROUND, true, "Up");
-
-	if ((btnIndex == 4) && (_savegameIndex < MAX_SAVEGAME_SLOTS - 5))
-		screen.buttonPrint(Common::Point(ENV_POINTS[4][2], CONTROLS_Y), COMMAND_HIGHLIGHTED, true, "Down");
-	else if (_savegameIndex < (MAX_SAVEGAME_SLOTS - 5))
-		screen.buttonPrint(Common::Point(ENV_POINTS[4][2], CONTROLS_Y), COMMAND_FOREGROUND, true, "Down");
-
-	color = (btnIndex == 5) ? COMMAND_HIGHLIGHTED : COMMAND_FOREGROUND;
-	screen.buttonPrint(Common::Point(ENV_POINTS[5][2], CONTROLS_Y), color, 1, "Quit");
 }
 
 void SaveManager::loadGame(int slot) {
+	Events &events = *_vm->_events;
 	Common::InSaveFile *saveFile = g_system->getSavefileManager()->openForLoading(
 		generateSaveName(slot));
 	if (!saveFile)
@@ -302,13 +218,16 @@ void SaveManager::loadGame(int slot) {
 	}
 
 	// Synchronize the savegame data
-	Common::Serializer s(saveFile, nullptr);
+	Serializer s(saveFile, nullptr);
+	s.setSaveVersion(header._version);
 	synchronize(s);
 
 	delete saveFile;
+	events.clearEvents();
 }
 
 void SaveManager::saveGame(int slot, const Common::String &name) {
+	Events &events = *_vm->_events;
 	Common::OutSaveFile *out = g_system->getSavefileManager()->openForSaving(
 		generateSaveName(slot));
 
@@ -317,18 +236,20 @@ void SaveManager::saveGame(int slot, const Common::String &name) {
 	writeSavegameHeader(out, header);
 
 	// Synchronize the savegame data
-	Common::Serializer s(nullptr, out);
+	Serializer s(nullptr, out);
+	s.setSaveVersion(CURRENT_SAVEGAME_VERSION);
 	synchronize(s);
 
 	out->finalize();
 	delete out;
+	events.clearEvents();
 }
 
 Common::String SaveManager::generateSaveName(int slot) {
 	return Common::String::format("%s.%03d", _target.c_str(), slot);
 }
 
-void SaveManager::synchronize(Common::Serializer &s) {
+void SaveManager::synchronize(Serializer &s) {
 	Inventory &inv = *_vm->_inventory;
 	Journal &journal = *_vm->_journal;
 	Map &map = *_vm->_map;
@@ -351,130 +272,7 @@ void SaveManager::synchronize(Common::Serializer &s) {
 	if (screen.fontNumber() != oldFont)
 		journal.resetPosition();
 
-	_justLoaded = true;
-}
-
-bool SaveManager::checkGameOnScreen(int slot) {
-	Screen &screen = *_vm->_screen;
-
-	// Check if it's already on-screen
-	if (slot != -1 && (slot < _savegameIndex || slot >= (_savegameIndex + ONSCREEN_FILES_COUNT))) {
-		_savegameIndex = slot;
-
-		screen._backBuffer1.fillRect(Common::Rect(3, CONTROLS_Y + 11, SHERLOCK_SCREEN_WIDTH - 2,
-			SHERLOCK_SCREEN_HEIGHT - 1), INV_BACKGROUND);
-
-		for (int idx = _savegameIndex; idx < (_savegameIndex + 5); ++idx) {
-			screen.gPrint(Common::Point(6, CONTROLS_Y + 11 + (idx - _savegameIndex) * 10),
-				INV_FOREGROUND, "%d.", idx + 1);
-			screen.gPrint(Common::Point(24, CONTROLS_Y + 11 + (idx - _savegameIndex) * 10),
-				INV_FOREGROUND, "%s", _savegames[idx].c_str());
-		}
-
-		screen.slamRect(Common::Rect(3, CONTROLS_Y + 11, 318, SHERLOCK_SCREEN_HEIGHT));
-
-		byte color = !_savegameIndex ? COMMAND_NULL : COMMAND_FOREGROUND;
-		screen.buttonPrint(Common::Point(ENV_POINTS[3][2], CONTROLS_Y), color, 1, "Up");
-
-		color = (_savegameIndex == (MAX_SAVEGAME_SLOTS - 5)) ? COMMAND_NULL : COMMAND_FOREGROUND;
-		screen.buttonPrint(Common::Point(ENV_POINTS[4][2], CONTROLS_Y), color, 1, "Down");
-
-		return true;
-	}
-
-	return false;
-}
-
-bool SaveManager::promptForDescription(int slot) {
-	Events &events = *_vm->_events;
-	Scene &scene = *_vm->_scene;
-	Screen &screen = *_vm->_screen;
-	Talk &talk = *_vm->_talk;
-	int xp, yp;
-	bool flag = false;
-
-	screen.buttonPrint(Common::Point(ENV_POINTS[0][2], CONTROLS_Y), COMMAND_NULL, true, "Exit");
-	screen.buttonPrint(Common::Point(ENV_POINTS[1][2], CONTROLS_Y), COMMAND_NULL, true, "Load");
-	screen.buttonPrint(Common::Point(ENV_POINTS[2][2], CONTROLS_Y), COMMAND_NULL, true, "Save");
-	screen.buttonPrint(Common::Point(ENV_POINTS[3][2], CONTROLS_Y), COMMAND_NULL, true, "Up");
-	screen.buttonPrint(Common::Point(ENV_POINTS[4][2], CONTROLS_Y), COMMAND_NULL, true, "Down");
-	screen.buttonPrint(Common::Point(ENV_POINTS[5][2], CONTROLS_Y), COMMAND_NULL, true, "Quit");
-
-	Common::String saveName = _savegames[slot];
-	if (isSlotEmpty(slot)) {
-		// It's an empty slot, so start off with an empty save name
-		saveName = "";
-
-		yp = CONTROLS_Y + 12 + (slot - _savegameIndex) * 10;
-		screen.vgaBar(Common::Rect(24, yp, 85, yp + 9), INV_BACKGROUND);
-	}
-
-	screen.print(Common::Point(6, CONTROLS_Y + 12 + (slot - _savegameIndex) * 10), TALK_FOREGROUND, "%d.", slot + 1);
-	screen.print(Common::Point(24, CONTROLS_Y + 12 + (slot - _savegameIndex) * 10), TALK_FOREGROUND, "%s", saveName.c_str());
-	xp = 24 + screen.stringWidth(saveName);
-	yp = CONTROLS_Y + 12 + (slot - _savegameIndex) * 10;
-
-	int done = 0;
-	do {
-		while (!_vm->shouldQuit() && !events.kbHit()) {
-			scene.doBgAnim();
-
-			if (talk._talkToAbort)
-				return false;
-
-			// Allow event processing
-			events.pollEventsAndWait();
-			events.setButtonState();
-
-			flag = !flag;
-			if (flag)
-				screen.vgaBar(Common::Rect(xp, yp - 1, xp + 8, yp + 9), INV_FOREGROUND);
-			else
-				screen.vgaBar(Common::Rect(xp, yp - 1, xp + 8, yp + 9), INV_BACKGROUND);
-		}
-		if (_vm->shouldQuit())
-			return false;
-
-		// Get the next keypress
-		Common::KeyState keyState = events.getKey();
-
-		if (keyState.keycode == Common::KEYCODE_BACKSPACE && saveName.size() > 0) {
-			// Delete character of save name
-			screen.vgaBar(Common::Rect(xp - screen.charWidth(saveName.lastChar()), yp - 1,
-				xp + 8, yp + 9), INV_BACKGROUND);
-			xp -= screen.charWidth(saveName.lastChar());
-			screen.vgaBar(Common::Rect(xp, yp - 1, xp + 8, yp + 9), INV_FOREGROUND);
-			saveName.deleteLastChar();
-		
-		} else if (keyState.keycode == Common::KEYCODE_RETURN && saveName.compareToIgnoreCase(EMPTY_SAVEGAME_SLOT)) {
-			done = 1;
-
-		} else if (keyState.keycode == Common::KEYCODE_ESCAPE) {
-			screen.vgaBar(Common::Rect(xp, yp - 1, xp + 8, yp + 9), INV_BACKGROUND);
-			done = -1;
-		
-		} else if (keyState.ascii >= ' ' && keyState.ascii <= 'z' && saveName.size() < 50
-				&& (xp + screen.charWidth(keyState.ascii)) < 308) {
-			char c = (char)keyState.ascii;
-
-			screen.vgaBar(Common::Rect(xp, yp - 1, xp + 8, yp + 9), INV_BACKGROUND);
-			screen.print(Common::Point(xp, yp), TALK_FOREGROUND, "%c", c);
-			xp += screen.charWidth(c);
-			screen.vgaBar(Common::Rect(xp, yp - 1, xp + 8, yp + 9), INV_FOREGROUND);
-			saveName += c;
-		}
-	} while (!done);
-
-	if (done == 1) {
-		// Enter key perssed
-		_savegames[slot] = saveName;
-	} else {
-		done = 0;
-		_envMode = SAVEMODE_NONE;
-		highlightButtons(-1);
-	}
-
-	return done == 1;
+	_justLoaded = s.isLoading();
 }
 
 bool SaveManager::isSlotEmpty(int slot) const {

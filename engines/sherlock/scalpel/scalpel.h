@@ -24,40 +24,56 @@
 #define SHERLOCK_SCALPEL_H
 
 #include "sherlock/sherlock.h"
-#include "sherlock/scalpel/darts.h"
+#include "sherlock/scalpel/scalpel_darts.h"
 
 namespace Sherlock {
 
 namespace Scalpel {
 
-enum { BLACKWOOD_CAPTURE = 2, BAKER_STREET = 4, DRAWING_ROOM = 12, STATION = 17, PUB_INTERIOR = 19,
-	LAWYER_OFFICE = 27, BAKER_ST_EXTERIOR = 39, RESCUE_ANNA = 52, MOOREHEAD_DEATH = 53, EXIT_GAME = 55,
-	BRUMWELL_SUICIDE = 70, OVERHEAD_MAP2 = 98, DARTS_GAME = 99, OVERHEAD_MAP = 100 };
+enum {
+	BUTTON_TOP			= 233,
+	BUTTON_MIDDLE		= 244,
+	BUTTON_BOTTOM		= 248,
+	COMMAND_FOREGROUND	= 15,
+	COMMAND_HIGHLIGHTED = 10,
+	COMMAND_NULL		= 248,
+	INFO_FOREGROUND		= 11,
+	INFO_BACKGROUND		= 1,
+	INV_FOREGROUND		= 14,
+	INV_BACKGROUND		= 1,
+	PEN_COLOR			= 250
+};
 
 class ScalpelEngine : public SherlockEngine {
 private:
 	Darts *_darts;
 	int _mapResult;
 
+	bool show3DOSplash();
+
 	/**
 	 * Show the starting city cutscene which shows the game title
 	 */
 	bool showCityCutscene();
+	bool showCityCutscene3DO();
 
 	/**
 	 * Show the back alley where the initial murder takes place
 	 */
 	bool showAlleyCutscene();
+	bool showAlleyCutscene3DO();
 
 	/**
 	 * Show the Baker Street outside cutscene
 	 */
 	bool showStreetCutscene();
+	bool showStreetCutscene3DO();
 
 	/**
 	 * Show Holmes and Watson at the breakfast table, lestrade's note, and then the scrolling credits
 	 */
 	bool showOfficeCutscene();
+	bool showOfficeCutscene3DO();
 
 	/**
 	 * Show the game credits
@@ -97,17 +113,17 @@ public:
 	/**
 	 * Takes care of clearing the mirror in scene 12 (mansion drawing room), in case anything drew over it
 	 */
-	void eraseMirror12();
+	void eraseBrumwellMirror();
 
 	/**
 	 * Takes care of drawing Holme's reflection onto the mirror in scene 12 (mansion drawing room)
 	 */
-	void doMirror12();
+	void doBrumwellMirror();
 
 	/**
 	 * This clears the mirror in scene 12 (mansion drawing room) in case anything messed draw over it
 	 */
-	void flushMirror12();
+	void flushBrumwellMirror();
 };
 
 } // End of namespace Scalpel

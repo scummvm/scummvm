@@ -2445,6 +2445,16 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, ADGF_UNSTABLE, GUIO5(GUIO_NOSPEECH, GUIO_NOASPECT, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
+	// Lighthouse - Japanese DOS (from m_kiewitz)
+	// Executable scanning reports "3.000.000", VERSION file reports "1.0C"
+	{"lighthouse", "", {
+		{"resmap.001", 0, "18e0ac1597fe1cf6dc663118fe983e3b", 7885},
+		{"ressci.001", 0, "14e922c47b92156377cb49e241691792", 99573473},
+		{"resmap.002", 0, "723fc742c623d8933e5753a264324cb0", 7657},
+		{"ressci.002", 0, "175468431a979b9f317c294ce3bc1430", 94627469},
+		AD_LISTEND},
+		Common::JA_JPN, Common::kPlatformDOS, ADGF_UNSTABLE, GUIO5(GUIO_NOSPEECH, GUIO_NOASPECT, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
+
 	// Lighthouse - Spanish DOS (from jvprat)
 	// Executable scanning reports "3.000.000", VERSION file reports "1.1"
 	{"lighthouse", "", {

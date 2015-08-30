@@ -137,6 +137,10 @@ protected:
 public:
 	AnimationManager *_animation;
 	BubbleBox *_bubbleBox;
+	BubbleBox *_helpBox;
+	BubbleBox *_travelBox;
+	BubbleBox *_invBox;
+	BubbleBox *_aboutBox;
 	CharManager *_char;
 	Debugger *_debugger;
 	EventsManager *_events;
@@ -173,10 +177,9 @@ public:
 	ImageEntryList _images;
 	int _mouseMode;
 
+	int _playerDataCount;
 	int _currentManOld;
 	int _converseMode;
-	int _startAboutBox;
-	int _startTravelBox;
 	bool _currentCharFlag;
 	bool _boxSelect;
 	int _scale;
@@ -204,6 +207,26 @@ public:
 	uint32 _newDate;
 	int _flags[256];
 
+	// Fields used by MM
+	// TODO: Refactor
+	int _travel[60];
+	int _ask[40];
+	int _startTravelItem;
+	int _startTravelBox;
+	int _startAboutItem;
+	int _startAboutBox;
+	int _boxDataStart;
+	bool _boxDataEnd;
+	int _boxSelectY;
+	int _boxSelectYOld;
+	int _numLines;
+	byte _byte26CB5;
+	int _bcnt;
+	byte *_tempList;
+	int _pictureTaken;
+	//
+
+	bool _vidEnd;
 	bool _clearSummaryFlag;
 	bool _cheatFl;
 	bool _restartFl;
@@ -250,8 +273,6 @@ public:
 
 	void copyBF2Vid();
 
-	void doLoadSave();
-
 	void freeChar();
 
 	/**
@@ -289,6 +310,9 @@ public:
 	 * Write out a savegame header
 	 */
 	void writeSavegameHeader(Common::OutSaveFile *out, AccessSavegameHeader &header);
+
+	void SPRINTCHR(char c, int fontNum);
+	void PRINTCHR(Common::String msg, int fontNum);
 };
 
 } // End of namespace Access

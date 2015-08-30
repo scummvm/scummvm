@@ -28,6 +28,7 @@
 #include "sherlock/surface.h"
 #include "sherlock/objects.h"
 #include "sherlock/resources.h"
+#include "sherlock/fixed_text.h"
 
 namespace Sherlock {
 
@@ -47,7 +48,16 @@ enum MenuMode {
 	GIVE_MODE		=  9,
 	JOURNAL_MODE	= 10,
 	FILES_MODE		= 11,
-	SETUP_MODE		= 12
+	SETUP_MODE		= 12,
+
+	// Rose Tattoo specific
+	LAB_MODE		= 20,
+	MESSAGE_MODE	= 21,
+	VERB_MODE		= 22,
+	OPTION_MODE		= 23,
+	QUIT_MODE		= 24,
+	FOOLSCAP_MODE	= 25,
+	PASSWORD_MODE	= 26
 };
 
 class UserInterface {
@@ -66,10 +76,12 @@ public:
 	bool _helpStyle;
 	Common::Rect _windowBounds;
 	bool _lookScriptFlag;
+	int _bgFound, _oldBgFound;
+	int _exitZone;
 
 	// TODO: Not so sure these should be in the base class. May want to refactor them to SherlockEngine, or refactor
 	// various Scalpel dialogs to keep their own private state of key/selections
-	char _key, _oldKey;
+	signed char _key, _oldKey;
 	int _selector, _oldSelector;
 	int _temp, _oldTemp;
 	int _temp1;
@@ -79,9 +91,14 @@ public:
 	virtual ~UserInterface() {}
 
 	/**
+	 * Called for OPEN, CLOSE, and MOVE actions are being done
+	 */
+	void checkAction(ActionType &action, int objNum, FixedTextActionId fixedTextActionId = kFixedTextAction_Invalid);
+public:
+	/**
 	 * Resets the user interface
 	 */
-	virtual void reset() {}
+	virtual void reset();
 
 	/**
 	 * Draw the user interface onto the screen's back buffers
@@ -118,11 +135,6 @@ public:
 	 * Clear any active text window
 	 */
 	virtual void clearWindow() {}
-
-	/**
-	 * Print the previously selected object's decription
-	 */
-	virtual void printObjectDesc() {}
 };
 
 } // End of namespace Sherlock

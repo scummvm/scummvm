@@ -44,6 +44,10 @@ Common::Platform SherlockEngine::getPlatform() const {
 	return _gameDescription->desc.platform;
 }
 
+Common::Language SherlockEngine::getLanguage() const {
+	return _gameDescription->desc.language;
+}
+
 } // End of namespace Sherlock
 
 static const PlainGameDescriptor sherlockGames[] = {
@@ -58,6 +62,7 @@ static const PlainGameDescriptor sherlockGames[] = {
 #define GAMEOPTION_HELP_STYLE		GUIO_GAMEOPTIONS3
 #define GAMEOPTION_PORTRAITS_ON		GUIO_GAMEOPTIONS4
 #define GAMEOPTION_WINDOW_STYLE		GUIO_GAMEOPTIONS5
+#define GAMEOPTION_TRANSPARENT_WINDOWS		GUIO_GAMEOPTIONS6
 
 static const ADExtraGuiOptionsMap optionsList[] = {
 	{
@@ -106,6 +111,16 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			_s("Slide dialogs into view"),
 			_s("Slide UI dialogs into view, rather than simply showing them immediately"),
 			"window_style",
+			true
+		}
+	},
+
+	{
+		GAMEOPTION_TRANSPARENT_WINDOWS,
+		{
+			_s("Transparent windows"),
+			_s("Show windows with a partially transparent background"),
+			"transparent_windows",
 			true
 		}
 	},

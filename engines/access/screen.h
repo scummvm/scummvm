@@ -92,6 +92,8 @@ public:
 
 	virtual void drawRect();
 
+	virtual void drawBox();
+
 	virtual void transBlitFrom(ASurface *src, const Common::Point &destPos);
 
 	virtual void transBlitFrom(ASurface *src, const Common::Rect &bounds);
@@ -137,7 +139,12 @@ public:
 	/**
 	 * Set icon palette
 	 */
-	void setIconPalette() {}
+	void setIconPalette();
+
+	/**
+	 * Set Tex palette (Martian Memorandum)
+	 */
+	void setManPalette();
 
 	void loadPalette(int fileNum, int subfile);
 
@@ -150,6 +157,8 @@ public:
 	void restorePalette();
 
 	void getPalette(byte *pal);
+
+	void flashPalette(int count);
 
 	/**
 	 * Copy a buffer to the screen

@@ -27,6 +27,8 @@
 #include "audio/audiostream.h"
 #include "audio/mididrv.h"
 #include "audio/midiparser.h"
+// Miles Audio for Discworld 1
+#include "audio/miles.h"
 #include "audio/decoders/adpcm.h"
 
 #include "backends/audiocd/audiocd.h"
@@ -373,8 +375,78 @@ void DeleteMidiBuffer() {
 	g_midiBuffer.pDat = NULL;
 }
 
-MidiMusicPlayer::MidiMusicPlayer() {
-	MidiPlayer::createDriver();
+MidiMusicPlayer::MidiMusicPlayer(TinselEngine *vm) {
+	_driver = NULL;
+	_milesAudioMode = false;
+	bool milesAudioEnabled = false;
+
+	if (vm->getPlatform() == Common::kPlatformDOS) {
+		// Enable Miles Audio for DOS only
+		milesAudioEnabled = true;
+	}
+
+	if ((vm->getGameId() == GID_DW1) && (milesAudioEnabled)) {
+		// Discworld 1 (DOS) uses Miles Audio 3
+		// use our own Miles Audio drivers
+		// 
+		// It seems that there are multiple versions of Discworld 1
+		//
+		// Version 1:
+		// Has SAMPLE.AD for AdLib and SAMPLE.OPL for OPL-3
+		// Timbre files are inside a subdirectory of the CD called "/drivers". Main game files are in
+		// another subdirectory, which means the user has to copy those files over.
+		// Installer script copies all drivers directly to harddrive without name changes
+		//
+		// Version 2:
+		// Has FAT.OPL only (gets copied by the installer into MIDPAK.AD or MIDPAK.OPL)
+		// Timbre file is inside subdirectory "drivers" right in the main game directory.
+		// Installer copies FAT.OPL to MIDPAK.AD all the time, even when user selected AWE32
+		//
+		// Neither have timbre data for MT32
+
+		::MidiDriver::DeviceHandle dev = ::MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_GM);
+		::MusicType musicType = ::MidiDriver::getMusicType(dev);
+		Common::File fileClass;
+
+		switch (musicType) {
+		case MT_ADLIB:
+			if (fileClass.exists("FAT.OPL")) {
+				// Version 2: fat.opl, may be in drivers-subdirectory
+				_driver = Audio::MidiDriver_Miles_AdLib_create("", "FAT.OPL");
+			} else {
+				if (fileClass.exists("MIDPAK.AD")) {
+					// Version 2: drivers got installed and fat.opl got copied over by the user
+					_driver = Audio::MidiDriver_Miles_AdLib_create("MIDPAK.AD", "");
+				} else {
+					// Version 1: sample.ad / sample.opl, have to be copied over by the user for this version
+					// That's why we check those last, because then the user gets a proper error message for them
+					_driver = Audio::MidiDriver_Miles_AdLib_create("SAMPLE.AD", "SAMPLE.OPL");
+				}
+			}
+			break;
+		case MT_MT32:
+			// Discworld 1 doesn't have a MT32 timbre file
+			_driver = Audio::MidiDriver_Miles_MT32_create("");
+			break;
+		case MT_GM:
+			if (ConfMan.getBool("native_mt32")) {
+				_driver = Audio::MidiDriver_Miles_MT32_create("");
+				musicType = MT_MT32;
+			}
+			break;
+		default:
+			break;
+		}
+		if (!_driver) {
+			// nothing got created yet? -> create default driver
+			MidiPlayer::createDriver();
+		} else {
+			_milesAudioMode = true;
+		}
+
+	} else {
+		MidiPlayer::createDriver();
+	}
 
 	int ret = _driver->open();
 	if (ret == 0) {
@@ -394,6 +466,11 @@ void MidiMusicPlayer::setVolume(int volume) {
 }
 
 void MidiMusicPlayer::send(uint32 b) {
+	if (_milesAudioMode) {
+		_driver->send(b);
+		return;
+	}
+
 	Audio::MidiPlayer::send(b);
 
 	byte channel = (byte)(b & 0x0F);

@@ -32,6 +32,7 @@
 #include "dosbox.h"
 #include "dbopl.h"
 
+#include "audio/mixer.h"
 #include "common/system.h"
 #include "common/scummsys.h"
 #include "common/util.h"
@@ -148,6 +149,7 @@ OPL::OPL(Config::OplType type) : _type(type), _rate(0), _emulator(0) {
 }
 
 OPL::~OPL() {
+	stop();
 	free();
 }
 
@@ -156,7 +158,7 @@ void OPL::free() {
 	_emulator = 0;
 }
 
-bool OPL::init(int rate) {
+bool OPL::init() {
 	free();
 
 	memset(&_reg, 0, sizeof(_reg));
@@ -167,19 +169,19 @@ bool OPL::init(int rate) {
 		return false;
 
 	DBOPL::InitTables();
-	_emulator->Setup(rate);
+	_rate = g_system->getMixer()->getOutputRate();
+	_emulator->Setup(_rate);
 
 	if (_type == Config::kDualOpl2) {
 		// Setup opl3 mode in the hander
 		_emulator->WriteReg(0x105, 1);
 	}
 
-	_rate = rate;
 	return true;
 }
 
 void OPL::reset() {
-	init(_rate);
+	init();
 }
 
 void OPL::write(int port, int val) {
@@ -307,7 +309,7 @@ void OPL::dualWrite(uint8 index, uint8 reg, uint8 val) {
 	_emulator->WriteReg(fullReg, val);
 }
 
-void OPL::readBuffer(int16 *buffer, int length) {
+void OPL::generateSamples(int16 *buffer, int length) {
 	// For stereo OPL cards, we divide the sample count by 2,
 	// to match stereo AudioStream behavior.
 	if (_type != Config::kOpl2)

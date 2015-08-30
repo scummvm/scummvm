@@ -33,6 +33,7 @@ SherlockEngine::SherlockEngine(OSystem *syst, const SherlockGameDescription *gam
 	_animation = nullptr;
 	_debugger = nullptr;
 	_events = nullptr;
+	_fixedText = nullptr;
 	_inventory = nullptr;
 	_journal = nullptr;
 	_map = nullptr;
@@ -56,13 +57,14 @@ SherlockEngine::~SherlockEngine() {
 	delete _animation;
 	delete _debugger;
 	delete _events;
+	delete _fixedText;
 	delete _journal;
 	delete _map;
-	delete _music;
 	delete _people;
 	delete _saves;
 	delete _scene;
 	delete _screen;
+	delete _music;
 	delete _sound;
 	delete _talk;
 	delete _ui;
@@ -71,11 +73,15 @@ SherlockEngine::~SherlockEngine() {
 }
 
 void SherlockEngine::initialize() {
-	DebugMan.addDebugChannel(kDebugScript, "scripts", "Script debug level");
+	DebugMan.addDebugChannel(kDebugLevelScript,      "scripts", "Script debug level");
+	DebugMan.addDebugChannel(kDebugLevelAdLibDriver, "AdLib",   "AdLib driver debugging");
+	DebugMan.addDebugChannel(kDebugLevelMT32Driver,  "MT32",    "MT32 driver debugging");
+	DebugMan.addDebugChannel(kDebugLevelMusic,       "Music",   "Music debugging");
 
+	Fonts::setVm(this);
 	ImageFile::setVm(this);
-	Object::setVm(this);
-	Sprite::setVm(this);
+	ImageFile3DO::setVm(this);
+	BaseObject::setVm(this);
 
 	if (isDemo()) {
 		Common::File f;
@@ -87,22 +93,29 @@ void SherlockEngine::initialize() {
 
 	_res = new Resources(this);
 	_animation = new Animation(this);
-	_debugger = new Debugger(this);
+	_debugger = Debugger::init(this);
 	_events = new Events(this);
-	_inventory = new Inventory(this);
-	_map = new Map(this);
+	_fixedText = FixedText::init(this);
+	_inventory = Inventory::init(this);
+	_map = Map::init(this);
 	_music = new Music(this, _mixer);
-	_journal = new Journal(this);
-	_people = new People(this);
-	_saves = new SaveManager(this, _targetName);
+	_journal = Journal::init(this);
+	_people = People::init(this);
+	_saves = SaveManager::init(this, _targetName);
 	_scene = Scene::init(this);
-	_screen = new Screen(this);
+	_screen = Screen::init(this);
 	_sound = new Sound(this, _mixer);
 	_talk = Talk::init(this);
 	_ui = UserInterface::init(this);
 
 	// Load game settings
 	loadConfig();
+
+	if (getPlatform() == Common::kPlatform3DO) {
+		// Disable portraits on 3DO
+		// 3DO does not include portrait data
+		_people->_portraitsOn = false;
+	}
 }
 
 Common::Error SherlockEngine::run() {
@@ -115,7 +128,7 @@ Common::Error SherlockEngine::run() {
 	// If requested, load a savegame instead of showing the intro
 	if (ConfMan.hasKey("save_slot")) {
 		int saveSlot = ConfMan.getInt("save_slot");
-		if (saveSlot >= 1 && saveSlot <= MAX_SAVEGAME_SLOTS)
+		if (saveSlot >= 0 && saveSlot <= MAX_SAVEGAME_SLOTS)
 			_loadGameSlot = saveSlot;
 	}
 
@@ -166,7 +179,7 @@ void SherlockEngine::sceneLoop() {
 		// Handle any input from the keyboard or mouse
 		handleInput();
 
-		if (_people->_hSavedPos.x == -1) {
+		if (_people->_savedPos.x == -1) {
 			_canLoadSave = true;
 			_scene->doBgAnim();
 			_canLoadSave = false;
@@ -175,11 +188,10 @@ void SherlockEngine::sceneLoop() {
 
 	_scene->freeScene();
 	_people->freeWalk();
-
 }
 
 void SherlockEngine::handleInput() {
-	_canLoadSave = true;
+	_canLoadSave = _ui->_menuMode == STD_MODE || _ui->_menuMode == LAB_MODE;
 	_events->pollEventsAndWait();
 	_canLoadSave = false;
 
@@ -203,11 +215,15 @@ void SherlockEngine::setFlags(int flagNum) {
 	_scene->checkSceneFlags(true);
 }
 
+void SherlockEngine::setFlagsDirect(int flagNum) {
+	_flags[ABS(flagNum)] = flagNum >= 0;
+}
+
 void SherlockEngine::loadConfig() {
 	// Load sound settings
 	syncSoundSettings();
 
-	ConfMan.registerDefault("font", 1);
+	ConfMan.registerDefault("font", getGameID() == GType_SerratedScalpel ? 1 : 4);
 
 	_screen->setFont(ConfMan.getInt("font"));
 	if (getGameID() == GType_SerratedScalpel)
@@ -240,7 +256,7 @@ void SherlockEngine::syncSoundSettings() {
 	_music->syncMusicSettings();
 }
 
-void SherlockEngine::synchronize(Common::Serializer &s) {
+void SherlockEngine::synchronize(Serializer &s) {
 	for (uint idx = 0; idx < _flags.size(); ++idx)
 		s.syncAsByte(_flags[idx]);
 }
@@ -263,4 +279,4 @@ Common::Error SherlockEngine::saveGameState(int slot, const Common::String &desc
 	return Common::kNoError;
 }
 
-} // End of namespace Comet
+} // End of namespace Sherlock

@@ -185,16 +185,30 @@ public:
 	void remove() { _visage.clear(); }
 };
 
+struct AnimationFrame {
+	int	frame;
+	int	x;
+	int	y;
+};
+
 class Logo {
 private:
 	ScalpelEngine *_vm;
 	TLib _lib;
-	int _counter;
+	int _counter, _frameCounter;
+	bool _finished;
 	byte _originalPalette[PALETTE_SIZE];
 	byte _palette1[PALETTE_SIZE];
 	byte _palette2[PALETTE_SIZE];
 	byte _palette3[PALETTE_SIZE];
 	Object _objects[4];
+	uint _waitFrames;
+	uint32 _waitStartFrame;
+	int _animateObject;
+	uint32 _animateStartFrame;
+	uint _animateFrameDelay;
+	const AnimationFrame *_animateFrames;
+	uint _animateFrame;
 
 	Logo(ScalpelEngine *vm);
 	~Logo();
@@ -202,6 +216,19 @@ private:
 	void nextFrame();
 
 	bool finished() const;
+
+	/**
+	 * Wait for a number of frames. Note that the frame count in _events is
+	 * not the same as the number of calls to nextFrame().
+	 */
+	void waitFrames(uint frames);
+
+	/**
+	 * Start an animation sequence. Used for sequences that are described
+	 * one frame at a time because they do unusual things, or run at
+	 * unusual rates.
+	 */
+	void startAnimation(uint object, uint frameDelay, const AnimationFrame *frames);
 
 	/**
 	 * Load the background for the scene

@@ -35,16 +35,43 @@ namespace Sherlock {
 
 namespace Scalpel {
 
+extern const int FS_TRANS[8];
+
+enum { BLACKWOOD_CAPTURE = 2, BAKER_STREET = 4, DRAWING_ROOM = 12, STATION = 17, PUB_INTERIOR = 19,
+	LAWYER_OFFICE = 27, BAKER_ST_EXTERIOR = 39, RESCUE_ANNA = 52, MOOREHEAD_DEATH = 53, EXIT_GAME = 55,
+	BRUMWELL_SUICIDE = 70, OVERHEAD_MAP2 = 98, DARTS_GAME = 99, OVERHEAD_MAP = 100 };
+
 class ScalpelScene : public Scene {
 private:
 	void doBgAnimCheckCursor();
 protected:
+	/**
+	 * Loads the data associated for a given scene. The room resource file's format is:
+	 * BGHEADER: Holds an index for the rest of the file
+	 * STRUCTS:  The objects for the scene
+	 * IMAGES:   The graphic information for the structures
+	 *
+	 * The _misc field of the structures contains the number of the graphic image
+	 * that it should point to after loading; _misc is then set to 0.
+	 */
+	virtual bool loadScene(const Common::String &filename);
+
 	/**
 	 * Checks all the background shapes. If a background shape is animating,
 	 * it will flag it as needing to be drawn. If a non-animating shape is
 	 * colliding with another shape, it will also flag it as needing drawing
 	 */
 	virtual void checkBgShapes();
+
+	/**
+	 * Draw all the shapes, people and NPCs in the correct order
+	 */
+	virtual void drawAllShapes();
+
+	/**
+	 * Returns the index of the closest zone to a given point.
+	 */
+	virtual int closestZone(const Common::Point &pt);
 public:
 	ScalpelScene(SherlockEngine *vm) : Scene(vm) {}
 
@@ -52,6 +79,22 @@ public:
 	 * Draw all objects and characters.
 	 */
 	virtual void doBgAnim();
+
+	/**
+	 * Attempt to start a canimation sequence. It will load the requisite graphics, and
+	 * then copy the canim object into the _canimShapes array to start the animation.
+	 *
+	 * @param cAnimNum		The canim object within the current scene
+	 * @param playRate		Play rate. 0 is invalid; 1=normal speed, 2=1/2 speed, etc.
+	 *		A negative playRate can also be specified to play the animation in reverse
+	 */
+	virtual int startCAnim(int cAnimNum, int playRate = 1);
+
+	/**
+	 * Attempts to find a background shape within the passed bounds. If found,
+	 * it will return the shape number, or -1 on failure.
+	 */
+	virtual int findBgShape(const Common::Point &pt);
 };
 
 } // End of namespace Scalpel

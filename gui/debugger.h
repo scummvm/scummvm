@@ -28,6 +28,7 @@
 #include "common/hashmap.h"
 #include "common/hash-str.h"
 #include "common/array.h"
+#include "common/str-array.h"
 
 namespace GUI {
 
@@ -40,7 +41,11 @@ public:
 	Debugger();
 	virtual ~Debugger();
 
+	int getCharsPerLine();
+
 	int debugPrintf(const char *format, ...) GCC_PRINTF(2, 3);
+
+	void debugPrintColumns(const Common::StringArray &list);
 
 	/**
 	 * The onFrame() method should be invoked by the engine at regular

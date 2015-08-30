@@ -59,7 +59,15 @@ void Sound::initFromAIFFFile(const Common::String &fileName) {
 		return;
 	}
 
-	_stream = Audio::makeAIFFStream(file, DisposeAfterUse::YES);
+	Audio::RewindableAudioStream *stream = Audio::makeAIFFStream(file, DisposeAfterUse::YES);
+
+	_stream = dynamic_cast<Audio::SeekableAudioStream *>(stream);
+
+	if (!_stream) {
+		delete stream;
+		warning("AIFF stream '%s' is not seekable", fileName.c_str());
+		return;
+	}
 }
 
 void Sound::initFromQuickTime(const Common::String &fileName) {

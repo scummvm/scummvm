@@ -26,14 +26,15 @@
 #include "common/scummsys.h"
 #include "common/array.h"
 #include "common/rect.h"
-#include "common/serializer.h"
 #include "common/stream.h"
 #include "common/stack.h"
+#include "sherlock/objects.h"
+#include "sherlock/saveload.h"
 
 namespace Sherlock {
 
+#define SPEAKER_REMOVE 0x80
 #define MAX_TALK_SEQUENCES 11
-#define MAX_TALK_FILES 500
 
 enum {
 	OP_SWITCH_SPEAKER			= 0,
@@ -69,7 +70,7 @@ enum {
 	OP_REMOVE_ITEM_FROM_INVENTORY = 30,
 	OP_ENABLE_END_KEY			= 31,
 	OP_DISABLE_END_KEY			= 32,
-	OP_CARRIAGE_RETURN			= 33,
+	OP_END_TEXT_WINDOW			= 33,
 	
 	OP_MOUSE_OFF_ON				= 34,
 	OP_SET_WALK_CONTROL			= 35,
@@ -82,27 +83,29 @@ enum {
 	OP_NEED_PASSWORD			= 42,
 	OP_SET_SCENE_ENTRY_FLAG		= 43,
 	OP_WALK_NPC_TO_CANIM		= 44,
-	OP_WALK_HOLMES_AND_NPC_TO_COORDS = 45,
-	OP_SET_NPC_TALK_FILE		= 46,
-	OP_TURN_NPC_OFF				= 47,
-	OP_TURN_NPC_ON				= 48,
-	OP_NPC_DESC_ON_OFF			= 49,
-	OP_NPC_PATH_PAUSE_TAKING_NOTES	= 50,
-	OP_NPC_PATH_PAUSE_LOOKING_HOLMES = 51,
-	OP_ENABLE_TALK_INTERRUPTS	= 52,
-	OP_DISABLE_TALK_INTERRUPTS	= 53,
-	OP_SET_NPC_INFO_LINE		= 54,
-	OP_SET_NPC_POSITION			= 54,
-	OP_NPC_PATH_LABEL			= 55,
-	OP_PATH_GOTO_LABEL			= 56,
-	OP_PATH_IF_FLAG_GOTO_LABEL	= 57,
-	OP_NPC_WALK_GRAPHICS		= 58,
-	OP_NPC_VERB					= 59,
-	OP_NPC_VERB_CANIM			= 60,
-	OP_NPC_VERB_SCRIPT			= 61,
-	OP_RESTORE_PEOPLE_SEQUENCE	= 62,
-	OP_NPC_VERB_TARGET			= 63,
-	OP_TURN_SOUNDS_OFF			= 64
+	OP_WALK_NPC_TO_COORDS		= 45,
+	OP_WALK_HOLMES_AND_NPC_TO_COORDS = 46,
+	OP_SET_NPC_TALK_FILE		= 47,
+	OP_TURN_NPC_OFF				= 48,
+	OP_TURN_NPC_ON				= 49,
+	OP_NPC_DESC_ON_OFF			= 50,
+	OP_NPC_PATH_PAUSE_TAKING_NOTES	= 51,
+	OP_NPC_PATH_PAUSE_LOOKING_HOLMES = 52,
+	OP_ENABLE_TALK_INTERRUPTS	= 53,
+	OP_DISABLE_TALK_INTERRUPTS	= 54,
+	OP_SET_NPC_INFO_LINE		= 55,
+	OP_SET_NPC_POSITION			= 56,
+	OP_NPC_PATH_LABEL			= 57,
+	OP_PATH_GOTO_LABEL			= 58,
+	OP_PATH_IF_FLAG_GOTO_LABEL	= 59,
+	OP_NPC_WALK_GRAPHICS		= 60,
+	OP_NPC_VERB					= 61,
+	OP_NPC_VERB_CANIM			= 62,
+	OP_NPC_VERB_SCRIPT			= 63,
+	OP_RESTORE_PEOPLE_SEQUENCE	= 64,
+	OP_NPC_VERB_TARGET			= 65,
+	OP_TURN_SOUNDS_OFF			= 66,
+	OP_NULL						= 67
 };
 
 enum OpcodeReturn { RET_EXIT = -1, RET_SUCCESS = 0, RET_CONTINUE = 1 };
@@ -116,8 +119,13 @@ typedef OpcodeReturn(Talk::*OpcodeMethod)(const byte *&str);
 struct SequenceEntry {
 	int _objNum;
 	Common::Array<byte> _sequences;
-	int _frameNumber;
-	int _seqTo;
+	Object *_obj;			// Pointer to the bgshape that these values go to
+	short _frameNumber;		// Frame number in frame sequence to draw
+	short _sequenceNumber;	// Start frame of sequences that are repeated
+	int _seqStack;			// Allows gosubs to return to calling frame
+	int _seqTo;				// Allows 1-5, 8-3 type sequences encoded 
+	int _seqCounter;		// How many times this sequence has been executed
+	int _seqCounter2;
 
 	SequenceEntry();
 };
@@ -139,11 +147,12 @@ struct Statement {
 	int _quotient;
 	int _talkMap;
 	Common::Rect _talkPos;
+	int _journal;
 
 	/**
 	 * Load the data for a single statement within a talk file
 	 */
-	void synchronize(Common::SeekableReadStream &s);
+	void load(Common::SeekableReadStream &s, bool isRoseTattoo);
 };
 
 struct TalkHistoryEntry {
@@ -153,16 +162,6 @@ struct TalkHistoryEntry {
 	bool &operator[](int index) { return _data[index]; }
 };
 
-struct TalkSequences {
-	byte _data[MAX_TALK_SEQUENCES];
-
-	TalkSequences() { clear(); }
-	TalkSequences(const byte *data);
-
-	byte &operator[](int idx) { return _data[idx]; }
-	void clear();
-};
-
 class Talk {
 	friend class Scalpel::ScalpelUserInterface;
 private:
@@ -170,48 +169,18 @@ private:
 	 * Remove any voice commands from a loaded statement list
 	 */
 	void stripVoiceCommands();
-	
-	/**
-	 * Form a table of the display indexes for statements
-	 */
-	void setTalkMap();
-
-	/**
-	 * Display a list of statements in a window at the bottom of the screen that the
-	 * player can select from.
-	 */
-	bool displayTalk(bool slamIt);
-
-	/**
-	 * Prints a single conversation option in the interface window
-	 */
-	int talkLine(int lineNum, int stateNum, byte color, int lineY, bool slamIt);
-
-	/**
-	 * Parses a reply for control codes and display text. The found text is printed within
-	 * the text window, handles delays, animations, and animating portraits.
-	 */
-	void doScript(const Common::String &script);
-
-	/**
-	 * When the talk window has been displayed, waits a period of time proportional to
-	 * the amount of text that's been displayed
-	 */
-	int waitForMore(int delay);
 protected:
 	SherlockEngine *_vm;
 	OpcodeMethod *_opcodeTable;
 	Common::Stack<SequenceEntry> _savedSequences;
-	Common::Stack<SequenceEntry> _sequenceStack;
 	Common::Stack<ScriptStackEntry> _scriptStack;
-	Common::Array<Statement> _statements;
-	TalkHistoryEntry _talkHistory[MAX_TALK_FILES];
-	int _speaker;
+	Common::Array<TalkHistoryEntry> _talkHistory;
 	int _talkIndex;
 	int _scriptSelect;
 	int _talkStealth;
 	int _talkToFlag;
 	int _scriptSaveIndex;
+	int _3doSpeechIndex;
 
 	// These fields are used solely by doScript, but are fields because all the script opcodes are
 	// separate methods now, and need access to these fields
@@ -229,10 +198,9 @@ protected:
 	OpcodeReturn cmdAddItemToInventory(const byte *&str);
 	OpcodeReturn cmdAdjustObjectSequence(const byte *&str);
 	OpcodeReturn cmdBanishWindow(const byte *&str);
-	OpcodeReturn cmdCallTalkFile(const byte *&str);
 	OpcodeReturn cmdDisableEndKey(const byte *&str);
 	OpcodeReturn cmdEnableEndKey(const byte *&str);
-	OpcodeReturn cmdGotoScene(const byte *&str);
+	OpcodeReturn cmdEndTextWindow(const byte *&str);
 	OpcodeReturn cmdHolmesOff(const byte *&str);
 	OpcodeReturn cmdHolmesOn(const byte *&str);
 	OpcodeReturn cmdPause(const byte *&str);
@@ -243,20 +211,61 @@ protected:
 	OpcodeReturn cmdSetObject(const byte *&str);
 	OpcodeReturn cmdStealthModeActivate(const byte *&str);
 	OpcodeReturn cmdStealthModeDeactivate(const byte *&str);
-	OpcodeReturn cmdSwitchSpeaker(const byte *&str);
 	OpcodeReturn cmdToggleObject(const byte *&str);
 	OpcodeReturn cmdWalkToCAnimation(const byte *&str);
-	OpcodeReturn cmdWalkToCoords(const byte *&str);
+protected:
+	/**
+	 * Checks, if a character is an opcode
+	 */
+	bool isOpcode(byte checkCharacter);
+	
+	/**
+	 * Form a table of the display indexes for statements
+	 */
+	void setTalkMap();
+
+	/**
+	 * When the talk window has been displayed, waits a period of time proportional to
+	 * the amount of text that's been displayed
+	 */
+	int waitForMore(int delay);
+
+	/**
+	 * Display the talk interface window
+	 */
+	virtual void talkInterface(const byte *&str) = 0;
+
+	/**
+	 * Pause when displaying a talk dialog on-screen
+	 */
+	virtual void talkWait(const byte *&str);
+
+	/**
+	 * Show the talk display
+	 */
+	virtual void showTalk() = 0;
+
+	/**
+	 * Called when a character being spoken to has no talk options to display
+	 */
+	virtual void nothingToSay() = 0;
+
+	/**
+	 * Called when the active speaker is switched
+	 */
+	virtual void switchSpeaker() {}
 public:
+	Common::Array<Statement> _statements;
 	bool _talkToAbort;
 	int _talkCounter;
 	int _talkTo;
 	int _scriptMoreFlag;
+	bool _openTalkWindow;
 	Common::String _scriptName;
 	bool _moreTalkUp, _moreTalkDown;
 	int _converseNum;
 	const byte *_opcodes;
-
+	int _speaker;
 public:
 	static Talk *init(SherlockEngine *vm);
 	virtual ~Talk() {}
@@ -274,7 +283,13 @@ public:
 	 *	In their case, the conversation display is simply suppressed, and control is passed on to
 	 *	doScript to implement whatever action is required.
 	 */
-	void talkTo(const Common::String &filename);
+	virtual void talkTo(const Common::String filename);
+
+	/**
+	 * Parses a reply for control codes and display text. The found text is printed within
+	 * the text window, handles delays, animations, and animating portraits.
+	 */
+	void doScript(const Common::String &script);
 
 	/**
 	 * Main method for handling conversations when a character to talk to has been
@@ -282,17 +297,12 @@ public:
 	 * interface window for the conversation and passes on control to give the
 	 * player a list of options to make a selection from
 	 */
-	void talk(int objNum);
+	void initTalk(int objNum);
 
 	/**
 	 * Clear loaded talk data
 	 */
 	void freeTalkVars();
-
-	/**
-	 * Draws the interface for conversation display
-	 */
-	void drawInterface();
 
 	/**
 	 * Opens the talk file 'talk.tlk' and searches the index for the specified
@@ -301,37 +311,20 @@ public:
 	void loadTalkFile(const Common::String &filename);
 
 	/**
-	 * Change the sequence of a background object corresponding to a given speaker.
-	 * The new sequence will display the character as "listening"
-	 */
-	void setStillSeq(int speaker);
-
-	/**
-	 * Clears the stack of pending object sequences associated with speakers in the scene
-	 */
-	void clearSequences();
-	
-	/**
-	 * Pulls a background object sequence from the sequence stack and restore's the
-	 * object's sequence
-	 */
-	void pullSequence();
-
-	/**
 	 * Push the sequence of a background object that's an NPC that needs to be
 	 * saved onto the sequence stack.
 	 */
 	void pushSequence(int speaker);
 	
 	/**
-	 * Change the sequence of the scene background object associated with the current speaker.
+	 * Push the details of a passed object onto the saved sequences stack
 	 */
-	void setSequence(int speaker);
+	virtual void pushSequenceEntry(Object *obj) = 0;
 
 	/**
-	 * Returns true if the script stack is empty
+	 * Clears the stack of pending object sequences associated with speakers in the scene
 	 */
-	bool isSequencesEmpty() const { return _scriptStack.empty(); }
+	virtual void clearSequences() = 0;
 
 	/**
 	 * Pops an entry off of the script stack
@@ -341,66 +334,34 @@ public:
 	/**
 	 * Synchronize the data for a savegame
 	 */
-	void synchronize(Common::Serializer &s);
-};
+	void synchronize(Serializer &s);
 
-class ScalpelTalk : public Talk {
-protected:
-	OpcodeReturn cmdAssignPortraitLocation(const byte *&str);
-	OpcodeReturn cmdClearInfoLine(const byte *&str);
-	OpcodeReturn cmdClearWindow(const byte *&str);
-	OpcodeReturn cmdDisplayInfoLine(const byte *&str);
-	OpcodeReturn cmdElse(const byte *&str);
-	OpcodeReturn cmdIf(const byte *&str);
-	OpcodeReturn cmdMoveMouse(const byte *&str);
-	OpcodeReturn cmdPlayPrologue(const byte *&str);
-	OpcodeReturn cmdRemovePortrait(const byte *&str);
-	OpcodeReturn cmdSfxCommand(const byte *&str);
-	OpcodeReturn cmdSummonWindow(const byte *&str);
-	OpcodeReturn cmdCarriageReturn(const byte *&str);
-public:
-	ScalpelTalk(SherlockEngine *vm);
-	virtual ~ScalpelTalk() {}
-};
+	/**
+	 * Draws the interface for conversation display
+	 */
+	virtual void drawInterface() {}
 
-class TattooTalk : public Talk {
-protected:
-	OpcodeReturn cmdMouseOnOff(const byte *&str);
-	OpcodeReturn cmdNextSong(const byte *&str);
-	OpcodeReturn cmdPassword(const byte *&str);
-	OpcodeReturn cmdPlaySong(const byte *&str);
-	OpcodeReturn cmdRestorePeopleSequence(const byte *&str);
-	OpcodeReturn cmdSetNPCDescOnOff(const byte *&str);
-	OpcodeReturn cmdSetNPCInfoLine(const byte *&str);
-	OpcodeReturn cmdNPCLabelGoto(const byte *&str);
-	OpcodeReturn cmdNPCLabelIfFlagGoto(const byte *&str);
-	OpcodeReturn cmdNPCLabelSet(const byte *&str);
-	OpcodeReturn cmdSetNPCOff(const byte *&str);
-	OpcodeReturn cmdSetNPCOn(const byte *&str);
-	OpcodeReturn cmdSetNPCPathDest(const byte *&str);
-	OpcodeReturn cmdSetNPCPathPause(const byte *&str);
-	OpcodeReturn cmdSetNPCPathPauseTakingNotes(const byte *&str);
-	OpcodeReturn cmdSetNPCPathPauseLookingHolmes(const byte *&str);
-	OpcodeReturn cmdSetNPCPosition(const byte *&str);
-	OpcodeReturn cmdSetNPCTalkFile(const byte *&str);
-	OpcodeReturn cmdSetNPCVerb(const byte *&str);
-	OpcodeReturn cmdSetNPCVerbCAnimation(const byte *&str);
-	OpcodeReturn cmdSetNPCVerbScript(const byte *&str);
-	OpcodeReturn cmdSetNPCVerbTarget(const byte *&str);
-	OpcodeReturn cmdSetNPCWalkGraphics(const byte *&str);
-	OpcodeReturn cmdSetSceneEntryFlag(const byte *&str);
-	OpcodeReturn cmdSetTalkSequence(const byte *&str);
-	OpcodeReturn cmdSetWalkControl(const byte *&str);
-	OpcodeReturn cmdTalkInterruptsDisable(const byte *&str);
-	OpcodeReturn cmdTalkInterruptsEnable(const byte *&str);
-	OpcodeReturn cmdTurnSoundsOff(const byte *&str);
-	OpcodeReturn cmdWalkHolmesAndNPCToCAnimation(const byte *&str);
-	OpcodeReturn cmdWalkNPCToCAnimation(const byte *&str);
-	OpcodeReturn cmdWalkNPCToCoords(const byte *&str);
-	OpcodeReturn cmdWalkHomesAndNPCToCoords(const byte *&str);
-public:
-	TattooTalk(SherlockEngine *vm);
-	virtual ~TattooTalk() {}
+	/**
+	 * Display a list of statements in a window at the bottom of the screen that the
+	 * player can select from.
+	 */
+	virtual bool displayTalk(bool slamIt) { return false; }
+
+	/**
+	 * Prints a single conversation option in the interface window
+	 */
+	virtual int talkLine(int lineNum, int stateNum, byte color, int lineY, bool slamIt) { return 0; }
+	
+	/**
+	 * Pulls a background object sequence from the sequence stack and restore's the
+	 * object's sequence
+	 */
+	virtual void pullSequence(int slot = -1) = 0;
+
+	/**
+	 * Returns true if the script stack is empty
+	 */
+	virtual bool isSequencesEmpty() const = 0;
 };
 
 } // End of namespace Sherlock

@@ -45,10 +45,11 @@ private:
 	/**
 	 * Checks for whether an animation is being played that has associated sound
 	 */
-	const int *checkForSoundFrames(const Common::String &filename);
+	const int *checkForSoundFrames(const Common::String &filename, bool intro);
 public:
 	Common::String _soundLibraryFilename;
 	Common::String _gfxLibraryFilename;
+
 public:
 	Animation(SherlockEngine *vm);
 
@@ -75,7 +76,9 @@ public:
 	/**
 	 * Play a full-screen animation
 	 */
-	bool play(const Common::String &filename, int minDelay, int fade, bool setPalette, int speed);
+	bool play(const Common::String &filename, bool intro, int minDelay, int fade, bool setPalette, int speed);
+
+	bool play3DO(const Common::String &filename, bool intro, int minDelay, bool fadeFromGrey, int speed);
 };
 
 } // End of namespace Sherlock

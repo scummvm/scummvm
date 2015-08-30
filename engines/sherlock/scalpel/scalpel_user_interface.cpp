@@ -21,8 +21,16 @@
  */
 
 #include "sherlock/scalpel/scalpel_user_interface.h"
-#include "sherlock/sherlock.h"
+#include "sherlock/scalpel/scalpel_fixed_text.h"
+#include "sherlock/scalpel/scalpel_inventory.h"
+#include "sherlock/scalpel/scalpel_journal.h"
+#include "sherlock/scalpel/scalpel_people.h"
+#include "sherlock/scalpel/scalpel_saveload.h"
+#include "sherlock/scalpel/scalpel_screen.h"
+#include "sherlock/scalpel/scalpel_talk.h"
 #include "sherlock/scalpel/settings.h"
+#include "sherlock/scalpel/scalpel.h"
+#include "sherlock/sherlock.h"
 
 namespace Sherlock {
 
@@ -60,33 +68,22 @@ const char COMMANDS[13] = "LMTPOCIUGJFS";
 const char INVENTORY_COMMANDS[9] = { "ELUG-+,." };
 const char *const PRESS_KEY_FOR_MORE = "Press any Key for More.";
 const char *const PRESS_KEY_TO_CONTINUE = "Press any Key to Continue.";
-
-const char *const MOPEN[] = {
-	"This cannot be opened", "It is already open", "It is locked", "Wait for Watson", " ", "."
-};
-const char *const MCLOSE[] = {
-	"This cannot be closed", "It is already closed", "The safe door is in the way"
-};
-const char *const MMOVE[] = {
-	"This cannot be moved", "It is bolted to the floor", "It is too heavy", "The other crate is in the way"
-};
-const char *const MPICK[] = {
-	"Nothing of interest here", "It is bolted down", "It is too big to carry", "It is too heavy",
-	"I think a girl would be more your type", "Those flowers belong to Penny", "She's far too young for you!",
-	"I think a girl would be more your type!", "Government property for official use only"
-};
-const char *const MUSE[] = {
-	"You can't do that", "It had no effect", "You can't reach it", "OK, the door looks bigger! Happy?",
-	"Doors don't smoke"
-};
+const int UI_OFFSET_3DO = 16;	// (320 - 288) / 2
 
 /*----------------------------------------------------------------*/
 
 
 ScalpelUserInterface::ScalpelUserInterface(SherlockEngine *vm): UserInterface(vm) {
 	if (_vm->_interactiveFl) {
-		_controls = new ImageFile("menu.all");
-		_controlPanel = new ImageFile("controls.vgs");
+		if (!IS_3DO) {
+			// PC
+			_controls = new ImageFile("menu.all");
+			_controlPanel = new ImageFile("controls.vgs");
+		} else {
+			// 3DO
+			_controls = new ImageFile3DO("menu.all", kImageFile3DOType_RoomFormat);
+			_controlPanel = new ImageFile3DO("controls.vgs", kImageFile3DOType_RoomFormat);
+		}
 	} else {
 		_controls = nullptr;
 		_controlPanel = nullptr;
@@ -94,8 +91,6 @@ ScalpelUserInterface::ScalpelUserInterface(SherlockEngine *vm): UserInterface(vm
 
 	_keyPress = '\0';
 	_lookHelp = 0;
-	_bgFound = 0;
-	_oldBgFound = -1;
 	_help = _oldHelp = 0;
 	_key = _oldKey = '\0';
 	_temp = _oldTemp = 0;
@@ -113,18 +108,20 @@ ScalpelUserInterface::~ScalpelUserInterface() {
 }
 
 void ScalpelUserInterface::reset() {
-	_oldKey = -1;
+	UserInterface::reset();
 	_help = _oldHelp = -1;
-	_oldTemp = _temp = -1;
 }
 
 void ScalpelUserInterface::drawInterface(int bufferNum) {
 	Screen &screen = *_vm->_screen;
 
+	const ImageFrame &src = (*_controlPanel)[0];
+	int16 x = (!IS_3DO) ? 0 : UI_OFFSET_3DO;
+
 	if (bufferNum & 1)
-		screen._backBuffer1.transBlitFrom((*_controlPanel)[0], Common::Point(0, CONTROLS_Y));
+		screen._backBuffer1.transBlitFrom(src, Common::Point(x, CONTROLS_Y));
 	if (bufferNum & 2)
-		screen._backBuffer2.transBlitFrom((*_controlPanel)[0], Common::Point(0, CONTROLS_Y));
+		screen._backBuffer2.transBlitFrom(src, Common::Point(x, CONTROLS_Y));
 	if (bufferNum == 3)
 		screen._backBuffer2.fillRect(0, INFO_LINE, SHERLOCK_SCREEN_WIDTH, INFO_LINE + 10, INFO_BLACK);
 }
@@ -141,7 +138,7 @@ void ScalpelUserInterface::handleInput() {
 		whileMenuCounter();
 
 	Common::Point pt = events.mousePos();
-	_bgFound = scene.findBgShape(Common::Rect(pt.x, pt.y, pt.x + 1, pt.y + 1));
+	_bgFound = scene.findBgShape(pt);
 	_keyPress = '\0';
 
 	// Check kbd and set the mouse released flag if Enter or space is pressed.
@@ -279,7 +276,7 @@ void ScalpelUserInterface::handleInput() {
 			}
 
 			if (events._released && personFound)
-				talk.talk(_bgFound);
+				talk.initTalk(_bgFound);
 			else if (personFound)
 				lookScreen(pt);
 			else if (_bgFound < 1000)
@@ -316,9 +313,9 @@ void ScalpelUserInterface::handleInput() {
 				// Mouse clicked in script zone
 				events._pressed = events._released = false;
 			} else {
-				people._walkDest = pt;
 				people._allowWalkAbort = false;
-				people.goAllTheWay();
+				people[HOLMES]._walkDest = pt;
+				people[HOLMES].goAllTheWay();
 			}
 
 			if (_oldKey != -1) {
@@ -385,6 +382,7 @@ void ScalpelUserInterface::handleInput() {
 void ScalpelUserInterface::depressButton(int num) {
 	Screen &screen = *_vm->_screen;
 	Common::Point pt(MENU_POINTS[num][0], MENU_POINTS[num][1]);
+	offsetButton3DO(pt, num);
 
 	ImageFrame &frame = (*_controls)[num];
 	screen._backBuffer1.transBlitFrom(frame, pt);
@@ -392,10 +390,17 @@ void ScalpelUserInterface::depressButton(int num) {
 }
 
 void ScalpelUserInterface::restoreButton(int num) {
+	Events &events = *_vm->_events;
 	Screen &screen = *_vm->_screen;
 	Common::Point pt(MENU_POINTS[num][0], MENU_POINTS[num][1]);
+	offsetButton3DO(pt, num);
+
 	Graphics::Surface &frame = (*_controls)[num]._frame;
 
+	// Reset the cursor
+	events.setCursor(ARROW);
+
+	// Restore the UI on the back buffer
 	screen._backBuffer1.blitFrom(screen._backBuffer2, pt,
 		Common::Rect(pt.x, pt.y, pt.x + 90, pt.y + 19));
 	screen.slamArea(pt.x, pt.y, pt.x + frame.w, pt.y + frame.h);
@@ -441,6 +446,7 @@ void ScalpelUserInterface::toggleButton(int num) {
 
 			ImageFrame &frame = (*_controls)[num];
 			Common::Point pt(MENU_POINTS[num][0], MENU_POINTS[num][1]);
+			offsetButton3DO(pt, num);
 			screen._backBuffer1.transBlitFrom(frame, pt);
 			screen.slamArea(pt.x, pt.y, pt.x + frame._width, pt.y + frame._height);
 		}
@@ -495,7 +501,7 @@ void ScalpelUserInterface::examine() {
 			scene.startCAnim(_cNum, canimSpeed);
 		} else if (obj._lookPosition.y != 0) {
 			// Need to walk to the object to be examined
-			people.walkToCoords(Common::Point(obj._lookPosition.x, obj._lookPosition.y * 100), obj._lookFacing);
+			people[HOLMES].walkToCoords(obj._lookPosition, obj._lookPosition._facing);
 		}
 
 		if (!talk._talkToAbort) {
@@ -536,7 +542,7 @@ void ScalpelUserInterface::lookScreen(const Common::Point &pt) {
 	Common::String tempStr;
 
 	// Don't display anything for right button command
-	if ((events._rightPressed || events._rightPressed) && !events._pressed)
+	if ((events._rightPressed || events._rightReleased) && !events._pressed)
 		return;
 
 	if (mousePos.y < CONTROLS_Y && (temp = _bgFound) != -1) {
@@ -666,9 +672,9 @@ void ScalpelUserInterface::lookInv() {
 
 void ScalpelUserInterface::doEnvControl() {
 	Events &events = *_vm->_events;
-	SaveManager &saves = *_vm->_saves;
+	ScalpelSaveManager &saves = *(ScalpelSaveManager *)_vm->_saves;
 	Scene &scene = *_vm->_scene;
-	Screen &screen = *_vm->_screen;
+	ScalpelScreen &screen = *(ScalpelScreen *)_vm->_screen;
 	Talk &talk = *_vm->_talk;
 	Common::Point mousePos = events.mousePos();
 	static const char ENV_COMMANDS[7] = "ELSUDQ";
@@ -968,9 +974,10 @@ void ScalpelUserInterface::doEnvControl() {
 
 void ScalpelUserInterface::doInvControl() {
 	Events &events = *_vm->_events;
-	Inventory &inv = *_vm->_inventory;
+	FixedText &fixedText = *_vm->_fixedText;
+	ScalpelInventory &inv = *(ScalpelInventory *)_vm->_inventory;
 	Scene &scene = *_vm->_scene;
-	Screen &screen = *_vm->_screen;
+	ScalpelScreen &screen = *(ScalpelScreen *)_vm->_screen;
 	Talk &talk = *_vm->_talk;
 	int colors[8];
 	Common::Point mousePos = events.mousePos();
@@ -993,15 +1000,20 @@ void ScalpelUserInterface::doInvControl() {
 	if (events._pressed || events._released) {
 		events.clearKeyboard();
 
+		Common::String fixedText_Exit = fixedText.getText(kFixedText_Inventory_Exit);
+		Common::String fixedText_Look = fixedText.getText(kFixedText_Inventory_Look);
+		Common::String fixedText_Use  = fixedText.getText(kFixedText_Inventory_Use);
+		Common::String fixedText_Give = fixedText.getText(kFixedText_Inventory_Give);
+
 		if (found != -1)
 			// If a slot highlighted, set its color
 			colors[found] = COMMAND_HIGHLIGHTED;
-		screen.buttonPrint(Common::Point(INVENTORY_POINTS[0][2], CONTROLS_Y1), colors[0], true, "Exit");
+		screen.buttonPrint(Common::Point(INVENTORY_POINTS[0][2], CONTROLS_Y1), colors[0], true, fixedText_Exit);
 
 		if (found >= 0 && found <= 3) {
-			screen.buttonPrint(Common::Point(INVENTORY_POINTS[1][2], CONTROLS_Y1), colors[1], true, "Look");
-			screen.buttonPrint(Common::Point(INVENTORY_POINTS[2][2], CONTROLS_Y1), colors[2], true, "Use");
-			screen.buttonPrint(Common::Point(INVENTORY_POINTS[3][2], CONTROLS_Y1), colors[3], true, "Give");
+			screen.buttonPrint(Common::Point(INVENTORY_POINTS[1][2], CONTROLS_Y1), colors[1], true, fixedText_Look);
+			screen.buttonPrint(Common::Point(INVENTORY_POINTS[2][2], CONTROLS_Y1), colors[2], true, fixedText_Use);
+			screen.buttonPrint(Common::Point(INVENTORY_POINTS[3][2], CONTROLS_Y1), colors[3], true, fixedText_Give);
 			inv._invMode = (InvMode)found;
 			_selector = -1;
 		}
@@ -1063,7 +1075,7 @@ void ScalpelUserInterface::doInvControl() {
 		}
 
 		if (_selector != -1)
-			inv.highlight(_selector, 235);
+			inv.highlight(_selector, BUTTON_BACKGROUND);
 
 		_oldSelector = _selector;
 	}
@@ -1177,10 +1189,10 @@ void ScalpelUserInterface::doInvControl() {
 					bool giveFl = (tempMode >= INVMODE_GIVE);
 					if (_selector >= 0)
 						// Use/Give inv object with scene object
-						checkUseAction(&scene._bgShapes[_find]._use[0], inv[_selector]._name, MUSE, _find, giveFl);
+						checkUseAction(&scene._bgShapes[_find]._use[0], inv[_selector]._name, kFixedTextAction_Use, _find, giveFl);
 					else
 						// Now inv object has been highlighted
-						checkUseAction(&scene._bgShapes[_find]._use[0], "*SELF*", MUSE, _find, giveFl);
+						checkUseAction(&scene._bgShapes[_find]._use[0], "*SELF*", kFixedTextAction_Use, _find, giveFl);
 
 					_selector = _oldSelector = -1;
 				}
@@ -1191,7 +1203,7 @@ void ScalpelUserInterface::doInvControl() {
 
 void ScalpelUserInterface::doLookControl() {
 	Events &events = *_vm->_events;
-	Inventory &inv = *_vm->_inventory;
+	ScalpelInventory &inv = *(ScalpelInventory *)_vm->_inventory;
 	Screen &screen = *_vm->_screen;
 
 	_key = _oldKey = -1;
@@ -1206,6 +1218,7 @@ void ScalpelUserInterface::doLookControl() {
 			} else if (!_lookHelp) {
 				// Need to close the window and depress the Look button
 				Common::Point pt(MENU_POINTS[0][0], MENU_POINTS[0][1]);
+				offsetButton3DO(pt, 0);
 				screen._backBuffer2.blitFrom((*_controls)[0], pt);
 				banishWindow(true);
 
@@ -1252,8 +1265,8 @@ void ScalpelUserInterface::doLookControl() {
 
 void ScalpelUserInterface::doMainControl() {
 	Events &events = *_vm->_events;
-	Inventory &inv = *_vm->_inventory;
-	SaveManager &saves = *_vm->_saves;
+	ScalpelInventory &inv = *(ScalpelInventory *)_vm->_inventory;
+	ScalpelSaveManager &saves = *(ScalpelSaveManager *)_vm->_saves;
 	Common::Point pt = events.mousePos();
 
 	if ((events._pressed || events._released) && pt.y > CONTROLS_Y) {
@@ -1264,6 +1277,10 @@ void ScalpelUserInterface::doMainControl() {
 		for (_temp = 0; (_temp < 12) && (_key == -1); ++_temp) {
 			Common::Rect r(MENU_POINTS[_temp][0], MENU_POINTS[_temp][1],
 				MENU_POINTS[_temp][2], MENU_POINTS[_temp][3]);
+			if (IS_3DO && _temp >= 0 && _temp <= 2) {
+				r.left += UI_OFFSET_3DO - 1;
+				r.right += UI_OFFSET_3DO - 1;
+			}
 			if (r.contains(pt))
 				_key = COMMANDS[_temp];
 		}
@@ -1403,7 +1420,7 @@ void ScalpelUserInterface::doMiscControl(int allowed) {
 
 				switch (allowed) {
 				case ALLOW_OPEN:
-					checkAction(obj._aOpen, MOPEN, _temp);
+					checkAction(obj._aOpen, _temp, kFixedTextAction_Open);
 					if (_menuMode != TALK_MODE && !talk._talkToAbort) {
 						_menuMode = STD_MODE;
 						restoreButton(OPEN_MODE - 1);
@@ -1412,7 +1429,7 @@ void ScalpelUserInterface::doMiscControl(int allowed) {
 					break;
 
 				case ALLOW_CLOSE:
-					checkAction(obj._aClose, MCLOSE, _temp);
+					checkAction(obj._aClose, _temp, kFixedTextAction_Close);
 					if (_menuMode != TALK_MODE && !talk._talkToAbort) {
 						_menuMode = STD_MODE;
 						restoreButton(CLOSE_MODE - 1);
@@ -1421,7 +1438,7 @@ void ScalpelUserInterface::doMiscControl(int allowed) {
 					break;
 
 				case ALLOW_MOVE:
-					checkAction(obj._aMove, MMOVE, _temp);
+					checkAction(obj._aMove, _temp, kFixedTextAction_Move);
 					if (_menuMode != TALK_MODE && !talk._talkToAbort) {
 						_menuMode = STD_MODE;
 						restoreButton(MOVE_MODE - 1);
@@ -1448,7 +1465,7 @@ void ScalpelUserInterface::doPickControl() {
 
 			// Don't allow characters to be picked up
 			if (_bgFound < 1000) {
-				scene._bgShapes[_bgFound].pickUpObject(MPICK);
+				scene._bgShapes[_bgFound].pickUpObject(kFixedTextAction_Pick);
 
 				if (!talk._talkToAbort && _menuMode != TALK_MODE) {
 					_key = _oldKey = -1;
@@ -1462,34 +1479,39 @@ void ScalpelUserInterface::doPickControl() {
 
 void ScalpelUserInterface::doTalkControl() {
 	Events &events = *_vm->_events;
-	Journal &journal = *_vm->_journal;
-	People &people = *_vm->_people;
-	Screen &screen = *_vm->_screen;
+	FixedText &fixedText = *_vm->_fixedText;
+	ScalpelJournal &journal = *(ScalpelJournal *)_vm->_journal;
+	ScalpelPeople &people = *(ScalpelPeople *)_vm->_people;
+	ScalpelScreen &screen = *(ScalpelScreen *)_vm->_screen;
 	Sound &sound = *_vm->_sound;
-	Talk &talk = *_vm->_talk;
+	ScalpelTalk &talk = *(ScalpelTalk *)_vm->_talk;
 	Common::Point mousePos = events.mousePos();
 
 	_key = _oldKey = -1;
 	_keyboardInput = false;
+
+	Common::String fixedText_Exit = fixedText.getText(kFixedText_Window_Exit);
+	Common::String fixedText_Up   = fixedText.getText(kFixedText_Window_Up);
+	Common::String fixedText_Down = fixedText.getText(kFixedText_Window_Down);
 
 	if (events._pressed || events._released) {
 		events.clearKeyboard();
 
 		// Handle button printing
 		if (mousePos.x > 99 && mousePos.x < 138 && mousePos.y > CONTROLS_Y && mousePos.y < (CONTROLS_Y + 10) && !_endKeyActive)
-			screen.buttonPrint(Common::Point(119, CONTROLS_Y), COMMAND_HIGHLIGHTED, true, "Exit");
+			screen.buttonPrint(Common::Point(119, CONTROLS_Y), COMMAND_HIGHLIGHTED, true, fixedText_Exit);
 		else if (_endKeyActive)
-			screen.buttonPrint(Common::Point(119, CONTROLS_Y), COMMAND_FOREGROUND, true, "Exit");
+			screen.buttonPrint(Common::Point(119, CONTROLS_Y), COMMAND_FOREGROUND, true, fixedText_Exit);
 
 		if (mousePos.x > 140 && mousePos.x < 170 && mousePos.y > CONTROLS_Y && mousePos.y < (CONTROLS_Y + 10) && talk._moreTalkUp)
-			screen.buttonPrint(Common::Point(159, CONTROLS_Y), COMMAND_HIGHLIGHTED, true, "Up");
+			screen.buttonPrint(Common::Point(159, CONTROLS_Y), COMMAND_HIGHLIGHTED, true, fixedText_Up);
 		else if (talk._moreTalkUp)
-			screen.buttonPrint(Common::Point(159, CONTROLS_Y), COMMAND_FOREGROUND, true, "Up");
+			screen.buttonPrint(Common::Point(159, CONTROLS_Y), COMMAND_FOREGROUND, true, fixedText_Up);
 
 		if (mousePos.x > 181&& mousePos.x < 220 && mousePos.y > CONTROLS_Y && mousePos.y < (CONTROLS_Y + 10) && talk._moreTalkDown)
-			screen.buttonPrint(Common::Point(200, CONTROLS_Y), COMMAND_HIGHLIGHTED, true, "Down");
+			screen.buttonPrint(Common::Point(200, CONTROLS_Y), COMMAND_HIGHLIGHTED, true, fixedText_Down);
 		else if (talk._moreTalkDown)
-			screen.buttonPrint(Common::Point(200, CONTROLS_Y), COMMAND_FOREGROUND, true, "Down");
+			screen.buttonPrint(Common::Point(200, CONTROLS_Y), COMMAND_FOREGROUND, true, fixedText_Down);
 
 		bool found = false;
 		for (_selector = talk._talkIndex; _selector < (int)talk._statements.size() && !found; ++_selector) {
@@ -1574,9 +1596,9 @@ void ScalpelUserInterface::doTalkControl() {
 
 			screen.slamRect(Common::Rect(5, CONTROLS_Y, SHERLOCK_SCREEN_WIDTH - 5, SHERLOCK_SCREEN_HEIGHT - 2));
 		} else if (_selector != -1) {
-			screen.buttonPrint(Common::Point(119, CONTROLS_Y), COMMAND_NULL, true, "Exit");
-			screen.buttonPrint(Common::Point(159, CONTROLS_Y), COMMAND_NULL, true, "Up");
-			screen.buttonPrint(Common::Point(200, CONTROLS_Y), COMMAND_NULL, true, "Down");
+			screen.buttonPrint(Common::Point(119, CONTROLS_Y), COMMAND_NULL, true, fixedText_Exit);
+			screen.buttonPrint(Common::Point(159, CONTROLS_Y), COMMAND_NULL, true, fixedText_Up);
+			screen.buttonPrint(Common::Point(200, CONTROLS_Y), COMMAND_NULL, true, fixedText_Down);
 
 			// If the reply is new, add it to the journal
 			if (!talk._talkHistory[talk._converseNum][_selector]) {
@@ -1615,14 +1637,17 @@ void ScalpelUserInterface::doTalkControl() {
 			people.setTalking(0);
 
 			if (!talk._statements[_selector]._voiceFile.empty() && sound._voices) {
-				sound.playSound(talk._statements[_selector]._voiceFile, WAIT_RETURN_IMMEDIATELY);
+				sound.playSpeech(talk._statements[_selector]._voiceFile);
 
 				// Set voices as an indicator for waiting
 				sound._voices = 2;
-				sound._speechOn = *sound._soundIsOn;
 			} else {
-				sound._speechOn = false;
+				sound._speechPlaying = false;
 			}
+
+			if (IS_3DO)
+				// Trigger to play 3DO movie
+				talk.talk3DOMovieTrigger(0);
 
 			talk.waitForMore(talk._statements[_selector]._statement.size());
 			if (talk._talkToAbort)
@@ -1670,9 +1695,9 @@ void ScalpelUserInterface::doTalkControl() {
 								!talk._statements[select]._statement.hasPrefix("^")) {
 							// Not a reply first file, so display the new selections
 							if (_endKeyActive)
-								screen.buttonPrint(Common::Point(119, CONTROLS_Y), COMMAND_FOREGROUND, true, "Exit");
+								screen.buttonPrint(Common::Point(119, CONTROLS_Y), COMMAND_FOREGROUND, true, fixedText_Exit);
 							else
-								screen.buttonPrint(Common::Point(119, CONTROLS_Y), COMMAND_NULL, true, "Exit");
+								screen.buttonPrint(Common::Point(119, CONTROLS_Y), COMMAND_NULL, true, fixedText_Exit);
 
 							talk.displayTalk(true);
 							events.setCursor(ARROW);
@@ -1714,7 +1739,7 @@ void ScalpelUserInterface::doTalkControl() {
 
 void ScalpelUserInterface::journalControl() {
 	Events &events = *_vm->_events;
-	Journal &journal = *_vm->_journal;
+	ScalpelJournal &journal = *(ScalpelJournal *)_vm->_journal;
 	Scene &scene = *_vm->_scene;
 	Screen &screen = *_vm->_screen;
 	bool doneFlag = false;
@@ -1762,8 +1787,8 @@ void ScalpelUserInterface::journalControl() {
 
 void ScalpelUserInterface::printObjectDesc(const Common::String &str, bool firstTime) {
 	Events &events = *_vm->_events;
-	Inventory &inv = *_vm->_inventory;
-	Screen &screen = *_vm->_screen;
+	ScalpelInventory &inv = *(ScalpelInventory *)_vm->_inventory;
+	ScalpelScreen &screen = *(ScalpelScreen *)_vm->_screen;
 	Talk &talk = *_vm->_talk;
 
 	if (str.hasPrefix("_")) {
@@ -1787,6 +1812,7 @@ void ScalpelUserInterface::printObjectDesc(const Common::String &str, bool first
 				// menu area, and draw the controls onto it
 				Surface tempSurface((*_controls)[0]._frame.w, (*_controls)[0]._frame.h);
 				Common::Point pt(MENU_POINTS[0][0], MENU_POINTS[0][1]);
+				offsetButton3DO(pt, 0);
 
 				tempSurface.blitFrom(screen._backBuffer2, Common::Point(0, 0),
 					Common::Rect(pt.x, pt.y, pt.x + tempSurface.w(), pt.y + tempSurface.h()));
@@ -1975,8 +2001,7 @@ void ScalpelUserInterface::summonWindow(bool slideUp, int height) {
 	Screen &screen = *_vm->_screen;
 
 	// Extract the window that's been drawn on the back buffer
-	Surface tempSurface(SHERLOCK_SCREEN_WIDTH,
-		(SHERLOCK_SCREEN_HEIGHT - height));
+	Surface tempSurface(SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT - height);
 	Common::Rect r(0, height, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT);
 	tempSurface.blitFrom(screen._backBuffer1, Common::Point(0, 0), r);
 
@@ -2055,13 +2080,14 @@ void ScalpelUserInterface::banishWindow(bool slideUp) {
 }
 
 void ScalpelUserInterface::checkUseAction(const UseType *use, const Common::String &invName,
-		const char *const messages[], int objNum, bool giveMode) {
+		FixedTextActionId fixedTextActionId, int objNum, bool giveMode) {
 	Events &events = *_vm->_events;
+	FixedText &fixedText = *_vm->_fixedText;
 	Inventory &inv = *_vm->_inventory;
 	Scene &scene = *_vm->_scene;
 	Screen &screen = *_vm->_screen;
 	Talk &talk = *_vm->_talk;
-	bool printed = messages == nullptr;
+	bool printed = fixedTextActionId == kFixedTextAction_Invalid;
 
 	if (objNum >= 1000) {
 		// Holmes was specified, so do nothing
@@ -2113,7 +2139,7 @@ void ScalpelUserInterface::checkUseAction(const UseType *use, const Common::Stri
 		if (!talk._talkToAbort) {
 			Object &obj = scene._bgShapes[objNum];
 			for (int idx = 0; idx < NAMES_COUNT && !talk._talkToAbort; ++idx) {
-				if (obj.checkNameForCodes(action._names[idx], messages)) {
+				if (obj.checkNameForCodes(action._names[idx], fixedTextActionId)) {
 					if (!talk._talkToAbort)
 						printed = true;
 				}
@@ -2134,10 +2160,11 @@ void ScalpelUserInterface::checkUseAction(const UseType *use, const Common::Stri
 
 		if (giveMode) {
 			screen.print(Common::Point(0, INFO_LINE + 1), INFO_FOREGROUND, "No, thank you.");
-		} else if (messages == nullptr) {
+		} else if (fixedTextActionId == kFixedTextAction_Invalid) {
 			screen.print(Common::Point(0, INFO_LINE + 1), INFO_FOREGROUND, "You can't do that.");
 		} else {
-			screen.print(Common::Point(0, INFO_LINE + 1), INFO_FOREGROUND, "%s", messages[0]);
+			Common::String errorMessage = fixedText.getActionMessage(fixedTextActionId, 0);
+			screen.print(Common::Point(0, INFO_LINE + 1), INFO_FOREGROUND, "%s", errorMessage.c_str());
 		}
 
 		_infoFlag = true;
@@ -2147,136 +2174,15 @@ void ScalpelUserInterface::checkUseAction(const UseType *use, const Common::Stri
 	events.setCursor(ARROW);
 }
 
-void ScalpelUserInterface::checkAction(ActionType &action, const char *const messages[], int objNum) {
-	Events &events = *_vm->_events;
-	People &people = *_vm->_people;
-	Scene &scene = *_vm->_scene;
-	Screen &screen = *_vm->_screen;
-	Talk &talk = *_vm->_talk;
-	Common::Point pt(-1, -1);
-
-	if (objNum >= 1000)
-		// Ignore actions done on characters
-		return;
-
-	if (!action._cAnimSpeed) {
-		// Invalid action, to print error message
-		_infoFlag = true;
-		clearInfo();
-		screen.print(Common::Point(0, INFO_LINE + 1), INFO_FOREGROUND, "%s", messages[action._cAnimNum]);
-		_infoFlag = true;
-
-		// Set how long to show the message
-		_menuCounter = 30;
-	} else {
-		Object &obj = scene._bgShapes[objNum];
-
-		int cAnimNum;
-		if (action._cAnimNum == 0)
-			// Really a 10
-			cAnimNum = 9;
-		else
-			cAnimNum = action._cAnimNum - 1;
-
-		int dir = -1;
-		if (action._cAnimNum != 99) {
-			CAnim &anim = scene._cAnim[cAnimNum];
-
-			if (action._cAnimNum != 99) {
-				if (action._cAnimSpeed & REVERSE_DIRECTION) {
-					pt = anim._teleportPos;
-					dir = anim._teleportDir;
-				} else {
-					pt = anim._goto;
-					dir = anim._gotoDir;
-				}
-			}
-		} else {
-			pt = Common::Point(-1, -1);
-			dir = -1;
-		}
-
-		// Has a value, so do action
-		// Show wait cursor whilst walking to object and doing action
-		events.setCursor(WAIT);
-		bool printed = false;
-
-		for (int nameIdx = 0; nameIdx < NAMES_COUNT; ++nameIdx) {
-			if (action._names[nameIdx].hasPrefix("*") && action._names[nameIdx].size() >= 2
-					&& toupper(action._names[nameIdx][1]) == 'W') {
-				if (obj.checkNameForCodes(Common::String(action._names[nameIdx].c_str() + 2), messages)) {
-					if (!talk._talkToAbort)
-						printed = true;
-				}
-			}
-		}
-
-		bool doCAnim = true;
-		for (int nameIdx = 0; nameIdx < NAMES_COUNT; ++nameIdx) {
-			if (action._names[nameIdx].hasPrefix("*") && action._names[nameIdx].size() >= 2) {
-				char ch = toupper(action._names[nameIdx][1]);
-
-				if (ch == 'T' || ch == 'B') {
-					printed = true;
-					if (pt.x != -1)
-						// Holmes needs to walk to object before the action is done
-						people.walkToCoords(pt, dir);
-
-					if (!talk._talkToAbort) {
-						// Ensure Holmes is on the exact intended location
-						people[AL]._position = pt;
-						people[AL]._sequenceNumber = dir;
-						people.gotoStand(people[AL]);
-
-						talk.talkTo(action._names[nameIdx].c_str() + 2);
-						if (ch == 'T')
-							doCAnim = false;
-					}
-				}
-			}
-		}
-
-		if (doCAnim && !talk._talkToAbort) {
-			if (pt.x != -1)
-				// Holmes needs to walk to object before the action is done
-				people.walkToCoords(pt, dir);
-		}
-
-		for (int nameIdx = 0; nameIdx < NAMES_COUNT; ++nameIdx) {
-			if (action._names[nameIdx].hasPrefix("*") && action._names[nameIdx].size() >= 2
-					&& toupper(action._names[nameIdx][1]) == 'F') {
-				if (obj.checkNameForCodes(action._names[nameIdx].c_str() + 2, messages)) {
-					if (!talk._talkToAbort)
-						printed = true;
-				}
-			}
-		}
-
-		if (doCAnim && !talk._talkToAbort && action._cAnimNum != 99)
-			scene.startCAnim(cAnimNum, action._cAnimSpeed);
-
-		if (!talk._talkToAbort) {
-			for (int nameIdx = 0; nameIdx < NAMES_COUNT && !talk._talkToAbort; ++nameIdx) {
-				if (obj.checkNameForCodes(action._names[nameIdx], messages)) {
-					if (!talk._talkToAbort)
-						printed = true;
-				}
-			}
-
-			// Unless we're leaving the scene, print a "Done" message unless the printed flag has been set
-			if (scene._goToScene != 1 && !printed && !talk._talkToAbort) {
-				_infoFlag = true;
-				clearInfo();
-				screen.print(Common::Point(0, INFO_LINE + 1), INFO_FOREGROUND, "Done...");
-
-				// Set how long to show the message
-				_menuCounter = 30;
-			}
-		}
+void ScalpelUserInterface::offsetButton3DO(Common::Point &pt, int num) {
+	if (IS_3DO) {
+		if (num >= 0 && num <= 2)
+			pt.x += 15;
+		else if (num >= 6 && num <= 8)
+			pt.x -= 4;
+		else if (num >= 9 && num <= 11)
+			pt.x -= 8;
 	}
-
-	// Reset cursor back to arrow
-	events.setCursor(ARROW);
 }
 
 } // End of namespace Scalpel

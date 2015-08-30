@@ -35,17 +35,24 @@ class Scripts;
 #define SCRIPT_START_BYTE 0xE0
 #define ROOM_SCRIPT 2000
 
+typedef void(Scripts::*ScriptMethodPtr)();
+
 class Scripts : public Manager {
 private:
 	Resource *_resource;
 	int _specialFunction;
 
-	void charLoop();
+	void clearWatch();
+	void printWatch();
+
 protected:
 	Common::SeekableReadStream *_data;
+	ScriptMethodPtr COMMAND_LIST[100];
 
 	virtual void executeSpecial(int commandIndex, int param1, int param2) = 0;
 	virtual void executeCommand(int commandIndex);
+
+	void charLoop();
 
 	/**
 	 * Read a null terminated string from the script
@@ -61,7 +68,8 @@ protected:
 	void cmdJumpUse();
 	void cmdJumpTalk();
 	void cmdNull();
-	void cmdPrint();
+	void cmdPrint_v1();
+	void cmdPrint_v2();
 	void cmdAnim();
 	void cmdSetFlag();
 	void cmdCheckFlag();
@@ -83,7 +91,8 @@ protected:
 	void cmdRetNeg();
 	void cmdCheckLoc();
 	void cmdSetAnim();
-	void cmdDispInv();
+	void cmdDispInv_v1();
+	void cmdDispInv_v2();
 	void cmdSetAbout();
 	void cmdSetTimer();
 	void cmdCheckTimer();
@@ -127,7 +136,8 @@ protected:
 	void cmdDead();
 	void cmdFadeOut();
 	void cmdEndVideo();
-	void cmdHelp();
+	void cmdHelp_v1();
+	void cmdHelp_v2();
 	void cmdCycleBack();
 	void cmdSetHelp();
 public:
@@ -138,10 +148,14 @@ public:
 	int _choice;
 	int32 _choiceStart;
 	Common::Point _charsOrg, _texsOrg;
+
 public:
 	Scripts(AccessEngine *vm);
 
 	virtual ~Scripts();
+
+	void setOpcodes();
+	void setOpcodes_v2();
 
 	void setScript(Resource *data, bool restartFlag = false);
 
@@ -152,6 +166,7 @@ public:
 	int executeScript();
 
 	void findNull();
+	void doCmdPrint_v1(Common::String msg);
 
 	/**
 	 * Print a given message to the screen in a bubble box
@@ -161,6 +176,7 @@ public:
 	// Script commands that need to be public
 	void cmdFreeSound();
 	void cmdRetPos();
+	void converse1(int val);
 };
 
 } // End of namespace Access

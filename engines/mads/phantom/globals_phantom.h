@@ -33,23 +33,91 @@ namespace MADS {
 namespace Phantom {
 
 enum GlobalId {
+	// Global variables
+
 	kWalkerTiming           = 0,
-//	kWalkerTiming0			= 1,
+	kWalkerTiming2			= 1,
+	kStopWalkerDisabled		= 2,	// disable walker idle animations
+	kTempInterface          = 3,
+	kWalkerConverse         = 4,	// conversation started with an NPC
+	kWalkerConverseState    = 5,
+	kWalkerConverseNow      = 6,
 
 	kCurrentYear            = 10,	// current year (1881 or 1993)
+	kMusicSelected          = 11,
+	kPlayerScore            = 12,
+	kPlayerScoreFlags       = 13,
+	kDoneBrieConv203        = 14,
+	kLanternStatus          = 15,
 
-	//kTalkInanimateCount		= 4,
+	// Section #1 variables
+	kLeaveAngelMusicOn      = 19,
+	kTrapDoorStatus         = 20,
+	kChristineDoorStatus    = 21,
+	kSandbagStatus          = 22,
+	kChrisFStatus           = 23,
+	kBrieTalkStatus         = 24,
+	kJuliesDoor             = 25,
+	kPrompterStandStatus    = 26,
+	kChrisDStatus           = 27,
+	kJulieNameIsKnown       = 28,
+	kChrisKickedRaoulOut    = 29,
+	kJacquesNameIsKnown     = 30,
+	kJacquesStatus          = 31,
+	kFlorentNameIsKnown     = 32,
+	kCharlesNameIsKnown     = 33,
+	kRoom103104Transition   = 34,
+	kObservedPhan104        = 35,
+	kDeathLocation          = 36,
+	kMakeBrieLeave203       = 37,
+	kHintThatDaaeIsHome1    = 38,
+	kHintThatDaaeIsHome2    = 39,
 
-	/* Section #1 variables */
+	// Section #2 variables
+	kChristineToldEnvelope  = 40,
+	kReadBook               = 41,
+	kScannedBookcase        = 42,
+	kRanConvIn205           = 43,
+	kDoorsIn205             = 44,
+	kPanelIn206             = 45,
+	kMadameNameIsKnown      = 46,
+	kMadameGiryLocation     = 47,
+	kLookedAtCase           = 48,
+	kMadameGiryShowsUp      = 49,
+	kDoneRichConv203        = 50,
+	kCameFromFade           = 51,
+	kTicketPeoplePresent    = 52,
+	kDegasNameIsKnown       = 53,
+	kTempVar                = 54,
+	kFlickedLever1          = 55,
+	kFlickedLever2          = 56,
+	kFlickedLever3          = 57,
+	kFlickedLever4          = 58,
 
-	/* Section #2 variables */
+	// Section #3 Variables
+	kTopFloorLocked         = 60,
 
-	/* Section #3 Variables */
+	// Section #4 Variables
+	kCatacombsRoom          = 80,
+	// TODO
+	kDoorIn409IsOpen        = 93,
+	kUnknown                = 94,	// TODO
+	kCobwebIsCut            = 95,
 
-	/* Section #4 Variables */
-
-	/* Section #5 Variables */
-
+	// Section #5 Variables
+	kChristineIsInBoat      = 100,
+	kChrisWillTakeSeat      = 101,
+	kRightDoorIsOpen504     = 102,
+	kCoffinStatus           = 103,
+	kChrisLeft505           = 104,
+	kKnockedOverHead        = 105,
+	kFightStatus            = 106,
+	kHeListened             = 107,
+	kCanFindBookInLibrary   = 108,
+	kRingIsOnFinger         = 109,
+	kLookedAtSkullFace      = 110,
+	kCableHookWasSeparate   = 111,
+	kMakeRichLeave203       = 112
 };
 
 class PhantomGlobals : public Globals {

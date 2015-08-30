@@ -35,21 +35,21 @@ namespace Sherlock {
 #define SHERLOCK_ADLIB_VOICES_COUNT 9
 #define SHERLOCK_ADLIB_NOTES_COUNT 96
 
-byte adlib_Operator1Register[SHERLOCK_ADLIB_VOICES_COUNT] = {
+byte operator1Register[SHERLOCK_ADLIB_VOICES_COUNT] = {
 	0x00, 0x01, 0x02, 0x08, 0x09, 0x0A, 0x10, 0x11, 0x12
 };
 
-byte adlib_Operator2Register[SHERLOCK_ADLIB_VOICES_COUNT] = {
+byte operator2Register[SHERLOCK_ADLIB_VOICES_COUNT] = {
 	0x03, 0x04, 0x05, 0x0B, 0x0C, 0x0D, 0x13, 0x14, 0x15
 };
 
-struct adlib_percussionChannelEntry {
+struct percussionChannelEntry {
 	byte requiredNote;
 	byte replacementNote;
 };
 
 // hardcoded, dumped from ADHOM.DRV
-const adlib_percussionChannelEntry adlib_percussionChannelTable[SHERLOCK_ADLIB_VOICES_COUNT] = {
+const percussionChannelEntry percussionChannelTable[SHERLOCK_ADLIB_VOICES_COUNT] = {
 	{ 0x00, 0x00 },
 	{ 0x00, 0x00 },
 	{ 0x00, 0x00 },
@@ -61,7 +61,7 @@ const adlib_percussionChannelEntry adlib_percussionChannelTable[SHERLOCK_ADLIB_V
 	{ 0x26, 0x1E }
 };
 
-struct adlib_InstrumentEntry {
+struct InstrumentEntry {
 	byte reg20op1;
 	byte reg40op1;
 	byte reg60op1;
@@ -77,7 +77,7 @@ struct adlib_InstrumentEntry {
 };
 
 // hardcoded, dumped from ADHOM.DRV
-const adlib_InstrumentEntry adlib_instrumentTable[] = {
+const InstrumentEntry instrumentTable[] = {
 	{ 0x71, 0x89, 0x51, 0x11, 0x00, 0x61, 0x23, 0x42, 0x15, 0x01, 0x02, 0xF4 },
 	{ 0x22, 0x20, 0x97, 0x89, 0x00, 0xA2, 0x1F, 0x70, 0x07, 0x00, 0x0A, 0xF4 },
 	{ 0x70, 0x1A, 0x64, 0x13, 0x00, 0x20, 0x1F, 0x53, 0x46, 0x00, 0x0E, 0xF4 },
@@ -203,7 +203,7 @@ const adlib_InstrumentEntry adlib_instrumentTable[] = {
 };
 
 // hardcoded, dumped from ADHOM.DRV
-uint16 adlib_FrequencyLookUpTable[SHERLOCK_ADLIB_NOTES_COUNT] = {
+uint16 frequencyLookUpTable[SHERLOCK_ADLIB_NOTES_COUNT] = {
 	0x0158, 0x016C, 0x0182, 0x0199, 0x01B1, 0x01CB, 0x01E6, 0x0203, 0x0222, 0x0242,
 	0x0265, 0x0289, 0x0558, 0x056C, 0x0582, 0x0599, 0x05B1, 0x05CB, 0x05E6, 0x0603,
 	0x0622, 0x0642, 0x0665, 0x0689, 0x0958, 0x096C, 0x0982, 0x0999, 0x09B1, 0x09CB,
@@ -216,13 +216,14 @@ uint16 adlib_FrequencyLookUpTable[SHERLOCK_ADLIB_NOTES_COUNT] = {
 	0x1DE6, 0x1E03, 0x1E22, 0x1E42, 0x1E65, 0x1E89
 };
 
-class MidiDriver_AdLib : public MidiDriver_Emulated {
+class MidiDriver_SH_AdLib : public MidiDriver {
 public:
-	MidiDriver_AdLib(Audio::Mixer *mixer)
-		: MidiDriver_Emulated(mixer), _masterVolume(15), _opl(0) {
+	MidiDriver_SH_AdLib(Audio::Mixer *mixer)
+		: _masterVolume(15), _opl(0),
+		  _adlibTimerProc(0), _adlibTimerParam(0), _isOpen(false) {
 		memset(_voiceChannelMapping, 0, sizeof(_voiceChannelMapping));
 	}
-	virtual ~MidiDriver_AdLib() { }
+	virtual ~MidiDriver_SH_AdLib() { }
 
 	// MidiDriver
 	int open();
@@ -230,15 +231,13 @@ public:
 	void send(uint32 b);
 	MidiChannel *allocateChannel() { return NULL; }
 	MidiChannel *getPercussionChannel() { return NULL; }
+	bool isOpen() const { return _isOpen; }
+	uint32 getBaseTempo() { return 1000000 / OPL::OPL::kDefaultCallbackFrequency; }
 
-	// AudioStream
-	bool isStereo() const { return false; }
-	int getRate() const { return _mixer->getOutputRate(); }
 	int getPolyphony() const { return SHERLOCK_ADLIB_VOICES_COUNT; }
 	bool hasRhythmChannel() const { return false; }
 
-	// MidiDriver_Emulated
-	void generateSamples(int16 *buf, int len);
+	virtual void setTimerCallback(void *timerParam, Common::TimerManager::TimerProc timerProc);
 
 	void setVolume(byte volume);
 	virtual uint32 property(int prop, uint32 param);
@@ -249,7 +248,7 @@ private:
 	struct adlib_ChannelEntry {
 		bool   inUse;
 		uint16 inUseTimer;
-		const  adlib_InstrumentEntry *currentInstrumentPtr;
+		const  InstrumentEntry *currentInstrumentPtr;
 		byte   currentNote;
 		byte   currentA0hReg;
 		byte   currentB0hReg;
@@ -261,19 +260,22 @@ private:
 	OPL::OPL *_opl;
 	int _masterVolume;
 
+	Common::TimerManager::TimerProc _adlibTimerProc;
+	void *_adlibTimerParam;
+
+	bool _isOpen;
+
 	// points to a MIDI channel for each of the new voice channels
 	byte _voiceChannelMapping[SHERLOCK_ADLIB_VOICES_COUNT];
 
 	// stores information about all FM voice channels
 	adlib_ChannelEntry _channels[SHERLOCK_ADLIB_VOICES_COUNT];
 
-protected:
 	void onTimer();
 
-private:
 	void resetAdLib();
-	void resetAdLib_OperatorRegisters(byte baseRegister, byte value);
-	void resetAdLib_FMVoiceChannelRegisters(byte baseRegister, byte value);
+	void resetAdLibOperatorRegisters(byte baseRegister, byte value);
+	void resetAdLibFMVoiceChannelRegisters(byte baseRegister, byte value);
 
 	void programChange(byte MIDIchannel, byte parameter);
 	void setRegister(int reg, int value);
@@ -284,32 +286,31 @@ private:
 	void pitchBendChange(byte MIDIchannel, byte parameter1, byte parameter2);
 };
 
-int MidiDriver_AdLib::open() {
-	int rate = _mixer->getOutputRate();
-
-	debug(3, "ADLIB: Starting driver");
+int MidiDriver_SH_AdLib::open() {
+	debugC(kDebugLevelAdLibDriver, "AdLib: starting driver");
 
 	_opl = OPL::Config::create(OPL::Config::kOpl2);
 
 	if (!_opl)
 		return -1;
 
-	_opl->init(rate);
+	_opl->init();
 
-	MidiDriver_Emulated::open();
+	_isOpen = true;
 
-	_mixer->playStream(Audio::Mixer::kPlainSoundType, &_mixerSoundHandle, this, -1, _mixer->kMaxChannelVolume, 0, DisposeAfterUse::NO);
+	_opl->start(new Common::Functor0Mem<void, MidiDriver_SH_AdLib>(this, &MidiDriver_SH_AdLib::onTimer));
 
 	return 0;
 }
 
-void MidiDriver_AdLib::close() {
-	_mixer->stopHandle(_mixerSoundHandle);
+void MidiDriver_SH_AdLib::close() {
+	// Stop the OPL timer
+	_opl->stop();
 
 	delete _opl;
 }
 
-void MidiDriver_AdLib::setVolume(byte volume) {
+void MidiDriver_SH_AdLib::setVolume(byte volume) {
 	_masterVolume = volume;
 	//renewNotes(-1, true);
 }
@@ -317,7 +318,13 @@ void MidiDriver_AdLib::setVolume(byte volume) {
 // this should/must get called per tick
 // original driver did this before MIDI data processing on each tick
 // we do it atm after MIDI data processing
-void MidiDriver_AdLib::onTimer() {
+void MidiDriver_SH_AdLib::onTimer() {
+	if (_adlibTimerProc)
+		(*_adlibTimerProc)(_adlibTimerParam);
+
+	// this should/must get called per tick
+	// original driver did this before MIDI data processing on each tick
+	// we do it atm after MIDI data processing
 	for (byte FMvoiceChannel = 0; FMvoiceChannel < SHERLOCK_ADLIB_VOICES_COUNT; FMvoiceChannel++) {
 		if (_channels[FMvoiceChannel].inUse) {
 			_channels[FMvoiceChannel].inUseTimer++;
@@ -326,7 +333,7 @@ void MidiDriver_AdLib::onTimer() {
 }
 
 // Called when a music track got loaded into memory
-void MidiDriver_AdLib::newMusicData(byte *musicData, int32 musicDataSize) {
+void MidiDriver_SH_AdLib::newMusicData(byte *musicData, int32 musicDataSize) {
 	assert(musicDataSize >= 0x7F);
 	// MIDI Channel <-> FM Voice Channel mapping at offset 0x22 of music data
 	memcpy(&_voiceChannelMapping, musicData + 0x22, 9);
@@ -338,7 +345,7 @@ void MidiDriver_AdLib::newMusicData(byte *musicData, int32 musicDataSize) {
 	memset(&_channels, 0, sizeof(_channels));
 }
 
-void MidiDriver_AdLib::resetAdLib() {
+void MidiDriver_SH_AdLib::resetAdLib() {
 
 	setRegister(0x01, 0x20); // enable waveform control on both operators
 	setRegister(0x04, 0xE0); // Timer control
@@ -347,17 +354,17 @@ void MidiDriver_AdLib::resetAdLib() {
 	setRegister(0xBD, 0); // disable Rhythm
 
 	// reset FM voice instrument data
-	resetAdLib_OperatorRegisters(0x20, 0);
-	resetAdLib_OperatorRegisters(0x60, 0);
-	resetAdLib_OperatorRegisters(0x80, 0);
-	resetAdLib_FMVoiceChannelRegisters(0xA0, 0);
-	resetAdLib_FMVoiceChannelRegisters(0xB0, 0);
-	resetAdLib_FMVoiceChannelRegisters(0xC0, 0);
-	resetAdLib_OperatorRegisters(0xE0, 0);
-	resetAdLib_OperatorRegisters(0x40, 0x3F);
+	resetAdLibOperatorRegisters(0x20, 0);
+	resetAdLibOperatorRegisters(0x60, 0);
+	resetAdLibOperatorRegisters(0x80, 0);
+	resetAdLibFMVoiceChannelRegisters(0xA0, 0);
+	resetAdLibFMVoiceChannelRegisters(0xB0, 0);
+	resetAdLibFMVoiceChannelRegisters(0xC0, 0);
+	resetAdLibOperatorRegisters(0xE0, 0);
+	resetAdLibOperatorRegisters(0x40, 0x3F);
 }
 
-void MidiDriver_AdLib::resetAdLib_OperatorRegisters(byte baseRegister, byte value) {
+void MidiDriver_SH_AdLib::resetAdLibOperatorRegisters(byte baseRegister, byte value) {
 	byte operatorIndex;
 
 	for (operatorIndex = 0; operatorIndex < 0x16; operatorIndex++) {
@@ -373,7 +380,7 @@ void MidiDriver_AdLib::resetAdLib_OperatorRegisters(byte baseRegister, byte valu
 	}
 }
 
-void MidiDriver_AdLib::resetAdLib_FMVoiceChannelRegisters(byte baseRegister, byte value) {
+void MidiDriver_SH_AdLib::resetAdLibFMVoiceChannelRegisters(byte baseRegister, byte value) {
 	byte FMvoiceChannel;
 
 	for (FMvoiceChannel = 0; FMvoiceChannel < SHERLOCK_ADLIB_VOICES_COUNT; FMvoiceChannel++) {
@@ -382,7 +389,7 @@ void MidiDriver_AdLib::resetAdLib_FMVoiceChannelRegisters(byte baseRegister, byt
 }
 
 // MIDI messages can be found at http://www.midi.org/techspecs/midimessages.php
-void MidiDriver_AdLib::send(uint32 b) {
+void MidiDriver_SH_AdLib::send(uint32 b) {
 	byte command = b & 0xf0;
 	byte channel = b & 0xf;
 	byte op1 = (b >> 8) & 0xff;
@@ -406,22 +413,18 @@ void MidiDriver_AdLib::send(uint32 b) {
 		// Aftertouch doesn't seem to be implemented in the Sherlock Holmes adlib driver
 		break;
 	case 0xe0:
-		warning("pitch bend change");
+		debugC(kDebugLevelAdLibDriver, "AdLib: pitch bend change");
 		pitchBendChange(channel, op1, op2);
 		break;
 	case 0xf0: // SysEx
-		warning("SysEx: %x", b);
+		warning("ADLIB: SysEx: %x", b);
 		break;
 	default:
 		warning("ADLIB: Unknown event %02x", command);
 	}
 }
 
-void MidiDriver_AdLib::generateSamples(int16 *data, int len) {
-	_opl->readBuffer(data, len);
-}
-
-void MidiDriver_AdLib::noteOn(byte MIDIchannel, byte note, byte velocity) {
+void MidiDriver_SH_AdLib::noteOn(byte MIDIchannel, byte note, byte velocity) {
 	int16  oldestInUseChannel = -1;
 	uint16 oldestInUseTimer   = 0;
 
@@ -453,7 +456,7 @@ void MidiDriver_AdLib::noteOn(byte MIDIchannel, byte note, byte velocity) {
 		}
 		if (oldestInUseChannel >= 0) {
 			// channel found
-			warning("used In-Use channel");
+			debugC(kDebugLevelAdLibDriver, "AdLib: used In-Use channel");
 			// original driver used note 0, we use the current note
 			// because using note 0 could create a bad note (out of index) and we check that. Original driver didn't.
 			voiceOnOff(oldestInUseChannel, false, _channels[oldestInUseChannel].currentNote, 0);
@@ -464,27 +467,26 @@ void MidiDriver_AdLib::noteOn(byte MIDIchannel, byte note, byte velocity) {
 			voiceOnOff(oldestInUseChannel, true, note, velocity);
 			return;
 		}
-		warning("MIDI channel not mapped/all FM voice channels busy %d", MIDIchannel);
+		debugC(kDebugLevelAdLibDriver, "AdLib: MIDI channel not mapped/all FM voice channels busy %d", MIDIchannel);
 
 	} else {
 		// Percussion channel
-		warning("percussion!");
 		for (byte FMvoiceChannel = 0; FMvoiceChannel < SHERLOCK_ADLIB_VOICES_COUNT; FMvoiceChannel++) {
 			if (_voiceChannelMapping[FMvoiceChannel] == MIDIchannel) {
-				if (note == adlib_percussionChannelTable[FMvoiceChannel].requiredNote) {
+				if (note == percussionChannelTable[FMvoiceChannel].requiredNote) {
 					_channels[FMvoiceChannel].inUse = true;
 					_channels[FMvoiceChannel].currentNote = note;
 
-					voiceOnOff(FMvoiceChannel, true, adlib_percussionChannelTable[FMvoiceChannel].replacementNote, velocity);
+					voiceOnOff(FMvoiceChannel, true, percussionChannelTable[FMvoiceChannel].replacementNote, velocity);
 					return;
 				}
 			}
 		}
-		warning("percussion MIDI channel not mapped/all FM voice channels busy");
+		debugC(kDebugLevelAdLibDriver, "AdLib: percussion MIDI channel not mapped/all FM voice channels busy");
 	}
 }
 
-void MidiDriver_AdLib::noteOff(byte MIDIchannel, byte note) {
+void MidiDriver_SH_AdLib::noteOff(byte MIDIchannel, byte note) {
 	for (byte FMvoiceChannel = 0; FMvoiceChannel < SHERLOCK_ADLIB_VOICES_COUNT; FMvoiceChannel++) {
 		if (_voiceChannelMapping[FMvoiceChannel] == MIDIchannel) {
 			if (_channels[FMvoiceChannel].currentNote == note) {
@@ -496,7 +498,7 @@ void MidiDriver_AdLib::noteOff(byte MIDIchannel, byte note) {
 					// not-percussion
 					voiceOnOff(FMvoiceChannel, false, note, 0);
 				} else {
-					voiceOnOff(FMvoiceChannel, false, adlib_percussionChannelTable[FMvoiceChannel].replacementNote, 0);
+					voiceOnOff(FMvoiceChannel, false, percussionChannelTable[FMvoiceChannel].replacementNote, 0);
 				}
 				return;
 			}
@@ -504,7 +506,7 @@ void MidiDriver_AdLib::noteOff(byte MIDIchannel, byte note) {
 	}
 }
 
-void MidiDriver_AdLib::voiceOnOff(byte FMvoiceChannel, bool keyOn, byte note, byte velocity) {
+void MidiDriver_SH_AdLib::voiceOnOff(byte FMvoiceChannel, bool keyOn, byte note, byte velocity) {
 	byte frequencyOffset = 0;
 	uint16 frequency = 0;
 	byte op2RegAdjust = 0;
@@ -519,10 +521,10 @@ void MidiDriver_AdLib::voiceOnOff(byte FMvoiceChannel, bool keyOn, byte note, by
 		frequencyOffset = note;
 	}
 	if (frequencyOffset >= SHERLOCK_ADLIB_NOTES_COUNT) {
-		warning("CRITICAL - bad note!!!");
+		warning("CRITICAL - AdLib driver: bad note!!!");
 		return;
 	}
-	frequency = adlib_FrequencyLookUpTable[frequencyOffset];
+	frequency = frequencyLookUpTable[frequencyOffset];
 
 	if (keyOn) {
 		// adjust register 40h
@@ -530,7 +532,7 @@ void MidiDriver_AdLib::voiceOnOff(byte FMvoiceChannel, bool keyOn, byte note, by
 			regValue40h = _channels[FMvoiceChannel].currentInstrumentPtr->reg40op2;
 		}
 		regValue40h = regValue40h - (velocity >> 3);
-		op2RegAdjust = adlib_Operator2Register[FMvoiceChannel];
+		op2RegAdjust = operator2Register[FMvoiceChannel];
 		setRegister(0x40 + op2RegAdjust, regValue40h);
 	}
 
@@ -546,7 +548,7 @@ void MidiDriver_AdLib::voiceOnOff(byte FMvoiceChannel, bool keyOn, byte note, by
 	_channels[FMvoiceChannel].currentB0hReg = regValueB0h;
 }
 
-void MidiDriver_AdLib::pitchBendChange(byte MIDIchannel, byte parameter1, byte parameter2) {
+void MidiDriver_SH_AdLib::pitchBendChange(byte MIDIchannel, byte parameter1, byte parameter2) {
 	uint16 channelFrequency              = 0;
 	byte   channelRegB0hWithoutFrequency = 0;
 	uint16 parameter                     = 0;
@@ -585,20 +587,20 @@ void MidiDriver_AdLib::pitchBendChange(byte MIDIchannel, byte parameter1, byte p
 	}
 }
 
-void MidiDriver_AdLib::programChange(byte MIDIchannel, byte op1) {
-	const adlib_InstrumentEntry *instrumentPtr;
+void MidiDriver_SH_AdLib::programChange(byte MIDIchannel, byte op1) {
+	const InstrumentEntry *instrumentPtr;
 	byte op1Reg = 0;
 	byte op2Reg = 0;
 
 	// setup instrument
-	instrumentPtr = &adlib_instrumentTable[op1];
+	instrumentPtr = &instrumentTable[op1];
 	//warning("program change for MIDI channel %d, instrument id %d", MIDIchannel, op1);
 
 	for (byte FMvoiceChannel = 0; FMvoiceChannel < SHERLOCK_ADLIB_VOICES_COUNT; FMvoiceChannel++) {
 		if (_voiceChannelMapping[FMvoiceChannel] == MIDIchannel) {
 
-			op1Reg = adlib_Operator1Register[FMvoiceChannel];
-			op2Reg = adlib_Operator2Register[FMvoiceChannel];
+			op1Reg = operator1Register[FMvoiceChannel];
+			op2Reg = operator2Register[FMvoiceChannel];
 
 			setRegister(0x20 + op1Reg, instrumentPtr->reg20op1);
 			setRegister(0x40 + op1Reg, instrumentPtr->reg40op1);
@@ -619,21 +621,26 @@ void MidiDriver_AdLib::programChange(byte MIDIchannel, byte op1) {
 		}
 	}
 }
-void MidiDriver_AdLib::setRegister(int reg, int value) {
+void MidiDriver_SH_AdLib::setRegister(int reg, int value) {
 	_opl->write(0x220, reg);
 	_opl->write(0x221, value);
 }
 
-uint32 MidiDriver_AdLib::property(int prop, uint32 param) {
+uint32 MidiDriver_SH_AdLib::property(int prop, uint32 param) {
 	return 0;
 }
 
-MidiDriver *MidiDriver_AdLib_create() {
-	return new MidiDriver_AdLib(g_system->getMixer());
+void MidiDriver_SH_AdLib::setTimerCallback(void *timerParam, Common::TimerManager::TimerProc timerProc) {
+	_adlibTimerProc = timerProc;
+	_adlibTimerParam = timerParam;
 }
 
-void MidiDriver_AdLib_newMusicData(MidiDriver *driver, byte *musicData, int32 musicDataSize) {
-	static_cast<MidiDriver_AdLib *>(driver)->newMusicData(musicData, musicDataSize);
+MidiDriver *MidiDriver_SH_AdLib_create() {
+	return new MidiDriver_SH_AdLib(g_system->getMixer());
 }
 
-} // End of namespace Sci
+void MidiDriver_SH_AdLib_newMusicData(MidiDriver *driver, byte *musicData, int32 musicDataSize) {
+	static_cast<MidiDriver_SH_AdLib *>(driver)->newMusicData(musicData, musicDataSize);
+}
+
+} // End of namespace Sherlock

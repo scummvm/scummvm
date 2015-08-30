@@ -2299,6 +2299,8 @@ void MickeyEngine::init() {
 	_gameStateMickey.fItemUsed[IDI_MSA_ITEM_LETTER] = true;
 
 #endif
+
+	setflag(fSoundOn, true); // enable sound
 }
 
 Common::Error MickeyEngine::go() {

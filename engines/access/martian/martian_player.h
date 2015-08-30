@@ -20,24 +20,28 @@
  *
  */
 
-#ifndef ZVISION_DETECTION_H
-#define ZVISION_DETECTION_H
+#ifndef ACCESS_MARTIAN_PLAYER_H
+#define ACCESS_MARTIAN_PLAYER_H
 
-#include "engines/advancedDetector.h"
+#include "common/scummsys.h"
+#include "access/player.h"
 
-namespace ZVision {
+namespace Access {
 
-enum ZVisionGameId {
-	GID_NONE = 0,
-	GID_NEMESIS = 1,
-	GID_GRANDINQUISITOR = 2
+namespace Martian {
+
+class MartianEngine;
+
+class MartianPlayer : public Player {
+private:
+	MartianEngine *_game;
+public:
+	MartianPlayer(AccessEngine *vm);
+	virtual void load();
 };
 
-struct ZVisionGameDescription {
-	ADGameDescription desc;
-	ZVisionGameId gameId;
-};
+} // End of namespace Martian
 
-}
+} // End of namespace Access
 
-#endif
+#endif /* ACCESS_MARTIAN_PLAYER_H */

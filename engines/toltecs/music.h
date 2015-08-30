@@ -47,6 +47,7 @@ protected:
 
 private:
 	byte *_buffer;
+	bool _milesAudioMode;
 };
 
 class Music : public MusicPlayer {

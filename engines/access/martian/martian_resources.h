@@ -31,22 +31,46 @@ namespace Martian {
 
 extern const char *const FILENAMES[];
 
+extern const int SIDEOFFR[];
+extern const int SIDEOFFL[];
+extern const int SIDEOFFU[];
+extern const int SIDEOFFD[];
+
 extern const byte *const CURSORS[4];
 
-extern const int TRAVEL_POS[][2];
+extern const int _travelPos[][2];
 
+extern const int INVENTORY_SIZE;
 extern const char *const INVENTORY_NAMES[];
 
 extern const byte *const ROOM_TABLE[];
 extern const char *const ROOM_DESCR[];
 extern const int ROOM_NUMB;
 
-extern const byte *const CHAR_TABLE[];
+extern const byte *const CHARTBL_MM[];
 
-extern const int COMBO_TABLE[54][4];
+extern const int SIDEOFFR[];
+extern const int SIDEOFFL[];
+extern const int SIDEOFFU[];
+extern const int SIDEOFFD[];
+
+extern const byte CREDIT_DATA[];
+extern const byte ICON_PALETTE[];
+
+extern const int RMOUSE[10][2];
+
+extern byte HELP[];
+extern const char *const _askTBL[];
+extern const char *const TRAVDATA[];
+
+extern const byte DEATH_SCREENS[];
+extern const char *const DEATHMESSAGE[];
+extern const char *const SPEC7MESSAGE;
+
+extern const byte _byte1EEB5[];
+extern const int PICTURERANGE[][2];
 
 } // End of namespace Martian
-
 } // End of namespace Access
 
 #endif /* ACCESS_MARTIAN_RESOURCES_H */

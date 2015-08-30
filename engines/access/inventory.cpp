@@ -31,10 +31,17 @@ namespace Access {
 void InventoryEntry::load(const Common::String &name, const int *data) {
 	_value = ITEM_NOT_FOUND;
 	_name = name;
-	_otherItem1 = *data++;
-	_newItem1 = *data++;
-	_otherItem2 = *data++;
-	_newItem2 = *data;
+	if (data) {
+		_otherItem1 = *data++;
+		_newItem1 = *data++;
+		_otherItem2 = *data++;
+		_newItem2 = *data;
+	} else {
+		_otherItem1 = -1;
+		_newItem1 = -1;
+		_otherItem2 = -1;
+		_newItem2 = -1;
+	}
 }
 
 int InventoryEntry::checkItem(int itemId) {
@@ -67,18 +74,18 @@ InventoryManager::InventoryManager(AccessEngine *vm) : Manager(vm) {
 		names = Amazon::INVENTORY_NAMES;
 		combineP = &Amazon::COMBO_TABLE[0][0];
 		_inv.resize(85);
+		for (uint i = 0; i < _inv.size(); ++i, combineP += 4)
+			_inv[i].load(names[i], combineP);
 		break;
 	case GType_MartianMemorandum:
 		names = Martian::INVENTORY_NAMES;
-		combineP = &Martian::COMBO_TABLE[0][0];
-		_inv.resize(54);
+		combineP = nullptr;
+		_inv.resize(55);
+		for (uint i = 0; i < _inv.size(); ++i)
+			_inv[i].load(names[i], nullptr);
 		break;
 	default:
 		error("Unknown game");
-	}
-
-	for (uint i = 0; i < _inv.size(); ++i, combineP += 4) {
-		_inv[i].load(names[i], combineP);
 	}
 
 	for (uint i = 0; i < 26; ++i) {
@@ -207,6 +214,31 @@ int InventoryManager::newDisplayInv() {
 	_invRefreshFlag = false;
 	_invChangeFlag = false;
 	return result;
+}
+
+int InventoryManager::displayInv() {
+	int *inv = (int *) malloc (Martian::INVENTORY_SIZE * sizeof(int));
+
+	for (int i = 0; i < Martian::INVENTORY_SIZE; i++)
+		inv[i] = _inv[i]._value;
+	_vm->_events->forceSetCursor(CURSOR_CROSSHAIRS);
+	_vm->_invBox->getList(Martian::INVENTORY_NAMES, inv);
+
+	int btnSelected = 0;
+	int boxX = _vm->_invBox->doBox_v1(_startInvItem, _startInvBox, btnSelected);
+	_startInvItem = _vm->_boxDataStart;
+	_startInvBox = _vm->_boxSelectY;
+
+	if (boxX == -1)
+		btnSelected = 2;
+
+	if (btnSelected != 2)
+		_vm->_useItem = _vm->_invBox->_tempListIdx[boxX];
+	else
+		_vm->_useItem = -1;
+
+	free(inv);
+	return 0;
 }
 
 void InventoryManager::savedFields() {

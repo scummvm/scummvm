@@ -52,11 +52,10 @@ AccessEngine::AccessEngine(OSystem *syst, const AccessGameDescription *gameDesc)
 	_destIn = nullptr;
 	_current = nullptr;
 	_mouseMode = 0;
+	_playerDataCount = 0;
 	_currentMan = 0;
 	_currentManOld = -1;
 	_converseMode = 0;
-	_startAboutBox = 0;
-	_startTravelBox = 0;
 	_numAnimTimers = 0;
 	_startup = 0;
 	_currentCharFlag = false;
@@ -97,11 +96,33 @@ AccessEngine::AccessEngine(OSystem *syst, const AccessGameDescription *gameDesc)
 	for (int i = 0; i < 100; i++)
 		_objectsTable[i] = nullptr;
 	_clearSummaryFlag = false;
+
+	for (int i = 0; i < 60; i++)
+		_travel[i] = 0;
+	_startTravelItem = _startTravelBox = 0;
+	for (int i = 0; i < 33; i++)
+		_ask[i] = 0;
+	_startAboutItem = _startAboutBox = 0;
+	_byte26CB5 = 0;
+	_bcnt = 0;
+	_boxDataStart = 0;
+	_boxDataEnd = false;
+	_boxSelectY = 0;
+	_boxSelectYOld = -1;
+	_numLines = 0;
+	_tempList = nullptr;
+	_pictureTaken = 0;
+
+	_vidEnd = false;
 }
 
 AccessEngine::~AccessEngine() {
 	delete _animation;
 	delete _bubbleBox;
+	delete _helpBox;
+	delete _travelBox;
+	delete _invBox;
+	delete _aboutBox;
 	delete _char;
 	delete _debugger;
 	delete _events;
@@ -147,7 +168,18 @@ void AccessEngine::initialize() {
 
 	// Create sub-objects of the engine
 	_animation = new AnimationManager(this);
-	_bubbleBox = new BubbleBox(this);
+	_bubbleBox = new BubbleBox(this, TYPE_2, 64, 32, 130, 122, 0, 0, 0, 0, "");
+	if (getGameID() == GType_MartianMemorandum) {
+		_helpBox = new BubbleBox(this, TYPE_1, 64, 24, 146, 122, 1, 32, 2, 76, "HELP");
+		_travelBox = new BubbleBox(this, TYPE_1, 64, 32, 194, 122, 1, 24, 2, 74, "TRAVEL");
+		_invBox = new BubbleBox(this, TYPE_1, 64, 32, 146, 122, 1, 32, 2, 76, "INVENTORY");
+		_aboutBox = new BubbleBox(this, TYPE_1, 64, 32, 194, 122, 1, 32, 2, 76, "ASK ABOUT");
+	} else {
+		_helpBox = nullptr;
+		_travelBox = nullptr;
+		_invBox = nullptr;
+		_aboutBox = nullptr;
+	}
 	_char = new CharManager(this);
 	_debugger = Debugger::init(this);
 	_events = new EventsManager(this);
@@ -416,10 +448,6 @@ void AccessEngine::playVideo(int videoNum, const Common::Point &pt) {
 	}
 }
 
-void AccessEngine::doLoadSave() {
-	error("TODO: doLoadSave");
-}
-
 void AccessEngine::freeChar() {
 	_scripts->freeScriptData();
 	_animation->clearTimers();
@@ -570,6 +598,36 @@ void AccessEngine::writeSavegameHeader(Common::OutSaveFile *out, AccessSavegameH
 	out->writeSint16LE(td.tm_hour);
 	out->writeSint16LE(td.tm_min);
 	out->writeUint32LE(_events->getFrameCounter());
+}
+
+void AccessEngine::SPRINTCHR(char c, int fontNum) {
+	warning("TODO: SPRINTCHR");
+	_fonts._font1.drawChar(_screen, c, _screen->_printOrg);
+}
+
+void AccessEngine::PRINTCHR(Common::String msg, int fontNum) {
+	_events->hideCursor();
+	warning("TODO: PRINTCHR - Handle fontNum");
+
+	for (int i = 0; msg[i]; i++) {
+		if (!(_fonts._charSet._hi & 8)) {
+			_fonts._font1.drawChar(_screen, msg[i], _screen->_printOrg);
+			continue;
+		} else if (_fonts._charSet._hi & 2) {
+			Common::Point oldPos = _screen->_printOrg;
+			int oldFontLo = _fonts._charFor._lo;
+
+			_fonts._charFor._lo = 0;
+			_screen->_printOrg.x++;
+			_screen->_printOrg.y++;
+			SPRINTCHR(msg[i], fontNum);
+
+			_screen->_printOrg = oldPos;
+			_fonts._charFor._lo = oldFontLo;
+		}
+		SPRINTCHR(msg[i], fontNum);
+	}
+	_events->showCursor();
 }
 
 bool AccessEngine::shouldQuitOrRestart() {

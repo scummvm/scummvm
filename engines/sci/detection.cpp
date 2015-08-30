@@ -371,8 +371,8 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 	{
 		GAMEOPTION_EGA_UNDITHER,
 		{
-			_s("EGA undithering"),
-			_s("Enable undithering in EGA games"),
+			_s("Skip EGA dithering pass (full color backgrounds)"),
+			_s("Skip dithering pass in EGA games, graphics are shown with full colors"),
 			"disable_dithering",
 			false
 		}

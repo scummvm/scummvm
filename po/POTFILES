@@ -10,6 +10,7 @@ gui/KeysDialog.cpp
 gui/launcher.cpp
 gui/massadd.cpp
 gui/options.cpp
+gui/recorderdialog.cpp
 gui/saveload-dialog.cpp
 gui/themebrowser.cpp
 gui/ThemeEngine.cpp

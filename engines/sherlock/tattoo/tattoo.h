@@ -24,17 +24,48 @@
 #define SHERLOCK_TATTOO_H
 
 #include "sherlock/sherlock.h"
+#include "sherlock/tattoo/tattoo_darts.h"
+#include "sherlock/tattoo/widget_foolscap.h"
 
 namespace Sherlock {
 
 namespace Tattoo {
 
+enum {
+	INV_FOREGROUND		= 167,
+	INV_BACKGROUND		= 1,
+	INFO_FOREGROUND		= 233,
+	INFO_BACKGROUND		= 239,
+	INFO_TOP			= 185,
+	INFO_MIDDLE			= 186,
+	INFO_BOTTOM			= 188,
+	MENU_BACKGROUND		= 225,
+	COMMAND_FOREGROUND	= 15,
+	COMMAND_HIGHLIGHTED	= 254,
+	COMMAND_NULL		= 193,
+	PEN_COLOR			= 248,
+	PEN_HIGHLIGHT_COLOR	= 129
+};
+
+enum {
+	FLAG_PLAYER_IS_HOLMES	= 76,
+	FLAG_ALT_MAP_MUSIC		= 525
+};
+
 class TattooEngine : public SherlockEngine {
 private:
+	Darts _darts;
+	WidgetFoolscap _foolscapWidget;
+
 	/**
 	 * Loads the initial palette for the game
 	 */
 	void loadInitialPalette();
+
+	/**
+	 * Load the initial inventory
+	 */
+	void loadInventory();
 protected:
 	/**
 	 * Initialize the engine
@@ -47,21 +78,34 @@ protected:
 	 * Starting a scene within the game
 	 */
 	virtual void startScene();
+
+	/**
+	 * Load configuration options
+	 */
+	virtual void loadConfig();
 public:
-	bool _creditsActive;
+	bool _runningProlog;
+	bool _fastMode, _allowFastMode;
+	bool _transparentMenus;
+	bool _textWindowsOn;
 public:
 	TattooEngine(OSystem *syst, const SherlockGameDescription *gameDesc);
-	virtual ~TattooEngine() {}
+	virtual ~TattooEngine();
 
 	/**
-	 * Draw credits on the screen
+	 * Shows the foolscap puzzle
 	 */
-	void drawCredits();
+	void doFoolscapPuzzle();
 
 	/**
-	 * Erase any area of the screen covered by credits
+	 * Save the game configuration
 	 */
-	void eraseCredits();
+	virtual void saveConfig();
+
+	/**
+	 * Returns true if the game can be saved
+	 */
+	virtual bool canSaveGameStateCurrently();
 };
 
 } // End of namespace Tattoo

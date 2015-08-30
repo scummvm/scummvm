@@ -53,7 +53,22 @@ struct SoundEnergyItem {
 
 typedef Common::Array<SoundEnergyItem> SoundEnergyArray;
 
-void decompressSound(byte *source, byte *dest, uint16 chunkSize, uint16 chunkCount, SoundEnergyArray *soundEnergyArray = NULL);
+
+// Persistent data for decompressSound(). When calling decompressSound()
+// repeatedly (for the same stream), pass the same SoundDecoderData object to
+// ensure decoding properly resumes.
+class SoundDecoderData {
+public:
+	SoundDecoderData() {
+		memset(_soundBuffer, 0x80, sizeof(_soundBuffer));
+		_prevSample = 0;
+	}
+
+	byte _soundBuffer[1025];
+	int16 _prevSample;
+};
+
+void decompressSound(byte *source, byte *dest, uint16 chunkSize, uint16 chunkCount, SoundEnergyArray *soundEnergyArray = NULL, SoundDecoderData *decoderData = NULL);
 
 } // End of namespace Made
 

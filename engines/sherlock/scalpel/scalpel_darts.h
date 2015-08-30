@@ -20,10 +20,10 @@
  *
  */
 
-#ifndef SHERLOCK_DARTS_H
-#define SHERLOCK_DARTS_H
+#ifndef SHERLOCK_SCALPEL_DARTS_H
+#define SHERLOCK_SCALPEL_DARTS_H
 
-#include "sherlock/resources.h"
+#include "sherlock/image_file.h"
 
 namespace Sherlock {
 
@@ -97,7 +97,7 @@ private:
 	/**
 	 * Returns true if a mouse button or key is pressed.
 	 */
-	bool dartHit();
+	int dartHit();
 	
 	/**
 	 * Return the score of the given location on the dart-board
@@ -114,12 +114,6 @@ private:
 	 * Returns the center position for the area of the dartboard with a given number
 	 */
 	bool findNumberOnBoard(int aim, Common::Point &pt);
-
-	/**
-	 * Set a global flag to 0 or 1 depending on whether the passed flag is negative or positive.
-	 * @remarks		We don't use the global setFlags method because we don't want to check scene flags
-	 */
-	void setFlagsForDarts(int flagNum);
 public:
 	Darts(ScalpelEngine *vm);
 

@@ -34,11 +34,15 @@ namespace Sherlock {
 
 #define MAX_SAVEGAME_SLOTS 99
 #define ONSCREEN_FILES_COUNT 5
-#define SHERLOCK_SAVEGAME_VERSION 1
+
+enum {
+	CURRENT_SAVEGAME_VERSION = 4,
+	MINIMUM_SAVEGAME_VERSION = 4
+};
 
 enum SaveMode { SAVEMODE_NONE = 0, SAVEMODE_LOAD = 1, SAVEMODE_SAVE = 2 };
 
-extern const int ENV_POINTS[6][3];
+extern const char *const EMPTY_SAVEGAME_SLOT;
 
 struct SherlockSavegameHeader {
 	uint8 _version;
@@ -51,8 +55,22 @@ struct SherlockSavegameHeader {
 
 class SherlockEngine;
 
+
+/**
+ * Derived serializer class with extra synchronization types
+ */
+class Serializer : public Common::Serializer {
+public:
+	Serializer(Common::SeekableReadStream *in, Common::WriteStream *out) : Common::Serializer(in, out) {}
+
+	/**
+	 * New method to allow setting the version
+	 */
+	void setSaveVersion(byte version) { _version = version; }
+};
+
 class SaveManager {
-private:
+protected:
 	SherlockEngine *_vm;
 	Common::String _target;
 	Graphics::Surface *_saveThumb;
@@ -65,20 +83,15 @@ private:
 	/**
 	 * Synchronize the data for a savegame
 	 */
-	void synchronize(Common::Serializer &s);
+	void synchronize(Serializer &s);
 public:
 	Common::StringArray _savegames;
 	int _savegameIndex;
-	SaveMode _envMode;
 	bool _justLoaded;
 public:
+	static SaveManager *init(SherlockEngine *vm, const Common::String &target);
 	SaveManager(SherlockEngine *vm, const Common::String &target);
-	~SaveManager();
-
-	/**
-	 * Shows the in-game dialog interface for loading and saving games
-	 */
-	void drawInterface();
+	virtual ~SaveManager();
 
 	/**
 	 * Creates a thumbnail for the current on-screen contents
@@ -125,16 +138,6 @@ public:
 	 * Save the game in the specified slot with the given name
 	 */
 	void saveGame(int slot, const Common::String &name);
-
-	/**
-	 * Make sure that the selected savegame is on-screen
-	 */
-	bool checkGameOnScreen(int slot);
-
-	/**
-	 * Prompts the user to enter a description in a given slot
-	 */
-	bool promptForDescription(int slot);
 
 	/**
 	 * Returns true if the given save slot is empty

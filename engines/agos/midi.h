@@ -33,10 +33,16 @@ class File;
 
 namespace AGOS {
 
+enum kMusicMode {
+	kMusicModeDisabled = 0,
+	kMusicModeAccolade = 1,
+	kMusicModeMilesAudio = 2,
+	kMusicModeSimon1 = 3
+};
+
 struct MusicInfo {
 	MidiParser *parser;
 	byte *data;
-	bool loopTrack;
 	byte num_songs;           // For Type 1 SMF resources
 	byte *songs[16];          // For Type 1 SMF resources
 	uint32 song_sizes[16];    // For Type 1 SMF resources
@@ -47,7 +53,6 @@ struct MusicInfo {
 	MusicInfo() { clear(); }
 	void clear() {
 		parser = 0; data = 0; num_songs = 0;
-		loopTrack = false;
 		memset(songs, 0, sizeof(songs));
 		memset(song_sizes, 0, sizeof(song_sizes));
 		memset(channel, 0, sizeof(channel));
@@ -73,21 +78,18 @@ protected:
 
 	// These are only used for music.
 	byte _currentTrack;
-	bool _loopTrackDefault;
+	bool _loopTrack;
 	byte _queuedTrack;
 	bool _loopQueuedTrack;
-
-	byte *_adlibPatches;
 
 protected:
 	static void onTimer(void *data);
 	void clearConstructs();
 	void clearConstructs(MusicInfo &info);
 	void resetVolumeTable();
-	void loadAdlibPatches();
-	void unloadAdlibPatches();
 
 public:
+	bool _adLibMusic;
 	bool _enable_sfx;
 
 public:
@@ -113,12 +115,17 @@ public:
 	void setVolume(int musicVol, int sfxVol);
 
 public:
-	int open(int gameType);
+	int open(int gameType, bool isDemo);
 
 	// MidiDriver_BASE interface implementation
 	virtual void send(uint32 b);
 	virtual void metaEvent(byte type, byte *data, uint16 length);
 
+private:
+	kMusicMode _musicMode;
+
+private:
+	Common::SeekableReadStream *simon2SetupExtractFile(const Common::String &requestedFileName);
 };
 
 } // End of namespace AGOS

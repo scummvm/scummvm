@@ -445,11 +445,9 @@ void OptionsDialog::close() {
 
 		if (_oplPopUp) {
 			if (_enableAudioSettings) {
-				const OPL::Config::EmulatorDescription *ed = OPL::Config::getAvailable();
-				while (ed->name && ed->id != (int)_oplPopUp->getSelectedTag())
-					++ed;
+				const OPL::Config::EmulatorDescription *ed = OPL::Config::findDriver(_oplPopUp->getSelectedTag());
 
-				if (ed->name)
+				if (ed)
 					ConfMan.set("opl_driver", ed->name, _domain);
 				else
 					ConfMan.removeKey("opl_driver", _domain);

@@ -110,6 +110,23 @@ static const MortevielleGameDescription MortevielleGameDescriptions[] = {
 		}, Common::DE_DEU, kUseEngineDataFile
 	},
 
+	// French, provided by ultrapingu in bug ref #6575
+	{
+		{
+			"mortevielle",
+			"",
+			{
+				{"menu.mor", 0, "3fef0a3f8fca99fdcb6dbca8cbcef46f", 160},
+				{"dxx.mor", 0, "949e68e829ecd5ad29e36a00347a9e7e", 207744},
+				AD_LISTEND
+			},
+			Common::FR_FRA,
+			Common::kPlatformDOS,
+			ADGF_NO_FLAGS,
+			GUIO0()
+		}, Common::FR_FRA, kUseOriginalData
+	},
+
 	{ AD_TABLE_END_MARKER , Common::EN_ANY, kUseEngineDataFile}
 };
 

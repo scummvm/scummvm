@@ -275,7 +275,7 @@ void MadeEngine::handleEvents() {
 }
 
 Common::Error MadeEngine::run() {
-	_music = new MusicPlayer();
+	_music = new MusicPlayer(getGameID() == GID_RTZ);
 	syncSoundSettings();
 
 	// Initialize backend

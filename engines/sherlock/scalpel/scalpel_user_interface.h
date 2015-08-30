@@ -49,9 +49,8 @@ class ScalpelUserInterface: public UserInterface {
 private:
 	char _keyPress;
 	int _lookHelp;
-	int _bgFound, _oldBgFound;
 	int _help, _oldHelp;
-	char _key, _oldKey;
+	int _key, _oldKey;
 	int _temp, _oldTemp;
 	int _oldLook;
 	bool _keyboardInput;
@@ -85,7 +84,7 @@ private:
 	void lookScreen(const Common::Point &pt);
 
 	/**
-	 * Gets the item in the inventory the mouse is on and display's it's description
+	 * Gets the item in the inventory the mouse is on and display's its description
 	 */
 	void lookInv();
 
@@ -136,14 +135,9 @@ private:
 	/**
 	 * Checks to see whether a USE action is valid on the given object
 	 */
-	void checkUseAction(const UseType *use, const Common::String &invName, const char *const messages[],
+	void checkUseAction(const UseType *use, const Common::String &invName, FixedTextActionId fixedTextActionId,
 		int objNum, bool giveMode);
 	
-	/**
-	 * Called for OPEN, CLOSE, and MOVE actions are being done
-	 */
-	void checkAction(ActionType &action, const char *const messages[], int objNum);
-
 	/**
 	 * Print the previously selected object's decription
 	 */
@@ -172,6 +166,8 @@ public:
 	 * of the highlighted object
 	 */
 	void examine();
+
+	void offsetButton3DO(Common::Point &pt, int num);
 public:
 	/**
 	 * Resets the user interface

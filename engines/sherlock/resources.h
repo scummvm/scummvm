@@ -29,6 +29,7 @@
 #include "common/hash-str.h"
 #include "common/rect.h"
 #include "common/str.h"
+#include "common/str-array.h"
 #include "common/stream.h"
 #include "graphics/surface.h"
 
@@ -88,7 +89,7 @@ private:
 	int _resourceIndex;
 
 	/**
-	 * Reads in the index from a library file, and caches it's index for later use
+	 * Reads in the index from a library file, and caches its index for later use
 	 */
 	void loadLibraryIndex(const Common::String &libFilename, Common::SeekableReadStream *stream, bool isNewStyle);
 public:
@@ -96,7 +97,7 @@ public:
 
 	/**
 	 * Adds the specified file to the cache. If it's a library file, takes care of
-	 * loading it's index for future use
+	 * loading its index for future use
 	 */
 	void addToCache(const Common::String &filename);
 	
@@ -113,7 +114,7 @@ public:
 	bool isInCache(const Common::String &filename) const { return _cache.isCached(filename); }
 
 	/**
-	 * Checks the passed stream, and if is compressed, deletes it and replaces it with it's uncompressed data
+	 * Checks the passed stream, and if is compressed, deletes it and replaces it with its uncompressed data
 	 */
 	void decompressIfNecessary(Common::SeekableReadStream *&stream);
 
@@ -125,7 +126,7 @@ public:
 	/**
 	 * Loads a specific resource from a given library file
 	 */
-	Common::SeekableReadStream *load(const Common::String &filename, const Common::String &libraryFile);
+	Common::SeekableReadStream *load(const Common::String &filename, const Common::String &libraryFile, bool suppressErrors = false);
 
 	/**
 	 * Returns true if the given file exists on disk or in the cache
@@ -133,11 +134,16 @@ public:
 	bool exists(const Common::String &filename) const;
 
 	/**
-	 * Returns the index of the last loaded resource in it's given library file.
+	 * Returns the index of the last loaded resource in its given library file.
 	 * This will be used primarily when loading talk files, so the engine can
 	 * update the given conversation number in the journal
 	 */
 	int resourceIndex() const;
+
+	/**
+	 * Produces a list of all resource names within a file. Used by the debugger.
+	 */
+	void getResourceNames(const Common::String &libraryFile, Common::StringArray &names);
 
 	/**
 	 * Decompresses LZW compressed data
@@ -163,53 +169,6 @@ public:
 	 * Decompresses LZW compressed data
 	 */
 	static void decompressLZ(Common::SeekableReadStream &source, byte *outBuffer, int32 outSize, int32 inSize);
-};
-
-struct ImageFrame {
-	uint32 _size;
-	uint16 _width, _height;
-	int _paletteBase;
-	bool _rleEncoded;
-	Common::Point _offset;
-	byte _rleMarker;
-	Graphics::Surface _frame;
-
-	/**
-	 * Return the frame width adjusted by a specified scale amount
-	 */
-	int sDrawXSize(int scaleVal) const;
-
-	/**
-	 * Return the frame height adjusted by a specified scale amount
-	 */
-	int sDrawYSize(int scaleVal) const;
-};
-
-class ImageFile : public Common::Array<ImageFrame> {
-private:
-	static SherlockEngine *_vm;
-
-	/**
-	 * Load the data of the sprite
-	 */
-	void load(Common::SeekableReadStream &stream, bool skipPalette, bool animImages);
-
-	/**
-	 * Gets the palette at the start of the sprite file
-	 */
-	void loadPalette(Common::SeekableReadStream &stream);
-
-	/**
-	 * Decompress a single frame for the sprite
-	 */
-	void decompressFrame(ImageFrame  &frame, const byte *src);
-public:
-	byte _palette[256 * 3];
-public:
-	ImageFile(const Common::String &name, bool skipPal = false, bool animImages = false);
-	ImageFile(Common::SeekableReadStream &stream, bool skipPal = false);
-	~ImageFile();
-	static void setVm(SherlockEngine *vm);
 };
 
 } // End of namespace Sherlock

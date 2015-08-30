@@ -22,10 +22,16 @@
 
 #include "engines/util.h"
 #include "sherlock/scalpel/scalpel.h"
+#include "sherlock/scalpel/scalpel_fixed_text.h"
+#include "sherlock/scalpel/scalpel_map.h"
+#include "sherlock/scalpel/scalpel_people.h"
+#include "sherlock/scalpel/scalpel_scene.h"
 #include "sherlock/scalpel/tsage/logo.h"
 #include "sherlock/sherlock.h"
 #include "sherlock/music.h"
 #include "sherlock/animation.h"
+// for 3DO
+#include "sherlock/scalpel/3do/movie_decoder.h"
 
 namespace Sherlock {
 
@@ -92,280 +98,80 @@ static const byte MAP_SEQUENCES[3][MAX_FRAME] = {
 
 #define MAX_PEOPLE 66
 
-const char PEOPLE_PORTRAITS[MAX_PEOPLE][5] = {
-	{ "HOLM" },			// Sherlock Holmes
-	{ "WATS" },			// Dr. Watson
-	{ "LEST" },			// Inspector Lestrade
-	{ "CON1" },			// Constable O'Brien
-	{ "CON2" },			// Constable Lewis
-	{ "SHEI" },			// Sheila Parker
-	{ "HENR" },			// Henry Carruthers
-	{ "LESL" },			// Lesley (flower girl)
-	{ "USH1" },			// Usher #1
-	{ "USH2" },			// Usher #2
-	{ "FRED" },			// Fredrick Epstein
-	{ "WORT" },			// Mrs. Worthington
-	{ "COAC" },			// Coach
-	{ "PLAY" },			// Player
-	{ "WBOY" },			// Tim (Waterboy)
-	{ "JAME" },			// James Sanders
-	{ "BELL" },			// Belle (perfumerie)
-	{ "GIRL" },			// Cleaning Girl (perfumerie)
-	{ "EPST" },			// Epstien in the Opera Balcony
-	{ "WIGG" },			// Wiggins
-	{ "PAUL" },			// Paul (Brumwell / Carroway)
-	{ "BART" },			// Bartender
-	{ "DIRT" },			// Dirty Drunk
-	{ "SHOU" },			// Shouting Drunk
-	{ "STAG" },			// Staggering Drunk
-	{ "BOUN" },			// Bouncer
-	{ "SAND" },			// James Sanders - At Home
-	{ "CORO" },			// The Coroner
-	{ "EQUE" },			// The Equestrian Shop Keeper
-	{ "GEOR" },			// George Blackwood
-	{ "LARS" },			// Lars
-	{ "PARK" },			// Sheila Parker (happy)
-	{ "CHEM" },			// Chemist
-	{ "GREG" },			// Inspector Gregson
-	{ "LAWY" },			// Jacob Farthington Lawyer
-	{ "MYCR" },			// Mycroft
-	{ "SHER" },			// Old Sherman
-	{ "CHMB" },			// Richard Chemist Stock boy
-	{ "BARM" },			// Barman
-	{ "DAND" },			// Dandy Player
-	{ "ROUG" },			// Rough-looking Player
-	{ "SPEC" },			// Spectator
-	{ "HUNT" },			// Robert Hunt
-	{ "VIOL" },			// Violet Secretary
-	{ "PETT" },			// Pettigrew
-	{ "APPL" },			// Augie (apple seller)
-	{ "ANNA" },			// Anna Carroway
-	{ "GUAR" },			// Guard
-	{ "ANTO" },			// Antonio Caruso
-	{ "TOBY" },			// Toby the Dog
-	{ "KING" },			// Simon Kingsley
-	{ "ALFR" },			// Alfred Tobacco Clerk
-	{ "LADY" },			// Lady Brumwell
-	{ "ROSA" },			// Madame Rosa
-	{ "LADB" },			// Lady Brumwell
-	{ "MOOR" },			// Joseph Moorehead
-	{ "BEAL" },			// Mrs. Beale
-	{ "LION" },			// Felix the Lion
-	{ "HOLL" },			// Hollingston
-	{ "CALL" },			// Constable Callaghan
-	{ "JERE" },			// Sergeant Jeremy Duncan
-	{ "LORD" },			// Lord Brumwell
-	{ "NIGE" },			// Nigel Jameson
-	{ "JONA" },			// Jonas (newspaper seller)
-	{ "DUGA" },			// Constable Dugan
-	{ "INSP" }			// Inspector Lestrade (Scotland Yard)
+struct PeopleData {
+	const char *portrait;
+	const char *name;
+	byte stillSequences[MAX_TALK_SEQUENCES];
+	byte talkSequences[MAX_TALK_SEQUENCES];
 };
 
-const char *const PEOPLE_NAMES[MAX_PEOPLE] = {
-	"Sherlock Holmes",
-	"Dr. Watson",
-	"Inspector Lestrade",
-	"Constable O'Brien",
-	"Constable Lewis",
-	"Sheila Parker",
-	"Henry Carruthers",
-	"Lesley",
-	"An Usher",
-	"An Usher",
-	"Fredrick Epstein",
-	"Mrs. Worthington",
-	"The Coach",
-	"A Player",
-	"Tim",
-	"James Sanders",
-	"Belle",
-	"Cleaning Girl",
-	"Fredrick Epstein",
-	"Wiggins",
-	"Paul",
-	"The Bartender",
-	"A Dirty Drunk",
-	"A Shouting Drunk",
-	"A Staggering Drunk",
-	"The Bouncer",
-	"James Sanders",
-	"The Coroner",
-	"Reginald Snipes",
-	"George Blackwood",
-	"Lars",
-	"Sheila Parker",
-	"The Chemist",
-	"Inspector Gregson",
-	"Jacob Farthington",
-	"Mycroft",
-	"Old Sherman",
-	"Richard",
-	"The Barman",
-	"A Dandy Player",
-	"A Rough-looking Player",
-	"A Spectator",
-	"Robert Hunt",
-	"Violet",
-	"Pettigrew",
-	"Augie",
-	"Anna Carroway",
-	"A Guard",
-	"Antonio Caruso",
-	"Toby the Dog",
-	"Simon Kingsley",
-	"Alfred",
-	"Lady Brumwell",
-	"Madame Rosa",
-	"Lady Brumwell",
-	"Joseph Moorehead",
-	"Mrs. Beale",
-	"Felix",
-	"Hollingston",
-	"Constable Callaghan",
-	"Sergeant Duncan",
-	"Lord Brumwell",
-	"Nigel Jaimeson",
-	"Jonas",
-	"Constable Dugan",
-	"Inspector Lestrade"
-};
-
-static const byte PEOPLE_STILL_SEQUENCES[MAX_PEOPLE][MAX_TALK_SEQUENCES] = {
-	{ 1, 0, 0 },	// Sherlock Holmes
-	{ 6, 0, 0 },	// Dr. Watson
-	{ 4, 0, 0 },	// Inspector Lestrade
-	{ 2, 0, 0 },	// Constable #1
-	{ 2, 0, 0 },	// Constable #2
-	{ 2, 0, 0 },	// Sheila Parker
-	{ 3, 0, 0 },	// Henry Carruthers
-	{ 9, 0, 0 },	// Lesly (flower girl)
-	{ 13, 0, 0 },	// Usher #1
-	{ 2, 0, 0 },	// Usher #2
-	{ 4, 0, 0 },	// Fredrick Epstein
-	{ 9, 0, 0 },	// Mrs.Worthington
-	{ 2, 0, 0 },	// Coach
-	{ 8, 0, 0 },	// Player
-	{ 13, 0, 0 },	// Waterboy
-	{ 6, 0, 0 },	// James Sanders
-	{ 1, 0, 0 },	// Belle (perfumerie)
-	{ 20, 0, 0 },	// Cleaning Girl (perfumerie)
-	{ 17, 0, 0 },	// Epstien in the Opera Balcony
-	{ 3, 0, 0 },	// Wiggins
-	{ 2, 0, 0 },	// Paul (Brumwell/Carroway)
-	{ 1, 0, 0 },	// Bartender
-	{ 1, 0, 0 },	// Dirty Drunk
-	{ 1, 0, 0 },	// Shouting Drunk
-	{ 1, 0, 0 },	// Staggering Drunk
-	{ 1, 0, 0 },	// Bouncer
-	{ 6, 0, 0 },	// James Sanders - At Home
-	{ 6, 0, 0 },	// The Coroner
-	{ 1, 0, 0 },	// The Equestrian Shop Keeper
-	{ 1, 0, 0 },	// George Blackwood
-	{ 7, 0, 0 },	// Lars
-	{ 1, 0, 0 },	// Sheila Parker
-	{ 8, 0, 0 },	// Chemist
-	{ 6, 0, 0 },	// Inspector Gregson
-	{ 1, 0, 0 },	// Lawyer
-	{ 1, 0, 0 },	// Mycroft
-	{ 7, 0, 0 },	// Old Sherman
-	{ 1, 0, 0 },	// Stock Boy in Chemist Shop
-	{ 1, 0, 0 },	// Barman
-	{ 1, 0, 0 },	// Dandy Player
-	{ 1, 0, 0 },	// Rough-looking Player
-	{ 1, 0, 0 },	// Spectator
-	{ 1, 0, 0 },	// Robert Hunt
-	{ 3, 0, 0 },	// Violet Secretary
-	{ 1, 0, 0 },	// Pettigrew
-	{ 8, 0, 0 },	// Augie (apple seller)
-	{ 16, 0, 0 },	// Anna Carroway
-	{ 1, 0, 0 },	// Guard
-	{ 8, 0, 0 },	// Antonio Caruso
-	{ 1, 0, 0 },	// Toby the Dog
-	{ 13, 0, 0 },	// Simon Kingsley
-	{ 2, 0, 0 },	// Alfred Tobacco Clerk
-	{ 1, 0, 0 },	// Lady Brumwell
-	{ 1, 0, 0 },	// Madame Rosa
-	{ 1, 0, 0 },	// Lady Brumwell
-	{ 1, 0, 0 },	// Joseph Moorehead
-	{ 5, 0, 0 },	// Mrs. Beale
-	{ 1, 0, 0 },	// Felix the Lion
-	{ 1, 0, 0 },	// Hollingston
-	{ 1, 0, 0 },	// Constable Callaghan
-	{ 2, 0, 0 },	// Sergeant Jeremy Duncan
-	{ 1, 0, 0 },	// Lord Brumwell
-	{ 1, 0, 0 },	// Nigel Jameson
-	{ 1, 0, 0 },	// Jonas (newspaper seller)
-	{ 1, 0, 0 },	// Constable Dugan
-	{ 4, 0, 0 }		// Inspector Lestrade (Yard)
-};
-
-static const byte PEOPLE_TALK_SEQUENCES[MAX_PEOPLE][MAX_TALK_SEQUENCES] = {
-	{ 1, 0, 0 },					// Sherlock Holmes
-	{ 5, 5, 6, 7, 8, 7, 8, 6, 0, 0 },	// Dr. Watson
-	{ 2, 0, 0 },					// Inspector Lestrade
-	{ 1, 0, 0 },					// Constable #1
-	{ 1, 0, 0 },					// Constable #2
-	{ 2, 3, 0, 0 },					// Sheila Parker
-	{ 3, 0, 0 },					// Henry Carruthers
-	{ 1, 2, 3, 2, 1, 2, 3, 0, 0 },	// Lesly (flower girl)
-	{ 13, 14, 0, 0 },				// Usher #1
-	{ 2, 0, 0 },					// Usher #2
-	{ 1, 2, 3, 4, 3, 4, 3, 2, 0, 0 },	// Fredrick Epstein
-	{ 8, 0, 0 },						// Mrs.Worthington
-	{ 1, 2, 3, 4, 5, 4, 3, 2, 0, 0 },	// Coach
-	{ 7, 8, 0, 0 },						// Player
-	{ 12, 13, 0, 0 },					// Waterboy
-	{ 3, 4, 0, 0 },						// James Sanders
-	{ 4, 5, 0, 0 },						// Belle (perfumerie)
-	{ 14, 15, 16, 17, 18, 19, 20, 20, 20, 0, 0 },	// Cleaning Girl (perfumerie)
-	{ 16, 17, 18, 18, 18, 17, 17, 0, 0 },	// Epstien in the Opera Balcony
-	{ 2, 3, 0, 0 },					// Wiggins
-	{ 1, 2, 0, 0 },					// Paul (Brumwell/Carroway)
-	{ 1, 0, 0 },					// Bartender
-	{ 1, 0, 0 },					// Dirty Drunk
-	{ 1, 0, 0 },					// Shouting Drunk
-	{ 1, 0, 0 },					// Staggering Drunk
-	{ 1, 0, 0 },					// Bouncer
-	{ 5, 6, 0, 0 },					// James Sanders - At Home
-	{ 4, 5, 0, 0 },					// The Coroner
-	{ 1, 0, 0 },					// The Equestrian Shop Keeper
-	{ 1, 0, 0 },					// George Blackwood
-	{ 5, 6, 0, 0 },					// Lars
-	{ 1, 0, 0 },					// Sheila Parker
-	{ 8, 9, 0, 0 },					// Chemist
-	{ 5, 6, 0, 0 },					// Inspector Gregson
-	{ 1, 0, 0 },					// Lawyer
-	{ 1, 0, 0 },					// Mycroft
-	{ 7, 8, 0, 0 },					// Old Sherman
-	{ 1, 0, 0 },					// Stock Boy in Chemist Shop
-	{ 1, 0, 0 },					// Barman
-	{ 1, 0, 0 },					// Dandy Player
-	{ 1, 0, 0 },					// Rough-looking Player
-	{ 1, 0, 0 },					// Spectator
-	{ 1, 0, 0 },					// Robert Hunt
-	{ 3, 4, 0, 0 },					// Violet Secretary
-	{ 1, 0, 0 },					// Pettigrew
-	{ 14, 15, 0, 0 },				// Augie (apple seller)
-	{ 3, 4, 5, 6, 0, 0 },			// Anna Carroway
-	{ 4, 5, 6, 0, 0 },				// Guard
-	{ 7, 8, 0, 0 },					// Antonio Caruso
-	{ 1, 0, 0 },					// Toby the Dog
-	{ 13, 14, 0, 0 },				// Simon Kingsley
-	{ 2, 3, 0, 0 },					// Alfred Tobacco Clerk
-	{ 3, 4, 0, 0 },					// Lady Brumwell
-	{ 1, 30, 0, 0 },				// Madame Rosa
-	{ 3, 4, 0, 0 },					// Lady Brumwell
-	{ 1, 0, 0 },					// Joseph Moorehead
-	{ 14, 15, 16, 17, 18, 19, 20, 0, 0 },	// Mrs. Beale
-	{ 1, 0, 0 },					// Felix the Lion
-	{ 1, 0, 0 },					// Hollingston
-	{ 1, 0, 0 },					// Constable Callaghan
-	{ 1, 1, 2, 2, 0, 0 },			// Sergeant Jeremy Duncan
-	{ 9, 10, 0, 0 },				// Lord Brumwell
-	{ 1, 2, 0, 138, 3, 4, 0, 138, 0, 0 },	// Nigel Jameson
-	{ 1, 8, 0, 0 },					// Jonas (newspaper seller)
-	{ 1, 0, 0 },					// Constable Dugan
-	{ 2, 0, 0 }						// Inspector Lestrade (Yard)
+const PeopleData PEOPLE_DATA[MAX_PEOPLE] = {
+	{ "HOLM", "Sherlock Holmes", { 1, 0, 0 }, { 1, 0, 0 } },
+	{ "WATS", "Dr. Watson", { 6, 0, 0 }, { 5, 5, 6, 7, 8, 7, 8, 6, 0, 0 } },
+	{ "LEST", "Inspector Lestrade", { 4, 0, 0 }, { 2, 0, 0 } },
+	{ "CON1", "Constable O'Brien", { 2, 0, 0 }, { 1, 0, 0 } },
+	{ "CON2", "Constable Lewis", { 2, 0, 0 }, { 1, 0, 0 } },
+	{ "SHEI", "Sheila Parker", { 2, 0, 0 }, { 2, 3, 0, 0 } },
+	{ "HENR", "Henry Carruthers", { 3, 0, 0 }, { 3, 0, 0 } },
+	{ "LESL", "Lesley", { 9, 0, 0 }, { 1, 2, 3, 2, 1, 2, 3, 0, 0 } },
+	{ "USH1", "An Usher", { 13, 0, 0 }, { 13, 14, 0, 0 } },
+	{ "USH2", "An Usher", { 2, 0, 0 }, { 2, 0, 0 } },
+	{ "FRED", "Fredrick Epstein", { 4, 0, 0 }, { 1, 2, 3, 4, 3, 4, 3, 2, 0, 0 } },
+	{ "WORT", "Mrs. Worthington", { 9, 0, 0 }, { 8, 0, 0 } },
+	{ "COAC", "The Coach", { 2, 0, 0 }, { 1, 2, 3, 4, 5, 4, 3, 2, 0, 0 } },
+	{ "PLAY", "A Player", { 8, 0, 0 }, { 7, 8, 0, 0 } },
+	{ "WBOY", "Tim", { 13, 0, 0 }, { 12, 13, 0, 0 } },
+	{ "JAME", "James Sanders", { 6, 0, 0 }, { 3, 4, 0, 0 } },
+	{ "BELL", "Belle", { 1, 0, 0 }, { 4, 5, 0, 0 } },
+	{ "GIRL", "Cleaning Girl", { 20, 0, 0 }, { 14, 15, 16, 17, 18, 19, 20, 20, 20, 0, 0 } },
+	{ "EPST", "Fredrick Epstein", { 17, 0, 0 }, { 16, 17, 18, 18, 18, 17, 17, 0, 0 } },
+	{ "WIGG", "Wiggins", { 3, 0, 0 }, { 2, 3, 0, 0 } },
+	{ "PAUL", "Paul", { 2, 0, 0 }, { 1, 2, 0, 0 } },
+	{ "BART", "The Bartender", { 1, 0, 0 }, { 1, 0, 0 } },
+	{ "DIRT", "A Dirty Drunk", { 1, 0, 0 }, { 1, 0, 0 } },
+	{ "SHOU", "A Shouting Drunk", { 1, 0, 0 }, { 1, 0, 0 } },
+	{ "STAG", "A Staggering Drunk", { 1, 0, 0 }, { 1, 0, 0 } },
+	{ "BOUN", "The Bouncer", { 1, 0, 0 }, { 1, 0, 0 } },
+	{ "SAND", "James Sanders", { 6, 0, 0 }, { 5, 6, 0, 0 } },
+	{ "CORO", "The Coroner", { 6, 0, 0 }, { 4, 5, 0, 0 } },
+	{ "EQUE", "Reginald Snipes", { 1, 0, 0 }, { 1, 0, 0 } },
+	{ "GEOR", "George Blackwood", { 1, 0, 0 }, { 1, 0, 0 } },
+	{ "LARS", "Lars", { 7, 0, 0 }, { 5, 6, 0, 0 } },
+	{ "PARK", "Sheila Parker", { 1, 0, 0 }, { 1, 0, 0 } },
+	{ "CHEM", "The Chemist", { 8, 0, 0 }, { 8, 9, 0, 0 } },
+	{ "GREG", "Inspector Gregson", { 6, 0, 0 }, { 5, 6, 0, 0 } },
+	{ "LAWY", "Jacob Farthington", { 1, 0, 0 }, { 1, 0, 0 } },
+	{ "MYCR", "Mycroft", { 1, 0, 0 }, { 1, 0, 0 } },
+	{ "SHER", "Old Sherman", { 7, 0, 0 }, { 7, 8, 0, 0 } },
+	{ "CHMB", "Richard", { 1, 0, 0 }, { 1, 0, 0 } },
+	{ "BARM", "The Barman", { 1, 0, 0 }, { 1, 0, 0 } },
+	{ "DAND", "A Dandy Player", { 1, 0, 0 }, { 1, 0, 0 } },
+	{ "ROUG", "A Rough-looking Player", { 1, 0, 0 }, { 1, 0, 0 } },
+	{ "SPEC", "A Spectator", { 1, 0, 0 }, { 1, 0, 0 } },
+	{ "HUNT", "Robert Hunt", { 1, 0, 0 }, { 1, 0, 0 } },
+	{ "VIOL", "Violet", { 3, 0, 0 }, { 3, 4, 0, 0 } },
+	{ "PETT", "Pettigrew", { 1, 0, 0 }, { 1, 0, 0 } },
+	{ "APPL", "Augie", { 8, 0, 0 }, { 14, 15, 0, 0 } },
+	{ "ANNA", "Anna Carroway", { 16, 0, 0 }, { 3, 4, 5, 6, 0, 0 } },
+	{ "GUAR", "A Guard", { 1, 0, 0 }, { 4, 5, 6, 0, 0 } },
+	{ "ANTO", "Antonio Caruso", { 8, 0, 0 }, { 7, 8, 0, 0 } },
+	{ "TOBY", "Toby the Dog", { 1, 0, 0 }, { 1, 0, 0 } },
+	{ "KING", "Simon Kingsley", { 13, 0, 0 }, { 13, 14, 0, 0 } },
+	{ "ALFR", "Alfred", { 2, 0, 0 }, { 2, 3, 0, 0 } },
+	{ "LADY", "Lady Brumwell", { 1, 0, 0 }, { 3, 4, 0, 0 } },
+	{ "ROSA", "Madame Rosa", { 1, 0, 0 }, { 1, 30, 0, 0 } },
+	{ "LADB", "Lady Brumwell", { 1, 0, 0 }, { 3, 4, 0, 0 } },
+	{ "MOOR", "Joseph Moorehead", { 1, 0, 0 }, { 1, 0, 0 } },
+	{ "BEAL", "Mrs. Beale", { 5, 0, 0 }, { 14, 15, 16, 17, 18, 19, 20, 0, 0 } },
+	{ "LION", "Felix", { 1, 0, 0 }, { 1, 0, 0 } },
+	{ "HOLL", "Hollingston", { 1, 0, 0 }, { 1, 0, 0 } },
+	{ "CALL", "Constable Callaghan", { 1, 0, 0 }, { 1, 0, 0 } },
+	{ "JERE", "Sergeant Duncan", { 2, 0, 0 }, { 1, 1, 2, 2, 0, 0 } },
+	{ "LORD", "Lord Brumwell", { 1, 0, 0 }, { 9, 10, 0, 0 } },
+	{ "NIGE", "Nigel Jaimeson", { 1, 0, 0 }, { 1, 2, 0, 138, 3, 4, 0, 138, 0, 0 } },
+	{ "JONA", "Jonas", { 1, 0, 0 }, { 1, 8, 0, 0 } },
+	{ "DUGA", "Constable Dugan", { 1, 0, 0 }, { 1, 0, 0 } },
+	{ "INSP", "Inspector Lestrade", { 4, 0, 0 }, { 2, 0, 0 } }
 };
 
 /*----------------------------------------------------------------*/
@@ -381,7 +187,16 @@ ScalpelEngine::~ScalpelEngine() {
 }
 
 void ScalpelEngine::initialize() {
-	initGraphics(320, 200, false);
+	// 3DO actually uses RGB555, but some platforms of ours only support RGB565, so we use that
+
+	if (getPlatform() == Common::kPlatform3DO) {
+		const Graphics::PixelFormat pixelFormatRGB565 = Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0);
+		// 320x200 16-bit RGB565 for 3DO support
+		initGraphics(320, 200, false, &pixelFormatRGB565);
+	} else {
+		// 320x200 palettized
+		initGraphics(320, 200, false);
+	}
 
 	// Let the base engine intialize
 	SherlockEngine::initialize();
@@ -394,9 +209,10 @@ void ScalpelEngine::initialize() {
 
 	if (!isDemo()) {
 		// Load the map co-ordinates for each scene and sequence data
-		_map->loadPoints(NUM_PLACES, &MAP_X[0], &MAP_Y[0], &MAP_TRANSLATE[0]);
-		_map->loadSequences(3, &MAP_SEQUENCES[0][0]);
-		_map->_oldCharPoint = BAKER_ST_EXTERIOR;
+		ScalpelMap &map = *(ScalpelMap *)_map;
+		map.loadPoints(NUM_PLACES, &MAP_X[0], &MAP_Y[0], &MAP_TRANSLATE[0]);
+		map.loadSequences(3, &MAP_SEQUENCES[0][0]);
+		map._oldCharPoint = BAKER_ST_EXTERIOR;
 	}
 
 	// Load the inventory
@@ -404,8 +220,8 @@ void ScalpelEngine::initialize() {
 
 	// Set up list of people
 	for (int idx = 0; idx < MAX_PEOPLE; ++idx)
-		_people->_characters.push_back(PersonData(PEOPLE_NAMES[idx], PEOPLE_PORTRAITS[idx],
-			PEOPLE_STILL_SEQUENCES[idx], PEOPLE_TALK_SEQUENCES[idx]));
+		_people->_characters.push_back(PersonData(PEOPLE_DATA[idx].name, PEOPLE_DATA[idx].portrait,
+			PEOPLE_DATA[idx].stillSequences, PEOPLE_DATA[idx].talkSequences));
 
 	_animation->setPrologueNames(&PROLOGUE_NAMES[0], PROLOGUE_NAMES_COUNT);
 	_animation->setPrologueFrames(&PROLOGUE_FRAMES[0][0], 6, 9);
@@ -421,45 +237,81 @@ void ScalpelEngine::initialize() {
 }
 
 void ScalpelEngine::showOpening() {
+	bool finished = true;
+
 	if (isDemo() && _interactiveFl)
 		return;
 
-	if (!TsAGE::Logo::show(this))
-		return;
-	if (!showCityCutscene())
-		return;
-	if (!showAlleyCutscene())
-		return;
-	if (!showStreetCutscene())
-		return;
-	if (!showOfficeCutscene())
-		return;
+	_events->setFrameRate(60);
 
-	_events->clearEvents();
-	_music->stopMusic();
+	if (getPlatform() == Common::kPlatform3DO) {
+		show3DOSplash();
+
+		finished = showCityCutscene3DO();
+		if (finished)
+			finished = showAlleyCutscene3DO();
+		if (finished)
+			finished = showStreetCutscene3DO();
+		if (finished)
+			showOfficeCutscene3DO();
+
+		_events->clearEvents();
+		_music->stopMusic();
+	} else {
+		TsAGE::Logo::show(this);
+
+		finished = showCityCutscene();
+		if (finished)
+			finished = showAlleyCutscene();
+		if (finished)
+			finished = showStreetCutscene();
+		if (finished)
+			showOfficeCutscene();
+
+		_events->clearEvents();
+		_music->stopMusic();
+	}
+
+	_events->setFrameRate(GAME_FRAME_RATE);
 }
 
 bool ScalpelEngine::showCityCutscene() {
+	byte greyPalette[PALETTE_SIZE];
 	byte palette[PALETTE_SIZE];
 
-	_music->playMusic("prolog1.mus");
+	// Demo fades from black into grey and then fades from grey into the scene
+	Common::fill(&greyPalette[0], &greyPalette[PALETTE_SIZE], 142);
+	_screen->fadeIn((const byte *)greyPalette, 3);
+
+	_music->loadSong("prolog1");
 	_animation->_gfxLibraryFilename = "title.lib";
 	_animation->_soundLibraryFilename = "title.snd";
-	bool finished = _animation->play("26open1", 1, 255, true, 2);
+	bool finished = _animation->play("26open1", true, 1, 255, true, 2);
 
 	if (finished) {
-		ImageFile titleImages("title2.vgs", true);
+		ImageFile titleImages_LondonNovember("title2.vgs", true);
 		_screen->_backBuffer1.blitFrom(*_screen);
 		_screen->_backBuffer2.blitFrom(*_screen);
 
+		Common::Point londonPosition;
+
+		if ((titleImages_LondonNovember[0]._width == 302) && (titleImages_LondonNovember[0]._height == 39)) {
+			// Spanish
+			londonPosition = Common::Point(9, 8);
+		} else {
+			// English (German uses the same English graphics), width 272, height 37
+			// In the German version this is placed differently, check against German floppy version TODO
+			londonPosition = Common::Point(30, 50);
+		}
+
 		// London, England
-		_screen->_backBuffer1.transBlitFrom(titleImages[0], Common::Point(10, 11));
+		_screen->_backBuffer1.transBlitFrom(titleImages_LondonNovember[0], londonPosition);
 		_screen->randomTransition();
 		finished = _events->delay(1000, true);
 
 		// November, 1888
 		if (finished) {
-			_screen->_backBuffer1.transBlitFrom(titleImages[1], Common::Point(101, 102));
+			_screen->_backBuffer1.transBlitFrom(titleImages_LondonNovember[1], Common::Point(100, 100));
 			_screen->randomTransition();
 			finished = _events->delay(5000, true);
 		}
@@ -470,19 +322,35 @@ bool ScalpelEngine::showCityCutscene() {
 	}
 
 	if (finished)
-		finished = _animation->play("26open2", 1, 0, false, 2);
+		finished = _animation->play("26open2", true, 1, 0, false, 2);
 
 	if (finished) {
-		ImageFile titleImages("title.vgs", true);
+		ImageFile titleImages_SherlockHolmesTitle("title.vgs", true);
 		_screen->_backBuffer1.blitFrom(*_screen);
 		_screen->_backBuffer2.blitFrom(*_screen);
 
+		Common::Point lostFilesPosition;
+		Common::Point sherlockHolmesPosition;
+		Common::Point copyrightPosition;
+
+		if ((titleImages_SherlockHolmesTitle[0]._width == 306) && (titleImages_SherlockHolmesTitle[0]._height == 39)) {
+			// Spanish
+			lostFilesPosition = Common::Point(5, 5);
+			sherlockHolmesPosition = Common::Point(24, 40);
+			copyrightPosition = Common::Point(3, 190);
+		} else {
+			// English (German uses the same English graphics), width 208, height 39
+			lostFilesPosition = Common::Point(75, 6);
+			sherlockHolmesPosition = Common::Point(34, 21);
+			copyrightPosition = Common::Point(4, 190);
+		}
+
 		// The Lost Files of
-		_screen->_backBuffer1.transBlitFrom(titleImages[0], Common::Point(75, 6));
+		_screen->_backBuffer1.transBlitFrom(titleImages_SherlockHolmesTitle[0], lostFilesPosition);
 		// Sherlock Holmes
-		_screen->_backBuffer1.transBlitFrom(titleImages[1], Common::Point(34, 21));
+		_screen->_backBuffer1.transBlitFrom(titleImages_SherlockHolmesTitle[1], sherlockHolmesPosition);
 		// copyright
-		_screen->_backBuffer1.transBlitFrom(titleImages[2], Common::Point(4, 190));
+		_screen->_backBuffer1.transBlitFrom(titleImages_SherlockHolmesTitle[2], copyrightPosition);
 
 		_screen->verticalTransition();
 		finished = _events->delay(4000, true);
@@ -500,9 +368,23 @@ bool ScalpelEngine::showCityCutscene() {
 
 		if (finished) {
 			// In the alley...
-			_screen->transBlitFrom(titleImages[3], Common::Point(72, 51));
+			Common::Point alleyPosition;
+
+			if ((titleImages_SherlockHolmesTitle[3]._width == 105) && (titleImages_SherlockHolmesTitle[3]._height == 16)) {
+				// German
+				alleyPosition = Common::Point(72, 50);
+			} else if ((titleImages_SherlockHolmesTitle[3]._width == 166) && (titleImages_SherlockHolmesTitle[3]._height == 36)) {
+				// Spanish
+				alleyPosition = Common::Point(71, 50);
+			} else {
+				// English, width 175, height 38
+				alleyPosition = Common::Point(72, 51);
+			}
+			_screen->transBlitFrom(titleImages_SherlockHolmesTitle[3], alleyPosition);
 			_screen->fadeIn(palette, 3);
-			finished = _events->delay(3000, true);
+
+			// Wait until the track got looped and the first few notes were played
+			finished = _music->waitUntilMSec(4300, 21300, 0, 2500); // ticks 0x104 / ticks 0x500
 		}
 	}
 
@@ -513,22 +395,45 @@ bool ScalpelEngine::showCityCutscene() {
 
 bool ScalpelEngine::showAlleyCutscene() {
 	byte palette[PALETTE_SIZE];
-	_music->playMusic("prolog2.mus");
+	_music->loadSong("prolog2");
 
 	_animation->_gfxLibraryFilename = "TITLE.LIB";
 	_animation->_soundLibraryFilename = "TITLE.SND";
 
-	bool finished = _animation->play("27PRO1", 1, 3, true, 2);
-	if (finished)
-		finished = _animation->play("27PRO2", 1, 0, false, 2);
+	// Fade "In The Alley..." text to black
+	_screen->fadeToBlack(2);
+
+	bool finished = _animation->play("27PRO1", true, 1, 3, true, 2);
+	if (finished) {
+		_screen->getPalette(palette);
+		_screen->fadeToBlack(2);
+
+		// wait until second lower main note
+		finished = _music->waitUntilMSec(26800, 0xFFFFFFFF, 0, 1000); // ticks 0x64A
+	}
+
+	if (finished) {
+		_screen->setPalette(palette);
+		finished = _animation->play("27PRO2", true, 1, 0, false, 2);
+	}
 
 	if (finished) {
 		showLBV("scream.lbv");
-		finished = _events->delay(6000);
+
+		// wait until first "scream" in music happened
+		finished = _music->waitUntilMSec(45800, 0xFFFFFFFF, 0, 6000); // ticks 0xABE
+	}
+
+	if (finished) {
+		// quick fade out 
+		_screen->fadeToBlack(1);
+
+		// wait until after third "scream" in music happened
+		finished = _music->waitUntilMSec(49000, 0xFFFFFFFF, 0, 2000); // ticks 0xB80
 	}
 
 	if (finished)
-		finished = _animation->play("27PRO3", 1, 0, true, 2);
+		finished = _animation->play("27PRO3", true, 1, 0, true, 2);
 
 	if (finished) {
 		_screen->getPalette(palette);
@@ -536,11 +441,28 @@ bool ScalpelEngine::showAlleyCutscene() {
 	}
 
 	if (finished) {
-		ImageFile titleImages("title3.vgs", true);
+		ImageFile titleImages_EarlyTheFollowingMorning("title3.vgs", true);
 		// "Early the following morning on Baker Street..."
-		_screen->_backBuffer1.transBlitFrom(titleImages[0], Common::Point(35, 51), false, 0);
-		_screen->fadeIn(palette, 3);
-		finished = _events->delay(1000);
+		Common::Point earlyTheFollowingMorningPosition;
+
+		if ((titleImages_EarlyTheFollowingMorning[0]._width == 164) && (titleImages_EarlyTheFollowingMorning[0]._height == 19)) {
+			// German
+			earlyTheFollowingMorningPosition = Common::Point(35, 50);
+		} else if ((titleImages_EarlyTheFollowingMorning[0]._width == 171) && (titleImages_EarlyTheFollowingMorning[0]._height == 32)) {
+			// Spanish
+			earlyTheFollowingMorningPosition = Common::Point(35, 50);
+		} else {
+			// English, width 218, height 31
+			earlyTheFollowingMorningPosition = Common::Point(35, 52);
+		}
+
+		_screen->transBlitFrom(titleImages_EarlyTheFollowingMorning[0], earlyTheFollowingMorningPosition);
+
+		// fast fade-in
+		_screen->fadeIn(palette, 1);
+
+		// wait for music to end and wait an additional 2.5 seconds
+		finished = _music->waitUntilMSec(0xFFFFFFFF, 0xFFFFFFFF, 2500, 3000);
 	}
 
 	_animation->_gfxLibraryFilename = "";
@@ -552,24 +474,89 @@ bool ScalpelEngine::showStreetCutscene() {
 	_animation->_gfxLibraryFilename = "TITLE.LIB";
 	_animation->_soundLibraryFilename = "TITLE.SND";
 
-	_music->playMusic("PROLOG3.MUS");
+	_music->loadSong("prolog3");
 
-	bool finished = _animation->play("14KICK", 1, 3, true, 2);
+	// wait a bit
+	bool finished = _events->delay(500);
+
+	if (finished) {
+		// fade out "Early the following morning..."
+		_screen->fadeToBlack(2);
+
+		// wait for music a bit
+		finished = _music->waitUntilMSec(3800, 0xFFFFFFFF, 0, 1000); // ticks 0xE4
+	}
 
 	if (finished)
-		finished = _animation->play("14NOTE", 1, 0, false, 2);
+		finished = _animation->play("14KICK", true, 1, 3, true, 2);
+
+	// Constable animation plays slower than speed 2
+	// If we play it with speed 2, music gets obviously out of sync
+	if (finished)
+		finished = _animation->play("14NOTE", true, 1, 0, false, 3);
+
+	// Fade to black
+	if (finished)
+		_screen->fadeToBlack(1);
 
 	_animation->_gfxLibraryFilename = "";
 	_animation->_soundLibraryFilename = "";
 	return finished;
 }
 
+bool ScalpelEngine::showOfficeCutscene() {
+	_music->loadSong("prolog4");
+	_animation->_gfxLibraryFilename = "TITLE2.LIB";
+	_animation->_soundLibraryFilename = "TITLE.SND";
+
+	bool finished = _animation->play("COFF1", true, 1, 3, true, 3);
+	if (finished)
+		finished = _animation->play("COFF2", true, 1, 0, false, 3);
+	if (finished) {
+		showLBV("note.lbv");
+
+		if (_sound->_voices) {
+			finished = _sound->playSound("NOTE1", WAIT_KBD_OR_FINISH);
+			if (finished)
+				finished = _sound->playSound("NOTE2", WAIT_KBD_OR_FINISH);
+			if (finished)
+				finished = _sound->playSound("NOTE3", WAIT_KBD_OR_FINISH);
+			if (finished)
+				finished = _sound->playSound("NOTE4", WAIT_KBD_OR_FINISH);
+		} else
+			finished = _events->delay(19000);
+
+		if (finished) {
+			_events->clearEvents();
+			finished = _events->delay(500);
+		}
+	}
+
+	if (finished)
+		finished = _animation->play("COFF3", true, 1, 0, true, 3);
+
+	if (finished)
+		finished = _animation->play("COFF4", true, 1, 0, false, 3);
+
+	if (finished)
+		finished = scrollCredits();
+
+	if (finished)
+		_screen->fadeToBlack(3);
+
+	_animation->_gfxLibraryFilename = "";
+	_animation->_soundLibraryFilename = "";
+	return finished;
+}
 
 bool ScalpelEngine::scrollCredits() {
 	// Load the images for displaying credit text
 	Common::SeekableReadStream *stream = _res->load("credits.vgs", "title.lib");
 	ImageFile creditsImages(*stream);
-	_screen->setPalette(creditsImages._palette);
+
+	// Demo fades slowly from the scene into credits palette
+	_screen->fadeIn(creditsImages._palette, 3);
+
 	delete stream;
 
 	// Save a copy of the screen background for use in drawing each credit frame
@@ -597,70 +584,327 @@ bool ScalpelEngine::scrollCredits() {
 	return true;
 }
 
-bool ScalpelEngine::showOfficeCutscene() {
-	_music->playMusic("PROLOG4.MUS");
-	_animation->_gfxLibraryFilename = "TITLE2.LIB";
+// 3DO variant
+bool ScalpelEngine::show3DOSplash() {
+	// 3DO EA Splash screen
+	ImageFile3DO titleImage_3DOSplash("3DOSplash.cel", kImageFile3DOType_Cel);
+
+	_screen->transBlitFrom(titleImage_3DOSplash[0]._frame, Common::Point(0, -20));
+	bool finished = _events->delay(3000, true);
+
+	if (finished) {
+		_screen->clear();
+		finished = _events->delay(500, true);
+	}
+
+	if (finished) {
+		// EA logo movie
+		Scalpel3DOMoviePlay("EAlogo.stream", Common::Point(20, 0));
+	}
+
+	// Always clear screen
+	_screen->clear();
+	return finished;
+}
+
+bool ScalpelEngine::showCityCutscene3DO() {
 	_animation->_soundLibraryFilename = "TITLE.SND";
 
-	bool finished = _animation->play("COFF1", 1, 3, true, 3);
-	if (finished)
-		finished = _animation->play("COFF2", 1, 0, false, 3);
-	if (finished) {
-		showLBV("note.lbv");
+	_screen->clear();
+	bool finished = _events->delay(2500, true);
 
-		if (_sound->_voices) {
-			finished = _sound->playSound("NOTE1", WAIT_KBD_OR_FINISH);
-			if (finished)
-				finished = _sound->playSound("NOTE2", WAIT_KBD_OR_FINISH);
-			if (finished)
-				finished = _sound->playSound("NOTE3", WAIT_KBD_OR_FINISH);
-			if (finished)
-				finished = _sound->playSound("NOTE4", WAIT_KBD_OR_FINISH);
-		} else
-			finished = _events->delay(19000);
+	// rain.aiff seems to be playing in an endless loop until
+	// sherlock logo fades away TODO
+
+	if (finished) {
+		finished = _events->delay(2500, true);
+
+		// Play intro music
+		_music->loadSong("prolog");
+
+		// Fade screen to grey
+		_screen->_backBuffer1.fill(0xCE59); // RGB565: 25, 50, 25 (grey)
+		_screen->fadeIntoScreen3DO(2);
+	}
+
+	if (finished) {
+		finished = _music->waitUntilMSec(3400, 0, 0, 3400);
+	}
+
+	if (finished) {
+		_screen->_backBuffer1.fill(0); // fill backbuffer with black to avoid issues during fade from white
+		finished = _animation->play3DO("26open1", true, 1, true, 2);
+	}
+
+	if (finished) {
+		_screen->_backBuffer1.blitFrom(*_screen); // save into backbuffer 1, used for fade
+		_screen->_backBuffer2.blitFrom(*_screen); // save into backbuffer 2, for restoring later
+
+		// "London, England"
+		ImageFile3DO titleImage_London("title2a.cel", kImageFile3DOType_Cel);
+		_screen->_backBuffer1.transBlitFrom(titleImage_London[0]._frame, Common::Point(30, 50));
+
+		_screen->fadeIntoScreen3DO(1);
+		finished = _events->delay(1500, true);
 
 		if (finished) {
-			_events->clearEvents();
-			finished = _events->delay(500);
+			// "November, 1888"
+			ImageFile3DO titleImage_November("title2b.cel", kImageFile3DOType_Cel);
+			_screen->_backBuffer1.transBlitFrom(titleImage_November[0]._frame, Common::Point(100, 100));
+
+			_screen->fadeIntoScreen3DO(1);
+			finished = _music->waitUntilMSec(14700, 0, 0, 5000);
+		}
+
+		if (finished) {
+			// Restore screen
+			_screen->blitFrom(_screen->_backBuffer2);
 		}
 	}
 
 	if (finished)
-		finished = _animation->play("COFF3", 1, 0, true, 3);
+		finished = _animation->play3DO("26open2", true, 1, false, 2);
+
+	if (finished) {
+		_screen->_backBuffer1.blitFrom(*_screen); // save into backbuffer 1, used for fade
+
+		// "Sherlock Holmes" (title)
+		ImageFile3DO titleImage_SherlockHolmesTitle("title1ab.cel", kImageFile3DOType_Cel);
+		_screen->_backBuffer1.transBlitFrom(titleImage_SherlockHolmesTitle[0]._frame, Common::Point(34, 5));
+
+		// Blend in
+		_screen->fadeIntoScreen3DO(2);
+		finished = _events->delay(500, true);
+
+		// Title should fade in, Copyright should be displayed a bit after that
+		if (finished) {
+			ImageFile3DO titleImage_Copyright("title1c.cel", kImageFile3DOType_Cel);
+
+			_screen->transBlitFrom(titleImage_Copyright[0]._frame, Common::Point(20, 190));
+			finished = _events->delay(3500, true);
+		}
+	}
 
 	if (finished)
-		finished = _animation->play("COFF4", 1, 0, false, 3);
+		finished = _music->waitUntilMSec(33600, 0, 0, 2000);
+
+	if (finished) {
+		// Fade to black
+		_screen->_backBuffer1.clear();
+		_screen->fadeIntoScreen3DO(3);
+	}
+
+	if (finished) {
+		// "In the alley behind the Regency Theatre..."
+		ImageFile3DO titleImage_InTheAlley("title1d.cel", kImageFile3DOType_Cel);
+		_screen->_backBuffer1.transBlitFrom(titleImage_InTheAlley[0]._frame, Common::Point(72, 51));
+
+		// Fade in
+		_screen->fadeIntoScreen3DO(4);
+		finished = _music->waitUntilMSec(39900, 0, 0, 2500);
+
+		// Fade out
+		_screen->_backBuffer1.clear();
+		_screen->fadeIntoScreen3DO(4);
+	}
+	return finished;
+}
+
+bool ScalpelEngine::showAlleyCutscene3DO() {
+	bool finished = _music->waitUntilMSec(43500, 0, 0, 1000);
 
 	if (finished)
-		finished = scrollCredits();
+		finished = _animation->play3DO("27PRO1", true, 1, false, 2);
+
+	if (finished) {
+		// Fade out...
+		_screen->_backBuffer1.clear();
+		_screen->fadeIntoScreen3DO(3);
+
+		finished = _music->waitUntilMSec(67100, 0, 0, 1000); // 66700
+	}
 
 	if (finished)
-		_screen->fadeToBlack(3);
+		finished = _animation->play3DO("27PRO2", true, 1, false, 2);
 
-	_animation->_gfxLibraryFilename = "";
-	_animation->_soundLibraryFilename = "";
+	if (finished)
+		finished = _music->waitUntilMSec(76000, 0, 0, 1000);
+
+	if (finished) {
+		// Show screaming victim
+		ImageFile3DO titleImage_ScreamingVictim("scream.cel", kImageFile3DOType_Cel);
+
+		_screen->clear();
+		_screen->transBlitFrom(titleImage_ScreamingVictim[0]._frame, Common::Point(0, 0));
+
+		// Play "scream.aiff"
+		if (_sound->_voices)
+			_sound->playSound("prologue/sounds/scream.aiff", WAIT_RETURN_IMMEDIATELY, 100);
+
+		finished = _music->waitUntilMSec(81600, 0, 0, 6000);
+	}
+
+	if (finished) {
+		// Fade out
+		_screen->_backBuffer1.clear();
+		_screen->fadeIntoScreen3DO(5);
+
+		finished = _music->waitUntilMSec(84400, 0, 0, 2000);
+	}
+
+	if (finished)
+		finished = _animation->play3DO("27PRO3", true, 1, false, 2);
+
+	if (finished) {
+		// Fade out
+		_screen->_backBuffer1.clear();
+		_screen->fadeIntoScreen3DO(5);
+	}
+
+	if (finished) {
+		// "Early the following morning on Baker Street..."
+		ImageFile3DO titleImage_EarlyTheFollowingMorning("title3.cel", kImageFile3DOType_Cel);
+		_screen->_backBuffer1.transBlitFrom(titleImage_EarlyTheFollowingMorning[0]._frame, Common::Point(35, 51));
+
+		// Fade in
+		_screen->fadeIntoScreen3DO(4);
+		finished = _music->waitUntilMSec(96700, 0, 0, 3000);
+	}
+
+	return finished;
+}
+
+bool ScalpelEngine::showStreetCutscene3DO() {
+	bool finished = true;
+
+	if (finished) {
+		// fade out "Early the following morning..."
+		_screen->_backBuffer1.clear();
+		_screen->fadeIntoScreen3DO(4);
+
+		// wait for music a bit
+		finished = _music->waitUntilMSec(100300, 0, 0, 1000);
+	}
+
+	if (finished)
+		finished = _animation->play3DO("14KICK", true, 1, false, 2);
+
+	// note: part of the constable is sticking to the door during the following
+	//       animation, when he walks away. This is a bug of course, but it actually happened on 3DO!
+	//       I'm not sure if it happens because the door is pure black (0, 0, 0) and it's because
+	//       of transparency - or if the animation itself is bad. We will definitely have to adjust
+	//       the animation data to fix it.
+	if (finished)
+		finished = _animation->play3DO("14NOTE", true, 1, false, 3);
+
+	if (finished) {
+		// Fade out
+		_screen->_backBuffer1.clear();
+		_screen->fadeIntoScreen3DO(4);
+	}
+
+	return finished;
+}
+
+bool ScalpelEngine::showOfficeCutscene3DO() {
+	bool finished = _music->waitUntilMSec(151000, 0, 0, 1000);
+
+	if (finished)
+		finished = _animation->play3DO("COFF1", true, 1, false, 3);
+
+	if (finished)
+		finished = _animation->play3DO("COFF2", true, 1, false, 3);
+
+	if (finished)
+		finished = _music->waitUntilMSec(182400, 0, 0, 1000);
+
+	if (finished) {
+		// Show the note
+		ImageFile3DO titleImage_CoffeeNote("note.cel", kImageFile3DOType_Cel);
+
+		_screen->clear();
+		_screen->transBlitFrom(titleImage_CoffeeNote[0]._frame, Common::Point(0, 0));
+
+		if (_sound->_voices) {
+			finished = _sound->playSound("prologue/sounds/note.aiff", WAIT_KBD_OR_FINISH);
+		} else
+			finished = _events->delay(19000);
+
+		if (finished)
+			finished = _music->waitUntilMSec(218800, 0, 0, 1000);
+
+		// Fade out
+		_screen->clear();
+	}
+
+	if (finished)
+		finished = _music->waitUntilMSec(222200, 0, 0, 1000);
+
+	if (finished)
+		finished = _animation->play3DO("COFF3", true, 1, false, 3);
+
+	if (finished)
+		finished = _animation->play3DO("COFF4", true, 1, false, 3);
+
+	if (finished) {
+		finished = _music->waitUntilMSec(244500, 0, 0, 2000);
+
+		// TODO: Brighten the image, possibly by doing a partial fade
+		// to white.
+
+		_screen->_backBuffer1.blitFrom(*_screen);
+
+		for (int nr = 1; finished && nr <= 4; nr++) {
+			char filename[15];
+			sprintf(filename, "credits%d.cel", nr);
+			ImageFile3DO *creditsImage = new ImageFile3DO(filename, kImageFile3DOType_Cel);
+			ImageFrame *creditsFrame = &(*creditsImage)[0];
+			for (int i = 0; finished && i < 200 + creditsFrame->_height; i++) {
+				_screen->blitFrom(_screen->_backBuffer1);
+				_screen->transBlitFrom(creditsFrame->_frame, Common::Point((320 - creditsFrame->_width) / 2, 200 - i));
+				if (!_events->delay(70, true))
+					finished = false;
+			}
+			delete creditsImage;
+		}
+	}
+
 	return finished;
 }
 
 void ScalpelEngine::loadInventory() {
+	ScalpelFixedText &fixedText = *(ScalpelFixedText *)_fixedText;
 	Inventory &inv = *_inventory;
+
+	Common::String fixedText_Message    = fixedText.getText(kFixedText_InitInventory_Message);
+	Common::String fixedText_HolmesCard = fixedText.getText(kFixedText_InitInventory_HolmesCard);
+	Common::String fixedText_Tickets    = fixedText.getText(kFixedText_InitInventory_Tickets);
+	Common::String fixedText_CuffLink   = fixedText.getText(kFixedText_InitInventory_CuffLink);
+	Common::String fixedText_WireHook   = fixedText.getText(kFixedText_InitInventory_WireHook);
+	Common::String fixedText_Note       = fixedText.getText(kFixedText_InitInventory_Note);
+	Common::String fixedText_OpenWatch  = fixedText.getText(kFixedText_InitInventory_OpenWatch);
+	Common::String fixedText_Paper      = fixedText.getText(kFixedText_InitInventory_Paper);
+	Common::String fixedText_Letter     = fixedText.getText(kFixedText_InitInventory_Letter);
+	Common::String fixedText_Tarot      = fixedText.getText(kFixedText_InitInventory_Tarot);
+	Common::String fixedText_OrnateKey  = fixedText.getText(kFixedText_InitInventory_OrnateKey);
+	Common::String fixedText_PawnTicket = fixedText.getText(kFixedText_InitInventory_PawnTicket);
 
 	// Initial inventory
 	inv._holdings = 2;
-	inv.push_back(InventoryItem(0, "Message", "A message requesting help", "_ITEM03A"));
-	inv.push_back(InventoryItem(0, "Holmes Card", "A number of business cards", "_ITEM07A"));
+	inv.push_back(InventoryItem(0,     "Message", fixedText_Message,    "_ITEM03A"));
+	inv.push_back(InventoryItem(0, "Holmes Card", fixedText_HolmesCard, "_ITEM07A"));
 
 	// Hidden items
-	inv.push_back(InventoryItem(95, "Tickets", "Opera Tickets", "_ITEM10A"));
-	inv.push_back(InventoryItem(138, "Cuff Link", "Cuff Link", "_ITEM04A"));
-	inv.push_back(InventoryItem(138, "Wire Hook", "Wire Hook", "_ITEM06A"));
-	inv.push_back(InventoryItem(150, "Note", "Note", "_ITEM13A"));
-	inv.push_back(InventoryItem(481, "Open Watch", "An open pocket watch", "_ITEM62A"));
-	inv.push_back(InventoryItem(481, "Paper", "A piece of paper with numbers on it", "_ITEM44A"));
-	inv.push_back(InventoryItem(532, "Letter", "A letter folded many times", "_ITEM68A"));
-	inv.push_back(InventoryItem(544, "Tarot", "Tarot Cards", "_ITEM71A"));
-	inv.push_back(InventoryItem(544, "Ornate Key", "An ornate key", "_ITEM70A"));
-	inv.push_back(InventoryItem(586, "Pawn ticket", "A pawn ticket", "_ITEM16A"));
+	inv.push_back(InventoryItem(95,  "Tickets",     fixedText_Tickets,    "_ITEM10A"));
+	inv.push_back(InventoryItem(138, "Cuff Link",   fixedText_CuffLink,   "_ITEM04A"));
+	inv.push_back(InventoryItem(138, "Wire Hook",   fixedText_WireHook,   "_ITEM06A"));
+	inv.push_back(InventoryItem(150, "Note",        fixedText_Note,       "_ITEM13A"));
+	inv.push_back(InventoryItem(481, "Open Watch",  fixedText_OpenWatch,  "_ITEM62A"));
+	inv.push_back(InventoryItem(481, "Paper",       fixedText_Paper,      "_ITEM44A"));
+	inv.push_back(InventoryItem(532, "Letter",      fixedText_Letter,     "_ITEM68A"));
+	inv.push_back(InventoryItem(544, "Tarot",       fixedText_Tarot,      "_ITEM71A"));
+	inv.push_back(InventoryItem(544, "Ornate Key",  fixedText_OrnateKey,  "_ITEM70A"));
+	inv.push_back(InventoryItem(586, "Pawn ticket", fixedText_PawnTicket, "_ITEM16A"));
 }
 
 void ScalpelEngine::showLBV(const Common::String &filename) {
@@ -682,8 +926,8 @@ void ScalpelEngine::startScene() {
 		_scene->_goToScene = _map->show();
 
 		_music->freeSong();
-		_people->_hSavedPos = Common::Point(-1, -1);
-		_people->_hSavedFacing = -1;
+		_people->_savedPos = Common::Point(-1, -1);
+		_people->_savedPos._facing = -1;
 	}
 
 	// Some rooms are prologue cutscenes, rather than normal game scenes. These are:
@@ -705,8 +949,8 @@ void ScalpelEngine::startScene() {
 			// Blackwood's capture
 			_res->addToCache("final2.vda", "epilogue.lib");
 			_res->addToCache("final2.vdx", "epilogue.lib");
-			_animation->play("final1", 1, 3, true, 4);
-			_animation->play("final2", 1, 0, false, 4);
+			_animation->play("final1", false, 1, 3, true, 4);
+			_animation->play("final2", false, 1, 0, false, 4);
 			break;
 
 		case RESCUE_ANNA:
@@ -722,8 +966,8 @@ void ScalpelEngine::startScene() {
 			_res->addToCache("finale4.vda", "EPILOG2.lib");
 			_res->addToCache("finale4.vdx", "EPILOG2.lib");
 
-			_animation->play("finalr1", 1, 3, true, 4);
-			_animation->play("finalr2", 1, 0, false, 4);
+			_animation->play("finalr1", false, 1, 3, true, 4);
+			_animation->play("finalr2", false, 1, 0, false, 4);
 
 			if (!_res->isInCache("finale2.vda")) {
 				// Finale file isn't cached
@@ -735,12 +979,12 @@ void ScalpelEngine::startScene() {
 				_res->addToCache("finale4.vdx", "EPILOG2.lib");
 			}
 
-			_animation->play("finale1", 1, 0, false, 4);
-			_animation->play("finale2", 1, 0, false, 4);
-			_animation->play("finale3", 1, 0, false, 4);
+			_animation->play("finale1", false, 1, 0, false, 4);
+			_animation->play("finale2", false, 1, 0, false, 4);
+			_animation->play("finale3", false, 1, 0, false, 4);
 
 			_useEpilogue2 = true;
-			_animation->play("finale4", 1, 0, false, 4);
+			_animation->play("finale4", false, 1, 0, false, 4);
 			_useEpilogue2 = false;
 			break;
 
@@ -751,9 +995,9 @@ void ScalpelEngine::startScene() {
 			_res->addToCache("SUBWAY3.vda", "epilogue.lib");
 			_res->addToCache("SUBWAY3.vdx", "epilogue.lib");
 
-			_animation->play("SUBWAY1", 1, 3, true, 4);
-			_animation->play("SUBWAY2", 1, 0, false, 4);
-			_animation->play("SUBWAY3", 1, 0, false, 4);
+			_animation->play("SUBWAY1", false, 1, 3, true, 4);
+			_animation->play("SUBWAY2", false, 1, 0, false, 4);
+			_animation->play("SUBWAY3", false, 1, 0, false, 4);
 
 			// Set fading to direct fade temporary so the transition goes quickly.
 			_scene->_tempFadeStyle = _screen->_fadeStyle ? 257 : 256;
@@ -762,7 +1006,7 @@ void ScalpelEngine::startScene() {
 
 		case BRUMWELL_SUICIDE:
 			// Brumwell suicide
-			_animation->play("suicid", 1, 3, true, 4);
+			_animation->play("suicid", false, 1, 3, true, 4);
 			break;
 		default:
 			break;
@@ -822,8 +1066,8 @@ void ScalpelEngine::startScene() {
 	_mapResult = _scene->_goToScene;
 }
 
-void ScalpelEngine::eraseMirror12() {
-	Common::Point pt((*_people)[AL]._position.x / 100, (*_people)[AL]._position.y / 100);
+void ScalpelEngine::eraseBrumwellMirror() {
+	Common::Point pt((*_people)[HOLMES]._position.x / FIXED_INT_MULTIPLIER, (*_people)[HOLMES]._position.y / FIXED_INT_MULTIPLIER);
 
 	// If player is in range of the mirror, then restore background from the secondary back buffer
 	if (Common::Rect(70, 100, 200, 200).contains(pt)) {
@@ -832,15 +1076,15 @@ void ScalpelEngine::eraseMirror12() {
 	}
 }
 
-void ScalpelEngine::doMirror12() {
+void ScalpelEngine::doBrumwellMirror() {
 	People &people = *_people;
-	Person &player = people._player;
+	Person &player = people[HOLMES];
 
-	Common::Point pt((*_people)[AL]._position.x / 100, (*_people)[AL]._position.y / 100);
+	Common::Point pt((*_people)[HOLMES]._position.x / FIXED_INT_MULTIPLIER, (*_people)[HOLMES]._position.y / FIXED_INT_MULTIPLIER);
 	int frameNum = player._walkSequences[player._sequenceNumber][player._frameNumber] +
 		player._walkSequences[player._sequenceNumber][0] - 2;
 
-	switch ((*_people)[AL]._sequenceNumber) {
+	switch ((*_people)[HOLMES]._sequenceNumber) {
 	case WALK_DOWN:
 		frameNum -= 7;
 		break;
@@ -883,12 +1127,12 @@ void ScalpelEngine::doMirror12() {
 
 	if (Common::Rect(80, 100, 145, 138).contains(pt)) {
 		// Get the frame of Sherlock to draw
-		ImageFrame &imageFrame = (*people[AL]._images)[frameNum];
+		ImageFrame &imageFrame = (*people[HOLMES]._images)[frameNum];
 
 		// Draw the mirror image of Holmes
-		bool flipped = people[AL]._sequenceNumber == WALK_LEFT || people[AL]._sequenceNumber == STOP_LEFT
-			|| people[AL]._sequenceNumber == WALK_UPRIGHT || people[AL]._sequenceNumber == STOP_UPRIGHT
-			|| people[AL]._sequenceNumber == WALK_DOWNLEFT || people[AL]._sequenceNumber == STOP_DOWNLEFT;
+		bool flipped = people[HOLMES]._sequenceNumber == WALK_LEFT || people[HOLMES]._sequenceNumber == STOP_LEFT
+			|| people[HOLMES]._sequenceNumber == WALK_UPRIGHT || people[HOLMES]._sequenceNumber == STOP_UPRIGHT
+			|| people[HOLMES]._sequenceNumber == WALK_DOWNLEFT || people[HOLMES]._sequenceNumber == STOP_DOWNLEFT;
 		_screen->_backBuffer1.transBlitFrom(imageFrame, pt + Common::Point(38, -imageFrame._frame.h - 25), flipped);
 
 		// Redraw the mirror borders to prevent the drawn image of Holmes from appearing outside of the mirror
@@ -907,8 +1151,8 @@ void ScalpelEngine::doMirror12() {
 	}
 }
 
-void ScalpelEngine::flushMirror12() {
-	Common::Point pt((*_people)[AL]._position.x / 100, (*_people)[AL]._position.y / 100);
+void ScalpelEngine::flushBrumwellMirror() {
+	Common::Point pt((*_people)[HOLMES]._position.x / FIXED_INT_MULTIPLIER, (*_people)[HOLMES]._position.y / FIXED_INT_MULTIPLIER);
 
 	// If player is in range of the mirror, then draw the entire mirror area to the screen
 	if (Common::Rect(70, 100, 200, 200).contains(pt))
@@ -917,4 +1161,4 @@ void ScalpelEngine::flushMirror12() {
 
 } // End of namespace Scalpel
 
-} // End of namespace Scalpel
+} // End of namespace Sherlock

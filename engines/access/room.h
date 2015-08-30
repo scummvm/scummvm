@@ -72,6 +72,8 @@ private:
 	int calcLR(int yp);
 	int calcUD(int xp);
 
+	void takePicture();
+
 	/**
 	 * Cycles forwards or backwards through the list of commands
 	 */
@@ -103,6 +105,8 @@ protected:
 	 */
 	void executeCommand(int commandId);
 
+	void clearCamera();
+
 	virtual void reloadRoom() = 0;
 
 	virtual void reloadRoom1() = 0;
@@ -126,6 +130,7 @@ public:
 	byte *_tile;
 	int _selectCommand;
 	bool _conFlag;
+	int _rMouse[10][2];
 public:
 	Room(AccessEngine *vm);
 

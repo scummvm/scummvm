@@ -22,12 +22,44 @@
 
 #include "sherlock/debugger.h"
 #include "sherlock/sherlock.h"
+#include "sherlock/music.h"
+#include "sherlock/scalpel/3do/movie_decoder.h"
+#include "sherlock/scalpel/scalpel_debugger.h"
+#include "sherlock/tattoo/tattoo_debugger.h"
+#include "audio/mixer.h"
+#include "audio/decoders/aiff.h"
+#include "audio/decoders/wave.h"
+#include "common/str-array.h"
 
 namespace Sherlock {
 
+Debugger *Debugger::init(SherlockEngine *vm) {
+	if (vm->getGameID() == GType_RoseTattoo)
+		return new Tattoo::TattooDebugger(vm);
+	else
+		return new Scalpel::ScalpelDebugger(vm);
+}
+
 Debugger::Debugger(SherlockEngine *vm) : GUI::Debugger(), _vm(vm) {
-	registerCmd("continue",		WRAP_METHOD(Debugger, cmdExit));
-	registerCmd("scene", WRAP_METHOD(Debugger, cmdScene));
+	_showAllLocations = LOC_DISABLED;
+
+	registerCmd("continue",	     WRAP_METHOD(Debugger, cmdExit));
+	registerCmd("scene",         WRAP_METHOD(Debugger, cmdScene));
+	registerCmd("song",          WRAP_METHOD(Debugger, cmdSong));
+	registerCmd("songs",         WRAP_METHOD(Debugger, cmdListSongs));
+	registerCmd("listfiles",     WRAP_METHOD(Debugger, cmdListFiles));
+	registerCmd("dumpfile",      WRAP_METHOD(Debugger, cmdDumpFile));
+	registerCmd("locations",     WRAP_METHOD(Debugger, cmdLocations));
+}
+
+void Debugger::postEnter() {
+	if (!_3doPlayMovieFile.empty()) {
+		Scalpel3DOMoviePlay(_3doPlayMovieFile.c_str(), Common::Point(0, 0));
+
+		_3doPlayMovieFile.clear();
+	}
+
+	_vm->pauseEngine(false);
 }
 
 int Debugger::strToInt(const char *s) {
@@ -55,5 +87,80 @@ bool Debugger::cmdScene(int argc, const char **argv) {
 		return false;
 	}
 }
+
+bool Debugger::cmdSong(int argc, const char **argv) {
+	if (argc != 2) {
+		debugPrintf("Format: song <name>\n");
+		return true;
+	}
+
+	Common::StringArray songs;
+	_vm->_music->getSongNames(songs);
+
+	for (uint i = 0; i < songs.size(); i++) {
+		if (songs[i].equalsIgnoreCase(argv[1])) {
+			_vm->_music->loadSong(songs[i]);
+			return false;
+		}
+	}
+
+	debugPrintf("Invalid song. Use the 'songs' command to see which ones are available.\n");
+	return true;
+}
+
+bool Debugger::cmdListSongs(int argc, const char **argv) {
+	Common::StringArray songs;
+	_vm->_music->getSongNames(songs);
+	debugPrintColumns(songs);
+	return true;
+}
+
+bool Debugger::cmdListFiles(int argc, const char **argv) {
+	if (argc != 2) {
+		debugPrintf("Format: listfiles <resource file>\n");
+		return true;
+	}
+	Common::StringArray files;
+	_vm->_res->getResourceNames(Common::String(argv[1]), files);
+	debugPrintColumns(files);
+	return true;
+}
+
+bool Debugger::cmdDumpFile(int argc, const char **argv) {
+	if (argc != 2) {
+		debugPrintf("Format: dumpfile <resource name>\n");
+		return true;
+	}
+
+	Common::SeekableReadStream *s = _vm->_res->load(argv[1]);
+	if (!s) {
+		debugPrintf("Invalid resource.\n");
+		return true;
+	}
+
+	byte *buffer = new byte[s->size()];
+	s->read(buffer, s->size());
+
+	Common::DumpFile dumpFile;
+	dumpFile.open(argv[1]);
+
+	dumpFile.write(buffer, s->size());
+	dumpFile.flush();
+	dumpFile.close();
+
+	delete[] buffer;
+
+	debugPrintf("Resource %s has been dumped to disk.\n", argv[1]);
+
+	return true;
+}
+
+bool Debugger::cmdLocations(int argc, const char **argv) {
+	_showAllLocations = LOC_REFRESH;
+
+	debugPrintf("Now showing all map locations\n");
+	return false;
+}
+
 
 } // End of namespace Sherlock
