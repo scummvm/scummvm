@@ -219,7 +219,7 @@ protected:
 	bool _castsShadow;
 	Common::String _archiveName;
 	Common::String _animFilename;
-	uint32 _field_48;
+	bool _loop;
 	uint32 _movementSpeed;
 	uint32 _field_6C;
 

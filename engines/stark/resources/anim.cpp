@@ -265,7 +265,7 @@ AnimSkeleton::~AnimSkeleton() {
 AnimSkeleton::AnimSkeleton(Object *parent, byte subType, uint16 index, const Common::String &name) :
 				Anim(parent, subType, index, name),
 				_castsShadow(true),
-				_field_48(0),
+				_loop(false),
 				_movementSpeed(100),
 				_field_6C(1),
 				_seletonAnim(nullptr),
@@ -303,7 +303,7 @@ void AnimSkeleton::readData(Formats::XRCReadStream *stream) {
 	stream->readString(); // Skipped in the original
 	stream->readString(); // Skipped in the original
 
-	_field_48 = stream->readUint32LE();
+	_loop = stream->readBool();
 	_movementSpeed = stream->readUint32LE();
 
 	  if (_movementSpeed < 1) {
@@ -359,7 +359,7 @@ void AnimSkeleton::printData() {
 
 	debug("filename: %s", _animFilename.c_str());
 	debug("castsShadow: %d", _castsShadow);
-	debug("field_48: %d", _field_48);
+	debug("loop: %d", _loop);
 	debug("movementSpeed: %d", _movementSpeed);
 	debug("field_6C: %d", _field_6C);
 }
