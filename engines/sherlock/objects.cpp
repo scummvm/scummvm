@@ -350,10 +350,10 @@ bool BaseObject::checkEndOfSequence() {
 	if (_type == REMOVE || _type == INVALID)
 		return false;
 
-	if (_sequences[_frameNumber] == 0 || _frameNumber >= checkFrame) {
+	if (_frameNumber < 0 || _frameNumber >= checkFrame || _sequences[_frameNumber] == 0) {
 		result = true;
 
-		if (_frameNumber >= (checkFrame - 1)) {
+		if (_frameNumber < 0 || _frameNumber >= (checkFrame - 1)) {
 			_frameNumber = START_FRAME;
 		}  else {
 			// Determine next sequence to use
