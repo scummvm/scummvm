@@ -44,6 +44,7 @@ Events::Events(SherlockEngine *vm): _vm(vm) {
 	_oldButtons = _oldRightButton = false;
 	_firstPress = false;
 	_waitCounter = 0;
+	_frameRate = 0;
 
 	if (_vm->_interactiveFl)
 		loadCursors("rmouse.vgs");
@@ -232,10 +233,14 @@ Common::Point Events::mousePos() const {
 	return _vm->_screen->_currentScroll + _mousePos;
 }
 
+void Events::setFrameRate(int newRate) {
+	_frameRate = newRate;
+}
+
 bool Events::checkForNextFrameCounter() {
 	// Check for next game frame
 	uint32 milli = g_system->getMillis();
-	if ((milli - _priorFrameTime) >= GAME_FRAME_TIME) {
+	if ((milli - _priorFrameTime) >= (1000 / _frameRate)) {
 		++_frameCounter;
 		_priorFrameTime = milli;
 
@@ -303,7 +308,7 @@ void Events::clearKeyboard() {
 }
 
 void Events::wait(int numFrames) {
-	uint32 totalMilli = numFrames * 1000 / GAME_FRAME_RATE;
+	uint32 totalMilli = numFrames * 1000 / _frameRate;
 	delay(totalMilli);
 }
 

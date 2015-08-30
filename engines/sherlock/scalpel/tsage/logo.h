@@ -195,7 +195,7 @@ class Logo {
 private:
 	ScalpelEngine *_vm;
 	TLib _lib;
-	int _counter;
+	int _counter, _frameCounter;
 	bool _finished;
 	byte _originalPalette[PALETTE_SIZE];
 	byte _palette1[PALETTE_SIZE];

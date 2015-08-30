@@ -399,8 +399,9 @@ bool Logo::show(ScalpelEngine *vm) {
 		for (int idx = 0; idx < 4; ++idx)
 			logo->_objects[idx].update();
 
-		events.wait(2);
+		events.delay(10);
 		events.setButtonState();
+		++logo->_frameCounter;
 
 		interrupted = vm->shouldQuit() || events.kbHit() || events._pressed;
 		if (interrupted) {
@@ -476,7 +477,7 @@ void Logo::nextFrame() {
 	Screen &screen = *_vm->_screen;
 
 	if (_waitFrames) {
-		uint32 currFrame = _vm->_events->getFrameCounter();
+		uint32 currFrame = _frameCounter;
 		if (currFrame - _waitStartFrame < _waitFrames) {
 			return;
 		}
@@ -485,7 +486,7 @@ void Logo::nextFrame() {
 	}
 
 	if (_animateFrames) {
-		uint32 currFrame = _vm->_events->getFrameCounter();
+		uint32 currFrame = _frameCounter;
 		if (currFrame > _animateStartFrame + _animateFrameDelay) {
 			AnimationFrame animationFrame = _animateFrames[_animateFrame];
 			if (animationFrame.frame) {
@@ -611,14 +612,14 @@ void Logo::nextFrame() {
 
 void Logo::waitFrames(uint frames) {
 	_waitFrames = frames;
-	_waitStartFrame = _vm->_events->getFrameCounter();
+	_waitStartFrame = _frameCounter;
 }
 
 void Logo::startAnimation(uint object, uint frameDelay, const AnimationFrame *frames) {
 	_animateObject = object;
 	_animateFrameDelay = frameDelay;
 	_animateFrames = frames;
-	_animateStartFrame = _vm->_events->getFrameCounter();
+	_animateStartFrame = _frameCounter;
 	_animateFrame = 1;
 
 	_objects[object]._frame = frames[0].frame;

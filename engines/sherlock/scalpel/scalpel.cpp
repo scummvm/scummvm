@@ -242,6 +242,8 @@ void ScalpelEngine::showOpening() {
 	if (isDemo() && _interactiveFl)
 		return;
 
+	_events->setFrameRate(60);
+
 	if (getPlatform() == Common::kPlatform3DO) {
 		show3DOSplash();
 
@@ -255,20 +257,22 @@ void ScalpelEngine::showOpening() {
 
 		_events->clearEvents();
 		_music->stopMusic();
-		return;
+	} else {
+		TsAGE::Logo::show(this);
+
+		finished = showCityCutscene();
+		if (finished)
+			finished = showAlleyCutscene();
+		if (finished)
+			finished = showStreetCutscene();
+		if (finished)
+			showOfficeCutscene();
+
+		_events->clearEvents();
+		_music->stopMusic();
 	}
 
-	TsAGE::Logo::show(this);
-	finished = showCityCutscene();
-	if (finished)
-		finished = showAlleyCutscene();
-	if (finished)
-		finished = showStreetCutscene();
-	if (finished)
-		showOfficeCutscene();
-
-	_events->clearEvents();
-	_music->stopMusic();
+	_events->setFrameRate(GAME_FRAME_RATE);
 }
 
 bool ScalpelEngine::showCityCutscene() {

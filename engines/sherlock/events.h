@@ -46,6 +46,7 @@ private:
 	int _mouseButtons;
 	Common::Point _mousePos;
 	int _waitCounter;
+	int _frameRate;
 
 	/**
 	 * Check whether it's time to display the next screen frame
@@ -141,6 +142,11 @@ public:
 	 * Get the current mouse position within the scene, adjusted by the scroll position
 	 */
 	Common::Point mousePos() const;
+
+	/**
+	 * Override the default frame rate
+	 */
+	void setFrameRate(int newRate);
 
 	/**
 	 * Return the current game frame number
