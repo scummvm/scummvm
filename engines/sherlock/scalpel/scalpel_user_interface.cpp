@@ -860,7 +860,7 @@ void ScalpelUserInterface::doEnvControl() {
 				// Check whether there are more pending D keys pressed
 				moreKeys = false;
 				if (events.kbHit()) {
-					Common::KeyState keyState;
+					Common::KeyState keyState = events.getKey();
 					_key = toupper(keyState.keycode);
 
 					moreKeys = _key == 'D';
