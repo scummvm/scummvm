@@ -138,6 +138,7 @@ public:
 		kIsOnPlace = 177,
 
 		kIsAnimPlaying = 179,
+		kIsItemActivity = 180,
 
 		kIsOnNearPlace = 183,
 
@@ -232,6 +233,7 @@ protected:
 	Command *opIsOnNearPlace(const ResourceReference &itemRef, const ResourceReference &positionRef, int32 testDistance);
 	Command *opIsOnPlace(const ResourceReference &itemRef, const ResourceReference &positionRef);
 	Command *opIsAnimPlaying(int branch1, int branch2, const ResourceReference &animRef);
+	Command *opIsItemActivity(const ResourceReference &itemRef, int32 value);
 	Command *opIsAnimAtTime(int branch1, int branch2, const ResourceReference &animRef, int32 time);
 	
 	Common::Array<Argument> _arguments;

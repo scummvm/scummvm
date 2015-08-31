@@ -183,6 +183,8 @@ Command *Command::execute(uint32 callMode, Script *script) {
 		return opIsOnNearPlace(_arguments[2].referenceValue, _arguments[3].referenceValue, _arguments[4].intValue);
 	case kIsAnimPlaying:
 		return opIsAnimPlaying(_arguments[0].intValue, _arguments[1].intValue, _arguments[2].referenceValue);
+	case kIsItemActivity:
+		return opIsItemActivity(_arguments[2].referenceValue, _arguments[3].intValue);
 	case kIsAnimAtTime:
 		return opIsAnimAtTime(_arguments[0].intValue, _arguments[1].intValue, _arguments[2].referenceValue, _arguments[3].intValue);
 	default:
@@ -863,6 +865,13 @@ Command *Command::opIsAnimPlaying(int branch1, int branch2, const ResourceRefere
 
 	// TODO: Just returning true, since we're skipping anims for now.
 	return nextCommandIf(false);
+}
+
+Command *Command::opIsItemActivity(const ResourceReference &itemRef, int32 value) {
+	Item *item = itemRef.resolve<Item>();
+	ItemVisual *sceneItem = item->getSceneInstance();
+
+	return nextCommandIf(sceneItem->getAnimKind() == value);
 }
 
 Command *Command::opIsAnimAtTime(int branch1, int branch2, const ResourceReference &animRef, int32 time) {
