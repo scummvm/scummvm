@@ -206,7 +206,11 @@ void ItemVisual::saveLoad(ResourceSerializer *serializer) {
 }
 
 void ItemVisual::onPreDestroy() {
-	resetActionAnim();
+	if (_actionAnim) {
+		_actionAnim->removeFromItem(this);
+		_actionAnim = nullptr;
+	}
+
 	Item::onPreDestroy();
 }
 
