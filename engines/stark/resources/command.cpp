@@ -595,8 +595,8 @@ Command *Command::opItemLookDirection(Script *script, const ResourceReference &i
 
 	Current *current = StarkGlobal->getCurrent();
 	Camera *camera = current->getCamera();
-	float cameraAngle = camera->getHorizontalAngle();
-	float targetAngle = abs(direction + cameraAngle) % 360;
+	Math::Angle cameraAngle = camera->getHorizontalAngle();
+	Math::Angle targetAngle = direction + cameraAngle;
 
 	Math::Matrix3 rot;
 	rot.buildAroundZ(-targetAngle);
@@ -692,9 +692,9 @@ Command *Command::opItemPlaceDirection(const ResourceReference &itemRef, int32 d
 
 	Current *current = StarkGlobal->getCurrent();
 	Camera *camera = current->getCamera();
-	float cameraAngle = camera->getHorizontalAngle();
+	Math::Angle cameraAngle = camera->getHorizontalAngle();
 
-	item->setDirection(abs(direction + cameraAngle) % 360);
+	item->setDirection(direction + cameraAngle);
 
 	return nextCommand();
 }

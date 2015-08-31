@@ -27,6 +27,7 @@
 #include "common/rect.h"
 #include "common/str.h"
 
+#include "math/angle.h"
 #include "math/vector3d.h"
 #include "math/vector4d.h"
 
@@ -59,7 +60,7 @@ public:
 	void setClipPlanes(float near, float far);
 
 	/** Compute the angle between the X vector and the look at direction in the horizontal plane */
-	float getHorizontalAngle() const;
+	Math::Angle getHorizontalAngle() const;
 
 protected:
 	void readData(Formats::XRCReadStream *stream) override;

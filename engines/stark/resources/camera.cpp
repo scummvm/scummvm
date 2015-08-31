@@ -80,13 +80,13 @@ void Camera::onEnterLocation() {
 	location->setScrollPosition(location->getScrollPosition());
 }
 
-float Camera::getHorizontalAngle() const {
+Math::Angle Camera::getHorizontalAngle() const {
 	Math::Angle lookDirectionAngle = Math::Vector3d::angle(_lookDirection, Math::Vector3d(1.0, 0.0, 0.0));
 	Math::Vector3d cross = Math::Vector3d::crossProduct(_lookDirection, Math::Vector3d(1.0, 0.0, 0.0));
 	if (cross.z() < 0) {
-		return -lookDirectionAngle.getDegrees();
+		return -lookDirectionAngle;
 	} else {
-		return lookDirectionAngle.getDegrees();
+		return lookDirectionAngle;
 	}
 }
 

@@ -332,7 +332,7 @@ public:
 	Math::Vector3d getDirectionVector() const;
 
 	/** Set the direction the item faces */
-	void setDirection(float direction);
+	void setDirection(const Math::Angle &direction);
 
 	/** Obtain the sort value for the item, used to compute the draw order */
 	float getSortKey() const;

@@ -599,8 +599,8 @@ Math::Vector3d FloorPositionedItem::getDirectionVector() const {
 	return direction;
 }
 
-void FloorPositionedItem::setDirection(float direction) {
-	_direction3D = direction;
+void FloorPositionedItem::setDirection(const Math::Angle &direction) {
+	_direction3D = direction.getDegrees(0.0);
 }
 
 float FloorPositionedItem::getSortKey() const {
