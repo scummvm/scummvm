@@ -67,11 +67,6 @@ void VisualSmacker::render(const Common::Point &position) {
 }
 
 void VisualSmacker::update() {
-	if (_smacker->endOfVideo()) {
-		_smacker->rewind();
-		_smacker->start();
-	}
-
 	if (_smacker->needsUpdate()) {
 		_surface = _smacker->decodeNextFrame();
 		const byte *palette = _smacker->getPalette();
@@ -140,6 +135,19 @@ int VisualSmacker::getWidth() const {
 
 int VisualSmacker::getHeight() const {
 	return _smacker->getHeight();
+}
+
+uint32 VisualSmacker::getDuration() const {
+	return _smacker->getDuration().msecs();
+}
+
+void VisualSmacker::rewind() {
+	_smacker->rewind();
+	_smacker->start();
+}
+
+uint32 VisualSmacker::getCurrentTime() const {
+	return _smacker->getTime();
 }
 
 } // End of namespace Stark

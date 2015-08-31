@@ -99,6 +99,23 @@ int Anim::getPointHotspotIndex(const Common::Point &point) const {
 	return 0;
 }
 
+uint32 Anim::getDuration() const {
+	// TODO: Implement for each anim type
+	warning("Anim::getDuration is not implemented");
+	return 0;
+}
+
+void Anim::playAsAction(ItemVisual *item) {
+	// TODO: Implement for each anim type
+	warning("Anim::playAsAction is not implemented");
+}
+
+bool Anim::isAtTime(uint32 time) const {
+	// TODO: Implement for each anim type
+	warning("Anim::isAtTime is not implemented");
+	return true;
+}
+
 void Anim::printData() {
 	debug("usage: %d", _usage);
 	debug("numFrames: %d", _numFrames);
@@ -171,7 +188,8 @@ AnimVideo::AnimVideo(Object *parent, byte subType, uint16 index, const Common::S
 				_smacker(nullptr),
 				_field_4C(-1),
 				_field_50(0),
-				_loop(false) {
+				_loop(false),
+				_actionItem(nullptr) {
 }
 
 void AnimVideo::readData(Formats::XRCReadStream *stream) {
@@ -210,16 +228,27 @@ void AnimVideo::onAllLoaded() {
 }
 
 void AnimVideo::onGameLoop() {
-	if (!isInUse()) {
+	if (!_smacker || !isInUse()) {
 		return; // Animation not in use, no need to update the movie
 	}
 
-	if (!_smacker) {
-		return;
+	if (_smacker->isDone()) {
+		// The last frame has been reached
+		if (!_loop && _actionItem) {
+			// Reset our item if needed
+			_actionItem->resetActionAnim();
+			_actionItem = nullptr;
+		}
+
+		if (_loop) {
+			_smacker->rewind();
+		}
 	}
 
-	_smacker->update();
-	updateSmackerPosition();
+	if (!_smacker->isDone()) {
+		_smacker->update();
+		updateSmackerPosition();
+	}
 }
 
 Visual *AnimVideo::getVisual() {
@@ -231,6 +260,23 @@ void AnimVideo::updateSmackerPosition() {
 	if (frame != -1 && frame < (int) _positions.size()) {
 		_smacker->setPosition(_positions[frame]);
 	}
+}
+
+uint32 AnimVideo::getDuration() const {
+	return _smacker->getDuration();
+}
+
+void AnimVideo::playAsAction(ItemVisual *item) {
+	_actionItem = item;
+
+	if (!_loop) {
+		_smacker->rewind();
+	}
+}
+
+bool AnimVideo::isAtTime(uint32 time) const {
+	uint32 currentTime = _smacker->getCurrentTime();
+	return currentTime >= time;
 }
 
 void AnimVideo::printData() {
@@ -270,7 +316,8 @@ AnimSkeleton::AnimSkeleton(Object *parent, byte subType, uint16 index, const Com
 				_field_6C(1),
 				_seletonAnim(nullptr),
 				_currentTime(0),
-				_totalTime(0) {
+				_totalTime(0),
+				_actionItem(nullptr) {
 	_visual = StarkGfx->createActorRenderer();
 }
 
@@ -285,10 +332,20 @@ void AnimSkeleton::applyToItem(Item *item) {
 	_visual->setModel(mesh->getModel());
 	_visual->setTexture(texture->getTexture());
 	_visual->setAnim(_seletonAnim);
+
+	if (!_loop) {
+		_currentTime = 0;
+	}
+
+	if (_currentTime < 0 || _currentTime  > _totalTime) {
+		_currentTime = 0;
+	}
 }
 
 void AnimSkeleton::removeFromItem(Item *item) {
 	Anim::removeFromItem(item);
+
+	_actionItem = nullptr;
 }
 
 Visual *AnimSkeleton::getVisual() {
@@ -345,13 +402,38 @@ void AnimSkeleton::onGameLoop() {
 	Anim::onGameLoop();
 
 	if (isInUse() && _totalTime) {
-		_currentTime = (_currentTime + StarkGlobal->getMillisecondsPerGameloop()) % _totalTime;
-		_visual->setTime(_currentTime);
+		uint32 newTime = _currentTime + StarkGlobal->getMillisecondsPerGameloop();
+
+		if (!_loop && newTime > _totalTime) {
+			if (_actionItem) {
+				_actionItem->resetActionAnim();
+				_actionItem = nullptr;
+			}
+		} else {
+			_currentTime = newTime % _totalTime;
+			_visual->setTime(_currentTime);
+		}
 	}
 }
 
 uint32 AnimSkeleton::getMovementSpeed() const {
 	return _movementSpeed;
+}
+
+uint32 AnimSkeleton::getDuration() const {
+	return _totalTime;
+}
+
+void AnimSkeleton::playAsAction(ItemVisual *item) {
+	_actionItem = item;
+
+	if (!_loop) {
+		_currentTime = 0;
+	}
+}
+
+bool AnimSkeleton::isAtTime(uint32 time) const {
+	return _currentTime >= time;
 }
 
 void AnimSkeleton::printData() {

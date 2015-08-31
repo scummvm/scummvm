@@ -166,6 +166,7 @@ ItemVisual::~ItemVisual() {
 ItemVisual::ItemVisual(Object *parent, byte subType, uint16 index, const Common::String &name) :
 				Item(parent, subType, index, name),
 				_renderEntry(nullptr),
+				_actionAnim(nullptr),
 				_animHierarchy(nullptr),
 				_currentAnimKind(-1),
 				_clickable(true) {
@@ -204,12 +205,18 @@ void ItemVisual::saveLoad(ResourceSerializer *serializer) {
 	}
 }
 
+void ItemVisual::onPreDestroy() {
+	resetActionAnim();
+	Item::onPreDestroy();
+}
+
 void ItemVisual::setEnabled(bool enabled) {
 	Item::setEnabled(enabled);
 
 	if (enabled) {
 		_animHierarchy->selectItemAnim(this);
 	} else {
+		resetActionAnim();
 		_animHierarchy->unselectItemAnim(this);
 	}
 }
@@ -223,7 +230,9 @@ int32 ItemVisual::getAnimKind() const {
 }
 
 void ItemVisual::setAnimKind(int32 usage) {
-	bool animNeedsUpdate = usage != _currentAnimKind;
+	bool animNeedsUpdate = usage != _currentAnimKind || _actionAnim != nullptr || _animHierarchy->getCurrentAnim() == nullptr;
+
+	resetActionAnim();
 
 	_currentAnimKind = usage;
 	if (animNeedsUpdate && _animHierarchy) {
@@ -238,10 +247,16 @@ void ItemVisual::printData() {
 }
 
 Anim *ItemVisual::getAnim() const {
+	if (_actionAnim) {
+		return _actionAnim;
+	}
+
 	return _animHierarchy->getCurrentAnim();
 }
 
 void ItemVisual::setAnimHierarchy(AnimHierarchy *animHierarchy) {
+	resetActionAnim();
+
 	if (_animHierarchy) {
 		_animHierarchy->unselectItemAnim(this);
 	}
@@ -280,6 +295,28 @@ bool ItemVisual::doAction(uint32 action, uint32 hotspotIndex) {
 	}
 
 	return false;
+}
+
+void ItemVisual::playActionAnim(Anim *anim) {
+	resetActionAnim();
+
+	_animHierarchy->unselectItemAnim(this);
+	_actionAnim = anim;
+	anim->applyToItem(this);
+	anim->playAsAction(this);
+}
+
+void ItemVisual::resetActionAnim() {
+	if (_actionAnim) {
+		_actionAnim->removeFromItem(this);
+		_actionAnim = nullptr;
+
+		// TODO: Add a condition to this?
+		_animHierarchy->selectItemAnim(this);
+		if (_subType == kItemModel) {
+			_animHierarchy->setItemAnim(this, Anim::kActorUsageIdle);
+		}
+	}
 }
 
 ItemTemplate::~ItemTemplate() {
@@ -435,7 +472,7 @@ Gfx::RenderEntry *InventoryItem::getRenderEntry(const Common::Point &positionOff
 }
 
 void InventoryItem::setEnabled(bool enabled) {
-	Item::setEnabled(enabled);
+	ItemVisual::setEnabled(enabled);
 
 	// Deselect the item in the inventory when removing it
 	int16 selectedInventoryItem = StarkUserInterface->getSelectedInventoryItem();

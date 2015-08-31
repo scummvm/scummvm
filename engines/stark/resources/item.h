@@ -144,6 +144,7 @@ public:
 	virtual void readData(Formats::XRCReadStream *stream) override;
 	virtual void onAllLoaded() override;
 	virtual void saveLoad(ResourceSerializer *serializer) override;
+	virtual void onPreDestroy() override;
 
 	// Item API
 	void setEnabled(bool enabled) override;
@@ -168,6 +169,12 @@ public:
 	/** Get the currently playing animation */
 	Anim *getAnim() const;
 
+	/** Replace the current generic animation with an action specific animation */
+	void playActionAnim(Anim *anim);
+
+	/** Remove the current specific animation and revert to a generic one */
+	void resetActionAnim();
+
 protected:
 	// Resource API
 	void printData() override;
@@ -176,6 +183,7 @@ protected:
 
 	Gfx::RenderEntry *_renderEntry;
 
+	Anim *_actionAnim;
 	AnimHierarchy *_animHierarchy;
 	int32 _currentAnimKind;
 	bool _clickable;

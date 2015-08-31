@@ -49,6 +49,9 @@ public:
 	void render(const Common::Point &position);
 	bool isDone();
 
+	/** Reset the video to resume playing from the beginning */
+	void rewind();
+
 	/** Perform a transparency hit test on a point */
 	bool isPointSolid(const Common::Point &point) const;
 
@@ -58,6 +61,13 @@ public:
 	int getFrameNumber() const;
 	Common::Point getPosition() const { return _position; }
 	void setPosition(const Common::Point &pos) { _position = pos; }
+
+	/** Get the total duration in milliseconds for the video */
+	uint32 getDuration() const;
+
+	/** Get the current time in the video since the beginning */
+	uint32 getCurrentTime() const;
+
 private:
 	Video::SmackerDecoder *_smacker;
 	const Graphics::Surface *_surface;

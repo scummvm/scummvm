@@ -110,7 +110,7 @@ Command *Command::execute(uint32 callMode, Script *script) {
 	case kUseAnimHierarchy:
 		return opUseAnimHierachy(_arguments[1].referenceValue);
 	case kPlayAnimation:
-		return opPlayAnimation(_arguments[1].referenceValue, _arguments[2].intValue);
+		return opPlayAnimation(script, _arguments[1].referenceValue, _arguments[2].intValue);
 	case kShowPlay:
 		return opShowPlay(script, _arguments[1].referenceValue, _arguments[2].intValue);
 	case kScriptEnable:
@@ -462,12 +462,24 @@ Command *Command::opUseAnimHierachy(const ResourceReference &animHierRef) {
 	return nextCommand();
 }
 
-Command *Command::opPlayAnimation(const ResourceReference &animRef, int32 unknown) {
-	assert(_arguments.size() == 3);
-	Object *anim = animRef.resolve<Object>();
-	warning("(TODO: Implement) opPlayAnimation(%s, %d) : %s", anim->getName().c_str(), unknown, animRef.describe().c_str());
+Command *Command::opPlayAnimation(Script *script, const ResourceReference &animRef, bool suspend) {
+	Anim *anim = animRef.resolve<Anim>();
+	Item *item = anim->findParent<Item>();
+	ItemVisual *sceneItem = item->getSceneInstance();
 
-	return nextCommand();
+	sceneItem->setMovement(nullptr);
+	sceneItem->playActionAnim(anim);
+
+	// TODO: Check if the anim should reset the anim hirarchy upon completion
+
+	if (suspend) {
+		float animDuration = anim->getDuration();
+		script->pause(animDuration);
+		item->setMovementSuspendedScript(script);
+		return this; // Stay on the same command while suspended
+	} else {
+		return nextCommand();
+	}
 }
 
 Command *Command::opScriptEnable(const ResourceReference &scriptRef, int32 enable) {
@@ -854,12 +866,11 @@ Command *Command::opIsAnimPlaying(int branch1, int branch2, const ResourceRefere
 }
 
 Command *Command::opIsAnimAtTime(int branch1, int branch2, const ResourceReference &animRef, int32 time) {
-	assert(_arguments.size() == 4);
-	Object *animObj = animRef.resolve<Object>();
-	warning("(TODO: Implement opIsAnimAtTime(%d %d %s %d) %s", branch1, branch2, animObj->getName().c_str(), time, animRef.describe().c_str());
+	Anim *anim = animRef.resolve<Anim>();
 
-	// TODO: Just returning true, since we're skipping anims for now.
-	return nextCommandIf(true);
+	bool condition = anim->isInUse() && anim->isAtTime(time);
+
+	return nextCommandIf(condition);
 }
 
 Command *Command::nextCommand() {

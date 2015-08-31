@@ -195,7 +195,7 @@ protected:
 	Command *opItemSetActivity(const ResourceReference &itemRef, int32 unknown1, int32 unknown2);
 	Command *opItemSelectInInventory(const ResourceReference &itemRef);
 	Command *opUseAnimHierachy(const ResourceReference &animHierRef);
-	Command *opPlayAnimation(const ResourceReference &animRef, int32 unknown);
+	Command *opPlayAnimation(Script *script, const ResourceReference &animRef, bool suspend);
 	Command *opScriptEnable(const ResourceReference &scriptRef, int32 enable);
 	Command *opShowPlay(Script *script, const ResourceReference &ref, int32 suspend);
 	Command *opSetBoolean(const ResourceReference &knowledgeRef, int32 enable);

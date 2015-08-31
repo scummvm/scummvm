@@ -43,6 +43,7 @@ namespace Resources {
 class Direction;
 class Image;
 class Item;
+class ItemVisual;
 
 /**
  * Animation base class
@@ -107,6 +108,20 @@ public:
 
 	/** Return the hotspot index for a point given in relative coordinates */
 	virtual int getPointHotspotIndex(const Common::Point &point) const;
+
+	/** Get the animation typical duration in milliseconds */
+	virtual uint32 getDuration() const;
+
+	/**
+	 * Play the animation as an action for an item.
+	 *
+	 * This sets up a callback to the item for when the animation completes.
+	 */
+	virtual void playAsAction(ItemVisual *item);
+
+	/** Checks if the elapsed time since the animation start is greater than a specified duration */
+	virtual bool isAtTime(uint32 time) const;
+
 protected:
 	virtual void printData() override;
 
@@ -165,6 +180,9 @@ public:
 
 	// Anim API
 	Visual *getVisual() override;
+	void playAsAction(ItemVisual *item) override;
+	uint32 getDuration() const override;
+	bool isAtTime(uint32 time) const override;
 
 protected:
 	typedef Common::Array<Common::Point> PointArray;
@@ -189,6 +207,8 @@ protected:
 	int32 _field_4C;
 	uint32 _field_50;
 	bool _loop;
+
+	ItemVisual *_actionItem;
 };
 
 /**
@@ -209,6 +229,9 @@ public:
 	void applyToItem(Item *item) override;
 	void removeFromItem(Item *item) override;
 	Visual *getVisual() override;
+	uint32 getDuration() const override;
+	void playAsAction(ItemVisual *item) override;
+	bool isAtTime(uint32 time) const override;
 
 	/** Get the anim movement speed in units per seconds */
 	uint32 getMovementSpeed() const;
@@ -228,6 +251,8 @@ protected:
 
 	SkeletonAnim *_seletonAnim;
 	VisualActor *_visual;
+
+	ItemVisual *_actionItem;
 };
 
 } // End of namespace Resources
