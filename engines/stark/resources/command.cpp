@@ -182,7 +182,7 @@ Command *Command::execute(uint32 callMode, Script *script) {
 	case kIsOnNearPlace:
 		return opIsOnNearPlace(_arguments[2].referenceValue, _arguments[3].referenceValue, _arguments[4].intValue);
 	case kIsAnimPlaying:
-		return opIsAnimPlaying(_arguments[0].intValue, _arguments[1].intValue, _arguments[2].referenceValue);
+		return opIsAnimPlaying(_arguments[2].referenceValue);
 	case kIsItemActivity:
 		return opIsItemActivity(_arguments[2].referenceValue, _arguments[3].intValue);
 	case kIsAnimAtTime:
@@ -858,13 +858,10 @@ Command *Command::opIsOnNearPlace(const ResourceReference &itemRef, const Resour
 	return nextCommandIf(itemPostion.getDistanceTo(testPosition) < testDistance);
 }
 
-Command *Command::opIsAnimPlaying(int branch1, int branch2, const ResourceReference &animRef) {
-	assert(_arguments.size() == 3);
-	Object *animObj = animRef.resolve<Object>();
-	warning("(TODO: Implement opIsAnimPlaying(%d %d %s) %s", branch1, branch2, animObj->getName().c_str(), animRef.describe().c_str());
+Command *Command::opIsAnimPlaying(const ResourceReference &animRef) {
+	Anim *anim = animRef.resolve<Anim>();
 
-	// TODO: Just returning true, since we're skipping anims for now.
-	return nextCommandIf(false);
+	return nextCommandIf(anim->isInUse());
 }
 
 Command *Command::opIsItemActivity(const ResourceReference &itemRef, int32 value) {

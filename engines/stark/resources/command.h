@@ -232,7 +232,7 @@ protected:
 	Command *opIsRandom(int32 chance);
 	Command *opIsOnNearPlace(const ResourceReference &itemRef, const ResourceReference &positionRef, int32 testDistance);
 	Command *opIsOnPlace(const ResourceReference &itemRef, const ResourceReference &positionRef);
-	Command *opIsAnimPlaying(int branch1, int branch2, const ResourceReference &animRef);
+	Command *opIsAnimPlaying(const ResourceReference &animRef);
 	Command *opIsItemActivity(const ResourceReference &itemRef, int32 value);
 	Command *opIsAnimAtTime(const ResourceReference &animRef, int32 time);
 	
