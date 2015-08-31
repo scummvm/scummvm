@@ -84,9 +84,9 @@ Command *Command::execute(uint32 callMode, Script *script) {
 	case kWalkTo:
 		return opWalkTo(script, _arguments[2].referenceValue, _arguments[3].intValue);
 	case kGameLoop:
-		return opGameLoop(_arguments[1].intValue);
+		return opScriptPauseGameLoop(script, _arguments[1].intValue);
 	case kScriptPauseRandom:
-		return opPauseRandom(script, _arguments[1].referenceValue);
+		return opScriptPauseRandom(script, _arguments[1].referenceValue);
 	case kExit2DLocation:
 		return opExit2DLocation(script);
 	case kGoto2DLocation:
@@ -277,15 +277,15 @@ Command *Command::opWalkTo(Script *script, const ResourceReference &objectRef, i
 	}
 }
 
-Command *Command::opGameLoop(int32 unknown) {
-	assert(_arguments.size() == 2);
-	assert(_arguments[1].type == Argument::kTypeInteger1 || _arguments[1].type == Argument::kTypeInteger2);
-	warning("(TODO: Implement) opGameLoop(%d)", unknown);
+Command *Command::opScriptPauseGameLoop(Script *script, int32 count) {
+	uint gameloopDuration = StarkGlobal->getMillisecondsPerGameloop();
 
-	return nextCommand();
+	script->pause(gameloopDuration * count);
+
+	return this; // Stay on this command while the script is suspended
 }
 
-Command *Command::opPauseRandom(Script *script, const ResourceReference &ref) {
+Command *Command::opScriptPauseRandom(Script *script, const ResourceReference &ref) {
 	float randomFactor = StarkRandomSource->getRandomNumber(10000) / 10000.0;
 
 	Knowledge *duration = ref.resolve<Knowledge>();

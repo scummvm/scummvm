@@ -182,9 +182,9 @@ protected:
 	Command *opSetInteractiveMode(bool enabled);
 	Command *opLocationGoTo(const Common::String &level, const Common::String &location, const ResourceReference &bookmarkRef, int32 direction);
 	Command *opWalkTo(Script *script, const ResourceReference &objectRef, int32 suspend);
-	Command *opGameLoop(int32 unknown);
+	Command *opScriptPauseGameLoop(Script *script, int32 count);
 	Command *opScriptPause(Script *script, const ResourceReference &durationRef);
-	Command *opPauseRandom(Script *script, const ResourceReference &itemRef);
+	Command *opScriptPauseRandom(Script *script, const ResourceReference &itemRef);
 	Command *opExit2DLocation(Script *script);
 	Command *opGoto2DLocation(const Common::String &level, const Common::String &location);
 	Command *opRumbleScene(int32 unknown1, int32 unknown2);
