@@ -186,7 +186,7 @@ Command *Command::execute(uint32 callMode, Script *script) {
 	case kIsItemActivity:
 		return opIsItemActivity(_arguments[2].referenceValue, _arguments[3].intValue);
 	case kIsAnimAtTime:
-		return opIsAnimAtTime(_arguments[0].intValue, _arguments[1].intValue, _arguments[2].referenceValue, _arguments[3].intValue);
+		return opIsAnimAtTime(_arguments[2].referenceValue, _arguments[3].intValue);
 	default:
 		warning("Unimplemented command %d - %s", _subType, _name.c_str());
 		printData();
@@ -874,7 +874,7 @@ Command *Command::opIsItemActivity(const ResourceReference &itemRef, int32 value
 	return nextCommandIf(sceneItem->getAnimKind() == value);
 }
 
-Command *Command::opIsAnimAtTime(int branch1, int branch2, const ResourceReference &animRef, int32 time) {
+Command *Command::opIsAnimAtTime(const ResourceReference &animRef, int32 time) {
 	Anim *anim = animRef.resolve<Anim>();
 
 	bool condition = anim->isInUse() && anim->isAtTime(time);
