@@ -729,7 +729,7 @@ void TattooJournal::drawScrollBar() {
 void TattooJournal::disableControls() {
 	Screen &screen = *_vm->_screen;
 	Common::Rect r(JOURNAL_BAR_WIDTH, BUTTON_SIZE + screen.fontHeight() + 13);
-	r.moveTo((SHERLOCK_SCREEN_HEIGHT - r.width()) / 2, SHERLOCK_SCREEN_HEIGHT - r.height());
+	r.moveTo((SHERLOCK_SCREEN_WIDTH - r.width()) / 2, SHERLOCK_SCREEN_HEIGHT - r.height());
 	const char *JOURNAL_COMMANDS[3] = { FIXED(CloseJournal), FIXED(SearchJournal), FIXED(SaveJournal) };
 
 	// Print the Journal commands
@@ -752,7 +752,8 @@ int TattooJournal::getFindName(bool printError) {
 	int done = 0;
 	Common::String name;
 	int cursorX, cursorY;
-	bool flag = false;
+	bool blinkFlag = false;
+	int blinkCountdown = 1;
 
 	Common::Rect r(JOURNAL_BAR_WIDTH, (screen.fontHeight() + 4) * 2 + 9);
 	r.moveTo((SHERLOCK_SCREEN_WIDTH - r.width()) / 2, (SHERLOCK_SCREEN_HEIGHT - r.height()) / 2);
@@ -820,21 +821,27 @@ int TattooJournal::getFindName(bool printError) {
 			events.setButtonState();
 
 			// Handle blinking cursor
-			flag = !flag;
-			if (flag) {
-				// Draw cursor
-				screen._backBuffer1.fillRect(Common::Rect(cursorX, cursorY, cursorX + 7, cursorY + 8), COMMAND_HIGHLIGHTED);
-				screen.slamArea(cursorX, cursorY, 8, 9);
-			} else {
-				// Erase cursor by restoring background and writing current text
-				screen._backBuffer1.blitFrom(bgSurface, Common::Point(r.left + 3, cursorY));
-				screen.gPrint(Common::Point(r.left + screen.widestChar() + 3, cursorY), COMMAND_HIGHLIGHTED, "%s", name.c_str());
-				screen.slamArea(r.left + 3, r.top, r.width() - 3, screen.fontHeight());
+			if (--blinkCountdown == 0) {
+				blinkCountdown = 3;
+				blinkFlag = !blinkFlag;
+				if (blinkFlag) {
+					// Draw cursor
+					screen._backBuffer1.fillRect(Common::Rect(cursorX, cursorY, cursorX + 7, cursorY + 8), COMMAND_HIGHLIGHTED);
+					screen.slamArea(cursorX, cursorY, 8, 9);
+				}
+				else {
+					// Erase cursor by restoring background and writing current text
+					screen._backBuffer1.blitFrom(bgSurface, Common::Point(r.left + 3, cursorY));
+					screen.gPrint(Common::Point(r.left + screen.widestChar() + 3, cursorY), COMMAND_HIGHLIGHTED, "%s", name.c_str());
+					screen.slamArea(r.left + 3, cursorY, r.width() - 3, screen.fontHeight());
+				}
 			}
 
 			highlightSearchControls(true);
 
 			events.wait(2);
+			if (_vm->shouldQuit())
+				return 0;
 		}
 
 		if (events.kbHit()) {
@@ -881,10 +888,11 @@ int TattooJournal::getFindName(bool printError) {
 				}
 			}
 
-			if (keyState.ascii && keyState.ascii != '@' && name.size() < 50) {
+			if (keyState.ascii >= ' ' && keyState.ascii != '@' && name.size() < 50) {
 				if ((cursorX + screen.charWidth(keyState.ascii)) < (r.right - screen.widestChar() * 3)) {
-					cursorX += screen.charWidth(keyState.ascii);
-					name += toupper(keyState.ascii);
+					char c = toupper(keyState.ascii);
+					cursorX += screen.charWidth(c);
+					name += c;
 				}
 			}
 
