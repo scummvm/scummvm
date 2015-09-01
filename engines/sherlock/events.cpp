@@ -44,7 +44,7 @@ Events::Events(SherlockEngine *vm): _vm(vm) {
 	_oldButtons = _oldRightButton = false;
 	_firstPress = false;
 	_waitCounter = 0;
-	_frameRate = 0;
+	_frameRate = GAME_FRAME_RATE;
 
 	if (_vm->_interactiveFl)
 		loadCursors("rmouse.vgs");
