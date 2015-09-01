@@ -202,7 +202,7 @@ protected:
 	Command *opSetBoolean(const ResourceReference &knowledgeRef, int32 enable);
 	Command *opSetInteger(const ResourceReference &knowledgeRef, int32 value);
 	Command *opEnableFloorField(const ResourceReference &floorFieldRef, int32 value);
-	Command *opPlayAnimScriptItem(Script *script, const ResourceReference &animScriptItemRef, int32 pause);
+	Command *opPlayAnimScriptItem(Script *script, const ResourceReference &animScriptItemRef, int32 suspend);
 	Command *opKnowledgeAssignBool(const ResourceReference &knowledgeRef1, const ResourceReference &knowledgeRef2);
 	Command *opKnowledgeAssignNegatedBool(const ResourceReference &knowledgeRef1, const ResourceReference &knowledgeRef2);
 	Command *opSoundPlay(Script *script, const ResourceReference &soundRef, int32 suspend);

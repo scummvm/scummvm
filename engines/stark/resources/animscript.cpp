@@ -107,14 +107,67 @@ void AnimScript::onGameLoop() {
 	_msecsToNextUpdate -= StarkGlobal->getMillisecondsPerGameloop();
 }
 
-void AnimScript::setCurrentIndex(uint32 index) {
-	assert(index < _items.size());
-	_nextItemIndex = index;
-}
-
 void AnimScript::goToNextItem() {
 	_nextItemIndex += 1;
 	_nextItemIndex %= _items.size();
+}
+
+void AnimScript::goToScriptItem(AnimScriptItem *item) {
+	_nextItemIndex = findItemIndex(item);
+	_msecsToNextUpdate = 0;
+
+	if (item && item->getOpcode() == AnimScriptItem::kDisplayFrame) {
+		_anim->selectFrame(item->getOperand());
+	}
+}
+
+uint32 AnimScript::getDurationStartingWithItem(AnimScriptItem *startItem) {
+	uint32 duration = 0;
+	uint32 itemIndex = findItemIndex(startItem);
+
+	while (1) {
+		bool goingBackwards = false;
+		AnimScriptItem *item = _items[itemIndex];
+
+		switch (item->getOpcode()) {
+			case AnimScriptItem::kDisplayFrame:
+			case AnimScriptItem::kPlayAnimSound:
+			case AnimScriptItem::kDisplayRandomFrame:
+				itemIndex += 1;
+				itemIndex %= _items.size();
+				break;
+			case AnimScriptItem::kGoToItem:
+				if (item->getOperand() <= itemIndex) {
+					goingBackwards = true;
+				}
+				itemIndex = item->getOperand();
+				break;
+			default:
+				break;
+		}
+
+		if (itemIndex == 0 || goingBackwards) {
+			break;
+		}
+
+		duration += item->getDuration();
+	}
+
+	return duration;
+}
+
+int32 AnimScript::findItemIndex(AnimScriptItem *item) {
+	if (!item) {
+		return 0;
+	}
+
+	for (uint i = 0; i < _items.size(); i++) {
+		if (_items[i] == item) {
+			return i;
+		}
+	}
+
+	return 0;
 }
 
 AnimScriptItem::~AnimScriptItem() {

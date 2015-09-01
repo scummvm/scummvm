@@ -562,16 +562,23 @@ Command *Command::opEnableFloorField(const ResourceReference &floorFieldRef, int
 	return nextCommand();
 }
 
-Command *Command::opPlayAnimScriptItem(Script *script, const ResourceReference &animScriptItemRef, int32 pause) {
-	assert(_arguments.size() == 3);
-	Object *animScriptItemObj = animScriptItemRef.resolve<Object>();
+Command *Command::opPlayAnimScriptItem(Script *script, const ResourceReference &animScriptItemRef, int32 suspend) {
+	AnimScriptItem *animScriptItem = animScriptItemRef.resolve<AnimScriptItem>();
+	AnimScript *animScript = animScriptItem->findParent<AnimScript>();
+	Anim *anim = animScriptItem->findParent<Anim>();
+	Item *item = animScriptItem->findParent<Item>();
+	ItemVisual *sceneItem = item->getSceneInstance();
 
-	AnimScript *animScript = animScriptItemObj->findParent<AnimScript>();
-	assert(animScript);
-	animScript->setCurrentIndex(animScriptItemObj->getIndex());
-	// TODO: If pause is true, pause the script for the duration of the anim
-	warning("(TODO: Implement) opPlayAnimScriptItem(%s, %d) : %s", animScriptItemObj->getName().c_str(), pause, animScriptItemRef.describe().c_str());
-	return nextCommand();
+	sceneItem->playActionAnim(anim);
+	animScript->goToScriptItem(animScriptItem);
+
+	if (suspend) {
+		uint32 duration = animScript->getDurationStartingWithItem(animScriptItem);
+		script->pause(duration);
+		return this; // Stay on the same command while suspended
+	} else {
+		return nextCommand();
+	}
 }
 
 Command *Command::opKnowledgeAssignBool(const ResourceReference &knowledgeRef1, const ResourceReference &knowledgeRef2) {

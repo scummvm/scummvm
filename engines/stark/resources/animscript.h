@@ -58,9 +58,19 @@ public:
 	void onAllLoaded() override;
 	void onGameLoop() override;
 
-	void setCurrentIndex(uint32 index);
+	/** Go to a script item. Cancel any delay so that it is shown immediately. */
+	void goToScriptItem(AnimScriptItem *item);
+
+	/**
+	 * Compute the duration in milliseconds of an animation script portion.
+	 *
+	 * Said portion goes from the specified starting point to the end of the script
+	 */
+	uint32 getDurationStartingWithItem(AnimScriptItem *startItem);
+
 protected:
 	void goToNextItem();
+	int32 findItemIndex(AnimScriptItem *item);
 
 	Anim *_anim;
 	Common::Array<AnimScriptItem *> _items;
