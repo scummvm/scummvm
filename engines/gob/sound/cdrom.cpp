@@ -91,7 +91,10 @@ void CDROM::startTrack(const char *trackName) {
 		return;
 	}
 
-	Common::strlcpy(_curTrack, trackName, 16);
+	Common::String curTrack(trackName);
+	curTrack.toUppercase();
+
+	Common::strlcpy(_curTrack, curTrack.c_str(), 16);
 
 	stopPlaying();
 	_curTrackBuffer = matchPtr;
