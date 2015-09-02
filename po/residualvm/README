@@ -1,0 +1,12 @@
+ResidualVM shares much of its code with ScummVM, and therefore much of its
+translations are the same.
+This directory contains translations of the parts that are unique to
+ResidualVM, largely those belonging to its engines.
+
+If you want to contribute a translation, please follow these steps:
+1) call `make updatepot` from a build directory to get a residualvm.pot.
+2) use `msginit -i po/residualvm.pot -o po/residualvm/nl_NL.po -l nl_NL`
+   to generate a template you can fill in. Make sure to set the charset to
+   ISO-8859-1, not UTF-8.
+3) Once your translations are done, call `make update-translations` and
+   `make install` to update the `translations.dat` file.
