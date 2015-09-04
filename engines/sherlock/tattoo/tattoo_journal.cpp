@@ -764,6 +764,7 @@ int TattooJournal::getFindName(bool printError) {
 	cursorY = r.top + screen.fontHeight() + 12;
 
 	drawControls(1);
+	disableControls();
 	
 	// Backup the area under the text entry
 	Surface bgSurface(r.width() - 6, screen.fontHeight());
@@ -771,7 +772,7 @@ int TattooJournal::getFindName(bool printError) {
 		r.right - 3, cursorY + screen.fontHeight()));
 
 	if (printError) {
-		screen.gPrint(Common::Point(r.left + (r.width() - screen.stringWidth(FIXED(TextNotFound))) / 2, cursorY),
+		screen.gPrint(Common::Point(r.left + (r.width() - screen.stringWidth(FIXED(TextNotFound))) / 2, cursorY), 
 			INFO_TOP, "%s", FIXED(TextNotFound));
 	} else {
 		// If there was a name already entered, copy it to name and display it
