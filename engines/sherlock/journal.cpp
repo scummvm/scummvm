@@ -250,7 +250,7 @@ bool Journal::drawJournal(int direction, int howFar) {
 
 				// Print out the found keyword
 				Common::String lineMatch(matchP, matchP + _find.size());
-				byte fgColor = IS_SERRATED_SCALPEL ? (byte)Scalpel::INV_FOREGROUND : (byte)Tattoo::INV_FOREGROUND;
+				byte fgColor = IS_SERRATED_SCALPEL ? (byte)Scalpel::INV_FOREGROUND : (byte)Tattoo::PEN_HIGHLIGHT_COLOR;
 				screen.gPrint(Common::Point(JOURNAL_LEFT_X + width, yp), fgColor, "%s", lineMatch.c_str());
 				width += screen.stringWidth(lineMatch.c_str());
 

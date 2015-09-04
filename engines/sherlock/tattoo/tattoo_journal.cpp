@@ -353,8 +353,8 @@ void TattooJournal::handleButtons() {
 					_savedSub = _sub;
 					_savedPage = _page;
 					
-					if (drawJournal(dir + 2, 1000 * LINES_PER_PAGE) == 0)
-					{
+					bool drawResult = drawJournal(dir + 2, 1000 * LINES_PER_PAGE);
+					if (!drawResult) {
 						_index = _savedIndex;
 						_sub = _savedSub;
 						_page = _savedPage;
@@ -362,12 +362,13 @@ void TattooJournal::handleButtons() {
 						drawFrame();
 						drawJournal(0, 0);
 						notFound = true;
-					} else {
-						break;
 					}
 
 					highlightJournalControls(false);
 					screen.slamArea(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT);
+
+					if (drawResult)
+						break;
 				} else {
 					break;
 				}
@@ -754,6 +755,7 @@ int TattooJournal::getFindName(bool printError) {
 	int cursorX, cursorY;
 	bool blinkFlag = false;
 	int blinkCountdown = 1;
+	enum SearchButtons { SB_CANCEL = 0, SB_BACKWARDS = 1, SB_FORWARDS = 2 };
 
 	Common::Rect r(JOURNAL_BAR_WIDTH, (screen.fontHeight() + 4) * 2 + 9);
 	r.moveTo((SHERLOCK_SCREEN_WIDTH - r.width()) / 2, (SHERLOCK_SCREEN_HEIGHT - r.height()) / 2);
@@ -769,7 +771,8 @@ int TattooJournal::getFindName(bool printError) {
 		r.right - 3, cursorY + screen.fontHeight()));
 
 	if (printError) {
-		screen.gPrint(Common::Point(0, cursorY), INFO_TOP, "%s", FIXED(TextNotFound));
+		screen.gPrint(Common::Point(r.left + (r.width() - screen.stringWidth(FIXED(TextNotFound))) / 2, cursorY),
+			INFO_TOP, "%s", FIXED(TextNotFound));
 	} else {
 		// If there was a name already entered, copy it to name and display it
 		if (!_find.empty()) {
@@ -905,13 +908,13 @@ int TattooJournal::getFindName(bool printError) {
 
 		if (events._released || events._rightReleased) {
 			switch (_selector) {
-			case JH_CLOSE:
+			case SB_CANCEL:
 				done = -1;
 				break;
-			case JH_SEARCH:
+			case SB_BACKWARDS:
 				done = 2;
 				break;
-			case JH_PRINT:
+			case SB_FORWARDS:
 				done = 1;
 				break;
 			default:
@@ -921,6 +924,7 @@ int TattooJournal::getFindName(bool printError) {
 	} while (!done);
 
 	if (done != -1) {
+		// Forwards or backwards search, so save the entered name
 		_find = name;
 		result = done;
 	} else {
