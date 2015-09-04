@@ -279,12 +279,11 @@ void ResourceProvider::setAprilInitialPosition() {
 	if (!_nextPositionBookmarkReference.empty()) {
 		Resources::Bookmark *position = _nextPositionBookmarkReference.resolve<Resources::Bookmark>();
 		april->placeOnBookmark(position);
-	} else {
+		april->setDirection(_nextDirection);
+	} else if (april->getFloorFaceIndex() <= 0) {
 		// No target location provided, place April on the first floor face
 		april->placeDefaultPosition();
 	}
-
-	april->setDirection(_nextDirection);
 
 	_nextPositionBookmarkReference = ResourceReference();
 	_nextDirection = 0;
