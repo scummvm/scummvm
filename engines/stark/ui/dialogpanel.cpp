@@ -153,4 +153,16 @@ void DialogPanel::onClick(const Common::Point &pos) {
 	}
 }
 
+void DialogPanel::reset() {
+	if (_currentSpeech) {
+		_currentSpeech->stop();
+		_currentSpeech = nullptr;
+	}
+
+	delete _subtitleVisual;
+	_subtitleVisual = nullptr;
+
+	StarkDialogPlayer->reset();
+}
+
 } // End of namespace Stark

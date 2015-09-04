@@ -93,6 +93,8 @@ public:
 	/** Set the selected inventory item */
 	void selectInventoryItem(int16 itemIndex);
 
+	/** Clears all the pointers to data that may be location dependent */
+	void clearLocationDependentState();
 private:
 	typedef void (Window::*WindowHandler)();
 	void dispatchEvent(WindowHandler handler);

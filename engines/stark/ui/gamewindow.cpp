@@ -210,4 +210,11 @@ void GameWindow::checkObjectAtPos(Common::Point pos, int16 selectedInventoryItem
 	}
 }
 
+void GameWindow::reset() {
+	_renderEntries.clear();
+	_objectUnderCursor = nullptr;
+	_objectRelativePosition.x = 0;
+	_objectRelativePosition.y = 0;
+}
+
 } // End of namespace Stark

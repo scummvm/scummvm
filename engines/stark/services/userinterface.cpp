@@ -189,5 +189,11 @@ void UserInterface::setInteractive(bool interactive) {
 	_interactive = interactive;
 }
 
+void UserInterface::clearLocationDependentState() {
+	_dialogPanel->reset();
+	_gameWindow->reset();
+	_inventoryWindow->reset();
+}
+
 } // End of namespace Stark
 

@@ -32,9 +32,12 @@
 #include "engines/stark/resources/location.h"
 #include "engines/stark/resources/root.h"
 #include "engines/stark/resources/script.h"
+
+#include "engines/stark/services/services.h"
 #include "engines/stark/services/archiveloader.h"
 #include "engines/stark/services/global.h"
 #include "engines/stark/services/stateprovider.h"
+#include "engines/stark/services/userinterface.h"
 
 namespace Stark {
 
@@ -209,6 +212,9 @@ void ResourceProvider::performLocationChange() {
 		previous->getLevel()->onExitLocation();
 		_global->getLevel()->onExitLocation();
 	}
+
+	// Clear all pointers to location objects in the UI instances
+	StarkUserInterface->clearLocationDependentState();
 
 	// Set the new current location
 	_global->setCurrent(current);

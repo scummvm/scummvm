@@ -46,6 +46,9 @@ public:
 	DialogPanel(Gfx::Driver *gfx, Cursor *cursor);
 	virtual ~DialogPanel();
 
+	/** Abort the currently playing dialog */
+	void reset();
+
 protected:
 	void onMouseMove(const Common::Point &pos) override;
 	void onClick(const Common::Point &pos) override;

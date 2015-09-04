@@ -195,4 +195,8 @@ void InventoryWindow::onRightClick(const Common::Point &pos) {
 	}
 }
 
+void InventoryWindow::reset() {
+	_renderEntries.clear();
+}
+
 } // End of namespace Stark

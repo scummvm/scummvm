@@ -85,6 +85,9 @@ public:
 	/** Resume the dialog after it was interrupted to run a script */
 	void resume(Resources::Dialog *dialog);
 
+	/** Clear the currently running dialog */
+	void reset();
+
 protected:
 	/** Build a list of available dialog options */
 	void buildOptions();
@@ -94,9 +97,6 @@ protected:
 
 	/** Initiate the next action after the end of a reply */
 	void onReplyEnd();
-
-	/** Clear the currently running dialog */
-	void reset();
 
 	void saveToInterruptionSlot();
 	void restoreFromInterruptionSlot();

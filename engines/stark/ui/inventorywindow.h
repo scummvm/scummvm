@@ -50,6 +50,9 @@ public:
 	void setSelectedInventoryItem(int16 selectedInventoryItem);
 	int16 getSelectedInventoryItem() const;
 
+	/** Clear the location dependent state */
+	void reset();
+
 protected:
 	void onMouseMove(const Common::Point &pos) override;
 	void onClick(const Common::Point &pos) override;
