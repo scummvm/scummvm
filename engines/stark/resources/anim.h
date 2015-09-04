@@ -142,6 +142,7 @@ public:
 	// Resource API
 	void readData(Formats::XRCReadStream *stream) override;
 	void onAllLoaded() override;
+	void saveLoad(ResourceSerializer *serializer) override;
 
 	// Anim API
 	void selectFrame(uint32 frameIndex) override;

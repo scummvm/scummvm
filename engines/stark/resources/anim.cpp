@@ -30,9 +30,12 @@
 #include "engines/stark/resources/image.h"
 #include "engines/stark/resources/item.h"
 #include "engines/stark/resources/textureset.h"
+
 #include "engines/stark/services/archiveloader.h"
 #include "engines/stark/services/global.h"
 #include "engines/stark/services/services.h"
+#include "engines/stark/services/stateprovider.h"
+
 #include "engines/stark/model/skeleton_anim.h"
 #include "engines/stark/visual/actor.h"
 #include "engines/stark/visual/smacker.h"
@@ -168,6 +171,16 @@ int AnimImages::getPointHotspotIndex(const Common::Point &point) const {
 		return _currentFrameImage->indexForPoint(point);
 	}
 	return -1;
+}
+
+void AnimImages::saveLoad(ResourceSerializer *serializer) {
+	Anim::saveLoad(serializer);
+
+	serializer->syncAsUint32LE(_currentFrame);
+
+	if (serializer->isLoading()) {
+		selectFrame(_currentFrame);
+	}
 }
 
 AnimSub2::~AnimSub2() {

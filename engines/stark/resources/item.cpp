@@ -198,10 +198,20 @@ void ItemVisual::onAllLoaded() {
 void ItemVisual::saveLoad(ResourceSerializer *serializer) {
 	Item::saveLoad(serializer);
 
-	serializer->syncAsResourceReference(&_animHierarchy);
+	serializer->syncAsSint32LE(_currentAnimKind);
 
+	serializer->syncAsResourceReference(&_animHierarchy);
 	if (serializer->isLoading() && _animHierarchy) {
 		setAnimHierarchy(_animHierarchy);
+	}
+
+	serializer->syncAsResourceReference(&_actionAnim);
+	if (serializer->isLoading()) {
+		if (_actionAnim) {
+			_actionAnim->applyToItem(this);
+		} else {
+			setAnimKind(_currentAnimKind);
+		}
 	}
 }
 
@@ -790,6 +800,15 @@ void ModelItem::onEnterLocation() {
 	}
 
 	setAnimKind(Anim::kActorUsageIdle);
+}
+
+void ModelItem::onExitLocation() {
+	FloorPositionedItem::onExitLocation();
+
+	resetActionAnim();
+	if (_animHierarchy) {
+		_animHierarchy->unselectItemAnim(this);
+	}
 }
 
 void ModelItem::setBonesMesh(int32 index) {

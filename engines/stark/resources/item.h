@@ -387,6 +387,7 @@ public:
 	void readData(Formats::XRCReadStream *stream) override;
 	void onAllLoaded() override;
 	void onEnterLocation() override;
+	void onExitLocation() override;
 
 	// Item API
 	Gfx::RenderEntry *getRenderEntry(const Common::Point &positionOffset) override;

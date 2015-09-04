@@ -57,6 +57,7 @@ public:
 	// Resource API
 	void onAllLoaded() override;
 	void onGameLoop() override;
+	void saveLoad(ResourceSerializer *serializer) override;
 
 	/** Go to a script item. Cancel any delay so that it is shown immediately. */
 	void goToScriptItem(AnimScriptItem *item);

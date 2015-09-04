@@ -27,8 +27,10 @@
 
 #include "engines/stark/formats/xrc.h"
 #include "engines/stark/resources/anim.h"
+
 #include "engines/stark/services/global.h"
 #include "engines/stark/services/services.h"
+#include "engines/stark/services/stateprovider.h"
 
 namespace Stark {
 namespace Resources {
@@ -168,6 +170,14 @@ int32 AnimScript::findItemIndex(AnimScriptItem *item) {
 	}
 
 	return 0;
+}
+
+void AnimScript::saveLoad(ResourceSerializer *serializer) {
+	serializer->syncAsSint32LE(_nextItemIndex);
+
+	if (serializer->isLoading()) {
+		_msecsToNextUpdate = 0;
+	}
 }
 
 AnimScriptItem::~AnimScriptItem() {
