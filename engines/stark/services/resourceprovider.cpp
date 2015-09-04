@@ -163,8 +163,8 @@ void ResourceProvider::requestLocationChange(uint16 level, uint16 location) {
 
 	// If we just loaded a resource tree, restore its state
 	if (newlyLoaded) {
-		_stateProvider->restoreLevelState(currentLocation->getLevel());
 		currentLocation->getLevel()->onAllLoaded();
+		_stateProvider->restoreLevelState(currentLocation->getLevel());
 	}
 
 	// Retrieve the location archive name
@@ -187,8 +187,8 @@ void ResourceProvider::requestLocationChange(uint16 level, uint16 location) {
 
 	// If we just loaded a resource tree, restore its state
 	if (newlyLoaded) {
-		_stateProvider->restoreLocationState(currentLocation->getLevel(), currentLocation->getLocation());
 		currentLocation->getLocation()->onAllLoaded();
+		_stateProvider->restoreLocationState(currentLocation->getLevel(), currentLocation->getLocation());
 	}
 
 	_locationChangeRequest = true;
