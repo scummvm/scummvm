@@ -337,6 +337,14 @@ AnimSkeleton::AnimSkeleton(Object *parent, byte subType, uint16 index, const Com
 void AnimSkeleton::applyToItem(Item *item) {
 	Anim::applyToItem(item);
 
+	if (!_loop) {
+		_currentTime = 0;
+	}
+
+	if (_currentTime < 0 || _currentTime  > _totalTime) {
+		_currentTime = 0;
+	}
+
 	ModelItem *modelItem = Object::cast<ModelItem>(item);
 
 	BonesMesh *mesh = modelItem->findBonesMesh();
@@ -345,14 +353,7 @@ void AnimSkeleton::applyToItem(Item *item) {
 	_visual->setModel(mesh->getModel());
 	_visual->setTexture(texture->getTexture());
 	_visual->setAnim(_seletonAnim);
-
-	if (!_loop) {
-		_currentTime = 0;
-	}
-
-	if (_currentTime < 0 || _currentTime  > _totalTime) {
-		_currentTime = 0;
-	}
+	_visual->setTime(_currentTime);
 }
 
 void AnimSkeleton::removeFromItem(Item *item) {
