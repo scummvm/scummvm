@@ -148,7 +148,7 @@ Command *Command::execute(uint32 callMode, Script *script) {
 	case kChangeSound:
 		return opChangeSound(_arguments[1].referenceValue, _arguments[2].intValue, _arguments[3].intValue, _arguments[4].intValue, _arguments[5].intValue);
 	case kItem3DRunTo:
-		return opItem3DRunTo(_arguments[1].referenceValue, _arguments[2].referenceValue, _arguments[3].intValue);
+		return opItem3DRunTo(script, _arguments[1].referenceValue, _arguments[2].referenceValue, _arguments[3].intValue);
 	case kItemPlaceDirection:
 		return opItemPlaceDirection(_arguments[1].referenceValue, _arguments[2].intValue);
 	case kActivateTexture:
@@ -709,14 +709,24 @@ Command *Command::opChangeSound(const ResourceReference &soundRef, int32 unknown
 	return nextCommand();
 }
 
-Command *Command::opItem3DRunTo(const ResourceReference &itemRef, const ResourceReference &bookmarkRef, int32 unknown) {
-	assert(_arguments.size() == 4);
-	Object *itemObj = itemRef.resolve<Object>();
-	Object *bookmarkObj = bookmarkRef.resolve<Object>();
+Command *Command::opItem3DRunTo(Script *script, const ResourceReference &itemRef, const ResourceReference &targetRef, int32 suspend) {
+	FloorPositionedItem *item = itemRef.resolve<FloorPositionedItem>();
+	Math::Vector3d targetPosition = getObjectPosition(targetRef);
 
-	warning("(TODO: Implement) opItem3DRunTo(%s, %s, %d) %s : %s", itemObj->getName().c_str(), bookmarkObj->getName().c_str(),unknown, itemRef.describe().c_str(), bookmarkRef.describe().c_str());
+	Walk *walk = new Walk(item);
+	walk->setDestination(targetPosition);
+	walk->setRunning();
+	walk->start();
 
-	return nextCommand();
+	item->setMovement(walk);
+
+	if (suspend) {
+		script->suspend(item);
+		item->setMovementSuspendedScript(script);
+		return this; // Stay on the same command while suspended
+	} else {
+		return nextCommand();
+	}
 }
 
 Command *Command::opItemPlaceDirection(const ResourceReference &itemRef, int32 direction) {
