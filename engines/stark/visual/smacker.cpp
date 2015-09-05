@@ -63,7 +63,7 @@ void VisualSmacker::load(Common::SeekableReadStream *stream) {
 
 void VisualSmacker::render(const Common::Point &position) {
 	// The position argument contains the scroll offset
-	_gfx->drawSurface(_texture, _position );
+	_gfx->drawSurface(_texture, _position - position);
 }
 
 void VisualSmacker::update() {

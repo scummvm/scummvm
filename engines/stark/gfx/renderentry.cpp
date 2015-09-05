@@ -108,7 +108,7 @@ bool RenderEntry::containsPoint(const Common::Point &position, Common::Point &re
 	VisualSmacker *smacker = _visual->get<VisualSmacker>();
 	if (smacker) {
 		Common::Point smackerPosition = smacker->getPosition();
-		smackerPosition += _position;
+		smackerPosition -= _position;
 
 		Common::Rect smackerRect = Common::Rect(smacker->getWidth(), smacker->getHeight());
 		smackerRect.translate(smackerPosition.x, smackerPosition.y);
