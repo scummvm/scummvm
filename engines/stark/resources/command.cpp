@@ -121,6 +121,8 @@ Command *Command::execute(uint32 callMode, Script *script) {
 		return opKnowledgeSetInteger(_arguments[1].referenceValue, _arguments[2].intValue);
 	case kKnowledgeAddInteger:
 		return opKnowledgeAddInteger(_arguments[1].referenceValue, _arguments[2].intValue);
+	case kKnowledgeSubValue:
+		return opKnowledgeSubValue(_arguments[1].referenceValue, _arguments[2].referenceValue);
 	case kEnableFloorField:
 		return opEnableFloorField(_arguments[1].referenceValue, _arguments[2].intValue);
 	case kPlayAnimScriptItem:
@@ -561,6 +563,18 @@ Command *Command::opKnowledgeAddInteger(const ResourceReference &knowledgeRef, i
 
 	int32 oldValue = knowledge->getIntegerValue();
 	knowledge->setIntegerValue(oldValue + increment);
+
+	return nextCommand();
+}
+
+Command *Command::opKnowledgeSubValue(const ResourceReference &knowledgeRef, const ResourceReference &valueRef) {
+	Knowledge *knowledge = knowledgeRef.resolve<Knowledge>();
+	Knowledge *operand = valueRef.resolve<Knowledge>();
+
+	int32 oldValue = knowledge->getIntegerValue();
+	int32 decrement = operand->getIntegerValue();
+
+	knowledge->setIntegerValue(oldValue - decrement);
 
 	return nextCommand();
 }

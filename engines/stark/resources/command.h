@@ -100,6 +100,7 @@ public:
 
 		kSoundPlay = 112,
 
+		kKnowledgeSubValue = 117,
 		kItemLookDirection = 118,
 
 		kStopPlayingSound = 119,
@@ -203,6 +204,7 @@ protected:
 	Command *opKnowledgeSetBoolean(const ResourceReference &knowledgeRef, int32 enable);
 	Command *opKnowledgeSetInteger(const ResourceReference &knowledgeRef, int32 value);
 	Command *opKnowledgeAddInteger(const ResourceReference &knowledgeRef, int32 increment);
+	Command *opKnowledgeSubValue(const ResourceReference &knowledgeRef, const ResourceReference &valueRef);
 	Command *opEnableFloorField(const ResourceReference &floorFieldRef, int32 value);
 	Command *opPlayAnimScriptItem(Script *script, const ResourceReference &animScriptItemRef, int32 suspend);
 	Command *opKnowledgeAssignBool(const ResourceReference &knowledgeRef1, const ResourceReference &knowledgeRef2);
