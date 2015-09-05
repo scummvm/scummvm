@@ -108,7 +108,7 @@ public:
 		kScrollSet = 122,
 		kPlayFullMotionVideo = 123,
 
-	    kKnowledgeAssignNegatedBool = 126,
+		kKnowledgeAssignNegatedBool = 126,
 		kEnableDiaryEntry = 127,
 		kPATChangeTooltip = 128,
 
@@ -127,21 +127,21 @@ public:
 		kIsItemEnabled = 163,
 
 		kIsScriptEnabled = 165,
-		kIsSet = 166,
+		kIsKnowledgeBooleanSet = 166,
 
-		kIsIntegerInRange = 170,
-		kIsIntegerAbove = 171,
-		kIsIntegerEqual = 172,
-		kIsIntegerLower = 173,
+		kIsKnowledgeIntegerInRange = 170,
+		kIsKnowledgeIntegerAbove = 171,
+		kIsKnowledgeIntegerEqual = 172,
+		kIsKnowledgeIntegerLower = 173,
 		kIsScriptActive = 174,
 		kIsRandom = 175,
 
-		kIsOnPlace = 177,
+		kIsItemOnPlace = 177,
 
 		kIsAnimPlaying = 179,
 		kIsItemActivity = 180,
 
-		kIsOnNearPlace = 183,
+		kIsItemNearPlace = 183,
 
 		kIsAnimAtTime = 185
 	};
@@ -225,15 +225,15 @@ protected:
 	Command *opIsOnFloorField(const ResourceReference &itemRef, const ResourceReference &floorFieldRef);
 	Command *opIsItemEnabled(const ResourceReference &itemRef);
 	Command *opIsScriptEnabled(const ResourceReference &scriptRef);
-	Command *opIsSet(const ResourceReference &knowledgeRef);
-	Command *opIsIntegerInRange(const ResourceReference &knowledgeRef, int32 min, int32 max);
-	Command *opIsIntegerAbove(const ResourceReference &knowledgeRef, int32 value);
-	Command *opIsIntegerEqual(const ResourceReference &knowledgeRef, int32 value);
-	Command *opIsIntegerLower(const ResourceReference &knowledgeRef, int32 value);
+	Command *opIsKnowledgeBooleanSet(const ResourceReference &knowledgeRef);
+	Command *opIsKnowledgeIntegerInRange(const ResourceReference &knowledgeRef, int32 min, int32 max);
+	Command *opIsKnowledgeIntegerAbove(const ResourceReference &knowledgeRef, int32 value);
+	Command *opIsKnowledgeIntegerEqual(const ResourceReference &knowledgeRef, int32 value);
+	Command *opIsKnowledgeIntegerLower(const ResourceReference &knowledgeRef, int32 value);
 	Command *opIsScriptActive(const ResourceReference &scriptRef);
 	Command *opIsRandom(int32 chance);
-	Command *opIsOnNearPlace(const ResourceReference &itemRef, const ResourceReference &positionRef, int32 testDistance);
-	Command *opIsOnPlace(const ResourceReference &itemRef, const ResourceReference &positionRef);
+	Command *opIsItemNearPlace(const ResourceReference &itemRef, const ResourceReference &positionRef, int32 testDistance);
+	Command *opIsItemOnPlace(const ResourceReference &itemRef, const ResourceReference &positionRef);
 	Command *opIsAnimPlaying(const ResourceReference &animRef);
 	Command *opIsItemActivity(const ResourceReference &itemRef, int32 value);
 	Command *opIsAnimAtTime(const ResourceReference &animRef, int32 time);

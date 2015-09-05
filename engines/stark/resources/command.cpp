@@ -165,24 +165,24 @@ Command *Command::execute(uint32 callMode, Script *script) {
 		return opIsItemEnabled(_arguments[2].referenceValue);
 	case kIsScriptEnabled:
 		return opIsScriptEnabled(_arguments[2].referenceValue);
-	case kIsSet:
-		return opIsSet(_arguments[2].referenceValue);
-	case kIsIntegerInRange:
-		return opIsIntegerInRange(_arguments[2].referenceValue, _arguments[3].intValue, _arguments[4].intValue);
-	case kIsIntegerAbove:
-		return opIsIntegerAbove(_arguments[2].referenceValue, _arguments[3].intValue);
-	case kIsIntegerEqual:
-		return opIsIntegerEqual(_arguments[2].referenceValue, _arguments[3].intValue);
-	case kIsIntegerLower:
-		return opIsIntegerLower(_arguments[2].referenceValue, _arguments[3].intValue);
+	case kIsKnowledgeBooleanSet:
+		return opIsKnowledgeBooleanSet(_arguments[2].referenceValue);
+	case kIsKnowledgeIntegerInRange:
+		return opIsKnowledgeIntegerInRange(_arguments[2].referenceValue, _arguments[3].intValue, _arguments[4].intValue);
+	case kIsKnowledgeIntegerAbove:
+		return opIsKnowledgeIntegerAbove(_arguments[2].referenceValue, _arguments[3].intValue);
+	case kIsKnowledgeIntegerEqual:
+		return opIsKnowledgeIntegerEqual(_arguments[2].referenceValue, _arguments[3].intValue);
+	case kIsKnowledgeIntegerLower:
+		return opIsKnowledgeIntegerLower(_arguments[2].referenceValue, _arguments[3].intValue);
 	case kIsScriptActive:
 		return opIsScriptActive(_arguments[2].referenceValue);
 	case kIsRandom:
 		return opIsRandom(_arguments[2].intValue);
-	case kIsOnPlace:
-		return opIsOnPlace(_arguments[2].referenceValue, _arguments[3].referenceValue);
-	case kIsOnNearPlace:
-		return opIsOnNearPlace(_arguments[2].referenceValue, _arguments[3].referenceValue, _arguments[4].intValue);
+	case kIsItemOnPlace:
+		return opIsItemOnPlace(_arguments[2].referenceValue, _arguments[3].referenceValue);
+	case kIsItemNearPlace:
+		return opIsItemNearPlace(_arguments[2].referenceValue, _arguments[3].referenceValue, _arguments[4].intValue);
 	case kIsAnimPlaying:
 		return opIsAnimPlaying(_arguments[2].referenceValue);
 	case kIsItemActivity:
@@ -815,32 +815,32 @@ Command *Command::opIsScriptEnabled(const ResourceReference &scriptRef) {
 	return nextCommandIf(script->isEnabled());
 }
 
-Command *Command::opIsSet(const ResourceReference &knowledgeRef) {
+Command *Command::opIsKnowledgeBooleanSet(const ResourceReference &knowledgeRef) {
 	Knowledge *value = knowledgeRef.resolve<Knowledge>();
 
 	return nextCommandIf(value->getBooleanValue());
 }
 
-Command *Command::opIsIntegerInRange(const ResourceReference &knowledgeRef, int32 min, int32 max) {
+Command *Command::opIsKnowledgeIntegerInRange(const ResourceReference &knowledgeRef, int32 min, int32 max) {
 	Knowledge *knowledgeValue = knowledgeRef.resolve<Knowledge>();
 	int value = knowledgeValue->getIntegerValue();
 
 	return nextCommandIf(value >= min && value <= max);
 }
 
-Command *Command::opIsIntegerAbove(const ResourceReference &knowledgeRef, int32 value) {
+Command *Command::opIsKnowledgeIntegerAbove(const ResourceReference &knowledgeRef, int32 value) {
 	Knowledge *knowledgeValue = knowledgeRef.resolve<Knowledge>();
 
 	return nextCommandIf(knowledgeValue->getIntegerValue() > value);
 }
 
-Command *Command::opIsIntegerEqual(const ResourceReference &knowledgeRef, int32 value) {
+Command *Command::opIsKnowledgeIntegerEqual(const ResourceReference &knowledgeRef, int32 value) {
 	Knowledge *knowledgeValue = knowledgeRef.resolve<Knowledge>();
 
 	return nextCommandIf(knowledgeValue->getIntegerValue() == value);
 }
 
-Command *Command::opIsIntegerLower(const ResourceReference &knowledgeRef, int32 value) {
+Command *Command::opIsKnowledgeIntegerLower(const ResourceReference &knowledgeRef, int32 value) {
 	Knowledge *knowledgeValue = knowledgeRef.resolve<Knowledge>();
 
 	return nextCommandIf(knowledgeValue->getIntegerValue() < value);
@@ -858,7 +858,7 @@ Command *Command::opIsRandom(int32 chance) {
 	return nextCommandIf(value < chance);
 }
 
-Command *Command::opIsOnPlace(const ResourceReference &itemRef, const ResourceReference &positionRef) {
+Command *Command::opIsItemOnPlace(const ResourceReference &itemRef, const ResourceReference &positionRef) {
 	FloorPositionedItem *item = itemRef.resolve<FloorPositionedItem>();
 
 	Math::Vector3d itemPostion = item->getPosition3D();
@@ -867,7 +867,7 @@ Command *Command::opIsOnPlace(const ResourceReference &itemRef, const ResourceRe
 	return nextCommandIf(itemPostion == testPosition);
 }
 
-Command *Command::opIsOnNearPlace(const ResourceReference &itemRef, const ResourceReference &positionRef, int32 testDistance) {
+Command *Command::opIsItemNearPlace(const ResourceReference &itemRef, const ResourceReference &positionRef, int32 testDistance) {
 	FloorPositionedItem *item = itemRef.resolve<FloorPositionedItem>();
 
 	Math::Vector3d itemPostion = item->getPosition3D();
