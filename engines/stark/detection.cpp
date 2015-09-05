@@ -215,7 +215,8 @@ public:
 
 	virtual bool hasFeature(MetaEngineFeature f) const {
 		return
-			(f == kSupportsListSaves);
+			(f == kSupportsListSaves) ||
+			(f == kSupportsLoadingDuringStartup);
 	}
 
 	int getMaximumSaveSlot() const {
