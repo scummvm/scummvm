@@ -88,9 +88,10 @@ public:
 		kPlayAnimation = 93,
 		kScriptEnable = 94,
 		kShowPlay = 95,
-		kSetBoolean = 96,
+		kKnowledgeSetBoolean = 96,
 
-		kSetInteger = 100,
+		kKnowledgeSetInteger = 100,
+		kKnowledgeAddInteger = 101,
 
 		kEnableFloorField = 103,
 		kPlayAnimScriptItem = 104,
@@ -199,8 +200,9 @@ protected:
 	Command *opPlayAnimation(Script *script, const ResourceReference &animRef, bool suspend);
 	Command *opScriptEnable(const ResourceReference &scriptRef, int32 enable);
 	Command *opShowPlay(Script *script, const ResourceReference &ref, int32 suspend);
-	Command *opSetBoolean(const ResourceReference &knowledgeRef, int32 enable);
-	Command *opSetInteger(const ResourceReference &knowledgeRef, int32 value);
+	Command *opKnowledgeSetBoolean(const ResourceReference &knowledgeRef, int32 enable);
+	Command *opKnowledgeSetInteger(const ResourceReference &knowledgeRef, int32 value);
+	Command *opKnowledgeAddInteger(const ResourceReference &knowledgeRef, int32 increment);
 	Command *opEnableFloorField(const ResourceReference &floorFieldRef, int32 value);
 	Command *opPlayAnimScriptItem(Script *script, const ResourceReference &animScriptItemRef, int32 suspend);
 	Command *opKnowledgeAssignBool(const ResourceReference &knowledgeRef1, const ResourceReference &knowledgeRef2);

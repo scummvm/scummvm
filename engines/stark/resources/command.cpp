@@ -115,10 +115,12 @@ Command *Command::execute(uint32 callMode, Script *script) {
 		return opShowPlay(script, _arguments[1].referenceValue, _arguments[2].intValue);
 	case kScriptEnable:
 		return opScriptEnable(_arguments[1].referenceValue, _arguments[2].intValue);
-	case kSetBoolean:
-		return opSetBoolean(_arguments[1].referenceValue, _arguments[2].intValue);
-	case kSetInteger:
-		return opSetInteger(_arguments[1].referenceValue, _arguments[2].intValue);
+	case kKnowledgeSetBoolean:
+		return opKnowledgeSetBoolean(_arguments[1].referenceValue, _arguments[2].intValue);
+	case kKnowledgeSetInteger:
+		return opKnowledgeSetInteger(_arguments[1].referenceValue, _arguments[2].intValue);
+	case kKnowledgeAddInteger:
+		return opKnowledgeAddInteger(_arguments[1].referenceValue, _arguments[2].intValue);
 	case kEnableFloorField:
 		return opEnableFloorField(_arguments[1].referenceValue, _arguments[2].intValue);
 	case kPlayAnimScriptItem:
@@ -523,7 +525,7 @@ Command *Command::opShowPlay(Script *script, const ResourceReference &ref, int32
 	}
 }
 
-Command *Command::opSetBoolean(const ResourceReference &knowledgeRef, int32 enable) {
+Command *Command::opKnowledgeSetBoolean(const ResourceReference &knowledgeRef, int32 enable) {
 	Knowledge *boolean = knowledgeRef.resolve<Knowledge>();
 
 	bool previousState = boolean->getBooleanValue();
@@ -546,10 +548,19 @@ Command *Command::opSetBoolean(const ResourceReference &knowledgeRef, int32 enab
 	return nextCommand();
 }
 
-Command *Command::opSetInteger(const ResourceReference &knowledgeRef, int32 value) {
-	Knowledge *integer = knowledgeRef.resolve<Knowledge>();
+Command *Command::opKnowledgeSetInteger(const ResourceReference &knowledgeRef, int32 value) {
+	Knowledge *knowledge = knowledgeRef.resolve<Knowledge>();
 
-	integer->setIntegerValue(value);
+	knowledge->setIntegerValue(value);
+
+	return nextCommand();
+}
+
+Command *Command::opKnowledgeAddInteger(const ResourceReference &knowledgeRef, int32 increment) {
+	Knowledge *knowledge = knowledgeRef.resolve<Knowledge>();
+
+	int32 oldValue = knowledge->getIntegerValue();
+	knowledge->setIntegerValue(oldValue + increment);
 
 	return nextCommand();
 }
