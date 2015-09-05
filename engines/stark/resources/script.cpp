@@ -102,7 +102,7 @@ bool Script::isOnEnd() {
 }
 
 Command *Script::getBeginCommand() {
-	return findChildWithSubtype<Command>(Command::kCommandBegin);
+	return findChildWithSubtype<Command>(Command::kCommandBegin, false);
 }
 
 bool Script::isEnabled() {
