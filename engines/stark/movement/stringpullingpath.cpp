@@ -47,7 +47,7 @@ Math::Vector3d StringPullingPath::computeWalkTarget(const Math::Vector3d &fromPo
 	// HACK: Sometimes the character gets stuck because of rounding errors
 	// If we detect the character is stuck on a step, just make it go to the next one.
 	// TODO: Improve the string pulling code so that the targets can also be points between two steps.
-	if (fromPosition.getDistanceTo(_steps[_targetStep]) < 1.0 && _targetStep < _steps.size()) {
+	if (fromPosition.getDistanceTo(_steps[_targetStep]) < 1.0 && _targetStep < _steps.size() - 1) {
 		_targetStep++;
 	}
 

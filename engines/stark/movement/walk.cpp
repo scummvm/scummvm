@@ -122,6 +122,11 @@ void Walk::onGameLoop() {
 		rot.transformVector(&direction);
 	}
 
+	// Some scripts expect the character position to be the exact destination
+	if (newPosition == _destination) {
+		stop();
+	}
+
 	// Update the new position's height according to the floor
 	int32 newFloorFaceIndex = floor->findFaceContainingPoint(newPosition);
 	if (newFloorFaceIndex >= 0) {
@@ -134,11 +139,6 @@ void Walk::onGameLoop() {
 	_item->setPosition3D(newPosition);
 	_item->setDirection(computeAngleBetweenVectorsXYPlane(direction, Math::Vector3d(1.0, 0.0, 0.0)));
 	_item->setFloorFaceIndex(newFloorFaceIndex);
-
-	// Check if we are close enough to the destination to stop
-	if (newPosition.getDistanceTo(_destination) < distancePerGameloop) {
-		stop();
-	}
 
 	changeItemAnim();
 }

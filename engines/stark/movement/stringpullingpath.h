@@ -48,7 +48,7 @@ public:
 
 private:
 	Common::Array<Math::Vector3d> _steps;
-	int32 _targetStep;
+	uint32 _targetStep;
 };
 
 } // End of namespace Stark
