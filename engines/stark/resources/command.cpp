@@ -259,7 +259,7 @@ Command *Command::opWalkTo(Script *script, const ResourceReference &objectRef, i
 	Math::Vector3d currentPosition = april->getPosition3D();
 
 	if (destinationPosition == currentPosition) {
-		return nextCommandIf(true);
+		return nextCommand();
 	}
 
 	Walk *walk = new Walk(april);
@@ -273,7 +273,7 @@ Command *Command::opWalkTo(Script *script, const ResourceReference &objectRef, i
 		april->setMovementSuspendedScript(script);
 		return this; // Stay on the same command while suspended
 	} else {
-		return nextCommandIf(false);
+		return nextCommand();
 	}
 }
 
