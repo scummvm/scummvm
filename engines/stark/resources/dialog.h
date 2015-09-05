@@ -139,6 +139,7 @@ public:
 
 	// Resource API
 	void readData(Formats::XRCReadStream *stream) override;
+	void saveLoad(ResourceSerializer *serializer) override;
 
 	/** List the currently available topics for this Dialog */
 	TopicArray listAvailableTopics();

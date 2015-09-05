@@ -31,6 +31,7 @@
 
 #include "engines/stark/services/global.h"
 #include "engines/stark/services/services.h"
+#include "engines/stark/services/stateprovider.h"
 
 namespace Stark {
 namespace Resources {
@@ -81,6 +82,12 @@ void Dialog::readData(Formats::XRCReadStream *stream) {
 		}
 
 		_topics.push_back(topic);
+	}
+}
+
+void Dialog::saveLoad(ResourceSerializer *serializer) {
+	for (uint i = 0; i < _topics.size(); i++) {
+		serializer->syncAsSint32LE(_topics[i]._currentReplyIndex);
 	}
 }
 
