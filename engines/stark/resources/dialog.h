@@ -66,9 +66,9 @@ public:
 		enum ConditionType {
 			kConditionTypeAlways              = 0,
 			kConditionTypeNoOtherOptions      = 1,
-			kConditionType3                   = 3,
-			kConditionType4                   = 4,
-			kConditionType5                   = 5,
+			kConditionTypeHasItem             = 3,
+			kConditionTypeCheckValue4         = 4,
+			kConditionTypeCheckValue5         = 5,
 			kConditionTypeRunScriptCheckValue = 6
 		};
 

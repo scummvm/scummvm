@@ -23,6 +23,8 @@
 #include "engines/stark/resources/dialog.h"
 
 #include "engines/stark/formats/xrc.h"
+
+#include "engines/stark/resources/item.h"
 #include "engines/stark/resources/knowledge.h"
 #include "engines/stark/resources/script.h"
 #include "engines/stark/resources/speech.h"
@@ -256,6 +258,15 @@ bool Dialog::Reply::checkCondition() const {
 			return true;
 		case kConditionTypeNoOtherOptions:
 			return true; // Will be removed from to the options later if some other options are available
+		case kConditionTypeHasItem: {
+			Item *item = _conditionReference.resolve<Item>();
+			return item->isEnabled();
+		}
+		case kConditionTypeCheckValue4:
+		case kConditionTypeCheckValue5: {
+			Knowledge *condition = _conditionReference.resolve<Knowledge>();
+			return condition->getBooleanValue();
+		}
 		case kConditionTypeRunScriptCheckValue: {
 			Script *conditionScript = _conditionScriptReference.resolve<Script>();
 			conditionScript->execute(Resources::Script::kCallModeDialogAnswer);
