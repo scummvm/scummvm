@@ -164,6 +164,18 @@ class AnimSub2 : public Anim {
 public:
 	AnimSub2(Object *parent, byte subType, uint16 index, const Common::String &name);
 	virtual ~AnimSub2();
+
+	// Resource API
+	void readData(Formats::XRCReadStream *stream) override;
+
+protected:
+	void printData() override;
+
+	Common::String _field_3C;
+	Common::Array<Common::String> _meshFilenames;
+	Common::String _textureFilename;
+	uint32 _field_5C;
+	Common::String _archiveName;
 };
 
 /**

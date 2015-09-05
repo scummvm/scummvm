@@ -190,6 +190,34 @@ AnimSub2::AnimSub2(Object *parent, byte subType, uint16 index, const Common::Str
 				Anim(parent, subType, index, name) {
 }
 
+void AnimSub2::readData(Formats::XRCReadStream *stream) {
+	Anim::readData(stream);
+
+	_field_3C = stream->readString();
+
+	uint32 meshCount = stream->readUint32LE();
+	for (uint i = 0; i < meshCount; i++) {
+		_meshFilenames.push_back(stream->readString());
+	}
+
+	_textureFilename = stream->readString();
+	_field_5C = stream->readUint32LE();
+	_archiveName = stream->getArchiveName();
+}
+
+void AnimSub2::printData() {
+	Anim::printData();
+
+	debug("field_3C: %s", _field_3C.c_str());
+
+	Common::String description;
+	for (uint32 i = 0; i < _meshFilenames.size(); i++) {
+		debug("meshFilename[%d]: %s", i, _meshFilenames[i].c_str());
+	}
+	debug("textureFilename: %s", _textureFilename.c_str());
+	debug("field_5C: %d", _field_5C);
+}
+
 AnimVideo::~AnimVideo() {
 	delete _smacker;
 }
