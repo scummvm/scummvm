@@ -70,11 +70,13 @@ void ResourceProvider::initGlobal() {
 
 	// Set the global tree
 	global = _archiveLoader->useRoot<Resources::Level>(globalArchiveName);
-	_stateProvider->restoreLevelState(global);
 	_global->setLevel(global);
 
 	// Resources lifecycle update
 	global->onAllLoaded();
+
+	// Load the state
+	_stateProvider->restoreLevelState(global);
 
 	_global->setInventory(global->findChildWithSubtype<Resources::KnowledgeSet>(Resources::KnowledgeSet::kInventory));
 	_global->setApril(global->findChildWithSubtype<Resources::GlobalItemTemplate>(Resources::Item::kItemGlobalTemplate));

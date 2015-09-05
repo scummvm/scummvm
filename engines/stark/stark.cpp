@@ -271,6 +271,9 @@ Common::Error StarkEngine::loadGameState(int slot) {
 		return _saveFileMan->getError();
 	}
 
+	// 0. Clear the previous world resources
+	_resourceProvider->shutdown();
+
 	StateReadStream *stream = new StateReadStream(save);
 
 	// 1. Read the header
@@ -296,9 +299,8 @@ Common::Error StarkEngine::loadGameState(int slot) {
 
 	delete stream;
 
-	_resourceProvider->shutdown();
+	// 3. Initialize the world resources with the loaded state
 	_resourceProvider->initGlobal();
-
 	_resourceProvider->requestLocationChange(levelIndex, locationIndex);
 
 	return Common::kNoError;
