@@ -2,14 +2,18 @@
 
 gui/about.cpp
 gui/browser.cpp
+gui/browser_osx.mm
 gui/chooser.cpp
+gui/editrecorddialog.cpp
 gui/error.cpp
 gui/gui-manager.cpp
 gui/KeysDialog.h
 gui/KeysDialog.cpp
 gui/launcher.cpp
 gui/massadd.cpp
+gui/onscreendialog.cpp
 gui/options.cpp
+gui/predictivedialog.cpp
 gui/recorderdialog.cpp
 gui/saveload-dialog.cpp
 gui/themebrowser.cpp
@@ -32,7 +36,7 @@ audio/musicplugin.cpp
 audio/null.h
 audio/null.cpp
 audio/mods/paula.cpp
-audio/softsynth/adlib.cpp
+audio/adlib.cpp
 audio/softsynth/appleiigs.cpp
 audio/softsynth/sid.cpp
 audio/softsynth/mt32.cpp
