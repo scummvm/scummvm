@@ -65,6 +65,7 @@ const int INVENTORY_POINTS[8][3] = {
 };
 
 const char COMMANDS[13] = "LMTPOCIUGJFS";
+const char COMMANDS_3DO[13] = "LMTPOCIUGSFF";
 const char INVENTORY_COMMANDS[9] = { "ELUG-+,." };
 const char *const PRESS_KEY_FOR_MORE = "Press any Key for More.";
 const char *const PRESS_KEY_TO_CONTINUE = "Press any Key to Continue.";
@@ -1268,6 +1269,7 @@ void ScalpelUserInterface::doMainControl() {
 	ScalpelInventory &inv = *(ScalpelInventory *)_vm->_inventory;
 	ScalpelSaveManager &saves = *(ScalpelSaveManager *)_vm->_saves;
 	Common::Point pt = events.mousePos();
+	const char *commands = IS_3DO ? COMMANDS_3DO : COMMANDS;
 
 	if ((events._pressed || events._released) && pt.y > CONTROLS_Y) {
 		events.clearKeyboard();
@@ -1282,7 +1284,7 @@ void ScalpelUserInterface::doMainControl() {
 				r.right += UI_OFFSET_3DO - 1;
 			}
 			if (r.contains(pt))
-				_key = COMMANDS[_temp];
+				_key = commands[_temp];
 		}
 		--_temp;
 	} else if (_keyPress) {
@@ -1290,8 +1292,8 @@ void ScalpelUserInterface::doMainControl() {
 		_keyboardInput = true;
 
 		if (_keyPress >= 'A' && _keyPress <= 'Z') {
-			const char *c = strchr(COMMANDS, _keyPress);
-			_temp = !c ? 12 : c - COMMANDS;
+			const char *c = strchr(commands, _keyPress);
+			_temp = !c ? 12 : c - commands;
 		} else {
 			_temp = 12;
 		}
@@ -1393,7 +1395,7 @@ void ScalpelUserInterface::doMainControl() {
 			}
 			break;
 		case 'S':
-			pushButton(11);
+			pushButton(IS_3DO ? 9 : 11);
 			_menuMode = SETUP_MODE;
 			Settings::show(_vm);
 			break;

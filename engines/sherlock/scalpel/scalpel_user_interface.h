@@ -34,6 +34,7 @@ class Talk;
 namespace Scalpel {
 
 extern const char COMMANDS[13];
+extern const char COMMANDS_3DO[13];
 extern const int MENU_POINTS[12][4];
 
 extern const int INVENTORY_POINTS[8][3];
