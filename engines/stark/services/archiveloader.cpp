@@ -157,7 +157,20 @@ ArchiveReadStream::~ArchiveReadStream() {
 
 Common::String ArchiveReadStream::readString() {
 	// Read the string length
-	uint16 length = readUint32LE();
+	uint32 length = readUint32LE();
+
+	// Read the string
+	char *data = new char[length];
+	read(data, length);
+	Common::String string(data, length);
+	delete[] data;
+
+	return string;
+}
+
+Common::String ArchiveReadStream::readString16() {
+	// Read the string length
+	uint16 length = readUint16LE();
 
 	// Read the string
 	char *data = new char[length];

@@ -22,84 +22,97 @@
 
 #include "engines/stark/formats/tm.h"
 
-#include "common/stream.h"
-#include "common/str.h"
-
 #include "graphics/surface.h"
 
 #include "engines/stark/gfx/driver.h"
 #include "engines/stark/gfx/texture.h"
 
+#include "engines/stark/formats/biff.h"
+
+#include "engines/stark/services/archiveloader.h"
+#include "engines/stark/services/services.h"
+
 namespace Stark {
 namespace Formats {
 
-TextureSetReader::TextureSetReader(Gfx::Driver *driver) :
-		_palette(nullptr),
-		_driver(driver) {
-}
+enum TextureSetType {
+	kTextureSetGroup   = 0x02faf082,
+	kTextureSetTexture = 0x02faf080
+};
 
-TextureSetReader::~TextureSetReader() {
-	delete[] _palette;
-}
+class TextureGroup : public BiffObject {
+public:
+	static const uint32 TYPE = kTextureSetGroup;
 
-Gfx::TextureSet *TextureSetReader::read(Common::ReadStream *stream) {
-	Gfx::TextureSet *textureSet = new Gfx::TextureSet();
-
-	/*uint32 id = */stream->readUint32LE();
-	uint32 format = stream->readUint32LE();
-	/*uint32 u1 = */stream->readUint32LE();
-	/*uint32 u2 = */stream->readUint32LE();
-
-	uint32 len = stream->readUint32LE();
-	for (uint32 i = 0; i < len; ++i) {
-		readChunk(stream, format, textureSet);
+	TextureGroup() :
+			BiffObject(),
+			_palette(nullptr) {
+		_type = TYPE;
 	}
 
-	return textureSet;
-}
-
-void TextureSetReader::readChunk(Common::ReadStream *stream, uint32 format, Gfx::TextureSet *textureSet) {
-	uint32 marker = stream->readUint32LE();
-	if (marker != 0xf0f0f0f0) {
-		error("Wrong magic while reading texture");
-	}
-
-	uint32 type = stream->readUint32LE();
-	/*uint32 u3 = */stream->readUint32LE();
-
-	uint32 size = stream->readUint32LE();
-
-	if (format == 2)
-		/*uint u4 = */stream->readUint32LE();
-
-	if (type == 0x02faf082) {
-		// Palette
+	virtual ~TextureGroup() {
 		delete[] _palette;
+	}
 
+	const byte *getPalette() {
+		return _palette;
+	}
+
+	// BiffObject API
+	void readData(ArchiveReadStream *stream, uint32 dataLength) override {
 		int entries = stream->readUint32LE();
 		_palette = new byte[entries * 3];
+
 		byte *ptr = _palette;
 		for (int i = 0; i < entries; ++i) {
-			*ptr++ = (byte)stream->readUint16LE();
-			*ptr++ = (byte)stream->readUint16LE();
-			*ptr++ = (byte)stream->readUint16LE();
+			*ptr++ = (byte) stream->readUint16LE();
+			*ptr++ = (byte) stream->readUint16LE();
+			*ptr++ = (byte) stream->readUint16LE();
 		}
-	} else if (type == 0x02faf080) {
-		// Img
-		uint16 nameLength = stream->readUint16LE();
-		char *name = new char[nameLength];
-		stream->read(name, nameLength);
-		Common::String nameStr = Common::String(name, nameLength);
-		delete[] name;
-		/*byte u = */stream->readByte();
+	}
 
-		Gfx::Texture *texture = _driver->createTexture();
+private:
+	byte *_palette;
+};
+
+class Texture : public BiffObject {
+public:
+	static const uint32 TYPE = kTextureSetTexture;
+
+	Texture() :
+			BiffObject(),
+			_texture(nullptr) {
+		_type = TYPE;
+	}
+
+	virtual ~Texture() {
+		delete _texture;
+	}
+
+	Common::String getName() const {
+		return _name;
+	}
+
+	Gfx::Texture *acquireTexturePointer() {
+		Gfx::Texture *texture = _texture;
+		_texture = nullptr;
+
+		return texture;
+	}
+
+	// BiffObject API
+	void readData(ArchiveReadStream *stream, uint32 dataLength) override {
+		TextureGroup *textureGroup = static_cast<TextureGroup *>(_parent);
+
+		_name = stream->readString16();
+		_u = stream->readByte();
 
 		uint32 w = stream->readUint32LE();
 		uint32 h = stream->readUint32LE();
 		uint32 levels = stream->readUint32LE();
 
-		texture->setLevelCount(levels);
+		_texture = StarkGfx->createTexture();
+		_texture->setLevelCount(levels);
 
 		for (uint32 i = 0; i < levels; ++i) {
 			// Read the pixel data to a surface
@@ -108,29 +121,48 @@ void TextureSetReader::readChunk(Common::ReadStream *stream, uint32 format, Gfx:
 			stream->read(level.getPixels(), level.w * level.h);
 
 			// Add the mipmap level to the texture
-			texture->addLevel(i, &level, _palette);
+			_texture->addLevel(i, &level, textureGroup->getPalette());
 
 			level.free();
 
 			w /= 2;
 			h /= 2;
 		}
-
-		textureSet->addTexture(nameStr, texture);
-	} else {
-		byte *data = new byte[size];
-		stream->read(data, size);
-		delete[] data;
 	}
 
-	marker = stream->readUint32LE();
-	if (marker != 0x0f0f0f0f) {
-		error("Wrong magic while reading texture");
+private:
+	Common::String _name;
+	Gfx::Texture *_texture;
+	byte _u;
+};
+
+Gfx::TextureSet *TextureSetReader::read(ArchiveReadStream *stream) {
+	BiffArchive archive = BiffArchive(stream, &biffObjectBuilder);
+
+	Common::Array<BiffObject *> objects = archive.listObjects();
+
+	Common::Array<Texture *> textures;
+	for (uint i = 0; i < objects.size(); i++) {
+		textures.push_back(objects[i]->listChildrenRecursive<Texture>());
 	}
 
-	uint32 len = stream->readUint32LE();
-	for (uint32 i = 0; i < len; ++i) {
-		readChunk(stream, format, textureSet);
+	Gfx::TextureSet *textureSet = new Gfx::TextureSet();
+
+	for (uint i = 0; i < textures.size(); i++) {
+		textureSet->addTexture(textures[i]->getName(), textures[i]->acquireTexturePointer());
+	}
+
+	return textureSet;
+}
+
+BiffObject *TextureSetReader::biffObjectBuilder(uint32 type) {
+	switch (type) {
+		case kTextureSetGroup:
+			return new TextureGroup();
+		case kTextureSetTexture:
+			return new Texture();
+		default:
+			return nullptr;
 	}
 }
 

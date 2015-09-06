@@ -50,6 +50,7 @@ public:
 	virtual ~ArchiveReadStream();
 
 	Common::String readString();
+	Common::String readString16();
 	Math::Vector3d readVector3();
 	Math::Quaternion readQuaternion();
 	float readFloat();

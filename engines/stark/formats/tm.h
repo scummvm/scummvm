@@ -25,39 +25,33 @@
 
 #include "common/scummsys.h"
 
-namespace Common {
-	class ReadStream;
-}
-
 namespace Stark {
 
+class ArchiveReadStream;
+
 namespace Gfx {
-class Driver;
 class TextureSet;
 }
 
 namespace Formats {
+
+class BiffObject;
 
 /**
  * A texture set loader able to read '.tm' files
  */
 class TextureSetReader {
 public:
-	TextureSetReader(Gfx::Driver *driver);
-	~TextureSetReader();
-
 	/**
 	 * Load a texture set from the provided stream.
 	 *
 	 * The caller is responsible for freeing the texture set.
 	 */
-	Gfx::TextureSet *read(Common::ReadStream *stream);
+	static Gfx::TextureSet *read(ArchiveReadStream *stream);
 
 private:
-	void readChunk(Common::ReadStream *stream, uint32 format, Gfx::TextureSet *textureSet);
+	static BiffObject *biffObjectBuilder(uint32 type);
 
-	byte *_palette;
-	Gfx::Driver *_driver;
 };
 
 } // End of namespace Formats

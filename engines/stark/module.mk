@@ -10,6 +10,7 @@ MODULE_OBJS := \
 	gfx/opengltexture.o \
 	gfx/renderentry.o \
 	gfx/texture.o \
+	formats/biff.o \
 	formats/iss.o \
 	formats/tm.o \
 	formats/xarc.o \
