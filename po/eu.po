@@ -5,9 +5,9 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: ResidualVM\n"
-"Report-Msgid-Bugs-To: https://github.com/residualvm/residualvm/issues\n"
-"POT-Creation-Date: 2015-06-30 20:57+0100\n"
+"Project-Id-Version: ScummVM 1.5.0git\n"
+"Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
+"POT-Creation-Date: 2015-09-06 15:14+0200\n"
 "PO-Revision-Date: 2011-12-15 14:53+0100\n"
 "Last-Translator: Mikel Iturbe Urretxa <mikel@hamahiru.org>\n"
 "Language-Team: Librezale <librezale@librezale.org>\n"
@@ -385,24 +385,24 @@ msgid "~Q~uit"
 msgstr "~I~rten"
 
 #: gui/launcher.cpp:626 backends/platform/sdl/macosx/appmenu_osx.mm:95
-msgid "Quit ResidualVM"
-msgstr "Irten ResidualVM-tik"
+msgid "Quit ScummVM"
+msgstr "Irten ScummVM-tik"
 
 #: gui/launcher.cpp:627
 msgid "A~b~out..."
 msgstr "Ho~n~i buruz..."
 
 #: gui/launcher.cpp:627 backends/platform/sdl/macosx/appmenu_osx.mm:69
-msgid "About ResidualVM"
-msgstr "ResidualVM-i buruz"
+msgid "About ScummVM"
+msgstr "ScummVM-i buruz"
 
 #: gui/launcher.cpp:628
 msgid "~O~ptions..."
 msgstr "~A~ukerak"
 
 #: gui/launcher.cpp:628
-msgid "Change global ResidualVM options"
-msgstr "ResidualVM-ren aukera globalak aldatu"
+msgid "Change global ScummVM options"
+msgstr "ScummVM-ren aukera globalak aldatu"
 
 #: gui/launcher.cpp:630
 msgid "~S~tart"
@@ -511,12 +511,12 @@ msgid "No"
 msgstr "Ez"
 
 #: gui/launcher.cpp:841
-msgid "ResidualVM couldn't open the specified directory!"
-msgstr "ResidualVM-k ezin izan du zehazturiko direktorioa ireki!"
+msgid "ScummVM couldn't open the specified directory!"
+msgstr "ScummVM-k ezin izan du zehazturiko direktorioa ireki!"
 
 #: gui/launcher.cpp:853
-msgid "ResidualVM could not find any game in the specified directory!"
-msgstr "ResidualVM-k ezin izan du jokorik aurkitu zehazturiko direktorioan!"
+msgid "ScummVM could not find any game in the specified directory!"
+msgstr "ScummVM-k ezin izan du jokorik aurkitu zehazturiko direktorioan!"
 
 #: gui/launcher.cpp:867
 msgid "Pick the game:"
@@ -536,9 +536,9 @@ msgid "This game does not support loading games from the launcher."
 msgstr "Joko honek ez du uzten partidak abiarazletik kargatzen."
 
 #: gui/launcher.cpp:1052
-msgid "ResidualVM could not find any engine capable of running the selected game!"
+msgid "ScummVM could not find any engine capable of running the selected game!"
 msgstr ""
-"ResidualVM-k ezin izan du aukeraturiko jokoa exekutatzeko gai den motorerik "
+"ScummVM-k ezin izan du aukeraturiko jokoa exekutatzeko gai den motorerik "
 "aurkitu!"
 
 #: gui/launcher.cpp:1159
@@ -794,190 +794,190 @@ msgstr ""
 "Markatu ordenagailura konektaturiko Roland-ekin bateragarria den soinu-"
 "gailua erabiltzeko"
 
-#: gui/options.cpp:888
+#: gui/options.cpp:886
 msgctxt "lowres"
 msgid "True Roland MT-32 (no GM emulation)"
 msgstr "Benetako Roland MT-32 (GM emulazio gabe)"
 
-#: gui/options.cpp:891
+#: gui/options.cpp:889
 #, fuzzy
 msgid "Roland GS Device (enable MT-32 mappings)"
 msgstr "Benetako Roland MT-32 (GM emulazio gabe)"
 
-#: gui/options.cpp:891
+#: gui/options.cpp:889
 msgid ""
 "Check if you want to enable patch mappings to emulate an MT-32 on a Roland "
 "GS device"
 msgstr ""
 
-#: gui/options.cpp:900
+#: gui/options.cpp:898
 msgid "Don't use Roland MT-32 music"
 msgstr "Ez erabili Roland MT-32 musika"
 
-#: gui/options.cpp:927
+#: gui/options.cpp:925
 msgid "Text and Speech:"
 msgstr "Testu eta ahotsa:"
 
-#: gui/options.cpp:931 gui/options.cpp:941
+#: gui/options.cpp:929 gui/options.cpp:939
 msgid "Speech"
 msgstr "Ahotsa"
 
-#: gui/options.cpp:932 gui/options.cpp:942
+#: gui/options.cpp:930 gui/options.cpp:940
 msgid "Subtitles"
 msgstr "Azpitituluak"
 
-#: gui/options.cpp:933
+#: gui/options.cpp:931
 msgid "Both"
 msgstr "Biak"
 
-#: gui/options.cpp:935
+#: gui/options.cpp:933
 msgid "Subtitle speed:"
 msgstr "Azpitit. abiadura:"
 
-#: gui/options.cpp:937
+#: gui/options.cpp:935
 msgctxt "lowres"
 msgid "Text and Speech:"
 msgstr "Testu eta ahotsa:"
 
-#: gui/options.cpp:941
+#: gui/options.cpp:939
 msgid "Spch"
 msgstr "Ahots."
 
-#: gui/options.cpp:942
+#: gui/options.cpp:940
 msgid "Subs"
 msgstr "Azp."
 
-#: gui/options.cpp:943
+#: gui/options.cpp:941
 msgctxt "lowres"
 msgid "Both"
 msgstr "Biak"
 
-#: gui/options.cpp:943
+#: gui/options.cpp:941
 msgid "Show subtitles and play speech"
 msgstr "Ahotsak erreproduzitu eta azpitituluak erakutsi"
 
-#: gui/options.cpp:945
+#: gui/options.cpp:943
 msgctxt "lowres"
 msgid "Subtitle speed:"
 msgstr "Azpit. abiadura:"
 
-#: gui/options.cpp:961
+#: gui/options.cpp:959
 msgid "Music volume:"
 msgstr "Musika:"
 
-#: gui/options.cpp:963
+#: gui/options.cpp:961
 msgctxt "lowres"
 msgid "Music volume:"
 msgstr "Musika:"
 
-#: gui/options.cpp:970
+#: gui/options.cpp:968
 msgid "Mute All"
 msgstr "Mututu dena"
 
-#: gui/options.cpp:973
+#: gui/options.cpp:971
 msgid "SFX volume:"
 msgstr "Efektuak:"
 
-#: gui/options.cpp:973 gui/options.cpp:975 gui/options.cpp:976
+#: gui/options.cpp:971 gui/options.cpp:973 gui/options.cpp:974
 msgid "Special sound effects volume"
 msgstr "Soinu efektu berezien bolumena"
 
-#: gui/options.cpp:975
+#: gui/options.cpp:973
 msgctxt "lowres"
 msgid "SFX volume:"
 msgstr "Efektuak:"
 
-#: gui/options.cpp:983
+#: gui/options.cpp:981
 msgid "Speech volume:"
 msgstr "Ahotsak:"
 
-#: gui/options.cpp:985
+#: gui/options.cpp:983
 msgctxt "lowres"
 msgid "Speech volume:"
 msgstr "Ahotsak:"
+
+#: gui/options.cpp:1140
+msgid "Theme Path:"
+msgstr "Gaiak:"
 
 #: gui/options.cpp:1142
-msgid "Theme Path:"
-msgstr "Gaiak:"
-
-#: gui/options.cpp:1144
 msgctxt "lowres"
 msgid "Theme Path:"
 msgstr "Gaiak:"
 
-#: gui/options.cpp:1150 gui/options.cpp:1152 gui/options.cpp:1153
-msgid "Specifies path to additional data used by all games or ResidualVM"
+#: gui/options.cpp:1148 gui/options.cpp:1150 gui/options.cpp:1151
+msgid "Specifies path to additional data used by all games or ScummVM"
 msgstr ""
-"Joko guztiek edo ResidualVM-k darabilten datu gehigarrien bide-izena ezartzen du"
+"Joko guztiek edo ScummVM-k darabilten datu gehigarrien bide-izena ezartzen du"
+
+#: gui/options.cpp:1157
+msgid "Plugins Path:"
+msgstr "Pluginak:"
 
 #: gui/options.cpp:1159
-msgid "Plugins Path:"
-msgstr "Pluginak:"
-
-#: gui/options.cpp:1161
 msgctxt "lowres"
 msgid "Plugins Path:"
 msgstr "Pluginak:"
 
-#: gui/options.cpp:1170 gui/fluidsynth-dialog.cpp:138
+#: gui/options.cpp:1168 gui/fluidsynth-dialog.cpp:138
+msgid "Misc"
+msgstr "Beste"
+
+#: gui/options.cpp:1170
+msgctxt "lowres"
 msgid "Misc"
 msgstr "Beste"
 
 #: gui/options.cpp:1172
-msgctxt "lowres"
-msgid "Misc"
-msgstr "Beste"
-
-#: gui/options.cpp:1174
 msgid "Theme:"
 msgstr "Gaia:"
 
-#: gui/options.cpp:1178
+#: gui/options.cpp:1176
 msgid "GUI Renderer:"
 msgstr "Interfazea:"
 
-#: gui/options.cpp:1190
+#: gui/options.cpp:1188
 msgid "Autosave:"
 msgstr "Autogordetzea:"
 
-#: gui/options.cpp:1192
+#: gui/options.cpp:1190
 msgctxt "lowres"
 msgid "Autosave:"
 msgstr "Autogordetzea:"
 
-#: gui/options.cpp:1200
+#: gui/options.cpp:1198
 msgid "Keys"
 msgstr "Teklak"
 
-#: gui/options.cpp:1207
+#: gui/options.cpp:1205
 msgid "GUI Language:"
 msgstr "Hizkuntza"
 
-#: gui/options.cpp:1207
-msgid "Language of ResidualVM GUI"
-msgstr "ResidualVM interfazearen hizkuntza"
+#: gui/options.cpp:1205
+msgid "Language of ScummVM GUI"
+msgstr "ScummVM interfazearen hizkuntza"
 
-#: gui/options.cpp:1366
-msgid "You have to restart ResidualVM before your changes will take effect."
-msgstr "ResidualVM berrabiarazi behar duzu aldaketak indarrean jartzeko"
+#: gui/options.cpp:1364
+msgid "You have to restart ScummVM before your changes will take effect."
+msgstr "ScummVM berrabiarazi behar duzu aldaketak indarrean jartzeko"
 
-#: gui/options.cpp:1386
+#: gui/options.cpp:1384
 msgid "The chosen directory cannot be written to. Please select another one."
 msgstr "Aukeraturiko direktorioan ezin da idatzi. Mesedez, aukeratu beste bat."
 
-#: gui/options.cpp:1395
+#: gui/options.cpp:1393
 msgid "Select directory for GUI themes"
 msgstr "Gaien direktorioa aukeratu"
 
-#: gui/options.cpp:1405
+#: gui/options.cpp:1403
 msgid "Select directory for extra files"
 msgstr "Fitxategi gehigarrien direktorioa aukeratu"
 
-#: gui/options.cpp:1416
+#: gui/options.cpp:1414
 msgid "Select directory for plugins"
 msgstr "Pluginen direktorioa aukeratu"
 
-#: gui/options.cpp:1469
+#: gui/options.cpp:1467
 msgid ""
 "The theme you selected does not support your current language. If you want "
 "to use this theme you need to switch to another language first."
@@ -1340,8 +1340,8 @@ msgid "The game in '%s' seems to be unknown."
 msgstr "'%s'-(e)ko jokoa ezezaguna dela dirudi"
 
 #: engines/advancedDetector.cpp:318
-msgid "Please, report the following data to the ResidualVM team along with name"
-msgstr "Mesedez, bidali hurrengo datuak ResidualVM taldeari gehitzen saiatu zaren"
+msgid "Please, report the following data to the ScummVM team along with name"
+msgstr "Mesedez, bidali hurrengo datuak ScummVM taldeari gehitzen saiatu zaren"
 
 #: engines/advancedDetector.cpp:320
 msgid "of the game you tried to add and its version/language/etc.:"
@@ -1489,12 +1489,12 @@ msgstr ""
 #: engines/engine.cpp:480
 msgid ""
 "WARNING: The game you are about to start is not yet fully supported by "
-"ResidualVM. As such, it is likely to be unstable, and any saves you make might "
-"not work in future versions of ResidualVM."
+"ScummVM. As such, it is likely to be unstable, and any saves you make might "
+"not work in future versions of ScummVM."
 msgstr ""
-"ABISUA: ResidualVM-k ez du guztiz onartzen exekutatuko duzun jokoa oraindik. "
+"ABISUA: ScummVM-k ez du guztiz onartzen exekutatuko duzun jokoa oraindik. "
 "Hori dela eta, ezegonkorra izan daiteke eta gerta daiteke gordeta izan "
-"ditzakezun partidan ez ibiltzea ResidualVM-ren etorkizuneko bertsioetan."
+"ditzakezun partidan ez ibiltzea ScummVM-ren etorkizuneko bertsioetan."
 
 #: engines/engine.cpp:483
 msgid "Start anyway"
@@ -1734,8 +1734,8 @@ msgid "Right Click"
 msgstr "Eskuin-klika"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:77
-msgid "Hide ResidualVM"
-msgstr "ResidualVM ezkutatu"
+msgid "Hide ScummVM"
+msgstr "ScummVM ezkutatu"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:82
 msgid "Hide Others"

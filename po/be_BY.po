@@ -5,9 +5,9 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: ResidualVM\n"
-"Report-Msgid-Bugs-To: https://github.com/residualvm/residualvm/issues\n"
-"POT-Creation-Date: 2015-06-30 20:57+0100\n"
+"Project-Id-Version: ScummVM 1.7.0git\n"
+"Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
+"POT-Creation-Date: 2015-09-06 15:14+0200\n"
 "PO-Revision-Date: 2014-07-02 17:22+0300\n"
 "Last-Translator: Ivan Lukyanov <greencis@mail.ru>\n"
 "Language-Team: Ivan Lukyanov <greencis@mail.ru>\n"
@@ -387,24 +387,24 @@ msgid "~Q~uit"
 msgstr "~В~ыхад"
 
 #: gui/launcher.cpp:626 backends/platform/sdl/macosx/appmenu_osx.mm:95
-msgid "Quit ResidualVM"
-msgstr "Завяршыць ResidualVM"
+msgid "Quit ScummVM"
+msgstr "Завяршыць ScummVM"
 
 #: gui/launcher.cpp:627
 msgid "A~b~out..."
 msgstr "Пра п~р~аграму..."
 
 #: gui/launcher.cpp:627 backends/platform/sdl/macosx/appmenu_osx.mm:69
-msgid "About ResidualVM"
-msgstr "Пра праграму ResidualVM"
+msgid "About ScummVM"
+msgstr "Пра праграму ScummVM"
 
 #: gui/launcher.cpp:628
 msgid "~O~ptions..."
 msgstr "~Н~алады..."
 
 #: gui/launcher.cpp:628
-msgid "Change global ResidualVM options"
-msgstr "Змяніць глабальныя налады ResidualVM"
+msgid "Change global ScummVM options"
+msgstr "Змяніць глабальныя налады ScummVM"
 
 #: gui/launcher.cpp:630
 msgid "~S~tart"
@@ -513,12 +513,12 @@ msgid "No"
 msgstr "Не"
 
 #: gui/launcher.cpp:841
-msgid "ResidualVM couldn't open the specified directory!"
-msgstr "ResidualVM не можа адкрыць азначаную дырэкторыю!"
+msgid "ScummVM couldn't open the specified directory!"
+msgstr "ScummVM не можа адкрыць азначаную дырэкторыю!"
 
 #: gui/launcher.cpp:853
-msgid "ResidualVM could not find any game in the specified directory!"
-msgstr "ResidualVM не можа знайсці гульню ў азначанай дырэкторыі!"
+msgid "ScummVM could not find any game in the specified directory!"
+msgstr "ScummVM не можа знайсці гульню ў азначанай дырэкторыі!"
 
 #: gui/launcher.cpp:867
 msgid "Pick the game:"
@@ -537,8 +537,8 @@ msgid "This game does not support loading games from the launcher."
 msgstr "Гэтая гульня не падтрымлівае загрузку захаванняў праз галоўнае меню."
 
 #: gui/launcher.cpp:1052
-msgid "ResidualVM could not find any engine capable of running the selected game!"
-msgstr "ResidualVM не змог знайсці рухавічок для запуску абранай гульні!"
+msgid "ScummVM could not find any engine capable of running the selected game!"
+msgstr "ScummVM не змог знайсці рухавічок для запуску абранай гульні!"
 
 #: gui/launcher.cpp:1159
 msgid "Mass Add..."
@@ -808,175 +808,175 @@ msgstr ""
 "Адзначце, калі жадаеце дазволіць мапінг для эмуляцыі MT-32 на прыладзе "
 "Rolans GS"
 
-#: gui/options.cpp:900
+#: gui/options.cpp:898
 msgid "Don't use Roland MT-32 music"
 msgstr "Не выкарыстоўваць музыку для MT-32"
 
-#: gui/options.cpp:927
+#: gui/options.cpp:925
 msgid "Text and Speech:"
 msgstr "Тэкст і агучка:"
 
-#: gui/options.cpp:931 gui/options.cpp:941
+#: gui/options.cpp:929 gui/options.cpp:939
 msgid "Speech"
 msgstr "Агучка"
 
-#: gui/options.cpp:932 gui/options.cpp:942
+#: gui/options.cpp:930 gui/options.cpp:940
 msgid "Subtitles"
 msgstr "Субтытры"
 
-#: gui/options.cpp:933
+#: gui/options.cpp:931
 msgid "Both"
 msgstr "Абое"
 
-#: gui/options.cpp:935
+#: gui/options.cpp:933
 msgid "Subtitle speed:"
 msgstr "Хуткасць тытраў:"
 
-#: gui/options.cpp:937
+#: gui/options.cpp:935
 msgctxt "lowres"
 msgid "Text and Speech:"
 msgstr "Тэкст і агучка:"
 
-#: gui/options.cpp:941
+#: gui/options.cpp:939
 msgid "Spch"
 msgstr "Агуч"
 
-#: gui/options.cpp:942
+#: gui/options.cpp:940
 msgid "Subs"
 msgstr "Суб"
 
-#: gui/options.cpp:943
+#: gui/options.cpp:941
 msgctxt "lowres"
 msgid "Both"
 msgstr "Абое"
 
-#: gui/options.cpp:943
+#: gui/options.cpp:941
 msgid "Show subtitles and play speech"
 msgstr "Паказваць субтытры і прайграваць гаворку"
 
-#: gui/options.cpp:945
+#: gui/options.cpp:943
 msgctxt "lowres"
 msgid "Subtitle speed:"
 msgstr "Хуткасць тытраў:"
 
-#: gui/options.cpp:961
+#: gui/options.cpp:959
 msgid "Music volume:"
 msgstr "Гучн. музыкі:"
 
-#: gui/options.cpp:963
+#: gui/options.cpp:961
 msgctxt "lowres"
 msgid "Music volume:"
 msgstr "Гучн. музыкі:"
 
-#: gui/options.cpp:970
+#: gui/options.cpp:968
 msgid "Mute All"
 msgstr "Выкл. усё"
 
-#: gui/options.cpp:973
+#: gui/options.cpp:971
 msgid "SFX volume:"
 msgstr "Гучнасць SFX:"
 
-#: gui/options.cpp:973 gui/options.cpp:975 gui/options.cpp:976
+#: gui/options.cpp:971 gui/options.cpp:973 gui/options.cpp:974
 msgid "Special sound effects volume"
 msgstr "Гучнасць спецыяльных гукавых эфектаў"
 
-#: gui/options.cpp:975
+#: gui/options.cpp:973
 msgctxt "lowres"
 msgid "SFX volume:"
 msgstr "Гучн. SFX:"
 
-#: gui/options.cpp:983
+#: gui/options.cpp:981
 msgid "Speech volume:"
 msgstr "Гучн. агучкі:"
 
-#: gui/options.cpp:985
+#: gui/options.cpp:983
 msgctxt "lowres"
 msgid "Speech volume:"
 msgstr "Гучн. агучкі:"
 
-#: gui/options.cpp:1142
+#: gui/options.cpp:1140
 msgid "Theme Path:"
 msgstr "Шлях да тэм:"
 
-#: gui/options.cpp:1144
+#: gui/options.cpp:1142
 msgctxt "lowres"
 msgid "Theme Path:"
 msgstr "Дзе тэмы:"
 
-#: gui/options.cpp:1150 gui/options.cpp:1152 gui/options.cpp:1153
-msgid "Specifies path to additional data used by all games or ResidualVM"
+#: gui/options.cpp:1148 gui/options.cpp:1150 gui/options.cpp:1151
+msgid "Specifies path to additional data used by all games or ScummVM"
 msgstr ""
 "Паказвае шлях да дадатковых файлаў дадзеных, выкарыстоўваных усімі гульнямі, "
-"або ResidualVM"
+"або ScummVM"
 
-#: gui/options.cpp:1159
+#: gui/options.cpp:1157
 msgid "Plugins Path:"
 msgstr "Шлях да плагінаў:"
 
-#: gui/options.cpp:1161
+#: gui/options.cpp:1159
 msgctxt "lowres"
 msgid "Plugins Path:"
 msgstr "Шлях да плагінаў:"
 
-#: gui/options.cpp:1170 gui/fluidsynth-dialog.cpp:138
+#: gui/options.cpp:1168 gui/fluidsynth-dialog.cpp:138
+msgid "Misc"
+msgstr "Рознае"
+
+#: gui/options.cpp:1170
+msgctxt "lowres"
 msgid "Misc"
 msgstr "Рознае"
 
 #: gui/options.cpp:1172
-msgctxt "lowres"
-msgid "Misc"
-msgstr "Рознае"
-
-#: gui/options.cpp:1174
 msgid "Theme:"
 msgstr "Тэма"
 
-#: gui/options.cpp:1178
+#: gui/options.cpp:1176
 msgid "GUI Renderer:"
 msgstr "Малявалка GUI:"
 
-#: gui/options.cpp:1190
+#: gui/options.cpp:1188
 msgid "Autosave:"
 msgstr "Аўтазахаванне:"
 
-#: gui/options.cpp:1192
+#: gui/options.cpp:1190
 msgctxt "lowres"
 msgid "Autosave:"
 msgstr "Аўтазах.:"
 
-#: gui/options.cpp:1200
+#: gui/options.cpp:1198
 msgid "Keys"
 msgstr "Клавішы"
 
-#: gui/options.cpp:1207
+#: gui/options.cpp:1205
 msgid "GUI Language:"
 msgstr "Мова GUI:"
 
-#: gui/options.cpp:1207
-msgid "Language of ResidualVM GUI"
-msgstr "Мова графічнага інтэрфейсу ResidualVM"
+#: gui/options.cpp:1205
+msgid "Language of ScummVM GUI"
+msgstr "Мова графічнага інтэрфейсу ScummVM"
 
-#: gui/options.cpp:1366
-msgid "You have to restart ResidualVM before your changes will take effect."
-msgstr "Вы павінны перазапусціць ResidualVM, каб ужыць змены."
+#: gui/options.cpp:1364
+msgid "You have to restart ScummVM before your changes will take effect."
+msgstr "Вы павінны перазапусціць ScummVM, каб ужыць змены."
 
-#: gui/options.cpp:1386
+#: gui/options.cpp:1384
 msgid "The chosen directory cannot be written to. Please select another one."
 msgstr "Не магу пісаць у абраную дырэкторыю. Калі ласка, азначце іншую."
 
-#: gui/options.cpp:1395
+#: gui/options.cpp:1393
 msgid "Select directory for GUI themes"
 msgstr "Абярыце дырэкторыю для тэм GUI"
 
-#: gui/options.cpp:1405
+#: gui/options.cpp:1403
 msgid "Select directory for extra files"
 msgstr "Абярыце дырэкторыю з дадатковымі файламі"
 
-#: gui/options.cpp:1416
+#: gui/options.cpp:1414
 msgid "Select directory for plugins"
 msgstr "Абярыце дырэкторыю з плагінамі"
 
-#: gui/options.cpp:1469
+#: gui/options.cpp:1467
 msgid ""
 "The theme you selected does not support your current language. If you want "
 "to use this theme you need to switch to another language first."
@@ -1329,9 +1329,9 @@ msgid "The game in '%s' seems to be unknown."
 msgstr "Здаецца, што гульня '%s' яшчэ невядомая."
 
 #: engines/advancedDetector.cpp:318
-msgid "Please, report the following data to the ResidualVM team along with name"
+msgid "Please, report the following data to the ScummVM team along with name"
 msgstr ""
-"Калі ласка, перадайце наступныя дадзеныя камандзе ResidualVM разам з назвай"
+"Калі ласка, перадайце наступныя дадзеныя камандзе ScummVM разам з назвай"
 
 #: engines/advancedDetector.cpp:320
 msgid "of the game you tried to add and its version/language/etc.:"
@@ -1483,12 +1483,12 @@ msgstr ""
 #: engines/engine.cpp:480
 msgid ""
 "WARNING: The game you are about to start is not yet fully supported by "
-"ResidualVM. As such, it is likely to be unstable, and any saves you make might "
-"not work in future versions of ResidualVM."
+"ScummVM. As such, it is likely to be unstable, and any saves you make might "
+"not work in future versions of ScummVM."
 msgstr ""
 "ПАПЯРЭДЖАННЕ: Гульня, якую вы збіраецеся запусціць, яшчэ не падтрымліваецца "
-"ResidualVM цалкам. Яна, хутчэй за ўсё, не будзе працаваць стабільна, і "
-"захаванні гульняў могуць не працаваць у будучых версіях ResidualVM."
+"ScummVM цалкам. Яна, хутчэй за ўсё, не будзе працаваць стабільна, і "
+"захаванні гульняў могуць не працаваць у будучых версіях ScummVM."
 
 #: engines/engine.cpp:483
 msgid "Start anyway"
@@ -1728,8 +1728,8 @@ msgid "Right Click"
 msgstr "Правая пстрычка"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:77
-msgid "Hide ResidualVM"
-msgstr "Схаваць ResidualVM"
+msgid "Hide ScummVM"
+msgstr "Схаваць ScummVM"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:82
 msgid "Hide Others"
