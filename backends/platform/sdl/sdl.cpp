@@ -438,3 +438,17 @@ Common::TimerManager *OSystem_SDL::getTimerManager() {
 	return _timerManager;
 #endif
 }
+
+// ResidualVM specific code
+bool OSystem_SDL::hasFeature(Feature f) {
+	if (f == kFeatureSideTextures)
+		return true;
+	return ModularBackend::hasFeature(f);
+}
+
+// ResidualVM specific code
+void OSystem_SDL::suggestSideTextures(Graphics::Surface *left,
+                                      Graphics::Surface *right) {
+	SurfaceSdlGraphicsManager *ssgm = dynamic_cast<SurfaceSdlGraphicsManager *>(_graphicsManager);
+	ssgm->setSideTextures(left, right);
+}

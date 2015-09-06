@@ -313,6 +313,8 @@ public:
 		//ResidualVM specific
 		kFeatureOpenGL,
 		kFeatureVirtControls,
+		// Can side textures be rendered on the side for widescreen support?
+		kFeatureSideTextures,
 
 		/**
 		 * The presence of this feature indicates whether the displayLogFile()
@@ -665,6 +667,21 @@ public:
 	 */
 
 	virtual Graphics::PixelBuffer setupScreen(uint screenW, uint screenH, bool fullscreen, bool accel3d) = 0;
+
+	/**
+	 * Suggest textures to render at the side of the game window.
+	 * This enables eg. Grim to render the game in a widescreen format.
+	 * 
+	 * The system must take a copy of the Surfaces, as they will be free()d
+	 * automatically.
+	 *
+	 * !!! ResidualVM specific method: !!!
+	 *
+	 * @param left			Texture to be used on the left
+	 * @param height		Texture to be used on the right
+	 */
+	virtual void suggestSideTextures(Graphics::Surface *left,
+	                                 Graphics::Surface *right) {};
 
 	/**
 	 * Returns the currently set virtual screen height.

@@ -26,6 +26,7 @@
 #ifdef USE_OPENGL
 #include "graphics/opengl/system_headers.h"
 #include "graphics/opengl/framebuffer.h"
+#include "graphics/opengl/texture.h"
 #endif
 
 #undef ARRAYSIZE
@@ -113,6 +114,12 @@ public:
 	virtual int16 getOverlayWidth() { return _overlayWidth; }
 	void closeOverlay(); // ResidualVM specific method
 
+	/* Render the passed Surfaces besides the game texture.
+	 * This is used for widescreen support in the Grim engine.
+	 * Note: we must copy the Surfaces, as they are free()d after this call.
+	 */
+	virtual void setSideTextures(Graphics::Surface *left, Graphics::Surface *right);
+
 	virtual bool showMouse(bool visible);
 	virtual void warpMouse(int x, int y);
 	virtual void setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale = false, const Graphics::PixelFormat *format = NULL);
@@ -172,9 +179,12 @@ protected:
 	GLuint *_overlayTexIds;
 	GLenum _overlayScreenGLFormat;
 
+	Graphics::Texture *_sideTextures[2];
+
 	void updateOverlayTextures();
 	void drawOverlayOpenGL();
-	void drawFramebufferOpenGL();
+	void drawSideTexturesOpenGL();
+	void drawTexture(const Graphics::Texture &tex, const Math::Vector2d &topLeft, const Math::Vector2d &bottomRight, bool flip = false);
 
 	Graphics::FrameBuffer *_frameBuffer;
 
@@ -183,9 +193,10 @@ protected:
 	GLuint _boxVerticesVBO;
 
 	void drawOverlayOpenGLShaders();
-	void drawFramebufferOpenGLShaders();
 #endif
 #endif
+
+	SDL_Surface *_sideSurfaces[2];
 
 	/** Force full redraw on next updateScreen */
 	bool _forceFull;
@@ -193,6 +204,7 @@ protected:
 	int _screenChangeCount;
 
 	void drawOverlay();
+	void drawSideTextures();
 };
 
 #endif

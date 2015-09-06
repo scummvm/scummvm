@@ -25,6 +25,7 @@
 #if defined(USE_OPENGL)
 
 #include "graphics/opengl/texture.h"
+#include "graphics/opengl/extensions.h"
 
 
 namespace Graphics {
@@ -50,12 +51,18 @@ static const Graphics::PixelFormat getRGBAPixelFormat() {
 }
 
 Texture::Texture(const Surface &srf) :
-		_managedTexture(true), _width(srf.w), _height(srf.h),
-		_texWidth(nextHigher2(_width)), _texHeight(nextHigher2(_height)) {
+		_managedTexture(true), _width(srf.w), _height(srf.h) {
+	if (Graphics::isExtensionSupported("GL_ARB_texture_non_power_of_two")) {
+		_texWidth  = _width;
+		_texHeight = _height;
+	} else {
+		_texWidth  = nextHigher2(_width);
+		_texHeight = nextHigher2(_height);
+	}
 	glGenTextures(1, &_texture);
 	glBindTexture(GL_TEXTURE_2D, _texture);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, _texWidth, _texHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
@@ -72,12 +79,18 @@ Texture::Texture(const Surface &srf) :
 }
 
 Texture::Texture(uint width, uint height) :
-		_managedTexture(true), _width(width), _height(height),
-		_texWidth(nextHigher2(width)), _texHeight(nextHigher2(height)) {
+		_managedTexture(true), _width(width), _height(height) {
+	if (Graphics::isExtensionSupported("GL_ARB_texture_non_power_of_two")) {
+		_texWidth  = _width;
+		_texHeight = _height;
+	} else {
+		_texWidth  = nextHigher2(_width);
+		_texHeight = nextHigher2(_height);
+	}
 	glGenTextures(1, &_texture);
 	glBindTexture(GL_TEXTURE_2D, _texture);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, _texWidth, _texHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);

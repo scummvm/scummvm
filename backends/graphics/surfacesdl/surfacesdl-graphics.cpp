@@ -78,6 +78,10 @@ SurfaceSdlGraphicsManager::SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSou
 		const SDL_VideoInfo *vi = SDL_GetVideoInfo();
 		_desktopW = vi->current_w;
 		_desktopH = vi->current_h;
+		_sideSurfaces[0] = _sideSurfaces[1] = nullptr;
+#ifdef USE_OPENGL
+		_sideTextures[0] = _sideTextures[1] = nullptr;
+#endif
 }
 
 SurfaceSdlGraphicsManager::~SurfaceSdlGraphicsManager() {
@@ -573,7 +577,23 @@ void SurfaceSdlGraphicsManager::drawOverlayOpenGL() {
 	glPopAttrib();
 }
 
-void SurfaceSdlGraphicsManager::drawFramebufferOpenGL() {
+void SurfaceSdlGraphicsManager::drawSideTexturesOpenGL() {
+	if (_fullscreen && _lockAspectRatio) {
+		const Math::Vector2d nudge(1.0 / float(_screen->w), 0);
+		if (_sideTextures[0] != nullptr) {
+			float left = _gameRect.getBottomLeft().getX() - (float(_screen->h) / float(_sideTextures[0]->getHeight())) * _sideTextures[0]->getWidth() / float(_screen->w);
+			drawTexture(*_sideTextures[0], Math::Vector2d(left, 0.0), _gameRect.getBottomLeft() + nudge, true);
+		}
+
+		if (_sideTextures[1] != nullptr) {
+			float right = _gameRect.getTopRight().getX() + (float(_screen->h) / float(_sideTextures[1]->getHeight())) * _sideTextures[1]->getWidth() / float(_screen->w);
+			drawTexture(*_sideTextures[1], _gameRect.getTopRight() - nudge, Math::Vector2d(right, 1.0), true);
+		}
+	}
+}
+
+void SurfaceSdlGraphicsManager::drawTexture(const Graphics::Texture &tex, const Math::Vector2d &topLeft, const Math::Vector2d &bottomRight, bool flip) {
+#ifndef USE_OPENGL_SHADERS
 	// Save current state
 	glPushAttrib(GL_TRANSFORM_BIT | GL_ENABLE_BIT | GL_DEPTH_BUFFER_BIT | GL_SCISSOR_BIT);
 
@@ -596,30 +616,28 @@ void SurfaceSdlGraphicsManager::drawFramebufferOpenGL() {
 	glDisable(GL_DEPTH_TEST);
 	glDisable(GL_ALPHA_TEST);
 	glDepthMask(GL_FALSE);
-	glEnable(GL_SCISSOR_TEST);
 
-	glScissor(0, 0, _desktopW, _desktopH);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+	float texcropX = tex.getWidth() / float(tex.getTexWidth());
+	float texcropY = tex.getHeight() / float(tex.getTexHeight());
+	float texTop    = flip ? 0.0 : texcropY;
+	float texBottom = flip ? texcropY : 0.0;
 
-	float texcropX = _frameBuffer->getWidth() / float(_frameBuffer->getTexWidth());
-	float texcropY = _frameBuffer->getHeight() / float(_frameBuffer->getTexHeight());
-
-	float offsetX = _gameRect.getTopLeft().getX();
-	float offsetY = _gameRect.getTopLeft().getY();
-	float sizeX   = _gameRect.getWidth();
-	float sizeY   = _gameRect.getHeight();
+	float offsetX = topLeft.getX();
+	float offsetY = topLeft.getY();
+	float sizeX   = fabsf(topLeft.getX() - bottomRight.getX());
+	float sizeY   = fabsf(topLeft.getY() - bottomRight.getY());
 
 	glColor4f(1.0, 1.0, 1.0, 1.0);
 
-	glBindTexture(GL_TEXTURE_2D, _frameBuffer->getTextureName());
+	glBindTexture(GL_TEXTURE_2D, tex.getTextureName());
 	glBegin(GL_QUADS);
-	glTexCoord2f(0, texcropY);
+	glTexCoord2f(0, texTop);
 	glVertex2f(offsetX, offsetY);
-	glTexCoord2f(texcropX, texcropY);
+	glTexCoord2f(texcropX, texTop);
 	glVertex2f(offsetX + sizeX, offsetY);
-	glTexCoord2f(texcropX, 0.0);
+	glTexCoord2f(texcropX, texBottom);
 	glVertex2f(offsetX + sizeX, offsetY + sizeY);
-	glTexCoord2f(0.0, 0.0);
+	glTexCoord2f(0.0, texBottom);
 	glVertex2f(offsetX, offsetY + sizeY);
 	glEnd();
 
@@ -634,6 +652,21 @@ void SurfaceSdlGraphicsManager::drawFramebufferOpenGL() {
 	glPopMatrix();
 
 	glPopAttrib();
+#else
+	glBindTexture(GL_TEXTURE_2D, tex.getTextureName());
+
+	_boxShader->use();
+	float texcropX = tex.getWidth() / float(tex.getTexWidth());
+	float texcropY = tex.getHeight() / float(tex.getTexHeight());
+	_boxShader->setUniform("texcrop", Math::Vector2d(texcropX, texcropY));
+	_boxShader->setUniform("flipY", flip);
+
+	_boxShader->setUniform("offsetXY", topLeft);
+	_boxShader->setUniform("sizeWH", Math::Vector2d(fabsf(topLeft.getX() - bottomRight.getX()), fabsf(topLeft.getY() - bottomRight.getY())));
+
+	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+	glBindTexture(GL_TEXTURE_2D, 0);
+#endif
 }
 
 #ifdef USE_OPENGL_SHADERS
@@ -666,24 +699,29 @@ void SurfaceSdlGraphicsManager::drawOverlayOpenGLShaders() {
 	}
 }
 
-void SurfaceSdlGraphicsManager::drawFramebufferOpenGLShaders() {
-	glBindTexture(GL_TEXTURE_2D, _frameBuffer->getTextureName());
+#endif
+#endif
 
-	_boxShader->use();
-	float texcropX = _frameBuffer->getWidth() / float(_frameBuffer->getTexWidth());
-	float texcropY = _frameBuffer->getHeight() / float(_frameBuffer->getTexHeight());
-	_boxShader->setUniform("texcrop", Math::Vector2d(texcropX, texcropY));
-	_boxShader->setUniform("flipY", false);
-
-	_boxShader->setUniform("offsetXY", _gameRect.getTopLeft());
-	_boxShader->setUniform("sizeWH", Math::Vector2d(_gameRect.getWidth(), _gameRect.getHeight()));
-
-	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-	glBindTexture(GL_TEXTURE_2D, 0);
+void SurfaceSdlGraphicsManager::drawSideTextures() {
+	if (_fullscreen && _lockAspectRatio) {
+		if (_sideSurfaces[0]) {
+			SDL_Rect dstrect;
+			dstrect.x = _gameRect.getTopLeft().getX() - _sideSurfaces[0]->w;
+			dstrect.y = _gameRect.getTopLeft().getY();
+			dstrect.w = _sideSurfaces[0]->w;
+			dstrect.h = _sideSurfaces[0]->h;
+			SDL_BlitSurface(_sideSurfaces[0], NULL, _screen, &dstrect);
+		}
+		if (_sideSurfaces[1]) {
+			SDL_Rect dstrect;
+			dstrect.x = _gameRect.getTopRight().getX();
+			dstrect.y = _gameRect.getTopLeft().getY();
+			dstrect.w = _sideSurfaces[1]->w;
+			dstrect.h = _sideSurfaces[1]->h;
+			SDL_BlitSurface(_sideSurfaces[1], NULL, _screen, &dstrect);
+		}
+	}
 }
-
-#endif
-#endif
 
 void SurfaceSdlGraphicsManager::drawOverlay() {
 	if (!_overlayscreen)
@@ -712,11 +750,8 @@ void SurfaceSdlGraphicsManager::updateScreen() {
 			_frameBuffer->detach();
 			glViewport(0, 0, _screen->w, _screen->h);
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-#ifndef USE_OPENGL_SHADERS
-			drawFramebufferOpenGL();
-#else
-			drawFramebufferOpenGLShaders();
-#endif
+			drawSideTexturesOpenGL();
+			drawTexture(*_frameBuffer, _gameRect.getTopLeft(), _gameRect.getBottomRight());
 		}
 
 		if (_overlayVisible) {
@@ -748,6 +783,7 @@ void SurfaceSdlGraphicsManager::updateScreen() {
 		if (_overlayVisible) {
 			drawOverlay();
 		}
+		drawSideTextures();
 		SDL_Flip(_screen);
 	}
 }
@@ -894,6 +930,37 @@ void SurfaceSdlGraphicsManager::clearOverlay() {
 	_overlayDirty = true;
 }
 
+void SurfaceSdlGraphicsManager::setSideTextures(Graphics::Surface *left, Graphics::Surface *right) {
+#ifdef USE_OPENGL
+	if (_opengl) {
+		delete _sideTextures[0];
+		_sideTextures[0] = nullptr;
+		delete _sideTextures[1];
+		_sideTextures[1] = nullptr;
+		if (left) {
+			_sideTextures[0] = new Graphics::Texture(*left);
+		}
+		if (right) {
+			_sideTextures[1] = new Graphics::Texture(*right);
+		}
+	} else
+#endif
+	{
+		delete _sideSurfaces[0];
+		_sideSurfaces[0] = nullptr;
+		delete _sideSurfaces[1];
+		_sideSurfaces[1] = nullptr;
+		if (left) {
+			_sideSurfaces[0] = SDL_CreateRGBSurface(SDL_SWSURFACE, left->w, left->h, 32, 0xff << left->format.rShift, 0xff << left->format.gShift, 0xff << left->format.bShift, 0xff << left->format.aShift);
+			memcpy(_sideSurfaces[0]->pixels, left->getPixels(), left->w * left->h * 4);
+		}
+		if (right) {
+			_sideSurfaces[1] = SDL_CreateRGBSurface(SDL_SWSURFACE, right->w, right->h, 32, 0xff << right->format.rShift, 0xff << right->format.gShift, 0xff << right->format.bShift, 0xff << right->format.aShift);
+			memcpy(_sideSurfaces[1]->pixels, right->getPixels(), right->w * right->h * 4);
+		}
+	}
+}
+
 void SurfaceSdlGraphicsManager::grabOverlay(void *buf, int pitch) {
 	if (_overlayscreen == NULL)
 		return;
@@ -957,6 +1024,14 @@ void SurfaceSdlGraphicsManager::copyRectToOverlay(const void *buf, int pitch, in
 }
 
 void SurfaceSdlGraphicsManager::closeOverlay() {
+	SDL_FreeSurface(_sideSurfaces[0]);
+	SDL_FreeSurface(_sideSurfaces[1]);
+	_sideSurfaces[0] = _sideSurfaces[1] = nullptr;
+#ifdef USE_OPENGL
+	delete _sideTextures[0];
+	delete _sideTextures[1];
+	_sideTextures[0] = _sideTextures[1] = nullptr;
+#endif
 	if (_overlayscreen) {
 		SDL_FreeSurface(_overlayscreen);
 		_overlayscreen = NULL;

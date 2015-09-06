@@ -188,6 +188,8 @@ public:
 	virtual void openMainMenuDialog() override;
 	void debugLua(const Common::String &str);
 
+	void setSideTextures(const Common::String &setup);
+
 protected:
 	virtual void pauseEngineIntern(bool pause) override;
 

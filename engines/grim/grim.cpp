@@ -38,6 +38,8 @@
 #include "gui/gui-manager.h"
 #include "gui/message.h"
 
+#include "image/png.h"
+
 #include "engines/engine.h"
 
 #include "engines/grim/md5check.h"
@@ -168,6 +170,7 @@ GrimEngine::GrimEngine(OSystem *syst, uint32 gameFlags, GrimGameType gameType, C
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
 	SearchMan.addSubDirectoryMatching(gameDataDir, "movies"); // Add 'movies' subdirectory for the demo
 	SearchMan.addSubDirectoryMatching(gameDataDir, "credits");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "widescreen");
 
 	Debug::registerDebugChannels();
 }
@@ -667,6 +670,7 @@ void GrimEngine::drawNormalMode() {
 	if (_setupChanged) {
 		cameraPostChangeHandle(_currSet->getSetup());
 		_setupChanged = false;
+		setSideTextures(_currSet->getCurrSetup()->_name.c_str());
 	}
 
 	// Draw actors
@@ -1373,6 +1377,32 @@ void GrimEngine::pauseEngineIntern(bool pause) {
 		_frameStart += _system->getMillis() - _pauseStartTime;
 	}
 }
+
+
+Graphics::Surface *loadPNG(const Common::String &filename) {
+	Image::PNGDecoder d;
+	Common::SeekableReadStream *s = SearchMan.createReadStreamForMember(filename);
+	if (!s)
+		return nullptr;
+	d.loadStream(*s);
+	delete s;
+
+	Graphics::Surface *srf = d.getSurface()->convertTo(Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
+	return srf;
+}
+
+void GrimEngine::setSideTextures(const Common::String &setup) {
+	if (! g_system->hasFeature(OSystem::kFeatureSideTextures))
+			return;
+	Graphics::Surface *t1 = loadPNG(Common::String::format("%s_left.png", setup.c_str()));
+	Graphics::Surface *t2 = loadPNG(Common::String::format("%s_right.png", setup.c_str()));
+	g_system->suggestSideTextures(t1, t2);
+	t1->free();
+	t2->free();
+	delete t1;
+	delete t2;
+}
+
 
 void GrimEngine::debugLua(const Common::String &str) {
 	lua_dostring(str.c_str());
