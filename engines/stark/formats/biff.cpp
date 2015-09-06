@@ -30,8 +30,14 @@ namespace Formats {
 class UnimplementedBiffObject : public BiffObject {
 public:
 	UnimplementedBiffObject(uint32 type) :
-			BiffObject() {
+			BiffObject(),
+			_data(nullptr),
+			_dataLength(0) {
 		_type = type;
+	}
+
+	virtual ~UnimplementedBiffObject() {
+		delete[] _data;
 	}
 
 	// BiffObject API
