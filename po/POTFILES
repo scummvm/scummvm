@@ -4,9 +4,8 @@ gui/about.cpp
 gui/browser.cpp
 gui/browser_osx.mm
 gui/chooser.cpp
-gui/error.cpp
 gui/editrecorddialog.cpp
-gui/fluidsynth-dialog.cpp
+gui/error.cpp
 gui/gui-manager.cpp
 gui/KeysDialog.h
 gui/KeysDialog.cpp
@@ -14,14 +13,13 @@ gui/launcher.cpp
 gui/massadd.cpp
 gui/onscreendialog.cpp
 gui/options.cpp
-gui/recorderdialog.cpp
-gui/saveload-dialog.cpp
 gui/predictivedialog.cpp
 gui/recorderdialog.cpp
 gui/saveload-dialog.cpp
 gui/themebrowser.cpp
 gui/ThemeEngine.cpp
 gui/widget.cpp
+gui/fluidsynth-dialog.cpp
 
 base/main.cpp
 
@@ -41,7 +39,7 @@ audio/softsynth/mt32.cpp
 
 backends/keymapper/remap-dialog.cpp
 backends/midi/windows.cpp
-backends/platform/sdl/macosx/appMenu_osx.mm
+backends/platform/sdl/macosx/appmenu_osx.mm
 backends/graphics/surfacesdl/surfacesdl-graphics.cpp
 backends/events/default/default-events.cpp
 backends/updates/macosx/macosx-updates.mm

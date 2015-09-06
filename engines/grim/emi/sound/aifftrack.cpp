@@ -70,13 +70,13 @@ void AIFFTrack::setLooping(bool looping) {
 		return;
 	_looping = looping;
 	if (looping && _stream) {
-		_stream = Audio::makeLoopingAudioStream(static_cast<Audio::SeekableAudioStream *>(_stream), 0);
+		_stream = Audio::makeLoopingAudioStream(dynamic_cast<Audio::SeekableAudioStream *>(_stream), 0);
 	}
 }
 
 bool AIFFTrack::play() {
 	if (_stream) {
-		Audio::RewindableAudioStream *stream = static_cast<Audio::RewindableAudioStream *>(_stream);
+		Audio::RewindableAudioStream *stream = dynamic_cast<Audio::RewindableAudioStream *>(_stream);
 		if (!_looping) {
 			stream->rewind();
 		}

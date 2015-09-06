@@ -32,7 +32,8 @@
 #include "audio/mixer.h"
 
 namespace Audio {
-class QueuingAudioStream;
+class AudioStream;
+class PacketizedAudioStream;
 }
 
 namespace Common {
@@ -215,6 +216,7 @@ protected:
 		AVIAudioTrack(const AVIStreamHeader &streamHeader, const PCMWaveFormat &waveFormat, Audio::Mixer::SoundType soundType);
 		~AVIAudioTrack();
 
+		virtual void createAudioStream();
 		virtual void queueSound(Common::SeekableReadStream *stream);
 		Audio::Mixer::SoundType getSoundType() const { return _soundType; }
 		void skipAudio(const Audio::Timestamp &time, const Audio::Timestamp &frameTime);
@@ -226,7 +228,7 @@ protected:
 		bool rewind();
 
 	protected:
-		Audio::AudioStream *getAudioStream() const;
+		Audio::AudioStream *getAudioStream() const { return _audioStream; }
 
 		// Audio Codecs
 		enum {
@@ -241,8 +243,8 @@ protected:
 		AVIStreamHeader _audsHeader;
 		PCMWaveFormat _wvInfo;
 		Audio::Mixer::SoundType _soundType;
-		Audio::QueuingAudioStream *_audStream;
-		Audio::QueuingAudioStream *createAudioStream();
+		Audio::AudioStream *_audioStream;
+		Audio::PacketizedAudioStream *_packetStream;
 		uint32 _curChunk;
 	};
 

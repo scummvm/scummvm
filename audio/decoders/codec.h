@@ -31,6 +31,13 @@ namespace Audio {
 
 class AudioStream;
 
+/**
+ * @deprecated The old method of handling audio codecs that rely
+ * on the state remaining the same between calls. This should
+ * only be used for old code.
+ *
+ * DEPRECATED; USE PacketizedAudioStream INSTEAD!
+ */
 class Codec {
 public:
 	Codec() {}

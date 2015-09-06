@@ -457,4 +457,34 @@ RewindableAudioStream *makeADPCMStream(Common::SeekableReadStream *stream, Dispo
 	}
 }
 
+class PacketizedADPCMStream : public StatelessPacketizedAudioStream {
+public:
+	PacketizedADPCMStream(ADPCMType type, int rate, int channels, uint32 blockAlign) :
+		StatelessPacketizedAudioStream(rate, channels), _type(type), _blockAlign(blockAlign) {}
+
+protected:
+	AudioStream *makeStream(Common::SeekableReadStream *data);
+
+private:
+	ADPCMType _type;
+	uint32 _blockAlign;
+};
+
+AudioStream *PacketizedADPCMStream::makeStream(Common::SeekableReadStream *data) {
+	return makeADPCMStream(data, DisposeAfterUse::YES, data->size(), _type, getRate(), getChannels(), _blockAlign);
+}
+
+PacketizedAudioStream *makePacketizedADPCMStream(ADPCMType type, int rate, int channels, uint32 blockAlign) {
+	// Filter out types we can't support (they're not fully stateless)
+	switch (type) {
+	case kADPCMOki:
+	case kADPCMDVI:
+		return 0;
+	default:
+		break;
+	}
+
+	return new PacketizedADPCMStream(type, rate, channels, blockAlign);
+}
+
 } // End of namespace Audio
