@@ -11,6 +11,7 @@ MODULE_OBJS := \
 	gfx/renderentry.o \
 	gfx/texture.o \
 	formats/biff.o \
+	formats/biffmesh.o \
 	formats/iss.o \
 	formats/tm.o \
 	formats/xarc.o \
