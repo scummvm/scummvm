@@ -203,7 +203,7 @@ ScalpelEngine::ScalpelEngine(OSystem *syst, const SherlockGameDescription *gameD
 
 	if (getPlatform() == Common::kPlatform3DO) {
 		const Graphics::PixelFormat pixelFormatRGB565 = Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0);
-		INFO_BLACK = FROM_RGB(0, 0, 0x48);
+		INFO_BLACK = FROM_RGB(0, 0, 0);
 		BORDER_COLOR = FROM_RGB(0x6d, 0x38, 0x10);
 		COMMAND_BACKGROUND = FROM_RGB(0x38, 0x38, 0xce);
 		BUTTON_BACKGROUND = FROM_RGB(0x95, 0x5d, 0x24);

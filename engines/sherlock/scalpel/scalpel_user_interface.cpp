@@ -119,10 +119,18 @@ void ScalpelUserInterface::drawInterface(int bufferNum) {
 	const ImageFrame &src = (*_controlPanel)[0];
 	int16 x = (!IS_3DO) ? 0 : UI_OFFSET_3DO;
 
-	if (bufferNum & 1)
+	if (bufferNum & 1) {
+		if (IS_3DO)
+			screen._backBuffer1.fillRect(Common::Rect(0, CONTROLS_Y,
+				SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT), BLACK);
 		screen._backBuffer1.transBlitFrom(src, Common::Point(x, CONTROLS_Y));
-	if (bufferNum & 2)
+	}
+	if (bufferNum & 2) {
+		if (IS_3DO)
+			screen._backBuffer2.fillRect(Common::Rect(0, CONTROLS_Y,
+				SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT), BLACK);
 		screen._backBuffer2.transBlitFrom(src, Common::Point(x, CONTROLS_Y));
+	}
 	if (bufferNum == 3)
 		screen._backBuffer2.fillRect(0, INFO_LINE, SHERLOCK_SCREEN_WIDTH, INFO_LINE + 10, INFO_BLACK);
 }
@@ -460,8 +468,8 @@ void ScalpelUserInterface::toggleButton(int num) {
 
 void ScalpelUserInterface::clearInfo() {
 	if (_infoFlag) {
-		_vm->_screen->vgaBar(Common::Rect(16, INFO_LINE, SHERLOCK_SCREEN_WIDTH - 19,
-			INFO_LINE + 10), INFO_BLACK);
+		_vm->_screen->vgaBar(Common::Rect(IS_3DO ? 33 : 16, INFO_LINE, 
+			SHERLOCK_SCREEN_WIDTH - (IS_3DO ? 33 : 19), INFO_LINE + 10), INFO_BLACK);
 		_infoFlag = false;
 		_oldLook = -1;
 	}
