@@ -27,38 +27,6 @@
 namespace Stark {
 namespace Formats {
 
-class UnimplementedBiffObject : public BiffObject {
-public:
-	UnimplementedBiffObject(uint32 type) :
-			BiffObject(),
-			_data(nullptr),
-			_dataLength(0) {
-		_type = type;
-	}
-
-	virtual ~UnimplementedBiffObject() {
-		delete[] _data;
-	}
-
-	// BiffObject API
-	void readData(ArchiveReadStream *stream, uint32 dataLength) override {
-		_dataLength = dataLength;
-
-		// Read the data
-		_data = new byte[_dataLength];
-		uint32 bytesRead = stream->read(_data, _dataLength);
-
-		// Verify the whole array could be read
-		if (bytesRead != _dataLength) {
-			error("Stark::UnimplementedBiffObject: data length mismatch (%d != %d)", bytesRead, _dataLength);
-		}
-	}
-
-private:
-	uint32 _dataLength;
-	byte *_data;
-};
-
 BiffArchive::BiffArchive(ArchiveReadStream *stream, ObjectBuilder objectBuilder) :
 	_objectBuilder(objectBuilder) {
 	read(stream);
@@ -97,7 +65,7 @@ BiffObject *BiffArchive::readObject(ArchiveReadStream *stream, BiffObject *paren
 	uint32 type = stream->readUint32LE();
 	BiffObject *object = _objectBuilder(type);
 	if (!object) {
-		object = new UnimplementedBiffObject(type);
+		error("Unimplemented BIFF object type %x", type);
 	}
 
 	object->_parent = parent;
@@ -105,7 +73,7 @@ BiffObject *BiffArchive::readObject(ArchiveReadStream *stream, BiffObject *paren
 	uint32 size = stream->readUint32LE();
 
 	if (_version >= 2) {
-		object->_u4 = stream->readUint32LE();
+		object->_version = stream->readUint32LE();
 	}
 
 	object->readData(stream, size);
@@ -130,7 +98,7 @@ Common::Array<BiffObject *> BiffArchive::listObjects() {
 
 BiffObject::BiffObject() :
 	_u3(0),
-	_u4(0),
+	_version(0),
 	_parent(nullptr) {
 
 }

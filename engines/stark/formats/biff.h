@@ -89,7 +89,7 @@ public:
 protected:
 	uint32 _type;
 	uint32 _u3;
-	uint32 _u4;
+	uint32 _version;
 
 	BiffObject *_parent;
 	Common::Array<BiffObject *> _children;
