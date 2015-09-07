@@ -21,6 +21,8 @@
  */
 
 #include "engines/util.h"
+#include "gui/saveload.h"
+#include "common/translation.h"
 #include "sherlock/scalpel/scalpel.h"
 #include "sherlock/scalpel/scalpel_fixed_text.h"
 #include "sherlock/scalpel/scalpel_map.h"
@@ -1216,6 +1218,27 @@ void ScalpelEngine::flushBrumwellMirror() {
 	// If player is in range of the mirror, then draw the entire mirror area to the screen
 	if (Common::Rect(70, 100, 200, 200).contains(pt))
 		_screen->slamArea(137, 18, 47, 56);
+}
+
+
+void ScalpelEngine::showScummVMSaveDialog() {
+	GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
+
+	int slot = dialog->runModalWithCurrentTarget();
+	if (slot >= 0) {
+		Common::String desc = dialog->getResultString();
+
+		saveGameState(slot, desc);
+	}
+}
+
+void ScalpelEngine::showScummVMRestoreDialog() {
+	GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Restore game:"), _("Restore"), false);
+
+	int slot = dialog->runModalWithCurrentTarget();
+	if (slot >= 0) {
+		loadGameState(slot);
+	}
 }
 
 } // End of namespace Scalpel

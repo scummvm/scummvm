@@ -1273,6 +1273,7 @@ void ScalpelUserInterface::doLookControl() {
 }
 
 void ScalpelUserInterface::doMainControl() {
+	ScalpelEngine &vm = *(ScalpelEngine *)_vm;
 	Events &events = *_vm->_events;
 	ScalpelInventory &inv = *(ScalpelInventory *)_vm->_inventory;
 	ScalpelSaveManager &saves = *(ScalpelSaveManager *)_vm->_saves;
@@ -1382,24 +1383,34 @@ void ScalpelUserInterface::doMainControl() {
 			journalControl();
 			break;
 		case 'F':
-			pushButton(10);
-
-			// Create a thumbnail of the current screen before the files dialog is shown, in case
-			// the user saves the game
-			saves.createThumbnail();
-
-			_selector = _oldSelector = -1;
-
-			if (_vm->_showOriginalSavesDialog) {
-				// Show the original dialog
-				_menuMode = FILES_MODE;
-				saves.drawInterface();
-				_windowOpen = true;
+			if (IS_3DO) {
+				if (_temp == 10) {
+					pushButton(10);
+					vm.showScummVMRestoreDialog();
+				} else if (_temp == 11) {
+					pushButton(11);
+					vm.showScummVMSaveDialog();
+				}
 			} else {
-				// Show the ScummVM GMM instead
-				_vm->_canLoadSave = true;
-				_vm->openMainMenuDialog();
-				_vm->_canLoadSave = false;
+				pushButton(10);
+
+				// Create a thumbnail of the current screen before the files dialog is shown, in case
+				// the user saves the game
+				saves.createThumbnail();
+
+				_selector = _oldSelector = -1;
+
+				if (_vm->_showOriginalSavesDialog) {
+					// Show the original dialog
+					_menuMode = FILES_MODE;
+					saves.drawInterface();
+					_windowOpen = true;
+				} else {
+					// Show the ScummVM GMM instead
+					_vm->_canLoadSave = true;
+					_vm->openMainMenuDialog();
+					_vm->_canLoadSave = false;
+				}
 			}
 			break;
 		case 'S':

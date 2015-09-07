@@ -128,6 +128,16 @@ public:
 	 * This clears the mirror in scene 12 (mansion drawing room) in case anything messed draw over it
 	 */
 	void flushBrumwellMirror();
+
+	/**
+	 * Show the ScummVM restore savegame dialog
+	 */
+	void showScummVMSaveDialog();
+
+	/**
+	 * Show the ScummVM restore savegame dialog
+	 */
+	void showScummVMRestoreDialog();
 };
 
 } // End of namespace Scalpel
