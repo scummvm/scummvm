@@ -227,6 +227,7 @@ void writeMenuData(const char *menuData, int languageId) {
 
 void writeMenuBlock() {
 	writeMenuData(menuDataEn, 1);
+	writeMenuData(menuDataFr, 0);
 	writeMenuData(menuDataDe, 2);
 }
 
