@@ -56,11 +56,13 @@ void Model::readFromStream(ArchiveReadStream *stream) {
 	}
 
 	uint32 format = stream->readUint32LE();
-	if (format != 256) {
+	if (format == 256) {
+		_u1 = stream->readUint32LE();
+	} else if (format == 16) {
+		_u1 = 0;
+	} else {
 		error("Wrong format while reading actor '%d'", format);
 	}
-
-	_u1 = stream->readUint32LE();
 
 	uint32 id2 = stream->readUint32LE();
 	if (id2 != 0xDEADBABE) {
