@@ -194,7 +194,7 @@ uint PEN_COLOR;
 
 /*----------------------------------------------------------------*/
 
-#define FROM_RGB(r, g, b) pixelFormatRGB565.ARGBToColor(0, r, g, b)
+#define FROM_RGB(r, g, b) pixelFormatRGB565.RGBToColor(r, g, b)
 
 ScalpelEngine::ScalpelEngine(OSystem *syst, const SherlockGameDescription *gameDesc) :
 		SherlockEngine(syst, gameDesc) {
