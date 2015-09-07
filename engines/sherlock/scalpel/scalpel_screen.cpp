@@ -45,7 +45,7 @@ void ScalpelScreen::makeButton(const Common::Rect &bounds, int textX,
 		COMMAND_FOREGROUND, "%s", str.c_str() + 1);
 }
 
-void ScalpelScreen::buttonPrint(const Common::Point &pt, byte color, bool slamIt,
+void ScalpelScreen::buttonPrint(const Common::Point &pt, uint color, bool slamIt,
 		const Common::String &str) {
 	int xStart = pt.x - stringWidth(str) / 2;
 

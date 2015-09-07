@@ -201,16 +201,16 @@ void Surface::transBlitFromUnscaled(const Graphics::Surface &src, const Common::
 	}
 }
 
-void Surface::fillRect(int x1, int y1, int x2, int y2, byte color) {
+void Surface::fillRect(int x1, int y1, int x2, int y2, uint color) {
 	fillRect(Common::Rect(x1, y1, x2, y2), color);
 }
 
-void Surface::fillRect(const Common::Rect &r, byte color) {
+void Surface::fillRect(const Common::Rect &r, uint color) {
 	_surface.fillRect(r, color);
 	addDirtyRect(r);
 }
 
-void Surface::fill(uint16 color) {
+void Surface::fill(uint color) {
 	_surface.fillRect(Common::Rect(_surface.w, _surface.h), color);
 }
 

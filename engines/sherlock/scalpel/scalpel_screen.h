@@ -45,7 +45,7 @@ public:
 	 * Prints an interface command with the first letter highlighted to indicate
 	 * what keyboard shortcut is associated with it
 	 */
-	void buttonPrint(const Common::Point &pt, byte color, bool slamIt, const Common::String &str);
+	void buttonPrint(const Common::Point &pt, uint color, bool slamIt, const Common::String &str);
 
 	/**
 	 * Draw a panel in the back buffer with a raised area effect around the edges

@@ -30,19 +30,23 @@ namespace Sherlock {
 
 namespace Scalpel {
 
-enum {
-	BUTTON_TOP			= 233,
-	BUTTON_MIDDLE		= 244,
-	BUTTON_BOTTOM		= 248,
-	COMMAND_FOREGROUND	= 15,
-	COMMAND_HIGHLIGHTED = 10,
-	COMMAND_NULL		= 248,
-	INFO_FOREGROUND		= 11,
-	INFO_BACKGROUND		= 1,
-	INV_FOREGROUND		= 14,
-	INV_BACKGROUND		= 1,
-	PEN_COLOR			= 250
-};
+extern uint BUTTON_TOP;
+extern uint BUTTON_MIDDLE;
+extern uint BUTTON_BOTTOM;
+extern uint COMMAND_FOREGROUND;
+extern uint COMMAND_HIGHLIGHTED;
+extern uint COMMAND_NULL;
+extern uint INFO_FOREGROUND;
+extern uint INFO_BACKGROUND;
+extern uint INV_FOREGROUND;
+extern uint INV_BACKGROUND;
+extern uint PEN_COLOR;
+extern uint INFO_BLACK;
+extern uint BORDER_COLOR;
+extern uint COMMAND_BACKGROUND;
+extern uint BUTTON_BACKGROUND;
+extern uint TALK_FOREGROUND;
+extern uint TALK_NULL;
 
 class ScalpelEngine : public SherlockEngine {
 private:

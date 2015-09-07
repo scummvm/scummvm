@@ -460,7 +460,7 @@ void Screen::blockMove() {
 	blockMove(Common::Rect(0, 0, w(), h()));
 }
 
-void Screen::print(const Common::Point &pt, byte color, const char *formatStr, ...) {
+void Screen::print(const Common::Point &pt, uint color, const char *formatStr, ...) {
 	// Create the string to display
 	va_list args;
 	va_start(args, formatStr);
@@ -488,7 +488,7 @@ void Screen::print(const Common::Point &pt, byte color, const char *formatStr, .
 	slamRect(textBounds);
 }
 
-void Screen::gPrint(const Common::Point &pt, byte color, const char *formatStr, ...) {
+void Screen::gPrint(const Common::Point &pt, uint color, const char *formatStr, ...) {
 	// Create the string to display
 	va_list args;
 	va_start(args, formatStr);
@@ -499,7 +499,7 @@ void Screen::gPrint(const Common::Point &pt, byte color, const char *formatStr, 
 	writeString(str, pt, color);
 }
 
-void Screen::writeString(const Common::String &str, const Common::Point &pt, byte overrideColor) {
+void Screen::writeString(const Common::String &str, const Common::Point &pt, uint overrideColor) {
 	Fonts::writeString(_backBuffer, str, pt, overrideColor);
 }
 

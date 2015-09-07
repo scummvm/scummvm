@@ -35,22 +35,12 @@ namespace Sherlock {
 #define PALETTE_COUNT 256
 #define VGA_COLOR_TRANS(x) ((x) * 255 / 63)
 #define BG_GREYSCALE_RANGE_END 229
-
-enum {
-	BLACK				= 0,
-	INFO_BLACK			= 1,
-	BORDER_COLOR		= 237,
-	COMMAND_BACKGROUND	= 4,
-	BUTTON_BACKGROUND	= 235,
-	TALK_FOREGROUND		= 12,
-	TALK_NULL			= 16
-};
+#define BLACK 0
 
 class SherlockEngine;
 
 class Screen : public Surface {
 private:
-	SherlockEngine *_vm;
 	Common::List<Common::Rect> _dirtyRects;
 	uint32 _transitionSeed;
 	Surface _sceneSurface;
@@ -69,6 +59,8 @@ private:
 	 */
 	bool unionRectangle(Common::Rect &destRect, const Common::Rect &src1, const Common::Rect &src2);
 protected:
+	SherlockEngine *_vm;
+
 	/**
 	 * Adds a rectangle to the list of modified areas of the screen during the
 	 * current frame
@@ -144,12 +136,12 @@ public:
 	 * Prints the text passed onto the back buffer at the given position and color.
 	 * The string is then blitted to the screen
 	 */
-	void print(const Common::Point &pt, byte color, const char *formatStr, ...) GCC_PRINTF(4, 5);
+	void print(const Common::Point &pt, uint color, const char *formatStr, ...) GCC_PRINTF(4, 5);
 
 	/**
 	 * Print a strings onto the back buffer without blitting it to the screen
 	 */
-	void gPrint(const Common::Point &pt, byte color, const char *formatStr, ...) GCC_PRINTF(4, 5);
+	void gPrint(const Common::Point &pt, uint color, const char *formatStr, ...) GCC_PRINTF(4, 5);
 
 	/**
 	 * Copies a section of the second back buffer into the main back buffer
@@ -223,7 +215,7 @@ public:
 	/**
 	 * Draws the given string into the back buffer using the images stored in _font
 	 */
-	virtual void writeString(const Common::String &str, const Common::Point &pt, byte overrideColor);
+	virtual void writeString(const Common::String &str, const Common::Point &pt, uint overrideColor);
 
 
 	// Rose Tattoo specific methods

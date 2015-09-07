@@ -133,14 +133,14 @@ public:
 	/**
 	 * Fill a given area of the surface with a given color
 	 */
-	void fillRect(int x1, int y1, int x2, int y2, byte color);
+	void fillRect(int x1, int y1, int x2, int y2, uint color);
 	
 	/**
 	 * Fill a given area of the surface with a given color
 	 */
-	void fillRect(const Common::Rect &r, byte color);
+	void fillRect(const Common::Rect &r, uint color);
 
-	void fill(uint16 color);
+	void fill(uint color);
 
 	/**
 	 * Clear the surface
