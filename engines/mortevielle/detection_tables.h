@@ -124,7 +124,7 @@ static const MortevielleGameDescription MortevielleGameDescriptions[] = {
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
 			GUIO0()
-		}, Common::FR_FRA, kUseOriginalData
+		}, Common::FR_FRA, kUseEngineDataFile
 	},
 
 	{ AD_TABLE_END_MARKER , Common::EN_ANY, kUseEngineDataFile}
