@@ -139,15 +139,9 @@ private:
 Gfx::TextureSet *TextureSetReader::read(ArchiveReadStream *stream) {
 	BiffArchive archive = BiffArchive(stream, &biffObjectBuilder);
 
-	Common::Array<BiffObject *> objects = archive.listObjects();
-
-	Common::Array<Texture *> textures;
-	for (uint i = 0; i < objects.size(); i++) {
-		textures.push_back(objects[i]->listChildrenRecursive<Texture>());
-	}
+	Common::Array<Texture *> textures = archive.listObjectsRecursive<Texture>();
 
 	Gfx::TextureSet *textureSet = new Gfx::TextureSet();
-
 	for (uint i = 0; i < textures.size(); i++) {
 		textureSet->addTexture(textures[i]->getName(), textures[i]->acquireTexturePointer());
 	}

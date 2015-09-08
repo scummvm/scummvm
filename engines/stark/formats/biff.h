@@ -51,6 +51,10 @@ public:
 	/** List the objects at the root level of the archive */
 	Common::Array<BiffObject *> listObjects();
 
+	/** List objects recursively matching the template parameter type */
+	template<class T>
+	Common::Array<T *> listObjectsRecursive();
+
 private:
 	void read(ArchiveReadStream *stream);
 	BiffObject *readObject(ArchiveReadStream *stream, BiffObject *parent);
@@ -96,6 +100,18 @@ protected:
 
 	friend class BiffArchive;
 };
+
+template<class T>
+Common::Array<T *> BiffArchive::listObjectsRecursive() {
+	Common::Array<BiffObject *> objects = listObjects();
+
+	Common::Array<T *> array;
+	for (uint i = 0; i < objects.size(); i++) {
+		array.push_back(objects[i]->listChildrenRecursive<T>());
+	}
+
+	return array;
+}
 
 template<class T>
 Common::Array<T *> BiffObject::listChildrenRecursive() {
