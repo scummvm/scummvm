@@ -20,10 +20,13 @@
  *
  */
 
-#ifndef STARK_FORMATS_TM_H
-#define STARK_FORMATS_TM_H
+#ifndef STARK_FORMATS_BIFF_MESH_H
+#define STARK_FORMATS_BIFF_MESH_H
 
-#include "common/scummsys.h"
+#include "common/array.h"
+
+#include "math/matrix4.h"
+#include "math/vector3d.h"
 
 namespace Stark {
 
@@ -32,6 +35,7 @@ class ArchiveReadStream;
 namespace Formats {
 
 class BiffObject;
+class BiffMesh;
 
 /**
  * A mesh reader
@@ -41,14 +45,52 @@ class BiffObject;
 class BiffMeshReader {
 public:
 	/** Read a mesh from a BIFF archive stream */
-	static void read(ArchiveReadStream *stream);
+	static BiffMesh *read(ArchiveReadStream *stream);
 
 private:
 	static BiffObject *biffObjectBuilder(uint32 type);
 
 };
 
+/**
+ * A mesh read out of a BIFF archive
+ */
+class BiffMesh {
+public:
+	struct Vertex {
+		Math::Vector3d position;
+		Math::Vector3d normal;
+		Math::Vector3d texturePosition;
+	};
+
+	struct Face {
+		Common::Array<uint32> vertexIndices;
+		uint32 materialId;
+	};
+
+	struct Material {
+		Common::String texture;
+		float r, g, b;
+	};
+
+	BiffMesh(const Common::Array<Vertex> &vertices, const Common::Array<Face> &faces, const Common::Array<Material> &materials);
+
+	const Common::Array<Vertex> &getVertices() const;
+	const Common::Array<Face> &getFaces() const;
+	const Common::Array<Material> &getMaterials() const;
+	Math::Matrix4 getTransform() const;
+
+	void setTransform(const Math::Matrix4 &transform);
+
+private:
+	Common::Array<Vertex> _vertices;
+	Common::Array<Face> _faces;
+	Common::Array<Material> _materials;
+
+	Math::Matrix4 _transform;
+};
+
 } // End of namespace Formats
 } // End of namespace Stark
 
-#endif // STARK_FORMATS_TM_H
+#endif // STARK_FORMATS_BIFF_MESH_H

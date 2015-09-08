@@ -23,8 +23,9 @@
 #include "engines/stark/formats/biffmesh.h"
 
 #include "engines/stark/formats/biff.h"
-
 #include "engines/stark/services/archiveloader.h"
+
+#include "common/hashmap.h"
 
 namespace Stark {
 namespace Formats {
@@ -141,17 +142,17 @@ public:
 			vertex.animInfluence2 = stream->readFloat();
 			vertex.position = stream->readVector3();
 
-			_vertices.push_back(vertex);
+			_rawVertices.push_back(vertex);
 		}
 
 		uint32 normalCount = stream->readUint32LE();
 		for (uint i = 0; i < normalCount; i++) {
-			_normals.push_back(stream->readVector3());
+			_rawNormals.push_back(stream->readVector3());
 		}
 
 		uint32 textureVertexCount = stream->readUint32LE();
 		for (uint i = 0; i < textureVertexCount; i++) {
-			_texturePositions.push_back(stream->readVector3());
+			_rawTexturePositions.push_back(stream->readVector3());
 		}
 
 		uint32 faceCount = stream->readUint32LE();
@@ -169,21 +170,116 @@ public:
 			face.materialId = stream->readUint32LE();
 			face.smoothingGroup = stream->readUint32LE();
 
-			_faces.push_back(face);
+			_rawFaces.push_back(face);
 		}
 
 		_hasPhysics = stream->readByte();
 	}
 
+	void reindex() {
+		// The raw data loaded from the BIFF archive needs to be split into faces of identical material.
+		// Reserve enough faces in our faces array
+		for (uint i = 0; i < _rawFaces.size(); i++) {
+			if (_rawFaces[i].materialId >= _faces.size()) {
+				_faces.resize(_rawFaces[i].materialId + 1);
+			}
+			_faces[_rawFaces[i].materialId].materialId = _rawFaces[i].materialId;
+		}
+
+		// The raw data loaded from the BIFF archive is multi-indexed, which is not simple to use to draw.
+		// Here, we reindex the data so that each vertex owns all of its related attributes, hence requiring
+		// a single index list.
+		Common::HashMap<VertexKey, uint32, VertexKey::Hash, VertexKey::EqualTo> vertexIndexMap;
+		for (uint i = 0; i < _rawFaces.size(); i++) {
+			for (uint j = 0; j < 3; j++) {
+				VertexKey vertexKey(_rawFaces[i].vertexIndex[j], _rawFaces[i].normalIndex[j], _rawFaces[i].textureVertexIndex[j]);
+				if (!vertexIndexMap.contains(vertexKey)) {
+					BiffMesh::Vertex vertex;
+					vertex.position = _rawVertices[_rawFaces[i].vertexIndex[j]].position;
+					vertex.normal = _rawNormals[_rawFaces[i].vertexIndex[j]];
+					vertex.texturePosition = _rawTexturePositions[_rawFaces[i].vertexIndex[j]];
+
+					_vertices.push_back(vertex);
+
+					vertexIndexMap.setVal(vertexKey, _vertices.size() - 1);
+				}
+
+				uint32 vertexIndex = vertexIndexMap.getVal(vertexKey);
+
+				// Add the index to a face according to its material
+				_faces[_rawFaces[i].materialId].vertexIndices.push_back(vertexIndex);
+			}
+		}
+
+		// Clear the raw data
+		_rawVertices.clear();
+		_rawNormals.clear();
+		_rawTexturePositions.clear();
+		_rawFaces.clear();
+	}
+
+	Math::Matrix4 getTransform(uint keyframeIndex) const {
+		const KeyFrame &keyframe = _keyFrames[keyframeIndex];
+
+		Math::Matrix4 rotation = keyframe.essentialRotation.toMatrix();
+
+		Math::Matrix4 translation;
+		translation.setPosition(keyframe.translation);
+
+		Math::Matrix4 scale;
+		scale.setValue(0, 0, keyframe.scale.x());
+		scale.setValue(1, 1, keyframe.scale.y());
+		scale.setValue(2, 2, keyframe.scale.z());
+
+		return translation * rotation * scale;
+	}
+
+	const Common::Array<BiffMesh::Vertex> &getVertices() const {
+		return _vertices;
+	}
+
+	const Common::Array<BiffMesh::Face> &getFaces() const {
+		return _faces;
+	}
+
 private:
+	struct VertexKey {
+		uint32 _vertexIndex;
+		uint32 _normalIndex;
+		uint32 _textureVertexIndex;
+
+		VertexKey(uint32 vertexIndex, uint32 normalIndex, uint32 textureVertexIndex) {
+			_vertexIndex = vertexIndex;
+			_normalIndex = normalIndex;
+			_textureVertexIndex = textureVertexIndex;
+		}
+
+		struct Hash {
+			uint operator() (const VertexKey &x) const {
+				return x._vertexIndex + x._normalIndex + x._textureVertexIndex;
+			}
+		};
+
+		struct EqualTo {
+			bool operator() (const VertexKey &x, const VertexKey &y) const {
+				return x._vertexIndex == y._vertexIndex &&
+						x._normalIndex == y._normalIndex &&
+						x._textureVertexIndex == y._textureVertexIndex;
+			}
+		};
+	};
+
 	Common::String _name;
 
 	Common::Array<KeyFrame> _keyFrames;
-	Common::Array<Vertex> _vertices;
-	Common::Array<Face> _faces;
 
-	Common::Array<Math::Vector3d> _normals;
-	Common::Array<Math::Vector3d> _texturePositions;
+	Common::Array<Vertex> _rawVertices;
+	Common::Array<Face> _rawFaces;
+	Common::Array<Math::Vector3d> _rawNormals;
+	Common::Array<Math::Vector3d> _rawTexturePositions;
+
+	Common::Array<BiffMesh::Vertex> _vertices;
+	Common::Array<BiffMesh::Face> _faces;
 
 	bool _hasPhysics;
 };
@@ -224,6 +320,20 @@ public:
 		assert(attributeCount == 0); // Reading the attributes is not implemented
 	}
 
+	BiffMesh::Material toMaterial() const {
+		BiffMesh::Material material;
+		material.texture = _texture;
+		material.r = _diffuse.x();
+		material.g = _diffuse.y();
+		material.b = _diffuse.z();
+
+		return material;
+	}
+
+	const Common::String &getTexture() const {
+		return _texture;
+	}
+
 private:
 	Common::String _name;
 	Common::String _texture;
@@ -247,8 +357,25 @@ private:
 	uint32 _colorKey;
 };
 
-void BiffMeshReader::read(ArchiveReadStream *stream) {
+BiffMesh *BiffMeshReader::read(ArchiveReadStream *stream) {
 	BiffArchive archive = BiffArchive(stream, &biffObjectBuilder);
+	Common::Array<MeshObjectTri *> tris = archive.listObjectsRecursive<MeshObjectTri>();
+	Common::Array<MeshObjectMaterial *> materialObjects = archive.listObjectsRecursive<MeshObjectMaterial>();
+
+	if (tris.size() != 1) {
+		error("Unexpected tri count in BIFF archive: '%d'", tris.size());
+	}
+
+	tris[0]->reindex();
+
+	Common::Array<BiffMesh::Material> materials;
+	for (uint i = 0; i < materialObjects.size(); i++) {
+		materials.push_back(materialObjects[i]->toMaterial());
+	}
+
+	BiffMesh *mesh = new BiffMesh(tris[0]->getVertices(), tris[0]->getFaces(), materials);
+	mesh->setTransform(tris[0]->getTransform(0));
+	return mesh;
 }
 
 BiffObject *BiffMeshReader::biffObjectBuilder(uint32 type) {
@@ -264,6 +391,33 @@ BiffObject *BiffMeshReader::biffObjectBuilder(uint32 type) {
 		default:
 			return nullptr;
 	}
+}
+
+BiffMesh::BiffMesh(const Common::Array<Vertex> &vertices, const Common::Array<Face> &faces,
+                   const Common::Array<Material> &materials) :
+	_vertices(vertices),
+    _faces(faces),
+    _materials(materials) {
+}
+
+const Common::Array<BiffMesh::Vertex> &BiffMesh::getVertices() const {
+	return _vertices;
+}
+
+const Common::Array<BiffMesh::Face> &BiffMesh::getFaces() const {
+	return _faces;
+}
+
+const Common::Array<BiffMesh::Material> &BiffMesh::getMaterials() const {
+	return _materials;
+}
+
+void BiffMesh::setTransform(const Math::Matrix4 &transform) {
+	_transform = transform;
+}
+
+Math::Matrix4 BiffMesh::getTransform() const {
+	return _transform;
 }
 
 } // End of namespace Formats
