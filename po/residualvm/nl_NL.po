@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ResidualVM 0.3.0git\n"
 "Report-Msgid-Bugs-To: https://github.com/residualvm/residualvm/issues\n"
-"POT-Creation-Date: 2015-09-02 14:36+0200\n"
+"POT-Creation-Date: 2015-09-08 16:58+0200\n"
 "PO-Revision-Date: 2015-09-02 14:36+0200\n"
 "Last-Translator: Dries Harnie <dries@harnie.be>\n"
 "Language-Team: Dutch <vertaling@vrijschrift.org>\n"
@@ -17,11 +17,11 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: gui/launcher.cpp:630 backends/platform/sdl/macosx/appMenu_osx.mm:95
+#: gui/launcher.cpp:630 backends/platform/sdl/macosx/appmenu_osx.mm:95
 msgid "Quit ResidualVM"
 msgstr "Hiermee verlaat u ResidualVM"
 
-#: gui/launcher.cpp:631 backends/platform/sdl/macosx/appMenu_osx.mm:69
+#: gui/launcher.cpp:631 backends/platform/sdl/macosx/appmenu_osx.mm:69
 msgid "About ResidualVM"
 msgstr "Geeft informatie over ResidualVM"
 
@@ -66,7 +66,8 @@ msgstr "Taal van de ResidualVM GUI"
 
 #: gui/options.cpp:1402
 msgid "You have to restart ResidualVM before your changes will take effect."
-msgstr "U dient ResidualVM opnieuw op te starten om de wijzigingen te activeren."
+msgstr ""
+"U dient ResidualVM opnieuw op te starten om de wijzigingen te activeren."
 
 #: engines/advancedDetector.cpp:318
 msgid ""
@@ -86,13 +87,28 @@ msgstr ""
 "instabiel is, en opgeslagen spellen zullen mogelijk niet werken in "
 "toekomstige versies van ResidualVM."
 
-#: audio/fmopl.cpp:67
-msgid "ALSA Direct FM"
-msgstr ""
-
-#: backends/platform/sdl/macosx/appMenu_osx.mm:77
+#: backends/platform/sdl/macosx/appmenu_osx.mm:77
 msgid "Hide ResidualVM"
 msgstr "Verberg ResidualVM"
+
+#: engines/grim/grim.cpp:285
+#, c-format
+msgid ""
+"ResidualVM found some problems with your game data files.\n"
+"Running ResidualVM nevertheless may cause game bugs or even crashes.\n"
+"Do you still want to run %s?"
+msgstr ""
+"ResidualVM heeft enkele problemen gevonden in uw spelbestanden.\n"
+"Nu opstarten kan leiden tot bugs of crashes.\n"
+"Wilt u %s alsnog opstarten?"
+
+#: engines/grim/grim.cpp:288
+msgid "Escape From Monkey Island"
+msgstr ""
+
+#: engines/grim/grim.cpp:288
+msgid "Grim Fandango"
+msgstr ""
 
 #: engines/grim/md5check.cpp:546
 #, c-format
@@ -109,9 +125,10 @@ msgid ""
 "%s"
 msgstr ""
 "Het spelbestand %s is mogelijk corrupt.\n"
-"Als u zeker bent dat dit niet het geval is, neem contact op met het ResidualVM "
-"team en vermeld de volgende code, samen met de bestandsnaam en een korte "
-"beschrijving van uw spel (bvb. taal en 'dvd-box' of 'jewelcase'): \n"
+"Als u zeker bent dat dit niet het geval is, neem contact op met het "
+"ResidualVM team en vermeld de volgende code, samen met de bestandsnaam en "
+"een korte beschrijving van uw spel (bvb. taal en 'dvd-box' of "
+"'jewelcase'): \n"
 "%s"
 
 #: engines/grim/md5check.cpp:553
