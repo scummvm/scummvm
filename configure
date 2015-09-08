@@ -166,8 +166,7 @@ _safedisc=no
 _vkeybd=no
 _keymapper=no
 _eventrec=no
-# GUI translation options
-_translation=no
+_translation=yes
 # Default platform settings
 _backend=sdl
 _16bit=auto
