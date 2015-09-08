@@ -2115,8 +2115,12 @@ void MortevielleEngine::music() {
 	_reloadCFIEC = true;
 
 	Common::File f;
-	if (!f.open("mort.img"))
-		error("Missing file - mort.img");
+	if (!f.open("mort.img")) {
+		// Some DOS versions use MORTP2 instead of MORT.IMG
+		// Some have both and they are identical
+		if (!f.open("mortp2"))
+			error("Missing file - mort.img");
+	}
 
 	int size = f.size();
 	byte *compMusicBuf = (byte *)malloc(sizeof(byte) * size);
