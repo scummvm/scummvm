@@ -145,8 +145,6 @@ void SoundManager::loadNoise() {
 		error("Missing file - bruit5");
 
 	if (f1.open("bruits")) { //Translation: "noise"
-		error("Missing file - bruits");
-
 		assert(f1.size() > 32000);
 		_noiseBuf = (byte *)malloc(sizeof(byte) * (f1.size() + f5.size()));
 
