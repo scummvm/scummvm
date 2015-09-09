@@ -26,6 +26,7 @@
 #include "common/debug.h"
 #include "common/endian.h"
 #include "common/stream.h"
+#include "common/memstream.h"
 #include "common/system.h"
 #include "common/textconsole.h"
 
@@ -557,9 +558,13 @@ MPEGPSDecoder::PS2AudioTrack::PS2AudioTrack(Common::SeekableReadStream *firstPac
 	_channels = firstPacket->readUint32LE();
 	_interleave = firstPacket->readUint32LE();
 
+	byte flags = Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN;
+	if (_channels == 2)
+		flags |= Audio::FLAG_STEREO;
+
 	_blockBuffer = new byte[_interleave * _channels];
 	_blockPos = _blockUsed = 0;
-	_audStream = Audio::makePacketizedMP3Stream(sampleRate, _channels == 2);
+	_audStream = Audio::makePacketizedRawStream(sampleRate, flags);
 	_isFirstPacket = true;
 
 	firstPacket->seek(0);
@@ -619,13 +624,7 @@ bool MPEGPSDecoder::PS2AudioTrack::sendPacket(Common::SeekableReadStream *packet
 		}
 	}
 
-	byte flags = Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN;
-
-	if (_audStream->isStereo())
-		flags |= Audio::FLAG_STEREO;
-
-	// FIXME:
-	//_audStream->queueBuffer((byte *)buffer, sampleCount * 2, DisposeAfterUse::YES, flags);
+	_audStream->queuePacket(new Common::MemoryReadStream(buffer, sampleCount * 2, DisposeAfterUse::YES));
 
 	delete packet;
 	return true;
