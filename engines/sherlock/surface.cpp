@@ -262,11 +262,11 @@ void Surface::setPixels(byte *pixels, int width, int height, Graphics::PixelForm
 	_surface.setPixels(pixels);
 }
 
-void Surface::writeString(const Common::String &str, const Common::Point &pt, byte overrideColor) {
+void Surface::writeString(const Common::String &str, const Common::Point &pt, uint overrideColor) {
 	Fonts::writeString(this, str, pt, overrideColor);
 }
 
-void Surface::writeFancyString(const Common::String &str, const Common::Point &pt, byte overrideColor1, byte overrideColor2) {
+void Surface::writeFancyString(const Common::String &str, const Common::Point &pt, uint overrideColor1, uint overrideColor2) {
 	writeString(str, Common::Point(pt.x, pt.y), overrideColor1);
 	writeString(str, Common::Point(pt.x + 1, pt.y), overrideColor1);
 	writeString(str, Common::Point(pt.x + 2, pt.y), overrideColor1);

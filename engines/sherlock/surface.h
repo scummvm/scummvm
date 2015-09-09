@@ -165,8 +165,8 @@ public:
 	/**
 	 * Draws the given string into the back buffer using the images stored in _font
 	 */
-	virtual void writeString(const Common::String &str, const Common::Point &pt, byte overrideColor);
-	void writeFancyString(const Common::String &str, const Common::Point &pt, byte overrideColor1, byte overrideColor2);
+	virtual void writeString(const Common::String &str, const Common::Point &pt, uint overrideColor);
+	void writeFancyString(const Common::String &str, const Common::Point &pt, uint overrideColor1, uint overrideColor2);
 
 	inline uint16 w() const { return _surface.w; }
 	inline uint16 h() const { return _surface.h; }
@@ -175,8 +175,8 @@ public:
 	inline byte *getBasePtr(int x, int y) { return (byte *)_surface.getBasePtr(x, y); }
 	inline const byte *getBasePtr(int x, int y) const { return (const byte *)_surface.getBasePtr(x, y); }
 	inline Graphics::Surface &getRawSurface() { return _surface; }
-	inline void hLine(int x, int y, int x2, uint32 color) { _surface.hLine(x, y, x2, color); }
-	inline void vLine(int x, int y, int y2, uint32 color) { _surface.vLine(x, y, y2, color); }
+	inline void hLine(int x, int y, int x2, uint color) { _surface.hLine(x, y, x2, color); }
+	inline void vLine(int x, int y, int y2, uint color) { _surface.vLine(x, y, y2, color); }
 };
 
 } // End of namespace Sherlock
