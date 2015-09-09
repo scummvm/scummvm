@@ -32,6 +32,7 @@ namespace Stark {
 
 class SkeletonAnim;
 class VisualActor;
+class VisualProp;
 class VisualSmacker;
 class Visual;
 namespace Formats {
@@ -92,7 +93,7 @@ public:
 	virtual void selectFrame(uint32 frameIndex);
 
 	/** Obtain the Visual to be used to render the animation */
-	virtual Visual *getVisual();
+	virtual Visual *getVisual() = 0;
 
 	/** Associate the animation to an Item */
 	virtual void applyToItem(Item *item);
@@ -170,8 +171,10 @@ public:
 
 	// Resource API
 	void readData(Formats::XRCReadStream *stream) override;
+	void onPostRead() override;
 
 	// Anim API
+	Visual *getVisual();
 	uint32 getMovementSpeed() const override;
 
 protected:
@@ -182,6 +185,8 @@ protected:
 	Common::String _textureFilename;
 	uint32 _movementSpeed;
 	Common::String _archiveName;
+
+	VisualProp *_visual;
 };
 
 /**

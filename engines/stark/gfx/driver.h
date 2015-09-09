@@ -31,6 +31,7 @@
 namespace Stark {
 
 class VisualActor;
+class VisualProp;
 
 namespace Gfx {
 
@@ -68,9 +69,15 @@ public:
 	 * Create a new actor renderer
 	 *
 	 * The caller is responsible for freeing it.
-	 *
 	 */
 	virtual VisualActor *createActorRenderer() = 0;
+
+	/**
+	 * Create a new prop renderer
+	 *
+	 * The caller is responsible for freeing it.
+	 */
+	virtual VisualProp *createPropRenderer() = 0;
 
 	/** Bound a screen coordinate coord within the actual game area */
 	Common::Point getScreenPosBounded(Common::Point point);

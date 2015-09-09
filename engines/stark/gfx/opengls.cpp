@@ -30,6 +30,7 @@
 #if defined(USE_GLES2) || defined(USE_OPENGL_SHADERS)
 
 #include "engines/stark/gfx/openglsactor.h"
+#include "engines/stark/gfx/openglsprop.h"
 #include "engines/stark/gfx/opengltexture.h"
 
 #include "graphics/pixelbuffer.h"
@@ -126,6 +127,10 @@ Texture *OpenGLSDriver::createTexture(const Graphics::Surface *surface, const by
 
 VisualActor *OpenGLSDriver::createActorRenderer() {
 	return new OpenGLSActorRenderer();
+}
+
+VisualProp *OpenGLSDriver::createPropRenderer() {
+	return new OpenGLSPropRenderer();
 }
 
 void OpenGLSDriver::drawSurface(const Texture *texture, const Common::Point &dest) {

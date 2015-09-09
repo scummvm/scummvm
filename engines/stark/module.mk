@@ -7,6 +7,7 @@ MODULE_OBJS := \
 	gfx/driver.o \
 	gfx/opengls.o \
 	gfx/openglsactor.o \
+	gfx/openglsprop.o \
 	gfx/opengltexture.o \
 	gfx/renderentry.o \
 	gfx/texture.o \
@@ -79,6 +80,7 @@ MODULE_OBJS := \
 	ui/window.o \
 	visual/actor.o \
 	visual/image.o \
+	visual/prop.o \
 	visual/smacker.o \
 	visual/text.o
 

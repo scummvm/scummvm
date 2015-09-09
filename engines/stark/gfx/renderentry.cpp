@@ -25,6 +25,7 @@
 
 #include "engines/stark/visual/actor.h"
 #include "engines/stark/visual/image.h"
+#include "engines/stark/visual/prop.h"
 #include "engines/stark/visual/smacker.h"
 #include "engines/stark/visual/visual.h"
 
@@ -54,6 +55,11 @@ void RenderEntry::render(Driver *gfx) {
 	VisualActor *actor = _visual->get<VisualActor>();
 	if (actor) {
 		actor->render(gfx, _position3D, _direction3D);
+	}
+
+	VisualProp *prop = _visual->get<VisualProp>();
+	if (prop) {
+		prop->render(gfx, _position3D, _direction3D);
 	}
 
 	VisualSmacker *smacker = _visual->get<VisualSmacker>();
@@ -131,6 +137,11 @@ bool RenderEntry::intersectRay(const Math::Ray &ray) const {
 	VisualActor *actor = _visual->get<VisualActor>();
 	if (actor) {
 		return actor->intersectRay(ray, _position3D, _direction3D);
+	}
+
+	VisualProp *prop = _visual->get<VisualProp>();
+	if (prop) {
+		return prop->intersectRay(ray, _position3D, _direction3D);
 	}
 
 	return false;

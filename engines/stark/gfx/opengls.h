@@ -55,6 +55,7 @@ public:
 
 	Texture *createTexture(const Graphics::Surface *surface = nullptr, const byte *palette = nullptr) override;
 	VisualActor *createActorRenderer() override;
+	VisualProp *createPropRenderer() override;
 
 	void drawSurface(const Texture *texture, const Common::Point &dest) override;
 

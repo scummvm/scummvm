@@ -22,7 +22,10 @@
 
 #include "common/debug.h"
 
+#include "engines/stark/formats/biffmesh.h"
+#include "engines/stark/formats/tm.h"
 #include "engines/stark/formats/xrc.h"
+
 #include "engines/stark/gfx/driver.h"
 #include "engines/stark/resources/anim.h"
 #include "engines/stark/resources/bonesmesh.h"
@@ -38,6 +41,7 @@
 
 #include "engines/stark/model/skeleton_anim.h"
 #include "engines/stark/visual/actor.h"
+#include "engines/stark/visual/prop.h"
 #include "engines/stark/visual/smacker.h"
 
 namespace Stark {
@@ -76,10 +80,6 @@ void Anim::readData(Formats::XRCReadStream *stream) {
 }
 
 void Anim::selectFrame(uint32 frameIndex) {
-}
-
-Visual *Anim::getVisual() {
-	return nullptr;
 }
 
 uint32 Anim::getUsage() const {
@@ -188,10 +188,17 @@ void AnimImages::saveLoad(ResourceSerializer *serializer) {
 }
 
 AnimSub2::~AnimSub2() {
+	delete _visual;
 }
 
 AnimSub2::AnimSub2(Object *parent, byte subType, uint16 index, const Common::String &name) :
-				Anim(parent, subType, index, name) {
+				Anim(parent, subType, index, name),
+				_movementSpeed(100) {
+	_visual = StarkGfx->createPropRenderer();
+}
+
+Visual *AnimSub2::getVisual() {
+	return _visual;
 }
 
 uint32 AnimSub2::getMovementSpeed() const {
@@ -211,6 +218,20 @@ void AnimSub2::readData(Formats::XRCReadStream *stream) {
 	_textureFilename = stream->readString();
 	_movementSpeed = stream->readUint32LE();
 	_archiveName = stream->getArchiveName();
+}
+
+void AnimSub2::onPostRead() {
+	if (_meshFilenames.size() != 1) {
+		error("Unexpected mesh count in prop anim: '%d'", _meshFilenames.size());
+	}
+
+	ArchiveReadStream *stream = StarkArchiveLoader->getFile(_meshFilenames[0], _archiveName);
+	_visual->setModel(Formats::BiffMeshReader::read(stream));
+	delete stream;
+
+	stream = StarkArchiveLoader->getFile(_textureFilename, _archiveName);
+	_visual->setTexture(Formats::TextureSetReader::read(stream));
+	delete stream;
 }
 
 void AnimSub2::printData() {
