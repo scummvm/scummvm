@@ -144,7 +144,7 @@ void Walk::onGameLoop() {
 }
 
 float Walk::computeDistancePerGameLoop() const {
-	Resources::AnimSkeleton *anim = Resources::Object::cast<Resources::AnimSkeleton>(_item->getAnim());
+	Resources::Anim *anim = _item->getAnim();
 	float distancePerGameloop = anim->getMovementSpeed() * StarkGlobal->getMillisecondsPerGameloop() / 1000.0;
 
 	return distancePerGameloop;

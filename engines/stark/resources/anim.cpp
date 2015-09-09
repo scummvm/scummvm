@@ -119,6 +119,10 @@ bool Anim::isAtTime(uint32 time) const {
 	return true;
 }
 
+uint32 Anim::getMovementSpeed() const {
+	return 100;
+}
+
 void Anim::printData() {
 	debug("usage: %d", _usage);
 	debug("numFrames: %d", _numFrames);
@@ -190,6 +194,10 @@ AnimSub2::AnimSub2(Object *parent, byte subType, uint16 index, const Common::Str
 				Anim(parent, subType, index, name) {
 }
 
+uint32 AnimSub2::getMovementSpeed() const {
+	return _movementSpeed;
+}
+
 void AnimSub2::readData(Formats::XRCReadStream *stream) {
 	Anim::readData(stream);
 
@@ -201,7 +209,7 @@ void AnimSub2::readData(Formats::XRCReadStream *stream) {
 	}
 
 	_textureFilename = stream->readString();
-	_field_5C = stream->readUint32LE();
+	_movementSpeed = stream->readUint32LE();
 	_archiveName = stream->getArchiveName();
 }
 
@@ -215,7 +223,7 @@ void AnimSub2::printData() {
 		debug("meshFilename[%d]: %s", i, _meshFilenames[i].c_str());
 	}
 	debug("textureFilename: %s", _textureFilename.c_str());
-	debug("field_5C: %d", _field_5C);
+	debug("movementSpeed: %d", _movementSpeed);
 }
 
 AnimVideo::~AnimVideo() {

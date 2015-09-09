@@ -122,6 +122,9 @@ public:
 	/** Checks if the elapsed time since the animation start is greater than a specified duration */
 	virtual bool isAtTime(uint32 time) const;
 
+	/** Get the anim movement speed in units per seconds */
+	virtual uint32 getMovementSpeed() const;
+
 protected:
 	virtual void printData() override;
 
@@ -168,13 +171,16 @@ public:
 	// Resource API
 	void readData(Formats::XRCReadStream *stream) override;
 
+	// Anim API
+	uint32 getMovementSpeed() const override;
+
 protected:
 	void printData() override;
 
 	Common::String _field_3C;
 	Common::Array<Common::String> _meshFilenames;
 	Common::String _textureFilename;
-	uint32 _field_5C;
+	uint32 _movementSpeed;
 	Common::String _archiveName;
 };
 
@@ -245,9 +251,7 @@ public:
 	uint32 getDuration() const override;
 	void playAsAction(ItemVisual *item) override;
 	bool isAtTime(uint32 time) const override;
-
-	/** Get the anim movement speed in units per seconds */
-	uint32 getMovementSpeed() const;
+	uint32 getMovementSpeed() const override;
 
 protected:
 	void printData() override;
