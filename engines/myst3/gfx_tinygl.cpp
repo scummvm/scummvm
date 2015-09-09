@@ -43,14 +43,6 @@
 
 namespace Myst3 {
 
-static const TGLfloat faceTextureCoords[] = {
-	// S     T
-	0.0f, 1.0f,
-	1.0f, 1.0f,
-	0.0f, 0.0f,
-	1.0f, 0.0f,
-};
-
 Renderer *CreateGfxTinyGL(OSystem *system) {
 	return new TinyGLRenderer(system);
 }

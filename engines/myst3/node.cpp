@@ -138,7 +138,7 @@ Node::~Node() {
 	delete _subtitles;
 }
 
-void Node::loadSpotItem(uint16 id, uint16 condition, bool fade) {
+void Node::loadSpotItem(uint16 id, int16 condition, bool fade) {
 	SpotItem *spotItem = new SpotItem(_vm);
 
 	spotItem->setCondition(condition);
@@ -173,7 +173,7 @@ void Node::loadSpotItem(uint16 id, uint16 condition, bool fade) {
 	_spotItems.push_back(spotItem);
 }
 
-SpotItemFace *Node::loadMenuSpotItem(uint16 condition, const Common::Rect &rect) {
+SpotItemFace *Node::loadMenuSpotItem(int16 condition, const Common::Rect &rect) {
 	SpotItem *spotItem = new SpotItem(_vm);
 
 	spotItem->setCondition(condition);

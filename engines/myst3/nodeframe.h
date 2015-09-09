@@ -32,7 +32,7 @@ public:
 	NodeFrame(Myst3Engine *vm, uint16 id);
 	virtual ~NodeFrame();
 
-	void draw();
+	void draw() override;
 
 protected:
 	virtual bool isFaceVisible(uint faceId) override { return true; }

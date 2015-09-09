@@ -1208,13 +1208,13 @@ void Myst3Engine::setMovieLooping(uint16 id, bool loop) {
 	}
 }
 
-void Myst3Engine::addSpotItem(uint16 id, uint16 condition, bool fade) {
+void Myst3Engine::addSpotItem(uint16 id, int16 condition, bool fade) {
 	assert(_node);
 
 	_node->loadSpotItem(id, condition, fade);
 }
 
-SpotItemFace *Myst3Engine::addMenuSpotItem(uint16 id, uint16 condition, const Common::Rect &rect) {
+SpotItemFace *Myst3Engine::addMenuSpotItem(uint16 id, int16 condition, const Common::Rect &rect) {
 	assert(_node);
 
 	SpotItemFace *face = _node->loadMenuSpotItem(condition, rect);

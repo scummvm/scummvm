@@ -165,8 +165,8 @@ public:
 	void removeMovie(uint16 id);
 	void setMovieLooping(uint16 id, bool loop);
 
-	void addSpotItem(uint16 id, uint16 condition, bool fade);
-	SpotItemFace *addMenuSpotItem(uint16 id, uint16 condition, const Common::Rect &rect);
+	void addSpotItem(uint16 id, int16 condition, bool fade);
+	SpotItemFace *addMenuSpotItem(uint16 id, int16 condition, const Common::Rect &rect);
 	void loadNodeSubtitles(uint32 id);
 
 	void addSunSpot(uint16 pitch, uint16 heading, uint16 intensity,

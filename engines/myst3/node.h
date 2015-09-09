@@ -100,7 +100,7 @@ public:
 	SpotItem(Myst3Engine *vm);
 	~SpotItem();
 
-	void setCondition(uint16 condition) { _condition = condition; }
+	void setCondition(int16 condition) { _condition = condition; }
 	void setFade(bool fade) { _enableFade = fade; }
 	void setFadeVar(uint16 var) { _fadeVar = var; }
 	void addFace(SpotItemFace *face) { _faces.push_back(face); }
@@ -110,7 +110,7 @@ public:
 private:
 	Myst3Engine *_vm;
 
-	uint16 _condition;
+	int16 _condition;
 	uint16 _fadeVar;
 	bool _enableFade;
 
@@ -128,17 +128,16 @@ public:
 	float radius;
 };
 
-class Node : Drawable {
+class Node : public Drawable {
 public:
 	Node(Myst3Engine *vm, uint16 id);
 	virtual ~Node();
 
 	void update();
-	virtual void draw() = 0;
 	void drawOverlay();
 
-	void loadSpotItem(uint16 id, uint16 condition, bool fade);
-	SpotItemFace *loadMenuSpotItem(uint16 condition, const Common::Rect &rect);
+	void loadSpotItem(uint16 id, int16 condition, bool fade);
+	SpotItemFace *loadMenuSpotItem(int16 condition, const Common::Rect &rect);
 
 	void loadSubtitles(uint32 id);
 	bool hasSubtitlesToDraw();
