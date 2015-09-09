@@ -14,6 +14,9 @@ updatepot:
 		-e 's/UTF-8/CHARSET/' -e 's/PACKAGE/ResidualVM/' $(POTFILE)_ > $(POTFILE).new
 
 	rm $(POTFILE)_
+	$(srcdir)/po/msgcut $(POTFILE).new $(srcdir)/po/scummvm.pot 	# ResidualVM specific
+
+
 	if test -f $(POTFILE); then \
 		sed -f $(srcdir)/po/remove-potcdate.sed < $(POTFILE) > $(POTFILE).1 && \
 		sed -f $(srcdir)/po/remove-potcdate.sed < $(POTFILE).new > $(POTFILE).2 && \
@@ -29,12 +32,20 @@ updatepot:
 	fi;
 
 %.po: $(POTFILE)
-	msgmerge $@ $(POTFILE) -o $@.new
+	# ResidualVM specific start ->
+	# msgmerge $@ $(POTFILE) -o $@.new
+	if [ -f $(dir $@)/residualvm/$(notdir $@) ]; then \
+		msgcat --use-first $(dir $@)/residualvm/$(notdir $@) $@ > $@.new; \
+	else \
+		cp $@ $@.new; \
+	fi
+	msgmerge --update $@.new $(POTFILE)
 	if cmp $@ $@.new >/dev/null 2>&1; then \
 		rm -f $@.new; \
 	else \
 		mv -f $@.new $@; \
 	fi;
+	# ResidualVM specific end <-
 
 translations-dat: devtools/create_translations
 	devtools/create_translations/create_translations $(POFILES) $(CPFILES)

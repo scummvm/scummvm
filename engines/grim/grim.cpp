@@ -31,6 +31,7 @@
 #include "common/foreach.h"
 #include "common/fs.h"
 #include "common/config-manager.h"
+#include "common/translation.h"
 
 #include "graphics/pixelbuffer.h"
 
@@ -280,11 +281,13 @@ Common::Error GrimEngine::run() {
 	if (ConfMan.getBool("check_gamedata")) {
 		MD5CheckDialog d;
 		if (!d.runModal()) {
-			Common::String confirmString("ResidualVM found some problems with your game data files.\n"
-										 "Running ResidualVM nevertheless may cause game bugs or even crashes.\n"
-										 "Do you still want to run ");
-			confirmString += (GType_MONKEY4 == getGameType() ? "Escape From Monkey Island?" : "Grim Fandango?");
-			GUI::MessageDialog msg(confirmString, "Yes", "No");
+			Common::String confirmString = Common::String::format(_(
+				"ResidualVM found some problems with your game data files.\n"
+				"Running ResidualVM nevertheless may cause game bugs or even crashes.\n"
+				"Do you still want to run %s?"),
+			GType_MONKEY4 == getGameType() ? _("Escape From Monkey Island") : _("Grim Fandango")
+			 );
+			GUI::MessageDialog msg(confirmString, _("Yes"), _("No"));
 			if (!msg.runModal()) {
 				return Common::kUserCanceled;
 			}
