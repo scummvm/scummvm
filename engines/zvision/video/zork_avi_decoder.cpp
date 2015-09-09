@@ -55,7 +55,9 @@ void ZorkAVIDecoder::ZorkAVIAudioTrack::queueSound(Common::SeekableReadStream *s
 	delete stream;
 
 	if (chunk.data) {
-		byte flags = Audio::FLAG_16BITS | Audio::FLAG_STEREO;
+		byte flags = Audio::FLAG_16BITS;
+		if (_wvInfo.channels == 2)
+			flags |= Audio::FLAG_STEREO;
 #ifdef SCUMM_LITTLE_ENDIAN
 		// RawChunkStream produces native endianness int16
 		flags |= Audio::FLAG_LITTLE_ENDIAN;
