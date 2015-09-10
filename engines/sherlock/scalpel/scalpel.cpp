@@ -1240,8 +1240,9 @@ void ScalpelEngine::showScummVMRestoreDialog() {
 	}
 }
 
-bool ScalpelEngine::play3doMovie(const Common::String &filename, const Common::Point &pos) {
+bool ScalpelEngine::play3doMovie(const Common::String &filename, const Common::Point &pos, bool halfSize) {
 	Scalpel3DOMovieDecoder *videoDecoder = new Scalpel3DOMovieDecoder();
+	Graphics::Surface tempSurface;
 
 	if (!videoDecoder->loadFile(filename)) {
 		warning("Scalpel3DOMoviePlay: could not open '%s'", filename.c_str());
@@ -1257,12 +1258,30 @@ bool ScalpelEngine::play3doMovie(const Common::String &filename, const Common::P
 	_events->clearEvents();
 	videoDecoder->start();
 
+	// If we're to show the movie at half-size, we'll need a temporary intermediate surface
+	if (halfSize)
+		tempSurface.create(width / 2, height / 2, _screen->getPixelFormat());
+
 	while (!shouldQuit() && !videoDecoder->endOfVideo() && !skipVideo) {
 		if (videoDecoder->needsUpdate()) {
 			const Graphics::Surface *frame = videoDecoder->decodeNextFrame();
 
 			if (frame) {
-				g_system->copyRectToScreen(frame->getPixels(), frame->pitch, pos.x, pos.y, width, height);
+				if (halfSize) {
+					// Reduce the movie frame to half-size on a temp surface
+					for (int yp = 0; yp < height / 2; ++yp) {
+						const uint16 *srcP = (const uint16 *)frame->getBasePtr(0, yp * 2);
+						uint16 *destP = (uint16 *)tempSurface.getBasePtr(0, yp);
+
+						for (int xp = 0; xp < width / 2; ++xp, ++destP, srcP += 2)
+							*destP = *srcP;
+					}
+
+					// Point the drawing frame to the temporary surface
+					frame = &tempSurface;
+				}
+
+				g_system->copyRectToScreen(frame->getPixels(), frame->pitch, pos.x, pos.y, frame->w, frame->h);
 				g_system->updateScreen();
 			}
 		}

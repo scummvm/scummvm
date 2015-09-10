@@ -600,7 +600,7 @@ void ScalpelTalk::talk3DOMovieTrigger(int subIndex) {
 	warning("selector: %d", selector);
 	warning("subindex: %d", subIndex);
 
-	vm.play3doMovie(movieFilename, Common::Point(5, 5));
+	vm.play3doMovie(movieFilename, Common::Point(5, 5), true);
 
 	// Restore screen HACK
 	_vm->_screen->makeAllDirty();
