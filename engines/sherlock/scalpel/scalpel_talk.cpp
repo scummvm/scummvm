@@ -554,6 +554,9 @@ void ScalpelTalk::switchSpeaker() {
 }
 
 void ScalpelTalk::talk3DOMovieTrigger(int subIndex) {
+	ScalpelEngine &vm = *(ScalpelEngine *)_vm;
+	Screen &screen = *_vm->_screen;
+
 	// Find out a few things that we need
 	int userSelector = _vm->_ui->_selector;
 	int scriptSelector = _scriptSelect;
@@ -569,13 +572,13 @@ void ScalpelTalk::talk3DOMovieTrigger(int subIndex) {
 			selector = scriptSelector;
 			subIndex--; // for scripts we adjust subIndex, b/c we won't get called from doTalkControl()
 		} else {
-		warning("talk3DOMovieTrigger: unable to find selector");
-		return;
+			warning("talk3DOMovieTrigger: unable to find selector");
+			return;
 		}
 	}
 
 	// Make a quick update, so that current text is shown on screen
-	_vm->_screen->update();
+	screen.update();
 
 	// Figure out that movie filename
 	Common::String movieFilename;
@@ -597,7 +600,7 @@ void ScalpelTalk::talk3DOMovieTrigger(int subIndex) {
 	warning("selector: %d", selector);
 	warning("subindex: %d", subIndex);
 
-	Scalpel3DOMoviePlay(movieFilename.c_str(), Common::Point(5, 5));
+	vm.play3doMovie(movieFilename, Common::Point(5, 5));
 
 	// Restore screen HACK
 	_vm->_screen->makeAllDirty();

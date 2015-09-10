@@ -119,9 +119,6 @@ private:
 	StreamAudioTrack *_audioTrack;
 };
 
-// Testing
-extern bool Scalpel3DOMoviePlay(const char *filename, Common::Point pos);
-
 } // End of namespace Sherlock
 
 #endif

@@ -464,47 +464,4 @@ Audio::AudioStream *Scalpel3DOMovieDecoder::StreamAudioTrack::getAudioStream() c
 	return _audioStream;
 }
 
-// Test-code
-
-// Code for showing a movie. Only meant for testing/debug purposes
-bool Scalpel3DOMoviePlay(const char *filename, Common::Point pos) {
-	Scalpel3DOMovieDecoder *videoDecoder = new Scalpel3DOMovieDecoder();
-
-	if (!videoDecoder->loadFile(filename)) {
-		warning("Scalpel3DOMoviePlay: could not open '%s'", filename);
-		return false;
-	}
-
-	bool skipVideo = false;
-	//byte bytesPerPixel = videoDecoder->getPixelFormat().bytesPerPixel;
-	uint16 width = videoDecoder->getWidth();
-	uint16 height = videoDecoder->getHeight();
-	//uint16 pitch = videoDecoder->getWidth() * bytesPerPixel;
-
-	videoDecoder->start();
-
-	while (!g_engine->shouldQuit() && !videoDecoder->endOfVideo() && (!skipVideo)) {
-		if (videoDecoder->needsUpdate()) {
-			const Graphics::Surface *frame = videoDecoder->decodeNextFrame();
-
-			if (frame) {
-				g_system->copyRectToScreen(frame->getPixels(), frame->pitch, pos.x, pos.y, width, height);
-				g_system->updateScreen();
-			}
-		}
-
-		Common::Event event;
-		while (g_system->getEventManager()->pollEvent(event)) {
-			if ((event.type == Common::EVENT_KEYDOWN && event.kbd.keycode == Common::KEYCODE_ESCAPE))
-				skipVideo = true;
-		}
-
-		g_system->delayMillis(10);
-	}
-	videoDecoder->close();
-	delete videoDecoder;
-
-	return !skipVideo;
-}
-
 } // End of namespace Sherlock

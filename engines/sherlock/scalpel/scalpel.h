@@ -138,6 +138,11 @@ public:
 	 * Show the ScummVM restore savegame dialog
 	 */
 	void showScummVMRestoreDialog();
+
+	/**
+	 * Play back a 3do movie
+	 */
+	bool play3doMovie(const Common::String &filename, const Common::Point &pos);
 };
 
 } // End of namespace Scalpel

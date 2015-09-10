@@ -32,7 +32,6 @@
 #include "sherlock/sherlock.h"
 #include "sherlock/music.h"
 #include "sherlock/animation.h"
-// for 3DO
 #include "sherlock/scalpel/3do/movie_decoder.h"
 
 namespace Sherlock {
@@ -660,7 +659,7 @@ bool ScalpelEngine::show3DOSplash() {
 
 	if (finished) {
 		// EA logo movie
-		Scalpel3DOMoviePlay("EAlogo.stream", Common::Point(20, 0));
+		play3doMovie("EAlogo.stream", Common::Point(20, 0));
 	}
 
 	// Always clear screen
@@ -1239,6 +1238,51 @@ void ScalpelEngine::showScummVMRestoreDialog() {
 	if (slot >= 0) {
 		loadGameState(slot);
 	}
+}
+
+bool ScalpelEngine::play3doMovie(const Common::String &filename, const Common::Point &pos) {
+	Scalpel3DOMovieDecoder *videoDecoder = new Scalpel3DOMovieDecoder();
+
+	if (!videoDecoder->loadFile(filename)) {
+		warning("Scalpel3DOMoviePlay: could not open '%s'", filename.c_str());
+		return false;
+	}
+
+	bool skipVideo = false;
+	//byte bytesPerPixel = videoDecoder->getPixelFormat().bytesPerPixel;
+	uint16 width = videoDecoder->getWidth();
+	uint16 height = videoDecoder->getHeight();
+	//uint16 pitch = videoDecoder->getWidth() * bytesPerPixel;
+
+	_events->clearEvents();
+	videoDecoder->start();
+
+	while (!shouldQuit() && !videoDecoder->endOfVideo() && !skipVideo) {
+		if (videoDecoder->needsUpdate()) {
+			const Graphics::Surface *frame = videoDecoder->decodeNextFrame();
+
+			if (frame) {
+				g_system->copyRectToScreen(frame->getPixels(), frame->pitch, pos.x, pos.y, width, height);
+				g_system->updateScreen();
+			}
+		}
+
+		_events->pollEventsAndWait();
+		_events->setButtonState();
+
+		if (_events->kbHit()) {
+			Common::KeyState keyState = _events->getKey();
+			if (keyState.keycode == Common::KEYCODE_ESCAPE)
+				skipVideo = true;
+		} else if (_events->_pressed) {
+			skipVideo = true;
+		}
+	}
+
+	videoDecoder->close();
+	delete videoDecoder;
+
+	return !skipVideo;
 }
 
 } // End of namespace Scalpel
