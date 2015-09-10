@@ -35,7 +35,8 @@ Location::~Location() {
 
 Location::Location(Object *parent, byte subType, uint16 index, const Common::String &name) :
 				Object(parent, subType, index, name),
-				_canScroll(false) {
+				_canScroll(false),
+				_currentLayer(nullptr) {
 	_type = TYPE;
 }
 
@@ -54,7 +55,9 @@ Gfx::RenderEntryArray Location::listRenderEntries() {
 
 	for (uint i = 0; i < _layers.size(); i++) {
 		Layer *layer = _layers[i];
-		renderEntries.push_back(layer->listRenderEntries());
+		if (layer->isEnabled()) {
+			renderEntries.push_back(layer->listRenderEntries());
+		}
 	}
 
 	return renderEntries;
@@ -83,6 +86,15 @@ void Location::setScrollPosition(const Common::Point &position) {
 	Common::Rect viewport(640, 365);
 	viewport.translate(_scroll.x, _scroll.y);
 	StarkScene->scrollCamera(viewport);
+}
+
+void Location::goToLayer(Layer *layer) {
+	if (_currentLayer) {
+		_currentLayer->enable(false);
+	}
+
+	layer->enable(true);
+	_currentLayer = layer;
 }
 
 void Location::printData() {

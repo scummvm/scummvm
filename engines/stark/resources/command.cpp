@@ -41,6 +41,8 @@
 #include "engines/stark/resources/fmv.h"
 #include "engines/stark/resources/item.h"
 #include "engines/stark/resources/knowledge.h"
+#include "engines/stark/resources/layer.h"
+#include "engines/stark/resources/location.h"
 #include "engines/stark/resources/pattable.h"
 #include "engines/stark/resources/script.h"
 #include "engines/stark/resources/sound.h"
@@ -139,8 +141,10 @@ Command *Command::execute(uint32 callMode, Script *script) {
 		return opItemLookDirection(script, _arguments[1].referenceValue, _arguments[2].intValue, _arguments[3].intValue);
 	case kStopPlayingSound:
 		return opStopPlayingSound(_arguments[1].referenceValue);
-	case kGoLayer:
-		return opGoLayer(_arguments[1].referenceValue);
+	case kLayerGoTo:
+		return opLayerGoTo(_arguments[1].referenceValue);
+	case kLayerEnable:
+		return opLayerEnable(_arguments[1].referenceValue, _arguments[2].intValue);
 	case kScrollSet:
 		return opScrollSet(_arguments[1].referenceValue);
 	case kPlayFullMotionVideo:
@@ -687,9 +691,36 @@ Command *Command::opStopPlayingSound(const ResourceReference &soundRef) {
 	return nextCommand();
 }
 
-Command *Command::opGoLayer(const ResourceReference &layerRef) {
-	Object *layerObj = layerRef.resolve<Object>();
-	warning("(TODO: Implement) opGoLayer(%s) : %s", layerObj->getName().c_str(), layerRef.describe().c_str());
+Command *Command::opLayerGoTo(const ResourceReference &layerRef) {
+	Layer *layer = layerRef.resolve<Layer>();
+	Location *location = layer->findParent<Location>();
+
+	location->goToLayer(layer);
+
+	return nextCommand();
+}
+
+Command *Command::opLayerEnable(const ResourceReference &layerRef, int32 enable) {
+	Layer *layer = layerRef.resolve<Layer>();
+
+	bool previousState = layer->isEnabled();
+
+	switch (enable) {
+		case 0:
+			layer->enable(false);
+			break;
+		case 1:
+			if (!previousState) {
+				layer->enable(true);
+			}
+			break;
+		case 2:
+			layer->enable(!previousState);
+			break;
+		default:
+			warning("Unhandled layer enable command %d", enable);
+			break;
+	}
 
 	return nextCommand();
 }

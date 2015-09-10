@@ -70,11 +70,15 @@ public:
 	/** Scroll the location to the specified position if possible */
 	void setScrollPosition(const Common::Point &position);
 
+	/** Replace the currently active layer */
+	void goToLayer(Layer *layer);
+
 protected:
 	void printData() override;
 
 private:
 	Common::Array<Layer *> _layers;
+	Layer *_currentLayer;
 
 	bool _canScroll;
 	Common::Point _scroll;

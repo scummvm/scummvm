@@ -106,8 +106,8 @@ public:
 		kItemLookDirection = 118,
 
 		kStopPlayingSound = 119,
-		kGoLayer = 120,
-
+		kLayerGoTo = 120,
+		kLayerEnable = 121,
 		kScrollSet = 122,
 		kPlayFullMotionVideo = 123,
 
@@ -215,7 +215,8 @@ protected:
 	Command *opSoundPlay(Script *script, const ResourceReference &soundRef, int32 suspend);
 	Command *opItemLookDirection(Script *script, const ResourceReference &itemRef, int32 direction, bool suspend);
 	Command *opStopPlayingSound(const ResourceReference &soundRef);
-	Command *opGoLayer(const ResourceReference &layerRef);
+	Command *opLayerGoTo(const ResourceReference &layerRef);
+	Command *opLayerEnable(const ResourceReference &layerRef, int32 enable);
 	Command *opScrollSet(const ResourceReference &scrollRef);
 	Command *opPlayFullMotionVideo(Script *script, const ResourceReference &movieRef, int32 unknown);
 	Command *opEnableDiaryEntry(const ResourceReference &knowledgeRef);

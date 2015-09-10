@@ -71,6 +71,12 @@ public:
 	/** Scroll the layer to the specified position */
 	void setScrollPosition(const Common::Point &position);
 
+	/** Enable the layer */
+	void enable(bool enabled);
+
+	/** Is the layer enabled? Disabled layers are not drawn. */
+	bool isEnabled() const;
+
 protected:
 	void printData() override;
 

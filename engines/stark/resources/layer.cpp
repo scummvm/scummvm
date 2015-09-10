@@ -69,6 +69,14 @@ void Layer::setScrollPosition(const Common::Point &position) {
 	_scroll.y = (_scrollScale + 1.0) * (float) position.y;
 }
 
+bool Layer::isEnabled() const {
+	return _enabled;
+}
+
+void Layer::enable(bool enabled) {
+	_enabled = enabled;
+}
+
 Layer2D::~Layer2D() {
 }
 
