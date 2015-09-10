@@ -930,7 +930,7 @@ Command *Command::opIsItemActivity(const ResourceReference &itemRef, int32 value
 Command *Command::opIsAnimAtTime(const ResourceReference &animRef, int32 time) {
 	Anim *anim = animRef.resolve<Anim>();
 
-	bool condition = anim->isInUse() && anim->isAtTime(time);
+	bool condition = !anim->isInUse() || anim->isAtTime(time);
 
 	return nextCommandIf(condition);
 }
