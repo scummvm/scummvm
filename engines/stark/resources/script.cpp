@@ -297,7 +297,7 @@ void Script::execute(uint32 callMode) {
 		}
 	}
 
-	if (isOnEnd()) {
+	if (isOnEnd() || !_nextCommand) {
 		// Reset ended scripts so they can be started again
 		reset();
 
