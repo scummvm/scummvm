@@ -94,6 +94,12 @@ public:
 	virtual void talkTo(const Common::String filename);
 
 	/**
+	 * When the talk window has been displayed, waits a period of time proportional to
+	 * the amount of text that's been displayed
+	 */
+	virtual int waitForMore(int delay);
+
+	/**
 	 * Draws the interface for conversation display
 	 */
 	void drawInterface();
@@ -112,7 +118,7 @@ public:
 	/**
 	 * Trigger to play a 3DO talk dialog movie
 	 */
-	void talk3DOMovieTrigger(int subIndex);
+	bool talk3DOMovieTrigger(int subIndex);
 
 	/**
 	 * Push the details of a passed object onto the saved sequences stack

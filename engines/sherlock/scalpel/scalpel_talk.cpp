@@ -548,12 +548,46 @@ void ScalpelTalk::nothingToSay() {
 }
 
 void ScalpelTalk::switchSpeaker() {
-	// If it's the 3DO, pass on to start the actor's conversation movie
-	if (IS_3DO)
-		talk3DOMovieTrigger(_3doSpeechIndex++);
 }
 
-void ScalpelTalk::talk3DOMovieTrigger(int subIndex) {
+int ScalpelTalk::waitForMore(int delay) {
+	Events &events = *_vm->_events;
+
+	if (!IS_3DO) {
+		return Talk::waitForMore(delay);
+	}
+
+	// Hide the cursor
+	events.hideCursor();
+	events.wait(1);
+
+	switchSpeaker();
+
+	// Play the video
+	talk3DOMovieTrigger(_3doSpeechIndex++);
+
+	// Adjust _talkStealth mode:
+	// mode 1 - It was by a pause without stealth being on before the pause, so reset back to 0
+	// mode 3 - It was set by a pause with stealth being on before the pause, to set it to active
+	// mode 0/2 (Inactive/active) No change
+	switch (_talkStealth) {
+	case 1:
+		_talkStealth = 0;
+		break;
+	case 2:
+		_talkStealth = 2;
+		break;
+	default:
+		break;
+	}
+
+	events.showCursor();
+	events._pressed = events._released = false;
+
+	return 254;
+}
+
+bool ScalpelTalk::talk3DOMovieTrigger(int subIndex) {
 	ScalpelEngine &vm = *(ScalpelEngine *)_vm;
 	Screen &screen = *_vm->_screen;
 
@@ -573,7 +607,7 @@ void ScalpelTalk::talk3DOMovieTrigger(int subIndex) {
 			subIndex--; // for scripts we adjust subIndex, b/c we won't get called from doTalkControl()
 		} else {
 			warning("talk3DOMovieTrigger: unable to find selector");
-			return;
+			return true;
 		}
 	}
 
@@ -600,10 +634,12 @@ void ScalpelTalk::talk3DOMovieTrigger(int subIndex) {
 	warning("selector: %d", selector);
 	warning("subindex: %d", subIndex);
 
-	vm.play3doMovie(movieFilename, Common::Point(5, 5), true);
+	bool result = vm.play3doMovie(movieFilename, Common::Point(5, 5), true);
 
 	// Restore screen HACK
 	_vm->_screen->makeAllDirty();
+
+	return result;
 }
 
 void ScalpelTalk::drawInterface() {

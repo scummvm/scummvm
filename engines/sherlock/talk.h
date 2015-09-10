@@ -228,7 +228,7 @@ protected:
 	 * When the talk window has been displayed, waits a period of time proportional to
 	 * the amount of text that's been displayed
 	 */
-	int waitForMore(int delay);
+	virtual int waitForMore(int delay);
 
 	/**
 	 * Display the talk interface window
