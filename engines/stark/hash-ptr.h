@@ -20,45 +20,24 @@
  *
  */
 
-#ifndef STARK_GFX_OPENGL_S_RENDERED_H
-#define STARK_GFX_OPENGL_S_RENDERED_H
+#ifndef STARK_HASH_PTR_H
+#define STARK_HASH_PTR_H
 
-#include "common/hashmap.h"
+#include "common/func.h"
 
-#include "engines/stark/hash-ptr.h"
-#include "engines/stark/formats/biffmesh.h"
-#include "engines/stark/visual/prop.h"
+namespace Common {
 
-namespace Graphics {
-	class Shader;
-}
-
-namespace Stark {
-
-namespace Gfx {
-
-class OpenGLSPropRenderer : public VisualProp {
-public:
-	OpenGLSPropRenderer();
-	virtual ~OpenGLSPropRenderer();
-
-	void render(Gfx::Driver *gfx, const Math::Vector3d position, float direction) override;
-
-protected:
-	typedef Common::HashMap<const Formats::BiffMesh::Face *, uint32> FaceBufferMap;
-
-	Graphics::Shader *_shader;
-
-	int32 _faceVBO;
-	FaceBufferMap _faceEBO;
-
-	void clearVertices();
-	void uploadVertices();
-	uint32 createFaceVBO();
-	uint32 createFaceEBO(const Formats::BiffMesh::Face *face);
+/**
+ * Partial specialization of the Hash functor to be able to use pointers as HashMap keys
+ */
+template<typename T>
+struct Hash<T *> {
+	uint operator()(T * const &v) const {
+		uint x = static_cast<uint>(reinterpret_cast<size_t>(v));
+		return x + (x >> 3);
+	}
 };
 
-} // End of namespace Gfx
-} // End of namespace Stark
+} // End of namespace Common
 
-#endif // STARK_GFX_OPENGL_S_RENDERED_H
+#endif

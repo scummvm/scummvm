@@ -22,22 +22,8 @@
 
 #include "engines/stark/movement/shortestpath.h"
 
+#include "engines/stark/hash-ptr.h"
 #include "engines/stark/resources/floor.h"
-
-namespace Common {
-
-/**
- * Partial specialization of the Hash functor to be able to use pointers as HashMap keys
- */
-template<typename T>
-struct Hash<T *> {
-	uint operator()(T * const &v) const {
-		uint x = static_cast<uint>(reinterpret_cast<size_t>(v));
-		return x + (x >> 3);
-	}
-};
-
-}
 
 namespace Stark {
 

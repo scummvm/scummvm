@@ -46,10 +46,6 @@ OpenGLSActorRenderer::~OpenGLSActorRenderer() {
 	delete _shader;
 }
 
-Common::String OpenGLSActorRenderer::faceHash(const FaceNode *face) const {
-	return Common::String::format("%p", (const void *) face);
-}
-
 void OpenGLSActorRenderer::render(Gfx::Driver *gfx, const Math::Vector3d position, float direction) {
 	if (_meshIsDirty) {
 		// Update the OpenGL Buffer Objects if required
@@ -89,8 +85,8 @@ void OpenGLSActorRenderer::render(Gfx::Driver *gfx, const Math::Vector3d positio
 				glBindTexture(GL_TEXTURE_2D, 0);
 			}
 
-			GLuint vbo = _faceVBO[faceHash(*face)];
-			GLuint ebo = _faceEBO[faceHash(*face)];
+			GLuint vbo = _faceVBO[*face];
+			GLuint ebo = _faceEBO[*face];
 
 			_shader->enableVertexAttribute("position1", vbo, 3, GL_FLOAT, GL_FALSE, 11 * sizeof(float), 0);
 			_shader->enableVertexAttribute("position2", vbo, 3, GL_FLOAT, GL_FALSE, 11 * sizeof(float), 12);
@@ -111,11 +107,11 @@ void OpenGLSActorRenderer::render(Gfx::Driver *gfx, const Math::Vector3d positio
 }
 
 void OpenGLSActorRenderer::clearVertices() {
-	for (Common::HashMap<Common::String, uint32>::iterator it = _faceVBO.begin(); it != _faceVBO.end(); ++it) {
+	for (FaceBufferMap::iterator it = _faceVBO.begin(); it != _faceVBO.end(); ++it) {
 		Graphics::Shader::freeBuffer(it->_value);
 	}
 
-	for (Common::HashMap<Common::String, uint32>::iterator it = _faceEBO.begin(); it != _faceEBO.end(); ++it) {
+	for (FaceBufferMap::iterator it = _faceEBO.begin(); it != _faceEBO.end(); ++it) {
 		Graphics::Shader::freeBuffer(it->_value);
 	}
 
@@ -127,8 +123,8 @@ void OpenGLSActorRenderer::uploadVertices() {
 	Common::Array<MeshNode *> meshes = _model->getMeshes();
 	for (Common::Array<MeshNode *>::const_iterator mesh = meshes.begin(); mesh != meshes.end(); ++mesh) {
 		for (Common::Array<FaceNode *>::const_iterator face = (*mesh)->_faces.begin(); face != (*mesh)->_faces.end(); ++face) {
-			_faceVBO[faceHash(*face)] = createFaceVBO(*face);
-			_faceEBO[faceHash(*face)] = createFaceEBO(*face);
+			_faceVBO[*face] = createFaceVBO(*face);
+			_faceEBO[*face] = createFaceEBO(*face);
 		}
 	}
 }

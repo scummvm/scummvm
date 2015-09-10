@@ -23,9 +23,9 @@
 #ifndef STARK_GFX_OPENGL_S_ACTOR_H
 #define STARK_GFX_OPENGL_S_ACTOR_H
 
-#include "common/hash-str.h"
-#include "common/str.h"
+#include "common/hashmap.h"
 
+#include "engines/stark/hash-ptr.h"
 #include "engines/stark/visual/actor.h"
 
 namespace Graphics {
@@ -43,12 +43,13 @@ public:
 	void render(Gfx::Driver *gfx, const Math::Vector3d position, float direction) override;
 
 protected:
+	typedef Common::HashMap<FaceNode *, uint32> FaceBufferMap;
+
 	Graphics::Shader *_shader;
 
-	Common::HashMap<Common::String, uint32> _faceVBO;
-	Common::HashMap<Common::String, uint32> _faceEBO;
+	FaceBufferMap _faceVBO;
+	FaceBufferMap _faceEBO;
 
-	Common::String faceHash(const FaceNode *face) const;
 	void clearVertices();
 	void uploadVertices();
 	uint32 createFaceVBO(const FaceNode *face);

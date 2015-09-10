@@ -45,10 +45,6 @@ OpenGLSPropRenderer::~OpenGLSPropRenderer() {
 	delete _shader;
 }
 
-Common::String OpenGLSPropRenderer::faceHash(const Formats::BiffMesh::Face *face) const {
-	return Common::String::format("%p", (const void *) face);
-}
-
 void OpenGLSPropRenderer::render(Gfx::Driver *gfx, const Math::Vector3d position, float direction) {
 	if (_faceVBO == -1) {
 		// Update the OpenGL Buffer Objects if required
@@ -82,7 +78,7 @@ void OpenGLSPropRenderer::render(Gfx::Driver *gfx, const Math::Vector3d position
 			glBindTexture(GL_TEXTURE_2D, 0);
 		}
 
-		GLuint ebo = _faceEBO[faceHash(face)];
+		GLuint ebo = _faceEBO[face];
 
 		_shader->enableVertexAttribute("position", _faceVBO, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(float), 0);
 		_shader->enableVertexAttribute("normal", _faceVBO, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(float), 12);
@@ -102,7 +98,7 @@ void OpenGLSPropRenderer::clearVertices() {
 	Graphics::Shader::freeBuffer(_faceVBO);
 	_faceVBO = -1;
 
-	for (Common::HashMap<Common::String, uint32>::iterator it = _faceEBO.begin(); it != _faceEBO.end(); ++it) {
+	for (FaceBufferMap::iterator it = _faceEBO.begin(); it != _faceEBO.end(); ++it) {
 		Graphics::Shader::freeBuffer(it->_value);
 	}
 
@@ -114,7 +110,7 @@ void OpenGLSPropRenderer::uploadVertices() {
 
 	const Common::Array<Formats::BiffMesh::Face> &faces = _model->getFaces();
 	for (Common::Array<Formats::BiffMesh::Face>::const_iterator face = faces.begin(); face != faces.end(); ++face) {
-		_faceEBO[faceHash(face)] = createFaceEBO(face);
+		_faceEBO[face] = createFaceEBO(face);
 	}
 }
 
