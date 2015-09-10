@@ -39,7 +39,6 @@ updatepot:
 	else \
 		cp $@ $@.new; \
 	fi
-	msgmerge --update $@.new $(POTFILE)
 	if cmp $@ $@.new >/dev/null 2>&1; then \
 		rm -f $@.new; \
 	else \
