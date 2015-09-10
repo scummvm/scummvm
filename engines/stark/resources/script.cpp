@@ -247,6 +247,11 @@ void Script::updateSuspended() {
 	}
 }
 
+void Script::stop() {
+	reset();
+	_enabled = false;
+}
+
 void Script::pause(int32 msecs) {
 	_pauseTimeLeft = msecs;
 }

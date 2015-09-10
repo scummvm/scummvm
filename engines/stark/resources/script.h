@@ -107,6 +107,9 @@ public:
 	/** Enable the script */
 	void enable(bool value);
 
+	/** Disable and reset the script */
+	void stop();
+
 	/** Is the script on its Begin command? */
 	bool isOnBegin();
 

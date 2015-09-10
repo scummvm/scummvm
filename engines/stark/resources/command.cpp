@@ -81,6 +81,8 @@ Command *Command::execute(uint32 callMode, Script *script) {
 		return opLocationGoTo(_arguments[0].stringValue, _arguments[1].stringValue, _arguments[2].referenceValue, _arguments[3].intValue);
 	case kScriptPause:
 		return opScriptPause(script, _arguments[1].referenceValue);
+	case kScriptAbort:
+		return opScriptAbort(_arguments[1].referenceValue, _arguments[2].intValue);
 	case kWalkTo:
 		return opWalkTo(script, _arguments[2].referenceValue, _arguments[3].intValue);
 	case kGameLoop:
@@ -296,6 +298,18 @@ Command *Command::opScriptPauseRandom(Script *script, const ResourceReference &r
 	script->pause(randomFactor * duration->getIntegerValue());
 
 	return this; // Stay on this command while the script is suspended
+}
+
+Command *Command::opScriptAbort(ResourceReference scriptRef, bool disable) {
+	Script *script = scriptRef.resolve<Script>();
+
+	if (!script->isOnBegin()) {
+		script->stop();
+	}
+
+	script->enable(!disable);
+
+	return nextCommand();
 }
 
 Command *Command::opExit2DLocation(Script *script) {
