@@ -78,10 +78,11 @@ void OpenGLSActorRenderer::render(Gfx::Driver *gfx, const Math::Vector3d positio
 	Common::Array<MaterialNode *> mats = _model->getMaterials();
 	const Gfx::TextureSet *texture = _model->getTextureSet();
 
-	for (Common::Array<MeshNode *>::iterator mesh = meshes.begin(); mesh != meshes.end(); ++mesh) {
-		for (Common::Array<FaceNode *>::iterator face = (*mesh)->_faces.begin(); face != (*mesh)->_faces.end(); ++face) {
+	for (Common::Array<MeshNode *>::const_iterator mesh = meshes.begin(); mesh != meshes.end(); ++mesh) {
+		for (Common::Array<FaceNode *>::const_iterator face = (*mesh)->_faces.begin(); face != (*mesh)->_faces.end(); ++face) {
 			// For each face draw its vertices from the VBO, indexed by the EBO
-			const Gfx::Texture *tex = texture->getTexture(mats[(*face)->_matIdx]->_texName);
+			const MaterialNode *material = mats[(*face)->_matIdx];
+			const Gfx::Texture *tex = texture->getTexture(material->_texName);
 			if (tex) {
 				tex->bind();
 			} else {
@@ -99,7 +100,7 @@ void OpenGLSActorRenderer::render(Gfx::Driver *gfx, const Math::Vector3d positio
 			_shader->enableVertexAttribute("texcoord", vbo, 2, GL_FLOAT, GL_FALSE, 11 * sizeof(float), 36);
 			_shader->use(true);
 			_shader->setUniform("textured", tex != nullptr);
-			_shader->setUniform("color", Math::Vector3d(mats[(*face)->_matIdx]->_r, mats[(*face)->_matIdx]->_g, mats[(*face)->_matIdx]->_b));
+			_shader->setUniform("color", Math::Vector3d(material->_r, material->_g, material->_b));
 
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
 			glDrawElements(GL_TRIANGLES, 3 * (*face)->_tris.size(), GL_UNSIGNED_INT, 0);
