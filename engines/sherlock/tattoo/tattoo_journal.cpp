@@ -909,13 +909,13 @@ int TattooJournal::getFindName(bool printError) {
 
 		if (events._released || events._rightReleased) {
 			switch (_selector) {
-			case SB_CANCEL:
+			case (int)SB_CANCEL:
 				done = -1;
 				break;
-			case SB_BACKWARDS:
+			case (int)SB_BACKWARDS:
 				done = 2;
 				break;
-			case SB_FORWARDS:
+			case (int)SB_FORWARDS:
 				done = 1;
 				break;
 			default:

@@ -1229,6 +1229,8 @@ void ScalpelEngine::showScummVMSaveDialog() {
 
 		saveGameState(slot, desc);
 	}
+
+	delete dialog;
 }
 
 void ScalpelEngine::showScummVMRestoreDialog() {
@@ -1238,6 +1240,8 @@ void ScalpelEngine::showScummVMRestoreDialog() {
 	if (slot >= 0) {
 		loadGameState(slot);
 	}
+
+	delete dialog;
 }
 
 bool ScalpelEngine::play3doMovie(const Common::String &filename, const Common::Point &pos, bool halfSize) {

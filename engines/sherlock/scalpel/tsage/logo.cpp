@@ -423,6 +423,7 @@ Logo::Logo(ScalpelEngine *vm) : _vm(vm), _lib("sf3.rlb") {
 
 	// Initialize counter
 	_counter = 0;
+	_frameCounter = 0;
 
 	// Initialize wait frame counters
 	_waitFrames = 0;
