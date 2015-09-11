@@ -97,9 +97,17 @@ void GameInterface::walkTo(const Common::Point &mouse) {
 
 	Math::Ray mouseRay = StarkScene->makeRayFromMouse(mouse);
 
+	// First look for a direct intersection with the floor
 	Math::Vector3d destinationPosition;
 	int32 destinationFloorFaceIndex = floor->findFaceHitByRay(mouseRay, destinationPosition);
+
+	// Otherwise fall back to the floor face center closest to the ray
 	if (destinationFloorFaceIndex < 0) {
+		destinationFloorFaceIndex = floor->findFaceClosestToRay(mouseRay, destinationPosition);
+	}
+
+	if (destinationFloorFaceIndex < 0) {
+		// No destination was found
 		return;
 	}
 

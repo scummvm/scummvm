@@ -70,6 +70,11 @@ public:
 	 */
 	bool intersectRay(const Math::Ray &ray, Math::Vector3d &intersection) const;
 
+	/**
+	 * Compute the distance between the face center and the ray
+	 */
+	float distanceToRay(const Math::Ray &ray) const;
+
 	/** Obtain the distance to the camera */
 	float getDistanceFromCamera() const;
 
@@ -91,6 +96,9 @@ public:
 
 	/** Get the point at the center of the face's triangle */
 	Math::Vector3d getCenter() const;
+
+	/** Checks if the face is non degenerate */
+	bool hasVertices() const;
 
 protected:
 	void readData(Formats::XRCReadStream *stream) override;

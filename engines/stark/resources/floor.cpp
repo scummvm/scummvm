@@ -22,9 +22,10 @@
 
 #include "engines/stark/resources/floor.h"
 
-#include "engines/stark/debug.h"
 #include "engines/stark/formats/xrc.h"
 #include "engines/stark/resources/floorface.h"
+
+#include "common/math.h"
 
 namespace Stark {
 namespace Resources {
@@ -65,6 +66,26 @@ int32 Floor::findFaceHitByRay(const Math::Ray &ray, Math::Vector3d &intersection
 	}
 
 	return -1;
+}
+
+int32 Floor::findFaceClosestToRay(const Math::Ray &ray, Math::Vector3d &center) const {
+	float minDistance = FLT_MAX;
+	int32 minFace = -1;
+	for (uint32 i = 0; i < _faces.size(); i++) {
+		if (_faces[i]->hasVertices()) {
+			float distance = _faces[i]->distanceToRay(ray);
+			if (distance < minDistance) {
+				minFace = i;
+				minDistance = distance;
+			}
+		}
+	}
+
+	if (minFace >= 0) {
+		center = _faces[minFace]->getCenter();
+	}
+
+	return minFace;
 }
 
 float Floor::getDistanceFromCamera(uint32 faceIndex) const {
@@ -119,9 +140,11 @@ void Floor::buildEdgeList() {
 
 	// Add the triangle edges from all our faces
 	for (uint i = 0; i < _faces.size(); i++) {
-		addFaceEdgeToList(i, 2, 0);
-		addFaceEdgeToList(i, 0, 1);
-		addFaceEdgeToList(i, 1, 2);
+		if (_faces[i]->hasVertices()) {
+			addFaceEdgeToList(i, 2, 0);
+			addFaceEdgeToList(i, 0, 1);
+			addFaceEdgeToList(i, 1, 2);
+		}
 	}
 
 	// Add the edges to their faces

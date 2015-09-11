@@ -135,12 +135,20 @@ public:
 	/**
 	 * Check if a ray is intersecting the floor
 	 *
-	 * @param origin The ray's origin
-	 * @param direction The ray's direction
-	 * @param intersection The intersection between the ray and the floor. Only valid when the return value is true.
+	 * @param ray The ray
+	 * @param intersection The intersection between the ray and the floor. Only valid when the return value is positive.
 	 * @return -1 if no face contains the point, the hit face index otherwise
 	 */
 	int32 findFaceHitByRay(const Math::Ray &ray, Math::Vector3d &intersection) const;
+
+	/**
+	 * Find the floor face center closest to the ray
+	 *
+	 * @param ray The ray
+	 * @param center The closest face center to the ray. Only valid when the return value is positive.
+	 * @return -1 if no face was found, the face index with its center closest to the ray otherwise
+	 */
+	int32 findFaceClosestToRay(const Math::Ray &ray, Math::Vector3d &center) const;
 
 	/** Obtain the distance to the camera for a face */
 	float getDistanceFromCamera(uint32 faceIndex) const;

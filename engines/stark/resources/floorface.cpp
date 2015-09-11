@@ -123,6 +123,11 @@ bool FloorFace::intersectRay(const Math::Ray &ray, Math::Vector3d &intersection)
 	return isPointInside(intersection);
 }
 
+float FloorFace::distanceToRay(const Math::Ray &ray) const {
+	Math::Vector3d center = getCenter();
+	return Math::Vector3d::crossProduct(ray.direction(), center - ray.origin()).getMagnitude();
+}
+
 float FloorFace::getDistanceFromCamera() const {
 	return _distanceFromCamera;
 }
@@ -158,6 +163,10 @@ FloorEdge *FloorFace::findNearestEdge(const Math::Vector3d &point) const {
 
 Math::Vector3d FloorFace::getCenter() const {
 	return (_vertices[0] + _vertices[1] + _vertices[2]) / 3.0;
+}
+
+bool FloorFace::hasVertices() const {
+	return _indices[0] != 0 || _indices[1] != 0 || _indices[2] != 0;
 }
 
 void FloorFace::readData(Formats::XRCReadStream *stream) {
