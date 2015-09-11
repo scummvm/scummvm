@@ -137,7 +137,9 @@ void Walk::onGameLoop() {
 
 	// Update the item's properties
 	_item->setPosition3D(newPosition);
-	_item->setDirection(computeAngleBetweenVectorsXYPlane(direction, Math::Vector3d(1.0, 0.0, 0.0)));
+	if (direction.getMagnitude() != 0.0) {
+		_item->setDirection(computeAngleBetweenVectorsXYPlane(direction, Math::Vector3d(1.0, 0.0, 0.0)));
+	}
 	_item->setFloorFaceIndex(newFloorFaceIndex);
 
 	changeItemAnim();
