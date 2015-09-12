@@ -771,17 +771,17 @@ void ModelItem::readData(Formats::XRCReadStream *stream) {
 void ModelItem::onAllLoaded() {
 	FloorPositionedItem::onAllLoaded();
 
-	BonesMesh *bonesMesh = findChild<BonesMesh>();
+	BonesMesh *bonesMesh = findChild<BonesMesh>(false);
 	if (bonesMesh) {
 		_meshIndex = bonesMesh->getIndex();
 	}
 
-	TextureSet *textureNormal = findChildWithSubtype<TextureSet>(TextureSet::kTextureNormal);
+	TextureSet *textureNormal = findChildWithSubtype<TextureSet>(TextureSet::kTextureNormal, false);
 	if (textureNormal) {
 		_textureNormalIndex = textureNormal->getIndex();
 	}
 
-	TextureSet *textureFace = findChildWithSubtype<TextureSet>(TextureSet::kTextureFace);
+	TextureSet *textureFace = findChildWithSubtype<TextureSet>(TextureSet::kTextureFace, false);
 	if (textureFace) {
 		_textureFaceIndex = textureFace->getIndex();
 	}
