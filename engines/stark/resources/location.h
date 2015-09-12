@@ -86,6 +86,7 @@ protected:
 private:
 	void scrollToCharacter();
 	Common::Point getCharacterScrollPosition();
+	uint getScrollStepMovement();
 
 	Common::Array<Layer *> _layers;
 	Layer *_currentLayer;

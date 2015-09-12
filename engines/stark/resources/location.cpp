@@ -23,6 +23,7 @@
 #include "engines/stark/resources/location.h"
 
 #include "engines/stark/formats/xrc.h"
+#include "engines/stark/gfx/driver.h"
 
 #include "engines/stark/resources/item.h"
 #include "engines/stark/resources/layer.h"
@@ -94,7 +95,7 @@ void Location::setScrollPosition(const Common::Point &position) {
 	}
 
 	// Reconfigure the camera
-	Common::Rect viewport(640, 365);
+	Common::Rect viewport(Gfx::Driver::kGameViewportWidth, Gfx::Driver::kGameViewportHeight);
 	viewport.translate(_scroll.x, _scroll.y);
 	StarkScene->scrollCamera(viewport);
 }
@@ -106,11 +107,11 @@ Common::Point Location::getCharacterScrollPosition() {
 
 	Common::Point newScroll;
 	if (_maxScroll.x > 0) {
-		newScroll.x = _scroll.x + position2D.x - 320;
+		newScroll.x = _scroll.x + position2D.x - Gfx::Driver::kGameViewportWidth / 2;
 		newScroll.y = _scroll.y;
 	} else {
 		newScroll.x = _scroll.x;
-		newScroll.y = _scroll.y + position2D.y - 183;
+		newScroll.y = _scroll.y + position2D.y - Gfx::Driver::kGameViewportHeight / 2;
 	}
 
 	return newScroll;
@@ -143,8 +144,24 @@ void Location::scrollToCharacterImmediate() {
 	setScrollPosition(getCharacterScrollPosition());
 }
 
+uint Location::getScrollStepMovement() {
+	ModelItem *april = StarkGlobal->getCurrent()->getInteractive();
+	Common::Point position2D = StarkScene->convertPosition3DToScreen(april->getPosition3D());
+
+	// TODO: Complete
+
+	uint scrollStep;
+	if (_maxScroll.x > 0) {
+		scrollStep = abs((Gfx::Driver::kGameViewportWidth / 2 - position2D.x) / 16);
+	} else {
+		scrollStep = abs((Gfx::Driver::kGameViewportHeight / 2 - position2D.y) / 16);
+	}
+
+	return CLIP<uint>(scrollStep, 1, 4);
+}
+
 void Location::scrollToSmooth(const Common::Point &position) {
-	uint scrollStep = 4; //TODO: Select correct value according to case
+	uint scrollStep = getScrollStepMovement(); //TODO: Select correct value according to case
 
 	Common::Point delta;
 	if (position.x < _scroll.x) {
