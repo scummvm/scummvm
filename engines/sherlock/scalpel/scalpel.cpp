@@ -1293,9 +1293,9 @@ bool ScalpelEngine::play3doMovie(const Common::String &filename, const Common::P
 					// movies are 152 x 200
 
 					// Downscale, but calculate average color out of 4 pixels and put that average into the target pixel
-					// TODO: 3DO actually did color weighting, exact details about this are unknown
-					// it's also unknown what 3DO exactly did for interpolation and it's also unknown atm
-					// if the CinePak videos contained color weighting information
+					// TODO: 3DO actually did pixel weighting, exact details about this are unknown
+					// It's also unknown what 3DO exactly did for interpolation
+					// and it's also unknown atm if the CinePak videos contained pixel weighting information
 
 					if ((height & 1) || (width & 1)) {
 						error("Scalpel3DOMoviePlay: critical error, half-size requested on video with uneven height/width");
