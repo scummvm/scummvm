@@ -1248,9 +1248,27 @@ bool ScalpelEngine::play3doMovie(const Common::String &filename, const Common::P
 	Scalpel3DOMovieDecoder *videoDecoder = new Scalpel3DOMovieDecoder();
 	Graphics::Surface tempSurface;
 
+	Common::Point framePos(pos.x, pos.y);
+	ImageFile3DO *frameImageFile = nullptr;
+	ImageFrame *frameImage = nullptr;
+	bool frameShown = false;
+
 	if (!videoDecoder->loadFile(filename)) {
 		warning("Scalpel3DOMoviePlay: could not open '%s'", filename.c_str());
 		return false;
+	}
+
+	_screen->_backBuffer1.blitFrom(*_screen); // save into backbuffer 1
+
+	if (halfSize) {
+		// only for portrait videos, not for EA intro logo and such
+		if ((framePos.x >= 8) && (framePos.y >= 8)) { // safety check
+			framePos.x -= 8;
+			framePos.y -= 8; // frame is 8 pixels on left + top, and 7 pixels on right + bottom
+		}
+
+		frameImageFile = new ImageFile3DO("vidframe.cel", kImageFile3DOType_Cel);
+		frameImage = &(*frameImageFile)[0];
 	}
 
 	bool skipVideo = false;
@@ -1283,10 +1301,18 @@ bool ScalpelEngine::play3doMovie(const Common::String &filename, const Common::P
 
 					// Point the drawing frame to the temporary surface
 					frame = &tempSurface;
+
+					if (!frameShown) {
+						// Draw the frame (not the frame of the video, but a frame around the video) itself
+						_screen->transBlitFrom(frameImage->_frame, framePos);
+						frameShown = true;
+					}
 				}
 
-				g_system->copyRectToScreen(frame->getPixels(), frame->pitch, pos.x, pos.y, frame->w, frame->h);
-				g_system->updateScreen();
+				_screen->blitFrom(*frame, pos);
+				_screen->update();
+				//g_system->copyRectToScreen(frame->getPixels(), frame->pitch, pos.x, pos.y, frame->w, frame->h);
+				//g_system->updateScreen();
 			}
 		}
 
@@ -1307,6 +1333,12 @@ bool ScalpelEngine::play3doMovie(const Common::String &filename, const Common::P
 
 	videoDecoder->close();
 	delete videoDecoder;
+
+	if (halfSize) {
+		delete frameImage;
+	}
+
+	_screen->blitFrom(_screen->_backBuffer1);
 
 	return !skipVideo;
 }
