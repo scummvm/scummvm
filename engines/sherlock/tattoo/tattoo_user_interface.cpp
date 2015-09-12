@@ -216,9 +216,9 @@ void TattooUserInterface::doJournal() {
 	TattooJournal &journal = *(TattooJournal *)_vm->_journal;
 	TattooScene &scene = *(TattooScene *)_vm->_scene;
 	Screen &screen = *_vm->_screen;
-	byte lookupTable[PALETTE_SIZE];
+	byte lookupTable[PALETTE_COUNT];
 
-	Common::copy(&_lookupTable[0], &_lookupTable[PALETTE_SIZE], &lookupTable[0]);
+	Common::copy(&_lookupTable[0], &_lookupTable[PALETTE_COUNT], &lookupTable[0]);
 	_menuMode = JOURNAL_MODE;
 	journal.show();
 
@@ -229,7 +229,7 @@ void TattooUserInterface::doJournal() {
 	// Restore the the old screen palette and greyscale lookup table
 	screen.clear();
 	screen.setPalette(screen._cMap);
-	Common::copy(&lookupTable[0], &lookupTable[PALETTE_SIZE], &_lookupTable[0]);
+	Common::copy(&lookupTable[0], &lookupTable[PALETTE_COUNT], &_lookupTable[0]);
 
 	// Restore the scene
 	screen._backBuffer1.blitFrom(screen._backBuffer2);
