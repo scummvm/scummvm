@@ -609,7 +609,6 @@ bool ScalpelTalk::talk3DOMovieTrigger(int subIndex) {
 		if (scriptSelector >= 0) {
 			// Script-selected dialog
 			selector = scriptSelector;
-			subIndex--; // for scripts we adjust subIndex, b/c we won't get called from doTalkControl()
 		} else {
 			warning("talk3DOMovieTrigger: unable to find selector");
 			return true;
