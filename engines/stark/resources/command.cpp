@@ -45,6 +45,7 @@
 #include "engines/stark/resources/location.h"
 #include "engines/stark/resources/pattable.h"
 #include "engines/stark/resources/script.h"
+#include "engines/stark/resources/scroll.h"
 #include "engines/stark/resources/sound.h"
 #include "engines/stark/resources/speech.h"
 #include "engines/stark/resources/string.h"
@@ -135,6 +136,8 @@ Command *Command::execute(uint32 callMode, Script *script) {
 		return opKnowledgeAssignBool(_arguments[1].referenceValue, _arguments[2].referenceValue);
 	case kKnowledgeAssignNegatedBool:
 		return opKnowledgeAssignNegatedBool(_arguments[1].referenceValue, _arguments[2].referenceValue);
+	case kLocationScrollTo:
+		return opLocationScrollTo(script, _arguments[1].referenceValue, _arguments[2].intValue);
 	case kSoundPlay:
 		return opSoundPlay(script, _arguments[1].referenceValue, _arguments[2].intValue);
 	case kItemLookDirection:
@@ -145,8 +148,8 @@ Command *Command::execute(uint32 callMode, Script *script) {
 		return opLayerGoTo(_arguments[1].referenceValue);
 	case kLayerEnable:
 		return opLayerEnable(_arguments[1].referenceValue, _arguments[2].intValue);
-	case kScrollSet:
-		return opScrollSet(_arguments[1].referenceValue);
+	case kLocationScrollSet:
+		return opLocationScrollSet(_arguments[1].referenceValue);
 	case kPlayFullMotionVideo:
 		return opPlayFullMotionVideo(script, _arguments[1].referenceValue, _arguments[2].intValue);
 	case kEnableDiaryEntry:
@@ -642,6 +645,21 @@ Command *Command::opKnowledgeAssignNegatedBool(const ResourceReference &knowledg
 	return nextCommand();
 }
 
+Command *Command::opLocationScrollTo(Script *script, const ResourceReference &scrollRef, bool suspend) {
+	Scroll *scroll = scrollRef.resolve<Scroll>();
+	Location *location = scroll->findParent<Location>();
+
+	location->stopAllScrolls();
+	scroll->start();
+
+	if (suspend) {
+		script->suspend(scroll);
+		return this; // Stay on the same command while suspended
+	} else {
+		return nextCommand();
+	}
+}
+
 Command *Command::opSoundPlay(Script *script, const ResourceReference &soundRef, int32 suspend) {
 	Sound *sound = soundRef.resolve<Sound>();
 	sound->play();
@@ -725,10 +743,12 @@ Command *Command::opLayerEnable(const ResourceReference &layerRef, int32 enable)
 	return nextCommand();
 }
 
-Command *Command::opScrollSet(const ResourceReference &scrollRef) {
-	assert(_arguments.size() == 2);
-	Object *scroll =  scrollRef.resolve<Object>();
-	warning("(TODO: Implement) opScrollSet(%s) : %s", scroll->getName().c_str(), scrollRef.describe().c_str());
+Command *Command::opLocationScrollSet(const ResourceReference &scrollRef) {
+	Scroll *scroll =  scrollRef.resolve<Scroll>();
+	scroll->applyToLocationImmediate();
+
+	Location *location = scroll->findParent<Location>();
+	location->stopFollowingCharacter();
 
 	return nextCommand();
 }

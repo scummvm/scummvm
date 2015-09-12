@@ -27,6 +27,7 @@
 
 #include "engines/stark/resources/item.h"
 #include "engines/stark/resources/layer.h"
+#include "engines/stark/resources/scroll.h"
 
 #include "engines/stark/scene.h"
 #include "engines/stark/services/services.h"
@@ -41,7 +42,9 @@ Location::~Location() {
 Location::Location(Object *parent, byte subType, uint16 index, const Common::String &name) :
 				Object(parent, subType, index, name),
 				_canScroll(false),
-				_currentLayer(nullptr) {
+				_currentLayer(nullptr),
+				_hasActiveScroll(false),
+				_scrollFollowCharacter(false) {
 	_type = TYPE;
 }
 
@@ -54,8 +57,17 @@ void Location::onAllLoaded() {
 void Location::onGameLoop() {
 	Object::onGameLoop();
 
-	// TODO: Add conditions
-	scrollToCharacter();
+	if (_hasActiveScroll) {
+		// Script triggered scrolling has precedence over following the character
+		_scrollFollowCharacter = false;
+	}
+
+	if (_scrollFollowCharacter) {
+		bool complete = scrollToCharacter();
+		if (complete) {
+			_scrollFollowCharacter = false;
+		}
+	}
 }
 
 bool Location::has3DLayer() {
@@ -117,23 +129,25 @@ Common::Point Location::getCharacterScrollPosition() {
 	return newScroll;
 }
 
-void Location::scrollToCharacter() {
+bool Location::scrollToCharacter() {
 	if (!_canScroll) {
-		return;
+		return true;
 	}
 
 	Common::Point newScroll = getCharacterScrollPosition();
 	if (_maxScroll.x > 0) {
 		if (newScroll.x < _scroll.x - 15 || newScroll.x > _scroll.x + 15) {
 			newScroll.x = CLIP<int16>(newScroll.x, 0, _maxScroll.x);
-			scrollToSmooth(newScroll);
+			return scrollToSmooth(newScroll, true);
 		}
 	} else {
 		if (newScroll.y < _scroll.y - 15 || newScroll.y > _scroll.y + 15) {
 			newScroll.y = CLIP<int16>(newScroll.y, 0, _maxScroll.y);
-			scrollToSmooth(newScroll);
+			return scrollToSmooth(newScroll, true);
 		}
 	}
+
+	return false;
 }
 
 void Location::scrollToCharacterImmediate() {
@@ -144,7 +158,7 @@ void Location::scrollToCharacterImmediate() {
 	setScrollPosition(getCharacterScrollPosition());
 }
 
-uint Location::getScrollStepMovement() {
+uint Location::getScrollStepFollow() {
 	ModelItem *april = StarkGlobal->getCurrent()->getInteractive();
 	Common::Point position2D = StarkScene->convertPosition3DToScreen(april->getPosition3D());
 
@@ -160,8 +174,32 @@ uint Location::getScrollStepMovement() {
 	return CLIP<uint>(scrollStep, 1, 4);
 }
 
-void Location::scrollToSmooth(const Common::Point &position) {
-	uint scrollStep = getScrollStepMovement(); //TODO: Select correct value according to case
+uint Location::getScrollStep() {
+	uint scrollStep;
+	if (_maxScroll.x > 0) {
+		if (_scroll.x <= _maxScroll.x / 2) {
+			scrollStep = _scroll.x / 16;
+		} else {
+			scrollStep = (_maxScroll.x - _scroll.x) / 16;
+		}
+	} else {
+		if (_scroll.y <= _maxScroll.y / 2) {
+			scrollStep = _scroll.y / 16;
+		} else {
+			scrollStep = (_maxScroll.y - _scroll.y) / 16;
+		}
+	}
+
+	return CLIP<uint>(scrollStep, 1, 4);
+}
+
+bool Location::scrollToSmooth(const Common::Point &position, bool followCharacter) {
+	uint scrollStep;
+	if (followCharacter) {
+		scrollStep = getScrollStepFollow();
+	} else {
+		scrollStep = getScrollStep();
+	}
 
 	Common::Point delta;
 	if (position.x < _scroll.x) {
@@ -180,7 +218,56 @@ void Location::scrollToSmooth(const Common::Point &position) {
 		delta.y = CLIP<int16>(delta.y, 0, position.y - _scroll.y);
 	}
 
+	if (delta.x == 0 && delta.y == 0) {
+		// We already are at the target position, scrolling has completed
+		return true;
+	}
+
 	setScrollPosition(_scroll + delta);
+	return false;
+}
+
+bool Location::scrollToCoordinateSmooth(uint32 coordinate) {
+	Common::Point newScroll = getScrollPointFromCoordinate(coordinate);
+	return scrollToSmooth(newScroll, false);
+}
+
+void Location::scrollToCoordinateImmediate(uint32 coordinate) {
+	Common::Point newScroll = getScrollPointFromCoordinate(coordinate);
+	return setScrollPosition(newScroll);
+}
+
+Common::Point Location::getScrollPointFromCoordinate(uint32 coordinate) const {
+	Common::Point newScroll = _scroll;
+
+	if (_maxScroll.x > 0) {
+		newScroll.x = coordinate;
+	} else {
+		newScroll.y = coordinate;
+	}
+
+	return newScroll;
+}
+
+void Location::stopFollowingCharacter() {
+	_scrollFollowCharacter = false;
+}
+
+void Location::startFollowingCharacter() {
+	_scrollFollowCharacter = true;
+}
+
+void Location::setHasActiveScroll() {
+	_hasActiveScroll = true;
+}
+
+void Location::stopAllScrolls() {
+	Common::Array<Scroll *> scrolls = listChildren<Scroll>();
+	for (uint i = 0; i < scrolls.size(); i++) {
+		scrolls[i]->stop();
+	}
+
+	_hasActiveScroll = false;
 }
 
 void Location::goToLayer(Layer *layer) {

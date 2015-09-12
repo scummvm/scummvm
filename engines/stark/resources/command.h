@@ -100,6 +100,7 @@ public:
 
 		kKnowledgeAssignBool = 107,
 
+		kLocationScrollTo = 111,
 		kSoundPlay = 112,
 
 		kKnowledgeSubValue = 117,
@@ -108,7 +109,7 @@ public:
 		kStopPlayingSound = 119,
 		kLayerGoTo = 120,
 		kLayerEnable = 121,
-		kScrollSet = 122,
+		kLocationScrollSet = 122,
 		kPlayFullMotionVideo = 123,
 
 		kKnowledgeAssignNegatedBool = 126,
@@ -212,12 +213,13 @@ protected:
 	Command *opPlayAnimScriptItem(Script *script, const ResourceReference &animScriptItemRef, int32 suspend);
 	Command *opKnowledgeAssignBool(const ResourceReference &knowledgeRef1, const ResourceReference &knowledgeRef2);
 	Command *opKnowledgeAssignNegatedBool(const ResourceReference &knowledgeRef1, const ResourceReference &knowledgeRef2);
+	Command *opLocationScrollTo(Script *script, const ResourceReference &scrollRef, bool suspend);
 	Command *opSoundPlay(Script *script, const ResourceReference &soundRef, int32 suspend);
 	Command *opItemLookDirection(Script *script, const ResourceReference &itemRef, int32 direction, bool suspend);
 	Command *opStopPlayingSound(const ResourceReference &soundRef);
 	Command *opLayerGoTo(const ResourceReference &layerRef);
 	Command *opLayerEnable(const ResourceReference &layerRef, int32 enable);
-	Command *opScrollSet(const ResourceReference &scrollRef);
+	Command *opLocationScrollSet(const ResourceReference &scrollRef);
 	Command *opPlayFullMotionVideo(Script *script, const ResourceReference &movieRef, int32 unknown);
 	Command *opEnableDiaryEntry(const ResourceReference &knowledgeRef);
     Command *opPATChangeTooltip(const ResourceReference &patRef, const ResourceReference &stringRef);

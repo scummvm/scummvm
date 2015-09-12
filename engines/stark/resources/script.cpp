@@ -23,15 +23,17 @@
 #include "engines/stark/resources/script.h"
 
 #include "engines/stark/formats/xrc.h"
+
 #include "engines/stark/resources/command.h"
 #include "engines/stark/resources/item.h"
+#include "engines/stark/resources/scroll.h"
 #include "engines/stark/resources/sound.h"
 #include "engines/stark/resources/speech.h"
+
 #include "engines/stark/services/dialogplayer.h"
 #include "engines/stark/services/global.h"
 #include "engines/stark/services/services.h"
 #include "engines/stark/services/stateprovider.h"
-
 #include "engines/stark/services/userinterface.h"
 
 namespace Stark {
@@ -211,6 +213,14 @@ void Script::updateSuspended() {
 			Speech *speech = Object::cast<Speech>(_suspendingResource);
 			if (!speech->isPlaying()) {
 				// Resume the script execution once the speech has stopped playing
+				_suspendingResource = nullptr;
+			}
+			break;
+		}
+		case Type::kScroll: {
+			Scroll *scroll = Object::cast<Scroll>(_suspendingResource);
+			if (!scroll->isActive()) {
+				// Resume the script execution once the scroll target position is reached
 				_suspendingResource = nullptr;
 			}
 			break;

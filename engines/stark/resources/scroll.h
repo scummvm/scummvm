@@ -47,6 +47,19 @@ public:
 
 	// Resource API
 	void readData(Formats::XRCReadStream *stream) override;
+	void onGameLoop() override;
+
+	/** Start scrolling the location to this position */
+	void start();
+
+	/** Stop scrolling the location from this object */
+	void stop();
+
+	/** Is this scroll currently running? */
+	bool isActive();
+
+	/** Scroll the location to this position, with immediate effect */
+	void applyToLocationImmediate();
 
 protected:
 	void printData() override;
@@ -55,6 +68,8 @@ protected:
 	uint32 _field_30;
 	uint32 _field_34;
 	uint32 _bookmarkIndex;
+
+	bool _active;
 };
 
 } // End of namespace Resources

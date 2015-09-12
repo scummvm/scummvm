@@ -72,7 +72,7 @@ public:
 	void setScrollPosition(const Common::Point &position);
 
 	/** Smoothly scroll to a position in 2D world coordinates */
-	void scrollToSmooth(const Common::Point &position);
+	bool scrollToCoordinateSmooth(uint32 coordinate);
 
 	/** Immediatly scroll the character location */
 	void scrollToCharacterImmediate();
@@ -80,20 +80,46 @@ public:
 	/** Replace the currently active layer */
 	void goToLayer(Layer *layer);
 
+	/**
+	 * Indicate on script driven scroll is active.
+	 *
+	 * This means that the location should not follow the character
+	 */
+	void setHasActiveScroll();
+
+	/**
+	 * Stop all script driven scrolls
+	 */
+	void stopAllScrolls();
+
+	/** Tell the location to scroll to follow the character */
+	void startFollowingCharacter();
+
+	/** Tell the location not to scroll to follow the character */
+	void stopFollowingCharacter();
+
+	void scrollToCoordinateImmediate(uint32 coordinate);
+
 protected:
 	void printData() override;
 
 private:
-	void scrollToCharacter();
+	bool scrollToSmooth(const Common::Point &position, bool followCharacter);
+	bool scrollToCharacter();
 	Common::Point getCharacterScrollPosition();
-	uint getScrollStepMovement();
+	uint getScrollStepFollow();
+	Common::Point getScrollPointFromCoordinate(uint32 coordinate) const;
 
 	Common::Array<Layer *> _layers;
 	Layer *_currentLayer;
 
 	bool _canScroll;
+	bool _hasActiveScroll;
+	bool _scrollFollowCharacter;
 	Common::Point _scroll;
 	Common::Point _maxScroll;
+
+	uint getScrollStep();
 };
 
 } // End of namespace Resources

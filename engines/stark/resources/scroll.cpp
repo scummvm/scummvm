@@ -24,6 +24,8 @@
 
 #include "engines/stark/formats/xrc.h"
 
+#include "engines/stark/resources/location.h"
+
 namespace Stark {
 namespace Resources {
 
@@ -35,8 +37,42 @@ Scroll::Scroll(Object *parent, byte subType, uint16 index, const Common::String 
 				_coordinate(0),
 				_field_30(0),
 				_field_34(0),
-				_bookmarkIndex(0) {
+				_bookmarkIndex(0),
+				_active(false) {
 	_type = TYPE;
+}
+
+void Scroll::applyToLocationImmediate() {
+	Location *location = findParent<Location>();
+	location->scrollToCoordinateImmediate(_coordinate);
+}
+
+void Scroll::start() {
+	_active = true;
+
+	Location *location = findParent<Location>();
+	location->setHasActiveScroll();
+}
+
+void Scroll::stop() {
+	_active = false;
+}
+
+bool Scroll::isActive() {
+	return _active;
+}
+
+void Scroll::onGameLoop() {
+	Object::onGameLoop();
+
+	if (_active) {
+		Location *location = findParent<Location>();
+		bool complete = location->scrollToCoordinateSmooth(_coordinate);
+		if (complete) {
+			_active = false;
+			location->stopAllScrolls();
+		}
+	}
 }
 
 void Scroll::readData(Formats::XRCReadStream *stream) {

@@ -29,9 +29,10 @@
 #include "engines/stark/services/services.h"
 
 #include "engines/stark/resources/anim.h"
-#include "engines/stark/resources/item.h"
 #include "engines/stark/resources/floor.h"
 #include "engines/stark/resources/floorface.h"
+#include "engines/stark/resources/item.h"
+#include "engines/stark/resources/location.h"
 
 namespace Stark {
 
@@ -51,6 +52,9 @@ void Walk::start() {
 
 	updatePath();
 	changeItemAnim();
+
+	Resources::Location *location = StarkGlobal->getCurrent()->getLocation();
+	location->startFollowingCharacter();
 }
 
 void Walk::updatePath() const {
