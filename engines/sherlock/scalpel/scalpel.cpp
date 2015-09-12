@@ -1290,6 +1290,61 @@ bool ScalpelEngine::play3doMovie(const Common::String &filename, const Common::P
 
 			if (frame) {
 				if (halfSize) {
+					// movies are 152 x 200
+
+					// Downscale, but calculate average color out of 4 pixels and put that average into the target pixel
+					// TODO: 3DO actually did color weighting, exact details about this are unknown
+					// it's also unknown what 3DO exactly did for interpolation and it's also unknown atm
+					// if the CinePak videos contained color weighting information
+
+					if ((height & 1) || (width & 1)) {
+						error("Scalpel3DOMoviePlay: critical error, half-size requested on video with uneven height/width");
+					}
+
+					for (int downscaleY = 0; downscaleY < height / 2; downscaleY++) {
+						const uint16 *downscaleSource1Ptr = (const uint16 *)frame->getBasePtr(0, downscaleY * 2);
+						const uint16 *downscaleSource2Ptr = (const uint16 *)frame->getBasePtr(0, (downscaleY * 2) + 1);
+						uint16 *downscaleTargetPtr = (uint16 *)tempSurface.getBasePtr(0, downscaleY);
+
+						for (int downscaleX = 0; downscaleX < width / 2; downscaleX++) {
+							// get 4 pixel colors
+							uint16 downscaleColor = *downscaleSource1Ptr;
+							uint32 downscaleRed = downscaleColor >> 11; // 5 bits
+							uint32 downscaleGreen = (downscaleColor >> 5) & 0x3f; // 6 bits
+							uint32 downscaleBlue = downscaleColor & 0x1f;
+
+							downscaleSource1Ptr++;
+							downscaleColor = *downscaleSource1Ptr;
+							downscaleRed += downscaleColor >> 11;
+							downscaleGreen += (downscaleColor >> 5) & 0x3f;
+							downscaleBlue += downscaleColor & 0x1f;
+
+							downscaleColor = *downscaleSource2Ptr;
+							downscaleRed += downscaleColor >> 11;
+							downscaleGreen += (downscaleColor >> 5) & 0x3f;
+							downscaleBlue += downscaleColor & 0x1f;
+
+							downscaleSource2Ptr++;
+							downscaleColor = *downscaleSource2Ptr;
+							downscaleRed += downscaleColor >> 11;
+							downscaleGreen += (downscaleColor >> 5) & 0x3f;
+							downscaleBlue += downscaleColor & 0x1f;
+
+							// Divide colors by 4, so that we get the average
+							downscaleRed = downscaleRed >> 2;
+							downscaleGreen = downscaleGreen >> 2;
+							downscaleBlue = downscaleBlue >> 2;
+
+							// write new color to target pixel
+							downscaleColor = (downscaleRed << 11) | (downscaleGreen << 5) | downscaleBlue;
+							*downscaleTargetPtr = downscaleColor;
+
+							downscaleSource1Ptr++;
+							downscaleSource2Ptr++;
+							downscaleTargetPtr++;
+						}
+					}
+#if 0
 					// Reduce the movie frame to half-size on a temp surface
 					for (int yp = 0; yp < height / 2; ++yp) {
 						const uint16 *srcP = (const uint16 *)frame->getBasePtr(0, yp * 2);
@@ -1298,6 +1353,7 @@ bool ScalpelEngine::play3doMovie(const Common::String &filename, const Common::P
 						for (int xp = 0; xp < width / 2; ++xp, ++destP, srcP += 2)
 							*destP = *srcP;
 					}
+#endif
 
 					// Point the drawing frame to the temporary surface
 					frame = &tempSurface;
