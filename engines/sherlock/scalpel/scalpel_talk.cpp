@@ -673,8 +673,8 @@ Common::Point ScalpelTalk::get3doPortraitPosition() const {
 	// Adjust the top-left so the center of the portrait will be on the character,
 	// but ensure the portrait will be entirely on-screen
 	pt -= Common::Point(PORTRAIT_W / 2, PORTRAIT_H / 2);
-	pt.x = CLIP((int)pt.x, 20, SHERLOCK_SCREEN_WIDTH - 20 - PORTRAIT_W);
-	pt.y = CLIP((int)pt.y, 20, SHERLOCK_SCREEN_HEIGHT - 20 - PORTRAIT_H);
+	pt.x = CLIP((int)pt.x, 10, SHERLOCK_SCREEN_WIDTH - 10 - PORTRAIT_W);
+	pt.y = CLIP((int)pt.y, 10, CONTROLS_Y - PORTRAIT_H - 10);
 
 	return pt;
 }
