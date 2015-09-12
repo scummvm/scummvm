@@ -63,6 +63,7 @@ public:
 
 	void pushAndChangeLocation(int16 level, int16 location);
 	void returnToPushedLocation();
+
 	/**
 	 * Apply a location change request.
 	 *
@@ -103,6 +104,7 @@ private:
 
 	void runLocationChangeScripts(Resources::Object *resource, uint32 scriptCallMode);
 	void setAprilInitialPosition();
+	void setScrollInitialPosition();
 
 	Global *_global;
 	ArchiveLoader *_archiveLoader;

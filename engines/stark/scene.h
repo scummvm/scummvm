@@ -65,6 +65,11 @@ public:
 	 */
 	Math::Ray makeRayFromMouse(const Common::Point &mouse) const;
 
+	/**
+	 * Convert a 3D position in world coordinates into a point in the screen space
+	 */
+	Common::Point convertPosition3DToScreen(const Math::Vector3d &obj) const;
+
 private:
 	void computeClippingRect(float *xmin, float *xmax, float *ymin, float *ymax);
 

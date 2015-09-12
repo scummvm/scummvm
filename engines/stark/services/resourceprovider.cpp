@@ -239,6 +239,7 @@ void ResourceProvider::performLocationChange() {
 	}
 
 	setAprilInitialPosition();
+	setScrollInitialPosition();
 
 	// Trigger location change scripts
 	if (levelChanged) {
@@ -289,6 +290,12 @@ void ResourceProvider::setAprilInitialPosition() {
 
 	_nextPositionBookmarkReference = ResourceReference();
 	_nextDirection = 0;
+}
+
+void ResourceProvider::setScrollInitialPosition() {
+	Current *current = _global->getCurrent();
+	Resources::Location *location = current->getLocation();
+	location->scrollToCharacterImmediate();
 }
 
 void ResourceProvider::purgeOldLocations() {

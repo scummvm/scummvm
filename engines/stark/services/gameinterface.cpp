@@ -73,21 +73,6 @@ void GameInterface::skipCurrentSpeeches() {
 	}
 }
 
-void GameInterface::scrollLocation(int32 dX, int32 dY) {
-	Current *current = StarkGlobal->getCurrent();
-
-	if (!current) {
-		return; // No current location, nothing to do
-	}
-
-	Resources::Location *location = current->getLocation();
-
-	Common::Point scroll = location->getScrollPosition();
-	scroll.x += dX;
-	scroll.y += dY;
-	location->setScrollPosition(scroll);
-}
-
 void GameInterface::walkTo(const Common::Point &mouse) {
 	Resources::Floor *floor = StarkGlobal->getCurrent()->getFloor();
 	Resources::ModelItem *april = StarkGlobal->getCurrent()->getInteractive();

@@ -199,7 +199,6 @@ void StarkEngine::mainLoop() {
 			} else if (e.type == Common::EVENT_LBUTTONUP) {
 				// Do nothing for now
 			} else if (e.type == Common::EVENT_MOUSEMOVE) {
-				_gameInterface->scrollLocation(e.relMouse.x, e.relMouse.y);
 				_cursor->setMousePosition(e.mouse);
 			} else if (e.type == Common::EVENT_LBUTTONDOWN) {
 				_userInterface->handleClick();

@@ -54,6 +54,7 @@ public:
 
 	// Resource API
 	void onAllLoaded() override;
+	void onGameLoop() override;
 
 	/** Does the location have a 3D layer ? */
 	bool has3DLayer();
@@ -70,6 +71,12 @@ public:
 	/** Scroll the location to the specified position if possible */
 	void setScrollPosition(const Common::Point &position);
 
+	/** Smoothly scroll to a position in 2D world coordinates */
+	void scrollToSmooth(const Common::Point &position);
+
+	/** Immediatly scroll the character location */
+	void scrollToCharacterImmediate();
+
 	/** Replace the currently active layer */
 	void goToLayer(Layer *layer);
 
@@ -77,6 +84,9 @@ protected:
 	void printData() override;
 
 private:
+	void scrollToCharacter();
+	Common::Point getCharacterScrollPosition();
+
 	Common::Array<Layer *> _layers;
 	Layer *_currentLayer;
 

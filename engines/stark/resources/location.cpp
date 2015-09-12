@@ -23,9 +23,13 @@
 #include "engines/stark/resources/location.h"
 
 #include "engines/stark/formats/xrc.h"
+
+#include "engines/stark/resources/item.h"
 #include "engines/stark/resources/layer.h"
+
 #include "engines/stark/scene.h"
 #include "engines/stark/services/services.h"
+#include "engines/stark/services/global.h"
 
 namespace Stark {
 namespace Resources {
@@ -44,6 +48,13 @@ void Location::onAllLoaded() {
 	Object::onAllLoaded();
 
 	_layers = listChildren<Layer>();
+}
+
+void Location::onGameLoop() {
+	Object::onGameLoop();
+
+	// TODO: Add conditions
+	scrollToCharacter();
 }
 
 bool Location::has3DLayer() {
@@ -86,6 +97,73 @@ void Location::setScrollPosition(const Common::Point &position) {
 	Common::Rect viewport(640, 365);
 	viewport.translate(_scroll.x, _scroll.y);
 	StarkScene->scrollCamera(viewport);
+}
+
+Common::Point Location::getCharacterScrollPosition() {
+	// TODO: Use April's 2D bounding box
+	ModelItem *april = StarkGlobal->getCurrent()->getInteractive();
+	Common::Point position2D = StarkScene->convertPosition3DToScreen(april->getPosition3D());
+
+	Common::Point newScroll;
+	if (_maxScroll.x > 0) {
+		newScroll.x = _scroll.x + position2D.x - 320;
+		newScroll.y = _scroll.y;
+	} else {
+		newScroll.x = _scroll.x;
+		newScroll.y = _scroll.y + position2D.y - 183;
+	}
+
+	return newScroll;
+}
+
+void Location::scrollToCharacter() {
+	if (!_canScroll) {
+		return;
+	}
+
+	Common::Point newScroll = getCharacterScrollPosition();
+	if (_maxScroll.x > 0) {
+		if (newScroll.x < _scroll.x - 15 || newScroll.x > _scroll.x + 15) {
+			newScroll.x = CLIP<int16>(newScroll.x, 0, _maxScroll.x);
+			scrollToSmooth(newScroll);
+		}
+	} else {
+		if (newScroll.y < _scroll.y - 15 || newScroll.y > _scroll.y + 15) {
+			newScroll.y = CLIP<int16>(newScroll.y, 0, _maxScroll.y);
+			scrollToSmooth(newScroll);
+		}
+	}
+}
+
+void Location::scrollToCharacterImmediate() {
+	if (!_canScroll) {
+		return;
+	}
+
+	setScrollPosition(getCharacterScrollPosition());
+}
+
+void Location::scrollToSmooth(const Common::Point &position) {
+	uint scrollStep = 4; //TODO: Select correct value according to case
+
+	Common::Point delta;
+	if (position.x < _scroll.x) {
+		delta.x = -scrollStep;
+		delta.x = CLIP<int16>(delta.x, position.x - _scroll.x, 0);
+	} else if (position.x > _scroll.x) {
+		delta.x = scrollStep;
+		delta.x = CLIP<int16>(delta.x, 0, position.x - _scroll.x);
+	}
+
+	if (position.y < _scroll.y) {
+		delta.y = -scrollStep;
+		delta.y = CLIP<int16>(delta.y, position.y - _scroll.y, 0);
+	} else if (position.y > _scroll.y) {
+		delta.y = scrollStep;
+		delta.y = CLIP<int16>(delta.y, 0, position.y - _scroll.y);
+	}
+
+	setScrollPosition(_scroll + delta);
 }
 
 void Location::goToLayer(Layer *layer) {

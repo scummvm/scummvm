@@ -105,16 +105,33 @@ Math::Ray Scene::makeRayFromMouse(const Common::Point &mouse) const {
 	view.translate(_cameraPosition);
 
 	Math::Matrix4 A = _projectionMatrix * view;
-	A.transpose();
 	A.inverse();
 
-	Math::Vector4d out = A.transform(in);
+	Math::Vector4d out = A * in;
 
 	Math::Vector3d origin = _cameraPosition;
 	Math::Vector3d direction = Math::Vector3d(out.x(), out.y(), out.z());
 	direction.normalize();
 
 	return Math::Ray(origin, direction);
+}
+
+Common::Point Scene::convertPosition3DToScreen(const Math::Vector3d &obj) const {
+	Math::Vector4d in;
+	in.set(obj.x(), obj.y(), obj.z(), 1.0);
+
+	Math::Vector4d out = _projectionMatrix * _viewMatrix * in;
+
+	out.x() /= out.w();
+	out.y() /= out.w();
+
+	Common::Rect gameViewport = _gfx->gameViewport();
+
+	Common::Point point;
+	point.x = gameViewport.left + (1 + out.x()) * gameViewport.width() / 2;
+	point.y = -gameViewport.top + g_system->getHeight() - (1 + out.y()) * gameViewport.height() / 2;
+
+	return point;
 }
 
 } // End of namespace Stark
