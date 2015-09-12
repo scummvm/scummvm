@@ -123,9 +123,13 @@ void UserInterface::dispatchEvent(WindowHandler handler) {
 	}
 }
 
-void UserInterface::notifyShouldOpenInventory() {
+void UserInterface::inventoryOpen(bool open) {
 	// Make the inventory update its contents.
-	_inventoryWindow->open();
+	if (open) {
+		_inventoryWindow->open();
+	} else {
+		_inventoryWindow->close();
+	}
 }
 
 int16 UserInterface::getSelectedInventoryItem() const {

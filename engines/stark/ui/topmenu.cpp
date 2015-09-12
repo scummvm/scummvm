@@ -91,7 +91,7 @@ void TopMenu::onClick(const Common::Point &pos) {
 	}
 
 	if (_inventoryButton->containsPoint(pos)) {
-		StarkUserInterface->notifyShouldOpenInventory();
+		StarkUserInterface->inventoryOpen(true);
 	}
 }
 

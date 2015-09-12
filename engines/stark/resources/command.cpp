@@ -100,6 +100,8 @@ Command *Command::execute(uint32 callMode, Script *script) {
 		return opRumbleScene(_arguments[1].intValue, _arguments[2].intValue);
 	case kFadeScene:
 		return opFadeScene(_arguments[1].intValue, _arguments[2].intValue, _arguments[3].intValue);
+	case kInventoryOpen:
+		return opInventoryOpen(_arguments[1].intValue);
 	case kItem3DPlaceOn:
 		return opItem3DPlaceOn(_arguments[1].referenceValue, _arguments[2].referenceValue);
 	case kItem3DWalkTo:
@@ -126,6 +128,8 @@ Command *Command::execute(uint32 callMode, Script *script) {
 		return opKnowledgeSetInteger(_arguments[1].referenceValue, _arguments[2].intValue);
 	case kKnowledgeAddInteger:
 		return opKnowledgeAddInteger(_arguments[1].referenceValue, _arguments[2].intValue);
+	case kKnowledgeSetIntRandom:
+		return opKnowledgeSetIntRandom(_arguments[1].referenceValue, _arguments[2].intValue, _arguments[3].intValue);
 	case kKnowledgeSubValue:
 		return opKnowledgeSubValue(_arguments[1].referenceValue, _arguments[2].referenceValue);
 	case kEnableFloorField:
@@ -200,6 +204,8 @@ Command *Command::execute(uint32 callMode, Script *script) {
 		return opIsItemActivity(_arguments[2].referenceValue, _arguments[3].intValue);
 	case kIsAnimAtTime:
 		return opIsAnimAtTime(_arguments[2].referenceValue, _arguments[3].intValue);
+	case kIsLocation2D:
+		return opIsLocation2D();
 	default:
 		warning("Unimplemented command %d - %s", _subType, _name.c_str());
 		printData();
@@ -381,6 +387,12 @@ Math::Vector3d Command::getObjectPosition(const ResourceReference &targetRef, in
 	}
 
 	return position;
+}
+
+Command *Command::opInventoryOpen(bool open) {
+	StarkUserInterface->inventoryOpen(open);
+
+	return nextCommand();
 }
 
 Command *Command::opItem3DPlaceOn(const ResourceReference &itemRef, const ResourceReference &targetRef) {
@@ -574,6 +586,15 @@ Command *Command::opKnowledgeSetBoolean(const ResourceReference &knowledgeRef, i
 Command *Command::opKnowledgeSetInteger(const ResourceReference &knowledgeRef, int32 value) {
 	Knowledge *knowledge = knowledgeRef.resolve<Knowledge>();
 
+	knowledge->setIntegerValue(value);
+
+	return nextCommand();
+}
+
+Command *Command::opKnowledgeSetIntRandom(const ResourceReference &knowledgeRef, uint32 min, uint32 max) {
+	Knowledge *knowledge = knowledgeRef.resolve<Knowledge>();
+
+	uint32 value = StarkRandomSource->getRandomNumberRng(min, max);
 	knowledge->setIntegerValue(value);
 
 	return nextCommand();
@@ -984,6 +1005,13 @@ Command *Command::opIsAnimAtTime(const ResourceReference &animRef, int32 time) {
 	bool condition = !anim->isInUse() || anim->isAtTime(time);
 
 	return nextCommandIf(condition);
+}
+
+Command *Command::opIsLocation2D() {
+	Current *current = StarkGlobal->getCurrent();
+	Location *location = current->getLocation();
+
+	return nextCommandIf(!location->has3DLayer());
 }
 
 Command *Command::nextCommand() {

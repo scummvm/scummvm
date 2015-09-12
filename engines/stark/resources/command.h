@@ -77,6 +77,8 @@ public:
 		kRumbleScene = 19,
 		kFadeScene = 20,
 
+		kInventoryOpen = 24,
+
 		kItem3DPlaceOn = 81,
 		kItem3DWalkTo = 82,
 
@@ -102,6 +104,8 @@ public:
 
 		kLocationScrollTo = 111,
 		kSoundPlay = 112,
+
+		kKnowledgeSetIntRandom = 115,
 
 		kKnowledgeSubValue = 117,
 		kItemLookDirection = 118,
@@ -147,7 +151,8 @@ public:
 
 		kIsItemNearPlace = 183,
 
-		kIsAnimAtTime = 185
+		kIsAnimAtTime = 185,
+		kIsLocation2D = 186
 	};
 
 	struct Argument {
@@ -195,6 +200,7 @@ protected:
 	Command *opGoto2DLocation(const Common::String &level, const Common::String &location);
 	Command *opRumbleScene(int32 unknown1, int32 unknown2);
 	Command *opFadeScene(int32 unknown1, int32 unknown2, int32 unknown3);
+	Command *opInventoryOpen(bool open);
 	Command *opItem3DPlaceOn(const ResourceReference &itemRef, const ResourceReference &targetRef);
 	Command *opItem3DWalkTo(Script *script, const ResourceReference &itemRef, const ResourceReference &targetRef, bool suspend);
 	Command *opItemLookAt(Script *script, const ResourceReference &itemRef, const ResourceReference &objRef, bool suspend, int32 unknown);
@@ -207,6 +213,7 @@ protected:
 	Command *opShowPlay(Script *script, const ResourceReference &ref, int32 suspend);
 	Command *opKnowledgeSetBoolean(const ResourceReference &knowledgeRef, int32 enable);
 	Command *opKnowledgeSetInteger(const ResourceReference &knowledgeRef, int32 value);
+	Command *opKnowledgeSetIntRandom(const ResourceReference &knowledgeRef, uint32 min, uint32 max);
 	Command *opKnowledgeAddInteger(const ResourceReference &knowledgeRef, int32 increment);
 	Command *opKnowledgeSubValue(const ResourceReference &knowledgeRef, const ResourceReference &valueRef);
 	Command *opEnableFloorField(const ResourceReference &floorFieldRef, int32 value);
@@ -245,6 +252,7 @@ protected:
 	Command *opIsAnimPlaying(const ResourceReference &animRef);
 	Command *opIsItemActivity(const ResourceReference &itemRef, int32 value);
 	Command *opIsAnimAtTime(const ResourceReference &animRef, int32 time);
+	Command *opIsLocation2D();
 	
 	Common::Array<Argument> _arguments;
 };
