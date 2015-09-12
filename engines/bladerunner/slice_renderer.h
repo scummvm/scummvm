@@ -26,6 +26,8 @@
 #include "bladerunner/vector.h"
 #include "bladerunner/view.h"
 #include "bladerunner/matrix.h"
+#include "bladerunner/lights.h"
+#include "bladerunner/set_effects.h"
 
 #include "graphics/surface.h"
 
@@ -34,8 +36,9 @@ namespace Common {
 }
 
 namespace BladeRunner {
+	class SetEffects;
 
-class BladeRunnerEngine;
+	class BladeRunnerEngine;
 
 class SliceRenderer {
 	BladeRunnerEngine *_vm;
@@ -46,7 +49,9 @@ class SliceRenderer {
 	float     _facing;
 	float     _scale;
 
-	View      _view;
+	View       *_view;
+	Lights     *_lights;
+	SetEffects *_setEffects;
 
 	void                     *_sliceFramePtr;
 
@@ -75,6 +80,8 @@ class SliceRenderer {
 	int _t5[256];
 	int _c6;
 
+
+
 	Matrix3x2 calculateFacingRotationMatrix();
 	void drawSlice(int slice, uint16 *frameLinePtr, uint16 *zbufLinePtr);
 
@@ -84,11 +91,16 @@ public:
 	{}
 	~SliceRenderer();
 
-	void setView(const View &view);
+	void setView(View *view);
+	void setLights(Lights *lights);
+	void setSetEffects(SetEffects *setEffects);
+
 	void setupFrame(int animation, int frame, Vector3 position, float facing, float scale = 1.0f);
 	void calculateBoundingRect();
 
 	void drawFrame(Graphics::Surface &surface, uint16 *zbuffer);
+
+
 };
 
 } // End of namespace BladeRunner

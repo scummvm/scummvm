@@ -28,11 +28,15 @@
 namespace BladeRunner {
 
 class BoundingBox {
+public:
 	Vector3 _vertices[2];
 
 public:
 	BoundingBox() {}
 	BoundingBox(float x0, float y0, float z0, float x1, float y1, float z1);
+
+	void expand(float x0, float y0, float z0, float x1, float y1, float z1);
+	bool isXYZInside(float x, float y, float z);
 };
 
 } // End of namespace BladeRunner

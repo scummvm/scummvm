@@ -52,8 +52,8 @@ public:
 	const Graphics::Surface    *decodeVideoFrame();
 	const uint16               *decodeZBuffer();
 	Audio::SeekableAudioStream *decodeAudioFrame();
-
-	const View &getView() { return _videoTrack->getView(); }
+	void                        decodeView(View *view);
+	//const View &getView() { return _videoTrack->getView(); }
 
 	uint16 numFrames() const { return _header.numFrames; }
 	uint8  frameRate() const { return _header.frameRate; }
@@ -163,7 +163,7 @@ private:
 		int getFrameCount() const;
 		const Graphics::Surface *decodeVideoFrame();
 		const uint16 *decodeZBuffer();
-		const View &getView() { return _view; }
+		void decodeView(View *view);
 
 		bool readVQFR(Common::SeekableReadStream *s, uint32 size);
 		bool readVPTR(Common::SeekableReadStream *s, uint32 size);
@@ -207,7 +207,7 @@ private:
 
 		int      _curFrame;
 
-		View     _view;
+		uint8   *_viewData;
 
 		void VPTRWriteBlock(uint16 *frame, unsigned int dstBlock, unsigned int srcBlock, int count, bool alpha = false);
 		bool decodeFrame(uint16 *frame);

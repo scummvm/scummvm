@@ -28,6 +28,8 @@
 #include "bladerunner/chapters.h"
 #include "bladerunner/gameinfo.h"
 #include "bladerunner/script/script.h"
+#include "bladerunner/slice_renderer.h"
+#include "bladerunner/scene_objects.h"
 
 #include "common/str.h"
 #include "common/stream.h"
@@ -38,7 +40,7 @@ bool Scene::open(int setId, int sceneId, bool isLoadingGame) {
 	if (!isLoadingGame) {
 		// flush ADQ
 	}
-
+	// reset mouse button status
 	_setId = setId;
 	_sceneId = sceneId;
 
@@ -48,9 +50,11 @@ bool Scene::open(int setId, int sceneId, bool isLoadingGame) {
 		// TODO: Set up overlays
 	} else {
 		// TODO: Clear regions
+		// reset aesc
 		// TODO: Destroy all overlays
 		_defaultLoop = 0;
 		_frame = -1;
+		//_loopStartSpecial = -1;
 	}
 
 	Common::String vqaName;
@@ -75,34 +79,50 @@ bool Scene::open(int setId, int sceneId, bool isLoadingGame) {
 	if (!_set->open(setResourceName))
 		return false;
 
-	// TODO: Set view
+	_vm->_sliceRenderer->setView(_vm->_view);
+
 	if (isLoadingGame) {
-		if (sceneId >= 73 && sceneId <= 76)
-			_vm->_script->InitializeScene();
-		return true;
+		// resume()
+		if (sceneId >= 73 && sceneId <= 76) {
+			_vm->_script->SceneLoaded();
+			return true;
+		}
 	}
 
 	// TODO: set VQADecoder parameters
 
 	// TODO: Set actor position from scene info
+	//advance frame 0
 	_vm->_playerActor->set_at_xyz(_actorStartPosition, _actorStartFacing);
-
 	// TODO: Set actor set
-
 	_vm->_script->SceneLoaded();
 
-#if 0
+	_vm->_sceneObjects->reset();
+	
 	// Init click map
 	int actorCount = _vm->_gameInfo->getActorCount();
 	for (int i = 0; i != actorCount; ++i) {
 		Actor *actor = _vm->_actors[i];
 		if (actor->getSet() == setId) {
-
+			_vm->_sceneObjects->addActor(
+				i,
+				actor->getBoundingBox(),
+				actor->getScreenRectangle(),
+				1,
+				0,
+				actor->isTargetable(),
+				actor->isRetired());
 		}
 	}
-	// TODO: Update click map for set, items
-#endif
+	
+	_set->addAllObjectsToScene(_vm->_sceneObjects);
+	//add all items to scene
+	//calculate walking obstacles??
 
+	 if (_playerWalkedIn) {
+		//_vm->_script->PlayerWalkedIn();
+	 }
+	
 	return true;
 }
 
@@ -111,7 +131,6 @@ int Scene::advanceFrame(Graphics::Surface &surface, uint16 *&zBuffer) {
 	if (frame >= 0) {
 		surface.copyFrom(*_vqaPlayer.getSurface());
 		memcpy(zBuffer, _vqaPlayer.getZBuffer(), 640*480*2);
-		_view = _vqaPlayer.getView();
 	}
 	return frame;
 }

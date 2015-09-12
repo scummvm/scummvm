@@ -30,6 +30,7 @@
 
 #include "common/array.h"
 #include "common/util.h"
+#include "common/memstream.h"
 
 namespace BladeRunner {
 
@@ -524,7 +525,12 @@ bool VQADecoder::readMFCI(Common::SeekableReadStream *s, uint32 size) {
 	return true;
 }
 
-VQADecoder::VQAVideoTrack::VQAVideoTrack(VQADecoder *vqaDecoder) {
+void VQADecoder::decodeView(View* view)
+{
+	_videoTrack->decodeView(view);
+}
+
+	VQADecoder::VQAVideoTrack::VQAVideoTrack(VQADecoder *vqaDecoder) {
 	VQADecoder::Header *header = &vqaDecoder->_header;
 
 	_surface = nullptr;
@@ -560,6 +566,8 @@ VQADecoder::VQAVideoTrack::VQAVideoTrack(VQADecoder *vqaDecoder) {
 
 	_surface = new Graphics::Surface();
 	_surface->create(_width, _height, createRGB555());
+
+	_viewData = new uint8[56];
 }
 
 VQADecoder::VQAVideoTrack::~VQAVideoTrack() {
@@ -567,6 +575,7 @@ VQADecoder::VQAVideoTrack::~VQAVideoTrack() {
 	delete[] _cbfz;
 	delete[] _zbufChunk;
 	delete[] _vpointer;
+	delete[] _viewData;
 
 	if (_surface)
 		_surface->free();
@@ -743,18 +752,29 @@ const uint16 *VQADecoder::VQAVideoTrack::decodeZBuffer()
 	return _zbuffer;
 }
 
-bool VQADecoder::VQAVideoTrack::readVIEW(Common::SeekableReadStream *s, uint32 size)
+
+void VQADecoder::VQAVideoTrack::decodeView(View* view)
+{
+	assert(_viewData);
+	assert(view);
+	
+	Common::MemoryReadStream s(_viewData, 56);
+	view->read(&s);
+}
+
+	bool VQADecoder::VQAVideoTrack::readVIEW(Common::SeekableReadStream *s, uint32 size)
 {
 	if (size != 56)
 		return false;
 
-	_view.read(s);
+	s->read(_viewData, 56);
 
 	return true;
 }
 
 bool VQADecoder::VQAVideoTrack::readAESC(Common::SeekableReadStream *s, uint32 size)
 {
+	// some screen (2d not 3d) effects for transparency
 	s->skip(roundup(size));
 	return true;
 }

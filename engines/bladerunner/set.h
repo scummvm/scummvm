@@ -24,6 +24,10 @@
 #define BLADERUNNER_SET_H
 
 #include "bladerunner/boundingbox.h"
+#include "bladerunner/set_effects.h"
+#include "bladerunner/lights.h"
+#include "bladerunner/scene_objects.h"
+
 
 #include "common/scummsys.h"
 #include "common/str.h"
@@ -41,6 +45,7 @@ struct Object {
 	uint8       _isClickable;
 	uint8       _isHotMouse;
 	uint8       _isCombatTarget;
+	uint8       _unknown1;
 };
 
 struct Walkbox {
@@ -53,19 +58,24 @@ struct Walkbox {
 class Set {
 	BladeRunnerEngine *_vm;
 
-	uint32   _objectCount;
-	uint32   _walkboxCount;
-	Object  *_objects;
-	Walkbox *_walkboxes;
-	int      _walkboxStepSound[85];
-	int      _footstepSoundOverride;
-	float    _unknown[10];
+	uint32      _objectCount;
+	uint32      _walkboxCount;
+	Object     *_objects;
+	Walkbox    *_walkboxes;
+	int         _walkboxStepSound[85];
+	int         _footstepSoundOverride;
+	SetEffects *_effects;
+public:
+	
 
 public:
 	Set(BladeRunnerEngine *vm);
 	~Set();
 
 	bool open(const Common::String &name);
+	void addAllObjectsToScene(SceneObjects *sceneObjects);
+
+	
 };
 
 } // End of namespace BladeRunner

@@ -165,7 +165,7 @@ void AudioPlayer::fadeAndStopTrack(Track *track, int time)
 
 int AudioPlayer::playAud(const Common::String &name, int volume, int panFrom, int panTo, int priority, byte flags) {
 	/* Find first available track or, alternatively, the lowest priority playing track */
-	int    trackId;
+	int    trackId = -1;
 	Track *track = NULL;
 	int    lowestPriority = 100;
 	Track *lowestPriorityTrack = NULL;

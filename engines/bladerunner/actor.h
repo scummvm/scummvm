@@ -26,6 +26,11 @@
 #include "bladerunner/bladerunner.h"
 
 #include "bladerunner/vector.h"
+#include "bladerunner/movement_track.h"
+#include "bladerunner/actor_clues.h"
+#include "bladerunner/actor_walk.h"
+
+#include "common/rect.h"
 
 namespace BladeRunner {
 
@@ -37,7 +42,8 @@ class Actor {
 
 private:
 	BoundingBox   *_bbox;
-	// MovementTrack *_movementTrack;
+	Common::Rect _screenRectangle;
+	MovementTrack *_movementTrack;
 
 	int  _honesty;
 	int  _intelligence;
@@ -49,7 +55,7 @@ private:
 	int _currentHP;
 	int _maxHP;
 
-	// Clues _clues;
+	ActorClues* _clues;
 
 	int     _id;
 	int     _set;
@@ -62,6 +68,8 @@ private:
 	bool _isInvisible;
 	bool _isImmuneToObstacles;
 
+	bool _isRetired;
+
 	// Animation
 	int _width;
 	int _height;
@@ -71,7 +79,7 @@ private:
 	int _animationId;
 	int _animationFrame;
 
-	// WalkInfo _walkInfo;
+	ActorWalk* _walkInfo;
 
 	int _timersRemain[7];
 	int _timersBegan[7];
@@ -87,6 +95,12 @@ public:
 	void set_at_xyz(Vector3 pos, int facing);
 
 	void draw();
+
+	int getSet() { return _set; }
+	BoundingBox* getBoundingBox() { return _bbox; }
+	Common::Rect* getScreenRectangle() { return &_screenRectangle; }
+	bool isRetired() { return _isRetired; }
+	bool isTargetable() { return _isTargetable; }
 };
 
 } // End of namespace BladeRunner

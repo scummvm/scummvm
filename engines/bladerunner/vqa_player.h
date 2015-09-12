@@ -42,13 +42,13 @@ class VQAPlayer {
 	const uint16                *_zBuffer;
 	Audio::QueuingAudioStream   *_audioStream;
 
+	View                        *_view;
+
 	int _curFrame;
 	int _decodedFrame;
 	int _curLoop;
 	int _loopSpecial;
 	int _loopDefault;
-
-	View _view;
 
 	uint32 _nextFrameTime;
 	bool   _hasAudio;
@@ -57,7 +57,7 @@ class VQAPlayer {
 
 public:
 
-	VQAPlayer(BladeRunnerEngine *vm)
+	VQAPlayer(BladeRunnerEngine *vm, View *view)
 		: _vm(vm),
 		  _s(nullptr),
 		  _surface(nullptr),
@@ -69,7 +69,8 @@ public:
 		  _loopDefault(-1),
 		  _nextFrameTime(0),
 		  _hasAudio(false),
-		  _audioStarted(false)
+		  _audioStarted(false),
+		  _view(view)
 	{}
 
 	~VQAPlayer() {
@@ -82,7 +83,6 @@ public:
 	int  update();
 	const Graphics::Surface *getSurface() const;
 	const uint16 *getZBuffer() const;
-	const View &getView() const { return _view; }
 
 	void setLoopSpecial(int loop, bool wait);
 	void setLoopDefault(int loop);

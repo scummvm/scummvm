@@ -34,4 +34,23 @@ BoundingBox::BoundingBox(float x0, float y0, float z0, float x1, float y1, float
 	_vertices[1].z = z1;
 }
 
+void BoundingBox::expand(float x0, float y0, float z0, float x1, float y1, float z1)
+{
+	_vertices[0].x += x0;
+	_vertices[0].y += y0;
+	_vertices[0].z += z0;
+
+	_vertices[1].x += x1;
+	_vertices[1].y += y1;
+	_vertices[1].z += z1;
+}
+
+
+bool BoundingBox::isXYZInside(float x, float y, float z)
+{
+	return
+		x >= _vertices[0].x && x <= _vertices[1].x
+		&& y >= _vertices[0].y && y <= _vertices[1].y
+		&& z >= _vertices[0].z && z <= _vertices[1].z;
+}
 } // End of namespace BladeRunner

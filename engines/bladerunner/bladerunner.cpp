@@ -35,6 +35,7 @@
 #include "bladerunner/mouse.h"
 #include "bladerunner/outtake.h"
 #include "bladerunner/scene.h"
+#include "bladerunner/scene_objects.h"
 #include "bladerunner/script/init.h"
 #include "bladerunner/script/script.h"
 #include "bladerunner/settings.h"
@@ -65,6 +66,7 @@ BladeRunnerEngine::BladeRunnerEngine(OSystem *syst)
 
 	_script = new Script(this);
 	_settings = new Settings(this);
+	_lights = new Lights(this);
 }
 
 BladeRunnerEngine::~BladeRunnerEngine() {
@@ -87,7 +89,7 @@ BladeRunnerEngine::~BladeRunnerEngine() {
 
 	// delete[] _zBuffer1;
 	// delete[] _zBuffer2;
-
+	delete _lights;
 	delete _settings;
 	delete _script;
 }
@@ -162,9 +164,9 @@ bool BladeRunnerEngine::startup(bool hasSavegames) {
 
 	// TODO: Sine and cosine lookup tables for intervals of 1.0, 4.0, and 12.0
 
-	// TODO: View
+	_view = new View(this);
 
-	// TODO: Screen Index
+	_sceneObjects = new SceneObjects(this, _view);
 
 	_gameFlags = new GameFlags();
 	_gameFlags->setFlagCount(_gameInfo->getFlagCount());
@@ -401,9 +403,11 @@ void BladeRunnerEngine::shutdown() {
 	delete _gameFlags;
 	_gameFlags = 0;
 
-	// TODO: Delete View
+	delete _view;
+	_view = 0;
 
-	// TODO: Delete Screen Index
+	delete _sceneObjects;
+	_sceneObjects = 0;
 
 	// TODO: Delete sine and cosine lookup tables
 
@@ -517,7 +521,7 @@ void BladeRunnerEngine::gameTick() {
 			// TODO: Tick and draw all actors in current set (drawing works in Replicant)
 
 			// HACK to draw McCoy
-			_sliceRenderer->setView(_scene->_view);
+			//_sliceRenderer->setView(&_scene->_view);
 			_playerActor->draw();
 
 			// TODO: Draw items (drawing works in Replicant)

@@ -46,12 +46,16 @@ class GameInfo;
 class GameFlags;
 class Mouse;
 class Scene;
+class SceneObjects;
 class Script;
 class Settings;
 class Shape;
 class SliceAnimations;
 class SliceRenderer;
 class TextResource;
+class Lights;
+class View;
+
 
 class BladeRunnerEngine : public Engine {
 public:
@@ -67,12 +71,16 @@ public:
 	GameFlags       *_gameFlags;
 	GameInfo        *_gameInfo;
 	Mouse           *_mouse;
+	View            *_view;
 	Scene           *_scene;
+	SceneObjects    *_sceneObjects;
 	Script          *_script;
 	Settings        *_settings;
 	SliceAnimations *_sliceAnimations;
 	SliceRenderer   *_sliceRenderer;
 	int             *_gameVars;
+
+	Lights          *_lights;
 
 	TextResource    *_textActorNames;
 	TextResource    *_textCrimes;

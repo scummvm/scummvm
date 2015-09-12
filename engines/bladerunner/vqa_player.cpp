@@ -65,7 +65,7 @@ int VQAPlayer::update() {
 				queueAudioFrame(_decoder.decodeAudioFrame());
 			_surface = _decoder.decodeVideoFrame();
 			_zBuffer = _decoder.decodeZBuffer();
-			_view = _decoder.getView();
+			_decoder.decodeView(_view);
 		}
 
 		_decodedFrame = calcNextFrame(_curFrame);
@@ -89,7 +89,7 @@ int VQAPlayer::update() {
 		if (_curFrame >= 0) {
 			_surface = _decoder.decodeVideoFrame();
 			_zBuffer = _decoder.decodeZBuffer();
-			_view = _decoder.getView();
+			_decoder.decodeView(_view);
 		}
 
 		_decodedFrame = calcNextFrame(_curFrame);

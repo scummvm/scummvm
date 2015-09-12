@@ -24,6 +24,9 @@
 
 #include "bladerunner/bladerunner.h"
 #include "bladerunner/slice_animations.h"
+#include "bladerunner/lights.h"
+#include "bladerunner/scene.h"
+#include "bladerunner/set.h"
 
 #include "common/debug.h"
 #include "common/memstream.h"
@@ -54,7 +57,7 @@ void dump(const char *str, Matrix4x3 m) {
 SliceRenderer::~SliceRenderer() {
 }
 
-void SliceRenderer::setView(const View &view) {
+void SliceRenderer::setView(View *view) {
 	_view = view;
 }
 
@@ -84,7 +87,7 @@ void SliceRenderer::setupFrame(int animation, int frame, Vector3 position, float
 Matrix3x2 SliceRenderer::calculateFacingRotationMatrix() {
 	assert(_sliceFramePtr);
 
-	Matrix4x3 viewMatrix = _view._sliceViewMatrix;
+	Matrix4x3 viewMatrix = _view->_sliceViewMatrix;
 	Vector3 viewPos = viewMatrix * _position;
 	float dir = atan2f(viewPos.x, viewPos.z) + _facing;
 	float s = sinf(dir);
@@ -107,7 +110,7 @@ void SliceRenderer::calculateBoundingRect() {
 	_minY = 0.0f;
 	_maxY = 0.0f;
 
-	Matrix4x3 viewMatrix = _view._sliceViewMatrix;
+	Matrix4x3 viewMatrix = _view->_sliceViewMatrix;
 
 	Vector3 frameBottom = Vector3(0.0f, 0.0f, _frameBottomZ);
 	Vector3 frameTop    = Vector3(0.0f, 0.0f, _frameBottomZ + _frameSliceCount * _frameSliceHeight);
@@ -122,7 +125,7 @@ void SliceRenderer::calculateBoundingRect() {
 
 	Matrix3x2 facingRotation = calculateFacingRotationMatrix();
 
-	Matrix3x2 m4(_view._viewportDistance / bottom.z,  0.0f, 0.0f,
+	Matrix3x2 m4(_view->_viewportDistance / bottom.z,  0.0f, 0.0f,
 	                                           0.0f, 25.5f, 0.0f);
 
 	Matrix3x2 m2(_frameFront.x,          0.0f, _framePos.x,
@@ -130,13 +133,13 @@ void SliceRenderer::calculateBoundingRect() {
 
 	_field_109E = m4 * (facingRotation * m2);
 
-	Vector4 B6(_view._viewportHalfWidth   + top.x / top.z * _view._viewportDistance,
-	           _view._viewportHalfHeight  + top.y / top.z * _view._viewportDistance,
+	Vector4 B6(_view->_viewportHalfWidth   + top.x / top.z * _view->_viewportDistance,
+	           _view->_viewportHalfHeight  + top.y / top.z * _view->_viewportDistance,
 	           1.0f / top.z,
 	           _frameSliceCount * (1.0f / top.z));
 
-	Vector4 C2(_view._viewportHalfWidth   + bottom.x / bottom.z * _view._viewportDistance,
-	           _view._viewportHalfHeight  + bottom.y / bottom.z * _view._viewportDistance,
+	Vector4 C2(_view->_viewportHalfWidth   + bottom.x / bottom.z * _view->_viewportDistance,
+	           _view->_viewportHalfHeight  + bottom.y / bottom.z * _view->_viewportDistance,
 	           1.0f / bottom.z,
 	           0.0f);
 
@@ -324,6 +327,9 @@ void setupLookupTable(int t[256], int inc) {
 
 void SliceRenderer::drawFrame(Graphics::Surface &surface, uint16 *zbuffer) {
 	assert(_sliceFramePtr);
+	assert(_lights);
+	assert(_setEffects);
+	assert(_view);
 
 	SliceLineIterator sliceLineIterator;
 	sliceLineIterator.setup(
@@ -333,6 +339,9 @@ void SliceRenderer::drawFrame(Graphics::Surface &surface, uint16 *zbuffer) {
 		_field_109E              // 3x2 matrix
 		);
 
+	_lights->setupFrame(_view->_frame);
+	_setEffects->setupFrame(_view->_frame);
+	
 	setupLookupTable(_t1, sliceLineIterator._field_00[0][0]);
 	setupLookupTable(_t2, sliceLineIterator._field_00[0][1]);
 	setupLookupTable(_t4, sliceLineIterator._field_00[1][0]);
@@ -407,4 +416,13 @@ void SliceRenderer::drawSlice(int slice, uint16 *frameLinePtr, uint16 *zbufLineP
 	}
 }
 
+void SliceRenderer::setLights(Lights* lights)
+{
+	_lights = lights;
+}
+
+void SliceRenderer::setSetEffects(SetEffects* setEffects)
+{
+	_setEffects = setEffects;
+}
 } // End of namespace BladeRunner

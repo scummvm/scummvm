@@ -38,7 +38,7 @@ Actor::Actor(BladeRunnerEngine *vm, int actorId) {
 
 	_bbox = new BoundingBox();
 
-	// TODO: Construct _clues ((actorId && actor != 99) ? 2 : 4)
+	_clues = new ActorClues(vm, ((actorId && actorId != 99) ? 2 : 4));
 
 	// TODO: Construct _movementTrack
 
@@ -69,6 +69,8 @@ void Actor::setup(int actorId) {
 	_isTargetable        = false;
 	_isInvisible         = false;
 	_isImmuneToObstacles = false;
+	
+	_isRetired           = false;
 
 	_width = 0;
 	_height = 0;
@@ -105,11 +107,35 @@ void Actor::setup(int actorId) {
 void Actor::set_at_xyz(Vector3 pos, int facing) {
 	_position = pos;
 	_facing = facing;
+
+
+//	this->x = x;
+//	this->y = y;
+//	this->z = z;
+//	actor::set_angle(this, angle, addOrSet);
+//	if (scene::get_sceneId(Scene) == this->sceneId)
+//		this->walkboxId = set::findWalkbox(Scene->set, x, z);
+//	else
+//		this->walkboxId = -1;
+//	actor::setBoundingBox(this, x, y, z, retired);
+//	sceneObjects::removeScreneObject(SceneObjects, this->id);
+//	scene = this->sceneId;
+//	if (scene == scene::get_sceneId(Scene))
+//		sceneObjects::addActor(
+//			SceneObjects,
+//			this->id,
+//			this->boundingBox,
+//			&this->screenRect,
+//			1,
+//			a7,
+//			this->targetable,
+//			retired);
 }
 
 void Actor::draw() {
 	Vector3 draw_position(_position.x, -_position.z, _position.y + 2.0);
 	float   draw_facing = _facing * M_PI / 512.0;
+	// just for viewing animations _facing = (_facing + 10) % 1024;
 	// float   draw_scale  = _scale;
 
 	// TODO: Handle SHORTY mode

@@ -26,7 +26,7 @@
 #include "bladerunner/bladerunner.h"
 
 #include "bladerunner/set.h"
-#include "bladerunner/view.h"
+//#include "bladerunner/view.h"
 #include "bladerunner/vqa_player.h"
 
 namespace BladeRunner {
@@ -48,7 +48,6 @@ public:
 	Vector3     _actorStartPosition;
 	int         _actorStartFacing;
 	bool        _playerWalkedIn;
-	View        _view;
 
 public:
 	Scene(BladeRunnerEngine *vm)
@@ -56,7 +55,7 @@ public:
 		  _set(new Set(vm)),
 		  _setId(-1),
 		  _sceneId(-1),
-		  _vqaPlayer(vm),
+		  _vqaPlayer(vm, vm->_view),
 		  _defaultLoop(0),
 		  _nextSetId(-1),
 		  _nextSceneId(-1),
