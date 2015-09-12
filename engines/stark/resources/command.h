@@ -77,6 +77,8 @@ public:
 		kRumbleScene = 19,
 		kFadeScene = 20,
 
+		kLocationGoToNewCD = 22,
+
 		kInventoryOpen = 24,
 
 		kItem3DPlaceOn = 81,

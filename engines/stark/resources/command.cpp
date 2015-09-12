@@ -81,6 +81,7 @@ Command *Command::execute(uint32 callMode, Script *script) {
 	case kSetInteractiveMode:
 		return opSetInteractiveMode(_arguments[1].intValue);
 	case kLocationGoTo:
+	case kLocationGoToNewCD:
 		return opLocationGoTo(_arguments[0].stringValue, _arguments[1].stringValue, _arguments[2].referenceValue, _arguments[3].intValue);
 	case kScriptPause:
 		return opScriptPause(script, _arguments[1].referenceValue);
