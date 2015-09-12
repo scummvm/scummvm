@@ -28,6 +28,7 @@
 #include "engines/stark/services/archiveloader.h"
 #include "engines/stark/services/services.h"
 #include "engines/stark/visual/image.h"
+#include "engines/stark/visual/text.h"
 
 #include "math/line2d.h"
 #include "math/vector2d.h"
@@ -83,7 +84,8 @@ void Image::readData(Formats::XRCReadStream *stream) {
 }
 
 Visual *Image::getVisual() {
-	return nullptr;
+	initVisual();
+	return _visual;
 }
 
 void Image::printData() {
@@ -169,11 +171,6 @@ void ImageStill::onPostRead() {
 	initVisual();
 }
 
-Visual *ImageStill::getVisual() {
-	initVisual();
-	return _visual;
-}
-
 void ImageStill::initVisual() {
 	if (_visual) {
 		return; // The visual is already there
@@ -208,11 +205,22 @@ ImageText::~ImageText() {
 void ImageText::readData(Formats::XRCReadStream *stream) {
 	Image::readData(stream);
 
-
 	_size = stream->readPoint();
 	_text = stream->readString();
 	_color = stream->readUint32LE();
 	_font = stream->readUint32LE();
+}
+
+void ImageText::initVisual() {
+	if (_visual) {
+		return; // The visual is already there
+	}
+
+	VisualText *text = new VisualText(StarkGfx);
+	text->setText(_text);
+	text->setColor(_color | 0xFF000000);
+
+	_visual = text;
 }
 
 void ImageText::printData() {

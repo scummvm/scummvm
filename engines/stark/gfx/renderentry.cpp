@@ -27,6 +27,7 @@
 #include "engines/stark/visual/image.h"
 #include "engines/stark/visual/prop.h"
 #include "engines/stark/visual/smacker.h"
+#include "engines/stark/visual/text.h"
 #include "engines/stark/visual/visual.h"
 
 namespace Stark {
@@ -65,6 +66,11 @@ void RenderEntry::render(Driver *gfx) {
 	VisualSmacker *smacker = _visual->get<VisualSmacker>();
 	if (smacker) {
 		smacker->render(_position);
+	}
+
+	VisualText *text = _visual->get<VisualText>();
+	if (text) {
+		text->render(_position);
 	}
 }
 
@@ -122,6 +128,18 @@ bool RenderEntry::containsPoint(const Common::Point &position, Common::Point &re
 		relativePosition.x = position.x - smackerRect.left;
 		relativePosition.y = position.y - smackerRect.top;
 		if (smackerRect.contains(position) && smacker->isPointSolid(relativePosition)) {
+			return true;
+		}
+	}
+
+	VisualText *text = _visual->get<VisualText>();
+	if (text) {
+		Common::Rect textRect = text->getRect();
+		textRect.translate(_position.x, _position.y);
+
+		relativePosition.x = position.x - textRect.left;
+		relativePosition.y = position.y - textRect.top;
+		if (textRect.contains(position)) {
 			return true;
 		}
 	}

@@ -70,6 +70,8 @@ protected:
 	void printData() override;
 	bool isPointInPolygon(const Polygon &polygon, const Common::Point &point) const;
 
+	virtual void initVisual() = 0;
+
 	Common::String _filename;
 	Common::String _archiveName;
 
@@ -96,13 +98,12 @@ public:
 	void readData(Formats::XRCReadStream *stream) override;
 	void onPostRead() override;
 
-	// Image API
-	Visual *getVisual() override;
-
 protected:
+	// Resource API
 	void printData() override;
 
-	void initVisual();
+	// Image API
+	void initVisual() override;
 
 	bool _noName;
 };
@@ -119,7 +120,11 @@ public:
 	void readData(Formats::XRCReadStream *stream) override;
 
 protected:
+	// Resource API
 	void printData() override;
+
+	// Image API
+	void initVisual();
 
 	Common::Point _size;
 	Common::String _text;
