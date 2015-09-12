@@ -87,10 +87,10 @@ protected:
 /**
  * A still image resource loading its data from an XMG file
  */
-class ImageSub23 : public Image {
+class ImageStill : public Image {
 public:
-	ImageSub23(Object *parent, byte subType, uint16 index, const Common::String &name);
-	virtual ~ImageSub23();
+	ImageStill(Object *parent, byte subType, uint16 index, const Common::String &name);
+	virtual ~ImageStill();
 
 	// Resource API
 	void readData(Formats::XRCReadStream *stream) override;
@@ -105,6 +105,26 @@ protected:
 	void initVisual();
 
 	bool _noName;
+};
+
+/**
+ * Text image rendered from a TTF font
+ */
+class ImageText : public Image {
+public:
+	ImageText(Object *parent, byte subType, uint16 index, const Common::String &name);
+	virtual ~ImageText();
+
+	// Resource API
+	void readData(Formats::XRCReadStream *stream) override;
+
+protected:
+	void printData() override;
+
+	Common::Point _size;
+	Common::String _text;
+	uint32 _color;
+	uint32 _font;
 };
 
 } // End of namespace Resources

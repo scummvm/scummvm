@@ -39,11 +39,11 @@ Object *Image::construct(Object *parent, byte subType, uint16 index, const Commo
 	switch (subType) {
 	case kImageSub2:
 	case kImageSub3:
-		return new ImageSub23(parent, subType, index, name);
+		return new ImageStill(parent, subType, index, name);
 	case kImageSub4:
-		return new UnimplementedResource(parent, TYPE, subType, index, name);
+		return new ImageText(parent, subType, index, name);
 	default:
-		error("Unknown anim subtype %d", subType);
+		error("Unknown image subtype %d", subType);
 	}
 }
 
@@ -142,15 +142,15 @@ bool Image::isPointInPolygon(const Polygon &polygon, const Common::Point &point)
 	return intersectCount % 2 != 0;
 }
 
-ImageSub23::~ImageSub23() {
+ImageStill::~ImageStill() {
 }
 
-ImageSub23::ImageSub23(Object *parent, byte subType, uint16 index, const Common::String &name) :
+ImageStill::ImageStill(Object *parent, byte subType, uint16 index, const Common::String &name) :
 				Image(parent, subType, index, name),
 				_noName(false) {
 }
 
-void ImageSub23::readData(Formats::XRCReadStream *stream) {
+void ImageStill::readData(Formats::XRCReadStream *stream) {
 	Image::readData(stream);
 
 	if (stream->isDataLeft()) {
@@ -165,16 +165,16 @@ void ImageSub23::readData(Formats::XRCReadStream *stream) {
 	_noName = _filename == "noname" || _filename == "noname.xmg";
 }
 
-void ImageSub23::onPostRead() {
+void ImageStill::onPostRead() {
 	initVisual();
 }
 
-Visual *ImageSub23::getVisual() {
+Visual *ImageStill::getVisual() {
 	initVisual();
 	return _visual;
 }
 
-void ImageSub23::initVisual() {
+void ImageStill::initVisual() {
 	if (_visual) {
 		return; // The visual is already there
 	}
@@ -194,8 +194,34 @@ void ImageSub23::initVisual() {
 	delete stream;
 }
 
-void ImageSub23::printData() {
+void ImageStill::printData() {
 	Image::printData();
+}
+
+ImageText::ImageText(Object *parent, byte subType, uint16 index, const Common::String &name) :
+	Image(parent, subType, index, name) {
+}
+
+ImageText::~ImageText() {
+}
+
+void ImageText::readData(Formats::XRCReadStream *stream) {
+	Image::readData(stream);
+
+
+	_size = stream->readPoint();
+	_text = stream->readString();
+	_color = stream->readUint32LE();
+	_font = stream->readUint32LE();
+}
+
+void ImageText::printData() {
+	Image::printData();
+
+	debug("size: x %d, y %d", _size.x, _size.y);
+	debug("text: %s", _text.c_str());
+	debug("color: %d", _color);
+	debug("font: %d", _font);
 }
 
 } // End of namespace Resources
