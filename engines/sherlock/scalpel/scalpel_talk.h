@@ -84,6 +84,12 @@ public:
 	virtual ~ScalpelTalk() {}
 
 	/**
+	 * Opens the talk file 'talk.tlk' and searches the index for the specified
+	 * conversation. If found, the data for that conversation is loaded
+	 */
+	virtual void loadTalkFile(const Common::String &filename);
+
+	/**
 	 * Called whenever a conversation or item script needs to be run. For standard conversations,
 	 * it opens up a description window similar to how 'talk' does, but shows a 'reply' directly
 	 * instead of waiting for a statement option.

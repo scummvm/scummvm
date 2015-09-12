@@ -528,6 +528,11 @@ OpcodeReturn ScalpelTalk::cmdSummonWindow(const byte *&str) {
 	return RET_SUCCESS;
 }
 
+void ScalpelTalk::loadTalkFile(const Common::String &filename) {
+	Talk::loadTalkFile(filename);
+	_3doSpeechIndex = 0;
+}
+
 void ScalpelTalk::talkWait(const byte *&str) {
 	UserInterface &ui = *_vm->_ui;
 	bool pauseFlag = _pauseFlag;

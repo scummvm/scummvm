@@ -1666,9 +1666,6 @@ void ScalpelUserInterface::doTalkControl() {
 				sound._speechPlaying = false;
 			}
 
-			if (IS_3DO)
-				// Trigger to play 3DO movie
-				talk.talk3DOMovieTrigger(0);
 
 			talk.waitForMore(talk._statements[_selector]._statement.size());
 			if (talk._talkToAbort)
