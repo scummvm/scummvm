@@ -39,6 +39,11 @@ class ScalpelTalk : public Talk {
 private:
 	Common::Stack<SequenceEntry> _sequenceStack;
 
+	/**
+	 * Get the center position for the current speaker, if any
+	 */
+	Common::Point get3doPortraitPosition() const;
+
 	OpcodeReturn cmdSwitchSpeaker(const byte *&str);
 	OpcodeReturn cmdAssignPortraitLocation(const byte *&str);
 	OpcodeReturn cmdGotoScene(const byte *&str);

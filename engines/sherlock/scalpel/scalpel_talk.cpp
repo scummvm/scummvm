@@ -639,12 +639,45 @@ bool ScalpelTalk::talk3DOMovieTrigger(int subIndex) {
 	warning("selector: %d", selector);
 	warning("subindex: %d", subIndex);
 
-	bool result = vm.play3doMovie(movieFilename, Common::Point(5, 5), true);
+	bool result = vm.play3doMovie(movieFilename, get3doPortraitPosition(), true);
 
 	// Restore screen HACK
 	_vm->_screen->makeAllDirty();
 
 	return result;
+}
+
+Common::Point ScalpelTalk::get3doPortraitPosition() const {
+	// TODO: This current method is only an assumption of how the original figured 
+	// out where to place each character's portrait movie.
+	People &people = *_vm->_people;
+	Scene &scene = *_vm->_scene;
+	const int PORTRAIT_W = 100;
+	const int PORTRAIT_H = 76;
+
+	if (_speaker == -1)
+		return Common::Point();
+
+	// Get the position of the character
+	Common::Point pt;
+	if (_speaker == HOLMES) {
+		pt = Common::Point(people[HOLMES]._position.x / FIXED_INT_MULTIPLIER,
+			people[HOLMES]._position.y / FIXED_INT_MULTIPLIER);
+	} else {
+		int objNum = people.findSpeaker(_speaker);
+		if (objNum == -1)
+			return Common::Point();
+
+		pt = scene._bgShapes[objNum]._position;
+	}
+	
+	// Adjust the top-left so the center of the portrait will be on the character,
+	// but ensure the portrait will be entirely on-screen
+	pt -= Common::Point(PORTRAIT_W / 2, PORTRAIT_H / 2);
+	pt.x = CLIP((int)pt.x, 20, SHERLOCK_SCREEN_WIDTH - 20 - PORTRAIT_W);
+	pt.y = CLIP((int)pt.y, 20, SHERLOCK_SCREEN_HEIGHT - 20 - PORTRAIT_H);
+
+	return pt;
 }
 
 void ScalpelTalk::drawInterface() {
