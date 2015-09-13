@@ -45,7 +45,6 @@ void WidgetLab::handleEvents() {
 	Common::Point mousePos = events.mousePos();
 
 	WidgetBase::handleEvents();
-	bool noDesc = false;
 
 	// Handle drawing tooltips. If the user is dragging a lab item, display a tooltip for using the item
 	// on another. Otherwise, fall back on showing standard tooltips
@@ -65,6 +64,7 @@ void WidgetLab::handleEvents() {
 		if (ui._arrowZone == -1 || events._rightReleased)
 			ui._tooltipWidget.setText("");
 
+		bool noDesc = false;
 		if (ui._bgFound != -1) {
 			if (ui._bgShape->_description.hasPrefix(" ") || ui._bgShape->_description.empty())
 				noDesc = true;

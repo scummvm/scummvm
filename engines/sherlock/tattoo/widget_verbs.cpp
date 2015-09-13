@@ -158,7 +158,6 @@ void WidgetVerbs::handleEvents() {
 	Talk &talk = *_vm->_talk;
 	TattooUserInterface &ui = *(TattooUserInterface *)_vm->_ui;
 	Common::Point mousePos = events.mousePos();
-	bool noDesc = false;
 
 	Common::String strLook = fixedText.getText(kFixedText_Look);
 	Common::String strTalk = fixedText.getText(kFixedText_Talk);
@@ -184,6 +183,7 @@ void WidgetVerbs::handleEvents() {
 					ui._personFound = ui._bgFound >= 1000;
 					ui._bgShape = ui._personFound || ui._bgFound == -1 ? nullptr : &scene._bgShapes[ui._bgFound];
 
+					bool noDesc = false;
 					if (ui._personFound) {
 						if (people[ui._bgFound - 1000]._description.empty() || people[ui._bgFound - 1000]._description.hasPrefix(" "))
 							noDesc = true;

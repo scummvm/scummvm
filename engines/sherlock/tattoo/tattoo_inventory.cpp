@@ -43,10 +43,10 @@ void TattooInventory::loadInv() {
 	Common::SeekableReadStream *stream = _vm->_res->load("invent.txt");
 
 	int count = stream->readByte();
-	char c;
 
 	for (int idx = 0; idx < count; ++idx) {
 		Common::String name;
+		char c;
 		while ((c = stream->readByte()) != 0)
 			name += c;
 

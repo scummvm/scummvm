@@ -809,13 +809,12 @@ void TattooScene::synchronize(Serializer &s) {
 int TattooScene::closestZone(const Common::Point &pt) {
 	int zone = -1;
 	int dist = 9999;
-	int d;
 
 	for (uint idx = 0; idx < _zones.size(); ++idx) {
 		Common::Rect &r = _zones[idx];
 
 		// Check the distance from the point to the center of the zone
-		d = ABS(r.left + (r.width() / 2) - pt.x) + ABS(r.top + (r.height() / 2) - pt.y);
+		int d = ABS(r.left + (r.width() / 2) - pt.x) + ABS(r.top + (r.height() / 2) - pt.y);
 		if (d < dist) {
 			dist = d;
 			zone = idx;

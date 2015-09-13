@@ -77,7 +77,6 @@ void Darts::playDarts(GameType gameType) {
 	Screen &screen = *_vm->_screen;
 	int oldFontType = screen.fontNumber();
 	int playerNum = 0;
-	int roundStart, score;
 	int lastDart;
 	int numHits = 0;
 	bool gameOver = false;
@@ -92,6 +91,7 @@ void Darts::playDarts(GameType gameType) {
 	initDarts();
 
 	while (!done && !_vm->shouldQuit()) {
+		int roundStart, score;
 		roundStart = score = (playerNum == 0) ? _score1 : _score2;
 
 		showNames(playerNum);
@@ -143,7 +143,6 @@ void Darts::playDarts(GameType gameType) {
 			} else {
 				// check for cricket game over
 				bool allClosed = true;
-				int nOtherScore;
 
 				for (int y = 0; y < 7; y++) {
 					if (_cricketScore[playerNum][y] < 3)
@@ -151,7 +150,7 @@ void Darts::playDarts(GameType gameType) {
 				}
 
 				if (allClosed) {
-					nOtherScore = (playerNum == 0) ? _score2 : _score1;
+					int nOtherScore = (playerNum == 0) ? _score2 : _score1;
 					if (score >= nOtherScore)
 						gameOver = true;
 				}
@@ -561,11 +560,10 @@ void Darts::drawDartThrow(const Common::Point &dartPos, int computer) {
 	Events &events = *_vm->_events;
 	Screen &screen = *_vm->_screen;
 	int cx, cy;
-	int handCy;
 	int drawX = 0, drawY = 0, oldDrawX = 0, oldDrawY = 0;
 	int xSize = 0, ySize = 0, oldxSize = 0, oldySize = 0;
-	int handOCx, handOCy;
-	int ocx, ocy;
+	int handOCx = 0, handOCy = 0;
+	int ocx = 0, ocy = 0;
 	int handOldxSize, handOldySize;
 	int delta = 9;
 	int dartNum;
@@ -576,7 +574,6 @@ void Darts::drawDartThrow(const Common::Point &dartPos, int computer) {
 	ImageFile &hands = !computer ? *_hand1 : *_hand2;
 	int numFrames = !computer ? 14 : 13;
 
-	ocx = ocy = handOCx = handOCy = 0;
 	oldxSize = oldySize = handOldxSize = handOldySize = 1;
 	cx = dartPos.x;
 	cy = SHERLOCK_SCREEN_HEIGHT - _handSize.y - 20;
@@ -590,7 +587,7 @@ void Darts::drawDartThrow(const Common::Point &dartPos, int computer) {
 	for (int idx = 0; idx < numFrames; ++idx) {
 		_handSize.x = hands[idx]._offset.x + hands[idx]._width;
 		_handSize.y = hands[idx]._offset.y + hands[idx]._height;
-		handCy = SHERLOCK_SCREEN_HEIGHT - _handSize.y;
+		int handCy = SHERLOCK_SCREEN_HEIGHT - _handSize.y;
 
 		screen._backBuffer1.transBlitFrom(hands[idx], Common::Point(_handX, handCy));
 		screen.slamArea(_handX, handCy, _handSize.x + 1, _handSize.y);
@@ -787,8 +784,6 @@ void Darts::getComputerNumber(int playerNum, Common::Point &targetPos) {
 	int score;
 	int aim = 0;
 	Common::Point pt;
-	bool done = false;
-	int cricketaimset = false;
 	bool shootBull = false;
 
 	score = (playerNum == 0) ? _score1 : _score2;
@@ -799,6 +794,7 @@ void Darts::getComputerNumber(int playerNum, Common::Point &targetPos) {
 		if(score > 60)
 			shootBull = true;
 	} else {
+		bool cricketaimset = false;
 		if (_cricketScore[playerNum][6] < 3) {
 			// shoot at bull first
 			aim = CRICKET_VALUE[6];
@@ -842,6 +838,7 @@ void Darts::getComputerNumber(int playerNum, Common::Point &targetPos) {
 		}
 	} else {
 		// Loop in case number does not exist on board
+		bool done = false;
 		do {
 			done = findNumberOnBoard(aim, pt);
 			--aim;

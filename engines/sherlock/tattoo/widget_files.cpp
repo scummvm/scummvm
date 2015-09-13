@@ -253,7 +253,6 @@ bool WidgetFiles::getFilename() {
 	int done = 0;
 	bool blinkFlag = false;
 	int blinkCountdown = 0;
-	int width;
 	int cursorColor = 192;
 	byte color, textColor;
 	bool insert = true;
@@ -285,7 +284,7 @@ bool WidgetFiles::getFilename() {
 
 		char currentChar = (index == (int)filename.size()) ? ' ' : filename[index];
 		Common::String charString = Common::String::format("%c", currentChar);
-		width = screen.charWidth(currentChar);
+		int width = screen.charWidth(currentChar);
 
 		// Wait for keypress
 		while (!events.kbHit()) {

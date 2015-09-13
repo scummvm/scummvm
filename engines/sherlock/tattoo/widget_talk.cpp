@@ -369,11 +369,11 @@ void WidgetTalk::handleEvents() {
 
 void WidgetTalk::render(Highlight highlightMode) {
 	TattooTalk &talk = *(TattooTalk *)_vm->_talk;
-	int yp = 5;
-	int statementNum = 1;
-	byte color;
 
 	if (highlightMode != HL_SCROLLBAR_ONLY) {
+		int yp = 5;
+		int statementNum = 1;
+
 		// Draw all the statements
 		// Check whether scrolling has occurred, and if so, figure out what the starting
 		// number for the first visible statement will be
@@ -392,7 +392,7 @@ void WidgetTalk::render(Highlight highlightMode) {
 				_surface.fillRect(Common::Rect(3, yp, _surface.w() - BUTTON_SIZE - 3, yp + _surface.fontHeight()), TRANSPARENCY);
 
 				// Different coloring based on whether the option has been previously chosen or not
-				color = (!talk._talkHistory[talk._converseNum][_statementLines[idx]._num]) ?
+				byte color = (!talk._talkHistory[talk._converseNum][_statementLines[idx]._num]) ?
 					INFO_TOP : INFO_BOTTOM;
 
 				if (_statementLines[idx]._num == _selector && highlightMode == HL_CHANGED_HIGHLIGHTS)

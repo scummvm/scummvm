@@ -1010,7 +1010,6 @@ void TattooPerson::walkHolmesToNPC() {
 	Screen &screen = *_vm->_screen;
 	Talk &talk = *_vm->_talk;
 	TattooPerson &holmes = people[HOLMES];
-	int facing;
 
 	// Save the character's details
 	pushNPCPath();
@@ -1073,9 +1072,8 @@ void TattooPerson::walkHolmesToNPC() {
 
 	if (!talk._talkToAbort) {
 		// Setup correct direction for Holmes to face
-
 		// See where Holmes is with respect to the NPC (x coords)
-		facing = (holmes._position.x < _position.x) ? STOP_RIGHT : STOP_LEFT;
+		int facing = (holmes._position.x < _position.x) ? STOP_RIGHT : STOP_LEFT;
 
 		// See where Holmes is with respect to the NPC (y coords)
 		if (holmes._position.y < (_position.y - (10 * FIXED_INT_MULTIPLIER))) {

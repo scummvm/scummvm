@@ -345,9 +345,9 @@ void TattooJournal::handleButtons() {
 			disableControls();
 
 			bool notFound = false;
-			int dir;
 
 			do {
+				int dir;
 				if ((dir = getFindName(notFound)) != 0) {
 					_savedIndex = _index;
 					_savedSub = _sub;

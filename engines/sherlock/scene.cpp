@@ -1091,9 +1091,9 @@ void Scene::checkSceneFlags(bool flag) {
 
 	for (uint idx = 0; idx < _bgShapes.size(); ++idx) {
 		Object &o = _bgShapes[idx];
-		bool objectFlag = true;
 
 		if (o._requiredFlag[0] || o._requiredFlag[1]) {
+			bool objectFlag = true;
 			if (o._requiredFlag[0] != 0)
 				objectFlag = _vm->readFlags(o._requiredFlag[0]);
 			if (o._requiredFlag[1] != 0)

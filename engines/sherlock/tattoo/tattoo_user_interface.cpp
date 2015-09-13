@@ -85,7 +85,6 @@ void TattooUserInterface::lookAtObject() {
 	Talk &talk = *_vm->_talk;
 	Common::Point mousePos = events.mousePos();
 	Common::String desc;
-	int cAnimSpeed = 0;
 
 	_lookPos = mousePos;
 	_menuMode = LOOK_MODE;
@@ -95,7 +94,7 @@ void TattooUserInterface::lookAtObject() {
 	} else {
 		// Check if there is a Look animation
 		if (_bgShape->_lookcAnim != 0) {
-			cAnimSpeed = _bgShape->_lookcAnim & 0xe0;
+			int cAnimSpeed = _bgShape->_lookcAnim & 0xe0;
 			cAnimSpeed >>= 5;
 			++cAnimSpeed;
 
@@ -377,7 +376,6 @@ void TattooUserInterface::doStandardControl() {
 	TattooScene &scene = *(TattooScene *)_vm->_scene;
 	Talk &talk = *_vm->_talk;
 	Common::Point mousePos = events.mousePos();
-	bool noDesc = false;
 
 	// Don't do any input processing whilst the prolog is running
 	if (vm._runningProlog)
@@ -458,6 +456,7 @@ void TattooUserInterface::doStandardControl() {
 		if (_arrowZone == -1 || events._rightReleased)
 			freeMenu();
 
+		bool noDesc = false;
 		if (_personFound) {
 			if (people[_bgFound - 1000]._description.empty() || people[_bgFound - 1000]._description.hasPrefix(" "))
 				noDesc = true;
