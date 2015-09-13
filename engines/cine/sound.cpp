@@ -946,7 +946,7 @@ PCSound::~PCSound() {
 	delete _soundDriver;
 }
 
-static const char *const musicFileNames[12] = {
+static const char *const musicFileNames[11] = {
 	"DUGGER.DAT",
 	"SUITE21.DAT",
 	"FWARS.DAT",
@@ -960,7 +960,7 @@ static const char *const musicFileNames[12] = {
 	"TELESONG.DAT",
 };
 
-static uint8 musicCDTracks[12] = {
+static uint8 musicCDTracks[11] = {
 	20, 21, 22, 23, 24, 25, 26, 27, 28, 30, 22,
 };
 
