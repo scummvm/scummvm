@@ -32,8 +32,9 @@
 namespace Stark {
 namespace Gfx {
 
-OpenGLSPropRenderer::OpenGLSPropRenderer() :
+OpenGLSPropRenderer::OpenGLSPropRenderer(Driver *gfx) :
 		VisualProp(),
+		_gfx(gfx),
 		_faceVBO(-1) {
 	static const char* attributes[] = { "position", "normal", "texcoord", nullptr };
 	_shader = Graphics::Shader::fromFiles("stark_prop", attributes);
@@ -45,14 +46,14 @@ OpenGLSPropRenderer::~OpenGLSPropRenderer() {
 	delete _shader;
 }
 
-void OpenGLSPropRenderer::render(Gfx::Driver *gfx, const Math::Vector3d position, float direction) {
+void OpenGLSPropRenderer::render(const Math::Vector3d position, float direction) {
 	if (_faceVBO == -1) {
 		// Update the OpenGL Buffer Objects if required
 		clearVertices();
 		uploadVertices();
 	}
 
-	gfx->set3DMode();
+	_gfx->set3DMode();
 
 	Math::Matrix4 model = getModelMatrix(position, direction);
 	Math::Matrix4 view = StarkScene->getViewMatrix();

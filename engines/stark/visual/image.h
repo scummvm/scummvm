@@ -23,14 +23,21 @@
 #ifndef STARK_VISUAL_IMAGE_H
 #define STARK_VISUAL_IMAGE_H
 
-#include "common/stream.h"
 #include "engines/stark/visual/visual.h"
+
+#include "common/rect.h"
+#include "common/stream.h"
 
 namespace Graphics {
 struct Surface;
 }
 
 namespace Stark {
+
+namespace Gfx {
+class Driver;
+class Texture;
+}
 
 /**
  * XMG (still image) renderer

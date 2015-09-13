@@ -23,10 +23,16 @@
 #ifndef STARK_VISUAL_TEXT_H
 #define STARK_VISUAL_TEXT_H
 
-#include "common/stream.h"
 #include "engines/stark/visual/visual.h"
 
+#include "common/rect.h"
+
 namespace Stark {
+
+namespace Gfx {
+class Driver;
+class Texture;
+}
 
 /**
  * Text renderer

@@ -61,7 +61,7 @@ void GameWindow::onRender() {
 	Gfx::RenderEntryArray::iterator element = _renderEntries.begin();
 	while (element != _renderEntries.end()) {
 		// Draw the current element
-		(*element)->render(_gfx);
+		(*element)->render();
 
 		// Go for the next one
 		element++;

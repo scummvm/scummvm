@@ -23,8 +23,6 @@
 #ifndef STARK_VISUAL_PROP_H
 #define STARK_VISUAL_PROP_H
 
-#include "common/str.h"
-
 #include "math/matrix4.h"
 #include "math/ray.h"
 #include "math/vector3d.h"
@@ -52,7 +50,7 @@ public:
 	void setTexture(Gfx::TextureSet *texture);
 
 	bool intersectRay(const Math::Ray &ray, const Math::Vector3d position, float direction);
-	virtual void render(Gfx::Driver *gfx, const Math::Vector3d position, float direction) = 0;
+	virtual void render(const Math::Vector3d position, float direction) = 0;
 
 protected:
 	Formats::BiffMesh *_model;

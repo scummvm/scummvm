@@ -23,15 +23,9 @@
 #ifndef STARK_VISUAL_VISUAL_H
 #define STARK_VISUAL_VISUAL_H
 
-#include "common/rect.h"
 #include "common/scummsys.h"
 
 namespace Stark {
-
-namespace Gfx {
-class Driver;
-class Texture;
-}
 
 class Visual {
 public:

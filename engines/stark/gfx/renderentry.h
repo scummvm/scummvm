@@ -41,14 +41,12 @@ class ItemVisual;
 
 namespace Gfx {
 
-class Driver;
-
 class RenderEntry {
 public:
 	RenderEntry(Resources::ItemVisual *owner, const Common::String &name);
 	virtual ~RenderEntry() {}
 
-	void render(Driver *gfx);
+	void render();
 
 	void setVisual(Visual *visual);
 	void setPosition(const Common::Point &position);

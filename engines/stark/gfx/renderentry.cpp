@@ -42,7 +42,7 @@ RenderEntry::RenderEntry(Resources::ItemVisual *owner, const Common::String &nam
 	_clickable(true) {
 }
 
-void RenderEntry::render(Driver *gfx) {
+void RenderEntry::render() {
 	if (!_visual) {
 		// warning("No visual for render entry '%s'", _name.c_str());
 		return;
@@ -55,12 +55,12 @@ void RenderEntry::render(Driver *gfx) {
 
 	VisualActor *actor = _visual->get<VisualActor>();
 	if (actor) {
-		actor->render(gfx, _position3D, _direction3D);
+		actor->render(_position3D, _direction3D);
 	}
 
 	VisualProp *prop = _visual->get<VisualProp>();
 	if (prop) {
-		prop->render(gfx, _position3D, _direction3D);
+		prop->render(_position3D, _direction3D);
 	}
 
 	VisualSmacker *smacker = _visual->get<VisualSmacker>();

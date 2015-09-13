@@ -25,10 +25,11 @@
 
 #include "engines/stark/visual/visual.h"
 
+#include "common/rect.h"
 #include "common/stream.h"
 
 namespace Video {
-	class SmackerDecoder;
+class SmackerDecoder;
 }
 
 namespace Graphics {
@@ -36,6 +37,11 @@ struct Surface;
 }
 
 namespace Stark {
+
+namespace Gfx {
+class Driver;
+class Texture;
+}
 
 class VisualSmacker : public Visual {
 public:

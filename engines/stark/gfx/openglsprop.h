@@ -37,16 +37,19 @@ namespace Stark {
 
 namespace Gfx {
 
+class Driver;
+
 class OpenGLSPropRenderer : public VisualProp {
 public:
-	OpenGLSPropRenderer();
+	OpenGLSPropRenderer(Driver *gfx);
 	virtual ~OpenGLSPropRenderer();
 
-	void render(Gfx::Driver *gfx, const Math::Vector3d position, float direction) override;
+	void render(const Math::Vector3d position, float direction) override;
 
 protected:
 	typedef Common::HashMap<const Formats::BiffMesh::Face *, uint32> FaceBufferMap;
 
+	Driver *_gfx;
 	Graphics::Shader *_shader;
 
 	int32 _faceVBO;

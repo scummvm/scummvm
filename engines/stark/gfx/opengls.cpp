@@ -126,11 +126,11 @@ Texture *OpenGLSDriver::createTexture(const Graphics::Surface *surface, const by
 }
 
 VisualActor *OpenGLSDriver::createActorRenderer() {
-	return new OpenGLSActorRenderer();
+	return new OpenGLSActorRenderer(this);
 }
 
 VisualProp *OpenGLSDriver::createPropRenderer() {
-	return new OpenGLSPropRenderer();
+	return new OpenGLSPropRenderer(this);
 }
 
 void OpenGLSDriver::drawSurface(const Texture *texture, const Common::Point &dest) {
