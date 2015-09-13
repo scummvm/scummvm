@@ -1264,6 +1264,7 @@ void ScalpelEngine::showScummVMRestoreDialog() {
 }
 
 bool ScalpelEngine::play3doMovie(const Common::String &filename, const Common::Point &pos, bool halfSize) {
+	Scalpel3DOScreen &screen = *(Scalpel3DOScreen *)_screen;
 	Scalpel3DOMovieDecoder *videoDecoder = new Scalpel3DOMovieDecoder();
 	Graphics::Surface tempSurface;
 
@@ -1276,8 +1277,6 @@ bool ScalpelEngine::play3doMovie(const Common::String &filename, const Common::P
 		warning("Scalpel3DOMoviePlay: could not open '%s'", filename.c_str());
 		return false;
 	}
-
-	_screen->_backBuffer1.blitFrom(*_screen); // save into backbuffer 1
 
 	if (halfSize) {
 		// only for portrait videos, not for EA intro logo and such
@@ -1413,7 +1412,10 @@ bool ScalpelEngine::play3doMovie(const Common::String &filename, const Common::P
 		delete frameImage;
 	}
 
-	_screen->blitFrom(_screen->_backBuffer1);
+	// Restore scene
+	screen._backBuffer1.blitFrom(screen._backBuffer2);
+	_scene->updateBackground();
+	screen.slamArea(0, 0, screen.w(), CONTROLS_Y);
 
 	return !skipVideo;
 }
