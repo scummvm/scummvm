@@ -150,7 +150,7 @@ public:
 	/**
 	 * Play back a 3do movie
 	 */
-	bool play3doMovie(const Common::String &filename, const Common::Point &pos, bool halfSize = false);
+	bool play3doMovie(const Common::String &filename, const Common::Point &pos, bool isPortrait = false);
 };
 
 } // End of namespace Scalpel

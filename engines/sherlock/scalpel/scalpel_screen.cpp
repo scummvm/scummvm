@@ -329,6 +329,14 @@ uint16 Scalpel3DOScreen::h() const {
 	return _vm->_isScreenDoubled ? _surface.h / 2 : _surface.h;
 }
 
+void Scalpel3DOScreen::rawBlitFrom(const Graphics::Surface &src, const Common::Point &pt) {
+	Common::Rect srcRect(0, 0, src.w, src.h);
+	Common::Rect destRect(pt.x, pt.y, pt.x + src.w, pt.y + src.h);
+
+	addDirtyRect(destRect);
+	_surface.copyRectToSurface(src, destRect.left, destRect.top, srcRect);
+}
+
 } // End of namespace Scalpel
 
 } // End of namespace Sherlock

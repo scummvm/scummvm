@@ -79,9 +79,7 @@ public:
 	/**
 	 * Draws a sub-section of a surface at a given position within this surface
 	 */
-	void rawBlitFrom(const Graphics::Surface &src, const Common::Point &pt, const Common::Rect &srcBounds) {
-		ScalpelScreen::blitFrom(src, pt, srcBounds);
-	}
+	void rawBlitFrom(const Graphics::Surface &src, const Common::Point &pt);
 
 	/**
 	 * Fade backbuffer 1 into screen (3DO RGB!)

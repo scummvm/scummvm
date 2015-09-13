@@ -1263,7 +1263,7 @@ void ScalpelEngine::showScummVMRestoreDialog() {
 	delete dialog;
 }
 
-bool ScalpelEngine::play3doMovie(const Common::String &filename, const Common::Point &pos, bool halfSize) {
+bool ScalpelEngine::play3doMovie(const Common::String &filename, const Common::Point &pos, bool isPortrait) {
 	Scalpel3DOScreen &screen = *(Scalpel3DOScreen *)_screen;
 	Scalpel3DOMovieDecoder *videoDecoder = new Scalpel3DOMovieDecoder();
 	Graphics::Surface tempSurface;
@@ -1278,7 +1278,8 @@ bool ScalpelEngine::play3doMovie(const Common::String &filename, const Common::P
 		return false;
 	}
 
-	if (halfSize) {
+	bool halfSize = isPortrait && !_isScreenDoubled;
+	if (isPortrait) {
 		// only for portrait videos, not for EA intro logo and such
 		if ((framePos.x >= 8) && (framePos.y >= 8)) { // safety check
 			framePos.x -= 8;
@@ -1362,31 +1363,24 @@ bool ScalpelEngine::play3doMovie(const Common::String &filename, const Common::P
 							downscaleTargetPtr++;
 						}
 					}
-#if 0
-					// Reduce the movie frame to half-size on a temp surface
-					for (int yp = 0; yp < height / 2; ++yp) {
-						const uint16 *srcP = (const uint16 *)frame->getBasePtr(0, yp * 2);
-						uint16 *destP = (uint16 *)tempSurface.getBasePtr(0, yp);
-
-						for (int xp = 0; xp < width / 2; ++xp, ++destP, srcP += 2)
-							*destP = *srcP;
-					}
-#endif
 
 					// Point the drawing frame to the temporary surface
 					frame = &tempSurface;
-
-					if (!frameShown) {
-						// Draw the frame (not the frame of the video, but a frame around the video) itself
-						_screen->transBlitFrom(frameImage->_frame, framePos);
-						frameShown = true;
-					}
 				}
 
-				_screen->blitFrom(*frame, pos);
+				if (isPortrait && !frameShown) {
+					// Draw the frame (not the frame of the video, but a frame around the video) itself
+					_screen->transBlitFrom(frameImage->_frame, framePos);
+					frameShown = true;
+				}
+
+				if (isPortrait && !halfSize) {
+					screen.rawBlitFrom(*frame, Common::Point(pos.x * 2, pos.y * 2));
+				} else {
+					_screen->blitFrom(*frame, pos);
+				}
+
 				_screen->update();
-				//g_system->copyRectToScreen(frame->getPixels(), frame->pitch, pos.x, pos.y, frame->w, frame->h);
-				//g_system->updateScreen();
 			}
 		}
 
