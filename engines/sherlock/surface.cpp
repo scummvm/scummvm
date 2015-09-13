@@ -211,23 +211,23 @@ void Surface::fillRect(const Common::Rect &r, uint color) {
 }
 
 void Surface::fill(uint color) {
-	_surface.fillRect(Common::Rect(_surface.w, _surface.h), color);
+	fillRect(Common::Rect(_surface.w, _surface.h), color);
 }
 
 bool Surface::clip(Common::Rect &srcBounds, Common::Rect &destBounds) {
-	if (destBounds.left >= _surface.w || destBounds.top >= _surface.h ||
+	if (destBounds.left >= w() || destBounds.top >= h() ||
 			destBounds.right <= 0 || destBounds.bottom <= 0)
 		return false;
 
 	// Clip the bounds if necessary to fit on-screen
-	if (destBounds.right > _surface.w) {
-		srcBounds.right -= destBounds.right - _surface.w;
-		destBounds.right = _surface.w;
+	if (destBounds.right > w()) {
+		srcBounds.right -= destBounds.right - w();
+		destBounds.right = w();
 	}
 
-	if (destBounds.bottom > _surface.h) {
-		srcBounds.bottom -= destBounds.bottom - _surface.h;
-		destBounds.bottom = _surface.h;
+	if (destBounds.bottom > h()) {
+		srcBounds.bottom -= destBounds.bottom - h();
+		destBounds.bottom = h();
 	}
 
 	if (destBounds.top < 0) {
@@ -244,7 +244,7 @@ bool Surface::clip(Common::Rect &srcBounds, Common::Rect &destBounds) {
 }
 
 void Surface::clear() {
-	fillRect(Common::Rect(0, 0, _surface.w, _surface.h), 0);
+	fillRect(Common::Rect(0, 0, w(), h()), 0);
 }
 
 void Surface::free() {

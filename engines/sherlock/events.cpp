@@ -176,6 +176,8 @@ void Events::pollEvents() {
 	Common::Event event;
 	while (g_system->getEventManager()->pollEvent(event)) {
 		_mousePos = event.mouse;
+		if (IS_3DO)
+			_mousePos = Common::Point(_mousePos.x / 2, _mousePos.y / 2);
 
 		// Handle events
 		switch (event.type) {
@@ -219,7 +221,11 @@ void Events::pollEventsAndWait() {
 }
 
 void Events::warpMouse(const Common::Point &pt) {
-	_mousePos = pt - _vm->_screen->_currentScroll;	
+	Common::Point pos = pt;
+	if (IS_3DO)
+		pos = Common::Point(pt.x / 2, pt.y);
+
+	_mousePos = pos - _vm->_screen->_currentScroll;
 	g_system->warpMouse(_mousePos.x, _mousePos.y);
 }
 

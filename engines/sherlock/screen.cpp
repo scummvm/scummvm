@@ -30,15 +30,17 @@
 namespace Sherlock {
 
 Screen *Screen::init(SherlockEngine *vm) {
-	if (vm->getGameID() == GType_SerratedScalpel)
-		return new Scalpel::ScalpelScreen(vm);
-	else
+	if (vm->getGameID() == GType_RoseTattoo)
 		return new Screen(vm);
+	else if (vm->getPlatform() == Common::kPlatform3DO)
+		return new Scalpel::Scalpel3DOScreen(vm);
+	else
+		return new Scalpel::ScalpelScreen(vm);
 }
 
 Screen::Screen(SherlockEngine *vm) : Surface(g_system->getWidth(), g_system->getHeight()), _vm(vm),
-		_backBuffer1(g_system->getWidth(), g_system->getHeight()),
-		_backBuffer2(g_system->getWidth(), g_system->getHeight()),
+		_backBuffer1(vm->getGameID() == GType_RoseTattoo ? 640 : 320, vm->getGameID() == GType_RoseTattoo ? 480 : 200),
+		_backBuffer2(vm->getGameID() == GType_RoseTattoo ? 640 : 320, vm->getGameID() == GType_RoseTattoo ? 480 : 200),
 		_backBuffer(&_backBuffer1) {
 	_transitionSeed = 1;
 	_fadeStyle = false;
@@ -217,130 +219,6 @@ void Screen::verticalTransition() {
 
 		events.delay(10);
 	}
-}
-
-void Screen::fadeIntoScreen3DO(int speed) {
-	Events &events = *_vm->_events;
-	uint16 *currentScreenBasePtr = (uint16 *)getPixels();
-	uint16 *targetScreenBasePtr = (uint16 *)_backBuffer->getPixels();
-	uint16  currentScreenPixel = 0;
-	uint16  targetScreenPixel = 0;
-
-	uint16  currentScreenPixelRed = 0;
-	uint16  currentScreenPixelGreen = 0;
-	uint16  currentScreenPixelBlue = 0;
-
-	uint16  targetScreenPixelRed = 0;
-	uint16  targetScreenPixelGreen = 0;
-	uint16  targetScreenPixelBlue = 0;
-
-	uint16  screenWidth = this->w();
-	uint16  screenHeight = this->h();
-	uint16  screenX = 0;
-	uint16  screenY = 0;
-	uint16  pixelsChanged = 0;
-
-	_dirtyRects.clear();
-
-	do {
-		pixelsChanged = 0;
-		uint16 *currentScreenPtr = currentScreenBasePtr;
-		uint16 *targetScreenPtr = targetScreenBasePtr;
-
-		for (screenY = 0; screenY < screenHeight; screenY++) {
-			for (screenX = 0; screenX < screenWidth; screenX++) {
-				currentScreenPixel = *currentScreenPtr;
-				targetScreenPixel  = *targetScreenPtr;
-
-				if (currentScreenPixel != targetScreenPixel) {
-					// pixel doesn't match, adjust accordingly
-					currentScreenPixelRed   = currentScreenPixel & 0xF800;
-					currentScreenPixelGreen = currentScreenPixel & 0x07E0;
-					currentScreenPixelBlue  = currentScreenPixel & 0x001F;
-					targetScreenPixelRed    = targetScreenPixel & 0xF800;
-					targetScreenPixelGreen  = targetScreenPixel & 0x07E0;
-					targetScreenPixelBlue   = targetScreenPixel & 0x001F;
-
-					if (currentScreenPixelRed != targetScreenPixelRed) {
-						if (currentScreenPixelRed < targetScreenPixelRed) {
-							currentScreenPixelRed += 0x0800;
-						} else {
-							currentScreenPixelRed -= 0x0800;
-						}
-					}
-					if (currentScreenPixelGreen != targetScreenPixelGreen) {
-						// Adjust +2/-2 because we are running RGB555 at RGB565
-						if (currentScreenPixelGreen < targetScreenPixelGreen) {
-							currentScreenPixelGreen += 0x0040;
-						} else {
-							currentScreenPixelGreen -= 0x0040;
-						}
-					}
-					if (currentScreenPixelBlue != targetScreenPixelBlue) {
-						if (currentScreenPixelBlue < targetScreenPixelBlue) {
-							currentScreenPixelBlue += 0x0001;
-						} else {
-							currentScreenPixelBlue -= 0x0001;
-						}
-					}
-					*currentScreenPtr = currentScreenPixelRed | currentScreenPixelGreen | currentScreenPixelBlue;
-					pixelsChanged++;
-				}
-
-				currentScreenPtr++;
-				targetScreenPtr++;
-			}
-		}
-
-		// Too much considered dirty at the moment
-		addDirtyRect(Common::Rect(0, 0, screenWidth, screenHeight));
-
-		events.pollEvents();
-		events.delay(10 * speed);
-	} while ((pixelsChanged) && (!_vm->shouldQuit()));
-}
-
-void Screen::blitFrom3DOcolorLimit(uint16 limitColor) {
-	uint16 *currentScreenPtr = (uint16 *)getPixels();
-	uint16 *targetScreenPtr = (uint16 *)_backBuffer->getPixels();
-	uint16  currentScreenPixel = 0;
-
-	uint16  screenWidth = this->w();
-	uint16  screenHeight = this->h();
-	uint16  screenX = 0;
-	uint16  screenY = 0;
-
-	uint16  currentScreenPixelRed = 0;
-	uint16  currentScreenPixelGreen = 0;
-	uint16  currentScreenPixelBlue = 0;
-
-	uint16  limitPixelRed = limitColor & 0xF800;
-	uint16  limitPixelGreen = limitColor & 0x07E0;
-	uint16  limitPixelBlue = limitColor & 0x001F;
-
-	for (screenY = 0; screenY < screenHeight; screenY++) {
-		for (screenX = 0; screenX < screenWidth; screenX++) {
-			currentScreenPixel = *targetScreenPtr;
-
-			currentScreenPixelRed   = currentScreenPixel & 0xF800;
-			currentScreenPixelGreen = currentScreenPixel & 0x07E0;
-			currentScreenPixelBlue  = currentScreenPixel & 0x001F;
-
-			if (currentScreenPixelRed < limitPixelRed)
-				currentScreenPixelRed = limitPixelRed;
-			if (currentScreenPixelGreen < limitPixelGreen)
-				currentScreenPixelGreen = limitPixelGreen;
-			if (currentScreenPixelBlue < limitPixelBlue)
-				currentScreenPixelBlue = limitPixelBlue;
-
-			*currentScreenPtr = currentScreenPixelRed | currentScreenPixelGreen | currentScreenPixelBlue;
-			currentScreenPtr++;
-			targetScreenPtr++;
-		}
-	}
-
-	// Too much considered dirty at the moment
-	addDirtyRect(Common::Rect(0, 0, screenWidth, screenHeight));
 }
 
 void Screen::restoreBackground(const Common::Rect &r) {

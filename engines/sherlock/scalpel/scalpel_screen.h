@@ -59,6 +59,46 @@ public:
 	void makeField(const Common::Rect &r);
 };
 
+class Scalpel3DOScreen : public ScalpelScreen {
+protected:
+	/**
+	 * Draws a sub-section of a surface at a given position within this surface
+	 * Overriden for the 3DO to automatically double the size of everything to the underlying 640x400 surface
+	 */
+	virtual void blitFrom(const Graphics::Surface &src, const Common::Point &pt, const Common::Rect &srcBounds);
+
+	/**
+	 * Draws a surface at a given position within this surface with transparency
+	 */
+	virtual void transBlitFromUnscaled(const Graphics::Surface &src, const Common::Point &pt, bool flipped, 
+		int overrideColor);
+public:
+	Scalpel3DOScreen(SherlockEngine *vm) : ScalpelScreen(vm) {}
+	virtual ~Scalpel3DOScreen() {}
+
+	/**
+	 * Draws a sub-section of a surface at a given position within this surface
+	 */
+	void rawBlitFrom(const Graphics::Surface &src, const Common::Point &pt, const Common::Rect &srcBounds) {
+		ScalpelScreen::blitFrom(src, pt, srcBounds);
+	}
+
+	/**
+	 * Fade backbuffer 1 into screen (3DO RGB!)
+	 */
+	void fadeIntoScreen3DO(int speed);
+
+	void blitFrom3DOcolorLimit(uint16 color);
+
+	/**
+	 * Fill a given area of the surface with a given color
+	 */
+	virtual void fillRect(const Common::Rect &r, uint color);
+
+	inline virtual uint16 w() const { return _surface.w / 2; }
+	inline virtual uint16 h() const { return _surface.h / 2; }
+};
+
 } // End of namespace Scalpel
 
 } // End of namespace Sherlock

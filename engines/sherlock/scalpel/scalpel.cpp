@@ -28,6 +28,7 @@
 #include "sherlock/scalpel/scalpel_map.h"
 #include "sherlock/scalpel/scalpel_people.h"
 #include "sherlock/scalpel/scalpel_scene.h"
+#include "sherlock/scalpel/scalpel_screen.h"
 #include "sherlock/scalpel/tsage/logo.h"
 #include "sherlock/sherlock.h"
 #include "sherlock/music.h"
@@ -251,8 +252,8 @@ void ScalpelEngine::initialize() {
 
 	if (getPlatform() == Common::kPlatform3DO) {
 		const Graphics::PixelFormat pixelFormatRGB565 = Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0);
-		// 320x200 16-bit RGB565 for 3DO support
-		initGraphics(320, 200, false, &pixelFormatRGB565);
+		// 16-bit RGB565 for 3DO support
+		initGraphics(640, 400, true, &pixelFormatRGB565);
 	} else {
 		// 320x200 palettized
 		initGraphics(320, 200, false);
@@ -668,9 +669,10 @@ bool ScalpelEngine::show3DOSplash() {
 }
 
 bool ScalpelEngine::showCityCutscene3DO() {
+	Scalpel3DOScreen &screen = *(Scalpel3DOScreen *)_screen;
 	_animation->_soundLibraryFilename = "TITLE.SND";
 
-	_screen->clear();
+	screen.clear();
 	bool finished = _events->delay(2500, true);
 
 	// rain.aiff seems to be playing in an endless loop until
@@ -683,8 +685,8 @@ bool ScalpelEngine::showCityCutscene3DO() {
 		_music->loadSong("prolog");
 
 		// Fade screen to grey
-		_screen->_backBuffer1.fill(0xCE59); // RGB565: 25, 50, 25 (grey)
-		_screen->fadeIntoScreen3DO(2);
+		screen._backBuffer1.fill(0xCE59); // RGB565: 25, 50, 25 (grey)
+		screen.fadeIntoScreen3DO(2);
 	}
 
 	if (finished) {
@@ -692,27 +694,27 @@ bool ScalpelEngine::showCityCutscene3DO() {
 	}
 
 	if (finished) {
-		_screen->_backBuffer1.fill(0); // fill backbuffer with black to avoid issues during fade from white
+		screen._backBuffer1.fill(0); // fill backbuffer with black to avoid issues during fade from white
 		finished = _animation->play3DO("26open1", true, 1, true, 2);
 	}
 
 	if (finished) {
-		_screen->_backBuffer1.blitFrom(*_screen); // save into backbuffer 1, used for fade
-		_screen->_backBuffer2.blitFrom(*_screen); // save into backbuffer 2, for restoring later
+		screen._backBuffer1.blitFrom(*_screen); // save into backbuffer 1, used for fade
+		screen._backBuffer2.blitFrom(*_screen); // save into backbuffer 2, for restoring later
 
 		// "London, England"
 		ImageFile3DO titleImage_London("title2a.cel", kImageFile3DOType_Cel);
-		_screen->_backBuffer1.transBlitFrom(titleImage_London[0]._frame, Common::Point(30, 50));
+		screen._backBuffer1.transBlitFrom(titleImage_London[0]._frame, Common::Point(30, 50));
 
-		_screen->fadeIntoScreen3DO(1);
+		screen.fadeIntoScreen3DO(1);
 		finished = _events->delay(1500, true);
 
 		if (finished) {
 			// "November, 1888"
 			ImageFile3DO titleImage_November("title2b.cel", kImageFile3DOType_Cel);
-			_screen->_backBuffer1.transBlitFrom(titleImage_November[0]._frame, Common::Point(100, 100));
+			screen._backBuffer1.transBlitFrom(titleImage_November[0]._frame, Common::Point(100, 100));
 
-			_screen->fadeIntoScreen3DO(1);
+			screen.fadeIntoScreen3DO(1);
 			finished = _music->waitUntilMSec(14700, 0, 0, 5000);
 		}
 
@@ -726,21 +728,21 @@ bool ScalpelEngine::showCityCutscene3DO() {
 		finished = _animation->play3DO("26open2", true, 1, false, 2);
 
 	if (finished) {
-		_screen->_backBuffer1.blitFrom(*_screen); // save into backbuffer 1, used for fade
+		screen._backBuffer1.blitFrom(screen); // save into backbuffer 1, used for fade
 
 		// "Sherlock Holmes" (title)
 		ImageFile3DO titleImage_SherlockHolmesTitle("title1ab.cel", kImageFile3DOType_Cel);
-		_screen->_backBuffer1.transBlitFrom(titleImage_SherlockHolmesTitle[0]._frame, Common::Point(34, 5));
+		screen._backBuffer1.transBlitFrom(titleImage_SherlockHolmesTitle[0]._frame, Common::Point(34, 5));
 
 		// Blend in
-		_screen->fadeIntoScreen3DO(2);
+		screen.fadeIntoScreen3DO(2);
 		finished = _events->delay(500, true);
 
 		// Title should fade in, Copyright should be displayed a bit after that
 		if (finished) {
 			ImageFile3DO titleImage_Copyright("title1c.cel", kImageFile3DOType_Cel);
 
-			_screen->transBlitFrom(titleImage_Copyright[0]._frame, Common::Point(20, 190));
+			screen.transBlitFrom(titleImage_Copyright[0]._frame, Common::Point(20, 190));
 			finished = _events->delay(3500, true);
 		}
 	}
@@ -750,27 +752,28 @@ bool ScalpelEngine::showCityCutscene3DO() {
 
 	if (finished) {
 		// Fade to black
-		_screen->_backBuffer1.clear();
-		_screen->fadeIntoScreen3DO(3);
+		screen._backBuffer1.clear();
+		screen.fadeIntoScreen3DO(3);
 	}
 
 	if (finished) {
 		// "In the alley behind the Regency Theatre..."
 		ImageFile3DO titleImage_InTheAlley("title1d.cel", kImageFile3DOType_Cel);
-		_screen->_backBuffer1.transBlitFrom(titleImage_InTheAlley[0]._frame, Common::Point(72, 51));
+		screen._backBuffer1.transBlitFrom(titleImage_InTheAlley[0]._frame, Common::Point(72, 51));
 
 		// Fade in
-		_screen->fadeIntoScreen3DO(4);
+		screen.fadeIntoScreen3DO(4);
 		finished = _music->waitUntilMSec(39900, 0, 0, 2500);
 
 		// Fade out
-		_screen->_backBuffer1.clear();
-		_screen->fadeIntoScreen3DO(4);
+		screen._backBuffer1.clear();
+		screen.fadeIntoScreen3DO(4);
 	}
 	return finished;
 }
 
 bool ScalpelEngine::showAlleyCutscene3DO() {
+	Scalpel3DOScreen &screen = *(Scalpel3DOScreen *)_screen;
 	bool finished = _music->waitUntilMSec(43500, 0, 0, 1000);
 
 	if (finished)
@@ -778,8 +781,8 @@ bool ScalpelEngine::showAlleyCutscene3DO() {
 
 	if (finished) {
 		// Fade out...
-		_screen->_backBuffer1.clear();
-		_screen->fadeIntoScreen3DO(3);
+		screen._backBuffer1.clear();
+		screen.fadeIntoScreen3DO(3);
 
 		finished = _music->waitUntilMSec(67100, 0, 0, 1000); // 66700
 	}
@@ -794,8 +797,8 @@ bool ScalpelEngine::showAlleyCutscene3DO() {
 		// Show screaming victim
 		ImageFile3DO titleImage_ScreamingVictim("scream.cel", kImageFile3DOType_Cel);
 
-		_screen->clear();
-		_screen->transBlitFrom(titleImage_ScreamingVictim[0]._frame, Common::Point(0, 0));
+		screen.clear();
+		screen.transBlitFrom(titleImage_ScreamingVictim[0]._frame, Common::Point(0, 0));
 
 		// Play "scream.aiff"
 		if (_sound->_voices)
@@ -806,8 +809,8 @@ bool ScalpelEngine::showAlleyCutscene3DO() {
 
 	if (finished) {
 		// Fade out
-		_screen->_backBuffer1.clear();
-		_screen->fadeIntoScreen3DO(5);
+		screen._backBuffer1.clear();
+		screen.fadeIntoScreen3DO(5);
 
 		finished = _music->waitUntilMSec(84400, 0, 0, 2000);
 	}
@@ -817,17 +820,17 @@ bool ScalpelEngine::showAlleyCutscene3DO() {
 
 	if (finished) {
 		// Fade out
-		_screen->_backBuffer1.clear();
-		_screen->fadeIntoScreen3DO(5);
+		screen._backBuffer1.clear();
+		screen.fadeIntoScreen3DO(5);
 	}
 
 	if (finished) {
 		// "Early the following morning on Baker Street..."
 		ImageFile3DO titleImage_EarlyTheFollowingMorning("title3.cel", kImageFile3DOType_Cel);
-		_screen->_backBuffer1.transBlitFrom(titleImage_EarlyTheFollowingMorning[0]._frame, Common::Point(35, 51));
+		screen._backBuffer1.transBlitFrom(titleImage_EarlyTheFollowingMorning[0]._frame, Common::Point(35, 51));
 
 		// Fade in
-		_screen->fadeIntoScreen3DO(4);
+		screen.fadeIntoScreen3DO(4);
 		finished = _music->waitUntilMSec(96700, 0, 0, 3000);
 	}
 
@@ -835,12 +838,13 @@ bool ScalpelEngine::showAlleyCutscene3DO() {
 }
 
 bool ScalpelEngine::showStreetCutscene3DO() {
+	Scalpel3DOScreen &screen = *(Scalpel3DOScreen *)_screen;
 	bool finished = true;
 
 	if (finished) {
 		// fade out "Early the following morning..."
-		_screen->_backBuffer1.clear();
-		_screen->fadeIntoScreen3DO(4);
+		screen._backBuffer1.clear();
+		screen.fadeIntoScreen3DO(4);
 
 		// wait for music a bit
 		finished = _music->waitUntilMSec(100300, 0, 0, 1000);
@@ -859,8 +863,8 @@ bool ScalpelEngine::showStreetCutscene3DO() {
 
 	if (finished) {
 		// Fade out
-		_screen->_backBuffer1.clear();
-		_screen->fadeIntoScreen3DO(4);
+		screen._backBuffer1.clear();
+		screen.fadeIntoScreen3DO(4);
 	}
 
 	return finished;

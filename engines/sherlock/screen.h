@@ -62,6 +62,11 @@ protected:
 	SherlockEngine *_vm;
 
 	/**
+	 * Clear the current dirty rects list
+	 */
+	void clearDirtyRects() { _dirtyRects.clear(); }
+
+	/**
 	 * Adds a rectangle to the list of modified areas of the screen during the
 	 * current frame
 	 */
@@ -86,7 +91,7 @@ public:
 	void update();
 
 	/**
-	 * Makes the whole screen dirty, Hack for 3DO movie playing
+	 * Makes the whole screen dirty
 	 */
 	void makeAllDirty();
 
@@ -124,13 +129,6 @@ public:
 	 * Transition to the surface from _backBuffer using a vertical transition
 	 */
 	void verticalTransition();
-
-	/**
-	 * Fade backbuffer 1 into screen (3DO RGB!)
-	 */
-	void fadeIntoScreen3DO(int speed);
-
-	void blitFrom3DOcolorLimit(uint16 color);
 
 	/**
 	 * Prints the text passed onto the back buffer at the given position and color.

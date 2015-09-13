@@ -22,6 +22,7 @@
 
 #include "sherlock/animation.h"
 #include "sherlock/sherlock.h"
+#include "sherlock/scalpel/scalpel_screen.h"
 #include "common/algorithm.h"
 
 namespace Sherlock {
@@ -212,7 +213,7 @@ bool Animation::play3DO(const Common::String &filename, bool intro, int minDelay
 
 			if (fadeActive) {
 				// process fading
-				screen.blitFrom3DOcolorLimit(fadeLimitColor);
+				static_cast<Scalpel::Scalpel3DOScreen *>(_vm->_screen)->blitFrom3DOcolorLimit(fadeLimitColor);
 
 				if (!fadeLimitColor) {
 					// we are at the end, so stop
