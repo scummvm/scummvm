@@ -91,6 +91,11 @@ void ScalpelScreen::makeField(const Common::Rect &r) {
 /*----------------------------------------------------------------*/
 
 void Scalpel3DOScreen::blitFrom(const Graphics::Surface &src, const Common::Point &pt, const Common::Rect &srcBounds) {
+	if (!_vm->_isScreenDoubled) {
+		ScalpelScreen::blitFrom(src, pt, srcBounds);
+		return;
+	}
+
 	Common::Rect srcRect = srcBounds;
 	Common::Rect destRect(pt.x, pt.y, pt.x + srcRect.width(), pt.y + srcRect.height());
 
@@ -116,6 +121,11 @@ void Scalpel3DOScreen::blitFrom(const Graphics::Surface &src, const Common::Poin
 
 void Scalpel3DOScreen::transBlitFromUnscaled(const Graphics::Surface &src, const Common::Point &pt,
 		bool flipped, int overrideColor) {
+	if (!_vm->_isScreenDoubled) {
+		ScalpelScreen::transBlitFromUnscaled(src, pt, flipped, overrideColor);
+		return;
+	}
+
 	Common::Rect drawRect(0, 0, src.w, src.h);
 	Common::Rect destRect(pt.x, pt.y, pt.x + src.w, pt.y + src.h);
 
@@ -154,7 +164,10 @@ void Scalpel3DOScreen::transBlitFromUnscaled(const Graphics::Surface &src, const
 }
 
 void Scalpel3DOScreen::fillRect(const Common::Rect &r, uint color) {
-	Screen::fillRect(Common::Rect(r.left * 2, r.top * 2, r.right * 2, r.bottom * 2), color);
+	if (_vm->_isScreenDoubled)
+		ScalpelScreen::fillRect(Common::Rect(r.left * 2, r.top * 2, r.right * 2, r.bottom * 2), color);
+	else
+		ScalpelScreen::fillRect(r, color);
 }
 
 void Scalpel3DOScreen::fadeIntoScreen3DO(int speed) {
@@ -185,7 +198,7 @@ void Scalpel3DOScreen::fadeIntoScreen3DO(int speed) {
 		uint16 *currentScreenPtr = currentScreenBasePtr;
 		uint16 *targetScreenPtr = targetScreenBasePtr;
 
-		for (screenY = 0; screenY < screenHeight; screenY++, currentScreenPtr += 640) {
+		for (screenY = 0; screenY < screenHeight; screenY++) {
 			for (screenX = 0; screenX < screenWidth; screenX++) {
 				currentScreenPixel = *currentScreenPtr;
 				targetScreenPixel = *targetScreenPtr;
@@ -224,20 +237,28 @@ void Scalpel3DOScreen::fadeIntoScreen3DO(int speed) {
 
 					uint16 v = currentScreenPixelRed | currentScreenPixelGreen | currentScreenPixelBlue;
 					*currentScreenPtr = v;
-					*(currentScreenPtr + 1) = v;
-					*(currentScreenPtr + 640) = v;
-					*(currentScreenPtr + 640 + 1) = v;
+					if (_vm->_isScreenDoubled) {
+						*(currentScreenPtr + 1) = v;
+						*(currentScreenPtr + 640) = v;
+						*(currentScreenPtr + 640 + 1) = v;
+					}
 
 					pixelsChanged++;
 				}
 
-				currentScreenPtr += 2;
+				currentScreenPtr += _vm->_isScreenDoubled ? 2 : 1;
 				targetScreenPtr++;
 			}
+
+			if (_vm->_isScreenDoubled)
+				currentScreenPtr += 640;
 		}
 
 		// Too much considered dirty at the moment
-		addDirtyRect(Common::Rect(0, 0, screenWidth * 2, screenHeight * 2));
+		if (_vm->_isScreenDoubled)
+			addDirtyRect(Common::Rect(0, 0, screenWidth * 2, screenHeight * 2));
+		else
+			addDirtyRect(Common::Rect(0, 0, screenWidth, screenHeight));
 
 		events.pollEvents();
 		events.delay(10 * speed);
@@ -262,7 +283,7 @@ void Scalpel3DOScreen::blitFrom3DOcolorLimit(uint16 limitColor) {
 	uint16  limitPixelGreen = limitColor & 0x07E0;
 	uint16  limitPixelBlue = limitColor & 0x001F;
 
-	for (screenY = 0; screenY < screenHeight; screenY++, currentScreenPtr += 640) {
+	for (screenY = 0; screenY < screenHeight; screenY++) {
 		for (screenX = 0; screenX < screenWidth; screenX++) {
 			currentScreenPixel = *targetScreenPtr;
 
@@ -279,17 +300,33 @@ void Scalpel3DOScreen::blitFrom3DOcolorLimit(uint16 limitColor) {
 
 			uint16 v = currentScreenPixelRed | currentScreenPixelGreen | currentScreenPixelBlue;
 			*currentScreenPtr = v;
-			*(currentScreenPtr + 1) = v;
-			*(currentScreenPtr + 640) = v;
-			*(currentScreenPtr + 640 + 1) = v;
+			if (_vm->_isScreenDoubled) {
+				*(currentScreenPtr + 1) = v;
+				*(currentScreenPtr + 640) = v;
+				*(currentScreenPtr + 640 + 1) = v;
+			}
 
-			currentScreenPtr += 2;
+			currentScreenPtr += _vm->_isScreenDoubled ? 2 : 1;
 			targetScreenPtr++;
 		}
+
+		if (_vm->_isScreenDoubled)
+			currentScreenPtr += 640;
 	}
 
 	// Too much considered dirty at the moment
-	addDirtyRect(Common::Rect(0, 0, screenWidth * 2, screenHeight * 2));
+	if (_vm->_isScreenDoubled)
+		addDirtyRect(Common::Rect(0, 0, screenWidth * 2, screenHeight * 2));
+	else
+		addDirtyRect(Common::Rect(0, 0, screenWidth, screenHeight));
+}
+
+uint16 Scalpel3DOScreen::w() const {
+	return _vm->_isScreenDoubled ? _surface.w / 2 : _surface.w;
+}
+
+uint16 Scalpel3DOScreen::h() const {
+	return _vm->_isScreenDoubled ? _surface.h / 2 : _surface.h;
 }
 
 } // End of namespace Scalpel

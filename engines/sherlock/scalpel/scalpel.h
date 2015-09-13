@@ -53,6 +53,14 @@ private:
 	Darts *_darts;
 	int _mapResult;
 
+	/**
+	 * Initialize graphics mode
+	 */
+	void setupGraphics();
+
+	/**
+	 * Show the 3DO splash screen
+	 */
 	bool show3DOSplash();
 
 	/**

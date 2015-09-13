@@ -97,6 +97,8 @@ void Events::setCursor(const Graphics::Surface &src, int hotspotX, int hotspotY)
 	if (!IS_3DO) {
 		// PC 8-bit palettized
 		CursorMan.replaceCursor(src.getPixels(), src.w, src.h, hotspotX, hotspotY, 0xff);
+	} else if (!_vm->_isScreenDoubled) {
+		CursorMan.replaceCursor(src.getPixels(), src.w, src.h, hotspotX, hotspotY, 0x0000, false, &src.format);
 	} else {
 		Graphics::Surface tempSurface;
 		tempSurface.create(2 * src.w, 2 * src.h, src.format);
@@ -192,7 +194,7 @@ void Events::pollEvents() {
 	Common::Event event;
 	while (g_system->getEventManager()->pollEvent(event)) {
 		_mousePos = event.mouse;
-		if (IS_3DO)
+		if (_vm->_isScreenDoubled)
 			_mousePos = Common::Point(_mousePos.x / 2, _mousePos.y / 2);
 
 		// Handle events
@@ -238,7 +240,7 @@ void Events::pollEventsAndWait() {
 
 void Events::warpMouse(const Common::Point &pt) {
 	Common::Point pos = pt;
-	if (IS_3DO)
+	if (_vm->_isScreenDoubled)
 		pos = Common::Point(pt.x / 2, pt.y);
 
 	_mousePos = pos - _vm->_screen->_currentScroll;

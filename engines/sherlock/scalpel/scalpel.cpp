@@ -247,17 +247,32 @@ ScalpelEngine::~ScalpelEngine() {
 	delete _darts;
 }
 
-void ScalpelEngine::initialize() {
-	// 3DO actually uses RGB555, but some platforms of ours only support RGB565, so we use that
-
-	if (getPlatform() == Common::kPlatform3DO) {
-		const Graphics::PixelFormat pixelFormatRGB565 = Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0);
-		// 16-bit RGB565 for 3DO support
-		initGraphics(640, 400, true, &pixelFormatRGB565);
-	} else {
+void ScalpelEngine::setupGraphics() {
+	if (getPlatform() != Common::kPlatform3DO) {
 		// 320x200 palettized
 		initGraphics(320, 200, false);
+	} else {
+		// 3DO actually uses RGB555, but some platforms of ours only support RGB565, so we use that
+		const Graphics::PixelFormat pixelFormatRGB565 = Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0);
+
+		// First try for a 640x400 mode
+		g_system->beginGFXTransaction();
+		initCommonGFX(true);
+		g_system->initSize(640, 400, &pixelFormatRGB565);
+		OSystem::TransactionError gfxError = g_system->endGFXTransaction();
+
+		if (gfxError == OSystem::kTransactionSuccess) {
+			_isScreenDoubled = true;
+		} else {
+			// System doesn't support it, so fall back on 320x200 mode
+			initGraphics(320, 200, false, &pixelFormatRGB565);
+		}
 	}
+}
+
+void ScalpelEngine::initialize() {
+	// Setup graphics mode
+	setupGraphics();
 
 	// Let the base engine intialize
 	SherlockEngine::initialize();

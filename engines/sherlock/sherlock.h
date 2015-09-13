@@ -80,6 +80,7 @@ class Resource;
 
 class SherlockEngine : public Engine {
 private:
+\
 	/**
 	 * Main loop for displaying a scene and handling all that occurs within it
 	 */
@@ -133,6 +134,7 @@ public:
 	bool _canLoadSave;
 	bool _showOriginalSavesDialog;
 	bool _interactiveFl;
+	bool _isScreenDoubled;
 public:
 	SherlockEngine(OSystem *syst, const SherlockGameDescription *gameDesc);
 	virtual ~SherlockEngine();

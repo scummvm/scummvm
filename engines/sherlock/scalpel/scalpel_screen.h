@@ -95,8 +95,8 @@ public:
 	 */
 	virtual void fillRect(const Common::Rect &r, uint color);
 
-	inline virtual uint16 w() const { return _surface.w / 2; }
-	inline virtual uint16 h() const { return _surface.h / 2; }
+	virtual uint16 w() const;
+	virtual uint16 h() const;
 };
 
 } // End of namespace Scalpel
