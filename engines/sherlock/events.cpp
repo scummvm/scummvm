@@ -98,8 +98,24 @@ void Events::setCursor(const Graphics::Surface &src, int hotspotX, int hotspotY)
 		// PC 8-bit palettized
 		CursorMan.replaceCursor(src.getPixels(), src.w, src.h, hotspotX, hotspotY, 0xff);
 	} else {
+		Graphics::Surface tempSurface;
+		tempSurface.create(2 * src.w, 2 * src.h, src.format);
+
+		for (int y = 0; y < src.h; y++) {
+			const uint16 *srcP = (const uint16 *)src.getBasePtr(0, y);
+			uint16 *destP = (uint16 *)tempSurface.getBasePtr(0, 2 * y);
+			for (int x = 0; x < src.w; ++x, ++srcP, destP += 2) {
+				*destP = *srcP;
+				*(destP + 1) = *srcP;
+				*(destP + 2 * src.w) = *srcP;
+				*(destP + 2 * src.w + 1) = *srcP;
+			}
+		}
+
 		// 3DO RGB565
-		CursorMan.replaceCursor(src.getPixels(), src.w, src.h, hotspotX, hotspotY, 0x0000, false, &src.format);
+		CursorMan.replaceCursor(tempSurface.getPixels(), tempSurface.w, tempSurface.h, 2 * hotspotX, 2 * hotspotY, 0x0000, false, &src.format);
+
+		tempSurface.free();
 	}
 	showCursor();
 }
