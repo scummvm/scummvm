@@ -35,6 +35,9 @@ For a more comprehensive changelog of the latest experimental code, see:
      head scene (bug #6728). It may have been happening in other scenes as
      well.
 
+ CinE:
+   - Added support for music in CD version of Future Wars.
+
  MADE:
    - Improved AdLib music support in Return to Zork.
 

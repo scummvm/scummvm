@@ -32,6 +32,8 @@
 #include "cine/cine.h"
 #include "cine/sound.h"
 
+#include "backends/audiocd/audiocd.h"
+
 #include "audio/audiostream.h"
 #include "audio/fmopl.h"
 #include "audio/mididrv.h"
@@ -907,6 +909,10 @@ void PCSoundFxPlayer::unload() {
 PCSound::PCSound(Audio::Mixer *mixer, CineEngine *vm)
 	: Sound(mixer, vm), _soundDriver(0) {
 
+	_currentMusic = 0;
+	_currentMusicStatus = 0;
+	_currentBgSlot = 0;
+
 	const MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB);
 	const MusicType musicType = MidiDriver::getMusicType(dev);
 	if (musicType == MT_MT32 || musicType == MT_GM) {
@@ -940,23 +946,98 @@ PCSound::~PCSound() {
 	delete _soundDriver;
 }
 
+static const char *const musicFileNames[12] = {
+	"DUGGER.DAT",
+	"SUITE21.DAT",
+	"FWARS.DAT",
+	"SUITE23.DAT",
+	"SUITE22.DAT",
+	"ESCAL",
+	"MOINES.DAT",
+	"MEDIAVAL.DAT",
+	"SFUTUR",
+	"ALIENS",
+	"TELESONG.DAT",
+};
+
+static uint8 musicCDTracks[12] = {
+	20, 21, 22, 23, 24, 25, 26, 27, 28, 30, 22,
+};
+
 void PCSound::loadMusic(const char *name) {
 	debugC(5, kCineDebugSound, "PCSound::loadMusic('%s')", name);
-	_player->load(name);
+	if (_vm->getGameType() == GType_FW && (_vm->getFeatures() & GF_CD)) {
+		_currentMusic = 0;
+		_currentMusicStatus = 0;
+		for (int i = 0; i < 11; i++) {
+			if (!strcmp((const char *)name, musicFileNames[i])) {
+				_currentMusic = musicCDTracks[i];
+				_currentMusicStatus = musicCDTracks[i];
+			}
+		}
+	} else {
+		_player->load(name);
+	}
 }
 
 void PCSound::playMusic() {
 	debugC(5, kCineDebugSound, "PCSound::playMusic()");
-	_player->play();
+	if (_vm->getGameType() == GType_FW && (_vm->getFeatures() & GF_CD)) {
+		g_system->getAudioCDManager()->stop();
+		g_system->getAudioCDManager()->play(_currentMusic - 1, -1, 0, 0);
+	} else {
+		_player->play();
+	}
+}
+
+static uint8 bgCDTracks[49] = {
+	0, 21, 21, 23, 0, 29, 0, 0, 0, 0,
+	0, 27,  0,  0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 22, 22, 23, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0
+};
+
+void PCSound::setBgMusic(int num) {
+	debugC(5, kCineDebugSound, "PCSound::setBgMusic(%d)", num);
+	_currentBgSlot = num;
+	if (!bgCDTracks[_currentBgSlot])
+		return;
+
+	if ((_currentBgSlot == 1) || (_currentMusicStatus == 0 && _currentMusic != bgCDTracks[_currentBgSlot])) {
+		_currentMusic = bgCDTracks[_currentBgSlot];
+		g_system->getAudioCDManager()->stop();
+		g_system->getAudioCDManager()->play(bgCDTracks[_currentBgSlot] - 1, -1, 0, 0);
+	}
 }
 
 void PCSound::stopMusic() {
 	debugC(5, kCineDebugSound, "PCSound::stopMusic()");
+
+	if (_vm->getGameType() == GType_FW && (_vm->getFeatures() & GF_CD)) {
+		if (_currentBgSlot != 1)
+			g_system->getAudioCDManager()->stop();
+	}
 	_player->stop();
 }
 
 void PCSound::fadeOutMusic() {
 	debugC(5, kCineDebugSound, "PCSound::fadeOutMusic()");
+
+	if (_vm->getGameType() == GType_FW && (_vm->getFeatures() & GF_CD)) {
+		if (_currentMusicStatus) {
+			if (_currentBgSlot == 1) {
+				_currentMusicStatus = 0;
+			} else {
+				_currentMusic = 0;
+				_currentMusicStatus = 0;
+				g_system->getAudioCDManager()->stop();
+				if (bgCDTracks[_currentBgSlot]) {
+					g_system->getAudioCDManager()->play(_currentBgSlot - 1, -1, 0, 0);
+				}
+			}
+		}
+	}
 	_player->fadeOut();
 }
 
@@ -1054,6 +1135,9 @@ void PaulaSound::stopMusic() {
 	Common::StackLock lock(_musicMutex);
 
 	_mixer->stopHandle(_moduleHandle);
+}
+
+void PaulaSound::setBgMusic(int num) {
 }
 
 void PaulaSound::fadeOutMusic() {
