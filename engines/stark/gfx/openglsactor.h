@@ -36,11 +36,11 @@ namespace Graphics {
 namespace Stark {
 namespace Gfx {
 
-class Driver;
+class OpenGLSDriver;
 
 class OpenGLSActorRenderer : public VisualActor {
 public:
-	OpenGLSActorRenderer(Driver *gfx);
+	OpenGLSActorRenderer(OpenGLSDriver *gfx);
 	virtual ~OpenGLSActorRenderer();
 
 	void render(const Math::Vector3d position, float direction, const LightEntryArray &lights) override;
@@ -48,7 +48,7 @@ public:
 protected:
 	typedef Common::HashMap<FaceNode *, uint32> FaceBufferMap;
 
-	Driver *_gfx;
+	OpenGLSDriver *_gfx;
 	Graphics::Shader *_shader;
 
 	FaceBufferMap _faceVBO;

@@ -26,7 +26,7 @@
 #include "engines/stark/model/skeleton.h"
 #include "engines/stark/scene.h"
 #include "engines/stark/services/services.h"
-#include "engines/stark/gfx/driver.h"
+#include "engines/stark/gfx/opengls.h"
 #include "engines/stark/gfx/texture.h"
 
 #include "graphics/opengles2/shader.h"
@@ -34,11 +34,10 @@
 namespace Stark {
 namespace Gfx {
 
-OpenGLSActorRenderer::OpenGLSActorRenderer(Driver *gfx) :
+OpenGLSActorRenderer::OpenGLSActorRenderer(OpenGLSDriver *gfx) :
 		VisualActor(),
 		_gfx(gfx) {
-	static const char* attributes[] = { "position1", "position2", "bone1", "bone2", "boneWeight", "normal", "texcoord", nullptr };
-	_shader = Graphics::Shader::fromFiles("stark_actor", attributes);
+	_shader = _gfx->createActorShaderInstance();
 }
 
 OpenGLSActorRenderer::~OpenGLSActorRenderer() {

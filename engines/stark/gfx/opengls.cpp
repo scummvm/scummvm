@@ -55,6 +55,7 @@ OpenGLSDriver::OpenGLSDriver() :
 OpenGLSDriver::~OpenGLSDriver() {
 	Graphics::Shader::freeBuffer(_boxVBO);
 	delete _boxShader;
+	delete _actorShader;
 }
 
 void OpenGLSDriver::init() {
@@ -68,6 +69,9 @@ void OpenGLSDriver::init() {
 	_boxVBO = Graphics::Shader::createBuffer(GL_ARRAY_BUFFER, sizeof(boxVertices), boxVertices);
 	_boxShader->enableVertexAttribute("position", _boxVBO, 2, GL_FLOAT, GL_TRUE, 2 * sizeof(float), 0);
 	_boxShader->enableVertexAttribute("texcoord", _boxVBO, 2, GL_FLOAT, GL_TRUE, 2 * sizeof(float), 0);
+
+	static const char* actorAttributes[] = { "position1", "position2", "bone1", "bone2", "boneWeight", "normal", "texcoord", nullptr };
+	_actorShader = Graphics::Shader::fromFiles("stark_actor", actorAttributes);
 }
 
 void OpenGLSDriver::setScreenViewport(bool noScaling) {
@@ -181,6 +185,10 @@ void OpenGLSDriver::end2DMode() {
 void OpenGLSDriver::set3DMode() {
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LESS);
+}
+
+Graphics::Shader *OpenGLSDriver::createActorShaderInstance() {
+	return _actorShader->clone();
 }
 
 } // End of namespace Gfx

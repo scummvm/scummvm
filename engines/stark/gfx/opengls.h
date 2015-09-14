@@ -56,6 +56,7 @@ public:
 	Texture *createTexture(const Graphics::Surface *surface = nullptr, const byte *palette = nullptr) override;
 	VisualActor *createActorRenderer() override;
 	VisualProp *createPropRenderer() override;
+	Graphics::Shader *createActorShaderInstance();
 
 	void drawSurface(const Texture *texture, const Common::Point &dest) override;
 
@@ -71,6 +72,7 @@ private:
 	Common::Rect _unscaledViewport;
 
 	Graphics::Shader *_boxShader;
+	Graphics::Shader *_actorShader;
 	uint32 _boxVBO;
 };
 
