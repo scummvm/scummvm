@@ -197,7 +197,3 @@ void* scumm_bsearch(const void *key, const void *base, size_t nmemb, size_t size
 	return NULL;
 }
 
-int remove(const char *path)
-{
-	return unlink(path);
-}
