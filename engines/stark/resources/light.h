@@ -58,6 +58,9 @@ public:
 	/** Get the rendering object used to represent this light */
 	Gfx::LightEntry *getLightEntry();
 
+	/** Change this light's diffuse color */
+	void setColor(int32 red, int32 green, int32 blue);
+
 protected:
 	void printData() override;
 

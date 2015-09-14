@@ -70,6 +70,12 @@ void Light::onPostRead() {
 	// TODO: Add support for negative lights
 }
 
+void Light::setColor(int32 red, int32 green, int32 blue) {
+	_color.x() = (float) red / 255.0;
+	_color.y() = (float) green / 255.0;
+	_color.z() = (float) blue / 255.0;
+}
+
 Gfx::LightEntry *Light::getLightEntry() {
 	_lightEntry->color = _color;
 	_lightEntry->position = _position;

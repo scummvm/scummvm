@@ -42,6 +42,7 @@
 #include "engines/stark/resources/item.h"
 #include "engines/stark/resources/knowledge.h"
 #include "engines/stark/resources/layer.h"
+#include "engines/stark/resources/light.h"
 #include "engines/stark/resources/location.h"
 #include "engines/stark/resources/pattable.h"
 #include "engines/stark/resources/script.h"
@@ -163,6 +164,8 @@ Command *Command::execute(uint32 callMode, Script *script) {
 		return opPATChangeTooltip(_arguments[1].referenceValue, _arguments[2].referenceValue);
 	case kChangeSound:
 		return opChangeSound(_arguments[1].referenceValue, _arguments[2].intValue, _arguments[3].intValue, _arguments[4].intValue, _arguments[5].intValue);
+	case kLightSetColor:
+		return opLightSetColor(_arguments[1].referenceValue, _arguments[2].intValue, _arguments[3].intValue, _arguments[4].intValue);
 	case kItem3DRunTo:
 		return opItem3DRunTo(script, _arguments[1].referenceValue, _arguments[2].referenceValue, _arguments[3].intValue);
 	case kItemPlaceDirection:
@@ -807,6 +810,14 @@ Command *Command::opChangeSound(const ResourceReference &soundRef, int32 unknown
 	assert(_arguments.size() == 6);
 	Object *sound = soundRef.resolve<Object>();
 	warning("(TODO: Implement) opChangeSound(%s, %d, %d, %d, %d) : %s", sound->getName().c_str(), unknown1, unknown2, unknown3, unknown4, soundRef.describe().c_str());
+	return nextCommand();
+}
+
+Command *Command::opLightSetColor(const ResourceReference &lightRef, int32 red, int32 green, int32 blue) {
+	Light *light = lightRef.resolve<Light>();
+
+	light->setColor(red, green, blue);
+
 	return nextCommand();
 }
 

@@ -121,8 +121,8 @@ public:
 		kKnowledgeAssignNegatedBool = 126,
 		kEnableDiaryEntry = 127,
 		kPATChangeTooltip = 128,
-
 		kChangeSound = 129,
+		kLightSetColor = 130,
 
 		kItem3DRunTo = 132,
 		kItemPlaceDirection = 133,
@@ -233,6 +233,7 @@ protected:
 	Command *opEnableDiaryEntry(const ResourceReference &knowledgeRef);
     Command *opPATChangeTooltip(const ResourceReference &patRef, const ResourceReference &stringRef);
 	Command *opChangeSound(const ResourceReference &soundRef, int32 unknown1, int32 unknown2, int32 unknown3, int32 unknown4);
+	Command *opLightSetColor(const ResourceReference &lightRef, int32 red, int32 green, int32 blue);
 	Command *opItem3DRunTo(Script *script, const ResourceReference &itemRef, const ResourceReference &targetRef, int32 suspend);
 	Command *opItemPlaceDirection(const ResourceReference &itemRef, int32 direction);
 	Command *opActivateTexture(const ResourceReference &textureRef);
