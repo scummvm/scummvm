@@ -58,9 +58,10 @@ typedef signed long int int32;
 // re-define those data types.
 #define SCUMMVM_DONT_DEFINE_TYPES
 
-// Hiding macro "remove" defined in unistd.h from anywere except default-saves.cpp.
-// Should be after including unistd.h
-#ifndef USE_SYSTEM_REMOVE
+// Hide the macro "remove" defined in unistd.h from anywere except where
+// we explicitly require it. This lets us use the name "remove" in engines.
+// Must be after including unistd.h .
+#ifndef SYMBIAN_USE_SYSTEM_REMOVE
 #undef remove
 #endif
 

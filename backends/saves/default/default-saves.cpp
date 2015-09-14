@@ -20,11 +20,10 @@
  *
  */
 
-/* This definition fixes compilation error for Symbian due conflict between
- * builting macro "remove" and various functions named "remove" in engines.
- * Should be before including scummsys.h
- */
-#define USE_SYSTEM_REMOVE
+// This define lets us use the system function remove() on Symbian, which
+// is disabled by default due to a macro conflict.
+// See backends/platform/symbian/src/portdefs.h .
+#define SYMBIAN_USE_SYSTEM_REMOVE
 
 #include "common/scummsys.h"
 
