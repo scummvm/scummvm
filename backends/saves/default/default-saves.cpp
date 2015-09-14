@@ -20,6 +20,12 @@
  *
  */
 
+/* This definition fixes compilation error for Symbian due conflict between
+ * builting macro "remove" and various functions named "remove" in engines.
+ * Should be before including scummsys.h
+ */
+#define USE_SYSTEM_REMOVE
+
 #include "common/scummsys.h"
 
 #if !defined(DISABLE_DEFAULT_SAVEFILEMANAGER)
