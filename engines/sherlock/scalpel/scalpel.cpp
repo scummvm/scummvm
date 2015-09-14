@@ -714,8 +714,7 @@ bool ScalpelEngine::showCityCutscene3DO() {
 	}
 
 	if (finished) {
-		screen._backBuffer1.blitFrom(*_screen); // save into backbuffer 1, used for fade
-		screen._backBuffer2.blitFrom(*_screen); // save into backbuffer 2, for restoring later
+		screen._backBuffer2.blitFrom(screen._backBuffer1);
 
 		// "London, England"
 		ImageFile3DO titleImage_London("title2a.cel", kImageFile3DOType_Cel);
@@ -735,7 +734,8 @@ bool ScalpelEngine::showCityCutscene3DO() {
 
 		if (finished) {
 			// Restore screen
-			_screen->blitFrom(_screen->_backBuffer2);
+			_screen->_backBuffer1.blitFrom(screen._backBuffer2);
+			_screen->blitFrom(screen._backBuffer1);
 		}
 	}
 
@@ -743,8 +743,6 @@ bool ScalpelEngine::showCityCutscene3DO() {
 		finished = _animation->play3DO("26open2", true, 1, false, 2);
 
 	if (finished) {
-		screen._backBuffer1.blitFrom(screen); // save into backbuffer 1, used for fade
-
 		// "Sherlock Holmes" (title)
 		ImageFile3DO titleImage_SherlockHolmesTitle("title1ab.cel", kImageFile3DOType_Cel);
 		screen._backBuffer1.transBlitFrom(titleImage_SherlockHolmesTitle[0]._frame, Common::Point(34, 5));
@@ -931,7 +929,7 @@ bool ScalpelEngine::showOfficeCutscene3DO() {
 		// TODO: Brighten the image, possibly by doing a partial fade
 		// to white.
 
-		_screen->_backBuffer1.blitFrom(*_screen);
+		_screen->_backBuffer2.blitFrom(_screen->_backBuffer1);
 
 		for (int nr = 1; finished && nr <= 4; nr++) {
 			char filename[15];
@@ -939,7 +937,7 @@ bool ScalpelEngine::showOfficeCutscene3DO() {
 			ImageFile3DO *creditsImage = new ImageFile3DO(filename, kImageFile3DOType_Cel);
 			ImageFrame *creditsFrame = &(*creditsImage)[0];
 			for (int i = 0; finished && i < 200 + creditsFrame->_height; i++) {
-				_screen->blitFrom(_screen->_backBuffer1);
+				_screen->blitFrom(_screen->_backBuffer2);
 				_screen->transBlitFrom(creditsFrame->_frame, Common::Point((320 - creditsFrame->_width) / 2, 200 - i));
 				if (!_events->delay(70, true))
 					finished = false;
