@@ -682,13 +682,10 @@ void Menu::initMenu() {
 	if (!menuLoaded) {
 		// Load menu from game data using the original language
 		if (_vm->getOriginalLanguage() == Common::FR_FRA) {
-			if (f.exists("menufr.mor")) {
-				if (!f.open("menufr.mor"))
-					error("Missing file - menufr.mor");
-			} else {
-				if (!f.open("menu.mor"))
-					error("Missing file - menu.mor");
-			}
+			// We do not support reading menu.mor (it has a different format).
+			// If the game version does not have menufr.mor it has to get the menu from the DAT file.
+			if (!f.open("menufr.mor"))
+				error("Missing file - menufr.mor");
 		} else { // Common::DE_DEU
 			if (!f.open("menual.mor"))
 				error("Missing file - menual.mor");
