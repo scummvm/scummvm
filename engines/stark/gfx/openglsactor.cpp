@@ -268,6 +268,7 @@ void OpenGLSActorRenderer::setLightArrayUniform(const char *uniform, const Light
 
 		Math::Vector3d worldDirection = l->direction;
 		Math::Vector3d eyeDirection = viewMatrixRot * worldDirection;
+		eyeDirection.normalize();
 
 		_shader->setUniform(Common::String::format("lights[%d].position", i).c_str(), eyePosition);
 		_shader->setUniform(Common::String::format("lights[%d].direction", i).c_str(), eyeDirection);
