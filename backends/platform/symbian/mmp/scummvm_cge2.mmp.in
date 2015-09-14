@@ -32,7 +32,6 @@
 
 TARGET          scummvm_cge2.lib
 TARGETTYPE      lib
-MACRO 			REMOVE_UNDEFINED
 #include "config.mmh"
 
 //START_AUTO_MACROS_SLAVE//
