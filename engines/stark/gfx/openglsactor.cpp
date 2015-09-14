@@ -240,13 +240,14 @@ void OpenGLSActorRenderer::setBoneRotationArrayUniform(const char *uniform) {
 }
 
 void OpenGLSActorRenderer::setLightArrayUniform(const char *uniform, const LightEntryArray &lights) {
-	assert(lights.size() <= 8);
+	static const uint maxLights = 8;
 
-	if (!lights.empty()) {
-		const LightEntry *ambient = lights[0];
-		assert(ambient->type == LightEntry::kAmbient);
-		_shader->setUniform("ambientColor", ambient->color);
-	}
+	assert(lights.size() >= 1);
+	assert(lights.size() <= maxLights);
+
+	const LightEntry *ambient = lights[0];
+	assert(ambient->type == LightEntry::kAmbient); // The first light must be the ambient light
+	_shader->setUniform("ambientColor", ambient->color);
 
 	Math::Matrix4 viewMatrix = StarkScene->getViewMatrix();
 	Math::Matrix3 viewMatrixRot = viewMatrix.getRotation();
@@ -279,6 +280,11 @@ void OpenGLSActorRenderer::setLightArrayUniform(const char *uniform, const Light
 		params.w() = l->outerConeAngle.getCosine();
 
 		_shader->setUniform(Common::String::format("lights[%d].params", i).c_str(), params);
+	}
+
+	for (uint i = lights.size() - 1; i < maxLights; i++) {
+		// Make sure unused lights are disabled
+		_shader->setUniform(Common::String::format("lights[%d].position", i).c_str(), Math::Vector4d());
 	}
 }
 
