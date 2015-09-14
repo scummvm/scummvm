@@ -29,19 +29,6 @@
 // Common EPOC MMP makefiles option storage for ScummVM
 //
 
-/*
- * MACRO REMOVE_UNDEFINED used for bypass this bug -
- * http://sourceforge.net/p/scummvm/bugs/6437/
- * Requre change in epoc32\include\libc\sys\unistd.h by
- *
- *  #ifndef REMOVE_UNDEFINED
- *  #define remove(x)       unlink(x)
- *  #define wremove(x)       wunlink(x)
- *  #endif //REMOVE_UNDEFINED
- *
- * Affects Avalanche, CGE2 and Tsage
- */
-
 // *** Definitions
 
 OPTION			MSVC /QIfist /Ob1 /Oy /GF // /QIfist disables use of __ftol2 to avoid linker probs with MS libc: http://msdn.microsoft.com/library/default.asp?url=/library/en-us/vccore/html/vcrefQIfistSuppress_ftol.asp
