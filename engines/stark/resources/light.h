@@ -35,6 +35,10 @@ namespace Formats {
 class XRCReadStream;
 }
 
+namespace Gfx {
+class LightEntry;
+}
+
 namespace Resources {
 
 /**
@@ -44,18 +48,15 @@ class Light : public Object {
 public:
 	static const Type::ResourceType TYPE = Type::kLight;
 
-	enum SubType {
-		kAmbiant     = 0,
-		kPoint       = 1,
-		kDirectional = 2,
-		kSpot        = 4
-	};
-
 	Light(Object *parent, byte subType, uint16 index, const Common::String &name);
 	virtual ~Light();
 
 	// Resource API
 	void readData(Formats::XRCReadStream *stream) override;
+	void onPostRead() override;
+
+	/** Get the rendering object used to represent this light */
+	Gfx::LightEntry *getLightEntry();
 
 protected:
 	void printData() override;
@@ -67,6 +68,8 @@ protected:
 	float _outerConeAngle;
 	float _falloffNear;
 	float _falloffFar;
+
+	Gfx::LightEntry *_lightEntry;
 };
 
 } // End of namespace Resources

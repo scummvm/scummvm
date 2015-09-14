@@ -41,12 +41,32 @@ class ItemVisual;
 
 namespace Gfx {
 
+struct LightEntry {
+	enum Type {
+		kAmbient     = 0,
+		kPoint       = 1,
+		kDirectional = 2,
+		kSpot        = 4
+	};
+
+	Type type;
+	Math::Vector3d color;
+	Math::Vector3d position;
+	Math::Vector3d direction;
+	Math::Angle innerConeAngle;
+	Math::Angle outerConeAngle;
+	float falloffNear;
+	float falloffFar;
+};
+
+typedef Common::Array<LightEntry *> LightEntryArray;
+
 class RenderEntry {
 public:
 	RenderEntry(Resources::ItemVisual *owner, const Common::String &name);
 	virtual ~RenderEntry() {}
 
-	void render();
+	void render(const LightEntryArray &lights);
 
 	void setVisual(Visual *visual);
 	void setPosition(const Common::Point &position);

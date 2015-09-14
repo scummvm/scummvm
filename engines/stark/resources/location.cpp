@@ -87,6 +87,19 @@ Gfx::RenderEntryArray Location::listRenderEntries() {
 	return renderEntries;
 }
 
+Gfx::LightEntryArray Location::listLightEntries() {
+	Gfx::LightEntryArray lightEntries;
+
+	for (uint i = 0; i < _layers.size(); i++) {
+		Layer *layer = _layers[i];
+		if (layer->isEnabled()) {
+			lightEntries.push_back(layer->listLightEntries());
+		}
+	}
+
+	return lightEntries;
+}
+
 void Location::initScroll(const Common::Point &maxScroll) {
 	_maxScroll = maxScroll;
 	_canScroll = _maxScroll.x != 0 || _maxScroll.y != 0;

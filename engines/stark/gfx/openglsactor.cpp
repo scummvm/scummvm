@@ -37,7 +37,7 @@ namespace Gfx {
 OpenGLSActorRenderer::OpenGLSActorRenderer(Driver *gfx) :
 		VisualActor(),
 		_gfx(gfx) {
-	static const char* attributes[] = { "position1", "position2", "bone1", "bone2", "boneWeight", "texcoord", nullptr };
+	static const char* attributes[] = { "position1", "position2", "bone1", "bone2", "boneWeight", "normal", "texcoord", nullptr };
 	_shader = Graphics::Shader::fromFiles("stark_actor", attributes);
 }
 
@@ -47,7 +47,7 @@ OpenGLSActorRenderer::~OpenGLSActorRenderer() {
 	delete _shader;
 }
 
-void OpenGLSActorRenderer::render(const Math::Vector3d position, float direction) {
+void OpenGLSActorRenderer::render(const Math::Vector3d position, float direction, const LightEntryArray &lights) {
 	if (_meshIsDirty) {
 		// Update the OpenGL Buffer Objects if required
 		clearVertices();
@@ -63,13 +63,24 @@ void OpenGLSActorRenderer::render(const Math::Vector3d position, float direction
 	Math::Matrix4 view = StarkScene->getViewMatrix();
 	Math::Matrix4 projection = StarkScene->getProjectionMatrix();
 
-	Math::Matrix4 mvp = projection * view * model;
-	mvp.transpose();
+	Math::Matrix4 modelViewMatrix = view * model;
+	modelViewMatrix.transpose(); // OpenGL expects matrices transposed when compared to ResidualVM's
+
+	Math::Matrix4 projectionMatrix = projection;
+	projectionMatrix.transpose(); // OpenGL expects matrices transposed when compared to ResidualVM's
+
+	Math::Matrix4 normalMatrix = modelViewMatrix;
+	normalMatrix.invertAffineOrthonormal();
+	//normalMatrix.transpose(); // OpenGL expects matrices transposed when compared to ResidualVM's
+	//normalMatrix.transpose(); // No need to transpose twice in a row
 
 	_shader->use(true);
-	_shader->setUniform("mvp", mvp);
+	_shader->setUniform("modelViewMatrix", modelViewMatrix);
+	_shader->setUniform("projectionMatrix", projectionMatrix);
+	_shader->setUniform("normalMatrix", normalMatrix.getRotation());
 	setBoneRotationArrayUniform("boneRotation");
 	setBonePositionArrayUniform("bonePosition");
+	setLightArrayUniform("lights", lights);
 
 	Common::Array<MeshNode *> meshes = _model->getMeshes();
 	Common::Array<MaterialNode *> mats = _model->getMaterials();
@@ -89,12 +100,13 @@ void OpenGLSActorRenderer::render(const Math::Vector3d position, float direction
 			GLuint vbo = _faceVBO[*face];
 			GLuint ebo = _faceEBO[*face];
 
-			_shader->enableVertexAttribute("position1", vbo, 3, GL_FLOAT, GL_FALSE, 11 * sizeof(float), 0);
-			_shader->enableVertexAttribute("position2", vbo, 3, GL_FLOAT, GL_FALSE, 11 * sizeof(float), 12);
-			_shader->enableVertexAttribute("bone1", vbo, 1, GL_FLOAT, GL_FALSE, 11 * sizeof(float), 24);
-			_shader->enableVertexAttribute("bone2", vbo, 1, GL_FLOAT, GL_FALSE, 11 * sizeof(float), 28);
-			_shader->enableVertexAttribute("boneWeight", vbo, 1, GL_FLOAT, GL_FALSE, 11 * sizeof(float), 32);
-			_shader->enableVertexAttribute("texcoord", vbo, 2, GL_FLOAT, GL_FALSE, 11 * sizeof(float), 36);
+			_shader->enableVertexAttribute("position1", vbo, 3, GL_FLOAT, GL_FALSE, 14 * sizeof(float), 0);
+			_shader->enableVertexAttribute("position2", vbo, 3, GL_FLOAT, GL_FALSE, 14 * sizeof(float), 12);
+			_shader->enableVertexAttribute("bone1", vbo, 1, GL_FLOAT, GL_FALSE, 14 * sizeof(float), 24);
+			_shader->enableVertexAttribute("bone2", vbo, 1, GL_FLOAT, GL_FALSE, 14 * sizeof(float), 28);
+			_shader->enableVertexAttribute("boneWeight", vbo, 1, GL_FLOAT, GL_FALSE, 14 * sizeof(float), 32);
+			_shader->enableVertexAttribute("normal", vbo, 3, GL_FLOAT, GL_FALSE, 14 * sizeof(float), 36);
+			_shader->enableVertexAttribute("texcoord", vbo, 2, GL_FLOAT, GL_FALSE, 14 * sizeof(float), 48);
 			_shader->use(true);
 			_shader->setUniform("textured", tex != nullptr);
 			_shader->setUniform("color", Math::Vector3d(material->_r, material->_g, material->_b));
@@ -131,7 +143,7 @@ void OpenGLSActorRenderer::uploadVertices() {
 }
 
 uint32 OpenGLSActorRenderer::createFaceVBO(const FaceNode *face) {
-	float *vertices = new float[11 * face->_verts.size()];
+	float *vertices = new float[14 * face->_verts.size()];
 	float *vertPtr = vertices;
 
 	// Build a vertex array
@@ -149,11 +161,15 @@ uint32 OpenGLSActorRenderer::createFaceVBO(const FaceNode *face) {
 
 		*vertPtr++ = (*tri)->_boneWeight;
 
+		*vertPtr++ = (*tri)->_normal.x();
+		*vertPtr++ = (*tri)->_normal.y();
+		*vertPtr++ = (*tri)->_normal.z();
+
 		*vertPtr++ = -(*tri)->_texS;
 		*vertPtr++ = (*tri)->_texT;
 	}
 
-	uint32 vbo = Graphics::Shader::createBuffer(GL_ARRAY_BUFFER, sizeof(float) * 11 * face->_verts.size(), vertices);
+	uint32 vbo = Graphics::Shader::createBuffer(GL_ARRAY_BUFFER, sizeof(float) * 14 * face->_verts.size(), vertices);
 	delete[] vertices;
 
 	return vbo;
@@ -222,6 +238,49 @@ void OpenGLSActorRenderer::setBoneRotationArrayUniform(const char *uniform) {
 
 	glUniform4fv(rot, bones.size(), rotations);
 	delete[] rotations;
+}
+
+void OpenGLSActorRenderer::setLightArrayUniform(const char *uniform, const LightEntryArray &lights) {
+	assert(lights.size() <= 8);
+
+	if (!lights.empty()) {
+		const LightEntry *ambient = lights[0];
+		assert(ambient->type == LightEntry::kAmbient);
+		_shader->setUniform("ambientColor", ambient->color);
+	}
+
+	Math::Matrix4 viewMatrix = StarkScene->getViewMatrix();
+	Math::Matrix3 viewMatrixRot = viewMatrix.getRotation();
+
+	for (uint i = 0; i < lights.size() - 1; i++) {
+		const LightEntry *l = lights[i + 1];
+
+		Math::Vector4d worldPosition;
+		worldPosition.x() = l->position.x();
+		worldPosition.y() = l->position.y();
+		worldPosition.z() = l->position.z();
+		worldPosition.w() = 1.0;
+
+		Math::Vector4d eyePosition = viewMatrix * worldPosition;
+
+		// The light type is stored in the w coordinate of the position to save an uniform slot
+		eyePosition.w() = l->type;
+
+		Math::Vector3d worldDirection = l->direction;
+		Math::Vector3d eyeDirection = viewMatrixRot * worldDirection;
+
+		_shader->setUniform(Common::String::format("lights[%d].position", i).c_str(), eyePosition);
+		_shader->setUniform(Common::String::format("lights[%d].direction", i).c_str(), eyeDirection);
+		_shader->setUniform(Common::String::format("lights[%d].color", i).c_str(), l->color);
+
+		Math::Vector4d params;
+		params.x() = l->falloffNear;
+		params.y() = l->falloffFar;
+		params.z() = l->innerConeAngle.getCosine();
+		params.w() = l->outerConeAngle.getCosine();
+
+		_shader->setUniform(Common::String::format("lights[%d].params", i).c_str(), params);
+	}
 }
 
 } // End of namespace Gfx

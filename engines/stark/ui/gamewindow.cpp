@@ -55,13 +55,15 @@ GameWindow::GameWindow(Gfx::Driver *gfx, Cursor *cursor, ActionMenu *actionMenu,
 
 void GameWindow::onRender() {
 	// List the items to render
-	_renderEntries = StarkGlobal->getCurrent()->getLocation()->listRenderEntries();
+	Resources::Location *location = StarkGlobal->getCurrent()->getLocation();
+	_renderEntries = location->listRenderEntries();
+	Gfx::LightEntryArray lightEntries = location->listLightEntries();
 
 	// Render all the scene items
 	Gfx::RenderEntryArray::iterator element = _renderEntries.begin();
 	while (element != _renderEntries.end()) {
 		// Draw the current element
-		(*element)->render();
+		(*element)->render(lightEntries);
 
 		// Go for the next one
 		element++;

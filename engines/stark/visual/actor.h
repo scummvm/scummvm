@@ -23,16 +23,20 @@
 #ifndef STARK_VISUAL_ACTOR_H
 #define STARK_VISUAL_ACTOR_H
 
+#include "engines/stark/visual/visual.h"
+
+#include "common/array.h"
+
 #include "math/matrix4.h"
 #include "math/ray.h"
 #include "math/vector3d.h"
 
-#include "engines/stark/visual/visual.h"
 
 namespace Stark {
 
 namespace Gfx {
 class TextureSet;
+class LightEntry;
 }
 
 class Model;
@@ -53,7 +57,7 @@ public:
 	void setTime(uint32 time);
 
 	bool intersectRay(const Math::Ray &ray, const Math::Vector3d position, float direction);
-	virtual void render(const Math::Vector3d position, float direction) = 0;
+	virtual void render(const Math::Vector3d position, float direction, const Common::Array<Gfx::LightEntry *> &lights) = 0;
 
 protected:
 	Model *_model;

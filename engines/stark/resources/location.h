@@ -62,6 +62,9 @@ public:
 	/** Obtain a list of render entries for all the items in the location */
 	Gfx::RenderEntryArray listRenderEntries();
 
+	/** Obtain a list of render entries for all the lights in the location */
+	Gfx::LightEntryArray listLightEntries();
+
 	/** Initialize scrolling from Camera data */
 	void initScroll(const Common::Point &maxScroll);
 

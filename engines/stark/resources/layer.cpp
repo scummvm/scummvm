@@ -23,8 +23,10 @@
 #include "engines/stark/resources/layer.h"
 
 #include "engines/stark/formats/xrc.h"
+
 #include "engines/stark/resources/camera.h"
 #include "engines/stark/resources/item.h"
+#include "engines/stark/resources/light.h"
 
 #include "common/debug.h"
 
@@ -75,6 +77,17 @@ bool Layer::isEnabled() const {
 
 void Layer::enable(bool enabled) {
 	_enabled = enabled;
+}
+
+Gfx::LightEntryArray Layer::listLightEntries() {
+	Common::Array<Light *> lights = listChildren<Light>();
+
+	Gfx::LightEntryArray lightEntries;
+	for (uint i = 0; i < lights.size(); i++) {
+		lightEntries.push_back(lights[i]->getLightEntry());
+	}
+
+	return lightEntries;
 }
 
 Layer2D::~Layer2D() {

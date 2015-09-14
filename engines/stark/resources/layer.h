@@ -68,6 +68,9 @@ public:
 	/** Obtain the render entries for all items, including the background */
 	virtual Gfx::RenderEntryArray listRenderEntries() = 0;
 
+	/** Obtain a list of render entries for all the lights in the layer */
+	Gfx::LightEntryArray listLightEntries();
+
 	/** Scroll the layer to the specified position */
 	void setScrollPosition(const Common::Point &position);
 

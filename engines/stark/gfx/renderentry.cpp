@@ -42,7 +42,7 @@ RenderEntry::RenderEntry(Resources::ItemVisual *owner, const Common::String &nam
 	_clickable(true) {
 }
 
-void RenderEntry::render() {
+void RenderEntry::render(const LightEntryArray &lights) {
 	if (!_visual) {
 		// warning("No visual for render entry '%s'", _name.c_str());
 		return;
@@ -55,7 +55,7 @@ void RenderEntry::render() {
 
 	VisualActor *actor = _visual->get<VisualActor>();
 	if (actor) {
-		actor->render(_position3D, _direction3D);
+		actor->render(_position3D, _direction3D, lights);
 	}
 
 	VisualProp *prop = _visual->get<VisualProp>();

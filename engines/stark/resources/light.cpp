@@ -22,12 +22,15 @@
 
 #include "engines/stark/resources/light.h"
 
+#include "engines/stark/gfx/renderentry.h"
+
 #include "engines/stark/formats/xrc.h"
 
 namespace Stark {
 namespace Resources {
 
 Light::~Light() {
+	delete _lightEntry;
 }
 
 Light::Light(Object *parent, byte subType, uint16 index, const Common::String &name) :
@@ -35,7 +38,8 @@ Light::Light(Object *parent, byte subType, uint16 index, const Common::String &n
 				_outerConeAngle(0),
 				_innerConeAngle(0),
 				_falloffNear(100.0),
-				_falloffFar(500.0) {
+				_falloffFar(500.0),
+				_lightEntry(nullptr) {
 	_type = TYPE;
 }
 
@@ -50,6 +54,27 @@ void Light::readData(Formats::XRCReadStream *stream) {
 		_falloffNear = stream->readFloat();
 		_falloffFar = stream->readFloat();
 	}
+}
+
+void Light::onPostRead() {
+	Object::onPostRead();
+
+	_lightEntry = new Gfx::LightEntry();
+	_lightEntry->type = (Gfx::LightEntry::Type) _subType;
+	_lightEntry->direction = _direction;
+	_lightEntry->innerConeAngle = _innerConeAngle / 2.0;
+	_lightEntry->outerConeAngle = _outerConeAngle / 2.0;
+	_lightEntry->falloffNear = _falloffNear;
+	_lightEntry->falloffFar = _falloffFar;
+
+	// TODO: Add support for negative lights
+}
+
+Gfx::LightEntry *Light::getLightEntry() {
+	_lightEntry->color = _color;
+	_lightEntry->position = _position;
+
+	return _lightEntry;
 }
 
 void Light::printData() {

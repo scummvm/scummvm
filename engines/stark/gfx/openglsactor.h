@@ -26,6 +26,7 @@
 #include "common/hashmap.h"
 
 #include "engines/stark/hash-ptr.h"
+#include "engines/stark/gfx/renderentry.h"
 #include "engines/stark/visual/actor.h"
 
 namespace Graphics {
@@ -42,7 +43,7 @@ public:
 	OpenGLSActorRenderer(Driver *gfx);
 	virtual ~OpenGLSActorRenderer();
 
-	void render(const Math::Vector3d position, float direction) override;
+	void render(const Math::Vector3d position, float direction, const LightEntryArray &lights) override;
 
 protected:
 	typedef Common::HashMap<FaceNode *, uint32> FaceBufferMap;
@@ -59,6 +60,7 @@ protected:
 	uint32 createFaceEBO(const FaceNode *face);
 	void setBonePositionArrayUniform(const char *uniform);
 	void setBoneRotationArrayUniform(const char *uniform);
+	void setLightArrayUniform(const char *uniform, const LightEntryArray &lights);
 };
 
 } // End of namespace Gfx
