@@ -1400,7 +1400,7 @@ bool ScalpelEngine::play3doMovie(const Common::String &filename, const Common::P
 	videoDecoder->close();
 	delete videoDecoder;
 
-	if (halfSize) {
+	if (isPortrait) {
 		delete frameImageFile;
 	}
 
