@@ -1267,6 +1267,7 @@ bool ScalpelEngine::play3doMovie(const Common::String &filename, const Common::P
 	Graphics::Surface tempSurface;
 
 	Common::Point framePos(pos.x, pos.y);
+	ImageFile3DO *frameImageFile = nullptr;
 	ImageFrame *frameImage = nullptr;
 	bool frameShown = false;
 
@@ -1283,7 +1284,7 @@ bool ScalpelEngine::play3doMovie(const Common::String &filename, const Common::P
 			framePos.y -= 8; // frame is 8 pixels on left + top, and 7 pixels on right + bottom
 		}
 
-		ImageFile3DO *frameImageFile = new ImageFile3DO("vidframe.cel", kImageFile3DOType_Cel);
+		frameImageFile = new ImageFile3DO("vidframe.cel", kImageFile3DOType_Cel);
 		frameImage = &(*frameImageFile)[0];
 	}
 
@@ -1400,7 +1401,7 @@ bool ScalpelEngine::play3doMovie(const Common::String &filename, const Common::P
 	delete videoDecoder;
 
 	if (halfSize) {
-		delete frameImage;
+		delete frameImageFile;
 	}
 
 	// Restore scene
