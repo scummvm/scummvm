@@ -100,17 +100,13 @@ void main()
 	vec3 lightColor = ambientColor;
 	for (int i = 0; i < maxLights; i++) {
 		int type = int(lights[i].position.w);
-		switch (type) {
-		case lightTypePoint:
+		if (type == lightTypePoint) {
 			lightColor += pointLight(lights[i].position.xyz, lights[i].color, lights[i].params.x, lights[i].params.y);
-			break;
-		case lightTypeDirectional:
+		} else if (type == lightTypeDirectional) {
 			lightColor += directionalLight(lights[i].direction, lights[i].color);
-			break;
-		case lightTypeSpot:
+		} else if (type == lightTypeSpot) {
 			lightColor += spotLight(lights[i].position.xyz, lights[i].color, lights[i].params.x, lights[i].params.y,
 									lights[i].direction, lights[i].params.z, lights[i].params.w);
-			break;
 		}
 	}
 
