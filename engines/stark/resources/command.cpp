@@ -437,6 +437,11 @@ Command *Command::opItemLookAt(Script *script, const ResourceReference &itemRef,
 	Math::Vector3d targetPosition = getObjectPosition(objRef);
 	Math::Vector3d targetDirection = targetPosition - currentPosition;
 
+	if (targetDirection == Math::Vector3d()) {
+		// Can't look at a target if we are sitting on top of it
+		return nextCommand();
+	}
+
 	Turn *movement = new Turn(item);
 	movement->setTargetDirection(targetDirection);
 	movement->start();
