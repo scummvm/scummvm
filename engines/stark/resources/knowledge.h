@@ -56,6 +56,7 @@ public:
 
 	// Resource API
 	void readData(Formats::XRCReadStream *stream) override;
+	void saveLoad(ResourceSerializer *serializer) override;
 
 	/** Define the value for boolean Knowledge elements */
 	void setBooleanValue(bool value);
@@ -69,7 +70,6 @@ public:
 	/** Obtain the value for integer Knowledge elements */
 	int32 getIntegerValue();
 
-	void saveLoad(ResourceSerializer *serializer) override;
 protected:
 	void printData() override;
 
