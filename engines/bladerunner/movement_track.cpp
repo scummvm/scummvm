@@ -39,7 +39,7 @@ namespace BladeRunner {
 		_lastIndex = -1;
 		_hasNext = 0;
 		_paused = 0;
-		for (int i = 0; i < sizeof(this->_entries); i++)
+		for (int i = 0; i < 100; i++)
 		{
 			_entries[i].waypointId = -1;
 			_entries[i].delay = -1;

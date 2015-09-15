@@ -20,41 +20,44 @@
 *
 */
 
-#ifndef BLADERUNNER_ACTOR_WALK_H
-#define BLADERUNNER_ACTOR_WALK_H
+#ifndef BLADERUNNER_ACTOR_COMBAT_H
+#define BLADERUNNER_ACTOR_COMBAT_H
 
 #include "bladerunner/bladerunner.h"
+
 #include "bladerunner/vector.h"
 
-namespace BladeRunner
-{
-	struct ActorWalkEntry
-	{
-		int _actorId;
-		int _present;
-	};
-
-	class ActorWalk
+namespace BladeRunner {
+	
+	class ActorCombat
 	{
 		BladeRunnerEngine *_vm;
 	private:
-		int _walking;
-		int _running;
-		Vector3 _wanted;
-		Vector3 _unknown;
-		Vector3 _start;
-		Vector3 _end;
-		int facing;
-		ActorWalkEntry _actors[20];
-		int _actorsCount;
+		int _actorId;
+		int _combatOn;
+		int _field2;
+		int _field3;
+		int _otherActorId;
+		int _field5;
+		int _field6;
+		int _field7;
+		int _field8;
+		int _field9;
+		int _field10;
+		int _field11;
+		int _field12;
+		int _actorHp;
+		int _field14;
 		int _field15;
-		int _status;
-	public:
-		ActorWalk(BladeRunnerEngine *vm);
-		~ActorWalk();
+		Vector3 actorPosition;
+		Vector3 otherActorPosition;
+		int _availableCoversCount;
+		int _availableFleeWaypointsCount;
+		int _field24;
 
-		bool isWalking();
-		void stop(int actorId, bool unknown, int animationMode, int notused);
+	public:
+		ActorCombat(BladeRunnerEngine *vm);
+		~ActorCombat();
 
 	};
 }

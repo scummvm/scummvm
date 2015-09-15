@@ -20,43 +20,36 @@
 *
 */
 
-#ifndef BLADERUNNER_ACTOR_WALK_H
-#define BLADERUNNER_ACTOR_WALK_H
+#ifndef BLADERUNNER_REGIONS_H
+#define BLADERUNNER_REGIONS_H
 
 #include "bladerunner/bladerunner.h"
-#include "bladerunner/vector.h"
 
-namespace BladeRunner
-{
-	struct ActorWalkEntry
+#include "common/rect.h"
+
+
+namespace BladeRunner {
+	struct Region
 	{
-		int _actorId;
+		Common::Rect _rectangle;
+		int _type;
 		int _present;
 	};
 
-	class ActorWalk
+	class Regions
 	{
-		BladeRunnerEngine *_vm;
 	private:
-		int _walking;
-		int _running;
-		Vector3 _wanted;
-		Vector3 _unknown;
-		Vector3 _start;
-		Vector3 _end;
-		int facing;
-		ActorWalkEntry _actors[20];
-		int _actorsCount;
-		int _field15;
-		int _status;
+		Region* _regions;
+		bool _enabled;
 	public:
-		ActorWalk(BladeRunnerEngine *vm);
-		~ActorWalk();
+		Regions();
+		~Regions();
 
-		bool isWalking();
-		void stop(int actorId, bool unknown, int animationMode, int notused);
+		bool add(int index, Common::Rect rect, int type);
+		bool remove(int index);
+		void clear();
 
+		void setEnabled(bool enabled);
 	};
 }
-
 #endif

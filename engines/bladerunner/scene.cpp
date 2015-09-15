@@ -49,7 +49,8 @@ bool Scene::open(int setId, int sceneId, bool isLoadingGame) {
 	if (isLoadingGame) {
 		// TODO: Set up overlays
 	} else {
-		// TODO: Clear regions
+		_regions->clear();
+		_exits->clear();
 		// reset aesc
 		// TODO: Destroy all overlays
 		_defaultLoop = 0;
@@ -93,17 +94,17 @@ bool Scene::open(int setId, int sceneId, bool isLoadingGame) {
 
 	// TODO: Set actor position from scene info
 	//advance frame 0
-	_vm->_playerActor->set_at_xyz(_actorStartPosition, _actorStartFacing);
+	_vm->_playerActor->set_at_xyz(_actorStartPosition, _actorStartFacing, false, 0, 0);
 	// TODO: Set actor set
 	_vm->_script->SceneLoaded();
 
-	_vm->_sceneObjects->reset();
+	_vm->_sceneObjects->clear();
 	
 	// Init click map
 	int actorCount = _vm->_gameInfo->getActorCount();
 	for (int i = 0; i != actorCount; ++i) {
 		Actor *actor = _vm->_actors[i];
-		if (actor->getSet() == setId) {
+		if (actor->getSetId() == setId) {
 			_vm->_sceneObjects->addActor(
 				i,
 				actor->getBoundingBox(),
@@ -115,7 +116,7 @@ bool Scene::open(int setId, int sceneId, bool isLoadingGame) {
 		}
 	}
 	
-	_set->addAllObjectsToScene(_vm->_sceneObjects);
+	_set->addObjectsToScene(_vm->_sceneObjects);
 	//add all items to scene
 	//calculate walking obstacles??
 
@@ -131,6 +132,8 @@ int Scene::advanceFrame(Graphics::Surface &surface, uint16 *&zBuffer) {
 	if (frame >= 0) {
 		surface.copyFrom(*_vqaPlayer.getSurface());
 		memcpy(zBuffer, _vqaPlayer.getZBuffer(), 640*480*2);
+
+		memcpy(surface.getPixels(), _vqaPlayer.getZBuffer(), 640 * 480 * 2);
 	}
 	return frame;
 }
@@ -138,6 +141,23 @@ int Scene::advanceFrame(Graphics::Surface &surface, uint16 *&zBuffer) {
 void Scene::setActorStart(Vector3 position, int facing) {
 	_actorStartPosition = position;
 	_actorStartFacing = facing;
+}
+
+
+int Scene::getSetId() {
+	return _setId;
+}
+
+int Scene::findObject(char* objectName) {
+	return _set->findObject(objectName);
+}
+
+bool Scene::objectSetHotMouse(int objectId) {
+	return _set->objectSetHotMouse(objectId);
+}
+
+bool Scene::objectGetBoundingBox(int objectId, BoundingBox* boundingBox) {
+	return _set->objectGetBoundingBox(objectId, boundingBox);
 }
 
 } // End of namespace BladeRunner

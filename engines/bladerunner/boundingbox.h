@@ -28,7 +28,7 @@
 namespace BladeRunner {
 
 class BoundingBox {
-public:
+private:
 	Vector3 _vertices[2];
 
 public:
@@ -36,7 +36,11 @@ public:
 	BoundingBox(float x0, float y0, float z0, float x1, float y1, float z1);
 
 	void expand(float x0, float y0, float z0, float x1, float y1, float z1);
-	bool isXYZInside(float x, float y, float z);
+	bool inside(float x, float y, float z);
+	void setXyz(float x0, float y0, float z0, float x1, float y1, float z1);
+	void getXyz(float* x0, float* y0, float* z0, float* x1, float* y1, float* z1);
+	float getZ0();
+	float getZ1();
 };
 
 } // End of namespace BladeRunner

@@ -35,8 +35,8 @@
 namespace BladeRunner {
 
 class BladeRunnerEngine;
-
 class VQADecoder;
+class Scene;
 
 struct Object {
 	char        _name[20];
@@ -56,6 +56,8 @@ struct Walkbox {
 };
 
 class Set {
+	friend class Scene;
+
 	BladeRunnerEngine *_vm;
 
 	uint32      _objectCount;
@@ -73,9 +75,17 @@ public:
 	~Set();
 
 	bool open(const Common::String &name);
-	void addAllObjectsToScene(SceneObjects *sceneObjects);
+	void addObjectsToScene(SceneObjects *sceneObjects);
 
-	
+	int findWalkbox(float x, float z);
+	int findObject(char* objectName);
+
+	bool objectSetHotMouse(int objectId);
+	bool objectGetBoundingBox(int objectId, BoundingBox *boundingBox);
+
+private:
+	bool isXzInWalkbox(float x, float z, Walkbox* walkbox);
+
 };
 
 } // End of namespace BladeRunner

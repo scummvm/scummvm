@@ -44,6 +44,8 @@
 #include "bladerunner/slice_renderer.h"
 #include "bladerunner/text_resource.h"
 #include "bladerunner/vqa_decoder.h"
+#include "bladerunner/waypoints.h"
+#include "bladerunner/items.h"
 
 #include "common/array.h"
 #include "common/error.h"
@@ -89,6 +91,8 @@ BladeRunnerEngine::~BladeRunnerEngine() {
 
 	// delete[] _zBuffer1;
 	// delete[] _zBuffer2;
+	delete _items;
+	delete _waypoints;
 	delete _lights;
 	delete _settings;
 	delete _script;
@@ -150,7 +154,7 @@ bool BladeRunnerEngine::startup(bool hasSavegames) {
 		}
 	}
 
-	// TODO: World waypoints
+	_waypoints = new Waypoints(this, _gameInfo->getWaypointCount());
 
 	// TODO: Cover waypoints
 
@@ -171,7 +175,7 @@ bool BladeRunnerEngine::startup(bool hasSavegames) {
 	_gameFlags = new GameFlags();
 	_gameFlags->setFlagCount(_gameInfo->getFlagCount());
 
-	// TODO: Items
+	_items = new Items(this);
 
 	// Setup sound output
 
@@ -529,6 +533,7 @@ void BladeRunnerEngine::gameTick() {
 			// TODO: Draw dialogue menu
 
 			Common::Point p = _eventMan->getMousePos();
+			_mouse->tick(p.x, p.y);
 			_mouse->draw(_surface2, p.x, p.y);
 
 			// TODO: Process AUD (audio in Replicant)

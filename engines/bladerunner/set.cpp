@@ -117,13 +117,84 @@ bool Set::open(const Common::String &name) {
 }
 
 
-void Set::addAllObjectsToScene(SceneObjects* sceneObjects)
+void Set::addObjectsToScene(SceneObjects* sceneObjects)
 {
 	uint32 i;
-	for (i = 0; i < _objectCount; i++)
-	{
+	for (i = 0; i < _objectCount; i++) {
 		sceneObjects->addObject(i + SCENE_OBJECTS_OBJECTS_OFFSET, &_objects[i]._bbox, _objects[i]._isClickable, _objects[i]._isObstacle, _objects[i]._unknown1, _objects[i]._isCombatTarget);
 	}
+}
+
+
+int Set::findWalkbox(float x, float z) {
+	int i;
+	float altitude = 0.0f;
+	int foundWalkboxId = -1;
+	for (i = 0; i < _walkboxCount; i++) {
+		if (isXzInWalkbox(x, z, &_walkboxes[i])) {
+			if (foundWalkboxId == -1 || altitude < _walkboxes[i]._altitude) {
+				altitude = _walkboxes[i]._altitude;
+				foundWalkboxId = i;
+			}
+		}
+	}
+	return foundWalkboxId;
+}
+
+bool Set::isXzInWalkbox(float x, float z, Walkbox* walkbox) {
+	int found = 0;
+	int i;
+
+	float lastX = walkbox->_vertices[walkbox->_vertexCount - 1].x;
+	float lastZ = walkbox->_vertices[walkbox->_vertexCount - 1].z;
+	for (i = 0; i < walkbox->_vertexCount; i++) {
+
+		float currentX = walkbox->_vertices[i].x;
+		float currentZ = walkbox->_vertices[i].z;
+
+		if ((currentZ > z && z >= lastZ) || (currentZ <= z && z < lastZ)) {
+			float lineX = (lastX - currentX) / (lastZ - currentZ) * (z - currentZ) + currentX;
+			if (x < lineX)
+				found++;
+		}
+
+	}
+	return found & 1;
+}
+
+
+int Set::findObject(char* objectName) {
+	int i;	
+	for (i = 0; i < _objectCount; i++) {
+		if (scumm_stricmp(objectName, _objects[i]._name) == 0) {
+			return i;
+		}
+	}
+	return -1;
+}
+
+bool Set::objectSetHotMouse(int objectId) {
+	if(!_objects || objectId < 0 || objectId >= _objectCount) {
+		return false;
+	}
+	
+	_objects[objectId]._isHotMouse = true;
+	return true;
+}
+
+bool Set::objectGetBoundingBox(int objectId, BoundingBox* boundingBox) {
+	assert(boundingBox);
+
+	if (!_objects || objectId < 0 || objectId >= _objectCount) {
+		boundingBox->setXyz(0, 0, 0, 0, 0, 0);
+		return false;
+	}
+	float x0, y0, z0, x1, y1, z1;
+
+	_objects[objectId]._bbox.getXyz(&x0, &y0, &z0, &x1, &y1, &z1);
+	boundingBox->setXyz(x0, y0, z0, x1, y1, z1);
+
+	return true;
 }
 
 } // End of namespace BladeRunner

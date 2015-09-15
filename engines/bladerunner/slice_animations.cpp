@@ -170,4 +170,10 @@ void *SliceAnimations::getFramePtr(uint32 animation, uint32 frame) {
 	return (byte*)_pages[page]._data + pageOffset;
 }
 
+
+int SliceAnimations::getNumberOfFrames(int animationId) {
+	if (animationId > _animations.size())
+		return 0;
+	return _animations[animationId].frameCount;
+}
 } // End of namespace BladeRunner

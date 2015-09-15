@@ -53,7 +53,7 @@ class SliceRenderer {
 	Lights     *_lights;
 	SetEffects *_setEffects;
 
-	void                     *_sliceFramePtr;
+	void       *_sliceFramePtr;
 
 	// Animation frame data
 	Vector2 _frameFront;
@@ -100,6 +100,8 @@ public:
 
 	void drawFrame(Graphics::Surface &surface, uint16 *zbuffer);
 
+
+	void preload(int animationId);
 
 };
 

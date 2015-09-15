@@ -28,6 +28,7 @@
 #include "bladerunner/set.h"
 //#include "bladerunner/view.h"
 #include "bladerunner/vqa_player.h"
+#include "bladerunner/regions.h"
 
 namespace BladeRunner {
 
@@ -48,6 +49,8 @@ public:
 	Vector3     _actorStartPosition;
 	int         _actorStartFacing;
 	bool        _playerWalkedIn;
+	Regions*    _regions;
+	Regions*    _exits;
 
 public:
 	Scene(BladeRunnerEngine *vm)
@@ -59,16 +62,24 @@ public:
 		  _defaultLoop(0),
 		  _nextSetId(-1),
 		  _nextSceneId(-1),
-		  _playerWalkedIn(false)
+		  _playerWalkedIn(false),
+		  _regions(new Regions()),
+		  _exits(new Regions())
 	{}
 
 	~Scene() {
 		delete _set;
+		delete _regions;
+		delete _exits;
 	}
 
 	bool open(int setId, int sceneId, bool isLoadingGame);
 	int  advanceFrame(Graphics::Surface &surface, uint16 *&zBuffer);
 	void setActorStart(Vector3 position, int facing);
+	int getSetId();
+	int findObject(char *objectName);
+	bool objectSetHotMouse(int objectId);
+	bool objectGetBoundingBox(int objectId, BoundingBox *boundingBox);
 };
 
 } // End of namespace BladeRunner

@@ -32,7 +32,6 @@
 
 namespace BladeRunner {
 	class BladeRunnerEngine;
-	class SceneObject;
 
 	enum SceneObjectType
 	{
@@ -47,6 +46,21 @@ namespace BladeRunner {
 #define SCENE_OBJECTS_ITEMS_OFFSET 74
 #define SCENE_OBJECTS_OBJECTS_OFFSET 198
 
+	struct SceneObject
+	{
+		int _sceneObjectId;
+		SceneObjectType _sceneObjectType;
+		BoundingBox _boundingBox;
+		Common::Rect _screenRectangle;
+		float _distanceToCamera;
+		int _present;
+		int _isClickable;
+		int _isObstacle;
+		int _unknown1;
+		int _isCombatTarget;
+		int _isMoving;
+		int _isRetired;
+	};
 
 
 	class SceneObjects {
@@ -60,37 +74,19 @@ namespace BladeRunner {
 	public:
 		SceneObjects(BladeRunnerEngine *vm, View *view);
 		~SceneObjects();
-		void reset();
 		bool addActor(int sceneObjectId, BoundingBox* boundingBox, Common::Rect* screenRectangle, uint8 isClickable, uint8 unknown1, uint8 isCombatTarget, uint8 isRetired);
 		bool addObject(int sceneObjectId, BoundingBox* boundingBox, uint8 isClickable, uint8 isObstacle, uint8 unknown1, uint8 isCombatTarget);
 		bool addItem(int sceneObjectId, BoundingBox* boundingBox, Common::Rect* screenRectangle, uint8 isCombatTarget, uint8 isObstacle);
 		bool remove(int sceneObjectId);
-		int findByXYZ(int* clickable, int* obstacle, int* targetable, float x, float y, float z, int firstClickable, int firstObstacle, int firstTargetable);		
+		void clear();
+		int findByXYZ(int *isClickable, int *isObstacle, int *isCombatTarget, float x, float y, float z, int mustBeClickable, int mustBeObstacle, int mustBeCombatTarget);
+		void setMoving(int sceneObjectId, bool isMoving);
 	private:
 		int findById(int sceneObjectId);
 		bool addSceneObject(int sceneObjectId, SceneObjectType sceneObjectType, BoundingBox* boundingBox, Common::Rect* screenRectangle, uint8 isClickable, uint8 isObstacle, uint8 unknown1, uint8 isCombatTarget, uint unknown2, uint isRetired);
 		int findEmpty();
 	};
 
-	class SceneObject
-	{
-		friend class SceneObjects;
-	private:
-		int _sceneObjectId;
-		SceneObjectType _sceneObjectType;
-		BoundingBox _boundingBox;
-		Common::Rect _screenRectangle;
-		float _distanceToCamera;
-		int _present;
-		int _isClickable;
-		int _isObstacle;
-		int _unknown1;
-		int _isCombatTarget;
-		int _unknown2;
-		int _isRetired;
-	public:
-		SceneObject();
-		~SceneObject();
-	};
+
 }
 #endif

@@ -20,42 +20,37 @@
 *
 */
 
-#ifndef BLADERUNNER_ACTOR_WALK_H
-#define BLADERUNNER_ACTOR_WALK_H
+#ifndef BLADERUNNER_WAYPOINTS_H
+#define BLADERUNNER_WAYPOINTS_H
 
 #include "bladerunner/bladerunner.h"
 #include "bladerunner/vector.h"
 
-namespace BladeRunner
-{
-	struct ActorWalkEntry
-	{
-		int _actorId;
-		int _present;
+#include "common/array.h"
+
+
+namespace BladeRunner {
+
+	struct Waypoint {
+		int _setId;
+		Vector3 _position;
+		bool _present;
 	};
 
-	class ActorWalk
-	{
+	class Waypoints {
 		BladeRunnerEngine *_vm;
 	private:
-		int _walking;
-		int _running;
-		Vector3 _wanted;
-		Vector3 _unknown;
-		Vector3 _start;
-		Vector3 _end;
-		int facing;
-		ActorWalkEntry _actors[20];
-		int _actorsCount;
-		int _field15;
-		int _status;
+		int       _count;
+		Waypoint *_waypoints;
 	public:
-		ActorWalk(BladeRunnerEngine *vm);
-		~ActorWalk();
+		Waypoints(BladeRunnerEngine *vm, int count);
+		~Waypoints();
 
-		bool isWalking();
-		void stop(int actorId, bool unknown, int animationMode, int notused);
+		void getXyz(int waypointId, float *x, float *y, float *z);
+		int getSetId(int waypointId);
 
+		bool set(int waypointId, int setId, Vector3 position);
+		bool reset(int waypointId);
 	};
 }
 

@@ -55,6 +55,8 @@ class SliceRenderer;
 class TextResource;
 class Lights;
 class View;
+class Waypoints;
+class Items;
 
 
 class BladeRunnerEngine : public Engine {
@@ -81,6 +83,8 @@ public:
 	int             *_gameVars;
 
 	Lights          *_lights;
+	Waypoints       *_waypoints;
+	Items           *_items;
 
 	TextResource    *_textActorNames;
 	TextResource    *_textCrimes;
@@ -104,6 +108,9 @@ public:
 	uint16            *_zBuffer2;
 
 	Common::RandomSource _rnd;
+
+	bool _playerActorIdle;
+	bool _playerDead;
 
 private:
 	static const int kArchiveCount = 10;

@@ -24,8 +24,10 @@
 
 #include "bladerunner/bladerunner.h"
 #include "bladerunner/shape.h"
+#include "bladerunner/scene.h"
 
 #include "graphics/surface.h"
+#include "common/rect.h""
 
 namespace BladeRunner {
 
@@ -245,6 +247,50 @@ void Mouse::updateCursorFrame() {
 		if (++_frame > 2)
 			_frame = 0;
 	}
+}
+
+void Mouse::tick(int x, int y)
+{
+	if (!_vm->playerHasControl() || isDisabled())
+		return;
+
+	Vector3 mousePosition;
+
+	getXYZ(x, y, &mousePosition);
+	int isClickable = 0;
+	int isObstacle = 0;
+	int isCombatTarget = 0;
+	int sceneObjectId = _vm->_sceneObjects->findByXYZ(&isClickable, &isObstacle, &isCombatTarget, mousePosition.x, mousePosition.y, mousePosition.z, 1, 0, 1);
+	//debug("mouse tick: objectid = %d", sceneObjectId);
+}
+
+void Mouse::getXYZ(int x, int y, Vector3* mousePosition)
+{
+	if (_vm->_scene->_setId == -1)
+		return;
+
+	int screenRight = 640 - x;
+	int screenDown = 480 - y;
+	
+	float zcoef = 1.0f / tan(_vm->_view->_fovX / 2.0f);
+
+	float x3d = (2.0f / 640.0f * screenRight - 1)  * zcoef / (1*zcoef);
+	float y3d = (2.0f / 480.0f * screenDown- 1) / (4/3 * zcoef) * zcoef;
+
+	uint16 zbufval = _vm->_zBuffer1[x + y * 480];
+
+	Vector3 vector;
+	vector.z = zbufval / 25.5f;
+	vector.x = vector.z / zcoef * x3d;
+	vector.y = vector.z / zcoef * y3d;
+
+	Matrix4x3 matrix = _vm->_view->_frameViewMatrix;
+	matrix.unknown();
+	vector = matrix * vector;
+
+	mousePosition->x = vector.x;
+	mousePosition->y = vector.y;
+	mousePosition->z = vector.z;
 }
 
 } // End of namespace BladeRunner

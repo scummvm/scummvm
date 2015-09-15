@@ -20,42 +20,30 @@
 *
 */
 
-#ifndef BLADERUNNER_ACTOR_WALK_H
-#define BLADERUNNER_ACTOR_WALK_H
+#ifndef BLADERUNNER_ITEMS_H
+#define BLADERUNNER_ITEMS_H
 
 #include "bladerunner/bladerunner.h"
-#include "bladerunner/vector.h"
+#include "bladerunner/item.h"
 
-namespace BladeRunner
-{
-	struct ActorWalkEntry
-	{
-		int _actorId;
-		int _present;
-	};
+#include "common/array.h"
+#include "common/rect.h"
 
-	class ActorWalk
-	{
+namespace BladeRunner {	
+
+	class Items {
 		BladeRunnerEngine *_vm;
 	private:
-		int _walking;
-		int _running;
-		Vector3 _wanted;
-		Vector3 _unknown;
-		Vector3 _start;
-		Vector3 _end;
-		int facing;
-		ActorWalkEntry _actors[20];
-		int _actorsCount;
-		int _field15;
-		int _status;
+		Common::Array<Item> _items;
+
 	public:
-		ActorWalk(BladeRunnerEngine *vm);
-		~ActorWalk();
+		Items(BladeRunnerEngine *vm);
+		~Items();
+		
+		void getXyz(int itemId, float *x, float *y, float *z);
 
-		bool isWalking();
-		void stop(int actorId, bool unknown, int animationMode, int notused);
-
+	private:
+		int findItem(int itemId);
 	};
 }
 

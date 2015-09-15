@@ -416,13 +416,17 @@ void SliceRenderer::drawSlice(int slice, uint16 *frameLinePtr, uint16 *zbufLineP
 	}
 }
 
-void SliceRenderer::setLights(Lights* lights)
-{
+void SliceRenderer::setLights(Lights* lights){
 	_lights = lights;
 }
 
-void SliceRenderer::setSetEffects(SetEffects* setEffects)
-{
+void SliceRenderer::setSetEffects(SetEffects* setEffects){
 	_setEffects = setEffects;
+}
+
+void SliceRenderer::preload(int animationId) {
+	int i;
+	for (i = 0; i < _vm->_sliceAnimations->getNumberOfFrames(animationId); i++)
+		_vm->_sliceAnimations->getFramePtr(animationId, i);
 }
 } // End of namespace BladeRunner

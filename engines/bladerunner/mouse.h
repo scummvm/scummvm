@@ -28,8 +28,9 @@ namespace Graphics {
 }
 
 namespace BladeRunner {
+	class Vector3;
 
-class BladeRunnerEngine;
+	class BladeRunnerEngine;
 
 class Mouse {
 	BladeRunnerEngine *_vm;
@@ -56,6 +57,10 @@ public:
 
 	void draw(Graphics::Surface &surface, int x, int y);
 	void updateCursorFrame();
+
+	void tick(int x, int y);
+private:
+	void Mouse::getXYZ(int x, int y, Vector3* mousePosition);
 };
 
 } // End of namespace BladeRunner

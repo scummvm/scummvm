@@ -20,43 +20,48 @@
 *
 */
 
-#ifndef BLADERUNNER_ACTOR_WALK_H
-#define BLADERUNNER_ACTOR_WALK_H
+#ifndef BLADERUNNER_ITEM_H
+#define BLADERUNNER_ITEM_H
 
 #include "bladerunner/bladerunner.h"
-#include "bladerunner/vector.h"
+#include "bladerunner/boundingbox.h"
 
-namespace BladeRunner
-{
-	struct ActorWalkEntry
-	{
-		int _actorId;
-		int _present;
-	};
+#include "common/array.h"
+#include "common/rect.h"
 
-	class ActorWalk
-	{
-		BladeRunnerEngine *_vm;
+namespace BladeRunner {
+	class Items;
+
+	class Item {
+		friend class Items;
 	private:
-		int _walking;
-		int _running;
-		Vector3 _wanted;
-		Vector3 _unknown;
-		Vector3 _start;
-		Vector3 _end;
-		int facing;
-		ActorWalkEntry _actors[20];
-		int _actorsCount;
-		int _field15;
-		int _status;
+		int          _itemId;
+		int          _setId;
+
+		BoundingBox  _boundingBox;
+		Common::Rect _screenRectangle;
+		int          _animationId;
+		Vector3      _position;
+		int          _facing;
+		float        _angle;
+		int          _width;
+		int          _height;
+		//int field_1C8;
+		int          _target;
+		//float field_1D0;
+		int          _targetable;
+		int          _spinning;
+		int          _angleChange;
+		float        _cameraAngle;
+		int          _obstacle;
+		//int field_1E8;
 	public:
-		ActorWalk(BladeRunnerEngine *vm);
-		~ActorWalk();
+		Item();
+		~Item();
 
-		bool isWalking();
-		void stop(int actorId, bool unknown, int animationMode, int notused);
-
+		void getXyz(float *x, float *y, float *z);
 	};
+
 }
 
 #endif
