@@ -22,9 +22,9 @@
 
 #include "engines/stark/resources/light.h"
 
-#include "engines/stark/gfx/renderentry.h"
-
 #include "engines/stark/formats/xrc.h"
+#include "engines/stark/gfx/renderentry.h"
+#include "engines/stark/services/stateprovider.h"
 
 namespace Stark {
 namespace Resources {
@@ -68,6 +68,13 @@ void Light::onPostRead() {
 	_lightEntry->falloffFar = _falloffFar;
 
 	// TODO: Add support for negative lights
+}
+
+void Light::saveLoad(ResourceSerializer *serializer) {
+	Object::saveLoad(serializer);
+
+	serializer->syncAsVector3d(_color);
+	serializer->syncAsVector3d(_position);
 }
 
 void Light::setColor(int32 red, int32 green, int32 blue) {

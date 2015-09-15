@@ -54,6 +54,7 @@ public:
 	// Resource API
 	void readData(Formats::XRCReadStream *stream) override;
 	void onPostRead() override;
+	void saveLoad(ResourceSerializer *serializer) override;
 
 	/** Get the rendering object used to represent this light */
 	Gfx::LightEntry *getLightEntry();
