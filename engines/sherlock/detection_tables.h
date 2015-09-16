@@ -76,6 +76,24 @@ static const SherlockGameDescription gameDescriptions[] = {
 	},
 
 	{
+		// Case of the Serrated Scalpel - German
+		// Provided by max565
+		{
+			"scalpel",
+			0, {
+				{"talk.lib", 0, "3d813fd8505b391a1f8b3a16b1aa7f2e", 284195},
+				{"music.lib", 0, "68ae2f7684ecf903bd60a00bb6bae195", 366465},
+				AD_LISTEND },
+				Common::DE_DEU,
+				Common::kPlatformDOS,
+				ADGF_TESTING,
+				GUIO6(GUIO_NOSPEECH, GAMEOPTION_ORIGINAL_SAVES, GAMEOPTION_FADE_STYLE, GAMEOPTION_HELP_STYLE,
+				GAMEOPTION_PORTRAITS_ON, GAMEOPTION_WINDOW_STYLE)
+		},
+		GType_SerratedScalpel,
+	},
+
+	{
 		// Case of the Serrated Scalpel - Spanish CD (from multilingual CD)
 		// Provided by m_kiewitz
 		{
@@ -175,6 +193,21 @@ static const SherlockGameDescription gameDescriptions[] = {
 			"CD",
 			AD_ENTRY1s("talk.lib", "5027aa72f0d263ed3b1c764a6c397911", 873864),
   			Common::DE_DEU,
+			Common::kPlatformDOS,
+			ADGF_TESTING,
+			GUIO3(GAMEOPTION_ORIGINAL_SAVES, GAMEOPTION_HELP_STYLE, GAMEOPTION_TRANSPARENT_WINDOWS)
+		},
+		GType_RoseTattoo,
+	},
+
+	{
+		// Case of the Rose Tattoo - Spanish CD
+		// Provided by dianiu
+		{
+			"rosetattoo",
+			"CD",
+			AD_ENTRY1s("talk.lib", "4f3ccf50e1012445624569cd605d7449", 783713),
+			Common::ES_ESP,
 			Common::kPlatformDOS,
 			ADGF_TESTING,
 			GUIO3(GAMEOPTION_ORIGINAL_SAVES, GAMEOPTION_HELP_STYLE, GAMEOPTION_TRANSPARENT_WINDOWS)
