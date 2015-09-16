@@ -102,7 +102,7 @@ RewindableAudioStream *makeAIFFStream(Common::SeekableReadStream *stream, Dispos
 	bool foundSSND = false;
 
 	uint16 channels = 0, bitsPerSample = 0;
-	uint32 blockAlign = 0, rate = 0;
+	uint32 rate = 0;
 	uint32 codec = kCodecPCM; // AIFF default
 	Common::SeekableReadStream *dataStream = 0;
 
@@ -128,7 +128,7 @@ RewindableAudioStream *makeAIFFStream(Common::SeekableReadStream *stream, Dispos
 		case MKTAG('S', 'S', 'N', 'D'):
 			foundSSND = true;
 			/* uint32 offset = */ stream->readUint32BE();
-			blockAlign = stream->readUint32BE();
+			/* uint32 blockAlign = */ stream->readUint32BE();
 			dataStream = new Common::SeekableSubReadStream(stream, stream->pos(), stream->pos() + length - 8, disposeAfterUse);
 			break;
 		case MKTAG('F', 'V', 'E', 'R'):
