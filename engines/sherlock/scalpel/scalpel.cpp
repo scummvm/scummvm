@@ -690,14 +690,15 @@ bool ScalpelEngine::showCityCutscene3DO() {
 	screen.clear();
 	bool finished = _events->delay(2500, true);
 
-	// rain.aiff seems to be playing in an endless loop until
-	// sherlock logo fades away TODO
-
 	if (finished) {
 		finished = _events->delay(2500, true);
 
 		// Play intro music
 		_music->loadSong("prolog");
+
+		// Loop rain.aiff until the Sherlock logo fades away.
+		// TODO: The volume is just a guess.
+		_sound->playAiff("prologue/sounds/rain.aiff", 15, true);
 
 		// Fade screen to grey
 		screen._backBuffer1.fill(0xCE59); // RGB565: 25, 50, 25 (grey)
@@ -762,6 +763,8 @@ bool ScalpelEngine::showCityCutscene3DO() {
 
 	if (finished)
 		finished = _music->waitUntilMSec(33600, 0, 0, 2000);
+
+	_sound->stopAiff();
 
 	if (finished) {
 		// Fade to black

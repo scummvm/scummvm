@@ -46,6 +46,7 @@ private:
 	SherlockEngine *_vm;
 	Audio::Mixer *_mixer;
 	Audio::SoundHandle _scalpelEffectsHandle;
+	Audio::SoundHandle _aiffHandle;
 	Audio::SoundHandle _tattooEffectsHandle[MAX_MIXER_CHANNELS];
 	Audio::SoundHandle _speechHandle;
 	int _curPriority;
@@ -87,6 +88,16 @@ public:
 	 * Play the sound in the specified resource
 	 */
 	bool playSound(const Common::String &name, WaitType waitType, int priority = 100, const char *libraryFilename = nullptr);
+
+	/**
+	 * Play the specified AIFF file. (Used for the 3DO Scalpel intro.)
+	 */
+	void playAiff(const Common::String &name, int volume = Audio::Mixer::kMaxChannelVolume, bool loop = false);
+
+	/**
+	 * Stop the AIFF sound that was started with playAiff().
+	 */
+	void stopAiff();
 	
 	/**
 	 * Play a previously loaded sound
