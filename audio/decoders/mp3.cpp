@@ -330,8 +330,11 @@ MP3Stream::MP3Stream(Common::SeekableReadStream *inStream, DisposeAfterUse::Flag
 		_inStream(skipID3(inStream, dispose)),
 		_length(0, 1000) {
 
-	// Initialize the stream with some data
+	// Initialize the stream with some data and set the channels and rate
+	// variables
 	decodeMP3Data(*_inStream);
+	_channels = MAD_NCHANNELS(&_frame.header);
+	_rate = _frame.header.samplerate;
 
 	// Calculate the length of the stream
 	while (_state != MP3_STATE_EOS)
@@ -352,12 +355,8 @@ MP3Stream::MP3Stream(Common::SeekableReadStream *inStream, DisposeAfterUse::Flag
 	_state = MP3_STATE_INIT;
 	_inStream->seek(0);
 
-	// Decode the first chunk of data. This is necessary so that _frame
-	// is setup and we can retrieve channels/rate.
+	// Decode the first chunk of data to set up the stream again.
 	decodeMP3Data(*_inStream);
-
-	_channels = MAD_NCHANNELS(&_frame.header);
-	_rate = _frame.header.samplerate;
 }
 
 int MP3Stream::readBuffer(int16 *buffer, const int numSamples) {
