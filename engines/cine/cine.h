@@ -145,6 +145,7 @@ public:
 
 private:
 	void initialize();
+	void showSplashScreen();
 	void resetEngine();
 	bool loadPlainSaveFW(Common::SeekableReadStream &in, CineSaveGameFormat saveGameFormat);
 	bool loadTempSaveOS(Common::SeekableReadStream &in);
