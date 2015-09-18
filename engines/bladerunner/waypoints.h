@@ -47,6 +47,9 @@ namespace BladeRunner {
 		~Waypoints();
 
 		void getXyz(int waypointId, float *x, float *y, float *z);
+		float getX(int waypointId);
+		float getY(int waypointId);
+		float getZ(int waypointId);
 		int getSetId(int waypointId);
 
 		bool set(int waypointId, int setId, Vector3 position);

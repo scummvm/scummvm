@@ -44,6 +44,12 @@ class Settings {
 	int   _fullHDFrames;
 	int   _mst3k;
 
+	int   _difficulty;
+	int   _playerAgenda;
+	
+	int   _ammoType;
+	int   _ammoAmounts[3];
+
 public:
 	Settings(BladeRunnerEngine *vm);
 
@@ -87,6 +93,14 @@ public:
 	}
 
 	bool openNewScene();
+
+	int getAmmoType();
+	int getAmmoAmount(int ammoType);
+
+	int getDifficulty();
+	int getPlayerAgenda();
+	void setPlayerAgenda(int agenda);
+	void addAmmo(int ammoType, int ammo);
 };
 
 } // End of namespace BladeRunner

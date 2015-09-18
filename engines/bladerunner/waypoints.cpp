@@ -50,6 +50,18 @@ bool Waypoints::reset(int waypointId) {
 	_waypoints[waypointId]._present = false;
 
 	return true;
-
 }
+
+float Waypoints::getX(int waypointId) {
+	return _waypoints[waypointId]._position.x;
+}
+
+float Waypoints::getY(int waypointId) {
+	return _waypoints[waypointId]._position.y;
+}
+
+float Waypoints::getZ(int waypointId) {
+	return _waypoints[waypointId]._position.z;
+}
+
 }

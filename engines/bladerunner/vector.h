@@ -56,6 +56,8 @@ public:
 	Vector3(float ax, float ay, float az)
 		: x(ax), y(ay), z(az)
 	{}
+
+	float length() { return sqrtf(x * x + y * y + z * z); }
 };
 
 inline

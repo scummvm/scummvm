@@ -40,7 +40,7 @@ class BoundingBox;
 
 class Actor {
 	BladeRunnerEngine *_vm;
-
+	friend class ScriptBase;
 private:
 	BoundingBox   *_bbox;
 	Common::Rect   _screenRectangle;
@@ -76,7 +76,6 @@ private:
 	bool _isMoving;
 	bool _damageAnimIfMoving;
 
-
 	// Animation
 	int _width;	
 	int _height;
@@ -96,6 +95,12 @@ private:
 
 	float _scale;
 
+	int _unknown1;
+	int _unknown2;
+	int _unknown3;
+
+	Vector3 _actorSpeed;
+
 public:
 	Actor(BladeRunnerEngine *_vm, int actorId);
 	~Actor();
@@ -105,6 +110,13 @@ public:
 	void set_at_xyz(Vector3 pos, int facing, bool halfOrSet, int unknown, bool retired);
 	void set_at_waypoint(int waypointId, int angle, int unknown, bool retired);
 
+	float getX();
+	float getY();
+	float getZ();
+	void getXYZ(float* x, float* y, float* z);
+	int getFacing();
+	int getAnimationMode();
+
 	void draw();
 
 	int getSetId();
@@ -113,13 +125,15 @@ public:
 	Common::Rect* getScreenRectangle() { return &_screenRectangle; }
 	bool isRetired() { return _isRetired; }
 	bool isTargetable() { return _isTargetable; }
+	void setTargetable(bool targetable);
 	bool inCombat() { return _inCombat; }
 	bool isMoving() { return _isMoving; }
 	void setMoving(bool value) { _isMoving = value; }
 	bool isWalking();
-	void stopWalking(int value);
-
-	void changeAnimationMode(int animationMode, int force);
+	void stopWalking(bool value);
+	
+	void changeAnimationMode(int animationMode, bool force);
+	void setFps(int fps);
 
 	void faceActor(int otherActorId, bool animate);
 	void faceObject(char *objectName, bool animate);
@@ -128,19 +142,14 @@ public:
 	void faceXYZ(float x, float y, float z, bool animate);
 	void faceCurrentCamera(bool animate);
 	void faceHeading(int heading, bool animate);
-	int getFriendlinessToOther(int otherActorId);
 	void modifyFriendlinessToOther(int otherActorId, signed int change);
 	void setFriendlinessToOther(int otherActorId, int friendliness);
 	void setHonesty(int honesty);
 	void setIntelligence(int intelligence);
 	void setStability(int stability);
 	void setCombatAggressiveness(int combatAggressiveness);
-	int getCurrentHP();
-	int getMaxHP();
-	int getCombatAggressiveness();
-	int getHonesty();
-	int getIntelligence();
-	int getStability();
+	void setInvisible(bool isInvisible);
+	void setImmunityToObstacles(bool isImmune);
 	void modifyCurrentHP(signed int change);
 	void modifyMaxHP(signed int change);
 	void modifyCombatAggressiveness(signed int change);
@@ -149,13 +158,27 @@ public:
 	void modifyStability(signed int change);
 	void setFlagDamageAnimIfMoving(bool value);
 	bool getFlagDamageAnimIfMoving();
+	void setHealth(int hp, int maxHp);
 
+	void retire(bool isRetired, int width, int height, int retiredByActorId);
 
-	void retire(bool isRetired, int unknown1, int unknown2, int retiredByActorId);
+	void combatModeOn(int a2, int a3, int a4, int a5, int combatAnimationMode, int a7, int a8, int a9, int a10, int a11, int a12, int a13, int a14);
+	void combatModeOff();
 
+	void setGoal(int goalNumber);
+	int getGoal();
 
+	float distanceFromActor(int otherActorId);
 
+	void speechPlay(int sentenceId, bool voiceOver);
+	void speechStop();
+	bool isSpeeching();
 
+	void addClueToDatabase(int clueId, int unknown, bool clueAcquired, bool unknownFlag, int fromActorId);
+	void acquireClue(int clueId, byte unknownFlag, int fromActorId);
+	void loseClue(int clueId);
+	bool hasClue(int clueId);
+	void copyClues(int actorId);
 private:
 	void setFacing(int facing, bool halfOrSet);
 	void setBoundingBox(Vector3 position, bool retired);

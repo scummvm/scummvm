@@ -29,34 +29,39 @@
 
 #include "common/stream.h"
 
-
 namespace BladeRunner {
 
-	class SetEffects
-	{
-		BladeRunnerEngine *_vm;
+class SetEffects
+{
+	BladeRunnerEngine *_vm;
 
-	private:
-		Color _distanceColor;
-		float _distanceCoeficient;
-		Color _fadeColor;
-		float _fadeDensity;
-		int _fogsCount;
-		Fog *_fogs;
+private:
+	Color _distanceColor;
+	float _distanceCoeficient;
+	Color _fadeColor;
+	float _fadeDensity;
+	int   _fogsCount;
+	Fog  *_fogs;
 
-	public:
-		SetEffects(BladeRunnerEngine *vm);
-		~SetEffects();
+public:
+	SetEffects(BladeRunnerEngine *vm);
+	~SetEffects();
 
-		void read(Common::ReadStream *stream, int framesCount);
+	void read(Common::ReadStream *stream, int framesCount);
 
-		void reset();
+	void reset();
 
-		void setupFrame(int frame);
+	void setupFrame(int frame);
 
-	private:
+	void setFadeColor(float r, float g, float b);
+	void setFadeDensity(float density);
+	void setFogColor(char* fogName, float r, float g, float b);
+	void setFogDensity(char* fogName, float density);
+private:
 
-	};
+	Fog* findFog(char* fogName);
+
+};
 
 }
 #endif

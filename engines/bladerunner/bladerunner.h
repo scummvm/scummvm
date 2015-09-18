@@ -57,6 +57,7 @@ class Lights;
 class View;
 class Waypoints;
 class Items;
+class Combat;
 
 
 class BladeRunnerEngine : public Engine {
@@ -85,6 +86,7 @@ public:
 	Lights          *_lights;
 	Waypoints       *_waypoints;
 	Items           *_items;
+	Combat          *_combat;
 
 	TextResource    *_textActorNames;
 	TextResource    *_textCrimes;
@@ -111,7 +113,12 @@ public:
 
 	bool _playerActorIdle;
 	bool _playerDead;
-
+	bool _speechSkipped;
+	bool _gameOver;
+	int  _gameAutoSave;
+	bool _gameIsLoading;
+	bool _sceneIsLoading;
+	
 private:
 	static const int kArchiveCount = 10;
 	MIXArchive _archives[kArchiveCount];
@@ -130,10 +137,11 @@ public:
 
 	bool loadSplash();
 	bool init2();
-
+	
 	void gameLoop();
 	void gameTick();
 	void handleEvents();
+	void gameWaitForActive();
 	void loopActorSpeaking();
 
 	void outtakePlay(int id, bool no_localization, int container = -1);

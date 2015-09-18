@@ -19,7 +19,7 @@ void Items::getXyz(int itemId, float* x, float* y, float* z) {
 
 int Items::findItem(int itemId) {
 	int i;
-	for (i = 0; i < _items.size();i++) {
+	for (i = 0; i < (int)_items.size(); i++) {
 		if (_items[i]._itemId == itemId)
 			return i;
 	}

@@ -46,6 +46,7 @@
 #include "bladerunner/vqa_decoder.h"
 #include "bladerunner/waypoints.h"
 #include "bladerunner/items.h"
+#include "bladerunner/combat.h"
 
 #include "common/array.h"
 #include "common/error.h"
@@ -69,6 +70,7 @@ BladeRunnerEngine::BladeRunnerEngine(OSystem *syst)
 	_script = new Script(this);
 	_settings = new Settings(this);
 	_lights = new Lights(this);
+	_combat = new Combat(this);
 }
 
 BladeRunnerEngine::~BladeRunnerEngine() {
@@ -91,7 +93,8 @@ BladeRunnerEngine::~BladeRunnerEngine() {
 
 	// delete[] _zBuffer1;
 	// delete[] _zBuffer2;
-	delete _items;
+
+	delete _combat;
 	delete _waypoints;
 	delete _lights;
 	delete _settings;
@@ -402,7 +405,8 @@ void BladeRunnerEngine::shutdown() {
 
 	// TODO: Delete KIA6PT.FON
 
-	// TODO: Delete Items
+	delete _items;
+	_items = 0;
 
 	delete _gameFlags;
 	_gameFlags = 0;
@@ -550,6 +554,12 @@ void BladeRunnerEngine::handleEvents() {
 	Common::Event event;
 	Common::EventManager *eventMan = _system->getEventManager();
 	while (eventMan->pollEvent(event)) {
+	}
+}
+
+void BladeRunnerEngine::gameWaitForActive() {
+	while(!_windowIsActive) {
+		handleEvents();
 	}
 }
 

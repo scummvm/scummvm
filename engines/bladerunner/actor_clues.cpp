@@ -64,7 +64,7 @@ namespace BladeRunner
 		_clues[clueIndex]._flags = 0;
 	}
 
-	int ActorClues::isAcquired(int clueId)
+	bool ActorClues::isAcquired(int clueId)
 	{
 		int clueIndex = findClueIndex(clueId);
 		if (clueIndex == -1)
@@ -82,7 +82,7 @@ namespace BladeRunner
 		return _clues[clueIndex]._fromActorId;
 	}
 
-	int ActorClues::isFlag2(int clueId)
+	bool ActorClues::isFlag2(int clueId)
 	{
 		int clueIndex = findClueIndex(clueId);
 		if (clueIndex == -1)
@@ -91,7 +91,7 @@ namespace BladeRunner
 		return (_clues[clueIndex]._flags & 0x02) >> 1;
 	}
 
-	int ActorClues::isFlag3(int clueId)
+	bool ActorClues::isFlag3(int clueId)
 	{
 		int clueIndex = findClueIndex(clueId);
 		if (clueIndex == -1)
@@ -100,7 +100,7 @@ namespace BladeRunner
 		return (_clues[clueIndex]._flags & 0x04) >> 2;
 	}
 
-	int ActorClues::isFlag4(int clueId)
+	bool ActorClues::isFlag4(int clueId)
 	{
 		int clueIndex = findClueIndex(clueId);
 		if (clueIndex == -1)
@@ -144,14 +144,14 @@ namespace BladeRunner
 		return -1;
 	}
 
-	void ActorClues::add(int actorId, int clueId, int field1, char acquired, char flag2, int fromActorId)
+	void ActorClues::add(int actorId, int clueId, int unknown, bool acquired, bool unknownFlag, int fromActorId)
 	{
 		_clues[_count]._clueId = clueId;
-		_clues[_count]._field1 = field1;
+		_clues[_count]._field1 = unknown;
 
 		_clues[_count]._flags = 0;
 		_clues[_count]._flags = _clues[_count]._flags & 0xFE | (acquired & 0x01);
-		_clues[_count]._flags = _clues[_count]._flags & 0xFD | ((flag2 << 1) & 0x02);
+		_clues[_count]._flags = _clues[_count]._flags & 0xFD | ((unknownFlag << 1) & 0x02);
 
 		_clues[_count]._fromActorId = fromActorId;
 		++_count;
@@ -172,7 +172,7 @@ namespace BladeRunner
 		_clues[index]._field8 = 0;
 	}
 
-	int ActorClues::exists(int clueId)
+	bool ActorClues::exists(int clueId)
 	{
 		return findClueIndex(clueId) != -1;
 	}

@@ -80,15 +80,13 @@ class SliceRenderer {
 	int _t5[256];
 	int _c6;
 
-
+	bool _animationsShadowEnabled[997];
 
 	Matrix3x2 calculateFacingRotationMatrix();
 	void drawSlice(int slice, uint16 *frameLinePtr, uint16 *zbufLinePtr);
 
 public:
-	SliceRenderer(BladeRunnerEngine *vm)
-		: _vm(vm)
-	{}
+	SliceRenderer(BladeRunnerEngine *vm);
 	~SliceRenderer();
 
 	void setView(View *view);
@@ -100,9 +98,9 @@ public:
 
 	void drawFrame(Graphics::Surface &surface, uint16 *zbuffer);
 
-
 	void preload(int animationId);
 
+	void disableShadows(int* animationsIdsList, int listSize);
 };
 
 } // End of namespace BladeRunner

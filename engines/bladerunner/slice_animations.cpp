@@ -63,14 +63,14 @@ bool SliceAnimations::open(const Common::String &name) {
 	_animations.resize(animationCount);
 
 	for (uint32 i = 0; i != animationCount; ++i) {
-		_animations[i].frameCount = file.readUint32LE();
-		_animations[i].frameSize  = file.readUint32LE();
-		_animations[i].fps        = file.readFloatLE();
-		_animations[i].unk0       = file.readFloatLE();
-		_animations[i].unk1       = file.readFloatLE();
-		_animations[i].unk2       = file.readFloatLE();
-		_animations[i].unk3       = file.readFloatLE();
-		_animations[i].offset     = file.readUint32LE();
+		_animations[i].frameCount       = file.readUint32LE();
+		_animations[i].frameSize        = file.readUint32LE();
+		_animations[i].fps              = file.readFloatLE();
+		_animations[i].positionChange.x = file.readFloatLE();
+		_animations[i].positionChange.y = file.readFloatLE();
+		_animations[i].positionChange.z = file.readFloatLE();
+		_animations[i].facingChange     = file.readFloatLE();
+		_animations[i].offset           = file.readUint32LE();
 
 #if 0
 		debug("%4d  %6d %6x  %7.2g %7.2g %7.2g %7.2g %7.2g %8x",
@@ -172,8 +172,16 @@ void *SliceAnimations::getFramePtr(uint32 animation, uint32 frame) {
 
 
 int SliceAnimations::getNumberOfFrames(int animationId) {
-	if (animationId > _animations.size())
+	if (animationId > (int)_animations.size())
 		return 0;
 	return _animations[animationId].frameCount;
 }
+
+
+float SliceAnimations::getFps(int animationId) {
+	if (animationId > (int)_animations.size())
+		return 15.0f;
+	return _animations[animationId].fps;
+}
+
 } // End of namespace BladeRunner

@@ -27,7 +27,7 @@
 #include "bladerunner/scene.h"
 
 #include "graphics/surface.h"
-#include "common/rect.h""
+#include "common/rect.h"
 
 namespace BladeRunner {
 

@@ -95,4 +95,33 @@ bool Settings::openNewScene() {
 	return true;
 }
 
+
+int Settings::getAmmoType() {
+	return _ammoType;
+}
+
+int Settings::getAmmoAmount(int ammoType) {
+	return _ammoAmounts[ammoType];
+}
+
+void Settings::addAmmo(int ammoType, int ammo) {
+	if (ammoType > _ammoType || _ammoAmounts[_ammoType] == 0)
+		_ammoType = ammoType;
+	_ammoAmounts[ammoType] += ammo;
+}
+
+int Settings::getDifficulty() {
+	return _difficulty;
+}
+
+int Settings::getPlayerAgenda() {
+	return _playerAgenda;
+}
+
+void Settings::setPlayerAgenda(int agenda) {
+	_playerAgenda = agenda;
+}
+
+
+
 } // End of namespace BladeRunner

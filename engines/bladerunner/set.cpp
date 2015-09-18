@@ -130,7 +130,7 @@ int Set::findWalkbox(float x, float z) {
 	int i;
 	float altitude = 0.0f;
 	int foundWalkboxId = -1;
-	for (i = 0; i < _walkboxCount; i++) {
+	for (i = 0; i < (int)_walkboxCount; i++) {
 		if (isXzInWalkbox(x, z, &_walkboxes[i])) {
 			if (foundWalkboxId == -1 || altitude < _walkboxes[i]._altitude) {
 				altitude = _walkboxes[i]._altitude;
@@ -147,7 +147,7 @@ bool Set::isXzInWalkbox(float x, float z, Walkbox* walkbox) {
 
 	float lastX = walkbox->_vertices[walkbox->_vertexCount - 1].x;
 	float lastZ = walkbox->_vertices[walkbox->_vertexCount - 1].z;
-	for (i = 0; i < walkbox->_vertexCount; i++) {
+	for (i = 0; i < (int)walkbox->_vertexCount; i++) {
 
 		float currentX = walkbox->_vertices[i].x;
 		float currentZ = walkbox->_vertices[i].z;
@@ -165,7 +165,7 @@ bool Set::isXzInWalkbox(float x, float z, Walkbox* walkbox) {
 
 int Set::findObject(char* objectName) {
 	int i;	
-	for (i = 0; i < _objectCount; i++) {
+	for (i = 0; i < (int)_objectCount; i++) {
 		if (scumm_stricmp(objectName, _objects[i]._name) == 0) {
 			return i;
 		}
@@ -174,7 +174,7 @@ int Set::findObject(char* objectName) {
 }
 
 bool Set::objectSetHotMouse(int objectId) {
-	if(!_objects || objectId < 0 || objectId >= _objectCount) {
+	if(!_objects || objectId < 0 || objectId >= (int)_objectCount) {
 		return false;
 	}
 	
@@ -185,7 +185,7 @@ bool Set::objectSetHotMouse(int objectId) {
 bool Set::objectGetBoundingBox(int objectId, BoundingBox* boundingBox) {
 	assert(boundingBox);
 
-	if (!_objects || objectId < 0 || objectId >= _objectCount) {
+	if (!_objects || objectId < 0 || objectId >= (int)_objectCount) {
 		boundingBox->setXyz(0, 0, 0, 0, 0, 0);
 		return false;
 	}
@@ -195,6 +195,18 @@ bool Set::objectGetBoundingBox(int objectId, BoundingBox* boundingBox) {
 	boundingBox->setXyz(x0, y0, z0, x1, y1, z1);
 
 	return true;
+}
+
+void Set::objectSetIsClickable(int objectId, bool isClickable) {
+	_objects[objectId]._isClickable = isClickable;
+}
+
+void Set::objectSetIsObstacle(int objectId, bool isObstacle) {
+	_objects[objectId]._isObstacle = isObstacle;
+}
+
+void Set::objectSetIsCombatTarget(int objectId, bool isCombatTarget) {
+	_objects[objectId]._isCombatTarget = isCombatTarget;
 }
 
 } // End of namespace BladeRunner

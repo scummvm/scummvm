@@ -56,13 +56,14 @@ namespace BladeRunner {
 		ActorClues(BladeRunnerEngine *_vm, int cluesType);
 		~ActorClues();
 
+		void add(int actorId, int clueId, int unknown, bool acquired, bool unknownFlag, int fromActorId);
 		void acquire(int clueId, char flag2, int fromActorId);
 		void lose(int clueId);
-		int isAcquired(int clueId);
+		bool isAcquired(int clueId);
 		int getFromActorId(int clueId);
-		int isFlag2(int clueId);
-		int isFlag3(int clueId);
-		int isFlag4(int clueId);
+		bool isFlag2(int clueId);
+		bool isFlag3(int clueId);
+		bool isFlag4(int clueId);
 		int getField1(int clueId);
 
 		int getCount();
@@ -72,10 +73,10 @@ namespace BladeRunner {
 		//savegame
 		//loadgame
 	private:
+		bool exists(int clueId);
 		int findClueIndex(int clueId);
-		void add(int actorId, int clueId, int field1, char acquired, char flag2, int fromActorId);
 		void remove(int clueIndex);
-		int exists(int clueId);
+		
 	};
 }
 

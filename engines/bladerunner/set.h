@@ -66,9 +66,8 @@ class Set {
 	Walkbox    *_walkboxes;
 	int         _walkboxStepSound[85];
 	int         _footstepSoundOverride;
-	SetEffects *_effects;
 public:
-	
+	SetEffects *_effects;
 
 public:
 	Set(BladeRunnerEngine *vm);
@@ -82,6 +81,9 @@ public:
 
 	bool objectSetHotMouse(int objectId);
 	bool objectGetBoundingBox(int objectId, BoundingBox *boundingBox);
+	void objectSetIsClickable(int objectId, bool isClickable);
+	void objectSetIsObstacle(int objectId, bool isObstacle);
+	void objectSetIsCombatTarget(int objectId, bool isCombatTarget);
 
 private:
 	bool isXzInWalkbox(float x, float z, Walkbox* walkbox);

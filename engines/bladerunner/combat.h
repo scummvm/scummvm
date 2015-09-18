@@ -20,53 +20,42 @@
 *
 */
 
-#ifndef BLADERUNNER_ACTOR_COMBAT_H
-#define BLADERUNNER_ACTOR_COMBAT_H
+#ifndef BLADERUNNER_COMBAT_H
+#define BLADERUNNER_COMBAT_H
 
 #include "bladerunner/bladerunner.h"
 
-#include "bladerunner/vector.h"
-
 namespace BladeRunner {
-	
-	class ActorCombat
-	{
-		BladeRunnerEngine *_vm;
-	private:
-		int _actorId;
-		int _combatOn;
-		int _field2;
-		int _field3;
-		int _otherActorId;
-		int _field5;
-		int _field6;
-		int _field7;
-		int _field8;
-		int _field9;
-		int _field10;
-		int _field11;
-		int _field12;
-		int _actorHp;
-		int _field14;
-		int _field15;
-		Vector3 actorPosition;
-		Vector3 otherActorPosition;
-		int _availableCoversCount;
-		int _availableFleeWaypointsCount;
-		int _field24;
 
-	public:
-		ActorCombat(BladeRunnerEngine *vm);
-		~ActorCombat();
-		
-		void setup();
+class Combat {
+	BladeRunnerEngine *_vm;
 
-		void hitAttempt();
-		
-		void combatOn(int actorId, int a3, int a4, int otherActorId, int a6, int a7, int a8, int a9, int a10, int a11, int a12);
-		void combatOff();
+	bool _active;
+	bool _enabled;
+	int _hitSoundId[9];
+	int _missSoundId[9];
+	int _random1;
+	int _random2;
 
-	};
+public:
+	int _ammoDamage[3] = { 10, 20, 30 };
+
+public:
+	Combat(BladeRunnerEngine *vm);
+	~Combat();
+
+	void activate();
+	void deactivate();
+	bool isActive();
+
+	void enable();
+	void disable();
+
+	void setHitSoundId(int row, int column, int soundId);
+	void setMissSoundId(int row, int column, int soundId);
+
+};
+
 }
 
 #endif

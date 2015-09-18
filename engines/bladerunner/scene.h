@@ -77,9 +77,14 @@ public:
 	int  advanceFrame(Graphics::Surface &surface, uint16 *&zBuffer);
 	void setActorStart(Vector3 position, int facing);
 	int getSetId();
+	int getSceneId();
 	int findObject(char *objectName);
 	bool objectSetHotMouse(int objectId);
 	bool objectGetBoundingBox(int objectId, BoundingBox *boundingBox);
+	void objectSetIsClickable(int objectId, bool isClickable, bool sceneLoaded);
+	void objectSetIsObstacle(int objectId, bool isObstacle, bool sceneLoaded, bool updateWalkpath);
+	void objectSetIsObstacleAll(bool isObstacle, bool sceneLoaded);
+	void objectSetIsCombatTarget(int objectId, bool isCombatTarget, bool sceneLoaded);
 };
 
 } // End of namespace BladeRunner

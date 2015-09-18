@@ -81,6 +81,12 @@ namespace BladeRunner {
 		void clear();
 		int findByXYZ(int *isClickable, int *isObstacle, int *isCombatTarget, float x, float y, float z, int mustBeClickable, int mustBeObstacle, int mustBeCombatTarget);
 		void setMoving(int sceneObjectId, bool isMoving);
+		void setRetired(int sceneObjectId, bool isRetired);
+		bool isBetweenTwoXZ(int sceneObjectId, float x1, float z1, float x2, float z2);
+		void setIsClickable(int sceneObjectId, bool isClickable);
+		void setIsObstacle(int sceneObjectId, bool isObstacle);
+		void setIsCombatTarget(int sceneObjectId, bool isCombatTarget);
+		void updateWalkpath();
 	private:
 		int findById(int sceneObjectId);
 		bool addSceneObject(int sceneObjectId, SceneObjectType sceneObjectType, BoundingBox* boundingBox, Common::Rect* screenRectangle, uint8 isClickable, uint8 isObstacle, uint8 unknown1, uint8 isCombatTarget, uint unknown2, uint isRetired);

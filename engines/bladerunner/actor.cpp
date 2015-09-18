@@ -30,6 +30,9 @@
 #include "bladerunner/waypoints.h"
 #include "bladerunner/scene.h"
 #include "bladerunner/items.h"
+#include "bladerunner/script/script.h"
+#include "bladerunner/slice_animations.h"
+#include "bladerunner/audio_speech.h"
 
 namespace BladeRunner {
 
@@ -100,15 +103,20 @@ void Actor::setup(int actorId) {
 
 	_timersRemain[4] = 60000;
 	_animationMode = -1;
-	// TODO: screen rect = { -1, -1, -1, -1 };
+	_screenRectangle = Common::Rect(-1, -1, -1, -1);
+	_combatAnimationMode = 4;
+	_unknown1 = 7;
+	_unknown2 = 8;
 
 	int actorCount = (int)_vm->_gameInfo->getActorCount();
 	for (int i = 0; i != actorCount; ++i)
 		_friendlinessToOther[i] = 50;
 
-	// TODO: Setup clues
+	_combatInfo->setup();
+	_clues->removeAll();
+	_movementTrack->flush();
 
-	// TODO: Flush movement track
+	_actorSpeed = Vector3();
 }
 
 void Actor::set_at_xyz(Vector3 position, int facing, bool halfOrSet, int moving, bool retired) {
@@ -179,7 +187,6 @@ void Actor::setSetId(int setId) {
 	}
 }
 
-
 void Actor::setFacing(int facing, bool halfOrSet) {
 	if (facing < 0 || facing >= 1024) {
 		return;
@@ -218,15 +225,15 @@ void Actor::setFacing(int facing, bool halfOrSet) {
 }
 
 void Actor::setBoundingBox(Vector3 position, bool retired) {
-	if(retired) {
-		
-	}else {
+	if (retired) {
+		_bbox->setXyz(position.x - (_retiredWidth / 2.0f), position.y, position.z - (_retiredWidth / 2.0f), position.x + (_retiredWidth / 2.0f), position.y + _retiredHeight, position.z + (_retiredWidth / 2.0f));
+	} else {
 		_bbox->setXyz(position.x - 12.0f, position.y + 6.0f, position.z - 12.0f, position.x + 12.0f, position.y + 72.0f, position.z + 12.0f);
 	}
 }
 
 
-void Actor::changeAnimationMode(int animationMode, int force) {
+void Actor::changeAnimationMode(int animationMode, bool force) {
 	if (force == 1) {
 		_animationMode = -1;
 	}
@@ -234,15 +241,30 @@ void Actor::changeAnimationMode(int animationMode, int force) {
 		//TODO: _vm->actorScript->ChangeAnimationMode(_id, animationMode);
 		_animationMode = animationMode;
 	}
+}
 
+void Actor::setFps(int fps) {
+	_fps = fps;
+	if (fps == 0) {
+		_frame_ms = 0;
+	} else {
+		if(_fps == -1) {
+			_frame_ms = -1000;
+		} else if (_fps == -2) {
+			_fps = _vm->_sliceAnimations->getFps(_animationId);
+			_frame_ms = 1000 / _fps;
+		} else {
+			_frame_ms = 1000 / _fps;
+		}
+	}
 }
 
 bool Actor::isWalking() {
 	return _walkInfo->isWalking();
 }
 
-void Actor::stopWalking(int value) {
-	if (value == 1 && _id == 0) {
+void Actor::stopWalking(bool value) {
+	if (value && _id == 0) {
 		_vm->_playerActorIdle = true;
 	}
 
@@ -325,10 +347,6 @@ void Actor::faceHeading(int heading, bool animate) {
 	}
 }
 
-int Actor::getFriendlinessToOther(int otherActorId) {
-	return _friendlinessToOther[otherActorId];
-}
-
 void Actor::modifyFriendlinessToOther(int otherActorId, signed int change) {
 	_friendlinessToOther[otherActorId] = MIN(MAX(_friendlinessToOther[otherActorId] + change, 0), 100);
 }
@@ -353,28 +371,12 @@ void Actor::setCombatAggressiveness(int combatAggressiveness) {
 	_combatAggressiveness = combatAggressiveness;
 }
 
-int Actor::getCurrentHP() {
-	return _currentHP;
+void Actor::setInvisible(bool isInvisible) {
+	_isInvisible = isInvisible;
 }
 
-int Actor::getMaxHP() {
-	return _maxHP;
-}
-
-int Actor::getCombatAggressiveness() {
-	return _combatAggressiveness;
-}
-
-int Actor::getHonesty() {
-	return _honesty;
-}
-
-int Actor::getIntelligence() {
-	return _intelligence;
-}
-
-int Actor::getStability() {
-	return _stability;
+void Actor::setImmunityToObstacles(bool isImmune) {
+	_isImmuneToObstacles = isImmune;
 }
 
 void Actor::modifyCurrentHP(signed int change) {
@@ -415,12 +417,156 @@ void Actor::retire(bool isRetired, int width, int height, int retiredByActorId) 
 	_isRetired = isRetired;
 	_retiredWidth = MAX(width, 0);
 	_retiredHeight = MAX(height, 0);
-	if(_id == 0 && isRetired) {
+	if (_id == 0 && isRetired) {
 		_vm->playerLosesControl();
 		_vm->_playerDead = true;
 	}
-	if(isRetired) {
+	if (isRetired) {
 		//TODO: _vm->actorScript->Retired(_id, retiredByActorId);
 	}
 }
+
+void Actor::setTargetable(bool targetable) {
+	_isTargetable = targetable;
+}
+
+void Actor::setHealth(int hp, int maxHp) {
+	_currentHP = hp;
+	_maxHP = maxHp;
+	if(hp > 0) {
+		retire(0, 0, 0, -1);
+	}
+}
+
+void Actor::combatModeOn(int a2, int a3, int otherActorId, int a5, int combatAnimationMode, int a7, int a8, int a9, int a10, int a11, int ammoDamage, int a13, int a14) {
+	_combatAnimationMode = combatAnimationMode;
+	_unknown1 = a7;
+	_unknown2 = a8;
+	_inCombat = true;
+	if (_id > 0)
+		_combatInfo->combatOn(_id, a2, a3, otherActorId, a5, a9, a10, a11, ammoDamage, a13, a14);
+	stopWalking(0);
+	changeAnimationMode(_combatAnimationMode, 0);
+	int i;
+	for (i = 0; i < (int)_vm->_gameInfo->getActorCount(); i++) {
+		Actor *otherActor = _vm->_actors[i];
+		if (i != _id && otherActor->_setId == _setId && !otherActor->_isRetired) {
+			//TODO: _vm->actorScript->OtherAgentEnteredCombatMode(i, _id, 1);
+		}
+	}
+}
+
+void Actor::combatModeOff() {
+	if (_id > 0)
+		_combatInfo->combatOff();
+	_inCombat = false;
+	stopWalking(0);
+	changeAnimationMode(0, 0);
+	int i;
+	for (i = 0; i < (int)_vm->_gameInfo->getActorCount(); i++) {
+		Actor *otherActor = _vm->_actors[i];
+		if (i != _id && otherActor->_setId == _setId && !otherActor->_isRetired) {
+			//TODO: _vm->actorScript->OtherAgentEnteredCombatMode(i, _id, 0);
+		}
+	}
+}
+
+float Actor::distanceFromActor(int otherActorId) {
+	return (_position - _vm->_actors[otherActorId]->_position).length();
+}
+
+float Actor::getX() {
+	return _position.x;
+}
+
+float Actor::getY() {
+	return _position.y;
+}
+
+float Actor::getZ() {
+	return _position.z;
+}
+
+void Actor::getXYZ(float* x, float* y, float* z) {
+	*x = _position.x;
+	*y = _position.y;
+	*z = _position.z;
+}
+
+int Actor::getFacing() {
+	return _facing;
+}
+
+int Actor::getAnimationMode() {
+	return _animationMode;
+}
+
+void Actor::setGoal(int goalNumber) {
+	if (goalNumber == _goalNumber)
+		return;
+
+	//TODO: _vm->actorScript->GoalChanged(_id, _goalNumber, goalNumber);
+
+	_vm->_script->SceneActorChangedGoal(_id, goalNumber, _goalNumber, _vm->_scene->getSetId() == _setId);
+}
+
+int Actor::getGoal() {
+	return _goalNumber;
+}
+
+void Actor::speechPlay(int sentenceId, bool voiceOver) {
+	char name[13];
+	sprintf(name, "%02d-%04d.AUD", _id, sentenceId); //TODO somewhere here should be also language code
+	int balance;
+
+	if(voiceOver || _id == 99) {
+		balance = 0;
+	}else {
+		Vector3 pos = _vm->_view->_frameViewMatrix * _position;
+		int screenX = 0, screenY = 0;
+		//TODO: transform to screen space using fov;
+		balance = 127 * (2 * screenX - 640) / 640;
+		balance = MIN(127, MAX(-127, balance));
+	}
+
+	_vm->_audioSpeech->playSpeech(name, balance);
+}
+
+void Actor::speechStop() {
+	_vm->_audioSpeech->stopSpeech();
+}
+
+bool Actor::isSpeeching() {
+	return _vm->_audioSpeech->isPlaying();
+}
+
+void Actor::addClueToDatabase(int clueId, int unknown, bool clueAcquired, bool unknownFlag, int fromActorId) {
+	_clues->add(_id, clueId, unknown, clueAcquired, unknownFlag, fromActorId);
+}
+
+void Actor::acquireClue(int clueId, byte unknownFlag, int fromActorId) {
+	_clues->acquire(clueId, unknownFlag, fromActorId);
+}
+
+void Actor::loseClue(int clueId) {
+	_clues->lose(clueId);
+}
+
+bool Actor::hasClue(int clueId) {
+	return _clues->isAcquired(clueId);
+}
+
+void Actor::copyClues(int actorId) {
+	Actor *otherActor = _vm->_actors[actorId];
+	int i;
+	for (i = 0; i < (int)_vm->_gameInfo->getClueCount(); i++) {
+		if(hasClue(i) && !_clues->isFlag4(i) && !otherActor->hasClue(i)) {
+			int fromActorId = _id;
+			if (_id == 99)
+				fromActorId = _clues->getFromActorId(i);
+			otherActor->acquireClue(i, 0, fromActorId);
+		}
+	}
+}
+
 } // End of namespace BladeRunner

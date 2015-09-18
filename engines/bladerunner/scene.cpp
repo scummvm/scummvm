@@ -148,6 +148,11 @@ int Scene::getSetId() {
 	return _setId;
 }
 
+
+int Scene::getSceneId() {
+	return _sceneId;
+}
+
 int Scene::findObject(char* objectName) {
 	return _set->findObject(objectName);
 }
@@ -158,6 +163,40 @@ bool Scene::objectSetHotMouse(int objectId) {
 
 bool Scene::objectGetBoundingBox(int objectId, BoundingBox* boundingBox) {
 	return _set->objectGetBoundingBox(objectId, boundingBox);
+}
+
+void Scene::objectSetIsClickable(int objectId, bool isClickable, bool sceneLoaded) {
+	_set->objectSetIsClickable(objectId, isClickable);
+	if (sceneLoaded) {
+		_vm->_sceneObjects->setIsClickable(objectId + 198, isClickable);
+	}
+}
+
+void Scene::objectSetIsObstacle(int objectId, bool isObstacle, bool sceneLoaded, bool updateWalkpath) {
+	_set->objectSetIsObstacle(objectId, isObstacle);
+	if (sceneLoaded) {
+		_vm->_sceneObjects->setIsObstacle(objectId + 198, isObstacle);
+		if(updateWalkpath) {
+			_vm->_sceneObjects->updateWalkpath();
+		}
+	}
+}
+
+void Scene::objectSetIsObstacleAll(bool isObstacle, bool sceneLoaded) {
+	int i;
+	for (i = 0; i < (int)_set->_objectCount; i++) {
+		_set->objectSetIsObstacle(i, isObstacle);
+		if (sceneLoaded) {
+			_vm->_sceneObjects->setIsObstacle(i + 198, isObstacle);
+		}
+	}
+}
+
+void Scene::objectSetIsCombatTarget(int objectId, bool isCombatTarget, bool sceneLoaded) {
+	_set->objectSetIsCombatTarget(objectId, isCombatTarget);
+	if (sceneLoaded) {
+		_vm->_sceneObjects->setIsCombatTarget(objectId + 198, isCombatTarget);
+	}
 }
 
 } // End of namespace BladeRunner
