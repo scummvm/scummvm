@@ -874,8 +874,8 @@ Common::Point TattooPerson::getSourcePoint() const {
 	TattooScene &scene = *(TattooScene *)_vm->_scene;
 	int scaleVal = scene.getScaleVal(_position);
 
-	return Common::Point(_position.x / FIXED_INT_MULTIPLIER + _imageFrame->sDrawXSize(scaleVal) / 2,
-		_position.y / FIXED_INT_MULTIPLIER);
+	return Common::Point(_position.x / FIXED_INT_MULTIPLIER + 
+		(_imageFrame ? _imageFrame->sDrawXSize(scaleVal) / 2 : 0), _position.y / FIXED_INT_MULTIPLIER);
 }
 
 void TattooPerson::setObjTalkSequence(int seq) {
