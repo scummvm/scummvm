@@ -33,6 +33,12 @@
 #include "bladerunner/scene.h"
 #include "bladerunner/text_resource.h"
 #include "bladerunner/vector.h"
+#include "bladerunner/slice_renderer.h"
+#include "bladerunner/actor.h"
+#include "bladerunner/waypoints.h"
+#include "bladerunner/slice_animations.h"
+#include "bladerunner/combat.h"
+#include "bladerunner/settings.h"
 
 namespace BladeRunner {
 
@@ -40,6 +46,8 @@ bool Script::open(const Common::String &name) {
 	delete _currentScript;
 
 	if (name == "RC01") { _currentScript = new ScriptRC01(_vm); return true; }
+
+	_currentScript = new ScriptRC01(_vm); return true;
 
 	return false;
 }
@@ -66,76 +74,344 @@ void Script::SceneFrameAdvanced(int frame) {
 	_inScriptCounter--;
 }
 
-// ScriptBase::Preload
-// ScriptBase::Actor_Put_In_Set
-// ScriptBase::Actor_Set_At_XYZ
-// ScriptBase::Actor_Set_At_Waypoint
-// ScriptBase::Region_Check
-// ScriptBase::Object_Query_Click
-// ScriptBase::Object_Do_Ground_Click
-// ScriptBase::Object_Mark_For_Hot_Mouse
-// ScriptBase::Actor_Face_Actor
-// ScriptBase::Actor_Face_Object
-// ScriptBase::Actor_Face_Item
-// ScriptBase::Actor_Face_Waypoint
-// ScriptBase::Actor_Face_XYZ
-// ScriptBase::Actor_Face_Current_Camera
-// ScriptBase::Actor_Face_Heading
-// ScriptBase::Actor_Query_Friendliness_To_Other
-// ScriptBase::Actor_Modify_Friendliness_To_Other
-// ScriptBase::Actor_Set_Friendliness_To_Other
-// ScriptBase::Actor_Set_Honesty
-// ScriptBase::Actor_Set_Intelligence
-// ScriptBase::Actor_Set_Stability
-// ScriptBase::Actor_Set_Combat_Aggressiveness
-// ScriptBase::Actor_Query_Current_HP
-// ScriptBase::Actor_Query_Max_HP
-// ScriptBase::Actor_Query_Combat_Aggressiveness
-// ScriptBase::Actor_Query_Honesty
-// ScriptBase::Actor_Query_Intelligence
-// ScriptBase::Actor_Query_Stability
-// ScriptBase::Actor_Modify_Current_HP
-// ScriptBase::Actor_Modify_Max_HP
-// ScriptBase::Actor_Modify_Combat_Aggressiveness
-// ScriptBase::Actor_Modify_Honesty
-// ScriptBase::Actor_Modify_Intelligence
-// ScriptBase::Actor_Modify_Stability
-// ScriptBase::Actor_Set_Flag_Damage_Anim_If_Moving
-// ScriptBase::Actor_Query_Flag_Damage_Anim_If_Moving
-// ScriptBase::Actor_Combat_AI_Hit_Attempt
-// ScriptBase::Non_Player_Actor_Combat_Mode_On
-// ScriptBase::Non_Player_Actor_Combat_Mode_Off
-// ScriptBase::Actor_Set_Health
-// ScriptBase::Actor_Set_Targetable
-// ScriptBase::Actor_Says
-// ScriptBase::Actor_Says_With_Pause
-
-void ScriptBase::Actor_Voice_Over(int sentenceId, int actorId) {
-	// Wait for any existing speech to end
-	_vm->loopActorSpeaking();
-
-	// TODO: Hack - This needs to go through the actor class
-	char name[13];
-	sprintf(name, "%02d-%04d.AUD", actorId, sentenceId);
-	_vm->_audioSpeech->playSpeech(name);
+void Script::SceneActorChangedGoal(int actorId, int newGoal, int oldGoal, bool currentSet) {
+	_inScriptCounter++;
+	_currentScript->SceneActorChangedGoal(actorId, newGoal, oldGoal, currentSet);
+	_inScriptCounter--;
 }
 
-// ScriptBase::Actor_Start_Speech_Sample
-// ScriptBase::Actor_Start_Voice_Over_Sample
-// ScriptBase::Actor_Query_Which_Set_In
-// ScriptBase::Actor_Query_Is_In_Current_Set
-// ScriptBase::Actor_Query_In_Set
-// ScriptBase::Actor_Query_Inch_Distance_From_Actor
-// ScriptBase::Actor_Query_Inch_Distance_From_Waypoint
-// ScriptBase::Actor_Query_In_Between_Two_Actors
-// ScriptBase::Actor_Set_Goal_Number
-// ScriptBase::Actor_Query_Goal_Number
-// ScriptBase::Actor_Query_XYZ
-// ScriptBase::Actor_Query_Facing_1024
-// ScriptBase::Actor_Set_Frame_Rate_FPS
-// ScriptBase::Slice_Animation_Query_Number_Of_Frames
-// ScriptBase::Actor_Change_Animation_Mode
-// ScriptBase::Actor_Query_Animation_Mode
+void ScriptBase::Preload(int animationId) {
+	_vm->_sliceRenderer->preload(animationId);
+}
+
+void ScriptBase::Actor_Put_In_Set(int actorId, int setId) {
+	_vm->_actors[actorId]->setSetId(setId);
+}
+
+void ScriptBase::Actor_Set_At_XYZ(int actorId, float x, float y, float z, int angle) {
+	_vm->_actors[actorId]->set_at_xyz(Vector3(x, y, z), angle, true, 0, 0);
+}
+
+void ScriptBase::Actor_Set_At_Waypoint(int actorId, int waypointId, int angle) {
+	_vm->_actors[actorId]->set_at_waypoint(waypointId, angle, 0, 0);
+}
+
+bool ScriptBase::Region_Check(int left, int top, int right, int down) {
+	//TODO: return _vm->_mouse.x >= left && _vm->_mouse.y >= top && _vm->_mouse.x <= right && _vm->_mouse.y <= down;
+	return false;
+}
+
+// ScriptBase::Object_Query_Click
+// ScriptBase::Object_Do_Ground_Click
+
+bool ScriptBase::Object_Mark_For_Hot_Mouse(char *objectName) {
+	int objectId = _vm->_scene->findObject(objectName);
+	if (objectId == -1)
+		return false;
+	return _vm->_scene->objectSetHotMouse(objectId);
+}
+
+void ScriptBase::Actor_Face_Actor(int actorId, int otherActorId, bool animate) {
+	_vm->_actors[actorId]->faceActor(otherActorId, animate);
+}
+
+void ScriptBase::Actor_Face_Object(int actorId, char *objectName, bool animate) {
+	_vm->_actors[actorId]->faceObject(objectName, animate);
+}
+
+void ScriptBase::Actor_Face_Item(int actorId, int itemId, bool animate) {
+	_vm->_actors[actorId]->faceItem(itemId, animate);
+}
+
+void ScriptBase::Actor_Face_Waypoint(int actorId, int waypointId, bool animate) {
+	_vm->_actors[actorId]->faceWaypoint(waypointId, animate);
+}
+
+void ScriptBase::Actor_Face_XYZ(int actorId, float x, float y, float z, bool animate) {
+	_vm->_actors[actorId]->faceXYZ(x, y, z, animate);
+}
+
+void ScriptBase::Actor_Face_Current_Camera(int actorId, bool animate) {
+	_vm->_actors[actorId]->faceCurrentCamera(animate);
+}
+
+void ScriptBase::Actor_Face_Heading(int actorId, int heading) {
+	_vm->_actors[actorId]->faceHeading(heading, true);
+}
+
+int ScriptBase::Actor_Query_Friendliness_To_Other(int actorId, int otherActorId) {
+	return _vm->_actors[actorId]->_friendlinessToOther[otherActorId];
+}
+
+void ScriptBase::Actor_Modify_Friendliness_To_Other(int actorId, int otherActorId, signed int change) {
+	_vm->_actors[actorId]->modifyFriendlinessToOther(otherActorId, change);
+}
+
+void ScriptBase::Actor_Set_Friendliness_To_Other(int actorId, int otherActorId, int friendliness) {
+	_vm->_actors[actorId]->setFriendlinessToOther(otherActorId, friendliness);
+}
+
+void ScriptBase::Actor_Set_Honesty(int actorId, int honesty) {
+	_vm->_actors[actorId]->setHonesty(honesty);
+}
+
+void ScriptBase::Actor_Set_Intelligence(int actorId, int intelligence) {
+	_vm->_actors[actorId]->setIntelligence(intelligence);
+}
+
+void ScriptBase::Actor_Set_Stability(int actorId, int stability) {
+	_vm->_actors[actorId]->setStability(stability);
+}
+
+void ScriptBase::Actor_Set_Combat_Aggressiveness(int actorId, int combatAggressiveness) {
+	_vm->_actors[actorId]->setCombatAggressiveness(combatAggressiveness);
+}
+
+int ScriptBase::Actor_Query_Current_HP(int actorId) {
+	return _vm->_actors[actorId]->_currentHP;
+}
+
+int ScriptBase::Actor_Query_Max_HP(int actorId) {
+	return _vm->_actors[actorId]->_maxHP;
+}
+
+int ScriptBase::Actor_Query_Combat_Aggressiveness(int actorId) {
+	return _vm->_actors[actorId]->_combatAggressiveness;
+}
+
+int ScriptBase::Actor_Query_Honesty(int actorId) {
+	return _vm->_actors[actorId]->_honesty;
+}
+
+int ScriptBase::Actor_Query_Intelligence(int actorId) {
+	return _vm->_actors[actorId]->_intelligence;
+}
+
+int ScriptBase::Actor_Query_Stability(int actorId) {
+	return _vm->_actors[actorId]->_stability;
+}
+
+void ScriptBase::Actor_Modify_Current_HP(int actorId, signed int change) {
+	_vm->_actors[actorId]->modifyCurrentHP(change);
+}
+
+void ScriptBase::Actor_Modify_Max_HP(int actorId, signed int change) {
+	_vm->_actors[actorId]->modifyMaxHP(change);
+}
+
+void ScriptBase::Actor_Modify_Combat_Aggressiveness(int actorId, signed int change) {
+	_vm->_actors[actorId]->modifyCombatAggressiveness(change);
+}
+
+void ScriptBase::Actor_Modify_Honesty(int actorId, signed int change) {
+	_vm->_actors[actorId]->modifyHonesty(change);
+}
+
+void ScriptBase::Actor_Modify_Intelligence(int actorId, signed int change) {
+	_vm->_actors[actorId]->modifyIntelligence(change);
+}
+
+void ScriptBase::Actor_Modify_Stability(int actorId, signed int change) {
+	_vm->_actors[actorId]->modifyStability(change);
+}
+
+void ScriptBase::Actor_Set_Flag_Damage_Anim_If_Moving(int actorId, bool value) {
+	_vm->_actors[actorId]->setFlagDamageAnimIfMoving(value);
+}
+
+bool ScriptBase::Actor_Query_Flag_Damage_Anim_If_Moving(int actorId) {
+	return _vm->_actors[actorId]->getFlagDamageAnimIfMoving();
+}
+
+void ScriptBase::Actor_Combat_AI_Hit_Attempt(int actorId) {
+	if (_vm->_actors[actorId]->inCombat())
+		_vm->_actors[actorId]->_combatInfo->hitAttempt();
+}
+
+void ScriptBase::Non_Player_Actor_Combat_Mode_On(int actorId, int a2, int a3, int a4, int a5, int a6, int a7, int a8, int a9, int a10, int a11, int a12, int a13, int a14) {
+	_vm->_actors[actorId]->combatModeOn(a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14);
+}
+
+void ScriptBase::Non_Player_Actor_Combat_Mode_Off(int actorId) {
+	_vm->_actors[actorId]->combatModeOff();
+}
+
+void ScriptBase::Actor_Set_Health(int actorId, int hp, int maxHp) {
+	_vm->_actors[actorId]->setHealth(hp, maxHp);
+}
+
+void ScriptBase::Actor_Set_Targetable(int actorId, bool targetable) {
+	_vm->_actors[actorId]->setTargetable(targetable);
+	
+}
+
+void ScriptBase::Actor_Says(int actorId, int sentenceId, int animationMode){
+	_vm->loopActorSpeaking();
+	//_vm->ADQ->flush(1,1)
+	Actor_Says_With_Pause(actorId, sentenceId, 0.5f, animationMode);
+}
+
+void ScriptBase::Actor_Says_With_Pause(int actorId, int sentenceId, float pause, int animationMode) {
+	_vm->gameWaitForActive();
+	_vm->loopActorSpeaking();
+	//_vm->ADQ->flush(1,1)
+
+	Actor *actor = _vm->_actors[actorId];
+
+	if(animationMode != -1) {
+		actor->stopWalking(false);
+	}
+
+	actor->speechPlay(sentenceId, false);
+	bool animationModeChanged = false;
+	if(animationMode >= 0) {
+		if (actorId != 0) {
+			actor->changeAnimationMode(animationMode, false);
+			animationModeChanged = true;
+		} else if(_vm->_combat->isActive()) {
+			actor->changeAnimationMode(animationMode, false);
+			animationModeChanged = true;
+		}
+	}
+	Player_Loses_Control();
+	while (_vm->_gameIsRunning) {
+		_vm->_speechSkipped = false;
+		_vm->gameTick();
+		if (_vm->_speechSkipped || !actor->isSpeeching()) {
+			actor->speechStop();
+			break;
+		}
+	}
+	if (animationModeChanged) {
+		actor->changeAnimationMode(0, false);
+	}
+
+	//TODO: sitcom
+	//if (_vm->isSitcom)
+	//{
+	//	int rnd = _vm->random(1, 100);
+	//	if (rnd <= actor::get_unknown3(actor))
+	//	{
+	//		int soundId = _vm->random(319, 327);
+	//		_vm->_audioPlayer->play(soundId, 40, 0, 0, 50);
+	//	}
+	//}
+	if(pause > 0.0f && !_vm->_speechSkipped) {
+		Delay(pause * 1000);
+	}
+	Player_Gains_Control();
+}
+
+void ScriptBase::Actor_Voice_Over(int sentenceId, int actorId) {
+	_vm->gameWaitForActive();
+	_vm->loopActorSpeaking();
+	//_vm->ADQ->flush(1,1)
+
+	Actor *actor = _vm->_actors[actorId];
+
+	actor->speechPlay(sentenceId, true);
+	Player_Loses_Control();
+	while(_vm->_gameIsRunning) {
+		_vm->_speechSkipped = false;
+		_vm->gameTick();
+		if(_vm->_speechSkipped || !actor->isSpeeching()) {
+			actor->speechStop();
+			break;
+		}
+	}
+	Player_Gains_Control();
+}
+
+void ScriptBase::Actor_Start_Speech_Sample(int actorId, int sentenceId) {
+	_vm->loopActorSpeaking();
+	_vm->_actors[actorId]->speechPlay(sentenceId, false);
+}
+
+void ScriptBase::Actor_Start_Voice_Over_Sample(int sentenceId) {
+	_vm->loopActorSpeaking();	
+	_vm->_voiceoverActor->speechPlay(sentenceId, true);
+}
+
+int ScriptBase::Actor_Query_Which_Set_In(int actorId) {
+	return _vm->_actors[actorId]->getSetId();
+}
+
+bool ScriptBase::Actor_Query_Is_In_Current_Set(int actorId) {
+	int actorSetId = _vm->_actors[actorId]->getSetId();
+	return actorSetId >= 0 && _vm->_scene->getSetId();
+}
+
+bool ScriptBase::Actor_Query_In_Set(int actorId, int setId) {
+	return _vm->_actors[actorId]->getSetId() == setId;
+}
+
+int ScriptBase::Actor_Query_Inch_Distance_From_Actor(int actorId, int otherActorId) {
+	if (_vm->_actors[actorId]->getSetId() != _vm->_actors[otherActorId]->getSetId())
+		return 0.0f;
+	return _vm->_actors[actorId]->distanceFromActor(otherActorId);
+}
+
+int ScriptBase::Actor_Query_Inch_Distance_From_Waypoint(int actorId, int waypointId) {
+	if (_vm->_actors[actorId]->getSetId() != _vm->_waypoints->getSetId(waypointId))
+		return 0;
+
+	float actorX = _vm->_actors[actorId]->getX();
+	float actorZ = _vm->_actors[actorId]->getZ();
+	float waypointX = _vm->_waypoints->getX(waypointId);
+	float waypointZ = _vm->_waypoints->getZ(waypointId);
+
+	float distX = actorX - waypointX;
+	float distZ = actorZ - waypointZ;
+
+	return sqrtf(distX * distX + distZ * distZ);
+}
+
+bool ScriptBase::Actor_Query_In_Between_Two_Actors(int actorId, int otherActor1Id, int otherActor2Id) {
+	float x1 = _vm->_actors[otherActor1Id]->getX();
+	float z1 = _vm->_actors[otherActor1Id]->getZ();
+	float x2 = _vm->_actors[otherActor2Id]->getX();
+	float z2 = _vm->_actors[otherActor2Id]->getZ();
+	return _vm->_sceneObjects->isBetweenTwoXZ(actorId, x1, z1, x2, z1)
+		|| _vm->_sceneObjects->isBetweenTwoXZ(actorId, x1 - 12.0f, z1 - 12.0f, x2 - 12.0f, z2 - 12.0f)
+		|| _vm->_sceneObjects->isBetweenTwoXZ(actorId, x1 + 12.0f, z1 - 12.0f, x2 + 12.0f, z2 - 12.0f)
+		|| _vm->_sceneObjects->isBetweenTwoXZ(actorId, x1 + 12.0f, z1 + 12.0f, x2 + 12.0f, z2 + 12.0f)
+		|| _vm->_sceneObjects->isBetweenTwoXZ(actorId, x1 - 12.0f, z1 + 12.0f, x2 - 12.0f, z2 + 12.0f);
+}
+
+void ScriptBase::Actor_Set_Goal_Number(int actorId, int goalNumber) {
+	_vm->_actors[actorId]->setGoal(goalNumber);
+}
+
+int ScriptBase::Actor_Query_Goal_Number(int actorId) {
+	return _vm->_actors[actorId]->getGoal();
+}
+
+void ScriptBase::Actor_Query_XYZ(int actorId, float *x, float *y, float *z) {
+	*x = _vm->_actors[actorId]->getX();
+	*y = _vm->_actors[actorId]->getY();
+	*z = _vm->_actors[actorId]->getZ();
+}
+
+int ScriptBase::Actor_Query_Facing_1024(int actorId) {
+	return _vm->_actors[actorId]->getFacing();
+}
+
+void ScriptBase::Actor_Set_Frame_Rate_FPS(int actorId, int fps) {
+	_vm->_actors[actorId]->setFps(fps);
+}
+
+int ScriptBase::Slice_Animation_Query_Number_Of_Frames(int animationId) {
+	return _vm->_sliceAnimations->getNumberOfFrames(animationId);
+}
+
+void ScriptBase::Actor_Change_Animation_Mode(int actorId, int animationMode) {
+	_vm->_actors[actorId]->changeAnimationMode(animationMode, 0);
+}
+
+int ScriptBase::Actor_Query_Animation_Mode(int actorId) {
+	return _vm->_actors[actorId]->getAnimationMode();
+}
+
 // ScriptBase::Loop_Actor_Walk_To_Actor
 // ScriptBase::Loop_Actor_Walk_To_Item
 // ScriptBase::Loop_Actor_Walk_To_Scene_Object
@@ -147,48 +423,129 @@ void ScriptBase::Actor_Voice_Over(int sentenceId, int actorId) {
 // ScriptBase::Loop_Actor_Travel_Stairs
 // ScriptBase::Loop_Actor_Travel_Ladder
 
-void ScriptBase::Actor_Clue_Add_To_Database(int a0, int a1, int a2, int a3, int a4, int a5) {
-	// debug("STUB: Actor_Clue_Add_To_Database(%d, %3d, %3d, %d, %d, %d)", a0, a1, a2, a3, a4, a5);
-	// debug("\tACTOR: %s", _vm->_actorNames->getText(a0));
-	// debug("\tCLUE:  %s\n", _vm->_clues->getClueText(a1));
+void ScriptBase::Actor_Clue_Add_To_Database(int actorId, int clueId, int unknown, bool clueAcquired, bool unknownFlag, int fromActorId) {
+	_vm->_actors[actorId]->addClueToDatabase(clueId, unknown, clueAcquired, unknownFlag, fromActorId);
 }
 
-// ScriptBase::Actor_Clue_Acquire
-// ScriptBase::Actor_Clue_Lose
-// ScriptBase::Actor_Clue_Query
-// ScriptBase::Actor_Clues_Transfer_New_To_Mainframe
-// ScriptBase::Actor_Clues_Transfer_New_From_Mainframe
-// ScriptBase::Actor_Set_Invisible
-// ScriptBase::Actor_Set_Immunity_To_Obstacles
+void ScriptBase::Actor_Clue_Acquire(int actorId, int clueId, byte unknownFlag, int fromActorId) {
+	_vm->_actors[actorId]->acquireClue(clueId, unknownFlag, fromActorId);
+}
+
+void ScriptBase::Actor_Clue_Lose(int actorId, int clueId) {
+	_vm->_actors[actorId]->loseClue(clueId);
+}
+
+bool ScriptBase::Actor_Clue_Query(int actorId, int clueId) {
+	return _vm->_actors[actorId]->hasClue(clueId);
+}
+
+void ScriptBase::Actor_Clues_Transfer_New_To_Mainframe(int actorId) {
+	_vm->_actors[actorId]->copyClues(99);
+}
+
+void ScriptBase::Actor_Clues_Transfer_New_From_Mainframe(int actorId) {
+	_vm->_voiceoverActor->copyClues(actorId);
+}
+
+void ScriptBase::Actor_Set_Invisible(int actorId, bool isInvisible) {
+	_vm->_actors[actorId]->setInvisible(isInvisible);
+}
+
+void ScriptBase::Actor_Set_Immunity_To_Obstacles(int actorId, bool isImmune) {
+	_vm->_actors[actorId]->setImmunityToObstacles(isImmune);
+}
+
 // ScriptBase::Item_Add_To_World
 // ScriptBase::Item_Remove_From_World
 // ScriptBase::Item_Spin_In_World
 // ScriptBase::Item_Flag_As_Target
 // ScriptBase::Item_Flag_As_Non_Target
 // ScriptBase::Item_Pickup_Spin_Effect
-// ScriptBase::Animation_Open
-// ScriptBase::Animation_Close
-// ScriptBase::Animation_Start
-// ScriptBase::Animation_Stop
-// ScriptBase::Animation_Skip_To_Frame
-// ScriptBase::Delay
+
+int ScriptBase::Animation_Open() {
+	//This is not implemented in game
+	return -1;
+}
+
+int ScriptBase::Animation_Close() {
+	//This is not implemented in game
+	return 0;
+}
+
+int ScriptBase::Animation_Start() {
+	//This is not implemented in game
+	return 0;
+}
+
+int ScriptBase::Animation_Stop() {
+	//This is not implemented in game
+	return 0;
+}
+
+int ScriptBase::Animation_Skip_To_Frame() {
+	//This is not implemented in game
+	return 0;
+}
+
+
+void ScriptBase::Delay(int miliseconds) {
+	Player_Loses_Control();
+	int endTime = _vm->getTotalPlayTime() + miliseconds;
+	while ((int)_vm->getTotalPlayTime() < endTime)
+		_vm->gameTick();
+	Player_Gains_Control();
+	
+}
 
 void ScriptBase::Player_Loses_Control() {
-		_vm->playerLosesControl();
+	_vm->playerLosesControl();
 }
 
 void ScriptBase::Player_Gains_Control() {
-		_vm->playerGainsControl();
+	_vm->playerGainsControl();
 }
 
-// ScriptBase::Player_Set_Combat_Mode
-// ScriptBase::Player_Query_Combat_Mode
-// ScriptBase::Player_Set_Combat_Mode_Access
-// ScriptBase::Player_Query_Current_Set
-// ScriptBase::Player_Query_Current_Scene
-// ScriptBase::Player_Query_Agenda
-// ScriptBase::Player_Set_Agenda
-// ScriptBase::Query_Difficulty_Level
+void ScriptBase::Player_Set_Combat_Mode(bool activate) {
+	if(!_vm->_combat->isActive() || activate) {
+		if(_vm->_combat->isActive() && activate) {
+			_vm->_combat->activate();
+		}
+	}else {
+		_vm->_combat->deactivate();
+	}
+}
+
+bool ScriptBase::Player_Query_Combat_Mode() {
+	return _vm->_combat->isActive();
+}
+
+void ScriptBase::Player_Set_Combat_Mode_Access(bool enable) {
+	if(enable) {
+		_vm->_combat->enable();
+	}else {
+		_vm->_combat->disable();
+	}
+}
+
+int ScriptBase::Player_Query_Current_Set() {
+	return _vm->_scene->getSetId();
+}
+
+int ScriptBase::Player_Query_Current_Scene() {
+	return _vm->_scene->getSceneId();
+}
+
+int ScriptBase::Player_Query_Agenda() {
+	return _vm->_settings->getPlayerAgenda();
+}
+
+void ScriptBase::Player_Set_Agenda(int agenda) {
+	_vm->_settings->setPlayerAgenda(agenda);
+}
+
+int ScriptBase::Query_Difficulty_Level() {
+	return _vm->_settings->getDifficulty();
+}
 
 void ScriptBase::Game_Flag_Set(int flag) {
 	_vm->_gameFlags->set(flag);
@@ -202,8 +559,14 @@ bool ScriptBase::Game_Flag_Query(int flag) {
 	return _vm->_gameFlags->query(flag);
 }
 
-// ScriptBase::Set_Enter
-// ScriptBase::Chapter_Enter
+void ScriptBase::Set_Enter(int setId, int sceneId) {
+	_vm->_settings->setNewSetAndScene(setId, sceneId);
+}
+
+void ScriptBase::Chapter_Enter(int chapter, int setId, int sceneId) {
+	_vm->_settings->setChapter(chapter);
+	Set_Enter(setId, sceneId);
+}
 
 int ScriptBase::Global_Variable_Set(int var, int value) {
 	return _vm->_gameVars[var] = value;
@@ -303,19 +666,29 @@ void ScriptBase::Setup_Scene_Information(float actorX, float actorY, float actor
 // ScriptBase::Dialogue_Menu_Query_Input
 // ScriptBase::Dialogue_Menu_Query_List_Size
 
-void ScriptBase::Scene_Exit_Add_2D_Exit(int a, int b, int c, int d, int e, int f) {
-	debug("Scene_Exit_Add_2D_Exit(%d, %d, %d, %d, %d, %d)", a, b, c, d, e, f);
+void ScriptBase::Scene_Exit_Add_2D_Exit(int index, int left, int top, int right, int down, int type) {
+	_vm->_scene->_exits->add(index, Common::Rect(left, top, right, down), type);
 }
 
-// ScriptBase::Scene_Exit_Remove
-// ScriptBase::Scene_Exits_Disable
-// ScriptBase::Scene_Exits_Enable
-
-void ScriptBase::Scene_2D_Region_Add(int a, int b, int c, int d, int e) {
-	debug("Scene_2D_Region_Add(%d, %d, %d, %d, %d)", a, b, c, d, e);
+void ScriptBase::Scene_Exit_Remove(int index) {
+	_vm->_scene->_exits->remove(index);
 }
 
-// ScriptBase::Scene_2D_Region_Remove
+void ScriptBase::Scene_Exits_Disable() {
+	_vm->_scene->_exits->setEnabled(false);
+}
+void ScriptBase::Scene_Exits_Enable() {
+	_vm->_scene->_exits->setEnabled(true);
+}
+
+void ScriptBase::Scene_2D_Region_Add(int index, int left, int top, int right, int down) {
+	_vm->_scene->_regions->add(index, Common::Rect(left, top, right, down), 0);
+}
+
+void ScriptBase::Scene_2D_Region_Remove(int index) {
+	_vm->_scene->_regions->remove(index);
+}
+
 // ScriptBase::World_Waypoint_Set
 // ScriptBase::World_Waypoint_Reset
 // ScriptBase::World_Waypoint_Query_X
@@ -355,35 +728,114 @@ void ScriptBase::Set_Score(int a0, int a1) {
 	debug("STUB: Set_Score(%d, %d)", a0, a1);
 }
 
-// ScriptBase::Give_McCoy_Ammo
-
-void ScriptBase::Assign_Player_Gun_Hit_Sounds(int a0, int a1, int a2, int a3) {
-	debug("STUB: Assign_Player_Gun_Hit_Sounds(%d, %d, %d, %d)", a0, a1, a2, a3);
+void ScriptBase::Give_McCoy_Ammo(int ammoType, int ammo) {
+	_vm->_settings->addAmmo(ammoType, ammo);
 }
 
-void ScriptBase::Assign_Player_Gun_Miss_Sounds(int a0, int a1, int a2, int a3) {
-	debug("STUB: Assign_Player_Gun_Miss_Sounds(%d, %d, %d, %d)", a0, a1, a2, a3);
+void ScriptBase::Assign_Player_Gun_Hit_Sounds(int row, int soundId1, int soundId2, int soundId3) {
+	_vm->_combat->setHitSoundId(row, 0, soundId1);
+	_vm->_combat->setHitSoundId(row, 1, soundId2);
+	_vm->_combat->setHitSoundId(row, 2, soundId3);
 }
 
-// ScriptBase::Disable_Shadows
-// ScriptBase::Query_System_Currently_Loading_Game
-// ScriptBase::Actor_Retired_Here
-// ScriptBase::Clickable_Object
-// ScriptBase::Unclickable_Object
-// ScriptBase::Obstacle_Object
-// ScriptBase::Unobstacle_Object
-// ScriptBase::Obstacle_Flag_All_Objects
-// ScriptBase::Combat_Target_Object
-// ScriptBase::Un_Combat_Target_Object
-// ScriptBase::Set_Fade_Color
-// ScriptBase::Set_Fade_Density
-// ScriptBase::Set_Fog_Color
-// ScriptBase::Set_Fog_Density
+void ScriptBase::Assign_Player_Gun_Miss_Sounds(int row, int soundId1, int soundId2, int soundId3) {
+	_vm->_combat->setMissSoundId(row, 0, soundId1);
+	_vm->_combat->setMissSoundId(row, 1, soundId2);
+	_vm->_combat->setMissSoundId(row, 2, soundId3);
+}
+
+void ScriptBase::Disable_Shadows(int *animationsIdsList, int listSize) {
+	_vm->_sliceRenderer->disableShadows(animationsIdsList, listSize);
+}
+
+bool ScriptBase::Query_System_Currently_Loading_Game() {
+	return _vm->_gameIsLoading;
+}
+
+void ScriptBase::Actor_Retired_Here(int actorId, int width, int height, int retired, int retiredByActorId) {
+	Actor *actor = _vm->_actors[actorId];
+	Vector3 actorPosition;
+	actor->getXYZ(&actorPosition.x, &actorPosition.y, &actorPosition.z);
+	actor->retire(retired, width, height, retiredByActorId);
+	actor->set_at_xyz(actorPosition, actor->getFacing(), true, 0, true);
+	_vm->_sceneObjects->setRetired(actorId, true);
+}
+
+void ScriptBase::Clickable_Object(char *objectName) {
+	int objectId = _vm->_scene->findObject(objectName);
+	if (objectId == -1)
+		return;
+	_vm->_scene->objectSetIsClickable(objectId, true, !_vm->_sceneIsLoading);
+}
+
+void ScriptBase::Unclickable_Object(char *objectName) {
+	int objectId = _vm->_scene->findObject(objectName);
+	if (objectId == -1)
+		return;
+	_vm->_scene->objectSetIsClickable(objectId, false, !_vm->_sceneIsLoading);
+}
+
+void ScriptBase::Obstacle_Object(char *objectName, bool updateWalkpath) {
+	int objectId = _vm->_scene->findObject(objectName);
+	if (objectId == -1)
+		return;
+	_vm->_scene->objectSetIsObstacle(objectId, true, !_vm->_sceneIsLoading, !_vm->_sceneIsLoading && updateWalkpath);
+}
+
+void ScriptBase::Unobstacle_Object(char *objectName, bool updateWalkpath) {
+	int objectId = _vm->_scene->findObject(objectName);
+	if (objectId == -1)
+		return;
+	_vm->_scene->objectSetIsObstacle(objectId, false, !_vm->_sceneIsLoading, !_vm->_sceneIsLoading && updateWalkpath);
+}
+
+void ScriptBase::Obstacle_Flag_All_Objects(bool isObstacle) {
+	_vm->_scene->objectSetIsObstacleAll(isObstacle, !_vm->_sceneIsLoading);
+}
+
+void ScriptBase::Combat_Target_Object(char *objectName) {
+	int objectId = _vm->_scene->findObject(objectName);
+	if (objectId == -1)
+		return;
+	_vm->_scene->objectSetIsCombatTarget(objectId, true, !_vm->_sceneIsLoading);
+}
+
+void ScriptBase::Un_Combat_Target_Object(char *objectName) {
+	int objectId = _vm->_scene->findObject(objectName);
+	if (objectId == -1)
+		return;
+	_vm->_scene->objectSetIsCombatTarget(objectId, true, !_vm->_sceneIsLoading);
+}
+
+void ScriptBase::Set_Fade_Color(float r, float g, float b) {
+	_vm->_scene->_set->_effects->setFadeColor(r, g, b);
+}
+
+void ScriptBase::Set_Fade_Density(float density) {
+	_vm->_scene->_set->_effects->setFadeDensity(density);
+}
+
+void ScriptBase::Set_Fog_Color(char* fogName, float r, float g, float b) {
+	_vm->_scene->_set->_effects->setFogColor(fogName, r, g, b);
+}
+
+void ScriptBase::Set_Fog_Density(char* fogName, float density) {
+	_vm->_scene->_set->_effects->setFogDensity(fogName, density);
+}
+
 // ScriptBase::ADQ_Flush
 // ScriptBase::ADQ_Add
 // ScriptBase::ADQ_Add_Pause
-// ScriptBase::Game_Over
-// ScriptBase::Autosave_Game
+
+bool ScriptBase::Game_Over() {
+	_vm->_gameIsRunning = false;
+	_vm->_gameOver = true;
+	return true;
+}
+
+void ScriptBase::Autosave_Game(int textId) {
+	_vm->_gameAutoSave = textId;
+}
 
 void ScriptBase::I_Sez(const char *str) {
 	_vm->ISez(str);

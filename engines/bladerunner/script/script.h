@@ -41,66 +41,66 @@ public:
 	{}
 
 protected:
-	// Preload
-	// Actor_Put_In_Set
-	// Actor_Set_At_XYZ
-	// Actor_Set_At_Waypoint
-	// Region_Check
+	void Preload(int animationId);
+	void Actor_Put_In_Set(int actorId, int setId);
+	void Actor_Set_At_XYZ(int actorId, float x, float y, float z, int angle);
+	void Actor_Set_At_Waypoint(int actorId, int waypointId, int angle);
+	bool Region_Check(int left, int top, int right, int down);
 	// Object_Query_Click
 	// Object_Do_Ground_Click
-	// Object_Mark_For_Hot_Mouse
-	// Actor_Face_Actor
-	// Actor_Face_Object
-	// Actor_Face_Item
-	// Actor_Face_Waypoint
-	// Actor_Face_XYZ
-	// Actor_Face_Current_Camera
-	// Actor_Face_Heading
-	// Actor_Query_Friendliness_To_Other
-	// Actor_Modify_Friendliness_To_Other
-	// Actor_Set_Friendliness_To_Other
-	// Actor_Set_Honesty
-	// Actor_Set_Intelligence
-	// Actor_Set_Stability
-	// Actor_Set_Combat_Aggressiveness
-	// Actor_Query_Current_HP
-	// Actor_Query_Max_HP
-	// Actor_Query_Combat_Aggressiveness
-	// Actor_Query_Honesty
-	// Actor_Query_Intelligence
-	// Actor_Query_Stability
-	// Actor_Modify_Current_HP
-	// Actor_Modify_Max_HP
-	// Actor_Modify_Combat_Aggressiveness
-	// Actor_Modify_Honesty
-	// Actor_Modify_Intelligence
-	// Actor_Modify_Stability
-	// Actor_Set_Flag_Damage_Anim_If_Moving
-	// Actor_Query_Flag_Damage_Anim_If_Moving
-	// Actor_Combat_AI_Hit_Attempt
-	// Non_Player_Actor_Combat_Mode_On
-	// Non_Player_Actor_Combat_Mode_Off
-	// Actor_Set_Health
-	// Actor_Set_Targetable
-	// Actor_Says
-	// Actor_Says_With_Pause
+	bool Object_Mark_For_Hot_Mouse(char *objectName);
+	void Actor_Face_Actor(int actorId, int otherActorId, bool animate);
+	void Actor_Face_Object(int actorId, char *objectName, bool animate);
+	void Actor_Face_Item(int actorId, int itemId, bool animate);
+	void Actor_Face_Waypoint(int actorId, int waypointId, bool animate);
+	void Actor_Face_XYZ(int actorId, float x, float y, float z, bool animate);
+	void Actor_Face_Current_Camera(int actorId, bool animate);
+	void Actor_Face_Heading(int actorId, int heading);
+	int Actor_Query_Friendliness_To_Other(int actorId, int otherActorId);
+	void Actor_Modify_Friendliness_To_Other(int actorId, int otherActorId, signed int change);
+	void Actor_Set_Friendliness_To_Other(int actorId, int otherActorId, int friendliness);
+	void Actor_Set_Honesty(int actorId, int honesty);
+	void Actor_Set_Intelligence(int actorId, int intelligence);
+	void Actor_Set_Stability(int actorId, int stability);
+	void Actor_Set_Combat_Aggressiveness(int actorId, int combatAggressiveness);
+	int Actor_Query_Current_HP(int actorId);
+	int Actor_Query_Max_HP(int actorId);
+	int Actor_Query_Combat_Aggressiveness(int actorId);
+	int Actor_Query_Honesty(int actorId);
+	int Actor_Query_Intelligence(int actorId);
+	int Actor_Query_Stability(int actorId);
+	void Actor_Modify_Current_HP(int actorId, signed int change);
+	void Actor_Modify_Max_HP(int actorId, signed int change);
+	void Actor_Modify_Combat_Aggressiveness(int actorId, signed int change);
+	void Actor_Modify_Honesty(int actorId, signed int change);
+	void Actor_Modify_Intelligence(int actorId, signed int change);
+	void Actor_Modify_Stability(int actorId, signed int change);
+	void Actor_Set_Flag_Damage_Anim_If_Moving(int actorId, bool value);
+	bool Actor_Query_Flag_Damage_Anim_If_Moving(int actorId);
+	void Actor_Combat_AI_Hit_Attempt(int actorId);
+	void Non_Player_Actor_Combat_Mode_On(int actorId, int a2, int a3, int a4, int a5, int a6, int a7, int a8, int a9, int a10, int a11, int a12, int a13, int a14);
+	void Non_Player_Actor_Combat_Mode_Off(int actorId);
+	void Actor_Set_Health(int actor, int hp, int maxHp);
+	void Actor_Set_Targetable(int actor, bool targetable);
+	void Actor_Says(int actorId, int sentenceId, int animationMode);
+	void Actor_Says_With_Pause(int actorId, int sentenceId, float pause, int animationMode);
 	void Actor_Voice_Over(int sentenceId, int actorId);
-	// Actor_Start_Speech_Sample
-	// Actor_Start_Voice_Over_Sample
-	// Actor_Query_Which_Set_In
-	// Actor_Query_Is_In_Current_Set
-	// Actor_Query_In_Set
-	// Actor_Query_Inch_Distance_From_Actor
-	// Actor_Query_Inch_Distance_From_Waypoint
-	// Actor_Query_In_Between_Two_Actors
-	// Actor_Set_Goal_Number
-	// Actor_Query_Goal_Number
-	// Actor_Query_XYZ
-	// Actor_Query_Facing_1024
-	// Actor_Set_Frame_Rate_FPS
-	// Slice_Animation_Query_Number_Of_Frames
-	// Actor_Change_Animation_Mode
-	// Actor_Query_Animation_Mode
+	void Actor_Start_Speech_Sample(int actorId, int sentenceId);
+	void Actor_Start_Voice_Over_Sample(int sentenceId);
+	int Actor_Query_Which_Set_In(int actorId);
+	bool Actor_Query_Is_In_Current_Set(int actorId);
+	bool Actor_Query_In_Set(int actorId, int setId);
+	int Actor_Query_Inch_Distance_From_Actor(int actorId, int otherActorId);
+	int Actor_Query_Inch_Distance_From_Waypoint(int actorId, int waypointId);
+	bool Actor_Query_In_Between_Two_Actors(int actorId, int otherActor1Id, int otherActor2Id);
+	void Actor_Set_Goal_Number(int actorId, int goalNumber);
+	int Actor_Query_Goal_Number(int actorId);
+	void Actor_Query_XYZ(int actorId, float *x, float *y, float *z);
+	int Actor_Query_Facing_1024(int actorId);
+	void Actor_Set_Frame_Rate_FPS(int actorId, int fps);
+	int Slice_Animation_Query_Number_Of_Frames(int animationId);
+	void Actor_Change_Animation_Mode(int actorId, int animationMode);
+	int Actor_Query_Animation_Mode(int actorId);
 	// Loop_Actor_Walk_To_Actor
 	// Loop_Actor_Walk_To_Item
 	// Loop_Actor_Walk_To_Scene_Object
@@ -111,41 +111,41 @@ protected:
 	// Actor_Force_Stop_Walking
 	// Loop_Actor_Travel_Stairs
 	// Loop_Actor_Travel_Ladder
-	void Actor_Clue_Add_To_Database(int a0, int a1, int a2, int a3, int a4, int a5);
-	// Actor_Clue_Acquire
-	// Actor_Clue_Lose
-	// Actor_Clue_Query
-	// Actor_Clues_Transfer_New_To_Mainframe
-	// Actor_Clues_Transfer_New_From_Mainframe
-	// Actor_Set_Invisible
-	// Actor_Set_Immunity_To_Obstacles
+	void Actor_Clue_Add_To_Database(int actorId, int clueId, int unknown, bool clueAcquired, bool unknownFlag, int fromActorId);
+	void Actor_Clue_Acquire(int actorId, int clueId, byte unknownFlag, int fromActorId);
+	void Actor_Clue_Lose(int actorId, int clueId);
+	bool Actor_Clue_Query(int actorId, int clueId);
+	void Actor_Clues_Transfer_New_To_Mainframe(int actorId);
+	void Actor_Clues_Transfer_New_From_Mainframe(int actorId);
+	void Actor_Set_Invisible(int actorId, bool isInvisible);
+	void Actor_Set_Immunity_To_Obstacles(int actorId, bool isImmune);
 	// Item_Add_To_World
 	// Item_Remove_From_World
 	// Item_Spin_In_World
 	// Item_Flag_As_Target
 	// Item_Flag_As_Non_Target
 	// Item_Pickup_Spin_Effect
-	// Animation_Open
-	// Animation_Close
-	// Animation_Start
-	// Animation_Stop
-	// Animation_Skip_To_Frame
-	// Delay
+	int Animation_Open();
+	int Animation_Close();
+	int Animation_Start();
+	int Animation_Stop();
+	int Animation_Skip_To_Frame();
+	void Delay(int miliseconds);
 	void Player_Loses_Control();
 	void Player_Gains_Control();
-	// Player_Set_Combat_Mode
-	// Player_Query_Combat_Mode
-	// Player_Set_Combat_Mode_Access
-	// Player_Query_Current_Set
-	// Player_Query_Current_Scene
-	// Player_Query_Agenda
-	// Player_Set_Agenda
-	// Query_Difficulty_Level
+	void Player_Set_Combat_Mode(bool activate);
+	bool Player_Query_Combat_Mode();
+	void Player_Set_Combat_Mode_Access(bool enable);
+	int Player_Query_Current_Set();
+	int Player_Query_Current_Scene();
+	int Player_Query_Agenda();
+	void Player_Set_Agenda(int agenda);
+	int Query_Difficulty_Level();
 	void Game_Flag_Set(int flag);
 	void Game_Flag_Reset(int flag);
 	bool Game_Flag_Query(int flag);
-	// Set_Enter
-	// Chapter_Enter
+	void Set_Enter(int setId, int sceneId);
+	void Chapter_Enter(int chapter, int setId, int sceneId);
 	int Global_Variable_Set(int, int);
 	int Global_Variable_Reset(int);
 	int Global_Variable_Query(int);
@@ -194,12 +194,12 @@ protected:
 	// Dialogue_Menu_Remove_From_List
 	// Dialogue_Menu_Query_Input
 	// Dialogue_Menu_Query_List_Size
-	void Scene_Exit_Add_2D_Exit(int, int, int, int, int, int);
-	// Scene_Exit_Remove
-	// Scene_Exits_Disable
-	// Scene_Exits_Enable
-	void Scene_2D_Region_Add(int, int, int, int, int);
-	// Scene_2D_Region_Remove
+	void Scene_Exit_Add_2D_Exit(int index, int left, int top, int right, int down, int type);
+	void Scene_Exit_Remove(int index);
+	void Scene_Exits_Disable();
+	void Scene_Exits_Enable();
+	void Scene_2D_Region_Add(int index, int left, int top, int right, int down);
+	void Scene_2D_Region_Remove(int index);
 	// World_Waypoint_Set
 	// World_Waypoint_Reset
 	// World_Waypoint_Query_X
@@ -235,28 +235,28 @@ protected:
 	// View_Score_Board
 	// Query_Score
 	void Set_Score(int a0, int a1);
-	// Give_McCoy_Ammo
-	void Assign_Player_Gun_Hit_Sounds(int a0, int a1, int a2, int a3);
-	void Assign_Player_Gun_Miss_Sounds(int a0, int a1, int a2, int a3);
-	// Disable_Shadows
-	// Query_System_Currently_Loading_Game
-	// Actor_Retired_Here
-	// Clickable_Object
-	// Unclickable_Object
-	// Obstacle_Object
-	// Unobstacle_Object
-	// Obstacle_Flag_All_Objects
-	// Combat_Target_Object
-	// Un_Combat_Target_Object
-	// Set_Fade_Color
-	// Set_Fade_Density
-	// Set_Fog_Color
-	// Set_Fog_Density
+	void Give_McCoy_Ammo(int ammoType, int ammo);
+	void Assign_Player_Gun_Hit_Sounds(int row, int soundId1, int soundId2, int soundId3);
+	void Assign_Player_Gun_Miss_Sounds(int row, int soundId1, int soundId2, int soundId3);
+	void Disable_Shadows(int *animationsIdsList, int listSize);
+	bool Query_System_Currently_Loading_Game();
+	void Actor_Retired_Here(int actorId, int width, int height, int retired, int retiredByActorId);
+	void Clickable_Object(char *objectName);
+	void Unclickable_Object(char *objectName);
+	void Obstacle_Object(char *objectName, bool updateWalkpath);
+	void Unobstacle_Object(char *objectName, bool updateWalkpath);
+	void Obstacle_Flag_All_Objects(bool isObstacle);
+	void Combat_Target_Object(char *objectName);
+	void Un_Combat_Target_Object(char *objectName);
+	void Set_Fade_Color(float r, float g, float b);
+	void Set_Fade_Density(float density);
+	void Set_Fog_Color(char* fogName, float r, float g, float b);
+	void Set_Fog_Density(char* fogName, float density);
 	// ADQ_Flush
 	// ADQ_Add
 	// ADQ_Add_Pause
-	// Game_Over
-	// Autosave_Game
+	bool Game_Over();
+	void Autosave_Game(int textId);
 	void I_Sez(const char *str);
 };
 
@@ -269,6 +269,7 @@ public:
 	virtual void InitializeScene() = 0;
 	virtual void SceneLoaded() = 0;
 	virtual void SceneFrameAdvanced(int frame) = 0;
+	virtual void SceneActorChangedGoal(int actorId, int newGoal, int oldGoal, bool currentSet) = 0;
 };
 
 class Script {
@@ -289,6 +290,7 @@ public:
 	void InitializeScene();
 	void SceneLoaded();
 	void SceneFrameAdvanced(int frame);
+	void SceneActorChangedGoal(int actorId, int newGoal, int oldGoal, bool currentSet);
 };
 
 #define DECLARE_SCRIPT(name) \
@@ -300,6 +302,7 @@ public: \
 	void InitializeScene(); \
 	void SceneLoaded(); \
 	void SceneFrameAdvanced(int frame); \
+	void SceneActorChangedGoal(int actorId, int newGoal, int oldGoal, bool currentSet); \
 };
 
 DECLARE_SCRIPT(RC01)

@@ -154,4 +154,11 @@ void ScriptRC01::SceneFrameAdvanced(int frame) {
 		Sound_Play(118, 40, 80, 80, 50);  // CARDOWN3.AUD
 }
 
+
+void ScriptRC01::SceneActorChangedGoal(int actorId, int newGoal, int oldGoal, bool currentSet) {
+
+}
+
+
+
 } // End of namespace BladeRunner
