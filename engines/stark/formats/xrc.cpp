@@ -45,6 +45,7 @@
 #include "engines/stark/resources/light.h"
 #include "engines/stark/resources/lipsync.h"
 #include "engines/stark/resources/location.h"
+#include "engines/stark/resources/path.h"
 #include "engines/stark/resources/pattable.h"
 #include "engines/stark/resources/root.h"
 #include "engines/stark/resources/script.h"
@@ -227,6 +228,9 @@ Resources::Object *XRCReader::createResource(XRCReadStream *stream, Resources::O
 		break;
 	case Resources::Type::kSoundItem:
 		resource = new Resources::Sound(parent, subType, index, name);
+		break;
+	case Resources::Type::kPath:
+		resource = Resources::Path::construct(parent, subType, index, name);
 		break;
 	case Resources::Type::kFloorField:
 		resource = new Resources::FloorField(parent, subType, index, name);

@@ -49,6 +49,7 @@ MODULE_OBJS := \
 	resources/lipsync.o \
 	resources/location.o \
 	resources/object.o \
+	resources/path.o \
 	resources/pattable.o \
 	resources/root.o \
 	resources/script.o \

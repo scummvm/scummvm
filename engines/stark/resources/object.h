@@ -55,6 +55,7 @@ public:
 		kAnimScript             = 14,
 		kAnimScriptItem         = 15,
 		kSoundItem              = 16,
+		kPath                   = 17,
 		kFloorField             = 18,
 		kBookmark               = 19,
 		kKnowledgeSet           = 20,

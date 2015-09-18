@@ -62,6 +62,7 @@ const char *Type::getName() const {
 			{ Type::kAnimScript,             "AnimScript"             },
 			{ Type::kAnimScriptItem,         "AnimScriptItem"         },
 			{ Type::kSoundItem,              "SoundItem"              },
+			{ Type::kPath,                   "Path"                   },
 			{ Type::kFloorField,             "FloorField"             },
 			{ Type::kBookmark,               "Bookmark"               },
 			{ Type::kKnowledgeSet,           "KnowledgeSet"           },
