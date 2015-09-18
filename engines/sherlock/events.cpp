@@ -28,6 +28,7 @@
 #include "sherlock/sherlock.h"
 #include "sherlock/events.h"
 #include "sherlock/surface.h"
+#include "sherlock/tattoo/tattoo.h"
 
 namespace Sherlock {
 
@@ -173,7 +174,8 @@ void Events::animateCursorIfNeeded() {
 }
 
 void Events::showCursor() {
-	CursorMan.showMouse(true);
+	if (IS_SERRATED_SCALPEL || !static_cast<Tattoo::TattooEngine *>(_vm)->_runningProlog)
+		CursorMan.showMouse(true);
 }
 
 void Events::hideCursor() {
