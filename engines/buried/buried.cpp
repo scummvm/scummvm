@@ -62,7 +62,8 @@ BuriedEngine::BuriedEngine(OSystem *syst, const BuriedGameDescription *gameDesc)
 	_yielding = false;
 
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
-	SearchMan.addSubDirectoryMatching(gameDataDir, "WIN31/MANUAL", 0, 2);
+	SearchMan.addSubDirectoryMatching(gameDataDir, "WIN31/MANUAL", 0, 2); // v1.05 era
+	SearchMan.addSubDirectoryMatching(gameDataDir, "WIN95/MANUAL", 0, 2); // v1.10 era (Trilogy release)
 }
 
 BuriedEngine::~BuriedEngine() {
