@@ -296,7 +296,7 @@ void sceneHandler23_pushButton(ExCommand *cmd) {
 					if (g_fp->_msgX == 276 && g_fp->_msgY == 438 )
 						return;
 
-					MessageQueue *mq = getCurrSceneSc2MotionController()->method34(g_fp->_aniMan, 276, 438, 1, ST_MAN_RIGHT);
+					MessageQueue *mq = getCurrSceneSc2MotionController()->startMove(g_fp->_aniMan, 276, 438, 1, ST_MAN_RIGHT);
 
 					if (mq) {
 						mq->addExCommandToEnd(cmd->createClone());
@@ -424,7 +424,7 @@ int sceneHandler23(ExCommand *cmd) {
 	case MSG_SC23_FROMSTOOL:
 		g_vars->scene23_isOnStool = false;
 
-		getCurrSceneSc2MotionController()->setEnabled();
+		getCurrSceneSc2MotionController()->activate();
 		getGameLoaderInteractionController()->enableFlag24();
 
 		g_fp->_behaviorManager->setFlagByStaticAniObject(g_fp->_aniMan, 1);
@@ -438,7 +438,7 @@ int sceneHandler23(ExCommand *cmd) {
 	case MSG_SC23_ONSTOOL:
 		g_vars->scene23_isOnStool = true;
 
-		getCurrSceneSc2MotionController()->clearEnabled();
+		getCurrSceneSc2MotionController()->deactivate();
 		getGameLoaderInteractionController()->disableFlag24();
 
 		g_fp->_behaviorManager->setFlagByStaticAniObject(g_fp->_aniMan, 0);

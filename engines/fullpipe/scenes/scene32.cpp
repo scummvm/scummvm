@@ -189,7 +189,7 @@ void sceneHandler32_trySit(ExCommand *cmd) {
 
 		g_vars->scene32_dudeIsSitting = true;
 
-		getCurrSceneSc2MotionController()->clearEnabled();
+		getCurrSceneSc2MotionController()->deactivate();
 		getGameLoaderInteractionController()->disableFlag24();
 	}
 }
@@ -236,7 +236,7 @@ void sceneHandler32_ladderLogic(ExCommand *cmd) {
 
 	g_vars->scene32_dudeOnLadder = false;
 
-	getCurrSceneSc2MotionController()->setEnabled();
+	getCurrSceneSc2MotionController()->activate();
 	getGameLoaderInteractionController()->enableFlag24();
 }
 
@@ -258,7 +258,7 @@ void sceneHandler32_potLogic(ExCommand *cmd) {
 		mq->setFlags(mq->getFlags() | 1);
 		mq->chain(0);
 
-		getCurrSceneSc2MotionController()->setEnabled();
+		getCurrSceneSc2MotionController()->activate();
 		getGameLoaderInteractionController()->enableFlag24();
 
 		g_vars->scene32_dudeIsSitting = false;
@@ -330,7 +330,7 @@ int sceneHandler32(ExCommand *cmd) {
 	case MSG_SC32_ONLADDER:
 		g_vars->scene32_dudeOnLadder = true;
 
-		getCurrSceneSc2MotionController()->clearEnabled();
+		getCurrSceneSc2MotionController()->deactivate();
 		getGameLoaderInteractionController()->disableFlag24();
 		break;
 

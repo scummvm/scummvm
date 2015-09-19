@@ -275,7 +275,7 @@ void sceneHandler04_clickButton() {
 }
 
 void sceneHandler04_downLadder(int x, int y) {
-	g_vars->scene04_ladder->method34(g_fp->_aniMan, x + g_vars->scene04_ladder->_ladder_field_20, y + g_vars->scene04_ladder->_ladder_field_24, 0, 0);
+	g_vars->scene04_ladder->startMove(g_fp->_aniMan, x + g_vars->scene04_ladder->_ladder_field_20, y + g_vars->scene04_ladder->_ladder_field_24, 0, 0);
 }
 
 void sceneHandler04_walkClimbLadder(ExCommand *ex) {
@@ -321,7 +321,7 @@ void sceneHandler04_walkClimbLadder(ExCommand *ex) {
 	g_vars->scene04_ladder->_ladder_field_20 = 0;
 	g_vars->scene04_ladder->_ladder_field_24 = -60;
 
-	g_vars->scene04_ladder->addObject(g_fp->_aniMan);
+	g_vars->scene04_ladder->attachObject(g_fp->_aniMan);
 
 	if (g_vars->scene04_soundPlaying) {
 		g_vars->scene04_ladder->_ladmovements.front()->movVars->varUpStart = MV_MAN_STARTLADDER2;
@@ -337,7 +337,7 @@ void sceneHandler04_walkClimbLadder(ExCommand *ex) {
 
 	g_fp->_aniMan->_priority = 12;
 
-	getSc2MctlCompoundBySceneId(g_fp->_currentScene->_sceneId)->clearEnabled();
+	getSc2MctlCompoundBySceneId(g_fp->_currentScene->_sceneId)->deactivate();
 	getGameLoaderInteractionController()->disableFlag24();
 }
 
@@ -368,7 +368,7 @@ void sceneHandler04_clickLadder() {
 	} else {
 		if (g_fp->_aniMan->isIdle() && !(g_fp->_aniMan->_flags & 0x100)) {
 			if (abs(1095 - g_vars->scene04_dudePosX) > 1 || abs(434 - g_vars->scene04_dudePosY) > 1) {
-				MessageQueue *mq = getSc2MctlCompoundBySceneId(g_fp->_currentScene->_sceneId)->method34(g_fp->_aniMan, 1095, 434, 1, ST_MAN_UP);
+				MessageQueue *mq = getSc2MctlCompoundBySceneId(g_fp->_currentScene->_sceneId)->startMove(g_fp->_aniMan, 1095, 434, 1, ST_MAN_UP);
 				if (mq) {
 					ExCommand *ex = new ExCommand(0, 17, MSG_SC4_CLICKLADDER, 0, 0, 0, 1, 0, 0, 0);
 
@@ -533,7 +533,7 @@ void sceneHandler04_manFromBottle() {
 
 	g_vars->scene04_ladder = 0;
 
-	getSc2MctlCompoundBySceneId(g_fp->_currentScene->_sceneId)->setEnabled();
+	getSc2MctlCompoundBySceneId(g_fp->_currentScene->_sceneId)->activate();
 	getGameLoaderInteractionController()->enableFlag24();
 }
 
@@ -1120,7 +1120,7 @@ void sceneHandler04_leaveLadder(ExCommand *ex) {
 
 						ex->_messageKind = 0;
 
-						mc->setEnabled();
+						mc->activate();
 						getGameLoaderInteractionController()->enableFlag24();
 					} else {
 						delete mq;
@@ -1275,7 +1275,7 @@ void sceneHandler04_winArcade() {
 		g_vars->scene04_objectIsTaken = false;
 		g_vars->scene04_soundPlaying = false;
 
-		getSc2MctlCompoundBySceneId(g_fp->_currentScene->_sceneId)->setEnabled();
+		getSc2MctlCompoundBySceneId(g_fp->_currentScene->_sceneId)->activate();
 
 		getGameLoaderInteractionController()->enableFlag24();
 

@@ -298,7 +298,7 @@ void sceneHandler16_drink() {
 void sceneHandler16_mugClick() {
 	if (abs(310 - g_fp->_aniMan->_ox) >= 1 || abs(449 - g_fp->_aniMan->_oy) >= 1
 		|| g_fp->_aniMan->_movement || g_fp->_aniMan->_statics->_staticsId != ST_MAN_RIGHT) {
-		MessageQueue *mq = getCurrSceneSc2MotionController()->method34(g_fp->_aniMan, 310, 449, 1, ST_MAN_RIGHT);
+		MessageQueue *mq = getCurrSceneSc2MotionController()->startMove(g_fp->_aniMan, 310, 449, 1, ST_MAN_RIGHT);
 
 		if (mq) {
 			ExCommand *ex = new ExCommand(0, 17, MSG_SC16_MUGCLICK, 0, 0, 0, 1, 0, 0, 0);

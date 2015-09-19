@@ -687,7 +687,7 @@ void sceneHandler29_ballHitCheck() {
 
 void sceneHandler29_manFromL() {
 	if (g_vars->scene29_manX < 497 && !g_vars->scene29_scrollingDisabled) {
-		getCurrSceneSc2MotionController()->setEnabled();
+		getCurrSceneSc2MotionController()->activate();
 		getGameLoaderInteractionController()->enableFlag24();
 
 		g_fp->_aniMan->changeStatics2(ST_MAN_RIGHT | 0x4000);
@@ -700,7 +700,7 @@ void sceneHandler29_manFromL() {
 }
 
 void sceneHandler29_manFromR() {
-	getCurrSceneSc2MotionController()->setEnabled();
+	getCurrSceneSc2MotionController()->activate();
 	getGameLoaderInteractionController()->enableFlag24();
 
 	chainQueue(QU_SC29_MANFROM_R, 1);
@@ -721,7 +721,7 @@ int sceneHandler29_updateScreenCallback() {
 }
 
 void sceneHandler29_manToL() {
-	getCurrSceneSc2MotionController()->clearEnabled();
+	getCurrSceneSc2MotionController()->deactivate();
 	getGameLoaderInteractionController()->disableFlag24();
 
 	chainQueue(QU_SC29_MANTO_L, 1);
@@ -737,7 +737,7 @@ void sceneHandler29_manToL() {
 }
 
 void sceneHandler29_manToR() {
-	getCurrSceneSc2MotionController()->clearEnabled();
+	getCurrSceneSc2MotionController()->deactivate();
 	getGameLoaderInteractionController()->disableFlag24();
 
 	chainQueue(QU_SC29_MANTO_R, 1);
@@ -763,7 +763,7 @@ void sceneHandler29_clickPorter(ExCommand *cmd) {
 		if (ABS(351 - g_vars->scene29_manX) > 1 || ABS(443 - g_vars->scene29_manY) > 1
 			|| g_fp->_aniMan->_movement || g_fp->_aniMan->_statics->_staticsId != ST_MAN_RIGHT) {
 			if (g_fp->_msgX != 351 || g_fp->_msgY != 443) {
-				MessageQueue *mq = getCurrSceneSc2MotionController()->method34(g_fp->_aniMan, 351, 443, 1, ST_MAN_RIGHT);
+				MessageQueue *mq = getCurrSceneSc2MotionController()->startMove(g_fp->_aniMan, 351, 443, 1, ST_MAN_RIGHT);
 
 				if (mq) {
 					mq->addExCommandToEnd(cmd->createClone());
@@ -781,7 +781,7 @@ void sceneHandler29_clickPorter(ExCommand *cmd) {
 		if (ABS(1582 - g_vars->scene29_manX) > 1 || ABS(445 - g_fp->_aniMan->_oy) > 1
 			|| g_fp->_aniMan->_movement || g_fp->_aniMan->_statics->_staticsId != (0x4000 | ST_MAN_RIGHT)) {
 			if (g_fp->_msgX != 1582 || g_fp->_msgY != 445) {
-				MessageQueue *mq = getCurrSceneSc2MotionController()->method34(g_fp->_aniMan, 1582, 445, 1, (0x4000 | ST_MAN_RIGHT));
+				MessageQueue *mq = getCurrSceneSc2MotionController()->startMove(g_fp->_aniMan, 1582, 445, 1, (0x4000 | ST_MAN_RIGHT));
 
 				if (mq) {
 					mq->addExCommandToEnd(cmd->createClone());
@@ -1001,7 +1001,7 @@ int sceneHandler29(ExCommand *cmd) {
 		g_vars->scene29_reachedFarRight = false;
 		g_vars->scene29_rideBackEnabled = false;
 
-		getCurrSceneSc2MotionController()->setEnabled();
+		getCurrSceneSc2MotionController()->activate();
 		getGameLoaderInteractionController()->enableFlag24();
 		break;
 

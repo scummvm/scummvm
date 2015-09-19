@@ -419,7 +419,7 @@ bool GameLoader::unloadScene(int sceneId) {
 	if (_sc2array[sceneTag]._isLoaded)
 		saveScenePicAniInfos(sceneId);
 
-	_sc2array[sceneTag]._motionController->freeItems();
+	_sc2array[sceneTag]._motionController->detachAllObjects();
 
 	delete tag->_scene;
 	tag->_scene = 0;
