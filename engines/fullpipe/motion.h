@@ -404,10 +404,9 @@ class MctlConnectionPoint : public CObject {
 public:
 	int _connectionX;
 	int _connectionY;
-	int _field_C;
-	int _field_10;
-	int16 _field_14;
-	int16 _field_16;
+	int _mctlflags;
+	int _mctlstatic;
+	int16 _mctlmirror;
 	MessageQueue *_messageQueueObj;
 	int _motionControllerObj;
 

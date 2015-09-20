@@ -195,7 +195,7 @@ MessageQueue *MctlCompound::startMove(StaticANIObject *ani, int sourceX, int sou
 	if (!cp)
 		return 0;
 
-	MessageQueue *mq = _motionControllers[idx]->_motionControllerObj->doWalkTo(ani, cp->_connectionX, cp->_connectionY, 1, cp->_field_14);
+	MessageQueue *mq = _motionControllers[idx]->_motionControllerObj->doWalkTo(ani, cp->_connectionX, cp->_connectionY, 1, cp->_mctlmirror);
 
 	if (!mq)
 		return 0;
@@ -264,7 +264,7 @@ MessageQueue *MctlCompound::doWalkTo(StaticANIObject *subj, int xpos, int ypos, 
 	if (!closestP)
 		return 0;
 
-	MessageQueue *mq = _motionControllers[match1]->_motionControllerObj->doWalkTo(subj, closestP->_connectionX, closestP->_connectionY, 1, closestP->_field_14);
+	MessageQueue *mq = _motionControllers[match1]->_motionControllerObj->doWalkTo(subj, closestP->_connectionX, closestP->_connectionY, 1, closestP->_mctlmirror);
 
 	ExCommand *ex;
 
@@ -669,10 +669,9 @@ void MctlCompound::replaceNodeX(int from, int to) {
 MctlConnectionPoint::MctlConnectionPoint() {
 	_connectionX = 0;
 	_connectionY = 0;
-	_field_C = 0;
-	_field_10 = 0;
-	_field_14 = 0;
-	_field_16 = 0;
+	_mctlflags = 0;
+	_mctlstatic = 0;
+	_mctlmirror = 0;
 	_messageQueueObj = 0;
 	_motionControllerObj = 0;
 }
