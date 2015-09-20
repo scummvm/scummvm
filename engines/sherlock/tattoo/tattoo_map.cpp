@@ -366,6 +366,7 @@ void TattooMap::showCloseUp(int closeUpNum) {
 
 	// Reset scroll position
 	screen._currentScroll = Common::Point(0, 0);
+	events.hideCursor();
 
 	// Get the closeup images
 	Common::String fname = Common::String::format("res%02d.vgs", closeUpNum + 1);
@@ -426,7 +427,9 @@ void TattooMap::showCloseUp(int closeUpNum) {
 	screen._backBuffer1.transBlitFrom(pic[0], Common::Point(r.left, r.top));
 	screen.slamRect(oldBounds);
 	screen.slamRect(r);
+
 	events.wait(60);
+	events.showCursor();
 }
 
 } // End of namespace Tattoo
