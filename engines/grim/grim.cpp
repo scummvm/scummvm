@@ -1400,8 +1400,10 @@ void GrimEngine::setSideTextures(const Common::String &setup) {
 	Graphics::Surface *t1 = loadPNG(Common::String::format("%s_left.png", setup.c_str()));
 	Graphics::Surface *t2 = loadPNG(Common::String::format("%s_right.png", setup.c_str()));
 	g_system->suggestSideTextures(t1, t2);
-	t1->free();
-	t2->free();
+	if (t1)
+		t1->free();
+	if (t2)
+		t2->free();
 	delete t1;
 	delete t2;
 }
