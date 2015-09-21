@@ -258,32 +258,32 @@ void Scene101::step() {
 		break;
 	}
 
-	if (_scene->_activeAnimation != nullptr) {
-		if ((_scene->_activeAnimation->getCurrentFrame() >= 6) && (_messageNum == 0)) {
+	if (_scene->_animation[0] != nullptr) {
+		if ((_scene->_animation[0]->getCurrentFrame() >= 6) && (_messageNum == 0)) {
 			_messageNum++;
 			_scene->_kernelMessages.add(Common::Point(63, _posY), 0x1110, 0, 0, 240, _game.getQuote(49));
 			_posY += 14;
 		}
 
-		if ((_scene->_activeAnimation->getCurrentFrame() >= 7) && (_messageNum == 1)) {
+		if ((_scene->_animation[0]->getCurrentFrame() >= 7) && (_messageNum == 1)) {
 			_messageNum++;
 			_scene->_kernelMessages.add(Common::Point(63, _posY), 0x1110, 0, 0, 240, _game.getQuote(54));
 			_posY += 14;
 		}
 
-		if ((_scene->_activeAnimation->getCurrentFrame() >= 10) && (_messageNum == 2)) {
+		if ((_scene->_animation[0]->getCurrentFrame() >= 10) && (_messageNum == 2)) {
 			_messageNum++;
 			_scene->_kernelMessages.add(Common::Point(63, _posY), 0x1110, 0, 0, 240, _game.getQuote(55));
 			_posY += 14;
 		}
 
-		if ((_scene->_activeAnimation->getCurrentFrame() >= 17) && (_messageNum == 3)) {
+		if ((_scene->_animation[0]->getCurrentFrame() >= 17) && (_messageNum == 3)) {
 			_messageNum++;
 			_scene->_kernelMessages.add(Common::Point(63, _posY), 0x1110, 0, 0, 240, _game.getQuote(56));
 			_posY += 14;
 		}
 
-		if ((_scene->_activeAnimation->getCurrentFrame() >= 20) && (_messageNum == 4)) {
+		if ((_scene->_animation[0]->getCurrentFrame() >= 20) && (_messageNum == 4)) {
 			_messageNum++;
 			_scene->_kernelMessages.add(Common::Point(63, _posY), 0x1110, 0, 0, 240, _game.getQuote(50));
 			_posY += 14;
@@ -1782,7 +1782,7 @@ void Scene104::step() {
 	if ((_game._player._special > 0) && _game._player._stepEnabled)
 		_game._player._stepEnabled = false;
 
-	if (_kargShootingFl && (_scene->_activeAnimation->getCurrentFrame() >= 19)) {
+	if (_kargShootingFl && (_scene->_animation[0]->getCurrentFrame() >= 19)) {
 		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, _game.getQuote(52));
 		_kargShootingFl = false;
 	}
@@ -2079,7 +2079,7 @@ void Scene106::step() {
 		}
 	}
 
-	if (_firstEmergingFl && (_scene->_activeAnimation->getCurrentFrame() >= 19)) {
+	if (_firstEmergingFl && (_scene->_animation[0]->getCurrentFrame() >= 19)) {
 		_firstEmergingFl = false;
 		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, _game.getQuote(52));
 	}
@@ -2263,7 +2263,7 @@ void Scene107::enter() {
 }
 
 void Scene107::step() {
-	if (_shootingFl && (_scene->_activeAnimation->getCurrentFrame() >= 19)) {
+	if (_shootingFl && (_scene->_animation[0]->getCurrentFrame() >= 19)) {
 		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, _game.getQuote(52));
 		_shootingFl = false;
 	}
@@ -2919,7 +2919,7 @@ void Scene110::actions() {
 		switch (_game._trigger) {
 		case 0:
 			_scene->loadAnimation(Resources::formatName(110, 'T', 0, EXT_AA, ""), 1);
-			_scene->_activeAnimation->setNextFrameTimer(_game._player._ticksAmount + _game._player._priorTimer);
+			_scene->_animation[0]->setNextFrameTimer(_game._player._ticksAmount + _game._player._priorTimer);
 			_game._player._stepEnabled = false;
 			_game._player._visible = false;
 			break;
@@ -3066,7 +3066,7 @@ void Scene111::step() {
 	if (_game._trigger == 73)
 		_vm->_sound->command(37);
 
-	if (_rexDivingFl && (_scene->_activeAnimation->getCurrentFrame() >= 9)) {
+	if (_rexDivingFl && (_scene->_animation[0]->getCurrentFrame() >= 9)) {
 		_vm->_sound->command(36);
 		_rexDivingFl = false;
 	}
@@ -3138,8 +3138,8 @@ void Scene112::enter() {
 }
 
 void Scene112::step() {
-	if ((_scene->_activeAnimation != nullptr) && (_game._storyMode == STORYMODE_NICE)) {
-		if (_scene->_activeAnimation->getCurrentFrame() >= 54) {
+	if ((_scene->_animation[0] != nullptr) && (_game._storyMode == STORYMODE_NICE)) {
+		if (_scene->_animation[0]->getCurrentFrame() >= 54) {
 			_scene->freeAnimation();
 			_game._trigger = 70;
 		}

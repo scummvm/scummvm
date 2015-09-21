@@ -124,7 +124,7 @@ void Scene601::step() {
 	switch (_game._trigger) {
 	case 70:
 		_game._player._visible = true;
-		_game._player._priorTimer = _scene->_activeAnimation->getNextFrameTimer() - _game._player._ticksAmount;
+		_game._player._priorTimer = _scene->_animation[0]->getNextFrameTimer() - _game._player._ticksAmount;
 		_scene->_sequences.addTimer(30, 71);
 		break;
 
@@ -431,7 +431,7 @@ void Scene602::actions() {
 
 		case 1: {
 			_game._player._visible = true;
-			_game._player._priorTimer = _scene->_activeAnimation->getNextFrameTimer() - _game._player._ticksAmount;
+			_game._player._priorTimer = _scene->_animation[0]->getNextFrameTimer() - _game._player._ticksAmount;
 			_lastSpriteIdx = _globals._spriteIndexes[3];
 			_lastSequenceIdx = _scene->_sequences.startCycle(_lastSpriteIdx, false, -1);
 			_scene->_sequences.setDepth(_lastSequenceIdx, 14);
@@ -775,7 +775,7 @@ void Scene604::step() {
 	switch (_game._trigger) {
 	case 70:
 		_game._player._visible = true;
-		_game._player._priorTimer = _scene->_activeAnimation->getNextFrameTimer() - _game._player._ticksAmount;
+		_game._player._priorTimer = _scene->_animation[0]->getNextFrameTimer() - _game._player._ticksAmount;
 		_scene->_sequences.addTimer(30, 71);
 		break;
 
@@ -797,9 +797,9 @@ void Scene604::step() {
 		break;
 	}
 
-	if (_monsterActive && (_scene->_activeAnimation != nullptr)) {
-		if (_scene->_activeAnimation->getCurrentFrame() != _monsterFrame) {
-			_monsterFrame = _scene->_activeAnimation->getCurrentFrame();
+	if (_monsterActive && (_scene->_animation[0] != nullptr)) {
+		if (_scene->_animation[0]->getCurrentFrame() != _monsterFrame) {
+			_monsterFrame = _scene->_animation[0]->getCurrentFrame();
 			int nextMonsterFrame = -1;
 
 			switch (_monsterFrame) {
@@ -837,7 +837,7 @@ void Scene604::step() {
 			}
 
 			if ((nextMonsterFrame >= 0) && (nextMonsterFrame != _monsterFrame)) {
-				_scene->_activeAnimation->setCurrentFrame(nextMonsterFrame);
+				_scene->_animation[0]->setCurrentFrame(nextMonsterFrame);
 				_monsterFrame = nextMonsterFrame;
 			}
 		}
@@ -1297,7 +1297,7 @@ void Scene607::step() {
 	switch (_game._trigger) {
 	case 80:
 		_game._player._visible = true;
-		_game._player._priorTimer = _scene->_activeAnimation->getNextFrameTimer() - _game._player._ticksAmount;
+		_game._player._priorTimer = _scene->_animation[0]->getNextFrameTimer() - _game._player._ticksAmount;
 		_scene->_sequences.addTimer(6, 81);
 		break;
 
@@ -1331,7 +1331,7 @@ void Scene607::handleThrowingBone() {
 
 	case 1:
 		_game._player._visible = true;
-		_game._player._priorTimer = _scene->_activeAnimation->getNextFrameTimer() - _game._player._ticksAmount;
+		_game._player._priorTimer = _scene->_animation[0]->getNextFrameTimer() - _game._player._ticksAmount;
 
 		if (_animationMode != 1)
 			_scene->_hotspots.activate(NOUN_OBNOXIOUS_DOG, false);
@@ -1605,7 +1605,7 @@ void Scene608::restoreAnimations() {
 		_scene->_sequences.remove(_globals._sequenceIndexes[6]);
 		_scene->_sequences.remove(_globals._sequenceIndexes[7]);
 		_scene->loadAnimation(formAnimName('A', -1));
-		_scene->_activeAnimation->setCurrentFrame(6);
+		_scene->_animation[0]->setCurrentFrame(6);
 	}
 }
 
@@ -1757,7 +1757,7 @@ void Scene608::enter() {
 		int idx = _scene->_dynamicHotspots.add(NOUN_CAR, VERB_WALKTO, -1, Common::Rect(100, 100, 100 + 82, 100 + 25));
 		_carHotspotId = _scene->_dynamicHotspots.setPosition(idx, Common::Point(96, 132), FACING_NORTHEAST);
 		_scene->loadAnimation(formAnimName('A', -1));
-		_scene->_activeAnimation->setCurrentFrame(6);
+		_scene->_animation[0]->setCurrentFrame(6);
 	} else if (_globals[kCarStatus] == CAR_SQUASHES_DOG) {
 		_carMode = 2;
 		_dogDeathMode = 0;
@@ -1927,13 +1927,13 @@ void Scene608::step() {
 		_animationMode = 0;
 	}
 
-	if ((_carMode == 4) && (_scene->_activeAnimation != nullptr)) {
-		if (_scene->_activeAnimation->getCurrentFrame() != _carFrame) {
-			_carFrame = _scene->_activeAnimation->getCurrentFrame();
+	if ((_carMode == 4) && (_scene->_animation[0] != nullptr)) {
+		if (_scene->_animation[0]->getCurrentFrame() != _carFrame) {
+			_carFrame = _scene->_animation[0]->getCurrentFrame();
 
 			if (_carFrame == 10) {
 				_game._player._visible = true;
-				_game._player._priorTimer = _scene->_activeAnimation->getNextFrameTimer() - _game._player._ticksAmount;
+				_game._player._priorTimer = _scene->_animation[0]->getNextFrameTimer() - _game._player._ticksAmount;
 			} else if (_carFrame == 56) {
 				resetDogVariables();
 				_animationMode = 0;
@@ -1942,12 +1942,12 @@ void Scene608::step() {
 		}
 	}
 
-	if ((_carMode == 5) && (_scene->_activeAnimation != nullptr)) {
-		if (_scene->_activeAnimation->getCurrentFrame() != _carFrame) {
-			_carFrame = _scene->_activeAnimation->getCurrentFrame();
+	if ((_carMode == 5) && (_scene->_animation[0] != nullptr)) {
+		if (_scene->_animation[0]->getCurrentFrame() != _carFrame) {
+			_carFrame = _scene->_animation[0]->getCurrentFrame();
 			if (_carFrame == 10) {
 				_game._player._visible = true;
-				_game._player._priorTimer = _scene->_activeAnimation->getNextFrameTimer() - _game._player._ticksAmount;
+				_game._player._priorTimer = _scene->_animation[0]->getNextFrameTimer() - _game._player._ticksAmount;
 			} else if (_carFrame == 52) {
 				resetDogVariables();
 				_animationMode = 0;
@@ -1956,13 +1956,13 @@ void Scene608::step() {
 		}
 	}
 
-	if ((_carMode == 6) && (_scene->_activeAnimation != nullptr)) {
-		if (_scene->_activeAnimation->getCurrentFrame() != _carFrame) {
-			_carFrame = _scene->_activeAnimation->getCurrentFrame();
+	if ((_carMode == 6) && (_scene->_animation[0] != nullptr)) {
+		if (_scene->_animation[0]->getCurrentFrame() != _carFrame) {
+			_carFrame = _scene->_animation[0]->getCurrentFrame();
 
 			if (_carFrame == 11) {
 				_game._player._visible = true;
-				_game._player._priorTimer = _scene->_activeAnimation->getNextFrameTimer() - _game._player._ticksAmount;
+				_game._player._priorTimer = _scene->_animation[0]->getNextFrameTimer() - _game._player._ticksAmount;
 			} else if (_carFrame == 41) {
 				_globals._sequenceIndexes[10] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[10], false, 9, 0, 0, 0);
 				_scene->_sequences.setAnimRange(_globals._sequenceIndexes[10], 10, 11);
@@ -2000,9 +2000,9 @@ void Scene608::step() {
 	if (_game._trigger == 112)
 		_dogYelping = false;
 
-	if ((_carMode == 0) && (_scene->_activeAnimation != nullptr)) {
-		if (_scene->_activeAnimation->getCurrentFrame() != _carFrame) {
-			_carFrame = _scene->_activeAnimation->getCurrentFrame();
+	if ((_carMode == 0) && (_scene->_animation[0] != nullptr)) {
+		if (_scene->_animation[0]->getCurrentFrame() != _carFrame) {
+			_carFrame = _scene->_animation[0]->getCurrentFrame();
 			int nextFrame = -1;
 
 			if ((_globals[kCarStatus] == CAR_UP) || (_globals[kCarStatus] == CAR_DOWN)) {
@@ -2015,7 +2015,7 @@ void Scene608::step() {
 					break;
 
 				case 1:
-					if (_scene->_activeAnimation->getCurrentFrame() >= 12) {
+					if (_scene->_animation[0]->getCurrentFrame() >= 12) {
 						nextFrame = 0;
 						_carMoveMode = 0;
 						_globals[kCarStatus] = CAR_UP;
@@ -2023,7 +2023,7 @@ void Scene608::step() {
 					break;
 
 				case 2:
-					if (_scene->_activeAnimation->getCurrentFrame() >= 6) {
+					if (_scene->_animation[0]->getCurrentFrame() >= 6) {
 						nextFrame = 6;
 						_carMoveMode = 0;
 						_globals[kCarStatus] = CAR_DOWN;
@@ -2035,35 +2035,35 @@ void Scene608::step() {
 				}
 			}
 
-			if ((nextFrame >= 0) && (nextFrame != _scene->_activeAnimation->getCurrentFrame())) {
-				_scene->_activeAnimation->setCurrentFrame(nextFrame);
+			if ((nextFrame >= 0) && (nextFrame != _scene->_animation[0]->getCurrentFrame())) {
+				_scene->_animation[0]->setCurrentFrame(nextFrame);
 				_carFrame = nextFrame;
 			}
 		}
 	}
 
-	if ((_carMode == 2) && (_scene->_activeAnimation != nullptr)) {
-		if (_scene->_activeAnimation->getCurrentFrame() != _carFrame) {
-			_carFrame = _scene->_activeAnimation->getCurrentFrame();
+	if ((_carMode == 2) && (_scene->_animation[0] != nullptr)) {
+		if (_scene->_animation[0]->getCurrentFrame() != _carFrame) {
+			_carFrame = _scene->_animation[0]->getCurrentFrame();
 			int nextFrame = -1;
 
 			if (_carMoveMode == 0)
 				nextFrame = 28;
-			else if (_scene->_activeAnimation->getCurrentFrame() >= 28) {
+			else if (_scene->_animation[0]->getCurrentFrame() >= 28) {
 				nextFrame = 28;
 				_carMoveMode = 0;
 			}
 
-			if ((nextFrame >= 0) && (nextFrame != _scene->_activeAnimation->getCurrentFrame())) {
-				_scene->_activeAnimation->setCurrentFrame(nextFrame);
+			if ((nextFrame >= 0) && (nextFrame != _scene->_animation[0]->getCurrentFrame())) {
+				_scene->_animation[0]->setCurrentFrame(nextFrame);
 				_carFrame = nextFrame;
 			}
 		}
 	}
 
-	if ((_carMode == 3) && (_scene->_activeAnimation != nullptr)) {
-		if (_scene->_activeAnimation->getCurrentFrame() != _carFrame) {
-			_carFrame = _scene->_activeAnimation->getCurrentFrame();
+	if ((_carMode == 3) && (_scene->_animation[0] != nullptr)) {
+		if (_scene->_animation[0]->getCurrentFrame() != _carFrame) {
+			_carFrame = _scene->_animation[0]->getCurrentFrame();
 			int nextFrame = -1;
 
 			if (_resetPositionsFl) {
@@ -2071,22 +2071,22 @@ void Scene608::step() {
 				_carMoveMode = 0;
 			} else if (_carMoveMode == 0)
 				nextFrame = 6;
-			else if (_scene->_activeAnimation->getCurrentFrame() >= 6) {
+			else if (_scene->_animation[0]->getCurrentFrame() >= 6) {
 				nextFrame = 6;
 				_carMoveMode = 0;
 			}
 
-			if ((nextFrame >= 0) && (nextFrame != _scene->_activeAnimation->getCurrentFrame())) {
-				_scene->_activeAnimation->setCurrentFrame(nextFrame);
+			if ((nextFrame >= 0) && (nextFrame != _scene->_animation[0]->getCurrentFrame())) {
+				_scene->_animation[0]->setCurrentFrame(nextFrame);
 				_carFrame = nextFrame;
 			}
 		}
 	}
 
 
-	if ((_carMode == 1) && (_scene->_activeAnimation != nullptr)) {
-		if (_scene->_activeAnimation->getCurrentFrame() != _carFrame) {
-			_carFrame = _scene->_activeAnimation->getCurrentFrame();
+	if ((_carMode == 1) && (_scene->_animation[0] != nullptr)) {
+		if (_scene->_animation[0]->getCurrentFrame() != _carFrame) {
+			_carFrame = _scene->_animation[0]->getCurrentFrame();
 			int nextFrame = -1;
 
 			if (_resetPositionsFl) {
@@ -2094,13 +2094,13 @@ void Scene608::step() {
 				_carMoveMode = 0;
 			} else if (_carMoveMode == 0)
 				nextFrame = 6;
-			else if (_scene->_activeAnimation->getCurrentFrame() >= 6) {
+			else if (_scene->_animation[0]->getCurrentFrame() >= 6) {
 				nextFrame = 6;
 				_carMoveMode = 0;
 			}
 
-			if ((nextFrame >= 0) && (nextFrame != _scene->_activeAnimation->getCurrentFrame())) {
-				_scene->_activeAnimation->setCurrentFrame(nextFrame);
+			if ((nextFrame >= 0) && (nextFrame != _scene->_animation[0]->getCurrentFrame())) {
+				_scene->_animation[0]->setCurrentFrame(nextFrame);
 				_carFrame = nextFrame;
 			}
 		}
@@ -2605,7 +2605,7 @@ void Scene609::step() {
 	switch (_game._trigger) {
 	case 70:
 		_game._player._visible = true;
-		_game._player._priorTimer = _scene->_activeAnimation->getNextFrameTimer() - _game._player._ticksAmount;
+		_game._player._priorTimer = _scene->_animation[0]->getNextFrameTimer() - _game._player._ticksAmount;
 		_scene->_sequences.addTimer(6, 71);
 		break;
 
@@ -4145,13 +4145,13 @@ void Scene611::step() {
 			_hermitMovingFl = true;
 	}
 
-	if (_stickFingerFl && (_scene->_activeAnimation->getCurrentFrame() == 47)) {
+	if (_stickFingerFl && (_scene->_animation[0]->getCurrentFrame() == 47)) {
 		_stickFingerFl = false;
 		_hermitMovingFl = true;
 		_hermitMode = 1;
 	}
 
-	if (_scene->_activeAnimation != nullptr && (_scene->_activeAnimation->getCurrentFrame() == 240) && _check1Fl) {
+	if (_scene->_animation[0] != nullptr && (_scene->_animation[0]->getCurrentFrame() == 240) && _check1Fl) {
 		_check1Fl = false;
 		_scene->_kernelMessages.add(Common::Point(33, 88), 0xFDFC, 0, 0, 90, _game.getQuote(0x27E));
 		_scene->_sequences.addTimer(120, 120);
@@ -4240,7 +4240,7 @@ void Scene611::step() {
 		}
 	}
 
-	if (_scene->_activeAnimation != nullptr && _scene->_activeAnimation->getCurrentFrame() == 254)
+	if (_scene->_animation[0] != nullptr && _scene->_animation[0]->getCurrentFrame() == 254)
 		_game._player._stepEnabled = true;
 
 	if (_game._trigger == 110) {
@@ -4266,7 +4266,7 @@ void Scene611::step() {
 	}
 
 	if (_hermitMode == 6) {
-		if ((_scene->_activeAnimation->getCurrentFrame() == 9) && _check1Fl) {
+		if ((_scene->_animation[0]->getCurrentFrame() == 9) && _check1Fl) {
 			_scene->_sequences.remove(_globals._sequenceIndexes[3]);
 			_globals._sequenceIndexes[3] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[3], false, 7, 1, 0, 0);
 			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[3], 1, 2);
@@ -4275,7 +4275,7 @@ void Scene611::step() {
 			_check1Fl = false;
 		}
 
-		if ((_scene->_activeAnimation->getCurrentFrame() == 17) && !_check1Fl) {
+		if ((_scene->_animation[0]->getCurrentFrame() == 17) && !_check1Fl) {
 			_nextFrame = 26;
 			_hermitMode = 4;
 			_check1Fl = true;
@@ -4283,13 +4283,13 @@ void Scene611::step() {
 	}
 
 	if (_hermitMode == 4) {
-		if ((_scene->_activeAnimation->getCurrentFrame() == 33) && _check1Fl) {
+		if ((_scene->_animation[0]->getCurrentFrame() == 33) && _check1Fl) {
 			displayHermitQuestions(_hermitDisplayedQuestion);
 			_nextFrame = 1;
 			_check1Fl = false;
 		}
 
-		if ((_scene->_activeAnimation->getCurrentFrame() == 9) && !_check1Fl) {
+		if ((_scene->_animation[0]->getCurrentFrame() == 9) && !_check1Fl) {
 			_nextFrame = 8;
 			_scene->_sequences.addTimer(1, 113);
 			_check1Fl = true;
@@ -4315,8 +4315,8 @@ void Scene611::step() {
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_EXPIRE, 0, 115);
 	}
 
-	if ((_nextFrame >= 0) && (_nextFrame != _scene->_activeAnimation->getCurrentFrame())) {
-		_scene->_activeAnimation->setCurrentFrame(_nextFrame);
+	if ((_nextFrame >= 0) && (_nextFrame != _scene->_animation[0]->getCurrentFrame())) {
+		_scene->_animation[0]->setCurrentFrame(_nextFrame);
 		_nextFrame = -1;
 	}
 
@@ -4588,7 +4588,7 @@ void Scene612::step() {
 	switch (_game._trigger) {
 	case 70:
 		_game._player._visible = true;
-		_game._player._priorTimer = _scene->_activeAnimation->getNextFrameTimer() - _game._player._ticksAmount;
+		_game._player._priorTimer = _scene->_animation[0]->getNextFrameTimer() - _game._player._ticksAmount;
 		_scene->_sequences.addTimer(6, 71);
 		break;
 

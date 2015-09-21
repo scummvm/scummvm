@@ -49,7 +49,8 @@ Scene::Scene(MADSEngine *vm)
 	_reloadSceneFlag = false;
 	_freeAnimationFlag = false;
 	_animationData = nullptr;
-	_activeAnimation = nullptr;
+	for (int i = 0; i < 10; i++)
+		_animation[i] = nullptr;
 	_textSpacing = -1;
 	_frameStartTime = 0;
 	_mode = SCREENMODE_VGA;
@@ -430,8 +431,10 @@ void Scene::doFrame() {
 				_sequences.tick();
 
 				// Handle any active animation
-				if (_activeAnimation)
-					_activeAnimation->update();
+				for (int i = 0; i < 10; i++) {
+					if (_animation[i])
+						_animation[i]->update();
+				}
 			}
 
 			// If the debugget flag is set, show the mouse position
@@ -480,8 +483,10 @@ void Scene::doFrame() {
 	_vm->_game->_fx = kTransitionNone;
 
 	// Handle freeing animation if necessary
-	if (_activeAnimation && _activeAnimation->freeFlag())
-		_freeAnimationFlag = true;
+	for (int i = 0; i < 10; i++) {
+		if (_animation[i] && _animation[i]->freeFlag())
+			_freeAnimationFlag = true;
+	}
 	if (_freeAnimationFlag)
 		freeAnimation();
 }
@@ -605,19 +610,19 @@ void Scene::checkKeyboard() {
 	}
 }
 
-void Scene::loadAnimation(const Common::String &resName, int trigger) {
+void Scene::loadAnimation(const Common::String &resName, int trigger, int id) {
 	// WORKAROUND: If there's already a previous active animation used by the
 	// scene, then free it before we create the new one
-	if (_activeAnimation)
+	if ((_vm->getGameID() == GType_RexNebular) && _animation[id])
 		freeAnimation();
 
 	DepthSurface depthSurface;
 	UserInterface interfaceSurface(_vm);
 
-	_activeAnimation = Animation::init(_vm, this);
-	_activeAnimation->load(interfaceSurface, depthSurface, resName,
+	_animation[id] = Animation::init(_vm, this);
+	_animation[id]->load(interfaceSurface, depthSurface, resName,
 		_vm->_dithering ? ANIMFLAG_DITHER : 0, nullptr, nullptr);
-	_activeAnimation->startAnimation(trigger);
+	_animation[id]->startAnimation(trigger);
 }
 
 void Scene::updateCursor() {
@@ -658,9 +663,12 @@ void Scene::freeCurrentScene() {
 		delete _animationData;
 		_animationData = nullptr;
 	}
-	if (_activeAnimation) {
-		delete _activeAnimation;
-		_activeAnimation = nullptr;
+
+	for (int i = 0; i < 10; i++) {
+		if (_animation[i]) {
+			delete _animation[i];
+			_animation[i] = nullptr;
+		}
 	}
 
 	_vm->_palette->_paletteUsage.load(nullptr);
@@ -692,30 +700,34 @@ void Scene::resetScene() {
 }
 
 void Scene::freeAnimation() {
-	if (_activeAnimation) {
-		Player &player = _vm->_game->_player;
+	for (int j = 0; j < 10; j++) {
+		if (_animation[j]) {
+			if (j == 0) {
+				Player &player = _vm->_game->_player;
 
-		if (!_freeAnimationFlag) {
-			_spriteSlots.fullRefresh(true);
-			_sequences.scan();
+				if (!_freeAnimationFlag) {
+					_spriteSlots.fullRefresh(true);
+					_sequences.scan();
+				}
+
+				// Refresh the player
+				if (player._visible) {
+					player._forceRefresh = true;
+					player.update();
+				}
+			}
+
+			// Remove any kernel messages in use by the animation
+			for (uint i = 0; i < _animation[j]->_messages.size(); ++i) {
+				int msgIndex = _animation[j]->_messages[i]._kernelMsgIndex;
+				if (msgIndex >= 0)
+					_kernelMessages.remove(msgIndex);
+			}
+
+			// Delete the animation
+			delete _animation[j];
+			_animation[j] = nullptr;
 		}
-
-		// Refresh the player
-		if (player._visible) {
-			player._forceRefresh = true;
-			player.update();
-		}
-
-		// Remove any kernel messages in use by the animation
-		for (uint i = 0; i < _activeAnimation->_messages.size(); ++i) {
-			int msgIndex = _activeAnimation->_messages[i]._kernelMsgIndex;
-			if (msgIndex >= 0)
-				_kernelMessages.remove(msgIndex);
-		}
-
-		// Delete the animation
-		delete _activeAnimation;
-		_activeAnimation = nullptr;
 	}
 
 	_freeAnimationFlag = false;

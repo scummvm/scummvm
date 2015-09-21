@@ -722,9 +722,9 @@ void Scene504::enter() {
 }
 
 void Scene504::step() {
-	if ((_carAnimationMode == 1) && (_scene->_activeAnimation != nullptr)) {
-		if (_scene->_activeAnimation->getCurrentFrame() != _carFrame) {
-			_carFrame = _scene->_activeAnimation->getCurrentFrame();
+	if ((_carAnimationMode == 1) && (_scene->_animation[0] != nullptr)) {
+		if (_scene->_animation[0]->getCurrentFrame() != _carFrame) {
+			_carFrame = _scene->_animation[0]->getCurrentFrame();
 			int nextFrame;
 
 			if (_carFrame == 1)
@@ -732,8 +732,8 @@ void Scene504::step() {
 			else
 				nextFrame = -1;
 
-			if ((nextFrame >= 0) && (nextFrame != _scene->_activeAnimation->getCurrentFrame())) {
-				_scene->_activeAnimation->setCurrentFrame(nextFrame);
+			if ((nextFrame >= 0) && (nextFrame != _scene->_animation[0]->getCurrentFrame())) {
+				_scene->_animation[0]->setCurrentFrame(nextFrame);
 				_carFrame = nextFrame;
 			}
 		}
@@ -943,15 +943,15 @@ void Scene505::enter() {
 	_game._player._stepEnabled = false;
 	_frame = -1;
 	_scene->loadAnimation(formAnimName('a', -1));
-	_scene->_activeAnimation->setCurrentFrame(86);
+	_scene->_animation[0]->setCurrentFrame(86);
 
 	sceneEntrySound();
 	_vm->_sound->command(16);
 }
 
 void Scene505::step() {
-	if (_frame != _scene->_activeAnimation->getCurrentFrame()) {
-		_frame = _scene->_activeAnimation->getCurrentFrame();
+	if (_frame != _scene->_animation[0]->getCurrentFrame()) {
+		_frame = _scene->_animation[0]->getCurrentFrame();
 		int resetFrame = -1;
 
 		switch (_frame) {
@@ -1088,8 +1088,8 @@ void Scene505::step() {
 			break;
 		}
 
-		if ((resetFrame >= 0) && (resetFrame != _scene->_activeAnimation->getCurrentFrame())) {
-			_scene->_activeAnimation->setCurrentFrame(resetFrame);
+		if ((resetFrame >= 0) && (resetFrame != _scene->_animation[0]->getCurrentFrame())) {
+			_scene->_animation[0]->setCurrentFrame(resetFrame);
 			_frame = resetFrame;
 		}
 	}
@@ -1254,7 +1254,7 @@ void Scene506::step() {
 		switch (_game._trigger) {
 		case 70:
 			_game._player._visible = true;
-			_game._player._priorTimer = _scene->_activeAnimation->getNextFrameTimer() - _game._player._ticksAmount;
+			_game._player._priorTimer = _scene->_animation[0]->getNextFrameTimer() - _game._player._ticksAmount;
 			_scene->_sequences.addTimer(6, 71);
 			break;
 
@@ -1943,9 +1943,9 @@ void Scene511::enter() {
 }
 
 void Scene511::step() {
-	if ((_lineAnimationMode == 1) && _scene->_activeAnimation) {
-		if (_lineFrame != _scene->_activeAnimation->getCurrentFrame()) {
-			_lineFrame = _scene->_activeAnimation->getCurrentFrame();
+	if ((_lineAnimationMode == 1) && _scene->_animation[0]) {
+		if (_lineFrame != _scene->_animation[0]->getCurrentFrame()) {
+			_lineFrame = _scene->_animation[0]->getCurrentFrame();
 			int resetFrame = -1;
 
 			if ((_lineAnimationPosition == 2) && (_lineFrame == 14))
@@ -1961,8 +1961,8 @@ void Scene511::step() {
 					resetFrame = 2;
 			}
 
-			if ((resetFrame >= 0) && (resetFrame != _scene->_activeAnimation->getCurrentFrame())) {
-				_scene->_activeAnimation->setCurrentFrame(resetFrame);
+			if ((resetFrame >= 0) && (resetFrame != _scene->_animation[0]->getCurrentFrame())) {
+				_scene->_animation[0]->setCurrentFrame(resetFrame);
 				_lineFrame = resetFrame;
 			}
 		}
@@ -1971,7 +1971,7 @@ void Scene511::step() {
 	switch (_game._trigger) {
 	case 70:
 		_game._player._visible = true;
-		_game._player._priorTimer = _scene->_activeAnimation->getNextFrameTimer() - _game._player._ticksAmount;
+		_game._player._priorTimer = _scene->_animation[0]->getNextFrameTimer() - _game._player._ticksAmount;
 		_scene->_sequences.addTimer(6, 71);
 		break;
 
@@ -2009,7 +2009,7 @@ void Scene511::preActions() {
 			_scene->loadAnimation(formAnimName('R',2), 1);
 		} else if (_game._trigger == 1) {
 			_game._player._visible = true;
-			_game._player._priorTimer = _scene->_activeAnimation->getNextFrameTimer() - _game._player._ticksAmount;
+			_game._player._priorTimer = _scene->_animation[0]->getNextFrameTimer() - _game._player._ticksAmount;
 			_game._objects.setRoom(OBJ_FISHING_LINE, 1);
 			_handingLine = false;
 			_game._player._stepEnabled = true;
@@ -2118,8 +2118,8 @@ void Scene511::actions() {
 						_globals[kLineStatus] = 3;
 						_game._player._stepEnabled = true;
 
-						if (_scene->_activeAnimation)
-							_scene->_activeAnimation->eraseSprites();
+						if (_scene->_animation[0])
+							_scene->_animation[0]->eraseSprites();
 						_game._player.update();
 					}
 				}
@@ -2434,8 +2434,8 @@ void Scene512::actions() {
 		_vm->_dialogs->show(51225);
 	else if (_action.isAction(VERB_LOOK, NOUN_PADLOCK_KEY) && _game._objects.isInRoom(OBJ_PADLOCK_KEY))
 		_vm->_dialogs->show(51215);
-	else if (_action.isAction(VERB_LOOK, NOUN_FISHING_ROD) && (!_scene->_activeAnimation ||
-			_scene->_activeAnimation->getCurrentFrame() == 4))
+	else if (_action.isAction(VERB_LOOK, NOUN_FISHING_ROD) && (!_scene->_animation[0] ||
+			_scene->_animation[0]->getCurrentFrame() == 4))
 		_vm->_dialogs->show(51216);
 	else if (_action.isAction(VERB_LOOK, NOUN_SHIPS_WHEEL))
 		_vm->_dialogs->show(51218);
@@ -2570,7 +2570,7 @@ void Scene513::step() {
 	switch (_game._trigger) {
 	case 70:
 		_game._player._visible = true;
-		_game._player._priorTimer = _scene->_activeAnimation->getNextFrameTimer() - _game._player._ticksAmount;
+		_game._player._priorTimer = _scene->_animation[0]->getNextFrameTimer() - _game._player._ticksAmount;
 		_scene->_sequences.addTimer(6, 71);
 		break;
 

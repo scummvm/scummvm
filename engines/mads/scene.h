@@ -111,7 +111,7 @@ public:
 	Common::Array<PaletteCycle> _paletteCycles;
 	Common::StringArray _vocabStrings;
 	Animation *_animationData;
-	Animation *_activeAnimation;
+	Animation *_animation[10];
 	bool _freeAnimationFlag;
 	int _depthStyle;
 	int _bandsRange;
@@ -214,7 +214,7 @@ public:
 	/**
 	 * Load an animation
 	 */
-	void loadAnimation(const Common::String &resName, int trigger = 0);
+	void loadAnimation(const Common::String &resName, int trigger = 0, int id = 0);
 
 	/**
 	 * Returns a vocab entry
