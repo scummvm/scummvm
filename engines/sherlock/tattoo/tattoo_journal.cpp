@@ -253,9 +253,11 @@ void TattooJournal::handleButtons() {
 		// FIgure out the left of the scrollbar scroll area and paging data
 		const int scrollingWidth = JOURNAL_BAR_WIDTH - BUTTON_SIZE * 2 - 6;
 		const int scrollingLeft = (SHERLOCK_SCREEN_WIDTH - JOURNAL_BAR_WIDTH) / 2 + BUTTON_SIZE + 3;
-		const int numPages = (_maxPage + LINES_PER_PAGE - 1) / LINES_PER_PAGE - 1;
-		const int barWidth = CLIP(scrollingWidth / numPages, BUTTON_SIZE, JOURNAL_BAR_WIDTH - BUTTON_SIZE * 2 - 6);
+		const int numPages = (_maxPage + LINES_PER_PAGE - 1) / LINES_PER_PAGE;
+		if (numPages == 1)
+			return;
 
+		const int barWidth = CLIP(scrollingWidth / numPages, BUTTON_SIZE, JOURNAL_BAR_WIDTH - BUTTON_SIZE * 2 - 6);
 		const int scrollOffset = mousePos.x - scrollingLeft;
 		const int page = scrollOffset * FIXED_INT_MULTIPLIER / ((scrollingWidth - barWidth) * (FIXED_INT_MULTIPLIER / (numPages - 1))) + 1;
 
@@ -556,7 +558,7 @@ void TattooJournal::highlightJournalControls(bool slamIt) {
 			_selector = JH_NONE;
 	} else {
 		// Calculate the Scroll Position Bar
-		int numPages = (_maxPage + LINES_PER_PAGE - 1) / LINES_PER_PAGE - 1;
+		int numPages = (_maxPage + LINES_PER_PAGE - 1) / LINES_PER_PAGE;
 		int barWidth = (r.width() - BUTTON_SIZE * 2 - 6) / numPages;
 		barWidth = CLIP(barWidth, BUTTON_SIZE, r.width() - BUTTON_SIZE * 2 - 6);
 
@@ -672,7 +674,7 @@ void TattooJournal::drawScrollBar() {
 	r.moveTo((SHERLOCK_SCREEN_WIDTH - r.width()) / 2, SHERLOCK_SCREEN_HEIGHT - r.height());
 
 	// Calculate the Scroll Position Bar
-	int numPages = (_maxPage + LINES_PER_PAGE - 1) / LINES_PER_PAGE - 1;
+	int numPages = (_maxPage + LINES_PER_PAGE - 1) / LINES_PER_PAGE;
 	int barWidth = (r.width() - BUTTON_SIZE * 2 - 6) / numPages;
 	barWidth = CLIP(barWidth, BUTTON_SIZE, r.width() - BUTTON_SIZE * 2 - 6);
 	int barX;
