@@ -514,11 +514,9 @@ void TattooUserInterface::doStandardControl() {
 void TattooUserInterface::doLookControl() {
 	Events &events = *_vm->_events;
 	TattooScene &scene = *(TattooScene *)_vm->_scene;
-	Sound &sound = *_vm->_sound;
 
-	// See if a mouse button was released or a key pressed, and we want to initiate an action
-	// TODO: Not sure about _soundOn.. should be check for speaking voice for text being complete
-	if (events._released || events._rightReleased || _keyState.keycode || (sound._voices && !sound._soundOn)) {
+	// See if a mouse button was released or a key pressed to close the active look dialog
+	if (events._released || events._rightReleased || _keyState.keycode) {
 		// See if we were looking at an inventory object
 		if (!_invLookFlag) {
 			// See if there is any more text to display
