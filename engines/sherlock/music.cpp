@@ -397,6 +397,7 @@ bool Music::playMusic(const Common::String &name) {
 	if (!_musicOn)
 		return false;
 
+	_nextSongName = _currentSongName = name;
 	debugC(kDebugLevelMusic, "Music: playMusic('%s')", name.c_str());
 
 	if (!IS_3DO) {
@@ -611,6 +612,12 @@ void Music::getSongNames(Common::StringArray &songs) {
 		}
 	}
 	Common::sort(songs.begin(), songs.end());
+}
+
+void Music::checkSongProgress() {
+	if (!isPlaying()) {
+		playMusic(_nextSongName);
+	}
 }
 
 } // End of namespace Sherlock

@@ -134,6 +134,7 @@ int TattooMap::show() {
 			screen.slamArea(screen._currentScroll.x, screen._currentScroll.y, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_WIDTH);
 		}
 
+		music.checkSongProgress();
 		checkMapNames(true);
 
 		if (mousePos.x < (SHERLOCK_SCREEN_WIDTH / 6))

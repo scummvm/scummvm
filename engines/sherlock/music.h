@@ -127,6 +127,12 @@ public:
 	 * Gets the names of all the songs in the game. Used by the debugger.
 	 */
 	void getSongNames(Common::StringArray &songs);
+
+	/**
+	 * Checks to see if the currently playing song has finished, then the music specified
+	 * in _nextSongName will be started
+	 */
+	void checkSongProgress();
 };
 
 } // End of namespace Sherlock

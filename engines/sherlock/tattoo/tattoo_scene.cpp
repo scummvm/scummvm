@@ -340,12 +340,14 @@ void TattooScene::doBgAnimCheckCursor() {
 void TattooScene::doBgAnim() {
 	TattooEngine &vm = *(TattooEngine *)_vm;
 	Events &events = *_vm->_events;
+	Music &music = *_vm->_music;
 	TattooPeople &people = *(TattooPeople *)_vm->_people;
 	Screen &screen = *_vm->_screen;
 	Talk &talk = *_vm->_talk;
 	TattooUserInterface &ui = *((TattooUserInterface *)_vm->_ui);
 
 	doBgAnimCheckCursor();
+	music.checkSongProgress();
 
 	talk._talkToAbort = false;
 
