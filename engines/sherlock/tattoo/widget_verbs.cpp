@@ -58,9 +58,8 @@ void WidgetVerbs::load(bool objectsOn) {
 		// person or an object
 		if (ui._personFound) {
 			TattooPerson &person = people[ui._activeObj - 1000];
-			TattooPerson &npc = people[ui._activeObj - 1001];
 
-			if (!scumm_strnicmp(npc._npcName.c_str(), "WATS", 4))
+			if (!scumm_strnicmp(person._npcName.c_str(), "WATS", 4))
 				isWatson = true;
 
 
