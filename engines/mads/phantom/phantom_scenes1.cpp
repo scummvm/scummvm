@@ -31,14 +31,88 @@ namespace MADS {
 namespace Phantom {
 
 void Scene1xx::setAAName() {
-	// TODO
-	//int idx = 0;
-	//_game._aaName = Resources::formatAAName(idx);
+	_game._aaName = Resources::formatAAName(_globals[kTempInterface]);
+	_vm->_palette->setEntry(254, 43, 47, 51);
 }
 
 void Scene1xx::sceneEntrySound() {
-	// TODO
+	if (!_vm->_musicFlag)
+		return;
+
+	if (_globals[kDoneBrieConv203] == 3) {
+		_vm->_sound->command(39);
+	} else {
+		switch (_scene->_nextSceneId) {
+		case 101:
+			if (!_game._visitedScenes._sceneRevisited)
+				_vm->_sound->command(38);
+			else
+				_vm->_sound->command(16);
+			break;
+
+		case 102:
+			if (_scene->_priorSceneId == 104)
+				_vm->_sound->command(27);
+			else
+				_vm->_sound->command(16);
+			break;
+
+		case 103:
+			if ((_globals[kJacquesStatus] == 2)) {
+				_vm->_sound->command(32);
+				_globals[kJacquesStatus] = 3;
+			} else
+				_vm->_sound->command(16);
+			break;
+
+		case 104:
+			if (_scene->_priorSceneId == 301) {
+				warning("TODO: Add check on Conversation restore running == 7");
+				_vm->_sound->command(33);
+			} else if ((_globals[kRoom103104Transition] == 0) && !_globals[kObservedPhan104]) {
+				_vm->_sound->command(37);
+				_globals[kObservedPhan104] = true;
+			} else
+				_vm->_sound->command(16);
+			break;
+
+		case 111:
+			if (_scene->_priorSceneId == 150)
+				_vm->_sound->command(38);
+			else if (_globals[kLeaveAngelMusicOn])
+				_vm->_sound->command(34);
+			else
+				_vm->_sound->command(16);
+			break;
+		case 113:
+			if (_globals[kLeaveAngelMusicOn])
+				_vm->_sound->command(34);
+			else if (_globals[kCurrentYear] == 1993)
+				_vm->_sound->command(36);
+			else
+				_vm->_sound->command(35);
+			break;
+
+		default:
+			if ((_scene->_priorSceneId != 204) && (_scene->_nextSceneId != 150))
+				_vm->_sound->command(16);
+			break;
+		}
+	}
 }
+
+void Scene1xx::setPlayerSpritesPrefix() {
+	_vm->_sound->command(5);
+
+	Common::String oldName = _game._player._spritesPrefix;
+
+	if (!_game._player._forcePrefix)
+		_game._player._spritesPrefix = "RAL";
+
+	if (oldName != _game._player._spritesPrefix)
+		_game._player._spritesChanged = true;
+
+	_game._player._scalingVelocity = true;}
 
 /*------------------------------------------------------------------------*/
 
@@ -48,11 +122,10 @@ Scene101::Scene101(MADSEngine *vm) : Scene1xx(vm) {
 
 void Scene101::synchronize(Common::Serializer &s) {
 	Scene1xx::synchronize(s);
-
 }
 
 void Scene101::setup() {
-	//setPlayerSpritesPrefix();
+	setPlayerSpritesPrefix();
 	setAAName();
 }
 

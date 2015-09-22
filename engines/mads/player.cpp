@@ -80,6 +80,7 @@ Player::Player(MADSEngine *vm)
 	_moving = false;
 	_walkOffScreen = 0;
 	_walkOffScreenSceneId = -1;
+	_forcePrefix = false;
 
 	Common::fill(&_stopWalkerList[0], &_stopWalkerList[12], 0);
 	Common::fill(&_stopWalkerTrigger[0], &_stopWalkerTrigger[12], 0);

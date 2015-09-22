@@ -131,6 +131,7 @@ public:
 	int _trigger;
 	bool _scalingVelocity;
 	bool _forceRefresh;
+	bool _forcePrefix;
 	bool _needToWalk;
 	bool _readyToWalk;
 	int _stopWalkerIndex;
