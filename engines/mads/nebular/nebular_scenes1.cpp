@@ -84,7 +84,7 @@ void Scene1xx::setPlayerSpritesPrefix() {
 	} else if (_scene->_nextSceneId == 112)
 		_game._player._spritesPrefix = "";
 
-	if (oldName == _game._player._spritesPrefix)
+	if (oldName != _game._player._spritesPrefix)
 		_game._player._spritesChanged = true;
 
 	if (_scene->_nextSceneId == 105 || (_scene->_nextSceneId == 109 && _globals[kHoovicAlive])) {
