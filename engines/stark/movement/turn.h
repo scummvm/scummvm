@@ -27,6 +27,10 @@
 
 namespace Stark {
 
+namespace Resources {
+class FloorPositionedItem;
+}
+
 /**
  * Make an item turn on itself towards a target direction
  */
@@ -42,6 +46,7 @@ public:
 	void setTargetDirection(const Math::Vector3d &direction);
 
 private:
+	Resources::FloorPositionedItem *_item3D;
 	Math::Vector3d _targetDirection;
 	float _turnSpeed;
 };

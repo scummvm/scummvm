@@ -38,6 +38,7 @@ namespace Stark {
 
 Walk::Walk(Resources::FloorPositionedItem *item) :
 	Movement(item),
+	_item3D(item),
 	_running(false),
 	_turnDirection(kTurnNone) {
 	_path = new StringPullingPath();
@@ -60,8 +61,8 @@ void Walk::start() {
 void Walk::updatePath() const {
 	Resources::Floor *floor = StarkGlobal->getCurrent()->getFloor();
 
-	Math::Vector3d startPosition = _item->getPosition3D();
-	int32 startFloorFaceIndex = _item->getFloorFaceIndex();
+	Math::Vector3d startPosition = _item3D->getPosition3D();
+	int32 startFloorFaceIndex = _item3D->getFloorFaceIndex();
 	Resources::FloorFace *startFloorFace = floor->getFace(startFloorFaceIndex);
 	Resources::FloorEdge *startFloorEdge = startFloorFace->findNearestEdge(startPosition);
 
@@ -86,7 +87,7 @@ void Walk::onGameLoop() {
 	Resources::Floor *floor = StarkGlobal->getCurrent()->getFloor();
 
 	// Get the target to walk to
-	Math::Vector3d currentPosition = _item->getPosition3D();
+	Math::Vector3d currentPosition = _item3D->getPosition3D();
 	Math::Vector3d target = _path->computeWalkTarget(currentPosition);
 
 	// Compute the direction to walk into
@@ -95,7 +96,7 @@ void Walk::onGameLoop() {
 	direction.normalize();
 
 	// Compute the angle with the current character direction
-	Math::Vector3d currentDirection = _item->getDirectionVector();
+	Math::Vector3d currentDirection = _item3D->getDirectionVector();
 	float directionDeltaAngle = computeAngleBetweenVectorsXYPlane(currentDirection, direction);
 
 	// If the angle between the current direction and the new one is too high,
@@ -140,11 +141,11 @@ void Walk::onGameLoop() {
 	}
 
 	// Update the item's properties
-	_item->setPosition3D(newPosition);
+	_item3D->setPosition3D(newPosition);
 	if (direction.getMagnitude() != 0.0) {
-		_item->setDirection(computeAngleBetweenVectorsXYPlane(direction, Math::Vector3d(1.0, 0.0, 0.0)));
+		_item3D->setDirection(computeAngleBetweenVectorsXYPlane(direction, Math::Vector3d(1.0, 0.0, 0.0)));
 	}
-	_item->setFloorFaceIndex(newFloorFaceIndex);
+	_item3D->setFloorFaceIndex(newFloorFaceIndex);
 
 	changeItemAnim();
 }

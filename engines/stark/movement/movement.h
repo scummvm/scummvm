@@ -28,7 +28,7 @@
 namespace Stark {
 
 namespace Resources {
-class FloorPositionedItem;
+class ItemVisual;
 }
 
 /**
@@ -36,7 +36,7 @@ class FloorPositionedItem;
  */
 class Movement {
 public:
-	Movement(Resources::FloorPositionedItem *item);
+	Movement(Resources::ItemVisual *item);
 	virtual ~Movement();
 
 	/**
@@ -71,7 +71,7 @@ protected:
 	float computeAngleBetweenVectorsXYPlane(const Math::Vector3d &v1, const Math::Vector3d &v2) const;
 
 	bool _ended;
-	Resources::FloorPositionedItem *_item;
+	Resources::ItemVisual *_item;
 };
 
 } // End of namespace Stark

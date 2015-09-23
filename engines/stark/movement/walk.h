@@ -29,6 +29,10 @@ namespace Stark {
 
 class StringPullingPath;
 
+namespace Resources {
+class FloorPositionedItem;
+}
+
 /**
  * Make an item walk / run to its destination on the current
  * location's floor
@@ -54,6 +58,7 @@ private:
 	void changeItemAnim();
 	void updatePath() const;
 
+	Resources::FloorPositionedItem *_item3D;
 	StringPullingPath *_path;
 
 	Math::Vector3d _destination;

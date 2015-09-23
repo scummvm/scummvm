@@ -31,6 +31,7 @@ namespace Stark {
 
 Turn::Turn(Resources::FloorPositionedItem *item) :
 	Movement(item),
+	_item3D(item),
 	_turnSpeed(_defaultTurnAngleSpeed) {
 }
 
@@ -44,7 +45,7 @@ void Turn::onGameLoop() {
 	direction.normalize();
 
 	// Compute the angle with the current character direction
-	Math::Vector3d currentDirection = _item->getDirectionVector();
+	Math::Vector3d currentDirection = _item3D->getDirectionVector();
 	float directionDeltaAngle = computeAngleBetweenVectorsXYPlane(currentDirection, direction);
 
 	// If the angle between the current direction and the new one is too high,
@@ -68,7 +69,7 @@ void Turn::onGameLoop() {
 	}
 
 	// Update the item's direction
-	_item->setDirection(computeAngleBetweenVectorsXYPlane(direction, Math::Vector3d(1.0, 0.0, 0.0)));
+	_item3D->setDirection(computeAngleBetweenVectorsXYPlane(direction, Math::Vector3d(1.0, 0.0, 0.0)));
 
 	// Check if we are close enough to the destination to stop
 	if (direction == _targetDirection) {

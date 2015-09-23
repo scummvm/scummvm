@@ -24,7 +24,7 @@
 
 namespace Stark {
 
-Movement::Movement(Resources::FloorPositionedItem *item) :
+Movement::Movement(Resources::ItemVisual *item) :
 	_ended(false),
 	_item(item) {
 }
