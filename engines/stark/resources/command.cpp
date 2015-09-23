@@ -162,8 +162,8 @@ Command *Command::execute(uint32 callMode, Script *script) {
 		return opEnableDiaryEntry(_arguments[1].referenceValue);
 	case kPATChangeTooltip:
 		return opPATChangeTooltip(_arguments[1].referenceValue, _arguments[2].referenceValue);
-	case kChangeSound:
-		return opChangeSound(_arguments[1].referenceValue, _arguments[2].intValue, _arguments[3].intValue, _arguments[4].intValue, _arguments[5].intValue);
+	case kSoundChange:
+		return opSoundChange(script, _arguments[1].referenceValue, _arguments[2].intValue, _arguments[3].intValue, _arguments[4].intValue, _arguments[5].intValue);
 	case kLightSetColor:
 		return opLightSetColor(_arguments[1].referenceValue, _arguments[2].intValue, _arguments[3].intValue, _arguments[4].intValue);
 	case kItem3DRunTo:
@@ -811,11 +811,17 @@ Command *Command::opPATChangeTooltip(const ResourceReference &patRef, const Reso
 	return nextCommand();
 }
 
-Command *Command::opChangeSound(const ResourceReference &soundRef, int32 unknown1, int32 unknown2, int32 unknown3, int32 unknown4) {
+Command *Command::opSoundChange(Script *script, const ResourceReference &soundRef, int32 volume, int32 pan, int32 duration, bool pause) {
 	assert(_arguments.size() == 6);
 	Object *sound = soundRef.resolve<Object>();
-	warning("(TODO: Implement) opChangeSound(%s, %d, %d, %d, %d) : %s", sound->getName().c_str(), unknown1, unknown2, unknown3, unknown4, soundRef.describe().c_str());
-	return nextCommand();
+	warning("(TODO: Implement) opSoundChange(%s, %d, %d, %d, %d) : %s", sound->getName().c_str(), volume, pan, duration, pause, soundRef.describe().c_str());
+
+	if (pause) {
+		script->pause(duration);
+		return this; // Stay on the same command while paused
+	} else {
+		return nextCommand();
+	}
 }
 
 Command *Command::opLightSetColor(const ResourceReference &lightRef, int32 red, int32 green, int32 blue) {
