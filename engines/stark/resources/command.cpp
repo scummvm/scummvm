@@ -26,6 +26,7 @@
 
 #include "engines/stark/formats/xrc.h"
 
+#include "engines/stark/movement/followpath.h"
 #include "engines/stark/movement/turn.h"
 #include "engines/stark/movement/walk.h"
 
@@ -44,6 +45,7 @@
 #include "engines/stark/resources/layer.h"
 #include "engines/stark/resources/light.h"
 #include "engines/stark/resources/location.h"
+#include "engines/stark/resources/path.h"
 #include "engines/stark/resources/pattable.h"
 #include "engines/stark/resources/script.h"
 #include "engines/stark/resources/scroll.h"
@@ -108,6 +110,9 @@ Command *Command::execute(uint32 callMode, Script *script) {
 		return opItem3DPlaceOn(_arguments[1].referenceValue, _arguments[2].referenceValue);
 	case kItem3DWalkTo:
 		return opItem3DWalkTo(script, _arguments[1].referenceValue, _arguments[2].referenceValue, _arguments[3].intValue);
+	case kItem3DFollowPath:
+	case kItem2DFollowPath:
+		return opItemFollowPath(script, _arguments[1].referenceValue, _arguments[2].referenceValue, _arguments[3].intValue, _arguments[4].intValue);
 	case kItemLookAt:
 		return opItemLookAt(script, _arguments[1].referenceValue, _arguments[2].referenceValue, _arguments[3].intValue,	_arguments[4].intValue);
 	case kItemEnable:
@@ -420,6 +425,26 @@ Command *Command::opItem3DWalkTo(Script *script, const ResourceReference &itemRe
 	walk->start();
 
 	item->setMovement(walk);
+
+	if (suspend) {
+		script->suspend(item);
+		item->setMovementSuspendedScript(script);
+		return this; // Stay on the same command while suspended
+	} else {
+		return nextCommand();
+	}
+}
+
+Command *Command::opItemFollowPath(Script *script, ResourceReference itemRef, ResourceReference pathRef, uint32 speed, uint32 suspend) {
+	ItemVisual *item = itemRef.resolve<ItemVisual>();
+	Path *path = pathRef.resolve<Path>();
+
+	FollowPath *follow = new FollowPath(item);
+	follow->setPath(path);
+	follow->setSpeed(speed / 100.0);
+	follow->start();
+
+	item->setMovement(follow);
 
 	if (suspend) {
 		script->suspend(item);

@@ -89,7 +89,7 @@ void Item::onGameLoop() {
 	if (_enabled && _movement) {
 		_movement->onGameLoop();
 
-		if (_movement->hasEnded()) {
+		if (_movement && _movement->hasEnded()) {
 			setMovement(nullptr);
 		}
 	}
@@ -331,6 +331,10 @@ void ItemVisual::resetActionAnim() {
 			_animHierarchy->setItemAnim(this, Anim::kActorUsageIdle);
 		}
 	}
+}
+
+void ItemVisual::setPosition2D(const Common::Point &position) {
+	warning("ItemVisual::setPosition2D is not implemented for this item type: %d (%s)", _subType, _name.c_str());
 }
 
 ItemTemplate::~ItemTemplate() {
@@ -594,7 +598,9 @@ FloorPositionedItem::~FloorPositionedItem() {
 FloorPositionedItem::FloorPositionedItem(Object *parent, byte subType, uint16 index, const Common::String &name) :
 		ItemVisual(parent, subType, index, name),
 		_direction3D(0.0),
-		_floorFaceIndex(-1) {
+		_floorFaceIndex(-1),
+		_sortKeyOverride(false),
+		_sortKeyOverridenValue(0.0) {
 }
 
 Math::Vector3d FloorPositionedItem::getPosition3D() const {
@@ -611,6 +617,7 @@ int32 FloorPositionedItem::getFloorFaceIndex() const {
 
 void FloorPositionedItem::setFloorFaceIndex(int32 faceIndex) {
 	_floorFaceIndex = faceIndex;
+	_sortKeyOverride = false;
 }
 
 void FloorPositionedItem::placeOnBookmark(Bookmark *target) {
@@ -654,7 +661,16 @@ void FloorPositionedItem::setDirection(const Math::Angle &direction) {
 	_direction3D = direction.getDegrees(0.0);
 }
 
+void FloorPositionedItem::overrideSortKey(float sortKey) {
+	_sortKeyOverride = true;
+	_sortKeyOverridenValue = sortKey;
+}
+
 float FloorPositionedItem::getSortKey() const {
+	if (_sortKeyOverride) {
+		return _sortKeyOverridenValue;
+	}
+
 	Floor *floor = StarkGlobal->getCurrent()->getFloor();
 
 	if (_floorFaceIndex == -1) {
@@ -705,6 +721,10 @@ Gfx::RenderEntry *FloorPositionedImageItem::getRenderEntry(const Common::Point &
 	return _renderEntry;
 }
 
+void FloorPositionedImageItem::setPosition2D(const Common::Point &position) {
+	_position = position;
+}
+
 void FloorPositionedImageItem::printData() {
 	FloorPositionedItem::printData();
 
@@ -742,6 +762,10 @@ Gfx::RenderEntry *ImageItem::getRenderEntry(const Common::Point &positionOffset)
 	}
 
 	return _renderEntry;
+}
+
+void ImageItem::setPosition2D(const Common::Point &position) {
+	_position = position;
 }
 
 void ImageItem::printData() {

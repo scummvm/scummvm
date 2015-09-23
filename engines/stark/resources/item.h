@@ -151,6 +151,13 @@ public:
 	ItemVisual *getSceneInstance() override;
 	void setAnimHierarchy(AnimHierarchy *animHierarchy) override;
 
+	/**
+	 * Change the item's 2D position.
+	 *
+	 * Only applies to 2D items
+	 */
+	virtual void setPosition2D(const Common::Point &position);
+
 	/** Get the hotspot index for an item relative position */
 	int getHotspotIndexForPoint(const Common::Point &point);
 
@@ -345,10 +352,20 @@ public:
 	/** Obtain the sort value for the item, used to compute the draw order */
 	float getSortKey() const;
 
+	/**
+	 * Don't rely on the floor face to compute the sort key, use the provided value instead.
+	 *
+	 * This can be used to handle cases where the item is not over the floor.
+	 */
+	void overrideSortKey(float sortKey);
+
 protected:
 	int32 _floorFaceIndex;
 	Math::Vector3d _position3D;
 	float _direction3D;
+
+	bool _sortKeyOverride;
+	float _sortKeyOverridenValue;
 };
 
 /**
@@ -366,6 +383,9 @@ public:
 
 	// Item API
 	Gfx::RenderEntry *getRenderEntry(const Common::Point &positionOffset) override;
+
+	// ItemVisual API
+	void setPosition2D(const Common::Point &position) override;
 
 protected:
 	void printData() override;
@@ -437,6 +457,9 @@ public:
 
 	// Item API
 	Gfx::RenderEntry *getRenderEntry(const Common::Point &positionOffset) override;
+
+	// ItemVisual API
+	void setPosition2D(const Common::Point &position) override;
 
 protected:
 	void printData() override;

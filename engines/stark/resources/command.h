@@ -83,9 +83,10 @@ public:
 
 		kItem3DPlaceOn = 81,
 		kItem3DWalkTo = 82,
-
+		kItem3DFollowPath = 83,
 		kItemLookAt = 84,
 
+		kItem2DFollowPath = 86,
 		kItemEnable = 87,
 		kItemSetActivity = 88,
 		kItemSelectInInventory = 89,
@@ -205,6 +206,7 @@ protected:
 	Command *opInventoryOpen(bool open);
 	Command *opItem3DPlaceOn(const ResourceReference &itemRef, const ResourceReference &targetRef);
 	Command *opItem3DWalkTo(Script *script, const ResourceReference &itemRef, const ResourceReference &targetRef, bool suspend);
+	Command *opItemFollowPath(Script *script, ResourceReference itemRef, ResourceReference pathRef, uint32 speed, uint32 suspend);
 	Command *opItemLookAt(Script *script, const ResourceReference &itemRef, const ResourceReference &objRef, bool suspend, int32 unknown);
 	Command *opItemEnable(const ResourceReference &itemRef, int32 enable);
 	Command *opItemSetActivity(const ResourceReference &itemRef, int32 unknown1, int32 unknown2);

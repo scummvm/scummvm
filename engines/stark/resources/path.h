@@ -37,6 +37,12 @@ class XRCReadStream;
 
 namespace Resources {
 
+/**
+ * A path can be followed by an item in a location
+ *
+ * Path are made of a list of vertices. Two consecutive vertices delimit an edge.
+ * Each vertex has a weight. A higher weight means a higher movement speed.
+ */
 class Path : public Object {
 public:
 	static const Type::ResourceType TYPE = Type::kPath;
@@ -55,18 +61,44 @@ public:
 	// Resource API
 	virtual	void readData(Formats::XRCReadStream *stream) override;
 
+	/** Get the edge count in the path */
+	virtual uint getEdgeCount() const = 0;
+
+	/**
+	 * Get a unit vector pointing in the direction of an edge
+	 *
+	 * Only valid for 3D paths
+	 */
+	virtual Math::Vector3d getEdgeDirection(uint edgeIndex) const;
+
+	/** Get the sort key to be used by the item following the path */
+	virtual float getSortKey() const;
+
+	/** Get an edge's length */
+	float getWeightedEdgeLength(uint edgeIndex) const;
+
+	/** Get the scene position from a position in an edge */
+	Math::Vector3d getWeightedPositionInEdge(uint edgeIndex, float positionInEdge);
+
 protected:
 	void printData() override;
+	float getEdgeLength(uint edgeIndex) const;
+	virtual float getVertexWeight(uint vertexIndex) const = 0;
+	virtual Math::Vector3d getVertexPosition(uint vertexIndex) const = 0;
 
 	uint32 _field_30;
+
 };
 
+/**
+ * A 2D path for 2D items
+ */
 class Path2D : public Path {
 public:
 	Path2D(Object *parent, byte subType, uint16 index, const Common::String &name);
 	virtual ~Path2D();
 
-	struct Step {
+	struct Vertex {
 		float weight;
 		Common::Point position;
 	};
@@ -74,19 +106,29 @@ public:
 	// Resource API
 	virtual void readData(Formats::XRCReadStream *stream) override;
 
+	// Path API
+	uint getEdgeCount() const override;
+
+protected:
+	float getVertexWeight(uint vertexIndex) const override;
+	Math::Vector3d getVertexPosition(uint vertexIndex) const override;
+
 private:
 	// Resource API
-	void printData();
+	void printData() override;
 
-	Common::Array<Step> _steps;
+	Common::Array<Vertex> _vertices;
 };
 
+/**
+ * A 3D path for 3D items
+ */
 class Path3D : public Path {
 public:
 	Path3D(Object *parent, byte subType, uint16 index, const Common::String &name);
 	virtual ~Path3D();
 
-	struct Step {
+	struct Vertex {
 		float weight;
 		Math::Vector3d position;
 	};
@@ -94,11 +136,20 @@ public:
 	// Resource API
 	virtual void readData(Formats::XRCReadStream *stream) override;
 
+	// Path API
+	uint getEdgeCount() const override;
+	float getSortKey() const override;
+	Math::Vector3d getEdgeDirection(uint edgeIndex) const override;
+
+protected:
+	float getVertexWeight(uint vertexIndex) const override;
+	Math::Vector3d getVertexPosition(uint vertexIndex) const override;
+
 private:
 	// Resource API
-	void printData();
+	void printData() override;
 
-	Common::Array<Step> _steps;
+	Common::Array<Vertex> _vertices;
 	float _sortKey;
 };
 
