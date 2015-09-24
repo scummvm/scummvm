@@ -36,7 +36,7 @@ class XRCReadStream;
 }
 
 namespace Gfx {
-class LightEntry;
+struct LightEntry;
 }
 
 namespace Resources {

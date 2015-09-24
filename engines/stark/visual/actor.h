@@ -36,7 +36,7 @@ namespace Stark {
 
 namespace Gfx {
 class TextureSet;
-class LightEntry;
+struct LightEntry;
 }
 
 class Model;
