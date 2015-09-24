@@ -73,6 +73,10 @@ void VisualImageXMG::render(const Common::Point &position, bool useOffset) {
 }
 
 bool VisualImageXMG::isPointSolid(const Common::Point &point) const {
+	if (_width < 32 && _height < 32) {
+		return true; // Small images are always solid
+	}
+
 	// Maybe implement this method in some other way to avoid having to keep the surface in memory
 	const uint32 *ptr = (const uint32 *) _surface->getBasePtr(point.x, point.y);
 	return ((*ptr) & 0xFF000000) == 0xFF000000;
