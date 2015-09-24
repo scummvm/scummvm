@@ -62,4 +62,5 @@ Math::Vector3d StringPullingPath::computeWalkTarget(const Math::Vector3d &fromPo
 
 	return _steps[_targetStep];
 }
+
 } // End of namespace Stark
