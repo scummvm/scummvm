@@ -42,7 +42,7 @@ Sound::Sound(Object *parent, byte subType, uint16 index, const Common::String &n
 		_enabled(0),
 		_looping(0),
 		_field_64(0),
-		_playUntilComplete(0),
+		_loopIndefinitely(0),
 		_maxDuration(0),
 		_stockSoundType(0),
 		_field_6C(0),
@@ -130,9 +130,9 @@ void Sound::onPreDestroy() {
 void Sound::readData(Formats::XRCReadStream *stream) {
 	_filename = stream->readString();
 	_enabled = stream->readUint32LE();
-	_looping = stream->readUint32LE();
+	_looping = stream->readBool();
 	_field_64 = stream->readUint32LE();
-	_playUntilComplete = stream->readUint32LE();
+	_loopIndefinitely = stream->readBool();
 	_maxDuration = stream->readUint32LE();
 	stream->readUint32LE(); // Skipped ?
 	_stockSoundType = stream->readUint32LE();
@@ -149,7 +149,7 @@ void Sound::printData() {
 	debug("enabled: %d", _enabled);
 	debug("looping: %d", _looping);
 	debug("field_64: %d", _field_64);
-	debug("playUntilComplete: %d", _playUntilComplete);
+	debug("loopIndefinitely: %d", _loopIndefinitely);
 	debug("maxDuration: %d", _maxDuration);
 	debug("stockSoundType: %d", _stockSoundType);
 	debug("soundName: %s", _soundName.c_str());
@@ -159,5 +159,16 @@ void Sound::printData() {
 	debug("volume: %f", _volume);
 }
 
+void Sound::onGameLoop() {
+	Object::onGameLoop();
+
+	if (_looping && !_loopIndefinitely) {
+		// Automatically stop after the maximum run time has been reached
+		uint32 elapsedTime = g_system->getMixer()->getSoundElapsedTime(_handle);
+		if (elapsedTime > _maxDuration) {
+			stop();
+		}
+	}
+}
 } // End of namespace Resources
 } // End of namespace Stark

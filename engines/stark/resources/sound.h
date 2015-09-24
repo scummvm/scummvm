@@ -60,6 +60,7 @@ public:
 	// Resource API
 	void readData(Formats::XRCReadStream *stream) override;
 	void onPreDestroy() override;
+	void onGameLoop() override;
 
 	/** Start playing the sound */
 	void play();
@@ -79,9 +80,9 @@ protected:
 	Common::String _filename;
 	Common::String _archiveName;
 	uint32 _enabled;
-	uint32 _looping;
+	bool _looping;
 	uint32 _field_64;
-	uint32 _playUntilComplete;
+	bool _loopIndefinitely;
 	uint32 _maxDuration;
 	uint32 _stockSoundType;
 	Common::String _soundName;
