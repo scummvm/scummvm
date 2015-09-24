@@ -146,7 +146,7 @@ public:
 		kIsKnowledgeIntegerLower = 173,
 		kIsScriptActive = 174,
 		kIsRandom = 175,
-
+		kIsAnimScriptItemReached = 176,
 		kIsItemOnPlace = 177,
 
 		kIsAnimPlaying = 179,
@@ -252,6 +252,7 @@ protected:
 	Command *opIsKnowledgeIntegerLower(const ResourceReference &knowledgeRef, int32 value);
 	Command *opIsScriptActive(const ResourceReference &scriptRef);
 	Command *opIsRandom(int32 chance);
+	Command *opIsAnimScriptItemReached(const ResourceReference &animScriptItemRef);
 	Command *opIsItemNearPlace(const ResourceReference &itemRef, const ResourceReference &positionRef, int32 testDistance);
 	Command *opIsItemOnPlace(const ResourceReference &itemRef, const ResourceReference &positionRef);
 	Command *opIsAnimPlaying(const ResourceReference &animRef);

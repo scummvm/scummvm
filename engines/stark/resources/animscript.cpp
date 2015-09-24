@@ -158,6 +158,11 @@ uint32 AnimScript::getDurationStartingWithItem(AnimScriptItem *startItem) {
 	return duration;
 }
 
+bool AnimScript::hasReached(AnimScriptItem *item) {
+	int32 index = findItemIndex(item);
+	return _nextItemIndex >= index;
+}
+
 int32 AnimScript::findItemIndex(AnimScriptItem *item) {
 	if (!item) {
 		return 0;

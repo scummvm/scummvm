@@ -203,6 +203,8 @@ Command *Command::execute(uint32 callMode, Script *script) {
 		return opIsScriptActive(_arguments[2].referenceValue);
 	case kIsRandom:
 		return opIsRandom(_arguments[2].intValue);
+	case kIsAnimScriptItemReached:
+		return opIsAnimScriptItemReached(_arguments[2].referenceValue);
 	case kIsItemOnPlace:
 		return opIsItemOnPlace(_arguments[2].referenceValue, _arguments[3].referenceValue);
 	case kIsItemNearPlace:
@@ -1014,6 +1016,13 @@ Command *Command::opIsRandom(int32 chance) {
 	int32 value = StarkRandomSource->getRandomNumber(100);
 
 	return nextCommandIf(value < chance);
+}
+
+Command *Command::opIsAnimScriptItemReached(const ResourceReference &animScriptItemRef) {
+	AnimScriptItem *animScriptItem = animScriptItemRef.resolve<AnimScriptItem>();
+	AnimScript *animScript = animScriptItem->findParent<AnimScript>();
+
+	return nextCommandIf(animScript->hasReached(animScriptItem));
 }
 
 Command *Command::opIsItemOnPlace(const ResourceReference &itemRef, const ResourceReference &positionRef) {

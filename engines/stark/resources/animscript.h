@@ -69,6 +69,9 @@ public:
 	 */
 	uint32 getDurationStartingWithItem(AnimScriptItem *startItem);
 
+	/** Is the current script item later in the script when compared to the specified one? */
+	bool hasReached(AnimScriptItem *item);
+
 protected:
 	void goToNextItem();
 	int32 findItemIndex(AnimScriptItem *item);
