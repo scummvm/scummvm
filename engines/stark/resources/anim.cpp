@@ -398,7 +398,7 @@ void AnimSkeleton::applyToItem(Item *item) {
 		_currentTime = 0;
 	}
 
-	if (_currentTime < 0 || _currentTime  > _totalTime) {
+	if (_currentTime > _totalTime) {
 		_currentTime = 0;
 	}
 
