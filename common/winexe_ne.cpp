@@ -64,6 +64,82 @@ bool NEResources::loadFromEXE(SeekableReadStream *stream) {
 	return true;
 }
 
+<<<<<<< HEAD
+=======
+bool NEResources::loadFromCompressedEXE(const String &fileName) {
+	// Based on http://www.cabextract.org.uk/libmspack/doc/szdd_kwaj_format.html
+
+	// TODO: Merge this with with loadFromEXE() so the handling of the compressed
+	// EXE's is transparent
+
+	File file;
+
+	if (!file.open(fileName))
+		return false;
+
+	// First part of the signature
+	if (file.readUint32BE() != MKTAG('S','Z','D','D'))
+		return false;
+
+	// Second part of the signature
+	if (file.readUint32BE() != 0x88F02733)
+		return false;
+
+	// Compression mode must be 'A'
+	if (file.readByte() != 'A')
+		return false;
+
+	file.readByte(); // file name character change
+	uint32 unpackedLength = file.readUint32LE();
+
+	byte *window = new byte[0x1000];
+	int pos = 0x1000 - 16;
+	memset(window, 0x20, 0x1000); // Initialize to all spaces
+
+	byte *unpackedData = (byte *)malloc(unpackedLength);
+	if (!unpackedData)
+		error("Failed to allocate uncompressed EXE");
+
+	byte *dataPos = unpackedData;
+	byte *endPos = unpackedData + unpackedLength;
+
+	// Apply simple LZSS decompression
+	while (dataPos < endPos) {
+		byte controlByte = file.readByte();
+
+		if (file.eos())
+			break;
+
+		for (byte i = 0; i < 8 && dataPos < endPos; i++) {
+			if (controlByte & (1 << i)) {
+				*dataPos++ = window[pos++] = file.readByte();
+				pos &= 0xFFF;
+			} else {
+				int matchPos = file.readByte();
+				int matchLen = file.readByte();
+				matchPos |= (matchLen & 0xF0) << 4;
+				matchLen = (matchLen & 0xF) + 3;
+
+				// Clip the length to the remaining size
+				matchLen = MIN<int>(matchLen, endPos - dataPos);
+
+				while (matchLen--) {
+					*dataPos++ = window[pos++] = window[matchPos++];
+					pos &= 0xFFF;
+					matchPos &= 0xFFF;
+				}
+			}
+
+		}
+	}
+
+	delete[] window;
+	SeekableReadStream *stream = new MemoryReadStream(unpackedData, unpackedLength);
+
+	return loadFromEXE(stream);
+}
+
+>>>>>>> 50fe418ac0 (COMMON: Fix out-of-bounds write in SZDD EXE decompression)
 uint32 NEResources::getResourceTableOffset() {
 	if (!_exe)
 		return 0xFFFFFFFF;
