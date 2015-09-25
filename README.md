@@ -15,7 +15,7 @@ ResidualVM: A 3D game interpreter
 
 1. What is ResidualVM?
 ----------------------
-ResidualVM is a game engine reimplementation that allows you 
+ResidualVM is a game engine reimplementation that allows you
 to play 3D adventure games such as Grim Fandango, Escape from Monkey Island
 and Myst III.
 
@@ -226,18 +226,18 @@ configuration file manually.
 
 By default, the configuration file is saved in, and loaded from:
 
-Operating System  | Location
------------------ | ---------------------------------------------------------------------------
-Windows Vista/7/8 | \Users\username\AppData\Roaming\ResidualVM\residualvm.ini
-Windows 2000/XP   | \Documents and Settings\username\Application Data\ResidualVM\residualvm.ini
-Unix              | ~/.residualvmrc
-Mac OS X          | ~/Library/Preferences/ResidualVM Preferences
-Others            | residualvm.ini in the current directory
+Operating System     | Location
+-------------------- | ---------------------------------------------------------------------------
+Windows Vista/7/8/10 | \Users\username\AppData\Roaming\ResidualVM\residualvm.ini
+Windows 2000/XP      | \Documents and Settings\username\Application Data\ResidualVM\residualvm.ini
+Unix                 | ~/.residualvmrc
+Mac OS X             | ~/Library/Preferences/ResidualVM Preferences
+Others               | residualvm.ini in the current directory
 
 ### 5.2. Interesting settings for GrimE games ###
 
 The following settings are currently available in the config-file,
-however some of them might not work with your current build. And 
+however some of them might not work with your current build. And
 some of them might make ResidualVM crash, or behave in weird ways.
 
 Setting        | Values            | Effect
@@ -263,12 +263,12 @@ either the forums at our homepage, or IRC: #residualvm at freenode.
 ### 6.1. I played a bit, but can't start a new game! ###
 
 This is because the last save and visited scene is stored in your configuration
-file, either delete grim-fandango from the ResidualVM-menu, and re-add it, or 
+file, either delete grim-fandango from the ResidualVM-menu, and re-add it, or
 go to your configuration file, and clean out the last-save and last-set entries.
 
 ### 6.2. My Save Games don't work any more ###
 
-Did you recently update to a newer build of ResidualVM? 
+Did you recently update to a newer build of ResidualVM?
 ResidualVM is still a work in progress, which means that the save format might
 change between builds. While attempts are made to keep save file compatibility,
 this isn't always possible.
