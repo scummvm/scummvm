@@ -30,6 +30,7 @@ namespace Stark {
 
 namespace Resources {
 class Anim;
+class Image;
 class Level;
 }
 
@@ -48,13 +49,20 @@ public:
 	StaticProvider(ArchiveLoader *archiveLoader, Global *global);
 
 	enum UIElement {
-		kInventoryBg = 4,
+		kImages = 4,
 		kActionMenuBg = 5,
+		kTextScrollUpArrow = 6,
+		kTextScrollDownArrow = 7,
 		kQuit = 8,
 		kDiaryNormal = 15,
 		kInventory = 16,
 		kTextBackgroundActive = 20,
 		kTextBackgroundPassive = 21
+	};
+
+	enum UIImage {
+		kInventoryBg = 0,
+		kDialogOptionBullet = 4
 	};
 
 	/** Load the static level archive */
@@ -75,12 +83,16 @@ public:
 	/** Get an image for a static UI element */
 	VisualImageXMG *getUIElement(UIElement element);
 
+	/** Get an image for a static UI element */
+	VisualImageXMG *getUIImage(UIImage image);
+
 private:
 	ArchiveLoader *_archiveLoader;
 	Global *_global;
 
 	Resources::Level *_level;
 	Common::Array<Resources::Anim *> _stockAnims;
+	Common::Array<Resources::Image *> _stockImages;
 };
 
 } // End of namespace Stark

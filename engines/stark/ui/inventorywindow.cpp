@@ -49,7 +49,7 @@ InventoryWindow::InventoryWindow(Gfx::Driver *gfx, Cursor *cursor, ActionMenu *a
 	_position = Common::Rect(Gfx::Driver::kGameViewportWidth, Gfx::Driver::kGameViewportHeight);
 	_position.translate(0, Gfx::Driver::kTopBorderHeight);
 
-	_backgroundTexture = StarkStaticProvider->getUIElement(StaticProvider::kInventoryBg);
+	_backgroundTexture = StarkStaticProvider->getUIImage(StaticProvider::kInventoryBg);
 
 	// Center the background in the window
 	_backgroundRect = Common::Rect(_backgroundTexture->getWidth(), _backgroundTexture->getHeight());

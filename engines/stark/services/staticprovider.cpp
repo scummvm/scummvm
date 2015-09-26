@@ -23,6 +23,7 @@
 #include "engines/stark/services/staticprovider.h"
 
 #include "engines/stark/resources/anim.h"
+#include "engines/stark/resources/image.h"
 #include "engines/stark/resources/item.h"
 #include "engines/stark/resources/level.h"
 #include "engines/stark/services/archiveloader.h"
@@ -53,6 +54,9 @@ void StaticProvider::init() {
 	for (uint i = 0; i< _stockAnims.size(); i++) {
 		_stockAnims[i]->applyToItem(0);
 	}
+
+	Resources::Anim *imagesAnim = _stockAnims[kImages];
+	_stockImages = imagesAnim->listChildrenRecursive<Resources::Image>();
 }
 
 void StaticProvider::onGameLoop() {
@@ -73,6 +77,11 @@ VisualImageXMG *StaticProvider::getCursorImage(uint32 cursor) {
 
 VisualImageXMG *StaticProvider::getUIElement(UIElement element) {
 	return getCursorImage(element);
+}
+
+VisualImageXMG *StaticProvider::getUIImage(UIImage image) {
+	Resources::Image *anim = _stockImages[image];
+	return anim->getVisual()->get<VisualImageXMG>();
 }
 
 } // End of namespace Stark
