@@ -33,6 +33,7 @@ ResidualVM
                                       fixes
        Robert Biro                  - Antialiasing support
        Bastien Bouclet              - Various fixes to engine
+       David Cardwell               - Few fixes to EMI
        Marcus Comstedt              - Initial Dreamcast port
        Andrea Corna                 - Patcher module, various engine
                                       improvements
@@ -72,6 +73,7 @@ ResidualVM
        cmayer0087                   - Various engine code fixes
        JenniBee                     - Compilation fixes
        karjonas                     - Various engine code fixes
+       PoulpiFr                     - Few fixes to Android port
        sietschie                    - Few fixes to engine
 
     Myst 3:

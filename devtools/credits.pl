@@ -517,6 +517,7 @@ begin_credits("Credits");
 		add_person("Ori Avtalion", "salty-horse", "Lipsync, LAF support, various code fixes");
 		add_person("Robert Biro", "DarthJDG", "Antialiasing support");
 		add_person("Bastien Bouclet", "bgK", "Various fixes to engine");
+		add_person("David Cardwell", "d356", "Few fixes to EMI");
 		add_person("Marcus Comstedt", "marcus_c", "Initial Dreamcast port");
 		add_person("Andrea Corna", "Yak Bizzarro", "Patcher module, various engine improvements");
 		add_person("Jonathan Gray", "khalek", "Various code fixes");
@@ -549,6 +550,7 @@ begin_credits("Credits");
 		add_person("", "cmayer0087", "Various engine code fixes");
 		add_person("", "JenniBee", "Compilation fixes");
 		add_person("", "karjonas", "Various engine code fixes");
+		add_person("", "PoulpiFr", "Few fixes to Android port");
 		add_person("", "sietschie", "Few fixes to engine");
 	    end_section();
 
