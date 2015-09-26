@@ -173,12 +173,12 @@ class MovGraphNode : public CObject {
 public:
 	int _x;
 	int _y;
-	int _distance;
+	int _z;
 	int16 _field_10;
 	int _field_14;
 
 public:
-	MovGraphNode() : _x(0), _y(0), _distance(0), _field_10(0), _field_14(0) { _objtype = kObjTypeMovGraphNode; }
+	MovGraphNode() : _x(0), _y(0), _z(0), _field_10(0), _field_14(0) { _objtype = kObjTypeMovGraphNode; }
 	virtual bool load(MfcArchive &file);
 };
 
@@ -225,7 +225,7 @@ class MovGraphLink : public CObject {
 	int _flags;
 	int _field_38;
 	int _field_3C;
-	double _distance;
+	double _z;
 	double _angle;
 	MovGraphReact *_movGraphReact;
 	char *_name;

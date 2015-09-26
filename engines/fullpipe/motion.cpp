@@ -1176,16 +1176,16 @@ MessageQueue *MovGraph::fillMGMinfo(StaticANIObject *ani, MovArr *movarr, int st
 		if (i == movarr->_movStepCount - 1) {
 			nx = movarr->_point.x;
 			ny = movarr->_point.y;
-			nd = st->link->_movGraphNode1->_distance;
+			nd = st->link->_movGraphNode1->_z;
 		} else {
 			if (st->sfield_0) {
 				nx = st->link->_movGraphNode1->_x;
 				ny = st->link->_movGraphNode1->_y;
-				nd = st->link->_movGraphNode1->_distance;
+				nd = st->link->_movGraphNode1->_z;
 			} else {
 				nx = st->link->_movGraphNode2->_x;
 				ny = st->link->_movGraphNode2->_y;
-				nd = st->link->_movGraphNode2->_distance;
+				nd = st->link->_movGraphNode2->_z;
 			}
 		}
 
@@ -1293,14 +1293,14 @@ double MovGraph::calcDistance(Common::Point *point, MovGraphLink *link, int fuzz
 	double dist2x = (double)(n2x - n1x);
 	double dist2y = (double)(n2y - n1y);
 	double dist1 = sqrt(dist1y * dist1y + dist1x * dist1x);
-	double dist2 = ((double)(n1y - n2y) * dist1y + dist2x * dist1x) / link->_distance / dist1;
+	double dist2 = ((double)(n1y - n2y) * dist1y + dist2x * dist1x) / link->_z / dist1;
 	double distm = dist2 * dist1;
 	double res = sqrt(1.0 - dist2 * dist2) * dist1;
 
-	if (dist2 <= 0.0 || distm >= link->_distance) {
+	if (dist2 <= 0.0 || distm >= link->_z) {
 		if (fuzzyMatch) {
 			if (dist2 > 0.0) {
-				if (distm >= link->_distance) {
+				if (distm >= link->_z) {
 					point->x = n2x;
 					point->y = n2y;
 				}
@@ -1312,8 +1312,8 @@ double MovGraph::calcDistance(Common::Point *point, MovGraphLink *link, int fuzz
 			return -1.0;
 		}
 	} else {
-		point->x = (int)(n1x + (dist2x * distm / link->_distance));
-		point->y = (int)(n1y + (dist2y * distm / link->_distance));
+		point->x = (int)(n1x + (dist2x * distm / link->_z));
+		point->y = (int)(n1y + (dist2y * distm / link->_z));
 	}
 
 	return res;
@@ -1347,7 +1347,7 @@ bool MovGraph::getNearestPoint(int unusedArg, Common::Point *p, MovArr *movarr) 
 			double dx3 = lnk->_movGraphNode2->_x - lnk->_movGraphNode1->_x;
 			double dy3 = lnk->_movGraphNode2->_y - lnk->_movGraphNode1->_y;
 			double sq1 = sqrt(dy1 * dy1 + dx1 * dx1);
-			double sdist = (dy3 * dy1 + dx3 * dx1) / lnk->_distance / sq1;
+			double sdist = (dy3 * dy1 + dx3 * dx1) / lnk->_z / sq1;
 			double ldist = sdist * sq1;
 			double dist = sqrt(1.0 - sdist * sdist) * sq1;
 
@@ -1356,14 +1356,14 @@ bool MovGraph::getNearestPoint(int unusedArg, Common::Point *p, MovArr *movarr) 
 				dist = sqrt(dx1 * dx1 + dy1 * dy1);
 			}
 
-			if (ldist > lnk->_distance) {
-				ldist = lnk->_distance;
+			if (ldist > lnk->_z) {
+				ldist = lnk->_z;
 				dist = sqrt(dx2 * dx2 + dy2 * dy2);
 			}
 
-			if (ldist >= 0.0 && ldist <= lnk->_distance && dist < mindist) {
-				resx = lnk->_movGraphNode1->_x + (int)(dx3 * ldist / lnk->_distance);
-				resy = lnk->_movGraphNode1->_y + (int)(dy3 * ldist / lnk->_distance);
+			if (ldist >= 0.0 && ldist <= lnk->_z && dist < mindist) {
+				resx = lnk->_movGraphNode1->_x + (int)(dx3 * ldist / lnk->_z);
+				resy = lnk->_movGraphNode1->_y + (int)(dy3 * ldist / lnk->_z);
 
 				mindist = dist;
 				link = lnk;
@@ -1417,7 +1417,7 @@ Common::Array<MovArr *> *MovGraph::genMovArr(int x, int y, int *arrSize, int fla
 				movarr->_link = lnk;
 				movarr->_dist = ((double)(lnk->_movGraphNode1->_y - lnk->_movGraphNode2->_y) * (double)(lnk->_movGraphNode1->_y - point.y) +
 								 (double)(lnk->_movGraphNode2->_x - lnk->_movGraphNode1->_x) * (double)(point.x - lnk->_movGraphNode1->_x)) /
-					lnk->_distance / lnk->_distance;
+					lnk->_z / lnk->_z;
 				movarr->_point = point;
 
 				arr->push_back(movarr);
@@ -1446,7 +1446,7 @@ Common::Array<MovArr *> *MovGraph::genMovArr(int x, int y, int *arrSize, int fla
 						movarr->_link = lnk;
 						movarr->_dist = ((double)(lnk->_movGraphNode1->_y - lnk->_movGraphNode2->_y) * (double)(lnk->_movGraphNode1->_y - y) +
 										 (double)(lnk->_movGraphNode2->_x - lnk->_movGraphNode1->_x) * (double)(x - lnk->_movGraphNode1->_x)) /
-							lnk->_distance / lnk->_distance;
+							lnk->_z / lnk->_z;
 						movarr->_point.x = x;
 						movarr->_point.y = y;
 
@@ -2239,9 +2239,9 @@ MessageQueue *MovGraph2::doWalkTo(StaticANIObject *obj, int xpos, int ypos, int 
 	int dx2, dy2;
 
 	if (linkInfoSource.node)
-		movInfo1.distance1 = linkInfoSource.node->_distance;
+		movInfo1.distance1 = linkInfoSource.node->_z;
 	else
-		movInfo1.distance1 = linkInfoSource.link->_movGraphNode1->_distance;
+		movInfo1.distance1 = linkInfoSource.link->_movGraphNode1->_z;
 
 	if (linkInfoDest.node) {
 		dx2 = linkInfoDest.node->_x;
@@ -2250,16 +2250,16 @@ MessageQueue *MovGraph2::doWalkTo(StaticANIObject *obj, int xpos, int ypos, int 
 		movInfo1.pt2.x = linkInfoDest.node->_x;
 		movInfo1.pt2.y = linkInfoDest.node->_y;
 
-		movInfo1.distance2 = linkInfoDest.node->_distance;
+		movInfo1.distance2 = linkInfoDest.node->_z;
 	} else {
 		movInfo1.pt2.x = xpos;
 		movInfo1.pt2.y = ypos;
 
 		MovGraphNode *nod = linkInfoDest.link->_movGraphNode1;
 		double dst1 = sqrt((double)((ypos - nod->_y) * (ypos - nod->_y) + (xpos - nod->_x) * (xpos - nod->_x)));
-		int dst = linkInfoDest.link->_movGraphNode2->_distance - nod->_distance;
+		int dst = linkInfoDest.link->_movGraphNode2->_z - nod->_z;
 
-		movInfo1.distance2 = (int)(nod->_distance + (dst1 * (double)dst / linkInfoDest.link->_distance));
+		movInfo1.distance2 = (int)(nod->_z + (dst1 * (double)dst / linkInfoDest.link->_z));
 
 		calcDistance(&movInfo1.pt2, linkInfoDest.link, 1);
 
@@ -2396,8 +2396,8 @@ int MovGraph2::findLink(Common::Array<MovGraphLink *> *linkList, int idx, Common
 		rect->bottom = node2->_y;
 	}
 	if (point) {
-		point->x = node3->_distance;
-		point->y = node2->_distance;
+		point->x = node3->_z;
+		point->y = node2->_z;
 	}
 
 	if (abs(node3->_x - node2->_x) <= abs(node3->_y - node2->_y))
@@ -2658,7 +2658,7 @@ MovGraphLink *MovGraph2::findLink2(int x, int y) {
 			double n1dx = n1x - x;
 			double n1dy = n1y - y;
 			double dst1 = sqrt(n1dy * n1dy + n1dx * n1dx);
-			double coeff1 = ((n1y - n2y) * n1dy + (n2x - n1x) * n1dx) / lnk->_distance / dst1;
+			double coeff1 = ((n1y - n2y) * n1dy + (n2x - n1x) * n1dx) / lnk->_z / dst1;
 			double dst3 = coeff1 * dst1;
 			double dst2 = sqrt(1.0 - coeff1 * coeff1) * dst1;
 
@@ -2666,11 +2666,11 @@ MovGraphLink *MovGraph2::findLink2(int x, int y) {
 				dst3 = 0.0;
 				dst2 = sqrt(n1dy * n1dy + n1dx * n1dx);
 			}
-			if (dst3 > lnk->_distance) {
-				dst3 = lnk->_distance;
+			if (dst3 > lnk->_z) {
+				dst3 = lnk->_z;
 				dst2 = sqrt((n2x - x) * (n2x - x) + (n2y - y) * (n2y - y));
 			}
-			if (dst3 >= 0.0 && dst3 <= lnk->_distance && dst2 < mindist) {
+			if (dst3 >= 0.0 && dst3 <= lnk->_z && dst2 < mindist) {
 				mindist = dst2;
 				res = lnk;
 			}
@@ -2703,11 +2703,11 @@ double MovGraph2::findMinPath(LinkInfo *linkInfoSource, LinkInfo *linkInfoDest, 
 
 					double newDistance = findMinPath(&linkInfoWorkSource, linkInfoDest, &tmpList);
 
-					if (newDistance >= 0.0 && (minDistance < 0.0 || newDistance + lnk->_distance < minDistance)) {
+					if (newDistance >= 0.0 && (minDistance < 0.0 || newDistance + lnk->_z < minDistance)) {
 						listObj->clear();
 						listObj->push_back(tmpList);
 
-						minDistance = newDistance + lnk->_distance;
+						minDistance = newDistance + lnk->_z;
 					}
 
 					lnk->_flags &= 0x7FFFFFFF;
@@ -2774,7 +2774,7 @@ MovGraphNode *MovGraph::calcOffset(int ox, int oy) {
 }
 
 MovGraphLink::MovGraphLink() {
-	_distance = 0;
+	_z = 0;
 	_angle = 0;
 	_flags = 0x10000000;
 	_movGraphNode2 = 0;
@@ -2808,10 +2808,10 @@ bool MovGraphLink::load(MfcArchive &file) {
 	debug(8, "GraphNode2");
 	_movGraphNode2 = (MovGraphNode *)file.readClass();
 
-	_distance = file.readDouble();
+	_z = file.readDouble();
 	_angle = file.readDouble();
 
-	debug(8, "distance: %g, angle: %g", _distance, _angle);
+	debug(8, "distance: %g, angle: %g", _z, _angle);
 
 	_movGraphReact = (MovGraphReact *)file.readClass();
 	_name = file.readPascalString();
@@ -2824,7 +2824,7 @@ void MovGraphLink::recalcLength() {
 		double dx = _movGraphNode2->_x - _movGraphNode1->_x;
 		double dy = _movGraphNode2->_y - _movGraphNode1->_y;
 
-		_distance = sqrt(dy * dy + dx * dx);
+		_z = sqrt(dy * dy + dx * dx);
 		_angle = atan2(dx, dy);
 	}
 }
@@ -2835,7 +2835,7 @@ bool MovGraphNode::load(MfcArchive &file) {
 	_field_14 = file.readUint32LE();
 	_x = file.readUint32LE();
 	_y = file.readUint32LE();
-	_distance = file.readUint32LE();
+	_z = file.readUint32LE();
 
 	return true;
 }
