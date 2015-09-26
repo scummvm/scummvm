@@ -48,6 +48,7 @@ public:
 
 	void setText(const Common::String &text);
 	void setColor(uint32 color);
+	void setTargetWidth(uint32 width);
 
 	void render(const Common::Point &position);
 
@@ -59,6 +60,7 @@ private:
 
 	Common::String _text;
 	uint32 _color;
+	uint32 _targetWidth;
 	Gfx::Texture *_texture;
 };
 

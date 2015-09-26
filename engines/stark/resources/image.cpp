@@ -219,6 +219,7 @@ void ImageText::initVisual() {
 	VisualText *text = new VisualText(StarkGfx);
 	text->setText(_text);
 	text->setColor(_color | 0xFF000000);
+	text->setTargetWidth(_size.x);
 
 	_visual = text;
 }

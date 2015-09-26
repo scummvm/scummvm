@@ -39,7 +39,8 @@ VisualText::VisualText(Gfx::Driver *gfx) :
 		Visual(TYPE),
 		_gfx(gfx),
 		_texture(nullptr),
-		_color(0) {
+		_color(0),
+		_targetWidth(600) {
 }
 
 VisualText::~VisualText() {
@@ -64,12 +65,16 @@ void VisualText::setColor(uint32 color) {
 	_color = color;
 }
 
+void VisualText::setTargetWidth(uint32 width) {
+	freeTexture();
+	_targetWidth = width;
+}
+
 void VisualText::createTexture() {
 	const Graphics::Font *font = FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
 
-	// TODO: The hardcoded widths here are not exactly perfect.
 	Common::Array<Common::String> lines;
-	font->wordWrapText(_text, 580, lines);
+	font->wordWrapText(_text, _targetWidth, lines);
 
 	int height = font->getFontHeight();
 	int width = 0;
@@ -81,7 +86,7 @@ void VisualText::createTexture() {
 	surface.create(width, height*lines.size(), _gfx->getScreenFormat());
 
 	for (uint i = 0; i < lines.size(); i++) {
-		font->drawString(&surface, lines[i], 0, height*i, 580, _color);
+		font->drawString(&surface, lines[i], 0, height*i, _targetWidth, _color);
 	}
 	_texture = _gfx->createTexture(&surface);
 	surface.free();
