@@ -39,7 +39,10 @@ namespace Stark {
 DialogPanel::DialogPanel(Gfx::Driver *gfx, Cursor *cursor) :
 		Window(gfx, cursor),
 		_subtitleVisual(nullptr),
-		_currentSpeech(nullptr) {
+		_currentSpeech(nullptr),
+		_scrollUpArrowVisible(false),
+		_scrollDownArrowVisible(false),
+		_firstVisibleOption(0) {
 	_position = Common::Rect(Gfx::Driver::kOriginalWidth, Gfx::Driver::kBottomBorderHeight);
 	_position.translate(0, Gfx::Driver::kTopBorderHeight + Gfx::Driver::kGameViewportHeight);
 
@@ -47,6 +50,15 @@ DialogPanel::DialogPanel(Gfx::Driver *gfx, Cursor *cursor) :
 
 	_activeBackGroundTexture = StarkStaticProvider->getUIElement(StaticProvider::kTextBackgroundActive);
 	_passiveBackGroundTexture = StarkStaticProvider->getUIElement(StaticProvider::kTextBackgroundPassive);
+	_scrollUpArrowImage = StarkStaticProvider->getUIElement(StaticProvider::kTextScrollUpArrow);
+	_scrollDownArrowImage = StarkStaticProvider->getUIElement(StaticProvider::kTextScrollDownArrow);
+	_dialogOptionBullet = StarkStaticProvider->getUIImage(StaticProvider::kDialogOptionBullet);
+
+	_scrollUpArrowRect = Common::Rect(_scrollUpArrowImage->getWidth(), _scrollUpArrowImage->getHeight());
+	_scrollUpArrowRect.translate(0, _optionsTop);
+
+	_scrollDownArrowRect = Common::Rect(_scrollDownArrowImage->getWidth(), _scrollDownArrowImage->getHeight());
+	_scrollDownArrowRect.translate(0, _optionsTop + _optionsHeight - _scrollDownArrowImage->getHeight());
 }
 
 DialogPanel::~DialogPanel() {
@@ -62,8 +74,32 @@ void DialogPanel::clearOptions() {
 }
 
 void DialogPanel::renderOptions() {
-	for (uint i = 0; i < _options.size(); i++) {
+	uint32 pos = _optionsTop;
+	uint32 visibleOptions = 0;
+	for (uint i = _firstVisibleOption; i < _options.size(); i++) {
+		_options[i]->setPosition(Common::Point(_optionsLeft, pos));
 		_options[i]->render();
+		// TODO: Add buttons
+
+		visibleOptions++;
+
+		pos += _options[i]->getHeight();
+		if (pos >= _optionsHeight - _optionHeight) {
+			break;
+		}
+	}
+
+	_scrollUpArrowVisible = _firstVisibleOption > 0;
+	_scrollDownArrowVisible = _firstVisibleOption + visibleOptions < _options.size();
+}
+
+void DialogPanel::renderScrollArrows() const {
+	if (_scrollUpArrowVisible) {
+		_scrollUpArrowImage->render(Common::Point(_scrollUpArrowRect.left, _scrollUpArrowRect.top), true);
+	}
+
+	if (_scrollDownArrowVisible) {
+		_scrollDownArrowImage->render(Common::Point(_scrollDownArrowRect.left, _scrollDownArrowRect.top), true);
 	}
 }
 
@@ -94,14 +130,14 @@ void DialogPanel::onRender() {
 	if (!_options.empty()) {
 		_activeBackGroundTexture->render(Common::Point(0, 0), false);
 		renderOptions();
+		renderScrollArrows();
 	} else {
 		_passiveBackGroundTexture->render(Common::Point(0, 0), false);
 	}
 
 	// Draw subtitle if available
 	if (_subtitleVisual) {
-		// TODO: Unhardcode
-		_subtitleVisual->render(Common::Point(10, 10));
+		_subtitleVisual->render(Common::Point(_optionsLeft, _optionsTop));
 	}
 }
 
@@ -118,25 +154,17 @@ void DialogPanel::updateSubtitleVisual() {
 void DialogPanel::updateDialogOptions() {
 	clearOptions();
 
+	_firstVisibleOption = 0;
 	Common::Array<DialogPlayer::Option> options = StarkDialogPlayer->listOptions();
 
-	int pos = 10;
 	for (uint i = 0; i < options.size(); i++) {
-		ClickText *text = new ClickText(options[i]._caption, _aprilColor);
-		text->setPosition(Common::Point(10, pos));
-
-		_options.push_back(text);
-		pos += text->getHeight();
-		// TODO: Add buttons?
-		if (pos > Gfx::Driver::kBottomBorderHeight) {
-			break;
-		}
+		_options.push_back(new ClickText(options[i]._caption, _aprilColor));
 	}
 }
 
 void DialogPanel::onMouseMove(const Common::Point &pos) {
 	if (!_options.empty() && _options.size() > 0) {
-		for (uint i = 0; i < _options.size(); i++) {
+		for (uint i = _firstVisibleOption; i < _options.size(); i++) {
 			_options[i]->handleMouseMove(pos);
 		}
 	}
@@ -144,13 +172,18 @@ void DialogPanel::onMouseMove(const Common::Point &pos) {
 
 void DialogPanel::onClick(const Common::Point &pos) {
 	if (!_options.empty() && _options.size() > 0) {
-		for (uint i = 0; i < _options.size(); i++) {
-			if (_options[i]->containsPoint(pos)) {
-				StarkDialogPlayer->selectOption(i);
+		int hoveredOption = getHoveredOption(pos);
+		if (hoveredOption >= 0) {
+			StarkDialogPlayer->selectOption(hoveredOption);
+			clearOptions();
+		}
 
-				clearOptions();
-				return;
-			}
+		if (_scrollUpArrowVisible && _scrollUpArrowRect.contains(pos)) {
+			scrollOptions(-3);
+		}
+
+		if (_scrollDownArrowVisible && _scrollDownArrowRect.contains(pos)) {
+			scrollOptions(3);
 		}
 	}
 }
@@ -165,6 +198,20 @@ void DialogPanel::reset() {
 	_subtitleVisual = nullptr;
 
 	StarkDialogPlayer->reset();
+}
+
+int DialogPanel::getHoveredOption(const Common::Point &pos) {
+	for (uint i = _firstVisibleOption; i < _options.size(); i++) {
+		if (_options[i]->containsPoint(pos)) {
+			return i;
+		}
+	}
+
+	return -1;
+}
+
+void DialogPanel::scrollOptions(int increment) {
+	_firstVisibleOption = CLIP<int32>(_firstVisibleOption + increment, 0, _options.size() - 3);
 }
 
 } // End of namespace Stark

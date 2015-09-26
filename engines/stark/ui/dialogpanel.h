@@ -58,18 +58,34 @@ private:
 	void updateSubtitleVisual();
 	void updateDialogOptions();
 	void clearOptions();
+	int getHoveredOption(const Common::Point &pos);
+	void scrollOptions(int increment);
 	void renderOptions();
+	void renderScrollArrows() const;
 
 	VisualImageXMG *_passiveBackGroundTexture;
 	VisualImageXMG *_activeBackGroundTexture;
+	VisualImageXMG *_scrollUpArrowImage;
+	VisualImageXMG *_scrollDownArrowImage;
+	VisualImageXMG *_dialogOptionBullet;
 	VisualText *_subtitleVisual;
+
+	bool _scrollUpArrowVisible;
+	bool _scrollDownArrowVisible;
+	Common::Rect _scrollUpArrowRect;
+	Common::Rect _scrollDownArrowRect;
 
 	Resources::Speech *_currentSpeech;
 
+	uint32 _firstVisibleOption;
 	Common::Array<ClickText*> _options;
 
 	static const uint32 _aprilColor = 0xFF00C0FF;
 	static const uint32 _otherColor = 0xFF4040FF;
+	static const uint32 _optionsTop = 4;
+	static const uint32 _optionsLeft = 30;
+	static const uint32 _optionsHeight = 71;
+	static const uint32 _optionHeight = 12;
 };
 
 } // End of namespace Stark
