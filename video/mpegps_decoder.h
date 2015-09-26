@@ -126,7 +126,7 @@ private:
 		Audio::PacketizedAudioStream *_audStream;
 	};
 #endif
-
+// ResidualVM specific start
 	class PS2AudioTrack : public AudioTrack, public MPEGStream {
 	public:
 		PS2AudioTrack(Common::SeekableReadStream *firstPacket);
@@ -156,6 +156,7 @@ private:
 
 		uint32 calculateSampleCount(uint32 packetSize) const;
 	};
+// ResidualVM specific end
 
 	// The different types of private streams we can detect at the moment
 	enum PrivateStreamType {

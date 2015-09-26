@@ -938,7 +938,7 @@ const Feature s_features[] = {
 	{            "nasm",             "USE_NASM",         "", true,  "IA-32 assembly support" }, // This feature is special in the regard, that it needs additional handling.
 	{          "opengl",           "USE_OPENGL", "opengl32", true,  "OpenGL support" },
 	{         "taskbar",          "USE_TASKBAR",         "", true,  "Taskbar integration support" },
-	{     "translation",      "USE_TRANSLATION",         "", false,  "Translation support" },
+	{     "translation",      "USE_TRANSLATION",         "", true,  "Translation support" },
 	{          "vkeybd",        "ENABLE_VKEYBD",         "", false, "Virtual keyboard support"},
 	{       "keymapper",     "ENABLE_KEYMAPPER",         "", false, "Keymapper support"},
 	{   "eventrecorder", "ENABLE_EVENTRECORDER",         "", false, "Event recorder support"},
