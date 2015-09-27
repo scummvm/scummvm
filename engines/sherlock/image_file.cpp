@@ -961,59 +961,57 @@ void ImageFile3DO::loadFont(Common::SeekableReadStream &stream) {
 
 	for (curChar = 33; curChar < header_charCount; curChar++) {
 		// create frame
-		{
-			ImageFrame imageFrame;
+		ImageFrame imageFrame;
 
-			imageFrame._width = widthTablePtr[curChar];
-			imageFrame._height = header_fontHeight;
-			imageFrame._paletteBase = 0;
-			imageFrame._offset.x = 0;
-			imageFrame._offset.y = 0;
-			imageFrame._rleEncoded = false;
-			imageFrame._size = 0;
+		imageFrame._width = widthTablePtr[curChar];
+		imageFrame._height = header_fontHeight;
+		imageFrame._paletteBase = 0;
+		imageFrame._offset.x = 0;
+		imageFrame._offset.y = 0;
+		imageFrame._rleEncoded = false;
+		imageFrame._size = 0;
 
-			// Extract pixels
-			imageFrame._frame.create(imageFrame._width, imageFrame._height, Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0));
-			uint16 *dest = (uint16 *)imageFrame._frame.getPixels();
-			Common::fill(dest, dest + imageFrame._width * imageFrame._height, 0);
+		// Extract pixels
+		imageFrame._frame.create(imageFrame._width, imageFrame._height, Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0));
+		uint16 *dest = (uint16 *)imageFrame._frame.getPixels();
+		Common::fill(dest, dest + imageFrame._width * imageFrame._height, 0);
 
-			curCharHeightLeft = header_fontHeight;
-			while (curCharHeightLeft) {
-				curCharWidthLeft = widthTablePtr[curChar];
-				curBitsPtr  = curBitsLinePtr;
-				curBitsLeft = 8;
-				curPosX     = 0;
+		curCharHeightLeft = header_fontHeight;
+		while (curCharHeightLeft) {
+			curCharWidthLeft = widthTablePtr[curChar];
+			curBitsPtr  = curBitsLinePtr;
+			curBitsLeft = 8;
+			curPosX     = 0;
 
-				while (curCharWidthLeft) {
-					if (!(curPosX & 1)) {
-						curBits = *curBitsPtr >> 4;
-					} else {
-						curBits = *curBitsPtr & 0x0F;
-						curBitsPtr++;
-					}
-					// doing this properly is complicated
-					// the 3DO has built-in anti-aliasing
-					// this here at least results in somewhat readable text
-					// TODO: make it better
-					if (curBits) {
-						curBitsReversed = (curBits >> 3) | ((curBits & 0x04) >> 1) | ((curBits & 0x02) << 1) | ((curBits & 0x01) << 3);
-						curBits = 20 - curBits;
-					}
-
-					byte curIntensity = curBits;
-					*dest = (curIntensity << 11) | (curIntensity << 6) | curIntensity;
-					dest++;
-
-					curCharWidthLeft--;
-					curPosX++;
+			while (curCharWidthLeft) {
+				if (!(curPosX & 1)) {
+					curBits = *curBitsPtr >> 4;
+				} else {
+					curBits = *curBitsPtr & 0x0F;
+					curBitsPtr++;
+				}
+				// doing this properly is complicated
+				// the 3DO has built-in anti-aliasing
+				// this here at least results in somewhat readable text
+				// TODO: make it better
+				if (curBits) {
+					curBitsReversed = (curBits >> 3) | ((curBits & 0x04) >> 1) | ((curBits & 0x02) << 1) | ((curBits & 0x01) << 3);
+					curBits = 20 - curBits;
 				}
 
-				curCharHeightLeft--;
-				curBitsLinePtr += header_bytesPerLine;
+				byte curIntensity = curBits;
+				*dest = (curIntensity << 11) | (curIntensity << 6) | curIntensity;
+				dest++;
+
+				curCharWidthLeft--;
+				curPosX++;
 			}
 
-			push_back(imageFrame);
+			curCharHeightLeft--;
+			curBitsLinePtr += header_bytesPerLine;
 		}
+
+		push_back(imageFrame);
 	}
 
 	// Warning below being used to silence unused variable warnings for now
