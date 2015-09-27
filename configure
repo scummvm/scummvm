@@ -4259,6 +4259,20 @@ define_in_config_if_yes "$_opengl" "USE_OPENGL"
 define_in_config_if_yes "$_opengles" "USE_GLES"
 
 #
+# Check for Linux CD-ROM support
+#
+echocheck "Linux CD-ROM"
+linuxcd=no
+cat > $TMPC << EOF
+#include <linux/cdrom.h>
+int main(void) { int x = CDROMREADAUDIO; return 0; }
+EOF
+cc_check && linuxcd=yes
+define_in_config_if_yes "$linuxcd" 'USE_LINUXCD'
+echo "$linuxcd"
+
+
+#
 # Check for nasm
 #
 if test "$_have_x86" = yes ; then
