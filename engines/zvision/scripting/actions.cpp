@@ -879,7 +879,8 @@ ActionSetPartialScreen::ActionSetPartialScreen(ZVision *engine, int32 slotKey, c
 	_fileName = Common::String(fileName);
 
 	if (_backgroundColor > 65535) {
-		warning("Background color for ActionSetPartialScreen is bigger than a uint16");
+		warning("Background color for ActionSetPartialScreen(%d)"
+				" is bigger than a uint16(65536)", _backgroundColor);
 	}
 }
 
