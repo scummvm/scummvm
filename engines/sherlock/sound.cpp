@@ -90,7 +90,7 @@ Sound::Sound(SherlockEngine *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mixer) {
 void Sound::syncSoundSettings() {
 	_digitized = !ConfMan.getBool("mute");
 	_speechOn = !ConfMan.getBool("mute") && !ConfMan.getBool("speech_mute");
-	_voices = _speechOn ? 1 : 0;
+	_voices = _digitized ? 1 : 0;
 }
 
 void Sound::loadSound(const Common::String &name, int priority) {
