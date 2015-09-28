@@ -52,7 +52,7 @@ void MSVCProvider::createWorkspace(const BuildSetup &setup) {
 	if (!solution)
 		error("Could not open \"" + setup.outputDir + '/' + setup.projectName + ".sln\" for writing");
 
-	solution << "Microsoft Visual Studio Solution File, Format Version " << _version + 1 << ".00\n";
+	solution << "Microsoft Visual Studio Solution File, Format Version " << getSolutionVersion() << ".00\n";
 	solution << "# Visual Studio " << getVisualStudioVersion() << "\n";
 
 	// Write main project
@@ -157,13 +157,17 @@ void MSVCProvider::createGlobalProp(const BuildSetup &setup) {
 	outputGlobalPropFile(setup, properties, 64, x64Defines, convertPathToWin(setup.filePrefix), setup.runBuildEvents);
 }
 
+int MSVCProvider::getSolutionVersion() {
+	return _version + 1;
+}
+
 std::string MSVCProvider::getPreBuildEvent() const {
 	std::string cmdLine = "";
 
 	cmdLine = "@echo off\n"
 	          "echo Executing Pre-Build script...\n"
-			  "echo.\n"
-			  "@call &quot;$(SolutionDir)../../devtools/create_project/scripts/prebuild.cmd&quot; &quot;$(SolutionDir)/../..&quot;  &quot;$(TargetDir)&quot;\n"
+	          "echo.\n"
+	          "@call &quot;$(SolutionDir)../../devtools/create_project/scripts/prebuild.cmd&quot; &quot;$(SolutionDir)/../..&quot;  &quot;$(TargetDir)&quot;\n"
 	          "EXIT /B0";
 
 	return cmdLine;

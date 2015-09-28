@@ -83,6 +83,11 @@ protected:
 	virtual int getVisualStudioVersion() = 0;
 
 	/**
+	 * Get the Solution version (used in the sln file header)
+	 */
+	virtual int getSolutionVersion();
+
+	/**
 	 * Get the command line for the revision tool (shared between all Visual Studio based providers)
 	 */
 	std::string getPreBuildEvent() const;

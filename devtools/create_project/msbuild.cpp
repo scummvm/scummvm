@@ -55,7 +55,14 @@ int MSBuildProvider::getVisualStudioVersion() {
 	if (_version == 12)
 		return 2013;
 
+	if (_version == 14)
+		return 14;
+
 	error("Unsupported version passed to getVisualStudioVersion");
+}
+
+int MSBuildProvider::getSolutionVersion() {
+	return (_version < 14) ? _version + 1 : _version;
 }
 
 namespace {
@@ -116,7 +123,7 @@ void MSBuildProvider::createProjectFile(const std::string &name, const std::stri
 	// Shared configuration
 	project << "\t<Import Project=\"$(VCTargetsPath)\\Microsoft.Cpp.Default.props\" />\n";
 
-    std::string version = "v" + toString(_version) + "0";
+	std::string version = "v" + toString(_version) + "0";
 	std::string llvm = "LLVM-vs" + toString(getVisualStudioVersion());
 
 	outputConfigurationType(setup, project, name, "Release|Win32", version);
@@ -177,6 +184,13 @@ void MSBuildProvider::createProjectFile(const std::string &name, const std::stri
 		project << "\t</ItemGroup>\n";
 	}
 
+	// Visual Studio 2015 automatically imports natvis files that are part of the project
+	if (name == PROJECT_NAME && _version == 14) {
+		project << "\t<ItemGroup>\n";
+		project << "\t\t<None Include=\"" << setup.srcDir << "/devtools/create_project/scripts/scummvm.natvis\" />\n";
+		project << "\t</ItemGroup>\n";
+	}
+
 	project << "\t<Import Project=\"$(VCTargetsPath)\\Microsoft.Cpp.targets\" />\n"
 	           "\t<ImportGroup Label=\"ExtensionTargets\">\n"
 	           "\t</ImportGroup>\n";
@@ -185,7 +199,7 @@ void MSBuildProvider::createProjectFile(const std::string &name, const std::stri
 		// We override the normal target to ignore the exit code (this allows us to have a clean output and not message about the command exit code)
 		project << "\t\t<Target Name=\"PostBuildEvent\">\n"
 		        << "\t\t\t<Message Text=\"Description: Run tests\" />\n"
-				<< "\t\t\t<Exec Command=\"$(TargetPath)\"  IgnoreExitCode=\"true\" />\n"
+		        << "\t\t\t<Exec Command=\"$(TargetPath)\"  IgnoreExitCode=\"true\" />\n"
 		        << "\t\t</Target>\n";
 	}
 
@@ -305,6 +319,13 @@ void MSBuildProvider::outputProjectSettings(std::ofstream &project, const std::s
 		for (StringList::const_iterator i = setup.libraries.begin(); i != setup.libraries.end(); ++i)
 			libraries += *i + ".lib;";
 
+		if (_version == 14)
+		{
+			std::string debug = isRelease ? "" : "d";
+			libraries += "libvcruntime" + debug + ".lib;";
+			libraries += "libucrt" + debug + ".lib;";
+		}
+
 		project << "\t\t<Link>\n"
 		           "\t\t\t<OutputFile>$(OutDir)" << ((setup.devTools || setup.tests) ? name : setup.projectName) << ".exe</OutputFile>\n"
 		           "\t\t\t<AdditionalDependencies>" << libraries << "%(AdditionalDependencies)</AdditionalDependencies>\n"
@@ -362,7 +383,7 @@ void MSBuildProvider::outputGlobalPropFile(const BuildSetup &setup, std::ofstrea
 	              "\t\t\t<DisableSpecificWarnings>" << warnings << ";%(DisableSpecificWarnings)</DisableSpecificWarnings>\n"
 	              "\t\t\t<AdditionalIncludeDirectories>$(" << LIBS_DEFINE << ")\\include;.;" << prefix << ";" << prefix << "\\engines;" << (setup.tests ? prefix + "\\test\\cxxtest;" : "") << "$(TargetDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>\n"
 	              "\t\t\t<PreprocessorDefinitions>" << definesList << "%(PreprocessorDefinitions)</PreprocessorDefinitions>\n"
-	              "\t\t\t<ExceptionHandling>" << ((setup.devTools || setup.tests) ? "Sync" : "") << "</ExceptionHandling>\n";
+	              "\t\t\t<ExceptionHandling>" << ((setup.devTools || setup.tests || _version == 14) ? "Sync" : "") << "</ExceptionHandling>\n";
 
 #if NEEDS_RTTI
 	properties << "\t\t\t<RuntimeTypeInfo>true</RuntimeTypeInfo>\n";
