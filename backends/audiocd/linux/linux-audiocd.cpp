@@ -32,6 +32,7 @@
 #include "audio/audiostream.h"
 #include "backends/audiocd/default/default-audiocd.h"
 #include "common/array.h"
+#include "common/config-manager.h"
 #include "common/str.h"
 #include "common/debug.h"
 
@@ -153,14 +154,20 @@ public:
 
 private:
 	struct Device {
-		Device(const Common::String &n, dev_t m) : name(n), mode(m) {}
+		Device(const Common::String &n, dev_t d) : name(n), device(d) {}
 		Common::String name;
-		dev_t mode;
+		dev_t device;
 	};
 
-	Common::Array<Device> scanDevices();
-	bool tryAddDrive(const Common::String &drive, Common::Array<Device> &devices);
+	typedef Common::Array<Device> DeviceList;
+	DeviceList scanDevices();
+	bool tryAddDrive(DeviceList &devices, const Common::String &drive);
+	bool tryAddDrive(DeviceList &devices, const Common::String &drive, dev_t device);
+	bool tryAddDrive(DeviceList &devices, dev_t device);
+	bool tryAddPath(DeviceList &devices, const Common::String &path);
+	bool tryAddGamePath(DeviceList &devices);
 	bool loadTOC();
+	static bool hasDevice(const DeviceList &devices, dev_t device);
 
 	int _fd;
 	cdrom_tochdr _tocHeader;
@@ -193,11 +200,11 @@ LinuxAudioCDManager::~LinuxAudioCDManager() {
 bool LinuxAudioCDManager::openCD(int drive) {
 	closeCD();
 
-	Common::Array<Device> devices = scanDevices();
-	if (devices.empty())
+	DeviceList devices = scanDevices();
+	if (drive >= (int)devices.size())
 		return false;
 
-	_fd = open(devices[0].name.c_str(), O_RDONLY | O_NONBLOCK, 0);
+	_fd = open(devices[drive].name.c_str(), O_RDONLY | O_NONBLOCK, 0);
 	if (_fd < 0)
 		return false;
 
@@ -259,13 +266,21 @@ void LinuxAudioCDManager::playCD(int track, int numLoops, int startFrame, int du
 		true);
 }
 
-Common::Array<LinuxAudioCDManager::Device> LinuxAudioCDManager::scanDevices() {
-	Common::Array<Device> devices;
-	tryAddDrive("/dev/cdrom", devices);
+LinuxAudioCDManager::DeviceList LinuxAudioCDManager::scanDevices() {
+	DeviceList devices;
+
+	// Try to use the game's path first as the device
+	tryAddGamePath(devices);
+
+	// Try adding the default CD-ROM
+	tryAddDrive(devices, "/dev/cdrom");
+
+	// TODO: Try others?
+
 	return devices;
 }
 
-bool LinuxAudioCDManager::tryAddDrive(const Common::String &drive, Common::Array<Device> &devices) {
+bool LinuxAudioCDManager::tryAddDrive(DeviceList &devices, const Common::String &drive) {
 	struct stat stbuf;
 	if (stat(drive.c_str(), &stbuf) < 0)
 		return false;
@@ -273,6 +288,13 @@ bool LinuxAudioCDManager::tryAddDrive(const Common::String &drive, Common::Array
 	// Must be a character or block device
 	if (!S_ISCHR(stbuf.st_mode) && !S_ISBLK(stbuf.st_mode))
 		return false;
+
+	return tryAddDrive(devices, drive, stbuf.st_rdev);
+}
+
+bool LinuxAudioCDManager::tryAddDrive(DeviceList &devices, const Common::String &drive, dev_t device) {
+	if (hasDevice(devices, device))
+		return true;
 
 	// Try opening the device and seeing if it is a CD-ROM drve
 	int fd = open(drive.c_str(), O_RDONLY | O_NONBLOCK, 0);
@@ -283,12 +305,35 @@ bool LinuxAudioCDManager::tryAddDrive(const Common::String &drive, Common::Array
 		bool isCD = ioctl(fd, CDROMSUBCHNL, &info) == 0 || isTrayEmpty(errno);
 		close(fd);
 		if (isCD) {
-			devices.push_back(Device(drive, stbuf.st_rdev));
+			devices.push_back(Device(drive, device));
 			return true;
 		}
 	}
 
 	return false;
+}
+
+bool LinuxAudioCDManager::tryAddDrive(DeviceList &devices, dev_t device) {
+	// Construct the block name
+	// (Does anyone have a better way to do this? bdevname is kernel only)
+	Common::String name = Common::String::format("/dev/block/%d:%d", gnu_dev_major(device), gnu_dev_minor(device));
+
+	return tryAddDrive(devices, name, device);
+}
+
+bool LinuxAudioCDManager::tryAddPath(DeviceList &devices, const Common::String &path) {
+	struct stat stbuf;
+	if (stat(path.c_str(), &stbuf) < 0)
+		return false;
+
+	return tryAddDrive(devices, stbuf.st_dev);
+}
+
+bool LinuxAudioCDManager::tryAddGamePath(DeviceList &devices) {
+	if (!ConfMan.hasKey("path"))
+		return false;
+
+	return tryAddPath(devices, ConfMan.get("path"));
 }
 
 bool LinuxAudioCDManager::loadTOC() {
@@ -343,6 +388,14 @@ bool LinuxAudioCDManager::loadTOC() {
 
 	_tocEntries.push_back(entry);
 	return true;
+}
+
+bool LinuxAudioCDManager::hasDevice(const DeviceList &devices, dev_t device) {
+	for (DeviceList::const_iterator it = devices.begin(); it != devices.end(); it++)
+		if (it->device == device)
+			return true;
+
+	return false;
 }
 
 AudioCDManager *createLinuxAudioCDManager() {
