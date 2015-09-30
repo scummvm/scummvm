@@ -365,8 +365,7 @@ void TattooMap::showCloseUp(int closeUpNum) {
 	Events &events = *_vm->_events;
 	Screen &screen = *_vm->_screen;
 
-	// Reset scroll position
-	screen._currentScroll = Common::Point(0, 0);
+	// Hide the cursor
 	events.hideCursor();
 
 	// Get the closeup images
@@ -404,7 +403,8 @@ void TattooMap::showCloseUp(int closeUpNum) {
 
 	for (int step = 0; step < CLOSEUP_STEPS; ++step) {
 		Common::Point picSize(pic[0].sDrawXSize(scaleVal), pic[0].sDrawYSize(scaleVal));
-		Common::Point pt(closeUp.x / 100 - picSize.x / 2, closeUp.y / 100 - picSize.y / 2);
+		Common::Point pt(screen._currentScroll.x + closeUp.x / 100 - picSize.x / 2,
+			screen._currentScroll.y + closeUp.y / 100 - picSize.y / 2);
 
 		restoreArea(oldBounds);
 		screen._backBuffer1.transBlitFrom(pic[0], pt, false, 0, scaleVal);
@@ -420,9 +420,10 @@ void TattooMap::showCloseUp(int closeUpNum) {
 	}
 
 	// Handle final drawing of closeup
-	Common::Rect r(SHERLOCK_SCREEN_WIDTH / 2 - pic[0]._width / 2, SHERLOCK_SCREEN_HEIGHT / 2 - pic[0]._height / 2,
-		SHERLOCK_SCREEN_WIDTH / 2 - pic[0]._width / 2 + pic[0]._width,
-		SHERLOCK_SCREEN_HEIGHT / 2 - pic[0]._height / 2 + pic[0]._height);
+	Common::Rect r(screen._currentScroll.x + SHERLOCK_SCREEN_WIDTH / 2 - pic[0]._width / 2,
+		screen._currentScroll.y + SHERLOCK_SCREEN_HEIGHT / 2 - pic[0]._height / 2,
+		screen._currentScroll.x + SHERLOCK_SCREEN_WIDTH / 2 - pic[0]._width / 2 + pic[0]._width,
+		screen._currentScroll.y + SHERLOCK_SCREEN_HEIGHT / 2 - pic[0]._height / 2 + pic[0]._height);
 
 	restoreArea(oldBounds);
 	screen._backBuffer1.transBlitFrom(pic[0], Common::Point(r.left, r.top));
