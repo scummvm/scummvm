@@ -42,6 +42,13 @@ public:
 	void update();
 	virtual Status getStatus() const; // Subclasses should override for better status results
 
+	bool openCD();
+
+	/**
+	 * Open a CD using the specified drive index
+	 * @param drive The index of the drive
+	 * @note The index is implementation-defined, but 0 is always the best choice
+	 */
 	virtual bool openCD(int drive) { return false; }
 	virtual void updateCD() {}
 	virtual bool pollCD() const { return false; }

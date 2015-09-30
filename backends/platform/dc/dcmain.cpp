@@ -123,7 +123,7 @@ void DCCDManager::updateCD()
   // Dummy.  The CD drive takes care of itself.
 }
 
-bool DCCDManager::openCD(int drive)
+bool DCCDManager::openCD()
 {
   // Dummy.
   return true;

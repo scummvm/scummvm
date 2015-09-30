@@ -715,7 +715,7 @@ void OSystem_DS::deleteMutex(MutexRef mutex) {
 // and should be replaced by an AudioCDManager subclass,
 // see backends/audiocd/ and common/system.h
 
-bool OSystem_DS::openCD(int drive) {
+bool OSystem_DS::openCD() {
 	return DS::CD::checkCD();
 }
 

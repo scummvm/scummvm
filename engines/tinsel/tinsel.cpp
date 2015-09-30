@@ -841,9 +841,7 @@ TinselEngine::TinselEngine(OSystem *syst, const TinselGameDescription *gameDesc)
 		if (!scumm_stricmp(g->gameid, gameid))
 			_gameId = g->id;
 
-	int cd_num = ConfMan.getInt("cdrom");
-	if (cd_num >= 0)
-		_system->getAudioCDManager()->openCD(cd_num);
+	_system->getAudioCDManager()->openCD();
 
 	_mousePos.x = 0;
 	_mousePos.y = 0;

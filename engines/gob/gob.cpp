@@ -296,9 +296,7 @@ Common::Error GobEngine::run() {
 	if (isCD())
 		checkCD();
 
-	int cd_num = ConfMan.getInt("cdrom");
-	if (cd_num >= 0)
-		_system->getAudioCDManager()->openCD(cd_num);
+	_system->getAudioCDManager()->openCD();
 
 	_global->_debugFlag = 1;
 	_video->_doRangeClamp = true;

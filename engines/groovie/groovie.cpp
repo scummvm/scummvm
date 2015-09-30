@@ -257,11 +257,7 @@ Common::Error GroovieEngine::run() {
 	// the same cd
 	if (getPlatform() != Common::kPlatformIOS) {
 		checkCD();
-
-		// Initialize the CD
-		int cd_num = ConfMan.getInt("cdrom");
-		if (cd_num >= 0)
-			_system->getAudioCDManager()->openCD(cd_num);
+		_system->getAudioCDManager()->openCD();
 	}
 
 	while (!shouldQuit()) {

@@ -109,10 +109,9 @@ public:
 
 	/**
 	 * Initialize the specified CD drive for audio playback.
-	 * @param drive the drive id
 	 * @return true if the CD drive was inited successfully
 	 */
-	virtual bool openCD(int drive) = 0;
+	virtual bool openCD() = 0;
 
 	/**
 	 * Poll CD status.

@@ -22,6 +22,7 @@
 
 #include "backends/audiocd/default/default-audiocd.h"
 #include "audio/audiostream.h"
+#include "common/config-manager.h"
 #include "common/system.h"
 
 DefaultAudioCDManager::DefaultAudioCDManager() {
@@ -151,4 +152,8 @@ DefaultAudioCDManager::Status DefaultAudioCDManager::getStatus() const {
 	Status info = _cd;
 	info.playing = isPlaying();
 	return info;
+}
+
+bool DefaultAudioCDManager::openCD() {
+	return openCD(ConfMan.getInt("cdrom"));
 }

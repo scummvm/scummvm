@@ -130,7 +130,7 @@ public:
 	// FIXME/TODO: The CD API as follows is *obsolete*
 	// and should be replaced by an AudioCDManager subclass,
 	// see backends/audiocd/ and common/system.h
-	virtual bool openCD(int drive);
+	virtual bool openCD();
 	virtual bool pollCD();
 	virtual void playCD(int track, int num_loops, int start_frame, int duration);
 	virtual void stopCD();
