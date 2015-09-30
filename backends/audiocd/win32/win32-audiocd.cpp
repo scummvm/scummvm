@@ -26,9 +26,11 @@
 #include "backends/audiocd/default/default-audiocd.h"
 #include "common/array.h"
 #include "common/config-manager.h"
-#include "common/endian.h"
-#include "common/str.h"
 #include "common/debug.h"
+#include "common/mutex.h"
+#include "common/queue.h"
+#include "common/str.h"
+#include "common/timer.h"
 
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
@@ -59,6 +61,11 @@ enum {
 	kPreGapFrames = kFramesPerSecond * 2
 };
 
+enum {
+	// Keep about a second's worth of audio in the buffer
+	kBufferThreshold = kFramesPerSecond
+};
+
 static int getFrameCount(const TRACK_DATA &data) {
 	int time = data.Address[1];
 	time *= kSecondsPerMinute;
@@ -71,6 +78,7 @@ static int getFrameCount(const TRACK_DATA &data) {
 class Win32AudioCDStream : public Audio::SeekableAudioStream {
 public:
 	Win32AudioCDStream(HANDLE handle, const TRACK_DATA &startEntry, const TRACK_DATA &endEntry);
+	~Win32AudioCDStream();
 
 	int readBuffer(int16 *buffer, const int numSamples);
 	bool isStereo() const { return true; }
@@ -86,15 +94,26 @@ private:
 	int _frame;
 	uint _bufferPos;
 
+	Common::Queue<int16 *> _bufferQueue;
+	int _bufferFrame;
+	Common::Mutex _mutex;
+
 	bool readNextFrame();
+	static void timerProc(void *refCon);
+	void onTimer();
+	void emptyQueue();
+	void startTimer();
+	void stopTimer();
 };
 
 Win32AudioCDStream::Win32AudioCDStream(HANDLE handle, const TRACK_DATA &startEntry, const TRACK_DATA &endEntry) :
-		_driveHandle(handle), _startEntry(startEntry), _endEntry(endEntry), _buffer(), _frame(0), _bufferPos(kSamplesPerFrame) {
-	// Read the first frame here. This should hopefully keep games more
-	// in sync instead of potentially waiting in the mixer thread for the
-	// disc to seek to the first frame.
-	readNextFrame();
+		_driveHandle(handle), _startEntry(startEntry), _endEntry(endEntry), _buffer(), _frame(0), _bufferPos(kSamplesPerFrame), _bufferFrame(0) {
+	startTimer();
+}
+
+Win32AudioCDStream::~Win32AudioCDStream() {
+	stopTimer();
+	emptyQueue();
 }
 
 int Win32AudioCDStream::readBuffer(int16 *buffer, const int numSamples) {
@@ -121,33 +140,21 @@ int Win32AudioCDStream::readBuffer(int16 *buffer, const int numSamples) {
 }
 
 bool Win32AudioCDStream::readNextFrame() {
-	// Figure out the MSF of the frame we're looking for
-	int frame = _frame + getFrameCount(_startEntry);
+	// Fetch a frame from the queue
+	int16 *buffer;
 
-	// Request to read that frame. Subtract the pre-gap frames
-	// so that we get to the right sector.
-	RAW_READ_INFO readAudio;
-	memset(&readAudio, 0, sizeof(readAudio));
-	readAudio.DiskOffset.QuadPart = (frame - kPreGapFrames) * 2048;
-	readAudio.SectorCount = 1;
-	readAudio.TrackMode = CDDA;
-	
-	DWORD bytesReturned;
-	bool result = DeviceIoControl(
-		_driveHandle,
-		IOCTL_CDROM_RAW_READ,
-		&readAudio,
-		sizeof(readAudio),
-		&_buffer,
-		sizeof(_buffer),
-		&bytesReturned,
-		NULL);
-	if (!result) {
-		warning("Failed to retrieve CD sector %d: %d", frame, (int)GetLastError());
-		_frame = getFrameCount(_endEntry);
-		return false;
+	{
+		Common::StackLock lock(_mutex);
+
+		// Nothing we can do if it's empty
+		if (_bufferQueue.empty())
+			return false;
+
+		buffer = _bufferQueue.pop();
 	}
 
+	memcpy(_buffer, buffer, kSamplesPerFrame * 2);
+	delete[] buffer;
 	_frame++;
 	return true;
 }
@@ -157,15 +164,98 @@ bool Win32AudioCDStream::endOfData() const {
 }
 
 bool Win32AudioCDStream::seek(const Audio::Timestamp &where) {
+	// Stop the timer
+	stopTimer();
+
+	// Clear anything out of the queue
+	emptyQueue();
+
 	// Convert to the frame number
 	// Really not much else needed
 	_bufferPos = kSamplesPerFrame;
 	_frame = where.convertToFramerate(kFramesPerSecond).totalNumberOfFrames();
+	_bufferFrame = _frame;
+
+	// Start the timer again
+	startTimer();
 	return true;
 }
 
 Audio::Timestamp Win32AudioCDStream::getLength() const {
 	return Audio::Timestamp(0, getFrameCount(_endEntry) - getFrameCount(_startEntry), 75);
+}
+
+void Win32AudioCDStream::timerProc(void *refCon) {
+	static_cast<Win32AudioCDStream *>(refCon)->onTimer();
+}
+
+void Win32AudioCDStream::onTimer() {
+	// The goal here is to do as much work in this timer instead
+	// of doing it in the readBuffer() call, which is the mixer.
+
+	// If we're done, bail.
+	if (getFrameCount(_startEntry) + _bufferFrame >= getFrameCount(_endEntry))
+		return;
+
+	// Get a quick count of the number of items in the queue
+	// We don't care that much; we only need a quick estimate
+	_mutex.lock();
+	uint32 queueCount = _bufferQueue.size();
+	_mutex.unlock();
+
+	// If we have enough audio buffered, bail out
+	if (queueCount >= kBufferThreshold)
+		return;
+
+	while (queueCount < kBufferThreshold && getFrameCount(_startEntry) + _bufferFrame < getFrameCount(_endEntry)) {
+		int16 *buffer = new int16[kSamplesPerFrame];
+
+		// Figure out the MSF of the frame we're looking for
+		int frame = _bufferFrame + getFrameCount(_startEntry);
+
+		// Request to read that frame
+		RAW_READ_INFO readAudio;
+		memset(&readAudio, 0, sizeof(readAudio));
+		readAudio.DiskOffset.QuadPart = (frame - kPreGapFrames) * 2048;
+		readAudio.SectorCount = 1;
+		readAudio.TrackMode = CDDA;
+
+		DWORD bytesReturned;
+		bool result = DeviceIoControl(
+			_driveHandle,
+			IOCTL_CDROM_RAW_READ,
+			&readAudio,
+			sizeof(readAudio),
+			buffer,
+			kBytesPerFrame,
+			&bytesReturned,
+			NULL);
+		if (!result) {
+			warning("Failed to retrieve CD sector %d: %d", frame, (int)GetLastError());
+			_bufferFrame = getFrameCount(_endEntry) - getFrameCount(_startEntry);
+			return;
+		}
+
+		_bufferFrame++;
+
+		// Now push the buffer onto the queue
+		Common::StackLock lock(_mutex);
+		_bufferQueue.push(buffer);
+		queueCount = _bufferQueue.size();
+	}
+}
+
+void Win32AudioCDStream::startTimer() {
+	g_system->getTimerManager()->installTimerProc(timerProc, 10 * 1000, this, "Win32AudioCDStream");
+}
+
+void Win32AudioCDStream::stopTimer() {
+	g_system->getTimerManager()->removeTimerProc(timerProc);
+}
+
+void Win32AudioCDStream::emptyQueue() {
+	while (!_bufferQueue.empty())
+		delete[] _bufferQueue.pop();
 }
 
 class Win32AudioCDManager : public DefaultAudioCDManager {
