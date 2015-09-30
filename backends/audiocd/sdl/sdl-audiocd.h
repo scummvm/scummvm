@@ -39,6 +39,7 @@ public:
 
 protected:
 	virtual bool openCD(int drive);
+	virtual void closeCD();
 	virtual void updateCD();
 	virtual bool pollCD() const;
 	virtual void playCD(int track, int num_loops, int start_frame, int duration);

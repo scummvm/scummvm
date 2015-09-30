@@ -114,6 +114,11 @@ public:
 	virtual bool openCD() = 0;
 
 	/**
+	 * Close the currently open CD drive
+	 */
+	virtual void closeCD() = 0;
+
+	/**
 	 * Poll CD status.
 	 * @return true if CD audio is playing
 	 */

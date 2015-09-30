@@ -43,10 +43,7 @@ SdlAudioCDManager::SdlAudioCDManager()
 }
 
 SdlAudioCDManager::~SdlAudioCDManager() {
-	if (_cdrom) {
-		SDL_CDStop(_cdrom);
-		SDL_CDClose(_cdrom);
-	}
+	closeCD();
 }
 
 bool SdlAudioCDManager::openCD(int drive) {
@@ -65,6 +62,14 @@ bool SdlAudioCDManager::openCD(int drive) {
 	}
 
 	return (_cdrom != NULL);
+}
+
+void SdlAudioCDManager::closeCD() {
+	if (_cdrom) {
+                SDL_CDStop(_cdrom);
+                SDL_CDClose(_cdrom);
+		_cdrom = 0;
+        }
 }
 
 void SdlAudioCDManager::stopCD() {

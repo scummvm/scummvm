@@ -60,6 +60,9 @@ class DCCDManager : public DefaultAudioCDManager {
   // Initialize the specified CD drive for audio playback.
   bool openCD();
 
+	// Close the open CD drive
+	void closeCD() {}
+
   // Poll cdrom status
   // Returns true if cd audio is playing
   bool pollCD();
