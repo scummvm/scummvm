@@ -256,6 +256,9 @@ public:
 	void closeCD();
 	void playCD(int track, int numLoops, int startFrame, int duration);
 
+protected:
+	bool openCD(const Common::String &drive);
+
 private:
 	struct Device {
 		Device(const Common::String &n, dev_t d) : name(n), device(d) {}
@@ -309,6 +312,23 @@ bool LinuxAudioCDManager::openCD(int drive) {
 		return false;
 
 	_fd = open(devices[drive].name.c_str(), O_RDONLY | O_NONBLOCK, 0);
+	if (_fd < 0)
+		return false;
+
+	if (!loadTOC()) {
+		closeCD();
+		return false;
+	}
+
+	return true;
+}
+
+bool LinuxAudioCDManager::openCD(const Common::String &drive) {
+	DeviceList devices;
+	if (!tryAddDrive(devices, drive) && !tryAddPath(devices, drive))
+		return false;
+
+	_fd = open(devices[0].name.c_str(), O_RDONLY | O_NONBLOCK, 0);
 	if (_fd < 0)
 		return false;
 
