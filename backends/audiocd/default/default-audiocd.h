@@ -26,6 +26,10 @@
 #include "backends/audiocd/audiocd.h"
 #include "audio/mixer.h"
 
+namespace Common {
+class String;
+} // End of namespace Common
+
 /**
  * The default audio cd manager. Implements emulation of audio cd playback.
  */
@@ -51,12 +55,20 @@ public:
 	 * @note The index is implementation-defined, but 0 is always the best choice
 	 */
 	virtual bool openCD(int drive) { return false; }
+
 	virtual void updateCD() {}
 	virtual bool pollCD() const { return false; }
 	virtual void playCD(int track, int num_loops, int start_frame, int duration) {}
 	virtual void stopCD() {}
 
 protected:
+	/**
+	 * Open a CD from a specific drive
+	 * @param drive The name of the drive/path
+	 * @note The drive parameter is platform-specific
+	 */
+	virtual bool openCD(const Common::String &drive) { return false; }
+
 	Audio::SoundHandle _handle;
 	bool _emulating;
 

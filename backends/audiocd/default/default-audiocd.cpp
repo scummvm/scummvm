@@ -155,5 +155,19 @@ DefaultAudioCDManager::Status DefaultAudioCDManager::getStatus() const {
 }
 
 bool DefaultAudioCDManager::openCD() {
-	return openCD(ConfMan.getInt("cdrom"));
+	Common::String cdrom = ConfMan.get("cdrom");
+
+	// Try to parse it as an int
+	char *endPos;
+	int drive = strtol(cdrom.c_str(), &endPos, 0);
+
+	// If not an integer, treat as a drive path
+	if (endPos == cdrom.c_str())
+		return openCD(cdrom);
+
+	if (drive < 0)
+		return false;
+
+	return openCD(drive);
 }
+
