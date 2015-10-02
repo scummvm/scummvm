@@ -777,7 +777,7 @@ void ScalpelUserInterface::doEnvControl() {
 		} else if ((found == 1 && events._released) || _key == 'L') {
 			saves._envMode = SAVEMODE_LOAD;
 			if (_selector != -1) {
-				saves.loadGame(_selector + 1);
+				saves.loadGame(_selector);
 			}
 		} else if ((found == 2 && events._released) || _key == 'S') {
 			saves._envMode = SAVEMODE_SAVE;
@@ -786,7 +786,7 @@ void ScalpelUserInterface::doEnvControl() {
 					_oldSelector = _selector;
 
 				if (saves.promptForDescription(_selector)) {
-					saves.saveGame(_selector + 1, saves._savegames[_selector]);
+					saves.saveGame(_selector, saves._savegames[_selector]);
 
 					banishWindow(1);
 					_windowBounds.top = CONTROLS_Y1;
@@ -950,14 +950,14 @@ void ScalpelUserInterface::doEnvControl() {
 			if (_selector != -1) {
 				// Are we already in Load mode?
 				if (saves._envMode == SAVEMODE_LOAD) {
-					saves.loadGame(_selector + 1);
+					saves.loadGame(_selector);
 				} else if (saves._envMode == SAVEMODE_SAVE || saves.isSlotEmpty(_selector)) {
 					// We're already in save mode, or pointing to an empty save slot
 					if (saves.checkGameOnScreen(_selector))
 						_oldSelector = _selector;
 
 					if (saves.promptForDescription(_selector)) {
-						saves.saveGame(_selector + 1, saves._savegames[_selector]);
+						saves.saveGame(_selector, saves._savegames[_selector]);
 						banishWindow();
 						_windowBounds.top = CONTROLS_Y1;
 						_key = _oldKey = -1;
