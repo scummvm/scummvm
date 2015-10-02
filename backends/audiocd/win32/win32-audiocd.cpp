@@ -267,6 +267,9 @@ public:
 	void closeCD();
 	void playCD(int track, int numLoops, int startFrame, int duration);
 
+protected:
+	bool openCD(const Common::String &drive);
+
 private:
 	bool loadTOC();
 
@@ -312,6 +315,37 @@ bool Win32AudioCDManager::openCD(int drive) {
 	}
 	
 	return false;
+}
+
+bool Win32AudioCDManager::openCD(const Common::String &drive) {
+	// Just some bounds checking
+	if (drive.empty() || drive.size() > 3)
+		return false;
+
+	if (!Common::isAlpha(drive[0]) || drive[1] != ':')
+		return false;
+
+	if (drive[2] != 0 && drive[2] != '\\')
+		return false;
+
+	DriveList drives;
+	if (!tryAddDrive(toupper(drive[0]), drives))
+		return false;
+
+	// Construct the drive path and try to open it
+	Common::String drivePath = Common::String::format("\\\\.\\%c:", drives[0]);
+	_driveHandle = CreateFileA(drivePath.c_str(), GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
+	if (_driveHandle == INVALID_HANDLE_VALUE) {
+		warning("Failed to open drive %c:\\, error %d", drives[0], (int)GetLastError());
+		return false;
+	}
+
+	if (!loadTOC()) {
+		closeCD();
+		return false;
+	}
+
+	return true;
 }
 
 void Win32AudioCDManager::closeCD() {
