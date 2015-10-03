@@ -52,6 +52,7 @@ public:
 
 protected:
 	bool openCD(int drive);
+	bool openCD(const Common::String &drive);
 
 private:
 	struct Drive {
@@ -133,6 +134,24 @@ bool MacOSXAudioCDManager::openCD(int drive) {
 	debug(1, "Using '%s' as the CD drive", cddaDrives[drive].mountPoint.c_str());
 
 	return findTrackNames(cddaDrives[drive].mountPoint);
+}
+
+bool MacOSXAudioCDManager::openCD(const Common::String &drive) {
+	closeCD();
+
+	DriveList drives = detectAllDrives();
+
+	for (uint32 i = 0; i < drives.size(); i++) {
+		if (drives[i].fsType != "cddafs")
+			continue;
+
+		if (drives[i].mountPoint == drive || drives[i].deviceName == drive) {
+			debug(1, "Using '%s' as the CD drive", drives[i].mountPoint.c_str());
+			return findTrackNames(drives[i].mountPoint);
+		}
+	}
+
+	return false;
 }
 
 void MacOSXAudioCDManager::closeCD() {
