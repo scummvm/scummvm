@@ -8,16 +8,16 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
 "POT-Creation-Date: 2015-09-06 15:14+0200\n"
-"PO-Revision-Date: 2015-07-04 12:06+0200\n"
+"PO-Revision-Date: 2015-10-03 11:40+0200\n"
 "Last-Translator: Lothar Serra Mari <scummvm@rootfather.de>\n"
 "Language-Team: Simon Sawatzki <SimSaw@gmx.de>, Lothar Serra Mari "
 "<scummvm@rootfather.de>\n"
-"Language: Deutsch\n"
+"Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Poedit 1.8.2\n"
+"X-Generator: Poedit 1.8.5\n"
 
 #: gui/about.cpp:94
 #, c-format
@@ -75,7 +75,6 @@ msgid "Choose"
 msgstr "Auswählen"
 
 #: gui/editrecorddialog.cpp:58
-#, fuzzy
 msgid "Author:"
 msgstr "Autor:"
 
@@ -84,13 +83,12 @@ msgid "Name:"
 msgstr "Name:"
 
 #: gui/editrecorddialog.cpp:60
-#, fuzzy
 msgid "Notes:"
 msgstr "Notizen:"
 
 #: gui/editrecorddialog.cpp:68 gui/predictivedialog.cpp:75
 msgid "Ok"
-msgstr ""
+msgstr "OK"
 
 #: gui/gui-manager.cpp:117 backends/keymapper/remap-dialog.cpp:53
 #: engines/scumm/help.cpp:126 engines/scumm/help.cpp:141
@@ -579,19 +577,17 @@ msgstr "%d neue Spiele gefunden, %d bereits hinzugefügte Spiele ignoriert..."
 
 #: gui/onscreendialog.cpp:101 gui/onscreendialog.cpp:103
 msgid "Stop"
-msgstr ""
+msgstr "Anhalten"
 
 #: gui/onscreendialog.cpp:106
 msgid "Edit record description"
-msgstr ""
+msgstr "Aufnahme-Beschreibung ändern"
 
 #: gui/onscreendialog.cpp:108
-#, fuzzy
 msgid "Switch to Game"
 msgstr "Wechsle"
 
 #: gui/onscreendialog.cpp:110
-#, fuzzy
 msgid "Fast replay"
 msgstr "Schneller Modus"
 
@@ -1000,29 +996,29 @@ msgstr ""
 #. I18N: You must leave "#" as is, only word 'next' is translatable
 #: gui/predictivedialog.cpp:87
 msgid "#  next"
-msgstr ""
+msgstr "#  nächste"
 
 #: gui/predictivedialog.cpp:88
 msgid "add"
-msgstr ""
+msgstr "hinzufügen"
 
 #: gui/predictivedialog.cpp:92
-#, fuzzy
 msgid "Delete char"
 msgstr "Löschen"
 
 #: gui/predictivedialog.cpp:96
 msgid "<"
-msgstr ""
+msgstr "<"
 
 #. I18N: Pre means 'Predictive', leave '*' as is
 #: gui/predictivedialog.cpp:98
+#, fuzzy
 msgid "*  Pre"
-msgstr ""
+msgstr "*  Vorschau"
 
 #: gui/recorderdialog.cpp:64
 msgid "Recorder or Playback Gameplay"
-msgstr "Spiel aufzeichnen oder wiedergeben"
+msgstr "Spiel aufzeichnen/wiedergeben"
 
 #: gui/recorderdialog.cpp:69 gui/recorderdialog.cpp:156
 #: gui/saveload-dialog.cpp:220 gui/saveload-dialog.cpp:276
@@ -1520,7 +1516,7 @@ msgstr "DOSBox-OPL-Emulator"
 
 #: audio/fmopl.cpp:67
 msgid "ALSA Direct FM"
-msgstr ""
+msgstr "ALSA Direct FM"
 
 #: audio/mididrv.cpp:209
 #, c-format
@@ -3538,7 +3534,6 @@ msgstr ""
 "Zeige die aktuelle Anzahl von Bildern pro Sekunde in der oberen linken Ecke"
 
 #: engines/zvision/detection_tables.h:52
-#, fuzzy
 msgid "Use the original save/load screens instead of the ScummVM interface"
 msgstr ""
 "Verwendet die originalen Menüs zum Speichern und Laden statt der von ScummVM."
@@ -3548,7 +3543,6 @@ msgid "Double FPS"
 msgstr "FPS verdoppeln"
 
 #: engines/zvision/detection_tables.h:62
-#, fuzzy
 msgid "Increase framerate from 30 to 60 FPS"
 msgstr "Bilder pro Sekunde im Spiel von 30 auf 60 erhöhen"
 
@@ -3565,17 +3559,14 @@ msgid "Disable animation while turning"
 msgstr "Animation während Drehen ausschalten"
 
 #: engines/zvision/detection_tables.h:82
-#, fuzzy
 msgid "Disable animation while turning in panorama mode"
 msgstr "Animation während Drehen im Panorama-Modus ausschalten"
 
 #: engines/zvision/detection_tables.h:91
-#, fuzzy
 msgid "Use high resolution MPEG video"
 msgstr "Nutze hochauflösende MPEG-Filme"
 
 #: engines/zvision/detection_tables.h:92
-#, fuzzy
 msgid "Use MPEG video from the DVD version, instead of lower resolution AVI"
 msgstr ""
 "Verwende hochauflösende MPEG-Filme der DVD-Version anstelle der AVI-Filme"
