@@ -155,8 +155,8 @@ void Surface::transBlitFromUnscaled(const Graphics::Surface &src, const Common::
 		return;
 
 	if (flipped)
-		drawRect = Common::Rect(src.w - drawRect.right, src.h - drawRect.bottom,
-			src.w - drawRect.left, src.h - drawRect.top);
+		drawRect = Common::Rect(src.w - drawRect.right, drawRect.top,
+			src.w - drawRect.left, drawRect.bottom);
 
 	Common::Point destPt(destRect.left, destRect.top);
 	addDirtyRect(Common::Rect(destPt.x, destPt.y, destPt.x + drawRect.width(),
