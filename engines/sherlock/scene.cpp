@@ -896,27 +896,37 @@ bool Scene::loadScene(const Common::String &filename) {
 		// === WALK DATA === Read in the walk data
 		roomStream->seek(header3DO_walkData_offset);
 
-		int startPos = roomStream->pos();
-		while ((roomStream->pos() - startPos) < (int)header3DO_walkData_size) {
-			_walkPoints.push_back(WalkArray());
-			_walkPoints[_walkPoints.size() - 1]._fileOffset = roomStream->pos() - startPos;
-			_walkPoints[_walkPoints.size() - 1].load(*roomStream, false);
-		}
+		// Read in the walk data
+		Common::SeekableReadStream *walkStream = !_compressed ? roomStream->readStream(header3DO_walkData_size) :
+			res.decompress(*roomStream, header3DO_walkData_size);
 
 		// Translate the file offsets of the walk directory to indexes in the loaded walk data
 		for (uint idx1 = 0; idx1 < _zones.size(); ++idx1) {
 			for (uint idx2 = 0; idx2 < _zones.size(); ++idx2) {
-				int fileOffset = _walkDirectory[idx1][idx2];
-				if (fileOffset == -1)
+				int dataOffset = _walkDirectory[idx1][idx2];
+				if (dataOffset == -1)
 					continue;
 
+				// Check to see if we've already loaded the walk set for the given data offset
 				uint dataIndex = 0;
-				while (dataIndex < _walkPoints.size() && _walkPoints[dataIndex]._fileOffset != fileOffset)
+				while (dataIndex < _walkPoints.size() && _walkPoints[dataIndex]._fileOffset != dataOffset)
 					++dataIndex;
-				assert(dataIndex < _walkPoints.size());
+
+				if (dataIndex == _walkPoints.size()) {
+					// Walk data for that offset hasn't been loaded yet, so load it now
+					_walkPoints.push_back(WalkArray());
+
+					walkStream->seek(dataOffset);
+					_walkPoints[_walkPoints.size() - 1]._fileOffset = dataOffset;
+					_walkPoints[_walkPoints.size() - 1].load(*walkStream, IS_ROSE_TATTOO);
+					dataIndex = _walkPoints.size() - 1;
+				}
+
 				_walkDirectory[idx1][idx2] = dataIndex;
 			}
 		}
+
+		delete walkStream;
 
 		// === EXITS === Read in the exits
 		roomStream->seek(header3DO_exits_offset);
