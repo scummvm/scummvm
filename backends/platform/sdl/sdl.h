@@ -104,6 +104,11 @@ protected:
 	 */
 	virtual void initSDL();
 
+	/**
+	 * Create the audio CD manager
+	 */
+	virtual AudioCDManager *createAudioCDManager();
+
 	// Logging
 	virtual Common::WriteStream *createLogFile() { return 0; }
 	Backends::Log::Log *_logger;
