@@ -283,6 +283,7 @@ void ScriptedMovie::update() {
 		if (newEnabled) {
 			if (_disableWhenComplete
 					|| _bink.getCurFrame() < _startFrame
+					|| _bink.getCurFrame() >= _endFrame
 					|| _bink.endOfVideo()) {
 				_bink.seekToFrame(_startFrame);
 				_isLastFrame = false;
