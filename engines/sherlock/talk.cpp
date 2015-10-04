@@ -1023,6 +1023,7 @@ OpcodeReturn Talk::cmdEndTextWindow(const byte *&str) {
 OpcodeReturn Talk::cmdHolmesOff(const byte *&str) {
 	People &people = *_vm->_people;
 	people[HOLMES]._type = REMOVE;
+	people._holmesOn = false;
 
 	return RET_SUCCESS;
 }
@@ -1030,6 +1031,7 @@ OpcodeReturn Talk::cmdHolmesOff(const byte *&str) {
 OpcodeReturn Talk::cmdHolmesOn(const byte *&str) {
 	People &people = *_vm->_people;
 	people[HOLMES]._type = CHARACTER;
+	people._holmesOn = true;
 
 	return RET_SUCCESS;
 }

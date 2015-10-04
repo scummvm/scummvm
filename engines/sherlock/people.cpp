@@ -184,7 +184,7 @@ void People::reset() {
 		Person &p = *_data[idx];
 
 		if (IS_SERRATED_SCALPEL) {
-			p._type = CHARACTER;
+			p._type = _holmesOn ? CHARACTER : HIDDEN;
 			p._position = Point32(100 * FIXED_INT_MULTIPLIER, 110 * FIXED_INT_MULTIPLIER);
 		} else if (!talk._scriptMoreFlag && !saves._justLoaded) {
 			p._type = (idx == 0) ? CHARACTER : INVALID;
