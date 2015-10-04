@@ -750,15 +750,17 @@ void Talk::doScript(const Common::String &script) {
 			// Start of comment, so skip over it
 			while (*str++ != '}')
 				;
-		} else if (isOpcode(c)) {
-			// Handle control code
-			switch ((this->*_opcodeTable[c - _opcodes[0]])(str)) {
-			case RET_EXIT:
-				return;
-			case RET_CONTINUE:
-				continue;
-			default:
-				break;
+		} else if (isPossibleOpcode(c)) {
+			if (isOpcode(c)) {
+				// Handle control code
+				switch ((this->*_opcodeTable[c - _opcodes[0]])(str)) {
+				case RET_EXIT:
+					return;
+				case RET_CONTINUE:
+					continue;
+				default:
+					break;
+				}
 			}
 
 			++str;
@@ -910,6 +912,13 @@ bool Talk::isOpcode(byte checkCharacter) {
 	if (_opcodeTable[checkCharacter - _opcodes[0]])
 		return true;
 	return false;
+}
+
+bool Talk::isPossibleOpcode(byte checkCharacter) {
+	if (IS_SERRATED_SCALPEL && _vm->getLanguage() == Common::ES_ESP)
+		return checkCharacter >= 128;
+
+	return isOpcode(checkCharacter);
 }
 
 void Talk::popStack() {
