@@ -145,7 +145,7 @@ public:
 	/**
 	 * Returns true if the script stack is empty
 	 */
-	virtual bool isSequencesEmpty() const { return _scriptStack.empty(); }
+	virtual bool isSequencesEmpty() const { return _sequenceStack.empty(); }
 
 	/**
 	 * Clears the stack of pending object sequences associated with speakers in the scene
