@@ -223,7 +223,7 @@ void Screen::verticalTransition() {
 
 void Screen::restoreBackground(const Common::Rect &r) {
 	if (r.width() > 0 && r.height() > 0)
-		_backBuffer1.blitFrom(_backBuffer2, Common::Point(r.left, r.top), r);
+		_backBuffer->blitFrom(_backBuffer2, Common::Point(r.left, r.top), r);
 }
 
 void Screen::slamArea(int16 xp, int16 yp, int16 width, int16 height) {
