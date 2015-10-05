@@ -750,17 +750,32 @@ void Talk::doScript(const Common::String &script) {
 			// Start of comment, so skip over it
 			while (*str++ != '}')
 				;
-		} else if (isPossibleOpcode(c)) {
-			if (isOpcode(c)) {
-				// Handle control code
-				switch ((this->*_opcodeTable[c - _opcodes[0]])(str)) {
-				case RET_EXIT:
-					return;
-				case RET_CONTINUE:
-					continue;
-				default:
-					break;
-				}
+		} else if (isOpcode(c)) {
+			// the original interpreter checked for c being >= 0x80
+			// and if that is the case, it tried to process it as opcode, BUT ALSO ALWAYS skipped over it
+			// This was done inside the Spanish + German interpreters of Serrated Scalpel, not the original
+			// English interpreter (reverse engineered from the binaries).
+			//
+			// This resulted in special characters not getting shown in case they occurred at the start
+			// of sentences like for example the inverted exclamation mark and the inverted question mark.
+			// For further study see fonts.cpp
+			//
+			// We create an inverted exclamation mark for the Spanish version and we show it.
+			//
+			// Us not skipping over those characters may result in an assert() happening inside fonts.cpp
+			// in case more invalid characters exist.
+			// More information see bug #6931
+			//
+			//} else if (isPossibleOpcode(c)) {
+
+			// Handle control code
+			switch ((this->*_opcodeTable[c - _opcodes[0]])(str)) {
+			case RET_EXIT:
+				return;
+			case RET_CONTINUE:
+				continue;
+			default:
+				break;
 			}
 
 			++str;
