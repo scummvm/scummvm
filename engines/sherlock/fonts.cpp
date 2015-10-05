@@ -165,7 +165,7 @@ inline byte Fonts::translateChar(byte c) {
 					// searching the corpse. "[0xAD]Claro! Mi experiencia profesional revela que esta mujer fue asesinada..."
 					// The same text gets put inside Watson's journal as well and should be on page 10 right after
 					// talking with the inspector. For further study see bug #6931
-					// Inverted question mask was also skipped, but at least that character is inside the font already.
+					// Inverted question mark was also skipped, but at least that character is inside the font already.
 					if (c == 0xAD) {
 						// inverted exclamation mark
 						return 0x88; // our own font character, created during setFont()
