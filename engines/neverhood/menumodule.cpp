@@ -93,6 +93,10 @@ void MenuModule::setLoadgameInfo(uint index) {
 	_savegameSlot = (*_savegameList)[index].slotNum;
 }
 
+void MenuModule::setLoadgameSlot(int slot) {
+	_savegameSlot = slot;
+}
+
 void MenuModule::setSavegameInfo(const Common::String &description, uint index, bool newSavegame) {
 	_savegameDescription = description;
 	_savegameSlot = newSavegame ? -1 : (*_savegameList)[index].slotNum;
@@ -912,7 +916,7 @@ GameStateMenu::GameStateMenu(NeverhoodEngine *vm, Module *parentModule, Savegame
 
 		if (slot >= 0) {
 			if (!isSave) {
-				((MenuModule*)_parentModule)->setLoadgameInfo(slot);
+				((MenuModule*)_parentModule)->setLoadgameSlot(slot);
 			} else {
 				((MenuModule*)_parentModule)->setSavegameInfo(saveDesc,
 					slot, slot >= saveCount);
