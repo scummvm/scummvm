@@ -62,6 +62,43 @@ void Fonts::setFont(int fontNum) {
 
 		// load font data
 		_font = new ImageFile(fontFilename);
+
+		if (IS_SERRATED_SCALPEL) {
+			if (_vm->getLanguage() == Common::ES_ESP) {
+				if (_fontNumber == 1) {
+					// Create a new character - inverted exclamation mark (0x88)
+					// Seems this wasn't included originally, but some text has it
+					// This was obviously not done in the original game interpreter
+					ImageFrame &frameExclamationMark = (*_font)[0]; // get actual exclamation mark
+					ImageFrame frameRevExclamationMark;
+
+					frameRevExclamationMark._width = frameExclamationMark._width;
+					frameRevExclamationMark._height = frameExclamationMark._height;
+					frameRevExclamationMark._paletteBase = frameExclamationMark._paletteBase;
+					frameRevExclamationMark._rleEncoded = frameExclamationMark._rleEncoded;
+					frameRevExclamationMark._size = frameExclamationMark._size;
+					frameRevExclamationMark._frame.create(frameExclamationMark._width, frameExclamationMark._height, Graphics::PixelFormat::createFormatCLUT8());
+
+					byte *frameExclMarkPixels = (byte *)frameExclamationMark._frame.getPixels();
+					byte *frameRevExclMarkPixels = (byte *)frameRevExclamationMark._frame.getPixels();
+
+					uint16 revExclMarkY = frameExclamationMark._height - 1;
+					frameRevExclMarkPixels += frameExclamationMark._width * (frameExclamationMark._height - 1);
+					for (uint16 exclMarkY = 0; exclMarkY < frameExclamationMark._height; exclMarkY++) {
+						memcpy(frameRevExclMarkPixels, frameExclMarkPixels, frameExclamationMark._width);
+						revExclMarkY--;
+						frameRevExclMarkPixels -= frameExclamationMark._width;
+						frameExclMarkPixels += frameExclamationMark._width;
+					}
+
+					frameRevExclamationMark._offset.x = frameExclamationMark._offset.x;
+					frameRevExclamationMark._offset.y = frameExclamationMark._offset.y + 1;
+
+					_font->push_back(frameRevExclamationMark);
+				}
+			}
+		}
+
 	} else {
 		// 3DO
 		switch (fontNum) {
@@ -81,7 +118,7 @@ void Fonts::setFont(int fontNum) {
 	}
 
 	_charCount = _font->size();
-		
+
 	// Iterate through the frames to find the widest and tallest font characters
 	_fontHeight = _widestChar = 0;
 	for (uint idx = 0; idx < _charCount; ++idx) {
@@ -118,6 +155,24 @@ inline byte Fonts::translateChar(byte c) {
 		return 135; // and this for SH1
 	default:
 		if (IS_SERRATED_SCALPEL) {
+			if (_vm->getLanguage() == Common::ES_ESP) {
+				if (_fontNumber == 1) {
+					// Special workarounds for translated game text, which was skipped because of effectively a bug
+					// This was not done in the original interpreter
+					// It seems at least the inverted exclamation mark was skipped by the original interpreter /
+					// wasn't shown at all.
+					// This character is used for example in the alley room, when talking with the inspector after
+					// searching the corpse. "[0xAD]Claro! Mi experiencia profesional revela que esta mujer fue asesinada..."
+					// The same text gets put inside Watson's journal as well and should be on page 10 right after
+					// talking with the inspector. For further study see bug #6931
+					// Inverted question mask was also skipped, but at least that character is inside the font already.
+					if (c == 0xAD) {
+						// inverted exclamation mark
+						return 0x88; // our own font character, created during setFont()
+					}
+					// Inverted question mask is 0x86 (mapped from 0x88)
+				}
+			}
 			if (c >= 0x80) { // German SH1 version did this, but not German SH2
 				c--;
 			}
