@@ -915,6 +915,8 @@ bool Talk::isOpcode(byte checkCharacter) {
 }
 
 bool Talk::isPossibleOpcode(byte checkCharacter) {
+	// Some conversations in the Spanish version, such as the first conversation with Lastrade,
+	// start with an invalid character. Hence isPossibleOpcode being separate from isOpcode
 	if (IS_SERRATED_SCALPEL && _vm->getLanguage() == Common::ES_ESP)
 		return checkCharacter >= 128;
 
