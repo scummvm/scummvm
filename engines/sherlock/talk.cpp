@@ -766,7 +766,6 @@ void Talk::doScript(const Common::String &script) {
 			// in case more invalid characters exist.
 			// More information see bug #6931
 			//
-			//} else if (isPossibleOpcode(c)) {
 
 			// Handle control code
 			switch ((this->*_opcodeTable[c - _opcodes[0]])(str)) {
@@ -927,15 +926,6 @@ bool Talk::isOpcode(byte checkCharacter) {
 	if (_opcodeTable[checkCharacter - _opcodes[0]])
 		return true;
 	return false;
-}
-
-bool Talk::isPossibleOpcode(byte checkCharacter) {
-	// Some conversations in the Spanish version, such as the first conversation with Lastrade,
-	// start with an invalid character. Hence isPossibleOpcode being separate from isOpcode
-	if (IS_SERRATED_SCALPEL && _vm->getLanguage() == Common::ES_ESP)
-		return checkCharacter >= 128;
-
-	return isOpcode(checkCharacter);
 }
 
 void Talk::popStack() {

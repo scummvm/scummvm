@@ -218,11 +218,6 @@ protected:
 	 * Checks if a character is an opcode
 	 */
 	bool isOpcode(byte checkCharacter);
-	
-	/**
-	 * Checks if a character might be an opcode
-	 */
-	bool isPossibleOpcode(byte checkCharacter);
 
 	/**
 	 * Form a table of the display indexes for statements
