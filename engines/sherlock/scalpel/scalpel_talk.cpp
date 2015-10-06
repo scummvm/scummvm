@@ -22,6 +22,7 @@
 
 #include "sherlock/scalpel/scalpel_talk.h"
 #include "sherlock/scalpel/scalpel_fixed_text.h"
+#include "sherlock/scalpel/scalpel_journal.h"
 #include "sherlock/scalpel/scalpel_map.h"
 #include "sherlock/scalpel/scalpel_people.h"
 #include "sherlock/scalpel/scalpel_scene.h"
@@ -188,6 +189,9 @@ void ScalpelTalk::talkInterface(const byte *&str) {
 	People &people = *_vm->_people;
 	ScalpelScreen &screen = *(ScalpelScreen *)_vm->_screen;
 	UserInterface &ui = *_vm->_ui;
+
+	if (_vm->getLanguage() == Common::DE_DEU)
+		ScalpelJournal::skipBadText(str);
 
 	// If the window isn't yet open, draw the window before printing starts
 	if (!ui._windowOpen && _noTextYet) {

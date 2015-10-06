@@ -525,6 +525,9 @@ void Journal::loadJournalFile(bool alreadyLoaded) {
 			else
 				journalString += people._characters[c]._name;
 
+			if (IS_SERRATED_SCALPEL && _vm->getLanguage() == Common::DE_DEU)
+				Scalpel::ScalpelJournal::skipBadText(replyP);
+
 			const byte *strP = replyP;
 			byte v;
 			do {
