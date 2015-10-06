@@ -100,6 +100,16 @@ void ScalpelMap::loadData() {
 		while ((c = txtStream->readByte()) != '\0')
 			line += c;
 
+		// WORKAROUND: Special fixes for faulty translations
+		// Was obviously not done in the original interpreter
+		if (_vm->getLanguage() == Common::ES_ESP) {
+			if (line == " Alley") {
+				// In the Spanish version the "Alley" location on the map was not translated, we do this now
+				// see bug #6931
+				line = " Callejon";
+			}
+		}
+
 		_locationNames.push_back(line);
 	}
 
