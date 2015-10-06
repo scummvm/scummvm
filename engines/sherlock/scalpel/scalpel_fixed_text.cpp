@@ -244,11 +244,11 @@ static const char *const fixedTextDE[] = {
 // n with a wave on top - 0xA4 / octal 244
 static const char *const fixedTextES[] = {
 	// SH1: Window buttons
-	"Exit",
+	"Salir", // original interpreter: "Exit"
 	"Subir",
 	"Bajar",
 	// SH1: Inventory buttons
-	"Exit",
+	"Salir", // original interpreter: "Exit"
 	"Mirar",
 	"Usar",
 	"Dar",
@@ -256,7 +256,7 @@ static const char *const fixedTextES[] = {
 	"Diario de Watson",
 	"Pagina %d",
 	// SH1: Journal buttons
-	"Exit",
+	"Salir", // original interpreter: "Exit"
 	"Retroceder",
 	"Subir",
 	"baJar",
@@ -266,7 +266,7 @@ static const char *const fixedTextES[] = {
 	"Ult pagina",
 	"Imprimir",
 	// SH1: Journal search
-	"Exit",
+	"Salir", // original interpreter: "Exit"
 	"Retroceder",
 	"Avanzar",
 	"Texto no encontrado!",
