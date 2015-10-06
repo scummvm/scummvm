@@ -485,9 +485,9 @@ void Journal::loadJournalFile(bool alreadyLoaded) {
 				// Copy text from the place until either the reply ends, a comment
 				// {} block is started, or a control character is encountered
 				journalString += c;
-				do {
+				while (*replyP && *replyP < opcodes[0] && *replyP != '{' && *replyP != '}') {
 					journalString += *replyP++;
-				} while (*replyP && *replyP < opcodes[0] && *replyP != '{' && *replyP != '}');
+				}
 
 				commentJustPrinted = false;
 			}
