@@ -173,7 +173,7 @@ static const char *const fixedTextDE[] = {
 	"Eine offene Taschenuhr",
 	"Ein Zettel mit Zahlen drauf",
 	"Ein mehrfach gefalteter Briefbogen",
-	"Ein Tarock-Kartenspiel", // [sic]
+	"Ein Tarot-Kartenspiel", // original interpreter: "Ein Tarock-Kartenspiel" [sic]
 	"Ein verzierter Schl\201ssel",
 	"Ein Pfandschein",
 	// SH1: People names
@@ -193,7 +193,7 @@ static const char *const fixedTextDE[] = {
 	"Tim",
 	"James Sanders",
 	"Belle",
-	"Putzmädchen",
+	"Putzm\204dchen",
 	"Wiggins",
 	"Paul",
 	"Gastwirt",
