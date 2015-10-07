@@ -514,7 +514,7 @@ void AudioPlayer::stopSoundSync() {
 int AudioPlayer::audioCdPlay(int track, int start, int duration) {
 	if (!_initCD) {
 		// Initialize CD mode if we haven't already
-		g_system->getAudioCDManager()->openCD();
+		g_system->getAudioCDManager()->open();
 		_initCD = true;
 	}
 

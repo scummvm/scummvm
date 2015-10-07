@@ -57,24 +57,16 @@ class DCHardware {
 };
 
 class DCCDManager : public DefaultAudioCDManager {
-  // Initialize the specified CD drive for audio playback.
-  bool openCD();
+public:
+	// Poll cdrom status
+	// Returns true if cd audio is playing
+	bool isPlaying() const;
 
-	// Close the open CD drive
-	void closeCD() {}
+	// Play cdrom audio track
+	void play(int track, int numLoops, int startFrame, int duration, bool onlyEmulate = false);
 
-  // Poll cdrom status
-  // Returns true if cd audio is playing
-  bool pollCD();
-
-  // Play cdrom audio track
-  void playCD(int track, int num_loops, int start_frame, int duration);
-
-  // Stop cdrom audio track
-  void stopCD();
-
-  // Update cdrom audio status
-  void updateCD();
+	// Stop cdrom audio track
+	void stop();
 };
 
 class OSystem_Dreamcast : private DCHardware, public EventsBaseBackend, public PaletteManager, public FilesystemFactory

@@ -67,7 +67,7 @@ MadeEngine::MadeEngine(OSystem *syst, const MadeGameDescription *gameDesc) : Eng
 
 	_console = new MadeConsole(this);
 
-	_system->getAudioCDManager()->openCD();
+	_system->getAudioCDManager()->open();
 
 	_pmvPlayer = new PmvPlayer(this, _mixer);
 	_res = new ResourceReader();
@@ -268,7 +268,7 @@ void MadeEngine::handleEvents() {
 		}
 	}
 
-	_system->getAudioCDManager()->updateCD();
+	_system->getAudioCDManager()->update();
 
 }
 

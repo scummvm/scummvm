@@ -133,7 +133,7 @@ void DrasculaEngine::stopMusic() {
 }
 
 void DrasculaEngine::updateMusic() {
-	_system->getAudioCDManager()->updateCD();
+	_system->getAudioCDManager()->update();
 }
 
 int DrasculaEngine::musicStatus() {

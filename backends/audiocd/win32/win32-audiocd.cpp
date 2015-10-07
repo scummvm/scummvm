@@ -263,11 +263,12 @@ public:
 	Win32AudioCDManager();
 	~Win32AudioCDManager();
 
-	bool openCD(int drive);
-	void closeCD();
-	void playCD(int track, int numLoops, int startFrame, int duration);
+	bool open();
+	void close();
+	void play(int track, int numLoops, int startFrame, int duration, bool onlyEmulate = false);
 
 protected:
+	bool openCD(int drive);
 	bool openCD(const Common::String &drive);
 
 private:
@@ -288,12 +289,19 @@ Win32AudioCDManager::Win32AudioCDManager() {
 }
 
 Win32AudioCDManager::~Win32AudioCDManager() {
-	closeCD();
+	close();
+}
+
+bool Win32AudioCDManager::open() {
+	close();
+
+	if (openRealCD())
+		return true;
+
+	return DefaultAudioCDManager::open();
 }
 
 bool Win32AudioCDManager::openCD(int drive) {
-	closeCD();
-
 	// Fetch the drive list
 	DriveList drives = detectDrives();
 	if (drive >= (int)drives.size())
@@ -310,11 +318,11 @@ bool Win32AudioCDManager::openCD(int drive) {
 	}
 
 	if (!loadTOC()) {
-		closeCD();
+		close();
 		return false;
 	}
 	
-	return false;
+	return true;
 }
 
 bool Win32AudioCDManager::openCD(const Common::String &drive) {
@@ -341,16 +349,15 @@ bool Win32AudioCDManager::openCD(const Common::String &drive) {
 	}
 
 	if (!loadTOC()) {
-		closeCD();
+		close();
 		return false;
 	}
 
 	return true;
 }
 
-void Win32AudioCDManager::closeCD() {
-	// Stop any previous track
-	stop();
+void Win32AudioCDManager::close() {
+	DefaultAudioCDManager::close();
 
 	if (_driveHandle != INVALID_HANDLE_VALUE) {
 		CloseHandle(_driveHandle);
@@ -361,22 +368,27 @@ void Win32AudioCDManager::closeCD() {
 	_tocEntries.clear();
 }
 
-void Win32AudioCDManager::playCD(int track, int numLoops, int startFrame, int duration) {
-	// Stop any previous track
-	stop();
+bool Win32AudioCDManager::play(int track, int numLoops, int startFrame, int duration, bool onlyEmulate) {
+	// Prefer emulation
+	if (DefaultAudioCDManager::play(track, numLoops, startFrame, duration, onlyEmulate))
+		return true;
+
+	// If we're set to only emulate, or have no CD drive, return here
+	if (onlyEmulate || _driveHandle == INVALID_HANDLE_VALUE)
+		return false;
 
 	// HACK: For now, just assume that track number is right
 	// That only works because ScummVM uses the wrong track number anyway	
 
 	if (track >= (int)_tocEntries.size() - 1) {
 		warning("No such track %d", track);
-		return;
+		return false;
 	}
 
 	// Bail if the track isn't an audio track
 	if ((_tocEntries[track].Control & 0x04) != 0) {
 		warning("Track %d is not audio", track);
-		return;
+		return false;
 	}
 
 	// Create the AudioStream and play it
@@ -399,6 +411,7 @@ void Win32AudioCDManager::playCD(int track, int numLoops, int startFrame, int du
 		_cd.balance,
 		DisposeAfterUse::YES,
 		true);
+	return true;
 }
 
 bool Win32AudioCDManager::loadTOC() {

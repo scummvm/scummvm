@@ -47,8 +47,9 @@ public:
 	MacOSXAudioCDManager() {}
 	~MacOSXAudioCDManager();
 
-	void playCD(int track, int num_loops, int start_frame, int duration);
-	void closeCD();
+	bool open();
+	void close();
+	bool play(int track, int numLoops, int startFrame, int duration, bool onlyEmulate = false);
 
 protected:
 	bool openCD(int drive);
@@ -74,7 +75,16 @@ private:
 };
 
 MacOSXAudioCDManager::~MacOSXAudioCDManager() {
-	closeCD();
+	close();
+}
+
+bool MacOSXAudioCDManager::open() {
+	close();
+
+	if (openRealCD())
+		return true;
+
+	return DefaultAudioCDManager::open();
 }
 
 /**
@@ -95,8 +105,6 @@ static int findBaseDiskNumber(const Common::String &diskName) {
 }
 
 bool MacOSXAudioCDManager::openCD(int drive) {
-	closeCD();
-
 	DriveList allDrives = detectAllDrives();
 	if (allDrives.empty())
 		return false;
@@ -137,8 +145,6 @@ bool MacOSXAudioCDManager::openCD(int drive) {
 }
 
 bool MacOSXAudioCDManager::openCD(const Common::String &drive) {
-	closeCD();
-
 	DriveList drives = detectAllDrives();
 
 	for (uint32 i = 0; i < drives.size(); i++) {
@@ -154,8 +160,8 @@ bool MacOSXAudioCDManager::openCD(const Common::String &drive) {
 	return false;
 }
 
-void MacOSXAudioCDManager::closeCD() {
-	stop();
+void MacOSXAudioCDManager::close() {
+	DefaultAudioCDManager::close();
 	_trackMap.clear();
 }
 
@@ -178,9 +184,17 @@ MacOSXAudioCDManager::DriveList MacOSXAudioCDManager::detectAllDrives() {
 	return drives;
 }
 
-void MacOSXAudioCDManager::playCD(int track, int numLoops, int startFrame, int duration) {
-	if (!_trackMap.contains(track) || (!numLoops && !startFrame))
-		return;
+bool MacOSXAudioCDManager::play(int track, int numLoops, int startFrame, int duration, bool onlyEmulate) {
+	// Prefer emulation
+	if (DefaultAudioCDManager::play(track, numLoops, startFrame, duration, onlyEmulate))
+		return true;
+
+	// If we're set to only emulate, or have no CD drive, return here
+	if (onlyEmulate || !_trackMap.contains(track))
+		return false;
+
+	if (!numLoops && !startFrame)
+		return false;
 
 	// Now load the AIFF track from the name
 	Common::String fileName = _trackMap[track];
@@ -188,19 +202,19 @@ void MacOSXAudioCDManager::playCD(int track, int numLoops, int startFrame, int d
 
 	if (!stream) {
 		warning("Failed to open track '%s'", fileName.c_str());
-		return;
+		return false;
 	}
 
 	Audio::AudioStream *audioStream = Audio::makeAIFFStream(stream, DisposeAfterUse::YES);
 	if (!audioStream) {
 		warning("Track '%s' is not an AIFF track", fileName.c_str());
-		return;
+		return false;
 	}
 
 	Audio::SeekableAudioStream *seekStream = dynamic_cast<Audio::SeekableAudioStream *>(audioStream);
 	if (!seekStream) {
 		warning("Track '%s' is not seekable", fileName.c_str());
-		return;
+		return false;
 	}
 
 	Audio::Timestamp start = Audio::Timestamp(0, startFrame, 75);
@@ -211,6 +225,7 @@ void MacOSXAudioCDManager::playCD(int track, int numLoops, int startFrame, int d
 
 	_mixer->playStream(Audio::Mixer::kMusicSoundType, &_handle,
 			Audio::makeLoopingAudioStream(seekStream, start, end, (numLoops < 1) ? numLoops + 1 : numLoops), -1, _cd.volume, _cd.balance);
+	return true;
 }
 
 bool MacOSXAudioCDManager::findTrackNames(const Common::String &drivePath) {

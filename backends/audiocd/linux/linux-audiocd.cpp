@@ -252,11 +252,12 @@ public:
 	LinuxAudioCDManager();
 	~LinuxAudioCDManager();
 
-	bool openCD(int drive);
-	void closeCD();
-	void playCD(int track, int numLoops, int startFrame, int duration);
+	bool open();
+	void close();
+	bool play(int track, int numLoops, int startFrame, int duration, bool onlyEmulate = false);
 
 protected:
+	bool openCD(int drive);
 	bool openCD(const Common::String &drive);
 
 private:
@@ -301,22 +302,40 @@ LinuxAudioCDManager::LinuxAudioCDManager() {
 }
 
 LinuxAudioCDManager::~LinuxAudioCDManager() {
-	closeCD();
+	close();
+}
+
+bool LinuxAudioCDManager::open() {
+	close();
+
+	if (openRealCD())
+		return true;
+
+	return DefaultAudioCDManager::open();
+}
+
+void LinuxAudioCDManager::close() {
+	DefaultAudioCDManager::close();
+
+	if (_fd < 0)
+		return;
+
+	::close(_fd);
+	memset(&_tocHeader, 0, sizeof(_tocHeader));
+	_tocEntries.clear();
 }
 
 bool LinuxAudioCDManager::openCD(int drive) {
-	closeCD();
-
 	DeviceList devices = scanDevices();
 	if (drive >= (int)devices.size())
 		return false;
 
-	_fd = open(devices[drive].name.c_str(), O_RDONLY | O_NONBLOCK, 0);
+	_fd = ::open(devices[drive].name.c_str(), O_RDONLY | O_NONBLOCK, 0);
 	if (_fd < 0)
 		return false;
 
 	if (!loadTOC()) {
-		closeCD();
+		close();
 		return false;
 	}
 
@@ -328,44 +347,39 @@ bool LinuxAudioCDManager::openCD(const Common::String &drive) {
 	if (!tryAddDrive(devices, drive) && !tryAddPath(devices, drive))
 		return false;
 
-	_fd = open(devices[0].name.c_str(), O_RDONLY | O_NONBLOCK, 0);
+	_fd = ::open(devices[0].name.c_str(), O_RDONLY | O_NONBLOCK, 0);
 	if (_fd < 0)
 		return false;
 
 	if (!loadTOC()) {
-		closeCD();
+		close();
 		return false;
 	}
 
 	return true;
 }
 
-void LinuxAudioCDManager::closeCD() {
-	if (_fd < 0)
-		return;
+bool LinuxAudioCDManager::play(int track, int numLoops, int startFrame, int duration, bool onlyEmulate) {
+	// Prefer emulation
+	if (DefaultAudioCDManager::play(track, numLoops, startFrame, duration, onlyEmulate))
+		return true;
 
-	stop();
-	close(_fd);
-	memset(&_tocHeader, 0, sizeof(_tocHeader));
-	_tocEntries.clear();
-}
-
-void LinuxAudioCDManager::playCD(int track, int numLoops, int startFrame, int duration) {
-	// Stop any previous track
-	stop();
+	// If we're set to only emulate, or have no CD drive, return here
+	if (onlyEmulate || _fd < 0)
+		return false;
 
 	// HACK: For now, just assume that track number is right
 	// That only works because ScummVM uses the wrong track number anyway	
 
 	if (track >= (int)_tocEntries.size() - 1) {
 		warning("No such track %d", track);
-		return;
+		return false;
 	}
 
 	// Bail if the track isn't an audio track
 	if ((_tocEntries[track].cdte_ctrl & 0x04) != 0) {
 		warning("Track %d is not audio", track);
-		return;
+		return false;
 	}
 
 	// Create the AudioStream and play it
@@ -388,6 +402,8 @@ void LinuxAudioCDManager::playCD(int track, int numLoops, int startFrame, int du
 		_cd.balance,
 		DisposeAfterUse::YES,
 		true);
+
+	return true;
 }
 
 LinuxAudioCDManager::DeviceList LinuxAudioCDManager::scanDevices() {
@@ -421,13 +437,13 @@ bool LinuxAudioCDManager::tryAddDrive(DeviceList &devices, const Common::String 
 		return true;
 
 	// Try opening the device and seeing if it is a CD-ROM drve
-	int fd = open(drive.c_str(), O_RDONLY | O_NONBLOCK, 0);
+	int fd = ::open(drive.c_str(), O_RDONLY | O_NONBLOCK, 0);
 	if (fd >= 0) {
 		cdrom_subchnl info;
 		info.cdsc_format = CDROM_MSF;
 
 		bool isCD = ioctl(fd, CDROMSUBCHNL, &info) == 0 || isTrayEmpty(errno);
-		close(fd);
+		::close(fd);
 		if (isCD) {
 			devices.push_back(Device(drive, device));
 			return true;

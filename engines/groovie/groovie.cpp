@@ -257,7 +257,7 @@ Common::Error GroovieEngine::run() {
 	// the same cd
 	if (getPlatform() != Common::kPlatformIOS) {
 		checkCD();
-		_system->getAudioCDManager()->openCD();
+		_system->getAudioCDManager()->open();
 	}
 
 	while (!shouldQuit()) {
