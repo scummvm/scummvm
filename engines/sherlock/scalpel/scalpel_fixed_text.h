@@ -57,6 +57,11 @@ enum FixedTextId {
 	kFixedText_JournalSearch_Backward,
 	kFixedText_JournalSearch_Forward,
 	kFixedText_JournalSearch_NotFound,
+	// Press key text
+	kFixedText_PressKey_ForMore,
+	kFixedText_PressKey_ForMoreHotkey,
+	kFixedText_PressKey_ToContinue,
+	kFixedText_PressKey_ToContinueHotkey,
 	// Initial inventory
 	kFixedText_InitInventory_Message,
 	kFixedText_InitInventory_HolmesCard,

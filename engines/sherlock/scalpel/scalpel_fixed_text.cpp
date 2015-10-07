@@ -55,6 +55,11 @@ static const char *const fixedTextEN[] = {
 	"Backward",
 	"Forward",
 	"Text Not Found !",
+	// SH1: Press key text
+	"Press any Key for More.",
+	"P",
+	"Press any Key to Continue.",
+	"P",
 	// SH1: Initial Inventory
 	"A message requesting help",
 	"A number of business cards",
@@ -163,6 +168,11 @@ static const char *const fixedTextDE[] = {
 	"R\201ckw\204rts", // original: "Backward"
 	"Vorw\204rts", // original: "Forward"
 	"Text nicht gefunden!",
+	// SH1: Press key text
+	"Mehr auf Tastendruck...",
+	"M",
+	"Beliebige Taste dr\201cken.",
+	"B",
 	// SH1: Initial Inventory
 	"Ein Hilferuf von Lestrade",
 	"Holmes' Visitenkarten",
@@ -270,6 +280,11 @@ static const char *const fixedTextES[] = {
 	"Retroceder",
 	"Avanzar",
 	"Texto no encontrado!",
+	// SH1: Press key text
+	"Tecla para ver mas",
+	"T",
+	"Tecla para continuar",
+	"T",
 	// SH1: Initial Inventory
 	"Un mensaje solicitando ayuda",
 	"Unas cuantas tarjetas de visita",
