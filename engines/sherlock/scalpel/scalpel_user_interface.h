@@ -39,8 +39,6 @@ extern const int MENU_POINTS[12][4];
 
 extern const int INVENTORY_POINTS[8][3];
 extern const char INVENTORY_COMMANDS[9];
-extern const char *const PRESS_KEY_FOR_MORE;
-extern const char *const PRESS_KEY_TO_CONTINUE;
 
 class Settings;
 
