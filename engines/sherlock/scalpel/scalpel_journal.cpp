@@ -104,6 +104,25 @@ void ScalpelJournal::loadLocations() {
 		while ((c = loc->readByte()) != 0)
 			line += c;
 
+		// WORKAROUND: Special fixes for faulty translations
+		// Was obviously not done in the original interpreter
+		if (_vm->getLanguage() == Common::ES_ESP) {
+			// Spanish version
+			// We fix all sorts of typos
+			// see bug #6931
+			if (line == "En el cajellon destras del teatro Regency") {
+				line = "En el callejon detras del teatro Regency";
+			} else if (line == "En el apartamente de Simon Kingsley") {
+				line = "En el apartamento de Simon Kingsley";
+			} else if (line == "Bajo la muelle de Savoy Pier") {
+				line = "Bajo el muelle de Savoy Pier";
+			} else if (line == "En le viejo Sherman") {
+				line = "En el viejo Sherman";
+			} else if (line == "En la entrada de la cada de Anna Carroway") {
+				line = "En la entrada de la casa de Anna Carroway";
+			}
+		}
+
 		_locations.push_back(line);
 	}
 
