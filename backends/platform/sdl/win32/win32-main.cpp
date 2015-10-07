@@ -43,7 +43,12 @@ int __stdcall WinMain(HINSTANCE /*hInst*/, HINSTANCE /*hPrevInst*/,  LPSTR /*lpC
 #if !SDL_VERSION_ATLEAST(2, 0, 0)
 	SDL_SetModuleHandle(GetModuleHandle(NULL));
 #endif
+// HACK: __argc, __argv are broken and return zero when using mingwrt 4.0+ on MinGW
+#if defined(_MSC_VER)
 	return main(__argc, __argv);
+#else
+	return main(_argc, _argv);
+#endif
 }
 
 int main(int argc, char *argv[]) {
