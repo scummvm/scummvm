@@ -44,10 +44,10 @@ int __stdcall WinMain(HINSTANCE /*hInst*/, HINSTANCE /*hPrevInst*/,  LPSTR /*lpC
 	SDL_SetModuleHandle(GetModuleHandle(NULL));
 #endif
 // HACK: __argc, __argv are broken and return zero when using mingwrt 4.0+ on MinGW
-#if defined(_MSC_VER)
-	return main(__argc, __argv);
-#else
+#if defined(__GNUC__) && defined(__MINGW32__) && !defined(__MINGW64__)
 	return main(_argc, _argv);
+#else
+	return main(__argc, __argv);
 #endif
 }
 
