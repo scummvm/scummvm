@@ -57,22 +57,22 @@ void LargeSet::exclElement(uint16 element) {
 }
 
 bool LargeSet::readInitialConditions(const char *fileName) {
-	byte **file;
+	byte *file;
 	uint16 many, set;
 	char temp[5];
 
 	if ((file = g_music->newOpen(fileName)) != NULL) {
-		readBlock(temp, 4L, file);
+		memcpy(&temp, file, 4);	file += 4;
 		temp[4] = '\0';
 
 		if (strcmp(temp, "CON0") != 0)
 			return false;
 
-		readBlock(&many, 2L, file);
+		memcpy(&many, file, 2);	file += 2;
 		swapUShortPtr(&many, 1);
 
 		for (int counter = 0; counter < many; counter++) {
-			readBlock(&set, 2L, file);
+			memcpy(&set, file, 2);	file += 2;
 			swapUShortPtr(&set, 1);
 			inclElement(set);
 		}
