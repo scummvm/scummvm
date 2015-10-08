@@ -57,7 +57,7 @@ void LargeSet::exclElement(uint16 element) {
 }
 
 bool LargeSet::readInitialConditions(const char *fileName) {
-	byte *file;
+	byte **file;
 	uint16 many, set;
 	char temp[5];
 
