@@ -86,8 +86,6 @@ bool readPict(const char *filename, bool PlayOnce) {
 
 	readDiff(PlayOnce);
 
-	ungetVGABaseAddr();
-
 	return true;
 }
 
@@ -488,7 +486,6 @@ static void doScrollBlack() {
 
 	freeAllStolenMem();
 	mouseShow();
-	ungetVGABaseAddr();
 }
 
 
@@ -526,8 +523,6 @@ static void copyPage(uint16 width, uint16 height, uint16 nheight, uint16 startli
 		CurPage++;
 		OffSet = 0;
 	}
-
-	ungetVGABaseAddr();
 }
 
 
@@ -751,8 +746,6 @@ static void doTransWipe(CloseDataPtr *CPtr, char *filename) {
 			}
 		}
 	}
-
-	ungetVGABaseAddr();
 }
 
 

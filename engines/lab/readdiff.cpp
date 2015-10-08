@@ -277,9 +277,6 @@ void diffNextFrame() {
 				IsPlaying = false;
 				mouseShow();
 
-				if (DispBitMap->Flags & BITMAPF_VIDEO)
-					ungetVGABaseAddr();
-
 				if (!didTOF)
 					WSDL_UpdateScreen();
 
@@ -295,10 +292,6 @@ void diffNextFrame() {
 			break;
 		}
 	}
-
-	if (DispBitMap->Flags & BITMAPF_VIDEO)
-		ungetVGABaseAddr();
-
 }
 
 

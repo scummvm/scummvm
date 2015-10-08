@@ -290,16 +290,11 @@ byte *WSDL_LockVideo() {
 	return g_DisplayBuffer;
 }
 
-void WSDL_UnlockVideo() {
-}
-
 void WSDL_IgnoreUpdateDisplay(int state) {
 	g_IgnoreUpdateDisplay = state;
 }
 
 void WSDL_UpdateScreen() {
-	WSDL_UnlockVideo();
-
 	if (g_ScreenWasLocked && !g_IgnoreUpdateDisplay) {
 		g_system->copyRectToScreen(g_DisplayBuffer, VGAScreenWidth, 0, 0, VGAScreenWidth, VGAScreenHeight);
   		g_system->updateScreen();
@@ -317,11 +312,6 @@ byte *getVGABaseAddr() {
 		return VGABASEADDRESS;
 
 	return WSDL_LockVideo();
-}
-
-void ungetVGABaseAddr() {
-	if (!VGABASEADDRESS)
-		WSDL_UnlockVideo();
 }
 
 /*****************************************************************************/
@@ -364,8 +354,6 @@ void drawImage(Image *Im, uint16 x, uint16 y) {
 			s += Im->Width;
 			d += VGAScreenWidth;
 		}
-
-		ungetVGABaseAddr();
 	}
 }
 
@@ -419,8 +407,6 @@ void drawMaskImage(Image *Im, uint16 x, uint16 y) {
 			s += Im->Width;
 			d += VGAScreenWidth;
 		}
-
-		ungetVGABaseAddr();
 	}
 }
 
@@ -464,8 +450,6 @@ void readScreenImage(Image *Im, uint16 x, uint16 y) {
 			s += Im->Width;
 			d += VGAScreenWidth;
 		}
-
-		ungetVGABaseAddr();
 	}
 }
 
@@ -647,8 +631,6 @@ void rectFill(uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
 
 			d += VGAScreenWidth;
 		}
-
-		ungetVGABaseAddr();
 	}
 }
 
@@ -714,8 +696,6 @@ void ghoastRect(uint16 pencolor, uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
 			d += VGAScreenWidth;
 			dy++;
 		}
-
-		ungetVGABaseAddr();
 	}
 }
 

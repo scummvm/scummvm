@@ -214,8 +214,6 @@ static void changeCombination(uint16 number) {
 		g_lab->_conditions->inclElement(COMBINATIONUNLOCKED);
 	else
 		g_lab->_conditions->exclElement(COMBINATIONUNLOCKED);
-
-	ungetVGABaseAddr();
 }
 
 
@@ -735,8 +733,6 @@ static void drawJournal(uint16 wipenum, bool needFade) {
 	else
 		unGhoastGadget(&ForwardG);
 
-	ungetVGABaseAddr();
-
 
 	if (needFade)
 		fade(true, 0);
@@ -832,8 +828,6 @@ void doJournal() {
 	blackScreen();
 
 	freeAllStolenMem();
-
-	ungetVGABaseAddr();
 }
 
 bool saveRestoreGame() {

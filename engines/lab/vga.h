@@ -48,7 +48,6 @@ bool createScreen(bool HiRes);
 void waitTOF();
 void quickWaitTOF();
 byte *getVGABaseAddr();
-void ungetVGABaseAddr();
 void writeColorReg(byte *buf, uint16 regnum);
 void writeColorRegs(byte *buf, uint16 first, uint16 numreg);
 void writeColorRegsSmooth(byte *buf, uint16 first, uint16 numreg);
