@@ -18,6 +18,7 @@ MODULE_OBJS := \
 	processroom.o \
 	readdiff.o \
 	readparse.o \
+	resource.o \
 	savegame.o \
 	special.o \
 	text.o \

@@ -43,6 +43,7 @@
 
 #include "lab/lab.h"
 #include "lab/labfun.h"
+#include "lab/resource.h"
 
 #include "engines/advancedDetector.h"
 
@@ -73,6 +74,7 @@ Common::Error LabEngine::run() {
 		initGraphics(640, 480, true);
 
 	g_music = new Music();
+	g_resource = new Resource();
 
 	if (getPlatform() == Common::kPlatformWindows) {
 		// Check if this is the Wyrmkeep trial
