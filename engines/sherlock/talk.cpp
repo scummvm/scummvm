@@ -597,7 +597,7 @@ void Talk::stripVoiceCommands() {
 				// rest of the name following it
 				statement._reply = Common::String(statement._reply.c_str(),
 					statement._reply.c_str() + idx) + " " +
-					Common::String(statement._reply.c_str() + 9);
+					Common::String(statement._reply.c_str() + idx + 9);
 			}
 		}
 
