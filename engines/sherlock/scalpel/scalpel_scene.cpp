@@ -330,8 +330,8 @@ void ScalpelScene::doBgAnim() {
 		}
 	}
 
-	// Draw the person if not animating
-	if (people[HOLMES]._type == CHARACTER && people[HOLMES]._walkLoaded) {
+	// Draw the player if he's active and his walk has been loaded into memory
+	if (people[HOLMES]._type == CHARACTER && people[HOLMES]._walkLoaded && people._holmesOn) {
 		// If Holmes is too far to the right, move him back so he's on-screen
 		int xRight = SHERLOCK_SCREEN_WIDTH - 2 - people[HOLMES]._imageFrame->_frame.w;
 		int tempX = MIN(people[HOLMES]._position.x / FIXED_INT_MULTIPLIER, xRight);
