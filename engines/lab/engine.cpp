@@ -673,8 +673,8 @@ static void mainGameLoop() {
 	RoomNum = 1;
 	Direction = NORTH;
 
-	readRoomData("LAB:Doors");
-	readInventory("LAB:Inventor");
+	g_resource->readRoomData("LAB:Doors");
+	g_resource->readInventory("LAB:Inventor");
 
 	if (!(g_lab->_conditions = new LargeSet(HighestCondition + 1)))
 		return;
