@@ -178,11 +178,9 @@ char *Resource::readString(Common::File *file) {
 	char *c = str;
 	for (int i = 0; i < size; i++) {
 		*c = file->readByte();
-		if (*c != '\0')
-			*c -= 95;	// decrypt char
-		c++;
+		// Decrypt char
+		*c++ = (i < size - 1) ? *c - 95 : '\0';
 	}
-	*c = 0;
 
 	return str;
 }
@@ -212,16 +210,16 @@ Rule *Resource::readRule(Common::File *file) {
 
 		if (c == 1) {
 			rule = (Rule *)malloc(sizeof(Rule));
+			if (!head)
+				head = rule;
 			rule->RuleType = file->readSint16LE();
 			rule->Param1 = file->readSint16LE();
 			rule->Param2 = file->readSint16LE();
 			rule->Condition = readConditions(file);
-			if (!rule->Condition)
-				return NULL;
-			rule->ActionList = readAction(file);
 			rule->NextRule = NULL;
-			if (!head)
-				head = rule;
+			if (!rule->Condition)
+				return head;
+			rule->ActionList = readAction(file);
 			rule = rule->NextRule;
 		}
 	} while (c == 1);
@@ -240,6 +238,8 @@ Action *Resource::readAction(Common::File *file) {
 
 		if (c == 1) {
 			action = (Action *)malloc(sizeof(Action));
+			if (!head)
+				head = action;
 			action->ActionType = file->readSint16LE();
 			action->Param1 = file->readSint16LE();
 			action->Param2 = file->readSint16LE();
@@ -257,8 +257,6 @@ Action *Resource::readAction(Common::File *file) {
 			}
 
 			action->NextAction = NULL;
-			if (!head)
-				head = action;
 			action = action->NextAction;
 		}
 	} while (c == 1);
@@ -276,6 +274,8 @@ CloseData *Resource::readCloseUps(uint16 depth, Common::File *file) {
 
 		if (c != '\0') {
 			closeups = (CloseData *)malloc(sizeof(CloseData));
+			if (!head)
+				head = closeups;
 			closeups->x1 = file->readUint16LE();
 			closeups->y1 = file->readUint16LE();
 			closeups->x2 = file->readUint16LE();
@@ -284,11 +284,9 @@ CloseData *Resource::readCloseUps(uint16 depth, Common::File *file) {
 			closeups->depth = depth;
 			closeups->GraphicName = readString(file);
 			closeups->Message = readString(file);
-			if (!(closeups->SubCloseUps = readCloseUps(depth + 1, file)))
-				return NULL;
 			closeups->NextCloseUp = NULL;
-			if (!head)
-				head = closeups;
+			if (!(closeups->SubCloseUps = readCloseUps(depth + 1, file)))
+				return head;
 			closeups = closeups->NextCloseUp;
 		}
 	} while (c != '\0');
@@ -306,14 +304,14 @@ viewData *Resource::readView(Common::File *file) {
 
 		if (c == 1) {
 			view = (viewData *)malloc(sizeof(viewData));
+			if (!head)
+				head = view;
 			view->Condition = readConditions(file);
 			if (!view->Condition)
-				return NULL;
+				return head;
 			view->GraphicName = readString(file);
 			view->closeUps = readCloseUps(0, file);
 			view->NextCondition = NULL;
-			if (!head)
-				head = view;
 			view = view->NextCondition;
 		}
 	} while (c == 1);
