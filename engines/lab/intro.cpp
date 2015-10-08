@@ -238,15 +238,13 @@ void musicDelay() {
 
 
 static void NReadPict(const char *Filename, bool PlayOnce) {
-	Common::String finalFileName = "P:Intro/";
+	Common::String finalFileName = Common::String("P:Intro/") + Filename;
 
 	g_music->updateMusic();
 	introEatMessages();
 
 	if (QuitIntro)
 		return;
-
-	finalFileName += Filename;
 
 	DoBlack = IntroDoBlack;
 	stopDiffEnd();
