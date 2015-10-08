@@ -44,6 +44,7 @@
 #include "lab/timing.h"
 #include "lab/stddefines.h"
 #include "lab/parsetypes.h"
+#include "lab/resource.h"
 
 namespace Lab {
 
@@ -474,7 +475,7 @@ void doNotes() {
 	/* Load in the data */
 	BigMsgFont = &bmfont;
 
-	if (!getFont("P:Note.fon", BigMsgFont)) {
+	if (!(BigMsgFont = g_resource->getFont("P:Note.fon"))) {
 		BigMsgFont = NULL;
 		return;
 	}
@@ -500,7 +501,7 @@ void doWestPaper() {
 
 	BigMsgFont = &bmfont;
 
-	if (!getFont("P:News22.fon", BigMsgFont)) {
+	if (!(BigMsgFont = g_resource->getFont("P:News22.fon"))) {
 		BigMsgFont = NULL;
 		return;
 	}
@@ -512,7 +513,7 @@ void doWestPaper() {
 
 	BigMsgFont = &bmfont;
 
-	if (!getFont("P:News32.fon", BigMsgFont)) {
+	if (!(BigMsgFont = g_resource->getFont("P:News32.fon"))) {
 		BigMsgFont = NULL;
 		return;
 	}
@@ -531,7 +532,7 @@ void doWestPaper() {
 
 	BigMsgFont = &bmfont;
 
-	if (!getFont("P:Note.fon", BigMsgFont)) {
+	if (!(BigMsgFont = g_resource->getFont("P:Note.fon"))) {
 		BigMsgFont = NULL;
 		return;
 	}
@@ -562,7 +563,7 @@ static bool loadJournalData() {
 
 	BigMsgFont = &bmfont;
 
-	if (!getFont("P:Journal.fon", BigMsgFont)) {
+	if (!(BigMsgFont = g_resource->getFont("P:Journal.fon"))) {
 		BigMsgFont = NULL;
 		return false;
 	}
@@ -1071,7 +1072,7 @@ void doMonitor(char *background, char *textfile, bool isinteractive, uint16 x1, 
 
 	BigMsgFont = &bmfont;
 
-	if (!getFont("P:Map.fon", BigMsgFont)) {
+	if (!(BigMsgFont = g_resource->getFont("P:Map.fon"))) {
 		freeAllStolenMem();
 		BigMsgFont = NULL;
 		return;

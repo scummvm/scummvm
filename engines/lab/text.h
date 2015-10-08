@@ -52,7 +52,6 @@ struct TextFont {
 #pragma pack(pop)
 #endif
 
-bool openFont(const char *TextFontPath, TextFont **tf);
 void closeFont(TextFont *tf);
 uint16 textLength(TextFont *tf, const char *text, uint16 numchars);
 uint16 textHeight(TextFont *tf);

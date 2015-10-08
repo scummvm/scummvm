@@ -38,52 +38,12 @@ namespace Lab {
 extern uint32 VGAScreenWidth, VGABytesPerPage;
 
 /*****************************************************************************/
-/* Opens up a font from disk.                                                */
-/*****************************************************************************/
-bool openFont(const char *TextFontPath, struct TextFont **tf) {
-	byte **file = NULL;
-	char header[5];
-	uint32 filesize, headersize = 4L + 2L + 256 * 3 + 4L;
-
-	if ((*tf = (TextFont *)calloc(sizeof(struct TextFont), 1))) {
-		file = g_music->newOpen(TextFontPath, filesize);
-
-		if ((file != NULL) && (filesize > headersize)) {
-			header[4] = 0;
-			readBlock(&header, 4L, file);
-
-			if (strcmp(header, "VGAF") == 0) {
-				(*tf)->DataLength = filesize - headersize;
-				readBlock(&((*tf)->Height), 2L, file);
-				swapUShortPtr(&((*tf)->Height), 1);
-
-				readBlock((*tf)->Widths, 256L, file);
-				readBlock((*tf)->Offsets, 256L * 2L, file);
-				swapUShortPtr((*tf)->Offsets, 256);
-
-				(*file) += 4;
-
-				if (((*tf)->data = (byte *)calloc((*tf)->DataLength, 1))) {
-					readBlock((*tf)->data, (*tf)->DataLength, file);
-					return true;
-				}
-			}
-		}
-
-		free(*tf);
-	}
-
-	*tf = NULL;
-	return false;
-}
-
-/*****************************************************************************/
 /* Closes a font and frees all memory associated with it.                    */
 /*****************************************************************************/
 void closeFont(struct TextFont *tf) {
 	if (tf) {
 		if (tf->data && tf->DataLength)
-			free(tf->data);
+			delete[] tf->data;
 
 		free(tf);
 	}

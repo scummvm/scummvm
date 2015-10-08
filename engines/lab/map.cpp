@@ -37,6 +37,7 @@
 #include "lab/mouse.h"
 #include "lab/parsefun.h"
 #include "lab/parsetypes.h"
+#include "lab/resource.h"
 #include "lab/interface.h"
 #include "lab/text.h"
 
@@ -73,44 +74,6 @@ void setAmigaPal(uint16 *pal, uint16 numcolors) {
 	writeColorRegsSmooth(vgapal, 0, 16);
 }
 
-
-/*****************************************************************************/
-/* Gets a font from disk and puts it into temporary memory.                  */
-/*****************************************************************************/
-bool getFont(const char *filename, TextFont *textfont) {
-	byte **file = NULL;
-	char header[5];
-	uint32 filesize, headersize = 4L + 2L + 256 * 3 + 4L;
-
-	file = g_music->newOpen(filename, filesize);
-	g_music->updateMusic();
-
-	if ((file != NULL) && (filesize > headersize)) {
-		byte *fontbuffer = (byte *)stealBufMem(filesize - (sizeof(TextFont) + 4));
-		if (!fontbuffer)
-			return false;
-
-		header[4] = 0;
-		readBlock(&header, 4L, file);
-
-		if (strcmp(header, "VGAF") == 0) {
-			textfont->DataLength = filesize - headersize;
-			readBlock(&(textfont->Height), 2L, file);
-			swapUShortPtr(&(textfont->Height), 1);
-
-			readBlock(textfont->Widths, 256L, file);
-			readBlock(textfont->Offsets, 256L * 2L, file);
-			swapUShortPtr(textfont->Offsets, 256);
-
-			(*file) += 4;
-			textfont->data = fontbuffer;
-			readBlock(textfont->data, textfont->DataLength, file);
-			return true;
-		}
-	}
-
-	return false;
-}
 
 
 /*****************************************************************************/
@@ -234,7 +197,7 @@ static bool loadMapData() {
 
 	BigMsgFont = &bmf;
 
-	if (!getFont("P:Map.fon", BigMsgFont))
+	if (!(BigMsgFont = g_resource->getFont("P:Map.fon")))
 		BigMsgFont = MsgFont;
 
 	resetBuffer();  /* Make images load into start of buffer */

@@ -38,6 +38,7 @@
 #include "lab/parsefun.h"
 #include "lab/interface.h"
 #include "lab/mouse.h"
+#include "lab/resource.h"
 
 namespace Lab {
 
@@ -1361,7 +1362,7 @@ void LabEngine::go() {
 	if (!dointro)
 		g_music->initMusic();
 
-	openFont("P:AvanteG.12", &MsgFont);
+	MsgFont = g_resource->getFont("P:AvanteG.12");
 
 	mouseHide();
 

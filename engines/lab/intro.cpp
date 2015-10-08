@@ -31,6 +31,7 @@
 #include "lab/lab.h"
 #include "lab/stddefines.h"
 #include "lab/labfun.h"
+#include "lab/resource.h"
 #include "lab/timing.h"
 #include "lab/diff.h"
 #include "lab/text.h"
@@ -352,7 +353,7 @@ void introSequence() {
 	blackAllScreen();
 	g_music->updateMusic();
 
-	getFont("P:Map.fon", msgfont);
+	msgfont = g_resource->getFont("P:Map.fon");
 
 	nopalchange = true;
 	NReadPict("Intro.1", true);

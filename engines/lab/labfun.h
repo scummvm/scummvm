@@ -99,7 +99,6 @@ uint32 flowTextToMem(Image *DestIm, void *font,     /* the TextAttr pointer */
 
 void drawMessage(const char *text);
 int32 longDrawMessage(const char *text);
-bool readFont(char *filename, void *font, void *data);
 
 /* The Wipes */
 
@@ -255,7 +254,6 @@ char *translateFileName(const char *filename);
 void fade(bool fadein, uint16 res);
 void setAmigaPal(uint16 *pal, uint16 numcolors);
 char *getText(const char *filename);
-bool getFont(const char *filename, TextFont *textfont);
 void readImage(byte **buffer, Image **im);
 void doMap(uint16 CurRoom);
 void doJournal();
