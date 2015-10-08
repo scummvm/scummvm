@@ -21,308 +21,110 @@
  */
 
 #include "sherlock/tattoo/tattoo_resources.h"
+#include "sherlock/tattoo/tattoo_fixed_text.h"
 
 namespace Sherlock {
 
 namespace Tattoo {
 
-const char PORTRAITS[TATTOO_MAX_PEOPLE][5] = { 
-	{ "HOLM" },		//  Sherlock Holmes
-	{ "WATS" },		//  Dr. Watson
-	{ "HUDS" },		//  Mrs. Hudson
-	{ "FORB" },		//  Stanley Forbes
-	{ "MYCR" },		//  Mycroft Holmes
-	{ "WIGG" },		//  Wiggins
-	{ "BURN" },		//  Police Constable Burns
-	{ "TRIM" },		//  Augustus Trimble
-	{ "DALE" },		//  Police Constable Daley
-	{ "MATR" },		//  Matron
-	{ "GRAC" },		//  Sister Grace
-	{ "MCCA" },		//  Preston McCabe
-	{ "COLL" },		//  Bob Colleran
-	{ "JONA" },		//  Jonas Rigby
-	{ "ROAC" },		//  Police Constable Roach
-	{ "DEWA" },		//  James Dewar
-	{ "JERE" },		//  Sergeant Jeremy Duncan
-	{ "GREG" },		//  Inspector Gregson
-	{ "LEST" },		//  Inspector Lestrade
-	{ "NEED" },		//  Jesse Needhem
-	{ "FLEM" },		//  Arthur Fleming
-	{ "PRAT" },		//  Mr. Thomas Pratt
-	{ "TILL" },		//  Mathilda (Tillie) Mason
-	{ "RUSS" },		//  Adrian Russell
-	{ "WHIT" },		//  Eldridge Whitney
-	{ "HEPP" },		//  Hepplethwaite
-	{ "HORA" },		//  Horace Silverbridge
-	{ "SHER" },		//  Old Sherman
-	{ "VERN" },		//  Maxwell Verner
-	{ "REDD" },		//  Millicent Redding
-	{ "VIRG" },		//  Virgil Silverbridge
-	{ "GEOR" },		//  George O'Keeffe
-	{ "LAWT" },		//  Lord Denys Lawton
-	{ "JENK" },		//  Jenkins
-	{ "JOCK" },		//  Jock Mahoney
-	{ "BART" },		//  Bartender
-	{ "LADY" },		//  Lady Cordelia Lockridge
-	{ "PETT" },		//  Pettigrew
-	{ "FANS" },		//  Sir Avery Fanshawe
-	{ "HODG" },		//  Hodgkins
-	{ "WILB" },		//  Wilbur "Birdy" Heywood
-	{ "JACO" },		//  Jacob Farthington
-	{ "BLED" },		//  Philip Bledsoe
-	{ "FOWL" },		//  Sidney Fowler
-	{ "PROF" },		//  Professor Theodore Totman
-	{ "ROSE" },		//  Rose Hinchem
-	{ "TALL" },		//  Tallboy
-	{ "STIT" },		//  Ethlebert "Stitch" Rumsey
-	{ "FREE" },		//  Charles Freedman
-	{ "HEMM" },		//  Nigel Hemmings
-	{ "CART" },		//  Fairfax Carter
-	{ "WILH" },		//  Wilhelm II
-	{ "WACH" },		//  Wachthund
-	{ "WILS" },		//  Jonathan Wilson
-	{ "DAVE" },		//  David Lloyd-Jones
-	{ "HARG" },		//  Edward Hargrove
-	{ "MORI" },		//  Professor James Moriarty
-	{ "LASC" },		//  The Lascar
-	{ "PARR" },		//  Parrot
-	{ "SCAR" },		//  Vincent Scarrett
-	{ "ALEX" },		//  Alexandra
-	{ "QUEE" },		//  Queen Victoria
-	{ "JOHN" },		//  John Brown
-	{ "PAT1" },		//  Patient #1
-	{ "PAT2" },		//  Patient #2
-	{ "PATR" },		//  Patron
-	{ "QUEN" },		//  Queen Victoria
-	{ "WITE" },		//  Patient in White
-	{ "LUSH" },		//  Lush
-	{ "DRNK" },		//  Drunk
-	{ "PROS" },		//  Prostitute
-	{ "MUDL" },		//  Mudlark
-	{ "GRIN" },		//  Grinder
-	{ "BOUN" },		//  Bouncer
-	{ "RATC" },		//  Agnes Ratchet
-	{ "ALOY" },		//  Aloysius Ratchet
-	{ "REAL" },		//  Real Estate Agent
-	{ "CAND" },		//  Candy Clerk
-	{ "BEAD" },		//  Beadle
-	{ "PRUS" },		//  Prussian
-	{ "ROWB" },		//  Mrs. Rowbottom
-	{ "MSLJ" },		//  Miss Lloyd-Jones
-	{ "TPAT" },		//  Tavern patron
-	{ "USER" },		//  User
-	{ "TOBY" },		//  Toby
-	{ "STAT" },		//  Stationer
-	{ "CLRK" },		//  Law Clerk
-	{ "CLER" },		//  Ministry Clerk
-	{ "BATH" },		//  Bather
-	{ "MAID" },		//  Maid
-	{ "LADF" },		//  Lady Fanshawe
-	{ "SIDN" },		//  Sidney Ratchet
-	{ "BOYO" },		//  Boy
-	{ "PTR2" },		//  Second Patron
-	{ "BRIT" },		//  Constable Brit
-	{ "DROV" }		//  Wagon Driver
+const PeopleData PEOPLE_DATA[TATTOO_MAX_PEOPLE] = { 
+	{ "HOLM", kFixedText_People_SherlockHolmes },
+	{ "WATS", kFixedText_People_DrWatson },
+	{ "HUDS", kFixedText_People_MrsHudson },
+	{ "FORB", kFixedText_People_StanleyForbes },
+	{ "MYCR", kFixedText_People_MycroftHolmes },
+	{ "WIGG", kFixedText_People_Wiggins },
+	{ "BURN", kFixedText_People_PoliceConstableBurns },
+	{ "TRIM", kFixedText_People_AugustusTrimble },
+	{ "DALE", kFixedText_People_PoliceConstableDaley },
+	{ "MATR", kFixedText_People_Matron },
+	{ "GRAC", kFixedText_People_SisterGrace },
+	{ "MCCA", kFixedText_People_PrestonMcCabe },
+	{ "COLL", kFixedText_People_BobColleran },
+	{ "JONA", kFixedText_People_JonasRigby },
+	{ "ROAC", kFixedText_People_PoliceConstableRoach },
+	{ "DEWA", kFixedText_People_JamesDewar },
+	{ "JERE", kFixedText_People_SergeantJeremyDuncan },
+	{ "GREG", kFixedText_People_InspectorGregson },
+	{ "LEST", kFixedText_People_InspectorLestrade },
+	{ "NEED", kFixedText_People_JesseNeedhem },
+	{ "FLEM", kFixedText_People_ArthurFleming },
+	{ "PRAT", kFixedText_People_MrThomasPratt },
+	{ "TILL", kFixedText_People_MathildaTillieMason },
+	{ "RUSS", kFixedText_People_AdrianRussell },
+	{ "WHIT", kFixedText_People_EldridgeWhitney },
+	{ "HEPP", kFixedText_People_Hepplethwaite },
+	{ "HORA", kFixedText_People_HoraceSilverbridge },
+	{ "SHER", kFixedText_People_OldSherman },
+	{ "VERN", kFixedText_People_MaxwellVerner },
+	{ "REDD", kFixedText_People_MillicentRedding },
+	{ "VIRG", kFixedText_People_VirgilSilverbridge },
+	{ "GEOR", kFixedText_People_GeorgeOKeeffe },
+	{ "LAWT", kFixedText_People_LordDenysLawton },
+	{ "JENK", kFixedText_People_Jenkins },
+	{ "JOCK", kFixedText_People_JockMahoney },
+	{ "BART", kFixedText_People_Bartender },
+	{ "LADY", kFixedText_People_LadyCordeliaLockridge },
+	{ "PETT", kFixedText_People_Pettigrew },
+	{ "FANS", kFixedText_People_SirAveryFanshawe },
+	{ "HODG", kFixedText_People_Hodgkins },
+	{ "WILB", kFixedText_People_WilburBirdyHeywood },
+	{ "JACO", kFixedText_People_JacobFarthington },
+	{ "BLED", kFixedText_People_PhilipBledsoe },
+	{ "FOWL", kFixedText_People_SidneyFowler },
+	{ "PROF", kFixedText_People_ProfessorTheodoreTotman },
+	{ "ROSE", kFixedText_People_RoseHinchem },
+	{ "TALL", kFixedText_People_Tallboy },
+	{ "STIT", kFixedText_People_EthlebertStitchRumsey },
+	{ "FREE", kFixedText_People_CharlesFreedman },
+	{ "HEMM", kFixedText_People_NigelHemmings },
+	{ "CART", kFixedText_People_FairfaxCarter },
+	{ "WILH", kFixedText_People_WilhelmII },
+	{ "WACH", kFixedText_People_Wachthund },
+	{ "WILS", kFixedText_People_JonathanWilson },
+	{ "DAVE", kFixedText_People_DavidLloydJones },
+	{ "HARG", kFixedText_People_EdwardHargrove },
+	{ "MORI", kFixedText_People_Misteray },
+	{ "LASC", kFixedText_People_TheLascar },
+	{ "PARR", kFixedText_People_Parrot },
+	{ "SCAR", kFixedText_People_VincentScarrett },
+	{ "ALEX", kFixedText_People_Alexandra },
+	{ "QUEE", kFixedText_People_QueenVictoria },
+	{ "JOHN", kFixedText_People_JohnBrown },
+	{ "PAT1", kFixedText_People_APatient1 },
+	{ "PAT2", kFixedText_People_APatient2 },
+	{ "PATR", kFixedText_People_Patron },
+	{ "QUEN", kFixedText_People_QueenVictoria },
+	{ "WITE", kFixedText_People_PatientInWhite },
+	{ "LUSH", kFixedText_People_Lush },
+	{ "DRNK", kFixedText_People_Drunk },
+	{ "PROS", kFixedText_People_Prostitute },
+	{ "MUDL", kFixedText_People_Mudlark },
+	{ "GRIN", kFixedText_People_Grinder },
+	{ "BOUN", kFixedText_People_Bouncer },
+	{ "RATC", kFixedText_People_AgnesRatchet },
+	{ "ALOY", kFixedText_People_AloysiusRatchet },
+	{ "REAL", kFixedText_People_RealEstateAgent },
+	{ "CAND", kFixedText_People_CandyClerk },
+	{ "BEAD", kFixedText_People_Beadle },
+	{ "PRUS", kFixedText_People_Prussian },
+	{ "ROWB", kFixedText_People_MrsRowbottom },
+	{ "MSLJ", kFixedText_People_MissLloydJones },
+	{ "TPAT", kFixedText_People_TavernPatron },
+	{ "USER", kFixedText_People_User },
+	{ "TOBY", kFixedText_People_Toby },
+	{ "STAT", kFixedText_People_Stationer },
+	{ "CLRK", kFixedText_People_LawClerk },
+	{ "CLER", kFixedText_People_MinistryClerk },
+	{ "BATH", kFixedText_People_Bather },
+	{ "MAID", kFixedText_People_Maid },
+	{ "LADF", kFixedText_People_LadyFanshawe },
+	{ "SIDN", kFixedText_People_SidneyRatchet },
+	{ "BOYO", kFixedText_People_Boy },
+	{ "PTR2", kFixedText_People_Patron2 },
+	{ "BRIT", kFixedText_People_ConstableBrit },
+	{ "DROV", kFixedText_People_WagonDriver }
 };
-
-const char *const FRENCH_NAMES[TATTOO_MAX_PEOPLE] = {
-	"Sherlock Holmes",
-	"Dr. Watson",
-	"Mme. Hudson",
-	"Stanley Forbes",
-	"Mycroft Holmes",
-	"Wiggins",
-	"Sergent Burns",
-	"Augustus Trimble",
-	"Sergent Daley",
-	"Infirmi?re chef",
-	"Mme. Grace",
-	"Preston McCabe",
-	"Bob Colleran",
-	"Jonas Rigby",
-	"Sergent Roach",
-	"James Dewar",
-	"Sergent Jeremy Duncan",
-	"Inspecteur Gregson",
-	"Inspecteur Lestrade",
-	"Jesse Needhem",
-	"Arthur Fleming",
-	"M. Thomas Pratt",
-	"Mathilda (Tillie) Mason",
-	"Adrian Russell",
-	"Eldridge Whitney",
-	"Hepplethwaite",
-	"Horace Silverbridge",
-	"Sherman",
-	"Maxwell Verner",
-	"Millicent Redding",
-	"Virgil Silverbridge",
-	"George O'Keeffe",
-	"Lord Denys Lawton",
-	"Jenkins",
-	"Jock Mahoney",
-	"Serveur",
-	"Lady Cordelia Lockridge",
-	"Pettigrew",
-	"Sir Avery Fanshawe",
-	"Hodgkins",
-	"Wilbur \"Birdy\" Heywood",
-	"Jacob Farthington",
-	"Philip Bledsoe",
-	"Sidney Fowler",
-	"Professeur Theodore Totman",
-	"Rose Hinchem",
-	"Tallboy",
-	"Ethlebert \"Stitch\" Rumsey",
-	"Charles Freedman",
-	"Nigel Hemmings",
-	"Fairfax Carter",
-	"Wilhelm II",
-	"Wachthund",
-	"Jonathan Wilson",
-	"David Lloyd-Jones",
-	"Edward Hargrove",
-	"Misteray",
-	"Le Lascar",
-	"Oiseau",
-	"Vincent Scarrett",
-	"Alexandra",
-	"Queen Victoria",
-	"John Brown",
-	"Patient",
-	"Patient",
-	"Client",
-	"Queen Victoria",
-	"Patient en blanc",
-	"Ivrogne",
-	"Ivrogne",
-	"Belle femme",
-	"Mudlark",
-	"Broyeur",
-	"Videur",
-	"Agnes Ratchet",
-	"Aloysius Ratchet",
-	"Immobilier",
-	"Gar?on",
-	"Beadle",
-	"Prussian",
-	"Mme. Rowbottom",
-	"Mme Lloyd-Jones",
-	"Tavern Client",
-	"User",
-	"Toby",
-	"Papeterie",
-	"Law Clerc",
-	"Ministry Employ?",
-	"Clint du thermes",
-	"Bonne",
-	"Lady Fanshawe",
-	"Sidney Ratchet",
-	"Gar?on",
-	"Client",
-	"Sergent Brit",
-	"Wagon Driver"
-};
-
-const char *const ENGLISH_NAMES[TATTOO_MAX_PEOPLE] = {
-	"Sherlock Holmes",
-	"Dr. Watson",
-	"Mrs. Hudson",
-	"Stanley Forbes",
-	"Mycroft Holmes",
-	"Wiggins",
-	"Police Constable Burns",
-	"Augustus Trimble",
-	"Police Constable Daley",
-	"Matron",
-	"Sister Grace",
-	"Preston McCabe",
-	"Bob Colleran",
-	"Jonas Rigby",
-	"Police Constable Roach",
-	"James Dewar",
-	"Sergeant Jeremy Duncan",
-	"Inspector Gregson",
-	"Inspector Lestrade",
-	"Jesse Needhem",
-	"Arthur Fleming",
-	"Mr. Thomas Pratt",
-	"Mathilda (Tillie) Mason",
-	"Adrian Russell",
-	"Eldridge Whitney",
-	"Hepplethwaite",
-	"Horace Silverbridge",
-	"Old Sherman",
-	"Maxwell Verner",
-	"Millicent Redding",
-	"Virgil Silverbridge",
-	"George O'Keeffe",
-	"Lord Denys Lawton",
-	"Jenkins",
-	"Jock Mahoney",
-	"Bartender",
-	"Lady Cordelia Lockridge",
-	"Pettigrew",
-	"Sir Avery Fanshawe",
-	"Hodgkins",
-	"Wilbur \"Birdy\" Heywood",
-	"Jacob Farthington",
-	"Philip Bledsoe",
-	"Sidney Fowler",
-	"Professor Theodore Totman",
-	"Rose Hinchem",
-	"Tallboy",
-	"Ethlebert \"Stitch\" Rumsey",
-	"Charles Freedman",
-	"Nigel Hemmings",
-	"Fairfax Carter",
-	"Wilhelm II",
-	"Wachthund",
-	"Jonathan Wilson",
-	"David Lloyd-Jones",
-	"Edward Hargrove",
-	"Misteray",
-	"The Lascar",
-	"Parrot",
-	"Vincent Scarrett",
-	"Alexandra",
-	"Queen Victoria",
-	"John Brown",
-	"A Patient",
-	"A Patient",
-	"Patron",
-	"Queen Victoria",
-	"Patient in white",
-	"Lush",
-	"Drunk",
-	"Prostitute",
-	"Mudlark",
-	"Grinder",
-	"Bouncer",
-	"Agnes Ratchet",
-	"Aloysius Ratchet",
-	"Real Estate Agent",
-	"Candy Clerk",
-	"Beadle",
-	"Prussian",
-	"Mrs. Rowbottom",
-	"Miss Lloyd-Jones",
-	"Tavern patron",
-	"User",
-	"Toby",
-	"Stationer",
-	"Law Clerk",
-	"Ministry Clerk",
-	"Bather",
-	"Maid",
-	"Lady Fanshawe",
-	"Sidney Ratchet",
-	"Boy",
-	"Patron",
-	"Constable Brit",
-	"Wagon Driver"
-};
-
 
 } // End of namespace Tattoo
 
