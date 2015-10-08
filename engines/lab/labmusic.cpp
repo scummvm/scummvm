@@ -128,7 +128,8 @@ void Music::playSoundEffect(uint16 SampleSpeed, uint32 Length, void *Data) {
 }
 
 void Music::stopSoundEffect() {
-	g_lab->_mixer->stopHandle(_sfxHandle);
+	if (isSoundEffectActive())
+		g_lab->_mixer->stopHandle(_sfxHandle);
 }
 
 bool Music::isSoundEffectActive() const {
