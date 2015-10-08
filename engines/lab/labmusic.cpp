@@ -262,11 +262,11 @@ void Music::checkRoomMusic() {
 		return;
 
 	if (RoomNum == CLOWNROOM)
-		g_music->changeMusic("Music:Laugh");
+		changeMusic("Music:Laugh");
 	else if (RoomNum == DIMROOM)
-		g_music->changeMusic("Music:Rm81");
+		changeMusic("Music:Rm81");
 	else if (_doReset)
-		g_music->resetMusic();
+		resetMusic();
 
 	_lastMusicRoom = RoomNum;
 }
@@ -349,12 +349,9 @@ byte **Music::newOpen(const char *name, uint32 &size) {
 	if (file = isBuffered(name))
 		return file;
 
-	if (_musicOn) {
-		updateMusic();
-		updateMusic();
-	}
+	updateMusic();
 
-	if (!_doNotFilestopSoundEffect && isSoundEffectActive())
+	if (!_doNotFilestopSoundEffect)
 		stopSoundEffect();
 
 	file = openFile(name, size);
