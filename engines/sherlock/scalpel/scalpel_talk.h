@@ -132,6 +132,11 @@ public:
 	bool talk3DOMovieTrigger(int subIndex);
 
 	/**
+	 * Handles skipping over bad text in conversations
+	 */
+	static void skipBadText(const byte *&msgP);
+
+	/**
 	 * Push the details of a passed object onto the saved sequences stack
 	 */
 	virtual void pushSequenceEntry(Object *obj);

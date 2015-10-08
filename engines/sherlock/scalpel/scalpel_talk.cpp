@@ -191,7 +191,7 @@ void ScalpelTalk::talkInterface(const byte *&str) {
 	UserInterface &ui = *_vm->_ui;
 
 	if (_vm->getLanguage() == Common::DE_DEU)
-		ScalpelJournal::skipBadText(str);
+		skipBadText(str);
 
 	// If the window isn't yet open, draw the window before printing starts
 	if (!ui._windowOpen && _noTextYet) {
@@ -1011,6 +1011,14 @@ void ScalpelTalk::pullSequence(int slot) {
 
 void ScalpelTalk::clearSequences() {
 	_sequenceStack.clear();
+}
+
+void ScalpelTalk::skipBadText(const byte *&msgP) {
+	// WORKAROUND: Skip over bad text in the original game
+	const char *BAD_PHRASE1 = "Change Speaker to Sherlock Holmes ";
+
+	if (!strncmp((const char *)msgP, BAD_PHRASE1, strlen(BAD_PHRASE1)))
+		msgP += strlen(BAD_PHRASE1);
 }
 
 } // End of namespace Scalpel

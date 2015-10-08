@@ -24,6 +24,7 @@
 #include "sherlock/scalpel/scalpel.h"
 #include "sherlock/scalpel/scalpel_fixed_text.h"
 #include "sherlock/scalpel/scalpel_journal.h"
+#include "sherlock/scalpel/scalpel_talk.h"
 #include "sherlock/tattoo/tattoo.h"
 #include "sherlock/tattoo/tattoo_fixed_text.h"
 #include "sherlock/tattoo/tattoo_journal.h"
@@ -526,7 +527,7 @@ void Journal::loadJournalFile(bool alreadyLoaded) {
 				journalString += people._characters[c]._name;
 
 			if (IS_SERRATED_SCALPEL && _vm->getLanguage() == Common::DE_DEU)
-				Scalpel::ScalpelJournal::skipBadText(replyP);
+				Scalpel::ScalpelTalk::skipBadText(replyP);
 
 			const byte *strP = replyP;
 			byte v;

@@ -650,14 +650,6 @@ void ScalpelJournal::record(int converseNum, int statementNum, bool replyOnly) {
 		Journal::record(converseNum, statementNum, replyOnly);
 }
 
-void ScalpelJournal::skipBadText(const byte *&msgP) {
-	// WORKAROUND: Skip over bad text in the original game
-	const char *BAD_PHRASE1 = "Change Speaker to Sherlock Holmes ";
-	
-	if (!strncmp((const char *)msgP, BAD_PHRASE1, strlen(BAD_PHRASE1)))
-		msgP += strlen(BAD_PHRASE1);
-}
-
 } // End of namespace Scalpel
 
 } // End of namespace Sherlock

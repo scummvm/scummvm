@@ -71,11 +71,6 @@ public:
 	void drawInterface();
 
 	/**
-	 * Handles skipping over bad text in conversations
-	 */
-	static void skipBadText(const byte *&msgP);
-
-	/**
 	 * Handle events whilst the journal is being displayed
 	 */
 	bool handleEvents(int key);
