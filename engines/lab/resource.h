@@ -102,7 +102,7 @@ public:
 	bool readInventory(const char *fileName);
 	bool readViews(uint16 roomNum);
 	TextFont *getFont(const char *filename);
-	Common::String getStaticText(byte index) const { return _staticText[index + 1]; }
+	Common::String getStaticText(byte index) const { return _staticText[index]; }
 
 private:
 	Common::File *openDataFile(const char * fileName, uint32 fileHeader);

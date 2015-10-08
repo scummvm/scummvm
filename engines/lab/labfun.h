@@ -98,6 +98,7 @@ uint32 flowTextToMem(Image *DestIm, void *font,     /* the TextAttr pointer */
                      uint16 y1, uint16 x2, uint16 y2, const char *text); /* The text itself */
 
 void drawMessage(const char *text);
+void drawStaticMessage(byte index);
 int32 longDrawMessage(const char *text);
 
 /* The Wipes */

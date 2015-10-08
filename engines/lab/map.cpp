@@ -616,47 +616,42 @@ static void drawMap(uint16 CurRoom, uint16 CurMsg, uint16 Floor, bool fadeout, b
 	if (Floor == LOWERFLOOR) {
 		if (onFloor(SURMAZEFLOOR))
 			drawImage(Maze, mapScaleX(538), mapScaleY(277));
-	}
-
-	else if (Floor == MIDDLEFLOOR) {
+	} else if (Floor == MIDDLEFLOOR) {
 		if (onFloor(CARNIVAL))
 			drawImage(Maze, mapScaleX(358), mapScaleY(72));
 
 		if (onFloor(MEDMAZEFLOOR))
 			drawImage(Maze, mapScaleX(557), mapScaleY(325));
-	}
-
-	else if (Floor == UPPERFLOOR) {
+	} else if (Floor == UPPERFLOOR) {
 		if (onFloor(HEDGEMAZEFLOOR))
 			drawImage(HugeMaze, mapScaleX(524), mapScaleY(97));
-	}
-
-	else if (Floor == SURMAZEFLOOR) {
-		flowText(MsgFont, 0, 7, 0, true, true, true, true, mapScaleX(360), 0, mapScaleX(660), mapScaleY(450), SURMAZEMSG);
+	} else if (Floor == SURMAZEFLOOR) {
+		sptr = (char *)g_resource->getStaticText(kTextSurmazeMessage).c_str();
+		flowText(MsgFont, 0, 7, 0, true, true, true, true, mapScaleX(360), 0, mapScaleX(660), mapScaleY(450), sptr);
 	}
 
 
 	switch (Floor) {
 	case LOWERFLOOR:
-		sptr = LOWERFLOORS;
+		sptr = (char *)g_resource->getStaticText(kTextLowerFloor).c_str();
 		break;
 	case MIDDLEFLOOR:
-		sptr = MIDDLEFLOORS;
+		sptr = (char *)g_resource->getStaticText(kTextMiddleFloor).c_str();
 		break;
 	case UPPERFLOOR:
-		sptr = UPPERFLOORS;
+		sptr = (char *)g_resource->getStaticText(kTextUpperFloor).c_str();
 		break;
 	case MEDMAZEFLOOR:
-		sptr = MEDMAZEFLOORS;
+		sptr = (char *)g_resource->getStaticText(kTextMedMazeFloor).c_str();
 		break;
 	case HEDGEMAZEFLOOR:
-		sptr = HEDGEMAZEFLOORS;
+		sptr = (char *)g_resource->getStaticText(kTextHedgeMazeFloor).c_str();
 		break;
 	case SURMAZEFLOOR:
-		sptr = SURMAZEFLOORS;
+		sptr = (char *)g_resource->getStaticText(kTextSurMazeFloor).c_str();
 		break;
 	case CARNIVAL:
-		sptr = CARNIVALFLOOR;
+		sptr = (char *)g_resource->getStaticText(kTextCarnivalFloor).c_str();
 		break;
 	default:
 		sptr = NULL;

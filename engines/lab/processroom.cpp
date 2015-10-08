@@ -35,6 +35,7 @@
 #include "lab/labfun.h"
 #include "lab/parsetypes.h"
 #include "lab/parsefun.h"
+#include "lab/resource.h"
 #include "lab/timing.h"
 #include "lab/diff.h"
 #include "lab/vga.h"
@@ -55,7 +56,6 @@ extern bool DoNotDrawMessage, IsBM, noupdatediff, QuitLab, MusicOn, DoBlack, Lon
 extern char diffcmap[256 * 3];
 extern const char *CurFileName;
 extern CloseDataPtr CPtr;
-extern char *FACINGNORTH, *FACINGEAST, *FACINGSOUTH, *FACINGWEST;
 
 /*****************************************************************************/
 /* Generates a random number.                                                */
@@ -195,53 +195,28 @@ char *getPictName(CloseDataPtr *LCPtr) {
 /* Draws the current direction to the screen.                                */
 /*****************************************************************************/
 void drawDirection(CloseDataPtr LCPtr) {
-	char Message[250];
-
-	if (LCPtr != NULL) {
-		if (LCPtr->Message) {
-			drawMessage(LCPtr->Message);
-			return;
-		}
+	if (LCPtr != NULL && LCPtr->Message) {
+		drawMessage(LCPtr->Message);
+		return;
 	}
 
-
-	Message[0] = '\0';
+	Common::String message;
 
 	if (Rooms[RoomNum].RoomMsg) {
-		strcpy(Message, Rooms[RoomNum].RoomMsg);
-		strcat(Message, ", ");
+		message += Rooms[RoomNum].RoomMsg;
+		message += ", ";
 	}
 
 	if (Direction == NORTH)
-		strcat(Message, FACINGNORTH);
+		message += g_resource->getStaticText(kTextFacingNorth);
 	else if (Direction == EAST)
-		strcat(Message, FACINGEAST);
+		message += g_resource->getStaticText(kTextFacingEast);
 	else if (Direction == SOUTH)
-		strcat(Message, FACINGSOUTH);
+		message += g_resource->getStaticText(kTextFacingSouth);
 	else if (Direction == WEST)
-		strcat(Message, FACINGWEST);
+		message += g_resource->getStaticText(kTextFacingWest);
 
-	drawMessage(Message);
-}
-
-void getRoomMessage(int MyRoomNum, int MyDirection, char *msg) {
-	getViewData(MyRoomNum, MyDirection);
-
-	msg[0] = '\0';
-
-	if (Rooms[MyRoomNum].RoomMsg) {
-		strcpy(msg, Rooms[MyRoomNum].RoomMsg);
-		strcat(msg, ", ");
-	}
-
-	if (MyDirection == NORTH)
-		strcat(msg, FACINGNORTH);
-	else if (MyDirection == EAST)
-		strcat(msg, FACINGEAST);
-	else if (MyDirection == SOUTH)
-		strcat(msg, FACINGSOUTH);
-	else if (MyDirection == WEST)
-		strcat(msg, FACINGWEST);
+	drawMessage(message.c_str());
 }
 
 /*****************************************************************************/

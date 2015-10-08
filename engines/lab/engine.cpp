@@ -75,10 +75,6 @@ bool Alternate = false, ispal = false, noupdatediff = false, MainDisplay = true,
 extern const char *NewFileName;  /* When ProcessRoom.c decides to change the filename
                                     of the current picture. */
 
-extern char *LAMPONMSG, *TURNLEFT, *TURNRIGHT;
-extern char *GOFORWARDDIR, *NOPATH, *TAKEITEM, *USEONWHAT, *TAKEWHAT, *MOVEWHAT, *OPENWHAT, *CLOSEWHAT, *LOOKWHAT, *NOTHING, *USEMAP, *USEJOURNAL, *TURNLAMPON, *TURNLAMPOFF, *USEWHISKEY, *USEPITH, *USEHELMET;
-
-
 #define BUFFERSIZE 850000L
 
 /* LAB: Labyrinth specific code for the special puzzles */
@@ -208,7 +204,7 @@ static void drawRoomMessage(uint16 CurInv, CloseDataPtr cptr) {
 	if (Alternate) {
 		if ((CurInv <= NumInv) && g_lab->_conditions->in(CurInv) && Inventory[CurInv].BInvName) {
 			if ((CurInv == LAMPNUM) && g_lab->_conditions->in(LAMPON))  /* LAB: Labyrith specific */
-				drawMessage(LAMPONMSG);
+				drawStaticMessage(kTextLampOn);
 			else if (Inventory[CurInv].Many > 1) {
 				Common::String roomMessage = Common::String(Inventory[CurInv].name) + "  (" + Common::String::format("%d", Inventory[CurInv].Many) + ")";
 				drawMessage(roomMessage.c_str());
@@ -536,7 +532,7 @@ static const char *Test;
 static bool doUse(uint16 CurInv) {
 
 	if (CurInv == MAPNUM) {                  /* LAB: Labyrinth specific */
-		drawMessage(USEMAP);
+		drawStaticMessage(kTextUseMap);
 		interfaceOff();
 		stopDiff();
 		CurFileName = " ";
@@ -548,7 +544,7 @@ static bool doUse(uint16 CurInv) {
 	}
 
 	else if (CurInv == JOURNALNUM) {         /* LAB: Labyrinth specific */
-		drawMessage(USEJOURNAL);
+		drawStaticMessage(kTextUseJournal);
 		interfaceOff();
 		stopDiff();
 		CurFileName = " ";
@@ -562,10 +558,10 @@ static bool doUse(uint16 CurInv) {
 		interfaceOff();
 
 		if (g_lab->_conditions->in(LAMPON)) {
-			drawMessage(TURNLAMPOFF);
+			drawStaticMessage(kTextTurnLampOff);
 			g_lab->_conditions->exclElement(LAMPON);
 		} else {
-			drawMessage(TURNLAMPON);
+			drawStaticMessage(kTextTurnLampOn);
 			g_lab->_conditions->inclElement(LAMPON);
 		}
 
@@ -588,17 +584,17 @@ static bool doUse(uint16 CurInv) {
 
 	else if (CurInv == WHISKEYNUM) {                 /* LAB: Labyrinth specific */
 		g_lab->_conditions->inclElement(USEDHELMET);
-		drawMessage(USEWHISKEY);
+		drawStaticMessage(kTextUseWhiskey);
 	}
 
 	else if (CurInv == PITHHELMETNUM) {              /* LAB: Labyrinth specific */
 		g_lab->_conditions->inclElement(USEDHELMET);
-		drawMessage(USEPITH);
+		drawStaticMessage(kTextUsePith);
 	}
 
 	else if (CurInv == HELMETNUM) {                  /* LAB: Labyrinth specific */
 		g_lab->_conditions->inclElement(USEDHELMET);
-		drawMessage(USEHELMET);
+		drawStaticMessage(kTextUseHelmet);
 	}
 
 	else
@@ -955,15 +951,15 @@ from_crumbs:
 						perFlipGadget(ActionMode);
 
 						if (GadID == 0)
-							drawMessage(TAKEWHAT);
+							drawStaticMessage(kTextTakeWhat);
 						else if (GadID == 1)
-							drawMessage(MOVEWHAT);
+							drawStaticMessage(kTextMoveWhat);
 						else if (GadID == 2)
-							drawMessage(OPENWHAT);
+							drawStaticMessage(kTextOpenWhat);
 						else if (GadID == 3)
-							drawMessage(CLOSEWHAT);
+							drawStaticMessage(kTextCloseWhat);
 						else if (GadID == 4)
-							drawMessage(LOOKWHAT);
+							drawStaticMessage(kTextLookWhat);
 
 						WSDL_UpdateScreen();
 					}
@@ -978,9 +974,9 @@ from_crumbs:
 
 					if ((GadID == 6) || (GadID == 8)) {
 						if (GadID == 6)
-							drawMessage(TURNLEFT);
+							drawStaticMessage(kTextTurnLeft);
 						else
-							drawMessage(TURNRIGHT);
+							drawStaticMessage(kTextTurnRight);
 
 						CurFileName = " ";
 
@@ -1006,13 +1002,13 @@ from_crumbs:
 							processArrow(&Direction, GadID - 6);
 
 							if (OldRoomNum != RoomNum) {
-								drawMessage(GOFORWARDDIR);
+								drawStaticMessage(kTextGoForward);
 								g_lab->_roomsFound->inclElement(RoomNum); /* Potentially entered a new room */
 								CurFileName = " ";
 								ForceDraw = true;
 							} else {
 								DoBlack = true;
-								drawMessage(NOPATH);
+								drawStaticMessage(kTextNoPath);
 							}
 						}
 
@@ -1117,7 +1113,7 @@ from_crumbs:
 						if (Old < 5)
 							perFlipGadget(Old);
 
-						drawMessage(USEONWHAT);
+						drawStaticMessage(kTextUseOnWhat);
 						MainDisplay = true;
 
 						WSDL_UpdateScreen();
@@ -1211,13 +1207,13 @@ from_crumbs:
 						if (doActionRule(MouseX, MouseY, ActionMode, RoomNum, &CPtr))
 							CurFileName = NewFileName;
 						else if (takeItem(MouseX, MouseY, &CPtr))
-							drawMessage(TAKEITEM);
+							drawStaticMessage(kTextTakeItem);
 						else if (doActionRule(MouseX, MouseY, TAKEDEF - 1, RoomNum, &CPtr))
 							CurFileName = NewFileName;
 						else if (doActionRule(MouseX, MouseY, TAKE - 1, 0, &CPtr))
 							CurFileName = NewFileName;
 						else if (MouseY < (VGAScaleY(149) + SVGACord(2)))
-							drawMessage(NOTHING);
+							drawStaticMessage(kTextNothing);
 					} else if ((ActionMode == 1) /* Manipulate an object */  ||
 					         (ActionMode == 2) /* Open up a "door" */      ||
 					         (ActionMode == 3)) { /* Close a "door" */
@@ -1225,7 +1221,7 @@ from_crumbs:
 							CurFileName = NewFileName;
 						else if (!doActionRule(MouseX, MouseY, ActionMode, 0, &CPtr)) {
 							if (MouseY < (VGAScaleY(149) + SVGACord(2)))
-								drawMessage(NOTHING);
+								drawStaticMessage(kTextNothing);
 						}
 					} else if (ActionMode == 4) { /* Look at closeups */
 						TempCPtr = CPtr;
@@ -1233,15 +1229,15 @@ from_crumbs:
 
 						if (CPtr == TempCPtr) {
 							if (MouseY < (VGAScaleY(149) + SVGACord(2)))
-								drawMessage(NOTHING);
+								drawStaticMessage(kTextNothing);
 						} else if (TempCPtr->GraphicName) {
 							if (*(TempCPtr->GraphicName)) {
 								DoBlack = true;
 								CPtr = TempCPtr;
 							} else if (MouseY < (VGAScaleY(149) + SVGACord(2)))
-								drawMessage(NOTHING);
+								drawStaticMessage(kTextNothing);
 						} else if (MouseY < (VGAScaleY(149) + SVGACord(2)))
-							drawMessage(NOTHING);
+							drawStaticMessage(kTextNothing);
 					} else if ((ActionMode == 5)  &&
 					         g_lab->_conditions->in(CurInv)) { /* Use an item on something else */
 						if (doOperateRule(MouseX, MouseY, CurInv, &CPtr)) {
@@ -1250,7 +1246,7 @@ from_crumbs:
 							if (!g_lab->_conditions->in(CurInv))
 								decIncInv(&CurInv, false);
 						} else if (MouseY < (VGAScaleY(149) + SVGACord(2)))
-							drawMessage(NOTHING);
+							drawStaticMessage(kTextNothing);
 					}
 				}
 
@@ -1356,8 +1352,7 @@ void LabEngine::go() {
 
 	initMouse();
 
-	mem = mem && initRoomBuffer() &&
-	      initLabText();
+	mem = mem && initRoomBuffer();
 
 	if (!dointro)
 		g_music->initMusic();
@@ -1399,7 +1394,6 @@ void LabEngine::go() {
 
 	closeFont(MsgFont);
 
-	freeLabText();
 	freeRoomBuffer();
 	freeBuffer();
 

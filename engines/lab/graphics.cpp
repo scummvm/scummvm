@@ -37,6 +37,7 @@
 #include "lab/mouse.h"
 #include "lab/vga.h"
 #include "lab/text.h"
+#include "lab/resource.h"
 
 namespace Lab {
 
@@ -366,6 +367,9 @@ int32 longDrawMessage(const char *str) {
 
 
 
+void drawStaticMessage(byte index) {
+	drawMessage(g_resource->getStaticText((StaticText)index).c_str());
+}
 
 /******************************************************************************/
 /* Draws a message to the message box.                                        */
