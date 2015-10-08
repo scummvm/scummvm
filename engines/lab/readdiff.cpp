@@ -37,11 +37,11 @@
 
 namespace Lab {
 
-static bool PlayOnce = false, changedscreen;
+static bool PlayOnce = false;
 static uint32 header, size, processed = 0L, WaitSec = 0L, WaitMicros = 0L, DelayMicros = 0L;
 static uint16 CurBit = 0, framenumber = 0, samplespeed, numchunks = 1;
 static byte *Buffer, temp[5];
-static bool FirstThru = true, donepal = false;
+static bool donepal = false;
 static byte *storagefordifffile, **difffile = &storagefordifffile;
 static byte *start;
 static uint32 diffwidth, diffheight;
@@ -57,7 +57,6 @@ bool DoBlack        = false,     /* Black the screen before new picture  */
 
 static bool continuous,
 	IsPlaying      = false,
-	StopPlaying    = false,
 	StopPlayingEnd = false,
 	IsAnim         = false,
 	IsPal          = false;
@@ -150,7 +149,6 @@ void diffNextFrame() {
 				}
 
 				donepal = true;
-				FirstThru = false;
 			}
 
 			if (IsPal && !nopalchange && !IsBM && !donepal) {
@@ -308,15 +306,11 @@ void playDiff() {
 	CurBit = 0;
 	framenumber = 0;
 	numchunks   = 1;
-	FirstThru   = true;
 	donepal     = false;
 	difffile    = &storagefordifffile;
 
 	IsPlaying   = true;
-	StopPlaying = false;
 	StopPlayingEnd = false;
-
-	changedscreen = false;
 
 	if (DoBlack) {
 		DoBlack = false;
@@ -406,8 +400,6 @@ void playDiff() {
 /*****************************************************************************/
 void stopDiff() {
 	if (IsPlaying) {
-		StopPlaying = true;
-
 		if (IsAnim)
 			blackScreen();
 	}
@@ -420,8 +412,6 @@ void stopDiff() {
 /*****************************************************************************/
 void stopDiffEnd() {
 	if (IsPlaying) {
-		StopPlayingEnd = true;
-
 		while (IsPlaying) {
 			g_music->updateMusic();
 			diffNextFrame();
