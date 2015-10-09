@@ -229,8 +229,6 @@ void OptionsDialog::open() {
 		// Software rendering setting - ResidualVM specific lines
 		_softwareRenderingCheckbox->setEnabled(true);
 		_softwareRenderingCheckbox->setState(ConfMan.getBool("soft_renderer", _domain));
-	} else {
-		_aspectCheckbox->setState(false);
 	}
 
 	// Audio options
