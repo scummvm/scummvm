@@ -61,6 +61,11 @@ private:
 	 */
 	bool playSoundResource(const Common::String &name, const Common::String &libFilename,
 		Audio::Mixer::SoundType soundType, Audio::SoundHandle &handle);
+
+	/**
+	 * Form a filename from a passed sound resource name
+	 */
+	Common::String formFilename(const Common::String &name);
 public:
 	bool _digitized;
 	int _voices;

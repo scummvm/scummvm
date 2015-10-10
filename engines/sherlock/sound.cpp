@@ -123,23 +123,7 @@ byte Sound::decodeSample(byte sample, byte &reference, int16 &scale) {
 bool Sound::playSound(const Common::String &name, WaitType waitType, int priority, const char *libraryFilename) {
 	stopSound();
 
-	Common::String filename = name;
-	if (!filename.contains('.')) {
-		if (!IS_3DO) {
-			if (IS_SERRATED_SCALPEL) {
-				filename += ".SND";
-			} else {
-				filename += ".WAV";
-			}
-		} else {
-			// 3DO uses .aiff extension
-			filename += ".AIFF";
-			if (!filename.contains('/')) {
-				// if no directory was given, use the room sounds directory
-				filename = "rooms/sounds/" + filename;
-			}
-		}
-	}
+	Common::String filename = formFilename(name);
 
 	Audio::SoundHandle &soundHandle = (IS_SERRATED_SCALPEL) ? _scalpelEffectsHandle : getFreeSoundHandle();
 	if (!playSoundResource(filename, libraryFilename, Audio::Mixer::kSFXSoundType, soundHandle))
@@ -166,6 +150,29 @@ bool Sound::playSound(const Common::String &name, WaitType waitType, int priorit
 	_mixer->stopHandle(soundHandle);
 
 	return retval;
+}
+
+Common::String Sound::formFilename(const Common::String &name) {
+	Common::String filename = name;
+
+	if (!filename.contains('.')) {
+		if (!IS_3DO) {
+			if (IS_SERRATED_SCALPEL) {
+				filename += ".SND";
+			} else {
+				filename += ".WAV";
+			}
+		} else {
+			// 3DO uses .aiff extension
+			filename += ".AIFF";
+			if (!filename.contains('/')) {
+				// if no directory was given, use the room sounds directory
+				filename = "rooms/sounds/" + filename;
+			}
+		}
+	}
+
+	return filename;
 }
 
 void Sound::playAiff(const Common::String &name, int volume, bool loop) {
@@ -238,46 +245,41 @@ void Sound::setVolume(int volume) {
 void Sound::playSpeech(const Common::String &name) {
 	Resources &res = *_vm->_res;
 	Scene &scene = *_vm->_scene;
-	assert(IS_ROSE_TATTOO);
 
 	// Stop any previously playing speech
 	stopSpeech();
 
-	// Figure out which speech library to use
-	Common::String libraryName = Common::String::format("speech%02d.lib", scene._currentScene);
-	if ((!scumm_strnicmp(name.c_str(), "SLVE12S", 7)) || (!scumm_strnicmp(name.c_str(), "WATS12X", 7))
-			|| (!scumm_strnicmp(name.c_str(), "HOLM12X", 7)))
-		libraryName = "SPEECH12.LIB";
+	if (IS_SERRATED_SCALPEL) {
+		Common::String filename = formFilename(name);
+		if (playSoundResource(filename, nullptr, Audio::Mixer::kSFXSoundType, _speechHandle))
+			_speechPlaying = true;
+	} else {
+		// Figure out which speech library to use
+		Common::String libraryName = Common::String::format("speech%02d.lib", scene._currentScene);
+		if ((!scumm_strnicmp(name.c_str(), "SLVE12S", 7)) || (!scumm_strnicmp(name.c_str(), "WATS12X", 7))
+				|| (!scumm_strnicmp(name.c_str(), "HOLM12X", 7)))
+			libraryName = "SPEECH12.LIB";
 
-	// If the speech library file doesn't even exist, then we can't play anything
-	Common::File f;
-	if (!f.exists(libraryName))
-		return;
+		// If the speech library file doesn't even exist, then we can't play anything
+		Common::File f;
+		if (!f.exists(libraryName))
+			return;
 
-	// Ensure the given library is in the cache
-	res.addToCache(libraryName);
+		// Ensure the given library is in the cache
+		res.addToCache(libraryName);
 
-	if (playSoundResource(name, libraryName, Audio::Mixer::kSpeechSoundType, _speechHandle))
-		_speechPlaying = true;
+		if (playSoundResource(name, libraryName, Audio::Mixer::kSpeechSoundType, _speechHandle))
+			_speechPlaying = true;
+	}
 }
 
 void Sound::stopSpeech() {
-	if (IS_SERRATED_SCALPEL) {
-		_mixer->stopHandle(_scalpelEffectsHandle);
-	} else {
-		_mixer->stopHandle(_speechHandle);
-	}
+	_mixer->stopHandle(_speechHandle);
 	_speechPlaying = false;
 }
 
 bool Sound::isSpeechPlaying() {
 	_speechPlaying = _mixer->isSoundHandleActive(_speechHandle);
-
-	if (IS_SERRATED_SCALPEL) {
-		_soundPlaying = _mixer->isSoundHandleActive(_scalpelEffectsHandle);
-		return _soundPlaying;
-	}
-
 	return _speechPlaying;
 }
 
