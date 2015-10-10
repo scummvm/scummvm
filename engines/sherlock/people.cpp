@@ -185,7 +185,8 @@ void People::reset() {
 
 		if (IS_SERRATED_SCALPEL) {
 			p._type = _holmesOn ? CHARACTER : HIDDEN;
-			p._position = Point32(100 * FIXED_INT_MULTIPLIER, 110 * FIXED_INT_MULTIPLIER);
+			if (!saves._justLoaded)
+				p._position = Point32(100 * FIXED_INT_MULTIPLIER, 110 * FIXED_INT_MULTIPLIER);
 		} else if (!talk._scriptMoreFlag && !saves._justLoaded) {
 			p._type = (idx == 0) ? CHARACTER : INVALID;
 			p._position = Point32(36 * FIXED_INT_MULTIPLIER, 29 * FIXED_INT_MULTIPLIER);
