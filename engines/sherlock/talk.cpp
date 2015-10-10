@@ -846,7 +846,7 @@ int Talk::waitForMore(int delay) {
 	playingSpeech = sound.isSpeechPlaying();
 
 	do {
-		if (IS_SERRATED_SCALPEL && sound._speechOn && !sound.isSpeechPlaying())
+		if (IS_SERRATED_SCALPEL && playingSpeech && !sound.isSpeechPlaying())
 			people._portrait._frameNumber = -1;
 
 		scene.doBgAnim();
@@ -890,7 +890,7 @@ int Talk::waitForMore(int delay) {
 	} while (!_vm->shouldQuit() && key2 == 254 && (delay || (playingSpeech && sound.isSpeechPlaying()))
 		&& !events._released && !events._rightReleased);
 
-	// If voices was set 2 to indicate a voice file was place, then reset it back to 1
+	// If voices was set 2 to indicate a Scalpel voice file was playing, then reset it back to 1
 	if (sound._voices == 2)
 		sound._voices = 1;
 

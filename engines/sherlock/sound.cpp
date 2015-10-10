@@ -141,7 +141,7 @@ bool Sound::playSound(const Common::String &name, WaitType waitType, int priorit
 		}
 	}
 
-	Audio::SoundHandle soundHandle = (IS_SERRATED_SCALPEL) ? _scalpelEffectsHandle : getFreeSoundHandle();
+	Audio::SoundHandle &soundHandle = (IS_SERRATED_SCALPEL) ? _scalpelEffectsHandle : getFreeSoundHandle();
 	if (!playSoundResource(filename, libraryFilename, Audio::Mixer::kSFXSoundType, soundHandle))
 		error("Could not find sound resource - %s", filename.c_str());
 
@@ -222,7 +222,7 @@ void Sound::freeDigiSound() {
 	_soundPlaying = false;
 }
 
-Audio::SoundHandle Sound::getFreeSoundHandle() {
+Audio::SoundHandle &Sound::getFreeSoundHandle() {
 	for (int i = 0; i < MAX_MIXER_CHANNELS; i++) {
 		if (!_mixer->isSoundHandleActive(_tattooEffectsHandle[i]))
 			return _tattooEffectsHandle[i];
@@ -238,12 +238,10 @@ void Sound::setVolume(int volume) {
 void Sound::playSpeech(const Common::String &name) {
 	Resources &res = *_vm->_res;
 	Scene &scene = *_vm->_scene;
-	stopSpeech();
-
-	// TODO: Technically Scalpel has an sfx command which I've set to call this method because it sets the
-	// _voice variable as if it were speech. Need to do a play-through of Scalpel and see if it's ever called.
-	// If so, will need to enhance this method to handle the Serrated Scalpel voice resources
 	assert(IS_ROSE_TATTOO);
+
+	// Stop any previously playing speech
+	stopSpeech();
 
 	// Figure out which speech library to use
 	Common::String libraryName = Common::String::format("speech%02d.lib", scene._currentScene);
@@ -264,12 +262,22 @@ void Sound::playSpeech(const Common::String &name) {
 }
 
 void Sound::stopSpeech() {
-	_mixer->stopHandle(_speechHandle);
+	if (IS_SERRATED_SCALPEL) {
+		_mixer->stopHandle(_scalpelEffectsHandle);
+	} else {
+		_mixer->stopHandle(_speechHandle);
+	}
 	_speechPlaying = false;
 }
 
 bool Sound::isSpeechPlaying() {
 	_speechPlaying = _mixer->isSoundHandleActive(_speechHandle);
+
+	if (IS_SERRATED_SCALPEL) {
+		_soundPlaying = _mixer->isSoundHandleActive(_scalpelEffectsHandle);
+		return _soundPlaying;
+	}
+
 	return _speechPlaying;
 }
 

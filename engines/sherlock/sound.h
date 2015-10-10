@@ -116,8 +116,14 @@ public:
 
 	void freeDigiSound();
 
-	Audio::SoundHandle getFreeSoundHandle();
+	/**
+	 * Return a sound handle to use
+	 */
+	Audio::SoundHandle &getFreeSoundHandle();
 
+	/**
+	 * Set the volume
+	 */
 	void setVolume(int volume);
 
 	/**
