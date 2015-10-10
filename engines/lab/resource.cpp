@@ -145,13 +145,6 @@ bool Resource::readViews(uint16 roomNum) {
 	Rooms[roomNum].EastView = readView(dataFile);
 	Rooms[roomNum].WestView = readView(dataFile);
 	Rooms[roomNum].RuleList = readRule(dataFile);
-	/*warning("Room %d, msg %s, north %s, south %s, east %s, west %s",
-		Rooms[roomNum].RoomMsg,
-		Rooms[roomNum].NorthView->GraphicName,
-		Rooms[roomNum].SouthView->GraphicName,
-		Rooms[roomNum].EastView->GraphicName,
-		Rooms[roomNum].WestView->GraphicName
-	);*/
 
 	g_music->updateMusic();
 
@@ -203,6 +196,7 @@ int16 *Resource::readConditions(Common::File *file) {
 Rule *Resource::readRule(Common::File *file) {
 	char c;
 	Rule *rule = NULL;
+	Rule *prev = NULL;
 	Rule *head = NULL;
 
 	do {
@@ -212,15 +206,15 @@ Rule *Resource::readRule(Common::File *file) {
 			rule = (Rule *)malloc(sizeof(Rule));
 			if (!head)
 				head = rule;
+			if (prev)
+				prev->NextRule = rule;
 			rule->RuleType = file->readSint16LE();
 			rule->Param1 = file->readSint16LE();
 			rule->Param2 = file->readSint16LE();
 			rule->Condition = readConditions(file);
-			rule->NextRule = NULL;
-			if (!rule->Condition)
-				return head;
 			rule->ActionList = readAction(file);
-			rule = rule->NextRule;
+			rule->NextRule = NULL;
+			prev = rule;
 		}
 	} while (c == 1);
 
@@ -230,6 +224,7 @@ Rule *Resource::readRule(Common::File *file) {
 Action *Resource::readAction(Common::File *file) {
 	char c;
 	Action *action = NULL;
+	Action *prev = NULL;
 	Action *head = NULL;
 	char **messages;
 
@@ -240,6 +235,8 @@ Action *Resource::readAction(Common::File *file) {
 			action = (Action *)malloc(sizeof(Action));
 			if (!head)
 				head = action;
+			if (prev)
+				prev->NextAction = action;
 			action->ActionType = file->readSint16LE();
 			action->Param1 = file->readSint16LE();
 			action->Param2 = file->readSint16LE();
@@ -257,7 +254,7 @@ Action *Resource::readAction(Common::File *file) {
 			}
 
 			action->NextAction = NULL;
-			action = action->NextAction;
+			prev = action;
 		}
 	} while (c == 1);
 
@@ -266,28 +263,30 @@ Action *Resource::readAction(Common::File *file) {
 
 CloseData *Resource::readCloseUps(uint16 depth, Common::File *file) {
 	char c;
-	CloseData *closeups = NULL;
+	CloseData *closeup = NULL;
+	CloseData *prev = NULL;
 	CloseData *head = NULL;
 
 	do {
 		c = file->readByte();
 
 		if (c != '\0') {
-			closeups = (CloseData *)malloc(sizeof(CloseData));
+			closeup = (CloseData *)malloc(sizeof(CloseData));
 			if (!head)
-				head = closeups;
-			closeups->x1 = file->readUint16LE();
-			closeups->y1 = file->readUint16LE();
-			closeups->x2 = file->readUint16LE();
-			closeups->y2 = file->readUint16LE();
-			closeups->CloseUpType = file->readSint16LE();
-			closeups->depth = depth;
-			closeups->GraphicName = readString(file);
-			closeups->Message = readString(file);
-			closeups->NextCloseUp = NULL;
-			if (!(closeups->SubCloseUps = readCloseUps(depth + 1, file)))
-				return head;
-			closeups = closeups->NextCloseUp;
+				head = closeup;
+			if (prev)
+				prev->NextCloseUp = closeup;
+			closeup->x1 = file->readUint16LE();
+			closeup->y1 = file->readUint16LE();
+			closeup->x2 = file->readUint16LE();
+			closeup->y2 = file->readUint16LE();
+			closeup->CloseUpType = file->readSint16LE();
+			closeup->depth = depth;
+			closeup->GraphicName = readString(file);
+			closeup->Message = readString(file);
+			closeup->SubCloseUps = readCloseUps(depth + 1, file);
+			closeup->NextCloseUp = NULL;
+			prev = closeup;
 		}
 	} while (c != '\0');
 	
@@ -297,6 +296,7 @@ CloseData *Resource::readCloseUps(uint16 depth, Common::File *file) {
 viewData *Resource::readView(Common::File *file) {
 	char c;
 	viewData *view = NULL;
+	viewData *prev = NULL;
 	viewData *head = NULL;
 
 	do {
@@ -306,13 +306,13 @@ viewData *Resource::readView(Common::File *file) {
 			view = (viewData *)malloc(sizeof(viewData));
 			if (!head)
 				head = view;
+			if (prev)
+				prev->NextCondition = view;
 			view->Condition = readConditions(file);
-			if (!view->Condition)
-				return head;
 			view->GraphicName = readString(file);
 			view->closeUps = readCloseUps(0, file);
 			view->NextCondition = NULL;
-			view = view->NextCondition;
+			prev = view;
 		}
 	} while (c == 1);
 
