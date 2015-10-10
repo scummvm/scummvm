@@ -1298,9 +1298,11 @@ void ScalpelUserInterface::doMainControl() {
 		// Keyboard control
 		_keyboardInput = true;
 
-		if (_keyPress >= 'A' && _keyPress <= 'Z') {
-			const char *c = strchr(commands, _keyPress);
-			_temp = !c ? 12 : c - commands;
+		char key = toupper(_keyPress);
+		const char *c = strchr(commands, key);
+		if (c) {
+			_temp = c - commands;
+			_key = key;
 		} else {
 			_temp = 12;
 		}
