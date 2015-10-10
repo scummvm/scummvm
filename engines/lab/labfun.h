@@ -155,14 +155,6 @@ Common::File *openPartial(const char *name);
 void closePartial(int32 File);
 
 /*---------------------------*/
-/*------ From LabText.c -----*/
-/*---------------------------*/
-
-bool initLabText();
-void freeLabText();
-void decrypt(byte *text);
-
-/*---------------------------*/
 /*----- From LabMusic.c -----*/
 /*---------------------------*/
 
