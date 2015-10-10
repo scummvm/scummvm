@@ -46,12 +46,14 @@ MADSEngine::MADSEngine(OSystem *syst, const MADSGameDescription *gameDesc) :
 	_musicFlag = true;
 	_soundFlag = true;
 	_dithering = false;
+	_disableFastwalk = false;
 
 	_debugger = nullptr;
 	_dialogs = nullptr;
 	_events = nullptr;
 	_font = nullptr;
 	_game = nullptr;
+	_gameConv = nullptr;
 	_palette = nullptr;
 	_resources = nullptr;
 	_sound = nullptr;
@@ -65,6 +67,7 @@ MADSEngine::~MADSEngine() {
 	delete _font;
 	Font::deinit();
 	delete _game;
+	delete _gameConv;
 	delete _palette;
 	delete _resources;
 	delete _sound;
@@ -95,6 +98,14 @@ void MADSEngine::initialize() {
 	_sound = new SoundManager(this, _mixer);
 	_audio = new AudioPlayer(_mixer, getGameID());
 	_game = Game::init(this);
+
+	switch (getGameID()) {
+	case GType_RexNebular:
+		_gameConv = nullptr;
+		break;
+	default:
+		_gameConv = new GameConversation(this);
+	}
 
 	loadOptions();
 

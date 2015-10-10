@@ -81,6 +81,8 @@ Player::Player(MADSEngine *vm)
 	_walkOffScreen = 0;
 	_walkOffScreenSceneId = -1;
 	_forcePrefix = false;
+	_commandsAllowed = false;
+	_enableAtTarget = false;
 
 	Common::fill(&_stopWalkerList[0], &_stopWalkerList[12], 0);
 	Common::fill(&_stopWalkerTrigger[0], &_stopWalkerTrigger[12], 0);
@@ -798,4 +800,18 @@ void Player::removePlayerSprites() {
 	_visible = false;
 }
 
+void Player::firstWalk(Common::Point fromPos, Facing fromFacing, Common::Point destPos, Facing destFacing, bool enableFl) {
+	_playerPos = fromPos;
+	_facing = fromFacing;
+
+	walk(destPos, destFacing);
+	_walkAnywhere = true;
+
+	_commandsAllowed = false;
+	_enableAtTarget = enableFl;
+}
+
+void Player::setWalkTrigger(int val) {
+	warning("TODO: Player::setWalkTrigger");
+}
 } // End of namespace MADS

@@ -55,8 +55,20 @@ public:
 
 class Scene101 : public Scene1xx {
 private:
-	// TODO
-
+	int _execute_chan;
+	int _execute_wipe;
+	int _brie_calling_position;
+	int _brie_chandelier_position;
+	int _brie_calling_frame;
+	int _brie_chandelier_frame;
+	int _talk_count;
+	int _dynamic_brie;
+	int _dynamic_brie_2;
+	bool _start_walking;
+	bool _start_walking_0;
+	bool _anim_0_running;
+	bool _anim_1_running;
+	bool _start_sitting_down;
 public:
 	Scene101(MADSEngine *vm);
 	virtual void synchronize(Common::Serializer &s);

@@ -22,6 +22,7 @@
 
 #include "common/scummsys.h"
 #include "mads/mads.h"
+#include "mads/conversations.h"
 #include "mads/scene.h"
 #include "mads/phantom/phantom_scenes.h"
 #include "mads/phantom/phantom_scenes1.h"
@@ -117,30 +118,129 @@ void Scene1xx::setPlayerSpritesPrefix() {
 /*------------------------------------------------------------------------*/
 
 Scene101::Scene101(MADSEngine *vm) : Scene1xx(vm) {
-
+	_execute_chan = -1;
+	_execute_wipe = -1;
+	_brie_calling_position = -1;
+	_brie_chandelier_position = -1;
+	_brie_calling_frame = -1;
+	_brie_chandelier_frame = -1;
+	_talk_count = -1;
+	_dynamic_brie = 0;
+	_dynamic_brie_2 = 0;
+	_start_walking = false;
+	_start_walking_0 = false;
+	_anim_0_running = false;
+	_anim_1_running = false;
+	_start_sitting_down = false;
 }
 
 void Scene101::synchronize(Common::Serializer &s) {
 	Scene1xx::synchronize(s);
+	s.syncAsSint16LE(_execute_chan);
+	s.syncAsSint16LE(_execute_wipe);
+	s.syncAsSint16LE(_brie_calling_position);
+	s.syncAsSint16LE(_brie_chandelier_position);
+	s.syncAsSint16LE(_brie_calling_frame);
+	s.syncAsSint16LE(_brie_chandelier_frame);
+	s.syncAsSint16LE(_talk_count);
+	s.syncAsSint16LE(_dynamic_brie);
+	s.syncAsSint16LE(_dynamic_brie_2);
+	s.syncAsByte(_start_walking);
+	s.syncAsByte(_start_walking_0);
+	s.syncAsByte(_anim_0_running);
+	s.syncAsByte(_anim_1_running);
+	s.syncAsByte(_start_sitting_down);
 }
 
 void Scene101::setup() {
 	setPlayerSpritesPrefix();
 	setAAName();
+	_scene->addActiveVocab(NOUN_MONSIEUR_BRIE);
 }
 
 void Scene101::enter() {
-	// TODO
+	_vm->_disableFastwalk = true;
+
+	if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
+		_execute_chan         = -1;
+		_execute_wipe         = -1;
+		_start_walking        = false;
+		_start_walking_0      = false;
+		_anim_0_running       = true;
+		_anim_1_running       = false;
+		_start_sitting_down = false;
+	}
+
+	// Load Dialogs
+	_vm->_gameConv->get(0);
+	_vm->_gameConv->get(1);
 
 	if (_globals[kCurrentYear] == 1993) {
 		_globals._spriteIndexes[0] = _scene->_sprites.addSprites(formAnimName('z', -1));
-		// TODO
-		//_scene->_sequences.setDepth(_globals._sequenceIndexes[0], 14);
+		_globals._sequenceIndexes[0] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[0], false, 1);
+		_scene->_sequences.setDepth(_globals._sequenceIndexes[0], 14);
 	} else {
-		// TODO
+		_scene->_hotspots.activate(NOUN_CHANDELIER, false);
 	}
 
-	// TODO
+	if (_globals[kBrieTalkStatus] == 0) {
+		_game._player.firstWalk(Common::Point(-20, 75), FACING_EAST, Common::Point(18, 79), FACING_EAST, true);
+		_brie_calling_position = 0;
+		_brie_chandelier_position = 3;
+		_game._player.setWalkTrigger(50);
+
+		_scene->loadAnimation(formAnimName('b', 9), 1, 1);
+		_scene->loadAnimation(formAnimName('b', 8), 1, 0);
+
+		_anim_0_running  = true;
+		_anim_1_running  = true;
+
+		_dynamic_brie = _scene->_dynamicHotspots.add(NOUN_MONSIEUR_BRIE, VERB_WALKTO, SYNTAX_SINGULAR_MASC, -1, Common::Rect(0, 0, 0, 0));
+		_scene->_dynamicHotspots[_dynamic_brie]._articleNumber = PREP_ON;
+		_scene->_dynamicHotspots.setPosition(_dynamic_brie, Common::Point(490, 119), FACING_NONE);
+		_scene->setDynamicAnim(_dynamic_brie, 0, 0);
+		_scene->setDynamicAnim(_dynamic_brie, 0, 1);
+		_scene->setDynamicAnim(_dynamic_brie, 0, 2);
+		_scene->setDynamicAnim(_dynamic_brie, 0, 3);
+		_scene->setDynamicAnim(_dynamic_brie, 0, 4);
+
+		_dynamic_brie_2 = _scene->_dynamicHotspots.add(NOUN_MONSIEUR_BRIE, VERB_WALKTO, SYNTAX_SINGULAR_MASC, -1, Common::Rect(0, 0, 0, 0));
+		_scene->_dynamicHotspots[_dynamic_brie_2]._articleNumber = PREP_ON;
+		_scene->_dynamicHotspots.setPosition(_dynamic_brie_2, Common::Point(25, 80), FACING_NONE);
+		_scene->setDynamicAnim(_dynamic_brie_2, 1, 1);
+		_scene->setDynamicAnim(_dynamic_brie_2, 1, 2);
+
+		_talk_count = 0;
+	} else if (_globals[kBrieTalkStatus] == 1) {
+		_scene->loadAnimation(formAnimName('b', 9), 1, 1);
+		_dynamic_brie = _scene->_dynamicHotspots.add(NOUN_MONSIEUR_BRIE, VERB_WALKTO, SYNTAX_SINGULAR_MASC, -1, Common::Rect(0, 0, 0, 0));
+		_scene->_dynamicHotspots[_dynamic_brie]._articleNumber = PREP_ON;
+		_scene->setDynamicAnim(_dynamic_brie, 1, 1);
+		_scene->setDynamicAnim(_dynamic_brie, 1, 2);
+		_anim_1_running = true;
+		_talk_count = 0;
+		_brie_chandelier_position = 3;
+
+		if (_vm->_gameConv->_restoreRunning == 1) {
+			_vm->_gameConv->run(1);
+			_vm->_gameConv->exportPointer(&_globals[kPlayerScore]);
+			_brie_chandelier_position = 4;
+			if (_scene->_animation[1])
+				_scene->_animation[1]->setCurrentFrame(25);
+		}
+	} else {
+		if (_scene->_priorSceneId == 202) {
+			if (_globals[kJacquesStatus] == 1)
+				_globals[kJacquesStatus] = 2;
+
+			_game._player.firstWalk(Common::Point(-20, 75), FACING_EAST, Common::Point(18, 79), FACING_EAST, true);
+		} else if ((_scene->_priorSceneId == 102) || (_scene->_priorSceneId != RETURNING_FROM_LOADING)) {
+			_game._player.firstWalk(Common::Point(655, 130), FACING_WEST, Common::Point(625, 127), FACING_WEST, true);
+			_scene->setCamera(Common::Point(320, 0));
+		}
+	}
+
+	sceneEntrySound();
 }
 
 void Scene101::step() {

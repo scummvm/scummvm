@@ -52,6 +52,11 @@ DynamicHotspots::DynamicHotspots(MADSEngine *vm) : _vm(vm) {
 	_count = 0;
 }
 
+int DynamicHotspots::add(int descId, int verbId, int syntax, int seqIndex, const Common::Rect &bounds) {
+	warning("TODO: DynamicHotspots::add(5 params))");
+	return add(descId, verbId, seqIndex, bounds);
+}
+
 int DynamicHotspots::add(int descId, int verbId, int seqIndex, const Common::Rect &bounds) {
 	// Find a free slot
 	uint idx = 0;

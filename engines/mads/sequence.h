@@ -125,6 +125,8 @@ public:
 	void setMsgLayout(int seqIndex);
 	void setDone(int seqIndex);
 	void setMotion(int seqIndex, int flags, int deltaX, int deltaY);
+
+	int addStampCycle(int srcSpriteIdx, bool flipped, int sprite);
 };
 
 } // End of namespace MADS

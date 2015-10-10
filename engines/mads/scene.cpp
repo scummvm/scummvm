@@ -744,4 +744,11 @@ void Scene::synchronize(Common::Serializer &s) {
 	_dynamicHotspots.synchronize(s);
 }
 
+void Scene::setDynamicAnim(int id, int anim_id, int segment) {
+	warning("TODO: Scene::setDynamicAnim");
+}
+
+void Scene::setCamera(Common::Point pos) {
+	warning("TODO: Scene::setCamera");
+}
 } // End of namespace MADS

@@ -26,6 +26,7 @@ MODULE_OBJS := \
 	assets.o \
 	audio.o \
 	compression.o \
+	conversations.o \
 	debugger.o \
 	detection.o \
 	dialogs.o \

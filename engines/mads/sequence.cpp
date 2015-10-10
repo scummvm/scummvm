@@ -550,4 +550,9 @@ void SequenceList::setMotion(int seqIndex, int flags, int deltaX, int deltaY) {
 	se._posAccum.x = se._posAccum.y = 0;
 }
 
+int SequenceList::addStampCycle(int srcSpriteIdx, bool flipped, int sprite) {
+	warning("TODO: SequenceList::addStampCycle");
+	return -1;
+}
+
 } // End of namespace

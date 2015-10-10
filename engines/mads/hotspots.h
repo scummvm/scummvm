@@ -56,6 +56,16 @@ public:
 
 #define DYNAMIC_HOTSPOTS_SIZE 8
 
+#define SYNTAX_SINGULAR               0
+#define SYNTAX_PLURAL                 1
+#define SYNTAX_PARTITIVE              2
+#define SYNTAX_SINGULAR_MASC          3
+#define SYNTAX_SINGULAR_FEM           4
+#define SYNTAX_SINGULAR_LIVING        5
+#define SYNTAX_MASC_NOT_PROPER        6
+#define SYNTAX_FEM_NOT_PROPER         7
+#define MAX_SYNTAX                    8
+
 class DynamicHotspots {
 private:
 	MADSEngine *_vm;
@@ -68,6 +78,7 @@ public:
 
 	Common::Array<MADS::DynamicHotspot>::size_type size() const { return _entries.size(); }
 	DynamicHotspot &operator[](uint idx) { return _entries[idx]; }
+	int add(int descId, int verbId, int syntax, int seqIndex, const Common::Rect &bounds);
 	int add(int descId, int verbId, int seqIndex, const Common::Rect &bounds);
 	int setPosition(int index, const Common::Point &pos, Facing facing);
 	int setCursor(int index, CursorType cursor);

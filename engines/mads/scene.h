@@ -248,6 +248,9 @@ public:
 	* Synchronize the game
 	*/
 	void synchronize(Common::Serializer &s);
+
+	void setDynamicAnim(int id, int anim_id, int segment);
+	void setCamera(Common::Point pos);
 };
 
 } // End of namespace MADS
