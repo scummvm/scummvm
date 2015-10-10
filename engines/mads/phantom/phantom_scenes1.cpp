@@ -67,10 +67,9 @@ void Scene1xx::sceneEntrySound() {
 			break;
 
 		case 104:
-			if (_scene->_priorSceneId == 301) {
-				warning("TODO: Add check on Conversation restore running == 7");
+			if ((_vm->_gameConv->_restoreRunning == 7) || (_scene->_priorSceneId == 301)) {
 				_vm->_sound->command(33);
-			} else if ((_globals[kRoom103104Transition] == 0) && !_globals[kObservedPhan104]) {
+			} else if (!_globals[kRoom103104Transition] && !_globals[kObservedPhan104]) {
 				_vm->_sound->command(37);
 				_globals[kObservedPhan104] = true;
 			} else
@@ -228,16 +227,13 @@ void Scene101::enter() {
 			if (_scene->_animation[1])
 				_scene->_animation[1]->setCurrentFrame(25);
 		}
-	} else {
-		if (_scene->_priorSceneId == 202) {
-			if (_globals[kJacquesStatus] == 1)
-				_globals[kJacquesStatus] = 2;
-
-			_game._player.firstWalk(Common::Point(-20, 75), FACING_EAST, Common::Point(18, 79), FACING_EAST, true);
-		} else if ((_scene->_priorSceneId == 102) || (_scene->_priorSceneId != RETURNING_FROM_LOADING)) {
-			_game._player.firstWalk(Common::Point(655, 130), FACING_WEST, Common::Point(625, 127), FACING_WEST, true);
-			_scene->setCamera(Common::Point(320, 0));
-		}
+	} else if (_scene->_priorSceneId == 202) {
+		if (_globals[kJacquesStatus] == 1)
+			_globals[kJacquesStatus] = 2;
+		_game._player.firstWalk(Common::Point(-20, 75), FACING_EAST, Common::Point(18, 79), FACING_EAST, true);
+	} else if ((_scene->_priorSceneId == 102) || (_scene->_priorSceneId != RETURNING_FROM_LOADING)) {
+		_game._player.firstWalk(Common::Point(655, 130), FACING_WEST, Common::Point(625, 127), FACING_WEST, true);
+		_scene->setCamera(Common::Point(320, 0));
 	}
 
 	sceneEntrySound();
