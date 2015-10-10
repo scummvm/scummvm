@@ -11,13 +11,11 @@ MODULE_OBJS := \
 	labfile.o \
 	labmusic.o \
 	labsets.o \
-	labtext.o \
 	machine.o \
 	map.o \
 	mouse.o \
 	processroom.o \
 	readdiff.o \
-	readparse.o \
 	resource.o \
 	savegame.o \
 	special.o \

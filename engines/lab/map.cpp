@@ -74,7 +74,11 @@ void setAmigaPal(uint16 *pal, uint16 numcolors) {
 	writeColorRegsSmooth(vgapal, 0, 16);
 }
 
-
+void decrypt(byte *text) {
+	while (text && *text != '\0') {
+		*text++ -= (byte)95;
+	}
+}
 
 /*****************************************************************************/
 /* Gets a chunk of text and puts it into the graphics memory.                */
@@ -813,7 +817,7 @@ void processMap(uint16 CurRoom) {
 
 					if (OldMsg != CurMsg) {
 						if (Rooms[CurMsg].RoomMsg == NULL)
-							readViews(CurMsg);
+							g_resource->readViews(CurMsg);
 
 						if ((sptr = Rooms[CurMsg].RoomMsg)) {
 							mouseHide();

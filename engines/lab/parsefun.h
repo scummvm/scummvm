@@ -48,12 +48,6 @@ bool initRoomBuffer();
 void freeRoomBuffer();
 void allocRoom(void **Ptr, uint16 Size, uint16 RoomNum);
 
-/* From ReadParse.c */
-
-bool readRoomData(const char *fileName);
-bool readInventory(const char *fileName);
-bool readViews(uint16 RoomNum);
-
 
 /* From ProcessRoom.c */
 

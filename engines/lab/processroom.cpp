@@ -108,7 +108,7 @@ ViewDataPtr getViewData(uint16 roomNum, uint16 direction) {
 		VPtr = &Rooms[roomNum].WestView;
 
 	if (*VPtr == NULL)
-		readViews(roomNum);
+		g_resource->readViews(roomNum);
 
 	ViewPtr = *VPtr;
 
@@ -640,7 +640,7 @@ static bool doActionRuleSub(int16 action, int16 roomNum, CloseDataPtr LCPtr, Clo
 		RPtr = Rooms[roomNum].RuleList;
 
 		if ((RPtr == NULL) && (roomNum == 0)) {
-			readViews(roomNum);
+			g_resource->readViews(roomNum);
 			RPtr = Rooms[roomNum].RuleList;
 		}
 
@@ -702,7 +702,7 @@ static bool doOperateRuleSub(int16 ItemNum, int16 roomNum, CloseDataPtr LCPtr, C
 			RPtr = Rooms[roomNum].RuleList;
 
 			if ((RPtr == NULL) && (roomNum == 0)) {
-				readViews(roomNum);
+				g_resource->readViews(roomNum);
 				RPtr = Rooms[roomNum].RuleList;
 			}
 
