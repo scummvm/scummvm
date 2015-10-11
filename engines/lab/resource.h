@@ -98,6 +98,7 @@ public:
 	Resource();
 	~Resource() {}
 
+	Common::File *openDataFile(const char * fileName, uint32 fileHeader);
 	bool readRoomData(const char *fileName);
 	bool readInventory(const char *fileName);
 	bool readViews(uint16 roomNum);
@@ -105,7 +106,6 @@ public:
 	Common::String getStaticText(byte index) const { return _staticText[index]; }
 
 private:
-	Common::File *openDataFile(const char * fileName, uint32 fileHeader);
 	char *readString(Common::File *file);
 	int16 *readConditions(Common::File *file);
 	Rule *readRule(Common::File *file);
