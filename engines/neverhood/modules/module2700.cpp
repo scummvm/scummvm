@@ -773,7 +773,7 @@ void Scene2702::moveCarToPoint(NPoint pt) {
 			sendMessage(_asCar, 0x2003, _trackPoints->size() - 1);
 	} else {
 		_newTrackIndex = -1;
-		sendMessage(_asCar, 0x2004, pt.x);
+		sendMessage(_asCar, 0x2004, pt);
 	}
 }
 
@@ -1099,7 +1099,7 @@ void Scene2706::moveCarToPoint(NPoint pt) {
 			sendMessage(_asCar, 0x2003, 0);
 	} else {
 		_newTrackIndex = -1;
-		sendMessage(_asCar, 0x2004, pt.x);
+		sendMessage(_asCar, 0x2004, pt);
 	}
 }
 
