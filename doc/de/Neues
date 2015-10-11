@@ -17,7 +17,7 @@ Sie auf Englisch unter:
 
  AGI:
    - Es ist nun möglich, die Maus-Unterstützung zu deaktivieren (außer bei
-Amiga-Versionen und Fan-Spielen, die eine Maus benötigen).
+     Amiga-Versionen und Fan-Spielen, die eine Maus benötigen).
    - Fehlerhafte Lautstärke-Dämpfung im PCjr-Sound-Code behoben (Fehler #6858).
 
  AGOS:
@@ -26,6 +26,8 @@ Amiga-Versionen und Fan-Spielen, die eine Maus benötigen).
    - Verb-Feld in der Amiga-Version von Simon the Sorcerer 1 repariert.
    - Accolade AdLib- und MT32-Treiber für folgende Spiele hinzugefügt:
      Elvira 1, Elvira 2, Waxworks und Simon the Sorcerer 1 (Demoversion)
+   - AdLib-Ausgabe in Simon the Sorcerer 1 hinzugefügt. Dies verbessert die AdLib-
+     Ausgabe erheblich und erhöht die Originaltreue.
 
  Baphomets Fluch 1:
    - Erkennung der Byte-Reihenfolge der Sprachausgabe auf Big-Endian-Systemen
@@ -34,6 +36,9 @@ Amiga-Versionen und Fan-Spielen, die eine Maus benötigen).
      das Spiel in der Szene am Bull's Head Hill befindet, behoben
      (Fehler #6728). Dieser Fehler trat womöglich auch in anderen Szenen auf.
 
+ CinE:
+   - Unterstützung für Musik in der CD-Version von Future Wars hinzugefügt.
+ 
  MADE:
    - Unterstützung für AdLib-Musik in Return to Zork verbessert.
 
