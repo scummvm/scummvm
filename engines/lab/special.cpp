@@ -415,10 +415,6 @@ static void changeTile(uint16 col, uint16 row) {
 	if (scrolltype != -1) {
 		doTileScroll(col, row, scrolltype);
 
-#if defined(LABDEMO)
-		return;
-#endif
-
 		if (g_lab->getFeatures() & GF_WINDOWS_TRIAL) {
 			GUI::MessageDialog trialMessage("This puzzle is not available in the trial version of the game");
 			trialMessage.runModal();
@@ -1101,57 +1097,5 @@ void doMonitor(char *background, char *textfile, bool isinteractive, uint16 x1, 
 	rectFill(0, 0, VGAScreenWidth - 1, VGAScreenHeight - 1);
 	blackAllScreen();
 }
-
-#if defined(LABDEMO)
-void doTrialBlock() {
-	IntuiMessage *Msg;
-
-	uint32 Class;
-	uint16 Qualifier, MouseX, MouseY, Code, Temp;
-	int i;
-
-	loadBackPict("P:Warning", false);
-	mouseShow();
-
-	VGASetPal(diffcmap, 256);
-	memcpy(g_CommonPalette, diffcmap, 3 * 256);
-
-	while (1) {
-		g_music->updateMusic();  /* Make sure we check the music at least after every message */
-		Msg = getMsg();
-
-		if (Msg == NULL) {
-			g_music->updateMusic();
-		} else {
-			Class     = Msg->Class;
-			Qualifier = Msg->Qualifier;
-			MouseX    = Msg->MouseX;
-			MouseY    = Msg->MouseY;
-			Code      = Msg->Code;
-
-			if (((Class == MOUSEBUTTONS) && (IEQUALIFIER_RBUTTON & Qualifier)) ||
-			        ((Class == RAWKEY) && (Code == 27)))
-				return;
-
-			if ((Class == MOUSEBUTTONS) && (IEQUALIFIER_LEFTBUTTON & Qualifier)) {
-				if (MouseY > 399) {
-					// click on control panel, exit
-					break;
-				}
-
-				if (MouseX >= 0 && MouseX <= 319 && MouseY >= 0 && MouseY <= 399) {
-					extern void getItNow();
-					getItNow();
-				} else if (MouseX >= 320 && MouseX <= 639 && MouseY >= 0 && MouseY <= 399) {
-					break;
-				}
-			}
-		}
-	}
-
-	eatMessages();
-	mouseHide();
-}
-#endif
 
 } // End of namespace Lab
