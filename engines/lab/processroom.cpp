@@ -440,23 +440,6 @@ static void doActions(ActionPtr APtr, CloseDataPtr *LCPtr) {
 			break;
 
 		case SETPOSITION:
-#if defined(LABDEMO)
-
-			// if teleporting to room 45 or 49
-			if (APtr->Param1 == 45 || APtr->Param1 == 49) {
-				extern void doTrialBlock();
-
-				// Time to pay up!
-				doTrialBlock();
-
-				CurFileName = getPictName(LCPtr);
-				readPict(CurFileName, true);
-
-				APtr = NULL;
-				continue;
-			}
-
-#endif
 			if (APtr->Param1 & 0x8000) {
 				// This is a Wyrmkeep Windows trial version, thus stop at this
 				// point, since we can't check for game payment status
