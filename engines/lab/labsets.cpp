@@ -30,6 +30,7 @@
 
 #include "lab/stddefines.h"
 #include "lab/labfun.h"
+#include "lab/resource.h"
 
 namespace Lab {
 
@@ -57,29 +58,19 @@ void LargeSet::exclElement(uint16 element) {
 }
 
 bool LargeSet::readInitialConditions(const char *fileName) {
-	byte **file;
-	uint16 many, set;
-	char temp[5];
+	Common::File *file;
 
-	if ((file = g_music->newOpen(fileName)) != NULL) {
-		memcpy(&temp, file, 4);	file += 4;
-		temp[4] = '\0';
-
-		if (strcmp(temp, "CON0") != 0)
-			return false;
-
-		memcpy(&many, file, 2);	file += 2;
-		swapUShortPtr(&many, 1);
-
-		for (int counter = 0; counter < many; counter++) {
-			memcpy(&set, file, 2);	file += 2;
-			swapUShortPtr(&set, 1);
-			inclElement(set);
+	if (file = g_resource->openDataFile(fileName, MKTAG('C', 'O', 'N', '0'))) {
+		uint16 conditions = file->readUint16LE();
+		for (int i = 0; i < conditions; i++) {
+			inclElement(file->readUint16LE());
 		}
-	} else
-		return false;
 
-	return true;
+		delete file;
+		return true;
+	}
+
+	return false;
 }
 
 

@@ -28,10 +28,6 @@
  *
  */
 
-//#include "lab/labfun.h"
-//#include "lab/parsetypes.h"
-//#include "lab/parsefun.h"
-//#include "lab/stddefines.h"
 #include "lab/text.h"
 #include "lab/resource.h"
 
@@ -152,7 +148,7 @@ bool Resource::readViews(uint16 roomNum) {
 	return true;
 }
 
-Common::File *Resource::openDataFile(const char * fileName, uint32 fileHeader) {
+Common::File *Resource::openDataFile(const char *fileName, uint32 fileHeader) {
 	Common::File *dataFile = new Common::File();
 	dataFile->open(translateFileName(fileName));
 	if (dataFile->readUint32BE() != fileHeader) {
