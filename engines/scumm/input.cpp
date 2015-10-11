@@ -23,6 +23,7 @@
 #include "common/config-manager.h"
 #include "common/events.h"
 #include "common/system.h"
+#include "common/translation.h"
 
 #include "gui/message.h"
 #include "gui/gui-manager.h"
@@ -568,9 +569,9 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 		lastKeyHit.hasFlags(Common::KBD_CTRL)) {
 		_snapScroll ^= 1;
 		if (_snapScroll) {
-			messageDialog("Snap scroll on");
+			messageDialog(_("Snap scroll on"));
 		} else {
-			messageDialog("Snap scroll off");
+			messageDialog(_("Snap scroll off"));
 		}
 
 		if (VAR_CAMERA_FAST_X != 0xFF)
@@ -583,7 +584,7 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 			vol--;
 
 		// Display the music volume
-		ValueDisplayDialog dlg("Music volume: ", 0, 16, vol, ']', '[');
+		ValueDisplayDialog dlg(_("Music volume: "), 0, 16, vol, ']', '[');
 		vol = runDialog(dlg);
 
 		vol *= 16;
@@ -600,7 +601,7 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 			_defaultTalkDelay++;
 
 		// Display the talk speed
-		ValueDisplayDialog dlg("Subtitle speed: ", 0, 9, 9 - _defaultTalkDelay, '+', '-');
+		ValueDisplayDialog dlg(_("Subtitle speed: "), 0, 9, 9 - _defaultTalkDelay, '+', '-');
 		_defaultTalkDelay = 9 - runDialog(dlg);
 
 		// Save the new talkspeed value to ConfMan
