@@ -121,12 +121,13 @@ TattooPerson::TattooPerson() : Person() {
 	_lookHolmes = false;
 }
 
-void TattooPerson::freeAltGraphics() {
-	if (_altImages != nullptr) {
-		delete _altImages;
-		_altImages = nullptr;
-	}
+TattooPerson::~TattooPerson() {
+	delete _altImages;
+}
 
+void TattooPerson::freeAltGraphics() {
+	delete _altImages;
+	_altImages = nullptr;
 	_altSeq = 0;
 }
 

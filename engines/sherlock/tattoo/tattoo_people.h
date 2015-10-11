@@ -128,7 +128,7 @@ public:
 	bool _lookHolmes;
 public:
 	TattooPerson();
-	virtual ~TattooPerson() {}
+	virtual ~TattooPerson();
 
 	/**
 	 * Clear the NPC related data
