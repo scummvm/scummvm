@@ -251,7 +251,7 @@ void Sound::playSpeech(const Common::String &name) {
 
 	if (IS_SERRATED_SCALPEL) {
 		Common::String filename = formFilename(name);
-		if (playSoundResource(filename, nullptr, Audio::Mixer::kSFXSoundType, _speechHandle))
+		if (playSoundResource(filename, Common::String(), Audio::Mixer::kSFXSoundType, _speechHandle))
 			_speechPlaying = true;
 	} else {
 		// Figure out which speech library to use
