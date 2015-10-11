@@ -715,7 +715,8 @@ void ScalpelTalk::drawInterface() {
 
 		screen.makeButton(Common::Rect(46, CONTROLS_Y, 273, CONTROLS_Y + 10),
 			160 - fixedText_PressKeyToContinueLen / 2, fixedText_PressKeyToContinue);
-		screen.gPrint(Common::Point(160 - fixedText_PressKeyToContinueLen / 2, CONTROLS_Y), COMMAND_FOREGROUND, fixedText_PressKeyToContinueHotkey.c_str());
+		screen.gPrint(Common::Point(160 - fixedText_PressKeyToContinueLen / 2, CONTROLS_Y), COMMAND_FOREGROUND, 
+			"%s", fixedText_PressKeyToContinueHotkey.c_str());
 	}
 }
 

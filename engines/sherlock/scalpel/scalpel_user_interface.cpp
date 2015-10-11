@@ -1946,9 +1946,8 @@ void ScalpelUserInterface::printObjectDesc(const Common::String &str, bool first
 		screen.makeButton(Common::Rect(46, CONTROLS_Y, 272, CONTROLS_Y + 10),
 			(SHERLOCK_SCREEN_WIDTH - fixedText_PressKeyForMoreLen) / 2,
 			fixedText_PressKeyForMore);
-		screen.gPrint(Common::Point((SHERLOCK_SCREEN_WIDTH -
-			fixedText_PressKeyForMoreLen) / 2, CONTROLS_Y),
-			COMMAND_FOREGROUND, fixedText_PressKeyForMoreHotkey.c_str());
+		screen.gPrint(Common::Point((SHERLOCK_SCREEN_WIDTH - fixedText_PressKeyForMoreLen) / 2, CONTROLS_Y),
+			COMMAND_FOREGROUND, "%s", fixedText_PressKeyForMoreHotkey.c_str());
 		_descStr = msgP;
 	} else {
 		Common::String fixedText_PressKeyToContinue = fixedText.getText(kFixedText_PressKey_ToContinue);
@@ -1958,9 +1957,8 @@ void ScalpelUserInterface::printObjectDesc(const Common::String &str, bool first
 		screen.makeButton(Common::Rect(46, CONTROLS_Y, 272, CONTROLS_Y + 10),
 			(SHERLOCK_SCREEN_WIDTH - fixedText_PressKeyToContinueLen) / 2,
 			fixedText_PressKeyToContinue);
-		screen.gPrint(Common::Point((SHERLOCK_SCREEN_WIDTH -
-			fixedText_PressKeyToContinueLen) / 2, CONTROLS_Y),
-			COMMAND_FOREGROUND, fixedText_PressKeyToContinueHotkey.c_str());
+		screen.gPrint(Common::Point((SHERLOCK_SCREEN_WIDTH - fixedText_PressKeyToContinueLen) / 2, CONTROLS_Y),
+			COMMAND_FOREGROUND, "%s", fixedText_PressKeyToContinueHotkey.c_str());
 		_descStr = "";
 	}
 
