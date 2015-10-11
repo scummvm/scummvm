@@ -1049,6 +1049,7 @@ void StreamingImageFile::close() {
 	_stream = nullptr;
 	_frameNumber = -1;
 	_active = false;
+	_imageFrame._frame.free();
 }
 
 bool StreamingImageFile::getNextFrame() {
@@ -1078,6 +1079,9 @@ bool StreamingImageFile::getNextFrame() {
 	_imageFrame._offset.y = frameStream->readByte();
 	_imageFrame._size = frameStream->readUint16LE() - 11;
 	_imageFrame._rleMarker = frameStream->readByte();
+
+	// Free the previous frame
+	_imageFrame._frame.free();
 
 	// Decode the frame
 	if (_compressed) {
