@@ -68,6 +68,7 @@ private:
 	MidiDriver *_midiDriver;
 	Audio::SoundHandle _digitalMusicHandle;
 	MusicType _musicType;
+	byte *_midiMusicData;
 	
 	/**
 	 * Play the specified music resource

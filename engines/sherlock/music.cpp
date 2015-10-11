@@ -225,6 +225,7 @@ Music::Music(SherlockEngine *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mixer) {
 	_musicOn = false;
 	_midiOption = false;
 	_musicVolume = 0;
+	_midiMusicData = nullptr;
 
 	if (IS_3DO) {
 		// 3DO - uses digital samples for music
@@ -470,8 +471,8 @@ bool Music::playMusic(const Common::String &name) {
 			}
 		}
 
+		_midiMusicData = midiMusicData;
 		_midiParser->loadMusic(midiMusicData, midiMusicDataSize);
-
 	} else {
 		// 3DO: sample based
 		Audio::AudioStream *musicStream;
@@ -517,6 +518,8 @@ void Music::freeSong() {
 		_midiParser->unloadMusic();
 	}
 
+	delete[] _midiMusicData;
+	_midiMusicData = nullptr;
 	_musicPlaying = false;
 }
 
