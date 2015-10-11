@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2015-09-06 15:14+0200\n"
+"POT-Creation-Date: 2015-10-11 18:59+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1017,6 +1017,10 @@ msgstr ""
 msgid "Do you really want to delete this record?"
 msgstr ""
 
+#: gui/recorderdialog.cpp:174
+msgid "Unknown Author"
+msgstr ""
+
 #: gui/saveload-dialog.cpp:167
 msgid "List view"
 msgstr ""
@@ -1768,8 +1772,9 @@ msgstr ""
 #: backends/platform/symbian/src/SymbianActions.cpp:52
 #: backends/platform/wince/CEActionsPocket.cpp:44
 #: backends/platform/wince/CEActionsSmartphone.cpp:52
-#: backends/events/default/default-events.cpp:218 engines/scumm/dialogs.cpp:192
-#: engines/scumm/help.cpp:83 engines/scumm/help.cpp:85
+#: backends/events/default/default-events.cpp:218
+#: engines/scumm/dialogs.cpp:192 engines/scumm/help.cpp:83
+#: engines/scumm/help.cpp:85
 msgid "Quit"
 msgstr ""
 
@@ -3220,6 +3225,22 @@ msgstr ""
 
 #: engines/scumm/help.cpp:337
 msgid "Fly to lower right"
+msgstr ""
+
+#: engines/scumm/input.cpp:572
+msgid "Snap scroll on"
+msgstr ""
+
+#: engines/scumm/input.cpp:574
+msgid "Snap scroll off"
+msgstr ""
+
+#: engines/scumm/input.cpp:587
+msgid "Music volume: "
+msgstr ""
+
+#: engines/scumm/input.cpp:604
+msgid "Subtitle speed: "
 msgstr ""
 
 #: engines/scumm/scumm.cpp:1832

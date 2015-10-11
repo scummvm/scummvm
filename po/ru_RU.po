@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2015-09-06 15:14+0200\n"
+"POT-Creation-Date: 2015-10-11 18:59+0100\n"
 "PO-Revision-Date: 2014-07-02 17:20+0300\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian\n"
@@ -1044,6 +1044,11 @@ msgstr ""
 msgid "Do you really want to delete this record?"
 msgstr "Вы действительно хотите удалить это сохранение?"
 
+#: gui/recorderdialog.cpp:174
+#, fuzzy
+msgid "Unknown Author"
+msgstr "Неизвестная ошибка"
+
 #: gui/saveload-dialog.cpp:167
 msgid "List view"
 msgstr "Вид списка"
@@ -1829,8 +1834,9 @@ msgstr "Быстрый режим"
 #: backends/platform/symbian/src/SymbianActions.cpp:52
 #: backends/platform/wince/CEActionsPocket.cpp:44
 #: backends/platform/wince/CEActionsSmartphone.cpp:52
-#: backends/events/default/default-events.cpp:218 engines/scumm/dialogs.cpp:192
-#: engines/scumm/help.cpp:83 engines/scumm/help.cpp:85
+#: backends/events/default/default-events.cpp:218
+#: engines/scumm/dialogs.cpp:192 engines/scumm/help.cpp:83
+#: engines/scumm/help.cpp:85
 msgid "Quit"
 msgstr "Выход"
 
@@ -3334,6 +3340,25 @@ msgstr "Лететь вправо"
 #: engines/scumm/help.cpp:337
 msgid "Fly to lower right"
 msgstr "Лететь вправо-вниз"
+
+#: engines/scumm/input.cpp:572
+#, fuzzy
+msgid "Snap scroll on"
+msgstr "Плавная прокрутка"
+
+#: engines/scumm/input.cpp:574
+msgid "Snap scroll off"
+msgstr ""
+
+#: engines/scumm/input.cpp:587
+#, fuzzy
+msgid "Music volume: "
+msgstr "Громк. музыки:"
+
+#: engines/scumm/input.cpp:604
+#, fuzzy
+msgid "Subtitle speed: "
+msgstr "Скорость титров:"
 
 #: engines/scumm/scumm.cpp:1832
 #, c-format

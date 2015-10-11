@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2015-09-06 15:14+0200\n"
+"POT-Creation-Date: 2015-10-11 18:59+0100\n"
 "PO-Revision-Date: 2013-05-05 14:16+0100\n"
 "Last-Translator: Jordi Vilalta Prat <jvprat@jvprat.com>\n"
 "Language-Team: Catalan <scummvm-devel@lists.sf.net>\n"
@@ -1047,6 +1047,11 @@ msgstr ""
 msgid "Do you really want to delete this record?"
 msgstr "Realment voleu suprimir aquesta partida?"
 
+#: gui/recorderdialog.cpp:174
+#, fuzzy
+msgid "Unknown Author"
+msgstr "Error desconegut"
+
 #: gui/saveload-dialog.cpp:167
 msgid "List view"
 msgstr "Vista de llistat"
@@ -1832,8 +1837,9 @@ msgstr "Mode ràpid"
 #: backends/platform/symbian/src/SymbianActions.cpp:52
 #: backends/platform/wince/CEActionsPocket.cpp:44
 #: backends/platform/wince/CEActionsSmartphone.cpp:52
-#: backends/events/default/default-events.cpp:218 engines/scumm/dialogs.cpp:192
-#: engines/scumm/help.cpp:83 engines/scumm/help.cpp:85
+#: backends/events/default/default-events.cpp:218
+#: engines/scumm/dialogs.cpp:192 engines/scumm/help.cpp:83
+#: engines/scumm/help.cpp:85
 msgid "Quit"
 msgstr "Surt"
 
@@ -3337,6 +3343,25 @@ msgstr "Vola a la dreta"
 #: engines/scumm/help.cpp:337
 msgid "Fly to lower right"
 msgstr "Vola avall i a la dreta"
+
+#: engines/scumm/input.cpp:572
+#, fuzzy
+msgid "Snap scroll on"
+msgstr "Desplaçament suau"
+
+#: engines/scumm/input.cpp:574
+msgid "Snap scroll off"
+msgstr ""
+
+#: engines/scumm/input.cpp:587
+#, fuzzy
+msgid "Music volume: "
+msgstr "Volum de música:"
+
+#: engines/scumm/input.cpp:604
+#, fuzzy
+msgid "Subtitle speed: "
+msgstr "Velocitat de subt.:"
 
 #: engines/scumm/scumm.cpp:1832
 #, c-format
