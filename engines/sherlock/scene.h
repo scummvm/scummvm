@@ -229,7 +229,7 @@ public:
 	Common::Array<Exit> _exits;
 	SceneEntry _entrance;
 	Common::Array<SceneSound> _sounds;
-	ObjectArray _canimShapes;
+	Common::Array<Object *> _canimShapes;
 	Common::Array<ScaleZone> _scaleZones;
 	Common::StringArray _objSoundList;
 	bool _restoreFlag;
