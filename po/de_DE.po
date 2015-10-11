@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
 "POT-Creation-Date: 2015-09-06 15:14+0200\n"
-"PO-Revision-Date: 2015-10-03 11:40+0200\n"
+"PO-Revision-Date: 2015-10-11 15:49+0200\n"
 "Last-Translator: Lothar Serra Mari <scummvm@rootfather.de>\n"
 "Language-Team: Simon Sawatzki <SimSaw@gmx.de>, Lothar Serra Mari "
 "<scummvm@rootfather.de>\n"
@@ -875,7 +875,7 @@ msgstr "Musiklautstärke:"
 
 #: gui/options.cpp:968
 msgid "Mute All"
-msgstr "Alles stumm"
+msgstr "Alles aus"
 
 #: gui/options.cpp:971
 msgid "SFX volume:"
