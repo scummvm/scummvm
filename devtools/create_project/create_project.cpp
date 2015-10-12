@@ -471,6 +471,8 @@ int main(int argc, char *argv[]) {
 		// 4512 ('class' : assignment operator could not be generated)
 		//   some classes use const items and the default assignment operator cannot be generated
 		//
+		// 4577 ('noexcept' used with no exception handling mode specified)
+		//
 		// 4702 (unreachable code)
 		//   mostly thrown after error() calls (marked as NORETURN)
 		//
@@ -513,7 +515,6 @@ int main(int argc, char *argv[]) {
 		globalWarnings.push_back("4127");
 		globalWarnings.push_back("4244");
 		globalWarnings.push_back("4250");
-		globalWarnings.push_back("4267");
 		globalWarnings.push_back("4310");
 		globalWarnings.push_back("4345");
 		globalWarnings.push_back("4351");
@@ -526,6 +527,11 @@ int main(int argc, char *argv[]) {
 		globalWarnings.push_back("6211");
 		globalWarnings.push_back("6385");
 		globalWarnings.push_back("6386");
+
+		if (msvcVersion == 14) {
+			globalWarnings.push_back("4267");
+			globalWarnings.push_back("4577");
+		}
 
 		projectWarnings["agi"].push_back("4510");
 		projectWarnings["agi"].push_back("4610");

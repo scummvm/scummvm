@@ -319,8 +319,7 @@ void MSBuildProvider::outputProjectSettings(std::ofstream &project, const std::s
 		for (StringList::const_iterator i = setup.libraries.begin(); i != setup.libraries.end(); ++i)
 			libraries += *i + ".lib;";
 
-		if (_version == 14)
-		{
+		if (_version == 14) {
 			std::string debug = isRelease ? "" : "d";
 			libraries += "libvcruntime" + debug + ".lib;";
 			libraries += "libucrt" + debug + ".lib;";
@@ -383,7 +382,7 @@ void MSBuildProvider::outputGlobalPropFile(const BuildSetup &setup, std::ofstrea
 	              "\t\t\t<DisableSpecificWarnings>" << warnings << ";%(DisableSpecificWarnings)</DisableSpecificWarnings>\n"
 	              "\t\t\t<AdditionalIncludeDirectories>$(" << LIBS_DEFINE << ")\\include;.;" << prefix << ";" << prefix << "\\engines;" << (setup.tests ? prefix + "\\test\\cxxtest;" : "") << "$(TargetDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>\n"
 	              "\t\t\t<PreprocessorDefinitions>" << definesList << "%(PreprocessorDefinitions)</PreprocessorDefinitions>\n"
-	              "\t\t\t<ExceptionHandling>" << ((setup.devTools || setup.tests || _version == 14) ? "Sync" : "") << "</ExceptionHandling>\n";
+	              "\t\t\t<ExceptionHandling>" << ((setup.devTools || setup.tests) ? "Sync" : "") << "</ExceptionHandling>\n";
 
 #if NEEDS_RTTI
 	properties << "\t\t\t<RuntimeTypeInfo>true</RuntimeTypeInfo>\n";
