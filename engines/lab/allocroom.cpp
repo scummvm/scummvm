@@ -97,7 +97,14 @@ static void freeRoom(uint16 RMarker) {
 		Rooms[RoomNum].SouthView = NULL;
 		Rooms[RoomNum].EastView  = NULL;
 		Rooms[RoomNum].WestView  = NULL;
-		Rooms[RoomNum].RuleList  = NULL;
+
+		RuleList *rules = Rooms[RoomNum].rules;
+		for (RuleList::iterator rule = rules->begin(); rule != rules->end(); rule++)
+			delete *rule;
+		Rooms[RoomNum].rules->clear();
+		delete Rooms[RoomNum].rules;
+		Rooms[RoomNum].rules  = NULL;
+
 		Rooms[RoomNum].RoomMsg   = NULL;
 	}
 

@@ -101,7 +101,7 @@ bool Resource::readRoomData(const char *fileName) {
 		Rooms[i].SouthView = NULL;
 		Rooms[i].EastView = NULL;
 		Rooms[i].WestView = NULL;
-		Rooms[i].RuleList = NULL;
+		Rooms[i].rules = NULL;
 		Rooms[i].RoomMsg = NULL;
 	}
 
@@ -140,7 +140,7 @@ bool Resource::readViews(uint16 roomNum) {
 	Rooms[roomNum].SouthView = readView(dataFile);
 	Rooms[roomNum].EastView = readView(dataFile);
 	Rooms[roomNum].WestView = readView(dataFile);
-	Rooms[roomNum].RuleList = readRule(dataFile);
+	Rooms[roomNum].rules = readRule(dataFile);
 
 	g_music->updateMusic();
 
@@ -189,32 +189,25 @@ int16 *Resource::readConditions(Common::File *file) {
 	return list;
 }
 
-Rule *Resource::readRule(Common::File *file) {
+RuleList *Resource::readRule(Common::File *file) {
 	char c;
-	Rule *rule = NULL;
-	Rule *prev = NULL;
-	Rule *head = NULL;
+	RuleList *rules = new Common::List<Rule *>();
 
 	do {
 		c = file->readByte();
 
 		if (c == 1) {
-			rule = (Rule *)malloc(sizeof(Rule));
-			if (!head)
-				head = rule;
-			if (prev)
-				prev->NextRule = rule;
+			Rule *rule = new Rule();;
 			rule->RuleType = file->readSint16LE();
 			rule->Param1 = file->readSint16LE();
 			rule->Param2 = file->readSint16LE();
 			rule->Condition = readConditions(file);
 			rule->ActionList = readAction(file);
-			rule->NextRule = NULL;
-			prev = rule;
+			rules->push_back(rule);
 		}
 	} while (c == 1);
 
-	return head;
+	return rules;
 }
 
 Action *Resource::readAction(Common::File *file) {

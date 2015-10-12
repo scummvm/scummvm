@@ -108,7 +108,7 @@ public:
 private:
 	char *readString(Common::File *file);
 	int16 *readConditions(Common::File *file);
-	Rule *readRule(Common::File *file);
+	RuleList *readRule(Common::File *file);
 	Action *readAction(Common::File *file);
 	CloseData *readCloseUps(uint16 depth, Common::File *file);
 	viewData *readView(Common::File *file);
