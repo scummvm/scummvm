@@ -61,7 +61,7 @@ static TextFont bmfont;
 static char *journaltext, *journaltexttitle;
 static uint16 JPage = 0;
 static bool lastpage = false;
-static Image *JCancel, *JCancelAlt, *JLeft, *JLeftAlt, *JRight, *JRightAlt, JBackImage, ScreenImage;
+static Image JBackImage, ScreenImage;
 static uint16 JGadX[3] = { 80, 144, 194 }, JGadY[3] = { 162, 164, 162 };
 static Gadget ForwardG, CancelG, BackG;
 static bool GotBackImage = false;
@@ -602,23 +602,15 @@ static bool loadJournalData() {
 	if (!buffer)
 		return false;
 
-	readImage(buffer, &JLeft);
-	readImage(buffer, &JLeftAlt);
-	readImage(buffer, &JRight);
-	readImage(buffer, &JRightAlt);
-	readImage(buffer, &JCancel);
-	readImage(buffer, &JCancelAlt);
+	readImage(buffer, &(BackG.Im));
+	readImage(buffer, &(BackG.ImAlt));
+	readImage(buffer, &(ForwardG.Im));
+	readImage(buffer, &(ForwardG.ImAlt));
+	readImage(buffer, &(CancelG.Im));
+	readImage(buffer, &(CancelG.ImAlt));
 
-	BackG.Im = JLeft;
-	BackG.ImAlt = JLeftAlt;
 	BackG.KeyEquiv = VKEY_LTARROW;
-
-	ForwardG.Im = JRight;
-	ForwardG.ImAlt = JRightAlt;
 	ForwardG.KeyEquiv = VKEY_RTARROW;
-
-	CancelG.Im = JCancel;
-	CancelG.ImAlt = JCancelAlt;
 
 	counter = 0;
 
