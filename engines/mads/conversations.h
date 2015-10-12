@@ -44,8 +44,12 @@ public:
 
 	void get(int id);
 	void run(int id);
+	void stop();
 	void exportPointer(int *val);
+	void setHeroTrigger(int val);
+	void setInterlocutorTrigger(int val);
 
+	int _running;
 	int _restoreRunning;
 };
 

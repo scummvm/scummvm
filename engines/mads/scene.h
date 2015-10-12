@@ -245,6 +245,11 @@ public:
 	void freeAnimation();
 
 	/**
+	 * Frees any given active animation for the scene
+	 */
+	void freeAnimation(int idx);
+
+	/**
 	* Synchronize the game
 	*/
 	void synchronize(Common::Serializer &s);

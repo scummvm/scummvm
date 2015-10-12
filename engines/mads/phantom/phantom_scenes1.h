@@ -62,6 +62,7 @@ private:
 	int _brie_calling_frame;
 	int _brie_chandelier_frame;
 	int _talk_count;
+	int _converse_counter;
 	int _dynamic_brie;
 	int _dynamic_brie_2;
 	bool _start_walking;
@@ -78,6 +79,11 @@ public:
 	virtual void step();
 	virtual void preActions();
 	virtual void actions();
+
+	void handleConversation0();
+	void handleConversation1();
+	void handleAnimation0();
+	void handleAnimation1();
 };
 
 class Scene102 : public Scene1xx {

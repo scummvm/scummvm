@@ -27,7 +27,7 @@ namespace MADS {
 
 GameConversation::GameConversation(MADSEngine *vm)
 	: _vm(vm) {
-	_restoreRunning = 0;
+	_running = _restoreRunning = 0;
 }
 
 GameConversation::~GameConversation() {
@@ -41,7 +41,19 @@ void GameConversation::run(int id) {
 	warning("TODO GameConversation::run");
 }
 
+void GameConversation::stop() {
+	warning("TODO GameConversation::stop");
+}
+
 void GameConversation::exportPointer(int *val) {
 	warning("TODO GameConversation::exportPointer");
+}
+
+void GameConversation::setHeroTrigger(int val) {
+	warning("TODO: GameConversation::setHeroTrigger");
+}
+
+void GameConversation::setInterlocutorTrigger(int val) {
+	warning("TODO: GameConversation::setInterlocutorTrigger");
 }
 } // End of namespace MADS

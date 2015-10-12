@@ -614,7 +614,7 @@ void Scene::loadAnimation(const Common::String &resName, int trigger, int id) {
 	// WORKAROUND: If there's already a previous active animation used by the
 	// scene, then free it before we create the new one
 	if ((_vm->getGameID() == GType_RexNebular) && _animation[id])
-		freeAnimation();
+		freeAnimation(id);
 
 	DepthSurface depthSurface;
 	UserInterface interfaceSurface(_vm);
@@ -700,37 +700,40 @@ void Scene::resetScene() {
 }
 
 void Scene::freeAnimation() {
-	for (int j = 0; j < 10; j++) {
-		if (_animation[j]) {
-			if (j == 0) {
-				Player &player = _vm->_game->_player;
-
-				if (!_freeAnimationFlag) {
-					_spriteSlots.fullRefresh(true);
-					_sequences.scan();
-				}
-
-				// Refresh the player
-				if (player._visible) {
-					player._forceRefresh = true;
-					player.update();
-				}
-			}
-
-			// Remove any kernel messages in use by the animation
-			for (uint i = 0; i < _animation[j]->_messages.size(); ++i) {
-				int msgIndex = _animation[j]->_messages[i]._kernelMsgIndex;
-				if (msgIndex >= 0)
-					_kernelMessages.remove(msgIndex);
-			}
-
-			// Delete the animation
-			delete _animation[j];
-			_animation[j] = nullptr;
-		}
-	}
+	for (int j = 0; j < 10; j++)
+		freeAnimation(j);
 
 	_freeAnimationFlag = false;
+}
+
+void Scene::freeAnimation(int idx) {
+	if (_animation[idx]) {
+		if (idx == 0) {
+			Player &player = _vm->_game->_player;
+
+			if (!_freeAnimationFlag) {
+				_spriteSlots.fullRefresh(true);
+				_sequences.scan();
+			}
+
+			// Refresh the player
+			if (player._visible) {
+				player._forceRefresh = true;
+				player.update();
+			}
+		}
+
+		// Remove any kernel messages in use by the animation
+		for (uint i = 0; i < _animation[idx]->_messages.size(); ++i) {
+			int msgIndex = _animation[idx]->_messages[i]._kernelMsgIndex;
+			if (msgIndex >= 0)
+				_kernelMessages.remove(msgIndex);
+		}
+
+		// Delete the animation
+		delete _animation[idx];
+		_animation[idx] = nullptr;
+	}
 }
 
 void Scene::synchronize(Common::Serializer &s) {
