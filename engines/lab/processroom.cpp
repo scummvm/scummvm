@@ -615,34 +615,29 @@ static void doActions(ActionPtr APtr, CloseDataPtr *LCPtr) {
 /* Does the work for doActionRule.                                           */
 /*****************************************************************************/
 static bool doActionRuleSub(int16 action, int16 roomNum, CloseDataPtr LCPtr, CloseDataPtr *Set, bool AllowDefaults) {
-	RulePtr RPtr;
-
 	action++;
 
 	if (LCPtr) {
-		RPtr = Rooms[roomNum].RuleList;
-
-		if ((RPtr == NULL) && (roomNum == 0)) {
+		RuleList *rules = Rooms[RoomNum].rules;
+		
+		if ((rules == NULL) && (roomNum == 0)) {
 			g_resource->readViews(roomNum);
-			RPtr = Rooms[roomNum].RuleList;
+			rules = Rooms[roomNum].rules;
 		}
 
-
-		while (RPtr) {
-			if ((RPtr->RuleType == ACTION) &&
-			        ((RPtr->Param1 == action) || ((RPtr->Param1 == 0) && AllowDefaults))) {
-				if (((RPtr->Param2 == LCPtr->CloseUpType) ||
-				        ((RPtr->Param2 == 0) && AllowDefaults))
+		for (RuleList::iterator rule = rules->begin(); rule != rules->end(); rule++) {
+			if (((*rule)->RuleType == ACTION) &&
+				(((*rule)->Param1 == action) || (((*rule)->Param1 == 0) && AllowDefaults))) {
+				if ((((*rule)->Param2 == LCPtr->CloseUpType) ||
+					(((*rule)->Param2 == 0) && AllowDefaults))
 				        ||
-				        ((action == 1) && (RPtr->Param2 == (-LCPtr->CloseUpType)))) {
-					if (checkConditions(RPtr->Condition)) {
-						doActions(RPtr->ActionList, Set);
+						((action == 1) && ((*rule)->Param2 == (-LCPtr->CloseUpType)))) {
+					if (checkConditions((*rule)->Condition)) {
+						doActions((*rule)->ActionList, Set);
 						return true;
 					}
 				}
 			}
-
-			RPtr = RPtr->NextRule;
 		}
 	}
 
@@ -678,28 +673,24 @@ bool doActionRule(int16 x, int16 y, int16 action, int16 roomNum, CloseDataPtr *L
 /* Does the work for doActionRule.                                           */
 /*****************************************************************************/
 static bool doOperateRuleSub(int16 ItemNum, int16 roomNum, CloseDataPtr LCPtr, CloseDataPtr *Set, bool AllowDefaults) {
-	RulePtr RPtr;
-
 	if (LCPtr)
 		if (LCPtr->CloseUpType > 0) {
-			RPtr = Rooms[roomNum].RuleList;
+			RuleList *rules = Rooms[roomNum].rules;
 
-			if ((RPtr == NULL) && (roomNum == 0)) {
+			if ((rules == NULL) && (roomNum == 0)) {
 				g_resource->readViews(roomNum);
-				RPtr = Rooms[roomNum].RuleList;
+				rules = Rooms[roomNum].rules;
 			}
 
-			while (RPtr) {
-				if ((RPtr->RuleType == OPERATE) &&
-				        ((RPtr->Param1 == ItemNum) || ((RPtr->Param1 == 0) && AllowDefaults)) &&
-				        ((RPtr->Param2 == LCPtr->CloseUpType) || ((RPtr->Param2 == 0) && AllowDefaults))) {
-					if (checkConditions(RPtr->Condition)) {
-						doActions(RPtr->ActionList, Set);
+			for (RuleList::iterator rule = rules->begin(); rule != rules->end(); rule++) {
+				if (((*rule)->RuleType == OPERATE) &&
+				        (((*rule)->Param1 == ItemNum) || (((*rule)->Param1 == 0) && AllowDefaults)) &&
+						(((*rule)->Param2 == LCPtr->CloseUpType) || (((*rule)->Param2 == 0) && AllowDefaults))) {
+					if (checkConditions((*rule)->Condition)) {
+						doActions((*rule)->ActionList, Set);
 						return true;
 					}
 				}
-
-				RPtr = RPtr->NextRule;
 			}
 		}
 
@@ -744,19 +735,15 @@ bool doOperateRule(int16 x, int16 y, int16 ItemNum, CloseDataPtr *LCPtr) {
 /* Goes thru the rules if the user tries to go forward.                      */
 /*****************************************************************************/
 bool doGoForward(CloseDataPtr *LCPtr) {
-	RulePtr RPtr;
+	RuleList *rules = Rooms[RoomNum].rules;
 
-	RPtr = Rooms[RoomNum].RuleList;
-
-	while (RPtr) {
-		if ((RPtr->RuleType == GOFORWARD) && (RPtr->Param1 == (Direction + 1))) {
-			if (checkConditions(RPtr->Condition)) {
-				doActions(RPtr->ActionList, LCPtr);
+	for (RuleList::iterator rule = rules->begin(); rule != rules->end(); rule++) {
+		if (((*rule)->RuleType == GOFORWARD) && ((*rule)->Param1 == (Direction + 1))) {
+			if (checkConditions((*rule)->Condition)) {
+				doActions((*rule)->ActionList, LCPtr);
 				return true;
 			}
 		}
-
-		RPtr = RPtr->NextRule;
 	}
 
 	return false;
@@ -766,25 +753,20 @@ bool doGoForward(CloseDataPtr *LCPtr) {
 /* Goes thru the rules if the user tries to turn.                            */
 /*****************************************************************************/
 bool doTurn(uint16 from, uint16 to, CloseDataPtr *LCPtr) {
-	RulePtr RPtr;
-
 	from++;
 	to++;
 
-	RPtr = Rooms[RoomNum].RuleList;
+	RuleList *rules = Rooms[RoomNum].rules;
 
-	while (RPtr) {
-		if ((RPtr->RuleType == TURN) ||
-
-		        ((RPtr->RuleType == TURNFROMTO) &&
-		         (RPtr->Param1   == from) && (RPtr->Param2 == to))) {
-			if (checkConditions(RPtr->Condition)) {
-				doActions(RPtr->ActionList, LCPtr);
+	for (RuleList::iterator rule = rules->begin(); rule != rules->end(); rule++) {
+		if (((*rule)->RuleType == TURN) ||
+		        (((*rule)->RuleType == TURNFROMTO) &&
+		         ((*rule)->Param1   == from) && ((*rule)->Param2 == to))) {
+			if (checkConditions((*rule)->Condition)) {
+				doActions((*rule)->ActionList, LCPtr);
 				return true;
 			}
 		}
-
-		RPtr = RPtr->NextRule;
 	}
 
 	return false;
@@ -794,19 +776,14 @@ bool doTurn(uint16 from, uint16 to, CloseDataPtr *LCPtr) {
 /* Goes thru the rules if the user tries to go to the main view              */
 /*****************************************************************************/
 bool doMainView(CloseDataPtr *LCPtr) {
-	RulePtr RPtr;
-
-	RPtr = Rooms[RoomNum].RuleList;
-
-	while (RPtr) {
-		if (RPtr->RuleType == GOMAINVIEW) {
-			if (checkConditions(RPtr->Condition)) {
-				doActions(RPtr->ActionList, LCPtr);
+	RuleList *rules = Rooms[RoomNum].rules;
+	for (RuleList::iterator rule = rules->begin(); rule != rules->end(); rule++) {
+		if ((*rule)->RuleType == GOMAINVIEW) {
+			if (checkConditions((*rule)->Condition)) {
+				doActions((*rule)->ActionList, LCPtr);
 				return true;
 			}
 		}
-
-		RPtr = RPtr->NextRule;
 	}
 
 	return false;

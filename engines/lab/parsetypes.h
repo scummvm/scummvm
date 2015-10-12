@@ -138,7 +138,7 @@ struct Rule {
 	Rule *NextRule;
 };
 
-typedef Rule *RulePtr;
+typedef Common::List<Rule *> RuleList;
 
 struct RoomData {
 	uint16 NorthDoor, SouthDoor, EastDoor, WestDoor;
@@ -146,7 +146,7 @@ struct RoomData {
 	byte WipeType;
 
 	ViewDataPtr NorthView, SouthView, EastView, WestView;
-	RulePtr RuleList;
+	RuleList *rules;
 	char *RoomMsg;
 };
 
