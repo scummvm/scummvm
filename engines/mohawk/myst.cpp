@@ -413,7 +413,12 @@ void MohawkEngine_Myst::changeToStack(uint16 stack, uint16 card, uint16 linkSrcS
 
 	// Fill screen with black and empty cursor
 	_cursor->setCursor(0);
-	_system->fillScreen(_system->getScreenFormat().RGBToColor(0, 0, 0));
+
+	if (getFeatures() & GF_ME)
+		_system->fillScreen(_system->getScreenFormat().RGBToColor(0, 0, 0));
+	else
+		_gfx->clearScreenPalette();
+
 	_system->updateScreen();
 
 	_sound->stopSound();
@@ -495,9 +500,10 @@ void MohawkEngine_Myst::changeToStack(uint16 stack, uint16 card, uint16 linkSrcS
 	_cache.clear();
 	_gfx->clearCache();
 
-	// Play Flyby Entry Movie on Masterpiece Edition.
-	const char *flyby = 0;
 	if (getFeatures() & GF_ME) {
+		// Play Flyby Entry Movie on Masterpiece Edition.
+		const char *flyby = 0;
+
 		switch (_curStack) {
 		case kSeleniticStack:
 			flyby = "selenitic flyby";

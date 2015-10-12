@@ -82,9 +82,10 @@ MODULE_OBJS := \
 	util/lua/lvm.o \
 	util/lua/lzio.o \
 	util/lua/scummvm_file.o \
-	util/pluto/pdep.o \
-	util/pluto/pluto.o \
-	util/pluto/plzio.o
+	util/double_serialization.o \
+	util/lua_persistence_util.o \
+	util/lua_persist.o \
+	util/lua_unpersist.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_SWORD25), DYNAMIC_PLUGIN)

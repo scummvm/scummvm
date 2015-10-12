@@ -35,9 +35,8 @@
 #include "common/error.h"
 #include "common/textconsole.h"
 
-#include <SDL_syswm.h> // For setting the icon
-
 #include "backends/platform/sdl/win32/win32.h"
+#include "backends/platform/sdl/win32/win32-window.h"
 #include "backends/saves/windows/windows-saves.h"
 #include "backends/fs/windows/windows-fs-factory.h"
 #include "backends/taskbar/win32/win32-taskbar.h"
@@ -50,9 +49,12 @@ void OSystem_Win32::init() {
 	// Initialize File System Factory
 	_fsFactory = new WindowsFilesystemFactory();
 
+	// Create Win32 specific window
+	_window = new SdlWindow_Win32();
+
 #if defined(USE_TASKBAR)
 	// Initialize taskbar manager
-	_taskbarManager = new Win32TaskbarManager();
+	_taskbarManager = new Win32TaskbarManager(_window);
 #endif
 
 	// Invoke parent implementation of this method
@@ -124,28 +126,6 @@ bool OSystem_Win32::displayLogFile() {
 		return true;
 
 	return false;
-}
-
-void OSystem_Win32::setupIcon() {
-	HMODULE handle = GetModuleHandle(NULL);
-	HICON   ico    = LoadIcon(handle, MAKEINTRESOURCE(1001 /* IDI_ICON */));
-	if (ico) {
-		SDL_SysWMinfo  wminfo;
-		SDL_VERSION(&wminfo.version);
-		if (SDL_GetWMInfo(&wminfo)) {
-			// Replace the handle to the icon associated with the window class by our custom icon
-			SetClassLongPtr(wminfo.window, GCLP_HICON, (ULONG_PTR)ico);
-
-			// Since there wasn't any default icon, we can't use the return value from SetClassLong
-			// to check for errors (it would be 0 in both cases: error or no previous value for the
-			// icon handle). Instead we check for the last-error code value.
-			if (GetLastError() == ERROR_SUCCESS)
-				return;
-		}
-	}
-
-	// If no icon has been set, fallback to default path
-	OSystem_SDL::setupIcon();
 }
 
 Common::String OSystem_Win32::getDefaultConfigFileName() {

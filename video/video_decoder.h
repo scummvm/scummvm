@@ -377,6 +377,25 @@ public:
 	 */
 	bool setReverse(bool reverse);
 
+	/**
+	 * Tell the video to dither to a palette.
+	 *
+	 * By default, VideoDecoder will return surfaces in native, or in the case
+	 * of YUV-based videos, the format set by setDefaultHighColorFormat().
+	 * For video formats or codecs that support it, this will start outputting
+	 * its surfaces in 8bpp with this palette.
+	 *
+	 * This should be called after loadStream(), but before a decodeNextFrame()
+	 * call. This is enforced.
+	 *
+	 * The palette will be copied, so you do not need to worry about the pointer
+	 * going out-of-scope.
+	 *
+	 * @param palette The palette to use for dithering
+	 * @return true on success, false otherwise
+	 */
+	bool setDitheringPalette(const byte *palette);
+
 	/////////////////////////////////////////
 	// Audio Control
 	/////////////////////////////////////////
@@ -604,6 +623,16 @@ protected:
 		 * Is the video track set to play in reverse?
 		 */
 		virtual bool isReversed() const { return false; }
+
+		/**
+		 * Can the video track dither?
+		 */
+		virtual bool canDither() const { return false; }
+
+		/**
+		 * Activate dithering mode with a palette
+		 */
+		virtual void setDither(const byte *palette) {}
 	};
 
 	/**
@@ -900,6 +929,9 @@ private:
 	// Palette settings from individual tracks
 	mutable bool _dirtyPalette;
 	const byte *_palette;
+
+	// Enforcement of not being able to set dither
+	bool _canSetDither;
 
 	// Default PixelFormat settings
 	Graphics::PixelFormat _defaultHighColorFormat;

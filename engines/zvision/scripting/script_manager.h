@@ -25,7 +25,7 @@
 
 #include "zvision/scripting/puzzle.h"
 #include "zvision/scripting/control.h"
-#include "zvision/scripting/sidefx.h"
+#include "zvision/scripting/scripting_effect.h"
 
 #include "common/hashmap.h"
 #include "common/queue.h"
@@ -87,6 +87,7 @@ enum StateKey {
 	StateKey_JapanFonts = 75,
 	StateKey_ExecScopeStyle = 76,
 	StateKey_Brightness = 77,
+	StateKey_MPEGMovies = 78,
 	StateKey_EF9_R = 91,
 	StateKey_EF9_G = 92,
 	StateKey_EF9_B = 93,
@@ -94,7 +95,12 @@ enum StateKey {
 	StateKey_Inv_Cnt_Slot = 100,
 	StateKey_Inv_1_Slot = 101,
 	StateKey_Inv_49_Slot = 149,
-	StateKey_Inv_TotalSlots = 150
+	// ZGI only
+	StateKey_Inv_TotalSlots = 150,
+	StateKey_Inv_StartSlot = 151,
+	StateKey_Spell_1 = 191,
+	StateKey_Active_Spell = 205,
+	StateKey_Reversed_Spellbooc = 206
 };
 
 struct Location {
@@ -107,11 +113,33 @@ struct Location {
 	uint32 offset;
 };
 
+inline bool operator==(const Location& lhs, const Location& rhs) {
+	return (
+		lhs.world == rhs.world &&
+		lhs.room == rhs.room &&
+		lhs.node == rhs.node &&
+		lhs.view == rhs.view
+	);
+}
+
+inline bool operator==(const Location& lhs, const char* rhs) {
+	Common::String lhsStr = Common::String::format("%c%c%c%c", lhs.world, lhs.room, lhs.node, lhs.view);
+	return lhsStr == rhs;
+}
+
+inline bool operator!=(const Location& lhs, const Location& rhs) {
+	return !(lhs == rhs);
+}
+
+inline bool operator!=(const Location& lhs, const char* rhs) {
+	return !(lhs == rhs);
+}
+
 typedef Common::List<Puzzle *> PuzzleList;
 typedef Common::Queue<Puzzle *> PuzzleQueue;
 typedef Common::List<Control *> ControlList;
 typedef Common::HashMap<uint32, int32> StateMap;
-typedef Common::List<SideFX *> SideFXList;
+typedef Common::List<ScriptingEffect *> SideFXList;
 typedef Common::List<Common::Event> EventList;
 
 class ScriptManager {
@@ -191,12 +219,12 @@ public:
 	// Only change focus control without call focus/unfocus.
 	void setFocusControlKey(uint32 key);
 
-	void addSideFX(SideFX *fx);
-	SideFX *getSideFX(uint32 key);
+	void addSideFX(ScriptingEffect *fx);
+	ScriptingEffect *getSideFX(uint32 key);
 	void deleteSideFx(uint32 key);
 	void stopSideFx(uint32 key);
 	void killSideFx(uint32 key);
-	void killSideFxType(SideFX::SideFXType type);
+	void killSideFxType(ScriptingEffect::ScriptingEffectType type);
 
 	void addEvent(Common::Event);
 	void flushEvent(Common::EventType type);
@@ -267,7 +295,7 @@ private:
 	bool execScope(ScriptScope &scope);
 
 	/** Perform change location */
-	void ChangeLocationReal();
+	void ChangeLocationReal(bool isLoading);
 
 	int8 inventoryGetCount();
 	void inventorySetCount(int8 cnt);
@@ -282,7 +310,7 @@ public:
 	void inventoryDrop(int16 item);
 	void inventoryCycle();
 
-	// TODO: Make this private. It was only made public so Console::cmdParseAllScrFiles() could use it
+private:
 	/**
 	 * Parses a script file into triggers and events
 	 *
@@ -291,7 +319,6 @@ public:
 	 */
 	void parseScrFile(const Common::String &fileName, ScriptScope &scope);
 
-private:
 	/**
 	 * Parses the stream into a Puzzle object
 	 * Helper method for parseScrFile.
@@ -307,9 +334,10 @@ private:
 	 *
 	 * @param criteria    Pointer to the Criteria object to fill
 	 * @param stream      Scr file stream
+	 * @param key         Puzzle key (for workarounds)
 	 * @return            Whether any criteria were read
 	 */
-	bool parseCriteria(Common::SeekableReadStream &stream, Common::List<Common::List<Puzzle::CriteriaEntry> > &criteriaList) const;
+	bool parseCriteria(Common::SeekableReadStream &stream, Common::List<Common::List<Puzzle::CriteriaEntry> > &criteriaList, uint32 key) const;
 
 	/**
 	 * Parses the stream into a ResultAction objects

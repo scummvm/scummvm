@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -308,6 +308,9 @@ void MSurface::copyFrom(MSurface *src, const Common::Point &destPos, int depth,
 		if (!copyRect.isValidRect())
 			return;
 
+		if (flipped)
+			copyRect.moveTo(0, copyRect.top);
+
 		byte *data = src->getData();
 		byte *srcPtr = data + (src->getWidth() * copyRect.top + copyRect.left);
 		byte *destPtr = (byte *)pixels + (destY * pitch) + destX;
@@ -397,12 +400,14 @@ void MSurface::copyFrom(MSurface *src, const Common::Point &destPos, int depth,
 		const byte *srcP = srcPixelsP;
 		byte *destP = destPixelsP;
 
-		for (int xp = 0, sprX = 0; xp < frameWidth; ++xp, ++srcP) {
-			if (xp < spriteLeft)
-				// Not yet reached start of display area
-				continue;
-			if (!lineDist[sprX++])
+		for (int xp = 0, sprX = -1; xp < frameWidth; ++xp, ++srcP) {
+			if (!lineDist[xp])
 				// Not a display pixel
+				continue;
+
+			++sprX;
+			if (sprX < spriteLeft || sprX >= spriteRight)
+				// Skip pixel if it's not in horizontal display portion
 				continue;
 
 			// Get depth of current output pixel in depth surface
@@ -485,7 +490,6 @@ void MSurface::scrollY(int yAmount) {
 	delete[] tempData;
 }
 
-
 void MSurface::translate(Common::Array<RGB6> &palette) {
 	for (int y = 0; y < this->h; ++y) {
 		byte *pDest = getBasePtr(0, y);
@@ -519,6 +523,20 @@ MSurface *MSurface::flipHorizontal() const {
 	}
 
 	return dest;
+}
+
+void MSurface::copyRectTranslate(MSurface &srcSurface, const byte *paletteMap,
+		const Common::Point &destPos, const Common::Rect &srcRect) {
+	// Loop through the lines
+	for (int yCtr = 0; yCtr < srcRect.height(); ++yCtr) {
+		const byte *srcP = srcSurface.getBasePtr(srcRect.left, srcRect.top + yCtr);
+		byte *destP = getBasePtr(destPos.x, destPos.y + yCtr);
+
+		// Copy the line over
+		for (int xCtr = 0; xCtr < srcRect.width(); ++xCtr, ++srcP, ++destP) {
+			*destP = paletteMap[*srcP];
+		}
+	}
 }
 
 /*------------------------------------------------------------------------*/

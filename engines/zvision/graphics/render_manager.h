@@ -24,14 +24,14 @@
 #define ZVISION_RENDER_MANAGER_H
 
 #include "zvision/graphics/render_table.h"
-#include "zvision/graphics/truetype_font.h"
+#include "zvision/text/truetype_font.h"
 
 #include "common/rect.h"
 #include "common/hashmap.h"
 
 #include "graphics/surface.h"
 
-#include "effect.h"
+#include "graphics_effect.h"
 
 class OSystem;
 
@@ -48,7 +48,7 @@ namespace ZVision {
 
 class RenderManager {
 public:
-	RenderManager(ZVision *engine, uint32 windowWidth, uint32 windowHeight, const Common::Rect workingWindow, const Graphics::PixelFormat pixelFormat);
+	RenderManager(ZVision *engine, uint32 windowWidth, uint32 windowHeight, const Common::Rect workingWindow, const Graphics::PixelFormat pixelFormat, bool doubleFPS);
 	~RenderManager();
 
 private:
@@ -61,7 +61,7 @@ private:
 	};
 
 	typedef Common::HashMap<uint16, OneSubtitle> SubtitleMap;
-	typedef Common::List<Effect *> EffectsList;
+	typedef Common::List<GraphicsEffect *> EffectsList;
 
 private:
 	ZVision *_engine;
@@ -73,12 +73,8 @@ private:
 	 * are given in this coordinate space. Also, all images are clipped to the
 	 * edges of this Rectangle
 	 */
-	const Common::Rect _workingWindow;
+	Common::Rect _workingWindow;
 
-	// Width of the working window. Saved to prevent extraneous calls to _workingWindow.width()
-	const int _workingWidth;
-	// Height of the working window. Saved to prevent extraneous calls to _workingWindow.height()
-	const int _workingHeight;
 	// Center of the screen in the x direction
 	const int _screenCenterX;
 	// Center of the screen in the y direction
@@ -88,7 +84,7 @@ private:
 	Graphics::Surface _currentBackgroundImage;
 	Common::Rect _backgroundDirtyRect;
 
-	/** 
+	/**
 	 * The x1 or y1 offset of the subRectangle of the background that is currently displayed on the screen
 	 * It will be x1 if PANORAMA, or y1 if TILT
 	 */
@@ -106,7 +102,6 @@ private:
 
 	// A buffer for subtitles
 	Graphics::Surface _subtitleSurface;
-	Common::Rect _subtitleSurfaceDirtyRect;
 
 	// Rectangle for subtitles area
 	Common::Rect _subtitleArea;
@@ -137,7 +132,8 @@ private:
 	// Visual effects list
 	EffectsList _effects;
 
-	
+	bool _doubleFPS;
+
 public:
 	void initialize();
 
@@ -145,6 +141,8 @@ public:
 	 * Renders the scene to the screen
 	 */
 	void renderSceneToScreen();
+
+	void copyToScreen(const Graphics::Surface &surface, Common::Rect &rect, int16 srcLeft, int16 srcTop);
 
 	/**
 	 * Blits the image or a portion of the image to the background.
@@ -227,22 +225,19 @@ public:
 	// Blitting surface-to-surface methods
 	void blitSurfaceToSurface(const Graphics::Surface &src, const Common::Rect &_srcRect , Graphics::Surface &dst, int x, int y);
 	void blitSurfaceToSurface(const Graphics::Surface &src, const Common::Rect &_srcRect , Graphics::Surface &dst, int _x, int _y, uint32 colorkey);
-	void blitSurfaceToSurface(const Graphics::Surface &src, Graphics::Surface &dst, int x, int y);
-	void blitSurfaceToSurface(const Graphics::Surface &src, Graphics::Surface &dst, int x, int y, uint32 colorkey);
 
 	// Blitting surface-to-background methods
-	void blitSurfaceToBkg(const Graphics::Surface &src, int x, int y);
-	void blitSurfaceToBkg(const Graphics::Surface &src, int x, int y, uint32 colorkey);
+	void blitSurfaceToBkg(const Graphics::Surface &src, int x, int y, int32 colorkey = -1);
 
 	// Blitting surface-to-background methods with scale
-	void blitSurfaceToBkgScaled(const Graphics::Surface &src, const Common::Rect &_dstRect);
-	void blitSurfaceToBkgScaled(const Graphics::Surface &src, const Common::Rect &_dstRect, uint32 colorkey);
+	void blitSurfaceToBkgScaled(const Graphics::Surface &src, const Common::Rect &_dstRect, int32 colorkey = -1);
 
 	// Blitting surface-to-menu methods
-	void blitSurfaceToMenu(const Graphics::Surface &src, int x, int y);
-	void blitSurfaceToMenu(const Graphics::Surface &src, int x, int y, uint32 colorkey);
+	void blitSurfaceToMenu(const Graphics::Surface &src, int x, int y, int32 colorkey = -1);
 
 	// Subtitles methods
+
+	void initSubArea(uint32 windowWidth, uint32 windowHeight, const Common::Rect workingWindow);
 
 	// Create subtitle area and return ID
 	uint16 createSubArea(const Common::Rect &area);
@@ -265,10 +260,8 @@ public:
 	Graphics::Surface *getBkgRect(Common::Rect &rect);
 
 	// Load image into new surface
-	Graphics::Surface *loadImage(const char *file);
-	Graphics::Surface *loadImage(Common::String &file);
-	Graphics::Surface *loadImage(const char *file, bool transposed);
-	Graphics::Surface *loadImage(Common::String &file, bool transposed);
+	Graphics::Surface *loadImage(Common::String file);
+	Graphics::Surface *loadImage(Common::String file, bool transposed);
 
 	// Clear whole/area of menu surface
 	void clearMenuSurface();
@@ -281,8 +274,7 @@ public:
 	void prepareBackground();
 
 	/**
-	 * Reads an image file pixel data into a Surface buffer. In the process
-	 * it converts the pixel data from RGB 555 to RGB 565. Also, if the image
+	 * Reads an image file pixel data into a Surface buffer. Also, if the image
 	 * is transposed, it will un-transpose the pixel data. The function will
 	 * call destination::create() if the dimensions of destination do not match
 	 * up with the dimensions of the image.
@@ -293,8 +285,7 @@ public:
 	void readImageToSurface(const Common::String &fileName, Graphics::Surface &destination);
 
 	/**
-	 * Reads an image file pixel data into a Surface buffer. In the process
-	 * it converts the pixel data from RGB 555 to RGB 565. Also, if the image
+	 * Reads an image file pixel data into a Surface buffer. Also, if the image
 	 * is transposed, it will un-transpose the pixel data. The function will
 	 * call destination::create() if the dimensions of destination do not match
 	 * up with the dimensions of the image.
@@ -306,7 +297,7 @@ public:
 	void readImageToSurface(const Common::String &fileName, Graphics::Surface &destination, bool transposed);
 
 	// Add visual effect to effects list
-	void addEffect(Effect *_effect);
+	void addEffect(GraphicsEffect *_effect);
 
 	// Delete effect(s) by ID (ID equal to slot of action:region that create this effect)
 	void deleteEffect(uint32 ID);
@@ -328,8 +319,21 @@ public:
 	// Mark whole background surface as dirty
 	void markDirty();
 
-	// Fille background surface by color
+#if 0
+	// Fill background surface by color
 	void bkgFill(uint8 r, uint8 g, uint8 b);
+#endif
+
+	bool askQuestion(const Common::String &str);
+	void delayedMessage(const Common::String &str, uint16 milsecs);
+	void timedMessage(const Common::String &str, uint16 milsecs);
+	void showDebugMsg(const Common::String &msg, int16 delay = 3000);
+
+	void checkBorders();
+	void rotateTo(int16 to, int16 time);
+	void updateRotation();
+
+	void upscaleRect(Common::Rect &rect);
 };
 
 } // End of namespace ZVision

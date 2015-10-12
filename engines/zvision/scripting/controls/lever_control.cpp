@@ -64,12 +64,12 @@ LeverControl::LeverControl(ZVision *engine, uint32 key, Common::SeekableReadStre
 	while (!stream.eos() && !line.contains('}')) {
 		if (param.matchString("descfile", true)) {
 			char levFileName[25];
-			sscanf(values.c_str(), "%25s", levFileName);
+			sscanf(values.c_str(), "%24s", levFileName);
 
 			parseLevFile(levFileName);
 		} else if (param.matchString("cursor", true)) {
 			char cursorName[25];
-			sscanf(values.c_str(), "%25s", cursorName);
+			sscanf(values.c_str(), "%24s", cursorName);
 
 			_cursor = _engine->getCursorManager()->getCursorId(Common::String(cursorName));
 		}
@@ -232,10 +232,13 @@ bool LeverControl::onMouseMove(const Common::Point &screenSpacePos, const Common
 				if (angle >= (int)iter->angle - ANGLE_DELTA && angle <= (int)iter->angle + ANGLE_DELTA) {
 					_currentFrame = iter->toFrame;
 					renderFrame(_currentFrame);
+					_engine->getScriptManager()->setStateValue(_key, _currentFrame);
 					break;
 				}
 			}
 		}
+		_engine->getCursorManager()->changeCursor(_cursor);
+		cursorWasChanged = true;
 	} else if (_frameInfo[_currentFrame].hotspot.contains(backgroundImageSpacePos)) {
 		_engine->getCursorManager()->changeCursor(_cursor);
 		cursorWasChanged = true;

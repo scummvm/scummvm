@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -195,6 +195,9 @@ public:
 	 */
 	virtual void synchronize(Common::Serializer &s, bool phase1);
 
+	virtual void setNaughtyMode(bool naughtyMode) {}
+	virtual bool getNaughtyMode() const { return true; }
+
 	// DEPRECATED: ScummVM re-implementation keeps all the quotes loaded, so the methods below are stubs
 	void clearQuotes() {}
 	void loadQuoteRange(int startNum, int endNum) {}
@@ -204,7 +207,7 @@ public:
 	/**
 	* Handle a keyboard event
 	*/
-	void handleKeypress(const Common::Event &event);
+	void handleKeypress(const Common::KeyState &kbd);
 
 	/**
 	 * Starts a savegame loading.

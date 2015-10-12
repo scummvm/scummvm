@@ -241,6 +241,7 @@ void AnimationResource::load(byte *source, int size) {
 /* SoundResource */
 
 SoundResource::SoundResource() : _soundSize(0), _soundData(NULL) {
+	_soundEnergyArray = nullptr;
 }
 
 SoundResource::~SoundResource() {
@@ -377,6 +378,9 @@ void GenericResource::load(byte *source, int size) {
 ResourceReader::ResourceReader() {
 	_isV1 = false;
 	_cacheDataSize = 0;
+
+	_fd = _fdMusic = _fdPics = _fdSounds = nullptr;
+	_cacheCount = 0;
 }
 
 ResourceReader::~ResourceReader() {

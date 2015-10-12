@@ -305,7 +305,7 @@ bool ModalMap::init(int counterdiff) {
 
 	if (_flag) {
 		_rect2.left = _mouseX + _field_38 - g_fp->_mouseScreenPos.x;
-		_rect2.top = _mouseY + _field_3C - g_fp->_mouseScreenPos.y;;
+		_rect2.top = _mouseY + _field_3C - g_fp->_mouseScreenPos.y;
 		_rect2.right = _rect2.left + 800;
 		_rect2.bottom = _rect2.top + 600;
 

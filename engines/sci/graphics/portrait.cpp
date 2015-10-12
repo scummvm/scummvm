@@ -57,13 +57,39 @@ void Portrait::init() {
 	// 4 bytes paletteSize (base 1)
 	//  -> 17 bytes
 	// paletteSize bytes paletteData
-	// 14 bytes bitmap header
-	//  -> 4 bytes unknown
-	//  -> 2 bytes height
-	//  -> 2 bytes width
-	//  -> 6 bytes unknown
-	// height * width bitmap data
-	// another animation count times bitmap header and data
+	//
+	// bitmap-data follows, total of [animation count]
+	//   14 bytes bitmap header
+	//    -> 4 bytes unknown
+	//    -> 2 bytes height
+	//    -> 2 bytes width
+	//    -> 6 bytes unknown
+	//   height * width bitmap data
+	//
+	// 4 bytes offset table size (may be larger than the actual known entries?!)
+	//   14 bytes all zeroes (dummy entry?!)
+	//
+	//   14 bytes for each entry
+	//    -> 2 bytes displace X
+	//    -> 2 bytes displace Y
+	//    -> 2 bytes height (again)
+	//    -> 2 bytes width (again)
+	//    -> 6 bytes unknown (normally 01 00 00 00 00 00 for delta bitmaps, 00 00 00 00 00 00 for first bitmap)
+	//   random data may be used as filler
+	//
+	// 4 bytes lip sync id table size (is [lip sync id count] * 4, should be 0x2E0 for all actors)
+	//   4 bytes per lip sync id
+	//    -> 1 byte length of ID
+	//    -> 3 bytes actual ID
+	//
+	// 4 bytes lip sync id data table size (seems to be the same for all actors, always 0x220 in size)
+	//   1 byte animation number or 0xFF as terminator
+	//   1 byte delay, if last byte was not terminator
+	//   one array for every lip sync id
+	//
+	// 4 bytes appended, seem to be random
+	//   9E11120E for alex
+	//   9E9E9E9E for vizier
 	int32 fileSize = 0;
 	Common::SeekableReadStream *file =
 		SearchMan.createReadStreamForMember("actors/" + _resourceName + ".bin");
@@ -202,8 +228,9 @@ void Portrait::doit(Common::Point position, uint16 resourceId, uint16 noun, uint
 	if (raveResource->size < 4000) {
 		memcpy(debugPrint, raveResource->data, raveResource->size);
 		debugPrint[raveResource->size] = 0; // set terminating NUL
+		debug("kPortrait: using actor %s", _resourceName.c_str());
 		debug("kPortrait (noun %d, verb %d, cond %d, seq %d)", noun, verb, cond, seq);
-		debug("kPortrait: %s", debugPrint);
+		debug("kPortrait: rave data is '%s'", debugPrint);
 	}
 #endif
 
@@ -273,6 +300,14 @@ void Portrait::doit(Common::Point position, uint16 resourceId, uint16 noun, uint
 			raveLipSyncData = NULL;
 		}
 
+#ifdef DEBUG_PORTRAIT
+		if (raveID & 0x0ff) {
+			debug("kPortrait: rave '%c%c' after %d ticks", raveID >> 8, raveID & 0x0ff, raveTicks);
+		} else if (raveID) {
+			debug("kPortrait: rave '%c' after %d ticks", raveID >> 8, raveTicks);
+		}
+#endif
+
 		timerPosition += raveTicks;
 
 		// Wait till syncTime passed, then show specific animation bitmap
@@ -282,7 +317,8 @@ void Portrait::doit(Common::Point position, uint16 resourceId, uint16 noun, uint
 				curEvent = _event->getSciEvent(SCI_EVENT_ANY);
 				if (curEvent.type == SCI_EVENT_MOUSE_PRESS ||
 					(curEvent.type == SCI_EVENT_KEYBOARD && curEvent.data == SCI_KEY_ESC) ||
-					g_sci->getEngineState()->abortScriptProcessing == kAbortQuitGame)
+					g_sci->getEngineState()->abortScriptProcessing == kAbortQuitGame ||
+					g_sci->getEngineState()->_delayedRestoreGame)
 					userAbort = true;
 				curPosition = _audio->getAudioPosition();
 			} while ((curPosition != -1) && (curPosition < timerPosition) && (!userAbort));
@@ -295,6 +331,8 @@ void Portrait::doit(Common::Point position, uint16 resourceId, uint16 noun, uint
 			timerPositionWithin = timerPosition;
 			raveLipSyncTicks = *raveLipSyncData++;
 			while ( (raveLipSyncData < _lipSyncDataOffsetTableEnd) && (raveLipSyncTicks != 0xFF) ) {
+				if (raveLipSyncTicks)
+					raveLipSyncTicks--; // 1 -> wait 0 ticks, 2 -> wait 1 tick, etc.
 				timerPositionWithin += raveLipSyncTicks;
 
 				do {
@@ -308,6 +346,13 @@ void Portrait::doit(Common::Point position, uint16 resourceId, uint16 noun, uint
 				} while ((curPosition != -1) && (curPosition < timerPositionWithin) && (!userAbort));
 
 				raveLipSyncBitmapNr = *raveLipSyncData++;
+#ifdef DEBUG_PORTRAIT
+				if (!raveLipSyncTicks) {
+					debug("kPortrait: showing frame %d", raveLipSyncBitmapNr);
+				} else {
+					debug("kPortrait: showing frame %d after %d ticks", raveLipSyncBitmapNr, raveLipSyncTicks);
+				}
+#endif
 
 				// bitmap nr within sync data is base 1, we need base 0
 				raveLipSyncBitmapNr--;

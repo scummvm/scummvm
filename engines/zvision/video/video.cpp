@@ -23,13 +23,17 @@
 #include "common/scummsys.h"
 #include "common/system.h"
 #include "video/video_decoder.h"
+#ifdef USE_MPEG2
+#include "video/mpegps_decoder.h"
+#endif
 #include "engines/util.h"
 #include "graphics/surface.h"
 
 #include "zvision/zvision.h"
 #include "zvision/core/clock.h"
 #include "zvision/graphics/render_manager.h"
-#include "zvision/graphics/subtitles.h"
+#include "zvision/scripting/script_manager.h"
+#include "zvision/text/subtitles.h"
 #include "zvision/video/rlf_decoder.h"
 #include "zvision/video/zork_avi_decoder.h"
 
@@ -44,12 +48,21 @@ Video::VideoDecoder *ZVision::loadAnimation(const Common::String &fileName) {
 		animation = new RLFDecoder();
 	else if (tmpFileName.hasSuffix(".avi"))
 		animation = new ZorkAVIDecoder();
+#ifdef USE_MPEG2
+	else if (tmpFileName.hasSuffix(".vob"))
+		animation = new Video::MPEGPSDecoder();
+#endif
 	else
 		error("Unknown suffix for animation %s", fileName.c_str());
 
 	Common::File *_file = getSearchManager()->openFile(tmpFileName);
-	animation->loadStream(_file);
-	
+	if (!_file)
+		error("Error opening %s", tmpFileName.c_str());
+
+	bool loaded = animation->loadStream(_file);
+	if (!loaded)
+		error("Error loading animation %s", tmpFileName.c_str());
+
 	return animation;
 }
 
@@ -70,6 +83,7 @@ void ZVision::playVideo(Video::VideoDecoder &vid, const Common::Rect &destRect, 
 	uint16 y = _workingWindow.top + dst.top;
 	uint16 finalWidth = dst.width() < _workingWindow.width() ? dst.width() : _workingWindow.width();
 	uint16 finalHeight = dst.height() < _workingWindow.height() ? dst.height() : _workingWindow.height();
+	bool showSubs = (_scriptManager->getStateValue(StateKey_Subtitles) == 1);
 
 	_clock.stop();
 	vid.start();
@@ -101,7 +115,7 @@ void ZVision::playVideo(Video::VideoDecoder &vid, const Common::Rect &destRect, 
 
 		if (vid.needsUpdate()) {
 			const Graphics::Surface *frame = vid.decodeNextFrame();
-			if (sub)
+			if (sub && showSubs)
 				sub->process(vid.getCurFrame());
 
 			if (frame) {
@@ -109,7 +123,8 @@ void ZVision::playVideo(Video::VideoDecoder &vid, const Common::Rect &destRect, 
 					_renderManager->scaleBuffer(frame->getPixels(), scaled->getPixels(), frame->w, frame->h, frame->format.bytesPerPixel, scaled->w, scaled->h);
 					frame = scaled;
 				}
-				_system->copyRectToScreen((const byte *)frame->getPixels(), frame->pitch, x, y, finalWidth, finalHeight);
+				Common::Rect rect = Common::Rect(x, y, x + finalWidth, y + finalHeight);
+				_renderManager->copyToScreen(*frame, rect, 0, 0);
 				_renderManager->processSubs(0);
 			}
 		}

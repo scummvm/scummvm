@@ -34,6 +34,7 @@ namespace Video {
 
 namespace ZVision {
 
+// Only used in Zork Nemesis, handles draggable levers (te2e, tm7e, tp2e, tt2e, tz2e)
 class LeverControl : public Control {
 public:
 	LeverControl(ZVision *engine, uint32 key, Common::SeekableReadStream &stream);

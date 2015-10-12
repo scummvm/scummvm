@@ -92,6 +92,9 @@ Common::Error CineEngine::run() {
 	// Initialize backend
 	initGraphics(320, 200, false);
 
+	if (g_cine->getGameType() == GType_FW && (g_cine->getFeatures() & GF_CD))
+		checkCD();
+
 	if (getPlatform() == Common::kPlatformDOS) {
 		g_sound = new PCSound(_mixer, this);
 	} else {

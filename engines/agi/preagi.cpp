@@ -59,6 +59,12 @@ void PreAgiEngine::initialize() {
 	_gfx = new GfxMgr(this);
 	_picture = new PictureMgr(this, _gfx);
 
+	if (getGameID() == GID_MICKEY) {
+		_fontData = fontData_Mickey;
+	} else {
+		_fontData = fontData_IBM;
+	}
+
 	_gfx->initMachine();
 
 	_game.gameFlags = 0;
@@ -137,7 +143,7 @@ void PreAgiEngine::drawStr(int row, int col, int attr, const char *buffer) {
 			break;
 
 		default:
-			_gfx->putTextCharacter(1, col * 8 , row * 8, static_cast<char>(code), attr & 0x0f, (attr & 0xf0) / 0x10, false, getGameID() == GID_MICKEY ? mickey_fontdata : ibm_fontdata);
+			_gfx->putTextCharacter(1, col * 8 , row * 8, static_cast<char>(code), attr & 0x0f, (attr & 0xf0) / 0x10, false, _fontData);
 
 			if (++col == 320 / 8) {
 				col = 0;

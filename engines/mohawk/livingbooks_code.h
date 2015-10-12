@@ -263,6 +263,10 @@ public:
 	void cmdLeft(const Common::Array<LBValue> &params);
 	void cmdBottom(const Common::Array<LBValue> &params);
 	void cmdRight(const Common::Array<LBValue> &params);
+	void cmdXPos(const Common::Array<LBValue> &params);
+	void cmdYPos(const Common::Array<LBValue> &params);
+	void cmdWidth(const Common::Array<LBValue> &params);
+	void cmdHeight(const Common::Array<LBValue> &params);
 	void cmdMove(const Common::Array<LBValue> &params);
 	void cmdSetDragParams(const Common::Array<LBValue> &params);
 	void cmdNewList(const Common::Array<LBValue> &params);
@@ -273,6 +277,7 @@ public:
 	void cmdDeleteAt(const Common::Array<LBValue> &params);
 	void cmdSetProperty(const Common::Array<LBValue> &params);
 	void cmdGetProperty(const Common::Array<LBValue> &params);
+	void cmdDeleteVar(const Common::Array<LBValue> &params);
 	void cmdExec(const Common::Array<LBValue> &params);
 	void cmdReturn(const Common::Array<LBValue> &params);
 	void cmdSetPlayParams(const Common::Array<LBValue> &params);

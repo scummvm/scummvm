@@ -1082,6 +1082,7 @@ int ThreadResource::doApt() {
 		break;
 	case 2:
 		_vm->_voy->_aptLoadMode = 142;
+		break;
 	case 5:
 		_vm->_voy->_aptLoadMode = 141;
 		break;

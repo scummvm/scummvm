@@ -32,8 +32,8 @@
 
 static SDL_Cursor *hiddenCursor;
 
-OPGraphicsManager::OPGraphicsManager(SdlEventSource *sdlEventSource)
-	: SurfaceSdlGraphicsManager(sdlEventSource) {
+OPGraphicsManager::OPGraphicsManager(SdlEventSource *sdlEventSource, SdlWindow *window)
+	: SurfaceSdlGraphicsManager(sdlEventSource, window) {
 }
 
 bool OPGraphicsManager::loadGFXMode() {

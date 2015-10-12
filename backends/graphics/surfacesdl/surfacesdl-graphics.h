@@ -77,7 +77,7 @@ public:
  */
 class SurfaceSdlGraphicsManager : public SdlGraphicsManager, public Common::EventObserver {
 public:
-	SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSource);
+	SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSource, SdlWindow *window);
 	virtual ~SurfaceSdlGraphicsManager();
 
 	virtual void activateManager();
@@ -166,6 +166,17 @@ protected:
 	/** Hardware screen */
 	SDL_Surface *_hwscreen;
 
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	/* SDL2 features a different API for 2D graphics. We create a wrapper
+	 * around this API to keep the code paths as close as possible. */
+	SDL_Renderer *_renderer;
+	SDL_Texture *_screenTexture;
+	void deinitializeRenderer();
+
+	SDL_Surface *SDL_SetVideoMode(int width, int height, int bpp, Uint32 flags);
+	void SDL_UpdateRects(SDL_Surface *screen, int numrects, SDL_Rect *rects);
+#endif
+
 	/** Unseen game screen */
 	SDL_Surface *_screen;
 #ifdef USE_RGB_COLOR
@@ -224,6 +235,9 @@ protected:
 #endif
 	};
 	VideoState _videoMode, _oldVideoMode;
+
+	// Original BPP to restore the video mode on unload
+	uint8 _originalBitsPerPixel;
 
 	/** Force full redraw on next updateScreen */
 	bool _forceFull;

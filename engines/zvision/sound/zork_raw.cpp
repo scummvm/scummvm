@@ -33,7 +33,6 @@
 
 #include "zvision/sound/zork_raw.h"
 #include "zvision/zvision.h"
-#include "zvision/detection.h"
 
 namespace ZVision {
 
@@ -73,10 +72,7 @@ RawChunkStream::RawChunk RawChunkStream::readNextChunk(Common::SeekableReadStrea
 	tmp.size = 0;
 	tmp.data = NULL;
 
-	if (!stream)
-		return tmp;
-
-	if (stream && (stream->size() == 0 || stream->eos()))
+	if (!stream || stream->size() == 0 || stream->eos())
 		return tmp;
 
 	tmp.size = (stream->size() - stream->pos()) * 2;
@@ -139,7 +135,8 @@ int RawChunkStream::readBuffer(int16 *buffer, Common::SeekableReadStream *stream
 	return bytesRead;
 }
 
-const SoundParams RawZorkStream::_zNemSoundParamLookupTable[32] = {{'0', 0x1F40, false, false, false},
+const SoundParams RawZorkStream::_zNemSoundParamLookupTable[32] = {
+	{'0', 0x1F40, false, false, false},
 	{'1', 0x1F40, true, false, false},
 	{'2', 0x1F40, false, false, true},
 	{'3', 0x1F40, true, false, true},
@@ -173,7 +170,8 @@ const SoundParams RawZorkStream::_zNemSoundParamLookupTable[32] = {{'0', 0x1F40,
 	{'x', 0xAC44, true, true, true}
 };
 
-const SoundParams RawZorkStream::_zgiSoundParamLookupTable[24] = {{'4', 0x2B11, false, false, false},
+const SoundParams RawZorkStream::_zgiSoundParamLookupTable[24] = {
+	{'4', 0x2B11, false, false, false},
 	{'5', 0x2B11, true, false, false},
 	{'6', 0x2B11, false, false, true},
 	{'7', 0x2B11, true, false, true},
@@ -216,7 +214,6 @@ RawZorkStream::RawZorkStream(uint32 rate, bool stereo, DisposeAfterUse::Flag dis
 }
 
 int RawZorkStream::readBuffer(int16 *buffer, const int numSamples) {
-
 	int32 bytesRead = _streamReader.readBuffer(buffer, _stream.get(), numSamples);
 
 	if (_stream->eos())
@@ -244,19 +241,29 @@ Audio::RewindableAudioStream *makeRawZorkStream(Common::SeekableReadStream *stre
 	return new RawZorkStream(rate, stereo, disposeAfterUse, stream);
 }
 
-Audio::RewindableAudioStream *makeRawZorkStream(const byte *buffer, uint32 size,
-        int rate,
-        bool stereo,
-        DisposeAfterUse::Flag disposeAfterUse) {
-	return makeRawZorkStream(new Common::MemoryReadStream(buffer, size, disposeAfterUse), rate, stereo, DisposeAfterUse::YES);
-}
-
 Audio::RewindableAudioStream *makeRawZorkStream(const Common::String &filePath, ZVision *engine) {
 	Common::File *file = new Common::File();
-	assert(engine->getSearchManager()->openFile(*file, filePath));
+	Common::String actualName = filePath;
+	bool found = engine->getSearchManager()->openFile(*file, actualName);
+	bool isRaw = actualName.hasSuffix(".raw");
+
+	if ((!found && isRaw) || (found && isRaw && file->size() < 10)) {
+		if (found)
+			file->close();
+
+		// Check for an audio patch (.src)
+		actualName.setChar('s', actualName.size() - 3);
+		actualName.setChar('r', actualName.size() - 2);
+		actualName.setChar('c', actualName.size() - 1);
+
+		if (!engine->getSearchManager()->openFile(*file, actualName))
+			return NULL;
+	} else if (!found && !isRaw) {
+		return NULL;
+	}
 
 	// Get the file name
-	Common::StringTokenizer tokenizer(filePath, "/\\");
+	Common::StringTokenizer tokenizer(actualName, "/\\");
 	Common::String fileName;
 	while (!tokenizer.empty()) {
 		fileName = tokenizer.nextToken();

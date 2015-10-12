@@ -23,118 +23,29 @@
 #include "common/endian.h"
 #include "common/textconsole.h"
 
-#include "audio/fmopl.h"
-#include "audio/softsynth/emumidi.h"
+#include "engines/queen/midiadlib.h"
 
 namespace Queen {
 
-class AdLibMidiDriver : public MidiDriver_Emulated {
-public:
-
-	AdLibMidiDriver(Audio::Mixer *mixer) : MidiDriver_Emulated(mixer) { _adlibWaveformSelect = 0; }
-	~AdLibMidiDriver() {}
-
-	// MidiDriver
-	int open();
-	void close();
-	void send(uint32 b);
-	void metaEvent(byte type, byte *data, uint16 length);
-	MidiChannel *allocateChannel() { return 0; }
-	MidiChannel *getPercussionChannel() { return 0; }
-
-	// AudioStream
-	bool isStereo() const { return false; }
-	int getRate() const { return _mixer->getOutputRate(); }
-
-	// MidiDriver_Emulated
-	void generateSamples(int16 *buf, int len);
-
-private:
-
-	void handleMidiEvent0x90_NoteOn(int channel, int param1, int param2);
-	void handleSequencerSpecificMetaEvent1(int channel, const uint8 *data);
-	void handleSequencerSpecificMetaEvent2(uint8 value);
-	void handleSequencerSpecificMetaEvent3(uint8 value);
-
-	void adlibWrite(uint8 port, uint8 value);
-	void adlibSetupCard();
-	void adlibSetupChannels(int fl);
-	void adlibResetAmpVibratoRhythm(int am, int vib, int kso);
-	void adlibResetChannels();
-	void adlibSetAmpVibratoRhythm();
-	void adlibSetCSMKeyboardSplit();
-	void adlibSetNoteMul(int mul);
-	void adlibSetWaveformSelect(int fl);
-	void adlibSetPitchBend(int channel, int range);
-	void adlibPlayNote(int channel);
-	uint8 adlibPlayNoteHelper(int channel, int note1, int note2, int oct);
-	void adlibTurnNoteOff(int channel);
-	void adlibTurnNoteOn(int channel, int note);
-	void adlibSetupChannelFromSequence(int channel, const uint8 *src, int fl);
-	void adlibSetupChannel(int channel, const uint16 *src, int fl);
-	void adlibSetNoteVolume(int channel, int volume);
-	void adlibSetupChannelHelper(int channel);
-	void adlibSetChannel0x40(int channel);
-	void adlibSetChannel0xC0(int channel);
-	void adlibSetChannel0x60(int channel);
-	void adlibSetChannel0x80(int channel);
-	void adlibSetChannel0x20(int channel);
-	void adlibSetChannel0xE0(int channel);
-
-	FM_OPL *_opl;
-	int _midiNumberOfChannels;
-	int _adlibNoteMul;
-	int _adlibWaveformSelect;
-	int _adlibAMDepthEq48;
-	int _adlibVibratoDepthEq14;
-	int _adlibRhythmEnabled;
-	int _adlibKeyboardSplitOn;
-	int _adlibVibratoRhythm;
-	uint8 _midiChannelsFreqTable[9];
-	uint8 _adlibChannelsLevelKeyScalingTable[11];
-	uint8 _adlibSetupChannelSequence1[14 * 18];
-	uint16 _adlibSetupChannelSequence2[14];
-	int16 _midiChannelsNote2Table[9];
-	uint8 _midiChannelsNote1Table[9];
-	uint8 _midiChannelsOctTable[9];
-	uint16 _adlibChannelsVolume[11];
-	uint16 _adlibMetaSequenceData[28];
-
-	static const uint8 _adlibChannelsMappingTable1[];
-	static const uint8 _adlibChannelsNoFeedback[];
-	static const uint8 _adlibChannelsMappingTable2[];
-	static const uint8 _adlibChannelsMappingTable3[];
-	static const uint8 _adlibChannelsKeyScalingTable1[];
-	static const uint8 _adlibChannelsKeyScalingTable2[];
-	static const uint8 _adlibChannelsVolumeTable[];
-	static const uint8 _adlibInitSequenceData1[];
-	static const uint8 _adlibInitSequenceData2[];
-	static const uint8 _adlibInitSequenceData3[];
-	static const uint8 _adlibInitSequenceData4[];
-	static const uint8 _adlibInitSequenceData5[];
-	static const uint8 _adlibInitSequenceData6[];
-	static const uint8 _adlibInitSequenceData7[];
-	static const uint8 _adlibInitSequenceData8[];
-	static const int16 _midiChannelsNoteTable[];
-	static const int16 _midiNoteFreqTable[];
-};
-
 int AdLibMidiDriver::open() {
-	MidiDriver_Emulated::open();
-	_opl = makeAdLibOPL(getRate());
+	_isOpen = true;
+	_opl = OPL::Config::create();
+	if (!_opl || !_opl->init())
+		error("Failed to create OPL");
+
 	adlibSetupCard();
 	for (int i = 0; i < 11; ++i) {
 		_adlibChannelsVolume[i] = 0;
 		adlibSetNoteVolume(i, 0);
 		adlibTurnNoteOff(i);
 	}
-	_mixer->playStream(Audio::Mixer::kMusicSoundType, &_mixerSoundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
+
+	_opl->start(new Common::Functor0Mem<void, AdLibMidiDriver>(this, &AdLibMidiDriver::onTimer));
 	return 0;
 }
 
 void AdLibMidiDriver::close() {
-	_mixer->stopHandle(_mixerSoundHandle);
-	OPLDestroy(_opl);
+	delete _opl;
 }
 
 void AdLibMidiDriver::send(uint32 b) {
@@ -162,6 +73,11 @@ void AdLibMidiDriver::send(uint32 b) {
 //		warning("Unhandled cmd %d channel %d (0x%X)", cmd, channel, b);
 		break;
 	}
+}
+
+void AdLibMidiDriver::setVolume(uint32 volume) {
+	for (int i = 0; i < _midiNumberOfChannels; ++i)
+		adlibSetChannelVolume(i, volume * 64 / 256 + 64);
 }
 
 void AdLibMidiDriver::metaEvent(byte type, byte *data, uint16 length) {
@@ -192,9 +108,14 @@ void AdLibMidiDriver::metaEvent(byte type, byte *data, uint16 length) {
 	warning("Unhandled meta event %d len %d", event, length);
 }
 
-void AdLibMidiDriver::generateSamples(int16 *data, int len) {
-	memset(data, 0, sizeof(int16) * len);
-	YM3812UpdateOne(_opl, data, len);
+void AdLibMidiDriver::setTimerCallback(void *timerParam, Common::TimerManager::TimerProc timerProc) {
+	_adlibTimerProc = timerProc;
+	_adlibTimerParam = timerParam;
+}
+
+void AdLibMidiDriver::onTimer() {
+	if (_adlibTimerProc)
+		(*_adlibTimerProc)(_adlibTimerParam);
 }
 
 void AdLibMidiDriver::handleSequencerSpecificMetaEvent1(int channel, const uint8 *data) {
@@ -238,7 +159,7 @@ void AdLibMidiDriver::handleMidiEvent0x90_NoteOn(int channel, int param1, int pa
 }
 
 void AdLibMidiDriver::adlibWrite(uint8 port, uint8 value) {
-	OPLWriteReg(_opl, port, value);
+	_opl->writeReg(port, value);
 }
 
 void AdLibMidiDriver::adlibSetupCard() {
@@ -253,6 +174,7 @@ void AdLibMidiDriver::adlibSetupCard() {
 		_midiChannelsFreqTable[i] = 0;
 	}
 	memset(_adlibChannelsLevelKeyScalingTable, 127, 11);
+	memset(_adlibChannelsVolumeTable, 128, 11);
 	adlibSetupChannels(0);
 	adlibResetAmpVibratoRhythm(0, 0, 0);
 	adlibSetNoteMul(1);
@@ -448,6 +370,11 @@ void AdLibMidiDriver::adlibSetNoteVolume(int channel, int volume) {
 	}
 }
 
+void AdLibMidiDriver::adlibSetChannelVolume(int channel, uint8 volume) {
+	if (channel < (_adlibRhythmEnabled ? 11 : 9))
+		_adlibChannelsVolumeTable[channel] = volume;
+}
+
 void AdLibMidiDriver::adlibSetupChannelHelper(int channel) {
 	adlibSetAmpVibratoRhythm();
 	adlibSetCSMKeyboardSplit();
@@ -558,10 +485,6 @@ const uint8 AdLibMidiDriver::_adlibChannelsKeyScalingTable2[] = {
 	0, 3, 1, 4, 2, 5, 6, 9, 7, 10, 8, 11, 12, 15, 16, 255, 14, 255, 17, 255, 13, 255
 };
 
-const uint8 AdLibMidiDriver::_adlibChannelsVolumeTable[] = {
-	128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128
-};
-
 const uint8 AdLibMidiDriver::_adlibInitSequenceData1[] = {
 	1, 1, 3, 15, 5, 0, 1, 3, 15, 0, 0, 0, 1, 0
 };
@@ -616,9 +539,5 @@ const int16 AdLibMidiDriver::_midiNoteFreqTable[] = {
 	-391, -389, -387, -385, -382, -380, -378, -375, -373, -371, -368, -366,
 	-363, -361, -359, -356, -354, -351, -349, -347, -344, -342, -339, -337
 };
-
-MidiDriver *C_Player_CreateAdLibMidiDriver(Audio::Mixer *mixer) {
-	return new AdLibMidiDriver(mixer);
-}
 
 } // End of namespace Queen

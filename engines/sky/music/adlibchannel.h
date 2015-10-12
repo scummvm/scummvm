@@ -60,14 +60,15 @@ typedef struct {
 
 class AdLibChannel : public ChannelBase {
 public:
-	AdLibChannel (FM_OPL *opl, uint8 *pMusicData, uint16 startOfData);
+	AdLibChannel (OPL::OPL *opl, uint8 *pMusicData, uint16 startOfData);
 	virtual ~AdLibChannel();
 	virtual uint8 process(uint16 aktTime);
 	virtual void updateVolume(uint16 pVolume);
 	virtual bool isActive();
 private:
-	FM_OPL *_opl;
+	OPL::OPL *_opl;
 	uint8 *_musicData;
+	uint16 _musicVolume;
 	AdLibChannelType _channelData;
 
 	InstrumentStruct *_instruments;

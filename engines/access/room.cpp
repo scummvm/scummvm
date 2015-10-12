@@ -38,6 +38,23 @@ Room::Room(AccessEngine *vm) : Manager(vm) {
 	_selectCommand = 0;
 	_conFlag = false;
 	_selectCommand = -1;
+
+	switch (vm->getGameID()) {
+	case GType_Amazon:
+		for (int i = 0; i < 10; i++) {
+			_rMouse[i][0] = Amazon::RMOUSE[i][0];
+			_rMouse[i][1] = Amazon::RMOUSE[i][1];
+		}
+		break;
+	case GType_MartianMemorandum:
+		for (int i = 0; i < 10; i++) {
+			_rMouse[i][0] = Martian::RMOUSE[i][0];
+			_rMouse[i][1] = Martian::RMOUSE[i][1];
+		}
+		break;
+	default:
+		error("Game not supported");
+	}
 }
 
 Room::~Room() {
@@ -53,6 +70,91 @@ void Room::freePlayField() {
 void Room::freeTileData() {
 	delete[] _tile;
 	_tile = nullptr;
+}
+
+void Room::clearCamera() {
+	_vm->_player->_scrollFlag = true;
+	_vm->_events->hideCursor();
+
+	_vm->_screen->_orgX1 = 48;
+	_vm->_screen->_orgY1 = 24;
+	_vm->_screen->_orgX2 = 274;
+	_vm->_screen->_orgY2 = 152;
+	_vm->_screen->_lColor = 0;
+	_vm->_screen->drawRect();
+
+	_vm->_events->showCursor();
+
+	_vm->_events->_vbCount = 4;
+	while (!_vm->shouldQuit() && _vm->_events->_vbCount > 0)
+		_vm->_events->pollEventsAndWait();
+}
+
+void Room::takePicture() {
+	_vm->_events->pollEvents();
+	if (!_vm->_events->_leftButton)
+		return;
+
+	Common::Array<Common::Rect> pictureCoords;
+	for (int i = 0; Martian::PICTURERANGE[i][0] != -1; i += 2) {
+		pictureCoords.push_back(Common::Rect(Martian::PICTURERANGE[i][0], Martian::PICTURERANGE[i + 1][0],
+			                                 Martian::PICTURERANGE[i][1], Martian::PICTURERANGE[i + 1][1]));
+	}
+
+	int result = _vm->_events->checkMouseBox1(pictureCoords);
+
+	if (result == 4) {
+		_vm->_events->debounceLeft();
+		if (_vm->_inventory->_inv[44]._value != ITEM_IN_INVENTORY) {
+			Common::String msg = "YOU HAVE NO MORE FILM.";
+			_vm->_scripts->doCmdPrint_v1(msg);
+			return;
+		}
+
+		// TODO: simplify the second part of the test when tested
+		if ((_vm->_scrollCol < 35) || ((_vm->_scrollRow >= 10) && (_vm->_scrollRow >= 20))){
+			Common::String msg = "THAT ISN'T INTERESTING ENOUGH TO WASTE FILM ON.";
+			_vm->_scripts->doCmdPrint_v1(msg);
+			return;
+		}
+
+		if (_vm->_inventory->_inv[26]._value != ITEM_USED) {
+			Common::String msg = "ALTHOUGH IT WOULD MAKE A NICE PICTURE, YOU MAY FIND SOMETHING MORE INTERESTING TO USE YOUR FILM ON.";
+			_vm->_scripts->doCmdPrint_v1(msg);
+			return;
+		}
+
+		Common::String msg = "THAT PHOTO MAY COME IN HANDY SOME DAY.";
+		_vm->_scripts->doCmdPrint_v1(msg);
+		_vm->_inventory->_inv[8]._value = ITEM_IN_INVENTORY;
+		_vm->_pictureTaken++;
+		if (_vm->_pictureTaken == 16)
+			_vm->_inventory->_inv[44]._value = ITEM_USED;
+
+		_vm->_events->debounceLeft();
+		_vm->_sound->playSound(0);
+		clearCamera();
+		return;
+	} else if (result == 5) {
+		if (_vm->_flags[26] != 2) {
+			_vm->_video->closeVideo();
+			_vm->_video->_videoEnd = true;
+		}
+		_vm->_player->_roomNumber = 7;
+		_vm->_room->_function = FN_CLEAR1;
+		return;
+	} else if (result >= 0) 
+		_vm->_player->_move = (Direction)(result + 1);
+
+	_vm->_player->_scrollFlag = false;
+	if (_vm->_player->_move == UP)
+		_vm->_player->scrollDown(2);
+	else if (_vm->_player->_move == DOWN)
+		_vm->_player->scrollUp(2);
+	else if (_vm->_player->_move == LEFT)
+		_vm->_player->scrollRight(2);
+	else if (_vm->_player->_move == RIGHT)
+		_vm->_player->scrollLeft(2);
 }
 
 void Room::doRoom() {
@@ -84,9 +186,13 @@ void Room::doRoom() {
 			_vm->_events->pollEventsAndWait();
 			_vm->_canSaveLoad = false;
 
-			_vm->_player->walk();
-			_vm->_midi->midiRepeat();
-			_vm->_player->checkScroll();
+			if ((_vm->getGameID() == GType_MartianMemorandum) && (_vm->_player->_roomNumber == 47)) {
+				takePicture();
+			} else {
+				_vm->_player->walk();
+				_vm->_midi->midiRepeat();
+				_vm->_player->checkScroll();
+			}
 
 			doCommands();
 			if (_vm->shouldQuitOrRestart())
@@ -136,7 +242,8 @@ void Room::doRoom() {
 				} else {
 					_vm->plotList();
 
-					if (_vm->_events->_mousePos.y < 177)
+					if (((_vm->getGameID() == GType_MartianMemorandum) && (_vm->_events->_mousePos.y < 184)) ||
+						((_vm->getGameID() == GType_Amazon) && (_vm->_events->_mousePos.y < 177)))
 						_vm->_events->setCursor(_vm->_events->_normalMouse);
 					else
 						_vm->_events->setCursor(CURSOR_ARROW);
@@ -173,8 +280,8 @@ void Room::loadRoomData(const byte *roomData) {
 	_vm->_establishFlag = false;
 	if (roomInfo._estIndex != -1) {
 		_vm->_establishFlag = true;
-		if (_vm->_establishTable[roomInfo._estIndex] != 1) {
-			_vm->_establishTable[roomInfo._estIndex] = 1;
+		if (!_vm->_establishTable[roomInfo._estIndex]) {
+			_vm->_establishTable[roomInfo._estIndex] = true;
 			_vm->establish(0, roomInfo._estIndex);
 		}
 	}
@@ -370,9 +477,9 @@ void Room::loadPlayField(int fileNum, int subfile) {
 	screen.loadRawPalette(playData->_stream);
 
 	// Copy off the tile data
-	_tileSize = (int)header[2] << 8;
-	_tile = new byte[_tileSize];
-	playData->_stream->read(_tile, _tileSize);
+	int tileSize = (int)header[2] << 8;
+	_tile = new byte[tileSize];
+	playData->_stream->read(_tile, tileSize);
 
 	// Copy off the playfield data
 	_matrixSize = header[0] * header[1];
@@ -455,8 +562,8 @@ void Room::doCommands() {
 		if (_vm->_events->_mouseRow >= 22) {
 			// Mouse in user interface area
 			for (commandId = 0; commandId < 10; ++commandId) {
-				if (_vm->_events->_mousePos.x >= RMOUSE[commandId][0] &&
-					_vm->_events->_mousePos.x < RMOUSE[commandId][1])
+				if (_vm->_events->_mousePos.x >= _rMouse[commandId][0] &&
+					_vm->_events->_mousePos.x < _rMouse[commandId][1])
 					break;
 			}
 			if (commandId < 10)
@@ -489,9 +596,6 @@ void Room::cycleCommand(int incr) {
 }
 
 void Room::handleCommand(int commandId) {
-	if (commandId == 1)
-		--commandId;
-
 	if (commandId == 9) {
 		_vm->_events->debounceLeft();
 		_vm->_canSaveLoad = true;
@@ -510,41 +614,90 @@ void Room::executeCommand(int commandId) {
 	EventsManager &events = *_vm->_events;
 	_selectCommand = commandId;
 
-	switch (commandId) {
-	case 0:
-		events.forceSetCursor(CURSOR_LOOK);
-		break;
-	case 2:
-		events.forceSetCursor(CURSOR_USE);
-		break;
-	case 3:
-		events.forceSetCursor(CURSOR_TAKE);
-		break;
-	case 4:
-		events.setCursor(CURSOR_ARROW);
-		if (_vm->_inventory->newDisplayInv() == 2) {
-			commandOff();
-			return;
-		}
-		break;
-	case 5:
-		events.forceSetCursor(CURSOR_CLIMB);
-		break;
-	case 6:
-		events.forceSetCursor(CURSOR_TALK);
-		break;
-	case 7:
-		walkCursor();
-		return;
-	case 8:
-		events.forceSetCursor(CURSOR_HELP);
-		break;
-	default:
-		break;
-	}
+	if (_vm->getGameID() == GType_MartianMemorandum) {
+		switch (commandId) {
+		case 4:
+			events.setCursor(CURSOR_ARROW);
+			if (_vm->_inventory->displayInv() == 2) {
+				commandOff();
+				return;
+			}
+			if (_vm->_useItem == 39) {
+				if (_vm->_player->_roomNumber == 23)
+					_vm->_currentMan = 1;
+				commandOff();
+				return;
+			} else if (_vm->_useItem == 6) {
+				_vm->_flags[3] = 2;
+				_vm->_scripts->converse1(24);
 
-	// Draw the default toolbar menu at the bottom of the screen
-	roomMenu();
+				_conFlag = true;
+				while (_conFlag && !_vm->shouldQuitOrRestart()) {
+					_conFlag = false;
+					_vm->_scripts->executeScript();
+				}
+
+				_vm->_boxSelect = true;
+				return;
+			}
+			break;
+		case 7:
+			walkCursor();
+			return;
+		case 8: {
+			events.forceSetCursor(CURSOR_CROSSHAIRS);
+			_vm->_scripts->_sequence = 10000;
+			_vm->_scripts->searchForSequence();
+
+			_conFlag = true;
+			while (_conFlag && !_vm->shouldQuitOrRestart()) {
+				_conFlag = false;
+				_vm->_scripts->executeScript();
+			}
+
+			_vm->_boxSelect = true;
+			return;
+			}
+		default:
+			// No set cursor in MM. Forcing to CROSSHAIRS
+			events.setCursor(CURSOR_CROSSHAIRS);
+			break;
+		}
+	} else {
+		switch (commandId) {
+		case 0:
+		case 1:
+			events.forceSetCursor(CURSOR_LOOK);
+			break;
+		case 2:
+			events.forceSetCursor(CURSOR_USE);
+			break;
+		case 3:
+			events.forceSetCursor(CURSOR_TAKE);
+			break;
+		case 4:
+			events.setCursor(CURSOR_ARROW);
+			if (_vm->_inventory->newDisplayInv() == 2) {
+				commandOff();
+				return;
+			}
+			break;
+		case 5:
+			events.forceSetCursor(CURSOR_CLIMB);
+			break;
+		case 6:
+			events.forceSetCursor(CURSOR_TALK);
+			break;
+		case 7:
+			walkCursor();
+			return;
+		case 8:
+			events.forceSetCursor(CURSOR_HELP);
+			break;
+		default:
+			break;
+		}
+	}
 	_vm->_screen->saveScreen();
 	_vm->_screen->setDisplayScan();
 
@@ -555,7 +708,7 @@ void Room::executeCommand(int commandId) {
 
 	// Draw the button as selected
 	_vm->_screen->plotImage(spr, _selectCommand + 2,
-		Common::Point(RMOUSE[_selectCommand][0], 176));
+		Common::Point(_rMouse[_selectCommand][0], (_vm->getGameID() == GType_MartianMemorandum) ? 184 : 176));
 
 	_vm->_screen->restoreScreen();
 	_vm->_boxSelect = true;

@@ -29,21 +29,6 @@ namespace Access {
 
 extern const byte INITIAL_PALETTE[18 * 3];
 
-extern const int SIDEOFFR[];
-extern const int SIDEOFFL[];
-extern const int SIDEOFFU[];
-extern const int SIDEOFFD[];
-extern const int DIAGOFFURX[];
-extern const int DIAGOFFURY[];
-extern const int DIAGOFFDRX[];
-extern const int DIAGOFFDRY[];
-extern const int DIAGOFFULX[];
-extern const int DIAGOFFULY[];
-extern const int DIAGOFFDLX[];
-extern const int DIAGOFFDLY[];
-
-extern const int RMOUSE[10][2];
-
 extern const char *const GENERAL_MESSAGES[];
 
 extern const int INVCOORDS[][4];

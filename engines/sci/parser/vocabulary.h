@@ -233,6 +233,16 @@ public:
 	int parseGNF(const ResultWordListList &words, bool verbose = false);
 
 	/**
+	 * Find and store reference for future pronouns
+	 */
+	bool storePronounReference();
+
+	/**
+	 * Replace pronouns by stored reference
+	 */
+	void replacePronouns(ResultWordListList &words);
+
+	/**
 	 * Constructs the Greibach Normal Form of the grammar supplied in 'branches'.
 	 * @param verbose	Set to true for debugging. If true, the list is
 	 *					freed before the function ends
@@ -359,6 +369,8 @@ private:
 	WordMap _parserWords;
 	SynonymList _synonyms; /**< The list of synonyms */
 	Common::Array<Common::List<AltInput> > _altInputs;
+
+	int _pronounReference;
 
 public:
 	// Accessed by said()

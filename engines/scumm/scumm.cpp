@@ -316,6 +316,7 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	_NES_lastTalkingActor = 0;
 	_NES_talkColor = 0;
 	_keepText = false;
+	_msgCount = 0;
 	_costumeLoader = NULL;
 	_costumeRenderer = NULL;
 	_2byteFontPtr = 0;
@@ -1904,7 +1905,7 @@ void ScummEngine::setupMusic(int midi) {
 		// EGA/VGA. However, we support multi MIDI for that game and we cannot
 		// support this with the Player_AD code at the moment. The reason here
 		// is that multi MIDI is supported internally by our iMuse output.
-		_musicEngine = new Player_AD(this, _mixer);
+		_musicEngine = new Player_AD(this);
 	} else if (_game.version >= 3 && _game.heversion <= 62) {
 		MidiDriver *nativeMidiDriver = 0;
 		MidiDriver *adlibMidiDriver = 0;
@@ -2597,9 +2598,52 @@ void ScummEngine_v90he::runBootscript() {
 }
 #endif
 
-void ScummEngine::startManiac() {
-	debug(0, "stub startManiac()");
-	displayMessage(0, "%s", _("Usually, Maniac Mansion would start now. But ScummVM doesn't do that yet. To play it, go to 'Add Game' in the ScummVM start menu and select the 'Maniac' directory inside the Tentacle game directory."));
+bool ScummEngine::startManiac() {
+	Common::String currentPath = ConfMan.get("path");
+	Common::String maniacTarget;
+
+	if (!ConfMan.hasKey("easter_egg")) {
+		// Look for a game with a game path pointing to a 'Maniac' directory
+		// as a subdirectory to the current game.
+		Common::ConfigManager::DomainMap::iterator iter = ConfMan.beginGameDomains();
+		for (; iter != ConfMan.endGameDomains(); ++iter) {
+			Common::ConfigManager::Domain &dom = iter->_value;
+			Common::String path = dom.getVal("path");
+
+			if (path.hasPrefix(currentPath)) {
+				path.erase(0, currentPath.size() + 1);
+				if (path.equalsIgnoreCase("maniac")) {
+					maniacTarget = iter->_key;
+					break;
+				}
+			}
+		}
+	} else {
+		maniacTarget = ConfMan.get("easter_egg");
+	}
+
+	if (!maniacTarget.empty()) {
+		// Request a temporary save game to be made.
+		_saveLoadFlag = 1;
+		_saveLoadSlot = 100;
+		_saveTemporaryState = true;
+
+		// Set up the chanined games to Maniac Mansion, and then back
+		// to the current game again with that save slot.
+		ChainedGamesMan.push(maniacTarget);
+		ChainedGamesMan.push(ConfMan.getActiveDomainName(), 100);
+
+		// Force a return to the launcher. This will start the first
+		// chained game.
+		Common::EventManager *eventMan = g_system->getEventManager();
+		Common::Event event;
+		event.type = Common::EVENT_RTL;
+		eventMan->pushEvent(event);
+		return true;
+	} else {
+		displayMessage(0, "%s", _("Usually, Maniac Mansion would start now. But for that to work, the game files for Maniac Mansion have to be in the 'Maniac' directory inside the Tentacle game directory, and the game has to be added to ScummVM."));
+		return false;
+	}
 }
 
 #pragma mark -

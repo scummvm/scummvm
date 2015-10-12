@@ -19,6 +19,7 @@
 
 #include "mt32emu.h"
 #include "mmath.h"
+#include "internals.h"
 
 namespace MT32Emu {
 

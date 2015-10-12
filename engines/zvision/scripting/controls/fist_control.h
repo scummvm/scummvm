@@ -34,6 +34,7 @@ namespace Video {
 
 namespace ZVision {
 
+// Only used in Zork Nemesis, handles the door lock puzzle with the skeletal fingers (td9e)
 class FistControl : public Control {
 public:
 	FistControl(ZVision *engine, uint32 key, Common::SeekableReadStream &stream);
@@ -63,10 +64,6 @@ private:
 	Video::VideoDecoder *_animation;
 	Common::Rect _anmRect;
 	int32   _soundKey;
-	int32   _frameCur;
-	int32   _frameEnd;
-	int32   _frameTime;
-	int32   _lastRenderedFrame;
 	int32   _animationId;
 
 public:
@@ -75,7 +72,6 @@ public:
 	bool process(uint32 deltaTimeInMillis);
 
 private:
-	void renderFrame(uint frameNumber);
 	void readDescFile(const Common::String &fileName);
 	void clearFistArray(Common::Array< Common::Array<Common::Rect> > &arr);
 	uint32 readBits(const char *str);

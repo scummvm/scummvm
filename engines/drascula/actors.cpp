@@ -396,6 +396,16 @@ void DrasculaEngine::increaseFrameNum() {
 		curHeight = (int)newHeight;
 		curWidth = (int)newWidth;
 	}
+	
+	// Fix bug #5903 DRASCULA-IT: Crash/graphic glitch at castle towers
+	// Chapter 5 Room 45 is the castle tower part
+	// Fixing the character's coordinate(0,0) in the tower section to prevent out of window coordinates and crash
+	if ((currentChapter == 5) && (_roomNumber == 45)) {
+		curY = 0;
+		curX = 0;
+		curHeight = 0;
+		curWidth = 0;
+	}
 }
 
 void DrasculaEngine::walkDown() {

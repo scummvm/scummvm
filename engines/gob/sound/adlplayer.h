@@ -36,7 +36,7 @@ namespace Gob {
 /** A player for Coktel Vision's ADL music format. */
 class ADLPlayer : public AdLib {
 public:
-	ADLPlayer(Audio::Mixer &mixer);
+	ADLPlayer();
 	~ADLPlayer();
 
 	bool load(Common::SeekableReadStream &adl);
@@ -76,8 +76,6 @@ private:
 	bool readHeader  (Common::SeekableReadStream &adl, int &timbreCount);
 	bool readTimbres (Common::SeekableReadStream &adl, int  timbreCount);
 	bool readSongData(Common::SeekableReadStream &adl);
-
-	uint32 getSampleDelay(uint16 delay) const;
 };
 
 } // End of namespace Gob

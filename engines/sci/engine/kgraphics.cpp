@@ -32,6 +32,7 @@
 #include "sci/event.h"
 #include "sci/resource.h"
 #include "sci/engine/features.h"
+#include "sci/engine/savegame.h"
 #include "sci/engine/state.h"
 #include "sci/engine/selector.h"
 #include "sci/engine/kernel.h"
@@ -399,6 +400,12 @@ reg_t kWait(EngineState *s, int argc, reg_t *argv) {
 	int sleep_time = argv[0].toUint16();
 
 	s->wait(sleep_time);
+
+	if (s->_delayedRestoreGame) {
+		// delayed restore game from ScummVM menu got triggered
+		gamestate_delayedrestore(s);
+		return NULL_REG;
+	}
 
 	return s->r_acc;
 }
@@ -955,8 +962,9 @@ reg_t kDrawControl(EngineState *s, int argc, reg_t *argv) {
 		reg_t textReference = readSelector(s->_segMan, controlObject, SELECTOR(text));
 		if (!textReference.isNull()) {
 			Common::String text = s->_segMan->getString(textReference);
-			if ((text == "a:hq1_hero.sav") || (text == "a:glory1.sav") || (text == "a:glory2.sav") || (text == "a:glory3.sav")) {
+			if ((text == "a:hq1_hero.sav") || (text == "a:glory1.sav") || (text == "a:glory2.sav") || (text == "a:glory3.sav") || (text == "a:gloire3.sauv")) {
 				// Remove "a:" from hero quest / quest for glory export default filenames
+				// The french version of Quest For Glory 3 uses "gloire3.sauv". It seems a translator translated the filename.
 				text.deleteChar(0);
 				text.deleteChar(0);
 				s->_segMan->strcpy(textReference, text.c_str());

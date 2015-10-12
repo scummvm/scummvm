@@ -74,6 +74,8 @@ Vocabulary::Vocabulary(ResourceManager *resMan, bool foreign) : _resMan(resMan),
 
 	parser_event = NULL_REG;
 	parserIsValid = false;
+
+	_pronounReference = 0x1000; // Non-existent word
 }
 
 Vocabulary::~Vocabulary() {
@@ -736,6 +738,81 @@ int Vocabulary::parseNodes(int *i, int *pos, int type, int nr, int argc, const c
 		con->debugPrintf("Expected ')' at token %d\n", *i);
 
 	return oldPos;
+}
+
+
+// FIXME: Duplicated from said.cpp
+static int node_major(ParseTreeNode* node) {
+	assert(node->type == kParseTreeBranchNode);
+	assert(node->left->type == kParseTreeLeafNode);
+	return node->left->value;
+}
+static bool node_is_terminal(ParseTreeNode* node) {
+	return (node->right->right &&
+            node->right->right->type != kParseTreeBranchNode);
+}
+static int node_terminal_value(ParseTreeNode* node) {
+	assert(node_is_terminal(node));
+	return node->right->right->value;
+}
+
+static ParseTreeNode* scanForMajor(ParseTreeNode *tree, int major) {
+	assert(tree);
+
+	if (node_is_terminal(tree)) {
+		if (node_major(tree) == major)
+			return tree;
+		else
+			return 0;
+	}
+
+	ParseTreeNode* ptr = tree->right;
+
+	// Scan children
+	while (ptr->right) {
+		ptr = ptr->right;
+
+		if (node_major(ptr->left) == major)
+			return ptr->left;
+	}
+
+	if (major == 0x141)
+		return 0;
+
+	// If not found, go into a 0x141 and try again
+	tree = scanForMajor(tree, 0x141);
+	if (!tree)
+		return 0;
+	return scanForMajor(tree, major);
+}
+
+bool Vocabulary::storePronounReference() {
+	assert(parserIsValid);
+
+	ParseTreeNode *ptr = scanForMajor(_parserNodes, 0x142); // 0x142 = object?
+
+	while (ptr && !node_is_terminal(ptr))
+		ptr = scanForMajor(ptr, 0x141);
+
+	if (!ptr)
+		return false;
+
+	_pronounReference = node_terminal_value(ptr);
+
+	debugC(kDebugLevelParser, "Stored pronoun reference: %x", _pronounReference);
+	return true;
+}
+
+void Vocabulary::replacePronouns(ResultWordListList &words) {
+	if (_pronounReference == 0x1000)
+		return;
+
+	for (ResultWordListList::iterator i = words.begin(); i != words.end(); ++i)
+		for (ResultWordList::iterator j = i->begin(); j != i->end(); ++j)
+			if (j->_class & (VOCAB_CLASS_PRONOUN << 4)) {
+				j->_class = VOCAB_CLASS_NOUN << 4;
+				j->_group = _pronounReference;
+			}
 }
 
 } // End of namespace Sci

@@ -1,0 +1,112 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ */
+
+#ifndef BACKENDS_PLATFORM_SDL_WINDOW_H
+#define BACKENDS_PLATFORM_SDL_WINDOW_H
+
+#include "backends/platform/sdl/sdl-sys.h"
+
+#include "common/str.h"
+
+class SdlWindow {
+public:
+	SdlWindow();
+	virtual ~SdlWindow();
+
+	/**
+	 * Setup the window icon.
+	 */
+	virtual void setupIcon();
+
+	/**
+	 * Change the caption of the window.
+	 *
+	 * @param caption New window caption in UTF-8 encoding.
+	 */
+	void setWindowCaption(const Common::String &caption);
+
+	/**
+	 * Toggle mouse grab state. This decides whether the cursor can leave the
+	 * window or not.
+	 */
+	void toggleMouseGrab();
+
+	/**
+	 * Check whether the application has mouse focus.
+	 */
+	bool hasMouseFocus() const;
+
+	/**
+	 * Warp the mouse to the specified position in window coordinates.
+	 */
+	void warpMouseInWindow(uint x, uint y);
+
+	/**
+	 * Iconifies the window.
+	 */
+	void iconifyWindow();
+
+	/**
+	 * Query platform specific SDL window manager information.
+	 *
+	 * Since this is an SDL internal structure clients are responsible
+	 * for accessing it in a version safe manner.
+	 */
+	bool getSDLWMInformation(SDL_SysWMinfo *info) const;
+
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+public:
+	/**
+	 * @return The window ScummVM has setup with SDL.
+	 */
+	SDL_Window *getSDLWindow() const { return _window; }
+
+	/**
+	 * Creates a new SDL window (and destroies the old one).
+	 *
+	 * @param width   Width of the window.
+	 * @param height  Height of the window.
+	 * @param flags   SDL flags passed to SDL_CreateWindow
+	 * @return true on success, false otherwise
+	 */
+	bool createWindow(int width, int height, uint32 flags);
+
+	/**
+	 * Destroies the current SDL window.
+	 */
+	void destroyWindow();
+
+protected:
+	SDL_Window *_window;
+
+private:
+	bool _inputGrabState;
+	Common::String _windowCaption;
+#endif
+};
+
+class SdlIconlessWindow : public SdlWindow {
+public:
+	virtual void setupIcon() {}
+};
+
+#endif

@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -235,12 +235,18 @@ void Player::selectSeries() {
 
 void Player::updateFrame() {
 	// WORKAROUND: Prevent character info being referenced when not present
-	if ((_spritesStart + _spritesIdx) < 0 || !_spriteSetsPresent[_spritesStart + _spritesIdx])
+	int idx = _spritesStart + _spritesIdx;
+	if (idx < 0 || (idx < PLAYER_SPRITES_FILE_COUNT && !_spriteSetsPresent[idx]))
 		return;
 
 	Scene &scene = _vm->_game->_scene;
-	SpriteAsset &spriteSet = *scene._sprites[_spritesStart + _spritesIdx];
-	assert(spriteSet._charInfo);
+	assert(scene._sprites[idx] != nullptr);
+	SpriteAsset &spriteSet = *scene._sprites[idx];
+	
+	// WORKAROUND: Certain cutscenes set up player sprites that don't have any 
+	// character info. In such cases, simply ignore player updates
+	if (!spriteSet._charInfo)
+		return;
 
 	if (!spriteSet._charInfo->_numEntries) {
 		_frameNumber = 1;
@@ -509,12 +515,12 @@ void Player::idle() {
 		return;
 	}
 
-	if ((_spritesStart + _spritesIdx) < 0 || !_spriteSetsPresent[_spritesStart + _spritesIdx])
+	int idx = _spritesStart + _spritesIdx;
+	if (idx < 0 || (idx < PLAYER_SPRITES_FILE_COUNT && !_spriteSetsPresent[idx]))
 		return;
 
-	SpriteAsset &spriteSet = *scene._sprites[_spritesStart + _spritesIdx];
-	assert(spriteSet._charInfo);
-	if (spriteSet._charInfo->_numEntries == 0)
+	SpriteAsset &spriteSet = *scene._sprites[idx];
+	if (spriteSet._charInfo == nullptr || spriteSet._charInfo->_numEntries == 0)
 		// No entries, so exit immediately
 		return;
 
@@ -528,11 +534,11 @@ void Player::idle() {
 		_frameNumber += direction;
 		_forceRefresh = true;
 
-		if (spriteSet._charInfo->_stopFrames[frameIndex] < _frameNumber) {
+		if (_frameNumber > spriteSet._charInfo->_stopFrames[frameIndex]) {
 			_trigger = _upcomingTrigger;
 			updateFrame();
 		}
-		if (spriteSet._charInfo->_startFrames[frameIndex] < _frameNumber) {
+		if (_frameNumber < spriteSet._charInfo->_startFrames[frameIndex]) {
 			_trigger = _upcomingTrigger;
 			updateFrame();
 		}
@@ -658,7 +664,7 @@ void Player::startMovement() {
 	_deltaDistance = (majorChange == 0) ? 0 : _totalDistance / majorChange;
 
 	if (_playerPos.x > _targetPos.x)
-		_pixelAccum = MAX(_posChange.x, _posChange.y);
+		_pixelAccum = MIN(_posChange.x, _posChange.y);
 	else
 		_pixelAccum = 0;
 
@@ -703,7 +709,7 @@ void Player::releasePlayerSprites() {
 	_spritesLoaded = false;
 	_spritesChanged = true;
 
-	if (scene._sprites._assetCount > 0) {
+	if (scene._sprites.size() > 0) {
 		warning("Player::releasePlayerSprites(): leftover sprites remain, clearing list");
 		scene._sprites.clear();
 	}
@@ -779,14 +785,14 @@ void Player::removePlayerSprites() {
 	int heroSpriteId = _spritesStart;
 	for (int i = 0; i < 8; i++) {
 		if (_spriteSetsPresent[i]) {
-			scene._sprites.remove(heroSpriteId++);
+			delete scene._sprites[heroSpriteId];
+			scene._sprites[heroSpriteId] = nullptr;
 			_spriteSetsPresent[i] = false;
+			++heroSpriteId;
 		}
 	}
 
-	if (scene._activeAnimation != nullptr)
-		scene._activeAnimation->resetSpriteSetsCount();
-
+	scene._spriteSlots.clear();
 	scene._spriteSlots.fullRefresh();
 	_visible = false;
 }

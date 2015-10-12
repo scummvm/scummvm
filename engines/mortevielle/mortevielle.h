@@ -92,6 +92,7 @@ enum DataType {
 #define MORT_DAT_REQUIRED_VERSION 1
 #define MORT_DAT "mort.dat"
 #define GAME_FRAME_DELAY (1000 / 50)
+#define DISK_ACCESS_DELAY 1000
 
 const int kTime1 = 410;
 const int kTime2 = 250;
@@ -115,6 +116,7 @@ const int kInventoryStringIndex = 186;
 const int kQuestionStringIndex = 247;
 const int kDialogStringIndex = 292;
 const int kMenuPlaceStringIndex = 435;
+const int kStartingScreenStringIndex = 456;
 const int kMenuActionStringIndex = 476;
 const int kMenuSelfStringIndex = 497;
 const int kMenuSayStringIndex = 502;
@@ -415,6 +417,7 @@ public:
 	int _maff;
 	int _caff;
 	int _crep;
+	int _is;		// ???
 
 	byte _destinationArray[7][25];
 
@@ -465,6 +468,7 @@ public:
 	void gameLoaded();
 	void initGame();
 	void displayAloneText();
+	void displayInterScreenMessage(int mesgId);
 	void draw(int x, int y);
 	void charToHour();
 	void hourToChar();

@@ -709,6 +709,10 @@ void ActionThread(CORO_PARAM, const void *param) {
 		CORO_SLEEP(1);
 	}
 
+	// WORKAROUND: User interface sometimes remaining disabled after capturing guard on Ferris wheel
+	if (_ctx->item->_nObj == 3601 && _ctx->item->_dwRes == 9)
+		g_vm->getEngine()->enableInput();
+
 	globalDestroy(_ctx->item);
 	_ctx->item = NULL;
 

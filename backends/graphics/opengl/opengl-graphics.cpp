@@ -49,9 +49,9 @@ OpenGLGraphicsManager::OpenGLGraphicsManager()
       _displayWidth(0), _displayHeight(0), _defaultFormat(), _defaultFormatAlpha(),
       _gameScreen(nullptr), _gameScreenShakeOffset(0), _overlay(nullptr),
       _overlayVisible(false), _cursor(nullptr),
-      _cursorX(0), _cursorY(0), _cursorHotspotX(0), _cursorHotspotY(0), _cursorHotspotXScaled(0),
-      _cursorHotspotYScaled(0), _cursorWidthScaled(0), _cursorHeightScaled(0), _cursorKeyColor(0),
-      _cursorVisible(false), _cursorDontScale(false), _cursorPaletteEnabled(false)
+      _cursorX(0), _cursorY(0), _cursorDisplayX(0),_cursorDisplayY(0), _cursorHotspotX(0), _cursorHotspotY(0),
+      _cursorHotspotXScaled(0), _cursorHotspotYScaled(0), _cursorWidthScaled(0), _cursorHeightScaled(0),
+      _cursorKeyColor(0), _cursorVisible(false), _cursorDontScale(false), _cursorPaletteEnabled(false)
 #ifdef USE_OSD
       , _osdAlpha(0), _osdFadeStartTime(0), _osd(nullptr)
 #endif
@@ -351,7 +351,7 @@ void OpenGLGraphicsManager::updateScreen() {
 		return;
 	}
 
-	// Clear the screen buffer
+	// Clear the screen buffer.
 	GLCALL(glClear(GL_COLOR_BUFFER_BIT));
 
 	const GLfloat shakeOffset = _gameScreenShakeOffset * (GLfloat)_displayHeight / _gameScreen->getHeight();
@@ -370,12 +370,42 @@ void OpenGLGraphicsManager::updateScreen() {
 		// visible.
 		const GLfloat cursorOffset = _overlayVisible ? 0 : shakeOffset;
 
-		_cursor->draw(_cursorX - _cursorHotspotXScaled, _cursorY - _cursorHotspotYScaled + cursorOffset,
+		_cursor->draw(_cursorDisplayX - _cursorHotspotXScaled,
+		              _cursorDisplayY - _cursorHotspotYScaled + cursorOffset,
 		              _cursorWidthScaled, _cursorHeightScaled);
 	}
 
+	// Fourth step: Draw black borders around the game screen when no overlay
+	// is visible. This makes sure that the mouse cursor etc. is only drawn
+	// in the actual game screen area in this case.
+	if (!_overlayVisible) {
+		GLCALL(glColor4f(0.0f, 0.0f, 0.0f, 1.0f));
+
+		GLCALL(glDisable(GL_TEXTURE_2D));
+		GLCALL(glDisableClientState(GL_TEXTURE_COORD_ARRAY));
+
+		// Top border.
+		drawRect(0, 0, _outputScreenWidth, _displayY);
+
+		// Left border.
+		drawRect(0, 0, _displayX, _outputScreenHeight);
+
+		// Bottom border.
+		const int y = _displayY + _displayHeight;
+		drawRect(0, y, _outputScreenWidth, _outputScreenHeight - y);
+
+		// Right border.
+		const int x = _displayX + _displayWidth;
+		drawRect(x, 0, _outputScreenWidth - x, _outputScreenHeight);
+
+		GLCALL(glEnableClientState(GL_TEXTURE_COORD_ARRAY));
+		GLCALL(glEnable(GL_TEXTURE_2D));
+
+		GLCALL(glColor4f(1.0f, 1.0f, 1.0f, 1.0f));
+	}
+
 #ifdef USE_OSD
-	// Fourth step: Draw the OSD.
+	// Fifth step: Draw the OSD.
 	if (_osdAlpha > 0) {
 		Common::StackLock lock(_osdMutex);
 
@@ -435,10 +465,16 @@ int16 OpenGLGraphicsManager::getOverlayHeight() {
 
 void OpenGLGraphicsManager::showOverlay() {
 	_overlayVisible = true;
+
+	// Update cursor position.
+	setMousePosition(_cursorX, _cursorY);
 }
 
 void OpenGLGraphicsManager::hideOverlay() {
 	_overlayVisible = false;
+
+	// Update cursor position.
+	setMousePosition(_cursorX, _cursorY);
 }
 
 Graphics::PixelFormat OpenGLGraphicsManager::getOverlayFormat() const {
@@ -892,12 +928,25 @@ void OpenGLGraphicsManager::adjustMousePosition(int16 &x, int16 &y) {
 		const int16 width  = _gameScreen->getWidth();
 		const int16 height = _gameScreen->getHeight();
 
-		x = (x * width)  / _displayWidth;
-		y = (y * height) / _displayHeight;
+		x = (x * width)  / (int)_displayWidth;
+		y = (y * height) / (int)_displayHeight;
 
 		// Make sure we only supply valid coordinates.
 		x = CLIP<int16>(x, 0, width - 1);
 		y = CLIP<int16>(y, 0, height - 1);
+	}
+}
+
+void OpenGLGraphicsManager::setMousePosition(int x, int y) {
+	_cursorX = x;
+	_cursorY = y;
+
+	if (_overlayVisible) {
+		_cursorDisplayX = x;
+		_cursorDisplayY = y;
+	} else {
+		_cursorDisplayX = CLIP<int>(x, _displayX, _displayX + _displayWidth  - 1);
+		_cursorDisplayY = CLIP<int>(y, _displayY, _displayY + _displayHeight - 1);
 	}
 }
 
@@ -1046,6 +1095,9 @@ void OpenGLGraphicsManager::recalculateDisplayArea() {
 	// We center the screen in the middle for now.
 	_displayX = (_outputScreenWidth  - _displayWidth ) / 2;
 	_displayY = (_outputScreenHeight - _displayHeight) / 2;
+
+	// Update the cursor position to adjust for new display area.
+	setMousePosition(_cursorX, _cursorY);
 }
 
 void OpenGLGraphicsManager::updateCursorPalette() {
@@ -1161,6 +1213,22 @@ void OpenGLGraphicsManager::saveScreenshot(const Common::String &filename) const
 
 	// Free allocated memory
 	delete[] pixels;
+}
+
+void OpenGLGraphicsManager::drawRect(GLfloat x, GLfloat y, GLfloat w, GLfloat h) {
+	if (w < 0 || h < 0) {
+		return;
+	}
+
+	const GLfloat vertices[4*2] = {
+		x,     y,
+		x + w, y,
+		x,     y + h,
+		x + w, y + h
+	};
+	GLCALL(glVertexPointer(2, GL_FLOAT, 0, vertices));
+
+	GLCALL(glDrawArrays(GL_TRIANGLE_STRIP, 0, 4));
 }
 
 } // End of namespace OpenGL

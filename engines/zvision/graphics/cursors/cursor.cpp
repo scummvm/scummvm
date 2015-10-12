@@ -36,35 +36,6 @@ ZorkCursor::ZorkCursor()
 	  _hotspotY(0) {
 }
 
-ZorkCursor::ZorkCursor(const Common::String &fileName)
-	: _width(0),
-	  _height(0),
-	  _hotspotX(0),
-	  _hotspotY(0) {
-	Common::File file;
-	if (!file.open(fileName))
-		return;
-
-	uint32 magic = file.readUint32BE();
-	if (magic != MKTAG('Z', 'C', 'R', '1')) {
-		warning("%s is not a Zork Cursor file", fileName.c_str());
-		return;
-	}
-
-	_hotspotX = file.readUint16LE();
-	_hotspotY = file.readUint16LE();
-	_width = file.readUint16LE();
-	_height = file.readUint16LE();
-
-	uint dataSize = _width * _height * sizeof(uint16);
-	_surface.create(_width, _height, Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0));
-	uint32 bytesRead = file.read(_surface.getPixels(), dataSize);
-	assert(bytesRead == dataSize);
-
-	// Convert to RGB 565
-	_surface.convertToInPlace(Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0));
-}
-
 ZorkCursor::ZorkCursor(ZVision *engine, const Common::String &fileName)
 	: _width(0),
 	  _height(0),
@@ -72,7 +43,7 @@ ZorkCursor::ZorkCursor(ZVision *engine, const Common::String &fileName)
 	  _hotspotY(0) {
 	Common::File file;
 	if (!engine->getSearchManager()->openFile(file, fileName))
-		return;
+		error("Cursor file %s does not exist", fileName.c_str());
 
 	uint32 magic = file.readUint32BE();
 	if (magic != MKTAG('Z', 'C', 'R', '1')) {
@@ -86,12 +57,15 @@ ZorkCursor::ZorkCursor(ZVision *engine, const Common::String &fileName)
 	_height = file.readUint16LE();
 
 	uint dataSize = _width * _height * sizeof(uint16);
-	_surface.create(_width, _height, Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0));
+	_surface.create(_width, _height, engine->_resourcePixelFormat);
 	uint32 bytesRead = file.read(_surface.getPixels(), dataSize);
 	assert(bytesRead == dataSize);
 
-	// Convert to RGB 565
-	_surface.convertToInPlace(Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0));
+#ifndef SCUMM_LITTLE_ENDIAN
+	int16 *buffer = (int16 *)_surface.getPixels();
+	for (uint32 i = 0; i < dataSize / 2; ++i)
+		buffer[i] = FROM_LE_16(buffer[i]);
+#endif
 }
 
 ZorkCursor::ZorkCursor(const ZorkCursor &other) {

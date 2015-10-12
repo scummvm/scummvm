@@ -707,6 +707,7 @@ bool AGOSEngine::processSpecialKeys() {
 		if (_midiEnabled) {
 			_midi->pause(_musicPaused);
 		}
+		_mixer->pauseHandle(_modHandle, _musicPaused);
 		syncSoundSettings();
 		break;
 	case 's':

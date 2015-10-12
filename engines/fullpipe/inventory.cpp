@@ -126,7 +126,7 @@ void Inventory2::removeItem2(Scene *sceneObj, int itemId, int x, int y, int prio
 	int idx = getInventoryItemIndexById(itemId);
 
 	if (idx >= 0) {
-		if (_inventoryItems[idx]->itemId >> 16) {
+		if (_inventoryItems[idx]->count) {
 			removeItem(itemId, 1);
 
 			Scene *sc = g_fp->accessScene(_sceneId);

@@ -31,7 +31,7 @@
 namespace ZVision {
 
 FogFx::FogFx(ZVision *engine, uint32 key, Common::Rect region, bool ported, EffectMap *Map, const Common::String &clouds):
-	Effect(engine, key, region, ported) {
+	GraphicsEffect(engine, key, region, ported) {
 
 	_map = Map;
 
@@ -79,10 +79,10 @@ const Graphics::Surface *FogFx::draw(const Graphics::Surface &srcSubRect) {
 			if (it->inEffect) {
 				// Not 100% equivalent, but looks nice and not buggy
 				uint8 sr, sg, sb;
-				_engine->_pixelFormat.colorToRGB(lineBuf[i], sr, sg, sb);
+				_engine->_resourcePixelFormat.colorToRGB(lineBuf[i], sr, sg, sb);
 				uint16 fogColor = *(uint16 *)_fog.getBasePtr((i + _pos) % _fog.w, j);
 				uint8 dr, dg, db;
-				_engine->_pixelFormat.colorToRGB(_colorMap[fogColor & 0x1F], dr, dg, db);
+				_engine->_resourcePixelFormat.colorToRGB(_colorMap[fogColor & 0x1F], dr, dg, db);
 				uint16 fr = dr + sr;
 				if (fr > 255)
 					fr = 255;
@@ -92,7 +92,7 @@ const Graphics::Surface *FogFx::draw(const Graphics::Surface &srcSubRect) {
 				uint16 fb = db + sb;
 				if (fb > 255)
 					fb = 255;
-				lineBuf[i] = _engine->_pixelFormat.RGBToColor(fr, fg, fb);
+				lineBuf[i] = _engine->_resourcePixelFormat.RGBToColor(fr, fg, fb);
 			}
 			cnt++;
 			if (cnt >= it->count) {
@@ -138,14 +138,14 @@ void FogFx::update() {
 
 		// Not 100% equivalent, but looks nice and not buggy
 
-		_colorMap[31] = _engine->_pixelFormat.RGBToColor(_r << 3, _g << 3, _b << 3);
+		_colorMap[31] = _engine->_resourcePixelFormat.RGBToColor(_r << 3, _g << 3, _b << 3);
 
 		for (uint8 i = 0; i < 31; i++) {
 			float perc = (float)i / 31.0;
-			uint8 cr = (float)_r * perc;
-			uint8 cg = (float)_g * perc;
-			uint8 cb = (float)_b * perc;
-			_colorMap[i] = _engine->_pixelFormat.RGBToColor(cr << 3, cg << 3, cb << 3);
+			uint8 cr = (uint8)((float)_r * perc);
+			uint8 cg = (uint8)((float)_g * perc);
+			uint8 cb = (uint8)((float)_b * perc);
+			_colorMap[i] = _engine->_resourcePixelFormat.RGBToColor(cr << 3, cg << 3, cb << 3);
 		}
 	}
 

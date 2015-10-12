@@ -30,7 +30,7 @@
 namespace ZVision {
 
 WaveFx::WaveFx(ZVision *engine, uint32 key, Common::Rect region, bool ported, int16 frames, int16 centerX, int16 centerY, float ampl, float waveln, float spd):
-	Effect(engine, key, region, ported) {
+	GraphicsEffect(engine, key, region, ported) {
 
 	_frame = 0;
 	_frameCount = frames;
@@ -54,7 +54,7 @@ WaveFx::WaveFx(ZVision *engine, uint32 key, Common::Rect region, bool ported, in
 				int16 dx = (x - quarterWidth);
 				int16 dy = (y - quarterHeight);
 
-				_ampls[i][x + y * _halfWidth] = ampl * sin(sqrt(dx * dx / (float)centerX + dy * dy / (float)centerY) / (-waveln * 3.1415926) + phase);
+				_ampls[i][x + y * _halfWidth] = (int8)(ampl * sin(sqrt(dx * dx / (float)centerX + dy * dy / (float)centerY) / (-waveln * 3.1415926) + phase));
 			}
 		phase += spd;
 	}

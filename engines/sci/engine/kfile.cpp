@@ -933,6 +933,11 @@ reg_t kRestoreGame(EngineState *s, int argc, reg_t *argv) {
 				g_sci->_gfxMenu->kernelSetAttribute(1025 >> 8, 1025 & 0xFF, SCI_MENU_ATTRIBUTE_ENABLED, TRUE_REG);  // Status -> Statistics
 				g_sci->_gfxMenu->kernelSetAttribute(1026 >> 8, 1026 & 0xFF, SCI_MENU_ATTRIBUTE_ENABLED, TRUE_REG);  // Status -> Goals
 				break;
+			case GID_PQ2:
+				// HACK: Same as above - enable the save game menu option when loading in PQ2 (bug #6875).
+				// It gets disabled in the game's death screen.
+				g_sci->_gfxMenu->kernelSetAttribute(2, 1, SCI_MENU_ATTRIBUTE_ENABLED, TRUE_REG);	// Game -> Save Game
+				break;
 			default:
 				break;
 			}

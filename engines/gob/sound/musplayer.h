@@ -40,7 +40,7 @@ namespace Gob {
  */
 class MUSPlayer : public AdLib {
 public:
-	MUSPlayer(Audio::Mixer &mixer);
+	MUSPlayer();
 	~MUSPlayer();
 
 	/** Load the instruments (.SND or .TBR) */
@@ -97,7 +97,6 @@ private:
 	bool readMUSHeader(Common::SeekableReadStream &mus);
 	bool readMUSSong  (Common::SeekableReadStream &mus);
 
-	uint32 getSampleDelay(uint16 delay) const;
 	void setInstrument(uint8 voice, uint8 instrument);
 	void skipToTiming();
 

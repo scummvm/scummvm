@@ -34,6 +34,7 @@ namespace Video {
 
 namespace ZVision {
 
+// Only used in Zork Nemesis, handles the safe in the Asylum (ac4g)
 class SafeControl : public Control {
 public:
 	SafeControl(ZVision *engine, uint32 key, Common::SeekableReadStream &stream);
@@ -51,19 +52,12 @@ private:
 	int32  _outerRadiusSqr;
 	int16  _zeroPointer;
 	int16  _startPointer;
-	int16  _curFrame;
 	int16  _targetFrame;
-	int32  _frameTime;
-
-	int16 _lastRenderedFrame;
 
 public:
 	bool onMouseUp(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos);
 	bool onMouseMove(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos);
 	bool process(uint32 deltaTimeInMillis);
-
-private:
-	void renderFrame(uint frameNumber);
 };
 
 } // End of namespace ZVision

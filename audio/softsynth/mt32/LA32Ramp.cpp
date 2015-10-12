@@ -50,8 +50,8 @@ We haven't fully explored:
 //#include <cmath>
 
 #include "mt32emu.h"
-#include "LA32Ramp.h"
 #include "mmath.h"
+#include "internals.h"
 
 namespace MT32Emu {
 

@@ -75,7 +75,22 @@ static const AccessGameDescription gameDescriptions[] = {
 		{
 			"martian",
 			nullptr,
-			AD_ENTRY1s("r00.ap", "af98db5ee7f9ef86c6b1f43187a3691b", 31),
+			AD_ENTRY1s("r01.ap", "c081daca9b0cfd710157cf946e343df6", 39352),
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NONE)
+		},
+		GType_MartianMemorandum,
+		0
+	},
+
+	{
+		// Martian Memorandum
+		{
+			"martian",
+			"Demo",
+			AD_ENTRY1s("r01.rm", "c2facf9c43047211289044ee39a2322a", 2313),
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,

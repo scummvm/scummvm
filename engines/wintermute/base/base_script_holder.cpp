@@ -302,7 +302,7 @@ bool BaseScriptHolder::addScript(const char *filename) {
 	for (uint32 i = 0; i < _scripts.size(); i++) {
 		if (scumm_stricmp(_scripts[i]->_filename, filename) == 0) {
 			if (_scripts[i]->_state != SCRIPT_FINISHED) {
-				BaseEngine::LOG(0, "BaseScriptHolder::AddScript - trying to add script '%s' mutiple times (obj: '%s')", filename, getName());
+				BaseEngine::LOG(0, "BaseScriptHolder::AddScript - trying to add script '%s' multiple times (obj: '%s')", filename, getName());
 				return STATUS_OK;
 			}
 		}

@@ -523,22 +523,45 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 			}
 			#endif
 
+			// At this point, we usually return to the launcher. However, the
+			// game may have requested that one or more other games be "chained"
+			// to the current one, with optional save slots to start the games
+			// at. At the time of writing, this is used for the Maniac Mansion
+			// easter egg in Day of the Tentacle.
+
+			Common::String chainedGame;
+			int saveSlot = -1;
+
+			ChainedGamesMan.pop(chainedGame, saveSlot);
+
 			// Discard any command line options. It's unlikely that the user
 			// wanted to apply them to *all* games ever launched.
 			ConfMan.getDomain(Common::ConfigManager::kTransientDomain)->clear();
 
-			// Clear the active config domain
-			ConfMan.setActiveDomain("");
+			if (!chainedGame.empty()) {
+				if (saveSlot != -1) {
+					ConfMan.setInt("save_slot", saveSlot, Common::ConfigManager::kTransientDomain);
+				}
+				// Start the chained game
+				ConfMan.setActiveDomain(chainedGame);
+			} else {
+				// Clear the active config domain
+				ConfMan.setActiveDomain("");
+			}
 
 			PluginManager::instance().loadAllPlugins(); // only for cached manager
-
 		} else {
 			GUI::displayErrorDialog(_("Could not find any engine capable of running the selected game"));
+
+			// Clear the active domain
+			ConfMan.setActiveDomain("");
 		}
 
 		// reset the graphics to default
 		setupGraphics(system);
-		launcherDialog();
+		if (0 == ConfMan.getActiveDomain()) {
+			launcherDialog();
+		}
 	}
 	PluginManager::instance().unloadAllPlugins();
 	PluginManager::destroy();

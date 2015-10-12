@@ -63,7 +63,6 @@ Animation::Animation(AccessEngine *vm, Common::SeekableReadStream *stream) : Man
 	_countdownTicks = stream->readUint16LE();
 	_currentLoopCount = stream->readSint16LE();
 	stream->readUint16LE(); // unk
-	_field10 = 0;
 
 	Common::Array<uint16> frameOffsets;
 	uint16 ofs;
@@ -311,9 +310,7 @@ Animation *AnimationManager::setAnimation(int animId) {
 	anim->_countdownTicks = anim->_initialTicks;
 	anim->_frameNumber = 0;
 
-	anim->_currentLoopCount = (anim->_type != 3 && anim->_type != 4) ? 0 :
-		anim->_loopCount;
-	anim->_field10 = 0;
+	anim->_currentLoopCount = (anim->_type != 3 && anim->_type != 4) ? 0 : anim->_loopCount;
 
 	return anim;
 }

@@ -125,6 +125,13 @@ public:
 		write(&value, 4);
 	}
 
+#ifdef HAVE_INT64
+	void writeUint64LE(uint64 value) {
+		value = TO_LE_64(value);
+		write(&value, 8);
+	}
+#endif
+
 	void writeUint16BE(uint16 value) {
 		value = TO_BE_16(value);
 		write(&value, 2);
@@ -135,6 +142,13 @@ public:
 		write(&value, 4);
 	}
 
+#ifdef HAVE_INT64
+	void writeUint64BE(uint64 value) {
+		value = TO_BE_64(value);
+		write(&value, 8);
+	}
+#endif
+
 	FORCEINLINE void writeSint16LE(int16 value) {
 		writeUint16LE((uint16)value);
 	}
@@ -143,6 +157,12 @@ public:
 		writeUint32LE((uint32)value);
 	}
 
+#ifdef HAVE_INT64
+	FORCEINLINE void writeSint64LE(int64 value) {
+		writeUint64LE((uint64)value);
+	}
+#endif
+
 	FORCEINLINE void writeSint16BE(int16 value) {
 		writeUint16BE((uint16)value);
 	}
@@ -150,6 +170,12 @@ public:
 	FORCEINLINE void writeSint32BE(int32 value) {
 		writeUint32BE((uint32)value);
 	}
+
+#ifdef HAVE_INT64
+	FORCEINLINE void writeSint64BE(int64 value) {
+		writeUint64BE((uint64)value);
+	}
+#endif
 
 	/**
 	 * Write the given string to the stream.
@@ -241,6 +267,21 @@ public:
 		return FROM_LE_32(val);
 	}
 
+#ifdef HAVE_INT64
+	/**
+	 * Read an unsigned 64-bit word stored in little endian (LSB first) order
+	 * from the stream and return it.
+	 * Performs no error checking. The return value is undefined
+	 * if a read error occurred (for which client code can check by
+	 * calling err() and eos() ).
+	 */
+	uint64 readUint64LE() {
+		uint64 val;
+		read(&val, 8);
+		return FROM_LE_64(val);
+	}
+#endif
+
 	/**
 	 * Read an unsigned 16-bit word stored in big endian (MSB first) order
 	 * from the stream and return it.
@@ -267,6 +308,21 @@ public:
 		return FROM_BE_32(val);
 	}
 
+#ifdef HAVE_INT64
+	/**
+	 * Read an unsigned 64-bit word stored in big endian (MSB first) order
+	 * from the stream and return it.
+	 * Performs no error checking. The return value is undefined
+	 * if a read error occurred (for which client code can check by
+	 * calling err() and eos() ).
+	 */
+	uint64 readUint64BE() {
+		uint64 val;
+		read(&val, 8);
+		return FROM_BE_64(val);
+	}
+#endif
+
 	/**
 	 * Read a signed 16-bit word stored in little endian (LSB first) order
 	 * from the stream and return it.
@@ -289,6 +345,19 @@ public:
 		return (int32)readUint32LE();
 	}
 
+#ifdef HAVE_INT64
+	/**
+	 * Read a signed 64-bit word stored in little endian (LSB first) order
+	 * from the stream and return it.
+	 * Performs no error checking. The return value is undefined
+	 * if a read error occurred (for which client code can check by
+	 * calling err() and eos() ).
+	 */
+	FORCEINLINE int64 readSint64LE() {
+		return (int64)readUint64LE();
+	}
+#endif
+
 	/**
 	 * Read a signed 16-bit word stored in big endian (MSB first) order
 	 * from the stream and return it.
@@ -310,6 +379,19 @@ public:
 	FORCEINLINE int32 readSint32BE() {
 		return (int32)readUint32BE();
 	}
+
+#ifdef HAVE_INT64
+	/**
+	 * Read a signed 64-bit word stored in big endian (MSB first) order
+	 * from the stream and return it.
+	 * Performs no error checking. The return value is undefined
+	 * if a read error occurred (for which client code can check by
+	 * calling err() and eos() ).
+	 */
+	FORCEINLINE int64 readSint64BE() {
+		return (int64)readUint64BE();
+	}
+#endif
 
 	/**
 	 * Read the specified amount of data into a malloc'ed buffer
@@ -435,6 +517,14 @@ public:
 		return (_bigEndian) ? TO_BE_32(val) : TO_LE_32(val);
 	}
 
+#ifdef HAVE_INT64
+	uint64 readUint64() {
+		uint64 val;
+		read(&val, 8);
+		return (_bigEndian) ? TO_BE_64(val) : TO_LE_64(val);
+	}
+#endif
+
 	FORCEINLINE int16 readSint16() {
 		return (int16)readUint16();
 	}
@@ -442,6 +532,12 @@ public:
 	FORCEINLINE int32 readSint32() {
 		return (int32)readUint32();
 	}
+
+#ifdef HAVE_INT64
+	FORCEINLINE int64 readSint64() {
+		return (int64)readUint64();
+	}
+#endif
 };
 
 /**

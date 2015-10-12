@@ -1,5 +1,5 @@
 # Czech translation for ScummVM.
-# Copyright (C) 2001-2014 ScummVM Team
+# Copyright (C) 2001-2015 The ScummVM Team
 # This file is distributed under the same license as the ScummVM package.
 # Zbynìk Schwarz <zbynek.schwarz@gmail.com>, 2011-2013.
 #
@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.7.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2014-10-04 00:58+0100\n"
-"PO-Revision-Date: 2014-02-27 21:43+0100\n"
+"POT-Creation-Date: 2015-09-06 15:14+0200\n"
+"PO-Revision-Date: 2015-07-26 18:51+0200\n"
 "Last-Translator: Zbynìk Schwarz <zbynek.schwarz@gmail.com>\n"
 "Language-Team: \n"
 "Language: Cesky\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
 "X-Poedit-SourceCharset: iso-8859-2\n"
-"X-Generator: Poedit 1.6.4\n"
+"X-Generator: Poedit 1.8.3\n"
 "X-Poedit-Basepath: ..\n"
 
 #: gui/about.cpp:94
@@ -33,7 +33,7 @@ msgstr "Zakompilované funkce:"
 msgid "Available engines:"
 msgstr "Dostupná jádra:"
 
-#: gui/browser.cpp:68
+#: gui/browser.cpp:68 gui/browser_osx.mm:104
 msgid "Show hidden files"
 msgstr "Zobrazit skryté soubory"
 
@@ -54,12 +54,14 @@ msgctxt "lowres"
 msgid "Go up"
 msgstr "Jít nahoru"
 
-#: gui/browser.cpp:75 gui/chooser.cpp:46 gui/KeysDialog.cpp:43
-#: gui/launcher.cpp:351 gui/massadd.cpp:95 gui/options.cpp:1239
-#: gui/saveload-dialog.cpp:216 gui/saveload-dialog.cpp:276
-#: gui/saveload-dialog.cpp:547 gui/saveload-dialog.cpp:922
-#: gui/themebrowser.cpp:55 gui/fluidsynth-dialog.cpp:152
-#: engines/engine.cpp:452 backends/platform/wii/options.cpp:48
+#: gui/browser.cpp:75 gui/chooser.cpp:46 gui/editrecorddialog.cpp:67
+#: gui/KeysDialog.cpp:43 gui/launcher.cpp:351 gui/massadd.cpp:95
+#: gui/options.cpp:1237 gui/predictivedialog.cpp:74 gui/recorderdialog.cpp:70
+#: gui/recorderdialog.cpp:156 gui/saveload-dialog.cpp:216
+#: gui/saveload-dialog.cpp:276 gui/saveload-dialog.cpp:547
+#: gui/saveload-dialog.cpp:931 gui/themebrowser.cpp:55
+#: gui/fluidsynth-dialog.cpp:152 engines/engine.cpp:483
+#: backends/platform/wii/options.cpp:48
 #: backends/events/default/default-events.cpp:196
 #: backends/events/default/default-events.cpp:218
 #: engines/drascula/saveload.cpp:49 engines/parallaction/saveload.cpp:274
@@ -67,14 +69,33 @@ msgstr "Jít nahoru"
 msgid "Cancel"
 msgstr "Zru¹it"
 
-#: gui/browser.cpp:76 gui/chooser.cpp:47 gui/themebrowser.cpp:56
+#: gui/browser.cpp:76 gui/browser_osx.mm:103 gui/chooser.cpp:47
+#: gui/themebrowser.cpp:56
 msgid "Choose"
 msgstr "Zvolit"
 
+#: gui/editrecorddialog.cpp:58
+#, fuzzy
+msgid "Author:"
+msgstr "Autor:"
+
+#: gui/editrecorddialog.cpp:59 gui/launcher.cpp:204
+msgid "Name:"
+msgstr "Jméno"
+
+#: gui/editrecorddialog.cpp:60
+#, fuzzy
+msgid "Notes:"
+msgstr "Poznámky:"
+
+#: gui/editrecorddialog.cpp:68 gui/predictivedialog.cpp:75
+msgid "Ok"
+msgstr ""
+
 #: gui/gui-manager.cpp:117 backends/keymapper/remap-dialog.cpp:53
-#: engines/scumm/help.cpp:125 engines/scumm/help.cpp:140
-#: engines/scumm/help.cpp:165 engines/scumm/help.cpp:191
-#: engines/scumm/help.cpp:209
+#: engines/scumm/help.cpp:126 engines/scumm/help.cpp:141
+#: engines/scumm/help.cpp:166 engines/scumm/help.cpp:192
+#: engines/scumm/help.cpp:210
 msgid "Close"
 msgstr "Zavøít"
 
@@ -90,7 +111,7 @@ msgstr "Zobrazit klávesnici"
 msgid "Remap keys"
 msgstr "Pøemapovat klávesy"
 
-#: gui/gui-manager.cpp:131 base/main.cpp:326 engines/scumm/help.cpp:86
+#: gui/gui-manager.cpp:131 base/main.cpp:326 engines/scumm/help.cpp:87
 msgid "Toggle fullscreen"
 msgstr "Pøepnout celou obrazovku"
 
@@ -103,14 +124,14 @@ msgid "Map"
 msgstr "Mapovat"
 
 #: gui/KeysDialog.cpp:42 gui/launcher.cpp:352 gui/launcher.cpp:1048
-#: gui/launcher.cpp:1052 gui/massadd.cpp:92 gui/options.cpp:1240
-#: gui/saveload-dialog.cpp:923 gui/fluidsynth-dialog.cpp:153
-#: engines/engine.cpp:371 engines/engine.cpp:382
+#: gui/launcher.cpp:1052 gui/massadd.cpp:92 gui/options.cpp:1238
+#: gui/saveload-dialog.cpp:932 gui/fluidsynth-dialog.cpp:153
+#: engines/engine.cpp:402 engines/engine.cpp:413
 #: backends/platform/wii/options.cpp:47
 #: backends/platform/wince/CELauncherDialog.cpp:54
 #: engines/agos/animation.cpp:558 engines/drascula/saveload.cpp:49
-#: engines/groovie/script.cpp:399 engines/parallaction/saveload.cpp:274
-#: engines/scumm/dialogs.cpp:193 engines/scumm/scumm.cpp:1825
+#: engines/groovie/script.cpp:408 engines/parallaction/saveload.cpp:274
+#: engines/scumm/dialogs.cpp:193 engines/scumm/scumm.cpp:1834
 #: engines/scumm/players/player_v3m.cpp:130
 #: engines/scumm/players/player_v5m.cpp:108 engines/sky/compact.cpp:131
 #: engines/sky/compact.cpp:141 engines/sword1/animation.cpp:524
@@ -165,10 +186,6 @@ msgctxt "lowres"
 msgid "ID:"
 msgstr "ID:"
 
-#: gui/launcher.cpp:204
-msgid "Name:"
-msgstr "Jméno"
-
 #: gui/launcher.cpp:204 gui/launcher.cpp:206 gui/launcher.cpp:207
 msgid "Full title of the game"
 msgstr "Úplný název hry"
@@ -189,7 +206,7 @@ msgid ""
 msgstr "Jazyk hry. Toto z va¹í ©panìlské verze neudìlá Anglickou"
 
 #: gui/launcher.cpp:212 gui/launcher.cpp:226 gui/options.cpp:87
-#: gui/options.cpp:737 gui/options.cpp:750 gui/options.cpp:1210
+#: gui/options.cpp:735 gui/options.cpp:748 gui/options.cpp:1208
 #: audio/null.cpp:41
 msgid "<default>"
 msgstr "<výchozí>"
@@ -211,11 +228,11 @@ msgstr "Platforma:"
 msgid "Engine"
 msgstr "Jádro"
 
-#: gui/launcher.cpp:245 gui/options.cpp:1073 gui/options.cpp:1090
+#: gui/launcher.cpp:245 gui/options.cpp:1071 gui/options.cpp:1088
 msgid "Graphics"
 msgstr "Obraz"
 
-#: gui/launcher.cpp:245 gui/options.cpp:1073 gui/options.cpp:1090
+#: gui/launcher.cpp:245 gui/options.cpp:1071 gui/options.cpp:1088
 msgid "GFX"
 msgstr "GFX"
 
@@ -228,7 +245,7 @@ msgctxt "lowres"
 msgid "Override global graphic settings"
 msgstr "Potlaèit globální nastavení obrazu"
 
-#: gui/launcher.cpp:257 gui/options.cpp:1096
+#: gui/launcher.cpp:257 gui/options.cpp:1094
 msgid "Audio"
 msgstr "Zvuk"
 
@@ -241,11 +258,11 @@ msgctxt "lowres"
 msgid "Override global audio settings"
 msgstr "Potlaèit globální nastavení zvuku"
 
-#: gui/launcher.cpp:271 gui/options.cpp:1101
+#: gui/launcher.cpp:271 gui/options.cpp:1099
 msgid "Volume"
 msgstr "Hlasitost"
 
-#: gui/launcher.cpp:273 gui/options.cpp:1103
+#: gui/launcher.cpp:273 gui/options.cpp:1101
 msgctxt "lowres"
 msgid "Volume"
 msgstr "Hlasitost"
@@ -259,7 +276,7 @@ msgctxt "lowres"
 msgid "Override global volume settings"
 msgstr "Potlaèit globální nastavení hlasitosti"
 
-#: gui/launcher.cpp:286 gui/options.cpp:1111
+#: gui/launcher.cpp:286 gui/options.cpp:1109
 msgid "MIDI"
 msgstr "MIDI"
 
@@ -272,7 +289,7 @@ msgctxt "lowres"
 msgid "Override global MIDI settings"
 msgstr "Potlaèit globální nastavení MIDI"
 
-#: gui/launcher.cpp:300 gui/options.cpp:1117
+#: gui/launcher.cpp:300 gui/options.cpp:1115
 msgid "MT-32"
 msgstr "MT-32"
 
@@ -285,11 +302,11 @@ msgctxt "lowres"
 msgid "Override global MT-32 settings"
 msgstr "Potlaèit globální nastavení MT-32"
 
-#: gui/launcher.cpp:314 gui/options.cpp:1124
+#: gui/launcher.cpp:314 gui/options.cpp:1122
 msgid "Paths"
 msgstr "Cesty"
 
-#: gui/launcher.cpp:316 gui/options.cpp:1126
+#: gui/launcher.cpp:316 gui/options.cpp:1124
 msgctxt "lowres"
 msgid "Paths"
 msgstr "Cesty"
@@ -303,7 +320,7 @@ msgctxt "lowres"
 msgid "Game Path:"
 msgstr "Cesta Hry:"
 
-#: gui/launcher.cpp:330 gui/options.cpp:1150
+#: gui/launcher.cpp:330 gui/options.cpp:1148
 msgid "Extra Path:"
 msgstr "Dodateèná Cesta:"
 
@@ -311,42 +328,42 @@ msgstr "Dodateèná Cesta:"
 msgid "Specifies path to additional data used by the game"
 msgstr "Stanoví cestu pro dodateèná data pou¾itá ve høe"
 
-#: gui/launcher.cpp:332 gui/options.cpp:1152
+#: gui/launcher.cpp:332 gui/options.cpp:1150
 msgctxt "lowres"
 msgid "Extra Path:"
 msgstr "Dodateèná Cesta:"
 
-#: gui/launcher.cpp:339 gui/options.cpp:1134
+#: gui/launcher.cpp:339 gui/options.cpp:1132
 msgid "Save Path:"
 msgstr "Cesta pro ulo¾ení:"
 
 #: gui/launcher.cpp:339 gui/launcher.cpp:341 gui/launcher.cpp:342
-#: gui/options.cpp:1134 gui/options.cpp:1136 gui/options.cpp:1137
+#: gui/options.cpp:1132 gui/options.cpp:1134 gui/options.cpp:1135
 msgid "Specifies where your saved games are put"
 msgstr "Stanovuje, kam jsou umístìny va¹e ulo¾ené hry"
 
-#: gui/launcher.cpp:341 gui/options.cpp:1136
+#: gui/launcher.cpp:341 gui/options.cpp:1134
 msgctxt "lowres"
 msgid "Save Path:"
 msgstr "Cesta pro ulo¾ení:"
 
 #: gui/launcher.cpp:360 gui/launcher.cpp:459 gui/launcher.cpp:517
-#: gui/launcher.cpp:571 gui/options.cpp:1145 gui/options.cpp:1153
-#: gui/options.cpp:1162 gui/options.cpp:1277 gui/options.cpp:1283
-#: gui/options.cpp:1291 gui/options.cpp:1321 gui/options.cpp:1327
-#: gui/options.cpp:1334 gui/options.cpp:1427 gui/options.cpp:1430
-#: gui/options.cpp:1442
+#: gui/launcher.cpp:571 gui/options.cpp:1143 gui/options.cpp:1151
+#: gui/options.cpp:1160 gui/options.cpp:1275 gui/options.cpp:1281
+#: gui/options.cpp:1289 gui/options.cpp:1319 gui/options.cpp:1325
+#: gui/options.cpp:1332 gui/options.cpp:1425 gui/options.cpp:1428
+#: gui/options.cpp:1440
 msgctxt "path"
 msgid "None"
 msgstr "®ádné"
 
 #: gui/launcher.cpp:365 gui/launcher.cpp:465 gui/launcher.cpp:575
-#: gui/options.cpp:1271 gui/options.cpp:1315 gui/options.cpp:1433
+#: gui/options.cpp:1269 gui/options.cpp:1313 gui/options.cpp:1431
 #: backends/platform/wii/options.cpp:56
 msgid "Default"
 msgstr "Výchozí"
 
-#: gui/launcher.cpp:510 gui/options.cpp:1436
+#: gui/launcher.cpp:510 gui/options.cpp:1434
 msgid "Select SoundFont"
 msgstr "Vybrat SoundFont"
 
@@ -358,7 +375,7 @@ msgstr "Vyberte adresáø s daty hry"
 msgid "Select additional game directory"
 msgstr "Vyberte dodateèný adresáø hry"
 
-#: gui/launcher.cpp:559 gui/options.cpp:1379
+#: gui/launcher.cpp:559 gui/options.cpp:1377
 msgid "Select directory for saved games"
 msgstr "Vyberte adresáø pro ulo¾ené hry"
 
@@ -478,7 +495,7 @@ msgstr ""
 
 #: gui/launcher.cpp:793 gui/launcher.cpp:941 gui/launcher.cpp:1000
 #: gui/fluidsynth-dialog.cpp:217
-#: backends/events/symbiansdl/symbiansdl-events.cpp:184
+#: backends/events/symbiansdl/symbiansdl-events.cpp:186
 #: backends/platform/wince/CEActionsPocket.cpp:326
 #: backends/platform/wince/CEActionsSmartphone.cpp:287
 #: backends/platform/wince/CELauncherDialog.cpp:83
@@ -488,7 +505,7 @@ msgstr "Ano"
 
 #: gui/launcher.cpp:793 gui/launcher.cpp:941 gui/launcher.cpp:1000
 #: gui/fluidsynth-dialog.cpp:217
-#: backends/events/symbiansdl/symbiansdl-events.cpp:184
+#: backends/events/symbiansdl/symbiansdl-events.cpp:186
 #: backends/platform/wince/CEActionsPocket.cpp:326
 #: backends/platform/wince/CEActionsSmartphone.cpp:287
 #: backends/platform/wince/CELauncherDialog.cpp:83
@@ -524,6 +541,14 @@ msgstr "Tato hra nepodporuje spou¹tìní her ze spou¹tìèe"
 msgid "ScummVM could not find any engine capable of running the selected game!"
 msgstr "ScummVM nemohl najít ¾ádné jádro schopné vybranou hru spustit!"
 
+#: gui/launcher.cpp:1159
+msgid "Mass Add..."
+msgstr "Hromadné Pøidání..."
+
+#: gui/launcher.cpp:1161
+msgid "Record..."
+msgstr "Nahrát..."
+
 #: gui/massadd.cpp:79 gui/massadd.cpp:82
 msgid "... progress ..."
 msgstr "... prùbìh ..."
@@ -546,6 +571,24 @@ msgstr "Prohledáno %d adresáøù..."
 #, c-format
 msgid "Discovered %d new games, ignored %d previously added games ..."
 msgstr "Objeveno %d nových her, ignorováno %d døíve pøidaných her ..."
+
+#: gui/onscreendialog.cpp:101 gui/onscreendialog.cpp:103
+msgid "Stop"
+msgstr ""
+
+#: gui/onscreendialog.cpp:106
+msgid "Edit record description"
+msgstr ""
+
+#: gui/onscreendialog.cpp:108
+#, fuzzy
+msgid "Switch to Game"
+msgstr "Pøepnout"
+
+#: gui/onscreendialog.cpp:110
+#, fuzzy
+msgid "Fast replay"
+msgstr "Rychlý re¾im"
 
 #: gui/options.cpp:85
 msgid "Never"
@@ -587,8 +630,8 @@ msgstr "44 kHz"
 msgid "48 kHz"
 msgstr "48 kHz"
 
-#: gui/options.cpp:255 gui/options.cpp:481 gui/options.cpp:582
-#: gui/options.cpp:651 gui/options.cpp:859
+#: gui/options.cpp:255 gui/options.cpp:479 gui/options.cpp:580
+#: gui/options.cpp:649 gui/options.cpp:857
 msgctxt "soundfont"
 msgid "None"
 msgstr "®ádné"
@@ -609,70 +652,70 @@ msgstr "nastavení celé obrazovky nemohlo být zmìnìno"
 msgid "the aspect ratio setting could not be changed"
 msgstr "nastavení pomìru stran nemohlo být zmìnìno"
 
-#: gui/options.cpp:734
+#: gui/options.cpp:732
 msgid "Graphics mode:"
 msgstr "Re¾im obrazu:"
 
-#: gui/options.cpp:748
+#: gui/options.cpp:746
 msgid "Render mode:"
 msgstr "Re¾im vykreslení:"
 
-#: gui/options.cpp:748 gui/options.cpp:749
+#: gui/options.cpp:746 gui/options.cpp:747
 msgid "Special dithering modes supported by some games"
 msgstr "Speciální re¾imy chvìní podporované nìkterými hrami"
 
-#: gui/options.cpp:760
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2249
+#: gui/options.cpp:758
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2298
 msgid "Fullscreen mode"
 msgstr "Re¾im celé obrazovky"
 
-#: gui/options.cpp:763
+#: gui/options.cpp:761
 msgid "Aspect ratio correction"
 msgstr "Korekce pomìru stran"
 
-#: gui/options.cpp:763
+#: gui/options.cpp:761
 msgid "Correct aspect ratio for 320x200 games"
 msgstr "Korigovat pomìr stran pro hry 320x200"
 
-#: gui/options.cpp:771
+#: gui/options.cpp:769
 msgid "Preferred Device:"
 msgstr "Prioritní Zaøízení:"
 
-#: gui/options.cpp:771
+#: gui/options.cpp:769
 msgid "Music Device:"
 msgstr "Hudební zaøízení"
 
-#: gui/options.cpp:771 gui/options.cpp:773
+#: gui/options.cpp:769 gui/options.cpp:771
 msgid "Specifies preferred sound device or sound card emulator"
 msgstr "Stanoví prioritní zvukové zaøízení nebo emulátor zvukové karty"
 
-#: gui/options.cpp:771 gui/options.cpp:773 gui/options.cpp:774
+#: gui/options.cpp:769 gui/options.cpp:771 gui/options.cpp:772
 msgid "Specifies output sound device or sound card emulator"
 msgstr "Stanoví výstupní zvukové zaøízení nebo emulátor zvukové karty"
 
-#: gui/options.cpp:773
+#: gui/options.cpp:771
 msgctxt "lowres"
 msgid "Preferred Dev.:"
 msgstr "Prioritní Zaø.:"
 
-#: gui/options.cpp:773
+#: gui/options.cpp:771
 msgctxt "lowres"
 msgid "Music Device:"
 msgstr "Hudební zaøízení"
 
-#: gui/options.cpp:800
+#: gui/options.cpp:798
 msgid "AdLib emulator:"
 msgstr "AdLib emulátor"
 
-#: gui/options.cpp:800 gui/options.cpp:801
+#: gui/options.cpp:798 gui/options.cpp:799
 msgid "AdLib is used for music in many games"
 msgstr "AdLib se pou¾ívá pro hudbu v mnoha hrách"
 
-#: gui/options.cpp:811
+#: gui/options.cpp:809
 msgid "Output rate:"
 msgstr "Výstup. frekvence:"
 
-#: gui/options.cpp:811 gui/options.cpp:812
+#: gui/options.cpp:809 gui/options.cpp:810
 msgid ""
 "Higher value specifies better sound quality but may be not supported by your "
 "soundcard"
@@ -680,66 +723,66 @@ msgstr ""
 "Vy¹¹í hodnota zpùsobí lep¹í kvalitu zvuku, ale nemusí být podporována Va¹i "
 "zvukovou kartou"
 
-#: gui/options.cpp:822
+#: gui/options.cpp:820
 msgid "GM Device:"
 msgstr "GM Zaøízení:"
 
-#: gui/options.cpp:822
+#: gui/options.cpp:820
 msgid "Specifies default sound device for General MIDI output"
 msgstr "Stanoví výchozí zvukové zaøízení pro výstup General MIDI"
 
-#: gui/options.cpp:833
+#: gui/options.cpp:831
 msgid "Don't use General MIDI music"
 msgstr "Nepou¾ívat hudbu General MIDI"
 
-#: gui/options.cpp:844 gui/options.cpp:910
+#: gui/options.cpp:842 gui/options.cpp:908
 msgid "Use first available device"
 msgstr "Pou¾ít první dostupné zaøízení"
 
-#: gui/options.cpp:856
+#: gui/options.cpp:854
 msgid "SoundFont:"
 msgstr "SoundFont:"
 
-#: gui/options.cpp:856 gui/options.cpp:858 gui/options.cpp:859
+#: gui/options.cpp:854 gui/options.cpp:856 gui/options.cpp:857
 msgid "SoundFont is supported by some audio cards, FluidSynth and Timidity"
 msgstr ""
 "SoundFont je podporován nìkterými zvukovými kartami, FluidSynth a Timidity"
 
-#: gui/options.cpp:858
+#: gui/options.cpp:856
 msgctxt "lowres"
 msgid "SoundFont:"
 msgstr "SoundFont:"
 
-#: gui/options.cpp:864
+#: gui/options.cpp:862
 msgid "Mixed AdLib/MIDI mode"
 msgstr "Smí¹ený re¾im AdLib/MIDI"
 
-#: gui/options.cpp:864
+#: gui/options.cpp:862
 msgid "Use both MIDI and AdLib sound generation"
 msgstr "Pou¾ít obì zvukové generace MIDI a AdLib"
 
-#: gui/options.cpp:867
+#: gui/options.cpp:865
 msgid "MIDI gain:"
 msgstr "Zesílení MIDI:"
 
-#: gui/options.cpp:874
+#: gui/options.cpp:872
 msgid "FluidSynth Settings"
 msgstr "Nastavení FluidSynth"
 
-#: gui/options.cpp:881
+#: gui/options.cpp:879
 msgid "MT-32 Device:"
 msgstr "Zaøízení MT-32:"
 
-#: gui/options.cpp:881
+#: gui/options.cpp:879
 msgid "Specifies default sound device for Roland MT-32/LAPC1/CM32l/CM64 output"
 msgstr ""
 "Stanoví výchozí zvukové výstupní zaøízení pro Roland MT-32/LAPC1/CM32l/CM64"
 
-#: gui/options.cpp:886
+#: gui/options.cpp:884
 msgid "True Roland MT-32 (disable GM emulation)"
 msgstr "Opravdový Roland MT-32 (vypne GM emulaci)"
 
-#: gui/options.cpp:886 gui/options.cpp:888
+#: gui/options.cpp:884 gui/options.cpp:886
 msgid ""
 "Check if you want to use your real hardware Roland-compatible sound device "
 "connected to your computer"
@@ -747,16 +790,16 @@ msgstr ""
 "Za¹krtnìte, pokud chcete pou¾ít pravé hardwarové zaøízení kompatibilní s "
 "Roland, pøipojené k va¹emu poèítaèi"
 
-#: gui/options.cpp:888
+#: gui/options.cpp:886
 msgctxt "lowres"
 msgid "True Roland MT-32 (no GM emulation)"
 msgstr "Opravdový Roland MT-32 (¾ádná GM emulace)"
 
-#: gui/options.cpp:891
+#: gui/options.cpp:889
 msgid "Roland GS Device (enable MT-32 mappings)"
 msgstr "Zaøízení Roland GS (zapne mapování MT-32)"
 
-#: gui/options.cpp:891
+#: gui/options.cpp:889
 msgid ""
 "Check if you want to enable patch mappings to emulate an MT-32 on a Roland "
 "GS device"
@@ -764,179 +807,237 @@ msgstr ""
 "Za¹krtnìte, pokud chcete povolit záplaty mapování umo¾òující emulovat MT-32 "
 "na zaøízení Roland GS"
 
-#: gui/options.cpp:900
+#: gui/options.cpp:898
 msgid "Don't use Roland MT-32 music"
 msgstr "Nepou¾ívat hudbu Roland MT-32"
 
-#: gui/options.cpp:927
+#: gui/options.cpp:925
 msgid "Text and Speech:"
 msgstr "Text a Øeè"
 
-#: gui/options.cpp:931 gui/options.cpp:941
+#: gui/options.cpp:929 gui/options.cpp:939
 msgid "Speech"
 msgstr "Øeè"
 
-#: gui/options.cpp:932 gui/options.cpp:942
+#: gui/options.cpp:930 gui/options.cpp:940
 msgid "Subtitles"
 msgstr "Titulky"
 
-#: gui/options.cpp:933
+#: gui/options.cpp:931
 msgid "Both"
 msgstr "Oba"
 
-#: gui/options.cpp:935
+#: gui/options.cpp:933
 msgid "Subtitle speed:"
 msgstr "Rychlost titulkù:"
 
-#: gui/options.cpp:937
+#: gui/options.cpp:935
 msgctxt "lowres"
 msgid "Text and Speech:"
 msgstr "Text a Øeè:"
 
-#: gui/options.cpp:941
+#: gui/options.cpp:939
 msgid "Spch"
 msgstr "Øeè"
 
-#: gui/options.cpp:942
+#: gui/options.cpp:940
 msgid "Subs"
 msgstr "Titl"
 
-#: gui/options.cpp:943
+#: gui/options.cpp:941
 msgctxt "lowres"
 msgid "Both"
 msgstr "Oba"
 
-#: gui/options.cpp:943
+#: gui/options.cpp:941
 msgid "Show subtitles and play speech"
 msgstr "Zobrazit titulky a pøehrávat øeè"
 
-#: gui/options.cpp:945
+#: gui/options.cpp:943
 msgctxt "lowres"
 msgid "Subtitle speed:"
 msgstr "Rychlost titulkù"
 
-#: gui/options.cpp:961
+#: gui/options.cpp:959
 msgid "Music volume:"
 msgstr "Hlasitost hudby"
 
-#: gui/options.cpp:963
+#: gui/options.cpp:961
 msgctxt "lowres"
 msgid "Music volume:"
 msgstr "Hlasitost hudby"
 
-#: gui/options.cpp:970
+#: gui/options.cpp:968
 msgid "Mute All"
 msgstr "Ztlumit V¹e"
 
-#: gui/options.cpp:973
+#: gui/options.cpp:971
 msgid "SFX volume:"
 msgstr "Hlasitost zvukù"
 
-#: gui/options.cpp:973 gui/options.cpp:975 gui/options.cpp:976
+#: gui/options.cpp:971 gui/options.cpp:973 gui/options.cpp:974
 msgid "Special sound effects volume"
 msgstr "Hlasitost speciálních zvukových efektù"
 
-#: gui/options.cpp:975
+#: gui/options.cpp:973
 msgctxt "lowres"
 msgid "SFX volume:"
 msgstr "Hlasitost zvukù"
 
-#: gui/options.cpp:983
+#: gui/options.cpp:981
 msgid "Speech volume:"
 msgstr "Hlasitost øeèi"
 
-#: gui/options.cpp:985
+#: gui/options.cpp:983
 msgctxt "lowres"
 msgid "Speech volume:"
 msgstr "Hlasitost øeèi"
+
+#: gui/options.cpp:1140
+msgid "Theme Path:"
+msgstr "Cesta ke Vzhledu:"
 
 #: gui/options.cpp:1142
-msgid "Theme Path:"
-msgstr "Cesta ke Vzhledu:"
-
-#: gui/options.cpp:1144
 msgctxt "lowres"
 msgid "Theme Path:"
 msgstr "Cesta ke Vzhledu:"
 
-#: gui/options.cpp:1150 gui/options.cpp:1152 gui/options.cpp:1153
+#: gui/options.cpp:1148 gui/options.cpp:1150 gui/options.cpp:1151
 msgid "Specifies path to additional data used by all games or ScummVM"
 msgstr "Stanoví cestu k dodateèným datùm pou¾ívaná v¹emi hrami nebo ScummVM"
 
-#: gui/options.cpp:1159
+#: gui/options.cpp:1157
 msgid "Plugins Path:"
 msgstr "Cesta k Pluginùm:"
 
-#: gui/options.cpp:1161
+#: gui/options.cpp:1159
 msgctxt "lowres"
 msgid "Plugins Path:"
 msgstr "Cesta k Pluginùm:"
 
-#: gui/options.cpp:1170 gui/fluidsynth-dialog.cpp:138
+#: gui/options.cpp:1168 gui/fluidsynth-dialog.cpp:138
+msgid "Misc"
+msgstr "Rùzné"
+
+#: gui/options.cpp:1170
+msgctxt "lowres"
 msgid "Misc"
 msgstr "Rùzné"
 
 #: gui/options.cpp:1172
-msgctxt "lowres"
-msgid "Misc"
-msgstr "Rùzné"
-
-#: gui/options.cpp:1174
 msgid "Theme:"
 msgstr "Vzhled:"
 
-#: gui/options.cpp:1178
+#: gui/options.cpp:1176
 msgid "GUI Renderer:"
 msgstr "GUI Vykreslovaè:"
 
-#: gui/options.cpp:1190
+#: gui/options.cpp:1188
 msgid "Autosave:"
 msgstr "Autoukládání:"
 
-#: gui/options.cpp:1192
+#: gui/options.cpp:1190
 msgctxt "lowres"
 msgid "Autosave:"
 msgstr "Autoukládání:"
 
-#: gui/options.cpp:1200
+#: gui/options.cpp:1198
 msgid "Keys"
 msgstr "Klávesy"
 
-#: gui/options.cpp:1207
+#: gui/options.cpp:1205
 msgid "GUI Language:"
 msgstr "Jazyk GUI"
 
-#: gui/options.cpp:1207
+#: gui/options.cpp:1205
 msgid "Language of ScummVM GUI"
 msgstr "Jazyk GUI ScummVM"
 
-#: gui/options.cpp:1366
+#: gui/options.cpp:1364
 msgid "You have to restart ScummVM before your changes will take effect."
 msgstr "Pro pou¾ití tìchto nastavení musíte restartovat ScummVM."
 
-#: gui/options.cpp:1386
+#: gui/options.cpp:1384
 msgid "The chosen directory cannot be written to. Please select another one."
 msgstr "Do zvoleného adresáøe nelze zapisovat. Vyberte, prosím, jiný."
 
-#: gui/options.cpp:1395
+#: gui/options.cpp:1393
 msgid "Select directory for GUI themes"
 msgstr "Vyberte adresáø pro vhledy GUI"
 
-#: gui/options.cpp:1405
+#: gui/options.cpp:1403
 msgid "Select directory for extra files"
 msgstr "Vyberte adresáø pro dodateèné soubory"
 
-#: gui/options.cpp:1416
+#: gui/options.cpp:1414
 msgid "Select directory for plugins"
 msgstr "Vyberte adresáø pro zásuvné moduly"
 
-#: gui/options.cpp:1469
+#: gui/options.cpp:1467
 msgid ""
 "The theme you selected does not support your current language. If you want "
 "to use this theme you need to switch to another language first."
 msgstr ""
 "Vzhled, který jste zvolili, nepodporuje Vá¹ souèasný jazyk. Pokud chcete "
 "tento vzhled pou¾ít, musíte nejdøíve pøepnout na jiný jazyk."
+
+#. I18N: You must leave "#" as is, only word 'next' is translatable
+#: gui/predictivedialog.cpp:87
+msgid "#  next"
+msgstr ""
+
+#: gui/predictivedialog.cpp:88
+msgid "add"
+msgstr ""
+
+#: gui/predictivedialog.cpp:92
+#, fuzzy
+msgid "Delete char"
+msgstr "Smazat"
+
+#: gui/predictivedialog.cpp:96
+msgid "<"
+msgstr ""
+
+#. I18N: Pre means 'Predictive', leave '*' as is
+#: gui/predictivedialog.cpp:98
+msgid "*  Pre"
+msgstr ""
+
+#: gui/recorderdialog.cpp:64
+msgid "Recorder or Playback Gameplay"
+msgstr "Nahrávat nebo pøehrát hru"
+
+#: gui/recorderdialog.cpp:69 gui/recorderdialog.cpp:156
+#: gui/saveload-dialog.cpp:220 gui/saveload-dialog.cpp:276
+msgid "Delete"
+msgstr "Smazat"
+
+#: gui/recorderdialog.cpp:71
+msgid "Record"
+msgstr "Nahrát"
+
+#: gui/recorderdialog.cpp:72
+msgid "Playback"
+msgstr "Pøehrát"
+
+#: gui/recorderdialog.cpp:74
+msgid "Edit"
+msgstr "Upravit"
+
+#: gui/recorderdialog.cpp:86 gui/recorderdialog.cpp:243
+#: gui/recorderdialog.cpp:253
+msgid "Author: "
+msgstr "Autor:"
+
+#: gui/recorderdialog.cpp:87 gui/recorderdialog.cpp:244
+#: gui/recorderdialog.cpp:254
+msgid "Notes: "
+msgstr "Poznámky:"
+
+#: gui/recorderdialog.cpp:155
+msgid "Do you really want to delete this record?"
+msgstr "Opravdu chcete tento záznam smazat?"
 
 #: gui/saveload-dialog.cpp:167
 msgid "List view"
@@ -958,23 +1059,19 @@ msgstr "®ádný ulo¾ený èas"
 msgid "No playtime saved"
 msgstr "®ádná ulo¾ená doba hraní"
 
-#: gui/saveload-dialog.cpp:220 gui/saveload-dialog.cpp:276
-msgid "Delete"
-msgstr "Smazat"
-
 #: gui/saveload-dialog.cpp:275
 msgid "Do you really want to delete this saved game?"
 msgstr "Opravdu chcete tuto ulo¾enou hru vymazat"
 
-#: gui/saveload-dialog.cpp:385 gui/saveload-dialog.cpp:875
+#: gui/saveload-dialog.cpp:385 gui/saveload-dialog.cpp:884
 msgid "Date: "
 msgstr "Datum:"
 
-#: gui/saveload-dialog.cpp:389 gui/saveload-dialog.cpp:881
+#: gui/saveload-dialog.cpp:389 gui/saveload-dialog.cpp:890
 msgid "Time: "
 msgstr "Èas:"
 
-#: gui/saveload-dialog.cpp:395 gui/saveload-dialog.cpp:889
+#: gui/saveload-dialog.cpp:395 gui/saveload-dialog.cpp:898
 msgid "Playtime: "
 msgstr "Doba hraní:"
 
@@ -990,19 +1087,19 @@ msgstr "Dal¹í"
 msgid "Prev"
 msgstr "Pøedchozí"
 
-#: gui/saveload-dialog.cpp:739
+#: gui/saveload-dialog.cpp:748
 msgid "New Save"
 msgstr "Nová ulo¾ená pozice"
 
-#: gui/saveload-dialog.cpp:739
+#: gui/saveload-dialog.cpp:748
 msgid "Create a new save game"
 msgstr "Vytvoøit novou ulo¾enou hru."
 
-#: gui/saveload-dialog.cpp:868
+#: gui/saveload-dialog.cpp:877
 msgid "Name: "
 msgstr "Název:"
 
-#: gui/saveload-dialog.cpp:940
+#: gui/saveload-dialog.cpp:949
 #, c-format
 msgid "Enter a description for slot %d:"
 msgstr "Zadejte popis pro pozici %d:"
@@ -1155,7 +1252,7 @@ msgstr "Pøeskoèit øádek"
 msgid "Error running game:"
 msgstr "Chyba pøi spu¹tìní hry:"
 
-#: base/main.cpp:536
+#: base/main.cpp:554
 msgid "Could not find any engine capable of running the selected game"
 msgstr "Nelze nalézt ¾ádné jádro schopné vybranou hru spustit"
 
@@ -1272,7 +1369,7 @@ msgstr "~N~ávrat do Spou¹tìèe"
 #: engines/dialogs.cpp:116 engines/agi/saveload.cpp:803
 #: engines/cruise/menu.cpp:212 engines/drascula/saveload.cpp:336
 #: engines/dreamweb/saveload.cpp:261 engines/neverhood/menumodule.cpp:873
-#: engines/pegasus/pegasus.cpp:377 engines/sci/engine/kfile.cpp:758
+#: engines/pegasus/pegasus.cpp:377 engines/sci/engine/kfile.cpp:759
 #: engines/toltecs/menu.cpp:281 engines/tsage/scenes.cpp:598
 msgid "Save game:"
 msgstr "Ulo¾it hru:"
@@ -1285,7 +1382,7 @@ msgstr "Ulo¾it hru:"
 #: engines/agi/saveload.cpp:803 engines/cruise/menu.cpp:212
 #: engines/drascula/saveload.cpp:336 engines/dreamweb/saveload.cpp:261
 #: engines/neverhood/menumodule.cpp:873 engines/pegasus/pegasus.cpp:377
-#: engines/sci/engine/kfile.cpp:758 engines/scumm/dialogs.cpp:188
+#: engines/sci/engine/kfile.cpp:759 engines/scumm/dialogs.cpp:188
 #: engines/toltecs/menu.cpp:281 engines/tsage/scenes.cpp:598
 msgid "Save"
 msgstr "Ulo¾it"
@@ -1323,23 +1420,23 @@ msgstr "~Z~ru¹it"
 msgid "~K~eys"
 msgstr "~K~lávesy"
 
-#: engines/engine.cpp:245
+#: engines/engine.cpp:276
 msgid "Could not initialize color format."
 msgstr "Nelze zavést barevný formát."
 
-#: engines/engine.cpp:253
+#: engines/engine.cpp:284
 msgid "Could not switch to video mode: '"
 msgstr "Nelze pøepnout na re¾im obrazu: '"
 
-#: engines/engine.cpp:262
+#: engines/engine.cpp:293
 msgid "Could not apply aspect ratio setting."
 msgstr "Nelze pou¾ít nastavení pomìru stran."
 
-#: engines/engine.cpp:267
+#: engines/engine.cpp:298
 msgid "Could not apply fullscreen setting."
 msgstr "Nelze pou¾ít nastavení celé obrazovky."
 
-#: engines/engine.cpp:367
+#: engines/engine.cpp:398
 msgid ""
 "You appear to be playing this game directly\n"
 "from the CD. This is known to cause problems,\n"
@@ -1353,7 +1450,7 @@ msgstr ""
 "datové soubory na Vá¹ pevný disk.\n"
 "Pro podrobnosti si pøeètìte README."
 
-#: engines/engine.cpp:378
+#: engines/engine.cpp:409
 msgid ""
 "This game has audio tracks in its disk. These\n"
 "tracks need to be ripped from the disk using\n"
@@ -1367,7 +1464,7 @@ msgstr ""
 "abyste mohli poslouchat hudbu ve høe.\n"
 "Pro podrobnosti si pøeètìte README."
 
-#: engines/engine.cpp:436
+#: engines/engine.cpp:467
 #, c-format
 msgid ""
 "Gamestate load failed (%s)! Please consult the README for basic information, "
@@ -1376,7 +1473,7 @@ msgstr ""
 "Naètení stavu hry selhalo (%s)! Prosím pøeètìte si dokumentaci pro základní "
 "informace a pokyny k získání dal¹í podpory."
 
-#: engines/engine.cpp:449
+#: engines/engine.cpp:480
 msgid ""
 "WARNING: The game you are about to start is not yet fully supported by "
 "ScummVM. As such, it is likely to be unstable, and any saves you make might "
@@ -1386,17 +1483,21 @@ msgstr ""
 "ScummVM. Proto je mo¾né, ¾e bude nestabilní a jakékoli ulo¾ené hry nemusí "
 "fungovat v budoucích verzích ScummVM."
 
-#: engines/engine.cpp:452
+#: engines/engine.cpp:483
 msgid "Start anyway"
 msgstr "Pøesto spustit"
 
-#: audio/fmopl.cpp:50
+#: audio/fmopl.cpp:62
 msgid "MAME OPL emulator"
 msgstr "MAME OPL Emulátor"
 
-#: audio/fmopl.cpp:52
+#: audio/fmopl.cpp:64
 msgid "DOSBox OPL emulator"
 msgstr "DOSBox OPL Emulátor"
+
+#: audio/fmopl.cpp:67
+msgid "ALSA Direct FM"
+msgstr ""
 
 #: audio/mididrv.cpp:209
 #, c-format
@@ -1447,7 +1548,7 @@ msgstr "Bez hudby"
 msgid "Amiga Audio Emulator"
 msgstr "Emulátor zvuku Amiga"
 
-#: audio/softsynth/adlib.cpp:2285
+#: audio/adlib.cpp:2291
 msgid "AdLib Emulator"
 msgstr "AdLib Emulátor"
 
@@ -1596,11 +1697,11 @@ msgstr "Touchpad re¾im zapnut"
 msgid "Touchpad mode disabled."
 msgstr "Touchpad re¾im vypnut"
 
-#: backends/platform/maemo/maemo.cpp:209
+#: backends/platform/maemo/maemo.cpp:208
 msgid "Click Mode"
 msgstr "Re¾im kliknutí"
 
-#: backends/platform/maemo/maemo.cpp:215
+#: backends/platform/maemo/maemo.cpp:214
 #: backends/platform/symbian/src/SymbianActions.cpp:42
 #: backends/platform/wince/CEActionsPocket.cpp:60
 #: backends/platform/wince/CEActionsSmartphone.cpp:43
@@ -1608,11 +1709,11 @@ msgstr "Re¾im kliknutí"
 msgid "Left Click"
 msgstr "Levé Kliknutí"
 
-#: backends/platform/maemo/maemo.cpp:218
+#: backends/platform/maemo/maemo.cpp:217
 msgid "Middle Click"
 msgstr "Kliknutí prostøedním tlaèítkem"
 
-#: backends/platform/maemo/maemo.cpp:221
+#: backends/platform/maemo/maemo.cpp:220
 #: backends/platform/symbian/src/SymbianActions.cpp:43
 #: backends/platform/wince/CEActionsSmartphone.cpp:44
 #: backends/platform/tizen/form.cpp:267
@@ -1649,19 +1750,19 @@ msgctxt "lowres"
 msgid "Normal (no scaling)"
 msgstr "Normální (bez zmìny velikosti)"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2148
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2197
 msgid "Enabled aspect ratio correction"
 msgstr "Povolena korekce pomìru stran"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2154
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2203
 msgid "Disabled aspect ratio correction"
 msgstr "Zakázána korekce pomìru stran"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2209
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2258
 msgid "Active graphics filter:"
 msgstr "Aktivní grafický filtr:"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2251
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2300
 msgid "Windowed mode"
 msgstr "Re¾im do okna"
 
@@ -1719,9 +1820,8 @@ msgstr "Rychlý re¾im"
 #: backends/platform/symbian/src/SymbianActions.cpp:52
 #: backends/platform/wince/CEActionsPocket.cpp:44
 #: backends/platform/wince/CEActionsSmartphone.cpp:52
-#: backends/events/default/default-events.cpp:218
-#: engines/scumm/dialogs.cpp:192 engines/scumm/help.cpp:82
-#: engines/scumm/help.cpp:84
+#: backends/events/default/default-events.cpp:218 engines/scumm/dialogs.cpp:192
+#: engines/scumm/help.cpp:83 engines/scumm/help.cpp:85
 msgid "Quit"
 msgstr "Ukonèit"
 
@@ -1741,7 +1841,7 @@ msgstr "Virtuální klávesnice"
 msgid "Key mapper"
 msgstr "Mapovaè kláves"
 
-#: backends/events/symbiansdl/symbiansdl-events.cpp:184
+#: backends/events/symbiansdl/symbiansdl-events.cpp:186
 msgid "Do you want to quit ?"
 msgstr "Chcete ukonèit ?"
 
@@ -1994,7 +2094,7 @@ msgstr ""
 
 #: backends/events/default/default-events.cpp:196
 msgid "Do you really want to return to the Launcher?"
-msgstr "Opravdu se chcete vrátit tuto do Spou¹tìèe?"
+msgstr "Opravdu se chcete vrátit do Spou¹tìèe?"
 
 #: backends/events/default/default-events.cpp:196
 msgid "Launcher"
@@ -2078,33 +2178,55 @@ msgstr "Kliknutí Povoleno"
 msgid "Clicking Disabled"
 msgstr "Kliknutí Zakázáno"
 
-#: engines/agi/detection.cpp:142 engines/drascula/detection.cpp:302
+#: engines/agi/detection.cpp:147 engines/drascula/detection.cpp:302
 #: engines/dreamweb/detection.cpp:47 engines/neverhood/detection.cpp:160
 #: engines/sci/detection.cpp:394 engines/toltecs/detection.cpp:200
-#: engines/zvision/detection.cpp:103
+#: engines/zvision/detection_tables.h:51
 msgid "Use original save/load screens"
 msgstr "Pou¾ít pùvodní obrazovky naètení/ulo¾ení"
 
-#: engines/agi/detection.cpp:143 engines/drascula/detection.cpp:303
+#: engines/agi/detection.cpp:148 engines/drascula/detection.cpp:303
 #: engines/dreamweb/detection.cpp:48 engines/neverhood/detection.cpp:161
 #: engines/sci/detection.cpp:395 engines/toltecs/detection.cpp:201
-#: engines/zvision/detection.cpp:104
 msgid "Use the original save/load screens, instead of the ScummVM ones"
 msgstr "Pou¾ít pùvodní obrazovky naètení/ulo¾ení místo ze ScummVM"
 
+#: engines/agi/detection.cpp:157
+msgid "Use an alternative palette"
+msgstr "Pou¾ít jinou paletu"
+
+#: engines/agi/detection.cpp:158
+msgid ""
+"Use an alternative palette, common for all Amiga games. This was the old "
+"behavior"
+msgstr ""
+"Pou¾ít alternativní paletu, bì¾né pro hry Amiga. Toto byl pùvodní starý "
+"standard"
+
+#: engines/agi/detection.cpp:167
+msgid "Mouse support"
+msgstr "Podpora my¹i"
+
+#: engines/agi/detection.cpp:168
+msgid ""
+"Enables mouse support. Allows to use mouse for movement and in game menus."
+msgstr ""
+"Povolí podporu my¹i. Umo¾ní pou¾ít my¹ pro pohyb a pro ovládání herních "
+"nabídek."
+
 #: engines/agi/saveload.cpp:816 engines/drascula/saveload.cpp:349
 #: engines/dreamweb/saveload.cpp:169 engines/neverhood/menumodule.cpp:886
-#: engines/sci/engine/kfile.cpp:857 engines/toltecs/menu.cpp:256
+#: engines/sci/engine/kfile.cpp:858 engines/toltecs/menu.cpp:256
 msgid "Restore game:"
 msgstr "Obnovit hru"
 
 #: engines/agi/saveload.cpp:816 engines/drascula/saveload.cpp:349
 #: engines/dreamweb/saveload.cpp:169 engines/neverhood/menumodule.cpp:886
-#: engines/sci/engine/kfile.cpp:857 engines/toltecs/menu.cpp:256
+#: engines/sci/engine/kfile.cpp:858 engines/toltecs/menu.cpp:256
 msgid "Restore"
 msgstr "Obnovit"
 
-#: engines/agos/saveload.cpp:160 engines/scumm/scumm.cpp:2368
+#: engines/agos/saveload.cpp:160 engines/scumm/scumm.cpp:2377
 #, c-format
 msgid ""
 "Failed to load game state from file:\n"
@@ -2115,7 +2237,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:195 engines/scumm/scumm.cpp:2361
+#: engines/agos/saveload.cpp:195 engines/scumm/scumm.cpp:2370
 #, c-format
 msgid ""
 "Failed to save game state to file:\n"
@@ -2126,7 +2248,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:203 engines/scumm/scumm.cpp:2379
+#: engines/agos/saveload.cpp:203 engines/scumm/scumm.cpp:2388
 #, c-format
 msgid ""
 "Successfully saved game state in file:\n"
@@ -2142,14 +2264,13 @@ msgstr ""
 msgid "Cutscene file '%s' not found!"
 msgstr "Soubor videa '%s' nenalezen'"
 
-#: engines/cge/detection.cpp:105 engines/cge2/detection.cpp:81
-#, fuzzy
+#: engines/cge/detection.cpp:105 engines/cge2/detection.cpp:101
 msgid "Color Blind Mode"
-msgstr "Re¾im kliknutí"
+msgstr "Re¾im pro barvoslepé"
 
-#: engines/cge/detection.cpp:106 engines/cge2/detection.cpp:82
+#: engines/cge/detection.cpp:106 engines/cge2/detection.cpp:102
 msgid "Enable Color Blind Mode by default"
-msgstr ""
+msgstr "Standardnì zapínat re¾im pro barvoslepé"
 
 #: engines/drascula/saveload.cpp:47
 msgid ""
@@ -2199,17 +2320,17 @@ msgstr "Zvý¹ená rychlost videa"
 msgid "Play movies at an increased speed"
 msgstr "Pøehrát videa se zvý¹enou rychlostí"
 
-#: engines/groovie/script.cpp:399
+#: engines/groovie/script.cpp:408
 msgid "Failed to save game"
 msgstr "Nelze ulo¾it hru."
 
 #: engines/hopkins/detection.cpp:76 engines/hopkins/detection.cpp:86
 msgid "Gore Mode"
-msgstr ""
+msgstr "Povolit násilné scény"
 
 #: engines/hopkins/detection.cpp:77 engines/hopkins/detection.cpp:87
 msgid "Enable Gore Mode when available"
-msgstr ""
+msgstr "Povolit násilné scény, jsou-li dostupné"
 
 #. I18N: Studio audience adds an applause and cheering sounds whenever
 #. Malcolm makes a joke.
@@ -2341,6 +2462,12 @@ msgid ""
 "Do you wish to use this save game file with ScummVM?\n"
 "\n"
 msgstr ""
+"V cestì va¹í hry byl nalezen následující soubor s ulo¾enou hrou:\n"
+"\n"
+"%s %s\n"
+"\n"
+"Chcete tento soubor pou¾ít v ScummVM?\n"
+"\n"
 
 #: engines/kyra/saveload_eob.cpp:590
 #, c-format
@@ -2348,6 +2475,8 @@ msgid ""
 "A save game file was found in the specified slot %d. Overwrite?\n"
 "\n"
 msgstr ""
+"V urèené pozici %d byl nalezen soubor s ulo¾enou hrou. Pøepsat?\n"
+"\n"
 
 #: engines/kyra/saveload_eob.cpp:623
 #, c-format
@@ -2359,6 +2488,10 @@ msgid ""
 "'import_savefile'.\n"
 "\n"
 msgstr ""
+"%d pùvodních souborù s ulo¾enou hrou bylo úspì¹nì importováno do\n"
+"ScummVM. Pokud chcete pozdìji toto uèinit znovu ruènì, je tøeba otevøít\n"
+"ladící konzoli ScummVM a pou¾ít pøíkaz 'import_savefile'.\n"
+"\n"
 
 #. I18N: Option for fast scene switching
 #: engines/mohawk/dialogs.cpp:92 engines/mohawk/dialogs.cpp:167
@@ -2496,12 +2629,13 @@ msgid "Use an alternative game intro (CD version only)"
 msgstr "Pou¾ít jinou verzi úvodu (Pouze verze CD)"
 
 #: engines/sci/detection.cpp:374
-msgid "EGA undithering"
-msgstr "Nerozkládání EGA"
+msgid "Skip EGA dithering pass (full color backgrounds)"
+msgstr "Pøekoèit prùchod rozkladu barev EGA (pozadí v plných barvách)"
 
 #: engines/sci/detection.cpp:375
-msgid "Enable undithering in EGA games"
-msgstr "Povolit nerozkládání v EGA hrách"
+msgid "Skip dithering pass in EGA games, graphics are shown with full colors"
+msgstr ""
+"Pøeskoèit prùchod rozkladu barev EGA, obraze je zobrazen v plných barvách"
 
 #: engines/sci/detection.cpp:384
 msgid "Prefer digital sound effects"
@@ -2572,12 +2706,12 @@ msgstr "Hra Pozastavena. Stisknìte MEZERNÍK pro pokraèování."
 #. "Moechten Sie wirklich neu starten?  (J/N)J"
 #. Will react to J as 'Yes'
 #: engines/scumm/dialogs.cpp:183
-msgid "Are you sure you want to restart?  (Y/N)"
+msgid "Are you sure you want to restart?  (Y/N)Y"
 msgstr "Jste si jisti, ¾e chcete restartovat? (A/N)A"
 
 #. I18N: you may specify 'Yes' symbol at the end of the line. See previous comment
 #: engines/scumm/dialogs.cpp:185
-msgid "Are you sure you want to quit?  (Y/N)"
+msgid "Are you sure you want to quit?  (Y/N)Y"
 msgstr "Jste si jisti, ¾e chcete odejít?  (A/N)A"
 
 #: engines/scumm/dialogs.cpp:190
@@ -2665,516 +2799,540 @@ msgstr "Cvièení"
 msgid "Expert"
 msgstr "Pokroèilý"
 
-#: engines/scumm/help.cpp:73
+#: engines/scumm/help.cpp:74
 msgid "Common keyboard commands:"
 msgstr "Bì¾né klávesové pøíkazy"
 
-#: engines/scumm/help.cpp:74
+#: engines/scumm/help.cpp:75
 msgid "Save / Load dialog"
 msgstr "Dialog Nahrát / Ulo¾it"
 
-#: engines/scumm/help.cpp:76
+#: engines/scumm/help.cpp:77
 msgid "Skip line of text"
 msgstr "Pøeskoèit øádek textu"
 
-#: engines/scumm/help.cpp:77
+#: engines/scumm/help.cpp:78
 msgid "Esc"
 msgstr "Mezerník"
 
-#: engines/scumm/help.cpp:77
+#: engines/scumm/help.cpp:78
 msgid "Skip cutscene"
 msgstr "Pøeskoèit video"
 
-#: engines/scumm/help.cpp:78
+#: engines/scumm/help.cpp:79
 msgid "Space"
 msgstr "Mezerník"
 
-#: engines/scumm/help.cpp:78
+#: engines/scumm/help.cpp:79
 msgid "Pause game"
 msgstr "Pozastavit hru"
 
-#: engines/scumm/help.cpp:79 engines/scumm/help.cpp:84
-#: engines/scumm/help.cpp:95 engines/scumm/help.cpp:96
-#: engines/scumm/help.cpp:97 engines/scumm/help.cpp:98
-#: engines/scumm/help.cpp:99 engines/scumm/help.cpp:100
-#: engines/scumm/help.cpp:101 engines/scumm/help.cpp:102
+#: engines/scumm/help.cpp:80 engines/scumm/help.cpp:85
+#: engines/scumm/help.cpp:96 engines/scumm/help.cpp:97
+#: engines/scumm/help.cpp:98 engines/scumm/help.cpp:99
+#: engines/scumm/help.cpp:100 engines/scumm/help.cpp:101
+#: engines/scumm/help.cpp:102 engines/scumm/help.cpp:103
 msgid "Ctrl"
 msgstr "Ctrl"
 
-#: engines/scumm/help.cpp:79
+#: engines/scumm/help.cpp:80
 msgid "Load game state 1-10"
 msgstr "Nahrát stav hry 1-10"
 
-#: engines/scumm/help.cpp:80 engines/scumm/help.cpp:84
-#: engines/scumm/help.cpp:86 engines/scumm/help.cpp:100
-#: engines/scumm/help.cpp:101 engines/scumm/help.cpp:102
+#: engines/scumm/help.cpp:81 engines/scumm/help.cpp:85
+#: engines/scumm/help.cpp:87 engines/scumm/help.cpp:101
+#: engines/scumm/help.cpp:102 engines/scumm/help.cpp:103
 msgid "Alt"
 msgstr "Alt"
 
-#: engines/scumm/help.cpp:80
+#: engines/scumm/help.cpp:81
 msgid "Save game state 1-10"
 msgstr "Ulo¾it stav hry 1-10"
 
-#: engines/scumm/help.cpp:86 engines/scumm/help.cpp:89
+#: engines/scumm/help.cpp:87 engines/scumm/help.cpp:90
 msgid "Enter"
 msgstr "Enter"
 
-#: engines/scumm/help.cpp:87
+#: engines/scumm/help.cpp:88
 msgid "Music volume up / down"
 msgstr "Hlasitost hudby nahoru / dolù"
 
-#: engines/scumm/help.cpp:88
+#: engines/scumm/help.cpp:89
 msgid "Text speed slower / faster"
 msgstr "Zvý¹it / Sní¾it rychlost textu"
 
-#: engines/scumm/help.cpp:89
+#: engines/scumm/help.cpp:90
 msgid "Simulate left mouse button"
 msgstr "Napodobit levé tlaèítko my¹i"
 
-#: engines/scumm/help.cpp:90
+#: engines/scumm/help.cpp:91
 msgid "Tab"
 msgstr "Tab"
 
-#: engines/scumm/help.cpp:90
+#: engines/scumm/help.cpp:91
 msgid "Simulate right mouse button"
 msgstr "Napodobit pravé tlaèítko my¹i"
 
-#: engines/scumm/help.cpp:93
+#: engines/scumm/help.cpp:94
 msgid "Special keyboard commands:"
 msgstr "Speciální klávesové pøíkazy"
 
-#: engines/scumm/help.cpp:94
+#: engines/scumm/help.cpp:95
 msgid "Show / Hide console"
 msgstr "Ukázat / Skrýt konzoli"
 
-#: engines/scumm/help.cpp:95
+#: engines/scumm/help.cpp:96
 msgid "Start the debugger"
 msgstr "Spustit ladící program"
 
-#: engines/scumm/help.cpp:96
+#: engines/scumm/help.cpp:97
 msgid "Show memory consumption"
 msgstr "Zobrazit spotøebu pamìti"
 
-#: engines/scumm/help.cpp:97
+#: engines/scumm/help.cpp:98
 msgid "Run in fast mode (*)"
 msgstr "Spustit v rychlém re¾imu (*)"
 
-#: engines/scumm/help.cpp:98
+#: engines/scumm/help.cpp:99
 msgid "Run in really fast mode (*)"
 msgstr "Spustit ve velmi rychlém re¾imu (*)"
 
-#: engines/scumm/help.cpp:99
+#: engines/scumm/help.cpp:100
 msgid "Toggle mouse capture"
 msgstr "Povolit zachycování my¹i"
 
-#: engines/scumm/help.cpp:100
+#: engines/scumm/help.cpp:101
 msgid "Switch between graphics filters"
 msgstr "Pøepínat mezi grafickými filtry"
 
-#: engines/scumm/help.cpp:101
+#: engines/scumm/help.cpp:102
 msgid "Increase / Decrease scale factor"
 msgstr "Zvìt¹it / Zmen¹it faktor zmìny velikosti"
 
-#: engines/scumm/help.cpp:102
+#: engines/scumm/help.cpp:103
 msgid "Toggle aspect-ratio correction"
 msgstr "Povolit korekci pomìru stran"
 
-#: engines/scumm/help.cpp:107
+#: engines/scumm/help.cpp:108
 msgid "* Note that using ctrl-f and"
 msgstr "Upozoròujeme, ¾e pou¾ívání ctrl-f a"
 
-#: engines/scumm/help.cpp:108
+#: engines/scumm/help.cpp:109
 msgid "  ctrl-g are not recommended"
 msgstr "  ctrl-g není doporuèeno"
 
-#: engines/scumm/help.cpp:109
+#: engines/scumm/help.cpp:110
 msgid "  since they may cause crashes"
 msgstr "jeliko¾ mù¾ou zpùsobit pád"
 
-#: engines/scumm/help.cpp:110
+#: engines/scumm/help.cpp:111
 msgid "  or incorrect game behavior."
 msgstr "  nebo nesprávné chování hry."
 
-#: engines/scumm/help.cpp:114
+#: engines/scumm/help.cpp:115
 msgid "Spinning drafts on the keyboard:"
 msgstr "Pletení náèrtkù na klávesnici:"
 
-#: engines/scumm/help.cpp:116
+#: engines/scumm/help.cpp:117
 msgid "Main game controls:"
 msgstr "Hlavní ovládací prvky:"
 
-#: engines/scumm/help.cpp:121 engines/scumm/help.cpp:136
-#: engines/scumm/help.cpp:161
+#: engines/scumm/help.cpp:122 engines/scumm/help.cpp:137
+#: engines/scumm/help.cpp:162
 msgid "Push"
 msgstr "Tlaèit"
 
-#: engines/scumm/help.cpp:122 engines/scumm/help.cpp:137
-#: engines/scumm/help.cpp:162
+#: engines/scumm/help.cpp:123 engines/scumm/help.cpp:138
+#: engines/scumm/help.cpp:163
 msgid "Pull"
 msgstr "Táhnout"
 
-#: engines/scumm/help.cpp:123 engines/scumm/help.cpp:138
-#: engines/scumm/help.cpp:163 engines/scumm/help.cpp:197
-#: engines/scumm/help.cpp:207
+#: engines/scumm/help.cpp:124 engines/scumm/help.cpp:139
+#: engines/scumm/help.cpp:164 engines/scumm/help.cpp:198
+#: engines/scumm/help.cpp:208
 msgid "Give"
 msgstr "Dát"
 
-#: engines/scumm/help.cpp:124 engines/scumm/help.cpp:139
-#: engines/scumm/help.cpp:164 engines/scumm/help.cpp:190
-#: engines/scumm/help.cpp:208
+#: engines/scumm/help.cpp:125 engines/scumm/help.cpp:140
+#: engines/scumm/help.cpp:165 engines/scumm/help.cpp:191
+#: engines/scumm/help.cpp:209
 msgid "Open"
 msgstr "Otevøít"
 
-#: engines/scumm/help.cpp:126
+#: engines/scumm/help.cpp:127
 msgid "Go to"
 msgstr "Jít do"
 
-#: engines/scumm/help.cpp:127
+#: engines/scumm/help.cpp:128
 msgid "Get"
 msgstr "Vzít"
 
-#: engines/scumm/help.cpp:128 engines/scumm/help.cpp:152
-#: engines/scumm/help.cpp:170 engines/scumm/help.cpp:198
-#: engines/scumm/help.cpp:213 engines/scumm/help.cpp:224
-#: engines/scumm/help.cpp:250
+#: engines/scumm/help.cpp:129 engines/scumm/help.cpp:153
+#: engines/scumm/help.cpp:171 engines/scumm/help.cpp:199
+#: engines/scumm/help.cpp:214 engines/scumm/help.cpp:225
+#: engines/scumm/help.cpp:251
 msgid "Use"
 msgstr "Pou¾ít"
 
-#: engines/scumm/help.cpp:129 engines/scumm/help.cpp:141
+#: engines/scumm/help.cpp:130 engines/scumm/help.cpp:142
 msgid "Read"
 msgstr "Pøeèíst"
 
-#: engines/scumm/help.cpp:130 engines/scumm/help.cpp:147
+#: engines/scumm/help.cpp:131 engines/scumm/help.cpp:148
 msgid "New kid"
 msgstr "Nové dítì"
 
-#: engines/scumm/help.cpp:131 engines/scumm/help.cpp:153
-#: engines/scumm/help.cpp:171
+#: engines/scumm/help.cpp:132 engines/scumm/help.cpp:154
+#: engines/scumm/help.cpp:172
 msgid "Turn on"
 msgstr "Zapnout"
 
-#: engines/scumm/help.cpp:132 engines/scumm/help.cpp:154
-#: engines/scumm/help.cpp:172
+#: engines/scumm/help.cpp:133 engines/scumm/help.cpp:155
+#: engines/scumm/help.cpp:173
 msgid "Turn off"
 msgstr "Vypnout"
 
-#: engines/scumm/help.cpp:142 engines/scumm/help.cpp:167
-#: engines/scumm/help.cpp:194
+#: engines/scumm/help.cpp:143 engines/scumm/help.cpp:168
+#: engines/scumm/help.cpp:195
 msgid "Walk to"
 msgstr "Pøejít na"
 
-#: engines/scumm/help.cpp:143 engines/scumm/help.cpp:168
-#: engines/scumm/help.cpp:195 engines/scumm/help.cpp:210
-#: engines/scumm/help.cpp:227
+#: engines/scumm/help.cpp:144 engines/scumm/help.cpp:169
+#: engines/scumm/help.cpp:196 engines/scumm/help.cpp:211
+#: engines/scumm/help.cpp:228
 msgid "Pick up"
 msgstr "Sebrat"
 
-#: engines/scumm/help.cpp:144 engines/scumm/help.cpp:169
+#: engines/scumm/help.cpp:145 engines/scumm/help.cpp:170
 msgid "What is"
 msgstr "Co je"
 
-#: engines/scumm/help.cpp:146
+#: engines/scumm/help.cpp:147
 msgid "Unlock"
 msgstr "Odemknout"
 
-#: engines/scumm/help.cpp:149
+#: engines/scumm/help.cpp:150
 msgid "Put on"
 msgstr "Obléct"
 
-#: engines/scumm/help.cpp:150
+#: engines/scumm/help.cpp:151
 msgid "Take off"
 msgstr "Svléct"
 
-#: engines/scumm/help.cpp:156
+#: engines/scumm/help.cpp:157
 msgid "Fix"
 msgstr "Spravit"
 
-#: engines/scumm/help.cpp:158
+#: engines/scumm/help.cpp:159
 msgid "Switch"
 msgstr "Pøepnout"
 
-#: engines/scumm/help.cpp:166 engines/scumm/help.cpp:228
+#: engines/scumm/help.cpp:167 engines/scumm/help.cpp:229
 msgid "Look"
 msgstr "Dívat se"
 
-#: engines/scumm/help.cpp:173 engines/scumm/help.cpp:223
+#: engines/scumm/help.cpp:174 engines/scumm/help.cpp:224
 msgid "Talk"
 msgstr "Mluvit"
 
-#: engines/scumm/help.cpp:174
+#: engines/scumm/help.cpp:175
 msgid "Travel"
 msgstr "Cestovat"
 
-#: engines/scumm/help.cpp:175
+#: engines/scumm/help.cpp:176
 msgid "To Henry / To Indy"
 msgstr "Henrymu / Indymu"
 
 #. I18N: These are different musical notes
-#: engines/scumm/help.cpp:179
+#: engines/scumm/help.cpp:180
 msgid "play C minor on distaff"
 msgstr "zahrát c moll na pøeslici"
 
-#: engines/scumm/help.cpp:180
+#: engines/scumm/help.cpp:181
 msgid "play D on distaff"
 msgstr "zahrát D na pøeslici"
 
-#: engines/scumm/help.cpp:181
+#: engines/scumm/help.cpp:182
 msgid "play E on distaff"
 msgstr "zahrát E na pøeslici"
 
-#: engines/scumm/help.cpp:182
+#: engines/scumm/help.cpp:183
 msgid "play F on distaff"
 msgstr "zahrát F na pøeslici"
 
-#: engines/scumm/help.cpp:183
+#: engines/scumm/help.cpp:184
 msgid "play G on distaff"
 msgstr "zahrát G na pøeslici"
 
-#: engines/scumm/help.cpp:184
+#: engines/scumm/help.cpp:185
 msgid "play A on distaff"
 msgstr "zahrát A na pøeslici"
 
-#: engines/scumm/help.cpp:185
+#: engines/scumm/help.cpp:186
 msgid "play B on distaff"
 msgstr "zahrát B na pøeslici"
 
-#: engines/scumm/help.cpp:186
+#: engines/scumm/help.cpp:187
 msgid "play C major on distaff"
 msgstr "zahrát C dur na pøeslici"
 
-#: engines/scumm/help.cpp:192 engines/scumm/help.cpp:214
+#: engines/scumm/help.cpp:193 engines/scumm/help.cpp:215
 msgid "puSh"
 msgstr "tlaèIt"
 
-#: engines/scumm/help.cpp:193 engines/scumm/help.cpp:215
+#: engines/scumm/help.cpp:194 engines/scumm/help.cpp:216
 msgid "pull (Yank)"
 msgstr "táhnout (©kubnout)"
 
-#: engines/scumm/help.cpp:196 engines/scumm/help.cpp:212
-#: engines/scumm/help.cpp:248
+#: engines/scumm/help.cpp:197 engines/scumm/help.cpp:213
+#: engines/scumm/help.cpp:249
 msgid "Talk to"
 msgstr "Mluvit s"
 
-#: engines/scumm/help.cpp:199 engines/scumm/help.cpp:211
+#: engines/scumm/help.cpp:200 engines/scumm/help.cpp:212
 msgid "Look at"
 msgstr "Dívat se na"
 
-#: engines/scumm/help.cpp:200
+#: engines/scumm/help.cpp:201
 msgid "turn oN"
 msgstr "zapnouT"
 
-#: engines/scumm/help.cpp:201
+#: engines/scumm/help.cpp:202
 msgid "turn oFf"
 msgstr "vypnoUt"
 
-#: engines/scumm/help.cpp:217
+#: engines/scumm/help.cpp:218
 msgid "KeyUp"
 msgstr "KlávesaNahoru"
 
-#: engines/scumm/help.cpp:217
+#: engines/scumm/help.cpp:218
 msgid "Highlight prev dialogue"
 msgstr "Zvýraznit pøedchozí dialog"
 
-#: engines/scumm/help.cpp:218
+#: engines/scumm/help.cpp:219
 msgid "KeyDown"
 msgstr "KlávesaDolù"
 
-#: engines/scumm/help.cpp:218
+#: engines/scumm/help.cpp:219
 msgid "Highlight next dialogue"
 msgstr "Zvýraznit následující dialog"
 
-#: engines/scumm/help.cpp:222
+#: engines/scumm/help.cpp:223
 msgid "Walk"
 msgstr "Jít"
 
-#: engines/scumm/help.cpp:225 engines/scumm/help.cpp:234
-#: engines/scumm/help.cpp:241 engines/scumm/help.cpp:249
+#: engines/scumm/help.cpp:226 engines/scumm/help.cpp:235
+#: engines/scumm/help.cpp:242 engines/scumm/help.cpp:250
 msgid "Inventory"
 msgstr "Inventáø"
 
-#: engines/scumm/help.cpp:226
+#: engines/scumm/help.cpp:227
 msgid "Object"
 msgstr "Objekt"
 
-#: engines/scumm/help.cpp:229
+#: engines/scumm/help.cpp:230
 msgid "Black and White / Color"
 msgstr "Èernobílé / Barva"
 
-#: engines/scumm/help.cpp:232
+#: engines/scumm/help.cpp:233
 msgid "Eyes"
 msgstr "Oèi"
 
-#: engines/scumm/help.cpp:233
+#: engines/scumm/help.cpp:234
 msgid "Tongue"
 msgstr "Jazyk"
 
-#: engines/scumm/help.cpp:235
+#: engines/scumm/help.cpp:236
 msgid "Punch"
 msgstr "Udeøit"
 
-#: engines/scumm/help.cpp:236
+#: engines/scumm/help.cpp:237
 msgid "Kick"
 msgstr "Kopnout"
 
-#: engines/scumm/help.cpp:239 engines/scumm/help.cpp:247
+#: engines/scumm/help.cpp:240 engines/scumm/help.cpp:248
 msgid "Examine"
 msgstr "Prohlédnout"
 
-#: engines/scumm/help.cpp:240
+#: engines/scumm/help.cpp:241
 msgid "Regular cursor"
 msgstr "Obyèejný kurzor"
 
 #. I18N: Comm is a communication device
-#: engines/scumm/help.cpp:243
+#: engines/scumm/help.cpp:244
 msgid "Comm"
 msgstr "Komunikace"
 
-#: engines/scumm/help.cpp:246
+#: engines/scumm/help.cpp:247
 msgid "Save / Load / Options"
 msgstr "Ulo¾it / Nahrát / Volby"
 
-#: engines/scumm/help.cpp:255
+#: engines/scumm/help.cpp:256
 msgid "Other game controls:"
 msgstr "Dal¹í ovládací prvky hry"
 
-#: engines/scumm/help.cpp:257 engines/scumm/help.cpp:267
+#: engines/scumm/help.cpp:258 engines/scumm/help.cpp:268
 msgid "Inventory:"
 msgstr "Inventáø:"
 
-#: engines/scumm/help.cpp:258 engines/scumm/help.cpp:274
+#: engines/scumm/help.cpp:259 engines/scumm/help.cpp:275
 msgid "Scroll list up"
 msgstr "Posunout seznam nahoru"
 
-#: engines/scumm/help.cpp:259 engines/scumm/help.cpp:275
+#: engines/scumm/help.cpp:260 engines/scumm/help.cpp:276
 msgid "Scroll list down"
 msgstr "Posunout seznam dolu"
 
-#: engines/scumm/help.cpp:260 engines/scumm/help.cpp:268
+#: engines/scumm/help.cpp:261 engines/scumm/help.cpp:269
 msgid "Upper left item"
 msgstr "Polo¾ka vlevo nahoøe"
 
-#: engines/scumm/help.cpp:261 engines/scumm/help.cpp:270
+#: engines/scumm/help.cpp:262 engines/scumm/help.cpp:271
 msgid "Lower left item"
 msgstr "Polo¾ka vlevo dole"
 
-#: engines/scumm/help.cpp:262 engines/scumm/help.cpp:271
+#: engines/scumm/help.cpp:263 engines/scumm/help.cpp:272
 msgid "Upper right item"
 msgstr "Polo¾ka vpravo nahoøe"
 
-#: engines/scumm/help.cpp:263 engines/scumm/help.cpp:273
+#: engines/scumm/help.cpp:264 engines/scumm/help.cpp:274
 msgid "Lower right item"
 msgstr "Polo¾ka vpravo dole"
 
-#: engines/scumm/help.cpp:269
+#: engines/scumm/help.cpp:270
 msgid "Middle left item"
 msgstr "Polo¾ka vlevo uprostøed"
 
-#: engines/scumm/help.cpp:272
+#: engines/scumm/help.cpp:273
 msgid "Middle right item"
 msgstr "Polo¾ka vpravo uprostøed"
 
-#: engines/scumm/help.cpp:279 engines/scumm/help.cpp:284
+#: engines/scumm/help.cpp:280 engines/scumm/help.cpp:285
 msgid "Switching characters:"
 msgstr "Mìnìní postav:"
 
-#: engines/scumm/help.cpp:281
+#: engines/scumm/help.cpp:282
 msgid "Second kid"
 msgstr "Druhé dítì"
 
-#: engines/scumm/help.cpp:282
+#: engines/scumm/help.cpp:283
 msgid "Third kid"
 msgstr "Tøetí dítì"
 
-#: engines/scumm/help.cpp:294
+#: engines/scumm/help.cpp:292
+msgid "Toggle Inventory/IQ Points display"
+msgstr "Pøepínat zobrazení inventáøe/chytrostních bodù"
+
+#: engines/scumm/help.cpp:293
+msgid "Toggle Keyboard/Mouse Fighting (*)"
+msgstr "Pøepínat bojování pomocí kláves/my¹i (*)"
+
+#: engines/scumm/help.cpp:295
+msgid "* Keyboard Fighting is always on,"
+msgstr "* Bojování pomocí klávesnice je v¾dy zapnuto,"
+
+#: engines/scumm/help.cpp:296
+msgid "  so despite the in-game message this"
+msgstr " tak¾e nehledì a to, co øíká hra,"
+
+#: engines/scumm/help.cpp:297
+msgid "  actually toggles Mouse Fighting Off/On"
+msgstr " toto ve skuteènosti ovládá bojování s my¹í"
+
+#: engines/scumm/help.cpp:304
 msgid "Fighting controls (numpad):"
 msgstr "Ovládání boje (num. kláv.)"
 
-#: engines/scumm/help.cpp:295 engines/scumm/help.cpp:296
-#: engines/scumm/help.cpp:297
+#: engines/scumm/help.cpp:305 engines/scumm/help.cpp:306
+#: engines/scumm/help.cpp:307
 msgid "Step back"
 msgstr "Ustoupit"
 
-#: engines/scumm/help.cpp:298
+#: engines/scumm/help.cpp:308
 msgid "Block high"
 msgstr "Bránit nahoøe"
 
-#: engines/scumm/help.cpp:299
+#: engines/scumm/help.cpp:309
 msgid "Block middle"
 msgstr "Bránit uprostøed"
 
-#: engines/scumm/help.cpp:300
+#: engines/scumm/help.cpp:310
 msgid "Block low"
 msgstr "Bránit dole"
 
-#: engines/scumm/help.cpp:301
+#: engines/scumm/help.cpp:311
 msgid "Punch high"
 msgstr "Udeøit nahoru"
 
-#: engines/scumm/help.cpp:302
+#: engines/scumm/help.cpp:312
 msgid "Punch middle"
 msgstr "Udeøit doprostøed"
 
-#: engines/scumm/help.cpp:303
+#: engines/scumm/help.cpp:313
 msgid "Punch low"
 msgstr "Udeøit dolù"
 
-#: engines/scumm/help.cpp:306
+#: engines/scumm/help.cpp:315
+msgid "Sucker punch"
+msgstr "Neèekaná rána"
+
+#: engines/scumm/help.cpp:318
 msgid "These are for Indy on left."
 msgstr "Tyto jsou pro Indyho nalevo."
 
-#: engines/scumm/help.cpp:307
+#: engines/scumm/help.cpp:319
 msgid "When Indy is on the right,"
 msgstr "Kdy¾ je Indy napravo,"
 
-#: engines/scumm/help.cpp:308
+#: engines/scumm/help.cpp:320
 msgid "7, 4, and 1 are switched with"
-msgstr "71 4 a 1 jsou zamìnìny s"
+msgstr "7, 4 a 1 jsou zamìnìny s"
 
-#: engines/scumm/help.cpp:309
+#: engines/scumm/help.cpp:321
 msgid "9, 6, and 3, respectively."
 msgstr "9, 6 a 3, v tomto poøadí."
 
-#: engines/scumm/help.cpp:316
+#: engines/scumm/help.cpp:328
 msgid "Biplane controls (numpad):"
 msgstr "Kontrola dvojplo¹níku (numerická klávesnice)"
 
-#: engines/scumm/help.cpp:317
+#: engines/scumm/help.cpp:329
 msgid "Fly to upper left"
 msgstr "Letìt doprava nahoru"
 
-#: engines/scumm/help.cpp:318
+#: engines/scumm/help.cpp:330
 msgid "Fly to left"
 msgstr "Letìt doleva"
 
-#: engines/scumm/help.cpp:319
+#: engines/scumm/help.cpp:331
 msgid "Fly to lower left"
 msgstr "Letìt doleva dolù"
 
-#: engines/scumm/help.cpp:320
+#: engines/scumm/help.cpp:332
 msgid "Fly upwards"
 msgstr "Letìt nahoru"
 
-#: engines/scumm/help.cpp:321
+#: engines/scumm/help.cpp:333
 msgid "Fly straight"
 msgstr "Letìt rovnì"
 
-#: engines/scumm/help.cpp:322
+#: engines/scumm/help.cpp:334
 msgid "Fly down"
 msgstr "Letìt dolù"
 
-#: engines/scumm/help.cpp:323
+#: engines/scumm/help.cpp:335
 msgid "Fly to upper right"
 msgstr "Letìt doprava nahoru"
 
-#: engines/scumm/help.cpp:324
+#: engines/scumm/help.cpp:336
 msgid "Fly to right"
 msgstr "Letìt doprava"
 
-#: engines/scumm/help.cpp:325
+#: engines/scumm/help.cpp:337
 msgid "Fly to lower right"
 msgstr "Letìt doprava dolù"
 
-#: engines/scumm/scumm.cpp:1823
+#: engines/scumm/scumm.cpp:1832
 #, c-format
 msgid ""
 "Native MIDI support requires the Roland Upgrade from LucasArts,\n"
@@ -3183,27 +3341,31 @@ msgstr ""
 "Pøirozená podpora MIDI vy¾aduje Aktualizaci Roland od LucasArts,\n"
 "ale %s chybí. Místo toho je pou¾it AdLib."
 
-#: engines/scumm/scumm.cpp:2594
+#: engines/scumm/scumm.cpp:2644
 msgid ""
-"Usually, Maniac Mansion would start now. But ScummVM doesn't do that yet. To "
-"play it, go to 'Add Game' in the ScummVM start menu and select the 'Maniac' "
-"directory inside the Tentacle game directory."
+"Usually, Maniac Mansion would start now. But for that to work, the game "
+"files for Maniac Mansion have to be in the 'Maniac' directory inside the "
+"Tentacle game directory, and the game has to be added to ScummVM."
 msgstr ""
-"Normálnì by teï Maniac Mansion byl spu¹tìn. Ale ScummVM toto zatím nedìlá. "
-"Abyste toto mohli hrát, pøejdìte do 'Pøidat Hru' v poèáteèním menu ScummVM a "
-"vyberte adresáø 'Maniac' uvnitø herního adresáøe Tentacle."
+"Normálnì by teï byl spu¹tìn Maniac Mansion. Ale aby toto mohlo fungovat, "
+"musí být soubory se hrou umístìny do slo¾ky 'Maniac' uvnitø slo¾ky se hrou "
+"Tentacle a hra musí být pøidána do ScummVM."
 
 #: engines/scumm/players/player_v3m.cpp:129
 msgid ""
 "Could not find the 'Loom' Macintosh executable to read the\n"
 "instruments from. Music will be disabled."
 msgstr ""
+"Nelze najít spustitelný soubor 'Loom' pro Macintosh z jeho¾\n"
+"mají být naèteny hudební nástroje. Hudba bude zakázána."
 
 #: engines/scumm/players/player_v5m.cpp:107
 msgid ""
 "Could not find the 'Monkey Island' Macintosh executable to read the\n"
 "instruments from. Music will be disabled."
 msgstr ""
+"Nelze najít spustitelný soubor 'Monkey Island' pro Macintosh z\n"
+"jeho¾ mají být naèteny hudební nástroje. Hudba bude zakázána."
 
 #: engines/sky/compact.cpp:130
 msgid ""
@@ -3315,19 +3477,80 @@ msgstr ""
 
 #: engines/wintermute/detection.cpp:58
 msgid "Show FPS-counter"
-msgstr ""
+msgstr "Zobrazit poèítadlo FPS"
 
 #: engines/wintermute/detection.cpp:59
 msgid "Show the current number of frames per second in the upper left corner"
+msgstr "Zobrazit souèasný poèet snímkù za sekundu v horním levém rohu"
+
+#: engines/zvision/detection_tables.h:52
+#, fuzzy
+msgid "Use the original save/load screens instead of the ScummVM interface"
+msgstr "Pou¾ít pùvodní obrazovky naètení/ulo¾ení místo ze ScummVM"
+
+#: engines/zvision/detection_tables.h:61
+msgid "Double FPS"
+msgstr "Dvojité snímky za sekundu"
+
+#: engines/zvision/detection_tables.h:62
+#, fuzzy
+msgid "Increase framerate from 30 to 60 FPS"
+msgstr "Zvý¹it herní snímky za sekundu z 30 na 60"
+
+#: engines/zvision/detection_tables.h:71
+msgid "Enable Venus"
+msgstr "Povolit Venus"
+
+#: engines/zvision/detection_tables.h:72
+msgid "Enable the Venus help system"
+msgstr "Povolit systém nápovìdy Venus"
+
+#: engines/zvision/detection_tables.h:81
+msgid "Disable animation while turning"
+msgstr "Zakázat animaci pøi otáèení"
+
+#: engines/zvision/detection_tables.h:82
+#, fuzzy
+msgid "Disable animation while turning in panorama mode"
+msgstr "Zakázat animaci pøi otáèení v panoramatickém re¾imu"
+
+#: engines/zvision/detection_tables.h:91
+#, fuzzy
+msgid "Use high resolution MPEG video"
+msgstr "Pou¾ít videa MPEG ve vysokém rozli¹ení"
+
+#: engines/zvision/detection_tables.h:92
+#, fuzzy
+msgid "Use MPEG video from the DVD version, instead of lower resolution AVI"
 msgstr ""
+"Pou¾ít videa MPEG ve vysokém rozli¹ení pocházející z DVD verze, namísto "
+"videí AVI v nízkém rozli¹ení."
+
+#~ msgid "EGA undithering"
+#~ msgstr "Nerozkládání EGA"
+
+#~ msgid "Enable undithering in EGA games"
+#~ msgstr "Povolit nerozkládání v EGA hrách"
+
+#~ msgid "Are you sure you want to restart?  (Y/N)"
+#~ msgstr "Jste si jisti, ¾e chcete restartovat? (A/N)A"
+
+#~ msgid "Are you sure you want to quit?  (Y/N)"
+#~ msgstr "Jste si jisti, ¾e chcete odejít?  (A/N)A"
+
+#~ msgid ""
+#~ "Usually, Maniac Mansion would start now. But ScummVM doesn't do that yet. "
+#~ "To play it, go to 'Add Game' in the ScummVM start menu and select the "
+#~ "'Maniac' directory inside the Tentacle game directory."
+#~ msgstr ""
+#~ "Normálnì by teï Maniac Mansion byl spu¹tìn. Ale ScummVM toto zatím "
+#~ "nedìlá. Abyste toto mohli hrát, pøejdìte do 'Pøidat Hru' v poèáteèním "
+#~ "menu ScummVM a vyberte adresáø 'Maniac' uvnitø herního adresáøe Tentacle."
 
 #~ msgid "MPEG-2 cutscenes found but ScummVM has been built without MPEG-2"
 #~ msgstr "Videa MPEG-2 nalezena, ale ScummVM byl sestaven bez MPEG-2"
 
 #~ msgctxt "lowres"
-#~ msgid "Mass Add..."
-#~ msgstr "Hromadné Pøidání..."
-
 #~ msgid "Mass Add..."
 #~ msgstr "Hromadné Pøidání..."
 

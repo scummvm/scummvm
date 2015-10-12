@@ -30,8 +30,6 @@
 #include "common/debug.h"
 #include "common/endian.h"
 
-#include "graphics/colormasks.h"
-
 namespace ZVision {
 
 RLFDecoder::~RLFDecoder() {
@@ -41,9 +39,13 @@ RLFDecoder::~RLFDecoder() {
 bool RLFDecoder::loadStream(Common::SeekableReadStream *stream) {
 	close();
 
-	addTrack(new RLFVideoTrack(stream));
-
-	return true;
+	// Check if the stream is valid
+	if (stream && !stream->err() && stream->readUint32BE() == MKTAG('F', 'E', 'L', 'R')) {
+		addTrack(new RLFVideoTrack(stream));
+		return true;
+	} else {
+		return false;
+	}
 }
 
 RLFDecoder::RLFVideoTrack::RLFVideoTrack(Common::SeekableReadStream *stream)
@@ -54,7 +56,7 @@ RLFDecoder::RLFVideoTrack::RLFVideoTrack(Common::SeekableReadStream *stream)
 	  _height(0),
 	  _frameTime(0),
 	  _frames(0),
-	  _curFrame(0),
+	  _displayedFrame(-1),
 	  _frameBufferByteSize(0) {
 
 	if (!readHeader()) {
@@ -62,7 +64,7 @@ RLFDecoder::RLFVideoTrack::RLFVideoTrack(Common::SeekableReadStream *stream)
 		return;
 	}
 
-	_currentFrameBuffer.create(_width, _height, Graphics::createPixelFormat<565>());
+	_currentFrameBuffer.create(_width, _height, getPixelFormat());
 	_frameBufferByteSize = _width * _height * sizeof(uint16);
 
 	_frames = new Frame[_frameCount];
@@ -83,10 +85,6 @@ RLFDecoder::RLFVideoTrack::~RLFVideoTrack() {
 }
 
 bool RLFDecoder::RLFVideoTrack::readHeader() {
-	if (_readStream->readUint32BE() != MKTAG('F', 'E', 'L', 'R')) {
-		return false;
-	}
-
 	// Read the header
 	_readStream->readUint32LE();                // Size1
 	_readStream->readUint32LE();                // Unknown1
@@ -161,22 +159,17 @@ RLFDecoder::RLFVideoTrack::Frame RLFDecoder::RLFVideoTrack::readNextFrame() {
 
 bool RLFDecoder::RLFVideoTrack::seek(const Audio::Timestamp &time) {
 	uint frame = getFrameAtTime(time);
-	assert(frame < (int)_frameCount);
+	assert(frame < _frameCount);
 
-	if ((uint)_curFrame == frame)
+	if ((uint)_displayedFrame == frame)
 		return true;
 
-	if (frame < 0) {
-		_curFrame = 0;
-		return false;
-	}
-
-	int closestFrame = _curFrame;
-	int distance = (int)frame - _curFrame;
+	int closestFrame = _displayedFrame;
+	int distance = (int)frame - closestFrame;
 
 	if (distance < 0) {
 		for (uint i = 0; i < _completeFrames.size(); ++i) {
-			if ((int)_completeFrames[i] > frame)
+			if (_completeFrames[i] > frame)
 				break;
 			closestFrame = _completeFrames[i];
 		}
@@ -196,19 +189,18 @@ bool RLFDecoder::RLFVideoTrack::seek(const Audio::Timestamp &time) {
 		applyFrameToCurrent(i);
 	}
 
-	_curFrame = frame;
+	_displayedFrame = frame - 1;
 
 	return true;
 }
 
 const Graphics::Surface *RLFDecoder::RLFVideoTrack::decodeNextFrame() {
-	// When an animation ends, rewind
-	if (_curFrame == (int)_frameCount)
-		seek(Audio::Timestamp(0, getFrameRate().toInt()));
-	
-	applyFrameToCurrent(_curFrame);
+	if (_displayedFrame >= (int)_frameCount)
+		return NULL;
 
-	_curFrame++;
+	_displayedFrame++;
+	applyFrameToCurrent(_displayedFrame);
+
 	return &_currentFrameBuffer;
 }
 
@@ -242,10 +234,7 @@ void RLFDecoder::RLFVideoTrack::decodeMaskedRunLengthEncoding(int8 *source, int8
 					return;
 				}
 
-				byte r, g, b;
-				Graphics::colorToRGB<Graphics::ColorMasks<555> >(READ_LE_UINT16(source + sourceOffset), r, g, b);
-				uint16 destColor = Graphics::RGBToColor<Graphics::ColorMasks<565> >(r, g, b);
-				WRITE_UINT16(dest + destOffset, destColor);
+				WRITE_UINT16(dest + destOffset, READ_LE_UINT16(source + sourceOffset));
 
 				sourceOffset += 2;
 				destOffset += 2;
@@ -289,10 +278,7 @@ void RLFDecoder::RLFVideoTrack::decodeSimpleRunLengthEncoding(int8 *source, int8
 					return;
 				}
 
-				byte r, g, b;
-				Graphics::colorToRGB<Graphics::ColorMasks<555> >(READ_LE_UINT16(source + sourceOffset), r, g, b);
-				uint16 destColor = Graphics::RGBToColor<Graphics::ColorMasks<565> >(r, g, b);
-				WRITE_UINT16(dest + destOffset, destColor);
+				WRITE_UINT16(dest + destOffset, READ_LE_UINT16(source + sourceOffset));
 
 				sourceOffset += 2;
 				destOffset += 2;
@@ -306,9 +292,7 @@ void RLFDecoder::RLFVideoTrack::decodeSimpleRunLengthEncoding(int8 *source, int8
 				return;
 			}
 
-			byte r, g, b;
-			Graphics::colorToRGB<Graphics::ColorMasks<555> >(READ_LE_UINT16(source + sourceOffset), r, g, b);
-			uint16 sampleColor = Graphics::RGBToColor<Graphics::ColorMasks<565> >(r, g, b);
+			uint16 sampleColor = READ_LE_UINT16(source + sourceOffset);
 			sourceOffset += 2;
 
 			numberOfCopy = numberOfSamples + 2;

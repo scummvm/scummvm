@@ -46,10 +46,6 @@ FistControl::FistControl(ZVision *engine, uint32 key, Common::SeekableReadStream
 	_order = 0;
 	_fistnum = 0;
 
-	_frameCur = -1;
-	_frameEnd = -1;
-	_frameTime = 0;
-	_lastRenderedFrame = -1;
 	_animationId = 0;
 
 	clearFistArray(_fistsUp);
@@ -95,41 +91,28 @@ FistControl::~FistControl() {
 	_entries.clear();
 }
 
-void FistControl::renderFrame(uint frameNumber) {
-	if ((int32)frameNumber == _lastRenderedFrame)
-		return;
-
-	_lastRenderedFrame = frameNumber;
-
-	const Graphics::Surface *frameData;
-
-	if (_animation) {
-		_animation->seekToFrame(frameNumber);
-		frameData = _animation->decodeNextFrame();
-		if (frameData)
-			_engine->getRenderManager()->blitSurfaceToBkgScaled(*frameData, _anmRect);
-	}
-}
-
 bool FistControl::process(uint32 deltaTimeInMillis) {
 	if (_engine->getScriptManager()->getStateFlag(_key) & Puzzle::DISABLED)
 		return false;
 
-	if (_frameCur >= 0 && _frameEnd >= 0)
-		if (_frameCur <= _frameEnd) {
-			_frameTime -= deltaTimeInMillis;
-
-			if (_frameTime <= 0) {
-				_frameTime = 1000.0 / _animation->getDuration().framerate();
-
-				renderFrame(_frameCur);
-
-				_frameCur++;
-
-				if (_frameCur > _frameEnd)
-					_engine->getScriptManager()->setStateValue(_animationId, 2);
-			}
+	if (_animation && _animation->isPlaying()) {
+		if (_animation->endOfVideo()) {
+			_animation->stop();
+			_engine->getScriptManager()->setStateValue(_animationId, 2);
+			return false;
 		}
+
+		if (_animation->needsUpdate()) {
+			const Graphics::Surface *frameData = _animation->decodeNextFrame();
+			if (frameData)
+				// WORKAROUND: Ignore the target frame dimensions for the finger animations.
+				// The target dimensions specify an area smaller than expected, thus if we
+				// scale the finger videos to fit these dimensions, they are not aligned
+				// correctly. Not scaling these videos yields a result identical to the
+				// original. Fixes bug #6784.
+				_engine->getRenderManager()->blitSurfaceToBkg(*frameData, _anmRect.left, _anmRect.top);
+		}
+	}
 
 	return false;
 }
@@ -160,9 +143,12 @@ bool FistControl::onMouseUp(const Common::Point &screenSpacePos, const Common::P
 
 		for (int i = 0; i < _numEntries; i++)
 			if (_entries[i]._bitsStrt == oldStatus && _entries[i]._bitsEnd == _fiststatus) {
-				_frameCur = _entries[i]._anmStrt;
-				_frameEnd = _entries[i]._anmEnd;
-				_frameTime = 0;
+				if (_animation) {
+					_animation->stop();
+					_animation->seekToFrame(_entries[i]._anmStrt);
+					_animation->setEndFrame(_entries[i]._anmEnd);
+					_animation->start();
+				}
 
 				_engine->getScriptManager()->setStateValue(_animationId, 1);
 				_engine->getScriptManager()->setStateValue(_soundKey, _entries[i]._sound);

@@ -33,7 +33,12 @@
 #include "graphics/surface.h"
 
 #include <theora/theoradec.h>
+
+#ifdef USE_TREMOR
+#include <tremor/ivorbiscodec.h>
+#else
 #include <vorbis/codec.h>
+#endif
 
 namespace Common {
 class SeekableReadStream;
@@ -50,6 +55,7 @@ namespace Video {
  *
  * Decoder for Theora videos.
  * Video decoder used in engines:
+ *  - pegasus
  *  - sword25
  *  - wintermute
  */

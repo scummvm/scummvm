@@ -62,6 +62,7 @@ static const PlainGameDescriptor tSageGameTitles[] = {
 	{ "ringworld", "Ringworld: Revenge of the Patriarch" },
 	{ "blueforce", "Blue Force" },
 	{ "ringworld2", "Return to Ringworld" },
+	{ "sherlock-logo", "The Lost Files of Sherlock Holmes (Logo)" },
 	{ 0, 0 }
 };
 

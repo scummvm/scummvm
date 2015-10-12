@@ -977,19 +977,15 @@ void Script::opSpeak(SCRIPTOP_PARAMS) {
 
 	// now data contains last string index
 
-#if 0
-	if (_vm->getFeatures() & GF_OLD_ITE_DOS) { // special ITE dos
+	if (_vm->getFeatures() & GF_ITE_DOS_DEMO) {
 		if ((_vm->_scene->currentSceneNumber() == ITE_DEFAULT_SCENE) &&
 			(iparam1 >= 288) && (iparam1 <= (RID_SCENE1_VOICE_END - RID_SCENE1_VOICE_START + 288))) {
 			sampleResourceId = RID_SCENE1_VOICE_START + iparam1 - 288;
 		}
 	} else {
-#endif
 		if (thread->_voiceLUT->size() > uint16(first))
 			sampleResourceId = (*thread->_voiceLUT)[uint16(first)];
-#if 0
 	}
-#endif
 
 	if (sampleResourceId < 0 || sampleResourceId > 4000)
 		sampleResourceId = -1;

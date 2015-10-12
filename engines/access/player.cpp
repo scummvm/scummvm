@@ -26,29 +26,29 @@
 #include "access/access.h"
 #include "access/resources.h"
 #include "access/amazon/amazon_player.h"
+#include "access/martian/martian_player.h"
 
 namespace Access {
 
 Player *Player::init(AccessEngine *vm) {
 	switch (vm->getGameID()) {
 	case GType_Amazon:
+		vm->_playerDataCount = 8;
 		return new Amazon::AmazonPlayer(vm);
+	case GType_MartianMemorandum:
+		vm->_playerDataCount = 10;
+		return new Martian::MartianPlayer(vm);
 	default:
+		vm->_playerDataCount = 8;
 		return new Player(vm);
 	}
 }
 
 Player::Player(AccessEngine *vm) : Manager(vm), ImageEntry() {
-	Common::fill(&_walkOffRight[0], &_walkOffRight[PLAYER_DATA_COUNT], 0);
-	Common::fill(&_walkOffLeft[0], &_walkOffLeft[PLAYER_DATA_COUNT], 0);
-	Common::fill(&_walkOffUp[0], &_walkOffUp[PLAYER_DATA_COUNT], 0);
-	Common::fill(&_walkOffDown[0], &_walkOffDown[PLAYER_DATA_COUNT], 0);
-
 	_playerSprites = nullptr;
 	_playerSprites1 = nullptr;
 	_manPal1 = nullptr;
 	_frameNumber = 0;
-	_monData = nullptr;
 	_rawTempL = 0;
 	_rawXTemp = 0;
 	_rawYTempL = 0;
@@ -79,14 +79,36 @@ Player::Player(AccessEngine *vm) : Manager(vm), ImageEntry() {
 	_downWalkMin = _downWalkMax = 0;
 	_diagUpWalkMin = _diagUpWalkMax = 0;
 	_diagDownWalkMin = _diagDownWalkMax = 0;
+	_walkOffRight = _walkOffLeft = nullptr;
+	_walkOffUp = _walkOffDown = nullptr;
+	_walkOffUR = _walkOffDR = nullptr;
+	_walkOffUL = _walkOffDL = nullptr;
 }
 
 Player::~Player() {
 	delete _playerSprites;
 	delete[] _manPal1;
+	delete[] _walkOffRight;
+	delete[] _walkOffLeft;
+	delete[] _walkOffUp;
+	delete[] _walkOffDown;
+	delete[] _walkOffUR;
+	delete[] _walkOffDR;
+	delete[] _walkOffUL;
+	delete[] _walkOffDL;
 }
 
 void Player::load() {
+	int dataCount = _vm->_playerDataCount;
+	_walkOffRight = new int[dataCount];
+	_walkOffLeft = new int[dataCount];
+	_walkOffUp = new int[dataCount];
+	_walkOffDown = new int[dataCount];
+	_walkOffUR = new Common::Point[dataCount];
+	_walkOffDR = new Common::Point[dataCount];
+	_walkOffUL = new Common::Point[dataCount];
+	_walkOffDL = new Common::Point[dataCount];
+
 	_playerOffset.x = _vm->_screen->_scaleTable1[25];
 	_playerOffset.y = _vm->_screen->_scaleTable1[67];
 	_leftDelta = -3;
@@ -94,21 +116,6 @@ void Player::load() {
 	_upDelta = 5;
 	_downDelta = -10;
 	_scrollConst = 5;
-
-	for (int i = 0; i < PLAYER_DATA_COUNT; ++i) {
-		_walkOffRight[i] = SIDEOFFR[i];
-		_walkOffLeft[i] = SIDEOFFL[i];
-		_walkOffUp[i] = SIDEOFFU[i];
-		_walkOffDown[i] = SIDEOFFD[i];
-		_walkOffUR[i].x = DIAGOFFURX[i];
-		_walkOffUR[i].y = DIAGOFFURY[i];
-		_walkOffDR[i].x = DIAGOFFDRX[i];
-		_walkOffDR[i].y = DIAGOFFDRY[i];
-		_walkOffUL[i].x = DIAGOFFULX[i];
-		_walkOffUL[i].y = DIAGOFFULY[i];
-		_walkOffDL[i].x = DIAGOFFDLX[i];
-		_walkOffDL[i].y = DIAGOFFDLY[i];
-	}
 
 	_sideWalkMin = 0;
 	_sideWalkMax = 7;
@@ -123,16 +130,35 @@ void Player::load() {
 
 	_playerSprites = _playerSprites1;
 	if (_manPal1) {
-		Common::copy(_manPal1 + 0x270, _manPal1 + 0x270 + 0x60, _vm->_screen->_manPal);
+		// Those values are from MM as Amazon doesn't use it
+		Common::copy(_manPal1 + 0x2A0, _manPal1 + 0x2A0 + 0x42, _vm->_screen->_manPal);
 	} else {
 		Common::fill(_vm->_screen->_manPal, _vm->_screen->_manPal + 0x60, 0);
 	}
+}
+
+void Player::loadTexPalette() {
+	Resource *texPal = _vm->_files->loadFile("TEXPAL.COL");
+	int size = texPal->_size;
+	assert(size == 768);
+	_manPal1 = new byte[size];
+	memcpy(_manPal1, texPal->data(), size);	
 }
 
 void Player::loadSprites(const Common::String &name) {
 	freeSprites();
 
 	Resource *data = _vm->_files->loadFile(name);
+
+#if 0
+	Common::DumpFile *outFile = new Common::DumpFile();
+	Common::String outName = name + ".dump";
+	outFile->open(outName);
+	outFile->write(data->data(), data->_size);
+	outFile->finalize();
+	outFile->close();
+#endif
+
 	_playerSprites1 = new SpriteResource(_vm, data);
 	delete data;
 }
@@ -358,7 +384,7 @@ void Player::walkRight() {
 		if (_frame > _sideWalkMax)
 			_frame = _sideWalkMin;
 
-		plotCom(0);
+		plotCom0();
 	}
 }
 
@@ -389,7 +415,7 @@ void Player::walkUpLeft() {
 	tempL = _rawPlayerLow.y - _vm->_screen->_scaleTable2[walkOffset];
 	_rawYTempL = (byte)tempL;
 	_rawYTemp = _rawPlayer.y - _vm->_screen->_scaleTable1[walkOffset] -
-		(tempL < 0 ? 1 : 0);;
+		(tempL < 0 ? 1 : 0);
 
 	if (_vm->_room->codeWalls()) {
 		plotCom2();
@@ -635,15 +661,19 @@ void Player::checkMove() {
 }
 
 void Player::plotCom(int flags) {
-	_flags &= ~2;
-	_flags &= ~8;
+	_flags &= ~IMGFLAG_BACKWARDS;
+	_flags &= ~IMGFLAG_UNSCALED;
 	_flags |= flags;
 
 	plotCom3();
 }
 
+void Player::plotCom0() {
+	plotCom(_vm->getGameID() == GType_Amazon ? 0 : IMGFLAG_BACKWARDS);
+}
+
 void Player::plotCom1() {
-	plotCom(2);
+	plotCom(_vm->getGameID() == GType_Amazon ? IMGFLAG_BACKWARDS : 0);
 }
 
 void Player::plotCom2() {
@@ -710,8 +740,12 @@ void Player::checkScroll() {
 	}
 }
 
-bool Player::scrollUp() {
-	_scrollAmount = -(_vm->_screen->_clipHeight - _playerY - _scrollThreshold);
+bool Player::scrollUp(int forcedAmount) {
+	if (forcedAmount == -1)
+		_scrollAmount = -(_vm->_screen->_clipHeight - _playerY - _scrollThreshold);
+	else
+		_scrollAmount = forcedAmount;
+
 	if ((_vm->_scrollRow + _vm->_screen->_vWindowHeight) >=
 			_vm->_room->_playFieldHeight)
 		return true;
@@ -738,8 +772,12 @@ bool Player::scrollUp() {
 	return false;
 }
 
-bool Player::scrollDown() {
-	_scrollAmount = -(_playerY - _scrollThreshold);
+bool Player::scrollDown(int forcedAmount) {
+	if (forcedAmount == -1)
+		_scrollAmount = -(_playerY - _scrollThreshold);
+	else
+		_scrollAmount = forcedAmount;
+
 	_scrollFlag = true;
 	_vm->_scrollY -= _scrollAmount;
 	if (_vm->_scrollY >= 0)
@@ -763,9 +801,13 @@ bool Player::scrollDown() {
 	return true;
 }
 
-bool Player::scrollLeft() {
+bool Player::scrollLeft(int forcedAmount) {
 	Screen &screen = *_vm->_screen;
-	_scrollAmount = -(_vm->_screen->_clipWidth - _playerX - _scrollThreshold);
+	if (forcedAmount == -1)
+		_scrollAmount = -(_vm->_screen->_clipWidth - _playerX - _scrollThreshold);
+	else
+		_scrollAmount = forcedAmount;
+
 	if ((_vm->_scrollCol + screen._vWindowWidth) == _vm->_room->_playFieldWidth) {
 		_scrollEnd = 2;
 		_vm->_scrollX = 0;
@@ -790,8 +832,12 @@ bool Player::scrollLeft() {
 	}
 }
 
-bool Player::scrollRight() {
-	_scrollAmount = -(_playerX - _scrollThreshold);
+bool Player::scrollRight(int forcedAmount) {
+	if (forcedAmount == -1)
+		_scrollAmount = -(_playerX - _scrollThreshold);
+	else
+		_scrollAmount = forcedAmount;
+
 	_scrollFlag = true;
 	_vm->_scrollX -= _scrollAmount;
 

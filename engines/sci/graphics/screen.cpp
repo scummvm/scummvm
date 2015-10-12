@@ -81,7 +81,8 @@ GfxScreen::GfxScreen(ResourceManager *resMan) : _resMan(resMan) {
 		case GID_LSL1:
 		case GID_LSL5:
 		case GID_SQ1:
-			_width = 190;
+			_scriptHeight = 190;
+			break;
 		default:
 			break;
 		}
@@ -238,6 +239,8 @@ GfxScreen::GfxScreen(ResourceManager *resMan) : _resMan(resMan) {
 		_vectorPutPixelPtr = &GfxScreen::putPixelDisplayUpscaled;
 		_putPixelPtr = &GfxScreen::putPixelDisplayUpscaled;
 		break;
+	case GFX_SCREEN_UPSCALED_DISABLED:
+		break;
 	}
 }
 
@@ -246,6 +249,18 @@ GfxScreen::~GfxScreen() {
 	free(_priorityScreen);
 	free(_controlScreen);
 	free(_displayScreen);
+}
+
+// should not be used regularly; only meant for restore game
+void GfxScreen::clearForRestoreGame() {
+	// reset all screen data
+	memset(_visualScreen, 0, _pixels);
+	memset(_priorityScreen, 0, _pixels);
+	memset(_controlScreen, 0, _pixels);
+	memset(_displayScreen, 0, _displayPixels);
+	memset(&_ditheredPicColors, 0, sizeof(_ditheredPicColors));
+	_fontIsUpscaled = false;
+	copyToScreen();
 }
 
 void GfxScreen::copyToScreen() {

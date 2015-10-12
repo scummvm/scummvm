@@ -2110,7 +2110,7 @@ RouteItem *LinesManager::cityMapCarRoute(int x1, int y1, int x2, int y2) {
 				_testRoute0[superRouteIdx].set(curRouteX, curRouteY, curRouteDir);
 				superRouteIdx++;
 				if (curRouteX == -1)
-					break;;
+					break;
 			}
 			if (curRouteX != -1) {
 				curRouteLineIdx = arrLineIdx[DIR_UP];

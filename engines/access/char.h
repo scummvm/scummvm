@@ -41,7 +41,7 @@ public:
 	FileIdent _scriptFile;
 	Common::Array<ExtraCell> _extraCells;
 public:
-	CharEntry(const byte *data);
+	CharEntry(const byte *data, AccessEngine *vm);
 
 	CharEntry();
 };
@@ -51,11 +51,8 @@ private:
 	void charMenu();
 public:
 	Common::Array<CharEntry> _charTable;
-	int _converseMode;
 	int _charFlag;
 
-	// Fields that are included in savegames
-	int _conversation;
 public:
 	CharManager(AccessEngine *vm);
 

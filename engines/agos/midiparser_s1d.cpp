@@ -179,12 +179,43 @@ void MidiParser_S1D::parseNextEvent(EventInfo &info) {
 bool MidiParser_S1D::loadMusic(byte *data, uint32 size) {
 	unloadMusic();
 
+	if (!size)
+		return false;
+
 	// The original actually just ignores the first two bytes.
 	byte *pos = data;
-	if (*(pos++) != 0xFC)
-		debug(1, "Expected 0xFC header but found 0x%02X instead", (int) *pos);
+	if (*pos == 0xFC) {
+		// SysEx found right at the start
+		// this seems to happen since Elvira 2, we ignore it
+		// 3rd byte after the SysEx seems to be saved into a global
 
-	pos += 1;
+		// We expect at least 4 bytes in total
+		if (size < 4)
+			return false;
+
+		byte skipOffset = pos[2]; // get second byte after the SysEx
+		// pos[1] seems to have been ignored
+		// pos[3] is saved into a global inside the original interpreters
+
+		// Waxworks + Simon 1 demo typical header is:
+		//  0xFC 0x29 0x07 0x01 [0x00/0x01]
+		// Elvira 2 typical header is:
+		//  0xFC 0x04 0x06 0x06
+
+		if (skipOffset >= 6) {
+			// should be at least 6, so that we skip over the 2 size bytes and the
+			// smallest SysEx possible
+			skipOffset -= 2; // 2 size bytes were already read by previous code outside of this method
+
+			if (size <= skipOffset) // Skip to the end of file? -> something is not correct
+				return false;
+
+			// Do skip over the bytes
+			pos += skipOffset;
+		} else {
+			warning("MidiParser_S1D: unexpected skip offset in music file");
+		}
+	}
 
 	// And now we're at the actual data. Only one track.
 	_numTracks = 1;

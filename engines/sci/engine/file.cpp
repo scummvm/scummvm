@@ -252,6 +252,9 @@ void DirSeeker::addAsVirtualFiles(Common::String title, Common::String fileMask)
 	Common::SaveFileManager *saveFileMan = g_sci->getSaveFileManager();
 	Common::StringArray foundFiles = saveFileMan->listSavefiles(fileMask);
 	if (!foundFiles.empty()) {
+		// Sort all filenames alphabetically
+		Common::sort(foundFiles.begin(), foundFiles.end());
+
 		_files.push_back(title);
 		_virtualFiles.push_back("");
 		Common::StringArray::iterator it;

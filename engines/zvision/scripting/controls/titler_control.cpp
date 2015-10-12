@@ -67,20 +67,22 @@ TitlerControl::TitlerControl(ZVision *engine, uint32 key, Common::SeekableReadSt
 
 	if (!_rectangle.isEmpty()) {
 		_surface = new Graphics::Surface;
-		_surface->create(_rectangle.width(), _rectangle.height(), _engine->_pixelFormat);
+		_surface->create(_rectangle.width(), _rectangle.height(), _engine->_resourcePixelFormat);
 		_surface->fillRect(Common::Rect(_surface->w, _surface->h), 0);
 	}
 }
 
 TitlerControl::~TitlerControl() {
-	if (_surface)
+	if (_surface) {
+		_surface->free();
 		delete _surface;
+	}
 }
 
 void TitlerControl::setString(int strLine) {
 	if (strLine != _curString && strLine >= 0 && strLine < (int)_strings.size()) {
 		_surface->fillRect(Common::Rect(_surface->w, _surface->h), 0);
-		_engine->getTextRenderer()->drawTxtInOneLine(_strings[strLine], *_surface);
+		_engine->getTextRenderer()->drawTextWithWordWrapping(_strings[strLine], *_surface);
 		_engine->getRenderManager()->blitSurfaceToBkg(*_surface, _rectangle.left, _rectangle.top);
 		_curString = strLine;
 	}

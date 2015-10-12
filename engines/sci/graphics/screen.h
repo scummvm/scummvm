@@ -76,6 +76,7 @@ public:
 	byte getColorWhite() { return _colorWhite; }
 	byte getColorDefaultVectorData() { return _colorDefaultVectorData; }
 
+	void clearForRestoreGame();
 	void copyToScreen();
 	void copyFromScreen(byte *buffer);
 	void kernelSyncWithFramebuffer();

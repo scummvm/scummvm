@@ -41,6 +41,7 @@ class OutputPersistenceBlock : public PersistenceBlock {
 public:
 	OutputPersistenceBlock();
 
+	void write(const void *data, uint32 size);
 	void write(int32 value);
 	void write(uint32 value);
 	void write(float value);

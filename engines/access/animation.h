@@ -106,7 +106,6 @@ public:
 	int _loopCount;
 	int _countdownTicks;
 	int _currentLoopCount;
-	int _field10;
 public:
 	Animation(AccessEngine *vm, Common::SeekableReadStream *stream);
 	~Animation();

@@ -111,6 +111,7 @@ public:
 	Common::Error run();
 	GUI::Debugger *getDebugger() { return _console; }
 	bool showMainmenu(bool &loadedGame);
+	bool showOptions();
 	void init();
 	bool loadToonDat();
 	char **loadTextsVariants(Common::File &in);
@@ -122,6 +123,7 @@ public:
 	void parseInput();
 	void initChapter();
 	void initFonts();
+	void setFont(bool alternative);
 	void loadScene(int32 SceneId, bool forGameLoad = false);
 	void exitScene();
 	void loadCursor();
@@ -421,6 +423,7 @@ protected:
 	FontRenderer *_fontRenderer;
 	Animation *_fontToon;
 	Animation *_fontEZ;
+	Animation *_currentFont;
 
 	AudioManager *_audioManager;
 
@@ -431,6 +434,7 @@ protected:
 	bool _firstFrame;
 	bool _isDemo;
 	bool _showConversationText;
+	bool _useAlternativeFont;
 	bool _needPaletteFlush;
 private:
 	ToonConsole *_console;

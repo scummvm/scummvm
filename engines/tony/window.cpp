@@ -28,7 +28,7 @@
 
 #include "common/scummsys.h"
 #include "graphics/surface.h"
-#include "util.h"
+#include "engines/util.h"
 #include "tony/window.h"
 #include "tony/game.h"
 #include "tony/tony.h"

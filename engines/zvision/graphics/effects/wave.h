@@ -24,13 +24,13 @@
 #define WAVEFX_H_INCLUDED
 
 #include "common/array.h"
-#include "zvision/graphics/effect.h"
+#include "zvision/graphics/graphics_effect.h"
 
 namespace ZVision {
 
 class ZVision;
 
-class WaveFx : public Effect {
+class WaveFx : public GraphicsEffect {
 public:
 
 	WaveFx(ZVision *engine, uint32 key, Common::Rect region, bool ported, int16 frames, int16 centerX, int16 centerY, float ampl, float waveln, float spd);

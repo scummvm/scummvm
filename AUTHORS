@@ -259,8 +259,10 @@ ScummVM Team
        Einar Johan T. Somaaen
        Tobia Tesan
 
-    ZVision:
+    Z-Vision:
        Adrian Astley
+       Filippos Karapetis
+       Anton Yarcev
 
   Backend Teams
   -------------
@@ -483,7 +485,7 @@ Other contributions
 
     German:
        Simon Sawatzki
-       Lothar Serra Mari            - (retired)
+       Lothar Serra Mari
 
     Hungarian:
        Alex Bevilacqua
@@ -524,6 +526,12 @@ Other contributions
        Victor Gonzalez              - Soltys Spanish translation
        Alejandro Gomez de la Munoza - Soltys Spanish translation
 
+    CGE2:
+       Arnaud Boutonne              - Sfinx English translation
+       Thierry Crozat               - Sfinx English translation
+       Peter Bozso                  - Sfinx English translation editor
+       Ryan Clark                   - Sfinx English translation editor
+
     Drascula:
        Thierry Crozat               - Improve French translation
 
@@ -557,6 +565,7 @@ Other contributions
      Jeroen Janssen               - Numerous readability and bugfix patches
      Keith Kaisershot             - Several Pegasus Prime patches
      Andreas Karlsson             - Initial port for SymbianOS
+     Stefan Kristiansson          - Initial work on SDL2 support
      Claudio Matsuoka             - Daily Linux builds
      Thomas Mayer                 - PSP port contributions
      Sean Murray                  - ScummVM tools GUI application (GSoC 2007
@@ -661,7 +670,7 @@ Special thanks to
    Jimmi Thogersen   - For ScummRev, and much obscure code/documentation
    Tristan           - For additional work on the original MT-32 emulator
    James Woodcock    - Soundtrack enhancements
-   Anton Yartsev     - For the original re-implementation of the ZVision
+   Anton Yartsev     - For the original re-implementation of the Z-Vision
                        engine
 
    Tony Warriner and everyone at Revolution Software Ltd. for sharing with us

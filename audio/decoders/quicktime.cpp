@@ -241,6 +241,15 @@ void QuickTimeAudioDecoder::QuickTimeAudioTrack::queueAudio(const Timestamp &len
 			// If we have any samples that we need to skip (ie. we seeked into
 			// the middle of a chunk), skip them here.
 			if (_skipSamples != Timestamp()) {
+				if (_skipSamples > chunkLength) {
+					// If the amount we need to skip is greater than the size
+					// of the chunk, just skip it altogether.
+					_curMediaPos = _curMediaPos + chunkLength;
+					_skipSamples = _skipSamples - chunkLength;
+					delete stream;
+					continue;
+				}
+
 				skipSamples(_skipSamples, stream);
 				_curMediaPos = _curMediaPos + _skipSamples;
 				chunkLength = chunkLength - _skipSamples;

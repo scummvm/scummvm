@@ -323,7 +323,7 @@ bool preloadCallback(PreloadItem &pre, int flag) {
 
 		if (!g_fp->_loaderScene) {
 			g_fp->_gameLoader->loadScene(SC_LDR);
-			g_fp->_loaderScene = g_fp->accessScene(SC_LDR);;
+			g_fp->_loaderScene = g_fp->accessScene(SC_LDR);
 		}
 
 		StaticANIObject *pbar = g_fp->_loaderScene->getStaticANIObject1ById(ANI_PBAR, -1);

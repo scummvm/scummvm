@@ -60,28 +60,32 @@ class MemoryReadStreamTestSuite : public CxxTest::TestSuite {
 	}
 
 	void test_seek_read_le() {
-		byte contents[] = { 1, 2, 3, 4, 5, 6, 7 };
+		byte contents[] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 };
 		Common::MemoryReadStream ms(contents, sizeof(contents));
 
 		TS_ASSERT_EQUALS(ms.readUint16LE(), 0x0201UL);
 		TS_ASSERT_EQUALS(ms.pos(), 2);
 		TS_ASSERT_EQUALS(ms.readUint32LE(), 0x06050403UL);
 		TS_ASSERT_EQUALS(ms.pos(), 6);
-		TS_ASSERT_EQUALS(ms.readByte(), 0x07);
-		TS_ASSERT_EQUALS(ms.pos(), 7);
+		TS_ASSERT_EQUALS(ms.readUint64LE(), 0x0E0D0C0B0A090807ULL);
+		TS_ASSERT_EQUALS(ms.pos(), 14);
+		TS_ASSERT_EQUALS(ms.readByte(), 0x0F);
+		TS_ASSERT_EQUALS(ms.pos(), 15);
 		TS_ASSERT(!ms.eos());
 	}
 
 	void test_seek_read_be() {
-		byte contents[] = { 1, 2, 3, 4, 5, 6, 7 };
+		byte contents[] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 };
 		Common::MemoryReadStream ms(contents, sizeof(contents));
 
 		TS_ASSERT_EQUALS(ms.readUint16BE(), 0x0102UL);
 		TS_ASSERT_EQUALS(ms.pos(), 2);
 		TS_ASSERT_EQUALS(ms.readUint32BE(), 0x03040506UL);
 		TS_ASSERT_EQUALS(ms.pos(), 6);
-		TS_ASSERT_EQUALS(ms.readByte(), 0x07);
-		TS_ASSERT_EQUALS(ms.pos(), 7);
+		TS_ASSERT_EQUALS(ms.readUint64BE(), 0x0708090A0B0C0D0EULL);
+		TS_ASSERT_EQUALS(ms.pos(), 14);
+		TS_ASSERT_EQUALS(ms.readByte(), 0x0F);
+		TS_ASSERT_EQUALS(ms.pos(), 15);
 		TS_ASSERT(!ms.eos());
 	}
 

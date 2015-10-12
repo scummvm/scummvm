@@ -21,6 +21,7 @@
 
 #include "mt32emu.h"
 #include "mmath.h"
+#include "internals.h"
 
 namespace MT32Emu {
 
@@ -312,8 +313,8 @@ bool Partial::produceOutput(Sample *leftBuf, Sample *rightBuf, unsigned long len
 		// Though, it is unknown whether this overflow is exploited somewhere.
 		Sample leftOut = Sample((sample * leftPanValue) >> 8);
 		Sample rightOut = Sample((sample * rightPanValue) >> 8);
-		*leftBuf = Synth::clipBit16s((Bit32s)*leftBuf + (Bit32s)leftOut);
-		*rightBuf = Synth::clipBit16s((Bit32s)*rightBuf + (Bit32s)rightOut);
+		*leftBuf = Synth::clipSampleEx((SampleEx)*leftBuf + (SampleEx)leftOut);
+		*rightBuf = Synth::clipSampleEx((SampleEx)*rightBuf + (SampleEx)rightOut);
 		leftBuf++;
 		rightBuf++;
 #endif
