@@ -88,7 +88,7 @@ public:
 
 class Scene102 : public Scene1xx {
 private:
-	bool _animRunningFl;
+	bool _anim0RunningFl;
 
 public:
 	Scene102(MADSEngine *vm);

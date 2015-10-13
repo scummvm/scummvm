@@ -754,4 +754,12 @@ void Scene::setDynamicAnim(int id, int anim_id, int segment) {
 void Scene::setCamera(Common::Point pos) {
 	warning("TODO: Scene::setCamera");
 }
+
+void Scene::drawToBackground(int series_id, int sprite_id, Common::Point pos, int depth, int scale) {
+	warning("TODO: Scene::drawToBackground");
+}
+
+void Scene::deleteSequence(int idx) {
+	warning("TODO: Scene::deleteSequence");
+}
 } // End of namespace MADS

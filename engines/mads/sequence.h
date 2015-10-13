@@ -127,6 +127,7 @@ public:
 	void setMotion(int seqIndex, int flags, int deltaX, int deltaY);
 
 	int addStampCycle(int srcSpriteIdx, bool flipped, int sprite);
+	int setTimingTrigger(int delay, int code);
 };
 
 } // End of namespace MADS

@@ -555,4 +555,8 @@ int SequenceList::addStampCycle(int srcSpriteIdx, bool flipped, int sprite) {
 	return -1;
 }
 
+int SequenceList::setTimingTrigger(int delay, int code) {
+	warning("TODO: SequenceList::setTimingTrigger");
+	return -1;
+}
 } // End of namespace

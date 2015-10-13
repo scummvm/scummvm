@@ -606,50 +606,86 @@ void Scene101::handleAnimation1() {
 /*------------------------------------------------------------------------*/
 
 Scene102::Scene102(MADSEngine *vm) : Scene1xx(vm) {
-	_animRunningFl = false;
+	_anim0RunningFl = false;
 }
 
 void Scene102::synchronize(Common::Serializer &s) {
 	Scene1xx::synchronize(s);
 
-	s.syncAsByte(_animRunningFl);
+	s.syncAsByte(_anim0RunningFl);
 }
 
 void Scene102::setup() {
-	//setPlayerSpritesPrefix();
+	setPlayerSpritesPrefix();
 	setAAName();
 }
 
 void Scene102::enter() {
-	_animRunningFl = false;
+	_anim0RunningFl = false;
 
 	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('x', 0));
 	_globals._spriteIndexes[3] = _scene->_sprites.addSprites("*RAL86");
 
 	if (_globals[kCurrentYear] == 1993) {
 		_globals._spriteIndexes[0] = _scene->_sprites.addSprites(formAnimName('z', -1));
-		// TODO
-		//_scene->_sequences.setDepth(_globals._sequenceIndexes[0], 14);
+		_scene->drawToBackground(_globals._sequenceIndexes[0], 1, Common::Point(-32000, -32000), 0, 100);
+		_scene->_sequences.setDepth(_globals._sequenceIndexes[0], 14);
 	} else {
-		// TODO
+		_scene->_hotspots.activate(NOUN_CHANDELIER, false);
 	}
 
 	if (_scene->_priorSceneId == 101) {
 		_game._player._playerPos = Common::Point(97, 79);
 		_game._player._facing = FACING_SOUTHEAST;
-		// TODO
+		_globals._sequenceIndexes[2] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[2], false, 4);
 		_game._player.walk(Common::Point(83, 87), FACING_SOUTHEAST);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 14);
 	} else if (_scene->_priorSceneId == 104) {
 		// Player fell from pit -> death
-		// TODO
+		Common::Point deathPos = Common::Point(0, 0);
+		int deathScale = 0;
+		int deathDepth = 0;
+		_game._player._stepEnabled = false;
+		_game._player._visible = false;
+
+		switch (_globals[36]) {
+		case 0:
+			deathPos = Common::Point(221, 57);
+			deathScale = 50;
+			deathDepth = 14;
+			break;
+
+		case 1:
+			deathPos = Common::Point(219, 85);
+			deathScale = 60;
+			deathDepth = 6;
+			break;
+
+		case 2:
+			deathPos = Common::Point(257, 138);
+			deathScale = 76;
+			deathDepth = 1;
+			break;
+
+		default:
+			break;
+		}
+		_scene->_userInterface.emptyConversationList();
+		_scene->_userInterface.setup(kInputConversation);
+		_globals._sequenceIndexes[3] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[3], false, 1);
+		_scene->_sequences.setDepth(_globals._sequenceIndexes[3], deathDepth);
+		_scene->_sequences.setPosition(_globals._sequenceIndexes[3], deathPos);
+		_scene->_sequences.setScale(_globals._sequenceIndexes[3], deathScale);
+		_scene->_sequences.setTimingTrigger(120, 65);
+		_globals._sequenceIndexes[2] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[2], false, 4);
+		_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 14);
 	} else if (_scene->_priorSceneId == 103 || _scene->_priorSceneId != -1) {
 		_game._player._playerPos = Common::Point(282, 145);
 		_game._player._facing = FACING_WEST;
-		_animRunningFl = true;
-		// TODO: Door closing animation
+		_anim0RunningFl = true;
+		_scene->loadAnimation(formAnimName('d', 1), 60, 0);
 	} else if (_scene->_priorSceneId == -1) {
-		// TODO
+		_globals._sequenceIndexes[2] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[2], false, 4);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 14);
 	}
 
@@ -657,12 +693,20 @@ void Scene102::enter() {
 }
 
 void Scene102::step() {
-	if (_game._trigger == 60) {		// Door closes
-		// TODO
-		_animRunningFl = false;
-	} else if (_game._trigger == 65) {		// Death
-		// TODO
-		_scene->_currentSceneId = 104;
+	if (_game._trigger == 60) {
+		// Door closes
+		_globals._sequenceIndexes[2] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[2], false, 4);
+		_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 14);
+		_anim0RunningFl = false;
+	} else if (_game._trigger == 65) {
+		// Death
+		if (_globals[kDeathLocation] == 0)
+			_vm->_dialogs->show(10232);
+		else
+			_vm->_dialogs->show(10229);
+
+		_vm->_sound->command(16);
+		_scene->_nextSceneId = 104;
 	}
 }
 
@@ -675,34 +719,31 @@ void Scene102::preActions() {
 void Scene102::actions() {
 	if (_action.isAction(VERB_WALK_DOWN, NOUN_AISLE)) {
 		_scene->_nextSceneId = 101;
-		_game._player._stepEnabled = true;
-	}
-
-	if (_action.isAction(VERB_WALK_THROUGH, NOUN_ORCHESTRA_DOOR) ||
+	} else if (_action.isAction(VERB_WALK_THROUGH, NOUN_ORCHESTRA_DOOR) ||
 		_action.isAction(VERB_PUSH, NOUN_ORCHESTRA_DOOR) ||
 		_action.isAction(VERB_OPEN, NOUN_ORCHESTRA_DOOR)) {
-		if (_animRunningFl) {
-			// TODO
+		if (_anim0RunningFl) {
+			_scene->_sequences.setTimingTrigger(15, 70);
+			_game._player._stepEnabled = false;
 		} else {
-			_scene->_nextSceneId = 103;		// FIXME: temporary HACK - remove!
-
 			switch (_game._trigger) {
 			case 70:	// try again
 			case 0:
-				// TODO
+				_scene->deleteSequence(_globals._sequenceIndexes[2]);
+				_scene->loadAnimation(formAnimName('d', 0), 1, 0);
+				_game._player._stepEnabled = false;
+				_game._player._visible = false;
 				break;
 			case 1:
 				_scene->_nextSceneId = 103;
 				break;
+			default:
+				break;
 			}
 		}
-
-		_game._player._stepEnabled = true;
-	}
-
-	// TODO: Look around
-
-	if (_action.isAction(VERB_LOOK) || _action.isAction(VERB_LOOK_AT)) {
+	} else if (_action._lookFlag)
+		_vm->_dialogs->show(10210);
+	else if (_action.isAction(VERB_LOOK) || _action.isAction(VERB_LOOK_AT)) {
 		if (_action.isObject(NOUN_PIT))
 			_vm->_dialogs->show(10211);
 		else if (_action.isObject(NOUN_SEATS))
@@ -740,18 +781,12 @@ void Scene102::actions() {
 			_vm->_dialogs->show(10227);
 		else if (_action.isObject(NOUN_CHANDELIER))
 			_vm->_dialogs->show(10231);
-		else
-			return;
-
-		_game._player._stepEnabled = true;
-	}
-
-	if (_action.isAction(VERB_CLOSE, NOUN_ORCHESTRA_DOOR)) {
+	} else if (_action.isAction(VERB_CLOSE, NOUN_ORCHESTRA_DOOR)) {
 		_vm->_dialogs->show(10228);
-		_game._player._stepEnabled = true;
 	}
-}
 
+	_game._player._stepEnabled = false;
+}
 
 /*------------------------------------------------------------------------*/
 
