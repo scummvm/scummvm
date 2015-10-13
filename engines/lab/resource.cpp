@@ -282,17 +282,17 @@ CloseData *Resource::readCloseUps(uint16 depth, Common::File *file) {
 	return head;
 }
 
-viewData *Resource::readView(Common::File *file) {
+ViewData *Resource::readView(Common::File *file) {
 	char c;
-	viewData *view = NULL;
-	viewData *prev = NULL;
-	viewData *head = NULL;
+	ViewData *view = NULL;
+	ViewData *prev = NULL;
+	ViewData *head = NULL;
 
 	do {
 		c = file->readByte();
 
 		if (c == 1) {
-			view = (viewData *)malloc(sizeof(viewData));
+			view = (ViewData *)malloc(sizeof(ViewData));
 			if (!head)
 				head = view;
 			if (prev)

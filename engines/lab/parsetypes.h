@@ -110,14 +110,12 @@ typedef struct closeData {
 
 typedef CloseData *CloseDataPtr;
 
-struct viewData {
+struct ViewData {
 	int16 *Condition;
 	char *GraphicName;
-	struct viewData *NextCondition;
+	struct ViewData *NextCondition;
 	CloseDataPtr closeUps;
 };
-
-typedef viewData *ViewDataPtr;
 
 
 struct Action {
@@ -127,14 +125,11 @@ struct Action {
 	Action *NextAction;
 };
 
-typedef Action *ActionPtr;
-
-
 
 struct Rule {
 	int16 RuleType, Param1, Param2, *Condition;
 
-	ActionPtr ActionList;
+	Action * ActionList;
 	Rule *NextRule;
 };
 
@@ -145,7 +140,7 @@ struct RoomData {
 
 	byte WipeType;
 
-	ViewDataPtr NorthView, SouthView, EastView, WestView;
+	ViewData *NorthView, *SouthView, *EastView, *WestView;
 	RuleList *rules;
 	char *RoomMsg;
 };

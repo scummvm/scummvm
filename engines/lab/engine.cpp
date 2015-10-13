@@ -665,7 +665,7 @@ static void mainGameLoop() {
 	uint16 OldRoomNum, OldDirection = 0, GadID = 0, NewDir;
 
 	CloseDataPtr OldCPtr, TempCPtr, HCPtr = NULL;
-	ViewDataPtr VPtr;
+	ViewData *VPtr;
 
 	VGASetPal(initcolors, 8);
 
