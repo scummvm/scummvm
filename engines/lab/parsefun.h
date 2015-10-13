@@ -51,7 +51,7 @@ void allocRoom(void **Ptr, uint16 Size, uint16 RoomNum);
 
 /* From ProcessRoom.c */
 
-ViewDataPtr getViewData(uint16 RoomNum, uint16 Direction);
+ViewData *getViewData(uint16 RoomNum, uint16 Direction);
 char *getPictName(CloseDataPtr *LCPtr);
 void drawDirection(CloseDataPtr LCPtr);
 bool processArrow(uint16 *Direction, uint16 Arrow);

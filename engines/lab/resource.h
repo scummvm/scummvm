@@ -111,7 +111,7 @@ private:
 	RuleList *readRule(Common::File *file);
 	Action *readAction(Common::File *file);
 	CloseData *readCloseUps(uint16 depth, Common::File *file);
-	viewData *readView(Common::File *file);
+	ViewData *readView(Common::File *file);
 	void readStaticText();
 
 	Common::String _staticText[48];

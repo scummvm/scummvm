@@ -94,40 +94,36 @@ static bool checkConditions(int16 *Condition) {
 /*****************************************************************************/
 /* Gets the current ViewDataPointer.                                         */
 /*****************************************************************************/
-ViewDataPtr getViewData(uint16 roomNum, uint16 direction) {
-	ViewDataPtr *VPtr = NULL, ViewPtr;
-	bool doit = true;
+ViewData *getViewData(uint16 roomNum, uint16 direction) {
+	ViewData *view = NULL;
 
-	if (direction == NORTH)
-		VPtr = &Rooms[roomNum].NorthView;
-	else if (direction == SOUTH)
-		VPtr = &Rooms[roomNum].SouthView;
-	else if (direction == EAST)
-		VPtr = &Rooms[roomNum].EastView;
-	else if (direction == WEST)
-		VPtr = &Rooms[roomNum].WestView;
-
-	if (*VPtr == NULL)
+	if (!Rooms[roomNum].RoomMsg)
 		g_resource->readViews(roomNum);
 
-	ViewPtr = *VPtr;
+	if (direction == NORTH)
+		view = Rooms[roomNum].NorthView;
+	else if (direction == SOUTH)
+		view = Rooms[roomNum].SouthView;
+	else if (direction == EAST)
+		view = Rooms[roomNum].EastView;
+	else if (direction == WEST)
+		view = Rooms[roomNum].WestView;
 
 	do {
-		if (checkConditions(ViewPtr->Condition))
-			doit = false;
-		else
-			ViewPtr = ViewPtr->NextCondition;
+		if (checkConditions(view->Condition))
+			break;
 
-	} while (doit);
+		view = view->NextCondition;
+	} while (true);
 
-	return ViewPtr;
+	return view;
 }
 
 /*****************************************************************************/
 /* Gets an object, if any, from the user's click on the screen.              */
 /*****************************************************************************/
 static CloseData *getObject(uint16 x, uint16 y, CloseDataPtr LCPtr) {
-	ViewDataPtr VPtr;
+	ViewData *VPtr;
 
 	if (LCPtr == NULL) {
 		VPtr = getViewData(RoomNum, Direction);
@@ -179,7 +175,7 @@ static CloseDataPtr findCPtrMatch(CloseDataPtr Main, CloseDataPtr List) {
 /* Returns the current picture name.                                         */
 /*****************************************************************************/
 char *getPictName(CloseDataPtr *LCPtr) {
-	ViewDataPtr ViewPtr = getViewData(RoomNum, Direction);
+	ViewData *ViewPtr = getViewData(RoomNum, Direction);
 
 	if (*LCPtr != NULL) {
 		*LCPtr = findCPtrMatch(*LCPtr, ViewPtr->closeUps);
@@ -266,7 +262,7 @@ bool processArrow(uint16 *direction, uint16 Arrow) {
 /* Sets the current close up data.                                           */
 /*****************************************************************************/
 void setCurClose(uint16 x, uint16 y, CloseDataPtr *cptr, bool useAbsoluteCoords) {
-	ViewDataPtr VPtr;
+	ViewData *VPtr;
 	CloseDataPtr LCPtr;
 	uint16 x1, y1, x2, y2;
 
@@ -302,7 +298,7 @@ void setCurClose(uint16 x, uint16 y, CloseDataPtr *cptr, bool useAbsoluteCoords)
 /* Takes the currently selected item.                                        */
 /*****************************************************************************/
 bool takeItem(uint16 x, uint16 y, CloseDataPtr *cptr) {
-	ViewDataPtr VPtr;
+	ViewData *VPtr;
 	CloseDataPtr LCPtr;
 
 	if (*cptr == NULL) {
@@ -332,7 +328,7 @@ bool takeItem(uint16 x, uint16 y, CloseDataPtr *cptr) {
 /*****************************************************************************/
 /* Processes the action list.                                                */
 /*****************************************************************************/
-static void doActions(ActionPtr APtr, CloseDataPtr *LCPtr) {
+static void doActions(Action * APtr, CloseDataPtr *LCPtr) {
 	CloseDataPtr TLCPtr;
 	bool FirstLoaded = true;
 	char **str, *Test;
