@@ -32,6 +32,7 @@
 #define LAB_DIFF_H
 
 #include "lab/stddefines.h"
+#include "common/file.h"
 
 namespace Lab {
 
@@ -74,7 +75,7 @@ void blackAllScreen();
 void whiteScreen();
 bool readDiff(bool playonce);
 void diffNextFrame();
-void readSound(bool waitTillFinished);
+void readSound(bool waitTillFinished, Common::File *file);
 void stopDiff();
 void stopDiffEnd();
 void stopSound();

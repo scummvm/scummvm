@@ -97,12 +97,15 @@ bool readPict(const char *filename, bool PlayOnce) {
 /* Reads in a music file.  Ignores any graphics.                             */
 /*****************************************************************************/
 bool readMusic(const char *filename, bool waitTillFinished) {
-	byte **file = g_music->newOpen(filename);
+	Common::File *file = g_resource->openDataFile(filename, MKTAG('D', 'I', 'F', 'F'));
+	g_music->updateMusic();
+	if (!g_music->_doNotFilestopSoundEffect)
+		g_music->stopSoundEffect();
 	if (!file)
 		return false;
 
 	DoBlack = false;
-	readSound(waitTillFinished);
+	readSound(waitTillFinished, file);
 
 	return true;
 }

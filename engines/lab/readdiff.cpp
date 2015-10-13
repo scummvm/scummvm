@@ -434,48 +434,25 @@ bool readDiff(bool playonce) {
 }
 
 
-void readSound(bool waitTillFinished) {
-	uint32 header_ = 0, size_;
-	uint16 samplespeed_;
-	char temp_[5];
-	byte *storagefordifffile_, **difffile_ = &storagefordifffile_;
-
-	byte *mstart = *startoffile;            /* Make a copy of the pointer to the start of the file    */
-	*difffile_ = mstart;               /* Now can modify the file without modifying the original */
-
-	if (mstart == NULL)
+void readSound(bool waitTillFinished, Common::File *file) {
+	uint32 magicBytes = file->readUint32LE();
+	if (magicBytes != 1219009121L)
 		return;
 
-	readBlock(temp_, 4L, difffile_);
-	temp_[4] = '\0';
-	readBlock(&header_, 4L, difffile_);
-	swapULong(&header_);
+	uint32 soundTag = file->readUint32LE();
+	uint32 soundSize = file->readUint32LE();
 
-	processed += 8L;
-
-	if (!((strcmp(temp_, "DIFF") == 0) && (header_ == 1219009121L)))
-		return;
-
-	readBlock(&header_, 4L, difffile_);
-	swapULong(&header_);
-
-	readBlock(&size_, 4L, difffile_);
-	swapULong(&size_);
-
-	if (header_ == 0)
-		(*difffile_) += size_;
+	if (soundTag == 0)
+		file->skip(soundSize);	// skip the header
 	else
 		return;
 
-	while (header_ != 65535) {
+	while (soundTag != 65535) {
 		g_music->updateMusic();
-		readBlock(&header_, 4L, difffile_);
-		swapULong(&header_);
+		soundTag = file->readUint32LE();
+		soundSize = file->readUint32LE() - 8;
 
-		readBlock(&size_, 4L, difffile_);
-		swapULong(&size_);
-
-		if ((header_ == 30) || (header_ == 31)) {
+		if ((soundTag == 30) || (soundTag == 31)) {
 			if (waitTillFinished) {
 				while (g_music->isSoundEffectActive()) {
 					g_music->updateMusic();
@@ -483,20 +460,14 @@ void readSound(bool waitTillFinished) {
 				}
 			}
 
-			size_ -= 8L;
+			file->skip(4);
 
-			(*difffile_) += 4;
-			readBlock(&samplespeed_, 2L, difffile_);
-			swapUShortPtr(&samplespeed_, 1);
-
-			(*difffile_) += 2;
-
-			byte *music = *difffile_;
-			uint32 musicsize = size_;
-			(*difffile_) += size_;
-
-			g_music->playSoundEffect(samplespeed_, musicsize, music);
-		} else if (header_ == 65535L) {
+			uint16 sampleRate = file->readUint16LE();
+			file->skip(2);
+			byte *soundData = (byte *)malloc(soundSize);
+			file->read(soundData, soundSize);
+			g_music->playSoundEffect(sampleRate, soundSize, soundData);
+		} else if (soundTag == 65535L) {
 			if (waitTillFinished) {
 				while (g_music->isSoundEffectActive()) {
 					g_music->updateMusic();
@@ -504,7 +475,7 @@ void readSound(bool waitTillFinished) {
 				}
 			}
 		} else
-			(*difffile_) += size_;
+			file->skip(soundSize);
 	}
 }
 
