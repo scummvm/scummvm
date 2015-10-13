@@ -38,7 +38,7 @@
 namespace Lab {
 
 static bool PlayOnce = false;
-static uint32 header, size, processed = 0L, WaitSec = 0L, WaitMicros = 0L, DelayMicros = 0L;
+static uint32 header, size, WaitSec = 0L, WaitMicros = 0L, DelayMicros = 0L;
 static uint16 CurBit = 0, framenumber = 0, samplespeed, numchunks = 1;
 static byte *Buffer, temp[5];
 static bool donepal = false;
@@ -176,10 +176,6 @@ void diffNextFrame() {
 		readBlock(&size, 4L, difffile);
 		swapULong(&size);
 
-		processed += 8L;
-
-		processed += size;
-
 		switch (header) {
 		case 8L:
 			readBlock(diffcmap, size, difffile);
@@ -296,7 +292,6 @@ void diffNextFrame() {
 /* A separate task launched by readDiff.  Plays the DIFF.                    */
 /*****************************************************************************/
 void playDiff() {
-	processed = 0L;
 	WaitSec   = 0L;
 	WaitMicros = 0L;
 	DelayMicros = 0L;
@@ -330,8 +325,6 @@ void playDiff() {
 
 	readBlock(&header, 4L, difffile);
 	swapULong(&header);
-
-	processed += 8L;
 
 	if (!((strcmp((char *)temp, "DIFF") == 0) && (header == 1219009121L))) {
 		IsPlaying = false;
@@ -374,8 +367,6 @@ void playDiff() {
 	} else {
 		return;
 	}
-
-	processed += 8L + size;
 
 	for (header = 0; header < 8; header++)
 		RawDiffBM.Planes[header] = NULL;
