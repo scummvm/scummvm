@@ -46,7 +46,6 @@ static byte *storagefordifffile, **difffile = &storagefordifffile;
 static byte *start;
 static uint32 diffwidth, diffheight;
 static byte blackbuffer[256 * 3];
-static byte *mstart;
 
 bool DoBlack        = false,     /* Black the screen before new picture  */
      nopalchange    = false,     /* Don't change the palette.            */
@@ -57,7 +56,6 @@ bool DoBlack        = false,     /* Black the screen before new picture  */
 
 static bool continuous,
 	IsPlaying      = false,
-	StopPlayingEnd = false,
 	IsAnim         = false,
 	IsPal          = false;
 
@@ -259,7 +257,7 @@ void diffNextFrame() {
 			break;
 		}
 		case 65535L:
-			if ((framenumber == 1) || PlayOnce || StopPlayingEnd) {
+			if ((framenumber == 1) || PlayOnce) {
 				int didTOF = 0;
 
 				if (waitForEffect) {
@@ -310,7 +308,6 @@ void playDiff() {
 	difffile    = &storagefordifffile;
 
 	IsPlaying   = true;
-	StopPlayingEnd = false;
 
 	if (DoBlack) {
 		DoBlack = false;
@@ -443,7 +440,7 @@ void readSound(bool waitTillFinished) {
 	char temp_[5];
 	byte *storagefordifffile_, **difffile_ = &storagefordifffile_;
 
-	mstart = *startoffile;            /* Make a copy of the pointer to the start of the file    */
+	byte *mstart = *startoffile;            /* Make a copy of the pointer to the start of the file    */
 	*difffile_ = mstart;               /* Now can modify the file without modifying the original */
 
 	if (mstart == NULL)
