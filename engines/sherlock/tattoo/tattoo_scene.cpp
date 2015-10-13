@@ -718,6 +718,7 @@ int TattooScene::startCAnim(int cAnimNum, int playRate) {
 	// Flag the Canimation to be cleared
 	_activeCAnim._zPlacement = REMOVE;
 	_activeCAnim._removeBounds = _activeCAnim._oldBounds;
+	_vm->_ui->_bgFound = -1;
 
 	// Free up the animation
 	_activeCAnim.close();
