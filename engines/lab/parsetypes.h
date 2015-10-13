@@ -117,7 +117,6 @@ struct ViewData {
 	CloseDataPtr closeUps;
 };
 
-
 struct Action {
 	int16 ActionType, Param1, Param2, Param3;
 	byte *Data;            /* Message, or a pointer to array
@@ -125,11 +124,10 @@ struct Action {
 	Action *NextAction;
 };
 
-
 struct Rule {
 	int16 RuleType, Param1, Param2, *Condition;
 
-	Action * ActionList;
+	Action *ActionList;
 	Rule *NextRule;
 };
 
