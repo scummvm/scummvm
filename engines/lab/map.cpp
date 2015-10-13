@@ -188,13 +188,11 @@ static uint16 mapScaleY(uint16 y) {
 }
 
 
-
-
 /*****************************************************************************/
 /* Loads in the map data.                                                    */
 /*****************************************************************************/
 static bool loadMapData() {
-	byte **buffer, Temp[5];
+	byte **buffer;
 	uint32 Size;
 	Gadget *gptr;
 	uint16 counter;
@@ -254,28 +252,33 @@ static bool loadMapData() {
 		counter++;
 	}
 
-	uint32 bufferSize;
-	buffer = g_music->newOpen("Lab:Maps", bufferSize);
-	stealBufMem(bufferSize);  /* Freeze the memory for the maps */
-	readBlock(Temp, 4L, buffer);
-	Temp[4] = 0;
+	Common::File *mapFile = g_resource->openDataFile("Lab:Maps", MKTAG('M', 'A', 'P', '0'));
+	if (!mapFile)
+		error("Corrupt map file");
+	g_music->updateMusic();
+	if (!g_music->_doNotFilestopSoundEffect)
+		g_music->stopSoundEffect();
 
-	if (strcmp((char *)Temp, "MAP0") == 0) {
-		readBlock(&MaxRooms, 2L, buffer);
-		swapUShortPtr(&MaxRooms, 1);
-		Maps = (MapData *)(*buffer);
+	MaxRooms = mapFile->readUint16LE();
+	Maps = new MapData[MaxRooms];	// will be freed when the user exits the map
+	for (int i = 0; i < MaxRooms; i++) {
+		Maps[i].x = mapFile->readUint16LE();
+		Maps[i].y = mapFile->readUint16LE();
+		Maps[i].PageNumber = mapFile->readUint16LE();
+		Maps[i].SpecialID = mapFile->readUint16LE();
+		Maps[i].MapFlags = mapFile->readUint32LE();
+	}
 
-		for (counter = 1; counter <= MaxRooms; counter++) {
-			swapUShortPtr(&Maps[counter].x, 4);
-			swapULong(&Maps[counter].MapFlags);
-		}
-	} else
-		return false;
+	delete mapFile;
 
 	return true;
 }
 
 
+static void freeMapData() {
+	delete[] Maps;
+	Maps = NULL;
+}
 
 
 static uint16 fadeNumIn(uint16 num, uint16 res, uint16 counter) {
@@ -543,7 +546,7 @@ static void getDownFloor(uint16 *Floor, bool *isfloor) {
 			*isfloor = false;
 			return;
 		} else if (*Floor > UPPERFLOOR) {
-			/* LAB: Labyrinth specific code */
+			// Labyrinth specific code
 			if (*Floor == HEDGEMAZEFLOOR)
 				*Floor = UPPERFLOOR;
 			else if ((*Floor == CARNIVAL) || (*Floor == MEDMAZEFLOOR))
@@ -616,7 +619,7 @@ static void drawMap(uint16 CurRoom, uint16 CurMsg, uint16 Floor, bool fadeout, b
 	else
 		ghoastGadget(&downgadget, 12);
 
-	/* LAB: Labyrinth specific code */
+	// Labyrinth specific code
 	if (Floor == LOWERFLOOR) {
 		if (onFloor(SURMAZEFLOOR))
 			drawImage(Maze, mapScaleX(538), mapScaleY(277));
@@ -633,7 +636,6 @@ static void drawMap(uint16 CurRoom, uint16 CurMsg, uint16 Floor, bool fadeout, b
 		sptr = (char *)g_resource->getStaticText(kTextSurmazeMessage).c_str();
 		flowText(MsgFont, 0, 7, 0, true, true, true, true, mapScaleX(360), 0, mapScaleX(660), mapScaleY(450), sptr);
 	}
-
 
 	switch (Floor) {
 	case LOWERFLOOR:
@@ -879,7 +881,7 @@ void doMap(uint16 CurRoom) {
 	mouseHide();
 	setAPen(0);
 	rectFill(0, 0, VGAScreenWidth - 1, VGAScreenHeight - 1);
-	freeAllStolenMem();
+	freeMapData();
 	blackAllScreen();
 	mouseShow();
 	WSDL_UpdateScreen();
