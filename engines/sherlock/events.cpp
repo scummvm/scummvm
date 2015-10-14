@@ -263,6 +263,10 @@ void Events::setFrameRate(int newRate) {
 	_frameRate = newRate;
 }
 
+void Events::toggleSpeed() {
+	_frameRate = (_frameRate == GAME_FRAME_RATE) ? GAME_FRAME_RATE * 2 : GAME_FRAME_RATE;
+}
+
 bool Events::checkForNextFrameCounter() {
 	// Check for next game frame
 	uint32 milli = g_system->getMillis();

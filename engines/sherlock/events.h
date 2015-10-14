@@ -30,7 +30,7 @@
 
 namespace Sherlock {
 
-#define GAME_FRAME_RATE 40
+#define GAME_FRAME_RATE 30
 #define GAME_FRAME_TIME (1000 / GAME_FRAME_RATE)
 
 enum CursorId { ARROW = 0, MAGNIFY = 1, WAIT = 2, EXIT_ZONES_START = 5, INVALID_CURSOR = -1 };
@@ -147,6 +147,11 @@ public:
 	 * Override the default frame rate
 	 */
 	void setFrameRate(int newRate);
+
+	/**
+	 * Toggle between standard game speed and an "extra fast" mode
+	 */
+	void toggleSpeed();
 
 	/**
 	 * Return the current game frame number

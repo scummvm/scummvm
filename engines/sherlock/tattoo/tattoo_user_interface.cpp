@@ -277,7 +277,7 @@ void TattooUserInterface::handleInput() {
 			scene._goToScene = STARTING_GAME_SCENE;
 		} else if (_menuMode == STD_MODE) {
 			if (_keyState.keycode == Common::KEYCODE_s && vm._allowFastMode) {
-				vm._fastMode = !vm._fastMode;
+				events.toggleSpeed();
 
 			} else if (_keyState.keycode == Common::KEYCODE_l && _bgFound != -1) {
 				// Beging used for testing that Look dialogs work

@@ -192,9 +192,6 @@ void TattooTalk::talkTo(const Common::String filename) {
 	if (filename == "wilb29a")
 		events.incWaitCounter();
 
-	if (filename == "keys33d")
-		events.setFrameRate(30);
-
 	Talk::talkTo(filename);
 
 	if (filename == "wilb29a")
@@ -203,8 +200,6 @@ void TattooTalk::talkTo(const Common::String filename) {
 		events.decWaitCounter();
 		events.setCursor(ARROW);
 	}
-	if (filename == "keys33d")
-		events.setFrameRate(GAME_FRAME_RATE);
 }
 
 void TattooTalk::talkInterface(const byte *&str) {

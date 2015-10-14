@@ -655,10 +655,6 @@ int TattooScene::startCAnim(int cAnimNum, int playRate) {
 	if (ui._windowOpen)
 		ui.banishWindow();
 	
-	if (_currentScene == 3 && cAnimNum == 21)
-		// Set framerate for correct playing of violin in Holmes' bedroom
-		events.setFrameRate(30);
-
 	// Open up the room resource file and get the data for the animation
 	Common::SeekableReadStream *stream = res.load(_roomFilename);
 	stream->seek(44 + cAnimNum * 4);
@@ -721,7 +717,6 @@ int TattooScene::startCAnim(int cAnimNum, int playRate) {
 	_activeCAnim._zPlacement = REMOVE;
 	_activeCAnim._removeBounds = _activeCAnim._oldBounds;
 	_vm->_ui->_bgFound = -1;
-	events.setFrameRate(GAME_FRAME_RATE);
 
 	// Free up the animation
 	_activeCAnim.close();
