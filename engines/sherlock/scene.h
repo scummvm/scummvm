@@ -145,8 +145,6 @@ public:
 
 class Scene {
 private:
-	bool _loadingSavedGame;
-
 	/**
 	 * Loads sounds for the scene
 	 */
