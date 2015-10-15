@@ -55,21 +55,20 @@ public:
 
 class Scene101 : public Scene1xx {
 private:
-	int _execute_chan;
-	int _execute_wipe;
-	int _brie_calling_position;
-	int _brie_chandelier_position;
-	int _brie_calling_frame;
-	int _brie_chandelier_frame;
-	int _talk_count;
-	int _converse_counter;
-	int _dynamic_brie;
-	int _dynamic_brie_2;
-	bool _start_walking;
-	bool _start_walking_0;
-	bool _anim_0_running;
-	bool _anim_1_running;
-	bool _start_sitting_down;
+	int _chanStatus;
+	int _wipeStatus;
+	int _callingStatus;
+	int _chandelierStatus;
+	int _callingFrame;
+	int _chandelierFrame;
+	int _talkCounter;
+	int _convCounter;
+	int _brieAnimId;
+	bool _startWalkingFl;
+	bool _startWalking0Fl;
+	bool _anim0Running;
+	bool _anim1Running;
+	bool _startSittingFl;
 public:
 	Scene101(MADSEngine *vm);
 	virtual void synchronize(Common::Serializer &s);
@@ -88,7 +87,7 @@ public:
 
 class Scene102 : public Scene1xx {
 private:
-	bool _anim0RunningFl;
+	bool _anim0Running;
 
 public:
 	Scene102(MADSEngine *vm);

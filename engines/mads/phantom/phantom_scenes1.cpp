@@ -117,40 +117,38 @@ void Scene1xx::setPlayerSpritesPrefix() {
 /*------------------------------------------------------------------------*/
 
 Scene101::Scene101(MADSEngine *vm) : Scene1xx(vm) {
-	_execute_chan = -1;
-	_execute_wipe = -1;
-	_brie_calling_position = -1;
-	_brie_chandelier_position = -1;
-	_brie_calling_frame = -1;
-	_brie_chandelier_frame = -1;
-	_converse_counter = 0;
-	_talk_count = -1;
-	_dynamic_brie = 0;
-	_dynamic_brie_2 = 0;
-	_start_walking = false;
-	_start_walking_0 = false;
-	_anim_0_running = false;
-	_anim_1_running = false;
-	_start_sitting_down = false;
+	_chanStatus = -1;
+	_wipeStatus = -1;
+	_callingStatus = -1;
+	_chandelierStatus = -1;
+	_callingFrame = -1;
+	_chandelierFrame = -1;
+	_convCounter = 0;
+	_talkCounter = -1;
+	_brieAnimId = 0;
+	_startWalkingFl = false;
+	_startWalking0Fl = false;
+	_anim0Running = false;
+	_anim1Running = false;
+	_startSittingFl = false;
 }
 
 void Scene101::synchronize(Common::Serializer &s) {
 	Scene1xx::synchronize(s);
-	s.syncAsSint16LE(_execute_chan);
-	s.syncAsSint16LE(_execute_wipe);
-	s.syncAsSint16LE(_brie_calling_position);
-	s.syncAsSint16LE(_brie_chandelier_position);
-	s.syncAsSint16LE(_brie_calling_frame);
-	s.syncAsSint16LE(_brie_chandelier_frame);
-	s.syncAsSint16LE(_converse_counter);
-	s.syncAsSint16LE(_talk_count);
-	s.syncAsSint16LE(_dynamic_brie);
-	s.syncAsSint16LE(_dynamic_brie_2);
-	s.syncAsByte(_start_walking);
-	s.syncAsByte(_start_walking_0);
-	s.syncAsByte(_anim_0_running);
-	s.syncAsByte(_anim_1_running);
-	s.syncAsByte(_start_sitting_down);
+	s.syncAsSint16LE(_chanStatus);
+	s.syncAsSint16LE(_wipeStatus);
+	s.syncAsSint16LE(_callingStatus);
+	s.syncAsSint16LE(_chandelierStatus);
+	s.syncAsSint16LE(_callingFrame);
+	s.syncAsSint16LE(_chandelierFrame);
+	s.syncAsSint16LE(_convCounter);
+	s.syncAsSint16LE(_talkCounter);
+	s.syncAsSint16LE(_brieAnimId);
+	s.syncAsByte(_startWalkingFl);
+	s.syncAsByte(_startWalking0Fl);
+	s.syncAsByte(_anim0Running);
+	s.syncAsByte(_anim1Running);
+	s.syncAsByte(_startSittingFl);
 }
 
 void Scene101::setup() {
@@ -163,10 +161,10 @@ void Scene101::enter() {
 	_vm->_disableFastwalk = true;
 
 	if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
-		_execute_chan = _execute_wipe = -1;
-		_start_walking = _start_walking_0 = false;
-		_anim_0_running = _anim_1_running = false;
-		_start_sitting_down = false;
+		_chanStatus = _wipeStatus = -1;
+		_startWalkingFl = _startWalking0Fl = false;
+		_anim0Running = _anim1Running = false;
+		_startSittingFl = false;
 	}
 
 	// Load Dialogs
@@ -183,46 +181,46 @@ void Scene101::enter() {
 
 	if (_globals[kBrieTalkStatus] == 0) {
 		_game._player.firstWalk(Common::Point(-20, 75), FACING_EAST, Common::Point(18, 79), FACING_EAST, true);
-		_brie_calling_position = 0;
-		_brie_chandelier_position = 3;
+		_callingStatus = 0;
+		_chandelierStatus = 3;
 		_game._player.setWalkTrigger(50);
 
 		_globals._animationIndexes[1] = _scene->loadAnimation(formAnimName('b', 9), 1);
 		_globals._animationIndexes[0] = _scene->loadAnimation(formAnimName('b', 8), 1);
 
-		_anim_0_running  = true;
-		_anim_1_running  = true;
+		_anim0Running  = true;
+		_anim1Running  = true;
 
-		_dynamic_brie = _scene->_dynamicHotspots.add(NOUN_MONSIEUR_BRIE, VERB_WALKTO, SYNTAX_SINGULAR_MASC, -1, Common::Rect(0, 0, 0, 0));
-		_scene->_dynamicHotspots[_dynamic_brie]._articleNumber = PREP_ON;
-		_scene->_dynamicHotspots.setPosition(_dynamic_brie, Common::Point(490, 119), FACING_NONE);
-		_scene->setDynamicAnim(_dynamic_brie, 0, 0);
-		_scene->setDynamicAnim(_dynamic_brie, 0, 1);
-		_scene->setDynamicAnim(_dynamic_brie, 0, 2);
-		_scene->setDynamicAnim(_dynamic_brie, 0, 3);
-		_scene->setDynamicAnim(_dynamic_brie, 0, 4);
+		_brieAnimId = _scene->_dynamicHotspots.add(NOUN_MONSIEUR_BRIE, VERB_WALKTO, SYNTAX_SINGULAR_MASC, -1, Common::Rect(0, 0, 0, 0));
+		_scene->_dynamicHotspots[_brieAnimId]._articleNumber = PREP_ON;
+		_scene->_dynamicHotspots.setPosition(_brieAnimId, Common::Point(490, 119), FACING_NONE);
+		_scene->setDynamicAnim(_brieAnimId, 0, 0);
+		_scene->setDynamicAnim(_brieAnimId, 0, 1);
+		_scene->setDynamicAnim(_brieAnimId, 0, 2);
+		_scene->setDynamicAnim(_brieAnimId, 0, 3);
+		_scene->setDynamicAnim(_brieAnimId, 0, 4);
 
-		_dynamic_brie_2 = _scene->_dynamicHotspots.add(NOUN_MONSIEUR_BRIE, VERB_WALKTO, SYNTAX_SINGULAR_MASC, -1, Common::Rect(0, 0, 0, 0));
-		_scene->_dynamicHotspots[_dynamic_brie_2]._articleNumber = PREP_ON;
-		_scene->_dynamicHotspots.setPosition(_dynamic_brie_2, Common::Point(25, 80), FACING_NONE);
-		_scene->setDynamicAnim(_dynamic_brie_2, 1, 1);
-		_scene->setDynamicAnim(_dynamic_brie_2, 1, 2);
+		int tmpIdx = _scene->_dynamicHotspots.add(NOUN_MONSIEUR_BRIE, VERB_WALKTO, SYNTAX_SINGULAR_MASC, -1, Common::Rect(0, 0, 0, 0));
+		_scene->_dynamicHotspots[tmpIdx]._articleNumber = PREP_ON;
+		_scene->_dynamicHotspots.setPosition(tmpIdx, Common::Point(25, 80), FACING_NONE);
+		_scene->setDynamicAnim(tmpIdx, 1, 1);
+		_scene->setDynamicAnim(tmpIdx, 1, 2);
 
-		_talk_count = 0;
+		_talkCounter = 0;
 	} else if (_globals[kBrieTalkStatus] == 1) {
 		_globals._animationIndexes[1] = _scene->loadAnimation(formAnimName('b', 9), 1);
-		_dynamic_brie = _scene->_dynamicHotspots.add(NOUN_MONSIEUR_BRIE, VERB_WALKTO, SYNTAX_SINGULAR_MASC, -1, Common::Rect(0, 0, 0, 0));
-		_scene->_dynamicHotspots[_dynamic_brie]._articleNumber = PREP_ON;
-		_scene->setDynamicAnim(_dynamic_brie, 1, 1);
-		_scene->setDynamicAnim(_dynamic_brie, 1, 2);
-		_anim_1_running = true;
-		_talk_count = 0;
-		_brie_chandelier_position = 3;
+		_brieAnimId = _scene->_dynamicHotspots.add(NOUN_MONSIEUR_BRIE, VERB_WALKTO, SYNTAX_SINGULAR_MASC, -1, Common::Rect(0, 0, 0, 0));
+		_scene->_dynamicHotspots[_brieAnimId]._articleNumber = PREP_ON;
+		_scene->setDynamicAnim(_brieAnimId, 1, 1);
+		_scene->setDynamicAnim(_brieAnimId, 1, 2);
+		_anim1Running = true;
+		_talkCounter = 0;
+		_chandelierStatus = 3;
 
 		if (_vm->_gameConv->_restoreRunning == 1) {
 			_vm->_gameConv->run(1);
 			_vm->_gameConv->exportPointer(&_globals[kPlayerScore]);
-			_brie_chandelier_position = 4;
+			_chandelierStatus = 4;
 			_scene->setAnimFrame(_globals._animationIndexes[1], 25);
 		}
 	} else if (_scene->_priorSceneId == 202) {
@@ -238,16 +236,16 @@ void Scene101::enter() {
 }
 
 void Scene101::step() {
-	if (_anim_0_running)
+	if (_anim0Running)
 		handleAnimation0();
 
 	if ((_globals[kWalkerConverse] == 2) || (_globals[kWalkerConverse] == 3)) {
-		++_converse_counter;
-		if (_converse_counter > 200)
+		++_convCounter;
+		if (_convCounter > 200)
 			_globals[kWalkerConverse] = _vm->getRandomNumber(1, 4);
 	}
 
-	if (_anim_1_running) {
+	if (_anim1Running) {
 		handleAnimation1();
 
 		if (_scene->getAnimFrame(_globals._animationIndexes[1]) == 80) {
@@ -256,32 +254,32 @@ void Scene101::step() {
 		}
 	}
 
-	if (!_start_sitting_down && (_globals[kBrieTalkStatus] != 2)) {
+	if (!_startSittingFl && (_globals[kBrieTalkStatus] != 2)) {
 		warning("TODO: Add a check on view port x > 200");
-		_start_sitting_down = true;
+		_startSittingFl = true;
 		_game._player.walk(Common::Point(490, 119), FACING_NORTHEAST);
 		_game._player._stepEnabled = false;
 		_game._player.setWalkTrigger(55);
-		_brie_chandelier_position = 4;
+		_chandelierStatus = 4;
 	}
 
 	if (_game._trigger == 55) {
 		_game._player._stepEnabled = true;
 		_vm->_gameConv->run(1);
 		_vm->_gameConv->exportPointer(&_globals[kPlayerScore]);
-		_brie_chandelier_frame = -1;
-		_talk_count = 0;
+		_chandelierFrame = -1;
+		_talkCounter = 0;
 	}
 
 	if (_game._trigger == 50) {
 		_vm->_gameConv->run(0);
-		_brie_calling_position = 1;
+		_callingStatus = 1;
 	}
 }
 
 void Scene101::preActions() {
 	if (_action.isAction(VERB_EXIT_TO, NOUN_ORCHESTRA_PIT)) {
-		if ((_globals[kBrieTalkStatus] == 2) || _start_walking) {
+		if ((_globals[kBrieTalkStatus] == 2) || _startWalkingFl) {
 			_game._player._walkOffScreenSceneId = 102;
 			_globals[kBrieTalkStatus] = 2;
 		} else {
@@ -289,7 +287,7 @@ void Scene101::preActions() {
 			_game._player._needToWalk = false;
 		}
 	} else if (_action.isAction(VERB_EXIT_TO, NOUN_GRAND_FOYER)) {
-		if ((_globals[kBrieTalkStatus] == 2) || _start_walking)
+		if ((_globals[kBrieTalkStatus] == 2) || _startWalkingFl)
 			_game._player._walkOffScreenSceneId = 202;
 		else {
 			_vm->_gameConv->run(0);
@@ -321,7 +319,7 @@ void Scene101::actions() {
 		} else if (_action.isObject(NOUN_SIDE_WALL)) {
 			_vm->_dialogs->show(10115);
 		} else if (_action.isObject(NOUN_SEATS)) {
-			if ((_globals[kBrieTalkStatus] > 1) || _start_walking)
+			if ((_globals[kBrieTalkStatus] > 1) || _startWalkingFl)
 				_vm->_dialogs->show(10119);
 			else
 				_vm->_dialogs->show(10116);
@@ -346,7 +344,7 @@ void Scene101::handleConversation0() {
 
 	if (_game._trigger == 90) {
 		_globals[kBrieTalkStatus] = 1;
-		_start_walking_0 = true;
+		_startWalking0Fl = true;
 	}  
 }
 
@@ -357,19 +355,19 @@ void Scene101::handleConversation1() {
 		if (_game._trigger == 60) {
 			switch (_action._activeAction._verbId) {
 			case 0:
-				_brie_chandelier_position = 6;
-				_execute_wipe = 2;
+				_chandelierStatus = 6;
+				_wipeStatus = 2;
 				break;
 
 			case 1:
-				_brie_chandelier_position = 2;
-				_execute_chan = 9;
+				_chandelierStatus = 2;
+				_chanStatus = 9;
 				break;
 
 			case 4:
-				_brie_chandelier_position = 0;
-				_execute_chan = -1;
-				_execute_wipe = -1;
+				_chandelierStatus = 0;
+				_chanStatus = -1;
+				_wipeStatus = -1;
 				break;
 
 			case 8:
@@ -377,18 +375,18 @@ void Scene101::handleConversation1() {
 			case 18:
 			case 22:
 			case 24:
-				_start_walking = true;
-				_execute_chan = -1;
-				_execute_wipe = -1;
+				_startWalkingFl = true;
+				_chanStatus = -1;
+				_wipeStatus = -1;
 				_globals[kWalkerConverse] = 0;
 				_vm->_gameConv->setInterlocutorTrigger(105);
 				interlocutorFl = true;
 				break;
 
 			case 12:
-				_brie_chandelier_position = 5;
-				_execute_chan = -1;
-				_execute_wipe = -1;
+				_chandelierStatus = 5;
+				_chanStatus = -1;
+				_wipeStatus = -1;
 				break;
 
 			default:
@@ -401,21 +399,21 @@ void Scene101::handleConversation1() {
 
 		_vm->_gameConv->setHeroTrigger(70);
 
-		_talk_count = 0;
+		_talkCounter = 0;
 
 		if (_game._trigger == 60) {
-			if (!_start_walking)
+			if (!_startWalkingFl)
 				_globals[kWalkerConverse] = _vm->getRandomNumber(1, 4);
 
-			_brie_chandelier_position = 2;
-		} else if ((_game._trigger == 70) && !_start_walking) {
-			_brie_chandelier_position = 4;
-			_execute_chan = -1;
-			_execute_wipe = -1;
-			if (!_start_walking)
+			_chandelierStatus = 2;
+		} else if ((_game._trigger == 70) && !_startWalkingFl) {
+			_chandelierStatus = 4;
+			_chanStatus = -1;
+			_wipeStatus = -1;
+			if (!_startWalkingFl)
 				_globals[kWalkerConverse] = _vm->getRandomNumber(2, 3);
 
-			_converse_counter = 0;
+			_convCounter = 0;
 		}
 	}
 }
@@ -424,65 +422,65 @@ void Scene101::handleAnimation0() {
 	int random;
 	int reset_frame;
 
-	if (_scene->getAnimFrame(_globals._animationIndexes[0]) != _brie_calling_frame) {
-		_brie_calling_frame = _scene->getAnimFrame(_globals._animationIndexes[0]);
+	if (_scene->getAnimFrame(_globals._animationIndexes[0]) != _callingFrame) {
+		_callingFrame = _scene->getAnimFrame(_globals._animationIndexes[0]);
 		reset_frame = -1;
-		switch (_brie_calling_frame) {
+		switch (_callingFrame) {
 		case 1:
 		case 9:
 		case 12:
-			if (_brie_calling_position == 1) {
-				if (_brie_calling_frame == 9) {
-					if (_start_walking_0) {
+			if (_callingStatus == 1) {
+				if (_callingFrame == 9) {
+					if (_startWalking0Fl) {
 						reset_frame = 13;
-						_brie_calling_position = 3;
+						_callingStatus = 3;
 					} else
-						_brie_calling_position = 2;
+						_callingStatus = 2;
 				} else
 					reset_frame = 1;
 			}
 
-			if (_brie_calling_position == 0) {
-				if (_start_walking_0) {
+			if (_callingStatus == 0) {
+				if (_startWalking0Fl) {
 					reset_frame = 60;
-					_brie_calling_position = 3;
+					_callingStatus = 3;
 				} else
 					reset_frame = 0;
 			}
 
-			if (_brie_calling_position == 2) {
-				if (_start_walking_0) {
+			if (_callingStatus == 2) {
+				if (_startWalking0Fl) {
 					reset_frame = 13;
-					_brie_calling_position = 3;
+					_callingStatus = 3;
 				} else {
 					random = _vm->getRandomNumber(1, 2);
-					++_talk_count;
+					++_talkCounter;
 
-					if (_talk_count < 18) {
+					if (_talkCounter < 18) {
 						if (random == 1)
 							reset_frame = 7;
 						else
 							reset_frame = 10;
 					} else {
 						reset_frame = 54;
-						_brie_calling_position = 0;
+						_callingStatus = 0;
 					}
 				}
 			}
 			break;
 
 		case 53:
-			_anim_0_running    = false;
+			_anim0Running    = false;
 			_scene->freeAnimation(0);
 			break;
 
 		case 59:  
-			if (_start_walking_0) {
+			if (_startWalking0Fl) {
 				reset_frame = 60;
-				_brie_calling_position = 3;
+				_callingStatus = 3;
 			} else {
 				reset_frame = 0;
-				_brie_calling_position = 0;
+				_callingStatus = 0;
 			}
 			break;
 
@@ -493,7 +491,7 @@ void Scene101::handleAnimation0() {
 
 		if (reset_frame >= 0) {
 			_scene->setAnimFrame(_globals._animationIndexes[0], reset_frame);
-			_brie_calling_frame = reset_frame;
+			_callingFrame = reset_frame;
 		}
 	}
 } 
@@ -502,12 +500,12 @@ void Scene101::handleAnimation1() {
 	int random;
 	int reset_frame;
 
-	if (_scene->getAnimFrame(_globals._animationIndexes[1]) != _brie_chandelier_frame) {
-		_brie_chandelier_frame = _scene->getAnimFrame(_globals._animationIndexes[1]);
+	if (_scene->getAnimFrame(_globals._animationIndexes[1]) != _chandelierFrame) {
+		_chandelierFrame = _scene->getAnimFrame(_globals._animationIndexes[1]);
 		reset_frame = -1;
-		switch (_brie_chandelier_frame) {
+		switch (_chandelierFrame) {
 		case 1:
-			if (_brie_chandelier_position == 3)
+			if (_chandelierStatus == 3)
 				reset_frame = 0;
 			break;
 
@@ -518,30 +516,30 @@ void Scene101::handleAnimation1() {
 		case 26:
 		case 44:
 		case 333:
-			if (_talk_count == _execute_chan) {
-				_brie_chandelier_position = 0;
-				++_talk_count;
-				_execute_chan = -1;
+			if (_talkCounter == _chanStatus) {
+				_chandelierStatus = 0;
+				++_talkCounter;
+				_chanStatus = -1;
 			} 
 
-			if (_talk_count == _execute_wipe) {
-				_brie_chandelier_position = 6;
-				++_talk_count;
-				_execute_wipe = -1;
+			if (_talkCounter == _wipeStatus) {
+				_chandelierStatus = 6;
+				++_talkCounter;
+				_wipeStatus = -1;
 			}
 
-			if (_start_walking) {
+			if (_startWalkingFl) {
 				if (_vm->_gameConv->_running == 1) {
-					if (_talk_count > 13)
-						_brie_chandelier_position = 1;
+					if (_talkCounter > 13)
+						_chandelierStatus = 1;
 				} else
-					_brie_chandelier_position = 1;
+					_chandelierStatus = 1;
 			}
 
-			switch (_brie_chandelier_position) {
+			switch (_chandelierStatus) {
 			case 0:
 				reset_frame = 27;
-				_brie_chandelier_position = 2;
+				_chandelierStatus = 2;
 				break;
 
 			case 1:
@@ -549,14 +547,14 @@ void Scene101::handleAnimation1() {
 				reset_frame = 45;
 				if (_vm->_gameConv->_running == 1)
 					_vm->_gameConv->stop();
-				_scene->_dynamicHotspots.remove(_dynamic_brie);
+				_scene->_dynamicHotspots.remove(_brieAnimId);
 				_game._player._stepEnabled = false;
 				break;
 
 			case 2:
 				random = _vm->getRandomNumber(1, 3);
-				++_talk_count;
-				if (_talk_count < 15) {
+				++_talkCounter;
+				if (_talkCounter < 15) {
 					if (random == 1)
 						reset_frame = 12;
 					else if (random == 2)
@@ -564,7 +562,7 @@ void Scene101::handleAnimation1() {
 					else if (random == 3)
 						reset_frame = 17;
 				} else {
-					_brie_chandelier_position = 4;
+					_chandelierStatus = 4;
 					reset_frame = 25;
 				}
 				break;
@@ -575,12 +573,12 @@ void Scene101::handleAnimation1() {
 
 			case 5:
 				reset_frame = 21;
-				_brie_chandelier_position = 2;
+				_chandelierStatus = 2;
 				break;
 
 			case 6:
 				reset_frame = 316;
-				_brie_chandelier_position = 2;
+				_chandelierStatus = 2;
 				break;
 
 			default:
@@ -595,7 +593,7 @@ void Scene101::handleAnimation1() {
 
 		if (reset_frame >= 0) {
 			_scene->setAnimFrame(_globals._animationIndexes[1], reset_frame);
-			_brie_chandelier_frame = reset_frame;
+			_chandelierFrame = reset_frame;
 		}
 	}
 }
@@ -603,13 +601,13 @@ void Scene101::handleAnimation1() {
 /*------------------------------------------------------------------------*/
 
 Scene102::Scene102(MADSEngine *vm) : Scene1xx(vm) {
-	_anim0RunningFl = false;
+	_anim0Running = false;
 }
 
 void Scene102::synchronize(Common::Serializer &s) {
 	Scene1xx::synchronize(s);
 
-	s.syncAsByte(_anim0RunningFl);
+	s.syncAsByte(_anim0Running);
 }
 
 void Scene102::setup() {
@@ -618,7 +616,7 @@ void Scene102::setup() {
 }
 
 void Scene102::enter() {
-	_anim0RunningFl = false;
+	_anim0Running = false;
 
 	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('x', 0));
 	_globals._spriteIndexes[3] = _scene->_sprites.addSprites("*RAL86");
@@ -679,7 +677,7 @@ void Scene102::enter() {
 	} else if (_scene->_priorSceneId == 103 || _scene->_priorSceneId != -1) {
 		_game._player._playerPos = Common::Point(282, 145);
 		_game._player._facing = FACING_WEST;
-		_anim0RunningFl = true;
+		_anim0Running = true;
 		_globals._animationIndexes[0] = _scene->loadAnimation(formAnimName('d', 1), 60);
 	} else if (_scene->_priorSceneId == -1) {
 		_globals._sequenceIndexes[2] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[2], false, 4);
@@ -694,7 +692,7 @@ void Scene102::step() {
 		// Door closes
 		_globals._sequenceIndexes[2] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[2], false, 4);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 14);
-		_anim0RunningFl = false;
+		_anim0Running = false;
 	} else if (_game._trigger == 65) {
 		// Death
 		if (_globals[kDeathLocation] == 0)
@@ -718,7 +716,7 @@ void Scene102::actions() {
 	} else if (_action.isAction(VERB_WALK_THROUGH, NOUN_ORCHESTRA_DOOR) ||
 		_action.isAction(VERB_PUSH, NOUN_ORCHESTRA_DOOR) ||
 		_action.isAction(VERB_OPEN, NOUN_ORCHESTRA_DOOR)) {
-		if (_anim0RunningFl) {
+		if (_anim0Running) {
 			_scene->_sequences.setTimingTrigger(15, 70);
 			_game._player._stepEnabled = false;
 		} else {
