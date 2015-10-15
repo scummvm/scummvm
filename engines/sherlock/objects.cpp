@@ -539,7 +539,7 @@ int BaseObject::checkNameForCodes(const Common::String &name, FixedTextActionId 
 			// G: Have object go somewhere
 			// A: Add onto existing co-ordinates
 			Common::String sx(name.c_str() + 2, name.c_str() + 5);
-			Common::String sy(name.c_str() + 6, name.c_str() + 9);
+			Common::String sy(name.c_str() + 5, name.c_str() + 8);
 
 			if (ch == 'G')
 				_position = Common::Point(atoi(sx.c_str()), atoi(sy.c_str()));
