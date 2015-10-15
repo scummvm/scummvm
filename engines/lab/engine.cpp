@@ -115,8 +115,6 @@ extern const char *NewFileName;  /* When ProcessRoom.c decides to change the fil
 #define LEVERSMONITOR        82
 
 
-static byte *MovePanelBuffer, *InvPanelBuffer;
-static uint32 MovePanelBufferSize, InvPanelBufferSize;
 static Image *MoveImages[20], *InvImages[10];
 static Gadget *MoveGadgetList, *InvGadgetList;
 
@@ -223,7 +221,8 @@ static void drawRoomMessage(uint16 CurInv, CloseDataPtr cptr) {
 /******************************************************************************/
 bool setUpScreens() {
 	uint16 counter;
-	byte *bufferstorage, **buffer = &bufferstorage;
+	byte *buffer;
+	byte *MovePanelBuffer, *InvPanelBuffer;
 	Gadget *curgad;
 	uint16 y;
 
@@ -231,18 +230,18 @@ bool setUpScreens() {
 		return false;
 
 	/* Loads in the graphics for the movement control panel */
-	Common::File *file = openPartial("P:Control");
-	if (!file)
+	Common::File file;
+	file.open(translateFileName("P:Control"));
+	if (file.err() || file.size() == 0)
 		return false;
 
-	MovePanelBufferSize = file->size();
-	if (!MovePanelBufferSize || !(MovePanelBuffer = (byte *)calloc(MovePanelBufferSize, 1)))
+	if (!(MovePanelBuffer = (byte *)calloc(file.size(), 1)))
 		return false;
 
-	file->read(MovePanelBuffer, MovePanelBufferSize);
-	file->close();
+	file.read(MovePanelBuffer, file.size());
+	file.close();
 
-	*buffer = MovePanelBuffer;
+	buffer = MovePanelBuffer;
 
 	for (counter = 0; counter < 20; counter++)
 		readImage(buffer, &(MoveImages[counter]));
@@ -292,18 +291,17 @@ bool setUpScreens() {
 		curgad->NextGadget = createButton(289, y, 9, 0, MoveImages[10], MoveImages[11]);
 	}
 
-	file = openPartial("P:Inv");
-	if (!file)
+	file.open(translateFileName("P:Inv"));
+	if (file.err() || file.size() == 0)
 		return false;
 
-	InvPanelBufferSize = file->size();
-	if (!InvPanelBufferSize || !(InvPanelBuffer = (byte *)calloc(InvPanelBufferSize, 1)))
+	if (!(InvPanelBuffer = (byte *)calloc(file.size(), 1)))
 		return false;
 
-	file->read(InvPanelBuffer, InvPanelBufferSize);
-	file->close();
+	file.read(InvPanelBuffer, file.size());
+	file.close();
 
-	*buffer = InvPanelBuffer;
+	buffer = InvPanelBuffer;
 
 	if (g_lab->getPlatform() == Common::kPlatformWindows) {
 		for (counter = 0; counter < 10; counter++)
