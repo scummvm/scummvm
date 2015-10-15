@@ -65,7 +65,7 @@ static Image JBackImage, ScreenImage;
 static uint16 JGadX[3] = { 80, 144, 194 }, JGadY[3] = { 162, 164, 162 };
 static Gadget ForwardG, CancelG, BackG;
 static bool GotBackImage = false;
-static uint16 monpage;
+static uint16 monitorPage;
 static const char *TextFileName;
 
 Image *MonButton, *AltMonButton, *MonQuit, *AltMonQuit, *MonBack, *AltMonBack,
@@ -918,14 +918,14 @@ static void drawMonText(char *text, uint16 x1, uint16 y1, uint16 x2, uint16 y2, 
 		rectFill(x1, y1, x2, y2);
 	}
 
-	while (DrawingToPage < monpage) {
+	while (DrawingToPage < monitorPage) {
 		g_music->updateMusic();
 		CurText = (char *)(text + CharsDrawn);
 		CharsDrawn += flowText(BigMsgFont, yspacing, 0, 0, false, false, false, false, x1, y1, x2, y2, CurText);
 		lastpage = (*CurText == 0);
 
 		if (lastpage)
-			monpage = DrawingToPage;
+			monitorPage = DrawingToPage;
 		else
 			DrawingToPage++;
 	}
@@ -963,7 +963,7 @@ static void processMonitor(char *ntext, bool isinteractive, uint16 x1, uint16 y1
 				Test = CPtr->GraphicName;
 
 			if (strcmp(Test, TextFileName)) {
-				monpage      = 0;
+				monitorPage      = 0;
 				TextFileName = Test;
 
 				ntext = getText(TextFileName);
@@ -993,26 +993,26 @@ static void processMonitor(char *ntext, bool isinteractive, uint16 x1, uint16 y1
 				if ((MouseY >= VGAScaleY(171)) && (MouseY <= VGAScaleY(200))) {
 					if ((MouseX >= VGAScaleX(259)) && (MouseX <= VGAScaleX(289))) {
 						if (!lastpage) {
-							monpage += 1;
+							monitorPage += 1;
 							drawMonText(ntext, x1, y1, x2, y2, isinteractive);
 						}
 					} else if ((MouseX >= VGAScaleX(0)) && (MouseX <= VGAScaleX(31))) {
 						return;
 					} else if ((MouseX >= VGAScaleX(290)) && (MouseX <= VGAScaleX(320))) {
-						if (monpage >= 1) {
-							monpage -= 1;
+						if (monitorPage >= 1) {
+							monitorPage -= 1;
 							drawMonText(ntext, x1, y1, x2, y2, isinteractive);
 						}
 					} else if ((MouseX >= VGAScaleX(31)) && (MouseX <= VGAScaleX(59))) {
 						if (isinteractive) {
-							monpage = 0;
+							monitorPage = 0;
 
 							if (depth) {
 								depth--;
 								CPtr = LastCPtr[depth];
 							}
-						} else if (monpage > 0) {
-							monpage = 0;
+						} else if (monitorPage > 0) {
+							monitorPage = 0;
 							drawMonText(ntext, x1, y1, x2, y2, isinteractive);
 						}
 					}
@@ -1054,7 +1054,7 @@ void doMonitor(char *background, char *textfile, bool isinteractive, uint16 x1, 
 	blackAllScreen();
 
 	resetBuffer();
-	monpage = 0;
+	monitorPage = 0;
 	lastpage = false;
 	FadePalette = hipal;
 
