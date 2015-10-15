@@ -228,6 +228,9 @@ public:
 	void firstWalk(Common::Point fromPos, Facing fromFacing, Common::Point destPos, Facing destFacing, bool enableFl);
 
 	void setWalkTrigger(int val);
+
+	void resetFacing(Facing facing);
+
 };
 
 } // End of namespace MADS

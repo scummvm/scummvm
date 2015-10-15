@@ -47,7 +47,7 @@ SceneLogic *SceneFactory::createScene(MADSEngine *vm) {
 	case 102:	// music stands
 		return new Scene102(vm);
 	case 103:	// below stage
-		return new DummyScene(vm);	// TODO
+		return new Scene103(vm);
 	case 104:	// stage
 		return new DummyScene(vm);	// TODO
 	case 105:	// ground floor, storage room

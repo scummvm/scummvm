@@ -235,6 +235,9 @@ public:
 	 * Creates a temporary thumbnail for use in saving games
 	 */
 	void createThumbnail();
+
+	void syncTimers(int slave_type, int slave_id, int master_type, int master_id);
+
 };
 
 } // End of namespace MADS

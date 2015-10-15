@@ -814,4 +814,8 @@ void Player::firstWalk(Common::Point fromPos, Facing fromFacing, Common::Point d
 void Player::setWalkTrigger(int val) {
 	warning("TODO: Player::setWalkTrigger");
 }
+
+void Player::resetFacing(Facing facing) {
+	warning("TODO: Player::resetFacing");
+}
 } // End of namespace MADS

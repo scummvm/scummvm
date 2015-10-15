@@ -274,4 +274,8 @@ void Rails::synchronize(Common::Serializer &s) {
 	}
 }
 
+void Rails::disableNode(int idx) {
+	warning("TODO: Rails::disableNode");
+}
+
 } // End of namespace MADS

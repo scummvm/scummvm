@@ -34,6 +34,7 @@ PhantomGlobals::PhantomGlobals()
 	resize(210);
 	_spriteIndexes.resize(30);
 	_sequenceIndexes.resize(30);
+	_animationIndexes.resize(30);
 }
 
 void PhantomGlobals::synchronize(Common::Serializer &s) {
@@ -41,6 +42,7 @@ void PhantomGlobals::synchronize(Common::Serializer &s) {
 
 	_spriteIndexes.synchronize(s);
 	_sequenceIndexes.synchronize(s);
+	_animationIndexes.synchronize(s);
 }
 
 

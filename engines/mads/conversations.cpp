@@ -49,11 +49,20 @@ void GameConversation::exportPointer(int *val) {
 	warning("TODO GameConversation::exportPointer");
 }
 
+void GameConversation::exportValue(int val) {
+	warning("TODO GameConversation::exportValue");
+}
+
 void GameConversation::setHeroTrigger(int val) {
 	warning("TODO: GameConversation::setHeroTrigger");
 }
 
 void GameConversation::setInterlocutorTrigger(int val) {
 	warning("TODO: GameConversation::setInterlocutorTrigger");
+}
+
+int* GameConversation::getVariable(int idx) {
+	warning("TODO: GameConversation::getVariable");
+	return nullptr;
 }
 } // End of namespace MADS

@@ -101,6 +101,56 @@ public:
 	virtual void actions();
 };
 
+class Scene103 : public Scene1xx {
+private:
+	int _jacquesAction;
+	int _lastRandom;
+	int _standPosition;
+	int _hotspotPrompt1;
+	int _hotspotPrompt2;
+	int _hotspotPrompt3;
+	int _hotspotPrompt4;
+	int _hotspotPrompt5;
+	int _hotspotRightFloor1;
+	int _hotspotRightFloor2;
+	int _hotspotLeftFloor1;
+	int _hotspotLeftFloor2;
+	int _hotspotGentleman;
+	int _convCount;
+	int _lastStairFrame;
+	int _lastJacquesFrame;
+	int _talkCount;
+
+	bool _anim0ActvFl;
+	bool _anim1ActvFl;
+	bool _anim2ActvFl;
+	bool _anim3ActvFl;
+	bool _anim4ActvFl;
+	bool _anim5ActvFl;
+	bool _anim6ActvFl;
+	bool _climbThroughTrapFl;
+	bool _guardFrameFl;
+	bool _sitFl;
+
+	void adjustRails(int variant);
+	void handleJacquesAnim();
+	void climbRightStairs();
+	void climbLeftStairs();
+	void descendRightStairs();
+	void descendLeftStairs();
+	void process_conv_jacques();
+
+public:
+	Scene103(MADSEngine *vm);
+	virtual void synchronize(Common::Serializer &s);
+
+	virtual void setup();
+	virtual void enter();
+	virtual void step();
+	virtual void preActions();
+	virtual void actions();
+};
+
 } // End of namespace Phantom
 } // End of namespace MADS
 

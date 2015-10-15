@@ -124,6 +124,7 @@ class PhantomGlobals : public Globals {
 public:
 	SynchronizedList _spriteIndexes;
 	SynchronizedList _sequenceIndexes;
+	SynchronizedList _animationIndexes;
 public:
 	/**
 	 * Constructor

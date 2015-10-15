@@ -98,6 +98,7 @@ public:
 	int _textSpacing;
 	Hotspots _hotspots;
 	DirtyAreas _dirtyAreas;
+	int _initialVariant;
 	int _variant;
 	SceneInfo *_sceneInfo;
 	MSurface _backgroundSurface;
@@ -214,7 +215,7 @@ public:
 	/**
 	 * Load an animation
 	 */
-	void loadAnimation(const Common::String &resName, int trigger = 0, int id = 0);
+	int loadAnimation(const Common::String &resName, int trigger = 0);
 
 	/**
 	 * Returns a vocab entry
@@ -253,6 +254,9 @@ public:
 	* Synchronize the game
 	*/
 	void synchronize(Common::Serializer &s);
+
+	void setAnimFrame(int id, int val);
+	int getAnimFrame(int id);
 
 	void setDynamicAnim(int id, int anim_id, int segment);
 	void setCamera(Common::Point pos);

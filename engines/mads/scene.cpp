@@ -60,6 +60,7 @@ Scene::Scene(MADSEngine *vm)
 	_interfaceY = 0;
 	_spritesCount = 0;
 	_variant = 0;
+	_initialVariant = 0;
 
 	_paletteUsageF.push_back(PaletteUsage::UsageEntry(0xF));
 
@@ -610,19 +611,24 @@ void Scene::checkKeyboard() {
 	}
 }
 
-void Scene::loadAnimation(const Common::String &resName, int trigger, int id) {
+int Scene::loadAnimation(const Common::String &resName, int trigger) {
 	// WORKAROUND: If there's already a previous active animation used by the
 	// scene, then free it before we create the new one
-	if ((_vm->getGameID() == GType_RexNebular) && _animation[id])
-		freeAnimation(id);
+	if ((_vm->getGameID() == GType_RexNebular) && _animation[0])
+		freeAnimation(0);
 
 	DepthSurface depthSurface;
 	UserInterface interfaceSurface(_vm);
+
+	warning("TODO: Fix loadAnimation");
+	int id = 0;
 
 	_animation[id] = Animation::init(_vm, this);
 	_animation[id]->load(interfaceSurface, depthSurface, resName,
 		_vm->_dithering ? ANIMFLAG_DITHER : 0, nullptr, nullptr);
 	_animation[id]->startAnimation(trigger);
+
+	return id;
 }
 
 void Scene::updateCursor() {
@@ -744,7 +750,21 @@ void Scene::synchronize(Common::Serializer &s) {
 	s.syncAsByte(_roomChanged);
 	s.syncAsUint16LE(_nextSceneId);
 	s.syncAsUint16LE(_priorSceneId);
+	s.syncAsSint16LE(_initialVariant);
+	s.syncAsSint16LE(_variant);
 	_dynamicHotspots.synchronize(s);
+}
+
+void Scene::setAnimFrame(int id, int val) {
+	if ((id >= 0) && _animation[id])
+		_animation[id]->setCurrentFrame(val);
+}
+
+int Scene::getAnimFrame(int id) {
+	if ((id >= 0) && _animation[id])
+		return _animation[id]->getCurrentFrame();
+
+	return -1;
 }
 
 void Scene::setDynamicAnim(int id, int anim_id, int segment) {

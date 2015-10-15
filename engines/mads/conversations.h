@@ -42,10 +42,13 @@ public:
 	 */
 	virtual ~GameConversation();
 
+	int* getVariable(int idx);
+
 	void get(int id);
 	void run(int id);
 	void stop();
 	void exportPointer(int *val);
+	void exportValue(int val);
 	void setHeroTrigger(int val);
 	void setInterlocutorTrigger(int val);
 

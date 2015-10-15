@@ -599,4 +599,8 @@ void Game::createThumbnail() {
 	::createThumbnail(_saveThumb, _vm->_screen.getData(), MADS_SCREEN_WIDTH, MADS_SCREEN_HEIGHT, thumbPalette);
 }
 
+void Game::syncTimers(int slave_type, int slave_id, int master_type, int master_id) {
+	warning("TODO: Game_syncTimers");
+}
+
 } // End of namespace MADS

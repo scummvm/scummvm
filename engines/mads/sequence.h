@@ -128,6 +128,10 @@ public:
 
 	int addStampCycle(int srcSpriteIdx, bool flipped, int sprite);
 	int setTimingTrigger(int delay, int code);
+	void setRange(int sequence_id, int first, int last);
+	int addBackwardSequence(int idx, bool flipped, int numTicks, int intervalTicks, int startTicks, int expire);
+	int setTrigger(int sequence_id, int trigger_type, int trigger_sprite, int trigger_code);
+	void setSeqPlayer(int idx, bool flag);
 };
 
 } // End of namespace MADS
