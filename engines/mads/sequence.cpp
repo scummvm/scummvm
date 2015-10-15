@@ -564,11 +564,6 @@ void SequenceList::setRange(int sequence_id, int first, int last) {
 	warning("TODO: SequenceList::setRange");
 }
 
-int SequenceList::addBackwardSequence(int idx, bool flipped, int numTicks, int intervalTicks, int startTicks, int expire) {
-	warning("TODO: SequenceList::addBackwardSequence");
-	return -1;
-}
-
 int SequenceList::setTrigger(int idx, int trigger_type, int trigger_sprite, int trigger_code) {
 	warning("TODO: SequenceList::setTrigger");
 	return -1;
