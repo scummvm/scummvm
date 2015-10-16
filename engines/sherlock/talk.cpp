@@ -1196,7 +1196,7 @@ void Talk::talkWait(const byte *&str) {
 		_endStr = true;
 
 	// If a key was pressed to finish the window, see if further voice files should be skipped
-	if (_wait >= 0 && _wait < 254) {
+	if (IS_SERRATED_SCALPEL && _wait >= 0 && _wait < 254) {
 		if (str[0] == _opcodes[OP_SFX_COMMAND])
 			str += 9;
 	}
