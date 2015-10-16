@@ -575,6 +575,7 @@ void Talk::loadTalkFile(const Common::String &filename) {
 	_converseNum = res.resourceIndex();
 	talkStream->skip(2);	// Skip talk file version num
 
+	_statements.clear();
 	_statements.resize(talkStream->readByte());
 	for (uint idx = 0; idx < _statements.size(); ++idx)
 		_statements[idx].load(*talkStream, IS_ROSE_TATTOO);
