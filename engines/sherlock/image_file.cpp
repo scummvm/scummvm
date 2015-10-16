@@ -1054,6 +1054,7 @@ void StreamingImageFile::close() {
 
 bool StreamingImageFile::getNextFrame() {
 	// Don't proceed if we're already at the end of the stream
+	assert(_stream);
 	if (_stream->pos() >= _stream->size()) {
 		_active = false;
 		return false;

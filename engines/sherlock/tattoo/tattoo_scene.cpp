@@ -690,6 +690,7 @@ int TattooScene::startCAnim(int cAnimNum, int playRate) {
 				_goToScene = STARTING_GAME_SCENE;
 				talk._talkToAbort = true;
 				_activeCAnim.close();
+				break;
 			}
 		}
 	}
