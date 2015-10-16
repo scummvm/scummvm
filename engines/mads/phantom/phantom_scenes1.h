@@ -150,6 +150,48 @@ public:
 	virtual void actions();
 };
 
+class Scene104 : public Scene1xx {
+private:
+	bool _anim0ActvFl;
+	bool _anim1ActvFl;
+	bool _anim2ActvFl;
+	bool _needToGetUp;
+	bool _needToStandUp;
+	bool _needToTalk;
+	bool _sittingUp;
+	bool _beforeSheLeaves;
+	bool _beforeHeLeaves;
+
+	int _walkStatus;
+	int _walkFrame;
+	int _coupleStatus;
+	int _coupleFrame;
+	int _richStatus;
+	int _richFrame;
+	int _manTalkCount;
+	int _womanTalkCount;
+	int _lookCount;
+	int _richTalkCount;
+	int _lastPlayerFrame;
+
+	void cleanInventory();
+	void processConversations();
+	void handleWalkAnimation();
+	void handleCoupleAnimations();
+	void handleRichAnimations();
+	void handlePlayerWalk();
+
+public:
+	Scene104(MADSEngine *vm);
+	virtual void synchronize(Common::Serializer &s);
+
+	virtual void setup();
+	virtual void enter();
+	virtual void step();
+	virtual void preActions();
+	virtual void actions();
+};
+
 } // End of namespace Phantom
 } // End of namespace MADS
 

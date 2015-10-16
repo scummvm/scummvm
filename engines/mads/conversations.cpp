@@ -65,4 +65,13 @@ int* GameConversation::getVariable(int idx) {
 	warning("TODO: GameConversation::getVariable");
 	return nullptr;
 }
+
+void GameConversation::hold() {
+	warning("TODO: GameConversation::hold");
+}
+
+void GameConversation::release() {
+	warning("TODO: GameConversation::release");
+}
+
 } // End of namespace MADS

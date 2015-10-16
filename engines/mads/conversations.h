@@ -51,6 +51,8 @@ public:
 	void exportValue(int val);
 	void setHeroTrigger(int val);
 	void setInterlocutorTrigger(int val);
+	void hold();
+	void release();
 
 	int _running;
 	int _restoreRunning;
