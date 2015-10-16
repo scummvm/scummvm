@@ -375,6 +375,7 @@ void TattooUserInterface::doStandardControl() {
 	TattooEngine &vm = *(TattooEngine *)_vm;
 	Events &events = *_vm->_events;
 	People &people = *_vm->_people;
+	SaveManager &saves = *_vm->_saves;
 	TattooScene &scene = *(TattooScene *)_vm->_scene;
 	Talk &talk = *_vm->_talk;
 	Common::Point mousePos = events.mousePos();
@@ -472,6 +473,7 @@ void TattooUserInterface::doStandardControl() {
 		if (events._rightReleased) {
 			// Show the verbs menu for the highlighted object
 			_tooltipWidget.banishWindow();
+			saves.createThumbnail();
 			_verbsWidget.load(!noDesc);
 			_verbsWidget.summonWindow();
 
