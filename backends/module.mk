@@ -3,6 +3,7 @@ MODULE := backends
 MODULE_OBJS := \
 	base-backend.o \
 	modular-backend.o \
+	audiocd/audiocd-stream.o \
 	audiocd/default/default-audiocd.o \
 	events/default/default-events.o \
 	fs/abstract-fs.o \

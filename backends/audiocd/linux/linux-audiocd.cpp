@@ -29,15 +29,12 @@
 
 #include "backends/audiocd/linux/linux-audiocd.h"
 
-#include "audio/audiostream.h"
+#include "backends/audiocd/audiocd-stream.h"
 #include "backends/audiocd/default/default-audiocd.h"
 #include "common/array.h"
 #include "common/config-manager.h"
-#include "common/mutex.h"
-#include "common/queue.h"
 #include "common/str.h"
 #include "common/debug.h"
-#include "common/timer.h"
 
 enum {
 	kLeadoutTrack = 0xAA
@@ -67,185 +64,59 @@ static int getFrameCount(const cdrom_msf0 &msf) {
 	return time;
 }
 
-class LinuxAudioCDStream : public Audio::SeekableAudioStream {
+class LinuxAudioCDStream : public AudioCDStream {
 public:
 	LinuxAudioCDStream(int fd, const cdrom_tocentry &startEntry, const cdrom_tocentry &endEntry);
 	~LinuxAudioCDStream();
 
-	int readBuffer(int16 *buffer, const int numSamples);
-	bool isStereo() const { return true; }
-	int getRate() const { return 44100; }
-	bool endOfData() const;
-	bool seek(const Audio::Timestamp &where);
-	Audio::Timestamp getLength() const;
+protected:
+	uint getStartFrame() const;
+	uint getEndFrame() const;
+	bool readFrame(int frame, int16 *buffer);
 
 private:
 	int _fd;
 	const cdrom_tocentry &_startEntry, &_endEntry;
-	int16 _buffer[kSamplesPerFrame];
-	int _frame;
-	uint _bufferPos;
-
-	Common::Queue<int16 *> _bufferQueue;
-	int _bufferFrame;
-	Common::Mutex _mutex;
-
-	bool readNextFrame();
-	static void timerProc(void *refCon);
-	void onTimer();
-	void emptyQueue();
-	void startTimer();
-	void stopTimer();
 };
 
 LinuxAudioCDStream::LinuxAudioCDStream(int fd, const cdrom_tocentry &startEntry, const cdrom_tocentry &endEntry) :
-		_fd(fd), _startEntry(startEntry), _endEntry(endEntry), _buffer(), _frame(0), _bufferPos(kSamplesPerFrame), _bufferFrame(0) {
+		_fd(fd), _startEntry(startEntry), _endEntry(endEntry) {
 	startTimer();
 }
 
 LinuxAudioCDStream::~LinuxAudioCDStream() {
 	stopTimer();
-	emptyQueue();
 }
 
-int LinuxAudioCDStream::readBuffer(int16 *buffer, const int numSamples) {
-	int samples = 0;
+bool LinuxAudioCDStream::readFrame(int frame, int16 *buffer) {
+	int seconds = frame / kFramesPerSecond;
+	frame %= kFramesPerSecond;
+	int minutes = seconds / kSecondsPerMinute;
+	seconds %= kSecondsPerMinute;
 
-	// See if any data is left first
-	while (_bufferPos < kSamplesPerFrame && samples < numSamples)
-		buffer[samples++] = _buffer[_bufferPos++];
+	// Request to read that frame
+	cdrom_read_audio readAudio;
+	readAudio.addr.msf.minute = minutes;
+	readAudio.addr.msf.second = seconds;
+	readAudio.addr.msf.frame = frame;
+	readAudio.addr_format = CDROM_MSF;
+	readAudio.nframes = 1;
+	readAudio.buf = reinterpret_cast<__u8*>(buffer);
 
-	// Bail out if done
-	if (endOfData())
-		return samples;
+	if (ioctl(_fd, CDROMREADAUDIO, &readAudio) < 0)
+		return false;
 
-	while (samples < numSamples && !endOfData()) {
-		if (!readNextFrame())
-			return samples;
-
-		// Copy the samples over
-		for (_bufferPos = 0; _bufferPos < kSamplesPerFrame && samples < numSamples; )
-			buffer[samples++] = _buffer[_bufferPos++];
-	}
-
-	return samples;
-}
-
-bool LinuxAudioCDStream::readNextFrame() {
-	// Fetch a frame from the queue
-	int16 *buffer;
-
-	{
-		Common::StackLock lock(_mutex);
-
-		// Nothing we can do if it's empty
-		if (_bufferQueue.empty())
-			return false;
-
-		buffer = _bufferQueue.pop();
-	}
-
-	memcpy(_buffer, buffer, kSamplesPerFrame * 2);
-	delete[] buffer;
-	_frame++;
 	return true;
 }
 
-bool LinuxAudioCDStream::endOfData() const {
-	return getFrameCount(_startEntry.cdte_addr.msf) + _frame >= getFrameCount(_endEntry.cdte_addr.msf) && _bufferPos == kSamplesPerFrame;
+uint LinuxAudioCDStream::getStartFrame() const {
+	return getFrameCount(_startEntry.cdte_addr.msf);
 }
 
-bool LinuxAudioCDStream::seek(const Audio::Timestamp &where) {
-	// Stop the timer
-	stopTimer();
-
-	// Clear anything out of the queue
-	emptyQueue();
-
-	// Convert to the frame number
-	// Really not much else needed
-	_bufferPos = kSamplesPerFrame;
-	_frame = where.convertToFramerate(kFramesPerSecond).totalNumberOfFrames();
-	_bufferFrame = _frame;
-
-	// Start the timer again
-	startTimer();
-	return true;
+uint LinuxAudioCDStream::getEndFrame() const {
+	return getFrameCount(_endEntry.cdte_addr.msf);
 }
 
-Audio::Timestamp LinuxAudioCDStream::getLength() const {
-	return Audio::Timestamp(0, getFrameCount(_endEntry.cdte_addr.msf) - getFrameCount(_startEntry.cdte_addr.msf), 75);
-}
-
-void LinuxAudioCDStream::timerProc(void *refCon) {
-	static_cast<LinuxAudioCDStream *>(refCon)->onTimer();
-}
-
-void LinuxAudioCDStream::onTimer() {
-	// The goal here is to do as much work in this timer instead
-	// of doing it in the readBuffer() call, which is the mixer.
-
-	// If we're done, bail.
-	if (getFrameCount(_startEntry.cdte_addr.msf) + _bufferFrame >= getFrameCount(_endEntry.cdte_addr.msf))
-		return;
-
-	// Get a quick count of the number of items in the queue
-	// We don't care that much; we only need a quick estimate
-	_mutex.lock();
-	uint32 queueCount = _bufferQueue.size();
-	_mutex.unlock();
-
-	// If we have enough audio buffered, bail out
-	if (queueCount >= kBufferThreshold)
-		return;
-
-	while (queueCount < kBufferThreshold && getFrameCount(_startEntry.cdte_addr.msf) + _bufferFrame < getFrameCount(_endEntry.cdte_addr.msf)) {
-		int16 *buffer = new int16[kSamplesPerFrame];
-
-		// Figure out the MSF of the frame we're looking for
-		int frame = _bufferFrame + getFrameCount(_startEntry.cdte_addr.msf);
-
-		int seconds = frame / kFramesPerSecond;
-		frame %= kFramesPerSecond;
-		int minutes = seconds / kSecondsPerMinute;
-		seconds %= kSecondsPerMinute;
-
-		// Request to read that frame
-		cdrom_read_audio readAudio;
-		readAudio.addr.msf.minute = minutes;
-		readAudio.addr.msf.second = seconds;
-		readAudio.addr.msf.frame = frame;
-		readAudio.addr_format = CDROM_MSF;
-		readAudio.nframes = 1;
-		readAudio.buf = reinterpret_cast<__u8*>(buffer);
-
-		if (ioctl(_fd, CDROMREADAUDIO, &readAudio) < 0) {
-			warning("Failed to read audio");
-			_bufferFrame = getFrameCount(_endEntry.cdte_addr.msf);
-			return;
-		}
-
-		_bufferFrame++;
-
-		// Now push the buffer onto the queue
-		Common::StackLock lock(_mutex);
-		_bufferQueue.push(buffer);
-		queueCount = _bufferQueue.size();
-	}
-}
-
-void LinuxAudioCDStream::startTimer() {
-	g_system->getTimerManager()->installTimerProc(timerProc, 10 * 1000, this, "LinuxAudioCDStream");
-}
-
-void LinuxAudioCDStream::stopTimer() {
-	g_system->getTimerManager()->removeTimerProc(timerProc);
-}
-
-void LinuxAudioCDStream::emptyQueue() {
-	while (!_bufferQueue.empty())
-		delete[] _bufferQueue.pop();
-}
 
 class LinuxAudioCDManager : public DefaultAudioCDManager {
 public:
