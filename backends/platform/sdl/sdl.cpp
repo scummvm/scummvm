@@ -492,6 +492,14 @@ AudioCDManager *OSystem_SDL::createAudioCDManager() {
 #endif
 }
 
+Common::SaveFileManager *OSystem_SDL::getSavefileManager() {
+#ifdef ENABLE_EVENTRECORDER
+    return g_eventRec.getSaveManager(_savefileManager);
+#else
+    return _savefileManager;
+#endif
+}
+
 #ifdef USE_OPENGL
 
 const OSystem::GraphicsMode *OSystem_SDL::getSupportedGraphicsModes() const {
