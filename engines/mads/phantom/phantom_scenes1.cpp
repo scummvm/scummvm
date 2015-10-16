@@ -947,7 +947,7 @@ void Scene103::enter() {
 			_scene->_sequences.setPosition(_globals._sequenceIndexes[3], Common::Point(154, 139));
 
 			_globals._sequenceIndexes[12] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[12], false, 1);
-			_scene->_sequences.setDepth(_globals._sequenceIndexes[12], 1) ;
+			_scene->_sequences.setDepth(_globals._sequenceIndexes[12], 1);
 		}
 
 		_hotspotPrompt1 = _scene->_dynamicHotspots.add(NOUN_PROMPTERS_STAND, VERB_WALKTO, SYNTAX_SINGULAR, -1, Common::Rect(121, 79, 40, 63));
@@ -1464,7 +1464,7 @@ void Scene103::actions() {
 				case 75:
 					if (_globals[kPrompterStandStatus] == 0) {
 						_globals._sequenceIndexes[12] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[12], false, 1);
-						_scene->_sequences.setDepth(_globals._sequenceIndexes[12], 1) ;
+						_scene->_sequences.setDepth(_globals._sequenceIndexes[12], 1);
 						_globals._sequenceIndexes[3] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[3], false, 1);
 						_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 4);
 						_scene->_sequences.setPosition(_globals._sequenceIndexes[3], Common::Point(154, 139));
