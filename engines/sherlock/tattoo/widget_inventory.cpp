@@ -641,10 +641,12 @@ void WidgetInventory::handleEvents() {
 				bool found = false;
 				if (ui._bgFound != -1) {
 					if (ui._personFound) {
+						Person &person = people[ui._bgFound - 1000];
+
 						for (int idx = 0; idx < 2; ++idx) {
-							if (!people[ui._bgFound - 1000]._use[idx]._verb.compareToIgnoreCase(_verb) &&
-								!people[ui._bgFound - 1000]._use[idx]._target.compareToIgnoreCase(_invTarget)) {
-								ui.checkAction(people[ui._bgFound - 1000]._use[idx], ui._bgFound);
+							if (!person._use[idx]._verb.compareToIgnoreCase(_verb) &&
+								!person._use[idx]._target.compareToIgnoreCase(_invTarget)) {
+								ui.checkAction(person._use[idx], ui._bgFound);
 								found = true;
 							}
 						}
