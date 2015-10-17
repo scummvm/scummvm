@@ -80,8 +80,8 @@ static const char *const fixedTextEN[] = {
 	"GAME OVER",
 	"BUSTED",
 	"Wins",
-	"Scored %d points",
-	"points", // ??
+	"Scored",
+	"points",
 	"Hit %s %d",
 	"Double",
 	"Triple",

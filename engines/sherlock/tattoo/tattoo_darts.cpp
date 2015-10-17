@@ -416,7 +416,7 @@ void Darts::erasePowerBars() {
 
 bool Darts::dartHit() {
 	Events &events = *_vm->_events;
-	events.pollEventsAndWait();
+	events.pollEvents();
 	events.setButtonState();
 
 	// Keyboard check
@@ -441,10 +441,7 @@ int Darts::doPowerBar(const Common::Point &pt, byte color, int goToPower, int or
 	events.clearEvents();
 	events.delay(100);
 
-	while (!_vm->shouldQuit()) {
-		if (idx >= DART_BAR_SIZE)
-			break;
-
+	while (!_vm->shouldQuit() && idx < DART_BAR_SIZE) {
 		if ((goToPower - 1) == idx)
 			break;
 		else if (goToPower == 0) {
@@ -492,11 +489,8 @@ int Darts::drawHand(int goToPower, int computer) {
 	Common::Point pt(DARTBOARD_LEFT - HAND_OFFSET[hand], SHERLOCK_SCREEN_HEIGHT - _handSize.y);
 	int x = 0;
 
-	while (!_vm->shouldQuit()) {
-		if (x >= DARTBOARD_WIDTH)
-			break;
-
-		if ((goToPower - 1) == x)
+	while (!_vm->shouldQuit() && x < DARTBOARD_WIDTH) {
+		if (computer && x >= (goToPower - 1))
 			break;
 		else if (goToPower == 0) {
 			if (dartHit())
@@ -903,7 +897,7 @@ int Darts::throwDart(int dartNum, int computer) {
 	if (!computer) {
 		// Wait for a hit
 		while (!dartHit() && !_vm->shouldQuit())
-			;
+			events.wait(1);
 		if (_escapePressed)
 			return 0;
 	} else {
