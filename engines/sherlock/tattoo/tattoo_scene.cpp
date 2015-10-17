@@ -90,15 +90,22 @@ bool TattooScene::loadScene(const Common::String &filename) {
 		}
 	}
 
-	// Set the NPC paths for the scene
-	setNPCPath(WATSON);
-
 	// Handle loading music for the scene
 	if (talk._scriptMoreFlag != 1 && talk._scriptMoreFlag != 3)
 		music._nextSongName = Common::String::format("res%02d", _currentScene);
 
+	// Set the NPC paths for the scene
+	setNPCPath(WATSON);
+
 	// If it's a new song, then start it up
 	if (music._currentSongName.compareToIgnoreCase(music._nextSongName)) {
+		// WORKAROUND: Stop playing music after Diogenes fire scene in the intro, 
+		// since it overlaps slightly into the next scene
+		if (talk._scriptName == "prol80p" && _currentScene == 80) {
+			music.stopMusic();
+			events.wait(5);
+		}
+
 		if (music.loadSong(music._nextSongName)) {
 			if (music._musicOn)
 				music.startSong();
