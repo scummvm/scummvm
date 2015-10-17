@@ -782,4 +782,12 @@ void Scene::drawToBackground(int series_id, int sprite_id, Common::Point pos, in
 void Scene::deleteSequence(int idx) {
 	warning("TODO: Scene::deleteSequence");
 }
+
+void Scene::loadSpeech(int idx) {
+	warning("TODO: Scene::loadSpeech");
+}
+
+void Scene::playSpeech(int idx) {
+	warning("TODO: Scene::playSpeech");
+}
 } // End of namespace MADS

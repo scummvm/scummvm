@@ -262,6 +262,8 @@ public:
 	void setCamera(Common::Point pos);
 	void drawToBackground(int series_id, int sprite_id, Common::Point pos, int depth, int scale);
 	void deleteSequence(int idx);
+	void loadSpeech(int idx);
+	void playSpeech(int idx);
 };
 
 } // End of namespace MADS

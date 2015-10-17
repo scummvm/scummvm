@@ -191,7 +191,7 @@ void Scene101::enter() {
 		_anim0Running  = true;
 		_anim1Running  = true;
 
-		_brieAnimId = _scene->_dynamicHotspots.add(NOUN_MONSIEUR_BRIE, VERB_WALKTO, SYNTAX_SINGULAR_MASC, -1, Common::Rect(0, 0, 0, 0));
+		_brieAnimId = _scene->_dynamicHotspots.add(NOUN_MONSIEUR_BRIE, VERB_WALKTO, SYNTAX_SINGULAR_MASC, EXT_NONE, Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots[_brieAnimId]._articleNumber = PREP_ON;
 		_scene->_dynamicHotspots.setPosition(_brieAnimId, Common::Point(490, 119), FACING_NONE);
 		_scene->setDynamicAnim(_brieAnimId, 0, 0);
@@ -200,7 +200,7 @@ void Scene101::enter() {
 		_scene->setDynamicAnim(_brieAnimId, 0, 3);
 		_scene->setDynamicAnim(_brieAnimId, 0, 4);
 
-		int tmpIdx = _scene->_dynamicHotspots.add(NOUN_MONSIEUR_BRIE, VERB_WALKTO, SYNTAX_SINGULAR_MASC, -1, Common::Rect(0, 0, 0, 0));
+		int tmpIdx = _scene->_dynamicHotspots.add(NOUN_MONSIEUR_BRIE, VERB_WALKTO, SYNTAX_SINGULAR_MASC, EXT_NONE, Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots[tmpIdx]._articleNumber = PREP_ON;
 		_scene->_dynamicHotspots.setPosition(tmpIdx, Common::Point(25, 80), FACING_NONE);
 		_scene->setDynamicAnim(tmpIdx, 1, 1);
@@ -209,7 +209,7 @@ void Scene101::enter() {
 		_talkCounter = 0;
 	} else if (_globals[kBrieTalkStatus] == 1) {
 		_globals._animationIndexes[1] = _scene->loadAnimation(formAnimName('b', 9), 1);
-		_brieAnimId = _scene->_dynamicHotspots.add(NOUN_MONSIEUR_BRIE, VERB_WALKTO, SYNTAX_SINGULAR_MASC, -1, Common::Rect(0, 0, 0, 0));
+		_brieAnimId = _scene->_dynamicHotspots.add(NOUN_MONSIEUR_BRIE, VERB_WALKTO, SYNTAX_SINGULAR_MASC, EXT_NONE, Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots[_brieAnimId]._articleNumber = PREP_ON;
 		_scene->setDynamicAnim(_brieAnimId, 1, 1);
 		_scene->setDynamicAnim(_brieAnimId, 1, 2);
@@ -950,38 +950,38 @@ void Scene103::enter() {
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[12], 1);
 		}
 
-		_hotspotPrompt1 = _scene->_dynamicHotspots.add(NOUN_PROMPTERS_STAND, VERB_WALKTO, SYNTAX_SINGULAR, -1, Common::Rect(121, 79, 40, 63));
+		_hotspotPrompt1 = _scene->_dynamicHotspots.add(NOUN_PROMPTERS_STAND, VERB_WALKTO, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(121, 79, 40, 63));
 		_scene->_dynamicHotspots[_hotspotPrompt1]._articleNumber = PREP_ON;
 		_scene->_dynamicHotspots.setPosition(_hotspotPrompt1, promptPos, promptFacing);
 
-		_hotspotPrompt2 = _scene->_dynamicHotspots.add(NOUN_PROMPTERS_STAND, VERB_WALKTO, SYNTAX_SINGULAR, -1, Common::Rect(161, 67, 16, 75));
+		_hotspotPrompt2 = _scene->_dynamicHotspots.add(NOUN_PROMPTERS_STAND, VERB_WALKTO, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(161, 67, 16, 75));
 		_scene->_dynamicHotspots[_hotspotPrompt2]._articleNumber = PREP_ON;
 		_scene->_dynamicHotspots.setPosition(_hotspotPrompt2, promptPos, promptFacing);
 
-		_hotspotPrompt3 = _scene->_dynamicHotspots.add(NOUN_PROMPTERS_STAND, VERB_WALKTO, SYNTAX_SINGULAR, -1, Common::Rect(177, 90, 18, 52));
+		_hotspotPrompt3 = _scene->_dynamicHotspots.add(NOUN_PROMPTERS_STAND, VERB_WALKTO, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(177, 90, 18, 52));
 		_scene->_dynamicHotspots[_hotspotPrompt3]._articleNumber = PREP_ON;
 		_scene->_dynamicHotspots.setPosition(_hotspotPrompt3, promptPos, promptFacing);
 
-		_hotspotPrompt4 = _scene->_dynamicHotspots.add(NOUN_PROMPTERS_STAND, VERB_WALKTO, SYNTAX_SINGULAR, -1, Common::Rect(114, 100, 7, 38));
+		_hotspotPrompt4 = _scene->_dynamicHotspots.add(NOUN_PROMPTERS_STAND, VERB_WALKTO, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(114, 100, 7, 38));
 		_scene->_dynamicHotspots[_hotspotPrompt4]._articleNumber = PREP_ON;
 		_scene->_dynamicHotspots.setPosition(_hotspotPrompt4, promptPos, promptFacing);
 
-		_hotspotPrompt5 = _scene->_dynamicHotspots.add(NOUN_PROMPTERS_STAND, NOUN_CLIMB, SYNTAX_SINGULAR, -1, Common::Rect(121, 49, 40, 30));
+		_hotspotPrompt5 = _scene->_dynamicHotspots.add(NOUN_PROMPTERS_STAND, NOUN_CLIMB, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(121, 49, 40, 30));
 		_scene->_dynamicHotspots[_hotspotPrompt5]._articleNumber = PREP_ON;
 		_scene->_dynamicHotspots.setPosition(_hotspotPrompt5, Common::Point(196, 134), FACING_SOUTHWEST);
 		_scene->_dynamicHotspots.setCursor(_hotspotPrompt5, CURSOR_GO_UP);
 
-		_hotspotRightFloor1 = _scene->_dynamicHotspots.add(NOUN_FLOOR, VERB_WALK_ACROSS, SYNTAX_SINGULAR, -1, Common::Rect(154, 6, 41, 6));
+		_hotspotRightFloor1 = _scene->_dynamicHotspots.add(NOUN_FLOOR, VERB_WALK_ACROSS, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(154, 6, 41, 6));
 		_scene->_dynamicHotspots[_hotspotRightFloor1]._articleNumber = PREP_ON;
 		_scene->_dynamicHotspots.setPosition(_hotspotRightFloor1, Common::Point(171, 142), FACING_NONE);
 
-		_hotspotRightFloor2 = _scene->_dynamicHotspots.add(NOUN_FLOOR, VERB_WALK_ACROSS, SYNTAX_SINGULAR, -1, Common::Rect(114, 136, 32, 6));
+		_hotspotRightFloor2 = _scene->_dynamicHotspots.add(NOUN_FLOOR, VERB_WALK_ACROSS, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(114, 136, 32, 6));
 		_scene->_dynamicHotspots[_hotspotRightFloor2]._articleNumber = PREP_ON;
 		_scene->_dynamicHotspots.setPosition(_hotspotRightFloor2, Common::Point(127, 140), FACING_NONE);
 
 		if ((_globals[kJacquesStatus] == 0) && (_globals[kCurrentYear] == 1881)) {
 			if (_globals[kJacquesNameIsKnown] >= 1) {
-				_hotspotGentleman = _scene->_dynamicHotspots.add(NOUN_JACQUES, VERB_WALKTO, SYNTAX_SINGULAR_MASC, -1, Common::Rect(156, 116, 33, 31));
+				_hotspotGentleman = _scene->_dynamicHotspots.add(NOUN_JACQUES, VERB_WALKTO, SYNTAX_SINGULAR_MASC, EXT_NONE, Common::Rect(156, 116, 33, 31));
 				_scene->_dynamicHotspots[_hotspotGentleman]._articleNumber = PREP_ON;
 				_scene->_dynamicHotspots.setPosition(_hotspotGentleman, Common::Point(206, 148), FACING_NORTHWEST);
 			} else {
@@ -989,11 +989,11 @@ void Scene103::enter() {
 				_scene->_dynamicHotspots[_hotspotGentleman]._articleNumber = PREP_ON;
 				_scene->_dynamicHotspots.setPosition(_hotspotGentleman, Common::Point(206, 148), FACING_NORTHWEST);
 			}
-			int tmpIdx = _scene->_dynamicHotspots.add(NOUN_FLOOR, VERB_WALK_ACROSS, SYNTAX_SINGULAR, -1, Common::Rect(149, 140, 13, 7));
+			int tmpIdx = _scene->_dynamicHotspots.add(NOUN_FLOOR, VERB_WALK_ACROSS, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(149, 140, 13, 7));
 			_scene->_dynamicHotspots[tmpIdx]._articleNumber = PREP_ON;
 			_scene->_dynamicHotspots.setPosition(tmpIdx, Common::Point(155, 144), FACING_NONE);
 
-			tmpIdx = _scene->_dynamicHotspots.add(NOUN_FLOOR, VERB_WALK_ACROSS, SYNTAX_SINGULAR, -1, Common::Rect(187, 136, 8, 7));
+			tmpIdx = _scene->_dynamicHotspots.add(NOUN_FLOOR, VERB_WALK_ACROSS, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(187, 136, 8, 7));
 			_scene->_dynamicHotspots[tmpIdx]._articleNumber = PREP_ON;
 			_scene->_dynamicHotspots.setPosition(tmpIdx, Common::Point(195, 139), FACING_NONE);
 		} else if ((_globals[kJacquesStatus] >= 1) && (_globals[kCurrentYear] == 1881)) {
@@ -1007,23 +1007,23 @@ void Scene103::enter() {
 			_scene->_hotspots.activate(NOUN_JACQUES, true);
 			_scene->_dynamicHotspots.remove(_hotspotRightFloor2);
 
-			int tmpIdx = _scene->_dynamicHotspots.add(NOUN_JACQUES, VERB_WALKTO, SYNTAX_SINGULAR_MASC, -1, Common::Rect(114, 132, 30, 10));
+			int tmpIdx = _scene->_dynamicHotspots.add(NOUN_JACQUES, VERB_WALKTO, SYNTAX_SINGULAR_MASC, EXT_NONE, Common::Rect(114, 132, 30, 10));
 			_scene->_dynamicHotspots[tmpIdx]._articleNumber = PREP_ON;
 			_scene->_dynamicHotspots.setPosition(tmpIdx, Common::Point(95, 144), FACING_NORTHEAST);
 
-			tmpIdx = _scene->_dynamicHotspots.add(NOUN_FLOOR, VERB_WALK_ACROSS, SYNTAX_SINGULAR, -1, Common::Rect(94, 129, 18, 4));
+			tmpIdx = _scene->_dynamicHotspots.add(NOUN_FLOOR, VERB_WALK_ACROSS, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(94, 129, 18, 4));
 			_scene->_dynamicHotspots[tmpIdx]._articleNumber = PREP_ON;
 			_scene->_dynamicHotspots.setPosition(tmpIdx, Common::Point(95, 133), FACING_NONE);
 
-			tmpIdx = _scene->_dynamicHotspots.add(NOUN_FLOOR, VERB_WALK_ACROSS, SYNTAX_SINGULAR, -1, Common::Rect(94, 132, 3, 9));
+			tmpIdx = _scene->_dynamicHotspots.add(NOUN_FLOOR, VERB_WALK_ACROSS, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(94, 132, 3, 9));
 			_scene->_dynamicHotspots[tmpIdx]._articleNumber = PREP_ON;
 			_scene->_dynamicHotspots.setPosition(tmpIdx, Common::Point(93, 135), FACING_NONE);
 
-			tmpIdx = _scene->_dynamicHotspots.add(NOUN_FLOOR, VERB_WALK_ACROSS, SYNTAX_SINGULAR, -1, Common::Rect(112, 150, 21, 3));
+			tmpIdx = _scene->_dynamicHotspots.add(NOUN_FLOOR, VERB_WALK_ACROSS, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(112, 150, 21, 3));
 			_scene->_dynamicHotspots[tmpIdx]._articleNumber = PREP_ON;
 			_scene->_dynamicHotspots.setPosition(tmpIdx, Common::Point(118, 154), FACING_NONE);
 
-			tmpIdx = _scene->_dynamicHotspots.add(NOUN_FLOOR, VERB_WALK_ACROSS, SYNTAX_SINGULAR, -1, Common::Rect(98, 146, 21, 4));
+			tmpIdx = _scene->_dynamicHotspots.add(NOUN_FLOOR, VERB_WALK_ACROSS, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(98, 146, 21, 4));
 			_scene->_dynamicHotspots[tmpIdx]._articleNumber = PREP_ON;
 			_scene->_dynamicHotspots.setPosition(tmpIdx, Common::Point(104, 148), FACING_NONE);
 		}
@@ -1032,27 +1032,27 @@ void Scene103::enter() {
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 4);
 		_scene->_sequences.setPosition(_globals._sequenceIndexes[3], Common::Point(37, 139));
 
-		_hotspotPrompt1 = _scene->_dynamicHotspots.add(NOUN_PROMPTERS_STAND, VERB_WALKTO, SYNTAX_SINGULAR, -1, Common::Rect(2, 79, 40, 63));
+		_hotspotPrompt1 = _scene->_dynamicHotspots.add(NOUN_PROMPTERS_STAND, VERB_WALKTO, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(2, 79, 40, 63));
 		_scene->_dynamicHotspots[_hotspotPrompt1]._articleNumber = PREP_ON;
 		_scene->_dynamicHotspots.setPosition(_hotspotPrompt1, Common::Point(59, 140), FACING_NORTHWEST);
 
-		_hotspotPrompt2 = _scene->_dynamicHotspots.add(NOUN_PROMPTERS_STAND, VERB_WALKTO, SYNTAX_SINGULAR, -1, Common::Rect(42, 67, 16, 75));
+		_hotspotPrompt2 = _scene->_dynamicHotspots.add(NOUN_PROMPTERS_STAND, VERB_WALKTO, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(42, 67, 16, 75));
 		_scene->_dynamicHotspots[_hotspotPrompt2]._articleNumber = PREP_ON;
 		_scene->_dynamicHotspots.setPosition(_hotspotPrompt2, Common::Point(59, 140), FACING_NORTHWEST);
 
-		_hotspotPrompt3 = _scene->_dynamicHotspots.add(NOUN_PROMPTERS_STAND, VERB_WALKTO, SYNTAX_SINGULAR, -1, Common::Rect(58, 90, 18, 52));
+		_hotspotPrompt3 = _scene->_dynamicHotspots.add(NOUN_PROMPTERS_STAND, VERB_WALKTO, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(58, 90, 18, 52));
 		_scene->_dynamicHotspots[_hotspotPrompt3]._articleNumber = PREP_ON;
 		_scene->_dynamicHotspots.setPosition(_hotspotPrompt3, Common::Point(59, 140), FACING_NORTHWEST);
 
-		_hotspotPrompt5 = _scene->_dynamicHotspots.add(NOUN_PROMPTERS_STAND, NOUN_CLIMB, SYNTAX_SINGULAR, -1, Common::Rect(2, 49, 40, 30));
+		_hotspotPrompt5 = _scene->_dynamicHotspots.add(NOUN_PROMPTERS_STAND, NOUN_CLIMB, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(2, 49, 40, 30));
 		_scene->_dynamicHotspots[_hotspotPrompt5]._articleNumber = PREP_ON;
 		_scene->_dynamicHotspots.setPosition(_hotspotPrompt5, Common::Point(79, 132), FACING_SOUTHWEST);
 		_scene->_dynamicHotspots.setCursor(_hotspotPrompt5, CURSOR_GO_UP);
 
-		_hotspotLeftFloor1 = _scene->_dynamicHotspots.add(NOUN_FLOOR, VERB_WALK_ACROSS, SYNTAX_SINGULAR, -1, Common::Rect(35, 137, 40, 5));
+		_hotspotLeftFloor1 = _scene->_dynamicHotspots.add(NOUN_FLOOR, VERB_WALK_ACROSS, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(35, 137, 40, 5));
 		_scene->_dynamicHotspots[_hotspotLeftFloor1]._articleNumber = PREP_ON;
 		_scene->_dynamicHotspots.setPosition(_hotspotLeftFloor1, Common::Point(59, 140), FACING_NONE);
-		_hotspotLeftFloor2 = _scene->_dynamicHotspots.add(NOUN_FLOOR, VERB_WALK_ACROSS, SYNTAX_SINGULAR, -1, Common::Rect(76, 129, 6, 6));
+		_hotspotLeftFloor2 = _scene->_dynamicHotspots.add(NOUN_FLOOR, VERB_WALK_ACROSS, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(76, 129, 6, 6));
 		_scene->_dynamicHotspots[_hotspotLeftFloor2]._articleNumber = PREP_ON;
 		_scene->_dynamicHotspots.setPosition(_hotspotLeftFloor2, Common::Point(80, 135), FACING_NONE);
 	}
@@ -1483,32 +1483,32 @@ void Scene103::actions() {
 						_scene->_dynamicHotspots.remove(_hotspotLeftFloor1);
 						_scene->_dynamicHotspots.remove(_hotspotLeftFloor2);
 
-						_hotspotPrompt1 = _scene->_dynamicHotspots.add(NOUN_PROMPTERS_STAND, VERB_WALKTO, SYNTAX_SINGULAR, -1, Common::Rect(121, 79, 40, 63));
+						_hotspotPrompt1 = _scene->_dynamicHotspots.add(NOUN_PROMPTERS_STAND, VERB_WALKTO, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(121, 79, 40, 63));
 						_scene->_dynamicHotspots[_hotspotPrompt1]._articleNumber = PREP_ON;
 						_scene->_dynamicHotspots.setPosition(_hotspotPrompt1, Common::Point(171, 142), FACING_NORTHWEST);
 
-						_hotspotPrompt2 = _scene->_dynamicHotspots.add(NOUN_PROMPTERS_STAND, VERB_WALKTO, SYNTAX_SINGULAR, -1, Common::Rect(161, 67, 16, 75));
+						_hotspotPrompt2 = _scene->_dynamicHotspots.add(NOUN_PROMPTERS_STAND, VERB_WALKTO, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(161, 67, 16, 75));
 						_scene->_dynamicHotspots[_hotspotPrompt2]._articleNumber = PREP_ON;
 						_scene->_dynamicHotspots.setPosition(_hotspotPrompt2, Common::Point(171, 142), FACING_NORTHWEST);
 
-						_hotspotPrompt3 = _scene->_dynamicHotspots.add(NOUN_PROMPTERS_STAND, VERB_WALKTO, SYNTAX_SINGULAR, -1, Common::Rect(177, 90, 18, 52));
+						_hotspotPrompt3 = _scene->_dynamicHotspots.add(NOUN_PROMPTERS_STAND, VERB_WALKTO, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(177, 90, 18, 52));
 						_scene->_dynamicHotspots[_hotspotPrompt3]._articleNumber = PREP_ON;
 						_scene->_dynamicHotspots.setPosition(_hotspotPrompt3, Common::Point(171, 142), FACING_NORTHWEST);
 
-						_hotspotPrompt4 = _scene->_dynamicHotspots.add(NOUN_PROMPTERS_STAND, VERB_WALKTO, SYNTAX_SINGULAR, -1, Common::Rect(114, 100, 7, 38));
+						_hotspotPrompt4 = _scene->_dynamicHotspots.add(NOUN_PROMPTERS_STAND, VERB_WALKTO, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(114, 100, 7, 38));
 						_scene->_dynamicHotspots[_hotspotPrompt4]._articleNumber = PREP_ON;
 						_scene->_dynamicHotspots.setPosition(_hotspotPrompt4, Common::Point(171, 142), FACING_NORTHWEST);
 
-						_hotspotPrompt5 = _scene->_dynamicHotspots.add(NOUN_PROMPTERS_STAND, NOUN_CLIMB, SYNTAX_SINGULAR, -1, Common::Rect(121, 49, 40, 30));
+						_hotspotPrompt5 = _scene->_dynamicHotspots.add(NOUN_PROMPTERS_STAND, NOUN_CLIMB, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(121, 49, 40, 30));
 						_scene->_dynamicHotspots[_hotspotPrompt5]._articleNumber = PREP_ON;
 						_scene->_dynamicHotspots.setPosition(_hotspotPrompt5, Common::Point(196, 134), FACING_SOUTHWEST);
 						_scene->_dynamicHotspots.setCursor(_hotspotPrompt5, CURSOR_GO_UP);
 
-						_hotspotRightFloor1 = _scene->_dynamicHotspots.add(NOUN_FLOOR, VERB_WALK_ACROSS, SYNTAX_SINGULAR, -1, Common::Rect(154, 6, 41, 6));
+						_hotspotRightFloor1 = _scene->_dynamicHotspots.add(NOUN_FLOOR, VERB_WALK_ACROSS, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(154, 6, 41, 6));
 						_scene->_dynamicHotspots[_hotspotRightFloor1]._articleNumber = PREP_ON;
 						_scene->_dynamicHotspots.setPosition(_hotspotRightFloor1, Common::Point(171, 142), FACING_NONE);
 
-						_hotspotRightFloor2 = _scene->_dynamicHotspots.add(NOUN_FLOOR, VERB_WALK_ACROSS, SYNTAX_SINGULAR, -1, Common::Rect(114, 136, 32, 6));
+						_hotspotRightFloor2 = _scene->_dynamicHotspots.add(NOUN_FLOOR, VERB_WALK_ACROSS, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(114, 136, 32, 6));
 						_scene->_dynamicHotspots[_hotspotRightFloor2]._articleNumber = PREP_ON;
 						_scene->_dynamicHotspots.setPosition(_hotspotRightFloor2, Common::Point(127, 140), FACING_NONE);
 
@@ -1554,27 +1554,27 @@ void Scene103::actions() {
 						_scene->_dynamicHotspots.remove(_hotspotRightFloor1);
 						_scene->_dynamicHotspots.remove(_hotspotRightFloor2);
 
-						_hotspotPrompt1 = _scene->_dynamicHotspots.add(NOUN_PROMPTERS_STAND, VERB_WALKTO, SYNTAX_SINGULAR, -1, Common::Rect(2, 79, 40, 63));
+						_hotspotPrompt1 = _scene->_dynamicHotspots.add(NOUN_PROMPTERS_STAND, VERB_WALKTO, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(2, 79, 40, 63));
 						_scene->_dynamicHotspots[_hotspotPrompt1]._articleNumber = PREP_ON;
 						_scene->_dynamicHotspots.setPosition(_hotspotPrompt1, Common::Point(59, 140), FACING_NORTHWEST);
 
-						_hotspotPrompt2 = _scene->_dynamicHotspots.add(NOUN_PROMPTERS_STAND, VERB_WALKTO, SYNTAX_SINGULAR, -1, Common::Rect(42, 67, 16, 75));
+						_hotspotPrompt2 = _scene->_dynamicHotspots.add(NOUN_PROMPTERS_STAND, VERB_WALKTO, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(42, 67, 16, 75));
 						_scene->_dynamicHotspots[_hotspotPrompt2]._articleNumber = PREP_ON;
 						_scene->_dynamicHotspots.setPosition(_hotspotPrompt2, Common::Point(59, 140), FACING_NORTHWEST);
 
-						_hotspotPrompt3 = _scene->_dynamicHotspots.add(NOUN_PROMPTERS_STAND, VERB_WALKTO, SYNTAX_SINGULAR, -1, Common::Rect(58, 90, 18, 52));
+						_hotspotPrompt3 = _scene->_dynamicHotspots.add(NOUN_PROMPTERS_STAND, VERB_WALKTO, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(58, 90, 18, 52));
 						_scene->_dynamicHotspots[_hotspotPrompt3]._articleNumber = PREP_ON;
 						_scene->_dynamicHotspots.setPosition(_hotspotPrompt3, Common::Point(59, 140), FACING_NORTHWEST);
 
-						_hotspotLeftFloor1 = _scene->_dynamicHotspots.add(NOUN_FLOOR, VERB_WALK_ACROSS, SYNTAX_SINGULAR, -1, Common::Rect(35, 137, 40, 5));
+						_hotspotLeftFloor1 = _scene->_dynamicHotspots.add(NOUN_FLOOR, VERB_WALK_ACROSS, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(35, 137, 40, 5));
 						_scene->_dynamicHotspots[_hotspotLeftFloor1]._articleNumber = PREP_ON;
 						_scene->_dynamicHotspots.setPosition(_hotspotLeftFloor1, Common::Point(59, 140), FACING_NONE);
 
-						_hotspotLeftFloor2 = _scene->_dynamicHotspots.add(NOUN_FLOOR, VERB_WALK_ACROSS, SYNTAX_SINGULAR, -1, Common::Rect(76, 129, 6, 6));
+						_hotspotLeftFloor2 = _scene->_dynamicHotspots.add(NOUN_FLOOR, VERB_WALK_ACROSS, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(76, 129, 6, 6));
 						_scene->_dynamicHotspots[_hotspotLeftFloor2]._articleNumber = PREP_ON;
 						_scene->_dynamicHotspots.setPosition(_hotspotLeftFloor2, Common::Point(80, 135), FACING_NONE);
 
-						_hotspotPrompt5 = _scene->_dynamicHotspots.add(NOUN_PROMPTERS_STAND, NOUN_CLIMB, SYNTAX_SINGULAR, -1, Common::Rect(2, 49, 40, 30));
+						_hotspotPrompt5 = _scene->_dynamicHotspots.add(NOUN_PROMPTERS_STAND, NOUN_CLIMB, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(2, 49, 40, 30));
 						_scene->_dynamicHotspots[_hotspotPrompt5]._articleNumber = PREP_ON;
 						_scene->_dynamicHotspots.setPosition(_hotspotPrompt5, Common::Point(79, 132), FACING_SOUTHWEST);
 						_scene->_dynamicHotspots.setCursor(_hotspotPrompt5, CURSOR_GO_UP);
@@ -2360,7 +2360,7 @@ void Scene103::process_conv_jacques() {
 		if (_globals[kJacquesNameIsKnown] == 0) {
 			_globals[kJacquesNameIsKnown] = 1;
 			_scene->_dynamicHotspots.remove(_hotspotGentleman);
-			_hotspotGentleman = _scene->_dynamicHotspots.add(NOUN_JACQUES, VERB_WALKTO, SYNTAX_SINGULAR_MASC, -1, Common::Rect(156, 116, 33, 31));
+			_hotspotGentleman = _scene->_dynamicHotspots.add(NOUN_JACQUES, VERB_WALKTO, SYNTAX_SINGULAR_MASC, EXT_NONE, Common::Rect(156, 116, 33, 31));
 			_scene->_dynamicHotspots[_hotspotGentleman]._articleNumber = PREP_ON;
 			_scene->_dynamicHotspots.setPosition(_hotspotGentleman, Common::Point(206, 148), FACING_NORTHWEST);
 		}
@@ -3622,6 +3622,573 @@ void Scene104::handlePlayerWalk() {
 	default:
 		break;
 	}
+}
+
+/*------------------------------------------------------------------------*/
+
+Scene105::Scene105(MADSEngine *vm) : Scene1xx(vm) {
+}
+
+void Scene105::synchronize(Common::Serializer &s) {
+	Scene1xx::synchronize(s);
+
+}
+
+void Scene105::setup() {
+	if (_globals[kCurrentYear] == 1993)
+		_scene->_initialVariant = 1;
+
+	setPlayerSpritesPrefix();
+	setAAName();
+
+	_scene->addActiveVocab(NOUN_LIGHT_FIXTURE);
+}
+
+void Scene105::enter() {
+	_scene->loadSpeech(8);
+
+	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('x', 2), false);
+	_globals._spriteIndexes[4] = _scene->_sprites.addSprites(formAnimName('x', 3), false);
+	_globals._spriteIndexes[5] = _scene->_sprites.addSprites("*RRD_9", false);
+	_globals._spriteIndexes[6] = _scene->_sprites.addSprites("*RDR_9", false);
+	_globals._spriteIndexes[7] = _scene->_sprites.addSprites(formAnimName('a', 0), false);
+	_globals._spriteIndexes[8] = _scene->_sprites.addSprites(formAnimName('a', 1), false);
+	if (_globals[kCurrentYear] == 1993)
+		_globals._spriteIndexes[3]       = _scene->_sprites.addSprites(formAnimName('z', -1), false);
+
+	if ((_globals[kCurrentYear] == 1881) && (!_globals[kHintThatDaaeIsHome2])) {
+		if ((_globals[kJacquesNameIsKnown] == 2) && (_globals[kMadameNameIsKnown] == 2) &&
+			_globals[kPanelIn206] && _globals[kDoneRichConv203] && _game._objects.isInInventory(OBJ_LANTERN) &&
+			((_game._objects.isInInventory(OBJ_CABLE_HOOK) && _game._objects.isInInventory(OBJ_ROPE)) || _game._objects.isInInventory(OBJ_ROPE_WITH_HOOK))) {
+			_globals[kHintThatDaaeIsHome2] = true;
+			_scene->_sequences.setTimingTrigger(300, 75);
+		}
+	}
+
+	if ((_game._objects.isInRoom(OBJ_LANTERN)) && (_globals[kCurrentYear] == 1881)) {
+		_globals._spriteIndexes[0]  = _scene->_sprites.addSprites(formAnimName('x', 0), false);
+		_globals._sequenceIndexes[0] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[0], false, 1);
+		_scene->_sequences.setDepth(_globals._sequenceIndexes[0], 14);
+	} else {
+		_scene->_hotspots.activate(NOUN_LANTERN, false);
+	}
+
+	if (_game._objects.isInRoom(OBJ_RED_FRAME)) {
+		_globals._spriteIndexes[1]  = _scene->_sprites.addSprites(formAnimName('x', 1), false);
+		_globals._sequenceIndexes[1] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[1], false, 1);
+		_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 14);
+	} else {
+		_scene->_hotspots.activate(NOUN_RED_FRAME, false);
+	}
+
+	if (_globals[kCurrentYear] == 1993) {
+		_scene->drawToBackground(_globals._spriteIndexes[3], 1, Common::Point(-32000, -32000), 0, 100);
+		_scene->_hotspots.activate(NOUN_PROPS, false);
+		_scene->_hotspots.activate(NOUN_BEAR_PROP, false);
+		_scene->_hotspots.activate(NOUN_STAIR_UNIT, false);
+		_scene->_hotspots.activate(NOUN_PROP, false);
+		_scene->_hotspots.activate(NOUN_ELEPHANT_PROP, false);
+		_scene->_hotspots.activate(NOUN_COLUMN_PROP, false);
+
+		int tmpIdx = _scene->_dynamicHotspots.add(NOUN_COLUMN_PROP, VERB_WALKTO, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(132, 24, 21, 105));
+		_scene->_dynamicHotspots.setPosition(tmpIdx, Common::Point(159, 133), FACING_NORTHWEST);
+
+		tmpIdx = _scene->_dynamicHotspots.add(NOUN_COLUMN_PROP, VERB_WALKTO, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(56, 45, 11, 77));
+		_scene->_dynamicHotspots.setPosition(tmpIdx, Common::Point(72, 126), FACING_NORTHWEST);
+
+		_scene->_dynamicHotspots.add(NOUN_PROP, VERB_WALKTO, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(0, 125, 29, 31));
+		_scene->_dynamicHotspots.add(NOUN_PROP, VERB_WALKTO, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(29, 136, 50, 20));
+		_scene->_dynamicHotspots.add(NOUN_PROP, VERB_WALKTO, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(79, 141, 53, 15));
+
+		_scene->_dynamicHotspots.add(NOUN_BEAR_PROP, VERB_WALKTO, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(278, 132, 21, 24));
+		_scene->_dynamicHotspots.add(NOUN_BEAR_PROP, VERB_WALKTO, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(299, 146, 8, 10));
+		_scene->_dynamicHotspots.add(NOUN_BEAR_PROP, VERB_WALKTO, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(269, 142, 8, 8));
+
+		_scene->_dynamicHotspots.add(NOUN_LIGHT_FIXTURE, VERB_LOOK_AT, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(102, 14, 24, 10));
+	}
+
+	_globals._sequenceIndexes[4] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[4], false, 2);
+	_scene->_sequences.setDepth(_globals._sequenceIndexes[4], 14);
+
+	if ((_scene->_priorSceneId == 106) || (_scene->_priorSceneId == 114)) {
+		_game._player._playerPos = Common::Point(198, 132);
+		_game._player._facing = FACING_WEST;
+		_globals._sequenceIndexes[2] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[2], false, 1);
+		_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 10);
+	} else if ((_scene->_priorSceneId == 103) || (_scene->_priorSceneId != RETURNING_FROM_LOADING)) {
+		_game._player._playerPos = Common::Point(3, 112);
+		_game._player._facing = FACING_SOUTHEAST;
+		_game._player.walk(Common::Point(45, 131), FACING_SOUTHEAST);
+		_game._player.setWalkTrigger(60);
+		_game._player._stepEnabled = false;
+		_globals._sequenceIndexes[2] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[2], false, 8);
+		_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 10);
+	} else if (_scene->_priorSceneId == RETURNING_FROM_LOADING) {
+		_globals._sequenceIndexes[2] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[2], false, -1);
+		_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 10);
+	}
+
+	sceneEntrySound();
+}
+
+void Scene105::step() {
+	switch (_game._trigger) {
+	case 60:
+		_scene->deleteSequence(_globals._sequenceIndexes[2]);
+		_globals._sequenceIndexes[2] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[2], false, 8, 0, 0, 1);   
+		_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 10);
+		_scene->_sequences.setRange(_globals._sequenceIndexes[2], 1, 8);
+		_scene->_sequences.setTrigger(_globals._sequenceIndexes[2], 0, 0, 61);
+		_vm->_sound->command(66);
+		break; 
+
+	case 61:
+		_vm->_sound->command(25);
+		_globals._sequenceIndexes[2] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[2], false, 1);
+		_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 10);
+		_game._player._stepEnabled = true;
+		break;
+
+	case 75:
+		_scene->playSpeech(8);
+		_scene->_sequences.setTimingTrigger(120, 76);
+		break;
+
+	case 76:
+		_vm->_dialogs->show(10537);
+		break;
+
+	default:
+		break;
+	}
+}
+
+void Scene105::actions() {
+	if ((_action.isAction(VERB_PUSH, NOUN_THUNDER_MACHINE)) || (_action.isAction(VERB_PULL, NOUN_THUNDER_MACHINE))) {
+		switch (_game._trigger) {
+		case 0:
+			_game._player._stepEnabled = false;
+			_game._player._visible = false;
+			_globals._animationIndexes[0] = _scene->loadAnimation(formAnimName('t', 1), 70);
+			_scene->deleteSequence(_globals._sequenceIndexes[4]);
+			_game.syncTimers(1, _globals._sequenceIndexes[4], 3, _globals._animationIndexes[0]);
+			_scene->_sequences.setSeqPlayer(_globals._animationIndexes[0], false);
+			break;
+
+		case 70:
+			_globals._sequenceIndexes[4] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[4], false, 2);
+			_scene->_sequences.setDepth(_globals._sequenceIndexes[4], 14);
+			_game.syncTimers(1, _globals._sequenceIndexes[4], 3, _globals._animationIndexes[0]);
+			_game._player._stepEnabled = true;
+			_game._player._visible = true;
+			_game.syncTimers(2, 0, 3, _globals._animationIndexes[0]);
+			break;
+
+		default:
+			break;
+		}
+		_action._inProgress = false;
+		return;
+	}
+
+	if (_action.isAction(VERB_CLIMB_UP, NOUN_CIRCULAR_STAIRCASE)) {
+		switch (_game._trigger) {
+		case 0:
+			_game._player._stepEnabled = false;
+			_game._player._visible = false;
+			_globals._animationIndexes[0] = _scene->loadAnimation(formAnimName('u', 1), 1);
+			_game.syncTimers(3, _globals._animationIndexes[0], 2, 0);
+			break;
+
+		case 1:
+			_scene->_nextSceneId = 106;
+			break;
+
+		default:
+			break;
+		}
+		_action._inProgress = false;
+		return;
+	}
+
+	if (_action.isAction(VERB_CLIMB_DOWN, NOUN_CIRCULAR_STAIRCASE)) {
+		switch (_game._trigger) {
+		case 0:
+			_game._player._stepEnabled = false;
+			_game._player._visible = false;
+			_globals._animationIndexes[0] = _scene->loadAnimation(formAnimName('d', 1), 1);
+			_game.syncTimers(3, _globals._animationIndexes[0], 2, 0);
+			break;
+
+		case 1:
+			_scene->_nextSceneId = 114;
+			break;
+
+		default:
+			break;
+		}
+		_action._inProgress = false;
+		return;
+	}
+
+	if (_action.isAction(VERB_TAKE, NOUN_RED_FRAME) && (_game._objects.isInRoom(OBJ_RED_FRAME) || _game._trigger)) {
+		switch (_game._trigger) {
+		case (0):
+			if (_globals[kCurrentYear] == 1881) {
+				int count = 0;
+
+				if (_game._objects.isInInventory(NOUN_YELLOW_FRAME))
+					++count;
+
+				if (_game._objects.isInInventory(NOUN_GREEN_FRAME))
+					++count;
+
+				if (_game._objects.isInInventory(NOUN_BLUE_FRAME))
+					++count;
+
+				if (count < 3)
+					_globals[kPlayerScore] += 5;
+			}
+
+			_game._player._stepEnabled = false;
+			_game._player._visible = false;  
+			_globals._sequenceIndexes[5] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[5], true, 5, 0, 0, 2);
+			_scene->_sequences.setRange(_globals._sequenceIndexes[5], 1, 5);
+			_scene->_sequences.setSeqPlayer(_globals._sequenceIndexes[5], true);
+			_scene->_sequences.setTrigger(_globals._sequenceIndexes[5], 2, 5, 1);
+			_scene->_sequences.setTrigger(_globals._sequenceIndexes[5], 0, 0, 2);
+			break;
+
+		case 1:
+			_scene->deleteSequence(_globals._sequenceIndexes[1]);
+			_scene->_hotspots.activate(NOUN_RED_FRAME, false);
+			_game._objects.addToInventory(OBJ_RED_FRAME);
+			_vm->_sound->command(26);
+			break;
+
+		case 2:
+			_game.syncTimers(2, 0, 1, _globals._sequenceIndexes[5]); 
+			_game._player._visible = true;
+			_scene->_sequences.setTimingTrigger(20, 3);
+			break;
+
+		case 3:
+			if (_globals[kCurrentYear] == 1881)
+				_vm->_dialogs->showItem(OBJ_RED_FRAME, 842, 0);
+			else
+				_vm->_dialogs->showItem(OBJ_RED_FRAME, 802, 0);
+
+			_game._player._stepEnabled = true;
+			break;
+		}
+		_action._inProgress = false;
+		return;
+	}
+
+	if (_action.isAction(VERB_TAKE, NOUN_LANTERN) && (_game._objects.isInRoom(OBJ_LANTERN) || _game._trigger)) {
+		switch (_game._trigger) {
+		case (0):
+			_globals[kPlayerScore] += 5;
+			_game._player._stepEnabled = false;
+			_game._player._visible = false;  
+			_globals._sequenceIndexes[6] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[6], true, 5, 0, 0, 2);
+			_scene->_sequences.setRange(_globals._sequenceIndexes[6], 1, 4);
+			_scene->_sequences.setSeqPlayer(_globals._sequenceIndexes[6], true);
+			_scene->_sequences.setTrigger(_globals._sequenceIndexes[6], 2, 4, 1);
+			_scene->_sequences.setTrigger(_globals._sequenceIndexes[6], 0, 0, 2);
+			break;
+
+		case 1:
+			_scene->deleteSequence(_globals._sequenceIndexes[0]);
+			_scene->_hotspots.activate(NOUN_LANTERN, false);
+			_game._objects.addToInventory(OBJ_LANTERN);
+			_vm->_sound->command(26);
+			break;
+
+		case 2:
+			_game.syncTimers(2, 0, 1, _globals._sequenceIndexes[6]); 
+			_game._player._visible = true;
+			_scene->_sequences.setTimingTrigger(20, 3);
+			break;
+
+		case 3:
+			_vm->_dialogs->showItem(OBJ_LANTERN, 801, 0);
+			_game._player._stepEnabled = true;
+			break;
+
+		default:
+			break;
+		}
+		_action._inProgress = false;
+		return;
+	}
+
+	if (_action.isAction(VERB_WALK_THROUGH, NOUN_DOOR) || _action.isAction(VERB_OPEN, NOUN_DOOR) || (_game._trigger) ||
+		_action.isAction(VERB_UNLOCK, NOUN_DOOR) || _action.isAction(NOUN_LOCK, NOUN_DOOR)) {
+		if ((_globals[kCurrentYear] == 1881) && !_action.isAction(VERB_UNLOCK) && !_action.isAction(NOUN_LOCK)){
+			switch (_game._trigger) {
+			case (0):
+				_game._player._stepEnabled = false;
+				_game._player._visible = false;  
+				_globals._sequenceIndexes[6] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[6], true, 5, 0, 0, 2);
+				_scene->_sequences.setRange(_globals._sequenceIndexes[6], 1, 4);
+				_scene->_sequences.setSeqPlayer(_globals._sequenceIndexes[6], true);
+				_scene->_sequences.setTrigger(_globals._sequenceIndexes[6], 2, 4, 65);
+				_scene->_sequences.setTrigger(_globals._sequenceIndexes[6], 0, 0, 2);
+				break;
+
+			case 2:
+				_game._player._visible = true;
+				_scene->_sequences.setTimingTrigger(180, 3);
+				break;
+
+			case 3:
+				_scene->_nextSceneId = 103;
+				break;
+
+			case 65:
+				_vm->_sound->command(24);
+				_scene->deleteSequence(_globals._sequenceIndexes[2]);
+				_globals._sequenceIndexes[2] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[2], false, 8, 0, 0, 1);   
+				_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 14);
+				_scene->_sequences.setRange(_globals._sequenceIndexes[2], 1, 8);
+				_scene->_sequences.setTrigger(_globals._sequenceIndexes[2], 0, 0, 66);
+				_vm->_sound->command(66);
+				break; 
+
+			case 66: {
+				int tmpIdx = _globals._sequenceIndexes[2];
+				_globals._sequenceIndexes[2] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[2], false, 8);
+				_game.syncTimers(1, _globals._sequenceIndexes[2], 1, tmpIdx); 
+				_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 14);
+				_game._player.walk(Common::Point(0, 111), FACING_NORTHWEST);
+				}
+				break;
+
+			default:
+				break;
+			}
+		} else {
+			switch (_game._trigger) {
+			case (0):
+				_game._player._stepEnabled = false;
+				_game._player._visible = false;  
+				_globals._sequenceIndexes[6] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[6], true, 5, 0, 0, 1);
+				_scene->_sequences.setRange(_globals._sequenceIndexes[6], 1, 4);
+				_scene->_sequences.setSeqPlayer(_globals._sequenceIndexes[6], true);
+				_scene->_sequences.setTrigger(_globals._sequenceIndexes[6], 0, 0, 1);
+				break;
+
+			case 1: {
+				int tmpIdx = _globals._sequenceIndexes[6];
+				_globals._sequenceIndexes[6] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[6], true, 4);
+				_game.syncTimers(1, _globals._sequenceIndexes[6], 1, tmpIdx); 
+				_scene->_sequences.setSeqPlayer(_globals._sequenceIndexes[6], false);
+				_vm->_sound->command(73);
+				_scene->_sequences.setTimingTrigger(15, 2);
+				}
+				break; 
+
+			case 2:
+				_scene->deleteSequence(_globals._sequenceIndexes[6]);
+				_globals._sequenceIndexes[6] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[6], true, 5, 0, 0, 1);
+				_scene->_sequences.setRange(_globals._sequenceIndexes[6], 1, 4);
+				_scene->_sequences.setSeqPlayer(_globals._sequenceIndexes[6], false);
+				_scene->_sequences.setTrigger(_globals._sequenceIndexes[6], 0, 0, 3);
+				break;
+
+			case 3:
+				_game.syncTimers(2, 0, 1, _globals._sequenceIndexes[6]); 
+				_game._player._visible = true;
+				if (_action.isAction(NOUN_LOCK) || _action.isAction(VERB_UNLOCK))
+					_vm->_dialogs->show(32);
+				else
+					_vm->_dialogs->show(10536);
+
+				_game._player._stepEnabled = true;
+				break;
+
+			default:
+				break;
+			}
+		}
+		_action._inProgress = false;
+		return;
+	}
+
+	if (_action._lookFlag) {
+		if (_globals[kCurrentYear] == 1993)
+			_vm->_dialogs->show(10510);
+		else
+			_vm->_dialogs->show(10511);
+
+		_action._inProgress = false;
+		return;
+	}
+
+	if (_action.isAction(VERB_LOOK) || _action.isAction(VERB_LOOK_AT)) {
+		if (_action.isAction(NOUN_FLOOR)) {
+			_vm->_dialogs->show(10512);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isAction(NOUN_CIRCULAR_STAIRCASE)) {
+			_vm->_dialogs->show(10513);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isAction(NOUN_LANTERN) && _game._objects.isInRoom(OBJ_LANTERN))  {
+			_vm->_dialogs->show(10514);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isAction(NOUN_RED_FRAME) && _game._objects.isInRoom(OBJ_RED_FRAME)){
+			if (_globals[kCurrentYear] == 1881)
+				_vm->_dialogs->show(10530);
+			else
+				_vm->_dialogs->show(10515);
+
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isAction(NOUN_DOOR)) {
+			_vm->_dialogs->show(10516);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isAction(NOUN_WALL)) {
+			_vm->_dialogs->show(10517);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isAction(NOUN_PROP_TABLE)) {
+			_vm->_dialogs->show(10518);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isAction(NOUN_BEAR_PROP)) {
+			if (_globals[kCurrentYear] == 1993)
+				_vm->_dialogs->show(10519);
+			else
+				_vm->_dialogs->show(10538);
+
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isAction(NOUN_ELEPHANT_PROP)) {
+			_vm->_dialogs->show(10520);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isAction(NOUN_COLUMN_PROP)) {
+			if (_globals[kCurrentYear] == 1993)
+				_vm->_dialogs->show(10521);
+			else
+				_vm->_dialogs->show(10539);
+
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isAction(NOUN_THUNDER_MACHINE)) {
+			if (_globals[kCurrentYear] == 1993)
+				_vm->_dialogs->show(10522);
+			else
+				_vm->_dialogs->show(10540);
+
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isAction(NOUN_STAIR_UNIT)) {
+			_vm->_dialogs->show(10523);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isAction(NOUN_PROP)) {
+			_vm->_dialogs->show(10524);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isAction(NOUN_PROPS)) {
+			_vm->_dialogs->show(10525);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isAction(NOUN_EXIT_SIGN)) {
+			_vm->_dialogs->show(10526);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isAction(NOUN_FLATS)) {
+			_vm->_dialogs->show(10527);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isAction(NOUN_HEMP)) {
+			_vm->_dialogs->show(10528);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isAction(NOUN_PIPE)) {
+			_vm->_dialogs->show(10529);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isAction(NOUN_GRAFFITI)) {
+			_vm->_dialogs->show(10531);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isAction(NOUN_LIGHT_FIXTURE)) {
+			_vm->_dialogs->show(10535);
+			_action._inProgress = false;
+			return;
+		}
+	}
+
+	if (_action.isAction(VERB_TALK_TO, NOUN_BEAR_PROP)) {
+		_vm->_dialogs->show(10532);
+		_action._inProgress = false;
+		return;
+	}
+
+	if (_action.isAction(VERB_TAKE, NOUN_BEAR_PROP)) {
+		_vm->_dialogs->show(10533);
+		_action._inProgress = false;
+		return;
+	}
+
+	if (_action.isAction(VERB_CLOSE, NOUN_DOOR)) {
+		_vm->_dialogs->show(10534);
+		_action._inProgress = false;
+		return;
+	}
+}
+
+void Scene105::preActions() {
+  if (_action.isAction(VERB_WALK_THROUGH, NOUN_DOOR_TO_PIT))
+    _game._player._walkOffScreenSceneId = 102;
+
+  if (_action.isAction(VERB_OPEN, NOUN_DOOR) || _action.isAction(VERB_UNLOCK, NOUN_DOOR) || _action.isAction(NOUN_LOCK, NOUN_DOOR))
+	  _game._player.walk(Common::Point(33, 128), FACING_NORTHWEST);
 }
 
 /*------------------------------------------------------------------------*/
