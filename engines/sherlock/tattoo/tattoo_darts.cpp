@@ -89,6 +89,7 @@ void Darts::playDarts(GameType gameType) {
 	// Load dart graphics and initialize values
 	loadDarts();
 	initDarts();
+	events.hideCursor();
 
 	while (!done && !_vm->shouldQuit()) {
 		int roundStart, score;
