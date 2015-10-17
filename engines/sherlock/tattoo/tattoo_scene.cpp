@@ -94,16 +94,14 @@ bool TattooScene::loadScene(const Common::String &filename) {
 	setNPCPath(WATSON);
 
 	// Handle loading music for the scene
-	if (music._musicOn) {
-		if (talk._scriptMoreFlag != 1 && talk._scriptMoreFlag != 3)
-			music._nextSongName = Common::String::format("res%02d", _currentScene);
+	if (talk._scriptMoreFlag != 1 && talk._scriptMoreFlag != 3)
+		music._nextSongName = Common::String::format("res%02d", _currentScene);
 
-		// If it's a new song, then start it up
-		if (music._currentSongName.compareToIgnoreCase(music._nextSongName)) {
-			if (music.loadSong(music._nextSongName)) {
-				if (music._musicOn)
-					music.startSong();
-			}
+	// If it's a new song, then start it up
+	if (music._currentSongName.compareToIgnoreCase(music._nextSongName)) {
+		if (music.loadSong(music._nextSongName)) {
+			if (music._musicOn)
+				music.startSong();
 		}
 	}
 
