@@ -1,0 +1,234 @@
+# LANGUAGE translation for ResidualVM.
+# Copyright (C) 2015 ResidualVM Team
+# This file is distributed under the same license as the ResidualVM package.
+# Lothar Serra Mari <scummvm@rootfather.de>, 2015.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: ResidualVM 0.3.0git\n"
+"Report-Msgid-Bugs-To: https://github.com/residualvm/residualvm/issues\n"
+"POT-Creation-Date: 2015-10-17 09:10+0000\n"
+"PO-Revision-Date: 2015-10-17 12:29+0200\n"
+"Last-Translator: Lothar Serra Mari <scummvm@rootfather.de>\n"
+"Language-Team: Lothar Serra Mari <scummvm@rootfather.de>\n"
+"Language: de\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=ISO-8859-1\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 1.8.5\n"
+
+#: gui/launcher.cpp:630 backends/platform/sdl/macosx/appmenu_osx.mm:95
+msgid "Quit ResidualVM"
+msgstr "ResidualVM beenden"
+
+#: gui/launcher.cpp:631 backends/platform/sdl/macosx/appmenu_osx.mm:69
+msgid "About ResidualVM"
+msgstr "Über ResidualVM"
+
+#: gui/launcher.cpp:632
+msgid "Change global ResidualVM options"
+msgstr "Globale ResidualVM-Optionen ändern"
+
+#: gui/launcher.cpp:845
+msgid "ResidualVM couldn't open the specified directory!"
+msgstr "ResidualVM kann das gewählte Verzeichnis nicht öffnen!"
+
+#: gui/launcher.cpp:857
+msgid "ResidualVM could not find any game in the specified directory!"
+msgstr "ResidualVM kann kein Spiel im gewählten Verzeichnis finden!"
+
+#: gui/launcher.cpp:1056
+msgid ""
+"ResidualVM could not find any engine capable of running the selected game!"
+msgstr "ResidualVM kann keine für diese Spiel geeignete Engine finden!"
+
+#: gui/options.cpp:793
+msgid "Preserve aspect ratio"
+msgstr "Seitenverhältnis beibehalten"
+
+#: gui/options.cpp:793
+msgid "Preserve the aspect ratio in fullscreen mode"
+msgstr "Seitenverhältnis im Vollbildmodus beibehalten"
+
+#: gui/options.cpp:795
+msgid "Software Rendering"
+msgstr "Software-Rendering"
+
+#: gui/options.cpp:795
+msgid "Enable software rendering"
+msgstr "Software-Rendering aktivieren"
+
+#: gui/options.cpp:1243
+msgid "Language of ResidualVM GUI"
+msgstr "Sprache der ResidualVM-Oberfläche"
+
+#: gui/options.cpp:1402
+msgid "You have to restart ResidualVM before your changes will take effect."
+msgstr ""
+"Sie müssen ResidualVM neu starten, damit die Änderungen wirksam werden."
+
+#: engines/advancedDetector.cpp:318
+msgid ""
+"Please, report the following data to the ResidualVM team along with name"
+msgstr ""
+"Bitte melden Sie die folgenden Daten an das ResidualVM-Team, zusammen mit "
+"dem Namen"
+
+#: engines/engine.cpp:481
+msgid ""
+"WARNING: The game you are about to start is not yet fully supported by "
+"ResidualVM. As such, it is likely to be unstable, and any saves you make "
+"might not work in future versions of ResidualVM."
+msgstr ""
+"WARNUNG: Das Spiel, welches Sie starten wollen, wird noch nicht vollständig "
+"von ResidualVM unterstützt. Somit ist es wahrscheinlich, dass es instabil "
+"ist und jegliche Spielstände, die Sie erstellen, könnten in zukünftigen "
+"Versionen von ResidualVM nicht mehr funktionieren."
+
+#: backends/platform/sdl/macosx/appmenu_osx.mm:77
+msgid "Hide ResidualVM"
+msgstr "ResidualVM verstecken"
+
+#: engines/myst3/myst3.cpp:348
+msgid ""
+"This version of Myst III is encrypted with a copy-protection\n"
+"preventing ResidualVM from reading required data.\n"
+"Please replace your 'M3.exe' file with the one from the official update\n"
+"corresponding to your game's language and redetect the game.\n"
+"These updates don't contain the copy-protection and can be downloaded from\n"
+"http://www.residualvm.org/downloads/"
+msgstr ""
+"Diese Version von Myst III ist mit einem Kopierschutz verschlüsselt,\n"
+"weshalb ResidualVM die nötigen Daten nicht lesen kann.\n"
+"Bitte ersetzen Sie Ihre 'M3.exe'-Datei mit der aus dem offiziellen Update,\n"
+"passend zu der Sprache Ihres Spiels und fügen Sie das Spiel erneut hinzu.\n"
+"Diese Updates beinhalten keinen Kopierschutz und können von\n"
+"http://www.residualvm.org/downloads/ heruntergeladen werden."
+
+#: engines/grim/grim.cpp:285
+#, c-format
+msgid ""
+"ResidualVM found some problems with your game data files.\n"
+"Running ResidualVM nevertheless may cause game bugs or even crashes.\n"
+"Do you still want to run %s?"
+msgstr ""
+"ResidualVM hat Probleme mit Ihren Spiel-Dateien gefunden.\n"
+"Wenn Sie ResidualVM trotzdem starten, kann dies Fehler im Spiel oder "
+"Abstürze verursachen.\n"
+"Möchten Sie %s trotzdem ausführen?"
+
+#: engines/grim/grim.cpp:288
+msgid "Escape From Monkey Island"
+msgstr "Escape From Monkey Island"
+
+#: engines/grim/grim.cpp:288
+msgid "Grim Fandango"
+msgstr "Grim Fandango"
+
+#: engines/grim/md5check.cpp:546
+#, c-format
+msgid "'%s' may be corrupted. MD5: '%s'"
+msgstr "'%s' ist möglicherweise defekt. MD5: '%s'"
+
+#: engines/grim/md5check.cpp:547
+#, c-format
+msgid ""
+"The game data file %s may be corrupted.\n"
+"If you are sure it is not please provide the ResidualVM team the following "
+"code, along with the file name, the language and a description of your game "
+"version (i.e. dvd-box or jewelcase):\n"
+"%s"
+msgstr ""
+"Die Spiel-Datei %s ist möglicherweise defekt.\n"
+"Wenn Sie sicher sind, dass dies nicht der Fall ist, schicken Sie den "
+"folgenden Code an das ResidualVM-Team, zusammen mit Dateinamen, der Sprache "
+"und einer Beschreibung Ihrer Spiele-Version (z.B. DVD-Box oder Jewelcase):\n"
+"%s"
+
+#: engines/grim/md5check.cpp:553
+#, c-format
+msgid "Could not open %s for checking"
+msgstr "Kann %s nicht zur Überprüfung öffnen"
+
+#: engines/grim/md5check.cpp:554
+#, c-format
+msgid ""
+"Could not open the file %s for checking.\n"
+"It may be missing or you may not have the rights to open it.\n"
+"Go to http://wiki.residualvm.org/index.php/Datafiles to see a list of the "
+"needed files."
+msgstr ""
+"Die Datei %s kann nicht zur Überprüfung geöffnet werden.\n"
+"Entweder fehlt die Datei, oder Sie haben nicht die nötigen Rechte, um sie zu "
+"öffnen.\n"
+"Auf http://wiki.residualvm.org/index.php/Datafiles finden Sie eine Liste der "
+"benötigten Dateien."
+
+#: engines/grim/md5checkdialog.cpp:42
+msgid ""
+"ResidualVM will now verify the game data files, to make sure you have the "
+"best gaming experience.\n"
+"This may take a while, please wait.\n"
+"Successive runs will not check them again."
+msgstr ""
+"ResidualVM wird jetzt die Spiel-Dateien überprüfen, um ein optimales "
+"Spielerlebnis sicherzustellen.\n"
+"Dies wird eine Weile dauern - bitte warten.\n"
+"Zukünftig werden sie nicht mehr überprüft."
+
+#: engines/grim/resource.cpp:96
+msgid ""
+"The original patch of Grim Fandango\n"
+"is missing. Please download it from\n"
+"http://www.residualvm.org/downloads/\n"
+"and put it in the game data files directory"
+msgstr ""
+"Der originale Patch von Grim Fandango\n"
+"ist nicht vorhanden. Bitte laden Sie ihn von\n"
+"http://www.residualvm.org/downloads/\n"
+"herunter und kopieren Sie ihn in das Verzeichnis\n"
+"mit den Spiel-Dateien."
+
+#: engines/grim/resource.cpp:101
+msgid ""
+"The original patch of Escape from Monkey Island is missing. \n"
+"Please download it from http://www.residualvm.org/downloads/\n"
+"and put it in the game data files directory.\n"
+"Pay attention to download the correct version according to the game's "
+"language"
+msgstr ""
+"Der originale Patch von Escape from Monkey Island ist nicht vorhanden. \n"
+"Bitte Laden Sie ihn von http://www.residualvm.org/downloads/ herunter \n"
+"und kopieren Sie ihn in das Verzeichnis mit den Spiel-Dateien.\n"
+"Achten Sie darauf, dass Sie die zur Spiel-Sprache passende Version "
+"herunterladen."
+
+#: engines/grim/resource.cpp:121
+msgid "residualvm-grim-patch.lab not found"
+msgstr "residualvm-grim-patch.lab nicht gefunden"
+
+#: engines/grim/resource.cpp:143
+msgid ""
+"Loading datausr.lab. Please note that the ResidualVM-team doesn't provide "
+"support for using such patches"
+msgstr ""
+"Lade datausr.lab. Bitte beachten Sie, dass das ResidualVM-Team keine "
+"Unterstützung für solche Patches anbietet."
+
+#: engines/grim/resource.cpp:150
+#, c-format
+msgid "%s not found"
+msgstr "%s nicht gefunden"
+
+#: engines/grim/resource.cpp:181
+msgid ""
+"Loading datausr.m4b. Please note that the ResidualVM-team doesn't provide "
+"support for using such patches"
+msgstr ""
+"Lade datausr.m4b. Bitte beachten Sie, dass das ResidualVM-Team keine "
+"Unterstützung für solche Patches anbietet."
+
+#: engines/grim/resource.cpp:188
+msgid "Cannot find game data - check configuration file"
+msgstr "Spiel-Daten nicht gefunden - Konfigurationsdatei überprüfen!"
