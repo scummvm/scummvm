@@ -350,7 +350,8 @@ bool Events::delay(uint32 time, bool interruptable) {
 		g_system->delayMillis(time);
 		bool result = !(interruptable && (kbHit() || _pressed || _vm->shouldQuit()));
 
-		clearEvents();
+		if (interruptable)
+			clearEvents();
 		return result;
 	} else {
 		// For long periods go into a loop where we delay by 10ms at a time and then
