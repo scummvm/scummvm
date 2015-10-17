@@ -561,7 +561,6 @@ void Darts::drawDartThrow(const Common::Point &dartPos, int computer) {
 	Events &events = *_vm->_events;
 	Screen &screen = *_vm->_screen;
 	int cx, cy;
-	int drawX = 0, drawY = 0, oldDrawX = 0, oldDrawY = 0;
 	int xSize = 0, ySize = 0, oldxSize = 0, oldySize = 0;
 	int handOCx = 0, handOCy = 0;
 	int ocx = 0, ocy = 0;
@@ -569,6 +568,7 @@ void Darts::drawDartThrow(const Common::Point &dartPos, int computer) {
 	int delta = 9;
 	int dartNum;
 	int hddy;
+	Common::Point drawPos, oldDrawPos;
 
 	// Draw the animation of the hand throwing the dart first
 	// See which hand animation to use
@@ -608,37 +608,37 @@ void Darts::drawDartThrow(const Common::Point &dartPos, int computer) {
 			xSize = (*_dartGraphics)[dartNum]._width;
 			ySize = (*_dartGraphics)[dartNum]._height;
 
-			ocx = drawX = cx - (*_dartGraphics)[dartNum]._width / 2;
-			ocy = drawY = cy - (*_dartGraphics)[dartNum]._height;
+			ocx = drawPos.x = cx - (*_dartGraphics)[dartNum]._width / 2;
+			ocy = drawPos.y = cy - (*_dartGraphics)[dartNum]._height;
 
 			// Draw dart
-			screen._backBuffer1.transBlitFrom((*_dartGraphics)[dartNum], dartPos);
+			screen._backBuffer1.transBlitFrom((*_dartGraphics)[dartNum], drawPos);
 
-			if (drawX < 0) {
-				xSize += drawX;
+			if (drawPos.x < 0) {
+				xSize += drawPos.x;
 				if (xSize < 0)
 					xSize = 1;
-				drawX = 0;
+				drawPos.x = 0;
 			}
 
-			if (drawY < 0) {
-				ySize += drawY;
+			if (drawPos.y < 0) {
+				ySize += drawPos.y;
 				if (ySize < 0)
 					ySize = 1;
-				drawY = 0;
+				drawPos.y = 0;
 			}
 
 			// Flush the drawn dart to the screen
-			screen.slamArea(drawX, drawY, xSize, ySize);
-			if (oldDrawX != -1)
+			screen.slamArea(drawPos.x, drawPos.y, xSize, ySize);
+			if (oldDrawPos.x != -1)
 				// Flush the erased dart area
-				screen.slamArea(oldDrawX, oldDrawY, oldxSize, oldySize); 
+				screen.slamArea(oldDrawPos.x, oldDrawPos.y, oldxSize, oldySize); 
 
-			screen._backBuffer1.blitFrom(screen._backBuffer2, Common::Point(drawX, drawY), 
-				Common::Rect(drawX, drawY, drawX + xSize, drawY + ySize));
+			screen._backBuffer1.blitFrom(screen._backBuffer2, Common::Point(drawPos.x, drawPos.y), 
+				Common::Rect(drawPos.x, drawPos.y, drawPos.x + xSize, drawPos.y + ySize));
 
-			oldDrawX = drawX;
-			oldDrawY = drawY;
+			oldDrawPos.x = drawPos.x;
+			oldDrawPos.y = drawPos.y;
 			oldxSize = xSize;
 			oldySize = ySize;
 
@@ -652,15 +652,15 @@ void Darts::drawDartThrow(const Common::Point &dartPos, int computer) {
 	screen.slamArea(handOCx, handOCy, handOldxSize, handOldySize);
 
 	// Erase the old dart
-	if (oldDrawX != -1)
-		screen.slamArea(oldDrawX, oldDrawY, oldxSize, oldySize);
+	if (oldDrawPos.x != -1)
+		screen.slamArea(oldDrawPos.x, oldDrawPos.y, oldxSize, oldySize);
 
-	screen._backBuffer1.blitFrom(screen._backBuffer2, Common::Point(drawX, drawY),
-		Common::Rect(drawX, drawY, drawX + xSize, drawY + ySize));
+	screen._backBuffer1.blitFrom(screen._backBuffer2, Common::Point(drawPos.x, drawPos.y),
+		Common::Rect(drawPos.x, drawPos.y, drawPos.x + xSize, drawPos.y + ySize));
 
 	cx = dartPos.x;
 	cy = dartPos.y + 2;
-	oldDrawX = oldDrawY = -1;
+	oldDrawPos.x = oldDrawPos.y = -1;
 
 	for (int idx = 5; idx <= 23; ++idx) {
 		dartNum = idx - 4;
@@ -678,38 +678,37 @@ void Darts::drawDartThrow(const Common::Point &dartPos, int computer) {
 		xSize = (*_dartGraphics)[dartNum]._width;
 		ySize = (*_dartGraphics)[dartNum]._height;
 
-		ocx = drawX = cx - (*_dartGraphics)[dartNum]._width / 2;
-		ocy = drawY = cy - (*_dartGraphics)[dartNum]._height;
+		ocx = drawPos.x = cx - (*_dartGraphics)[dartNum]._width / 2;
+		ocy = drawPos.y = cy - (*_dartGraphics)[dartNum]._height;
 
-		screen._backBuffer1.transBlitFrom((*_dartGraphics)[dartNum], Common::Point(drawX, drawY));
+		screen._backBuffer1.transBlitFrom((*_dartGraphics)[dartNum], Common::Point(drawPos.x, drawPos.y));
 
-		if (drawX < 0) {
-			xSize += drawX;
+		if (drawPos.x < 0) {
+			xSize += drawPos.x;
 			if (xSize < 0)
 				xSize = 1;
-			drawX = 0;
+			drawPos.x = 0;
 		}
 
-		if (drawY < 0) {
-			ySize += drawY;
+		if (drawPos.y < 0) {
+			ySize += drawPos.y;
 			if (ySize < 0)
 				ySize = 1;
-			drawY = 0;
+			drawPos.y = 0;
 		}
 
 		// flush the dart
-		screen.slamArea(drawX, drawY, xSize, ySize);
-		if (oldDrawX != -1)
-			screen.slamArea(oldDrawX, oldDrawY, oldxSize, oldySize);
+		screen.slamArea(drawPos.x, drawPos.y, xSize, ySize);
+		if (oldDrawPos.x != -1)
+			screen.slamArea(oldDrawPos.x, oldDrawPos.y, oldxSize, oldySize);
 
 		if (idx != 23)
-			screen._backBuffer1.blitFrom(screen._backBuffer2, Common::Point(drawX, drawY), 
-				Common::Rect(drawX, drawY, drawX + xSize, drawY + ySize)); // erase dart
+			screen._backBuffer1.blitFrom(screen._backBuffer2, drawPos, 
+				Common::Rect(drawPos.x, drawPos.y, drawPos.x + xSize, drawPos.y + ySize)); // erase dart
 
 		events.wait(1);
 
-		oldDrawX = drawX;
-		oldDrawY = drawY;
+		oldDrawPos = drawPos;
 		oldxSize = xSize;
 		oldySize = ySize;
 	}
