@@ -341,6 +341,10 @@ OpcodeReturn TattooTalk::cmdNextSong(const byte *&str) {
 		music._nextSongName += str[idx];
 	str += 7;
 
+	// WORKAROUND: Original game set wrong music name at the end of the introduction sequence
+	if (_scriptName == "prol80p" && music._nextSongName == "default")
+		music._nextSongName = "01cue90";
+
 	return RET_SUCCESS;
 }
 
