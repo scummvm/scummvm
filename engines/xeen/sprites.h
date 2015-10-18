@@ -50,15 +50,22 @@ private:
 
 	void load(Common::SeekableReadStream &f);
 
+	/**
+	 * Draw the sprite onto the given surface
+	 */
 	void draw(XSurface &dest, int frame, const Common::Point &destPos,
 		const Common::Rect &bounds, int flags = 0, int scale = 0);
 
+	/**
+	 * Draw a sprite frame based on a passed offset into the data stream
+	 */
 	void drawOffset(XSurface &dest, uint16 offset, const Common::Point &pt, 
 		const Common::Rect &bounds, int flags, int scale);
 
-	void setupScaling(int scale, int frameWidth, int frameHeight);
-
-	int getScaledValue(int xy);
+	/**
+	 * Scale a co-ordinate value based on the passed scaling mask
+	 */
+	static uint getScaledVal(int xy, uint16 &scaleMask);
 public:
 	SpriteResource();
 	SpriteResource(const Common::String &filename);
@@ -79,6 +86,9 @@ public:
 	void draw(Window &dest, int frame, const Common::Point &destPos,
 		int flags = 0, int scale = 0);
 
+	/**
+	 * Draw the sprite onto the given surface
+	 */
 	void draw(XSurface &dest, int frame);
 
 	int size() const { return _index.size(); }

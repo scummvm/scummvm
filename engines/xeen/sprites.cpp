@@ -117,6 +117,17 @@ void SpriteResource::clear() {
  */
 void SpriteResource::drawOffset(XSurface &dest, uint16 offset, const Common::Point &pt, 
 		const Common::Rect &bounds, int flags, int scale) {
+	static const uint SCALE_TABLE[] = { 
+		0xFFFF, 0xFFEF, 0xEFEF, 0xEFEE, 0xEEEE, 0xEEAE, 0xAEAE, 0xAEAA,
+		0xAAAA, 0xAA8A, 0x8A8A, 0x8A88, 0x8888, 0x8880, 0x8080, 0x8000
+	};
+	static const int PATTERN_STEPS[] = { 0, 1, 1, 1, 2, 2, 3, 3, 0, -1, -1, -1, -2, -2, -3, -3 };
+
+	uint16 scaleMask = SCALE_TABLE[scale];
+	uint16 scaleMaskX = scaleMask, scaleMaskY = scaleMask;
+	bool flipped = (flags & SPRFLAG_HORIZ_FLIPPED) != 0;
+	int xInc = flipped ? -1 : 1;
+
 	// Get cell header
 	Common::MemoryReadStream f(_data, _filesize);
 	f.seek(offset);
@@ -125,62 +136,65 @@ void SpriteResource::drawOffset(XSurface &dest, uint16 offset, const Common::Poi
 	int yOffset = f.readUint16LE();
 	int height = f.readUint16LE();
 
-	// TODO: I don't currently know the algorithm the original used for scaling.
-	// This is a best fit estimate that every increment of the scale field
-	// reduces the size of a sprite by approximately 6.6%
-	int newScale = MAX(100.0 - 6.6 * scale, 0.0);
-	if (newScale == 0)
-		return;
-	setupScaling(newScale, xOffset + width, yOffset + height);
-
-	Common::Point destPos = pt;
-	destPos.x += (xOffset + width - _scaledWidth) / 2;
-
-	bool flipped = (flags & SPRFLAG_HORIZ_FLIPPED) != 0;
-	int xInc = flipped ? -1 : 1;
-
+	// Figure out drawing x, y
+	Common::Point destPos;
+	destPos.x = pt.x + getScaledVal(xOffset, scaleMaskX);
+	destPos.x += (width - getScaledVal(width, scaleMaskX)) / 2;
+	
+	destPos.y = pt.y + getScaledVal(yOffset, scaleMaskY);
+	
+	// If the flags allow the dest surface to be resized, ensure dest surface is big enough
 	if (flags & SPRFLAG_RESIZE) {
 		if (dest.w < (xOffset + width) || dest.h < (yOffset + height))
 			dest.create(xOffset + width, yOffset + height);
 	}
-	// The pattern steps used in the pattern command
-	const int patternSteps[] = { 0, 1, 1, 1, 2, 2, 3, 3, 0, -1, -1, -1, -2, -2, -3, -3 };
+	
+	uint16 scaleMaskXCopy = scaleMaskX;
+	Common::Rect drawBounds;
+	drawBounds.left = SCREEN_WIDTH;
+	drawBounds.top = SCREEN_HEIGHT;
+	drawBounds.right = drawBounds.bottom = 0;
 
 	// Main loop
-	int opr1, opr2;
-	int32 pos;
-	int yIndex = yOffset;
-	int yPos = destPos.y + getScaledValue(yOffset);
-	for (int yCtr = 0, byteCount = 0; yCtr < height; ++yCtr, ++yIndex, byteCount = 0) {
+	for (int yCtr = height; yCtr > 0; --yCtr) {
 		// The number of bytes in this scan line
 		int lineLength = f.readByte();
 
 		if (lineLength == 0) {
 			// Skip the specified number of scan lines
 			int numLines = f.readByte();
-			for (int idx = 0; idx < numLines; ++idx, ++yIndex, ++yCtr) {
-				if (_lineDist[yIndex])
-					++yPos;
-			}
-		} else if (destPos.y < bounds.top || yPos >= bounds.bottom 
-				|| !_lineDist[yIndex]) {
+			destPos.y += getScaledVal(numLines, scaleMaskY);
+			yCtr -= numLines;
+			continue;
+		}
+
+		// Roll the scale mask 
+		uint bit = (scaleMaskY >> 15) & 1;
+		scaleMaskY = ((scaleMaskY & 0x7fff) << 1) + bit;
+		
+		if (!bit) {
+			// Not a line to be drawn due to scaling down
+			f.skip(lineLength);
+		} else if (destPos.y < bounds.top || destPos.y >= bounds.bottom) {
 			// Skip over the bytes of the line
 			f.skip(lineLength);
+			destPos.y++;
 		} else {
-			const byte *lineStartP = (const byte *)dest.getBasePtr(bounds.left, yPos);
-			const byte *lineEndP = (const byte *)dest.getBasePtr(bounds.right, yPos);
+			scaleMaskX = scaleMaskXCopy;
+			int xOffset = f.readByte();
+			
+			// Initialize the array to hold the temporary data for the line. We do this to make it simpler
+			// to handle both deciding which pixels to draw in a scaled image, as well as when images
+			// have been horizontally flipped
+			int tempLine[SCREEN_WIDTH];
+			Common::fill(&tempLine[0], &tempLine[SCREEN_WIDTH], -1);
+			int *lineP = flipped ? &tempLine[width - 1 - xOffset] : &tempLine[xOffset];
 
-			// Skip the transparent pixels at the beginning of the scan line
-			int xPos = f.readByte() + xOffset; ++byteCount;
-			int xAmt = getScaledValue(flipped ? xOffset + width - xPos : xPos);
-			int xIndex = 0;
-
-			byte *destP = (byte *)dest.getBasePtr(destPos.x + xAmt, yPos);
-			++yPos;
-
-			while (byteCount < lineLength) {
-				// The next byte is an opcode that determines what 
-				// operators are to follow and how to interpret them.
+			// Build up the line
+			int byteCount, opr1, opr2;
+			int32 pos;
+			for (byteCount = 1; byteCount < lineLength; ) {
+				// The next byte is an opcode that determines what operators are to follow and how to interpret them.
 				int opcode = f.readByte(); ++byteCount;
 
 				// Decode the opcode
@@ -190,26 +204,18 @@ void SpriteResource::drawOffset(XSurface &dest, uint16 offset, const Common::Poi
 				switch (cmd) {
 				case 0:   // The following len + 1 bytes are stored as indexes into the color table.
 				case 1:   // The following len + 33 bytes are stored as indexes into the color table.
-					for (int i = 0; i < opcode + 1; ++i, ++xPos) {
+					for (int i = 0; i < opcode + 1; ++i, ++byteCount) {
 						byte b = f.readByte();
-						++byteCount;
-
-						if (_lineDist[xIndex++]) {
-							if (destP >= lineStartP && destP < lineEndP)
-								*destP = b;
-							destP += xInc;
-						}
+						*lineP = b;
+						lineP += xInc;
 					}
 					break;
 
 				case 2:   // The following byte is an index into the color table, draw it len + 3 times.
 					opr1 = f.readByte(); ++byteCount;
-					for (int i = 0; i < len + 3; ++i, ++xPos) {
-						if (_lineDist[xIndex++]) {
-							if (destP >= lineStartP && destP < lineEndP)
-								*destP = opr1;
-							destP += xInc;
-						}
+					for (int i = 0; i < len + 3; ++i) {
+						*lineP = opr1;
+						lineP += xInc;
 					}
 					break;
 
@@ -218,13 +224,9 @@ void SpriteResource::drawOffset(XSurface &dest, uint16 offset, const Common::Poi
 					pos = f.pos();
 					f.seek(-opr1, SEEK_CUR);
 
-					for (int i = 0; i < len + 4; ++i, ++xPos) {
-						byte b = f.readByte();
-						if (_lineDist[xIndex++]) {
-							if (destP >= lineStartP && destP < lineEndP)
-								*destP = b;
-							destP += xInc;
-						}
+					for (int i = 0; i < len + 4; ++i) {
+						*lineP = f.readByte();
+						lineP += xInc;
 					}
 
 					f.seek(pos, SEEK_SET);
@@ -233,31 +235,16 @@ void SpriteResource::drawOffset(XSurface &dest, uint16 offset, const Common::Poi
 				case 4:   // The following two bytes are indexes into the color table, draw the pair len + 2 times.
 					opr1 = f.readByte(); ++byteCount;
 					opr2 = f.readByte(); ++byteCount;
-					for (int i = 0; i < len + 2; ++i, xPos += 2) {
-						if (destP < lineStartP || destP >= (lineEndP - 1)) {
-							if (_lineDist[xIndex++])
-								destP += xInc;
-							if (_lineDist[xIndex++])
-								destP += xInc;
-						} else {
-							if (_lineDist[xIndex++]) {
-								*destP = opr1;
-								destP += xInc;
-							}
-							if (_lineDist[xIndex++]) {
-								*destP = opr2;
-								destP += xInc;
-							}
-						}
+					for (int i = 0; i < len + 2; ++i) {
+						*lineP = opr1;
+						lineP += xInc;
+						*lineP = opr2;
+						lineP += xInc;
 					}
 					break;
 
-				case 5:   // Skip len + 1 pixels filling them with the transparent color.
-					for (int idx = 0; idx < (len + 1); ++idx) {
-						if (_lineDist[xIndex++])
-							destP += xInc;
-						++xPos;
-					}
+				case 5:   // Skip len + 1 pixels
+					lineP += len + 1;
 					break;
 
 				case 6:   // Pattern command.
@@ -267,30 +254,54 @@ void SpriteResource::drawOffset(XSurface &dest, uint16 offset, const Common::Poi
 					cmd = (opcode >> 2) & 0x0E;
 
 					opr1 = f.readByte(); ++byteCount;
-					for (int i = 0; i < len + 3; ++i, ++xPos) {
-						if (_lineDist[xIndex++]) {
-							if (destP >= lineStartP && destP < lineEndP)
-								*destP = opr1;
-							destP += xInc;
-						}
-						opr1 += patternSteps[cmd + (i % 2)];
+					for (int i = 0; i < len + 3; ++i) {
+						*lineP = opr1;
+						lineP += xInc;
+						opr1 += PATTERN_STEPS[cmd + (i % 2)];
 					}
 					break;
+
 				default:
 					break;
 				}
 			}
-
 			assert(byteCount == lineLength);
+
+			drawBounds.top = MIN(drawBounds.top, destPos.y);
+			drawBounds.bottom = MAX(drawBounds.bottom, destPos.y);
+
+			// Handle drawing out the line
+			byte *destP = (byte *)dest.getBasePtr(destPos.x, destPos.y);
+			int16 xp = destPos.x;
+			lineP = &tempLine[0];
+
+			for (int xCtr = 0; xCtr < width; ++xCtr, ++lineP) {
+				bit = (scaleMaskX >> 15) & 1;
+				scaleMaskX = ((scaleMaskX & 0x7fff) << 1) + bit;
+
+				if (bit) {
+					if (*lineP != -1 && xp >= bounds.left && xp < bounds.right) {
+						*destP = (byte)*lineP;
+						drawBounds.left = MIN(drawBounds.left, xp);
+						drawBounds.right = MAX(drawBounds.right, xp);
+					}
+
+					++destP;
+					++xp;
+				}
+			}
+
+			++destPos.y;
 		}
 	}
-	
-	Common::Rect r(Common::Rect(
-		destPos.x + getScaledValue(xOffset), destPos.y + getScaledValue(yOffset),
-		destPos.x + getScaledValue(xOffset + width), destPos.y + getScaledValue(yOffset + height)));
-	r.clip(Common::Rect(0, 0, dest.w, dest.h));
-	if (!r.isEmpty())
-		dest.addDirtyRect(r);
+	dest.addDirtyRect(Common::Rect(0, 0, dest.w, dest.h));
+	/*
+	if (drawBounds.isValidRect()) {
+		drawBounds.clip(Common::Rect(0, 0, dest.w, dest.h));
+		if (!drawBounds.isEmpty())
+			dest.addDirtyRect(drawBounds);
+	}
+	*/
 }
 
 void SpriteResource::draw(XSurface &dest, int frame, const Common::Point &destPos,
@@ -303,9 +314,6 @@ void SpriteResource::draw(Window &dest, int frame, const Common::Point &destPos,
 	draw(dest, frame, destPos, dest.getBounds(), flags, scale);
 }
 
-/**
- * Draw the sprite onto the given surface
- */
 void SpriteResource::draw(XSurface &dest, int frame, const Common::Point &destPos, 
 		const Common::Rect &bounds, int flags, int scale) {
 	// TODO: TO test when I find sprites using scale values and flags
@@ -318,47 +326,22 @@ void SpriteResource::draw(XSurface &dest, int frame, const Common::Point &destPo
 		drawOffset(dest, _index[frame]._offset2, destPos, bounds, flags, scale);
 }
 
-/**
- * Draw the sprite onto the given surface
- */
 void SpriteResource::draw(XSurface &dest, int frame) {
 	draw(dest, frame, Common::Point());
 }
 
-void SpriteResource::setupScaling(int scale, int frameWidth, int frameHeight) {
-	int highestDim = MAX(frameWidth, frameHeight);
-	int distCtr = 0;
-	int distIndex = 0;
-	_scaledWidth = _scaledHeight = 0;
+uint SpriteResource::getScaledVal(int xy, uint16 &scaleMask) {
+	if (!xy)
+		return 0;
 
-	do {
-		distCtr += scale;
-		if (distCtr < 100) {
-			_lineDist[distIndex] = false;
-		} else {
-			_lineDist[distIndex] = true;
-			distCtr -= 100;
-
-			if (distIndex < frameWidth)
-				++_scaledWidth;
-
-			if (distIndex < frameHeight)
-				++_scaledHeight;
-		}
-	} while (++distIndex < highestDim);
-}
-
-/**
- * Returns a scaled value based on a passed in x or y distance
- */
-int SpriteResource::getScaledValue(int xy) {
-	int newVal = 0;
+	uint result = 0;
 	for (int idx = 0; idx < xy; ++idx) {
-		if (_lineDist[idx])
-			++newVal;
+		uint bit = (scaleMask >> 15) & 1;
+		scaleMask = ((scaleMask & 0x7fff) << 1) + bit;
+		result += bit;
 	}
-
-	return newVal;
+	
+	return result;
 }
 
 } // End of namespace Xeen
