@@ -188,8 +188,8 @@ void Scene101::enter() {
 		_globals._animationIndexes[1] = _scene->loadAnimation(formAnimName('b', 9), 1);
 		_globals._animationIndexes[0] = _scene->loadAnimation(formAnimName('b', 8), 1);
 
-		_anim0Running  = true;
-		_anim1Running  = true;
+		_anim0Running = true;
+		_anim1Running = true;
 
 		_brieAnimId = _scene->_dynamicHotspots.add(NOUN_MONSIEUR_BRIE, VERB_WALKTO, SYNTAX_SINGULAR_MASC, EXT_NONE, Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots[_brieAnimId]._articleNumber = PREP_ON;
@@ -470,7 +470,7 @@ void Scene101::handleAnimation0() {
 			break;
 
 		case 53:
-			_anim0Running    = false;
+			_anim0Running = false;
 			_scene->freeAnimation(0);
 			break;
 
@@ -903,7 +903,7 @@ void Scene103::enter() {
 	adjustRails(_scene->_initialVariant);
 
 	_scene->_hotspots.activate(NOUN_JACQUES, false);
-	_scene->_hotspots.activate(NOUN_KEY,  false);
+	_scene->_hotspots.activate(NOUN_KEY, false);
 
 	_vm->_gameConv->get(12);
 
@@ -1739,7 +1739,7 @@ void Scene103::actions() {
 	}
 
 	if (_action.isAction(VERB_CLIMB_THROUGH, NOUN_TRAP_DOOR) || _climbThroughTrapFl) {
-		if ((_standPosition == 2) && (_globals[kTrapDoorStatus] == 0))  {
+		if ((_standPosition == 2) && (_globals[kTrapDoorStatus] == 0)) {
 			switch (_game._trigger) {
 			case 0:
 			case 120:
@@ -1806,14 +1806,14 @@ void Scene103::actions() {
 			switch (_game._trigger) {
 			case 0:
 				_globals._animationIndexes[1] = _scene->loadAnimation(formAnimName('l', 1), 1);
-				_anim1ActvFl   = true;
+				_anim1ActvFl = true;
 				_game._player._visible = false;
 				_game._player._stepEnabled = false;
 				_game.syncTimers(3, _globals._animationIndexes[1], 2, 0);
 				break;
 
 			case 1:
-				_anim1ActvFl    = false;
+				_anim1ActvFl = false;
 				_game._player._visible = true;
 				_globals[kTrapDoorStatus] = 0;
 				_game._player._stepEnabled = true;
@@ -2276,7 +2276,7 @@ void Scene103::climbLeftStairs() {
 		return;
 
 	_lastStairFrame = _scene->getAnimFrame(_globals._animationIndexes[5]);
-	int stairs_reset_frame  = -1;
+	int stairs_reset_frame = -1;
 
 	if (_lastStairFrame == 34) {
 		stairs_reset_frame = 33;
@@ -2980,7 +2980,7 @@ void Scene104::processConversations() {
 		_vm->_gameConv->setInterlocutorTrigger(75);
 		_vm->_gameConv->setHeroTrigger(79);
 		interlocutorTriggerFl = true;
-		heroTriggerFl  = true;
+		heroTriggerFl = true;
 		break;
 
 	case 23:
@@ -3273,10 +3273,10 @@ void Scene104::handleCoupleAnimations() {
 			if (_womanTalkCount > 15) {
 				if (_needToGetUp) {
 					_coupleStatus = 6;
-					resetFrame   = 1;
+					resetFrame = 1;
 				} else {
 					_coupleStatus = 11;
-					resetFrame   = 0;
+					resetFrame = 0;
 				}
 			}
 		}
@@ -3311,6 +3311,9 @@ void Scene104::handleCoupleAnimations() {
 				_coupleStatus = 3;
 			else
 				_coupleStatus = 1;
+			break;
+
+		default:
 			break;
 		}
 
@@ -3630,7 +3633,7 @@ void Scene105::enter() {
 	_globals._spriteIndexes[7] = _scene->_sprites.addSprites(formAnimName('a', 0), false);
 	_globals._spriteIndexes[8] = _scene->_sprites.addSprites(formAnimName('a', 1), false);
 	if (_globals[kCurrentYear] == 1993)
-		_globals._spriteIndexes[3]       = _scene->_sprites.addSprites(formAnimName('z', -1), false);
+		_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('z', -1), false);
 
 	if ((_globals[kCurrentYear] == 1881) && (!_globals[kHintThatDaaeIsHome2])) {
 		if ((_globals[kJacquesNameIsKnown] == 2) && (_globals[kMadameNameIsKnown] == 2) &&
@@ -3642,7 +3645,7 @@ void Scene105::enter() {
 	}
 
 	if ((_game._objects.isInRoom(OBJ_LANTERN)) && (_globals[kCurrentYear] == 1881)) {
-		_globals._spriteIndexes[0]  = _scene->_sprites.addSprites(formAnimName('x', 0), false);
+		_globals._spriteIndexes[0] = _scene->_sprites.addSprites(formAnimName('x', 0), false);
 		_globals._sequenceIndexes[0] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[0], false, 1);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[0], 14);
 	} else {
@@ -3650,7 +3653,7 @@ void Scene105::enter() {
 	}
 
 	if (_game._objects.isInRoom(OBJ_RED_FRAME)) {
-		_globals._spriteIndexes[1]  = _scene->_sprites.addSprites(formAnimName('x', 1), false);
+		_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('x', 1), false);
 		_globals._sequenceIndexes[1] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[1], false, 1);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 14);
 	} else {
@@ -3711,12 +3714,12 @@ void Scene105::step() {
 	switch (_game._trigger) {
 	case 60:
 		_scene->deleteSequence(_globals._sequenceIndexes[2]);
-		_globals._sequenceIndexes[2] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[2], false, 8, 1);   
+		_globals._sequenceIndexes[2] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[2], false, 8, 1);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 10);
 		_scene->_sequences.setRange(_globals._sequenceIndexes[2], 1, 8);
 		_scene->_sequences.setTrigger(_globals._sequenceIndexes[2], 0, 0, 61);
 		_vm->_sound->command(66);
-		break; 
+		break;
 
 	case 61:
 		_vm->_sound->command(25);
@@ -3827,7 +3830,7 @@ void Scene105::actions() {
 			}
 
 			_game._player._stepEnabled = false;
-			_game._player._visible = false;  
+			_game._player._visible = false;
 			_globals._sequenceIndexes[5] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[5], true, 5, 2);
 			_scene->_sequences.setRange(_globals._sequenceIndexes[5], 1, 5);
 			_scene->_sequences.setSeqPlayer(_globals._sequenceIndexes[5], true);
@@ -3843,7 +3846,7 @@ void Scene105::actions() {
 			break;
 
 		case 2:
-			_game.syncTimers(2, 0, 1, _globals._sequenceIndexes[5]); 
+			_game.syncTimers(2, 0, 1, _globals._sequenceIndexes[5]);
 			_game._player._visible = true;
 			_scene->_sequences.setTimingTrigger(20, 3);
 			break;
@@ -3866,7 +3869,7 @@ void Scene105::actions() {
 		case (0):
 			_globals[kPlayerScore] += 5;
 			_game._player._stepEnabled = false;
-			_game._player._visible = false;  
+			_game._player._visible = false;
 			_globals._sequenceIndexes[6] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[6], true, 5, 2);
 			_scene->_sequences.setRange(_globals._sequenceIndexes[6], 1, 4);
 			_scene->_sequences.setSeqPlayer(_globals._sequenceIndexes[6], true);
@@ -3882,7 +3885,7 @@ void Scene105::actions() {
 			break;
 
 		case 2:
-			_game.syncTimers(2, 0, 1, _globals._sequenceIndexes[6]); 
+			_game.syncTimers(2, 0, 1, _globals._sequenceIndexes[6]);
 			_game._player._visible = true;
 			_scene->_sequences.setTimingTrigger(20, 3);
 			break;
@@ -3905,7 +3908,7 @@ void Scene105::actions() {
 			switch (_game._trigger) {
 			case (0):
 				_game._player._stepEnabled = false;
-				_game._player._visible = false;  
+				_game._player._visible = false;
 				_globals._sequenceIndexes[6] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[6], true, 5, 2);
 				_scene->_sequences.setRange(_globals._sequenceIndexes[6], 1, 4);
 				_scene->_sequences.setSeqPlayer(_globals._sequenceIndexes[6], true);
@@ -3925,17 +3928,17 @@ void Scene105::actions() {
 			case 65:
 				_vm->_sound->command(24);
 				_scene->deleteSequence(_globals._sequenceIndexes[2]);
-				_globals._sequenceIndexes[2] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[2], false, 8, 1);   
+				_globals._sequenceIndexes[2] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[2], false, 8, 1);
 				_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 14);
 				_scene->_sequences.setRange(_globals._sequenceIndexes[2], 1, 8);
 				_scene->_sequences.setTrigger(_globals._sequenceIndexes[2], 0, 0, 66);
 				_vm->_sound->command(66);
-				break; 
+				break;
 
 			case 66: {
 				int tmpIdx = _globals._sequenceIndexes[2];
 				_globals._sequenceIndexes[2] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[2], false, 8);
-				_game.syncTimers(1, _globals._sequenceIndexes[2], 1, tmpIdx); 
+				_game.syncTimers(1, _globals._sequenceIndexes[2], 1, tmpIdx);
 				_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 14);
 				_game._player.walk(Common::Point(0, 111), FACING_NORTHWEST);
 				}
@@ -3948,7 +3951,7 @@ void Scene105::actions() {
 			switch (_game._trigger) {
 			case (0):
 				_game._player._stepEnabled = false;
-				_game._player._visible = false;  
+				_game._player._visible = false;
 				_globals._sequenceIndexes[6] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[6], true, 5, 1);
 				_scene->_sequences.setRange(_globals._sequenceIndexes[6], 1, 4);
 				_scene->_sequences.setSeqPlayer(_globals._sequenceIndexes[6], true);
@@ -3958,12 +3961,12 @@ void Scene105::actions() {
 			case 1: {
 				int tmpIdx = _globals._sequenceIndexes[6];
 				_globals._sequenceIndexes[6] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[6], true, 4);
-				_game.syncTimers(1, _globals._sequenceIndexes[6], 1, tmpIdx); 
+				_game.syncTimers(1, _globals._sequenceIndexes[6], 1, tmpIdx);
 				_scene->_sequences.setSeqPlayer(_globals._sequenceIndexes[6], false);
 				_vm->_sound->command(73);
 				_scene->_sequences.setTimingTrigger(15, 2);
 				}
-				break; 
+				break;
 
 			case 2:
 				_scene->deleteSequence(_globals._sequenceIndexes[6]);
@@ -3974,7 +3977,7 @@ void Scene105::actions() {
 				break;
 
 			case 3:
-				_game.syncTimers(2, 0, 1, _globals._sequenceIndexes[6]); 
+				_game.syncTimers(2, 0, 1, _globals._sequenceIndexes[6]);
 				_game._player._visible = true;
 				if (_action.isAction(NOUN_LOCK) || _action.isAction(VERB_UNLOCK))
 					_vm->_dialogs->show(32);
@@ -4015,7 +4018,7 @@ void Scene105::actions() {
 			return;
 		}
 
-		if (_action.isAction(NOUN_LANTERN) && _game._objects.isInRoom(OBJ_LANTERN))  {
+		if (_action.isAction(NOUN_LANTERN) && _game._objects.isInRoom(OBJ_LANTERN)) {
 			_vm->_dialogs->show(10514);
 			_action._inProgress = false;
 			return;
@@ -4160,11 +4163,11 @@ void Scene105::actions() {
 }
 
 void Scene105::preActions() {
-  if (_action.isAction(VERB_WALK_THROUGH, NOUN_DOOR_TO_PIT))
-    _game._player._walkOffScreenSceneId = 102;
+	if (_action.isAction(VERB_WALK_THROUGH, NOUN_DOOR_TO_PIT))
+		_game._player._walkOffScreenSceneId = 102;
 
-  if (_action.isAction(VERB_OPEN, NOUN_DOOR) || _action.isAction(VERB_UNLOCK, NOUN_DOOR) || _action.isAction(NOUN_LOCK, NOUN_DOOR))
-	  _game._player.walk(Common::Point(33, 128), FACING_NORTHWEST);
+	if (_action.isAction(VERB_OPEN, NOUN_DOOR) || _action.isAction(VERB_UNLOCK, NOUN_DOOR) || _action.isAction(NOUN_LOCK, NOUN_DOOR))
+		_game._player.walk(Common::Point(33, 128), FACING_NORTHWEST);
 }
 
 /*------------------------------------------------------------------------*/
