@@ -4747,5 +4747,276 @@ void Scene106::preActions() {
 
 /*------------------------------------------------------------------------*/
 
+Scene107::Scene107(MADSEngine *vm) : Scene1xx(vm) {
+}
+
+void Scene107::synchronize(Common::Serializer &s) {
+	Scene1xx::synchronize(s);
+}
+
+void Scene107::setup() {
+	setPlayerSpritesPrefix();
+	setAAName();
+}
+
+void Scene107::enter() {
+	if (_globals[kCurrentYear] == 1993)
+		_globals._spriteIndexes[0] = _scene->_sprites.addSprites(formAnimName('z', -1), false);
+
+	if (_game._objects.isInRoom(OBJ_YELLOW_FRAME)) {
+		_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('f', 0), false);
+		_globals._spriteIndexes[1] = _scene->_sprites.addSprites("*RRD_9", false);
+	}
+
+	if (_game._objects.isInRoom(OBJ_YELLOW_FRAME)) {
+		_globals._sequenceIndexes[2] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[2], false, 1);
+		_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 14);
+	} else {
+		_scene->_hotspots.activate(NOUN_YELLOW_FRAME, false);
+	}
+
+	if (_globals[kCurrentYear] == 1993) {
+		_scene->drawToBackground(_globals._spriteIndexes[0], 1, Common::Point(-32000, -32000), 0, 100);
+		_scene->_hotspots.activate(NOUN_PROP_TABLE, false);
+	} else {
+		_scene->_hotspots.activate(NOUN_HEADSET, false);
+	}
+
+	if (_scene->_priorSceneId == 106) {
+		_game._player._playerPos = Common::Point(276, 73);
+		_game._player._facing = FACING_SOUTHWEST;
+		_game._player.walk(Common::Point(248, 75), FACING_SOUTHWEST);
+	} else if ((_scene->_priorSceneId == 104) || (_scene->_priorSceneId != RETURNING_FROM_LOADING)) {
+		if (_game._player._playerPos.y > 128) {
+			_game._player._playerPos.x = 216;
+			_game._player._facing = FACING_NORTHWEST;
+		} else if (_game._player._playerPos.y > 99) {
+			_game._player._playerPos.x = 127;
+			_game._player._facing = FACING_NORTHWEST;
+		} else {
+			_game._player._playerPos.x = 44;
+			_game._player._facing = FACING_NORTHEAST;
+		}
+		_game._player._playerPos.y = 143;
+	}
+
+	sceneEntrySound();
+}
+
+void Scene107::step() {
+}
+
+void Scene107::actions() {
+	if (_action.isAction(VERB_WALK_ONTO, NOUN_STAGE)) {
+		_scene->_nextSceneId = 104;
+		_action._inProgress = false;
+		return;
+	}
+
+	if (_action.isAction(VERB_WALK, NOUN_BACKSTAGE)) {
+		_scene->_nextSceneId = 106;
+		_action._inProgress = false;
+		return;
+	}
+
+	if (_action.isAction(VERB_TAKE, NOUN_YELLOW_FRAME) && (_game._objects.isInRoom(OBJ_YELLOW_FRAME) || _game._trigger)) {
+		switch (_game._trigger) {
+		case (0):
+			if (_globals[kCurrentYear] == 1881) {
+				int count = 0;
+				if (_game._objects.isInInventory(OBJ_GREEN_FRAME))
+					++count;
+				if (_game._objects.isInInventory(OBJ_RED_FRAME))
+					++count;
+				if (_game._objects.isInInventory(OBJ_BLUE_FRAME))
+					++count;
+
+				if (count < 3)
+					_globals[kPlayerScore] += 5;
+			}
+
+			_game._player._stepEnabled = false;
+			_game._player._visible = false;
+			_globals._sequenceIndexes[1] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[1], false, 5, 2);
+			_scene->_sequences.setRange(_globals._sequenceIndexes[1], 1, 5);
+			_scene->_sequences.setSeqPlayer(_globals._sequenceIndexes[1], true);
+			_scene->_sequences.setTrigger(_globals._sequenceIndexes[1], 2, 5, 1);
+			_scene->_sequences.setTrigger(_globals._sequenceIndexes[1], 0, 0, 2);
+			break;
+
+		case 1:
+			_scene->deleteSequence(_globals._sequenceIndexes[2]);
+			_scene->_hotspots.activate(NOUN_YELLOW_FRAME, false);
+			_game._objects.addToInventory(OBJ_YELLOW_FRAME);
+			_vm->_sound->command(26);
+			break;
+
+		case 2:
+			_game.syncTimers(2, 0, 1, _globals._sequenceIndexes[1]); 
+			_game._player._visible = true;
+			_scene->_sequences.setTimingTrigger(20, 3);
+			break;
+
+		case 3:
+			if (_globals[kCurrentYear] == 1881)
+				_vm->_dialogs->showItem(OBJ_YELLOW_FRAME, 843, 0);
+			else
+				_vm->_dialogs->showItem(OBJ_YELLOW_FRAME, 804, 0);
+
+			_game._player._stepEnabled = true;
+			break;
+
+		default:
+			break;
+		}
+		_action._inProgress = false;
+		return;
+	}
+
+	if (_action._lookFlag) {
+		_vm->_dialogs->show(10710);
+		_action._inProgress = false;
+		return;
+	}
+
+	if (_action.isAction(VERB_LOOK) || _action.isAction(VERB_LOOK_AT)) {
+		if (_action.isAction(NOUN_STAGE)) {
+			_vm->_dialogs->show(10711);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isAction(NOUN_IN_TWO)) {
+			_vm->_dialogs->show(10712);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isAction(NOUN_IN_ONE)) {
+			_vm->_dialogs->show(10713);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isAction(NOUN_CYCLORAMA)) {
+			_vm->_dialogs->show(10714);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isAction(NOUN_COUNTERWEIGHT_SYSTEM)) {
+			_vm->_dialogs->show(10715);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isAction(NOUN_PURCHASE_LINES)) {
+			_vm->_dialogs->show(10716);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isAction(NOUN_LOCKRAIL)) {
+			_vm->_dialogs->show(10717);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isAction(NOUN_STAGE)) {
+			_vm->_dialogs->show(10718);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isAction(NOUN_PROP_TABLE)) {
+			_vm->_dialogs->show(10719);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isAction(NOUN_ACT_CURTAIN)) {
+			_vm->_dialogs->show(10720);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isAction(NOUN_LEG)) {
+			_vm->_dialogs->show(10721);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isAction(NOUN_APRON)) {
+			_vm->_dialogs->show(10722);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isAction(NOUN_PROSCENIUM_ARCH)) {
+			_vm->_dialogs->show(10723);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isAction(NOUN_STAGE)) {
+			_vm->_dialogs->show(10724);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isAction(NOUN_BACKSTAGE)) {
+			_vm->_dialogs->show(10725);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isAction(NOUN_YELLOW_FRAME) && _game._objects.isInRoom(OBJ_YELLOW_FRAME)) {
+			if (_globals[kCurrentYear] == 1881)
+				_vm->_dialogs->show(10727);
+			else
+				_vm->_dialogs->show(10726);
+
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isAction(NOUN_HEADSET)) {
+			_vm->_dialogs->show(10728);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isAction(NOUN_WALL)) {
+			_vm->_dialogs->show(10730);
+			_action._inProgress = false;
+			return;
+		}
+	}
+
+	if (_action.isAction(VERB_TAKE, NOUN_HEADSET)) {
+		_vm->_dialogs->show(10729);
+		_action._inProgress = false;
+		return;
+	}
+
+	if (_action.isAction(VERB_TALK_TO, NOUN_HEADSET)) {
+		_vm->_dialogs->show(10732);
+		_action._inProgress = false;
+		return;
+	}
+
+	if (_action.isAction(VERB_PULL, NOUN_PURCHASE_LINES)) {
+		_vm->_dialogs->show(10731);
+		_action._inProgress = false;
+		return;
+	}
+}
+
+void Scene107::preActions() {
+}
+
+/*------------------------------------------------------------------------*/
+
+
 } // End of namespace Phantom
 } // End of namespace MADS

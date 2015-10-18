@@ -193,8 +193,6 @@ public:
 };
 
 class Scene105 : public Scene1xx {
-private:
-
 public:
 	Scene105(MADSEngine *vm);
 	virtual void synchronize(Common::Serializer &s);
@@ -211,6 +209,20 @@ private:
 	int _sandbagHostpotId;
 public:
 	Scene106(MADSEngine *vm);
+	virtual void synchronize(Common::Serializer &s);
+
+	virtual void setup();
+	virtual void enter();
+	virtual void step();
+	virtual void preActions();
+	virtual void actions();
+};
+
+class Scene107 : public Scene1xx {
+private:
+
+public:
+	Scene107(MADSEngine *vm);
 	virtual void synchronize(Common::Serializer &s);
 
 	virtual void setup();
