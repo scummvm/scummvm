@@ -1303,7 +1303,9 @@ arm-riscos)
 raspberrypi)
 	_host_os=linux
 	_host_cpu=arm
-	_host_alias=arm-linux-gnueabihf
+	# This tuple is the one used by the official Rpi toolchain.
+	# It may change in the future.
+	_host_alias=bcm2708hardfp
 	;;
 caanoo)
 	_host_os=gph-linux
@@ -2549,8 +2551,18 @@ if test -n "$_host"; then
 			_port_mk="backends/platform/dingux/dingux.mk"
 			;;
 		raspberrypi)
-			# For proper cross-compilation, we assume that the cross-building environment provides 
-			# an sdl-config executable with modified prefix pointing to $RPI_ROOT/usr.
+			# This is needed because the official cross compiler doesn't have multiarch enabled
+			# but Raspbian does.
+			# Be careful as it's the linker (LDFLAGS) which must know about sysroot.	
+			# These are needed to build against Raspbian's libSDL even if we don't activate 
+			# dispmanx support. 
+			LDFLAGS="$LDFLAGS --sysroot=$RPI_ROOT"
+			LDFLAGS="$LDFLAGS -B$RPI_ROOT/usr/lib/arm-linux-gnueabihf"
+			LDFLAGS="$LDFLAGS -Xlinker --rpath-link=$RPI_ROOT/usr/lib/arm-linux-gnueabihf"
+			LDFLAGS="$LDFLAGS -Xlinker --rpath-link=$RPI_ROOT/lib/arm-linux-gnueabihf"
+			LDFLAGS="$LDFLAGS -Xlinker --rpath-link=$RPI_ROOT/opt/vc/lib"
+			LDFLAGS="$LDFLAGS -L$RPI_ROOT/opt/vc/lib"
+			LDFLAGS="$LDFLAGS -L/opt/rpi_root/lib/arm-linux-gnueabihf -L$RPI_ROOT/usr/lib -L$RPI_ROOT/opt/vc/lib -lbcm_host -lvcos"
 			_savegame_timestamp=no
 			_eventrec=no
 			_build_scalers=no
@@ -3001,10 +3013,6 @@ case $_backend in
 		DEFINES="$DEFINES -DDISABLE_DOSBOX_OPL"
 		LIBS="$LIBS -lpng"
 		LIBS="$LIBS -Wl,-Map,mapfile.txt"
-		;;
-	raspberrypi)
-		LIBS="$LIBS -L$RPI_ROOT/usr/lib"
-		LIBS="$LIBS -L$RPI_ROOT/usr/lib/arm-linux-gnueabihf"
 		;;
 	samsungtv)
 		DEFINES="$DEFINES -DSAMSUNGTV"
@@ -4074,12 +4082,16 @@ fi
 define_in_config_if_yes "$_opengl" "USE_OPENGL"
 define_in_config_if_yes "$_opengles" "USE_GLES"
 
-# Check if Raspberry Pi dispmanx has been activated. 
+# Check if Raspberry Pi's Dispmanx graphics have been enabled and everything is in place. 
 if test "$_dispmanx" = "yes" ; then
 		echocheck "DispmanX graphics"
 		_use_dispmanx=no
-		DISPMANX_CXXFLAGS="-I$RPI_ROOT/opt/vc/include -I$RPI_ROOT/opt/vc/include/interface/vmcs_host/linux/ -I$RPI_ROOT/opt/vc/include/interface/vcos/pthreads -I$RPI_ROOT/opt/rpi_root/usr/include/SDL"
-		DISPMANX_LIBS="--sysroot=$RPI_ROOT -L$RPI_ROOT/usr/lib -L$RPI_ROOT/opt/vc/lib -lbcm_host -lvcos -lvchiq_arm"
+
+		# These are only needed if, appart from cross-building for Raspberry Pi,
+		# we are activating dispmanx support.
+		DISPMANX_CXXFLAGS="-I$RPI_ROOT/usr/include/arm-linux-gnueabihf -I$RPI_ROOT/opt/vc/include -I$RPI_ROOT/opt/vc/include/interface/vmcs_host/linux -I$RPI_ROOT/opt/vc/include/interface/vcos/pthreads -I$RPI_ROOT/usr/include/SDL"
+		DISPMANX_LIBS="$RPI_LIBS -L/opt/rpi_root/lib/arm-linux-gnueabihf -L$RPI_ROOT/usr/lib -L$RPI_ROOT/opt/vc/lib -lbcm_host -lvcos -lvchiq_arm"
+		
 		cat > $TMPC << EOF
 #include <bcm_host.h>
 
@@ -4094,6 +4106,7 @@ EOF
 			DEFINES="$DEFINES -DRASPBERRYPI"
 			add_line_to_config_mk 'RASPBERRYPI = 1'
 			echo $_use_dispmanx
+		else echo "no"
 		fi
 fi
 
