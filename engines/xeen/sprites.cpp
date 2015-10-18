@@ -294,14 +294,12 @@ void SpriteResource::drawOffset(XSurface &dest, uint16 offset, const Common::Poi
 			++destPos.y;
 		}
 	}
-	dest.addDirtyRect(Common::Rect(0, 0, dest.w, dest.h));
-	/*
+
 	if (drawBounds.isValidRect()) {
 		drawBounds.clip(Common::Rect(0, 0, dest.w, dest.h));
 		if (!drawBounds.isEmpty())
 			dest.addDirtyRect(drawBounds);
 	}
-	*/
 }
 
 void SpriteResource::draw(XSurface &dest, int frame, const Common::Point &destPos,
