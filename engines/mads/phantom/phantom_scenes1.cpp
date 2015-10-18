@@ -5132,7 +5132,7 @@ void Scene108::enter() {
 
 void Scene108::step() {
 	if (_anim0ActvFl)
-		handle_animation_char ();
+		handleCharAnimation ();
 
 	if ((_globals[kWalkerConverse] == 2) || (_globals[kWalkerConverse] == 3)) {
 		++_conversationCount;
@@ -5143,7 +5143,7 @@ void Scene108::step() {
 
 void Scene108::actions() {
 	if (_vm->_gameConv->_running == 2) {
-		process_conversation_charles();
+		handleCharlesConversation();
 		_action._inProgress = false;
 		return;
 	}
@@ -5303,7 +5303,7 @@ void Scene108::actions() {
 void Scene108::preActions() {
 }
 
-void Scene108::handle_animation_char() {
+void Scene108::handleCharAnimation() {
 	if (_scene->_animation[_globals._animationIndexes[0]]->getCurrentFrame() == _charFrame)
 		return;
 
@@ -5502,7 +5502,7 @@ void Scene108::handle_animation_char() {
 	}
 }
 
-void Scene108::process_conversation_charles() {
+void Scene108::handleCharlesConversation() {
 	switch (_action._activeAction._verbId) {
 	case 1:
 	case 25:

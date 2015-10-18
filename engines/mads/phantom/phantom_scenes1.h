@@ -243,8 +243,8 @@ private:
 	int _conversationCount;
 	int _prevShutUpFrame;
 
-	void handle_animation_char();
-	void process_conversation_charles();
+	void handleCharAnimation();
+	void handleCharlesConversation();
 
 public:
 	Scene108(MADSEngine *vm);
