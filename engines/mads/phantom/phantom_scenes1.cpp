@@ -950,46 +950,46 @@ void Scene103::enter() {
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[12], 1);
 		}
 
-		_hotspotPrompt1 = _scene->_dynamicHotspots.add(NOUN_PROMPTERS_STAND, VERB_WALKTO, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(121, 79, 40, 63));
+		_hotspotPrompt1 = _scene->_dynamicHotspots.add(NOUN_PROMPTERS_STAND, VERB_WALKTO, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(121, 79, 121 + 40, 79 + 63));
 		_scene->_dynamicHotspots[_hotspotPrompt1]._articleNumber = PREP_ON;
 		_scene->_dynamicHotspots.setPosition(_hotspotPrompt1, promptPos, promptFacing);
 
-		_hotspotPrompt2 = _scene->_dynamicHotspots.add(NOUN_PROMPTERS_STAND, VERB_WALKTO, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(161, 67, 16, 75));
+		_hotspotPrompt2 = _scene->_dynamicHotspots.add(NOUN_PROMPTERS_STAND, VERB_WALKTO, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(161, 67, 161 + 16, 67 + 75));
 		_scene->_dynamicHotspots[_hotspotPrompt2]._articleNumber = PREP_ON;
 		_scene->_dynamicHotspots.setPosition(_hotspotPrompt2, promptPos, promptFacing);
 
-		_hotspotPrompt3 = _scene->_dynamicHotspots.add(NOUN_PROMPTERS_STAND, VERB_WALKTO, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(177, 90, 18, 52));
+		_hotspotPrompt3 = _scene->_dynamicHotspots.add(NOUN_PROMPTERS_STAND, VERB_WALKTO, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(177, 90, 177 + 18, 90 + 52));
 		_scene->_dynamicHotspots[_hotspotPrompt3]._articleNumber = PREP_ON;
 		_scene->_dynamicHotspots.setPosition(_hotspotPrompt3, promptPos, promptFacing);
 
-		_hotspotPrompt4 = _scene->_dynamicHotspots.add(NOUN_PROMPTERS_STAND, VERB_WALKTO, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(114, 100, 7, 38));
+		_hotspotPrompt4 = _scene->_dynamicHotspots.add(NOUN_PROMPTERS_STAND, VERB_WALKTO, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(114, 100, 114 + 7, 100 + 38));
 		_scene->_dynamicHotspots[_hotspotPrompt4]._articleNumber = PREP_ON;
 		_scene->_dynamicHotspots.setPosition(_hotspotPrompt4, promptPos, promptFacing);
 
-		_hotspotPrompt5 = _scene->_dynamicHotspots.add(NOUN_PROMPTERS_STAND, NOUN_CLIMB, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(121, 49, 40, 30));
+		_hotspotPrompt5 = _scene->_dynamicHotspots.add(NOUN_PROMPTERS_STAND, NOUN_CLIMB, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(121, 49, 121 + 40, 49 + 30));
 		_scene->_dynamicHotspots[_hotspotPrompt5]._articleNumber = PREP_ON;
 		_scene->_dynamicHotspots.setPosition(_hotspotPrompt5, Common::Point(196, 134), FACING_SOUTHWEST);
 		_scene->_dynamicHotspots.setCursor(_hotspotPrompt5, CURSOR_GO_UP);
 
-		_hotspotRightFloor1 = _scene->_dynamicHotspots.add(NOUN_FLOOR, VERB_WALK_ACROSS, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(154, 6, 41, 6));
+		_hotspotRightFloor1 = _scene->_dynamicHotspots.add(NOUN_FLOOR, VERB_WALK_ACROSS, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(154, 6, 154 + 41, 6 + 6));
 		_scene->_dynamicHotspots[_hotspotRightFloor1]._articleNumber = PREP_ON;
 		_scene->_dynamicHotspots.setPosition(_hotspotRightFloor1, Common::Point(171, 142), FACING_NONE);
 
-		_hotspotRightFloor2 = _scene->_dynamicHotspots.add(NOUN_FLOOR, VERB_WALK_ACROSS, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(114, 136, 32, 6));
+		_hotspotRightFloor2 = _scene->_dynamicHotspots.add(NOUN_FLOOR, VERB_WALK_ACROSS, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(114, 136, 114 + 32, 136 + 6));
 		_scene->_dynamicHotspots[_hotspotRightFloor2]._articleNumber = PREP_ON;
 		_scene->_dynamicHotspots.setPosition(_hotspotRightFloor2, Common::Point(127, 140), FACING_NONE);
 
 		if ((_globals[kJacquesStatus] == 0) && (_globals[kCurrentYear] == 1881)) {
 			if (_globals[kJacquesNameIsKnown] >= 1) {
-				_hotspotGentleman = _scene->_dynamicHotspots.add(NOUN_JACQUES, VERB_WALKTO, SYNTAX_SINGULAR_MASC, EXT_NONE, Common::Rect(156, 116, 33, 31));
+				_hotspotGentleman = _scene->_dynamicHotspots.add(NOUN_JACQUES, VERB_WALKTO, SYNTAX_SINGULAR_MASC, EXT_NONE, Common::Rect(156, 116, 156 + 33, 116 + 31));
 				_scene->_dynamicHotspots[_hotspotGentleman]._articleNumber = PREP_ON;
 				_scene->_dynamicHotspots.setPosition(_hotspotGentleman, Common::Point(206, 148), FACING_NORTHWEST);
 			} else {
-				_hotspotGentleman = _scene->_dynamicHotspots.add(NOUN_GENTLEMAN, VERB_WALKTO, SYNTAX_MASC_NOT_PROPER, -1, Common::Rect(156, 116, 33, 31));
+				_hotspotGentleman = _scene->_dynamicHotspots.add(NOUN_GENTLEMAN, VERB_WALKTO, SYNTAX_MASC_NOT_PROPER, -1, Common::Rect(156, 116, 156 + 33, 116 + 31));
 				_scene->_dynamicHotspots[_hotspotGentleman]._articleNumber = PREP_ON;
 				_scene->_dynamicHotspots.setPosition(_hotspotGentleman, Common::Point(206, 148), FACING_NORTHWEST);
 			}
-			int tmpIdx = _scene->_dynamicHotspots.add(NOUN_FLOOR, VERB_WALK_ACROSS, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(149, 140, 13, 7));
+			int tmpIdx = _scene->_dynamicHotspots.add(NOUN_FLOOR, VERB_WALK_ACROSS, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(149, 140, 149 + 13, 140 + 7));
 			_scene->_dynamicHotspots[tmpIdx]._articleNumber = PREP_ON;
 			_scene->_dynamicHotspots.setPosition(tmpIdx, Common::Point(155, 144), FACING_NONE);
 
@@ -1007,23 +1007,23 @@ void Scene103::enter() {
 			_scene->_hotspots.activate(NOUN_JACQUES, true);
 			_scene->_dynamicHotspots.remove(_hotspotRightFloor2);
 
-			int tmpIdx = _scene->_dynamicHotspots.add(NOUN_JACQUES, VERB_WALKTO, SYNTAX_SINGULAR_MASC, EXT_NONE, Common::Rect(114, 132, 30, 10));
+			int tmpIdx = _scene->_dynamicHotspots.add(NOUN_JACQUES, VERB_WALKTO, SYNTAX_SINGULAR_MASC, EXT_NONE, Common::Rect(114, 132, 114 + 30, 132 + 10));
 			_scene->_dynamicHotspots[tmpIdx]._articleNumber = PREP_ON;
 			_scene->_dynamicHotspots.setPosition(tmpIdx, Common::Point(95, 144), FACING_NORTHEAST);
 
-			tmpIdx = _scene->_dynamicHotspots.add(NOUN_FLOOR, VERB_WALK_ACROSS, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(94, 129, 18, 4));
+			tmpIdx = _scene->_dynamicHotspots.add(NOUN_FLOOR, VERB_WALK_ACROSS, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(94, 129, 94 + 18, 129 + 4));
 			_scene->_dynamicHotspots[tmpIdx]._articleNumber = PREP_ON;
 			_scene->_dynamicHotspots.setPosition(tmpIdx, Common::Point(95, 133), FACING_NONE);
 
-			tmpIdx = _scene->_dynamicHotspots.add(NOUN_FLOOR, VERB_WALK_ACROSS, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(94, 132, 3, 9));
+			tmpIdx = _scene->_dynamicHotspots.add(NOUN_FLOOR, VERB_WALK_ACROSS, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(94, 132, 94 + 3, 132 + 9));
 			_scene->_dynamicHotspots[tmpIdx]._articleNumber = PREP_ON;
 			_scene->_dynamicHotspots.setPosition(tmpIdx, Common::Point(93, 135), FACING_NONE);
 
-			tmpIdx = _scene->_dynamicHotspots.add(NOUN_FLOOR, VERB_WALK_ACROSS, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(112, 150, 21, 3));
+			tmpIdx = _scene->_dynamicHotspots.add(NOUN_FLOOR, VERB_WALK_ACROSS, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(112, 150, 112 + 21, 150 + 3));
 			_scene->_dynamicHotspots[tmpIdx]._articleNumber = PREP_ON;
 			_scene->_dynamicHotspots.setPosition(tmpIdx, Common::Point(118, 154), FACING_NONE);
 
-			tmpIdx = _scene->_dynamicHotspots.add(NOUN_FLOOR, VERB_WALK_ACROSS, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(98, 146, 21, 4));
+			tmpIdx = _scene->_dynamicHotspots.add(NOUN_FLOOR, VERB_WALK_ACROSS, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(98, 146, 98 + 21, 146 + 4));
 			_scene->_dynamicHotspots[tmpIdx]._articleNumber = PREP_ON;
 			_scene->_dynamicHotspots.setPosition(tmpIdx, Common::Point(104, 148), FACING_NONE);
 		}
@@ -1032,27 +1032,27 @@ void Scene103::enter() {
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 4);
 		_scene->_sequences.setPosition(_globals._sequenceIndexes[3], Common::Point(37, 139));
 
-		_hotspotPrompt1 = _scene->_dynamicHotspots.add(NOUN_PROMPTERS_STAND, VERB_WALKTO, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(2, 79, 40, 63));
+		_hotspotPrompt1 = _scene->_dynamicHotspots.add(NOUN_PROMPTERS_STAND, VERB_WALKTO, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(2, 79, 2 + 40, 79 + 63));
 		_scene->_dynamicHotspots[_hotspotPrompt1]._articleNumber = PREP_ON;
 		_scene->_dynamicHotspots.setPosition(_hotspotPrompt1, Common::Point(59, 140), FACING_NORTHWEST);
 
-		_hotspotPrompt2 = _scene->_dynamicHotspots.add(NOUN_PROMPTERS_STAND, VERB_WALKTO, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(42, 67, 16, 75));
+		_hotspotPrompt2 = _scene->_dynamicHotspots.add(NOUN_PROMPTERS_STAND, VERB_WALKTO, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(42, 67, 42 + 16, 67 + 75));
 		_scene->_dynamicHotspots[_hotspotPrompt2]._articleNumber = PREP_ON;
 		_scene->_dynamicHotspots.setPosition(_hotspotPrompt2, Common::Point(59, 140), FACING_NORTHWEST);
 
-		_hotspotPrompt3 = _scene->_dynamicHotspots.add(NOUN_PROMPTERS_STAND, VERB_WALKTO, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(58, 90, 18, 52));
+		_hotspotPrompt3 = _scene->_dynamicHotspots.add(NOUN_PROMPTERS_STAND, VERB_WALKTO, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(58, 90, 58 + 18, 90 + 52));
 		_scene->_dynamicHotspots[_hotspotPrompt3]._articleNumber = PREP_ON;
 		_scene->_dynamicHotspots.setPosition(_hotspotPrompt3, Common::Point(59, 140), FACING_NORTHWEST);
 
-		_hotspotPrompt5 = _scene->_dynamicHotspots.add(NOUN_PROMPTERS_STAND, NOUN_CLIMB, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(2, 49, 40, 30));
+		_hotspotPrompt5 = _scene->_dynamicHotspots.add(NOUN_PROMPTERS_STAND, NOUN_CLIMB, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(2, 49, 2 + 40, 49 + 30));
 		_scene->_dynamicHotspots[_hotspotPrompt5]._articleNumber = PREP_ON;
 		_scene->_dynamicHotspots.setPosition(_hotspotPrompt5, Common::Point(79, 132), FACING_SOUTHWEST);
 		_scene->_dynamicHotspots.setCursor(_hotspotPrompt5, CURSOR_GO_UP);
 
-		_hotspotLeftFloor1 = _scene->_dynamicHotspots.add(NOUN_FLOOR, VERB_WALK_ACROSS, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(35, 137, 40, 5));
+		_hotspotLeftFloor1 = _scene->_dynamicHotspots.add(NOUN_FLOOR, VERB_WALK_ACROSS, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(35, 137, 35 + 40, 137 + 5));
 		_scene->_dynamicHotspots[_hotspotLeftFloor1]._articleNumber = PREP_ON;
 		_scene->_dynamicHotspots.setPosition(_hotspotLeftFloor1, Common::Point(59, 140), FACING_NONE);
-		_hotspotLeftFloor2 = _scene->_dynamicHotspots.add(NOUN_FLOOR, VERB_WALK_ACROSS, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(76, 129, 6, 6));
+		_hotspotLeftFloor2 = _scene->_dynamicHotspots.add(NOUN_FLOOR, VERB_WALK_ACROSS, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(76, 129, 76 + 6, 129 + 6));
 		_scene->_dynamicHotspots[_hotspotLeftFloor2]._articleNumber = PREP_ON;
 		_scene->_dynamicHotspots.setPosition(_hotspotLeftFloor2, Common::Point(80, 135), FACING_NONE);
 	}
@@ -1089,12 +1089,10 @@ void Scene103::enter() {
 
 		_globals._sequenceIndexes[1] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[1], false, -1);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 14);
-
 	} else if (_scene->_priorSceneId == 102) {
 		_game._player.firstWalk(Common::Point(-20, 140), FACING_EAST, Common::Point(15, 147), FACING_EAST, true);
 		_globals._sequenceIndexes[1] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[1], false, 1);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 14);
-
 	} else if ((_scene->_priorSceneId == 105) || (_scene->_priorSceneId != RETURNING_FROM_LOADING)) {
 		_game._player._playerPos = Common::Point(287, 135);
 		_game._player._facing = FACING_WEST;
@@ -1103,16 +1101,13 @@ void Scene103::enter() {
 		_game._player.setWalkTrigger(65);
 		_globals._sequenceIndexes[1] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[1], false, 6);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 14);
-
 	} else if (_scene->_priorSceneId == -1) {
 		if (_standPosition == 1) {
 			_game._player._visible = false;
 			_globals._animationIndexes[5] = _scene->loadAnimation(formAnimName('w', 3), 0);
 			_anim5ActvFl = true;
 			_scene->setAnimFrame(_globals._animationIndexes[5], 33);
-
 		} else if (_standPosition == 2) {
-
 			_scene->deleteSequence(_globals._sequenceIndexes[3]);
 			_globals._sequenceIndexes[3] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[3], false, 1);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 13);
@@ -1122,7 +1117,6 @@ void Scene103::enter() {
 			_anim3ActvFl = true;
 			_game._player._stepEnabled = true;
 			_scene->setAnimFrame(_globals._animationIndexes[3], 36);
-
 		} else if (_vm->_gameConv->_restoreRunning == 12) {
 			_vm->_gameConv->run(12);
 			_vm->_gameConv->exportPointer(&_globals[kPlayerScore]);
@@ -1439,11 +1433,9 @@ void Scene103::actions() {
 		}
 	}
 
-	if (_action.isAction(NOUN_CLIMB, NOUN_PROMPTERS_STAND)) {
-		if (_standPosition != 0) {
-			_action._inProgress = false;
-			return;
-		}
+	if (_action.isAction(NOUN_CLIMB, NOUN_PROMPTERS_STAND) && (_standPosition != 0)) {
+		_action._inProgress = false;
+		return;
 	}
 
 	if ((_action.isAction(VERB_PUSH, NOUN_PROMPTERS_STAND)) || (_action.isAction(VERB_PULL, NOUN_PROMPTERS_STAND))) {
@@ -1483,32 +1475,32 @@ void Scene103::actions() {
 						_scene->_dynamicHotspots.remove(_hotspotLeftFloor1);
 						_scene->_dynamicHotspots.remove(_hotspotLeftFloor2);
 
-						_hotspotPrompt1 = _scene->_dynamicHotspots.add(NOUN_PROMPTERS_STAND, VERB_WALKTO, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(121, 79, 40, 63));
+						_hotspotPrompt1 = _scene->_dynamicHotspots.add(NOUN_PROMPTERS_STAND, VERB_WALKTO, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(121, 79, 121 + 40, 79 + 63));
 						_scene->_dynamicHotspots[_hotspotPrompt1]._articleNumber = PREP_ON;
 						_scene->_dynamicHotspots.setPosition(_hotspotPrompt1, Common::Point(171, 142), FACING_NORTHWEST);
 
-						_hotspotPrompt2 = _scene->_dynamicHotspots.add(NOUN_PROMPTERS_STAND, VERB_WALKTO, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(161, 67, 16, 75));
+						_hotspotPrompt2 = _scene->_dynamicHotspots.add(NOUN_PROMPTERS_STAND, VERB_WALKTO, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(161, 67, 161 + 16, 67 + 75));
 						_scene->_dynamicHotspots[_hotspotPrompt2]._articleNumber = PREP_ON;
 						_scene->_dynamicHotspots.setPosition(_hotspotPrompt2, Common::Point(171, 142), FACING_NORTHWEST);
 
-						_hotspotPrompt3 = _scene->_dynamicHotspots.add(NOUN_PROMPTERS_STAND, VERB_WALKTO, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(177, 90, 18, 52));
+						_hotspotPrompt3 = _scene->_dynamicHotspots.add(NOUN_PROMPTERS_STAND, VERB_WALKTO, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(177, 90, 177 + 18, 90 + 52));
 						_scene->_dynamicHotspots[_hotspotPrompt3]._articleNumber = PREP_ON;
 						_scene->_dynamicHotspots.setPosition(_hotspotPrompt3, Common::Point(171, 142), FACING_NORTHWEST);
 
-						_hotspotPrompt4 = _scene->_dynamicHotspots.add(NOUN_PROMPTERS_STAND, VERB_WALKTO, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(114, 100, 7, 38));
+						_hotspotPrompt4 = _scene->_dynamicHotspots.add(NOUN_PROMPTERS_STAND, VERB_WALKTO, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(114, 100, 114 + 7, 100 + 38));
 						_scene->_dynamicHotspots[_hotspotPrompt4]._articleNumber = PREP_ON;
 						_scene->_dynamicHotspots.setPosition(_hotspotPrompt4, Common::Point(171, 142), FACING_NORTHWEST);
 
-						_hotspotPrompt5 = _scene->_dynamicHotspots.add(NOUN_PROMPTERS_STAND, NOUN_CLIMB, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(121, 49, 40, 30));
+						_hotspotPrompt5 = _scene->_dynamicHotspots.add(NOUN_PROMPTERS_STAND, NOUN_CLIMB, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(121, 49, 121 + 40, 49 + 30));
 						_scene->_dynamicHotspots[_hotspotPrompt5]._articleNumber = PREP_ON;
 						_scene->_dynamicHotspots.setPosition(_hotspotPrompt5, Common::Point(196, 134), FACING_SOUTHWEST);
 						_scene->_dynamicHotspots.setCursor(_hotspotPrompt5, CURSOR_GO_UP);
 
-						_hotspotRightFloor1 = _scene->_dynamicHotspots.add(NOUN_FLOOR, VERB_WALK_ACROSS, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(154, 6, 41, 6));
+						_hotspotRightFloor1 = _scene->_dynamicHotspots.add(NOUN_FLOOR, VERB_WALK_ACROSS, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(154, 6, 154 + 41, 6 + 6));
 						_scene->_dynamicHotspots[_hotspotRightFloor1]._articleNumber = PREP_ON;
 						_scene->_dynamicHotspots.setPosition(_hotspotRightFloor1, Common::Point(171, 142), FACING_NONE);
 
-						_hotspotRightFloor2 = _scene->_dynamicHotspots.add(NOUN_FLOOR, VERB_WALK_ACROSS, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(114, 136, 32, 6));
+						_hotspotRightFloor2 = _scene->_dynamicHotspots.add(NOUN_FLOOR, VERB_WALK_ACROSS, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(114, 136, 114 + 32, 132 + 6));
 						_scene->_dynamicHotspots[_hotspotRightFloor2]._articleNumber = PREP_ON;
 						_scene->_dynamicHotspots.setPosition(_hotspotRightFloor2, Common::Point(127, 140), FACING_NONE);
 
@@ -1554,7 +1546,7 @@ void Scene103::actions() {
 						_scene->_dynamicHotspots.remove(_hotspotRightFloor1);
 						_scene->_dynamicHotspots.remove(_hotspotRightFloor2);
 
-						_hotspotPrompt1 = _scene->_dynamicHotspots.add(NOUN_PROMPTERS_STAND, VERB_WALKTO, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(2, 79, 40, 63));
+						_hotspotPrompt1 = _scene->_dynamicHotspots.add(NOUN_PROMPTERS_STAND, VERB_WALKTO, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(2, 79, 2 + 40, 79 + 63));
 						_scene->_dynamicHotspots[_hotspotPrompt1]._articleNumber = PREP_ON;
 						_scene->_dynamicHotspots.setPosition(_hotspotPrompt1, Common::Point(59, 140), FACING_NORTHWEST);
 
@@ -1588,12 +1580,11 @@ void Scene103::actions() {
 					break;
 				}
 			}
-		} else {
-			if (_globals[kJacquesNameIsKnown])
-				_vm->_dialogs->show(10340);
-			else
-				_vm->_dialogs->show(10350);
-		}
+		} else if (_globals[kJacquesNameIsKnown])
+			_vm->_dialogs->show(10340);
+		else
+			_vm->_dialogs->show(10350);
+
 		_action._inProgress = false;
 		return;
 	}
@@ -1963,12 +1954,10 @@ void Scene103::actions() {
 			return;
 		}
 
-		if (_action.isAction(NOUN_KEY)) {
-			if (_game._objects.isInRoom(OBJ_KEY)) {
-				_vm->_dialogs->show(10326);
-				_action._inProgress = false;
-				return;
-			}
+		if (_action.isAction(NOUN_KEY) && _game._objects.isInRoom(OBJ_KEY)) {
+			_vm->_dialogs->show(10326);
+			_action._inProgress = false;
+			return;
 		}
 
 		if (_action.isAction(NOUN_STAIR_UNIT)) {
@@ -2217,9 +2206,9 @@ void Scene103::handleJacquesAnim() {
 
 	case 44:
 		random = _vm->getRandomNumber(1, 50);
-		while (_lastRandom == random) {
+		while (_lastRandom == random)
 			random = _vm->getRandomNumber(1, 50);
-		}
+
 		_lastRandom = random;
 
 		switch (_jacquesAction) {
@@ -2312,8 +2301,6 @@ void Scene103::descendRightStairs() {
 	if (_scene->getAnimFrame(_globals._animationIndexes[4]) == _lastStairFrame)
 		return;
 
-	// CHECKME: use of this local variable
-	int stairs_reset_frame = -1;
 	_lastStairFrame = _scene->getAnimFrame(_globals._animationIndexes[4]);
 
 	if (_lastStairFrame == 2) {
@@ -2322,19 +2309,12 @@ void Scene103::descendRightStairs() {
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 4);
 		_scene->_sequences.setPosition(_globals._sequenceIndexes[3], Common::Point(154, 139));
 	}
-
-	if (stairs_reset_frame >= 0) {
-		_scene->setAnimFrame(_globals._animationIndexes[4], stairs_reset_frame);
-		_lastStairFrame = stairs_reset_frame;
-	}
 }
 
 void Scene103::descendLeftStairs() {
 	if (_scene->getAnimFrame(_globals._animationIndexes[6]) == _lastStairFrame)
 		return;
 
-	// CHECKME: use of this local variable
-	int stairs_reset_frame = -1;
 	_lastStairFrame = _scene->getAnimFrame(_globals._animationIndexes[6]);
 
 	if (_lastStairFrame == 2) {
@@ -2342,11 +2322,6 @@ void Scene103::descendLeftStairs() {
 		_globals._sequenceIndexes[3] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[3], false, 1);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 4);
 		_scene->_sequences.setPosition(_globals._sequenceIndexes[3], Common::Point(37, 139));
-	}
-
-	if (stairs_reset_frame >= 0) {
-		_scene->setAnimFrame(_globals._animationIndexes[6], stairs_reset_frame);
-		_lastStairFrame = stairs_reset_frame;
 	}
 }
 
@@ -2396,7 +2371,8 @@ void Scene103::process_conv_jacques() {
 		break;
 	}
 
-	if ((_action._activeAction._verbId != 1) && (_action._activeAction._verbId != 8) && (_action._activeAction._verbId != 12) && (_action._activeAction._verbId != 29))
+	if ((_action._activeAction._verbId != 1) && (_action._activeAction._verbId != 8)
+	 && (_action._activeAction._verbId != 12) && (_action._activeAction._verbId != 29))
 		_vm->_gameConv->setInterlocutorTrigger(90);
 
 	_vm->_gameConv->setHeroTrigger(92);
@@ -3690,21 +3666,21 @@ void Scene105::enter() {
 		_scene->_hotspots.activate(NOUN_ELEPHANT_PROP, false);
 		_scene->_hotspots.activate(NOUN_COLUMN_PROP, false);
 
-		int tmpIdx = _scene->_dynamicHotspots.add(NOUN_COLUMN_PROP, VERB_WALKTO, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(132, 24, 21, 105));
+		int tmpIdx = _scene->_dynamicHotspots.add(NOUN_COLUMN_PROP, VERB_WALKTO, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(132, 24, 132 + 21, 24 + 105));
 		_scene->_dynamicHotspots.setPosition(tmpIdx, Common::Point(159, 133), FACING_NORTHWEST);
 
-		tmpIdx = _scene->_dynamicHotspots.add(NOUN_COLUMN_PROP, VERB_WALKTO, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(56, 45, 11, 77));
+		tmpIdx = _scene->_dynamicHotspots.add(NOUN_COLUMN_PROP, VERB_WALKTO, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(56, 45, 56 + 11, 45 + 77));
 		_scene->_dynamicHotspots.setPosition(tmpIdx, Common::Point(72, 126), FACING_NORTHWEST);
 
-		_scene->_dynamicHotspots.add(NOUN_PROP, VERB_WALKTO, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(0, 125, 29, 31));
-		_scene->_dynamicHotspots.add(NOUN_PROP, VERB_WALKTO, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(29, 136, 50, 20));
-		_scene->_dynamicHotspots.add(NOUN_PROP, VERB_WALKTO, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(79, 141, 53, 15));
+		_scene->_dynamicHotspots.add(NOUN_PROP, VERB_WALKTO, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(0, 125, 29, 125 + 31));
+		_scene->_dynamicHotspots.add(NOUN_PROP, VERB_WALKTO, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(29, 136, 29 + 50, 136 + 20));
+		_scene->_dynamicHotspots.add(NOUN_PROP, VERB_WALKTO, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(79, 141, 79 + 53, 141 + 15));
 
-		_scene->_dynamicHotspots.add(NOUN_BEAR_PROP, VERB_WALKTO, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(278, 132, 21, 24));
-		_scene->_dynamicHotspots.add(NOUN_BEAR_PROP, VERB_WALKTO, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(299, 146, 8, 10));
-		_scene->_dynamicHotspots.add(NOUN_BEAR_PROP, VERB_WALKTO, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(269, 142, 8, 8));
+		_scene->_dynamicHotspots.add(NOUN_BEAR_PROP, VERB_WALKTO, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(278, 132, 278 + 21, 132 + 24));
+		_scene->_dynamicHotspots.add(NOUN_BEAR_PROP, VERB_WALKTO, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(299, 146, 299 + 8, 146 + 10));
+		_scene->_dynamicHotspots.add(NOUN_BEAR_PROP, VERB_WALKTO, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(269, 142, 269 + 8, 142 + 8));
 
-		_scene->_dynamicHotspots.add(NOUN_LIGHT_FIXTURE, VERB_LOOK_AT, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(102, 14, 24, 10));
+		_scene->_dynamicHotspots.add(NOUN_LIGHT_FIXTURE, VERB_LOOK_AT, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(102, 14, 102 + 24, 102 + 10));
 	}
 
 	_globals._sequenceIndexes[4] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[4], false, 2);
