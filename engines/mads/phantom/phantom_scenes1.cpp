@@ -993,7 +993,7 @@ void Scene103::enter() {
 			_scene->_dynamicHotspots[tmpIdx]._articleNumber = PREP_ON;
 			_scene->_dynamicHotspots.setPosition(tmpIdx, Common::Point(155, 144), FACING_NONE);
 
-			tmpIdx = _scene->_dynamicHotspots.add(NOUN_FLOOR, VERB_WALK_ACROSS, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(187, 136, 8, 7));
+			tmpIdx = _scene->_dynamicHotspots.add(NOUN_FLOOR, VERB_WALK_ACROSS, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(187, 136, 187 + 8, 136 + 7));
 			_scene->_dynamicHotspots[tmpIdx]._articleNumber = PREP_ON;
 			_scene->_dynamicHotspots.setPosition(tmpIdx, Common::Point(195, 139), FACING_NONE);
 		} else if ((_globals[kJacquesStatus] >= 1) && (_globals[kCurrentYear] == 1881)) {
@@ -1550,23 +1550,23 @@ void Scene103::actions() {
 						_scene->_dynamicHotspots[_hotspotPrompt1]._articleNumber = PREP_ON;
 						_scene->_dynamicHotspots.setPosition(_hotspotPrompt1, Common::Point(59, 140), FACING_NORTHWEST);
 
-						_hotspotPrompt2 = _scene->_dynamicHotspots.add(NOUN_PROMPTERS_STAND, VERB_WALKTO, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(42, 67, 16, 75));
+						_hotspotPrompt2 = _scene->_dynamicHotspots.add(NOUN_PROMPTERS_STAND, VERB_WALKTO, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(42, 67, 42 + 16, 67 + 75));
 						_scene->_dynamicHotspots[_hotspotPrompt2]._articleNumber = PREP_ON;
 						_scene->_dynamicHotspots.setPosition(_hotspotPrompt2, Common::Point(59, 140), FACING_NORTHWEST);
 
-						_hotspotPrompt3 = _scene->_dynamicHotspots.add(NOUN_PROMPTERS_STAND, VERB_WALKTO, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(58, 90, 18, 52));
+						_hotspotPrompt3 = _scene->_dynamicHotspots.add(NOUN_PROMPTERS_STAND, VERB_WALKTO, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(58, 90, 58 + 18, 90 + 52));
 						_scene->_dynamicHotspots[_hotspotPrompt3]._articleNumber = PREP_ON;
 						_scene->_dynamicHotspots.setPosition(_hotspotPrompt3, Common::Point(59, 140), FACING_NORTHWEST);
 
-						_hotspotLeftFloor1 = _scene->_dynamicHotspots.add(NOUN_FLOOR, VERB_WALK_ACROSS, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(35, 137, 40, 5));
+						_hotspotLeftFloor1 = _scene->_dynamicHotspots.add(NOUN_FLOOR, VERB_WALK_ACROSS, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(35, 137, 35 + 40, 137 + 5));
 						_scene->_dynamicHotspots[_hotspotLeftFloor1]._articleNumber = PREP_ON;
 						_scene->_dynamicHotspots.setPosition(_hotspotLeftFloor1, Common::Point(59, 140), FACING_NONE);
 
-						_hotspotLeftFloor2 = _scene->_dynamicHotspots.add(NOUN_FLOOR, VERB_WALK_ACROSS, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(76, 129, 6, 6));
+						_hotspotLeftFloor2 = _scene->_dynamicHotspots.add(NOUN_FLOOR, VERB_WALK_ACROSS, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(76, 129, 76 + 6, 129 + 6));
 						_scene->_dynamicHotspots[_hotspotLeftFloor2]._articleNumber = PREP_ON;
 						_scene->_dynamicHotspots.setPosition(_hotspotLeftFloor2, Common::Point(80, 135), FACING_NONE);
 
-						_hotspotPrompt5 = _scene->_dynamicHotspots.add(NOUN_PROMPTERS_STAND, NOUN_CLIMB, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(2, 49, 40, 30));
+						_hotspotPrompt5 = _scene->_dynamicHotspots.add(NOUN_PROMPTERS_STAND, NOUN_CLIMB, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(2, 49, 2 + 40, 49 + 30));
 						_scene->_dynamicHotspots[_hotspotPrompt5]._articleNumber = PREP_ON;
 						_scene->_dynamicHotspots.setPosition(_hotspotPrompt5, Common::Point(79, 132), FACING_SOUTHWEST);
 						_scene->_dynamicHotspots.setCursor(_hotspotPrompt5, CURSOR_GO_UP);
@@ -2335,7 +2335,7 @@ void Scene103::process_conv_jacques() {
 		if (_globals[kJacquesNameIsKnown] == 0) {
 			_globals[kJacquesNameIsKnown] = 1;
 			_scene->_dynamicHotspots.remove(_hotspotGentleman);
-			_hotspotGentleman = _scene->_dynamicHotspots.add(NOUN_JACQUES, VERB_WALKTO, SYNTAX_SINGULAR_MASC, EXT_NONE, Common::Rect(156, 116, 33, 31));
+			_hotspotGentleman = _scene->_dynamicHotspots.add(NOUN_JACQUES, VERB_WALKTO, SYNTAX_SINGULAR_MASC, EXT_NONE, Common::Rect(156, 116, 156 + 33, 116 + 31));
 			_scene->_dynamicHotspots[_hotspotGentleman]._articleNumber = PREP_ON;
 			_scene->_dynamicHotspots.setPosition(_hotspotGentleman, Common::Point(206, 148), FACING_NORTHWEST);
 		}
@@ -4852,7 +4852,7 @@ void Scene107::actions() {
 			break;
 
 		case 2:
-			_game.syncTimers(2, 0, 1, _globals._sequenceIndexes[1]); 
+			_game.syncTimers(2, 0, 1, _globals._sequenceIndexes[1]);
 			_game._player._visible = true;
 			_scene->_sequences.setTimingTrigger(20, 3);
 			break;
@@ -5017,6 +5017,595 @@ void Scene107::preActions() {
 
 /*------------------------------------------------------------------------*/
 
+Scene108::Scene108(MADSEngine *vm) : Scene1xx(vm) {
+	_anim0ActvFl = false;
+	_handRaisedFl = false;
+	_shutUpCount = -1;
+	_maxTalkCount = -1;
+	_charAction = -1;
+	_charFrame = -1;
+	_charHotspotId = -1;
+	_charTalkCount = -1;
+	_conversationCount = -1;
+	_prevShutUpFrame = -1;
+}
+
+void Scene108::synchronize(Common::Serializer &s) {
+	Scene1xx::synchronize(s);
+
+	s.syncAsByte(_anim0ActvFl);
+	s.syncAsByte(_handRaisedFl);
+	s.syncAsSint16LE(_shutUpCount);
+	s.syncAsSint16LE(_maxTalkCount);
+	s.syncAsSint16LE(_charAction);
+	s.syncAsSint16LE(_charFrame);
+	s.syncAsSint16LE(_charHotspotId);
+	s.syncAsSint16LE(_charTalkCount);
+	s.syncAsSint16LE(_conversationCount);
+	s.syncAsSint16LE(_prevShutUpFrame);
+}
+
+void Scene108::setup() {
+	setPlayerSpritesPrefix();
+	setAAName();
+	
+	if (_globals[kCurrentYear] == 1993)
+		_scene->_initialVariant = 1;
+
+	_scene->addActiveVocab(NOUN_GENTLEMAN);
+	_scene->addActiveVocab(NOUN_CHARLES);
+}
+
+void Scene108::enter() {
+	if (_scene->_priorSceneId != RETURNING_FROM_LOADING) {
+		_anim0ActvFl = false;
+		_handRaisedFl = false;
+		_charTalkCount = 0;
+		_shutUpCount = 40;
+		_maxTalkCount = 15;
+	}
+
+	_vm->_gameConv->get(2);
+
+	if (_globals[kCurrentYear] == 1993) {
+		_globals._spriteIndexes[0] = _scene->_sprites.addSprites(formAnimName('z', -1), false);
+		_scene->_hotspots.activate(NOUN_STOOL, false);
+		int idx = _scene->_dynamicHotspots.add(NOUN_STOOL, VERB_WALK_TO, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(250, 68, 250 + 8, 68 + 21));
+		_scene->_dynamicHotspots[idx]._articleNumber = PREP_ON;
+		_scene->_dynamicHotspots.setPosition(idx, Common::Point(253, 75), FACING_SOUTHEAST);
+		_scene->drawToBackground(_globals._spriteIndexes[0], 1, Common::Point(-32000, -32000), 0, 100);
+	} else {
+		_scene->_hotspots.activate(NOUN_HEADSET, false);
+		int idx = _scene->_dynamicHotspots.add(NOUN_WALL, VERB_WALK_TO, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(258, 58, 258 + 6, 58 + 10));
+		_scene->_dynamicHotspots[idx]._articleNumber = PREP_ON;
+		_scene->_dynamicHotspots.setPosition(idx, Common::Point(236, 69), FACING_NORTHEAST);
+	}
+
+	if ((_globals[kCurrentYear] == 1993) && (_globals[kDoneBrieConv203] == 0)) {
+		_globals._animationIndexes[0] = _scene->loadAnimation(formAnimName('c', 1), 1);
+		_anim0ActvFl = true;
+
+		if (_vm->_gameConv->_running == 2) {
+			_globals[kWalkerConverse] = _vm->getRandomNumber(1, 4);
+			_charAction = 0;
+			_vm->_gameConv->run(2);
+			_vm->_gameConv->exportPointer(&_globals[kPlayerScore]);
+			_vm->_gameConv->exportValue(_globals[kJulieNameIsKnown]);
+			_vm->_gameConv->exportValue(_globals[kObservedPhan104]);
+			_scene->setAnimFrame(_globals._animationIndexes[0], 55);
+			_shutUpCount = 40;
+		} else {
+			_charAction = 2;
+		}
+
+		if (_globals[kCharlesNameIsKnown]) {
+			_charHotspotId = _scene->_dynamicHotspots.add(NOUN_CHARLES, VERB_WALK_TO, SYNTAX_SINGULAR_MASC, EXT_NONE, Common::Rect(253, 52, 253 + 15, 52 + 34));
+			_scene->_dynamicHotspots[_charHotspotId]._articleNumber = PREP_ON;
+		} else {
+			_charHotspotId = _scene->_dynamicHotspots.add(NOUN_GENTLEMAN, VERB_WALK_TO, SYNTAX_MASC_NOT_PROPER, EXT_NONE, Common::Rect(253, 52, 253 + 15, 52 + 34));
+			_scene->_dynamicHotspots[_charHotspotId]._articleNumber = PREP_ON;
+		}
+		_scene->_dynamicHotspots.setPosition(_charHotspotId, Common::Point(235, 102), FACING_NORTHEAST);
+	} 
+
+	if (_scene->_priorSceneId == 106) {
+		_game._player._playerPos = Common::Point(48, 81);
+		_game._player._facing = FACING_SOUTHEAST;
+		_game._player.walk(Common::Point(71, 76), FACING_SOUTHEAST);
+	} else if ((_scene->_priorSceneId == 104) || (_scene->_priorSceneId != RETURNING_FROM_LOADING)) {
+		if (_game._player._playerPos.y > 128) {
+			_game._player._playerPos.x = 124;
+			_game._player._facing = FACING_NORTHEAST;
+		} else if (_game._player._playerPos.y > 99) {
+			_game._player._playerPos.x = 185;
+			_game._player._facing = FACING_NORTHEAST;
+		} else {
+			_game._player._playerPos.x = 243;
+			_game._player._facing = FACING_NORTHWEST;
+		}
+
+		_game._player._playerPos.y = 143;
+	}
+
+	sceneEntrySound();
+}
+
+void Scene108::step() {
+	if (_anim0ActvFl)
+		handle_animation_char ();
+
+	if ((_globals[kWalkerConverse] == 2) || (_globals[kWalkerConverse] == 3)) {
+		++_conversationCount;
+		if (_conversationCount > 200)
+			_globals[kWalkerConverse] = _vm->getRandomNumber(1, 4);
+	}
+}
+
+void Scene108::actions() {
+	if (_vm->_gameConv->_running == 2) {
+		process_conversation_charles();
+		_action._inProgress = false;
+		return;
+	}
+
+	if (_action.isAction(VERB_TALK_TO, NOUN_GENTLEMAN) || _action.isAction(VERB_TALK_TO, NOUN_CHARLES)) {
+		_charAction = 6;
+		_game._player._stepEnabled = false;
+		_action._inProgress = false;
+		return;
+	}
+
+	if (_action.isAction(VERB_WALK_ONTO, NOUN_STAGE)) {
+		_scene->_nextSceneId = 104;
+		_action._inProgress = false;
+		return;
+	}
+
+	if (_action.isAction(VERB_WALK, NOUN_BACKSTAGE)) {
+		_scene->_nextSceneId = 106;
+		_action._inProgress = false;
+		return;
+	}
+
+	if (_action._lookFlag) {
+		_vm->_dialogs->show(10810);
+		_action._inProgress = false;
+		return;
+	} 
+
+	if (_action.isAction(VERB_LOOK) || _action.isAction(VERB_LOOK_AT)) {
+		if (_action.isAction(NOUN_WALL)) {
+			_vm->_dialogs->show(10730);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isAction(NOUN_STAGE)) {
+			_vm->_dialogs->show(10811);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isAction(NOUN_IN_TWO)) {
+			_vm->_dialogs->show(10812);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isAction(NOUN_IN_ONE)) {
+			_vm->_dialogs->show(10813);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isAction(NOUN_PROSCENIUM_ARCH)) {
+			_vm->_dialogs->show(10814);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isAction(NOUN_ACT_CURTAIN)) {
+			_vm->_dialogs->show(10815);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isAction(NOUN_LEG)) {
+			_vm->_dialogs->show(10816);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isAction(NOUN_CYCLORAMA)) {
+			_vm->_dialogs->show(10817);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isAction(NOUN_FLATS)) {
+			_vm->_dialogs->show(10818);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isAction(NOUN_STAGEMANAGERS_POST)) {
+			if (_globals[kCurrentYear] == 1993)
+				_vm->_dialogs->show(10819);
+			else
+				_vm->_dialogs->show(10820);
+
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isAction(NOUN_STOOL)) {
+			_vm->_dialogs->show(10821);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isAction(NOUN_BACKSTAGE)) {
+			_vm->_dialogs->show(10822);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isAction(NOUN_STAGE)) {
+			_vm->_dialogs->show(10823);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isAction(NOUN_HEADSET)) {
+			_vm->_dialogs->show(10824);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isAction(NOUN_WALL)) {
+			_vm->_dialogs->show(10826);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isAction(NOUN_CHARLES) || _action.isAction(NOUN_GENTLEMAN)) {
+			_vm->_dialogs->show(10827);
+			_action._inProgress = false;
+			return;
+		}
+	}
+
+	if (_action.isAction(VERB_TAKE, NOUN_CHARLES) || _action.isAction(VERB_TAKE, NOUN_GENTLEMAN)) {
+		_vm->_dialogs->show(10828);
+		_action._inProgress = false;
+		return;
+	}
+
+	if (_action.isAction(VERB_TAKE, NOUN_HEADSET)) {
+		_vm->_dialogs->show(10825);
+		_action._inProgress = false;
+		return;
+	}
+
+	if (_action.isAction(VERB_TAKE, NOUN_STOOL) && (_globals[kCurrentYear] == 1993)) {
+		_vm->_dialogs->show(10829);
+		_action._inProgress = false;
+		return;
+	}
+
+	if (_action.isAction(VERB_TALK_TO, NOUN_HEADSET)) {
+		_vm->_dialogs->show(10830);
+		_action._inProgress = false;
+		return;
+	}
+}
+
+void Scene108::preActions() {
+}
+
+void Scene108::handle_animation_char() {
+	if (_scene->_animation[_globals._animationIndexes[0]]->getCurrentFrame() == _charFrame)
+		return;
+
+	_charFrame = _scene->_animation[_globals._animationIndexes[0]]->getCurrentFrame();
+	int resetFrame = -1;
+	int random = -1;
+
+	switch (_charFrame) {
+	case 1:
+	case 2:
+	case 3:
+	case 4:
+	case 92:
+		if (_charAction == 2)
+			random = _vm->getRandomNumber(2, 15);
+
+		if (_charAction == 6) {
+			_charTalkCount = 0;
+			_charAction = 1;
+			random = 1;
+		}
+
+		switch (random) {
+		case 1:
+			resetFrame = 5;
+			break;
+
+		case 2:
+			resetFrame = 0;
+			break;
+
+		case 3:
+			resetFrame = 1;
+			break;
+
+		case 4:
+			resetFrame = 2;
+			break;
+
+		default:
+			resetFrame = 3;
+			break;
+		}
+		break;
+
+	case 18:
+	case 19:
+	case 20:
+	case 21:
+	case 27:
+	case 33:
+	case 41:
+	case 51:
+	case 52:
+	case 53:
+	case 54:
+	case 55:
+	case 56:
+	case 57:
+	case 62:
+	case 73:
+		if (_charFrame == 18) {
+			_game._player._stepEnabled = true;
+			_vm->_gameConv->run(2);
+			_vm->_gameConv->exportPointer(&_globals[kPlayerScore]);
+			_vm->_gameConv->exportValue(_globals[kJulieNameIsKnown]);
+			_vm->_gameConv->exportValue(_globals[kObservedPhan104]);
+		}
+
+		if (_charAction == 1) {
+			if (_handRaisedFl) {
+				random = _vm->getRandomNumber(1, 3);
+			} else {
+				random = _vm->getRandomNumber(1, 4);
+				if (random == 4)
+					random = _vm->getRandomNumber(1, 4);
+			}
+
+			if (random == 4)
+				_handRaisedFl = true;
+
+			++_charTalkCount;
+			if (_charTalkCount > _maxTalkCount) {
+				_charAction = 0;
+				_shutUpCount = 0;
+				_prevShutUpFrame = 10;
+				random = 12;
+			} 
+		} else if (_charAction == 0) {
+			int delay = _vm->getRandomNumber(10, 15);
+			++_shutUpCount;
+			if (_shutUpCount > delay) {
+				random = _vm->getRandomNumber(10, 16);
+				_prevShutUpFrame = random;
+				if (random == 15)
+					_shutUpCount = 16;
+				else
+					_shutUpCount = 0;
+			} else {
+				random = _prevShutUpFrame;
+			}
+		} else if (_charAction == 7) {
+			_charAction = 1;
+			random = 5;
+		} else if (_charAction == 3) {
+			_charAction = 1;
+			random = 6;
+		} else if (_charAction == 5) {
+			_charAction = 1;
+			random = 7;
+		} else if (_charAction == 4) {
+			_charAction = 1;
+			random = 8;
+		} else if (_charAction == 2) {
+			random = 9;
+		}
+
+		switch (random) {
+		case 1:
+			resetFrame = 18;
+			break;
+
+		case 2:
+			resetFrame = 19;
+			break;
+
+		case 3:
+			resetFrame = 20;
+			break;
+
+		case 4:
+			resetFrame = 62;
+			_charTalkCount += 5;
+			break;
+
+		case 5:
+			resetFrame = 21;
+			break;
+
+		case 6:
+			resetFrame = 41;
+			break;
+
+		case 7:
+			resetFrame = 33;
+			break;
+
+		case 8:
+			resetFrame = 27;
+			break;
+
+		case 9:
+			resetFrame = 74;
+			break;
+
+		case 10:
+			resetFrame = 51;
+			break;
+
+		case 11:
+			resetFrame = 53;
+			break;
+
+		case 12:
+			resetFrame = 54;
+			break;
+
+		case 13:
+			resetFrame = 55;
+			break;
+
+		case 14:
+			resetFrame = 56;
+			break;
+
+		case 15:
+			resetFrame = 57;
+			break;
+
+		case 16:
+			resetFrame = 52;
+			break;
+
+		default:
+			break;
+		}
+		break;
+
+	default:
+		break;
+	}
+
+	if (resetFrame >= 0) {
+		_scene->setAnimFrame(_globals._animationIndexes[0], resetFrame);
+		_charFrame = resetFrame;
+	}
+}
+
+void Scene108::process_conversation_charles() {
+	switch (_action._activeAction._verbId) {
+	case 1:
+	case 25:
+	case 26:
+		_globals[kWalkerConverse] = 0;
+		_vm->_gameConv->setHeroTrigger(64);
+		if (_action._activeAction._verbId == 26)
+			_globals[kCharlesNameIsKnown] = 2;
+		break;
+
+	case 2:
+		if (!_globals[kCharlesNameIsKnown]) {
+			_scene->_dynamicHotspots.remove(_charHotspotId);
+			_charHotspotId = _scene->_dynamicHotspots.add(NOUN_CHARLES, VERB_WALK_TO, SYNTAX_SINGULAR_MASC, EXT_NONE, Common::Rect(253, 52, 253 + 15, 52 + 34));
+			_scene->_dynamicHotspots[_charHotspotId]._articleNumber = PREP_ON;
+			_scene->_dynamicHotspots.setPosition(_charHotspotId, Common::Point(235, 102), FACING_NORTHEAST);
+			_globals[kCharlesNameIsKnown] = true;
+		}
+		break;
+
+	case 5:
+		_vm->_gameConv->setInterlocutorTrigger(66);
+		_maxTalkCount = 35;
+		break;
+
+	case 6:
+	case 8:
+	case 9:
+	case 10:
+	case 11:
+	case 12:
+	case 15:
+		_maxTalkCount = 35;
+		break;
+
+	case 16:
+		_vm->_gameConv->setInterlocutorTrigger(68);
+		_maxTalkCount = 35;
+		break;
+
+	case 19:
+		_vm->_gameConv->setInterlocutorTrigger(72);
+		break;
+
+	case 22:
+		_vm->_gameConv->setInterlocutorTrigger(70);
+		break;
+
+	default:
+		_maxTalkCount = 15;
+		break;
+	}
+
+	switch (_game._trigger) {
+	case 60:
+		_charAction = 1;
+		_globals[kWalkerConverse] = _vm->getRandomNumber(1, 4);
+		break;
+
+	case 62:
+		_globals[kWalkerConverse] = _vm->getRandomNumber(2, 3);
+		_conversationCount = 0;
+		_charAction = 0;
+		break;
+
+	case 64:
+		_charAction = 2;
+		break;
+
+	case 66:
+		_charAction = 5;
+		break;
+
+	case 68:
+		_charAction = 4;
+		break;
+
+	case 70:
+		_charAction = 7;
+		break;
+
+	case 72:
+		_charAction = 3;
+		break;
+
+	default:
+		break;
+	} 
+
+	if ((_action._activeAction._verbId != 1) && (_action._activeAction._verbId != 5) &&
+		(_action._activeAction._verbId != 16) && (_action._activeAction._verbId != 19) &&
+		(_action._activeAction._verbId != 22) && (_action._activeAction._verbId != 25) &&
+		(_action._activeAction._verbId != 26) && (_charAction != 2)) {
+		_vm->_gameConv->setInterlocutorTrigger(60);
+		_vm->_gameConv->setHeroTrigger(62);
+	}
+
+	_charTalkCount = 0;
+	_shutUpCount = 40;
+	_handRaisedFl = false;
+}
+
+/*------------------------------------------------------------------------*/
 
 } // End of namespace Phantom
 } // End of namespace MADS

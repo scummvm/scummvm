@@ -219,8 +219,6 @@ public:
 };
 
 class Scene107 : public Scene1xx {
-private:
-
 public:
 	Scene107(MADSEngine *vm);
 	virtual void synchronize(Common::Serializer &s);
@@ -231,6 +229,34 @@ public:
 	virtual void preActions();
 	virtual void actions();
 };
+
+class Scene108 : public Scene1xx {
+private:
+	bool _anim0ActvFl;
+	bool _handRaisedFl;
+	int _shutUpCount;
+	int _maxTalkCount;
+	int _charAction;
+	int _charFrame;
+	int _charTalkCount;
+	int _charHotspotId;
+	int _conversationCount;
+	int _prevShutUpFrame;
+
+	void handle_animation_char();
+	void process_conversation_charles();
+
+public:
+	Scene108(MADSEngine *vm);
+	virtual void synchronize(Common::Serializer &s);
+
+	virtual void setup();
+	virtual void enter();
+	virtual void step();
+	virtual void preActions();
+	virtual void actions();
+};
+
 } // End of namespace Phantom
 } // End of namespace MADS
 

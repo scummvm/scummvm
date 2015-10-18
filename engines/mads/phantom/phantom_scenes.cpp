@@ -57,7 +57,7 @@ SceneLogic *SceneFactory::createScene(MADSEngine *vm) {
 	case 107:	// stage right wing
 		return new Scene107(vm);
 	case 108:	// stage left wing
-		return new DummyScene(vm);	// TODO
+		return new Scene108(vm);
 	case 109:	// upper floor, staircase
 		return new DummyScene(vm);	// TODO
 	case 110:	// outside dressing rooms 1
