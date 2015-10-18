@@ -127,7 +127,7 @@ MODULE_OBJS += \
 	mixer/sdl13/sdl13-mixer.o
 endif
 
-ifdef RASPBERRYPI
+ifdef DISPMANX
 MODULE_OBJS += \
 	graphics/dispmanxsdl/dispmanxsdl-graphics.o
 endif

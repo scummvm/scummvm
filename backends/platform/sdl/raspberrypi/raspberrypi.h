@@ -20,10 +20,10 @@
  *
  */
 
-#ifndef SDL_RASPBERRYPI_COMMON_H
-#define SDL_RASPBERRYPI_COMMON_H
+#ifndef SDL_DISPMANX_COMMON_H
+#define SDL_DISPMANX_COMMON_H
 
-#if defined(RASPBERRYPI)
+#if defined(DISPMANX)
 #include "backends/platform/sdl/posix/posix.h"
 
 class OSystem_SDL_RaspberryPi : public OSystem_POSIX {
@@ -31,5 +31,5 @@ public:
 	void initBackend();
 };
 
-#endif /* RASPBERRYPI */
-#endif /* SDL_RASPBERRYPI_COMMON_H */
+#endif /* DISPMANX */
+#endif /* SDL_DISPMANX_COMMON_H */

@@ -25,7 +25,7 @@
 
 #include "common/scummsys.h"
 
-#if defined(RASPBERRYPI)
+#if defined(DISPMANX)
 
 #include "backends/graphics/dispmanxsdl/dispmanxsdl-graphics.h"
 #include "graphics/scaler/aspect.h"

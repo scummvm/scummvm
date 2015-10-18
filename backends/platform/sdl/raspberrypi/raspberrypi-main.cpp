@@ -25,7 +25,7 @@
 #include "common/scummsys.h"
 #include "base/main.h"
 
-#if defined(RASPBERRYPI)
+#if defined(DISPMANX)
 int main(int argc, char* argv[]) {
 	
 	// Create our OSystem instance

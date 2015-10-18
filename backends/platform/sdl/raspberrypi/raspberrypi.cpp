@@ -20,7 +20,7 @@
  *
  */
 
-#if defined(RASPBERRYPI)
+#if defined(DISPMANX)
 
 #include "backends/platform/sdl/raspberrypi/raspberrypi.h"
 #include "backends/graphics/dispmanxsdl/dispmanxsdl-graphics.h"

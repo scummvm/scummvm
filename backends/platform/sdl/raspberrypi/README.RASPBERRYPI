@@ -95,6 +95,5 @@ NOTE: Distcc is my preferred method as it does cross-compiling totally transpare
 (we build ON the Pi but the actual CPU-intensive compilation is made on an external 
 server), but it involves building a custom gcc version on the compilation server and 
 configuring a server and client in both the Raspberry Pi and the server.
-More info here: http://elinux.org/RPi_Linaro_GCC_Compilation#Build_GCC_Linaro
 
 Enjoy!

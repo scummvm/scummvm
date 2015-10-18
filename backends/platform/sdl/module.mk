@@ -34,7 +34,7 @@ MODULE_OBJS += \
 	ps3/ps3.o
 endif
 
-ifdef RASPBERRYPI
+ifdef DISPMANX
 MODULE_OBJS += \
 	raspberrypi/raspberrypi-main.o \
 	raspberrypi/raspberrypi.o

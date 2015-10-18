@@ -4081,6 +4081,7 @@ define_in_config_if_yes "$_opengl" "USE_OPENGL"
 define_in_config_if_yes "$_opengles" "USE_GLES"
 
 # Check if Raspberry Pi's Dispmanx graphics have been enabled and everything is in place. 
+# If dispmanx is disabled, we fall back to plain SDL rendering.
 if test "$_dispmanx" = "yes" ; then
 		echocheck "DispmanX graphics"
 		_use_dispmanx=no
@@ -4101,8 +4102,8 @@ EOF
 		if test "$_use_dispmanx" = "yes"; then
 			CXXFLAGS="$CXXFLAGS $DISPMANX_CXXFLAGS"
 			LIBS="$LIBS $DISPMANX_LIBS"
-			DEFINES="$DEFINES -DRASPBERRYPI"
-			add_line_to_config_mk 'RASPBERRYPI = 1'
+			DEFINES="$DEFINES -DDISPMANX"
+			add_line_to_config_mk 'DISPMANX = 1'
 			echo $_use_dispmanx
 		else echo "no"
 		fi
