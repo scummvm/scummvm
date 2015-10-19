@@ -30,6 +30,9 @@
 
 namespace Xeen {
 
+#define SCENE_CLIP_LEFT 8
+#define SCENE_CLIP_RIGHT 223
+
 SpriteResource::SpriteResource() {
 	_filesize = 0;
 	_data = nullptr;
@@ -280,7 +283,8 @@ void SpriteResource::drawOffset(XSurface &dest, uint16 offset, const Common::Poi
 				scaleMaskX = ((scaleMaskX & 0x7fff) << 1) + bit;
 
 				if (bit) {
-					if (*lineP != -1 && xp >= bounds.left && xp < bounds.right) {
+					if (*lineP != -1 && xp >= bounds.left && xp < bounds.right &&
+							(!(flags & SPRFLAG_SCENE_CLIPPED) || (xp >= SCENE_CLIP_LEFT && xp < SCENE_CLIP_RIGHT))) {
 						*destP = (byte)*lineP;
 						drawBounds.left = MIN(drawBounds.left, xp);
 						drawBounds.right = MAX(drawBounds.right, xp);
@@ -317,7 +321,6 @@ void SpriteResource::draw(XSurface &dest, int frame, const Common::Point &destPo
 	// TODO: TO test when I find sprites using scale values and flags
 	assert(scale != 0x8000); 
 	assert(scale >= 0);
-//	assert((flags & SPRFLAG_2000) == 0);
 
 	drawOffset(dest, _index[frame]._offset1, destPos, bounds, flags, scale);
 	if (_index[frame]._offset2)

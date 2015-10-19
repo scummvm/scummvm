@@ -34,7 +34,7 @@ namespace Xeen {
 class XeenEngine;
 class Window;
 
-enum SpriteFlags { SPRFLAG_2000 = 0x2000, SPRFLAG_4000 = 0x4000, 
+enum SpriteFlags { SPRFLAG_SCENE_CLIPPED = 0x2000, SPRFLAG_4000 = 0x4000, 
 	SPRFLAG_HORIZ_FLIPPED = 0x8000, SPRFLAG_RESIZE = 0x10000 };
 
 class SpriteResource {
