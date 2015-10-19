@@ -274,6 +274,18 @@ public:
 	virtual void preActions();
 	virtual void actions();
 };
+
+class Scene110 : public Scene1xx {
+public:
+	Scene110(MADSEngine *vm);
+	virtual void synchronize(Common::Serializer &s);
+
+	virtual void setup();
+	virtual void enter();
+	virtual void step();
+	virtual void preActions();
+	virtual void actions();
+};
 } // End of namespace Phantom
 } // End of namespace MADS
 

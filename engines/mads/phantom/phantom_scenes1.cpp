@@ -6114,5 +6114,354 @@ void Scene109::preActions() {
 
 /*------------------------------------------------------------------------*/
 
+Scene110::Scene110(MADSEngine *vm) : Scene1xx(vm) {
+}
+
+void Scene110::synchronize(Common::Serializer &s) {
+	Scene1xx::synchronize(s);
+}
+
+void Scene110::setup() {
+	if (_globals[kCurrentYear] == 1993)
+		_scene->_initialVariant = 1;
+
+	setPlayerSpritesPrefix();
+	setAAName();
+}
+
+void Scene110::enter() {
+	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('x', 0), false);
+	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('x', 1), false);
+	_globals._spriteIndexes[1] = _scene->_sprites.addSprites("*RDR_9", false);
+
+	if (_globals[kCurrentYear] == 1993) {
+		_globals._spriteIndexes[0] = _scene->_sprites.addSprites(formAnimName('z', -1), false);
+		_scene->drawToBackground(_globals._spriteIndexes[0], 1, Common::Point(-32000, -32000), 0, 100);
+		_scene->_hotspots.activate(NOUN_POSTER, false);
+		_scene->_hotspots.activate(NOUN_WASTE_BASKET, false);
+
+		if (_globals[kDoneBrieConv203] == 0) {
+			if (_globals[kJuliesDoor] == 0) {
+				_globals._sequenceIndexes[2] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[2], false, 3);
+				_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 8);
+			}
+		} else {
+			_globals._sequenceIndexes[3] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[3], false, 1);
+			_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 8);
+		}
+	} else {
+		_scene->_hotspots.activate(NOUN_BULLETIN_BOARD, false);
+		_scene->_hotspots.activate(NOUN_PAPER, false);
+		_scene->_hotspots.activate(NOUN_TRASH_BUCKET, false);
+	}
+
+	if (_scene->_priorSceneId == 112) {
+		_game._player._playerPos = Common::Point(261, 121);
+		_game._player._facing = FACING_SOUTH;
+		_game._player.walk(Common::Point(221, 131), FACING_SOUTH);
+	} else if ((_scene->_priorSceneId == 109) || (_scene->_priorSceneId != RETURNING_FROM_LOADING)) {
+		_game._player.firstWalk(Common::Point(335, 150), FACING_WEST, Common::Point(310, 150), FACING_WEST, true);
+	}
+
+	sceneEntrySound();
+}
+
+void Scene110::step() {
+}
+
+void Scene110::actions() {
+	if ((_action.isAction(VERB_WALK_THROUGH, NOUN_RIGHT_DOOR) || _action.isAction(VERB_UNLOCK, NOUN_RIGHT_DOOR) || _action.isAction(NOUN_LOCK, NOUN_RIGHT_DOOR))
+	 && (_globals[kDoneBrieConv203] == 0) && (_globals[kCurrentYear] == 1993) && (_globals[kJuliesDoor] == 0)) {
+		_scene->_nextSceneId = 112;
+		_action._inProgress = false;
+		return;
+	}
+
+	if (_action.isAction(VERB_WALK_THROUGH, NOUN_LEFT_DOOR) || _action.isAction(VERB_OPEN, NOUN_LEFT_DOOR)
+	 || _action.isAction(VERB_UNLOCK, NOUN_LEFT_DOOR) || _action.isAction(NOUN_LOCK, NOUN_LEFT_DOOR)) {
+		switch (_game._trigger) {
+		case (0):
+			_game._player._stepEnabled  = false;
+			_game._player._visible = false;  
+			_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 5, 1);
+			_scene->_sequences.setRange(_globals._sequenceIndexes[1], 1, 4);
+			_scene->_sequences.setSeqPlayer(_globals._sequenceIndexes[1], true);
+			_scene->_sequences.setTrigger(_globals._sequenceIndexes[1], 0, 0, 1);
+			break;
+
+		case 1: {
+			int idx = _globals._sequenceIndexes[1];
+			_globals._sequenceIndexes[1] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[1], false, 4);
+			_game.syncTimers(1, _globals._sequenceIndexes[1], 1, idx); 
+			_scene->_sequences.setSeqPlayer(_globals._sequenceIndexes[1], false);
+			_scene->_sequences.setTimingTrigger(30, 2);
+			_vm->_sound->command(73);
+			}
+			break; 
+
+		case 2:
+			_scene->deleteSequence(_globals._sequenceIndexes[1]);
+			_globals._sequenceIndexes[1] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[1], false, 5, 1);
+			_scene->_sequences.setRange(_globals._sequenceIndexes[1], 1, 4);
+			_scene->_sequences.setSeqPlayer(_globals._sequenceIndexes[1], false);
+			_scene->_sequences.setTrigger(_globals._sequenceIndexes[1], 0, 0, 3);
+			break;
+
+		case 3:
+			_game.syncTimers(2, 0, 1, _globals._sequenceIndexes[1]); 
+			_game._player._visible = true;
+			_game._player._stepEnabled = true;
+			if (_action.isAction(NOUN_LOCK) || _action.isAction(VERB_UNLOCK))
+				_vm->_dialogs->show(32);
+			else
+				_vm->_dialogs->show(11022);
+
+			break;
+
+		default:
+			break;
+		}
+		_action._inProgress = false;
+		return;
+	}
+
+	if (_action.isAction(VERB_WALK_THROUGH, NOUN_RIGHT_DOOR) || _action.isAction(VERB_OPEN, NOUN_RIGHT_DOOR)
+	 || _action.isAction(VERB_UNLOCK, NOUN_RIGHT_DOOR) || _action.isAction(NOUN_LOCK, NOUN_RIGHT_DOOR)) {
+		if ((_globals[kCurrentYear] == 1881) || (_globals[kDoneBrieConv203] >= 1)
+		 && !_action.isAction(VERB_UNLOCK, NOUN_RIGHT_DOOR) && !_action.isAction(NOUN_LOCK, NOUN_RIGHT_DOOR)) {
+			switch (_game._trigger) {
+			case (0):
+				_game._player._stepEnabled  = false;
+				_game._player._visible = false;  
+				_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 5, 1);
+				_scene->_sequences.setRange(_globals._sequenceIndexes[1], 1, 4);
+				_scene->_sequences.setSeqPlayer(_globals._sequenceIndexes[1], true);
+				_scene->_sequences.setTrigger(_globals._sequenceIndexes[1], 0, 0, 1);
+				break;
+
+			case 1: {
+				int idx = _globals._sequenceIndexes[1];
+				_globals._sequenceIndexes[1] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[1], false, 4);
+				_game.syncTimers(1, _globals._sequenceIndexes[1], 1, idx); 
+				_scene->_sequences.setSeqPlayer(_globals._sequenceIndexes[1], false);
+				_scene->_sequences.setTimingTrigger(30, 2);
+				_vm->_sound->command(73);
+				}
+				break; 
+
+			case 2:
+				_scene->deleteSequence(_globals._sequenceIndexes[1]);
+				_globals._sequenceIndexes[1] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[1], false, 5, 1);
+				_scene->_sequences.setRange(_globals._sequenceIndexes[1], 1, 4);
+				_scene->_sequences.setSeqPlayer(_globals._sequenceIndexes[1], false);
+				_scene->_sequences.setTrigger(_globals._sequenceIndexes[1], 0, 0, 3);
+				break;
+
+			case 3:
+				_game.syncTimers(2, 0, 1, _globals._sequenceIndexes[1]); 
+				_game._player._visible = true;
+				_game._player._stepEnabled = true;
+				if (_action.isAction(NOUN_LOCK) || _action.isAction(VERB_UNLOCK))
+					_vm->_dialogs->show(32);
+				else
+					_vm->_dialogs->show(11023);
+				break;
+
+			default:
+				break;
+			}
+			_action._inProgress = false;
+			return;
+		} else if (_globals[kJuliesDoor] == 1) {
+			switch (_game._trigger) {
+			case (0):
+				_game._player._stepEnabled  = false;
+				_game._player._visible = false;  
+				_globals._sequenceIndexes[1] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[1], false, 7, 2);
+				_scene->_sequences.setRange(_globals._sequenceIndexes[1], 1, 4);
+				_scene->_sequences.setSeqPlayer(_globals._sequenceIndexes[1], true);
+				_scene->_sequences.setTrigger(_globals._sequenceIndexes[1], 2, 4, 1);
+				_scene->_sequences.setTrigger(_globals._sequenceIndexes[1], 0, 0, 3);
+				break;
+
+			case 1:
+				_vm->_sound->command(24);
+				_globals._sequenceIndexes[2] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[2], false, 10, 1);
+				_scene->_sequences.setRange(_globals._sequenceIndexes[2], -1, -2);
+				_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 10);
+				_scene->_sequences.setTrigger(_globals._sequenceIndexes[2], 0, 0, 2);
+				break; 
+
+			case 2:
+				_globals._sequenceIndexes[2] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[2], false, 3);
+				_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 10);
+				break;
+
+			case 3:
+				_game.syncTimers(2, 0, 1, _globals._sequenceIndexes[1]); 
+				_game._player._visible = true;
+				_game._player.walk(Common::Point(261, 121), FACING_NORTHEAST);
+				_game._player.setWalkTrigger(4);
+				break;
+
+			case 4:
+				_scene->_nextSceneId = 112;
+				_globals[kJuliesDoor] = 0;
+				break;
+
+			default:
+				break;
+			}
+			_action._inProgress = false;
+			return;
+		}
+	}
+
+	if (_action._lookFlag) {
+		_vm->_dialogs->show(11010);
+		_action._inProgress = false;
+		return;
+	}
+
+	if (_action.isAction(VERB_LOOK) || _action.isAction(VERB_LOOK_AT)) {
+		if (_action.isAction(NOUN_FLOOR)) {
+			_vm->_dialogs->show(11011);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isAction(NOUN_WALL)) {
+			_vm->_dialogs->show(11012);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isAction(NOUN_CEILING)) {
+			_vm->_dialogs->show(11013);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isAction(NOUN_STAIRWELL)) {
+			_vm->_dialogs->show(11014);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isAction(NOUN_RIGHT_DOOR)) {
+			if (_globals[kDoneBrieConv203] >= 1)
+				_vm->_dialogs->show(11016);
+			else if (_globals[kChrisFStatus] == 1)
+				_vm->_dialogs->show(11015);
+			else
+				_vm->_dialogs->show(11016);
+
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isAction(NOUN_LEFT_DOOR)) {
+			_vm->_dialogs->show(11016);
+			_action._inProgress = false;
+			return;
+		}
+
+		if ((_action.isAction(NOUN_WASTE_BASKET)) || (_action.isAction(NOUN_TRASH_BUCKET))) {
+			_vm->_dialogs->show(11017);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isAction(NOUN_POSTER)) {
+			_vm->_dialogs->show(11018);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isAction(NOUN_BULLETIN_BOARD)) {
+			_vm->_dialogs->show(11019);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isAction(NOUN_PAPER)) {
+			_vm->_dialogs->show(11029);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isAction(VERB_TAKE, NOUN_WASTE_BASKET) || _action.isAction(VERB_TAKE, NOUN_TRASH_BUCKET)) {
+			_vm->_dialogs->show(11020);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isAction(NOUN_LIGHT_FIXTURE)) {
+			if (_globals[kCurrentYear] == 1993)
+				_vm->_dialogs->show(11021);
+			else
+				_vm->_dialogs->show(11028);
+
+			_action._inProgress = false;
+			return;
+		}
+	}
+
+	if (_action.isAction(VERB_TAKE, NOUN_PAPER)) {
+		_vm->_dialogs->show(11030);
+		_action._inProgress = false;
+		return;
+	}
+
+	if (_action.isAction(VERB_CLOSE, NOUN_RIGHT_DOOR)) {
+		if (_globals[kDoneBrieConv203] >= 1)
+			_vm->_dialogs->show(11026);
+		else if (_globals[kChrisFStatus] == 1)
+			_vm->_dialogs->show(11024);
+		else
+			_vm->_dialogs->show(11026);
+
+		_action._inProgress = false;
+		return;
+	}
+
+	if (_action.isAction(VERB_CLOSE, NOUN_LEFT_DOOR)) {
+		_vm->_dialogs->show(11025);
+		_action._inProgress = false;
+		return;
+	}
+
+	if (_action.isAction(VERB_OPEN, NOUN_RIGHT_DOOR)) {
+		if ((_globals[kChrisFStatus] == 1) && (_globals[kDoneBrieConv203] == 0))
+			_vm->_dialogs->show(11027);
+
+		_action._inProgress = false;
+		return;
+	}
+}
+
+void Scene110::preActions() {
+	if (_action.isAction(VERB_EXIT_TO, NOUN_STAIRWELL))
+		_game._player._walkOffScreenSceneId = 109;
+
+	if (_action.isAction(VERB_OPEN, NOUN_LEFT_DOOR) || _action.isAction(VERB_UNLOCK, NOUN_LEFT_DOOR) || _action.isAction(NOUN_LOCK, NOUN_LEFT_DOOR))
+		_game._player.walk(Common::Point(111, 126), FACING_NORTHEAST);
+
+	if (_action.isAction(VERB_OPEN, NOUN_RIGHT_DOOR) || _action.isAction(VERB_WALK_THROUGH, NOUN_RIGHT_DOOR)
+	 || _action.isAction(VERB_UNLOCK, NOUN_RIGHT_DOOR) || _action.isAction(NOUN_LOCK, NOUN_RIGHT_DOOR)) {
+		if ((_globals[kCurrentYear] == 1881) || (_globals[kDoneBrieConv203] >= 1))
+			_game._player.walk(Common::Point(221, 131), FACING_NORTHEAST);
+		else if ((_globals[kJuliesDoor] == 1) || _action.isAction(VERB_OPEN))
+			_game._player.walk(Common::Point(223, 128), FACING_NORTHEAST);
+		else if (_globals[kJuliesDoor] == 0)
+			_game._player.walk(Common::Point(261, 120), FACING_NORTHEAST);
+	}
+
+	if (_action.isAction(VERB_LOOK, NOUN_PAPER))
+		_game._player._needToWalk = true;
+}
+
+/*------------------------------------------------------------------------*/
+
 } // End of namespace Phantom
 } // End of namespace MADS
