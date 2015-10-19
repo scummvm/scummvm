@@ -35,6 +35,10 @@ namespace Phantom {
 // TODO: Adapt for Phantom's difficulty setting
 enum StoryMode { STORYMODE_NAUGHTY = 1, STORYMODE_NICE = 2 };
 
+enum Difficulty {
+	DIFFICULTY_HARD = 1, DIFFICULTY_MEDIUM = 2, DIFFICULTY_EASY = 3
+};
+
 enum InventoryObject {
 	OBJ_NONE = -1,
 	OBJ_KEY = 0,
@@ -79,6 +83,8 @@ protected:
 public:
 	PhantomGlobals _globals;
 	StoryMode _storyMode;
+	Difficulty _difficulty;
+
 
 	virtual Globals &globals() { return _globals; }
 
