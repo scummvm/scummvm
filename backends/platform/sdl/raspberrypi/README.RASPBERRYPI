@@ -77,7 +77,7 @@ Local compilation would simply consist of the "standard" GNU/Linux building proc
 
 cd <sources_dir>
 
-./configure --backend=raspberrypi -disable-debug --enable-release 
+./configure --enable-dispmanx -disable-debug --enable-release 
 --enable-optimizations --disable-mt32emu --disable-flac --disable-mad --disable-vorbis 
 --disable-tremor --disable-fluidsynth --disable-taskbar --disable-timidity --disable-alsa
 
