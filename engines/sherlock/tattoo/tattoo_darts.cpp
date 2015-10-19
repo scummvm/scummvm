@@ -30,7 +30,8 @@ namespace Tattoo {
 
 enum {
 	DART_COLOR_FORE	= 5,
-	PLAYER_COLOR	= 11
+	PLAYER_COLOR	= 11,
+	DART_BAR_FORE	= 208
 };
 
 static const int STATUS_INFO_X = 430;
@@ -921,7 +922,7 @@ int Darts::throwDart(int dartNum, int computer) {
 	if (_escapePressed)
 		return 0;
 
-	height = doPowerBar(Common::Point(DART_BAR_VX, DART_HEIGHT_Y), DART_COLOR_FORE, targetPos.y, 1);
+	height = doPowerBar(Common::Point(DART_BAR_VX, DART_HEIGHT_Y), DART_BAR_FORE, targetPos.y, 1);
 	if (_escapePressed)
 		return 0;
 
