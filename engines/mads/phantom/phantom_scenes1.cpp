@@ -1364,7 +1364,7 @@ void Scene103::preActions() {
 	if (_action.isAction(VERB_WALK_THROUGH, NOUN_DOOR_TO_PIT))
 		_game._player._walkOffScreenSceneId = 102;
 
-	if ((_action.isAction(VERB_OPEN, NOUN_DOOR) || _action.isAction(VERB_UNLOCK, NOUN_DOOR) || _action.isAction(NOUN_LOCK, NOUN_DOOR)) && (_standPosition == 0))
+	if ((_action.isAction(VERB_OPEN, NOUN_DOOR) || _action.isAction(VERB_UNLOCK, NOUN_DOOR) || _action.isAction(VERB_LOCK, NOUN_DOOR)) && (_standPosition == 0))
 		_game._player.walk(Common::Point(252, 134), FACING_EAST);
 }
 
@@ -1589,8 +1589,8 @@ void Scene103::actions() {
 		return;
 	}
 
-	if (_action.isAction(VERB_WALK_THROUGH, NOUN_DOOR) || _action.isAction(VERB_OPEN, NOUN_DOOR) || _action.isAction(VERB_UNLOCK, NOUN_DOOR) || _action.isAction(NOUN_LOCK, NOUN_DOOR)) {
-		if ((_globals[kCurrentYear] == 1881) && !_action.isAction(NOUN_LOCK, NOUN_DOOR) && !_action.isAction(VERB_UNLOCK, NOUN_DOOR)) {
+	if (_action.isAction(VERB_WALK_THROUGH, NOUN_DOOR) || _action.isAction(VERB_OPEN, NOUN_DOOR) || _action.isAction(VERB_UNLOCK, NOUN_DOOR) || _action.isAction(VERB_LOCK, NOUN_DOOR)) {
+		if ((_globals[kCurrentYear] == 1881) && !_action.isAction(VERB_LOCK, NOUN_DOOR) && !_action.isAction(VERB_UNLOCK, NOUN_DOOR)) {
 			switch (_game._trigger) {
 			case (0):
 				_game._player._stepEnabled = false;
@@ -1666,7 +1666,7 @@ void Scene103::actions() {
 			case 3:
 				_game.syncTimers(2, 0, 1, _globals._sequenceIndexes[2]);
 				_game._player._visible = true;
-				if (_action.isAction(NOUN_LOCK) || _action.isAction(VERB_UNLOCK))
+				if (_action.isAction(VERB_LOCK) || _action.isAction(VERB_UNLOCK))
 					_vm->_dialogs->show(00032);
 				else
 					_vm->_dialogs->show(10335);
@@ -3903,8 +3903,8 @@ void Scene105::actions() {
 	}
 
 	if (_action.isAction(VERB_WALK_THROUGH, NOUN_DOOR) || _action.isAction(VERB_OPEN, NOUN_DOOR) || (_game._trigger) ||
-		_action.isAction(VERB_UNLOCK, NOUN_DOOR) || _action.isAction(NOUN_LOCK, NOUN_DOOR)) {
-		if ((_globals[kCurrentYear] == 1881) && !_action.isAction(VERB_UNLOCK) && !_action.isAction(NOUN_LOCK)){
+		_action.isAction(VERB_UNLOCK, NOUN_DOOR) || _action.isAction(VERB_LOCK, NOUN_DOOR)) {
+		if ((_globals[kCurrentYear] == 1881) && !_action.isAction(VERB_UNLOCK) && !_action.isAction(VERB_LOCK)){
 			switch (_game._trigger) {
 			case (0):
 				_game._player._stepEnabled = false;
@@ -3979,7 +3979,7 @@ void Scene105::actions() {
 			case 3:
 				_game.syncTimers(2, 0, 1, _globals._sequenceIndexes[6]);
 				_game._player._visible = true;
-				if (_action.isAction(NOUN_LOCK) || _action.isAction(VERB_UNLOCK))
+				if (_action.isAction(VERB_LOCK) || _action.isAction(VERB_UNLOCK))
 					_vm->_dialogs->show(32);
 				else
 					_vm->_dialogs->show(10536);
@@ -4166,7 +4166,7 @@ void Scene105::preActions() {
 	if (_action.isAction(VERB_WALK_THROUGH, NOUN_DOOR_TO_PIT))
 		_game._player._walkOffScreenSceneId = 102;
 
-	if (_action.isAction(VERB_OPEN, NOUN_DOOR) || _action.isAction(VERB_UNLOCK, NOUN_DOOR) || _action.isAction(NOUN_LOCK, NOUN_DOOR))
+	if (_action.isAction(VERB_OPEN, NOUN_DOOR) || _action.isAction(VERB_UNLOCK, NOUN_DOOR) || _action.isAction(VERB_LOCK, NOUN_DOOR))
 		_game._player.walk(Common::Point(33, 128), FACING_NORTHWEST);
 }
 
@@ -6170,7 +6170,7 @@ void Scene110::step() {
 }
 
 void Scene110::actions() {
-	if ((_action.isAction(VERB_WALK_THROUGH, NOUN_RIGHT_DOOR) || _action.isAction(VERB_UNLOCK, NOUN_RIGHT_DOOR) || _action.isAction(NOUN_LOCK, NOUN_RIGHT_DOOR))
+	if ((_action.isAction(VERB_WALK_THROUGH, NOUN_RIGHT_DOOR) || _action.isAction(VERB_UNLOCK, NOUN_RIGHT_DOOR) || _action.isAction(VERB_LOCK, NOUN_RIGHT_DOOR))
 	 && (_globals[kDoneBrieConv203] == 0) && (_globals[kCurrentYear] == 1993) && (_globals[kJuliesDoor] == 0)) {
 		_scene->_nextSceneId = 112;
 		_action._inProgress = false;
@@ -6178,7 +6178,7 @@ void Scene110::actions() {
 	}
 
 	if (_action.isAction(VERB_WALK_THROUGH, NOUN_LEFT_DOOR) || _action.isAction(VERB_OPEN, NOUN_LEFT_DOOR)
-	 || _action.isAction(VERB_UNLOCK, NOUN_LEFT_DOOR) || _action.isAction(NOUN_LOCK, NOUN_LEFT_DOOR)) {
+	 || _action.isAction(VERB_UNLOCK, NOUN_LEFT_DOOR) || _action.isAction(VERB_LOCK, NOUN_LEFT_DOOR)) {
 		switch (_game._trigger) {
 		case (0):
 			_game._player._stepEnabled  = false;
@@ -6211,7 +6211,7 @@ void Scene110::actions() {
 			_game.syncTimers(2, 0, 1, _globals._sequenceIndexes[1]); 
 			_game._player._visible = true;
 			_game._player._stepEnabled = true;
-			if (_action.isAction(NOUN_LOCK) || _action.isAction(VERB_UNLOCK))
+			if (_action.isAction(VERB_LOCK) || _action.isAction(VERB_UNLOCK))
 				_vm->_dialogs->show(32);
 			else
 				_vm->_dialogs->show(11022);
@@ -6226,9 +6226,9 @@ void Scene110::actions() {
 	}
 
 	if (_action.isAction(VERB_WALK_THROUGH, NOUN_RIGHT_DOOR) || _action.isAction(VERB_OPEN, NOUN_RIGHT_DOOR)
-	 || _action.isAction(VERB_UNLOCK, NOUN_RIGHT_DOOR) || _action.isAction(NOUN_LOCK, NOUN_RIGHT_DOOR)) {
+	 || _action.isAction(VERB_UNLOCK, NOUN_RIGHT_DOOR) || _action.isAction(VERB_LOCK, NOUN_RIGHT_DOOR)) {
 		if ((_globals[kCurrentYear] == 1881) || (_globals[kDoneBrieConv203] >= 1)
-		 && !_action.isAction(VERB_UNLOCK, NOUN_RIGHT_DOOR) && !_action.isAction(NOUN_LOCK, NOUN_RIGHT_DOOR)) {
+		 && !_action.isAction(VERB_UNLOCK, NOUN_RIGHT_DOOR) && !_action.isAction(VERB_LOCK, NOUN_RIGHT_DOOR)) {
 			switch (_game._trigger) {
 			case (0):
 				_game._player._stepEnabled  = false;
@@ -6261,7 +6261,7 @@ void Scene110::actions() {
 				_game.syncTimers(2, 0, 1, _globals._sequenceIndexes[1]); 
 				_game._player._visible = true;
 				_game._player._stepEnabled = true;
-				if (_action.isAction(NOUN_LOCK) || _action.isAction(VERB_UNLOCK))
+				if (_action.isAction(VERB_LOCK) || _action.isAction(VERB_UNLOCK))
 					_vm->_dialogs->show(32);
 				else
 					_vm->_dialogs->show(11023);
@@ -6444,11 +6444,11 @@ void Scene110::preActions() {
 	if (_action.isAction(VERB_EXIT_TO, NOUN_STAIRWELL))
 		_game._player._walkOffScreenSceneId = 109;
 
-	if (_action.isAction(VERB_OPEN, NOUN_LEFT_DOOR) || _action.isAction(VERB_UNLOCK, NOUN_LEFT_DOOR) || _action.isAction(NOUN_LOCK, NOUN_LEFT_DOOR))
+	if (_action.isAction(VERB_OPEN, NOUN_LEFT_DOOR) || _action.isAction(VERB_UNLOCK, NOUN_LEFT_DOOR) || _action.isAction(VERB_LOCK, NOUN_LEFT_DOOR))
 		_game._player.walk(Common::Point(111, 126), FACING_NORTHEAST);
 
 	if (_action.isAction(VERB_OPEN, NOUN_RIGHT_DOOR) || _action.isAction(VERB_WALK_THROUGH, NOUN_RIGHT_DOOR)
-	 || _action.isAction(VERB_UNLOCK, NOUN_RIGHT_DOOR) || _action.isAction(NOUN_LOCK, NOUN_RIGHT_DOOR)) {
+	 || _action.isAction(VERB_UNLOCK, NOUN_RIGHT_DOOR) || _action.isAction(VERB_LOCK, NOUN_RIGHT_DOOR)) {
 		if ((_globals[kCurrentYear] == 1881) || (_globals[kDoneBrieConv203] >= 1))
 			_game._player.walk(Common::Point(221, 131), FACING_NORTHEAST);
 		else if ((_globals[kJuliesDoor] == 1) || _action.isAction(VERB_OPEN))
