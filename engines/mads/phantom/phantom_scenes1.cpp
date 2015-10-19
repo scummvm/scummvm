@@ -6172,8 +6172,8 @@ void Scene110::actions() {
 	 || _action.isAction(VERB_UNLOCK, NOUN_LEFT_DOOR) || _action.isAction(VERB_LOCK, NOUN_LEFT_DOOR)) {
 		switch (_game._trigger) {
 		case (0):
-			_game._player._stepEnabled  = false;
-			_game._player._visible = false;  
+			_game._player._stepEnabled = false;
+			_game._player._visible = false;
 			_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 5, 1);
 			_scene->_sequences.setRange(_globals._sequenceIndexes[1], 1, 4);
 			_scene->_sequences.setSeqPlayer(_globals._sequenceIndexes[1], true);
@@ -6183,12 +6183,12 @@ void Scene110::actions() {
 		case 1: {
 			int idx = _globals._sequenceIndexes[1];
 			_globals._sequenceIndexes[1] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[1], false, 4);
-			_game.syncTimers(1, _globals._sequenceIndexes[1], 1, idx); 
+			_game.syncTimers(1, _globals._sequenceIndexes[1], 1, idx);
 			_scene->_sequences.setSeqPlayer(_globals._sequenceIndexes[1], false);
 			_scene->_sequences.setTimingTrigger(30, 2);
 			_vm->_sound->command(73);
 			}
-			break; 
+			break;
 
 		case 2:
 			_scene->deleteSequence(_globals._sequenceIndexes[1]);
@@ -6199,7 +6199,7 @@ void Scene110::actions() {
 			break;
 
 		case 3:
-			_game.syncTimers(2, 0, 1, _globals._sequenceIndexes[1]); 
+			_game.syncTimers(2, 0, 1, _globals._sequenceIndexes[1]);
 			_game._player._visible = true;
 			_game._player._stepEnabled = true;
 			if (_action.isAction(VERB_LOCK) || _action.isAction(VERB_UNLOCK))
@@ -6222,8 +6222,8 @@ void Scene110::actions() {
 		 && !_action.isAction(VERB_UNLOCK, NOUN_RIGHT_DOOR) && !_action.isAction(VERB_LOCK, NOUN_RIGHT_DOOR)) {
 			switch (_game._trigger) {
 			case (0):
-				_game._player._stepEnabled  = false;
-				_game._player._visible = false;  
+				_game._player._stepEnabled = false;
+				_game._player._visible = false;
 				_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 5, 1);
 				_scene->_sequences.setRange(_globals._sequenceIndexes[1], 1, 4);
 				_scene->_sequences.setSeqPlayer(_globals._sequenceIndexes[1], true);
@@ -6233,12 +6233,12 @@ void Scene110::actions() {
 			case 1: {
 				int idx = _globals._sequenceIndexes[1];
 				_globals._sequenceIndexes[1] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[1], false, 4);
-				_game.syncTimers(1, _globals._sequenceIndexes[1], 1, idx); 
+				_game.syncTimers(1, _globals._sequenceIndexes[1], 1, idx);
 				_scene->_sequences.setSeqPlayer(_globals._sequenceIndexes[1], false);
 				_scene->_sequences.setTimingTrigger(30, 2);
 				_vm->_sound->command(73);
 				}
-				break; 
+				break;
 
 			case 2:
 				_scene->deleteSequence(_globals._sequenceIndexes[1]);
@@ -6249,7 +6249,7 @@ void Scene110::actions() {
 				break;
 
 			case 3:
-				_game.syncTimers(2, 0, 1, _globals._sequenceIndexes[1]); 
+				_game.syncTimers(2, 0, 1, _globals._sequenceIndexes[1]);
 				_game._player._visible = true;
 				_game._player._stepEnabled = true;
 				if (_action.isAction(VERB_LOCK) || _action.isAction(VERB_UNLOCK))
@@ -6266,8 +6266,8 @@ void Scene110::actions() {
 		} else if (_globals[kJuliesDoor] == 1) {
 			switch (_game._trigger) {
 			case (0):
-				_game._player._stepEnabled  = false;
-				_game._player._visible = false;  
+				_game._player._stepEnabled = false;
+				_game._player._visible = false;
 				_globals._sequenceIndexes[1] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[1], false, 7, 2);
 				_scene->_sequences.setRange(_globals._sequenceIndexes[1], 1, 4);
 				_scene->_sequences.setSeqPlayer(_globals._sequenceIndexes[1], true);
@@ -6281,7 +6281,7 @@ void Scene110::actions() {
 				_scene->_sequences.setRange(_globals._sequenceIndexes[2], -1, -2);
 				_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 10);
 				_scene->_sequences.setTrigger(_globals._sequenceIndexes[2], 0, 0, 2);
-				break; 
+				break;
 
 			case 2:
 				_globals._sequenceIndexes[2] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[2], false, 3);
@@ -6289,7 +6289,7 @@ void Scene110::actions() {
 				break;
 
 			case 3:
-				_game.syncTimers(2, 0, 1, _globals._sequenceIndexes[1]); 
+				_game.syncTimers(2, 0, 1, _globals._sequenceIndexes[1]);
 				_game._player._visible = true;
 				_game._player.walk(Common::Point(261, 121), FACING_NORTHEAST);
 				_game._player.setWalkTrigger(4);
@@ -6533,7 +6533,7 @@ void Scene111::enter() {
 			_scene->_hotspots.activate(NOUN_HANDLE, true);
 			_scene->_hotspots.activate(NOUN_AXE, true);
 		}
-	}  
+	}
 
 	if ((_globals[kChristineDoorStatus] == 0) && (_scene->_priorSceneId != 113) && !_closedFl) {
 		_globals._sequenceIndexes[5] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[5], false, 3);
@@ -6584,7 +6584,7 @@ void Scene111::step() {
 		_scene->deleteSequence(_globals._sequenceIndexes[2]);
 		_game._objects.addToInventory(OBJ_FIRE_AXE);
 		_removeAxe = true;
-	}  
+	}
 
 	if (_game._objects.isInInventory(OBJ_FIRE_AXE) && _anim1ActvFl && (_scene->_animation[_globals._animationIndexes[1]]->getCurrentFrame() == 36))
 		_game._objects.setRoom(OBJ_FIRE_AXE, NOWHERE);
@@ -6649,7 +6649,7 @@ void Scene111::actions() {
 		switch (_game._trigger) {
 		case (0):
 			_game._player._stepEnabled = false;
-			_game._player._visible = false;  
+			_game._player._visible = false;
 			_globals._sequenceIndexes[0] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[0], false, 5, 1);
 			_scene->_sequences.setRange(_globals._sequenceIndexes[0], 1, 4);
 			_scene->_sequences.setSeqPlayer(_globals._sequenceIndexes[0], true);
@@ -6660,7 +6660,7 @@ void Scene111::actions() {
 		case 1: {
 			int idx = _globals._sequenceIndexes[0];
 			_globals._sequenceIndexes[0] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[0], false, 4);
-			_game.syncTimers(1, _globals._sequenceIndexes[0], 1, idx); 
+			_game.syncTimers(1, _globals._sequenceIndexes[0], 1, idx);
 			_scene->_sequences.setSeqPlayer(_globals._sequenceIndexes[0], false);
 			_scene->_sequences.setTimingTrigger(30, 2);
 			_vm->_sound->command(73);
@@ -6678,7 +6678,7 @@ void Scene111::actions() {
 			return;
 
 		case 3:
-			_game.syncTimers(2, 0, 1, _globals._sequenceIndexes[0]); 
+			_game.syncTimers(2, 0, 1, _globals._sequenceIndexes[0]);
 			_game._player._visible = true;
 			if (_action.isAction(VERB_LOCK) || _action.isAction(VERB_UNLOCK))
 				_vm->_dialogs->show(32);
@@ -6699,7 +6699,7 @@ void Scene111::actions() {
 			switch (_game._trigger) {
 			case (0):
 				_game._player._stepEnabled = false;
-				_game._player._visible = false;  
+				_game._player._visible = false;
 				_globals._sequenceIndexes[0] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[0], false, 5, 1);
 				_scene->_sequences.setRange(_globals._sequenceIndexes[0], 1, 4);
 				_scene->_sequences.setSeqPlayer(_globals._sequenceIndexes[0], true);
@@ -6710,7 +6710,7 @@ void Scene111::actions() {
 			case 1: {
 				int idx = _globals._sequenceIndexes[0];
 				_globals._sequenceIndexes[0] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[0], false, 4);
-				_game.syncTimers(1, _globals._sequenceIndexes[0], 1, idx); 
+				_game.syncTimers(1, _globals._sequenceIndexes[0], 1, idx);
 				_scene->_sequences.setSeqPlayer(_globals._sequenceIndexes[0], false);
 				_scene->_sequences.setTimingTrigger(30, 2);
 				_vm->_sound->command(73);
@@ -6728,7 +6728,7 @@ void Scene111::actions() {
 				return;
 
 			case 3:
-				_game.syncTimers(2, 0, 1, _globals._sequenceIndexes[0]); 
+				_game.syncTimers(2, 0, 1, _globals._sequenceIndexes[0]);
 				_game._player._visible = true;
 
 				if (_action.isAction(VERB_LOCK) || _action.isAction(VERB_UNLOCK))
@@ -6773,10 +6773,10 @@ void Scene111::actions() {
 			case 1:
 				_globals[kChristineDoorStatus] = 2;
 				_globals._sequenceIndexes[3] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[3], false, 1);
-				_game.syncTimers(1, _globals._sequenceIndexes[3], 3, _globals._animationIndexes[1]); 
+				_game.syncTimers(1, _globals._sequenceIndexes[3], 3, _globals._animationIndexes[1]);
 				_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 10);
 				_scene->drawToBackground(_globals._spriteIndexes[4], 1, Common::Point(-32000, -32000), 0, 100);
-				_game.syncTimers(2, 0, 3, _globals._animationIndexes[1]); 
+				_game.syncTimers(2, 0, 3, _globals._animationIndexes[1]);
 				_game._player._visible = true;
 				_game._player._playerPos = Common::Point(126, 126);
 				_anim1ActvFl = false;
@@ -6896,7 +6896,7 @@ void Scene111::actions() {
 				_vm->_dialogs->show(11116);
 			_action._inProgress = false;
 			return;
-		}  
+		}
 
 		if (_action.isAction(NOUN_RIGHT_DOOR)) {
 			_vm->_dialogs->show(11117);
@@ -6961,7 +6961,7 @@ void Scene111::handleListenAnimation() {
 	if (_scene->_animation[_globals._animationIndexes[0]]->getCurrentFrame() == _listenFrame)
 		return;
 
-	int nextFrame  = -1;
+	int nextFrame = -1;
 	_listenFrame = _scene->_animation[_globals._animationIndexes[0]]->getCurrentFrame();
 
 	if (_listenFrame == 6) {
@@ -6994,6 +6994,658 @@ void Scene111::handleListenConversation() {
 
 	if ((_action._activeAction._verbId != 1) && (_action._activeAction._verbId != 7))
 		_vm->_gameConv->setInterlocutorTrigger(72);
+}
+
+/*------------------------------------------------------------------------*/
+
+Scene112::Scene112(MADSEngine *vm) : Scene1xx(vm) {
+	_anim0ActvFl = false;
+	_anim1ActvFl = false;
+	_raoulAction = -1;
+	_raoulFrame = -1;
+	_didOptionFl = -1;
+	_julieFrame = -1;
+	_julieAction = -1;
+	_julieHotspotId = -1;
+	_julieCounter = -1;
+}
+
+void Scene112::synchronize(Common::Serializer &s) {
+	Scene1xx::synchronize(s);
+
+	s.syncAsByte(_anim0ActvFl);
+	s.syncAsByte(_anim1ActvFl);
+	s.syncAsSint16LE(_raoulAction);
+	s.syncAsSint16LE(_raoulFrame);
+	s.syncAsSint16LE(_didOptionFl);
+	s.syncAsSint16LE(_julieFrame);
+	s.syncAsSint16LE(_julieAction);
+	s.syncAsSint16LE(_julieCounter);
+}
+
+void Scene112::setup() {
+	setPlayerSpritesPrefix();
+	setAAName();
+
+	_scene->addActiveVocab(NOUN_WOMAN);
+	_scene->addActiveVocab(NOUN_JULIE);
+}
+
+void Scene112::enter() {
+	if (_scene->_priorSceneId != RETURNING_FROM_LOADING) {
+		_raoulAction = 2;
+		_didOptionFl = 0;
+	}
+
+	_vm->_gameConv->get(3);
+
+	_globals._animationIndexes[0] = _scene->loadAnimation(formAnimName('j', 1), 1);
+	_anim0ActvFl = true;
+	_julieAction = 2;
+	_scene->setAnimFrame(_globals._animationIndexes[0], 3);
+	if (_globals[kJulieNameIsKnown] == 2) {
+		_julieHotspotId = _scene->_dynamicHotspots.add(NOUN_JULIE, VERB_WALK_TO, SYNTAX_SINGULAR_FEM, EXT_NONE, Common::Rect(255, 82, 255 + 30, 82 + 44));
+		_scene->_dynamicHotspots[_julieHotspotId]._articleNumber = PREP_ON;
+		_scene->_dynamicHotspots.setPosition(_julieHotspotId, Common::Point(216, 137), FACING_NORTHEAST);
+		_scene->_hotspots.activate(NOUN_WOMAN, false);
+	}
+	_globals._animationIndexes[1] = _scene->loadAnimation(formAnimName('r', 1), 1);
+	_anim1ActvFl = true;
+	_scene->setAnimFrame(_globals._animationIndexes[1], 82);
+	_raoulAction = 2;
+
+	if (_vm->_gameConv->_restoreRunning == 3) {
+		_vm->_gameConv->run(3);
+		_vm->_gameConv->exportPointer(&_globals[kPlayerScore]);
+		_scene->setAnimFrame(_globals._animationIndexes[1], 17);
+		_raoulAction = 1;
+		_game._player._playerPos = Common::Point(53, 128);
+		_game._player._facing = FACING_EAST;
+		_game._player._visible = false;
+	} else if ((_scene->_priorSceneId == 110) || (_scene->_priorSceneId != RETURNING_FROM_LOADING)) {
+		_game._player._playerPos = Common::Point(128, 145);
+		_game._player._facing = FACING_NORTH;
+	}
+
+	sceneEntrySound();
+}
+
+void Scene112::step() {
+	if (_anim0ActvFl)
+		handleJulieAnimation();
+
+	if (_anim1ActvFl)
+		handleRaoulChair();
+}
+
+void Scene112::actions() {
+	if (_vm->_gameConv->_running == 3) {
+		handleConversation();
+		_action._inProgress = false;
+		return;
+	}
+
+	if ((_action.isAction(VERB_TALK_TO, NOUN_JULIE)) || (_action.isAction(VERB_TALK_TO, NOUN_WOMAN))) {
+		if (_globals[kJulieNameIsKnown] > 0) {
+			_game._player._visible = false;
+			_game.syncTimers(3, _globals._animationIndexes[1], 2, 0);
+			_scene->setAnimFrame(_globals._animationIndexes[1], 1);
+			_raoulAction = 1;
+		}
+		_vm->_gameConv->run(3);
+		_vm->_gameConv->exportPointer(&_globals[kPlayerScore]);
+		_action._inProgress = false;
+		return;
+	}
+
+	if (_action.isAction(VERB_EXIT_TO, NOUN_CORRIDOR)) {
+		_scene->_nextSceneId = 110;
+		_action._inProgress = false;
+		return;
+	}
+
+	if (_action._lookFlag) {
+		_vm->_dialogs->show(11210);
+		_action._inProgress = false;
+		return;
+	}
+
+	if (_action.isAction(VERB_LOOK) || _action.isAction(VERB_LOOK_AT)) {
+		if (_action.isAction(NOUN_WALL)) {
+			_vm->_dialogs->show(11211);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isAction(NOUN_FLOOR)) {
+			_vm->_dialogs->show(11212);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isAction(NOUN_MIRROR)) {
+			_vm->_dialogs->show(11213);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isAction(NOUN_BALLET_BAR)) {
+			_vm->_dialogs->show(11214);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isAction(NOUN_CORRIDOR)) {
+			_vm->_dialogs->show(11215);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isAction(NOUN_THROW_RUGS)) {
+			_vm->_dialogs->show(11216);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isAction(NOUN_DRESSING_SCREEN)) {
+			_vm->_dialogs->show(11217);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isAction(NOUN_DRESSING_TABLE)) {
+			_vm->_dialogs->show(11218);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isAction(NOUN_CHAIR)) {
+			_vm->_dialogs->show(11219);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isAction(NOUN_PLANT)) {
+			_vm->_dialogs->show(11220);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isAction(NOUN_COAT_RACK)) {
+			_vm->_dialogs->show(11221);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isAction(NOUN_UMBRELLA)) {
+			_vm->_dialogs->show(11222);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isAction(NOUN_PAINTINGS)) {
+			_vm->_dialogs->show(11223);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isAction(NOUN_TRASH_BUCKET)) {
+			_vm->_dialogs->show(11224);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isAction(NOUN_SHELF)) {
+			_vm->_dialogs->show(11225);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isAction(NOUN_CONTAINER)) {
+			_vm->_dialogs->show(11226);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isAction(NOUN_TORN_POSTER)) {
+			_vm->_dialogs->show(11227);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isAction(NOUN_POSTER)) {
+			_vm->_dialogs->show(11228);
+			_action._inProgress = false;
+			return;
+		}
+
+		if ((_action.isAction(NOUN_REVIEW)) || (_action.isAction(NOUN_REVIEWS))) {
+			_vm->_dialogs->show(11229);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isAction(NOUN_JULIE)) {
+			_vm->_dialogs->show(11231);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isAction(NOUN_COSTUME_RACK)) {
+			_vm->_dialogs->show(11232);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isAction(NOUN_LIGHT_FIXTURE)) {
+			_vm->_dialogs->show(11233);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isAction(NOUN_WARDROBE)) {
+			_vm->_dialogs->show(11234);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isAction(NOUN_WOMAN)) {
+			_vm->_dialogs->show(11237);
+			_action._inProgress = false;
+			return;
+		}
+	}
+
+	if (_action.isAction(VERB_TAKE)) {
+		if (_action.isAction(NOUN_WOMAN) || _action.isAction(NOUN_JULIE)) {
+			_vm->_dialogs->show(11238);
+			_action._inProgress = false;
+			return;
+		}
+	}
+
+	if (_action.isAction(VERB_OPEN, NOUN_WARDROBE)) {
+		_vm->_dialogs->show(11235);
+		_action._inProgress = false;
+		return;
+	}
+
+	if (_action.isAction(VERB_OPEN, NOUN_CONTAINER)) {
+		_vm->_dialogs->show(11236);
+		_action._inProgress = false;
+		return;
+	}
+}
+
+void Scene112::preActions() {
+	if ((_action.isAction(VERB_TALK_TO, NOUN_JULIE) || _action.isAction(VERB_TALK_TO, NOUN_WOMAN)) && (_globals[kJulieNameIsKnown] > 0))
+		_game._player.walk(Common::Point(53, 128), FACING_EAST);
+}
+
+void Scene112::handleConversation() {
+	switch (_action._activeAction._verbId) {
+	case 1:
+		if (!_game._trigger && (_raoulAction == 2))
+			_vm->_gameConv->setInterlocutorTrigger(68);
+		break;
+
+	case 3:
+	case 4:
+		if (_globals[kJulieNameIsKnown] < 2) {
+			_globals[kJulieNameIsKnown] = 2;
+			_scene->_hotspots.activate(NOUN_WOMAN, false);
+			_julieHotspotId = _scene->_dynamicHotspots.add(NOUN_JULIE, VERB_WALK_TO, SYNTAX_SINGULAR_FEM, EXT_NONE, Common::Rect(255, 82, 255 + 30, 82 + 44));
+			_scene->_dynamicHotspots[_julieHotspotId]._articleNumber = PREP_ON;
+			_scene->_dynamicHotspots.setPosition(_julieHotspotId, Common::Point(216, 137), FACING_NORTHEAST);
+		}
+		break;
+
+	case 5:
+		_vm->_gameConv->setInterlocutorTrigger(74);
+		_globals[kJulieNameIsKnown] = 1;
+		break;
+
+	case 6:
+	case 7:
+	case 10:
+	case 23:
+	case 27:
+		_vm->_gameConv->setInterlocutorTrigger(74);
+		_globals[kJulieNameIsKnown] = 2;
+		break;
+
+	case 13:
+		_julieAction = 1;
+		_raoulAction = 1;
+		break;
+
+	case 14:
+	case 15:
+	case 16:
+		_julieAction = 0;
+		_raoulAction = 1;
+		break;
+
+	default:
+		break;
+	}
+
+	switch (_game._trigger) {
+	case 60:
+		_julieAction = 0;
+		_raoulAction = 1;
+		break;
+
+	case 62:
+		_julieAction = 2;
+		if (_raoulAction != 2)
+			_raoulAction = 0;
+		break;
+
+	case 68: 
+		_scene->_sequences.setTimingTrigger(120, 70);
+		_vm->_gameConv->hold();
+		break;
+
+	case 70: 
+		_game._player.walk(Common::Point(53, 128), FACING_EAST);
+		_game._player.setWalkTrigger(72);
+		break;
+
+	case 72:
+		_vm->_gameConv->release();
+		_game._player._visible = false;
+		_game.syncTimers(3, _globals._animationIndexes[1], 2, 0);
+		_scene->setAnimFrame(_globals._animationIndexes[1], 1);
+		_raoulAction = 1;
+		break;
+
+	case 74: 
+		_raoulAction = 3;
+		_vm->_gameConv->hold();
+		break;
+
+	default:
+		break;
+	}
+
+	if ((_action._activeAction._verbId != 0) && (_action._activeAction._verbId != 1) &&
+		(_action._activeAction._verbId != 2) && (_action._activeAction._verbId != 5) &&
+		(_action._activeAction._verbId != 6) && (_action._activeAction._verbId != 7) &&
+		(_action._activeAction._verbId != 10) && (_action._activeAction._verbId != 23) &&
+		(_action._activeAction._verbId != 27)) {
+		_vm->_gameConv->setInterlocutorTrigger(60);
+		_vm->_gameConv->setHeroTrigger(62);
+	}
+
+	if (_action._activeAction._verbId == 18)
+		_globals[kCanFindBookInLibrary] = true;
+
+	_julieCounter = 0;
+}
+
+void Scene112::handleJulieAnimation() {
+	int random = -1;
+	int resetFrame;
+
+	if (_scene->_animation[_globals._animationIndexes[0]]->getCurrentFrame() != _julieFrame) {
+		_julieFrame = _scene->_animation[_globals._animationIndexes[0]]->getCurrentFrame();
+		resetFrame = -1;
+
+		switch (_julieFrame) {
+		case 1:
+		case 2:
+		case 3:
+		case 22:
+		case 39:
+		case 71:
+		case 107:
+			switch (_julieAction) {
+			case 0:
+				random = _vm->getRandomNumber(4, 6);
+				++_julieCounter;
+				if (_julieCounter > 25)
+					_julieAction = 2;
+				break;
+
+			case 1:
+				random = 3;
+				break;
+
+			case 2:
+				random = _vm->getRandomNumber(1, 3);
+				while (_didOptionFl == random)
+					random = _vm->getRandomNumber(1, 3);
+				_didOptionFl = random;
+				break;
+
+			default:
+				break;
+			}
+
+			switch (random) {
+			case 1:
+				resetFrame = 22;
+				break;
+
+			case 2:
+				resetFrame = 39;
+				break;
+
+			case 3:
+				resetFrame = 83;
+				break;
+
+			case 4:
+				resetFrame = 0;
+				break;
+
+			case 5:
+				resetFrame = 1;
+				break;
+
+			case 6:
+				resetFrame = 2;
+				break;
+
+			default:
+				break;
+			}
+			break;
+		case 56:
+		case 77:
+		case 83:
+			random = _vm->getRandomNumber(1, 3);
+			while (_didOptionFl == random)
+				random = _vm->getRandomNumber(1, 3);
+			_didOptionFl = random;
+
+			if ((_julieAction == 0) || (_julieAction == 1))
+				random = 3;
+
+			switch (random) {
+			case 1:
+				resetFrame = 71;
+				break;
+
+			case 2:
+				resetFrame = 77;
+				break;
+
+			case 3:
+				resetFrame = 56;
+				break;
+
+			default:
+				break;
+			}
+
+			break;
+
+		case 95:
+			if (_julieAction == 1)
+				random = 2;
+			else
+				random = 1;
+
+			switch (random) {
+			case 1:
+				resetFrame = 95;
+				break;
+
+			case 2:
+				resetFrame = 107;
+				break;
+
+			default:
+				break;
+			}
+			break;
+
+		case 130:
+			resetFrame = 95;
+			_julieAction = 2;
+			break;
+
+		default:
+			break;
+		}
+
+		if (resetFrame >= 0) {
+			_scene->setAnimFrame(_globals._animationIndexes[0], resetFrame);
+			_julieFrame = resetFrame;
+		}
+	}
+}
+
+void Scene112::handleRaoulChair() {
+	if (_scene->_animation[_globals._animationIndexes[1]]->getCurrentFrame() == _raoulFrame)
+		return;
+
+	_raoulFrame = _scene->_animation[_globals._animationIndexes[1]]->getCurrentFrame();
+	int resetFrame = -1;
+	int random = -1;
+
+	switch (_raoulFrame) {
+	case 18:
+	case 30:
+	case 41:
+	case 49:
+	case 56:
+	case 65:
+		switch (_raoulAction) {
+		case 0:
+			random = _vm->getRandomNumber(1, 4);
+			_raoulAction = 1;
+			break;
+
+		case 2:
+			random = 6;
+			break;
+
+		case 3:
+			random = 5;
+			_raoulAction = 2;
+			break;
+
+		default:
+			random = _vm->getRandomNumber(7, 50);
+			while (_didOptionFl == random)
+				random = _vm->getRandomNumber(7, 50);
+			_didOptionFl = random;
+			break;
+		}
+
+		switch (random) {
+		case 1:
+			resetFrame = 49;
+			break;
+
+		case 2:
+			resetFrame = 41;
+			break;
+
+		case 3:
+			resetFrame = 18;
+			break;
+
+		case 4:
+			resetFrame = 30;
+			break;
+
+		case 5:
+			resetFrame = 65;
+			break;
+
+		case 6:
+			resetFrame = 82;
+			break;
+
+		case 7:
+			resetFrame = 56;
+			break;
+
+		default:
+			resetFrame = 17;
+			break;
+		}
+		break;
+
+	case 61:
+		if (_raoulAction == 1)
+			random = 1;
+		else
+			random = 2;
+
+		switch (random) {
+		case 1:
+			resetFrame = 60;
+			break;
+
+		case 2:
+			resetFrame = 61;
+			break;
+
+		default:
+			break;
+		}
+		break;
+
+	case 82:
+		_raoulAction = 2;
+		_game._player._visible = true;
+		_vm->_gameConv->release();
+		_game.syncTimers(2, 0, 3, _globals._animationIndexes[1]);
+		break;
+
+	case 83:
+		if (_raoulAction == 2)
+			random = 1;
+		else
+			random = 2;
+
+		switch (random) {
+		case 1:
+			resetFrame = 82;
+			break;
+
+		case 2:
+			resetFrame = 0;
+			break;
+
+		default:
+			break;
+		}
+		break;
+
+	default:
+		break;
+	}
+
+	if (resetFrame >= 0) {
+		_scene->setAnimFrame(_globals._animationIndexes[1], resetFrame);
+		_raoulFrame = resetFrame;
+	}
 }
 
 /*------------------------------------------------------------------------*/

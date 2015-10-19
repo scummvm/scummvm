@@ -309,6 +309,35 @@ public:
 	virtual void preActions();
 	virtual void actions();
 };
+
+class Scene112 : public Scene1xx {
+private:
+	bool _anim0ActvFl;
+	bool _anim1ActvFl;
+
+	int _raoulAction;
+	int _raoulFrame;
+	int _didOptionFl;
+	int _julieFrame;
+	int _julieAction;
+	int _julieCounter;
+	int _julieHotspotId;
+
+	void handleConversation();
+	void handleJulieAnimation();
+	void handleRaoulChair();
+
+public:
+	Scene112(MADSEngine *vm);
+	virtual void synchronize(Common::Serializer &s);
+
+	virtual void setup();
+	virtual void enter();
+	virtual void step();
+	virtual void preActions();
+	virtual void actions();
+};
+
 } // End of namespace Phantom
 } // End of namespace MADS
 

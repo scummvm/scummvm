@@ -65,7 +65,7 @@ SceneLogic *SceneFactory::createScene(MADSEngine *vm) {
 	case 111:	// outside dressing rooms 2
 		return new Scene111(vm);
 	case 112:	// inside dressing room 1
-		return new DummyScene(vm);	// TODO
+		return new Scene112(vm);
 	case 113:	// inside dressing room 2
 		return new DummyScene(vm);	// TODO
 	case 114:	// lower floor, storage room
