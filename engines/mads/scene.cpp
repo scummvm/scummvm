@@ -790,4 +790,8 @@ void Scene::loadSpeech(int idx) {
 void Scene::playSpeech(int idx) {
 	warning("TODO: Scene::playSpeech");
 }
+
+void Scene::sceneScale(int front_y, int front_scale, int back_y,  int back_scale) {
+	warning("TODO: Scene:scaleRoom");
+}
 } // End of namespace MADS

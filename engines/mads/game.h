@@ -238,6 +238,12 @@ public:
 
 	void syncTimers(int slave_type, int slave_id, int master_type, int master_id);
 
+	typedef struct {
+		//TODO
+	} Camera;
+	Camera _camX, _camY;
+	void camPanTo(Camera *camera, int target);
+
 };
 
 } // End of namespace MADS

@@ -603,4 +603,7 @@ void Game::syncTimers(int slave_type, int slave_id, int master_type, int master_
 	warning("TODO: Game_syncTimers");
 }
 
+void Game::camPanTo(Camera *camera, int target) {
+	warning("TODO: Game::camPanTo");
+}
 } // End of namespace MADS
