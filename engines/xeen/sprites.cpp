@@ -247,7 +247,7 @@ void SpriteResource::drawOffset(XSurface &dest, uint16 offset, const Common::Poi
 					break;
 
 				case 5:   // Skip len + 1 pixels
-					lineP += len + 1;
+					lineP += (len + 1) * xInc;
 					break;
 
 				case 6:   // Pattern command.
