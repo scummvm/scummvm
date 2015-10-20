@@ -862,7 +862,7 @@ void Scene103::setup() {
 	_scene->addActiveVocab(NOUN_PROMPTERS_STAND);
 	_scene->addActiveVocab(NOUN_JACQUES);
 	_scene->addActiveVocab(NOUN_GENTLEMAN);
-	_scene->addActiveVocab(NOUN_CLIMB);
+	_scene->addActiveVocab(VERB_CLIMB);
 }
 
 void Scene103::enter() {
@@ -968,7 +968,7 @@ void Scene103::enter() {
 		_scene->_dynamicHotspots[_hotspotPrompt4]._articleNumber = PREP_ON;
 		_scene->_dynamicHotspots.setPosition(_hotspotPrompt4, promptPos, promptFacing);
 
-		_hotspotPrompt5 = _scene->_dynamicHotspots.add(NOUN_PROMPTERS_STAND, NOUN_CLIMB, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(121, 49, 121 + 40, 49 + 30));
+		_hotspotPrompt5 = _scene->_dynamicHotspots.add(NOUN_PROMPTERS_STAND, VERB_CLIMB, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(121, 49, 121 + 40, 49 + 30));
 		_scene->_dynamicHotspots[_hotspotPrompt5]._articleNumber = PREP_ON;
 		_scene->_dynamicHotspots.setPosition(_hotspotPrompt5, Common::Point(196, 134), FACING_SOUTHWEST);
 		_scene->_dynamicHotspots.setCursor(_hotspotPrompt5, CURSOR_GO_UP);
@@ -1046,7 +1046,7 @@ void Scene103::enter() {
 		_scene->_dynamicHotspots[_hotspotPrompt3]._articleNumber = PREP_ON;
 		_scene->_dynamicHotspots.setPosition(_hotspotPrompt3, Common::Point(59, 140), FACING_NORTHWEST);
 
-		_hotspotPrompt5 = _scene->_dynamicHotspots.add(NOUN_PROMPTERS_STAND, NOUN_CLIMB, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(2, 49, 2 + 40, 49 + 30));
+		_hotspotPrompt5 = _scene->_dynamicHotspots.add(NOUN_PROMPTERS_STAND, VERB_CLIMB, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(2, 49, 2 + 40, 49 + 30));
 		_scene->_dynamicHotspots[_hotspotPrompt5]._articleNumber = PREP_ON;
 		_scene->_dynamicHotspots.setPosition(_hotspotPrompt5, Common::Point(79, 132), FACING_SOUTHWEST);
 		_scene->_dynamicHotspots.setCursor(_hotspotPrompt5, CURSOR_GO_UP);
@@ -1268,13 +1268,13 @@ void Scene103::preActions() {
 
 	if ((_standPosition != 0) && !_action.isAction(VERB_CLIMB_THROUGH, NOUN_TRAP_DOOR) &&
 		!_action.isAction(VERB_OPEN, NOUN_TRAP_DOOR) &&
-		!_action.isAction(NOUN_CLIMB, NOUN_PROMPTERS_STAND) &&
+		!_action.isAction(VERB_CLIMB, NOUN_PROMPTERS_STAND) &&
 		!_action.isAction(VERB_PUSH, NOUN_TRAP_DOOR) &&
 		!_action.isAction(VERB_LOOK_THROUGH, NOUN_PROMPTERS_BOX) &&
 		!_action.isAction(VERB_PULL, NOUN_TRAP_DOOR)) {
 
 		if (_action.isAction(VERB_PULL) || _action.isAction(VERB_PUSH)) {
-			if (!_action.isAction(NOUN_LEVER) && !_game._trigger)
+			if (!_action.isObject(NOUN_LEVER) && !_game._trigger)
 				_game._player._needToWalk = false;
 		}
 
@@ -1401,7 +1401,7 @@ void Scene103::actions() {
 		return;
 	}
 
-	if ((_action.isAction(NOUN_CLIMB, NOUN_PROMPTERS_STAND) && _standPosition == 0) ||
+	if ((_action.isAction(VERB_CLIMB, NOUN_PROMPTERS_STAND) && _standPosition == 0) ||
 		(_action.isAction(VERB_LOOK_THROUGH, NOUN_PROMPTERS_BOX) && (_standPosition == 0)) ||
 		(_action.isAction(VERB_CLIMB_THROUGH, NOUN_TRAP_DOOR) && (_standPosition == 0))) {
 		if (_globals[kPrompterStandStatus] == 0) {
@@ -1435,7 +1435,7 @@ void Scene103::actions() {
 		}
 	}
 
-	if (_action.isAction(NOUN_CLIMB, NOUN_PROMPTERS_STAND) && (_standPosition != 0)) {
+	if (_action.isAction(VERB_CLIMB, NOUN_PROMPTERS_STAND) && (_standPosition != 0)) {
 		_action._inProgress = false;
 		return;
 	}
@@ -1493,7 +1493,7 @@ void Scene103::actions() {
 						_scene->_dynamicHotspots[_hotspotPrompt4]._articleNumber = PREP_ON;
 						_scene->_dynamicHotspots.setPosition(_hotspotPrompt4, Common::Point(171, 142), FACING_NORTHWEST);
 
-						_hotspotPrompt5 = _scene->_dynamicHotspots.add(NOUN_PROMPTERS_STAND, NOUN_CLIMB, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(121, 49, 121 + 40, 49 + 30));
+						_hotspotPrompt5 = _scene->_dynamicHotspots.add(NOUN_PROMPTERS_STAND, VERB_CLIMB, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(121, 49, 121 + 40, 49 + 30));
 						_scene->_dynamicHotspots[_hotspotPrompt5]._articleNumber = PREP_ON;
 						_scene->_dynamicHotspots.setPosition(_hotspotPrompt5, Common::Point(196, 134), FACING_SOUTHWEST);
 						_scene->_dynamicHotspots.setCursor(_hotspotPrompt5, CURSOR_GO_UP);
@@ -1568,7 +1568,7 @@ void Scene103::actions() {
 						_scene->_dynamicHotspots[_hotspotLeftFloor2]._articleNumber = PREP_ON;
 						_scene->_dynamicHotspots.setPosition(_hotspotLeftFloor2, Common::Point(80, 135), FACING_NONE);
 
-						_hotspotPrompt5 = _scene->_dynamicHotspots.add(NOUN_PROMPTERS_STAND, NOUN_CLIMB, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(2, 49, 2 + 40, 49 + 30));
+						_hotspotPrompt5 = _scene->_dynamicHotspots.add(NOUN_PROMPTERS_STAND, VERB_CLIMB, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(2, 49, 2 + 40, 49 + 30));
 						_scene->_dynamicHotspots[_hotspotPrompt5]._articleNumber = PREP_ON;
 						_scene->_dynamicHotspots.setPosition(_hotspotPrompt5, Common::Point(79, 132), FACING_SOUTHWEST);
 						_scene->_dynamicHotspots.setCursor(_hotspotPrompt5, CURSOR_GO_UP);
@@ -1857,7 +1857,7 @@ void Scene103::actions() {
 	}
 
 	if (_action.isAction(VERB_LOOK) || _action.isAction(VERB_LOOK_AT)) {
-		if (_action.isAction(NOUN_PROMPTERS_STAND)) {
+		if (_action.isObject(NOUN_PROMPTERS_STAND)) {
 			if (_globals[kJacquesStatus] >= 1)
 				_vm->_dialogs->show(10349);
 			else if (_globals[kCurrentYear] == 1993)
@@ -1868,49 +1868,49 @@ void Scene103::actions() {
 			return;
 		}
 
-		if (_action.isAction(NOUN_FLOOR)) {
+		if (_action.isObject(NOUN_FLOOR)) {
 			_vm->_dialogs->show(10313);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_TRAP_CEILING)) {
+		if (_action.isObject(NOUN_TRAP_CEILING)) {
 			_vm->_dialogs->show(10314);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_DOOR)) {
+		if (_action.isObject(NOUN_DOOR)) {
 			_vm->_dialogs->show(10315);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_DOOR_TO_PIT)) {
+		if (_action.isObject(NOUN_DOOR_TO_PIT)) {
 			_vm->_dialogs->show(10316);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_WALL)) {
+		if (_action.isObject(NOUN_WALL)) {
 			_vm->_dialogs->show(10317);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_PROMPTERS_BOX)) {
+		if (_action.isObject(NOUN_PROMPTERS_BOX)) {
 			_vm->_dialogs->show(10318);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_TRAP_DOOR)) {
+		if (_action.isObject(NOUN_TRAP_DOOR)) {
 			_vm->_dialogs->show(10319);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_JUNK)) {
+		if (_action.isObject(NOUN_JUNK)) {
 			if (_globals[kCurrentYear] == 1993)
 				_vm->_dialogs->show(10320);
 			else
@@ -1919,7 +1919,7 @@ void Scene103::actions() {
 			return;
 		}
 
-		if (_action.isAction(NOUN_CARTON)) {
+		if (_action.isObject(NOUN_CARTON)) {
 			if (_globals[kCurrentYear] == 1993)
 				_vm->_dialogs->show(10321);
 			else
@@ -1928,7 +1928,7 @@ void Scene103::actions() {
 			return;
 		}
 
-		if (_action.isAction(NOUN_GARBAGE_CAN)) {
+		if (_action.isObject(NOUN_GARBAGE_CAN)) {
 			if (_globals[kCurrentYear] == 1993)
 				_vm->_dialogs->show(10322);
 			else
@@ -1937,13 +1937,13 @@ void Scene103::actions() {
 			return;
 		}
 
-		if (_action.isAction(NOUN_CABLE)) {
+		if (_action.isObject(NOUN_CABLE)) {
 			_vm->_dialogs->show(10323);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_JACQUES) || _action.isAction(NOUN_GENTLEMAN)) {
+		if (_action.isObject(NOUN_JACQUES) || _action.isObject(NOUN_GENTLEMAN)) {
 			if (_globals[kJacquesStatus] == 0)
 				_vm->_dialogs->show(10324);
 			else
@@ -1952,37 +1952,37 @@ void Scene103::actions() {
 			return;
 		}
 
-		if (_action.isAction(NOUN_KEY) && _game._objects.isInRoom(OBJ_KEY)) {
+		if (_action.isObject(NOUN_KEY) && _game._objects.isInRoom(OBJ_KEY)) {
 			_vm->_dialogs->show(10326);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_STAIR_UNIT)) {
+		if (_action.isObject(NOUN_STAIR_UNIT)) {
 			_vm->_dialogs->show(10327);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_EXPOSED_BRICK)) {
+		if (_action.isObject(NOUN_EXPOSED_BRICK)) {
 			_vm->_dialogs->show(10328);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_WATER_PIPE)) {
+		if (_action.isObject(NOUN_WATER_PIPE)) {
 			_vm->_dialogs->show(10329);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_PROMPTERS_SEAT)) {
+		if (_action.isObject(NOUN_PROMPTERS_SEAT)) {
 			_vm->_dialogs->show(10338);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_LEVER)) {
+		if (_action.isObject(NOUN_LEVER)) {
 			_vm->_dialogs->show(10339);
 			_action._inProgress = false;
 			return;
@@ -2668,10 +2668,10 @@ void Scene104::step() {
 }
 
 void Scene104::preActions() {
-	if (_action.isAction(NOUN_EXIT, NOUN_STAGE_LEFT))
+	if (_action.isAction(VERB_EXIT, NOUN_STAGE_LEFT))
 		_game._player._walkOffScreenSceneId = 108;
 
-	if (_action.isAction(NOUN_EXIT, NOUN_STAGE_RIGHT))
+	if (_action.isAction(VERB_EXIT, NOUN_STAGE_RIGHT))
 		_game._player._walkOffScreenSceneId = 107;
 
 	if (_action.isAction(VERB_OPEN, NOUN_TRAP_DOOR) || _action.isAction(VERB_CLOSE, NOUN_TRAP_DOOR))
@@ -2773,61 +2773,61 @@ void Scene104::actions() {
 	}
 
 	if (_action.isAction(VERB_LOOK) || _action.isAction(VERB_LOOK_AT)) {
-		if (_action.isAction(NOUN_STAGE)) {
+		if (_action.isObject(NOUN_STAGE)) {
 			_vm->_dialogs->show(10412);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_APRON)) {
+		if (_action.isObject(NOUN_APRON)) {
 			_vm->_dialogs->show(10413);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_PROSCENIUM_ARCH)) {
+		if (_action.isObject(NOUN_PROSCENIUM_ARCH)) {
 			_vm->_dialogs->show(10414);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_ACT_CURTAIN)) {
+		if (_action.isObject(NOUN_ACT_CURTAIN)) {
 			_vm->_dialogs->show(10415);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_ORCHESTRA_PIT)) {
+		if (_action.isObject(NOUN_ORCHESTRA_PIT)) {
 			_vm->_dialogs->show(10416);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_CONDUCTORS_STAND)) {
+		if (_action.isObject(NOUN_CONDUCTORS_STAND)) {
 			_vm->_dialogs->show(10417);
 			_action._inProgress = false;
 			return;
 		}
 
-		if ((_action.isAction(NOUN_MUSIC_STAND)) || (_action.isAction(NOUN_MUSIC_STANDS))) {
+		if ((_action.isObject(NOUN_MUSIC_STAND)) || (_action.isObject(NOUN_MUSIC_STANDS))) {
 			_vm->_dialogs->show(10418);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_PROMPTERS_BOX)) {
+		if (_action.isObject(NOUN_PROMPTERS_BOX)) {
 			_vm->_dialogs->show(10419);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_TRAP_DOOR)) {
+		if (_action.isObject(NOUN_TRAP_DOOR)) {
 			_vm->_dialogs->show(10420);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_HOUSE)) {
+		if (_action.isObject(NOUN_HOUSE)) {
 			if (_globals[kCurrentYear] == 1881)
 				_vm->_dialogs->show(10421);
 			else
@@ -2837,25 +2837,25 @@ void Scene104::actions() {
 			return;
 		}
 
-		if (_action.isAction(NOUN_STAGE_LEFT)) {
+		if (_action.isObject(NOUN_STAGE_LEFT)) {
 			_vm->_dialogs->show(10422);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_STAGE_RIGHT)) {
+		if (_action.isObject(NOUN_STAGE_RIGHT)) {
 			_vm->_dialogs->show(10423);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_CHANDELIER)) {
+		if (_action.isObject(NOUN_CHANDELIER)) {
 			_vm->_dialogs->show(10428);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_MONSIEUR_RICHARD)) {
+		if (_action.isObject(NOUN_MONSIEUR_RICHARD)) {
 			_vm->_dialogs->show(10433);
 			_action._inProgress = false;
 			return;
@@ -4004,25 +4004,25 @@ void Scene105::actions() {
 	}
 
 	if (_action.isAction(VERB_LOOK) || _action.isAction(VERB_LOOK_AT)) {
-		if (_action.isAction(NOUN_FLOOR)) {
+		if (_action.isObject(NOUN_FLOOR)) {
 			_vm->_dialogs->show(10512);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_CIRCULAR_STAIRCASE)) {
+		if (_action.isObject(NOUN_CIRCULAR_STAIRCASE)) {
 			_vm->_dialogs->show(10513);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_LANTERN) && _game._objects.isInRoom(OBJ_LANTERN)) {
+		if (_action.isObject(NOUN_LANTERN) && _game._objects.isInRoom(OBJ_LANTERN)) {
 			_vm->_dialogs->show(10514);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_RED_FRAME) && _game._objects.isInRoom(OBJ_RED_FRAME)){
+		if (_action.isObject(NOUN_RED_FRAME) && _game._objects.isInRoom(OBJ_RED_FRAME)){
 			if (_globals[kCurrentYear] == 1881)
 				_vm->_dialogs->show(10530);
 			else
@@ -4032,25 +4032,25 @@ void Scene105::actions() {
 			return;
 		}
 
-		if (_action.isAction(NOUN_DOOR)) {
+		if (_action.isObject(NOUN_DOOR)) {
 			_vm->_dialogs->show(10516);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_WALL)) {
+		if (_action.isObject(NOUN_WALL)) {
 			_vm->_dialogs->show(10517);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_PROP_TABLE)) {
+		if (_action.isObject(NOUN_PROP_TABLE)) {
 			_vm->_dialogs->show(10518);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_BEAR_PROP)) {
+		if (_action.isObject(NOUN_BEAR_PROP)) {
 			if (_globals[kCurrentYear] == 1993)
 				_vm->_dialogs->show(10519);
 			else
@@ -4060,13 +4060,13 @@ void Scene105::actions() {
 			return;
 		}
 
-		if (_action.isAction(NOUN_ELEPHANT_PROP)) {
+		if (_action.isObject(NOUN_ELEPHANT_PROP)) {
 			_vm->_dialogs->show(10520);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_COLUMN_PROP)) {
+		if (_action.isObject(NOUN_COLUMN_PROP)) {
 			if (_globals[kCurrentYear] == 1993)
 				_vm->_dialogs->show(10521);
 			else
@@ -4076,7 +4076,7 @@ void Scene105::actions() {
 			return;
 		}
 
-		if (_action.isAction(NOUN_THUNDER_MACHINE)) {
+		if (_action.isObject(NOUN_THUNDER_MACHINE)) {
 			if (_globals[kCurrentYear] == 1993)
 				_vm->_dialogs->show(10522);
 			else
@@ -4086,55 +4086,55 @@ void Scene105::actions() {
 			return;
 		}
 
-		if (_action.isAction(NOUN_STAIR_UNIT)) {
+		if (_action.isObject(NOUN_STAIR_UNIT)) {
 			_vm->_dialogs->show(10523);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_PROP)) {
+		if (_action.isObject(NOUN_PROP)) {
 			_vm->_dialogs->show(10524);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_PROPS)) {
+		if (_action.isObject(NOUN_PROPS)) {
 			_vm->_dialogs->show(10525);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_EXIT_SIGN)) {
+		if (_action.isObject(NOUN_EXIT_SIGN)) {
 			_vm->_dialogs->show(10526);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_FLATS)) {
+		if (_action.isObject(NOUN_FLATS)) {
 			_vm->_dialogs->show(10527);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_HEMP)) {
+		if (_action.isObject(NOUN_HEMP)) {
 			_vm->_dialogs->show(10528);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_PIPE)) {
+		if (_action.isObject(NOUN_PIPE)) {
 			_vm->_dialogs->show(10529);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_GRAFFITI)) {
+		if (_action.isObject(NOUN_GRAFFITI)) {
 			_vm->_dialogs->show(10531);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_LIGHT_FIXTURE)) {
+		if (_action.isObject(NOUN_LIGHT_FIXTURE)) {
 			_vm->_dialogs->show(10535);
 			_action._inProgress = false;
 			return;
@@ -4580,49 +4580,49 @@ void Scene106::actions() {
 	}
 
 	if (_action.isAction(VERB_LOOK) || _action.isAction(VERB_LOOK_AT)) {
-		if (_action.isAction(NOUN_STAGE_RIGHT_WING)) {
+		if (_action.isObject(NOUN_STAGE_RIGHT_WING)) {
 			_vm->_dialogs->show(10611);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_STAGE_LEFT_WING)) {
+		if (_action.isObject(NOUN_STAGE_LEFT_WING)) {
 			_vm->_dialogs->show(10612);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_IN_TWO)) {
+		if (_action.isObject(NOUN_IN_TWO)) {
 			_vm->_dialogs->show(10613);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_CYCLORAMA)) {
+		if (_action.isObject(NOUN_CYCLORAMA)) {
 			_vm->_dialogs->show(10614);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_STAGE)) {
+		if (_action.isObject(NOUN_STAGE)) {
 			_vm->_dialogs->show(10615);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_PEDESTAL)) {
+		if (_action.isObject(NOUN_PEDESTAL)) {
 			_vm->_dialogs->show(10616);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_PLANT_PROP)) {
+		if (_action.isObject(NOUN_PLANT_PROP)) {
 			_vm->_dialogs->show(10617);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_SANDBAG)) {
+		if (_action.isObject(NOUN_SANDBAG)) {
 			if (_scene->_customDest.y < 60) {
 				_vm->_dialogs->show(10618);
 				_action._inProgress = false;
@@ -4634,49 +4634,49 @@ void Scene106::actions() {
 			}
 		}
 
-		if (_action.isAction(NOUN_STATUE)) {
+		if (_action.isObject(NOUN_STATUE)) {
 			_vm->_dialogs->show(10619);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_CIRCULAR_STAIRCASE)) {
+		if (_action.isObject(NOUN_CIRCULAR_STAIRCASE)) {
 			_vm->_dialogs->show(10620);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_BATTEN)) {
+		if (_action.isObject(NOUN_BATTEN)) {
 			_vm->_dialogs->show(10621);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_DOOR)) {
+		if (_action.isObject(NOUN_DOOR)) {
 			_vm->_dialogs->show(10622);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_BOXES) || _action.isAction(NOUN_BOX)) {
+		if (_action.isObject(NOUN_BOXES) || _action.isObject(NOUN_BOX)) {
 			_vm->_dialogs->show(10623);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_BIG_PROP)) {
+		if (_action.isObject(NOUN_BIG_PROP)) {
 			_vm->_dialogs->show(10624);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_CRATE)) {
+		if (_action.isObject(NOUN_CRATE)) {
 			_vm->_dialogs->show(10625);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_CASE)) {
+		if (_action.isObject(NOUN_CASE)) {
 			if (_globals[kCurrentYear] == 1881)
 				_vm->_dialogs->show(10638);
 			else
@@ -4686,31 +4686,31 @@ void Scene106::actions() {
 			return;
 		}
 
-		if (_action.isAction(NOUN_VENTILATION_DUCT)) {
+		if (_action.isObject(NOUN_VENTILATION_DUCT)) {
 			_vm->_dialogs->show(10626);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_JUNK)) {
+		if (_action.isObject(NOUN_JUNK)) {
 			_vm->_dialogs->show(10627);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_FLATS)) {
+		if (_action.isObject(NOUN_FLATS)) {
 			_vm->_dialogs->show(10628);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_WALL)) {
+		if (_action.isObject(NOUN_WALL)) {
 			_vm->_dialogs->show(10629);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_CABLE_HOOK) && _game._objects.isInRoom(OBJ_CABLE_HOOK)) {
+		if (_action.isObject(NOUN_CABLE_HOOK) && _game._objects.isInRoom(OBJ_CABLE_HOOK)) {
 			_vm->_dialogs->show(10639);
 			_action._inProgress = false;
 			return;
@@ -4873,97 +4873,97 @@ void Scene107::actions() {
 	}
 
 	if (_action.isAction(VERB_LOOK) || _action.isAction(VERB_LOOK_AT)) {
-		if (_action.isAction(NOUN_STAGE)) {
+		if (_action.isObject(NOUN_STAGE)) {
 			_vm->_dialogs->show(10711);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_IN_TWO)) {
+		if (_action.isObject(NOUN_IN_TWO)) {
 			_vm->_dialogs->show(10712);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_IN_ONE)) {
+		if (_action.isObject(NOUN_IN_ONE)) {
 			_vm->_dialogs->show(10713);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_CYCLORAMA)) {
+		if (_action.isObject(NOUN_CYCLORAMA)) {
 			_vm->_dialogs->show(10714);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_COUNTERWEIGHT_SYSTEM)) {
+		if (_action.isObject(NOUN_COUNTERWEIGHT_SYSTEM)) {
 			_vm->_dialogs->show(10715);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_PURCHASE_LINES)) {
+		if (_action.isObject(NOUN_PURCHASE_LINES)) {
 			_vm->_dialogs->show(10716);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_LOCKRAIL)) {
+		if (_action.isObject(NOUN_LOCKRAIL)) {
 			_vm->_dialogs->show(10717);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_STAGE)) {
+		if (_action.isObject(NOUN_STAGE)) {
 			_vm->_dialogs->show(10718);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_PROP_TABLE)) {
+		if (_action.isObject(NOUN_PROP_TABLE)) {
 			_vm->_dialogs->show(10719);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_ACT_CURTAIN)) {
+		if (_action.isObject(NOUN_ACT_CURTAIN)) {
 			_vm->_dialogs->show(10720);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_LEG)) {
+		if (_action.isObject(NOUN_LEG)) {
 			_vm->_dialogs->show(10721);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_APRON)) {
+		if (_action.isObject(NOUN_APRON)) {
 			_vm->_dialogs->show(10722);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_PROSCENIUM_ARCH)) {
+		if (_action.isObject(NOUN_PROSCENIUM_ARCH)) {
 			_vm->_dialogs->show(10723);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_STAGE)) {
+		if (_action.isObject(NOUN_STAGE)) {
 			_vm->_dialogs->show(10724);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_BACKSTAGE)) {
+		if (_action.isObject(NOUN_BACKSTAGE)) {
 			_vm->_dialogs->show(10725);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_YELLOW_FRAME) && _game._objects.isInRoom(OBJ_YELLOW_FRAME)) {
+		if (_action.isObject(NOUN_YELLOW_FRAME) && _game._objects.isInRoom(OBJ_YELLOW_FRAME)) {
 			if (_globals[kCurrentYear] == 1881)
 				_vm->_dialogs->show(10727);
 			else
@@ -4973,13 +4973,13 @@ void Scene107::actions() {
 			return;
 		}
 
-		if (_action.isAction(NOUN_HEADSET)) {
+		if (_action.isObject(NOUN_HEADSET)) {
 			_vm->_dialogs->show(10728);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_WALL)) {
+		if (_action.isObject(NOUN_WALL)) {
 			_vm->_dialogs->show(10730);
 			_action._inProgress = false;
 			return;
@@ -5167,61 +5167,61 @@ void Scene108::actions() {
 	}
 
 	if (_action.isAction(VERB_LOOK) || _action.isAction(VERB_LOOK_AT)) {
-		if (_action.isAction(NOUN_WALL)) {
+		if (_action.isObject(NOUN_WALL)) {
 			_vm->_dialogs->show(10730);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_STAGE)) {
+		if (_action.isObject(NOUN_STAGE)) {
 			_vm->_dialogs->show(10811);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_IN_TWO)) {
+		if (_action.isObject(NOUN_IN_TWO)) {
 			_vm->_dialogs->show(10812);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_IN_ONE)) {
+		if (_action.isObject(NOUN_IN_ONE)) {
 			_vm->_dialogs->show(10813);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_PROSCENIUM_ARCH)) {
+		if (_action.isObject(NOUN_PROSCENIUM_ARCH)) {
 			_vm->_dialogs->show(10814);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_ACT_CURTAIN)) {
+		if (_action.isObject(NOUN_ACT_CURTAIN)) {
 			_vm->_dialogs->show(10815);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_LEG)) {
+		if (_action.isObject(NOUN_LEG)) {
 			_vm->_dialogs->show(10816);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_CYCLORAMA)) {
+		if (_action.isObject(NOUN_CYCLORAMA)) {
 			_vm->_dialogs->show(10817);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_FLATS)) {
+		if (_action.isObject(NOUN_FLATS)) {
 			_vm->_dialogs->show(10818);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_STAGEMANAGERS_POST)) {
+		if (_action.isObject(NOUN_STAGEMANAGERS_POST)) {
 			if (_globals[kCurrentYear] == 1993)
 				_vm->_dialogs->show(10819);
 			else
@@ -5231,37 +5231,37 @@ void Scene108::actions() {
 			return;
 		}
 
-		if (_action.isAction(NOUN_STOOL)) {
+		if (_action.isObject(NOUN_STOOL)) {
 			_vm->_dialogs->show(10821);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_BACKSTAGE)) {
+		if (_action.isObject(NOUN_BACKSTAGE)) {
 			_vm->_dialogs->show(10822);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_STAGE)) {
+		if (_action.isObject(NOUN_STAGE)) {
 			_vm->_dialogs->show(10823);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_HEADSET)) {
+		if (_action.isObject(NOUN_HEADSET)) {
 			_vm->_dialogs->show(10824);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_WALL)) {
+		if (_action.isObject(NOUN_WALL)) {
 			_vm->_dialogs->show(10826);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_CHARLES) || _action.isAction(NOUN_GENTLEMAN)) {
+		if (_action.isObject(NOUN_CHARLES) || _action.isObject(NOUN_GENTLEMAN)) {
 			_vm->_dialogs->show(10827);
 			_action._inProgress = false;
 			return;
@@ -6016,7 +6016,7 @@ void Scene109::actions() {
 	}
 
 	if (_action.isAction(VERB_LOOK) || _action.isAction(VERB_LOOK_AT)) {
-		if (_action.isAction(NOUN_STAIRCASE)) {
+		if (_action.isObject(NOUN_STAIRCASE)) {
 			if (_currentFloor == 1)
 				_vm->_dialogs->show(10911);
 			else if (_currentFloor == 2)
@@ -6028,55 +6028,55 @@ void Scene109::actions() {
 			return;
 		}
 
-		if (_action.isAction(NOUN_FLOOR)) {
+		if (_action.isObject(NOUN_FLOOR)) {
 			_vm->_dialogs->show(10912);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_BACKSTAGE)) {
+		if (_action.isObject(NOUN_BACKSTAGE)) {
 			_vm->_dialogs->show(10913);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_DOOR)) {
+		if (_action.isObject(NOUN_DOOR)) {
 			_vm->_dialogs->show(10914);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_RAILING)) {
+		if (_action.isObject(NOUN_RAILING)) {
 			_vm->_dialogs->show(10915);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_WALL)) {
+		if (_action.isObject(NOUN_WALL)) {
 			_vm->_dialogs->show(10916);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_LIGHT_FIXTURE)) {
+		if (_action.isObject(NOUN_LIGHT_FIXTURE)) {
 			_vm->_dialogs->show(10917);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_LAMP)) {
+		if (_action.isObject(NOUN_LAMP)) {
 			_vm->_dialogs->show(10918);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_HOLE)) {
+		if (_action.isObject(NOUN_HOLE)) {
 			_vm->_dialogs->show(10919);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_CEILING)) {
+		if (_action.isObject(NOUN_CEILING)) {
 			_vm->_dialogs->show(10920);
 			_action._inProgress = false;
 			return;
@@ -6317,31 +6317,31 @@ void Scene110::actions() {
 	}
 
 	if (_action.isAction(VERB_LOOK) || _action.isAction(VERB_LOOK_AT)) {
-		if (_action.isAction(NOUN_FLOOR)) {
+		if (_action.isObject(NOUN_FLOOR)) {
 			_vm->_dialogs->show(11011);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_WALL)) {
+		if (_action.isObject(NOUN_WALL)) {
 			_vm->_dialogs->show(11012);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_CEILING)) {
+		if (_action.isObject(NOUN_CEILING)) {
 			_vm->_dialogs->show(11013);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_STAIRWELL)) {
+		if (_action.isObject(NOUN_STAIRWELL)) {
 			_vm->_dialogs->show(11014);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_RIGHT_DOOR)) {
+		if (_action.isObject(NOUN_RIGHT_DOOR)) {
 			if (_globals[kDoneBrieConv203] >= 1)
 				_vm->_dialogs->show(11016);
 			else if (_globals[kChrisFStatus] == 1)
@@ -6353,31 +6353,31 @@ void Scene110::actions() {
 			return;
 		}
 
-		if (_action.isAction(NOUN_LEFT_DOOR)) {
+		if (_action.isObject(NOUN_LEFT_DOOR)) {
 			_vm->_dialogs->show(11016);
 			_action._inProgress = false;
 			return;
 		}
 
-		if ((_action.isAction(NOUN_WASTE_BASKET)) || (_action.isAction(NOUN_TRASH_BUCKET))) {
+		if ((_action.isObject(NOUN_WASTE_BASKET)) || (_action.isObject(NOUN_TRASH_BUCKET))) {
 			_vm->_dialogs->show(11017);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_POSTER)) {
+		if (_action.isObject(NOUN_POSTER)) {
 			_vm->_dialogs->show(11018);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_BULLETIN_BOARD)) {
+		if (_action.isObject(NOUN_BULLETIN_BOARD)) {
 			_vm->_dialogs->show(11019);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_PAPER)) {
+		if (_action.isObject(NOUN_PAPER)) {
 			_vm->_dialogs->show(11029);
 			_action._inProgress = false;
 			return;
@@ -6389,7 +6389,7 @@ void Scene110::actions() {
 			return;
 		}
 
-		if (_action.isAction(NOUN_LIGHT_FIXTURE)) {
+		if (_action.isObject(NOUN_LIGHT_FIXTURE)) {
 			if (_globals[kCurrentYear] == 1993)
 				_vm->_dialogs->show(11021);
 			else
@@ -6807,85 +6807,85 @@ void Scene111::actions() {
 	}
 
 	if (_action.isAction(VERB_LOOK) || _action.isAction(VERB_LOOK_AT)) {
-		if (_action.isAction(NOUN_FLOOR)) {
+		if (_action.isObject(NOUN_FLOOR)) {
 			_vm->_dialogs->show(11112);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_WALL)) {
+		if (_action.isObject(NOUN_WALL)) {
 			_vm->_dialogs->show(11113);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_CEILING)) {
+		if (_action.isObject(NOUN_CEILING)) {
 			_vm->_dialogs->show(11114);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_STAIRWELL)) {
+		if (_action.isObject(NOUN_STAIRWELL)) {
 			_vm->_dialogs->show(11115);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_TABLE)) {
+		if (_action.isObject(NOUN_TABLE)) {
 			_vm->_dialogs->show(11118);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_PLANT)) {
+		if (_action.isObject(NOUN_PLANT)) {
 			_vm->_dialogs->show(11119);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_FIRE_AXE)) {
+		if (_action.isObject(NOUN_FIRE_AXE)) {
 			_vm->_dialogs->show(11120);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_HANDLE)) {
+		if (_action.isObject(NOUN_HANDLE)) {
 			_vm->_dialogs->show(11121);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_AXE)) {
+		if (_action.isObject(NOUN_AXE)) {
 			_vm->_dialogs->show(11122);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_DOOR_CHUNKS)) {
+		if (_action.isObject(NOUN_DOOR_CHUNKS)) {
 			_vm->_dialogs->show(11129);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_LIGHT)) {
+		if (_action.isObject(NOUN_LIGHT)) {
 			_vm->_dialogs->show(11131);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_LAMP)) {
+		if (_action.isObject(NOUN_LAMP)) {
 			_vm->_dialogs->show(11132);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_HOOK)) {
+		if (_action.isObject(NOUN_HOOK)) {
 			_vm->_dialogs->show(11141);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_LEFT_DOOR)) {
+		if (_action.isObject(NOUN_LEFT_DOOR)) {
 			if (_globals[kJacquesStatus])
 				_vm->_dialogs->show(11140);
 			else if (_globals[kChristineDoorStatus] == 2)
@@ -6900,7 +6900,7 @@ void Scene111::actions() {
 			return;
 		}
 
-		if (_action.isAction(NOUN_RIGHT_DOOR)) {
+		if (_action.isObject(NOUN_RIGHT_DOOR)) {
 			_vm->_dialogs->show(11117);
 			_action._inProgress = false;
 			return;
@@ -7113,145 +7113,145 @@ void Scene112::actions() {
 	}
 
 	if (_action.isAction(VERB_LOOK) || _action.isAction(VERB_LOOK_AT)) {
-		if (_action.isAction(NOUN_WALL)) {
+		if (_action.isObject(NOUN_WALL)) {
 			_vm->_dialogs->show(11211);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_FLOOR)) {
+		if (_action.isObject(NOUN_FLOOR)) {
 			_vm->_dialogs->show(11212);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_MIRROR)) {
+		if (_action.isObject(NOUN_MIRROR)) {
 			_vm->_dialogs->show(11213);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_BALLET_BAR)) {
+		if (_action.isObject(NOUN_BALLET_BAR)) {
 			_vm->_dialogs->show(11214);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_CORRIDOR)) {
+		if (_action.isObject(NOUN_CORRIDOR)) {
 			_vm->_dialogs->show(11215);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_THROW_RUGS)) {
+		if (_action.isObject(NOUN_THROW_RUGS)) {
 			_vm->_dialogs->show(11216);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_DRESSING_SCREEN)) {
+		if (_action.isObject(NOUN_DRESSING_SCREEN)) {
 			_vm->_dialogs->show(11217);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_DRESSING_TABLE)) {
+		if (_action.isObject(NOUN_DRESSING_TABLE)) {
 			_vm->_dialogs->show(11218);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_CHAIR)) {
+		if (_action.isObject(NOUN_CHAIR)) {
 			_vm->_dialogs->show(11219);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_PLANT)) {
+		if (_action.isObject(NOUN_PLANT)) {
 			_vm->_dialogs->show(11220);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_COAT_RACK)) {
+		if (_action.isObject(NOUN_COAT_RACK)) {
 			_vm->_dialogs->show(11221);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_UMBRELLA)) {
+		if (_action.isObject(NOUN_UMBRELLA)) {
 			_vm->_dialogs->show(11222);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_PAINTINGS)) {
+		if (_action.isObject(NOUN_PAINTINGS)) {
 			_vm->_dialogs->show(11223);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_TRASH_BUCKET)) {
+		if (_action.isObject(NOUN_TRASH_BUCKET)) {
 			_vm->_dialogs->show(11224);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_SHELF)) {
+		if (_action.isObject(NOUN_SHELF)) {
 			_vm->_dialogs->show(11225);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_CONTAINER)) {
+		if (_action.isObject(NOUN_CONTAINER)) {
 			_vm->_dialogs->show(11226);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_TORN_POSTER)) {
+		if (_action.isObject(NOUN_TORN_POSTER)) {
 			_vm->_dialogs->show(11227);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_POSTER)) {
+		if (_action.isObject(NOUN_POSTER)) {
 			_vm->_dialogs->show(11228);
 			_action._inProgress = false;
 			return;
 		}
 
-		if ((_action.isAction(NOUN_REVIEW)) || (_action.isAction(NOUN_REVIEWS))) {
+		if ((_action.isObject(NOUN_REVIEW)) || (_action.isObject(NOUN_REVIEWS))) {
 			_vm->_dialogs->show(11229);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_JULIE)) {
+		if (_action.isObject(NOUN_JULIE)) {
 			_vm->_dialogs->show(11231);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_COSTUME_RACK)) {
+		if (_action.isObject(NOUN_COSTUME_RACK)) {
 			_vm->_dialogs->show(11232);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_LIGHT_FIXTURE)) {
+		if (_action.isObject(NOUN_LIGHT_FIXTURE)) {
 			_vm->_dialogs->show(11233);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_WARDROBE)) {
+		if (_action.isObject(NOUN_WARDROBE)) {
 			_vm->_dialogs->show(11234);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_WOMAN)) {
+		if (_action.isObject(NOUN_WOMAN)) {
 			_vm->_dialogs->show(11237);
 			_action._inProgress = false;
 			return;
@@ -7259,7 +7259,7 @@ void Scene112::actions() {
 	}
 
 	if (_action.isAction(VERB_TAKE)) {
-		if (_action.isAction(NOUN_WOMAN) || _action.isAction(NOUN_JULIE)) {
+		if (_action.isObject(NOUN_WOMAN) || _action.isObject(NOUN_JULIE)) {
 			_vm->_dialogs->show(11238);
 			_action._inProgress = false;
 			return;
@@ -8137,37 +8137,37 @@ void Scene113::actions() {
 	}
 
 	if (_action.isAction(VERB_LOOK) || _action.isAction(VERB_LOOK_AT)) {
-		if (_action.isAction(NOUN_FLOOR)) {
+		if (_action.isObject(NOUN_FLOOR)) {
 			_vm->_dialogs->show(11312);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_RUG)) {
+		if (_action.isObject(NOUN_RUG)) {
 			_vm->_dialogs->show(11313);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_WALL)) {
+		if (_action.isObject(NOUN_WALL)) {
 			_vm->_dialogs->show(11314);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_COUCH)) {
+		if (_action.isObject(NOUN_COUCH)) {
 			_vm->_dialogs->show(11315);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_MURAL)) {
+		if (_action.isObject(NOUN_MURAL)) {
 			_vm->_dialogs->show(11316);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_PAINTING)) {
+		if (_action.isObject(NOUN_PAINTING)) {
 			if (_globals[kCurrentYear] == 1881)
 				_vm->_dialogs->show(11317);
 			else
@@ -8176,25 +8176,25 @@ void Scene113::actions() {
 			return;
 		}
 
-		if (_action.isAction(NOUN_PAINTING)) {
+		if (_action.isObject(NOUN_PAINTING)) {
 			_vm->_dialogs->show(11317);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_DRESSING_TABLE)) {
+		if (_action.isObject(NOUN_DRESSING_TABLE)) {
 			_vm->_dialogs->show(11318);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_CHAIR)) {
+		if (_action.isObject(NOUN_CHAIR)) {
 			_vm->_dialogs->show(11319);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_MIRROR)) {
+		if (_action.isObject(NOUN_MIRROR)) {
 			if (_globals[kCurrentYear] == 1993) {
 				_vm->_dialogs->show(11344);
 			} else {
@@ -8204,85 +8204,85 @@ void Scene113::actions() {
 			return;
 		}
 
-		if (_action.isAction(NOUN_FAN)) {
+		if (_action.isObject(NOUN_FAN)) {
 			_vm->_dialogs->show(11321);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_VASE)) {
+		if (_action.isObject(NOUN_VASE)) {
 			_vm->_dialogs->show(11322);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_HAT_RACK)) {
+		if (_action.isObject(NOUN_HAT_RACK)) {
 			_vm->_dialogs->show(11323);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_LIGHT_FIXTURE)) {
+		if (_action.isObject(NOUN_LIGHT_FIXTURE)) {
 			_vm->_dialogs->show(11324);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_CEILING)) {
+		if (_action.isObject(NOUN_CEILING)) {
 			_vm->_dialogs->show(11325);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_WARDROBE)) {
+		if (_action.isObject(NOUN_WARDROBE)) {
 			_vm->_dialogs->show(11326);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_DRESSING_SCREEN)) {
+		if (_action.isObject(NOUN_DRESSING_SCREEN)) {
 			_vm->_dialogs->show(11327);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_CORRIDOR)) {
+		if (_action.isObject(NOUN_CORRIDOR)) {
 			_vm->_dialogs->show(11328);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_DRESSING_GOWN)) {
+		if (_action.isObject(NOUN_DRESSING_GOWN)) {
 			_vm->_dialogs->show(11330);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_SMALL_NOTE) && _game._objects.isInRoom(OBJ_SMALL_NOTE)) {
+		if (_action.isObject(NOUN_SMALL_NOTE) && _game._objects.isInRoom(OBJ_SMALL_NOTE)) {
 			_vm->_dialogs->show(11349);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_CHRISTINE) && _globals[kDoneBrieConv203]) {
+		if (_action.isObject(NOUN_CHRISTINE) && _globals[kDoneBrieConv203]) {
 			_vm->_dialogs->show(11338);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_JULIE)) {
+		if (_action.isObject(NOUN_JULIE)) {
 			_vm->_dialogs->show(11339);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_NOTICE)) {
+		if (_action.isObject(NOUN_NOTICE)) {
 			_vm->_dialogs->show(11347);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(NOUN_CLOTHES_DUMMY)) {
+		if (_action.isObject(NOUN_CLOTHES_DUMMY)) {
 			if (_globals[kCurrentYear] == 1993)
 				_vm->_dialogs->show(11345);
 			else
@@ -8291,7 +8291,7 @@ void Scene113::actions() {
 			return;
 		}
 
-		if (_action.isAction(NOUN_WOMAN) || _action.isAction(NOUN_CHRISTINE)) {
+		if (_action.isObject(NOUN_WOMAN) || _action.isObject(NOUN_CHRISTINE)) {
 			if (_globals[kCurrentYear] == 1993)
 				_vm->_dialogs->show(11341);
 			else {
