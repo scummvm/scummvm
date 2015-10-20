@@ -64,6 +64,20 @@ static int getFrameCount(const cdrom_msf0 &msf) {
 	return time;
 }
 
+// Helper function to convert an error code into a human-readable message
+static Common::String getErrorMessage(int errorCode) {
+	char buf[256];
+	buf[0] = 0;
+
+#ifdef _GNU_SOURCE
+	// glibc sucks
+	return Common::String(strerror_r(errorCode, buf, sizeof(buf)));
+#else
+	strerror_r(errorCode, buf, sizeof(buf));
+	return Common::String(buf);
+#endif
+}
+
 class LinuxAudioCDStream : public AudioCDStream {
 public:
 	LinuxAudioCDStream(int fd, const cdrom_tocentry &startEntry, const cdrom_tocentry &endEntry);
@@ -89,23 +103,33 @@ LinuxAudioCDStream::~LinuxAudioCDStream() {
 }
 
 bool LinuxAudioCDStream::readFrame(int frame, int16 *buffer) {
+	// Create the argument
+	union {
+		cdrom_msf msf;
+		char buffer[kBytesPerFrame];
+	} arg;
+
 	int seconds = frame / kFramesPerSecond;
 	frame %= kFramesPerSecond;
 	int minutes = seconds / kSecondsPerMinute;
 	seconds %= kSecondsPerMinute;
 
 	// Request to read that frame
-	cdrom_read_audio readAudio;
-	readAudio.addr.msf.minute = minutes;
-	readAudio.addr.msf.second = seconds;
-	readAudio.addr.msf.frame = frame;
-	readAudio.addr_format = CDROM_MSF;
-	readAudio.nframes = 1;
-	readAudio.buf = reinterpret_cast<__u8*>(buffer);
+	// We don't use CDROMREADAUDIO, as it seems to cause kernel
+	// panics on ejecting discs. Probably bad to eject the disc
+	// while playing, but at least let's try to prevent that case.
+	arg.msf.cdmsf_min0 = minutes;
+	arg.msf.cdmsf_sec0 = seconds;
+	arg.msf.cdmsf_frame0 = frame;
+	// The "end" part is irrelevant (why isn't cdrom_msf0 the type
+	// instead?)
 
-	if (ioctl(_fd, CDROMREADAUDIO, &readAudio) < 0)
+	if (ioctl(_fd, CDROMREADRAW, &arg) < 0) {
+		warning("Failed to CD read audio: %s", getErrorMessage(errno).c_str());
 		return false;
+	}
 
+	memcpy(buffer, arg.buffer, kBytesPerFrame);
 	return true;
 }
 
