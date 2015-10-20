@@ -126,10 +126,11 @@ void SpriteResource::drawOffset(XSurface &dest, uint16 offset, const Common::Poi
 	};
 	static const int PATTERN_STEPS[] = { 0, 1, 1, 1, 2, 2, 3, 3, 0, -1, -1, -1, -2, -2, -3, -3 };
 
-	uint16 scaleMask = SCALE_TABLE[scale];
+	uint16 scaleMask = SCALE_TABLE[scale & 0x7fff];
 	uint16 scaleMaskX = scaleMask, scaleMaskY = scaleMask;
 	bool flipped = (flags & SPRFLAG_HORIZ_FLIPPED) != 0;
 	int xInc = flipped ? -1 : 1;
+	bool enlarge = (scale & 0x8000) != 0;
 
 	// Get cell header
 	Common::MemoryReadStream f(_data, _filesize);
@@ -283,11 +284,15 @@ void SpriteResource::drawOffset(XSurface &dest, uint16 offset, const Common::Poi
 				scaleMaskX = ((scaleMaskX & 0x7fff) << 1) + bit;
 
 				if (bit) {
+					// Check whether there's a pixel to write, and we're within the allowable bounds. Note that for
+					// the SPRFLAG_SCENE_CLIPPED or when scale == 0x8000, we also have an extra horizontal bounds check
 					if (*lineP != -1 && xp >= bounds.left && xp < bounds.right &&
-							(!(flags & SPRFLAG_SCENE_CLIPPED) || (xp >= SCENE_CLIP_LEFT && xp < SCENE_CLIP_RIGHT))) {
-						*destP = (byte)*lineP;
+							((!(flags & SPRFLAG_SCENE_CLIPPED) && !enlarge) || (xp >= SCENE_CLIP_LEFT && xp < SCENE_CLIP_RIGHT))) {
 						drawBounds.left = MIN(drawBounds.left, xp);
 						drawBounds.right = MAX(drawBounds.right, xp);
+						*destP = (byte)*lineP;
+						if (enlarge)
+							*(destP + SCREEN_WIDTH) = (byte)*lineP;
 					}
 
 					++destP;
@@ -296,6 +301,8 @@ void SpriteResource::drawOffset(XSurface &dest, uint16 offset, const Common::Poi
 			}
 
 			++destPos.y;
+			if (enlarge)
+				++destPos.y;
 		}
 	}
 
@@ -318,9 +325,6 @@ void SpriteResource::draw(Window &dest, int frame, const Common::Point &destPos,
 
 void SpriteResource::draw(XSurface &dest, int frame, const Common::Point &destPos, 
 		const Common::Rect &bounds, int flags, int scale) {
-	// TODO: TO test when I find sprites using scale values and flags
-	assert(scale != 0x8000); 
-	assert(scale >= 0);
 
 	drawOffset(dest, _index[frame]._offset1, destPos, bounds, flags, scale);
 	if (_index[frame]._offset2)
