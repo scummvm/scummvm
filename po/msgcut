@@ -2,7 +2,6 @@
 
 use strict;
 use warnings;
-use Data::Printer;
 use Tie::IxHash;
 use open qw(:std :utf8);
 
