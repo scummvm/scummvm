@@ -10,3 +10,5 @@ If you want to contribute a translation, please follow these steps:
    ISO-8859-1, not UTF-8.
 3) Once your translations are done, call `make update-translations` and
    `make install` to update the `translations.dat` file.
+4) To actually test, set the `gui_language` key in your .residualvmrc to
+   the desired locale (eg. nl_NL).
