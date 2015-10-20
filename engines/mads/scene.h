@@ -129,7 +129,7 @@ public:
 	Common::Point _customDest;
 	Common::Array<PaletteUsage::UsageEntry> _paletteUsageF;
 	Common::Array<PaletteUsage::UsageEntry> _scenePaletteUsage;
-
+	int _speechReady;
 	/**
 	 * Constructor
 	 */
@@ -265,6 +265,7 @@ public:
 	void loadSpeech(int idx);
 	void playSpeech(int idx);
 	void sceneScale(int front_y, int front_scale, int back_y,  int back_scale);
+	void animations_tick();
 };
 
 } // End of namespace MADS

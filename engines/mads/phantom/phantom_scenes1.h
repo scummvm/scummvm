@@ -338,6 +338,59 @@ public:
 	virtual void actions();
 };
 
+class Scene113 : public Scene1xx {
+private:
+	bool _standing_talking;
+	bool _day_wants_to_talk;
+	bool _music_is_playing;
+	bool _right_after_kiss;
+	bool _anim_0_running;
+	bool _anim_1_running;
+	bool _anim_2_running;
+	bool _anim_3_running;
+	bool _anim_4_running;
+	bool _prevent_1;
+	bool _prevent_2;
+	bool _raoul_is_up;
+	bool _arms_are_out;
+
+	int _christineHotspotId1;
+	int _christineHotspotId2;
+	int _dayStatus;
+	int _dayFrame;
+	int _dayCount;
+	int _florentStatus;
+	int _florentFrame;
+	int _florentCount;
+	int _julieStatus;
+	int _julieFrame;
+	int _julieCount;
+	int _raoulAction;
+	int _raoulFrame;
+	int _raoulCount;
+	int _lastDayResetFrame;
+	int _standCount;
+
+	void handle_animation_florent();
+	void handle_animation_13_day();
+	void handle_animation_4_raoul();
+	void handle_animation_13_raoul();
+	void handle_animation_6_julie();
+	void process_conversation_dead();
+	void process_conversation_florent();
+	void process_conversation_love();
+
+public:
+	Scene113(MADSEngine *vm);
+	virtual void synchronize(Common::Serializer &s);
+
+	virtual void setup();
+	virtual void enter();
+	virtual void step();
+	virtual void preActions();
+	virtual void actions();
+};
+
 } // End of namespace Phantom
 } // End of namespace MADS
 

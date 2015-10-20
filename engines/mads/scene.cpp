@@ -61,6 +61,7 @@ Scene::Scene(MADSEngine *vm)
 	_spritesCount = 0;
 	_variant = 0;
 	_initialVariant = 0;
+	_speechReady = -1;
 
 	_paletteUsageF.push_back(PaletteUsage::UsageEntry(0xF));
 
@@ -432,10 +433,7 @@ void Scene::doFrame() {
 				_sequences.tick();
 
 				// Handle any active animation
-				for (int i = 0; i < 10; i++) {
-					if (_animation[i])
-						_animation[i]->update();
-				}
+				animations_tick();
 			}
 
 			// If the debugget flag is set, show the mouse position
@@ -794,4 +792,13 @@ void Scene::playSpeech(int idx) {
 void Scene::sceneScale(int front_y, int front_scale, int back_y,  int back_scale) {
 	warning("TODO: Scene:scaleRoom");
 }
+
+void Scene::animations_tick() {
+	warning("TODO: Implement _animations as an AnimationList and refactor (and check implementation)");
+	for (int i = 0; i < 10; i++) {
+		if (_animation[i])
+			_animation[i]->update();
+	}
+}
+
 } // End of namespace MADS

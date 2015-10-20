@@ -217,4 +217,16 @@ void Hotspots::activate(int vocabId, bool active) {
 	}
 }
 
+void Hotspots::activateAtPos(int vocabId, bool active, Common::Point pos) {
+	for (uint idx = 0; idx < size(); ++idx) {
+		Hotspot &hotspot = (*this)[idx];
+		if ((hotspot._vocabId == vocabId) && (pos.x >= hotspot._bounds.left) &&
+		    (pos.x <= hotspot._bounds.right) && (pos.y >= hotspot._bounds.top) &&
+		    (pos.y <= hotspot._bounds.bottom)) {
+			hotspot._active = active;
+			_vm->_game->_screenObjects.setActive(CAT_HOTSPOT, idx, active);
+		}
+	}
+}
+
 } // End of namespace MADS

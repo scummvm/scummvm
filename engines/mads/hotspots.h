@@ -124,6 +124,12 @@ public:
 	 * Sets the active state of a given hotspot
 	 */
 	void activate(int vocabId, bool active);
+
+	/**
+	 * Sets the active state of a given hotspot if it includes a given position
+	 */
+	void activateAtPos(int vocabId, bool active, Common::Point pos);
+
 };
 
 } // End of namespace MADS
