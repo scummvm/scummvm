@@ -79,9 +79,16 @@ cd <sources_dir>
 
 ./configure --enable-dispmanx -disable-debug --enable-release 
 --enable-optimizations --disable-mt32emu --disable-flac --disable-mad --disable-vorbis 
---disable-tremor --disable-fluidsynth --disable-taskbar --disable-timidity --disable-alsa
+--disable-tremor --disable-fluidsynth --disable-taskbar --disable-timidity --disable-alsa 
+--disable-scalers --disable-hq-scalers --disable-savegame-timestamp --disable-eventrecorder
 
 make
+
+As you can see, we're manually disabling scalers because we prefer dispmanx for that, which 
+makes scalers unnecessary on a CPU limited platform like this, timestamps because most people
+doesn't have an RTC on the Raspberry Pi, and event recorder to save SD card write cycles.
+All these are automatically disabled when we crosscompile by passing "--host=raspberrypi",
+which is not the case.
 
 ¡¡It will be an SLOW process, taking several hours to complete, unless you
 are running distcc against a fast compilation server!!
