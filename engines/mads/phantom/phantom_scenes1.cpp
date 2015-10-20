@@ -7387,136 +7387,135 @@ void Scene112::handleConversation() {
 }
 
 void Scene112::handleJulieAnimation() {
+	if (_scene->_animation[_globals._animationIndexes[0]]->getCurrentFrame() == _julieFrame)
+		return;
+
+	_julieFrame = _scene->_animation[_globals._animationIndexes[0]]->getCurrentFrame();
 	int random = -1;
-	int resetFrame;
+	int resetFrame = -1;
 
-	if (_scene->_animation[_globals._animationIndexes[0]]->getCurrentFrame() != _julieFrame) {
-		_julieFrame = _scene->_animation[_globals._animationIndexes[0]]->getCurrentFrame();
-		resetFrame = -1;
-
-		switch (_julieFrame) {
-		case 1:
-		case 2:
-		case 3:
-		case 22:
-		case 39:
-		case 71:
-		case 107:
-			switch (_julieAction) {
-			case 0:
-				random = _vm->getRandomNumber(4, 6);
-				++_julieCounter;
-				if (_julieCounter > 25)
-					_julieAction = 2;
-				break;
-
-			case 1:
-				random = 3;
-				break;
-
-			case 2:
-				random = _vm->getRandomNumber(1, 3);
-				while (_didOptionFl == random)
-					random = _vm->getRandomNumber(1, 3);
-				_didOptionFl = random;
-				break;
-
-			default:
-				break;
-			}
-
-			switch (random) {
-			case 1:
-				resetFrame = 22;
-				break;
-
-			case 2:
-				resetFrame = 39;
-				break;
-
-			case 3:
-				resetFrame = 83;
-				break;
-
-			case 4:
-				resetFrame = 0;
-				break;
-
-			case 5:
-				resetFrame = 1;
-				break;
-
-			case 6:
-				resetFrame = 2;
-				break;
-
-			default:
-				break;
-			}
+	switch (_julieFrame) {
+	case 1:
+	case 2:
+	case 3:
+	case 22:
+	case 39:
+	case 71:
+	case 107:
+		switch (_julieAction) {
+		case 0:
+			random = _vm->getRandomNumber(4, 6);
+			++_julieCounter;
+			if (_julieCounter > 25)
+				_julieAction = 2;
 			break;
-		case 56:
-		case 77:
-		case 83:
+
+		case 1:
+			random = 3;
+			break;
+
+		case 2:
 			random = _vm->getRandomNumber(1, 3);
 			while (_didOptionFl == random)
 				random = _vm->getRandomNumber(1, 3);
 			_didOptionFl = random;
-
-			if ((_julieAction == 0) || (_julieAction == 1))
-				random = 3;
-
-			switch (random) {
-			case 1:
-				resetFrame = 71;
-				break;
-
-			case 2:
-				resetFrame = 77;
-				break;
-
-			case 3:
-				resetFrame = 56;
-				break;
-
-			default:
-				break;
-			}
-
-			break;
-
-		case 95:
-			if (_julieAction == 1)
-				random = 2;
-			else
-				random = 1;
-
-			switch (random) {
-			case 1:
-				resetFrame = 95;
-				break;
-
-			case 2:
-				resetFrame = 107;
-				break;
-
-			default:
-				break;
-			}
-			break;
-
-		case 130:
-			resetFrame = 95;
-			_julieAction = 2;
 			break;
 
 		default:
 			break;
 		}
 
-		if (resetFrame >= 0) {
-			_scene->setAnimFrame(_globals._animationIndexes[0], resetFrame);
-			_julieFrame = resetFrame;
+		switch (random) {
+		case 1:
+			resetFrame = 22;
+			break;
+
+		case 2:
+			resetFrame = 39;
+			break;
+
+		case 3:
+			resetFrame = 83;
+			break;
+
+		case 4:
+			resetFrame = 0;
+			break;
+
+		case 5:
+			resetFrame = 1;
+			break;
+
+		case 6:
+			resetFrame = 2;
+			break;
+
+		default:
+			break;
 		}
+		break;
+	case 56:
+	case 77:
+	case 83:
+		random = _vm->getRandomNumber(1, 3);
+		while (_didOptionFl == random)
+			random = _vm->getRandomNumber(1, 3);
+		_didOptionFl = random;
+
+		if ((_julieAction == 0) || (_julieAction == 1))
+			random = 3;
+
+		switch (random) {
+		case 1:
+			resetFrame = 71;
+			break;
+
+		case 2:
+			resetFrame = 77;
+			break;
+
+		case 3:
+			resetFrame = 56;
+			break;
+
+		default:
+			break;
+		}
+
+		break;
+
+	case 95:
+		if (_julieAction == 1)
+			random = 2;
+		else
+			random = 1;
+
+		switch (random) {
+		case 1:
+			resetFrame = 95;
+			break;
+
+		case 2:
+			resetFrame = 107;
+			break;
+
+		default:
+			break;
+		}
+		break;
+
+	case 130:
+		resetFrame = 95;
+		_julieAction = 2;
+		break;
+
+	default:
+		break;
+	}
+
+	if (resetFrame >= 0) {
+		_scene->setAnimFrame(_globals._animationIndexes[0], resetFrame);
+		_julieFrame = resetFrame;
 	}
 }
 
@@ -8006,16 +8005,16 @@ void Scene113::enter() {
 
 void Scene113::step() {
 	if (_anim_1_running)
-		handle_animation_13_raoul();
+		handleRaoulAnimation2();
 
 	if (_anim_4_running)
-		handle_animation_6_julie();
+		handleJulieAnimation();
 
 	if (_anim_2_running)
-		handle_animation_florent();
+		handleFlorentAnimation();
 
 	if (_anim_3_running) {
-		handle_animation_4_raoul();
+		handleRaoulAnimation();
 
 		if ((!_game._objects.isInInventory(OBJ_SMALL_NOTE)) && (_scene->_animation[_globals._animationIndexes[3]]->getCurrentFrame() == 26)) {
 			_scene->_hotspots.activate(NOUN_SMALL_NOTE, false);
@@ -8037,7 +8036,7 @@ void Scene113::step() {
 	}
 
 	if (_anim_0_running) {
-		handle_animation_13_day();
+		handleDayAnimation();
 
 		if ((_scene->_animation[_globals._animationIndexes[0]]->getCurrentFrame() == 95) && (!_arms_are_out)) {
 			_standing_talking = true;
@@ -8082,19 +8081,19 @@ void Scene113::step() {
 
 void Scene113::actions() {
 	if (_vm->_gameConv->_running == 13) {
-		process_conversation_love();
+		handleLoveConversation();
 		_action._inProgress = false;
 		return;
 	}
 
 	if (_vm->_gameConv->_running == 4) {
-		process_conversation_florent();
+		handleFlorentConversation();
 		_action._inProgress = false;
 		return;
 	}
 
 	if (_vm->_gameConv->_running == 6) {
-		process_conversation_dead();
+		handleDeadConversation();
 		_action._inProgress = false;
 		return;
 	}
@@ -8369,7 +8368,7 @@ void Scene113::preActions() {
 	}
 }
 
-void Scene113::handle_animation_florent() {
+void Scene113::handleFlorentAnimation() {
 	if (_scene->_animation[_globals._animationIndexes[2]]->getCurrentFrame() == _florentFrame)
 		return;
 
@@ -8482,7 +8481,7 @@ void Scene113::handle_animation_florent() {
 	}
 }
 
-void Scene113::handle_animation_13_day() {
+void Scene113::handleDayAnimation() {
 	if (_scene->_animation[_globals._animationIndexes[0]]->getCurrentFrame() == _dayFrame)
 		return;
 
@@ -8629,7 +8628,7 @@ void Scene113::handle_animation_13_day() {
 	}
 }
 
-void Scene113::handle_animation_4_raoul() {
+void Scene113::handleRaoulAnimation() {
 	if (_globals[kFlorentNameIsKnown] == 2)
 		_raoulAction = 3;
 
@@ -8724,7 +8723,7 @@ void Scene113::handle_animation_4_raoul() {
 	}
 }
 
-void Scene113::handle_animation_13_raoul() {
+void Scene113::handleRaoulAnimation2() {
 	if (_scene->_animation[_globals._animationIndexes[1]]->getCurrentFrame() == _raoulFrame)
 		return;
 
@@ -8782,7 +8781,7 @@ void Scene113::handle_animation_13_raoul() {
 	}
 }
 
-void Scene113::handle_animation_6_julie() {
+void Scene113::handleJulieAnimation() {
 	if (_scene->_animation[_globals._animationIndexes[4]]->getCurrentFrame() == _julieFrame)
 		return;
 
@@ -8850,7 +8849,7 @@ void Scene113::handle_animation_6_julie() {
 	}
 }
 
-void Scene113::process_conversation_dead() {
+void Scene113::handleDeadConversation() {
 	switch (_game._trigger) {
 	case 106:
 		_julieStatus = 1;
@@ -8870,7 +8869,7 @@ void Scene113::process_conversation_dead() {
 	_julieCount = 0;
 }
 
-void Scene113::process_conversation_florent() {
+void Scene113::handleFlorentConversation() {
 	int random;
 
 	switch (_action._activeAction._verbId) {
@@ -9010,7 +9009,7 @@ void Scene113::process_conversation_florent() {
 	_florentCount = 0;
 }
 
-void Scene113::process_conversation_love() {
+void Scene113::handleLoveConversation() {
 	int random;
 
 	switch (_action._activeAction._verbId) {

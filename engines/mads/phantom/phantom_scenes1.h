@@ -371,14 +371,14 @@ private:
 	int _lastDayResetFrame;
 	int _standCount;
 
-	void handle_animation_florent();
-	void handle_animation_13_day();
-	void handle_animation_4_raoul();
-	void handle_animation_13_raoul();
-	void handle_animation_6_julie();
-	void process_conversation_dead();
-	void process_conversation_florent();
-	void process_conversation_love();
+	void handleFlorentAnimation();
+	void handleDayAnimation();
+	void handleRaoulAnimation();
+	void handleRaoulAnimation2();
+	void handleJulieAnimation();
+	void handleDeadConversation();
+	void handleFlorentConversation();
+	void handleLoveConversation();
 
 public:
 	Scene113(MADSEngine *vm);
