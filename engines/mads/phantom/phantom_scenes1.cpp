@@ -254,8 +254,7 @@ void Scene101::step() {
 		}
 	}
 
-	if (!_startSittingFl && (_globals[kBrieTalkStatus] != 2)) {
-		warning("TODO: Add a check on view port x > 200");
+	if (_scene->_posAdjust.x > 200 && !_startSittingFl && (_globals[kBrieTalkStatus] != 2)) {
 		_startSittingFl = true;
 		_game._player.walk(Common::Point(490, 119), FACING_NORTHEAST);
 		_game._player._stepEnabled = false;

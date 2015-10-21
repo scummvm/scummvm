@@ -49,6 +49,7 @@ Debugger::Debugger(MADSEngine *vm) : GUI::Debugger(), _vm(vm) {
 	registerCmd("item", WRAP_METHOD(Debugger, Cmd_Item));
 	registerCmd("play_anim", WRAP_METHOD(Debugger, Cmd_PlayAnim));
 	registerCmd("play_text", WRAP_METHOD(Debugger, Cmd_PlayText));
+	registerCmd("set_camera", WRAP_METHOD(Debugger, Cmd_SetCamera));
 }
 
 static int strToInt(const char *s) {
@@ -391,4 +392,17 @@ bool Debugger::Cmd_PlayText(int argc, const char **argv) {
 	}
 }
 
+bool Debugger::Cmd_SetCamera(int argc, const char **argv) {
+	if (argc != 3) {
+		debugPrintf("Usage: %s <x> <y>\n", argv[0]);
+		return true;
+	} else {
+		int x = strToInt(argv[1]);
+		int y = strToInt(argv[2]);
+		_vm->_game->_scene.setCamera(Common::Point(x, y));
+		_vm->_game->_scene.resetScene();
+		_vm->_game->_scene.drawElements(kTransitionNone, false);
+		return false;
+	}
+}
 } // End of namespace MADS

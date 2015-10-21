@@ -153,6 +153,7 @@ void Scene::loadScene(int sceneId, const Common::String &prefix, bool palFlag) {
 	_sequences.clear();
 	_kernelMessages.clear();
 	_vm->_palette->_paletteUsage.load(&_scenePaletteUsage);
+	setCamera(Common::Point(0, 0));
 
 	int flags = SCENEFLAG_LOAD_SHADOW;
 	if (_vm->_dithering)
@@ -787,7 +788,7 @@ void Scene::setDynamicAnim(int id, int anim_id, int segment) {
 }
 
 void Scene::setCamera(Common::Point pos) {
-	warning("TODO: Scene::setCamera");
+	_posAdjust = pos;
 }
 
 void Scene::drawToBackground(int series_id, int sprite_id, Common::Point pos, int depth, int scale) {

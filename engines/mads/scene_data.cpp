@@ -422,6 +422,18 @@ void SceneInfo::loadMadsV2Background(int sceneId, const Common::String &resName,
 	assert(screenWidth == _width);
 	assert(screenHeight <= _height);
 
+	// Resize the background surface to hold all of the tiles
+	uint16 newWidth = bgSurface.w;
+	uint16 newHeight = bgSurface.h;
+
+	if (tileWidth < screenWidth && bgSurface.w != tileCount * tileWidth)
+		newWidth = tileCount * tileWidth;
+	if (tileHeight < screenHeight && bgSurface.h != tileCount * tileHeight)
+		newHeight = tileCount * tileHeight;
+
+	if (bgSurface.w != newWidth || bgSurface.h != newHeight)
+		bgSurface.setSize(newWidth, newHeight);
+
 	// --------------------------------------------------------------------------------
 
 	// Get tile data
