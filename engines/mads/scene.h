@@ -129,7 +129,6 @@ public:
 	Common::Point _customDest;
 	Common::Array<PaletteUsage::UsageEntry> _paletteUsageF;
 	Common::Array<PaletteUsage::UsageEntry> _scenePaletteUsage;
-	int _speechReady;
 	/**
 	 * Constructor
 	 */

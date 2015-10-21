@@ -8021,7 +8021,6 @@ void Scene113::step() {
 			_game._objects.addToInventory(OBJ_SMALL_NOTE);
 			_scene->deleteSequence(_globals._sequenceIndexes[1]);
 			_vm->_sound->command(26);
-			_scene->_speechReady = -1;
 			_vm->_dialogs->showItem(OBJ_SMALL_NOTE, 806, 2);
 		}
 	}

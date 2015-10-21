@@ -24,6 +24,7 @@
 #include "mads/scene.h"
 #include "mads/compression.h"
 #include "mads/mads.h"
+#include "mads/audio.h"
 #include "mads/dragonsphere/dragonsphere_scenes.h"
 #include "mads/nebular/nebular_scenes.h"
 #include "mads/phantom/phantom_scenes.h"
@@ -61,7 +62,6 @@ Scene::Scene(MADSEngine *vm)
 	_spritesCount = 0;
 	_variant = 0;
 	_initialVariant = 0;
-	_speechReady = -1;
 
 	_paletteUsageF.push_back(PaletteUsage::UsageEntry(0xF));
 
@@ -782,11 +782,14 @@ void Scene::deleteSequence(int idx) {
 }
 
 void Scene::loadSpeech(int idx) {
-	warning("TODO: Scene::loadSpeech");
+	_vm->_audio->setDefaultSoundGroup();
+	// NOTE: The original actually preloads the speech sample here, but the samples
+	// are so small that it's not really worth it...
 }
 
 void Scene::playSpeech(int idx) {
-	warning("TODO: Scene::playSpeech");
+	_vm->_audio->stop();
+	_vm->_audio->playSound(idx - 1);
 }
 
 void Scene::sceneScale(int front_y, int front_scale, int back_y,  int back_scale) {
