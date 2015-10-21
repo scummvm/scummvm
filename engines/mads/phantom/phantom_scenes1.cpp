@@ -9491,5 +9491,70 @@ void Scene114::preActions() {
 
 /*------------------------------------------------------------------------*/
 
+Scene150::Scene150(MADSEngine *vm) : Scene1xx(vm) {
+}
+
+void Scene150::synchronize(Common::Serializer &s) {
+	Scene1xx::synchronize(s);
+}
+
+void Scene150::setup() {
+	setPlayerSpritesPrefix();
+	setAAName();
+}
+
+void Scene150::enter() {
+	warning("TODO: Switch to letter box view. See definition of MADS_MENU_Y");
+
+	_game._player._stepEnabled = false;
+	_game._player._visible = false;
+
+	if (_scene->_priorSceneId == 113)
+		_globals._animationIndexes[0] = _scene->loadAnimation(formAnimName('l', 1), 1);
+	else if (_scene->_priorSceneId == 203) {
+		_globals._animationIndexes[0] = _scene->loadAnimation(formAnimName('f', 1), 2);
+		sceneEntrySound();  
+	} else if (_scene->_priorSceneId == 306)
+		_globals._animationIndexes[0] = _scene->loadAnimation(formAnimName('e', 1), 4);
+	else if (_scene->_priorSceneId == 208)
+		_globals._animationIndexes[0] = _scene->loadAnimation(formAnimName('h', 1), 3);
+	else
+		_globals._animationIndexes[0] = _scene->loadAnimation(formAnimName('q', 1), 5);
+}
+
+void Scene150::step() {
+	if (_game._trigger == 1)
+		_scene->_nextSceneId = 203;
+
+	if (_game._trigger == 2)
+		_scene->_nextSceneId = 111;
+
+	if (_game._trigger == 4)
+		_scene->_nextSceneId = 204;
+
+	if (_game._trigger == 3) {
+		_globals[kJacquesStatus] = 1;
+		_scene->_nextSceneId = 205;
+	}
+
+	if (_game._trigger == 5)
+		_game._winStatus = 1;
+
+	if (_scene->_nextSceneId != _scene->_currentSceneId) {
+		byte pal[768];
+		_vm->_palette->getFullPalette(pal);
+		Common::fill(&pal[12], &pal[756], 0);
+		_vm->_palette->setFullPalette(pal);
+	}
+}
+
+void Scene150::actions() {
+}
+
+void Scene150::preActions() {
+}
+
+/*------------------------------------------------------------------------*/
+
 } // End of namespace Phantom
 } // End of namespace MADS
