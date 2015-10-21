@@ -618,15 +618,20 @@ int Scene::loadAnimation(const Common::String &resName, int trigger) {
 	DepthSurface depthSurface;
 	UserInterface interfaceSurface(_vm);
 
-	warning("TODO: Fix loadAnimation");
-	int id = 0;
+	for (int i = 0; i < 10; i++) {
+		if (!_animation[i]) {
+			_animation[i] = Animation::init(_vm, this);
+			_animation[i]->load(interfaceSurface, depthSurface, resName,
+				_vm->_dithering ? ANIMFLAG_DITHER : 0, nullptr, nullptr);
+			_animation[i]->startAnimation(trigger);
 
-	_animation[id] = Animation::init(_vm, this);
-	_animation[id]->load(interfaceSurface, depthSurface, resName,
-		_vm->_dithering ? ANIMFLAG_DITHER : 0, nullptr, nullptr);
-	_animation[id]->startAnimation(trigger);
+			return i;
+		}
+	}
 
-	return id;
+	error("Unable to find an available animation slot");
+
+	return -1;
 }
 
 void Scene::updateCursor() {
@@ -797,7 +802,7 @@ void Scene::sceneScale(int front_y, int front_scale, int back_y,  int back_scale
 }
 
 void Scene::animations_tick() {
-	warning("TODO: Implement _animations as an AnimationList and refactor (and check implementation)");
+	//warning("TODO: Implement _animations as an AnimationList and refactor (and check implementation)");
 	for (int i = 0; i < 10; i++) {
 		if (_animation[i])
 			_animation[i]->update();
