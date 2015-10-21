@@ -38,7 +38,7 @@ enum SequenceTrigger {
 	SEQUENCE_TRIGGER_SPRITE = 2		// Trigger when sequence reaches specific sprite
 };
 
-enum SpriteAnimType { ANIMTYPE_NONE = 0, ANIMTYPE_CYCLED = 1, ANIMTYPE_PING_PONG = 2 };
+enum SpriteAnimType { ANIMTYPE_NONE = 0, ANIMTYPE_CYCLED = 1, ANIMTYPE_PING_PONG = 2, ANIMTYPE_STAMP = 9 };
 
 #define SEQUENCE_ENTRY_SUBSET_MAX 5
 
