@@ -555,7 +555,7 @@ int SequenceList::addStampCycle(int srcSpriteIdx, bool flipped, int sprite) {
 
 	id = addSpriteCycle(srcSpriteIdx, flipped, 32767, 0, 0, 0);
 	if (id >= 0) {
-		setRange(id, sprite, sprite);
+		setAnimRange(id, sprite, sprite);
 		_entries[id]._animType = ANIMTYPE_STAMP;
 	}
 	return (id);
@@ -564,10 +564,6 @@ int SequenceList::addStampCycle(int srcSpriteIdx, bool flipped, int sprite) {
 int SequenceList::setTimingTrigger(int delay, int code) {
 	warning("TODO: SequenceList::setTimingTrigger");
 	return -1;
-}
-
-void SequenceList::setRange(int sequence_id, int first, int last) {
-	warning("TODO: SequenceList::setRange");
 }
 
 int SequenceList::setTrigger(int idx, int trigger_type, int trigger_sprite, int trigger_code) {

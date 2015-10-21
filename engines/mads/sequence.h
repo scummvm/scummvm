@@ -128,7 +128,6 @@ public:
 
 	int addStampCycle(int srcSpriteIdx, bool flipped, int sprite);
 	int setTimingTrigger(int delay, int code);
-	void setRange(int sequence_id, int first, int last);
 	int setTrigger(int sequence_id, int trigger_type, int trigger_sprite, int trigger_code);
 	void setSeqPlayer(int idx, bool flag);
 };
