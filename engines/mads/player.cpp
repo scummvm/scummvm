@@ -56,7 +56,6 @@ Player::Player(MADSEngine *vm)
 	_special = 0;
 	_ticksAmount = 0;
 	_priorTimer = 0;
-	_trigger = 0;
 	_scalingVelocity = false;
 	_spritesChanged = false;
 	_forceRefresh = false;
@@ -816,6 +815,9 @@ void Player::setWalkTrigger(int val) {
 }
 
 void Player::resetFacing(Facing facing) {
-	warning("TODO: Player::resetFacing");
+	_facing = facing;
+	_turnToFacing = facing;
+	selectSeries();
 }
+
 } // End of namespace MADS
