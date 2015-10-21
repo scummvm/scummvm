@@ -35,6 +35,7 @@ class DynamicHotspot {
 public:
 	bool _active;
 	int _seqIndex;
+	int _animIndex;
 	Common::Rect _bounds;
 	Common::Point _feetPos;
 	Facing _facing;
@@ -54,7 +55,7 @@ public:
 	void synchronize(Common::Serializer &s);
 };
 
-#define DYNAMIC_HOTSPOTS_SIZE 10
+#define DYNAMIC_HOTSPOTS_SIZE 16
 
 #define SYNTAX_SINGULAR               0
 #define SYNTAX_PLURAL                 1

@@ -27,6 +27,7 @@ namespace MADS {
 
 DynamicHotspot::DynamicHotspot() {
 	_seqIndex = 0;
+	_animIndex = -1;
 	_facing = FACING_NONE;
 	_descId = 0;
 	_verbId = 0;
@@ -74,6 +75,7 @@ int DynamicHotspots::add(int descId, int verbId, int seqIndex, const Common::Rec
 	_entries[idx]._verbId = verbId;
 	_entries[idx]._articleNumber = PREP_IN;
 	_entries[idx]._cursor = CURSOR_NONE;
+	_entries[idx]._animIndex = -1;
 
 	++_count;
 	_changed = true;
@@ -106,6 +108,8 @@ void DynamicHotspots::remove(int index) {
 	if (index >= 0 && _entries[index]._active) {
 		if (_entries[index]._seqIndex >= 0)
 			scene._sequences[_entries[index]._seqIndex]._dynamicHotspotIndex = -1;
+		if (_entries[index]._animIndex >= 0)
+			scene._animation[_entries[index]._animIndex]->_dynamicHotspotIndex = -1;
 		_entries[index]._active = false;
 
 		--_count;

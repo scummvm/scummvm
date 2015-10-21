@@ -771,7 +771,19 @@ int Scene::getAnimFrame(int id) {
 }
 
 void Scene::setDynamicAnim(int id, int anim_id, int segment) {
-	warning("TODO: Scene::setDynamicAnim");
+	if (id >= 0 && id <= DYNAMIC_HOTSPOTS_SIZE && _animation[anim_id]) {
+		_animation[anim_id]->_dynamicHotspotIndex = id;
+		if (_dynamicHotspots[id]._animIndex < 0)
+			_dynamicHotspots[id]._active = false;
+		_dynamicHotspots[id]._animIndex = anim_id;
+
+		// TODO: Anim segments
+
+		// NOTE: Only remove the TODO below when _dynamicHotspotIndex
+		// in the Animation class is actually used in the engine!
+
+		warning("TODO: Scene::setDynamicAnim");
+	}
 }
 
 void Scene::setCamera(Common::Point pos) {

@@ -191,6 +191,7 @@ public:
 	bool _resetFlag;
 	int _currentFrame;
 	int _oldFrameEntry;
+	int _dynamicHotspotIndex;
 
 	static Animation *init(MADSEngine *vm, Scene *scene);
 	/*

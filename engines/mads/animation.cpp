@@ -177,6 +177,7 @@ Animation::Animation(MADSEngine *vm, Scene *scene) : _vm(vm), _scene(scene) {
 	_oldFrameEntry = 0;
 	_rgbResult = -1;
 	_palIndex1 = _palIndex2 = -1;
+	_dynamicHotspotIndex = -1;
 }
 
 Animation::~Animation() {
