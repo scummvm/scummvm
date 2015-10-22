@@ -22,8 +22,24 @@
 
 #include "mads/conversations.h"
 #include "mads/mads.h"
+#include "mads/compression.h"
+#include "common/file.h"
 
 namespace MADS {
+
+struct ConvData {
+	uint16 nodes;
+	uint16 unk1;
+	uint16 messages;
+	uint16 unk2;
+	uint16 unk3;
+	uint16 imports;
+	uint16 speakers;
+	Common::List<Common::String> portraits;
+	Common::String speechFile;
+};
+
+#define MAX_SPEAKERS 5
 
 GameConversation::GameConversation(MADSEngine *vm)
 	: _vm(vm) {
@@ -34,6 +50,58 @@ GameConversation::~GameConversation() {
 }
 
 void GameConversation::get(int id) {
+	Common::File inFile;
+	Common::String fileName = Common::String::format("CONV%03d.CNV", id);
+	inFile.open(fileName);
+	MadsPack convFileUnpacked(&inFile);
+	Common::SeekableReadStream *convFile = convFileUnpacked.getItemStream(0);
+
+	char buffer[16];
+
+	ConvData conv;
+
+	// Section 0: Header
+	conv.nodes = convFile->readUint16LE();
+	conv.unk1 = convFile->readUint16LE();
+	conv.messages = convFile->readUint16LE();
+	conv.unk2 = convFile->readUint16LE();
+	conv.unk3 = convFile->readUint16LE();
+	conv.imports = convFile->readUint16LE();
+	conv.speakers = convFile->readUint16LE();
+
+	debug("Conv %d has %d nodes, %d messages, %d imports and %d speakers", id, conv.nodes, conv.messages, conv.imports, conv.speakers);
+
+	for (uint16 i = 0; i < MAX_SPEAKERS; i++) {
+		convFile->read(buffer, 16);
+		Common::String portrait = buffer;
+		debug("Speaker %d, portrait %s", i, portrait.c_str());
+		conv.portraits.push_back(portrait);
+	}
+
+	for (uint16 i = 0; i < MAX_SPEAKERS; i++) {
+		convFile->skip(2);
+	}
+
+	convFile->read(buffer, 14);
+	conv.speechFile = Common::String(buffer);
+	debug("Speech file %s", conv.speechFile.c_str());
+
+	convFile->skip(32);	// unknown bytes
+
+	// Section 1
+	convFile = convFileUnpacked.getItemStream(1);
+
+	for (uint16 i = 0; i < conv.nodes; i++) {
+		uint16 nodeIndex = convFile->readUint16LE();
+		debug("Node %d, index %d", i, nodeIndex);
+		convFile->skip(2);	// 01 00
+		convFile->skip(6);
+	}
+
+	// TODO: Read the rest of the sections
+
+	inFile.close();
+
 	warning("TODO GameConversation::get");
 }
 
