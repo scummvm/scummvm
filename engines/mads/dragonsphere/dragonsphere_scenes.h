@@ -29,7 +29,6 @@
 #include "mads/dragonsphere/game_dragonsphere.h"
 //#include "mads/dragonsphere/globals_dragonsphere.h"
 
-
 namespace MADS {
 
 namespace Dragonsphere {
@@ -653,27 +652,6 @@ protected:
 	* Constructor
 	*/
 	SceneInfoDragonsphere(MADSEngine *vm) : SceneInfo(vm) {}
-};
-
-// TODO: Temporary, remove once implemented properly
-class Scene1xx : public DragonsphereScene {
-protected:
-	/**
-	 * Plays an appropriate sound when entering a scene
-	 */
-	void sceneEntrySound() {}
-
-	/**
-	 *Sets the AA file to use for the scene
-	 */
-	void setAAName() {}
-
-	/**
-	 * Updates the prefix used for getting player sprites for the scene
-	 */
-	void setPlayerSpritesPrefix() {}
-public:
-	Scene1xx(MADSEngine *vm) : DragonsphereScene(vm) {}
 };
 
 // TODO: Temporary, remove once implemented properly

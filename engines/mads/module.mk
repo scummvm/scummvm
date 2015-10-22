@@ -3,6 +3,8 @@ MODULE := engines/mads
 MODULE_OBJS := \
 	dragonsphere/game_dragonsphere.o \
 	dragonsphere/dragonsphere_scenes.o \
+	dragonsphere/dragonsphere_scenes1.o \
+	dragonsphere/globals_dragonsphere.o \
 	phantom/game_phantom.o \
 	phantom/globals_phantom.o \
 	phantom/phantom_scenes.o \
