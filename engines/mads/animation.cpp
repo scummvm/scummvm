@@ -464,21 +464,25 @@ void Animation::update() {
 		scene._spriteSlots.fullRefresh();
 	}
 
-	// Handle any offset adjustment for sprites as of this frame
-	bool paChanged = false;
-	if (scene._posAdjust.x != misc._posAdjust.x) {
-		scene._posAdjust.x = misc._posAdjust.x;
-		paChanged = true;
-	}
-	if (scene._posAdjust.y != misc._posAdjust.y) {
-		scene._posAdjust.y = misc._posAdjust.y;
-		paChanged = true;
-	}
+	bool isV2 = (_vm->getGameID() != GType_RexNebular);
+	if (!isV2) {
+		// Handle any offset adjustment for sprites as of this frame
+		// FIXME: This doesn't work properly for Phantom scene 101
+		bool paChanged = false;
+		if (scene._posAdjust.x != misc._posAdjust.x) {
+			scene._posAdjust.x = misc._posAdjust.x;
+			paChanged = true;
+		}
+		if (scene._posAdjust.y != misc._posAdjust.y) {
+			scene._posAdjust.y = misc._posAdjust.y;
+			paChanged = true;
+		}
 
-	if (paChanged) {
-		int newIndex = scene._spriteSlots.add();
-		scene._spriteSlots[newIndex]._seqIndex = -1;
-		scene._spriteSlots[newIndex]._flags = IMG_REFRESH;
+		if (paChanged) {
+			int newIndex = scene._spriteSlots.add();
+			scene._spriteSlots[newIndex]._seqIndex = -1;
+			scene._spriteSlots[newIndex]._flags = IMG_REFRESH;
+		}
 	}
 
 	// Main frame animation loop - frames get animated by being placed, as necessary, into the
