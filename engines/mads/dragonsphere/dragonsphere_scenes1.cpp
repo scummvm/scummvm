@@ -205,5 +205,39 @@ void Scene1xx::setPlayerSpritesPrefix() {
 
 /*------------------------------------------------------------------------*/
 
+Scene101::Scene101(MADSEngine *vm) : Scene1xx(vm) {
+}
+
+void Scene101::synchronize(Common::Serializer &s) {
+	Scene1xx::synchronize(s);
+}
+
+void Scene101::setup() {
+	setPlayerSpritesPrefix();
+	setAAName();
+}
+
+void Scene101::enter() {
+	sceneEntrySound();
+}
+
+void Scene101::step() {
+}
+
+void Scene101::actions() {
+	if (_action.isObject(NOUN_BED)) {
+		int sprIdx = _scene->_sprites.addSprites("*ob001i", false);
+		int seqIdx = _scene->_sequences.addStampCycle(sprIdx, false, 1);
+		_scene->_sequences.setDepth(seqIdx, 0);
+		_scene->_sequences.setPosition(seqIdx, Common::Point(10, 50));
+		_action._inProgress = false;
+	}
+}
+
+void Scene101::preActions() {
+}
+
+/*------------------------------------------------------------------------*/
+
 } // End of namespace Dragonsphere
 } // End of namespace MADS

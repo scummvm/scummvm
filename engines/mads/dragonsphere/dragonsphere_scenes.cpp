@@ -28,6 +28,7 @@
 #include "mads/scene.h"
 #include "mads/dragonsphere/game_dragonsphere.h"
 #include "mads/dragonsphere/dragonsphere_scenes.h"
+#include "mads/dragonsphere/dragonsphere_scenes1.h"
 
 namespace MADS {
 
@@ -42,7 +43,7 @@ SceneLogic *SceneFactory::createScene(MADSEngine *vm) {
 	switch (scene._nextSceneId) {
 	// Scene group #1 (Castle, river and caves)
 	case 101:	// king's bedroom
-		return new DummyScene(vm);	// TODO
+		return new Scene101(vm);
 	case 102:	// queen's bedroom
 		return new DummyScene(vm);	// TODO
 	case 103:	// outside king's bedroom
