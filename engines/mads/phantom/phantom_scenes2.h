@@ -53,6 +53,31 @@ public:
 	Scene2xx(MADSEngine *vm) : PhantomScene(vm) {}
 };
 
+class Scene201 : public Scene2xx {
+private:
+	bool _anim0ActvFl;
+	bool _anim1ActvFl;
+	bool _needHoldFl;
+	int _sellerCount;
+	int _sellerStatus;
+	int _sellerFrame;
+	int _raoulFrame;
+	int _raoulStatus;
+
+	void handleSellerAnimation();
+	void handleRaoulAnimation();
+	void handleConversation();
+
+public:
+	Scene201(MADSEngine *vm);
+	virtual void synchronize(Common::Serializer &s);
+
+	virtual void setup();
+	virtual void enter();
+	virtual void step();
+	virtual void preActions();
+	virtual void actions();
+};
 } // End of namespace Phantom
 } // End of namespace MADS
 
