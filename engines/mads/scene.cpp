@@ -796,7 +796,15 @@ void Scene::drawToBackground(int series_id, int sprite_id, Common::Point pos, in
 }
 
 void Scene::deleteSequence(int idx) {
-	warning("TODO: Scene::deleteSequence");
+	if (_sequences[idx]._active && _sequences[idx]._dynamicHotspotIndex >= 0)
+		_dynamicHotspots.remove(_sequences[idx]._dynamicHotspotIndex);
+
+	_sequences[idx]._active = false;
+
+	if (!_sequences[idx]._doneFlag)
+		doFrame();	// FIXME/CHECKME: Is this correct?
+	else
+		_sequences.remove(idx);
 }
 
 void Scene::loadSpeech(int idx) {
