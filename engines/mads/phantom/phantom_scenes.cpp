@@ -170,12 +170,12 @@ Common::String PhantomScene::formAnimName(char sepChar, int suffixNum) {
 /*------------------------------------------------------------------------*/
 
 void SceneInfoPhantom::loadCodes(MSurface &depthSurface, int variant) {
-	// The intro scenes do not have any codes
-	if (_sceneId >= 900)
+	Common::String ext = Common::String::format(".WW%d", variant);
+	Common::String fileName = Resources::formatName(RESPREFIX_RM, _sceneId, ext);
+	if (!Common::File::exists(fileName))
 		return;
 
-	Common::String ext = Common::String::format(".WW%d", variant);
-	File f(Resources::formatName(RESPREFIX_RM, _sceneId, ext));
+	File f(fileName);
 	MadsPack codesPack(&f);
 	Common::SeekableReadStream *stream = codesPack.getItemStream(0);
 
