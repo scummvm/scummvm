@@ -259,7 +259,7 @@ bool SequenceList::loadSprites(int seqIndex) {
 			}
 
 			if (seqEntry._flags & 2) {
-				// Check for object having moved off-scren
+				// Check for object having moved off-screen
 				if ((pt.x + width) < 0 || (pt.x + width) >= MADS_SCREEN_WIDTH ||
 						pt.y < 0 || (pt.y - height) >= MADS_SCENE_HEIGHT) {
 					result = true;
