@@ -7651,19 +7651,19 @@ void Scene112::handleRaoulChair() {
 /*------------------------------------------------------------------------*/
 
 Scene113::Scene113(MADSEngine *vm) : Scene1xx(vm) {
-	_standing_talking = false;
-	_day_wants_to_talk = false;
-	_music_is_playing = false;
-	_right_after_kiss = false;
-	_anim_0_running = false;
-	_anim_1_running = false;
-	_anim_2_running = false;
-	_anim_3_running = false;
-	_anim_4_running = false;
-	_prevent_1 = false;
-	_prevent_2 = false;
-	_raoul_is_up = false;
-	_arms_are_out = false;
+	_standingAndTalking = false;
+	_dayWantsToTalk = false;
+	_musicPlaying = false;
+	_afterKissFl = false;
+	_anim0ActvFl = false;
+	_anim1ActvFl = false;
+	_anim2ActvFl = false;
+	_anim3ActvFl = false;
+	_anim4ActvFl = false;
+	_prevent1 = false;
+	_prevent2 = false;
+	_raoulStandingFl = false;
+	_armsOutFl = false;
 
 	_dayStatus = -1;
 	_raoulAction = -1;
@@ -7685,19 +7685,19 @@ Scene113::Scene113(MADSEngine *vm) : Scene1xx(vm) {
 void Scene113::synchronize(Common::Serializer &s) {
 	Scene1xx::synchronize(s);
 
-	s.syncAsByte(_standing_talking);
-	s.syncAsByte(_day_wants_to_talk);
-	s.syncAsByte(_music_is_playing);
-	s.syncAsByte(_right_after_kiss);
-	s.syncAsByte(_anim_0_running);
-	s.syncAsByte(_anim_1_running);
-	s.syncAsByte(_anim_2_running);
-	s.syncAsByte(_anim_3_running);
-	s.syncAsByte(_anim_4_running);
-	s.syncAsByte(_prevent_1);
-	s.syncAsByte(_prevent_2);
-	s.syncAsByte(_raoul_is_up);
-	s.syncAsByte(_arms_are_out);
+	s.syncAsByte(_standingAndTalking);
+	s.syncAsByte(_dayWantsToTalk);
+	s.syncAsByte(_musicPlaying);
+	s.syncAsByte(_afterKissFl);
+	s.syncAsByte(_anim0ActvFl);
+	s.syncAsByte(_anim1ActvFl);
+	s.syncAsByte(_anim2ActvFl);
+	s.syncAsByte(_anim3ActvFl);
+	s.syncAsByte(_anim4ActvFl);
+	s.syncAsByte(_prevent1);
+	s.syncAsByte(_prevent2);
+	s.syncAsByte(_raoulStandingFl);
+	s.syncAsByte(_armsOutFl);
 
 	s.syncAsSint16LE(_dayStatus);
 	s.syncAsSint16LE(_raoulAction);
@@ -7727,19 +7727,19 @@ void Scene113::setup() {
 
 void Scene113::enter() {
 	if (_scene->_priorSceneId != RETURNING_FROM_LOADING) {
-		_standing_talking = false;
-		_day_wants_to_talk = false;
-		_music_is_playing = false;
-		_right_after_kiss = false;
-		_anim_0_running = false;
-		_anim_1_running = false;
-		_anim_2_running = false;
-		_anim_3_running = false;
-		_anim_4_running = false;
-		_prevent_1 = false;
-		_prevent_2 = false;
-		_raoul_is_up = false;
-		_arms_are_out = false;
+		_standingAndTalking = false;
+		_dayWantsToTalk = false;
+		_musicPlaying = false;
+		_afterKissFl = false;
+		_anim0ActvFl = false;
+		_anim1ActvFl = false;
+		_anim2ActvFl = false;
+		_anim3ActvFl = false;
+		_anim4ActvFl = false;
+		_prevent1 = false;
+		_prevent2 = false;
+		_raoulStandingFl = false;
+		_armsOutFl = false;
 	}
 
 	_scene->_hotspots.activate(NOUN_SMALL_NOTE, false);
@@ -7783,7 +7783,7 @@ void Scene113::enter() {
 		if (_globals[kCurrentYear] == 1881) {
 			if (_dayStatus <= 3) {
 				_globals._animationIndexes[1] = _scene->loadAnimation(formAnimName('r', 1), 1);
-				_anim_1_running = true;
+				_anim1ActvFl = true;
 			}
 
 			if (_raoulAction == 3)
@@ -7794,9 +7794,9 @@ void Scene113::enter() {
 				_scene->setAnimFrame(_globals._animationIndexes[1], 8);
 			}
 
-			if (_music_is_playing) {
+			if (_musicPlaying) {
 				_globals._animationIndexes[0] = _scene->loadAnimation(formAnimName('d', 2), 0);
-				_anim_0_running = true;
+				_anim0ActvFl = true;
 				_christineHotspotId1 = _scene->_dynamicHotspots.add(NOUN_CHRISTINE, VERB_WALK_TO, SYNTAX_SINGULAR_FEM, EXT_NONE, Common::Rect(0, 0, 0, 0));
 				_scene->_dynamicHotspots[_christineHotspotId1]._articleNumber = PREP_ON;
 				_scene->setDynamicAnim(_christineHotspotId1, _globals._animationIndexes[0], 13);
@@ -7804,7 +7804,7 @@ void Scene113::enter() {
 				_scene->setDynamicAnim(_christineHotspotId1, _globals._animationIndexes[0], 16);
 				_scene->setAnimFrame(_globals._animationIndexes[0], 212);
 				_game._player._visible = true;
-				_anim_1_running = false;
+				_anim1ActvFl = false;
 			} else {
 				switch (_dayStatus) {
 				case 0:
@@ -7812,7 +7812,7 @@ void Scene113::enter() {
 				case 2:
 				case 3:
 					_globals._animationIndexes[0] = _scene->loadAnimation(formAnimName('d', 1), 0);
-					_anim_0_running = true;
+					_anim0ActvFl = true;
 					_dayStatus = 2;
 					_scene->setAnimFrame(_globals._animationIndexes[0], 208);
 					_scene->_hotspots.activate(NOUN_CHRISTINE, true);
@@ -7821,7 +7821,7 @@ void Scene113::enter() {
 
 				default:
 					_globals._animationIndexes[0] = _scene->loadAnimation(formAnimName('d', 2), 0);
-					_anim_0_running = true;
+					_anim0ActvFl = true;
 					_dayStatus = 7;
 					_game._player._visible = false;
 					_scene->setAnimFrame(_globals._animationIndexes[0], 165);
@@ -7845,7 +7845,7 @@ void Scene113::enter() {
 		} else if ((_globals[kDoneBrieConv203] == 1) || (_globals[kDoneBrieConv203] == 3)) {
 			_globals._animationIndexes[4] = _scene->loadAnimation(formAnimName('x', 1), 1);
 			_julieStatus = 0;
-			_anim_4_running = true;
+			_anim4ActvFl = true;
 			_globals[kMakeBrieLeave203] = true;
 			_globals._sequenceIndexes[0] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[0], false, 1);
 			_globals._sequenceIndexes[2] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[2], false, 1);
@@ -7858,13 +7858,13 @@ void Scene113::enter() {
 			_globals._sequenceIndexes[0] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[0], false, 1);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[0], 14);
 			_globals._animationIndexes[2] = _scene->loadAnimation(formAnimName('f', 1), 1);
-			_anim_2_running = true;
+			_anim2ActvFl = true;
 
 			if (_florentStatus != 3)
 				_florentStatus = 1;
 
 			_globals._animationIndexes[3] = _scene->loadAnimation(formAnimName('r', 1), 1);
-			_anim_3_running = true;
+			_anim3ActvFl = true;
 
 			if (_raoulAction == 3)
 				_scene->setAnimFrame(_globals._animationIndexes[3], 33);
@@ -7906,7 +7906,7 @@ void Scene113::enter() {
 
 			_globals._animationIndexes[4] = _scene->loadAnimation(formAnimName('x', 1), 1);
 			_julieStatus = 0;
-			_anim_4_running = true;
+			_anim4ActvFl = true;
 			_globals[kMakeBrieLeave203] = true;
 			_game._player._playerPos = Common::Point(190, 148);
 			_game._player._facing = FACING_NORTH;
@@ -7926,11 +7926,11 @@ void Scene113::enter() {
 
 			_globals._animationIndexes[2] = _scene->loadAnimation(formAnimName('f', 1), 1);
 			_florentStatus = 1;
-			_anim_2_running = true;
+			_anim2ActvFl = true;
 
 			_globals._animationIndexes[3] = _scene->loadAnimation(formAnimName('r', 1), 1);
 			_raoulAction = 3;
-			_anim_3_running = true;
+			_anim3ActvFl = true;
 			_scene->setAnimFrame(_globals._animationIndexes[3], 33);
 
 			if (_globals[kFlorentNameIsKnown] >= 1) {
@@ -7956,11 +7956,11 @@ void Scene113::enter() {
 	} else if ((_globals[kCurrentYear] == 1881) && (! _globals[kChrisKickedRaoulOut])) {
 		_globals._animationIndexes[1] = _scene->loadAnimation(formAnimName('r', 1), 1);
 		_raoulAction = 3;
-		_anim_1_running = true;
+		_anim1ActvFl = true;
 		_scene->setAnimFrame(_globals._animationIndexes[1], 33);
 		_globals._animationIndexes[0] = _scene->loadAnimation(formAnimName('d', 1), 1);
 		_dayStatus = 2;
-		_anim_0_running = true;
+		_anim0ActvFl = true;
 
 		_scene->_hotspots.activate(NOUN_CHRISTINE, true);
 		_scene->_hotspots.activateAtPos(NOUN_CHRISTINE, false, Common::Point(220, 130));
@@ -8003,16 +8003,16 @@ void Scene113::enter() {
 }
 
 void Scene113::step() {
-	if (_anim_1_running)
+	if (_anim1ActvFl)
 		handleRaoulAnimation2();
 
-	if (_anim_4_running)
+	if (_anim4ActvFl)
 		handleJulieAnimation();
 
-	if (_anim_2_running)
+	if (_anim2ActvFl)
 		handleFlorentAnimation();
 
-	if (_anim_3_running) {
+	if (_anim3ActvFl) {
 		handleRaoulAnimation();
 
 		if ((!_game._objects.isInInventory(OBJ_SMALL_NOTE)) && (_scene->_animation[_globals._animationIndexes[3]]->getCurrentFrame() == 26)) {
@@ -8024,28 +8024,28 @@ void Scene113::step() {
 		}
 	}
 
-	if ((_scene->_animation[_globals._animationIndexes[0]]->getCurrentFrame() == 86) && (!_prevent_2)) {
+	if ((_scene->_animation[_globals._animationIndexes[0]]->getCurrentFrame() == 86) && (!_prevent2)) {
 		_scene->freeAnimation(_globals._animationIndexes[0]);
-		_prevent_2 = true;
+		_prevent2 = true;
 		_globals._animationIndexes[0] = _scene->loadAnimation(formAnimName('d', 2), 0);
 		_scene->setAnimFrame (_globals._animationIndexes[0], 86);
 		_game.syncTimers(3, _globals._animationIndexes[0], 4, 0);
 		_scene->animations_tick();
 	}
 
-	if (_anim_0_running) {
+	if (_anim0ActvFl) {
 		handleDayAnimation();
 
-		if ((_scene->_animation[_globals._animationIndexes[0]]->getCurrentFrame() == 95) && (!_arms_are_out)) {
-			_standing_talking = true;
+		if ((_scene->_animation[_globals._animationIndexes[0]]->getCurrentFrame() == 95) && (!_armsOutFl)) {
+			_standingAndTalking = true;
 			_dayStatus = 7;
 			_raoulAction = 3;
-			_arms_are_out = true;
+			_armsOutFl = true;
 			_game.syncTimers(3, _globals._animationIndexes[0], 3, _globals._animationIndexes[1]);
 		}
 
-		if ((_scene->_animation[_globals._animationIndexes[0]]->getCurrentFrame() == 165) && !_right_after_kiss)
-			_right_after_kiss = true;
+		if ((_scene->_animation[_globals._animationIndexes[0]]->getCurrentFrame() == 165) && !_afterKissFl)
+			_afterKissFl = true;
 	}
 
 	switch (_game._trigger) {
@@ -8293,7 +8293,7 @@ void Scene113::actions() {
 			if (_globals[kCurrentYear] == 1993)
 				_vm->_dialogs->show(11341);
 			else {
-				if (_music_is_playing)
+				if (_musicPlaying)
 					_vm->_dialogs->show(11336);
 				else
 					_vm->_dialogs->show(11342);
@@ -8336,7 +8336,7 @@ void Scene113::preActions() {
 		_game._player.walk(Common::Point(272, 138), FACING_EAST);
 
 	if (! _action.isAction(VERB_EXIT_TO, NOUN_CORRIDOR) && !_globals[kChrisKickedRaoulOut]
-	 && !_action.isAction(VERB_LOOK, NOUN_CHRISTINE) && !_action.isAction(VERB_TAKE, NOUN_CHRISTINE) && _music_is_playing) {
+	 && !_action.isAction(VERB_LOOK, NOUN_CHRISTINE) && !_action.isAction(VERB_TAKE, NOUN_CHRISTINE) && _musicPlaying) {
 		_vm->_gameConv->run(13);
 		_vm->_gameConv->exportPointer(&_globals[kPlayerScore]);
 		_game._player.cancelCommand();
@@ -8518,14 +8518,14 @@ void Scene113::handleDayAnimation() {
 			} else {
 				_dayStatus = 1;
 				resetFrame = 25;
-				_day_wants_to_talk = false;
+				_dayWantsToTalk = false;
 			}
 			break;
 
 		case 1:
-			if (_day_wants_to_talk) {
+			if (_dayWantsToTalk) {
 				_dayStatus = 0;
-				_day_wants_to_talk = false;
+				_dayWantsToTalk = false;
 				resetFrame = 1;
 			} else {
 				resetFrame = 25;
@@ -8569,7 +8569,7 @@ void Scene113::handleDayAnimation() {
 				_dayStatus = 7;
 				resetFrame = 165;
 			}
-			if (_music_is_playing)
+			if (_musicPlaying)
 				resetFrame = 167;
 			break;
 
@@ -8586,13 +8586,13 @@ void Scene113::handleDayAnimation() {
 				resetFrame = 165;
 			}
 
-			if (_music_is_playing)
+			if (_musicPlaying)
 				resetFrame = 167;
 			break;
 
 		case 7:
 			resetFrame = 165;
-			if (_music_is_playing)
+			if (_musicPlaying)
 				resetFrame = 167;
 			break;
 
@@ -8670,7 +8670,7 @@ void Scene113::handleRaoulAnimation() {
 
 		case 4:
 			resetFrame = 38;
-			_raoul_is_up = true;
+			_raoulStandingFl = true;
 			_vm->_gameConv->hold();
 			break;
 
@@ -8690,7 +8690,7 @@ void Scene113::handleRaoulAnimation() {
 			_raoulAction = 1;
 		} else if (_raoulAction == 4) {
 			resetFrame = 38;
-			_raoul_is_up = true;
+			_raoulStandingFl = true;
 		} else if (_raoulAction == 0) {
 			resetFrame = 9;
 		} else {
@@ -8701,7 +8701,7 @@ void Scene113::handleRaoulAnimation() {
 
 	case 42:
 		if (_raoulAction == 4) {
-			if (!_prevent_2) {
+			if (!_prevent2) {
 				_vm->_gameConv->release();
 			}
 			resetFrame = 33;
@@ -8873,14 +8873,14 @@ void Scene113::handleFlorentConversation() {
 	switch (_action._activeAction._verbId) {
 	case 3:
 	case 4:
-		if (!_prevent_1) {
+		if (!_prevent1) {
 			_globals[kFlorentNameIsKnown] = 1;
 			_vm->_gameConv->setInterlocutorTrigger(82);
 			_scene->_dynamicHotspots.remove(_christineHotspotId2);
 			_christineHotspotId2 = _scene->_dynamicHotspots.add(NOUN_CHRISTINE, VERB_WALK_TO, SYNTAX_SINGULAR_FEM, EXT_NONE, Common::Rect(43, 118, 43 + 15, 118 + 29));
 			_scene->_dynamicHotspots[_christineHotspotId2]._articleNumber = PREP_ON;
 			_scene->_dynamicHotspots.setPosition(_christineHotspotId2, Common::Point(106, 127), FACING_SOUTHWEST);
-			_prevent_1 = true;
+			_prevent1 = true;
 		}
 		break;
 
@@ -8895,11 +8895,11 @@ void Scene113::handleFlorentConversation() {
 		break;
 
 	case 26:
-		if (!_prevent_2) {
+		if (!_prevent2) {
 			_scene->_sequences.setTimingTrigger(120, 92);
 			_vm->_gameConv->setInterlocutorTrigger(96);
 			_florentStatus = 0;
-			_prevent_2 = true;
+			_prevent2 = true;
 		}
 		break;
 
@@ -8921,7 +8921,7 @@ void Scene113::handleFlorentConversation() {
 	case 62:
 		if ((_action._activeAction._verbId != 3) && (_action._activeAction._verbId != 4) && (_action._activeAction._verbId != 19) &&
 			(_action._activeAction._verbId != 27) && (_action._activeAction._verbId != 28) && (_action._activeAction._verbId != 29)) {
-				if ((_raoulAction != 5) && (_raoulAction != 4) && !_raoul_is_up)
+				if ((_raoulAction != 5) && (_raoulAction != 4) && !_raoulStandingFl)
 					_raoulAction = 0;
 
 				if ((_florentStatus != 3) && (_florentStatus != 2))
@@ -8937,7 +8937,7 @@ void Scene113::handleFlorentConversation() {
 					_florentStatus = 0;
 		}
 
-		if ((_raoulAction != 3) && (_raoulAction != 5) && (_raoulAction != 4) && (!_raoul_is_up)) {
+		if ((_raoulAction != 3) && (_raoulAction != 5) && (_raoulAction != 4) && (!_raoulStandingFl)) {
 			_raoulAction = 1;
 			random = _vm->getRandomNumber(1, 2);
 			if (random == 1)
@@ -9013,14 +9013,14 @@ void Scene113::handleLoveConversation() {
 	switch (_action._activeAction._verbId) {
 	case 1:
 	case 2:
-		if (!_prevent_1) {
+		if (!_prevent1) {
 			_vm->_gameConv->setInterlocutorTrigger(82);
-			_prevent_1 = true;
+			_prevent1 = true;
 		}
 		break;
 
 	case 21:
-		if (!_arms_are_out) {
+		if (!_armsOutFl) {
 			_dayStatus = 4;
 			_scene->_sequences.setTimingTrigger(1, 70);
 			_scene->_userInterface.emptyConversationList();
@@ -9036,10 +9036,10 @@ void Scene113::handleLoveConversation() {
 		break;
 
 	case 31:
-		if (!_music_is_playing) {
+		if (!_musicPlaying) {
 			_vm->_gameConv->hold();
 			_dayStatus = 7;
-			_music_is_playing = true;
+			_musicPlaying = true;
 			_christineHotspotId1 = _scene->_dynamicHotspots.add(NOUN_CHRISTINE, VERB_WALK_TO, SYNTAX_SINGULAR_FEM, EXT_NONE, Common::Rect(0, 0, 0, 0));
 			_scene->_dynamicHotspots[_christineHotspotId1]._articleNumber = PREP_ON;
 			_scene->setDynamicAnim(_christineHotspotId1, _globals._animationIndexes[0], 14);
@@ -9051,18 +9051,18 @@ void Scene113::handleLoveConversation() {
 	switch (_game._trigger) {
 	case 62:
 		if (_action._activeAction._verbId != 0) {
-			if (_standing_talking) {
+			if (_standingAndTalking) {
 				_dayStatus = 6;
 			} else if (_dayStatus != 4) {
 				_dayStatus = 1;
 				_raoulAction = 0;
-				_day_wants_to_talk = false;
+				_dayWantsToTalk = false;
 			}
 		}
 		break;
 
 	case 66:
-		if (_standing_talking) {
+		if (_standingAndTalking) {
 			_dayStatus = 5;
 
 		} else {
@@ -9070,7 +9070,7 @@ void Scene113::handleLoveConversation() {
 				_dayStatus = 3;
 			} else {
 				_dayStatus = 1;
-				_day_wants_to_talk = true;
+				_dayWantsToTalk = true;
 			}
 
 			if (_raoulAction != 3) {
@@ -9084,14 +9084,14 @@ void Scene113::handleLoveConversation() {
 		break;
 
 	case 70:
-		if (_arms_are_out) {
+		if (_armsOutFl) {
 			_vm->_gameConv->release();
 			_vm->_gameConv->setInterlocutorTrigger(76);
 		}
 		break;
 
 	case 72:
-		if (_right_after_kiss)
+		if (_afterKissFl)
 			_vm->_gameConv->release();
 		else
 			_scene->_sequences.setTimingTrigger(1, 72);
@@ -9103,7 +9103,7 @@ void Scene113::handleLoveConversation() {
 		break;
 
 	case 78:
-		if (_arms_are_out) {
+		if (_armsOutFl) {
 			_vm->_gameConv->release();
 			_vm->_gameConv->setInterlocutorTrigger(76);
 		}
@@ -9121,7 +9121,7 @@ void Scene113::handleLoveConversation() {
 		_scene->_sequences.setTimingTrigger(120, 84);
 		_vm->_gameConv->hold();
 		_dayStatus = 1;
-		_day_wants_to_talk = true;
+		_dayWantsToTalk = true;
 		break;
 
 	case 84:

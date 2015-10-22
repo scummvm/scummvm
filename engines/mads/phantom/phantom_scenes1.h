@@ -340,19 +340,19 @@ public:
 
 class Scene113 : public Scene1xx {
 private:
-	bool _standing_talking;
-	bool _day_wants_to_talk;
-	bool _music_is_playing;
-	bool _right_after_kiss;
-	bool _anim_0_running;
-	bool _anim_1_running;
-	bool _anim_2_running;
-	bool _anim_3_running;
-	bool _anim_4_running;
-	bool _prevent_1;
-	bool _prevent_2;
-	bool _raoul_is_up;
-	bool _arms_are_out;
+	bool _standingAndTalking;
+	bool _dayWantsToTalk;
+	bool _musicPlaying;
+	bool _afterKissFl;
+	bool _anim0ActvFl;
+	bool _anim1ActvFl;
+	bool _anim2ActvFl;
+	bool _anim3ActvFl;
+	bool _anim4ActvFl;
+	bool _prevent1;
+	bool _prevent2;
+	bool _raoulStandingFl;
+	bool _armsOutFl;
 
 	int _christineHotspotId1;
 	int _christineHotspotId2;
