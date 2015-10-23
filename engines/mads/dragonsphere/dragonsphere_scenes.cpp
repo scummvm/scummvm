@@ -47,7 +47,7 @@ SceneLogic *SceneFactory::createScene(MADSEngine *vm) {
 	case 102:	// queen's bedroom
 		return new Scene102(vm);
 	case 103:	// outside king's bedroom
-		return new DummyScene(vm);	// TODO
+		return new Scene103(vm);
 	case 104:	// fireplace / bookshelf
 		return new DummyScene(vm);	// TODO
 	case 105:	// dining room

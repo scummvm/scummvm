@@ -272,9 +272,9 @@ void Scene102::enter() {
 	_globals._spriteIndexes[7] = _scene->_sprites.addSprites("*KGRD_6", false);
 	_globals._spriteIndexes[8] = _scene->_sprites.addSprites(formAnimName('y', 2), false);
 
-	_globals._sequenceIndexes[4] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[4], false, 7, 0, 0, 0);
-	_globals._sequenceIndexes[5] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[5], false, 7, 0, 0, 0);
-	_globals._sequenceIndexes[8] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[8], false, 7, 0, 0, 0);
+	_globals._sequenceIndexes[4] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[4], false, 7, 0);
+	_globals._sequenceIndexes[5] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[5], false, 7, 0);
+	_globals._sequenceIndexes[8] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[8], false, 7, 0);
 
 	_globals._sequenceIndexes[1] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[1], false, -1);
 	_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 12);
@@ -659,6 +659,401 @@ void Scene102::actions() {
 }
 
 void Scene102::preActions() {
+}
+
+/*------------------------------------------------------------------------*/
+
+Scene103::Scene103(MADSEngine *vm) : Scene1xx(vm) {
+}
+
+void Scene103::synchronize(Common::Serializer &s) {
+	Scene1xx::synchronize(s);
+}
+
+void Scene103::setup() {
+	setPlayerSpritesPrefix();
+	setAAName();
+}
+
+void Scene103::enter() {
+	_vm->_disableFastwalk = true;
+
+	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('y', 1), false);
+	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('y', 2), false);
+	_globals._spriteIndexes[8] = _scene->_sprites.addSprites(formAnimName('y', 7), false);
+	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('y', 0), false);
+	_globals._spriteIndexes[4] = _scene->_sprites.addSprites(formAnimName('y', 3), false);
+	_globals._spriteIndexes[5] = _scene->_sprites.addSprites(formAnimName('y', 4), false);
+	_globals._spriteIndexes[6] = _scene->_sprites.addSprites(formAnimName('y', 5), false);
+	_globals._spriteIndexes[7] = _scene->_sprites.addSprites(formAnimName('y', 6), false);
+	_globals._spriteIndexes[9] = _scene->_sprites.addSprites(formAnimName('x', 0), false);
+	_globals._spriteIndexes[10] = _scene->_sprites.addSprites(formAnimName('x', 1), false);
+	_globals._spriteIndexes[11] = _scene->_sprites.addSprites("*KGRD_9", false);
+
+	_globals._sequenceIndexes[2] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[2], false, 7, 0, 0);
+	_globals._sequenceIndexes[3] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[3], false, 7, 0, 4);
+	_globals._sequenceIndexes[8] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[8], false, 7, 0, 0);
+	_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 7, 0, 0);
+	_globals._sequenceIndexes[4] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[4], false, 7, 0, 3);
+	_globals._sequenceIndexes[5] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[5], false, 7, 0, 2);
+	_globals._sequenceIndexes[6] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[6], false, 7, 0, 0);
+	_globals._sequenceIndexes[7] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[7], false, 7, 0, 5);
+
+	if ((_scene->_priorSceneId == 104) || (_scene->_priorSceneId == 105)) {
+		_globals._sequenceIndexes[9] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[9], false, -1);
+		_scene->_sequences.setDepth(_globals._sequenceIndexes[9], 8);
+		_globals._sequenceIndexes[10] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[10], false, -1);
+		_scene->_sequences.setDepth(_globals._sequenceIndexes[10], 8);
+	}
+
+	if (_scene->_priorSceneId == 102) {
+		_globals._sequenceIndexes[9] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[9], false, -1);
+		_scene->_sequences.setDepth(_globals._sequenceIndexes[9], 6);
+		_globals._sequenceIndexes[10] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[10], false, -2);
+		_scene->_sequences.setDepth(_globals._sequenceIndexes[10], 14);
+		_scene->setCamera(Common::Point(320, 0));
+		_game._player.walk(Common::Point(482, 128), FACING_SOUTH);
+		_game._player.firstWalk(Common::Point(471, 108), FACING_SOUTH, Common::Point(482, 128), FACING_SOUTH, false);
+		_game._player.setWalkTrigger(72);
+	} else if (_scene->_priorSceneId == 104) {
+		_game._player._playerPos = Common::Point(130, 152);
+		_game._player._facing = FACING_NORTHEAST;
+	} else if (_scene->_priorSceneId == 105) {
+		_game._player._playerPos = Common::Point(517, 152);
+		_game._player._facing = FACING_NORTHWEST;
+		_scene->setCamera(Common::Point(320, 0));
+	} else if ((_scene->_priorSceneId == 101) || (_scene->_priorSceneId != RETURNING_FROM_LOADING)) {
+		_globals._sequenceIndexes[10] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[10], false, -1);
+		_scene->_sequences.setDepth(_globals._sequenceIndexes[10], 6);
+		_globals._sequenceIndexes[9] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[9], false, -2);
+		_scene->_sequences.setDepth(_globals._sequenceIndexes[9], 14);
+		_game._player.firstWalk(Common::Point(173, 108), FACING_SOUTH, Common::Point(162, 127), FACING_SOUTH, false);
+		_game._player.setWalkTrigger(70);
+	} else {
+		_globals._sequenceIndexes[10] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[10], false, -1);
+		_scene->_sequences.setDepth(_globals._sequenceIndexes[10], 6);
+		_globals._sequenceIndexes[9] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[9], false, -1);
+		_scene->_sequences.setDepth(_globals._sequenceIndexes[9], 6);
+	}
+
+	sceneEntrySound();
+}
+
+void Scene103::step() {
+	switch (_game._trigger) {
+	case 70:
+		_scene->deleteSequence(_globals._sequenceIndexes[9]);
+		_vm->_sound->command(25);
+		_globals._sequenceIndexes[9] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[9], false, 6, 1);
+		_scene->_sequences.setDepth(_globals._sequenceIndexes[9], 6);
+		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[9], 1, 3);
+		_scene->_sequences.setTrigger(_globals._sequenceIndexes[9], 0, 0, 71);
+		break;
+
+	case 71: {
+		int tmpIdx = _globals._sequenceIndexes[9];
+		_globals._sequenceIndexes[9] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[9], false, -1);
+		_scene->_sequences.setDepth(_globals._sequenceIndexes[9], 6);
+		_game.syncTimers(1, _globals._sequenceIndexes[9], 1, tmpIdx);
+		_game._player._stepEnabled = true;
+		}
+		break;
+
+	case 72:
+		_scene->deleteSequence(_globals._sequenceIndexes[10]);
+		_vm->_sound->command(25);
+		_globals._sequenceIndexes[10] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[10], false, 6, 1);
+		_scene->_sequences.setDepth(_globals._sequenceIndexes[10], 6);
+		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[10], 1, 3);
+		_scene->_sequences.setTrigger(_globals._sequenceIndexes[10], 0, 0, 73);
+		break;
+
+	case 73: {
+		int tmpIdx = _globals._sequenceIndexes[10];
+		_globals._sequenceIndexes[10] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[10], false, -1);
+		_scene->_sequences.setDepth(_globals._sequenceIndexes[10], 6);
+		_game.syncTimers(1, _globals._sequenceIndexes[10], 1, tmpIdx);
+		_game._player._stepEnabled = true;
+		}
+		break;
+
+	default:
+		break;
+	}
+}
+
+void Scene103::actions() {
+	if (_action._lookFlag) {
+		_vm->_dialogs->show(10301);
+		_action._inProgress = false;
+		return;
+	}
+
+	if (_action.isAction(VERB_WALK_THROUGH, NOUN_DOOR_TO_KINGS_ROOM) || _action.isAction(VERB_OPEN, NOUN_DOOR_TO_KINGS_ROOM) || _action.isAction(VERB_PULL, NOUN_DOOR_TO_KINGS_ROOM)) {
+		switch (_game._trigger) {
+		case 0:
+			_game._player._stepEnabled = false;
+			_game._player._visible = false;
+			_globals._sequenceIndexes[11] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[11], false, 7, 2);
+			_scene->_sequences.setSeqPlayer(_globals._sequenceIndexes[11],true);
+			_scene->_sequences.setTrigger(_globals._sequenceIndexes[11], 2, 2, 1);
+			_scene->_sequences.setTrigger(_globals._sequenceIndexes[11], 0, 0, 3);
+			break;
+
+		case 1:
+			_scene->deleteSequence(_globals._sequenceIndexes[9]);
+			_vm->_sound->command(24);
+			_globals._sequenceIndexes[9] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[9], false, 7, 1);
+			_scene->_sequences.setDepth(_globals._sequenceIndexes[9], 8);
+			_scene->_sequences.setTrigger(_globals._sequenceIndexes[9], 0, 0, 2);
+			break;
+
+		case 2: {
+			int tmpIdx = _globals._sequenceIndexes[9];
+			_globals._sequenceIndexes[9] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[9], false, -2);
+			_scene->_sequences.setDepth(_globals._sequenceIndexes[9], 14);
+			_game.syncTimers(1, _globals._sequenceIndexes[9], 1, tmpIdx);
+			}
+			break;
+
+		case 3:
+			_game._player._visible = true;
+			_game.syncTimers(2, 0, 1, _globals._sequenceIndexes[11]);
+			_scene->_sequences.setTimingTrigger(1,4);
+			break;
+
+		case 4:
+			_game._player.walk(Common::Point(173, 108), FACING_NORTH);
+			_game._player.setWalkTrigger(5);
+			break;
+
+		case 5:
+			_scene->deleteSequence(_globals._sequenceIndexes[9]);
+			_vm->_sound->command(25);
+			_globals._sequenceIndexes[9] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[9], false, 7, 1);
+			_scene->_sequences.setDepth(_globals._sequenceIndexes[9], 1);
+			_scene->_sequences.setTrigger(_globals._sequenceIndexes[9], 0, 0, 6);
+			break;
+
+		case 6: {
+			int tmpIdx = _globals._sequenceIndexes[9];
+			_globals._sequenceIndexes[9] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[9], false, -1);
+			_scene->_sequences.setDepth(_globals._sequenceIndexes[9], 1);
+			_game.syncTimers(1, _globals._sequenceIndexes[9], 1, tmpIdx);
+			_scene->_sequences.setTimingTrigger(6, 7);
+			}
+			break;
+
+		case 7:
+			_scene->_nextSceneId = 101;
+			break;
+
+		default:
+			break;
+		}
+		_action._inProgress = false;
+		return;
+	}
+
+	if (_action.isAction(VERB_WALK_THROUGH, NOUN_DOOR_TO_QUEENS_ROOM) || _action.isAction(VERB_OPEN, NOUN_DOOR_TO_QUEENS_ROOM) || _action.isAction(VERB_PULL, NOUN_DOOR_TO_QUEENS_ROOM)) {
+		switch (_game._trigger) {
+		case 0:
+			_game._player._stepEnabled = false;
+			_game._player._visible = false;
+			_globals._sequenceIndexes[11] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[11], true, 7, 2);
+			_scene->_sequences.setSeqPlayer(_globals._sequenceIndexes[11],true);
+			_scene->_sequences.setTrigger(_globals._sequenceIndexes[11], 2, 2, 1);
+			_scene->_sequences.setTrigger(_globals._sequenceIndexes[11], 0, 0, 3);
+			break;
+
+		case 1:
+			_scene->deleteSequence(_globals._sequenceIndexes[10]);
+			_vm->_sound->command(24);
+			_globals._sequenceIndexes[10] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[10], false, 7, 1);
+			_scene->_sequences.setDepth(_globals._sequenceIndexes[10], 8);
+			_scene->_sequences.setTrigger(_globals._sequenceIndexes[10], 0, 0, 2);
+			break;
+
+		case 2: {
+			int tmpIdx = _globals._sequenceIndexes[10];
+			_globals._sequenceIndexes[10] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[10], false, -2);
+			_scene->_sequences.setDepth(_globals._sequenceIndexes[10], 14);
+			_game.syncTimers(1, _globals._sequenceIndexes[10], 1, tmpIdx);
+			}
+			break;
+
+		case 3:
+			_game._player._visible = true;
+			_game.syncTimers(2, 0, 1, _globals._sequenceIndexes[11]);
+			_scene->_sequences.setTimingTrigger(1,4);
+			break;
+
+		case 4:
+			_game._player.walk(Common::Point(471, 108), FACING_NORTH);
+			_game._player.setWalkTrigger(5);
+			break;
+
+		case 5:
+			_scene->deleteSequence(_globals._sequenceIndexes[10]);
+			_vm->_sound->command(25);
+			_globals._sequenceIndexes[10] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[10], false, 7, 1);
+			_scene->_sequences.setDepth(_globals._sequenceIndexes[10], 1);
+			_scene->_sequences.setTrigger(_globals._sequenceIndexes[10], 0, 0, 6);
+			break;
+
+		case 6: {
+			int tmpIdx = _globals._sequenceIndexes[10];
+			_globals._sequenceIndexes[10] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[10], false, -1);
+			_scene->_sequences.setDepth(_globals._sequenceIndexes[10], 1);
+			_game.syncTimers(1, _globals._sequenceIndexes[10], 1, tmpIdx);
+			_scene->_sequences.setTimingTrigger(6, 7);
+			}
+			break;
+
+		case 7:
+			_scene->_nextSceneId = 102;
+			break;
+
+		default:
+			break;
+		}
+		_action._inProgress = false;
+		return;
+	}
+
+	if (_action.isAction(VERB_WALK_THROUGH, NOUN_DOOR_TO_MEETING_ROOM) || _action.isAction(VERB_OPEN, NOUN_DOOR_TO_MEETING_ROOM) || _action.isAction(VERB_PULL, NOUN_DOOR_TO_MEETING_ROOM)) {
+		_scene->_nextSceneId = 104;
+		_action._inProgress = false;
+		return;
+	}
+
+	if (_action.isAction(VERB_WALK_THROUGH, NOUN_DOOR_TO_BALLROOM) || _action.isAction(VERB_OPEN, NOUN_DOOR_TO_BALLROOM) || _action.isAction(VERB_PULL, NOUN_DOOR_TO_BALLROOM)) {
+		_scene->_nextSceneId = 105;
+		_action._inProgress = false;
+		return;
+	}
+
+	if (_action.isAction(VERB_LOOK) || _action.isAction(VERB_LOOK_AT)) {
+		if (_action.isObject(NOUN_TAPESTRY)) {
+			if ((_scene->_customDest.x <= 75) && (_scene->_customDest.y <= 130))
+				_vm->_dialogs->show(10302);
+			else
+				_vm->_dialogs->show(10303);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isObject(NOUN_COAT_OF_ARMS)) {
+			_vm->_dialogs->show(10305);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isObject(NOUN_DOOR_TO_QUEENS_ROOM)) {
+			_vm->_dialogs->show(10307);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isObject(NOUN_DOOR_TO_KINGS_ROOM)) {
+			_vm->_dialogs->show(10308);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isObject(NOUN_CEDAR_CHEST)) {
+			_vm->_dialogs->show(10309);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isObject(NOUN_TABLE)) {
+			_vm->_dialogs->show(10311);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isObject(NOUN_SMALL_WINDOW)) {
+			_vm->_dialogs->show(10312);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isObject(NOUN_LARGE_WINDOW)) {
+			_vm->_dialogs->show(10314);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isObject(NOUN_BATTLE_AXES)) {
+			_vm->_dialogs->show(10315);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isObject(NOUN_BUST_ON_WALL)) {
+			_vm->_dialogs->show(10317);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isObject(NOUN_DECORATION)) {
+			_vm->_dialogs->show(10320);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isObject(NOUN_WALL_PLAQUE)) {
+			_vm->_dialogs->show(10322);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isObject(NOUN_DOOR_TO_BALLROOM)) {
+			_vm->_dialogs->show(10323);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isObject(NOUN_DOOR_TO_MEETING_ROOM)) {
+			_vm->_dialogs->show(10324);
+			_action._inProgress = false;
+			return;
+		}
+	}
+
+	if ((_action.isAction(VERB_TAKE) || _action.isAction(VERB_PULL)) && _action.isObject(NOUN_BATTLE_AXES)) {
+		_vm->_dialogs->show(10316);
+		_action._inProgress = false;
+		return;
+	}
+
+	if ((_action.isAction(VERB_PUSH) || _action.isAction(VERB_PULL)) && _action.isObject(NOUN_TAPESTRY)) {
+		_vm->_dialogs->show(10304);
+		_action._inProgress = false;
+		return;
+	}
+
+	if (_action.isAction(VERB_PULL, NOUN_COAT_OF_ARMS)) {
+		_vm->_dialogs->show(10306);
+		_action._inProgress = false;
+		return;
+	}
+
+	if (_action.isAction(VERB_OPEN, NOUN_CEDAR_CHEST)) {
+		_vm->_dialogs->show(10310);
+		_action._inProgress = false;
+		return;
+	}
+
+	if (_action.isAction(VERB_OPEN, NOUN_SMALL_WINDOW) || _action.isAction(VERB_OPEN, NOUN_LARGE_WINDOW)) {
+		_vm->_dialogs->show(10313);
+		_action._inProgress = false;
+		return;
+	}
+}
+
+void Scene103::preActions() {
 }
 
 /*------------------------------------------------------------------------*/

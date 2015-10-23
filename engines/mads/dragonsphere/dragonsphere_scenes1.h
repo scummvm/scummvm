@@ -82,6 +82,18 @@ public:
 	virtual void preActions();
 	virtual void actions();
 };
+
+class Scene103 : public Scene1xx {
+public:
+	Scene103(MADSEngine *vm);
+	virtual void synchronize(Common::Serializer &s);
+
+	virtual void setup();
+	virtual void enter();
+	virtual void step();
+	virtual void preActions();
+	virtual void actions();
+};
 } // End of namespace Dragonsphere
 } // End of namespace MADS
 
