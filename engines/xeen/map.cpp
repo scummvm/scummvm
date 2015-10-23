@@ -1114,6 +1114,7 @@ void Map::load(int mapId) {
 
 		_groundSprites.load("water.out");
 		_tileSprites.load("outdoor.til");
+		outdoorList._sky1._sprites = &_skySprites[0];
 		outdoorList._sky2._sprites = &_skySprites[0];
 		outdoorList._groundSprite._sprites = &_groundSprites;
 		
