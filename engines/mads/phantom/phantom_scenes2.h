@@ -78,6 +78,38 @@ public:
 	virtual void preActions();
 	virtual void actions();
 };
+
+class Scene202 : public Scene2xx {
+private:
+	bool _ticketGivenFl;
+	bool _anim0ActvFl;
+	bool _anim1ActvFl;
+	bool _skipWalkFl;
+	int _chandeliersPosX[5];
+	int _chandeliersHotspotId[5];
+	int _conversationCount;
+	int _usherStatus;
+	int _usherFrame;
+	int _usherCount;
+	int _degasStatus;
+	int _degasFrame;
+
+	void handleConversation1();
+	void handleConversation2();
+	void handleUsherAnimation();
+	void handleDegasAnimation();
+	void handleChandeliersPositions();
+
+public:
+	Scene202(MADSEngine *vm);
+	virtual void synchronize(Common::Serializer &s);
+
+	virtual void setup();
+	virtual void enter();
+	virtual void step();
+	virtual void preActions();
+	virtual void actions();
+};
 } // End of namespace Phantom
 } // End of namespace MADS
 

@@ -78,7 +78,7 @@ SceneLogic *SceneFactory::createScene(MADSEngine *vm) {
 	case 201:	// entrance / ticket office
 		return new Scene201(vm);
 	case 202:	// outside offices / paintings room
-		return new DummyScene(vm);	// TODO
+		return new Scene202(vm);
 	case 203:	// office
 		return new DummyScene(vm);	// TODO
 	case 204:	// library

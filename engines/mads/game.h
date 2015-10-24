@@ -240,8 +240,10 @@ public:
 
 	typedef struct {
 		//TODO
+		bool _panFrame;
 	} Camera;
 	Camera _camX, _camY;
+
 	void camPanTo(Camera *camera, int target);
 
 };
