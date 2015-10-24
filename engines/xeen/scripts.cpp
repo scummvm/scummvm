@@ -20,6 +20,7 @@
  *
  */
 
+#include "common/config-manager.h"
 #include "xeen/scripts.h"
 #include "xeen/dialogs_input.h"
 #include "xeen/dialogs_whowill.h"
@@ -1792,7 +1793,11 @@ bool Scripts::ifProc(int action, uint32 mask, int mode, int charIndex) {
 }
 
 bool Scripts::copyProtectionCheck() {
-	// Currentl not implemented
+	// Only bother doing the protection check if it's been explicitly turned on
+	if (!ConfMan.getBool("copy_protection"))
+		return true;
+
+	// Currently not implemented
 	return true;
 }
 
