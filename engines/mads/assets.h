@@ -99,8 +99,8 @@ public:
 	int getCount() { return _frameCount; }
 	int getFrameRate() const { return _frameRate; }
 	int getPixelSpeed() const { return _pixelSpeed; }
-	int getFrameWidth(int index);
-	int getFrameHeight(int index);
+	int getFrameWidth(int index) { assert (index < _frameCount); return _frames[index]._bounds.width(); }
+	int getFrameHeight(int index) { assert (index < _frameCount); return _frames[index]._bounds.height(); }
 	int getMaxFrameWidth() const { return _maxWidth; }
 	int getMaxFrameHeight() const { return _maxHeight; }
 	MSprite *getFrame(int frameIndex);
