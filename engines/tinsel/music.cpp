@@ -418,9 +418,12 @@ MidiMusicPlayer::MidiMusicPlayer(TinselEngine *vm) {
 					// Version 2: drivers got installed and fat.opl got copied over by the user
 					_driver = Audio::MidiDriver_Miles_AdLib_create("MIDPAK.AD", "");
 				} else {
-					// Version 1: sample.ad / sample.opl, have to be copied over by the user for this version
-					// That's why we check those last, because then the user gets a proper error message for them
-					_driver = Audio::MidiDriver_Miles_AdLib_create("SAMPLE.AD", "SAMPLE.OPL");
+					if ((fileClass.exists("SAMPLE.AD")) || (fileClass.exists("SAMPLE.OPL"))) {
+						// Version 1: sample.ad / sample.opl, have to be copied over by the user for this version
+						_driver = Audio::MidiDriver_Miles_AdLib_create("SAMPLE.AD", "SAMPLE.OPL");
+					} else {
+						error("MILES-ADLIB: timbre file not found (may be called FAT.OPL, MIDPAK.AD, SAMPLE.AD or SAMPLE.OPL, may be in a subdirectory)");
+					}
 				}
 			}
 			break;
