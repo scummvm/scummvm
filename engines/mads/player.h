@@ -95,6 +95,8 @@ private:
 	void startMovement();
 
 	void changeFacing();
+
+	void activateTrigger();
 public:
 	MADSAction *_action;
 
@@ -141,6 +143,7 @@ public:
 	int _currentDepth;
 	int _currentScale;
 	Common::String _spritesPrefix;
+	int _walkTrigger;
 public:
 	Player(MADSEngine *vm);
 

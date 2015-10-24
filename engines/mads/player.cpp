@@ -82,7 +82,8 @@ Player::Player(MADSEngine *vm)
 	_forcePrefix = false;
 	_commandsAllowed = false;
 	_enableAtTarget = false;
-
+	_walkTrigger = 0;
+	 
 	Common::fill(&_stopWalkerList[0], &_stopWalkerList[12], 0);
 	Common::fill(&_stopWalkerTrigger[0], &_stopWalkerTrigger[12], 0);
 	Common::fill(&_spriteSetsPresent[0], &_spriteSetsPresent[PLAYER_SPRITES_FILE_COUNT], false);
@@ -188,8 +189,10 @@ void Player::changeFacing() {
 		(Facing)_directionListIndexes[_facing + 10];
 	selectSeries();
 
-	if ((_facing == _turnToFacing) && !_moving)
+	if ((_facing == _turnToFacing) && !_moving) {
 		updateFrame();
+		activateTrigger();
+	}
 
 	_priorTimer += 1;
 }
@@ -278,6 +281,16 @@ void Player::updateFrame() {
 	}
 
 	_forceRefresh = true;
+}
+
+void Player::activateTrigger() {
+	// TODO: Finish this!
+	// TODO: Also sync _walkTrigger, if necessary
+
+	if (_walkTrigger) {
+		_vm->_game->_trigger = _walkTrigger;
+		_walkTrigger = 0;
+	}
 }
 
 void Player::update() {
@@ -443,10 +456,12 @@ void Player::move() {
 	if (newFacing && _moving)
 		startMovement();
 
-	if (_turnToFacing != _facing)
+	if (_turnToFacing != _facing) {
 		changeFacing();
-	else if (!_moving)
+	} else if (!_moving) {
 		updateFrame();
+		activateTrigger();
+	}
 
 	int velocity = _velocity;
 	if (_scalingVelocity && (_totalDistance > 0)) {
@@ -811,6 +826,7 @@ void Player::firstWalk(Common::Point fromPos, Facing fromFacing, Common::Point d
 }
 
 void Player::setWalkTrigger(int val) {
+	_walkTrigger = val;
 	warning("TODO: Player::setWalkTrigger");
 }
 
