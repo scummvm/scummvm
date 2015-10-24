@@ -216,6 +216,8 @@ ASound::ASound(Audio::Mixer *mixer, OPL::OPL *opl, const Common::String &filenam
 }
 
 ASound::~ASound() {
+	_opl->stop();
+
 	Common::List<CachedDataEntry>::iterator i;
 	for (i = _dataCache.begin(); i != _dataCache.end(); ++i)
 		delete[] (*i)._data;
