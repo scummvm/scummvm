@@ -94,6 +94,63 @@ public:
 	virtual void preActions();
 	virtual void actions();
 };
+
+class Scene104 : public Scene1xx {
+private:
+	bool _anim0ActvFl;
+	bool _anim1ActvFl;
+	bool _anim2ActvFl;
+	bool _anim3ActvFl;
+	bool _anim4ActvFl;
+	bool _anim5ActvFl;
+	bool _anim6ActvFl;
+	bool _activateTimerFl;
+	bool _wasBearFl;
+	bool _amuletWorksFl;
+	bool _pidDrawnSword;
+	int _animationRunning;
+	int _deathTimer;
+	int _deathFrame;
+	int _doorwayHotspotId;
+
+	int _kingStatus;
+	int _kingFrame;
+	int _kingCount;
+	int _queenStatus;
+	int _queenFrame;
+	int _queenCount;
+	int _pidStatus;
+	int _pidFrame;
+	int _pidCount;
+	int _macStatus;
+	int _macFrame;
+	int _macCount;
+	int _twinklesStatus;
+	int _twinklesFrame;
+	int _twinklesCount;
+	int _tapestryFrame;
+
+	int32 _clock;
+
+	void handleFinalConversation();
+	void handleKingAnimation();
+	void handleMacAnimation1();
+	void handleMacAnimation2();
+	void handleQueenAnimation();
+	void handleTwinklesAnimation();
+	void handleDeathAnimation();
+	void handlePidAnimation();
+
+public:
+	Scene104(MADSEngine *vm);
+	virtual void synchronize(Common::Serializer &s);
+
+	virtual void setup();
+	virtual void enter();
+	virtual void step();
+	virtual void preActions();
+	virtual void actions();
+};
 } // End of namespace Dragonsphere
 } // End of namespace MADS
 

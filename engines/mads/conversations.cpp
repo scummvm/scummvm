@@ -44,6 +44,7 @@ struct ConvData {
 GameConversation::GameConversation(MADSEngine *vm)
 	: _vm(vm) {
 	_running = _restoreRunning = 0;
+	_nextStartNode = nullptr;
 }
 
 GameConversation::~GameConversation() {
@@ -142,4 +143,11 @@ void GameConversation::release() {
 	warning("TODO: GameConversation::release");
 }
 
+void GameConversation::reset(int id) {
+	warning("TODO: GameConversation::reset");
+}
+
+void GameConversation::abortConv() {
+	warning("TODO: GameConversation::abort");
+}
 } // End of namespace MADS

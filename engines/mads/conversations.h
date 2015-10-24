@@ -42,6 +42,7 @@ public:
 	 */
 	virtual ~GameConversation();
 
+	int* _nextStartNode;
 	int* getVariable(int idx);
 
 	void get(int id);
@@ -53,6 +54,8 @@ public:
 	void setInterlocutorTrigger(int val);
 	void hold();
 	void release();
+	void reset(int id);
+	void abortConv();
 
 	int _running;
 	int _restoreRunning;
