@@ -316,6 +316,8 @@ void GameConversation::exportValue(int val) {
 }
 
 void GameConversation::setHeroTrigger(int val) {
+	_vm->_game->_trigger = val;	// HACK
+	_running = -1;	// HACK
 	warning("TODO: GameConversation::setHeroTrigger");
 }
 
