@@ -118,6 +118,10 @@ void GameNebular::startGame() {
 
 	initializeGlobals();
 
+	if (_loadGameSlot >= 0)
+		// User selected to resume a savegame
+		return;
+
 	// Check copy protection
 	ProtectionResult protectionResult = checkCopyProtection();
 
