@@ -265,6 +265,7 @@ public:
 	void playSpeech(int idx);
 	void sceneScale(int front_y, int front_scale, int back_y,  int back_scale);
 	void animations_tick();
+	int _speechReady;
 };
 
 } // End of namespace MADS

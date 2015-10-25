@@ -510,8 +510,8 @@ void Scene201::handleSellerAnimation() {
 }
 
 void Scene201::handleConversation() {
-	int interlocutorFl = false;
-	int heroFl = false;
+	bool interlocutorFl = false;
+	bool heroFl = false;
 
 	switch (_action._activeAction._verbId) {
 	case 4:
@@ -1033,8 +1033,8 @@ void Scene202::preActions() {
 }
 
 void Scene202::handleConversation1() {
-	int interlocutorFl = false;
-	int heroFl = false;
+	bool interlocutorFl = false;
+	bool heroFl = false;
 
 	switch (_action._activeAction._verbId) {
 	case 0:
@@ -1100,8 +1100,8 @@ void Scene202::handleConversation1() {
 }
 
 void Scene202::handleConversation2() {
-	int interlocutorFl = false;
-	int heroFl = false;
+	bool interlocutorFl = false;
+	bool heroFl = false;
 
 	switch (_action._activeAction._verbId) {
 	case 1:
@@ -1488,6 +1488,1765 @@ void Scene202::handleDegasAnimation() {
 	if (resetFrame >= 0) {
 		_scene->setAnimFrame(_globals._animationIndexes[1], resetFrame);
 		_degasFrame = resetFrame;
+	}
+}
+
+/*------------------------------------------------------------------------*/
+
+Scene203::Scene203(MADSEngine *vm) : Scene2xx(vm) {
+	_anim0ActvFl = false;
+	_anim1ActvFl = false;
+	_anim2ActvFl = false;
+	_anim3ActvFl = false;
+	_showNoteFl = false;
+
+	_brieStatus = -1;
+	_brieFrame = -1;
+	_brieCount = -1;
+	_raoulStatus = -1;
+	_raoulFrame = -1;
+	_raoulCount = -1;
+	_richardStatus = -1;
+	_richardFrame = -1;
+	_daaeStatus = -1;
+	_daaeFrame = -1;
+	_conversationCount = -1;
+}
+
+void Scene203::synchronize(Common::Serializer &s) {
+	Scene2xx::synchronize(s);
+
+	s.syncAsByte(_anim0ActvFl);
+	s.syncAsByte(_anim1ActvFl);
+	s.syncAsByte(_anim2ActvFl);
+	s.syncAsByte(_anim3ActvFl);
+	s.syncAsByte(_showNoteFl);
+
+	s.syncAsSint16LE(_brieStatus);
+	s.syncAsSint16LE(_brieFrame);
+	s.syncAsSint16LE(_brieCount);
+	s.syncAsSint16LE(_raoulStatus);
+	s.syncAsSint16LE(_raoulFrame);
+	s.syncAsSint16LE(_raoulCount);
+	s.syncAsSint16LE(_richardStatus);
+	s.syncAsSint16LE(_richardFrame);
+	s.syncAsSint16LE(_daaeStatus);
+	s.syncAsSint16LE(_daaeFrame);
+	s.syncAsSint16LE(_conversationCount);
+}
+
+void Scene203::setup() {
+	if (_globals[kCurrentYear] == 1993)
+		_scene->_initialVariant = 1;
+
+	setPlayerSpritesPrefix();
+	setAAName();
+}
+
+void Scene203::enter() {
+	if (_scene->_priorSceneId != RETURNING_FROM_LOADING) {
+		_anim0ActvFl = false;
+		_anim1ActvFl = false;
+		_anim2ActvFl = false;
+		_anim3ActvFl = false;
+		_showNoteFl = false;
+	}
+
+	_conversationCount = 0;
+	_scene->_hotspots.activate(NOUN_LETTER, false);
+	_scene->_hotspots.activate(NOUN_PARCHMENT, false);
+	_scene->_hotspots.activate(NOUN_NOTICE, false);
+
+	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('p', 1), false);
+	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('p', 0), false);
+	_globals._spriteIndexes[5] = _scene->_sprites.addSprites(formAnimName('x', 0), false);
+	_globals._spriteIndexes[4] = _scene->_sprites.addSprites("*RDR_6", false);
+
+	if (_globals[kCurrentYear] == 1993) {
+		_globals._spriteIndexes[0] = _scene->_sprites.addSprites(formAnimName('z', -1), false);
+		_vm->_gameConv->get(5);
+	} else {
+		_vm->_gameConv->get(8);
+		_vm->_gameConv->get(15);
+	}
+
+	if (_globals[kCurrentYear] == 1993) {
+		if (_game._objects.isInRoom(OBJ_PARCHMENT)) {
+			_globals._sequenceIndexes[1] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[1], false, 1);
+			_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 3);
+			_scene->_hotspots.activate(NOUN_PARCHMENT, true);
+		}
+
+		_scene->_hotspots.activate(NOUN_MONSIEUR_RICHARD, false);
+		_scene->_hotspots.activate(NOUN_MANAGERS_CHAIR, false);
+
+		if (!_globals[kMakeBrieLeave203]) {
+			_globals._animationIndexes[0] = _scene->loadAnimation(formAnimName('b', 9), 1);
+			_anim0ActvFl = true;
+			_brieStatus = 4;
+		} else {
+			_scene->_hotspots.activate(NOUN_MONSIEUR_BRIE, false);
+			_scene->_hotspots.activate(NOUN_MANAGERS_CHAIR, true);
+		}
+
+		if ((_scene->_priorSceneId == RETURNING_FROM_LOADING) && (_vm->_gameConv->_restoreRunning == 5)) {
+			_brieStatus = 4;
+			_raoulStatus = 0;
+			_anim1ActvFl = true;
+			_game._player._visible = false;
+			_game._player._stepEnabled = false;
+			_globals._animationIndexes[1] = _scene->loadAnimation(formAnimName('c', 1), 0);
+			_scene->setAnimFrame(_globals._animationIndexes[1], 9);
+			_vm->_gameConv->run(5);
+			_vm->_gameConv->exportPointer(&_globals[kPlayerScore]);
+			_vm->_gameConv->exportValue(_game._objects.isInInventory(OBJ_SMALL_NOTE));
+			_vm->_gameConv->exportValue(_globals[kReadBook]);
+			_vm->_gameConv->exportValue(_game._objects.isInInventory(OBJ_LARGE_NOTE));
+			_vm->_gameConv->exportValue(_globals[kLookedAtCase]);
+			_vm->_gameConv->exportValue(_globals[kCharlesNameIsKnown]);
+			_vm->_gameConv->exportValue(_globals[kCanFindBookInLibrary]);
+			_vm->_gameConv->exportValue(_globals[kFlorentNameIsKnown]);
+			_vm->_gameConv->exportValue(_globals[kSandbagStatus]);
+			_vm->_gameConv->exportValue(_globals[kObservedPhan104]);
+		}
+
+		_scene->drawToBackground(_globals._spriteIndexes[0], 1, Common::Point(-32000, -32000), 0, 100);
+		_scene->_hotspots.activate(NOUN_CANDLE, false);
+	} else if (_globals[kJacquesStatus] == 0) {
+		_scene->_hotspots.activate(NOUN_DESK_LAMP, false);
+		_scene->_hotspots.activate(NOUN_MONSIEUR_BRIE, false);
+		_scene->_hotspots.activate(NOUN_MANAGERS_CHAIR, false);
+
+		if (!_globals[kMakeRichLeave203]) {
+			_globals._animationIndexes[2] = _scene->loadAnimation(formAnimName('r', 1), 1);
+			_anim2ActvFl = true;
+			_richardStatus = 4;
+		} else {
+			_scene->_hotspots.activate(NOUN_MONSIEUR_RICHARD, false);
+			_scene->_hotspots.activate(NOUN_MANAGERS_CHAIR, true);
+		}
+
+		if ((_scene->_priorSceneId == RETURNING_FROM_LOADING) && (_vm->_gameConv->_restoreRunning == 8)) {
+			_globals._animationIndexes[1] = _scene->loadAnimation(formAnimName('c', 1), 0);
+			_scene->setAnimFrame(_globals._animationIndexes[1], 9);
+			_anim1ActvFl = true;
+			_game._player._visible = false;
+			_raoulStatus = 0;
+			_vm->_gameConv->run(8);
+			_vm->_gameConv->exportPointer(&_globals[kPlayerScore]);
+		}
+
+		if (_game._objects.isInRoom(OBJ_LETTER)) {
+			_globals._sequenceIndexes[3] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[3], false, 1);
+			_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 3);
+			_scene->_hotspots.activate(NOUN_LETTER, true);
+		}
+
+		if (_game._objects.isInRoom(OBJ_NOTICE)) {
+			_globals._sequenceIndexes[1] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[1], false, 1);
+			_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 3);
+			_scene->_hotspots.activate(NOUN_NOTICE, true);
+		}
+	} else {
+		_scene->_hotspots.activate(NOUN_MONSIEUR_BRIE, false);
+		_scene->_hotspots.activate(NOUN_MONSIEUR_RICHARD, false);
+		_scene->_hotspots.activate(NOUN_DESK_LAMP, false);
+	}
+
+	if (_vm->_gameConv->_restoreRunning == 15) {
+		_globals._sequenceIndexes[5] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[5], false, -1);
+		_scene->_sequences.setDepth(_globals._sequenceIndexes[5], 14);
+		_game._player._playerPos = Common::Point(98, 137);
+		_game._player._facing = FACING_NORTHEAST;
+		_vm->_gameConv->run(15);
+		_vm->_gameConv->exportPointer(&_globals[kPlayerScore]);
+		_vm->_gameConv->exportPointer(&_globals[kChristineToldEnvelope]);
+		_globals[kWalkerConverse] = _vm->getRandomNumber(1, 4);
+	}
+
+	if (_scene->_priorSceneId == RETURNING_FROM_LOADING) {
+		_globals._sequenceIndexes[5] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[5], false, -1);
+		_scene->_sequences.setDepth(_globals._sequenceIndexes[5], 14);
+	} else if (_scene->_priorSceneId == 202) {
+		_globals._sequenceIndexes[5] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[5], false, -1);
+		_scene->_sequences.setDepth(_globals._sequenceIndexes[5], 14);
+		_game._player._playerPos = Common::Point(195, 147);
+		_game._player._facing = FACING_NORTH;
+	} else if (_scene->_priorSceneId == 150) {
+		_globals._sequenceIndexes[5] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[5], false, -1);
+		_scene->_sequences.setDepth(_globals._sequenceIndexes[5], 14);
+		_game._player._playerPos = Common::Point(98, 137);
+		_game._player._facing = FACING_NORTHEAST;
+		_vm->_gameConv->run(15);
+		_vm->_gameConv->exportPointer(&_globals[kPlayerScore]);
+		_vm->_gameConv->exportPointer(&_globals[kChristineToldEnvelope]);
+		_globals[kWalkerConverse] = _vm->getRandomNumber(1, 4);
+	} else if ((_scene->_priorSceneId == 204) || (_scene->_priorSceneId != RETURNING_FROM_LOADING)) {
+		_globals._sequenceIndexes[5] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[5], false, -2);
+		_scene->_sequences.setDepth(_globals._sequenceIndexes[5], 1);
+		_game._player._playerPos = Common::Point(319, 123);
+		_game._player._facing = FACING_SOUTHWEST;
+		_game._player.walk(Common::Point(276, 123), FACING_WEST);
+		_game._player.setWalkTrigger(95);
+		_game._player._stepEnabled = false;
+	}
+
+	sceneEntrySound();
+}
+
+void Scene203::step() {
+	if (_anim0ActvFl)
+		handleBrieAnimation();
+
+	if (_anim1ActvFl)
+		handleRaoulAnimation();
+
+	if (_anim2ActvFl)
+		handleRichardAnimation();
+
+	if (_anim3ActvFl)
+		handleDaaeAnimation();
+
+	if ((_globals[kWalkerConverse] == 2) || (_globals[kWalkerConverse] == 3)) {
+		++_conversationCount;
+		if (_conversationCount > 200)
+			_globals[kWalkerConverse] = _vm->getRandomNumber(1, 4);
+	}
+
+	switch (_game._trigger) {
+	case 95:
+		_scene->deleteSequence(_globals._sequenceIndexes[5]);
+		_globals._sequenceIndexes[5] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[5], false, 8, 1);
+		_scene->_sequences.setDepth(_globals._sequenceIndexes[5], 10);
+		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[5], -1, -2);
+		_scene->_sequences.setTrigger(_globals._sequenceIndexes[5], 0, 0, 96);
+		break;
+
+	case 96:
+		_vm->_sound->command(25);
+		_globals._sequenceIndexes[5] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[5], false, -1);
+		_scene->_sequences.setDepth(_globals._sequenceIndexes[5], 14);
+		if (_vm->_gameConv->_running != 15)
+			_game._player._stepEnabled = true;
+		break;
+
+	default:
+		break;
+	}
+}
+
+void Scene203::actions() {
+	if (_vm->_gameConv->_running == 5) {
+		handleBrieConversation();
+		_action._inProgress = false;
+		return;
+	}
+
+	if (_vm->_gameConv->_running == 8) {
+		handleRichardConversation();
+		_action._inProgress = false;
+		return;
+	}
+
+	if (_vm->_gameConv->_running == 15) {
+		handleRichardAndDaaeConversation();
+		_action._inProgress = false;
+		return;
+	}
+
+	if (_action.isAction(VERB_WALK_THROUGH, NOUN_DOOR) || _action.isAction(VERB_OPEN, NOUN_DOOR) || _game._trigger) {
+		switch (_game._trigger) {
+		case (0):
+			_game._player._stepEnabled = false;
+			_game._player._visible = false;
+			_globals._sequenceIndexes[4] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[4], false, 5, 2);
+			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[4], 1, 4);
+			_scene->_sequences.setSeqPlayer(_globals._sequenceIndexes[4], true);
+			_scene->_sequences.setTrigger(_globals._sequenceIndexes[4], 2, 4, 90);
+			_scene->_sequences.setTrigger(_globals._sequenceIndexes[4], 0, 0, 92);
+			break;
+
+		case 90:
+			_vm->_sound->command(24);
+			_scene->deleteSequence(_globals._sequenceIndexes[5]);
+			_globals._sequenceIndexes[5] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[5], false, 8, 1);
+			_scene->_sequences.setDepth(_globals._sequenceIndexes[5], 1);
+			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[5], -1, -2);
+			_scene->_sequences.setTrigger(_globals._sequenceIndexes[5], 0, 0, 91);
+			break;
+
+		case 91:
+			_globals._sequenceIndexes[5] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[5], false, -2);
+			_scene->_sequences.setDepth(_globals._sequenceIndexes[5], 1);
+			break;
+
+		case 92:
+			_game._player._visible = true;
+			_game.syncTimers(2, 0, 1, _globals._sequenceIndexes[4]);
+			_game._player.walk(Common::Point(319, 123), FACING_WEST);
+			_game._player.setWalkTrigger(93);
+			break;
+
+		case 93:
+			_scene->_nextSceneId = 204;
+			break;
+
+		default:
+			break;
+		}
+		_action._inProgress = false;
+		return;
+	}
+
+	if (_action.isAction(VERB_TALK_TO, NOUN_MONSIEUR_BRIE)) {
+		_globals._animationIndexes[1] = _scene->loadAnimation(formAnimName('c', 1), 0);
+		_anim1ActvFl = true;
+		_game._player._visible = false;
+		_raoulStatus = 0;
+		_game.syncTimers(3, _globals._animationIndexes[1], 2, 0);
+
+		_vm->_gameConv->run(5);
+		_vm->_gameConv->hold();
+		_vm->_gameConv->exportPointer(&_globals[kPlayerScore]);
+		_vm->_gameConv->exportValue(_game._objects.isInInventory(OBJ_SMALL_NOTE));
+		_vm->_gameConv->exportValue(_globals[kReadBook]);
+		_vm->_gameConv->exportValue(_game._objects.isInInventory(OBJ_LARGE_NOTE));
+		_vm->_gameConv->exportValue(_globals[kLookedAtCase]);
+		if (_globals[kCharlesNameIsKnown] == 2)
+			_vm->_gameConv->exportValue(1);
+		else
+			_vm->_gameConv->exportValue(0);
+
+		_vm->_gameConv->exportValue(_globals[kCanFindBookInLibrary]);
+		_vm->_gameConv->exportValue(_globals[kFlorentNameIsKnown]);
+		_vm->_gameConv->exportValue(_globals[kSandbagStatus]);
+		_vm->_gameConv->exportValue(_globals[kObservedPhan104]);
+		_action._inProgress = false;
+		return;
+	}
+
+	if (_action.isAction(VERB_TALK_TO, NOUN_MONSIEUR_RICHARD)) {
+		if (_globals[kCameFromFade]) {
+			_vm->_gameConv->run(15);
+			_vm->_gameConv->exportPointer(&_globals[kPlayerScore]);
+			_vm->_gameConv->exportPointer(&_globals[kChristineToldEnvelope]);
+		} else {
+			_globals._animationIndexes[1] = _scene->loadAnimation(formAnimName('c', 1), 0);
+			_anim1ActvFl = true;
+			_game._player._visible = false;
+			_game._player._stepEnabled = false;
+			_raoulStatus = 0;
+			_game.syncTimers(3, _globals._animationIndexes[1], 2, 0);
+
+			_vm->_gameConv->run(8);
+			_vm->_gameConv->exportPointer(&_globals[kPlayerScore]);
+			_vm->_gameConv->hold();
+		}
+		_action._inProgress = false;
+		return;
+	}
+
+	if (_action.isAction(VERB_EXIT_TO, NOUN_GRAND_FOYER)) {
+		_scene->_nextSceneId = 202;
+		_action._inProgress = false;
+		return;
+	}
+
+	if (_action._lookFlag) {
+		if (_globals[kMakeBrieLeave203])
+			_vm->_dialogs->show(20337);
+		else
+			_vm->_dialogs->show(20310);
+
+		_action._inProgress = false;
+		return;
+	}
+
+	if (_action.isAction(VERB_LOOK) || _action.isAction(VERB_LOOK_AT)) {
+		if (_action.isObject(NOUN_WALL)) {
+			_vm->_dialogs->show(20311);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isObject(NOUN_FLOOR)) {
+			_vm->_dialogs->show(20312);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isObject(NOUN_BOOKCASE)) {
+			_vm->_dialogs->show(20313);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isObject(NOUN_DOORWAY)) {
+			_vm->_dialogs->show(20314);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isObject(NOUN_COMFY_CHAIR)) {
+			_vm->_dialogs->show(20315);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isObject(NOUN_DESK)) {
+			_vm->_dialogs->show(20316);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isObject(NOUN_MANAGERS_CHAIR)) {
+			_vm->_dialogs->show(20317);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isObject(NOUN_DESK_LAMP)) {
+			_vm->_dialogs->show(20318);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isObject(NOUN_LAMP)) {
+			_vm->_dialogs->show(20319);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isObject(NOUN_LIGHT_FIXTURE)) {
+			_vm->_dialogs->show(20320);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isObject(NOUN_WINDOW)) {
+			_vm->_dialogs->show(20321);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isObject(NOUN_SHEERS)) {
+			_vm->_dialogs->show(20322);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isObject(NOUN_TAPESTRY)) {
+			_vm->_dialogs->show(20323);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isObject(NOUN_GRAND_FOYER)) {
+			_vm->_dialogs->show(20324);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isObject(NOUN_TABLE)) {
+			_vm->_dialogs->show(20325);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isObject(NOUN_CANDLE)) {
+			_vm->_dialogs->show(20326);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isObject(NOUN_MONSIEUR_BRIE)) {
+			_vm->_dialogs->show(20327);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isObject(NOUN_MONSIEUR_RICHARD)) {
+			_vm->_dialogs->show(20328);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isObject(NOUN_PARCHMENT) && _game._objects.isInRoom(OBJ_PARCHMENT)) {
+			_vm->_dialogs->show(20329);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isObject(NOUN_LETTER) && _game._objects.isInRoom(OBJ_LETTER)) {
+			_vm->_dialogs->show(20331);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isObject(NOUN_NOTICE) && _game._objects.isInRoom(OBJ_NOTICE)) {
+			_vm->_dialogs->show(20333);
+			_action._inProgress = false;
+			return;
+		}
+	}
+
+	if (_action.isAction(VERB_TAKE, NOUN_PARCHMENT)) {
+		_vm->_dialogs->show(20330);
+		_action._inProgress = false;
+		return;
+	}
+
+	if (_action.isAction(VERB_TAKE, NOUN_LETTER)) {
+		_vm->_dialogs->show(20332);
+		_action._inProgress = false;
+		return;
+	}
+
+	if (_action.isAction(VERB_TAKE, NOUN_NOTICE)) {
+		_vm->_dialogs->show(20334);
+		_action._inProgress = false;
+		return;
+	}
+
+	if (_action.isAction(VERB_TAKE, NOUN_MONSIEUR_BRIE)) {
+		_vm->_dialogs->show(20335);
+		_action._inProgress = false;
+		return;
+	}
+
+	if (_action.isAction(VERB_TAKE, NOUN_MONSIEUR_RICHARD)) {
+		_vm->_dialogs->show(20336);
+		_action._inProgress = false;
+		return;
+	}
+}
+
+void Scene203::preActions() {
+	if (_action.isAction(VERB_TALK_TO, NOUN_MONSIEUR_RICHARD)) {
+		if (_globals[kCameFromFade])
+			_game._player.walk(Common::Point(98, 137), FACING_NORTHEAST);
+		else
+			_game._player.walk(Common::Point(154, 131), FACING_NORTHWEST);
+	}
+
+	if (_action.isAction(VERB_TALK_TO, NOUN_MONSIEUR_BRIE))
+		_game._player.walk(Common::Point(154, 131), FACING_NORTHWEST);
+
+	if (_action.isAction(VERB_OPEN, NOUN_DOOR))
+		_game._player.walk(Common::Point(276, 123), FACING_EAST);
+}
+
+void Scene203::handleBrieConversation() {
+	bool interlocutorFl = false;
+	bool heroFl = false;
+
+	switch (_action._activeAction._verbId) {
+	case 9:
+	case 12:
+	case 35:
+	case 42:
+		_vm->_gameConv->setInterlocutorTrigger(70);
+		interlocutorFl = true;
+		heroFl = true;
+		break;
+
+	case 14:
+		if (!_game._trigger) {
+			_vm->_gameConv->hold();
+			_raoulStatus = 5;
+		}
+		break;
+
+	case 17:
+		_raoulStatus = 0;
+		_vm->_gameConv->hold();
+		break;
+
+	case 24:
+		_vm->_gameConv->setInterlocutorTrigger(78);
+		interlocutorFl = true;
+		break;
+
+	case 20:
+	case 25:
+		_vm->_gameConv->setInterlocutorTrigger(76);
+		interlocutorFl = true;
+		break;
+
+	case 37:
+		if (!_game._trigger) {
+			_vm->_gameConv->hold();
+			if (_vm->_sound->_preferRoland)
+				_vm->_sound->command(65);
+			else
+				_scene->playSpeech(1);
+
+			_scene->_sequences.setTimingTrigger(60, 110);
+		}
+		break;
+
+	case 41:
+		_globals[kDoneBrieConv203] = 1;
+		_globals[kChrisFStatus] = 0;
+		break;
+
+	case 44:
+		if (!_game._trigger) {
+			_vm->_gameConv->hold();
+			_raoulStatus = 3;
+		}
+		break;
+
+	default:
+		break;
+	}
+
+	switch (_game._trigger) {
+	case 60:
+		_brieStatus = 0;
+		break;
+
+	case 65:
+		_brieStatus = 4;
+		break;
+
+	case 70:
+		_vm->_gameConv->setHeroTrigger(71);
+		interlocutorFl = true;
+		heroFl = true;
+		break;
+
+	case 71:
+		_raoulStatus = 2;
+		break;
+
+	case 74:
+		_vm->_gameConv->hold();
+		_raoulStatus = 3;
+		break;
+
+	case 76:
+		_brieStatus = 1;
+		break;
+
+	case 78:
+		_brieStatus = 2;
+		break;
+
+	case 110:
+		_vm->_gameConv->release();
+		break;
+
+	default:
+		break;
+	}
+
+	if (!heroFl && (_raoulStatus != 5))
+		_vm->_gameConv->setHeroTrigger(65);
+
+	if (!interlocutorFl)
+		_vm->_gameConv->setInterlocutorTrigger(60);
+
+	_brieCount = 0;
+	_raoulCount = 0;
+}
+
+
+
+void Scene203::handleRichardConversation() {
+	bool interlocutorFl = false;
+	bool heroFl = false;
+
+	switch (_action._activeAction._verbId) {
+	case 4:
+		_vm->_gameConv->setInterlocutorTrigger(83);
+		interlocutorFl = true;
+		break;
+
+	case 5:
+	case 15:
+	case 20:
+	case 21:
+	case 27:
+		_vm->_gameConv->setInterlocutorTrigger(70);
+		interlocutorFl = true;
+		heroFl = true;
+		break;
+
+	case 7:
+		if (_game._objects.isInRoom(OBJ_NOTICE) && !_game._trigger) {
+			_vm->_gameConv->hold();
+			_raoulStatus = 3;
+		}
+		break;
+
+	case 9:
+		if (_game._objects.isInRoom(OBJ_LETTER) && !_game._trigger) {
+			_vm->_gameConv->hold();
+			_raoulStatus = 4;
+		}
+		break;
+
+	case 17:
+		_vm->_gameConv->setInterlocutorTrigger(85);
+		interlocutorFl = true;
+		break;
+
+	case 19:
+		_vm->_gameConv->setInterlocutorTrigger(81);
+		interlocutorFl = true;
+		break;
+
+	default:
+		break;
+	}
+
+	switch (_game._trigger) {
+	case 65:
+		_richardStatus = 4;
+		break;
+
+	case 70:
+		_vm->_gameConv->setHeroTrigger(71);
+		interlocutorFl = true;
+		heroFl = true;
+		break;
+
+	case 71: {
+		_raoulStatus = 2;
+		int *val1 = _vm->_gameConv->getVariable(24);
+		int *val2 = _vm->_gameConv->getVariable(26);
+		if ((*val1) && (*val2)) {
+			_globals[kDoneRichConv203] = true;
+			_globals[kMadameGiryShowsUp] = true;
+		}
+		}
+		break;
+
+	case 74:
+		_vm->_gameConv->hold();
+		_raoulStatus = 3;
+		break;
+
+	case 81:
+		_richardStatus = 2;
+		break;
+
+	case 83:
+		_richardStatus = 1;
+		break;
+
+	case 85:
+		_richardStatus = 3;
+		break;
+
+	case 100:
+		_richardStatus = 0;
+		break;
+
+	default:
+		break;
+	}
+
+	if (!heroFl && (_raoulStatus != 5))
+		_vm->_gameConv->setHeroTrigger(65);
+
+	if (!interlocutorFl)
+		_vm->_gameConv->setInterlocutorTrigger(100);
+
+	_brieCount = 0;
+	_raoulCount = 0;
+}
+
+void Scene203::handleRichardAndDaaeConversation() {
+	bool interlocutorFl = false;
+	bool heroFl = false;
+
+	switch (_action._activeAction._verbId) {
+	case 5:
+		if (!_game._trigger) {
+			_vm->_gameConv->hold();
+
+			_vm->_sound->command(24);
+			_scene->deleteSequence(_globals._sequenceIndexes[5]);
+			_globals._sequenceIndexes[5] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[5], false, 8, 1);
+			_scene->_sequences.setDepth(_globals._sequenceIndexes[5], 1);
+			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[5], -1, -2);
+			_scene->_sequences.setTrigger(_globals._sequenceIndexes[5], 0, 0, 90);
+			interlocutorFl = true;
+			heroFl = true;
+		}
+		break;
+
+	case 11:
+		if (!_game._trigger) {
+			_vm->_gameConv->hold();
+			_daaeStatus = 3;
+		}
+		break;
+
+	case 13:
+	case 14:
+	case 15:
+		_globals[kChristineDoorStatus] = 1;
+		_globals[kTicketPeoplePresent] = 2;
+		heroFl = true;
+		interlocutorFl = true;
+		_vm->_gameConv->setInterlocutorTrigger(115);
+		break;
+
+	default:
+		break;
+	}
+
+	switch (_game._trigger) {
+	case 65:
+		if (_globals[kWalkerConverse] != 0)
+			_globals[kWalkerConverse] = _vm->getRandomNumber(2, 3);
+
+		if ((_richardStatus != 5) && (_richardStatus != 7))
+			_richardStatus = 4;
+
+		_conversationCount = 0;
+		break;
+
+	case 90:
+		_globals._sequenceIndexes[5] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[5], false, -2);
+		_scene->_sequences.setDepth(_globals._sequenceIndexes[5], 1);
+		_globals._animationIndexes[3] = _scene->loadAnimation(formAnimName('d', 1), 0);
+		_anim3ActvFl = true;
+		_daaeStatus = 0;
+		break;
+
+	case 100:
+		if (_globals[kWalkerConverse] != 0)
+			_globals[kWalkerConverse] = _vm->getRandomNumber(1, 4);
+
+		if ((_action._activeAction._verbId == 7) || (_action._activeAction._verbId == 9))
+			_daaeStatus = 1;
+		else if (_richardStatus == 7)
+			_richardStatus = 5;
+		else if (_richardStatus != 5)
+			_richardStatus = 0;
+
+		break;
+
+	case 115:
+		_globals[kWalkerConverse] = 0;
+		heroFl = true;
+		interlocutorFl = true;
+		break;
+
+	default:
+		break;
+	}
+
+	if (!heroFl)
+		_vm->_gameConv->setHeroTrigger(65);
+
+	if (!interlocutorFl)
+		_vm->_gameConv->setInterlocutorTrigger(100);
+
+	_brieCount = 0;
+	_raoulCount = 0;
+}
+
+void Scene203::handleBrieAnimation() {
+	if (_scene->_animation[_globals._animationIndexes[0]]->getCurrentFrame() == _brieFrame)
+		return;
+
+	_brieFrame = _scene->_animation[_globals._animationIndexes[0]]->getCurrentFrame();
+	int resetFrame = -1;
+	int random = -1;
+
+	switch (_brieFrame) {
+	case 1:
+	case 2:
+	case 4:
+	case 11:
+	case 22:
+	case 31:
+	case 35:
+	case 29:
+		random = _vm->getRandomNumber(6, 45);
+
+		switch (_brieStatus) {
+		case 0:
+			random = _vm->getRandomNumber(1, 2);
+			++_brieCount;
+			if (_brieCount > 20) {
+				_brieStatus = 4;
+				random = 45;
+			}
+			break;
+
+		case 1:
+			random = 5;
+			break;
+
+		case 2:
+			random = 4;
+			break;
+
+		case 3:
+			random = 3;
+			_brieStatus = 0;
+			break;
+
+		default:
+			break;
+		}
+
+		switch (random) {
+		case 1:
+			resetFrame = 0;
+			break;
+
+		case 2:
+			resetFrame = 1;
+			break;
+
+		case 3:
+			resetFrame = 2;
+			break;
+
+		case 4:
+			resetFrame = 22;
+			_brieStatus = 0;
+			break;
+
+		case 5:
+			resetFrame = 13;
+			break;
+
+		case 6:
+			resetFrame = 4;
+			break;
+
+		case 7:
+			resetFrame = 29;
+			break;
+
+		case 8:
+			resetFrame = 31;
+			break;
+
+		default:
+			resetFrame = 0;
+			break;
+		}
+		break;
+
+	case 30:
+		random = _vm->getRandomNumber(1, 45);
+
+		switch (_brieStatus) {
+		case 0:
+		case 1:
+		case 2:
+		case 3:
+			random = 1;
+			break;
+		}
+
+		if (random == 1)
+			resetFrame = 30;
+		else
+			resetFrame = 29;
+
+		break;
+
+	case 8:
+		random = _vm->getRandomNumber(1, 45);
+
+		switch (_brieStatus) {
+		case 0:
+		case 1:
+		case 2:
+		case 3:
+			random = 3;
+			break;
+		}
+
+		switch (random) {
+		case 1:
+			resetFrame = 11;
+			break;
+
+		case 2:
+			resetFrame = 12;
+			break;
+
+		case 3:
+			resetFrame = 8;
+			break;
+
+		default:
+			resetFrame = 7;
+			break;
+		}
+		break;
+
+	case 12:
+		random = _vm->getRandomNumber(1, 45);
+
+		switch (_brieStatus) {
+		case 0:
+		case 1:
+		case 2:
+		case 3:
+			random = 1;
+			break;
+		}
+
+		if (random == 1)
+			resetFrame = 7;
+		else
+			resetFrame = 11;
+
+		break;
+
+	case 13:
+		random = _vm->getRandomNumber(1, 45);
+
+		switch (_brieStatus) {
+		case 0:
+		case 1:
+		case 2:
+		case 3:
+			random = 1;
+			break;
+		}
+
+		if (random == 1)
+			resetFrame = 7;
+		else
+			resetFrame = 12;
+
+		break;
+
+	case 17:
+	case 18:
+		switch (_brieStatus) {
+		case 0:
+		case 2:
+		case 3:
+			random = 3;
+			break;
+		case 1:
+			random = _vm->getRandomNumber(1, 2);
+			++_brieCount;
+			if (_brieCount > 20) {
+				_brieStatus = 4;
+				random = 3;
+			}
+			break;
+
+		default:
+			break;
+		}
+
+		switch (random) {
+		case 1:
+			resetFrame = 16;
+			break;
+
+		case 2:
+			resetFrame = 17;
+			break;
+
+		case 3:
+			resetFrame = 18;
+			break;
+
+		default:
+			break;
+		}
+		break;
+
+	case 33:
+	case 40:
+		random = _vm->getRandomNumber(1, 45);
+
+		switch (_brieStatus) {
+		case 0:
+		case 1:
+		case 2:
+		case 3:
+			random = 1;
+			break;
+		}
+
+		switch (random) {
+		case 1:
+			resetFrame = 33;
+			break;
+
+		case 2:
+			resetFrame = 35;
+			break;
+
+		default:
+			resetFrame = 32;
+			break;
+		}
+		break;
+
+	case 38:
+		random = _vm->getRandomNumber(1, 45);
+
+		switch (_brieStatus) {
+		case 0:
+		case 1:
+		case 2:
+		case 3:
+			random = 1;
+			break;
+		}
+
+		if (random == 1)
+			resetFrame = 38;
+		else
+			resetFrame = 37;
+
+		break;
+	}
+
+	if (resetFrame >= 0) {
+		_scene->setAnimFrame(_globals._animationIndexes[0], resetFrame);
+		_brieFrame = resetFrame;
+	}
+}
+
+void Scene203::handleRichardAnimation() {
+	if (_scene->_animation[_globals._animationIndexes[2]]->getCurrentFrame() == _richardFrame)
+		return;
+
+	_richardFrame = _scene->_animation[_globals._animationIndexes[2]]->getCurrentFrame();
+	int resetFrame = -1;
+	int random = -1;
+
+	switch (_richardFrame) {
+	case 1:
+	case 2:
+	case 3:
+	case 7:
+	case 15:
+	case 25:
+	case 37:
+	case 53:
+	case 59:
+	case 63:
+	case 67:
+	case 69:
+	case 79:
+	case 87:
+	case 108:
+		random = _vm->getRandomNumber(8, 45);
+
+		switch (_richardStatus) {
+		case 0:
+			random = _vm->getRandomNumber(1, 3);
+			++_brieCount;
+			if (_brieCount > 20) {
+				_richardStatus = 4;
+				random = 45;
+			}
+			break;
+
+		case 1:
+			random = 4;
+			_richardStatus = 0;
+			break;
+
+		case 2:
+			random = 5;
+			_richardStatus = 0;
+			break;
+
+		case 3:
+			random = 6;
+			_richardStatus = 0;
+			break;
+
+		case 5:
+			random = 7;
+			break;
+
+		default:
+			break;
+		}
+
+		switch (random) {
+		case 1:
+			resetFrame = 0;
+			break;
+
+		case 2:
+			resetFrame = 1;
+			break;
+
+		case 3:
+			resetFrame = 2;
+			break;
+
+		case 4:
+			resetFrame = 69;
+			break;
+
+		case 5:
+			resetFrame = 53;
+			_richardStatus = 0;
+			break;
+
+		case 6:
+			resetFrame = 42;
+			break;
+
+		case 7:
+			resetFrame = 87;
+			break;
+
+		case 8:
+			resetFrame = 25;
+			break;
+
+		case 9:
+			resetFrame = 15;
+			break;
+
+		case 10:
+			resetFrame = 3;
+			break;
+
+		case 11:
+			resetFrame = 7;
+			break;
+
+		case 12:
+			resetFrame = 59;
+			break;
+
+		case 13:
+			resetFrame = 63;
+			break;
+
+		case 14:
+			resetFrame = 67;
+			break;
+
+		case 15:
+			resetFrame = 79;
+			break;
+
+		default:
+			resetFrame = 0;
+			break;
+		}
+		break;
+
+	case 5:
+		random = _vm->getRandomNumber(1, 45);
+
+		switch (_richardStatus) {
+		case 0:
+		case 1:
+		case 2:
+		case 3:
+		case 5:
+			random = 1;
+			break;
+		}
+
+		if (random == 1)
+			resetFrame = 5;
+		else
+			resetFrame = 4;
+
+		break;
+
+	case 11:
+		random = _vm->getRandomNumber(1, 45);
+
+		switch (_richardStatus) {
+		case 0:
+		case 1:
+		case 2:
+		case 3:
+		case 5:
+			random = 1;
+			break;
+		}
+
+		if (random == 1)
+			resetFrame = 11;
+		else
+			resetFrame = 10;
+
+		break;
+
+	case 61:
+		random = _vm->getRandomNumber(1, 45);
+
+		switch (_richardStatus) {
+		case 0:
+		case 1:
+		case 2:
+		case 3:
+		case 5:
+			random = 1;
+			break;
+		}
+
+		if (random == 1)
+			resetFrame = 61;
+		else
+			resetFrame = 60;
+
+		break;
+
+	case 65:
+		random = _vm->getRandomNumber(1, 45);
+
+		switch (_richardStatus) {
+		case 0:
+		case 1:
+		case 2:
+		case 3:
+		case 5:
+			random = 1;
+			break;
+		}
+
+		if (random == 1)
+			resetFrame = 65;
+		else
+			resetFrame = 64;
+
+		break;
+
+	case 68:
+		random = _vm->getRandomNumber(1, 45);
+
+		switch (_richardStatus) {
+		case 0:
+		case 1:
+		case 2:
+		case 3:
+		case 5:
+			random = 1;
+			break;
+		}
+
+		if (random == 1)
+			resetFrame = 68;
+		else
+			resetFrame = 67;
+
+		break;
+
+	case 83:
+		random = _vm->getRandomNumber(1, 45);
+
+		switch (_richardStatus) {
+		case 0:
+		case 1:
+		case 2:
+		case 3:
+		case 5:
+			random = 1;
+			break;
+		}
+
+		if (random == 1)
+			resetFrame = 83;
+		else
+			resetFrame = 82;
+
+		break;
+
+	case 92:
+		_vm->_gameConv->release();
+		break;
+
+	case 93:
+	case 94:
+	case 95:
+		if (_richardStatus == 5) {
+			random = _vm->getRandomNumber(1, 3);
+			++_brieCount;
+			if (_brieCount > 20) {
+				_richardStatus = 7;
+				random = 4;
+			}
+		} else
+			random = 4;
+
+		switch (random) {
+		case 1:
+			resetFrame = 92;
+			break;
+
+		case 2:
+			resetFrame = 93;
+			break;
+
+		case 3:
+			resetFrame = 94;
+			break;
+
+		case 4:
+			resetFrame = 95;
+			break;
+		}
+		break;
+
+	case 100:
+	case 101:
+	case 102:
+		switch (_richardStatus) {
+		case 5:
+			random = _vm->getRandomNumber(1, 3);
+			++_brieCount;
+			if (_brieCount > 20) {
+				_richardStatus = 7;
+				random = 1;
+			}
+			break;
+
+		case 7:
+			random = 1;
+			break;
+
+		default:
+			random = 4;
+			break;
+		}
+
+		switch (random) {
+		case 1:
+			resetFrame = 99;
+			break;
+
+		case 2:
+			resetFrame = 100;
+			break;
+
+		case 3:
+			resetFrame = 101;
+			break;
+
+		case 4:
+			resetFrame = 102;
+			break;
+
+		default:
+			break;
+		}
+		break;
+
+	case 31:
+		random = _vm->getRandomNumber(1, 45);
+
+		switch (_richardStatus) {
+		case 0 :
+		case 1:
+		case 2:
+		case 3:
+		case 5:
+			random = 1;
+			break;
+		}
+
+		if (random == 1)
+			resetFrame = 31;
+		else
+			resetFrame = 30;
+
+		break;
+	}
+
+	if (resetFrame >= 0) {
+		_scene->setAnimFrame(_globals._animationIndexes[2], resetFrame);
+		_richardFrame = resetFrame;
+	}
+}
+
+
+void Scene203::handleRaoulAnimation() {
+	if (_scene->_animation[_globals._animationIndexes[1]]->getCurrentFrame() == _raoulFrame)
+		return;
+
+	_raoulFrame = _scene->_animation[_globals._animationIndexes[1]]->getCurrentFrame();
+	int resetFrame = -1;
+	int random = -1;
+
+	switch (_raoulFrame) {
+	case 9:
+	case 21:
+	case 57:
+		_vm->_gameConv->release();
+		break;
+
+	case 10:
+	case 22:
+	case 30:
+	case 34:
+	case 58:
+		if (_raoulFrame == 22)
+			_raoulStatus = 0;
+
+		random = _vm->getRandomNumber(5, 45);
+
+		switch (_raoulStatus) {
+		case 1:
+			random = 1;
+			break;
+
+		case 2:
+			_game._player._stepEnabled = false;
+			random = 2;
+			break;
+
+		case 3:
+		case 5:
+			random = 3;
+			break;
+
+		case 4:
+			random = 4;
+			break;
+
+		default:
+			random = _vm->getRandomNumber(5, 100);
+			break;
+			}
+
+		switch (random) {
+		case 1:
+			resetFrame = 22;
+			break;
+
+		case 2:
+			resetFrame = 34;
+			break;
+
+		case 3:
+			resetFrame = 10;
+			break;
+
+		case 4:
+			resetFrame = 45;
+			break;
+
+		case 5:
+			resetFrame = 30;
+			break;
+
+		default:
+			resetFrame = 9;
+			break;
+		}
+		break;
+
+	case 16:
+		switch (_raoulStatus) {
+		case 3:
+			random = 1;
+			break;
+
+		case 0:
+		case 2:
+			random = 2;
+			break;
+
+		case 5:
+			random = 3;
+			break;
+
+		default:
+			break;
+		}
+
+		switch (random) {
+		case 1:
+			if (_globals[kCurrentYear] == 1881) {
+				resetFrame = 16;
+				_scene->deleteSequence(_globals._sequenceIndexes[1]);
+				_scene->_hotspots.activate(NOUN_NOTICE, false);
+				_game._objects.addToInventory(OBJ_NOTICE);
+				_vm->_sound->command(26);
+				_scene->_speechReady = -1;
+				_vm->_dialogs->showItem(OBJ_NOTICE, 814, 5);
+				_raoulStatus = 0;
+			} else {
+				resetFrame = 16;
+				_scene->deleteSequence(_globals._sequenceIndexes[1]);
+				_scene->_hotspots.activate(NOUN_PARCHMENT, false);
+				_game._objects.addToInventory(OBJ_PARCHMENT);
+				_vm->_sound->command(26);
+				_scene->_speechReady = -1;
+				_vm->_dialogs->showItem(OBJ_PARCHMENT, 812, 3);
+				_raoulStatus = 0;
+			}
+			break;
+
+		case 2:
+			if (_showNoteFl) {
+				_scene->deleteSequence(_globals._sequenceIndexes[2]);
+				_showNoteFl = false;
+			}
+			break;
+
+		default:
+			if (!_showNoteFl) {
+				_globals._sequenceIndexes[2] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[1], true, 1);
+				_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 3);
+				_vm->_gameConv->release();
+				_showNoteFl = true;
+			}
+			resetFrame = 15;
+			break;
+		}
+		break;
+
+	case 26:
+		random = _vm->getRandomNumber(1, 45);
+
+		switch (_raoulStatus) {
+		case 0:
+		case 2:
+		case 3:
+		case 4:
+		case 5:
+			random = 1;
+			break;
+
+		case 1:
+			random = 2;
+			break;
+		}
+
+		if (random == 1)
+			resetFrame = 26;
+		else
+			resetFrame = 25;
+
+		break;
+
+	case 45:
+		_anim1ActvFl = false;
+		_game._player._visible = true;
+		_game._player._stepEnabled = true;
+		_game.syncTimers(2, 0, 3, _globals._animationIndexes[1]);
+		resetFrame = 58;
+		if ((_globals[kDoneBrieConv203]) && (_globals[kCurrentYear] == 1993)) {
+			_globals[kPrompterStandStatus] = 1;
+			_scene->_nextSceneId = 150;
+		}
+		break;
+
+	case 52:
+		_scene->deleteSequence(_globals._sequenceIndexes[3]);
+		_scene->_hotspots.activate(NOUN_LETTER, false);
+		_game._objects.addToInventory(OBJ_LETTER);
+		_vm->_sound->command(26);
+		_scene->_speechReady = -1;
+		_vm->_dialogs->showItem(OBJ_LETTER, 813, 4);
+		_raoulStatus = 0;
+		break;
+
+	default:
+		break;
+	}
+
+	if (resetFrame >= 0) {
+		_scene->setAnimFrame(_globals._animationIndexes[1], resetFrame);
+		_raoulFrame = resetFrame;
+	}
+}
+
+
+void Scene203::handleDaaeAnimation() {
+	if (_scene->_animation[_globals._animationIndexes[3]]->getCurrentFrame() == _daaeFrame)
+		return;
+
+	_daaeFrame = _scene->_animation[_globals._animationIndexes[3]]->getCurrentFrame();
+	int resetFrame = -1;
+	int random = -1;
+
+	switch (_daaeFrame) {
+	case 20:
+		_vm->_gameConv->release();
+		_richardStatus = 5;
+		break;
+
+	case 175:
+		_richardStatus = 4;
+		break;
+
+	case 198:
+		_vm->_gameConv->release();
+		break;
+
+	case 201:
+		_scene->_sequences.setTimingTrigger(1, 95);
+		break;
+
+	case 76:
+	case 92:
+	case 102:
+	case 123:
+		switch (_daaeStatus) {
+		case 1:
+			random = _vm->getRandomNumber(1, 2);
+			_daaeStatus = 2;
+			break;
+
+		case 2:
+			random = 3;
+			_daaeStatus = 0;
+			break;
+
+		case 3:
+			random = 4;
+			break;
+
+		default:
+			random = 5;
+			break;
+		}
+
+		switch (random) {
+		case 1:
+			resetFrame = 79;
+			break;
+
+		case 2:
+			resetFrame = 92;
+			break;
+
+		case 3:
+			resetFrame = 102;
+			break;
+
+		case 4:
+			resetFrame = 123;
+			break;
+
+		case 5:
+			resetFrame = 75;
+			break;
+
+		default:
+			break;
+		}
+		break;
+	}
+
+	if (resetFrame >= 0) {
+		_scene->setAnimFrame(_globals._animationIndexes[3], resetFrame);
+		_daaeFrame = resetFrame;
 	}
 }
 

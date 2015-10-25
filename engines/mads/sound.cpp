@@ -39,6 +39,8 @@ SoundManager::SoundManager(MADSEngine *vm, Audio::Mixer *mixer) {
 	_newSoundsPaused = false;
 	_masterVolume = 255;
 
+	_preferRoland = false;
+
 	_opl = OPL::Config::create();
 	_opl->init();
 

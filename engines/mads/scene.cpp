@@ -63,6 +63,8 @@ Scene::Scene(MADSEngine *vm)
 	_variant = 0;
 	_initialVariant = 0;
 
+	_speechReady = -1;
+
 	_paletteUsageF.push_back(PaletteUsage::UsageEntry(0xF));
 
 	// Set up a scene surface that maps to our physical screen drawing surface
@@ -811,6 +813,9 @@ void Scene::loadSpeech(int idx) {
 	_vm->_audio->setDefaultSoundGroup();
 	// NOTE: The original actually preloads the speech sample here, but the samples
 	// are so small that it's not really worth it...
+
+	// TODO: As the speech samples aren't cached anymore, _speechReady should be remove
+	_speechReady = idx;
 }
 
 void Scene::playSpeech(int idx) {

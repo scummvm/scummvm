@@ -80,7 +80,7 @@ SceneLogic *SceneFactory::createScene(MADSEngine *vm) {
 	case 202:	// outside offices / paintings room
 		return new Scene202(vm);
 	case 203:	// office
-		return new DummyScene(vm);	// TODO
+		return new Scene203(vm);
 	case 204:	// library
 		return new DummyScene(vm);	// TODO
 	case 205:	// upper floor, outside balcony boxes
