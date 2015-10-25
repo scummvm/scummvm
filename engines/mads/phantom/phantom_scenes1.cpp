@@ -349,7 +349,7 @@ void Scene101::handleConversation0() {
 
 void Scene101::handleConversation1() {
 	if ((_action._activeAction._verbId >= 0) && (_action._activeAction._verbId <= 27)) {
-		int interlocutorFl = false;
+		bool interlocutorFl = false;
 
 		if (_game._trigger == 60) {
 			switch (_action._activeAction._verbId) {
@@ -2323,7 +2323,7 @@ void Scene103::descendLeftStairs() {
 }
 
 void Scene103::process_conv_jacques() {
-	int quitConversationFl = false;
+	bool quitConversationFl = false;
 
 	switch (_action._activeAction._verbId) {
 	case 1:
