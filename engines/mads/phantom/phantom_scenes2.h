@@ -113,10 +113,10 @@ public:
 
 class Scene203 : public Scene2xx {
 private:
-	bool _anim0ActvFl;  
-	bool _anim1ActvFl;  
-	bool _anim2ActvFl;  
-	bool _anim3ActvFl;  
+	bool _anim0ActvFl;
+	bool _anim1ActvFl;
+	bool _anim2ActvFl;
+	bool _anim3ActvFl;
 	bool _showNoteFl;
 
 	int _brieStatus;
@@ -138,7 +138,7 @@ private:
 	void handleRichardAnimation();
 	void handleRaoulAnimation();
 	void handleDaaeAnimation();
-	
+
 public:
 	Scene203(MADSEngine *vm);
 	virtual void synchronize(Common::Serializer &s);
@@ -179,6 +179,39 @@ private:
 
 public:
 	Scene204(MADSEngine *vm);
+	virtual void synchronize(Common::Serializer &s);
+
+	virtual void setup();
+	virtual void enter();
+	virtual void step();
+	virtual void preActions();
+	virtual void actions();
+};
+
+class Scene205 : public Scene2xx {
+private:
+	bool _anim0ActvFl;
+	bool _anim1ActvFl;
+	bool _noConversationHold;
+	bool _giveTicketFl;
+
+	int _richardFrame;
+	int _richardStatus;
+	int _richardCount;
+	int _giryFrame;
+	int _giryStatus;
+	int _giryCount;
+	int _conversationCounter;
+	int _lastRandom;
+
+	void handleConversation18();
+	void handleConversation10();
+	void handleConversation11();
+	void handleRichardAnimation();
+	void handleGiryAnimation();
+
+public:
+	Scene205(MADSEngine *vm);
 	virtual void synchronize(Common::Serializer &s);
 
 	virtual void setup();
