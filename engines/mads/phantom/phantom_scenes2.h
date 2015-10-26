@@ -149,6 +149,45 @@ public:
 	virtual void preActions();
 	virtual void actions();
 };
+
+class Scene204 : public Scene2xx {
+private:
+	bool _anim0ActvFl;
+	bool _anim1ActvFl;
+	bool _anim2ActvFl;
+	bool _anim3ActvFl;
+	bool _raoulDown;
+	bool _florentGone;
+	bool _skip1Fl;
+	bool _skip2Fl;
+	bool _skip3Fl;
+	bool _endGameFl;
+
+	int _brieStatus;
+	int _brieFrame;
+	int _florStatus;
+	int _florFrame;
+	int _raoulStatus;
+	int _raoulFrame;
+	int _raoulCount;
+
+	void handleConversation();
+	void handleBrieAnimation();
+	void handleFlorAnimation();
+	void handleRaoulAnimation();
+	void handleEndAnimation();
+
+public:
+	Scene204(MADSEngine *vm);
+	virtual void synchronize(Common::Serializer &s);
+
+	virtual void setup();
+	virtual void enter();
+	virtual void step();
+	virtual void preActions();
+	virtual void actions();
+};
+
 } // End of namespace Phantom
 } // End of namespace MADS
 

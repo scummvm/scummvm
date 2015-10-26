@@ -817,7 +817,7 @@ void Scene202::actions() {
 		return;
 	}
 
-	if ((_action.isAction(VERB_TALK_TO, NOUN_GENTLEMAN)) || (_action.isAction(VERB_TALK_TO, NOUN_EDGAR_DEGAS))) {
+	if (_action.isAction(VERB_TALK_TO, NOUN_GENTLEMAN) || _action.isAction(VERB_TALK_TO, NOUN_EDGAR_DEGAS)) {
 		if (!_globals[kDegasNameIsKnown] ) {
 			_vm->_gameConv->run(9);
 			_vm->_gameConv->exportPointer(&_globals[kPlayerScore]);
@@ -1025,7 +1025,7 @@ void Scene202::preActions() {
 	if (_action.isAction(VERB_OPEN, NOUN_LEFT_DOOR))
 		_game._player.walk(Common::Point(126, 123), FACING_NORTHEAST);
 
-	if ((_globals[kTicketPeoplePresent] == 2) && (_action.isAction(VERB_WALK_THROUGH, NOUN_RIGHT_ARCHWAY)))
+	if ((_globals[kTicketPeoplePresent] == 2) && _action.isAction(VERB_WALK_THROUGH, NOUN_RIGHT_ARCHWAY))
 		_game._player.walk(Common::Point(569, 147), FACING_NORTHEAST);
 
 	if (_action.isAction(VERB_TAKE, NOUN_GENTLEMAN) || _action.isAction(VERB_TAKE, NOUN_EDGAR_DEGAS))
@@ -3140,7 +3140,7 @@ void Scene203::handleRaoulAnimation() {
 		_game._player._stepEnabled = true;
 		_game.syncTimers(2, 0, 3, _globals._animationIndexes[1]);
 		resetFrame = 58;
-		if ((_globals[kDoneBrieConv203]) && (_globals[kCurrentYear] == 1993)) {
+		if (_globals[kDoneBrieConv203] && (_globals[kCurrentYear] == 1993)) {
 			_globals[kPrompterStandStatus] = 1;
 			_scene->_nextSceneId = 150;
 		}
@@ -3248,6 +3248,957 @@ void Scene203::handleDaaeAnimation() {
 		_scene->setAnimFrame(_globals._animationIndexes[3], resetFrame);
 		_daaeFrame = resetFrame;
 	}
+}
+
+/*------------------------------------------------------------------------*/
+
+Scene204::Scene204(MADSEngine *vm) : Scene2xx(vm) {
+	_anim0ActvFl = false;
+	_anim1ActvFl = false;
+	_anim2ActvFl = false;
+	_anim3ActvFl = false;
+	_raoulDown = false;
+	_florentGone = false;
+	_skip1Fl = false;
+	_skip2Fl = false;
+	_skip3Fl = false;
+	_endGameFl = false;
+
+	_brieStatus = -1;
+	_brieFrame = -1;
+	_florStatus = -1;
+	_florFrame = -1;
+	_raoulStatus = -1;
+	_raoulFrame = -1;
+	_raoulCount = -1;
+}
+
+void Scene204::synchronize(Common::Serializer &s) {
+	Scene2xx::synchronize(s);
+
+	s.syncAsByte(_anim0ActvFl);
+	s.syncAsByte(_anim1ActvFl);
+	s.syncAsByte(_anim2ActvFl);
+	s.syncAsByte(_anim3ActvFl);
+	s.syncAsByte(_raoulDown);
+	s.syncAsByte(_florentGone);
+	s.syncAsByte(_skip1Fl);
+	s.syncAsByte(_skip2Fl);
+	s.syncAsByte(_skip3Fl);
+	s.syncAsByte(_endGameFl);
+
+	s.syncAsSint16LE(_brieStatus);
+	s.syncAsSint16LE(_brieFrame);
+	s.syncAsSint16LE(_florStatus);
+	s.syncAsSint16LE(_florFrame);
+	s.syncAsSint16LE(_raoulStatus);
+	s.syncAsSint16LE(_raoulFrame);
+	s.syncAsSint16LE(_raoulCount);
+}
+
+void Scene204::setup() {
+	if ((_globals[kCurrentYear] == 1993) || _globals[kRightDoorIsOpen504])
+		_scene->_initialVariant = 1;
+
+	setPlayerSpritesPrefix();
+	setAAName();
+}
+
+void Scene204::enter() {
+	_skip3Fl = false;
+
+	if (_scene->_priorSceneId != RETURNING_FROM_LOADING) {
+		_anim0ActvFl = false;
+		_anim1ActvFl = false;
+		_anim2ActvFl = false;
+		_anim3ActvFl = false;
+		_florentGone = false;
+		_skip1Fl = false;
+		_skip2Fl = false;
+		_endGameFl = false;
+		_raoulDown = true;
+	}
+
+	if (_globals[kTicketPeoplePresent] == 2)
+		_globals[kMakeRichLeave203] = true;
+
+	if (_globals[kRightDoorIsOpen504])
+		_endGameFl = true;
+
+	warning("TODO: If end of game, remove the walking areas");
+
+	_scene->_hotspots.activate(NOUN_BOOK, false);
+	_vm->_gameConv->get(22);
+
+	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('p', 0), false);
+	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('x', 6), false);
+	_globals._spriteIndexes[4] = _scene->_sprites.addSprites("*RALRH_9", false);
+	_globals._spriteIndexes[5] = _scene->_sprites.addSprites("*RDRR_6", false);
+
+	if (_game._objects.isInRoom(OBJ_BOOK) || (_globals[kCurrentYear] == 1881) || _endGameFl) {
+		_globals._sequenceIndexes[2] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[2], false, 1);
+		_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 5);
+		if (_globals[kScannedBookcase] && (_globals[kCurrentYear] == 1993))
+			_scene->_hotspots.activate(NOUN_BOOK, true);
+	}
+
+	if ((_globals[kCurrentYear] == 1993) || _endGameFl) {
+		_globals._spriteIndexes[0] = _scene->_sprites.addSprites(formAnimName('z', -1), false);
+		_scene->drawToBackground(_globals._spriteIndexes[0], 1, Common::Point(-32000, -32000), 0, 100);
+		_scene->_sprites.remove(_globals._spriteIndexes[0]);
+		_scene->_hotspots.activate(NOUN_CANDLE, false);
+		_scene->_hotspots.activate(NOUN_BUST, false);
+		_scene->_hotspots.activate(NOUN_COFFEE_TABLE, false);
+
+		int idx = _scene->_dynamicHotspots.add(NOUN_COFFEE_TABLE, VERB_WALK_TO, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(83, 140, 83 + 45, 140 + 12));
+		_scene->_dynamicHotspots.setPosition(idx, Common::Point(84, 150), FACING_SOUTHEAST);
+
+		idx = _scene->_dynamicHotspots.add(NOUN_GRAND_FOYER, VERB_EXIT_TO, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(199, 147, 199 + 52, 147 + 8));
+		_scene->_dynamicHotspots.setPosition(idx, Common::Point(224, 152), FACING_SOUTH);
+		_scene->_dynamicHotspots.setCursor(idx, CURSOR_GO_DOWN);
+
+		idx = _scene->_dynamicHotspots.add(NOUN_GRAND_FOYER, VERB_EXIT_TO, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(145, 147, 145 + 54, 147 + 8));
+		_scene->_dynamicHotspots.setPosition(idx, Common::Point(175, 152), FACING_SOUTH);
+		_scene->_dynamicHotspots.setCursor(idx, CURSOR_GO_DOWN);
+	} else {
+		_scene->_hotspots.activate(NOUN_LIGHT, false);
+		_scene->_hotspots.activate(NOUN_GLASS_CASE, false);
+
+		int idx = _scene->_dynamicHotspots.add(NOUN_COMFY_CHAIR, VERB_WALK_TO, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(220, 147, 220 + 6, 147 + 8));
+		_scene->_dynamicHotspots.setPosition(idx, Common::Point(220, 150), FACING_SOUTHEAST);
+
+		idx = _scene->_dynamicHotspots.add(NOUN_COMFY_CHAIR, VERB_WALK_TO, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(226, 134, 226 + 12, 134 + 21));
+		_scene->_dynamicHotspots.setPosition(idx, Common::Point(220, 150), FACING_SOUTHEAST);
+
+		idx = _scene->_dynamicHotspots.add(NOUN_COMFY_CHAIR, VERB_WALK_TO, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(238, 128, 238 + 13, 128 + 27));
+		_scene->_dynamicHotspots.setPosition(idx, Common::Point(220, 150), FACING_SOUTHEAST);
+
+		idx = _scene->_dynamicHotspots.add(NOUN_GRAND_FOYER, VERB_EXIT_TO, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(199, 147, 199 + 19, 147 + 8));
+		_scene->_dynamicHotspots.setPosition(idx, Common::Point(209, 152), FACING_SOUTH);
+		_scene->_dynamicHotspots.setCursor(idx, CURSOR_GO_DOWN);
+
+		idx = _scene->_dynamicHotspots.add(NOUN_GRAND_FOYER, VERB_EXIT_TO, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(84, 147, 84 + 61, 147 + 8));
+		_scene->_dynamicHotspots.setPosition(idx, Common::Point(115, 152), FACING_SOUTH);
+		_scene->_dynamicHotspots.setCursor(idx, CURSOR_GO_DOWN);
+	}
+
+	if ((_scene->_priorSceneId == 306) || (_endGameFl)) {
+		_globals._spriteIndexes[6] = _scene->_sprites.addSprites(formAnimName('f', 0), false);
+		_scene->drawToBackground(_globals._spriteIndexes[6], 1, Common::Point(-32000, -32000), 0, 100);
+	} else if (_globals[kCurrentYear] == 1993) {
+		_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('f', 1), false);
+		_scene->drawToBackground(_globals._spriteIndexes[1], 1, Common::Point(-32000, -32000), 0, 100);
+		_scene->_sprites.remove(_globals._spriteIndexes[1]);
+	}
+
+	if (_scene->_priorSceneId == RETURNING_FROM_LOADING) {
+		if (_endGameFl) {
+			_game.loadQuoteSet(0x75, 0);
+
+			_globals._animationIndexes[2] = _scene->loadAnimation(formAnimName('r', 1), 0);
+			_anim2ActvFl = true;
+
+			if (_florentGone) {
+				_scene->setAnimFrame(_globals._animationIndexes[2], 9);
+				_raoulStatus = 1;
+			} else {
+				_scene->setAnimFrame(_globals._animationIndexes[2], 32);
+				_raoulStatus = 4;
+			}
+
+			_globals._animationIndexes[0] = _scene->loadAnimation(formAnimName('m', 1), 0);
+			_anim0ActvFl = true;
+			_brieStatus = 2;
+
+			_globals._animationIndexes[1] = _scene->loadAnimation(formAnimName('f', 1), 0);
+			_anim1ActvFl = true;
+			_florStatus = 2;
+
+			if (_florentGone)
+				_scene->setAnimFrame(_globals._animationIndexes[1], 172);
+			else if (!_raoulDown)
+				_scene->setAnimFrame(_globals._animationIndexes[1], 21);
+
+			_game._player._visible = false;
+			_vm->_gameConv->run(22);
+			_vm->_gameConv->exportPointer(&_globals[kPlayerScore]);
+		} else {
+			_globals._sequenceIndexes[3] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[3], false, 1);
+			_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 5);
+		}
+	} else if (_scene->_priorSceneId == 202) {
+		_globals._sequenceIndexes[3] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[3], false, 1);
+		_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 5);
+		if (_globals[kCurrentYear] == 1993)
+			_game._player._playerPos = Common::Point(175, 145);
+		else
+			_game._player._playerPos = Common::Point(115, 147);
+
+		_game._player._facing = FACING_NORTHWEST;
+	} else if (_scene->_priorSceneId == 150) {
+		int size = _game._objects.size();
+		for (int i = 0; i < size; i++)
+			_game._objects.setRoom(i, 1);
+
+		_game.loadQuoteSet(0x75, 0);
+
+		_globals._animationIndexes[2] = _scene->loadAnimation(formAnimName('r', 1), 0);
+		_anim2ActvFl = true;
+		_raoulStatus = 4;
+		_scene->setAnimFrame(_globals._animationIndexes[2], 32);
+
+		_globals._animationIndexes[0] = _scene->loadAnimation(formAnimName('m', 1), 0);
+		_anim0ActvFl = true;
+		_brieStatus = 2;
+
+		_globals._animationIndexes[1] = _scene->loadAnimation(formAnimName('f', 1), 0);
+		_anim1ActvFl = true;
+		_raoulDown = true;
+		_florStatus = 2;
+
+		_game._player._visible = false;
+		_endGameFl = true;
+
+		_vm->_gameConv->run(22);
+		_vm->_gameConv->exportPointer(&_globals[kPlayerScore]);
+	} else if ((_scene->_priorSceneId == 203) || (_scene->_priorSceneId != RETURNING_FROM_LOADING)) {
+		_game._player.firstWalk(Common::Point(-10, 136), FACING_EAST, Common::Point(30, 140), FACING_EAST, true);
+		_game._player.setWalkTrigger(70);
+		_game._player._stepEnabled = false;
+	}
+
+	sceneEntrySound();
+}
+
+void Scene204::step() {
+	if (_anim0ActvFl)
+		handleBrieAnimation();
+
+	if (_anim1ActvFl)
+		handleFlorAnimation();
+
+	if (_anim2ActvFl)
+		handleRaoulAnimation();
+
+	if (_anim3ActvFl)
+		handleEndAnimation();
+
+	if (_game._trigger == 85)
+		_scene->_nextSceneId = 250;
+
+	if ((_vm->_gameConv->_running != 22) && !_skip1Fl && _endGameFl) {
+		_game._player._stepEnabled = false;
+		_skip1Fl = true;
+	}
+
+	if (_game._trigger == 70) {
+		 _globals._sequenceIndexes[3] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[3], false, 8, 1);
+		 _scene->_sequences.setDepth(_globals._sequenceIndexes[3], 10);
+		 _scene->_sequences.setAnimRange(_globals._sequenceIndexes[3], -1, -2);
+		 _scene->_sequences.setTrigger(_globals._sequenceIndexes[3], 0, 0, 71);
+	} else if (_game._trigger == 71) {
+		 _vm->_sound->command(25);
+		 _globals._sequenceIndexes[3] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[3], false, 1);
+		 _scene->_sequences.setDepth(_globals._sequenceIndexes[3], 5);
+		 _game._player._stepEnabled = true;
+	}
+}
+
+void Scene204::actions() {
+	if (_vm->_gameConv->_running == 22) {
+		handleConversation();
+
+		_action._inProgress = false;
+		return;
+	}
+
+	if (_action.isAction(VERB_WALK_THROUGH, NOUN_DOOR) || _action.isAction(VERB_OPEN, NOUN_DOOR)) {
+		switch (_game._trigger) {
+		case (0):
+			_game._player._stepEnabled = false;
+			_game._player._visible = false;
+			_globals._sequenceIndexes[5] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[5], true, 5, 2);
+			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[5], 1, 4);
+			_scene->_sequences.setSeqPlayer(_globals._sequenceIndexes[5], true);
+			_scene->_sequences.setTrigger(_globals._sequenceIndexes[5], 2, 4, 60);
+			_scene->_sequences.setTrigger(_globals._sequenceIndexes[5], 0, 0, 61);
+			break;
+
+		case 60:
+			_vm->_sound->command(24);
+			_scene->deleteSequence(_globals._sequenceIndexes[3]);
+			_globals._sequenceIndexes[3] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[3], false, 8, 1);
+			_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 14);
+			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[3], -1, -2);
+			break;
+
+		case 61:
+			_game._player._visible = true;
+			_game.syncTimers(2, 0, 1, _globals._sequenceIndexes[5]);
+			_game._player.walk(Common::Point(0, 136), FACING_WEST);
+			_game._player.setWalkTrigger(62);
+			break;
+
+		case 62:
+			_scene->_nextSceneId = 203;
+			break;
+
+		default:
+			break;
+		}
+		_action._inProgress = false;
+		return;
+	}
+
+	if (_action.isAction(VERB_TAKE, NOUN_BOOK) && (_game._objects.isInRoom(OBJ_BOOK) || _game._trigger)) {
+		switch (_game._trigger) {
+		case (0):
+			_game._player._stepEnabled = false;
+			_game._player._visible = false;
+			_globals._sequenceIndexes[4] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[4], false, 5, 2);
+			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[4], -1, -2);
+			_scene->_sequences.setSeqPlayer(_globals._sequenceIndexes[4], true);
+			_scene->_sequences.setTrigger(_globals._sequenceIndexes[4], 2, 8, 1);
+			_scene->_sequences.setTrigger(_globals._sequenceIndexes[4], 0, 0, 2);
+			break;
+
+		case 1:
+			_scene->deleteSequence(_globals._sequenceIndexes[2]);
+			_scene->_hotspots.activate(NOUN_BOOK, false);
+			_game._objects.addToInventory(OBJ_BOOK);
+			_vm->_sound->command(26);
+			break;
+
+		case 2:
+			_game.syncTimers(2, 0, 1, _globals._sequenceIndexes[4]);
+			_game._player._visible = true;
+			_scene->_sequences.setTimingTrigger(20, 3);
+			break;
+
+		case 3:
+			_vm->_dialogs->showItem(OBJ_BOOK, 815, 0);
+			_globals[kReadBook] = true;
+			_globals[kPlayerScore] += 5;
+			_game._player._stepEnabled = true;
+			break;
+
+		default:
+			break;
+		}
+		_action._inProgress = false;
+		return;
+	}
+
+	if (_action.isAction(VERB_EXIT_TO, NOUN_GRAND_FOYER)) {
+		_scene->_nextSceneId = 202;
+		_action._inProgress = false;
+		return;
+	}
+
+	if (_action._lookFlag) {
+		_vm->_dialogs->show(20410);
+		_action._inProgress = false;
+		return;
+	}
+
+	if (_action.isAction(VERB_LOOK) || _action.isAction(VERB_LOOK_AT)) {
+		if (_action.isObject(NOUN_WALL)) {
+			_vm->_dialogs->show(20411);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isObject(NOUN_FLOOR)) {
+			_vm->_dialogs->show(20412);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isObject(NOUN_RUG)) {
+			_vm->_dialogs->show(20413);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isObject(NOUN_GLASS_CASE)) {
+			_vm->_dialogs->show(20414);
+			_globals[kLookedAtCase] = true;
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isObject(NOUN_CEILING)) {
+			if (_globals[kSandbagStatus] == 0)
+				_vm->_dialogs->show(20429);
+			else
+				_vm->_dialogs->show(20416);
+
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isObject(NOUN_BOOKCASE)) {
+			if (_globals[kCanFindBookInLibrary] && (_globals[kCurrentYear] == 1993)) {
+				if ((_scene->_customDest.x < 46) && !_game._objects.isInInventory(OBJ_BOOK)) {
+					if (!_globals[kScannedBookcase]) {
+						_vm->_dialogs->show(20433);
+						_scene->_hotspots.activate(NOUN_BOOK, true);
+						_globals[kScannedBookcase] = true;
+					} else {
+						_vm->_dialogs->show(20437);
+					}
+				} else {
+					_vm->_dialogs->show(20417);
+				}
+			} else {
+				_vm->_dialogs->show(20417);
+			}
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isObject(NOUN_SOFA)) {
+			_vm->_dialogs->show(20418);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isObject(NOUN_END_TABLE)) {
+			_vm->_dialogs->show(20419);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isObject(NOUN_LAMP)) {
+			_vm->_dialogs->show(20420);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isObject(NOUN_BUST)) {
+			_vm->_dialogs->show(20421);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isObject(NOUN_COFFEE_TABLE)) {
+			_vm->_dialogs->show(20422);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isObject(NOUN_COMFY_CHAIR)) {
+			_vm->_dialogs->show(20423);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isObject(NOUN_DECORATIVE_VASE )) {
+			_vm->_dialogs->show(20424);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isObject(NOUN_PAINTING)) {
+			_vm->_dialogs->show(20425);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isObject(NOUN_GRAND_FOYER)) {
+			_vm->_dialogs->show(20426);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isObject(NOUN_DOOR)) {
+			_vm->_dialogs->show(20427);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isObject(NOUN_WINDOW)) {
+			_vm->_dialogs->show(20428);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isObject(NOUN_BOOK) && _game._objects.isInRoom(OBJ_BOOK)) {
+			_vm->_dialogs->show(20434);
+			_action._inProgress = false;
+			return;
+		}
+	}
+
+	if (_action.isAction(VERB_TALK_TO, NOUN_BUST)) {
+		_vm->_dialogs->show(20436);
+		_action._inProgress = false;
+		return;
+	}
+}
+
+void Scene204::preActions() {
+	if (_action.isAction(VERB_LOOK, NOUN_BOOKCASE))
+		_game._player._needToWalk = true;
+
+	if (_action.isAction(VERB_LOOK, NOUN_BOOK) && _game._objects.isInRoom(OBJ_BOOK))
+		_game._player._needToWalk = true;
+
+	if (_action.isAction(VERB_OPEN, NOUN_DOOR))
+		_game._player.walk(Common::Point(27, 139), FACING_WEST);
+}
+
+void Scene204::handleConversation() {
+	bool interlocutorFl = false;
+	bool heroFl = false;
+
+	switch (_action._activeAction._verbId) {
+	case 6:
+	case 7:
+	case 8:
+		if (_raoulDown) {
+			_vm->_gameConv->hold();
+			_raoulDown = false;
+		}
+		break;
+
+	case 17:
+		if (!_game._trigger) {
+			_florStatus = 3;
+			_florentGone = true;
+			interlocutorFl = true;
+			heroFl = true;
+			_vm->_gameConv->hold();
+		}
+		break;
+
+	case 25:
+		if (!_game._trigger) {
+			_raoulStatus = 5;
+			_florStatus = 5;
+			interlocutorFl = true;
+			heroFl = true;
+			_vm->_gameConv->hold();
+		}
+		break;
+
+	case 29:
+		interlocutorFl = true;
+		heroFl = true;
+		if (!_game._trigger) {
+			_brieStatus = 3;
+			_vm->_gameConv->hold();
+		}
+		break;
+
+	default:
+		break;
+	}
+
+	switch (_game._trigger) {
+	case 75:
+		if (_florentGone) {
+			if (_raoulStatus != 2)
+				_raoulStatus = 0;
+		} else
+			_florStatus = 4;
+
+		break;
+
+	case 80:
+		if (_florentGone) {
+			if ((_action._activeAction._verbId != 18) && (_action._activeAction._verbId != 23))
+				_brieStatus = 0;
+		} else {
+			switch (_action._activeAction._verbId) {
+			case 1:
+			case 7:
+			case 8:
+			case 9:
+			case 13:
+			case 15:
+			case 19:
+			case 20:
+			case 21:
+			case 22:
+				_brieStatus = 0;
+				break;
+
+			default:
+				_florStatus = 0;
+				break;
+			}
+		}
+		break;
+
+	default:
+		break;
+	}
+
+	if (!heroFl && !_raoulDown)
+		_vm->_gameConv->setHeroTrigger(75);
+
+	if (!interlocutorFl)
+		_vm->_gameConv->setInterlocutorTrigger(80);
+
+	_raoulCount = 0;
+}
+
+void Scene204::handleBrieAnimation() {
+	if (_scene->_animation[_globals._animationIndexes[0]]->getCurrentFrame() == _brieFrame)
+		return;
+
+	_brieFrame = _scene->_animation[_globals._animationIndexes[0]]->getCurrentFrame();
+	int resetFrame = -1;
+	int random;
+
+	switch (_brieFrame) {
+	case 80:
+		_vm->_gameConv->release();
+		_raoulStatus = 2;
+		break;
+
+	case 173:
+		_game._player._stepEnabled = true;
+		_vm->_dialogs->show(20430);
+		_game._player._stepEnabled = false;
+		break;
+
+	case 174:
+		_raoulStatus = 3;
+		resetFrame = 173;
+		break;
+
+	case 1:
+	case 22:
+	case 49:
+	case 7:
+	case 13:
+	case 33:
+	case 61:
+		switch (_brieStatus) {
+		case 0:
+			random = _vm->getRandomNumber(1, 4);
+			_brieStatus = 2;
+			break;
+
+		case 1:
+			random = 5;
+			break;
+
+		case 3:
+			random = 6;
+			break;
+
+		case 4:
+			random = 7;
+			break;
+
+		default:
+			random = 8;
+			break;
+		}
+
+		switch (random) {
+		case 1:
+			resetFrame = 1;
+			_brieStatus = 2;
+			break;
+
+		case 2:
+			resetFrame = 7;
+			_brieStatus = 2;
+			break;
+
+		case 3:
+			resetFrame = 22;
+			_brieStatus = 2;
+			break;
+
+		case 4:
+			resetFrame = 49;
+			_brieStatus = 2;
+			break;
+
+		case 5:
+			resetFrame = 13;
+			_brieStatus = 2;
+			break;
+
+		case 6:
+			resetFrame = 61;
+			break;
+
+		default:
+			resetFrame = 0;
+			break;
+		}
+		break;
+	}
+
+	if (resetFrame >= 0) {
+		_scene->setAnimFrame(_globals._animationIndexes[0], resetFrame);
+		_brieFrame = resetFrame;
+	}
+}
+
+void Scene204::handleFlorAnimation() {
+	if (_scene->_animation[_globals._animationIndexes[1]]->getCurrentFrame() == _florFrame)
+		return;
+
+	_florFrame = _scene->_animation[_globals._animationIndexes[1]]->getCurrentFrame();
+	int resetFrame = -1;
+	int random;
+
+	switch (_florFrame) {
+	case 80:
+		_scene->setAnimFrame(_globals._animationIndexes[2], 1);
+		_game.syncTimers(3, _globals._animationIndexes[2], 3, _globals._animationIndexes[1]);
+		_raoulStatus = 1;
+		break;
+
+	case 86:
+		_vm->_gameConv->release();
+		break;
+
+	case 173:
+		resetFrame = 172;
+		break;
+
+	case 1:
+	case 2:
+	case 3:
+		if (_raoulDown) {
+			random = _vm->getRandomNumber(1, 1000);
+			if (random < 300)
+				resetFrame = 0;
+			else if (random < 600)
+				resetFrame = 1;
+			else
+				resetFrame = 2;
+		}
+		break;
+
+	case 21:
+	case 180:
+		_vm->_gameConv->release();
+		break;
+
+	case 22:
+	case 50:
+	case 30:
+	case 174:
+	case 175:
+	case 176:
+	case 181:
+		switch (_florStatus) {
+		case 0:
+			random = 1;
+			_florStatus = 2;
+			break;
+
+		case 1:
+			random = 2;
+			_florStatus = 2;
+			break;
+
+		case 3:
+			random = 3;
+			break;
+
+		case 5:
+			random = 4;
+			_florStatus = 2;
+			break;
+
+		case 4:
+			random = _vm->getRandomNumber(5, 7);
+			++_raoulCount;
+			if (_raoulCount > 17) {
+				_florStatus = 2;
+				random = 8;
+			}
+			break;
+
+		default:
+			random = 7;
+			break;
+		}
+
+		switch (random) {
+		case 1:
+			resetFrame = 22;
+			break;
+
+		case 2:
+			resetFrame = 30;
+			break;
+
+		case 3:
+			resetFrame = 53;
+			break;
+
+		case 4:
+			resetFrame = 176;
+			break;
+
+		case 5:
+			resetFrame = 173;
+			break;
+
+		case 6:
+			resetFrame = 174;
+			break;
+
+		case 7:
+			resetFrame = 175;
+			break;
+
+		default:
+			resetFrame = 21;
+			break;
+		}
+		break;
+	}
+
+	if (resetFrame >= 0) {
+		_scene->setAnimFrame(_globals._animationIndexes[1], resetFrame);
+		_florFrame = resetFrame;
+	}
+}
+
+void Scene204::handleRaoulAnimation() {
+	if (_scene->_animation[_globals._animationIndexes[2]]->getCurrentFrame() == _raoulFrame)
+		return;
+
+	_raoulFrame = _scene->_animation[_globals._animationIndexes[2]]->getCurrentFrame();
+	int resetFrame = -1;
+	int random;
+
+	switch (_raoulFrame) {
+	case 1:
+		if (_raoulStatus == 4)
+			resetFrame = 0;
+
+		break;
+
+	case 10:
+	case 14:
+	case 20:
+	case 258:
+		switch (_raoulStatus) {
+		case 0:
+			random = _vm->getRandomNumber(1, 2);
+			_raoulStatus = 1;
+			break;
+
+		case 2:
+			random = 3;
+			break;
+
+		case 5:
+			random = 4;
+			break;
+
+		default:
+			random = 5;
+			break;
+		}
+
+		switch (random) {
+		case 1:
+			resetFrame = 10;
+			_raoulStatus = 1;
+			break;
+
+		case 2:
+			resetFrame = 14;
+			_raoulStatus = 1;
+			break;
+
+		case 3:
+			resetFrame = 20;
+			break;
+
+		case 4:
+			resetFrame = 253;
+			_raoulStatus = 1;
+			break;
+
+		default:
+			resetFrame = 9;
+			break;
+		}
+		break;
+
+	case 31:
+		if (_raoulStatus == 3)
+			resetFrame = 33;
+		else
+			resetFrame = 30;
+
+		break;
+
+	case 33:
+		resetFrame = 32;
+		break;
+
+	case 114:
+		_scene->deleteSequence(_globals._sequenceIndexes[2]);
+		_game._objects.addToInventory(OBJ_BOOK);
+		break;
+
+	case 213:
+		_game._player._stepEnabled = true;
+		_vm->_dialogs->showItem(OBJ_BOOK, 20431, 0);
+		_game._player._stepEnabled = false;
+		break;
+
+	case 229:
+		_game._player._stepEnabled = true;
+		_vm->_dialogs->showItem(OBJ_BOOK, 20432, 0);
+		_game._player._stepEnabled = false;
+		break;
+
+	case 237:
+		_scene->freeAnimation(_globals._animationIndexes[1]);
+		_scene->freeAnimation(_globals._animationIndexes[0]);
+		_anim0ActvFl = false;
+		_anim1ActvFl = false;
+		_anim3ActvFl = true;
+		_globals._animationIndexes[3] = _scene->loadAnimation(formAnimName('e', 1), 0);
+		_scene->loadSpeech(9);
+		break;
+
+	case 253:
+		resetFrame = 244;
+		break;
+
+	case 257:
+		_vm->_gameConv->release();
+		break;
+	}
+
+	if (resetFrame >= 0) {
+		_scene->setAnimFrame(_globals._animationIndexes[2], resetFrame);
+		_raoulFrame = resetFrame;
+	}
+}
+
+void Scene204::handleEndAnimation() {
+	if ((_scene->_animation[_globals._animationIndexes[3]]->getCurrentFrame() == 15) && !_skip3Fl) {
+		_scene->playSpeech(9);
+		_skip3Fl = true;
+	}
+
+	if ((_scene->_animation[_globals._animationIndexes[3]]->getCurrentFrame() == 26) && !_skip2Fl) {
+		_scene->_sequences.setTimingTrigger(300, 85);
+		_scene->_kernelMessages.add(Common::Point(123, 137), 0x1110, 0, 0, 360, _game.getQuote(0x75));
+		_skip2Fl = true;
+	}
+
+	if (_scene->_animation[_globals._animationIndexes[3]]->getCurrentFrame() == 27)
+		_scene->setAnimFrame(_globals._animationIndexes[3], 12);
 }
 
 /*------------------------------------------------------------------------*/
