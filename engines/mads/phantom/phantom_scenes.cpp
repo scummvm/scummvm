@@ -97,7 +97,7 @@ SceneLogic *SceneFactory::createScene(MADSEngine *vm) {
 
 	// Scene group #3 (catwalks, chandelier, lake / catacombs entrance)
 	case 301:	// catwalk #1 above stage
-		return new DummyScene(vm);	// TODO
+		return new Scene301(vm);
 	case 302:	// catwalk #2 above stage
 		return new DummyScene(vm);	// TODO
 	case 303:	// above chandelier
