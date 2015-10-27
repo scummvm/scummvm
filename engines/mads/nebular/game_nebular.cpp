@@ -350,7 +350,7 @@ void GameNebular::setSectionHandler() {
 
 void GameNebular::checkShowDialog() {
 	// Loop for showing dialogs, if any need to be shown
-	if (_vm->_dialogs->_pendingDialog && (_player._stepEnabled || _winStatus) 
+	if (_vm->_dialogs->_pendingDialog && (_player._stepEnabled || _winStatus)
 			&& !_globals[kCopyProtectFailed]) {
 		_player.releasePlayerSprites();
 

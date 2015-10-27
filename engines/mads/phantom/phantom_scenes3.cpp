@@ -511,7 +511,7 @@ void Scene302::actions() {
 			}
 
 			_game._player._stepEnabled = false;
-			_game._player._visible = false; 
+			_game._player._visible = false;
 			_globals._sequenceIndexes[1] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[1], true, 5, 2);
 			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[1], 1, 5);
 			_scene->_sequences.setSeqPlayer(_globals._sequenceIndexes[1], true);
@@ -527,7 +527,7 @@ void Scene302::actions() {
 			break;
 
 		case 2:
-			_game.syncTimers(2, 0, 1, _globals._sequenceIndexes[1]); 
+			_game.syncTimers(2, 0, 1, _globals._sequenceIndexes[1]);
 			_game._player._visible = true;
 			_scene->_sequences.setTimingTrigger(20, 3);
 			break;

@@ -8632,7 +8632,7 @@ void Scene113::handleRaoulAnimation() {
 
 	if (_scene->_animation[_globals._animationIndexes[3]]->getCurrentFrame() == _raoulFrame)
 		return;
-		
+
 	_raoulFrame = _scene->_animation[_globals._animationIndexes[3]]->getCurrentFrame();
 	int resetFrame = -1;
 
@@ -9233,7 +9233,7 @@ void Scene114::actions() {
 		case (0):
 			_globals[kPlayerScore] += 5;
 			_game._player._stepEnabled = false;
-			_game._player._visible = false;  
+			_game._player._visible = false;
 			_globals._sequenceIndexes[1] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[1], false, 6, 2);
 			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[1], 1, 3);
 			_scene->_sequences.setSeqPlayer(_globals._sequenceIndexes[1], true);
@@ -9249,7 +9249,7 @@ void Scene114::actions() {
 			break;
 
 		case 2:
-			_game.syncTimers(2, 0, 1, _globals._sequenceIndexes[1]); 
+			_game.syncTimers(2, 0, 1, _globals._sequenceIndexes[1]);
 			_game._player._visible = true;
 			_scene->_sequences.setTimingTrigger(20, 3);
 			break;
@@ -9511,7 +9511,7 @@ void Scene150::enter() {
 		_globals._animationIndexes[0] = _scene->loadAnimation(formAnimName('l', 1), 1);
 	else if (_scene->_priorSceneId == 203) {
 		_globals._animationIndexes[0] = _scene->loadAnimation(formAnimName('f', 1), 2);
-		sceneEntrySound();  
+		sceneEntrySound();
 	} else if (_scene->_priorSceneId == 306)
 		_globals._animationIndexes[0] = _scene->loadAnimation(formAnimName('e', 1), 4);
 	else if (_scene->_priorSceneId == 208)

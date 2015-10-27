@@ -83,7 +83,7 @@ Player::Player(MADSEngine *vm)
 	_commandsAllowed = false;
 	_enableAtTarget = false;
 	_walkTrigger = 0;
-	 
+
 	Common::fill(&_stopWalkerList[0], &_stopWalkerList[12], 0);
 	Common::fill(&_stopWalkerTrigger[0], &_stopWalkerTrigger[12], 0);
 	Common::fill(&_spriteSetsPresent[0], &_spriteSetsPresent[PLAYER_SPRITES_FILE_COUNT], false);
@@ -247,8 +247,8 @@ void Player::updateFrame() {
 	Scene &scene = _vm->_game->_scene;
 	assert(scene._sprites[idx] != nullptr);
 	SpriteAsset &spriteSet = *scene._sprites[idx];
-	
-	// WORKAROUND: Certain cutscenes set up player sprites that don't have any 
+
+	// WORKAROUND: Certain cutscenes set up player sprites that don't have any
 	// character info. In such cases, simply ignore player updates
 	if (!spriteSet._charInfo)
 		return;

@@ -2089,7 +2089,7 @@ void Scene511::actions() {
 		} else {
 			_vm->_dialogs->show(51130);
 		}
-	} else if (_action.isAction(VERB_TIE, NOUN_FISHING_LINE, NOUN_BOAT) || 
+	} else if (_action.isAction(VERB_TIE, NOUN_FISHING_LINE, NOUN_BOAT) ||
 			_action.isAction(VERB_ATTACH, NOUN_FISHING_LINE, NOUN_BOAT)) {
 		if (_globals[kBoatRaised])
 			_vm->_dialogs->show(51131);
