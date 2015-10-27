@@ -1347,7 +1347,6 @@ void Scene202::handleUsherAnimation() {
 	}
 }
 
-
 void Scene202::handleDegasAnimation() {
 	if (_scene->_animation[_globals._animationIndexes[1]]->getCurrentFrame() == _degasFrame)
 		return;
@@ -2150,8 +2149,6 @@ void Scene203::handleBrieConversation() {
 	_brieCount = 0;
 	_raoulCount = 0;
 }
-
-
 
 void Scene203::handleRichardConversation() {
 	bool interlocutorFl = false;
@@ -2972,7 +2969,6 @@ void Scene203::handleRichardAnimation() {
 	}
 }
 
-
 void Scene203::handleRaoulAnimation() {
 	if (_scene->_animation[_globals._animationIndexes[1]]->getCurrentFrame() == _raoulFrame)
 		return;
@@ -3165,7 +3161,6 @@ void Scene203::handleRaoulAnimation() {
 		_raoulFrame = resetFrame;
 	}
 }
-
 
 void Scene203::handleDaaeAnimation() {
 	if (_scene->_animation[_globals._animationIndexes[3]]->getCurrentFrame() == _daaeFrame)
@@ -5489,7 +5484,6 @@ void Scene205::handleRichardAnimation() {
 	}
 }
 
-
 void Scene205::handleGiryAnimation() {
 	if (_scene->_animation[_globals._animationIndexes[1]]->getCurrentFrame() == _giryFrame)
 		return;
@@ -6052,7 +6046,6 @@ void Scene206::actions() {
 		}
 	}
 
-
 	if (_action.isAction(VERB_WALK_BEHIND, NOUN_PANEL) || _action.isAction(VERB_OPEN, NOUN_PANEL)
 	 || ((_game._trigger >= 70) && (_game._trigger < 77))) {
 		if (_globals[kPanelIn206] == 3) {
@@ -6314,7 +6307,7 @@ void Scene206::actions() {
 			_globals[kPlayerScoreFlags] |= 8;
 			_globals[kPlayerScore] += 5;
 		}
-		_scene->_sequences.setTimingTrigger(15, 96); /* a slight delay so anim totally ends */
+		_scene->_sequences.setTimingTrigger(15, 96);
 
 		_action._inProgress = false;
 		return;
@@ -6341,6 +6334,194 @@ void Scene206::preActions() {
 
 	if (_action.isObject(NOUN_LEFT_COLUMN) && (_globals[kPanelIn206] == 0))
 		_game._player.walk(Common::Point(103, 137), FACING_NORTHWEST);
+}
+
+/*------------------------------------------------------------------------*/
+
+Scene207::Scene207(MADSEngine *vm) : Scene2xx(vm) {
+	_skip1Fl = false;
+	_anim0ActvFl = false;
+}
+
+void Scene207::synchronize(Common::Serializer &s) {
+	Scene2xx::synchronize(s);
+
+	s.syncAsByte(_skip1Fl);
+	s.syncAsByte(_anim0ActvFl);
+}
+
+void Scene207::setup() {
+	setPlayerSpritesPrefix();
+	setAAName();
+}
+
+void Scene207::enter() {
+	_scene->loadSpeech(2);
+	_skip1Fl = false;
+	_anim0ActvFl = false;
+
+	_globals._spriteIndexes[0] = _scene->_sprites.addSprites(formAnimName('a', 0), false);
+	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('c', 0), false);
+	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('x', 0), false);
+
+	_globals._sequenceIndexes[1] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[1], false, 1);
+	_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 10);
+
+	if ((_scene->_priorSceneId == 205) || (_scene->_priorSceneId != RETURNING_FROM_LOADING)) {
+		_game._player._playerPos = Common::Point(159, 147);
+		_game._player._facing = FACING_NORTH;
+	}
+
+	sceneEntrySound();
+}
+
+void Scene207::step() {
+	if (_anim0ActvFl && !_skip1Fl) {
+		if (_scene->_animation[_globals._animationIndexes[0]]->getCurrentFrame() == 6) {
+			if (_vm->_sound->_preferRoland)
+				_vm->_sound->command(69);
+			else
+				_scene->playSpeech(2);
+
+			_skip1Fl = true;
+		}
+	}
+}
+
+void Scene207::actions() {
+	if (_action.isAction(VERB_TAKE, NOUN_SEAT)) {
+		switch (_game._trigger) {
+		case 0:
+			_globals[kPlayerScore] += 5;
+			_game._player._stepEnabled = false;
+			_game._player._visible = false;
+			_vm->_sound->command(3);
+			_globals._sequenceIndexes[0] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[0], false, 7, 1);
+			_scene->_sequences.setDepth(_globals._sequenceIndexes[0], 10);
+			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[0], -1, -2);
+			_scene->_sequences.setTrigger(_globals._sequenceIndexes[0], 0, 0, 1);
+			break;
+
+		case 1:
+			_globals._sequenceIndexes[0] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[0], false, -2);
+			_scene->_sequences.setDepth(_globals._sequenceIndexes[0], 10);
+			_scene->_sequences.setTimingTrigger(120, 2);
+			_scene->_sequences.setTimingTrigger(240, 3);
+			break;
+
+		case 2:
+			_globals._sequenceIndexes[2] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[2], false, 6, 1);
+			_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 1);
+			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[2], -1, -2);
+			_scene->_sequences.setTrigger(_globals._sequenceIndexes[2], 0, 0, 4);
+			break;
+
+		case 3:
+			_globals._animationIndexes[0] = _scene->loadAnimation(formAnimName('s', 1), 5);
+			_anim0ActvFl = true;
+			_scene->deleteSequence(_globals._sequenceIndexes[1]);
+			break;
+
+		case 4:
+			_globals._sequenceIndexes[2] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[2], false, -2);
+			_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 1);
+			break;
+
+		case 5:
+			_scene->_nextSceneId = 208;
+			break;
+
+		default:
+			break;
+		}
+		_action._inProgress = false;
+		return;
+	}
+
+	if (_action.isAction(VERB_EXIT_TO, NOUN_LOGE_CORRIDOR)) {
+		_scene->_nextSceneId = 205;
+		_action._inProgress = false;
+		return;
+	}
+
+	if (_action._lookFlag) {
+		_vm->_dialogs->show(20710);
+		_action._inProgress = false;
+		return;
+	}
+
+	if (_action.isAction(VERB_LOOK) || _action.isAction(VERB_LOOK_AT)) {
+		if (_action.isObject(NOUN_WALL)) {
+			_vm->_dialogs->show(20711);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isObject(NOUN_FLOOR)) {
+			_vm->_dialogs->show(20712);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isObject(NOUN_LEFT_COLUMN)) {
+			_vm->_dialogs->show(20713);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isObject(NOUN_RIGHT_COLUMN)) {
+			_vm->_dialogs->show(20714);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isObject(NOUN_RAIL)) {
+			_vm->_dialogs->show(20715);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isObject(NOUN_SEAT)) {
+			_vm->_dialogs->show(20716);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isObject(NOUN_LOGE_CORRIDOR)) {
+			_vm->_dialogs->show(20717);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isObject(NOUN_STAGE)) {
+			_vm->_dialogs->show(20718);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isObject(NOUN_HOUSE)) {
+			_vm->_dialogs->show(20719);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isObject(NOUN_CEILING)) {
+			_vm->_dialogs->show(20720);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isObject(NOUN_HOUSE_LIGHT)) {
+			_vm->_dialogs->show(20721);
+			_action._inProgress = false;
+			return;
+		}
+	}
+}
+
+void Scene207::preActions() {
+	if (_action.isAction(VERB_TAKE, NOUN_SEAT))
+		_game._player.walk(Common::Point(139, 124), FACING_NORTH);
 }
 
 /*------------------------------------------------------------------------*/
