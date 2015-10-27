@@ -50,7 +50,7 @@ protected:
 	 */
 	void setPlayerSpritesPrefix();
 public:
-	Scene2xx(MADSEngine *vm) : PhantomScene(vm) {}
+	Scene2xx(MADSEngine *vm) : PhantomScene(vm) { _game._player._scalingVelocity = true; }
 };
 
 class Scene201 : public Scene2xx {
