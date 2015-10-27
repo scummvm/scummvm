@@ -254,63 +254,75 @@ void Scene301::actions() {
 		default:
 			break;
 		}
-		goto handled;
+		_action._inProgress = false;
+		return;
 	}
 
 	if (_action._lookFlag) {
 		_vm->_dialogs->show(30110);
-		goto handled;
+		_action._inProgress = false;
+		return;
 	}
 
 	if (_action.isAction(VERB_LOOK) || _action.isAction(VERB_LOOK_AT)) {
 		if (_action.isObject(NOUN_GRID)) {
 			_vm->_dialogs->show(30111);
-			goto handled;
+			_action._inProgress = false;
+			return;
 		}
 
 		if (_action.isObject(NOUN_CATWALK)) {
 			_vm->_dialogs->show(30112);
-			goto handled;
+			_action._inProgress = false;
+			return;
 		}
 
 		if (_action.isObject(NOUN_SIDE_WALL)) {
 			_vm->_dialogs->show(30113);
-			goto handled;
+			_action._inProgress = false;
+			return;
 		}
 
 		if (_action.isObject(NOUN_BACK_WALL)) {
 			_vm->_dialogs->show(30114);
-			goto handled;
+			_action._inProgress = false;
+			return;
 		}
 
 		if (_action.isObject(NOUN_SUPPORT)) {
 			_vm->_dialogs->show(30115);
-			goto handled;
+			_action._inProgress = false;
+			return;
 		}
 
 		if (_action.isObject(NOUN_ACT_CURTAIN)) {
 			_vm->_dialogs->show(30116);
-			goto handled;
+			_action._inProgress = false;
+			return;
 		}
 
 		if (_action.isObject(NOUN_HOUSE)) {
 			_vm->_dialogs->show(30117);
-			goto handled;
+			_action._inProgress = false;
+			return;
 		}
 
 		if (_action.isObject(NOUN_OTHER_CATWALK)) {
 			_vm->_dialogs->show(30118);
-			goto handled;
+			_action._inProgress = false;
+			return;
 		}
 
 		if (_action.isObject(NOUN_GRIDWORK)) {
 			_vm->_dialogs->show(30119);
-			goto handled;
+			_action._inProgress = false;
+			return;
 		}
 
 		if (_action.isObject(NOUN_BEAM_POSITION)) {
 			_vm->_dialogs->show(30120);
-			goto handled;
+			_action._inProgress = false;
+			return;
 		}
 
 		if (_action.isObject(NOUN_LIGHTING_INSTRUMENT)) {
@@ -319,7 +331,8 @@ void Scene301::actions() {
 			else
 				_vm->_dialogs->show(30122);
 
-			goto handled;
+			_action._inProgress = false;
+			return;
 		}
 
 		if (_action.isObject(NOUN_TARP)) {
@@ -328,107 +341,315 @@ void Scene301::actions() {
 			else
 				_vm->_dialogs->show(30140);
 
-			goto handled;
+			_action._inProgress = false;
+			return;
 		}
 
 		if (_action.isObject(NOUN_COUNTERWEIGHT_SYSTEM)) {
 			_vm->_dialogs->show(30124);
-			goto handled;
+			_action._inProgress = false;
+			return;
 		}
 
 		if (_action.isObject(NOUN_SANDBAG) && (_action._mainObjectSource == CAT_HOTSPOT)) {
 			_vm->_dialogs->show(30125);
-			goto handled;
+			_action._inProgress = false;
+			return;
 		}
 
 		if (_action.isObject(NOUN_BATTEN)) {
 			_vm->_dialogs->show(30126);
-			goto handled;
+			_action._inProgress = false;
+			return;
 		}
 
 		if (_action.isObject(NOUN_STOOL)) {
 			_vm->_dialogs->show(30127);
-			goto handled;
+			_action._inProgress = false;
+			return;
 		}
 
 		if (_action.isObject(NOUN_HEMP)) {
 			_vm->_dialogs->show(30128);
-			goto handled;
+			_action._inProgress = false;
+			return;
 		}
 
 		if (_action.isObject(NOUN_CIRCULAR_STAIRCASE)) {
 			_vm->_dialogs->show(30129);
-			goto handled;
+			_action._inProgress = false;
+			return;
 		}
 
 		if (_action.isObject(NOUN_CATWALK_OVER_HOUSE)) {
 			_vm->_dialogs->show(30130);
-			goto handled;
+			_action._inProgress = false;
+			return;
 		}
 
 		if (_action.isObject(NOUN_STAIRCASE_POST)) {
 			_vm->_dialogs->show(30131);
-			goto handled;
+			_action._inProgress = false;
+			return;
 		}
 
 		if (_action.isObject(NOUN_RAILING)) {
 			_vm->_dialogs->show(30132);
-			goto handled;
+			_action._inProgress = false;
+			return;
 		}
 
 		if (_action.isObject(NOUN_CYCLORAMA)) {
 			_vm->_dialogs->show(30133);
-			goto handled;
+			_action._inProgress = false;
+			return;
 		}
 
 		if (_action.isObject(NOUN_BIG_PROP)) {
 			_vm->_dialogs->show(30134);
-			goto handled;
+			_action._inProgress = false;
+			return;
 		}
 
 		if (_action.isObject(NOUN_PROSCENIUM_ARCH)) {
 			_vm->_dialogs->show(30135);
-			goto handled;
+			_action._inProgress = false;
+			return;
 		}
 
 		if (_action.isObject(NOUN_CABLE)) {
 			_vm->_dialogs->show(30136);
-			goto handled;
+			_action._inProgress = false;
+			return;
 		}
 	}
 
 	if (_action.isAction(VERB_TAKE, NOUN_HEMP)) {
 		_vm->_dialogs->show(30138);
-		goto handled;
+		_action._inProgress = false;
+		return;
 	}
 
 	if (_action.isAction(VERB_PULL, NOUN_HEMP)) {
 		_vm->_dialogs->show(30141);
-		goto handled;
+		_action._inProgress = false;
+		return;
 	}
 
 	if (_action.isAction(VERB_TAKE, NOUN_SANDBAG) && (_action._mainObjectSource == CAT_HOTSPOT)) {
 		_vm->_dialogs->show(30139);
-		goto handled;
+		_action._inProgress = false;
+		return;
 	}
 
 	if (_action.isAction(VERB_TAKE, NOUN_TARP)) {
 		_vm->_dialogs->show(30142);
-		goto handled;
+		_action._inProgress = false;
+		return;
 	}
-
-	goto done;
-
-handled:
-	_action._inProgress = false;
-
-done:
-	;
 }
 
 void Scene301::preActions() {
 	if (_action.isAction(VERB_EXIT_TO, NOUN_CATWALK_OVER_HOUSE))
 		_game._player._walkOffScreenSceneId = 302;
+}
+
+/*------------------------------------------------------------------------*/
+
+Scene302::Scene302(MADSEngine *vm) : Scene3xx(vm) {
+}
+
+void Scene302::synchronize(Common::Serializer &s) {
+	Scene3xx::synchronize(s);
+}
+
+void Scene302::setup() {
+	setPlayerSpritesPrefix();
+	setAAName();
+}
+
+void Scene302::enter() {
+	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('p', 0), false);
+	_globals._spriteIndexes[1] = _scene->_sprites.addSprites("*RRD_9", false);
+
+	if (_game._objects.isInRoom(OBJ_BLUE_FRAME)) {
+		_globals._sequenceIndexes[2] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[2], false, 1);
+		_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 14);
+	} else
+		_scene->_hotspots.activate(NOUN_BLUE_FRAME, false);
+
+	if (_globals[kCurrentYear] == 1993) {
+		_globals._spriteIndexes[0] = _scene->_sprites.addSprites(formAnimName('z', -1), false);
+		_scene->drawToBackground(_globals._spriteIndexes[0], 1, Common::Point(-32000, -32000), 0, 100);
+	}
+
+	if (_scene->_priorSceneId == 303)
+		_game._player.firstWalk(Common::Point(-20, 134), FACING_WEST, Common::Point(15, 134), FACING_EAST, true);
+	else if ((_scene->_priorSceneId == 301) || (_scene->_priorSceneId != RETURNING_FROM_LOADING))
+		_game._player.firstWalk(Common::Point(340, 134), FACING_WEST, Common::Point(297, 134), FACING_WEST, true);
+
+	sceneEntrySound();
+}
+
+void Scene302::step() {
+}
+
+void Scene302::actions() {
+	if (_action.isAction(VERB_TAKE, NOUN_BLUE_FRAME) && (_game._objects.isInRoom(OBJ_BLUE_FRAME) || _game._trigger)) {
+		switch (_game._trigger) {
+		case (0):
+			if (_globals[kCurrentYear] == 1881) {
+				int count = 0;
+				if (_game._objects.isInInventory(OBJ_YELLOW_FRAME))
+					++count;
+				if (_game._objects.isInInventory(OBJ_RED_FRAME))
+					++count;
+				if (_game._objects.isInInventory(OBJ_GREEN_FRAME))
+					++count;
+				if (count < 3)
+					_globals[kPlayerScore] += 5;
+			}
+
+			_game._player._stepEnabled = false;
+			_game._player._visible = false; 
+			_globals._sequenceIndexes[1] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[1], true, 5, 2);
+			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[1], 1, 5);
+			_scene->_sequences.setSeqPlayer(_globals._sequenceIndexes[1], true);
+			_scene->_sequences.setTrigger(_globals._sequenceIndexes[1], 2, 5, 1);
+			_scene->_sequences.setTrigger(_globals._sequenceIndexes[1], 0, 0, 2);
+			break;
+
+		case 1:
+			_scene->deleteSequence(_globals._sequenceIndexes[2]);
+			_scene->_hotspots.activate(NOUN_BLUE_FRAME, false);
+			_game._objects.addToInventory(OBJ_BLUE_FRAME);
+			_vm->_sound->command(26);
+			break;
+
+		case 2:
+			_game.syncTimers(2, 0, 1, _globals._sequenceIndexes[1]); 
+			_game._player._visible = true;
+			_scene->_sequences.setTimingTrigger(20, 3);
+			break;
+
+		case 3:
+			if (_globals[kCurrentYear] == 1881)
+				_vm->_dialogs->showItem(OBJ_BLUE_FRAME, 844, 0);
+			else
+				_vm->_dialogs->showItem(OBJ_BLUE_FRAME, 817, 0);
+
+			_game._player._stepEnabled = true;
+			break;
+
+		default:
+			break;
+		}
+		_action._inProgress = false;
+		return;
+	}
+
+	if (_action._lookFlag) {
+		_vm->_dialogs->show(30210);
+		_action._inProgress = false;
+		return;
+	}
+
+	if (_action.isAction(VERB_LOOK) || _action.isAction(VERB_LOOK_AT)) {
+		if (_action.isObject(NOUN_CATWALK)) {
+			_vm->_dialogs->show(30211);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isObject(NOUN_GRID)) {
+			_vm->_dialogs->show(30212);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isObject(NOUN_HEMP)) {
+			_vm->_dialogs->show(30213);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isObject(NOUN_SIDE_WALL)) {
+			_vm->_dialogs->show(30214);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isObject(NOUN_CATWALK)) {
+			_vm->_dialogs->show(30215);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isObject(NOUN_RAILING)) {
+			_vm->_dialogs->show(30216);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isObject(NOUN_BEAM_POSITION)) {
+			_vm->_dialogs->show(30217);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isObject(NOUN_LIGHTING_INSTRUMENT)) {
+			if (_globals[kCurrentYear] == 1993)
+				_vm->_dialogs->show(30218);
+			else
+				_vm->_dialogs->show(30219);
+
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isObject(NOUN_BLUE_FRAME) && _game._objects.isInRoom(OBJ_BLUE_FRAME)) {
+			if (_globals[kCurrentYear] == 1993)
+				_vm->_dialogs->show(30220);
+			else
+				_vm->_dialogs->show(30221);
+
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isObject(NOUN_SUPPORT)) {
+			_vm->_dialogs->show(30222);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isObject(NOUN_OTHER_CATWALK)) {
+			_vm->_dialogs->show(30223);
+			_action._inProgress = false;
+			return;
+		}
+	}
+
+	if (_action.isAction(VERB_TAKE, NOUN_HEMP)) {
+		_vm->_dialogs->show(30224);
+		_action._inProgress = false;
+		return;
+	}
+
+	if (_action.isAction(VERB_PULL, NOUN_HEMP)) {
+		_vm->_dialogs->show(30141);
+		_action._inProgress = false;
+		return;
+	}
+}
+
+void Scene302::preActions() {
+	if (_action.isAction(VERB_EXIT_TO, NOUN_CATWALK)) {
+		if (_scene->_customDest.x > 160)
+			_game._player._walkOffScreenSceneId = 301;
+		else
+			_game._player._walkOffScreenSceneId = 303;
+	}
 }
 
 /*------------------------------------------------------------------------*/
