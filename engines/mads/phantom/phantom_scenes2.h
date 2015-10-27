@@ -253,6 +253,41 @@ public:
 	virtual void preActions();
 	virtual void actions();
 };
+
+class Scene208 : public Scene2xx {
+private:
+	bool _skip1Fl;
+	bool _skip2Fl;
+
+	int _topLeftPeopleFrame;
+	int _topRightPeopleFrame;
+	int _middleLeftPeopleFrame;
+	int _centerPeopleFrame;
+	int _middleRightPeopleFrame;
+	int _bottomLeftPeopleFrame;
+	int _bottomMiddlePeopleFrame;
+	int _bottomRightPeopleFrame;
+	int _direction;
+
+	void animateTopLeftPeople();
+	void animateTopRightPeople();
+	void animateMiddleLeftPeople();
+	void animateCenterPeople();
+	void animateMiddleRightPeople();
+	void animateBottomLeftPeople();
+	void animateBottomMiddlePeople();
+	void animateBottomRightPeople();
+
+public:
+	Scene208(MADSEngine *vm);
+	virtual void synchronize(Common::Serializer &s);
+
+	virtual void setup();
+	virtual void enter();
+	virtual void step();
+	virtual void preActions();
+	virtual void actions();
+};
 } // End of namespace Phantom
 } // End of namespace MADS
 

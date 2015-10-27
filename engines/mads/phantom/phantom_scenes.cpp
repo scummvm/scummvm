@@ -90,7 +90,7 @@ SceneLogic *SceneFactory::createScene(MADSEngine *vm) {
 	case 207:	// balcony box #2
 		return new Scene207(vm);
 	case 208:	// stage and balcony view
-		return new DummyScene(vm);	// TODO
+		return new Scene208(vm);
 	case 250:	// cutscene
 		return new DummyScene(vm);	// TODO
 
