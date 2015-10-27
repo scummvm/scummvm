@@ -92,7 +92,7 @@ SceneLogic *SceneFactory::createScene(MADSEngine *vm) {
 	case 208:	// stage and balcony view
 		return new Scene208(vm);
 	case 250:	// cutscene
-		return new DummyScene(vm);	// TODO
+		return new Scene250(vm);
 
 	// Scene group #3 (catwalks, chandelier, lake / catacombs entrance)
 	case 301:	// catwalk #1 above stage

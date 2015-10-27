@@ -6906,5 +6906,88 @@ void Scene208::animateBottomRightPeople() {
 
 /*------------------------------------------------------------------------*/
 
+Scene250::Scene250(MADSEngine *vm) : Scene2xx(vm) {
+}
+
+void Scene250::synchronize(Common::Serializer &s) {
+	Scene2xx::synchronize(s);
+}
+
+void Scene250::setup() {
+	setPlayerSpritesPrefix();
+	setAAName();
+}
+
+void Scene250::enter() {
+	warning("TODO: Switch to letter box view. See definition of MADS_MENU_Y");
+
+	_game._player._stepEnabled = false;
+	_game._player._visible    = false;
+
+	_game.loadQuoteSet(0x36, 0x37, 0x38, 0x39, 0x3A, 0x3B, 0x3C, 0x3D, 0x3E, 0x3F, 0x40, 0x41, 0);
+	_globals._animationIndexes[0] = _scene->loadAnimation("*RM150Q1", 1);
+}
+
+void Scene250::step() {
+	if (_game._trigger == 1)
+		_scene->_sequences.setTimingTrigger(12, 2);
+
+	if (_game._trigger == 2) {
+		int y = 68;
+
+		_scene->_kernelMessages.add(Common::Point(160, y), 0x1110, 0x20, 0, 900, _game.getQuote(0x36));
+		y += 16;
+
+		if (_globals[kPlayerScore] > 250)
+			_globals[kPlayerScore] = 250;
+
+		Common::String message = Common::String::format("%d", _globals[kPlayerScore]);
+		message += " ";
+		message += _game.getQuote(0x37);
+		message += " 250 ";
+		message += _game.getQuote(0x38);
+
+		_scene->_kernelMessages.add(Common::Point(160, y), 0x1110, 0x20, 3, 900, message);
+		y += 16;
+
+		_scene->_kernelMessages.add(Common::Point(160, y), 0x1110, 0x20, 0, 900, _game.getQuote(0x39));
+		y += 16;
+
+		int score = _globals[kPlayerScore];
+		int messageId;
+
+		if (score <= 25)
+			messageId = 0x3A;    /* Stage sweeper */
+		else if (score <= 50)
+			messageId = 0x3B;    /* Dresser */
+		else if (score <= 75)
+			messageId = 0x3C;    /* Usher */
+		else if (score <= 100)
+			messageId = 0x3D;    /* Stagehand */
+		else if (score <= 150)
+			messageId = 0x3E;    /* Chorus Member */
+		else if (score <= 200)
+			messageId = 0x3F;    /* Supporting Player */
+		else if (score <= 249)
+			messageId = 0x40;    /* Star Player */
+		else
+			messageId = 0x41;    /* Director */
+
+		_scene->_kernelMessages.add(Common::Point(160, y), 0x1110, 0x20, 0, 900, _game.getQuote(messageId));
+		_scene->_sequences.setTimingTrigger(930, 3);
+	}
+
+	if (_game._trigger == 3)
+		_game._winStatus = 1;
+}
+
+void Scene250::actions() {
+}
+
+void Scene250::preActions() {
+}
+
+/*------------------------------------------------------------------------*/
+
 } // End of namespace Phantom
 } // End of namespace MADS
