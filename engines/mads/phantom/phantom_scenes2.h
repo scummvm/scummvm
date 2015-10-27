@@ -221,6 +221,23 @@ public:
 	virtual void actions();
 };
 
+class Scene206 : public Scene2xx {
+private:
+	bool _anim0ActvFl;
+	bool _skip1Fl;
+	bool _skip2Fl;
+
+public:
+	Scene206(MADSEngine *vm);
+	virtual void synchronize(Common::Serializer &s);
+
+	virtual void setup();
+	virtual void enter();
+	virtual void step();
+	virtual void preActions();
+	virtual void actions();
+};
+
 } // End of namespace Phantom
 } // End of namespace MADS
 
