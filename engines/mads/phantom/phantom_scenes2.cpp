@@ -6957,21 +6957,29 @@ void Scene250::step() {
 		int messageId;
 
 		if (score <= 25)
-			messageId = 0x3A;    /* Stage sweeper */
+			// Score level: Stage sweeper
+			messageId = 0x3A;
 		else if (score <= 50)
-			messageId = 0x3B;    /* Dresser */
+			// Score level: Dresser
+			messageId = 0x3B;
 		else if (score <= 75)
-			messageId = 0x3C;    /* Usher */
+			// Score level: Usher
+			messageId = 0x3C;
 		else if (score <= 100)
-			messageId = 0x3D;    /* Stagehand */
+			// Score level: Stagehand
+			messageId = 0x3D;
 		else if (score <= 150)
-			messageId = 0x3E;    /* Chorus Member */
+			// Score level: Chorus member
+			messageId = 0x3E;
 		else if (score <= 200)
-			messageId = 0x3F;    /* Supporting Player */
+			// Score level: Supporting player
+			messageId = 0x3F;
 		else if (score <= 249)
-			messageId = 0x40;    /* Star Player */
+			// Score level: Star player
+			messageId = 0x40;
 		else
-			messageId = 0x41;    /* Director */
+			// Score level: Director
+			messageId = 0x41;
 
 		_scene->_kernelMessages.add(Common::Point(160, y), 0x1110, 0x20, 0, 900, _game.getQuote(messageId));
 		_scene->_sequences.setTimingTrigger(930, 3);
