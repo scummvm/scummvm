@@ -774,7 +774,8 @@ void Scene303::actions() {
 			_game._player._stepEnabled = true;
 			break;
 		}
-		goto handled;
+		_action._inProgress = false;
+		return;
 	}
 
 	if (_action.isAction(VERB_CLIMB_INTO, NOUN_HOLE) || _action.isAction(VERB_CLIMB_DOWN, NOUN_CHANDELIER_CABLE)) {
@@ -800,7 +801,8 @@ void Scene303::actions() {
 		} else
 			_vm->_dialogs->show(30325);
 
-		goto handled;
+		_action._inProgress = false;
+		return;
 	}
 
 	if (_action.isAction(VERB_EXIT_TO, NOUN_CATWALK)) {
@@ -812,13 +814,15 @@ void Scene303::actions() {
 
 			_vm->_gameConv->run(26);
 			_vm->_gameConv->exportValue(4);
-			goto handled;
+			_action._inProgress = false;
+			return;
 		}
 	}
 
 	if (_action._lookFlag) {
 		_vm->_dialogs->show(30310);
-		goto handled;
+		_action._inProgress = false;
+		return;
 	}
 
 	if (_action.isAction(VERB_LOOK) || _action.isAction(VERB_LOOK_AT)) {
@@ -826,17 +830,20 @@ void Scene303::actions() {
 		// It looks to me like an original bug
 		if (_action.isAction(VERB_EXIT_TO, NOUN_CATWALK)) {
 			_vm->_dialogs->show(30316);
-			goto handled;
+			_action._inProgress = false;
+			return;
 		}
 
 		if (_action.isObject(NOUN_CATWALK)) {
 			_vm->_dialogs->show(30311);
-			goto handled;
+			_action._inProgress = false;
+			return;
 		}
 
 		if (_action.isObject(NOUN_GRID)) {
 			_vm->_dialogs->show(30312);
-			goto handled;
+			_action._inProgress = false;
+			return;
 		}
 
 		if (_action.isObject(NOUN_CHANDELIER_CABLE)) {
@@ -847,47 +854,56 @@ void Scene303::actions() {
 			else
 				_vm->_dialogs->show(30329);
 
-			goto handled;
+			_action._inProgress = false;
+			return;
 		}
 
 		if (_action.isObject(NOUN_HEMP)) {
 			_vm->_dialogs->show(30313);
-			goto handled;
+			_action._inProgress = false;
+			return;
 		}
 
 		if (_action.isObject(NOUN_BACK_WALL)) {
 			_vm->_dialogs->show(30314);
-			goto handled;
+			_action._inProgress = false;
+			return;
 		}
 
 		if (_action.isObject(NOUN_DUCTWORK)) {
 			_vm->_dialogs->show(30315);
-			goto handled;
+			_action._inProgress = false;
+			return;
 		}
 
 		if (_action.isObject(NOUN_CRATE)) {
 			_vm->_dialogs->show(30318);
-			goto handled;
+			_action._inProgress = false;
+			return;
 		}
 
 		if (_action.isObject(NOUN_SUPPORT)) {
 			_vm->_dialogs->show(30319);
-			goto handled;
+			_action._inProgress = false;
+			return;
 		}
 
 		if (_action.isObject(NOUN_PIECE_OF_WOOD)) {
 			_vm->_dialogs->show(30320);
-			goto handled;
+			_action._inProgress = false;
+			return;
 		}
 
 		if (_action.isObject(NOUN_RAILING)) {
 			_vm->_dialogs->show(30321);
-			goto handled;
+			_action._inProgress = false;
+			return;
 		}
 
 		if (_action.isObject(NOUN_CHANDELIER_TRAP)) {
 			_vm->_dialogs->show(30322);
-			goto handled;
+			_action._inProgress = false;
+			return;
 		}
 
 		if (_action.isObject(NOUN_HOLE)) {
@@ -896,37 +912,34 @@ void Scene303::actions() {
 			else
 				_vm->_dialogs->show(30323);
 
-			goto handled;
+			_action._inProgress = false;
+			return;
 		}
 
 		if (_action.isObject(NOUN_LARGE_NOTE) && _game._objects.isInRoom(OBJ_LARGE_NOTE)) {
 			_vm->_dialogs->show(30324);
-			goto handled;
+			_action._inProgress = false;
+			return;
 		}
 	}
 
 	if (_action.isAction(VERB_WALK_TO, NOUN_HOLE)) {
 		_vm->_dialogs->show(30325);
-		goto handled;
+		_action._inProgress = false;
+		return;
 	}
 
 	if (_action.isAction(VERB_TAKE, NOUN_HEMP)) {
 		_vm->_dialogs->show(30327);
-		goto handled;
+		_action._inProgress = false;
+		return;
 	}
 
 	if (_action.isAction(VERB_PULL, NOUN_HEMP)) {
 		_vm->_dialogs->show(30141);
-		goto handled;
+		_action._inProgress = false;
+		return;
 	}
-
-	goto done;
-
-handled:
-	_action._inProgress = false;
-
-done:
-	;
 }
 
 void Scene303::preActions() {
@@ -939,6 +952,452 @@ void Scene303::preActions() {
 
 	if (_action.isAction(VERB_CLIMB_INTO, NOUN_HOLE) || _action.isAction(VERB_CLIMB_DOWN, NOUN_CHANDELIER_CABLE))
 		_game._player.walk(Common::Point(110, 95), FACING_SOUTHWEST);
+}
+
+/*------------------------------------------------------------------------*/
+
+Scene304::Scene304(MADSEngine *vm) : Scene3xx(vm) {
+	_anim0ActvFl = false;
+	_anim1ActvFl = false;
+	_anim2ActvFl = false;
+
+	_raoulFrame = -1;
+	_raoulStatus = -1;
+	_fightFrame = -1;
+	_fightStatus = -1;
+	_fightCount = -1;
+	_phantomFrame = -1;
+	_phantomStatus = -1;
+}
+
+void Scene304::synchronize(Common::Serializer &s) {
+	Scene3xx::synchronize(s);
+
+	s.syncAsByte(_anim0ActvFl);
+	s.syncAsByte(_anim1ActvFl);
+	s.syncAsByte(_anim2ActvFl);
+
+	s.syncAsSint16LE(_raoulFrame);
+	s.syncAsSint16LE(_raoulStatus);
+	s.syncAsSint16LE(_fightFrame);
+	s.syncAsSint16LE(_fightStatus);
+	s.syncAsSint16LE(_fightCount);
+	s.syncAsSint16LE(_phantomFrame);
+	s.syncAsSint16LE(_phantomStatus);
+}
+
+void Scene304::setup() {
+	setPlayerSpritesPrefix();
+	setAAName();
+}
+
+void Scene304::enter() {
+	_game._player._playerPos.x = 0;
+
+	if (_scene->_priorSceneId != RETURNING_FROM_LOADING) {
+		_anim0ActvFl = false;
+		_anim1ActvFl = false;
+		_anim2ActvFl = false;
+	}
+
+	if (_globals[kRightDoorIsOpen504])
+		_vm->_gameConv->get(23);
+
+	if (!_globals[kRightDoorIsOpen504]) {
+		_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('f', 1), false);
+		_globals._sequenceIndexes[1] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[1], false, -1);
+		_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 1);
+
+		_globals._animationIndexes[0] = _scene->loadAnimation(formAnimName('n', 1), 0);
+		_anim0ActvFl = true;
+		_raoulStatus = 1;
+		_game._player._stepEnabled = false;
+	} else {
+		_scene->_userInterface.setup(kInputLimitedSentences);
+
+		if (_scene->_priorSceneId == 305) {
+			_globals._spriteIndexes[0] = _scene->_sprites.addSprites(formAnimName('f', 0), false);
+			_scene->drawToBackground(_globals._spriteIndexes[0], 1, Common::Point(-32000, -32000), 0, 100);
+
+			_game._player._stepEnabled = false;
+			_globals._animationIndexes[1] = _scene->loadAnimation(formAnimName('f', 1), 0);
+			_anim1ActvFl = true;
+			_scene->setAnimFrame(_globals._animationIndexes[1], 138);
+
+		} else {
+
+			_globals._spriteIndexes[0] = _scene->_sprites.addSprites(formAnimName('f', 0), false);
+			_scene->drawToBackground(_globals._spriteIndexes[0], 1, Common::Point(-32000, -32000), 0, 100);
+
+			_globals._animationIndexes[1] = _scene->loadAnimation(formAnimName('f', 1), 0);
+			_anim1ActvFl = true;
+			_phantomStatus = 0;
+
+			_globals._animationIndexes[2] = _scene->loadAnimation(formAnimName('r', 1), 0);
+			_anim2ActvFl = true;
+			_fightStatus = 0;
+
+			_game._player._stepEnabled = false;
+			_fightCount = 0;
+
+			_globals[kPlayerScore] += 10;
+
+			_vm->_gameConv->run(23);
+			_vm->_gameConv->hold();
+		}
+	}
+
+
+	if ((_scene->_priorSceneId == RETURNING_FROM_LOADING) && !_globals[kRightDoorIsOpen504]) {
+		_scene->setAnimFrame(_globals._animationIndexes[0], 53);
+		_game._player._stepEnabled = true;
+	}
+
+	_game._player._visible = false;
+
+	sceneEntrySound();
+}
+
+void Scene304::step() {
+	if (_anim0ActvFl)
+		handleRaoulAnimation();
+
+	if (_anim1ActvFl)
+		handlePhantomAnimation();
+
+	if (_anim2ActvFl)
+		handleFightAnimation();
+}
+
+void Scene304::actions() {
+	if (_vm->_gameConv->_running == 23) {
+		handleConversation23();
+		_action._inProgress = false;
+		return;
+	}
+
+	if (_action.isAction(VERB_CLIMB_THROUGH, NOUN_OPENING) || _action.isAction(VERB_CLIMB, NOUN_CHANDELIER_CABLE)) {
+		_raoulStatus = 0;
+		_action._inProgress = false;
+		return;
+	}
+
+	if (_action._lookFlag) {
+		_vm->_dialogs->show(30410);
+		_action._inProgress = false;
+		return;
+	}
+
+	if (_action.isAction(VERB_LOOK) || _action.isAction(VERB_LOOK_AT)) {
+		if (_action.isObject(NOUN_CEILING)) {
+			_vm->_dialogs->show(30411);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isObject(NOUN_DOME)) {
+			_vm->_dialogs->show(30412);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isObject(NOUN_LATTICEWORK)) {
+			_vm->_dialogs->show(30413);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isObject(NOUN_OPENING)) {
+			_vm->_dialogs->show(30414);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isObject(NOUN_CHANDELIER)) {
+			_vm->_dialogs->show(30415);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isObject(NOUN_CHANDELIER_CABLE)) {
+			_vm->_dialogs->show(30416);
+			_action._inProgress = false;
+			return;
+		}
+	}
+}
+
+void Scene304::preActions() {
+}
+
+void Scene304::handleConversation23() {
+	switch (_action._activeAction._verbId) {
+	case 5:
+		_phantomStatus = 1;
+		_vm->_gameConv->hold();
+		break;
+
+	case 6:
+		if (_phantomStatus != 1)
+			_fightStatus = 0;
+
+		_vm->_gameConv->hold();
+		break;
+
+	case 9:
+		if (_phantomStatus != 1)
+			_fightStatus = 2;
+
+		break;
+
+	case 12:
+		_phantomStatus = 2;
+		break;
+
+	default:
+		break;
+	}
+
+	_fightCount = 0;
+}
+
+void Scene304::handleRaoulAnimation() {
+	if (_scene->_animation[_globals._animationIndexes[0]]->getCurrentFrame() == _raoulFrame)
+		return;
+
+	_raoulFrame = _scene->_animation[_globals._animationIndexes[0]]->getCurrentFrame();
+	int resetFrame = -1;
+
+	switch (_raoulFrame) {
+	case 20:
+		_game._player._stepEnabled = true;
+		resetFrame = 53;
+		break;
+
+	case 53:
+		_scene->_nextSceneId = 303;
+		break;
+
+	case 54:
+	case 55:
+	case 56:
+		if (_raoulStatus == 0) {
+			resetFrame = 20;
+			_game._player._stepEnabled = false;
+		} else {
+			int random = _vm->getRandomNumber(1, 50);
+			switch (_raoulFrame) {
+			case 54:
+				if (random == 1)
+					resetFrame = 54;
+				else if (random == 2)
+					resetFrame = 55;
+				else
+					resetFrame = _raoulFrame - 1;
+
+				break;
+
+			case 55:
+				if (random == 1)
+					resetFrame = 54;
+				else if (random == 2)
+					resetFrame = 53;
+				else
+					resetFrame = _raoulFrame - 1;
+
+				break;
+
+			case 56:
+				if (random == 1)
+					resetFrame = 55;
+				else if (random == 2)
+					resetFrame = 53;
+				else
+					resetFrame = _raoulFrame - 1;
+
+				break;
+
+			default:
+				break;
+			}
+		}
+		break;
+	}
+
+	if (resetFrame >= 0) {
+		_scene->setAnimFrame(_globals._animationIndexes[0], resetFrame);
+		_raoulFrame = resetFrame;
+	}
+}
+
+void Scene304::handlePhantomAnimation() {
+	if (_scene->_animation[_globals._animationIndexes[1]]->getCurrentFrame() == _phantomFrame)
+		return;
+
+	_phantomFrame = _scene->_animation[_globals._animationIndexes[1]]->getCurrentFrame();
+	int resetFrame = -1;
+
+	switch (_phantomFrame) {
+	 case 7:
+	 case 11:
+		 resetFrame = _vm->getRandomNumber(6, 7);
+
+		 if (_phantomStatus == 1)
+			 resetFrame = 7;
+
+		 break;
+
+	 case 9:
+	 case 15:
+		 switch (_vm->getRandomNumber(1, 3)) {
+		 case 1:
+			 resetFrame = 8;
+			 break;
+
+		 case 2:
+			 resetFrame = 9;
+			 break;
+
+		 case 3:
+			 resetFrame = 11;
+			 break;
+		 }
+
+		 if (_phantomStatus == 1)
+			 resetFrame = 11;
+
+		 break;
+
+	 case 13:
+	 case 24:
+		 switch (_vm->getRandomNumber(1, 3)) {
+		 case 1:
+			 resetFrame = 12;
+			 break;
+
+		 case 2:
+			 resetFrame = 13;
+			 break;
+
+		 case 3:
+			 resetFrame = 16;
+			 break;
+		 }
+
+		 if (_phantomStatus == 1)
+			 resetFrame = 16;
+
+		 break;
+
+	 case 20:
+		 if (_vm->getRandomNumber(1, 2) == 1)
+			 resetFrame = 19;
+		 else
+			 resetFrame = 20;
+
+		 if (_phantomStatus == 1)
+			 resetFrame = 24;
+
+		 break;
+
+	 case 25:
+		 _vm->_gameConv->release();
+		 break;
+
+	 case 47:
+		 _fightStatus = 0;
+		 break;
+
+	 case 59:
+		 if (_phantomStatus == 2)
+			 resetFrame = 59;
+		 else
+			 resetFrame = 58;
+		 break;
+
+	 case 60:
+		 _game._player._stepEnabled = false;
+		 break;
+
+	 case 80:
+		 _game._objects.setRoom(OBJ_SWORD, NOWHERE);
+		 break;
+
+	 case 137:
+		 _game._player._playerPos.x = 100;
+		 _scene->_nextSceneId = 305;
+		 break;
+
+	 case 176:
+		 _game._player._playerPos.x = 200;
+		 _scene->_nextSceneId = 305;
+		 break;
+
+	 default:
+		 break;
+	}
+
+	if (resetFrame >= 0) {
+		_scene->setAnimFrame(_globals._animationIndexes[1], resetFrame);
+		_phantomFrame = resetFrame;
+	}
+}
+
+void Scene304::handleFightAnimation() {
+	if (_scene->_animation[_globals._animationIndexes[2]]->getCurrentFrame() == _fightFrame)
+		return;
+
+	_fightFrame = _scene->_animation[_globals._animationIndexes[2]]->getCurrentFrame();
+	int resetFrame = -1;
+
+	switch (_fightFrame) {
+	case 22:
+		_vm->_gameConv->release();
+		break;
+
+	case 23:
+		if (_fightStatus != 2)
+			resetFrame = 22;
+		break;
+
+	case 25:
+	case 26:
+	case 27:
+		if (_fightStatus == 2) {
+			resetFrame = _vm->getRandomNumber(24, 26);
+			++_fightCount;
+			if (_fightCount > 17)
+				resetFrame = 24;
+		}
+		break;
+
+	case 28:
+		_fightStatus = 2;
+		break;
+
+	case 45:
+		_vm->_gameConv->release();
+		break;
+
+	case 46:
+	case 47:
+	case 48:
+		if (_fightStatus == 2) {
+			resetFrame = _vm->getRandomNumber(45, 47);
+			++_fightCount;
+			if (_fightCount > 17)
+				resetFrame = 45;
+		}
+		break;
+
+	default:
+		break;
+	}
+
+	if (resetFrame >= 0) {
+		_scene->setAnimFrame(_globals._animationIndexes[2], resetFrame);
+		_fightFrame = resetFrame;
+	}
 }
 
 /*------------------------------------------------------------------------*/

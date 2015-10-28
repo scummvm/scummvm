@@ -87,9 +87,9 @@ public:
 
 class Scene303 : public Scene3xx {
 private:
-  bool _anim0ActvFl;  
-  int _hempHotspotId;
-  int _skipFrameCheckFl;
+	bool _anim0ActvFl;  
+	int _hempHotspotId;
+	int _skipFrameCheckFl;
 public:
 	Scene303(MADSEngine *vm);
 	virtual void synchronize(Common::Serializer &s);
@@ -100,6 +100,37 @@ public:
 	virtual void preActions();
 	virtual void actions();
 };
+
+class Scene304 : public Scene3xx {
+private:
+	bool _anim0ActvFl;
+	bool _anim1ActvFl;
+	bool _anim2ActvFl;
+
+	int _raoulFrame;
+	int _raoulStatus;
+	int _fightFrame;
+	int _fightStatus;
+	int _fightCount;
+	int _phantomFrame;
+	int _phantomStatus;
+
+	void handleConversation23();
+	void handleRaoulAnimation();
+	void handlePhantomAnimation();
+	void handleFightAnimation();
+
+public:
+	Scene304(MADSEngine *vm);
+	virtual void synchronize(Common::Serializer &s);
+
+	virtual void setup();
+	virtual void enter();
+	virtual void step();
+	virtual void preActions();
+	virtual void actions();
+};
+
 } // End of namespace Phantom
 } // End of namespace MADS
 
