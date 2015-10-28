@@ -194,6 +194,10 @@ void GamePhantom::synchronize(Common::Serializer &s, bool phase1) {
 	}
 }
 
+void GamePhantom::enterCatacombs(int val) {
+	warning("TODO: enterCatacombs");
+}
+
 } // End of namespace Phantom
 
 } // End of namespace MADS

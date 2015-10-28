@@ -2017,7 +2017,7 @@ void Scene308::step() {
 	}
 
 	if (_anim1ActvFl) {
-		if ((_scene->_animation[_globals._animationIndexes[0]]->getCurrentFrame() == 51)  && _globals[kTopFloorLocked]) {
+		if ((_scene->_animation[_globals._animationIndexes[0]]->getCurrentFrame() == 51) && _globals[kTopFloorLocked]) {
 			_scene->setAnimFrame(_globals._animationIndexes[0], 50);
 			if (!_skip1Fl) {
 				_game._player._stepEnabled = true;
@@ -2205,6 +2205,357 @@ void Scene308::actions() {
 }
 
 void Scene308::preActions() {
+}
+
+/*------------------------------------------------------------------------*/
+
+Scene309::Scene309(MADSEngine *vm) : Scene3xx(vm) {
+	_anim0ActvFl = false;
+
+	_boatStatus = -1;
+	_boatFrame = -1;
+	_talkCount = -1;
+}
+
+void Scene309::synchronize(Common::Serializer &s) {
+	Scene3xx::synchronize(s);
+
+	s.syncAsByte(_anim0ActvFl);
+
+	s.syncAsSint16LE(_boatStatus);
+	s.syncAsSint16LE(_boatFrame);
+	s.syncAsSint16LE(_talkCount);
+}
+
+void Scene309::setup() {
+	setPlayerSpritesPrefix();
+	setAAName();
+
+	if (_globals[kRightDoorIsOpen504])
+		_scene->_initialVariant = 1;
+}
+
+void Scene309::enter() {
+	_scene->_hotspots.activate(NOUN_CHRISTINE, false);
+	_scene->_hotspots.activate(NOUN_BOAT, false);
+
+	_anim0ActvFl = false;
+	_boatStatus = 1;
+	_vm->_gameConv->get(26);
+
+	_globals._spriteIndexes[0] = _scene->_sprites.addSprites(formAnimName('x', 0), false);
+	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('x', 1), false);
+	_globals._spriteIndexes[1] = _scene->_sprites.addSprites("*RDR_9", false);
+
+	if (_scene->_priorSceneId == RETURNING_FROM_LOADING) {
+		_globals._sequenceIndexes[0] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[0], false, -1);
+		_scene->_sequences.setDepth(_globals._sequenceIndexes[0], 10);
+
+		if (_game._visitedScenes.exists(310)) {
+			_anim0ActvFl = true;
+
+			_globals._animationIndexes[0] = _scene->loadAnimation(formAnimName('b', 1), 70);
+			_scene->setAnimFrame(_globals._animationIndexes[0], 184);
+			int id = _scene->_dynamicHotspots.add(NOUN_CHRISTINE, VERB_WALK_TO, SYNTAX_SINGULAR_FEM, EXT_NONE, Common::Rect(0, 0, 0, 0));
+			_scene->_dynamicHotspots.setPosition(id, Common::Point(62, 146), FACING_NORTHWEST);
+			_scene->_dynamicHotspots[id]._articleNumber = PREP_ON;
+
+			_scene->setDynamicAnim(id, _globals._animationIndexes[0], 10);
+			_scene->setDynamicAnim(id, _globals._animationIndexes[0], 11);
+			_scene->setDynamicAnim(id, _globals._animationIndexes[0], 12);
+			_scene->setDynamicAnim(id, _globals._animationIndexes[0], 13);
+			_scene->setDynamicAnim(id, _globals._animationIndexes[0], 14);
+			_scene->setDynamicAnim(id, _globals._animationIndexes[0], 15);
+			_scene->setDynamicAnim(id, _globals._animationIndexes[0], 16);
+			_scene->setDynamicAnim(id, _globals._animationIndexes[0], 17);
+			_scene->setDynamicAnim(id, _globals._animationIndexes[0], 18);
+			_scene->_hotspots.activate(NOUN_CHRISTINE, true);
+			_scene->_hotspots.activate(NOUN_BOAT, true);
+		}
+	}
+
+	if (_scene->_priorSceneId == 404) {
+		_game._player._playerPos = Common::Point(319, 136);
+		_game._player._facing = FACING_SOUTHWEST;
+		_game._player.walk(Common::Point(281, 148), FACING_SOUTHWEST);
+		_globals._sequenceIndexes[0] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[0], false, -1);
+		_scene->_sequences.setDepth(_globals._sequenceIndexes[0], 10);
+	} else if (_scene->_priorSceneId == 310) {
+		_game._player._playerPos = Common::Point(209, 144);
+		_game._player._facing = FACING_SOUTH;
+		_game._player._stepEnabled = false;
+		_game._player._visible = false;
+		_anim0ActvFl = true;
+
+		_globals._animationIndexes[0] = _scene->loadAnimation(formAnimName('b', 1), 70);
+		int id = _scene->_dynamicHotspots.add(NOUN_CHRISTINE, VERB_WALK_TO, SYNTAX_SINGULAR_FEM, EXT_NONE, Common::Rect(0, 0, 0, 0));
+		_scene->_dynamicHotspots.setPosition(id, Common::Point(63, 146), FACING_NORTHWEST);
+		_scene->_dynamicHotspots[id]._articleNumber = PREP_ON;
+
+		_scene->setDynamicAnim(id, _globals._animationIndexes[0], 10);
+		_scene->setDynamicAnim(id, _globals._animationIndexes[0], 11);
+		_scene->setDynamicAnim(id, _globals._animationIndexes[0], 12);
+		_scene->setDynamicAnim(id, _globals._animationIndexes[0], 13);
+		_scene->setDynamicAnim(id, _globals._animationIndexes[0], 14);
+		_scene->setDynamicAnim(id, _globals._animationIndexes[0], 15);
+		_scene->setDynamicAnim(id, _globals._animationIndexes[0], 16);
+		_scene->setDynamicAnim(id, _globals._animationIndexes[0], 17);
+		_scene->setDynamicAnim(id, _globals._animationIndexes[0], 18);
+		_scene->_hotspots.activate(NOUN_CHRISTINE, true);
+		_scene->_hotspots.activate(NOUN_BOAT, true);
+		_globals._sequenceIndexes[0] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[0], false, -1);
+		_scene->_sequences.setDepth(_globals._sequenceIndexes[0], 10);
+	} else if ((_scene->_priorSceneId == 308) || (_scene->_priorSceneId != RETURNING_FROM_LOADING)) {
+		_game._player._playerPos = Common::Point(0, 121);
+		_game._player._facing = FACING_SOUTHEAST;
+		_game._player.walk(Common::Point(28, 142), FACING_SOUTHEAST);
+		_game._player.setWalkTrigger(65);
+		_game._player._stepEnabled = false;
+		_globals._sequenceIndexes[0] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[0], false, -2);
+		_scene->_sequences.setDepth(_globals._sequenceIndexes[0], 10);
+	}
+
+	sceneEntrySound();
+}
+
+void Scene309::step() {
+	if (_anim0ActvFl)
+		handleBoatAnimation ();
+
+	switch (_game._trigger) {
+	case 65:
+		_scene->deleteSequence(_globals._sequenceIndexes[0]);
+		_globals._sequenceIndexes[0] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[0], false, 8, 1);
+		_scene->_sequences.setDepth(_globals._sequenceIndexes[0], 10);
+		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[0], -1, -2);
+		_scene->_sequences.setTrigger(_globals._sequenceIndexes[0], 0, 0, 66);
+		break;
+
+	case 66:
+		_vm->_sound->command(25);
+		_globals._sequenceIndexes[0] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[0], false, -1);
+		_scene->_sequences.setDepth(_globals._sequenceIndexes[0], 10);
+		_game._player._stepEnabled = true;
+		break;
+
+	default:
+		break;
+	}
+}
+
+void Scene309::actions() {
+	if (_action.isAction(VERB_WALK_THROUGH, NOUN_STONE_ARCHWAY)) {
+		if (_globals[kRightDoorIsOpen504]) {
+			_vm->_gameConv->run(26);
+			_vm->_gameConv->exportValue(1);
+			_boatStatus = 0;
+			_talkCount = 0;
+		} else if (_globals[kLanternStatus] == 1)
+			_game.enterCatacombs(0);
+
+		_action._inProgress = false;
+		return;
+	}
+
+	if (_action.isAction(VERB_TALK_TO, NOUN_CHRISTINE)) {
+		_vm->_gameConv->run(26);
+		_vm->_gameConv->exportValue(1);
+		_boatStatus = 0;
+		_talkCount = 0;
+		_action._inProgress = false;
+		return;
+	}
+
+	if (_action.isAction(VERB_WALK_THROUGH, NOUN_DOOR) || _action.isAction(VERB_OPEN, NOUN_DOOR)) {
+		switch (_game._trigger) {
+		case (0):
+			_game._player._stepEnabled = false;
+			_game._player._visible = false;
+			_globals._sequenceIndexes[1] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[1], false, 5, 2);
+			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[1], 1, 4);
+			_scene->_sequences.setSeqPlayer(_globals._sequenceIndexes[1], true);
+			_scene->_sequences.setTrigger(_globals._sequenceIndexes[1], 2, 4, 60);
+			_scene->_sequences.setTrigger(_globals._sequenceIndexes[1], 0, 0, 62);
+			break;
+
+		case 60:
+			_scene->deleteSequence(_globals._sequenceIndexes[0]);
+			_globals._sequenceIndexes[0] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[0], false, 8, 1);
+			_scene->_sequences.setDepth(_globals._sequenceIndexes[0], 14);
+			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[0], -1, -2);
+			_scene->_sequences.setTrigger(_globals._sequenceIndexes[0], 0, 0, 61);
+			_vm->_sound->command(24);
+			break;
+
+		case 61: {
+			int idx = _globals._sequenceIndexes[0];
+			_globals._sequenceIndexes[0] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[0], false, 5);
+			_game.syncTimers(1, _globals._sequenceIndexes[0], 1, idx);
+			_scene->_sequences.setDepth(_globals._sequenceIndexes[0], 14);
+			_game._player.walk(Common::Point(0, 121), FACING_NORTHWEST);
+			_game._player.setWalkTrigger(63);
+			}
+			break;
+
+		case 62:
+			_game._player._visible = true;
+			break;
+
+		case 63:
+			if (!_globals[kRightDoorIsOpen504]) {
+				_scene->deleteSequence(_globals._sequenceIndexes[0]);
+				_globals._sequenceIndexes[0] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[0], false, 8, 1);
+				_scene->_sequences.setDepth(_globals._sequenceIndexes[0], 1);
+				_scene->_sequences.setAnimRange(_globals._sequenceIndexes[0], -1, -2);
+				_scene->_sequences.setTrigger(_globals._sequenceIndexes[0], 0, 0, 64);
+				_vm->_sound->command(25);
+			} else
+				_scene->setAnimFrame(_globals._animationIndexes[0], 186);
+
+			break;
+
+		case 64:
+			_globals._sequenceIndexes[0] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[0], false, 5);
+			_scene->_sequences.setDepth(_globals._sequenceIndexes[0], 1);
+			_scene->_nextSceneId = 308;
+			break;
+
+		default:
+			break;
+		}
+		_action._inProgress = false;
+		return;
+	}
+
+	if (_action._lookFlag) {
+		_vm->_dialogs->show(30910);
+		_action._inProgress = false;
+		return;
+	}
+
+	if (_action.isAction(VERB_LOOK) || _action.isAction(VERB_LOOK_AT)) {
+		if (_action.isObject(NOUN_STONE_WALL)) {
+			_vm->_dialogs->show(30911);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isObject(NOUN_LAKE)) {
+			_vm->_dialogs->show(30912);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isObject(NOUN_STONE_COLUMN)) {
+			_vm->_dialogs->show(30913);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isObject(NOUN_DOORWAY)) {
+			_vm->_dialogs->show(30914);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isObject(NOUN_STONE_ARCHWAY)) {
+			_vm->_dialogs->show(30915);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isObject(NOUN_STONE_FLOOR)) {
+			_vm->_dialogs->show(30916);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isObject(NOUN_CATACOMBS)) {
+			_vm->_dialogs->show(30917);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isObject(NOUN_CHRISTINE)) {
+			_vm->_dialogs->show(30919);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isObject(NOUN_BOAT)) {
+			_vm->_dialogs->show(30921);
+			_action._inProgress = false;
+			return;
+		}
+	}
+
+	if (_action.isAction(VERB_CLIMB_INTO, NOUN_BOAT)) {
+		_vm->_dialogs->show(30920);
+		_action._inProgress = false;
+	}
+}
+
+void Scene309::preActions() {
+	if (_action.isAction(VERB_WALK_THROUGH, NOUN_STONE_ARCHWAY) && (_globals[kLanternStatus] == 0)) {
+		_game._player._needToWalk = false;
+		_vm->_dialogs->show(30918);
+	}
+
+	if (_action.isAction(VERB_WALK_THROUGH, NOUN_STONE_ARCHWAY) && _globals[kRightDoorIsOpen504])
+		_game._player.walk(Common::Point(285, 147), FACING_NORTHEAST);
+
+	if (_action.isAction(VERB_OPEN, NOUN_DOOR))
+		_game._player.walk(Common::Point(16, 139), FACING_NORTHEAST);
+}
+
+void Scene309::handleBoatAnimation() {
+	if (_scene->_animation[_globals._animationIndexes[0]]->getCurrentFrame() == _boatFrame)
+		return;
+
+	_boatFrame = _scene->_animation[_globals._animationIndexes[0]]->getCurrentFrame();
+	int resetFrame = -1;
+
+	switch (_boatFrame) {
+	case 72:
+		_game.syncTimers(2, 0, 3, _globals._animationIndexes[0]);
+		_game._player._visible = true;
+		break;
+
+	case 130:
+		_game._player._stepEnabled = true;
+		break;
+
+	case 185:
+		if (_boatStatus == 0)
+			resetFrame = 244;
+		else
+			resetFrame = 184;
+
+		break;
+
+	case 244:
+		_scene->_nextSceneId = 308;
+		break;
+
+	case 245:
+	case 246:
+	case 247:
+		resetFrame = _vm->getRandomNumber(244, 246);
+		++_talkCount;
+		if (_talkCount > 10) {
+			resetFrame = 184;
+			_boatStatus = 1;
+		}
+		break;
+
+	default:
+		break;
+	}
+
+	if (resetFrame >= 0) {
+		_scene->setAnimFrame(_globals._animationIndexes[0], resetFrame);
+		_boatFrame = resetFrame;
+	}
 }
 
 /*------------------------------------------------------------------------*/

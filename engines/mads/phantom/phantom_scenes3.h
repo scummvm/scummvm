@@ -200,6 +200,27 @@ public:
 	virtual void preActions();
 	virtual void actions();
 };
+
+class Scene309 : public Scene3xx {
+private:
+	bool _anim0ActvFl;
+
+	int _boatStatus;
+	int _boatFrame;
+	int _talkCount;
+
+	void Scene309::handleBoatAnimation();
+
+public:
+	Scene309(MADSEngine *vm);
+	virtual void synchronize(Common::Serializer &s);
+
+	virtual void setup();
+	virtual void enter();
+	virtual void step();
+	virtual void preActions();
+	virtual void actions();
+};
 } // End of namespace Phantom
 } // End of namespace MADS
 

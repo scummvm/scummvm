@@ -95,6 +95,8 @@ public:
 	virtual void step();
 
 	virtual void synchronize(Common::Serializer &s, bool phase1);
+
+	void enterCatacombs(int val);
 };
 
 
