@@ -131,6 +131,28 @@ public:
 	virtual void actions();
 };
 
+class Scene305 : public Scene3xx {
+private:
+	bool _anim0ActvFl;
+	bool _anim1ActvFl;
+	bool _skipFl;
+	bool _unmaskFl;
+
+	int _unmaskFrame;
+
+	void handle_animation_unmask();
+
+public:
+	Scene305(MADSEngine *vm);
+	virtual void synchronize(Common::Serializer &s);
+
+	virtual void setup();
+	virtual void enter();
+	virtual void step();
+	virtual void preActions();
+	virtual void actions();
+};
+
 } // End of namespace Phantom
 } // End of namespace MADS
 

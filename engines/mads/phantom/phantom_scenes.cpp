@@ -105,7 +105,7 @@ SceneLogic *SceneFactory::createScene(MADSEngine *vm) {
 	case 304:	// chandelier
 		return new Scene304(vm);
 	case 305:	// chandelier fight, phantom closeup
-		return new DummyScene(vm);	// TODO
+		return new Scene305(vm);
 	case 306:	// chandelier #2
 		return new DummyScene(vm);	// TODO
 	case 307:	// catwalk #3 above stage

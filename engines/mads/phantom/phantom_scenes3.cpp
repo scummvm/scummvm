@@ -1402,5 +1402,130 @@ void Scene304::handleFightAnimation() {
 
 /*------------------------------------------------------------------------*/
 
+Scene305::Scene305(MADSEngine *vm) : Scene3xx(vm) {
+	_anim0ActvFl = false;
+	_anim1ActvFl = false;
+	_skipFl = false;
+	_unmaskFl = false;
+
+	_unmaskFrame = -1;
+}
+
+void Scene305::synchronize(Common::Serializer &s) {
+	Scene3xx::synchronize(s);
+
+	s.syncAsByte(_anim0ActvFl);
+	s.syncAsByte(_anim1ActvFl);
+	s.syncAsByte(_skipFl);
+	s.syncAsByte(_unmaskFl);
+
+	s.syncAsSint16LE(_unmaskFrame);
+}
+
+void Scene305::setup() {
+	setPlayerSpritesPrefix();
+	setAAName();
+}
+
+void Scene305::enter() {
+	_unmaskFl = false;
+	_skipFl = false;
+	_game._player._visible = false;
+	_anim0ActvFl = false;
+	_anim1ActvFl = false;
+
+	_scene->_userInterface.setup(kInputLimitedSentences);
+	_scene->loadSpeech(5);
+	_game.loadQuoteSet(0x64, 0x65, 0);
+
+	if (_game._player._playerPos.x == 100) {
+		_globals._animationIndexes[0] = _scene->loadAnimation(formAnimName('r', 1), 60);
+		_scene->_hotspots.activate(NOUN_MASK, false);
+		_anim1ActvFl = true;
+	} else if (_game._player._playerPos.x == 200) {
+		_globals._animationIndexes[0] = _scene->loadAnimation(formAnimName('u', 1), 0);
+		_anim0ActvFl = true;
+		_scene->_hotspots.activate(NOUN_CANE, false);
+	}
+
+	sceneEntrySound();
+}
+
+void Scene305::step() {
+	if (_anim0ActvFl)
+		handle_animation_unmask ();
+
+	if (_anim1ActvFl) {
+		if (_scene->_animation[_globals._animationIndexes[0]]->getCurrentFrame() == 53)
+			_game._player._stepEnabled = false;
+
+		if (_scene->_animation[_globals._animationIndexes[0]]->getCurrentFrame() == 54 && !_skipFl) {
+			_scene->playSpeech(5);
+			_skipFl = true;
+		}
+	}
+
+	if (_game._trigger == 60) {
+		_globals[kPlayerScore] -= 10;
+		_scene->_userInterface.noInventoryAnim();
+		// CHECKME: Not sure about the next function call
+		_scene->_userInterface.refresh();
+		_scene->_nextSceneId = 303;
+	}
+}
+
+void Scene305::actions() {
+	if (_action.isAction(VERB_PUSH, NOUN_CANE)) {
+		_scene->_nextSceneId = 304;
+		_action._inProgress = false;
+		return;
+	}
+
+	if (_action.isAction(VERB_TAKE, NOUN_MASK)) {
+		_unmaskFl = true;
+		_game._player._stepEnabled = false;
+		_action._inProgress = false;
+	}
+}
+
+void Scene305::preActions() {
+}
+
+void Scene305::handle_animation_unmask() {
+	if (_scene->_animation[_globals._animationIndexes[0]]->getCurrentFrame() == _unmaskFrame)
+		return;
+
+	_unmaskFrame = _scene->_animation[_globals._animationIndexes[0]]->getCurrentFrame();
+	int resetFrame = -1;
+
+	switch (_unmaskFrame) {
+	case 25:
+		if (!_unmaskFl)
+			resetFrame = 0;
+
+		break;
+
+	case 60:
+		_scene->playSpeech(10);
+		_scene->_kernelMessages.add(Common::Point(176, 53), 0x1110, 0, 0, 360, _game.getQuote(0x64));
+		_scene->_kernelMessages.add(Common::Point(176, 68), 0x1110, 0, 0, 360, _game.getQuote(0x65));
+		break;
+
+	case 95:
+		_scene->_nextSceneId = 306;
+		break;
+
+	default:
+		break;
+	}
+
+	if (resetFrame >= 0) {
+		_scene->setAnimFrame(_globals._animationIndexes[0], resetFrame);
+		_unmaskFrame = resetFrame;
+	}
+}
+
+/*------------------------------------------------------------------------*/
+
 } // End of namespace Phantom
 } // End of namespace MADS
