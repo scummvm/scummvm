@@ -225,8 +225,8 @@ public:
 	 */
 	void eraseSprites();
 
-	void setNextFrameTimer(int frameNumber);
-	int getNextFrameTimer() const { return _nextFrameTimer; }
+	void setNextFrameTimer(uint32 frameNumber);
+	uint32 getNextFrameTimer() const { return _nextFrameTimer; }
 	void setCurrentFrame(int frameNumber);
 	int getCurrentFrame() const { return _currentFrame; }
 

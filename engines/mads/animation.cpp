@@ -603,7 +603,7 @@ void Animation::setCurrentFrame(int frameNumber) {
 	_freeFlag = false;
 }
 
-void Animation::setNextFrameTimer(int frameNumber) {
+void Animation::setNextFrameTimer(uint32 frameNumber) {
 	_nextFrameTimer = frameNumber;
 }
 
