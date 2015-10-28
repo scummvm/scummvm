@@ -278,4 +278,8 @@ void Rails::disableNode(int idx) {
 	warning("TODO: Rails::disableNode");
 }
 
+void Rails::disableLine(int from, int to) {
+	warning("TODO: Rails::disableLine");
+}
+
 } // End of namespace MADS

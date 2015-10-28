@@ -129,6 +129,7 @@ public:
 	void synchronize(Common::Serializer &s);
 
 	void disableNode(int idx);
+	void disableLine(int from, int to);
 
 };
 

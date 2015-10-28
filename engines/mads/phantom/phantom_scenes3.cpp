@@ -654,5 +654,294 @@ void Scene302::preActions() {
 
 /*------------------------------------------------------------------------*/
 
+Scene303::Scene303(MADSEngine *vm) : Scene3xx(vm) {
+	_anim0ActvFl = false;
+	_hempHotspotId = -1;
+	_skipFrameCheckFl = -1;
+}
+
+void Scene303::synchronize(Common::Serializer &s) {
+	Scene3xx::synchronize(s);
+
+	s.syncAsByte(_anim0ActvFl);
+	s.syncAsSint16LE(_hempHotspotId);
+	s.syncAsSint16LE(_skipFrameCheckFl);
+}
+
+void Scene303::setup() {
+	setPlayerSpritesPrefix();
+	setAAName();
+
+	_scene->addActiveVocab(NOUN_CHANDELIER_CABLE);
+	_scene->addActiveVocab(VERB_CLIMB_DOWN);
+}
+
+void Scene303::enter() {
+	_anim0ActvFl = false;
+	_skipFrameCheckFl = false;
+
+	if (_globals[kRightDoorIsOpen504])
+		_vm->_gameConv->get(26);
+
+	if (_globals[kCurrentYear] == 1993) {
+		_globals._spriteIndexes[0] = _scene->_sprites.addSprites(formAnimName('z', -1), false);
+		_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('p', 0), false);
+	}
+
+	if ((_game._objects.isInRoom(OBJ_LARGE_NOTE)) && (_globals[kCurrentYear] == 1993)) {
+		_globals._sequenceIndexes[2] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[2], false, 1);
+		_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 4);
+	} else
+		_scene->_hotspots.activate(NOUN_LARGE_NOTE, false);
+
+	if (_globals[kCurrentYear] == 1993)
+		_scene->drawToBackground(_globals._spriteIndexes[0], 1, Common::Point(-32000, -32000), 0, 100);
+	else {
+		_hempHotspotId = _scene->_dynamicHotspots.add(NOUN_CHANDELIER_CABLE, VERB_CLIMB_DOWN, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(74, 92, 74 + 7, 92 + 12));
+		_scene->_dynamicHotspots.setPosition(_hempHotspotId, Common::Point(95, 107), FACING_NORTHWEST);
+		_scene->_dynamicHotspots[_hempHotspotId]._articleNumber = PREP_ON;
+		_scene->_dynamicHotspots.setCursor(_hempHotspotId, CURSOR_GO_DOWN);
+	}
+
+	if (_scene->_priorSceneId == 307)
+		_game._player.firstWalk(Common::Point(-20, 135), FACING_EAST, Common::Point(16, 135), FACING_EAST, true);
+	else if (_scene->_priorSceneId == 304) {
+		_globals._animationIndexes[0] = _scene->loadAnimation(formAnimName('u', 1), 60);
+		_game._player._stepEnabled = false;
+		_game._player._visible = false;
+	} else if (_scene->_priorSceneId == 305) {
+		_game._objects.addToInventory(OBJ_SWORD);
+		_game._player._playerPos = Common::Point(117, 92);
+		_game._player._facing = FACING_SOUTHWEST;
+	} else if ((_scene->_priorSceneId == 302) || (_scene->_priorSceneId != RETURNING_FROM_LOADING))
+		_game._player.firstWalk(Common::Point(340, 136), FACING_WEST, Common::Point(303, 136), FACING_WEST, true);
+
+	_scene->_rails.disableLine(5, 9);
+	_scene->_rails.disableLine(5, 12);
+	_scene->_rails.disableLine(5, 8);
+	_scene->_rails.disableLine(6, 3);
+	_scene->_rails.disableLine(6, 2);
+	_scene->_rails.disableLine(11, 3);
+	_scene->_rails.disableLine(11, 4);
+	_scene->_rails.disableLine(10, 2);
+	_scene->_rails.disableLine(4, 9);
+	_scene->_rails.disableLine(8, 0);
+
+	sceneEntrySound();
+}
+
+void Scene303::step() {
+	if (_game._trigger == 60) {
+		_game._player._playerPos = Common::Point(110, 95);
+		_game._player._stepEnabled = true;
+		_game._player._visible = true;
+		_game.syncTimers(2, 0, 3, _globals._animationIndexes[0]);
+		_game._player.resetFacing(FACING_SOUTHWEST);
+	}
+
+	if (_anim0ActvFl) {
+		if ((_scene->_animation[_globals._animationIndexes[0]]->getCurrentFrame() >= 6) && !_skipFrameCheckFl) {
+			_skipFrameCheckFl = true;
+			_scene->deleteSequence(_globals._sequenceIndexes[2]);
+			_scene->_hotspots.activate(NOUN_LARGE_NOTE, false);
+			_game._objects.addToInventory(OBJ_LARGE_NOTE);
+			_vm->_sound->command(26);
+		}
+	}
+}
+
+void Scene303::actions() {
+	if ((_action.isAction(VERB_TAKE, NOUN_LARGE_NOTE) && _game._objects.isInRoom(OBJ_LARGE_NOTE)) || ((_game._trigger > 0) && _game._trigger < 3)) {
+		switch (_game._trigger) {
+		case (0):
+			_game._player._stepEnabled = false;
+			_game._player._visible = false;
+			_globals._animationIndexes[0] = _scene->loadAnimation(formAnimName('n', 1), 1);
+			_anim0ActvFl = true;
+			_game.syncTimers(3, _globals._animationIndexes[0], 2, 0);
+			_globals[kPlayerScore] += 5;
+			break;
+
+		case 1:
+			_anim0ActvFl = false;
+			_game._player._visible = true;
+			_game.syncTimers(2, 0, 3, _globals._animationIndexes[0]);
+			_scene->_sequences.setTimingTrigger(20, 2);
+			break;
+
+		case 2:
+			_vm->_dialogs->showItem(OBJ_LARGE_NOTE, 818, 7);
+			_game._player._stepEnabled = true;
+			break;
+		}
+		goto handled;
+	}
+
+	if (_action.isAction(VERB_CLIMB_INTO, NOUN_HOLE) || _action.isAction(VERB_CLIMB_DOWN, NOUN_CHANDELIER_CABLE)) {
+		if (_globals[kCurrentYear] == 1881) {
+			switch (_game._trigger) {
+			case 0:
+				if (_globals[kRightDoorIsOpen504])
+					_vm->_dialogs->show(30331);
+
+				_globals._animationIndexes[0] = _scene->loadAnimation(formAnimName('d', 1), 3);
+				_game._player._stepEnabled = false;
+				_game._player._visible = false;
+				_game.syncTimers(3, _globals._animationIndexes[0], 2, 0);
+				break;
+
+			case 3:
+				_scene->_nextSceneId = 304;
+				break;
+
+			default:
+				break;
+			}
+		} else
+			_vm->_dialogs->show(30325);
+
+		goto handled;
+	}
+
+	if (_action.isAction(VERB_EXIT_TO, NOUN_CATWALK)) {
+		if (_globals[kRightDoorIsOpen504]) {
+			if (_vm->_sound->_preferRoland)
+				_vm->_sound->command(74);
+			else
+				_scene->playSpeech(1);
+
+			_vm->_gameConv->run(26);
+			_vm->_gameConv->exportValue(4);
+			goto handled;
+		}
+	}
+
+	if (_action._lookFlag) {
+		_vm->_dialogs->show(30310);
+		goto handled;
+	}
+
+	if (_action.isAction(VERB_LOOK) || _action.isAction(VERB_LOOK_AT)) {
+		// CHECKME: That's illogical, the check is always false... Should be out of the big 'look' check
+		// It looks to me like an original bug
+		if (_action.isAction(VERB_EXIT_TO, NOUN_CATWALK)) {
+			_vm->_dialogs->show(30316);
+			goto handled;
+		}
+
+		if (_action.isObject(NOUN_CATWALK)) {
+			_vm->_dialogs->show(30311);
+			goto handled;
+		}
+
+		if (_action.isObject(NOUN_GRID)) {
+			_vm->_dialogs->show(30312);
+			goto handled;
+		}
+
+		if (_action.isObject(NOUN_CHANDELIER_CABLE)) {
+			if (_globals[kCurrentYear] == 1993)
+				_vm->_dialogs->show(30317);
+			else if (_globals[kRightDoorIsOpen504])
+				_vm->_dialogs->show(30330);
+			else
+				_vm->_dialogs->show(30329);
+
+			goto handled;
+		}
+
+		if (_action.isObject(NOUN_HEMP)) {
+			_vm->_dialogs->show(30313);
+			goto handled;
+		}
+
+		if (_action.isObject(NOUN_BACK_WALL)) {
+			_vm->_dialogs->show(30314);
+			goto handled;
+		}
+
+		if (_action.isObject(NOUN_DUCTWORK)) {
+			_vm->_dialogs->show(30315);
+			goto handled;
+		}
+
+		if (_action.isObject(NOUN_CRATE)) {
+			_vm->_dialogs->show(30318);
+			goto handled;
+		}
+
+		if (_action.isObject(NOUN_SUPPORT)) {
+			_vm->_dialogs->show(30319);
+			goto handled;
+		}
+
+		if (_action.isObject(NOUN_PIECE_OF_WOOD)) {
+			_vm->_dialogs->show(30320);
+			goto handled;
+		}
+
+		if (_action.isObject(NOUN_RAILING)) {
+			_vm->_dialogs->show(30321);
+			goto handled;
+		}
+
+		if (_action.isObject(NOUN_CHANDELIER_TRAP)) {
+			_vm->_dialogs->show(30322);
+			goto handled;
+		}
+
+		if (_action.isObject(NOUN_HOLE)) {
+			if (_globals[kCurrentYear] == 1993)
+				_vm->_dialogs->show(30326);
+			else
+				_vm->_dialogs->show(30323);
+
+			goto handled;
+		}
+
+		if (_action.isObject(NOUN_LARGE_NOTE) && _game._objects.isInRoom(OBJ_LARGE_NOTE)) {
+			_vm->_dialogs->show(30324);
+			goto handled;
+		}
+	}
+
+	if (_action.isAction(VERB_WALK_TO, NOUN_HOLE)) {
+		_vm->_dialogs->show(30325);
+		goto handled;
+	}
+
+	if (_action.isAction(VERB_TAKE, NOUN_HEMP)) {
+		_vm->_dialogs->show(30327);
+		goto handled;
+	}
+
+	if (_action.isAction(VERB_PULL, NOUN_HEMP)) {
+		_vm->_dialogs->show(30141);
+		goto handled;
+	}
+
+	goto done;
+
+handled:
+	_action._inProgress = false;
+
+done:
+	;
+}
+
+void Scene303::preActions() {
+	if (_action.isAction(VERB_EXIT_TO, NOUN_CATWALK) && !_globals[kRightDoorIsOpen504]) {
+		if (_scene->_customDest.x > 160)
+			_game._player._walkOffScreenSceneId = 302;
+		else
+			_game._player._walkOffScreenSceneId = 307;
+	}
+
+	if (_action.isAction(VERB_CLIMB_INTO, NOUN_HOLE) || _action.isAction(VERB_CLIMB_DOWN, NOUN_CHANDELIER_CABLE))
+		_game._player.walk(Common::Point(110, 95), FACING_SOUTHWEST);
+}
+
+/*------------------------------------------------------------------------*/
+
 } // End of namespace Phantom
 } // End of namespace MADS
