@@ -1527,5 +1527,64 @@ void Scene305::handle_animation_unmask() {
 
 /*------------------------------------------------------------------------*/
 
+Scene306::Scene306(MADSEngine *vm) : Scene3xx(vm) {
+	_speechDoneFl = false;
+}
+
+void Scene306::synchronize(Common::Serializer &s) {
+	Scene3xx::synchronize(s);
+
+	s.syncAsByte(_speechDoneFl);
+}
+
+void Scene306::setup() {
+	setPlayerSpritesPrefix();
+	setAAName();
+}
+
+void Scene306::enter() {
+	_scene->loadSpeech(6);
+	_speechDoneFl = false;
+
+	warning("TODO: Switch to letter box view. See definition of MADS_MENU_Y");
+
+	_game._player._visible = false;
+	_game._player._stepEnabled = false;
+	_globals._animationIndexes[0] = _scene->loadAnimation(formAnimName('a', 1), 60);
+
+	sceneEntrySound();
+}
+
+void Scene306::step() {
+	if (_game._trigger == 60) {
+		if (_vm->_sound->_preferRoland)
+			_scene->_sequences.setTimingTrigger(120, 61);
+		else
+			_scene->_sequences.setTimingTrigger(300, 61);
+	}
+
+	if (!_speechDoneFl && (_scene->_animation[_globals._animationIndexes[0]]->getCurrentFrame() == 3)) {
+		_scene->playSpeech(6);
+		_speechDoneFl = true;
+	}
+
+	if (_game._trigger == 61) {
+		_vm->_sound->command(1);
+		_vm->_sound->command(66);
+		_scene->_sequences.setTimingTrigger(120, 62);
+	}
+
+	if (_game._trigger == 62)
+		_scene->_nextSceneId = 150;
+}
+
+void Scene306::actions() {
+}
+
+void Scene306::preActions() {
+}
+
+/*------------------------------------------------------------------------*/
+
 } // End of namespace Phantom
 } // End of namespace MADS
