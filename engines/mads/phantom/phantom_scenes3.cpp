@@ -1862,5 +1862,352 @@ void Scene307::preActions() {
 
 /*------------------------------------------------------------------------*/
 
+Scene308::Scene308(MADSEngine *vm) : Scene3xx(vm) {
+	_anim0ActvFl = false;
+	_anim1ActvFl = false;
+	_anim2ActvFl = false;
+	_anim3ActvFl = false;
+	_skip1Fl = false;
+	_skip2Fl = false;
+
+	_currentFloor = -1;
+}
+
+void Scene308::synchronize(Common::Serializer &s) {
+	Scene3xx::synchronize(s);
+
+	s.syncAsByte(_anim0ActvFl);
+	s.syncAsByte(_anim1ActvFl);
+	s.syncAsByte(_anim2ActvFl);
+	s.syncAsByte(_anim3ActvFl);
+	s.syncAsByte(_skip1Fl);
+	s.syncAsByte(_skip2Fl);
+
+	s.syncAsSint16LE(_currentFloor);
+}
+
+void Scene308::setup() {
+	setPlayerSpritesPrefix();
+	setAAName();
+}
+
+void Scene308::enter() {
+	_scene->loadSpeech(4);
+
+	if (_scene->_priorSceneId != RETURNING_FROM_LOADING) {
+		_anim0ActvFl = false;
+		_anim1ActvFl = false;
+		_anim2ActvFl = false;
+		_anim3ActvFl = false;
+	}
+
+	_skip1Fl = false;
+	_skip2Fl = false;
+
+	_vm->_gameConv->get(26);
+	_globals._spriteIndexes[0] = _scene->_sprites.addSprites(formAnimName('a', 0), false);
+	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('b', 0), false);
+	_scene->_userInterface.setup(kInputLimitedSentences);
+	_game._player._visible = false;
+
+	if (_scene->_priorSceneId == RETURNING_FROM_LOADING) {
+		switch (_currentFloor) {
+		case 1:
+			if (_globals[kRightDoorIsOpen504]) {
+				_globals._sequenceIndexes[0] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[0], false, 1);
+				_scene->_sequences.setDepth(_globals._sequenceIndexes[0], 10);
+				_scene->_sequences.setPosition(_globals._sequenceIndexes[0], Common::Point(160, 104));
+				_globals._sequenceIndexes[1] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[1], false, 1);
+				_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 10);
+				_scene->_sequences.setPosition(_globals._sequenceIndexes[1], Common::Point(161, 124));
+			} else {
+				_globals._sequenceIndexes[0] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[0], false, 1);
+				_scene->_sequences.setDepth(_globals._sequenceIndexes[0], 10);
+				_scene->_sequences.setPosition(_globals._sequenceIndexes[0], Common::Point(160, 127));
+			}
+			break;
+
+		case 2:
+			_globals._sequenceIndexes[0] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[0], false, 1);
+			_scene->_sequences.setDepth(_globals._sequenceIndexes[0], 10);
+			_scene->_sequences.setPosition(_globals._sequenceIndexes[0], Common::Point(160, 76));
+			break;
+
+		case 3:
+			if (_globals[kRightDoorIsOpen504] && !_globals[kKnockedOverHead]) {
+				_anim0ActvFl = true;
+				_skip1Fl = true;
+				_globals._animationIndexes[0] = _scene->loadAnimation(formAnimName('b', 2), 2);
+				_scene->setAnimFrame(_globals._animationIndexes[0], 76);
+			} else {
+				_anim0ActvFl = true;
+				_skip1Fl = true;
+				_globals._animationIndexes[0] = _scene->loadAnimation(formAnimName('u', 2), 2);
+				_scene->setAnimFrame(_globals._animationIndexes[0], 96);
+			}
+			break;
+
+		default:
+			break;
+		}
+	} else if (_scene->_priorSceneId == 309) {
+		_currentFloor = 1;
+		if (_globals[kRightDoorIsOpen504]) {
+			_globals._sequenceIndexes[0] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[0], false, 1);
+			_scene->_sequences.setDepth(_globals._sequenceIndexes[0], 10);
+			_scene->_sequences.setPosition(_globals._sequenceIndexes[0], Common::Point(160, 104));
+			_globals._sequenceIndexes[1] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[1], false, 1);
+			_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 10);
+			_scene->_sequences.setPosition(_globals._sequenceIndexes[1], Common::Point(161, 124));
+		} else {
+			_globals._sequenceIndexes[0] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[0], false, 1);
+			_scene->_sequences.setDepth(_globals._sequenceIndexes[0], 10);
+			_scene->_sequences.setPosition(_globals._sequenceIndexes[0], Common::Point(160, 127));
+		}
+	} else if (_scene->_priorSceneId == 206) {
+		_currentFloor = 2;
+		_globals._sequenceIndexes[0] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[0], false, 1);
+		_scene->_sequences.setDepth(_globals._sequenceIndexes[0], 10);
+		_scene->_sequences.setPosition(_globals._sequenceIndexes[0], Common::Point(160, 76));
+	} else if (_scene->_priorSceneId == 307) {
+		_currentFloor = 3;
+		_anim0ActvFl = true;
+		_skip1Fl = true;
+		_globals._animationIndexes[0] = _scene->loadAnimation(formAnimName('u', 2), 2);
+		_scene->setAnimFrame(_globals._animationIndexes[0], 96);
+	}
+
+	if (!_game._visitedScenes._sceneRevisited) {
+		_globals[kPlayerScore] += 5;
+		_scene->_sequences.setTimingTrigger(1, 60);
+	}
+
+	sceneEntrySound();
+}
+
+void Scene308::step() {
+	if (_game._trigger == 60)
+		_vm->_dialogs->show(30810);
+
+	if (_anim2ActvFl) {
+		if (_scene->_animation[_globals._animationIndexes[0]]->getCurrentFrame() == 77) {
+			_scene->setAnimFrame(_globals._animationIndexes[0], 76);
+			if (!_skip1Fl) {
+				_game._player._stepEnabled = true;
+				_vm->_dialogs->show(30811);
+				_skip1Fl = true;
+			}
+		}
+	}
+
+	if (_anim0ActvFl) {
+		if (_scene->_animation[_globals._animationIndexes[0]]->getCurrentFrame() == 97) {
+			if (_globals[kTopFloorLocked]) {
+				_scene->setAnimFrame(_globals._animationIndexes[0], 96);
+				if (!_skip1Fl) {
+					_game._player._stepEnabled = true;
+					_vm->_dialogs->show(30811);
+					_skip1Fl = true;
+				}
+			}
+		} else if (_scene->_animation[_globals._animationIndexes[0]]->getCurrentFrame() == 116) {
+			_globals[kTopFloorLocked] = true;
+			_scene->_nextSceneId = 307;
+		}
+	}
+
+	if (_anim1ActvFl) {
+		if ((_scene->_animation[_globals._animationIndexes[0]]->getCurrentFrame() == 51)  && _globals[kTopFloorLocked]) {
+			_scene->setAnimFrame(_globals._animationIndexes[0], 50);
+			if (!_skip1Fl) {
+				_game._player._stepEnabled = true;
+				_vm->_dialogs->show(30811);
+				_skip1Fl = true;
+			}
+		}
+	}
+}
+
+void Scene308::actions() {
+	switch (_game._trigger) {
+	case 1:
+		_scene->_nextSceneId = 206;
+		_action._inProgress = false;
+		return;
+
+	case 2:
+		_scene->_nextSceneId = 307;
+		_action._inProgress = false;
+		return;
+
+	case 3:
+		_scene->_nextSceneId = 309;
+		_action._inProgress = false;
+		return;
+
+	default:
+		break;
+	}
+
+	if (_action.isAction(VERB_EXIT_TO, NOUN_MIDDLE_LEVEL)) {
+		switch (_currentFloor) {
+		case 1:
+			if (_globals[kRightDoorIsOpen504]) {
+				_globals._animationIndexes[0] = _scene->loadAnimation(formAnimName('b', 1), 1);
+				_scene->deleteSequence(_globals._sequenceIndexes[0]);
+				_scene->deleteSequence(_globals._sequenceIndexes[1]);
+				_game._player._stepEnabled = false;
+			} else {
+				_globals._animationIndexes[0] = _scene->loadAnimation(formAnimName('u', 1), 1);
+				_scene->deleteSequence(_globals._sequenceIndexes[0]);
+				_game._player._stepEnabled = false;
+			}
+			_action._inProgress = false;
+			return;
+
+		case 2:
+			_globals._animationIndexes[0] = _scene->loadAnimation(formAnimName('m', 1), 1);
+			_scene->deleteSequence(_globals._sequenceIndexes[0]);
+			_game._player._stepEnabled = false;
+			_action._inProgress = false;
+			return;
+
+		case 3:
+			if (_globals[kRightDoorIsOpen504] && !_globals[kKnockedOverHead]) {
+				_scene->freeAnimation(_globals._animationIndexes[0]);
+				_globals._animationIndexes[0] = _scene->loadAnimation(formAnimName('b', 4), 1);
+				_game._player._stepEnabled = false;
+				_anim2ActvFl = false;
+
+			} else {
+				_scene->freeAnimation(_globals._animationIndexes[0]);
+				_globals._animationIndexes[0] = _scene->loadAnimation(formAnimName('x', 1), 1);
+				_game._player._stepEnabled = false;
+				_anim0ActvFl = false;
+				_anim1ActvFl = false;
+			}
+			_action._inProgress = false;
+			return;
+
+		default:
+			break;
+		}
+	}
+
+	if (_action.isAction(VERB_EXIT_TO, NOUN_UPPER_LEVEL)) {
+		switch (_currentFloor) {
+		case 1:
+			if (_globals[kRightDoorIsOpen504]) {
+				_globals._animationIndexes[0] = _scene->loadAnimation(formAnimName('b', 2), 1);
+				_scene->deleteSequence(_globals._sequenceIndexes[0]);
+				_scene->deleteSequence(_globals._sequenceIndexes[1]);
+				_game._player._stepEnabled = false;
+				_anim2ActvFl = true;
+				_currentFloor = 3;
+			} else {
+				_globals._animationIndexes[0] = _scene->loadAnimation(formAnimName('u', 2), 2);
+				_scene->deleteSequence(_globals._sequenceIndexes[0]);
+				_game._player._stepEnabled = false;
+				_anim0ActvFl = true;
+				_currentFloor = 3;
+			}
+			_action._inProgress = false;
+			return;
+
+		case 2:
+			if (_globals[kRightDoorIsOpen504]) {
+				_globals._animationIndexes[0] = _scene->loadAnimation(formAnimName('u', 3), 2);
+				_scene->deleteSequence(_globals._sequenceIndexes[0]);
+				_game._player._stepEnabled = false;
+			} else {
+				_globals._animationIndexes[0] = _scene->loadAnimation(formAnimName('u', 3), 2);
+				_scene->deleteSequence(_globals._sequenceIndexes[0]);
+				_game._player._stepEnabled = false;
+				_anim1ActvFl = true;
+				_currentFloor = 3;
+			}
+			_action._inProgress = false;
+			return;
+
+		case 3:
+			if (_globals[kRightDoorIsOpen504])
+				_globals[kTopFloorLocked] = false;
+			else {
+				_skip2Fl = false;
+				_skip1Fl = false;
+			}
+			_action._inProgress = false;
+			return;
+
+		default:
+			break;
+		}
+	}
+
+	if (_action.isAction(VERB_EXIT_TO, NOUN_LOWER_LEVEL)) {
+		switch (_currentFloor) {
+		case 1:
+			if (_globals[kRightDoorIsOpen504]) {
+				_vm->_gameConv->run(26);
+				_vm->_gameConv->exportValue(1);
+			} else {
+				_globals._animationIndexes[0] = _scene->loadAnimation(formAnimName('l', 1), 3);
+				_scene->deleteSequence(_globals._sequenceIndexes[0]);
+				_game._player._stepEnabled = false;
+			}
+			_action._inProgress = false;
+			return;
+
+		case 2:
+			if (_globals[kRightDoorIsOpen504]) {
+				if (_vm->_sound->_preferRoland)
+					_vm->_sound->command(74);
+				else
+					_scene->playSpeech(1);
+
+				_vm->_gameConv->run(26);
+				_vm->_gameConv->exportValue(6);
+
+			} else {
+				_globals._animationIndexes[0] = _scene->loadAnimation(formAnimName('d', 1), 3);
+				_scene->deleteSequence(_globals._sequenceIndexes[0]);
+				_game._player._stepEnabled = false;
+			}
+			_action._inProgress = false;
+			return;
+
+		case 3:
+			if (_globals[kRightDoorIsOpen504] && !_globals[kKnockedOverHead]) {
+				_vm->_gameConv->run(26);
+				_vm->_gameConv->exportValue(5);
+			} else if (_globals[kRightDoorIsOpen504] && _globals[kKnockedOverHead]) {
+				if (_vm->_sound->_preferRoland)
+					_vm->_sound->command(74);
+				else
+					_scene->playSpeech(1);
+
+				_vm->_gameConv->run(26);
+				_vm->_gameConv->exportValue(6);
+			} else {
+				_scene->freeAnimation(_globals._animationIndexes[0]);
+				_globals._animationIndexes[0] = _scene->loadAnimation(formAnimName('x', 2), 3);
+				_game._player._stepEnabled = false;
+				_anim0ActvFl = false;
+				_anim1ActvFl = false;
+			}
+			_action._inProgress = false;
+			return;
+
+		default:
+			break;
+		}
+	}
+}
+
+void Scene308::preActions() {
+}
+
+/*------------------------------------------------------------------------*/
+
 } // End of namespace Phantom
 } // End of namespace MADS

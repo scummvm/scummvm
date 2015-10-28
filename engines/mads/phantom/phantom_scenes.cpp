@@ -111,7 +111,7 @@ SceneLogic *SceneFactory::createScene(MADSEngine *vm) {
 	case 307:	// catwalk #3 above stage
 		return new Scene307(vm);
 	case 308:	// hidden staircase behind balcony box
-		return new DummyScene(vm);	// TODO
+		return new Scene308(vm);
 	case 309:	// lake and archway
 		return new DummyScene(vm);	// TODO
 	case 310:	// lake
