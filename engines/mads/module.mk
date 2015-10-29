@@ -11,6 +11,7 @@ MODULE_OBJS := \
 	phantom/phantom_scenes1.o \
 	phantom/phantom_scenes2.o \
 	phantom/phantom_scenes3.o \
+	phantom/phantom_scenes4.o \
 	nebular/dialogs_nebular.o \
 	nebular/game_nebular.o \
 	nebular/globals_nebular.o \
