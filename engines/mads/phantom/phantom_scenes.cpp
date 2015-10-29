@@ -115,7 +115,7 @@ SceneLogic *SceneFactory::createScene(MADSEngine *vm) {
 	case 309:	// lake and archway
 		return new Scene309(vm);
 	case 310:	// lake
-		return new DummyScene(vm);	// TODO
+		return new Scene310(vm);
 
 	// Scene group #4 (labyrinth)
 	case 401:	// labyrinth room, 3 exits
