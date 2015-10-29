@@ -193,6 +193,10 @@ void KernelMessages::processText(int msgIndex) {
 			msg._timeout = 0;
 	}
 
+	if (msg._flags & KMSG_ANIM) {
+		warning("TODO: Implement animated text");
+	}
+
 	if ((msg._timeout <= 0) && (_vm->_game->_trigger == 0)) {
 		msg._flags |= KMSG_EXPIRE;
 		if (msg._trigger != 0) {
@@ -463,6 +467,16 @@ void KernelMessages::initRandomMessages(int maxSimultaneousMessages,
 	}
 
 	va_end(va);
+}
+
+void KernelMessages::setAnim(int msgId, int seqId, int val3 = 0) {
+	if (msgId < 0)
+		return;
+
+	_entries[msgId]._flags |= KMSG_ANIM;
+	_entries[msgId]._sequenceIndex = seqId;
+
+	warning("TODO: KernelMessages::setAnim, unused parameter");
 }
 
 

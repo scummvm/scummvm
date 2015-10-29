@@ -162,6 +162,7 @@ Animation::Animation(MADSEngine *vm, Scene *scene) : _vm(vm), _scene(scene) {
 	_flags = 0;
 	_font = nullptr;
 	_resetFlag = false;
+	_canChangeView = false;
 	_messageCtr = 0;
 	_skipLoad = false;
 	_freeFlag = false;
@@ -616,4 +617,9 @@ void Animation::eraseSprites() {
 	}
 }
 
+Common::Point Animation::getFramePosAdjust(int idx) {
+	warning("TODO: Implement getFramePosAdjust");
+
+	return Common::Point(0, 0);
+}
 } // End of namespace MADS

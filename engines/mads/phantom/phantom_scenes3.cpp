@@ -2560,5 +2560,215 @@ void Scene309::handleBoatAnimation() {
 
 /*------------------------------------------------------------------------*/
 
+Scene310::Scene310(MADSEngine *vm) : Scene3xx(vm) {
+	_raoulMessageColor = -1;
+	_chrisMessageColor = -1;
+	_lakeFrame = -1;
+	for (int i = 0; i < 4; i++)
+		_multiplanePosX[i] = -1;
+}
+
+void Scene310::synchronize(Common::Serializer &s) {
+	Scene3xx::synchronize(s);
+
+	s.syncAsSint16LE(_raoulMessageColor);
+	s.syncAsSint16LE(_chrisMessageColor);
+	s.syncAsSint16LE(_lakeFrame);
+	for (int i = 0; i < 4; i++)
+		s.syncAsSint16LE(_multiplanePosX[i]);
+}
+
+void Scene310::setup() {
+	setPlayerSpritesPrefix();
+	setAAName();
+}
+
+void Scene310::enter() {
+	warning("TODO: Switch to letter box view. See definition of MADS_MENU_Y");
+
+	for (int i = 0; i < 4; i++) {
+		_globals._spriteIndexes[i] = _scene->_sprites.addSprites(formAnimName('f', i), false);
+		_globals._sequenceIndexes[i] = -1;
+	}
+
+	_multiplanePosX[0] = 100;
+	_multiplanePosX[1] = 210;
+	_multiplanePosX[2] = 320;
+	_multiplanePosX[3] = 472;
+
+	_game.loadQuoteSet(0x66, 0x67, 0x69, 0x6A, 0x6C, 0x6D, 0x6E, 0x6F, 0x71, 0x72, 0x74, 0x70, 0x68, 0x73, 0x6B, 0);
+	_game._player._stepEnabled = false;
+	_game._player._visible = false;
+	_globals._animationIndexes[0] = _scene->loadAnimation(formAnimName('l', 1), 80);
+	_scene->_animation[_globals._animationIndexes[0]]->_canChangeView = true;
+	_game._camX._panMode = 1;
+
+	_raoulMessageColor = 0x102;
+	_chrisMessageColor = 0x1110;
+
+	_scene->_userInterface.emptyConversationList();
+	_scene->_userInterface.setup(kInputConversation);
+
+	sceneEntrySound();
+}
+
+void Scene310::step() {
+	handleLakeAnimation();
+
+	if (_game._trigger == 80)
+		_scene->_nextSceneId = 309;
+
+	bool positionsSetFl = false;
+
+	if (_globals._animationIndexes[0] >= 0) {
+		MADS::Animation *anim = _scene->_animation[_globals._animationIndexes[0]];
+		int curFrame = anim->getCurrentFrame();
+		uint32 clock = anim->getNextFrameTimer();
+		if ((curFrame > 0) && (_scene->_frameStartTime >= clock)) {
+			Common::Point pos = anim->getFramePosAdjust(curFrame);
+			if (pos.x != _scene->_posAdjust.x) {
+				setMultiplanePos(pos.x);
+				positionsSetFl = true;
+			}
+		}
+	}
+
+	if (!positionsSetFl && (_game._fx != kTransitionNone))
+		setMultiplanePos(320);
+}
+
+void Scene310::actions() {
+}
+
+void Scene310::preActions() {
+}
+
+void Scene310::setMultiplanePos(int x_new) {
+	int center = x_new + 160;
+
+	for (int i = 0; i < 4; i++) {
+		if (_globals._sequenceIndexes[i] >= 0)
+			_scene->deleteSequence(_globals._sequenceIndexes[i]);
+
+		int difference = center - _multiplanePosX[i];
+
+		int direction = 0;
+		if (difference < 0)
+			direction = 1;
+		else if (difference > 0)
+			direction = -1;
+
+		int displace = abs(difference);
+		if (direction < 0)
+			displace = -displace;
+
+		int x = _multiplanePosX[i] + displace - 1;
+		int y = _scene->_sprites[_globals._spriteIndexes[i]]->getFrameWidth(0) + 29;
+		int halfWidth = 1 + (_scene->_sprites[_globals._spriteIndexes[i]]->getFrameHeight(0) / 2);
+
+		if (((x - halfWidth) >= (x_new + 320)) || ((x + halfWidth) < x_new))
+			_globals._sequenceIndexes[i] = -1;
+		else {
+			_globals._sequenceIndexes[i] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[i], false, 1);
+			_scene->_sequences.setPosition(_globals._sequenceIndexes[i], Common::Point(x, y));
+			_scene->_sequences.setDepth(_globals._sequenceIndexes[i], 1);
+		}
+	}
+}
+
+void Scene310::handleLakeAnimation() {
+	if (_scene->_animation[_globals._animationIndexes[0]]->getCurrentFrame() == _lakeFrame)
+		return;
+
+
+	_lakeFrame = _scene->_animation[_globals._animationIndexes[0]]->getCurrentFrame();
+	int resetFrame = -1;
+	int id;
+
+	switch (_lakeFrame) {
+	case 60:
+		id = _scene->_kernelMessages.add(Common::Point(-142, 0), _chrisMessageColor, 0, 61, 600, _game.getQuote(0x66));
+		_scene->_kernelMessages.setAnim(id, _globals._animationIndexes[0], 0);
+		id = _scene->_kernelMessages.add(Common::Point(-142, 15), _chrisMessageColor, 0, 0, 600, _game.getQuote(0x67));
+		_scene->_kernelMessages.setAnim(id, _globals._animationIndexes[0], 0);
+		id = _scene->_kernelMessages.add(Common::Point(-142, 30), _chrisMessageColor, 0, 0, 600, _game.getQuote(0x68));
+		_scene->_kernelMessages.setAnim(id, _globals._animationIndexes[0], 0);
+		break;
+
+	case 120:
+		_scene->_kernelMessages.reset();
+		break;
+
+	case 140:
+		id = _scene->_kernelMessages.add(Common::Point(-120, 0), _chrisMessageColor, 0, 63, 360, _game.getQuote(0x69));
+		_scene->_kernelMessages.setAnim(id, _globals._animationIndexes[0], 0);
+		id = _scene->_kernelMessages.add(Common::Point(-120, 15), _chrisMessageColor, 0, 0, 360, _game.getQuote(0x6A));
+		_scene->_kernelMessages.setAnim(id, _globals._animationIndexes[0], 0);
+		id = _scene->_kernelMessages.add(Common::Point(-120, 30), _chrisMessageColor, 0, 0, 360, _game.getQuote(0x6B));
+		_scene->_kernelMessages.setAnim(id, _globals._animationIndexes[0], 0);
+		break;
+
+	case 200:
+		_scene->_kernelMessages.reset();
+		break;
+
+	case 220:
+		id = _scene->_kernelMessages.add(Common::Point(-32, 30), _chrisMessageColor, 0, 65, 240, _game.getQuote(0x6C));
+		_scene->_kernelMessages.setAnim(id, _globals._animationIndexes[0], 0);
+		id = _scene->_kernelMessages.add(Common::Point(-32, 45), _chrisMessageColor, 0, 0, 240, _game.getQuote(0x6D));
+		_scene->_kernelMessages.setAnim(id, _globals._animationIndexes[0], 0);
+		break;
+
+	case 280:
+		_scene->_kernelMessages.reset();
+		break;
+
+	case 300:
+		id = _scene->_kernelMessages.add(Common::Point(101, 0), _raoulMessageColor, 0, 67, 360, _game.getQuote(0x6E));
+		_scene->_kernelMessages.setAnim(id, _globals._animationIndexes[0], 0);
+		id = _scene->_kernelMessages.add(Common::Point(101, 15), _raoulMessageColor, 0, 0, 360, _game.getQuote(0x6F));
+		_scene->_kernelMessages.setAnim(id, _globals._animationIndexes[0], 0);
+		id = _scene->_kernelMessages.add(Common::Point(101, 30), _raoulMessageColor, 0, 0, 360, _game.getQuote(0x70));
+		_scene->_kernelMessages.setAnim(id, _globals._animationIndexes[0], 0);
+		break;
+
+	case 360:
+		_scene->_kernelMessages.reset();
+		break;
+
+	case 380:
+		id = _scene->_kernelMessages.add(Common::Point(107, 0), _chrisMessageColor, 0, 69, 360, _game.getQuote(0x71));
+		_scene->_kernelMessages.setAnim(id, _globals._animationIndexes[0], 0);
+		id = _scene->_kernelMessages.add(Common::Point(107, 15), _chrisMessageColor, 0, 0, 360, _game.getQuote(0x72));
+		_scene->_kernelMessages.setAnim(id, _globals._animationIndexes[0], 0);
+		id = _scene->_kernelMessages.add(Common::Point(107, 30), _chrisMessageColor, 0, 0, 360, _game.getQuote(0x73));
+		_scene->_kernelMessages.setAnim(id, _globals._animationIndexes[0], 0);
+		break;
+
+	case 440:
+		_scene->_kernelMessages.reset();
+		break;
+
+	case 460:
+		id = _scene->_kernelMessages.add(Common::Point(107, 7), _chrisMessageColor, 0, 0, 180, _game.getQuote(0x74));
+		_scene->_kernelMessages.setAnim(id, _globals._animationIndexes[0], 0);
+		break;
+
+	case 510:
+		_scene->_kernelMessages.reset();
+		break;
+
+	default:
+		break;
+	}
+
+	if (resetFrame >= 0) {
+		_scene->setAnimFrame(_globals._animationIndexes[0], resetFrame);
+		_lakeFrame = resetFrame;
+	}
+}
+
+/*------------------------------------------------------------------------*/
+
 } // End of namespace Phantom
 } // End of namespace MADS

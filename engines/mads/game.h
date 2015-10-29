@@ -241,6 +241,7 @@ public:
 	typedef struct {
 		//TODO
 		bool _panFrame;
+		int _panMode;
 	} Camera;
 	Camera _camX, _camY;
 

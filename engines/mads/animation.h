@@ -189,6 +189,7 @@ public:
 	Common::Array<AnimUIEntry> _uiEntries;
 	Common::Array<AnimMessage> _messages;
 	bool _resetFlag;
+	bool _canChangeView;
 	int _currentFrame;
 	int _oldFrameEntry;
 	int _dynamicHotspotIndex;
@@ -236,6 +237,8 @@ public:
 	void resetSpriteSetsCount() { _header._spriteSetsCount = 0; } // CHECKME: See if it doesn't leak the memory when the destructor is called
 
 	SpriteAsset *getSpriteSet(int idx) { return _spriteSets[idx]; }
+
+	Common::Point getFramePosAdjust(int idx);
 };
 
 } // End of namespace MADS

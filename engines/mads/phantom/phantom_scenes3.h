@@ -11,7 +11,7 @@
 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
 
  * You should have received a copy of the GNU General Public License
@@ -55,12 +55,12 @@ public:
 
 class Scene301 : public Scene3xx {
 private:
-  bool _anim0ActvFl;
-  bool _skip1Fl;
-  bool _skip2Fl;
+	bool _anim0ActvFl;
+	bool _skip1Fl;
+	bool _skip2Fl;
 
-  int _lightingHotspotId;
-  int _sandbagHotspotId;
+	int _lightingHotspotId;
+	int _sandbagHotspotId;
 
 public:
 	Scene301(MADSEngine *vm);
@@ -87,7 +87,7 @@ public:
 
 class Scene303 : public Scene3xx {
 private:
-	bool _anim0ActvFl;  
+	bool _anim0ActvFl;
 	int _hempHotspotId;
 	int _skipFrameCheckFl;
 public:
@@ -213,6 +213,27 @@ private:
 
 public:
 	Scene309(MADSEngine *vm);
+	virtual void synchronize(Common::Serializer &s);
+
+	virtual void setup();
+	virtual void enter();
+	virtual void step();
+	virtual void preActions();
+	virtual void actions();
+};
+
+class Scene310 : public Scene3xx {
+private:
+	int _raoulMessageColor;
+	int _chrisMessageColor;
+	int _multiplanePosX[4];
+	int _lakeFrame;
+
+	void setMultiplanePos(int x_new);
+	void handleLakeAnimation();
+
+public:
+	Scene310(MADSEngine *vm);
 	virtual void synchronize(Common::Serializer &s);
 
 	virtual void setup();

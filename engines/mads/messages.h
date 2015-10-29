@@ -39,7 +39,7 @@ namespace MADS {
 enum KernelMessageFlags {
 	KMSG_QUOTED = 1, KMSG_PLAYER_TIMEOUT = 2, KMSG_SEQ_ENTRY = 4, KMSG_SCROLL = 8,
 	KMSG_RIGHT_ALIGN = 0x10, KMSG_CENTER_ALIGN = 0x20, KMSG_EXPIRE = 0x40,
-	KMSG_ACTIVE = 0x80
+	KMSG_ACTIVE = 0x80, KMSG_ANIM = 0x100
 };
 
 class MADSEngine;
@@ -104,6 +104,7 @@ public:
 	int addQuote(int quoteId, int endTrigger, uint32 timeout);
 	void scrollMessage(int msgIndex, int numTicks, bool quoted);
 	void setSeqIndex(int msgIndex, int seqIndex);
+	void setAnim(int msgId, int seqId, int val3);
 	void remove(int msgIndex);
 	void reset();
 	void update();
