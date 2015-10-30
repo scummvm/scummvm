@@ -75,6 +75,26 @@ public:
 	virtual void actions();
 };
 
+class Scene403 : public Scene4xx {
+private:
+	bool _frameInRoomFl;
+	bool _takingFrameInRoomFl;
+
+	int _redFrameHotspotId;
+	int _greenFrameHostpotId;
+	int _blueFrameHotspotId;
+	int _yellowFrameHotspotId;
+
+public:
+	Scene403(MADSEngine *vm);
+	virtual void synchronize(Common::Serializer &s);
+
+	virtual void setup();
+	virtual void enter();
+	virtual void step();
+	virtual void preActions();
+	virtual void actions();
+};
 } // End of namespace Phantom
 } // End of namespace MADS
 
