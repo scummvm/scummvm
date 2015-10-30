@@ -31,6 +31,7 @@
 #include "mads/phantom/phantom_scenes1.h"
 #include "mads/phantom/phantom_scenes2.h"
 #include "mads/phantom/phantom_scenes3.h"
+#include "mads/phantom/phantom_scenes4.h"
 
 namespace MADS {
 
@@ -119,7 +120,7 @@ SceneLogic *SceneFactory::createScene(MADSEngine *vm) {
 
 	// Scene group #4 (labyrinth)
 	case 401:	// labyrinth room, 3 exits
-		return new DummyScene(vm);	// TODO
+		return new Scene401(vm);
 	case 403:	// labyrinth room (big), 4 exits + 1 bricked door, left
 		return new DummyScene(vm);	// TODO
 	case 404:	// labyrinth room, 3 exits

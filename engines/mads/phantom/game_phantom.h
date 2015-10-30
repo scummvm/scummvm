@@ -68,6 +68,21 @@ enum InventoryObject {
 	OBJ_OAR = 24
 };
 
+enum MazeEvent {
+	MAZE_EVENT_PUDDLE = 0x0001,
+	MAZE_EVENT_RAT_NEST = 0x0002,
+	MAZE_EVENT_SKULL = 0x0004,
+	MAZE_EVENT_POT = 0x0008,
+	MAZE_EVENT_BRICK = 0x0010,
+	MAZE_EVENT_HOLE = 0x0020,
+	MAZE_EVENT_WEB = 0x0040,
+	MAZE_EVENT_PLANK = 0x0080,
+	MAZE_EVENT_DRAIN = 0x0100,
+	MAZE_EVENT_STONE = 0x0200,
+	MAZE_EVENT_BLOCK = 0x0400,
+	MAZE_EVENT_FALLEN_BLOCK = 0x0800
+};
+
 class GamePhantom : public Game {
 	friend class Game;
 protected:
@@ -97,6 +112,9 @@ public:
 	virtual void synchronize(Common::Serializer &s, bool phase1);
 
 	void enterCatacombs(int val);
+	void initCatacombs();
+	void moveCatacombs(int dir) { warning("TODO: moveCataCombs"); };
+	int exitCatacombs(int dir) { warning("TODO: exitCatacombs"); return -1; };
 };
 
 

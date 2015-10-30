@@ -105,7 +105,7 @@ void GamePhantom::initializeGlobals() {
 	_globals[kChristineToldEnvelope]   = false;
 	_globals[kLeaveAngelMusicOn]       = false;
 	_globals[kDoorIn409IsOpen]         = false;
-	_globals[kUnknown]                 = false;
+	_globals[kPriestPistonPuke]        = false;
 	_globals[kCobwebIsCut]             = false;
 	_globals[kChristineIsInBoat]       = false;
 	_globals[kRightDoorIsOpen504]      = false;
@@ -198,6 +198,9 @@ void GamePhantom::enterCatacombs(int val) {
 	warning("TODO: enterCatacombs");
 }
 
+void GamePhantom::initCatacombs() {
+	warning("TODO: initCatacombs");
+}
 } // End of namespace Phantom
 
 } // End of namespace MADS
