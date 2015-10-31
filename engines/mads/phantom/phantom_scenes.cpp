@@ -128,7 +128,7 @@ SceneLogic *SceneFactory::createScene(MADSEngine *vm) {
 	case 406:	// labyrinth room, 2 exits
 		return new Scene406(vm);
 	case 407:	// catacomb room / lake
-		return new DummyScene(vm);	// TODO
+		return new Scene407(vm);
 	case 408:	// catacomb corridor
 		return new DummyScene(vm);	// TODO
 	case 409:	// catacomb room, door with switch panel
