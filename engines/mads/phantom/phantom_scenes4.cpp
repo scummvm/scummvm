@@ -2948,14 +2948,13 @@ void Scene409::enter() {
 		_scene->_hotspots.activate(NOUN_SWORD, true);
 	}
 
-
 	if (!_globals[kDoorIn409IsOpen]) {
 		_globals._sequenceIndexes[6] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[6], false, 1);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[6], 14);
 		_scene->_hotspots.activate(NOUN_ARCHWAY_TO_NORTH, false);
 	} else
 		_scene->_hotspots.activate(NOUN_DOOR, false);
-0
+
 	if (_scene->_priorSceneId == 410) {
 		_game._player._facing = FACING_NORTH;
 		_game._player._playerPos = Common::Point(229, 106);
