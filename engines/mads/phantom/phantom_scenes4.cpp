@@ -3504,5 +3504,626 @@ void Scene409::preActions() {
 
 /*------------------------------------------------------------------------*/
 
+Scene410::Scene410(MADSEngine *vm) : Scene4xx(vm) {
+	for (int i = 0; i < 26; i++)
+		_skullSequence[i];
+}
+
+void Scene410::synchronize(Common::Serializer &s) {
+	Scene4xx::synchronize(s);
+
+	for (int i = 0; i < 26; i++)
+		s.syncAsSint16LE(_skullSequence[i]);
+}
+
+void Scene410::setup() {
+	setPlayerSpritesPrefix();
+	setAAName();
+}
+
+void Scene410::enter() {
+	_game._player._visible = false;
+	_globals._spriteIndexes[0] = _scene->_sprites.addSprites(formAnimName('l', 0), false);
+	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('l', 1), false);
+	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('l', 2), false);
+	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('a', 0), false);
+	_globals._spriteIndexes[4] = _scene->_sprites.addSprites(formAnimName('f', 0), false);
+
+	for (int i = 1; i < 27; i++) {
+		Common::Point pos;
+		int type;
+
+		getLeverInfo(&pos, &type, i, NULL);
+		int stampType = -1;
+
+		switch (type) {
+		case 1:
+			stampType = _globals._spriteIndexes[0];
+			break;
+
+		case 2:
+			stampType = _globals._spriteIndexes[1];
+			break;
+
+		case 3:
+			stampType = _globals._spriteIndexes[2];
+			break;
+
+		default:
+			break;
+		}
+
+		_globals._sequenceIndexes[0] = _scene->_sequences.addStampCycle(stampType, false, 1);
+		_scene->_sequences.setPosition(_globals._sequenceIndexes[0], pos);
+		_scene->_sequences.setDepth(_globals._sequenceIndexes[0], 2);
+		_skullSequence[i - 1] = _globals._sequenceIndexes[0];
+	}
+
+	if (_globals[kFlickedLever1]) {
+		Common::Point pos;
+		int type;
+
+		getLeverInfo(&pos, &type, _globals[kFlickedLever1], NULL);
+		int stampType = -1;
+
+		switch (type) {
+		case 1:
+			stampType = _globals._spriteIndexes[0];
+			break;
+
+		case 2:
+			stampType = _globals._spriteIndexes[1];
+			break;
+
+		case 3:
+			stampType = _globals._spriteIndexes[2];
+			break;
+
+		default:
+			break;
+		}
+		_scene->deleteSequence(_skullSequence[_globals[kFlickedLever1] - 1]);
+		_globals._sequenceIndexes[0] = _scene->_sequences.addStampCycle(stampType, false, -2);
+		_scene->_sequences.setPosition(_globals._sequenceIndexes[0], pos);
+		_scene->_sequences.setDepth(_globals._sequenceIndexes[0], 2);
+	}
+
+	if (_globals[kFlickedLever2]) {
+		Common::Point pos;
+		int type;
+
+		getLeverInfo(&pos, &type, _globals[kFlickedLever2], NULL);
+		int stampType = -1;
+		switch (type) {
+		case 1:
+			stampType = _globals._spriteIndexes[0];
+			break;
+
+		case 2:
+			stampType = _globals._spriteIndexes[1];
+			break;
+
+		case 3:
+			stampType = _globals._spriteIndexes[2];
+			break;
+
+		default:
+			break;
+		}
+		_scene->deleteSequence(_skullSequence[_globals[kFlickedLever2] - 1]);
+		_globals._sequenceIndexes[0] = _scene->_sequences.addStampCycle(stampType, false, -2);
+		_scene->_sequences.setPosition(_globals._sequenceIndexes[0], pos);
+		_scene->_sequences.setDepth(_globals._sequenceIndexes[0], 2);
+	}
+
+	if (_globals[kFlickedLever3]) {
+		Common::Point pos;
+		int type;
+
+		getLeverInfo(&pos, &type, _globals[kFlickedLever3], NULL);
+		int stampType = -1;
+		switch (type) {
+		case 1:
+			stampType = _globals._spriteIndexes[0];
+			break;
+
+		case 2:
+			stampType = _globals._spriteIndexes[1];
+			break;
+
+		case 3:
+			stampType = _globals._spriteIndexes[2];
+			break;
+
+		default:
+			break;
+		}
+		_scene->deleteSequence(_skullSequence[_globals[kFlickedLever3] - 1]);
+		_globals._sequenceIndexes[0] = _scene->_sequences.addStampCycle(stampType, false, -2);
+		_scene->_sequences.setPosition(_globals._sequenceIndexes[0], pos);
+		_scene->_sequences.setDepth(_globals._sequenceIndexes[0], 2);
+	}
+
+	if (_globals[kFlickedLever4]) {
+		Common::Point pos;
+		int type;
+
+		getLeverInfo(&pos, &type, _globals[kFlickedLever4], NULL);
+		int stampType = -1;
+		switch (type) {
+		case 1:
+			stampType = _globals._spriteIndexes[0];
+			break;
+
+		case 2:
+			stampType = _globals._spriteIndexes[1];
+			break;
+
+		case 3:
+			stampType = _globals._spriteIndexes[2];
+			break;
+
+		default:
+			break;
+		}
+		_scene->deleteSequence(_skullSequence[_globals[kFlickedLever4] - 1]);
+		_globals._sequenceIndexes[0] = _scene->_sequences.addStampCycle(stampType, false, -2);
+		_scene->_sequences.setPosition(_globals._sequenceIndexes[0], pos);
+		_scene->_sequences.setDepth(_globals._sequenceIndexes[0], 2);
+	}
+
+	sceneEntrySound();
+}
+
+void Scene410::step() {
+}
+
+void Scene410::actions() {
+	if (_action._lookFlag) {
+		_vm->_dialogs->show(41013);
+		_action._inProgress = false;
+		return;
+	}
+
+	if (_action.isAction(VERB_PUSH) || _action.isAction(VERB_PULL)) {
+		if (_globals[kDoorIn409IsOpen])
+			_vm->_dialogs->show(41014);
+		else {
+			Common::Point pos;
+			int type;
+			int number;
+
+			switch (_game._trigger) {
+			case 0:
+				_game._player._stepEnabled = false;
+				getLeverInfo(&pos, &type, 0, &number);
+				_globals._sequenceIndexes[3] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[3], false, 4, 2);
+				_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 1);
+				_scene->_sequences.setAnimRange(_globals._sequenceIndexes[3], -1, -2);
+				if (pos.y == 46)
+					pos.y = 48;
+
+				_scene->_sequences.setPosition(_globals._sequenceIndexes[3], Common::Point(pos.x + 4, pos.y + 107));
+				if (!_globals[kDoorIn409IsOpen])
+					_scene->_sequences.setTrigger(_globals._sequenceIndexes[3], 2, 16, 1);
+				_scene->_sequences.setTrigger(_globals._sequenceIndexes[3], 0, 0, 2);
+				break;
+
+			case 1:
+				getLeverInfo(&pos, &type, 0, &number);
+
+				if ((_globals[kFlickedLever1] != number) && (_globals[kFlickedLever2] != number) && (_globals[kFlickedLever3] != number) && (_globals[kFlickedLever4] != number)) {
+					_vm->_sound->command(65);
+
+					if (!_globals[kFlickedLever1]) {
+						_globals[kFlickedLever1] = number;
+						if (_globals[kFlickedLever1] == 5)
+							_vm->_sound->command(66);
+					} else if (!_globals[kFlickedLever2]) {
+						_globals[kFlickedLever2] = number;
+						if ((_globals[kFlickedLever1] == 5) && (_globals[kFlickedLever2] == 18))
+							_vm->_sound->command(66);
+					} else if (!_globals[kFlickedLever3]) {
+						_globals[kFlickedLever3] = number;
+						if ((_globals[kFlickedLever1] == 5) && (_globals[kFlickedLever2] == 18) && (_globals[kFlickedLever3] == 9))
+							_vm->_sound->command(66);
+					} else if (!_globals[kFlickedLever4]) {
+						_globals[kFlickedLever4] = number;
+						if ((_globals[kFlickedLever1] == 5) && (_globals[kFlickedLever2] == 18) && (_globals[kFlickedLever3] == 9) && (_globals[kFlickedLever4] == 11))
+							_vm->_sound->command(66);
+					}
+
+					if (_game._difficulty == DIFFICULTY_EASY)
+						_scene->drawToBackground(_globals._spriteIndexes[4], number, Common::Point(-32000, -32000), 0, 100);
+
+					switch (type) {
+					case 1:
+						_scene->deleteSequence(_skullSequence[number - 1]);
+						_globals._sequenceIndexes[0] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[0], false, 4, 1);
+						_scene->_sequences.setDepth(_globals._sequenceIndexes[0], 2);
+						_scene->_sequences.setAnimRange(_globals._sequenceIndexes[0], -1, -2);
+						_scene->_sequences.setTrigger(_globals._sequenceIndexes[0], 0, 0, 4);
+						_scene->_sequences.setPosition(_globals._sequenceIndexes[0], pos);
+						break;
+
+					case 2:
+						_scene->deleteSequence(_skullSequence[number - 1]);
+						_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 4, 1);
+						_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 2);
+						_scene->_sequences.setAnimRange(_globals._sequenceIndexes[1], -1, -2);
+						_scene->_sequences.setTrigger(_globals._sequenceIndexes[1], 0, 0, 4);
+						_scene->_sequences.setPosition(_globals._sequenceIndexes[1], pos);
+						break;
+
+					case 3:
+						_scene->deleteSequence(_skullSequence[number - 1]);
+						_globals._sequenceIndexes[2] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[2], false, 4, 1);
+						_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 2);
+						_scene->_sequences.setAnimRange(_globals._sequenceIndexes[2], -1, -2);
+						_scene->_sequences.setTrigger(_globals._sequenceIndexes[2], 0, 0, 4);
+						_scene->_sequences.setPosition(_globals._sequenceIndexes[2], pos);
+						break;
+
+					default:
+						break;
+					}
+				}
+				break;
+
+			case 2:
+				_game._player._stepEnabled = true;
+
+				if ((_globals[kFlickedLever1] == 5) && (_globals[kFlickedLever2] == 18) && (_globals[kFlickedLever3] == 9) && (_globals[kFlickedLever4] == 11) && !_globals[kDoorIn409IsOpen])
+					_vm->_sound->command(67);
+
+				if (_globals[kFlickedLever1] && _globals[kFlickedLever2] && _globals[kFlickedLever3] && _globals[kFlickedLever4])
+					_scene->_nextSceneId = 409;
+
+				break;
+
+			case 4:
+				getLeverInfo(&pos, &type, 0, &number);
+				_globals._sequenceIndexes[0] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[0], false, -2);
+				_scene->_sequences.setDepth(_globals._sequenceIndexes[0], 2);
+				_scene->_sequences.setPosition(_globals._sequenceIndexes[0], pos);
+				break;
+
+			case 5:
+				getLeverInfo(&pos, &type, 0, &number);
+				_globals._sequenceIndexes[1] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[1], false, -2);
+				_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 2);
+				_scene->_sequences.setPosition(_globals._sequenceIndexes[1], pos);
+				break;
+
+			case 6:
+				getLeverInfo(&pos, &type, 0, &number);
+				_globals._sequenceIndexes[2] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[2], false, -2);
+				_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 2);
+				_scene->_sequences.setPosition(_globals._sequenceIndexes[2], pos);
+				break;
+
+			default:
+				break;
+			}
+		}
+		_action._inProgress = false;
+		return;
+	}
+
+	if (_action.isAction(VERB_LOOK) || _action.isAction(VERB_LOOK_AT)) {
+		if (_action.isObject(NOUN_WALL)) {
+			_vm->_dialogs->show(41011);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isObject(NOUN_SWITCH_PANEL)) {
+			_vm->_dialogs->show(41011);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isObject(NOUN_CATACOMB_ROOM)) {
+			_vm->_dialogs->show(41015);
+			_action._inProgress = false;
+			return;
+		}
+
+		switch (_action._activeAction._objectNameId) {
+		case NOUN_SKULL_SWITCH_1:
+		case NOUN_SKULL_SWITCH_2:
+		case NOUN_SKULL_SWITCH_3:
+		case NOUN_SKULL_SWITCH_4:
+		case NOUN_SKULL_SWITCH_5:
+		case NOUN_SKULL_SWITCH_6:
+		case NOUN_SKULL_SWITCH_7:
+		case NOUN_SKULL_SWITCH_8:
+		case NOUN_SKULL_SWITCH_9:
+		case NOUN_SKULL_SWITCH_10:
+		case NOUN_SKULL_SWITCH_11:
+		case NOUN_SKULL_SWITCH_12:
+		case NOUN_SKULL_SWITCH_13:
+		case NOUN_SKULL_SWITCH_14:
+		case NOUN_SKULL_SWITCH_15:
+		case NOUN_SKULL_SWITCH_16:
+		case NOUN_SKULL_SWITCH_17:
+		case NOUN_SKULL_SWITCH_18:
+		case NOUN_SKULL_SWITCH_19:
+		case NOUN_SKULL_SWITCH_20:
+		case NOUN_SKULL_SWITCH_21:
+		case NOUN_SKULL_SWITCH_22:
+		case NOUN_SKULL_SWITCH_23:
+		case NOUN_SKULL_SWITCH_24:
+		case NOUN_SKULL_SWITCH_25:
+		case NOUN_SKULL_SWITCH_26:
+			_vm->_dialogs->show(41012);
+			_action._inProgress = false;
+			return;
+			break;
+		}
+	}
+
+	if (_action.isAction(VERB_EXIT_TO, NOUN_CATACOMB_ROOM)) {
+		_scene->_nextSceneId = 409;
+		_action._inProgress = false;
+	}
+}
+
+void Scene410::preActions() {
+}
+
+void Scene410::getLeverInfo(Common::Point *pos, int *type, int lever, int *noun) {
+	if (noun != NULL) {
+		switch (_action._activeAction._objectNameId) {
+		case NOUN_SKULL_SWITCH_1:
+			lever = 1;
+			break;
+
+		case NOUN_SKULL_SWITCH_2:
+			lever = 2;
+			break;
+
+		case NOUN_SKULL_SWITCH_3:
+			lever = 3;
+			break;
+
+		case NOUN_SKULL_SWITCH_4:
+			lever = 4;
+			break;
+
+		case NOUN_SKULL_SWITCH_5:
+			lever = 5;
+			break;
+
+		case NOUN_SKULL_SWITCH_6:
+			lever = 6;
+			break;
+
+		case NOUN_SKULL_SWITCH_7:
+			lever = 7;
+			break;
+
+		case NOUN_SKULL_SWITCH_8:
+			lever = 8;
+			break;
+
+		case NOUN_SKULL_SWITCH_9:
+			lever = 9;
+			break;
+
+		case NOUN_SKULL_SWITCH_10:
+			lever = 10;
+			break;
+
+		case NOUN_SKULL_SWITCH_11:
+			lever = 11;
+			break;
+
+		case NOUN_SKULL_SWITCH_12:
+			lever = 12;
+			break;
+
+		case NOUN_SKULL_SWITCH_13:
+			lever = 13;
+			break;
+
+		case NOUN_SKULL_SWITCH_14:
+			lever = 14;
+			break;
+
+		case NOUN_SKULL_SWITCH_15:
+			lever = 15;
+			break;
+
+		case NOUN_SKULL_SWITCH_16:
+			lever = 16;
+			break;
+
+		case NOUN_SKULL_SWITCH_17:
+			lever = 17;
+			break;
+
+		case NOUN_SKULL_SWITCH_18:
+			lever = 18;
+			break;
+
+		case NOUN_SKULL_SWITCH_19:
+			lever = 19;
+			break;
+
+		case NOUN_SKULL_SWITCH_20:
+			lever = 20;
+			break;
+
+		case NOUN_SKULL_SWITCH_21:
+			lever = 21;
+			break;
+
+		case NOUN_SKULL_SWITCH_22:
+			lever = 22;
+			break;
+
+		case NOUN_SKULL_SWITCH_23:
+			lever = 23;
+			break;
+
+		case NOUN_SKULL_SWITCH_24:
+			lever = 24;
+			break;
+
+		case NOUN_SKULL_SWITCH_25:
+			lever = 25;
+			break;
+
+		case NOUN_SKULL_SWITCH_26:
+			lever = 26;
+			break;
+
+		default:
+			break;
+		}
+		*noun = lever;
+	}
+
+	switch (lever) {
+	case 1:
+		*pos = Common::Point(124, 46);
+		*type = 3;
+		break;
+
+	case 2:
+		*pos = Common::Point(143, 46);
+		*type = 2;
+		break;
+
+	case 3:
+		*pos = Common::Point(162, 46);
+		*type = 1;
+		break;
+
+	case 4:
+		*pos = Common::Point(181, 46);
+		*type = 3;
+		break;
+
+	case 5:
+		*pos = Common::Point(200, 46);
+		*type = 1;
+		break;
+
+	case 6:
+		*pos = Common::Point(219, 46);
+		*type = 2;
+		break;
+
+	case 7:
+		*pos = Common::Point(238, 46);
+		*type = 1;
+		break;
+
+	case 8:
+		*pos = Common::Point(133, 71);
+		*type = 3;
+		break;
+
+	case 9:
+		*pos = Common::Point(152, 71);
+		*type = 2;
+		break;
+
+	case 10:
+		*pos = Common::Point(171, 71);
+		*type = 1;
+		break;
+
+	case 11:
+		*pos = Common::Point(190, 71);
+		*type = 3;
+		break;
+
+	case 12:
+		*pos = Common::Point(209, 71);
+		*type = 2;
+		break;
+
+	case 13:
+		*pos = Common::Point(228, 71);
+		*type = 1;
+		break;
+
+	case 14:
+		*pos = Common::Point(124, 98);
+		*type = 1;
+		break;
+
+	case 15:
+		*pos = Common::Point(143, 98);
+		*type = 3;
+		break;
+
+	case 16:
+		*pos = Common::Point(162, 98);
+		*type = 2;
+		break;
+
+	case 17:
+		*pos = Common::Point(181, 98);
+		*type = 1;
+		break;
+
+	case 18:
+		*pos = Common::Point(200, 98);
+		*type = 1;
+		break;
+
+	case 19:
+		*pos = Common::Point(219, 98);
+		*type = 2;
+		break;
+
+	case 20:
+		*pos = Common::Point(238, 98);
+		*type = 1;
+		break;
+
+	case 21:
+		*pos = Common::Point(133, 125);
+		*type = 3;
+		break;
+
+	case 22:
+		*pos = Common::Point(152, 125);
+		*type = 1;
+		break;
+
+	case 23:
+		*pos = Common::Point(171, 125);
+		*type = 3;
+		break;
+
+	case 24:
+		*pos = Common::Point(190, 125);
+		*type = 2;
+		break;
+
+	case 25:
+		*pos = Common::Point(209, 125);
+		*type = 1;
+		break;
+
+	case 26:
+		*pos = Common::Point(228, 125);
+		*type = 2;
+		break;
+
+	default:
+		*pos = Common::Point(-1, -1);
+		*type = -1;
+		break;
+	}
+}
+
+/*------------------------------------------------------------------------*/
+
 } // End of namespace Phantom
 } // End of namespace MADS

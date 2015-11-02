@@ -202,6 +202,21 @@ public:
 	virtual void actions();
 };
 
+class Scene410 : public Scene4xx {
+private:
+	int _skullSequence[26];
+	void getLeverInfo(Common::Point *pos, int *type, int lever_number, int *noun);
+
+public:
+	Scene410(MADSEngine *vm);
+	virtual void synchronize(Common::Serializer &s);
+
+	virtual void setup();
+	virtual void enter();
+	virtual void step();
+	virtual void preActions();
+	virtual void actions();
+};
 } // End of namespace Phantom
 } // End of namespace MADS
 
