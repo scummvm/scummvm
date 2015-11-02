@@ -138,7 +138,7 @@ SceneLogic *SceneFactory::createScene(MADSEngine *vm) {
 	case 453:	// Labyrinth room (big), 4 exits + 1 bricked door, right
 		return new Scene453(vm);
 	case 456:	// Labyrinth room, 2 exits
-		return new DummyScene(vm);	// TODO
+		return new Scene456(vm);
 
 	// Scene group #5 (Phantom's hideout)
 	case 501:	// catacombs, outside phantom's hideout, lake and boat

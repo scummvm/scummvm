@@ -4613,5 +4613,363 @@ void Scene453::preActions() {
 
 /*------------------------------------------------------------------------*/
 
+Scene456::Scene456(MADSEngine *vm) : Scene4xx(vm) {
+	_frameInRoomFl = false;
+	_takingFrameInRoomFl = false;
+
+	_redFrameHotspotId = -1;
+	_greenFrameHotspotId = -1;
+	_blueFrameHotspotId = -1;
+	_yellowFrameHotspotId = -1;
+}
+
+void Scene456::synchronize(Common::Serializer &s) {
+	Scene4xx::synchronize(s);
+
+	s.syncAsByte(_frameInRoomFl);
+	s.syncAsByte(_takingFrameInRoomFl);
+
+	s.syncAsSint16LE(_redFrameHotspotId);
+	s.syncAsSint16LE(_greenFrameHotspotId);
+	s.syncAsSint16LE(_blueFrameHotspotId);
+	s.syncAsSint16LE(_yellowFrameHotspotId);
+}
+
+void Scene456::setup() {
+	setPlayerSpritesPrefix();
+	setAAName();
+
+	_scene->addActiveVocab(NOUN_RED_FRAME);
+	_scene->addActiveVocab(NOUN_YELLOW_FRAME);
+	_scene->addActiveVocab(NOUN_BLUE_FRAME);
+	_scene->addActiveVocab(NOUN_GREEN_FRAME);
+}
+
+void Scene456::enter() {
+	_game.initCatacombs();
+
+	_globals._spriteIndexes[0] = _scene->_sprites.addSprites(formAnimName('c', 1), false);
+	_globals._spriteIndexes[1] = _scene->_sprites.addSprites("*RRD_9", false);
+	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('f', 0), false);
+	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('f', 1), false);
+	_globals._spriteIndexes[4] = _scene->_sprites.addSprites(formAnimName('f', 2), false);
+	_globals._spriteIndexes[5] = _scene->_sprites.addSprites(formAnimName('f', 3), false);
+
+	if (_game.exitCatacombs(1) == -1) {
+		_scene->drawToBackground(_globals._spriteIndexes[0], 1, Common::Point(-32000, -32000), 0, 100);
+		_scene->_hotspots.activate(NOUN_ARCHWAY_TO_EAST, false);
+	}
+
+	if (_scene->_priorSceneId != RETURNING_FROM_LOADING) {
+		switch (_globals[kCatacombsFrom]) {
+		case 1:
+			_game._player._playerPos = Common::Point(298, 123);
+			_game._player._facing = FACING_WEST;
+			_game._player.walk(Common::Point(254, 123), FACING_WEST);
+			break;
+
+		case 3:
+			_game._player._playerPos = Common::Point(14, 117);
+			_game._player._facing = FACING_SOUTH;
+			_game._player.walk(Common::Point(46, 117), FACING_EAST);
+			break;
+
+		default:
+			break;
+		}
+	}
+
+	if (_game._objects[OBJ_RED_FRAME]._roomNumber == _globals[kCatacombsRoom] + 600) {
+		_globals._sequenceIndexes[2] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[2], false, 1);
+		_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 14);
+
+		Common::Point pos = _scene->_sprites[_globals._spriteIndexes[2]]->getFramePos(0);
+		_redFrameHotspotId = _scene->_dynamicHotspots.add(NOUN_RED_FRAME, VERB_WALK_TO, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(pos.x - 5, pos.y - 5, pos.x + 5, pos.y + 1));
+		_scene->_dynamicHotspots.setPosition(_redFrameHotspotId, Common::Point(pos.x + 12, pos.y), FACING_NORTHWEST);
+	}
+
+	if (_game._objects[OBJ_GREEN_FRAME]._roomNumber == _globals[kCatacombsRoom] + 600) {
+		_globals._sequenceIndexes[3] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[3], false, 1);
+		_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 14);
+
+		Common::Point pos = _scene->_sprites[_globals._spriteIndexes[2]]->getFramePos(0);
+		_greenFrameHotspotId = _scene->_dynamicHotspots.add(NOUN_GREEN_FRAME, VERB_WALK_TO, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(pos.x - 5, pos.y - 5, pos.x + 5, pos.y + 1));
+		_scene->_dynamicHotspots.setPosition(_greenFrameHotspotId, Common::Point(pos.x + 12, pos.y), FACING_NORTHWEST);
+	}
+
+	if (_game._objects[OBJ_BLUE_FRAME]._roomNumber == _globals[kCatacombsRoom] + 600) {
+		_globals._sequenceIndexes[4] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[4], false, 1);
+		_scene->_sequences.setDepth(_globals._sequenceIndexes[4], 14);
+
+		Common::Point pos = _scene->_sprites[_globals._spriteIndexes[2]]->getFramePos(0);
+		_blueFrameHotspotId = _scene->_dynamicHotspots.add(NOUN_BLUE_FRAME, VERB_WALK_TO, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(pos.x - 5, pos.y - 5, pos.x + 5, pos.y + 1));
+		_scene->_dynamicHotspots.setPosition(_blueFrameHotspotId, Common::Point(pos.x + 12, pos.y), FACING_NORTHWEST);
+	}
+
+	if (_game._objects[OBJ_YELLOW_FRAME]._roomNumber == _globals[kCatacombsRoom] + 600) {
+		_globals._sequenceIndexes[5] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[5], false, 1);
+		_scene->_sequences.setDepth(_globals._sequenceIndexes[5], 14);
+
+		Common::Point pos = _scene->_sprites[_globals._spriteIndexes[2]]->getFramePos(0);
+		_yellowFrameHotspotId = _scene->_dynamicHotspots.add(NOUN_YELLOW_FRAME, VERB_WALK_TO, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(pos.x - 5, pos.y - 5, pos.x + 5, pos.y + 1));
+		_scene->_dynamicHotspots.setPosition(_yellowFrameHotspotId, Common::Point(pos.x + 12, pos.y), FACING_NORTHWEST);
+	}
+
+	sceneEntrySound();
+}
+
+void Scene456::step() {
+}
+
+void Scene456::actions() {
+	if (_action.isAction(VERB_PUT) && _action.isTarget(NOUN_FLOOR)) {
+		if (_action.isObject(NOUN_RED_FRAME) || _action.isObject(NOUN_BLUE_FRAME) || _action.isObject(NOUN_YELLOW_FRAME) || _action.isObject(NOUN_GREEN_FRAME)) {
+			if (_frameInRoomFl) {
+				_vm->_dialogs->show(29);
+			} else {
+				switch (_game._trigger) {
+				case (0):
+					_game._player._stepEnabled = false;
+					_game._player._visible = false;
+					_globals._sequenceIndexes[1] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[1], true, 5, 2);
+					_scene->_sequences.setAnimRange(_globals._sequenceIndexes[1], 1, 5);
+					_scene->_sequences.setSeqPlayer(_globals._sequenceIndexes[1], true);
+					_scene->_sequences.setTrigger(_globals._sequenceIndexes[1], 2, 5, 1);
+					_scene->_sequences.setTrigger(_globals._sequenceIndexes[1], 0, 0, 2);
+					break;
+
+				case 1:
+					if (_action.isObject(NOUN_RED_FRAME)) {
+						_game._objects.setRoom(OBJ_RED_FRAME, NOWHERE);
+						_game._objects[OBJ_RED_FRAME]._roomNumber = _globals[kCatacombsRoom] + 600;
+						_globals._sequenceIndexes[2] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[2], false, 1);
+						_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 14);
+
+						Common::Point pos = _scene->_sprites[_globals._spriteIndexes[2]]->getFramePos(0);
+						_redFrameHotspotId = _scene->_dynamicHotspots.add(NOUN_RED_FRAME, VERB_WALK_TO, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(pos.x - 5, pos.y - 5, pos.x + 5, pos.y + 1));
+						_scene->_dynamicHotspots.setPosition(_redFrameHotspotId, Common::Point(pos.x + 12, pos.y), FACING_NORTHWEST);
+					}
+
+					if (_action.isObject(NOUN_GREEN_FRAME)) {
+						_game._objects.setRoom(OBJ_GREEN_FRAME, NOWHERE);
+						_game._objects[OBJ_GREEN_FRAME]._roomNumber = _globals[kCatacombsRoom] + 600;
+						_globals._sequenceIndexes[3] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[3], false, 1);
+						_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 14);
+
+						Common::Point pos = _scene->_sprites[_globals._spriteIndexes[2]]->getFramePos(0);
+						_greenFrameHotspotId = _scene->_dynamicHotspots.add(NOUN_GREEN_FRAME, VERB_WALK_TO, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(pos.x - 5, pos.y - 5, pos.x + 5, pos.y + 1));
+						_scene->_dynamicHotspots.setPosition(_greenFrameHotspotId, Common::Point(pos.x + 12, pos.y), FACING_NORTHWEST);
+					}
+
+					if (_action.isObject(NOUN_BLUE_FRAME)) {
+						_game._objects.setRoom(OBJ_BLUE_FRAME, NOWHERE);
+						_game._objects[OBJ_BLUE_FRAME]._roomNumber = _globals[kCatacombsRoom] + 600;
+						_globals._sequenceIndexes[4] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[4], false, 1);
+						_scene->_sequences.setDepth(_globals._sequenceIndexes[4], 14);
+
+						Common::Point pos = _scene->_sprites[_globals._spriteIndexes[2]]->getFramePos(0);
+						_blueFrameHotspotId = _scene->_dynamicHotspots.add(NOUN_BLUE_FRAME, VERB_WALK_TO, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(pos.x - 5, pos.y - 5, pos.x + 5, pos.y + 1));
+						_scene->_dynamicHotspots.setPosition(_blueFrameHotspotId, Common::Point(pos.x + 12, pos.y), FACING_NORTHWEST);
+					}
+
+					if (_action.isObject(NOUN_YELLOW_FRAME)) {
+						_game._objects.setRoom(OBJ_YELLOW_FRAME, NOWHERE);
+						_game._objects[OBJ_YELLOW_FRAME]._roomNumber = _globals[kCatacombsRoom] + 600;
+						_globals._sequenceIndexes[5] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[5], false, 1);
+						_scene->_sequences.setDepth(_globals._sequenceIndexes[5], 14);
+
+						Common::Point pos = _scene->_sprites[_globals._spriteIndexes[2]]->getFramePos(0);
+						_yellowFrameHotspotId = _scene->_dynamicHotspots.add(NOUN_YELLOW_FRAME, VERB_WALK_TO, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(pos.x - 5, pos.y - 5, pos.x + 5, pos.y + 1));
+						_scene->_dynamicHotspots.setPosition(_yellowFrameHotspotId, Common::Point(pos.x + 12, pos.y), FACING_NORTHWEST);
+					}
+					break;
+
+				case 2:
+					_game.syncTimers(2, 0, 1, _globals._sequenceIndexes[1]);
+					_game._player._visible = true;
+					_game._player._stepEnabled = true;
+					break;
+
+				default:
+					break;
+				}
+			}
+			_action._inProgress = false;
+			return;
+		}
+	}
+
+
+	if (_action.isAction(VERB_TAKE)
+	 && (_action.isObject(NOUN_RED_FRAME) || _action.isObject(NOUN_GREEN_FRAME) || _action.isObject(NOUN_BLUE_FRAME) || _action.isObject(NOUN_YELLOW_FRAME))) {
+		if ((_takingFrameInRoomFl || _game._trigger)) {
+			switch (_game._trigger) {
+			case (0):
+				_game._player._stepEnabled = false;
+				_game._player._visible = false;
+				_globals._sequenceIndexes[1] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[1], true, 5, 2);
+				_scene->_sequences.setAnimRange(_globals._sequenceIndexes[1], 1, 5);
+				_scene->_sequences.setSeqPlayer(_globals._sequenceIndexes[1], true);
+				_scene->_sequences.setTrigger(_globals._sequenceIndexes[1], 2, 5, 1);
+				_scene->_sequences.setTrigger(_globals._sequenceIndexes[1], 0, 0, 2);
+				break;
+
+			case 1:
+				if (_action.isObject(NOUN_RED_FRAME)) {
+					_scene->deleteSequence(_globals._sequenceIndexes[2]);
+					_scene->_dynamicHotspots.remove(_redFrameHotspotId);
+					_game._objects.addToInventory(OBJ_RED_FRAME);
+				}
+
+				if (_action.isObject(NOUN_GREEN_FRAME)) {
+					_scene->deleteSequence(_globals._sequenceIndexes[3]);
+					_scene->_dynamicHotspots.remove(_greenFrameHotspotId);
+					_game._objects.addToInventory(OBJ_GREEN_FRAME);
+				}
+
+				if (_action.isObject(NOUN_BLUE_FRAME)) {
+					_scene->deleteSequence(_globals._sequenceIndexes[4]);
+					_scene->_dynamicHotspots.remove(_blueFrameHotspotId);
+					_game._objects.addToInventory(OBJ_BLUE_FRAME);
+				}
+
+				if (_action.isObject(NOUN_YELLOW_FRAME)) {
+					_scene->deleteSequence(_globals._sequenceIndexes[5]);
+					_scene->_dynamicHotspots.remove(_yellowFrameHotspotId);
+					_game._objects.addToInventory(OBJ_YELLOW_FRAME);
+				}
+
+				_vm->_sound->command(26);
+				break;
+
+			case 2:
+				_game.syncTimers(2, 0, 1, _globals._sequenceIndexes[1]);
+				_game._player._visible = true;
+				_game._player._stepEnabled = true;
+				break;
+
+			default:
+				break;
+			}
+			_action._inProgress = false;
+			return;
+		}
+	}
+
+	if (_action.isAction(VERB_WALK_THROUGH, NOUN_ARCHWAY_TO_WEST)) {
+		_game.moveCatacombs(3);
+		_action._inProgress = false;
+		return;
+	}
+
+	if (_action.isAction(VERB_WALK_THROUGH, NOUN_ARCHWAY_TO_EAST)) {
+		_game.moveCatacombs(1);
+		_action._inProgress = false;
+		return;
+	}
+
+	if (_action._lookFlag) {
+		_vm->_dialogs->show(45610);
+		_action._inProgress = false;
+		return;
+	}
+
+	if (_action.isAction(VERB_LOOK) || _action.isAction(VERB_LOOK_AT)) {
+		if (_action.isObject(NOUN_WALL)) {
+			_vm->_dialogs->show(45611);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isObject(NOUN_FLOOR)) {
+			_vm->_dialogs->show(45612);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isObject(NOUN_ARCHWAY)) {
+			_vm->_dialogs->show(45613);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isObject(NOUN_EXPOSED_BRICK)) {
+			_vm->_dialogs->show(45614);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isObject(NOUN_RED_FRAME) && !_game._objects.isInInventory(OBJ_RED_FRAME)) {
+			_vm->_dialogs->showItem(OBJ_RED_FRAME, 802, 0);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isObject(NOUN_GREEN_FRAME) && !_game._objects.isInInventory(OBJ_GREEN_FRAME)) {
+			_vm->_dialogs->showItem(OBJ_GREEN_FRAME, 819, 0);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isObject(NOUN_BLUE_FRAME) && !_game._objects.isInInventory(OBJ_BLUE_FRAME)) {
+			_vm->_dialogs->showItem(OBJ_BLUE_FRAME, 817, 0);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isObject(NOUN_YELLOW_FRAME) && !_game._objects.isInInventory(OBJ_YELLOW_FRAME)) {
+			_vm->_dialogs->showItem(OBJ_YELLOW_FRAME, 804, 0);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isObject(NOUN_MORE_CATACOMBS)) {
+			_vm->_dialogs->show(45615);
+			_action._inProgress = false;
+		}
+	}
+}
+
+void Scene456::preActions() {
+	_frameInRoomFl = false;
+	_takingFrameInRoomFl = false;
+
+	if (_game._objects[OBJ_RED_FRAME]._roomNumber == _globals[kCatacombsRoom] + 600) {
+		_frameInRoomFl = true;
+		if (_action.isAction(VERB_TAKE, NOUN_RED_FRAME))
+			_takingFrameInRoomFl = true;
+	}
+
+	if (_game._objects[OBJ_YELLOW_FRAME]._roomNumber == _globals[kCatacombsRoom] + 600) {
+		_frameInRoomFl = true;
+		if (_action.isAction(VERB_TAKE, NOUN_YELLOW_FRAME))
+			_takingFrameInRoomFl = true;
+	}
+
+	if (_game._objects[OBJ_BLUE_FRAME]._roomNumber == _globals[kCatacombsRoom] + 600) {
+		_frameInRoomFl = true;
+		if (_action.isAction(VERB_TAKE, NOUN_BLUE_FRAME))
+			_takingFrameInRoomFl = true;
+	}
+
+	if (_game._objects[OBJ_GREEN_FRAME]._roomNumber == _globals[kCatacombsRoom] + 600) {
+		_frameInRoomFl = true;
+		if (_action.isAction(VERB_TAKE, NOUN_GREEN_FRAME))
+			_takingFrameInRoomFl = true;
+	}
+
+	if (_action.isAction(VERB_PUT) && _action.isTarget(NOUN_FLOOR)
+	 && (_action.isObject(NOUN_RED_FRAME) || _action.isObject(NOUN_BLUE_FRAME) || _action.isObject(NOUN_YELLOW_FRAME) || _action.isObject(NOUN_GREEN_FRAME))) {
+		if (_frameInRoomFl)
+			_game._player._needToWalk = false;
+		else {
+			Common::Point pos = _scene->_sprites[_globals._spriteIndexes[2]]->getFramePos(0);
+			_game._player.walk(Common::Point(pos.x + 12, pos.y), FACING_NORTHWEST);
+		}
+	}
+}
+
+/*------------------------------------------------------------------------*/
+
 } // End of namespace Phantom
 } // End of namespace MADS
