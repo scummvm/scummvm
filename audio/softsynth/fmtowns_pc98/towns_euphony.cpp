@@ -51,7 +51,7 @@ bool EuphonyPlayer::init() {
 	for (int i = 0; i < 3; i++) {
 		if (_drivers[i]) {
 			if (!_drivers[i]->init()) {
-				warning("EuphonyPlayer:: Driver initalization failed: %d", i);
+				warning("EuphonyPlayer:: Driver initialization failed: %d", i);
 				delete _drivers[i];
 				_drivers[i] = 0;
 			}
@@ -129,40 +129,42 @@ void EuphonyPlayer::setLoopStatus(bool loop) {
 }
 
 int EuphonyPlayer::configPart_enable(int part, int val) {
-	if (part > 31)
+	uint8 enable = val & 0xff;
+	if (part > 31 || ((enable + 1) & 0xff) > 1)
 		return 3;
-	_partConfig_enable[part] = val;
+	_partConfig_enable[part] = enable;
 	return 0;
 }
 
 int EuphonyPlayer::configPart_setType(int part, int val) {
-	if (part > 31)
+	uint8 type = val & 0xff;
+	if (part > 31 || ((type + 1) & 0xff) > 8)
 		return 3;
-	_partConfig_type[part] = val;
+	_partConfig_type[part] = type;
 	return 0;
 }
 
 int EuphonyPlayer::configPart_remap(int part, int val) {
-	if (part > 31)
+	uint8 remap = val & 0xff;
+	if (part > 31 || ((remap + 1) & 0xff) > 16)
 		return 3;
-	if (val < 16)
-		_partConfig_ordr[part] = val;
+	_partConfig_ordr[part] = remap;
 	return 0;
 }
 
 int EuphonyPlayer::configPart_adjustVolume(int part, int val) {
-	if (part > 31)
+	int8 adjvol = val & 0xff;
+	if (part > 31 || adjvol < -40 || adjvol > 40)
 		return 3;
-	if (val <= 40)
-		_partConfig_volume[part] = (int8)(val & 0xff);
+	_partConfig_volume[part] = adjvol;
 	return 0;
 }
 
 int EuphonyPlayer::configPart_setTranspose(int part, int val) {
-	if (part > 31)
+	int8 trans = val & 0xff;
+	if (part > 31 || trans < -40 || trans > 40)
 		return 3;
-	if (val <= 40)
-		_partConfig_transpose[part] = (int8)(val & 0xff);
+	_partConfig_transpose[part] = trans;
 	return 0;
 }
 
@@ -281,9 +283,7 @@ void EuphonyPlayer::updateParser() {
 
 		} else {
 			if (_parseToBar == _bar) {
-				uint16 parseToBeat = READ_LE_UINT16(&_musicPos[2]);
-				uint8 l = (parseToBeat & 0xff) + (parseToBeat & 0xff);
-				parseToBeat = ((parseToBeat & 0xff00) | l) >> 1;
+				uint16 parseToBeat = ((_musicPos[3] << 8) | ((_musicPos[2] << 1) & 0xff)) >> 1;
 				if (parseToBeat > _beat)
 					loop = false;
 			}
@@ -313,7 +313,7 @@ bool EuphonyPlayer::parseEvent() {
 		EVENT(programChange_channelAftertouch),
 		EVENT(controlChange_pitchWheel),
 		
-		EVENT(loadInstrument),
+		EVENT(sysex),
 		EVENT(advanceBar),
 		EVENT(notImpl),
 		EVENT(notImpl),
@@ -437,7 +437,7 @@ bool EuphonyPlayer::event_noteOn() {
 		return true;
 
 	velo = _musicPos[5];
-	uint16 len = ((((_musicPos[1] << 4) | (_musicPos[2] << 8)) >> 4) & 0xff) | ((((_musicPos[3] << 4) | (_musicPos[4] << 8)) >> 4) << 8);
+	uint16 len = (_musicPos[1] & 0x0f) | ((_musicPos[2] & 0x0f) << 4) | ((_musicPos[3] & 0x0f) << 8) | ((_musicPos[4] & 0x0f) << 12);
 
 	int i = 0;
 	for (; i < 64; i++) {
@@ -506,7 +506,25 @@ bool EuphonyPlayer::event_programChange_channelAftertouch() {
 	return false;
 }
 
-bool EuphonyPlayer::event_loadInstrument() {
+bool EuphonyPlayer::event_sysex() {
+	uint8 type = _partConfig_type[_musicPos[1]];
+	sendEvent(type, 0xF0);
+	proceedToNextEvent();
+
+	for (bool loop = true; loop; ) {
+		for (int i = 0; i < 6; i++) {
+			if (_musicPos[i] != 0xFF) {
+				sendEvent(type, _musicPos[i]);
+				if (_musicPos[i] >= 0x80) {
+					loop = false;
+					break;
+				}
+			}
+		}
+		if (loop)
+			proceedToNextEvent();
+	}
+
 	return false;
 }
 
@@ -517,8 +535,7 @@ bool EuphonyPlayer::event_advanceBar() {
 }
 
 bool EuphonyPlayer::event_setTempo() {
-	uint8 l = _musicPos[4] << 1;
-	_trackTempo = (l | (_musicPos[5] << 8)) >> 1;
+	_trackTempo = ((_musicPos[5] << 8) | ((_musicPos[4] << 1) & 0xff)) >> 1;
 	sendTempo(_trackTempo);
 	return false;
 }
@@ -567,7 +584,7 @@ void EuphonyPlayer::sendEvent(uint8 type, uint8 command) {
 }
 
 void EuphonyPlayer::sendNoteEvent(int type, int evt, int note, int velo) {
-	if (!velo)
+	if (velo)
 		evt &= 0x8f;
 	sendEvent(type, evt);
 	sendEvent(type, note);

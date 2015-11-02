@@ -161,7 +161,7 @@ private:
 	bool event_controlChange_pitchWheel();
 	bool event_programChange_channelAftertouch();
 
-	bool event_loadInstrument();
+	bool event_sysex();
 	bool event_advanceBar();
 	bool event_setTempo();
 	bool event_typeOrdrChange();
