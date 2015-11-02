@@ -136,7 +136,7 @@ SceneLogic *SceneFactory::createScene(MADSEngine *vm) {
 	case 410:	// skull switch panel
 		return new Scene410(vm);
 	case 453:	// Labyrinth room (big), 4 exits + 1 bricked door, right
-		return new DummyScene(vm);	// TODO
+		return new Scene453(vm);
 	case 456:	// Labyrinth room, 2 exits
 		return new DummyScene(vm);	// TODO
 
