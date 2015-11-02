@@ -4171,10 +4171,10 @@ void Scene453::enter() {
 	_scene->_hotspots.activate(NOUN_HOLE, false);
 	_scene->_hotspots.activate(NOUN_GATE, false);
 
-	_globals._spriteIndexes[8]  = _scene->_sprites.addSprites("*RRD_9", false);
-	_globals._spriteIndexes[9]    = _scene->_sprites.addSprites(formAnimName('f', 0), false);
-	_globals._spriteIndexes[10]  = _scene->_sprites.addSprites(formAnimName('f', 1), false);
-	_globals._spriteIndexes[11]   = _scene->_sprites.addSprites(formAnimName('f', 2), false);
+	_globals._spriteIndexes[8] = _scene->_sprites.addSprites("*RRD_9", false);
+	_globals._spriteIndexes[9] = _scene->_sprites.addSprites(formAnimName('f', 0), false);
+	_globals._spriteIndexes[10] = _scene->_sprites.addSprites(formAnimName('f', 1), false);
+	_globals._spriteIndexes[11] = _scene->_sprites.addSprites(formAnimName('f', 2), false);
 	_globals._spriteIndexes[12] = _scene->_sprites.addSprites(formAnimName('f', 3), false);
 
 
@@ -4185,14 +4185,14 @@ void Scene453::enter() {
 	}
 
 	if (_game.exitCatacombs(3) == -1) {
-		_globals._spriteIndexes[13]  = _scene->_sprites.addSprites(formAnimName('c', 8), false);
+		_globals._spriteIndexes[13] = _scene->_sprites.addSprites(formAnimName('c', 8), false);
 		_scene->drawToBackground(_globals._spriteIndexes[13], 1, Common::Point(-32000, -32000), 0, 100);
 		_scene->_hotspots.activate(NOUN_MORE_CATACOMBS, false);
 		_scene->_hotspots.activate(NOUN_GATE, true);
 	}
 
 	if (_game.exitCatacombs(1) == -1) {
-		_globals._spriteIndexes[2]  = _scene->_sprites.addSprites(formAnimName('c', 2), false);
+		_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('c', 2), false);
 		_scene->drawToBackground(_globals._spriteIndexes[2], 1, Common::Point(-32000, -32000), 0, 100);
 		_scene->_hotspots.activate(NOUN_ARCHWAY_TO_EAST, false);
 	}
@@ -4297,15 +4297,15 @@ void Scene453::step() {
 
 void Scene453::actions() {
 	if (_action.isAction(VERB_PUT) && _action.isTarget(NOUN_FLOOR)) {
-		if (_action.isObject(NOUN_RED_FRAME) || _action.isObject(NOUN_BLUE_FRAME) || _action.isObject(NOUN_YELLOW_FRAME) || _action.isObject(NOUN_GREEN_FRAME)) { 
+		if (_action.isObject(NOUN_RED_FRAME) || _action.isObject(NOUN_BLUE_FRAME) || _action.isObject(NOUN_YELLOW_FRAME) || _action.isObject(NOUN_GREEN_FRAME)) {
 			if (_frameInRoomFl)
 				_vm->_dialogs->show(29);
 			else {
 				switch (_game._trigger) {
 				case (0):
-					_game._player._stepEnabled  = false;
-					_game._player._visible     = false;  
-					_globals._sequenceIndexes[8]      = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[8], true, 5, 2);
+					_game._player._stepEnabled = false;
+					_game._player._visible = false;
+					_globals._sequenceIndexes[8] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[8], true, 5, 2);
 					_scene->_sequences.setAnimRange(_globals._sequenceIndexes[8], 1, 5);
 					_scene->_sequences.setSeqPlayer(_globals._sequenceIndexes[8], true);
 					_scene->_sequences.setTrigger(_globals._sequenceIndexes[8], 2, 5, 1);
@@ -4359,8 +4359,8 @@ void Scene453::actions() {
 					break;
 
 				case 2:
-					_game.syncTimers(2, 0, 1, _globals._sequenceIndexes[8]); 
-					_game._player._visible    = true;
+					_game.syncTimers(2, 0, 1, _globals._sequenceIndexes[8]);
+					_game._player._visible = true;
 					_game._player._stepEnabled = true;
 					break;
 
@@ -4378,9 +4378,9 @@ void Scene453::actions() {
 			if ((_takingFrameInRoomFl || _game._trigger)) {
 				switch (_game._trigger) {
 				case (0):
-					_game._player._stepEnabled  = false;
-					_game._player._visible     = false;  
-					_globals._sequenceIndexes[8]      = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[8], true, 5, 2);
+					_game._player._stepEnabled = false;
+					_game._player._visible = false;
+					_globals._sequenceIndexes[8] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[8], true, 5, 2);
 					_scene->_sequences.setAnimRange(_globals._sequenceIndexes[8], 1, 5);
 					_scene->_sequences.setSeqPlayer(_globals._sequenceIndexes[8], true);
 					_scene->_sequences.setTrigger(_globals._sequenceIndexes[8], 2, 5, 1);
@@ -4416,8 +4416,8 @@ void Scene453::actions() {
 					break;
 
 				case 2:
-					_game.syncTimers(2, 0, 1, _globals._sequenceIndexes[8]); 
-					_game._player._visible    = true;
+					_game.syncTimers(2, 0, 1, _globals._sequenceIndexes[8]);
+					_game._player._visible = true;
 					_game._player._stepEnabled = true;
 					break;
 
@@ -4574,7 +4574,7 @@ void Scene453::preActions() {
 	if (_action.isAction(VERB_EXIT_TO, NOUN_MORE_CATACOMBS))
 		_game.moveCatacombs(3);
 
-	_frameInRoomFl         = false;
+	_frameInRoomFl = false;
 	_takingFrameInRoomFl = false;
 
 	if (_game._objects[OBJ_RED_FRAME]._roomNumber == _globals[kCatacombsRoom] + 600) {
@@ -4601,7 +4601,7 @@ void Scene453::preActions() {
 			_takingFrameInRoomFl = true;
 	}
 
-	if (_action.isAction(VERB_PUT) && _action.isTarget(NOUN_FLOOR) && (_action.isObject(NOUN_RED_FRAME) || _action.isObject(NOUN_BLUE_FRAME) || _action.isObject(NOUN_YELLOW_FRAME) || _action.isObject(NOUN_GREEN_FRAME))) { 
+	if (_action.isAction(VERB_PUT) && _action.isTarget(NOUN_FLOOR) && (_action.isObject(NOUN_RED_FRAME) || _action.isObject(NOUN_BLUE_FRAME) || _action.isObject(NOUN_YELLOW_FRAME) || _action.isObject(NOUN_GREEN_FRAME))) {
 		if (_frameInRoomFl)
 			_game._player._needToWalk = false;
 		else {
