@@ -1940,14 +1940,14 @@ bool TownsAudioInterface::init() {
 	return _intf->init();
 }
 
-int TownsAudioInterface::callback(int command, ...) {
+TownsAudioInterface::ErrorCode TownsAudioInterface::callback(int command, ...) {
 	va_list args;
 	va_start(args, command);
 
 	int res = _intf->processCommand(command, args);
 
 	va_end(args);
-	return res;
+	return (TownsAudioInterface::ErrorCode)res;
 }
 
 void TownsAudioInterface::setMusicVolume(int volume) {
