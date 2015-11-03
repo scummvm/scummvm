@@ -32,9 +32,6 @@ namespace MADS {
 
 namespace Phantom {
 
-// TODO: Adapt for Phantom's difficulty setting
-enum StoryMode { STORYMODE_NAUGHTY = 1, STORYMODE_NICE = 2 };
-
 enum Difficulty {
 	DIFFICULTY_HARD = 1, DIFFICULTY_MEDIUM = 2, DIFFICULTY_EASY = 3
 };
@@ -110,7 +107,6 @@ protected:
 	virtual void checkShowDialog();
 public:
 	PhantomGlobals _globals;
-	StoryMode _storyMode;
 	Difficulty _difficulty;
 
 
