@@ -69,6 +69,7 @@ enum InventoryObject {
 };
 
 enum MazeEvent {
+	MAZE_EVENT_NONE = 0,
 	MAZE_EVENT_PUDDLE = 0x0001,
 	MAZE_EVENT_RAT_NEST = 0x0002,
 	MAZE_EVENT_SKULL = 0x0004,
@@ -83,8 +84,19 @@ enum MazeEvent {
 	MAZE_EVENT_FALLEN_BLOCK = 0x0800
 };
 
+struct Catacombs {
+	int _sceneNum;
+	int _exit[4];
+	int _fromDirection[4];
+	int _flags;
+};
+
 class GamePhantom : public Game {
 	friend class Game;
+
+private:
+	Catacombs *catacombs;
+
 protected:
 	GamePhantom(MADSEngine *vm);
 
@@ -111,6 +123,7 @@ public:
 
 	virtual void synchronize(Common::Serializer &s, bool phase1);
 
+	void setupCatacombs();
 	void enterCatacombs(int val);
 	void initCatacombs();
 	void moveCatacombs(int dir) { warning("TODO: moveCataCombs"); };

@@ -35,8 +35,107 @@ namespace MADS {
 
 namespace Phantom {
 
-GamePhantom::GamePhantom(MADSEngine *vm)
-	: Game(vm) {
+	Catacombs easy_catacombs[32] = {
+		{ 401, { -1,  1,  2,  6 }, { 2, 3, 0, 1 }, MAZE_EVENT_BRICK },
+		{ 404, { 10, 11,  3,  0 }, { 2, 3, 0, 1 }, MAZE_EVENT_PUDDLE },
+		{ 404, {  0,  3,  4, -2 }, { 2, 3, 0, 1 }, MAZE_EVENT_BLOCK },
+		{ 401, {  1, 14,  5,  2 }, { 2, 3, 0, 1 }, MAZE_EVENT_POT },
+		{ 453, {  2,  4, -1,  4 }, { 2, 3, 0, 1 }, MAZE_EVENT_DRAIN },
+		{ 403, {  3,  6, -1, -1 }, { 2, 3, 0, 1 }, MAZE_EVENT_BRICK | MAZE_EVENT_PLANK },
+		{ 406, { -1,  0, -1,  5 }, { 2, 3, 0, 1 }, MAZE_EVENT_NONE },
+		{ 453, { -1,  8, -1, -1 }, { 2, 3, 0, 1 }, MAZE_EVENT_BRICK },
+		{ 406, { -1,  9, -1,  7 }, { 2, 3, 0, 1 }, MAZE_EVENT_NONE },
+		{ 401, {  1, -1, 10,  8 }, { 2, 3, 0, 1 }, MAZE_EVENT_RAT_NEST | MAZE_EVENT_SKULL },
+		{ 408, {  9, -1,  1, -1 }, { 2, 3, 0, 1 }, MAZE_EVENT_NONE },
+		{ 453, { 12, -1, -1,  1 }, { 2, 3, 0, 1 }, MAZE_EVENT_BRICK | MAZE_EVENT_STONE },
+		{ 408, { 13, -1, 11, -1 }, { 2, 3, 0, 1 }, MAZE_EVENT_BRICK },
+		{ 401, { 13, 20, 12, 13 }, { 3, 3, 0, 0 }, MAZE_EVENT_BRICK },
+		{ 453, { 16, 15, -1,  3 }, { 2, 3, 0, 1 }, MAZE_EVENT_BRICK | MAZE_EVENT_RAT_NEST },
+		{ 456, { -1, -1, -1, 14 }, { 2, 3, 0, 1 }, MAZE_EVENT_NONE },
+		{ 404, { -1, 17, 14, -1 }, { 2, 3, 0, 1 }, MAZE_EVENT_WEB | MAZE_EVENT_POT },
+		{ 401, { 18, -1, 19, 16 }, { 2, 3, 0, 1 }, MAZE_EVENT_BRICK },
+		{ 408, { -1, -1, 17, -1 }, { 2, 3, 0, 1 }, MAZE_EVENT_BRICK },
+		{ 403, { 17, -1, -1, -1 }, { 2, 3, 0, 1 }, MAZE_EVENT_HOLE | MAZE_EVENT_WEB },
+		{ 403, { 21, 22, -1, 13 }, { 2, 3, 0, 1 }, MAZE_EVENT_WEB | MAZE_EVENT_SKULL },
+		{ 404, { -1, -1, 20, -1 }, { 2, 3, 0, 1 }, MAZE_EVENT_NONE },
+		{ 406, { -1, 23, -1, 20 }, { 2, 3, 0, 1 }, MAZE_EVENT_NONE },
+		{ 404, { 24, 23, 23, 22 }, { 2, 2, 1, 1 }, MAZE_EVENT_RAT_NEST | MAZE_EVENT_BRICK },
+		{ 401, { -1,  1, 23, 25 }, { 2, 1, 0, 1 }, MAZE_EVENT_PUDDLE | MAZE_EVENT_POT | MAZE_EVENT_BRICK },
+		{ 407, { 29, 24, 28, 26 }, { 3, 3, 1, 1 }, MAZE_EVENT_NONE },
+		{ 401, { 27, 25, 23, -1 }, { 2, 3, 0, 1 }, MAZE_EVENT_SKULL },
+		{ 404, { -1, 28, 26, -1 }, { 2, 3, 0, 1 }, MAZE_EVENT_WEB | MAZE_EVENT_FALLEN_BLOCK },
+		{ 456, { -1, 25, -1, 27 }, { 2, 2, 0, 1 }, MAZE_EVENT_NONE },
+		{ 406, { -1, 30, -1, 25 }, { 2, 3, 0, 0 }, MAZE_EVENT_NONE },
+		{ 453, { -3, 30, -1, 29 }, { 2, 3, 0, 1 }, MAZE_EVENT_STONE | MAZE_EVENT_RAT_NEST | MAZE_EVENT_WEB },
+		{ 408, { -5, -1, -4, -1 }, { 2, 3, 0, 1 }, MAZE_EVENT_WEB | MAZE_EVENT_BRICK }
+	};
+
+	Catacombs hard_catacombs[62] = {
+		{ 401, { -1,  1,  2,  6 }, { 2, 3, 0, 1 }, MAZE_EVENT_BRICK },
+		{ 404, { 10, 11,  3,  0 }, { 2, 3, 0, 1 }, MAZE_EVENT_PUDDLE },
+		{ 404, {  0,  3,  4, -2 }, { 2, 3, 0, 1 }, MAZE_EVENT_BLOCK },
+		{ 401, {  1, 20,  5,  2 }, { 2, 0, 0, 1 }, MAZE_EVENT_POT },
+		{ 453, {  2,  4, -1,  4 }, { 2, 3, 0, 1 }, MAZE_EVENT_DRAIN },
+		{ 403, {  3,  6, -1,  4 }, { 2, 3, 0, 1 }, MAZE_EVENT_BRICK | MAZE_EVENT_PLANK },
+		{ 406, { -1,  0, -1,  5 }, { 2, 3, 0, 1 }, MAZE_EVENT_NONE },
+		{ 453, { -1,  8, -1, -1 }, { 2, 3, 0, 1 }, MAZE_EVENT_BRICK },
+		{ 406, { -1,  9, -1,  7 }, { 2, 3, 0, 1 }, MAZE_EVENT_NONE },
+		{ 401, {  1, -1, 10,  8 }, { 0, 3, 0, 1 }, MAZE_EVENT_RAT_NEST | MAZE_EVENT_SKULL },
+		{ 408, {  9, -1,  1, -1 }, { 2, 3, 0, 1 }, MAZE_EVENT_NONE },
+		{ 453, { 12, -1, -1,  1 }, { 2, 3, 0, 1 }, MAZE_EVENT_BRICK | MAZE_EVENT_STONE },
+		{ 408, { 13, -1, 11, -1 }, { 2, 3, 0, 1 }, MAZE_EVENT_BRICK },
+		{ 401, { 13, 21, 12, 13 }, { 3, 3, 0, 0 }, MAZE_EVENT_BRICK },
+		{ 453, { 16, 15, -1, 20 }, { 2, 3, 0, 2 }, MAZE_EVENT_RAT_NEST | MAZE_EVENT_BRICK },
+		{ 456, { -1, -1, -1, 14 }, { 2, 3, 0, 1 }, MAZE_EVENT_NONE },
+		{ 404, { -1, 17, 14, -1 }, { 2, 3, 0, 1 }, MAZE_EVENT_WEB | MAZE_EVENT_POT },
+		{ 401, { 18, -1, 19, 16 }, { 2, 3, 0, 1 }, MAZE_EVENT_BRICK },
+		{ 408, { -1, -1, 17, -1 }, { 2, 3, 0, 1 }, MAZE_EVENT_BRICK },
+		{ 403, { 17, -1, -1, -1 }, { 2, 3, 0, 1 }, MAZE_EVENT_HOLE | MAZE_EVENT_WEB },
+		{ 408, {  3, -1, 14, -1 }, { 1, 3, 3, 1 }, MAZE_EVENT_NONE },
+		{ 404, {  9, 30, 22, 13 }, { 0, 3, 0, 1 }, MAZE_EVENT_RAT_NEST },
+		{ 403, { 21, 23, -1, -1 }, { 2, 3, 0, 1 }, MAZE_EVENT_HOLE | MAZE_EVENT_WEB },
+		{ 401, { -1, -1, 24, 22 }, { 2, 3, 3, 1 }, MAZE_EVENT_BRICK },
+		{ 406, { -1, 26, -1, 23 }, { 2, 0, 0, 2 }, MAZE_EVENT_NONE },
+		{ 407, { 36, 33, 35, 34 }, { 3, 3, 1, 1 }, MAZE_EVENT_NONE },
+		{ 453, { 24, 27, -1, -1 }, { 1, 0, 0, 1 }, MAZE_EVENT_BRICK },
+		{ 403, { 26, -1, -1, 28 }, { 1, 3, 0, 0 }, MAZE_EVENT_BRICK | MAZE_EVENT_SKULL },
+		{ 404, { 27, 28, 28, 29 }, { 3, 2, 1, 2 }, MAZE_EVENT_NONE },
+		{ 408, { -1, -1, 28, -1 }, { 2, 3, 3, 1 }, MAZE_EVENT_BRICK },
+		{ 406, { -1, 31, -1, 21 }, { 2, 0, 0, 1 }, MAZE_EVENT_NONE },
+		{ 401, { 30, 33,  1, -1 }, { 1, 2, 1, 1 }, MAZE_EVENT_PUDDLE | MAZE_EVENT_POT },
+		{ 456, { -1, 31, -1, 33 }, { 2, 1, 0, 0 }, MAZE_EVENT_NONE },
+		{ 404, { 32, -1, 31, 25 }, { 3, 3, 1, 1 }, MAZE_EVENT_NONE },
+		{ 401, { 46, 25, 31, -1 }, { 2, 3, 0, 1 }, MAZE_EVENT_SKULL },
+		{ 401, { -1, 25, 41, -1 }, { 2, 2, 1, 1 }, MAZE_EVENT_BRICK | MAZE_EVENT_POT },
+		{ 406, { -1, 37, -1, 25 }, { 2, 3, 0, 0 }, MAZE_EVENT_NONE },
+		{ 453, { -3, 37, -1, 36 }, { 2, 3, 0, 1 }, MAZE_EVENT_STONE | MAZE_EVENT_RAT_NEST | MAZE_EVENT_WEB },
+		{ 408, { 57, -1, 54, -1 }, { 2, 3, 0, 1 }, MAZE_EVENT_NONE },
+		{ 408, { 40, -1, -4, -1 }, { 2, 3, 0, 1 }, MAZE_EVENT_BRICK | MAZE_EVENT_WEB },
+		{ 404, { 40, 40, 39, 53 }, { 1, 0, 0, 1 }, MAZE_EVENT_BLOCK | MAZE_EVENT_FALLEN_BLOCK },
+		{ 456, { -1, 35, -1, 42 }, { 2, 2, 0, 2 }, MAZE_EVENT_NONE },
+		{ 408, { 43, -1, 41, -1 }, { 1, 3, 3, 1 }, MAZE_EVENT_BRICK },
+		{ 406, { -1, 42, -1, 61 }, { 2, 0, 0, 1 }, MAZE_EVENT_NONE },
+		{ 403, { 58, 45, -1, -1 }, { 2, 3, 0, 1 }, MAZE_EVENT_BRICK | MAZE_EVENT_RAT_NEST },
+		{ 401, { 34, -1, 46, 44 }, { 0, 3, 0, 1 }, MAZE_EVENT_RAT_NEST | MAZE_EVENT_BRICK },
+		{ 404, { 45, -1, 34, 47 }, { 2, 3, 0, 1 }, MAZE_EVENT_WEB | MAZE_EVENT_FALLEN_BLOCK },
+		{ 406, { -1, 46, -1, 48 }, { 2, 3, 0, 1 }, MAZE_EVENT_NONE },
+		{ 403, { 49, 47, -1, -1 }, { 2, 3, 0, 1 }, MAZE_EVENT_BRICK | MAZE_EVENT_SKULL | MAZE_EVENT_WEB },
+		{ 408, { 50, -1, 48, -1 }, { 2, 3, 0, 1 }, MAZE_EVENT_BRICK },
+		{ 408, { 51, -1, 49, -1 }, { 2, 3, 0, 1 }, MAZE_EVENT_NONE },
+		{ 408, { 52, -1, 50, -1 }, { 2, 3, 0, 1 }, MAZE_EVENT_BRICK },
+		{ 408, { -1, -1, 51, -1 }, { 2, 3, 0, 1 }, MAZE_EVENT_BRICK },
+		{ 406, { -1, 40, -1, 54 }, { 2, 3, 0, 1 }, MAZE_EVENT_NONE },
+		{ 403, { 38, 53, -1, 55 }, { 2, 3, 0, 1 }, MAZE_EVENT_SKULL },
+		{ 453, { 56, 54, -1, -1 }, { 2, 3, 0, 1 }, MAZE_EVENT_BRICK | MAZE_EVENT_WEB },
+		{ 401, { 56, -5, 55, 56 }, { 3, 3, 0, 0 }, MAZE_EVENT_BRICK | MAZE_EVENT_SKULL },
+		{ 404, { -1, 57, 38, 57 }, { 2, 3, 0, 1 }, MAZE_EVENT_POT | MAZE_EVENT_BLOCK },
+		{ 404, { 59, 59, 44, 60 }, { 2, 3, 0, 1 }, MAZE_EVENT_NONE },
+		{ 404, { 59, 60, 59, 58 }, { 2, 3, 0, 1 }, MAZE_EVENT_NONE },
+		{ 404, { 61, 58, 59, 59 }, { 2, 3, 0, 1 }, MAZE_EVENT_NONE },
+		{ 404, { 34, 43, 60, 44 }, { 0, 3, 0, 1 }, MAZE_EVENT_NONE }
+	};
+
+GamePhantom::GamePhantom(MADSEngine *vm) : Game(vm) {
 	_surface = new MSurface(MADS_SCREEN_WIDTH, MADS_SCENE_HEIGHT);
 	_storyMode = STORYMODE_NAUGHTY;
 	_difficulty = DIFFICULTY_HARD;
@@ -52,8 +151,7 @@ void GamePhantom::startGame() {
 
 void GamePhantom::initializeGlobals() {
 	_globals.reset();
-
-	// TODO: Catacombs setup
+	setupCatacombs();
 
 	_player._facing = FACING_NORTH;
 	_player._turnToFacing = FACING_NORTH;
@@ -201,6 +299,37 @@ void GamePhantom::enterCatacombs(int val) {
 void GamePhantom::initCatacombs() {
 	warning("TODO: initCatacombs");
 }
+
+void GamePhantom::setupCatacombs() {
+	switch (_difficulty) {
+	case DIFFICULTY_EASY:
+		catacombs = easy_catacombs;
+
+		_globals[kCatacombs309]      = 2;
+		_globals[kCatacombs309From]  = 3;
+		_globals[kCatacombs409a]     = 30;
+		_globals[kCatacombs409aFrom] = 0;
+		_globals[kCatacombs409b]     = 31;
+		_globals[kCatacombs409bFrom] = 2;
+		_globals[kCatacombs501]      = 31;
+		_globals[kCatacombs501From]  = 0;
+		break;
+
+	case DIFFICULTY_HARD:
+		catacombs = hard_catacombs;
+
+		_globals[kCatacombs309]      = 2;
+		_globals[kCatacombs309From]  = 3;
+		_globals[kCatacombs409a]     = 37;
+		_globals[kCatacombs409aFrom] = 0;
+		_globals[kCatacombs409b]     = 39;
+		_globals[kCatacombs409bFrom] = 2;
+		_globals[kCatacombs501]      = 56;
+		_globals[kCatacombs501From]  = 1;
+		break;
+	}
+}
+
 } // End of namespace Phantom
 
 } // End of namespace MADS

@@ -28,8 +28,7 @@ namespace MADS {
 
 namespace Phantom {
 
-PhantomGlobals::PhantomGlobals()
-	: Globals() {
+PhantomGlobals::PhantomGlobals() : Globals() {
 	// Initialize lists
 	resize(210);
 	_spriteIndexes.resize(30);
