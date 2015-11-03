@@ -35,7 +35,7 @@ namespace MADS {
 
 namespace Phantom {
 
-	Catacombs easy_catacombs[32] = {
+	Catacombs _easyCatacombs[32] = {
 		{ 401, { -1,  1,  2,  6 }, { 2, 3, 0, 1 }, MAZE_EVENT_BRICK },
 		{ 404, { 10, 11,  3,  0 }, { 2, 3, 0, 1 }, MAZE_EVENT_PUDDLE },
 		{ 404, {  0,  3,  4, -2 }, { 2, 3, 0, 1 }, MAZE_EVENT_BLOCK },
@@ -70,7 +70,7 @@ namespace Phantom {
 		{ 408, { -5, -1, -4, -1 }, { 2, 3, 0, 1 }, MAZE_EVENT_WEB | MAZE_EVENT_BRICK }
 	};
 
-	Catacombs hard_catacombs[62] = {
+	Catacombs _hardCatacombs[62] = {
 		{ 401, { -1,  1,  2,  6 }, { 2, 3, 0, 1 }, MAZE_EVENT_BRICK },
 		{ 404, { 10, 11,  3,  0 }, { 2, 3, 0, 1 }, MAZE_EVENT_PUDDLE },
 		{ 404, {  0,  3,  4, -2 }, { 2, 3, 0, 1 }, MAZE_EVENT_BLOCK },
@@ -303,7 +303,8 @@ void GamePhantom::initCatacombs() {
 void GamePhantom::setupCatacombs() {
 	switch (_difficulty) {
 	case DIFFICULTY_EASY:
-		catacombs = easy_catacombs;
+		_catacombs = _easyCatacombs;
+		_catacombSize = 32;
 
 		_globals[kCatacombs309]      = 2;
 		_globals[kCatacombs309From]  = 3;
@@ -316,7 +317,8 @@ void GamePhantom::setupCatacombs() {
 		break;
 
 	case DIFFICULTY_HARD:
-		catacombs = hard_catacombs;
+		_catacombs = _hardCatacombs;
+		_catacombSize = 62;
 
 		_globals[kCatacombs309]      = 2;
 		_globals[kCatacombs309From]  = 3;
@@ -329,6 +331,12 @@ void GamePhantom::setupCatacombs() {
 		break;
 	}
 }
+
+int GamePhantom::exitCatacombs(int dir) {
+	int scene = _globals[kCatacombsRoom];
+	assert ((scene < _catacombSize) && (dir < 4));
+	return (_catacombs[scene]._exit[dir]);
+};
 
 } // End of namespace Phantom
 

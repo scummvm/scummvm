@@ -95,7 +95,8 @@ class GamePhantom : public Game {
 	friend class Game;
 
 private:
-	Catacombs *catacombs;
+	Catacombs *_catacombs;
+	int _catacombSize;
 
 protected:
 	GamePhantom(MADSEngine *vm);
@@ -127,7 +128,7 @@ public:
 	void enterCatacombs(int val);
 	void initCatacombs();
 	void moveCatacombs(int dir) { warning("TODO: moveCataCombs"); };
-	int exitCatacombs(int dir) { warning("TODO: exitCatacombs"); return -1; };
+	int exitCatacombs(int dir);
 };
 
 
