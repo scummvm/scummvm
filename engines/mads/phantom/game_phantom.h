@@ -121,10 +121,11 @@ public:
 	virtual void synchronize(Common::Serializer &s, bool phase1);
 
 	void setupCatacombs();
-	void enterCatacombs(int val);
+	void enterCatacombs(bool val);
 	void initCatacombs();
-	void moveCatacombs(int dir) { warning("TODO: moveCataCombs"); };
+	void moveCatacombs(int dir);
 	int exitCatacombs(int dir);
+	void newCatacombRoom(int fromRoom, int fromExit);
 };
 
 

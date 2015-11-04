@@ -291,12 +291,33 @@ void GamePhantom::synchronize(Common::Serializer &s, bool phase1) {
 	}
 }
 
-void GamePhantom::enterCatacombs(int val) {
+void GamePhantom::enterCatacombs(bool val) {
 	warning("TODO: enterCatacombs");
+
+	setupCatacombs();
+
+	int var4, var2;
+	if (_scene._currentSceneId == 409) {
+		if (val) {
+			var4 = _globals[kCatacombs409b];
+			var2 = _globals[kCatacombs409bFrom];
+		} else {
+			var4 = _globals[kCatacombs409a];
+			var2 = _globals[kCatacombs409aFrom];
+		}
+	} else if (_scene._currentSceneId == 501) {
+		var4 = _globals[kCatacombs501];
+		var2 = _globals[kCatacombs501From];
+	} else {
+		var4 = _globals[kCatacombs309];
+		var2 = _globals[kCatacombs309From];
+	}
+
+	newCatacombRoom(var4, var2);
 }
 
 void GamePhantom::initCatacombs() {
-	warning("TODO: initCatacombs");
+	_globals[kCatacombsRoom] = _globals[kCatacombsNextRoom];
 }
 
 void GamePhantom::setupCatacombs() {
@@ -336,6 +357,51 @@ int GamePhantom::exitCatacombs(int dir) {
 	assert ((scene < _catacombSize) && (dir < 4));
 	return (_catacombs[scene]._exit[dir]);
 };
+
+void GamePhantom::moveCatacombs(int dir) {
+	assert(_globals[kCatacombsRoom] = CLIP(_globals[kCatacombsRoom], 0, _catacombSize));
+	assert(dir = CLIP(dir, 0, 3));
+
+	newCatacombRoom(_catacombs[_globals[kCatacombsRoom]]._fromDirection[dir], _catacombs[_globals[kCatacombsRoom]]._exit[dir]);
+};
+
+void GamePhantom::newCatacombRoom(int toRoom, int fromExit) {
+	_globals[kCatacombsNextRoom] = toRoom;
+	_globals[kCatacombsFrom] = fromExit & 0x03;
+	_globals[kCatacombsFlag] = fromExit & 0xFC;
+
+	int newSceneNum = -1;
+
+	if (toRoom < 0) {
+		switch (toRoom) {
+		case -5:
+			newSceneNum = 501;
+			break;
+
+		case -4:
+		case -3:
+			newSceneNum = 409;
+			break;
+
+		case -2:
+			newSceneNum = 309;
+			break;
+
+		default:
+			error("Unexpected room in newCatacombRoom");
+		} 
+	} else {
+		newSceneNum = _catacombs[toRoom]._sceneNum;
+		_globals[81] = _catacombs[toRoom]._flags;
+	}
+
+	if (_triggerSetupMode == SEQUENCE_TRIGGER_PREPARE) {
+		_player._walkOffScreenSceneId = newSceneNum;
+	} else {
+		_scene._reloadSceneFlag = -1;
+		_scene._nextSceneId = newSceneNum;
+	}
+}
 
 } // End of namespace Phantom
 

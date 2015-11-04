@@ -2351,7 +2351,7 @@ void Scene309::actions() {
 			_boatStatus = 0;
 			_talkCount = 0;
 		} else if (_globals[kLanternStatus] == 1)
-			_game.enterCatacombs(0);
+			_game.enterCatacombs(false);
 
 		_action._inProgress = false;
 		return;
