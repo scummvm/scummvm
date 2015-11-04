@@ -53,6 +53,22 @@ public:
 	Scene5xx(MADSEngine *vm) : PhantomScene(vm) { _game._player._scalingVelocity = true; }
 };
 
+class Scene501 : public Scene5xx {
+private:
+	bool _anim_0_running;
+	bool _prevent_2;
+
+public:
+	Scene501(MADSEngine *vm);
+	virtual void synchronize(Common::Serializer &s);
+
+	virtual void setup();
+	virtual void enter();
+	virtual void step();
+	virtual void preActions();
+	virtual void actions();
+};
+
 } // End of namespace Phantom
 } // End of namespace MADS
 
