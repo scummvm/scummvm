@@ -32,6 +32,7 @@
 #include "mads/phantom/phantom_scenes2.h"
 #include "mads/phantom/phantom_scenes3.h"
 #include "mads/phantom/phantom_scenes4.h"
+#include "mads/phantom/phantom_scenes5.h"
 
 namespace MADS {
 
