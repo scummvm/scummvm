@@ -292,8 +292,6 @@ void GamePhantom::synchronize(Common::Serializer &s, bool phase1) {
 }
 
 void GamePhantom::enterCatacombs(bool val) {
-	warning("TODO: enterCatacombs");
-
 	setupCatacombs();
 
 	int var4, var2;
@@ -398,7 +396,7 @@ void GamePhantom::newCatacombRoom(int toRoom, int fromExit) {
 	if (_triggerSetupMode == SEQUENCE_TRIGGER_PREPARE) {
 		_player._walkOffScreenSceneId = newSceneNum;
 	} else {
-		_scene._reloadSceneFlag = -1;
+		_scene._reloadSceneFlag = true;
 		_scene._nextSceneId = newSceneNum;
 	}
 }
