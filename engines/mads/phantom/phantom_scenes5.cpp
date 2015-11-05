@@ -1411,108 +1411,81 @@ void Scene502::setPaletteCycle() {
 void Scene502::getPanelInfo(Common::Point *walkToPos, int *panel, Common::Point mousePos, Common::Point *interimPos) {
 	walkToPos->y = 148;
 
-	if ((mousePos.x >= 120) && (mousePos.x <= 139)) {
+	if ((mousePos.x < 120) || (mousePos.y < 75) || (mousePos.y > 137))
+		return;
+
+	if (mousePos.x <= 139) {
 		interimPos->x = 129;
-		if ((mousePos.y >=75) && (mousePos.y <=90)) {
+		if (mousePos.y <= 90) {
 			*panel = 0;
 			interimPos->y = 90;
 			walkToPos->x = 107;
-		}
-
-		if ((mousePos.y >=91) && (mousePos.y <=106)) {
+		} else if (mousePos.y <= 106) {
 			*panel = 4;
 			interimPos->y = 106;
 			walkToPos->x = 107;
-		}
-
-		if ((mousePos.y >=107) && (mousePos.y <=122)) {
+		} else if (mousePos.y <= 122) {
 			*panel = 8;
 			interimPos->y = 122;
 			walkToPos->x = 107;
-		}
-
-		if ((mousePos.y >=123) && (mousePos.y <=137)) {
+		} else {
 			*panel = 12;
 			interimPos->y = 138;
 			walkToPos->x = 107;
 		}
-	}
-
-	if ((mousePos.x >= 140) && (mousePos.x <= 159)) {
+	} else if (mousePos.x <= 159) {
 		interimPos->x = 149;
-		if ((mousePos.y >=75) && (mousePos.y <=90)) {
+		if (mousePos.y <= 90) {
 			*panel = 1;
 			interimPos->y = 90;
 			walkToPos->x = 127;
-		}
-
-		if ((mousePos.y >=91) && (mousePos.y <=106)) {
+		} else if (mousePos.y <= 106) {
 			*panel = 5;
 			interimPos->y = 106;
 			walkToPos->x = 127;
-		}
-
-		if ((mousePos.y >=107) && (mousePos.y <=122)) {
+		} else if (mousePos.y <= 122) {
 			*panel = 9;
 			interimPos->y = 122;
 			walkToPos->x = 127;
-		}
-
-		if ((mousePos.y >=123) && (mousePos.y <=137)) {
+		} else {
 			*panel = 13;
 			interimPos->y = 138;
 			walkToPos->x = 127;
 		}
-	}
-
-	if ((mousePos.x >= 160) && (mousePos.x <= 179)) {
+	} else if (mousePos.x <= 179) {
 		interimPos->x = 169;
-		if ((mousePos.y >=75) && (mousePos.y <=90)) {
+		if (mousePos.y <= 90) {
 			*panel = 2;
 			interimPos->y = 90;
 			walkToPos->x = 147;
-		}
-
-		if ((mousePos.y >=91) && (mousePos.y <=106)) {
+		} else if (mousePos.y <= 106) {
 			*panel = 6;
 			interimPos->y = 106;
 			walkToPos->x = 147;
-		}
-
-		if ((mousePos.y >=107) && (mousePos.y <=122)) {
+		} else if (mousePos.y <= 122) {
 			*panel = 10;
 			interimPos->y = 122;
 			walkToPos->x = 147;
-		}
-
-		if ((mousePos.y >=123) && (mousePos.y <=137)) {
+		} else {
 			*panel = 14;
 			interimPos->y = 138;
 			walkToPos->x = 147;
 		}
-	}
-
-	if ((mousePos.x >= 180) && (mousePos.x <= 199)) {
+	} else if (mousePos.x <= 199) {
 		interimPos->x = 189;
-		if ((mousePos.y >=75) && (mousePos.y <=90)) {
+		if (mousePos.y <= 90) {
 			*panel = 3;
 			interimPos->y = 90;
 			walkToPos->x = 167;
-		}
-
-		if ((mousePos.y >=91) && (mousePos.y <=106)) {
+		} else if (mousePos.y <= 106) {
 			*panel = 7;
 			interimPos->y = 106;
 			walkToPos->x = 167;
-		}
-
-		if ((mousePos.y >=107) && (mousePos.y <=122)) {
+		} else if (mousePos.y <= 122) {
 			*panel = 11;
 			interimPos->y = 122;
 			walkToPos->x = 167;
-		}
-
-		if ((mousePos.y >=123) && (mousePos.y <=137)) {
+		} else {
 			*panel = 15;
 			interimPos->y = 138;
 			walkToPos->x = 167;
