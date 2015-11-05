@@ -55,11 +55,56 @@ public:
 
 class Scene501 : public Scene5xx {
 private:
-	bool _anim_0_running;
-	bool _prevent_2;
+	bool _anim0ActvFl;
+	bool _skipFl;
 
 public:
 	Scene501(MADSEngine *vm);
+	virtual void synchronize(Common::Serializer &s);
+
+	virtual void setup();
+	virtual void enter();
+	virtual void step();
+	virtual void preActions();
+	virtual void actions();
+};
+
+class Scene502 : public Scene5xx {
+private:
+	bool _fire1ActiveFl;
+	bool _fire2ActiveFl;
+	bool _fire3ActiveFl;
+	bool _fire4ActiveFl;
+	bool _panelTurningFl;
+	bool _trapDoorHotspotEnabled;
+	bool _acceleratedFireActivationFl;
+
+	int _panelPushedNum;
+	int _puzzlePictures[16];
+	int _puzzleSprites[16];
+	int _puzzleSequences[16];
+	int _messageLevel;
+	int _cycleStage;
+
+	Common::Point _nextPos;
+
+	uint32 _lastFrameTime;
+	uint32 _timer;
+	uint32 _deathTimer;
+
+	byte *_cyclePointer;
+
+	void room_502_initialize_panels();
+	void loadCyclingInfo();
+	void animateFireBursts();
+	void setPaletteCycle();
+	void handlePanelAnimation();
+	void getPanelInfo(Common::Point *walkToPos, int *panel, Common::Point mousePos, Common::Point *interimPos);
+
+public:
+	Scene502(MADSEngine *vm);
+	~Scene502();
+
 	virtual void synchronize(Common::Serializer &s);
 
 	virtual void setup();

@@ -63,15 +63,15 @@ void Scene5xx::setPlayerSpritesPrefix() {
 /*------------------------------------------------------------------------*/
 
 Scene501::Scene501(MADSEngine *vm) : Scene5xx(vm) {
-	_anim_0_running = false;
-	_prevent_2 = false;
+	_anim0ActvFl = false;
+	_skipFl = false;
 }
 
 void Scene501::synchronize(Common::Serializer &s) {
 	Scene5xx::synchronize(s);
 
-	s.syncAsByte(_anim_0_running);
-	s.syncAsByte(_prevent_2);
+	s.syncAsByte(_anim0ActvFl);
+	s.syncAsByte(_skipFl);
 }
 
 void Scene501::setup() {
@@ -88,8 +88,8 @@ void Scene501::enter() {
 	_scene->_hotspots.activate(NOUN_BOAT, false);
 
 	if (_scene->_priorSceneId != RETURNING_FROM_LOADING) {
-		_anim_0_running = false;
-		_prevent_2 = false;
+		_anim0ActvFl = false;
+		_skipFl = false;
 	}
 
 	_vm->_gameConv->get(26);
@@ -110,7 +110,7 @@ void Scene501::enter() {
 
 	if (_scene->_priorSceneId == RETURNING_FROM_LOADING) {
 		if (_globals[kChristineIsInBoat]) {
-			_anim_0_running = true;
+			_anim0ActvFl = true;
 			_globals._animationIndexes[0] = _scene->loadAnimation(formAnimName('b', 1), 100);
 			_scene->setAnimFrame(_globals._animationIndexes[0], 124);
 			_scene->_hotspots.activateAtPos(NOUN_CHRISTINE, true, Common::Point(113, 93));
@@ -129,7 +129,7 @@ void Scene501::enter() {
 		_game._player._stepEnabled = false;
 
 		if (_globals[kChristineIsInBoat]) {
-			_anim_0_running = true;
+			_anim0ActvFl = true;
 			_globals._animationIndexes[0] = _scene->loadAnimation(formAnimName('b', 1), 100);
 			_scene->setAnimFrame(_globals._animationIndexes[0], 124);
 			_scene->_hotspots.activateAtPos(NOUN_CHRISTINE, true, Common::Point(113, 93));
@@ -138,7 +138,7 @@ void Scene501::enter() {
 			_game._player.setWalkTrigger(80);
 			_game._player.setWalkTrigger(55);
 		} else {
-			_anim_0_running = true;
+			_anim0ActvFl = true;
 			_globals._animationIndexes[0] = _scene->loadAnimation(formAnimName('b', 1), 100);
 			_globals[kChristineIsInBoat] = true;
 			_scene->_hotspots.activate(NOUN_BOAT, true);
@@ -231,12 +231,12 @@ void Scene501::step() {
 		break;
 	}
 
-	if (_anim_0_running) {
+	if (_anim0ActvFl) {
 		if (_scene->_animation[_globals._animationIndexes[0]]->getCurrentFrame() == 103)
 			_scene->_hotspots.activateAtPos(NOUN_CHRISTINE, true, Common::Point(125, 94));
 
-		if ((_scene->_animation[_globals._animationIndexes[0]]->getCurrentFrame() == 28) && !_prevent_2) {
-			_prevent_2 = true;
+		if ((_scene->_animation[_globals._animationIndexes[0]]->getCurrentFrame() == 28) && !_skipFl) {
+			_skipFl = true;
 			_scene->_sequences.setTimingTrigger(1, 55);
 		}
 
@@ -278,7 +278,7 @@ void Scene501::actions() {
 
 	if (_action.isAction(VERB_CLIMB_INTO, NOUN_BOAT)) {
 		if (_game._objects.isInInventory(OBJ_OAR))
-			_anim_0_running = false;
+			_anim0ActvFl = false;
 		else
 			_vm->_dialogs->show(50123);
 
@@ -639,6 +639,1158 @@ void Scene501::preActions() {
 		_game._player.walk(Common::Point(24, 110), FACING_WEST);
 }
 
+/*------------------------------------------------------------------------*/
+
+Scene502::Scene502(MADSEngine *vm) : Scene5xx(vm) {
+	_fire1ActiveFl = false;
+	_fire2ActiveFl = false;
+	_fire3ActiveFl = false;
+	_fire4ActiveFl = false;
+	_panelTurningFl = false;
+	_trapDoorHotspotEnabled = false;
+	_acceleratedFireActivationFl = false;
+
+	for (int i = 0; i < 16; i++) {
+		_puzzlePictures[i] = -1;
+		_puzzleSprites[i] = -1;
+		_puzzleSequences[i] = -1;
+	}
+
+	_panelPushedNum = -1;
+	_messageLevel = -1;
+	_cycleStage = -1;
+
+	_nextPos = Common::Point(-1, -1);
+
+	_lastFrameTime = 0;
+	_timer = 0;
+	_deathTimer = 0;
+
+	_cyclePointer = nullptr;
+}
+
+Scene502::~Scene502() {
+	if (_cyclePointer)
+		delete(_cyclePointer);
+}
+
+void Scene502::synchronize(Common::Serializer &s) {
+	Scene5xx::synchronize(s);
+
+	s.syncAsByte(_fire1ActiveFl);
+	s.syncAsByte(_fire2ActiveFl);
+	s.syncAsByte(_fire3ActiveFl);
+	s.syncAsByte(_fire4ActiveFl);
+	s.syncAsByte(_panelTurningFl);
+	s.syncAsByte(_trapDoorHotspotEnabled);
+	s.syncAsByte(_acceleratedFireActivationFl);
+
+	for (int i = 0; i < 16; i++) {
+		s.syncAsSint16LE(_puzzlePictures[i]);
+		s.syncAsSint16LE(_puzzleSprites[i]);
+		s.syncAsSint16LE(_puzzleSequences[i]);
+	}
+
+	s.syncAsSint16LE(_panelPushedNum);
+	s.syncAsSint16LE(_messageLevel);
+	s.syncAsSint16LE(_cycleStage);
+
+	s.syncAsSint16LE(_nextPos.x);
+	s.syncAsSint16LE(_nextPos.y);
+
+	s.syncAsUint32LE(_lastFrameTime);
+	s.syncAsUint32LE(_timer);
+	s.syncAsUint32LE(_deathTimer);
+
+	warning("more syncing required");
+}
+
+void Scene502::setup() {
+	setPlayerSpritesPrefix();
+	setAAName();
+}
+
+void Scene502::enter() {
+	loadCyclingInfo();
+	_scene->loadSpeech(7);
+
+	_panelPushedNum = -1;
+	_panelTurningFl = false;
+	_fire1ActiveFl = false;
+	_fire2ActiveFl = false;
+	_fire3ActiveFl = false;
+	_fire4ActiveFl = false;
+
+	if (_scene->_priorSceneId != RETURNING_FROM_LOADING) {
+		_lastFrameTime = _scene->_frameStartTime;
+		_cycleStage = 0;
+		_timer = 0;
+		_deathTimer = 0;
+		_messageLevel = 1;
+		_acceleratedFireActivationFl = true;
+		_trapDoorHotspotEnabled = false;
+	}
+
+	_scene->_hotspots.activate(NOUN_ROPE, false);
+	_scene->_hotspots.activateAtPos(NOUN_TRAP_DOOR, false, Common::Point(225, 28));
+
+	_globals._spriteIndexes[0] = _scene->_sprites.addSprites(formAnimName('x', 2), false);
+	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('x', 3), false);
+	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('x', 4), false);
+	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('x', 5), false);
+	_globals._spriteIndexes[4] = _scene->_sprites.addSprites(formAnimName('a', 2), false);
+	_globals._spriteIndexes[5] = _scene->_sprites.addSprites(formAnimName('x', 0), false);
+	_globals._spriteIndexes[6] = _scene->_sprites.addSprites(formAnimName('x', 1), false);
+	_globals._spriteIndexes[7] = _scene->_sprites.addSprites(formAnimName('a', 1), false);
+	_globals._spriteIndexes[8] = _scene->_sprites.addSprites(formAnimName('a', 3), false);
+	_globals._spriteIndexes[9] = _scene->_sprites.addSprites(formAnimName('x', 6), false);
+	_globals._spriteIndexes[10] = _scene->_sprites.addSprites(formAnimName('a', 0), false);
+	_globals._spriteIndexes[11] = _scene->_sprites.addSprites(formAnimName('j', 0), false);
+	_globals._spriteIndexes[12] = _scene->_sprites.addSprites(formAnimName('k', 0), false);
+	_globals._spriteIndexes[13] = _scene->_sprites.addSprites(formAnimName('l', 0), false);
+	_globals._spriteIndexes[14] = _scene->_sprites.addSprites(formAnimName('m', 0), false);
+	_globals._spriteIndexes[16] = _scene->_sprites.addSprites(formAnimName('h', 0), false);
+
+	if (_scene->_priorSceneId != RETURNING_FROM_LOADING) {
+		_globals._sequenceIndexes[5] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[5], false, 1);
+		_scene->_sequences.setDepth(_globals._sequenceIndexes[5], 14);
+	} else
+		_scene->drawToBackground(_globals._spriteIndexes[5], -2, Common::Point(-32000, -32000), 0, 100);
+
+	if ((_scene->_priorSceneId == 501) || (_scene->_priorSceneId != RETURNING_FROM_LOADING)) {
+		if (!_game._visitedScenes._sceneRevisited) {
+			if (_game._objects.isInInventory(OBJ_ROPE))
+				_globals[kCableHookWasSeparate] = true;
+			else
+				_globals[kCableHookWasSeparate] = false;
+		} else if (_globals[kCableHookWasSeparate]) {
+			_game._objects.addToInventory(OBJ_ROPE);
+			_game._objects.addToInventory(OBJ_CABLE_HOOK);
+			_game._objects.setRoom(OBJ_ROPE_WITH_HOOK, NOWHERE);
+		} else {
+			_game._objects.setRoom(OBJ_ROPE, NOWHERE);
+			_game._objects.setRoom(OBJ_CABLE_HOOK, NOWHERE);
+			_game._objects.addToInventory(OBJ_ROPE_WITH_HOOK);
+		}
+
+		_game._player._playerPos = Common::Point(43, 154);
+		_game._player._facing = FACING_EAST;
+		_game._player._stepEnabled = false;
+		_game._player.walk(Common::Point(87, 153), FACING_EAST);
+		_game._player.setWalkTrigger(77);
+	}
+
+	room_502_initialize_panels();
+
+	if (_trapDoorHotspotEnabled) {
+		_globals._sequenceIndexes[6] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[6], false, 6);
+		_scene->_sequences.setDepth(_globals._sequenceIndexes[6], 1);
+		_scene->_hotspots.activate(NOUN_TRAP_DOOR, false);
+		_scene->_hotspots.activateAtPos(NOUN_TRAP_DOOR, true, Common::Point(225, 28));
+		if (!_game._objects.isInInventory(OBJ_ROPE_WITH_HOOK) && !_game._objects.isInInventory(OBJ_CABLE_HOOK)) {
+			_globals._sequenceIndexes[9] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[9], false, -2);
+			_scene->_sequences.setDepth(_globals._sequenceIndexes[9], 12);
+			_scene->_hotspots.activate(NOUN_ROPE, true);
+		}
+	} else {
+		_globals._sequenceIndexes[6] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[6], false, 1);
+		_scene->_sequences.setDepth(_globals._sequenceIndexes[6], 14);
+	}
+
+	sceneEntrySound();
+}
+
+void Scene502::step() {
+	if (_acceleratedFireActivationFl) {
+		int32 diff = _scene->_frameStartTime - _lastFrameTime;
+		if ((diff >= 0) && (diff <= 4)) {
+			_timer += diff;
+			_deathTimer += diff;
+		} else {
+			_timer += 1;
+			_deathTimer += 1;
+		}
+		_lastFrameTime = _scene->_frameStartTime;
+
+		if (_timer >= 300) {
+			_timer = 0;
+			if (_cycleStage < 8)
+				++_cycleStage;
+		}
+	}
+
+	if ((_deathTimer >= 7200)  && !_panelTurningFl) {
+		_vm->_dialogs->show(50215);
+		_game._player.walk(Common::Point(160, 148), FACING_NORTH);
+		_game._player.setWalkTrigger(71);
+		_game._player._stepEnabled = false;
+		_panelTurningFl = true;
+		_deathTimer = 0;
+	}
+
+	if ((_deathTimer > 900) && (_messageLevel == 1) && !_panelTurningFl) {
+		_messageLevel = 2;
+		_vm->_dialogs->show(50212);
+	}
+
+	if ((_deathTimer > 3600) && (_messageLevel == 2) && !_panelTurningFl) {
+		_messageLevel = 3;
+		_vm->_dialogs->show(50213);
+	}
+
+	if ((_deathTimer > 5400) && (_messageLevel == 3) && !_panelTurningFl) {
+		_messageLevel = 4;
+		_vm->_dialogs->show(50214);
+	}
+
+	switch (_game._trigger) {
+	case 71:
+		_game._player._stepEnabled = false;
+		_game._player._visible = false;
+		_globals._sequenceIndexes[4] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[4], false, 7, 1);
+		_scene->_sequences.setDepth(_globals._sequenceIndexes[4], 1);
+		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[4], -1, -2);
+		_scene->_sequences.setTrigger(_globals._sequenceIndexes[4], 0, 0, 72);
+		_scene->_sequences.setTrigger(_globals._sequenceIndexes[4], 2, 44, 73);
+		_scene->_sequences.setTrigger(_globals._sequenceIndexes[4], 2, 51, 74);
+		_scene->_sequences.setTrigger(_globals._sequenceIndexes[4], 2, 32, 75);
+		break;
+
+	case 72:
+		_globals._sequenceIndexes[4] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[4], false, -2);
+		_scene->_sequences.setDepth(_globals._sequenceIndexes[4], 1);
+		_scene->_userInterface.noInventoryAnim();
+		// CHECKME: Not sure about the next function call
+		_scene->_userInterface.refresh();
+		_scene->_sequences.setTimingTrigger(120, 76);
+		break;
+
+	case 73:
+		_vm->_sound->command(1);
+		_vm->_sound->command(67);
+		break;
+
+	case 74:
+		_vm->_sound->command(27);
+		break;
+
+	case 75:
+		_scene->playSpeech(7);
+		break;
+
+	case 76:
+		_scene->_reloadSceneFlag = true;
+		break;
+
+	case 77:
+		_scene->deleteSequence(_globals._sequenceIndexes[5]);
+		_globals._sequenceIndexes[5] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[5], false, 7, 1);
+		_scene->_sequences.setDepth(_globals._sequenceIndexes[5], 1);
+		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[5], -1, -2);
+		_scene->_sequences.setTrigger(_globals._sequenceIndexes[5], 0, 0, 78);
+		break;
+
+	case 78:
+		_vm->_dialogs->show(50211);
+		_scene->drawToBackground(_globals._spriteIndexes[5], -2, Common::Point(-32000, -32000), 0, 100);
+		_game._player._stepEnabled = true;
+		break;
+
+	default:
+		break;
+	}
+
+	if (!_trapDoorHotspotEnabled)
+		animateFireBursts();
+
+	setPaletteCycle();
+}
+
+void Scene502::actions() {
+	if (_game._trigger >= 110) {
+		handlePanelAnimation();
+		_action._inProgress = false;
+		return;
+	}
+
+	switch (_game._trigger) {
+	case 80:
+		_globals._sequenceIndexes[6] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[6], false, 6);
+		_scene->_hotspots.activateAtPos(NOUN_ROPE, true, Common::Point(225, 28));
+		_scene->_sequences.setDepth(_globals._sequenceIndexes[6], 1);
+		_scene->_hotspots.activate(NOUN_TRAP_DOOR, false);
+		_scene->_hotspots.activateAtPos(NOUN_TRAP_DOOR, true, Common::Point(225, 28));
+		if (!_panelTurningFl)
+			_vm->_dialogs->show(50216);
+
+		_action._inProgress = false;
+		return;
+
+	case 90:
+		_game._player._stepEnabled = false;
+		_game._player._visible = false;
+		_globals._sequenceIndexes[10] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[10], false, 7, 2);
+		_scene->_sequences.setSeqPlayer(_globals._sequenceIndexes[10], true);
+		_scene->_sequences.setDepth(_globals._sequenceIndexes[10], 1);
+		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[10], 14, 18);
+		_scene->_sequences.setTrigger(_globals._sequenceIndexes[10], 0, 0, 91);
+		_scene->_sequences.setTrigger(_globals._sequenceIndexes[10], 2, 18, 110);
+		_action._inProgress = false;
+		return;
+
+	case 91:
+		_game.syncTimers(2, 0, 1, _globals._sequenceIndexes[10]);
+		_game._player._visible = true;
+		_game._player._stepEnabled = true;
+		_scene->_sequences.setTimingTrigger(5, 102);
+		_action._inProgress = false;
+		return;
+
+	case 95:
+		_game._player._stepEnabled = false;
+		_game._player._visible = false;
+		_globals._sequenceIndexes[10] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[10], false, 7, 2);
+		_scene->_sequences.setSeqPlayer(_globals._sequenceIndexes[10], true);
+		_scene->_sequences.setDepth(_globals._sequenceIndexes[10], 1);
+		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[10], 8, 13);
+		_scene->_sequences.setTrigger(_globals._sequenceIndexes[10], 0, 0, 96);
+		_scene->_sequences.setTrigger(_globals._sequenceIndexes[10], 2, 13, 110);
+		_action._inProgress = false;
+		return;
+
+	case 96:
+		_game.syncTimers(2, 0, 1, _globals._sequenceIndexes[10]);
+		_game._player._visible = true;
+		_game._player._stepEnabled = true;
+		_scene->_sequences.setTimingTrigger(5, 102);
+		_action._inProgress = false;
+		return;
+
+	case 100:
+		_game._player._stepEnabled = false;
+		_game._player._visible = false;
+		_globals._sequenceIndexes[10] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[10], false, 9, 2);
+		_scene->_sequences.setSeqPlayer(_globals._sequenceIndexes[10], true);
+		_scene->_sequences.setDepth(_globals._sequenceIndexes[10], 1);
+		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[10], 5, 7);
+		_scene->_sequences.setTrigger(_globals._sequenceIndexes[10], 0, 0, 101);
+		_scene->_sequences.setTrigger(_globals._sequenceIndexes[10], 2, 7, 110);
+		_action._inProgress = false;
+		return;
+
+	case 101:
+		_game.syncTimers(2, 0, 1, _globals._sequenceIndexes[10]);
+		_game._player._visible = true;
+		_scene->_sequences.setTimingTrigger(5, 102);
+		_action._inProgress = false;
+		return;
+
+	case 102:
+		_panelTurningFl = false;
+		_game._player._stepEnabled = true;
+		_action._inProgress = false;
+		return;
+
+	case 105:
+		_game._player._stepEnabled = false;
+		_game._player._visible = false;
+		_globals._sequenceIndexes[10] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[10], false, 8, 2);
+		_scene->_sequences.setSeqPlayer(_globals._sequenceIndexes[10], true);
+		_scene->_sequences.setDepth(_globals._sequenceIndexes[10], 1);
+		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[10], 1, 4);
+		_scene->_sequences.setTrigger(_globals._sequenceIndexes[10], 0, 0, 106);
+		_scene->_sequences.setTrigger(_globals._sequenceIndexes[10], 2, 4, 110);
+		_action._inProgress = false;
+		return;
+
+	case 106:
+		_game.syncTimers(2, 0, 1, _globals._sequenceIndexes[10]);
+		_game._player._visible = true;
+		_scene->_sequences.setTimingTrigger(5, 102);
+		_action._inProgress = false;
+		return;
+
+	default:
+		break;
+	}
+
+	if (_action.isAction(VERB_PUSH, NOUN_PANEL)) {
+		if (_panelTurningFl) {
+			_action._inProgress = false;
+			return;
+		}
+
+		Common::Point walkToPos;
+		getPanelInfo(&walkToPos, &_panelPushedNum, _scene->_customDest, &_nextPos);
+		_panelTurningFl = true;
+
+		switch (_panelPushedNum) {
+		case 0:
+		case 1:
+		case 2:
+		case 3:
+			_scene->_sequences.setTimingTrigger(1, 90);
+			break;
+
+		case 4:
+		case 5:
+		case 6:
+		case 7:
+			_scene->_sequences.setTimingTrigger(1, 95);
+			break;
+
+		case 8:
+		case 9:
+		case 10:
+		case 11:
+			_scene->_sequences.setTimingTrigger(1, 100);
+			break;
+
+		default:
+			_scene->_sequences.setTimingTrigger(1, 105);
+			break;
+		}
+		_action._inProgress = false;
+		return;
+	}
+
+	if (_action.isAction(VERB_THROW, NOUN_ROPE_WITH_HOOK, NOUN_TRAP_DOOR) || _action.isAction(VERB_GRAPPLE, NOUN_TRAP_DOOR)) {
+		if (_trapDoorHotspotEnabled) {
+			switch (_game._trigger) {
+		case 0:
+			_game._player._stepEnabled = false;
+			_game._player._visible = false;
+			_panelTurningFl = true;
+			_globals._sequenceIndexes[7] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[7], false, 6, 1);
+			_scene->_sequences.setDepth(_globals._sequenceIndexes[7], 13);
+			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[7], -1, -2);
+			_scene->_sequences.setTrigger(_globals._sequenceIndexes[7], 0, 0, 82);
+			_scene->_sequences.setTrigger(_globals._sequenceIndexes[7], 2, 10, 83);
+			_game._objects.setRoom(OBJ_ROPE_WITH_HOOK, NOWHERE);
+			break;
+
+		case 82:
+			_game._player._stepEnabled = true;
+			_game._player._visible = true;
+			_panelTurningFl = false;
+			_game.syncTimers(2, 0, 1, _globals._sequenceIndexes[7]);
+			_globals._sequenceIndexes[9] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[9], false, -2);
+			_scene->_sequences.setDepth(_globals._sequenceIndexes[9], 13);
+			_scene->_hotspots.activate(NOUN_ROPE, true);
+			break;
+
+		case 83:
+			_vm->_sound->command(69);
+			break;
+
+		default:
+			break;
+			}
+		} else
+			_vm->_dialogs->show(50229);
+
+		_action._inProgress = false;
+		return;
+	}
+
+	if (_action.isAction(VERB_CLIMB_THROUGH, NOUN_TRAP_DOOR)
+	 && (_game._objects.isInInventory(OBJ_ROPE_WITH_HOOK) || _game._objects.isInInventory(OBJ_CABLE_HOOK))) {
+		_vm->_dialogs->show(50228);
+		_action._inProgress = false;
+		return;
+	}
+
+	if (_action.isAction(VERB_THROW, NOUN_ROPE, NOUN_TRAP_DOOR)) {
+		_vm->_dialogs->show(50226);
+		_action._inProgress = false;
+		return;
+	}
+
+	if (_action.isAction(VERB_THROW, NOUN_CABLE_HOOK, NOUN_TRAP_DOOR)) {
+		_vm->_dialogs->show(50227);
+		_action._inProgress = false;
+		return;
+	}
+
+	if (_action.isAction(VERB_CLIMB, NOUN_ROPE) || _action.isAction(VERB_CLIMB_THROUGH, NOUN_TRAP_DOOR)) {
+		switch (_game._trigger) {
+		case 0:
+			_globals[kPlayerScore] += 5;
+			_game._player._stepEnabled = false;
+			_game._player._visible = false;
+			_panelTurningFl = true;
+			_globals._sequenceIndexes[8] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[8], false, 6, 1);
+			_scene->_sequences.setDepth(_globals._sequenceIndexes[8], 10);
+			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[8], -1, -2);
+			_scene->_sequences.setTrigger(_globals._sequenceIndexes[8], 0, 0, 82);
+			break;
+
+		case 82:
+			_scene->_nextSceneId = 504;
+			break;
+
+		default:
+			break;
+		}
+		_action._inProgress = false;
+		return;
+	}
+
+	if (_action._lookFlag) {
+		_vm->_dialogs->show(50210);
+		_action._inProgress = false;
+		return;
+	}
+
+	if (_action.isAction(VERB_LOOK) || _action.isAction(VERB_LOOK_AT)) {
+		if (_action.isObject(NOUN_FLOOR)) {
+			_vm->_dialogs->show(50217);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isObject(NOUN_TRAP_DOOR)) {
+			_vm->_dialogs->show(_trapDoorHotspotEnabled ? 50220 : 50225);
+
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isObject(NOUN_WALL)) {
+			_vm->_dialogs->show(50219);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isObject(NOUN_DOOR)) {
+			_vm->_dialogs->show(50221);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isObject(NOUN_PANELS)) {
+			_vm->_dialogs->show(50222);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isObject(NOUN_PANEL)) {
+			_vm->_dialogs->show(50223);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isObject(NOUN_CEILING)) {
+			_vm->_dialogs->show(50224);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isObject(NOUN_ROPE) && !_game._objects.isInInventory(OBJ_ROPE) && !_game._objects.isInInventory(OBJ_CABLE_HOOK) && !_game._objects.isInInventory(OBJ_ROPE_WITH_HOOK)) {
+			_vm->_dialogs->show(50233);
+			_action._inProgress = false;
+			return;
+		}
+	}
+
+	if (_action.isAction(VERB_OPEN, NOUN_TRAP_DOOR)) {
+		_vm->_dialogs->show(_trapDoorHotspotEnabled ? 50230 : 50228);
+		_action._inProgress = false;
+		return;
+	}
+
+	if (_action.isAction(VERB_CLOSE, NOUN_TRAP_DOOR)) {
+		_vm->_dialogs->show(_trapDoorHotspotEnabled ? 50228 : 50231);
+		_action._inProgress = false;
+		return;
+	}
+
+	if (_action.isAction(VERB_TAKE, NOUN_ROPE) && !_game._objects.isInInventory(OBJ_ROPE) && !_game._objects.isInInventory(OBJ_CABLE_HOOK) && !_game._objects.isInInventory(OBJ_ROPE_WITH_HOOK)) {
+		_vm->_dialogs->show(50234);
+		_action._inProgress = false;
+		return;
+	}
+
+	if (_action.isAction(VERB_LASSO, NOUN_TRAP_DOOR)) {
+		_vm->_dialogs->show(50232);
+		_action._inProgress = false;
+		return;
+	}
+}
+
+void Scene502::preActions() {
+	int panel;
+
+	if (_action.isAction(VERB_PUSH, NOUN_PANEL)) {
+		Common::Point walkToPos;
+		Common::Point tmpPos;
+		getPanelInfo(&walkToPos, &panel, _scene->_customDest, &tmpPos);
+		_game._player.walk(walkToPos, FACING_NORTH);
+	}
+
+	if (_trapDoorHotspotEnabled && (_action.isAction(VERB_CLIMB, NOUN_ROPE) || _action.isAction(VERB_CLIMB_THROUGH, NOUN_TRAP_DOOR)))
+		_game._player.walk(Common::Point(211, 149), FACING_NORTH);
+
+	if (_trapDoorHotspotEnabled && (_action.isAction(VERB_THROW, NOUN_ROPE_WITH_HOOK, NOUN_TRAP_DOOR) || _action.isAction(VERB_GRAPPLE, NOUN_TRAP_DOOR)))
+		_game._player.walk(Common::Point(200, 149), FACING_NORTH);
+}
+
+void Scene502::room_502_initialize_panels() {
+	for (int i = 0, curPuzzleSprite = 2, count = 1; i < 16; i++) {
+		if (_scene->_priorSceneId != RETURNING_FROM_LOADING)
+			_puzzlePictures[i] = _vm->getRandomNumber(1, 4);
+
+		curPuzzleSprite += (_puzzlePictures[i] * 3) - 3;
+		_puzzleSprites[i] = curPuzzleSprite;
+
+		int sprIdx;
+
+		switch (i) {
+		case 0:
+		case 1:
+		case 2:
+		case 3:
+			sprIdx = _globals._spriteIndexes[11];
+			break;
+
+		case 4:
+		case 5:
+		case 6:
+		case 7:
+			sprIdx = _globals._spriteIndexes[12];
+			break;
+
+		case 8:
+		case 9:
+		case 10:
+		case 11:
+			sprIdx = _globals._spriteIndexes[13];
+			break;
+
+		default:
+			sprIdx = _globals._spriteIndexes[14];
+			break;
+		}
+
+		_globals._sequenceIndexes[15] = _scene->_sequences.addStampCycle(sprIdx, false, curPuzzleSprite);
+		_scene->_sequences.setDepth(_globals._sequenceIndexes[15], 14);
+		_puzzleSequences[i] = _globals._sequenceIndexes[15];
+
+		++count;
+		if (count >= 5)
+			count = 1;
+
+		switch (count) {
+		case 1:
+			curPuzzleSprite = 2;
+			break;
+
+		case 2:
+			curPuzzleSprite = 14;
+			break;
+
+		case 3:
+			curPuzzleSprite = 26;
+			break;
+
+		case 4:
+			curPuzzleSprite = 38;
+			break;
+		}
+	}
+}
+
+void Scene502::loadCyclingInfo() {
+	warning("TODO: loadCyclingInfo");
+}
+
+void Scene502::animateFireBursts() {
+	int rndTrigger;
+
+	if (_acceleratedFireActivationFl)
+		rndTrigger = _vm->getRandomNumber(1, 50);
+	else
+		rndTrigger = _vm->getRandomNumber(1, 400);
+
+	if (rndTrigger == 1) {
+		rndTrigger = _vm->getRandomNumber(1, 4);
+
+		switch (rndTrigger) {
+		case 1:
+			if (!_fire1ActiveFl) {
+				_scene->_sequences.setTimingTrigger(_vm->getRandomNumber(300, 600), 60);
+				_fire1ActiveFl = true;
+			}
+			break;
+
+		case 2:
+			if (!_fire2ActiveFl) {
+				_scene->_sequences.setTimingTrigger(_vm->getRandomNumber(300, 600), 63);
+				_fire2ActiveFl = true;
+			}
+			break;
+
+		case 3:
+			if (!_fire3ActiveFl) {
+				_scene->_sequences.setTimingTrigger(_vm->getRandomNumber(300, 600), 66);
+				_fire3ActiveFl = true;
+			}
+			break;
+
+		case 4:
+			if (!_fire4ActiveFl) {
+				_scene->_sequences.setTimingTrigger(_vm->getRandomNumber(300, 600), 69);
+				_fire4ActiveFl = true;
+			}
+			break;
+		}
+	}
+
+	switch (_game._trigger) {
+	case 60:
+		if ((_game._player._playerPos.x < 198) || (_game._player._playerPos.y > 150)) {
+			_globals._sequenceIndexes[0] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[0], false, 5, 1);
+			_scene->_sequences.setDepth(_globals._sequenceIndexes[0], 14);
+			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[0], 1, 10);
+			_scene->_sequences.setTrigger(_globals._sequenceIndexes[0], 0, 0, 61);
+		}
+		break;
+
+	case 61:
+		_fire1ActiveFl = false;
+		break;
+
+	case 63:
+		if ((_game._player._playerPos.x > 127) || (_game._player._playerPos.y < 150)) {
+			_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 5, 1);
+			_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 1);
+			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[1], 1, 10);
+			_scene->_sequences.setTrigger(_globals._sequenceIndexes[1], 0, 0, 64);
+		}
+		break;
+
+	case 64:
+		_fire2ActiveFl = false;
+		break;
+
+	case 66:
+		if (_game._player._playerPos.x < 198) {
+			_globals._sequenceIndexes[2] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[2], false, 5, 1);
+			_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 1);
+			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[2], 1, 10);
+			_scene->_sequences.setTrigger(_globals._sequenceIndexes[2], 0, 0, 67);
+		}
+		break;
+
+	case 67:
+		_fire3ActiveFl = false;
+		break;
+
+	case 69:
+		if ((_game._player._playerPos.x > 110) || (_game._player._playerPos.y > 150)) {
+			_globals._sequenceIndexes[3] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[3], false, 5, 1);
+			_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 14);
+			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[3], 1, 10);
+			_scene->_sequences.setTrigger(_globals._sequenceIndexes[3], 0, 0, 70);
+		}
+		break;
+
+	case 70:
+		_fire4ActiveFl = false;
+		break;
+
+	default:
+		break;
+	}
+}
+
+void Scene502::setPaletteCycle() {
+	warning("TODO: setPaletteCycle");
+}
+
+void Scene502::getPanelInfo(Common::Point *walkToPos, int *panel, Common::Point mousePos, Common::Point *interimPos) {
+	walkToPos->y = 148;
+
+	if ((mousePos.x >= 120) && (mousePos.x <= 139)) {
+		interimPos->x = 129;
+		if ((mousePos.y >=75) && (mousePos.y <=90)) {
+			*panel = 0;
+			interimPos->y = 90;
+			walkToPos->x = 107;
+		}
+
+		if ((mousePos.y >=91) && (mousePos.y <=106)) {
+			*panel = 4;
+			interimPos->y = 106;
+			walkToPos->x = 107;
+		}
+
+		if ((mousePos.y >=107) && (mousePos.y <=122)) {
+			*panel = 8;
+			interimPos->y = 122;
+			walkToPos->x = 107;
+		}
+
+		if ((mousePos.y >=123) && (mousePos.y <=137)) {
+			*panel = 12;
+			interimPos->y = 138;
+			walkToPos->x = 107;
+		}
+	}
+
+	if ((mousePos.x >= 140) && (mousePos.x <= 159)) {
+		interimPos->x = 149;
+		if ((mousePos.y >=75) && (mousePos.y <=90)) {
+			*panel = 1;
+			interimPos->y = 90;
+			walkToPos->x = 127;
+		}
+
+		if ((mousePos.y >=91) && (mousePos.y <=106)) {
+			*panel = 5;
+			interimPos->y = 106;
+			walkToPos->x = 127;
+		}
+
+		if ((mousePos.y >=107) && (mousePos.y <=122)) {
+			*panel = 9;
+			interimPos->y = 122;
+			walkToPos->x = 127;
+		}
+
+		if ((mousePos.y >=123) && (mousePos.y <=137)) {
+			*panel = 13;
+			interimPos->y = 138;
+			walkToPos->x = 127;
+		}
+	}
+
+	if ((mousePos.x >= 160) && (mousePos.x <= 179)) {
+		interimPos->x = 169;
+		if ((mousePos.y >=75) && (mousePos.y <=90)) {
+			*panel = 2;
+			interimPos->y = 90;
+			walkToPos->x = 147;
+		}
+
+		if ((mousePos.y >=91) && (mousePos.y <=106)) {
+			*panel = 6;
+			interimPos->y = 106;
+			walkToPos->x = 147;
+		}
+
+		if ((mousePos.y >=107) && (mousePos.y <=122)) {
+			*panel = 10;
+			interimPos->y = 122;
+			walkToPos->x = 147;
+		}
+
+		if ((mousePos.y >=123) && (mousePos.y <=137)) {
+			*panel = 14;
+			interimPos->y = 138;
+			walkToPos->x = 147;
+		}
+	}
+
+	if ((mousePos.x >= 180) && (mousePos.x <= 199)) {
+		interimPos->x = 189;
+		if ((mousePos.y >=75) && (mousePos.y <=90)) {
+			*panel = 3;
+			interimPos->y = 90;
+			walkToPos->x = 167;
+		}
+
+		if ((mousePos.y >=91) && (mousePos.y <=106)) {
+			*panel = 7;
+			interimPos->y = 106;
+			walkToPos->x = 167;
+		}
+
+		if ((mousePos.y >=107) && (mousePos.y <=122)) {
+			*panel = 11;
+			interimPos->y = 122;
+			walkToPos->x = 167;
+		}
+
+		if ((mousePos.y >=123) && (mousePos.y <=137)) {
+			*panel = 15;
+			interimPos->y = 138;
+			walkToPos->x = 167;
+		}
+	}
+}
+
+void Scene502::handlePanelAnimation() {
+	int puzzleSolvedFl = true;
+
+	switch (_game._trigger) {
+	case 110:
+		_vm->_sound->command(65);
+		_scene->deleteSequence(_puzzleSequences[_panelPushedNum]);
+		switch (_panelPushedNum) {
+		case 0:
+		case 1:
+		case 2:
+		case 3:
+			_globals._sequenceIndexes[11] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[11], false, _puzzleSprites[_panelPushedNum] - 1);
+			_scene->_sequences.setDepth(_globals._sequenceIndexes[11], 14);
+			_scene->_sequences.setTimingTrigger(5, 111);
+			break;
+
+		case 4:
+		case 5:
+		case 6:
+		case 7:
+			_globals._sequenceIndexes[12] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[12], false, _puzzleSprites[_panelPushedNum] - 1);
+			_scene->_sequences.setDepth(_globals._sequenceIndexes[12], 14);
+			_scene->_sequences.setTimingTrigger(5, 111);
+			break;
+
+		case 8:
+		case 9:
+		case 10:
+		case 11:
+			_globals._sequenceIndexes[13] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[13], false, _puzzleSprites[_panelPushedNum] - 1);
+			_scene->_sequences.setDepth(_globals._sequenceIndexes[13], 14);
+			_scene->_sequences.setTimingTrigger(5, 111);
+			break;
+
+		default:
+			_globals._sequenceIndexes[14] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[14], false, _puzzleSprites[_panelPushedNum] - 1);
+			_scene->_sequences.setDepth(_globals._sequenceIndexes[14], 14);
+			_scene->_sequences.setTimingTrigger(5, 111);
+			break;
+		}
+		break;
+
+	case 111:
+		switch (_panelPushedNum) {
+		case 0:
+		case 1:
+		case 2:
+		case 3:
+			_scene->deleteSequence(_globals._sequenceIndexes[11]);
+			break;
+
+		case 4:
+		case 5:
+		case 6:
+		case 7:
+			_scene->deleteSequence(_globals._sequenceIndexes[12]);
+			break;
+
+		case 8:
+		case 9:
+		case 10:
+		case 11:
+			_scene->deleteSequence(_globals._sequenceIndexes[13]);
+			break;
+
+		default:
+			_scene->deleteSequence(_globals._sequenceIndexes[14]);
+			break;
+		}
+
+		_globals._sequenceIndexes[16] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[16], false, 5, 1);
+		_scene->_sequences.setDepth(_globals._sequenceIndexes[16], 14);
+		_scene->_sequences.setPosition(_globals._sequenceIndexes[16], _nextPos);
+		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[16], -1, -2);
+		_scene->_sequences.setTrigger(_globals._sequenceIndexes[16], 0, 0, 112);
+		break;
+
+	case 112: {
+		int idx = _globals._sequenceIndexes[16];
+		int newSprId = _puzzleSprites[_panelPushedNum] + 4;
+
+		switch (_panelPushedNum) {
+		case 0:
+		case 4:
+		case 8:
+		case 12:
+			if (newSprId > 12)
+				newSprId = 3;
+			break;
+
+		case 1:
+		case 5:
+		case 9:
+		case 13:
+			if (newSprId > 24)
+				newSprId = 15;
+			break;
+
+		case 2:
+		case 6:
+		case 10:
+		case 14:
+			if (newSprId > 36)
+				newSprId = 27;
+			break;
+
+		default:
+			if (newSprId > 48)
+				newSprId = 39;
+			break;
+		}
+
+		switch (_panelPushedNum) {
+		case 0:
+		case 1:
+		case 2:
+		case 3:
+			_globals._sequenceIndexes[11] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[11], false, newSprId);
+			_scene->_sequences.setDepth(_globals._sequenceIndexes[11], 14);
+			_game.syncTimers(1, _globals._sequenceIndexes[11], 1, idx);
+			_scene->_sequences.setTimingTrigger(5, 113);
+			break;
+
+		case 4:
+		case 5:
+		case 6:
+		case 7:
+			_globals._sequenceIndexes[12] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[12], false, newSprId);
+			_scene->_sequences.setDepth(_globals._sequenceIndexes[12], 14);
+			_game.syncTimers(1, _globals._sequenceIndexes[12], 1, idx);
+			_scene->_sequences.setTimingTrigger(5, 113);
+			break;
+
+		case 8:
+		case 9:
+		case 10:
+		case 11:
+			_globals._sequenceIndexes[13] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[13], false, newSprId);
+			_scene->_sequences.setDepth(_globals._sequenceIndexes[13], 14);
+			_game.syncTimers(1, _globals._sequenceIndexes[13], 1, idx);
+			_scene->_sequences.setTimingTrigger(5, 113);
+			break;
+
+		default:
+			_globals._sequenceIndexes[14] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[14], false, newSprId);
+			_scene->_sequences.setDepth(_globals._sequenceIndexes[14], 14);
+			_game.syncTimers(1, _globals._sequenceIndexes[14], 1, idx);
+			_scene->_sequences.setTimingTrigger(5, 113);
+			break;
+		}
+		}
+		break;
+
+	case 113: {
+		switch (_panelPushedNum) {
+		case 0:
+		case 1:
+		case 2:
+		case 3:
+			_scene->deleteSequence(_globals._sequenceIndexes[11]);
+			break;
+
+		case 4:
+		case 5:
+		case 6:
+		case 7:
+			_scene->deleteSequence(_globals._sequenceIndexes[12]);
+			break;
+
+		case 8:
+		case 9:
+		case 10:
+		case 11:
+			_scene->deleteSequence(_globals._sequenceIndexes[13]);
+			break;
+
+		default:
+			_scene->deleteSequence(_globals._sequenceIndexes[14]);
+			break;
+		}
+
+		int newSprId = _puzzleSprites[_panelPushedNum] + 3;
+
+		switch (_panelPushedNum) {
+		case 0:
+		case 4:
+		case 8:
+		case 12:
+			if (newSprId > 12)
+				newSprId = 2;
+			break;
+
+		case 1:
+		case 5:
+		case 9:
+		case 13:
+			if (newSprId > 24)
+				newSprId = 14;
+			break;
+
+		case 2:
+		case 6:
+		case 10:
+		case 14:
+			if (newSprId > 36)
+				newSprId = 26;
+			break;
+
+		default:
+			if (newSprId > 48)
+				newSprId = 38;
+			break;
+		}
+		_puzzleSprites[_panelPushedNum] = newSprId;
+		++_puzzlePictures[_panelPushedNum];
+		if (_puzzlePictures[_panelPushedNum] >= 5)
+			_puzzlePictures[_panelPushedNum] = 1;
+
+		switch (_panelPushedNum) {
+		case 0:
+		case 1:
+		case 2:
+		case 3:
+			_globals._sequenceIndexes[11] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[11], false, newSprId);
+			_scene->_sequences.setDepth(_globals._sequenceIndexes[11], 14);
+			_puzzleSequences[_panelPushedNum] = _globals._sequenceIndexes[11];
+			break;
+
+		case 4:
+		case 5:
+		case 6:
+		case 7:
+			_globals._sequenceIndexes[12] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[12], false, newSprId);
+			_scene->_sequences.setDepth(_globals._sequenceIndexes[12], 14);
+			_puzzleSequences[_panelPushedNum] = _globals._sequenceIndexes[12];
+			break;
+
+		case 8:
+		case 9:
+		case 10:
+		case 11:
+			_globals._sequenceIndexes[13] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[13], false, newSprId);
+			_scene->_sequences.setDepth(_globals._sequenceIndexes[13], 14);
+			_puzzleSequences[_panelPushedNum] = _globals._sequenceIndexes[13];
+			break;
+
+		default:
+			_globals._sequenceIndexes[14] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[14], false, newSprId);
+			_scene->_sequences.setDepth(_globals._sequenceIndexes[14], 14);
+			_puzzleSequences[_panelPushedNum] = _globals._sequenceIndexes[14];
+			break;
+		}
+
+		for (int i = 0; i < 16; i++) {
+			if (_puzzlePictures[i] != 1)
+				puzzleSolvedFl = false;
+		}
+
+		if (puzzleSolvedFl && !_trapDoorHotspotEnabled) {
+			_trapDoorHotspotEnabled = true;
+			_scene->deleteSequence(_globals._sequenceIndexes[6]);
+			_globals._animationIndexes[0] = _scene->loadAnimation(formAnimName('t', 1), 80);
+		}
+		}
+		break;
+
+	default:
+		break;
+	}
+}
 /*------------------------------------------------------------------------*/
 
 } // End of namespace Phantom
