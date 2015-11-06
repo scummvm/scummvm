@@ -176,6 +176,12 @@ void SceneInfo::load(int sceneId, int variant, const Common::String &resName,
 		_width = 320;
 		_height = 156;
 
+		// TODO: Initialize correctly!
+		_yBandsEnd = 155;
+		_yBandsStart = 0;
+		_maxScale = 100;
+		_minScale = 100;
+
 		infoStream->skip(140);
 	}
 
