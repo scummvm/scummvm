@@ -53,6 +53,8 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Improve support for Japanese PC-9801 games.
 
  SCUMM:
+   - Major improvements to Korean versions text rendering.
+   - Implemented original Maniac Mansion v0-v1 walking code.
    - It is now possible to play Maniac Mansion from within Day of the
      Tentacle, with a few caveats. See README for details.
 
