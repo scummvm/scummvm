@@ -1,5 +1,6 @@
- "<?xml version = '1.0'?>"
-"<render_info>"
+const char *defaultXML1 = "<?xml version = '1.0'?>"
+;
+ const char *defaultXML2 = "<render_info>"
 "<palette>"
 "<color name='black' "
 "rgb='0,0,0' "
@@ -610,7 +611,8 @@
 "/>"
 "</drawdata>"
 "</render_info>"
-"<layout_info resolution='y>399'>"
+;
+ const char *defaultXML3 = "<layout_info resolution='y>399'>"
 "<globals>"
 "<def var='Line.Height' value='16' />"
 "<def var='Font.Height' value='16' />"
@@ -1895,7 +1897,8 @@
 "</layout>"
 "</dialog>"
 "</layout_info>"
-"<layout_info resolution='y<400'>"
+;
+ const char *defaultXML4 = "<layout_info resolution='y<400'>"
 "<globals>"
 "<def var='Line.Height' value='12' />"
 "<def var='Font.Height' value='10' />"
@@ -3149,3 +3152,5 @@
 "</layout>"
 "</dialog>"
 "</layout_info>"
+;
+const char *defaultXML[] = { defaultXML1, defaultXML2, defaultXML3, defaultXML4 };
