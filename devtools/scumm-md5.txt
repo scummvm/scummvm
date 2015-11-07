@@ -494,7 +494,7 @@ freddi	Freddi Fish 1: The Case of the Missing Kelp Seeds
 	1f2e62b5a9c50589fc342285a6bb3a27	-1	he	Windows	HE 73	-	-	e_orz
 	64a22be96d679018696e5c8d3ca8b71d	26375	jp	Windows	HE 73	-	-	sev
 	507bb360688dc4180fdf0d7597352a69	26402	se	Windows	HE 73	-	-	Sven Arvidsson
-	df047cc4792150f601290357566d36a6	-1	us	All	HE 90	Updated	-	khalek
+	df047cc4792150f601290357566d36a6	-1	en	All	HE 90	Updated	-	khalek
 	e44ea295a3f8fe4f41983080dab1e9ce	-1	fr	Mac	HE 90	Updated	-	ThierryFR
 	746e88c172a5b7a1ae89ac0ee3ee681a	-1	ru	Windows	HE 90	Updated	-	sev
 	a197a87ae77f3b3333f09a7a2c448fe2	-1	en	Windows	HE 99	Updated	-	Jonathan
@@ -523,9 +523,9 @@ freddi2	Freddi Fish 2: The Case of the Haunted Schoolhouse
 	5057fb0e99e5aa29df1836329232f101	-1	All	Windows	HE 80	-	-	sev
 	ac62d50e39492ee3738b4e83a5ac780f	-1	nl	Windows	HE 80	-	-	joostp
 	151071053a1d0021198216713939521d	-1	en	Windows	HE 80	-	-	vampir_raziel
-	51305e929e330e24a75a0351c8f9975e	-1	us	All	HE 99	Updated	-	Kirben
+	51305e929e330e24a75a0351c8f9975e	-1	en	All	HE 99	Updated	-	Kirben
 	9c0ee9c252785e9fca0143e42ac4b256	-1	de	Windows	HE 99	Updated	-	George Kormendi
-	8ee63cafb1fe9d62aa0d5a23117e70e7	-1	us	All	HE 100	Updated	-	Kirben
+	8ee63cafb1fe9d62aa0d5a23117e70e7	-1	en	All	HE 100	Updated	-	Kirben
 	e41de1c2a15abbcdbf9977e2d7e8a340	-1	ru	Windows	HE 100	Updated	-	sev
 
 	c20848f53c2d48bfacdc840993843765	-1	nl	All	HE 80	Demo	-	DarthBo
@@ -533,7 +533,7 @@ freddi2	Freddi Fish 2: The Case of the Haunted Schoolhouse
 	d37c55388294b66e53e7ced3af88fa68	-1	en	All	HE 100	Updated Demo	-	khalek
 
 freddi3	Freddi Fish 3: The Case of the Stolen Conch Shell
-	8368f552b1e3eba559f8d559bcc4cadb	-1	All	All	-	-	-	Kirben, sev
+	8368f552b1e3eba559f8d559bcc4cadb	55959	All	All	-	-	-	Kirben, sev (US and ???)
 	0cccfa5223099a60e76cfcca57a1a141	-1	nl	All	-	-	-	adutchguy, daniel9
 	008e76ec3ae58d0add637ea7aa299a2c	-1	fr	Mac	-	-	-	ThierryFR
 	898ce8eb1234a955ef75e87141902bb3	-1	ru	Windows	-	-	-	sev
@@ -551,7 +551,7 @@ freddi3	Freddi Fish 3: The Case of the Stolen Conch Shell
 	d73c851b942af44deb9b6d5f416a0972	-1	he	Windows	HE 99	Demo	-	Ori Avtalion
 
 freddi4	Freddi Fish 4: The Case of the Hogfish Rustlers of Briny Gulch
-	4f580a021eee026f3b4589e17d130d78	-1	All	All	-	-	-	Kirben, sev
+	4f580a021eee026f3b4589e17d130d78	44190	All	All	-	-	-	Kirben, sev (US and ???)
 	14d48c95b43ddeb983254cf6c43851f1	-1	nl	All	-	-	-	adutchguy, daniel9
 	3b832f4a90740bf22e9b8ed42ca0128c	-1	gb	All	HE 99	-	-	Reckless
 	d74122362a77ec24525fdd50297dfd82	-1	fr	Mac	-	-	-	ThierryFR
@@ -581,7 +581,7 @@ freddi4	Freddi Fish 4: The Case of the Hogfish Rustlers of Briny Gulch
 	47e041521d35c7a801bb1c010d84da9d	-1	it	Windows	HE 99	Demo	-	Kirben
 
 freddicove	Freddi Fish 5: The Case of the Creature of Coral Cove
-	590e6546aacd0d374b7f3a4f53013ab1	-1	All	All	-	-	-	cyx
+	590e6546aacd0d374b7f3a4f53013ab1	41165	All	All	-	-	-	cyx (US and ???)
 	21abe302e1b1e2b66d6f5c12e241ebfd	-1	ru	Windows	unenc	Unencrypted	-	sev
 	b8955d7d23b4972229060d1592489fef	-1	nl	All	HE 100	-	-	adutchguy, daniel9
 	8f345db2f3f5a25ed6305001957e6f72	41182	nl	All	HE 100	-	-	Ben Castricum
@@ -651,12 +651,12 @@ moonbase	Moonbase Commander
 	ef71a322b6530ac45b1a070f7c0795f7	-1	en	Windows	Demo	Demo	-	Kirben
 
 pajama	Pajama Sam 1: No Need to Hide When It's Dark Outside
-	672dec94b82f7f0877ebb5b5cf7f4bc1	-1	us	All	-	-	-	khalek
+	672dec94b82f7f0877ebb5b5cf7f4bc1	-1	en	All	-	-	-	khalek
 	1d7a2e1ddcade791e2de0cfceac86725	-1	fr	All	-	-	-	gist974, ThierryFR
 	4fa6870d9bc8c313b65d54b1da5a1891	-1	nl	All	-	-	-	joostp
 	a095e33061606d231ff37dca4c64c8ac	-1	de	All	HE 99	-	-	Joachim Eberhard
 	898eaa21f79cf8d4f08db856244689ff	66505	en	Windows	HE 99	Updated	-	Joachim Eberhard
-	37aed3f91c1ef959e0bd265f9b13781f	-1	us	All	HE 100	Updated	-	Kirben
+	37aed3f91c1ef959e0bd265f9b13781f	66599	en	All	HE 100	Updated	-	Kirben
 	4aa93cb30e485b728504ba3a693f12bf	-1	ru	Windows	HE 100	-	-	sev
 	782393c5934ecd0b536eaf5fd541bd26	-1	en	Windows	HE 101	Updated	-	Jonathan
 	c225bec1b6c0798a2b8c89ac226dc793	-1	en	Wii	HE 101	-	-	sanguinehearts
@@ -766,14 +766,14 @@ puttmoon	Putt-Putt Goes to the Moon
 
 puttcircus	Putt-Putt Joins the Circus
 	ecc4340c2b801f5af8da4e00c0e432d9	-1	nl	All	-	-	-	daniel9
-	ab0693e9324cfcf498fdcbb12acf8bb4	-1	en	All	-	-	-	sev
+	ab0693e9324cfcf498fdcbb12acf8bb4	36655	us	All	-	-	-	sev
 	7bad72e332a59f9fcc1d437f4edad32a	-1	ru	All	-	-	-	sev
 	db74136c20557eca6ed3411bff39f7a1	-1	gb	Windows	-	-	-	Reckless
 	d0ad929def3e9cfe39dea55bd12098d4	-1	fr	Windows	-	-	-	gist974
 	febf4a983ea5faea1c9dd6c710ebb09c	-1	de	Windows	-	-	-	andy482
 	c8253da0f4626d2236b5291b99e33408	-1	he	Windows	HE 99	-	-	Matan Bareket
 
-	a7cacad9c40c4dc9e1812abf6c8af9d5	-1	en	All	-	Demo	-	Kirben, sev
+	a7cacad9c40c4dc9e1812abf6c8af9d5	-1	us	All	-	Demo	-	Kirben, sev
 	1387d16aa620dc1c2d1fd87f8a9e7a09	-1	fr	Windows	-	Demo	-	Mevi
 	3af61c5edf8e15b43dbafd285b2e9777	-1	he	Windows	-	Demo	-	Ori Avtalion
 
@@ -800,7 +800,7 @@ puttzoo	Putt-Putt Saves the Zoo
 	9781422e4288dbc090720e4563168ba7	-1	fr	Windows	-	-	-	gist974
 	0f9d3317910ac7a9f449243118884ada	42070	de	Windows	-	-	-	George Kormendi
 	92e7727e67f5cd979d8a1070e4eb8cb3	-1	en	All	HE 98.5	Updated	-	cyx
-	3a3e592b074f595489f7f11e150c398d	-1	us	Windows	HE 99	Updated	-	Adrian
+	3a3e592b074f595489f7f11e150c398d	-1	en	Windows	HE 99	Updated	-	Adrian
 	c5cc7cba02a2fbd539c4439e775b0536	43470	de	Windows	HE 99	Updated	-	Lightkey
 	5c9cecbd2952ccec14c9ecebf5822a34	-1	en	iOS	HE 100	-	-	clone2727
 	7b4ee071eecadc2d8cd0c3509110825c	-1	en	Windows	HE 100	Remastered	-	Kirben
@@ -816,7 +816,7 @@ puttzoo	Putt-Putt Saves the Zoo
 
 PuttTime	Putt-Putt Travels Through Time
 	fcb78ebecab2757264c590890c319cc5	-1	nl	All	HE 85	-	-	adutchguy, daniel9
-	63fdcdc95cdeea00060883aed38e5504	-1	en	All	HE 85	-	-	iziku
+	63fdcdc95cdeea00060883aed38e5504	62582	us	All	HE 85	-	-	iziku
 	db21a6e338fe3b70c2723b6530865bf2	-1	fr	All	HE 85	-	-	gist974, ThierryFR
 	84e3c23a49ded8a6f9197735c8eb3de7	-1	de	Windows	HE 85	-	-	oncer
 	2108d83dcf09f8adb4bc524669c8cf51	-1	us	All	HE 99	Updated	-	Kirben
@@ -841,9 +841,9 @@ balloon	Putt-Putt and Pep's Balloon-O-Rama
 	bab0fb81dcb12b8930c5d850b8f2a7de	12800	de	Windows	HE 80	-	-	George Kormendi
 	145bd3373574feb668cc2eea2ec6cf86	-1	ru	Windows	HE 80	-	-	sev
 	27b2ef1653089fe5b897d9cc89ce784f	-1	ru	Windows	HE 80	-	-	George Kormendi
-	2232b0b9411575b1f9961713ebc9de61	-1	nl	Windows	HE 80	-	-	Ben Castricum
-	a22af0ad0e3126d19d22707b0267a37d	-1	nl	Windows	HE 80	-	-	Ben Castricum
-	a56a05c6b865b9956639f8c51269e5ab	-1	nl	Mac	HE 80	-	-	Ben Castricum
+	2232b0b9411575b1f9961713ebc9de61	12800	nl	Windows	HE 80	-	-	Ben Castricum
+	a22af0ad0e3126d19d22707b0267a37d	12800	nl	Windows	HE 80	-	-	Ben Castricum
+	a56a05c6b865b9956639f8c51269e5ab	12800	nl	Mac	HE 80	-	-	Ben Castricum
 	d7b247c26bf1f01f8f7daf142be84de3	-1	en	Windows	HE 99	Updated	-	iziku
 	8e3241ddd6c8dadf64305e8740d45e13	-1	en	All	HE 100	Updated	-	Kirben
 
@@ -870,40 +870,40 @@ PuttsFunShop	Putt-Putt's One-Stop Fun Shop
 	5262a27afcaee04e5c4900220bd463e7	-1	us	All	-	-	-	Kirben
 
 spyfox	SPY Fox 1: Dry Cereal
-	6bf70eee5de3d24d2403e0dd3d267e8a	49221	All	Windows	-	-	-	khalek
+	6bf70eee5de3d24d2403e0dd3d267e8a	49221	All	Windows	-	-	-	khalek (US and ???)
 	100b4c8403ad6a83d4bf7dbf83e44dc4	-1	fr	Windows	-	-	-	gist974
 	9bda5fee51d2fda5253d02c642016bf4	-1	nl	All	HE 98.5	-	-	daniel9, joostp
-	58436e634f4fae1d9973591c2ffa1fcb	-1	en	All	HE 99	Updated	-	Joachim Eberhard
+	58436e634f4fae1d9973591c2ffa1fcb	-1	en	All	HE 99	Updated	-	Joachim Eberhard (GB or US?)
 	a28135a7ade38cc0208b04507c46efd1	-1	de	All	HE 99	-	-	nachbarnebenan
 	ee785fe2569bc9965526e774f7ab86f1	-1	fr	Mac	HE 99	-	-	ThierryFR
 	76b66b43e593ad4d2f1dfb5cc8f19700	-1	nl	Windows	HE 99	-	-	sugarcube
 	72ac6bc980d5101c2142189d746bd62f	-1	ru	Windows	HE 99	-	-	sev
 	3de99ef0523f8ca7958faa3afccd035a	-1	us	All	HE 100	Updated	-	Kirben
-	23394c8d29cc63c61313959431a12476	-1	en	Windows	HE 100	Updated	-	Jonathan
-	50b831f11b8c4b83784cf81f4dcc69ea	-1	en	Wii	HE 101	-	-	sanguinehearts
-	15878e3bee2e1e759184abee98589eaa	-1	en	iOS	HE 100	-	-	clone2727
+	23394c8d29cc63c61313959431a12476	-1	en	Windows	HE 100	Updated	-	Jonathan (GB or US?)
+	50b831f11b8c4b83784cf81f4dcc69ea	-1	en	Wii	HE 101	-	-	sanguinehearts (GB or US?)
+	15878e3bee2e1e759184abee98589eaa	-1	en	iOS	HE 100	-	-	clone2727 (GB or US?)
 
-	53e94115b55dd51d4b8ff0871aa1df1e	20103	en	All	-	Demo	-	khalek, sev
-	fbdd947d21e8f5bac6d6f7a316af1c5a	15693	en	All	-	Demo	-	sev
+	53e94115b55dd51d4b8ff0871aa1df1e	20103	us	All	-	Demo	-	khalek, sev
+	fbdd947d21e8f5bac6d6f7a316af1c5a	15693	us	All	-	Demo	-	sev
 	ba888e6831517597859e91aa173f945c	-1	fr	All	-	Demo	-	Kirben
 	73b8197e236da4bf49adc99fe8f5fa1b	-1	de	All	-	Demo	-	Joachim Eberhard
 	4edbf9d03550f7ba01e7f34d69b678dd	-1	nl	All	HE 98.5	Demo	-	Kirben
-	f2ec78e50bdc63b70044e9758be10914	-1	nl	Mac	HE 98.5	Demo	-	Ben Castricum
-	9d4ab3e0e1d1ebc6ba8a6a4c470ed184	-1	en	All	HE 100	Demo	-	khalek
+	f2ec78e50bdc63b70044e9758be10914	20141	nl	Mac	HE 98.5	Demo	-	Ben Castricum
+	9d4ab3e0e1d1ebc6ba8a6a4c470ed184	15943	us	All	HE 100	Demo	-	khalek
 
 spyfox2	SPY Fox 2: Some Assembly Required
-	f79e60c17cca601e411f1f75e8ee9b5a	51286	All	All	-	-	-	Kirben
+	f79e60c17cca601e411f1f75e8ee9b5a	51286	All	All	-	-	-	Kirben (US and ???)
 	90e2f0af4f779629695c6394a65bb702	-1	fr	All	-	-	-	gist974, ThierryFR
 	bc4700bc0e12879f6d25d14d6be6cfdd	-1	de	All	-	-	-	Joachim Eberhard
 	3785fd25f7e02b5782bfc5072d8f77c8	-1	it	All	-	-	-	Saleck
 	cea91e3dd47f2518ea418e41611aa77f	-1	ru	All	-	-	-	sev
-	9fd66fb3b04703bd50da4356e4202558	51295	en	Mac	-	-	-	pix_climber
+	9fd66fb3b04703bd50da4356e4202558	51295	en	Mac	-	-	-	pix_climber (GB or US?)
 	71fe97c3108678cf604f14abe342341b	51286	nl	All	-	-	-	adutchguy
 
 	1c792d28376d45e145cb916bca0400a2	-1	nl	All	-	Demo	-	joostp
 	7222f260253f325c21fcfa68b5bfab67	-1	us	All	-	Demo	-	Kirben
 	732845548b1d6c2da572cb6a1bf81b07	-1	de	All	-	Demo	-	Joachim Eberhard
-	e62056ba675ad65d8854ab3c5ad4b3c0	14689	en	Windows	-	Mini Game	-	Trekky
+	e62056ba675ad65d8854ab3c5ad4b3c0	14689	gb	Windows	-	Mini Game	-	Trekky
 	22c7432dc97a821fcfccd480e93e3911	14689	nl	Windows	-	Mini Game	-	Ben Castricum
 	6b10c9977cad9de503642059359792b1	14689	fr	Windows	-	Mini Game	-	Ben Castricum
 	9684c161258d68e0d464d6cab7024b9c	14689	it	Windows	-	Mini Game	-	Ben Castricum
@@ -920,7 +920,7 @@ spyozon	SPY Fox 3: Operation Ozone
 	7015b059ab72cff3a0ef9fb4d5e9889d	-1	de	Windows	-	-	-	andy482
 	be39a5d4db60e8aa736b9086778cb45c	-1	gb	Windows	-	-	-	
 
-	ebd0b2c8a387f18887282afe6cad894a	15317	en	All	-	Demo	-	Kirben
+	ebd0b2c8a387f18887282afe6cad894a	15317	us	All	-	Demo	-	Kirben
 	a99c39ba65b6086be28aef576da69595	-1	fr	Windows	-	Demo	-	Mevi
 	65563295c3a06493351870f20a1630cf	5235008	All	All	HE CUP	Preview	-	sev
 
