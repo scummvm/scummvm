@@ -59,7 +59,7 @@ static const char *const fixedTextEN[] = {
 	"Picked up",
 
 	"Page %d",
-	"Close Journal", 
+	"Close Journal",
 	"Search Journal",
 	"Save Journal",
 	"Abort Search",
@@ -651,7 +651,7 @@ static const char *const fixedTextES[] = {
 	"On", // ???
 	"Salir",
 	"quieres salir?",
-	"\250Est s seguro de que",
+	"\250Est\240s seguro de que",
 	"Si",
 	"Non",
 	"Introducir Palabra Clave",
