@@ -108,7 +108,7 @@ SceneInfo::SceneInfo(MADSEngine *vm) : _vm(vm) {
 	_minScale = 0;
 	_field4A = 0;
 	_usageIndex = 0;
-	for (int i = 0; i < 15; ++i)
+	for (int i = 0; i < DEPTH_BANDS_SIZE; ++i)
 		_depthList[i] = 0;
 }
 
@@ -145,6 +145,15 @@ void SceneInfo::load(int sceneId, int variant, const Common::String &resName,
 
 	// Read in basic data
 	Common::SeekableReadStream *infoStream = infoPack.getItemStream(0);
+
+	/*
+	byte *data = new byte[infoStream->size()];
+	infoStream->read(data, infoStream->size());
+	Common::hexdump(data, infoStream->size());
+	infoStream->seek(0);
+	delete[] data;
+	*/
+
 	if (_vm->getGameID() == GType_RexNebular) {
 		_sceneId = infoStream->readUint16LE();
 	} else {
@@ -161,28 +170,28 @@ void SceneInfo::load(int sceneId, int variant, const Common::String &resName,
 		_height = infoStream->readUint16LE();
 
 		infoStream->skip(24);
-
-		nodeCount = infoStream->readUint16LE();
-		_yBandsEnd = infoStream->readUint16LE();
-		_yBandsStart = infoStream->readUint16LE();
-		_maxScale = infoStream->readUint16LE();
-		_minScale = infoStream->readUint16LE();
-		for (int i = 0; i < DEPTH_BANDS_SIZE; ++i)
-			_depthList[i] = infoStream->readUint16LE();
-		_field4A = infoStream->readUint16LE();
 	} else {
 		_artFileNum = sceneId;
 		_depthStyle = 0;
 		_width = 320;
 		_height = 156;
 
-		// TODO: Initialize correctly!
-		_yBandsEnd = 155;
-		_yBandsStart = 0;
-		_maxScale = 100;
-		_minScale = 100;
+		infoStream->skip(98);
+	}
 
-		infoStream->skip(140);
+	nodeCount = infoStream->readUint16LE();
+	_yBandsEnd = infoStream->readUint16LE();
+	_yBandsStart = infoStream->readUint16LE();
+	_maxScale = infoStream->readUint16LE();
+	_minScale = infoStream->readUint16LE();
+	for (int i = 0; i < DEPTH_BANDS_SIZE; ++i)
+		_depthList[i] = infoStream->readUint16LE();
+	_field4A = infoStream->readUint16LE();
+
+	// HACK for V2 games
+	if (_vm->getGameID() != GType_RexNebular) {
+		_minScale = _maxScale = 100;
+		memset(_depthList, 0, DEPTH_BANDS_SIZE * sizeof(int));
 	}
 
 	// Load the scene's walk nodes
@@ -190,27 +199,29 @@ void SceneInfo::load(int sceneId, int variant, const Common::String &resName,
 		WalkNode node;
 		node.load(infoStream);
 
-		if (i < nodeCount)
+		if (i < nodeCount) {
 			_nodes.push_back(node);
+			//debug("Node %d: %d,%d", i, node._walkPos.x, node._walkPos.y);
+		}
 	}
 
-	int spriteSetsCount  = infoStream->readUint16LE();
-	int spriteInfoCount = infoStream->readUint16LE();
-
-	// Load in sprite sets
 	Common::StringArray setNames;
-	for (int i = 0; i < 10; ++i) {
-		char name[64];
-		infoStream->read(name, 64);
-
-		if (i < spriteSetsCount)
-			setNames.push_back(Common::String(name));
-	}
-
-	// Load in sprite draw information
 	Common::Array<SpriteInfo> spriteInfo;
-	// TODO: The following isn't quite right for V2 games
+
 	if (_vm->getGameID() == GType_RexNebular) {
+		int spriteSetsCount = infoStream->readUint16LE();
+		int spriteInfoCount = infoStream->readUint16LE();
+
+		// Load in sprite sets
+		for (int i = 0; i < 10; ++i) {
+			char name[64];
+			infoStream->read(name, 64);
+
+			if (i < spriteSetsCount)
+				setNames.push_back(Common::String(name));
+		}
+
+		// Load in sprite draw information
 		for (int i = 0; i < 50; ++i) {
 			SpriteInfo info;
 			info.load(infoStream);
@@ -218,6 +229,12 @@ void SceneInfo::load(int sceneId, int variant, const Common::String &resName,
 			if (i < spriteInfoCount)
 				spriteInfo.push_back(info);
 		}
+	} else {
+		uint16 shadowColors = infoStream->readUint16LE();
+		uint16 shadowR = infoStream->readUint16LE();
+		uint16 shadowG = infoStream->readUint16LE();
+		uint16 shadowB = infoStream->readUint16LE();
+		debug("Shadow colors: %d (%d, %d, %d)", shadowColors, shadowR, shadowG, shadowB);
 	}
 	delete infoStream;
 
