@@ -147,7 +147,7 @@ SceneLogic *SceneFactory::createScene(MADSEngine *vm) {
 	case 502:	// push panel trap
 		return new Scene502(vm);
 	case 504:	// Phantom's hideout, church organ
-		return new DummyScene(vm);	// TODO
+		return new Scene504(vm);
 	case 505:	// Phantom's hideout, sarcophagus
 		return new DummyScene(vm);	// TODO
 	case 506:	// catacomb room with ramp
