@@ -181,14 +181,17 @@ private:
 	int8 *_partConfig_volume;
 	int8 *_partConfig_transpose;
 
-	struct TimedEvent {
+	struct SavedEvent {
+		SavedEvent(int ev, int tp, int nt, int vl, int ln, SavedEvent *chain) : evt(ev), type(tp), note(nt), velo(vl), len(ln), next(chain) {}
 		uint8 evt;
 		uint8 type;
 		uint8 note;
 		uint8 velo;
 		uint16 len;
-	} *_timedEvents;
-	int _timedEventsCount;
+		SavedEvent *next;
+	};
+	
+	SavedEvent *_savedEventsChain;
 
 	uint8 _defaultBarLength;
 	uint8 _barLength;

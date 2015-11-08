@@ -26,7 +26,7 @@
 #include "common/textconsole.h"
 
 EuphonyPlayer::EuphonyPlayer(Audio::Mixer *mixer) : _partConfig_enable(0), _partConfig_type(0), _partConfig_ordr(0), _partConfig_volume(0),
-	_partConfig_transpose(0), _musicPos(0), _musicStart(0), _playing(false), _timedEvents(0), _timedEventsCount(0),
+	_partConfig_transpose(0), _musicPos(0), _musicStart(0), _playing(false), _savedEventsChain(0),
 	_tempoControlMode(0), _timerSetting(0), _tempoMode1PulseCounter(0), _parseToBar(0), _tempoMode1UpdateF8(0), _loop(false),
 	_endOfTrack(false), _paused(false), _musicTrackSize(0) {
 	_drivers[0] = _eupDriver = new EuphonyDriver(mixer, this);
@@ -39,7 +39,12 @@ EuphonyPlayer::~EuphonyPlayer() {
 	for (int i = 0; i < 3; i++)
 		delete _drivers[i];
 
-	delete[] _timedEvents;
+	while (_savedEventsChain) {
+		SavedEvent *evt = _savedEventsChain;
+		_savedEventsChain = _savedEventsChain->next;
+		delete evt;
+	}
+
 	delete[] _partConfig_enable;
 	delete[] _partConfig_type;
 	delete[] _partConfig_ordr;
@@ -61,14 +66,17 @@ bool EuphonyPlayer::init() {
 	if (!_drivers[0] || !_drivers[1])
 		return false;
 
-	delete[] _timedEvents;
+	while (_savedEventsChain) {
+		SavedEvent *evt = _savedEventsChain;
+		_savedEventsChain = _savedEventsChain->next;
+		delete evt;
+	}
+
 	delete[] _partConfig_enable;
 	delete[] _partConfig_type;
 	delete[] _partConfig_ordr;
 	delete[] _partConfig_volume;
 	delete[] _partConfig_transpose;
-
-	_timedEvents = new TimedEvent[64];
 
 	_partConfig_enable = new uint8[32];
 	_partConfig_type = new uint8[32];
@@ -195,8 +203,11 @@ void EuphonyPlayer::reset() {
 
 	resetPartConfig();
 
-	memset(_timedEvents, 0, 64 * sizeof(TimedEvent));
-	_timedEventsCount = 0;
+	while (_savedEventsChain) {
+		SavedEvent *evt = _savedEventsChain;
+		_savedEventsChain = _savedEventsChain->next;
+		delete evt;
+	}
 
 	_playing = _endOfTrack = _paused = _loop = false;
 	_tempoMode1UpdateF8 = 0;
@@ -297,7 +308,7 @@ void EuphonyPlayer::updateParser() {
 }
 
 void EuphonyPlayer::updateCheckEot() {
-	if (!_endOfTrack || _timedEventsCount)
+	if (!_endOfTrack || _savedEventsChain)
 		return;
 	stop();
 }
@@ -357,30 +368,35 @@ void EuphonyPlayer::proceedToNextEvent() {
 }
 
 void EuphonyPlayer::updateHangingNotes() {
-	TimedEvent *e = _timedEvents;
-	for (int i = _timedEventsCount; i; e++) {
-		if (e->evt == 0)
-			continue;
+	SavedEvent *l = 0;
+	SavedEvent *e = _savedEventsChain;
+
+	while (e) {
 		if (--e->len) {
-			--i;
+			l = e;
+			e = e->next;
 			continue;
 		}
+
+		SavedEvent *n = e->next;
+		if (l)
+			l->next = n;
+		if (_savedEventsChain == e)
+			_savedEventsChain = n;
+
 		sendNoteEvent(e->type, e->evt, e->note, e->velo);
-		e->evt = 0;
-		--i;
-		--_timedEventsCount;
+		delete e;
+
+		e = n;
 	}
 }
 
 void EuphonyPlayer::clearHangingNotes() {
-	TimedEvent *e = _timedEvents;
-	for (int i = _timedEventsCount; i; e++) {
-		if (e->evt == 0)
-			continue;
+	while (_savedEventsChain) {
+		SavedEvent *e = _savedEventsChain;
+		_savedEventsChain = _savedEventsChain->next;
 		sendNoteEvent(e->type, e->evt, e->note, e->velo);
-		e->evt = 0;
-		--i;
-		--_timedEventsCount;
+		delete e;
 	}
 }
 
@@ -439,22 +455,7 @@ bool EuphonyPlayer::event_noteOn() {
 	velo = _musicPos[5];
 	uint16 len = (_musicPos[1] & 0x0f) | ((_musicPos[2] & 0x0f) << 4) | ((_musicPos[3] & 0x0f) << 8) | ((_musicPos[4] & 0x0f) << 12);
 
-	int i = 0;
-	for (; i < 64; i++) {
-		if (_timedEvents[i].evt == 0)
-			break;
-	}
-
-	if (i == 64) {
-		sendNoteEvent(type, evt, note, velo);
-	} else {
-		_timedEvents[i].evt = evt;
-		_timedEvents[i].type = type;
-		_timedEvents[i].note = note;
-		_timedEvents[i].velo = velo;
-		_timedEvents[i].len = len ? len : 1;
-		_timedEventsCount++;
-	}
+	_savedEventsChain = new SavedEvent(evt, type, note, velo, len ? len : 1, _savedEventsChain);
 
 	return false;
 }
