@@ -161,6 +161,41 @@ public:
 	virtual void actions();
 };
 
+class Scene505 : public Scene5xx {
+private:
+  bool _anim0ActvFl;
+  bool _anim1ActvFl;
+  bool _anim2ActvFl;
+  bool _checkFrame106;
+  bool _leaveRoomFl;
+  bool _partedFl;
+
+  int _raoulStatus;
+  int _raoulFrame;
+  int _raoulCount;
+  int _bothStatus;
+  int _bothFrame;
+  int _bothCount;
+  int _partStatus;
+  int _partFrame;
+  int _partCount;
+
+  void handleRaoulAnimation();
+  void handleBothanimation();
+  void handlePartedAnimation();
+  void handleCoffinDialog();
+
+public:
+	Scene505(MADSEngine *vm);
+	virtual void synchronize(Common::Serializer &s);
+
+	virtual void setup();
+	virtual void enter();
+	virtual void step();
+	virtual void preActions();
+	virtual void actions();
+};
+
 } // End of namespace Phantom
 } // End of namespace MADS
 

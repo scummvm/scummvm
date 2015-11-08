@@ -430,8 +430,8 @@ void Scene501::actions() {
 					_scene->_sequences.setAnimRange(_globals._sequenceIndexes[1], -1, -2);
 					_scene->_sequences.setTrigger(_globals._sequenceIndexes[1], 0, 0, 66);
 					_vm->_sound->command(24);
-						 }
-						 break;
+					}
+					break;
 
 				case 66:
 					_game._player.walk(Common::Point(319, 116), FACING_NORTHWEST);
@@ -3120,6 +3120,787 @@ void Scene504::handleFightConversation() {
 	if ((_game._trigger == 145) && (_phantomStatus != 5)) {
 		_phantomStatus = 7;
 		_christineTalkCount = 0;
+	}
+}
+
+/*------------------------------------------------------------------------*/
+
+Scene505::Scene505(MADSEngine *vm) : Scene5xx(vm) {
+	_anim0ActvFl = false;
+	_anim1ActvFl = false;
+	_anim2ActvFl = false;
+	_checkFrame106 = false;
+	_leaveRoomFl = false;
+	_partedFl = false;
+
+	_raoulStatus = -1;
+	_raoulFrame = -1;
+	_raoulCount = -1;
+	_bothStatus = -1;
+	_bothFrame = -1;
+	_bothCount = -1;
+	_partStatus = -1;
+	_partFrame = -1;
+	_partCount = -1;
+}
+
+void Scene505::synchronize(Common::Serializer &s) {
+	Scene5xx::synchronize(s);
+
+	s.syncAsByte(_anim0ActvFl);
+	s.syncAsByte(_anim1ActvFl);
+	s.syncAsByte(_anim2ActvFl);
+	s.syncAsByte(_checkFrame106);
+	s.syncAsByte(_leaveRoomFl);
+	s.syncAsByte(_partedFl);
+
+	s.syncAsSint16LE(_raoulStatus);
+	s.syncAsSint16LE(_raoulFrame);
+	s.syncAsSint16LE(_raoulCount);
+	s.syncAsSint16LE(_bothStatus);
+	s.syncAsSint16LE(_bothFrame);
+	s.syncAsSint16LE(_bothCount);
+	s.syncAsSint16LE(_partStatus);
+	s.syncAsSint16LE(_partFrame);
+	s.syncAsSint16LE(_partCount);
+}
+
+void Scene505::setup() {
+	setPlayerSpritesPrefix();
+	setAAName();
+
+	if ((_globals[kCoffinStatus] == 2) && (!_globals[kChrisLeft505]))
+		_scene->_initialVariant = 1;
+
+	_scene->addActiveVocab(NOUN_CHRISTINE);
+}
+
+void Scene505::enter() {
+	_vm->_disableFastwalk = true;
+
+	if (_scene->_priorSceneId != RETURNING_FROM_LOADING) {
+		_partedFl = false;
+		_leaveRoomFl = false;
+		_anim0ActvFl = false;
+		_anim1ActvFl = false;
+		_anim2ActvFl = false;
+		_checkFrame106 = false;
+	}
+
+	_vm->_gameConv->get(20);
+	_scene->_hotspots.activateAtPos(NOUN_LID, false, Common::Point(216, 44));
+	_scene->_hotspots.activate(NOUN_CHRISTINE, false);
+
+	_globals._spriteIndexes[7] = _scene->_sprites.addSprites(formAnimName('x', 6), false);
+	_globals._spriteIndexes[0] = _scene->_sprites.addSprites(formAnimName('a', 1), false);
+	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('x', 0), false);
+	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('x', 1), false);
+	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('x', 2), false);
+	_globals._spriteIndexes[4] = _scene->_sprites.addSprites(formAnimName('x', 3), false);
+	_globals._spriteIndexes[5] = _scene->_sprites.addSprites(formAnimName('x', 4), false);
+	_globals._spriteIndexes[6] = _scene->_sprites.addSprites(formAnimName('x', 5), false);
+	_globals._spriteIndexes[8] = _scene->_sprites.addSprites(formAnimName('a', 4), false);
+
+	if (_scene->_priorSceneId == RETURNING_FROM_LOADING) {
+		if (_vm->_gameConv->_restoreRunning == 20) {
+			_scene->_hotspots.activate(NOUN_LID, false);
+			_scene->_hotspots.activateAtPos(NOUN_LID, true, Common::Point(216, 44));
+			_globals._sequenceIndexes[7] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[7], false, 12);
+			_scene->_sequences.setDepth(_globals._sequenceIndexes[7], 1);
+
+			_globals._animationIndexes[1] = _scene->loadAnimation(formAnimName('c', 1), 65);
+			_scene->setAnimFrame(_globals._animationIndexes[1], 109);
+			_anim1ActvFl = true;
+			_game._player._visible = false;
+			_game._player._stepEnabled = false;
+			_bothStatus = 3;
+
+			_vm->_gameConv->run(20);
+			_vm->_gameConv->exportPointer(&_globals[kPlayerScore]);
+		} else if (_partedFl && (_globals[kFightStatus] == 0)) {
+			_scene->_hotspots.activate(NOUN_LID, false);
+			_scene->_hotspots.activateAtPos(NOUN_LID, true, Common::Point(216, 44));
+			_globals._sequenceIndexes[7] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[7], false, 12);
+			_scene->_sequences.setDepth(_globals._sequenceIndexes[7], 1);
+
+			_anim2ActvFl = true;
+			_bothStatus = 3;
+			_globals._animationIndexes[2] = _scene->loadAnimation(formAnimName('b', 1), 0);
+			int hotspotIdx = _scene->_dynamicHotspots.add(NOUN_CHRISTINE, VERB_WALK_TO, SYNTAX_SINGULAR_FEM, EXT_NONE, Common::Rect(0, 0, 0, 0));
+			_scene->_dynamicHotspots[hotspotIdx]._articleNumber = PREP_ON;
+			_scene->_dynamicHotspots.setPosition(hotspotIdx, Common::Point(91, 108), FACING_NORTHWEST);
+			_scene->setAnimFrame(_globals._animationIndexes[2], 89);
+			_scene->setDynamicAnim(hotspotIdx, _globals._animationIndexes[2], 3);
+			_scene->setDynamicAnim(hotspotIdx, _globals._animationIndexes[2], 4);
+			_scene->setDynamicAnim(hotspotIdx, _globals._animationIndexes[2], 5);
+			_scene->setDynamicAnim(hotspotIdx, _globals._animationIndexes[2], 6);
+			_scene->setDynamicAnim(hotspotIdx, _globals._animationIndexes[2], 7);
+		} else if (_globals[kFightStatus]) {
+			_scene->_hotspots.activate(NOUN_LID, false);
+			_scene->_hotspots.activateAtPos(NOUN_LID, true, Common::Point(216, 44));
+			_globals._sequenceIndexes[7] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[7], false, 12);
+			_scene->_sequences.setDepth(_globals._sequenceIndexes[7], 1);
+		} else {
+			_globals._animationIndexes[1] = _scene->loadAnimation(formAnimName('c', 1), 65);
+			_anim1ActvFl = true;
+			_bothStatus = 0;
+			_scene->_hotspots.activate(NOUN_CHRISTINE, true);
+		}
+	}
+
+	if ((_scene->_priorSceneId == 504) || (_scene->_priorSceneId != RETURNING_FROM_LOADING)) {
+		_game._player._playerPos = Common::Point(5, 87);
+		_game._player._facing = FACING_EAST;
+		_game._player._stepEnabled = false;
+		_game._player.walk(Common::Point(58, 104), FACING_SOUTHEAST);
+		if (_globals[kCoffinStatus] != 2) {
+			_game._player.setWalkTrigger(70);
+			_anim1ActvFl = true;
+			_bothStatus = 0;
+			_scene->_hotspots.activate(NOUN_CHRISTINE, true);
+			_globals._animationIndexes[1] = _scene->loadAnimation(formAnimName('c', 1), 65);
+		} else {
+			_scene->_hotspots.activate(NOUN_LID, false);
+			_scene->_hotspots.activateAtPos(NOUN_LID, true, Common::Point(216, 44));
+			_globals._sequenceIndexes[7] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[7], false, 12);
+			_scene->_sequences.setDepth(_globals._sequenceIndexes[7], 1);
+			_game._player._stepEnabled = true;
+		}
+	}
+
+	sceneEntrySound();
+}
+
+void Scene505::step() {
+	if (_anim0ActvFl)
+		handleRaoulAnimation();
+
+	if (_anim1ActvFl)
+		handleBothanimation();
+
+	if (_anim2ActvFl)
+		handlePartedAnimation();
+
+	if (_game._trigger == 65) {
+		_scene->freeAnimation(_globals._animationIndexes[1]);
+		_vm->_sound->command(1);
+		_partedFl = true;
+		_anim2ActvFl = true;
+		_anim1ActvFl = false;
+		_globals._animationIndexes[2] = _scene->loadAnimation(formAnimName('b', 1), 0);
+
+		int hotspotIDx = _scene->_dynamicHotspots.add(NOUN_CHRISTINE, VERB_WALK_TO, SYNTAX_SINGULAR_FEM, EXT_NONE, Common::Rect(0, 0, 0, 0));
+		_scene->_dynamicHotspots.setPosition(hotspotIDx, Common::Point(91, 108), FACING_NORTHWEST);
+		_scene->_dynamicHotspots[hotspotIDx]._articleNumber = PREP_ON;
+		_scene->setDynamicAnim(hotspotIDx, _globals._animationIndexes[2], 3);
+		_scene->setDynamicAnim(hotspotIDx, _globals._animationIndexes[2], 4);
+		_scene->setDynamicAnim(hotspotIDx, _globals._animationIndexes[2], 5);
+		_scene->setDynamicAnim(hotspotIDx, _globals._animationIndexes[2], 6);
+		_scene->setDynamicAnim(hotspotIDx, _globals._animationIndexes[2], 7);
+	}
+
+	if (_game._trigger == 70) {
+		_game._player._stepEnabled = true;
+		if (!_game._visitedScenes._sceneRevisited) {
+			_vm->_gameConv->run(20);
+			_vm->_gameConv->exportPointer(&_globals[kPlayerScore]);
+		}
+	}
+}
+
+void Scene505::actions() {
+	if (_game._trigger == 80) {
+		_bothStatus = 2;
+		_action._inProgress = false;
+		return;
+	}
+
+	if (_vm->_gameConv->_running == 20) {
+		handleCoffinDialog();
+		_action._inProgress = false;
+		return;
+	}
+
+	if (_action.isAction(VERB_TALK_TO, NOUN_CHRISTINE)) {
+		if (_globals[kCoffinStatus] != 2)
+			_vm->_dialogs->show(50536);
+		else {
+			_vm->_gameConv->run(20);
+			_vm->_gameConv->exportPointer(&_globals[kPlayerScore]);
+			_partStatus = 10;
+			_partCount = 0;
+		}
+		_action._inProgress = false;
+		return;
+	}
+
+	if ((_action.isAction(VERB_UNLOCK, NOUN_SARCOPHAGUS) || _action.isAction(VERB_UNLOCK, NOUN_LID)) && !_globals[kLookedAtSkullFace]) {
+		_vm->_dialogs->show(50539);
+		_action._inProgress = false;
+		return;
+	}
+
+	if ((_action.isAction(VERB_UNLOCK, NOUN_SKULL_FACE) || _action.isAction(VERB_PUT, NOUN_KEY, NOUN_SKULL_FACE)) || ((_action.isAction(VERB_UNLOCK, NOUN_SARCOPHAGUS) || _action.isAction(VERB_UNLOCK, NOUN_LID)) && _globals[kLookedAtSkullFace])) {
+		if (_globals[kCoffinStatus] == 0) {
+			switch (_game._trigger) {
+			case (0):
+				_game._player._stepEnabled = false;
+				_game._player._visible = false;
+				_globals._sequenceIndexes[8] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[8], false, 5, 2);
+				_scene->_sequences.setAnimRange(_globals._sequenceIndexes[8], -1, -2);
+				_scene->_sequences.setSeqPlayer(_globals._sequenceIndexes[8], true);
+				_scene->_sequences.setTrigger(_globals._sequenceIndexes[8], 2, 9, 95);
+				_scene->_sequences.setTrigger(_globals._sequenceIndexes[8], 0, 0, 96);
+				_action._inProgress = false;
+				return;
+
+			case 95:
+				_vm->_sound->command(76);
+				_vm->_dialogs->show(50528);
+				_action._inProgress = false;
+				return;
+
+			case 96:
+				_game._player._visible = true;
+				_game._player._stepEnabled = true;
+				_globals[kCoffinStatus] = 1;
+				_game.syncTimers(2, 0, 1, _globals._sequenceIndexes[8]);
+				_action._inProgress = false;
+				return;
+
+			default:
+				break;
+			}
+		} else {
+			_vm->_dialogs->show(50534);
+			_action._inProgress = false;
+			return;
+		}
+	}
+
+	if (_action.isAction(VERB_PUSH, NOUN_SKULL) && (_scene->_customDest.x >= 19)) {
+		switch (_game._trigger) {
+		case 0:
+			_game._player._stepEnabled = false;
+			_game._player._visible = false;
+			_globals._sequenceIndexes[0] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[0], false, 5, 2);
+			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[0], -1, -2);
+			_scene->_sequences.setSeqPlayer(_globals._sequenceIndexes[0], true);
+			_scene->_sequences.setTrigger(_globals._sequenceIndexes[0], 2, 6, 1);
+			_scene->_sequences.setTrigger(_globals._sequenceIndexes[0], 0, 0, 2);
+			break;
+
+		case 1: {
+			int sprIdx;
+			_vm->_sound->command(77);
+			if (_scene->_customDest.x <= 44)
+				sprIdx = _globals._spriteIndexes[4];
+			else if (_scene->_customDest.x <= 58)
+				sprIdx = _globals._spriteIndexes[3];
+			else if (_scene->_customDest.x <= 71)
+				sprIdx = _globals._spriteIndexes[2];
+			else if (_scene->_customDest.x <= 84) {
+				sprIdx = _globals._spriteIndexes[1];
+				if (_globals[kCoffinStatus] == 1) {
+					_bothStatus = 1;
+					_scene->_hotspots.activate(NOUN_LID, false);
+					_scene->_hotspots.activate(NOUN_CHRISTINE, false);
+					_scene->_hotspots.activateAtPos(NOUN_LID, true, Common::Point(216, 44));
+					_scene->changeVariant(1);
+				}
+			} else if (_scene->_customDest.x <= 100)
+				sprIdx = _globals._spriteIndexes[5];
+			else
+				sprIdx = _globals._spriteIndexes[6];
+
+			int skullSeqIdx = _scene->_sequences.startPingPongCycle(sprIdx, false, 5, 2);
+			_scene->_sequences.setAnimRange(skullSeqIdx, -1, -2);
+			_scene->_sequences.setDepth(skullSeqIdx, 1);
+				}
+				break;
+
+		case 2:
+			_game.syncTimers(2, 0, 1, _globals._sequenceIndexes[0]);
+			_game._player._visible = true;
+			_game._player._stepEnabled = true;
+			if (_bothStatus == 1) {
+				_game._player.walk(Common::Point(136, 126), FACING_EAST);
+				_game._player.setWalkTrigger(80);
+				_game._player._stepEnabled = false;
+			}
+			break;
+
+		default:
+			break;
+		}
+		_action._inProgress = false;
+		return;
+	}
+
+	if (_action.isAction(VERB_WALK_THROUGH, NOUN_DOOR)) {
+		if (_anim2ActvFl) {
+			_leaveRoomFl = true;
+			_game._player._stepEnabled = false;
+		} else {
+			_globals[kChrisLeft505] = true;
+			_scene->_nextSceneId = 504;
+		}
+		_action._inProgress = false;
+		return;
+	}
+
+	if (_action._lookFlag) {
+		_vm->_dialogs->show(50510);
+		_action._inProgress = false;
+		return;
+	}
+
+	if (_action.isAction(VERB_LOOK) || _action.isAction(VERB_LOOK_AT)) {
+		if (_action.isObject(NOUN_FLOOR)) {
+			_vm->_dialogs->show(50511);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isObject(NOUN_WALL)) {
+			_vm->_dialogs->show(50512);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isObject(NOUN_SARCOPHAGUS)) {
+			_vm->_dialogs->show((_globals[kCoffinStatus] <= 1) ? 50513 : 50514);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isObject(NOUN_SKULL_FACE)) {
+			_globals[kLookedAtSkullFace] = true;
+			_vm->_dialogs->show(50529);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isObject(NOUN_DOOR)) {
+			_vm->_dialogs->show(50519);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isObject(NOUN_SKULL)) {
+			_vm->_dialogs->show((_scene->_customDest.x < 19) ? 50521 : 50520);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isObject(NOUN_SKULLS)) {
+			_vm->_dialogs->show(50521);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isObject(NOUN_TOTEM)) {
+			_vm->_dialogs->show(50522);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isObject(NOUN_DESK)) {
+			_vm->_dialogs->show(50523);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isObject(NOUN_POLE)) {
+			_vm->_dialogs->show(50524);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isObject(NOUN_CURTAIN)) {
+			_vm->_dialogs->show(50525);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isObject(NOUN_CHRISTINE)) {
+			_vm->_dialogs->show((_globals[kCoffinStatus] == 2) ? 50530 : 50537);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isObject(NOUN_LID)) {
+			_vm->_dialogs->show((_globals[kCoffinStatus] == 2) ? 50531 : 50532);
+			_action._inProgress = false;
+			return;
+		}
+	}
+
+	if (_action.isAction(VERB_LOCK, NOUN_SARCOPHAGUS) || _action.isAction(VERB_LOCK, NOUN_LID) || _action.isAction(VERB_LOCK, NOUN_SKULL_FACE)) {
+		_vm->_dialogs->show(50535);
+		_action._inProgress = false;
+		return;
+	}
+
+	if (_action.isAction(VERB_OPEN, NOUN_SARCOPHAGUS) || _action.isAction(VERB_OPEN, NOUN_LID)) {
+		if (_globals[kCoffinStatus] == 2)
+			_vm->_dialogs->show(50533);
+		else if (_globals[kCoffinStatus] == 1)
+			_vm->_dialogs->show(50518);
+		else
+			_vm->_dialogs->show(50515);
+		_action._inProgress = false;
+		return;
+	}
+
+	if (_action.isAction(VERB_TAKE, NOUN_CHRISTINE) && (_globals[kCoffinStatus] != 2)) {
+		_vm->_dialogs->show(50538);
+		_action._inProgress = false;
+		return;
+	}
+
+	if (_action.isAction(VERB_TAKE, NOUN_CHRISTINE)) {
+		_vm->_dialogs->show((_globals[kCoffinStatus] <= 1) ? 50538 : 50540);
+		_action._inProgress = false;
+	}
+}
+
+void Scene505::preActions() {
+	if ((_globals[kCoffinStatus] == 0) && (_action.isAction(VERB_UNLOCK, NOUN_SKULL_FACE) || _action.isAction(VERB_UNLOCK, NOUN_SARCOPHAGUS) || _action.isAction(VERB_PUT, NOUN_KEY, NOUN_SKULL_FACE) || _action.isAction(VERB_UNLOCK, NOUN_LID))) {
+		if (_action.isObject(NOUN_SKULL_FACE) || _globals[kLookedAtSkullFace])
+			_game._player.walk(Common::Point(279, 150), FACING_SOUTHWEST);
+	}
+
+	if (_action.isObject(NOUN_SKULL_FACE) && (_action.isAction(VERB_LOOK) || _action.isAction(VERB_LOOK_AT)))
+		_game._player.walk(Common::Point(279, 150), FACING_SOUTHWEST);
+
+	if (_action.isObject(NOUN_CURTAIN) && (_action.isAction(VERB_LOOK) || _action.isAction(VERB_LOOK_AT)))
+		_game._player._needToWalk = true;
+
+	if (_action.isObject(NOUN_SKULL) && (_action.isAction(VERB_LOOK) || _action.isAction(VERB_LOOK_AT)))
+		_game._player._needToWalk = true;
+}
+
+void Scene505::handleCoffinDialog() {
+	int interlocutorFl = false;
+	int heroFl = false;
+
+	switch (_action._activeAction._verbId) {
+	case 8:
+		heroFl = true;
+		interlocutorFl = true;
+		_bothStatus = 6;
+		break;
+
+	case 14:
+		heroFl = true;
+		interlocutorFl = true;
+		if (!_checkFrame106)
+			_vm->_gameConv->hold();
+		break;
+
+	case 17:
+		heroFl = true;
+		interlocutorFl = true;
+		if (!_game._trigger) {
+			_vm->_gameConv->hold();
+			_raoulStatus = 2;
+		}
+		break;
+
+	case 20:
+		heroFl = true;
+		interlocutorFl = true;
+		if (!_game._trigger) {
+			_vm->_gameConv->hold();
+			_game._player.walk(Common::Point(244, 130), FACING_SOUTHWEST);
+			_game._player.setWalkTrigger(71);
+		}
+		break;
+
+	case 22:
+		heroFl = true;
+		interlocutorFl = true;
+		if (!_game._trigger) {
+			_vm->_gameConv->hold();
+			_bothStatus = 7;
+		}
+		break;
+
+	default:
+		break;
+	}
+
+	switch (_game._trigger) {
+	case 70:
+	case 76:
+		_vm->_gameConv->release();
+		break;
+
+	case 71:
+		_globals._animationIndexes[0] = _scene->loadAnimation(formAnimName('r', 1), 75);
+		_anim0ActvFl = true;
+		_raoulStatus = 0;
+		_raoulCount = 0;
+		_game._player._visible = false;
+		break;
+
+	case 75:
+		_game._player._visible = true;
+		_game.syncTimers(2, 0, 3, _globals._animationIndexes[0]);
+		_scene->_sequences.setTimingTrigger(10, 76);
+		break;
+
+	case 85:
+		if ((_bothStatus != 6) && (_bothStatus != 0))
+			_bothStatus = 5;
+		break;
+
+	case 90:
+		if ((_bothStatus != 6) && (_bothStatus != 0))
+			_bothStatus = 4;
+		break;
+
+	default:
+		break;
+	}
+
+	if (!heroFl)
+		_vm->_gameConv->setHeroTrigger(85);
+
+	if (!interlocutorFl)
+		_vm->_gameConv->setInterlocutorTrigger(90);
+
+	_bothCount = 0;
+}
+
+void Scene505::handleRaoulAnimation() {
+	int curFrame = _scene->_animation[_globals._animationIndexes[0]]->getCurrentFrame();
+	if (curFrame == _raoulFrame)
+		return;
+
+	_raoulFrame = curFrame;
+	int resetFrame = -1;
+
+	switch (_raoulFrame) {
+	case 3:
+		_vm->_gameConv->release();
+		break;
+
+	case 4:
+	case 5:
+	case 6:
+		if (_raoulStatus == 0) {
+			resetFrame = _vm->getRandomNumber(3, 5);
+			++_raoulCount;
+			if (_raoulCount > 20) {
+				_raoulStatus = 1;
+				resetFrame = 3;
+			}
+			break;
+		}
+
+		if (_raoulStatus == 1)
+			resetFrame = 3;
+
+		if (_raoulStatus == 2)
+			resetFrame = 6;
+		break;
+
+	default:
+		break;
+	}
+
+	if (resetFrame >= 0) {
+		_scene->setAnimFrame(_globals._animationIndexes[0], resetFrame);
+		_raoulFrame = resetFrame;
+	}
+}
+
+void Scene505::handleBothanimation() {
+	int curFrame = _scene->_animation[_globals._animationIndexes[1]]->getCurrentFrame();
+	if (curFrame == _bothFrame)
+		return;
+
+	_bothFrame = curFrame;
+	int resetFrame = -1;
+
+	switch (_bothFrame) {
+	case 1:
+	case 20:
+	case 39:
+		if (_bothStatus == 0) {
+			if (_vm->getRandomNumber(1, 35) == 1) {
+				if (_vm->getRandomNumber(1, 2) == 1)
+					resetFrame = 1;
+				else
+					resetFrame = 20;
+			} else
+				resetFrame = 0;
+		} else if (_bothStatus == 1)
+			resetFrame = 39;
+		else
+			resetFrame = 0;
+		break;
+
+	case 14:
+		if (_vm->getRandomNumber(1, 3) == 1)
+			resetFrame = 8;
+		break;
+
+	case 32:
+		if (_vm->getRandomNumber(1, 2) == 1)
+			resetFrame = 28;
+		break;
+
+	case 41:
+		_vm->_sound->command(39);
+		break;
+
+	case 51:
+		_globals._sequenceIndexes[7] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[7], false, 12);
+		_scene->_sequences.setDepth(_globals._sequenceIndexes[7], 1);
+		_globals[kCoffinStatus] = 2;
+		break;
+
+	case 66:
+		_game._player._stepEnabled = false;
+		_vm->_gameConv->run(20);
+		_vm->_gameConv->exportPointer(&_globals[kPlayerScore]);
+		break;
+
+	case 67:
+		if (_bothStatus == 1)
+			resetFrame = 66;
+		break;
+
+	case 68:
+		_game._player._visible = false;
+		_game.syncTimers(2, 0, 3, _globals._animationIndexes[1]);
+		break;
+
+	case 106:
+		_checkFrame106 = true;
+		_vm->_gameConv->release();
+		break;
+
+	case 109:
+	case 130:
+		_vm->_gameConv->release();
+		break;
+
+	case 110:
+	case 111:
+	case 112:
+	case 113:
+	case 114:
+	case 115:
+	case 131:
+		switch (_bothStatus) {
+		case 4:
+			resetFrame = _vm->getRandomNumber(112, 114);
+			++_bothCount;
+			if (_bothCount > 20) {
+				_bothStatus = 3;
+				resetFrame = 109;
+			}
+			break;
+
+		case 5:
+			resetFrame = _vm->getRandomNumber(109, 111);
+			++_bothCount;
+			if (_bothCount > 20) {
+				_bothStatus = 3;
+				resetFrame = 109;
+			}
+			break;
+
+		case 6:
+			resetFrame = 131;
+			_bothStatus = 8;
+			_game._player._stepEnabled = false;
+			break;
+
+		case 7:
+			resetFrame = 115;
+			_bothStatus = 3;
+			break;
+
+		default:
+			resetFrame = 109;
+			break;
+		}
+		break;
+
+	case 127:
+		_vm->_sound->command(26);
+		_game._objects.addToInventory(OBJ_WEDDING_RING);
+		_vm->_dialogs->showItem(OBJ_WEDDING_RING, 821, 0);
+		break;
+
+	default:
+		break;
+	}
+
+	if (resetFrame >= 0) {
+		_scene->setAnimFrame(_globals._animationIndexes[1], resetFrame);
+		_bothFrame = resetFrame;
+	}
+}
+
+void Scene505::handlePartedAnimation() {
+	int curFrame = _scene->_animation[_globals._animationIndexes[2]]->getCurrentFrame();
+	if (curFrame == _partFrame)
+		return;
+
+	_partFrame = curFrame;
+	int resetFrame = -1;
+
+	switch (_partFrame) {
+	case 20:
+		_vm->_sound->command(16);
+		break;
+
+	case 25:
+		_game._player._playerPos = Common::Point(93, 133);
+		_game._player.resetFacing(FACING_WEST);
+		_game._player._visible = true;
+		_game.syncTimers(2, 0, 3, _globals._animationIndexes[2]);
+		break;
+
+	case 70:
+		_game._player._stepEnabled = true;
+		break;
+
+	case 90:
+		if (_partStatus == 10)
+			resetFrame = 146;
+		else if (!_leaveRoomFl)
+			resetFrame = 89;
+		break;
+
+	case 145:
+		_scene->_nextSceneId = 504;
+		break;
+
+	case 147:
+	case 148:
+	case 149:
+		resetFrame = _vm->getRandomNumber(146, 148);
+		++_partCount;
+		if (_partCount > 10) {
+			resetFrame = 89;
+			_partStatus = 8;
+		}
+		break;
+
+	default:
+		break;
+	}
+
+	if (resetFrame >= 0) {
+		_scene->setAnimFrame(_globals._animationIndexes[2], resetFrame);
+		_partFrame = resetFrame;
 	}
 }
 

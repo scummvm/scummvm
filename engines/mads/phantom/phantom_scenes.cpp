@@ -149,7 +149,7 @@ SceneLogic *SceneFactory::createScene(MADSEngine *vm) {
 	case 504:	// Phantom's hideout, church organ
 		return new Scene504(vm);
 	case 505:	// Phantom's hideout, sarcophagus
-		return new DummyScene(vm);	// TODO
+		return new Scene505(vm);
 	case 506:	// catacomb room with ramp
 		return new DummyScene(vm);	// TODO
 
