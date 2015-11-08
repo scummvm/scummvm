@@ -116,39 +116,39 @@ public:
 
 class Scene504 : public Scene5xx {
 private:
-  bool _anim0ActvFl;
-  bool _anim1ActvFl;
-  bool _anim2ActvFl;
-  bool _anim3ActvFl;
-  bool _anim4ActvFl;
-  bool _anim5ActvFl;
-  bool _playingMusicFl;
-  bool _chairDialogDoneFl;
-  bool _fireBreathFl;
+	bool _anim0ActvFl;
+	bool _anim1ActvFl;
+	bool _anim2ActvFl;
+	bool _anim3ActvFl;
+	bool _anim4ActvFl;
+	bool _anim5ActvFl;
+	bool _playingMusicFl;
+	bool _chairDialogDoneFl;
+	bool _fireBreathFl;
 
-  int _songNum;
-  int _input3Count;
-  int _playCount;
-  int _listenStatus;
-  int _listenFrame;
-  int _chairStatus;
-  int _chairFrame;
-  int _playStatus;
-  int _playFrame;
-  int _phantomStatus;
-  int _phantomFrame;
-  int _christineTalkCount;
-  int _deathCounter;
+	int _songNum;
+	int _input3Count;
+	int _playCount;
+	int _listenStatus;
+	int _listenFrame;
+	int _chairStatus;
+	int _chairFrame;
+	int _playStatus;
+	int _playFrame;
+	int _phantomStatus;
+	int _phantomFrame;
+	int _christineTalkCount;
+	int _deathCounter;
 
-  void handleListenAnimation();
-  void handleOrganAnimation();
-  void handleChairAnimation();
-  void handlePhantomAnimation1();
-  void handlePhantomAnimation2();
-  void handlePhantomAnimation3();
-  void handleListenConversation();
-  void handlePlayConversation();
-  void handleFightConversation();
+	void handleListenAnimation();
+	void handleOrganAnimation();
+	void handleChairAnimation();
+	void handlePhantomAnimation1();
+	void handlePhantomAnimation2();
+	void handlePhantomAnimation3();
+	void handleListenConversation();
+	void handlePlayConversation();
+	void handleFightConversation();
 
 public:
 	Scene504(MADSEngine *vm);
@@ -163,30 +163,47 @@ public:
 
 class Scene505 : public Scene5xx {
 private:
-  bool _anim0ActvFl;
-  bool _anim1ActvFl;
-  bool _anim2ActvFl;
-  bool _checkFrame106;
-  bool _leaveRoomFl;
-  bool _partedFl;
+	bool _anim0ActvFl;
+	bool _anim1ActvFl;
+	bool _anim2ActvFl;
+	bool _checkFrame106;
+	bool _leaveRoomFl;
+	bool _partedFl;
 
-  int _raoulStatus;
-  int _raoulFrame;
-  int _raoulCount;
-  int _bothStatus;
-  int _bothFrame;
-  int _bothCount;
-  int _partStatus;
-  int _partFrame;
-  int _partCount;
+	int _raoulStatus;
+	int _raoulFrame;
+	int _raoulCount;
+	int _bothStatus;
+	int _bothFrame;
+	int _bothCount;
+	int _partStatus;
+	int _partFrame;
+	int _partCount;
 
-  void handleRaoulAnimation();
-  void handleBothanimation();
-  void handlePartedAnimation();
-  void handleCoffinDialog();
+	void handleRaoulAnimation();
+	void handleBothanimation();
+	void handlePartedAnimation();
+	void handleCoffinDialog();
 
 public:
 	Scene505(MADSEngine *vm);
+	virtual void synchronize(Common::Serializer &s);
+
+	virtual void setup();
+	virtual void enter();
+	virtual void step();
+	virtual void preActions();
+	virtual void actions();
+};
+
+class Scene506 : public Scene5xx {
+private:
+	bool _anim0ActvFl;
+	bool _skipFl;
+	bool _ascendingFl;
+
+public:
+	Scene506(MADSEngine *vm);
 	virtual void synchronize(Common::Serializer &s);
 
 	virtual void setup();

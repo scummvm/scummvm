@@ -151,7 +151,7 @@ SceneLogic *SceneFactory::createScene(MADSEngine *vm) {
 	case 505:	// Phantom's hideout, sarcophagus
 		return new Scene505(vm);
 	case 506:	// catacomb room with ramp
-		return new DummyScene(vm);	// TODO
+		return new Scene506(vm);
 
 	default:
 		error("Invalid scene %d called", scene._nextSceneId);

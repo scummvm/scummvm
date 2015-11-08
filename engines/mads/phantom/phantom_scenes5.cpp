@@ -3906,5 +3906,404 @@ void Scene505::handlePartedAnimation() {
 
 /*------------------------------------------------------------------------*/
 
+Scene506::Scene506(MADSEngine *vm) : Scene5xx(vm) {
+	_anim0ActvFl = false;
+	_skipFl = false;
+	_ascendingFl = false;
+}
+
+void Scene506::synchronize(Common::Serializer &s) {
+	Scene5xx::synchronize(s);
+
+	s.syncAsByte(_anim0ActvFl);
+	s.syncAsByte(_skipFl);
+	s.syncAsByte(_ascendingFl);
+}
+
+void Scene506::setup() {
+	setPlayerSpritesPrefix();
+	setAAName();
+
+	_scene->addActiveVocab(NOUN_CHRISTINE);
+	_scene->addActiveVocab(VERB_LOOK_AT);
+
+	if (!_globals[kChristineIsInBoat])
+		_scene->_initialVariant = 1;
+}
+
+void Scene506::enter() {
+	_vm->_disableFastwalk = true;
+
+	if (_scene->_priorSceneId != RETURNING_FROM_LOADING) {
+		_anim0ActvFl = false;
+		_skipFl = false;
+		_ascendingFl = false;
+	}
+
+	_vm->_gameConv->get(26);
+
+	_globals._spriteIndexes[0] = _scene->_sprites.addSprites(formAnimName('x', 0), false);
+	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('x', 1), false);
+	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('x', 2), false);
+	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('x', 3), false);
+	_globals._spriteIndexes[5] = _scene->_sprites.addSprites(formAnimName('p', 0), false);
+	_globals._spriteIndexes[7] = _scene->_sprites.addSprites(formAnimName('a', 1), false);
+	_globals._spriteIndexes[8] = _scene->_sprites.addSprites(formAnimName('a', 0), false);
+	_globals._spriteIndexes[6] = _scene->_sprites.addSprites(formAnimName('b', 0), PALFLAG_ALL_TO_CLOSEST | PALFLAG_ANY_TO_CLOSEST);
+	_globals._spriteIndexes[4] = _scene->_sprites.addSprites("*RDR_9", false);
+	_globals._spriteIndexes[6] = _scene->_sprites.addSprites("*CHR_6", PALFLAG_ALL_TO_CLOSEST | PALFLAG_ANY_TO_CLOSEST);
+	_globals._spriteIndexes[6] = _scene->_sprites.addSprites("*CHR_3", PALFLAG_ALL_TO_CLOSEST | PALFLAG_ANY_TO_CLOSEST);
+	_globals._spriteIndexes[6] = _scene->_sprites.addSprites("*CHR_2", PALFLAG_ALL_TO_CLOSEST | PALFLAG_ANY_TO_CLOSEST);
+
+	if (_game._objects.isInRoom(OBJ_OAR)) {
+		_globals._sequenceIndexes[5] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[5], false, 1);
+		_scene->_sequences.setDepth(_globals._sequenceIndexes[5], 14);
+	} else
+		_scene->_hotspots.activate(NOUN_OAR, false);
+
+	_globals._sequenceIndexes[0] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[0], false, 6, 0);
+	_scene->_sequences.setDepth(_globals._sequenceIndexes[0], 14);
+	_scene->_sequences.setAnimRange(_globals._sequenceIndexes[0], -1, -2);
+
+	_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 6, 0);
+	_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 14);
+	_scene->_sequences.setAnimRange(_globals._sequenceIndexes[1], -1, -2);
+
+	_globals._sequenceIndexes[2] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[2], false, 6, 0);
+	_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 14);
+	_scene->_sequences.setAnimRange(_globals._sequenceIndexes[2], -1, -2);
+
+	if (_scene->_priorSceneId == RETURNING_FROM_LOADING) {
+		_globals._sequenceIndexes[3] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[3], false, 1);
+		_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 14);
+		if (!_globals[kChristineIsInBoat]) {
+			_anim0ActvFl = true;
+			_globals._animationIndexes[0] = _scene->loadAnimation(formAnimName('r', 1), 0);
+			_scene->setAnimFrame(_globals._animationIndexes[0], 239);
+			int hotspotIdx = _scene->_dynamicHotspots.add(NOUN_CHRISTINE, VERB_WALK_TO, SYNTAX_SINGULAR_FEM, EXT_NONE, Common::Rect(0, 0, 0, 0));
+			_scene->_dynamicHotspots[hotspotIdx]._articleNumber = PREP_ON;
+			_scene->_dynamicHotspots.setPosition(hotspotIdx, Common::Point(79, 133), FACING_SOUTHWEST);
+			_scene->setDynamicAnim(hotspotIdx, _globals._animationIndexes[0], 6);
+		}
+	} else if (_scene->_priorSceneId == 504) {
+		_globals._sequenceIndexes[3] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[3], false, 1);
+		_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 14);
+
+		if (_game._visitedScenes._sceneRevisited) {
+			_game._player._playerPos = Common::Point(189, 123);
+			_game._player._facing = FACING_SOUTHWEST;
+			_game._player._stepEnabled = false;
+			_game._player._visible = false;
+
+			if (!_globals[kChristineIsInBoat]) {
+				_anim0ActvFl = true;
+				_globals._animationIndexes[0] = _scene->loadAnimation(formAnimName('r', 1), 0);
+				_scene->setAnimFrame(_globals._animationIndexes[0], 239);
+				int hotspotIdx = _scene->_dynamicHotspots.add(NOUN_CHRISTINE, VERB_WALK_TO, SYNTAX_SINGULAR_FEM, EXT_NONE, Common::Rect(0, 0, 0, 0));
+				_scene->_dynamicHotspots[hotspotIdx]._articleNumber = PREP_ON;
+				_scene->_dynamicHotspots.setPosition(hotspotIdx, Common::Point(79, 133), FACING_SOUTHWEST);
+				_scene->setDynamicAnim(hotspotIdx, _globals._animationIndexes[0], 6);
+			}
+			_globals._animationIndexes[1] = _scene->loadAnimation(formAnimName('r', 2), 95);
+		} else {
+			_game._player._playerPos = Common::Point(186, 122);
+			_game._player._facing = FACING_SOUTHWEST;
+			_game._player._stepEnabled = false;
+			_game._player._visible = false;
+			_anim0ActvFl = true;
+			_globals._animationIndexes[0] = _scene->loadAnimation(formAnimName('r', 1), 0);
+			int hotspotIdx = _scene->_dynamicHotspots.add(NOUN_CHRISTINE, VERB_WALK_TO, SYNTAX_SINGULAR_FEM, EXT_NONE, Common::Rect(0, 0, 0, 0));
+			_scene->_dynamicHotspots[hotspotIdx]._articleNumber = PREP_ON;
+			_scene->_dynamicHotspots.setPosition(hotspotIdx, Common::Point(79, 133), FACING_SOUTHWEST);
+			_scene->setDynamicAnim(hotspotIdx, _globals._animationIndexes[0], 2);
+			_scene->setDynamicAnim(hotspotIdx, _globals._animationIndexes[0], 3);
+			_scene->setDynamicAnim(hotspotIdx, _globals._animationIndexes[0], 4);
+			_scene->setDynamicAnim(hotspotIdx, _globals._animationIndexes[0], 5);
+			_scene->setDynamicAnim(hotspotIdx, _globals._animationIndexes[0], 6);
+		}
+	} else if ((_scene->_priorSceneId == 501) || (_scene->_priorSceneId != RETURNING_FROM_LOADING)) {
+		_game._player._playerPos = Common::Point(0, 142);
+		_game._player._facing = FACING_EAST;
+		_game._player._stepEnabled = false;
+		_game._player.walk(Common::Point(23, 145), FACING_EAST);
+		_game._player.setWalkTrigger(60);
+	}
+
+	sceneEntrySound();
+}
+
+void Scene506::step() {
+	switch (_game._trigger) {
+	case 60:
+		_globals._sequenceIndexes[3] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[3], false, 6, 1);
+		_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 14);
+		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[3], -1, -2);
+		_scene->_sequences.setTrigger(_globals._sequenceIndexes[3], 0, 0, 61);
+		break;
+
+	case 61:
+		_globals._sequenceIndexes[3] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[3], false, 1);
+		_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 14);
+		_game._player._stepEnabled = true;
+		break;
+
+	case 95:
+		_game._player._visible = true;
+		_game._player._stepEnabled = true;
+		_game.syncTimers(2, 0, 3, _globals._animationIndexes[1]);
+		break;
+
+	default:
+		break;
+	}
+
+	if (_anim0ActvFl) {
+		int curFrame = _scene->_animation[_globals._animationIndexes[0]]->getCurrentFrame();
+		if ((curFrame == 141) && !_skipFl) {
+			_game._player._visible = true;
+			_skipFl = true;
+			_game.syncTimers(2, 0, 3, _globals._animationIndexes[0]);
+		}
+
+		if (curFrame == 240)
+			_scene->setAnimFrame(_globals._animationIndexes[0], 239);
+
+		if (curFrame == 300)
+			_scene->setAnimFrame(_globals._animationIndexes[0], 239);
+
+		if (curFrame == 168)
+			_game._player._stepEnabled = true;
+
+		if (curFrame == 289)
+			_scene->_nextSceneId = 501;
+	}
+
+	if (_ascendingFl && (_vm->_gameConv->_running != 26)) {
+		_ascendingFl = false;
+		_game._player._stepEnabled = false;
+	}
+}
+
+void Scene506::actions() {
+	if (_action.isAction(VERB_TALK_TO, NOUN_CHRISTINE)) {
+		_vm->_gameConv->run(26);
+		_vm->_gameConv->exportValue(1);
+		_scene->setAnimFrame(_globals._animationIndexes[0], 290);
+		_action._inProgress = false;
+		return;
+	}
+
+	if (_action.isAction(VERB_TAKE, NOUN_OAR)) {
+		switch (_game._trigger) {
+		case (0):
+			if (_game._objects.isInRoom(OBJ_OAR)) {
+				_game._player._stepEnabled = false;
+				_game._player._visible = false;
+				_globals._sequenceIndexes[4] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[4], true, 5, 2);
+				_scene->_sequences.setAnimRange(_globals._sequenceIndexes[4], 1, 4);
+				_scene->_sequences.setSeqPlayer(_globals._sequenceIndexes[4], true);
+				_scene->_sequences.setTrigger(_globals._sequenceIndexes[4], 2, 4, 1);
+				_scene->_sequences.setTrigger(_globals._sequenceIndexes[4], 0, 0, 2);
+			}
+			break;
+
+		case 1:
+			_scene->deleteSequence(_globals._sequenceIndexes[5]);
+			_scene->_hotspots.activate(NOUN_OAR, false);
+			_game._objects.addToInventory(OBJ_OAR);
+			_vm->_sound->command(26);
+			break;
+
+		case 2:
+			_game.syncTimers(2, 0, 1, _globals._sequenceIndexes[4]);
+			_game._player._visible = true;
+			_scene->_sequences.setTimingTrigger(20, 3);
+			break;
+
+		case 3:
+			_vm->_dialogs->showItem(OBJ_OAR, 824, 0);
+			_game._player._stepEnabled = true;
+			break;
+
+		default:
+			break;
+		}
+		_action._inProgress = false;
+		return;
+	}
+
+
+	if (_action.isAction(VERB_WALK_THROUGH, NOUN_DOOR) || _action.isAction(VERB_OPEN, NOUN_DOOR)) {
+		if (_scene->_customDest.x < 150) {
+			switch (_game._trigger) {
+			case (0):
+				_game._player._stepEnabled = false;
+				_game._player._visible = false;
+				_globals._sequenceIndexes[4] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[4], true, 5, 2);
+				_scene->_sequences.setAnimRange(_globals._sequenceIndexes[4], 1, 4);
+				_scene->_sequences.setSeqPlayer(_globals._sequenceIndexes[4], true);
+				_scene->_sequences.setTrigger(_globals._sequenceIndexes[4], 2, 4, 65);
+				_scene->_sequences.setTrigger(_globals._sequenceIndexes[4], 0, 0, 67);
+				break;
+
+			case 65:
+				_scene->deleteSequence(_globals._sequenceIndexes[3]);
+				_globals._sequenceIndexes[3] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[3], false, 8, 1);
+				_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 14);
+				_scene->_sequences.setAnimRange(_globals._sequenceIndexes[3], -1, -2);
+				_scene->_sequences.setTrigger(_globals._sequenceIndexes[3], 0, 0, 66);
+				_vm->_sound->command(24);
+				break;
+
+			case 66:
+				_game._player.walk(Common::Point(0, 142), FACING_WEST);
+				_game._player.setWalkTrigger(68);
+				break;
+
+			case 67:
+				_game._player._visible = true;
+				break;
+
+			case 68:
+				if (_globals[kChristineIsInBoat])
+					_scene->_nextSceneId = 501;
+				else
+					_scene->setAnimFrame(_globals._animationIndexes[0], 241);
+				break;
+
+			default:
+				break;
+			}
+		} else {
+			switch (_game._trigger) {
+			case (0):
+				if (!_globals[kChristineIsInBoat]) {
+					_vm->_gameConv->run(26);
+					_vm->_gameConv->exportValue(2);
+					int curFrame = _scene->_animation[_globals._animationIndexes[0]]->getCurrentFrame();
+					if (curFrame == 240 || curFrame == 239)
+						_scene->setAnimFrame(_globals._animationIndexes[0], 290);
+					_ascendingFl = true;
+				}
+				_game._player._stepEnabled = false;
+				_game._player._visible = false;
+				_globals._sequenceIndexes[7] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[7], false, 5, 1);
+				_scene->_sequences.setAnimRange(_globals._sequenceIndexes[7], -1, -2);
+				_game.syncTimers(1, _globals._sequenceIndexes[7], 2, 0);
+				_scene->_sequences.setTrigger(_globals._sequenceIndexes[7], 0, 0, 90);
+				break;
+
+			case 90:
+				_vm->_gameConv->abortConv();
+				_scene->_nextSceneId = 504;
+				break;
+
+			default:
+				break;
+			}
+		}
+		_action._inProgress = false;
+		return;
+	}
+
+	if (_vm->_gameConv->_running == 26) {
+		_action._inProgress = false;
+		return;
+	}
+
+	if (_action._lookFlag) {
+		_vm->_dialogs->show(50610);
+		_action._inProgress = false;
+		return;
+	}
+
+	if (_action.isAction(VERB_LOOK) || _action.isAction(VERB_LOOK_AT)) {
+		if (_action.isObject(NOUN_FLOOR)) {
+			_vm->_dialogs->show(50611);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isObject(NOUN_WALL)) {
+			_vm->_dialogs->show(50612);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isObject(NOUN_TORCH)) {
+			_vm->_dialogs->show(50613);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isObject(NOUN_COLUMN)) {
+			_vm->_dialogs->show(50614);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isObject(NOUN_CEILING)) {
+			_vm->_dialogs->show(50615);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isObject(NOUN_RAMP)) {
+			_vm->_dialogs->show(50616);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isObject(NOUN_DOOR)) {
+			if (_scene->_customDest.x < 150)
+				_vm->_dialogs->show(50617);
+			else
+				_vm->_dialogs->show(50618);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isObject(NOUN_OAR) && _game._objects.isInRoom(OBJ_OAR)) {
+			_vm->_dialogs->show(50619);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isObject(NOUN_CHRISTINE)) {
+			if (_scene->_animation[_globals._animationIndexes[0]]->getCurrentFrame() < 235)
+				_vm->_dialogs->show(50621);
+			else
+				_vm->_dialogs->show(50620);
+			_action._inProgress = false;
+			return;
+		}
+	}
+
+	if (_action.isAction(VERB_TAKE, NOUN_TORCH)) {
+		_vm->_dialogs->show(50613);
+		_action._inProgress = false;
+		return;
+	}
+
+	if (_action.isAction(VERB_TAKE, NOUN_CHRISTINE)) {
+		_vm->_dialogs->show(50622);
+		_action._inProgress = false;
+	}
+}
+
+void Scene506::preActions() {
+	if (_action.isAction(VERB_UNLOCK, NOUN_DOOR) || _action.isAction(VERB_LOCK, NOUN_DOOR))
+		_game._player.walk(Common::Point(33, 142), FACING_NORTHWEST);
+
+	if (_action.isAction(VERB_OPEN, NOUN_DOOR)) {
+		if (_scene->_customDest.x < 150)
+			_game._player.walk(Common::Point(33, 142), FACING_NORTHWEST);
+		else
+			_game._player.walk(Common::Point(191, 118), FACING_EAST);
+	}
+}
+
+/*------------------------------------------------------------------------*/
+
 } // End of namespace Phantom
 } // End of namespace MADS
