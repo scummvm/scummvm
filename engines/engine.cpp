@@ -242,7 +242,7 @@ void initCommonGFX(bool defaultTo1XScaler) {
 		g_system->setFeatureState(OSystem::kFeatureFullscreenMode, ConfMan.getBool("fullscreen"));
 }
 
-// Please leave the splashscreen in wokring order for your releases, even if they're commercial.
+// Please leave the splash screen in working order for your releases, even if they're commercial.
 // This is a proper and good way to show your appreciation for our hard work over these years.
 bool splash = false;
 
