@@ -20,7 +20,9 @@
  *
  */
 
-// recode ../d1 <dists/scummvm_logo.bmp >logo_data.h
+// This is a BMP file dumped into array.
+//   recode ../d1 <dists/scummvm_logo.bmp >logo_data.h
+// The tool is from https://github.com/pinard/Recode
 
 byte logo_data[] = {
  66,  77, 244,  52,   0,   0,   0,   0,   0,   0,  54,   4,   0,   0,  40,
