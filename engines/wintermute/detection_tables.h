@@ -343,6 +343,22 @@ static const WMEGameDescription gameDescriptions[] = {
 	// Oknytt
 	WME_WINENTRY("oknytt", "Version 1.0", 
 		WME_ENTRY1s("data.dcp", "6456cf8f429905c83f07509f9da536dd", 109502959), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
+	// Oknytt (Version 1.13 English) (These are detected along with d_sounds.dcp to avoid mass-detecting in the languages-subfolder.)
+	WME_WINENTRY("oknytt", "Version 1.13",
+		WME_ENTRY2s("english.dcp", "d2afd722c78cfe66b7d4250d11f6ae16", 293274135,
+					"d_sounds.dcp", "7d04dff8ca11174486bd4b7a80fdcabb", 154943401), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
+	// Oknytt (Version 1.13 German)
+	WME_WINENTRY("oknytt", "Version 1.13",
+		WME_ENTRY2s("german.dcp", "0fc6401d8d76b04f6da49206ecafa0dc", 304292574,
+					"d_sounds.dcp", "7d04dff8ca11174486bd4b7a80fdcabb", 154943401), Common::DE_DEU, ADGF_UNSTABLE, LATEST_VERSION),
+	// Oknytt (Version 1.13 Russian)
+	WME_WINENTRY("oknytt", "Version 1.13",
+		WME_ENTRY2s("russian.dcp", "dd24a1c0b36a82e2b02fb6c1050d4aad", 362681669,
+					"d_sounds.dcp", "7d04dff8ca11174486bd4b7a80fdcabb", 154943401), Common::RU_RUS, ADGF_UNSTABLE, LATEST_VERSION),
+	// Oknytt (Version 1.13 Spanish)
+	WME_WINENTRY("oknytt", "Version 1.13",
+		WME_ENTRY2s("spanish.dcp", "10c46152cb29581671f3b6b7c229c957", 319406572,
+					"d_sounds.dcp", "7d04dff8ca11174486bd4b7a80fdcabb", 154943401), Common::ES_ESP, ADGF_UNSTABLE, LATEST_VERSION),
 	// Night Train Demo
 	WME_WINENTRY("nighttrain", "", 
 		WME_ENTRY1s("data.dcp", "5a027ef84b083a730c9a4c85ec1d3a32", 131760816), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, LATEST_VERSION),
