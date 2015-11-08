@@ -140,9 +140,18 @@ static const WMEGameDescription gameDescriptions[] = {
 	// Five Lethal Demons
 	WME_WINENTRY("5ld", "", 
 		WME_ENTRY1s("data.dcp", "1037a77cbd001e0644898addc022322c", 15407750), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
-	// Five Magical Amulets
+	// Five Magical Amulets (Czech)
 	WME_WINENTRY("5ma", "", 
-		WME_ENTRY1s("data.dcp", "0134e92bcd5fd2837df3971087e96067", 163316498), Common::EN_ANY, ADGF_UNSTABLE, WME_1_7_0),
+		WME_ENTRY2s("czech.dcp", "7b2515a8ceb955c72bc14f0f1fca869e", 184,
+					"data.dcp", "0134e92bcd5fd2837df3971087e96067", 163316498), Common::CZ_CZE, ADGF_UNSTABLE, WME_1_7_0),
+	// Five Magical Amulets (English)
+	WME_WINENTRY("5ma", "",
+		WME_ENTRY2s("english.dcp", "2f97bca09260ba23b645da9f0855ce7f", 893681,
+					"data.dcp", "0134e92bcd5fd2837df3971087e96067", 163316498), Common::EN_ANY, ADGF_UNSTABLE, WME_1_7_0),
+	// Five Magical Amulets (Polish)
+	WME_WINENTRY("5ma", "",
+		WME_ENTRY2s("polish.dcp", "bb877d48795471a17f25b0b5109100d1", 1132197,
+					"data.dcp", "0134e92bcd5fd2837df3971087e96067", 163316498), Common::PL_POL, ADGF_UNSTABLE, WME_1_7_0),
 	// Actual Destination
 	WME_WINENTRY("actualdest", "", 
 		WME_ENTRY1s("data.dcp", "6926f44b26f21ceb1d840eaab9aeb510", 9081740), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
