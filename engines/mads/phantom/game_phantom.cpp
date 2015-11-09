@@ -259,7 +259,7 @@ void GamePhantom::checkShowDialog() {
 	}
 }
 
-void GamePhantom::global_object_examine() {
+void GamePhantom::genericObjectExamine() {
 	MADSAction &action = _scene._action;
 	int	id = _objects.getIdFromDesc(action._activeAction._objectNameId);
 
@@ -475,7 +475,7 @@ void GamePhantom::doObjectAction() {
 	}
 
 	if (action.isAction(VERB_LOOK) && _objects.isInInventory(_objects.getIdFromDesc(action._activeAction._objectNameId))) {
-		global_object_examine();
+		genericObjectExamine();
 		action._inProgress = false;
 		return;
 	}
@@ -635,13 +635,185 @@ void GamePhantom::unhandledAction() {
 		_vm->_dialogs->show(messageId);
 }
 
-void GamePhantom::step() {
-	if (_player._visible && _player._stepEnabled && !_player._moving &&
-		(_player._facing == _player._turnToFacing)) {
+void GamePhantom::stopWalker() {
+	int state   = _globals[kWalkerConverseState];
+	int command = _globals[kWalkerConverse];
 
-		// TODO
+	_globals[kWalkerConverseNow] = state;
+
+	if ((_player._facing != FACING_NORTHEAST) && (_player._facing != FACING_NORTHWEST)) {
+		state   = 0;
+		command = 0;
 	}
 
+	switch (state) {
+	case 1:
+		switch (command) {
+		case 1:
+			_player.addWalker(3, 0);
+			break;
+
+		case 2:
+		case 3:
+			_player.addWalker(6, 0);
+			_player.addWalker(5, 0);
+			_player.addWalker(4, 0);
+			state = 2;
+			break;
+
+		case 4:
+			_player.addWalker(8, 0);
+			_player.addWalker(4, 0);
+			state = 4;
+			break;
+
+		default:
+			_player.addWalker(-2, 0);
+			state = 0;
+			break;
+		}
+		break;
+
+	case 2:
+	case 3:
+		switch (command) {
+		case 2:
+		case 3:
+			if (state == 2) {
+				if (_vm->getRandomNumber(1, 30000) < 2000) {
+					_player.addWalker(10, 0);
+					_player.addWalker(7, 0);
+					state = 3;
+				} else
+					_player.addWalker(6, 0);
+			} else {
+				if (_vm->getRandomNumber(1, 30000) < 1000) {
+					_player.addWalker(6, 0);
+					_player.addWalker(7, 0);
+					state = 2;
+				} else
+					_player.addWalker(10, 0);
+			}
+			break;
+
+		default:
+			_player.addWalker(-4, 0);
+			_player.addWalker(-5, 0);
+			if (state == 3) {
+				_player.addWalker(6, 0);
+				_player.addWalker(7, 0);
+			}
+			state = 1;
+			break;
+		}
+		break;
+
+	case 4:
+		if (command == 4)
+			_player.addWalker(9, 0);
+		else {
+			_player.addWalker(-4, 0);
+			_player.addWalker(-8, 0);
+			state = 1;
+		}
+		break;
+
+	case 0:
+	default:
+		switch (command) {
+		case 1:
+		case 2:
+		case 3:
+		case 4:
+			_player.addWalker(2, 0);
+			state = 1;
+			break;
+
+		default:
+			stopWalkerBasic();
+			break;
+		}
+		break;
+	}
+
+	_globals[kWalkerConverse]       = command;
+	_globals[kWalkerConverseState] = state;
+}
+
+void GamePhantom::step() {
+	if (_player._visible  && !_globals[kStopWalkerDisabled]
+	 && (_player._stepEnabled || (_vm->_gameConv->_running >= 0))
+	 && !_player._moving && (_player._facing == _player._turnToFacing)
+	 && (_scene._frameStartTime >= *((uint32 *)&_globals[kWalkerTiming]))) {
+		if (!_player._stopWalkerIndex)
+			stopWalker();
+
+		*((uint32 *)&_globals[kWalkerTiming]) += 6;
+	}
+}
+
+void GamePhantom::stopWalkerBasic() {
+	int rndVal  = _vm->getRandomNumber(1, 30000);
+
+	switch (_player._facing) {
+	case FACING_SOUTH:
+		if (rndVal < 500) {
+			int maxSteps = _vm->getRandomNumber(4, 10);
+			for (int i = 0; i < maxSteps; i++)
+				_player.addWalker((rndVal < 250) ? 1 : 2, 0);
+		} else if (rndVal < 750) {
+			for (int i = 0; i < 4; i++)
+				_player.addWalker(1, 0);
+
+			_player.addWalker(0, 0);
+
+			for (int i = 0; i < 4; i++)
+				_player.addWalker(2, 0);
+
+			_player.addWalker(0, 0);
+		}
+		break;
+
+	case FACING_SOUTHEAST:
+	case FACING_SOUTHWEST:
+	case FACING_NORTHEAST:
+	case FACING_NORTHWEST:
+		if (rndVal < 150) {
+			_player.addWalker(-1, 0);
+			_player.addWalker(1, 0);
+			for (int i = 0; i < 6; i++)
+				_player.addWalker(0, 0);
+		}
+		break;
+
+	case FACING_EAST:
+	case FACING_WEST:
+		if (rndVal < 250) {
+			_player.addWalker(-1, 0);
+			int maxSteps = _vm->getRandomNumber(2, 6);
+			for (int i = 0; i < maxSteps; i++)
+				_player.addWalker(2, 0);
+			_player.addWalker(1, 0);
+			_player.addWalker(0, 0);
+			_player.addWalker(0, 0);
+		} else if (rndVal < 500)
+			*((uint32 *)&_globals[kWalkerTiming]) = _scene._frameStartTime;
+		break;
+
+	case FACING_NORTH:
+		if (rndVal < 250) {
+			_player.addWalker(-1, 0);
+			int maxSteps = _vm->getRandomNumber(3, 7);
+			for (int i = 0; i < maxSteps; i++)
+				_player.addWalker(2, 0);
+			_player.addWalker(1, 0);
+			_player.addWalker(0, 0);
+		}
+		break;
+
+	default:
+		break;
+	}
 }
 
 void GamePhantom::synchronize(Common::Serializer &s, bool phase1) {

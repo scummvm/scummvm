@@ -92,7 +92,10 @@ class GamePhantom : public Game {
 	friend class Game;
 
 private:
-	void global_object_examine();
+	void genericObjectExamine();
+	void stopWalker();
+	void stopWalkerBasic();
+
 	Catacombs *_catacombs;
 	int _catacombSize;
 
