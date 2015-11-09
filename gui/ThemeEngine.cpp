@@ -757,14 +757,14 @@ bool ThemeEngine::loadDefaultXML() {
 		return false;
 	}
 
-	free(tmpXML);
-
 	_themeName = "ScummVM Classic Theme (Builtin Version)";
 	_themeId = "builtin";
 	_themeFile.clear();
 
 	bool result = _parser->parse();
 	_parser->close();
+
+	free(tmpXML);
 
 	return result;
 #else
