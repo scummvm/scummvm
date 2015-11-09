@@ -746,6 +746,7 @@ bool ThemeEngine::loadDefaultXML() {
 		xmllen += strlen(defaultXML[i]);
 
 	byte *tmpXML = (byte *)malloc(xmllen + 1);
+	tmpXML[0] = '\0';
 
 	for (int i = 0; i < ARRAYSIZE(defaultXML); i++)
 		strncat((char *)tmpXML, defaultXML[i], xmllen);
