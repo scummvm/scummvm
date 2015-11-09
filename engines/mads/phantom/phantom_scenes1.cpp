@@ -112,7 +112,8 @@ void Scene1xx::setPlayerSpritesPrefix() {
 	if (oldName != _game._player._spritesPrefix)
 		_game._player._spritesChanged = true;
 
-	_game._player._scalingVelocity = true;}
+	_game._player._scalingVelocity = true;
+}
 
 /*------------------------------------------------------------------------*/
 
