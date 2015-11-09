@@ -259,14 +259,295 @@ void GamePhantom::checkShowDialog() {
 	}
 }
 
-void GamePhantom::doObjectAction() {
-	// TODO: Copied from Nebular
-	//Scene &scene = _scene;
+void GamePhantom::global_object_examine() {
 	MADSAction &action = _scene._action;
-	//Dialogs &dialogs = *_vm->_dialogs;
-	//int id;
+	int	id = _objects.getIdFromDesc(action._activeAction._objectNameId);
 
-	action._inProgress = false;
+	if (action.isAction(VERB_LOOK, NOUN_RED_FRAME))
+		_vm->_dialogs->showItem(id, (_globals[kCurrentYear] == 1993) ? 802 : 842, 0);
+	else if (action.isAction(VERB_LOOK, NOUN_YELLOW_FRAME))
+		_vm->_dialogs->showItem(id, (_globals[kCurrentYear] == 1993) ? 804 : 843, 0);
+	else if (action.isAction(VERB_LOOK, NOUN_BLUE_FRAME))
+		_vm->_dialogs->showItem(id, (_globals[kCurrentYear] == 1993) ? 817 : 844, 0);
+	else if (action.isAction(VERB_LOOK, NOUN_GREEN_FRAME))
+		_vm->_dialogs->showItem(id, (_globals[kCurrentYear] == 1993) ? 819 : 845, 0);
+	else if (action.isAction(VERB_LOOK, NOUN_LANTERN))
+		_vm->_dialogs->showItem(id, (_globals[kLanternStatus] == 1) ? 831 : 801, 0);
+	else if (action.isAction(VERB_LOOK, NOUN_SMALL_NOTE))
+		_vm->_dialogs->showItem(OBJ_SMALL_NOTE, 846, 2);
+	else if (action.isAction(VERB_LOOK, NOUN_PARCHMENT))
+		_vm->_dialogs->showItem(OBJ_PARCHMENT, 812, 3);
+	else if (action.isAction(VERB_LOOK, NOUN_LETTER))
+		_vm->_dialogs->showItem(OBJ_LETTER, 813, 4);
+	else if (action.isAction(VERB_LOOK, NOUN_NOTICE))
+		_vm->_dialogs->showItem(OBJ_NOTICE, 814, 5);
+	else if (action.isAction(VERB_LOOK, NOUN_CRUMPLED_NOTE))
+		_vm->_dialogs->showItem(OBJ_CRUMPLED_NOTE, 816, 6);
+	else if (action.isAction(VERB_LOOK, NOUN_LARGE_NOTE))
+		_vm->_dialogs->showItem(OBJ_LARGE_NOTE, 818, 7);
+	else
+	_vm->_dialogs->showItem(id, 800 + id, 0);
+}
+
+void GamePhantom::doObjectAction() {
+	MADSAction &action = _scene._action;
+
+	if ((_scene._currentSceneId >= 401) && (_scene._currentSceneId <= 456)
+	 && (action.isObject(NOUN_RED_FRAME) || action.isObject(NOUN_YELLOW_FRAME) || action.isObject(NOUN_GREEN_FRAME) || action.isObject(NOUN_BLUE_FRAME))
+	 && action.isAction(VERB_PUT)) {
+		if (action.isTarget(NOUN_UNLUCKY_ADVENTURER)) {
+			_vm->_dialogs->show(35);
+			action._inProgress = false;
+			return;
+		} else if (action.isTarget(NOUN_HOLE)) {
+			_vm->_dialogs->show(36);
+			action._inProgress = false;
+			return;
+		} else if (action.isTarget(NOUN_GRATE)) {
+			_vm->_dialogs->show(37);
+			action._inProgress = false;
+			return;
+		} else if (action.isTarget(NOUN_WALL)) {
+			_vm->_dialogs->show(38);
+			action._inProgress = false;
+			return;
+		}
+	}
+
+	if (action._lookFlag) {
+		_vm->_dialogs->show(810);
+		action._inProgress = false;
+		return;
+	}
+
+	if (action.isAction(VERB_PUT, NOUN_RED_FRAME) || action.isAction(VERB_PUT, NOUN_BLUE_FRAME) || action.isAction(VERB_PUT, NOUN_YELLOW_FRAME) || action.isAction(VERB_PUT, NOUN_GREEN_FRAME)) {
+		_vm->_dialogs->show((action.isTarget(NOUN_PUDDLE)) ? 40124 : 40125);
+		action._inProgress = false;
+		return;
+	}
+
+	if (action.isAction(VERB_WEAR, NOUN_WEDDING_RING)) {
+		if (_globals[kRingIsOnFinger])
+			_vm->_dialogs->show(849);
+		else {
+			_vm->_dialogs->show(835);
+			_globals[kRingIsOnFinger] = true;
+		}
+		action._inProgress = false;
+		return;
+	}
+
+	if (action.isAction(VERB_REMOVE, NOUN_WEDDING_RING)) {
+		if (!_globals[kRingIsOnFinger])
+			_vm->_dialogs->show(848);
+		else {
+			_vm->_dialogs->show(836);
+			_globals[kRingIsOnFinger] = false;
+		}
+		action._inProgress = false;
+		return;
+	}
+
+	if (action.isAction(VERB_LOOK, NOUN_ARCHWAY_TO_WEST) || action.isAction(VERB_LOOK, NOUN_ARCHWAY_TO_EAST) || action.isAction(VERB_LOOK, NOUN_ARCHWAY_TO_NORTH)) {
+		_vm->_dialogs->show(34);
+		action._inProgress = false;
+		return;
+	}
+
+	if (action.isAction(VERB_ATTACK, NOUN_CHRISTINE)) {
+		_vm->_dialogs->show(33);
+		action._inProgress = false;
+		return;
+	}
+
+	if (action.isAction(VERB_LOOK, NOUN_KEY)) {
+		_vm->_dialogs->showItem(OBJ_KEY, 800, 0);
+		action._inProgress = false;
+		return;
+	}
+
+	if (action.isAction(VERB_LOOK, NOUN_SANDBAG)) {
+		_vm->_dialogs->showItem(OBJ_SANDBAG, 803, 0);
+		action._inProgress = false;
+		return;
+	}
+
+	if (action.isAction(VERB_LOOK, NOUN_SMALL_NOTE) || action.isAction(VERB_READ, NOUN_SMALL_NOTE)) {
+		_vm->_dialogs->showItem(OBJ_SMALL_NOTE, 806, 2);
+		action._inProgress = false;
+		return;
+	}
+
+	if (action.isAction(VERB_LOOK, NOUN_ROPE)) {
+		_vm->_dialogs->showItem(OBJ_ROPE, 807, 0);
+		action._inProgress = false;
+		return;
+	}
+
+	if (action.isAction(VERB_LOOK, NOUN_SWORD)) {
+		_vm->_dialogs->showItem(OBJ_SWORD, 808, 0);
+		action._inProgress = false;
+		return;
+	}
+
+	if (action.isAction(VERB_LOOK, NOUN_ENVELOPE) || action.isAction(VERB_READ, NOUN_ENVELOPE)) {
+		_vm->_dialogs->showItem(OBJ_ENVELOPE, 809, 0);
+		action._inProgress = false;
+		return;
+	}
+
+	if (action.isAction(VERB_LOOK, NOUN_TICKET) || action.isAction(VERB_READ, NOUN_TICKET)) {
+		_vm->_dialogs->showItem(OBJ_TICKET, 810, 0);
+		action._inProgress = false;
+		return;
+	}
+
+	if (action.isAction(VERB_LOOK, NOUN_PIECE_OF_PAPER) || action.isAction(VERB_READ, NOUN_PIECE_OF_PAPER)) {
+		_vm->_dialogs->showItem(OBJ_PIECE_OF_PAPER, 811, 1);
+		action._inProgress = false;
+		return;
+	}
+
+	if (action.isAction(VERB_LOOK, NOUN_PARCHMENT) || action.isAction(VERB_READ, NOUN_PARCHMENT)) {
+		_vm->_dialogs->showItem(OBJ_PARCHMENT, 812, 3);
+		action._inProgress = false;
+		return;
+	}
+
+	if (action.isAction(VERB_LOOK, NOUN_LETTER) || action.isAction(VERB_READ, NOUN_LETTER)) {
+		_vm->_dialogs->showItem(OBJ_LETTER, 813, 4);
+		action._inProgress = false;
+		return;
+	}
+
+	if (action.isAction(VERB_LOOK, NOUN_NOTICE) || action.isAction(VERB_READ, NOUN_NOTICE)) {
+		_vm->_dialogs->showItem(OBJ_NOTICE, 814, 5);
+		action._inProgress = false;
+		return;
+	}
+
+	if (action.isAction(VERB_LOOK, NOUN_BOOK) || action.isAction(VERB_READ, NOUN_BOOK)) {
+		_vm->_dialogs->showItem(OBJ_BOOK, 815, 0);
+		action._inProgress = false;
+		return;
+	} 
+
+	if (action.isAction(VERB_LOOK, NOUN_CRUMPLED_NOTE) || action.isAction(VERB_READ, NOUN_CRUMPLED_NOTE)) {
+		_vm->_dialogs->showItem(OBJ_CRUMPLED_NOTE, 816, 6);
+		action._inProgress = false;
+		return;
+	}
+
+	if (action.isAction(VERB_LOOK, NOUN_LARGE_NOTE) || action.isAction(VERB_READ, NOUN_LARGE_NOTE)) {
+		_vm->_dialogs->showItem(OBJ_LARGE_NOTE, 818, 7);
+		action._inProgress = false;
+		return;
+	}
+
+	if (action.isAction(VERB_LOOK, NOUN_MUSIC_SCORE) || action.isAction(VERB_READ, NOUN_MUSIC_SCORE)) {
+		_vm->_dialogs->showItem(OBJ_MUSIC_SCORE, 820, 0);
+		action._inProgress = false;
+		return;
+	}
+
+	if (action.isAction(VERB_LOOK, NOUN_WEDDING_RING)) {
+		_vm->_dialogs->showItem(OBJ_WEDDING_RING, 821, 0);
+		action._inProgress = false;
+		return;
+	}
+
+	if (action.isAction(VERB_LOOK, NOUN_CABLE_HOOK)) {
+		_vm->_dialogs->showItem(OBJ_CABLE_HOOK, 822, 0);
+		action._inProgress = false;
+		return;
+	}
+
+	if (action.isAction(VERB_LOOK, NOUN_ROPE_WITH_HOOK)) {
+		_vm->_dialogs->showItem(OBJ_ROPE_WITH_HOOK, 823, 0);
+		action._inProgress = false;
+		return;
+	}
+
+	if (action.isAction(VERB_LOOK, NOUN_OAR)) {
+		_vm->_dialogs->showItem(OBJ_OAR, 824, 0);
+		action._inProgress = false;
+		return;
+	}
+
+	if (action.isAction(VERB_LOOK) && _objects.isInInventory(_objects.getIdFromDesc(action._activeAction._objectNameId))) {
+		global_object_examine();
+		action._inProgress = false;
+		return;
+	}
+
+	if (action.isAction(VERB_TURN_ON, NOUN_LANTERN)) {
+		if ((_globals[kLanternStatus] == 1) && !_trigger)
+			_vm->_dialogs->show(828);
+		else {
+			switch (_trigger) {
+			case 0:
+				_scene._sequences.setTimingTrigger(4, 1);
+				_globals[kLanternStatus] = 1;
+				_vm->_dialogs->spinObject(OBJ_LANTERN);
+				break;
+
+			case 1:
+				_vm->_dialogs->show(825);
+				break;
+
+			default:
+				break;
+			}
+		}
+		action._inProgress = false;
+		return;
+	}
+
+	if (action.isAction(VERB_TURN_OFF, NOUN_LANTERN)) {
+		if ((_globals[kLanternStatus] == 0) && !_trigger)
+			_vm->_dialogs->show(829);
+		else if ((_scene._currentSceneId / 100) == 4)
+			_vm->_dialogs->show(826);
+		else {
+			switch (_trigger) {
+			case 0:
+				_scene._sequences.setTimingTrigger(4, 1);
+				_globals[kLanternStatus] = 0;
+				_vm->_dialogs->spinObject(OBJ_LANTERN);
+				break;
+
+			case 1:
+				_vm->_dialogs->show(827);
+				break;
+
+			default:
+				break;
+			}
+		}
+		action._inProgress = false;
+		return;
+	}
+
+	if (action.isAction(VERB_OPEN, NOUN_ENVELOPE)) {
+		_objects.setRoom(OBJ_ENVELOPE, NOWHERE);
+		_objects.addToInventory(OBJ_TICKET);
+		_objects.addToInventory(OBJ_PIECE_OF_PAPER);
+		_vm->_dialogs->show(833);
+		action._inProgress = false;
+		return;
+	}
+
+	if (action.isAction(VERB_ATTACH, NOUN_CABLE_HOOK, NOUN_ROPE)) {
+		if (!_objects.isInInventory(OBJ_ROPE))
+			_vm->_dialogs->show(11438);
+		else {
+			_objects.setRoom(OBJ_CABLE_HOOK, NOWHERE);
+			_objects.setRoom(OBJ_ROPE, NOWHERE);
+			_objects.addToInventory(OBJ_ROPE_WITH_HOOK);
+			_vm->_dialogs->showItem(OBJ_ROPE_WITH_HOOK, 823, 0);
+		}
+		action._inProgress = false;
+	}
 }
 
 void GamePhantom::unhandledAction() {

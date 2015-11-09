@@ -226,6 +226,11 @@ public:
 	virtual void showItem(int objectId, int messageId, int speech = 0) = 0;
 	virtual Common::String getVocab(int vocabId) = 0;
 	virtual bool show(int messageId, int objectId = -1) = 0;
+
+	/**
+	* Show a spinning picture of an object, used in V2+ games
+	*/
+	virtual void spinObject(int idx) { warning("TODO: spinObject"); }
 };
 
 class FullScreenDialog: public EventTarget {

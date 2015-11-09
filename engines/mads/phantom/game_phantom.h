@@ -92,6 +92,7 @@ class GamePhantom : public Game {
 	friend class Game;
 
 private:
+	void global_object_examine();
 	Catacombs *_catacombs;
 	int _catacombSize;
 
