@@ -624,7 +624,7 @@ void Scene102::enter() {
 
 	if (_globals[kCurrentYear] == 1993) {
 		_globals._spriteIndexes[0] = _scene->_sprites.addSprites(formAnimName('z', -1));
-		_scene->drawToBackground(_globals._sequenceIndexes[0], 1, Common::Point(-32000, -32000), 0, 100);
+		_scene->drawToBackground(_globals._spriteIndexes[0], 1, Common::Point(-32000, -32000), 0, 100);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[0], 14);
 	} else {
 		_scene->_hotspots.activate(NOUN_CHANDELIER, false);
