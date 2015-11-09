@@ -41,6 +41,9 @@ namespace Phantom {
 SceneLogic *SceneFactory::createScene(MADSEngine *vm) {
 	Scene &scene = vm->_game->_scene;
 
+	if ((scene._nextSceneId / 100) != (scene._priorSceneId / 100))
+		vm->_game->_player._scalingVelocity = true;
+
 	switch (scene._nextSceneId) {
 	// Scene group #1 (theater, stage and dressing rooms)
 	case 101:	// seats
