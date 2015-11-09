@@ -551,7 +551,88 @@ void GamePhantom::doObjectAction() {
 }
 
 void GamePhantom::unhandledAction() {
-	// TODO
+	int messageId = 0;
+	int rndNum = _vm->getRandomNumber(1, 1000);
+	MADSAction &action = _scene._action;
+
+	if (action.isAction(VERB_PUT, NOUN_CHANDELIER, NOUN_SEATS))
+		_vm->_dialogs->show(10123);
+	else if (action.isAction(VERB_TAKE)) {
+		if (_objects.isInInventory(_objects.getIdFromDesc(action._activeAction._objectNameId)))
+			messageId = 25;
+		else {
+			if (rndNum <= 333)
+				messageId = 1;
+			else if (rndNum <= 666)
+				messageId = 2;
+			else
+				messageId = 3;
+		}
+	} else if (action.isAction(VERB_PUSH)) {
+		if (rndNum < 750)
+			messageId = 4;
+		else
+			messageId = 5;
+	} else if (action.isAction(VERB_PULL)) {
+		if (rndNum < 750)
+			messageId = 6;
+		else
+			messageId = 7;
+	} else if (action.isAction(VERB_OPEN)) {
+		if (rndNum <= 500)
+			messageId = 8;
+		else if (rndNum <= 750)
+			messageId = 9;
+		else
+			messageId = 10;
+	} else if (action.isAction(VERB_CLOSE)) {
+		if (rndNum <= 500)
+			messageId = 11;
+		else if (rndNum <= 750)
+			messageId = 12;
+		else
+			messageId = 13;
+	} else if (action.isAction(VERB_PUT)) {
+		if (_objects.isInInventory(_objects.getIdFromDesc(action._activeAction._objectNameId)))
+			messageId = 26;
+		else if (rndNum < 500)
+			messageId = 14;
+		else
+			messageId = 15;
+	} else if (action.isAction(VERB_TALK_TO)) {
+		if (rndNum <= 500)
+			messageId = 16;
+		else
+			messageId = 17;
+	} else if (action.isAction(VERB_GIVE)) {
+		if (_objects.isInInventory(_objects.getIdFromDesc(action._activeAction._objectNameId)))
+			messageId = 27;
+		else
+			messageId = 18;
+	} else if (action.isAction(VERB_THROW)) {
+		if (_objects.isInInventory(_objects.getIdFromDesc(action._activeAction._objectNameId)))
+			messageId = 19;
+		else
+			messageId = 28;
+	} else if (action.isAction(VERB_LOOK)) {
+		if (rndNum <= 333)
+			messageId = 20;
+		else if (rndNum <= 666)
+			messageId = 21;
+		else
+			messageId = 22;
+	} else if ((action.isAction(VERB_UNLOCK) || action.isAction(VERB_LOCK))
+			&& (action.isObject(NOUN_DOOR) || action.isObject(NOUN_LEFT_DOOR) || action.isObject(NOUN_MIDDLE_DOOR) || action.isObject(NOUN_RIGHT_DOOR) || action.isObject(NOUN_TRAP_DOOR)))
+		messageId = 32;
+	else if (!action.isAction(VERB_WALK_TO) && !action.isAction(VERB_WALK_ACROSS) && !action.isAction(VERB_WALK_DOWN) && !action.isAction(VERB_WALK_UP)) {
+		if (rndNum < 500)
+			messageId = 23;
+		else
+			messageId = 24;
+	}
+
+	if (messageId)
+		_vm->_dialogs->show(messageId);
 }
 
 void GamePhantom::step() {
