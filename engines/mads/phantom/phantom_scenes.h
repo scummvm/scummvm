@@ -484,18 +484,6 @@ protected:
 	SceneInfoPhantom(MADSEngine *vm) : SceneInfo(vm) {}
 };
 
-// TODO: Temporary, remove once implemented properly
-class DummyScene : public PhantomScene {
-public:
-	DummyScene(MADSEngine *vm) : PhantomScene(vm) {
-		warning("Unimplemented scene");
-	}
-
-	virtual void setup() {}
-	virtual void enter() {}
-	virtual void actions() {}
-};
-
 } // End of namespace Phantom
 
 } // End of namespace MADS
