@@ -41,9 +41,6 @@ namespace Phantom {
 SceneLogic *SceneFactory::createScene(MADSEngine *vm) {
 	Scene &scene = vm->_game->_scene;
 
-	// TODO
-	//scene.addActiveVocab(NOUN_DROP);
-
 	switch (scene._nextSceneId) {
 	// Scene group #1 (theater, stage and dressing rooms)
 	case 101:	// seats
