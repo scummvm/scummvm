@@ -744,11 +744,11 @@ void GamePhantom::step() {
 	if (_player._visible  && !_globals[kStopWalkerDisabled]
 	 && (_player._stepEnabled || (_vm->_gameConv->_running >= 0))
 	 && !_player._moving && (_player._facing == _player._turnToFacing)
-	 && (_scene._frameStartTime >= *((uint32 *)&_globals[kWalkerTiming]))) {
+	 && (_scene._frameStartTime >= (uint32)_globals[kWalkerTiming])) {
 		if (!_player._stopWalkerIndex)
 			stopWalker();
 
-		*((uint32 *)&_globals[kWalkerTiming]) += 6;
+		_globals[kWalkerTiming] += 6;
 	}
 }
 
@@ -797,7 +797,7 @@ void GamePhantom::stopWalkerBasic() {
 			_player.addWalker(0, 0);
 			_player.addWalker(0, 0);
 		} else if (rndVal < 500)
-			*((uint32 *)&_globals[kWalkerTiming]) = _scene._frameStartTime;
+			_globals[kWalkerTiming] = (int)_scene._frameStartTime;
 		break;
 
 	case FACING_NORTH:
