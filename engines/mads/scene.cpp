@@ -793,8 +793,23 @@ void Scene::setCamera(Common::Point pos) {
 	_posAdjust = pos;
 }
 
-void Scene::drawToBackground(int series_id, int sprite_id, Common::Point pos, int depth, int scale) {
-	warning("TODO: Scene::drawToBackground");
+void Scene::drawToBackground(int spriteId, int frameId, Common::Point pos, int depth, int scale) {
+	SpriteAsset &asset = *_sprites[spriteId];
+
+	if (pos.x == -32000)
+		pos.x = asset.getFramePos(frameId - 1).x;
+	if (pos.y == -32000)
+		pos.y = asset.getFramePos(frameId - 1).y;
+
+	int slotIndex = _spriteSlots.add();
+	SpriteSlot &slot = _spriteSlots[slotIndex];
+	slot._spritesIndex = spriteId;
+	slot._frameNumber = frameId;
+	slot._seqIndex = 1;
+	slot._position = pos;
+	slot._depth = depth;
+	slot._scale = scale;
+	slot._flags = IMG_DELTA;
 }
 
 void Scene::deleteSequence(int idx) {
@@ -803,10 +818,13 @@ void Scene::deleteSequence(int idx) {
 
 	_sequences[idx]._active = false;
 
-	if (!_sequences[idx]._doneFlag)
-		doFrame();	// FIXME/CHECKME: Is this correct?
-	else
+	if (!_sequences[idx]._doneFlag) {
+		warning("TODO: deleteSequence: Sequence %d not done", idx);
+		// TODO: This is wrong, and crashes Phantom at scene 102 when the door is opened
+		//doFrame();	// FIXME/CHECKME: Is this correct?
+	} else {
 		_sequences.remove(idx);
+	}
 }
 
 void Scene::loadSpeech(int idx) {
