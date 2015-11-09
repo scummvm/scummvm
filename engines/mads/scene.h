@@ -259,7 +259,7 @@ public:
 
 	void setDynamicAnim(int id, int anim_id, int segment);
 	void setCamera(Common::Point pos);
-	void drawToBackground(int series_id, int sprite_id, Common::Point pos, int depth, int scale);
+	void drawToBackground(int spriteId, int frameId, Common::Point pos, int depth, int scale);
 	void deleteSequence(int idx);
 	void loadSpeech(int idx);
 	void playSpeech(int idx);
