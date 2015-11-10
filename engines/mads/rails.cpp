@@ -274,12 +274,18 @@ void Rails::synchronize(Common::Serializer &s) {
 	}
 }
 
-void Rails::disableNode(int idx) {
-	warning("TODO: Rails::disableNode");
+void Rails::disableNode(int nodeIndex) {
+	_nodes[nodeIndex]._active = false;
+
+	for (uint16 i = 0; i < _nodes.size(); i++) {
+		if (i != nodeIndex)
+			disableLine(i, nodeIndex);
+	}
 }
 
 void Rails::disableLine(int from, int to) {
-	warning("TODO: Rails::disableLine");
+	_nodes[from]._distances[to] = 0x3FFF;
+	_nodes[to]._distances[from] = 0x3FFF;
 }
 
 } // End of namespace MADS
