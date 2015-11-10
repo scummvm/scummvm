@@ -255,7 +255,9 @@ void Player_Towns_v1::startSound(int sound) {
 		uint16 len = READ_LE_UINT16(ptr) + 2;
 		playPcmTrack(sound, ptr + 6, velocity, 64, note ? note : (len > 50 ? ptr[50] : 60), READ_LE_UINT16(ptr + 10));
 
-	} else if (type == 1) {
+		// WORKAROUND for bug #1873 INDY3 FMTOWNS: Music in Venice is distorted
+		// The resource for sound 40 accidently sets the sound type to 255 instead of 1.
+	} else if (type == 1 || (_vm->_game.id == GID_INDY3 && sound == 40)) {
 		playEuphonyTrack(sound, ptr + 6);
 
 	} else if (type == 2) {
@@ -410,7 +412,9 @@ void Player_Towns_v1::restoreAfterLoad() {
 		if (_vm->_game.version != 3)
 			ptr += 2;
 
-		if (ptr[7] == 1) {
+		// WORKAROUND for bug #1873 INDY3 FMTOWNS: Music in Venice is distorted
+		// The resource for sound 40 accidently sets the sound type to 255 instead of 1.
+		if (ptr[7] == 1 || (_vm->_game.id == GID_INDY3 && _eupCurrentSound == 40)) {
 			setSoundVolume(_eupCurrentSound, _eupVolLeft, _eupVolRight);
 			playEuphonyTrack(_eupCurrentSound, ptr);
 		}
