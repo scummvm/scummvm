@@ -2200,7 +2200,7 @@ void Scene104::actions() {
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[14], 6);
 			_game.syncTimers(1, _globals._sequenceIndexes[14], 4, 0);
 
-			_globals._spriteIndexes[15] = _scene->_sprites.addSprites(formAnimName('e', 3), 0x1000 | 0x2000);
+			_globals._spriteIndexes[15] = _scene->_sprites.addSprites(formAnimName('e', 3), PALFLAG_ALL_TO_CLOSEST | PALFLAG_ANY_TO_CLOSEST);
 			_globals._animationIndexes[1] = _scene->loadAnimation(formAnimName('m', 2), 0);
 			_anim1ActvFl = false;
 			_anim5ActvFl = true;
