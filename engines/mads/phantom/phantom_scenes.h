@@ -485,7 +485,6 @@ protected:
 };
 
 } // End of namespace Phantom
-
 } // End of namespace MADS
 
 #endif /* MADS_PHANTOM_SCENES_H */

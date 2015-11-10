@@ -566,13 +566,15 @@ int SequenceList::setTimingTrigger(int delay, int code) {
 	return -1;
 }
 
-int SequenceList::setTrigger(int idx, int trigger_type, int trigger_sprite, int trigger_code) {
-	warning("TODO: SequenceList::setTrigger");
-	return -1;
-}
-
 void SequenceList::setSeqPlayer(int idx, bool flag) {
-	warning("TODO: SequenceList::setSeqPlayer");
+	Player &player = _vm->_game->_player;
+	int yp = player._playerPos.y + (player._centerOfGravity * player._currentScale) / 100;
+	setPosition(idx, Common::Point(player._playerPos.x, yp));
+	setDepth(idx, player._currentDepth);
+	setScale(idx, player._currentScale);
+
+	if (flag)
+		_vm->_game->syncTimers(1, idx, 2, 0);
 }
 
 } // End of namespace

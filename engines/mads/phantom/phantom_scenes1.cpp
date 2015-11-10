@@ -1160,7 +1160,7 @@ void Scene103::step() {
 		_globals._sequenceIndexes[1] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[1], false, 8, 1);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 14);
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[1], 1, 6);
-		_scene->_sequences.setTrigger(_globals._sequenceIndexes[1], 0, 0, 66);
+		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[1], SEQUENCE_TRIGGER_EXPIRE, 0, 66);
 		_vm->_sound->command(66);
 		break;
 
@@ -1187,7 +1187,7 @@ void Scene103::step() {
 	case 100:
 		_scene->deleteSequence(_globals._sequenceIndexes[10]);
 		_globals._sequenceIndexes[10] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[10], false, 6, 1);
-		_scene->_sequences.setTrigger(_globals._sequenceIndexes[10], 0, 0, 101);
+		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[10], SEQUENCE_TRIGGER_EXPIRE, 0, 101);
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[10], -1, -2);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[10], 4);
 		break;
@@ -1215,7 +1215,7 @@ void Scene103::step() {
 				_globals._sequenceIndexes[0] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[0], false, 6, 1);
 				_scene->_sequences.setDepth(_globals._sequenceIndexes[0], 14);
 				_scene->_sequences.setAnimRange(_globals._sequenceIndexes[0], -1, -2);
-				_scene->_sequences.setTrigger(_globals._sequenceIndexes[0], 0, 0, 105);
+				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[0], SEQUENCE_TRIGGER_EXPIRE, 0, 105);
 			}
 		} else if (_anim2ActvFl) {
 			if ((_scene->getAnimFrame(_globals._animationIndexes[2]) == 7) && !_guardFrameFl) {
@@ -1226,7 +1226,7 @@ void Scene103::step() {
 				_globals._sequenceIndexes[0] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[0], false, 6, 1);
 				_scene->_sequences.setDepth(_globals._sequenceIndexes[0], 14);
 				_scene->_sequences.setAnimRange(_globals._sequenceIndexes[0], -1, -2);
-				_scene->_sequences.setTrigger(_globals._sequenceIndexes[0], 0, 0, 110);
+				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[0], SEQUENCE_TRIGGER_EXPIRE, 0, 110);
 			}
 		}
 		break;
@@ -1600,8 +1600,8 @@ void Scene103::actions() {
 				_globals._sequenceIndexes[2] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[2], false, 5, 2);
 				_scene->_sequences.setAnimRange(_globals._sequenceIndexes[2], -1, -2);
 				_scene->_sequences.setSeqPlayer(_globals._sequenceIndexes[2], true);
-				_scene->_sequences.setTrigger(_globals._sequenceIndexes[2], 0, 0, 2);
-				_scene->_sequences.setTrigger(_globals._sequenceIndexes[2], 2, 3, 70);
+				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[2], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[2], SEQUENCE_TRIGGER_SPRITE, 3, 70);
 				break;
 
 			case 2:
@@ -1621,7 +1621,7 @@ void Scene103::actions() {
 				_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 8, 1);
 				_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 14);
 				_scene->_sequences.setAnimRange(_globals._sequenceIndexes[1], -1, -2);
-				_scene->_sequences.setTrigger(_globals._sequenceIndexes[1], 0, 0, 71);
+				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[1], SEQUENCE_TRIGGER_EXPIRE, 0, 71);
 				_vm->_sound->command(66);
 				break;
 
@@ -1644,7 +1644,7 @@ void Scene103::actions() {
 				_globals._sequenceIndexes[2] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[2], false, 5, 1);
 				_scene->_sequences.setAnimRange(_globals._sequenceIndexes[2], 1, 4);
 				_scene->_sequences.setSeqPlayer(_globals._sequenceIndexes[2], true);
-				_scene->_sequences.setTrigger(_globals._sequenceIndexes[2], 0, 0, 1);
+				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[2], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
 				break;
 
 			case 1: {
@@ -1662,7 +1662,7 @@ void Scene103::actions() {
 				_globals._sequenceIndexes[2] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[2], false, 5, 1);
 				_scene->_sequences.setAnimRange(_globals._sequenceIndexes[2], 1, 4);
 				_scene->_sequences.setSeqPlayer(_globals._sequenceIndexes[2], false);
-				_scene->_sequences.setTrigger(_globals._sequenceIndexes[2], 0, 0, 3);
+				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[2], SEQUENCE_TRIGGER_EXPIRE, 0, 3);
 				break;
 
 			case 3:
@@ -1692,8 +1692,8 @@ void Scene103::actions() {
 			_globals._sequenceIndexes[8] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[8], false, 5, 2);
 			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[8], 1, 5);
 			_scene->_sequences.setSeqPlayer(_globals._sequenceIndexes[8], true);
-			_scene->_sequences.setTrigger(_globals._sequenceIndexes[8], 2, 5, 1);
-			_scene->_sequences.setTrigger(_globals._sequenceIndexes[8], 0, 0, 2);
+			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[8], SEQUENCE_TRIGGER_SPRITE, 5, 1);
+			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[8], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
 			_action._inProgress = false;
 			return;
 
@@ -1753,7 +1753,7 @@ void Scene103::actions() {
 				_globals._sequenceIndexes[11] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[11], false, 6, 1);
 				_scene->_sequences.setDepth(_globals._sequenceIndexes[11], 5);
 				_scene->_sequences.setAnimRange(_globals._sequenceIndexes[11], -1, -2);
-				_scene->_sequences.setTrigger(_globals._sequenceIndexes[11], 0, 0, 1);
+				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[11], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
 				break;
 
 			case 1:
@@ -1780,7 +1780,7 @@ void Scene103::actions() {
 				_globals._sequenceIndexes[10] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[10], false, 6, 1);
 				_scene->_sequences.setDepth(_globals._sequenceIndexes[10], 4);
 				_scene->_sequences.setAnimRange(_globals._sequenceIndexes[10], -1, -2);
-				_scene->_sequences.setTrigger(_globals._sequenceIndexes[10], 0, 0, 1);
+				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[10], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
 				if (!_sitFl)
 					_game.syncTimers(1, _globals._sequenceIndexes[10], 3, _globals._animationIndexes[5]);
 				_sitFl = false;
@@ -2693,7 +2693,7 @@ void Scene104::actions() {
 				_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 8, 1);
 				_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 13);
 				_scene->_sequences.setAnimRange(_globals._sequenceIndexes[1], 1, 16);
-				_scene->_sequences.setTrigger(_globals._sequenceIndexes[1], SEQUENCE_TRIGGER_EXPIRE, 0, 60);
+				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[1], SEQUENCE_TRIGGER_EXPIRE, 0, 60);
 				break;
 
 			case 60:
@@ -2737,7 +2737,7 @@ void Scene104::actions() {
 			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[3], -1, 4);
 			_scene->_sequences.setPosition(_globals._sequenceIndexes[3], _game._player._playerPos);
 			_scene->_sequences.setSeqPlayer(_globals._sequenceIndexes[3], true);
-			_scene->_sequences.setTrigger(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
+			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
 			break;
 
 		case 1:
@@ -3715,7 +3715,7 @@ void Scene105::step() {
 		_globals._sequenceIndexes[2] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[2], false, 8, 1);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 10);
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[2], 1, 8);
-		_scene->_sequences.setTrigger(_globals._sequenceIndexes[2], 0, 0, 61);
+		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[2], SEQUENCE_TRIGGER_EXPIRE, 0, 61);
 		_vm->_sound->command(66);
 		break;
 
@@ -3832,8 +3832,8 @@ void Scene105::actions() {
 			_globals._sequenceIndexes[5] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[5], true, 5, 2);
 			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[5], 1, 5);
 			_scene->_sequences.setSeqPlayer(_globals._sequenceIndexes[5], true);
-			_scene->_sequences.setTrigger(_globals._sequenceIndexes[5], 2, 5, 1);
-			_scene->_sequences.setTrigger(_globals._sequenceIndexes[5], 0, 0, 2);
+			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[5], SEQUENCE_TRIGGER_SPRITE, 5, 1);
+			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[5], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
 			break;
 
 		case 1:
@@ -3871,8 +3871,8 @@ void Scene105::actions() {
 			_globals._sequenceIndexes[6] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[6], true, 5, 2);
 			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[6], 1, 4);
 			_scene->_sequences.setSeqPlayer(_globals._sequenceIndexes[6], true);
-			_scene->_sequences.setTrigger(_globals._sequenceIndexes[6], 2, 4, 1);
-			_scene->_sequences.setTrigger(_globals._sequenceIndexes[6], 0, 0, 2);
+			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[6], SEQUENCE_TRIGGER_SPRITE, 4, 1);
+			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[6], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
 			break;
 
 		case 1:
@@ -3910,8 +3910,8 @@ void Scene105::actions() {
 				_globals._sequenceIndexes[6] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[6], true, 5, 2);
 				_scene->_sequences.setAnimRange(_globals._sequenceIndexes[6], 1, 4);
 				_scene->_sequences.setSeqPlayer(_globals._sequenceIndexes[6], true);
-				_scene->_sequences.setTrigger(_globals._sequenceIndexes[6], 2, 4, 65);
-				_scene->_sequences.setTrigger(_globals._sequenceIndexes[6], 0, 0, 2);
+				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[6], SEQUENCE_TRIGGER_SPRITE, 4, 65);
+				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[6], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
 				break;
 
 			case 2:
@@ -3929,7 +3929,7 @@ void Scene105::actions() {
 				_globals._sequenceIndexes[2] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[2], false, 8, 1);
 				_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 14);
 				_scene->_sequences.setAnimRange(_globals._sequenceIndexes[2], 1, 8);
-				_scene->_sequences.setTrigger(_globals._sequenceIndexes[2], 0, 0, 66);
+				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[2], SEQUENCE_TRIGGER_EXPIRE, 0, 66);
 				_vm->_sound->command(66);
 				break;
 
@@ -3953,7 +3953,7 @@ void Scene105::actions() {
 				_globals._sequenceIndexes[6] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[6], true, 5, 1);
 				_scene->_sequences.setAnimRange(_globals._sequenceIndexes[6], 1, 4);
 				_scene->_sequences.setSeqPlayer(_globals._sequenceIndexes[6], true);
-				_scene->_sequences.setTrigger(_globals._sequenceIndexes[6], 0, 0, 1);
+				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[6], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
 				break;
 
 			case 1: {
@@ -3971,7 +3971,7 @@ void Scene105::actions() {
 				_globals._sequenceIndexes[6] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[6], true, 5, 1);
 				_scene->_sequences.setAnimRange(_globals._sequenceIndexes[6], 1, 4);
 				_scene->_sequences.setSeqPlayer(_globals._sequenceIndexes[6], false);
-				_scene->_sequences.setTrigger(_globals._sequenceIndexes[6], 0, 0, 3);
+				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[6], SEQUENCE_TRIGGER_EXPIRE, 0, 3);
 				break;
 
 			case 3:
@@ -4306,7 +4306,7 @@ void Scene106::step() {
 		_globals._sequenceIndexes[2] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[2], false, 8, 1);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 14);
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[2], 1, 5);
-		_scene->_sequences.setTrigger(_globals._sequenceIndexes[2], 0, 0, 61);
+		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[2], SEQUENCE_TRIGGER_EXPIRE, 0, 61);
 		break;
 
 	case 61:
@@ -4335,8 +4335,8 @@ void Scene106::actions() {
 				_globals._sequenceIndexes[5] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[5], false, 5, 2);
 				_scene->_sequences.setAnimRange(_globals._sequenceIndexes[5], 1, 5);
 				_scene->_sequences.setSeqPlayer(_globals._sequenceIndexes[5], true);
-				_scene->_sequences.setTrigger(_globals._sequenceIndexes[5], 2, 5, 1);
-				_scene->_sequences.setTrigger(_globals._sequenceIndexes[5], 0, 0, 2);
+				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[5], SEQUENCE_TRIGGER_SPRITE, 5, 1);
+				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[5], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
 				break;
 
 			case 1:
@@ -4374,9 +4374,8 @@ void Scene106::actions() {
 				_globals._sequenceIndexes[5] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[5], true, 5, 2);
 				_scene->_sequences.setAnimRange(_globals._sequenceIndexes[5], 1, 5);
 				_scene->_sequences.setSeqPlayer(_globals._sequenceIndexes[5], true);
-				_scene->_sequences.setTrigger(_globals._sequenceIndexes[5],
-					2, 5, 1);
-				_scene->_sequences.setTrigger(_globals._sequenceIndexes[5], 0, 0, 2);
+				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[5], SEQUENCE_TRIGGER_SPRITE, 5, 1);
+				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[5], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
 				_globals[kPlayerScore] += 5;
 				break;
 
@@ -4480,7 +4479,7 @@ void Scene106::actions() {
 				_scene->_sequences.setDepth(_globals._sequenceIndexes[0], 2);
 				_scene->_sequences.setAnimRange(_globals._sequenceIndexes[0], 1, 9);
 				_scene->_sequences.setTimingTrigger(6, 2);
-				_scene->_sequences.setTrigger(_globals._sequenceIndexes[0], 0, 0, 1);
+				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[0], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
 				break;
 
 			case 1:
@@ -4524,8 +4523,8 @@ void Scene106::actions() {
 			_globals._sequenceIndexes[3] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[3], false, 5, 2);
 			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[3], 1, 4);
 			_scene->_sequences.setSeqPlayer(_globals._sequenceIndexes[3], true);
-			_scene->_sequences.setTrigger(_globals._sequenceIndexes[3], 2, 4, 65);
-			_scene->_sequences.setTrigger(_globals._sequenceIndexes[3], 0, 0, 67);
+			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_SPRITE, 4, 65);
+			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_EXPIRE, 0, 67);
 			break;
 
 		case 65:
@@ -4534,7 +4533,7 @@ void Scene106::actions() {
 			_globals._sequenceIndexes[2] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[2], false, 8, 1);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 14);
 			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[2], 1, 5);
-			_scene->_sequences.setTrigger(_globals._sequenceIndexes[2], 0, 0, 66);
+			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[2], SEQUENCE_TRIGGER_EXPIRE, 0, 66);
 			break;
 
 		case 66: {
@@ -4556,7 +4555,7 @@ void Scene106::actions() {
 			_globals._sequenceIndexes[2] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[2], false, 8, 1);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 1);
 			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[2], -1, -2);
-			_scene->_sequences.setTrigger(_globals._sequenceIndexes[2], 0, 0, 69);
+			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[2], SEQUENCE_TRIGGER_EXPIRE, 0, 69);
 			break;
 
 		case 69:
@@ -4833,8 +4832,8 @@ void Scene107::actions() {
 			_globals._sequenceIndexes[1] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[1], false, 5, 2);
 			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[1], 1, 5);
 			_scene->_sequences.setSeqPlayer(_globals._sequenceIndexes[1], true);
-			_scene->_sequences.setTrigger(_globals._sequenceIndexes[1], 2, 5, 1);
-			_scene->_sequences.setTrigger(_globals._sequenceIndexes[1], 0, 0, 2);
+			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[1], SEQUENCE_TRIGGER_SPRITE, 5, 1);
+			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[1], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
 			break;
 
 		case 1:
@@ -5730,7 +5729,7 @@ void Scene109::step() {
 		_globals._sequenceIndexes[0] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[0], false, 8, 1);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[0], 14);
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[0], 1, 3);
-		_scene->_sequences.setTrigger(_globals._sequenceIndexes[0], 0, 0, 61);
+		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[0], SEQUENCE_TRIGGER_EXPIRE, 0, 61);
 		break;
 
 	case 61:
@@ -5748,7 +5747,7 @@ void Scene109::step() {
 		_globals._sequenceIndexes[1] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[1], false, 8, 1);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 14);
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[1], 1, 3);
-		_scene->_sequences.setTrigger(_globals._sequenceIndexes[1], 0, 0, 66);
+		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[1], SEQUENCE_TRIGGER_EXPIRE, 0, 66);
 		break;
 
 	case 66:
@@ -5949,8 +5948,8 @@ void Scene109::actions() {
 			_globals._sequenceIndexes[8] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[8], true, 5, 2);
 			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[8], -1, -2);
 			_scene->_sequences.setSeqPlayer(_globals._sequenceIndexes[8], true);
-			_scene->_sequences.setTrigger(_globals._sequenceIndexes[8], 0, 0, 2);
-			_scene->_sequences.setTrigger(_globals._sequenceIndexes[8], 2, 4, 75);
+			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[8], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[8], SEQUENCE_TRIGGER_SPRITE, 4, 75);
 			break;
 
 		case 2:
@@ -5977,14 +5976,12 @@ void Scene109::actions() {
 				_globals._sequenceIndexes[0] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[0], false, 8, 1);
 				_scene->_sequences.setDepth(_globals._sequenceIndexes[0], 14);
 				_scene->_sequences.setAnimRange(_globals._sequenceIndexes[0], 1, 3);
-				_scene->_sequences.setTrigger(_globals._sequenceIndexes[0],
-					0, 0, 76);
+				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[0], SEQUENCE_TRIGGER_EXPIRE, 0, 76);
 			} else if (_currentFloor == 2) {
 				_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 8, 1);
 				_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 14);
 				_scene->_sequences.setAnimRange(_globals._sequenceIndexes[1], 1, 3);
-				_scene->_sequences.setTrigger(_globals._sequenceIndexes[1],
-					0, 0, 76);
+				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[1], SEQUENCE_TRIGGER_EXPIRE, 0, 76);
 			}
 			break;
 
@@ -6179,7 +6176,7 @@ void Scene110::actions() {
 			_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 5, 1);
 			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[1], 1, 4);
 			_scene->_sequences.setSeqPlayer(_globals._sequenceIndexes[1], true);
-			_scene->_sequences.setTrigger(_globals._sequenceIndexes[1], 0, 0, 1);
+			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[1], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
 			break;
 
 		case 1: {
@@ -6197,7 +6194,7 @@ void Scene110::actions() {
 			_globals._sequenceIndexes[1] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[1], false, 5, 1);
 			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[1], 1, 4);
 			_scene->_sequences.setSeqPlayer(_globals._sequenceIndexes[1], false);
-			_scene->_sequences.setTrigger(_globals._sequenceIndexes[1], 0, 0, 3);
+			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[1], SEQUENCE_TRIGGER_EXPIRE, 0, 3);
 			break;
 
 		case 3:
@@ -6229,7 +6226,7 @@ void Scene110::actions() {
 				_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 5, 1);
 				_scene->_sequences.setAnimRange(_globals._sequenceIndexes[1], 1, 4);
 				_scene->_sequences.setSeqPlayer(_globals._sequenceIndexes[1], true);
-				_scene->_sequences.setTrigger(_globals._sequenceIndexes[1], 0, 0, 1);
+				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[1], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
 				break;
 
 			case 1: {
@@ -6247,7 +6244,7 @@ void Scene110::actions() {
 				_globals._sequenceIndexes[1] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[1], false, 5, 1);
 				_scene->_sequences.setAnimRange(_globals._sequenceIndexes[1], 1, 4);
 				_scene->_sequences.setSeqPlayer(_globals._sequenceIndexes[1], false);
-				_scene->_sequences.setTrigger(_globals._sequenceIndexes[1], 0, 0, 3);
+				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[1], SEQUENCE_TRIGGER_EXPIRE, 0, 3);
 				break;
 
 			case 3:
@@ -6273,8 +6270,8 @@ void Scene110::actions() {
 				_globals._sequenceIndexes[1] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[1], false, 7, 2);
 				_scene->_sequences.setAnimRange(_globals._sequenceIndexes[1], 1, 4);
 				_scene->_sequences.setSeqPlayer(_globals._sequenceIndexes[1], true);
-				_scene->_sequences.setTrigger(_globals._sequenceIndexes[1], 2, 4, 1);
-				_scene->_sequences.setTrigger(_globals._sequenceIndexes[1], 0, 0, 3);
+				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[1], SEQUENCE_TRIGGER_SPRITE, 4, 1);
+				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[1], SEQUENCE_TRIGGER_EXPIRE, 0, 3);
 				break;
 
 			case 1:
@@ -6282,7 +6279,7 @@ void Scene110::actions() {
 				_globals._sequenceIndexes[2] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[2], false, 10, 1);
 				_scene->_sequences.setAnimRange(_globals._sequenceIndexes[2], -1, -2);
 				_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 10);
-				_scene->_sequences.setTrigger(_globals._sequenceIndexes[2], 0, 0, 2);
+				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[2], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
 				break;
 
 			case 2:
@@ -6598,7 +6595,7 @@ void Scene111::step() {
 	case 60:
 		_scene->deleteSequence(_globals._sequenceIndexes[5]);
 		_globals._sequenceIndexes[5] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[5], false, 7, 1);
-		_scene->_sequences.setTrigger(_globals._sequenceIndexes[5], 0, 0, 62);
+		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[5], SEQUENCE_TRIGGER_EXPIRE, 0, 62);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[5], 14);
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[5], -1, -2);
 		break;
@@ -6655,7 +6652,7 @@ void Scene111::actions() {
 			_globals._sequenceIndexes[0] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[0], false, 5, 1);
 			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[0], 1, 4);
 			_scene->_sequences.setSeqPlayer(_globals._sequenceIndexes[0], true);
-			_scene->_sequences.setTrigger(_globals._sequenceIndexes[0], 0, 0, 1);
+			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[0], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
 			_action._inProgress = false;
 			return;
 
@@ -6675,7 +6672,7 @@ void Scene111::actions() {
 			_globals._sequenceIndexes[0] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[0], false, 5, 1);
 			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[0], 1, 4);
 			_scene->_sequences.setSeqPlayer(_globals._sequenceIndexes[0], false);
-			_scene->_sequences.setTrigger(_globals._sequenceIndexes[0], 0, 0, 3);
+			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[0], SEQUENCE_TRIGGER_EXPIRE, 0, 3);
 			_action._inProgress = false;
 			return;
 
@@ -6705,7 +6702,7 @@ void Scene111::actions() {
 				_globals._sequenceIndexes[0] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[0], false, 5, 1);
 				_scene->_sequences.setAnimRange(_globals._sequenceIndexes[0], 1, 4);
 				_scene->_sequences.setSeqPlayer(_globals._sequenceIndexes[0], true);
-				_scene->_sequences.setTrigger(_globals._sequenceIndexes[0], 0, 0, 1);
+				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[0], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
 				_action._inProgress = false;
 				return;
 
@@ -6725,7 +6722,7 @@ void Scene111::actions() {
 				_globals._sequenceIndexes[0] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[0], false, 5, 1);
 				_scene->_sequences.setAnimRange(_globals._sequenceIndexes[0], 1, 4);
 				_scene->_sequences.setSeqPlayer(_globals._sequenceIndexes[0], false);
-				_scene->_sequences.setTrigger(_globals._sequenceIndexes[0], 0, 0, 3);
+				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[0], SEQUENCE_TRIGGER_EXPIRE, 0, 3);
 				_action._inProgress = false;
 				return;
 
@@ -9238,8 +9235,8 @@ void Scene114::actions() {
 			_globals._sequenceIndexes[1] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[1], false, 6, 2);
 			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[1], 1, 3);
 			_scene->_sequences.setSeqPlayer(_globals._sequenceIndexes[1], true);
-			_scene->_sequences.setTrigger(_globals._sequenceIndexes[1], 2, 3, 1);
-			_scene->_sequences.setTrigger(_globals._sequenceIndexes[1], 0, 0, 2);
+			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[1], SEQUENCE_TRIGGER_SPRITE, 3, 1);
+			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[1], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
 			break;
 
 		case 1:
