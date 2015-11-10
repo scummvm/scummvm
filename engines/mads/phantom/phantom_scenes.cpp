@@ -41,6 +41,7 @@ namespace Phantom {
 SceneLogic *SceneFactory::createScene(MADSEngine *vm) {
 	Scene &scene = vm->_game->_scene;
 
+	// When changing from one section to the other, set the scaling velocity
 	if ((scene._nextSceneId / 100) != (scene._priorSceneId / 100))
 		vm->_game->_player._scalingVelocity = true;
 
