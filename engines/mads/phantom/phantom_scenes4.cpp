@@ -103,26 +103,26 @@ void Scene401::enter() {
 	_scene->_hotspots.activate(NOUN_SKULL, false);
 	_scene->_hotspots.activate(NOUN_POT, false);
 
-	_globals._spriteIndexes[8] = _scene->_sprites.addSprites("*RRD_9", false);
-	_globals._spriteIndexes[9] = _scene->_sprites.addSprites(formAnimName('f', 0), false);
-	_globals._spriteIndexes[10] = _scene->_sprites.addSprites(formAnimName('f', 1), false);
-	_globals._spriteIndexes[11] = _scene->_sprites.addSprites(formAnimName('f', 2), false);
-	_globals._spriteIndexes[12] = _scene->_sprites.addSprites(formAnimName('f', 3), false);
+	_globals._spriteIndexes[8] = _scene->_sprites.addSprites("*RRD_9");
+	_globals._spriteIndexes[9] = _scene->_sprites.addSprites(formAnimName('f', 0));
+	_globals._spriteIndexes[10] = _scene->_sprites.addSprites(formAnimName('f', 1));
+	_globals._spriteIndexes[11] = _scene->_sprites.addSprites(formAnimName('f', 2));
+	_globals._spriteIndexes[12] = _scene->_sprites.addSprites(formAnimName('f', 3));
 
 	if (_game.exitCatacombs(0) == -1) {
-		_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('c', 1), false);
+		_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('c', 1));
 		_scene->drawToBackground(_globals._spriteIndexes[1], 1, Common::Point(-32000, -32000), 0, 100);
 		_scene->_hotspots.activate(NOUN_ARCHWAY_TO_NORTH, false);
 	}
 
 	if (_game.exitCatacombs(3) == -1) {
-		_globals._spriteIndexes[0] = _scene->_sprites.addSprites(formAnimName('c', 0), false);
+		_globals._spriteIndexes[0] = _scene->_sprites.addSprites(formAnimName('c', 0));
 		_scene->drawToBackground(_globals._spriteIndexes[0], 1, Common::Point(-32000, -32000), 0, 100);
 		_scene->_hotspots.activate(NOUN_ARCHWAY_TO_WEST, false);
 	}
 
 	if (_game.exitCatacombs(1) == -1) {
-		_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('c', 2), false);
+		_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('c', 2));
 		_scene->drawToBackground(_globals._spriteIndexes[2], 1, Common::Point(-32000, -32000), 0, 100);
 		_scene->_hotspots.activate(NOUN_ARCHWAY_TO_EAST, false);
 	}
@@ -131,25 +131,25 @@ void Scene401::enter() {
 		_scene->_hotspots.activate(NOUN_MORE_CATACOMBS, false);
 
 	if (_globals[kCatacombsMisc] & MAZE_EVENT_RAT_NEST) {
-		_globals._spriteIndexes[4] = _scene->_sprites.addSprites(formAnimName('c', 4), false);
+		_globals._spriteIndexes[4] = _scene->_sprites.addSprites(formAnimName('c', 4));
 		_scene->drawToBackground(_globals._spriteIndexes[4], 1, Common::Point(-32000, -32000), 0, 100);
 		_scene->_hotspots.activate(NOUN_RATS_NEST, true);
 	}
 
 	if (_globals[kCatacombsMisc] & MAZE_EVENT_SKULL) {
-		_globals._spriteIndexes[5] = _scene->_sprites.addSprites(formAnimName('c', 5), false);
+		_globals._spriteIndexes[5] = _scene->_sprites.addSprites(formAnimName('c', 5));
 		_scene->drawToBackground(_globals._spriteIndexes[5], 1, Common::Point(-32000, -32000), 0, 100);
 		_scene->_hotspots.activate(NOUN_SKULL, true);
 	}
 
 	if (_globals[kCatacombsMisc] & MAZE_EVENT_POT) {
-		_globals._spriteIndexes[6] = _scene->_sprites.addSprites(formAnimName('c', 6), false);
+		_globals._spriteIndexes[6] = _scene->_sprites.addSprites(formAnimName('c', 6));
 		_scene->drawToBackground(_globals._spriteIndexes[6], 1, Common::Point(-32000, -32000), 0, 100);
 		_scene->_hotspots.activate(NOUN_POT, true);
 	}
 
 	if (_globals[kCatacombsMisc] & MAZE_EVENT_BRICK) {
-		_globals._spriteIndexes[7] = _scene->_sprites.addSprites(formAnimName('c', 7), false);
+		_globals._spriteIndexes[7] = _scene->_sprites.addSprites(formAnimName('c', 7));
 		_scene->drawToBackground(_globals._spriteIndexes[7], 1, Common::Point(-32000, -32000), 0, 100);
 	}
 
@@ -601,20 +601,20 @@ void Scene403::enter() {
 	_scene->_hotspots.activate(NOUN_PLANK, false);
 	_scene->_hotspots.activate(NOUN_GATE, false);
 
-	_globals._spriteIndexes[8] = _scene->_sprites.addSprites("*RRD_9", false);
-	_globals._spriteIndexes[9] = _scene->_sprites.addSprites(formAnimName('f', 0), false);
-	_globals._spriteIndexes[10] = _scene->_sprites.addSprites(formAnimName('f', 1), false);
-	_globals._spriteIndexes[11] = _scene->_sprites.addSprites(formAnimName('f', 2), false);
-	_globals._spriteIndexes[12] = _scene->_sprites.addSprites(formAnimName('f', 3), false);
+	_globals._spriteIndexes[8] = _scene->_sprites.addSprites("*RRD_9");
+	_globals._spriteIndexes[9] = _scene->_sprites.addSprites(formAnimName('f', 0));
+	_globals._spriteIndexes[10] = _scene->_sprites.addSprites(formAnimName('f', 1));
+	_globals._spriteIndexes[11] = _scene->_sprites.addSprites(formAnimName('f', 2));
+	_globals._spriteIndexes[12] = _scene->_sprites.addSprites(formAnimName('f', 3));
 
 	if (_game.exitCatacombs(0) == -1) {
-		_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('c', 1), false);
+		_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('c', 1));
 		_scene->drawToBackground(_globals._spriteIndexes[1], 1, Common::Point(-32000, -32000), 0, 100);
 		_scene->_hotspots.activate(NOUN_ARCHWAY_TO_NORTH, false);
 	}
 
 	if (_game.exitCatacombs(3) == -1) {
-		_globals._spriteIndexes[0] = _scene->_sprites.addSprites(formAnimName('c', 0), false);
+		_globals._spriteIndexes[0] = _scene->_sprites.addSprites(formAnimName('c', 0));
 		_scene->drawToBackground(_globals._spriteIndexes[0], 1, Common::Point(-32000, -32000), 0, 100);
 		_scene->_hotspots.activate(NOUN_ARCHWAY_TO_WEST, false);
 	}
@@ -622,42 +622,42 @@ void Scene403::enter() {
 	if (_game.exitCatacombs(1) == -1) {
 		_scene->_hotspots.activate(NOUN_MORE_CATACOMBS, false);
 		_scene->_hotspots.activate(NOUN_GATE, true);
-		_globals._spriteIndexes[13] = _scene->_sprites.addSprites(formAnimName('c', 9), false);
+		_globals._spriteIndexes[13] = _scene->_sprites.addSprites(formAnimName('c', 9));
 		_scene->drawToBackground(_globals._spriteIndexes[13], 1, Common::Point(-32000, -32000), 0, 100);
 	}
 
 	if (_globals[kCatacombsMisc] & MAZE_EVENT_HOLE) {
-		_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('c', 3), false);
+		_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('c', 3));
 		_scene->drawToBackground(_globals._spriteIndexes[2], 1, Common::Point(-32000, -32000), 0, 100);
 		_scene->_hotspots.activate(NOUN_HOLE, true);
 	}
 
 	if (_globals[kCatacombsMisc] & MAZE_EVENT_WEB) {
-		_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('c', 4), false);
+		_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('c', 4));
 		_scene->drawToBackground(_globals._spriteIndexes[3], 1, Common::Point(-32000, -32000), 0, 100);
 		_scene->_hotspots.activate(NOUN_WEB, true);
 	}
 
 	if (_globals[kCatacombsMisc] & MAZE_EVENT_BRICK) {
-		_globals._spriteIndexes[4] = _scene->_sprites.addSprites(formAnimName('c', 5), false);
+		_globals._spriteIndexes[4] = _scene->_sprites.addSprites(formAnimName('c', 5));
 		_scene->drawToBackground(_globals._spriteIndexes[4], 1, Common::Point(-32000, -32000), 0, 100);
 		_scene->_hotspots.activateAtPos(NOUN_EXPOSED_BRICK, false, Common::Point(178, 35));
 	}
 
 	if (_globals[kCatacombsMisc] & MAZE_EVENT_RAT_NEST) {
-		_globals._spriteIndexes[5] = _scene->_sprites.addSprites(formAnimName('c', 6), false);
+		_globals._spriteIndexes[5] = _scene->_sprites.addSprites(formAnimName('c', 6));
 		_scene->drawToBackground(_globals._spriteIndexes[5], 1, Common::Point(-32000, -32000), 0, 100);
 		_scene->_hotspots.activate(NOUN_RATS_NEST, true);
 	}
 
 	if (_globals[kCatacombsMisc] & MAZE_EVENT_SKULL) {
-		_globals._spriteIndexes[6] = _scene->_sprites.addSprites(formAnimName('c', 7), false);
+		_globals._spriteIndexes[6] = _scene->_sprites.addSprites(formAnimName('c', 7));
 		_scene->drawToBackground(_globals._spriteIndexes[6], 1, Common::Point(-32000, -32000), 0, 100);
 		_scene->_hotspots.activate(NOUN_SKULL, true);
 	}
 
 	if (_globals[kCatacombsMisc] & MAZE_EVENT_PLANK) {
-		_globals._spriteIndexes[7] = _scene->_sprites.addSprites(formAnimName('c', 8), false);
+		_globals._spriteIndexes[7] = _scene->_sprites.addSprites(formAnimName('c', 8));
 		_scene->drawToBackground(_globals._spriteIndexes[7], 1, Common::Point(-32000, -32000), 0, 100);
 		_scene->_hotspots.activate(NOUN_PLANK, true);
 	}
@@ -1098,27 +1098,27 @@ void Scene404::enter() {
 
 	_anim0ActvFl = false;
 
-	_globals._spriteIndexes[9] = _scene->_sprites.addSprites("*RRD_9", false);
-	_globals._spriteIndexes[10] = _scene->_sprites.addSprites(formAnimName('f', 0), false);
-	_globals._spriteIndexes[11] = _scene->_sprites.addSprites(formAnimName('f', 1), false);
-	_globals._spriteIndexes[12] = _scene->_sprites.addSprites(formAnimName('f', 2), false);
-	_globals._spriteIndexes[13] = _scene->_sprites.addSprites(formAnimName('f', 3), false);
+	_globals._spriteIndexes[9] = _scene->_sprites.addSprites("*RRD_9");
+	_globals._spriteIndexes[10] = _scene->_sprites.addSprites(formAnimName('f', 0));
+	_globals._spriteIndexes[11] = _scene->_sprites.addSprites(formAnimName('f', 1));
+	_globals._spriteIndexes[12] = _scene->_sprites.addSprites(formAnimName('f', 2));
+	_globals._spriteIndexes[13] = _scene->_sprites.addSprites(formAnimName('f', 3));
 
 
 	if (_game.exitCatacombs(0) == -1) {
-		_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('c', 1), false);
+		_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('c', 1));
 		_scene->drawToBackground(_globals._spriteIndexes[1], 1, Common::Point(-32000, -32000), 0, 100);
 		_scene->_hotspots.activate(NOUN_ARCHWAY_TO_NORTH, false);
 	}
 
 	if (_game.exitCatacombs(3) == -1) {
-		_globals._spriteIndexes[0] = _scene->_sprites.addSprites(formAnimName('c', 0), false);
+		_globals._spriteIndexes[0] = _scene->_sprites.addSprites(formAnimName('c', 0));
 		_scene->drawToBackground(_globals._spriteIndexes[0], 1, Common::Point(-32000, -32000), 0, 100);
 		_scene->_hotspots.activate(NOUN_ARCHWAY_TO_WEST, false);
 	}
 
 	if (_game.exitCatacombs(1) == -1) {
-		_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('c', 2), false);
+		_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('c', 2));
 		_scene->drawToBackground(_globals._spriteIndexes[2], 1, Common::Point(-32000, -32000), 0, 100);
 		_scene->_hotspots.activate(NOUN_ARCHWAY_TO_EAST, false);
 	}
@@ -1127,30 +1127,30 @@ void Scene404::enter() {
 		_scene->_hotspots.activate(NOUN_MORE_CATACOMBS, false);
 
 	if (_globals[kCatacombsMisc] & MAZE_EVENT_RAT_NEST) {
-		_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('c', 3), false);
+		_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('c', 3));
 		_scene->drawToBackground(_globals._spriteIndexes[3], 1, Common::Point(-32000, -32000), 0, 100);
 		_scene->_hotspots.activate(NOUN_RATS_NEST, true);
 	}
 
 	if (_globals[kCatacombsMisc] & MAZE_EVENT_WEB) {
-		_globals._spriteIndexes[4] = _scene->_sprites.addSprites(formAnimName('c', 4), false);
+		_globals._spriteIndexes[4] = _scene->_sprites.addSprites(formAnimName('c', 4));
 		_scene->drawToBackground(_globals._spriteIndexes[4], 1, Common::Point(-32000, -32000), 0, 100);
 		_scene->_hotspots.activate(NOUN_WEB, true);
 	}
 
 	if (_globals[kCatacombsMisc] & MAZE_EVENT_POT) {
-		_globals._spriteIndexes[5] = _scene->_sprites.addSprites(formAnimName('c', 5), false);
+		_globals._spriteIndexes[5] = _scene->_sprites.addSprites(formAnimName('c', 5));
 		_scene->drawToBackground(_globals._spriteIndexes[5], 1, Common::Point(-32000, -32000), 0, 100);
 		_scene->_hotspots.activate(NOUN_BROKEN_POT, true);
 	}
 
 	if (_globals[kCatacombsMisc] & MAZE_EVENT_BLOCK) {
-		_globals._spriteIndexes[7] = _scene->_sprites.addSprites(formAnimName('c', 7), false);
+		_globals._spriteIndexes[7] = _scene->_sprites.addSprites(formAnimName('c', 7));
 		_scene->drawToBackground(_globals._spriteIndexes[7], 1, Common::Point(-32000, -32000), 0, 100);
 	}
 
 	if (_globals[kCatacombsMisc] & MAZE_EVENT_FALLEN_BLOCK) {
-		_globals._spriteIndexes[8] = _scene->_sprites.addSprites(formAnimName('c', 8), false);
+		_globals._spriteIndexes[8] = _scene->_sprites.addSprites(formAnimName('c', 8));
 		_scene->drawToBackground(_globals._spriteIndexes[8], 1, Common::Point(-32000, -32000), 0, 100);
 		_scene->_hotspots.activate(NOUN_BLOCK, true);
 	}
@@ -1587,11 +1587,11 @@ void Scene406::setup() {
 void Scene406::enter() {
 	_game.initCatacombs();
 
-	_globals._spriteIndexes[0] = _scene->_sprites.addSprites("*RRD_9", false);
-	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('f', 0), false);
-	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('f', 1), false);
-	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('f', 2), false);
-	_globals._spriteIndexes[4] = _scene->_sprites.addSprites(formAnimName('f', 3), false);
+	_globals._spriteIndexes[0] = _scene->_sprites.addSprites("*RRD_9");
+	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('f', 0));
+	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('f', 1));
+	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('f', 2));
+	_globals._spriteIndexes[4] = _scene->_sprites.addSprites(formAnimName('f', 3));
 
 	if (_scene->_priorSceneId != RETURNING_FROM_LOADING) {
 		switch (_globals[kCatacombsFrom]) {
@@ -1993,11 +1993,11 @@ void Scene407::setup() {
 void Scene407::enter() {
 	_game.initCatacombs();
 
-	_globals._spriteIndexes[0] = _scene->_sprites.addSprites("*RRD_9", false);
-	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('f', 0), false);
-	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('f', 1), false);
-	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('f', 2), false);
-	_globals._spriteIndexes[4] = _scene->_sprites.addSprites(formAnimName('f', 3), false);
+	_globals._spriteIndexes[0] = _scene->_sprites.addSprites("*RRD_9");
+	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('f', 0));
+	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('f', 1));
+	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('f', 2));
+	_globals._spriteIndexes[4] = _scene->_sprites.addSprites(formAnimName('f', 3));
 
 	if (_game.exitCatacombs(3) == -1) {
 		_scene->_hotspots.activateAtPos(NOUN_MORE_CATACOMBS, false, Common::Point(9, 46));
@@ -2463,14 +2463,14 @@ void Scene408::enter() {
 	_game.initCatacombs();
 	_scene->_hotspots.activate(NOUN_COBWEB, false);
 
-	_globals._spriteIndexes[0] = _scene->_sprites.addSprites(formAnimName('c', 0), false);
-	_globals._spriteIndexes[1] = _scene->_sprites.addSprites("*RRD_9", false);
-	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('f', 0), false);
-	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('f', 1), false);
-	_globals._spriteIndexes[4] = _scene->_sprites.addSprites(formAnimName('f', 2), false);
-	_globals._spriteIndexes[5] = _scene->_sprites.addSprites(formAnimName('f', 3), false);
-	_globals._spriteIndexes[6] = _scene->_sprites.addSprites(formAnimName('c', 1), false);
-	_globals._spriteIndexes[7] = _scene->_sprites.addSprites(formAnimName('c', 2), false);
+	_globals._spriteIndexes[0] = _scene->_sprites.addSprites(formAnimName('c', 0));
+	_globals._spriteIndexes[1] = _scene->_sprites.addSprites("*RRD_9");
+	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('f', 0));
+	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('f', 1));
+	_globals._spriteIndexes[4] = _scene->_sprites.addSprites(formAnimName('f', 2));
+	_globals._spriteIndexes[5] = _scene->_sprites.addSprites(formAnimName('f', 3));
+	_globals._spriteIndexes[6] = _scene->_sprites.addSprites(formAnimName('c', 1));
+	_globals._spriteIndexes[7] = _scene->_sprites.addSprites(formAnimName('c', 2));
 
 	if (_game.exitCatacombs(0) == -1) {
 		_scene->drawToBackground(_globals._spriteIndexes[0], 1, Common::Point(-32000, -32000), 0, 100);
@@ -2510,9 +2510,9 @@ void Scene408::enter() {
 	}
 
 	if (_globals[kCatacombsMisc] & MAZE_EVENT_WEB) {
-		_globals._spriteIndexes[8] = _scene->_sprites.addSprites(formAnimName('x', -1), false);
+		_globals._spriteIndexes[8] = _scene->_sprites.addSprites(formAnimName('x', -1));
 		if (!_globals[kCobwebIsCut]) {
-			_globals._spriteIndexes[6] = _scene->_sprites.addSprites(formAnimName('c', 1), false);
+			_globals._spriteIndexes[6] = _scene->_sprites.addSprites(formAnimName('c', 1));
 			_globals._sequenceIndexes[6] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[6], false, 1);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[6], 10);
 			_scene->_hotspots.activate(NOUN_COBWEB, true);
@@ -2533,7 +2533,7 @@ void Scene408::enter() {
 	}
 
 	if (_globals[kCatacombsMisc] & MAZE_EVENT_BRICK) {
-		_globals._spriteIndexes[7] = _scene->_sprites.addSprites(formAnimName('c', 2), false);
+		_globals._spriteIndexes[7] = _scene->_sprites.addSprites(formAnimName('c', 2));
 		_scene->drawToBackground(_globals._spriteIndexes[7], 1, Common::Point(-32000, -32000), 0, 100);
 		_scene->_hotspots.activate(NOUN_EXPOSED_BRICK, false);
 	}
@@ -2931,18 +2931,18 @@ void Scene409::enter() {
 	_scene->loadSpeech(3);
 	_scene->_hotspots.activate(NOUN_SWORD, false);
 
-	_globals._spriteIndexes[8] = _scene->_sprites.addSprites("*RDR_9", false);
-	_globals._spriteIndexes[0] = _scene->_sprites.addSprites("*RRD_9", false);
-	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('f', 0), false);
-	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('f', 1), false);
-	_globals._spriteIndexes[4] = _scene->_sprites.addSprites(formAnimName('f', 2), false);
-	_globals._spriteIndexes[5] = _scene->_sprites.addSprites(formAnimName('f', 3), false);
-	_globals._spriteIndexes[6] = _scene->_sprites.addSprites(formAnimName('x', 0), false);
-	_globals._spriteIndexes[7] = _scene->_sprites.addSprites(formAnimName('a', 0), false);
+	_globals._spriteIndexes[8] = _scene->_sprites.addSprites("*RDR_9");
+	_globals._spriteIndexes[0] = _scene->_sprites.addSprites("*RRD_9");
+	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('f', 0));
+	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('f', 1));
+	_globals._spriteIndexes[4] = _scene->_sprites.addSprites(formAnimName('f', 2));
+	_globals._spriteIndexes[5] = _scene->_sprites.addSprites(formAnimName('f', 3));
+	_globals._spriteIndexes[6] = _scene->_sprites.addSprites(formAnimName('x', 0));
+	_globals._spriteIndexes[7] = _scene->_sprites.addSprites(formAnimName('a', 0));
 
 	if (_game._objects.isInRoom(OBJ_SWORD)) {
-		_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('p', 0), false);
-		_globals._spriteIndexes[0] = _scene->_sprites.addSprites("*RRD_9", false);
+		_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('p', 0));
+		_globals._spriteIndexes[0] = _scene->_sprites.addSprites("*RRD_9");
 		_globals._sequenceIndexes[1] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[1], false, 1);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 14);
 		_scene->_hotspots.activate(NOUN_SWORD, true);
@@ -3523,11 +3523,11 @@ void Scene410::setup() {
 
 void Scene410::enter() {
 	_game._player._visible = false;
-	_globals._spriteIndexes[0] = _scene->_sprites.addSprites(formAnimName('l', 0), false);
-	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('l', 1), false);
-	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('l', 2), false);
-	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('a', 0), false);
-	_globals._spriteIndexes[4] = _scene->_sprites.addSprites(formAnimName('f', 0), false);
+	_globals._spriteIndexes[0] = _scene->_sprites.addSprites(formAnimName('l', 0));
+	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('l', 1));
+	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('l', 2));
+	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('a', 0));
+	_globals._spriteIndexes[4] = _scene->_sprites.addSprites(formAnimName('f', 0));
 
 	for (int i = 1; i < 27; i++) {
 		Common::Point pos;
@@ -4171,60 +4171,60 @@ void Scene453::enter() {
 	_scene->_hotspots.activate(NOUN_HOLE, false);
 	_scene->_hotspots.activate(NOUN_GATE, false);
 
-	_globals._spriteIndexes[8] = _scene->_sprites.addSprites("*RRD_9", false);
-	_globals._spriteIndexes[9] = _scene->_sprites.addSprites(formAnimName('f', 0), false);
-	_globals._spriteIndexes[10] = _scene->_sprites.addSprites(formAnimName('f', 1), false);
-	_globals._spriteIndexes[11] = _scene->_sprites.addSprites(formAnimName('f', 2), false);
-	_globals._spriteIndexes[12] = _scene->_sprites.addSprites(formAnimName('f', 3), false);
+	_globals._spriteIndexes[8] = _scene->_sprites.addSprites("*RRD_9");
+	_globals._spriteIndexes[9] = _scene->_sprites.addSprites(formAnimName('f', 0));
+	_globals._spriteIndexes[10] = _scene->_sprites.addSprites(formAnimName('f', 1));
+	_globals._spriteIndexes[11] = _scene->_sprites.addSprites(formAnimName('f', 2));
+	_globals._spriteIndexes[12] = _scene->_sprites.addSprites(formAnimName('f', 3));
 
 
 	if (_game.exitCatacombs(0) == -1) {
-		_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('c', 1), false);
+		_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('c', 1));
 		_scene->drawToBackground(_globals._spriteIndexes[1], 1, Common::Point(-32000, -32000), 0, 100);
 		_scene->_hotspots.activate(NOUN_ARCHWAY_TO_NORTH, false);
 	}
 
 	if (_game.exitCatacombs(3) == -1) {
-		_globals._spriteIndexes[13] = _scene->_sprites.addSprites(formAnimName('c', 8), false);
+		_globals._spriteIndexes[13] = _scene->_sprites.addSprites(formAnimName('c', 8));
 		_scene->drawToBackground(_globals._spriteIndexes[13], 1, Common::Point(-32000, -32000), 0, 100);
 		_scene->_hotspots.activate(NOUN_MORE_CATACOMBS, false);
 		_scene->_hotspots.activate(NOUN_GATE, true);
 	}
 
 	if (_game.exitCatacombs(1) == -1) {
-		_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('c', 2), false);
+		_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('c', 2));
 		_scene->drawToBackground(_globals._spriteIndexes[2], 1, Common::Point(-32000, -32000), 0, 100);
 		_scene->_hotspots.activate(NOUN_ARCHWAY_TO_EAST, false);
 	}
 
 	if (_globals[kCatacombsMisc] & MAZE_EVENT_DRAIN) {
-		_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('c', 3), false);
+		_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('c', 3));
 		_scene->drawToBackground(_globals._spriteIndexes[3], 1, Common::Point(-32000, -32000), 0, 100);
 		_scene->_hotspots.activate(NOUN_DRAIN, true);
 	}
 
 	if (_globals[kCatacombsMisc] & MAZE_EVENT_RAT_NEST) {
-		_globals._spriteIndexes[4] = _scene->_sprites.addSprites(formAnimName('c', 4), false);
+		_globals._spriteIndexes[4] = _scene->_sprites.addSprites(formAnimName('c', 4));
 		_scene->drawToBackground(_globals._spriteIndexes[4], 1, Common::Point(-32000, -32000), 0, 100);
 		_scene->_hotspots.activate(NOUN_SKULL, true);
 		_scene->_hotspots.activate(NOUN_RATS_NEST, true);
 	}
 
 	if (_globals[kCatacombsMisc] & MAZE_EVENT_WEB) {
-		_globals._spriteIndexes[5] = _scene->_sprites.addSprites(formAnimName('c', 5), false);
+		_globals._spriteIndexes[5] = _scene->_sprites.addSprites(formAnimName('c', 5));
 		_scene->drawToBackground(_globals._spriteIndexes[5], 1, Common::Point(-32000, -32000), 0, 100);
 		_scene->_hotspots.activate(NOUN_WEB, true);
 	}
 
 	if (_globals[kCatacombsMisc] & MAZE_EVENT_BRICK) {
-		_globals._spriteIndexes[6] = _scene->_sprites.addSprites(formAnimName('c', 6), false);
+		_globals._spriteIndexes[6] = _scene->_sprites.addSprites(formAnimName('c', 6));
 		_scene->drawToBackground(_globals._spriteIndexes[6], 1, Common::Point(-32000, -32000), 0, 100);
 		_scene->_hotspots.activateAtPos(NOUN_EXPOSED_BRICK, false, Common::Point(138, 35));
 		_scene->_hotspots.activateAtPos(NOUN_EXPOSED_BRICK, false, Common::Point(84, 27));
 	}
 
 	if (_globals[kCatacombsMisc] & MAZE_EVENT_STONE) {
-		_globals._spriteIndexes[7] = _scene->_sprites.addSprites(formAnimName('c', 7), false);
+		_globals._spriteIndexes[7] = _scene->_sprites.addSprites(formAnimName('c', 7));
 		_scene->drawToBackground(_globals._spriteIndexes[7], 1, Common::Point(-32000, -32000), 0, 100);
 		_scene->_hotspots.activate(NOUN_HOLE, true);
 		_scene->_hotspots.activate(NOUN_STONE, true);
@@ -4648,12 +4648,12 @@ void Scene456::setup() {
 void Scene456::enter() {
 	_game.initCatacombs();
 
-	_globals._spriteIndexes[0] = _scene->_sprites.addSprites(formAnimName('c', 1), false);
-	_globals._spriteIndexes[1] = _scene->_sprites.addSprites("*RRD_9", false);
-	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('f', 0), false);
-	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('f', 1), false);
-	_globals._spriteIndexes[4] = _scene->_sprites.addSprites(formAnimName('f', 2), false);
-	_globals._spriteIndexes[5] = _scene->_sprites.addSprites(formAnimName('f', 3), false);
+	_globals._spriteIndexes[0] = _scene->_sprites.addSprites(formAnimName('c', 1));
+	_globals._spriteIndexes[1] = _scene->_sprites.addSprites("*RRD_9");
+	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('f', 0));
+	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('f', 1));
+	_globals._spriteIndexes[4] = _scene->_sprites.addSprites(formAnimName('f', 2));
+	_globals._spriteIndexes[5] = _scene->_sprites.addSprites(formAnimName('f', 3));
 
 	if (_game.exitCatacombs(1) == -1) {
 		_scene->drawToBackground(_globals._spriteIndexes[0], 1, Common::Point(-32000, -32000), 0, 100);

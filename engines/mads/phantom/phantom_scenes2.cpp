@@ -114,8 +114,8 @@ void Scene201::enter() {
 	_needHoldFl = false;
 
 	_vm->_gameConv->get(16);
-	_globals._spriteIndexes[0] = _scene->_sprites.addSprites(formAnimName('x', 0), false);
-	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('f', 0), false);
+	_globals._spriteIndexes[0] = _scene->_sprites.addSprites(formAnimName('x', 0));
+	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('f', 0));
 
 	if (_globals[kTicketPeoplePresent]) {
 		_globals._animationIndexes[1] = _scene->loadAnimation(formAnimName('s', 1), 0);
@@ -654,9 +654,9 @@ void Scene202::enter() {
 	_vm->_gameConv->get(17);
 	_vm->_gameConv->get(9);
 
-	_globals._spriteIndexes[1] = _scene->_sprites.addSprites("*RDR_9", false);
-	_globals._spriteIndexes[0] = _scene->_sprites.addSprites(formAnimName('x', 0), false);
-	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('f', 0), false);
+	_globals._spriteIndexes[1] = _scene->_sprites.addSprites("*RDR_9");
+	_globals._spriteIndexes[0] = _scene->_sprites.addSprites(formAnimName('x', 0));
+	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('f', 0));
 
 	if (_globals[kTicketPeoplePresent] == 2) {
 		_globals._animationIndexes[0] = _scene->loadAnimation(formAnimName('b', 0), 0);
@@ -1556,13 +1556,13 @@ void Scene203::enter() {
 	_scene->_hotspots.activate(NOUN_PARCHMENT, false);
 	_scene->_hotspots.activate(NOUN_NOTICE, false);
 
-	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('p', 1), false);
-	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('p', 0), false);
-	_globals._spriteIndexes[5] = _scene->_sprites.addSprites(formAnimName('x', 0), false);
-	_globals._spriteIndexes[4] = _scene->_sprites.addSprites("*RDR_6", false);
+	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('p', 1));
+	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('p', 0));
+	_globals._spriteIndexes[5] = _scene->_sprites.addSprites(formAnimName('x', 0));
+	_globals._spriteIndexes[4] = _scene->_sprites.addSprites("*RDR_6");
 
 	if (_globals[kCurrentYear] == 1993) {
-		_globals._spriteIndexes[0] = _scene->_sprites.addSprites(formAnimName('z', -1), false);
+		_globals._spriteIndexes[0] = _scene->_sprites.addSprites(formAnimName('z', -1));
 		_vm->_gameConv->get(5);
 	} else {
 		_vm->_gameConv->get(8);
@@ -3325,10 +3325,10 @@ void Scene204::enter() {
 	_scene->_hotspots.activate(NOUN_BOOK, false);
 	_vm->_gameConv->get(22);
 
-	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('p', 0), false);
-	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('x', 6), false);
-	_globals._spriteIndexes[4] = _scene->_sprites.addSprites("*RALRH_9", false);
-	_globals._spriteIndexes[5] = _scene->_sprites.addSprites("*RDRR_6", false);
+	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('p', 0));
+	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('x', 6));
+	_globals._spriteIndexes[4] = _scene->_sprites.addSprites("*RALRH_9");
+	_globals._spriteIndexes[5] = _scene->_sprites.addSprites("*RDRR_6");
 
 	if (_game._objects.isInRoom(OBJ_BOOK) || (_globals[kCurrentYear] == 1881) || _endGameFl) {
 		_globals._sequenceIndexes[2] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[2], false, 1);
@@ -3338,7 +3338,7 @@ void Scene204::enter() {
 	}
 
 	if ((_globals[kCurrentYear] == 1993) || _endGameFl) {
-		_globals._spriteIndexes[0] = _scene->_sprites.addSprites(formAnimName('z', -1), false);
+		_globals._spriteIndexes[0] = _scene->_sprites.addSprites(formAnimName('z', -1));
 		_scene->drawToBackground(_globals._spriteIndexes[0], 1, Common::Point(-32000, -32000), 0, 100);
 		_scene->_sprites.remove(_globals._spriteIndexes[0]);
 		_scene->_hotspots.activate(NOUN_CANDLE, false);
@@ -3378,10 +3378,10 @@ void Scene204::enter() {
 	}
 
 	if ((_scene->_priorSceneId == 306) || (_endGameFl)) {
-		_globals._spriteIndexes[6] = _scene->_sprites.addSprites(formAnimName('f', 0), false);
+		_globals._spriteIndexes[6] = _scene->_sprites.addSprites(formAnimName('f', 0));
 		_scene->drawToBackground(_globals._spriteIndexes[6], 1, Common::Point(-32000, -32000), 0, 100);
 	} else if (_globals[kCurrentYear] == 1993) {
-		_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('f', 1), false);
+		_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('f', 1));
 		_scene->drawToBackground(_globals._spriteIndexes[1], 1, Common::Point(-32000, -32000), 0, 100);
 		_scene->_sprites.remove(_globals._spriteIndexes[1]);
 	}
@@ -4269,9 +4269,9 @@ void Scene205::enter() {
 	_noConversationHold = false;
 	_giveTicketFl = false;
 
-	_globals._spriteIndexes[0] = _scene->_sprites.addSprites(formAnimName('f', 0), false);
-	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('f', 1), false);
-	_globals._spriteIndexes[2] = _scene->_sprites.addSprites("*RDR_9", false);
+	_globals._spriteIndexes[0] = _scene->_sprites.addSprites(formAnimName('f', 0));
+	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('f', 1));
+	_globals._spriteIndexes[2] = _scene->_sprites.addSprites("*RDR_9");
 
 	_scene->_hotspots.activate(NOUN_MONSIEUR_RICHARD, false);
 	_scene->_hotspots.activate(NOUN_MADAME_GIRY, false);
@@ -5866,11 +5866,11 @@ void Scene206::enter() {
 	_scene->loadSpeech(1);
 	_vm->_gameConv->get(26);
 
-	_globals._spriteIndexes[0] = _scene->_sprites.addSprites(formAnimName('x', 0), false);
-	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('x', 1), false);
-	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('x', 2), false);
-	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('x', 3), false);
-	_globals._spriteIndexes[5] = _scene->_sprites.addSprites("*RDR_9", false);
+	_globals._spriteIndexes[0] = _scene->_sprites.addSprites(formAnimName('x', 0));
+	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('x', 1));
+	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('x', 2));
+	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('x', 3));
+	_globals._spriteIndexes[5] = _scene->_sprites.addSprites("*RDR_9");
 
 	if (_scene->_priorSceneId != 308) {
 		if (_globals[kPanelIn206] == 0) {
@@ -5890,7 +5890,7 @@ void Scene206::enter() {
 	}
 
 	if (_game._objects.isInRoom(OBJ_CRUMPLED_NOTE)) {
-		_globals._spriteIndexes[4] = _scene->_sprites.addSprites(formAnimName('p', 0), false);
+		_globals._spriteIndexes[4] = _scene->_sprites.addSprites(formAnimName('p', 0));
 		_globals._sequenceIndexes[4] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[4], false, 1);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[4], 10);
 	} else
@@ -6360,9 +6360,9 @@ void Scene207::enter() {
 	_skip1Fl = false;
 	_anim0ActvFl = false;
 
-	_globals._spriteIndexes[0] = _scene->_sprites.addSprites(formAnimName('a', 0), false);
-	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('c', 0), false);
-	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('x', 0), false);
+	_globals._spriteIndexes[0] = _scene->_sprites.addSprites(formAnimName('a', 0));
+	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('c', 0));
+	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('x', 0));
 
 	_globals._sequenceIndexes[1] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[1], false, 1);
 	_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 10);
@@ -6569,14 +6569,14 @@ void Scene208::enter() {
 	_skip1Fl = false;
 	_skip2Fl = false;
 
-	_globals._spriteIndexes[0] = _scene->_sprites.addSprites(formAnimName('x', 0), false);
-	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('x', 1), false);
-	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('x', 2), false);
-	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('x', 3), false);
-	_globals._spriteIndexes[4] = _scene->_sprites.addSprites(formAnimName('x', 4), false);
-	_globals._spriteIndexes[5] = _scene->_sprites.addSprites(formAnimName('x', 5), false);
-	_globals._spriteIndexes[6] = _scene->_sprites.addSprites(formAnimName('x', 6), false);
-	_globals._spriteIndexes[7] = _scene->_sprites.addSprites(formAnimName('x', 7), false);
+	_globals._spriteIndexes[0] = _scene->_sprites.addSprites(formAnimName('x', 0));
+	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('x', 1));
+	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('x', 2));
+	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('x', 3));
+	_globals._spriteIndexes[4] = _scene->_sprites.addSprites(formAnimName('x', 4));
+	_globals._spriteIndexes[5] = _scene->_sprites.addSprites(formAnimName('x', 5));
+	_globals._spriteIndexes[6] = _scene->_sprites.addSprites(formAnimName('x', 6));
+	_globals._spriteIndexes[7] = _scene->_sprites.addSprites(formAnimName('x', 7));
 
 	_scene->_userInterface.emptyConversationList();
 	_scene->_userInterface.setup(kInputConversation);

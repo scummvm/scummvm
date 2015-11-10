@@ -94,15 +94,15 @@ void Scene501::enter() {
 
 	_vm->_gameConv->get(26);
 
-	_globals._spriteIndexes[0] = _scene->_sprites.addSprites(formAnimName('x', 0), false);
-	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('x', 1), false);
-	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('x', 2), false);
-	_globals._spriteIndexes[5] = _scene->_sprites.addSprites(formAnimName('a', 1), false);
-	_globals._spriteIndexes[6] = _scene->_sprites.addSprites(formAnimName('a', 0), false);
+	_globals._spriteIndexes[0] = _scene->_sprites.addSprites(formAnimName('x', 0));
+	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('x', 1));
+	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('x', 2));
+	_globals._spriteIndexes[5] = _scene->_sprites.addSprites(formAnimName('a', 1));
+	_globals._spriteIndexes[6] = _scene->_sprites.addSprites(formAnimName('a', 0));
 	_globals._spriteIndexes[6] = _scene->_sprites.addSprites("*CHR_6", PALFLAG_ALL_TO_CLOSEST | PALFLAG_ANY_TO_CLOSEST);
 	_globals._spriteIndexes[6] = _scene->_sprites.addSprites("*CHR_9", PALFLAG_ALL_TO_CLOSEST | PALFLAG_ANY_TO_CLOSEST);
 	_globals._spriteIndexes[6] = _scene->_sprites.addSprites("*CHR_8", PALFLAG_ALL_TO_CLOSEST | PALFLAG_ANY_TO_CLOSEST);
-	_globals._spriteIndexes[3] = _scene->_sprites.addSprites("*RDRR_6", false);
+	_globals._spriteIndexes[3] = _scene->_sprites.addSprites("*RDRR_6");
 
 	_globals._sequenceIndexes[0] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[0], false, 6);
 	_scene->_sequences.setDepth(_globals._sequenceIndexes[0], 14);
@@ -734,22 +734,22 @@ void Scene502::enter() {
 	_scene->_hotspots.activate(NOUN_ROPE, false);
 	_scene->_hotspots.activateAtPos(NOUN_TRAP_DOOR, false, Common::Point(225, 28));
 
-	_globals._spriteIndexes[0] = _scene->_sprites.addSprites(formAnimName('x', 2), false);
-	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('x', 3), false);
-	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('x', 4), false);
-	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('x', 5), false);
-	_globals._spriteIndexes[4] = _scene->_sprites.addSprites(formAnimName('a', 2), false);
-	_globals._spriteIndexes[5] = _scene->_sprites.addSprites(formAnimName('x', 0), false);
-	_globals._spriteIndexes[6] = _scene->_sprites.addSprites(formAnimName('x', 1), false);
-	_globals._spriteIndexes[7] = _scene->_sprites.addSprites(formAnimName('a', 1), false);
-	_globals._spriteIndexes[8] = _scene->_sprites.addSprites(formAnimName('a', 3), false);
-	_globals._spriteIndexes[9] = _scene->_sprites.addSprites(formAnimName('x', 6), false);
-	_globals._spriteIndexes[10] = _scene->_sprites.addSprites(formAnimName('a', 0), false);
-	_globals._spriteIndexes[11] = _scene->_sprites.addSprites(formAnimName('j', 0), false);
-	_globals._spriteIndexes[12] = _scene->_sprites.addSprites(formAnimName('k', 0), false);
-	_globals._spriteIndexes[13] = _scene->_sprites.addSprites(formAnimName('l', 0), false);
-	_globals._spriteIndexes[14] = _scene->_sprites.addSprites(formAnimName('m', 0), false);
-	_globals._spriteIndexes[16] = _scene->_sprites.addSprites(formAnimName('h', 0), false);
+	_globals._spriteIndexes[0] = _scene->_sprites.addSprites(formAnimName('x', 2));
+	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('x', 3));
+	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('x', 4));
+	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('x', 5));
+	_globals._spriteIndexes[4] = _scene->_sprites.addSprites(formAnimName('a', 2));
+	_globals._spriteIndexes[5] = _scene->_sprites.addSprites(formAnimName('x', 0));
+	_globals._spriteIndexes[6] = _scene->_sprites.addSprites(formAnimName('x', 1));
+	_globals._spriteIndexes[7] = _scene->_sprites.addSprites(formAnimName('a', 1));
+	_globals._spriteIndexes[8] = _scene->_sprites.addSprites(formAnimName('a', 3));
+	_globals._spriteIndexes[9] = _scene->_sprites.addSprites(formAnimName('x', 6));
+	_globals._spriteIndexes[10] = _scene->_sprites.addSprites(formAnimName('a', 0));
+	_globals._spriteIndexes[11] = _scene->_sprites.addSprites(formAnimName('j', 0));
+	_globals._spriteIndexes[12] = _scene->_sprites.addSprites(formAnimName('k', 0));
+	_globals._spriteIndexes[13] = _scene->_sprites.addSprites(formAnimName('l', 0));
+	_globals._spriteIndexes[14] = _scene->_sprites.addSprites(formAnimName('m', 0));
+	_globals._spriteIndexes[16] = _scene->_sprites.addSprites(formAnimName('h', 0));
 
 	if (_scene->_priorSceneId != RETURNING_FROM_LOADING) {
 		_globals._sequenceIndexes[5] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[5], false, 1);
@@ -1861,8 +1861,8 @@ void Scene504::enter() {
 
 	_vm->_gameConv->get(26);
 
-	_globals._spriteIndexes[14] = _scene->_sprites.addSprites("*RDR_9", false);
-	_globals._spriteIndexes[15] = _scene->_sprites.addSprites(formAnimName('x', 8), false);
+	_globals._spriteIndexes[14] = _scene->_sprites.addSprites("*RDR_9");
+	_globals._spriteIndexes[15] = _scene->_sprites.addSprites(formAnimName('x', 8));
 
 	if (!_game._objects.isInRoom(OBJ_MUSIC_SCORE)) {
 		_globals._sequenceIndexes[15] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[15], false, 1);
@@ -1870,13 +1870,13 @@ void Scene504::enter() {
 		_scene->_hotspots.activate(NOUN_MUSIC_SCORE, false);
 	}
 
-	_globals._spriteIndexes[0] = _scene->_sprites.addSprites(formAnimName('x', 2), false);
+	_globals._spriteIndexes[0] = _scene->_sprites.addSprites(formAnimName('x', 2));
 	_globals._spriteIndexes[13] = _scene->_sprites.addSprites(formAnimName('x', 7), PALFLAG_ALL_TO_CLOSEST | PALFLAG_ANY_TO_CLOSEST);
 
 	if (_globals[kFightStatus] == 0)
-		_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('x', 1), false);
+		_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('x', 1));
 
-	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('x', 3), false);
+	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('x', 3));
 
 	if ((_scene->_priorSceneId == 505) || ((_scene->_priorSceneId == 504) && _globals[kRightDoorIsOpen504])) {
 		if ((_globals[kFightStatus] == 0) && (_globals[kCoffinStatus] == 2)) {
@@ -1884,14 +1884,14 @@ void Scene504::enter() {
 			_scene->drawToBackground(_globals._spriteIndexes[0], 1, Common::Point(-32000, -32000), 0, 100);
 
 			_globals._spriteIndexes[13] = _scene->_sprites.addSprites(formAnimName('x', 7), PALFLAG_ALL_TO_CLOSEST | PALFLAG_ANY_TO_CLOSEST);
-			_globals._spriteIndexes[6] = _scene->_sprites.addSprites(formAnimName('b', 0), false);
+			_globals._spriteIndexes[6] = _scene->_sprites.addSprites(formAnimName('b', 0));
 
 			_globals._spriteIndexes[6] = _scene->_sprites.addSprites("*CHR_6", PALFLAG_ALL_TO_CLOSEST | PALFLAG_ANY_TO_CLOSEST);
 			_globals._spriteIndexes[6] = _scene->_sprites.addSprites("*FACERAL", PALFLAG_ALL_TO_CLOSEST | PALFLAG_ANY_TO_CLOSEST);
 			_globals._spriteIndexes[6] = _scene->_sprites.addSprites("*FACEXDFR", PALFLAG_ALL_TO_CLOSEST | PALFLAG_ANY_TO_CLOSEST);
 			_globals._spriteIndexes[6] = _scene->_sprites.addSprites("*FACEPHN", PALFLAG_ALL_TO_CLOSEST | PALFLAG_ANY_TO_CLOSEST);
 
-			_globals._spriteIndexes[11] = _scene->_sprites.addSprites(formAnimName('a', 5), false);
+			_globals._spriteIndexes[11] = _scene->_sprites.addSprites(formAnimName('a', 5));
 			_globals._spriteIndexes[10] = _scene->_sprites.addSprites(formAnimName('a', 3), PALFLAG_ALL_TO_CLOSEST | PALFLAG_ANY_TO_CLOSEST);
 			_globals._spriteIndexes[7] = _scene->_sprites.addSprites(formAnimName('a', 6), PALFLAG_ALL_TO_CLOSEST | PALFLAG_ANY_TO_CLOSEST);
 			_globals._spriteIndexes[8] = _scene->_sprites.addSprites(formAnimName('a', 7), PALFLAG_ALL_TO_CLOSEST | PALFLAG_ANY_TO_CLOSEST);
@@ -1931,7 +1931,7 @@ void Scene504::enter() {
 				_scene->drawToBackground(_globals._spriteIndexes[13], 1, Common::Point(-32000, -32000), 0, 100);
 				_anim5ActvFl = true;
 
-				_globals._spriteIndexes[6] = _scene->_sprites.addSprites("*CHR_2", false);
+				_globals._spriteIndexes[6] = _scene->_sprites.addSprites("*CHR_2");
 				_globals._spriteIndexes[6] = _scene->_sprites.addSprites("*FACERAL", PALFLAG_ALL_TO_CLOSEST | PALFLAG_ANY_TO_CLOSEST);
 				_globals._spriteIndexes[6] = _scene->_sprites.addSprites("*FACEXDFR",PALFLAG_ALL_TO_CLOSEST | PALFLAG_ANY_TO_CLOSEST);
 				_globals._spriteIndexes[6] = _scene->_sprites.addSprites("*FACEPHN", PALFLAG_ALL_TO_CLOSEST | PALFLAG_ANY_TO_CLOSEST);
@@ -1959,7 +1959,7 @@ void Scene504::enter() {
 		_globals._sequenceIndexes[1] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[1], false, 1);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 14);
 
-		_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('x', 0), false);
+		_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('x', 0));
 		_globals._sequenceIndexes[2] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[2], false, 1);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 14);
 		_scene->drawToBackground(_globals._spriteIndexes[0], 1, Common::Point(-32000, -32000), 0, 100);
@@ -1970,7 +1970,7 @@ void Scene504::enter() {
 		_globals._sequenceIndexes[1] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[1], false, 1);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 14);
 
-		_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('x', 0), false);
+		_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('x', 0));
 		_globals._sequenceIndexes[2] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[2], false, 1);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 14);
 
@@ -1983,7 +1983,7 @@ void Scene504::enter() {
 
 	if (_scene->_priorSceneId == RETURNING_FROM_LOADING) {
 		if (!_globals[kRightDoorIsOpen504]) {
-			_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('x', 0), false);
+			_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('x', 0));
 			_globals._sequenceIndexes[2] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[2], false, 1);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 14);
 		}
@@ -2024,13 +2024,13 @@ void Scene504::enter() {
 				_scene->_hotspots.activate(NOUN_CHRISTINE, true);
 				_scene->drawToBackground(_globals._spriteIndexes[0], 1, Common::Point(-32000, -32000), 0, 100);
 
-				_globals._spriteIndexes[6] = _scene->_sprites.addSprites(formAnimName('b', 0), false);
+				_globals._spriteIndexes[6] = _scene->_sprites.addSprites(formAnimName('b', 0));
 				_globals._spriteIndexes[6] = _scene->_sprites.addSprites("*CHR_6", PALFLAG_ALL_TO_CLOSEST | PALFLAG_ANY_TO_CLOSEST);
 				_globals._spriteIndexes[6] = _scene->_sprites.addSprites("*FACERAL", PALFLAG_ALL_TO_CLOSEST | PALFLAG_ANY_TO_CLOSEST);
 				_globals._spriteIndexes[6] = _scene->_sprites.addSprites("*FACEXDFR", PALFLAG_ALL_TO_CLOSEST | PALFLAG_ANY_TO_CLOSEST);
 				_globals._spriteIndexes[6] = _scene->_sprites.addSprites("*FACEPHN", PALFLAG_ALL_TO_CLOSEST | PALFLAG_ANY_TO_CLOSEST);
 
-				_globals._spriteIndexes[11] = _scene->_sprites.addSprites(formAnimName('a', 5), false);
+				_globals._spriteIndexes[11] = _scene->_sprites.addSprites(formAnimName('a', 5));
 				_globals._spriteIndexes[10] = _scene->_sprites.addSprites(formAnimName('a', 3), PALFLAG_ALL_TO_CLOSEST | PALFLAG_ANY_TO_CLOSEST);
 				_globals._spriteIndexes[7] = _scene->_sprites.addSprites(formAnimName('a', 6), PALFLAG_ALL_TO_CLOSEST | PALFLAG_ANY_TO_CLOSEST);
 				_globals._spriteIndexes[8] = _scene->_sprites.addSprites(formAnimName('a', 7), PALFLAG_ALL_TO_CLOSEST | PALFLAG_ANY_TO_CLOSEST);
@@ -2064,7 +2064,7 @@ void Scene504::enter() {
 				_scene->drawToBackground(_globals._spriteIndexes[0], 1, Common::Point(-32000, -32000), 0, 100);
 				_scene->drawToBackground(_globals._spriteIndexes[13], 1, Common::Point(-32000, -32000), 0, 100);
 
-				_globals._spriteIndexes[6] = _scene->_sprites.addSprites("*CHR_3", false);
+				_globals._spriteIndexes[6] = _scene->_sprites.addSprites("*CHR_3");
 				_globals._spriteIndexes[6] = _scene->_sprites.addSprites("*FACERAL", PALFLAG_ALL_TO_CLOSEST | PALFLAG_ANY_TO_CLOSEST);
 				_globals._spriteIndexes[6] = _scene->_sprites.addSprites("*FACEXDFR", PALFLAG_ALL_TO_CLOSEST | PALFLAG_ANY_TO_CLOSEST);
 				_globals._spriteIndexes[6] = _scene->_sprites.addSprites("*FACEPHN", PALFLAG_ALL_TO_CLOSEST | PALFLAG_ANY_TO_CLOSEST);
@@ -2090,7 +2090,7 @@ void Scene504::enter() {
 				_scene->drawToBackground(_globals._spriteIndexes[13], 1, Common::Point(-32000, -32000), 0, 100);
 				_anim5ActvFl = true;
 
-				_globals._spriteIndexes[6] = _scene->_sprites.addSprites("*CHR_3", false);
+				_globals._spriteIndexes[6] = _scene->_sprites.addSprites("*CHR_3");
 				_globals._spriteIndexes[6] = _scene->_sprites.addSprites("*FACERAL", PALFLAG_ALL_TO_CLOSEST | PALFLAG_ANY_TO_CLOSEST);
 				_globals._spriteIndexes[6] = _scene->_sprites.addSprites("*FACEXDFR",PALFLAG_ALL_TO_CLOSEST | PALFLAG_ANY_TO_CLOSEST);
 				_globals._spriteIndexes[6] = _scene->_sprites.addSprites("*FACEPHN", PALFLAG_ALL_TO_CLOSEST | PALFLAG_ANY_TO_CLOSEST);
@@ -3191,15 +3191,15 @@ void Scene505::enter() {
 	_scene->_hotspots.activateAtPos(NOUN_LID, false, Common::Point(216, 44));
 	_scene->_hotspots.activate(NOUN_CHRISTINE, false);
 
-	_globals._spriteIndexes[7] = _scene->_sprites.addSprites(formAnimName('x', 6), false);
-	_globals._spriteIndexes[0] = _scene->_sprites.addSprites(formAnimName('a', 1), false);
-	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('x', 0), false);
-	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('x', 1), false);
-	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('x', 2), false);
-	_globals._spriteIndexes[4] = _scene->_sprites.addSprites(formAnimName('x', 3), false);
-	_globals._spriteIndexes[5] = _scene->_sprites.addSprites(formAnimName('x', 4), false);
-	_globals._spriteIndexes[6] = _scene->_sprites.addSprites(formAnimName('x', 5), false);
-	_globals._spriteIndexes[8] = _scene->_sprites.addSprites(formAnimName('a', 4), false);
+	_globals._spriteIndexes[7] = _scene->_sprites.addSprites(formAnimName('x', 6));
+	_globals._spriteIndexes[0] = _scene->_sprites.addSprites(formAnimName('a', 1));
+	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('x', 0));
+	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('x', 1));
+	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('x', 2));
+	_globals._spriteIndexes[4] = _scene->_sprites.addSprites(formAnimName('x', 3));
+	_globals._spriteIndexes[5] = _scene->_sprites.addSprites(formAnimName('x', 4));
+	_globals._spriteIndexes[6] = _scene->_sprites.addSprites(formAnimName('x', 5));
+	_globals._spriteIndexes[8] = _scene->_sprites.addSprites(formAnimName('a', 4));
 
 	if (_scene->_priorSceneId == RETURNING_FROM_LOADING) {
 		if (_vm->_gameConv->_restoreRunning == 20) {
@@ -3942,15 +3942,15 @@ void Scene506::enter() {
 
 	_vm->_gameConv->get(26);
 
-	_globals._spriteIndexes[0] = _scene->_sprites.addSprites(formAnimName('x', 0), false);
-	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('x', 1), false);
-	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('x', 2), false);
-	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('x', 3), false);
-	_globals._spriteIndexes[5] = _scene->_sprites.addSprites(formAnimName('p', 0), false);
-	_globals._spriteIndexes[7] = _scene->_sprites.addSprites(formAnimName('a', 1), false);
-	_globals._spriteIndexes[8] = _scene->_sprites.addSprites(formAnimName('a', 0), false);
+	_globals._spriteIndexes[0] = _scene->_sprites.addSprites(formAnimName('x', 0));
+	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('x', 1));
+	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('x', 2));
+	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('x', 3));
+	_globals._spriteIndexes[5] = _scene->_sprites.addSprites(formAnimName('p', 0));
+	_globals._spriteIndexes[7] = _scene->_sprites.addSprites(formAnimName('a', 1));
+	_globals._spriteIndexes[8] = _scene->_sprites.addSprites(formAnimName('a', 0));
 	_globals._spriteIndexes[6] = _scene->_sprites.addSprites(formAnimName('b', 0), PALFLAG_ALL_TO_CLOSEST | PALFLAG_ANY_TO_CLOSEST);
-	_globals._spriteIndexes[4] = _scene->_sprites.addSprites("*RDR_9", false);
+	_globals._spriteIndexes[4] = _scene->_sprites.addSprites("*RDR_9");
 	_globals._spriteIndexes[6] = _scene->_sprites.addSprites("*CHR_6", PALFLAG_ALL_TO_CLOSEST | PALFLAG_ANY_TO_CLOSEST);
 	_globals._spriteIndexes[6] = _scene->_sprites.addSprites("*CHR_3", PALFLAG_ALL_TO_CLOSEST | PALFLAG_ANY_TO_CLOSEST);
 	_globals._spriteIndexes[6] = _scene->_sprites.addSprites("*CHR_2", PALFLAG_ALL_TO_CLOSEST | PALFLAG_ANY_TO_CLOSEST);

@@ -884,23 +884,23 @@ void Scene103::enter() {
 
 	if (_globals[kJacquesStatus] >= 1) {
 		if (_game._objects.isInRoom(OBJ_KEY)) {
-			_globals._spriteIndexes[5] = _scene->_sprites.addSprites(formAnimName('x', 2), false);
-			_globals._spriteIndexes[8] = _scene->_sprites.addSprites("*RRD_9", false);
+			_globals._spriteIndexes[5] = _scene->_sprites.addSprites(formAnimName('x', 2));
+			_globals._spriteIndexes[8] = _scene->_sprites.addSprites("*RRD_9");
 		}
-		_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('f', 3), false);
-		_globals._spriteIndexes[6] = _scene->_sprites.addSprites(formAnimName('c', 1), false);
-		_globals._spriteIndexes[7] = _scene->_sprites.addSprites(formAnimName('f', 1), false);
+		_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('f', 3));
+		_globals._spriteIndexes[6] = _scene->_sprites.addSprites(formAnimName('c', 1));
+		_globals._spriteIndexes[7] = _scene->_sprites.addSprites(formAnimName('f', 1));
 	} else {
-		_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('f', 0), false);
-		_globals._spriteIndexes[10] = _scene->_sprites.addSprites(formAnimName('a', 3), false);
+		_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('f', 0));
+		_globals._spriteIndexes[10] = _scene->_sprites.addSprites(formAnimName('a', 3));
 	}
 
-	_globals._spriteIndexes[9] = _scene->_sprites.addSprites(formAnimName('x', 3), false);
-	_globals._spriteIndexes[11] = _scene->_sprites.addSprites(formAnimName('a', 2), false);
-	_globals._spriteIndexes[12] = _scene->_sprites.addSprites(formAnimName('f', 2), false);
-	_globals._spriteIndexes[0] = _scene->_sprites.addSprites(formAnimName('x', 0), false);
-	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('x', 1), false);
-	_globals._spriteIndexes[2] = _scene->_sprites.addSprites("*RDR_6", false);
+	_globals._spriteIndexes[9] = _scene->_sprites.addSprites(formAnimName('x', 3));
+	_globals._spriteIndexes[11] = _scene->_sprites.addSprites(formAnimName('a', 2));
+	_globals._spriteIndexes[12] = _scene->_sprites.addSprites(formAnimName('f', 2));
+	_globals._spriteIndexes[0] = _scene->_sprites.addSprites(formAnimName('x', 0));
+	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('x', 1));
+	_globals._spriteIndexes[2] = _scene->_sprites.addSprites("*RDR_6");
 
 	adjustRails(_scene->_initialVariant);
 
@@ -2487,12 +2487,12 @@ void Scene104::enter() {
 		_needToStandUp = false;
 	}
 
-	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('a', 0), false);
-	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('a', 6), false);
-	_globals._spriteIndexes[0] = _scene->_sprites.addSprites(formAnimName('x', 0), false);
+	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('a', 0));
+	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('a', 6));
+	_globals._spriteIndexes[0] = _scene->_sprites.addSprites(formAnimName('x', 0));
 
 	if (_globals[kCurrentYear] == 1993)
-		_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('z', 0), false);
+		_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('z', 0));
 
 	_vm->_gameConv->get(7);
 
@@ -3624,14 +3624,14 @@ void Scene105::setup() {
 void Scene105::enter() {
 	_scene->loadSpeech(8);
 
-	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('x', 2), false);
-	_globals._spriteIndexes[4] = _scene->_sprites.addSprites(formAnimName('x', 3), false);
-	_globals._spriteIndexes[5] = _scene->_sprites.addSprites("*RRD_9", false);
-	_globals._spriteIndexes[6] = _scene->_sprites.addSprites("*RDR_9", false);
-	_globals._spriteIndexes[7] = _scene->_sprites.addSprites(formAnimName('a', 0), false);
-	_globals._spriteIndexes[8] = _scene->_sprites.addSprites(formAnimName('a', 1), false);
+	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('x', 2));
+	_globals._spriteIndexes[4] = _scene->_sprites.addSprites(formAnimName('x', 3));
+	_globals._spriteIndexes[5] = _scene->_sprites.addSprites("*RRD_9");
+	_globals._spriteIndexes[6] = _scene->_sprites.addSprites("*RDR_9");
+	_globals._spriteIndexes[7] = _scene->_sprites.addSprites(formAnimName('a', 0));
+	_globals._spriteIndexes[8] = _scene->_sprites.addSprites(formAnimName('a', 1));
 	if (_globals[kCurrentYear] == 1993)
-		_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('z', -1), false);
+		_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('z', -1));
 
 	if ((_globals[kCurrentYear] == 1881) && (!_globals[kHintThatDaaeIsHome2])) {
 		if ((_globals[kJacquesNameIsKnown] == 2) && (_globals[kMadameNameIsKnown] == 2) &&
@@ -3643,7 +3643,7 @@ void Scene105::enter() {
 	}
 
 	if ((_game._objects.isInRoom(OBJ_LANTERN)) && (_globals[kCurrentYear] == 1881)) {
-		_globals._spriteIndexes[0] = _scene->_sprites.addSprites(formAnimName('x', 0), false);
+		_globals._spriteIndexes[0] = _scene->_sprites.addSprites(formAnimName('x', 0));
 		_globals._sequenceIndexes[0] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[0], false, 1);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[0], 14);
 	} else {
@@ -3651,7 +3651,7 @@ void Scene105::enter() {
 	}
 
 	if (_game._objects.isInRoom(OBJ_RED_FRAME)) {
-		_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('x', 1), false);
+		_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('x', 1));
 		_globals._sequenceIndexes[1] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[1], false, 1);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 14);
 	} else {
@@ -4193,22 +4193,22 @@ void Scene106::enter() {
 
 	if (_globals[kCurrentYear] == 1993) {
 		if (!_game._objects.isInInventory(OBJ_SANDBAG)) {
-			_globals._spriteIndexes[5] = _scene->_sprites.addSprites("*RRD_9", false);
-			_globals._spriteIndexes[0] = _scene->_sprites.addSprites(formAnimName('x', 0), false);
+			_globals._spriteIndexes[5] = _scene->_sprites.addSprites("*RRD_9");
+			_globals._spriteIndexes[0] = _scene->_sprites.addSprites(formAnimName('x', 0));
 		}
 	} else {
-		_globals._spriteIndexes[7] = _scene->_sprites.addSprites(formAnimName('z', -1), false);
+		_globals._spriteIndexes[7] = _scene->_sprites.addSprites(formAnimName('z', -1));
 		if (_game._objects.isInRoom(OBJ_CABLE_HOOK) && !_game._objects.isInInventory(OBJ_ROPE_WITH_HOOK)) {
-			_globals._spriteIndexes[5] = _scene->_sprites.addSprites("*RRD_9", false);
-			_globals._spriteIndexes[8] = _scene->_sprites.addSprites(formAnimName('p', 0), false);
+			_globals._spriteIndexes[5] = _scene->_sprites.addSprites("*RRD_9");
+			_globals._spriteIndexes[8] = _scene->_sprites.addSprites(formAnimName('p', 0));
 		}
 	}
 
-	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('a', 0), false);
-	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('x', 1), false);
-	_globals._spriteIndexes[3] = _scene->_sprites.addSprites("*RDR_9", false);
-	_globals._spriteIndexes[4] = _scene->_sprites.addSprites(formAnimName('a', 1), false);
-	_globals._spriteIndexes[6] = _scene->_sprites.addSprites(formAnimName('a', 2), false);
+	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('a', 0));
+	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('x', 1));
+	_globals._spriteIndexes[3] = _scene->_sprites.addSprites("*RDR_9");
+	_globals._spriteIndexes[4] = _scene->_sprites.addSprites(formAnimName('a', 1));
+	_globals._spriteIndexes[6] = _scene->_sprites.addSprites(formAnimName('a', 2));
 
 	if ((_globals[kCurrentYear] == 1881) && (!_globals[kHintThatDaaeIsHome1])) {
 		if ((_globals[kJacquesNameIsKnown] == 2) && (_globals[kMadameNameIsKnown] == 2)
@@ -4753,11 +4753,11 @@ void Scene107::setup() {
 
 void Scene107::enter() {
 	if (_globals[kCurrentYear] == 1993)
-		_globals._spriteIndexes[0] = _scene->_sprites.addSprites(formAnimName('z', -1), false);
+		_globals._spriteIndexes[0] = _scene->_sprites.addSprites(formAnimName('z', -1));
 
 	if (_game._objects.isInRoom(OBJ_YELLOW_FRAME)) {
-		_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('f', 0), false);
-		_globals._spriteIndexes[1] = _scene->_sprites.addSprites("*RRD_9", false);
+		_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('f', 0));
+		_globals._spriteIndexes[1] = _scene->_sprites.addSprites("*RRD_9");
 	}
 
 	if (_game._objects.isInRoom(OBJ_YELLOW_FRAME)) {
@@ -5060,7 +5060,7 @@ void Scene108::enter() {
 	_vm->_gameConv->get(2);
 
 	if (_globals[kCurrentYear] == 1993) {
-		_globals._spriteIndexes[0] = _scene->_sprites.addSprites(formAnimName('z', -1), false);
+		_globals._spriteIndexes[0] = _scene->_sprites.addSprites(formAnimName('z', -1));
 		_scene->_hotspots.activate(NOUN_STOOL, false);
 		int idx = _scene->_dynamicHotspots.add(NOUN_STOOL, VERB_WALK_TO, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(250, 68, 250 + 8, 68 + 21));
 		_scene->_dynamicHotspots[idx]._articleNumber = PREP_ON;
@@ -5626,14 +5626,14 @@ void Scene109::enter() {
 	_anim2ActvFl = false;
 	_anim3ActvFl = false;
 
-	_globals._spriteIndexes[0] = _scene->_sprites.addSprites(formAnimName('x', 0), false);
-	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('x', 2), false);
-	_globals._spriteIndexes[8] = _scene->_sprites.addSprites("*RDR_6", false);
+	_globals._spriteIndexes[0] = _scene->_sprites.addSprites(formAnimName('x', 0));
+	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('x', 2));
+	_globals._spriteIndexes[8] = _scene->_sprites.addSprites("*RDR_6");
 
 	if (_globals[kCurrentYear] == 1881) {
-		_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('x', 1), false);
-		_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('x', 3), false);
-		_globals._spriteIndexes[4] = _scene->_sprites.addSprites(formAnimName('x', 4), false);
+		_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('x', 1));
+		_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('x', 3));
+		_globals._spriteIndexes[4] = _scene->_sprites.addSprites(formAnimName('x', 4));
 
 		_scene->_hotspots.activate(NOUN_LIGHT_FIXTURE, false);
 		_globals._sequenceIndexes[2] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[2], false, 1);
@@ -5644,9 +5644,9 @@ void Scene109::enter() {
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[4], 14);
 		_scene->_sequences.addTimer(1, 70);
 	} else {
-		_globals._spriteIndexes[5] = _scene->_sprites.addSprites(formAnimName('z', 0), false);
-		_globals._spriteIndexes[6] = _scene->_sprites.addSprites(formAnimName('z', 1), false);
-		_globals._spriteIndexes[7] = _scene->_sprites.addSprites(formAnimName('z', 2), false);
+		_globals._spriteIndexes[5] = _scene->_sprites.addSprites(formAnimName('z', 0));
+		_globals._spriteIndexes[6] = _scene->_sprites.addSprites(formAnimName('z', 1));
+		_globals._spriteIndexes[7] = _scene->_sprites.addSprites(formAnimName('z', 2));
 
 		_scene->_hotspots.activate(NOUN_LAMP, false);
 		_globals._sequenceIndexes[5] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[5], false, 1);
@@ -6120,12 +6120,12 @@ void Scene110::setup() {
 }
 
 void Scene110::enter() {
-	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('x', 0), false);
-	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('x', 1), false);
-	_globals._spriteIndexes[1] = _scene->_sprites.addSprites("*RDR_9", false);
+	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('x', 0));
+	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('x', 1));
+	_globals._spriteIndexes[1] = _scene->_sprites.addSprites("*RDR_9");
 
 	if (_globals[kCurrentYear] == 1993) {
-		_globals._spriteIndexes[0] = _scene->_sprites.addSprites(formAnimName('z', -1), false);
+		_globals._spriteIndexes[0] = _scene->_sprites.addSprites(formAnimName('z', -1));
 		_scene->drawToBackground(_globals._spriteIndexes[0], 1, Common::Point(-32000, -32000), 0, 100);
 		_scene->_hotspots.activate(NOUN_POSTER, false);
 		_scene->_hotspots.activate(NOUN_WASTE_BASKET, false);
@@ -6507,16 +6507,16 @@ void Scene111::enter() {
 
 	_vm->_gameConv->get(14);
 
-	_globals._spriteIndexes[0] = _scene->_sprites.addSprites("*RDR_9", false);
-	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('a', 1), false);
-	_globals._spriteIndexes[4] = _scene->_sprites.addSprites(formAnimName('a', 3), false);
-	_globals._spriteIndexes[5] = _scene->_sprites.addSprites(formAnimName('x', 0), false);
+	_globals._spriteIndexes[0] = _scene->_sprites.addSprites("*RDR_9");
+	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('a', 1));
+	_globals._spriteIndexes[4] = _scene->_sprites.addSprites(formAnimName('a', 3));
+	_globals._spriteIndexes[5] = _scene->_sprites.addSprites(formAnimName('x', 0));
 
 	if (_globals[kCurrentYear] == 1881)
-		_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('a', 2), false);
+		_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('a', 2));
 
 	if (_globals[kCurrentYear] == 1993) {
-		_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('z', -1), false);
+		_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('z', -1));
 		_scene->drawToBackground(_globals._spriteIndexes[1], 1, Common::Point(-32000, -32000), 0, 100);
 		_scene->_hotspots.activate(NOUN_LAMP, false);
 		int idx = _scene->_dynamicHotspots.add(NOUN_WALL, VERB_WALK_TO, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(35, 82, 35 + 13, 82 + 11));
@@ -7747,14 +7747,14 @@ void Scene113::enter() {
 	_scene->_hotspots.activate(NOUN_LIGHT_FIXTURE, false);
 
 	if (_globals[kCurrentYear] == 1993) {
-		_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('z', -1), false);
-		_globals._spriteIndexes[0] = _scene->_sprites.addSprites(formAnimName('f', 0), false);
+		_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('z', -1));
+		_globals._spriteIndexes[0] = _scene->_sprites.addSprites(formAnimName('f', 0));
 
 		if (_game._objects.isInRoom(OBJ_SMALL_NOTE))
-			_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('f', 1), false);
+			_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('f', 1));
 
 		if ((_globals[kDoneBrieConv203] == 1) || (_globals[kDoneBrieConv203] == 3))
-			_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('c', 3), false);
+			_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('c', 3));
 	}
 
 	if (_globals[kCurrentYear] == 1993) {
@@ -9160,13 +9160,13 @@ void Scene114::setup() {
 
 void Scene114::enter() {
 	if (_globals[kCurrentYear] == 1993) {
-		_globals._spriteIndexes[0] = _scene->_sprites.addSprites(formAnimName('z', -1), false);
+		_globals._spriteIndexes[0] = _scene->_sprites.addSprites(formAnimName('z', -1));
 	} else if (_game._objects.isInRoom(OBJ_ROPE) && !_game._objects.isInInventory(OBJ_ROPE_WITH_HOOK)) {
-		_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('f', 0), false);
-		_globals._spriteIndexes[1] = _scene->_sprites.addSprites("*RDR_9", false);
+		_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('f', 0));
+		_globals._spriteIndexes[1] = _scene->_sprites.addSprites("*RDR_9");
 	}
 
-	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('a', 0), false);
+	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('a', 0));
 
 	if ((_game._objects.isInRoom(OBJ_ROPE)) && (_globals[kCurrentYear] == 1881) && !_game._objects.isInInventory(OBJ_ROPE_WITH_HOOK)) {
 		_globals._sequenceIndexes[2] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[2], false, 1);

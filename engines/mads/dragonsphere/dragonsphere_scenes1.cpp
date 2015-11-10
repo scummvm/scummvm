@@ -226,7 +226,7 @@ void Scene101::step() {
 
 void Scene101::actions() {
 	if (_action.isObject(NOUN_BED)) {
-		int sprIdx = _scene->_sprites.addSprites("*ob001i", false);
+		int sprIdx = _scene->_sprites.addSprites("*ob001i");
 		int seqIdx = _scene->_sequences.addStampCycle(sprIdx, false, 1);
 		_scene->_sequences.setDepth(seqIdx, 0);
 		_scene->_sequences.setPosition(seqIdx, Common::Point(10, 50));
@@ -264,13 +264,13 @@ void Scene102::setup() {
 }
 
 void Scene102::enter() {
-	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('p', 0), false);
-	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('p', 1), false);
-	_globals._spriteIndexes[4] = _scene->_sprites.addSprites(formAnimName('y', 0), false);
-	_globals._spriteIndexes[5] = _scene->_sprites.addSprites(formAnimName('y', 1), false);
-	_globals._spriteIndexes[6] = _scene->_sprites.addSprites(formAnimName('x', -1), false);
-	_globals._spriteIndexes[7] = _scene->_sprites.addSprites("*KGRD_6", false);
-	_globals._spriteIndexes[8] = _scene->_sprites.addSprites(formAnimName('y', 2), false);
+	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('p', 0));
+	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('p', 1));
+	_globals._spriteIndexes[4] = _scene->_sprites.addSprites(formAnimName('y', 0));
+	_globals._spriteIndexes[5] = _scene->_sprites.addSprites(formAnimName('y', 1));
+	_globals._spriteIndexes[6] = _scene->_sprites.addSprites(formAnimName('x', -1));
+	_globals._spriteIndexes[7] = _scene->_sprites.addSprites("*KGRD_6");
+	_globals._spriteIndexes[8] = _scene->_sprites.addSprites(formAnimName('y', 2));
 
 	_globals._sequenceIndexes[4] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[4], false, 7, 0);
 	_globals._sequenceIndexes[5] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[5], false, 7, 0);
@@ -678,17 +678,17 @@ void Scene103::setup() {
 void Scene103::enter() {
 	_vm->_disableFastwalk = true;
 
-	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('y', 1), false);
-	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('y', 2), false);
-	_globals._spriteIndexes[8] = _scene->_sprites.addSprites(formAnimName('y', 7), false);
-	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('y', 0), false);
-	_globals._spriteIndexes[4] = _scene->_sprites.addSprites(formAnimName('y', 3), false);
-	_globals._spriteIndexes[5] = _scene->_sprites.addSprites(formAnimName('y', 4), false);
-	_globals._spriteIndexes[6] = _scene->_sprites.addSprites(formAnimName('y', 5), false);
-	_globals._spriteIndexes[7] = _scene->_sprites.addSprites(formAnimName('y', 6), false);
-	_globals._spriteIndexes[9] = _scene->_sprites.addSprites(formAnimName('x', 0), false);
-	_globals._spriteIndexes[10] = _scene->_sprites.addSprites(formAnimName('x', 1), false);
-	_globals._spriteIndexes[11] = _scene->_sprites.addSprites("*KGRD_9", false);
+	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('y', 1));
+	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('y', 2));
+	_globals._spriteIndexes[8] = _scene->_sprites.addSprites(formAnimName('y', 7));
+	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('y', 0));
+	_globals._spriteIndexes[4] = _scene->_sprites.addSprites(formAnimName('y', 3));
+	_globals._spriteIndexes[5] = _scene->_sprites.addSprites(formAnimName('y', 4));
+	_globals._spriteIndexes[6] = _scene->_sprites.addSprites(formAnimName('y', 5));
+	_globals._spriteIndexes[7] = _scene->_sprites.addSprites(formAnimName('y', 6));
+	_globals._spriteIndexes[9] = _scene->_sprites.addSprites(formAnimName('x', 0));
+	_globals._spriteIndexes[10] = _scene->_sprites.addSprites(formAnimName('x', 1));
+	_globals._spriteIndexes[11] = _scene->_sprites.addSprites("*KGRD_9");
 
 	_globals._sequenceIndexes[2] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[2], false, 7, 0, 0);
 	_globals._sequenceIndexes[3] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[3], false, 7, 0, 4);
@@ -1152,8 +1152,8 @@ void Scene104::enter() {
 	_vm->_gameConv->get(1);
 
 	if (_globals[kPlayerPersona] == 1) {
-		_scene->_sprites.addSprites(formAnimName('e', 8), false);
-		_scene->_sprites.addSprites(formAnimName('b', 5), false);
+		_scene->_sprites.addSprites(formAnimName('e', 8));
+		_scene->_sprites.addSprites(formAnimName('b', 5));
 	}
 
 	_scene->_hotspots.activate(NOUN_MACMORN, false);
@@ -1180,13 +1180,13 @@ void Scene104::enter() {
 
 	_anim6ActvFl = false;
 
-	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('x', 0), false);
-	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('x', 1), false);
-	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('x', 2), false);
-	_globals._spriteIndexes[4] = _scene->_sprites.addSprites(formAnimName('x', 3), false);
-	_globals._spriteIndexes[5] = _scene->_sprites.addSprites(formAnimName('x', 5), false);
+	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('x', 0));
+	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('x', 1));
+	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('x', 2));
+	_globals._spriteIndexes[4] = _scene->_sprites.addSprites(formAnimName('x', 3));
+	_globals._spriteIndexes[5] = _scene->_sprites.addSprites(formAnimName('x', 5));
+	_globals._spriteIndexes[6] = _scene->_sprites.addSprites(formAnimName('x', 4));
 
-	_globals._spriteIndexes[6] = _scene->_sprites.addSprites(formAnimName('x', 4), false);
 	if (_globals[kNoLoadWalker]) {
 		_scene->drawToBackground(_globals._spriteIndexes[6], 5, Common::Point(-32000, -32000), 0, 100);
 		_scene->_sprites.remove(_globals._spriteIndexes[6]);
@@ -1195,11 +1195,11 @@ void Scene104::enter() {
 	if (_globals[kPlayerPersona] == 0) {
 		_scene->_hotspots.activateAtPos(NOUN_TABLE, false, Common::Point(139, 132));
 
-		_globals._spriteIndexes[7] = _scene->_sprites.addSprites("*KGRD_8", false);
-		_globals._spriteIndexes[8] = _scene->_sprites.addSprites("*KGRM1_8", false);
-		_globals._spriteIndexes[11] = _scene->_sprites.addSprites(formAnimName('y', 5), false);
-		_globals._spriteIndexes[10] = _scene->_sprites.addSprites(formAnimName('y', 4), false);
-		_globals._spriteIndexes[12] = _scene->_sprites.addSprites(formAnimName('y', 1), false);
+		_globals._spriteIndexes[7] = _scene->_sprites.addSprites("*KGRD_8");
+		_globals._spriteIndexes[8] = _scene->_sprites.addSprites("*KGRM1_8");
+		_globals._spriteIndexes[11] = _scene->_sprites.addSprites(formAnimName('y', 5));
+		_globals._spriteIndexes[10] = _scene->_sprites.addSprites(formAnimName('y', 4));
+		_globals._spriteIndexes[12] = _scene->_sprites.addSprites(formAnimName('y', 1));
 
 		if (_globals[kTapestryStatus] == 0 || _globals[kTapestryStatus] == 2) {
 			_scene->_hotspots.activate(NOUN_WALL_PANEL, false);
@@ -1225,19 +1225,19 @@ void Scene104::enter() {
 			}
 		}
 	} else {
-		_globals._spriteIndexes[14] = _scene->_sprites.addSprites(formAnimName('e', 5), false);
-		_scene->_sprites.addSprites(formAnimName('b', 0), false);
-		_globals._spriteIndexes[13] = _scene->_sprites.addSprites(formAnimName('b', 3), false);
+		_globals._spriteIndexes[14] = _scene->_sprites.addSprites(formAnimName('e', 5));
+		_scene->_sprites.addSprites(formAnimName('b', 0));
+		_globals._spriteIndexes[13] = _scene->_sprites.addSprites(formAnimName('b', 3));
 		_scene->_hotspots.activateAtPos(NOUN_TABLE, false, Common::Point(140, 107));
 		_scene->_hotspots.activateAtPos(NOUN_TABLE, true, Common::Point(139, 132));
-		_globals._spriteIndexes[10] = _scene->_sprites.addSprites(formAnimName('y', 4), false);
+		_globals._spriteIndexes[10] = _scene->_sprites.addSprites(formAnimName('y', 4));
 
 		if (_globals[kNoLoadWalker]) {
 			_scene->drawToBackground(_globals._spriteIndexes[10], 1, Common::Point(-32000, -32000), 0, 100);
 			_scene->_sprites.remove(_globals._spriteIndexes[10]);
 		}
 
-		_globals._spriteIndexes[9] = _scene->_sprites.addSprites(formAnimName('y', 3), false);
+		_globals._spriteIndexes[9] = _scene->_sprites.addSprites(formAnimName('y', 3));
 		_globals._sequenceIndexes[9] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[9], false, -1);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[9], 8);
 		_doorwayHotspotId = _scene->_dynamicHotspots.add(NOUN_DOORWAY, VERB_WALK_THROUGH, SYNTAX_SINGULAR, _globals._sequenceIndexes[9], Common::Rect(0, 0, 0, 0));
