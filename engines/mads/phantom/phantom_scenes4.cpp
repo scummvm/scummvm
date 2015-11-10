@@ -722,7 +722,7 @@ void Scene403::enter() {
 	}
 
 	if ((_game._difficulty == DIFFICULTY_EASY) && (_globals[kCatacombsRoom] == 19))
-		_scene->_sequences.setTimingTrigger(120, 60);
+		_scene->_sequences.addTimer(120, 60);
 
 	sceneEntrySound();
 }
@@ -1227,7 +1227,7 @@ void Scene404::enter() {
 	}
 
 	if (_globals[kPriestPistonPuke])
-		_scene->_sequences.setTimingTrigger(120, 60);
+		_scene->_sequences.addTimer(120, 60);
 
 	sceneEntrySound();
 }
@@ -1887,7 +1887,7 @@ void Scene406::actions() {
 		case 2:
 			_globals._sequenceIndexes[0] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[0], true, -2);
 			_scene->_sequences.setSeqPlayer(_globals._sequenceIndexes[0], true);
-			_scene->_sequences.setTimingTrigger(30, 3);
+			_scene->_sequences.addTimer(30, 3);
 			break;
 
 		case 3:
@@ -1901,7 +1901,7 @@ void Scene406::actions() {
 		case 4:
 			_game._player._visible = true;
 			_game.syncTimers(2, 0, 1, _globals._sequenceIndexes[0]);
-			_scene->_sequences.setTimingTrigger(6, 5);
+			_scene->_sequences.addTimer(6, 5);
 			break;
 
 		case 5:
@@ -2575,7 +2575,7 @@ void Scene408::enter() {
 	}
 
 	if ((_game._difficulty == DIFFICULTY_HARD) && (_globals[kCatacombsRoom] == 52))
-		_scene->_sequences.setTimingTrigger(120, 60);
+		_scene->_sequences.addTimer(120, 60);
 
 	sceneEntrySound();
 }
@@ -3057,7 +3057,7 @@ void Scene409::step() {
 	if (_game._trigger == 61) {
 		_globals._sequenceIndexes[7] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[7], false, -2);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[7], 1);
-		_scene->_sequences.setTimingTrigger(60, 62);
+		_scene->_sequences.addTimer(60, 62);
 		_vm->_sound->command(27);
 	}
 
@@ -3091,7 +3091,7 @@ void Scene409::actions() {
 			_globals._sequenceIndexes[8] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[8], false, 4);
 			_game.syncTimers(1, _globals._sequenceIndexes[8], 1, syncIdx);
 			_scene->_sequences.setSeqPlayer(_globals._sequenceIndexes[8], false);
-			_scene->_sequences.setTimingTrigger(30, 2);
+			_scene->_sequences.addTimer(30, 2);
 			_action._inProgress = false;
 			}
 			return;
@@ -3297,7 +3297,7 @@ void Scene409::actions() {
 		case 2:
 			_game.syncTimers(2, 0, 1, _globals._sequenceIndexes[0]);
 			_game._player._visible = true;
-			_scene->_sequences.setTimingTrigger(20, 3);
+			_scene->_sequences.addTimer(20, 3);
 			break;
 
 		case 3:
@@ -3419,7 +3419,7 @@ void Scene409::actions() {
 		case 2:
 			_globals._sequenceIndexes[0] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[0], false, -2);
 			_scene->_sequences.setSeqPlayer(_globals._sequenceIndexes[0], true);
-			_scene->_sequences.setTimingTrigger(30, 3);
+			_scene->_sequences.addTimer(30, 3);
 			break;
 
 		case 3:
@@ -3433,7 +3433,7 @@ void Scene409::actions() {
 		case 4:
 			_game._player._visible = true;
 			_game.syncTimers(2, 0, 1, _globals._sequenceIndexes[0]);
-			_scene->_sequences.setTimingTrigger(6, 5);
+			_scene->_sequences.addTimer(6, 5);
 			break;
 
 		case 5:

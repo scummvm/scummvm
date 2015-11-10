@@ -217,7 +217,7 @@ void Scene301::step() {
 			_scene->setAnimFrame(_globals._animationIndexes[0], 60);
 			if (!_skip2Fl) {
 				_vm->_sound->command(1);
-				_scene->_sequences.setTimingTrigger(420, 70);
+				_scene->_sequences.addTimer(420, 70);
 				_skip2Fl = true;
 			}
 		}
@@ -231,7 +231,7 @@ void Scene301::step() {
 	}
 
 	if (_game._trigger == 64)
-		_scene->_sequences.setTimingTrigger(60, 65);
+		_scene->_sequences.addTimer(60, 65);
 
 	if (_game._trigger == 65)
 		_vm->_dialogs->show(30137);
@@ -529,7 +529,7 @@ void Scene302::actions() {
 		case 2:
 			_game.syncTimers(2, 0, 1, _globals._sequenceIndexes[1]);
 			_game._player._visible = true;
-			_scene->_sequences.setTimingTrigger(20, 3);
+			_scene->_sequences.addTimer(20, 3);
 			break;
 
 		case 3:
@@ -766,7 +766,7 @@ void Scene303::actions() {
 			_anim0ActvFl = false;
 			_game._player._visible = true;
 			_game.syncTimers(2, 0, 3, _globals._animationIndexes[0]);
-			_scene->_sequences.setTimingTrigger(20, 2);
+			_scene->_sequences.addTimer(20, 2);
 			break;
 
 		case 2:
@@ -1558,9 +1558,9 @@ void Scene306::enter() {
 void Scene306::step() {
 	if (_game._trigger == 60) {
 		if (_vm->_sound->_preferRoland)
-			_scene->_sequences.setTimingTrigger(120, 61);
+			_scene->_sequences.addTimer(120, 61);
 		else
-			_scene->_sequences.setTimingTrigger(300, 61);
+			_scene->_sequences.addTimer(300, 61);
 	}
 
 	if (!_speechDoneFl && (_scene->_animation[_globals._animationIndexes[0]]->getCurrentFrame() == 3)) {
@@ -1571,7 +1571,7 @@ void Scene306::step() {
 	if (_game._trigger == 61) {
 		_vm->_sound->command(1);
 		_vm->_sound->command(66);
-		_scene->_sequences.setTimingTrigger(120, 62);
+		_scene->_sequences.addTimer(120, 62);
 	}
 
 	if (_game._trigger == 62)
@@ -1689,7 +1689,7 @@ void Scene307::actions() {
 		case 2:
 			_game.syncTimers(2, 0, 1, _globals._sequenceIndexes[1]);
 			_game._player._visible = true;
-			_scene->_sequences.setTimingTrigger(20, 3);
+			_scene->_sequences.addTimer(20, 3);
 			break;
 
 		case 3:
@@ -1733,7 +1733,7 @@ void Scene307::actions() {
 			_globals._sequenceIndexes[3] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[3], false, -2);
 			_game.syncTimers(1, _globals._sequenceIndexes[3], 1, idx);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 14);
-			_scene->_sequences.setTimingTrigger(10, 73);
+			_scene->_sequences.addTimer(10, 73);
 			 }
 			 break;
 
@@ -1979,7 +1979,7 @@ void Scene308::enter() {
 
 	if (!_game._visitedScenes._sceneRevisited) {
 		_globals[kPlayerScore] += 5;
-		_scene->_sequences.setTimingTrigger(1, 60);
+		_scene->_sequences.addTimer(1, 60);
 	}
 
 	sceneEntrySound();

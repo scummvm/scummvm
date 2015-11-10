@@ -467,7 +467,7 @@ void Scene102::actions() {
 			_scene->_dynamicHotspots.setPosition(_diaryHotspotIdx1, Common::Point(47, 123), FACING_NORTHWEST);
 			_game._player._visible = true;
 			_game.syncTimers(2, 0, 3, _globals._animationIndexes[0]);
-			_scene->_sequences.setTimingTrigger(6, 2);
+			_scene->_sequences.addTimer(6, 2);
 			break;
 
 		case 2:
@@ -819,7 +819,7 @@ void Scene103::actions() {
 		case 3:
 			_game._player._visible = true;
 			_game.syncTimers(2, 0, 1, _globals._sequenceIndexes[11]);
-			_scene->_sequences.setTimingTrigger(1,4);
+			_scene->_sequences.addTimer(1, 4);
 			break;
 
 		case 4:
@@ -840,7 +840,7 @@ void Scene103::actions() {
 			_globals._sequenceIndexes[9] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[9], false, -1);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[9], 1);
 			_game.syncTimers(1, _globals._sequenceIndexes[9], 1, tmpIdx);
-			_scene->_sequences.setTimingTrigger(6, 7);
+			_scene->_sequences.addTimer(6, 7);
 			}
 			break;
 
@@ -885,7 +885,7 @@ void Scene103::actions() {
 		case 3:
 			_game._player._visible = true;
 			_game.syncTimers(2, 0, 1, _globals._sequenceIndexes[11]);
-			_scene->_sequences.setTimingTrigger(1,4);
+			_scene->_sequences.addTimer(1, 4);
 			break;
 
 		case 4:
@@ -906,7 +906,7 @@ void Scene103::actions() {
 			_globals._sequenceIndexes[10] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[10], false, -1);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[10], 1);
 			_game.syncTimers(1, _globals._sequenceIndexes[10], 1, tmpIdx);
-			_scene->_sequences.setTimingTrigger(6, 7);
+			_scene->_sequences.addTimer(6, 7);
 			}
 			break;
 
@@ -1273,7 +1273,7 @@ void Scene104::enter() {
 
 		_globals._sequenceIndexes[5] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[5], false, -1);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[5], 4);
-		_scene->_sequences.setTimingTrigger(60, 77);
+		_scene->_sequences.addTimer(60, 77);
 
 		_globals._animationIndexes[0] = _scene->loadAnimation(formAnimName('k', 1), 0);
 		_anim0ActvFl = true;
@@ -1557,7 +1557,7 @@ void Scene104::actions() {
 			case 3:
 				_game._player._visible = true;
 				_game.syncTimers(2, 0, 1, _globals._sequenceIndexes[7]);
-				_scene->_sequences.setTimingTrigger(1,4);
+				_scene->_sequences.addTimer(1, 4);
 				break;
 
 			case 4:
@@ -1578,7 +1578,7 @@ void Scene104::actions() {
 				_globals._sequenceIndexes[6] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[6], false, -1);
 				_scene->_sequences.setDepth(_globals._sequenceIndexes[6], 1);
 				_game.syncTimers(1, _globals._sequenceIndexes[6], 1, tmpIdx);
-				_scene->_sequences.setTimingTrigger(6, 7);
+				_scene->_sequences.addTimer(6, 7);
 				}
 				break;
 
@@ -1630,7 +1630,7 @@ void Scene104::actions() {
 			case 3:
 				_game._player._visible = true;
 				_game.syncTimers(2, 0, 1, _globals._sequenceIndexes[8]);
-				_scene->_sequences.setTimingTrigger(5, 4);
+				_scene->_sequences.addTimer(5, 4);
 				break;
 
 			case 4:
@@ -1679,7 +1679,7 @@ void Scene104::actions() {
 				_scene->deleteSequence(_globals._sequenceIndexes[12]);
 				_globals._sequenceIndexes[12] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[12], false, 6, 1);
 				_scene->_sequences.setDepth(_globals._sequenceIndexes[12], 8);
-				_scene->_sequences.setTimingTrigger(6, 2);
+				_scene->_sequences.addTimer(6, 2);
 				break;
 
 			case 2:
@@ -1692,7 +1692,7 @@ void Scene104::actions() {
 			case 3:
 				_game._player._visible = true;
 				_game.syncTimers(2, 0, 1, _globals._sequenceIndexes[8]);
-				_scene->_sequences.setTimingTrigger(5, 4);
+				_scene->_sequences.addTimer(5, 4);
 				break;
 
 			case 4:
@@ -1737,7 +1737,7 @@ void Scene104::actions() {
 							_scene->_hotspots.activate(NOUN_WALL_PANEL, true);
 							_scene->_hotspots.activate(NOUN_SECRET_DOOR, false);
 						}
-						_scene->_sequences.setTimingTrigger(6, 2);
+						_scene->_sequences.addTimer(6, 2);
 						break;
 
 					case 2:
@@ -1789,7 +1789,7 @@ void Scene104::actions() {
 						_scene->_hotspots.activateAtPos(NOUN_TAPESTRY, true, Common::Point(310, 70));
 						_scene->_hotspots.activate(NOUN_SECRET_DOOR, false);
 						_scene->_hotspots.activate(NOUN_WALL_PANEL, false);
-						_scene->_sequences.setTimingTrigger(6, 2);
+						_scene->_sequences.addTimer(6, 2);
 						break;
 
 					case 2:

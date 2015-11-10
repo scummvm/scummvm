@@ -2080,7 +2080,7 @@ void Scene203::handleBrieConversation() {
 			else
 				_scene->playSpeech(1);
 
-			_scene->_sequences.setTimingTrigger(60, 110);
+			_scene->_sequences.addTimer(60, 110);
 		}
 		break;
 
@@ -3185,7 +3185,7 @@ void Scene203::handleDaaeAnimation() {
 		break;
 
 	case 201:
-		_scene->_sequences.setTimingTrigger(1, 95);
+		_scene->_sequences.addTimer(1, 95);
 		break;
 
 	case 76:
@@ -3567,7 +3567,7 @@ void Scene204::actions() {
 		case 2:
 			_game.syncTimers(2, 0, 1, _globals._sequenceIndexes[4]);
 			_game._player._visible = true;
-			_scene->_sequences.setTimingTrigger(20, 3);
+			_scene->_sequences.addTimer(20, 3);
 			break;
 
 		case 3:
@@ -4187,7 +4187,7 @@ void Scene204::handleEndAnimation() {
 	}
 
 	if ((_scene->_animation[_globals._animationIndexes[3]]->getCurrentFrame() == 26) && !_skip2Fl) {
-		_scene->_sequences.setTimingTrigger(300, 85);
+		_scene->_sequences.addTimer(300, 85);
 		_scene->_kernelMessages.add(Common::Point(123, 137), 0x1110, 0, 0, 360, _game.getQuote(0x75));
 		_skip2Fl = true;
 	}
@@ -4601,7 +4601,7 @@ void Scene205::actions() {
 				_game.syncTimers(1, _globals._sequenceIndexes[2], 1, idx);
 				_scene->_sequences.setSeqPlayer(_globals._sequenceIndexes[2], false);
 				_vm->_sound->command(72);
-				_scene->_sequences.setTimingTrigger(15, 2);
+				_scene->_sequences.addTimer(15, 2);
 				_action._inProgress = false;
 				return;
 				}
@@ -5953,7 +5953,7 @@ void Scene206::step() {
 		if (_scene->_animation[_globals._animationIndexes[0]]->getCurrentFrame() == 118) {
 			_globals[kKnockedOverHead] = true;
 			_skip1Fl = true;
-			_scene->_sequences.setTimingTrigger(1, 84);
+			_scene->_sequences.addTimer(1, 84);
 		}
 	}
 
@@ -6031,7 +6031,7 @@ void Scene206::actions() {
 		case 78:
 			_game.syncTimers(2, 0, 1, _globals._sequenceIndexes[5]);
 			_game._player._visible = true;
-			_scene->_sequences.setTimingTrigger(20, 79);
+			_scene->_sequences.addTimer(20, 79);
 			_action._inProgress = false;
 			return;
 
@@ -6144,7 +6144,7 @@ void Scene206::actions() {
 				_globals._sequenceIndexes[5] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[5], true, -2);
 				_game.syncTimers(1, _globals._sequenceIndexes[5], 1, idx);
 				_scene->_sequences.setSeqPlayer(_globals._sequenceIndexes[5], false);
-				_scene->_sequences.setTimingTrigger(30, 65);
+				_scene->_sequences.addTimer(30, 65);
 				}
 				break;
 
@@ -6307,7 +6307,7 @@ void Scene206::actions() {
 			_globals[kPlayerScoreFlags] |= 8;
 			_globals[kPlayerScore] += 5;
 		}
-		_scene->_sequences.setTimingTrigger(15, 96);
+		_scene->_sequences.addTimer(15, 96);
 
 		_action._inProgress = false;
 		return;
@@ -6405,8 +6405,8 @@ void Scene207::actions() {
 		case 1:
 			_globals._sequenceIndexes[0] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[0], false, -2);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[0], 10);
-			_scene->_sequences.setTimingTrigger(120, 2);
-			_scene->_sequences.setTimingTrigger(240, 3);
+			_scene->_sequences.addTimer(120, 2);
+			_scene->_sequences.addTimer(240, 3);
 			break;
 
 		case 2:
@@ -6589,43 +6589,43 @@ void Scene208::enter() {
 	_topLeftPeopleFrame = 2;
 	_globals._sequenceIndexes[0] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[0], false, _topLeftPeopleFrame);
 	_scene->_sequences.setDepth(_globals._sequenceIndexes[0], 1);
-	_scene->_sequences.setTimingTrigger(120, 60);
+	_scene->_sequences.addTimer(120, 60);
 
 	_topRightPeopleFrame = 2;
 	_globals._sequenceIndexes[1] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[1], false, _topRightPeopleFrame);
 	_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 1);
-	_scene->_sequences.setTimingTrigger(30, 62);
+	_scene->_sequences.addTimer(30, 62);
 
 	_middleLeftPeopleFrame = 2;
 	_globals._sequenceIndexes[2] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[2], false, _middleLeftPeopleFrame);
 	_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 1);
-	_scene->_sequences.setTimingTrigger(30, 64);
+	_scene->_sequences.addTimer(30, 64);
 
 	_centerPeopleFrame = 1;
 	_direction = 1;
 	_globals._sequenceIndexes[3] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[3], false, _centerPeopleFrame);
 	_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 14);
-	_scene->_sequences.setTimingTrigger(300, 66);
+	_scene->_sequences.addTimer(300, 66);
 
 	_middleRightPeopleFrame = 3;
 	_globals._sequenceIndexes[4] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[4], false, _middleRightPeopleFrame);
 	_scene->_sequences.setDepth(_globals._sequenceIndexes[4], 1);
-	_scene->_sequences.setTimingTrigger(60, 68);
+	_scene->_sequences.addTimer(60, 68);
 
 	_bottomLeftPeopleFrame = 4;
 	_globals._sequenceIndexes[5] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[5], false, _bottomLeftPeopleFrame);
 	_scene->_sequences.setDepth(_globals._sequenceIndexes[5], 1);
-	_scene->_sequences.setTimingTrigger(60, 70);
+	_scene->_sequences.addTimer(60, 70);
 
 	_bottomMiddlePeopleFrame = 4;
 	_globals._sequenceIndexes[6] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[6], false, _bottomMiddlePeopleFrame);
 	_scene->_sequences.setDepth(_globals._sequenceIndexes[6], 14);
-	_scene->_sequences.setTimingTrigger(30, 72);
+	_scene->_sequences.addTimer(30, 72);
 
 	_bottomRightPeopleFrame = 3;
 	_globals._sequenceIndexes[7] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[7], false, _bottomRightPeopleFrame);
 	_scene->_sequences.setDepth(_globals._sequenceIndexes[7], 1);
-	_scene->_sequences.setTimingTrigger(15, 74);
+	_scene->_sequences.addTimer(15, 74);
 
 	_globals._animationIndexes[0] = _scene->loadAnimation(formAnimName('p', 1), 80);
 
@@ -6699,7 +6699,7 @@ void Scene208::animateTopLeftPeople() {
 	_globals._sequenceIndexes[0] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[0], false, _topLeftPeopleFrame);
 	_scene->_sequences.setDepth(_globals._sequenceIndexes[0], 1);
 	int delay = _vm->getRandomNumber(15, 60);
-	_scene->_sequences.setTimingTrigger(delay, 60);
+	_scene->_sequences.addTimer(delay, 60);
 }
 
 void Scene208::animateTopRightPeople() {
@@ -6726,7 +6726,7 @@ void Scene208::animateTopRightPeople() {
 	_globals._sequenceIndexes[1] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[1], false, _topRightPeopleFrame);
 	_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 1);
 	int delay = _vm->getRandomNumber(15, 60);
-	_scene->_sequences.setTimingTrigger(delay, 62);
+	_scene->_sequences.addTimer(delay, 62);
 }
 
 void Scene208::animateMiddleLeftPeople() {
@@ -6758,7 +6758,7 @@ void Scene208::animateMiddleLeftPeople() {
 
 	_globals._sequenceIndexes[2] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[2], false, _middleLeftPeopleFrame);
 	_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 1);
-	_scene->_sequences.setTimingTrigger(delay, 64);
+	_scene->_sequences.addTimer(delay, 64);
 }
 
 
@@ -6790,7 +6790,7 @@ void Scene208::animateCenterPeople() {
 
 	_globals._sequenceIndexes[3] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[3], false, _centerPeopleFrame);
 	_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 14);
-	_scene->_sequences.setTimingTrigger(delay, 66);
+	_scene->_sequences.addTimer(delay, 66);
 }
 
 void Scene208::animateMiddleRightPeople() {
@@ -6820,7 +6820,7 @@ void Scene208::animateMiddleRightPeople() {
 	_globals._sequenceIndexes[4] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[4], false, _middleRightPeopleFrame);
 	_scene->_sequences.setDepth(_globals._sequenceIndexes[4], 1);
 	int delay = _vm->getRandomNumber(15, 60);
-	_scene->_sequences.setTimingTrigger(delay, 68);
+	_scene->_sequences.addTimer(delay, 68);
 }
 
 void Scene208::animateBottomLeftPeople() {
@@ -6847,7 +6847,7 @@ void Scene208::animateBottomLeftPeople() {
 	_globals._sequenceIndexes[5] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[5], false, _bottomLeftPeopleFrame);
 	_scene->_sequences.setDepth(_globals._sequenceIndexes[5], 1);
 	int delay = _vm->getRandomNumber(15, 60);
-	_scene->_sequences.setTimingTrigger(delay, 70);
+	_scene->_sequences.addTimer(delay, 70);
 }
 
 void Scene208::animateBottomMiddlePeople() {
@@ -6874,7 +6874,7 @@ void Scene208::animateBottomMiddlePeople() {
 	_globals._sequenceIndexes[6] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[6], false, _bottomMiddlePeopleFrame);
 	_scene->_sequences.setDepth(_globals._sequenceIndexes[6], 14);
 	int delay = _vm->getRandomNumber(15, 60);
-	_scene->_sequences.setTimingTrigger(delay, 72);
+	_scene->_sequences.addTimer(delay, 72);
 }
 
 void Scene208::animateBottomRightPeople() {
@@ -6901,7 +6901,7 @@ void Scene208::animateBottomRightPeople() {
 	_globals._sequenceIndexes[7] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[7], false, _bottomRightPeopleFrame);
 	_scene->_sequences.setDepth(_globals._sequenceIndexes[7], 1);
 	int delay = _vm->getRandomNumber(15, 60);
-	_scene->_sequences.setTimingTrigger(delay, 74);
+	_scene->_sequences.addTimer(delay, 74);
 }
 
 /*------------------------------------------------------------------------*/
@@ -6930,7 +6930,7 @@ void Scene250::enter() {
 
 void Scene250::step() {
 	if (_game._trigger == 1)
-		_scene->_sequences.setTimingTrigger(12, 2);
+		_scene->_sequences.addTimer(12, 2);
 
 	if (_game._trigger == 2) {
 		int y = 68;
@@ -6982,7 +6982,7 @@ void Scene250::step() {
 			messageId = 0x41;
 
 		_scene->_kernelMessages.add(Common::Point(160, y), 0x1110, 0x20, 0, 900, _game.getQuote(messageId));
-		_scene->_sequences.setTimingTrigger(930, 3);
+		_scene->_sequences.addTimer(930, 3);
 	}
 
 	if (_game._trigger == 3)

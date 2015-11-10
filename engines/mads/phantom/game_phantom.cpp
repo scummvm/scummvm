@@ -486,7 +486,7 @@ void GamePhantom::doObjectAction() {
 		else {
 			switch (_trigger) {
 			case 0:
-				_scene._sequences.setTimingTrigger(4, 1);
+				_scene._sequences.addTimer(4, 1);
 				_globals[kLanternStatus] = 1;
 				_vm->_dialogs->spinObject(OBJ_LANTERN);
 				break;
@@ -511,7 +511,7 @@ void GamePhantom::doObjectAction() {
 		else {
 			switch (_trigger) {
 			case 0:
-				_scene._sequences.setTimingTrigger(4, 1);
+				_scene._sequences.addTimer(4, 1);
 				_globals[kLanternStatus] = 0;
 				_vm->_dialogs->spinObject(OBJ_LANTERN);
 				break;

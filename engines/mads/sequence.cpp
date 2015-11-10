@@ -561,11 +561,6 @@ int SequenceList::addStampCycle(int srcSpriteIdx, bool flipped, int sprite) {
 	return (id);
 }
 
-int SequenceList::setTimingTrigger(int delay, int code) {
-	warning("TODO: SequenceList::setTimingTrigger");
-	return -1;
-}
-
 void SequenceList::setSeqPlayer(int idx, bool flag) {
 	Player &player = _vm->_game->_player;
 	int yp = player._playerPos.y + (player._centerOfGravity * player._currentScale) / 100;
