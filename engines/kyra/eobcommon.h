@@ -639,6 +639,12 @@ protected:
 	const uint8 *_dscDoorY1;
 	const uint8 *_dscDoorXE;
 
+	uint8 *_greenFadingTable;
+	uint8 *_blueFadingTable;
+	uint8 *_lightBlueFadingTable;
+	uint8 *_blackFadingTable;
+	uint8 *_greyFadingTable;
+
 	const uint8 *_wllFlagPreset;
 	int _wllFlagPresetSize;
 	const uint8 *_teleporterShapeCoords;

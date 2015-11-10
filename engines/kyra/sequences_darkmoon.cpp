@@ -82,6 +82,7 @@ private:
 	const Config *_config;
 
 	Palette *_palettes[12];
+	uint8 *_fadingTables[7];
 
 	const uint8 **_shapes;
 
@@ -972,6 +973,27 @@ DarkmoonSequenceHelper::DarkmoonSequenceHelper(OSystem *system, DarkMoonEngine *
 	_palettes[11] = new Palette(256);
 	_palettes[11]->fill(0, 256, 0);
 
+	for (int i = 0; i < 7; i++)
+		_fadingTables[i] = 0;
+
+	uint8 *fadeData = (_vm->_configRenderMode != Common::kRenderCGA && _vm->_configRenderMode != Common::kRenderEGA) ? _vm->resource()->fileData("FADING.DAT", 0) : 0;
+	
+	if (fadeData) {
+		for (int i = 0; i < 7; i++) {
+			_fadingTables[i] = new uint8[256];
+			memcpy(_fadingTables[i], fadeData + (i << 8), 256);
+		}
+	} else {
+		if (_vm->_configRenderMode != Common::kRenderCGA && _vm->_configRenderMode != Common::kRenderEGA) {
+			uint8 *pal = _vm->resource()->fileData("PALETTE1.PAL", 0);
+			for (int i = 0; i < 7; i++)
+				_screen->createFadeTable(pal, _fadingTables[i], 18, (i + 1) * 36);
+			delete[] pal;
+		}
+	}
+
+	delete[] fadeData;
+
 	_shapes = new const uint8*[30];
 	memset(_shapes, 0, 30 * sizeof(uint8 *));
 
@@ -993,6 +1015,9 @@ DarkmoonSequenceHelper::~DarkmoonSequenceHelper() {
 	delete _palettes[9];
 	delete _palettes[10];
 	delete _palettes[11];
+
+	for (int i = 0; i < 7; i++)
+		delete[] _fadingTables[i];
 
 	for (int i = 0; i < 30; i++)
 		delete[] _shapes[i];
@@ -1152,13 +1177,13 @@ void DarkmoonSequenceHelper::animCommand(int index, int del) {
 				_screen->updateScreen();
 				delay(s->delay /** 7*/);
 			} else {
-				_screen->setShapeFadeMode(0, true);
-				_screen->setShapeFadeMode(1, true);
+				_screen->enableShapeBackgroundFading(true);
+				_screen->setShapeFadingLevel(1);
 
 				end = _system->getMillis() + s->delay * _vm->tickLength();
 
 				if (palIndex) {
-					_screen->setFadeTableIndex(palIndex - 1);
+					_screen->setFadeTable(_fadingTables[palIndex - 1]);
 
 					_screen->copyRegion(s->x1 - 8, s->y1 - 8, 0, 0, (_shapes[s->obj][2] + 1) << 3, _shapes[s->obj][3], 2, 4, Screen::CR_NO_P_CHECK);
 					_screen->drawShape(4, _shapes[s->obj], s->x1 & 7, 0, 0);
@@ -1169,8 +1194,8 @@ void DarkmoonSequenceHelper::animCommand(int index, int del) {
 				_screen->updateScreen();
 
 				_vm->delayUntil(end);
-				_screen->setShapeFadeMode(0, false);
-				_screen->setShapeFadeMode(1, false);
+				_screen->enableShapeBackgroundFading(false);
+				_screen->setShapeFadingLevel(0);
 			}
 			break;
 

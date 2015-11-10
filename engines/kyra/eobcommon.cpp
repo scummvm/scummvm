@@ -114,6 +114,8 @@ EoBCoreEngine::EoBCoreEngine(OSystem *system, const GameFlags &flags)
 	_dscDoorY1 = 0;
 	_dscDoorXE = 0;
 
+	_greenFadingTable = _blueFadingTable = _lightBlueFadingTable = _blackFadingTable = _greyFadingTable = 0;
+
 	_menuDefs = 0;
 
 	_exchangeCharacterId = -1;
@@ -297,6 +299,12 @@ EoBCoreEngine::~EoBCoreEngine() {
 	delete[] _levelDecorationRects;
 	_dscWallMapping.clear();
 
+	delete[] _greenFadingTable;
+	delete[] _blueFadingTable;
+	delete[] _lightBlueFadingTable;
+	delete[] _blackFadingTable;
+	delete[] _greyFadingTable;
+
 	delete[] _spells;
 	delete[] _spellAnimBuffer;
 	delete[] _wallsOfForce;
@@ -446,6 +454,12 @@ Common::Error EoBCoreEngine::init() {
 	memset(&_wllShapeMap[13], -1, 5);
 
 	_wllVcnOffset = 16;
+
+	_greenFadingTable = new uint8[256];
+	_blueFadingTable = new uint8[256];
+	_lightBlueFadingTable = new uint8[256];
+	_blackFadingTable = new uint8[256];
+	_greyFadingTable = new uint8[256];
 
 	_monsters = new EoBMonsterInPlay[30];
 	memset(_monsters, 0, 30 * sizeof(EoBMonsterInPlay));
@@ -842,7 +856,7 @@ void EoBCoreEngine::setHandItem(Item itemIndex) {
 	const uint8 *ovl = 0;
 
 	if (icon && (_items[_itemInHand].flags & 0x80) && (_partyEffectFlags & 2))
-		ovl = _flags.gameID == GI_EOB1 ? ((_configRenderMode == Common::kRenderCGA) ? _itemsOverlayCGA : &_itemsOverlay[icon << 4]) : _screen->generateShapeOverlay(shp, 3);
+		ovl = _flags.gameID == GI_EOB1 ? ((_configRenderMode == Common::kRenderCGA) ? _itemsOverlayCGA : &_itemsOverlay[icon << 4]) : _screen->generateShapeOverlay(shp, _lightBlueFadingTable);
 
 	int mouseOffs = itemIndex ? 8 : 0;
 	_screen->setMouseCursor(mouseOffs, mouseOffs, shp, ovl);

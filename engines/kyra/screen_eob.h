@@ -59,10 +59,11 @@ public:
 	void drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int sd = -1, int flags = 0, ...);
 	const uint8 *scaleShape(const uint8 *shapeData, int blockDistance);
 	const uint8 *scaleShapeStep(const uint8 *shp);
-	const uint8 *generateShapeOverlay(const uint8 *shp, int paletteOverlayIndex);
+	const uint8 *generateShapeOverlay(const uint8 *shp, const uint8 *fadingTable);
 
 	void setShapeFrame(int x1, int y1, int x2, int y2);
-	void setShapeFadeMode(uint8 i, bool b);
+	void enableShapeBackgroundFading(bool enable);
+	void setShapeFadingLevel(int val);
 
 	void setGfxParameters(int x, int y, int col);
 	void drawExplosion(int scale, int radius, int numElements, int stepSize, int aspectRatio, const uint8 *colorTable, int colorTableSize);
@@ -74,10 +75,9 @@ public:
 	void setTextColorMap(const uint8 *cmap) {}
 	int getRectSize(int w, int h);
 
-	void setFadeTableIndex(int index);
+	void setFadeTable(const uint8 *table);
 	void createFadeTable(uint8 *palData, uint8 *dst, uint8 rootColor, uint8 weight);
-	uint8 *getFadeTable(int index);
-
+	
 	const uint16 *getCGADitheringTable(int index);
 	const uint8 *getEGADitheringTable();
 
@@ -100,10 +100,9 @@ private:
 	const uint8 *_gfxMaxY;
 
 	int16 _dsX1, _dsX2, _dsY1, _dsY2;
-	bool _shapeFadeMode[2];
-	uint16 _shapeFadeInternal;
-	uint8 *_fadeData;
-	int _fadeDataIndex;
+	
+	bool _dsBackgroundFading;
+	int16 _dsBackgroundFadingXOffs;
 	uint8 _shapeOverlay[16];
 
 	uint8 *_dsTempPage;

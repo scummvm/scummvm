@@ -168,8 +168,8 @@ Common::String EoBCoreEngine::initLevelData(int sub) {
 
 		if (_flags.gameID == GI_EOB1) {
 			pos += 11;
-			_screen->setShapeFadeMode(0, false);
-			_screen->setShapeFadeMode(1, false);
+			_screen->setShapeFadingLevel(0);
+			_screen->enableShapeBackgroundFading(false);
 		}
 
 		if (_flags.gameID == GI_EOB2 || _configRenderMode != Common::kRenderEGA)
@@ -181,14 +181,14 @@ Common::String EoBCoreEngine::initLevelData(int sub) {
 			_screen->getPalette(0).fill(224, 32, 0x3F);
 			uint8 *src = _screen->getPalette(0).getData();
 
-			_screen->createFadeTable(src, _screen->getFadeTable(0), 4, 75);     // green
-			_screen->createFadeTable(src, _screen->getFadeTable(1), 12, 200);   // black
-			_screen->createFadeTable(src, _screen->getFadeTable(2), 10, 85);    // blue
-			_screen->createFadeTable(src, _screen->getFadeTable(3), 11, 125);   // light blue
+			_screen->createFadeTable(src, _greenFadingTable, 4, 75);
+			_screen->createFadeTable(src, _blackFadingTable, 12, 200);
+			_screen->createFadeTable(src, _blueFadingTable, 10, 85);
+			_screen->createFadeTable(src, _lightBlueFadingTable, 11, 125);
 
 			_screen->getPalette(0).copy(backupPal, 224, 32, 224);
-			_screen->createFadeTable(src, _screen->getFadeTable(4), 12, 85);    // grey (shadow)
-			_screen->setFadeTableIndex(4);
+			_screen->createFadeTable(src, _greyFadingTable, 12, 85);
+			_screen->setFadeTable(_greyFadingTable);
 			if (_flags.gameID == GI_EOB2 && _configRenderMode == Common::kRenderEGA)
 				_screen->setScreenPalette(_screen->getPalette(0));
 		}

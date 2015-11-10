@@ -236,18 +236,18 @@ void EoBCoreEngine::gui_drawFaceShape(int index) {
 		}
 	} else {
 		if (c->effectFlags & 0x140) {
-			_screen->setFadeTableIndex(1);
-			_screen->setShapeFadeMode(1, true);
+			_screen->setFadeTable(_blackFadingTable);
+			_screen->setShapeFadingLevel(1);
 		}
 
 		if (c->flags & 2) {
-			_screen->setFadeTableIndex(0);
-			_screen->setShapeFadeMode(1, true);
+			_screen->setFadeTable(_greenFadingTable);
+			_screen->setShapeFadingLevel(1);
 		}
 
 		if (c->flags & 8) {
-			_screen->setFadeTableIndex(2);
-			_screen->setShapeFadeMode(1, true);
+			_screen->setFadeTable(_blueFadingTable);
+			_screen->setShapeFadingLevel(1);
 		}
 	}
 
@@ -256,8 +256,8 @@ void EoBCoreEngine::gui_drawFaceShape(int index) {
 	if (c->hitPointsCur < 1)
 		_screen->drawShape(_screen->_curPage, _disabledCharGrid, x, y, 0);
 
-	_screen->setFadeTableIndex(4);
-	_screen->setShapeFadeMode(1, false);
+	_screen->setFadeTable(_greyFadingTable);
+	_screen->setShapeFadingLevel(0);
 }
 
 void EoBCoreEngine::gui_drawWeaponSlot(int charIndex, int slot) {

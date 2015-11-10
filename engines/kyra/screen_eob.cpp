@@ -38,10 +38,10 @@
 namespace Kyra {
 
 Screen_EoB::Screen_EoB(EoBCoreEngine *vm, OSystem *system) : Screen(vm, system, _screenDimTable, _screenDimTableCount) {
-	_shapeFadeMode[0] = _shapeFadeMode[1] = 0;
-	_shapeFadeInternal = 0;
-	_fadeData = 0;
-	_fadeDataIndex = 0;
+	_dsBackgroundFading = false;
+	_dsShapeFadingLevel = 0;
+	_dsBackgroundFadingXOffs = 0;
+	_dsShapeFadingTable = 0;
 	_dsX1 = _dsX2 = _dsY1 = _dsY2 = 0;
 	_gfxX = _gfxY = 0;
 	_gfxCol = 0;
@@ -59,7 +59,6 @@ Screen_EoB::Screen_EoB(EoBCoreEngine *vm, OSystem *system) : Screen(vm, system, 
 }
 
 Screen_EoB::~Screen_EoB() {
-	delete[] _fadeData;
 	delete[] _dsTempPage;
 	delete[] _cgaScaleTable;
 	delete[] _egaDitheringTable;
@@ -72,20 +71,6 @@ bool Screen_EoB::init() {
 	if (Screen::init()) {
 		int temp;
 		_gfxMaxY = _vm->staticres()->loadRawData(kEoBBaseExpObjectY, temp);
-
-		if (_renderMode != Common::kRenderCGA && _renderMode != Common::kRenderEGA)
-			_fadeData = _vm->resource()->fileData("FADING.DAT", 0);
-
-		if (!_fadeData) {
-			_fadeData = new uint8[0x700];
-			memset(_fadeData, 0, 0x700);
-			if (_renderMode != Common::kRenderCGA && _renderMode != Common::kRenderEGA) {
-				uint8 *pal = _vm->resource()->fileData("PALETTE1.PAL", 0);
-				for (int i = 0; i < 7; i++)
-					createFadeTable(pal, &_fadeData[i << 8], 18, (i + 1) * 36);
-				delete[] pal;
-			}
-		}
 
 		_dsTempPage = new uint8[12000];
 
@@ -379,7 +364,7 @@ uint8 *Screen_EoB::encodeShape(uint16 x, uint16 y, uint16 w, uint16 h, bool enco
 		memset(shp, 0, shapesize);
 		uint8 *dst = shp;
 
-		*dst++ = 8;
+		*dst++ = 1;
 		*dst++ = (h & 0xFF);
 		*dst++ = (w & 0xFF);
 		*dst++ = (h & 0xFF);
@@ -483,11 +468,6 @@ void Screen_EoB::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, 
 	if (!src)
 		return;
 
-	va_list args;
-	va_start(args, flags);
-	uint8 *ovl = (flags & 2) ? va_arg(args, uint8 *) : 0;
-	va_end(args);
-
 	if (sd != -1) {
 		const ScreenDim *dm = getScreenDim(sd);
 		setShapeFrame(dm->sx, dm->sy, dm->sx + dm->w, dm->sy + dm->h);
@@ -495,12 +475,22 @@ void Screen_EoB::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, 
 		y += _dsY1;
 	}
 
+	uint8 *ovl = 0;
+
+	va_list args;
+	va_start(args, flags);
+	if (flags & 2) {
+		ovl = va_arg(args, uint8 *);
+		_dsBackgroundFadingXOffs = x;
+	}
+	va_end(args);
+
 	dst += (_dsX1 << 3);
 	int16 dX = x - (_dsX1 << 3);
 	int16 dY = y;
 	int16 dW = _dsX2 - _dsX1;
+	
 	uint8 pixelsPerByte = *src++;
-
 	uint16 dH = *src++;
 	uint16 width = (*src++) << 3;
 	uint16 transOffset = (pixelsPerByte == 4) ? (dH * width) >> 2 : 0;
@@ -516,7 +506,7 @@ void Screen_EoB::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, 
 
 	int pixelStep = (flags & 1) ? -1 : 1;
 
-	if (pixelsPerByte == 8)  {
+	if (pixelsPerByte == 1)  {
 		uint16 marginLeft = 0;
 		uint16 marginRight = 0;
 
@@ -773,7 +763,7 @@ void Screen_EoB::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, 
 }
 
 const uint8 *Screen_EoB::scaleShape(const uint8 *shapeData, int steps) {
-	setShapeFadeMode(1, steps ? true : false);
+	setShapeFadingLevel(steps);
 
 	while (shapeData && steps--)
 		shapeData = scaleShapeStep(shapeData);
@@ -842,14 +832,13 @@ const uint8 *Screen_EoB::scaleShapeStep(const uint8 *shp) {
 	return (const uint8 *)dst;
 }
 
-const uint8 *Screen_EoB::generateShapeOverlay(const uint8 *shp, int paletteOverlayIndex) {
+const uint8 *Screen_EoB::generateShapeOverlay(const uint8 *shp, const uint8 *fadingTable) {
 	if (*shp != 2)
 		return 0;
 
 	shp += 4;
-	uint8 *ovl = getFadeTable(paletteOverlayIndex);
 	for (int i = 0; i < 16; i++)
-		_shapeOverlay[i] = ovl[shp[i]];
+		_shapeOverlay[i] = fadingTable[shp[i]];
 	return _shapeOverlay;
 }
 
@@ -860,9 +849,12 @@ void Screen_EoB::setShapeFrame(int x1, int y1, int x2, int y2) {
 	_dsY2 = y2;
 }
 
-void Screen_EoB::setShapeFadeMode(uint8 i, bool b) {
-	if (!i || i == 1)
-		_shapeFadeMode[i] = b;
+void Screen_EoB::enableShapeBackgroundFading(bool enable) {
+	_dsBackgroundFading = enable;
+}
+
+void Screen_EoB::setShapeFadingLevel(int level) {
+	_dsShapeFadingLevel = level;
 }
 
 void Screen_EoB::setGfxParameters(int x, int y, int col) {
@@ -1171,8 +1163,8 @@ int Screen_EoB::getRectSize(int w, int h) {
 	return w * h;
 }
 
-void Screen_EoB::setFadeTableIndex(int index) {
-	_fadeDataIndex = (CLIP(index, 0, 7) << 8);
+void Screen_EoB::setFadeTable(const uint8 *table) {
+	_dsShapeFadingTable = table;
 }
 
 void Screen_EoB::createFadeTable(uint8 *palData, uint8 *dst, uint8 rootColor, uint8 weight) {
@@ -1216,10 +1208,6 @@ void Screen_EoB::createFadeTable(uint8 *palData, uint8 *dst, uint8 rootColor, ui
 		}
 		*dst++ = col;
 	}
-}
-
-uint8 *Screen_EoB::getFadeTable(int index) {
-	return (index >= 0 && index < 5) ? &_fadeData[index << 8] : 0;
 }
 
 const uint16 *Screen_EoB::getCGADitheringTable(int index) {
@@ -1273,19 +1261,19 @@ void Screen_EoB::ditherRect(const uint8 *src, uint8 *dst, int dstPitch, int srcW
 
 void Screen_EoB::drawShapeSetPixel(uint8 *dst, uint8 col) {
 	if ((_renderMode != Common::kRenderCGA && _renderMode != Common::kRenderEGA) || _useHiResEGADithering) {
-		if (_shapeFadeMode[0]) {
-			if (_shapeFadeMode[1]) {
+		if (_dsBackgroundFading) {
+			if (_dsShapeFadingLevel) {
 				col = *dst;
 			} else {
-				_shapeFadeInternal &= 7;
-				col = *(dst + _shapeFadeInternal++);
+				_dsBackgroundFadingXOffs &= 7;
+				col = *(dst + _dsBackgroundFadingXOffs++);
 			}
 		}
 
-		if (_shapeFadeMode[1]) {
-			uint8 cnt = _shapeFadeMode[1];
+		if (_dsShapeFadingLevel) {
+			uint8 cnt = _dsShapeFadingLevel;
 			while (cnt--)
-				col = _fadeData[_fadeDataIndex + col];
+				col = _dsShapeFadingTable[col];
 		}
 	}
 
