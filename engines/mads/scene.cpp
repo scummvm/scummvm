@@ -841,8 +841,14 @@ void Scene::playSpeech(int idx) {
 	_vm->_audio->playSound(idx - 1);
 }
 
-void Scene::sceneScale(int front_y, int front_scale, int back_y,  int back_scale) {
-	warning("TODO: Scene:scaleRoom");
+void Scene::sceneScale(int yFront, int maxScale, int yBack,  int minScale) {
+	_sceneInfo->_yBandsEnd = yFront;
+	_sceneInfo->_maxScale = maxScale;
+	_sceneInfo->_yBandsStart = yBack;
+	_sceneInfo->_minScale = minScale;
+
+	_bandsRange = _sceneInfo->_yBandsEnd - _sceneInfo->_yBandsStart;
+	_scaleRange = _sceneInfo->_maxScale - _sceneInfo->_minScale;
 }
 
 void Scene::animations_tick() {
