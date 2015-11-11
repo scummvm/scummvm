@@ -32,6 +32,7 @@ namespace ZVision {
 
 // Forward declaration of ZVision. This file is included before ZVision is declared
 class ZVision;
+class ScriptManager;
 class ValueSlot;
 
 /**
@@ -40,7 +41,7 @@ class ValueSlot;
   */
 class ResultAction {
 public:
-	ResultAction(ZVision *engine, int32 slotkey) : _engine(engine), _slotKey(slotkey) {}
+	ResultAction(ZVision *engine, int32 slotkey);
 	virtual ~ResultAction() {}
 	/**
 	 * This is called by the script system whenever a Puzzle's criteria are found to be true.
@@ -53,6 +54,7 @@ public:
 	virtual bool execute() = 0;
 protected:
 	ZVision *_engine;
+	ScriptManager *_scriptManager;
 	int32 _slotKey;
 };
 
@@ -224,7 +226,7 @@ public:
 private:
 	Common::String _fileName;
 	bool _loop;
-	byte _volume;
+	ValueSlot *_volume;
 	bool _universe;
 	bool _midi;
 	int8 _note;
@@ -267,7 +269,6 @@ public:
 	bool execute();
 
 private:
-	uint32 _animationKey;
 	uint32 _controlKey;
 	uint32 _x1;
 	uint32 _y1;
@@ -338,6 +339,15 @@ public:
 
 private:
 	ValueSlot *_max;
+};
+
+class ActionRestoreGame : public ResultAction {
+public:
+	ActionRestoreGame(ZVision *engine, int32 slotkey, const Common::String &line);
+	bool execute();
+
+private:
+	Common::String _fileName;
 };
 
 class ActionRotateTo : public ResultAction {

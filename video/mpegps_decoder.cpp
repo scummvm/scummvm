@@ -22,6 +22,7 @@
 
 #include "audio/audiostream.h"
 #include "audio/decoders/raw.h"
+#include "audio/decoders/mp3.h"
 #include "common/debug.h"
 #include "common/endian.h"
 #include "common/stream.h"
@@ -142,7 +143,7 @@ void MPEGPSDecoder::readNextPacket() {
 			} else if (startCode >= 0x1C0 && startCode <= 0x1DF) {
 #ifdef USE_MAD
 				// MPEG Audio stream
-				MPEGAudioTrack *audioTrack = new MPEGAudioTrack(packet);
+				MPEGAudioTrack *audioTrack = new MPEGAudioTrack(*packet);
 				stream = audioTrack;
 				_streamMap[startCode] = audioTrack;
 				addTrack(audioTrack);
@@ -158,6 +159,8 @@ void MPEGPSDecoder::readNextPacket() {
 		}
 
 		if (stream) {
+			packet->seek(0);
+
 			bool done = stream->sendPacket(packet, pts, dts);
 
 			if (done && stream->getStreamType() == MPEGStream::kStreamTypeVideo)
@@ -510,221 +513,21 @@ void MPEGPSDecoder::MPEGVideoTrack::findDimensions(Common::SeekableReadStream *f
 
 // The audio code here is almost entirely based on what we do in mp3.cpp
 
-MPEGPSDecoder::MPEGAudioTrack::MPEGAudioTrack(Common::SeekableReadStream *firstPacket) {
-	// The MAD_BUFFER_GUARD must always contain zeros (the reason
-	// for this is that the Layer III Huffman decoder of libMAD
-	// may read a few bytes beyond the end of the input buffer).
-	memset(_buf + BUFFER_SIZE, 0, MAD_BUFFER_GUARD);
-
-	_state = MP3_STATE_INIT;
-	_audStream = 0;
-
-	// Find out our audio parameters
-	initStream(firstPacket);
-
-	while (_state != MP3_STATE_EOS)
-		readHeader(firstPacket);
-
-	_audStream = Audio::makeQueuingAudioStream(_frame.header.samplerate, MAD_NCHANNELS(&_frame.header) == 2);
-
-	deinitStream();
-
-	firstPacket->seek(0);
-	_state = MP3_STATE_INIT;
+MPEGPSDecoder::MPEGAudioTrack::MPEGAudioTrack(Common::SeekableReadStream &firstPacket) {
+	_audStream = Audio::makePacketizedMP3Stream(firstPacket);
 }
 
 MPEGPSDecoder::MPEGAudioTrack::~MPEGAudioTrack() {
-	deinitStream();
 	delete _audStream;
 }
 
-static inline int scaleSample(mad_fixed_t sample) {
-	// round
-	sample += (1L << (MAD_F_FRACBITS - 16));
-
-	// clip
-	if (sample > MAD_F_ONE - 1)
-		sample = MAD_F_ONE - 1;
-	else if (sample < -MAD_F_ONE)
-		sample = -MAD_F_ONE;
-
-	// quantize and scale to not saturate when mixing a lot of channels
-	return sample >> (MAD_F_FRACBITS + 1 - 16);
-}
-
 bool MPEGPSDecoder::MPEGAudioTrack::sendPacket(Common::SeekableReadStream *packet, uint32 pts, uint32 dts) {
-	while (_state != MP3_STATE_EOS)
-		decodeMP3Data(packet);
-
-	_state = MP3_STATE_READY;
-	delete packet;
+	_audStream->queuePacket(packet);
 	return true;
 }
 
 Audio::AudioStream *MPEGPSDecoder::MPEGAudioTrack::getAudioStream() const {
 	return _audStream;
-}
-
-void MPEGPSDecoder::MPEGAudioTrack::initStream(Common::SeekableReadStream *packet) {
-	if (_state != MP3_STATE_INIT)
-		deinitStream();
-
-	// Init MAD
-	mad_stream_init(&_stream);
-	mad_frame_init(&_frame);
-	mad_synth_init(&_synth);
-
-	// Reset the stream data
-	packet->seek(0, SEEK_SET);
-
-	// Update state
-	_state = MP3_STATE_READY;
-
-	// Read the first few sample bytes
-	readMP3Data(packet);
-}
-
-void MPEGPSDecoder::MPEGAudioTrack::deinitStream() {
-	if (_state == MP3_STATE_INIT)
-		return;
-
-	// Deinit MAD
-	mad_synth_finish(&_synth);
-	mad_frame_finish(&_frame);
-	mad_stream_finish(&_stream);
-
-	_state = MP3_STATE_EOS;
-}
-
-void MPEGPSDecoder::MPEGAudioTrack::readMP3Data(Common::SeekableReadStream *packet) {
-	uint32 remaining = 0;
-
-	// Give up immediately if we already used up all data in the stream
-	if (packet->eos()) {
-		_state = MP3_STATE_EOS;
-		return;
-	}
-
-	if (_stream.next_frame) {
-		// If there is still data in the MAD stream, we need to preserve it.
-		// Note that we use memmove, as we are reusing the same buffer,
-		// and hence the data regions we copy from and to may overlap.
-		remaining = _stream.bufend - _stream.next_frame;
-		assert(remaining < BUFFER_SIZE);	// Paranoia check
-		memmove(_buf, _stream.next_frame, remaining);
-	}
-
-	memset(_buf + remaining, 0, BUFFER_SIZE - remaining);
-
-	// Try to read the next block
-	uint32 size = packet->read(_buf + remaining, BUFFER_SIZE - remaining);
-	if (size == 0) {
-		_state = MP3_STATE_EOS;
-		return;
-	}
-
-	// Feed the data we just read into the stream decoder
-	_stream.error = MAD_ERROR_NONE;
-	mad_stream_buffer(&_stream, _buf, size + remaining);
-}
-
-void MPEGPSDecoder::MPEGAudioTrack::readHeader(Common::SeekableReadStream *packet) {
-	if (_state != MP3_STATE_READY)
-		return;
-
-	// If necessary, load more data into the stream decoder
-	if (_stream.error == MAD_ERROR_BUFLEN)
-		readMP3Data(packet);
-
-	while (_state != MP3_STATE_EOS) {
-		_stream.error = MAD_ERROR_NONE;
-
-		// Decode the next header. Note: mad_frame_decode would do this for us, too.
-		// However, for seeking we don't want to decode the full frame (else it would
-		// be far too slow). Hence we perform this explicitly in a separate step.
-		if (mad_header_decode(&_frame.header, &_stream) == -1) {
-			if (_stream.error == MAD_ERROR_BUFLEN) {
-				readMP3Data(packet);  // Read more data
-				continue;
-			} else if (MAD_RECOVERABLE(_stream.error)) {
-				debug(6, "MPEGAudioTrack::readHeader(): Recoverable error in mad_header_decode (%s)", mad_stream_errorstr(&_stream));
-				continue;
-			} else {
-				warning("MPEGAudioTrack::readHeader(): Unrecoverable error in mad_header_decode (%s)", mad_stream_errorstr(&_stream));
-				break;
-			}
-		}
-
-		break;
-	}
-
-	if (_stream.error != MAD_ERROR_NONE)
-		_state = MP3_STATE_EOS;
-}
-
-void MPEGPSDecoder::MPEGAudioTrack::decodeMP3Data(Common::SeekableReadStream *packet) {
-	if (_state == MP3_STATE_INIT)
-		initStream(packet);
-
-	if (_state == MP3_STATE_EOS)
-		return;
-
-	do {
-		// If necessary, load more data into the stream decoder
-		if (_stream.error == MAD_ERROR_BUFLEN)
-			readMP3Data(packet);
-
-		while (_state == MP3_STATE_READY) {
-			_stream.error = MAD_ERROR_NONE;
-
-			// Decode the next frame
-			if (mad_frame_decode(&_frame, &_stream) == -1) {
-				if (_stream.error == MAD_ERROR_BUFLEN) {
-					break; // Read more data
-				} else if (MAD_RECOVERABLE(_stream.error)) {
-					// Note: we will occasionally see MAD_ERROR_BADDATAPTR errors here.
-					// These are normal and expected (caused by our frame skipping (i.e. "seeking")
-					// code above).
-					debug(6, "MPEGAudioTrack::decodeMP3Data(): Recoverable error in mad_frame_decode (%s)", mad_stream_errorstr(&_stream));
-					continue;
-				} else {
-					warning("MPEGAudioTrack::decodeMP3Data(): Unrecoverable error in mad_frame_decode (%s)", mad_stream_errorstr(&_stream));
-					break;
-				}
-			}
-
-			// Synthesize PCM data
-			mad_synth_frame(&_synth, &_frame);
-
-			// Output it to our queue
-			if (_synth.pcm.length != 0) {
-				byte *buffer = (byte *)malloc(_synth.pcm.length * 2 * MAD_NCHANNELS(&_frame.header));
-				int16 *ptr = (int16 *)buffer;
-
-				for (int i = 0; i < _synth.pcm.length; i++) {
-					*ptr++ = (int16)scaleSample(_synth.pcm.samples[0][i]);
-
-					if (MAD_NCHANNELS(&_frame.header) == 2)
-						*ptr++ = (int16)scaleSample(_synth.pcm.samples[1][i]);
-				}
-
-				int flags = Audio::FLAG_16BITS;
-
-				if (_audStream->isStereo())
-					flags |= Audio::FLAG_STEREO;
-
-#ifdef SCUMM_LITTLE_ENDIAN
-				flags |= Audio::FLAG_LITTLE_ENDIAN;
-#endif
-
-				_audStream->queueBuffer(buffer, _synth.pcm.length * 2 * MAD_NCHANNELS(&_frame.header), DisposeAfterUse::YES, flags);
-			}
-			break;
-		}
-	} while (_state != MP3_STATE_EOS && _stream.error == MAD_ERROR_BUFLEN);
-
-	if (_stream.error != MAD_ERROR_NONE)
-		_state = MP3_STATE_EOS;
 }
 
 #endif

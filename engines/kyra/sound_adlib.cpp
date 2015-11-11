@@ -55,7 +55,7 @@
 
 namespace Kyra {
 
-class AdLibDriver : public Audio::AudioStream {
+class AdLibDriver {
 public:
 	AdLibDriver(Audio::Mixer *mixer, int version);
 	~AdLibDriver();
@@ -69,34 +69,6 @@ public:
 	void resetSoundTrigger() { _soundTrigger = 0; }
 
 	void callback();
-
-	// AudioStream API
-	int readBuffer(int16 *buffer, const int numSamples) {
-		int32 samplesLeft = numSamples;
-		memset(buffer, 0, sizeof(int16) * numSamples);
-		while (samplesLeft) {
-			if (!_samplesTillCallback) {
-				callback();
-				_samplesTillCallback = _samplesPerCallback;
-				_samplesTillCallbackRemainder += _samplesPerCallbackRemainder;
-				if (_samplesTillCallbackRemainder >= CALLBACKS_PER_SECOND) {
-					_samplesTillCallback++;
-					_samplesTillCallbackRemainder -= CALLBACKS_PER_SECOND;
-				}
-			}
-
-			int32 render = MIN(samplesLeft, _samplesTillCallback);
-			samplesLeft -= render;
-			_samplesTillCallback -= render;
-			YM3812UpdateOne(_adlib, buffer, render);
-			buffer += render;
-		}
-		return numSamples;
-	}
-
-	bool isStereo() const { return false; }
-	bool endOfData() const { return false; }
-	int getRate() const { return _mixer->getOutputRate(); }
 
 	void setSyncJumpMask(uint16 mask) { _syncJumpMask = mask; }
 
@@ -334,11 +306,6 @@ private:
 	// _unkTable2_2[]  - One of the tables in _unkTable2[]
 	// _unkTable2_3[]  - One of the tables in _unkTable2[]
 
-	int32 _samplesPerCallback;
-	int32 _samplesPerCallbackRemainder;
-	int32 _samplesTillCallback;
-	int32 _samplesTillCallbackRemainder;
-
 	int _curChannel;
 	uint8 _soundTrigger;
 
@@ -365,7 +332,7 @@ private:
 	uint8 _unkValue19;
 	uint8 _unkValue20;
 
-	FM_OPL *_adlib;
+	OPL::OPL *_adlib;
 
 	uint8 *_soundData;
 	uint32 _soundDataSize;
@@ -411,7 +378,6 @@ private:
 
 	Common::Mutex _mutex;
 	Audio::Mixer *_mixer;
-	Audio::SoundHandle _soundHandle;
 
 	uint8 _musicVolume, _sfxVolume;
 
@@ -427,8 +393,9 @@ AdLibDriver::AdLibDriver(Audio::Mixer *mixer, int version) {
 
 	_mixer = mixer;
 
-	_adlib = makeAdLibOPL(getRate());
-	assert(_adlib);
+	_adlib = OPL::Config::create();
+	if (!_adlib || !_adlib->init())
+		error("Failed to create OPL");
 
 	memset(_channels, 0, sizeof(_channels));
 	_soundData = 0;
@@ -451,13 +418,6 @@ AdLibDriver::AdLibDriver(Audio::Mixer *mixer, int version) {
 
 	_tablePtr1 = _tablePtr2 = 0;
 
-	_mixer->playStream(Audio::Mixer::kPlainSoundType, &_soundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
-
-	_samplesPerCallback = getRate() / CALLBACKS_PER_SECOND;
-	_samplesPerCallbackRemainder = getRate() % CALLBACKS_PER_SECOND;
-	_samplesTillCallback = 0;
-	_samplesTillCallbackRemainder = 0;
-
 	_syncJumpMask = 0;
 
 	_musicVolume = 0;
@@ -467,11 +427,12 @@ AdLibDriver::AdLibDriver(Audio::Mixer *mixer, int version) {
 
 	_programQueueStart = _programQueueEnd = 0;
 	_retrySounds = false;
+
+	_adlib->start(new Common::Functor0Mem<void, AdLibDriver>(this, &AdLibDriver::callback), CALLBACKS_PER_SECOND);
 }
 
 AdLibDriver::~AdLibDriver() {
-	_mixer->stopHandle(_soundHandle);
-	OPLDestroy(_adlib);
+	delete _adlib;
 	_adlib = 0;
 }
 
@@ -877,7 +838,7 @@ void AdLibDriver::resetAdLibState() {
 // New calling style: writeOPL(0xAB, 0xCD)
 
 void AdLibDriver::writeOPL(byte reg, byte val) {
-	OPLWriteReg(_adlib, reg, val);
+	_adlib->writeReg(reg, val);
 }
 
 void AdLibDriver::initChannel(Channel &channel) {
@@ -947,15 +908,10 @@ void AdLibDriver::unkOutput2(uint8 chan) {
 	//
 	// This is very strange behavior, and causes problems with the ancient
 	// FMOPL code we borrowed from AdPlug. I've added a workaround. See
-	// fmopl.cpp for more details.
+	// audio/softsynth/opl/mame.cpp for more details.
 	//
-	// More recent versions of the MAME FMOPL don't seem to have this
-	// problem, but cannot currently be used because of licensing and
-	// performance issues.
-	//
-	// Ken Silverman's AdLib emulator (which can be found on his Web page -
-	// http://www.advsys.net/ken - and as part of AdPlug) also seems to be
-	// immune, but is apparently not as feature complete as MAME's.
+	// Fortunately, the more modern DOSBox FMOPL code does not seem to have
+	// any trouble with this.
 
 	writeOPL(0xB0 + chan, 0x20);
 }

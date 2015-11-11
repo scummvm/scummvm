@@ -174,7 +174,7 @@ void sceneHandler14_exitScene() {
 	chainQueue(QU_SC14_ENDARCADE, 0);
 
 	getGameLoaderInteractionController()->disableFlag24();
-	getCurrSceneSc2MotionController()->clearEnabled();
+	getCurrSceneSc2MotionController()->deactivate();
 }
 
 void sceneHandler14_showBallMan() {
@@ -284,7 +284,7 @@ void sceneHandler14_endArcade() {
 	setInputDisabled(0);
 
 	getGameLoaderInteractionController()->enableFlag24();
-	getCurrSceneSc2MotionController()->setEnabled();
+	getCurrSceneSc2MotionController()->activate();
 
 	BehaviorEntryInfo *beh = g_fp->_behaviorManager->getBehaviorEntryInfoByMessageQueueDataId(g_vars->scene14_grandma, ST_GMA_SIT, QU_GMA_BLINK);
 	if (beh)
@@ -365,7 +365,7 @@ void sceneHandler14_startArcade() {
 		g_fp->_aniMan->_priority = 25;
 	}
 
-	getCurrSceneSc2MotionController()->clearEnabled();
+	getCurrSceneSc2MotionController()->deactivate();
 	getGameLoaderInteractionController()->disableFlag24();
 
 	g_fp->_aniMan2 = 0;
@@ -458,7 +458,7 @@ bool sceneHandler14_arcadeProcessClick(ExCommand *cmd) {
 	if (cmd->_sceneClickX > 1237)
 		return false;
 
-	MessageQueue *mq = getCurrSceneSc2MotionController()->method34(g_fp->_aniMan, 1237, 451, 1, 0);
+	MessageQueue *mq = getCurrSceneSc2MotionController()->startMove(g_fp->_aniMan, 1237, 451, 1, 0);
 
 	if (!mq)
 		return false;
@@ -473,7 +473,7 @@ bool sceneHandler14_arcadeProcessClick(ExCommand *cmd) {
 
 	cmd->_messageKind = 0;
 
-	getCurrSceneSc2MotionController()->clearEnabled();
+	getCurrSceneSc2MotionController()->deactivate();
 	getGameLoaderInteractionController()->disableFlag24();
 	return true;
 }

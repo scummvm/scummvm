@@ -54,6 +54,12 @@ SpriteResource::~SpriteResource() {
 SpriteFrame::SpriteFrame(AccessEngine *vm, Common::SeekableReadStream *stream, int frameSize) {
 	int xSize = stream->readUint16LE();
 	int ySize = stream->readUint16LE();
+
+	if (vm->getGameID() == GType_MartianMemorandum) {
+		int size = stream->readUint16LE();
+		if (size != frameSize)
+			warning("Unexpected file difference: framesize %d - size %d %d - unknown %d", frameSize, xSize, ySize, size);
+	}
 	create(xSize, ySize);
 
 	// Empty surface
@@ -310,6 +316,21 @@ void ASurface::restoreBlock() {
 
 void ASurface::drawRect() {
 	Graphics::Surface::fillRect(Common::Rect(_orgX1, _orgY1, _orgX2, _orgY2), _lColor);
+}
+
+void ASurface::drawLine(int x1, int y1, int x2, int y2, int col) {
+	Graphics::Surface::drawLine(x1, y1, x2, y2, col);
+}
+
+void ASurface::drawLine() {
+	Graphics::Surface::drawLine(_orgX1, _orgY1, _orgX2, _orgY1, _lColor);
+}
+
+void ASurface::drawBox() {
+	Graphics::Surface::drawLine(_orgX1, _orgY1, _orgX2, _orgY1, _lColor);
+	Graphics::Surface::drawLine(_orgX1, _orgY2, _orgX2, _orgY2, _lColor);
+	Graphics::Surface::drawLine(_orgX2, _orgY1, _orgX2, _orgY1, _lColor);
+	Graphics::Surface::drawLine(_orgX2, _orgY2, _orgX2, _orgY2, _lColor);
 }
 
 void ASurface::flipHorizontal(ASurface &dest) {

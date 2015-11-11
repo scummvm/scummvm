@@ -47,9 +47,27 @@ public:
 
 	void test_pod_sort() {
 		{
+			int dummy;
+			Common::sort(&dummy, &dummy);
+			TS_ASSERT_EQUALS(checkSort(&dummy, &dummy, Common::Less<int>()), true);
+		}
+		{
+			int array[] = { 12 };
+			Common::sort(array, ARRAYEND(array));
+			TS_ASSERT_EQUALS(checkSort(array, ARRAYEND(array), Common::Less<int>()), true);
+
+			// already sorted
+			Common::sort(array, ARRAYEND(array));
+			TS_ASSERT_EQUALS(checkSort(array, ARRAYEND(array), Common::Less<int>()), true);
+		}
+		{
 			int array[] = { 63, 11, 31, 72, 1, 48, 32, 69, 38, 31 };
 			Common::sort(array, ARRAYEND(array));
 			TS_ASSERT_EQUALS(checkSort(array, ARRAYEND(array), Common::Less<int>()), true);
+
+			int sortedArray[] = { 1, 11, 31, 31, 32, 38, 48, 63, 69, 72 };
+			for (size_t i = 0; i < 10; ++i)
+				TS_ASSERT_EQUALS(array[i], sortedArray[i]);
 
 			// already sorted
 			Common::sort(array, ARRAYEND(array));

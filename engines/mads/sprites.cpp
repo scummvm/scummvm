@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -347,8 +347,10 @@ void SpriteSlots::drawSprites(MSurface *s) {
 				spr->copyTo(s, Common::Point(xp, yp), sprite->getTransparencyIndex());
 
 				// Free sprite if it was a flipped one
-				if (flipped)
+				if (flipped) {
+					spr->free();
 					delete spr;
+				}
 			}
 		}
 	}
@@ -368,22 +370,18 @@ SpriteSets::~SpriteSets() {
 }
 
 int SpriteSets::add(SpriteAsset *asset, int idx) {
-	if (idx)
-		idx = idx + 49;
-	else
-		idx = size();
+	if (idx) {
+		assert(idx == 1);
+		delete _uiSprites;
+		_uiSprites = asset;
 
-	if (idx >= (int)size())
-		resize(idx + 1);
-
-	if ((*this)[idx]) {
-		delete (*this)[idx];
+		return SPRITE_SLOTS_MAX_SIZE;
 	} else {
-		++_assetCount;
-	}
+		assert(size() < SPRITE_SLOTS_MAX_SIZE);
+		push_back(asset);
 
-	(*this)[idx] = asset;
-	return idx;
+		return (int)size() - 1;
+	}
 }
 
 int SpriteSets::addSprites(const Common::String &resName, int flags) {
@@ -393,25 +391,32 @@ int SpriteSets::addSprites(const Common::String &resName, int flags) {
 void SpriteSets::clear() {
 	for (uint i = 0; i < size(); ++i)
 		delete (*this)[i];
-
-	_assetCount = 0;
 	Common::Array<SpriteAsset *>::clear();
+
+	delete _uiSprites;
+	_uiSprites = nullptr;
 }
 
 void SpriteSets::remove(int idx) {
-	if (idx >= 0) {
+	if (idx == SPRITE_SLOTS_MAX_SIZE) {
+		delete _uiSprites;
+		_uiSprites = nullptr;
+	} else if (idx >= 0 && idx < (int)size()) {
+		delete (*this)[idx];
+
 		if (idx < ((int)size() - 1)) {
-			delete (*this)[idx];
 			(*this)[idx] = nullptr;
 		} else {
 			do {
 				remove_at(size() - 1);
 			} while (size() > 0 && (*this)[size() - 1] == nullptr);
 		}
-
-		if (_assetCount > 0)
-			--_assetCount;
 	}
+}
+
+SpriteAsset *&SpriteSets::operator[](int idx) {
+	return (idx == SPRITE_SLOTS_MAX_SIZE) ? _uiSprites :
+		Common::Array<SpriteAsset *>::operator[](idx);
 }
 
 } // End of namespace MADS

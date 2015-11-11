@@ -27,12 +27,8 @@
 #include "graphics/surface.h"
 #include "video/video_decoder.h"
 
-#ifdef USE_MAD
-#include <mad.h>
-#endif
-
 namespace Audio {
-class QueuingAudioStream;
+class PacketizedAudioStream;
 }
 
 namespace Common {
@@ -115,10 +111,9 @@ private:
 
 #ifdef USE_MAD
 	// An MPEG audio track
-	// TODO: Merge this with the normal MP3Stream somehow
 	class MPEGAudioTrack : public AudioTrack, public MPEGStream {
 	public:
-		MPEGAudioTrack(Common::SeekableReadStream *firstPacket);
+		MPEGAudioTrack(Common::SeekableReadStream &firstPacket);
 		~MPEGAudioTrack();
 
 		bool sendPacket(Common::SeekableReadStream *packet, uint32 pts, uint32 dts);
@@ -128,32 +123,7 @@ private:
 		Audio::AudioStream *getAudioStream() const;
 
 	private:
-		Audio::QueuingAudioStream *_audStream;
-
-		enum State {
-			MP3_STATE_INIT,  // Need to init the decoder
-			MP3_STATE_READY, // ready for processing data
-			MP3_STATE_EOS    // end of data reached (may need to loop)
-		};
-
-		State _state;
-
-		mad_stream _stream;
-		mad_frame _frame;
-		mad_synth _synth;
-
-		enum {
-			BUFFER_SIZE = 5 * 8192
-		};
-
-		// This buffer contains a slab of input data
-		byte _buf[BUFFER_SIZE + MAD_BUFFER_GUARD];
-
-		void initStream(Common::SeekableReadStream *packet);
-		void deinitStream();
-		void readMP3Data(Common::SeekableReadStream *packet);
-		void readHeader(Common::SeekableReadStream *packet);
-		void decodeMP3Data(Common::SeekableReadStream *packet);
+		Audio::PacketizedAudioStream *_audStream;
 	};
 #endif
 

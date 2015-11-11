@@ -40,7 +40,7 @@ void OSystem_SDL_SamsungTV::initBackend() {
 		_eventSource = new SamsungTVSdlEventSource();
 
 	if (_graphicsManager == 0)
-		_graphicsManager = new SamsungTVSdlGraphicsManager(_eventSource);
+		_graphicsManager = new SamsungTVSdlGraphicsManager(_eventSource, _window);
 
 	// Call parent implementation of this method
 	OSystem_POSIX::initBackend();

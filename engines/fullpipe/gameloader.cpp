@@ -323,7 +323,7 @@ bool preloadCallback(PreloadItem &pre, int flag) {
 
 		if (!g_fp->_loaderScene) {
 			g_fp->_gameLoader->loadScene(SC_LDR);
-			g_fp->_loaderScene = g_fp->accessScene(SC_LDR);;
+			g_fp->_loaderScene = g_fp->accessScene(SC_LDR);
 		}
 
 		StaticANIObject *pbar = g_fp->_loaderScene->getStaticANIObject1ById(ANI_PBAR, -1);
@@ -419,7 +419,7 @@ bool GameLoader::unloadScene(int sceneId) {
 	if (_sc2array[sceneTag]._isLoaded)
 		saveScenePicAniInfos(sceneId);
 
-	_sc2array[sceneTag]._motionController->freeItems();
+	_sc2array[sceneTag]._motionController->detachAllObjects();
 
 	delete tag->_scene;
 	tag->_scene = 0;

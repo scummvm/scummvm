@@ -91,7 +91,7 @@ public:
 	 *
 	 * @param slot    The save slot to load. Must be [1, 20]
 	 */
-	Common::Error loadGame(uint slot);
+	Common::Error loadGame(int slot);
 
 	Common::SeekableReadStream *getSlotFile(uint slot);
 	bool readSaveGameHeader(Common::SeekableReadStream *in, SaveGameHeader &header);

@@ -72,21 +72,23 @@ void ScriptManager::initialize() {
 }
 
 void ScriptManager::update(uint deltaTimeMillis) {
-	if (_currentLocation.node != _nextLocation.node ||
-	        _currentLocation.room != _nextLocation.room ||
-	        _currentLocation.view != _nextLocation.view ||
-	        _currentLocation.world != _nextLocation.world)
-		ChangeLocationReal();
+	if (_currentLocation != _nextLocation) {
+		ChangeLocationReal(false);
+	}
 
 	updateNodes(deltaTimeMillis);
-	if (! execScope(nodeview))
+	if (!execScope(nodeview)) {
 		return;
-	if (! execScope(room))
+	}
+	if (!execScope(room)) {
 		return;
-	if (! execScope(world))
+	}
+	if (!execScope(world)) {
 		return;
-	if (! execScope(universe))
+	}
+	if (!execScope(universe)) {
 		return;
+	}
 	updateControls(deltaTimeMillis);
 }
 
@@ -97,17 +99,22 @@ bool ScriptManager::execScope(ScriptScope &scope) {
 	scope.scopeQueue = tmp;
 	scope.scopeQueue->clear();
 
-	for (PuzzleList::iterator PuzzleIter = scope.puzzles.begin(); PuzzleIter != scope.puzzles.end(); ++PuzzleIter)
+	for (PuzzleList::iterator PuzzleIter = scope.puzzles.begin(); PuzzleIter != scope.puzzles.end(); ++PuzzleIter) {
 		(*PuzzleIter)->addedBySetState = false;
+	}
 
 	if (scope.procCount < 2 || getStateValue(StateKey_ExecScopeStyle)) {
-		for (PuzzleList::iterator PuzzleIter = scope.puzzles.begin(); PuzzleIter != scope.puzzles.end(); ++PuzzleIter)
-			if (!checkPuzzleCriteria(*PuzzleIter, scope.procCount))
+		for (PuzzleList::iterator PuzzleIter = scope.puzzles.begin(); PuzzleIter != scope.puzzles.end(); ++PuzzleIter) {
+			if (!checkPuzzleCriteria(*PuzzleIter, scope.procCount)) {
 				return false;
+			}
+		}
 	} else {
-		for (PuzzleList::iterator PuzzleIter = scope.execQueue->begin(); PuzzleIter != scope.execQueue->end(); ++PuzzleIter)
-			if (!checkPuzzleCriteria(*PuzzleIter, scope.procCount))
+		for (PuzzleList::iterator PuzzleIter = scope.execQueue->begin(); PuzzleIter != scope.execQueue->end(); ++PuzzleIter) {
+			if (!checkPuzzleCriteria(*PuzzleIter, scope.procCount)) {
 				return false;
+			}
+		}
 	}
 
 	if (scope.procCount < 2) {
@@ -119,9 +126,11 @@ bool ScriptManager::execScope(ScriptScope &scope) {
 void ScriptManager::referenceTableAddPuzzle(uint32 key, PuzzleRef ref) {
 	if (_referenceTable.contains(key)) {
 		Common::Array<PuzzleRef> *arr = &_referenceTable[key];
-		for (uint32 i = 0; i < arr->size(); i++)
-			if ((*arr)[i].puz == ref.puz)
+		for (uint32 i = 0; i < arr->size(); i++) {
+			if ((*arr)[i].puz == ref.puz) {
 				return;
+			}
+		}
 	}
 
 	_referenceTable[key].push_back(ref);
@@ -139,9 +148,11 @@ void ScriptManager::addPuzzlesToReferenceTable(ScriptScope &scope) {
 		referenceTableAddPuzzle(puzzlePtr->key, ref);
 
 		// Iterate through each CriteriaEntry and add a reference from the criteria key to the Puzzle
-		for (Common::List<Common::List<Puzzle::CriteriaEntry> >::iterator criteriaIter = (*PuzzleIter)->criteriaList.begin(); criteriaIter != (*PuzzleIter)->criteriaList.end(); ++criteriaIter)
-			for (Common::List<Puzzle::CriteriaEntry>::iterator entryIter = criteriaIter->begin(); entryIter != criteriaIter->end(); ++entryIter)
+		for (Common::List<Common::List<Puzzle::CriteriaEntry> >::iterator criteriaIter = (*PuzzleIter)->criteriaList.begin(); criteriaIter != (*PuzzleIter)->criteriaList.end(); ++criteriaIter) {
+			for (Common::List<Puzzle::CriteriaEntry>::iterator entryIter = criteriaIter->begin(); entryIter != criteriaIter->end(); ++entryIter) {
 				referenceTableAddPuzzle(entryIter->key, ref);
+			}
+		}
 	}
 }
 
@@ -159,8 +170,9 @@ void ScriptManager::updateNodes(uint deltaTimeMillis) {
 }
 
 void ScriptManager::updateControls(uint deltaTimeMillis) {
-	if (!_activeControls)
+	if (!_activeControls) {
 		return;
+	}
 
 	// Process only one event
 	if (!_controlEvents.empty()) {
@@ -187,21 +199,24 @@ void ScriptManager::updateControls(uint deltaTimeMillis) {
 		_controlEvents.pop_front();
 	}
 
-	for (ControlList::iterator iter = _activeControls->begin(); iter != _activeControls->end(); iter++)
-		if ((*iter)->process(deltaTimeMillis))
+	for (ControlList::iterator iter = _activeControls->begin(); iter != _activeControls->end(); iter++) {
+		if ((*iter)->process(deltaTimeMillis)) {
 			break;
+		}
+	}
 }
 
 bool ScriptManager::checkPuzzleCriteria(Puzzle *puzzle, uint counter) {
 	// Check if the puzzle is already finished
 	// Also check that the puzzle isn't disabled
-	if (getStateValue(puzzle->key) == 1 || (getStateFlag(puzzle->key) & Puzzle::DISABLED) == Puzzle::DISABLED) {
+	if (getStateValue(puzzle->key) == 1 || (getStateFlag(puzzle->key) & Puzzle::DISABLED)) {
 		return true;
 	}
 
 	// Check each Criteria
-	if (counter == 0 && (getStateFlag(puzzle->key) & Puzzle::DO_ME_NOW) == 0)
+	if (counter == 0 && (getStateFlag(puzzle->key) & Puzzle::DO_ME_NOW) == 0) {
 		return true;
+	}
 
 	bool criteriaMet = false;
 	for (Common::List<Common::List<Puzzle::CriteriaEntry> >::iterator criteriaIter = puzzle->criteriaList.begin(); criteriaIter != puzzle->criteriaList.end(); ++criteriaIter) {
@@ -210,10 +225,11 @@ bool ScriptManager::checkPuzzleCriteria(Puzzle *puzzle, uint counter) {
 		for (Common::List<Puzzle::CriteriaEntry>::iterator entryIter = criteriaIter->begin(); entryIter != criteriaIter->end(); ++entryIter) {
 			// Get the value to compare against
 			int argumentValue;
-			if (entryIter->argumentIsAKey)
+			if (entryIter->argumentIsAKey) {
 				argumentValue = getStateValue(entryIter->argument);
-			else
+			} else {
 				argumentValue = entryIter->argument;
+			}
 
 			// Do the comparison
 			switch (entryIter->criteriaOperator) {
@@ -251,8 +267,9 @@ bool ScriptManager::checkPuzzleCriteria(Puzzle *puzzle, uint counter) {
 		setStateValue(puzzle->key, 1);
 
 		for (Common::List<ResultAction *>::iterator resultIter = puzzle->resultActions.begin(); resultIter != puzzle->resultActions.end(); ++resultIter) {
-			if (!(*resultIter)->execute())
+			if (!(*resultIter)->execute()) {
 				return false;
+			}
 		}
 	}
 
@@ -275,13 +292,15 @@ void ScriptManager::cleanScriptScope(ScriptScope &scope) {
 	scope.privQueueTwo.clear();
 	scope.scopeQueue = &scope.privQueueOne;
 	scope.execQueue = &scope.privQueueTwo;
-	for (PuzzleList::iterator iter = scope.puzzles.begin(); iter != scope.puzzles.end(); ++iter)
+	for (PuzzleList::iterator iter = scope.puzzles.begin(); iter != scope.puzzles.end(); ++iter) {
 		delete(*iter);
+	}
 
 	scope.puzzles.clear();
 
-	for (ControlList::iterator iter = scope.controls.begin(); iter != scope.controls.end(); ++iter)
+	for (ControlList::iterator iter = scope.controls.begin(); iter != scope.controls.end(); ++iter) {
 		delete(*iter);
+	}
 
 	scope.controls.clear();
 
@@ -289,44 +308,49 @@ void ScriptManager::cleanScriptScope(ScriptScope &scope) {
 }
 
 int ScriptManager::getStateValue(uint32 key) {
-	if (_globalState.contains(key))
+	if (_globalState.contains(key)) {
 		return _globalState[key];
-	else
+	} else {
 		return 0;
+	}
 }
 
 void ScriptManager::queuePuzzles(uint32 key) {
 	if (_referenceTable.contains(key)) {
 		Common::Array<PuzzleRef> *arr = &_referenceTable[key];
-		for (int32 i = arr->size() - 1; i >= 0; i--)
+		for (int32 i = arr->size() - 1; i >= 0; i--) {
 			if (!(*arr)[i].puz->addedBySetState) {
 				(*arr)[i].scope->scopeQueue->push_back((*arr)[i].puz);
 				(*arr)[i].puz->addedBySetState = true;
 			}
+		}
 	}
 }
 
 void ScriptManager::setStateValue(uint32 key, int value) {
-	if (value == 0)
+	if (value == 0) {
 		_globalState.erase(key);
-	else
+	} else {
 		_globalState[key] = value;
+	}
 
 	queuePuzzles(key);
 }
 
 void ScriptManager::setStateValueSilent(uint32 key, int value) {
-	if (value == 0)
+	if (value == 0) {
 		_globalState.erase(key);
-	else
+	} else {
 		_globalState[key] = value;
+	}
 }
 
 uint ScriptManager::getStateFlag(uint32 key) {
-	if (_globalStateFlags.contains(key))
+	if (_globalStateFlags.contains(key)) {
 		return _globalStateFlags[key];
-	else
+	} else {
 		return 0;
+	}
 }
 
 void ScriptManager::setStateFlag(uint32 key, uint value) {
@@ -336,10 +360,11 @@ void ScriptManager::setStateFlag(uint32 key, uint value) {
 }
 
 void ScriptManager::setStateFlagSilent(uint32 key, uint value) {
-	if (value == 0)
+	if (value == 0) {
 		_globalStateFlags.erase(key);
-	else
+	} else {
 		_globalStateFlags[key] = value;
+	}
 }
 
 void ScriptManager::unsetStateFlag(uint32 key, uint value) {
@@ -348,23 +373,29 @@ void ScriptManager::unsetStateFlag(uint32 key, uint value) {
 	if (_globalStateFlags.contains(key)) {
 		_globalStateFlags[key] &= ~value;
 
-		if (_globalStateFlags[key] == 0)
+		if (_globalStateFlags[key] == 0) {
 			_globalStateFlags.erase(key);
+		}
 	}
 }
 
 Control *ScriptManager::getControl(uint32 key) {
-	for (ControlList::iterator iter = _activeControls->begin(); iter != _activeControls->end(); ++iter)
-		if ((*iter)->getKey() == key)
+	for (ControlList::iterator iter = _activeControls->begin(); iter != _activeControls->end(); ++iter) {
+		if ((*iter)->getKey() == key) {
 			return *iter;
+		}
+	}
+
 	return nullptr;
 }
 
 void ScriptManager::focusControl(uint32 key) {
-	if (!_activeControls)
+	if (!_activeControls) {
 		return;
-	if (_currentlyFocusedControl == key)
+	}
+	if (_currentlyFocusedControl == key) {
 		return;
+	}
 	for (ControlList::iterator iter = _activeControls->begin(); iter != _activeControls->end(); ++iter) {
 		uint32 controlKey = (*iter)->getKey();
 
@@ -443,50 +474,60 @@ void ScriptManager::killSideFxType(ScriptingEffect::ScriptingEffectType type) {
 }
 
 void ScriptManager::onMouseDown(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos) {
-	if (!_activeControls)
+	if (!_activeControls) {
 		return;
+	}
 	for (ControlList::iterator iter = _activeControls->reverse_begin(); iter != _activeControls->end(); iter--) {
-		if ((*iter)->onMouseDown(screenSpacePos, backgroundImageSpacePos))
+		if ((*iter)->onMouseDown(screenSpacePos, backgroundImageSpacePos)) {
 			return;
+		}
 	}
 }
 
 void ScriptManager::onMouseUp(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos) {
-	if (!_activeControls)
+	if (!_activeControls) {
 		return;
+	}
 	for (ControlList::iterator iter = _activeControls->reverse_begin(); iter != _activeControls->end(); iter--) {
-		if ((*iter)->onMouseUp(screenSpacePos, backgroundImageSpacePos))
+		if ((*iter)->onMouseUp(screenSpacePos, backgroundImageSpacePos)) {
 			return;
+		}
 	}
 }
 
 bool ScriptManager::onMouseMove(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos) {
-	if (!_activeControls)
+	if (!_activeControls) {
 		return false;
+	}
 
 	for (ControlList::iterator iter = _activeControls->reverse_begin(); iter != _activeControls->end(); iter--) {
-		if ((*iter)->onMouseMove(screenSpacePos, backgroundImageSpacePos))
+		if ((*iter)->onMouseMove(screenSpacePos, backgroundImageSpacePos)) {
 			return true;
+		}
 	}
 
 	return false;
 }
 
 void ScriptManager::onKeyDown(Common::KeyState keyState) {
-	if (!_activeControls)
+	if (!_activeControls) {
 		return;
+	}
 	for (ControlList::iterator iter = _activeControls->begin(); iter != _activeControls->end(); ++iter) {
-		if ((*iter)->onKeyDown(keyState))
+		if ((*iter)->onKeyDown(keyState)) {
 			return;
+		}
 	}
 }
 
 void ScriptManager::onKeyUp(Common::KeyState keyState) {
-	if (!_activeControls)
+	if (!_activeControls) {
 		return;
+	}
 	for (ControlList::iterator iter = _activeControls->begin(); iter != _activeControls->end(); ++iter) {
-		if ((*iter)->onKeyUp(keyState))
+		if ((*iter)->onKeyUp(keyState)) {
 			return;
+		}
 	}
 }
 
@@ -500,8 +541,8 @@ void ScriptManager::changeLocation(char _world, char _room, char _node, char _vi
 	_nextLocation.node = _node;
 	_nextLocation.view = _view;
 	_nextLocation.offset = offset;
-	// If next location 0000 - it's indicate to go to previous location.
-	if (_nextLocation.world == '0' && _nextLocation.room == '0' && _nextLocation.node == '0' && _nextLocation.view == '0') {
+	// If next location is 0000, return to the previous location.
+	if (_nextLocation == "0000") {
 		if (getStateValue(StateKey_World) != 'g' || getStateValue(StateKey_Room) != 'j') {
 			_nextLocation.world = getStateValue(StateKey_LastWorld);
 			_nextLocation.room = getStateValue(StateKey_LastRoom);
@@ -518,36 +559,42 @@ void ScriptManager::changeLocation(char _world, char _room, char _node, char _vi
 	}
 }
 
-void ScriptManager::ChangeLocationReal() {
+void ScriptManager::ChangeLocationReal(bool isLoading) {
 	assert(_nextLocation.world != 0);
 	debug(1, "Changing location to: %c %c %c %c %u", _nextLocation.world, _nextLocation.room, _nextLocation.node, _nextLocation.view, _nextLocation.offset);
 
-	if (_nextLocation.world == 'g' && _nextLocation.room == 'j' && !ConfMan.getBool("originalsaveload")) {
-		if ((_nextLocation.node == 's' || _nextLocation.node == 'r') && _nextLocation.view == 'e') {
+	const bool enteringMenu = (_nextLocation.world == 'g' && _nextLocation.room == 'j');
+	const bool leavingMenu = (_currentLocation.world == 'g' && _currentLocation.room == 'j');
+	const bool isSaveScreen = (enteringMenu && _nextLocation.node == 's' && _nextLocation.view == 'e');
+	const bool isRestoreScreen = (enteringMenu && _nextLocation.node == 'r' && _nextLocation.view == 'e');
+
+	if (enteringMenu && !ConfMan.getBool("originalsaveload")) {
+		if (isSaveScreen || isRestoreScreen) {
 			// Hook up the ScummVM save/restore dialog
-			bool isSave = (_nextLocation.node == 's');
-			bool gameSavedOrLoaded = _engine->getSaveManager()->scummVMSaveLoadDialog(isSave);
-			if (!gameSavedOrLoaded || isSave) {
+			bool gameSavedOrLoaded = _engine->getSaveManager()->scummVMSaveLoadDialog(isSaveScreen);
+			if (!gameSavedOrLoaded || isSaveScreen) {
 				// Reload the current room
 				_nextLocation.world = _currentLocation.world;
 				_nextLocation.room = _currentLocation.room;
 				_nextLocation.node = _currentLocation.node;
 				_nextLocation.view = _currentLocation.view;
 				_nextLocation.offset = _currentLocation.offset;
-				_currentLocation.world = '0';
+				
+				return;
+			} else {
+				_currentLocation.world = 'g';
 				_currentLocation.room = '0';
 				_currentLocation.node = '0';
 				_currentLocation.view = '0';
 				_currentLocation.offset = 0;
-			} else
-				return;
+			}
 		}
 	}
 
 	_engine->setRenderDelay(2);
 
-	if (getStateValue(StateKey_World) != 'g' || getStateValue(StateKey_Room) != 'j') {
-		if (_nextLocation.world != 'g' || _nextLocation.room != 'j') {
+	if (!leavingMenu) {
+		if (!isLoading && !enteringMenu) {
 			setStateValue(StateKey_LastWorld, getStateValue(StateKey_World));
 			setStateValue(StateKey_LastRoom, getStateValue(StateKey_Room));
 			setStateValue(StateKey_LastNode, getStateValue(StateKey_Node));
@@ -562,13 +609,14 @@ void ScriptManager::ChangeLocationReal() {
 		}
 	}
 
-	if (_nextLocation.world == 'g' && _nextLocation.room == 'j') {
-		if (_nextLocation.node == 's' && _nextLocation.view == 'e' &&
-		        _currentLocation.world != 'g' && _currentLocation.room != 'j')
+	if (enteringMenu) {
+		if (isSaveScreen && !leavingMenu) {
 			_engine->getSaveManager()->prepareSaveBuffer();
+		}
 	} else {
-		if (_currentLocation.world == 'g' && _currentLocation.room == 'j')
+		if (leavingMenu) {
 			_engine->getSaveManager()->flushSaveBuffer();
+		}
 	}
 
 	setStateValue(StateKey_World, _nextLocation.world);
@@ -631,7 +679,7 @@ void ScriptManager::ChangeLocationReal() {
 	// Change the background position
 	_engine->getRenderManager()->setBackgroundPosition(_nextLocation.offset);
 
-	if (_currentLocation.world == 0 && _currentLocation.room == 0 && _currentLocation.node == 0 && _currentLocation.view == 0) {
+	if (_currentLocation == "0000") {
 		_currentLocation = _nextLocation;
 		execScope(world);
 		execScope(room);
@@ -664,29 +712,33 @@ void ScriptManager::serialize(Common::WriteStream *stream) {
 	stream->writeByte(getStateValue(StateKey_View));
 	stream->writeUint32LE(getStateValue(StateKey_ViewPos));
 
-	for (SideFXList::iterator iter = _activeSideFx.begin(); iter != _activeSideFx.end(); ++iter)
+	for (SideFXList::iterator iter = _activeSideFx.begin(); iter != _activeSideFx.end(); ++iter) {
 		(*iter)->serialize(stream);
+	}
 
 	stream->writeUint32BE(MKTAG('F', 'L', 'A', 'G'));
 
 	int32 slots = 20000;
-	if (_engine->getGameId() == GID_NEMESIS)
+	if (_engine->getGameId() == GID_NEMESIS) {
 		slots = 30000;
+	}
 
 	stream->writeUint32LE(slots * 2);
 
-	for (int32 i = 0; i < slots; i++)
+	for (int32 i = 0; i < slots; i++) {
 		stream->writeUint16LE(getStateFlag(i));
+	}
 
 	stream->writeUint32BE(MKTAG('P', 'U', 'Z', 'Z'));
 
 	stream->writeUint32LE(slots * 2);
 
-	for (int32 i = 0; i < slots; i++)
+	for (int32 i = 0; i < slots; i++) {
 		stream->writeSint16LE(getStateValue(i));
+	}
 }
 
-void ScriptManager::reset() {
+void ScriptManager::deserialize(Common::SeekableReadStream *stream) {
 	// Clear out the current table values
 	_globalState.clear();
 	_globalStateFlags.clear();
@@ -700,16 +752,13 @@ void ScriptManager::reset() {
 	_currentLocation.room = 0;
 	_currentLocation.view = 0;
 
-	for (SideFXList::iterator iter = _activeSideFx.begin(); iter != _activeSideFx.end(); iter++)
+	for (SideFXList::iterator iter = _activeSideFx.begin(); iter != _activeSideFx.end(); iter++) {
 		delete(*iter);
+	}
 
 	_activeSideFx.clear();
 
 	_referenceTable.clear();
-}
-
-void ScriptManager::deserialize(Common::SeekableReadStream *stream) {
-	reset();
 
 	if (stream->readUint32BE() != MKTAG('Z', 'N', 'S', 'G') || stream->readUint32LE() != 4) {
 		changeLocation('g', 'a', 'r', 'y', 0);
@@ -738,20 +787,23 @@ void ScriptManager::deserialize(Common::SeekableReadStream *stream) {
 		case MKTAG('T', 'I', 'M', 'R'): {
 			uint32 key = stream->readUint32LE();
 			uint32 time = stream->readUint32LE();
-			if (_engine->getGameId() == GID_GRANDINQUISITOR)
+			if (_engine->getGameId() == GID_GRANDINQUISITOR) {
 				time /= 100;
-			else if (_engine->getGameId() == GID_NEMESIS)
+			} else if (_engine->getGameId() == GID_NEMESIS) {
 				time /= 1000;
+			}
 			addSideFX(new TimerNode(_engine, key, time));
 		}
 		break;
 		case MKTAG('F', 'L', 'A', 'G'):
-			for (uint32 i = 0; i < tagSize / 2; i++)
+			for (uint32 i = 0; i < tagSize / 2; i++) {
 				setStateFlagSilent(i, stream->readUint16LE());
+			}
 			break;
 		case MKTAG('P', 'U', 'Z', 'Z'):
-			for (uint32 i = 0; i < tagSize / 2; i++)
+			for (uint32 i = 0; i < tagSize / 2; i++) {
 				setStateValueSilent(i, stream->readUint16LE());
+			}
 			break;
 		default:
 			stream->seek(tagSize, SEEK_CUR);
@@ -760,7 +812,7 @@ void ScriptManager::deserialize(Common::SeekableReadStream *stream) {
 
 	_nextLocation = nextLocation;
 
-	ChangeLocationReal();
+	ChangeLocationReal(true);
 
 	_engine->setRenderDelay(10);
 	setStateValue(StateKey_RestoreFlag, 1);
@@ -805,10 +857,11 @@ void ScriptManager::flushEvent(Common::EventType type) {
 	EventList::iterator it = _controlEvents.begin();
 	while (it != _controlEvents.end()) {
 
-		if ((*it).type == type)
+		if ((*it).type == type) {
 			it = _controlEvents.erase(it);
-		else
+		} else {
 			it++;
+		}
 	}
 }
 
@@ -837,12 +890,15 @@ ValueSlot::ValueSlot(ScriptManager *scriptManager, const char *slotValue):
 }
 int16 ValueSlot::getValue() {
 	if (slot) {
-		if (value >= 0)
+		if (value >= 0) {
 			return _scriptManager->getStateValue(value);
-		else
+		}
+		else {
 			return 0;
-	} else
+		}
+	} else {
 		return value;
+	}
 }
 
 } // End of namespace ZVision

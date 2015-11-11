@@ -229,7 +229,7 @@ public:
 	Exit _exit;
 	ASoundExt _sound1;
 	Rect _rect1, _rect2, _rect3;
-	int _fieldA70, _fieldA72, _fieldA74;
+	int _fieldA70, _fieldA74;
 
 	Scene810();
 	virtual void synchronize(Serializer &s);

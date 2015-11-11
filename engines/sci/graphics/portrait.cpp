@@ -317,7 +317,8 @@ void Portrait::doit(Common::Point position, uint16 resourceId, uint16 noun, uint
 				curEvent = _event->getSciEvent(SCI_EVENT_ANY);
 				if (curEvent.type == SCI_EVENT_MOUSE_PRESS ||
 					(curEvent.type == SCI_EVENT_KEYBOARD && curEvent.data == SCI_KEY_ESC) ||
-					g_sci->getEngineState()->abortScriptProcessing == kAbortQuitGame)
+					g_sci->getEngineState()->abortScriptProcessing == kAbortQuitGame ||
+					g_sci->getEngineState()->_delayedRestoreGame)
 					userAbort = true;
 				curPosition = _audio->getAudioPosition();
 			} while ((curPosition != -1) && (curPosition < timerPosition) && (!userAbort));

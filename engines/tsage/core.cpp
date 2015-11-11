@@ -56,6 +56,9 @@ InvObject::InvObject(int sceneNumber, int rlbNum, int cursorNum, CursorType curs
 	_bounds = s.getBounds();
 
 	DEALLOCATE(imgData);
+	_visage = 0;
+	_strip = 0;
+	_frame = 0;
 }
 
 InvObject::InvObject(int visage, int strip, int frame) {
@@ -1462,7 +1465,7 @@ void ScenePalette::fade(const byte *adjustData, bool fullAdjust, int percent) {
 			adjustData += 3;
 	}
 
-	// Set the altered pale4tte
+	// Set the altered palette
 	g_system->getPaletteManager()->setPalette((const byte *)&tempPalette[0], 0, 256);
 	GLOBALS._screenSurface.updateScreen();
 }
@@ -1518,7 +1521,7 @@ void ScenePalette::changeBackground(const Rect &bounds, FadeMode fadeMode) {
 	}
 
 	Rect tempRect = bounds;
-	if (g_vm->getGameID() != GType_Ringworld)
+	if (g_vm->getGameID() != GType_Ringworld && g_vm->getGameID() != GType_Sherlock1)
 		tempRect.setHeight(T2_GLOBALS._interfaceY);
 
 	g_globals->_screenSurface.copyFrom(g_globals->_sceneManager._scene->_backSurface,
@@ -2803,7 +2806,7 @@ void SceneObject::updateScreen() {
 	srcRect.right = ((srcRect.right + 3) / 4) * 4;
 	srcRect.clip(g_globals->_sceneManager._scene->_sceneBounds);
 
-	if (g_vm->getGameID() != GType_Ringworld) {
+	if (g_vm->getGameID() != GType_Ringworld && g_vm->getGameID() != GType_Sherlock1) {
 		if (T2_GLOBALS._uiElements._visible)
 			srcRect.bottom = MIN<int16>(srcRect.bottom, T2_GLOBALS._interfaceY);
 	}

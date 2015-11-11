@@ -30,6 +30,10 @@
 
 #include "audio/timestamp.h"
 
+namespace Common {
+class SeekableReadStream;
+}
+
 namespace Audio {
 
 /**
@@ -86,7 +90,7 @@ public:
  * to its initial state. Note that rewinding itself is not required to
  * be working when the stream is being played by Mixer!
  */
-class RewindableAudioStream : public AudioStream {
+class RewindableAudioStream : public virtual AudioStream {
 public:
 	/**
 	 * Rewinds the stream to its start.
@@ -153,7 +157,7 @@ AudioStream *makeLoopingAudioStream(RewindableAudioStream *stream, uint loops);
  * interface for seeking. The seeking itself is not required to be
  * working while the stream is being played by Mixer!
  */
-class SeekableAudioStream : public RewindableAudioStream {
+class SeekableAudioStream : public virtual RewindableAudioStream {
 public:
 	/**
 	 * Tries to load a file by trying all available formats.
@@ -366,6 +370,74 @@ Timestamp convertTimeToStreamPos(const Timestamp &where, int rate, bool isStereo
  * @param disposeAfterUse Whether the parent stream object should be destroyed on destruction of the returned stream
  */
 AudioStream *makeLimitingAudioStream(AudioStream *parentStream, const Timestamp &length, DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES);
+
+/**
+ * An AudioStream designed to work in terms of packets.
+ *
+ * It is similar in concept to QueuingAudioStream, but does not
+ * necessarily rely on the data from each queued AudioStream
+ * being separate.
+ */
+class PacketizedAudioStream : public virtual AudioStream {
+public:
+	virtual ~PacketizedAudioStream() {}
+
+	/**
+	 * Queue the next packet to be decoded.
+	 */
+	virtual void queuePacket(Common::SeekableReadStream *data) = 0;
+
+	/**
+	 * Mark this stream as finished. That is, signal that no further data
+	 * will be queued to it. Only after this has been done can this
+	 * stream ever 'end'.
+	 */
+	virtual void finish() = 0;
+};
+
+/**
+ * A PacketizedAudioStream that works closer to a QueuingAudioStream.
+ * It queues individual packets as whole AudioStream to an internal
+ * QueuingAudioStream. This is used for writing quick wrappers against
+ * e.g. RawStream, which can be made into PacketizedAudioStreams with
+ * little effort.
+ */
+class StatelessPacketizedAudioStream : public PacketizedAudioStream {
+public:
+	StatelessPacketizedAudioStream(uint rate, uint channels) :
+		_rate(rate), _channels(channels), _stream(makeQueuingAudioStream(rate, channels == 2)) {}
+	virtual ~StatelessPacketizedAudioStream() {}
+
+	// AudioStream API
+	bool isStereo() const { return _channels == 2; }
+	int getRate() const { return _rate; }
+	int readBuffer(int16 *data, const int numSamples) { return _stream->readBuffer(data, numSamples); }
+	bool endOfData() const { return _stream->endOfData(); }
+	bool endOfStream() const { return _stream->endOfStream(); }
+
+	// PacketizedAudioStream API
+	void queuePacket(Common::SeekableReadStream *data) { _stream->queueAudioStream(makeStream(data)); }
+	void finish() { _stream->finish(); }
+
+	uint getChannels() const { return _channels; }
+
+protected:
+	/**
+	 * Make the AudioStream for a given packet
+	 */
+	virtual AudioStream *makeStream(Common::SeekableReadStream *data) = 0;
+
+private:
+	uint _rate;
+	uint _channels;
+	Common::ScopedPtr<QueuingAudioStream> _stream;
+};
+
+/**
+ * Create an AudioStream that plays nothing and immediately returns that
+ * endOfStream() has been reached.
+ */
+AudioStream *makeNullAudioStream();
 
 } // End of namespace Audio
 

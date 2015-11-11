@@ -316,12 +316,16 @@ void Mechanical::o_snakeBoxTrigger(uint16 op, uint16 var, uint16 argc, uint16 *a
 void Mechanical::o_fortressStaircaseMovie(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Play Stairs Movement Movie", op);
 
-	VideoHandle staircase = _vm->_video->playMovie(_vm->wrapMovieFilename("hhstairs", kMechanicalStack), 174, 222);
+	VideoHandle staircase = _vm->_video->playMovie(_vm->wrapMovieFilename("hhstairs", kMechanicalStack));
+	if (!staircase)
+		error("Failed to open hhstairs movie");
+
+	staircase->moveTo(174, 222);
 
 	if (_state.staircaseState) {
-		_vm->_video->setVideoBounds(staircase, Audio::Timestamp(0, 840, 600), Audio::Timestamp(0, 1680, 600));
+		staircase->setBounds(Audio::Timestamp(0, 840, 600), Audio::Timestamp(0, 1680, 600));
 	} else {
-		_vm->_video->setVideoBounds(staircase, Audio::Timestamp(0, 0, 600), Audio::Timestamp(0, 840, 600));
+		staircase->setBounds(Audio::Timestamp(0, 0, 600), Audio::Timestamp(0, 840, 600));
 	}
 
 	_vm->_video->waitUntilMovieEnds(staircase);
@@ -571,8 +575,12 @@ void Mechanical::o_elevatorWindowMovie(uint16 op, uint16 var, uint16 argc, uint1
 
 	debugC(kDebugScript, "Opcode %d Movie Time Index %d to %d", op, startTime, endTime);
 
-	VideoHandle window = _vm->_video->playMovie(_vm->wrapMovieFilename("ewindow", kMechanicalStack), 253, 0);
-	_vm->_video->setVideoBounds(window, Audio::Timestamp(0, startTime, 600), Audio::Timestamp(0, endTime, 600));
+	VideoHandle window = _vm->_video->playMovie(_vm->wrapMovieFilename("ewindow", kMechanicalStack));
+	if (!window)
+		error("Failed to open ewindow movie");
+
+	window->moveTo(253, 0);
+	window->setBounds(Audio::Timestamp(0, startTime, 600), Audio::Timestamp(0, endTime, 600));
 	_vm->_video->waitUntilMovieEnds(window);
 }
 
@@ -644,8 +652,12 @@ void Mechanical::o_elevatorTopMovie(uint16 op, uint16 var, uint16 argc, uint16 *
 
 	debugC(kDebugScript, "Opcode %d Movie Time Index %d to %d", op, startTime, endTime);
 
-	VideoHandle window = _vm->_video->playMovie(_vm->wrapMovieFilename("hcelev", kMechanicalStack), 206, 38);
-	_vm->_video->setVideoBounds(window, Audio::Timestamp(0, startTime, 600), Audio::Timestamp(0, endTime, 600));
+	VideoHandle window = _vm->_video->playMovie(_vm->wrapMovieFilename("hcelev", kMechanicalStack));
+	if (!window)
+		error("Failed to open hcelev movie");
+
+	window->moveTo(206, 38);
+	window->setBounds(Audio::Timestamp(0, startTime, 600), Audio::Timestamp(0, endTime, 600));
 	_vm->_video->waitUntilMovieEnds(window);
 }
 
@@ -653,7 +665,7 @@ void Mechanical::o_fortressRotationSetPosition(uint16 op, uint16 var, uint16 arg
 	debugC(kDebugScript, "Opcode %d: Set fortress position", op);
 
 	VideoHandle gears = _fortressRotationGears->playMovie();
-	uint32 moviePosition = Audio::Timestamp(_vm->_video->getTime(gears), 600).totalNumberOfFrames();
+	uint32 moviePosition = Audio::Timestamp(gears->getTime(), 600).totalNumberOfFrames();
 
 	// Myst ME short movie workaround, explained in o_fortressRotation_init
 	if (_fortressRotationShortMovieWorkaround) {
@@ -788,9 +800,8 @@ void Mechanical::o_elevatorRotation_init(uint16 op, uint16 var, uint16 argc, uin
 void Mechanical::fortressRotation_run() {
 	VideoHandle gears = _fortressRotationGears->playMovie();
 
-	double oldRate = _vm->_video->getVideoRate(gears).toDouble();
-
-	uint32 moviePosition = Audio::Timestamp(_vm->_video->getTime(gears), 600).totalNumberOfFrames();
+	double oldRate = gears->getRate().toDouble();
+	uint32 moviePosition = Audio::Timestamp(gears->getTime(), 600).totalNumberOfFrames();
 
 	// Myst ME short movie workaround, explained in o_fortressRotation_init
 	if (_fortressRotationShortMovieWorkaround) {
@@ -837,19 +848,19 @@ void Mechanical::fortressRotation_run() {
 
 		newRate = CLIP<double>(newRate, -2.5, 2.5);
 
-		_vm->_video->setVideoRate(gears, Common::Rational((int)(newRate * 1000.0), 1000));
+		gears->setRate(Common::Rational((int)(newRate * 1000.0), 1000));
 
 		_gearsWereRunning = true;
 	} else if (_gearsWereRunning) {
 		// The fortress has stopped. Set its new position
 		_fortressPosition = (moviePosition + 900) / 1800 % 4;
 
-		_vm->_video->setVideoRate(gears, 0);
+		gears->setRate(0);
 
 		if (!_fortressRotationShortMovieWorkaround) {
-			_vm->_video->seekToTime(gears, Audio::Timestamp(0, 1800 * _fortressPosition, 600));
+			gears->seek(Audio::Timestamp(0, 1800 * _fortressPosition, 600));
 		} else {
-			_vm->_video->seekToTime(gears, Audio::Timestamp(0, 1800 * (_fortressPosition % 2), 600));
+			gears->seek(Audio::Timestamp(0, 1800 * (_fortressPosition % 2), 600));
 		}
 
 		_vm->_sound->playSoundBlocking(_fortressRotationSounds[_fortressPosition]);
@@ -864,9 +875,9 @@ void Mechanical::o_fortressRotation_init(uint16 op, uint16 var, uint16 argc, uin
 	_fortressRotationGears = static_cast<MystResourceType6 *>(_invokingResource);
 
 	VideoHandle gears = _fortressRotationGears->playMovie();
-	_vm->_video->setVideoLooping(gears, true);
-	_vm->_video->seekToTime(gears, Audio::Timestamp(0, 1800 * _fortressPosition, 600));
-	_vm->_video->setVideoRate(gears, 0);
+	gears->setLooping(true);
+	gears->seek(Audio::Timestamp(0, 1800 * _fortressPosition, 600));
+	gears->setRate(0);
 
 	_fortressRotationSounds[0] = argv[0];
 	_fortressRotationSounds[1] = argv[1];
@@ -884,7 +895,7 @@ void Mechanical::o_fortressRotation_init(uint16 op, uint16 var, uint16 argc, uin
 	// ScummVM simulates a longer movie by counting the number of times the movie
 	// looped and adding that time to the current movie position.
 	// Hence allowing the fortress position to be properly computed.
-	uint32 movieDuration = _vm->_video->getDuration(gears).convertToFramerate(600).totalNumberOfFrames();
+	uint32 movieDuration = gears->getDuration().convertToFramerate(600).totalNumberOfFrames();
 	if (movieDuration == 3680) {
 		_fortressRotationShortMovieWorkaround = true;
 		_fortressRotationShortMovieCount = 0;
@@ -924,8 +935,8 @@ void Mechanical::fortressSimulation_run() {
 
 		_fortressSimulationStartup->pauseMovie(true);
 		VideoHandle holo = _fortressSimulationHolo->playMovie();
-		_vm->_video->setVideoLooping(holo, true);
-		_vm->_video->setVideoRate(holo, 0);
+		holo->setLooping(true);
+		holo->setRate(0);
 
 		_vm->_cursor->showCursor();
 
@@ -933,9 +944,8 @@ void Mechanical::fortressSimulation_run() {
 	} else {
 		VideoHandle holo = _fortressSimulationHolo->playMovie();
 
-		double oldRate = _vm->_video->getVideoRate(holo).toDouble();
-
-		uint32 moviePosition = Audio::Timestamp(_vm->_video->getTime(holo), 600).totalNumberOfFrames();
+		double oldRate = holo->getRate().toDouble();
+		uint32 moviePosition = Audio::Timestamp(holo->getTime(), 600).totalNumberOfFrames();
 
 		int32 positionInQuarter = 900 - (moviePosition + 900) % 1800;
 
@@ -968,15 +978,15 @@ void Mechanical::fortressSimulation_run() {
 
 			newRate = CLIP<double>(newRate, -2.5, 2.5);
 
-			_vm->_video->setVideoRate(holo, Common::Rational((int)(newRate * 1000.0), 1000));
+			holo->setRate(Common::Rational((int)(newRate * 1000.0), 1000));
 
 			_gearsWereRunning = true;
 		} else if (_gearsWereRunning) {
 			// The fortress has stopped. Set its new position
 			uint16 simulationPosition = (moviePosition + 900) / 1800 % 4;
 
-			_vm->_video->setVideoRate(holo, 0);
-			_vm->_video->seekToTime(holo, Audio::Timestamp(0, 1800 * simulationPosition, 600));
+			holo->setRate(0);
+			holo->seek(Audio::Timestamp(0, 1800 * simulationPosition, 600));
 			_vm->_sound->playSoundBlocking(	_fortressRotationSounds[simulationPosition]);
 
 			_gearsWereRunning = false;

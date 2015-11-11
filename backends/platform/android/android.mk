@@ -5,7 +5,7 @@ ANDROID_VERSIONCODE = 6
 
 ANDROID_TARGET_VERSION = 14
 
-NDK_BUILD = $(ANDROID_NDK)/ndk-build
+NDK_BUILD = $(ANDROID_NDK)/ndk-build APP_ABI=$(ABI)
 SDK_ANDROID = $(ANDROID_SDK)/tools/android
 
 PATH_DIST = $(srcdir)/dists/android
@@ -18,8 +18,6 @@ RESOURCES = \
 	$(PATH_BUILD_RES)/values/strings.xml \
 	$(PATH_BUILD_RES)/values-television/margins.xml \
 	$(PATH_BUILD_RES)/layout/main.xml \
-	$(PATH_BUILD_RES)/layout/splash.xml \
-	$(PATH_BUILD_RES)/drawable/gradient.xml \
 	$(PATH_BUILD_RES)/drawable/scummvm.png \
 	$(PATH_BUILD_RES)/drawable/scummvm_big.png \
 	$(PATH_BUILD_RES)/drawable-xhdpi/ouya_icon.png
@@ -30,14 +28,13 @@ DIST_BUILD_XML = $(PATH_DIST)/custom_rules.xml
 PATH_BUILD = ./build.tmp
 PATH_BUILD_ASSETS = $(PATH_BUILD)/assets
 PATH_BUILD_RES = $(PATH_BUILD)/res
-PATH_BUILD_LIBSCUMMVM = $(PATH_BUILD)/mylib/armeabi/libscummvm.so
+PATH_BUILD_LIBSCUMMVM = $(PATH_BUILD)/lib/$(ABI)/libscummvm.so
 
 FILE_MANIFEST_SRC = $(srcdir)/dists/android/AndroidManifest.xml
 FILE_MANIFEST = $(PATH_BUILD)/AndroidManifest.xml
 
 APK_MAIN = ScummVM-debug.apk
 APK_MAIN_RELEASE = ScummVM-release-unsigned.apk
-APK_PLUGINS = $(patsubst plugins/lib%.so, scummvm-engine-%.apk, $(PLUGINS))
 
 $(FILE_MANIFEST): $(FILE_MANIFEST_SRC) | $(PATH_BUILD)
 	@$(MKDIR) -p $(@D)
@@ -91,18 +88,18 @@ androidrelease: $(APK_MAIN_RELEASE)
 
 androidtestmain: $(APK_MAIN)
 	$(ADB) install -r $(APK_MAIN)
-	$(ADB) shell am start -a android.intent.action.MAIN -c android.intent.category.LAUNCHER -n org.scummvm.scummvm/.Unpacker
+	$(ADB) shell am start -a android.intent.action.MAIN -c android.intent.category.LAUNCHER -n org.scummvm.scummvm/.ScummVMActivity
 
-androidtest: $(APK_MAIN) $(APK_PLUGINS)
+androidtest: $(APK_MAIN)
 	@set -e; for apk in $^; do \
 		$(ADB) install -r $$apk; \
 	done
-	$(ADB) shell am start -a android.intent.action.MAIN -c android.intent.category.LAUNCHER -n org.scummvm.scummvm/.Unpacker
+	$(ADB) shell am start -a android.intent.action.MAIN -c android.intent.category.LAUNCHER -n org.scummvm.scummvm/.ScummVMActivity
 
 # used by buildbot!
 androiddistdebug: all
 	$(MKDIR) debug
-	$(CP) $(APK_MAIN) $(APK_PLUGINS) debug/
+	$(CP) $(APK_MAIN) debug/
 	for i in $(DIST_FILES_DOCS) $(PORT_DISTFILES); do \
 		sed 's/$$/\r/' < $$i > debug/`basename $$i`.txt; \
 	done

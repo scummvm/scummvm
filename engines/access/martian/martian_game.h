@@ -32,40 +32,41 @@ namespace Martian {
 class MartianEngine : public AccessEngine {
 private:
 	bool _skipStart;
-
+	SpriteResource *_introObjects;
+	Common::MemoryReadStream *_creditsStream;
 	/**
 	 * Do the game introduction
 	 */
-	void doIntroduction();
+	void doCredits();
 
-	/**
-	 * Do title sequence
-	 */
-	void doTitle();
-
-	/**
-	 * Do opening sequence
-	 */
-	void doOpening();
+	bool showCredits();
 
 	/**
 	 * Setup variables for the game
 	 */
 	void setupGame();
 
+	void initObjects();
+	void configSelect();
+	void initVariables();
 protected:
 	/**
 	 * Play the game
 	 */
 	virtual void playGame();
 
-	virtual void dead(int deathId) {}
-public:
-	MartianEngine(OSystem *syst, const AccessGameDescription *gameDesc);
+	virtual void dead(int deathId);
 
+	void setNoteParams();
+	void displayNote(const Common::String &msg);
+public:
+	SpriteResource *_spec7Objects;
+
+	MartianEngine(OSystem *syst, const AccessGameDescription *gameDesc);
 	virtual ~MartianEngine();
 
-	void drawHelp();
+	void doSpecial5(int param1);
+	void showDeathText(Common::String msg);
 	virtual void establish(int esatabIndex, int sub) {};
 };
 

@@ -26,6 +26,7 @@
 #include "common/file.h"
 #include "common/system.h"
 #include "common/unzip.h"
+#include "common/ustr.h"
 #include "graphics/font.h"
 #include "graphics/fonts/ttf.h"
 #include "graphics/surface.h"
@@ -36,65 +37,73 @@
 
 namespace ZVision {
 
+const FontStyle systemFonts[] = {
+	{ "*times new roman*",	  "times",   "FreeSerif", "Italic", "LiberationSerif"  },
+	{ "*times*",		  "times",   "FreeSerif", "Italic", "LiberationSerif"  },
+	{ "*century schoolbook*", "censcbk", "FreeSerif", "Italic", "LiberationSerif"  },
+	{ "*garamond*", 	  "gara",    "FreeSerif", "Italic", "LiberationSerif"  },
+	{ "*courier new*",	  "cour",    "FreeMono",  "Oblique", "LiberationMono" },
+	{ "*courier*",		  "cour",    "FreeMono",  "Oblique", "LiberationMono" },
+	{ "*ZorkDeath*",	  "cour",    "FreeMono",  "Oblique", "LiberationMono" },
+	{ "*arial*",		  "arial",   "FreeSans",  "Oblique", "LiberationSans" },
+	{ "*ZorkNormal*",	  "arial",   "FreeSans",  "Oblique", "LiberationSans" }
+};
+
+const FontStyle getSystemFont(int fontIndex) {
+	return systemFonts[fontIndex];
+}
+
 StyledTTFont::StyledTTFont(ZVision *engine) {
 	_engine = engine;
 	_style = 0;
-	_font = NULL;
+	_font = nullptr;
 	_lineHeight = 0;
 }
 
 StyledTTFont::~StyledTTFont() {
-	if (_font)
-		delete _font;
+	delete _font;
 }
 
 bool StyledTTFont::loadFont(const Common::String &fontName, int32 point, uint style) {
+	// Don't re-load the font if we've already loaded it
+	// We have to check for empty so we can default to Arial 
+	if (!fontName.empty() && _fontName.equalsIgnoreCase(fontName) && _lineHeight == point && _style == style) {
+		return true;
+	}
+
 	_style = style;
-	return loadFont(fontName, point);
-}
-
-bool StyledTTFont::loadFont(const Common::String &fontName, int32 point) {
-	struct FontStyle {
-		const char *zorkFont;
-		const char *fontBase;
-		const char *freeFontBase;
-		const char *freeFontItalicName;
-	};
-
-	const FontStyle systemFonts[] = {
-		{ "*times new roman*",	  "times",   "FreeSerif", "Italic"  },
-		{ "*times*",		  "times",   "FreeSerif", "Italic"  },
-		{ "*century schoolbook*", "censcbk", "FreeSerif", "Italic"  },
-		{ "*garamond*", 	  "gara",    "FreeSerif", "Italic"  },
-		{ "*courier new*",	  "cour",    "FreeMono",  "Oblique" },
-		{ "*courier*",		  "cour",    "FreeMono",  "Oblique" },
-		{ "*ZorkDeath*",	  "cour",    "FreeMono",  "Oblique" },
-		{ "*arial*",		  "arial",   "FreeSans",  "Oblique" },
-		{ "*ZorkNormal*",	  "arial",   "FreeSans",  "Oblique" },
-	};
 
 	Common::String newFontName;
 	Common::String freeFontName;
+	Common::String liberationFontName;
 
-	for (int i = 0; i < ARRAYSIZE(systemFonts); i++) {
-		if (fontName.matchString(systemFonts[i].zorkFont, true)) {
-			newFontName = systemFonts[i].fontBase;
-			freeFontName = systemFonts[i].freeFontBase;
+	for (int i = 0; i < FONT_COUNT; i++) {
+		FontStyle curFont = getSystemFont(i);
+		if (fontName.matchString(curFont.zorkFont, true)) {
+			newFontName = curFont.fontBase;
+			freeFontName = curFont.freeFontBase;
+			liberationFontName = curFont.liberationFontBase;
 
-			if ((_style & STTF_BOLD) && (_style & STTF_ITALIC)) {
+			if ((_style & TTF_STYLE_BOLD) && (_style & TTF_STYLE_ITALIC)) {
 				newFontName += "bi";
 				freeFontName += "Bold";
-				freeFontName += systemFonts[i].freeFontItalicName;
-			} else if (_style & STTF_BOLD) {
+				freeFontName += curFont.freeFontItalicName;
+				liberationFontName += "-BoldItalic";
+			} else if (_style & TTF_STYLE_BOLD) {
 				newFontName += "bd";
 				freeFontName += "Bold";
-			} else if (_style & STTF_ITALIC) {
+				liberationFontName += "-Bold";
+			} else if (_style & TTF_STYLE_ITALIC) {
 				newFontName += "i";
-				freeFontName += systemFonts[i].freeFontItalicName;
+				freeFontName += curFont.freeFontItalicName;
+				liberationFontName += "-Italic";
+			} else {
+				liberationFontName += "-Regular";
 			}
 
 			newFontName += ".ttf";
 			freeFontName += ".ttf";
+			liberationFontName += ".ttf";
 			break;
 		}
 	}
@@ -103,72 +112,99 @@ bool StyledTTFont::loadFont(const Common::String &fontName, int32 point) {
 		debug("Could not identify font: %s. Reverting to Arial", fontName.c_str());
 		newFontName = "arial.ttf";
 		freeFontName = "FreeSans.ttf";
+		liberationFontName = "LiberationSans-Regular.ttf";
 	}
 
-	bool sharp = (_style & STTF_SHARP) == STTF_SHARP;
+	bool sharp = (_style & TTF_STYLE_SHARP) == TTF_STYLE_SHARP;
 
 	Common::File file;
-	if (!file.open(newFontName) && !file.open(freeFontName) && !_engine->getSearchManager()->openFile(file, newFontName) && !_engine->getSearchManager()->openFile(file, freeFontName))
-		error("Unable to open font file %s (free alternative: %s)", newFontName.c_str(), freeFontName.c_str());
+	if (!file.open(newFontName) && !_engine->getSearchManager()->openFile(file, newFontName) &&
+		!file.open(liberationFontName) && !_engine->getSearchManager()->openFile(file, liberationFontName) &&
+		!file.open(freeFontName) && !_engine->getSearchManager()->openFile(file, freeFontName))
+		error("Unable to open font file %s (Liberation Font alternative: %s, FreeFont alternative: %s)", newFontName.c_str(), liberationFontName.c_str(), freeFontName.c_str());
 
-	Graphics::Font *_newFont = Graphics::loadTTFFont(file, point, 60, (sharp ? Graphics::kTTFRenderModeMonochrome : Graphics::kTTFRenderModeNormal)); // 66 dpi for 640 x 480 on 14" display
-	if (_newFont) {
-		if (!_font)
-			delete _font;
-		_font = _newFont;
+	Graphics::Font *newFont = Graphics::loadTTFFont(file, point, 60, (sharp ? Graphics::kTTFRenderModeMonochrome : Graphics::kTTFRenderModeNormal)); // 66 dpi for 640 x 480 on 14" display
+	if (newFont == nullptr) {
+		return false;
 	}
 
-	_fntName = fontName;
+	delete _font;
+	_font = newFont;
+
+	_fontName = fontName;
 	_lineHeight = point;
 
-	if (_font)
-		return true;
-	return false;
-}
-
-void StyledTTFont::setStyle(uint newStyle) {
-	if ((_style & (STTF_BOLD | STTF_ITALIC | STTF_SHARP)) != (newStyle & (STTF_BOLD | STTF_ITALIC | STTF_SHARP))) {
-		_style = newStyle;
-		loadFont(_fntName, _lineHeight);
-	} else {
-		_style = newStyle;
-	}
+	return true;
 }
 
 int StyledTTFont::getFontHeight() {
 	if (_font)
 		return _font->getFontHeight();
+
 	return 0;
 }
 
 int StyledTTFont::getMaxCharWidth() {
 	if (_font)
 		return _font->getMaxCharWidth();
+
 	return 0;
 }
 
 int StyledTTFont::getCharWidth(byte chr) {
 	if (_font)
 		return _font->getCharWidth(chr);
+
 	return 0;
 }
 
 int StyledTTFont::getKerningOffset(byte left, byte right) {
 	if (_font)
 		return _font->getKerningOffset(left, right);
+
 	return 0;
+}
+
+Common::U32String StyledTTFont::convertUtf8ToUtf32(const Common::String &str) {
+	// The String class, and therefore the Font class as well, assume one
+	// character is one byte, but in this case it's actually an UTF-8
+	// string with up to 4 bytes per character. To work around this,
+	// convert it to an U32String before drawing it, because our Font class
+	// can handle that.
+	Common::U32String u32str;
+	uint i = 0;
+	while (i < str.size()) {
+		uint32 chr = 0;
+		if ((str[i] & 0xF8) == 0xF0) {
+			chr |= (str[i++] & 0x07) << 18;
+			chr |= (str[i++] & 0x3F) << 12;
+			chr |= (str[i++] & 0x3F) << 6;
+			chr |= (str[i++] & 0x3F);
+		} else if ((str[i] & 0xF0) == 0xE0) {
+			chr |= (str[i++] & 0x0F) << 12;
+			chr |= (str[i++] & 0x3F) << 6;
+			chr |= (str[i++] & 0x3F);
+		} else if ((str[i] & 0xE0) == 0xC0) {
+			chr |= (str[i++] & 0x1F) << 6;
+			chr |= (str[i++] & 0x3F);
+		} else {
+			chr = (str[i++] & 0x7F);
+		}
+		u32str += chr;
+	}
+	return u32str;
 }
 
 void StyledTTFont::drawChar(Graphics::Surface *dst, byte chr, int x, int y, uint32 color) {
 	if (_font) {
 		_font->drawChar(dst, chr, x, y, color);
-		if (_style & STTF_UNDERLINE) {
-			int16 pos = floor(_font->getFontHeight() * 0.87);
+		if (_style & TTF_STYLE_UNDERLINE) {
+			int16 pos = (int16)floor(_font->getFontHeight() * 0.87);
 			int thk = MAX((int)(_font->getFontHeight() * 0.05), 1);
 			dst->fillRect(Common::Rect(x, y + pos, x + _font->getCharWidth(chr), y + pos + thk), color);
 		}
-		if (_style & STTF_STRIKEOUT) {
-			int16 pos = floor(_font->getFontHeight() * 0.60);
+		if (_style & TTF_STYLE_STRIKETHROUGH) {
+			int16 pos = (int16)floor(_font->getFontHeight() * 0.60);
 			int thk = MAX((int)(_font->getFontHeight() * 0.05), 1);
 			dst->fillRect(Common::Rect(x, y + pos, x + _font->getCharWidth(chr), y + pos + thk), color);
 		}
@@ -177,10 +213,11 @@ void StyledTTFont::drawChar(Graphics::Surface *dst, byte chr, int x, int y, uint
 
 void StyledTTFont::drawString(Graphics::Surface *dst, const Common::String &str, int x, int y, int w, uint32 color, Graphics::TextAlign align) {
 	if (_font) {
-		_font->drawString(dst, str, x, y, w, color, align);
-		if (_style & STTF_UNDERLINE) {
-			int16 pos = floor(_font->getFontHeight() * 0.87);
-			int16 wd = MIN(_font->getStringWidth(str), w);
+		Common::U32String u32str = convertUtf8ToUtf32(str);
+		_font->drawString(dst, u32str, x, y, w, color, align);
+		if (_style & TTF_STYLE_UNDERLINE) {
+			int16 pos = (int16)floor(_font->getFontHeight() * 0.87);
+			int16 wd = MIN(_font->getStringWidth(u32str), w);
 			int16 stX = x;
 			if (align == Graphics::kTextAlignCenter)
 				stX += (w - wd) / 2;
@@ -191,9 +228,9 @@ void StyledTTFont::drawString(Graphics::Surface *dst, const Common::String &str,
 
 			dst->fillRect(Common::Rect(stX, y + pos, stX + wd, y + pos + thk), color);
 		}
-		if (_style & STTF_STRIKEOUT) {
-			int16 pos = floor(_font->getFontHeight() * 0.60);
-			int16 wd = MIN(_font->getStringWidth(str), w);
+		if (_style & TTF_STYLE_STRIKETHROUGH) {
+			int16 pos = (int16)floor(_font->getFontHeight() * 0.60);
+			int16 wd = MIN(_font->getStringWidth(u32str), w);
 			int16 stX = x;
 			if (align == Graphics::kTextAlignCenter)
 				stX += (w - wd) / 2;

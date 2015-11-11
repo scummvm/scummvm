@@ -142,11 +142,14 @@ void SoundCommandParser::processInitSound(reg_t obj) {
 
 reg_t SoundCommandParser::kDoSoundPlay(int argc, reg_t *argv, reg_t acc) {
 	debugC(kDebugLevelSound, "kDoSound(play): %04x:%04x", PRINT_REG(argv[0]));
-	processPlaySound(argv[0]);
+	bool playBed = false;
+	if (argc >= 2 && !argv[1].isNull())
+		playBed = true;
+	processPlaySound(argv[0], playBed);
 	return acc;
 }
 
-void SoundCommandParser::processPlaySound(reg_t obj) {
+void SoundCommandParser::processPlaySound(reg_t obj, bool playBed) {
 	MusicEntry *musicSlot = _music->getSlot(obj);
 	if (!musicSlot) {
 		warning("kDoSound(play): Slot not found (%04x:%04x), initializing it manually", PRINT_REG(obj));
@@ -181,15 +184,26 @@ void SoundCommandParser::processPlaySound(reg_t obj) {
 	}
 
 	musicSlot->loop = readSelectorValue(_segMan, obj, SELECTOR(loop));
-	musicSlot->priority = readSelectorValue(_segMan, obj, SELECTOR(priority));
+
+	// Get song priority from either obj or soundRes
+	byte resourcePriority = 0xFF;
+	if (musicSlot->soundRes)
+		resourcePriority = musicSlot->soundRes->getSoundPriority();
+	if (!musicSlot->overridePriority && resourcePriority != 0xFF) {
+		musicSlot->priority = resourcePriority;
+	} else {
+		musicSlot->priority = readSelectorValue(_segMan, obj, SELECTOR(priority));
+	}
+
 	// Reset hold when starting a new song. kDoSoundSetHold is always called after
 	// kDoSoundPlay to set it properly, if needed. Fixes bug #3413589.
 	musicSlot->hold = -1;
+	musicSlot->playBed = playBed;
 	if (_soundVersion >= SCI_VERSION_1_EARLY)
 		musicSlot->volume = readSelectorValue(_segMan, obj, SELECTOR(vol));
 
-	debugC(kDebugLevelSound, "kDoSound(play): %04x:%04x number %d, loop %d, prio %d, vol %d", PRINT_REG(obj),
-			resourceId, musicSlot->loop, musicSlot->priority, musicSlot->volume);
+	debugC(kDebugLevelSound, "kDoSound(play): %04x:%04x number %d, loop %d, prio %d, vol %d, bed %d", PRINT_REG(obj),
+			resourceId, musicSlot->loop, musicSlot->priority, musicSlot->volume, playBed ? 1 : 0);
 
 	_music->soundPlay(musicSlot);
 
@@ -538,7 +552,7 @@ void SoundCommandParser::processUpdateCues(reg_t obj) {
 	if (_soundVersion >= SCI_VERSION_1_EARLY) {
 		writeSelectorValue(_segMan, obj, SELECTOR(min), musicSlot->ticker / 3600);
 		writeSelectorValue(_segMan, obj, SELECTOR(sec), musicSlot->ticker % 3600 / 60);
-		writeSelectorValue(_segMan, obj, SELECTOR(frame), musicSlot->ticker);
+		writeSelectorValue(_segMan, obj, SELECTOR(frame), musicSlot->ticker % 60 / 2);
 	}
 }
 
@@ -673,23 +687,19 @@ reg_t SoundCommandParser::kDoSoundSetPriority(int argc, reg_t *argv, reg_t acc) 
 	}
 
 	if (value == -1) {
-		uint16 resourceId = musicSlot->resourceId;
+		musicSlot->overridePriority = false;
+		musicSlot->priority = 0;
 
-		// Set priority from the song data
-		Resource *song = _resMan->findResource(ResourceId(kResourceTypeSound, resourceId), 0);
-		if (song->data[0] == 0xf0)
-			_music->soundSetPriority(musicSlot, song->data[1]);
-		else
-			warning("kDoSound(setPriority): Attempt to unset song priority when there is no built-in value");
+		// NB: It seems SSCI doesn't actually reset the priority here.
 
-		//pSnd->prio=0;field_15B=0
 		writeSelectorValue(_segMan, obj, SELECTOR(flags), readSelectorValue(_segMan, obj, SELECTOR(flags)) & 0xFD);
 	} else {
 		// Scripted priority
+		musicSlot->overridePriority = true;
 
-		//pSnd->field_15B=1;
 		writeSelectorValue(_segMan, obj, SELECTOR(flags), readSelectorValue(_segMan, obj, SELECTOR(flags)) | 2);
-		//DoSOund(0xF,hobj,w)
+
+		_music->soundSetPriority(musicSlot, value);
 	}
 	return acc;
 }
@@ -777,6 +787,8 @@ void SoundCommandParser::stopAllSounds() {
 }
 
 void SoundCommandParser::startNewSound(int number) {
+	// NB: This is only used by the debugging console.
+
 	Common::StackLock lock(_music->_mutex);
 
 	// Overwrite the first sound in the playlist
@@ -785,7 +797,7 @@ void SoundCommandParser::startNewSound(int number) {
 	processDisposeSound(soundObj);
 	writeSelectorValue(_segMan, soundObj, SELECTOR(number), number);
 	processInitSound(soundObj);
-	processPlaySound(soundObj);
+	processPlaySound(soundObj, false);
 }
 
 void SoundCommandParser::setMasterVolume(int vol) {

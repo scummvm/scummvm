@@ -37,7 +37,7 @@ class ZVision;
   * The base class that represents effects created from Actions.
   * This class is virtual.
   *
-  * Detailed Description: 
+  * Detailed Description:
   *     A scene has Controls. By interacting with the controls, the user
   *     causes Actions to execute. Certain Actions create 'effects', for
   *     example, a sound or an animation. This is the base class for

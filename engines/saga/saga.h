@@ -137,9 +137,7 @@ enum GameFileTypes {
 
 enum GameFeatures {
 	GF_ITE_FLOPPY        = 1 << 0,
-#if 0
-	GF_OLD_ITE_DOS       = 1 << 1,     // Currently unused
-#endif
+	GF_ITE_DOS_DEMO      = 1 << 1,
 	GF_EXTRA_ITE_CREDITS = 1 << 2,
 	GF_8BIT_UNSIGNED_PCM = 1 << 3
 };

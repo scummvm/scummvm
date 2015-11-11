@@ -31,7 +31,7 @@ class ZVision;
 
 class Subtitle {
 public:
-	Subtitle(ZVision *engine, const Common::String &subname);
+	Subtitle(ZVision *engine, const Common::String &subname, bool upscaleToHires = false);
 	~Subtitle();
 
 	void process(int32 time);

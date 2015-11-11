@@ -138,21 +138,41 @@ static const PlainGameDescriptor agiGames[] = {
 	{0, 0}
 };
 
-static const ExtraGuiOption agiExtraGuiOption = {
-	_s("Use original save/load screens"),
-	_s("Use the original save/load screens, instead of the ScummVM ones"),
-	"originalsaveload",
-	false
-};
-
-static const ExtraGuiOption agiExtraGuiOptionAmiga = {
-	_s("Use an alternative palette"),
-	_s("Use an alternative palette, common for all Amiga games. This was the old behavior"),
-	"altamigapalette",
-	false
-};
-
 #include "agi/detection_tables.h"
+
+static const ADExtraGuiOptionsMap optionsList[] = {
+	{
+		GAMEOPTION_ORIGINAL_SAVELOAD,
+		{
+			_s("Use original save/load screens"),
+			_s("Use the original save/load screens, instead of the ScummVM ones"),
+			"originalsaveload",
+			false
+		}
+	},
+
+	{
+		GAMEOPTION_AMIGA_ALTERNATIVE_PALETTE,
+		{
+			_s("Use an alternative palette"),
+			_s("Use an alternative palette, common for all Amiga games. This was the old behavior"),
+			"altamigapalette",
+			false
+		}
+	},
+
+	{
+		GAMEOPTION_DISABLE_MOUSE,
+		{
+			_s("Mouse support"),
+			_s("Enables mouse support. Allows to use mouse for movement and in game menus."),
+			"mousesupport",
+			true
+		}
+	},
+
+	AD_EXTRA_GUI_OPTIONS_TERMINATOR
+};
 
 using namespace Agi;
 
@@ -161,7 +181,7 @@ class AgiMetaEngine : public AdvancedMetaEngine {
 	mutable Common::String	_extra;
 
 public:
-	AgiMetaEngine() : AdvancedMetaEngine(Agi::gameDescriptions, sizeof(Agi::AGIGameDescription), agiGames) {
+	AgiMetaEngine() : AdvancedMetaEngine(Agi::gameDescriptions, sizeof(Agi::AGIGameDescription), agiGames, optionsList) {
 		_singleid = "agi";
 		_guioptions = GUIO1(GUIO_NOSPEECH);
 	}
@@ -175,7 +195,6 @@ public:
 
 	virtual bool hasFeature(MetaEngineFeature f) const;
 	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
-	virtual const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const;
 	virtual SaveStateList listSaves(const char *target) const;
 	virtual int getMaximumSaveSlot() const;
 	virtual void removeSaveState(const char *target, int slot) const;
@@ -232,14 +251,6 @@ bool AgiMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameD
 	}
 
 	return res;
-}
-
-const ExtraGuiOptions AgiMetaEngine::getExtraGuiOptions(const Common::String &target) const {
-	ExtraGuiOptions options;
-	options.push_back(agiExtraGuiOption);
-	if (target.contains("-amiga"))
-		options.push_back(agiExtraGuiOptionAmiga);
-	return options;
 }
 
 SaveStateList AgiMetaEngine::listSaves(const char *target) const {

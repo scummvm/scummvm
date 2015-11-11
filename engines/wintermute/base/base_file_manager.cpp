@@ -227,7 +227,7 @@ bool BaseFileManager::registerPackages() {
 
 			// Again, make the parent's name all lowercase to avoid any case
 			// issues.
-			Common::String parentName = fileIt->getParent().getName();
+			Common::String parentName = it->getName();
 			parentName.toLowercase();
 
 			// Avoid registering all the language files

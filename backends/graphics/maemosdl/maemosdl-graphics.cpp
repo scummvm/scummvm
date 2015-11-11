@@ -21,16 +21,14 @@
  */
 #if defined(MAEMO)
 
-#include "SDL_syswm.h"
-
 #include "common/scummsys.h"
 
 #include "backends/platform/maemo/maemo.h"
 #include "backends/events/maemosdl/maemosdl-events.h"
 #include "backends/graphics/maemosdl/maemosdl-graphics.h"
 
-MaemoSdlGraphicsManager::MaemoSdlGraphicsManager(SdlEventSource *sdlEventSource)
-	: SurfaceSdlGraphicsManager(sdlEventSource) {
+MaemoSdlGraphicsManager::MaemoSdlGraphicsManager(SdlEventSource *sdlEventSource, SdlWindow *window)
+	: SurfaceSdlGraphicsManager(sdlEventSource, window) {
 }
 
 bool MaemoSdlGraphicsManager::loadGFXMode() {

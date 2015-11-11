@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -41,7 +41,7 @@ void AAHeader::load(Common::SeekableReadStream *f) {
 	_spritesIndex = f->readUint16LE();
 	_scrollPosition.x = f->readSint16LE();
 	_scrollPosition.y = f->readSint16LE();
-	_scrollTicks = f->readUint32LE();
+	_scrollTicks = f->readUint32LE() & 0xffff;
 	f->skip(6);
 
 	char buffer[FILENAME_SIZE];
@@ -436,10 +436,8 @@ void Animation::update() {
 	if (_vm->_game->_scene._frameStartTime < _nextFrameTimer)
 		return;
 
-	for (uint idx = 0; idx < scene._spriteSlots.size(); ++idx) {
-		if (scene._spriteSlots[idx]._seqIndex >= 0x80)
-			scene._spriteSlots[idx]._flags = IMG_ERASE;
-	}
+	// Erase any active sprites
+	eraseSprites();
 
 	// Validate the current frame
 	if (_currentFrame >= (int)_miscEntries.size()) {
@@ -598,12 +596,19 @@ void Animation::setCurrentFrame(int frameNumber) {
 	_currentFrame = frameNumber;
 	_oldFrameEntry = 0;
 	_freeFlag = false;
-
-	_nextScrollTimer = _nextFrameTimer = _vm->_game->_scene._frameStartTime;
 }
 
 void Animation::setNextFrameTimer(int frameNumber) {
 	_nextFrameTimer = frameNumber;
+}
+
+void Animation::eraseSprites() {
+	Scene &scene = _vm->_game->_scene;
+
+	for (uint idx = 0; idx < scene._spriteSlots.size(); ++idx) {
+		if (scene._spriteSlots[idx]._seqIndex >= 0x80)
+			scene._spriteSlots[idx]._flags = IMG_ERASE;
+	}
 }
 
 } // End of namespace MADS

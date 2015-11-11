@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -178,31 +178,29 @@ int PaletteUsage::process(Common::Array<RGB6> &palette, uint flags) {
 		}
 
 		if (!changed && !noUsageFlag) {
-			int var2 = (palette[palIndex]._flags & 0x20) ||
-				(((flags & 0x2000) || (palette[palIndex]._flags & 0x4000)) &&
+			int bestHash = (palette[palIndex]._flags & 0x20) ||
+				(((flags & 0x2000) || (palette[palIndex]._flags & 0x40)) &&
 				((flags & 0x1000) || (palCount == 0))) ? 0x7fff : 1;
 			int var36 = (palette[palIndex]._flags & 0x80) ? 0 : 2;
 
 			for (int idx = palLow; idx < palIdx; ++idx) {
 				uint32 v = _vm->_palette->_palFlags[idx];
 				if ((v & var3A) && !(v & var36)) {
-					int var10;
-
-					if (var2 > 1) {
-						var10 = rgbFactor(&_vm->_palette->_mainPalette[idx * 3], palette[palIndex]);
-					}
-					else if (_vm->_palette->_mainPalette[idx * 3] != palette[palIndex].r ||
+					int hash;
+					if (bestHash > 1) {
+						hash = rgbFactor(&_vm->_palette->_mainPalette[idx * 3], palette[palIndex]);
+					} else if (_vm->_palette->_mainPalette[idx * 3] != palette[palIndex].r ||
 							_vm->_palette->_mainPalette[idx * 3 + 1] != palette[palIndex].g ||
 							_vm->_palette->_mainPalette[idx * 3 + 2] != palette[palIndex].b) {
-						var10 = 1;
+						hash = 1;
 					} else {
-						var10 = 0;
+						hash = 0;
 					}
 
-					if (var2 > var10) {
+					if (bestHash > hash) {
 						changed = true;
 						newPalIndex = idx;
-						var2 = var10;
+						bestHash = hash;
 					}
 				}
 			}
@@ -430,6 +428,14 @@ void Fader::grabPalette(byte *colors, uint start, uint num) {
 	g_system->getPaletteManager()->grabPalette(colors, start, num);
 }
 
+void Fader::getFullPalette(byte palette[PALETTE_SIZE]) {
+	grabPalette(&palette[0], 0, PALETTE_COUNT);
+}
+
+void Fader::setFullPalette(byte palette[PALETTE_SIZE]) {
+	setPalette(&palette[0], 0, PALETTE_COUNT);
+}
+
 void Fader::fadeOut(byte palette[PALETTE_SIZE], byte *paletteMap,
 		int baseColor, int numColors, int baseGrey, int numGreys,
 		int tickDelay, int steps) {
@@ -491,7 +497,7 @@ void Fader::fadeIn(byte palette[PALETTE_SIZE], byte destPalette[PALETTE_SIZE],
 	int baseColor, int numColors, int baseGrey, int numGreys,
 	int tickDelay, int steps) {
 	GreyEntry map[PALETTE_COUNT];
-	byte tempPal[PALETTE_SIZE];;
+	byte tempPal[PALETTE_SIZE];
 	int8 signs[PALETTE_COUNT][3];
 	byte palIndex[PALETTE_COUNT][3];
 	int intensity;
@@ -505,16 +511,12 @@ void Fader::fadeIn(byte palette[PALETTE_SIZE], byte destPalette[PALETTE_SIZE],
 		for (int colorCtr = 0; colorCtr < 3; ++colorCtr) {
 			if (_colorFlags[colorCtr]) {
 				int shiftSign = _colorValues[colorCtr];
-				if (shiftSign >= 0) {
+				if (shiftSign >= 0)
 					intensity = map[index]._intensity << shiftSign;
-				}
-				else {
+				else
 					intensity = map[index]._intensity >> abs(shiftSign);
-				}
-			}
-			else {
+			} else
 				intensity = _colorValues[colorCtr];
-			}
 
 			int diff = _rgb64Map[destPalette[palCtr * 3 + colorCtr]] - intensity;
 			palIndex[palCtr][colorCtr] = (byte)ABS(diff);
@@ -890,5 +892,31 @@ void Palette::refreshSceneColors() {
 
 	setPalette(_mainPalette + (val * 3), val, 256 - val);
 }
+
+int Palette::closestColor(const byte *matchColor, const byte *refPalette,
+		int paletteInc, int count) {
+	int bestColor = 0;
+	int bestDistance = 0x7fff;
+
+	for (int idx = 0; idx < count; ++idx) {
+		// Figure out figure for 'distance' between two colors
+		int distance = 0;
+		for (int rgbIdx = 0; rgbIdx < RGB_SIZE; ++rgbIdx) {
+			int diff = refPalette[rgbIdx] - matchColor[rgbIdx];
+			distance += diff * diff;
+		}
+
+		// If the given color is a closer match to our color, store the index
+		if (distance <= bestDistance) {
+			bestDistance = distance;
+			bestColor = idx;
+		}
+
+		refPalette += paletteInc;
+	}
+
+	return bestColor;
+}
+
 
 } // End of namespace MADS

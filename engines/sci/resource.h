@@ -596,6 +596,7 @@ public:
 	Track *getDigitalTrack();
 	int getChannelFilterMask(int hardwareMask, bool wantsRhythm);
 	byte getInitialVoiceCount(byte channel);
+	byte getSoundPriority() const { return _soundPriority; }
 
 private:
 	SciVersion _soundVersion;
@@ -603,6 +604,7 @@ private:
 	Track *_tracks;
 	Resource *_innerResource;
 	ResourceManager *_resMan;
+	byte _soundPriority;
 };
 
 } // End of namespace Sci

@@ -124,31 +124,30 @@ void CursorManager::cursorDown(bool pushed) {
 }
 
 void CursorManager::changeCursor(int id) {
-	int _id = id;
-
-	if (_item &&
-	        (_id == CursorIndex_Active ||
-	         _id == CursorIndex_Idle ||
-	         _id == CursorIndex_HandPu)) {
-
-		if (_id == CursorIndex_Idle)
-			_id = CursorIndex_ItemIdle;
-		else
-			_id = CursorIndex_ItemAct;
+	if (_item && (id == CursorIndex_Active ||
+	              id == CursorIndex_Idle ||
+	              id == CursorIndex_HandPu)) {
+		if (id == CursorIndex_Idle) {
+			id = CursorIndex_ItemIdle;
+		} else {
+			id = CursorIndex_ItemAct;
+		}
 	}
 
-	if (_currentCursor != _id ||
-	        ((_id == CursorIndex_ItemAct || _id == CursorIndex_ItemIdle) && _lastitem != _item)) {
-		_currentCursor = _id;
+	if (_currentCursor != id || ((id == CursorIndex_ItemAct || id == CursorIndex_ItemIdle) && _lastitem != _item)) {
+		_currentCursor = id;
 		_lastitem = _item;
 		changeCursor(_cursors[_currentCursor][_cursorIsPushed]);
 	}
 }
 
 int CursorManager::getCursorId(const Common::String &name) {
-	for (int i = 0; i < NUM_CURSORS; i++)
-		if (name.equals(_cursorNames[i]))
+	for (int i = 0; i < NUM_CURSORS; i++) {
+		if (name.equals(_cursorNames[i])) {
 			return i;
+		}
+	}
+
 	return CursorIndex_Idle;
 }
 

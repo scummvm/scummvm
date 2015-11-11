@@ -62,6 +62,9 @@ void EditTextWidget::reflowLayout() {
 
 
 void EditTextWidget::handleMouseDown(int x, int y, int button, int clickCount) {
+	if (!isEnabled())
+		return;
+
 	// First remove caret
 	if (_caretVisible)
 		drawCaret(true);

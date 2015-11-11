@@ -118,7 +118,7 @@ void sceneHandler06_winArcade() {
 
 	sceneHandler06_setExits(g_fp->_currentScene);
 
-	getCurrSceneSc2MotionController()->setEnabled();
+	getCurrSceneSc2MotionController()->activate();
 	getGameLoaderInteractionController()->enableFlag24();
 }
 
@@ -300,7 +300,7 @@ void sceneHandler06_startAiming() {
 		if (getCurrSceneSc2MotionController()->_isEnabled)
 			g_fp->_updateScreenCallback = sceneHandler06_updateScreenCallback;
 
-		getCurrSceneSc2MotionController()->clearEnabled();
+		getCurrSceneSc2MotionController()->deactivate();
 		getGameLoaderInteractionController()->disableFlag24();
 
 		g_vars->scene06_ballDrop->queueMessageQueue(0);
@@ -313,7 +313,7 @@ void sceneHandler06_takeBall() {
 			|| abs(452 - g_fp->_aniMan->_oy) > 1
 			|| g_fp->_aniMan->_movement
 			|| g_fp->_aniMan->_statics->_staticsId != (0x4000 | ST_MAN_RIGHT)) {
-			MessageQueue *mq = getCurrSceneSc2MotionController()->method34(g_fp->_aniMan, 1158, 452, 1, (0x4000 | ST_MAN_RIGHT));
+			MessageQueue *mq = getCurrSceneSc2MotionController()->startMove(g_fp->_aniMan, 1158, 452, 1, (0x4000 | ST_MAN_RIGHT));
 
 			if (mq) {
 				ExCommand *ex = new ExCommand(0, 17, MSG_SC6_TAKEBALL, 0, 0, 0, 1, 0, 0, 0);
@@ -562,7 +562,7 @@ int sceneHandler06(ExCommand *ex) {
 
 	case MSG_SC6_RESTORESCROLL:
 		g_fp->_aniMan2 = g_fp->_aniMan;
-		getCurrSceneSc2MotionController()->setEnabled();
+		getCurrSceneSc2MotionController()->activate();
 		getGameLoaderInteractionController()->enableFlag24();
 		sceneHandler06_setExits(g_fp->_currentScene);
 		break;

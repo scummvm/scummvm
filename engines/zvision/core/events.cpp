@@ -93,6 +93,11 @@ void ZVision::shortKeys(Common::Event event) {
 }
 
 void ZVision::cheatCodes(uint8 key) {
+	Location loc = _scriptManager->getCurrentLocation();
+	// Do not process cheat codes while in the game menus
+	if (loc.world == 'g' && loc.room == 'j')
+		return;
+
 	pushKeyToCheatBuf(key);
 
 	if (getGameId() == GID_GRANDINQUISITOR) {
@@ -146,9 +151,8 @@ void ZVision::cheatCodes(uint8 key) {
 		}
 
 		if (checkCode("HELLOSAILOR")) {
-			Location loc = _scriptManager->getCurrentLocation();
 			Audio::AudioStream *soundStream;
-			if (loc.world == 'v' && loc.room == 'b' && loc.node == '1' && loc.view == '0') {
+			if (loc == "vb10") {
 				soundStream = makeRawZorkStream("v000hpta.raw", this);
 			} else {
 				soundStream = makeRawZorkStream("v000hnta.raw", this);
@@ -336,7 +340,7 @@ void ZVision::onMouseMove(const Common::Point &pos) {
 					mspeed = 25;
 				}
 				_mouseVelocity  = MIN(((Common::Rational(mspeed, ROTATION_SCREEN_EDGE_OFFSET) * (clippedPos.x - _workingWindow.left)) - mspeed).toInt(), -1);
-				
+
 
 				_cursorManager->changeCursor(CursorIndex_Left);
 				cursorWasChanged = true;

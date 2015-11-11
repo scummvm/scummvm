@@ -252,6 +252,10 @@ byte *ObjectV3::getData() {
 
 
 GameDatabase::GameDatabase(MadeEngine *vm) : _vm(vm) {
+	_gameState = nullptr;
+	_gameStateSize = 0;
+	_mainCodeObjectIndex = 0;
+	_isRedSource = false;
 }
 
 GameDatabase::~GameDatabase() {
@@ -595,6 +599,8 @@ const char *GameDatabaseV2::getString(uint16 offset) {
 /* GameDatabaseV3 */
 
 GameDatabaseV3::GameDatabaseV3(MadeEngine *vm) : GameDatabase(vm) {
+	_gameText = nullptr;
+	_gameStateOffs = 0;
 }
 
 void GameDatabaseV3::load(Common::SeekableReadStream &sourceS) {

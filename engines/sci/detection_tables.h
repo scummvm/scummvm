@@ -904,16 +904,14 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO5(GUIO_NOSPEECH, GAMEOPTION_EGA_UNDITHER, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
-#if 0 // TODO: unknown if these files are corrupt
-	// Hoyle 1 - English Amiga (from www.back2roots.org)
-	// SCI interpreter version 0.000.519 - FIXME: some have 0.000.530, others x.yyy.zzz
+	// Hoyle 1 - English Amiga (from www.back2roots.org - verified by waltervn in bug report #6870)
+	// Game version 1.000.139, SCI interpreter version x.yyy.zzz
 	{"hoyle1", "", {
 		{"resource.map", 0, "2a72b1aba65fa6e339370eb86d8601d1", 5166},
 		{"resource.001", 0, "e0dd44069a62a463fd124974b915f10d", 218755},
 		{"resource.002", 0, "e0dd44069a62a463fd124974b915f10d", 439502},
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformAmiga, 0, GUIO4(GUIO_NOSPEECH, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
-#endif
 
 	// Hoyle 2 - English DOS
 	// SCI interpreter version 0.000.572
@@ -1551,6 +1549,17 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.msg", 0, "54d1fdc936f98c81f9e4c19e04fb1510", 8260},
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, ADGF_DEMO, GUIO4(GUIO_NOSPEECH, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
+
+	// King's Quest 6 - English DOS Playable CD "Sneak Peaks" Demo (first island fully playable)
+	//  (supplied by KQ5 G5 in bug report #6824)
+	// Executable scanning reports "1.cfs.158 Not a release version", VERSION file reports "1.000.000"
+	// SCI interpreter version ???
+	{"kq6", "Demo/CD", {
+		{"resource.000", 0, "233394a5f33b475ae5975e7e9a420865", 8345598},
+		{"resource.map", 0, "eb9e177281b7cde188dc0d83194cd365", 8960},
+		{"resource.msg", 0, "3cf5de44de36191f109d425b8450efc8", 259510},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformDOS, ADGF_CD | ADGF_DEMO, GUIO4(GUIO_NOSPEECH, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
 	// King's Quest 6 - English DOS Floppy
 	// SCI interpreter version 1.001.054
@@ -2435,6 +2444,16 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"ressci.002", 0, "175468431a979b9f317c294ce3bc1430", 94628315},
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, ADGF_UNSTABLE, GUIO5(GUIO_NOSPEECH, GUIO_NOASPECT, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
+
+	// Lighthouse - Japanese DOS (from m_kiewitz)
+	// Executable scanning reports "3.000.000", VERSION file reports "1.0C"
+	{"lighthouse", "", {
+		{"resmap.001", 0, "18e0ac1597fe1cf6dc663118fe983e3b", 7885},
+		{"ressci.001", 0, "14e922c47b92156377cb49e241691792", 99573473},
+		{"resmap.002", 0, "723fc742c623d8933e5753a264324cb0", 7657},
+		{"ressci.002", 0, "175468431a979b9f317c294ce3bc1430", 94627469},
+		AD_LISTEND},
+		Common::JA_JPN, Common::kPlatformDOS, ADGF_UNSTABLE, GUIO5(GUIO_NOSPEECH, GUIO_NOASPECT, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
 	// Lighthouse - Spanish DOS (from jvprat)
 	// Executable scanning reports "3.000.000", VERSION file reports "1.1"
@@ -4108,6 +4127,15 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::FR_FRA, Common::kPlatformWindows, ADGF_UNSTABLE, GUIO4(GUIO_NOASPECT, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
+	// Torin's Passage - German Windows CD (from m_kiewitz)
+	// SCI interpreter version 2.100.002
+	// VERSION file "1.0"
+	{"torin", "", {
+		{"resmap.000", 0, "e55c3097329b3c53752301e01c6af2fb", 9787},
+		{"ressci.000", 0, "118f9bec04bfe17c4f87bbb5ddb43c18", 56127540},
+		AD_LISTEND},
+		Common::DE_DEU, Common::kPlatformWindows, ADGF_UNSTABLE, GUIO4(GUIO_NOASPECT, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
+
 	// Torin's Passage (Multilingual) - German Windows CD
 	// SCI interpreter version 2.100.002
 	{"torin", "", {
@@ -4166,7 +4194,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 	FANMADE_L("Grostesteing: Plus Mechant que Jamais", "ec9a97ccb134f69249f6ea8b16c13d8e", 1500, "b869f5f11bfe2ab5f67f4f0c618f2ce1", 464657, Common::FR_FRA), // FIXME: Accent
 	FANMADE("Humanoid Demo", "97d8331293a6d57e8bad58c1efc89a63", 624, "fb354b9abe64011b12159e45d724633f", 452320),
 	FANMADE("Island of Secrets Demo 0.3", "61279176c3e4530fec9b578877aecda7", 504, "7f4ed7a81b86bea22c62bc98e6d9ec39", 197790),
-	FANMADE("Jim’s Quest 1: The Phantom Thesis", "0af50be1d3f0cb77a09137709a76ef4f", 960, "9c042c136548b20d9183495668e03526", 496446),
+	FANMADE("Jim's Quest 1: The Phantom Thesis", "0af50be1d3f0cb77a09137709a76ef4f", 960, "9c042c136548b20d9183495668e03526", 496446),
 	FANMADE("King's Quest II SCI Pre-Alpha Version", "cdea1c081022e7697a1afffb1d2f9f6a", 2646, "fb2ce39002c3e05f3d83533638dea105", 2310356),
 	FANMADE("Knight's Quest Demo 1.0", "5e816edf993956752ed06fccfeeae6d9", 1260, "959321f88a22905fa1f8c6d897874744", 703836),
 	FANMADE("LockerGnome Quest", "3eeff9130206cad0c4e1551e2b9dd2c5", 420, "ae05ca90806fd90cc43f147c82d3547c", 158906),

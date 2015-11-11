@@ -31,6 +31,8 @@
 #include "cine/bg_list.h"
 #include "cine/sound.h"
 
+#include "backends/audiocd/audiocd.h"
+
 namespace Cine {
 
 struct MouseStatusStruct {
@@ -219,6 +221,8 @@ void manageEvents() {
 
 	mouseData.left = mouseLeft;
 	mouseData.right = mouseRight;
+
+	g_system->getAudioCDManager()->updateCD();
 }
 
 void getMouseData(uint16 param, uint16 *pButton, uint16 *pX, uint16 *pY) {

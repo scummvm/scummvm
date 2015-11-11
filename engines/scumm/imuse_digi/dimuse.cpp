@@ -201,8 +201,7 @@ void IMuseDigital::saveOrLoad(Serializer *ser) {
 
 			track->stream = Audio::makeQueuingAudioStream(freq, (track->mixerFlags & kFlagStereo) != 0);
 
-			_mixer->playStream(track->getType(), &track->mixChanHandle, track->stream, -1, track->getVol(), track->getPan(),
-							DisposeAfterUse::YES, false, (track->mixerFlags & kFlagStereo) != 0);
+			_mixer->playStream(track->getType(), &track->mixChanHandle, track->stream, -1, track->getVol(), track->getPan());
 			_mixer->pauseHandle(track->mixChanHandle, true);
 		}
 	}

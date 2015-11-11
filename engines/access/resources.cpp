@@ -46,35 +46,17 @@ const byte INITIAL_PALETTE[18 * 3] = {
 	0x00, 0x00, 0x00
 };
 
-const int SIDEOFFR[] = { 5, 5, 5, 5, 5, 5, 5, 5, 0 };
-const int SIDEOFFL[] = { 5, 5, 5, 5, 5, 5, 5, 5, 0 };
-const int SIDEOFFU[] = { 2, 2, 2, 2, 2, 2, 2, 2, 0 };
-const int SIDEOFFD[] = { 2, 2, 2, 2, 2, 2, 2, 2, 0 };
-const int DIAGOFFURX[] = { 4, 5, 2, 2, 3, 4, 2, 2, 0 };
-const int DIAGOFFURY[] = { 2, 3, 2, 2, 2, 3, 1, 1, 0 };
-const int DIAGOFFDRX[] = { 4, 5, 4, 3, 5, 4, 5, 1, 0 };
-const int DIAGOFFDRY[] = { 3, 2, 1, 2, 2, 1, 2, 1, 0 };
-const int DIAGOFFULX[] = { 4, 5, 4, 3, 3, 2, 2, 2, 0 };
-const int DIAGOFFULY[] = { 3, 3, 1, 2, 2, 1, 1, 1, 0 };
-const int DIAGOFFDLX[] = { 4, 5, 3, 3, 5, 4, 6, 1, 0 };
-const int DIAGOFFDLY[] = { 2, 2, 1, 2, 3, 1, 2, 1, 0 };
-
-const int RMOUSE[10][2] = {
-	{ 0, 35 }, { 0, 0 }, { 36, 70 }, { 71, 106 }, { 107, 141 },
-	{ 142, 177 }, { 178, 212 }, { 213, 248 }, { 249, 283 }, { 284, 318 }
-};
-
-const char *const LOOK_MESSAGE = "LOOKING THERE REVEALS NOTHING OF INTEREST.";
-const char *const GET_MESSAGE  = "YOU CAN'T TAKE THAT.";
-const char *const OPEN_MESSAGE = "THAT DOESN'T OPEN.";
-const char *const MOVE_MESSAGE = "THAT WON'T MOVE.";
-const char *const USE_MESSAGE  = "THAT DOESN'T SEEM TO WORK.";
-const char *const GO_MESSAGE   = "YOU CAN'T CLIMB THAT.";
-const char *const HELP_MESSAGE = "THIS OBJECT REQUIRES NO HINTS";
-const char *const TALK_MESSAGE = "THERE SEEMS TO BE NO RESPONSE.";
 const char *const GENERAL_MESSAGES[] = {
-	LOOK_MESSAGE, OPEN_MESSAGE, MOVE_MESSAGE, GET_MESSAGE, USE_MESSAGE,
-	GO_MESSAGE, TALK_MESSAGE, HELP_MESSAGE, HELP_MESSAGE, USE_MESSAGE
+	"LOOKING THERE REVEALS NOTHING OF INTEREST.", // LOOK_MESSAGE
+	"THAT DOESN'T OPEN.",               // OPEN_MESSAGE
+	"THAT WON'T MOVE."                  // MOVE_MESSAGE
+	"YOU CAN'T TAKE THAT.",             // GET_MESSAGE
+	"THAT DOESN'T SEEM TO WORK.",       // USE_MESSAGE
+	"YOU CAN'T CLIMB THAT.",            // GO_MESSAGE
+	"THERE SEEMS TO BE NO RESPONSE.",   // TALK_MESSAGE
+	"THIS OBJECT REQUIRES NO HINTS",    // HELP_MESSAGE
+	"THIS OBJECT REQUIRES NO HINTS",    // HELP_MESSAGE
+	"THAT DOESN'T SEEM TO WORK.",       // USE_MESSAGE
 };
 
 const int INVCOORDS[][4] = {

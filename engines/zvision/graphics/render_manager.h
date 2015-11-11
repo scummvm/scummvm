@@ -73,12 +73,8 @@ private:
 	 * are given in this coordinate space. Also, all images are clipped to the
 	 * edges of this Rectangle
 	 */
-	const Common::Rect _workingWindow;
+	Common::Rect _workingWindow;
 
-	// Width of the working window. Saved to prevent extraneous calls to _workingWindow.width()
-	const int _workingWidth;
-	// Height of the working window. Saved to prevent extraneous calls to _workingWindow.height()
-	const int _workingHeight;
 	// Center of the screen in the x direction
 	const int _screenCenterX;
 	// Center of the screen in the y direction
@@ -88,7 +84,7 @@ private:
 	Graphics::Surface _currentBackgroundImage;
 	Common::Rect _backgroundDirtyRect;
 
-	/** 
+	/**
 	 * The x1 or y1 offset of the subRectangle of the background that is currently displayed on the screen
 	 * It will be x1 if PANORAMA, or y1 if TILT
 	 */
@@ -106,7 +102,6 @@ private:
 
 	// A buffer for subtitles
 	Graphics::Surface _subtitleSurface;
-	Common::Rect _subtitleSurfaceDirtyRect;
 
 	// Rectangle for subtitles area
 	Common::Rect _subtitleArea;
@@ -138,7 +133,7 @@ private:
 	EffectsList _effects;
 
 	bool _doubleFPS;
-	
+
 public:
 	void initialize();
 
@@ -242,6 +237,8 @@ public:
 
 	// Subtitles methods
 
+	void initSubArea(uint32 windowWidth, uint32 windowHeight, const Common::Rect workingWindow);
+
 	// Create subtitle area and return ID
 	uint16 createSubArea(const Common::Rect &area);
 	uint16 createSubArea();
@@ -335,6 +332,8 @@ public:
 	void checkBorders();
 	void rotateTo(int16 to, int16 time);
 	void updateRotation();
+
+	void upscaleRect(Common::Rect &rect);
 };
 
 } // End of namespace ZVision

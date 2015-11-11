@@ -316,6 +316,7 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	_NES_lastTalkingActor = 0;
 	_NES_talkColor = 0;
 	_keepText = false;
+	_msgCount = 0;
 	_costumeLoader = NULL;
 	_costumeRenderer = NULL;
 	_2byteFontPtr = 0;
@@ -1904,7 +1905,7 @@ void ScummEngine::setupMusic(int midi) {
 		// EGA/VGA. However, we support multi MIDI for that game and we cannot
 		// support this with the Player_AD code at the moment. The reason here
 		// is that multi MIDI is supported internally by our iMuse output.
-		_musicEngine = new Player_AD(this, _mixer);
+		_musicEngine = new Player_AD(this);
 	} else if (_game.version >= 3 && _game.heversion <= 62) {
 		MidiDriver *nativeMidiDriver = 0;
 		MidiDriver *adlibMidiDriver = 0;
@@ -2612,7 +2613,7 @@ bool ScummEngine::startManiac() {
 			if (path.hasPrefix(currentPath)) {
 				path.erase(0, currentPath.size() + 1);
 				if (path.equalsIgnoreCase("maniac")) {
-					maniacTarget = dom.getVal("gameid");
+					maniacTarget = iter->_key;
 					break;
 				}
 			}

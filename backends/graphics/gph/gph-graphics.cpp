@@ -35,8 +35,8 @@ static const OSystem::GraphicsMode s_supportedGraphicsModes[] = {
 	{0, 0, 0}
 };
 
-GPHGraphicsManager::GPHGraphicsManager(SdlEventSource *sdlEventSource)
-	: SurfaceSdlGraphicsManager(sdlEventSource) {
+GPHGraphicsManager::GPHGraphicsManager(SdlEventSource *sdlEventSource, SdlWindow *window)
+	: SurfaceSdlGraphicsManager(sdlEventSource, window) {
 }
 
 const OSystem::GraphicsMode *GPHGraphicsManager::getSupportedGraphicsModes() const {
@@ -141,7 +141,7 @@ void GPHGraphicsManager::initSize(uint w, uint h, const Graphics::PixelFormat *f
 	if (w > 320 || h > 240) {
 		setGraphicsMode(GFX_HALF);
 		setGraphicsModeIntern();
-		_eventSource->toggleMouseGrab();
+		_window->toggleMouseGrab();
 	}
 
 	_videoMode.overlayWidth = 320;

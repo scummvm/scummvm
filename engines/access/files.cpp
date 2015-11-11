@@ -40,6 +40,10 @@ void FileIdent::load(Common::SeekableReadStream &s) {
 
 /*------------------------------------------------------------------------*/
 
+CellIdent::	CellIdent() {
+	_cell = 0;
+}
+
 CellIdent::CellIdent(int cell, int fileNum, int subfile) {
 	_cell = cell;
 	_fileNum = fileNum;

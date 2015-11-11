@@ -42,28 +42,25 @@ namespace ZVision {
 RenderManager::RenderManager(ZVision *engine, uint32 windowWidth, uint32 windowHeight, const Common::Rect workingWindow, const Graphics::PixelFormat pixelFormat, bool doubleFPS)
 	: _engine(engine),
 	  _system(engine->_system),
-	  _workingWidth(workingWindow.width()),
-	  _workingHeight(workingWindow.height()),
-	  _screenCenterX(_workingWidth / 2),
-	  _screenCenterY(_workingHeight / 2),
+	  _screenCenterX(_workingWindow.width() / 2),
+	  _screenCenterY(_workingWindow.height() / 2),
 	  _workingWindow(workingWindow),
 	  _pixelFormat(pixelFormat),
 	  _backgroundWidth(0),
 	  _backgroundHeight(0),
 	  _backgroundOffset(0),
-	  _renderTable(_workingWidth, _workingHeight),
-	  _doubleFPS(doubleFPS) {
+	  _renderTable(_workingWindow.width(), _workingWindow.height()),
+	  _doubleFPS(doubleFPS),
+	  _subid(0) {
 
-	_backgroundSurface.create(_workingWidth, _workingHeight, _pixelFormat);
-	_effectSurface.create(_workingWidth, _workingHeight, _pixelFormat);
-	_warpedSceneSurface.create(_workingWidth, _workingHeight, _pixelFormat);
+	_backgroundSurface.create(_workingWindow.width(), _workingWindow.height(), _pixelFormat);
+	_effectSurface.create(_workingWindow.width(), _workingWindow.height(), _pixelFormat);
+	_warpedSceneSurface.create(_workingWindow.width(), _workingWindow.height(), _pixelFormat);
 	_menuSurface.create(windowWidth, workingWindow.top, _pixelFormat);
-	_subtitleSurface.create(windowWidth, windowHeight - workingWindow.bottom, _pixelFormat);
 
 	_menuArea = Common::Rect(0, 0, windowWidth, workingWindow.top);
-	_subtitleArea = Common::Rect(0, workingWindow.bottom, windowWidth, windowHeight);
 
-	_subid = 0;
+	initSubArea(windowWidth, windowHeight, workingWindow);
 }
 
 RenderManager::~RenderManager() {
@@ -83,7 +80,7 @@ void RenderManager::renderSceneToScreen() {
 	// If we have graphical effects, we apply them using a temporary buffer
 	if (!_effects.empty()) {
 		bool copied = false;
-		Common::Rect windowRect(_workingWidth, _workingHeight);
+		Common::Rect windowRect(_workingWindow.width(), _workingWindow.height());
 
 		for (EffectsList::iterator it = _effects.begin(); it != _effects.end(); it++) {
 			Common::Rect rect = (*it)->getRegion();
@@ -121,7 +118,7 @@ void RenderManager::renderSceneToScreen() {
 		if (!_backgroundSurfaceDirtyRect.isEmpty()) {
 			_renderTable.mutateImage(&_warpedSceneSurface, in);
 			out = &_warpedSceneSurface;
-			outWndDirtyRect = Common::Rect(_workingWidth, _workingHeight);
+			outWndDirtyRect = Common::Rect(_workingWindow.width(), _workingWindow.height());
 		}
 	} else {
 		out = in;
@@ -199,7 +196,7 @@ void RenderManager::readImageToSurface(const Common::String &fileName, Graphics:
 	uint32 imageHeight;
 	Image::TGADecoder tga;
 	uint16 *buffer;
-	// All ZVision images are in RGB 555
+	// All Z-Vision images are in RGB 555
 	destination.format = _engine->_resourcePixelFormat;
 
 	bool isTGZ;
@@ -590,7 +587,7 @@ void RenderManager::prepareBackground() {
 
 	if (state == RenderTable::PANORAMA) {
 		// Calculate the visible portion of the background
-		Common::Rect viewPort(_workingWidth, _workingHeight);
+		Common::Rect viewPort(_workingWindow.width(), _workingWindow.height());
 		viewPort.translate(-(_screenCenterX - _backgroundOffset), 0);
 		Common::Rect drawRect = _backgroundDirtyRect;
 		drawRect.clip(viewPort);
@@ -604,7 +601,7 @@ void RenderManager::prepareBackground() {
 		_backgroundSurfaceDirtyRect = _backgroundDirtyRect;
 		_backgroundSurfaceDirtyRect.translate(_screenCenterX - _backgroundOffset, 0);
 
-		// Panorama mode allows the user to spin in circles. Therefore, we need to render 
+		// Panorama mode allows the user to spin in circles. Therefore, we need to render
 		// the portion of the image that wrapped to the other side of the screen
 		if (_backgroundOffset < _screenCenterX) {
 			viewPort.moveTo(-(_screenCenterX - (_backgroundOffset + _backgroundWidth)), 0);
@@ -635,7 +632,7 @@ void RenderManager::prepareBackground() {
 		}
 	} else if (state == RenderTable::TILT) {
 		// Tilt doesn't allow wrapping, so we just do a simple clip
-		Common::Rect viewPort(_workingWidth, _workingHeight);
+		Common::Rect viewPort(_workingWindow.width(), _workingWindow.height());
 		viewPort.translate(0, -(_screenCenterY - _backgroundOffset));
 		Common::Rect drawRect = _backgroundDirtyRect;
 		drawRect.clip(viewPort);
@@ -655,7 +652,7 @@ void RenderManager::prepareBackground() {
 	// Clear the dirty rect since everything is clean now
 	_backgroundDirtyRect = Common::Rect();
 
-	_backgroundSurfaceDirtyRect.clip(_workingWidth, _workingHeight);
+	_backgroundSurfaceDirtyRect.clip(_workingWindow.width(), _workingWindow.height());
 }
 
 void RenderManager::clearMenuSurface() {
@@ -685,6 +682,15 @@ void RenderManager::renderMenuToScreen() {
 		}
 		_menuSurfaceDirtyRect = Common::Rect();
 	}
+}
+
+void RenderManager::initSubArea(uint32 windowWidth, uint32 windowHeight, const Common::Rect workingWindow) {
+	_workingWindow = workingWindow;
+
+	_subtitleSurface.free();
+
+	_subtitleSurface.create(windowWidth, windowHeight - workingWindow.bottom, _pixelFormat);
+	_subtitleArea = Common::Rect(0, workingWindow.bottom, windowWidth, windowHeight);
 }
 
 uint16 RenderManager::createSubArea(const Common::Rect &area) {
@@ -747,13 +753,12 @@ void RenderManager::processSubs(uint16 deltatime) {
 		for (SubtitleMap::iterator it = _subsList.begin(); it != _subsList.end(); it++) {
 			OneSubtitle *sub = &it->_value;
 			if (sub->txt.size()) {
-				Graphics::Surface *rndr = new Graphics::Surface();
-				rndr->create(sub->r.width(), sub->r.height(), _engine->_resourcePixelFormat);
-				_engine->getTextRenderer()->drawTxtInOneLine(sub->txt, *rndr);
+				Graphics::Surface subtitleSurface;
+				subtitleSurface.create(sub->r.width(), sub->r.height(), _engine->_resourcePixelFormat);
+				_engine->getTextRenderer()->drawTextWithWordWrapping(sub->txt, subtitleSurface);
 				Common::Rect empty;
-				blitSurfaceToSurface(*rndr, empty, _subtitleSurface, sub->r.left - _subtitleArea.left + _workingWindow.left, sub->r.top - _subtitleArea.top + _workingWindow.top);
-				rndr->free();
-				delete rndr;
+				blitSurfaceToSurface(subtitleSurface, empty, _subtitleSurface, sub->r.left - _subtitleArea.left + _workingWindow.left, sub->r.top - _subtitleArea.top + _workingWindow.top);
+				subtitleSurface.free();
 			}
 			sub->redraw = false;
 		}
@@ -791,8 +796,8 @@ Common::Rect RenderManager::transformBackgroundSpaceRectToScreenSpace(const Comm
 
 	if (state == RenderTable::PANORAMA) {
 		if (_backgroundOffset < _screenCenterX) {
-			Common::Rect rScreen(_screenCenterX + _backgroundOffset, _workingHeight);
-			Common::Rect lScreen(_workingWidth - rScreen.width(), _workingHeight);
+			Common::Rect rScreen(_screenCenterX + _backgroundOffset, _workingWindow.height());
+			Common::Rect lScreen(_workingWindow.width() - rScreen.width(), _workingWindow.height());
 			lScreen.translate(_backgroundWidth - lScreen.width(), 0);
 			lScreen.clip(src);
 			rScreen.clip(src);
@@ -802,8 +807,8 @@ Common::Rect RenderManager::transformBackgroundSpaceRectToScreenSpace(const Comm
 				tmp.translate(_screenCenterX - _backgroundOffset, 0);
 			}
 		} else if (_backgroundWidth - _backgroundOffset < _screenCenterX) {
-			Common::Rect rScreen(_screenCenterX - (_backgroundWidth - _backgroundOffset), _workingHeight);
-			Common::Rect lScreen(_workingWidth - rScreen.width(), _workingHeight);
+			Common::Rect rScreen(_screenCenterX - (_backgroundWidth - _backgroundOffset), _workingWindow.height());
+			Common::Rect lScreen(_workingWindow.width() - rScreen.width(), _workingWindow.height());
 			lScreen.translate(_backgroundWidth - lScreen.width(), 0);
 			lScreen.clip(src);
 			rScreen.clip(src);
@@ -965,16 +970,15 @@ void RenderManager::bkgFill(uint8 r, uint8 g, uint8 b) {
 void RenderManager::timedMessage(const Common::String &str, uint16 milsecs) {
 	uint16 msgid = createSubArea();
 	updateSubArea(msgid, str);
-	processSubs(0);
-	renderSceneToScreen();
 	deleteSubArea(msgid, milsecs);
 }
 
 bool RenderManager::askQuestion(const Common::String &str) {
-	uint16 msgid = createSubArea();
-	updateSubArea(msgid, str);
-	processSubs(0);
-	renderSceneToScreen();
+	Graphics::Surface textSurface;
+	textSurface.create(_subtitleArea.width(), _subtitleArea.height(), _engine->_resourcePixelFormat);
+	_engine->getTextRenderer()->drawTextWithWordWrapping(str, textSurface);
+	copyToScreen(textSurface, _subtitleArea, 0, 0);
+
 	_engine->stopClock();
 
 	int result = 0;
@@ -983,14 +987,38 @@ bool RenderManager::askQuestion(const Common::String &str) {
 		Common::Event evnt;
 		while (_engine->getEventManager()->pollEvent(evnt)) {
 			if (evnt.type == Common::EVENT_KEYDOWN) {
+				// English: yes/no
+				// German: ja/nein
+				// Spanish: si/no
+				// French Nemesis: F4/any other key
+				// French ZGI: oui/non
 				switch (evnt.kbd.keycode) {
 				case Common::KEYCODE_y:
-					result = 2;
+					if (_engine->getLanguage() == Common::EN_ANY)
+						result = 2;
+					break;
+				case Common::KEYCODE_j:
+					if (_engine->getLanguage() == Common::DE_DEU)
+						result = 2;
+					break;
+				case Common::KEYCODE_s:
+					if (_engine->getLanguage() == Common::ES_ESP)
+						result = 2;
+					break;
+				case Common::KEYCODE_o:
+					if (_engine->getLanguage() == Common::FR_FRA && _engine->getGameId() == GID_GRANDINQUISITOR)
+						result = 2;
+					break;
+				case Common::KEYCODE_F4:
+					if (_engine->getLanguage() == Common::FR_FRA && _engine->getGameId() == GID_NEMESIS)
+						result = 2;
 					break;
 				case Common::KEYCODE_n:
 					result = 1;
 					break;
 				default:
+					if (_engine->getLanguage() == Common::FR_FRA && _engine->getGameId() == GID_NEMESIS)
+						result = 1;
 					break;
 				}
 			}
@@ -1001,7 +1029,14 @@ bool RenderManager::askQuestion(const Common::String &str) {
 		else
 			_system->delayMillis(66);
 	}
-	deleteSubArea(msgid);
+
+	// Draw over the text in order to clear it
+	textSurface.fillRect(Common::Rect(_subtitleArea.width(), _subtitleArea.height()), 0);
+	copyToScreen(textSurface, _subtitleArea, 0, 0);
+
+	// Free the surface
+	textSurface.free();
+
 	_engine->startClock();
 	return result == 2;
 }
@@ -1073,7 +1108,7 @@ void RenderManager::updateRotation() {
 			int16 newPosition = startPosition + _velocity;
 
 			int16 screenHeight = getBkgSize().y;
-			int16 tiltGap = _renderTable.getTiltGap();
+			int16 tiltGap = (int16)_renderTable.getTiltGap();
 
 			if (newPosition >= (screenHeight - tiltGap))
 				newPosition = screenHeight - tiltGap;
@@ -1108,7 +1143,7 @@ void RenderManager::checkBorders() {
 		int16 newPosition = startPosition;
 
 		int16 screenHeight = getBkgSize().y;
-		int16 tiltGap = _renderTable.getTiltGap();
+		int16 tiltGap = (int16)_renderTable.getTiltGap();
 
 		if (newPosition >= (screenHeight - tiltGap))
 			newPosition = screenHeight - tiltGap;
@@ -1170,6 +1205,13 @@ void RenderManager::rotateTo(int16 _toPos, int16 _time) {
 	}
 
 	_engine->startClock();
+}
+
+void RenderManager::upscaleRect(Common::Rect &rect) {
+	rect.top = rect.top * HIRES_WINDOW_HEIGHT / WINDOW_HEIGHT;
+	rect.left = rect.left * HIRES_WINDOW_WIDTH / WINDOW_WIDTH;
+	rect.bottom = rect.bottom * HIRES_WINDOW_HEIGHT / WINDOW_HEIGHT;
+	rect.right = rect.right * HIRES_WINDOW_WIDTH / WINDOW_WIDTH;
 }
 
 } // End of namespace ZVision

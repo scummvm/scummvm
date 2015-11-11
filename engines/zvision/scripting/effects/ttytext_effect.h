@@ -51,7 +51,7 @@ public:
 private:
 	Common::Rect _r;
 
-	cTxtStyle _style;
+	TextStyleState _state;
 	StyledTTFont _fnt;
 	Common::String _txtbuf;
 	uint32 _txtpos;

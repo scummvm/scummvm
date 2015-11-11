@@ -184,6 +184,16 @@ bool SearchManager::loadZix(const Common::String &name) {
 			if (path.size() && path.hasSuffix("/"))
 				path.deleteLastChar();
 
+			// Handle paths in case-sensitive file systems (bug #6775)
+			if (path.size()) {
+				for (Common::List<Common::String>::iterator it = _dirList.begin(); it != _dirList.end(); ++it) {
+					if (path.equalsIgnoreCase(*it)) {
+						path = *it;
+						break;
+					}
+				}
+			}
+
 			if (path.matchString("*.zfs", true)) {
 				arc = new ZfsArchive(path);
 			} else {

@@ -1379,6 +1379,22 @@ static const MohawkGameDescription gameDescriptions[] = {
 		"GRANDMA.EXE"
 	},
 
+	// Just Grandma and Me 1.0, Macintosh
+	{
+		{
+			"grandma",
+			"v1.0",
+			AD_ENTRY1("BookOutline", "9162483da06179e76f4a082412245efa"),
+			Common::EN_ANY,
+			Common::kPlatformMacintosh,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_LIVINGBOOKSV1,
+		GF_LB_10,
+		0
+	},
+
 	// Just Grandma and Me 1.1 Mac
 	// From eisnerguy1 in bug#3610725
 	{

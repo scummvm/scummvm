@@ -24,7 +24,6 @@
 #ifndef ZVISION_TEXT_H
 #define ZVISION_TEXT_H
 
-#include "zvision/detection.h"
 #include "zvision/text/truetype_font.h"
 #include "zvision/zvision.h"
 
@@ -32,59 +31,53 @@ namespace ZVision {
 
 class ZVision;
 
-enum txtJustify {
-	TXT_JUSTIFY_CENTER = 0,
-	TXT_JUSTIFY_LEFT = 1,
-	TXT_JUSTIFY_RIGHT = 2
+enum TextJustification {
+	TEXT_JUSTIFY_CENTER = 0,
+	TEXT_JUSTIFY_LEFT = 1,
+	TEXT_JUSTIFY_RIGHT = 2
 };
 
-enum txtReturn {
-	TXT_RET_NOTHING = 0x0,
-	TXT_RET_FNTCHG = 0x1,
-	TXT_RET_FNTSTL = 0x2,
-	TXT_RET_NEWLN = 0x4,
-	TXT_RET_HASSTBOX = 0x8
+enum TextChange {
+	TEXT_CHANGE_NONE = 0x0,
+	TEXT_CHANGE_FONT_TYPE = 0x1,
+	TEXT_CHANGE_FONT_STYLE = 0x2,
+	TEXT_CHANGE_NEWLINE = 0x4,
+	TEXT_CHANGE_HAS_STATE_BOX = 0x8
 };
 
-class cTxtStyle {
+class TextStyleState {
 public:
-	cTxtStyle();
-	txtReturn parseStyle(const Common::String &strin, int16 len);
-	void readAllStyle(const Common::String &txt);
-	void setFontStyle(StyledTTFont &font);
-	void setFont(StyledTTFont &font);
+	TextStyleState();
+	TextChange parseStyle(const Common::String &str, int16 len);
+	void readAllStyles(const Common::String &txt);
+	void updateFontWithTextState(StyledTTFont &font);
+
+	uint32 getTextColor(ZVision *engine) {
+		return engine->_resourcePixelFormat.RGBToColor(_red, _green, _blue);
+	}
 
 public:
 	Common::String _fontname;
-	txtJustify _justify;  // 0 - center, 1-left, 2-right
+	TextJustification _justification;
 	int16 _size;
 	uint8 _red;     // 0-255
 	uint8 _green;   // 0-255
 	uint8 _blue;    // 0-255
-#if  0
-	int8 _newline;
-	int8 _escapement;
-#endif
 	bool _italic;
 	bool _bold;
 	bool _underline;
 	bool _strikeout;
-#if 0
-	bool _skipcolor;
-#endif
 	int32 _statebox;
 	bool _sharp;
-	// char image ??
 };
 
 class TextRenderer {
 public:
 	TextRenderer(ZVision *engine): _engine(engine) {};
 
-	void drawTxtWithJustify(const Common::String &txt, StyledTTFont &fnt, uint32 color, Graphics::Surface &dst, int lineY, txtJustify justify);
-	int32 drawTxt(const Common::String &txt, cTxtStyle &fontStyle, Graphics::Surface &dst);
-	Graphics::Surface *render(StyledTTFont &fnt, const Common::String &txt, cTxtStyle &style);
-	void drawTxtInOneLine(const Common::String &txt, Graphics::Surface &dst);
+	void drawTextWithJustification(const Common::String &text, StyledTTFont &font, uint32 color, Graphics::Surface &dest, int lineY, TextJustification jusification);
+	int32 drawText(const Common::String &text, TextStyleState &state, Graphics::Surface &dest);
+	void drawTextWithWordWrapping(const Common::String &text, Graphics::Surface &dest);
 
 private:
 	ZVision *_engine;

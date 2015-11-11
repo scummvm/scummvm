@@ -373,6 +373,10 @@ SCI Games by Sierra Entertainment:
 Wintermute Games:
      Chivalry is Not Dead                        [chivalry]
 
+Z-Vision Games by Activision:
+     Zork Nemesis: The Forbidden Lands           [znemesis]
+     Zork: Grand Inquisitor                      [zgi]
+
 SCUMM Games by Humongous Entertainment:
      Backyard Baseball                           [baseball]
      Backyard Baseball 2001                      [baseball2001]
@@ -1009,7 +1013,11 @@ site, please see the section on reporting bugs.
   Inherit the Earth: Quest for the Orb
     - Amiga versions aren't supported
 
-  Simon the Sorcerer 1:
+  Lure of the Temptress
+    - No Roland MT-32 support
+    - Sound support is incomplete and doesn't sound like original
+
+ Simon the Sorcerer 1:
     - Subtitles aren't available in the English and German CD versions
       as they are missing the majority of subtitles.
 
@@ -1344,6 +1352,7 @@ Engines which currently support returning to the Launcher are:
     TOUCHE
     TSAGE
     TUCKER
+    ZVISION
 
 
 5.5) Hotkeys:
@@ -1508,6 +1517,26 @@ other games.
     t                      - Switch between 'Voice only',
                              'Voice and Text' and 'Text only'
 
+  Zork: Grand Inquisitor
+    Ctrl-s                 - Save
+    Ctrl-r                 - Restore
+    Ctrl-q                 - Quit
+    Ctrl-p                 - Preferences
+    F1                     - Help
+    F5                     - Inventory
+    F6                     - Spellbook
+    F7                     - Score
+    F8                     - Put away current object/forget spell
+    F9                     - Extract coin (must have the coin bag)
+    Space                  - Skips movies
+
+  Zork Nemesis: The Forbidden Lands
+    Ctrl-s                 - Save
+    Ctrl-r                 - Restore
+    Ctrl-q                 - Quit
+    Ctrl-p                 - Preferences
+    Space                  - Skips movies
+
 Note that using Ctrl-f or Ctrl-g is not recommended: games can crash
 when being run faster than their normal speed, as scripts will lose
 synchronisation.
@@ -1627,6 +1656,7 @@ Where 'xxx' is exact the saved game slot (ie 001) under ScummVM
        TOUCHE
        TSAGE
        TUCKER
+       ZVISION
 
 --save-slot/-x:
 
@@ -1659,6 +1689,7 @@ Where 'xxx' is exact the saved game slot (ie 001) under ScummVM
        TOUCHE
        TSAGE
        TUCKER
+       ZVISION
 
 
 7.0) Music and Sound:
@@ -2237,6 +2268,10 @@ Sierra games using the AGI engine add the following non-standard keywords:
 
     originalsaveload   bool     If true, the original save/load screens are
                                 used instead of the enhanced ScummVM ones
+    altamigapalette    bool     Use an alternative palette, common for all
+                                Amiga games. This was the old behavior
+    mousesupport       bool     Enables mouse support. Allows to use mouse
+                                for movement and in game menus
 
 Sierra games using the SCI engine add the following non-standard keywords:
 
@@ -2248,6 +2283,12 @@ Sierra games using the SCI engine add the following non-standard keywords:
     native_fb01        bool     If true, the music driver for an IBM Music
                                 Feature card or a Yamaha FB-01 FM synth module
                                 is used for MIDI output
+    use_cdaudio        bool     Use CD audio instead of in-game audio,
+                                when available
+    windows_cursors    bool     Use the Windows cursors (smaller and monochrome)
+                                instead of the DOS ones (King's Quest 6)
+    silver_cursors     bool     Use the alternate set of silver cursors,
+                                instead of the normal golden ones (Space Quest 4)
 
 Broken Sword II adds the following non-standard keywords:
 
@@ -2340,6 +2381,27 @@ The 7th Guest adds the following non-standard keyword:
                                 normal speed, to avoid music synchronization
                                 issues
 
+Zork Nemesis: The Forbidden Lands adds the following non-standard keywords:
+
+    originalsaveload   bool     If true, the original save/load screens are
+                                used instead of the enhanced ScummVM ones
+    doublefps          bool     If true, game FPS are increased from 30 to 60
+    venusenabled       bool     If true, the in-game Venus help system is
+                                enabled
+    noanimwhileturning bool     If true, animations are disabled while turning
+                                in panoramic mode
+
+Zork: Grand Inquisitor adds the following non-standard keywords:
+
+    originalsaveload   bool     If true, the original save/load screens are
+                                used instead of the enhanced ScummVM ones
+    doublefps          bool     If true, game FPS are increased from 30 to 60
+    noanimwhileturning bool     If true, animations are disabled while turning
+                                in panoramic mode
+    mpegmovies         bool     If true, the hires MPEG movies are used in the
+                                DVD version of the game, instead of the lowres
+                                AVI ones
+
 
 8.2) Custom game options that can be toggled via the GUI
 ---- ---------------------------------------------------
@@ -2408,9 +2470,11 @@ debug messages (see http://www.sysinternals.com/ntw2k/freeware/debugview.shtml).
     * Type "./configure" in the ScummVM directory.
     * You can now type 'make' to create a command line binary.
     * To get a version you can run from Finder, type 'make bundle' which
-      will create ScummVM.app (this only works out of the box if you
-      installed SDL into /sw (as happens if you are using Fink). If you
-      have installed SDL in another way, you will have to edit ports.mk).
+      will create ScummVM.app (this tries to detect where the static libraries
+      are installed, which should work in most cases, but if it doesn't you
+      will need to specify this path with --with-staticlib-prefix= when calling
+      configure - for example "./configure --with-staticlib-prefix=/Users/foo"
+      if the libraries are in /Users/foo/lib).
     * For more information refer to:
       http://wiki.scummvm.org/index.php/Compiling_ScummVM/MacOS_X_Crosscompiling
 

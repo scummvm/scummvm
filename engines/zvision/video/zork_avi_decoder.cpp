@@ -34,33 +34,43 @@
 namespace ZVision {
 
 Video::AVIDecoder::AVIAudioTrack *ZorkAVIDecoder::createAudioTrack(Video::AVIDecoder::AVIStreamHeader sHeader, Video::AVIDecoder::PCMWaveFormat wvInfo) {
-	ZorkAVIDecoder::ZorkAVIAudioTrack *audioTrack = new ZorkAVIDecoder::ZorkAVIAudioTrack(sHeader, wvInfo, _soundType);
-	return (Video::AVIDecoder::AVIAudioTrack *)audioTrack;
+	if (wvInfo.tag != kWaveFormatZorkPCM)
+		return new AVIAudioTrack(sHeader, wvInfo, _soundType);
+
+	assert(wvInfo.size == 8);
+	return new ZorkAVIAudioTrack(sHeader, wvInfo, _soundType);
 }
 
-void ZorkAVIDecoder::ZorkAVIAudioTrack::queueSound(Common::SeekableReadStream *stream) {
-	if (_audStream) {
-		if (_wvInfo.tag == kWaveFormatZorkPCM) {
-			assert(_wvInfo.size == 8);
-			RawChunkStream::RawChunk chunk = decoder->readNextChunk(stream);
-			delete stream;
+ZorkAVIDecoder::ZorkAVIAudioTrack::ZorkAVIAudioTrack(const AVIStreamHeader &streamHeader, const PCMWaveFormat &waveFormat, Audio::Mixer::SoundType soundType) :
+		Video::AVIDecoder::AVIAudioTrack(streamHeader, waveFormat, soundType), _queueStream(0), _decoder(waveFormat.channels == 2) {
+}
 
-			if (chunk.data) {
-				byte flags = Audio::FLAG_16BITS | Audio::FLAG_STEREO;
+void ZorkAVIDecoder::ZorkAVIAudioTrack::createAudioStream() {
+	_queueStream = Audio::makeQueuingAudioStream(_wvInfo.samplesPerSec, _wvInfo.channels == 2);
+	_audioStream = _queueStream;
+}
+
+void ZorkAVIDecoder::ZorkAVIAudioTrack::queueSound(Common::SeekableReadStream *stream) {			
+	RawChunkStream::RawChunk chunk = _decoder.readNextChunk(stream);
+	delete stream;
+
+	if (chunk.data) {
+		byte flags = Audio::FLAG_16BITS;
+		if (_wvInfo.channels == 2)
+			flags |= Audio::FLAG_STEREO;
 #ifdef SCUMM_LITTLE_ENDIAN
-				// RawChunkStream produces native endianness int16
-				flags |= Audio::FLAG_LITTLE_ENDIAN;
+		// RawChunkStream produces native endianness int16
+		flags |= Audio::FLAG_LITTLE_ENDIAN;
 #endif
-				_audStream->queueBuffer((byte *)chunk.data, chunk.size, DisposeAfterUse::YES, flags);
-			}
-		} else {
-			AVIAudioTrack::queueSound(stream);
-		}
+		_queueStream->queueBuffer((byte *)chunk.data, chunk.size, DisposeAfterUse::YES, flags);
 	}
+
+	_curChunk++;
 }
 
 void ZorkAVIDecoder::ZorkAVIAudioTrack::resetStream() {
-	decoder->init();
+	AVIAudioTrack::resetStream();
+	_decoder.init();
 }
 
 } // End of namespace ZVision

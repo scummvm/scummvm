@@ -47,7 +47,6 @@ protected:
 	 */
 	Common::String _logFilePath;
 
-	virtual void setupIcon();
 	virtual Common::String getDefaultConfigFileName();
 	virtual Common::WriteStream *createLogFile();
 };

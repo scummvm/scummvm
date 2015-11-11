@@ -159,7 +159,7 @@ RLFDecoder::RLFVideoTrack::Frame RLFDecoder::RLFVideoTrack::readNextFrame() {
 
 bool RLFDecoder::RLFVideoTrack::seek(const Audio::Timestamp &time) {
 	uint frame = getFrameAtTime(time);
-	assert(frame < (int)_frameCount);
+	assert(frame < _frameCount);
 
 	if ((uint)_displayedFrame == frame)
 		return true;
@@ -169,7 +169,7 @@ bool RLFDecoder::RLFVideoTrack::seek(const Audio::Timestamp &time) {
 
 	if (distance < 0) {
 		for (uint i = 0; i < _completeFrames.size(); ++i) {
-			if ((int)_completeFrames[i] > frame)
+			if (_completeFrames[i] > frame)
 				break;
 			closestFrame = _completeFrames[i];
 		}
@@ -197,7 +197,7 @@ bool RLFDecoder::RLFVideoTrack::seek(const Audio::Timestamp &time) {
 const Graphics::Surface *RLFDecoder::RLFVideoTrack::decodeNextFrame() {
 	if (_displayedFrame >= (int)_frameCount)
 		return NULL;
-	
+
 	_displayedFrame++;
 	applyFrameToCurrent(_displayedFrame);
 

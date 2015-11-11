@@ -51,6 +51,7 @@ class SeekableReadStream;
 
 namespace Audio {
 
+class PacketizedAudioStream;
 class SeekableAudioStream;
 
 /**
@@ -64,6 +65,26 @@ class SeekableAudioStream;
 SeekableAudioStream *makeMP3Stream(
 	Common::SeekableReadStream *stream,
 	DisposeAfterUse::Flag disposeAfterUse);
+
+/**
+ * Create a new PacketizedAudioStream from the first packet in the given
+ * stream. It does not own the packet and must be queued again later.
+ *
+ * @param firstPacket		the SeekableReadStream from which to read the MP3 data
+ * @return	a new PacketizedAudioStream
+ */
+PacketizedAudioStream *makePacketizedMP3Stream(
+	Common::SeekableReadStream &firstPacket);
+
+/**
+ * Create a new PacketizedAudioStream for a given number of channels
+ * and sample rate.
+ *
+ * @param firstPacket		the SeekableReadStream from which to read the MP3 data
+ * @return	a new PacketizedAudioStream
+ */
+PacketizedAudioStream *makePacketizedMP3Stream(
+	uint channels, uint rate);
 
 } // End of namespace Audio
 

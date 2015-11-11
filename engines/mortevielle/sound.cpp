@@ -139,22 +139,44 @@ void SoundManager::loadAmbiantSounds() {
  * @remarks	Originally called 'charge_bruit' and 'charge_bruit5'
  */
 void SoundManager::loadNoise() {
-	Common::File f1, f2;
+	Common::File f1, f5;
 
-	if (!f1.open("bruits"))               //Translation: "noise"
-		error("Missing file - bruits");
-	if (!f2.open("bruit5"))
+	if (!f5.open("bruit5"))
 		error("Missing file - bruit5");
 
-	_noiseBuf = (byte *)malloc(sizeof(byte) * (f1.size() + f2.size()));
-	assert(f1.size() > 32000);
+	if (f1.open("bruits")) { //Translation: "noise"
+		assert(f1.size() > 32000);
+		_noiseBuf = (byte *)malloc(sizeof(byte) * (f1.size() + f5.size()));
 
-	f1.read(_noiseBuf, 32000); // 250 * 128
-	f2.read(&_noiseBuf[32000], f2.size());
-	f1.read(&_noiseBuf[32000 + f2.size()], f1.size() - 32000); // 19072
+		f1.read(_noiseBuf, 32000); // 250 * 128
+		f5.read(&_noiseBuf[32000], f5.size());
+		f1.read(&_noiseBuf[32000 + f5.size()], f1.size() - 32000); // 19072
 
-	f1.close();
-	f2.close();
+		f1.close();
+	} else {
+		Common::File f2, f3, f4;
+		if (!f1.open("bruit1") || !f2.open("bruit2") || !f3.open("bruit3") || !f4.open("bruit4"))
+			error("Missing file - bruits");
+
+		assert(f4.size() == 32000);
+		_noiseBuf = (byte *)malloc(sizeof(byte) * (f1.size() + f2.size() + f3.size() + f4.size() + f5.size()));
+
+		f4.read(_noiseBuf, f4.size());
+		int pos = f4.size();
+		f5.read(&_noiseBuf[pos], f5.size());
+		pos += f5.size();
+		f1.read(&_noiseBuf[pos], f1.size());
+		pos += f1.size();
+		f2.read(&_noiseBuf[pos], f2.size());
+		pos += f2.size();
+		f3.read(&_noiseBuf[pos], f3.size());
+
+		f1.close();
+		f2.close();
+		f3.close();
+		f4.close();
+	}
+	f5.close();
 }
 
 void SoundManager::regenbruit() {

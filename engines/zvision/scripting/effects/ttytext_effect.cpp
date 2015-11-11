@@ -57,9 +57,9 @@ ttyTextNode::ttyTextNode(ZVision *engine, uint32 key, const Common::String &file
 		delete infile;
 	}
 	_img.create(_r.width(), _r.height(), _engine->_resourcePixelFormat);
-	_style._sharp = true;
-	_style.readAllStyle(_txtbuf);
-	_style.setFont(_fnt);
+	_state._sharp = true;
+	_state.readAllStyles(_txtbuf);
+	_state.updateFontWithTextState(_fnt);
 	_engine->getScriptManager()->setStateValue(_key, 1);
 }
 
@@ -74,29 +74,27 @@ bool ttyTextNode::process(uint32 deltaTimeInMillis) {
 	if (_nexttime < 0) {
 		if (_txtpos < _txtbuf.size()) {
 			if (_txtbuf[_txtpos] == '<') {
-				int32 strt = _txtpos;
-				int32 endt = 0;
+				int32 start = _txtpos;
+				int32 end = 0;
 				int16 ret = 0;
 				while (_txtbuf[_txtpos] != '>' && _txtpos < _txtbuf.size())
 					_txtpos++;
-				endt = _txtpos;
-				if (strt != -1)
-					if ((endt - strt - 1) > 0)
-						ret = _style.parseStyle(_txtbuf.c_str() + strt + 1, endt - strt - 1);
-
-				if (ret & (TXT_RET_FNTCHG | TXT_RET_FNTSTL | TXT_RET_NEWLN)) {
-					if (ret & TXT_RET_FNTCHG)
-						_style.setFont(_fnt);
-					if (ret & TXT_RET_FNTSTL)
-						_style.setFontStyle(_fnt);
-
-					if (ret & TXT_RET_NEWLN)
-						newline();
+				end = _txtpos;
+				if (start != -1) {
+					if ((end - start - 1) > 0) {
+						ret = _state.parseStyle(_txtbuf.c_str() + start + 1, end - start - 1);
+					}
 				}
 
-				if (ret & TXT_RET_HASSTBOX) {
+				if (ret & (TEXT_CHANGE_FONT_TYPE | TEXT_CHANGE_FONT_STYLE)) {
+					_state.updateFontWithTextState(_fnt);
+				} else if (ret & TEXT_CHANGE_NEWLINE) {
+					newline();
+				}
+
+				if (ret & TEXT_CHANGE_HAS_STATE_BOX) {
 					Common::String buf;
-					buf = Common::String::format("%d", _engine->getScriptManager()->getStateValue(_style._statebox));
+					buf = Common::String::format("%d", _engine->getScriptManager()->getStateValue(_state._statebox));
 
 					for (uint8 j = 0; j < buf.size(); j++)
 						outchar(buf[j]);
@@ -158,7 +156,7 @@ void ttyTextNode::newline() {
 }
 
 void ttyTextNode::outchar(uint16 chr) {
-	uint32 clr = _engine->_resourcePixelFormat.RGBToColor(_style._red, _style._green, _style._blue);
+	uint32 clr = _engine->_resourcePixelFormat.RGBToColor(_state._red, _state._green, _state._blue);
 
 	if (_dx + _fnt.getCharWidth(chr) > _r.width())
 		newline();

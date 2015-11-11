@@ -191,7 +191,7 @@ void sceneHandler11_restartMan() {
 	chainObjQueue(0, QU_SC11_RESTARTMAN, 1);
 
 	getGameLoaderInteractionController()->enableFlag24();
-	getCurrSceneSc2MotionController()->setEnabled();
+	getCurrSceneSc2MotionController()->activate();
 
 	g_vars->scene11_scrollIsEnabled = false;
 }
@@ -234,7 +234,7 @@ int sceneHandler11_updateScreenCallback() {
 void sceneHandler11_manToSwing() {
 	g_vars->scene11_arcadeIsOn = true;
 
-	getCurrSceneSc2MotionController()->clearEnabled();
+	getCurrSceneSc2MotionController()->deactivate();
 	getGameLoaderInteractionController()->disableFlag24();
 
 	g_fp->_aniMan2->hide();
@@ -271,7 +271,7 @@ void sceneHandler11_putABoot() {
 void sceneHandler11_putBoot() {
 	if (abs(353 - g_fp->_aniMan->_ox) > 1 || abs(498 - g_fp->_aniMan->_oy) > 1
 		|| g_fp->_aniMan->_movement || g_fp->_aniMan->_statics->_staticsId != ST_MAN_RIGHT) {
-		MessageQueue *mq = getCurrSceneSc2MotionController()->method34(g_fp->_aniMan, 353, 498, 1, ST_MAN_RIGHT);
+		MessageQueue *mq = getCurrSceneSc2MotionController()->startMove(g_fp->_aniMan, 353, 498, 1, ST_MAN_RIGHT);
 
 		if (mq) {
 			ExCommand *ex = new ExCommand(0, 17, MSG_SC11_PUTBOOT, 0, 0, 0, 1, 0, 0, 0);
@@ -299,7 +299,7 @@ void sceneHandler11_jumpFromSwing() {
 	g_vars->scene11_hint->_flags &= 0xFFFB;
 	g_vars->scene11_scrollIsEnabled = false;
 
-	getCurrSceneSc2MotionController()->setEnabled();
+	getCurrSceneSc2MotionController()->activate();
 	getGameLoaderInteractionController()->enableFlag24();
 
 	g_vars->scene11_swingOldAngle = 0.0;

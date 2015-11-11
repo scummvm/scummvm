@@ -123,6 +123,8 @@ bool SafeControl::process(uint32 deltaTimeInMillis) {
 			_animation->seekToFrame(_animation->getCurFrame() - 1);
 
 		const Graphics::Surface *frameData = _animation->decodeNextFrame();
+		if (_animation->getCurFrame() == _targetFrame)
+			_engine->getScriptManager()->setStateValue(_key, _curState);
 		if (frameData)
 			_engine->getRenderManager()->blitSurfaceToBkg(*frameData, _rectangle.left, _rectangle.top);
 	}
@@ -169,8 +171,6 @@ bool SafeControl::onMouseUp(const Common::Point &screenSpacePos, const Common::P
 			_curState = (_statesCount * 2 + tmp2) % _statesCount;
 
 			_targetFrame = (_curState + _statesCount - _startPointer) % _statesCount;
-
-			_engine->getScriptManager()->setStateValue(_key, _curState);
 			return true;
 		}
 	}

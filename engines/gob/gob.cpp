@@ -389,6 +389,9 @@ void GobEngine::syncSoundSettings() {
 	Engine::syncSoundSettings();
 
 	_init->updateConfig();
+
+	if (_sound)
+		_sound->adlibSyncVolume();
 }
 
 void GobEngine::pauseGame() {

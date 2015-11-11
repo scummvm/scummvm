@@ -246,6 +246,15 @@ private:
 };
 
 inline int scaleMixerVolume(int volume, int max = 100) {
+	if (volume > max) {
+		// This happens for instance for Bud's line, "Is that the
+		// great mystery invention you had hidden away?" in the intro,
+		// which is played at volume 110 out of 100. This made it very
+		// hard to hear. I'm not sure if this was a bug in the original
+		// game, or if it had the ability to amplify sounds.
+		warning("scaleMixerVolume: Adjusting volume %d to %d", volume, max);
+		volume = max;
+	}
 	return volume * Audio::Mixer::kMaxChannelVolume / max;
 }
 

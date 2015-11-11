@@ -232,10 +232,13 @@ bool LeverControl::onMouseMove(const Common::Point &screenSpacePos, const Common
 				if (angle >= (int)iter->angle - ANGLE_DELTA && angle <= (int)iter->angle + ANGLE_DELTA) {
 					_currentFrame = iter->toFrame;
 					renderFrame(_currentFrame);
+					_engine->getScriptManager()->setStateValue(_key, _currentFrame);
 					break;
 				}
 			}
 		}
+		_engine->getCursorManager()->changeCursor(_cursor);
+		cursorWasChanged = true;
 	} else if (_frameInfo[_currentFrame].hotspot.contains(backgroundImageSpacePos)) {
 		_engine->getCursorManager()->changeCursor(_cursor);
 		cursorWasChanged = true;

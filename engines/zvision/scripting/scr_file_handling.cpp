@@ -47,15 +47,13 @@ namespace ZVision {
 void ScriptManager::parseScrFile(const Common::String &fileName, ScriptScope &scope) {
 	Common::File file;
 	if (!_engine->getSearchManager()->openFile(file, fileName)) {
-		warning("Script file not found: %s", fileName.c_str());
-		return;
+		error("Script file not found: %s", fileName.c_str());
 	}
 
 	while (!file.eos()) {
 		Common::String line = file.readLine();
 		if (file.err()) {
-			warning("Error parsing scr file: %s", fileName.c_str());
-			return;
+			error("Error parsing scr file: %s", fileName.c_str());
 		}
 
 		trimCommentsAndWhiteSpace(&line);
@@ -85,9 +83,18 @@ void ScriptManager::parsePuzzle(Puzzle *puzzle, Common::SeekableReadStream &stre
 
 	while (!stream.eos() && !line.contains('}')) {
 		if (line.matchString("criteria {", true)) {
-			parseCriteria(stream, puzzle->criteriaList);
+			parseCriteria(stream, puzzle->criteriaList, puzzle->key);
 		} else if (line.matchString("results {", true)) {
 			parseResults(stream, puzzle->resultActions);
+
+			// WORKAROUND for a script bug in Zork Nemesis, room ve5e (tuning
+			// fork box closeup). If the player leaves the screen while the
+			// box is open, puzzle 19398 shows the animation where the box
+			// closes, but the box state (state variable 19397) is not updated.
+			// We insert the missing assignment for the box state here.
+			// Fixes bug #6803.
+			if (_engine->getGameId() == GID_NEMESIS && puzzle->key == 19398)
+				puzzle->resultActions.push_back(new ActionAssign(_engine, 11, "19397, 0"));
 		} else if (line.matchString("flags {", true)) {
 			setStateFlag(puzzle->key, parseFlags(stream));
 		}
@@ -99,10 +106,17 @@ void ScriptManager::parsePuzzle(Puzzle *puzzle, Common::SeekableReadStream &stre
 	puzzle->addedBySetState = false;
 }
 
-bool ScriptManager::parseCriteria(Common::SeekableReadStream &stream, Common::List<Common::List<Puzzle::CriteriaEntry> > &criteriaList) const {
+bool ScriptManager::parseCriteria(Common::SeekableReadStream &stream, Common::List<Common::List<Puzzle::CriteriaEntry> > &criteriaList, uint32 key) const {
 	// Loop until we find the closing brace
 	Common::String line = stream.readLine();
 	trimCommentsAndWhiteSpace(&line);
+
+	// Skip any commented out criteria. If all the criteria are commented out,
+	// we might end up with an invalid criteria list (bug #6776).
+	while (line.empty()) {
+		line = stream.readLine();
+		trimCommentsAndWhiteSpace(&line);
+	}
 
 	// Criteria can be empty
 	if (line.contains('}')) {
@@ -111,6 +125,21 @@ bool ScriptManager::parseCriteria(Common::SeekableReadStream &stream, Common::Li
 
 	// Create a new List to hold the CriteriaEntries
 	criteriaList.push_back(Common::List<Puzzle::CriteriaEntry>());
+
+	// WORKAROUND for a script bug in Zork: Nemesis, room td9e (fist puzzle)
+	// Since we patch the script that triggers when manipulating the left fist
+	// (below), we add an additional check for the left fist sound, so that it
+	// doesn't get killed immediately when the left fist animation starts.
+	// Together with the workaround below, it fixes bug #6783.
+	if (_engine->getGameId() == GID_NEMESIS && key == 3594) {
+		Puzzle::CriteriaEntry entry;
+		entry.key = 567;
+		entry.criteriaOperator = Puzzle::NOT_EQUAL_TO;
+		entry.argumentIsAKey = false;
+		entry.argument = 1;
+
+		criteriaList.back().push_back(entry);
+	}
 
 	while (!stream.eos() && !line.contains('}')) {
 		Puzzle::CriteriaEntry entry;
@@ -123,6 +152,13 @@ bool ScriptManager::parseCriteria(Common::SeekableReadStream &stream, Common::Li
 		token = tokenizer.nextToken();
 		sscanf(token.c_str(), "[%u]", &(entry.key));
 
+		// WORKAROUND for a script bug in Zork: Nemesis, room td9e (fist puzzle)
+		// Check for the state of animation 567 (left fist) when manipulating
+		// the fingers of the left fist (puzzle slots 3582, 3583).
+		// Together with the workaround above, it fixes bug #6783.
+		if (_engine->getGameId() == GID_NEMESIS && (key == 3582 || key == 3583) && entry.key == 568)
+			entry.key = 567;
+
 		// Parse the operator out of the second token
 		token = tokenizer.nextToken();
 		if (token.c_str()[0] == '=')
@@ -134,9 +170,17 @@ bool ScriptManager::parseCriteria(Common::SeekableReadStream &stream, Common::Li
 		else if (token.c_str()[0] == '<')
 			entry.criteriaOperator = Puzzle::LESS_THAN;
 
+		// There are supposed to be three tokens, but there is no
+		// guarantee that there will be a space between the second and
+		// the third one (bug #6774)
+		if (token.size() == 1) {
+			token = tokenizer.nextToken();
+		} else {
+			token.deleteChar(0);
+		}
+
 		// First determine if the last token is an id or a value
 		// Then parse it into 'argument'
-		token = tokenizer.nextToken();
 		if (token.contains('[')) {
 			sscanf(token.c_str(), "[%u]", &(entry.argument));
 			entry.argumentIsAKey = true;
@@ -271,8 +315,8 @@ void ScriptManager::parseResults(Common::SeekableReadStream &stream, Common::Lis
 					actionList.push_back(new ActionRegion(_engine, slot, args));
 				} else if (act.matchString("restore_game", true)) {
 					// Only used by ZGI to load the restart game slot, r.svr.
-					_engine->getScriptManager()->reset();
-					_engine->getScriptManager()->changeLocation('g', 'a', 'r', 'y', 0);
+					// Used by the credits screen.
+					actionList.push_back(new ActionRestoreGame(_engine, slot, args));
 				} else if (act.matchString("rotate_to", true)) {
 					actionList.push_back(new ActionRotateTo(_engine, slot, args));
 				} else if (act.matchString("save_game", true)) {
@@ -343,6 +387,16 @@ Control *ScriptManager::parseControl(Common::String &line, Common::SeekableReadS
 	Common::String controlType(controlTypeBuffer);
 
 	if (controlType.equalsIgnoreCase("push_toggle")) {
+		// WORKAROUND for a script bug in ZGI: There is an invalid hotspot
+		// at scene em1h (bottom of tower), which points to a missing
+		// script em1n. This is a hotspot at the right of the screen.
+		// In the original, this hotspot doesn't lead anywhere anyway,
+		// so instead of moving to a missing scene, we just remove the
+		// hotspot altogether. The alternative would be to just process
+		// and ignore invalid scenes, but I don't think it's worth the
+		// effort. Fixes bug #6780.
+		if (_engine->getGameId() == GID_GRANDINQUISITOR && key == 5653)
+			return NULL;
 		return new PushToggleControl(_engine, key, stream);
 	} else if (controlType.equalsIgnoreCase("flat")) {
 		Control::parseFlatControl(_engine);

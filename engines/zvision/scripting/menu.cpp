@@ -46,13 +46,13 @@ MenuHandler::MenuHandler(ZVision *engine) {
 MenuZGI::MenuZGI(ZVision *engine) :
 	MenuHandler(engine) {
 	menuMouseFocus = -1;
-	inmenu = false;
+	inMenu = false;
 	scrolled[0] = false;
 	scrolled[1] = false;
 	scrolled[2] = false;
-	scrollPos[0] = 0.0;
-	scrollPos[1] = 0.0;
-	scrollPos[2] = 0.0;
+	scrollPos[0] = 0;
+	scrollPos[1] = 0;
+	scrollPos[2] = 0;
 	mouseOnItem = -1;
 	redraw = false;
 	clean = false;
@@ -60,15 +60,15 @@ MenuZGI::MenuZGI(ZVision *engine) :
 	char buf[24];
 	for (int i = 1; i < 4; i++) {
 		sprintf(buf, "gmzau%2.2x1.tga", i);
-		_engine->getRenderManager()->readImageToSurface(buf, menuback[i - 1][0], false);
+		_engine->getRenderManager()->readImageToSurface(buf, menuBack[i - 1][0], false);
 		sprintf(buf, "gmzau%2.2x1.tga", i + 0x10);
-		_engine->getRenderManager()->readImageToSurface(buf, menuback[i - 1][1], false);
+		_engine->getRenderManager()->readImageToSurface(buf, menuBack[i - 1][1], false);
 	}
 	for (int i = 0; i < 4; i++) {
 		sprintf(buf, "gmzmu%2.2x1.tga", i);
-		_engine->getRenderManager()->readImageToSurface(buf, menubar[i][0], false);
+		_engine->getRenderManager()->readImageToSurface(buf, menuBar[i][0], false);
 		sprintf(buf, "gmznu%2.2x1.tga", i);
-		_engine->getRenderManager()->readImageToSurface(buf, menubar[i][1], false);
+		_engine->getRenderManager()->readImageToSurface(buf, menuBar[i][1], false);
 	}
 
 	for (int i = 0; i < 50; i++) {
@@ -86,12 +86,12 @@ MenuZGI::MenuZGI(ZVision *engine) :
 
 MenuZGI::~MenuZGI() {
 	for (int i = 0; i < 3; i++) {
-		menuback[i][0].free();
-		menuback[i][1].free();
+		menuBack[i][0].free();
+		menuBack[i][1].free();
 	}
 	for (int i = 0; i < 4; i++) {
-		menubar[i][0].free();
-		menubar[i][1].free();
+		menuBar[i][0].free();
+		menuBar[i][1].free();
 	}
 	for (int i = 0; i < 50; i++) {
 		if (items[i][0]) {
@@ -208,9 +208,9 @@ void MenuZGI::onMouseUp(const Common::Point &Pos) {
 void MenuZGI::onMouseMove(const Common::Point &Pos) {
 	if (Pos.y < 40) {
 
-		if (!inmenu)
+		if (!inMenu)
 			redraw = true;
-		inmenu = true;
+		inMenu = true;
 		switch (menuMouseFocus) {
 		case kMenuItem:
 			if (menuBarFlag & kMenubarItems) {
@@ -311,7 +311,7 @@ void MenuZGI::onMouseMove(const Common::Point &Pos) {
 			if (Common::Rect(64, 0, 64 + 512, 8).contains(Pos)) { // Main
 				menuMouseFocus = kMenuMain;
 				scrolled[kMenuMain]  = false;
-				scrollPos[kMenuMain] = menuback[kMenuMain][1].h - menuback[kMenuMain][0].h;
+				scrollPos[kMenuMain] = menuBack[kMenuMain][1].h - menuBack[kMenuMain][0].h;
 				_engine->getScriptManager()->setStateValue(StateKey_MenuState, 2);
 			}
 
@@ -337,9 +337,9 @@ void MenuZGI::onMouseMove(const Common::Point &Pos) {
 			break;
 		}
 	} else {
-		if (inmenu)
+		if (inMenu)
 			clean = true;
-		inmenu = false;
+		inMenu = false;
 		if (_engine->getScriptManager()->getStateValue(StateKey_MenuState) != 0)
 			_engine->getScriptManager()->setStateValue(StateKey_MenuState, 0);
 		menuMouseFocus = -1;
@@ -361,15 +361,15 @@ void MenuZGI::process(uint32 deltatime) {
 				if (scrl == 0)
 					scrl = 1.0;
 
-				scrollPos [kMenuItem] += scrl;
+				scrollPos[kMenuItem] += (int)scrl;
 
 				if (scrollPos[kMenuItem] >= 0) {
 					scrolled[kMenuItem] = true;
-					scrollPos [kMenuItem] = 0;
+					scrollPos[kMenuItem] = 0;
 				}
 			}
 		if (redraw) {
-			_engine->getRenderManager()->blitSurfaceToMenu(menuback[kMenuItem][0], scrollPos[kMenuItem], 0);
+			_engine->getRenderManager()->blitSurfaceToMenu(menuBack[kMenuItem][0], scrollPos[kMenuItem], 0);
 
 			int itemCount = _engine->getScriptManager()->getStateValue(StateKey_Inv_TotalSlots);
 			if (itemCount == 0)
@@ -430,15 +430,15 @@ void MenuZGI::process(uint32 deltatime) {
 				if (scrl == 0)
 					scrl = 1.0;
 
-				scrollPos [kMenuMagic] += scrl;
+				scrollPos[kMenuMagic] += (int)scrl;
 
 				if (scrollPos[kMenuMagic] >= 600) {
 					scrolled[kMenuMagic] = true;
-					scrollPos [kMenuMagic] = 600;
+					scrollPos[kMenuMagic] = 600;
 				}
 			}
 		if (redraw) {
-			_engine->getRenderManager()->blitSurfaceToMenu(menuback[kMenuMagic][0], 640 - scrollPos[kMenuMagic], 0);
+			_engine->getRenderManager()->blitSurfaceToMenu(menuBack[kMenuMagic][0], 640 - scrollPos[kMenuMagic], 0);
 
 			for (int i = 0; i < 12; i++) {
 				bool inrect = false;
@@ -495,53 +495,53 @@ void MenuZGI::process(uint32 deltatime) {
 			if (scrl == 0)
 				scrl = 1.0;
 
-			scrollPos [kMenuMain] += scrl;
+			scrollPos[kMenuMain] += (int)scrl;
 
 			if (scrollPos[kMenuMain] >= 0) {
 				scrolled[kMenuMain] = true;
-				scrollPos [kMenuMain] = 0;
+				scrollPos[kMenuMain] = 0;
 			}
 		}
 		if (redraw) {
-			_engine->getRenderManager()->blitSurfaceToMenu(menuback[kMenuMain][0], 30, scrollPos[kMenuMain]);
+			_engine->getRenderManager()->blitSurfaceToMenu(menuBack[kMenuMain][0], 30, scrollPos[kMenuMain]);
 
 			if (menuBarFlag & kMenubarExit) {
 				if (mouseOnItem == kMainMenuExit)
-					_engine->getRenderManager()->blitSurfaceToMenu(menubar[kMainMenuExit][1], 320 + 135, scrollPos[kMenuMain]);
+					_engine->getRenderManager()->blitSurfaceToMenu(menuBar[kMainMenuExit][1], 320 + 135, scrollPos[kMenuMain]);
 				else
-					_engine->getRenderManager()->blitSurfaceToMenu(menubar[kMainMenuExit][0], 320 + 135, scrollPos[kMenuMain]);
+					_engine->getRenderManager()->blitSurfaceToMenu(menuBar[kMainMenuExit][0], 320 + 135, scrollPos[kMenuMain]);
 			}
 			if (menuBarFlag & kMenubarSettings) {
 				if (mouseOnItem == kMainMenuPrefs)
-					_engine->getRenderManager()->blitSurfaceToMenu(menubar[kMainMenuPrefs][1], 320, scrollPos[kMenuMain]);
+					_engine->getRenderManager()->blitSurfaceToMenu(menuBar[kMainMenuPrefs][1], 320, scrollPos[kMenuMain]);
 				else
-					_engine->getRenderManager()->blitSurfaceToMenu(menubar[kMainMenuPrefs][0], 320, scrollPos[kMenuMain]);
+					_engine->getRenderManager()->blitSurfaceToMenu(menuBar[kMainMenuPrefs][0], 320, scrollPos[kMenuMain]);
 			}
 			if (menuBarFlag & kMenubarRestore) {
 				if (mouseOnItem == kMainMenuLoad)
-					_engine->getRenderManager()->blitSurfaceToMenu(menubar[kMainMenuLoad][1], 320 - 135, scrollPos[kMenuMain]);
+					_engine->getRenderManager()->blitSurfaceToMenu(menuBar[kMainMenuLoad][1], 320 - 135, scrollPos[kMenuMain]);
 				else
-					_engine->getRenderManager()->blitSurfaceToMenu(menubar[kMainMenuLoad][0], 320 - 135, scrollPos[kMenuMain]);
+					_engine->getRenderManager()->blitSurfaceToMenu(menuBar[kMainMenuLoad][0], 320 - 135, scrollPos[kMenuMain]);
 			}
 			if (menuBarFlag & kMenubarSave) {
 				if (mouseOnItem == kMainMenuSave)
-					_engine->getRenderManager()->blitSurfaceToMenu(menubar[kMainMenuSave][1], 320 - 135 * 2, scrollPos[kMenuMain]);
+					_engine->getRenderManager()->blitSurfaceToMenu(menuBar[kMainMenuSave][1], 320 - 135 * 2, scrollPos[kMenuMain]);
 				else
-					_engine->getRenderManager()->blitSurfaceToMenu(menubar[kMainMenuSave][0], 320 - 135 * 2, scrollPos[kMenuMain]);
+					_engine->getRenderManager()->blitSurfaceToMenu(menuBar[kMainMenuSave][0], 320 - 135 * 2, scrollPos[kMenuMain]);
 			}
 			redraw = false;
 		}
 		break;
 	default:
 		if (redraw) {
-			if (inmenu) {
-				_engine->getRenderManager()->blitSurfaceToMenu(menuback[kMenuMain][1], 30, 0);
+			if (inMenu) {
+				_engine->getRenderManager()->blitSurfaceToMenu(menuBack[kMenuMain][1], 30, 0);
 
 				if (menuBarFlag & kMenubarItems)
-					_engine->getRenderManager()->blitSurfaceToMenu(menuback[kMenuItem][1], 0, 0);
+					_engine->getRenderManager()->blitSurfaceToMenu(menuBack[kMenuItem][1], 0, 0);
 
 				if (menuBarFlag & kMenubarMagic)
-					_engine->getRenderManager()->blitSurfaceToMenu(menuback[kMenuMagic][1], 640 - 28, 0);
+					_engine->getRenderManager()->blitSurfaceToMenu(menuBack[kMenuMagic][1], 640 - 28, 0);
 			}
 			redraw = false;
 		}
@@ -551,9 +551,9 @@ void MenuZGI::process(uint32 deltatime) {
 
 MenuNemesis::MenuNemesis(ZVision *engine) :
 	MenuHandler(engine) {
-	inmenu = false;
+	inMenu = false;
 	scrolled = false;
-	scrollPos = 0.0;
+	scrollPos = 0;
 	mouseOnItem = -1;
 	redraw = false;
 	delay = 0;
@@ -565,7 +565,7 @@ MenuNemesis::MenuNemesis(ZVision *engine) :
 			_engine->getRenderManager()->readImageToSurface(buf, but[i][j], false);
 		}
 
-	_engine->getRenderManager()->readImageToSurface("bar.tga", menubar, false);
+	_engine->getRenderManager()->readImageToSurface("bar.tga", menuBar, false);
 
 	frm = 0;
 }
@@ -575,7 +575,7 @@ MenuNemesis::~MenuNemesis() {
 		for (int j = 0; j < 6; j++)
 			but[i][j].free();
 
-	menubar.free();
+	menuBar.free();
 }
 
 static const int16 buts[4][2] = { {120 , 64}, {144, 184}, {128, 328}, {120, 456} };
@@ -631,7 +631,7 @@ void MenuNemesis::onMouseUp(const Common::Point &Pos) {
 void MenuNemesis::onMouseMove(const Common::Point &Pos) {
 	if (Pos.y < 40) {
 
-		inmenu = true;
+		inMenu = true;
 
 		if (_engine->getScriptManager()->getStateValue(StateKey_MenuState) != 2)
 			_engine->getScriptManager()->setStateValue(StateKey_MenuState, 2);
@@ -681,7 +681,7 @@ void MenuNemesis::onMouseMove(const Common::Point &Pos) {
 			delay = 200;
 		}
 	} else {
-		inmenu = false;
+		inMenu = false;
 		if (_engine->getScriptManager()->getStateValue(StateKey_MenuState) != 0)
 			_engine->getScriptManager()->setStateValue(StateKey_MenuState, 0);
 		mouseOnItem = -1;
@@ -689,14 +689,14 @@ void MenuNemesis::onMouseMove(const Common::Point &Pos) {
 }
 
 void MenuNemesis::process(uint32 deltatime) {
-	if (inmenu) {
+	if (inMenu) {
 		if (!scrolled) {
 			float scrl = 32.0 * 2.0 * (deltatime / 1000.0);
 
 			if (scrl == 0)
 				scrl = 1.0;
 
-			scrollPos += scrl;
+			scrollPos += (int)scrl;
 			redraw = true;
 		}
 
@@ -715,7 +715,7 @@ void MenuNemesis::process(uint32 deltatime) {
 		}
 
 		if (redraw) {
-			_engine->getRenderManager()->blitSurfaceToMenu(menubar, 64, scrollPos);
+			_engine->getRenderManager()->blitSurfaceToMenu(menuBar, 64, scrollPos);
 
 			if (menuBarFlag & kMenubarExit)
 				if (mouseOnItem == kMainMenuExit)
@@ -743,16 +743,16 @@ void MenuNemesis::process(uint32 deltatime) {
 			if (scrl == 0)
 				scrl = 1.0;
 
-			Common::Rect cl(64, 32 + scrollPos - scrl, 64 + 512, 32 + scrollPos + 1);
+			Common::Rect cl(64, (int16)(32 + scrollPos - scrl), 64 + 512, 32 + scrollPos + 1);
 			_engine->getRenderManager()->clearMenuSurface(cl);
 
-			scrollPos -= scrl;
+			scrollPos -= (int)scrl;
 			redraw = true;
 		} else
 			scrollPos = -32;
 
 		if (redraw) {
-			_engine->getRenderManager()->blitSurfaceToMenu(menubar, 64, scrollPos);
+			_engine->getRenderManager()->blitSurfaceToMenu(menuBar, 64, scrollPos);
 			redraw = false;
 		}
 	}

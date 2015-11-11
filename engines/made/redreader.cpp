@@ -76,6 +76,22 @@ bool RedReader::seekFile(Common::File &fd, FileEntry &fileEntry, const char *fil
 }
 
 LzhDecompressor::LzhDecompressor() {
+	freq = nullptr;
+	len_table = nullptr;
+	sortptr = nullptr;
+	_source = nullptr;
+
+	_compSize = 0;
+	_blockPos = 0;
+	_bitbuf = 0;
+	_subbitbuf = 0;
+	_bitcount = 0;
+	_blocksize = 0;
+	tree_n = 0;
+	heapsize = 0;
+	decode_i = 0;
+	decode_j = 0;
+	count_len_depth = 0;
 }
 
 LzhDecompressor::~LzhDecompressor() {

@@ -72,6 +72,7 @@ static const uint8 egaPalette[16 * 3] = {
  * from Donald Duck's Playground (1986) to Manhunter II (1989).
  * 16 RGB colors. 3 bits per color component.
  */
+#if 0
 static const uint8 atariStAgiPalette[16 * 3] = {
 	0x0, 0x0, 0x0,
 	0x0, 0x0, 0x7,
@@ -90,6 +91,7 @@ static const uint8 atariStAgiPalette[16 * 3] = {
 	0x7, 0x7, 0x4,
 	0x7, 0x7, 0x7
 };
+#endif
 
 /**
  * Second generation Apple IIGS AGI palette.
@@ -109,6 +111,8 @@ static const uint8 atariStAgiPalette[16 * 3] = {
  * 3.001 (Black Cauldron        v1.0O 1989-02-24 (CE))
  * 3.003 (Gold Rush!            v1.0M 1989-02-28 (CE))
  */
+#if 0
+// FIXME: Identical to amigaAgiPaletteV2
 static const uint8 appleIIgsAgiPaletteV2[16 * 3] = {
 	0x0, 0x0, 0x0,
 	0x0, 0x0, 0xF,
@@ -127,6 +131,7 @@ static const uint8 appleIIgsAgiPaletteV2[16 * 3] = {
 	0xE, 0xE, 0x0,
 	0xF, 0xF, 0xF
 };
+#endif
 
 /**
  * First generation Amiga & Apple IIGS AGI palette.
@@ -616,6 +621,8 @@ void GfxMgr::putTextCharacter(int l, int x, int y, unsigned char c, int fg, int 
 	int x1, y1, xx, yy, cc;
 	const uint8 *p;
 
+	assert(font);
+
 	p = font + ((unsigned int)c * CHAR_LINES);
 	for (y1 = 0; y1 < CHAR_LINES; y1++) {
 		for (x1 = 0; x1 < CHAR_COLS; x1++) {
@@ -699,7 +706,7 @@ void GfxMgr::printCharacter(int x, int y, char c, int fg, int bg) {
 	x *= CHAR_COLS;
 	y *= CHAR_LINES;
 
-	putTextCharacter(0, x, y, c, fg, bg);
+	putTextCharacter(0, x, y, c, fg, bg, false, _vm->getFontData());
 	// redundant! already inside put_text_character!
 	// flush_block (x, y, x + CHAR_COLS - 1, y + CHAR_LINES - 1);
 }
@@ -754,7 +761,7 @@ void GfxMgr::rawDrawButton(int x, int y, const char *s, int fgcolor, int bgcolor
 	drawRectangle(x1, y1, x2, y2, border ? BUTTON_BORDER : MSG_BOX_COLOR);
 
 	while (*s) {
-		putTextCharacter(0, x + textOffset, y + textOffset, *s++, fgcolor, bgcolor);
+		putTextCharacter(0, x + textOffset, y + textOffset, *s++, fgcolor, bgcolor, false, _vm->getFontData());
 		x += CHAR_COLS;
 	}
 

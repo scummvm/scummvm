@@ -74,8 +74,10 @@ MODULE_OBJS += \
 
 # SDL 1.3 removed audio CD support
 ifndef USE_SDL13
+ifndef USE_SDL2
 MODULE_OBJS += \
 	audiocd/sdl/sdl-audiocd.o
+endif
 endif
 
 ifdef USE_OPENGL

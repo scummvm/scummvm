@@ -34,6 +34,16 @@ struct Surface;
 
 namespace ZVision {
 
+struct FontStyle {
+	const char *zorkFont;
+	const char *fontBase;
+	const char *freeFontBase;
+	const char *freeFontItalicName;
+	const char *liberationFontBase;
+};
+
+#define FONT_COUNT 9
+
 class ZVision;
 
 // Styled TTF
@@ -43,11 +53,11 @@ public:
 	~StyledTTFont();
 
 	enum {
-		STTF_BOLD = 1,
-		STTF_ITALIC = 2,
-		STTF_UNDERLINE = 4,
-		STTF_STRIKEOUT = 8,
-		STTF_SHARP = 16
+		TTF_STYLE_BOLD = 0x01,
+		TTF_STYLE_ITALIC = 0x02,
+		TTF_STYLE_UNDERLINE = 0x04,
+		TTF_STYLE_STRIKETHROUGH = 0x08,
+		TTF_STYLE_SHARP = 0x10
 	};
 
 private:
@@ -55,17 +65,17 @@ private:
 	Graphics::Font *_font;
 	int _lineHeight;
 	uint _style;
-	Common::String _fntName;
+	Common::String _fontName;
 
 public:
-	bool loadFont(const Common::String &fontName, int32 point);
 	bool loadFont(const Common::String &fontName, int32 point, uint style);
-	void setStyle(uint newStyle);
 
 	int getFontHeight();
 	int getMaxCharWidth();
 	int getCharWidth(byte chr);
 	int getKerningOffset(byte left, byte right);
+
+	Common::U32String convertUtf8ToUtf32(const Common::String &str);
 
 	void drawChar(Graphics::Surface *dst, byte chr, int x, int y, uint32 color);
 

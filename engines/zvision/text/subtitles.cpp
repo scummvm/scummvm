@@ -27,7 +27,7 @@
 
 namespace ZVision {
 
-Subtitle::Subtitle(ZVision *engine, const Common::String &subname) :
+Subtitle::Subtitle(ZVision *engine, const Common::String &subname, bool upscaleToHires) :
 	_engine(engine),
 	_areaId(-1),
 	_subId(-1) {
@@ -44,6 +44,8 @@ Subtitle::Subtitle(ZVision *engine, const Common::String &subname) :
 				int32 x1, y1, x2, y2;
 				sscanf(str.c_str(), "%*[^:]:%d %d %d %d", &x1, &y1, &x2, &y2);
 				Common::Rect rct = Common::Rect(x1, y1, x2, y2);
+				if (upscaleToHires)
+					_engine->getRenderManager()->upscaleRect(rct);
 				_areaId = _engine->getRenderManager()->createSubArea(rct);
 			} else if (str.matchString("*TextFile*", true)) {
 				char filename[64];
@@ -67,6 +69,11 @@ Subtitle::Subtitle(ZVision *engine, const Common::String &subname) :
 				int32 sb;
 				if (sscanf(str.c_str(), "%*[^:]:(%d,%d)=%d", &st, &en, &sb) == 3) {
 					if (sb <= (int32)_subs.size()) {
+						if (upscaleToHires) {
+							// Convert from 15FPS (AVI) to 29.97FPS (VOB)
+							st = st * 2997 / 1500;
+							en = en * 2997 / 1500;
+						}
 						_subs[sb].start = st;
 						_subs[sb].stop = en;
 					}

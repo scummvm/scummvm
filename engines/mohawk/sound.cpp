@@ -77,8 +77,8 @@ void Sound::initMidi() {
 	_midiParser->setTimerRate(_midiDriver->getBaseTempo());
 }
 
-Audio::AudioStream *Sound::makeAudioStream(uint16 id, CueList *cueList) {
-	Audio::AudioStream *audStream = NULL;
+Audio::RewindableAudioStream *Sound::makeAudioStream(uint16 id, CueList *cueList) {
+	Audio::RewindableAudioStream *audStream = NULL;
 
 	switch (_vm->getGameType()) {
 	case GType_MYST:
@@ -109,17 +109,18 @@ Audio::AudioStream *Sound::makeAudioStream(uint16 id, CueList *cueList) {
 Audio::SoundHandle *Sound::playSound(uint16 id, byte volume, bool loop, CueList *cueList) {
 	debug (0, "Playing sound %d", id);
 
-	Audio::AudioStream *audStream = makeAudioStream(id, cueList);
+	Audio::RewindableAudioStream *rewindStream = makeAudioStream(id, cueList);
 
-	if (audStream) {
+	if (rewindStream) {
 		SndHandle *handle = getHandle();
 		handle->type = kUsedHandle;
 		handle->id = id;
-		handle->samplesPerSecond = audStream->getRate();
+		handle->samplesPerSecond = rewindStream->getRate();
 
 		// Set the stream to loop here if it's requested
+		Audio::AudioStream *audStream = rewindStream;
 		if (loop)
-			audStream = Audio::makeLoopingAudioStream((Audio::RewindableAudioStream *)audStream, 0);
+			audStream = Audio::makeLoopingAudioStream(rewindStream, 0);
 
 		_vm->_mixer->playStream(Audio::Mixer::kPlainSoundType, &handle->handle, audStream, -1, volume);
 		return &handle->handle;
@@ -335,11 +336,12 @@ void Sound::playSLSTSound(uint16 id, bool fade, bool loop, uint16 volume, int16 
 	sndHandle.id = id;
 	_currentSLSTSounds.push_back(sndHandle);
 
-	Audio::AudioStream *audStream = makeMohawkWaveStream(_vm->getResource(ID_TWAV, id));
+	Audio::RewindableAudioStream *rewindStream = makeMohawkWaveStream(_vm->getResource(ID_TWAV, id));
 
 	// Loop here if necessary
+	Audio::AudioStream *audStream = rewindStream;
 	if (loop)
-		audStream = Audio::makeLoopingAudioStream((Audio::RewindableAudioStream *)audStream, 0);
+		audStream = Audio::makeLoopingAudioStream(rewindStream, 0);
 
 	// TODO: Handle fading, possibly just raise the volume of the channel in increments?
 
@@ -363,7 +365,7 @@ void Sound::resumeSLST() {
 		_vm->_mixer->pauseHandle(*_currentSLSTSounds[i].handle, false);
 }
 
-Audio::AudioStream *Sound::makeMohawkWaveStream(Common::SeekableReadStream *stream, CueList *cueList) {
+Audio::RewindableAudioStream *Sound::makeMohawkWaveStream(Common::SeekableReadStream *stream, CueList *cueList) {
 	uint32 tag = 0;
 	ADPCMStatus adpcmStatus;
 	DataChunk dataChunk;
@@ -507,7 +509,7 @@ Audio::AudioStream *Sound::makeMohawkWaveStream(Common::SeekableReadStream *stre
 	return NULL;
 }
 
-Audio::AudioStream *Sound::makeLivingBooksWaveStream_v1(Common::SeekableReadStream *stream) {
+Audio::RewindableAudioStream *Sound::makeLivingBooksWaveStream_v1(Common::SeekableReadStream *stream) {
 	uint16 header = stream->readUint16BE();
 	uint16 rate = 0;
 	uint32 size = 0;
@@ -646,15 +648,15 @@ Audio::SoundHandle *Sound::replaceBackgroundMyst(uint16 id, uint16 volume) {
 	stopBackgroundMyst();
 
 	// Play new sound
-	Audio::AudioStream *audStream = makeAudioStream(id);
+	Audio::RewindableAudioStream *rewindStream = makeAudioStream(id);
 
-	if (audStream) {
+	if (rewindStream) {
 		_mystBackgroundSound.type = kUsedHandle;
 		_mystBackgroundSound.id = id;
-		_mystBackgroundSound.samplesPerSecond = audStream->getRate();
+		_mystBackgroundSound.samplesPerSecond = rewindStream->getRate();
 
 		// Set the stream to loop
-		audStream = Audio::makeLoopingAudioStream((Audio::RewindableAudioStream *)audStream, 0);
+		Audio::AudioStream *audStream = Audio::makeLoopingAudioStream(rewindStream, 0);
 
 		_vm->_mixer->playStream(Audio::Mixer::kPlainSoundType, &_mystBackgroundSound.handle, audStream, -1, volume >> 8);
 		return &_mystBackgroundSound.handle;

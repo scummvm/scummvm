@@ -46,6 +46,7 @@ struct CinepakStrip {
 	uint16 length;
 	Common::Rect rect;
 	CinepakCodebook v1_codebook[256], v4_codebook[256];
+	byte v1_dither[256 * 4 * 4 * 4], v4_dither[256 * 4 * 4 * 4];
 };
 
 struct CinepakFrame {
@@ -63,6 +64,9 @@ struct CinepakFrame {
  * Cinepak decoder.
  *
  * Used by BMP/AVI and PICT/QuickTime.
+ *
+ * Used in engines:
+ *  - sherlock
  */
 class CinepakDecoder : public Codec {
 public:
@@ -72,14 +76,30 @@ public:
 	const Graphics::Surface *decodeFrame(Common::SeekableReadStream &stream);
 	Graphics::PixelFormat getPixelFormat() const { return _pixelFormat; }
 
+	bool containsPalette() const { return _ditherPalette != 0; }
+	const byte *getPalette() { _dirtyPalette = false; return _ditherPalette; }
+	bool hasDirtyPalette() const { return _dirtyPalette; }
+	bool canDither(DitherType type) const;
+	void setDither(DitherType type, const byte *palette);
+
 private:
 	CinepakFrame _curFrame;
 	int32 _y;
+	int _bitsPerPixel;
 	Graphics::PixelFormat _pixelFormat;
 	byte *_clipTable, *_clipTableBuf;
 
+	byte *_ditherPalette;
+	bool _dirtyPalette;
+	byte *_colorMap;
+	DitherType _ditherType;
+
 	void loadCodebook(Common::SeekableReadStream &stream, uint16 strip, byte codebookType, byte chunkID, uint32 chunkSize);
 	void decodeVectors(Common::SeekableReadStream &stream, uint16 strip, byte chunkID, uint32 chunkSize);
+
+	byte findNearestRGB(int index) const;
+	void ditherVectors(Common::SeekableReadStream &stream, uint16 strip, byte chunkID, uint32 chunkSize);
+	void ditherCodebookQT(uint16 strip, byte codebookType, uint16 codebookIndex);
 };
 
 } // End of namespace Image

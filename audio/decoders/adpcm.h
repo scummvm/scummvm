@@ -44,6 +44,7 @@ class SeekableReadStream;
 
 namespace Audio {
 
+class PacketizedAudioStream;
 class RewindableAudioStream;
 
 // There are several types of ADPCM encoding, only some are supported here
@@ -80,6 +81,26 @@ RewindableAudioStream *makeADPCMStream(
     int rate,
     int channels,
     uint32 blockAlign = 0);
+
+/**
+ * Creates a PacketizedAudioStream that will automatically queue
+ * packets as individual AudioStreams like returned by makeADPCMStream.
+ *
+ * Due to the ADPCM types not necessarily supporting stateless
+ * streaming, OKI and DVI are not supported by this function
+ * and will return NULL.
+ *
+ * @param type              the compression type used
+ * @param rate              the sampling rate
+ * @param channels          the number of channels
+ * @param blockAlign        block alignment ???
+ * @return The new PacketizedAudioStream or NULL, if the type isn't supported.
+ */
+PacketizedAudioStream *makePacketizedADPCMStream(
+	ADPCMType type,
+	int rate,
+	int channels,
+	uint32 blockAlign = 0);
 
 } // End of namespace Audio
 

@@ -1380,6 +1380,12 @@ int FWScript::o1_loadBg() {
 
 	debugC(5, kCineDebugScript, "Line: %d: loadBg(\"%s\")", _line, param);
 
+	if (g_cine->getGameType() == GType_FW && (g_cine->getFeatures() & GF_CD)) {
+		char buffer[20];
+		removeExtention(buffer, param);
+		g_sound->setBgMusic(atoi(buffer + 1));
+	}
+
 	loadBg(param);
 	g_cine->_bgIncrustList.clear();
 	bgVar0 = 0;

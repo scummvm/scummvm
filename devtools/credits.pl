@@ -789,7 +789,7 @@ begin_credits("Credits");
 				add_person("Tobia Tesan", "t0by", "");
 			end_section();
             
-			begin_section("ZVision");
+			begin_section("Z-Vision");
 				add_person("Adrian Astley", "RichieSams", "");
 				add_person("Filippos Karapetis", "[md5]", "");
 				add_person("Anton Yarcev", "Zidane", "");
@@ -1053,7 +1053,7 @@ begin_credits("Credits");
 				end_section();
 				begin_section("German");
 					add_person("Simon Sawatzki", "SimSaw", "");
-					add_person("Lothar Serra Mari", "Lothar93", "(retired)");
+					add_person("Lothar Serra Mari", "rootfather", "");
 				end_section();
 				begin_section("Hungarian");
 					add_person("Alex Bevilacqua", "", "");
@@ -1133,6 +1133,7 @@ begin_credits("Credits");
 				add_person("Jeroen Janssen", "japj", "Numerous readability and bugfix patches");
 				add_person("Keith Kaisershot", "blitter", "Several Pegasus Prime patches");
 				add_person("Andreas Karlsson", "Sprawl", "Initial port for SymbianOS");
+				add_person("Stefan Kristiansson", "skristiansson", "Initial work on SDL2 support");
 				add_person("Claudio Matsuoka", "", "Daily Linux builds");
 				add_person("Thomas Mayer", "", "PSP port contributions");
 				add_person("Sean Murray", "lightcast", "ScummVM tools GUI application (GSoC 2007 task)");
@@ -1223,7 +1224,7 @@ begin_credits("Credits");
 			add_person("Jimmi Th&oslash;gersen", "", "For ScummRev, and much obscure code/documentation");
 			add_person("", "Tristan", "For additional work on the original MT-32 emulator");
 			add_person("James Woodcock", "", "Soundtrack enhancements");
-			add_person("Anton Yartsev", "Zidane", "For the original re-implementation of the ZVision engine");
+			add_person("Anton Yartsev", "Zidane", "For the original re-implementation of the Z-Vision engine");
 		end_persons();
 
 	add_paragraph(

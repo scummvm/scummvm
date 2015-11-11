@@ -113,6 +113,28 @@ struct Location {
 	uint32 offset;
 };
 
+inline bool operator==(const Location& lhs, const Location& rhs) {
+	return (
+		lhs.world == rhs.world &&
+		lhs.room == rhs.room &&
+		lhs.node == rhs.node &&
+		lhs.view == rhs.view
+	);
+}
+
+inline bool operator==(const Location& lhs, const char* rhs) {
+	Common::String lhsStr = Common::String::format("%c%c%c%c", lhs.world, lhs.room, lhs.node, lhs.view);
+	return lhsStr == rhs;
+}
+
+inline bool operator!=(const Location& lhs, const Location& rhs) {
+	return !(lhs == rhs);
+}
+
+inline bool operator!=(const Location& lhs, const char* rhs) {
+	return !(lhs == rhs);
+}
+
 typedef Common::List<Puzzle *> PuzzleList;
 typedef Common::Queue<Puzzle *> PuzzleQueue;
 typedef Common::List<Control *> ControlList;
@@ -248,7 +270,6 @@ public:
 
 	void serialize(Common::WriteStream *stream);
 	void deserialize(Common::SeekableReadStream *stream);
-	void reset();
 
 	Location getCurrentLocation() const;
 	Location getLastLocation();
@@ -274,7 +295,7 @@ private:
 	bool execScope(ScriptScope &scope);
 
 	/** Perform change location */
-	void ChangeLocationReal();
+	void ChangeLocationReal(bool isLoading);
 
 	int8 inventoryGetCount();
 	void inventorySetCount(int8 cnt);
@@ -313,9 +334,10 @@ private:
 	 *
 	 * @param criteria    Pointer to the Criteria object to fill
 	 * @param stream      Scr file stream
+	 * @param key         Puzzle key (for workarounds)
 	 * @return            Whether any criteria were read
 	 */
-	bool parseCriteria(Common::SeekableReadStream &stream, Common::List<Common::List<Puzzle::CriteriaEntry> > &criteriaList) const;
+	bool parseCriteria(Common::SeekableReadStream &stream, Common::List<Common::List<Puzzle::CriteriaEntry> > &criteriaList, uint32 key) const;
 
 	/**
 	 * Parses the stream into a ResultAction objects

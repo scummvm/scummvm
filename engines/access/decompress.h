@@ -32,7 +32,8 @@ public:
 	void decompress(byte *source, byte *dest);
 private:
 	byte *_source;
-	byte _codeLength, _bitPos;
+	byte _sourceBitsLeft;
+	byte _codeLength;
 	uint16 getCode();
 };
 

@@ -39,22 +39,15 @@ public:
 private:
 	class ZorkAVIAudioTrack : public Video::AVIDecoder::AVIAudioTrack {
 	public:
-		ZorkAVIAudioTrack(const AVIStreamHeader &streamHeader, const PCMWaveFormat &waveFormat, Audio::Mixer::SoundType soundType) :
-			Video::AVIDecoder::AVIAudioTrack(streamHeader, waveFormat, soundType),
-			decoder(NULL) {
-			if (_audStream) {
-				decoder = new RawChunkStream(_audStream->isStereo());
-			}
-		}
-		virtual ~ZorkAVIAudioTrack() {
-			if (decoder)
-				delete decoder;
-		}
+		ZorkAVIAudioTrack(const AVIStreamHeader &streamHeader, const PCMWaveFormat &waveFormat, Audio::Mixer::SoundType soundType);
 
+		void createAudioStream();
 		void queueSound(Common::SeekableReadStream *stream);
 		void resetStream();
+
 	private:
-		RawChunkStream *decoder;
+		Audio::QueuingAudioStream *_queueStream;
+		RawChunkStream _decoder;
 	};
 
 	Video::AVIDecoder::AVIAudioTrack *createAudioTrack(Video::AVIDecoder::AVIStreamHeader sHeader, Video::AVIDecoder::PCMWaveFormat wvInfo);

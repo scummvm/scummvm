@@ -781,7 +781,7 @@ int MovGraph_messageHandler(ExCommand *cmd) {
 		int off = (node->_field_14 >> 16) & 0xFF;
 		double off2 = ((link->_movGraphNode2->_field_14 >> 8) & 0xff) - off;
 
-		top = off + (int)(sqrt(sq) * off2 / link->_distance);
+		top = off + (int)(sqrt(sq) * off2 / link->_z);
 	} else {
 		top = (gr->calcOffset(ani->_ox, ani->_oy)->_field_14 >> 8) & 0xff;
 	}

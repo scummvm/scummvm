@@ -44,11 +44,12 @@ TSageEngine::TSageEngine(OSystem *system, const tSageGameDescription *gameDesc) 
 			_debugger = new DemoDebugger();
 		else
 			_debugger = new RingworldDebugger();
-	}
-	else if (g_vm->getGameID() == GType_BlueForce)
+	} else if (g_vm->getGameID() == GType_BlueForce)
 		_debugger = new BlueForceDebugger();
 	else if (g_vm->getGameID() == GType_Ringworld2)
 		_debugger = new Ringworld2Debugger();
+	else if (g_vm->getGameID() == GType_Sherlock1)
+		_debugger = new DemoDebugger();
 }
 
 Common::Error TSageEngine::init() {
@@ -110,6 +111,13 @@ void TSageEngine::initialize() {
 
 		// Reset all global variables
 		R2_GLOBALS.reset();
+	} else if (g_vm->getGameID() == GType_Sherlock1) {
+#ifdef TSAGE_SHERLOCK_ENABLED
+		g_resourceManager->addLib("SF3.RLB");
+		g_globals = new Globals();
+	
+		return;
+#endif
 	}
 
 	g_globals->gfxManager().setDefaults();

@@ -324,7 +324,7 @@ void FullpipeEngine::lift_walkAndGo() {
 	ExCommand *ex;
 
 	if (abs(_liftX - _aniMan->_ox) > 1 || abs(_liftY - _aniMan->_oy) > 1 || _aniMan->_movement || _aniMan->_statics->_staticsId != ST_MAN_UP) {
-		mq = getCurrSceneSc2MotionController()->method34(_aniMan, _liftX, _liftY, 1, ST_MAN_UP);
+		mq = getCurrSceneSc2MotionController()->startMove(_aniMan, _liftX, _liftY, 1, ST_MAN_UP);
 
 		if (mq) {
 			ex = new ExCommand(0, 17, MSG_LIFT_CLICKBUTTON, 0, 0, 0, 1, 0, 0, 0);

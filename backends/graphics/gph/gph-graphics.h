@@ -33,7 +33,7 @@ enum {
 
 class GPHGraphicsManager : public SurfaceSdlGraphicsManager {
 public:
-	GPHGraphicsManager(SdlEventSource *boss);
+	GPHGraphicsManager(SdlEventSource *boss, SdlWindow *window);
 
 	bool hasFeature(OSystem::Feature f);
 	void setFeatureState(OSystem::Feature f, bool enable);

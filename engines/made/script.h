@@ -84,7 +84,6 @@ protected:
 	int16 _localStackPos;
 	int16 _runningScriptObjectIndex;
 	byte *_codeBase, *_codeIp;
-	bool _terminated;
 
 	ScriptFunctions *_functions;
 

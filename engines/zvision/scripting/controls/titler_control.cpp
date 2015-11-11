@@ -82,7 +82,7 @@ TitlerControl::~TitlerControl() {
 void TitlerControl::setString(int strLine) {
 	if (strLine != _curString && strLine >= 0 && strLine < (int)_strings.size()) {
 		_surface->fillRect(Common::Rect(_surface->w, _surface->h), 0);
-		_engine->getTextRenderer()->drawTxtInOneLine(_strings[strLine], *_surface);
+		_engine->getTextRenderer()->drawTextWithWordWrapping(_strings[strLine], *_surface);
 		_engine->getRenderManager()->blitSurfaceToBkg(*_surface, _rectangle.left, _rectangle.top);
 		_curString = strLine;
 	}

@@ -121,10 +121,22 @@ void MouseHandler::cursorText(const char *buffer, const int16 cx, const int16 cy
 	int16 sx, sy;
 	if (cx < kXPix / 2) {
 		sx = cx + kCursorNameOffX;
-		sy = (_vm->_inventory->getInventoryObjId() == -1) ? cy + kCursorNameOffY : cy + kCursorNameOffY - (_vm->_screen->fontHeight() + 1);
+		if (_vm->_inventory->getInventoryObjId() == -1) {
+			sy = cy + kCursorNameOffY;
+		} else {
+			sy = cy + kCursorNameOffY - (_vm->_screen->fontHeight() + 1);
+			if (sy < 0) {
+				sx = cx + kCursorNameOffX + 25;
+				sy = cy + kCursorNameOffY;
+			}
+		}
 	} else {
 		sx = cx - sdx - kCursorNameOffX / 2;
 		sy = cy + kCursorNameOffY;
+	}
+
+	if (sy < 0) {
+		sy = 0;
 	}
 
 	// Display the string and add rect to display list

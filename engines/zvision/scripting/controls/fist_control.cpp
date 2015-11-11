@@ -105,7 +105,12 @@ bool FistControl::process(uint32 deltaTimeInMillis) {
 		if (_animation->needsUpdate()) {
 			const Graphics::Surface *frameData = _animation->decodeNextFrame();
 			if (frameData)
-				_engine->getRenderManager()->blitSurfaceToBkgScaled(*frameData, _anmRect);
+				// WORKAROUND: Ignore the target frame dimensions for the finger animations.
+				// The target dimensions specify an area smaller than expected, thus if we
+				// scale the finger videos to fit these dimensions, they are not aligned
+				// correctly. Not scaling these videos yields a result identical to the
+				// original. Fixes bug #6784.
+				_engine->getRenderManager()->blitSurfaceToBkg(*frameData, _anmRect.left, _anmRect.top);
 		}
 	}
 

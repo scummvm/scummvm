@@ -113,6 +113,20 @@ void Screen::setInitialPalettte() {
 	g_system->getPaletteManager()->setPalette(INITIAL_PALETTE, 0, 18);
 }
 
+void Screen::setManPalette() {
+	for (int i = 0; i < 0x42; i++) {
+		_rawPalette[672 + i] = VGA_COLOR_TRANS(_manPal[i]);
+	}
+}
+
+void Screen::setIconPalette() {
+	if (_vm->getGameID() == GType_MartianMemorandum) {
+		for (int i = 0; i < 0x1B; i++) {
+			_rawPalette[741 + i] = VGA_COLOR_TRANS(Martian::ICON_PALETTE[i]);
+		}
+	}
+}
+
 void Screen::loadPalette(int fileNum, int subfile) {
 	Resource *res = _vm->_files->loadFile(fileNum, subfile);
 	byte *palette = res->data();
@@ -189,7 +203,7 @@ void Screen::forceFadeIn() {
 		for (int idx = 0; idx < PALETTE_SIZE; ++idx, ++srcP, ++destP) {
 			if (*destP != *srcP) {
 				repeatFlag = true;
-				*destP = MAX((int)*destP + FADE_AMOUNT, (int)*srcP);
+				*destP = MIN((int)*destP + FADE_AMOUNT, (int)*srcP);
 			}
 		}
 
@@ -267,6 +281,11 @@ void Screen::drawRect() {
 	ASurface::drawRect();
 }
 
+void Screen::drawBox() {
+	addDirtyRect(Common::Rect(_orgX1, _orgY1, _orgX2, _orgY2));
+	ASurface::drawBox();
+}
+
 void Screen::transBlitFrom(ASurface *src, const Common::Point &destPos) {
 	addDirtyRect(Common::Rect(destPos.x, destPos.y, destPos.x + src->w, destPos.y + src->h));
 	ASurface::transBlitFrom(src, destPos);
@@ -320,6 +339,10 @@ void Screen::cyclePaletteBackwards() {
 		g_system->updateScreen();
 		g_system->delayMillis(10);
 	}
+}
+
+void Screen::flashPalette(int count) {
+	warning("TODO: Implement flashPalette");
 }
 
 void Screen::addDirtyRect(const Common::Rect &r) {

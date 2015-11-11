@@ -23,9 +23,20 @@
 #include "common/config-manager.h"
 #include "common/file.h"
 #include "common/textconsole.h"
+#include "common/memstream.h"
 
 #include "agos/agos.h"
 #include "agos/midi.h"
+
+#include "agos/drivers/accolade/mididriver.h"
+#include "agos/drivers/simon1/adlib.h"
+// Miles Audio for Simon 2
+#include "audio/miles.h"
+
+// PKWARE data compression library decompressor required for Simon 2
+#include "common/dcl.h"
+
+#include "gui/message.h"
 
 namespace AGOS {
 
@@ -42,6 +53,7 @@ MidiPlayer::MidiPlayer() {
 	_driver = 0;
 	_map_mt32_to_gm = false;
 
+	_adLibMusic = false;
 	_enable_sfx = true;
 	_current = 0;
 
@@ -52,9 +64,11 @@ MidiPlayer::MidiPlayer() {
 	_paused = false;
 
 	_currentTrack = 255;
-	_loopTrackDefault = false;
+	_loopTrack = 0;
 	_queuedTrack = 255;
 	_loopQueuedTrack = 0;
+
+	_musicMode = kMusicModeDisabled;
 }
 
 MidiPlayer::~MidiPlayer() {
@@ -70,12 +84,181 @@ MidiPlayer::~MidiPlayer() {
 	clearConstructs();
 }
 
-int MidiPlayer::open(int gameType) {
+int MidiPlayer::open(int gameType, bool isDemo) {
 	// Don't call open() twice!
 	assert(!_driver);
 
-	// Setup midi driver
-	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_ADLIB | MDT_MIDI | (gameType == GType_SIMON1 ? MDT_PREFER_MT32 : MDT_PREFER_GM));
+	Common::String accoladeDriverFilename;
+	MusicType musicType = MT_INVALID;
+
+	switch (gameType) {
+	case GType_ELVIRA1:
+		_musicMode = kMusicModeAccolade;
+		accoladeDriverFilename = "INSTR.DAT";
+		break;
+	case GType_ELVIRA2:
+	case GType_WW:
+		// Attention: Elvira 2 shipped with INSTR.DAT and MUSIC.DRV
+		// MUSIC.DRV is the correct one. INSTR.DAT seems to be a left-over
+		_musicMode = kMusicModeAccolade;
+		accoladeDriverFilename = "MUSIC.DRV";
+		break;
+	case GType_SIMON1:
+		if (isDemo) {
+			_musicMode = kMusicModeAccolade;
+			accoladeDriverFilename = "MUSIC.DRV";
+		} else if (Common::File::exists("MT_FM.IBK")) {
+			_musicMode = kMusicModeSimon1;
+		}
+		break;
+	case GType_SIMON2:
+		//_musicMode = kMusicModeMilesAudio;
+		// currently disabled, because there are a few issues
+		// MT32 seems to work fine now, AdLib seems to use bad instruments and is also outputting music on
+		// the right speaker only. The original driver did initialize the panning to 0 and the Simon2 XMIDI
+		// tracks don't set panning at all. We can reset panning to be centered, which would solve this
+		// issue, but we still don't know who's setting it in the original interpreter.
+		break;
+	default:
+		break;
+	}
+
+	MidiDriver::DeviceHandle dev;
+	int ret = 0;
+
+	if (_musicMode != kMusicModeDisabled) {
+		dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_MT32);
+		musicType = MidiDriver::getMusicType(dev);
+
+		switch (musicType) {
+		case MT_ADLIB:
+		case MT_MT32:
+			break;
+		case MT_GM:
+			if (!ConfMan.getBool("native_mt32")) {
+				// Not a real MT32 / no MUNT
+				::GUI::MessageDialog dialog(("You appear to be using a General MIDI device,\n"
+											"but your game only supports Roland MT32 MIDI.\n"
+											"We try to map the Roland MT32 instruments to\n"
+											"General MIDI ones. It is still possible that\n"
+											"some tracks sound incorrect."));
+				dialog.runModal();
+			}
+			// Switch to MT32 driver in any case
+			musicType = MT_MT32;
+			break;
+		default:
+			_musicMode = kMusicModeDisabled;
+			break;
+		}
+	}
+
+	switch (_musicMode) {
+	case kMusicModeAccolade: {
+		// Setup midi driver
+		switch (musicType) {
+		case MT_ADLIB:
+			_driver = MidiDriver_Accolade_AdLib_create(accoladeDriverFilename);
+			break;
+		case MT_MT32:
+			_driver = MidiDriver_Accolade_MT32_create(accoladeDriverFilename);
+			break;
+		default:
+			assert(0);
+			break;
+		}
+		if (!_driver)
+			return 255;
+
+		ret = _driver->open();
+		if (ret == 0) {
+			// Reset is done inside our MIDI driver
+			_driver->setTimerCallback(this, &onTimer);
+		}
+
+		//setTimerRate(_driver->getBaseTempo());
+		return 0;
+	}
+	
+	case kMusicModeMilesAudio: {
+		switch (musicType) {
+		case MT_ADLIB: {
+			Common::File instrumentDataFile;
+			if (instrumentDataFile.exists("MIDPAK.AD")) {
+				// if there is a file called MIDPAK.AD, use it directly
+				warning("SIMON 2: using MIDPAK.AD");
+				_driver = Audio::MidiDriver_Miles_AdLib_create("MIDPAK.AD", "MIDPAK.AD");
+			} else {
+				// if there is no file called MIDPAK.AD, try to extract it from the file SETUP.SHR
+				// if we didn't do this, the user would be forced to "install" the game instead of simply
+				// copying all files from CD-ROM.
+				Common::SeekableReadStream *midpakAdLibStream;
+				midpakAdLibStream = simon2SetupExtractFile("MIDPAK.AD");
+				if (!midpakAdLibStream)
+					error("MidiPlayer: could not extract MIDPAK.AD from SETUP.SHR");
+
+				// Pass this extracted data to the driver
+				warning("SIMON 2: using MIDPAK.AD extracted from SETUP.SHR");
+				_driver = Audio::MidiDriver_Miles_AdLib_create("", "", midpakAdLibStream);
+				delete midpakAdLibStream;
+			}
+			// TODO: not sure what's going wrong with AdLib
+			// it doesn't seem to matter if we use the regular XMIDI tracks or the 2nd set meant for MT32
+			break;
+		}
+		case MT_MT32:
+			_driver = Audio::MidiDriver_Miles_MT32_create("");
+			_nativeMT32 = true; // use 2nd set of XMIDI tracks
+			break;
+		case MT_GM:
+			if (ConfMan.getBool("native_mt32")) {
+				_driver = Audio::MidiDriver_Miles_MT32_create("");
+				_nativeMT32 = true; // use 2nd set of XMIDI tracks
+			}
+			break;
+
+		default:
+			break;
+		}
+		if (!_driver)
+			return 255;
+
+		ret = _driver->open();
+		if (ret == 0) {
+			// Reset is done inside our MIDI driver
+			_driver->setTimerCallback(this, &onTimer);
+		}
+		return 0;
+	}
+
+	case kMusicModeSimon1: {
+		// This only handles the original AdLib driver of Simon1.
+		if (musicType == MT_ADLIB) {
+			_adLibMusic = true;
+			_map_mt32_to_gm = false;
+			_nativeMT32 = false;
+
+			_driver = createMidiDriverSimon1AdLib("MT_FM.IBK");
+			if (_driver && _driver->open() == 0) {
+				_driver->setTimerCallback(this, &onTimer);
+				// Like the original, we enable the rhythm support by default.
+				_driver->send(0xB0, 0x67, 0x01);
+				return 0;
+			}
+
+			delete _driver;
+			_driver = nullptr;
+		}
+
+		_musicMode = kMusicModeDisabled;
+	}
+
+	default:
+		break;
+	}
+
+	dev = MidiDriver::detectDevice(MDT_ADLIB | MDT_MIDI | (gameType == GType_SIMON1 ? MDT_PREFER_MT32 : MDT_PREFER_GM));
+	_adLibMusic = (MidiDriver::getMusicType(dev) == MT_ADLIB);
 	_nativeMT32 = ((MidiDriver::getMusicType(dev) == MT_MT32) || ConfMan.getBool("native_mt32"));
 
 	_driver = MidiDriver::createMidi(dev);
@@ -87,7 +270,7 @@ int MidiPlayer::open(int gameType) {
 
 	_map_mt32_to_gm = (gameType != GType_SIMON2 && !_nativeMT32);
 
-	int ret = _driver->open();
+	ret = _driver->open();
 	if (ret)
 		return ret;
 	_driver->setTimerCallback(this, &onTimer);
@@ -103,6 +286,33 @@ int MidiPlayer::open(int gameType) {
 void MidiPlayer::send(uint32 b) {
 	if (!_current)
 		return;
+
+	if (_musicMode != kMusicModeDisabled) {
+		// Handle volume control for Simon1 output.
+		if (_musicMode == kMusicModeSimon1) {
+			// The driver does not support any volume control, thus we simply
+			// scale the velocities on note on for now.
+			// TODO: We should probably handle this at output level at some
+			// point. Then we can allow volume changes to affect already
+			// playing notes too. For now this simple change allows us to
+			// have some simple volume control though.
+			if ((b & 0xF0) == 0x90) {
+				byte volume = (b >> 16) & 0x7F;
+
+				if (_current == &_sfx) {
+					volume = volume * _sfxVolume / 255;
+				} else if (_current == &_music) {
+					volume = volume * _musicVolume / 255;
+				}
+
+				b = (b & 0xFF00FFFF) | (volume << 16);
+			}
+		}
+
+		// Send directly to Accolade/Miles/Simon1 Audio driver
+		_driver->send(b);
+		return;
+	}
 
 	byte channel = (byte)(b & 0x0F);
 	if ((b & 0xFFF0) == 0x07B0) {
@@ -135,8 +345,10 @@ void MidiPlayer::send(uint32 b) {
 		_current->volume[channel] = 127;
 	}
 
+	// Allocate channels if needed
 	if (!_current->channel[channel])
 		_current->channel[channel] = (channel == 9) ? _driver->getPercussionChannel() : _driver->allocateChannel();
+
 	if (_current->channel[channel]) {
 		if (channel == 9) {
 			if (_current == &_sfx)
@@ -166,13 +378,13 @@ void MidiPlayer::metaEvent(byte type, byte *data, uint16 length) {
 		return;
 	} else if (_current == &_sfx) {
 		clearConstructs(_sfx);
-	} else if (_current->loopTrack) {
+	} else if (_loopTrack) {
 		_current->parser->jumpToTick(0);
 	} else if (_queuedTrack != 255) {
 		_currentTrack = 255;
 		byte destination = _queuedTrack;
 		_queuedTrack = 255;
-		_current->loopTrack = _loopQueuedTrack;
+		_loopTrack = _loopQueuedTrack;
 		_loopQueuedTrack = false;
 
 		// Remember, we're still inside the locked mutex.
@@ -300,7 +512,7 @@ void MidiPlayer::setVolume(int musicVol, int sfxVol) {
 void MidiPlayer::setLoop(bool loop) {
 	Common::StackLock lock(_mutex);
 
-	_loopTrackDefault = loop;
+	_loopTrack = loop;
 }
 
 void MidiPlayer::queueTrack(int track, bool loop) {
@@ -411,24 +623,27 @@ void MidiPlayer::loadSMF(Common::File *in, int song, bool sfx) {
 		// 1 BYTE : Major version
 		// 1 BYTE : Minor version
 		// 1 BYTE : Ticks (Ranges from 2 - 8, always 2 for SFX)
-		// 1 BYTE : Loop control. 0 = no loop, 1 = loop
+		// 1 BYTE : Loop control. 0 = no loop, 1 = loop (Music only)
+		if (!sfx) {
+			// In the original, the ticks value indicated how many
+			// times the music timer was called before it actually
+			// did something. The larger the value the slower the
+			// music.
+			//
+			// We, on the other hand, have a timer rate which is
+			// used to control by how much the music advances on
+			// each onTimer() call. The larger the value, the
+			// faster the music.
+			//
+			// It seems that 4 corresponds to our base tempo, so
+			// this should be the right way to calculate it.
+			timerRate = (4 * _driver->getBaseTempo()) / p->data[5];
 
-		// In the original, the ticks value indicated how many
-		// times the music timer was called before it actually
-		// did something. The larger the value the slower the
-		// music.
-		//
-		// We, on the other hand, have a timer rate which is
-		// used to control by how much the music advances on
-		// each onTimer() call. The larger the value, the
-		// faster the music.
-		//
-		// It seems that 4 corresponds to our base tempo, so
-		// this should be the right way to calculate it.
-		timerRate = (4 * _driver->getBaseTempo()) / p->data[5];
-		p->loopTrack = (p->data[6] != 0);
-	} else {
-		p->loopTrack = _loopTrackDefault;
+			// According to bug #1004919 calling setLoop() from
+			// within a lock causes a lockup, though I have no
+			// idea when this actually happens.
+			_loopTrack = (p->data[6] != 0);
+		}
 	}
 
 	MidiParser *parser = MidiParser::createParser_SMF();
@@ -498,8 +713,6 @@ void MidiPlayer::loadMultipleSMF(Common::File *in, bool sfx) {
 		p->song_sizes[i] = size;
 	}
 
-	p->loopTrack = _loopTrackDefault;
-
 	if (!sfx) {
 		_currentTrack = 255;
 		resetVolumeTable();
@@ -531,7 +744,6 @@ void MidiPlayer::loadXMIDI(Common::File *in, bool sfx) {
 		in->seek(pos, 0);
 		p->data = (byte *)calloc(size, 1);
 		in->read(p->data, size);
-		p->loopTrack = _loopTrackDefault;
 	} else {
 		error("Expected 'FORM' tag but found '%c%c%c%c' instead", buf[0], buf[1], buf[2], buf[3]);
 	}
@@ -576,8 +788,105 @@ void MidiPlayer::loadS1D(Common::File *in, bool sfx) {
 		_currentTrack = 255;
 		resetVolumeTable();
 	}
-	p->loopTrack = _loopTrackDefault;
 	p->parser = parser; // That plugs the power cord into the wall
+}
+
+#define MIDI_SETUP_BUNDLE_HEADER_SIZE 56
+#define MIDI_SETUP_BUNDLE_FILEHEADER_SIZE 48
+#define MIDI_SETUP_BUNDLE_FILENAME_MAX_SIZE 12
+
+// PKWARE data compression library (called "DCL" in ScummVM) was used for storing files within SETUP.SHR
+// we need it to be able to get the file MIDPAK.AD, otherwise we would have to require the user
+// to "install" the game before being able to actually play it, when using AdLib.
+//
+// SETUP.SHR file format:
+//  [bundle file header]
+//    [compressed file header] [compressed file data]
+//     * compressed file count
+Common::SeekableReadStream *MidiPlayer::simon2SetupExtractFile(const Common::String &requestedFileName) {
+	Common::File *setupBundleStream = new Common::File();
+	uint32        bundleSize = 0;
+	uint32        bundleBytesLeft = 0;
+	byte          bundleHeader[MIDI_SETUP_BUNDLE_HEADER_SIZE];
+	byte          bundleFileHeader[MIDI_SETUP_BUNDLE_FILEHEADER_SIZE];
+	uint16        bundleFileCount = 0;
+	uint16        bundleFileNr = 0;
+
+	Common::String fileName;
+	uint32         fileCompressedSize = 0;
+	byte          *fileCompressedDataPtr = nullptr;
+
+	Common::SeekableReadStream *extractedStream = nullptr;
+
+	if (!setupBundleStream->open("setup.shr"))
+		error("MidiPlayer: could not open setup.shr");
+
+	bundleSize = setupBundleStream->size();
+	bundleBytesLeft = bundleSize;
+
+	if (bundleSize < MIDI_SETUP_BUNDLE_HEADER_SIZE)
+		error("MidiPlayer: unexpected EOF in setup.shr");
+
+	if (setupBundleStream->read(bundleHeader, MIDI_SETUP_BUNDLE_HEADER_SIZE) != MIDI_SETUP_BUNDLE_HEADER_SIZE)
+		error("MidiPlayer: setup.shr read error");
+	bundleBytesLeft -= MIDI_SETUP_BUNDLE_HEADER_SIZE;
+
+	// Verify header byte
+	if (bundleHeader[13] != 't')
+		error("MidiPlayer: setup.shr bundle header data mismatch");
+
+	bundleFileCount = READ_LE_UINT16(&bundleHeader[14]);
+
+	// Search for requested file
+	while (bundleFileNr < bundleFileCount) {
+		if (bundleBytesLeft < sizeof(bundleFileHeader))
+			error("MidiPlayer: unexpected EOF in setup.shr");
+
+		if (setupBundleStream->read(bundleFileHeader, sizeof(bundleFileHeader)) != sizeof(bundleFileHeader))
+			error("MidiPlayer: setup.shr read error");
+		bundleBytesLeft -= MIDI_SETUP_BUNDLE_FILEHEADER_SIZE;
+
+		// Extract filename from file-header
+		fileName.clear();
+		for (byte curPos = 0; curPos < MIDI_SETUP_BUNDLE_FILENAME_MAX_SIZE; curPos++) {
+			if (!bundleFileHeader[curPos]) // terminating NUL
+				break;
+			fileName.insertChar(bundleFileHeader[curPos], curPos);
+		}
+
+		// Get compressed
+		fileCompressedSize = READ_LE_UINT32(&bundleFileHeader[20]);
+		if (!fileCompressedSize)
+			error("MidiPlayer: compressed file is 0 bytes, data corruption?");
+		if (bundleBytesLeft < fileCompressedSize)
+			error("MidiPlayer: unexpected EOF in setup.shr");
+
+		if (fileName == requestedFileName) {
+			// requested file found
+			fileCompressedDataPtr = new byte[fileCompressedSize];
+
+			if (setupBundleStream->read(fileCompressedDataPtr, fileCompressedSize) != fileCompressedSize)
+				error("MidiPlayer: setup.shr read error");
+
+			Common::MemoryReadStream *compressedStream = nullptr;
+
+			compressedStream = new Common::MemoryReadStream(fileCompressedDataPtr, fileCompressedSize);
+			// we don't know the unpacked size, let decompressor figure it out
+			extractedStream = Common::decompressDCL(compressedStream);
+			delete compressedStream;
+			break;
+		}
+
+		// skip compressed size
+		setupBundleStream->skip(fileCompressedSize);
+		bundleBytesLeft -= fileCompressedSize;
+
+		bundleFileNr++;
+	}
+	setupBundleStream->close();
+	delete setupBundleStream;
+
+	return extractedStream;
 }
 
 } // End of namespace AGOS

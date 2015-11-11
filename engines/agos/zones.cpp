@@ -94,8 +94,7 @@ void AGOSEngine::loadZone(uint16 zoneNum, bool useError) {
 
 	vpe->sfxFile = NULL;
 
-	if ((getPlatform() == Common::kPlatformAmiga || getPlatform() == Common::kPlatformAtariST) &&
-		getGameType() == GType_ELVIRA2) {
+	if (getGameType() == GType_ELVIRA2) {
 		// A singe sound file is used for Amiga and AtariST versions
 		if (loadVGASoundFile(1, 3)) {
 			vpe->sfxFile = _block;

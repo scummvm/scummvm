@@ -31,8 +31,6 @@
 
 namespace Access {
 
-#define PLAYER_DATA_COUNT 8
-
 enum Direction {
 	NONE = 0,
 	UP = 1,
@@ -58,11 +56,11 @@ protected:
 	int _diagUpWalkMin, _diagUpWalkMax;
 	int _diagDownWalkMin, _diagDownWalkMax;
 	SpriteResource *_playerSprites1;
-	byte *_manPal1;
 	int _scrollEnd;
 	int _inactiveYOff;
 
 	void plotCom(int v1);
+	void plotCom0();
 	void plotCom1();
 	void plotCom2();
 	void plotCom3();
@@ -76,22 +74,19 @@ protected:
 	void walkUpRight();
 	void walkDownRight();
 	void checkScrollUp();
-	bool scrollUp();
-	bool scrollDown();
-	bool scrollLeft();
-	bool scrollRight();
 public:
 	Direction _playerDirection;
 	SpriteResource *_playerSprites;
 	// Fields in original Player structure
-	int _walkOffRight[PLAYER_DATA_COUNT];
-	int _walkOffLeft[PLAYER_DATA_COUNT];
-	int _walkOffUp[PLAYER_DATA_COUNT];
-	int _walkOffDown[PLAYER_DATA_COUNT];
-	Common::Point _walkOffUR[PLAYER_DATA_COUNT];
-	Common::Point _walkOffDR[PLAYER_DATA_COUNT];
-	Common::Point _walkOffUL[PLAYER_DATA_COUNT];
-	Common::Point _walkOffDL[PLAYER_DATA_COUNT];
+	byte *_manPal1;
+	int *_walkOffRight;
+	int *_walkOffLeft;
+	int *_walkOffUp;
+	int *_walkOffDown;
+	Common::Point *_walkOffUR;
+	Common::Point *_walkOffDR;
+	Common::Point *_walkOffUL;
+	Common::Point *_walkOffDL;
 	byte _rawTempL;
 	int _rawXTemp;
 	byte _rawYTempL;
@@ -125,6 +120,8 @@ public:
 
 	virtual void load();
 
+	void loadTexPalette();
+
 	void loadSprites(const Common::String &name);
 
 	void freeSprites();
@@ -137,6 +134,10 @@ public:
 
 	void calcPlayer();
 
+	bool scrollUp(int forcedAmount = -1);
+	bool scrollDown(int forcedAmount = -1);
+	bool scrollLeft(int forcedAmount = -1);
+	bool scrollRight(int forcedAmount = -1);
 	void checkScroll();
 
 	void checkMove();

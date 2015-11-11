@@ -68,8 +68,8 @@ public:
 	void onMouseUp(const Common::Point &Pos);
 	void process(uint32 deltaTimeInMillis);
 private:
-	Graphics::Surface menuback[3][2];
-	Graphics::Surface menubar[4][2];
+	Graphics::Surface menuBack[3][2];
+	Graphics::Surface menuBar[4][2];
 	Graphics::Surface *items[50][2];
 	uint itemId[50];
 
@@ -77,11 +77,11 @@ private:
 	uint magicId[12];
 
 	int menuMouseFocus;
-	bool inmenu;
+	bool inMenu;
 
 	int mouseOnItem;
 
-	bool   scrolled[3];
+	bool scrolled[3];
 	int16 scrollPos[3];
 
 	bool clean;
@@ -98,13 +98,13 @@ public:
 	void process(uint32 deltaTimeInMillis);
 private:
 	Graphics::Surface but[4][6];
-	Graphics::Surface menubar;
+	Graphics::Surface menuBar;
 
-	bool inmenu;
+	bool inMenu;
 
 	int mouseOnItem;
 
-	bool   scrolled;
+	bool scrolled;
 	int16 scrollPos;
 
 	bool redraw;
@@ -114,6 +114,6 @@ private:
 
 };
 
-}
+} // End of namespace ZVision
 
 #endif

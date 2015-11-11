@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -86,7 +86,7 @@ void MainMenu::display() {
 			frame0->_offset.y - frame0->h);
 		screenObjects.add(
 			Common::Rect(pt.x, pt.y + DIALOG_TOP, pt.x + frame0->w,
-			pt.y + frame0->h + DIALOG_TOP), LAYER_GUI, CAT_COMMAND, i);
+			pt.y + frame0->h + DIALOG_TOP), SCREENMODE_VGA, CAT_COMMAND, i);
 	}
 
 	// Set the cursor for when it's shown
@@ -292,7 +292,7 @@ bool MainMenu::onEvent(Common::Event &event) {
 }
 
 int MainMenu::getHighlightedItem(const Common::Point &pt) {
-	return _vm->_game->_screenObjects.scan(pt, LAYER_GUI) - 1;
+	return _vm->_game->_screenObjects.scan(pt, SCREENMODE_VGA) - 1;
 }
 
 void MainMenu::unhighlightItem() {

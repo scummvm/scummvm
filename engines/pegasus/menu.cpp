@@ -258,12 +258,12 @@ void MainMenu::handleInput(const Input &input, const Hotspot *cursorSpot) {
 	bool isDemo = vm->isDemo();
 
 	if (input.upButtonDown()) {
-		if (_menuSelection > (isDemo ? kFirstSelectionDemo : kFirstSelection)) {
+		if (_menuSelection > (uint32)(isDemo ? kFirstSelectionDemo : kFirstSelection)) {
 			_menuSelection--;
 			updateDisplay();
 		}
 	} else if (input.downButtonDown()) {
-		if (_menuSelection < (isDemo ? kLastSelectionDemo : kLastSelection)) {
+		if (_menuSelection < (uint32)(isDemo ? kLastSelectionDemo : kLastSelection)) {
 			_menuSelection++;
 			updateDisplay();
 		}

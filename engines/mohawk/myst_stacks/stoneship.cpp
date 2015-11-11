@@ -425,8 +425,12 @@ void Stoneship::o_cabinBookMovie(uint16 op, uint16 var, uint16 argc, uint16 *arg
 	uint16 startTime = argv[0];
 	uint16 endTime = argv[1];
 
-	VideoHandle book = _vm->_video->playMovie(_vm->wrapMovieFilename("bkroom", kStoneshipStack), 159, 99);
-	_vm->_video->setVideoBounds(book, Audio::Timestamp(0, startTime, 600), Audio::Timestamp(0, endTime, 600));
+	VideoHandle book = _vm->_video->playMovie(_vm->wrapMovieFilename("bkroom", kStoneshipStack));
+	if (!book)
+		error("Failed to open bkroom movie");
+
+	book->moveTo(159, 99);
+	book->setBounds(Audio::Timestamp(0, startTime, 600), Audio::Timestamp(0, endTime, 600));
 	_vm->_video->waitUntilMovieEnds(book);
 }
 
@@ -597,9 +601,9 @@ void Stoneship::o_hologramPlayback(uint16 op, uint16 var, uint16 argc, uint16 *a
 	if (_hologramTurnedOn) {
 		if (_hologramDisplayPos)
 			endPoint = _hologramDisplayPos;
-		_vm->_video->setVideoBounds(displayMovie, Audio::Timestamp(0, startPoint, 600), Audio::Timestamp(0, endPoint, 600));
+		displayMovie->setBounds(Audio::Timestamp(0, startPoint, 600), Audio::Timestamp(0, endPoint, 600));
 	} else {
-		_vm->_video->setVideoBounds(displayMovie, Audio::Timestamp(0, startPoint, 600), Audio::Timestamp(0, endPoint, 600));
+		displayMovie->setBounds(Audio::Timestamp(0, startPoint, 600), Audio::Timestamp(0, endPoint, 600));
 	}
 
 	_vm->_video->delayUntilMovieEnds(displayMovie);
@@ -673,29 +677,45 @@ void Stoneship::o_chestValveVideos(uint16 op, uint16 var, uint16 argc, uint16 *a
 
 	if (_state.chestValveState) {
 		// Valve closing
-		VideoHandle valve = _vm->_video->playMovie(movie, 97, 267);
-		_vm->_video->setVideoBounds(valve, Audio::Timestamp(0, 0, 600), Audio::Timestamp(0, 350, 600));
+		VideoHandle valve = _vm->_video->playMovie(movie);
+		if (!valve)
+			error("Failed to open '%s'", movie.c_str());
+
+		valve->moveTo(97, 267);
+		valve->setBounds(Audio::Timestamp(0, 0, 600), Audio::Timestamp(0, 350, 600));
 		_vm->_video->waitUntilMovieEnds(valve);
 	} else if (_state.chestWaterState) {
 		// Valve opening, spilling water
-		VideoHandle valve = _vm->_video->playMovie(movie, 97, 267);
-		_vm->_video->setVideoBounds(valve, Audio::Timestamp(0, 350, 600), Audio::Timestamp(0, 650, 600));
+		VideoHandle valve = _vm->_video->playMovie(movie);
+		if (!valve)
+			error("Failed to open '%s'", movie.c_str());
+
+		valve->moveTo(97, 267);
+		valve->setBounds(Audio::Timestamp(0, 350, 600), Audio::Timestamp(0, 650, 600));
 		_vm->_video->waitUntilMovieEnds(valve);
 
 		_vm->_sound->playSound(3132);
 
 		for (uint i = 0; i < 25; i++) {
-			valve = _vm->_video->playMovie(movie, 97, 267);
-			_vm->_video->setVideoBounds(valve, Audio::Timestamp(0, 650, 600), Audio::Timestamp(0, 750, 600));
+			valve = _vm->_video->playMovie(movie);
+			if (!valve)
+				error("Failed to open '%s'", movie.c_str());
+
+			valve->moveTo(97, 267);
+			valve->setBounds(Audio::Timestamp(0, 650, 600), Audio::Timestamp(0, 750, 600));
 			_vm->_video->waitUntilMovieEnds(valve);
 		}
 
 		_vm->_sound->resumeBackgroundMyst();
 	} else {
 		// Valve opening
-		VideoHandle valve = _vm->_video->playMovie(movie, 97, 267);
-		_vm->_video->seekToTime(valve, Audio::Timestamp(0, 350, 600));
-		_vm->_video->setVideoRate(valve, -1);
+		VideoHandle valve = _vm->_video->playMovie(movie);
+		if (!valve)
+			error("Failed to open '%s'", movie.c_str());
+
+		valve->moveTo(97, 267);
+		valve->seek(Audio::Timestamp(0, 350, 600));
+		valve->setRate(-1);
 		_vm->_video->waitUntilMovieEnds(valve);
 	}
 }
@@ -716,14 +736,22 @@ void Stoneship::o_trapLockOpen(uint16 op, uint16 var, uint16 argc, uint16 *argv)
 
 	Common::String movie = _vm->wrapMovieFilename("openloc", kStoneshipStack);
 
-	VideoHandle lock = _vm->_video->playMovie(movie, 187, 71);
-	_vm->_video->setVideoBounds(lock, Audio::Timestamp(0, 0, 600), Audio::Timestamp(0, 750, 600));
+	VideoHandle lock = _vm->_video->playMovie(movie);
+	if (!lock)
+		error("Failed to open '%s'", movie.c_str());
+
+	lock->moveTo(187, 71);
+	lock->setBounds(Audio::Timestamp(0, 0, 600), Audio::Timestamp(0, 750, 600));
 	_vm->_video->waitUntilMovieEnds(lock);
 
 	_vm->_sound->playSound(2143);
 
-	lock = _vm->_video->playMovie(movie, 187, 71);
-	_vm->_video->setVideoBounds(lock, Audio::Timestamp(0, 750, 600), Audio::Timestamp(0, 10000, 600));
+	lock = _vm->_video->playMovie(movie);
+	if (!lock)
+		error("Failed to open '%s'", movie.c_str());
+
+	lock->moveTo(187, 71);
+	lock->setBounds(Audio::Timestamp(0, 750, 600), Audio::Timestamp(0, 10000, 600));
 	_vm->_video->waitUntilMovieEnds(lock);
 
 	if (_state.pumpState != 4)

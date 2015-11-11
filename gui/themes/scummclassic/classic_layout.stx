@@ -196,6 +196,29 @@
 		</layout>
 	</dialog>
 
+	<dialog name = 'FileBrowser' overlays = 'screen' inset = '32' shading = 'dim'>
+		<layout type = 'vertical' padding = '16, 16, 16, 16'>
+			<widget name = 'Headline'
+					height = 'Globals.Line.Height'
+			/>
+			<widget name = 'Filename'
+					height = 'Globals.Line.Height'
+			/>
+			<space size = '10' />
+			<widget name = 'List'/>
+			<layout type = 'vertical' padding = '0, 0, 16, 0'>
+				<layout type = 'horizontal' padding = '0, 0, 0, 0'>
+					<widget name = 'Cancel'
+							type = 'Button'
+					/>
+					<widget name = 'Choose'
+							type = 'Button'
+					/>
+				</layout>
+			</layout>
+		</layout>
+	</dialog>
+
 	<dialog name = 'GlobalOptions' overlays = 'Dialog.Launcher.GameList' shading = 'dim'>
 		<layout type = 'vertical' padding = '0, 0, 0, 0'>
 			<widget name = 'TabWidget'/>
@@ -673,7 +696,7 @@
 			/>
 		</layout>
 	</dialog>
-	
+
 	<dialog name = 'GlobalMenu' overlays = 'screen_center'>
 		<layout type = 'vertical' padding = '16, 16, 16, 16' center = 'true'>
 			<widget name = 'Title'
@@ -1040,7 +1063,7 @@
 							width = '180'
 							height = '170'
 					/>
-					<layout type = 'horizontal' padding = '0, 0, 0, 0'>	
+					<layout type = 'horizontal' padding = '0, 0, 0, 0'>
 						<widget name = 'NextScreenShotButton'
 								width = '25'
 								height = '25'
@@ -1115,15 +1138,15 @@
 			<layout type = 'horizontal'  spacing = '5' padding = '0, 0, 0, 10'>
 				<widget name = 'AuthorLabel'
 						type = 'EditRecordLabel'
-				/>		
+				/>
 				<widget name = 'AuthorEdit'
 						type = 'EditRecord'
-				/>		
+				/>
 			</layout>
 			<layout type = 'horizontal'  spacing = '5' padding = '0, 0, 0, 10'>
 				<widget name = 'NameLabel'
 						type = 'EditRecordLabel'
-				/>		
+				/>
 				<widget name = 'NameEdit'
 						type = 'EditRecord'
 				/>
@@ -1142,11 +1165,11 @@
 				/>
 				<widget name = 'OK'
 						type = 'Button'
-				/>			
+				/>
 			</layout>
 		</layout>
 	</dialog>
-	
+
 	<dialog name = 'ScummHelp' overlays = 'screen_center'>
 		<layout type = 'vertical' padding = '8, 8, 8, 8' center = 'true'>
 			<widget name = 'Title'
@@ -1250,7 +1273,7 @@
 			<layout type = 'horizontal' padding = '5, 5, 5, 5'>
 				<widget name = 'Word'
 					width  = '190'
-					height = 'Globals.Button.Height' 
+					height = 'Globals.Button.Height'
 				/>
 				<widget name = 'Delete'
 					width  = '20'
@@ -1315,7 +1338,7 @@
 				/>
 			</layout>
 			<space size = '5' />
-			<layout type = 'horizontal' padding = '3, 3, 3, 3'>	
+			<layout type = 'horizontal' padding = '3, 3, 3, 3'>
 				<widget name = 'Add'
 					width  = 'Globals.Predictive.Button.Width'
 					height = 'Globals.Button.Height'
