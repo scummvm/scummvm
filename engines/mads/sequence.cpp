@@ -569,7 +569,7 @@ void SequenceList::setSeqPlayer(int idx, bool flag) {
 	setScale(idx, player._currentScale);
 
 	if (flag)
-		_vm->_game->syncTimers(1, idx, 2, 0);
+		_vm->_game->syncTimers(SYNC_SEQ, idx, SYNC_PLAYER, 0);
 }
 
 } // End of namespace

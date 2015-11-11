@@ -44,6 +44,11 @@ enum KernelMode {
 	KERNEL_ROOM_PRELOAD = 3, KERNEL_ROOM_INIT = 4, KERNEL_ACTIVE_CODE = 5
 };
 
+enum SyncType {
+	SYNC_SEQ = 1, SYNC_PLAYER = 2, SYNC_ANIM = 3, SYNC_CLOCK = 4
+};
+
+
 #define MADS_SAVEGAME_VERSION 1
 
 struct MADSSavegameHeader {
@@ -236,7 +241,7 @@ public:
 	 */
 	void createThumbnail();
 
-	void syncTimers(int slave_type, int slave_id, int master_type, int master_id);
+	void syncTimers(SyncType slaveType, int slaveId, SyncType masterType, int masterId);
 
 	typedef struct {
 		//TODO

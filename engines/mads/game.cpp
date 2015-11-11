@@ -599,8 +599,44 @@ void Game::createThumbnail() {
 	::createThumbnail(_saveThumb, _vm->_screen.getData(), MADS_SCREEN_WIDTH, MADS_SCREEN_HEIGHT, thumbPalette);
 }
 
-void Game::syncTimers(int slave_type, int slave_id, int master_type, int master_id) {
-	warning("TODO: Game_syncTimers");
+void Game::syncTimers(SyncType slaveType, int slaveId, SyncType masterType, int masterId) {
+	uint32 syncTime = 0;
+
+	switch (masterType) {
+	case SYNC_SEQ:
+		syncTime = _scene._sequences[masterId]._timeout;
+		break;
+
+	case SYNC_ANIM:
+		syncTime = _scene._animation[masterId]->getNextFrameTimer();
+		break;
+
+	case SYNC_CLOCK:
+		syncTime = _scene._frameStartTime + masterId;
+		break;
+
+	case SYNC_PLAYER:
+		syncTime = _player._priorTimer;
+		break;
+	}
+
+
+	switch (slaveType) {
+	case SYNC_SEQ:
+		_scene._sequences[slaveId]._timeout = syncTime;
+		break;
+
+	case SYNC_PLAYER:
+		_player._priorTimer = syncTime;
+		break;
+
+	case SYNC_ANIM:
+		_scene._animation[slaveId]->setNextFrameTimer(syncTime);
+		break;
+
+	case SYNC_CLOCK:
+		error("syncTimer is trying to force _frameStartTime");
+	}
 }
 
 void Game::camPanTo(Camera *camera, int target) {

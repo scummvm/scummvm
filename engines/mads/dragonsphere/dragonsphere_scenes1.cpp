@@ -315,7 +315,7 @@ void Scene102::step() {
 			switch (_diaryFrame) {
 			case 6:
 				_scene->deleteSequence(_globals._sequenceIndexes[1]);
-				_game.syncTimers(1, _globals._sequenceIndexes[1], 3, _globals._animationIndexes[0]);
+				_game.syncTimers(SYNC_SEQ, _globals._sequenceIndexes[1], SYNC_ANIM, _globals._animationIndexes[0]);
 				break;
 
 			case 10:
@@ -349,7 +349,7 @@ void Scene102::step() {
 			switch (_diaryFrame) {
 			case 6:
 				_scene->deleteSequence(_globals._sequenceIndexes[2]);
-				_game.syncTimers(1, _globals._sequenceIndexes[2], 3, _globals._animationIndexes[0]);
+				_game.syncTimers(SYNC_SEQ, _globals._sequenceIndexes[2], SYNC_ANIM, _globals._animationIndexes[0]);
 				break;
 
 			case 26:
@@ -385,7 +385,7 @@ void Scene102::step() {
 			int idx = _globals._sequenceIndexes[6];
 			_globals._sequenceIndexes[6] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[6], false, -1);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[6], -2);
-			_game.syncTimers(1, _globals._sequenceIndexes[6], 1, idx);
+			_game.syncTimers(SYNC_SEQ, _globals._sequenceIndexes[6], SYNC_SEQ, idx);
 			_game._player._stepEnabled = true;
 			}
 			break;
@@ -426,13 +426,13 @@ void Scene102::actions() {
 			int idx = _globals._sequenceIndexes[6];
 			_globals._sequenceIndexes[6] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[6], false, 5);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[6], 5);
-			_game.syncTimers(1, _globals._sequenceIndexes[6], 1, idx);
+			_game.syncTimers(SYNC_SEQ, _globals._sequenceIndexes[6], SYNC_SEQ, idx);
 			}
 			break;
 
 		case 3:
 			_game._player._visible = true;
-			_game.syncTimers(2, 0, 1, _globals._sequenceIndexes[7]);
+			_game.syncTimers(SYNC_PLAYER, 0, SYNC_SEQ, _globals._sequenceIndexes[7]);
 			_game._player.walk(Common::Point(0, 130), FACING_WEST);
 			_game._player._walkOffScreenSceneId = 101;
 			break;
@@ -457,7 +457,7 @@ void Scene102::actions() {
 			_game._player._visible = false;
 			_animRunning = 1;
 			_globals._animationIndexes[0] = _scene->loadAnimation(formAnimName('B',-1), 1);
-			_game.syncTimers(3, _globals._animationIndexes[0], 2, 0);
+			_game.syncTimers(SYNC_ANIM, _globals._animationIndexes[0], SYNC_PLAYER, 0);
 			break;
 
 		case 1:
@@ -466,7 +466,7 @@ void Scene102::actions() {
 			_diaryHotspotIdx1 = _scene->_dynamicHotspots.add(NOUN_DIARIES, VERB_WALK_TO, SYNTAX_PLURAL, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
 			_scene->_dynamicHotspots.setPosition(_diaryHotspotIdx1, Common::Point(47, 123), FACING_NORTHWEST);
 			_game._player._visible = true;
-			_game.syncTimers(2, 0, 3, _globals._animationIndexes[0]);
+			_game.syncTimers(SYNC_PLAYER, 0, SYNC_ANIM, _globals._animationIndexes[0]);
 			_scene->_sequences.addTimer(6, 2);
 			break;
 
@@ -479,7 +479,7 @@ void Scene102::actions() {
 			_game._player._visible = false;
 			_animRunning = 2;
 			_globals._animationIndexes[0] = _scene->loadAnimation(formAnimName('A',-1), 4);
-			_game.syncTimers(3, _globals._animationIndexes[0], 2, 0);
+			_game.syncTimers(SYNC_ANIM, _globals._animationIndexes[0], SYNC_PLAYER, 0);
 			break;
 
 		case 4:
@@ -489,7 +489,7 @@ void Scene102::actions() {
 			_scene->_dynamicHotspots.setPosition(_diaryHotspotIdx2, Common::Point(47, 123), FACING_NORTHWEST);
 			_game._player._visible = true;
 			_game._player._stepEnabled = true;
-			_game.syncTimers(2, 0, 3, _globals._animationIndexes[0]);
+			_game.syncTimers(SYNC_PLAYER, 0, SYNC_ANIM, _globals._animationIndexes[0]);
 			break;
 
 		default:
@@ -754,7 +754,7 @@ void Scene103::step() {
 		int tmpIdx = _globals._sequenceIndexes[9];
 		_globals._sequenceIndexes[9] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[9], false, -1);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[9], 6);
-		_game.syncTimers(1, _globals._sequenceIndexes[9], 1, tmpIdx);
+		_game.syncTimers(SYNC_SEQ, _globals._sequenceIndexes[9], SYNC_SEQ, tmpIdx);
 		_game._player._stepEnabled = true;
 		}
 		break;
@@ -772,7 +772,7 @@ void Scene103::step() {
 		int tmpIdx = _globals._sequenceIndexes[10];
 		_globals._sequenceIndexes[10] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[10], false, -1);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[10], 6);
-		_game.syncTimers(1, _globals._sequenceIndexes[10], 1, tmpIdx);
+		_game.syncTimers(SYNC_SEQ, _globals._sequenceIndexes[10], SYNC_SEQ, tmpIdx);
 		_game._player._stepEnabled = true;
 		}
 		break;
@@ -812,13 +812,13 @@ void Scene103::actions() {
 			int tmpIdx = _globals._sequenceIndexes[9];
 			_globals._sequenceIndexes[9] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[9], false, -2);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[9], 14);
-			_game.syncTimers(1, _globals._sequenceIndexes[9], 1, tmpIdx);
+			_game.syncTimers(SYNC_SEQ, _globals._sequenceIndexes[9], SYNC_SEQ, tmpIdx);
 			}
 			break;
 
 		case 3:
 			_game._player._visible = true;
-			_game.syncTimers(2, 0, 1, _globals._sequenceIndexes[11]);
+			_game.syncTimers(SYNC_PLAYER, 0, SYNC_SEQ, _globals._sequenceIndexes[11]);
 			_scene->_sequences.addTimer(1, 4);
 			break;
 
@@ -839,7 +839,7 @@ void Scene103::actions() {
 			int tmpIdx = _globals._sequenceIndexes[9];
 			_globals._sequenceIndexes[9] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[9], false, -1);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[9], 1);
-			_game.syncTimers(1, _globals._sequenceIndexes[9], 1, tmpIdx);
+			_game.syncTimers(SYNC_SEQ, _globals._sequenceIndexes[9], SYNC_SEQ, tmpIdx);
 			_scene->_sequences.addTimer(6, 7);
 			}
 			break;
@@ -878,13 +878,13 @@ void Scene103::actions() {
 			int tmpIdx = _globals._sequenceIndexes[10];
 			_globals._sequenceIndexes[10] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[10], false, -2);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[10], 14);
-			_game.syncTimers(1, _globals._sequenceIndexes[10], 1, tmpIdx);
+			_game.syncTimers(SYNC_SEQ, _globals._sequenceIndexes[10], SYNC_SEQ, tmpIdx);
 			}
 			break;
 
 		case 3:
 			_game._player._visible = true;
-			_game.syncTimers(2, 0, 1, _globals._sequenceIndexes[11]);
+			_game.syncTimers(SYNC_PLAYER, 0, SYNC_SEQ, _globals._sequenceIndexes[11]);
 			_scene->_sequences.addTimer(1, 4);
 			break;
 
@@ -905,7 +905,7 @@ void Scene103::actions() {
 			int tmpIdx = _globals._sequenceIndexes[10];
 			_globals._sequenceIndexes[10] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[10], false, -1);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[10], 1);
-			_game.syncTimers(1, _globals._sequenceIndexes[10], 1, tmpIdx);
+			_game.syncTimers(SYNC_SEQ, _globals._sequenceIndexes[10], SYNC_SEQ, tmpIdx);
 			_scene->_sequences.addTimer(6, 7);
 			}
 			break;
@@ -1393,7 +1393,7 @@ void Scene104::step() {
 
 			if (_tapestryFrame == 13) {
 				_game._player._visible = true;
-				_game.syncTimers(2, 0, 3, _globals._animationIndexes[0]);
+				_game.syncTimers(SYNC_PLAYER, 0, SYNC_ANIM, _globals._animationIndexes[0]);
 			}
 
 			if ((resetFrame >= 0) && (resetFrame != _scene->_animation[_globals._animationIndexes[0]]->getCurrentFrame())) {
@@ -1417,7 +1417,7 @@ void Scene104::step() {
 		int idx = _globals._sequenceIndexes[6];
 		_globals._sequenceIndexes[6] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[6], false, -1);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[6], 14);
-		_game.syncTimers(1, _globals._sequenceIndexes[6], 1, idx);
+		_game.syncTimers(SYNC_SEQ, _globals._sequenceIndexes[6], SYNC_SEQ, idx);
 		_game._player._stepEnabled = true;
 		}
 		break;
@@ -1432,7 +1432,7 @@ void Scene104::step() {
 		_globals._animationIndexes[4] = _scene->loadAnimation(formAnimName('p', 2), 0);
 		_anim4ActvFl = true;
 		_pidStatus = 0;
-		_game.syncTimers(3, _globals._animationIndexes[4], 4, 0);
+		_game.syncTimers(SYNC_ANIM, _globals._animationIndexes[4], SYNC_CLOCK, 0);
 
 		_scene->deleteSequence(_globals._sequenceIndexes[14]);
 		_globals._animationIndexes[1] = _scene->loadAnimation(formAnimName('m', 1), 0);
@@ -1550,13 +1550,13 @@ void Scene104::actions() {
 				int tmpIdx = _globals._sequenceIndexes[6];
 				_globals._sequenceIndexes[6] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[6], false, -2);
 				_scene->_sequences.setDepth(_globals._sequenceIndexes[6], 14);
-				_game.syncTimers(1, _globals._sequenceIndexes[6], 1, tmpIdx);
+				_game.syncTimers(SYNC_SEQ, _globals._sequenceIndexes[6], SYNC_SEQ, tmpIdx);
 				}
 				break;
 
 			case 3:
 				_game._player._visible = true;
-				_game.syncTimers(2, 0, 1, _globals._sequenceIndexes[7]);
+				_game.syncTimers(SYNC_PLAYER, 0, SYNC_SEQ, _globals._sequenceIndexes[7]);
 				_scene->_sequences.addTimer(1, 4);
 				break;
 
@@ -1577,7 +1577,7 @@ void Scene104::actions() {
 				int tmpIdx = _globals._sequenceIndexes[6];
 				_globals._sequenceIndexes[6] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[6], false, -1);
 				_scene->_sequences.setDepth(_globals._sequenceIndexes[6], 1);
-				_game.syncTimers(1, _globals._sequenceIndexes[6], 1, tmpIdx);
+				_game.syncTimers(SYNC_SEQ, _globals._sequenceIndexes[6], SYNC_SEQ, tmpIdx);
 				_scene->_sequences.addTimer(6, 7);
 				}
 				break;
@@ -1618,7 +1618,7 @@ void Scene104::actions() {
 			case 2: {
 				int tmpIdx = _globals._sequenceIndexes[12];
 				_globals._sequenceIndexes[12] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[12], false, -2);
-				_game.syncTimers(1, _globals._sequenceIndexes[12], 1, tmpIdx);
+				_game.syncTimers(SYNC_SEQ, _globals._sequenceIndexes[12], SYNC_SEQ, tmpIdx);
 				_scene->_sequences.setDepth(_globals._sequenceIndexes[12], 8);
 				if ((_globals[kTapestryStatus] == 1) || (_globals[kTapestryStatus] == 3)) {
 					_scene->_hotspots.activate(NOUN_WALL_PANEL, false);
@@ -1629,7 +1629,7 @@ void Scene104::actions() {
 
 			case 3:
 				_game._player._visible = true;
-				_game.syncTimers(2, 0, 1, _globals._sequenceIndexes[8]);
+				_game.syncTimers(SYNC_PLAYER, 0, SYNC_SEQ, _globals._sequenceIndexes[8]);
 				_scene->_sequences.addTimer(5, 4);
 				break;
 
@@ -1691,7 +1691,7 @@ void Scene104::actions() {
 
 			case 3:
 				_game._player._visible = true;
-				_game.syncTimers(2, 0, 1, _globals._sequenceIndexes[8]);
+				_game.syncTimers(SYNC_PLAYER, 0, SYNC_SEQ, _globals._sequenceIndexes[8]);
 				_scene->_sequences.addTimer(5, 4);
 				break;
 
@@ -1720,12 +1720,12 @@ void Scene104::actions() {
 						_game._player._stepEnabled = false;
 						_game._player._visible = false;
 						_animationRunning = 1;
-						_globals._animationIndexes[0] = _scene->loadAnimation(formAnimName('a',-1), 1);
+						_globals._animationIndexes[0] = _scene->loadAnimation(formAnimName('a', -1), 1);
 						break;
 
 					case 1:
 						_game._player._visible = true;
-						_game.syncTimers(2, 0, 3, _globals._animationIndexes[0]);
+						_game.syncTimers(SYNC_PLAYER, 0, SYNC_ANIM, _globals._animationIndexes[0]);
 						_globals._sequenceIndexes[10] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[10], false, -1);
 						_scene->_sequences.setDepth(_globals._sequenceIndexes[10], 6);
 						_scene->_hotspots.activateAtPos(NOUN_TAPESTRY, true, Common::Point(290, 20));
@@ -1777,12 +1777,12 @@ void Scene104::actions() {
 						_game._player._visible = false;
 						_scene->deleteSequence(_globals._sequenceIndexes[10]);
 						_animationRunning = 2;
-						_globals._animationIndexes[0] = _scene->loadAnimation(formAnimName('d',-1), 1);
+						_globals._animationIndexes[0] = _scene->loadAnimation(formAnimName('d', -1), 1);
 						break;
 
 					case 1:
 						_game._player._visible = true;
-						_game.syncTimers(2, 0, 3, _globals._animationIndexes[0]);
+						_game.syncTimers(SYNC_PLAYER, 0, SYNC_ANIM, _globals._animationIndexes[0]);
 						_globals._sequenceIndexes[11] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[11], false, -1);
 						_scene->_sequences.setDepth(_globals._sequenceIndexes[11], 6);
 						_scene->_hotspots.activateAtPos(NOUN_TAPESTRY, false, Common::Point(290, 20));
@@ -2198,7 +2198,7 @@ void Scene104::actions() {
 
 			_globals._sequenceIndexes[14] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[14], false, -2);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[14], 6);
-			_game.syncTimers(1, _globals._sequenceIndexes[14], 4, 0);
+			_game.syncTimers(SYNC_SEQ, _globals._sequenceIndexes[14], SYNC_CLOCK, 0);
 
 			_globals._spriteIndexes[15] = _scene->_sprites.addSprites(formAnimName('e', 3), PALFLAG_ALL_TO_CLOSEST | PALFLAG_ANY_TO_CLOSEST);
 			_globals._animationIndexes[1] = _scene->loadAnimation(formAnimName('m', 2), 0);
@@ -2639,7 +2639,7 @@ void Scene104::handleMacAnimation1() {
 			_pidFrame = 105;
 			resetFrame = 26;
 			_scene->setAnimFrame(_globals._animationIndexes[4], 105);
-			_game.syncTimers(3, _globals._animationIndexes[4], 3, _globals._animationIndexes[1]);
+			_game.syncTimers(SYNC_ANIM, _globals._animationIndexes[4], SYNC_ANIM, _globals._animationIndexes[1]);
 			break;
 
 		default:
@@ -2657,7 +2657,7 @@ void Scene104::handleMacAnimation1() {
 		_scene->setAnimFrame(_globals._animationIndexes[4], 89);
 		_pidFrame = 89;
 		_pidStatus = 7;
-		_game.syncTimers(3, _globals._animationIndexes[4], 3, _globals._animationIndexes[1]);
+		_game.syncTimers(SYNC_ANIM, _globals._animationIndexes[4], SYNC_ANIM, _globals._animationIndexes[1]);
 		break;
 
 	case 76:
@@ -2716,7 +2716,7 @@ void Scene104::handleMacAnimation2() {
 
 	case 2:
 		_scene->deleteSequence(_globals._sequenceIndexes[14]);
-		_game.syncTimers(1, _globals._sequenceIndexes[14], 3, _globals._animationIndexes[1]);
+		_game.syncTimers(SYNC_SEQ, _globals._sequenceIndexes[14], SYNC_ANIM, _globals._animationIndexes[1]);
 		break;
 
 	case 37:
@@ -2994,7 +2994,7 @@ void Scene104::handlePidAnimation() {
 			_anim4ActvFl = false;
 			_globals._animationIndexes[4] = _scene->loadAnimation(formAnimName('d', 2), 95);
 			_anim6ActvFl = true;
-			_game.syncTimers(3, _globals._animationIndexes[4], 4, 0);
+			_game.syncTimers(SYNC_ANIM, _globals._animationIndexes[4], SYNC_CLOCK, 0);
 			break;
 
 		default:

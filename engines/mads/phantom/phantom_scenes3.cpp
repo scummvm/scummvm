@@ -202,7 +202,7 @@ void Scene301::step() {
 		_anim0ActvFl = true;
 		_game._player._visible = false;
 		_globals[kPlayerScore] += 10;
-		_game.syncTimers(3, _globals._animationIndexes[0], 2, 0);
+		_game.syncTimers(SYNC_ANIM, _globals._animationIndexes[0], SYNC_PLAYER, 0);
 	}
 
 	if (_anim0ActvFl && !_skip1Fl) {
@@ -244,7 +244,7 @@ void Scene301::actions() {
 			_game._player._stepEnabled = false;
 			_game._player._visible = false;
 			_globals._animationIndexes[0] = _scene->loadAnimation(formAnimName('d', 1), 1);
-			_game.syncTimers(3, _globals._animationIndexes[0], 2, 0);
+			_game.syncTimers(SYNC_ANIM, _globals._animationIndexes[0], SYNC_PLAYER, 0);
 			break;
 
 		case 1:
@@ -527,7 +527,7 @@ void Scene302::actions() {
 			break;
 
 		case 2:
-			_game.syncTimers(2, 0, 1, _globals._sequenceIndexes[1]);
+			_game.syncTimers(SYNC_PLAYER, 0, SYNC_SEQ, _globals._sequenceIndexes[1]);
 			_game._player._visible = true;
 			_scene->_sequences.addTimer(20, 3);
 			break;
@@ -735,7 +735,7 @@ void Scene303::step() {
 		_game._player._playerPos = Common::Point(110, 95);
 		_game._player._stepEnabled = true;
 		_game._player._visible = true;
-		_game.syncTimers(2, 0, 3, _globals._animationIndexes[0]);
+		_game.syncTimers(SYNC_PLAYER, 0, SYNC_ANIM, _globals._animationIndexes[0]);
 		_game._player.resetFacing(FACING_SOUTHWEST);
 	}
 
@@ -758,14 +758,14 @@ void Scene303::actions() {
 			_game._player._visible = false;
 			_globals._animationIndexes[0] = _scene->loadAnimation(formAnimName('n', 1), 1);
 			_anim0ActvFl = true;
-			_game.syncTimers(3, _globals._animationIndexes[0], 2, 0);
+			_game.syncTimers(SYNC_ANIM, _globals._animationIndexes[0], SYNC_PLAYER, 0);
 			_globals[kPlayerScore] += 5;
 			break;
 
 		case 1:
 			_anim0ActvFl = false;
 			_game._player._visible = true;
-			_game.syncTimers(2, 0, 3, _globals._animationIndexes[0]);
+			_game.syncTimers(SYNC_PLAYER, 0, SYNC_ANIM, _globals._animationIndexes[0]);
 			_scene->_sequences.addTimer(20, 2);
 			break;
 
@@ -788,7 +788,7 @@ void Scene303::actions() {
 				_globals._animationIndexes[0] = _scene->loadAnimation(formAnimName('d', 1), 3);
 				_game._player._stepEnabled = false;
 				_game._player._visible = false;
-				_game.syncTimers(3, _globals._animationIndexes[0], 2, 0);
+				_game.syncTimers(SYNC_ANIM, _globals._animationIndexes[0], SYNC_PLAYER, 0);
 				break;
 
 			case 3:
@@ -1687,7 +1687,7 @@ void Scene307::actions() {
 			break;
 
 		case 2:
-			_game.syncTimers(2, 0, 1, _globals._sequenceIndexes[1]);
+			_game.syncTimers(SYNC_PLAYER, 0, SYNC_SEQ, _globals._sequenceIndexes[1]);
 			_game._player._visible = true;
 			_scene->_sequences.addTimer(20, 3);
 			break;
@@ -1731,7 +1731,7 @@ void Scene307::actions() {
 		case 71: {
 			int idx = _globals._sequenceIndexes[3];
 			_globals._sequenceIndexes[3] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[3], false, -2);
-			_game.syncTimers(1, _globals._sequenceIndexes[3], 1, idx);
+			_game.syncTimers(SYNC_SEQ, _globals._sequenceIndexes[3], SYNC_SEQ, idx);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 14);
 			_scene->_sequences.addTimer(10, 73);
 			 }
@@ -2390,7 +2390,7 @@ void Scene309::actions() {
 		case 61: {
 			int idx = _globals._sequenceIndexes[0];
 			_globals._sequenceIndexes[0] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[0], false, 5);
-			_game.syncTimers(1, _globals._sequenceIndexes[0], 1, idx);
+			_game.syncTimers(SYNC_SEQ, _globals._sequenceIndexes[0], SYNC_SEQ, idx);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[0], 14);
 			_game._player.walk(Common::Point(0, 121), FACING_NORTHWEST);
 			_game._player.setWalkTrigger(63);
@@ -2517,7 +2517,7 @@ void Scene309::handleBoatAnimation() {
 
 	switch (_boatFrame) {
 	case 72:
-		_game.syncTimers(2, 0, 3, _globals._animationIndexes[0]);
+		_game.syncTimers(SYNC_PLAYER, 0, SYNC_ANIM, _globals._animationIndexes[0]);
 		_game._player._visible = true;
 		break;
 
