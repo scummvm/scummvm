@@ -604,8 +604,8 @@ void Animation::setCurrentFrame(int frameNumber) {
 	_freeFlag = false;
 }
 
-void Animation::setNextFrameTimer(uint32 frameNumber) {
-	_nextFrameTimer = frameNumber;
+void Animation::setNextFrameTimer(uint32 newTimer) {
+	_nextFrameTimer = newTimer;
 }
 
 void Animation::eraseSprites() {
