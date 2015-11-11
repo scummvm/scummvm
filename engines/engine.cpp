@@ -50,6 +50,7 @@
 
 #include "backends/keymapper/keymapper.h"
 
+#include "gui/gui-manager.h"
 #include "gui/debugger.h"
 #include "gui/dialog.h"
 #include "gui/message.h"
@@ -303,7 +304,7 @@ void initGraphics(int width, int height, bool defaultTo1xScaler, const Graphics:
 
 	OSystem::TransactionError gfxError = g_system->endGFXTransaction();
 
-	if (!splash)
+	if (!splash && !GUI::GuiManager::instance()._launched)
 		splashScreen();
 
 	if (gfxError == OSystem::kTransactionSuccess)

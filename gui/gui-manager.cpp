@@ -64,6 +64,8 @@ GuiManager::GuiManager() : _redrawStatus(kRedrawDisabled), _stateIsSaved(false),
 	_width = _system->getOverlayWidth();
 	_height = _system->getOverlayHeight();
 
+	_launched = false;
+
 	// Clear the cursor
 	memset(_cursor, 0xFF, sizeof(_cursor));
 
