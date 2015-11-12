@@ -76,8 +76,8 @@ struct dispmanxPage {
 	struct dispvarsStruct *dispvars;
 };
 
-DispmanXSdlGraphicsManager::DispmanXSdlGraphicsManager(SdlEventSource *sdlEventSource)
- : SurfaceSdlGraphicsManager(sdlEventSource) {
+DispmanXSdlGraphicsManager::DispmanXSdlGraphicsManager(SdlEventSource *sdlEventSource, SdlWindow *window)
+ : SurfaceSdlGraphicsManager(sdlEventSource, window) {
 	_dispvars = new(dispvarsStruct);
 	dispmanXInit();
 }

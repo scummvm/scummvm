@@ -32,7 +32,7 @@ void OSystem_SDL_RaspberryPi::initBackend() {
 
 	// Create the graphics manager
 	if (_graphicsManager == 0) {
-		_graphicsManager = new DispmanXSdlGraphicsManager(_eventSource);
+		_graphicsManager = new DispmanXSdlGraphicsManager(_eventSource, _window);
 	}
 
 	// Call parent implementation of this method

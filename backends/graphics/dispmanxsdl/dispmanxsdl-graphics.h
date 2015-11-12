@@ -30,7 +30,7 @@ struct dispmanxPage;
 
 class DispmanXSdlGraphicsManager : public SurfaceSdlGraphicsManager {
 public:
-	DispmanXSdlGraphicsManager(SdlEventSource *sdlEventSource);
+	DispmanXSdlGraphicsManager(SdlEventSource *sdlEventSource, SdlWindow *window);
 	~DispmanXSdlGraphicsManager();
 	bool loadGFXMode();
 	void internUpdateScreen();

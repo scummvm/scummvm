@@ -1061,9 +1061,9 @@ for ac_option in $@; do
 	--disable-libunity)       _libunity=no    ;;
 	--enable-opengl)          _opengl=yes     ;;
 	--disable-opengl)         _opengl=no      ;;
-        --enable-dispmanx)        _dispmanx=yes   ;;
-        --disable-dispmanx)       _dispmanx=no    ;;
-        --enable-bink)            _bink=yes       ;;
+	--enable-dispmanx)        _dispmanx=yes   ;;
+	--disable-dispmanx)       _dispmanx=no    ;;
+	--enable-bink)            _bink=yes       ;;
 	--disable-bink)           _bink=no        ;;
 	--enable-verbose-build)   _verbose_build=yes ;;
 	--enable-plugins)         _dynamic_modules=yes ;;
@@ -2576,13 +2576,13 @@ if test -n "$_host"; then
 			# Be careful as it's the linker (LDFLAGS) which must know about sysroot.	
 			# These are needed to build against Raspbian's libSDL even if we don't activate 
 			# dispmanx support. 
-			LDFLAGS="$LDFLAGS --sysroot=$RPI_ROOT"
-			LDFLAGS="$LDFLAGS -B$RPI_ROOT/usr/lib/arm-linux-gnueabihf"
-			LDFLAGS="$LDFLAGS -Xlinker --rpath-link=$RPI_ROOT/usr/lib/arm-linux-gnueabihf"
-			LDFLAGS="$LDFLAGS -Xlinker --rpath-link=$RPI_ROOT/lib/arm-linux-gnueabihf"
-			LDFLAGS="$LDFLAGS -Xlinker --rpath-link=$RPI_ROOT/opt/vc/lib"
-			LDFLAGS="$LDFLAGS -L$RPI_ROOT/opt/vc/lib"
-			LDFLAGS="$LDFLAGS -L/opt/rpi_root/lib/arm-linux-gnueabihf -L$RPI_ROOT/usr/lib -L$RPI_ROOT/opt/vc/lib -lbcm_host -lvcos"
+			append_var LDFLAGS "--sysroot=$RPI_ROOT"
+			append_var LDFLAGS "-B$RPI_ROOT/usr/lib/arm-linux-gnueabihf"
+			append_var LDFLAGS "-Xlinker --rpath-link=$RPI_ROOT/usr/lib/arm-linux-gnueabihf"
+			append_var LDFLAGS "-Xlinker --rpath-link=$RPI_ROOT/lib/arm-linux-gnueabihf"
+			append_var LDFLAGS "-Xlinker --rpath-link=$RPI_ROOT/opt/vc/lib"
+			append_var LDFLAGS "-L$RPI_ROOT/opt/vc/lib"
+			append_var LDFLAGS "-L/opt/rpi_root/lib/arm-linux-gnueabihf -L$RPI_ROOT/usr/lib -L$RPI_ROOT/opt/vc/lib -lbcm_host -lvcos"
 			_savegame_timestamp=no
 			_eventrec=no
 			_build_scalers=no
@@ -4112,7 +4112,7 @@ if test "$_dispmanx" = "yes" ; then
 
 		# These are only needed if, appart from cross-building for Raspberry Pi,
 		# we are activating dispmanx support.
-		DISPMANX_CXXFLAGS="-I$RPI_ROOT/usr/include/arm-linux-gnueabihf -I$RPI_ROOT/opt/vc/include -I$RPI_ROOT/opt/vc/include/interface/vmcs_host/linux -I$RPI_ROOT/opt/vc/include/interface/vcos/pthreads -I$RPI_ROOT/usr/include/SDL"
+		DISPMANX_CXXFLAGS="-I$RPI_ROOT/usr/include -I$RPI_ROOT/usr/include/arm-linux-gnueabihf -I$RPI_ROOT/opt/vc/include -I$RPI_ROOT/opt/vc/include/interface/vmcs_host/linux -I$RPI_ROOT/opt/vc/include/interface/vcos/pthreads -I$RPI_ROOT/usr/include/SDL"
 		DISPMANX_LIBS="$RPI_LIBS -L/opt/rpi_root/lib/arm-linux-gnueabihf -L$RPI_ROOT/usr/lib -L$RPI_ROOT/opt/vc/lib -lbcm_host -lvcos -lvchiq_arm"
 		
 		cat > $TMPC << EOF
@@ -4124,9 +4124,9 @@ if test "$_dispmanx" = "yes" ; then
 EOF
 		cc_check $DISPMANX_CXXFLAGS $DISPMANX_LIBS && _use_dispmanx=yes
 		if test "$_use_dispmanx" = "yes"; then
-			CXXFLAGS="$CXXFLAGS $DISPMANX_CXXFLAGS"
-			LIBS="$LIBS $DISPMANX_LIBS"
-			DEFINES="$DEFINES -DDISPMANX"
+			append_var CXXFLAGS "$DISPMANX_CXXFLAGS"
+			append_var LIBS "$DISPMANX_LIBS"
+			append_var DEFINES "-DDISPMANX"
 			add_line_to_config_mk 'DISPMANX = 1'
 			echo $_use_dispmanx
 		else echo "no"
