@@ -151,6 +151,37 @@ public:
 	virtual void preActions();
 	virtual void actions();
 };
+
+class Scene105 : public Scene1xx {
+private:
+	bool _maidTalkingFl;
+	bool _sitUpFl;
+	bool _goodNumberFl;
+
+	int _maidFrame;
+	int _maidHotspotId1;
+	int _maidHotspotId2;
+	int _newStatus;
+	int _previousStatus;
+	int _bucketHotspotId;
+	int _boneHotspotId;
+	int _gobletHotspotId;
+
+	void setRandomStatus();
+	void setRandomWipebrow();
+	void handleConversation();
+
+public:
+	Scene105(MADSEngine *vm);
+	virtual void synchronize(Common::Serializer &s);
+
+	virtual void setup();
+	virtual void enter();
+	virtual void step();
+	virtual void preActions();
+	virtual void actions();
+};
+
 } // End of namespace Dragonsphere
 } // End of namespace MADS
 

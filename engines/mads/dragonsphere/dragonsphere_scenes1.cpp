@@ -3096,5 +3096,619 @@ void Scene104::handlePidAnimation() {
 }
 /*------------------------------------------------------------------------*/
 
+Scene105::Scene105(MADSEngine *vm) : Scene1xx(vm) {
+	_maidTalkingFl = false;
+	_sitUpFl = false;
+	_goodNumberFl = false;
+
+	_maidFrame = -1;
+	_newStatus = -1;
+	_previousStatus = -1;
+	_maidHotspotId1 = -1;
+	_maidHotspotId2 = -1;
+	_bucketHotspotId = -1;
+	_boneHotspotId = -1;
+	_gobletHotspotId = -1;
+}
+
+void Scene105::synchronize(Common::Serializer &s) {
+	Scene1xx::synchronize(s);
+
+	s.syncAsByte(_maidTalkingFl);
+	s.syncAsByte(_sitUpFl);
+	s.syncAsByte(_goodNumberFl);
+
+	s.syncAsSint16LE(_maidFrame);
+	s.syncAsSint16LE(_newStatus);
+	s.syncAsSint16LE(_previousStatus);
+	s.syncAsSint16LE(_maidHotspotId1);
+	s.syncAsSint16LE(_maidHotspotId2);
+	s.syncAsSint16LE(_bucketHotspotId);
+	s.syncAsSint16LE(_boneHotspotId);
+	s.syncAsSint16LE(_gobletHotspotId);
+}
+
+void Scene105::setup() {
+	setPlayerSpritesPrefix();
+	setAAName();
+
+	_scene->addActiveVocab(NOUN_SCULLERY_MAID);
+	_scene->addActiveVocab(NOUN_BUCKET);
+	_scene->addActiveVocab(VERB_WALK_TO);
+	_scene->addActiveVocab(NOUN_BONE);
+	_scene->addActiveVocab(NOUN_GOBLET);
+}
+
+void Scene105::enter() {
+	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('x', 0));
+	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('x', 1));
+	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('x', 2));
+	_globals._spriteIndexes[4] = _scene->_sprites.addSprites("*KGRD_8");
+
+	_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 7, 0);
+	_globals._sequenceIndexes[2] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[2], false, 7, 0, 3);
+
+	_maidHotspotId1 = _scene->_dynamicHotspots.add(NOUN_SCULLERY_MAID, VERB_WALK_TO, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(189, 123, 189 + 25, 123 + 11));
+	_scene->_dynamicHotspots.setPosition(_maidHotspotId1, Common::Point(174, 151), FACING_NORTHEAST);
+	_scene->_dynamicHotspots[_maidHotspotId1]._articleNumber = PREP_ON;
+
+	_maidHotspotId2 = _scene->_dynamicHotspots.add(NOUN_SCULLERY_MAID, VERB_WALK_TO, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(189, 134, 189 + 38, 134 + 9));
+	_scene->_dynamicHotspots.setPosition(_maidHotspotId2, Common::Point(174, 151), FACING_NORTHEAST);
+	_scene->_dynamicHotspots[_maidHotspotId2]._articleNumber = PREP_ON;
+
+	_bucketHotspotId = _scene->_dynamicHotspots.add(NOUN_BUCKET, VERB_WALK_TO, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(176, 137, 176 + 10, 137 + 8));
+	_scene->_dynamicHotspots.setPosition(_bucketHotspotId, Common::Point(174, 151), FACING_NORTHEAST);
+
+	if (_game._objects.isInRoom(OBJ_GOBLET)) {
+		_globals._spriteIndexes[5] = _scene->_sprites.addSprites(formAnimName('p', 1));
+		_globals._spriteIndexes[8] = _scene->_sprites.addSprites("*KGRM_6");
+		_globals._sequenceIndexes[5] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[5], false, -1);
+		_gobletHotspotId = _scene->_dynamicHotspots.add(NOUN_GOBLET, VERB_WALK_TO, SYNTAX_SINGULAR, _globals._sequenceIndexes[5], Common::Rect(0, 0, 0, 0));
+		_scene->_sequences.setDepth(_globals._sequenceIndexes[5], 6);
+		_scene->_dynamicHotspots.setPosition(_gobletHotspotId, Common::Point(63, 142), FACING_WEST);
+	}
+
+	if (_game._objects.isInRoom(OBJ_BONE)) {
+		_globals._spriteIndexes[6] = _scene->_sprites.addSprites(formAnimName('p', 0));
+		_globals._spriteIndexes[7] = _scene->_sprites.addSprites("*KGRL_6");
+		_globals._sequenceIndexes[6] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[6], false, -1);
+		_boneHotspotId = _scene->_dynamicHotspots.add(NOUN_BONE, VERB_WALK_TO, SYNTAX_SINGULAR, _globals._sequenceIndexes[6], Common::Rect(0, 0, 0, 0));
+		_scene->_sequences.setDepth(_globals._sequenceIndexes[6], 6);
+		_scene->_dynamicHotspots.setPosition(_boneHotspotId, Common::Point(255, 145), FACING_EAST);
+	}
+
+	_vm->_gameConv->get(2);
+	_newStatus = 1;
+	_previousStatus = 0;
+	_maidTalkingFl = false;
+	_sitUpFl = false;
+	_goodNumberFl = false;
+	_globals._animationIndexes[0] = _scene->loadAnimation(formAnimName('A',-1), 1);
+
+
+	if (_scene->_priorSceneId == 106) {
+		_game._player._playerPos = Common::Point(104, 152);
+		_game._player._facing = FACING_NORTHEAST;
+		_globals._sequenceIndexes[3] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[3], false, -1);
+		_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 12);
+	} else if (_scene->_priorSceneId != RETURNING_FROM_LOADING) {
+		_globals._sequenceIndexes[3] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[3], false, 6);
+		_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 12);
+		_game._player.firstWalk(Common::Point(120, 96), FACING_SOUTH, Common::Point(117, 108), FACING_SOUTH, false);
+		_game._player.setWalkTrigger(70);
+	} else {
+		_globals._sequenceIndexes[3] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[3], false, -1);
+		_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 15);
+	}
+
+	sceneEntrySound();
+}
+
+void Scene105::step() {
+	if (_scene->_animation[_globals._animationIndexes[0]]) {
+		if (_scene->_animation[_globals._animationIndexes[0]]->getCurrentFrame() != _maidFrame) {
+			_maidFrame = _scene->_animation[_globals._animationIndexes[0]]->getCurrentFrame();
+			int resetFrame = -1;
+
+			if (_sitUpFl && !_maidTalkingFl) {
+				_previousStatus = _newStatus;
+				_newStatus = 4;
+			}
+
+			if (_maidTalkingFl) {
+				_previousStatus = _newStatus;
+				_newStatus = 5;
+			}
+
+			switch (_maidFrame) {
+			case 16:
+				if (_newStatus == 1) {
+					_goodNumberFl = false;
+					while (!_goodNumberFl)
+						setRandomStatus();
+				}
+
+				if (_newStatus == 1)
+					resetFrame = 1;
+				else if ((_newStatus == 3 && !_sitUpFl) || _newStatus == 4)
+					resetFrame = 53;
+				else if ((_newStatus == 3) && (_sitUpFl))
+					resetFrame = 24;
+				break;
+
+			case 24:
+				if (_newStatus == 2) {
+					_goodNumberFl = false;
+					while (!_goodNumberFl)
+						setRandomStatus();
+				}
+
+				if ((_newStatus == 3) || (_newStatus == 5))
+					resetFrame = 53;
+				else if (_newStatus == 1)
+					resetFrame = 56;
+				else if (_newStatus == 4)
+					resetFrame = 53;
+
+				break;
+
+			case 32:
+				if (_newStatus == 3) {
+					_goodNumberFl = false;
+					while (!_goodNumberFl)
+						setRandomStatus();
+				}
+
+				if ((_newStatus == 1) || (_newStatus == 2))
+					resetFrame = 57;
+				else if (_newStatus == 4)
+					resetFrame = 55;
+				break;
+
+			case 53:
+				_maidTalkingFl = false;
+				_goodNumberFl = false;
+				while (!_goodNumberFl)
+					setRandomStatus();
+
+				if (_newStatus == 1)
+					resetFrame = 60;
+				else if (_newStatus == 2)
+					resetFrame = 57;
+				else if (_newStatus == 3)
+					resetFrame = 63;
+				else if (_newStatus == 4)
+					resetFrame = 55;
+				break;
+
+			case 56:
+				if (_newStatus == 4) {
+					_goodNumberFl = false;
+					while (!_goodNumberFl)
+						setRandomWipebrow();
+				}
+
+				if (_newStatus == 4)
+					resetFrame = 55;
+				else if (_newStatus == 5)
+					resetFrame = 32;
+				else if (_newStatus == 3)
+					resetFrame = 24;
+				break;
+
+			case 57:
+				if (_newStatus == 1)
+					resetFrame = 1;
+				break;
+
+			case 60:
+				if (_newStatus == 1)
+					resetFrame = 1;
+				else if (_newStatus == 2)
+					resetFrame = 16;
+				break;
+
+			case 63:
+				if (_newStatus == 1)
+					resetFrame = 1;
+				break;
+
+			case 64:
+				resetFrame = 24;
+				break;
+
+			default:
+				break;
+			}
+
+			if ((resetFrame >= 0) && (resetFrame != _scene->_animation[_globals._animationIndexes[0]]->getCurrentFrame())) {
+				_scene->setAnimFrame(_globals._animationIndexes[0], resetFrame);
+				_maidFrame = resetFrame;
+			}
+		}
+	}
+
+	if (_game._trigger >= 70) {
+		switch (_game._trigger) {
+		case 70:
+			_scene->deleteSequence(_globals._sequenceIndexes[3]);
+			_vm->_sound->command(25);
+			_globals._sequenceIndexes[3] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[3], false, 6, 1);
+			_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 12);
+			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[3], 1, 5);
+			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_EXPIRE, 0, 71);
+			break;
+
+		case 71: {
+			int seqIdx = _globals._sequenceIndexes[3];
+			_globals._sequenceIndexes[3] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[3], false, -1);
+			_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 15);
+			_game.syncTimers(SYNC_SEQ, _globals._sequenceIndexes[3], SYNC_SEQ, seqIdx);
+			_game._player._stepEnabled = true;
+			}
+			break;
+
+		default:
+			break;
+		}
+	}
+}
+
+void Scene105::actions() {
+	if (_action._lookFlag) {
+		_vm->_dialogs->show(10501);
+		_action._inProgress = false;
+		return;
+	}
+
+	if (_vm->_gameConv->_running == 2) {
+		handleConversation();
+		_action._inProgress = false;
+		return;
+	}
+
+	if (_action.isAction(VERB_WALK_THROUGH, NOUN_DOOR_TO_HALLWAY) || _action.isAction(VERB_OPEN, NOUN_DOOR_TO_HALLWAY) || _action.isAction(VERB_PULL, NOUN_DOOR_TO_HALLWAY)) {
+		switch (_game._trigger) {
+		case 0:
+			_game._player._stepEnabled = false;
+			_game._player._visible = false;
+			_globals._sequenceIndexes[4] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[4], false, 8, 2);
+			_scene->_sequences.setSeqPlayer(_globals._sequenceIndexes[4],true);
+			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[4], SEQUENCE_TRIGGER_SPRITE, 2, 1);
+			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[4], SEQUENCE_TRIGGER_EXPIRE, 0, 3);
+			break;
+
+		case 1:
+			_scene->deleteSequence(_globals._sequenceIndexes[3]);
+			_vm->_sound->command(24);
+			_globals._sequenceIndexes[3] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[3], false, 6, 1);
+			_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 12);
+			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+			break;
+
+		case 2: {
+			int seqIdx = _globals._sequenceIndexes[3];
+			_globals._sequenceIndexes[3] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[3], false, -2);
+			_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 12);
+			_game.syncTimers(SYNC_SEQ, _globals._sequenceIndexes[3], SYNC_SEQ, seqIdx);
+			}
+			break;
+
+		case 3:
+			_game._player._visible = true;
+			_game.syncTimers(SYNC_PLAYER, 0, SYNC_SEQ, _globals._sequenceIndexes[4]);
+			_scene->_sequences.addTimer(1,4);
+			break;
+
+		case 4:
+			_game._player.walk(Common::Point(120, 96), FACING_NORTH);
+			_game._player.setWalkTrigger(5);
+			break;
+
+		case 5:
+			_scene->deleteSequence(_globals._sequenceIndexes[3]);
+			_vm->_sound->command(25);
+			_globals._sequenceIndexes[3] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[3], false, 7, 1);
+			_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 1);
+			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_EXPIRE, 0, 6);
+			break;
+
+		case 6: {
+			int seqIdx = _globals._sequenceIndexes[3];
+			_globals._sequenceIndexes[3] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[3], false, -1);
+			_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 1);
+			_game.syncTimers(SYNC_SEQ, _globals._sequenceIndexes[3], SYNC_SEQ, seqIdx);
+			_scene->_sequences.addTimer(6, 7);
+			}
+			break;
+
+		case 7:
+			_scene->_nextSceneId = 103;
+			break;
+
+		default:
+			break;
+		}
+		_action._inProgress = false;
+		return;
+	}
+
+	if (_action.isAction(VERB_WALK_THROUGH, NOUN_DOOR_TO_THRONE_ROOM) || _action.isAction(VERB_OPEN, NOUN_DOOR_TO_THRONE_ROOM) || _action.isAction(VERB_PULL, NOUN_DOOR_TO_THRONE_ROOM)) {
+		_scene->_nextSceneId = 106;
+		_action._inProgress = false;
+		return;
+	}
+
+	if (_action.isAction(VERB_TALK_TO, NOUN_SCULLERY_MAID)) {
+		_vm->_gameConv->run(2);
+		_action._inProgress = false;
+		return;
+	}
+
+	if (_action.isAction(VERB_TAKE, NOUN_GOBLET)) {
+		if (_game._trigger || !_game._objects.isInInventory(OBJ_GOBLET)) {
+			switch (_game._trigger) {
+			case 0:
+				_game._player._stepEnabled = false;
+				_game._player._visible = false;
+				_globals._sequenceIndexes[8] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[8], true, 6, 2);
+				_scene->_sequences.setAnimRange (_globals._sequenceIndexes[8], 1, 7);
+				_scene->_sequences.setSeqPlayer(_globals._sequenceIndexes[8], true);
+				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[8], SEQUENCE_TRIGGER_SPRITE, 7, 1);
+				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[8], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+				break;
+
+			case 1:
+				_scene->deleteSequence (_globals._sequenceIndexes[5]);
+				_scene->_dynamicHotspots.remove(_gobletHotspotId);
+				_vm->_sound->command(26);
+				_game._objects.addToInventory(OBJ_GOBLET);
+				_vm->_dialogs->showItem(OBJ_GOBLET, 10519, 0);
+				break;
+
+			case 2:
+				_game.syncTimers(SYNC_PLAYER, 0, SYNC_SEQ, _globals._sequenceIndexes[8]);
+				_globals[kPlayerScore] += 1;
+				_game._player._visible = true;
+				_game._player._stepEnabled = true;
+				break;
+
+			default:
+				break;
+			}
+			_action._inProgress = false;
+			return;
+		}
+	}
+
+	if (_action.isAction(VERB_TAKE, NOUN_BONE) && _action._mainObjectSource == CAT_HOTSPOT) {
+		if (_game._trigger || !_game._objects.isInInventory(OBJ_BONE)) {
+			switch (_game._trigger) {
+			case 0:
+				_game._player._stepEnabled = false;
+				_game._player._visible = false;
+				_globals._sequenceIndexes[7] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[7], false, 6, 2);
+				_scene->_sequences.setSeqPlayer(_globals._sequenceIndexes[7], true);
+				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[7], SEQUENCE_TRIGGER_SPRITE, 6, 1);
+				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[7], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+				break;
+
+			case 1:
+				_scene->deleteSequence (_globals._sequenceIndexes[6]);
+				_vm->_sound->command(26);
+				_scene->_dynamicHotspots.remove(_boneHotspotId);
+				_game._objects.addToInventory(OBJ_BONE);
+				_vm->_dialogs->showItem(OBJ_BONE, 10520, 0);
+				break;
+
+			case 2:
+				_game.syncTimers(SYNC_PLAYER, 0, SYNC_SEQ, _globals._sequenceIndexes[7]);
+				if (!(_globals[kPlayerScoreFlags] & 2048)) {
+					_globals[kPlayerScoreFlags] |= 2048;
+					_globals[kPlayerScore] += 1;
+				}
+				_game._player._visible = true;
+				_game._player._stepEnabled = true;
+				break;
+
+			default:
+				break;
+			}
+			_action._inProgress = false;
+			return;
+		}
+	}
+
+	if (_action.isAction(VERB_TAKE, NOUN_BONE) && _game._objects.isInInventory(OBJ_BONE) && (_action._mainObjectSource == CAT_HOTSPOT)) {
+		_vm->_dialogs->show(40112);
+		_action._inProgress = false;
+		return;
+	}
+
+	if (_action.isAction(VERB_LOOK) || _action.isAction(VERB_LOOK_AT)) {
+
+		if (_action.isObject(NOUN_FLOOR)) {
+			_vm->_dialogs->show(10502);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isObject(NOUN_BRAZIER)) {
+			_vm->_dialogs->show(10503);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isObject(NOUN_DINING_TABLE)) {
+			if (_scene->_customDest.x <= 98) {
+				if (_game._objects[OBJ_GOBLET]._roomNumber == _scene->_currentSceneId)
+					_vm->_dialogs->show(10505);
+				else
+					_vm->_dialogs->show(10522);
+			} else
+				_vm->_dialogs->show(10504);
+
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isObject(NOUN_CHAIR)) {
+			_vm->_dialogs->show(10507);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isObject(NOUN_WINDOW)) {
+			_vm->_dialogs->show(10508);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isObject(NOUN_TAPESTRY)) {
+			_vm->_dialogs->show(10509);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isObject(NOUN_DOOR_TO_THRONE_ROOM)) {
+			_vm->_dialogs->show(10511);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isObject(NOUN_WALL)) {
+			_vm->_dialogs->show(10512);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isObject(NOUN_DOOR_TO_HALLWAY)) {
+			_vm->_dialogs->show(10513);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isObject(NOUN_DIVIDING_WALL)) {
+			_vm->_dialogs->show(10514);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isObject(NOUN_CEILING)) {
+			_vm->_dialogs->show(10515);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isObject(NOUN_SCULLERY_MAID)) {
+			_vm->_dialogs->show(10516);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isObject(NOUN_GOBLET) && _game._objects.isInRoom(OBJ_GOBLET)) {
+			_vm->_dialogs->show(10517);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isObject(NOUN_BONE) && _game._objects.isInRoom(OBJ_BONE)) {
+			_vm->_dialogs->show(10518);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isObject(NOUN_SCONCE)) {
+			_vm->_dialogs->show(10524);
+			_action._inProgress = false;
+			return;
+		}
+
+		if (_action.isObject(NOUN_BUCKET)) {
+			_vm->_dialogs->show(10521);
+			_action._inProgress = false;
+			return;
+		}
+	}
+
+	if (_action.isAction(VERB_TAKE, NOUN_SCULLERY_MAID)) {
+		_vm->_dialogs->show(30);
+		_action._inProgress = false;
+		return;
+	}
+
+	if ((_action.isAction(VERB_PUSH) || _action.isAction(VERB_PULL)) && _action.isObject(NOUN_DINING_TABLE)) {
+		_vm->_dialogs->show(10506);
+		_action._inProgress = false;
+		return;
+	}
+
+	if ((_action.isAction(VERB_PUSH) || _action.isAction(VERB_PULL)) && _action.isObject(NOUN_TAPESTRY)) {
+		_vm->_dialogs->show(10510);
+		_action._inProgress = false;
+		return;
+	}
+}
+
+void Scene105::preActions() {
+	if (_action.isAction(VERB_TALK_TO, NOUN_SCULLERY_MAID))
+		_sitUpFl = true;
+}
+
+void Scene105::setRandomStatus() {
+	_previousStatus = _newStatus;
+	int rndVal = _vm->getRandomNumber(1, 30);
+	if (rndVal < 20) {
+		_newStatus = 1;
+		_goodNumberFl = true;
+	} else if ((rndVal > 19) && (rndVal < 27) && (_previousStatus != 2)) {
+		_newStatus = 2;
+		_goodNumberFl = true;
+	} else if (_previousStatus != 3) {
+		_newStatus = 3;
+		_goodNumberFl = true;
+	}
+}
+
+void Scene105::setRandomWipebrow() {
+	_previousStatus = _newStatus;
+
+	if (_vm->getRandomNumber(1, 100) < 100) {
+		_newStatus = 4;
+		_goodNumberFl = true;
+	} else if (_previousStatus != 3) {
+		_newStatus = 3;
+		_goodNumberFl = true;
+	}
+}
+
+void Scene105::handleConversation() {
+	if ((_action._activeAction._verbId == 0) && !_sitUpFl)
+		_sitUpFl = true;
+
+	if ((_action._activeAction._verbId == 1) || (_action._activeAction._verbId == 2)) {
+		switch (_game._trigger) {
+		case 0:
+			_vm->_gameConv->setInterlocutorTrigger(1);
+			break;
+
+		case 1:
+			_maidTalkingFl = true;
+			_sitUpFl = false;
+			_vm->_gameConv->setHeroTrigger(2);
+			break;
+
+		case 2:
+			_maidTalkingFl = false;
+			break;
+
+		default:
+			break;
+		}
+	}
+}
+
+/*------------------------------------------------------------------------*/
+
 } // End of namespace Dragonsphere
 } // End of namespace MADS
