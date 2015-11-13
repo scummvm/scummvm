@@ -498,7 +498,7 @@ void Scene702::actions() {
 		_game._player._stepEnabled = false;
 		_game._player._visible = false;
 		_scene->_nextSceneId = 711;
-	} else if (_action.isAction(VERB_TAKE, NOUN_BONES) && (_action._mainObjectSource == 4) && (!_game._objects.isInInventory(OBJ_BONES) || _game._trigger)) {
+	} else if (_action.isAction(VERB_TAKE, NOUN_BONES) && (_action._mainObjectSource == CAT_HOTSPOT) && (!_game._objects.isInInventory(OBJ_BONES) || _game._trigger)) {
 		switch (_game._trigger) {
 		case 0:
 			_game._player._stepEnabled = false;
@@ -537,9 +537,9 @@ void Scene702::actions() {
 		_vm->_dialogs->show(70215);
 	else if (_action.isAction(VERB_LOOK, NOUN_TELEPORTER))
 		_vm->_dialogs->show(70216);
-	else if (_action.isAction(VERB_LOOK, NOUN_BONES) && (_action._mainObjectSource == 4))
+	else if (_action.isAction(VERB_LOOK, NOUN_BONES) && (_action._mainObjectSource == CAT_HOTSPOT))
 		_vm->_dialogs->show(70217);
-	else if (_action.isAction(VERB_TAKE, NOUN_BONES) && (_action._mainObjectSource == 4)) {
+	else if (_action.isAction(VERB_TAKE, NOUN_BONES) && (_action._mainObjectSource == CAT_HOTSPOT)) {
 		if (_game._objects.isInInventory(OBJ_BONES))
 			_vm->_dialogs->show(70219);
 	} else if (_action.isAction(VERB_LOOK, NOUN_SUBMERGED_CITY))
@@ -1455,7 +1455,7 @@ void Scene704::actions() {
 			_vm->_dialogs->show(70412);
 	} else if (_action.isAction(VERB_LOOK, NOUN_VOLCANO_RIM))
 		_vm->_dialogs->show(70413);
-	else if (_action.isAction(VERB_LOOK, NOUN_BOTTLE) && (_action._mainObjectSource == 4))
+	else if (_action.isAction(VERB_LOOK, NOUN_BOTTLE) && (_action._mainObjectSource == CAT_HOTSPOT))
 		_vm->_dialogs->show(70414);
 	else if (_action.isAction(VERB_LOOK, NOUN_OPEN_WATER_TO_SOUTH))
 		_vm->_dialogs->show(70416);
@@ -2017,7 +2017,7 @@ void Scene706::actions() {
 		_vm->_dialogs->show(70623);
 	else if (_action.isAction(VERB_LOOK, NOUN_VASE) && (_game._objects[OBJ_VASE]._roomNumber == _scene->_currentSceneId))
 		_vm->_dialogs->show(70624);
-	else if (_action.isAction(VERB_LOOK, NOUN_BOTTLE) && (_action._mainObjectSource == 4))
+	else if (_action.isAction(VERB_LOOK, NOUN_BOTTLE) && (_action._mainObjectSource == CAT_HOTSPOT))
 		_vm->_dialogs->show(70632);
 	else
 		return;

@@ -2159,9 +2159,9 @@ void Scene511::actions() {
 			_vm->_dialogs->show(51128);
 	} else if (_action.isAction(VERB_LOOK, NOUN_PORTHOLE))
 		_vm->_dialogs->show(51122);
-	else if (_action.isAction(VERB_LOOK, NOUN_FISHING_LINE) && (_action._mainObjectSource == 4) && (_globals[kLineStatus] == 2))
+	else if (_action.isAction(VERB_LOOK, NOUN_FISHING_LINE) && (_action._mainObjectSource == CAT_HOTSPOT) && (_globals[kLineStatus] == 2))
 		_vm->_dialogs->show(51126);
-	else if (_action.isAction(VERB_LOOK, NOUN_FISHING_LINE) && (_action._mainObjectSource == 4) && (_globals[kLineStatus] == 3))
+	else if (_action.isAction(VERB_LOOK, NOUN_FISHING_LINE) && (_action._mainObjectSource == CAT_HOTSPOT) && (_globals[kLineStatus] == 3))
 		_vm->_dialogs->show(51133);
 	else if (_action.isAction(VERB_LOOK, NOUN_STATUE))
 		_vm->_dialogs->show(51127);

@@ -1263,7 +1263,7 @@ void Scene102::actions() {
 		return;
 	}
 
-	if (_action.isAction(VERB_LOOK, NOUN_BURGER) && (_action._mainObjectSource == 4)) {
+	if (_action.isAction(VERB_LOOK, NOUN_BURGER) && (_action._mainObjectSource == CAT_HOTSPOT)) {
 		_vm->_dialogs->show(801);
 		_action._inProgress = false;
 	}
@@ -2295,7 +2295,7 @@ void Scene107::actions() {
 		_scene->_nextSceneId = 105;
 	else if (_action.isAction(VERB_LOOK, NOUN_NORTHERN_SEA_CLIFF))
 		_vm->_dialogs->show(10701);
-	else if (_action.isAction(VERB_LOOK, NOUN_DEAD_FISH) && (_action._mainObjectSource == 4))
+	else if (_action.isAction(VERB_LOOK, NOUN_DEAD_FISH) && (_action._mainObjectSource == CAT_HOTSPOT))
 		_vm->_dialogs->show(10702);
 	else if (_action.isAction(VERB_LOOK, NOUN_BUSH_LIKE_FORMATION))
 		_vm->_dialogs->show(10703);

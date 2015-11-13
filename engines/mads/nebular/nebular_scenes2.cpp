@@ -1405,9 +1405,9 @@ void Scene205::actions() {
 			_vm->_dialogs->show(20503);
 		else if (_action.isAction(VERB_LOOK, NOUN_HUT))
 			_vm->_dialogs->show(20504);
-		else if (_action.isAction(VERB_LOOK, NOUN_CHICKEN) && (_action._mainObjectSource == 4))
+		else if (_action.isAction(VERB_LOOK, NOUN_CHICKEN) && (_action._mainObjectSource == CAT_HOTSPOT))
 			_vm->_dialogs->show(20505);
-		else if (_action.isAction(VERB_TAKE, NOUN_CHICKEN) && (_action._mainObjectSource == 4))
+		else if (_action.isAction(VERB_TAKE, NOUN_CHICKEN) && (_action._mainObjectSource == CAT_HOTSPOT))
 			_vm->_dialogs->show(20506);
 		else if (_action.isAction(VERB_LOOK, NOUN_CHICKEN_ON_SPIT))
 			_vm->_dialogs->show(20507);

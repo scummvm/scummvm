@@ -684,7 +684,7 @@ void Scene603::actions() {
 			_vm->_dialogs->show(60327);
 		else
 			_vm->_dialogs->show(60328);
-	} else if (_action.isAction(VERB_LOOK, NOUN_COMPACT_CASE) && (_action._mainObjectSource == 4))
+	} else if (_action.isAction(VERB_LOOK, NOUN_COMPACT_CASE) && (_action._mainObjectSource == CAT_HOTSPOT))
 		_vm->_dialogs->show(60329);
 	// For the next two checks, the second part of the check wasn't surrounded par parenthesis, which was obviously wrong
 	else if (_action.isAction(VERB_LOOK) && (_action.isObject(NOUN_BRA) || _action.isObject(NOUN_BOA) || _action.isObject(NOUN_SLIP)))
@@ -2476,7 +2476,7 @@ void Scene608::actions() {
 			_vm->_dialogs->show(60824);
 	} else if (_action.isAction(VERB_OPEN, NOUN_STORAGE_BOX))
 		_vm->_dialogs->show(60826);
-	else if (_action.isAction(VERB_LOOK, NOUN_REARVIEW_MIRROR) && (_action._mainObjectSource == 4))
+	else if (_action.isAction(VERB_LOOK, NOUN_REARVIEW_MIRROR) && (_action._mainObjectSource == CAT_HOTSPOT))
 		_vm->_dialogs->show(60828);
 	else if (_action.isAction(VERB_LOOK, NOUN_TOOL_BOX)) {
 		if (_game._objects[OBJ_POLYCEMENT]._roomNumber == _scene->_currentSceneId)
@@ -3014,7 +3014,7 @@ void Scene610::actions() {
 		_vm->_dialogs->show(61024);
 	else if (_action.isAction(VERB_LOOK, NOUN_SPOTLIGHT))
 		_vm->_dialogs->show(61025);
-	else if (_action.isAction(VERB_LOOK, NOUN_PHONE_HANDSET) && (_action._mainObjectSource == 4))
+	else if (_action.isAction(VERB_LOOK, NOUN_PHONE_HANDSET) && (_action._mainObjectSource == CAT_HOTSPOT))
 		_vm->_dialogs->show(61026);
 	else if (_action.isAction(VERB_LOOK, NOUN_PHONE_CRADLE))
 		_vm->_dialogs->show(61027);

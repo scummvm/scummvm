@@ -5045,7 +5045,7 @@ void Scene359::actions() {
 		_vm->_dialogs->show(35918);
 	else if (_action.isAction(VERB_TAKE, NOUN_LIMB))
 		_vm->_dialogs->show(35919);
-	else if (_action.isAction(VERB_LOOK, NOUN_SECURITY_CARD) && (_action._mainObjectSource == 4))
+	else if (_action.isAction(VERB_LOOK, NOUN_SECURITY_CARD) && (_action._mainObjectSource == CAT_HOTSPOT))
 		_vm->_dialogs->show(35921);
 	else if (_action.isAction(VERB_LOOK, NOUN_BLOOD_STAIN)) {
 		if ((_game._difficulty != DIFFICULTY_HARD) && (_game._objects[OBJ_SECURITY_CARD]._roomNumber == 359))
