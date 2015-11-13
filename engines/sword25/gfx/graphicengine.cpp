@@ -87,7 +87,7 @@ GraphicEngine::~GraphicEngine() {
 }
 
 bool GraphicEngine::init(int width, int height, int bitDepth, int backbufferCount) {
-	// Warn when an unsupported bit depth has been selectede.
+	// Warn when an unsupported bit depth has been selecteed.
 	if (bitDepth != BIT_DEPTH) {
 		warning("Can't use a bit depth of %d (not supported). Falling back to %d.", bitDepth, BIT_DEPTH);
 		_bitDepth = BIT_DEPTH;
