@@ -60,7 +60,7 @@ enum {
 
 namespace Sword25 {
 
-static const uint FRAMETIME_SAMPLE_COUNT = 5;       // Number of frame periods in average per number of frames
+static const uint FRAMETIME_SAMPLE_COUNT = 5;       // Frame duration is averaged over FRAMETIME_SAMPLE_COUNT frames
 
 GraphicEngine::GraphicEngine(Kernel *pKernel) :
 	_width(0),
