@@ -46,7 +46,7 @@ private:
 	Graphics::Surface *_surface;
 
 	void decode8(Common::SeekableReadStream &stream);
-	//void decode16(Common::SeekableReadStream &stream);
+	void decode16(Common::SeekableReadStream &stream);
 };
 
 } // End of namespace Image
