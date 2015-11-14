@@ -516,7 +516,7 @@ void MinigameBbTennis::updateObjs() {
 		}
 		obj->blinkCtr = _vm->getRandom(64) + 60;
 		_tennisPlayerDelay = _vm->getRandom(128) + 400 - _playerDecrease;
-		if (_vm->getRandom(10) == 1 && !isAnySoundPlaying(kAllSounds, 0x11))
+		if (_vm->getRandom(10) == 1 && !isAnySoundPlaying(kAllSounds, 11))
 			playSound(kYuppieEnteringCourtSounds[_vm->getRandom(2)]);
 	}
 
