@@ -226,8 +226,8 @@ public:
 	void continueGameFromQuickSave();
 	void setNewSceneNum(int newSceneNum);
 	const Common::String getTargetName() { return _targetName; }
-private:
 	const ADGameDescription *_gameDescription;
+private:
 	Graphics::PixelFormat _pixelFormat;
 public:
 	Common::RandomSource *_random;
