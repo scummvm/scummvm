@@ -141,7 +141,7 @@ bool Screen::init() {
 			if (!font)
 				error("Could not load any SJIS font, neither the original nor ScummVM's 'SJIS.FNT'");
 
-			_fonts[FID_SJIS_FNT] = new SJISFont(font, _sjisInvisibleColor, _use16ColorMode, !_use16ColorMode && _vm->game() != GI_LOL, !_use16ColorMode && _vm->game() == GI_LOL ? 1 : 0);
+			_fonts[FID_SJIS_FNT] = new SJISFont(font, _sjisInvisibleColor, _use16ColorMode, !_use16ColorMode && _vm->game() != GI_LOL && _vm->game() != GI_EOB2, _vm->game() == GI_EOB2 && _vm->gameFlags().platform == Common::kPlatformFMTowns, !_use16ColorMode && _vm->game() == GI_LOL ? 1 : 0);
 		}
 	}
 
@@ -3583,12 +3583,11 @@ void AMIGAFont::unload() {
 	memset(_chars, 0, sizeof(_chars));
 }
 
-SJISFont::SJISFont(Graphics::FontSJIS *font, const uint8 invisColor, bool is16Color, bool drawOutline, int extraSpacing)
-    : _colorMap(0), _font(font), _invisColor(invisColor), _is16Color(is16Color), _drawOutline(drawOutline), _sjisWidthOffset(extraSpacing) {
+SJISFont::SJISFont(Graphics::FontSJIS *font, const uint8 invisColor, bool is16Color, bool drawOutline, bool fatPrint, int extraSpacing)
+	: _colorMap(0), _font(font), _invisColor(invisColor), _is16Color(is16Color), _drawOutline(drawOutline), _sjisWidthOffset(extraSpacing) {
 	assert(_font);
-
 	_font->setDrawingMode(_drawOutline ? Graphics::FontSJIS::kOutlineMode : Graphics::FontSJIS::kDefaultMode);
-
+	_font->toggleFatPrint(fatPrint);
 	_sjisWidth = _font->getMaxFontWidth() >> 1;
 	_fontHeight = _font->getFontHeight() >> 1;
 	_asciiWidth = _font->getCharWidth('a') >> 1;
@@ -3639,6 +3638,16 @@ void SJISFont::drawChar(uint16 c, byte *dst, int pitch) const {
 	}
 
 	_font->drawChar(dst, c, 640, 1, color1, color2, 640, 400);
+}
+
+SJISFontLarge::SJISFontLarge(Graphics::FontSJIS *font) : SJISFont(font, 0, false, false, false, 0) {
+	_sjisWidth = _font->getMaxFontWidth();
+	_fontHeight = _font->getFontHeight();
+	_asciiWidth = _font->getCharWidth('a');
+}
+
+void SJISFontLarge::drawChar(uint16 c, byte *dst, int pitch) const {
+	_font->drawChar(dst, c, 320, 1, _colorMap[1], _colorMap[0], 320, 200);
 }
 
 #pragma mark -

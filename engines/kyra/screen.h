@@ -211,34 +211,47 @@ private:
  */
 class SJISFont : public Font {
 public:
-	SJISFont(Graphics::FontSJIS *font, const uint8 invisColor, bool is16Color, bool drawOutline, int extraSpacing);
-	~SJISFont() { unload(); }
+	SJISFont(Graphics::FontSJIS *font, const uint8 invisColor, bool is16Color, bool drawOutline, bool fatPrint, int extraSpacing);
+	virtual ~SJISFont() { unload(); }
 
-	bool usesOverlay() const { return true; }
+	virtual bool usesOverlay() const { return true; }
 
 	bool load(Common::SeekableReadStream &) { return true; }
 	int getHeight() const;
 	int getWidth() const;
 	int getCharWidth(uint16 c) const;
 	void setColorMap(const uint8 *src);
-	void drawChar(uint16 c, byte *dst, int pitch) const;
-private:
+	virtual void drawChar(uint16 c, byte *dst, int pitch) const;
+
+protected:
 	void unload();
 
 	const uint8 *_colorMap;
+	Graphics::FontSJIS *_font;	
+	int _sjisWidth, _asciiWidth;
+	int _fontHeight;
+	const bool _drawOutline;
 
-	Graphics::FontSJIS *_font;
+private:
 	const uint8 _invisColor;
 	const bool _is16Color;
-	const bool _drawOutline;
 	// We use this for cases where the font width returned by getWidth() or getCharWidth() does not match the original.
 	// The original Japanese game versions use hard coded sjis font widths of 8 or 9. However, this does not necessarily
 	// depend on whether an outline is used or not (neither LOL/PC-9801 nor LOL/FM-TOWNS use an outline, but the first
 	// version uses a font width of 8 where the latter uses a font width of 9).
 	const int _sjisWidthOffset;
+};
 
-	int _sjisWidth, _asciiWidth;
-	int _fontHeight;
+/**
+* SJISFont variant used in the intro and outro of EOB II FM-Towns. It appears twice as large, since it is not rendered on the hires overlay pages
+*/
+class SJISFontLarge : public SJISFont {
+public:
+	SJISFontLarge(Graphics::FontSJIS *font);
+	virtual ~SJISFontLarge() { unload(); }
+
+	virtual bool usesOverlay() const { return false; }
+	virtual void drawChar(uint16 c, byte *dst, int pitch) const;
 };
 
 /**
@@ -400,6 +413,7 @@ public:
 		FID_GOLDFONT_FNT,
 		FID_INTRO_FNT,
 		FID_SJIS_FNT,
+		FID_SJIS_LARGE_FNT,
 		FID_NUM
 	};
 
