@@ -61,7 +61,6 @@ Scene::Scene(MADSEngine *vm)
 	_interfaceY = 0;
 	_spritesCount = 0;
 	_variant = 0;
-	_initialVariant = 0;
 
 	_speechReady = -1;
 
@@ -756,7 +755,6 @@ void Scene::synchronize(Common::Serializer &s) {
 	s.syncAsByte(_roomChanged);
 	s.syncAsUint16LE(_nextSceneId);
 	s.syncAsUint16LE(_priorSceneId);
-	s.syncAsSint16LE(_initialVariant);
 	s.syncAsSint16LE(_variant);
 	_dynamicHotspots.synchronize(s);
 }

@@ -618,7 +618,7 @@ void Scene202::setup() {
 	setAAName();
 
 	if (_globals[kTicketPeoplePresent] == 2)
-		_scene->_initialVariant = 1;
+		_scene->_variant = 1;
 
 	_scene->addActiveVocab(NOUN_CHANDELIER);
 	_scene->addActiveVocab(NOUN_EDGAR_DEGAS);
@@ -1536,7 +1536,7 @@ void Scene203::synchronize(Common::Serializer &s) {
 
 void Scene203::setup() {
 	if (_globals[kCurrentYear] == 1993)
-		_scene->_initialVariant = 1;
+		_scene->_variant = 1;
 
 	setPlayerSpritesPrefix();
 	setAAName();
@@ -3293,7 +3293,7 @@ void Scene204::synchronize(Common::Serializer &s) {
 
 void Scene204::setup() {
 	if ((_globals[kCurrentYear] == 1993) || _globals[kRightDoorIsOpen504])
-		_scene->_initialVariant = 1;
+		_scene->_variant = 1;
 
 	setPlayerSpritesPrefix();
 	setAAName();
@@ -4240,12 +4240,12 @@ void Scene205::setup() {
 		return;
 
 	if (_globals[kJacquesStatus] == 1)
-		_scene->_initialVariant = 3;
+		_scene->_variant = 3;
 	else if (_globals[kJacquesStatus] == 0) {
 		if (_globals[kMadameGiryLocation] == 0)
-			_scene->_initialVariant = 2;
+			_scene->_variant = 2;
 		else if (_globals[kMadameGiryLocation] == 1)
-			_scene->_initialVariant = 1;
+			_scene->_variant = 1;
 	}
 }
 

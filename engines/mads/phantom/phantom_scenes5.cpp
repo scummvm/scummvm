@@ -3170,7 +3170,7 @@ void Scene505::setup() {
 	setAAName();
 
 	if ((_globals[kCoffinStatus] == 2) && (!_globals[kChrisLeft505]))
-		_scene->_initialVariant = 1;
+		_scene->_variant = 1;
 
 	_scene->addActiveVocab(NOUN_CHRISTINE);
 }
@@ -3928,7 +3928,7 @@ void Scene506::setup() {
 	_scene->addActiveVocab(VERB_LOOK_AT);
 
 	if (!_globals[kChristineIsInBoat])
-		_scene->_initialVariant = 1;
+		_scene->_variant = 1;
 }
 
 void Scene506::enter() {

@@ -98,7 +98,6 @@ public:
 	int _textSpacing;
 	Hotspots _hotspots;
 	DirtyAreas _dirtyAreas;
-	int _initialVariant;
 	int _variant;
 	SceneInfo *_sceneInfo;
 	MSurface _backgroundSurface;

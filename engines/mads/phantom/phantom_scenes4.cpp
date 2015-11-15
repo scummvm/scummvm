@@ -86,7 +86,7 @@ void Scene401::setup() {
 	setAAName();
 
 	if (_globals[kCatacombsMisc] & MAZE_EVENT_PUDDLE)
-		_scene->_initialVariant = 1;
+		_scene->_variant = 1;
 
 	_scene->addActiveVocab(NOUN_RED_FRAME);
 	_scene->addActiveVocab(NOUN_YELLOW_FRAME);
@@ -580,10 +580,10 @@ void Scene403::setup() {
 	setAAName();
 
 	if (_globals[kCatacombsMisc] & MAZE_EVENT_HOLE)
-		_scene->_initialVariant = 1;
+		_scene->_variant = 1;
 
 	if (_globals[kCatacombsMisc] & MAZE_EVENT_PLANK)
-		_scene->_initialVariant = 2;
+		_scene->_variant = 2;
 
 	_scene->addActiveVocab(NOUN_RED_FRAME);
 	_scene->addActiveVocab(NOUN_YELLOW_FRAME);
@@ -1079,7 +1079,7 @@ void Scene404::setup() {
 	setAAName();
 
 	if (_globals[kCatacombsMisc] & MAZE_EVENT_BLOCK)
-		_scene->_initialVariant = 1;
+		_scene->_variant = 1;
 
 	_scene->addActiveVocab(NOUN_RED_FRAME);
 	_scene->addActiveVocab(NOUN_YELLOW_FRAME);
@@ -2451,7 +2451,7 @@ void Scene408::setup() {
 	setAAName();
 
 	if ((_globals[kCatacombsMisc] & MAZE_EVENT_WEB) && (!_globals[kCobwebIsCut]))
-		_scene->_initialVariant = 1;
+		_scene->_variant = 1;
 
 	_scene->addActiveVocab(NOUN_RED_FRAME);
 	_scene->addActiveVocab(NOUN_YELLOW_FRAME);
@@ -4152,7 +4152,7 @@ void Scene453::setup() {
 	setAAName();
 
 	if (_globals[kCatacombsMisc] & MAZE_EVENT_STONE)
-		_scene->_initialVariant = 1;
+		_scene->_variant = 1;
 
 	_scene->addActiveVocab(NOUN_RED_FRAME);
 	_scene->addActiveVocab(NOUN_YELLOW_FRAME);

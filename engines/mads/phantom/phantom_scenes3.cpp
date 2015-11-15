@@ -2232,7 +2232,7 @@ void Scene309::setup() {
 	setAAName();
 
 	if (_globals[kRightDoorIsOpen504])
-		_scene->_initialVariant = 1;
+		_scene->_variant = 1;
 }
 
 void Scene309::enter() {

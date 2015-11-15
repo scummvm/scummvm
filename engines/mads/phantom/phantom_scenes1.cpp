@@ -849,14 +849,14 @@ void Scene103::setup() {
 	setPlayerSpritesPrefix();
 	setAAName();
 
-	_scene->_initialVariant = 0;
+	_scene->_variant = 0;
 
 	if ((_globals[kPrompterStandStatus] == 1) || (_globals[kCurrentYear] == 1881)) {
-		_scene->_initialVariant = 1;
+		_scene->_variant = 1;
 		if ((_globals[kJacquesStatus] == 0) && (_globals[kCurrentYear] == 1881))
-			_scene->_initialVariant = 2;
+			_scene->_variant = 2;
 		else if ((_globals[kJacquesStatus] >= 1) && (_globals[kCurrentYear] == 1881))
-			_scene->_initialVariant = 3;
+			_scene->_variant = 3;
 	}
 
 	_scene->addActiveVocab(NOUN_PROMPTERS_STAND);
@@ -902,7 +902,7 @@ void Scene103::enter() {
 	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('x', 1));
 	_globals._spriteIndexes[2] = _scene->_sprites.addSprites("*RDR_6");
 
-	adjustRails(_scene->_initialVariant);
+	adjustRails(_scene->_variant);
 
 	_scene->_hotspots.activate(NOUN_JACQUES, false);
 	_scene->_hotspots.activate(NOUN_KEY, false);
@@ -2468,7 +2468,7 @@ void Scene104::setup() {
 	setAAName();
 
 	if (_globals[kTrapDoorStatus] == 1)
-		_scene->_initialVariant = 1;
+		_scene->_variant = 1;
 
 	_scene->addActiveVocab(NOUN_MONSIEUR_RICHARD);
 }
@@ -3613,7 +3613,7 @@ void Scene105::synchronize(Common::Serializer &s) {
 
 void Scene105::setup() {
 	if (_globals[kCurrentYear] == 1993)
-		_scene->_initialVariant = 1;
+		_scene->_variant = 1;
 
 	setPlayerSpritesPrefix();
 	setAAName();
@@ -4182,7 +4182,7 @@ void Scene106::synchronize(Common::Serializer &s) {
 
 void Scene106::setup() {
 	if (_globals[kCurrentYear] == 1881)
-		_scene->_initialVariant = 1;
+		_scene->_variant = 1;
 
 	setPlayerSpritesPrefix();
 	setAAName();
@@ -5042,7 +5042,7 @@ void Scene108::setup() {
 	setAAName();
 
 	if (_globals[kCurrentYear] == 1993)
-		_scene->_initialVariant = 1;
+		_scene->_variant = 1;
 
 	_scene->addActiveVocab(NOUN_GENTLEMAN);
 	_scene->addActiveVocab(NOUN_CHARLES);
@@ -6113,7 +6113,7 @@ void Scene110::synchronize(Common::Serializer &s) {
 
 void Scene110::setup() {
 	if (_globals[kCurrentYear] == 1993)
-		_scene->_initialVariant = 1;
+		_scene->_variant = 1;
 
 	setPlayerSpritesPrefix();
 	setAAName();
@@ -6476,7 +6476,7 @@ void Scene111::synchronize(Common::Serializer &s) {
 
 void Scene111::setup() {
 	if (_globals[kCurrentYear] == 1993)
-		_scene->_initialVariant = 1;
+		_scene->_variant = 1;
 
 	setPlayerSpritesPrefix();
 	setAAName();
@@ -9152,7 +9152,7 @@ void Scene114::synchronize(Common::Serializer &s) {
 
 void Scene114::setup() {
 	if (_globals[kCurrentYear] == 1993)
-		_scene->_initialVariant = 1;
+		_scene->_variant = 1;
 
 	setPlayerSpritesPrefix();
 	setAAName();
