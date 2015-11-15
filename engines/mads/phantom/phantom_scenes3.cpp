@@ -2601,7 +2601,7 @@ void Scene310::enter() {
 	_game._player._visible = false;
 	_globals._animationIndexes[0] = _scene->loadAnimation(formAnimName('l', 1), 80);
 	_scene->_animation[_globals._animationIndexes[0]]->_canChangeView = true;
-	_game._camX._panMode = 1;
+	_game._camX._manualFl = true;
 
 	_raoulMessageColor = 0x102;
 	_chrisMessageColor = 0x1110;

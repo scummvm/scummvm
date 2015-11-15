@@ -732,7 +732,7 @@ void Scene202::enter() {
 }
 
 void Scene202::step() {
-	if (_game._camX._panFrame)
+	if (_game._camX._currentFrameFl)
 		handleChandeliersPositions();
 
 	if (_anim0ActvFl)

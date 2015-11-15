@@ -58,7 +58,7 @@ Game *Game::init(MADSEngine *vm) {
 
 Game::Game(MADSEngine *vm)
 	: _vm(vm), _surface(nullptr), _objects(vm), _scene(vm),
-	  _screenObjects(vm), _player(vm) {
+	 _screenObjects(vm), _player(vm) {
 	_sectionNumber = 1;
 	_priorSectionNumber = 0;
 	_loadGameSlot = -1;
@@ -82,6 +82,7 @@ Game::Game(MADSEngine *vm)
 	_winStatus = 0;
 	_widepipeCtr = 0;
 	_fx = kTransitionNone;
+	_panningSpeed = 1; // Medium speed
 
 	// Load the inventory object list
 	_objects.load();
@@ -218,6 +219,10 @@ void Game::sectionLoop() {
 		}
 
 		_scene.loadScene(_scene._nextSceneId, _aaName, 0);
+		camInitDefault();
+		camSetSpeed();
+
+
 		_vm->_sound->pauseNewCommands();
 
 		if (!_player._spritesLoaded) {
@@ -640,10 +645,64 @@ void Game::syncTimers(SyncType slaveType, int slaveId, SyncType masterType, int 
 }
 
 void Game::camPanTo(Camera *camera, int target) {
-	warning("TODO: Game::camPanTo");
-	if (camera) {
-		// Incomplete
-		camera->_panMode = 1;
+	if (!camera)
+		return;
+
+	if (camera->_panAllowedFl) {
+		camera->_activeFl = true;
+		camera->_manualFl = true;
+		camera->_target = target;
+		camera->_timer = _scene._frameStartTime;
 	}
 }
+
+void Game::camInitDefault() {
+	_camX._activeFl = false;
+	_camY._activeFl = false;
+
+	_camX._panAllowedFl = (_scene._sceneInfo->_width > MADS_SCREEN_WIDTH);
+	_camY._panAllowedFl = (_scene._sceneInfo->_height > MADS_SCENE_HEIGHT);
+
+	if (_camX._panAllowedFl) {
+		_camX._manualFl = false;
+		_camX._rate = 4;
+		_camX._speed = 4;
+		_camX._target = 0;
+		_camX._distOffCenter = 80;
+		_camX._startTolerance = 80;
+		_camX._endTolerance = 4;
+		_camX._timer = _scene._frameStartTime;
+	}
+
+	if (_camY._panAllowedFl) {
+		_camY._manualFl = true;
+		_camY._rate = 4;
+		_camY._speed = 2;
+		_camY._target = 0;
+		_camY._distOffCenter = 80;
+		_camY._startTolerance = 60;
+		_camY._endTolerance = 4;
+		_camY._timer = _scene._frameStartTime;
+	}
+}
+
+void Game::camSetSpeed() {
+	switch (_panningSpeed) {
+	case 1:
+		_camX._speed = 8;
+		_camY._speed = 4;
+		break;
+
+	case 2:
+		_camX._speed = 320;
+		_camY._speed = 160;
+		break;
+
+	default:
+		_camX._speed = 4;
+		_camY._speed = 2;
+		break;
+	}
+}
+
 } // End of namespace MADS

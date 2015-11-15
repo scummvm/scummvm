@@ -147,6 +147,7 @@ public:
 	int _winStatus;
 	int _widepipeCtr;
 	int _loadGameSlot;
+	int _panningSpeed;
 
 public:
 	virtual ~Game();
@@ -244,13 +245,25 @@ public:
 	void syncTimers(SyncType slaveType, int slaveId, SyncType masterType, int masterId);
 
 	typedef struct {
-		//TODO
-		bool _panFrame;
-		int _panMode;
+		bool _panAllowedFl;
+		bool _activeFl;
+		bool _currentFrameFl;
+		bool _manualFl;
+
+		int _speed;
+		int _rate;
+		int _target;
+		int _distOffCenter;
+		int _startTolerance;
+		int _endTolerance;
+		int _direction;
+		uint32 _timer;
 	} Camera;
 	Camera _camX, _camY;
 
 	void camPanTo(Camera *camera, int target);
+	void camInitDefault();
+	void camSetSpeed();
 
 };
 
