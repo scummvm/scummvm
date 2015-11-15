@@ -223,6 +223,10 @@ public:
 		return 99;
 	}
 
+	static bool cmpSave(const SaveStateDescriptor &x, const SaveStateDescriptor &y) {
+		return x.getSaveSlot() < y.getSaveSlot();
+	}
+
 	virtual SaveStateList listSaves(const char *target) const {
 		SaveStateList saveList;
 		Common::StringArray filenames = g_system->getSavefileManager()->listSavefiles("Save??.tlj");
@@ -246,6 +250,7 @@ public:
 			saveList.push_back(SaveStateDescriptor(atoi(slot), description));
 		}
 
+		Common::sort(saveList.begin(), saveList.end(), cmpSave);
 		return saveList;
 	}
 
