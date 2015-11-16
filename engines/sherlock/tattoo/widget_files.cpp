@@ -143,19 +143,17 @@ void WidgetFiles::render(FilesRenderMode mode) {
 	int yp = _surface.fontHeight() + 14;
 	
 	for (int idx = _savegameIndex; idx < (_savegameIndex + FILES_LINES_COUNT); ++idx) {
-		if (OP_NAMES || idx == _selector || idx == _oldSelector) {
-			if (idx == _selector && mode != RENDER_ALL)
-				color = COMMAND_HIGHLIGHTED;
-			else
-				color = INFO_TOP;
+		if (idx == _selector && mode != RENDER_ALL)
+			color = COMMAND_HIGHLIGHTED;
+		else
+			color = INFO_TOP;
 
-			if (mode == RENDER_NAMES_AND_SCROLLBAR)
-				_surface.fillRect(Common::Rect(4, yp, _surface.w() - BUTTON_SIZE - 9, yp + _surface.fontHeight()), TRANSPARENCY);
+		if (mode == RENDER_NAMES_AND_SCROLLBAR)
+			_surface.fillRect(Common::Rect(4, yp, _surface.w() - BUTTON_SIZE - 9, yp + _surface.fontHeight()), TRANSPARENCY);
 			
-			Common::String numStr = Common::String::format("%d.", idx + 1);
-			_surface.writeString(numStr, Common::Point(_surface.widestChar(), yp), color);
-			_surface.writeString(_savegames[idx], Common::Point(xp, yp), color);
-		}
+		Common::String numStr = Common::String::format("%d.", idx + 1);
+		_surface.writeString(numStr, Common::Point(_surface.widestChar(), yp), color);
+		_surface.writeString(_savegames[idx], Common::Point(xp, yp), color);
 
 		yp += _surface.fontHeight() + 1;
 	}
