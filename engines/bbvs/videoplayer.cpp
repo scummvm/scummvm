@@ -43,6 +43,8 @@ void BbvsEngine::playVideo(int videoNum) {
 		return;
 	}
 
+	debug(0, "Screen format: %s", _system->getScreenFormat().toString().c_str());
+
 	Video::VideoDecoder *videoDecoder = new Video::AVIDecoder();
 	if (!videoDecoder->loadFile(videoFilename)) {
 		delete videoDecoder;
