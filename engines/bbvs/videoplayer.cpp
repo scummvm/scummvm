@@ -61,8 +61,10 @@ void BbvsEngine::playVideo(int videoNum) {
 			const Graphics::Surface *frame = videoDecoder->decodeNextFrame();
 			if (frame) {
 				if (frame->format.bytesPerPixel > 1) {
-					const Graphics::Surface *frame1 = frame->convertTo(_system->getScreenFormat());
+					Graphics::Surface *frame1 = frame->convertTo(_system->getScreenFormat());
 					_system->copyRectToScreen(frame1->getPixels(), frame1->pitch, 0, 0, frame1->w, frame1->h);
+					frame1->free();
+					delete frame1;
 				} else {
 					_system->copyRectToScreen(frame->getPixels(), frame->pitch, 0, 0, frame->w, frame->h);
 				}
