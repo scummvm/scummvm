@@ -390,6 +390,7 @@ void Scene::doFrame() {
 				!_vm->_game->_fx);
 	}
 
+	_vm->_game->camUpdate();
 	if (_action._selectedAction && player._stepEnabled && !player._needToWalk &&
 			!_vm->_game->_trigger && !player._trigger) {
 		_action.startAction();
@@ -789,6 +790,7 @@ void Scene::setDynamicAnim(int id, int anim_id, int segment) {
 
 void Scene::setCamera(Common::Point pos) {
 	_posAdjust = pos;
+	warning("setCamera: Incomplete function");
 }
 
 void Scene::drawToBackground(int spriteId, int frameId, Common::Point pos, int depth, int scale) {

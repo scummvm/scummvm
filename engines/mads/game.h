@@ -264,6 +264,8 @@ public:
 	void camPanTo(Camera *camera, int target);
 	void camInitDefault();
 	void camSetSpeed();
+	void camUpdate();
+	bool camPan(Camera *camera, int16 *picture_view, int16 *player_loc, int display_size, int picture_size);
 
 };
 
