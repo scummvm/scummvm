@@ -262,7 +262,7 @@ struct PixelFormat {
 		return 0;
 	}
 
-	Common::String toString();
+	Common::String toString() const;
 };
 
 } // End of namespace Graphics

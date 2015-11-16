@@ -25,7 +25,7 @@
 
 namespace Graphics {
 
-Common::String PixelFormat::toString() {
+Common::String PixelFormat::toString() const {
 	if (bytesPerPixel == 1)
 		return "CLUT8";
 
