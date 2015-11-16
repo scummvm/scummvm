@@ -22,6 +22,7 @@
 
 #include "graphics/pixelformat.h"
 #include "common/debug.h"
+#include "common/algorithm.h"
 
 namespace Graphics {
 
@@ -29,65 +30,33 @@ Common::String PixelFormat::toString() const {
 	if (bytesPerPixel == 1)
 		return "CLUT8";
 
+	// We apply a trick to simplify the code here. We encode all the shift,
+	// loss, and component name in the component entry. By having the shift as
+	// highest entry we can sort according to shift.
+	// This works because in valid RGB PixelFormats shift values needs to be
+	// distinct except when the loss is 8. However, components with loss value
+	// of 8 are not printed, thus their position does not matter.
 	int component[4];
-	char tmp[10];
-	tmp[0] = tmp[1] = 0;
+	component[0] = (rShift << 16) | (rLoss << 8) | 'R';
+	component[1] = (gShift << 16) | (gLoss << 8) | 'G';
+	component[2] = (bShift << 16) | (bLoss << 8) | 'B';
+	component[3] = (aShift << 16) | (aLoss << 8) | 'A';
 
-	component[0] = rShift;
-	component[1] = gShift;
-	component[2] = bShift;
-	component[3] = aShift;
+	// Sort components according to descending shift value.
+	Common::sort(component, component + ARRAYSIZE(component), Common::Greater<int>());
 
 	Common::String letters, digits;
-
-	for (int c = 0; c < 4; c++) {
-		int compPos = -1;
-		int maxshift = -1;
-
-		// Find maximal component
-		for (int i = 0; i < 4; i++)
-			if (component[i] >= 0 && component[i] > maxshift) {
-				maxshift = component[i];
-				compPos = i;
-			}
-
-		// Clean duplicates
-		for (int i = 0; i < 4; i++)
-			if (component[i] == maxshift)
-				component[i] = -1;
-
-		switch (compPos) {
-		case 0:
-			if (rLoss != 8) {
-				letters += "R";
-				tmp[0] = '0' + 8 - rLoss;
-				digits += tmp;
-			}
-			break;
-		case 1:
-			if (gLoss != 8) {
-				letters += "G";
-				tmp[0] = '0' + 8 - gLoss;
-				digits += tmp;
-			}
-			break;
-		case 2:
-			if (bLoss != 8) {
-				letters += "B";
-				tmp[0] = '0' + 8 - bLoss;
-				digits += tmp;
-			}
-			break;
-		case 3:
-			if (aLoss != 8) {
-				letters += "A";
-				tmp[0] = '0' + 8 - aLoss;
-				digits += tmp;
-			}
-			break;
-		default:
-			break;
+	for (int i = 0; i < ARRAYSIZE(component); ++i) {
+		const int componentLoss = (component[i] >> 8) & 0xFF;
+		// A loss of 8 means that the component does not exist.
+		if (componentLoss == 8) {
+			continue;
 		}
+
+		const char componentName = component[i] & 0xFF;
+
+		letters += componentName;
+		digits += '0' + 8 - componentLoss;
 	}
 
 	return letters + digits;
