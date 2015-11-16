@@ -21,7 +21,6 @@
  */
 
 #include "graphics/pixelformat.h"
-#include "common/debug.h"
 #include "common/algorithm.h"
 
 namespace Graphics {
