@@ -37,7 +37,7 @@ namespace Image {
 MSVideo1Decoder::MSVideo1Decoder(uint16 width, uint16 height, byte bitsPerPixel) : Codec() {
 	_surface = new Graphics::Surface();
 	_surface->create(width, height, (bitsPerPixel == 8) ? Graphics::PixelFormat::createFormatCLUT8() :
-                                                          Graphics::PixelFormat(2, 5, 5, 5, 0, 0, 5, 10, 0));
+                                                          Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0));
 
 	_bitsPerPixel = bitsPerPixel;
 }
@@ -216,9 +216,8 @@ void MSVideo1Decoder::decode16(Common::SeekableReadStream &stream) {
 const Graphics::Surface *MSVideo1Decoder::decodeFrame(Common::SeekableReadStream &stream) {
 	if (_bitsPerPixel == 8)
 		decode8(stream);
-	else {
+	else
         decode16(stream);
-	}
 
     return _surface;
 }
