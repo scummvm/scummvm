@@ -58,7 +58,12 @@ void BbvsEngine::playVideo(int videoNum) {
 		if (videoDecoder->needsUpdate()) {
 			const Graphics::Surface *frame = videoDecoder->decodeNextFrame();
 			if (frame) {
-				_system->copyRectToScreen(frame->getPixels(), frame->pitch, 0, 0, frame->w, frame->h);
+				if (frame->format.bytesPerPixel > 1) {
+					const Graphics::Surface *frame1 = frame->convertTo(_system->getScreenFormat());
+					_system->copyRectToScreen(frame1->getPixels(), frame1->pitch, 0, 0, frame1->w, frame1->h);
+				} else {
+					_system->copyRectToScreen(frame->getPixels(), frame->pitch, 0, 0, frame->w, frame->h);
+				}
 				_system->updateScreen();
 			}
 		}
