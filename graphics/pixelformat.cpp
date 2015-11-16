@@ -42,18 +42,18 @@ Common::String PixelFormat::toString() const {
 
 	for (int c = 0; c < 4; c++) {
 		int compPos = -1;
-		int minshift = 100;
+		int maxshift = -1;
 
-		// Find minimal component
+		// Find maximal component
 		for (int i = 0; i < 4; i++)
-			if (component[i] >= 0 && component[i] < minshift) {
-				minshift = component[i];
+			if (component[i] >= 0 && component[i] > maxshift) {
+				maxshift = component[i];
 				compPos = i;
 			}
 
 		// Clean duplicates
 		for (int i = 0; i < 4; i++)
-			if (component[i] == minshift)
+			if (component[i] == maxshift)
 				component[i] = -1;
 
 		switch (compPos) {
