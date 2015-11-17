@@ -2027,8 +2027,8 @@ const ASound4::CommandPtr ASound4::_commandList[61] = {
 	&ASound4::nullCommand, &ASound4::nullCommand, &ASound4::nullCommand, &ASound4::command43,
 	&ASound4::nullCommand, &ASound4::nullCommand, &ASound4::nullCommand, &ASound4::nullCommand,
 	&ASound4::nullCommand, &ASound4::nullCommand, &ASound4::nullCommand, &ASound4::nullCommand,
-	&ASound4::nullCommand, &ASound4::nullCommand, &ASound4::nullCommand, &ASound4::nullCommand,
-	&ASound4::nullCommand, &ASound4::command57, &ASound4::nullCommand, &ASound4::command59,
+	&ASound4::command52, &ASound4::command53, &ASound4::command54, &ASound4::command55,
+	&ASound4::command56, &ASound4::command57, &ASound4::command58, &ASound4::command59,
 	&ASound4::command60
 };
 
