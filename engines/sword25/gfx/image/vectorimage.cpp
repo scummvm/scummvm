@@ -283,7 +283,18 @@ VectorImage::VectorImage(const byte *pFileData, uint fileSize, bool &success, co
 		case 32:
 			success = parseDefineShape(3, bs);
 			return;
+		case 9:
+			// SetBackgroundColor
+			{
+				byte r, g, b;
+				r = bs.getByte();
+				g = bs.getByte();
+				b = bs.getByte();
+				_bgColor = Graphics::ARGBToColor<Graphics::ColorMasks<8888> >(0xff, r, g, b);
+			}
+			break;
 		default:
+			warning("Ignoring tag: %d, %d bytes", tagType, tagLength);
 			// Ignore unknown tags
 			bs.skipBytes(tagLength);
 		}
