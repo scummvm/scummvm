@@ -48,6 +48,7 @@ MainMenu::MainMenu(MADSEngine *vm): MenuView(vm) {
 	_highlightedIndex = -1;
 	_selectedIndex = -1;
 	_buttonDown = false;
+	_showEvolve = _showSets = false;
 
 	for (int i = 0; i < 7; ++i)
 		_menuItems[i] = nullptr;
@@ -137,12 +138,14 @@ void MainMenu::doFrame() {
 		}
 
 		_vm->_events->showCursor();
+		showBonusItems();
 	} else {
 		if ((_menuItemIndex == -1) || (_frameIndex == 0)) {
 			if (++_menuItemIndex == 6) {
 
 				// Reached end of display animation
 				_vm->_events->showCursor();
+				showBonusItems();
 				return;
 			} else if (_menuItemIndex == 4 && !shouldShowQuotes()) {
 				++_menuItemIndex;
@@ -178,6 +181,17 @@ void MainMenu::addSpriteSlot() {
 	slot._scale = 100;
 
 	_redrawFlag = true;
+}
+
+void MainMenu::showBonusItems() {
+	Scene &scene = _vm->_game->_scene;
+	_showEvolve = Common::File::exists("SECTION0.HAG") && Common::File::exists("evolve.res");
+	_showSets = Common::File::exists("SECTION0.HAG") && Common::File::exists("sets.res");
+
+	if (_showSets)
+		scene._kernelMessages.add(Common::Point(290, 143), 0x4140, 0, 0, 0, "S");
+	if (_showEvolve)
+		scene._kernelMessages.add(Common::Point(305, 143), 0x4140, 0, 0, 0, "E");
 }
 
 bool MainMenu::onEvent(Common::Event &event) {
@@ -280,6 +294,10 @@ bool MainMenu::onEvent(Common::Event &event) {
 			_selectedIndex = _highlightedIndex;
 			unhighlightItem();
 			_frameIndex = 0;
+		} else if (_showSets && Common::Rect(290, 165, 300, 185).contains(event.mouse)) {
+			handleAction(SETS);
+		} else if (_showEvolve && Common::Rect(305, 165, 315, 185).contains(event.mouse)) {
+			handleAction(EVOLVE);
 		}
 
 		return true;
@@ -333,6 +351,14 @@ void MainMenu::handleAction(MADSGameAction action) {
 	case QUOTES:
 		TextView::execute(_vm, "quotes");
 		return;
+
+	case SETS:
+		AnimationView::execute(_vm, "sets");
+		break;
+
+	case EVOLVE:
+		AnimationView::execute(_vm, "evolve");
+		break;
 
 	case EXIT:
 		_vm->_dialogs->_pendingDialog = DIALOG_ADVERT;

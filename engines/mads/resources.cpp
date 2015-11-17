@@ -151,7 +151,7 @@ void HagArchive::loadIndex(MADSEngine *vm) {
 	Common::File hagFile;
 
 	for (int sectionIndex = -1; sectionIndex < 11; ++sectionIndex) {
-		if (sectionIndex == 0)
+ 		if (sectionIndex == 0 && !Common::File::exists("SECTION0.HAG"))
 			continue;
 
 		// Dragonsphere does not have some sections - skip them
@@ -239,7 +239,7 @@ Common::String HagArchive::getResourceFilename(const Common::String &resourceNam
 		int value = atoi(resourceName.c_str() + 2);
 		int hagFileNum = (resType == RESTYPE_ROOM) ? value / 100 : value;
 
-		if (hagFileNum > 0)
+		if (hagFileNum >= 0)
 			outputFilename = Common::String::format("SECTION%d.HAG", hagFileNum);
 	}
 
