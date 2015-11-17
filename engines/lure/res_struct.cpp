@@ -1218,11 +1218,11 @@ void BarmanLists::loadFromStream(Common::ReadStream *stream) {
 
 void StringList::load(MemoryBlock *data) {
 	// Get the number of entries
-	uint count = READ_LE_UINT16(data->data());
+	uint numEntries = READ_LE_UINT16(data->data());
 
 	// Iterate through loading the strings one at a time
 	const char *p = (const char *)data->data() + sizeof(uint16);
-	for (uint index = 0; index < count; ++index) {
+	for (uint index = 0; index < numEntries; ++index) {
 		_entries.push_back(p);
 		p += strlen(p) + 1;
 	}
