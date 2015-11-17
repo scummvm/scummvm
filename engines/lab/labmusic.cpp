@@ -346,7 +346,7 @@ byte **Music::newOpen(const char *name, uint32 &size) {
 	if (!name || !strcmp(name, "") || !strcmp(name, " "))
 		return NULL;
 
-	if (file = isBuffered(name))
+	if ((file = isBuffered(name)))
 		return file;
 
 	updateMusic();
