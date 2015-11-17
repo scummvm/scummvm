@@ -99,7 +99,7 @@ void Text::setText(const Common::String &text) {
 }
 
 void Text::setColor(uint32 modulationColor) {
-	uint32 newModulationColor = (modulationColor & 0xffffff00) | (_modulationColor & 0x000000ff);
+	uint32 newModulationColor = (modulationColor & 0x00ffffff) | (_modulationColor & 0xff000000);
 	if (newModulationColor != _modulationColor) {
 		_modulationColor = newModulationColor;
 		forceRefresh();
@@ -108,7 +108,7 @@ void Text::setColor(uint32 modulationColor) {
 
 void Text::setAlpha(int alpha) {
 	assert(alpha >= 0 && alpha < 256);
-	uint32 newModulationColor = (_modulationColor & 0xffffff00) | alpha;
+	uint32 newModulationColor = (_modulationColor & 0xffffff) | (alpha << 24);
 	if (newModulationColor != _modulationColor) {
 		_modulationColor = newModulationColor;
 		forceRefresh();
