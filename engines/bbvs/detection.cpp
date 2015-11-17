@@ -30,7 +30,7 @@
 #include "graphics/thumbnail.h"
 
 static const PlainGameDescriptor bbvsGames[] = {
-	{ "bbvs", "Beavis and Butthead in Virtual Stupidity" },
+	{ "bbvs", "Beavis and Butt-head in Virtual Stupidity" },
 	{ 0, 0 }
 };
 
@@ -75,7 +75,7 @@ public:
 	}
 
 	virtual const char *getName() const {
-		return "MTV's Beavis and Butt-Head in Virtual Stupidity";
+		return "MTV's Beavis and Butt-head in Virtual Stupidity";
 	}
 
 	virtual const char *getOriginalCopyright() const {
