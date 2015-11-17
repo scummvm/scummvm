@@ -88,19 +88,6 @@ bool createScreen(bool HiRes) {
 /*****************************************************************************/
 /* Sets the current page on the VGA card.                                    */
 /*****************************************************************************/
-void setPage(uint16 PageNum) {
-	// PageNum should always calculated out to zero for SDL.
-	assert(PageNum == 0);
-}
-
-void VGAStorePage() {
-	// does nothing in SDL
-}
-
-void VGARestorePage() {
-	// does nothing in SDL
-}
-
 void changeVolume(int delta) {
 	warning("STUB: changeVolume()");
 }

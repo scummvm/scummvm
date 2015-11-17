@@ -90,7 +90,6 @@ void text(struct TextFont *tf, uint16 x, uint16 y, uint16 color, const char *tex
 		SegmentOffset = RealOffset - (curpage * VGABytesPerPage);
 		LeftInSegment = VGABytesPerPage - SegmentOffset;
 		VGACur = VGATop + SegmentOffset;
-		setPage(curpage);
 
 		if (tf->Widths[(uint)*text]) {
 			cdata = tf->data + tf->Offsets[(uint)*text];
@@ -120,7 +119,6 @@ void text(struct TextFont *tf, uint16 x, uint16 y, uint16 color, const char *tex
 						for (counterb = 0; counterb < 8; counterb++) {
 							if (templeft <= 0) {
 								curpage++;
-								setPage(curpage);
 								VGATemp = (byte *)(VGATop - templeft);
 								/* Set up VGATempLine for next line */
 								VGATempLine -= VGABytesPerPage;
@@ -148,7 +146,6 @@ void text(struct TextFont *tf, uint16 x, uint16 y, uint16 color, const char *tex
 
 				if (LeftInSegment <= 0) {
 					curpage++;
-					setPage(curpage);
 					VGATempLine -= VGABytesPerPage;
 					LeftInSegment += VGABytesPerPage;
 				}

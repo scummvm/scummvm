@@ -81,7 +81,6 @@ static Gadget *checkGadgetHit(Gadget *gadlist, uint16 x, uint16 y) {
 			if (IsHiRes) {
 				hitgad = gadlist;
 			} else {
-				VGAStorePage();
 				mouseHide();
 				drawImage(gadlist->ImAlt, gadlist->x, gadlist->y);
 				mouseShow();
@@ -92,7 +91,6 @@ static Gadget *checkGadgetHit(Gadget *gadlist, uint16 x, uint16 y) {
 				mouseHide();
 				drawImage(gadlist->Im, gadlist->x, gadlist->y);
 				mouseShow();
-				VGARestorePage();
 			}
 
 			return gadlist;
