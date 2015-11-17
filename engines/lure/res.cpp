@@ -44,6 +44,10 @@ Resources::Resources() : _rnd(LureEngine::getReference().rnd()) {
 	MemoryBlock *mb = Disk::getReference().getEntry(STRING_LIST_RESOURCE_ID);
 	_stringList.load(mb);
 	delete mb;
+
+	// WORKAROUND: In Spanish the look "Obsevar" should be "Observar"
+	if (!Common::String(_stringList.getString(LOOK)).compareTo("Obsevar"))
+		_stringList.setString(LOOK, "Observar");
 }
 
 Resources::~Resources() {

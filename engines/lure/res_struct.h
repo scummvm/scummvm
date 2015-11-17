@@ -863,6 +863,7 @@ public:
 	}
 	const char *getString(Action action) { return getString((int) action - 1); }
 	const char *getString(StringEnum sEnum) { return getString((int) sEnum); }
+	void setString(Action action, const Common::String &s) { _entries[(int)action - 1] = s; }
 };
 
 // The following class holds the field list used by the script engine as
