@@ -41,9 +41,6 @@ struct Image {
 	byte *ImageData;
 };
 
-void setPage(uint16 PageNum);
-void VGAStorePage();
-void VGARestorePage();
 bool createScreen(bool HiRes);
 void waitTOF();
 void quickWaitTOF();

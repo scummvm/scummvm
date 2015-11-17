@@ -423,7 +423,7 @@ void drawMessage(const char *str) {
 static void doScrollBlack() {
 	byte *mem, *tempmem;
 	Image Im;
-	uint16 width, height, by, nheight, CurPage;
+	uint16 width, height, by, nheight;
 	uint32 size, copysize;
 	uint32 *BaseAddr;
 
@@ -459,7 +459,6 @@ static void doScrollBlack() {
 		mem += by * width;
 		nheight -= by;
 		size = (int32) nheight * (int32) width;
-		CurPage = 0;
 		tempmem = mem;
 
 		while (size) {
@@ -470,10 +469,8 @@ static void doScrollBlack() {
 
 			size -= copysize;
 
-			setPage(CurPage);
 			memcpy(BaseAddr, tempmem, copysize);
 			tempmem += copysize;
-			CurPage++;
 		}
 
 		setAPen(0);
@@ -524,7 +521,6 @@ static void copyPage(uint16 width, uint16 height, uint16 nheight, uint16 startli
 
 		size -= copysize;
 
-		setPage(CurPage);
 		memcpy(BaseAddr + (OffSet >> 2), mem, copysize);
 		mem += copysize;
 		CurPage++;
