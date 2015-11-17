@@ -244,7 +244,7 @@ bool setUpScreens() {
 	buffer = MovePanelBuffer;
 
 	for (counter = 0; counter < 20; counter++)
-		readImage(buffer, &(MoveImages[counter]));
+		readImage(&buffer, &(MoveImages[counter]));
 
 	/* Creates the gadgets for the movement control panel */
 	y = VGAScaleY(173) - SVGACord(2);
@@ -305,7 +305,7 @@ bool setUpScreens() {
 
 	if (g_lab->getPlatform() == Common::kPlatformWindows) {
 		for (counter = 0; counter < 10; counter++)
-			readImage(buffer, &(InvImages[counter]));
+			readImage(&buffer, &(InvImages[counter]));
 
 		InvGadgetList = createButton(24, y, 0, 'm', InvImages[0], InvImages[1]);
 		curgad = InvGadgetList;
@@ -325,7 +325,7 @@ bool setUpScreens() {
 		curgad = curgad->NextGadget;
 	} else {
 		for (counter = 0; counter < 6; counter++)
-			readImage(buffer, &(InvImages[counter]));
+			readImage(&buffer, &(InvImages[counter]));
 
 		InvGadgetList = createButton(58, y, 0, 0, InvImages[0], InvImages[1]);
 		curgad = InvGadgetList;
@@ -814,7 +814,7 @@ from_crumbs:
 					Class     = MOUSEBUTTONS;
 					Qualifier = IEQUALIFIER_LEFTBUTTON;
 					mouseXY(&MouseX, &MouseY);
-				} else if (g_lab->getPlatform() == Common::kPlatformWindows && 
+				} else if (g_lab->getPlatform() == Common::kPlatformWindows &&
 						(Code == 'b' || Code == 'B')) {  /* Start bread crumbs */
 					BreadCrumbs[0].RoomNum = 0;
 					NumCrumbs = 0;
