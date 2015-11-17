@@ -29,6 +29,7 @@
  */
 
 #include "lab/stddefines.h"
+#include "common/endian.h"
 
 namespace Lab {
 
@@ -107,9 +108,9 @@ static void unDIFFByteWord(uint16 *Dest, uint16 *diff) {
 
 		if (skip == 255) {
 			if (copy == 0) {
-				skip = swapUShort(*diff);
+				skip = READ_LE_UINT16(diff);
 				diff++;
-				copy = swapUShort(*diff);
+				copy = READ_LE_UINT16(diff);
 				diff++;
 			} else if (copy == 255)
 				return;
@@ -118,19 +119,19 @@ static void unDIFFByteWord(uint16 *Dest, uint16 *diff) {
 		Dest += skip;
 
 		while (copy > 3) {
-			*Dest = *diff; //swapUShort(*diff);
+			*Dest = READ_LE_UINT16(diff);
 			Dest++;
 			diff++;
 
-			*Dest = *diff; //swapUShort(*diff);
+			*Dest = READ_LE_UINT16(diff);
 			Dest++;
 			diff++;
 
-			*Dest = *diff; //swapUShort(*diff);
+			*Dest = READ_LE_UINT16(diff);
 			Dest++;
 			diff++;
 
-			*Dest = *diff; //swapUShort(*diff);
+			*Dest = READ_LE_UINT16(diff);
 			Dest++;
 			diff++;
 
@@ -138,7 +139,7 @@ static void unDIFFByteWord(uint16 *Dest, uint16 *diff) {
 		}
 
 		while (copy) {
-			*Dest = *diff; //swapUShort(*diff);
+			*Dest = READ_LE_UINT16(diff);
 			Dest++;
 			diff++;
 			copy--;
