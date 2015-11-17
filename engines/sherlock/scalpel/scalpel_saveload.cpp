@@ -39,7 +39,8 @@ const int ENV_POINTS[6][3] = {
 
 /*----------------------------------------------------------------*/
 
-ScalpelSaveManager::ScalpelSaveManager(SherlockEngine *vm, const Common::String &target) : SaveManager(vm, target) {
+ScalpelSaveManager::ScalpelSaveManager(SherlockEngine *vm, const Common::String &target) : 
+	SaveManager(vm, target), _envMode(SAVEMODE_NONE) {
 }
 
 void ScalpelSaveManager::drawInterface() {

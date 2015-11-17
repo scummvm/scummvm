@@ -70,6 +70,7 @@ Darts::Darts(SherlockEngine *vm) : _vm(vm) {
 	_handX = 0;
 	_compPlay = 1;
 	_escapePressed = false;
+	_spacing = 0;
 }
 
 void Darts::playDarts(GameType gameType) {

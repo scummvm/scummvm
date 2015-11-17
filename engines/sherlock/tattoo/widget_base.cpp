@@ -33,6 +33,7 @@ namespace Tattoo {
 WidgetBase::WidgetBase(SherlockEngine *vm) : _vm(vm) {
 	_scroll = false;
 	_dialogTimer = 0;
+	_outsideMenu = false;
 }
 
 void WidgetBase::summonWindow() {

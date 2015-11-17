@@ -163,6 +163,7 @@ Object::Object() {
 	_angle = _changeCtr = 0;
 	_walkStartFrame = 0;
 	_majorDiff = _minorDiff = 0;
+	_updateStartFrame = 0;
 }
 
 void Object::setVisage(int visage, int strip) {

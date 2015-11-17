@@ -620,6 +620,7 @@ void Sprite::clear() {
 	_images = nullptr;
 	_imageFrame = nullptr;
 	_walkCount = 0;
+	_oldWalkSequence = 0;
 	_allow = 0;
 	_frameNumber = 0;
 	_position.x = _position.y = 0;
@@ -634,6 +635,7 @@ void Sprite::clear() {
 	_misc = 0;
 	_altImages = nullptr;
 	_altSeq = 0;
+	_centerWalk = 0;
 	Common::fill(&_stopFrames[0], &_stopFrames[8], (ImageFrame *)nullptr);
 }
 
