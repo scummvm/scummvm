@@ -129,6 +129,19 @@ static const ADGameDescription gameDescriptions[] = {
 		GF_EXTRACTED | ADGF_UNSTABLE,
 		GUIO1(GUIO_NOASPECT)
 	},
+
+	// Distributed by ScummVM
+	// Contains all language packs, English voice-overs and Hungarian version
+	{
+		"sword25",
+		"Latest version",
+		AD_ENTRY1s("data.b25c", "880a8a67faf4a4e7ab62cf114b771428", 827397764),
+		Common::EN_ANY,
+		Common::kPlatformUnknown,
+		ADGF_UNSTABLE,
+		GUIO1(GUIO_NOASPECT)
+	},
+
 	AD_TABLE_END_MARKER
 };
 
