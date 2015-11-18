@@ -86,7 +86,7 @@ static const ScreenShakerPoint kShakerPoints0[] = {
 };
 
 static const ScreenShakeEffect kShakerEffect0 = {
-	6, 5, kShakerPoints0
+	ARRAYSIZE(kShakerPoints0), 5, kShakerPoints0
 };
 
 static const ScreenShakerPoint kShakerPoints1[] = {
@@ -95,7 +95,7 @@ static const ScreenShakerPoint kShakerPoints1[] = {
 };
 
 static const ScreenShakeEffect kShakerEffect1 = {
-	9, 2, kShakerPoints1
+	ARRAYSIZE(kShakerPoints1), 2, kShakerPoints1
 };
 
 static const ScreenShakerPoint kShakerPoints2[] = {
@@ -104,7 +104,7 @@ static const ScreenShakerPoint kShakerPoints2[] = {
 };
 
 static const ScreenShakeEffect kShakerEffect2 = {
-	9, 2, kShakerPoints2
+	ARRAYSIZE(kShakerPoints2), 2, kShakerPoints2
 };
 
 static const ScreenShakerPoint kShakerPoints3[] = {
@@ -112,7 +112,7 @@ static const ScreenShakerPoint kShakerPoints3[] = {
 };
 
 static const ScreenShakeEffect kShakerEffect3 = {
-	5, 2, kShakerPoints3
+	ARRAYSIZE(kShakerPoints3), 2, kShakerPoints3
 };
 
 static const ScreenShakerPoint kShakerPoints4[] = {
@@ -120,7 +120,7 @@ static const ScreenShakerPoint kShakerPoints4[] = {
 };
 
 static const ScreenShakeEffect kShakerEffect4 = {
-	8, 5, kShakerPoints4
+	ARRAYSIZE(kShakerPoints4), 5, kShakerPoints4
 };
 
 static const ScreenShakerPoint kShakerPoints5[] = {
@@ -131,7 +131,7 @@ static const ScreenShakerPoint kShakerPoints5[] = {
 };
 
 static const ScreenShakeEffect kShakerEffect5 = {
-	31, 2, kShakerPoints5
+	ARRAYSIZE(kShakerPoints5), 2, kShakerPoints5
 };
 
 static const ScreenShakeEffect *kShakerEffects[] = {
