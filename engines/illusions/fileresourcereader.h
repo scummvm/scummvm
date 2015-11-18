@@ -20,26 +20,22 @@
  *
  */
 
-#ifndef ILLUSIONS_MIDIRESOURCE_H
-#define ILLUSIONS_MIDIRESOURCE_H
+#ifndef ILLUSIONS_FILERESOURCEREADER_H
+#define ILLUSIONS_FILERESOURCEREADER_H
 
-#include "illusions/graphics.h"
-#include "illusions/resourcesystem.h"
+#include "illusions/illusions.h"
+#include "illusions/resourcereader.h"
 
 namespace Illusions {
 
-class IllusionsEngine;
-
-class MidiGroupResourceLoader : public BaseResourceLoader {
+class ResourceReaderFileReader : public BaseResourceReader {
 public:
-	MidiGroupResourceLoader(IllusionsEngine *vm) : _vm(vm) {}
-	virtual ~MidiGroupResourceLoader() {}
-	virtual void load(Resource *resource);
-	virtual bool isFlag(int flag);
+	byte *readResource(uint32 sceneId, uint32 resId, uint32 &dataSize);
 protected:
-	IllusionsEngine *_vm;
+	Common::String buildResourceFilename(uint32 resId);
+	const char *getResourceExtension(uint32 resId);
 };
 
 } // End of namespace Illusions
 
-#endif // ILLUSIONS_SOUNDRESOURCE_H
+#endif // ILLUSIONS_FILERESOURCEREADER_H

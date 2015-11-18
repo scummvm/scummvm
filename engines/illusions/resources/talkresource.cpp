@@ -32,10 +32,6 @@ void TalkResourceLoader::load(Resource *resource) {
 	resource->_instance = _vm->_talkItems->createTalkInstance(resource);
 }
 
-void TalkResourceLoader::buildFilename(Resource *resource) {
-	resource->_filename = Common::String::format("%08X.tlk", resource->_resId);
-}
-
 bool TalkResourceLoader::isFlag(int flag) {
 	return
 		flag == kRlfLoadFile;

@@ -20,26 +20,9 @@
  *
  */
 
-#ifndef ILLUSIONS_MIDIRESOURCE_H
-#define ILLUSIONS_MIDIRESOURCE_H
-
-#include "illusions/graphics.h"
-#include "illusions/resourcesystem.h"
+#include "illusions/resourcereader.h"
+#include "illusions/illusions.h"
 
 namespace Illusions {
 
-class IllusionsEngine;
-
-class MidiGroupResourceLoader : public BaseResourceLoader {
-public:
-	MidiGroupResourceLoader(IllusionsEngine *vm) : _vm(vm) {}
-	virtual ~MidiGroupResourceLoader() {}
-	virtual void load(Resource *resource);
-	virtual bool isFlag(int flag);
-protected:
-	IllusionsEngine *_vm;
-};
-
 } // End of namespace Illusions
-
-#endif // ILLUSIONS_SOUNDRESOURCE_H

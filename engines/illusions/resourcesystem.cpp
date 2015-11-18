@@ -21,6 +21,7 @@
  */
 
 #include "illusions/resourcesystem.h"
+#include "illusions/resourcereader.h"
 #include "illusions/illusions.h"
 
 #include "common/algorithm.h"
@@ -47,21 +48,11 @@ ResourceInstance::~ResourceInstance() {
 
 // Resource
 
-void Resource::loadData() {
-	debug("Resource::loadData()");
-	
-	Common::File fd;
-	if (!fd.open(_filename))
-		error("Resource::loadData() Could not open %s for reading", _filename.c_str());
-	_dataSize = fd.size();
-	_data = (byte*)malloc(_dataSize);
-	fd.read(_data, _dataSize);
-	debug("Resource::loadData() OK");
+void Resource::loadData(BaseResourceReader *resReader) {
+	_data = resReader->readResource(_tag, _resId, _dataSize);
 }
 
 void Resource::unloadData() {
-	debug("Resource::unloadData()");
-	
 	free(_data);
 	_data = 0;
 	_dataSize = 0;
@@ -84,7 +75,7 @@ void ResourceSystem::addResourceLoader(uint32 resTypeId, BaseResourceLoader *res
 }
 
 void ResourceSystem::loadResource(uint32 resId, uint32 tag, uint32 threadId) {
-	debug("ResourceSystem::loadResource(%08X, %08X, %08X)", resId, tag, threadId);
+	debug(1, "ResourceSystem::loadResource(%08X, %08X, %08X)", resId, tag, threadId);
 	BaseResourceLoader *resourceLoader = getResourceLoader(resId);
 
 	Resource *resource = new Resource();
@@ -94,24 +85,21 @@ void ResourceSystem::loadResource(uint32 resId, uint32 tag, uint32 threadId) {
 	resource->_threadId = threadId;
 	resource->_gameId = _vm->getGameId();
 
-	resourceLoader->buildFilename(resource);
-
 	if (resourceLoader->isFlag(kRlfLoadFile)) {
-		debug("ResourceSystem::loadResource() kRlfLoadFile");
-		resource->loadData();
+		debug(1, "ResourceSystem::loadResource() kRlfLoadFile");
+		resource->loadData(_vm->_resReader);
 	}
 	
 	resourceLoader->load(resource);
 	
 	if (resourceLoader->isFlag(kRlfFreeDataAfterLoad)) {
-		debug("ResourceSystem::loadResource() kRlfFreeDataAfterLoad");
+		debug(1, "ResourceSystem::loadResource() kRlfFreeDataAfterLoad");
 		resource->unloadData();
 	}
 	
 	resource->_loaded = true;
 
 	_resources.push_back(resource);
-	// TODO? Not sure if this is needed krnfileAdd(filenameb, taga);
 
 }
 
@@ -150,7 +138,7 @@ Resource *ResourceSystem::getResource(uint32 resId) {
 }
 
 void ResourceSystem::unloadResource(Resource *resource) {
-	debug("Unloading %08X... (tag: %08X)", resource->_resId, resource->_tag);
+	debug(1, "Unloading %08X... (tag: %08X)", resource->_resId, resource->_tag);
 	ResourcesArrayIterator it = Common::find_if(_resources.begin(), _resources.end(), ResourceEqualByValue(resource));
 	if (it != _resources.end())
 		_resources.remove_at(it - _resources.begin());

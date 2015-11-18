@@ -20,26 +20,46 @@
  *
  */
 
-#ifndef ILLUSIONS_MIDIRESOURCE_H
-#define ILLUSIONS_MIDIRESOURCE_H
+#ifndef ILLUSIONS_GAMARCHIVE_H
+#define ILLUSIONS_GAMARCHIVE_H
 
-#include "illusions/graphics.h"
-#include "illusions/resourcesystem.h"
+#include "illusions/illusions.h"
+#include "common/file.h"
 
 namespace Illusions {
 
-class IllusionsEngine;
+struct GamFileEntry {
+	uint32 _id;
+	uint32 _fileOffset;
+	uint32 _fileSize;
+};
 
-class MidiGroupResourceLoader : public BaseResourceLoader {
+struct GamGroupEntry {
+	uint32 _id;
+	uint _fileCount;
+	GamFileEntry *_files;
+	GamGroupEntry() : _fileCount(0), _files(0) {
+	}
+	~GamGroupEntry() {
+		delete[] _files;
+	}
+};
+
+class GamArchive {
 public:
-	MidiGroupResourceLoader(IllusionsEngine *vm) : _vm(vm) {}
-	virtual ~MidiGroupResourceLoader() {}
-	virtual void load(Resource *resource);
-	virtual bool isFlag(int flag);
+	GamArchive(const char *filename);
+	~GamArchive();
+	byte *readResource(uint32 sceneId, uint32 resId, uint32 &dataSize);
 protected:
-	IllusionsEngine *_vm;
+	Common::File *_fd;
+	uint _groupCount;
+	GamGroupEntry *_groups;
+	void loadDictionary();
+	const GamGroupEntry *getGroupEntry(uint32 sceneId);
+	const GamFileEntry *getFileEntry(const GamGroupEntry *groupEntry, uint32 resId);
+	const GamFileEntry *getGroupFileEntry(uint32 sceneId, uint32 resId);
 };
 
 } // End of namespace Illusions
 
-#endif // ILLUSIONS_SOUNDRESOURCE_H
+#endif // ILLUSIONS_GAMARCHIVE_H

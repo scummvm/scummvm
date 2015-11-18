@@ -34,10 +34,6 @@ void SoundGroupResourceLoader::load(Resource *resource) {
 	resource->_instance = soundGroupInstance;
 }
 
-void SoundGroupResourceLoader::buildFilename(Resource *resource) {
-	resource->_filename = Common::String::format("%08X.sg", resource->_resId);
-}
-
 bool SoundGroupResourceLoader::isFlag(int flag) {
 	return
 		flag == kRlfLoadFile/* ||
@@ -53,7 +49,7 @@ void SoundEffect::load(Common::SeekableReadStream &stream) {
 	_volume = stream.readUint16LE();
 	_frequency = stream.readUint16LE();
 	stream.skip(32 + 4); // Skip name
-	debug("SoundEffect::load() _soundEffectId: %08X, _looping: %d, _field6: %d, _volume: %d, _frequency: %d",
+	debug(1, "SoundEffect::load() _soundEffectId: %08X, _looping: %d, _field6: %d, _volume: %d, _frequency: %d",
 		_soundEffectId, _looping, _field6, _volume, _frequency);
 }
 
@@ -74,7 +70,7 @@ void SoundGroupResource::load(byte *data, uint32 dataSize) {
 	_soundEffectsCount = stream.readUint16LE();
 	stream.skip(2);
 	uint32 soundEffectsOffs = stream.readUint32LE();
-	debug("_soundEffectsCount: %d; soundEffectsOffs: %08X", _soundEffectsCount, soundEffectsOffs);
+	debug(1, "_soundEffectsCount: %d; soundEffectsOffs: %08X", _soundEffectsCount, soundEffectsOffs);
 	_soundEffects = new SoundEffect[_soundEffectsCount];
 	stream.seek(soundEffectsOffs);
 	for (uint i = 0; i < _soundEffectsCount; ++i)

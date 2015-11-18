@@ -47,6 +47,7 @@ namespace Illusions {
 #define ILLUSIONS_SAVEGAME_VERSION 0
 
 class ResourceSystem;
+class BaseResourceReader;
 
 struct SurfInfo;
 
@@ -99,6 +100,7 @@ public:
 	Common::RandomSource *_random;
 	Dictionary *_dict;
 	ResourceSystem *_resSys;
+	BaseResourceReader *_resReader;
 	UpdateFunctions *_updateFunctions;
 	
 	void updateEvents();

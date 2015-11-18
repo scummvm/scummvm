@@ -20,7 +20,10 @@ MODULE_OBJS := \
 	duckman/illusions_duckman.o \
 	duckman/propertytimers.o \
 	duckman/scriptopcodes_duckman.o \
+	fileresourcereader.o \
 	fixedpoint.o \
+	gamarchive.o \
+	gamresourcereader.o \
 	graphics.o \
 	illusions.o \
 	input.o \

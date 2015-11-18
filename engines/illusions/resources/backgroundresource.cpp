@@ -37,10 +37,6 @@ void BackgroundResourceLoader::load(Resource *resource) {
 	resource->_instance = _vm->_backgroundInstances->createBackgroundInstance(resource);
 }
 
-void BackgroundResourceLoader::buildFilename(Resource *resource) {
-	resource->_filename = Common::String::format("%08X.bg", resource->_resId);
-}
-
 bool BackgroundResourceLoader::isFlag(int flag) {
 	return
 		flag == kRlfLoadFile;
@@ -131,7 +127,7 @@ void RegionLayer::load(byte *dataStart, Common::SeekableReadStream &stream) {
 	_mapWidth = READ_LE_UINT16(_map + 0);
 	_mapHeight = READ_LE_UINT16(_map + 2);
 	_map += 8;
-	debug("RegionLayer::load() %d; regionSequenceIdsOffs: %08X; _width: %d; _height: %d; mapOffs: %08X; valuesOffs: %08X",
+	debug(1, "RegionLayer::load() %d; regionSequenceIdsOffs: %08X; _width: %d; _height: %d; mapOffs: %08X; valuesOffs: %08X",
 		_unk, regionSequenceIdsOffs, _width, _height, mapOffs, valuesOffs);
 }
 
@@ -248,7 +244,7 @@ void BackgroundResource::load(byte *data, uint32 dataSize) {
 	_priorityLayers = new PriorityLayer[_priorityLayersCount];
 	stream.seek(0x34);
 	uint32 priorityLayersOffs = stream.readUint32LE();
-	debug("_priorityLayersCount: %d", _priorityLayersCount);
+	debug(1, "_priorityLayersCount: %d", _priorityLayersCount);
 	for (uint i = 0; i < _priorityLayersCount; ++i) {
 		stream.seek(priorityLayersOffs + i * 12);
 		_priorityLayers[i].load(data, stream);
@@ -260,7 +256,7 @@ void BackgroundResource::load(byte *data, uint32 dataSize) {
 	_regionLayers = new RegionLayer[_regionLayersCount];
 	stream.seek(0x38);
 	uint32 regionLayersOffs = stream.readUint32LE();
-	debug("_regionLayersCount: %d", _regionLayersCount);
+	debug(1, "_regionLayersCount: %d", _regionLayersCount);
 	for (uint i = 0; i < _regionLayersCount; ++i) {
 		stream.seek(regionLayersOffs + i * 20);
 		_regionLayers[i].load(data, stream);
@@ -291,7 +287,7 @@ void BackgroundResource::load(byte *data, uint32 dataSize) {
 	// Load path walk points
 	stream.seek(0x0E);
 	_pathWalkPointsCount = stream.readUint16LE();
-	debug("_pathWalkPointsCount: %d", _pathWalkPointsCount);
+	debug(1, "_pathWalkPointsCount: %d", _pathWalkPointsCount);
 	_pathWalkPoints = new PathWalkPoints[_pathWalkPointsCount];
 	stream.seek(0x28);
 	uint32 pathWalkPointsOffs = stream.readUint32LE();
@@ -303,7 +299,7 @@ void BackgroundResource::load(byte *data, uint32 dataSize) {
 	// Load path walk rects
 	stream.seek(0x12);
 	_pathWalkRectsCount = stream.readUint16LE();
-	debug("_pathWalkRectsCount: %d", _pathWalkRectsCount);
+	debug(1, "_pathWalkRectsCount: %d", _pathWalkRectsCount);
 	_pathWalkRects = new PathWalkRects[_pathWalkRectsCount];
 	stream.seek(0x30);
 	uint32 pathWalkRectsOffs = stream.readUint32LE();
@@ -376,7 +372,7 @@ BackgroundInstance::BackgroundInstance(IllusionsEngine *vm)
 }
 
 void BackgroundInstance::load(Resource *resource) {
-	debug("BackgroundResourceLoader::load() Loading background %08X from %s...", resource->_resId, resource->_filename.c_str());
+	debug(1, "BackgroundResourceLoader::load() Loading background %08X from %s...", resource->_resId, resource->_filename.c_str());
 
 	BackgroundResource *backgroundResource = new BackgroundResource();
 	backgroundResource->load(resource->_data, resource->_dataSize);
@@ -403,7 +399,7 @@ void BackgroundInstance::load(Resource *resource) {
 }
 
 void BackgroundInstance::unload() {
-	debug("BackgroundInstance::unload()");
+	debug(1, "BackgroundInstance::unload()");
 	freeSurface();
 	unregisterResources();
 	delete _bgRes;
