@@ -23,12 +23,36 @@
 #ifndef XEEN_WORLDOFXEEN_GAME_H
 #define XEEN_WORLDOFXEEN_GAME_H
 
-#include "xeen/clouds/clouds_game.h"
-#include "xeen/darkside/darkside_game.h"
+#include "xeen/xeen.h"
 
 namespace Xeen {
 
-class WorldOfXeenEngine : public DarkSideEngine, CloudsEngine {
+/**
+ * Implements a descendant of the base Xeen engine to handle 
+ * Clouds of Xeen, Dark Side of Xeen, and Worlds of Xeen specific
+ * game code
+ */
+class WorldOfXeenEngine: public XeenEngine {
+private:
+	/**
+	 * Shows the first part of the Dark Side of Xeen title sequence
+	 */
+	void showDarkSideTitle1();
+
+	/**
+	 * Shows the second part of the Dark Side of Xeen title sequence
+	 */
+	void showDarkSideTitle2();
+
+	/**
+	 * Shows the Dark Side of Xeen title sequence
+	 */
+	void showDarkSideTitle();
+
+	/**
+	 * Shows the Dark Side of Xeen introduction sequence
+	 */
+	void showDarkSideIntroSequence();
 protected:
 	virtual void playGame();
 public:

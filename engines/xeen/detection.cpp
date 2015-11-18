@@ -21,8 +21,6 @@
  */
 
 #include "xeen/xeen.h"
-#include "xeen/clouds/clouds_game.h"
-#include "xeen/darkside/darkside_game.h"
 #include "xeen/worldofxeen/worldofxeen_game.h"
 
 #include "base/plugins.h"
@@ -116,11 +114,7 @@ bool XeenMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGame
 
 	switch (gd->gameID) {
 	case Xeen::GType_Clouds:
-		*engine = new Xeen::CloudsEngine(syst, gd);
-		break;
 	case Xeen::GType_DarkSide:
-		*engine = new Xeen::DarkSideEngine(syst, gd);
-		break;
 	case Xeen::GType_WorldOfXeen:
 		*engine = new Xeen::WorldOfXeenEngine(syst, gd);
 		break;
