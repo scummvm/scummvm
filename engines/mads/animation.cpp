@@ -466,16 +466,17 @@ void Animation::update() {
 	}
 
 	bool isV2 = (_vm->getGameID() != GType_RexNebular);
-	if (!isV2) {
+	if (isV2 && _canChangeView) {
 		// Handle any offset adjustment for sprites as of this frame
 		// FIXME: This doesn't work properly for Phantom scene 101
 		bool paChanged = false;
-		if (scene._posAdjust.x != misc._posAdjust.x) {
-			scene._posAdjust.x = misc._posAdjust.x;
+		if (getFramePosAdjust(_currentFrame).x != scene._posAdjust.x) {
+			scene._posAdjust.x = getFramePosAdjust(_currentFrame).x;
 			paChanged = true;
 		}
-		if (scene._posAdjust.y != misc._posAdjust.y) {
-			scene._posAdjust.y = misc._posAdjust.y;
+
+		if (getFramePosAdjust(_currentFrame).y != scene._posAdjust.y) {
+			scene._posAdjust.y = getFramePosAdjust(_currentFrame).y;
 			paChanged = true;
 		}
 
