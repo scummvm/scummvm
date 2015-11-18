@@ -63,6 +63,10 @@ class SoundMan;
 #define BBVS_SAVEGAME_VERSION 0
 
 enum {
+	GF_GUILANGSWITCH =    (1 << 0) // If GUI language switch is required for menus
+};
+
+enum {
 	kVerbLook      = 0,
 	kVerbUse       = 1,
 	kVerbTalk      = 2,
@@ -227,8 +231,11 @@ public:
 	void setNewSceneNum(int newSceneNum);
 	const Common::String getTargetName() { return _targetName; }
 	const ADGameDescription *_gameDescription;
+
 private:
 	Graphics::PixelFormat _pixelFormat;
+	Common::String _oldGUILanguage;
+
 public:
 	Common::RandomSource *_random;
 

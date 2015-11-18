@@ -52,7 +52,7 @@ static const ADGameDescription gameDescriptions[] = {
 		AD_ENTRY1s("vspr0001.vnm", "91c76b1048f93208cd7b1a05ebccb408", 1176976),
 		Common::RU_RUS,
 		Common::kPlatformWindows,
-		ADGF_NO_FLAGS,
+		GF_GUILANGSWITCH,
 		GUIO0()
 	},
 

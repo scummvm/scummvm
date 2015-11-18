@@ -39,6 +39,8 @@
 #include "common/error.h"
 #include "common/fs.h"
 #include "common/timer.h"
+#include "common/translation.h"
+#include "engines/advancedDetector.h"
 #include "engines/util.h"
 #include "graphics/cursorman.h"
 #include "graphics/font.h"
@@ -116,9 +118,15 @@ BbvsEngine::BbvsEngine(OSystem *syst, const ADGameDescription *gd) :
 
 	Engine::syncSoundSettings();
 
+	_oldGUILanguage	= TransMan.getCurrentLanguage();
+
+	if (gd->flags & GF_GUILANGSWITCH)
+		TransMan.setLanguage(getLanguageLocale(gd->language));
 }
 
 BbvsEngine::~BbvsEngine() {
+	if (TransMan.getCurrentLanguage() != _oldGUILanguage)
+		TransMan.setLanguage(_oldGUILanguage);
 
 	delete _random;
 
