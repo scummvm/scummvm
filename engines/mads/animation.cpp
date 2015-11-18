@@ -377,6 +377,7 @@ void Animation::loadFrame(int frameNumber) {
 		pt.x = _unkList[_unkIndex].x;
 		pt.y = _unkList[_unkIndex].y;
 		_unkIndex = 1 - _unkIndex;
+		warning("LoadFrame - Using unknown array");
 	}
 
 	if (drawFrame(spriteSet, pt, frameNumber))
@@ -468,7 +469,6 @@ void Animation::update() {
 	bool isV2 = (_vm->getGameID() != GType_RexNebular);
 	if (isV2 && _canChangeView) {
 		// Handle any offset adjustment for sprites as of this frame
-		// FIXME: This doesn't work properly for Phantom scene 101
 		bool paChanged = false;
 		if (getFramePosAdjust(_currentFrame).x != scene._posAdjust.x) {
 			scene._posAdjust.x = getFramePosAdjust(_currentFrame).x;
