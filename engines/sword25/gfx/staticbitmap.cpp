@@ -124,6 +124,10 @@ uint StaticBitmap::getPixel(int x, int y) const {
 	assert(pResource->getType() == Resource::TYPE_BITMAP);
 	BitmapResource *pBitmapResource = static_cast<BitmapResource *>(pResource);
 	uint result = pBitmapResource->getPixel(x, y);
+	// Convert to LUA-ready format
+	byte a;
+	a = result & 0xff;
+	result = (result >> 8) | (a << 24);
 	pResource->release();
 	return result;
 }
