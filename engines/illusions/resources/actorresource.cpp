@@ -32,10 +32,6 @@ void ActorResourceLoader::load(Resource *resource) {
 	resource->_instance = _vm->_actorInstances->createActorInstance(resource);
 }
 
-void ActorResourceLoader::buildFilename(Resource *resource) {
-	resource->_filename = Common::String::format("%08X.act", resource->_resId);
-}
-
 bool ActorResourceLoader::isFlag(int flag) {
 	return
 		flag == kRlfLoadFile;
@@ -161,7 +157,7 @@ void ActorResource::load(Resource *resource) {
 		_namedPoints.load(namedPointsCount, stream);
 	}
 	
-	debug("ActorResource(%08X) framesCount: %d", resource->_resId, framesCount);
+	debug(1, "ActorResource(%08X) framesCount: %d", resource->_resId, framesCount);
 }
 
 bool ActorResource::containsSequence(Sequence *sequence) {

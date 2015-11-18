@@ -28,14 +28,10 @@ namespace Illusions {
 // MidiGroupResourceLoader
 
 void MidiGroupResourceLoader::load(Resource *resource) {
-	debug("MidiGroupResourceLoader::load() Loading midi group %08X...", resource->_resId);
+	debug(1, "MidiGroupResourceLoader::load() Loading midi group %08X...", resource->_resId);
 
     // TODO
 	
-}
-
-void MidiGroupResourceLoader::buildFilename(Resource *resource) {
-	resource->_filename = Common::String::format("%08X.fnt", resource->_resId);
 }
 
 bool MidiGroupResourceLoader::isFlag(int flag) {

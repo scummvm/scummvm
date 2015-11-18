@@ -947,7 +947,7 @@ void Control::startSequenceActorIntern(uint32 sequenceId, int value, byte *entry
 	Sequence *sequence = _vm->_dict->findSequence(sequenceId);
 
 	if (!sequence && _vm->getGameId() == kGameIdDuckman) {
-		debug("Load external sequence...");
+		debug(1, "Load external sequence...");
 		_vm->_resSys->loadResource(0x00060000 | (sequenceId & 0xFFFF), _vm->getCurrentScene(), 0);
 		sequence = _vm->_dict->findSequence(sequenceId);
 		_actor->_flags |= 0x800;
@@ -1378,7 +1378,7 @@ void Controls::actorControlRoutine(Control *control, uint32 deltaTime) {
 				int savedSeqCodeValue1 = actor->_seqCodeValue1;
 				int savedSeqCodeValue3 = actor->_seqCodeValue3;
 				uint32 regionSequenceId = actor->_regionLayer->getRegionSequenceId(regionIndex);
-				debug("Running transition sequence %08X", regionSequenceId);
+				debug(1, "Running transition sequence %08X", regionSequenceId);
 				Sequence *sequence = _vm->_dict->findSequence(regionSequenceId);
 				actor->_sequenceId = regionSequenceId;
 				actor->_seqCodeIp = sequence->_sequenceCode;

@@ -28,11 +28,12 @@
 #include "illusions/camera.h"
 #include "illusions/cursor.h"
 #include "illusions/dictionary.h"
-#include "illusions/resources/fontresource.h"
+#include "illusions/gamresourcereader.h"
 #include "illusions/graphics.h"
 #include "illusions/input.h"
 #include "illusions/resources/actorresource.h"
 #include "illusions/resources/backgroundresource.h"
+#include "illusions/resources/fontresource.h"
 #include "illusions/resources/midiresource.h"
 #include "illusions/resources/scriptresource.h"
 #include "illusions/resources/soundresource.h"
@@ -83,9 +84,10 @@ Common::Error IllusionsEngine_Duckman::run() {
 	SearchMan.addSubDirectoryMatching(gameDataDir, "sfx", 0, 2);
 	SearchMan.addSubDirectoryMatching(gameDataDir, "video");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "voice");
-	SearchMan.addSubDirectoryMatching(gameDataDir, "x");// DEBUG until gam reader is done
 
 	_dict = new Dictionary();
+	
+	_resReader = new ResourceReaderGamArchive("duckman.gam");
 
 	_resSys = new ResourceSystem(this);
 	_resSys->addResourceLoader(0x00060000, new ActorResourceLoader(this));
@@ -115,7 +117,7 @@ Common::Error IllusionsEngine_Duckman::run() {
 
 	_screen->setColorKey1(0);
 
-    initInput();
+	initInput();
 
 	initUpdateFunctions();
 
@@ -190,6 +192,7 @@ Common::Error IllusionsEngine_Duckman::run() {
 	delete _screenText;
 	delete _screen;
 	delete _resSys;
+	delete _resReader;
 	delete _dict;
 	
 	debug("Ok");
@@ -388,7 +391,7 @@ Common::Point IllusionsEngine_Duckman::getNamedPointPosition(uint32 namedPointId
 		}
 	} else {
 		// TODO
-		debug("getNamedPointPosition(%08X) UNKNOWN", namedPointId);
+		debug(1, "getNamedPointPosition(%08X) UNKNOWN", namedPointId);
 		return Common::Point(0, 0);
 	}
 }
@@ -1005,7 +1008,7 @@ bool IllusionsEngine_Duckman::getTriggerCause(uint32 verbId, uint32 objectId2, u
 
 uint32 IllusionsEngine_Duckman::runTriggerCause(uint32 verbId, uint32 objectId2, uint32 objectId) {
 	// TODO
-	debug("runTriggerCause(%08X, %08X, %08X)", verbId, objectId2, objectId);
+	debug(1, "runTriggerCause(%08X, %08X, %08X)", verbId, objectId2, objectId);
 	uint32 triggerThreadId;
 
 	if (!getTriggerCause(verbId, objectId2, objectId, triggerThreadId))
@@ -1048,7 +1051,7 @@ uint32 IllusionsEngine_Duckman::runTriggerCause(uint32 verbId, uint32 objectId2,
 	}
 
 	uint32 tempThreadId = newTempThreadId();
-	debug("Starting cause thread %08X with triggerThreadId %08X", tempThreadId, triggerThreadId);
+	debug(1, "Starting cause thread %08X with triggerThreadId %08X", tempThreadId, triggerThreadId);
 	CauseThread_Duckman *causeThread = new CauseThread_Duckman(this, tempThreadId, 0, 0,
 		triggerThreadId);
 	_threads->startThread(causeThread);

@@ -25,6 +25,7 @@
 #include "illusions/camera.h"
 #include "illusions/cursor.h"
 #include "illusions/dictionary.h"
+#include "illusions/fileresourcereader.h"
 #include "illusions/graphics.h"
 #include "illusions/input.h"
 #include "illusions/resources/actorresource.h"
@@ -138,6 +139,8 @@ Common::Error IllusionsEngine_BBDOU::run() {
 
 	_dict = new Dictionary();
 
+	_resReader = new ResourceReaderFileReader();
+
 	_resSys = new ResourceSystem(this);
 	_resSys->addResourceLoader(0x00060000, new ActorResourceLoader(this));
 	_resSys->addResourceLoader(0x00080000, new SoundGroupResourceLoader(this));
@@ -216,6 +219,7 @@ Common::Error IllusionsEngine_BBDOU::run() {
 	delete _screenText;
 	delete _screen;
 	delete _resSys;
+	delete _resReader;
 	delete _dict;
 	
 	debug("Ok");

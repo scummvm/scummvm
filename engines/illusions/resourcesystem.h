@@ -36,6 +36,7 @@ namespace Illusions {
 #define ResourceTypeId(x) ((x) & 0xFFFF0000)
 
 class BaseResourceLoader;
+class BaseResourceReader;
 class IllusionsEngine;
 struct Resource;
 
@@ -66,7 +67,7 @@ struct Resource {
 		delete _instance;
 		unloadData();
 	}
-	void loadData();
+	void loadData(BaseResourceReader *resReader);
 	void unloadData();
 };
 
@@ -79,7 +80,6 @@ class BaseResourceLoader {
 public:
 	virtual ~BaseResourceLoader() {}
 	virtual void load(Resource *resource) = 0;
-	virtual void buildFilename(Resource *resource) = 0;
 	virtual bool isFlag(int flag) = 0;
 };
 

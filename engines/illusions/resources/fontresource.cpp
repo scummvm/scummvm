@@ -34,10 +34,6 @@ void FontResourceLoader::load(Resource *resource) {
 	resource->_instance = fontInstance;
 }
 
-void FontResourceLoader::buildFilename(Resource *resource) {
-	resource->_filename = Common::String::format("%08X.fnt", resource->_resId);
-}
-
 bool FontResourceLoader::isFlag(int flag) {
 	return
 		flag == kRlfLoadFile;

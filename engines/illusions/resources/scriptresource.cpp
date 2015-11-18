@@ -33,10 +33,6 @@ void ScriptResourceLoader::load(Resource *resource) {
 	resource->_instance = scriptInstance;
 }
 
-void ScriptResourceLoader::buildFilename(Resource *resource) {
-	resource->_filename = Common::String::format("%08X.scr", resource->_resId);
-}
-
 bool ScriptResourceLoader::isFlag(int flag) {
 	return
 		flag == kRlfLoadFile;

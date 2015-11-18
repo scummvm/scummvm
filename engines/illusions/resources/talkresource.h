@@ -35,7 +35,6 @@ public:
 	TalkResourceLoader(IllusionsEngine *vm) : _vm(vm) {}
 	virtual ~TalkResourceLoader() {}
 	virtual void load(Resource *resource);
-	virtual void buildFilename(Resource *resource);
 	virtual bool isFlag(int flag);
 protected:
 	IllusionsEngine *_vm;

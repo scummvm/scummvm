@@ -272,7 +272,7 @@ void ScriptOpcodes_Duckman::opChangeScene(ScriptThread *scriptThread, OpCall &op
 	ARG_UINT32(threadId);
 	_vm->_input->discardAllEvents();
 	
-	debug("changeScene(%08X, %08X)", sceneId, threadId);
+	debug(1, "changeScene(%08X, %08X)", sceneId, threadId);
 	
 	//DEBUG
 	if (dsceneId) {
@@ -555,9 +555,7 @@ void ScriptOpcodes_Duckman::opPlayVideo(ScriptThread *scriptThread, OpCall &opCa
 void ScriptOpcodes_Duckman::opRunSpecialCode(ScriptThread *scriptThread, OpCall &opCall) {
 	ARG_SKIP(2);
 	ARG_UINT32(specialCodeId);
-debug("run(%08X)", specialCodeId);	
 	_vm->_specialCode->run(specialCodeId, opCall);
-debug("run(%08X) OK", specialCodeId);	
 }
 
 void ScriptOpcodes_Duckman::opStartSound(ScriptThread *scriptThread, OpCall &opCall) {
