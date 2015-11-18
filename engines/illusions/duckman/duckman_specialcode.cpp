@@ -21,6 +21,7 @@
  */
 
 #include "illusions/duckman/illusions_duckman.h"
+#include "illusions/duckman/duckman_screenshakereffects.h"
 #include "illusions/duckman/duckman_specialcode.h"
 #include "illusions/duckman/duckman_inventory.h"
 #include "illusions/duckman/propertytimers.h"
@@ -79,73 +80,9 @@ void DuckmanSpecialCode::run(uint32 specialCodeId, OpCall &opCall) {
 	}
 }
 
-// TODO Move to separate file
-
-static const ScreenShakerPoint kShakerPoints0[] = {
-	{0, -2}, {0, -4}, {0, -3}, {0, -1}, {0, 1}
-};
-
-static const ScreenShakeEffect kShakerEffect0 = {
-	ARRAYSIZE(kShakerPoints0), 5, kShakerPoints0
-};
-
-static const ScreenShakerPoint kShakerPoints1[] = {
-	{-4, -5}, {4,  5}, {-3, -4}, {3, 4}, {-2, -3}, {2, 3}, {-1, -2}, 
-	{ 1,  2}, {0, -1} 
-};
-
-static const ScreenShakeEffect kShakerEffect1 = {
-	ARRAYSIZE(kShakerPoints1), 2, kShakerPoints1
-};
-
-static const ScreenShakerPoint kShakerPoints2[] = {
-	{0, -3}, {0,  3}, {0, -2}, {0, 2}, {0, -2}, {0, 2}, {0, -1},
-	{0,  1}, {0, -1},
-};
-
-static const ScreenShakeEffect kShakerEffect2 = {
-	ARRAYSIZE(kShakerPoints2), 2, kShakerPoints2
-};
-
-static const ScreenShakerPoint kShakerPoints3[] = {
-	{0, 1}, {0, -1}, {0, -2}, {0, 0}, {(int16)32768, 0}
-};
-
-static const ScreenShakeEffect kShakerEffect3 = {
-	ARRAYSIZE(kShakerPoints3), 2, kShakerPoints3
-};
-
-static const ScreenShakerPoint kShakerPoints4[] = {
-	{0, 4}, {0, -1}, {0, 3}, {0, -2}, {0, 1}, {0, -1}, {0, 1}, {0, -1}
-};
-
-static const ScreenShakeEffect kShakerEffect4 = {
-	ARRAYSIZE(kShakerPoints4), 5, kShakerPoints4
-};
-
-static const ScreenShakerPoint kShakerPoints5[] = {
-	{0, -1}, {0, 0}, {0, 1}, {0, 0}, {0, -1}, {0, 0}, {0, 1}, {0, 0},
-	{0, -1}, {0, 0}, {0, 1}, {0, 0}, {0, -1}, {0, 0}, {0, 1}, {0, 0},
-	{0, -1}, {0, 0}, {0, 1}, {0, 0}, {0, -1}, {0, 0}, {0, 1}, {0, 0},
-	{0, -1}, {0, 0}, {0, 1}, {0, 0}, {0, -1}, {0, 0}, {0, 1}, {0, 0}
-};
-
-static const ScreenShakeEffect kShakerEffect5 = {
-	ARRAYSIZE(kShakerPoints5), 2, kShakerPoints5
-};
-
-static const ScreenShakeEffect *kShakerEffects[] = {
-	&kShakerEffect0,
-	&kShakerEffect1,
-	&kShakerEffect2,
-	&kShakerEffect3,
-	&kShakerEffect4,
-	&kShakerEffect5
-};
-
 void DuckmanSpecialCode::spcStartScreenShaker(OpCall &opCall) {
 	ARG_BYTE(effect);
-	const ScreenShakeEffect *shakerEffect = kShakerEffects[effect];
+	const ScreenShakeEffect *shakerEffect = getScreenShakeEffect(effect);
 	_vm->startScreenShaker(shakerEffect->_pointsCount, shakerEffect->_duration, shakerEffect->_points, opCall._threadId);
 }
 

@@ -15,6 +15,7 @@ MODULE_OBJS := \
 	dictionary.o \
 	duckman/duckman_dialog.o \
 	duckman/duckman_inventory.o \
+	duckman/duckman_screenshakereffects.o \
 	duckman/duckman_specialcode.o \
 	duckman/illusions_duckman.o \
 	duckman/propertytimers.o \
