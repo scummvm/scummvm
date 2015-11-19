@@ -717,13 +717,13 @@ void IllusionsEngine_Duckman::popActiveScene() {
 }
 
 bool IllusionsEngine_Duckman::loadScene(uint32 sceneId) {
-	ProgInfo *progInfo = _scriptResource->getProgInfo(sceneId & 0xFFFF);
-	if (!progInfo)
+	SceneInfo *sceneInfo = _scriptResource->getSceneInfo(sceneId & 0xFFFF);
+	if (!sceneInfo)
 		return false;
 	pushActiveScene(sceneId);
 	uint resourcesCount;
 	uint32 *resources;
-	progInfo->getResources(resourcesCount, resources);
+	sceneInfo->getResources(resourcesCount, resources);
 	for (uint i = 0; i < resourcesCount; ++i)
 		_resSys->loadResource(resources[i], sceneId, 0);
 	return true;
@@ -789,9 +789,9 @@ void IllusionsEngine_Duckman::setSceneIdThreadId(uint32 theSceneId, uint32 theTh
 }
 
 bool IllusionsEngine_Duckman::findTriggerCause(uint32 sceneId, uint32 verbId, uint32 objectId2, uint32 objectId, uint32 &codeOffs) {
-	ProgInfo *progInfo = _scriptResource->getProgInfo(sceneId & 0xFFFF);
-	if (progInfo)
-		return progInfo->findTriggerCause(verbId, objectId2, objectId, codeOffs);
+	SceneInfo *sceneInfo = _scriptResource->getSceneInfo(sceneId & 0xFFFF);
+	if (sceneInfo)
+		return sceneInfo->findTriggerCause(verbId, objectId2, objectId, codeOffs);
 	return false;
 }
 
@@ -993,15 +993,15 @@ void IllusionsEngine_Duckman::playSoundEffect(int index) {
 }
 
 bool IllusionsEngine_Duckman::getTriggerCause(uint32 verbId, uint32 objectId2, uint32 objectId, uint32 &outThreadId) {
-	ProgInfo *progInfo = _scriptResource->getProgInfo(getCurrentScene() & 0xFFFF);
+	SceneInfo *sceneInfo = _scriptResource->getSceneInfo(getCurrentScene() & 0xFFFF);
 	bool found =
-		progInfo->findTriggerCause(verbId, objectId2, objectId, outThreadId) ||
-		progInfo->findTriggerCause(verbId, objectId2, 0x40001, outThreadId);
+		sceneInfo->findTriggerCause(verbId, objectId2, objectId, outThreadId) ||
+		sceneInfo->findTriggerCause(verbId, objectId2, 0x40001, outThreadId);
 	if (!found) {
-		progInfo = _scriptResource->getProgInfo(3);
+		sceneInfo = _scriptResource->getSceneInfo(3);
 		found =
-			progInfo->findTriggerCause(verbId, objectId2, objectId, outThreadId) ||
-			progInfo->findTriggerCause(verbId, objectId2, 0x40001, outThreadId);
+			sceneInfo->findTriggerCause(verbId, objectId2, objectId, outThreadId) ||
+			sceneInfo->findTriggerCause(verbId, objectId2, 0x40001, outThreadId);
 	}
 	return found;
 }

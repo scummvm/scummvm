@@ -164,19 +164,19 @@ bool TriggerObject::findTriggerCause(uint32 verbId, uint32 objectId2, uint32 &co
 	return false;
 }
 
-void TriggerObject::fixupProgInfosDuckman() {
+void TriggerObject::fixupSceneInfosDuckman() {
 	for (uint i = 0; i < _causesCount; ++i)
 		_causes[i]._verbId &= 0xFFFF;
 }
 
-// ProgInfo
+// SceneInfo
 
-ProgInfo::ProgInfo()
+SceneInfo::SceneInfo()
 	: _triggerObjectsCount(0), _triggerObjects(0),
 	_resourcesCount(0), _resources(0) {
 }
 
-ProgInfo::~ProgInfo() {
+SceneInfo::~SceneInfo() {
 	delete[] _triggerObjects;
 	delete[] _resources;
 }
@@ -192,14 +192,14 @@ char *debugW2I(byte *wstr) {
 	return buf;
 }
 
-void ProgInfo::load(byte *dataStart, Common::SeekableReadStream &stream) {
+void SceneInfo::load(byte *dataStart, Common::SeekableReadStream &stream) {
 	_id = stream.readUint16LE();
 	_unk = stream.readUint16LE();
 	_name = dataStart + stream.pos();
 	stream.skip(128);
 	_triggerObjectsCount = stream.readUint16LE();
 	_resourcesCount = stream.readUint16LE();
-	debug(2, "\nProgInfo::load() _id: %d; _unk: %d; _name: [%s]",
+	debug(2, "\nSceneInfo::load() _id: %d; _unk: %d; _name: [%s]",
 		_id, _unk, debugW2I(_name));
 	uint32 triggerObjectsListOffs = stream.readUint32LE();
 	if (_resourcesCount > 0) {
@@ -218,28 +218,28 @@ void ProgInfo::load(byte *dataStart, Common::SeekableReadStream &stream) {
 	}
 }
 
-bool ProgInfo::findTriggerCause(uint32 verbId, uint32 objectId2, uint32 objectId, uint32 &codeOffs) {
+bool SceneInfo::findTriggerCause(uint32 verbId, uint32 objectId2, uint32 objectId, uint32 &codeOffs) {
 	TriggerObject *triggerObject = findTriggerObject(objectId);
 	if (triggerObject)
 		return triggerObject->findTriggerCause(verbId, objectId2, codeOffs);
 	return false;
 }
 
-void ProgInfo::getResources(uint &resourcesCount, uint32 *&resources) {
+void SceneInfo::getResources(uint &resourcesCount, uint32 *&resources) {
 	resourcesCount = _resourcesCount;
 	resources = _resources;
 }
 
-TriggerObject *ProgInfo::findTriggerObject(uint32 objectId) {
+TriggerObject *SceneInfo::findTriggerObject(uint32 objectId) {
 	for (uint i = 0; i < _triggerObjectsCount; ++i)
 		if (_triggerObjects[i]._objectId == objectId)
 			return &_triggerObjects[i];
 	return 0;
 }
 
-void ProgInfo::fixupProgInfosDuckman() {
+void SceneInfo::fixupSceneInfosDuckman() {
 	for (uint i = 0; i < _triggerObjectsCount; ++i)
-		_triggerObjects[i].fixupProgInfosDuckman();
+		_triggerObjects[i].fixupSceneInfosDuckman();
 }
 
 // ScriptResource
@@ -259,15 +259,15 @@ void ScriptResource::load(Resource *resource) {
 
 	Common::MemoryReadStream stream(_data, _dataSize, DisposeAfterUse::NO);
 	
-	uint32 objectMapOffs, progInfosOffs;
+	uint32 objectMapOffs, sceneInfosOffs;
 	_objectMapCount = 0;
 	
 	if (resource->_gameId == kGameIdBBDOU) {
-		progInfosOffs = 0x18;
+		sceneInfosOffs = 0x18;
 	} else if (resource->_gameId == kGameIdDuckman) {
 		for (uint i = 0; i < 27; ++i)
 			_soundIds[i] = stream.readUint32LE();
-		progInfosOffs = 0x8C;
+		sceneInfosOffs = 0x8C;
 	}
 	
 	stream.skip(4); // Skip unused
@@ -278,7 +278,7 @@ void ScriptResource::load(Resource *resource) {
 	if (resource->_gameId == kGameIdDuckman)
 		_objectMapCount = stream.readUint16LE();
 	_codeCount = stream.readUint16LE();
-	_progInfosCount = stream.readUint16LE();
+	_sceneInfosCount = stream.readUint16LE();
 	if (resource->_gameId == kGameIdDuckman)
 		stream.readUint16LE();//Unused?
 
@@ -289,8 +289,8 @@ void ScriptResource::load(Resource *resource) {
 		objectMapOffs = stream.readUint32LE();
 	uint32 codeTblOffs = stream.readUint32LE();
 	
-	debug(2, "ScriptResource::load() propertiesCount: %d; blockCountersCount: %d; _codeCount: %d; _progInfosCount: %d; _objectMapCount: %d",
-		propertiesCount, blockCountersCount, _codeCount, _progInfosCount, _objectMapCount);
+	debug(2, "ScriptResource::load() propertiesCount: %d; blockCountersCount: %d; _codeCount: %d; _sceneInfosCount: %d; _objectMapCount: %d",
+		propertiesCount, blockCountersCount, _codeCount, _sceneInfosCount, _objectMapCount);
 	debug(2, "ScriptResource::load() propertiesOffs: %08X; blockCountersOffs: %08X; codeTblOffs: %08X; objectMapOffs: %08X",
 		propertiesOffs, blockCountersOffs, codeTblOffs, objectMapOffs);
 	// Init properties
@@ -304,12 +304,12 @@ void ScriptResource::load(Resource *resource) {
 	for (uint i = 0; i < _codeCount; ++i)
 		_codeOffsets[i] = stream.readUint32LE();
 
-	_progInfos = new ProgInfo[_progInfosCount];
-	for (uint i = 0; i < _progInfosCount; ++i) {
-		stream.seek(progInfosOffs + i * 4);
-		uint32 progInfoOffs = stream.readUint32LE();
-		stream.seek(progInfoOffs);
-		_progInfos[i].load(_data, stream);
+	_sceneInfos = new SceneInfo[_sceneInfosCount];
+	for (uint i = 0; i < _sceneInfosCount; ++i) {
+		stream.seek(sceneInfosOffs + i * 4);
+		uint32 sceneInfoOffs = stream.readUint32LE();
+		stream.seek(sceneInfoOffs);
+		_sceneInfos[i].load(_data, stream);
 	}
 	
 	if (_objectMapCount > 0) {
@@ -330,7 +330,7 @@ void ScriptResource::load(Resource *resource) {
 	}
 	
 	if (resource->_gameId == kGameIdDuckman)
-		fixupProgInfosDuckman();
+		fixupSceneInfosDuckman();
 
 }
 
@@ -342,9 +342,9 @@ byte *ScriptResource::getCode(uint32 codeOffs) {
 	return _data + codeOffs;
 }
 
-ProgInfo *ScriptResource::getProgInfo(uint32 index) {
-	if (index > 0 && index <= _progInfosCount)
-		return &_progInfos[index - 1];
+SceneInfo *ScriptResource::getSceneInfo(uint32 index) {
+	if (index > 0 && index <= _sceneInfosCount)
+		return &_sceneInfos[index - 1];
 	return 0;
 }
 
@@ -352,9 +352,9 @@ uint32 ScriptResource::getObjectActorTypeId(uint32 objectId) {
 	return _objectMap[(objectId & 0xFFFF) - 1];
 }
 
-void ScriptResource::fixupProgInfosDuckman() {
-	for (uint i = 0; i < _progInfosCount; ++i)
-		_progInfos[i].fixupProgInfosDuckman();
+void ScriptResource::fixupSceneInfosDuckman() {
+	for (uint i = 0; i < _sceneInfosCount; ++i)
+		_sceneInfos[i].fixupSceneInfosDuckman();
 }
 
 // ScriptInstance

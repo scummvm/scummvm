@@ -504,13 +504,13 @@ uint32 IllusionsEngine_BBDOU::newTempThreadId() {
 }
 
 bool IllusionsEngine_BBDOU::enterScene(uint32 sceneId, uint32 threadId) {
-	ProgInfo *progInfo = _scriptResource->getProgInfo(sceneId & 0xFFFF);
-	if (!progInfo) {
+	SceneInfo *sceneInfo = _scriptResource->getSceneInfo(sceneId & 0xFFFF);
+	if (!sceneInfo) {
 		dumpActiveScenes(_globalSceneId, threadId);
 		sceneId = _theSceneId;
 	}
 	_activeScenes.push(sceneId);
-	return progInfo != 0;
+	return sceneInfo != 0;
 }
 
 void IllusionsEngine_BBDOU::exitScene(uint32 threadId) {
@@ -563,9 +563,9 @@ void IllusionsEngine_BBDOU::setSceneIdThreadId(uint32 theSceneId, uint32 theThre
 }
 
 bool IllusionsEngine_BBDOU::findTriggerCause(uint32 sceneId, uint32 verbId, uint32 objectId2, uint32 objectId, uint32 &codeOffs) {
-	ProgInfo *progInfo = _scriptResource->getProgInfo(sceneId & 0xFFFF);
-	if (progInfo)
-		return progInfo->findTriggerCause(verbId, objectId2, objectId, codeOffs);
+	SceneInfo *sceneInfo = _scriptResource->getSceneInfo(sceneId & 0xFFFF);
+	if (sceneInfo)
+		return sceneInfo->findTriggerCause(verbId, objectId2, objectId, codeOffs);
 	return false;
 }
 

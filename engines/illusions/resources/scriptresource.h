@@ -79,21 +79,21 @@ public:
 	~TriggerObject();
 	void load(byte *dataStart, Common::SeekableReadStream &stream);
 	bool findTriggerCause(uint32 verbId, uint32 objectId2, uint32 &codeOffs);
-	void fixupProgInfosDuckman();
+	void fixupSceneInfosDuckman();
 public:
 	uint32 _objectId;
 	uint _causesCount;
 	TriggerCause *_causes;
 };
 
-class ProgInfo {
+class SceneInfo {
 public:
-	ProgInfo();
-	~ProgInfo();
+	SceneInfo();
+	~SceneInfo();
 	void load(byte *dataStart, Common::SeekableReadStream &stream);
 	bool findTriggerCause(uint32 verbId, uint32 objectId2, uint32 objectId, uint32 &codeOffs);
 	void getResources(uint &resourcesCount, uint32 *&resources);
-	void fixupProgInfosDuckman();
+	void fixupSceneInfosDuckman();
 protected:
 	uint16 _id;
 	uint16 _unk;
@@ -112,7 +112,7 @@ public:
 	void load(Resource *resource);
 	byte *getThreadCode(uint32 threadId);
 	byte *getCode(uint32 codeOffs);
-	ProgInfo *getProgInfo(uint32 index);
+	SceneInfo *getSceneInfo(uint32 index);
 	uint32 getObjectActorTypeId(uint32 objectId);
 	uint32 getMainActorObjectId() const { return _mainActorObjectId; }
 public:
@@ -122,14 +122,14 @@ public:
 	BlockCounters _blockCounters;
 	uint _codeCount;
 	uint32 *_codeOffsets;
-	uint _progInfosCount;
-	ProgInfo *_progInfos;
+	uint _sceneInfosCount;
+	SceneInfo *_sceneInfos;
 	// Duckman specific
 	uint32 _soundIds[27];
 	uint _objectMapCount;
 	uint32 *_objectMap;
 	uint32 _mainActorObjectId;
-	void fixupProgInfosDuckman();
+	void fixupSceneInfosDuckman();
 };
 
 class ScriptInstance : public ResourceInstance {
