@@ -74,6 +74,8 @@ void ScriptOpcodes_Duckman::initOpcodes() {
 	OPCODE(23, opExitModalScene);
 	OPCODE(24, opEnterScene24);
 	OPCODE(25, opLeaveScene24);
+	OPCODE(26, opEnterScene26);
+	OPCODE(27, opLeaveScene26);
 	OPCODE(32, opPanCenterObject);
 	OPCODE(33, opPanTrackObject);
 	OPCODE(34, opPanToObject);
@@ -101,6 +103,8 @@ void ScriptOpcodes_Duckman::initOpcodes() {
 	OPCODE(65, opStartCursorHoldingObject);
 	OPCODE(66, opPlayVideo);
 	OPCODE(69, opRunSpecialCode);
+	OPCODE(70, opPause);
+	OPCODE(71, opUnpause);
 	OPCODE(72, opStartSound);
 	OPCODE(75, opStopSound);
 	OPCODE(76, opStartMidiMusic);
@@ -325,6 +329,14 @@ void ScriptOpcodes_Duckman::opLeaveScene24(ScriptThread *scriptThread, OpCall &o
 	_vm->dumpCurrSceneFiles(_vm->getCurrentScene(), opCall._callerThreadId);
 	_vm->exitScene();
 	_vm->leavePause(_vm->getCurrentScene(), opCall._callerThreadId);
+}
+
+void ScriptOpcodes_Duckman::opEnterScene26(ScriptThread *scriptThread, OpCall &opCall) {
+	// TODO
+}
+
+void ScriptOpcodes_Duckman::opLeaveScene26(ScriptThread *scriptThread, OpCall &opCall) {
+	// TODO
 }
 
 void ScriptOpcodes_Duckman::opPanCenterObject(ScriptThread *scriptThread, OpCall &opCall) {
@@ -556,6 +568,14 @@ void ScriptOpcodes_Duckman::opRunSpecialCode(ScriptThread *scriptThread, OpCall 
 	ARG_SKIP(2);
 	ARG_UINT32(specialCodeId);
 	_vm->_specialCode->run(specialCodeId, opCall);
+}
+
+void ScriptOpcodes_Duckman::opPause(ScriptThread *scriptThread, OpCall &opCall) {
+	_vm->pause(opCall._threadId);
+}
+
+void ScriptOpcodes_Duckman::opUnpause(ScriptThread *scriptThread, OpCall &opCall) {
+	_vm->unpause(opCall._threadId);
 }
 
 void ScriptOpcodes_Duckman::opStartSound(ScriptThread *scriptThread, OpCall &opCall) {

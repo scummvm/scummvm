@@ -283,6 +283,16 @@ void IllusionsEngine::updateFader() {
 	}
 }
 
+void IllusionsEngine::pauseFader() {
+	_fader->_paused = true;
+	_fader->_startTime = getCurrentTime() - _fader->_startTime;
+}
+
+void IllusionsEngine::unpauseFader() {
+	_fader->_startTime = getCurrentTime() - _fader->_startTime;
+	_fader->_paused = false;
+}
+
 void IllusionsEngine::setCurrFontId(uint32 fontId) {
 	_fontId = fontId;
 }

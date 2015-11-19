@@ -67,7 +67,7 @@ public:
 	InputEvent& setBitMask(uint bitMask);
 	InputEvent& addKey(Common::KeyCode key);
 	InputEvent& addMouseButton(int mouseButton);
-	byte handle(Common::KeyCode key, int mouseButton, bool down);
+	uint handle(Common::KeyCode key, int mouseButton, bool down);
 	uint getBitMask() const { return _bitMask; }
 protected:
 	uint _bitMask;

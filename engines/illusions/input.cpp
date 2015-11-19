@@ -59,8 +59,8 @@ InputEvent& InputEvent::addMouseButton(int mouseButton) {
 	return *this;
 }
 
-byte InputEvent::handle(Common::KeyCode key, int mouseButton, bool down) {
-	byte newKeys = 0;
+uint InputEvent::handle(Common::KeyCode key, int mouseButton, bool down) {
+	uint newKeys = 0;
 	for (KeyMap::iterator it = _keyMap.begin(); it != _keyMap.end(); ++it) {
 		KeyMapping &keyMapping = *it;
 		if ((keyMapping._key != Common::KEYCODE_INVALID && keyMapping._key == key) ||

@@ -59,6 +59,8 @@ protected:
 	void opExitModalScene(ScriptThread *scriptThread, OpCall &opCall);
 	void opEnterScene24(ScriptThread *scriptThread, OpCall &opCall);
 	void opLeaveScene24(ScriptThread *scriptThread, OpCall &opCall);
+	void opEnterScene26(ScriptThread *scriptThread, OpCall &opCall);
+	void opLeaveScene26(ScriptThread *scriptThread, OpCall &opCall);
 	void opPanCenterObject(ScriptThread *scriptThread, OpCall &opCall);
 	void opPanTrackObject(ScriptThread *scriptThread, OpCall &opCall);
 	void opPanToObject(ScriptThread *scriptThread, OpCall &opCall);
@@ -86,6 +88,8 @@ protected:
 	void opStartCursorHoldingObject(ScriptThread *scriptThread, OpCall &opCall);
 	void opPlayVideo(ScriptThread *scriptThread, OpCall &opCall);
 	void opRunSpecialCode(ScriptThread *scriptThread, OpCall &opCall);
+	void opPause(ScriptThread *scriptThread, OpCall &opCall);
+	void opUnpause(ScriptThread *scriptThread, OpCall &opCall);
 	void opStartSound(ScriptThread *scriptThread, OpCall &opCall);
 	void opStopSound(ScriptThread *scriptThread, OpCall &opCall);
 	void opStartMidiMusic(ScriptThread *scriptThread, OpCall &opCall);

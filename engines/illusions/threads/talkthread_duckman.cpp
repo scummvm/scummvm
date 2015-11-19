@@ -210,6 +210,33 @@ void TalkThread_Duckman::onNotify() {
 }
 
 void TalkThread_Duckman::onPause() {
+	if (_status == 5) {
+		if (!(_flags & 4)) {
+			// TODO audvocPauseVoice();
+		}
+		if (!(_flags & 8))
+			_textDurationElapsed = getDurationElapsed(_textStartTime, _textEndTime);
+	}
+}
+
+void TalkThread_Duckman::onUnpause() {
+	if (_status == 3) {
+		TalkEntry *talkEntry = getTalkResourceEntry(_talkId);
+		if (!_vm->isSoundActive())
+			_vm->_soundMan->cueVoice((char*)talkEntry->_voiceName);
+	} else if (_status == 5) {
+		if (!(_flags & 4)) {
+			// TODO audvocUnpauseVoice();
+		}
+		if (!(_flags & 8)) {
+			_textStartTime = getCurrentTime();
+			if (_textDuration <= _textDurationElapsed)
+				_textEndTime = _textStartTime;
+			else
+				_textEndTime = _textStartTime + _textDuration - _textDurationElapsed;
+			_textDurationElapsed = 0;
+		}
+	}
 }
 
 void TalkThread_Duckman::onResume() {

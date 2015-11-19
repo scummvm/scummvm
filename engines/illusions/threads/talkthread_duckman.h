@@ -44,6 +44,7 @@ public:
 	virtual void onSuspend();
 	virtual void onNotify();
 	virtual void onPause();
+	virtual void onUnpause();
 	virtual void onResume();
 	virtual void onTerminated();
 	virtual void onKill();

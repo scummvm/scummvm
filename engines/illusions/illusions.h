@@ -161,6 +161,8 @@ public:
 	bool isSoundActive();
 
 	void updateFader();
+	void pauseFader();
+	void unpauseFader();
 
 	void setCurrFontId(uint32 fontId);
 	bool checkActiveTalkThreads();
