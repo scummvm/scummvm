@@ -33,7 +33,7 @@ ScriptThread::ScriptThread(IllusionsEngine *vm, uint32 threadId, uint32 callingT
 	: Thread(vm, threadId, callingThreadId, notifyFlags), _scriptCodeIp(scriptCodeIp), _value8(value8),
 	_valueC(valueC), _value10(value10), _sequenceStalled(0) {
 	_type = kTTScriptThread;
-	_tag = _vm->getCurrentScene();
+	_sceneId = _vm->getCurrentScene();
 }
 
 int ScriptThread::onUpdate() {

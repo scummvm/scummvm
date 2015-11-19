@@ -368,7 +368,7 @@ bool BackgroundResource::findNamedPoint(uint32 namedPointId, Common::Point &pt) 
 // BackgroundInstance
 
 BackgroundInstance::BackgroundInstance(IllusionsEngine *vm)
-	: _vm(vm), _tag(0), _pauseCtr(0), _bgRes(0), _savedPalette(0) {
+	: _vm(vm), _sceneId(0), _pauseCtr(0), _bgRes(0), _savedPalette(0) {
 }
 
 void BackgroundInstance::load(Resource *resource) {
@@ -378,7 +378,7 @@ void BackgroundInstance::load(Resource *resource) {
 	backgroundResource->load(resource->_data, resource->_dataSize);
 
 	_bgRes = backgroundResource;
-	_tag = resource->_tag;
+	_sceneId = resource->_sceneId;
 	initSurface();
 	
 	// Insert background objects
@@ -549,15 +549,15 @@ void BackgroundInstanceList::removeBackgroundInstance(BackgroundInstance *backgr
 	_items.remove(backgroundInstance);
 }
 
-void BackgroundInstanceList::pauseByTag(uint32 tag) {
+void BackgroundInstanceList::pauseBySceneId(uint32 sceneId) {
 	for (ItemsIterator it = _items.begin(); it != _items.end(); ++it)
-		if ((*it)->_tag == tag)
+		if ((*it)->_sceneId == sceneId)
 			(*it)->pause();
 }
 
-void BackgroundInstanceList::unpauseByTag(uint32 tag) {
+void BackgroundInstanceList::unpauseBySceneId(uint32 sceneId) {
 	for (ItemsIterator it = _items.begin(); it != _items.end(); ++it)
-		if ((*it)->_tag == tag)
+		if ((*it)->_sceneId == sceneId)
 			(*it)->unpause();
 }
 

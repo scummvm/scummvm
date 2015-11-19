@@ -52,14 +52,14 @@ public:
 struct Resource {
 	bool _loaded;
 	uint32 _resId;
-	uint32 _tag;
+	uint32 _sceneId;
 	uint32 _threadId;
 	byte *_data;
 	uint32 _dataSize;
 	int _gameId;
 	Common::String _filename;
 	ResourceInstance *_instance;
-	Resource() : _loaded(false), _resId(0), _tag(0), _threadId(0), _data(0), _dataSize(0), _instance(0) {
+	Resource() : _loaded(false), _resId(0), _sceneId(0), _threadId(0), _data(0), _dataSize(0), _instance(0) {
 	}
 	~Resource() {
 		if (_instance)
@@ -93,9 +93,9 @@ public:
 	void addResourceLoader(uint32 resTypeId, BaseResourceLoader *resourceLoader);
 	
 	// TODO Handle threadId in caller as well as pausing of timer
-	void loadResource(uint32 resId, uint32 tag, uint32 threadId);
+	void loadResource(uint32 resId, uint32 sceneId, uint32 threadId);
 	void unloadResourceById(uint32 resId);
-	void unloadResourcesByTag(uint32 tag);
+	void unloadResourcesBySceneId(uint32 sceneId);
 	void unloadSceneResources(uint32 sceneId1, uint32 sceneId2);
 	
 protected:
@@ -125,11 +125,11 @@ protected:
 		}
 	};
 
-	struct ResourceEqualByTag : public Common::UnaryFunction<const Resource*, bool> {
-		uint32 _tag;
-		ResourceEqualByTag(uint32 tag) : _tag(tag) {}
+	struct ResourceEqualBySceneId : public Common::UnaryFunction<const Resource*, bool> {
+		uint32 _sceneId;
+		ResourceEqualBySceneId(uint32 sceneId) : _sceneId(sceneId) {}
 		bool operator()(const Resource *resource) const {
-			return resource->_tag == _tag;
+			return resource->_sceneId == _sceneId;
 		}
 	};
 
@@ -137,7 +137,7 @@ protected:
 		uint32 _sceneId1, _sceneId2;
 		ResourceNotEqualByScenes(uint32 sceneId1, uint32 sceneId2) : _sceneId1(sceneId1), _sceneId2(sceneId2) {}
 		bool operator()(const Resource *resource) const {
-			return resource->_tag != _sceneId1 && resource->_tag != _sceneId2;
+			return resource->_sceneId != _sceneId1 && resource->_sceneId != _sceneId2;
 		}
 	};
 

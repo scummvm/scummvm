@@ -260,8 +260,8 @@ void IllusionsEngine_BBDOU::initInput() {
 		.addKey(Common::KEYCODE_DOWN);
 }
 
-#define UPDATEFUNCTION(priority, tag, callback) \
-	_updateFunctions->add(priority, tag, new Common::Functor1Mem<uint, int, IllusionsEngine_BBDOU> \
+#define UPDATEFUNCTION(priority, sceneId, callback) \
+	_updateFunctions->add(priority, sceneId, new Common::Functor1Mem<uint, int, IllusionsEngine_BBDOU> \
 		(this, &IllusionsEngine_BBDOU::callback));
 
 void IllusionsEngine_BBDOU::initUpdateFunctions() {
@@ -516,30 +516,30 @@ bool IllusionsEngine_BBDOU::enterScene(uint32 sceneId, uint32 threadId) {
 void IllusionsEngine_BBDOU::exitScene(uint32 threadId) {
 	uint32 sceneId = _activeScenes.getCurrentScene();
 	// TODO krnfileDump(sceneId);
-	// TODO UpdateFunctions_disableByTag__TODO_maybe(sceneId);
-	_threads->terminateThreadsByTag(sceneId, threadId);
-	_controls->destroyControlsByTag(sceneId);
+	// TODO UpdateFunctions_disableBySceneId__TODO_maybe(sceneId);
+	_threads->terminateThreadsBySceneId(sceneId, threadId);
+	_controls->destroyControlsBySceneId(sceneId);
 	_triggerFunctions->removeBySceneId(sceneId);
-	_resSys->unloadResourcesByTag(sceneId);
+	_resSys->unloadResourcesBySceneId(sceneId);
 	_activeScenes.pop();
 }
 
 void IllusionsEngine_BBDOU::enterPause(uint32 threadId) {
 	uint32 sceneId = _activeScenes.getCurrentScene();
 	_camera->pushCameraMode();
-	_threads->suspendThreadsByTag(sceneId, threadId);
-	_controls->pauseControlsByTag(sceneId);
-	_actorInstances->pauseByTag(sceneId);
-	_backgroundInstances->pauseByTag(sceneId);
+	_threads->suspendThreadsBySceneId(sceneId, threadId);
+	_controls->pauseControlsBySceneId(sceneId);
+	_actorInstances->pauseBySceneId(sceneId);
+	_backgroundInstances->pauseBySceneId(sceneId);
 	_activeScenes.pauseActiveScene();
 }
 
 void IllusionsEngine_BBDOU::leavePause(uint32 threadId) {
 	uint32 sceneId = _activeScenes.getCurrentScene();
-	_backgroundInstances->unpauseByTag(sceneId);
-	_actorInstances->unpauseByTag(sceneId);
-	_controls->unpauseControlsByTag(sceneId);
-	_threads->notifyThreadsByTag(sceneId, threadId);
+	_backgroundInstances->unpauseBySceneId(sceneId);
+	_actorInstances->unpauseBySceneId(sceneId);
+	_controls->unpauseControlsBySceneId(sceneId);
+	_threads->notifyThreadsBySceneId(sceneId, threadId);
 	_camera->popCameraMode();
 	_activeScenes.unpauseActiveScene();
 }

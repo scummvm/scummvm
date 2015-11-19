@@ -85,7 +85,7 @@ void TalkInstance::load(Resource *resource) {
 	talkResource->load(resource->_data, resource->_dataSize);
 	_talkRes = talkResource;
 	_talkId = resource->_resId;
-	_tag = resource->_tag;
+	_sceneId = resource->_sceneId;
 	registerResources();
 }
 
@@ -148,21 +148,21 @@ TalkInstance *TalkInstanceList::findTalkItem(uint32 talkId) {
 	return 0;
 }
 
-TalkInstance *TalkInstanceList::findTalkItemByTag(uint32 tag) {
+TalkInstance *TalkInstanceList::findTalkItemBySceneId(uint32 sceneId) {
 	for (ItemsIterator it = _items.begin(); it != _items.end(); ++it)
-		if ((*it)->_tag == tag)
+		if ((*it)->_sceneId == sceneId)
 			return (*it);
 	return 0;
 }
 
-void TalkInstanceList::pauseByTag(uint32 tag) {
-	TalkInstance *talkInstance = findTalkItemByTag(tag);
+void TalkInstanceList::pauseBySceneId(uint32 sceneId) {
+	TalkInstance *talkInstance = findTalkItemBySceneId(sceneId);
 	if (talkInstance)
 		talkInstance->pause();
 }
 
-void TalkInstanceList::unpauseByTag(uint32 tag) {
-	TalkInstance *talkInstance = findTalkItemByTag(tag);
+void TalkInstanceList::unpauseBySceneId(uint32 sceneId) {
+	TalkInstance *talkInstance = findTalkItemBySceneId(sceneId);
 	if (talkInstance)
 		talkInstance->unpause();
 }

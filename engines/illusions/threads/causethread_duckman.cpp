@@ -33,19 +33,19 @@ CauseThread_Duckman::CauseThread_Duckman(IllusionsEngine_Duckman *vm, uint32 thr
 	uint32 triggerThreadId)
 	: Thread(vm, threadId, callingThreadId, notifyFlags), _vm(vm), _triggerThreadId(triggerThreadId), _flag(false) {
 	_type = kTTCauseThread;
-	_tag = _vm->getCurrentScene();
+	_sceneId = _vm->getCurrentScene();
 }
 
 int CauseThread_Duckman::onUpdate() {
 	if (_flag) {
-		if (_vm->getCurrentScene() == _tag) {
+		if (_vm->getCurrentScene() == _sceneId) {
 			Control *cursorCursor = _vm->getObjectControl(0x40004);
 			cursorCursor->appearActor();
 			_vm->_input->discardEvent(kEventLeftClick);
 		}
 		return kTSTerminate;
 	} else {
-		_tag = _vm->getCurrentScene();
+		_sceneId = _vm->getCurrentScene();
 		Control *cursorCursor = _vm->getObjectControl(0x40004);
 		cursorCursor->disappearActor();
 		_vm->_input->discardEvent(kEventLeftClick);

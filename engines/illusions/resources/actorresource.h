@@ -101,7 +101,7 @@ public:
 	virtual void unpause();
 public:
 	IllusionsEngine *_vm;
-	uint32 _tag;
+	uint32 _sceneId;
 	int _pauseCtr;
 	ActorResource *_actorResource;
 protected:
@@ -116,8 +116,8 @@ public:
 	~ActorInstanceList();
 	ActorInstance *createActorInstance(Resource *resource);
 	void removeActorInstance(ActorInstance *actorInstance);
-	void pauseByTag(uint32 tag);
-	void unpauseByTag(uint32 tag);
+	void pauseBySceneId(uint32 sceneId);
+	void unpauseBySceneId(uint32 sceneId);
 	FramesList *findSequenceFrames(Sequence *sequence);
 	ActorInstance *findActorByResource(ActorResource *actorResource);
 	bool findNamedPoint(uint32 namedPointId, Common::Point &pt);

@@ -279,7 +279,7 @@ void ScriptOpcodes_BBDOU::opStartModalScene(ScriptThread *scriptThread, OpCall &
 	// NOTE Skipped checking for stalled resources
 	_vm->_input->discardAllEvents();
 	_vm->enterPause(opCall._callerThreadId);
-	_vm->_talkItems->pauseByTag(_vm->getCurrentScene());
+	_vm->_talkItems->pauseBySceneId(_vm->getCurrentScene());
 	_vm->enterScene(sceneId, opCall._callerThreadId);
 	_vm->startScriptThread(threadId, 0,
 		scriptThread->_value8, scriptThread->_valueC, scriptThread->_value10);
@@ -291,7 +291,7 @@ void ScriptOpcodes_BBDOU::opExitModalScene(ScriptThread *scriptThread, OpCall &o
 	_vm->_input->discardAllEvents();
 	_vm->exitScene(opCall._callerThreadId);
 	_vm->leavePause(opCall._callerThreadId);
-	_vm->_talkItems->unpauseByTag(_vm->getCurrentScene());
+	_vm->_talkItems->unpauseBySceneId(_vm->getCurrentScene());
 }
 
 void ScriptOpcodes_BBDOU::opEnterCloseUpScene(ScriptThread *scriptThread, OpCall &opCall) {

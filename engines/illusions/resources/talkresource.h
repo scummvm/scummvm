@@ -69,7 +69,7 @@ public:
 public:
 	IllusionsEngine *_vm;
 	uint32 _talkId;
-	uint32 _tag;
+	uint32 _sceneId;
 	TalkResource *_talkRes;
 	int _pauseCtr;
 	void registerResources();
@@ -83,9 +83,9 @@ public:
 	TalkInstance *createTalkInstance(Resource *resource);
 	void removeTalkInstance(TalkInstance *talkInstance);
 	TalkInstance *findTalkItem(uint32 talkId);
-	TalkInstance *findTalkItemByTag(uint32 tag);
-	void pauseByTag(uint32 tag);
-	void unpauseByTag(uint32 tag);
+	TalkInstance *findTalkItemBySceneId(uint32 sceneId);
+	void pauseBySceneId(uint32 sceneId);
+	void unpauseBySceneId(uint32 sceneId);
 //protected:
 public:
 	typedef Common::List<TalkInstance*> Items;
