@@ -139,6 +139,7 @@ public:
 	uint16 getColorKey2() const { return _colorKey2; }
 	int16 getScreenWidth() const { return _backSurface->w; }
 	int16 getScreenHeight() const { return _backSurface->h; }
+	bool isFaderActive() const { return _isFaderActive; }
 public:
 	IllusionsEngine *_vm;
 	bool _displayOn;

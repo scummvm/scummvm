@@ -52,10 +52,18 @@ int TimerThread::onUpdate() {
 }
 
 void TimerThread::onSuspend() {
-	_durationElapsed = getDurationElapsed(_startTime, _endTime);
+	onPause();
 }
 
 void TimerThread::onNotify() {
+	onUnpause();
+}
+
+void TimerThread::onPause() {
+	_durationElapsed = getDurationElapsed(_startTime, _endTime);
+}
+
+void TimerThread::onUnpause() {
 	uint32 currTime = getCurrentTime();
 	_startTime = currTime;
 	if (_duration <= _durationElapsed)
@@ -63,10 +71,6 @@ void TimerThread::onNotify() {
 	else
 		_endTime = currTime + _duration - _durationElapsed;
 	_durationElapsed = 0;
-}
-
-void TimerThread::onPause() {
-	onSuspend();
 }
 
 void TimerThread::onResume() {

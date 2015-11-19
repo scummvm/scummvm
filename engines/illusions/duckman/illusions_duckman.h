@@ -165,6 +165,9 @@ public:
 	void dumpActiveScenes(uint32 sceneId, uint32 threadId);
 	void dumpCurrSceneFiles(uint32 sceneId, uint32 threadId);
 
+	void pause(uint32 callerThreadId);
+	void unpause(uint32 callerThreadId);
+
 	void setSceneIdThreadId(uint32 theSceneId, uint32 theThreadId);
 	bool findTriggerCause(uint32 sceneId, uint32 verbId, uint32 objectId2, uint32 objectId, uint32 &codeOffs);
 	void reset();

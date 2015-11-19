@@ -49,6 +49,9 @@ void Thread::onNotify() {
 void Thread::onPause() {
 }
 
+void Thread::onUnpause() {
+}
+
 void Thread::onResume() {
 }
 
@@ -69,6 +72,14 @@ void Thread::pause() {
 		++_pauseCtr;
 		if (_pauseCtr == 1)
 			onPause();
+	}
+}
+
+void Thread::unpause() {
+	if (!_terminated) {
+		--_pauseCtr;
+		if (_pauseCtr == 0)
+			onUnpause();
 	}
 }
 
@@ -243,6 +254,14 @@ void ThreadList::pauseThreads(uint32 threadId) {
 		Thread *thread = *it;
 		if (thread->_threadId != threadId)
 			thread->pause();
+	}
+}
+
+void ThreadList::unpauseThreads(uint32 threadId) {
+	for (Iterator it = _threads.begin(); it != _threads.end(); ++it) {
+		Thread *thread = *it;
+		if (thread->_threadId != threadId)
+			thread->unpause();
 	}
 }
 

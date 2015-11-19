@@ -53,11 +53,13 @@ public:
 	virtual void onSuspend();
 	virtual void onNotify();
 	virtual void onPause();
+	virtual void onUnpause();
 	virtual void onResume();
 	virtual void onTerminated();
 	virtual void onKill();
 	virtual uint32 sendMessage(int msgNum, uint32 msgValue);
 	void pause();
+	void unpause();
 	void resume();
 	void suspend();
 	void notify();
@@ -93,6 +95,7 @@ public:
 	void notifyThreads(uint32 threadId);
 	void notifyThreadsBySceneId(uint32 sceneId, uint32 threadId);
 	void pauseThreads(uint32 threadId);
+	void unpauseThreads(uint32 threadId);
 	void suspendThreads(uint32 threadId);
 	void resumeThreads(uint32 threadId);
 	void endTalkThreads();

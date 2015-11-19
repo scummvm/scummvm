@@ -231,6 +231,8 @@ void IllusionsEngine_Duckman::initInput() {
 	_input->setInputEvent(kEventDown, 0x80)
 		.addMouseButton(MOUSE_RIGHT_BUTTON)
 		.addKey(Common::KEYCODE_DOWN);
+	_input->setInputEvent(kEventF1, 0x100)
+		.addKey(Common::KEYCODE_F1);
 }
 
 #define UPDATEFUNCTION(priority, sceneId, callback) \
@@ -250,6 +252,16 @@ void IllusionsEngine_Duckman::initUpdateFunctions() {
 
 int IllusionsEngine_Duckman::updateScript(uint flags) {
 	// TODO Some more stuff
+
+	if (_screen->isDisplayOn() && !_screen->isFaderActive() && _pauseCtr == 0) {
+		if (_input->pollEvent(kEventAbort)) {
+			startScriptThread(0x00020342, 0);
+		} else if (_input->pollEvent(kEventF1)) {
+			debug("F1");
+			startScriptThread(0x0002033F, 0);
+		}
+	}
+
 	_threads->updateThreads();
 	return kUFNext;
 }
@@ -781,6 +793,24 @@ void IllusionsEngine_Duckman::dumpCurrSceneFiles(uint32 sceneId, uint32 threadId
 	_threads->terminateThreadsBySceneId(sceneId, threadId);
 	_controls->destroyActiveControls();
 	_resSys->unloadResourcesBySceneId(sceneId);
+}
+
+void IllusionsEngine_Duckman::pause(uint32 callerThreadId) {
+	if (++_pauseCtr == 1) {
+		_threads->pauseThreads(callerThreadId);
+		_camera->pause();
+		pauseFader();
+		// TODO largeObj_pauseControlActor(0x40004);
+	}
+}
+
+void IllusionsEngine_Duckman::unpause(uint32 callerThreadId) {
+	if (--_pauseCtr == 0) {
+		// TODO largeObj_unpauseControlActor(0x40004);
+		unpauseFader();
+		_camera->unpause();
+		_threads->unpauseThreads(callerThreadId);
+	}
 }
 
 void IllusionsEngine_Duckman::setSceneIdThreadId(uint32 theSceneId, uint32 theThreadId) {
