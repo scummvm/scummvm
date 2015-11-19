@@ -71,8 +71,7 @@ void UpdateFunctions::update() {
 }
 
 void UpdateFunctions::terminateByScene(uint32 sceneId) {
-	UpdateFunctionListIterator it = _updateFunctions.begin();
-	while (it != _updateFunctions.end())
+	for (UpdateFunctionListIterator it = _updateFunctions.begin(); it != _updateFunctions.end(); ++it)
 		if ((*it)->_sceneId == sceneId)
 			(*it)->terminate();
 }

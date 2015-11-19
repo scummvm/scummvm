@@ -81,7 +81,7 @@ bool PropertyTimers::findPropertyTimer(uint32 propertyId, PropertyTimer *&proper
 }
 
 int PropertyTimers::updatePropertyTimers(uint flags) {
-	int result = 1;
+	int result = kUFNext;
 	uint32 currTime = getCurrentTime();
 	if (_vm->_pauseCtr <= 0) {
 		if (_propertyTimersPaused) {
@@ -95,7 +95,7 @@ int PropertyTimers::updatePropertyTimers(uint flags) {
 		if (flags & 1) {
 			_propertyTimersActive = false;
 			_propertyTimersPaused = false;
-			result = 2;
+			result = kUFTerminate;
 		} else {
 			bool timersActive = false;
 			for (uint i = 0; i < kPropertyTimersCount; ++i) {
@@ -110,7 +110,7 @@ int PropertyTimers::updatePropertyTimers(uint flags) {
 			if (!timersActive) {
 				_propertyTimersActive = false;
 				_propertyTimersPaused = false;
-				result = 2;
+				result = kUFTerminate;
 			}
 		}
 	} else {
@@ -121,7 +121,7 @@ int PropertyTimers::updatePropertyTimers(uint flags) {
 			}
 			_propertyTimersPaused = true;
 		}
-		result = 1;
+		result = kUFNext;
 	}
 	return result;
 }

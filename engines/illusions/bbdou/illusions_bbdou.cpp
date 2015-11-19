@@ -515,8 +515,7 @@ bool IllusionsEngine_BBDOU::enterScene(uint32 sceneId, uint32 threadId) {
 
 void IllusionsEngine_BBDOU::exitScene(uint32 threadId) {
 	uint32 sceneId = _activeScenes.getCurrentScene();
-	// TODO krnfileDump(sceneId);
-	// TODO UpdateFunctions_disableBySceneId__TODO_maybe(sceneId);
+	_updateFunctions->terminateByScene(sceneId);
 	_threads->terminateThreadsBySceneId(sceneId, threadId);
 	_controls->destroyControlsBySceneId(sceneId);
 	_triggerFunctions->removeBySceneId(sceneId);

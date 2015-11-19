@@ -251,7 +251,7 @@ void IllusionsEngine_Duckman::initUpdateFunctions() {
 int IllusionsEngine_Duckman::updateScript(uint flags) {
 	// TODO Some more stuff
 	_threads->updateThreads();
-	return 1;
+	return kUFNext;
 }
 
 void IllusionsEngine_Duckman::startScreenShaker(uint pointsCount, uint32 duration, const ScreenShakerPoint *points, uint32 threadId) {
@@ -589,7 +589,7 @@ void IllusionsEngine_Duckman::startCursorHoldingObject(uint32 objectId, uint32 s
 	_cursor._sequenceId2 = sequenceId;
 	_cursor._actorIndex = 7;
 	_cursor._savedActorIndex = 7;
-	_cursor._field14[_cursor._actorIndex - 1] = true;
+	_cursor._field14[6] = true;
 	_cursor._control->startSequenceActor(sequenceId, 2, 0);
 	setCursorActorIndex(_cursor._actorIndex, 1, 0);
 	_cursor._currOverlappedControl = 0;
@@ -776,7 +776,7 @@ void IllusionsEngine_Duckman::dumpActiveScenes(uint32 sceneId, uint32 threadId) 
 }
 
 void IllusionsEngine_Duckman::dumpCurrSceneFiles(uint32 sceneId, uint32 threadId) {
-	// TODO UpdateFunctions_disableBySceneId(sceneId);
+	_updateFunctions->terminateByScene(sceneId);
 	_threads->terminateActiveThreads(threadId);
 	_threads->terminateThreadsBySceneId(sceneId, threadId);
 	_controls->destroyActiveControls();
