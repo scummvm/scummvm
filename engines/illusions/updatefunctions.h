@@ -29,8 +29,8 @@
 namespace Illusions {
 
 enum {
-	kUFNext         = 1,  // Run next update funtion
-	kUFTerminate    = 2   // Terminate update function
+	kUFNext      = 1,  // Run next update funtion
+	kUFTerminate = 2   // Terminate update function
 };
 
 typedef Common::Functor1<uint, int> UpdateFunctionCallback;

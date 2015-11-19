@@ -125,7 +125,7 @@ int IllusionsEngine::updateActors(uint flags) {
 		if (control->_pauseCtr == 0 && control->_actor && control->_actor->_controlRoutine)
 			control->_actor->runControlRoutine(control, deltaTime);
 	}
-	return 1;
+	return kUFNext;
 }
 
 int IllusionsEngine::updateSequences(uint flags) {
@@ -136,7 +136,7 @@ int IllusionsEngine::updateSequences(uint flags) {
 			control->sequenceActor();
 		}
 	}
-	return 1;
+	return kUFNext;
 }
 
 int IllusionsEngine::updateGraphics(uint flags) {
@@ -196,18 +196,18 @@ int IllusionsEngine::updateGraphics(uint flags) {
 			_screenText->_position, priority);
 	}
 
-	return 1;
+	return kUFNext;
 }
 
 int IllusionsEngine::updateSprites(uint flags) {
 	_screen->updateSprites();
 	_screen->updatePalette();
-	return 1;
+	return kUFNext;
 }
 
 int IllusionsEngine::updateSoundMan(uint flags) {
 	_soundMan->update();
-	return 1;
+	return kUFNext;
 }
 
 int IllusionsEngine::getRandom(int max) {
