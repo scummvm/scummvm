@@ -877,6 +877,10 @@ begin_credits("Credits");
 				add_person("Andre Heider", "dhewg", "");
 			end_section();
 
+			begin_section("Raspberry Pi");
+				add_person("Manuel Alfayate", "vanfanel", "");
+			end_section();
+
 		end_section();
 
 		begin_section("Other subsystems");
