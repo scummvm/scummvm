@@ -207,7 +207,7 @@ public:
 	int16 _priority;
 	Actor *_actor;
 	//field_6 dw
-	uint32 _tag;
+	uint32 _sceneId;
 	uint32 _objectId;
 	uint32 _actorTypeId;
 	// TODO Move points into own struct
@@ -233,13 +233,13 @@ public:
 	void placeDialogItem(uint16 objectNum, uint32 actorTypeId, uint32 sequenceId, Common::Point placePt, int16 choiceJumpOffs);
 	void destroyControls();
 	void destroyActiveControls();
-	void destroyControlsByTag(uint32 tag);
+	void destroyControlsBySceneId(uint32 sceneId);
 	void destroyDialogItems();
 	void threadIsDead(uint32 threadId);
 	void pauseControls();
 	void unpauseControls();
-	void pauseControlsByTag(uint32 tag);
-	void unpauseControlsByTag(uint32 tag);
+	void pauseControlsBySceneId(uint32 sceneId);
+	void unpauseControlsBySceneId(uint32 sceneId);
 	bool getOverlappedObject(Control *control, Common::Point pt, Control **outOverlappedControl, int minPriority);
 	bool getDialogItemAtPos(Control *control, Common::Point pt, Control **outOverlappedControl);
 	bool getOverlappedWalkObject(Control *control, Common::Point pt, Control **outOverlappedControl);

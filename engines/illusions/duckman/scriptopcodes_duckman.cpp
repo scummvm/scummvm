@@ -294,7 +294,7 @@ void ScriptOpcodes_Duckman::opStartModalScene(ScriptThread *scriptThread, OpCall
 	ARG_UINT32(threadId);
 	_vm->_input->discardAllEvents();
 	_vm->enterPause(_vm->getCurrentScene(), opCall._callerThreadId);
-	_vm->_talkItems->pauseByTag(_vm->getCurrentScene());
+	_vm->_talkItems->pauseBySceneId(_vm->getCurrentScene());
 	_vm->enterScene(sceneId, threadId);
 	opCall._result = kTSSuspend;
 }
@@ -308,7 +308,7 @@ void ScriptOpcodes_Duckman::opExitModalScene(ScriptThread *scriptThread, OpCall 
 		_vm->dumpCurrSceneFiles(_vm->getCurrentScene(), opCall._callerThreadId);
 		_vm->exitScene();
 		_vm->leavePause(_vm->getCurrentScene(), opCall._callerThreadId);
-		_vm->_talkItems->unpauseByTag(_vm->getCurrentScene());
+		_vm->_talkItems->unpauseBySceneId(_vm->getCurrentScene());
 	}
 }
 

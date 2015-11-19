@@ -39,7 +39,7 @@ TimerThread::TimerThread(IllusionsEngine *vm, uint32 threadId, uint32 callingThr
 	if (callingThreadId) {
 		Thread *callingThread = _vm->_threads->findThread(callingThreadId);
 		if (callingThread)
-			_tag = callingThread->_tag;
+			_sceneId = callingThread->_sceneId;
 	}
 
 }

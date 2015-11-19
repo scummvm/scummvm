@@ -77,7 +77,7 @@ TalkThread::TalkThread(IllusionsEngine *vm, uint32 threadId, uint32 callingThrea
 	if (callingThreadId) {
 		Thread *callingThread = _vm->_threads->findThread(callingThreadId);
 		if (callingThread)
-			_tag = callingThread->_tag;
+			_sceneId = callingThread->_sceneId;
 	}
 
 	//debug("New talk thread: %08X %08X", _threadId, _talkId);

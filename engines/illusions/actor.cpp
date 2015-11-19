@@ -212,7 +212,7 @@ Control::Control(IllusionsEngine *vm)
 	_position.y = 0;
 	_actorTypeId = 0;
 	_actor = 0;
-	_tag = _vm->getCurrentScene();
+	_sceneId = _vm->getCurrentScene();
 }
 
 Control::~Control() {
@@ -1188,10 +1188,10 @@ void Controls::destroyActiveControls() {
 	}
 }
 
-void Controls::destroyControlsByTag(uint32 tag) {
+void Controls::destroyControlsBySceneId(uint32 sceneId) {
 	ItemsIterator it = _controls.begin();
 	while (it != _controls.end()) {
-		if ((*it)->_tag == tag) {
+		if ((*it)->_sceneId == sceneId) {
 			destroyControlInternal(*it);
 			it = _controls.erase(it);
 		} else
@@ -1239,10 +1239,10 @@ void Controls::unpauseControls() {
 	}
 }
 
-void Controls::pauseControlsByTag(uint32 tag) {
+void Controls::pauseControlsBySceneId(uint32 sceneId) {
 	for (ItemsIterator it = _controls.begin(); it != _controls.end(); ++it) {
 		Control *control = *it;
-		if (control->_tag == tag) {
+		if (control->_sceneId == sceneId) {
 			++control->_pauseCtr;
 			if (control->_pauseCtr == 1)
 				control->pause();
@@ -1250,10 +1250,10 @@ void Controls::pauseControlsByTag(uint32 tag) {
 	}
 }
 
-void Controls::unpauseControlsByTag(uint32 tag) {
+void Controls::unpauseControlsBySceneId(uint32 sceneId) {
 	for (ItemsIterator it = _controls.begin(); it != _controls.end(); ++it) {
 		Control *control = *it;
-		if (control->_tag == tag) {
+		if (control->_sceneId == sceneId) {
 			--control->_pauseCtr;
 			if (control->_pauseCtr == 0)
 				control->unpause();

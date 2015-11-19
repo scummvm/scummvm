@@ -72,7 +72,7 @@ public:
 	uint _type;
 	uint32 _threadId;
 	uint32 _callingThreadId;
-	uint32 _tag;
+	uint32 _sceneId;
 	uint _notifyFlags;
 };
 
@@ -88,10 +88,10 @@ public:
 	void suspendTimerThreads(uint32 callingThreadId);
 	void terminateThreads(uint32 threadId);
 	void terminateActiveThreads(uint32 threadId);
-	void terminateThreadsByTag(uint32 tag, uint32 threadId);
-	void suspendThreadsByTag(uint32 tag, uint32 threadId);
+	void terminateThreadsBySceneId(uint32 sceneId, uint32 threadId);
+	void suspendThreadsBySceneId(uint32 sceneId, uint32 threadId);
 	void notifyThreads(uint32 threadId);
-	void notifyThreadsByTag(uint32 tag, uint32 threadId);
+	void notifyThreadsBySceneId(uint32 sceneId, uint32 threadId);
 	void pauseThreads(uint32 threadId);
 	void suspendThreads(uint32 threadId);
 	void resumeThreads(uint32 threadId);

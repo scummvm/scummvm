@@ -38,10 +38,10 @@ typedef Common::Functor1<uint, int> UpdateFunctionCallback;
 class UpdateFunction {
 public:
 	int _priority;
-	uint32 _tag;
+	uint32 _sceneId;
 	uint _flags;
 	UpdateFunctionCallback *_callback;
-	UpdateFunction() : _priority(0), _tag(0), _flags(0), _callback(0) {}
+	UpdateFunction() : _priority(0), _sceneId(0), _flags(0), _callback(0) {}
 	~UpdateFunction() { delete _callback; }
 	void terminate() { _flags |= 1; }
 	int run() { return (*_callback)(_flags); }
@@ -51,7 +51,7 @@ class UpdateFunctions {
 public:
 	UpdateFunctions();
 	~UpdateFunctions();
-	void add(int priority, uint32 tag, UpdateFunctionCallback *callback);
+	void add(int priority, uint32 sceneId, UpdateFunctionCallback *callback);
 	void update();
 	void terminateByScene(uint32 sceneId);
 protected:

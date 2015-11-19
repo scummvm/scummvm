@@ -60,7 +60,7 @@ TalkThread_Duckman::TalkThread_Duckman(IllusionsEngine_Duckman *vm, uint32 threa
 	_textDuration = _durationMult;
 	_defDurationMult = _vm->clipTextDuration(240);
 	
-	_tag = _vm->getCurrentScene();
+	_sceneId = _vm->getCurrentScene();
 
 }
 

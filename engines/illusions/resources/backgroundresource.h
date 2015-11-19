@@ -190,7 +190,7 @@ public:
 	virtual void unpause();
 public:
 	IllusionsEngine *_vm;
-	uint32 _tag;
+	uint32 _sceneId;
 	int _pauseCtr;
 	BackgroundResource *_bgRes;
 	Common::Point _panPoints[kMaxBackgroundItemSurfaces];
@@ -212,8 +212,8 @@ public:
 	~BackgroundInstanceList();
 	BackgroundInstance *createBackgroundInstance(Resource *resource);
 	void removeBackgroundInstance(BackgroundInstance *backgroundInstance);
-	void pauseByTag(uint32 tag);
-	void unpauseByTag(uint32 tag);
+	void pauseBySceneId(uint32 sceneId);
+	void unpauseBySceneId(uint32 sceneId);
 	BackgroundInstance *findActiveBackgroundInstance();
 	BackgroundInstance *findBackgroundByResource(BackgroundResource *backgroundResource);
 	BackgroundResource *getActiveBgResource();

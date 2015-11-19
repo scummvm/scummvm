@@ -126,7 +126,7 @@ ThreadList::ThreadList(IllusionsEngine *vm)
 }
 
 void ThreadList::startThread(Thread *thread) {
-	// TODO tag has to be set by the Thread class
+	// TODO sceneId has to be set by the Thread class
 	_threads.push_back(thread);
 }
 
@@ -206,18 +206,18 @@ void ThreadList::terminateActiveThreads(uint32 threadId) {
 	}
 }
 
-void ThreadList::terminateThreadsByTag(uint32 tag, uint32 threadId) {
+void ThreadList::terminateThreadsBySceneId(uint32 sceneId, uint32 threadId) {
 	for (Iterator it = _threads.begin(); it != _threads.end(); ++it) {
 		Thread *thread = *it;
-		if (thread->_tag == tag && thread->_threadId != threadId)
+		if (thread->_sceneId == sceneId && thread->_threadId != threadId)
 			thread->terminate();
 	}
 }
 
-void ThreadList::suspendThreadsByTag(uint32 tag, uint32 threadId) {
+void ThreadList::suspendThreadsBySceneId(uint32 sceneId, uint32 threadId) {
 	for (Iterator it = _threads.begin(); it != _threads.end(); ++it) {
 		Thread *thread = *it;
-		if (thread->_tag == tag && thread->_threadId != threadId)
+		if (thread->_sceneId == sceneId && thread->_threadId != threadId)
 			thread->suspend();
 	}
 }
@@ -230,10 +230,10 @@ void ThreadList::notifyThreads(uint32 threadId) {
 	}
 }
 
-void ThreadList::notifyThreadsByTag(uint32 tag, uint32 threadId) {
+void ThreadList::notifyThreadsBySceneId(uint32 sceneId, uint32 threadId) {
 	for (Iterator it = _threads.begin(); it != _threads.end(); ++it) {
 		Thread *thread = *it;
-		if (thread->_tag == tag && thread->_threadId != threadId)
+		if (thread->_sceneId == sceneId && thread->_threadId != threadId)
 			thread->notify();
 	}
 }
@@ -308,12 +308,12 @@ void ThreadList::killThread(uint32 threadId) {
 void ThreadList::setThreadSceneId(uint32 threadId, uint32 sceneId) {
 	Thread *thread = findThread(threadId);
 	if (thread)
-		thread->_tag = sceneId;
+		thread->_sceneId = sceneId;
 }
 
 uint32 ThreadList::getThreadSceneId(uint32 threadId) {
 	Thread *thread = findThread(threadId);
-	return thread ? thread->_tag : 0;
+	return thread ? thread->_sceneId : 0;
 }
 
 bool ThreadList::isActiveThread(int msgNum) {

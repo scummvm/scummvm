@@ -233,8 +233,8 @@ void IllusionsEngine_Duckman::initInput() {
 		.addKey(Common::KEYCODE_DOWN);
 }
 
-#define UPDATEFUNCTION(priority, tag, callback) \
-	_updateFunctions->add(priority, tag, new Common::Functor1Mem<uint, int, IllusionsEngine_Duckman> \
+#define UPDATEFUNCTION(priority, sceneId, callback) \
+	_updateFunctions->add(priority, sceneId, new Common::Functor1Mem<uint, int, IllusionsEngine_Duckman> \
 		(this, &IllusionsEngine_Duckman::callback));
 
 void IllusionsEngine_Duckman::initUpdateFunctions() {
@@ -760,13 +760,13 @@ bool IllusionsEngine_Duckman::changeScene(uint32 sceneId, uint32 threadId, uint3
 void IllusionsEngine_Duckman::enterPause(uint32 sceneId, uint32 threadId) {
 	_threads->suspendThreads(threadId);
 	_controls->pauseControls();
-	_actorInstances->pauseByTag(sceneId);
-	_backgroundInstances->pauseByTag(sceneId);
+	_actorInstances->pauseBySceneId(sceneId);
+	_backgroundInstances->pauseBySceneId(sceneId);
 }
 
 void IllusionsEngine_Duckman::leavePause(uint32 sceneId, uint32 threadId) {
-	_backgroundInstances->unpauseByTag(sceneId);
-	_actorInstances->unpauseByTag(sceneId);
+	_backgroundInstances->unpauseBySceneId(sceneId);
+	_actorInstances->unpauseBySceneId(sceneId);
 	_controls->unpauseControls();
 	_threads->notifyThreads(threadId);
 }
@@ -776,11 +776,11 @@ void IllusionsEngine_Duckman::dumpActiveScenes(uint32 sceneId, uint32 threadId) 
 }
 
 void IllusionsEngine_Duckman::dumpCurrSceneFiles(uint32 sceneId, uint32 threadId) {
-	// TODO UpdateFunctions_disableByTag(sceneId);
+	// TODO UpdateFunctions_disableBySceneId(sceneId);
 	_threads->terminateActiveThreads(threadId);
-	_threads->terminateThreadsByTag(sceneId, threadId);
+	_threads->terminateThreadsBySceneId(sceneId, threadId);
 	_controls->destroyActiveControls();
-	_resSys->unloadResourcesByTag(sceneId);
+	_resSys->unloadResourcesBySceneId(sceneId);
 }
 
 void IllusionsEngine_Duckman::setSceneIdThreadId(uint32 theSceneId, uint32 theThreadId) {

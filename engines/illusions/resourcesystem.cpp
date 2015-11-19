@@ -49,7 +49,7 @@ ResourceInstance::~ResourceInstance() {
 // Resource
 
 void Resource::loadData(BaseResourceReader *resReader) {
-	_data = resReader->readResource(_tag, _resId, _dataSize);
+	_data = resReader->readResource(_sceneId, _resId, _dataSize);
 }
 
 void Resource::unloadData() {
@@ -74,14 +74,14 @@ void ResourceSystem::addResourceLoader(uint32 resTypeId, BaseResourceLoader *res
 	_resourceLoaders[resTypeId] = resourceLoader;
 }
 
-void ResourceSystem::loadResource(uint32 resId, uint32 tag, uint32 threadId) {
-	debug(1, "ResourceSystem::loadResource(%08X, %08X, %08X)", resId, tag, threadId);
+void ResourceSystem::loadResource(uint32 resId, uint32 sceneId, uint32 threadId) {
+	debug(1, "ResourceSystem::loadResource(%08X, %08X, %08X)", resId, sceneId, threadId);
 	BaseResourceLoader *resourceLoader = getResourceLoader(resId);
 
 	Resource *resource = new Resource();
 	resource->_loaded = false;
 	resource->_resId = resId;
-	resource->_tag = tag;
+	resource->_sceneId = sceneId;
 	resource->_threadId = threadId;
 	resource->_gameId = _vm->getGameId();
 
@@ -109,11 +109,11 @@ void ResourceSystem::unloadResourceById(uint32 resId) {
 		unloadResource(resource);
 }
 
-void ResourceSystem::unloadResourcesByTag(uint32 tag) {
-	ResourcesArrayIterator it = Common::find_if(_resources.begin(), _resources.end(), ResourceEqualByTag(tag));
+void ResourceSystem::unloadResourcesBySceneId(uint32 sceneId) {
+	ResourcesArrayIterator it = Common::find_if(_resources.begin(), _resources.end(), ResourceEqualBySceneId(sceneId));
 	while (it != _resources.end()) {
 		unloadResource(*it);
-		it = Common::find_if(it, _resources.end(), ResourceEqualByTag(tag));
+		it = Common::find_if(it, _resources.end(), ResourceEqualBySceneId(sceneId));
 	}
 }
 
@@ -138,7 +138,7 @@ Resource *ResourceSystem::getResource(uint32 resId) {
 }
 
 void ResourceSystem::unloadResource(Resource *resource) {
-	debug(1, "Unloading %08X... (tag: %08X)", resource->_resId, resource->_tag);
+	debug(1, "Unloading %08X... (sceneId: %08X)", resource->_resId, resource->_sceneId);
 	ResourcesArrayIterator it = Common::find_if(_resources.begin(), _resources.end(), ResourceEqualByValue(resource));
 	if (it != _resources.end())
 		_resources.remove_at(it - _resources.begin());

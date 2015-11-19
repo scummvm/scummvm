@@ -180,7 +180,7 @@ ActorInstance::ActorInstance(IllusionsEngine *vm)
 void ActorInstance::load(Resource *resource) {
 	_actorResource = new ActorResource();
 	_actorResource->load(resource);
-	_tag = resource->_tag;
+	_sceneId = resource->_sceneId;
 	_pauseCtr = 0;
 	initActorTypes();
 	registerResources();
@@ -260,15 +260,15 @@ void ActorInstanceList::removeActorInstance(ActorInstance *actorInstance) {
 	_items.remove(actorInstance);
 }
 
-void ActorInstanceList::pauseByTag(uint32 tag) {
+void ActorInstanceList::pauseBySceneId(uint32 sceneId) {
 	for (ItemsIterator it = _items.begin(); it != _items.end(); ++it)
-		if ((*it)->_tag == tag)
+		if ((*it)->_sceneId == sceneId)
 			(*it)->pause();
 }
 
-void ActorInstanceList::unpauseByTag(uint32 tag) {
+void ActorInstanceList::unpauseBySceneId(uint32 sceneId) {
 	for (ItemsIterator it = _items.begin(); it != _items.end(); ++it)
-		if ((*it)->_tag == tag)
+		if ((*it)->_sceneId == sceneId)
 			(*it)->unpause();
 }
 

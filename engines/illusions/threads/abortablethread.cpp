@@ -34,7 +34,7 @@ AbortableThread::AbortableThread(IllusionsEngine *vm, uint32 threadId, uint32 ca
 	: Thread(vm, threadId, callingThreadId, notifyFlags), _scriptThreadId(scriptThreadId), 
 	_scriptCodeIp(scriptCodeIp), _status(1) {
 	_type = kTTAbortableThread;
-	_tag = _vm->getCurrentScene();
+	_sceneId = _vm->getCurrentScene();
 	_vm->_input->discardEvent(kEventAbort);
 }
 

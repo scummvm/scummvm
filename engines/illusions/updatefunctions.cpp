@@ -38,10 +38,10 @@ UpdateFunctions::~UpdateFunctions() {
 		delete *it;
 }
 
-void UpdateFunctions::add(int priority, uint32 tag, UpdateFunctionCallback *callback) {
+void UpdateFunctions::add(int priority, uint32 sceneId, UpdateFunctionCallback *callback) {
 	UpdateFunction *updateFunction = new UpdateFunction();
 	updateFunction->_priority = priority;
-	updateFunction->_tag = tag;
+	updateFunction->_sceneId = sceneId;
 	updateFunction->_callback = callback;
 	UpdateFunctionListIterator insertionPos = Common::find_if(_updateFunctions.begin(), _updateFunctions.end(),
 		FindInsertionPosition(priority));
@@ -73,7 +73,7 @@ void UpdateFunctions::update() {
 void UpdateFunctions::terminateByScene(uint32 sceneId) {
 	UpdateFunctionListIterator it = _updateFunctions.begin();
 	while (it != _updateFunctions.end())
-		if ((*it)->_tag == sceneId)
+		if ((*it)->_sceneId == sceneId)
 			(*it)->terminate();
 }
 

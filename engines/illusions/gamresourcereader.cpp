@@ -21,7 +21,7 @@
  */
 
 #include "illusions/resourcesystem.h"
-#include "illusions/resourcereader_gamarchive.h"
+#include "illusions/gamresourcereader.h"
 #include "illusions/gamarchive.h"
 #include "illusions/illusions.h"
 #include "common/file.h"
