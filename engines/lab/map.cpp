@@ -725,12 +725,12 @@ void processMap(uint16 CurRoom) {
 				place = 1;
 
 		} else {
-			Class     = Msg->Class;
-			Code      = Msg->Code;
-			GadgetID  = Msg->GadgetID;
-			Qualifier = Msg->Qualifier;
-			MouseX    = Msg->MouseX;
-			MouseY    = Msg->MouseY;
+			Class     = Msg->msgClass;
+			Code      = Msg->code;
+			GadgetID  = Msg->gadgetID;
+			Qualifier = Msg->qualifier;
+			MouseX    = Msg->mouseX;
+			MouseY    = Msg->mouseY;
 
 			if (((Class == MOUSEBUTTONS) && (IEQUALIFIER_RBUTTON & Qualifier)) ||
 			        ((Class == RAWKEY) && (Code == 27)))

@@ -745,14 +745,14 @@ static void processJournal() {
 
 	while (1) {
 		g_music->updateMusic();  /* Make sure we check the music at least after every message */
-		Msg = (IntuiMessage *) getMsg();
+		Msg = (IntuiMessage *)getMsg();
 
 		if (Msg == NULL) {
 			g_music->updateMusic();
 		} else {
-			Class     = Msg->Class;
-			Qualifier = Msg->Qualifier;
-			GadID     = Msg->Code;
+			Class     = Msg->msgClass;
+			Qualifier = Msg->qualifier;
+			GadID     = Msg->code;
 
 			if (((Class == MOUSEBUTTONS) && (IEQUALIFIER_RBUTTON & Qualifier)) ||
 			        ((Class == RAWKEY) && (GadID == 27)))
@@ -978,11 +978,11 @@ static void processMonitor(char *ntext, bool isinteractive, uint16 x1, uint16 y1
 		if (Msg == NULL) {
 			g_music->updateMusic();
 		} else {
-			Class     = Msg->Class;
-			Qualifier = Msg->Qualifier;
-			MouseX    = Msg->MouseX;
-			MouseY    = Msg->MouseY;
-			Code      = Msg->Code;
+			Class     = Msg->msgClass;
+			Qualifier = Msg->qualifier;
+			MouseX    = Msg->mouseX;
+			MouseY    = Msg->mouseY;
+			Code      = Msg->code;
 
 			if (((Class == MOUSEBUTTONS) && (IEQUALIFIER_RBUTTON & Qualifier)) ||
 			        ((Class == RAWKEY) && (Code == 27)))

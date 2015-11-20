@@ -177,30 +177,30 @@ IntuiMessage *getMsg() {
 
 	if ((curgad = mouseGadget()) != NULL) {
 		updateMouse();
-		IMessage.Class = GADGETUP;
-		IMessage.Code  = curgad->GadgetID;
-		IMessage.GadgetID = curgad->GadgetID;
-		IMessage.Qualifier = Qualifiers;
+		IMessage.msgClass = GADGETUP;
+		IMessage.code  = curgad->GadgetID;
+		IMessage.gadgetID = curgad->GadgetID;
+		IMessage.qualifier = Qualifiers;
 		return &IMessage;
-	} else if (mouseButton(&IMessage.MouseX, &IMessage.MouseY, true)) { /* Left Button */
-		IMessage.Qualifier = IEQUALIFIER_LEFTBUTTON | Qualifiers;
-		IMessage.Class = MOUSEBUTTONS;
+	} else if (mouseButton(&IMessage.mouseX, &IMessage.mouseY, true)) { /* Left Button */
+		IMessage.qualifier = IEQUALIFIER_LEFTBUTTON | Qualifiers;
+		IMessage.msgClass = MOUSEBUTTONS;
 		return &IMessage;
-	} else if (mouseButton(&IMessage.MouseX, &IMessage.MouseY, false)) { /* Right Button */
-		IMessage.Qualifier = IEQUALIFIER_RBUTTON | Qualifiers;
-		IMessage.Class = MOUSEBUTTONS;
+	} else if (mouseButton(&IMessage.mouseX, &IMessage.mouseY, false)) { /* Right Button */
+		IMessage.qualifier = IEQUALIFIER_RBUTTON | Qualifiers;
+		IMessage.msgClass = MOUSEBUTTONS;
 		return &IMessage;
-	} else if (keyPress(&IMessage.Code)) { /* Keyboard key */
-		curgad = checkNumGadgetHit(ScreenGadgetList, IMessage.Code);
+	} else if (keyPress(&IMessage.code)) { /* Keyboard key */
+		curgad = checkNumGadgetHit(ScreenGadgetList, IMessage.code);
 
 		if (curgad) {
-			IMessage.Class = GADGETUP;
-			IMessage.Code  = curgad->GadgetID;
-			IMessage.GadgetID = curgad->GadgetID;
+			IMessage.msgClass = GADGETUP;
+			IMessage.code  = curgad->GadgetID;
+			IMessage.gadgetID = curgad->GadgetID;
 		} else
-			IMessage.Class = RAWKEY;
+			IMessage.msgClass = RAWKEY;
 
-		IMessage.Qualifier = Qualifiers;
+		IMessage.qualifier = Qualifiers;
 		return &IMessage;
 	} else
 		return NULL;
