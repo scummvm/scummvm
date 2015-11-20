@@ -118,12 +118,6 @@ Gadget *addGadButton(uint16 x, uint16 y, void *UpImage, void *DownImage, uint16 
 void gadgetsOnOff(void *gptr, void *win, int32 num, bool on);
 
 /*----------------------*/
-/*---- From Intro.c ----*/
-/*----------------------*/
-
-void introSequence();
-
-/*----------------------*/
 /*----- From Lab.c -----*/
 /*----------------------*/
 
