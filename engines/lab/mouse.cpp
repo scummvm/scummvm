@@ -31,7 +31,6 @@
 #include "lab/mouse.h"
 #include "lab/vga.h"
 #include "lab/stddefines.h"
-#include "lab/timing.h"
 #include "lab/interface.h"
 
 namespace Lab {

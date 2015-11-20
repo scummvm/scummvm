@@ -28,8 +28,7 @@
  *
  */
 
-#include "lab/stddefines.h"
-#include "lab/timing.h"
+#include "lab/lab.h"
 #include "lab/vga.h"
 
 namespace Lab {
@@ -37,7 +36,7 @@ namespace Lab {
 /*****************************************************************************/
 /* Waits for for Secs seconds and Micros microseconds to pass.               */
 /*****************************************************************************/
-void microDelay(uint32 secs, uint32 micros) {
+void LabEngine::microDelay(uint32 secs, uint32 micros) {
 	uint32 waitSecs, waitMicros;
 
 	addCurTime(secs, micros, &waitSecs, &waitMicros);
@@ -55,7 +54,7 @@ void microDelay(uint32 secs, uint32 micros) {
 /*****************************************************************************/
 /* Gets the current system time.                                             */
 /*****************************************************************************/
-void getTime(uint32 *secs, uint32 *micros) {
+void LabEngine::getTime(uint32 *secs, uint32 *micros) {
 	uint32 t = g_system->getMillis();
 
 	*secs   = t / 1000;
@@ -65,7 +64,7 @@ void getTime(uint32 *secs, uint32 *micros) {
 /*****************************************************************************/
 /* Adds seconds and microseconds to current time to get a new time.          */
 /*****************************************************************************/
-void addCurTime(uint32 sec, uint32 micros, uint32 *timeSec, uint32 *timeMicros) {
+void LabEngine::addCurTime(uint32 sec, uint32 micros, uint32 *timeSec, uint32 *timeMicros) {
 	getTime(timeSec, timeMicros);
 
 	(*timeSec)    += sec;
@@ -81,7 +80,7 @@ void addCurTime(uint32 sec, uint32 micros, uint32 *timeSec, uint32 *timeMicros) 
 /* Finds the difference between time1 and time2.  If time1 is later than     */
 /* time2, returns 0.                                                         */
 /*****************************************************************************/
-void anyTimeDiff(uint32 sec1, uint32 micros1, uint32 sec2, uint32 micros2, uint32 *diffSecs, uint32 *diffMicros) {
+void LabEngine::anyTimeDiff(uint32 sec1, uint32 micros1, uint32 sec2, uint32 micros2, uint32 *diffSecs, uint32 *diffMicros) {
 	*diffSecs   = 0;
 	*diffMicros = 0;
 
@@ -103,7 +102,7 @@ void anyTimeDiff(uint32 sec1, uint32 micros1, uint32 sec2, uint32 micros2, uint3
 /* Finds the difference between the current time, and a future time. Returns */
 /* 0 if the future time is actually before the current time.                 */
 /*****************************************************************************/
-void timeDiff(uint32 sec, uint32 micros, uint32 *diffSec, uint32 *diffMicros) {
+void LabEngine::timeDiff(uint32 sec, uint32 micros, uint32 *diffSec, uint32 *diffMicros) {
 	uint32 curSec, curMicros;
 	getTime(&curSec, &curMicros);
 	anyTimeDiff(curSec, curMicros, sec, micros, diffSec, diffMicros);
@@ -112,7 +111,7 @@ void timeDiff(uint32 sec, uint32 micros, uint32 *diffSec, uint32 *diffMicros) {
 /*****************************************************************************/
 /* Waits for a specified time to occur.                                      */
 /*****************************************************************************/
-void waitForTime(uint32 sec, uint32 micros) {
+void LabEngine::waitForTime(uint32 sec, uint32 micros) {
 	uint32 curSec, curMicros;
 
 	getTime(&curSec, &curMicros);

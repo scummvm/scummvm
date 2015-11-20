@@ -33,7 +33,6 @@
 #include "lab/labfun.h"
 #include "lab/diff.h"
 #include "lab/vga.h"
-#include "lab/timing.h"
 #include "lab/text.h"
 #include "lab/parsefun.h"
 #include "lab/interface.h"
@@ -829,7 +828,7 @@ from_crumbs:
 							FollowCrumbsFast = (Code == 'r' || Code == 'R');
 							IsCrumbTurning = false;
 							IsCrumbWaiting = false;
-							getTime(&CrumbSecs, &CrumbMicros);
+							g_lab->getTime(&CrumbSecs, &CrumbMicros);
 
 							if (Alternate) {
 								eatMessages();
@@ -1158,7 +1157,7 @@ from_crumbs:
 							FollowCrumbsFast = false;
 							IsCrumbTurning = false;
 							IsCrumbWaiting = false;
-							getTime(&CrumbSecs, &CrumbMicros);
+							g_lab->getTime(&CrumbSecs, &CrumbMicros);
 
 							eatMessages();
 							Alternate = false;
@@ -1417,7 +1416,7 @@ int followCrumbs() {
 		uint32 Secs;
 		uint32 Micros;
 
-		timeDiff(CrumbSecs, CrumbMicros, &Secs, &Micros);
+		g_lab->timeDiff(CrumbSecs, CrumbMicros, &Secs, &Micros);
 
 		if (Secs != 0 || Micros != 0)
 			return 0;
@@ -1460,7 +1459,7 @@ int followCrumbs() {
 		IsCrumbTurning = (MoveDir != VKEY_UPARROW);
 		IsCrumbWaiting = true;
 
-		addCurTime(theDelay / ONESECOND, theDelay % ONESECOND, &CrumbSecs, &CrumbMicros);
+		g_lab->addCurTime(theDelay / ONESECOND, theDelay % ONESECOND, &CrumbSecs, &CrumbMicros);
 	}
 
 	return MoveDir;
