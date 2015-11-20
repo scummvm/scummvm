@@ -34,6 +34,7 @@
 #include "lab/diff.h"
 #include "lab/vga.h"
 #include "lab/text.h"
+#include "lab/intro.h"
 #include "lab/parsefun.h"
 #include "lab/interface.h"
 #include "lab/mouse.h"
@@ -1359,7 +1360,9 @@ void LabEngine::go() {
 	mouseHide();
 
 	if (dointro && mem) {
-		introSequence();
+		Intro intro;
+
+		intro.introSequence();
 	} else
 		DoBlack = true;
 

@@ -29,7 +29,7 @@
  */
 
 #include "lab/lab.h"
-#include "lab/stddefines.h"
+#include "lab/intro.h"
 #include "lab/labfun.h"
 #include "lab/resource.h"
 #include "lab/diff.h"
@@ -37,38 +37,36 @@
 #include "lab/interface.h"
 
 namespace Lab {
-
-static TextFont filler, *msgfont = &filler;
-static bool QuitIntro = false, IntroDoBlack;
-
 extern bool nopalchange, DoBlack, IsHiRes;
 extern char diffcmap[256 * 3];
 extern uint32 VGAScreenWidth, VGAScreenHeight;
 extern uint16 *FadePalette;
 
+Intro::Intro() {
+	_msgfont = &_filler;
+	_quitIntro = false;
+}
 
 /******************************************************************************/
 /* Goes thru, and responds to all the intuition messages currently in the     */
 /* the message port.                                                          */
 /******************************************************************************/
-void introEatMessages() {
-	IntuiMessage *Msg;
-
+void Intro::introEatMessages() {
 	while (1) {
-		Msg = getMsg();
+		IntuiMessage *msg = getMsg();
 
 		if (g_engine->shouldQuit()) {
-			QuitIntro = true;
+			_quitIntro = true;
 			return;
 		}
 
-		if (Msg == NULL)
+		if (msg == NULL)
 			return;
 		else {
-			if (((Msg->Class == MOUSEBUTTONS) && (IEQUALIFIER_RBUTTON & Msg->Qualifier)) ||
-			        ((Msg->Class == RAWKEY) && (Msg->Code == 27))
+			if (((msg->Class == MOUSEBUTTONS) && (IEQUALIFIER_RBUTTON & msg->Qualifier)) ||
+			        ((msg->Class == RAWKEY) && (msg->Code == 27))
 				)
-				QuitIntro = true;
+				_quitIntro = true;
 		}
 	}
 }
@@ -79,18 +77,18 @@ void introEatMessages() {
 /*****************************************************************************/
 /* Reads in a picture.                                                       */
 /*****************************************************************************/
-static void doPictText(const char *Filename, bool isscreen) {
+void Intro::doPictText(const char *filename, bool isscreen) {
 	uint32 lastsecs = 0L, lastmicros = 0L, secs = 0L, micros = 0L;
-	IntuiMessage *Msg;
-	char filename[50] = "Lab:rooms/Intro/";
+	IntuiMessage *msg;
+	char path[50] = "Lab:rooms/Intro/";
 	byte *curplace, **tfile;
-	bool DrawNextText = true, End = false, Begin = true;
+	bool drawNextText = true, end = false, begin = true;
 
-	int32 Class, Code, Drawn;
-	int16 Qualifier;
+	int32 cls, code, Drawn;
+	int16 qualifier;
 	uint timedelay;
 
-	strcat(filename, Filename);
+	strcat(path, filename);
 
 	if (isscreen) {
 		g_music->updateMusic();
@@ -100,15 +98,15 @@ static void doPictText(const char *Filename, bool isscreen) {
 		timedelay = 7;
 	}
 
-	if (QuitIntro)
+	if (_quitIntro)
 		return;
 
 	while (1) {
-		if (DrawNextText) {
-			if (Begin) {
-				Begin = false;
+		if (drawNextText) {
+			if (begin) {
+				begin = false;
 
-				tfile = g_music->newOpen(filename);
+				tfile = g_music->newOpen(path);
 
 				if (!tfile)
 					return;
@@ -121,7 +119,7 @@ static void doPictText(const char *Filename, bool isscreen) {
 				setAPen(7L);
 				rectFill(VGAScaleX(10), VGAScaleY(10), VGAScaleX(310), VGAScaleY(190));
 
-				Drawn = flowText(msgfont, (!IsHiRes) * -1, 5, 7, false, false, true, true, VGAScaleX(14), VGAScaleY(11), VGAScaleX(306), VGAScaleY(189), (char *)curplace);
+				Drawn = flowText(_msgfont, (!IsHiRes) * -1, 5, 7, false, false, true, true, VGAScaleX(14), VGAScaleY(11), VGAScaleX(306), VGAScaleY(189), (char *)curplace);
 				fade(true, 0);
 			} else {
 				Drawn = longDrawMessage((char *)curplace);
@@ -129,12 +127,12 @@ static void doPictText(const char *Filename, bool isscreen) {
 
 			curplace += Drawn;
 
-			End = (*curplace == 0);
+			end = (*curplace == 0);
 
-			DrawNextText = false;
+			drawNextText = false;
 			introEatMessages();
 
-			if (QuitIntro) {
+			if (_quitIntro) {
 				if (isscreen)
 					fade(false, 0);
 
@@ -144,9 +142,9 @@ static void doPictText(const char *Filename, bool isscreen) {
 			g_lab->getTime(&lastsecs, &lastmicros);
 		}
 
-		Msg = getMsg();
+		msg = getMsg();
 
-		if (Msg == NULL) {
+		if (msg == NULL) {
 			g_music->updateMusic();
 			diffNextFrame();
 
@@ -154,25 +152,25 @@ static void doPictText(const char *Filename, bool isscreen) {
 			g_lab->anyTimeDiff(lastsecs, lastmicros, secs, micros, &secs, &micros);
 
 			if (secs > timedelay) {
-				if (End) {
+				if (end) {
 					if (isscreen)
 						fade(false, 0);
 
 					return;
 				} else {
-					DrawNextText = true;
+					drawNextText = true;
 				}
 			}
 
 			waitTOF();
 		} else {
-			Class     = Msg->Class;
-			Qualifier = Msg->Qualifier;
-			Code      = Msg->Code;
+			cls       = msg->Class;
+			qualifier = msg->Qualifier;
+			code      = msg->Code;
 
-			if (((Class == MOUSEBUTTONS) && (IEQUALIFIER_RBUTTON & Qualifier)) ||
-			        ((Class == RAWKEY) && (Code == 27))) {
-				QuitIntro = true;
+			if (((cls == MOUSEBUTTONS) && (IEQUALIFIER_RBUTTON & qualifier)) ||
+			        ((cls == RAWKEY) && (code == 27))) {
+				_quitIntro = true;
 
 				if (isscreen)
 					fade(false, 0);
@@ -180,20 +178,20 @@ static void doPictText(const char *Filename, bool isscreen) {
 				return;
 			}
 
-			else if (Class == MOUSEBUTTONS) {
-				if (IEQUALIFIER_LEFTBUTTON & Qualifier) {
-					if (End) {
+			else if (cls == MOUSEBUTTONS) {
+				if (IEQUALIFIER_LEFTBUTTON & qualifier) {
+					if (end) {
 						if (isscreen)
 							fade(false, 0);
 
 						return;
 					} else
-						DrawNextText = true;
+						drawNextText = true;
 				}
 
 				introEatMessages();
 
-				if (QuitIntro) {
+				if (_quitIntro) {
 					if (isscreen)
 						fade(false, 0);
 
@@ -201,13 +199,13 @@ static void doPictText(const char *Filename, bool isscreen) {
 				}
 			}
 
-			if (End) {
+			if (end) {
 				if (isscreen)
 					fade(false, 0);
 
 				return;
 			} else
-				DrawNextText = true;
+				drawNextText = true;
 		}
 	}
 }
@@ -219,12 +217,12 @@ static void doPictText(const char *Filename, bool isscreen) {
 /*****************************************************************************/
 /* Does a one second delay, but checks the music while doing it.             */
 /*****************************************************************************/
-void musicDelay() {
+void Intro::musicDelay() {
 	int16 counter;
 
 	g_music->updateMusic();
 
-	if (QuitIntro)
+	if (_quitIntro)
 		return;
 
 	for (counter = 0; counter < 20; counter++) {
@@ -237,44 +235,47 @@ void musicDelay() {
 
 
 
-static void NReadPict(const char *Filename, bool PlayOnce) {
-	Common::String finalFileName = Common::String("P:Intro/") + Filename;
+void Intro::nReadPict(const char *filename, bool playOnce) {
+	Common::String finalFileName = Common::String("P:Intro/") + filename;
 
 	g_music->updateMusic();
 	introEatMessages();
 
-	if (QuitIntro)
+	if (_quitIntro)
 		return;
 
-	DoBlack = IntroDoBlack;
+	DoBlack = _introDoBlack;
 	stopDiffEnd();
-	readPict(finalFileName.c_str(), PlayOnce);
+	readPict(finalFileName.c_str(), playOnce);
 }
 
 
 /*****************************************************************************/
 /* Does the introduction sequence for Labyrinth.                             */
 /*****************************************************************************/
-void introSequence() {
+void Intro::introSequence() {
 	uint16 counter, counter1;
 
-	uint16 Palette[16] = {
-		0x0000, 0x0855, 0x0FF9, 0x0EE7, 0x0ED5, 0x0DB4, 0x0CA2, 0x0C91, 0x0B80, 0x0B80, 0x0B91, 0x0CA2, 0x0CB3, 0x0DC4, 0x0DD6, 0x0EE7
+	uint16 palette[16] = {
+		0x0000, 0x0855, 0x0FF9, 0x0EE7,
+		0x0ED5, 0x0DB4, 0x0CA2, 0x0C91,
+		0x0B80, 0x0B80, 0x0B91, 0x0CA2,
+		0x0CB3, 0x0DC4, 0x0DD6, 0x0EE7
 	};
 
 	DoBlack = true;
 
 	if (g_lab->getPlatform() != Common::kPlatformWindows) {
-		NReadPict("EA0", true);
-		NReadPict("EA1", true);
-		NReadPict("EA2", true);
-		NReadPict("EA3", true);
+		nReadPict("EA0", true);
+		nReadPict("EA1", true);
+		nReadPict("EA2", true);
+		nReadPict("EA3", true);
 	} else {
-		NReadPict("WYRMKEEP", true);
+		nReadPict("WYRMKEEP", true);
 		// Wait 4 seconds
 		for (counter = 0; counter < 4 * 1000 / 10; counter++) {
 			introEatMessages();
-			if (QuitIntro)
+			if (_quitIntro)
 				break;
 			g_system->delayMillis(10);
 		}
@@ -286,18 +287,18 @@ void introSequence() {
 
 	nopalchange = true;
 	if (g_lab->getPlatform() != Common::kPlatformWindows)
-		NReadPict("TNDcycle.pic", true);
+		nReadPict("TNDcycle.pic", true);
 	else
-		NReadPict("TNDcycle2.pic", true);
+		nReadPict("TNDcycle2.pic", true);
 	nopalchange = false;
 
-	FadePalette = Palette;
+	FadePalette = palette;
 
 	for (counter = 0; counter < 16; counter++) {
-		if (QuitIntro)
+		if (_quitIntro)
 			break;
 
-		Palette[counter] = ((diffcmap[counter * 3] >> 2) << 8) +
+		palette[counter] = ((diffcmap[counter * 3] >> 2) << 8) +
 		                   ((diffcmap[counter * 3 + 1] >> 2) << 4) +
 		                   (diffcmap[counter * 3 + 2] >> 2);
 	}
@@ -306,18 +307,18 @@ void introSequence() {
 	fade(true, 0);
 
 	for (int times = 0; times < 150; times++) {
-		if (QuitIntro)
+		if (_quitIntro)
 			break;
 
 		g_music->updateMusic();
-		uint16 temp = Palette[2];
+		uint16 temp = palette[2];
 
 		for (counter = 2; counter < 15; counter++)
-			Palette[counter] = Palette[counter + 1];
+			palette[counter] = palette[counter + 1];
 
-		Palette[15] = temp;
+		palette[15] = temp;
 
-		setAmigaPal(Palette, 16);
+		setAmigaPal(palette, 16);
 		waitTOF();
 	}
 
@@ -326,24 +327,24 @@ void introSequence() {
 
 	g_music->updateMusic();
 
-	NReadPict("Title.A", true);
-	NReadPict("AB", true);
+	nReadPict("Title.A", true);
+	nReadPict("AB", true);
 	musicDelay();
-	NReadPict("BA", true);
-	NReadPict("AC", true);
-	musicDelay();
-
-	if (g_lab->getPlatform() == Common::kPlatformWindows)
-		musicDelay(); // more credits on this page now
-
-	NReadPict("CA", true);
-	NReadPict("AD", true);
+	nReadPict("BA", true);
+	nReadPict("AC", true);
 	musicDelay();
 
 	if (g_lab->getPlatform() == Common::kPlatformWindows)
 		musicDelay(); // more credits on this page now
 
-	NReadPict("DA", true);
+	nReadPict("CA", true);
+	nReadPict("AD", true);
+	musicDelay();
+
+	if (g_lab->getPlatform() == Common::kPlatformWindows)
+		musicDelay(); // more credits on this page now
+
+	nReadPict("DA", true);
 	musicDelay();
 
 	g_music->newOpen("p:Intro/Intro.1");  /* load the picture into the buffer */
@@ -352,14 +353,14 @@ void introSequence() {
 	blackAllScreen();
 	g_music->updateMusic();
 
-	msgfont = g_resource->getFont("P:Map.fon");
+	_msgfont = g_resource->getFont("P:Map.fon");
 
 	nopalchange = true;
-	NReadPict("Intro.1", true);
+	nReadPict("Intro.1", true);
 	nopalchange = false;
 
 	for (counter = 0; counter < 16; counter++) {
-		Palette[counter] = ((diffcmap[counter * 3] >> 2) << 8) +
+		palette[counter] = ((diffcmap[counter * 3] >> 2) << 8) +
 		                   ((diffcmap[counter * 3 + 1] >> 2) << 4) +
 		                   (diffcmap[counter * 3 + 2] >> 2);
 	}
@@ -373,32 +374,32 @@ void introSequence() {
 	blackAllScreen();
 	g_music->updateMusic();
 
-	IntroDoBlack = true;
-	NReadPict("Station1", true);
+	_introDoBlack = true;
+	nReadPict("Station1", true);
 	doPictText("i.3", false);
 
-	NReadPict("Station2", true);
+	nReadPict("Station2", true);
 	doPictText("i.4", false);
 
-	NReadPict("Stiles4", true);
+	nReadPict("Stiles4", true);
 	doPictText("i.5", false);
 
-	NReadPict("Stiles3", true);
+	nReadPict("Stiles3", true);
 	doPictText("i.6", false);
 
-	NReadPict("Platform2", true);
+	nReadPict("Platform2", true);
 	doPictText("i.7", false);
 
-	NReadPict("Subway.1", true);
+	nReadPict("Subway.1", true);
 	doPictText("i.8", false);
 
-	NReadPict("Subway.2", true);
+	nReadPict("Subway.2", true);
 
 	doPictText("i.9", false);
 	doPictText("i.10", false);
 	doPictText("i.11", false);
 
-	if (!QuitIntro)
+	if (!_quitIntro)
 		for (counter = 0; counter < 50; counter++) {
 			for (counter1 = (8 * 3); counter1 < (255 * 3); counter1++)
 				diffcmap[counter1] = 255 - diffcmap[counter1];
@@ -413,57 +414,57 @@ void introSequence() {
 	doPictText("i.12", false);
 	doPictText("i.13", false);
 
-	IntroDoBlack = false;
-	NReadPict("Daed0", true);
+	_introDoBlack = false;
+	nReadPict("Daed0", true);
 	doPictText("i.14", false);
 
-	NReadPict("Daed1", true);
+	nReadPict("Daed1", true);
 	doPictText("i.15", false);
 
-	NReadPict("Daed2", true);
+	nReadPict("Daed2", true);
 	doPictText("i.16", false);
 	doPictText("i.17", false);
 	doPictText("i.18", false);
 
-	NReadPict("Daed3", true);
+	nReadPict("Daed3", true);
 	doPictText("i.19", false);
 	doPictText("i.20", false);
 
-	NReadPict("Daed4", true);
+	nReadPict("Daed4", true);
 	doPictText("i.21", false);
 
-	NReadPict("Daed5", true);
+	nReadPict("Daed5", true);
 	doPictText("i.22", false);
 	doPictText("i.23", false);
 	doPictText("i.24", false);
 
-	NReadPict("Daed6", true);
+	nReadPict("Daed6", true);
 	doPictText("i.25", false);
 	doPictText("i.26", false);
 
-	NReadPict("Daed7", false);
+	nReadPict("Daed7", false);
 	doPictText("i.27", false);
 	doPictText("i.28", false);
 	stopDiffEnd();
 
-	NReadPict("Daed8", true);
+	nReadPict("Daed8", true);
 	doPictText("i.29", false);
 	doPictText("i.30", false);
 
-	NReadPict("Daed9", true);
+	nReadPict("Daed9", true);
 	doPictText("i.31", false);
 	doPictText("i.32", false);
 	doPictText("i.33", false);
 
-	NReadPict("Daed9a", true);
-	NReadPict("Daed10", true);
+	nReadPict("Daed9a", true);
+	nReadPict("Daed10", true);
 	doPictText("i.34", false);
 	doPictText("i.35", false);
 	doPictText("i.36", false);
 
-	NReadPict("SubX", true);
+	nReadPict("SubX", true);
 
-	if (QuitIntro) {
+	if (_quitIntro) {
 		setAPen(0);
 		rectFill(0, 0, VGAScreenWidth - 1, VGAScreenHeight - 1);
 		DoBlack = true;
