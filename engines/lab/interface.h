@@ -37,9 +37,9 @@
 namespace Lab {
 
 struct IntuiMessage {
-	uint32 Class;
-	uint16 Code, Qualifier, MouseX, MouseY, GadgetID;
-	uint32 Seconds, Micros;
+	uint32 msgClass;
+	uint16 code, qualifier, mouseX, mouseY, gadgetID;
+	uint32 seconds, micros;
 };
 
 
@@ -121,4 +121,3 @@ IntuiMessage *getMsg();
 } // End of namespace Lab
 
 #endif /* LAB_INTEFACE_H */
-

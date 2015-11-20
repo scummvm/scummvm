@@ -797,12 +797,12 @@ static void mainGameLoop() {
 		} else {
 			GotMessage = true;
 
-			Class     = Msg->Class;
-			Code      = Msg->Code;
-			Qualifier = Msg->Qualifier;
-			MouseX    = Msg->MouseX;
-			MouseY    = Msg->MouseY;
-			GadID     = Msg->GadgetID;
+			Class     = Msg->msgClass;
+			Code      = Msg->code;
+			Qualifier = Msg->qualifier;
+			MouseX    = Msg->mouseX;
+			MouseY    = Msg->mouseY;
+			GadID     = Msg->gadgetID;
 
 			FollowingCrumbs = false;
 
@@ -868,14 +868,14 @@ from_crumbs:
 							g_music->updateMusic();
 							diffNextFrame();
 						} else {
-							if (Msg->Class == RAWKEY) {
-								if ((Msg->Code == 'Y') || (Msg->Code == 'y') || (Msg->Code == 'Q') || (Msg->Code == 'q')) {
+							if (Msg->msgClass == RAWKEY) {
+								if ((Msg->code == 'Y') || (Msg->code == 'y') || (Msg->code == 'Q') || (Msg->code == 'q')) {
 									doit = true;
 									break;
-								} else if (Msg->Code < 128) {
+								} else if (Msg->code < 128) {
 									break;
 								}
-							} else if (Msg->Class == MOUSEBUTTONS) {
+							} else if (Msg->msgClass == MOUSEBUTTONS) {
 								break;
 							}
 						}
