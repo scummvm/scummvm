@@ -51,6 +51,15 @@
 #include "backends/graphics/openglsdl/openglsdl-graphics.h"
 #include "graphics/cursorman.h"
 #endif
+#ifdef USE_EGL_RASPBERRYPI
+#include "backends/graphics/egl-raspberrypi/egl-raspberrypi.h"
+#endif
+#ifdef USE_EGL_KMS
+#include "backends/graphics/egl-kms/egl-kms.h"
+#endif
+#ifdef USE_EGL_FBDEV
+#include "backends/graphics/egl-fbdev/egl-fbdev.h"
+#endif
 
 #include <time.h>	// for getTimeAndDate()
 
@@ -220,6 +229,18 @@ void OSystem_SDL::initBackend() {
 				}
 			}
 		}
+#endif
+
+#ifdef USE_EGL_RASPBERRYPI
+		_graphicsManager = new EGLRaspberryPiGraphicsManager(_eventSource);
+#endif
+
+#ifdef USE_EGL_KMS
+		_graphicsManager = new EGLKMSGraphicsManager(_eventSource);
+#endif
+
+#ifdef USE_EGL_FBDEV
+		_graphicsManager = new EGLFBDEVGraphicsManager(_eventSource);
 #endif
 
 		if (_graphicsManager == 0) {

@@ -135,6 +135,9 @@ _faad=auto
 _fluidsynth=auto
 _opengl=auto
 _opengles=auto
+_gles_kms=no
+_gles_fbdev=no
+_gles_rpi=no
 _readline=auto
 _freetype2=auto
 _taskbar=auto
@@ -867,6 +870,7 @@ Special configuration feature:
                                            tizen for Samsung Tizen
                                            caanoo for Caanoo
                                            dingux for Dingux
+                                           raspberrypi for Raspberry Pi
                                            dreamcast for Sega Dreamcast
                                            ds for Nintendo DS
                                            gamecube for Nintendo GameCube
@@ -954,6 +958,9 @@ Optional Libraries:
 
   --with-opengl-prefix=DIR Prefix where OpenGL (ES) is installed (optional)
   --disable-opengl         disable OpenGL (ES) support [autodetect]
+  --enable-gles-kms        enable OpenGL (ES) on DRM with no X server (optional)
+  --enable-gles-rpi        enable OpenGL (ES) on Raspberry Pi (optional)
+  --enable-gles-fbdev      enable OpenGL (ES) on framebuffer device (optional)
 
   --with-jpeg-prefix=DIR   Prefix where libjpeg is installed (optional)
   --disable-jpeg           disable JPEG decoder [autodetect]
@@ -1059,6 +1066,12 @@ for ac_option in $@; do
 	--disable-libunity)       _libunity=no    ;;
 	--enable-opengl)          _opengl=yes     ;;
 	--disable-opengl)         _opengl=no      ;;
+	--enable-gles-kms)	  _gles_kms=yes   ;;
+	--enable-gles-rpi)	  _gles_rpi=yes   ;;
+	--enable-gles-fbdev)	  _gles_fbdev=yes ;;
+	--disable-gles-kms)	  _gles_kms=no    ;;
+	--disable-gles-rpi)	  _gles_rpi=no    ;;
+	--disable-gles-fbdev)	  _gles_fbdev=no  ;;
 	--enable-bink)            _bink=yes       ;;
 	--disable-bink)           _bink=no        ;;
 	--enable-verbose-build)   _verbose_build=yes ;;
@@ -1305,6 +1318,12 @@ arm-riscos)
 	_host_os=riscos
 	_host_cpu=arm
 	;;
+raspberrypi)
+        _host_os=linux
+        _host_cpu=arm
+        _host_alias=arm-linux-gnueabihf
+	_backend=raspberrypi
+	;;
 caanoo)
 	_host_os=gph-linux
 	_host_cpu=arm
@@ -1521,6 +1540,42 @@ if test "$_release_build" = yes; then
 	append_var DEFINES "-DRELEASE_BUILD"
 fi
 
+#
+# Detetect if we're told to use X-less GLES.
+#
+if test "$_gles_rpi" = yes; then
+	_opengl=no
+	_build_scalers=no
+	_build_hq_scalers=no
+	_gles_context="raspberrypi"
+	_use_gles_rpi=yes
+fi
+
+if test "$_gles_kms" = yes; then
+	_opengl=no
+	_build_scalers=no
+	_build_hq_scalers=no
+	if test -n "$_gles_context"; then
+		echo "Error: more than one GLES context enabled. Disabling all."
+		_gles_context=""
+	else
+		_gles_context="kms"
+		_use_gles_kms=yes
+	fi
+fi
+
+if test "$_gles_fbdev" = yes; then
+	_opengl=no
+	_build_scalers=no
+	_build_hq_scalers=no
+	if test -n "$_gles_context"; then
+		echo "Error: more than one GLES context enabled. Disabling all."
+		_gles_context=""
+	else
+		_gles_context="fbdev"
+		_use_gles_fbdev=yes
+	fi
+fi
 
 #
 # Determine extension used for executables
@@ -3006,6 +3061,18 @@ case $_backend in
 		append_var LDFLAGS "-shared"
 		append_var LDFLAGS "-fpic"
 		;;
+	raspberrypi)
+		# In raspberry Pi, we don't use find_sdlconfig since we could be crosscompiling, 
+		# but still we use SDL.
+		_savegame_timestamp=no
+		_eventrec=no
+		_sdlconfig=""
+		INCLUDES="$INCLUDES -I$RPI_ROOTDIR/usr/include/SDL -D_GNU_SOURCE=1 -D_REENTRANT"
+		LIBS="$LIBS -L$RPI_ROOTDIR/usr/lib -L$RPI_ROOTDIR/usr/lib/arm-linux-gnueabihf -lSDL"
+		DEFINES="$DEFINES -DSDL_BACKEND"
+		MODULES="$MODULES backends/platform/sdl"
+		add_line_to_config_mk "SDL_BACKEND = 1"
+		;;
 	tizen)
 		# dirent.h not available. NONSTANDARD_PORT==ensure portdefs.h is included
 		append_var DEFINES "-DTIZEN -DDISABLE_STDIO_FILESTREAM -DNONSTANDARD_PORT"
@@ -3093,7 +3160,7 @@ esac
 # Enable 16bit support only for backends which support it
 #
 case $_backend in
-	android | dingux | dc | gph | iphone | maemo | openpandora | psp | samsungtv | sdl | tizen | webos | wii)
+	android | dingux | dc | raspberrypi | gph | iphone | maemo | openpandora | psp | samsungtv | sdl | tizen | webos | wii)
 		if test "$_16bit" = auto ; then
 			_16bit=yes
 		else
@@ -4073,6 +4140,102 @@ fi
 define_in_config_if_yes "$_opengl" "USE_OPENGL"
 define_in_config_if_yes "$_opengles" "USE_GLES"
 
+if test -n "$_gles_context"; then
+	case "$_gles_context" in
+
+	raspberrypi)
+		echo_n "Checking for Raspberry Pi GLES context... "
+		RPI_CXXFLAGS="-I$RPI_ROOTDIR/opt/vc/include -I$RPI_ROOTDIR/opt/vc/include/interface/vmcs_host/linux/ -I$RPI_ROOTDIR/opt/vc/include/interface/vcos/pthreads -I$RPI_ROOTDIR/opt/rpi_root/usr/include/SDL"
+		RPI_LIBS="--sysroot=$RPI_ROOTDIR -L$RPI_ROOTDIR/usr/lib -L$RPI_ROOTDIR/opt/vc/lib -lbcm_host -lvcos -lvchiq_arm -lGLESv1_CM -lEGL"
+		_use_gles_rpi=no
+		cat > $TMPC << EOF
+		#include <bcm_host.h>
+			int main(int argc, char *argv[]) {
+				bcm_host_init();
+			}		
+EOF
+		cc_check $RPI_CXXFLAGS $RPI_LIBS && _use_gles_rpi=yes
+		echo $_use_gles_rpi
+		if test "$_use_gles_rpi" = "yes"; then
+			CXXFLAGS="$CXXFLAGS $RPI_CXXFLAGS"
+			LIBS="$LIBS $RPI_LIBS"
+			_opengles=yes
+			add_line_to_config_mk "USE_GLES = 1"
+			add_line_to_config_h "#define USE_GLES"	
+			add_line_to_config_mk "USE_EGL_RASPBERRYPI = 1"
+			add_line_to_config_h "#define USE_EGL_RASPBERRYPI"
+		fi
+	;;
+
+	kms)
+		# For boards that do EGL/GLES on standard DRM/KMS, as opposed to "custom" APIs. Ideally, this is 
+		# what every computer running GNU/Linux should use in the future.
+		# GLES is mandatory on KMS since we're currently lacking an standard scaled layer API. 
+		echo_n "Checking for GLES context on KMS... "	
+		GLES_KMS_CXXFLAGS="-I$BOARD_ROOTDIR/usr/include/drm"
+		GLES_KMS_LIBS="--sysroot=$BOARD_ROOTDIR -lGLESv1_CM -lEGL -ldrm -lgbm"
+		_use_gles_kms=no
+		cat > $TMPC << EOF
+			#define virtual __virtual
+			#include <xf86drm.h>
+			#undef virtual
+			#include <xf86drmMode.h>
+			#include <gbm.h>
+			#include <fcntl.h>
+
+			int main(int argc, char *argv[]) {
+				int fd = open("/dev/dri/card0", O_RDWR);
+				drmModeRes *resources = drmModeGetResources(fd);
+				return 0;
+			}
+EOF
+		cc_check $GLES_KMS_CXXFLAGS $GLES_KMS_LIBS && _use_gles_kms=yes
+		echo $_use_gles_kms
+		if test "$_use_gles_kms" = "yes"; then
+			CXXFLAGS="$CXXFLAGS $GLES_KMS_CXXFLAGS"
+			LIBS="$LIBS $GLES_KMS_LIBS"	
+			add_line_to_config_mk "USE_EGL_KMS = 1"
+			add_line_to_config_h "#define USE_EGL_KMS"
+			add_line_to_config_mk "USE_GLES = 1"
+			add_line_to_config_h "#define USE_GLES"	
+		fi
+	;;
+
+	fbdev)
+		# This EGL/GLES context init is for boards that still do EGL/GLES on the legacy FBDEV framebuffer,
+		# like these Allwinner A10/A20 based (Cubieboard, CB2, CubieTruck...). 
+		echo_n "Checking for GLES context on FBDEV... "	
+		GLES_FBDEV_CXXFLAGS=""
+		GLES_FBDEV_LIBS="--sysroot=$BOARD_ROOTDIR -lGLESv1_CM -lEGL"
+		_use_gles_fbdev=no
+		cat > $TMPC << EOF
+			#include <sys/ioctl.h>
+			#include <linux/fb.h>
+			#include <fcntl.h>
+			#include <unistd.h>
+
+			int main(int argc, char *argv[]) {
+				fb_var_screeninfo vinfo;
+				int fb = open("/dev/fb0", O_RDWR, 0);
+				if (ioctl(fb, FBIOGET_VSCREENINFO, &vinfo) < 0) {
+					return -1;
+				}
+				close (fb);
+			}
+EOF
+		cc_check $GLES_FBDEV_CXXFLAGS $GLES_FBDEV_LIBS && _use_gles_fbdev=yes
+		echo $_use_gles_fbdev
+		if test "$_use_gles_fbdev" = "yes"; then
+			CXXFLAGS="$CXXFLAGS $GLES_FBDEV_CXXFLAGS"
+			LIBS="$LIBS $GLES_FBDEV_LIBS"	
+			add_line_to_config_mk "USE_EGL_FBDEV = 1"
+			add_line_to_config_h "#define USE_EGL_FBDEV"
+			add_line_to_config_mk "USE_GLES = 1"
+			add_line_to_config_h "#define USE_GLES"
+		fi
+	;;
+	esac
+fi
 
 #
 # Check for nasm

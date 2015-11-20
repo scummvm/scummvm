@@ -86,6 +86,33 @@ MODULE_OBJS += \
 endif
 endif
 
+ifdef USE_EGL_RASPBERRYPI
+MODULE_OBJS += \
+	graphics/opengl/debug.o \
+	graphics/opengl/extensions.o \
+	graphics/opengl/opengl-graphics.o \
+	graphics/opengl/texture.o \
+	graphics/egl-raspberrypi/egl-raspberrypi.o
+endif
+
+ifdef USE_EGL_KMS
+MODULE_OBJS += \
+	graphics/opengl/debug.o \
+	graphics/opengl/extensions.o \
+	graphics/opengl/opengl-graphics.o \
+	graphics/opengl/texture.o \
+	graphics/egl-kms/egl-kms.o
+endif
+
+ifdef USE_EGL_FBDEV
+MODULE_OBJS += \
+	graphics/opengl/debug.o \
+	graphics/opengl/extensions.o \
+	graphics/opengl/opengl-graphics.o \
+	graphics/opengl/texture.o \
+	graphics/egl-fbdev/egl-fbdev.o
+endif
+
 ifdef POSIX
 MODULE_OBJS += \
 	fs/posix/posix-fs.o \
