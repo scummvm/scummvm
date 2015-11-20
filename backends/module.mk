@@ -129,6 +129,11 @@ MODULE_OBJS += \
 	mixer/sdl13/sdl13-mixer.o
 endif
 
+ifdef DISPMANX
+MODULE_OBJS += \
+	graphics/dispmanxsdl/dispmanxsdl-graphics.o
+endif
+
 ifeq ($(BACKEND),tizen)
 MODULE_OBJS += \
 	timer/tizen/timer.o

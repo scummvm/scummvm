@@ -20,34 +20,34 @@
  *
  */
 
-#include "common/scummsys.h"
+#ifndef BACKENDS_GRAPHICS_SDL_DISPMANX_H
+#define BACKENDS_GRAPHICS_SDL_DISPMANX_H
 
-#if defined(POSIX) && !defined(MACOSX) && !defined(SAMSUNGTV) && !defined(MAEMO) && !defined(WEBOS) && !defined(LINUXMOTO) && !defined(GPH_DEVICE) && !defined(GP2X) && !defined(DINGUX) && !defined(OPENPANDORA) && !defined(PLAYSTATION3) && !defined(DISPMANX)
+#include "backends/graphics/surfacesdl/surfacesdl-graphics.h"
 
-#include "backends/platform/sdl/posix/posix.h"
-#include "backends/plugins/sdl/sdl-provider.h"
-#include "base/main.h"
+struct dispvarsStruct;
+struct dispmanxPage;
 
-int main(int argc, char *argv[]) {
+class DispmanXSdlGraphicsManager : public SurfaceSdlGraphicsManager {
+public:
+	DispmanXSdlGraphicsManager(SdlEventSource *sdlEventSource, SdlWindow *window);
+	~DispmanXSdlGraphicsManager();
+	bool loadGFXMode();
+	void internUpdateScreen();
+	bool handleScalerHotkeys(Common::KeyCode key);
+	void setFullscreenMode(bool enable);
+	void setAspectRatioCorrection(bool enable);
+	void clearOverlay();
+	bool hasFeature(OSystem::Feature f);
+protected:
+	// Raspberry Pi Dispmanx API
+	void dispmanXSetup(int width, int height);
+	void dispmanXInit();
+	void dispmanXUpdate();
+	dispmanxPage *dispmanXGetFreePage();
+	void dispmanXFreeResources();
+	void dispmanXVideoQuit();
+	dispvarsStruct *_dispvars;
+};
 
-	// Create our OSystem instance
-	g_system = new OSystem_POSIX();
-	assert(g_system);
-
-	// Pre initialize the backend
-	((OSystem_POSIX *)g_system)->init();
-
-#ifdef DYNAMIC_MODULES
-	PluginManager::instance().addPluginProvider(new SDLPluginProvider());
-#endif
-
-	// Invoke the actual ScummVM main entry point:
-	int res = scummvm_main(argc, argv);
-
-	// Free OSystem
-	delete (OSystem_POSIX *)g_system;
-
-	return res;
-}
-
-#endif
+#endif /* BACKENDS_GRAPHICS_SDL_DISPMANX_H */
