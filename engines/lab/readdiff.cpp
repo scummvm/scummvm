@@ -28,8 +28,7 @@
  *
  */
 
-#include "lab/stddefines.h"
-#include "lab/timing.h"
+#include "lab/lab.h"
 #include "lab/diff.h"
 #include "lab/labfun.h"
 #include "lab/vga.h"
@@ -137,8 +136,8 @@ void diffNextFrame() {
 
 			if (!IsBM) {
 				if (headerdata.fps) {
-					waitForTime(WaitSec, WaitMicros);
-					addCurTime(0L, DelayMicros, &WaitSec, &WaitMicros);
+					g_lab->waitForTime(WaitSec, WaitMicros);
+					g_lab->addCurTime(0L, DelayMicros, &WaitSec, &WaitMicros);
 				}
 
 				if (IsPal && !nopalchange) {

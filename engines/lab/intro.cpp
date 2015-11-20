@@ -32,7 +32,6 @@
 #include "lab/stddefines.h"
 #include "lab/labfun.h"
 #include "lab/resource.h"
-#include "lab/timing.h"
 #include "lab/diff.h"
 #include "lab/text.h"
 #include "lab/interface.h"
@@ -142,7 +141,7 @@ static void doPictText(const char *Filename, bool isscreen) {
 				return;
 			}
 
-			getTime(&lastsecs, &lastmicros);
+			g_lab->getTime(&lastsecs, &lastmicros);
 		}
 
 		Msg = getMsg();
@@ -151,8 +150,8 @@ static void doPictText(const char *Filename, bool isscreen) {
 			g_music->updateMusic();
 			diffNextFrame();
 
-			getTime(&secs, &micros);
-			anyTimeDiff(lastsecs, lastmicros, secs, micros, &secs, &micros);
+			g_lab->getTime(&secs, &micros);
+			g_lab->anyTimeDiff(lastsecs, lastmicros, secs, micros, &secs, &micros);
 
 			if (secs > timedelay) {
 				if (End) {
@@ -258,7 +257,7 @@ static void NReadPict(const char *Filename, bool PlayOnce) {
 /*****************************************************************************/
 void introSequence() {
 	uint16 counter, counter1;
-	
+
 	uint16 Palette[16] = {
 		0x0000, 0x0855, 0x0FF9, 0x0EE7, 0x0ED5, 0x0DB4, 0x0CA2, 0x0C91, 0x0B80, 0x0B80, 0x0B91, 0x0CA2, 0x0CB3, 0x0DC4, 0x0DD6, 0x0EE7
 	};

@@ -45,6 +45,8 @@ enum GameFeatures {
 	GF_WINDOWS_TRIAL = 1 << 1
 };
 
+#define ONESECOND 1000
+
 class LabEngine : public Engine {
 public:
 	LabEngine(OSystem *syst, const ADGameDescription *gameDesc);
@@ -64,8 +66,18 @@ public:
 
 	LargeSet *_conditions, *_roomsFound;
 
+	// timing.cpp
+	void getTime(uint32 *secs, uint32 *micros);
+	void addCurTime(uint32 sec, uint32 micros, uint32 *timeSec, uint32 *timeMicros);
+	void anyTimeDiff(uint32 sec1, uint32 micros1, uint32 sec2, uint32 micros2, uint32 *diffSecs, uint32 *diffMicros);
+	void timeDiff(uint32 sec, uint32 micros, uint32 *diffSec, uint32 *diffMicros);
+	void waitForTime(uint32 sec, uint32 micros);
+
 private:
 	uint32 _extraGameFeatures;
+
+	// timing.cpp
+	void microDelay(uint32 secs, uint32 micros);
 };
 
 extern LabEngine *g_lab;

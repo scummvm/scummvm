@@ -41,7 +41,6 @@
 #include "lab/vga.h"
 #include "lab/text.h"
 #include "lab/mouse.h"
-#include "lab/timing.h"
 #include "lab/stddefines.h"
 #include "lab/parsetypes.h"
 #include "lab/resource.h"
@@ -855,7 +854,7 @@ bool saveRestoreGame() {
 	}
 
 	WSDL_UpdateScreen();
-	
+
 	return isOK;
 }
 

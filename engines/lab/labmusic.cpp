@@ -32,7 +32,6 @@
 
 #include "lab/stddefines.h"
 #include "lab/labfun.h"
-#include "lab/timing.h"
 #include "lab/mouse.h"
 #include "lab/vga.h"
 #include "lab/lab.h"

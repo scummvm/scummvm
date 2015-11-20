@@ -36,7 +36,6 @@
 #include "lab/parsetypes.h"
 #include "lab/parsefun.h"
 #include "lab/resource.h"
-#include "lab/timing.h"
 #include "lab/diff.h"
 #include "lab/vga.h"
 #include "lab/interface.h"
@@ -63,7 +62,7 @@ extern CloseDataPtr CPtr;
 uint16 getRandom(uint16 max) {
 	uint32 secs, micros;
 
-	getTime(&secs, &micros);
+	g_lab->getTime(&secs, &micros);
 	return ((micros + secs) % max);
 }
 
@@ -483,14 +482,14 @@ static void doActions(Action * APtr, CloseDataPtr *LCPtr) {
 			break;
 
 		case WAITSECS:
-			addCurTime(APtr->Param1, 0, &StartSecs, &StartMicros);
+			g_lab->addCurTime(APtr->Param1, 0, &StartSecs, &StartMicros);
 
 			WSDL_UpdateScreen();
 
 			while (1) {
 				g_music->updateMusic();
 				diffNextFrame();
-				getTime(&CurSecs, &CurMicros);
+				g_lab->getTime(&CurSecs, &CurMicros);
 
 				if ((CurSecs > StartSecs) || ((CurSecs == StartSecs) &&
 				                              (CurMicros >= StartMicros)))
@@ -615,7 +614,7 @@ static bool doActionRuleSub(int16 action, int16 roomNum, CloseDataPtr LCPtr, Clo
 
 	if (LCPtr) {
 		RuleList *rules = Rooms[RoomNum].rules;
-		
+
 		if ((rules == NULL) && (roomNum == 0)) {
 			g_resource->readViews(roomNum);
 			rules = Rooms[roomNum].rules;
