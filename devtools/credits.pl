@@ -710,6 +710,10 @@ begin_credits("Credits");
 				add_person("Lars Skovlund", "lskovlun", "");
 			end_section();
 
+			begin_section("Sherlock");
+				add_person("Paul Gilbert", "dreammaster", "");
+			end_section();
+
 			begin_section("Sky");
 				add_person("Robert G&ouml;ffringmann", "lavosspawn", "(retired)");
 				add_person("Oliver Kiehl", "olki", "(retired)");
@@ -1289,6 +1293,11 @@ begin_credits("Credits");
 	add_paragraph(
     "Bob Bell, Michel Kripalani, Tommy Yune, from Presto Studios for ".
     "providing the source code of The Journeyman Project: Pegasus Prime.");
+
+	add_paragraph(
+    "Electronic Arts IP Preservation Team, particularly Stefan Serbicki, and Vasyl Tsvirkunov of ".
+    "Electronic Arts for providing the source code of the two Lost Files of Sherlock Holmes games. ".
+    "Mr Ferguson and sirlemonhead for their tenacious efforts to recover the sources.");
 
 	end_section();
 

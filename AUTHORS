@@ -194,6 +194,9 @@ ScummVM Team
        Jordi Vilalta Prat
        Lars Skovlund
 
+    Sherlock:
+       Paul Gilbert
+
     Sky:
        Robert Goeffringmann         - (retired)
        Oliver Kiehl                 - (retired)
@@ -326,6 +329,9 @@ ScummVM Team
 
     Wii:
        Andre Heider
+
+    Raspberry Pi:
+       Manuel Alfayate
 
   Other subsystems
   ----------------
@@ -718,4 +724,9 @@ Special thanks to
 
    Bob Bell, Michel Kripalani, Tommy Yune, from Presto Studios for providing
    the source code of The Journeyman Project: Pegasus Prime.
+
+   Electronic Arts IP Preservation Team, particularly Stefan Serbicki, and
+   Vasyl Tsvirkunov of Electronic Arts for providing the source code of the
+   two Lost Files of Sherlock Holmes games. Mr Ferguson and sirlemonhead for
+   their tenacious efforts to recover the sources.
 
