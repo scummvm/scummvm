@@ -881,7 +881,7 @@ static const char *credits[] = {
 "C0""",
 "C0""Bob Bell, Michel Kripalani, Tommy Yune, from Presto Studios for providing the source code of The Journeyman Project: Pegasus Prime.",
 "C0""",
-"C0""Electronic Arts IP Preservation Team, particularly Stefan Serbicki, and Vasyl Tsvirkunov of Electronic Arts for providing the source code of the two Lost Files of Sherlock Holmes games. Mr Ferguson and sirlemonhead for their tenacious efforts to recover the sources.",
+"C0""Electronic Arts IP Preservation Team, particularly Stefan Serbicki, and Vasyl Tsvirkunov of Electronic Arts for providing the source code of the two Lost Files of Sherlock Holmes games. James M. Ferguson and Barry Duncan for their tenacious efforts to recover the sources.",
 "C0""",
 "",
 };

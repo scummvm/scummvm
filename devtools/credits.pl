@@ -1301,7 +1301,7 @@ begin_credits("Credits");
 	add_paragraph(
     "Electronic Arts IP Preservation Team, particularly Stefan Serbicki, and Vasyl Tsvirkunov of ".
     "Electronic Arts for providing the source code of the two Lost Files of Sherlock Holmes games. ".
-    "Mr Ferguson and sirlemonhead for their tenacious efforts to recover the sources.");
+    "James M. Ferguson and Barry Duncan for their tenacious efforts to recover the sources.");
 
 	end_section();
 
