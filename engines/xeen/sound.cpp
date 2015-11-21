@@ -24,14 +24,6 @@
 
 namespace Xeen {
 
-VOC::~VOC() {
-	stop();
-}
-
-void VOC::play() {
-	warning("TODO: VOC::play");
-}
-
 void VOC::stop() {
 	warning("TODO: VOC::stop");
 }
