@@ -35,16 +35,6 @@ namespace Xeen {
 class WorldOfXeenEngine: public XeenEngine {
 private:
 	/**
-	 * Shows the first part of the Dark Side of Xeen title sequence
-	 */
-	void showDarkSideTitle1();
-
-	/**
-	 * Shows the second part of the Dark Side of Xeen title sequence
-	 */
-	void showDarkSideTitle2();
-
-	/**
 	 * Shows the Dark Side of Xeen title sequence
 	 */
 	void showDarkSideTitle();
@@ -52,9 +42,9 @@ private:
 	/**
 	 * Shows the Dark Side of Xeen introduction sequence
 	 */
-	void showDarkSideIntroSequence();
+	void showDarkSideIntro();
 protected:
-	virtual void playGame();
+	virtual void showIntro();
 public:
 	WorldOfXeenEngine(OSystem *syst, const XeenGameDescription *gameDesc);
 	virtual ~WorldOfXeenEngine() {}

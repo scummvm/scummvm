@@ -266,10 +266,6 @@ void XeenEngine::writeSavegameHeader(Common::OutSaveFile *out, XeenSavegameHeade
 //	out->writeUint32LE(_events->getFrameCounter());
 }
 
-void XeenEngine::showIntro() {
-
-}
-
 void XeenEngine::showMainMenu() {
 	//OptionsMenu::show(this);
 }

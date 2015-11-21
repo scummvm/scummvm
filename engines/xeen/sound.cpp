@@ -24,6 +24,18 @@
 
 namespace Xeen {
 
+VOC::~VOC() {
+	stop();
+}
+
+void VOC::play() {
+	warning("TODO: VOC::play");
+}
+
+void VOC::stop() {
+	warning("TODO: VOC::stop");
+}
+
 SoundManager::SoundManager(XeenEngine *vm): _vm(vm) {
 }
 

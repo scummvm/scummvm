@@ -21,6 +21,7 @@
  */
 
 #include "xeen/worldofxeen/worldofxeen_game.h"
+#include "xeen/sound.h"
 
 namespace Xeen {
 
@@ -28,24 +29,15 @@ WorldOfXeenEngine::WorldOfXeenEngine(OSystem *syst, const XeenGameDescription *g
 		: XeenEngine(syst, gameDesc) {
 }
 
-void WorldOfXeenEngine::playGame () {
-	XeenEngine::playGame();
+void WorldOfXeenEngine::showIntro() {
+	// **DEBUG**
+	if (gDebugLevel == 0)
+		return;
+
+	showDarkSideTitle();
 }
 
 void WorldOfXeenEngine::showDarkSideTitle() {
-	showDarkSideTitle1();
-	if (shouldQuit())
-	return;
-
-	showDarkSideTitle2();
-	if (shouldQuit())
-	return;
-	
-	// TODO: Only show intro sequence if not seen before
-	showDarkSideIntroSequence();
-}
-
-void WorldOfXeenEngine::showDarkSideTitle1() {
 	// TODO: Starting method, and sound
 	//sub_28F40
 	_screen->loadPalette("dark.pal");
@@ -53,11 +45,22 @@ void WorldOfXeenEngine::showDarkSideTitle1() {
 		SpriteResource("nwc1.int"), SpriteResource("nwc2.int"),
 		SpriteResource("nwc3.int"), SpriteResource("nwc4.int")
 	};
-	Common::File voc[3];
+	VOC voc[3];
 	voc[0].open("dragon1.voc");
 	voc[1].open("dragon2.voc");
 	voc[2].open("dragon3.voc");
-
+/*
+	Common::File f;
+	f.open("adsnd");
+	Common::DumpFile df;
+	byte *b = new byte[f.size()];
+	f.read(b, f.size());
+	df.open("d:\\temp\\adsnd.bin");
+	df.write(b, f.size());
+	df.close();
+	f.close();
+	delete[] b;
+	*/
 	// Load backgrounds
 	_screen->loadBackground("nwc1.raw");
 	_screen->loadPage(0);
@@ -97,6 +100,8 @@ void WorldOfXeenEngine::showDarkSideTitle1() {
 		if (_events->wait(2, true))
 			return;
 	}
+	if (shouldQuit())
+		return;
 
 	// Loop for dragon using flyspray
 	for (int idx = 0; idx < 42 && !shouldQuit(); ++idx) {
@@ -130,10 +135,16 @@ void WorldOfXeenEngine::showDarkSideTitle1() {
 	}
 
 	// Pause for a bit
-	_events->wait(10, true);
-}
+	if (_events->wait(10, true))
+		return;
+	if (shouldQuit())
+		return;
 
-void WorldOfXeenEngine::showDarkSideTitle2() {
+	voc[0].stop();
+	voc[1].stop();
+	voc[2].stop();
+
+
 	_screen->fadeOut(8);
 	//TODO: Stuff
 
@@ -145,7 +156,7 @@ void WorldOfXeenEngine::showDarkSideTitle2() {
 	_events->wait(60, true);
 }
 
-void WorldOfXeenEngine::showDarkSideIntroSequence() {
+void WorldOfXeenEngine::showDarkSideIntro() {
 	_screen->fadeOut(8);
 	_screen->loadBackground("pyramid2.raw");
 	_screen->loadPage(0);
@@ -191,7 +202,7 @@ void WorldOfXeenEngine::showDarkSideIntroSequence() {
 
 		idx -= timeExpired;
 		frame = MIN(frame + timeExpired, (uint)200);
-
+		 
 		while (_events->timeElapsed() < 1) {
 			_events->pollEventsAndWait();
 			if (_events->isKeyMousePressed())

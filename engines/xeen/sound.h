@@ -29,6 +29,21 @@
 
 namespace Xeen {
 
+class VOC: public Common::File {
+public:
+	virtual ~VOC();
+
+	/**
+	 * Play the given loaded sound
+	 */
+	void play();
+
+	/**
+	 * Stop playing the sound
+	 */
+	void stop();
+};
+
 class SoundManager {
 private:
 	XeenEngine *_vm;

@@ -104,8 +104,6 @@ private:
 	Common::RandomSource _randomSource;
 	int _loadSaveSlot;
 
-	void showIntro();
-
 	void showMainMenu();
 
 	void play();
@@ -114,6 +112,8 @@ private:
 
 	void gameLoop();
 protected:
+	virtual void showIntro() = 0;
+
 	/**
 	* Play the game
 	*/
