@@ -29,14 +29,15 @@
 
 namespace Xeen {
 
-class VOC: public Common::File {
-public:
-	virtual ~VOC();
+class SoundManager;
 
-	/**
-	 * Play the given loaded sound
-	 */
-	void play();
+class VOC: public Common::File {
+	friend class SoundManager;
+private:
+	SoundManager *_sound;
+public:
+	VOC() : _sound(nullptr) {}
+	virtual ~VOC() { stop(); }
 
 	/**
 	 * Stop playing the sound
@@ -57,6 +58,8 @@ public:
 	void startMusic(int v1);
 
 	void playSong(Common::SeekableReadStream &f) {}
+
+	void playSound(VOC &voc) {}
 
 	void playSample(const Common::SeekableReadStream *stream, int v2 = 1) {}
 

@@ -83,7 +83,7 @@ void WorldOfXeenEngine::showDarkSideTitle() {
 
 		switch (idx) {
 		case 17:
-			_sound->proc2(voc[0]);
+			_sound->playSound(voc[0]);
 			break;
 		case 34:
 		case 44:
@@ -91,7 +91,7 @@ void WorldOfXeenEngine::showDarkSideTitle() {
 			nwcFrame = 0;
 			break;
 		case 35:
-			_sound->proc2(voc[1]);
+			_sound->playSound(voc[1]);
 			break;
 		default:
 			++nwcFrame;
