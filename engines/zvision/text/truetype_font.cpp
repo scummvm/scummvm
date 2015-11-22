@@ -123,7 +123,7 @@ bool StyledTTFont::loadFont(const Common::String &fontName, int32 point, uint st
 		!file.open(freeFontName) && !_engine->getSearchManager()->openFile(file, freeFontName))
 		error("Unable to open font file %s (Liberation Font alternative: %s, FreeFont alternative: %s)", newFontName.c_str(), liberationFontName.c_str(), freeFontName.c_str());
 
-	Graphics::Font *newFont = Graphics::loadTTFFont(file, point, Graphics::kTTFSizeModeCharacter, 60, (sharp ? Graphics::kTTFRenderModeMonochrome : Graphics::kTTFRenderModeNormal)); // 66 dpi for 640 x 480 on 14" display
+	Graphics::Font *newFont = Graphics::loadTTFFont(file, point, Graphics::kTTFSizeModeCell, 0, (sharp ? Graphics::kTTFRenderModeMonochrome : Graphics::kTTFRenderModeNormal));
 	if (newFont == nullptr) {
 		return false;
 	}
