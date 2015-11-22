@@ -209,7 +209,7 @@ private:
 	int _boatFrame;
 	int _talkCount;
 
-	void Scene309::handleBoatAnimation();
+	void handleBoatAnimation();
 
 public:
 	Scene309(MADSEngine *vm);
