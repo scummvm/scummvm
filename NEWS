@@ -12,6 +12,9 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for Beavis and Butthead in Virtual Stupidity.
    - Added support for Amazon: Guardians of Eden.
 
+ New Ports:
+   - Added Raspberry Pi port.
+
  General:
    - Updated Munt MT-32 emulation code to version 1.5.0.
 
