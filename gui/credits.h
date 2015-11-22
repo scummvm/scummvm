@@ -243,6 +243,7 @@ static const char *credits[] = {
 "",
 "C1""Sherlock",
 "C0""Paul Gilbert",
+"C0""Martin Kiewitz",
 "",
 "C1""Sky",
 "A0""Robert Goeffringmann",
