@@ -34,11 +34,13 @@ ClickText::ClickText(const Common::String &text, uint32 color) :
 	_visualPassive = new VisualText(StarkGfx);
 	_visualPassive->setText(_text);
 	_visualPassive->setColor(_color);
+	_visualPassive->setFont(FontProvider::kBigFont);
 	_visualPassive->setTargetWidth(600);
 
 	_visualActive = new VisualText(StarkGfx);
 	_visualActive->setText(_text);
 	_visualActive->setColor(0xFF00FF00);
+	_visualActive->setFont(FontProvider::kBigFont);
 	_visualActive->setTargetWidth(600);
 
 	_curVisual = _visualPassive;

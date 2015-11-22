@@ -20,54 +20,57 @@
  *
  */
 
-#ifndef STARK_VISUAL_TEXT_H
-#define STARK_VISUAL_TEXT_H
+#ifndef STARK_SERVICES_FONT_PROVIDER_H
+#define STARK_SERVICES_FONT_PROVIDER_H
 
-#include "engines/stark/visual/visual.h"
+#include "common/hash-str.h"
+#include "common/ptr.h"
 
-#include "engines/stark/services/fontprovider.h"
-
-#include "common/rect.h"
+namespace Graphics {
+class Font;
+}
 
 namespace Stark {
 
-namespace Gfx {
-class Driver;
-class Texture;
-}
-
 /**
- * Text renderer
+ * The font provider offers a set of predefined fonts for the game to use
  */
-class VisualText : public Visual {
+class FontProvider {
 public:
-	static const VisualType TYPE = Visual::kImageText;
+	FontProvider();
+	~FontProvider();
 
-	VisualText(Gfx::Driver *gfx);
-	virtual ~VisualText();
+	enum FontType {
+		kSmallFont,
+		kBigFont,
+		kCustomFont
+	};
 
-	Common::Rect getRect();
-
-	void setText(const Common::String &text);
-	void setColor(uint32 color);
-	void setTargetWidth(uint32 width);
-	void setFont(FontProvider::FontType type, int32 customFontIndex = -1);
-
-	void render(const Common::Point &position);
+	/**
+	 * Request a font matching the specified parameters
+	 */
+	const Graphics::Font *getFont(FontType type, int32 customFontIndex);
 
 private:
-	void createTexture();
-	void freeTexture();
+	struct FontHolder {
+		Common::String _name;
+		uint32 _height;
+		uint32 _charset;
+		Common::SharedPtr<Graphics::Font> _font;
 
-	Gfx::Driver *_gfx;
+		FontHolder() : _height(0), _charset(0) {}
+		FontHolder(FontProvider *fontProvider, Common::String name, uint32 height, uint32 charset = 0);
+	};
 
-	Common::String _text;
-	const Graphics::Font *_font;
-	uint32 _color;
-	uint32 _targetWidth;
-	Gfx::Texture *_texture;
+	void initFonts();
+
+	FontHolder _smallFont;
+	FontHolder _bigFont;
+	FontHolder _customFonts[8];
+
+	Common::StringMap _ttfFileMap;
 };
 
 } // End of namespace Stark
 
-#endif // STARK_VISUAL_TEXT_H
+#endif // STARK_SERVICES_FONT_PROVIDER_H

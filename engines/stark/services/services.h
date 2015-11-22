@@ -38,11 +38,12 @@ class Driver;
 
 class ArchiveLoader;
 class DialogPlayer;
+class FontProvider;
+class GameInterface;
 class Global;
 class ResourceProvider;
 class StaticProvider;
 class Scene;
-class GameInterface;
 class UserInterface;
 
 /**
@@ -61,6 +62,7 @@ public:
 		staticProvider = nullptr;
 		gameInterface = nullptr;
 		userInterface = nullptr;
+		fontProvider = nullptr;
 	}
 
 	ArchiveLoader *archiveLoader;
@@ -73,6 +75,7 @@ public:
 	StaticProvider *staticProvider;
 	GameInterface *gameInterface;
 	UserInterface *userInterface;
+	FontProvider *fontProvider;
 };
 
 /** Shortcuts for accessing the services. */
@@ -86,6 +89,7 @@ public:
 #define StarkStaticProvider     StarkServices::instance().staticProvider
 #define StarkGameInterface      StarkServices::instance().gameInterface
 #define StarkUserInterface      StarkServices::instance().userInterface
+#define StarkFontProvider       StarkServices::instance().fontProvider
 
 } // End of namespace Stark
 

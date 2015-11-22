@@ -24,9 +24,9 @@
 
 #include "engines/stark/gfx/driver.h"
 
+#include "engines/stark/services/gameinterface.h"
 #include "engines/stark/services/services.h"
 #include "engines/stark/services/staticprovider.h"
-#include "engines/stark/services/gameinterface.h"
 
 #include "engines/stark/resources/item.h"
 
@@ -101,6 +101,7 @@ void Cursor::setMouseHint(const Common::String &hint) {
 			_mouseText = new VisualText(_gfx);
 			_mouseText->setText(hint);
 			_mouseText->setColor(0xFFFF0000);
+			_mouseText->setFont(FontProvider::kSmallFont);
 			_mouseText->setTargetWidth(96);
 		} else {
 			_mouseText = nullptr;

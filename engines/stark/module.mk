@@ -63,6 +63,7 @@ MODULE_OBJS := \
 	scene.o \
 	services/archiveloader.o \
 	services/dialogplayer.o \
+	services/fontprovider.o \
 	services/gameinterface.o \
 	services/global.o \
 	services/resourceprovider.o \

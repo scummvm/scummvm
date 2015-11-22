@@ -44,6 +44,7 @@ class ArchiveLoader;
 class Console;
 class Cursor;
 class DialogPlayer;
+class FontProvider;
 class Global;
 class GameInterface;
 class Scene;
@@ -84,6 +85,7 @@ private:
 	StateProvider *_stateProvider;
 	StaticProvider *_staticProvider;
 	ResourceProvider *_resourceProvider;
+	FontProvider *_fontProvider;
 	Common::RandomSource *_randomSource;
 
 	const ADGameDescription *_gameDescription;

@@ -31,12 +31,13 @@
 #include "engines/stark/services/userinterface.h"
 #include "engines/stark/services/archiveloader.h"
 #include "engines/stark/services/dialogplayer.h"
+#include "engines/stark/services/fontprovider.h"
+#include "engines/stark/services/gameinterface.h"
 #include "engines/stark/services/global.h"
 #include "engines/stark/services/resourceprovider.h"
 #include "engines/stark/services/services.h"
 #include "engines/stark/services/stateprovider.h"
 #include "engines/stark/services/staticprovider.h"
-#include "engines/stark/services/gameinterface.h"
 #include "engines/stark/gfx/driver.h"
 
 #include "common/config-manager.h"
@@ -65,6 +66,7 @@ StarkEngine::StarkEngine(OSystem *syst, const ADGameDescription *gameDesc) :
 		_randomSource(nullptr),
 		_dialogPlayer(nullptr),
 		_userInterface(nullptr),
+		_fontProvider(nullptr),
 		_lastClickTime(0) {
 	_mixer->setVolumeForSoundType(Audio::Mixer::kPlainSoundType, 127);
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
@@ -92,6 +94,7 @@ StarkEngine::~StarkEngine() {
 	delete _stateProvider;
 	delete _archiveLoader;
 	delete _userInterface;
+	delete _fontProvider;
 
 	StarkServices::destroy();
 }
@@ -109,6 +112,7 @@ Common::Error StarkEngine::run() {
 	_resourceProvider = new ResourceProvider(_archiveLoader, _stateProvider, _global);
 	_staticProvider = new StaticProvider(_archiveLoader, _global);
 	_randomSource = new Common::RandomSource("stark");
+	_fontProvider = new FontProvider();
 	_scene = new Scene(_gfx);
 	_dialogPlayer = new DialogPlayer();
 	_cursor = new Cursor(_gfx);
@@ -127,6 +131,7 @@ Common::Error StarkEngine::run() {
 	services.staticProvider = _staticProvider;
 	services.gameInterface = _gameInterface;
 	services.userInterface = _userInterface;
+	services.fontProvider = _fontProvider;
 
 	// Load global resources
 	_resourceProvider->initGlobal();

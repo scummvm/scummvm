@@ -220,6 +220,7 @@ void ImageText::initVisual() {
 	text->setText(_text);
 	text->setColor(_color | 0xFF000000);
 	text->setTargetWidth(_size.x);
+	text->setFont(FontProvider::kCustomFont, _font);
 
 	_visual = text;
 }
