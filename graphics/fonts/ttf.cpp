@@ -38,6 +38,7 @@
 #include <ft2build.h>
 #include FT_FREETYPE_H
 #include FT_GLYPH_H
+#include FT_TRUETYPE_TABLES_H
 
 namespace Graphics {
 
@@ -101,7 +102,7 @@ public:
 	TTFFont();
 	virtual ~TTFFont();
 
-	bool load(Common::SeekableReadStream &stream, int size, uint dpi, TTFRenderMode renderMode, const uint32 *mapping);
+	bool load(Common::SeekableReadStream &stream, int size, TTFSizeMode sizeMode, uint dpi, TTFRenderMode renderMode, const uint32 *mapping);
 
 	virtual int getFontHeight() const;
 
@@ -136,6 +137,7 @@ private:
 	mutable GlyphCache _glyphs;
 	bool _allowLateCaching;
 	void assureCached(uint32 chr) const;
+	int computePointSize(int size, TTFSizeMode sizeMode);
 
 	FT_Int32 _loadFlags;
 	FT_Render_Mode _renderMode;
@@ -162,7 +164,7 @@ TTFFont::~TTFFont() {
 	}
 }
 
-bool TTFFont::load(Common::SeekableReadStream &stream, int size, uint dpi, TTFRenderMode renderMode, const uint32 *mapping) {
+bool TTFFont::load(Common::SeekableReadStream &stream, int size, TTFSizeMode sizeMode, uint dpi, TTFRenderMode renderMode, const uint32 *mapping) {
 	if (!g_ttf.isInitialized())
 		return false;
 
@@ -200,7 +202,7 @@ bool TTFFont::load(Common::SeekableReadStream &stream, int size, uint dpi, TTFRe
 	// Check whether we have kerning support
 	_hasKerning = (FT_HAS_KERNING(_face) != 0);
 
-	if (FT_Set_Char_Size(_face, 0, size * 64, dpi, dpi)) {
+	if (FT_Set_Char_Size(_face, 0, computePointSize(size, sizeMode) * 64, dpi, dpi)) {
 		delete[] _ttfFile;
 		_ttfFile = 0;
 
@@ -260,6 +262,30 @@ bool TTFFont::load(Common::SeekableReadStream &stream, int size, uint dpi, TTFRe
 
 	_initialized = (_glyphs.size() != 0);
 	return _initialized;
+}
+
+int TTFFont::computePointSize(int size, TTFSizeMode sizeMode) {
+	int ptSize;
+	switch (sizeMode) {
+	case kTTFSizeModeCell: {
+		TT_OS2 *os2Header = (TT_OS2 *) FT_Get_Sfnt_Table(_face, ft_sfnt_os2);
+		TT_HoriHeader *horiHeader = (TT_HoriHeader *) FT_Get_Sfnt_Table(_face, ft_sfnt_hhea);
+
+		if (os2Header && (os2Header->usWinAscent + os2Header->usWinDescent != 0)) {
+			ptSize = _face->units_per_EM * size / (os2Header->usWinAscent + os2Header->usWinDescent);
+		} else if (horiHeader && (horiHeader->Ascender + horiHeader->Descender != 0)) {
+			ptSize = _face->units_per_EM * size / (horiHeader->Ascender + horiHeader->Descender);
+		} else {
+			warning("Unable to compute point size for font '%s'", _face->family_name);
+			ptSize = 1;
+		}
+		break;
+	}
+	case kTTFSizeModeCharacter:
+		ptSize = size;
+		break;
+	}
+	return ptSize;
 }
 
 int TTFFont::getFontHeight() const {
@@ -521,10 +547,10 @@ void TTFFont::assureCached(uint32 chr) const {
 	}
 }
 
-Font *loadTTFFont(Common::SeekableReadStream &stream, int size, uint dpi, TTFRenderMode renderMode, const uint32 *mapping) {
+Font *loadTTFFont(Common::SeekableReadStream &stream, int size, TTFSizeMode sizeMode, uint dpi, TTFRenderMode renderMode, const uint32 *mapping) {
 	TTFFont *font = new TTFFont();
 
-	if (!font->load(stream, size, dpi, renderMode, mapping)) {
+	if (!font->load(stream, size, sizeMode, dpi, renderMode, mapping)) {
 		delete font;
 		return 0;
 	}
