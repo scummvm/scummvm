@@ -419,78 +419,77 @@ void Scene101::handleConversation1() {
 }
 
 void Scene101::handleAnimation0() {
-	int resetFrame;
+	if (_scene->getAnimFrame(_globals._animationIndexes[0]) == _callingFrame)
+		return;
 
-	if (_scene->getAnimFrame(_globals._animationIndexes[0]) != _callingFrame) {
-		_callingFrame = _scene->getAnimFrame(_globals._animationIndexes[0]);
-		resetFrame = -1;
-		switch (_callingFrame) {
-		case 1:
-		case 9:
-		case 12:
-			if (_callingStatus == 1) {
-				if (_callingFrame == 9) {
-					if (_startWalking0Fl) {
-						resetFrame = 13;
-						_callingStatus = 3;
-					} else
-						_callingStatus = 2;
-				} else
-					resetFrame = 1;
-			}
-
-			if (_callingStatus == 0) {
-				if (_startWalking0Fl) {
-					resetFrame = 60;
-					_callingStatus = 3;
-				} else
-					resetFrame = 0;
-			}
-
-			if (_callingStatus == 2) {
+	_callingFrame = _scene->getAnimFrame(_globals._animationIndexes[0]);
+	int resetFrame = -1;
+	switch (_callingFrame) {
+	case 1:
+	case 9:
+	case 12:
+		if (_callingStatus == 1) {
+			if (_callingFrame == 9) {
 				if (_startWalking0Fl) {
 					resetFrame = 13;
 					_callingStatus = 3;
-				} else {
-					++_talkCounter;
+				} else
+					_callingStatus = 2;
+			} else
+				resetFrame = 1;
+		}
 
-					if (_talkCounter < 18) {
-						if (_vm->getRandomNumber(1, 2) == 1)
-							resetFrame = 7;
-						else
-							resetFrame = 10;
-					} else {
-						resetFrame = 54;
-						_callingStatus = 0;
-					}
-				}
-			}
-			break;
-
-		case 53:
-			_anim0Running = false;
-			_scene->freeAnimation(0);
-			break;
-
-		case 59:
+		if (_callingStatus == 0) {
 			if (_startWalking0Fl) {
 				resetFrame = 60;
 				_callingStatus = 3;
-			} else {
+			} else
 				resetFrame = 0;
-				_callingStatus = 0;
+		}
+
+		if (_callingStatus == 2) {
+			if (_startWalking0Fl) {
+				resetFrame = 13;
+				_callingStatus = 3;
+			} else {
+				++_talkCounter;
+
+				if (_talkCounter < 18) {
+					if (_vm->getRandomNumber(1, 2) == 1)
+						resetFrame = 7;
+					else
+						resetFrame = 10;
+				} else {
+					resetFrame = 54;
+					_callingStatus = 0;
+				}
 			}
-			break;
-
-		case 66:
-			resetFrame = 24;
-			break;
 		}
+		break;
 
-		if (resetFrame >= 0) {
-			_scene->setAnimFrame(_globals._animationIndexes[0], resetFrame);
-			_callingFrame = resetFrame;
+	case 53:
+		_anim0Running = false;
+		_scene->freeAnimation(0);
+		break;
+
+	case 59:
+		if (_startWalking0Fl) {
+			resetFrame = 60;
+			_callingStatus = 3;
+		} else {
+			resetFrame = 0;
+			_callingStatus = 0;
 		}
+		break;
+
+	case 66:
+		resetFrame = 24;
+		break;
+	}
+
+	if (resetFrame >= 0) {
+		_scene->setAnimFrame(_globals._animationIndexes[0], resetFrame);
+		_callingFrame = resetFrame;
 	}
 }
 
@@ -8866,8 +8865,6 @@ void Scene113::handleDeadConversation() {
 }
 
 void Scene113::handleFlorentConversation() {
-	int random;
-
 	switch (_action._activeAction._verbId) {
 	case 3:
 	case 4:
@@ -8930,15 +8927,13 @@ void Scene113::handleFlorentConversation() {
 	case 66:
 		if ((_florentStatus != 3) &&
 			(_florentStatus != 2)) {
-				random = _vm->getRandomNumber(1,5);
-				if (random == 1)
+				if (_vm->getRandomNumber(1, 5) == 1)
 					_florentStatus = 0;
 		}
 
 		if ((_raoulAction != 3) && (_raoulAction != 5) && (_raoulAction != 4) && (!_raoulStandingFl)) {
 			_raoulAction = 1;
-			random = _vm->getRandomNumber(1, 2);
-			if (random == 1)
+			if (_vm->getRandomNumber(1, 2) == 1)
 				_raoulAction = 2;
 		}
 		break;
@@ -9006,8 +9001,6 @@ void Scene113::handleFlorentConversation() {
 }
 
 void Scene113::handleLoveConversation() {
-	int random;
-
 	switch (_action._activeAction._verbId) {
 	case 1:
 	case 2:
@@ -9073,10 +9066,8 @@ void Scene113::handleLoveConversation() {
 
 			if (_raoulAction != 3) {
 				_raoulAction = 1;
-				random = _vm->getRandomNumber(1, 2);
-				if (random == 1) {
+				if (_vm->getRandomNumber(1, 2) == 1)
 					_raoulAction = 2;
-				}
 			}
 		}
 		break;
