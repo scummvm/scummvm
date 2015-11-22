@@ -687,7 +687,6 @@ void ScreenSurface::panTransition(MSurface &newScreen, byte *palData, int entryS
 	int y1, y2;
 	int startX = 0;
 	int deltaX;
-	int xAt;
 	int loopStart;
 //	uint32 baseTicks, currentTicks;
 	byte paletteMap[256];
@@ -720,7 +719,7 @@ void ScreenSurface::panTransition(MSurface &newScreen, byte *palData, int entryS
 
 	loopStart = throughBlack == THROUGH_BLACK1 ? 0 : 1;
 	for (int loop = loopStart; loop < 2; ++loop) {
-		xAt = startX;
+		int xAt = startX;
 		for (int xCtr = 0; xCtr < size.x; ++xCtr, xAt += deltaX) {
 			if (!loop) {
 				fillRect(Common::Rect(xAt + destPos.x, y1 + destPos.y,
