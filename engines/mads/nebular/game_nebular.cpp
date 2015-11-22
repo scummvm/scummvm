@@ -354,7 +354,7 @@ void GameNebular::setSectionHandler() {
 
 void GameNebular::checkShowDialog() {
 	// Loop for showing dialogs, if any need to be shown
-	if (_vm->_dialogs->_pendingDialog && (_player._stepEnabled || _winStatus) 
+	if (_vm->_dialogs->_pendingDialog && (_player._stepEnabled || _winStatus)
 			&& !_globals[kCopyProtectFailed]) {
 		_player.releasePlayerSprites();
 
@@ -828,7 +828,7 @@ void GameNebular::unhandledAction() {
 void GameNebular::step() {
 	if (_player._visible && _player._stepEnabled && !_player._moving &&
 		(_player._facing == _player._turnToFacing)) {
-		if (_scene._frameStartTime >= *((uint32 *)&_globals[kWalkerTiming])) {
+		if (_scene._frameStartTime >= (uint32)_globals[kWalkerTiming]) {
 			if (!_player._stopWalkerIndex) {
 				int randomVal = _vm->getRandomNumber(29999);
 				if (_globals[kSexOfRex] == REX_MALE) {
@@ -877,19 +877,19 @@ void GameNebular::step() {
 				}
 			}
 
-			*((uint32 *)&_globals[kWalkerTiming]) += 6;
+			_globals[kWalkerTiming] += 6;
 		}
 	}
 
 	// Below is countdown to set the timebomb off in room 604
 	if (_globals[kTimebombStatus] == TIMEBOMB_ACTIVATED) {
-		int diff = _scene._frameStartTime - *((uint32 *)&_globals[kTimebombClock]);
-		if ((diff >= 0) && (diff <= 60)) {
-			*((uint32 *)&_globals[kTimebombTimer]) += diff;
-		} else {
-			++*((uint32 *)&_globals[kTimebombTimer]);
-		}
-		*((uint32 *)&_globals[kTimebombClock]) = _scene._frameStartTime;
+		int diff = _scene._frameStartTime - _globals[kTimebombClock];
+		if ((diff >= 0) && (diff <= 60))
+			_globals[kTimebombTimer] += diff;
+		else
+			++_globals[kTimebombTimer];
+
+		_globals[kTimebombClock] = (int) _scene._frameStartTime;
 	}
 }
 

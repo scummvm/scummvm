@@ -22,21 +22,22 @@
 
 #include "common/scummsys.h"
 #include "common/config-manager.h"
-#include "mads/phantom/globals_phantom.h"
+#include "mads/dragonsphere/globals_dragonsphere.h"
 
 namespace MADS {
 
-namespace Phantom {
+namespace Dragonsphere {
 
-PhantomGlobals::PhantomGlobals() : Globals() {
+DragonsphereGlobals::DragonsphereGlobals()
+	: Globals() {
 	// Initialize lists
-	resize(210);
+	resize(140);
 	_spriteIndexes.resize(30);
 	_sequenceIndexes.resize(30);
 	_animationIndexes.resize(30);
 }
 
-void PhantomGlobals::synchronize(Common::Serializer &s) {
+void DragonsphereGlobals::synchronize(Common::Serializer &s) {
 	Globals::synchronize(s);
 
 	_spriteIndexes.synchronize(s);
@@ -45,6 +46,6 @@ void PhantomGlobals::synchronize(Common::Serializer &s) {
 }
 
 
-} // End of namespace Phantom
+} // End of namespace Dragonsphere
 
 } // End of namespace MADS

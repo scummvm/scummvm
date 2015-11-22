@@ -26,7 +26,7 @@
 #include "common/scummsys.h"
 #include "mads/game.h"
 #include "mads/globals.h"
-//#include "mads/nebular/globals_nebular.h"
+#include "mads/dragonsphere/globals_dragonsphere.h"
 
 namespace MADS {
 
@@ -80,21 +80,12 @@ enum InventoryObject {
 	OBJ_DIAMOND_DUST = 40,
 	OBJ_RUBY_RING = 41,
 	OBJ_GOLD_NUGGET = 42,
-	OBJ_MUSIC_BOX = 43,
+	OBJ_MAGIC_MUSIC_BOX = 43,
 	OBJ_EMERALD = 44,
 	OBJ_PARCHMENT = 45,
 	OBJ_GAME = 46,
 	OBJ_GAME2 = 47,
 	OBJ_NEW_BUNDLE = 48
-};
-
-// HACK: A stub for now, remove from here once it's implemented properly
-class DragonsphereGlobals : public Globals {
-public:
-	DragonsphereGlobals() {
-		resize(210);	// Rex has 210 globals
-	}
-	virtual ~DragonsphereGlobals() {}
 };
 
 class GameDragonsphere : public Game {

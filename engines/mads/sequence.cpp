@@ -259,7 +259,7 @@ bool SequenceList::loadSprites(int seqIndex) {
 			}
 
 			if (seqEntry._flags & 2) {
-				// Check for object having moved off-scren
+				// Check for object having moved off-screen
 				if ((pt.x + width) < 0 || (pt.x + width) >= MADS_SCREEN_WIDTH ||
 						pt.y < 0 || (pt.y - height) >= MADS_SCENE_HEIGHT) {
 					result = true;
@@ -548,6 +548,28 @@ void SequenceList::setMotion(int seqIndex, int flags, int deltaX, int deltaY) {
 	se._posDiff.x = ABS(deltaX);
 	se._posDiff.y = ABS(deltaY);
 	se._posAccum.x = se._posAccum.y = 0;
+}
+
+int SequenceList::addStampCycle(int srcSpriteIdx, bool flipped, int sprite) {
+	int id;
+
+	id = addSpriteCycle(srcSpriteIdx, flipped, 32767, 0, 0, 0);
+	if (id >= 0) {
+		setAnimRange(id, sprite, sprite);
+		_entries[id]._animType = ANIMTYPE_STAMP;
+	}
+	return (id);
+}
+
+void SequenceList::setSeqPlayer(int idx, bool flag) {
+	Player &player = _vm->_game->_player;
+	int yp = player._playerPos.y + (player._centerOfGravity * player._currentScale) / 100;
+	setPosition(idx, Common::Point(player._playerPos.x, yp));
+	setDepth(idx, player._currentDepth);
+	setScale(idx, player._currentScale);
+
+	if (flag)
+		_vm->_game->syncTimers(SYNC_SEQ, idx, SYNC_PLAYER, 0);
 }
 
 } // End of namespace

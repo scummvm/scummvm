@@ -293,8 +293,8 @@ void Scene302::step() {
 	if (_game._trigger == 71)
 		_scene->_nextSceneId = 303;
 
-	if ((_scene->_activeAnimation != nullptr) && (_scene->_activeAnimation->getCurrentFrame() != _oldFrame)) {
-		_oldFrame = _scene->_activeAnimation->getCurrentFrame();
+	if ((_scene->_animation[0] != nullptr) && (_scene->_animation[0]->getCurrentFrame() != _oldFrame)) {
+		_oldFrame = _scene->_animation[0]->getCurrentFrame();
 		if (_oldFrame == 147) {
 			_game._objects.setRoom(OBJ_POISON_DARTS, 1);
 			_game._objects.setRoom(OBJ_BLOWGUN, 1);
@@ -828,23 +828,23 @@ void Scene307::enter() {
 void Scene307::step() {
 	handleForceField(&_forceField, &_globals._spriteIndexes[0]);
 
-	if ((_animationMode == 1) && (_scene->_activeAnimation != nullptr)) {
-		if (_scene->_activeAnimation->getCurrentFrame() == 126) {
+	if ((_animationMode == 1) && (_scene->_animation[0] != nullptr)) {
+		if (_scene->_animation[0]->getCurrentFrame() == 126) {
 			_forceField._flag = false;
 			_vm->_sound->command(5);
 		}
 
-		if (_scene->_activeAnimation->getCurrentFrame() == 194) {
+		if (_scene->_animation[0]->getCurrentFrame() == 194) {
 			_forceField._flag = true;
 			_vm->_sound->command(24);
 		}
 	}
 
-	if ((_animationMode == 2) && (_scene->_activeAnimation != nullptr)) {
-		if (_scene->_activeAnimation->getCurrentFrame() == 54)
+	if ((_animationMode == 2) && (_scene->_animation[0] != nullptr)) {
+		if (_scene->_animation[0]->getCurrentFrame() == 54)
 			_forceField._flag = false;
 
-		if (_scene->_activeAnimation->getCurrentFrame() == 150) {
+		if (_scene->_animation[0]->getCurrentFrame() == 150) {
 			_game._player._visible = false;
 			_game._player._priorTimer = _scene->_frameStartTime - _game._player._ticksAmount;
 		}
@@ -869,7 +869,7 @@ void Scene307::step() {
 		}
 		_lastFrameTime = _scene->_frameStartTime;
 
-		if ((_guardTime > 3000) && !_duringPeeingFl && (_scene->_activeAnimation == nullptr)
+		if ((_guardTime > 3000) && !_duringPeeingFl && (_scene->_animation[0] == nullptr)
 		&& (_game._screenObjects._inputMode != kInputConversation) && _globals[kMetBuddyBeast] && !_activePrisonerFl) {
 			if (!_game._objects.isInInventory(OBJ_SCALPEL) && !_grateOpenedFl) {
 				_game._player._stepEnabled = false;
@@ -879,7 +879,7 @@ void Scene307::step() {
 				_scene->loadAnimation(formAnimName('b', -1), 70);
 			}
 			_guardTime = 0;
-		} else if ((_prisonerTimer > 300) && (_game._screenObjects._inputMode != kInputConversation) && (_scene->_activeAnimation == nullptr) && !_activePrisonerFl) {
+		} else if ((_prisonerTimer > 300) && (_game._screenObjects._inputMode != kInputConversation) && (_scene->_animation[0] == nullptr) && !_activePrisonerFl) {
 			if (!_globals[kMetBuddyBeast]) {
 				int idx = _scene->_kernelMessages.add(Common::Point(5, 51), 0xFDFC, 0, 81, 120, _game.getQuote(_prisonerMessageId));
 				_scene->_kernelMessages.setQuoted(idx, 4, true);
@@ -1380,9 +1380,9 @@ void Scene309::enter() {
 	_game._player._stepEnabled = false;
 	_scene->loadAnimation(formAnimName('a', -1), 60);
 
-	_characterSpriteIndexes[0] = _scene->_activeAnimation->_spriteListIndexes[2];
-	_characterSpriteIndexes[1] = _scene->_activeAnimation->_spriteListIndexes[2];
-	_characterSpriteIndexes[2] = _scene->_activeAnimation->_spriteListIndexes[1];
+	_characterSpriteIndexes[0] = _scene->_animation[0]->_spriteListIndexes[2];
+	_characterSpriteIndexes[1] = _scene->_animation[0]->_spriteListIndexes[2];
+	_characterSpriteIndexes[2] = _scene->_animation[0]->_spriteListIndexes[1];
 
 	_messagesIndexes[0] = -1;
 	_messagesIndexes[1] = -1;
@@ -1404,9 +1404,9 @@ void Scene309::step() {
 	if (_game._trigger == 62)
 		_messagesIndexes[2] = -1;
 
-	if (_scene->_activeAnimation != nullptr) {
-		if (_lastFrame != _scene->_activeAnimation->getCurrentFrame()) {
-			_lastFrame = _scene->_activeAnimation->getCurrentFrame();
+	if (_scene->_animation[0] != nullptr) {
+		if (_lastFrame != _scene->_animation[0]->getCurrentFrame()) {
+			_lastFrame = _scene->_animation[0]->getCurrentFrame();
 			if (_lastFrame == 39) {
 				_messagesIndexes[0] = _scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 32, 61, 210, _game.getQuote(348));
 				_messagesIndexes[1] = _scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 32, 0, 210, _game.getQuote(349));
@@ -1419,15 +1419,15 @@ void Scene309::step() {
 				if (_messagesIndexes[charIdx] >= 0) {
 					bool match = false;
 					int j = -1;
-					for (j = _scene->_activeAnimation->_oldFrameEntry; j < _scene->_activeAnimation->_header._frameEntriesCount; j++) {
-						if (_scene->_activeAnimation->_frameEntries[j]._spriteSlot._spritesIndex == _characterSpriteIndexes[charIdx]) {
+					for (j = _scene->_animation[0]->_oldFrameEntry; j < _scene->_animation[0]->_header._frameEntriesCount; j++) {
+						if (_scene->_animation[0]->_frameEntries[j]._spriteSlot._spritesIndex == _characterSpriteIndexes[charIdx]) {
 							match = true;
 							break;
 						}
 					}
 
 					if (match) {
-						SpriteSlotSubset *curSpriteSlot = &_scene->_activeAnimation->_frameEntries[j]._spriteSlot;
+						SpriteSlotSubset *curSpriteSlot = &_scene->_animation[0]->_frameEntries[j]._spriteSlot;
 						_scene->_kernelMessages._entries[_messagesIndexes[charIdx]]._position.x = curSpriteSlot->_position.x;
 						_scene->_kernelMessages._entries[_messagesIndexes[charIdx]]._position.y = curSpriteSlot->_position.y - (50 + (14 * ((charIdx == 0) ? 2 : 1)));
 					}
@@ -2602,7 +2602,7 @@ void Scene318::enter() {
 
 	if (_globals[kAfterHavoc]) {
 		_scene->loadAnimation(formAnimName('f', -1));
-		_scene->_activeAnimation->_resetFlag = true;
+		_scene->_animation[0]->_resetFlag = true;
 	} else if (!_globals[kHasSeenProfPyro]) {
 		_scene->_hotspots.activate(NOUN_PROFESSORS_GURNEY, false);
 		_scene->_hotspots.activate(NOUN_PROFESSOR, false);
@@ -2655,7 +2655,7 @@ void Scene318::enter() {
 		0x1C8, 0x1C9, 0x1CA, 0x1CB, 0x1CC, 0x1CD, 0x1CE, 0x1CF, 0x1D0, 0x1D1, 0x1D2, 0x1D3,
 		0x190, 0x19D, 0);
 
-	if ((_scene->_priorSceneId == RETURNING_FROM_DIALOG) || (((_scene->_priorSceneId == 318) || 
+	if ((_scene->_priorSceneId == RETURNING_FROM_DIALOG) || (((_scene->_priorSceneId == 318) ||
 			(_scene->_priorSceneId == RETURNING_FROM_LOADING)) && (!_globals[kAfterHavoc]))) {
 		if (!_globals[kAfterHavoc]) {
 			_game._player._visible = false;
@@ -2705,9 +2705,9 @@ void Scene318::enter() {
 }
 
 void Scene318::step() {
-	if ((_scene->_activeAnimation != nullptr) && (_animMode == 2)) {
-		if (_lastFrame != _scene->_activeAnimation->getCurrentFrame()) {
-			_lastFrame = _scene->_activeAnimation->getCurrentFrame();
+	if ((_scene->_animation[0] != nullptr) && (_animMode == 2)) {
+		if (_lastFrame != _scene->_animation[0]->getCurrentFrame()) {
+			_lastFrame = _scene->_animation[0]->getCurrentFrame();
 			int nextFrame = -1;
 
 			switch (_lastFrame) {
@@ -2759,8 +2759,8 @@ void Scene318::step() {
 				break;
 			}
 
-			if ((nextFrame >= 0) && (nextFrame != _scene->_activeAnimation->getCurrentFrame())) {
-				_scene->_activeAnimation->setCurrentFrame(nextFrame);
+			if ((nextFrame >= 0) && (nextFrame != _scene->_animation[0]->getCurrentFrame())) {
+				_scene->_animation[0]->setCurrentFrame(nextFrame);
 				_lastFrame = nextFrame;
 			}
 		}
@@ -3185,11 +3185,11 @@ void Scene319::enter() {
 }
 
 void Scene319::step() {
-	if (_scene->_activeAnimation == nullptr)
+	if (_scene->_animation[0] == nullptr)
 		return;
 
-	if (_animFrame != _scene->_activeAnimation->getCurrentFrame()) {
-		_animFrame = _scene->_activeAnimation->getCurrentFrame();
+	if (_animFrame != _scene->_animation[0]->getCurrentFrame()) {
+		_animFrame = _scene->_animation[0]->getCurrentFrame();
 		int nextFrame = -1;
 		if (_animMode == 1) {
 			switch (_animFrame) {
@@ -3305,8 +3305,8 @@ void Scene319::step() {
 		if ((_animMode == 4) && (_animFrame == 16))
 			_vm->_screen._shakeCountdown = 80;
 
-		if ((nextFrame >= 0) && (nextFrame != _scene->_activeAnimation->getCurrentFrame())) {
-			_scene->_activeAnimation->setCurrentFrame(nextFrame);
+		if ((nextFrame >= 0) && (nextFrame != _scene->_animation[0]->getCurrentFrame())) {
+			_scene->_animation[0]->setCurrentFrame(nextFrame);
 			_animFrame = nextFrame;
 		}
 	}
@@ -3320,11 +3320,11 @@ void Scene319::step() {
 		_scene->freeAnimation();
 		_scene->loadAnimation(formAnimName('b', 0));
 		if (_nextAction1 == 3)
-			_scene->_activeAnimation->setCurrentFrame(85);
+			_scene->_animation[0]->setCurrentFrame(85);
 		else if (_nextAction1 == 1)
-			_scene->_activeAnimation->setCurrentFrame(40);
+			_scene->_animation[0]->setCurrentFrame(40);
 
-		_animFrame = _scene->_activeAnimation->getCurrentFrame();
+		_animFrame = _scene->_animation[0]->getCurrentFrame();
 		_slacheTalkingFl = true;
 		_vm->_screen._shakeCountdown = 1;
 
@@ -3710,9 +3710,9 @@ void Scene320::enter() {
 }
 
 void Scene320::step() {
-	if (_scene->_activeAnimation != nullptr) {
-		if (_lastFrame != _scene->_activeAnimation->getCurrentFrame()) {
-			_lastFrame = _scene->_activeAnimation->getCurrentFrame();
+	if (_scene->_animation[0] != nullptr) {
+		if (_lastFrame != _scene->_animation[0]->getCurrentFrame()) {
+			_lastFrame = _scene->_animation[0]->getCurrentFrame();
 			switch (_lastFrame) {
 			case 95:
 				_blinkFl = true;
@@ -3892,8 +3892,8 @@ void Scene321::enter() {
 }
 
 void Scene321::step() {
-	if (_scene->_activeAnimation != nullptr) {
-		if ((_scene->_activeAnimation->getCurrentFrame() >= 260) && (_globals[kSexOfRex] == REX_MALE) && (_game._storyMode >= STORYMODE_NICE))
+	if (_scene->_animation[0] != nullptr) {
+		if ((_scene->_animation[0]->getCurrentFrame() >= 260) && (_globals[kSexOfRex] == REX_MALE) && (_game._storyMode >= STORYMODE_NICE))
 			_scene->_nextSceneId = 316;
 	}
 
@@ -5045,7 +5045,7 @@ void Scene359::actions() {
 		_vm->_dialogs->show(35918);
 	else if (_action.isAction(VERB_TAKE, NOUN_LIMB))
 		_vm->_dialogs->show(35919);
-	else if (_action.isAction(VERB_LOOK, NOUN_SECURITY_CARD) && (_action._mainObjectSource == 4))
+	else if (_action.isAction(VERB_LOOK, NOUN_SECURITY_CARD) && (_action._mainObjectSource == CAT_HOTSPOT))
 		_vm->_dialogs->show(35921);
 	else if (_action.isAction(VERB_LOOK, NOUN_BLOOD_STAIN)) {
 		if ((_game._difficulty != DIFFICULTY_HARD) && (_game._objects[OBJ_SECURITY_CARD]._roomNumber == 359))

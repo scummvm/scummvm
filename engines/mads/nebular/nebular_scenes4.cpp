@@ -876,7 +876,7 @@ void Scene402::enter() {
 	_refuseAlienLiquor = false;
 
 	_scene->loadAnimation(Resources::formatName(402, 'd', 1, EXT_AA, ""));
-	_scene->_activeAnimation->_resetFlag = true;
+	_scene->_animation[0]->_resetFlag = true;
 
 	_globals._sequenceIndexes[5] = _scene->_sequences.startCycle(_globals._spriteIndexes[5], false, 1);
 	_scene->_sequences.setDepth(_globals._sequenceIndexes[5], 1);
@@ -1536,43 +1536,43 @@ void Scene402::step() {
 	if (_game._trigger == 32)
 		_rightWomanMoving = false;
 
-	if (_scene->_activeAnimation->getCurrentFrame() == 1) {
+	if (_scene->_animation[0]->getCurrentFrame() == 1) {
 		switch (_vm->getRandomNumber(1, 50)) {
 		case 1:
-			_scene->_activeAnimation->setCurrentFrame(2);
+			_scene->_animation[0]->setCurrentFrame(2);
 			break;
 
 		case 2:
-			_scene->_activeAnimation->setCurrentFrame(7);
+			_scene->_animation[0]->setCurrentFrame(7);
 			break;
 
 		case 3:
-			_scene->_activeAnimation->setCurrentFrame(11);
+			_scene->_animation[0]->setCurrentFrame(11);
 			break;
 
 		default:
-			_scene->_activeAnimation->setCurrentFrame(0);
+			_scene->_animation[0]->setCurrentFrame(0);
 			break;
 		}
 	}
 
-	if ((_scene->_activeAnimation->getCurrentFrame() == 4) && (_drinkTimer < 10)) {
+	if ((_scene->_animation[0]->getCurrentFrame() == 4) && (_drinkTimer < 10)) {
 		++ _drinkTimer;
-		_scene->_activeAnimation->setCurrentFrame(3);
+		_scene->_animation[0]->setCurrentFrame(3);
 	}
 
 	if (_drinkTimer == 10) {
 		_drinkTimer = 0;
-		_scene->_activeAnimation->setCurrentFrame(4);
-		_scene->_activeAnimation->_currentFrame = 5;
+		_scene->_animation[0]->setCurrentFrame(4);
+		_scene->_animation[0]->_currentFrame = 5;
 	}
 
 
-	switch (_scene->_activeAnimation->getCurrentFrame()) {
+	switch (_scene->_animation[0]->getCurrentFrame()) {
 	case 6:
 	case 10:
 	case 14:
-		_scene->_activeAnimation->setCurrentFrame(0);
+		_scene->_animation[0]->setCurrentFrame(0);
 		break;
 
 	default:
@@ -3126,36 +3126,36 @@ void Scene410::enter() {
 	sceneEntrySound();
 
 	_scene->loadAnimation(Resources::formatName(410, 'r', -1, EXT_AA, ""));
-	_scene->_activeAnimation->_resetFlag = true;
+	_scene->_animation[0]->_resetFlag = true;
 }
 
 void Scene410::step() {
-	if (_scene->_activeAnimation->getCurrentFrame() == 1) {
+	if (_scene->_animation[0]->getCurrentFrame() == 1) {
 		if (_vm->getRandomNumber(1, 30) == 1)
-			_scene->_activeAnimation->setCurrentFrame(2);
+			_scene->_animation[0]->setCurrentFrame(2);
 		else
-			_scene->_activeAnimation->setCurrentFrame(0);
+			_scene->_animation[0]->setCurrentFrame(0);
 	}
 
-	if (_scene->_activeAnimation->getCurrentFrame() == 9) {
+	if (_scene->_animation[0]->getCurrentFrame() == 9) {
 		if (_vm->getRandomNumber(1, 30) == 1)
-			_scene->_activeAnimation->setCurrentFrame(10);
+			_scene->_animation[0]->setCurrentFrame(10);
 		else
-			_scene->_activeAnimation->setCurrentFrame(8);
+			_scene->_animation[0]->setCurrentFrame(8);
 	}
 
-	if (_scene->_activeAnimation->getCurrentFrame() == 5) {
+	if (_scene->_animation[0]->getCurrentFrame() == 5) {
 		if (_vm->getRandomNumber(1, 30) == 1)
-			_scene->_activeAnimation->setCurrentFrame(6);
+			_scene->_animation[0]->setCurrentFrame(6);
 		else
-			_scene->_activeAnimation->setCurrentFrame(4);
+			_scene->_animation[0]->setCurrentFrame(4);
 	}
 
-	if (_scene->_activeAnimation->getCurrentFrame() == 3) {
+	if (_scene->_animation[0]->getCurrentFrame() == 3) {
 		if (_vm->getRandomNumber(1, 2) == 1)
-			_scene->_activeAnimation->setCurrentFrame(4);
+			_scene->_animation[0]->setCurrentFrame(4);
 		else // == 2
-			_scene->_activeAnimation->setCurrentFrame(8);
+			_scene->_animation[0]->setCurrentFrame(8);
 	}
 }
 
@@ -3491,7 +3491,7 @@ void Scene411::handleDialog() {
 			_game._player._priorTimer = _scene->_frameStartTime + _game._player._ticksAmount;
 			_game._player._visible = false;
 			_game._player._stepEnabled = false;
-			_scene->_activeAnimation->setCurrentFrame(_resetFrame);
+			_scene->_animation[0]->setCurrentFrame(_resetFrame);
 		}
 		_scene->_kernelMessages.reset();
 		_newQuantity = computeQuoteAndQuantity();
@@ -3661,16 +3661,16 @@ void Scene411::enter() {
 	}
 
 	_scene->loadAnimation(formAnimName('a', -1));
-	_scene->_activeAnimation->setCurrentFrame(128);
+	_scene->_animation[0]->setCurrentFrame(128);
 
 	_makeMushroomCloud = false;
 	_killRox = false;
 }
 
 void Scene411::step() {
-	if (_scene->_activeAnimation != nullptr) {
-		if (_curAnimationFrame != _scene->_activeAnimation->getCurrentFrame()) {
-			_curAnimationFrame = _scene->_activeAnimation->getCurrentFrame();
+	if (_scene->_animation[0] != nullptr) {
+		if (_curAnimationFrame != _scene->_animation[0]->getCurrentFrame()) {
+			_curAnimationFrame = _scene->_animation[0]->getCurrentFrame();
 			_resetFrame = -1;
 
 			switch (_curAnimationFrame) {
@@ -3738,14 +3738,14 @@ void Scene411::step() {
 				break;
 			}
 
-			if ((_resetFrame >= 0) && (_resetFrame != _scene->_activeAnimation->getCurrentFrame())) {
-				_scene->_activeAnimation->setCurrentFrame(_resetFrame);
+			if ((_resetFrame >= 0) && (_resetFrame != _scene->_animation[0]->getCurrentFrame())) {
+				_scene->_animation[0]->setCurrentFrame(_resetFrame);
 				_curAnimationFrame = _resetFrame;
 			}
 		}
 	}
 
-	if (_scene->_activeAnimation->getCurrentFrame() == 86)
+	if (_scene->_animation[0]->getCurrentFrame() == 86)
 		_vm->_sound->command(59);
 }
 
@@ -4113,10 +4113,10 @@ void Scene413::enter() {
 }
 
 void Scene413::step() {
-	if (_scene->_activeAnimation && _scene->_activeAnimation->getCurrentFrame() == 38)
-		_scene->_activeAnimation->setCurrentFrame(37);
+	if (_scene->_animation[0] && _scene->_animation[0]->getCurrentFrame() == 38)
+		_scene->_animation[0]->setCurrentFrame(37);
 
-	if (_scene->_activeAnimation && _scene->_activeAnimation->getCurrentFrame() == 21 && _canMove) {
+	if (_scene->_animation[0] && _scene->_animation[0]->getCurrentFrame() == 21 && _canMove) {
 		_vm->_sound->command(27);
 		_canMove = false;
 	}

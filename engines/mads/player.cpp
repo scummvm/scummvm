@@ -56,7 +56,6 @@ Player::Player(MADSEngine *vm)
 	_special = 0;
 	_ticksAmount = 0;
 	_priorTimer = 0;
-	_trigger = 0;
 	_scalingVelocity = false;
 	_spritesChanged = false;
 	_forceRefresh = false;
@@ -80,6 +79,10 @@ Player::Player(MADSEngine *vm)
 	_moving = false;
 	_walkOffScreen = 0;
 	_walkOffScreenSceneId = -1;
+	_forcePrefix = false;
+	_commandsAllowed = false;
+	_enableAtTarget = false;
+	_walkTrigger = 0;
 
 	Common::fill(&_stopWalkerList[0], &_stopWalkerList[12], 0);
 	Common::fill(&_stopWalkerTrigger[0], &_stopWalkerTrigger[12], 0);
@@ -186,8 +189,10 @@ void Player::changeFacing() {
 		(Facing)_directionListIndexes[_facing + 10];
 	selectSeries();
 
-	if ((_facing == _turnToFacing) && !_moving)
+	if ((_facing == _turnToFacing) && !_moving) {
 		updateFrame();
+		activateTrigger();
+	}
 
 	_priorTimer += 1;
 }
@@ -242,8 +247,8 @@ void Player::updateFrame() {
 	Scene &scene = _vm->_game->_scene;
 	assert(scene._sprites[idx] != nullptr);
 	SpriteAsset &spriteSet = *scene._sprites[idx];
-	
-	// WORKAROUND: Certain cutscenes set up player sprites that don't have any 
+
+	// WORKAROUND: Certain cutscenes set up player sprites that don't have any
 	// character info. In such cases, simply ignore player updates
 	if (!spriteSet._charInfo)
 		return;
@@ -278,6 +283,16 @@ void Player::updateFrame() {
 	_forceRefresh = true;
 }
 
+void Player::activateTrigger() {
+	// TODO: Finish this!
+	// TODO: Also sync _walkTrigger, if necessary
+
+	if (_walkTrigger) {
+		_vm->_game->_trigger = _walkTrigger;
+		_walkTrigger = 0;
+	}
+}
+
 void Player::update() {
 	Scene &scene = _vm->_game->_scene;
 
@@ -289,7 +304,7 @@ void Player::update() {
 		int newDepth = 1;
 		int yp = MIN(_playerPos.y, (int16)(MADS_SCENE_HEIGHT - 1));
 
-		for (int idx = 1; idx < 15; ++idx) {
+		for (int idx = 1; idx < DEPTH_BANDS_SIZE; ++idx) {
 			if (scene._sceneInfo->_depthList[newDepth] >= yp)
 				newDepth = idx + 1;
 		}
@@ -441,10 +456,12 @@ void Player::move() {
 	if (newFacing && _moving)
 		startMovement();
 
-	if (_turnToFacing != _facing)
+	if (_turnToFacing != _facing) {
 		changeFacing();
-	else if (!_moving)
+	} else if (!_moving) {
 		updateFrame();
+		activateTrigger();
+	}
 
 	int velocity = _velocity;
 	if (_scalingVelocity && (_totalDistance > 0)) {
@@ -795,6 +812,28 @@ void Player::removePlayerSprites() {
 	scene._spriteSlots.clear();
 	scene._spriteSlots.fullRefresh();
 	_visible = false;
+}
+
+void Player::firstWalk(Common::Point fromPos, Facing fromFacing, Common::Point destPos, Facing destFacing, bool enableFl) {
+	_playerPos = fromPos;
+	_facing = fromFacing;
+
+	walk(destPos, destFacing);
+	_walkAnywhere = true;
+
+	_commandsAllowed = false;
+	_enableAtTarget = enableFl;
+}
+
+void Player::setWalkTrigger(int val) {
+	_walkTrigger = val;
+	warning("TODO: Player::setWalkTrigger");
+}
+
+void Player::resetFacing(Facing facing) {
+	_facing = facing;
+	_turnToFacing = facing;
+	selectSeries();
 }
 
 } // End of namespace MADS
