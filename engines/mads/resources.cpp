@@ -79,7 +79,7 @@ private:
 	 */
 	ResourceType getResourceType(const Common::String &resourceName) const;
 public:
-	HagArchive(MADSEngine *vm);
+	explicit HagArchive(MADSEngine *vm);
 	virtual ~HagArchive();
 
 	// Archive implementation
