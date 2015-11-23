@@ -326,12 +326,10 @@ void BbvsEngine::canWalkToDest(WalkArea *walkArea, int infoCount) {
 }
 
 bool BbvsEngine::walkTestLineWalkable(const Common::Point &sourcePt, const Common::Point &destPt, WalkInfo *walkInfo) {
-	const float ptDeltaX = destPt.x - sourcePt.x;
+	const float ptDeltaX = MAX<float>(destPt.x - sourcePt.x, 1.0f);
 	const float ptDeltaY = destPt.y - sourcePt.y;
 	const float wDeltaX = walkInfo->x - sourcePt.x;
 	const float wDeltaY = walkInfo->y - sourcePt.y;
-	if (destPt.x == sourcePt.x)
-		return true;
 	if (walkInfo->direction) {
 		const float nDeltaY = wDeltaX * ptDeltaY / ptDeltaX + (float)sourcePt.y - (float)walkInfo->y;
 		return (nDeltaY >= 0.0f) && (nDeltaY < (float)walkInfo->delta);
