@@ -48,6 +48,10 @@ inline int ftCeil26_6(FT_Pos x) {
 	return (x + 63) / 64;
 }
 
+inline int divRoundToNearest(int dividend, int divisor) {
+	return (dividend + (divisor / 2)) / divisor;
+}
+
 } // End of anonymous namespace
 
 class TTFLibrary : public Common::Singleton<TTFLibrary> {
@@ -272,9 +276,9 @@ int TTFFont::computePointSize(int size, TTFSizeMode sizeMode) {
 		TT_HoriHeader *horiHeader = (TT_HoriHeader *) FT_Get_Sfnt_Table(_face, ft_sfnt_hhea);
 
 		if (os2Header && (os2Header->usWinAscent + os2Header->usWinDescent != 0)) {
-			ptSize = _face->units_per_EM * size / (os2Header->usWinAscent + os2Header->usWinDescent);
+			ptSize = divRoundToNearest(_face->units_per_EM * size, os2Header->usWinAscent + os2Header->usWinDescent);
 		} else if (horiHeader && (horiHeader->Ascender + horiHeader->Descender != 0)) {
-			ptSize = _face->units_per_EM * size / (horiHeader->Ascender + horiHeader->Descender);
+			ptSize = divRoundToNearest(_face->units_per_EM * size, horiHeader->Ascender + horiHeader->Descender);
 		} else {
 			warning("Unable to compute point size for font '%s'", _face->family_name);
 			ptSize = 1;
