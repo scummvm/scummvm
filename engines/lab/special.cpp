@@ -89,7 +89,6 @@ extern uint16 *FadePalette;
 extern bool nopalchange, DoBlack, IsHiRes;
 extern BitMap *DispBitMap, *DrawBitMap;
 extern char diffcmap[3 * 256];
-extern uint32 VGAScreenWidth, VGAScreenHeight;
 extern byte *TempScrollData;
 extern CloseDataPtr CPtr;
 extern InventoryData *Inventory;
@@ -120,7 +119,7 @@ static byte *loadBackPict(const char *fileName, bool tomem) {
 	nopalchange = true;
 
 	if (tomem)
-		res = readPictToMem(fileName, VGAScreenWidth, VGAScreenHeight);
+		res = readPictToMem(fileName, g_lab->_screenWidth, g_lab->_screenHeight);
 	else
 		readPict(fileName, true);
 
@@ -190,8 +189,8 @@ static void changeCombination(uint16 number) {
 	combnum = combination[number];
 
 	display.ImageData = getVGABaseAddr();
-	display.Width     = VGAScreenWidth;
-	display.Height    = VGAScreenHeight;
+	display.Width     = g_lab->_screenWidth;
+	display.Height    = g_lab->_screenHeight;
 
 	for (counter = 1; counter <= (Images[combnum]->Height / 2); counter++) {
 		if (IsHiRes) {
@@ -674,18 +673,18 @@ static void turnPage(bool FromLeft) {
 	uint16 counter;
 
 	if (FromLeft) {
-		for (counter = 0; counter < VGAScreenWidth; counter += 8) {
+		for (counter = 0; counter < g_lab->_screenWidth; counter += 8) {
 			g_music->updateMusic();
 			waitTOF();
 			ScreenImage.ImageData = getVGABaseAddr();
-			bltBitMap(&JBackImage, counter, 0, &ScreenImage, counter, 0, 8, VGAScreenHeight);
+			bltBitMap(&JBackImage, counter, 0, &ScreenImage, counter, 0, 8, g_lab->_screenHeight);
 		}
 	} else {
-		for (counter = (VGAScreenWidth - 8); counter > 0; counter -= 8) {
+		for (counter = (g_lab->_screenWidth - 8); counter > 0; counter -= 8) {
 			g_music->updateMusic();
 			waitTOF();
 			ScreenImage.ImageData = getVGABaseAddr();
-			bltBitMap(&JBackImage, counter, 0, &ScreenImage, counter, 0, 8, VGAScreenHeight);
+			bltBitMap(&JBackImage, counter, 0, &ScreenImage, counter, 0, 8, g_lab->_screenHeight);
 		}
 	}
 }
@@ -707,7 +706,7 @@ static void drawJournal(uint16 wipenum, bool needFade) {
 	ScreenImage.ImageData = getVGABaseAddr();
 
 	if (wipenum == 0)
-		bltBitMap(&JBackImage, 0, 0, &ScreenImage, 0, 0, VGAScreenWidth, VGAScreenHeight);
+		bltBitMap(&JBackImage, 0, 0, &ScreenImage, 0, 0, g_lab->_screenWidth, g_lab->_screenHeight);
 	else
 		turnPage((bool)(wipenum == 1));
 
@@ -726,7 +725,7 @@ static void drawJournal(uint16 wipenum, bool needFade) {
 		fade(true, 0);
 
 	nopalchange = true;
-	JBackImage.ImageData = readPictToMem("P:Journal.pic", VGAScreenWidth, VGAScreenHeight);
+	JBackImage.ImageData = readPictToMem("P:Journal.pic", g_lab->_screenWidth, g_lab->_screenHeight);
 	GotBackImage = true;
 
 	eatMessages();
@@ -787,8 +786,8 @@ void doJournal() {
 	lastpage    = false;
 	GotBackImage = false;
 
-	JBackImage.Width = VGAScreenWidth;
-	JBackImage.Height = VGAScreenHeight;
+	JBackImage.Width = g_lab->_screenWidth;
+	JBackImage.Height = g_lab->_screenHeight;
 	JBackImage.ImageData   = NULL;
 
 	BackG.NextGadget = &CancelG;
@@ -812,7 +811,7 @@ void doJournal() {
 	ScreenImage.ImageData = getVGABaseAddr();
 
 	setAPen(0);
-	rectFill(0, 0, VGAScreenWidth - 1, VGAScreenHeight - 1);
+	rectFill(0, 0, g_lab->_screenWidth - 1, g_lab->_screenHeight - 1);
 	blackScreen();
 
 	freeAllStolenMem();
@@ -905,13 +904,13 @@ static void drawMonText(char *text, uint16 x1, uint16 y1, uint16 x2, uint16 y2, 
 			MonGadHeight = fheight;
 
 		setAPen(0);
-		rectFill(0, 0, VGAScreenWidth - 1, y2);
+		rectFill(0, 0, g_lab->_screenWidth - 1, y2);
 
 		for (counter = 0; counter < numlines; counter++)
 			drawImage(MonButton, 0, counter * MonGadHeight);
 	} else if (isinteractive) {
 		setAPen(0);
-		rectFill(0, 0, VGAScreenWidth - 1, y2);
+		rectFill(0, 0, g_lab->_screenWidth - 1, y2);
 	} else {
 		setAPen(0);
 		rectFill(x1, y1, x2, y2);
@@ -1085,7 +1084,7 @@ void doMonitor(char *background, char *textfile, bool isinteractive, uint16 x1, 
 	freeAllStolenMem();
 
 	setAPen(0);
-	rectFill(0, 0, VGAScreenWidth - 1, VGAScreenHeight - 1);
+	rectFill(0, 0, g_lab->_screenWidth - 1, g_lab->_screenHeight - 1);
 	blackAllScreen();
 }
 

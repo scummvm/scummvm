@@ -49,7 +49,6 @@ static TextFont bmf;
 
 extern uint16 Direction;
 extern bool IsHiRes;
-extern uint32 VGAScreenWidth, VGAScreenHeight;
 
 extern CloseDataPtr CPtr;
 extern uint16 RoomNum;
@@ -584,7 +583,7 @@ static void drawMap(uint16 CurRoom, uint16 CurMsg, uint16 Floor, bool fadeout, b
 		fade(false, 0);
 
 	setAPen(0);
-	rectFill(0, 0, VGAScreenWidth - 1, VGAScreenHeight - 1);
+	rectFill(0, 0, g_lab->_screenWidth - 1, g_lab->_screenHeight - 1);
 
 	drawImage(Map, 0, 0);
 	drawGadgetList(MapGadgetList);
@@ -880,7 +879,7 @@ void doMap(uint16 CurRoom) {
 	blackAllScreen();
 	mouseHide();
 	setAPen(0);
-	rectFill(0, 0, VGAScreenWidth - 1, VGAScreenHeight - 1);
+	rectFill(0, 0, g_lab->_screenWidth - 1, g_lab->_screenHeight - 1);
 	freeMapData();
 	blackAllScreen();
 	mouseShow();

@@ -28,14 +28,13 @@
  *
  */
 
+#include "lab/lab.h"
 #include "lab/stddefines.h"
 #include "lab/labfun.h"
 #include "lab/text.h"
 #include "lab/vga.h"
 
 namespace Lab {
-
-extern uint32 VGAScreenWidth, VGABytesPerPage;
 
 /*****************************************************************************/
 /* Closes a font and frees all memory associated with it.                    */
@@ -85,10 +84,10 @@ void text(struct TextFont *tf, uint16 x, uint16 y, uint16 color, const char *tex
 	VGATop = getVGABaseAddr();
 
 	for (counter = 0; counter < numchars; counter++) {
-		RealOffset = (VGAScreenWidth * y) + x;
-		curpage    = RealOffset / VGABytesPerPage;
-		SegmentOffset = RealOffset - (curpage * VGABytesPerPage);
-		LeftInSegment = VGABytesPerPage - SegmentOffset;
+		RealOffset = (g_lab->_screenWidth * y) + x;
+		curpage    = RealOffset / g_lab->_screenBytesPerPage;
+		SegmentOffset = RealOffset - (curpage * g_lab->_screenBytesPerPage);
+		LeftInSegment = g_lab->_screenBytesPerPage - SegmentOffset;
 		VGACur = VGATop + SegmentOffset;
 
 		if (tf->Widths[(uint)*text]) {
@@ -121,10 +120,10 @@ void text(struct TextFont *tf, uint16 x, uint16 y, uint16 color, const char *tex
 								curpage++;
 								VGATemp = (byte *)(VGATop - templeft);
 								/* Set up VGATempLine for next line */
-								VGATempLine -= VGABytesPerPage;
+								VGATempLine -= g_lab->_screenBytesPerPage;
 								/* Set up LeftInSegment for next line */
-								LeftInSegment += VGABytesPerPage + templeft;
-								templeft += VGABytesPerPage;
+								LeftInSegment += g_lab->_screenBytesPerPage + templeft;
+								templeft += g_lab->_screenBytesPerPage;
 							}
 
 							if (mask & data)
@@ -141,13 +140,13 @@ void text(struct TextFont *tf, uint16 x, uint16 y, uint16 color, const char *tex
 					}
 				}
 
-				VGATempLine += VGAScreenWidth;
-				LeftInSegment -= VGAScreenWidth;
+				VGATempLine += g_lab->_screenWidth;
+				LeftInSegment -= g_lab->_screenWidth;
 
 				if (LeftInSegment <= 0) {
 					curpage++;
-					VGATempLine -= VGABytesPerPage;
-					LeftInSegment += VGABytesPerPage;
+					VGATempLine -= g_lab->_screenBytesPerPage;
+					LeftInSegment += g_lab->_screenBytesPerPage;
 				}
 			}
 		}

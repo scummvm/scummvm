@@ -28,6 +28,7 @@
  *
  */
 
+#include "lab/lab.h"
 #include "lab/vga.h"
 #include "lab/stddefines.h"
 #include "lab/mouse.h"
@@ -38,12 +39,8 @@
 
 namespace Lab {
 
-static byte curvgapal[256 * 3];
-static unsigned char curapen = 0;
-
-uint32 VGAScreenWidth = 320UL,
-              VGAScreenHeight = 200UL,
-              VGABytesPerPage = 65536UL;
+static byte _curvgapal[256 * 3];
+static unsigned char _curapen = 0;
 
 byte *VGABASEADDRESS = 0;
 
@@ -71,16 +68,16 @@ bool createScreen(bool HiRes) {
 	VGABASEADDRESS  = 0;
 
 	if (HiRes) {
-		VGAScreenWidth  = 640;
-		VGAScreenHeight = 480;
+		g_lab->_screenWidth  = 640;
+		g_lab->_screenHeight = 480;
 	} else {
-		VGAScreenWidth  = 320;
-		VGAScreenHeight = 200;
+		g_lab->_screenWidth  = 320;
+		g_lab->_screenHeight = 200;
 	}
-	VGABytesPerPage = VGAScreenWidth * VGAScreenHeight;
+	g_lab->_screenBytesPerPage = g_lab->_screenWidth * g_lab->_screenHeight;
 
-	g_DisplayBuffer = (byte *)malloc(VGABytesPerPage);
-	g_Pixels = (byte *)calloc(VGABytesPerPage, 4);
+	g_DisplayBuffer = (byte *)malloc(g_lab->_screenBytesPerPage);
+	g_Pixels = (byte *)calloc(g_lab->_screenBytesPerPage, 4);
 
 	return true;
 }
@@ -138,8 +135,8 @@ void WSDL_ProcessInput(bool can_delay) {
 					g_MouseX = 0;
 					g_MouseAtEdge = true;
 				}
-				if (g_MouseX > VGAScreenWidth - 1) {
-					g_MouseX = VGAScreenWidth;
+				if (g_MouseX > g_lab->_screenWidth - 1) {
+					g_MouseX = g_lab->_screenWidth;
 					g_MouseAtEdge = true;
 				}
 
@@ -148,8 +145,8 @@ void WSDL_ProcessInput(bool can_delay) {
 					g_MouseY = 0;
 					g_MouseAtEdge = true;
 				}
-				if (g_MouseY > VGAScreenHeight - 1) {
-					g_MouseY = VGAScreenHeight;
+				if (g_MouseY > g_lab->_screenHeight - 1) {
+					g_MouseY = g_lab->_screenHeight;
 					g_MouseAtEdge = true;
 				}
 
@@ -188,7 +185,7 @@ void WSDL_ProcessInput(bool can_delay) {
 				break;
 			}
 
-			g_system->copyRectToScreen(g_DisplayBuffer, VGAScreenWidth, 0, 0, VGAScreenWidth, VGAScreenHeight);
+			g_system->copyRectToScreen(g_DisplayBuffer, g_lab->_screenWidth, 0, 0, g_lab->_screenWidth, g_lab->_screenHeight);
 			g_system->updateScreen();
 		}
 	}
@@ -208,7 +205,7 @@ void waitTOF() {
 	int untilOutOfRefresh = 1;
 
   	if (g_ScreenWasLocked || untilOutOfRefresh) {
-		g_system->copyRectToScreen(g_DisplayBuffer, VGAScreenWidth, 0, 0, VGAScreenWidth, VGAScreenHeight);
+		g_system->copyRectToScreen(g_DisplayBuffer, g_lab->_screenWidth, 0, 0, g_lab->_screenWidth, g_lab->_screenHeight);
 		g_system->updateScreen();
   	}
 
@@ -249,12 +246,12 @@ void WSDL_SetColors(byte *buf, uint16 first, uint16 numreg, uint16 slow) {
 /*****************************************************************************/
 void writeColorRegs(byte *buf, uint16 first, uint16 numreg) {
 	WSDL_SetColors(buf, first, numreg, 0);
-	memcpy(&(curvgapal[first * 3]), buf, numreg * 3);
+	memcpy(&(_curvgapal[first * 3]), buf, numreg * 3);
 }
 
 void writeColorRegsSmooth(byte *buf, uint16 first, uint16 numreg) {
 	WSDL_SetColors(buf, first, numreg, 1);
-	memcpy(&(curvgapal[first * 3]), buf, numreg * 3);
+	memcpy(&(_curvgapal[first * 3]), buf, numreg * 3);
 }
 
 /*****************************************************************************/
@@ -267,7 +264,7 @@ void writeColorReg(byte *buf, uint16 regnum) {
 }
 
 void VGASetPal(void *cmap, uint16 numcolors) {
-	if (memcmp(cmap, curvgapal, numcolors * 3) != 0)
+	if (memcmp(cmap, _curvgapal, numcolors * 3) != 0)
 		writeColorRegs((byte *)cmap, 0, numcolors);
 }
 
@@ -283,7 +280,7 @@ void WSDL_IgnoreUpdateDisplay(int state) {
 
 void WSDL_UpdateScreen() {
 	if (g_ScreenWasLocked && !g_IgnoreUpdateDisplay) {
-		g_system->copyRectToScreen(g_DisplayBuffer, VGAScreenWidth, 0, 0, VGAScreenWidth, VGAScreenHeight);
+		g_system->copyRectToScreen(g_DisplayBuffer, g_lab->_screenWidth, 0, 0, g_lab->_screenWidth, g_lab->_screenHeight);
   		g_system->updateScreen();
   	}
 
@@ -326,20 +323,20 @@ void drawImage(Image *Im, uint16 x, uint16 y) {
 		dy = 0;
 	}
 
-	if ((uint)(dx + w) > VGAScreenWidth)
-		w = VGAScreenWidth - dx;
+	if ((uint)(dx + w) > g_lab->_screenWidth)
+		w = g_lab->_screenWidth - dx;
 
-	if ((uint)(dy + h) > VGAScreenHeight)
-		h = VGAScreenHeight - dy;
+	if ((uint)(dy + h) > g_lab->_screenHeight)
+		h = g_lab->_screenHeight - dy;
 
 	if (w > 0 && h > 0) {
 		byte *s = Im->ImageData + sy * Im->Width + sx;
-		byte *d = getVGABaseAddr() + dy * VGAScreenWidth + dx;
+		byte *d = getVGABaseAddr() + dy * g_lab->_screenWidth + dx;
 
 		while (h-- > 0) {
 			memcpy(d, s, w);
 			s += Im->Width;
-			d += VGAScreenWidth;
+			d += g_lab->_screenWidth;
 		}
 	}
 }
@@ -369,15 +366,15 @@ void drawMaskImage(Image *Im, uint16 x, uint16 y) {
 		dy = 0;
 	}
 
-	if ((uint)(dx + w) > VGAScreenWidth)
-		w = VGAScreenWidth - dx;
+	if ((uint)(dx + w) > g_lab->_screenWidth)
+		w = g_lab->_screenWidth - dx;
 
-	if ((uint)(dy + h) > VGAScreenHeight)
-		h = VGAScreenHeight - dy;
+	if ((uint)(dy + h) > g_lab->_screenHeight)
+		h = g_lab->_screenHeight - dy;
 
 	if (w > 0 && h > 0) {
 		byte *s = Im->ImageData + sy * Im->Width + sx;
-		byte *d = getVGABaseAddr() + dy * VGAScreenWidth + dx;
+		byte *d = getVGABaseAddr() + dy * g_lab->_screenWidth + dx;
 
 		while (h-- > 0) {
 			byte *ss = s;
@@ -392,7 +389,7 @@ void drawMaskImage(Image *Im, uint16 x, uint16 y) {
 			}
 
 			s += Im->Width;
-			d += VGAScreenWidth;
+			d += g_lab->_screenWidth;
 		}
 	}
 }
@@ -422,20 +419,20 @@ void readScreenImage(Image *Im, uint16 x, uint16 y) {
 		dy = 0;
 	}
 
-	if ((uint)(dx + w) > VGAScreenWidth)
-		w = VGAScreenWidth - dx;
+	if ((uint)(dx + w) > g_lab->_screenWidth)
+		w = g_lab->_screenWidth - dx;
 
-	if ((uint)(dy + h) > VGAScreenHeight)
-		h = VGAScreenHeight - dy;
+	if ((uint)(dy + h) > g_lab->_screenHeight)
+		h = g_lab->_screenHeight - dy;
 
 	if (w > 0 && h > 0) {
 		byte *s = Im->ImageData + sy * Im->Width + sx;
-		byte *d = getVGABaseAddr() + dy * VGAScreenWidth + dx;
+		byte *d = getVGABaseAddr() + dy * g_lab->_screenWidth + dx;
 
 		while (h-- > 0) {
 			memcpy(s, d, w);
 			s += Im->Width;
-			d += VGAScreenWidth;
+			d += g_lab->_screenWidth;
 		}
 	}
 }
@@ -575,7 +572,7 @@ void scrollDisplayY(int16 dy, uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
 /* Sets the pen number to use on all the drawing operations.                 */
 /*****************************************************************************/
 void setAPen(uint16 pennum) {
-	curapen = (unsigned char)pennum;
+	_curapen = (unsigned char)pennum;
 }
 
 /*****************************************************************************/
@@ -599,24 +596,24 @@ void rectFill(uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
 		dy = 0;
 	}
 
-	if ((uint)(dx + w) > VGAScreenWidth)
-		w = VGAScreenWidth - dx;
+	if ((uint)(dx + w) > g_lab->_screenWidth)
+		w = g_lab->_screenWidth - dx;
 
-	if ((uint)(dy + h) > VGAScreenHeight)
-		h = VGAScreenHeight - dy;
+	if ((uint)(dy + h) > g_lab->_screenHeight)
+		h = g_lab->_screenHeight - dy;
 
 	if (w > 0 && h > 0) {
-		char *d = (char *)getVGABaseAddr() + dy * VGAScreenWidth + dx;
+		char *d = (char *)getVGABaseAddr() + dy * g_lab->_screenWidth + dx;
 
 		while (h-- > 0) {
 			char *dd = d;
 			int ww = w;
 
 			while (ww-- > 0) {
-				*dd++ = curapen;
+				*dd++ = _curapen;
 			}
 
-			d += VGAScreenWidth;
+			d += g_lab->_screenWidth;
 		}
 	}
 }
@@ -656,14 +653,14 @@ void ghoastRect(uint16 pencolor, uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
 		dy = 0;
 	}
 
-	if ((uint)(dx + w) > VGAScreenWidth)
-		w = VGAScreenWidth - dx;
+	if ((uint)(dx + w) > g_lab->_screenWidth)
+		w = g_lab->_screenWidth - dx;
 
-	if ((uint)(dy + h) > VGAScreenHeight)
-		h = VGAScreenHeight - dy;
+	if ((uint)(dy + h) > g_lab->_screenHeight)
+		h = g_lab->_screenHeight - dy;
 
 	if (w > 0 && h > 0) {
-		char *d = (char *)getVGABaseAddr() + dy * VGAScreenWidth + dx;
+		char *d = (char *)getVGABaseAddr() + dy * g_lab->_screenWidth + dx;
 
 		while (h-- > 0) {
 			char *dd = d;
@@ -680,7 +677,7 @@ void ghoastRect(uint16 pencolor, uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
 				ww -= 2;
 			}
 
-			d += VGAScreenWidth;
+			d += g_lab->_screenWidth;
 			dy++;
 		}
 	}

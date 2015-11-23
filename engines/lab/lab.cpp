@@ -55,6 +55,10 @@ LabEngine::LabEngine(OSystem *syst, const ADGameDescription *gameDesc)
  : Engine(syst), _gameDescription(gameDesc), _extraGameFeatures(0) {
 	g_lab = this;
 
+    _screenWidth = 320;
+	_screenHeight = 200;
+	_screenBytesPerPage = 65536;
+
 	//const Common::FSNode gameDataDir(ConfMan.get("path"));
 	//SearchMan.addSubDirectoryMatching(gameDataDir, "game");
 	//SearchMan.addSubDirectoryMatching(gameDataDir, "game/pict");
@@ -100,7 +104,7 @@ Common::Error LabEngine::run() {
 			} else {
 				knownVersion = false;
 			}
-			
+
 			roomFile.close();
 
 			if (!knownVersion) {
