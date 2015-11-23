@@ -693,8 +693,6 @@ void GameNebular::doObjectAction() {
 			_globals[kHandsetCellStatus] = _difficulty != DIFFICULTY_HARD || _globals[kHandsetCellStatus] ? 1 : 2;
 			dialogs.show(425);
 		}
-	} else if (action.isAction(VERB_SET, NOUN_TIMEBOMB)) {
-		dialogs.show(427);
 	} else if (action.isAction(VERB_PUT, NOUN_BOMB, NOUN_CHICKEN) || action.isAction(VERB_PUT, NOUN_BOMBS, NOUN_CHICKEN)) {
 		_objects.setRoom(OBJ_CHICKEN, NOWHERE);
 		if (_objects.isInInventory(OBJ_BOMBS)) {
