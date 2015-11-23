@@ -65,6 +65,8 @@ public:
 	void load(Resource *resource);
 	CharInfo *getCharInfo(uint16 c);
 	int16 getColorIndex() const { return _colorIndex; }
+	int16 getCharHeight() const { return _charHeight; }
+	int16 getLineIncr() const { return _lineIncr; }
 public:
 	uint32 _totalSize;
 	int16 _charHeight;

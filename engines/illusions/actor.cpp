@@ -929,6 +929,23 @@ void Control::refreshSequenceCode() {
 	_actor->_seqCodeIp = sequence->_sequenceCode;
 }
 
+void Control::getActorFrameDimensions(WidthHeight &dimensions) {
+	dimensions._width = _actor->_surface->w;
+	dimensions._height = _actor->_surface->h;
+}
+
+void Control::drawActorRect(const Common::Rect r, byte color) {
+	_actor->_surface->fillRect(r, color);
+	_actor->_flags |= 0x4000;
+}
+
+void Control::fillActor(byte color) {
+	debug("FILL %d, %d", _actor->_surface->w, _actor->_surface->h);
+	Common::Rect r = Common::Rect(_actor->_surface->w, _actor->_surface->h);
+	_actor->_surface->fillRect(r, color);
+	_actor->_flags |= 0x4000;
+}
+
 void Control::startSequenceActorIntern(uint32 sequenceId, int value, byte *entryTblPtr, uint32 notifyThreadId) {
 	stopActor();
 

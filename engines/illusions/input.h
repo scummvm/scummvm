@@ -79,6 +79,7 @@ public:
 	Input();
 	void processEvent(Common::Event event);
 	bool pollEvent(uint evt);
+	bool hasNewEvents();
 	void discardEvent(uint evt);
 	void discardAllEvents();
 	void activateButton(uint bitMask);

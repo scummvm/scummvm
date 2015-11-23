@@ -77,12 +77,14 @@ uint InputEvent::handle(Common::KeyCode key, int mouseButton, bool down) {
 
 // Input
 
+const uint kAllButtons = 0xFFFF;
+
 Input::Input() {
 	_buttonStates = 0;
 	_newButtons = 0;
 	_buttonsDown = 0;
 	_newKeys = 0;
-	_enabledButtons = 0xFFFF;
+	_enabledButtons = kAllButtons;
 	_cursorPos.x = 0;
 	_cursorPos.y = 0;
 	_prevCursorPos.x = 0;
@@ -123,12 +125,16 @@ bool Input::pollEvent(uint evt) {
 	return pollButton(_inputEvents[evt].getBitMask());
 }
 
+bool Input::hasNewEvents() {
+	return lookNewButtons(kAllButtons);
+}
+
 void Input::discardEvent(uint evt) {
 	discardButtons(_inputEvents[evt].getBitMask());
 }
 
 void Input::discardAllEvents() {
-	discardButtons(0xFFFF);
+	discardButtons(kAllButtons);
 }
 
 void Input::activateButton(uint bitMask) {

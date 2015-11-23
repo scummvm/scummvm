@@ -23,10 +23,12 @@
 #include "illusions/duckman/illusions_duckman.h"
 #include "illusions/duckman/scriptopcodes_duckman.h"
 #include "illusions/duckman/duckman_dialog.h"
+#include "illusions/duckman/menusystem_duckman.h"
 #include "illusions/actor.h"
 #include "illusions/camera.h"
 #include "illusions/dictionary.h"
 #include "illusions/input.h"
+#include "illusions/menusystem.h"
 #include "illusions/resources/scriptresource.h"
 #include "illusions/resources/talkresource.h"
 #include "illusions/screen.h"
@@ -57,6 +59,7 @@ void ScriptOpcodes_Duckman::initOpcodes() {
 	// First clear everything
 	for (uint i = 0; i < 256; ++i)
 		_opcodes[i] = 0;
+	// Register opcodes
 	OPCODE(1, opNop);
 	OPCODE(2, opSuspend);
 	OPCODE(3, opYield);
@@ -69,13 +72,15 @@ void ScriptOpcodes_Duckman::initOpcodes() {
 	OPCODE(16, opLoadResource);
 	OPCODE(17, opUnloadResource);
 	OPCODE(18, opEnterScene18);
+	OPCODE(19, opUnloadResourcesBySceneId);
 	OPCODE(20, opChangeScene);
 	OPCODE(22, opStartModalScene);
 	OPCODE(23, opExitModalScene);
 	OPCODE(24, opEnterScene24);
 	OPCODE(25, opLeaveScene24);
-	OPCODE(26, opEnterScene26);
-	OPCODE(27, opLeaveScene26);
+	OPCODE(26, opEnterDebugger);
+	OPCODE(27, opLeaveDebugger);
+	OPCODE(28, opDumpCurrentSceneFiles);
 	OPCODE(32, opPanCenterObject);
 	OPCODE(33, opPanTrackObject);
 	OPCODE(34, opPanToObject);
@@ -135,7 +140,6 @@ void ScriptOpcodes_Duckman::initOpcodes() {
 	OPCODE(126, opDebug126);
 	OPCODE(127, opDebug127);
 #if 0		
-	// Register opcodes
 	OPCODE(8, opStartTempScriptThread);
 	OPCODE(14, opSetThreadSceneId);
 	OPCODE(15, opEndTalkThreads);
@@ -252,6 +256,12 @@ void ScriptOpcodes_Duckman::opEnterScene18(ScriptThread *scriptThread, OpCall &o
 	_vm->enterScene(sceneId, 0);
 }
 
+void ScriptOpcodes_Duckman::opUnloadResourcesBySceneId(ScriptThread *scriptThread, OpCall &opCall) {
+	ARG_SKIP(2);
+	ARG_UINT32(sceneId);
+	_vm->_resSys->unloadResourcesBySceneId(sceneId);
+}
+
 //static uint dsceneId = 0, dthreadId = 0;
 //static uint dsceneId = 0x00010008, dthreadId = 0x00020029;//Beginning in Jac
 static uint dsceneId = 0x0001000A, dthreadId = 0x00020043;//Home front
@@ -279,11 +289,13 @@ void ScriptOpcodes_Duckman::opChangeScene(ScriptThread *scriptThread, OpCall &op
 	debug(1, "changeScene(%08X, %08X)", sceneId, threadId);
 	
 	//DEBUG
+	/*
 	if (dsceneId) {
 		sceneId = dsceneId;
 		threadId = dthreadId;
 		dsceneId = 0;
 	}
+	*/
 	
 	if (_vm->_scriptResource->_properties.get(31)) {
 		_vm->changeScene(0x10002, 0x20001, opCall._callerThreadId);
@@ -331,12 +343,19 @@ void ScriptOpcodes_Duckman::opLeaveScene24(ScriptThread *scriptThread, OpCall &o
 	_vm->leavePause(_vm->getCurrentScene(), opCall._callerThreadId);
 }
 
-void ScriptOpcodes_Duckman::opEnterScene26(ScriptThread *scriptThread, OpCall &opCall) {
-	// TODO
+void ScriptOpcodes_Duckman::opEnterDebugger(ScriptThread *scriptThread, OpCall &opCall) {
+	// Used for debugging purposes in the original engine
+	// This is not supported and only reachable by code not implemented here!
+	error("ScriptOpcodes_Duckman::opEnterDebugger() Debugger function called");
 }
 
-void ScriptOpcodes_Duckman::opLeaveScene26(ScriptThread *scriptThread, OpCall &opCall) {
-	// TODO
+void ScriptOpcodes_Duckman::opLeaveDebugger(ScriptThread *scriptThread, OpCall &opCall) {
+	// See opEnterDebugger
+	error("ScriptOpcodes_Duckman::opLeaveDebugger() Debugger function called");
+}
+
+void ScriptOpcodes_Duckman::opDumpCurrentSceneFiles(ScriptThread *scriptThread, OpCall &opCall) {
+	_vm->dumpCurrSceneFiles(_vm->getCurrentScene(), opCall._callerThreadId);
 }
 
 void ScriptOpcodes_Duckman::opPanCenterObject(ScriptThread *scriptThread, OpCall &opCall) {
@@ -615,23 +634,32 @@ void ScriptOpcodes_Duckman::opAddMenuChoice(ScriptThread *scriptThread, OpCall &
 }
 
 void ScriptOpcodes_Duckman::opDisplayMenu(ScriptThread *scriptThread, OpCall &opCall) {
-	ARG_INT16(unk1);
+	ARG_INT16(timeOutDuration);
 	ARG_UINT32(menuId);
-	ARG_UINT32(unk2);
-	// TODO _vm->_shellMgr->displayMenu(_vm->_stack->topPtr(), &_vm->_menuChoiceOfs, menuId, unk1, unk2, opCall._callerThreadId);
-	// Remove menu choices from the stack
-	do {
-		_vm->_stack->pop();
-	} while (_vm->_stack->pop() == 0);
+	ARG_UINT32(timeOutMenuChoiceIndex);
+	
+	debug("timeOutMenuChoiceIndex: %d", timeOutMenuChoiceIndex);
+	
+	MenuChoiceOffsets menuChoiceOffsets;
 
+	// Load menu choices from the stack
+	do {
+		int16 choiceOffs = _vm->_stack->pop();
+		debug("choiceOffs: %04X", choiceOffs);
+		menuChoiceOffsets.push_back(choiceOffs);
+	} while (_vm->_stack->pop() == 0);
+	
+	_vm->_menuSystem->runMenu(menuChoiceOffsets, &_vm->_menuChoiceOfs, 
+		menuId, timeOutDuration, timeOutMenuChoiceIndex,
+		opCall._threadId);
+	
 	//DEBUG Resume calling thread, later done by the video player
-	_vm->notifyThreadId(opCall._callerThreadId);
+	//_vm->notifyThreadId(opCall._callerThreadId);
 
 }
 
 void ScriptOpcodes_Duckman::opSwitchMenuChoice(ScriptThread *scriptThread, OpCall &opCall) {
-_vm->_menuChoiceOfs = 156; // DEBUG Chose "Start game"
-
+	//_vm->_menuChoiceOfs = 156; // DEBUG Chose "Start game"
 	opCall._deltaOfs += _vm->_menuChoiceOfs;
 }
 

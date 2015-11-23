@@ -61,13 +61,13 @@ void GamArchive::loadDictionary() {
 		_groups[i]._fileCount = fileCount;
 		_groups[i]._files = new GamFileEntry[fileCount];
 		
-		debug("Group %08X, fileCount: %d", _groups[i]._id, _groups[i]._fileCount);
+		debug(8, "Group %08X, fileCount: %d", _groups[i]._id, _groups[i]._fileCount);
 		
 		for (uint j = 0; j < fileCount; ++j) {
 			_groups[i]._files[j]._id = _fd->readUint32LE();
 			_groups[i]._files[j]._fileOffset = _fd->readUint32LE();
 			_groups[i]._files[j]._fileSize = _fd->readUint32LE();
-			debug("  %08X, %08X, %d", _groups[i]._files[j]._id, _groups[i]._files[j]._fileOffset, _groups[i]._files[j]._fileSize);
+			debug(8, "  %08X, %08X, %d", _groups[i]._files[j]._id, _groups[i]._files[j]._fileOffset, _groups[i]._files[j]._fileSize);
 		}
 	}
 

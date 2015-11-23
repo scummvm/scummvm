@@ -37,7 +37,7 @@ MusicPlayer::~MusicPlayer() {
 }
 
 void MusicPlayer::play(uint32 musicId, bool looping, int16 volume, int16 pan) {
-	debug("MusicPlayer::play(%08X)", musicId);
+	debug(1, "MusicPlayer::play(%08X)", musicId);
 	if (_flags & 1) {
 		stop();
 		_musicId = musicId;
@@ -57,7 +57,7 @@ void MusicPlayer::play(uint32 musicId, bool looping, int16 volume, int16 pan) {
 }
 
 void MusicPlayer::stop() {
-	debug("MusicPlayer::stop()");
+	debug(1, "MusicPlayer::stop()");
 	if ((_flags & 1) && (_flags & 2)) {
 		if (g_system->getMixer()->isSoundHandleActive(_soundHandle))
 			g_system->getMixer()->stopHandle(_soundHandle);
@@ -82,7 +82,7 @@ VoicePlayer::~VoicePlayer() {
 }
 
 bool VoicePlayer::cue(const char *voiceName) {
-	debug("VoicePlayer::cue(%s)", voiceName);
+	debug(1, "VoicePlayer::cue(%s)", voiceName);
 	_voiceName = voiceName;
 	_voiceStatus = 2;
 	if (!isEnabled()) {
@@ -147,7 +147,7 @@ void Sound::load() {
 }
 
 void Sound::unload() {
-	debug("Sound::unload() %08X", _soundEffectId);
+	debug(1, "Sound::unload() %08X", _soundEffectId);
 	stop();
 	delete _stream;
 	_stream = 0;

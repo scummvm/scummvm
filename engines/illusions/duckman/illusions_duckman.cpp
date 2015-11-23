@@ -23,6 +23,7 @@
 #include "illusions/duckman/illusions_duckman.h"
 #include "illusions/duckman/duckman_dialog.h"
 #include "illusions/duckman/duckman_specialcode.h"
+#include "illusions/duckman/menusystem_duckman.h"
 #include "illusions/duckman/scriptopcodes_duckman.h"
 #include "illusions/actor.h"
 #include "illusions/camera.h"
@@ -110,6 +111,7 @@ Common::Error IllusionsEngine_Duckman::run() {
 	_threads = new ThreadList(this);
 	_updateFunctions = new UpdateFunctions();
 	_soundMan = new SoundMan(this);
+	_menuSystem = new DuckmanMenuSystem(this);
 
 	_fader = new Fader();
 	
@@ -180,6 +182,7 @@ Common::Error IllusionsEngine_Duckman::run() {
 
 	delete _fader;
 
+	delete _menuSystem;
 	delete _soundMan;
 	delete _updateFunctions;
 	delete _threads;
@@ -231,8 +234,10 @@ void IllusionsEngine_Duckman::initInput() {
 	_input->setInputEvent(kEventDown, 0x80)
 		.addMouseButton(MOUSE_RIGHT_BUTTON)
 		.addKey(Common::KEYCODE_DOWN);
+	/* Not implemented, used for original debugging purposes
 	_input->setInputEvent(kEventF1, 0x100)
 		.addKey(Common::KEYCODE_F1);
+	*/
 }
 
 #define UPDATEFUNCTION(priority, sceneId, callback) \
@@ -256,8 +261,13 @@ int IllusionsEngine_Duckman::updateScript(uint flags) {
 	if (_screen->isDisplayOn() && !_screen->isFaderActive() && _pauseCtr == 0) {
 		if (_input->pollEvent(kEventAbort)) {
 			startScriptThread(0x00020342, 0);
+			//testMenu(this);//TODO DEBUG
+			
+			//BaseMenu *me = _menuSystem->getMenuById(kDuckmanPauseMenu);
+			//_menuSystem->openMenu(me);
+			//_menuSystem->runMenu(0x180002);
+			
 		} else if (_input->pollEvent(kEventF1)) {
-			debug("F1");
 			startScriptThread(0x0002033F, 0);
 		}
 	}
@@ -632,7 +642,7 @@ void IllusionsEngine_Duckman::cursorControlRoutine(Control *control, uint32 delt
 			_dialogSys->updateDialogState();
 			break;
 		case 4:
-			// TODO ShellMgr_update(_cursor._control);
+			_menuSystem->update(_cursor._control);
 			break;
 		}
 	}

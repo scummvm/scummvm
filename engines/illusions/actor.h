@@ -34,6 +34,7 @@
 
 namespace Illusions {
 
+class Control;
 class IllusionsEngine;
 class SequenceOpcodes;
 struct OpCall;
@@ -200,6 +201,9 @@ public:
 	PointArray *createPath(Common::Point destPt);
 	void updateActorMovement(uint32 deltaTime);
 	void refreshSequenceCode();
+	void getActorFrameDimensions(WidthHeight &dimensions);
+	void drawActorRect(const Common::Rect r, byte color);
+	void fillActor(byte color);
 public:
 	IllusionsEngine *_vm;
 	uint _flags;
