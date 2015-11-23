@@ -1495,8 +1495,6 @@ void Scene502::getPanelInfo(Common::Point *walkToPos, int *panel, Common::Point 
 }
 
 void Scene502::handlePanelAnimation() {
-	int puzzleSolvedFl = true;
-
 	switch (_game._trigger) {
 	case 110:
 		_vm->_sound->command(65);
@@ -1748,6 +1746,7 @@ void Scene502::handlePanelAnimation() {
 			break;
 		}
 
+		int puzzleSolvedFl = true;
 		for (int i = 0; i < 16; i++) {
 			if (_puzzlePictures[i] != 1)
 				puzzleSolvedFl = false;
