@@ -64,7 +64,6 @@ char diffcmap[256 * 3];
 BitMap RawDiffBM;
 
 extern BitMap *DispBitMap, *DrawBitMap;
-extern uint32 VGABytesPerPage;
 extern byte **startoffile;
 
 #define CONTINUOUS      0xFFFF

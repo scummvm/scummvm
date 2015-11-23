@@ -39,7 +39,6 @@
 namespace Lab {
 extern bool nopalchange, DoBlack, IsHiRes;
 extern char diffcmap[256 * 3];
-extern uint32 VGAScreenWidth, VGAScreenHeight;
 extern uint16 *FadePalette;
 
 Intro::Intro() {
@@ -466,7 +465,7 @@ void Intro::introSequence() {
 
 	if (_quitIntro) {
 		setAPen(0);
-		rectFill(0, 0, VGAScreenWidth - 1, VGAScreenHeight - 1);
+		rectFill(0, 0, g_lab->_screenWidth - 1, g_lab->_screenHeight - 1);
 		DoBlack = true;
 	}
 }

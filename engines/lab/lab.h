@@ -66,6 +66,11 @@ public:
 
 	LargeSet *_conditions, *_roomsFound;
 
+	int _screenWidth;
+	int _screenHeight;
+	int _screenBytesPerPage;
+
+
 	// timing.cpp
 	void getTime(uint32 *secs, uint32 *micros);
 	void addCurTime(uint32 sec, uint32 micros, uint32 *timeSec, uint32 *timeMicros);

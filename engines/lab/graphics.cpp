@@ -62,8 +62,6 @@ extern const char *CurFileName;
 /*---------------------------------------------------------------------------*/
 
 
-extern uint32 VGAScreenWidth, VGAScreenHeight, VGABytesPerPage;
-
 /*****************************************************************************/
 /* Reads in a picture into the dest bitmap.                                  */
 /*****************************************************************************/
@@ -81,8 +79,8 @@ bool readPict(const char *filename, bool PlayOnce) {
 		return false;
 	}
 
-	DispBitMap->BytesPerRow = VGAScreenWidth;
-	DispBitMap->Rows        = VGAScreenHeight;
+	DispBitMap->BytesPerRow = g_lab->_screenWidth;
+	DispBitMap->Rows        = g_lab->_screenHeight;
 	DispBitMap->Flags       = BITMAPF_VIDEO;
 
 	readDiff(PlayOnce);
@@ -292,7 +290,6 @@ uint32 flowText(void *font,      /* the TextAttr pointer */
 }
 
 
-extern uint32 VGABytesPerPage;
 extern byte *VGABASEADDRESS;
 
 
@@ -309,15 +306,15 @@ uint32 flowTextToMem(Image *DestIm, void *font,     /* the TextAttr pointer */
                      bool output,                  /* Whether to output any text */
                      uint16 x1,               /* Cords */
                      uint16 y1, uint16 x2, uint16 y2, const char *str) { /* The text itself */
-	uint32 res, vgabyte = VGABytesPerPage;
+	uint32 res, vgabyte = g_lab->_screenBytesPerPage;
 	byte *tmp = VGABASEADDRESS;
 
 	VGABASEADDRESS = DestIm->ImageData;
-	VGABytesPerPage = (uint32) DestIm->Width * (int32) DestIm->Height;
+	g_lab->_screenBytesPerPage = (uint32) DestIm->Width * (int32) DestIm->Height;
 
 	res = flowText(font, spacing, pencolor, backpen, fillback, centerh, centerv, output, x1, y1, x2, y2, str);
 
-	VGABytesPerPage = vgabyte;
+	g_lab->_screenBytesPerPage = vgabyte;
 	VGABASEADDRESS = tmp;
 
 	return res;
@@ -462,8 +459,8 @@ static void doScrollBlack() {
 		tempmem = mem;
 
 		while (size) {
-			if (size > VGABytesPerPage)
-				copysize = VGABytesPerPage;
+			if (size > g_lab->_screenBytesPerPage)
+				copysize = g_lab->_screenBytesPerPage;
 			else
 				copysize = size;
 
@@ -510,12 +507,12 @@ static void copyPage(uint16 width, uint16 height, uint16 nheight, uint16 startli
 
 	size = (int32)(height - nheight) * (int32) width;
 	mem += startline * width;
-	CurPage = ((int32) nheight * (int32) width) / VGABytesPerPage;
-	OffSet = ((int32) nheight * (int32) width) - (CurPage * VGABytesPerPage);
+	CurPage = ((int32) nheight * (int32) width) / g_lab->_screenBytesPerPage;
+	OffSet = ((int32) nheight * (int32) width) - (CurPage * g_lab->_screenBytesPerPage);
 
 	while (size) {
-		if (size > (VGABytesPerPage - OffSet))
-			copysize = VGABytesPerPage - OffSet;
+		if (size > (g_lab->_screenBytesPerPage - OffSet))
+			copysize = g_lab->_screenBytesPerPage - OffSet;
 		else
 			copysize = size;
 
@@ -665,7 +662,7 @@ static void doTransWipe(CloseDataPtr *CPtr, char *filename) {
 				linesdone = 0;
 			}
 
-			ghoastRect(0, 0, CurY, VGAScreenWidth - 1, CurY + 1);
+			ghoastRect(0, 0, CurY, g_lab->_screenWidth - 1, CurY + 1);
 			CurY += 4;
 			linesdone++;
 		}
@@ -683,7 +680,7 @@ static void doTransWipe(CloseDataPtr *CPtr, char *filename) {
 				linesdone = 0;
 			}
 
-			rectFill(0, CurY, VGAScreenWidth - 1, CurY + 1);
+			rectFill(0, CurY, g_lab->_screenWidth - 1, CurY + 1);
 			CurY += 4;
 			linesdone++;
 		}
@@ -696,16 +693,16 @@ static void doTransWipe(CloseDataPtr *CPtr, char *filename) {
 	else
 		CurFileName = getPictName(CPtr);
 
-	byte *BitMapMem = readPictToMem(CurFileName, VGAScreenWidth, LastY + 5);
+	byte *BitMapMem = readPictToMem(CurFileName, g_lab->_screenWidth, LastY + 5);
 	VGASetPal(diffcmap, 256);
 
 	if (BitMapMem) {
-		ImSource.Width = VGAScreenWidth;
+		ImSource.Width = g_lab->_screenWidth;
 		ImSource.Height = LastY;
 		ImSource.ImageData = BitMapMem;
 
-		ImDest.Width = VGAScreenWidth;
-		ImDest.Height = VGAScreenHeight;
+		ImDest.Width = g_lab->_screenWidth;
+		ImDest.Height = g_lab->_screenHeight;
 		ImDest.ImageData = getVGABaseAddr();
 
 		for (counter = 0; counter < 2; counter++) {
@@ -720,8 +717,8 @@ static void doTransWipe(CloseDataPtr *CPtr, char *filename) {
 
 				ImDest.ImageData = getVGABaseAddr();
 
-				bltBitMap(&ImSource, 0, CurY, &ImDest, 0, CurY, VGAScreenWidth, 2);
-				ghoastRect(0, 0, CurY, VGAScreenWidth - 1, CurY + 1);
+				bltBitMap(&ImSource, 0, CurY, &ImDest, 0, CurY, g_lab->_screenWidth, 2);
+				ghoastRect(0, 0, CurY, g_lab->_screenWidth - 1, CurY + 1);
 				CurY += 4;
 				linesdone++;
 			}
@@ -740,9 +737,9 @@ static void doTransWipe(CloseDataPtr *CPtr, char *filename) {
 				ImDest.ImageData = getVGABaseAddr();
 
 				if (CurY == LastY)
-					bltBitMap(&ImSource, 0, CurY, &ImDest, 0, CurY, VGAScreenWidth, 1);
+					bltBitMap(&ImSource, 0, CurY, &ImDest, 0, CurY, g_lab->_screenWidth, 1);
 				else
-					bltBitMap(&ImSource, 0, CurY, &ImDest, 0, CurY, VGAScreenWidth, 2);
+					bltBitMap(&ImSource, 0, CurY, &ImDest, 0, CurY, g_lab->_screenWidth, 2);
 
 				CurY += 4;
 				linesdone++;
