@@ -43,30 +43,23 @@ static byte _curvgapal[256 * 3];
 static unsigned char _curapen = 0;
 
 byte *VGABASEADDRESS = 0;
+byte *_displayBuffer = 0;
 
-byte *g_DisplayBuffer = 0;
-byte *g_Pixels = 0;
-
-int g_ScreenWasLocked = 0;
-int g_IgnoreUpdateDisplay = 0;
 int g_LastWaitTOFTicks = 0;
 
-uint32 g_MouseX = 0;
-uint32 g_MouseY = 0;
+uint32 _mouseX = 0;
+uint32 _mouseY = 0;
 
 uint16 g_NextKeyIn = 0;
 uint16 g_KeyBuf[64];
 uint16 g_NextKeyOut = 0;
-bool g_MouseAtEdge = false;
+bool _mouseAtEdge = false;
 byte *TempScrollData;
 
 /*****************************************************************************/
 /* Sets up either a low-res or a high-res 256 color screen.                  */
 /*****************************************************************************/
 bool createScreen(bool HiRes) {
-	//VGABASEADDRESS  = (unsigned long)malloc(640 * 480);
-	VGABASEADDRESS  = 0;
-
 	if (HiRes) {
 		g_lab->_screenWidth  = 640;
 		g_lab->_screenHeight = 480;
@@ -76,8 +69,7 @@ bool createScreen(bool HiRes) {
 	}
 	g_lab->_screenBytesPerPage = g_lab->_screenWidth * g_lab->_screenHeight;
 
-	g_DisplayBuffer = (byte *)malloc(g_lab->_screenBytesPerPage);
-	g_Pixels = (byte *)calloc(g_lab->_screenBytesPerPage, 4);
+	_displayBuffer = (byte *)malloc(g_lab->_screenBytesPerPage);
 
 	return true;
 }
@@ -119,39 +111,39 @@ void WSDL_ProcessInput(bool can_delay) {
 			switch (event.type) {
 			case Common::EVENT_RBUTTONDOWN:
 				flags |= 8;
-				mouseHandler(flags, g_MouseX, g_MouseY);
+				mouseHandler(flags, _mouseX, _mouseY);
 				break;
 
 			case Common::EVENT_LBUTTONDOWN:
 				flags |= 2;
-				mouseHandler(flags, g_MouseX, g_MouseY);
+				mouseHandler(flags, _mouseX, _mouseY);
 				break;
 
 			case Common::EVENT_MOUSEMOVE:
-				lastMouseAtEdge = g_MouseAtEdge;
-				g_MouseAtEdge = false;
-				g_MouseX = event.mouse.x;
+				lastMouseAtEdge = _mouseAtEdge;
+				_mouseAtEdge = false;
+				_mouseX = event.mouse.x;
 				if (event.mouse.x <= 0) {
-					g_MouseX = 0;
-					g_MouseAtEdge = true;
+					_mouseX = 0;
+					_mouseAtEdge = true;
 				}
-				if (g_MouseX > g_lab->_screenWidth - 1) {
-					g_MouseX = g_lab->_screenWidth;
-					g_MouseAtEdge = true;
+				if (_mouseX > g_lab->_screenWidth - 1) {
+					_mouseX = g_lab->_screenWidth;
+					_mouseAtEdge = true;
 				}
 
-				g_MouseY = event.mouse.y;
+				_mouseY = event.mouse.y;
 				if (event.mouse.y <= 0) {
-					g_MouseY = 0;
-					g_MouseAtEdge = true;
+					_mouseY = 0;
+					_mouseAtEdge = true;
 				}
-				if (g_MouseY > g_lab->_screenHeight - 1) {
-					g_MouseY = g_lab->_screenHeight;
-					g_MouseAtEdge = true;
+				if (_mouseY > g_lab->_screenHeight - 1) {
+					_mouseY = g_lab->_screenHeight;
+					_mouseAtEdge = true;
 				}
 
-				if (!lastMouseAtEdge || !g_MouseAtEdge)
-					mouseHandler(1, g_MouseX, g_MouseY);
+				if (!lastMouseAtEdge || !_mouseAtEdge)
+					mouseHandler(1, _mouseX, _mouseY);
 
 				break;
 
@@ -185,7 +177,7 @@ void WSDL_ProcessInput(bool can_delay) {
 				break;
 			}
 
-			g_system->copyRectToScreen(g_DisplayBuffer, g_lab->_screenWidth, 0, 0, g_lab->_screenWidth, g_lab->_screenHeight);
+			g_system->copyRectToScreen(_displayBuffer, g_lab->_screenWidth, 0, 0, g_lab->_screenWidth, g_lab->_screenHeight);
 			g_system->updateScreen();
 		}
 	}
@@ -197,19 +189,14 @@ void WSDL_ProcessInput(bool can_delay) {
 void WSDL_GetMousePos(int *x, int *y) {
 	WSDL_ProcessInput(0);
 
-	*x = g_MouseX;
-	*y = g_MouseY;
+	*x = _mouseX;
+	*y = _mouseY;
 }
 
 void waitTOF() {
-	int untilOutOfRefresh = 1;
+	g_system->copyRectToScreen(_displayBuffer, g_lab->_screenWidth, 0, 0, g_lab->_screenWidth, g_lab->_screenHeight);
+	g_system->updateScreen();
 
-  	if (g_ScreenWasLocked || untilOutOfRefresh) {
-		g_system->copyRectToScreen(g_DisplayBuffer, g_lab->_screenWidth, 0, 0, g_lab->_screenWidth, g_lab->_screenHeight);
-		g_system->updateScreen();
-  	}
-
-  	g_ScreenWasLocked = 0;
   	WSDL_ProcessInput(0);
 
   	uint32 now;
@@ -268,23 +255,10 @@ void VGASetPal(void *cmap, uint16 numcolors) {
 		writeColorRegs((byte *)cmap, 0, numcolors);
 }
 
-byte *WSDL_LockVideo() {
-	g_ScreenWasLocked = 1;
-
-	return g_DisplayBuffer;
-}
-
-void WSDL_IgnoreUpdateDisplay(int state) {
-	g_IgnoreUpdateDisplay = state;
-}
-
 void WSDL_UpdateScreen() {
-	if (g_ScreenWasLocked && !g_IgnoreUpdateDisplay) {
-		g_system->copyRectToScreen(g_DisplayBuffer, g_lab->_screenWidth, 0, 0, g_lab->_screenWidth, g_lab->_screenHeight);
-  		g_system->updateScreen();
-  	}
+	g_system->copyRectToScreen(_displayBuffer, g_lab->_screenWidth, 0, 0, g_lab->_screenWidth, g_lab->_screenHeight);
+	g_system->updateScreen();
 
-	g_ScreenWasLocked = 0;
 	WSDL_ProcessInput(0);
 }
 
@@ -295,7 +269,7 @@ byte *getVGABaseAddr() {
 	if (VGABASEADDRESS)
 		return VGABASEADDRESS;
 
-	return WSDL_LockVideo();
+	return _displayBuffer;
 }
 
 /*****************************************************************************/

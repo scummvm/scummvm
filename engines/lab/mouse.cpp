@@ -199,16 +199,16 @@ void mouseHide() {
 }
 
 
-extern uint32 g_MouseX;
-extern uint32 g_MouseY;
+extern uint32 _mouseX;
+extern uint32 _mouseY;
 
 /*****************************************************************************/
 /* Gets the current mouse co-ordinates.  NOTE: On IBM version, will scale    */
 /* from virtual to screen co-ordinates automatically.                        */
 /*****************************************************************************/
 void mouseXY(uint16 *x, uint16 *y) {
-	*x = (uint16)g_MouseX;
-	*y = (uint16)g_MouseY;
+	*x = (uint16)_mouseX;
+	*y = (uint16)_mouseY;
 
 	if (!IsHiRes)
 		(*x) /= 2;
@@ -237,15 +237,15 @@ void mouseMove(uint16 x, uint16 y) {
 bool mouseButton(uint16 *x, uint16 *y, bool leftbutton) {
 	if (leftbutton) {
 		if (LeftClick) {
-			*x = (!IsHiRes) ? (uint16)g_MouseX / 2 : (uint16)g_MouseX;
-			*y = (uint16)g_MouseY;
+			*x = (!IsHiRes) ? (uint16)_mouseX / 2 : (uint16)_mouseX;
+			*y = (uint16)_mouseY;
 			LeftClick = false;
 			return true;
 		}
 	} else {
 		if (RightClick) {
-			*x = (!IsHiRes) ? (uint16)g_MouseX / 2 : (uint16)g_MouseX;
-			*y = (uint16)g_MouseY;
+			*x = (!IsHiRes) ? (uint16)_mouseX / 2 : (uint16)_mouseX;
+			*y = (uint16)_mouseY;
 			RightClick = false;
 			return true;
 		}
