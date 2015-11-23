@@ -35,6 +35,7 @@ Console::Console(AgiEngine *vm) : GUI::Debugger() {
 	registerCmd("debug",      WRAP_METHOD(Console, Cmd_Debug));
 	registerCmd("cont",       WRAP_METHOD(Console, Cmd_Cont));
 	registerCmd("agiver",     WRAP_METHOD(Console, Cmd_Agiver));
+	registerCmd("version",    WRAP_METHOD(Console, Cmd_Version));
 	registerCmd("flags",      WRAP_METHOD(Console, Cmd_Flags));
 	registerCmd("logic0",     WRAP_METHOD(Console, Cmd_Logic0));
 	registerCmd("objs",       WRAP_METHOD(Console, Cmd_Objs));
@@ -125,8 +126,153 @@ bool Console::Cmd_Agiver(int argc, const char **argv) {
 	maj = (ver >> 12) & 0xf;
 	min = ver & 0xfff;
 
+	debugPrintf("AGI version: ");
 	debugPrintf(maj <= 2 ? "%x.%03x\n" : "%x.002.%03x\n", maj, min);
 
+	return true;
+}
+
+#define CONSOLE_VERSION_MAXLEN 10
+
+bool Console::Cmd_Version(int argc, const char **argv) {
+	AgiGame *game = &_vm->_game;
+	int scriptNr = 0;
+	int scriptTextCount = 0;
+	int scriptTextNr = 0;
+	const char *scriptTextPtr = NULL;
+	const char *wordScanPtr = NULL;
+	const char *wordStartPtr = NULL;
+	const char *versionStartPtr = NULL;
+	const char *versionPtr = NULL;
+	int wordLen = 0;
+	char curChar = 0;
+	int versionLen = 0;
+	bool wordFound = false;
+	bool versionFound = false;
+	char versionString[CONSOLE_VERSION_MAXLEN];
+	bool scriptLoadedByUs = false;
+
+	// Show AGI version
+	Cmd_Agiver(argc, argv);
+
+	// And now try to figure out the version of the game
+	// We do this by scanning through all script texts
+	// This is the best we can do about it. There is no special location for the game version number.
+	// There are multiple variations, like "ver. X.XX", "ver X.XX" and even "verion X.XX".
+	for (scriptNr = 0; scriptNr < MAX_DIRS; scriptNr++) {
+		if (game->dirLogic[scriptNr].offset != _EMPTY) {
+			// Script is supposed to exist?
+			scriptLoadedByUs = false;
+			if (!(game->dirLogic[scriptNr].flags & RES_LOADED)) {
+				// But not currently loaded? -> load it now
+				if (_vm->agiLoadResource(rLOGIC, scriptNr) != errOK) {
+					// In case we can't load the source, skip it
+					continue;
+				}
+				scriptLoadedByUs = true;
+			}
+			// Script currently loaded
+			// Now scan all texts
+			scriptTextCount = game->logics[scriptNr].numTexts;
+			for (scriptTextNr = 0; scriptTextNr < scriptTextCount; scriptTextNr++) {
+				scriptTextPtr = game->logics[scriptNr].texts[scriptTextNr];
+
+				// Now scan this text for version information
+				wordScanPtr = scriptTextPtr;
+				versionPtr = NULL;
+
+				do {
+					curChar = *wordScanPtr;
+
+					if ((curChar == 'V') || (curChar == 'v')) {
+						// "V" gefunden, ggf. beginning of version?
+						wordStartPtr = wordScanPtr;
+						wordFound = false;
+
+						do {
+							curChar = *wordScanPtr;
+							if (curChar == ' ') {
+								break;
+							}
+							wordScanPtr++;
+						} while (curChar);
+
+						if (curChar) {
+							// end of "version" found
+							wordLen = wordScanPtr - wordStartPtr;
+
+							if (wordLen >= 3) {
+								if (strncmp(wordStartPtr, "ver", wordLen) == 0)
+									wordFound = true;
+								if (strncmp(wordStartPtr, "Ver", wordLen) == 0)
+									wordFound = true;
+							}
+							if ((!wordFound) && (wordLen >= 4)) {
+								if (strncmp(wordStartPtr, "ver.", wordLen) == 0)
+									wordFound = true;
+								if (strncmp(wordStartPtr, "Ver.", wordLen) == 0)
+									wordFound = true;
+							}
+							if ((!versionFound) && (wordLen >= 7)) {
+								if (strncmp(wordStartPtr, "version", wordLen) == 0)
+									wordFound = true;
+								if (strncmp(wordStartPtr, "Version", wordLen) == 0)
+									wordFound = true;
+								if (strncmp(wordStartPtr, "VERSION", wordLen) == 0)
+									wordFound = true;
+							}
+
+							if (wordFound) {
+								// We found something interesting
+								//debugPrintf("%d: %s\n", scriptNr, scriptTextPtr);
+
+								wordScanPtr++; // skip space
+								versionStartPtr = wordScanPtr;
+								curChar = *wordScanPtr;
+								if ((curChar >= '0') && (curChar <= '9')) {
+									// Next word starts with a number
+									wordScanPtr++;
+									curChar = *wordScanPtr;
+									if (curChar == '.') {
+										// Followed by a point? then we assume that we found a version number
+										// Now we try to find the end of it
+										wordScanPtr++;
+										do {
+											curChar = *wordScanPtr;
+											if ((curChar == ' ') || (curChar == '\\') || (!curChar))
+												break; // space or potential new line or NUL? -> found the end
+											wordScanPtr++;
+										} while (1);
+
+										versionLen = wordScanPtr - versionStartPtr;
+										if (versionLen < CONSOLE_VERSION_MAXLEN) {
+											// Looks fine, now extract and show it
+											memcpy(versionString, versionStartPtr, versionLen);
+											versionString[versionLen] = 0;
+											debugPrintf("Scanned game version: %s\n", versionString);
+											versionFound = true;
+										}
+									}
+								}
+							}
+						}
+
+						// Seek back
+						wordScanPtr = wordStartPtr;
+					}
+					wordScanPtr++;
+				} while (curChar);
+			}
+
+			if (scriptLoadedByUs) {
+				_vm->agiUnloadResource(rLOGIC, scriptNr);
+			}
+		}
+	}
+
+	if (!versionFound) {
+		debugPrintf("Scanned game version: [not found]\n");
+	}
 	return true;
 }
 
