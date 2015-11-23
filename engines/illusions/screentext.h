@@ -54,6 +54,7 @@ public:
 	ScreenText(IllusionsEngine *vm);
 	~ScreenText();
 	void getTextInfoDimensions(WidthHeight &textInfoDimensions);
+	void getTextInfoPosition(Common::Point &position);
 	void setTextInfoPosition(Common::Point position);
 	void updateTextInfoPosition(Common::Point position);
 	void clipTextInfoPosition(Common::Point &position);

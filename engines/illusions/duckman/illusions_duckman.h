@@ -32,6 +32,7 @@ namespace Illusions {
 class Dictionary;
 class ScriptStack;
 class DuckmanDialogSystem;
+class DuckmanMenuSystem;
 
 struct Cursor_Duckman {
 	int _gameState;
@@ -99,6 +100,7 @@ public:
 	int _savedInventoryActorIndex;
 
 	ScreenShaker *_screenShaker;
+	DuckmanMenuSystem *_menuSystem;
 	
 	void initInput();
 	

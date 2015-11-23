@@ -42,6 +42,10 @@ void ScreenText::getTextInfoDimensions(WidthHeight &textInfoDimensions) {
 	textInfoDimensions = _dimensions;
 }
 
+void ScreenText::getTextInfoPosition(Common::Point &position) {
+	position = _position;
+}
+
 void ScreenText::setTextInfoPosition(Common::Point position) {
 	_position = position;
 	clipTextInfoPosition(_position);
@@ -86,6 +90,7 @@ bool ScreenText::refreshScreenText(FontResource *font, WidthHeight dimensions, C
 	bool done = textDrawer.wrapText(font, text, &dimensions, offsPt, textFlags, outTextPtr);
 	_surface = _vm->_screen->allocSurface(dimensions._width, dimensions._height);
 	_surface->fillRect(Common::Rect(0, 0, _surface->w, _surface->h), _vm->_screen->getColorKey1());
+	debug("ScreenText dimensions (%d, %d)", dimensions._width, dimensions._height);
 	_dimensions = dimensions;
 	textDrawer.drawText(_vm->_screen, _surface, color2, color1);
 	return done;
@@ -121,6 +126,7 @@ bool ScreenText::insertText(uint16 *text, uint32 fontId, WidthHeight dimensions,
 	_screenTexts.push_back(screenText);
 
 	FontResource *font = _vm->_dict->findFont(screenText->_info._fontId);
+	debug("font: %p", font);
 	bool done = refreshScreenText(font, screenText->_info._dimensions, screenText->_info._offsPt,
 		text, screenText->_info._flags, screenText->_info._color2, screenText->_info._color1,
 		outTextPtr);

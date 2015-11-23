@@ -161,7 +161,7 @@ bool TextDrawer::wrapTextIntern(int16 x, int16 y, int16 maxWidth, int16 maxHeigh
 		}
 
 	}
-
+	
 	_dimensions->_width = maxLineWidth;
 	_dimensions->_height = textPosY - _font->_lineIncr;
 

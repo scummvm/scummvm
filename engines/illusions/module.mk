@@ -18,6 +18,7 @@ MODULE_OBJS := \
 	duckman/duckman_screenshakereffects.o \
 	duckman/duckman_specialcode.o \
 	duckman/illusions_duckman.o \
+	duckman/menusystem_duckman.o \
 	duckman/propertytimers.o \
 	duckman/scriptopcodes_duckman.o \
 	fileresourcereader.o \
@@ -27,6 +28,7 @@ MODULE_OBJS := \
 	graphics.o \
 	illusions.o \
 	input.o \
+	menusystem.o \
 	pathfinder.o \
 	resources/actorresource.o \
 	resources/backgroundresource.o \

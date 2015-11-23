@@ -54,13 +54,15 @@ protected:
 	void opUnloadResource(ScriptThread *scriptThread, OpCall &opCall);
 	void opStartTimerThread(ScriptThread *scriptThread, OpCall &opCall);
 	void opEnterScene18(ScriptThread *scriptThread, OpCall &opCall);
+	void opUnloadResourcesBySceneId(ScriptThread *scriptThread, OpCall &opCall);
 	void opChangeScene(ScriptThread *scriptThread, OpCall &opCall);
 	void opStartModalScene(ScriptThread *scriptThread, OpCall &opCall);
 	void opExitModalScene(ScriptThread *scriptThread, OpCall &opCall);
 	void opEnterScene24(ScriptThread *scriptThread, OpCall &opCall);
 	void opLeaveScene24(ScriptThread *scriptThread, OpCall &opCall);
-	void opEnterScene26(ScriptThread *scriptThread, OpCall &opCall);
-	void opLeaveScene26(ScriptThread *scriptThread, OpCall &opCall);
+	void opEnterDebugger(ScriptThread *scriptThread, OpCall &opCall);
+	void opLeaveDebugger(ScriptThread *scriptThread, OpCall &opCall);
+	void opDumpCurrentSceneFiles(ScriptThread *scriptThread, OpCall &opCall);
 	void opPanCenterObject(ScriptThread *scriptThread, OpCall &opCall);
 	void opPanTrackObject(ScriptThread *scriptThread, OpCall &opCall);
 	void opPanToObject(ScriptThread *scriptThread, OpCall &opCall);

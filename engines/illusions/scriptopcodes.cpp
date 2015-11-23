@@ -62,7 +62,7 @@ ScriptOpcodes::~ScriptOpcodes() {
 void ScriptOpcodes::execOpcode(ScriptThread *scriptThread, OpCall &opCall) {
 	if (!_opcodes[opCall._op])
 		error("ScriptOpcodes::execOpcode() Unimplemented opcode %d", opCall._op);
-	debug(0, "\nexecOpcode([%08X] %d) %s", opCall._callerThreadId, opCall._op, _opcodeNames[opCall._op].c_str());
+	debug("\nexecOpcode([%08X] %d) %s", opCall._callerThreadId, opCall._op, _opcodeNames[opCall._op].c_str());
 	(*_opcodes[opCall._op])(scriptThread, opCall);
 }
 
