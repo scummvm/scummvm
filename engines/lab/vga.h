@@ -64,7 +64,6 @@ void drawVLine(uint16 x1, uint16 y, uint16 x2);
 void rectFill(uint16 x1, uint16 y1, uint16 x2, uint16 y2);
 void ghoastRect(uint16 pencolor, uint16 x1, uint16 y1, uint16 x2, uint16 y2);
 void WSDL_UpdateScreen();
-void WSDL_IgnoreUpdateDisplay(int state);
 void WSDL_GetMousePos(int *x, int *y);
 uint16 WSDL_GetNextChar();
 bool WSDL_HasNextChar();
