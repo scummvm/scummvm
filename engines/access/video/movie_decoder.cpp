@@ -619,10 +619,11 @@ bool AccessVIDMovieDecoder::StreamVideoTrack::skipOverPalette(Common::SeekableRe
 void AccessVIDMovieDecoder::StreamVideoTrack::decodePalette(Common::SeekableReadStream *stream) {
 	assert(stream);
 
+	// VID files use a 6-bit palette and not a 8-bit one, we change it to 8-bit
 	for (uint16 curColor = 0; curColor < 256; curColor++) {
-		_palette[curColor * 3] = stream->readByte();
-		_palette[curColor * 3 + 1] = stream->readByte();
-		_palette[curColor * 3 + 2] = stream->readByte();
+		_palette[curColor * 3] = stream->readByte() << 2;
+		_palette[curColor * 3 + 1] = stream->readByte() << 2;
+		_palette[curColor * 3 + 2] = stream->readByte() << 2;
 	}
 
 	_dirtyPalette = true;
