@@ -28,11 +28,11 @@
  *
  */
 
+#include "lab/lab.h"
 #include "lab/labfun.h"
 #include "lab/stddefines.h"
 #include "lab/interface.h"
 #include "lab/mouse.h"
-#include "lab/vga.h"
 #include "common/util.h"
 
 namespace Lab {
@@ -82,7 +82,7 @@ void freeButtonList(Gadget *gptrlist) {
 /*****************************************************************************/
 void drawGadgetList(Gadget *gadlist) {
 	while (gadlist) {
-		drawImage(gadlist->Im, gadlist->x, gadlist->y);
+		g_lab->drawImage(gadlist->Im, gadlist->x, gadlist->y);
 
 		if (GADGETOFF & gadlist->GadgetFlags)
 			ghoastGadget(gadlist, 1);
@@ -96,7 +96,7 @@ void drawGadgetList(Gadget *gadlist) {
 /* Ghoasts a gadget, and makes it unavailable for using.                     */
 /*****************************************************************************/
 void ghoastGadget(Gadget *curgad, uint16 pencolor) {
-	ghoastRect(pencolor, curgad->x, curgad->y, curgad->x + curgad->Im->Width - 1, curgad->y + curgad->Im->Height - 1);
+	g_lab->ghoastRect(pencolor, curgad->x, curgad->y, curgad->x + curgad->Im->Width - 1, curgad->y + curgad->Im->Height - 1);
 	curgad->GadgetFlags |= GADGETOFF;
 }
 
@@ -106,7 +106,7 @@ void ghoastGadget(Gadget *curgad, uint16 pencolor) {
 /* Unghoasts a gadget, and makes it available again.                         */
 /*****************************************************************************/
 void unGhoastGadget(Gadget *curgad) {
-	drawImage(curgad->Im, curgad->x, curgad->y);
+	g_lab->drawImage(curgad->Im, curgad->x, curgad->y);
 	curgad->GadgetFlags &= !(GADGETOFF);
 }
 
@@ -133,11 +133,11 @@ static Gadget *checkNumGadgetHit(Gadget *gadlist, uint16 key) {
 		        (gadlist->KeyEquiv != 0 && makeGadgetKeyEquiv(key) == gadlist->KeyEquiv))
 		        && !(GADGETOFF & gadlist->GadgetFlags)) {
 			mouseHide();
-			drawImage(gadlist->ImAlt, gadlist->x, gadlist->y);
+			g_lab->drawImage(gadlist->ImAlt, gadlist->x, gadlist->y);
 			mouseShow();
 			g_system->delayMillis(80);
 			mouseHide();
-			drawImage(gadlist->Im, gadlist->x, gadlist->y);
+			g_lab->drawImage(gadlist->Im, gadlist->x, gadlist->y);
 			mouseShow();
 
 			return gadlist;
@@ -155,8 +155,8 @@ static Gadget *checkNumGadgetHit(Gadget *gadlist, uint16 key) {
 /* Checks whether or not a key has been pressed.                             */
 /*****************************************************************************/
 static bool keyPress(uint16 *KeyCode) {
-	if (WSDL_HasNextChar()) {
-        *KeyCode = WSDL_GetNextChar();
+	if (g_lab->WSDL_HasNextChar()) {
+        *KeyCode = g_lab->WSDL_GetNextChar();
 		return true;
 	}
 

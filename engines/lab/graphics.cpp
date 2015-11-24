@@ -35,7 +35,6 @@
 #include "lab/labfun.h"
 #include "lab/parsefun.h"
 #include "lab/mouse.h"
-#include "lab/vga.h"
 #include "lab/text.h"
 #include "lab/resource.h"
 
@@ -242,14 +241,14 @@ uint32 flowText(void *font,      /* the TextAttr pointer */
 	uint16 x, y;
 
 	if (fillback) {
-		setAPen(backpen);
-		rectFill(x1, y1, x2, y2);
+		g_lab->setAPen(backpen);
+		g_lab->rectFill(x1, y1, x2, y2);
 	}
 
 	if (str == NULL)
 		return 0L;
 
-	setAPen(pencolor);
+	g_lab->setAPen(pencolor);
 
 	fontheight = textHeight(msgfont) + spacing;
 	numlines   = (y2 - y1 + 1) / fontheight;
@@ -289,10 +288,6 @@ uint32 flowText(void *font,      /* the TextAttr pointer */
 	return (str - temp);
 }
 
-
-extern byte *_currentDsplayBuffer;
-
-
 /******************************************************************************/
 /* Calls flowText, but flows it to memory.  Same restrictions as flowText.    */
 /******************************************************************************/
@@ -307,15 +302,15 @@ uint32 flowTextToMem(Image *DestIm, void *font,     /* the TextAttr pointer */
                      uint16 x1,               /* Cords */
                      uint16 y1, uint16 x2, uint16 y2, const char *str) { /* The text itself */
 	uint32 res, vgabyte = g_lab->_screenBytesPerPage;
-	byte *tmp = _currentDsplayBuffer;
+	byte *tmp = g_lab->_currentDsplayBuffer;
 
-	_currentDsplayBuffer = DestIm->ImageData;
+	g_lab->_currentDsplayBuffer = DestIm->ImageData;
 	g_lab->_screenBytesPerPage = (uint32) DestIm->Width * (int32) DestIm->Height;
 
 	res = flowText(font, spacing, pencolor, backpen, fillback, centerh, centerv, output, x1, y1, x2, y2, str);
 
 	g_lab->_screenBytesPerPage = vgabyte;
-	_currentDsplayBuffer = tmp;
+	g_lab->_currentDsplayBuffer = tmp;
 
 	return res;
 }
@@ -328,14 +323,14 @@ uint32 flowTextToMem(Image *DestIm, void *font,     /* the TextAttr pointer */
 
 
 void createBox(uint16 y2) {
-	setAPen(7);                 /* Message box area */
-	rectFill(VGAScaleX(4), VGAScaleY(154), VGAScaleX(315), VGAScaleY(y2 - 2));
+	g_lab->setAPen(7);                 /* Message box area */
+	g_lab->rectFill(VGAScaleX(4), VGAScaleY(154), VGAScaleX(315), VGAScaleY(y2 - 2));
 
-	setAPen(0);                 /* Box around message area */
-	drawHLine(VGAScaleX(2), VGAScaleY(152), VGAScaleX(317));
-	drawVLine(VGAScaleX(317), VGAScaleY(152), VGAScaleY(y2));
-	drawHLine(VGAScaleX(2), VGAScaleY(y2), VGAScaleX(317));
-	drawVLine(VGAScaleX(2), VGAScaleY(152), VGAScaleY(y2));
+	g_lab->setAPen(0);                 /* Box around message area */
+	g_lab->drawHLine(VGAScaleX(2), VGAScaleY(152), VGAScaleX(317));
+	g_lab->drawVLine(VGAScaleX(317), VGAScaleY(152), VGAScaleY(y2));
+	g_lab->drawHLine(VGAScaleX(2), VGAScaleY(y2), VGAScaleX(317));
+	g_lab->drawVLine(VGAScaleX(2), VGAScaleY(152), VGAScaleY(y2));
 }
 
 
@@ -355,8 +350,8 @@ int32 longDrawMessage(const char *str) {
 
 	if (!LongWinInFront) {
 		LongWinInFront = true;
-		setAPen(3);                 /* Clear Area */
-		rectFill(0, VGAScaleY(149) + SVGACord(2), VGAScaleX(319), VGAScaleY(199));
+		g_lab->setAPen(3);                 /* Clear Area */
+		g_lab->rectFill(0, VGAScaleY(149) + SVGACord(2), VGAScaleX(319), VGAScaleY(199));
 	}
 
 	createBox(198);
@@ -387,7 +382,7 @@ void drawMessage(const char *str) {
 		} else {
 			if (LongWinInFront) {
 				LongWinInFront = false;
-				drawPanel();
+				g_lab->drawPanel();
 			}
 
 			mouseHide();
@@ -434,10 +429,10 @@ static void doScrollBlack() {
 	Im.Height = height;
 	Im.ImageData = mem;
 	g_music->updateMusic();
-	readScreenImage(&Im, 0, 0);
+	g_lab->readScreenImage(&Im, 0, 0);
 	g_music->updateMusic();
 
-	BaseAddr = (uint32 *) getVGABaseAddr();
+	BaseAddr = (uint32 *)g_lab->getVGABaseAddr();
 
 	by      = VGAScaleX(4);
 	nheight = height;
@@ -446,9 +441,9 @@ static void doScrollBlack() {
 		g_music->updateMusic();
 
 		if (!IsHiRes)
-			waitTOF();
+			g_lab->waitTOF();
 
-		BaseAddr = (uint32 *) getVGABaseAddr();
+		BaseAddr = (uint32 *)g_lab->getVGABaseAddr();
 
 		if (by > nheight)
 			by = nheight;
@@ -470,10 +465,10 @@ static void doScrollBlack() {
 			tempmem += copysize;
 		}
 
-		setAPen(0);
-		rectFill(0, nheight, width - 1, nheight + by - 1);
+		g_lab->setAPen(0);
+		g_lab->rectFill(0, nheight, width - 1, nheight + by - 1);
 
-		WSDL_UpdateScreen();
+		g_lab->WSDL_UpdateScreen();
 
 		if (!IsHiRes) {
 			if (nheight <= (height / 8))
@@ -503,7 +498,7 @@ static void copyPage(uint16 width, uint16 height, uint16 nheight, uint16 startli
 	uint16 CurPage;
 	uint32 *BaseAddr;
 
-	BaseAddr = (uint32 *)getVGABaseAddr();
+	BaseAddr = (uint32 *)g_lab->getVGABaseAddr();
 
 	size = (int32)(height - nheight) * (int32) width;
 	mem += startline * width;
@@ -539,12 +534,12 @@ static void doScrollWipe(char *filename) {
 
 	while (g_music->isSoundEffectActive()) {
 		g_music->updateMusic();
-		waitTOF();
+		g_lab->waitTOF();
 	}
 
 	IsBM = true;
 	readPict(filename, true);
-	VGASetPal(diffcmap, 256);
+	g_lab->VGASetPal(diffcmap, 256);
 	IsBM = false;
 	mem = RawDiffBM.Planes[0];
 
@@ -566,7 +561,7 @@ static void doScrollWipe(char *filename) {
 
 		copyPage(width, height, nheight, startline, mem);
 
-		WSDL_UpdateScreen();
+		g_lab->WSDL_UpdateScreen();
 
 		if (!nheight)
 			startline += by;
@@ -618,8 +613,8 @@ static void doScrollBounce() {
 		startline -= newby[counter];
 		copyPage(width, height, 0, startline, mem);
 
-		WSDL_UpdateScreen();
-		waitTOF();
+		g_lab->WSDL_UpdateScreen();
+		g_lab->waitTOF();
 	}
 
 	for (int counter = 8; counter > 0; counter--) {
@@ -627,8 +622,8 @@ static void doScrollBounce() {
 		startline += newby1[counter - 1];
 		copyPage(width, height, 0, startline, mem);
 
-		WSDL_UpdateScreen();
-		waitTOF();
+		g_lab->WSDL_UpdateScreen();
+		g_lab->waitTOF();
 
 	}
 
@@ -658,17 +653,17 @@ static void doTransWipe(CloseDataPtr *CPtr, char *filename) {
 		while (CurY < LastY) {
 			if (linesdone >= lineslast) {
 				g_music->updateMusic();
-				waitTOF();
+				g_lab->waitTOF();
 				linesdone = 0;
 			}
 
-			ghoastRect(0, 0, CurY, g_lab->_screenWidth - 1, CurY + 1);
+			g_lab->ghoastRect(0, 0, CurY, g_lab->_screenWidth - 1, CurY + 1);
 			CurY += 4;
 			linesdone++;
 		}
 	}
 
-	setAPen(0);
+	g_lab->setAPen(0);
 
 	for (counter = 0; counter < 2; counter++) {
 		CurY = counter * 2;
@@ -676,11 +671,11 @@ static void doTransWipe(CloseDataPtr *CPtr, char *filename) {
 		while (CurY <= LastY) {
 			if (linesdone >= lineslast) {
 				g_music->updateMusic();
-				waitTOF();
+				g_lab->waitTOF();
 				linesdone = 0;
 			}
 
-			rectFill(0, CurY, g_lab->_screenWidth - 1, CurY + 1);
+			g_lab->rectFill(0, CurY, g_lab->_screenWidth - 1, CurY + 1);
 			CurY += 4;
 			linesdone++;
 		}
@@ -694,7 +689,7 @@ static void doTransWipe(CloseDataPtr *CPtr, char *filename) {
 		CurFileName = getPictName(CPtr);
 
 	byte *BitMapMem = readPictToMem(CurFileName, g_lab->_screenWidth, LastY + 5);
-	VGASetPal(diffcmap, 256);
+	g_lab->VGASetPal(diffcmap, 256);
 
 	if (BitMapMem) {
 		ImSource.Width = g_lab->_screenWidth;
@@ -703,7 +698,7 @@ static void doTransWipe(CloseDataPtr *CPtr, char *filename) {
 
 		ImDest.Width = g_lab->_screenWidth;
 		ImDest.Height = g_lab->_screenHeight;
-		ImDest.ImageData = getVGABaseAddr();
+		ImDest.ImageData = g_lab->getVGABaseAddr();
 
 		for (counter = 0; counter < 2; counter++) {
 			CurY = counter * 2;
@@ -711,14 +706,14 @@ static void doTransWipe(CloseDataPtr *CPtr, char *filename) {
 			while (CurY < LastY) {
 				if (linesdone >= lineslast) {
 					g_music->updateMusic();
-					waitTOF();
+					g_lab->waitTOF();
 					linesdone = 0;
 				}
 
-				ImDest.ImageData = getVGABaseAddr();
+				ImDest.ImageData = g_lab->getVGABaseAddr();
 
-				bltBitMap(&ImSource, 0, CurY, &ImDest, 0, CurY, g_lab->_screenWidth, 2);
-				ghoastRect(0, 0, CurY, g_lab->_screenWidth - 1, CurY + 1);
+				g_lab->bltBitMap(&ImSource, 0, CurY, &ImDest, 0, CurY, g_lab->_screenWidth, 2);
+				g_lab->ghoastRect(0, 0, CurY, g_lab->_screenWidth - 1, CurY + 1);
 				CurY += 4;
 				linesdone++;
 			}
@@ -730,16 +725,16 @@ static void doTransWipe(CloseDataPtr *CPtr, char *filename) {
 			while (CurY <= LastY) {
 				if (linesdone >= lineslast) {
 					g_music->updateMusic();
-					waitTOF();
+					g_lab->waitTOF();
 					linesdone = 0;
 				}
 
-				ImDest.ImageData = getVGABaseAddr();
+				ImDest.ImageData = g_lab->getVGABaseAddr();
 
 				if (CurY == LastY)
-					bltBitMap(&ImSource, 0, CurY, &ImDest, 0, CurY, g_lab->_screenWidth, 1);
+					g_lab->bltBitMap(&ImSource, 0, CurY, &ImDest, 0, CurY, g_lab->_screenWidth, 1);
 				else
-					bltBitMap(&ImSource, 0, CurY, &ImDest, 0, CurY, g_lab->_screenWidth, 2);
+					g_lab->bltBitMap(&ImSource, 0, CurY, &ImDest, 0, CurY, g_lab->_screenWidth, 2);
 
 				CurY += 4;
 				linesdone++;

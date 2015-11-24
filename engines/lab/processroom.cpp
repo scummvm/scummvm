@@ -37,7 +37,6 @@
 #include "lab/parsefun.h"
 #include "lab/resource.h"
 #include "lab/diff.h"
-#include "lab/vga.h"
 #include "lab/interface.h"
 
 namespace Lab {
@@ -484,7 +483,7 @@ static void doActions(Action * APtr, CloseDataPtr *LCPtr) {
 		case WAITSECS:
 			g_lab->addCurTime(APtr->Param1, 0, &StartSecs, &StartMicros);
 
-			WSDL_UpdateScreen();
+			g_lab->WSDL_UpdateScreen();
 
 			while (1) {
 				g_music->updateMusic();
@@ -524,7 +523,7 @@ static void doActions(Action * APtr, CloseDataPtr *LCPtr) {
 			while (g_music->isSoundEffectActive()) {
 				g_music->updateMusic();
 				diffNextFrame();
-				waitTOF();
+				g_lab->waitTOF();
 			}
 
 			break;
@@ -567,23 +566,23 @@ static void doActions(Action * APtr, CloseDataPtr *LCPtr) {
 				for (counter = (8 * 3); counter < (255 * 3); counter++)
 					diffcmap[counter] = 255 - diffcmap[counter];
 
-				waitTOF();
-				VGASetPal(diffcmap, 256);
-				waitTOF();
-				waitTOF();
+				g_lab->waitTOF();
+				g_lab->VGASetPal(diffcmap, 256);
+				g_lab->waitTOF();
+				g_lab->waitTOF();
 			} else if (APtr->Param1 == 4) { /* white the palette */
 				whiteScreen();
-				waitTOF();
-				waitTOF();
+				g_lab->waitTOF();
+				g_lab->waitTOF();
 			} else if (APtr->Param1 == 6) { /* Restore the palette */
-				waitTOF();
-				VGASetPal(diffcmap, 256);
-				waitTOF();
-				waitTOF();
+				g_lab->waitTOF();
+				g_lab->VGASetPal(diffcmap, 256);
+				g_lab->waitTOF();
+				g_lab->waitTOF();
 			} else if (APtr->Param1 == 7) { /* Quick pause */
-				waitTOF();
-				waitTOF();
-				waitTOF();
+				g_lab->waitTOF();
+				g_lab->waitTOF();
+				g_lab->waitTOF();
 			}
 
 			break;
@@ -599,7 +598,7 @@ static void doActions(Action * APtr, CloseDataPtr *LCPtr) {
 		while (g_music->isSoundEffectActive()) {
 			g_music->updateMusic();
 			diffNextFrame();
-			waitTOF();
+			g_lab->waitTOF();
 		}
 	}
 

@@ -32,7 +32,6 @@
 #include "lab/stddefines.h"
 #include "lab/labfun.h"
 #include "lab/text.h"
-#include "lab/vga.h"
 
 namespace Lab {
 
@@ -81,7 +80,7 @@ void text(struct TextFont *tf, uint16 x, uint16 y, uint16 color, const char *tex
 	int32 templeft, LeftInSegment;
 	uint16 counter, counterb, bwidth, mask, curpage, rows, cols, data;
 
-	VGATop = getVGABaseAddr();
+	VGATop = g_lab->getVGABaseAddr();
 
 	for (counter = 0; counter < numchars; counter++) {
 		RealOffset = (g_lab->_screenWidth * y) + x;

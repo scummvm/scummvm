@@ -28,7 +28,6 @@
  *
  */
 
-#include "lab/vga.h"
 #include "common/keyboard.h"
 
 #ifndef LAB_INTEFACE_H

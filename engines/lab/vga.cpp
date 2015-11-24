@@ -29,7 +29,6 @@
  */
 
 #include "lab/lab.h"
-#include "lab/vga.h"
 #include "lab/stddefines.h"
 #include "lab/mouse.h"
 
@@ -39,27 +38,10 @@
 
 namespace Lab {
 
-static byte _curvgapal[256 * 3];
-static unsigned char _curapen = 0;
-
-byte *_currentDsplayBuffer = 0;
-byte *_displayBuffer = 0;
-
-int _lastWaitTOFTicks = 0;
-
-uint32 _mouseX = 0;
-uint32 _mouseY = 0;
-
-uint16 _nextKeyIn = 0;
-uint16 _keyBuf[64];
-uint16 _nextKeyOut = 0;
-bool _mouseAtEdge = false;
-byte *_tempScrollData;
-
 /*****************************************************************************/
 /* Sets up either a low-res or a high-res 256 color screen.                  */
 /*****************************************************************************/
-bool createScreen(bool HiRes) {
+bool LabEngine::createScreen(bool HiRes) {
 	if (HiRes) {
 		g_lab->_screenWidth  = 640;
 		g_lab->_screenHeight = 480;
@@ -77,11 +59,11 @@ bool createScreen(bool HiRes) {
 /*****************************************************************************/
 /* Sets the current page on the VGA card.                                    */
 /*****************************************************************************/
-void changeVolume(int delta) {
+void LabEngine::changeVolume(int delta) {
 	warning("STUB: changeVolume()");
 }
 
-uint16 WSDL_GetNextChar() {
+uint16 LabEngine::WSDL_GetNextChar() {
 	uint16 c = 0;
 
 	WSDL_ProcessInput(0);
@@ -94,12 +76,12 @@ uint16 WSDL_GetNextChar() {
 	return c;
 }
 
-bool WSDL_HasNextChar() {
+bool LabEngine::WSDL_HasNextChar() {
 	WSDL_ProcessInput(0);
 	return _nextKeyIn != _nextKeyOut;
 }
 
-void WSDL_ProcessInput(bool can_delay) {
+void LabEngine::WSDL_ProcessInput(bool can_delay) {
 	int n;
 	int lastMouseAtEdge;
 	int flags = 0;
@@ -186,14 +168,14 @@ void WSDL_ProcessInput(bool can_delay) {
 		g_system->delayMillis(10);
 }
 
-void WSDL_GetMousePos(int *x, int *y) {
+void LabEngine::WSDL_GetMousePos(int *x, int *y) {
 	WSDL_ProcessInput(0);
 
 	*x = _mouseX;
 	*y = _mouseY;
 }
 
-void waitTOF() {
+void LabEngine::waitTOF() {
 	g_system->copyRectToScreen(_displayBuffer, g_lab->_screenWidth, 0, 0, g_lab->_screenWidth, g_lab->_screenHeight);
 	g_system->updateScreen();
 
@@ -207,7 +189,7 @@ void waitTOF() {
 	_lastWaitTOFTicks = now;
 }
 
-void WSDL_SetColors(byte *buf, uint16 first, uint16 numreg, uint16 slow) {
+void LabEngine::WSDL_SetColors(byte *buf, uint16 first, uint16 numreg, uint16 slow) {
 	byte tmp[256 * 3];
 
 	for (int i = 0; i < 256 * 3; i++) {
@@ -231,12 +213,12 @@ void WSDL_SetColors(byte *buf, uint16 first, uint16 numreg, uint16 slow) {
 /*           The length of the buffer is 3 times the number of registers     */
 /*           selected.                                                       */
 /*****************************************************************************/
-void writeColorRegs(byte *buf, uint16 first, uint16 numreg) {
+void LabEngine::writeColorRegs(byte *buf, uint16 first, uint16 numreg) {
 	WSDL_SetColors(buf, first, numreg, 0);
 	memcpy(&(_curvgapal[first * 3]), buf, numreg * 3);
 }
 
-void writeColorRegsSmooth(byte *buf, uint16 first, uint16 numreg) {
+void LabEngine::writeColorRegsSmooth(byte *buf, uint16 first, uint16 numreg) {
 	WSDL_SetColors(buf, first, numreg, 1);
 	memcpy(&(_curvgapal[first * 3]), buf, numreg * 3);
 }
@@ -246,16 +228,16 @@ void writeColorRegsSmooth(byte *buf, uint16 first, uint16 numreg) {
 /* the first character in the string is the red value, then green, then      */
 /* blue.  Each color value is a 6 bit value.                                 */
 /*****************************************************************************/
-void writeColorReg(byte *buf, uint16 regnum) {
+void LabEngine::writeColorReg(byte *buf, uint16 regnum) {
 	writeColorRegs(buf, regnum, 1);
 }
 
-void VGASetPal(void *cmap, uint16 numcolors) {
+void LabEngine::VGASetPal(void *cmap, uint16 numcolors) {
 	if (memcmp(cmap, _curvgapal, numcolors * 3) != 0)
 		writeColorRegs((byte *)cmap, 0, numcolors);
 }
 
-void WSDL_UpdateScreen() {
+void LabEngine::WSDL_UpdateScreen() {
 	g_system->copyRectToScreen(_displayBuffer, g_lab->_screenWidth, 0, 0, g_lab->_screenWidth, g_lab->_screenHeight);
 	g_system->updateScreen();
 
@@ -265,7 +247,7 @@ void WSDL_UpdateScreen() {
 /*****************************************************************************/
 /* Returns the base address of the current VGA display.                      */
 /*****************************************************************************/
-byte *getVGABaseAddr() {
+byte *LabEngine::getVGABaseAddr() {
 	if (_currentDsplayBuffer)
 		return _currentDsplayBuffer;
 
@@ -275,7 +257,7 @@ byte *getVGABaseAddr() {
 /*****************************************************************************/
 /* Draws an image to the screen.                                             */
 /*****************************************************************************/
-void drawImage(Image *Im, uint16 x, uint16 y) {
+void LabEngine::drawImage(Image *Im, uint16 x, uint16 y) {
 	int sx, sy, dx, dy, w, h;
 
 	sx = 0;
@@ -318,7 +300,7 @@ void drawImage(Image *Im, uint16 x, uint16 y) {
 /*****************************************************************************/
 /* Draws an image to the screen.                                             */
 /*****************************************************************************/
-void drawMaskImage(Image *Im, uint16 x, uint16 y) {
+void LabEngine::drawMaskImage(Image *Im, uint16 x, uint16 y) {
 	int sx, sy, dx, dy, w, h;
 
 	sx = 0;
@@ -371,7 +353,7 @@ void drawMaskImage(Image *Im, uint16 x, uint16 y) {
 /*****************************************************************************/
 /* Reads an image from the screen.                                           */
 /*****************************************************************************/
-void readScreenImage(Image *Im, uint16 x, uint16 y) {
+void LabEngine::readScreenImage(Image *Im, uint16 x, uint16 y) {
 	int sx, sy, dx, dy, w, h;
 
 	sx = 0;
@@ -415,7 +397,7 @@ void readScreenImage(Image *Im, uint16 x, uint16 y) {
 /* Blits a piece of one image to another.                                    */
 /* NOTE: for our purposes, assumes that ImDest is to be in VGA memory.       */
 /*****************************************************************************/
-void bltBitMap(Image *ImSource, uint16 xs, uint16 ys, Image *ImDest,
+void LabEngine::bltBitMap(Image *ImSource, uint16 xs, uint16 ys, Image *ImDest,
 					uint16 xd, uint16 yd, uint16 width, uint16 height) {
 	// I think the old code assumed that the source image data was valid for the given box.
 	// I will proceed on that assumption.
@@ -461,7 +443,7 @@ void bltBitMap(Image *ImSource, uint16 xs, uint16 ys, Image *ImDest,
 /* The _tempScrollData variable must be initialized to some memory, or this   */
 /* function will fail.                                                       */
 /*****************************************************************************/
-void scrollDisplayX(int16 dx, uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
+void LabEngine::scrollDisplayX(int16 dx, uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
 	Image Im;
 	uint16 temp;
 
@@ -503,7 +485,7 @@ void scrollDisplayX(int16 dx, uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
 /*****************************************************************************/
 /* Scrolls the display in the y direction by blitting.                       */
 /*****************************************************************************/
-void scrollDisplayY(int16 dy, uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
+void LabEngine::scrollDisplayY(int16 dy, uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
 	Image Im;
 	uint16 temp;
 
@@ -545,14 +527,14 @@ void scrollDisplayY(int16 dy, uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
 /*****************************************************************************/
 /* Sets the pen number to use on all the drawing operations.                 */
 /*****************************************************************************/
-void setAPen(uint16 pennum) {
+void LabEngine::setAPen(uint16 pennum) {
 	_curapen = (unsigned char)pennum;
 }
 
 /*****************************************************************************/
 /* Fills in a rectangle.                                                     */
 /*****************************************************************************/
-void rectFill(uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
+void LabEngine::rectFill(uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
 	int dx, dy, w, h;
 
 	dx = x1;
@@ -595,21 +577,21 @@ void rectFill(uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
 /*****************************************************************************/
 /* Draws a horizontal line.                                                  */
 /*****************************************************************************/
-void drawVLine(uint16 x, uint16 y1, uint16 y2) {
+void LabEngine::drawVLine(uint16 x, uint16 y1, uint16 y2) {
 	rectFill(x, y1, x, y2);
 }
 
 /*****************************************************************************/
 /* Draws a vertical line.                                                    */
 /*****************************************************************************/
-void drawHLine(uint16 x1, uint16 y, uint16 x2) {
+void LabEngine::drawHLine(uint16 x1, uint16 y, uint16 x2) {
 	rectFill(x1, y, x2, y);
 }
 
 /*****************************************************************************/
 /* Ghoasts a region on the screen using the desired pen color.               */
 /*****************************************************************************/
-void ghoastRect(uint16 pencolor, uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
+void LabEngine::ghoastRect(uint16 pencolor, uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
 	int dx, dy, w, h;
 
 	dx = x1;

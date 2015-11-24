@@ -31,7 +31,6 @@
 #include "lab/lab.h"
 #include "lab/diff.h"
 #include "lab/labfun.h"
-#include "lab/vga.h"
 #include "lab/mouse.h"
 
 namespace Lab {
@@ -91,7 +90,7 @@ void unDiff(byte *NewBuf, byte *OldBuf, byte *DiffData, uint16 bytesperrow, bool
 /*****************************************************************************/
 void blackScreen() {
 	memset(blackbuffer, 0, 248 * 3);
-	writeColorRegs(blackbuffer, 8, 248);
+	g_lab->writeColorRegs(blackbuffer, 8, 248);
 
 	g_system->delayMillis(32);
 }
@@ -101,7 +100,7 @@ void blackScreen() {
 /*****************************************************************************/
 void whiteScreen() {
 	memset(blackbuffer, 255, 248 * 3);
-	writeColorRegs(blackbuffer, 8, 248);
+	g_lab->writeColorRegs(blackbuffer, 8, 248);
 }
 
 /*****************************************************************************/
@@ -109,7 +108,7 @@ void whiteScreen() {
 /*****************************************************************************/
 void blackAllScreen() {
 	memset(blackbuffer, 0, 256 * 3);
-	writeColorRegs(blackbuffer, 0, 256);
+	g_lab->writeColorRegs(blackbuffer, 0, 256);
 
 	g_system->delayMillis(32);
 }
@@ -120,7 +119,7 @@ void diffNextFrame() {
 		return;
 
 	if (DispBitMap->Flags & BITMAPF_VIDEO) {
-		DispBitMap->Planes[0] = getVGABaseAddr();
+		DispBitMap->Planes[0] = g_lab->getVGABaseAddr();
 		DispBitMap->Planes[1] = DispBitMap->Planes[0] + 0x10000;
 		DispBitMap->Planes[2] = DispBitMap->Planes[1] + 0x10000;
 		DispBitMap->Planes[3] = DispBitMap->Planes[2] + 0x10000;
@@ -140,7 +139,7 @@ void diffNextFrame() {
 				}
 
 				if (IsPal && !nopalchange) {
-					VGASetPal(diffcmap, 256);
+					g_lab->VGASetPal(diffcmap, 256);
 					IsPal = false;
 				}
 
@@ -148,7 +147,7 @@ void diffNextFrame() {
 			}
 
 			if (IsPal && !nopalchange && !IsBM && !donepal) {
-				VGASetPal(diffcmap, 256);
+				g_lab->VGASetPal(diffcmap, 256);
 				IsPal = false;
 			}
 
@@ -163,7 +162,7 @@ void diffNextFrame() {
 			CurBit = 0;
 
 			if (DispBitMap->Flags & BITMAPF_VIDEO)
-				WSDL_UpdateScreen();
+				g_lab->WSDL_UpdateScreen();
 
 			return; /* done with the next frame. */
 		}
@@ -231,7 +230,7 @@ void diffNextFrame() {
 			if (waitForEffect) {
 				while (g_music->isSoundEffectActive()) {
 					g_music->updateMusic();
-					waitTOF();
+					g_lab->waitTOF();
 				}
 			}
 
@@ -257,7 +256,7 @@ void diffNextFrame() {
 				if (waitForEffect) {
 					while (g_music->isSoundEffectActive()) {
 						g_music->updateMusic();
-						waitTOF();
+						g_lab->waitTOF();
 
 						if (DispBitMap->Flags & BITMAPF_VIDEO)
 							didTOF = 1;
@@ -268,7 +267,7 @@ void diffNextFrame() {
 				mouseShow();
 
 				if (!didTOF)
-					WSDL_UpdateScreen();
+					g_lab->WSDL_UpdateScreen();
 
 				return;
 			}
@@ -445,7 +444,7 @@ void readSound(bool waitTillFinished, Common::File *file) {
 			if (waitTillFinished) {
 				while (g_music->isSoundEffectActive()) {
 					g_music->updateMusic();
-					waitTOF();
+					g_lab->waitTOF();
 				}
 			}
 
@@ -460,7 +459,7 @@ void readSound(bool waitTillFinished, Common::File *file) {
 			if (waitTillFinished) {
 				while (g_music->isSoundEffectActive()) {
 					g_music->updateMusic();
-					waitTOF();
+					g_lab->waitTOF();
 				}
 			}
 		} else

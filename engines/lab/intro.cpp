@@ -115,8 +115,8 @@ void Intro::doPictText(const char *filename, bool isscreen) {
 				fade(false, 0);
 
 			if (isscreen) {
-				setAPen(7L);
-				rectFill(VGAScaleX(10), VGAScaleY(10), VGAScaleX(310), VGAScaleY(190));
+				g_lab->setAPen(7L);
+				g_lab->rectFill(VGAScaleX(10), VGAScaleY(10), VGAScaleX(310), VGAScaleY(190));
 
 				Drawn = flowText(_msgfont, (!IsHiRes) * -1, 5, 7, false, false, true, true, VGAScaleX(14), VGAScaleY(11), VGAScaleX(306), VGAScaleY(189), (char *)curplace);
 				fade(true, 0);
@@ -161,7 +161,7 @@ void Intro::doPictText(const char *filename, bool isscreen) {
 				}
 			}
 
-			waitTOF();
+			g_lab->waitTOF();
 		} else {
 			cls       = msg->msgClass;
 			qualifier = msg->qualifier;
@@ -226,9 +226,9 @@ void Intro::musicDelay() {
 
 	for (counter = 0; counter < 20; counter++) {
 		g_music->updateMusic();
-		waitTOF();
-		waitTOF();
-		waitTOF();
+		g_lab->waitTOF();
+		g_lab->waitTOF();
+		g_lab->waitTOF();
 	}
 }
 
@@ -318,7 +318,7 @@ void Intro::introSequence() {
 		palette[15] = temp;
 
 		setAmigaPal(palette, 16);
-		waitTOF();
+		g_lab->waitTOF();
 	}
 
 	fade(false, 0);
@@ -404,10 +404,10 @@ void Intro::introSequence() {
 				diffcmap[counter1] = 255 - diffcmap[counter1];
 
 			g_music->updateMusic();
-			waitTOF();
-			VGASetPal(diffcmap, 256);
-			waitTOF();
-			waitTOF();
+			g_lab->waitTOF();
+			g_lab->VGASetPal(diffcmap, 256);
+			g_lab->	waitTOF();
+			g_lab->waitTOF();
 		}
 
 	doPictText("i.12", false);
@@ -464,8 +464,8 @@ void Intro::introSequence() {
 	nReadPict("SubX", true);
 
 	if (_quitIntro) {
-		setAPen(0);
-		rectFill(0, 0, g_lab->_screenWidth - 1, g_lab->_screenHeight - 1);
+		g_lab->setAPen(0);
+		g_lab->rectFill(0, 0, g_lab->_screenWidth - 1, g_lab->_screenHeight - 1);
 		DoBlack = true;
 	}
 }

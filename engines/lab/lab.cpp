@@ -59,6 +59,20 @@ LabEngine::LabEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	_screenHeight = 200;
 	_screenBytesPerPage = 65536;
 
+    _curapen = 0;
+
+    _currentDsplayBuffer = 0;
+    _displayBuffer = 0;
+
+    _lastWaitTOFTicks = 0;
+
+    _mouseX = 0;
+    _mouseY = 0;
+
+     _nextKeyIn = 0;
+    _nextKeyOut = 0;
+    _mouseAtEdge = false;
+
 	//const Common::FSNode gameDataDir(ConfMan.get("path"));
 	//SearchMan.addSubDirectoryMatching(gameDataDir, "game");
 	//SearchMan.addSubDirectoryMatching(gameDataDir, "game/pict");
