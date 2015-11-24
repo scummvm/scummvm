@@ -891,8 +891,8 @@ int GamePhantom::exitCatacombs(int dir) {
 }
 
 void GamePhantom::moveCatacombs(int dir) {
-	assert(_globals[kCatacombsRoom] = CLIP(_globals[kCatacombsRoom], 0, _catacombSize));
-	assert(dir = CLIP(dir, 0, 3));
+	assert(_globals[kCatacombsRoom] == CLIP(_globals[kCatacombsRoom], 0, _catacombSize));
+	assert(dir == CLIP(dir, 0, 3));
 
 	newCatacombRoom(_catacombs[_globals[kCatacombsRoom]]._fromDirection[dir], _catacombs[_globals[kCatacombsRoom]]._exit[dir]);
 }
