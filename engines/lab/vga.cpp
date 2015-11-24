@@ -42,19 +42,19 @@ namespace Lab {
 static byte _curvgapal[256 * 3];
 static unsigned char _curapen = 0;
 
-byte *VGABASEADDRESS = 0;
+byte *_currentDsplayBuffer = 0;
 byte *_displayBuffer = 0;
 
-int g_LastWaitTOFTicks = 0;
+int _lastWaitTOFTicks = 0;
 
 uint32 _mouseX = 0;
 uint32 _mouseY = 0;
 
-uint16 g_NextKeyIn = 0;
-uint16 g_KeyBuf[64];
-uint16 g_NextKeyOut = 0;
+uint16 _nextKeyIn = 0;
+uint16 _keyBuf[64];
+uint16 _nextKeyOut = 0;
 bool _mouseAtEdge = false;
-byte *TempScrollData;
+byte *_tempScrollData;
 
 /*****************************************************************************/
 /* Sets up either a low-res or a high-res 256 color screen.                  */
@@ -85,10 +85,10 @@ uint16 WSDL_GetNextChar() {
 	uint16 c = 0;
 
 	WSDL_ProcessInput(0);
-	if (g_NextKeyIn != g_NextKeyOut) {
-		c = g_KeyBuf[g_NextKeyOut];
-		g_NextKeyOut = ((((unsigned int)((g_NextKeyOut + 1) >> 31) >> 26) + (byte)g_NextKeyOut + 1) & 0x3F)
-                 - ((unsigned int)((g_NextKeyOut + 1) >> 31) >> 26);
+	if (_nextKeyIn != _nextKeyOut) {
+		c = _keyBuf[_nextKeyOut];
+		_nextKeyOut = ((((unsigned int)((_nextKeyOut + 1) >> 31) >> 26) + (byte)_nextKeyOut + 1) & 0x3F)
+                 - ((unsigned int)((_nextKeyOut + 1) >> 31) >> 26);
   	}
 
 	return c;
@@ -96,7 +96,7 @@ uint16 WSDL_GetNextChar() {
 
 bool WSDL_HasNextChar() {
 	WSDL_ProcessInput(0);
-	return g_NextKeyIn != g_NextKeyOut;
+	return _nextKeyIn != _nextKeyOut;
 }
 
 void WSDL_ProcessInput(bool can_delay) {
@@ -162,11 +162,11 @@ void WSDL_ProcessInput(bool can_delay) {
 					break;
 
 				default:
-					n = ((((unsigned int)((g_NextKeyIn + 1) >> 31) >> 26) + (byte)g_NextKeyIn + 1) & 0x3F)
-					- ((unsigned int)((g_NextKeyIn + 1) >> 31) >> 26);
-					if (n != g_NextKeyOut) {
-						g_KeyBuf[g_NextKeyIn] = event.kbd.keycode;
-						g_NextKeyIn = n;
+					n = ((((unsigned int)((_nextKeyIn + 1) >> 31) >> 26) + (byte)_nextKeyIn + 1) & 0x3F)
+					- ((unsigned int)((_nextKeyIn + 1) >> 31) >> 26);
+					if (n != _nextKeyOut) {
+						_keyBuf[_nextKeyIn] = event.kbd.keycode;
+						_nextKeyIn = n;
 					}
 				}
 				break;
@@ -201,10 +201,10 @@ void waitTOF() {
 
   	uint32 now;
 
-  	for (now = g_system->getMillis(); now - g_LastWaitTOFTicks <= 0xF; now = g_system->getMillis() )
-  		g_system->delayMillis(g_LastWaitTOFTicks - now + 17);
+	for (now = g_system->getMillis(); now - _lastWaitTOFTicks <= 0xF; now = g_system->getMillis() )
+		g_system->delayMillis(_lastWaitTOFTicks - now + 17);
 
-  	g_LastWaitTOFTicks = now;
+	_lastWaitTOFTicks = now;
 }
 
 void WSDL_SetColors(byte *buf, uint16 first, uint16 numreg, uint16 slow) {
@@ -266,8 +266,8 @@ void WSDL_UpdateScreen() {
 /* Returns the base address of the current VGA display.                      */
 /*****************************************************************************/
 byte *getVGABaseAddr() {
-	if (VGABASEADDRESS)
-		return VGABASEADDRESS;
+	if (_currentDsplayBuffer)
+		return _currentDsplayBuffer;
 
 	return _displayBuffer;
 }
@@ -458,14 +458,14 @@ void bltBitMap(Image *ImSource, uint16 xs, uint16 ys, Image *ImDest,
 
 /*****************************************************************************/
 /* Scrolls the display in the x direction by blitting.                       */
-/* The TempScrollData variable must be initialized to some memory, or this   */
+/* The _tempScrollData variable must be initialized to some memory, or this   */
 /* function will fail.                                                       */
 /*****************************************************************************/
 void scrollDisplayX(int16 dx, uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
 	Image Im;
 	uint16 temp;
 
-	Im.ImageData = TempScrollData;
+	Im.ImageData = _tempScrollData;
 
 	if (x1 > x2) {
 		temp = x2;
@@ -507,7 +507,7 @@ void scrollDisplayY(int16 dy, uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
 	Image Im;
 	uint16 temp;
 
-	Im.ImageData = TempScrollData;
+	Im.ImageData = _tempScrollData;
 
 	if (x1 > x2) {
 		temp = x2;

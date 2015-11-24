@@ -290,7 +290,7 @@ uint32 flowText(void *font,      /* the TextAttr pointer */
 }
 
 
-extern byte *VGABASEADDRESS;
+extern byte *_currentDsplayBuffer;
 
 
 /******************************************************************************/
@@ -307,15 +307,15 @@ uint32 flowTextToMem(Image *DestIm, void *font,     /* the TextAttr pointer */
                      uint16 x1,               /* Cords */
                      uint16 y1, uint16 x2, uint16 y2, const char *str) { /* The text itself */
 	uint32 res, vgabyte = g_lab->_screenBytesPerPage;
-	byte *tmp = VGABASEADDRESS;
+	byte *tmp = _currentDsplayBuffer;
 
-	VGABASEADDRESS = DestIm->ImageData;
+	_currentDsplayBuffer = DestIm->ImageData;
 	g_lab->_screenBytesPerPage = (uint32) DestIm->Width * (int32) DestIm->Height;
 
 	res = flowText(font, spacing, pencolor, backpen, fillback, centerh, centerv, output, x1, y1, x2, y2, str);
 
 	g_lab->_screenBytesPerPage = vgabyte;
-	VGABASEADDRESS = tmp;
+	_currentDsplayBuffer = tmp;
 
 	return res;
 }
