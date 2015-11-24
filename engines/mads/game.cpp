@@ -92,6 +92,32 @@ Game::Game(MADSEngine *vm)
 
 	// Load the quotes
 	loadQuotes();
+
+	_camX._panAllowedFl = false;
+	_camX._activeFl = false;
+	_camX._currentFrameFl = false;
+	_camX._manualFl = false;
+	_camX._speed = -1;
+	_camX._rate = -1;
+	_camX._target = -1;
+	_camX._distOffCenter = -1;
+	_camX._startTolerance = -1;
+	_camX._endTolerance = -1;
+	_camX._direction = -1;
+	_camX._timer = 0;
+
+	_camY._panAllowedFl = false;
+	_camY._activeFl = false;
+	_camY._currentFrameFl = false;
+	_camY._manualFl = false;
+	_camY._speed = -1;
+	_camY._rate = -1;
+	_camY._target = -1;
+	_camY._distOffCenter = -1;
+	_camY._startTolerance = -1;
+	_camY._endTolerance = -1;
+	_camY._direction = -1;
+	_camY._timer = 0;
 }
 
 Game::~Game() {

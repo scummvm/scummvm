@@ -79,6 +79,7 @@ struct ConvData {
 GameConversation::GameConversation(MADSEngine *vm)
 	: _vm(vm) {
 	_running = _restoreRunning = 0;
+	_nextStartNode = nullptr;
 }
 
 GameConversation::~GameConversation() {
