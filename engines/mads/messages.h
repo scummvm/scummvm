@@ -46,7 +46,7 @@ class MADSEngine;
 
 class KernelMessage {
 public:
-	uint8 _flags;
+	uint16 _flags;
 	int _sequenceIndex;
 	int _color1;
 	int _color2;
