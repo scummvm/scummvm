@@ -551,7 +551,7 @@ void Scene307::handlePrisonerEncounter() {
 	}
 }
 
-void Scene307::handlePrisonerSpeech(int firstQuoteId, int number, long timeout) {
+void Scene307::handlePrisonerSpeech(int firstQuoteId, int number, uint32 timeout) {
 	int height = number * 14;
 	int posY;
 
