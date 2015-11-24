@@ -138,6 +138,8 @@ namespace Phantom {
 GamePhantom::GamePhantom(MADSEngine *vm) : Game(vm) {
 	_surface = new MSurface(MADS_SCREEN_WIDTH, MADS_SCENE_HEIGHT);
 	_difficulty = DIFFICULTY_HARD;
+	_catacombs = nullptr;
+	_catacombSize = -1;
 }
 
 void GamePhantom::startGame() {

@@ -5603,6 +5603,8 @@ Scene109::Scene109(MADSEngine *vm) : Scene1xx(vm) {
 	_anim1ActvFl = false;
 	_anim2ActvFl = false;
 	_anim3ActvFl = false;
+
+	_currentFloor = -1;
 }
 
 void Scene109::synchronize(Common::Serializer &s) {
@@ -5612,6 +5614,8 @@ void Scene109::synchronize(Common::Serializer &s) {
 	s.syncAsByte(_anim1ActvFl);
 	s.syncAsByte(_anim2ActvFl);
 	s.syncAsByte(_anim3ActvFl);
+
+	s.syncAsSint16LE(_currentFloor);
 }
 
 void Scene109::setup() {
@@ -7664,6 +7668,7 @@ Scene113::Scene113(MADSEngine *vm) : Scene1xx(vm) {
 
 	_dayStatus = -1;
 	_raoulAction = -1;
+	_christineHotspotId1 = -1;
 	_christineHotspotId2 = -1;
 	_raoulCount = -1;
 	_dayCount = -1;
@@ -7698,6 +7703,7 @@ void Scene113::synchronize(Common::Serializer &s) {
 
 	s.syncAsSint16LE(_dayStatus);
 	s.syncAsSint16LE(_raoulAction);
+	s.syncAsSint16LE(_christineHotspotId1);
 	s.syncAsSint16LE(_christineHotspotId2);
 	s.syncAsSint16LE(_raoulCount);
 	s.syncAsSint16LE(_dayCount);

@@ -264,6 +264,7 @@ private:
 	bool _anim2ActvFl;
 	bool _anim3ActvFl;
 	int _currentFloor;
+
 public:
 	Scene109(MADSEngine *vm);
 	virtual void synchronize(Common::Serializer &s);
