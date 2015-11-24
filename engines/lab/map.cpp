@@ -32,7 +32,6 @@
 #include "lab/stddefines.h"
 #include "lab/labfun.h"
 #include "lab/diff.h"
-#include "lab/vga.h"
 #include "lab/text.h"
 #include "lab/mouse.h"
 #include "lab/parsefun.h"
@@ -70,7 +69,7 @@ void setAmigaPal(uint16 *pal, uint16 numcolors) {
 		vgapal[vgacount++] = (byte)(((pal[counter] & 0x00f)) << 2);
 	}
 
-	writeColorRegsSmooth(vgapal, 0, 16);
+	g_lab->writeColorRegsSmooth(vgapal, 0, 16);
 }
 
 void decrypt(byte *text) {
@@ -310,7 +309,7 @@ void fade(bool fadein, uint16 res) {
 		}
 
 		setAmigaPal(newpal, 16);
-		waitTOF();
+		g_lab->waitTOF();
 		g_music->updateMusic();
 	}
 }
@@ -371,27 +370,27 @@ static void drawRoom(uint16 CurRoom, bool drawx) {
 	case UPARROWROOM:
 	case DOWNARROWROOM:
 		if (Maps[CurRoom].SpecialID == NORMAL)
-			drawImage(Room, x, y);
+			g_lab->drawImage(Room, x, y);
 		else if (Maps[CurRoom].SpecialID == DOWNARROWROOM)
-			drawImage(DownArrowRoom, x, y);
+			g_lab->drawImage(DownArrowRoom, x, y);
 		else
-			drawImage(UpArrowRoom, x, y);
+			g_lab->drawImage(UpArrowRoom, x, y);
 
 		offset = (Room->Width - Path->Width) / 2;
 
 		if ((NORTHDOOR & flags) && (y >= Path->Height))
-			drawImage(Path, x + offset, y - Path->Height);
+			g_lab->drawImage(Path, x + offset, y - Path->Height);
 
 		if (SOUTHDOOR & flags)
-			drawImage(Path, x + offset, y + Room->Height);
+			g_lab->drawImage(Path, x + offset, y + Room->Height);
 
 		offset = (Room->Height - Path->Height) / 2;
 
 		if (EASTDOOR & flags)
-			drawImage(Path, x + Room->Width, y + offset);
+			g_lab->drawImage(Path, x + Room->Width, y + offset);
 
 		if (WESTDOOR & flags)
-			drawImage(Path, x - Path->Width, y + offset);
+			g_lab->drawImage(Path, x - Path->Width, y + offset);
 
 		xx = x + (Room->Width - XMark->Width) / 2;
 		xy = y + (Room->Height - XMark->Height) / 2;
@@ -399,7 +398,7 @@ static void drawRoom(uint16 CurRoom, bool drawx) {
 		break;
 
 	case BRIDGEROOM:
-		drawImage(Bridge, x, y);
+		g_lab->drawImage(Bridge, x, y);
 
 		xx = x + (Bridge->Width - XMark->Width) / 2;
 		xy = y + (Bridge->Height - XMark->Height) / 2;
@@ -407,37 +406,37 @@ static void drawRoom(uint16 CurRoom, bool drawx) {
 		break;
 
 	case VCORRIDOR:
-		drawImage(VRoom, x, y);
+		g_lab->drawImage(VRoom, x, y);
 
 		offset = (VRoom->Width - Path->Width) / 2;
 
 		if (NORTHDOOR & flags)
-			drawImage(Path, x + offset, y - Path->Height);
+			g_lab->drawImage(Path, x + offset, y - Path->Height);
 
 		if (SOUTHDOOR & flags)
-			drawImage(Path, x + offset, y + VRoom->Height);
+			g_lab->drawImage(Path, x + offset, y + VRoom->Height);
 
 		offset = (Room->Height - Path->Height) / 2;
 
 		if (EASTDOOR & flags)
-			drawImage(Path, x + VRoom->Width, y + offset);
+			g_lab->drawImage(Path, x + VRoom->Width, y + offset);
 
 		if (WESTDOOR & flags)
-			drawImage(Path, x - Path->Width, y + offset);
+			g_lab->drawImage(Path, x - Path->Width, y + offset);
 
 		if (EASTBDOOR & flags)
-			drawImage(Path, x + VRoom->Width, y - offset - Path->Height + VRoom->Height);
+			g_lab->drawImage(Path, x + VRoom->Width, y - offset - Path->Height + VRoom->Height);
 
 		if (WESTBDOOR & flags)
-			drawImage(Path, x - Path->Width, y - offset - Path->Height + VRoom->Height);
+			g_lab->drawImage(Path, x - Path->Width, y - offset - Path->Height + VRoom->Height);
 
 		offset = (VRoom->Height - Path->Height) / 2;
 
 		if (EASTMDOOR & flags)
-			drawImage(Path, x + VRoom->Width, y - offset - Path->Height + VRoom->Height);
+			g_lab->drawImage(Path, x + VRoom->Width, y - offset - Path->Height + VRoom->Height);
 
 		if (WESTMDOOR & flags)
-			drawImage(Path, x - Path->Width, y - offset - Path->Height + VRoom->Height);
+			g_lab->drawImage(Path, x - Path->Width, y - offset - Path->Height + VRoom->Height);
 
 		xx = x + (VRoom->Width - XMark->Width) / 2;
 		xy = y + (VRoom->Height - XMark->Height) / 2;
@@ -445,37 +444,37 @@ static void drawRoom(uint16 CurRoom, bool drawx) {
 		break;
 
 	case HCORRIDOR:
-		drawImage(HRoom, x, y);
+		g_lab->drawImage(HRoom, x, y);
 
 		offset = (Room->Width - Path->Width) / 2;
 
 		if (NORTHDOOR & flags)
-			drawImage(Path, x + offset, y - Path->Height);
+			g_lab->drawImage(Path, x + offset, y - Path->Height);
 
 		if (SOUTHDOOR & flags)
-			drawImage(Path, x + offset, y + Room->Height);
+			g_lab->drawImage(Path, x + offset, y + Room->Height);
 
 		if (NORTHRDOOR & flags)
-			drawImage(Path, x - offset - Path->Width + HRoom->Width, y - Path->Height);
+			g_lab->drawImage(Path, x - offset - Path->Width + HRoom->Width, y - Path->Height);
 
 		if (SOUTHRDOOR & flags)
-			drawImage(Path, x - offset - Path->Width + HRoom->Width, y + Room->Height);
+			g_lab->drawImage(Path, x - offset - Path->Width + HRoom->Width, y + Room->Height);
 
 		offset = (HRoom->Width - Path->Width) / 2;
 
 		if (NORTHMDOOR & flags)
-			drawImage(Path, x - offset - Path->Width + HRoom->Width, y - Path->Height);
+			g_lab->drawImage(Path, x - offset - Path->Width + HRoom->Width, y - Path->Height);
 
 		if (SOUTHMDOOR & flags)
-			drawImage(Path, x - offset - Path->Width + HRoom->Width, y + Room->Height);
+			g_lab->drawImage(Path, x - offset - Path->Width + HRoom->Width, y + Room->Height);
 
 		offset = (Room->Height - Path->Height) / 2;
 
 		if (EASTDOOR & flags)
-			drawImage(Path, x + HRoom->Width, y + offset);
+			g_lab->drawImage(Path, x + HRoom->Width, y + offset);
 
 		if (WESTDOOR & flags)
-			drawImage(Path, x - Path->Width, y + offset);
+			g_lab->drawImage(Path, x - Path->Width, y + offset);
 
 		xx = x + (HRoom->Width - XMark->Width) / 2;
 		xy = y + (HRoom->Height - XMark->Height) / 2;
@@ -487,7 +486,7 @@ static void drawRoom(uint16 CurRoom, bool drawx) {
 	}
 
 	if (drawx)
-		drawImage(XMark, xx, xy);
+		g_lab->drawImage(XMark, xx, xy);
 }
 
 
@@ -582,10 +581,10 @@ static void drawMap(uint16 CurRoom, uint16 CurMsg, uint16 Floor, bool fadeout, b
 	if (fadeout)
 		fade(false, 0);
 
-	setAPen(0);
-	rectFill(0, 0, g_lab->_screenWidth - 1, g_lab->_screenHeight - 1);
+	g_lab->setAPen(0);
+	g_lab->rectFill(0, 0, g_lab->_screenWidth - 1, g_lab->_screenHeight - 1);
 
-	drawImage(Map, 0, 0);
+	g_lab->drawImage(Map, 0, 0);
 	drawGadgetList(MapGadgetList);
 
 	for (drawroom = 1; drawroom <= MaxRooms; drawroom++) {
@@ -621,16 +620,16 @@ static void drawMap(uint16 CurRoom, uint16 CurMsg, uint16 Floor, bool fadeout, b
 	// Labyrinth specific code
 	if (Floor == LOWERFLOOR) {
 		if (onFloor(SURMAZEFLOOR))
-			drawImage(Maze, mapScaleX(538), mapScaleY(277));
+			g_lab->drawImage(Maze, mapScaleX(538), mapScaleY(277));
 	} else if (Floor == MIDDLEFLOOR) {
 		if (onFloor(CARNIVAL))
-			drawImage(Maze, mapScaleX(358), mapScaleY(72));
+			g_lab->drawImage(Maze, mapScaleX(358), mapScaleY(72));
 
 		if (onFloor(MEDMAZEFLOOR))
-			drawImage(Maze, mapScaleX(557), mapScaleY(325));
+			g_lab->drawImage(Maze, mapScaleX(557), mapScaleY(325));
 	} else if (Floor == UPPERFLOOR) {
 		if (onFloor(HEDGEMAZEFLOOR))
-			drawImage(HugeMaze, mapScaleX(524), mapScaleY(97));
+			g_lab->drawImage(HugeMaze, mapScaleX(524), mapScaleY(97));
 	} else if (Floor == SURMAZEFLOOR) {
 		sptr = (char *)g_resource->getStaticText(kTextSurmazeMessage).c_str();
 		flowText(MsgFont, 0, 7, 0, true, true, true, true, mapScaleX(360), 0, mapScaleX(660), mapScaleY(450), sptr);
@@ -708,14 +707,14 @@ void processMap(uint16 CurRoom) {
 				newcolor[2] = newcolor[1];
 			}
 
-			waitTOF();
-			writeColorReg(newcolor, 1);
+			g_lab->waitTOF();
+			g_lab->writeColorReg(newcolor, 1);
 			updateMouse();
-			waitTOF();
+			g_lab->waitTOF();
 			updateMouse();
-			waitTOF();
+			g_lab->waitTOF();
 			updateMouse();
-			waitTOF();
+			g_lab->waitTOF();
 			updateMouse();
 
 			place++;
@@ -822,8 +821,8 @@ void processMap(uint16 CurRoom) {
 
 						if ((sptr = Rooms[CurMsg].RoomMsg)) {
 							mouseHide();
-							setAPen(3);
-							rectFill(VGAScaleX(13), VGAScaleY(148), VGAScaleX(135), VGAScaleY(186));
+							g_lab->setAPen(3);
+							g_lab->rectFill(VGAScaleX(13), VGAScaleY(148), VGAScaleX(135), VGAScaleY(186));
 							flowText(MsgFont, 0, 5, 3, true, true, true, true, VGAScaleX(14), VGAScaleY(148), VGAScaleX(134), VGAScaleY(186), sptr);
 
 							if (Maps[OldMsg].PageNumber == CurFloor)
@@ -834,8 +833,8 @@ void processMap(uint16 CurRoom) {
 							y1 = (y1 + y2) / 2;
 
 							if ((CurMsg != CurRoom) && (Maps[CurMsg].PageNumber == CurFloor)) {
-								setAPen(1);
-								rectFill(x1 - 1, y1, x1, y1);
+								g_lab->setAPen(1);
+								g_lab->rectFill(x1 - 1, y1, x1, y1);
 							}
 
 							mouseShow();
@@ -844,7 +843,7 @@ void processMap(uint16 CurRoom) {
 				}
 			}
 
-			WSDL_UpdateScreen();
+			g_lab->WSDL_UpdateScreen();
 		}
 	}
 }
@@ -872,18 +871,18 @@ void doMap(uint16 CurRoom) {
 	drawMap(CurRoom, CurRoom, Maps[CurRoom].PageNumber, false, true);
 	mouseShow();
 	attachGadgetList(MapGadgetList);
-	WSDL_UpdateScreen();
+	g_lab->WSDL_UpdateScreen();
 	processMap(CurRoom);
 	attachGadgetList(NULL);
 	fade(false, 0);
 	blackAllScreen();
 	mouseHide();
-	setAPen(0);
-	rectFill(0, 0, g_lab->_screenWidth - 1, g_lab->_screenHeight - 1);
+	g_lab->setAPen(0);
+	g_lab->rectFill(0, 0, g_lab->_screenWidth - 1, g_lab->_screenHeight - 1);
 	freeMapData();
 	blackAllScreen();
 	mouseShow();
-	WSDL_UpdateScreen();
+	g_lab->WSDL_UpdateScreen();
 }
 
 } // End of namespace Lab

@@ -122,8 +122,6 @@ void gadgetsOnOff(void *gptr, void *win, int32 num, bool on);
 /*----------------------*/
 
 void eatMessages();
-bool setUpScreens();
-void drawPanel();
 bool quitPlaying();
 
 /*---------------------------*/

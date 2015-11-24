@@ -33,7 +33,6 @@
 #include "lab/stddefines.h"
 #include "lab/labfun.h"
 #include "lab/mouse.h"
-#include "lab/vga.h"
 #include "lab/lab.h"
 
 namespace Lab {
@@ -72,7 +71,7 @@ Music::Music() {
 /* it from the Audio device.                                                 */
 /*****************************************************************************/
 void Music::updateMusic() {
-	WSDL_ProcessInput(0);
+	g_lab->WSDL_ProcessInput(0);
 
 	updateMouse();
 

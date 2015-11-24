@@ -38,7 +38,6 @@
 #include "lab/parsefun.h"
 #include "lab/interface.h"
 #include "lab/diff.h"
-#include "lab/vga.h"
 #include "lab/text.h"
 #include "lab/mouse.h"
 #include "lab/stddefines.h"
@@ -89,7 +88,6 @@ extern uint16 *FadePalette;
 extern bool nopalchange, DoBlack, IsHiRes;
 extern BitMap *DispBitMap, *DrawBitMap;
 extern char diffcmap[3 * 256];
-extern byte *_tempScrollData;
 extern CloseDataPtr CPtr;
 extern InventoryData *Inventory;
 extern uint16 RoomNum, Direction;
@@ -141,7 +139,7 @@ static void doCombination() {
 	uint16 counter;
 
 	for (counter = 0; counter <= 5; counter++)
-		drawImage(Images[combination[counter]], VGAScaleX(combx[counter]), VGAScaleY(65));
+		g_lab->drawImage(Images[combination[counter]], VGAScaleX(combx[counter]), VGAScaleY(65));
 }
 
 /*****************************************************************************/
@@ -164,11 +162,11 @@ void showCombination(const char *filename) {
 	for (CurBit = 0; CurBit < 10; CurBit++)
 		readImage(buffer, &(Images[CurBit]));
 
-	allocFile((void **)&_tempScrollData, Images[0]->Width * Images[0]->Height * 2L, "tempdata");
+	allocFile((void **)&g_lab->_tempScrollData, Images[0]->Width * Images[0]->Height * 2L, "tempdata");
 
 	doCombination();
 
-	VGASetPal(diffcmap, 256);
+	g_lab->VGASetPal(diffcmap, 256);
 }
 
 
@@ -188,22 +186,22 @@ static void changeCombination(uint16 number) {
 
 	combnum = combination[number];
 
-	display.ImageData = getVGABaseAddr();
+	display.ImageData = g_lab->getVGABaseAddr();
 	display.Width     = g_lab->_screenWidth;
 	display.Height    = g_lab->_screenHeight;
 
 	for (counter = 1; counter <= (Images[combnum]->Height / 2); counter++) {
 		if (IsHiRes) {
 			if (counter & 1)
-				waitTOF();
+				g_lab->waitTOF();
 		} else
-			waitTOF();
+			g_lab->waitTOF();
 
-		display.ImageData = getVGABaseAddr();
+		display.ImageData = g_lab->getVGABaseAddr();
 
-		scrollDisplayY(2, VGAScaleX(combx[number]), VGAScaleY(65), VGAScaleX(combx[number]) + (Images[combnum])->Width - 1, VGAScaleY(65) + (Images[combnum])->Height);
+		g_lab->scrollDisplayY(2, VGAScaleX(combx[number]), VGAScaleY(65), VGAScaleX(combx[number]) + (Images[combnum])->Width - 1, VGAScaleY(65) + (Images[combnum])->Height);
 
-		bltBitMap(Images[combnum], 0, (Images[combnum])->Height - (2 * counter), &(display), VGAScaleX(combx[number]), VGAScaleY(65), (Images[combnum])->Width, 2);
+		g_lab->bltBitMap(Images[combnum], 0, (Images[combnum])->Height - (2 * counter), &(display), VGAScaleX(combx[number]), VGAScaleY(65), (Images[combnum])->Width, 2);
 	}
 
 	for (counter = 0; counter < 6; counter++)
@@ -259,8 +257,8 @@ static void doTile(bool showsolution) {
 		rows = VGAScaleY(31);
 		cols = VGAScaleX(105);
 	} else {
-		setAPen(0);
-		rectFill(VGAScaleX(97), VGAScaleY(22), VGAScaleX(220), VGAScaleY(126));
+		g_lab->setAPen(0);
+		g_lab->rectFill(VGAScaleX(97), VGAScaleY(22), VGAScaleX(220), VGAScaleY(126));
 
 		rowm = VGAScaleY(25);
 		colm = VGAScaleX(30);
@@ -277,7 +275,7 @@ static void doTile(bool showsolution) {
 				num = CurTile[col] [row];
 
 			if (showsolution || num)
-				drawImage(Tiles[num], cols + (col * colm), rows + (row * rowm));
+				g_lab->drawImage(Tiles[num], cols + (col * colm), rows + (row * rowm));
 
 			col++;
 		}
@@ -315,19 +313,19 @@ void showTile(const char *filename, bool showsolution) {
 	for (CurBit = start; CurBit < 16; CurBit++)
 		readImage(buffer, &(Tiles[CurBit]));
 
-	allocFile((void **)&_tempScrollData, Tiles[1]->Width * Tiles[1]->Height * 2L, "tempdata");
+	allocFile((void **)&g_lab->_tempScrollData, Tiles[1]->Width * Tiles[1]->Height * 2L, "tempdata");
 
 	doTile(showsolution);
 
-	VGASetPal(diffcmap, 256);
+	g_lab->VGASetPal(diffcmap, 256);
 }
 
 static void scrollRaster(int16 dx, int16 dy, uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
 	if (dx)
-		scrollDisplayX(dx, x1, y1, x2, y2);
+		g_lab->scrollDisplayX(dx, x1, y1, x2, y2);
 
 	if (dy)
-		scrollDisplayY(dy, x1, y1, x2, y2);
+		g_lab->scrollDisplayY(dy, x1, y1, x2, y2);
 }
 
 /*****************************************************************************/
@@ -364,7 +362,7 @@ static void doTileScroll(uint16 col, uint16 row, uint16 scrolltype) {
 	y1 = VGAScaleY(25) + (row * VGAScaleY(25)) + dy;
 
 	for (counter = 0; counter < last; counter++) {
-		waitTOF();
+		g_lab->waitTOF();
 		scrollRaster(dX, dY, x1, y1, x1 + VGAScaleX(28) + sx, y1 + VGAScaleY(23) + sy);
 		x1 += dX;
 		y1 += dY;
@@ -479,7 +477,7 @@ void doNotes() {
 
 	flowText(BigMsgFont, -2 + SVGACord(1), 0, 0, false, false, true, true, VGAScaleX(25) + SVGACord(15), VGAScaleY(50), VGAScaleX(295) - SVGACord(15), VGAScaleY(148), ntext);
 
-	VGASetPal(diffcmap, 256);
+	g_lab->VGASetPal(diffcmap, 256);
 	freeAllStolenMem();
 }
 
@@ -541,7 +539,7 @@ void doWestPaper() {
 
 	CharsPrinted = flowText(BigMsgFont, -4, 0, 0, false, false, false, true, VGAScaleX(162), VGAScaleY(y), VGAScaleX(275), VGAScaleY(148), ntext);
 
-	VGASetPal(diffcmap, 256);
+	g_lab->VGASetPal(diffcmap, 256);
 	freeAllStolenMem();
 }
 
@@ -675,16 +673,16 @@ static void turnPage(bool FromLeft) {
 	if (FromLeft) {
 		for (counter = 0; counter < g_lab->_screenWidth; counter += 8) {
 			g_music->updateMusic();
-			waitTOF();
-			ScreenImage.ImageData = getVGABaseAddr();
-			bltBitMap(&JBackImage, counter, 0, &ScreenImage, counter, 0, 8, g_lab->_screenHeight);
+			g_lab->waitTOF();
+			ScreenImage.ImageData = g_lab->getVGABaseAddr();
+			g_lab->bltBitMap(&JBackImage, counter, 0, &ScreenImage, counter, 0, 8, g_lab->_screenHeight);
 		}
 	} else {
 		for (counter = (g_lab->_screenWidth - 8); counter > 0; counter -= 8) {
 			g_music->updateMusic();
-			waitTOF();
-			ScreenImage.ImageData = getVGABaseAddr();
-			bltBitMap(&JBackImage, counter, 0, &ScreenImage, counter, 0, 8, g_lab->_screenHeight);
+			g_lab->waitTOF();
+			ScreenImage.ImageData = g_lab->getVGABaseAddr();
+			g_lab->bltBitMap(&JBackImage, counter, 0, &ScreenImage, counter, 0, 8, g_lab->_screenHeight);
 		}
 	}
 }
@@ -703,10 +701,10 @@ static void drawJournal(uint16 wipenum, bool needFade) {
 
 	drawJournalText();
 
-	ScreenImage.ImageData = getVGABaseAddr();
+	ScreenImage.ImageData = g_lab->getVGABaseAddr();
 
 	if (wipenum == 0)
-		bltBitMap(&JBackImage, 0, 0, &ScreenImage, 0, 0, g_lab->_screenWidth, g_lab->_screenHeight);
+		g_lab->bltBitMap(&JBackImage, 0, 0, &ScreenImage, 0, 0, g_lab->_screenWidth, g_lab->_screenHeight);
 	else
 		turnPage((bool)(wipenum == 1));
 
@@ -794,7 +792,7 @@ void doJournal() {
 	CancelG.NextGadget = &ForwardG;
 
 	ScreenImage = JBackImage;
-	ScreenImage.ImageData = getVGABaseAddr();
+	ScreenImage.ImageData = g_lab->getVGABaseAddr();
 
 	g_music->updateMusic();
 	loadJournalData();
@@ -808,10 +806,10 @@ void doJournal() {
 	fade(false, 0);
 	mouseHide();
 
-	ScreenImage.ImageData = getVGABaseAddr();
+	ScreenImage.ImageData = g_lab->getVGABaseAddr();
 
-	setAPen(0);
-	rectFill(0, 0, g_lab->_screenWidth - 1, g_lab->_screenHeight - 1);
+	g_lab->setAPen(0);
+	g_lab->rectFill(0, 0, g_lab->_screenWidth - 1, g_lab->_screenHeight - 1);
 	blackScreen();
 
 	freeAllStolenMem();
@@ -852,7 +850,7 @@ bool saveRestoreGame() {
 		}
 	}
 
-	WSDL_UpdateScreen();
+	g_lab->WSDL_UpdateScreen();
 
 	return isOK;
 }
@@ -903,17 +901,17 @@ static void drawMonText(char *text, uint16 x1, uint16 y1, uint16 x2, uint16 y2, 
 		else
 			MonGadHeight = fheight;
 
-		setAPen(0);
-		rectFill(0, 0, g_lab->_screenWidth - 1, y2);
+		g_lab->setAPen(0);
+		g_lab->rectFill(0, 0, g_lab->_screenWidth - 1, y2);
 
 		for (counter = 0; counter < numlines; counter++)
-			drawImage(MonButton, 0, counter * MonGadHeight);
+			g_lab->drawImage(MonButton, 0, counter * MonGadHeight);
 	} else if (isinteractive) {
-		setAPen(0);
-		rectFill(0, 0, g_lab->_screenWidth - 1, y2);
+		g_lab->setAPen(0);
+		g_lab->rectFill(0, 0, g_lab->_screenWidth - 1, y2);
 	} else {
-		setAPen(0);
-		rectFill(x1, y1, x2, y2);
+		g_lab->setAPen(0);
+		g_lab->rectFill(x1, y1, x2, y2);
 	}
 
 	while (DrawingToPage < monitorPage) {
@@ -1083,8 +1081,8 @@ void doMonitor(char *background, char *textfile, bool isinteractive, uint16 x1, 
 
 	freeAllStolenMem();
 
-	setAPen(0);
-	rectFill(0, 0, g_lab->_screenWidth - 1, g_lab->_screenHeight - 1);
+	g_lab->setAPen(0);
+	g_lab->rectFill(0, 0, g_lab->_screenWidth - 1, g_lab->_screenHeight - 1);
 	blackAllScreen();
 }
 

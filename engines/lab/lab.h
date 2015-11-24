@@ -45,6 +45,12 @@ enum GameFeatures {
 	GF_WINDOWS_TRIAL = 1 << 1
 };
 
+struct Image {
+	uint16 Width;
+	uint16 Height;
+	byte *ImageData;
+};
+
 #define ONESECOND 1000
 
 class LabEngine : public Engine {
@@ -83,6 +89,74 @@ private:
 
 	// timing.cpp
 	void microDelay(uint32 secs, uint32 micros);
+
+	// vga.cpp
+	byte _curvgapal[256 * 3];
+	byte _curapen;
+
+public:
+	byte *_currentDsplayBuffer;
+
+	uint32 _mouseX;
+	uint32 _mouseY;
+
+private:
+	byte *_displayBuffer;
+
+	int _lastWaitTOFTicks;
+
+	uint16 _nextKeyIn;
+	uint16 _keyBuf[64];
+	uint16 _nextKeyOut;
+	bool _mouseAtEdge;
+public:
+	byte *_tempScrollData;
+
+private:
+	bool createScreen(bool HiRes);
+
+public:
+	void waitTOF();
+	void setAPen(uint16 pennum);
+	void writeColorRegs(byte *buf, uint16 first, uint16 numreg);
+	byte *getVGABaseAddr();
+	void readScreenImage(Image *Im, uint16 x, uint16 y);
+	void WSDL_UpdateScreen();
+	void rectFill(uint16 x1, uint16 y1, uint16 x2, uint16 y2);
+	void scrollDisplayX(int16 dx, uint16 x1, uint16 y1, uint16 x2, uint16 y2);
+	void scrollDisplayY(int16 dy, uint16 x1, uint16 y1, uint16 x2, uint16 y2);
+	void ghoastRect(uint16 pencolor, uint16 x1, uint16 y1, uint16 x2, uint16 y2);
+	void bltBitMap(Image *ImSource, uint16 xs, uint16 ys, Image *ImDest, uint16 xd, uint16 yd, uint16 width, uint16 height);
+	void VGASetPal(void *cmap, uint16 numcolors);
+	void drawHLine(uint16 x, uint16 y1, uint16 y2);
+	void drawVLine(uint16 x1, uint16 y, uint16 x2);
+	void drawImage(Image *Im, uint16 x, uint16 y);
+	bool WSDL_HasNextChar();
+	uint16 WSDL_GetNextChar();
+	void WSDL_ProcessInput(bool can_delay);
+	void writeColorReg(byte *buf, uint16 regnum);
+	void writeColorRegsSmooth(byte *buf, uint16 first, uint16 numreg);
+
+	void drawPanel();
+
+private:
+	void quickWaitTOF();
+
+	/*---------- Drawing Routines ----------*/
+
+	void drawMaskImage(Image *Im, uint16 x, uint16 y);
+	void WSDL_GetMousePos(int *x, int *y);
+	void changeVolume(int delta);
+	void WSDL_SetColors(byte *buf, uint16 first, uint16 numreg, uint16 slow);
+
+	// engine.cpp
+	bool setUpScreens();
+	void perFlipGadget(uint16 gadID);
+	bool doCloseUp(CloseDataPtr cptr);
+	void mainGameLoop();
+	bool doUse(uint16 curInv);
+	void mayShowCrumbIndicator();
+	void mayShowCrumbIndicatorOff();
 };
 
 extern LabEngine *g_lab;

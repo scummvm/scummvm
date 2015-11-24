@@ -28,8 +28,8 @@
  *
  */
 
+#include "lab/lab.h"
 #include "lab/mouse.h"
-#include "lab/vga.h"
 #include "lab/stddefines.h"
 #include "lab/interface.h"
 
@@ -81,14 +81,14 @@ static Gadget *checkGadgetHit(Gadget *gadlist, uint16 x, uint16 y) {
 				hitgad = gadlist;
 			} else {
 				mouseHide();
-				drawImage(gadlist->ImAlt, gadlist->x, gadlist->y);
+				g_lab->drawImage(gadlist->ImAlt, gadlist->x, gadlist->y);
 				mouseShow();
 
 				for (counter = 0; counter < 3; counter++)
-					waitTOF();
+					g_lab->waitTOF();
 
 				mouseHide();
-				drawImage(gadlist->Im, gadlist->x, gadlist->y);
+				g_lab->drawImage(gadlist->Im, gadlist->x, gadlist->y);
 				mouseShow();
 			}
 
@@ -141,21 +141,21 @@ void updateMouse() {
 
 	if (hitgad) {
 		mouseHide();
-		drawImage(hitgad->ImAlt, hitgad->x, hitgad->y);
+		g_lab->drawImage(hitgad->ImAlt, hitgad->x, hitgad->y);
 		mouseShow();
 
 		for (counter = 0; counter < 3; counter++)
-			waitTOF();
+			g_lab->waitTOF();
 
 		mouseHide();
-		drawImage(hitgad->Im, hitgad->x, hitgad->y);
+		g_lab->drawImage(hitgad->Im, hitgad->x, hitgad->y);
 		mouseShow();
 		doUpdateDisplay = true;
 		hitgad = NULL;
 	}
 
 	if (doUpdateDisplay)
-		WSDL_UpdateScreen();
+		g_lab->WSDL_UpdateScreen();
 }
 
 
@@ -178,7 +178,7 @@ void mouseShow() {
 		NumHidden--;
 
 	if ((NumHidden == 0) && MouseHidden) {
-		WSDL_ProcessInput(0);
+		g_lab->WSDL_ProcessInput(0);
 		MouseHidden = false;
 	}
 
@@ -198,17 +198,13 @@ void mouseHide() {
 	}
 }
 
-
-extern uint32 _mouseX;
-extern uint32 _mouseY;
-
 /*****************************************************************************/
 /* Gets the current mouse co-ordinates.  NOTE: On IBM version, will scale    */
 /* from virtual to screen co-ordinates automatically.                        */
 /*****************************************************************************/
 void mouseXY(uint16 *x, uint16 *y) {
-	*x = (uint16)_mouseX;
-	*y = (uint16)_mouseY;
+	*x = (uint16)g_lab->_mouseX;
+	*y = (uint16)g_lab->_mouseY;
 
 	if (!IsHiRes)
 		(*x) /= 2;
@@ -225,7 +221,7 @@ void mouseMove(uint16 x, uint16 y) {
 	g_system->warpMouse(x, y);
 
 	if (!MouseHidden)
-		WSDL_ProcessInput(0);
+		g_lab->WSDL_ProcessInput(0);
 }
 
 
@@ -237,15 +233,15 @@ void mouseMove(uint16 x, uint16 y) {
 bool mouseButton(uint16 *x, uint16 *y, bool leftbutton) {
 	if (leftbutton) {
 		if (LeftClick) {
-			*x = (!IsHiRes) ? (uint16)_mouseX / 2 : (uint16)_mouseX;
-			*y = (uint16)_mouseY;
+			*x = (!IsHiRes) ? (uint16)g_lab->_mouseX / 2 : (uint16)g_lab->_mouseX;
+			*y = (uint16)g_lab->_mouseY;
 			LeftClick = false;
 			return true;
 		}
 	} else {
 		if (RightClick) {
-			*x = (!IsHiRes) ? (uint16)_mouseX / 2 : (uint16)_mouseX;
-			*y = (uint16)_mouseY;
+			*x = (!IsHiRes) ? (uint16)g_lab->_mouseX / 2 : (uint16)g_lab->_mouseX;
+			*y = (uint16)g_lab->_mouseY;
 			RightClick = false;
 			return true;
 		}

@@ -32,7 +32,6 @@
 #include "lab/stddefines.h"
 #include "lab/labfun.h"
 #include "lab/diff.h"
-#include "lab/vga.h"
 #include "lab/text.h"
 #include "lab/intro.h"
 #include "lab/parsefun.h"
@@ -132,7 +131,7 @@ static char initcolors[] = { '\x00', '\x00', '\x00', '\x30',
 /******************************************************************************/
 /* Draws the control panel display.                                           */
 /******************************************************************************/
-void drawPanel() {
+void LabEngine::drawPanel() {
 	mouseHide();
 
 	setAPen(3);                 /* Clear Area */
@@ -219,7 +218,7 @@ static void drawRoomMessage(uint16 CurInv, CloseDataPtr cptr) {
 /******************************************************************************/
 /* Sets up the Labyrinth screens, and opens up the initial windows.           */
 /******************************************************************************/
-bool setUpScreens() {
+bool LabEngine::setUpScreens() {
 	uint16 counter;
 	byte *buffer;
 	byte *MovePanelBuffer, *InvPanelBuffer;
@@ -349,7 +348,7 @@ bool setUpScreens() {
 /******************************************************************************/
 /* Permanently flips the imagry of a gadget.                                  */
 /******************************************************************************/
-static void perFlipGadget(uint16 GadID) {
+void LabEngine::perFlipGadget(uint16 GadID) {
 	Image *Temp;
 	Gadget *TopGad;
 
@@ -391,7 +390,7 @@ void eatMessages() {
 /******************************************************************************/
 /* Checks whether the close up is one of the special case closeups.           */
 /******************************************************************************/
-static bool doCloseUp(CloseDataPtr cptr) {
+bool LabEngine::doCloseUp(CloseDataPtr cptr) {
 	if (cptr == NULL)
 		return false;
 
@@ -527,8 +526,7 @@ static const char *Test;
 /******************************************************************************/
 /* If the user hits the "Use" gadget; things that can get used on themselves. */
 /******************************************************************************/
-static bool doUse(uint16 CurInv) {
-
+bool LabEngine::doUse(uint16 CurInv) {
 	if (CurInv == MAPNUM) {                  /* LAB: Labyrinth specific */
 		drawStaticMessage(kTextUseMap);
 		interfaceOff();
@@ -539,9 +537,7 @@ static bool doUse(uint16 CurInv) {
 		VGASetPal(initcolors, 8);
 		drawMessage(NULL);
 		drawPanel();
-	}
-
-	else if (CurInv == JOURNALNUM) {         /* LAB: Labyrinth specific */
+	} else if (CurInv == JOURNALNUM) {         /* LAB: Labyrinth specific */
 		drawStaticMessage(kTextUseJournal);
 		interfaceOff();
 		stopDiff();
@@ -550,17 +546,15 @@ static bool doUse(uint16 CurInv) {
 		doJournal();
 		drawPanel();
 		drawMessage(NULL);
-	}
-
-	else if (CurInv == LAMPNUM) {            /* LAB: Labyrinth specific */
+	} else if (CurInv == LAMPNUM) {            /* LAB: Labyrinth specific */
 		interfaceOff();
 
-		if (g_lab->_conditions->in(LAMPON)) {
+		if (_conditions->in(LAMPON)) {
 			drawStaticMessage(kTextTurnLampOff);
-			g_lab->_conditions->exclElement(LAMPON);
+			_conditions->exclElement(LAMPON);
 		} else {
 			drawStaticMessage(kTextTurnLampOn);
-			g_lab->_conditions->inclElement(LAMPON);
+			_conditions->inclElement(LAMPON);
 		}
 
 		DoBlack = false;
@@ -570,32 +564,22 @@ static bool doUse(uint16 CurInv) {
 
 		DoBlack = false;
 		Test = getInvName(CurInv);
-	}
-
-	else if (CurInv == BELTNUM) {                    /* LAB: Labyrinth specific */
-		if (!g_lab->_conditions->in(BELTGLOW))
-			g_lab->_conditions->inclElement(BELTGLOW);
+	} else if (CurInv == BELTNUM) {                    /* LAB: Labyrinth specific */
+		if (!_conditions->in(BELTGLOW))
+			_conditions->inclElement(BELTGLOW);
 
 		DoBlack = false;
 		Test = getInvName(CurInv);
-	}
-
-	else if (CurInv == WHISKEYNUM) {                 /* LAB: Labyrinth specific */
-		g_lab->_conditions->inclElement(USEDHELMET);
+	} else if (CurInv == WHISKEYNUM) {                 /* LAB: Labyrinth specific */
+		_conditions->inclElement(USEDHELMET);
 		drawStaticMessage(kTextUseWhiskey);
-	}
-
-	else if (CurInv == PITHHELMETNUM) {              /* LAB: Labyrinth specific */
-		g_lab->_conditions->inclElement(USEDHELMET);
+	} else if (CurInv == PITHHELMETNUM) {              /* LAB: Labyrinth specific */
+		_conditions->inclElement(USEDHELMET);
 		drawStaticMessage(kTextUsePith);
-	}
-
-	else if (CurInv == HELMETNUM) {                  /* LAB: Labyrinth specific */
-		g_lab->_conditions->inclElement(USEDHELMET);
+	} else if (CurInv == HELMETNUM) {                  /* LAB: Labyrinth specific */
+		_conditions->inclElement(USEDHELMET);
 		drawStaticMessage(kTextUseHelmet);
-	}
-
-	else
+	} else
 		return false;
 
 	return true;
@@ -651,7 +635,7 @@ static void decIncInv(uint16 *CurInv, bool dec) {
 /******************************************************************************/
 /* The main game loop                                                         */
 /******************************************************************************/
-static void mainGameLoop() {
+void LabEngine::mainGameLoop() {
 	IntuiMessage *Msg;
 	uint32 Class;
 
@@ -1474,8 +1458,8 @@ byte dropCrumbsOff[] = { 0x00 };
 Image DropCrumbsImage = { 24, 24, dropCrumbs };
 Image DropCrumbsOffImage = { 24, 24, dropCrumbsOff };
 
-void mayShowCrumbIndicator() {
-	if (g_lab->getPlatform() != Common::kPlatformWindows)
+void LabEngine::mayShowCrumbIndicator() {
+	if (getPlatform() != Common::kPlatformWindows)
 		return;
 
 	if (DroppingCrumbs && MainDisplay) {
@@ -1485,8 +1469,8 @@ void mayShowCrumbIndicator() {
 	}
 }
 
-void mayShowCrumbIndicatorOff() {
-	if (g_lab->getPlatform() != Common::kPlatformWindows)
+void LabEngine::mayShowCrumbIndicatorOff() {
+	if (getPlatform() != Common::kPlatformWindows)
 		return;
 
 	if (MainDisplay) {
