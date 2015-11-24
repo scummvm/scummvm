@@ -2680,9 +2680,7 @@ void Scene310::handleLakeAnimation() {
 	if (_scene->_animation[_globals._animationIndexes[0]]->getCurrentFrame() == _lakeFrame)
 		return;
 
-
 	_lakeFrame = _scene->_animation[_globals._animationIndexes[0]]->getCurrentFrame();
-	int resetFrame = -1;
 	int id;
 
 	switch (_lakeFrame) {
@@ -2760,11 +2758,6 @@ void Scene310::handleLakeAnimation() {
 
 	default:
 		break;
-	}
-
-	if (resetFrame >= 0) {
-		_scene->setAnimFrame(_globals._animationIndexes[0], resetFrame);
-		_lakeFrame = resetFrame;
 	}
 }
 
