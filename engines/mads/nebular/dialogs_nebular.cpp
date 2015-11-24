@@ -366,6 +366,8 @@ void DialogsNebular::showScummVMSaveDialog() {
 
 	// Flag for scene loading that we're returning from a dialog
 	scene._currentSceneId = RETURNING_FROM_DIALOG;
+
+	delete dialog;
 }
 
 void DialogsNebular::showScummVMRestoreDialog() {
@@ -382,6 +384,8 @@ void DialogsNebular::showScummVMRestoreDialog() {
 		// Flag for scene loading that we're returning from a dialog
 		scene._currentSceneId = RETURNING_FROM_DIALOG;
 	}
+
+	delete dialog;
 }
 
 /*------------------------------------------------------------------------*/
