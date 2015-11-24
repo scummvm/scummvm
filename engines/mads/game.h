@@ -34,6 +34,7 @@
 #include "mads/inventory.h"
 #include "mads/player.h"
 #include "mads/screen.h"
+#include "mads/camera.h"
 
 namespace MADS {
 
@@ -148,6 +149,7 @@ public:
 	int _widepipeCtr;
 	int _loadGameSlot;
 	int _panningSpeed;
+	Camera _camX, _camY;
 
 public:
 	virtual ~Game();
@@ -244,29 +246,9 @@ public:
 
 	void syncTimers(SyncType slaveType, int slaveId, SyncType masterType, int masterId);
 
-	typedef struct {
-		bool _panAllowedFl;
-		bool _activeFl;
-		bool _currentFrameFl;
-		bool _manualFl;
-
-		int _speed;
-		int _rate;
-		int _target;
-		int _distOffCenter;
-		int _startTolerance;
-		int _endTolerance;
-		int _direction;
-		uint32 _timer;
-	} Camera;
-	Camera _camX, _camY;
-
-	void camPanTo(Camera *camera, int target);
 	void camInitDefault();
 	void camSetSpeed();
 	void camUpdate();
-	bool camPan(Camera *camera, int16 *picture_view, int16 *player_loc, int display_size, int picture_size);
-
 };
 
 } // End of namespace MADS

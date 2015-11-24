@@ -31,6 +31,7 @@ MODULE_OBJS := \
 	animation.o \
 	assets.o \
 	audio.o \
+	camera.o \
 	compression.o \
 	conversations.o \
 	debugger.o \

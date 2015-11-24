@@ -57,8 +57,7 @@ Game *Game::init(MADSEngine *vm) {
 }
 
 Game::Game(MADSEngine *vm)
-	: _vm(vm), _surface(nullptr), _objects(vm), _scene(vm),
-	 _screenObjects(vm), _player(vm) {
+	: _vm(vm), _surface(nullptr), _objects(vm), _scene(vm), _screenObjects(vm), _player(vm), _camX(vm), _camY(vm) {
 	_sectionNumber = 1;
 	_priorSectionNumber = 0;
 	_loadGameSlot = -1;
@@ -92,32 +91,6 @@ Game::Game(MADSEngine *vm)
 
 	// Load the quotes
 	loadQuotes();
-
-	_camX._panAllowedFl = false;
-	_camX._activeFl = false;
-	_camX._currentFrameFl = false;
-	_camX._manualFl = false;
-	_camX._speed = -1;
-	_camX._rate = -1;
-	_camX._target = -1;
-	_camX._distOffCenter = -1;
-	_camX._startTolerance = -1;
-	_camX._endTolerance = -1;
-	_camX._direction = -1;
-	_camX._timer = 0;
-
-	_camY._panAllowedFl = false;
-	_camY._activeFl = false;
-	_camY._currentFrameFl = false;
-	_camY._manualFl = false;
-	_camY._speed = -1;
-	_camY._rate = -1;
-	_camY._target = -1;
-	_camY._distOffCenter = -1;
-	_camY._startTolerance = -1;
-	_camY._endTolerance = -1;
-	_camY._direction = -1;
-	_camY._timer = 0;
 }
 
 Game::~Game() {
@@ -670,46 +643,9 @@ void Game::syncTimers(SyncType slaveType, int slaveId, SyncType masterType, int 
 	}
 }
 
-void Game::camPanTo(Camera *camera, int target) {
-	if (!camera)
-		return;
-
-	if (camera->_panAllowedFl) {
-		camera->_activeFl = true;
-		camera->_manualFl = true;
-		camera->_target = target;
-		camera->_timer = _scene._frameStartTime;
-	}
-}
-
 void Game::camInitDefault() {
-	_camX._activeFl = false;
-	_camY._activeFl = false;
-
-	_camX._panAllowedFl = (_scene._sceneInfo->_width > MADS_SCREEN_WIDTH);
-	_camY._panAllowedFl = (_scene._sceneInfo->_height > MADS_SCENE_HEIGHT);
-
-	if (_camX._panAllowedFl) {
-		_camX._manualFl = false;
-		_camX._rate = 4;
-		_camX._speed = 4;
-		_camX._target = 0;
-		_camX._distOffCenter = 80;
-		_camX._startTolerance = 80;
-		_camX._endTolerance = 4;
-		_camX._timer = _scene._frameStartTime;
-	}
-
-	if (_camY._panAllowedFl) {
-		_camY._manualFl = true;
-		_camY._rate = 4;
-		_camY._speed = 2;
-		_camY._target = 0;
-		_camY._distOffCenter = 80;
-		_camY._startTolerance = 60;
-		_camY._endTolerance = 4;
-		_camY._timer = _scene._frameStartTime;
-	}
+	_camX.setDefaultPanX();
+	_camY.setDefaultPanY();
 }
 
 void Game::camSetSpeed() {
@@ -732,119 +668,13 @@ void Game::camSetSpeed() {
 }
 
 void Game::camUpdate() {
-	bool any_pan = camPan(&_camX, &_scene._posAdjust.x, &_player._playerPos.x, 320, _scene._sceneInfo->_width);
-	any_pan |= camPan(&_camY, &_scene._posAdjust.y, &_player._playerPos.y, 156, _scene._sceneInfo->_height);
+	bool any_pan = _camX.camPan(&_scene._posAdjust.x, &_player._playerPos.x, 320, _scene._sceneInfo->_width);
+	any_pan |= _camY.camPan(&_scene._posAdjust.y, &_player._playerPos.y, 156, _scene._sceneInfo->_height);
 
 	if (any_pan) {
 		_scene.setCamera(_scene._posAdjust);
 		_screenObjects._forceRescan = true;
 	}
-}
-
-bool Game::camPan(Camera *camera, int16 *picture_view, int16 *player_loc, int display_size, int picture_size) {
-	if (!camera)
-		return false;
-
-	bool panningFl = false;
-	if (camera->_panAllowedFl) {
-		camera->_currentFrameFl = false;
-
-		uint32 timer;
-		if ((abs((int32) (camera->_timer - _player._priorTimer)) < camera->_rate) && (_player._ticksAmount == camera->_rate))
-			timer = _player._priorTimer;
-		else
-			timer = camera->_timer;
-
-		if (camera->_activeFl && (_scene._frameStartTime < timer))
-			return (panningFl);
-
-		camera->_timer = _scene._frameStartTime + camera->_rate;
-
-		if (camera->_manualFl) {
-			if (camera->_activeFl) {
-				int diff = camera->_target - *picture_view;
-				int direction = 0;
-				if (diff < 0)
-					direction = -1;
-				else if (diff > 0)
-					direction = 1;
-
-				int magnitude = MIN(abs(diff), camera->_speed);
-
-				if (magnitude == 0)
-					camera->_activeFl = false;
-				else {
-					int panAmount;
-					if (direction < 0)
-						panAmount = -magnitude;
-					else
-						panAmount = magnitude;
-
-					*picture_view += panAmount;
-
-					panningFl = true;
-					camera->_currentFrameFl = true;
-				}
-			}
-		} else {
-			if (!camera->_activeFl) {
-				int lowEdge = *picture_view + camera->_startTolerance;
-				int highEdge = *picture_view - camera->_startTolerance + display_size - 1;
-
-				if ((*player_loc < lowEdge) && (picture_view > 0)) {
-					camera->_activeFl = true;
-					camera->_direction = -1;
-				}
-
-				if ((*player_loc > highEdge) && (*picture_view < (picture_size - display_size))) {
-					camera->_activeFl = true;
-					camera->_direction = 1;
-				}
-			}
-
-			int newTarget = *player_loc - (display_size >> 1);
-
-			if (camera->_direction < 0)
-				newTarget -= camera->_distOffCenter;
-			else 
-				newTarget += camera->_distOffCenter;
-
-			newTarget = MAX(0, newTarget);
-			newTarget = MIN(newTarget, (picture_size - display_size));
-
-			camera->_target = newTarget;
-
-			int diff = newTarget - *picture_view;
-			int magnitude = abs(diff);
-
-			int direction = 0;
-			if (diff < 0)
-				direction = -1;
-			else if (diff > 0)
-				direction = 1;
-
-			if (camera->_activeFl && (magnitude <= camera->_endTolerance))
-				camera->_activeFl = false;
-
-			if (camera->_activeFl) {
-				magnitude = MIN(magnitude, camera->_speed);
-
-				int panAmount;
-				if (direction < 0)
-					panAmount = -magnitude;
-				else
-					panAmount = magnitude;
-
-				if (panAmount) {
-					*picture_view += panAmount;
-					panningFl = true;
-					camera->_currentFrameFl = true;
-				}
-			}
-		}
-	}
-
-	return (panningFl);
 }
 
 } // End of namespace MADS

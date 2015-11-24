@@ -5708,22 +5708,22 @@ void Scene109::enter() {
 void Scene109::step() {
 	if (_anim0ActvFl) {
 		if (_scene->_animation[_globals._animationIndexes[0]]->getCurrentFrame() == 80)
-			_game.camPanTo(&_game._camY, 156);
+			_game._camY.camPanTo(156);
 	}
 
 	if (_anim1ActvFl) {
 		if (_scene->_animation[_globals._animationIndexes[1]]->getCurrentFrame() == 80)
-			_game.camPanTo(&_game._camY, 0);
+			_game._camY.camPanTo(0);
 	}
 
 	if (_anim2ActvFl) {
 		if (_scene->_animation[_globals._animationIndexes[2]]->getCurrentFrame() == 7)
-			_game.camPanTo(&_game._camY, 312);
+			_game._camY.camPanTo(312);
 	}
 
 	if (_anim3ActvFl) {
 		if (_scene->_animation[_globals._animationIndexes[3]]->getCurrentFrame() == 14)
-			_game.camPanTo(&_game._camY, 156);
+			_game._camY.camPanTo(156);
 	}
 
 	switch (_game._trigger) {
