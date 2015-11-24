@@ -509,6 +509,8 @@ void SceneInfo::loadMadsV2Background(int sceneId, const Common::String &resName,
 	}
 	tileSet.clear();
 	tileDataFile.close();
+
+	delete[] tileMap;
 }
 
 /*------------------------------------------------------------------------*/
