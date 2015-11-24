@@ -581,13 +581,13 @@ void Scene307::setDialogNode(int node) {
 
 	case 1:
 		_globals[kMetBuddyBeast] = true;
-		handlePrisonerSpeech(0x10F, 2, 9999999);
+		handlePrisonerSpeech(0x10F, 2, INDEFINITE_TIMEOUT);
 		_dialog1.start();
 		break;
 
 	case 2:
 		_globals[kMetBuddyBeast] = true;
-		handlePrisonerSpeech(0x111, 2, 9999999);
+		handlePrisonerSpeech(0x111, 2, INDEFINITE_TIMEOUT);
 		_dialog1.start();
 		break;
 
@@ -598,7 +598,7 @@ void Scene307::setDialogNode(int node) {
 
 	case 5:
 		_globals[kKnowsBuddyBeast] = true;
-		handlePrisonerSpeech(0x117, 2, 9999999);
+		handlePrisonerSpeech(0x117, 2, INDEFINITE_TIMEOUT);
 		_dialog2.start();
 		break;
 
@@ -609,7 +609,7 @@ void Scene307::setDialogNode(int node) {
 
 	case 7:
 		_globals[kKnowsBuddyBeast] = true;
-		handlePrisonerSpeech(0x124, 10, 9999999);
+		handlePrisonerSpeech(0x124, 10, INDEFINITE_TIMEOUT);
 		_dialog2.write(0x11A, false);
 		_dialog2.write(0x11B, true);
 		_dialog2.write(0x120, true);
@@ -617,7 +617,7 @@ void Scene307::setDialogNode(int node) {
 		break;
 
 	case 8:
-		handlePrisonerSpeech(0x12E, 6, 9999999);
+		handlePrisonerSpeech(0x12E, 6, INDEFINITE_TIMEOUT);
 		_dialog2.write(0x11A, false);
 		_dialog2.write(0x11B, false);
 		_dialog2.write(0x11C, true);
@@ -627,38 +627,38 @@ void Scene307::setDialogNode(int node) {
 		break;
 
 	case 9:
-		handlePrisonerSpeech(0x134, 4, 9999999);
+		handlePrisonerSpeech(0x134, 4, INDEFINITE_TIMEOUT);
 		_dialog2.write(0x11D, false);
 		_dialog2.start();
 		break;
 
 	case 10:
-		handlePrisonerSpeech(0x138, 6, 9999999);
+		handlePrisonerSpeech(0x138, 6, INDEFINITE_TIMEOUT);
 		_dialog2.write(0x11E, false);
 		_dialog2.start();
 		break;
 
 	case 11:
-		handlePrisonerSpeech(0x13E, 6, 9999999);
+		handlePrisonerSpeech(0x13E, 6, INDEFINITE_TIMEOUT);
 		_dialog2.write(0x11F, false);
 		_dialog2.write(0x121, true);
 		_dialog2.start();
 		break;
 
 	case 12:
-		handlePrisonerSpeech(0x144, 4, 9999999);
+		handlePrisonerSpeech(0x144, 4, INDEFINITE_TIMEOUT);
 		_dialog2.write(0x11C, false);
 		_dialog2.start();
 		break;
 
 	case 13:
-		handlePrisonerSpeech(0x148, 7, 9999999);
+		handlePrisonerSpeech(0x148, 7, INDEFINITE_TIMEOUT);
 		_dialog2.write(0x120, false);
 		_dialog2.start();
 		break;
 
 	case 14:
-		handlePrisonerSpeech(0x14F, 3, 9999999);
+		handlePrisonerSpeech(0x14F, 3, INDEFINITE_TIMEOUT);
 		_dialog2.write(0x121, false);
 		_dialog2.start();
 		break;
@@ -670,7 +670,7 @@ void Scene307::setDialogNode(int node) {
 
 	case 16:
 		_globals[kKnowsBuddyBeast] = true;
-		handlePrisonerSpeech(0x10C, 1, 9999999);
+		handlePrisonerSpeech(0x10C, 1, INDEFINITE_TIMEOUT);
 		_dialog2.start();
 		break;
 
@@ -2465,59 +2465,59 @@ void Scene318::handleDialog() {
 
 		switch (_action._activeAction._verbId) {
 		case 0x191:
-			handleInternDialog(0x19E, 2, 9999999);
+			handleInternDialog(0x19E, 2, INDEFINITE_TIMEOUT);
 			_dialog1.write(0x192, true);
 			break;
 
 		case 0x192:
-			handleInternDialog(0x1A0, 5, 9999999);
+			handleInternDialog(0x1A0, 5, INDEFINITE_TIMEOUT);
 			_dialog1.write(0x193, true);
 			break;
 
 		case 0x193:
-			handleInternDialog(0x1A5, 4, 9999999);
+			handleInternDialog(0x1A5, 4, INDEFINITE_TIMEOUT);
 			_dialog1.write(0x194, true);
 			break;
 
 		case 0x194:
-			handleInternDialog(0x1A9, 6, 9999999);
+			handleInternDialog(0x1A9, 6, INDEFINITE_TIMEOUT);
 			_dialog1.write(0x195, true);
 			_dialog1.write(0x196, true);
 			_dialog1.write(0x19D, false);
 			break;
 
 		case 0x195:
-			handleInternDialog(0x1AF, 7, 9999999);
+			handleInternDialog(0x1AF, 7, INDEFINITE_TIMEOUT);
 			if (!_dialog1.read(0x196))
 				_dialog1.write(0x197, true);
 			break;
 
 		case 0x196:
-			handleInternDialog(0x1B6, 5, 9999999);
+			handleInternDialog(0x1B6, 5, INDEFINITE_TIMEOUT);
 			if (!_dialog1.read(0x195))
 				_dialog1.write(0x197, true);
 			break;
 
 		case 0x197:
-			handleInternDialog(0x1BB, 5, 9999999);
+			handleInternDialog(0x1BB, 5, INDEFINITE_TIMEOUT);
 			break;
 
 		case 0x198:
-			handleInternDialog(0x1C0, 5, 9999999);
+			handleInternDialog(0x1C0, 5, INDEFINITE_TIMEOUT);
 			_dialog1.write(0x19A, true);
 			break;
 
 		case 0x199:
-			handleInternDialog(0x1C5, 3, 9999999);
+			handleInternDialog(0x1C5, 3, INDEFINITE_TIMEOUT);
 			break;
 
 		case 0x19A:
-			handleInternDialog(0x1C8, 5, 9999999);
+			handleInternDialog(0x1C8, 5, INDEFINITE_TIMEOUT);
 			_dialog1.write(0x19B, true);
 			break;
 
 		case 0x19B:
-			handleInternDialog(0x1CD, 3, 9999999);
+			handleInternDialog(0x1CD, 3, INDEFINITE_TIMEOUT);
 			break;
 
 		case 0x19C:
@@ -2865,7 +2865,7 @@ void Scene318::actions() {
 
 		case 1:
 			_game._player._stepEnabled = true;
-			handleInternDialog(0x18F, 1, 9999999);
+			handleInternDialog(0x18F, 1, INDEFINITE_TIMEOUT);
 			_dialog1.start();
 			break;
 
@@ -3152,27 +3152,27 @@ void Scene319::enter() {
 		_slacheInitFl = true;
 
 		if (_globals[kRexHasMetSlache]) {
-			handleSlacheDialogs(VERB_WALK_OUTSIDE, 2, 9999999);
+			handleSlacheDialogs(VERB_WALK_OUTSIDE, 2, INDEFINITE_TIMEOUT);
 			_slachePosY = 3;
 		} else {
-			handleSlacheDialogs(0x186, 4, 9999999);
+			handleSlacheDialogs(0x186, 4, INDEFINITE_TIMEOUT);
 			_slachePosY = 5;
 		}
 	}
 
 	switch (_slacheTopic) {
 	case 1:
-		handleSlacheDialogs(0x15F, 2, 9999999);
+		handleSlacheDialogs(0x15F, 2, INDEFINITE_TIMEOUT);
 		_dialog1.start();
 		break;
 
 	case 2:
-		handleSlacheDialogs(0x16B, 2, 9999999);
+		handleSlacheDialogs(0x16B, 2, INDEFINITE_TIMEOUT);
 		_dialog2.start();
 		break;
 
 	case 3:
-		handleSlacheDialogs(0x177, 2, 9999999);
+		handleSlacheDialogs(0x177, 2, INDEFINITE_TIMEOUT);
 		_dialog3.start();
 		break;
 
@@ -3394,7 +3394,7 @@ void Scene319::actions() {
 			if (!_slacheTalkingFl) {
 				_scene->_sequences.addTimer(4, 2);
 			} else {
-				handleSlacheDialogs(0x16B, 2, 9999999);
+				handleSlacheDialogs(0x16B, 2, INDEFINITE_TIMEOUT);
 				_dialog2.start();
 				_game._player._stepEnabled = true;
 			}
@@ -3411,7 +3411,7 @@ void Scene319::actions() {
 			if (!_slacheTalkingFl) {
 				_scene->_sequences.addTimer(4, 2);
 			} else {
-				handleSlacheDialogs(0x177, 2, 9999999);
+				handleSlacheDialogs(0x177, 2, INDEFINITE_TIMEOUT);
 				_dialog3.start();
 				_game._player._stepEnabled = true;
 			}
@@ -3480,7 +3480,7 @@ void Scene319::actions() {
 						curDialog = &_dialog3;
 					}
 
-					handleSlacheDialogs(nextDocQuote, 2, 9999999);
+					handleSlacheDialogs(nextDocQuote, 2, INDEFINITE_TIMEOUT);
 					if (addDialogLine) {
 						curDialog->write(_action._activeAction._verbId, false);
 						curDialog->write(addVerbId, true);
@@ -3512,7 +3512,7 @@ void Scene319::actions() {
 						curDialog = &_dialog3;
 					}
 
-					handleSlacheDialogs(nextDocQuote, 2, 9999999);
+					handleSlacheDialogs(nextDocQuote, 2, INDEFINITE_TIMEOUT);
 					if (addDialogLine) {
 						curDialog->write(_action._activeAction._verbId, false);
 						curDialog->write(addVerbId, true);

@@ -1284,7 +1284,7 @@ void Scene205::step() {
 }
 
 void Scene205::handleWomanSpeech(int quote) {
-	_kernelMessage = _scene->_kernelMessages.add(Common::Point(186, 27), 0xFBFA, 0, 0, 9999999, _game.getQuote(quote));
+	_kernelMessage = _scene->_kernelMessages.add(Common::Point(186, 27), 0xFBFA, 0, 0, INDEFINITE_TIMEOUT, _game.getQuote(quote));
 }
 
 void Scene205::actions() {
@@ -4109,7 +4109,7 @@ void Scene210::setDialogNode(int node) {
 }
 
 void Scene210::handleTwinklesSpeech(int quoteId, int shiftX, uint32 delay) {
-	_scene->_kernelMessages.add(Common::Point(10, 70 + (shiftX * 14)), 0xFDFC, 0, 0, (delay == 0) ? 9999999 : delay, _game.getQuote(quoteId));
+	_scene->_kernelMessages.add(Common::Point(10, 70 + (shiftX * 14)), 0xFDFC, 0, 0, (delay == 0) ? INDEFINITE_TIMEOUT : delay, _game.getQuote(quoteId));
 }
 
 void Scene210::newNode(int node) {
