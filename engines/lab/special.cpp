@@ -89,7 +89,7 @@ extern uint16 *FadePalette;
 extern bool nopalchange, DoBlack, IsHiRes;
 extern BitMap *DispBitMap, *DrawBitMap;
 extern char diffcmap[3 * 256];
-extern byte *TempScrollData;
+extern byte *_tempScrollData;
 extern CloseDataPtr CPtr;
 extern InventoryData *Inventory;
 extern uint16 RoomNum, Direction;
@@ -164,7 +164,7 @@ void showCombination(const char *filename) {
 	for (CurBit = 0; CurBit < 10; CurBit++)
 		readImage(buffer, &(Images[CurBit]));
 
-	allocFile((void **)&TempScrollData, Images[0]->Width * Images[0]->Height * 2L, "tempdata");
+	allocFile((void **)&_tempScrollData, Images[0]->Width * Images[0]->Height * 2L, "tempdata");
 
 	doCombination();
 
@@ -315,7 +315,7 @@ void showTile(const char *filename, bool showsolution) {
 	for (CurBit = start; CurBit < 16; CurBit++)
 		readImage(buffer, &(Tiles[CurBit]));
 
-	allocFile((void **)&TempScrollData, Tiles[1]->Width * Tiles[1]->Height * 2L, "tempdata");
+	allocFile((void **)&_tempScrollData, Tiles[1]->Width * Tiles[1]->Height * 2L, "tempdata");
 
 	doTile(showsolution);
 
