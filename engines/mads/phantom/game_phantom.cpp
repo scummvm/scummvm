@@ -885,13 +885,14 @@ void GamePhantom::setupCatacombs() {
 }
 
 int GamePhantom::exitCatacombs(int dir) {
-	int scene = _globals[kCatacombsRoom];
-	assert ((scene < _catacombSize) && (dir < 4));
-	return (_catacombs[scene]._exit[dir]);
+	assert(_globals[kCatacombsRoom] == CLIP(_globals[kCatacombsRoom], 0, _catacombSize - 1));
+	assert(dir == CLIP(dir, 0, 3));
+
+	return (_catacombs[_globals[kCatacombsRoom]]._exit[dir]);
 }
 
 void GamePhantom::moveCatacombs(int dir) {
-	assert(_globals[kCatacombsRoom] == CLIP(_globals[kCatacombsRoom], 0, _catacombSize));
+	assert(_globals[kCatacombsRoom] == CLIP(_globals[kCatacombsRoom], 0, _catacombSize - 1));
 	assert(dir == CLIP(dir, 0, 3));
 
 	newCatacombRoom(_catacombs[_globals[kCatacombsRoom]]._fromDirection[dir], _catacombs[_globals[kCatacombsRoom]]._exit[dir]);
