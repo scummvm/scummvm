@@ -130,12 +130,16 @@ void GameConversation::get(int id) {
 	uint16 commandLength = convFile->readUint16LE();	// Total length of commands in section 6
 	//debug("Node entry commands length: %d", commandLength);
 
-	/*debug("Section 0 unknown bytes");
+#if 0
+	debug("Section 0 unknown bytes");
 	byte *tmp0 = new byte[26];
 	convFile->read(tmp0, 26);
 	Common::hexdump(tmp0, 26);
-	delete[] tmp0;*/
-	
+	delete[] tmp0;
+	delete convFile;
+#else
+	warning("Section 0 unknown bytes");
+#endif
 	// **** Section 1: Nodes **************************************************
 	convFile = convFileUnpacked.getItemStream(1);
 
@@ -149,6 +153,7 @@ void GameConversation::get(int id) {
 		conv.convNodes.push_back(node);
 		//debug("Node %d, index %d, entries %d - %d, %d, %d", i, node.index, node.dialogCount, node.unk1, node.unk2, node.unk3);
 	}
+	delete convFile;
 
 	// **** Section 2: Dialogs ************************************************
 	convFile = convFileUnpacked.getItemStream(2);
@@ -167,16 +172,20 @@ void GameConversation::get(int id) {
 			//debug("Node %d, dialog %d: text line %d, speech index %d, node offset %d, node size %d", j, i, dialog.textLineIndex, dialog.speechIndex, dialog.nodeOffset, dialog.nodeSize);
 		}
 	}
+	delete convFile;
 
 	// **** Section 3: ???? ***************************************************
-	/*debug("Section 3");
+#if 0
+	debug("Section 3");
 	convFile = convFileUnpacked.getItemStream(3);
 	byte *tmp1 = new byte[convFile->size()];
 	convFile->read(tmp1, convFile->size());
 	Common::hexdump(tmp1, convFile->size());
-	delete[] tmp1;*/
-	// TODO
-
+	delete[] tmp1;
+	delete convFile;
+#else
+	warning("Section 3 - TODO");
+#endif
 	// **** Section 4: Text line offsets **************************************
 	convFile = convFileUnpacked.getItemStream(4);
 	assert(convFile->size() == conv.textLineCount * 2);
@@ -184,6 +193,8 @@ void GameConversation::get(int id) {
 	uint16 *textLineOffsets = new uint16[conv.textLineCount];	// deleted below in section 5
 	for (uint16 i = 0; i < conv.textLineCount; i++)
 		textLineOffsets[i] = convFile->readUint16LE();
+
+	delete convFile;
 
 	// **** Section 5: Text lines *********************************************
 	convFile = convFileUnpacked.getItemStream(5);
@@ -201,6 +212,7 @@ void GameConversation::get(int id) {
 	}
 
 	delete[] textLineOffsets;
+	delete convFile;
 
 	// **** Section 6: Node entry commands ************************************
 	convFile = convFileUnpacked.getItemStream(6);
@@ -272,6 +284,7 @@ void GameConversation::get(int id) {
 		}
 	}
 
+	delete convFile;
 	inFile.close();
 
 	/*
