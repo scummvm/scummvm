@@ -154,7 +154,8 @@ void Scene::loadScene(int sceneId, const Common::String &prefix, bool palFlag) {
 	_sequences.clear();
 	_kernelMessages.clear();
 	_vm->_palette->_paletteUsage.load(&_scenePaletteUsage);
-	setCamera(Common::Point(0, 0));
+	if (_vm->getGameID() != GType_RexNebular)
+		setCamera(Common::Point(0, 0));
 
 	int flags = SCENEFLAG_LOAD_SHADOW;
 	if (_vm->_dithering)
