@@ -344,7 +344,6 @@ void Scene102::step() {
 	if ((_animRunning == 2) && _scene->_animation[_globals._animationIndexes[0]]) {
 		if (_scene->_animation[_globals._animationIndexes[0]]->getCurrentFrame() != _diaryFrame) {
 			_diaryFrame = _scene->_animation[_globals._animationIndexes[0]]->getCurrentFrame();
-			resetFrame = -1;
 
 			switch (_diaryFrame) {
 			case 6:
@@ -359,13 +358,6 @@ void Scene102::step() {
 
 			default:
 				break;
-			}
-
-			if (resetFrame >= 0) {
-				if (resetFrame != _scene->_animation[_globals._animationIndexes[0]]->getCurrentFrame()) {
-					_scene->setAnimFrame(_globals._animationIndexes[0], resetFrame);
-					_diaryFrame = resetFrame;
-				}
 			}
 		}
 	}
@@ -1389,16 +1381,10 @@ void Scene104::step() {
 	if ((_animationRunning == 1) && _scene->_animation[_globals._animationIndexes[0]]) {
 		if (_scene->_animation[_globals._animationIndexes[0]]->getCurrentFrame() != _tapestryFrame) {
 			_tapestryFrame = _scene->_animation[_globals._animationIndexes[0]]->getCurrentFrame();
-			int resetFrame = -1;
 
 			if (_tapestryFrame == 13) {
 				_game._player._visible = true;
 				_game.syncTimers(SYNC_PLAYER, 0, SYNC_ANIM, _globals._animationIndexes[0]);
-			}
-
-			if ((resetFrame >= 0) && (resetFrame != _scene->_animation[_globals._animationIndexes[0]]->getCurrentFrame())) {
-				_scene->setAnimFrame(_globals._animationIndexes[0], resetFrame);
-				_tapestryFrame = resetFrame;
 			}
 		}
 	}
@@ -2925,17 +2911,11 @@ void Scene104::handleDeathAnimation() {
 		return;
 
 	_deathFrame = _scene->_animation[_globals._animationIndexes[4]]->getCurrentFrame();
-	int resetFrame = -1;
 
 	if (_deathFrame == 11)
 		_scene->playSpeech(7);
 	else if (_deathFrame == 17)
 		_scene->playSpeech(6);
-
-	if (resetFrame >= 0) {
-		_scene->setAnimFrame(_globals._animationIndexes[4], resetFrame);
-		_deathFrame = resetFrame;
-	}
 }
 
 void Scene104::handlePidAnimation() {
