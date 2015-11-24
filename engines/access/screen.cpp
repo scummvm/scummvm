@@ -296,7 +296,7 @@ void Screen::transBlitFrom(ASurface *src, const Common::Rect &bounds) {
 	ASurface::transBlitFrom(src, bounds);
 }
 
-void Screen::blitFrom(Graphics::Surface &src) {
+void Screen::blitFrom(const Graphics::Surface &src) {
 	addDirtyRect(Common::Rect(0, 0, src.w, src.h));
 	ASurface::blitFrom(src);
 }

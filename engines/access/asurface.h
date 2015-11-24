@@ -107,7 +107,7 @@ public:
 
 	virtual void transBlitFrom(ASurface &src);
 
-	virtual void blitFrom(Graphics::Surface &src);
+	virtual void blitFrom(const Graphics::Surface &src);
 
 	virtual void copyBuffer(Graphics::Surface *src);
 

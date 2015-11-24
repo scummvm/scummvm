@@ -98,7 +98,7 @@ public:
 
 	virtual void transBlitFrom(ASurface *src, const Common::Rect &bounds);
 
-	virtual void blitFrom(Graphics::Surface &src);
+	virtual void blitFrom(const Graphics::Surface &src);
 
 	virtual void copyBuffer(Graphics::Surface *src);
 

@@ -52,12 +52,23 @@ Debugger *Debugger::init(AccessEngine *vm) {
 	}
 }
 
+void Debugger::postEnter() {
+	if (!_playMovieFile.empty()) {
+		_vm->playMovie(_playMovieFile, Common::Point(0, 0));
+
+		_playMovieFile.clear();
+	}
+
+	_vm->pauseEngine(false);
+}
+
 /*------------------------------------------------------------------------*/
 
 Debugger::Debugger(AccessEngine *vm) : GUI::Debugger(), _vm(vm) {
 	registerCmd("continue", WRAP_METHOD(Debugger, cmdExit));
 	registerCmd("scene", WRAP_METHOD(Debugger, Cmd_LoadScene));
 	registerCmd("cheat", WRAP_METHOD(Debugger, Cmd_Cheat));
+	registerCmd("playmovie", WRAP_METHOD(Debugger, Cmd_PlayMovie));
 
 	switch (vm->getGameID()) {
 	case GType_Amazon:
@@ -131,6 +142,19 @@ bool Debugger::Cmd_Cheat(int argc, const char **argv) {
 	_vm->_cheatFl = !_vm->_cheatFl;
 	debugPrintf("Cheat is now %s\n", _vm->_cheatFl ? "ON" : "OFF");
 	return true;
+}
+
+bool Debugger::Cmd_PlayMovie(int argc, const char **argv) {
+	if (argc != 2) {
+		debugPrintf("Format: playmovie <movie-file>\n");
+		return true;
+	}
+
+	// play gets postboned until debugger is closed
+	Common::String filename = argv[1];
+	_playMovieFile = filename;
+
+	return cmdExit(0, 0);
 }
 
 /*------------------------------------------------------------------------*/
