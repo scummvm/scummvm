@@ -150,7 +150,7 @@ bool Debugger::Cmd_PlayMovie(int argc, const char **argv) {
 		return true;
 	}
 
-	// play gets postboned until debugger is closed
+	// play gets postponed until debugger is closed
 	Common::String filename = argv[1];
 	_playMovieFile = filename;
 
