@@ -434,7 +434,6 @@ void AccessVIDMovieDecoder::StreamVideoTrack::decodeFrame(Common::SeekableReadSt
 			}
 		}
 
-		byte rleByte = 0;
 		expectedPixels = _width * (_height - horizontalStartPosition);
 
 		// adjust frame destination pointer
@@ -552,7 +551,6 @@ bool AccessVIDMovieDecoder::StreamVideoTrack::skipOverFrame(Common::SeekableRead
 			}
 		}
 
-		byte rleByte = 0;
 		expectedPixels = _width * (_height - horizontalStartPosition);
 
 		while (expectedPixels >= 0) {
@@ -704,8 +702,6 @@ bool AccessEngine::playMovie(const Common::String &filename, const Common::Point
 	}
 
 	bool skipVideo = false;
-	uint16 width = videoDecoder->getWidth();
-	uint16 height = videoDecoder->getHeight();
 
 	_events->clearEvents();
 	videoDecoder->start();
