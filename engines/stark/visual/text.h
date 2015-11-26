@@ -50,6 +50,7 @@ public:
 
 	void setText(const Common::String &text);
 	void setColor(uint32 color);
+	void setBackgroundColor(uint32 color);
 	void setTargetWidth(uint32 width);
 	void setFont(FontProvider::FontType type, int32 customFontIndex = -1);
 
@@ -64,6 +65,7 @@ private:
 	Common::String _text;
 	const Graphics::Font *_font;
 	uint32 _color;
+	uint32 _backgroundColor;
 	uint32 _targetWidth;
 	Gfx::Texture *_texture;
 };

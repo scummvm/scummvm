@@ -39,6 +39,7 @@ VisualText::VisualText(Gfx::Driver *gfx) :
 		_gfx(gfx),
 		_texture(nullptr),
 		_color(0),
+		_backgroundColor(0),
 		_targetWidth(600),
 		_font(nullptr) {
 }
@@ -65,6 +66,11 @@ void VisualText::setColor(uint32 color) {
 	_color = color;
 }
 
+void VisualText::setBackgroundColor(uint32 color) {
+	freeTexture();
+	_backgroundColor = color;
+}
+
 void VisualText::setTargetWidth(uint32 width) {
 	freeTexture();
 	_targetWidth = width;
@@ -82,8 +88,11 @@ void VisualText::createTexture() {
 		width = MAX(width, _font->getStringWidth(lines[i]));
 	}
 
+	Common::Rect boundingRect = Common::Rect(width, height * lines.size());
+
 	Graphics::Surface surface;
-	surface.create(width, height * lines.size(), _gfx->getScreenFormat());
+	surface.create(boundingRect.width(), boundingRect.height(), _gfx->getScreenFormat());
+	surface.fillRect(boundingRect, _backgroundColor);
 
 	for (uint i = 0; i < lines.size(); i++) {
 		_font->drawString(&surface, lines[i], 0, height * i, _targetWidth, _color);

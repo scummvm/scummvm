@@ -39,7 +39,8 @@ ClickText::ClickText(const Common::String &text, uint32 color) :
 
 	_visualActive = new VisualText(StarkGfx);
 	_visualActive->setText(_text);
-	_visualActive->setColor(0xFF00FF00);
+	_visualActive->setColor(0xFF000000);
+	_visualActive->setBackgroundColor(_color);
 	_visualActive->setFont(FontProvider::kBigFont);
 	_visualActive->setTargetWidth(600);
 
