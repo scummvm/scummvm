@@ -59,7 +59,7 @@ void Scene1xx::sceneEntrySound() {
 			break;
 
 		case 103:
-			if ((_globals[kJacquesStatus] == 2)) {
+			if (_globals[kJacquesStatus] == 2) {
 				_vm->_sound->command(32);
 				_globals[kJacquesStatus] = 3;
 			} else
