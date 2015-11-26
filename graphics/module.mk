@@ -11,6 +11,7 @@ MODULE_OBJS := \
 	fonts/newfont.o \
 	fonts/ttf.o \
 	fonts/winfont.o \
+	fonts/dosfont.o \
 	maccursor.o \
 	pixelformat.o \
 	primitives.o \

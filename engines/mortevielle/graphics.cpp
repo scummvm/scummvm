@@ -33,6 +33,10 @@
 #include "common/system.h"
 #include "graphics/palette.h"
 
+#include "graphics/fontman.h"
+#include "graphics/font.h"
+
+
 namespace Mortevielle {
 
 /*-------------------------------------------------------------------------*
@@ -1109,6 +1113,14 @@ void ScreenSurface::drawString(const Common::String &l, int command) {
 		pt.x += charWidth;
 	}
 	_vm->_mouse->showMouse();
+}
+
+void ScreenSurface::drawSystemString(const Common::String &l, int color) {
+	if (l == "")
+		return;
+	Common::Point pt = _textPos;
+ 	const Graphics::Font *font = FontMan.getFontByUsage(Graphics::FontManager::kDOSFont);
+	font->drawString(_vm->_screenSurface, l, pt.x, pt.y, SCREEN_WIDTH, color, Graphics::kTextAlignLeft, 0, false);	
 }
 
 /**

@@ -35,6 +35,7 @@
 #include "common/scummsys.h"
 #include "graphics/cursorman.h"
 
+
 namespace Mortevielle {
 
 /**
@@ -1728,13 +1729,16 @@ void MortevielleEngine::showMoveMenuAlert() {
 void MortevielleEngine::showConfigScreen() {
 	// FIXME: need a DOS palette, index 9 (light blue). Also we should show DOS font here
 	Common::String tmpStr;
-	int width, cy = 0;
+	int size, cy = 0;
 	clearScreen();
  	do {
  		++cy;
  		tmpStr = getString(cy + kStartingScreenStringIndex);
- 		width = _screenSurface->getStringWidth(tmpStr);
- 		_text->displayStr(tmpStr, 320 - width / 2, cy * 8, 80, 1, 2);
+ 		size = tmpStr.size();
+ 		// FIXME: to have all lines at the correct position we need a ceil()
+		// Check the text export in mort.dat for unexpected/missing space
+		_screenSurface->putxy((40 - size / 2 - size % 2 - 1) * 8, cy * 16);
+		_screenSurface->drawSystemString(tmpStr, 9);
  	} while (cy != 20);
 
  	int ix = 0;
@@ -2154,8 +2158,8 @@ void MortevielleEngine::showTitleScreen() {
 
 	// FIXME: should be a DOS font here
 	Common::String cpr = "COPYRIGHT 1989 : LANKHOR";
-	_screenSurface->putxy(104 + 72 * kResolutionScaler, 185);
-	_screenSurface->drawString(cpr, 0);
+	_screenSurface->putxy(216, 184 * kResolutionScaler - 1);
+	_screenSurface->drawSystemString(cpr, 7);
 }
 
 /**

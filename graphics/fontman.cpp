@@ -35,6 +35,7 @@ namespace Graphics {
 FORWARD_DECLARE_FONT(g_sysfont);
 FORWARD_DECLARE_FONT(g_sysfont_big);
 FORWARD_DECLARE_FONT(g_consolefont);
+FORWARD_DECLARE_FONT(g_dosfont);
 
 FontManager::FontManager() {
 	// This assert should *never* trigger, because
@@ -45,6 +46,7 @@ FontManager::FontManager() {
 	INIT_FONT(g_sysfont);
 	INIT_FONT(g_sysfont_big);
 	INIT_FONT(g_consolefont);
+	INIT_FONT(g_dosfont);
 }
 
 FontManager::~FontManager() {
@@ -77,6 +79,7 @@ const struct {
 	{ "helvB12.bdf", FontManager::kBigGUIFont },
 	{ "helvB12-iso-8859-1.bdf", FontManager::kBigGUIFont },
 	{ "helvB12-ascii.bdf", FontManager::kBigGUIFont },
+	{ "fixed8x16-DOS-limited-set", FontManager::kDOSFont },
 	{ 0, FontManager::kConsoleFont }
 };
 
@@ -117,6 +120,9 @@ bool FontManager::setFont(FontUsage usage, const BdfFont *font) {
 		delete g_sysfont_big;
 		g_sysfont_big = font;
 		break;
+	case kDOSFont:
+		delete g_dosfont;
+		g_dosfont = font;
 	default:
 		return false;
 	}
@@ -181,6 +187,8 @@ const Font *FontManager::getFontByUsage(FontUsage usage) const {
 		return g_sysfont;
 	case kBigGUIFont:
 		return g_sysfont_big;
+	case kDOSFont:
+		return g_dosfont;
 	case kLocalizedFont:
 		// By default use the big font as localized font
 		if (_localizedFontName.empty())
