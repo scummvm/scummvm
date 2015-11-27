@@ -432,7 +432,7 @@ void GamePhantom::doObjectAction() {
 		_vm->_dialogs->showItem(OBJ_BOOK, 815, 0);
 		action._inProgress = false;
 		return;
-	} 
+	}
 
 	if (action.isAction(VERB_LOOK, NOUN_CRUMPLED_NOTE) || action.isAction(VERB_READ, NOUN_CRUMPLED_NOTE)) {
 		_vm->_dialogs->showItem(OBJ_CRUMPLED_NOTE, 816, 6);
@@ -870,6 +870,10 @@ void GamePhantom::setupCatacombs() {
 		_globals[kCatacombs501From]  = 0;
 		break;
 
+	case DIFFICULTY_MEDIUM:
+		// TODO: FIXME. Do we need to set something here?
+		break;
+
 	case DIFFICULTY_HARD:
 		_catacombs = _hardCatacombs;
 		_catacombSize = 62;
@@ -924,7 +928,7 @@ void GamePhantom::newCatacombRoom(int toRoom, int fromExit) {
 
 		default:
 			error("Unexpected room in newCatacombRoom");
-		} 
+		}
 	} else {
 		newSceneNum = _catacombs[toRoom]._sceneNum;
 		_globals[81] = _catacombs[toRoom]._flags;
