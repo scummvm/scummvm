@@ -161,11 +161,13 @@ void AgiEngine::dictionaryWords(char *msg) {
 	char *q = NULL;
 	int wid, wlen;
 
+	assert(msg);
+
 	debugC(2, kDebugLevelScripts, "msg = \"%s\"", msg);
 
 	cleanInput();
 
-	for (p = msg; p && *p && getvar(vWordNotFound) == 0;) {
+	for (p = msg; *p && getvar(vWordNotFound) == 0;) {
 		if (*p == 0x20)
 			p++;
 
@@ -205,7 +207,7 @@ void AgiEngine::dictionaryWords(char *msg) {
 			break;
 		}
 
-		if (p != NULL && *p) {
+		if (*p) {
 			debugC(2, kDebugLevelScripts, "p = %s", p);
 			*p = 0;
 			p++;
