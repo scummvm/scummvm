@@ -608,18 +608,18 @@ static void doScrollBounce() {
 	g_music->updateMusic();
 	int startline = headerdata.y - height - 1;
 
-	for (int counter = 0; counter < 5; counter++) {
+	for (int i = 0; i < 5; i++) {
 		g_music->updateMusic();
-		startline -= newby[counter];
+		startline -= newby[i];
 		copyPage(width, height, 0, startline, mem);
 
 		g_lab->WSDL_UpdateScreen();
 		g_lab->waitTOF();
 	}
 
-	for (int counter = 8; counter > 0; counter--) {
+	for (int i = 8; i > 0; i--) {
 		g_music->updateMusic();
-		startline += newby1[counter - 1];
+		startline += newby1[i - 1];
 		copyPage(width, height, 0, startline, mem);
 
 		g_lab->WSDL_UpdateScreen();
@@ -636,7 +636,7 @@ static void doScrollBounce() {
 /* Does the transporter wipe.                                                */
 /*****************************************************************************/
 static void doTransWipe(CloseDataPtr *CPtr, char *filename) {
-	uint16 LastY, CurY, counter, linesdone = 0, lineslast;
+	uint16 LastY, CurY, linesdone = 0, lineslast;
 	Image ImSource, ImDest;
 
 	if (IsHiRes) {
@@ -647,8 +647,8 @@ static void doTransWipe(CloseDataPtr *CPtr, char *filename) {
 		LastY = 148;
 	}
 
-	for (counter = 0; counter < 2; counter++) {
-		CurY = counter * 2;
+	for (uint16 i = 0; i < 2; i++) {
+		CurY = i * 2;
 
 		while (CurY < LastY) {
 			if (linesdone >= lineslast) {
@@ -665,8 +665,8 @@ static void doTransWipe(CloseDataPtr *CPtr, char *filename) {
 
 	g_lab->setAPen(0);
 
-	for (counter = 0; counter < 2; counter++) {
-		CurY = counter * 2;
+	for (uint16 i = 0; i < 2; i++) {
+		CurY = i * 2;
 
 		while (CurY <= LastY) {
 			if (linesdone >= lineslast) {
@@ -700,8 +700,8 @@ static void doTransWipe(CloseDataPtr *CPtr, char *filename) {
 		ImDest.Height = g_lab->_screenHeight;
 		ImDest.ImageData = g_lab->getVGABaseAddr();
 
-		for (counter = 0; counter < 2; counter++) {
-			CurY = counter * 2;
+		for (uint16 i = 0; i < 2; i++) {
+			CurY = i * 2;
 
 			while (CurY < LastY) {
 				if (linesdone >= lineslast) {
@@ -719,8 +719,8 @@ static void doTransWipe(CloseDataPtr *CPtr, char *filename) {
 			}
 		}
 
-		for (counter = 0; counter < 2; counter++) {
-			CurY = counter * 2;
+		for (uint16 i = 0; i < 2; i++) {
+			CurY = i * 2;
 
 			while (CurY <= LastY) {
 				if (linesdone >= lineslast) {

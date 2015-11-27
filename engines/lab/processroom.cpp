@@ -330,7 +330,6 @@ static void doActions(Action * APtr, CloseDataPtr *LCPtr) {
 	CloseDataPtr TLCPtr;
 	bool FirstLoaded = true;
 	char **str, *Test;
-	uint16 counter;
 	uint32 StartSecs, StartMicros, CurSecs, CurMicros;
 
 	while (APtr) {
@@ -563,8 +562,8 @@ static void doActions(Action * APtr, CloseDataPtr *LCPtr) {
 			else if (APtr->Param1 == 2)
 				DoBlack = (CPtr != NULL);
 			else if (APtr->Param1 == 5) { /* inverse the palette */
-				for (counter = (8 * 3); counter < (255 * 3); counter++)
-					diffcmap[counter] = 255 - diffcmap[counter];
+				for (uint16 idx = (8 * 3); idx < (255 * 3); idx++)
+					diffcmap[idx] = 255 - diffcmap[idx];
 
 				g_lab->waitTOF();
 				g_lab->VGASetPal(diffcmap, 256);

@@ -217,14 +217,12 @@ void Intro::doPictText(const char *filename, bool isscreen) {
 /* Does a one second delay, but checks the music while doing it.             */
 /*****************************************************************************/
 void Intro::musicDelay() {
-	int16 counter;
-
 	g_music->updateMusic();
 
 	if (_quitIntro)
 		return;
 
-	for (counter = 0; counter < 20; counter++) {
+	for (uint16 i = 0; i < 20; i++) {
 		g_music->updateMusic();
 		g_lab->waitTOF();
 		g_lab->waitTOF();
@@ -253,8 +251,6 @@ void Intro::nReadPict(const char *filename, bool playOnce) {
 /* Does the introduction sequence for Labyrinth.                             */
 /*****************************************************************************/
 void Intro::introSequence() {
-	uint16 counter, counter1;
-
 	uint16 palette[16] = {
 		0x0000, 0x0855, 0x0FF9, 0x0EE7,
 		0x0ED5, 0x0DB4, 0x0CA2, 0x0C91,
@@ -272,7 +268,7 @@ void Intro::introSequence() {
 	} else {
 		nReadPict("WYRMKEEP", true);
 		// Wait 4 seconds
-		for (counter = 0; counter < 4 * 1000 / 10; counter++) {
+		for (uint16 i = 0; i < 4 * 1000 / 10; i++) {
 			introEatMessages();
 			if (_quitIntro)
 				break;
@@ -293,13 +289,13 @@ void Intro::introSequence() {
 
 	FadePalette = palette;
 
-	for (counter = 0; counter < 16; counter++) {
+	for (uint16 i = 0; i < 16; i++) {
 		if (_quitIntro)
 			break;
 
-		palette[counter] = ((diffcmap[counter * 3] >> 2) << 8) +
-		                   ((diffcmap[counter * 3 + 1] >> 2) << 4) +
-		                   (diffcmap[counter * 3 + 2] >> 2);
+		palette[i] = ((diffcmap[i * 3] >> 2) << 8) +
+		                   ((diffcmap[i * 3 + 1] >> 2) << 4) +
+		                   (diffcmap[i * 3 + 2] >> 2);
 	}
 
 	g_music->updateMusic();
@@ -312,8 +308,8 @@ void Intro::introSequence() {
 		g_music->updateMusic();
 		uint16 temp = palette[2];
 
-		for (counter = 2; counter < 15; counter++)
-			palette[counter] = palette[counter + 1];
+		for (uint16 i = 2; i < 15; i++)
+			palette[i] = palette[i + 1];
 
 		palette[15] = temp;
 
@@ -358,10 +354,10 @@ void Intro::introSequence() {
 	nReadPict("Intro.1", true);
 	nopalchange = false;
 
-	for (counter = 0; counter < 16; counter++) {
-		palette[counter] = ((diffcmap[counter * 3] >> 2) << 8) +
-		                   ((diffcmap[counter * 3 + 1] >> 2) << 4) +
-		                   (diffcmap[counter * 3 + 2] >> 2);
+	for (uint16 i = 0; i < 16; i++) {
+		palette[i] = ((diffcmap[i * 3] >> 2) << 8) +
+		             ((diffcmap[i * 3 + 1] >> 2) << 4) +
+		             (diffcmap[i * 3 + 2] >> 2);
 	}
 
 	doPictText("i.1", true);
@@ -399,9 +395,9 @@ void Intro::introSequence() {
 	doPictText("i.11", false);
 
 	if (!_quitIntro)
-		for (counter = 0; counter < 50; counter++) {
-			for (counter1 = (8 * 3); counter1 < (255 * 3); counter1++)
-				diffcmap[counter1] = 255 - diffcmap[counter1];
+		for (uint16 i = 0; i < 50; i++) {
+			for (uint16 idx = (8 * 3); idx < (255 * 3); idx++)
+				diffcmap[idx] = 255 - diffcmap[idx];
 
 			g_music->updateMusic();
 			g_lab->waitTOF();

@@ -70,8 +70,6 @@ static Gadget *hitgad = NULL;
 /* of gadgets.                                                               */
 /*****************************************************************************/
 static Gadget *checkGadgetHit(Gadget *gadlist, uint16 x, uint16 y) {
-	uint16 counter;
-
 	while (gadlist != NULL) {
 		if ((x >= gadlist->x) && (y >= gadlist->y) &&
 		        (x <= (gadlist->x + gadlist->Im->Width)) &&
@@ -84,7 +82,7 @@ static Gadget *checkGadgetHit(Gadget *gadlist, uint16 x, uint16 y) {
 				g_lab->drawImage(gadlist->ImAlt, gadlist->x, gadlist->y);
 				mouseShow();
 
-				for (counter = 0; counter < 3; counter++)
+				for (uint16 i = 0; i < 3; i++)
 					g_lab->waitTOF();
 
 				mouseHide();
@@ -133,7 +131,6 @@ void mouseHandler(int32 flag, int32 mouseX, int32 mouseY) {
 }
 
 void updateMouse() {
-	uint16 counter;
 	bool doUpdateDisplay = false;
 
 	if (!MouseHidden)
@@ -144,7 +141,7 @@ void updateMouse() {
 		g_lab->drawImage(hitgad->ImAlt, hitgad->x, hitgad->y);
 		mouseShow();
 
-		for (counter = 0; counter < 3; counter++)
+		for (uint16 i = 0; i < 3; i++)
 			g_lab->waitTOF();
 
 		mouseHide();

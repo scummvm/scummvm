@@ -371,14 +371,11 @@ void runLengthDecode(byte *Dest, byte *Source) {
 void VRunLengthDecode(byte *Dest, byte *Source, uint16 bytesperrow) {
 	int8 num;
 	int16 count;
-	uint16 Counter;
-	byte *Top;
+	byte *Top = Dest;
 
-	Top = Dest;
-
-	for (Counter = 0; Counter < DataBytesPerRow; Counter++) {
+	for (uint16 i = 0; i < DataBytesPerRow; i++) {
 		Dest = Top;
-		Dest += Counter;
+		Dest += i;
 
 		num = (int8)*Source;
 		Source++;

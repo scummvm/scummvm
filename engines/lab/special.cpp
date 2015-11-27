@@ -110,7 +110,6 @@ extern uint16 RoomNum, Direction;
 
 
 static byte *loadBackPict(const char *fileName, bool tomem) {
-	uint16 counter;
 	byte *res = NULL;
 
 	FadePalette = hipal;
@@ -121,10 +120,10 @@ static byte *loadBackPict(const char *fileName, bool tomem) {
 	else
 		readPict(fileName, true);
 
-	for (counter = 0; counter < 16; counter++) {
-		hipal[counter] = ((diffcmap[counter * 3] >> 2) << 8) +
-		                 ((diffcmap[counter * 3 + 1] >> 2) << 4) +
-		                 ((diffcmap[counter * 3 + 2] >> 2));
+	for (uint16 i = 0; i < 16; i++) {
+		hipal[i] = ((diffcmap[i * 3] >> 2) << 8) +
+		           ((diffcmap[i * 3 + 1] >> 2) << 4) +
+		           ((diffcmap[i * 3 + 2] >> 2));
 	}
 
 	nopalchange = false;
@@ -136,17 +135,14 @@ static byte *loadBackPict(const char *fileName, bool tomem) {
 /* Draws the images of the combination lock to the display bitmap.           */
 /*****************************************************************************/
 static void doCombination() {
-	uint16 counter;
-
-	for (counter = 0; counter <= 5; counter++)
-		g_lab->drawImage(Images[combination[counter]], VGAScaleX(combx[counter]), VGAScaleY(65));
+	for (uint16 i = 0; i <= 5; i++)
+		g_lab->drawImage(Images[combination[i]], VGAScaleX(combx[i]), VGAScaleY(65));
 }
 
 /*****************************************************************************/
 /* Reads in a backdrop picture.                                              */
 /*****************************************************************************/
 void showCombination(const char *filename) {
-	uint16 CurBit;
 	byte **buffer;
 
 	resetBuffer();
@@ -159,7 +155,7 @@ void showCombination(const char *filename) {
 
 	buffer = g_music->newOpen("P:Numbers");
 
-	for (CurBit = 0; CurBit < 10; CurBit++)
+	for (uint16 CurBit = 0; CurBit < 10; CurBit++)
 		readImage(buffer, &(Images[CurBit]));
 
 	allocFile((void **)&g_lab->_tempScrollData, Images[0]->Width * Images[0]->Height * 2L, "tempdata");
@@ -176,7 +172,7 @@ void showCombination(const char *filename) {
 /*****************************************************************************/
 static void changeCombination(uint16 number) {
 	Image display;
-	uint16 counter, combnum;
+	uint16 combnum;
 	bool unlocked = true;
 
 	if (combination[number] < 9)
@@ -190,9 +186,9 @@ static void changeCombination(uint16 number) {
 	display.Width     = g_lab->_screenWidth;
 	display.Height    = g_lab->_screenHeight;
 
-	for (counter = 1; counter <= (Images[combnum]->Height / 2); counter++) {
+	for (uint16 i = 1; i <= (Images[combnum]->Height / 2); i++) {
 		if (IsHiRes) {
-			if (counter & 1)
+			if (i & 1)
 				g_lab->waitTOF();
 		} else
 			g_lab->waitTOF();
@@ -201,11 +197,11 @@ static void changeCombination(uint16 number) {
 
 		g_lab->scrollDisplayY(2, VGAScaleX(combx[number]), VGAScaleY(65), VGAScaleX(combx[number]) + (Images[combnum])->Width - 1, VGAScaleY(65) + (Images[combnum])->Height);
 
-		g_lab->bltBitMap(Images[combnum], 0, (Images[combnum])->Height - (2 * counter), &(display), VGAScaleX(combx[number]), VGAScaleY(65), (Images[combnum])->Width, 2);
+		g_lab->bltBitMap(Images[combnum], 0, (Images[combnum])->Height - (2 * i), &(display), VGAScaleX(combx[number]), VGAScaleY(65), (Images[combnum])->Width, 2);
 	}
 
-	for (counter = 0; counter < 6; counter++)
-		unlocked = (combination[counter] == solution[counter]) && unlocked;
+	for (uint16 i = 0; i < 6; i++)
+		unlocked = (combination[i] == solution[i]) && unlocked;
 
 	if (unlocked)
 		g_lab->_conditions->inclElement(COMBINATIONUNLOCKED);
@@ -289,7 +285,7 @@ static void doTile(bool showsolution) {
 /* Reads in a backdrop picture.                                              */
 /*****************************************************************************/
 void showTile(const char *filename, bool showsolution) {
-	uint16 CurBit, start;
+	uint16 start;
 	byte **buffer;
 
 	resetBuffer();
@@ -310,8 +306,8 @@ void showTile(const char *filename, bool showsolution) {
 	if (!buffer)
 		return;
 
-	for (CurBit = start; CurBit < 16; CurBit++)
-		readImage(buffer, &(Tiles[CurBit]));
+	for (uint16 curBit = start; curBit < 16; curBit++)
+		readImage(buffer, &(Tiles[curBit]));
 
 	allocFile((void **)&g_lab->_tempScrollData, Tiles[1]->Width * Tiles[1]->Height * 2L, "tempdata");
 
@@ -334,7 +330,6 @@ static void scrollRaster(int16 dx, int16 dy, uint16 x1, uint16 y1, uint16 x2, ui
 static void doTileScroll(uint16 col, uint16 row, uint16 scrolltype) {
 	int16 dX = 0, dY = 0, dx = 0, dy = 0, sx = 0, sy = 0;
 	uint16 last = 0, x1, y1;
-	uint16 counter;
 
 	if (scrolltype == LEFTSCROLL) {
 		dX =  VGAScaleX(5);
@@ -361,7 +356,7 @@ static void doTileScroll(uint16 col, uint16 row, uint16 scrolltype) {
 	x1 = VGAScaleX(100) + (col * VGAScaleX(30)) + dx;
 	y1 = VGAScaleY(25) + (row * VGAScaleY(25)) + dy;
 
-	for (counter = 0; counter < last; counter++) {
+	for (uint16 i = 0; i < last; i++) {
 		g_lab->waitTOF();
 		scrollRaster(dX, dY, x1, y1, x1 + VGAScaleX(28) + sx, y1 + VGAScaleY(23) + sy);
 		x1 += dX;
@@ -549,7 +544,6 @@ static bool loadJournalData() {
 	byte **buffer;
 	char filename[20];
 	Gadget *TopGadget = &BackG;
-	uint16 counter;
 	bool bridge, dirty, news, clean;
 
 	BigMsgFont = &bmfont;
@@ -607,7 +601,7 @@ static bool loadJournalData() {
 	BackG.KeyEquiv = VKEY_LTARROW;
 	ForwardG.KeyEquiv = VKEY_RTARROW;
 
-	counter = 0;
+	uint16 counter = 0;
 
 	while (TopGadget) {
 		TopGadget->x = VGAScaleX(JGadX[counter]);
@@ -667,21 +661,19 @@ static void drawJournalText() {
 /* Does the turn page wipe.                                                  */
 /*****************************************************************************/
 static void turnPage(bool FromLeft) {
-	uint16 counter;
-
 	if (FromLeft) {
-		for (counter = 0; counter < g_lab->_screenWidth; counter += 8) {
+		for (int i = 0; i < g_lab->_screenWidth; i += 8) {
 			g_music->updateMusic();
 			g_lab->waitTOF();
 			ScreenImage.ImageData = g_lab->getVGABaseAddr();
-			g_lab->bltBitMap(&JBackImage, counter, 0, &ScreenImage, counter, 0, 8, g_lab->_screenHeight);
+			g_lab->bltBitMap(&JBackImage, i, 0, &ScreenImage, i, 0, 8, g_lab->_screenHeight);
 		}
 	} else {
-		for (counter = (g_lab->_screenWidth - 8); counter > 0; counter -= 8) {
+		for (int i = (g_lab->_screenWidth - 8); i > 0; i -= 8) {
 			g_music->updateMusic();
 			g_lab->waitTOF();
 			ScreenImage.ImageData = g_lab->getVGABaseAddr();
-			g_lab->bltBitMap(&JBackImage, counter, 0, &ScreenImage, counter, 0, 8, g_lab->_screenHeight);
+			g_lab->bltBitMap(&JBackImage, i, 0, &ScreenImage, i, 0, 8, g_lab->_screenHeight);
 		}
 	}
 }
@@ -878,7 +870,7 @@ static void getMonImages() {
 /* Draws the text for the monitor.                                           */
 /*****************************************************************************/
 static void drawMonText(char *text, uint16 x1, uint16 y1, uint16 x2, uint16 y2, bool isinteractive) {
-	uint16 DrawingToPage = 0, yspacing = 0, numlines, fheight, counter;
+	uint16 DrawingToPage = 0, yspacing = 0, numlines, fheight;
 	int32 CharsDrawn    = 0L;
 	char *CurText = text;
 
@@ -903,8 +895,8 @@ static void drawMonText(char *text, uint16 x1, uint16 y1, uint16 x2, uint16 y2, 
 		g_lab->setAPen(0);
 		g_lab->rectFill(0, 0, g_lab->_screenWidth - 1, y2);
 
-		for (counter = 0; counter < numlines; counter++)
-			g_lab->drawImage(MonButton, 0, counter * MonGadHeight);
+		for (uint16 i = 0; i < numlines; i++)
+			g_lab->drawImage(MonButton, 0, i * MonGadHeight);
 	} else if (isinteractive) {
 		g_lab->setAPen(0);
 		g_lab->rectFill(0, 0, g_lab->_screenWidth - 1, y2);

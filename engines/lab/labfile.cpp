@@ -86,16 +86,12 @@ static void *getCurMemLabFile(uint32 size) {
 	ptr = MemPlace;
 	MemPlace = (char *)MemPlace + size;
 
-	for (int counter = 0; counter < MAXMARKERS; counter++) {
-		if (FileMarkers[counter].name[0]) {
-			if (((FileMarkers[counter].Start >= ptr) &&
-			        (FileMarkers[counter].Start < MemPlace))  ||
-			        ((FileMarkers[counter].End >= ptr) &&
-			         (FileMarkers[counter].End < MemPlace))    ||
-			        ((ptr >= FileMarkers[counter].Start) &&
-			         (ptr <= FileMarkers[counter].End)))
-
-				freeFile(counter);
+	for (int i = 0; i < MAXMARKERS; i++) {
+		if (FileMarkers[i].name[0]) {
+			if ( ((FileMarkers[i].Start >= ptr) && (FileMarkers[i].Start < MemPlace))
+			  || ((FileMarkers[i].End >= ptr) && (FileMarkers[i].End < MemPlace))
+			  || ((ptr >= FileMarkers[i].Start) && (ptr <= FileMarkers[i].End)))
+				freeFile(i);
 		}
 	}
 

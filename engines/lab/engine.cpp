@@ -219,7 +219,6 @@ static void drawRoomMessage(uint16 CurInv, CloseDataPtr cptr) {
 /* Sets up the Labyrinth screens, and opens up the initial windows.           */
 /******************************************************************************/
 bool LabEngine::setUpScreens() {
-	uint16 counter;
 	byte *buffer;
 	byte *MovePanelBuffer, *InvPanelBuffer;
 	Gadget *curgad;
@@ -242,8 +241,8 @@ bool LabEngine::setUpScreens() {
 
 	buffer = MovePanelBuffer;
 
-	for (counter = 0; counter < 20; counter++)
-		readImage(&buffer, &(MoveImages[counter]));
+	for (uint16 i = 0; i < 20; i++)
+		readImage(&buffer, &(MoveImages[i]));
 
 	/* Creates the gadgets for the movement control panel */
 	y = VGAScaleY(173) - SVGACord(2);
@@ -303,8 +302,8 @@ bool LabEngine::setUpScreens() {
 	buffer = InvPanelBuffer;
 
 	if (g_lab->getPlatform() == Common::kPlatformWindows) {
-		for (counter = 0; counter < 10; counter++)
-			readImage(&buffer, &(InvImages[counter]));
+		for (uint16 imgIdx = 0; imgIdx < 10; imgIdx++)
+			readImage(&buffer, &(InvImages[imgIdx]));
 
 		InvGadgetList = createButton(24, y, 0, 'm', InvImages[0], InvImages[1]);
 		curgad = InvGadgetList;
@@ -323,8 +322,8 @@ bool LabEngine::setUpScreens() {
 		curgad->NextGadget = createButton(266, y, 7, 'f', InvImages[8], InvImages[9]);
 		curgad = curgad->NextGadget;
 	} else {
-		for (counter = 0; counter < 6; counter++)
-			readImage(&buffer, &(InvImages[counter]));
+		for (uint16 imgIdx = 0; imgIdx < 6; imgIdx++)
+			readImage(&buffer, &(InvImages[imgIdx]));
 
 		InvGadgetList = createButton(58, y, 0, 0, InvImages[0], InvImages[1]);
 		curgad = InvGadgetList;
@@ -639,7 +638,7 @@ void LabEngine::mainGameLoop() {
 	IntuiMessage *Msg;
 	uint32 Class;
 
-	uint16 Code = 0, Qualifier, MouseX, MouseY, ActionMode = 4;
+	uint16 Qualifier, MouseX, MouseY, ActionMode = 4;
 	uint16 CurInv = MAPNUM, LastInv = MAPNUM, Old;
 
 	bool ForceDraw = false, doit, GotMessage = true;
@@ -673,6 +672,7 @@ void LabEngine::mainGameLoop() {
 
 	/* Set up initial picture. */
 
+	uint16 code = 0;
 	while (1) {
 		WSDL_ProcessInput(1);
 
@@ -762,11 +762,11 @@ void LabEngine::mainGameLoop() {
 					MouseY    = y;
 
 					if (result == VKEY_UPARROW) {
-						Code = GadID = 7;
+						code = GadID = 7;
 					} else if (result == VKEY_LTARROW) {
-						Code = GadID = 6;
+						code = GadID = 6;
 					} else if (result == VKEY_RTARROW) {
-						Code = GadID = 8;
+						code = GadID = 8;
 					}
 
 					GotMessage = true;
@@ -782,7 +782,7 @@ void LabEngine::mainGameLoop() {
 			GotMessage = true;
 
 			Class     = Msg->msgClass;
-			Code      = Msg->code;
+			code      = Msg->code;
 			Qualifier = Msg->qualifier;
 			MouseX    = Msg->mouseX;
 			MouseY    = Msg->mouseY;
@@ -794,23 +794,23 @@ from_crumbs:
 			DoBlack = false;
 
 			if ((Class == RAWKEY) && (!LongWinInFront)) {
-				if (Code == 13) { /* The return key */
+				if (code == 13) { /* The return key */
 					Class     = MOUSEBUTTONS;
 					Qualifier = IEQUALIFIER_LEFTBUTTON;
 					mouseXY(&MouseX, &MouseY);
 				} else if (g_lab->getPlatform() == Common::kPlatformWindows &&
-						(Code == 'b' || Code == 'B')) {  /* Start bread crumbs */
+						(code == 'b' || code == 'B')) {  /* Start bread crumbs */
 					BreadCrumbs[0].RoomNum = 0;
 					NumCrumbs = 0;
 					DroppingCrumbs = true;
 					mayShowCrumbIndicator();
 					WSDL_UpdateScreen();
-				} else if (Code == 'f' || Code == 'F' ||
-				         Code == 'r' || Code == 'R') {  /* Follow bread crumbs */
+				} else if (code == 'f' || code == 'F' ||
+				         code == 'r' || code == 'R') {  /* Follow bread crumbs */
 					if (DroppingCrumbs) {
 						if (NumCrumbs > 0) {
 							FollowingCrumbs = true;
-							FollowCrumbsFast = (Code == 'r' || Code == 'R');
+							FollowCrumbsFast = (code == 'r' || code == 'R');
 							IsCrumbTurning = false;
 							IsCrumbWaiting = false;
 							g_lab->getTime(&CrumbSecs, &CrumbMicros);
@@ -836,8 +836,8 @@ from_crumbs:
 							WSDL_UpdateScreen();
 						}
 					}
-				} else if ((Code == 315) || (Code == 'x') || (Code == 'X')
-				         || (Code == 'q') || (Code == 'Q')) {  /* Quit? */
+				} else if ((code == 315) || (code == 'x') || (code == 'X')
+				         || (code == 'q') || (code == 'Q')) {  /* Quit? */
 					DoNotDrawMessage = false;
 					drawMessage("Do you want to quit? (Y/N)");
 					doit = false;
@@ -872,9 +872,9 @@ from_crumbs:
 						ForceDraw = true;
 						interfaceOn();
 					}
-				} else if (Code == 9) { /* TAB key */
+				} else if (code == 9) { /* TAB key */
 					Class = DELTAMOVE;
-				} else if (Code == 27) { /* ESC key */
+				} else if (code == 27) { /* ESC key */
 					CPtr = NULL;
 				}
 
@@ -1015,11 +1015,9 @@ from_crumbs:
 								BreadCrumbs[0].RoomNum = 0;
 							} else {
 								bool intersect = false;
-								int i;
-
-								for (i = 0; i < NumCrumbs; i++) {
-									if (BreadCrumbs[i].RoomNum == RoomNum) {
-										NumCrumbs = i + 1;
+								for (int idx = 0; idx < NumCrumbs; idx++) {
+									if (BreadCrumbs[idx].RoomNum == RoomNum) {
+										NumCrumbs = idx + 1;
 										BreadCrumbs[NumCrumbs].RoomNum = 0;
 										intersect = true;
 									}
@@ -1293,21 +1291,19 @@ from_crumbs:
 		free(Rooms);
 
 	if (Inventory) {
-		for (Code = 1; Code <= NumInv; Code++) {
-			if (Inventory[Code].name)
-				free(Inventory[Code].name);
+		for (code = 1; code <= NumInv; code++) {
+			if (Inventory[code].name)
+				free(Inventory[code].name);
 
-			if (Inventory[Code].BInvName)
-				free(Inventory[Code].BInvName);
+			if (Inventory[code].BInvName)
+				free(Inventory[code].BInvName);
 		}
 
 		free(Inventory);
 	}
 }
 
-
 void LabEngine::go() {
-	uint16 counter;
 	bool dointro = true;
 
 	IsHiRes = ((getFeatures() & GF_LOWRES) == 0);
@@ -1359,7 +1355,7 @@ void LabEngine::go() {
 		blackAllScreen();
 		readPict("P:End/L2In.1", true);
 
-		for (counter = 0; counter < 120; counter++) {
+		for (uint16 i = 0; i < 120; i++) {
 			g_music->updateMusic();
 			waitTOF();
 		}
@@ -1395,9 +1391,6 @@ int followCrumbs() {
 		{ VKEY_RTARROW, VKEY_LTARROW, VKEY_RTARROW, VKEY_UPARROW }
 	};
 
-	int ExitDir;
-	int MoveDir;
-
 	if (IsCrumbWaiting) {
 		uint32 Secs;
 		uint32 Micros;
@@ -1422,6 +1415,8 @@ int followCrumbs() {
 		return 0;
 	}
 
+	int ExitDir;
+
 	// which direction is last crumb
 	if (BreadCrumbs[NumCrumbs].Direction == EAST)
 		ExitDir = WEST;
@@ -1432,7 +1427,7 @@ int followCrumbs() {
 	else
 		ExitDir = NORTH;
 
-	MoveDir = movement[Direction][ExitDir];
+	int MoveDir = movement[Direction][ExitDir];
 
 	if (NumCrumbs == 0) {
 		IsCrumbTurning = false;

@@ -51,18 +51,17 @@ void closeFont(struct TextFont *tf) {
 /* Returns the length of a text in the specified font.                       */
 /*****************************************************************************/
 uint16 textLength(struct TextFont *tf, const char *text, uint16 numchars) {
-	uint16 counter, length = 0;
+	uint16 length = 0;
 
-	if (tf)
-		for (counter = 0; counter < numchars; counter++) {
+	if (tf) {
+		for (uint16 i = 0; i < numchars; i++) {
 			length += tf->Widths[(uint)*text];
 			text++;
 		}
+	}
 
 	return length;
 }
-
-
 
 /*****************************************************************************/
 /* Returns the height of a specified font.                                   */
@@ -78,11 +77,11 @@ void text(struct TextFont *tf, uint16 x, uint16 y, uint16 color, const char *tex
 	byte *VGATop, *VGACur, *VGATemp, *VGATempLine, *cdata;
 	uint32 RealOffset, SegmentOffset;
 	int32 templeft, LeftInSegment;
-	uint16 counter, counterb, bwidth, mask, curpage, rows, cols, data;
+	uint16 bwidth, mask, curpage, data;
 
 	VGATop = g_lab->getVGABaseAddr();
 
-	for (counter = 0; counter < numchars; counter++) {
+	for (uint16 i = 0; i < numchars; i++) {
 		RealOffset = (g_lab->_screenWidth * y) + x;
 		curpage    = RealOffset / g_lab->_screenBytesPerPage;
 		SegmentOffset = RealOffset - (curpage * g_lab->_screenBytesPerPage);
@@ -95,16 +94,16 @@ void text(struct TextFont *tf, uint16 x, uint16 y, uint16 color, const char *tex
 			VGATemp = VGACur;
 			VGATempLine = VGACur;
 
-			for (rows = 0; rows < tf->Height; rows++) {
+			for (uint16 rows = 0; rows < tf->Height; rows++) {
 				VGATemp = VGATempLine;
 				templeft = LeftInSegment;
 
-				for (cols = 0; cols < bwidth; cols++) {
+				for (uint16 cols = 0; cols < bwidth; cols++) {
 					data = *cdata++;
 
 					if (data && (templeft >= 8)) {
-						for (int i = 7; i >= 0; i--) {
-							if ((1 << i) & data)
+						for (int j = 7; j >= 0; j--) {
+							if ((1 << j) & data)
 								*VGATemp = color;
 							VGATemp++;
 						}
@@ -114,7 +113,7 @@ void text(struct TextFont *tf, uint16 x, uint16 y, uint16 color, const char *tex
 						mask = 0x80;
 						templeft = LeftInSegment;
 
-						for (counterb = 0; counterb < 8; counterb++) {
+						for (uint16 counterb = 0; counterb < 8; counterb++) {
 							if (templeft <= 0) {
 								curpage++;
 								VGATemp = (byte *)(VGATop - templeft);
