@@ -39,7 +39,7 @@ MartianRoom::~MartianRoom() {
 }
 
 void MartianRoom::loadRoom(int roomNumber) {
-	loadRoomData(ROOM_TABLE[roomNumber]);
+	loadRoomData(&MMRES.ROOMTBL[roomNumber]._data[0]);
 }
 
 void MartianRoom::reloadRoom() {

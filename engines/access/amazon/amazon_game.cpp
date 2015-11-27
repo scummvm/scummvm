@@ -146,27 +146,24 @@ void AmazonEngine::playGame() {
 }
 
 void AmazonEngine::setupGame() {
+	Amazon::AmazonResources &res = *((Amazon::AmazonResources *)_res);
+
 	// Load death list
-	if (isDemo()) {
-		_deaths.resize(34);
-		for (int i = 0; i < 34; ++i) {
-			_deaths[i]._screenId = DEATH_SCREENS_DEMO[i];
-			_deaths[i]._msg = DEATH_TEXT_DEMO[i];
-		}
-	} else {
-		_deaths.resize(58);
-		for (int i = 0; i < 58; ++i) {
-			_deaths[i]._screenId = DEATH_SCREENS[i];
-			_deaths[i]._msg = DEATH_TEXT[i];
-		}
+	_deaths.resize(_res->DEATHS.size());
+
+	for (uint idx = 0; idx < _deaths.size(); ++idx) {
+		_deaths[idx]._screenId = res.DEATHS[idx]._screenId;
+		_deaths[idx]._msg = res.DEATHS[idx]._msg;
 	}
+
+	// Load the deaths cells
 	_deaths._cells.resize(13);
 	for (int i = 0; i < 13; ++i)
 		_deaths._cells[i] = CellIdent(DEATH_CELLS[i][0], DEATH_CELLS[i][1], DEATH_CELLS[i][2]);
 
 	// Miscellaneous
-	_fonts._font1.load(FONT6x6_INDEX, FONT6x6_DATA);
-	_fonts._font2.load(FONT2_INDEX, FONT2_DATA);
+	_fonts._font1.load(&res.FONT6x6_INDEX[0], &res.FONT6x6_DATA[0]);
+	_fonts._font2.load(&res.FONT2_INDEX[0], &res.FONT2_DATA[0]);
 
 	initVariables();
 }
@@ -195,8 +192,8 @@ void AmazonEngine::initVariables() {
 		_timers.push_back(te);
 	}
 
-	_player->_playerX = _player->_rawPlayer.x = _travelPos[_player->_roomNumber][0];
-	_player->_playerY = _player->_rawPlayer.y = _travelPos[_player->_roomNumber][1];
+	_player->_playerX = _player->_rawPlayer.x = _res->ROOMTBL[_player->_roomNumber]._travelPos.x;
+	_player->_playerY = _player->_rawPlayer.y = _res->ROOMTBL[_player->_roomNumber]._travelPos.y;
 	_room->_selectCommand = -1;
 	_events->setNormalCursor(CURSOR_CROSSHAIRS);
 	_mouseMode = 0;
@@ -411,6 +408,7 @@ void AmazonEngine::calcIQ() {
 }
 
 void AmazonEngine::helpTitle() {
+	AmazonResources &res = *(AmazonResources *)_res;
 	int width = _fonts._font2.stringWidth(_bubbleBox->_bubbleTitle);
 	int posX = 160 - (width / 2);
 	_fonts._font2._fontColors[0] = 0;
@@ -419,13 +417,13 @@ void AmazonEngine::helpTitle() {
 	_fonts._font2._fontColors[3] = 35;
 	_fonts._font2.drawString(_screen, _bubbleBox->_bubbleTitle, Common::Point(posX, 24));
 
-	width = _fonts._font2.stringWidth(HELPLVLTXT[_helpLevel]);
+	width = _fonts._font2.stringWidth(res.HELPLVLTXT[_helpLevel]);
 	posX = 160 - (width / 2);
 	_fonts._font2._fontColors[0] = 0;
 	_fonts._font2._fontColors[1] = 10;
 	_fonts._font2._fontColors[2] = 11;
 	_fonts._font2._fontColors[3] = 12;
-	_fonts._font2.drawString(_screen, HELPLVLTXT[_helpLevel], Common::Point(posX, 36));
+	_fonts._font2.drawString(_screen, res.HELPLVLTXT[_helpLevel], Common::Point(posX, 36));
 
 	Common::String iqText = "IQ: ";
 	calcIQ();
@@ -441,7 +439,7 @@ void AmazonEngine::helpTitle() {
 	index /= 20;
 
 	iqText += " ";
-	iqText += IQLABELS[index];
+	iqText += res.IQLABELS[index];
 
 	width = _fonts._font2.stringWidth(iqText);
 	posX = 160 - (width / 2);

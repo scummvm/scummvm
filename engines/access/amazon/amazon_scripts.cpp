@@ -401,10 +401,10 @@ void AmazonScripts::cmdHelp_v2() {
 		_game->_useItem = 0;
 
 		if (_game->_noHints) {
-			printString(NO_HELP_MESSAGE);
+			printString(AMRES.NO_HELP_MESSAGE);
 			return;
 		} else if (_game->_hintLevel == 0) {
-			printString(NO_HINTS_MESSAGE);
+			printString(AMRES.NO_HINTS_MESSAGE);
 			return;
 		}
 	}

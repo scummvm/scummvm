@@ -24,6 +24,11 @@
 #define ACCESS_RESOURCES_H
 
 #include "common/scummsys.h"
+#include "common/array.h"
+#include "common/language.h"
+#include "common/rect.h"
+#include "common/str-array.h"
+#include "common/stream.h"
 
 namespace Access {
 
@@ -32,6 +37,65 @@ extern const byte INITIAL_PALETTE[18 * 3];
 extern const char *const GENERAL_MESSAGES[];
 
 extern const int INVCOORDS[][4];
+
+class AccessEngine;
+
+class Resources {
+	struct DATEntry {
+		byte _gameId;
+		byte _discType;
+		byte _demoType;
+		Common::Language _language;
+		uint _fileOffset;
+	};
+	struct RoomEntry {
+		Common::String _desc;
+		Common::Point _travelPos;
+		Common::Array<byte> _data;
+	};
+	struct DeathEntry {
+		byte _screenId;
+		Common::String _msg;
+	};
+	struct InventoryEntry {
+		Common::String _desc;
+		int _combo[4];
+	};
+protected:
+	AccessEngine *_vm;
+	Common::Array<DATEntry> _datIndex;
+
+	/**
+	 * Locate a specified entry in the index and return it's file offset
+	 */
+	uint findEntry(byte gameId, byte discType, byte demoType, Common::Language language);
+
+	/**
+	 * Read a string in from the passed stream
+	 */
+	Common::String readString(Common::SeekableReadStream &s);
+
+	/**
+	 * Load data from the access.dat file
+	 */
+	virtual void load(Common::SeekableReadStream &s);
+public:
+	Common::StringArray FILENAMES;
+	Common::Array< Common::Array<byte> > CHARTBL;
+	Common::Array<RoomEntry> ROOMTBL;
+	Common::Array<DeathEntry> DEATHS;
+	Common::Array<InventoryEntry> INVENTORY;
+	Common::Array< Common::Array<byte> > CURSORS;
+	Common::String CANT_GET_THERE;
+public:
+	Resources(AccessEngine *vm);
+	static Resources *init(AccessEngine *vm);
+
+	/**
+	 * Load the access.dat file
+	 */
+	bool load(Common::String &errorMessage);
+};
 
 } // End of namespace Access
 

@@ -689,19 +689,20 @@ void Scripts::cmdDoTravel() {
 			int idx = _vm->_travelBox->_tempListIdx[boxX];
 			if (Martian::_byte1EEB5[idx] != _vm->_byte26CB5) {
 				_vm->_bubbleBox->_bubbleTitle = "_travel";
-				_vm->_bubbleBox->printString("YOU CAN'T GET THERE FROM HERE.");
+				_vm->_bubbleBox->printString(_vm->_res->CANT_GET_THERE);
 				continue;
 			}
 			if (_vm->_player->_roomNumber != idx) {
 				_vm->_player->_roomNumber = idx;
 				_vm->_room->_function = FN_CLEAR1;
-				if (Martian::_travelPos[idx][0] == -1) {
+				if (_vm->_res->ROOMTBL[idx]._travelPos.x == -1) {
+					// For x == -1, the y value is a script Id, not a co-ordinate
 					_vm->_player->_roomNumber = idx;
 					_vm->_room->_conFlag = true;
-					_vm->_scripts->converse1(Martian::_travelPos[idx][1]);
+					_vm->_scripts->converse1(_vm->_res->ROOMTBL[idx]._travelPos.y);
 					return;
 				}
-				_vm->_player->_rawPlayer = Common::Point(Martian::_travelPos[idx][0], Martian::_travelPos[idx][1]);
+				_vm->_player->_rawPlayer = _vm->_res->ROOMTBL[idx]._travelPos;
 				cmdRetPos();
 				return;
 			}
@@ -1033,7 +1034,7 @@ void Scripts::cmdPrintWatch() {
 }
 
 void Scripts::cmdDispAbout() {
-	_vm->_travelBox->getList(Martian::_askTBL, _vm->_ask);
+	_vm->_travelBox->getList(Martian::ASK_TBL, _vm->_ask);
 	int btnSelected = 0;
 	int boxX = _vm->_aboutBox->doBox_v1(_vm->_startAboutItem, _vm->_startAboutBox, btnSelected);
 	_vm->_startAboutItem = _vm->_boxDataStart;

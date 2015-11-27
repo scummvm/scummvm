@@ -1598,7 +1598,7 @@ void River::moveCanoe() {
 		if (events._leftButton && pt.y >= 140) {
 			if (pt.x < _vm->_room->_rMouse[8][0]) {
 				// Disk icon wasn't clicked
-				_vm->_scripts->printString(BAR_MESSAGE);
+				_vm->_scripts->printString(AMRES.BAR_MESSAGE);
 			} else {
 				// Clicked on the Disc icon. Show the ScummVM menu
 				_vm->_room->handleCommand(9);

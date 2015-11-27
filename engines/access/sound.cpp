@@ -213,7 +213,7 @@ MusicManager::MusicManager(AccessEngine *vm) : _vm(vm) {
 	//
 	switch (musicType) {
 	case MT_ADLIB: {
-		if (_vm->getGameID() == GType_Amazon) {
+		if (_vm->getGameID() == GType_Amazon && !_vm->isDemo()) {
 			Resource   *midiDrvResource = _vm->_files->loadFile(92, 1);
 			Common::MemoryReadStream *adLibInstrumentStream = new Common::MemoryReadStream(midiDrvResource->data(), midiDrvResource->_size);
 

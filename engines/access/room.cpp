@@ -927,16 +927,9 @@ RoomInfo::RoomInfo(const byte *data, int gameType, bool isCD, bool isDemo) {
 
 	_roomFlag = stream.readByte();
 
-	if (gameType == GType_Amazon) {
-		if (isCD)
-			_estIndex = stream.readSint16LE();
-		else {
-			_estIndex = -1;
-			if (!isDemo)
-				stream.readSint16LE();
-		}
-	} else
-		_estIndex = -1;
+	_estIndex = -1;
+	if (gameType == GType_Amazon && isCD)
+		_estIndex = stream.readSint16LE();
 
 	_musicFile.load(stream);
 	_scaleH1 = stream.readByte();

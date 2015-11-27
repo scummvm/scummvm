@@ -40,8 +40,6 @@ protected:
 	bool Cmd_LoadScene(int argc, const char **argv);
 	bool Cmd_Cheat(int argc, const char **argv);
 	bool Cmd_PlayMovie(int argc, const char **argv);
-	Common::String *_sceneDescr;
-	int _sceneNumb;
 public:
 	static Debugger *init(AccessEngine *vm);
 	void postEnter();

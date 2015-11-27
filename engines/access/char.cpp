@@ -78,25 +78,12 @@ CharEntry::CharEntry() {
 /*------------------------------------------------------------------------*/
 
 CharManager::CharManager(AccessEngine *vm) : Manager(vm) {
-	switch (vm->getGameID()) {
-	case GType_Amazon:
-		// Setup character list
-		if (_vm->isDemo()) {
-			for (int i = 0; i < 27; ++i)
-				_charTable.push_back(CharEntry(Amazon::CHARTBL_DEMO[i], vm));
-		} else {
-			for (int i = 0; i < 37; ++i)
-				_charTable.push_back(CharEntry(Amazon::CHARTBL[i], vm));
-		}
-		break;
-
-	case GType_MartianMemorandum:
-		for (int i = 0; i < 27; ++i)
-			_charTable.push_back(CharEntry(Martian::CHARTBL_MM[i], vm));
-		break;
-
-	default:
-		error("Unknown game");
+	// Setup character list
+	for (uint idx = 0; idx < _vm->_res->CHARTBL.size(); ++idx) {
+		if (_vm->_res->CHARTBL[idx].size() == 0)
+			_charTable.push_back(CharEntry());
+		else
+			_charTable.push_back(CharEntry(&_vm->_res->CHARTBL[idx][0], _vm));
 	}
 
 	_charFlag = 0;

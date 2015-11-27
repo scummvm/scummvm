@@ -70,7 +70,6 @@ public:
 class FileManager {
 private:
 	AccessEngine *_vm;
-	const char * const *_filenames;
 
 	void openFile(Resource *res, const Common::String &filename);
 

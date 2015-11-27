@@ -66,27 +66,9 @@ InventoryManager::InventoryManager(AccessEngine *vm) : Manager(vm) {
 	_iconDisplayFlag = true;
 	_boxNum = 0;
 
-	const char *const *names;
-	const int *combineP;
-
-	switch (vm->getGameID()) {
-	case GType_Amazon:
-		names = Amazon::INVENTORY_NAMES;
-		combineP = &Amazon::COMBO_TABLE[0][0];
-		_inv.resize(85);
-		for (uint i = 0; i < _inv.size(); ++i, combineP += 4)
-			_inv[i].load(names[i], combineP);
-		break;
-	case GType_MartianMemorandum:
-		names = Martian::INVENTORY_NAMES;
-		combineP = nullptr;
-		_inv.resize(55);
-		for (uint i = 0; i < _inv.size(); ++i)
-			_inv[i].load(names[i], nullptr);
-		break;
-	default:
-		error("Unknown game");
-	}
+	_inv.resize(_vm->_res->INVENTORY.size());
+	for (uint idx = 0; idx < _inv.size(); ++idx)
+		_inv[idx].load(_vm->_res->INVENTORY[idx]._desc, _vm->_res->INVENTORY[idx]._combo);
 
 	for (uint i = 0; i < 26; ++i) {
 		const int *r = INVCOORDS[i];
@@ -217,12 +199,15 @@ int InventoryManager::newDisplayInv() {
 }
 
 int InventoryManager::displayInv() {
-	int *inv = (int *) malloc (Martian::INVENTORY_SIZE * sizeof(int));
+	int *inv = (int *) malloc(_vm->_res->INVENTORY.size() * sizeof(int));
+	const char **names = (const char **)malloc(_vm->_res->INVENTORY.size() * sizeof(const char *));
 
-	for (int i = 0; i < Martian::INVENTORY_SIZE; i++)
+	for (uint i = 0; i < _vm->_res->INVENTORY.size(); i++) {
 		inv[i] = _inv[i]._value;
+		names[i] = _inv[i]._name.c_str();
+	}
 	_vm->_events->forceSetCursor(CURSOR_CROSSHAIRS);
-	_vm->_invBox->getList(Martian::INVENTORY_NAMES, inv);
+	_vm->_invBox->getList(names, inv);
 
 	int btnSelected = 0;
 	int boxX = _vm->_invBox->doBox_v1(_startInvItem, _startInvBox, btnSelected);
