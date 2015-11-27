@@ -6220,7 +6220,7 @@ void Scene110::actions() {
 
 	if (_action.isAction(VERB_WALK_THROUGH, NOUN_RIGHT_DOOR) || _action.isAction(VERB_OPEN, NOUN_RIGHT_DOOR)
 	 || _action.isAction(VERB_UNLOCK, NOUN_RIGHT_DOOR) || _action.isAction(VERB_LOCK, NOUN_RIGHT_DOOR)) {
-		if ((_globals[kCurrentYear] == 1881) || (_globals[kDoneBrieConv203] >= 1)
+		if (((_globals[kCurrentYear] == 1881) || (_globals[kDoneBrieConv203] >= 1))
 		 && !_action.isAction(VERB_UNLOCK, NOUN_RIGHT_DOOR) && !_action.isAction(VERB_LOCK, NOUN_RIGHT_DOOR)) {
 			switch (_game._trigger) {
 			case (0):
