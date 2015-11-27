@@ -619,7 +619,7 @@ static bool doActionRuleSub(int16 action, int16 roomNum, CloseDataPtr LCPtr, Clo
 			rules = Rooms[roomNum].rules;
 		}
 
-		for (RuleList::iterator rule = rules->begin(); rule != rules->end(); rule++) {
+		for (RuleList::iterator rule = rules->begin(); rule != rules->end(); ++rule) {
 			if (((*rule)->RuleType == ACTION) &&
 				(((*rule)->Param1 == action) || (((*rule)->Param1 == 0) && AllowDefaults))) {
 				if ((((*rule)->Param2 == LCPtr->CloseUpType) ||
@@ -676,7 +676,7 @@ static bool doOperateRuleSub(int16 ItemNum, int16 roomNum, CloseDataPtr LCPtr, C
 				rules = Rooms[roomNum].rules;
 			}
 
-			for (RuleList::iterator rule = rules->begin(); rule != rules->end(); rule++) {
+			for (RuleList::iterator rule = rules->begin(); rule != rules->end(); ++rule) {
 				if (((*rule)->RuleType == OPERATE) &&
 				        (((*rule)->Param1 == ItemNum) || (((*rule)->Param1 == 0) && AllowDefaults)) &&
 						(((*rule)->Param2 == LCPtr->CloseUpType) || (((*rule)->Param2 == 0) && AllowDefaults))) {
@@ -731,7 +731,7 @@ bool doOperateRule(int16 x, int16 y, int16 ItemNum, CloseDataPtr *LCPtr) {
 bool doGoForward(CloseDataPtr *LCPtr) {
 	RuleList *rules = Rooms[RoomNum].rules;
 
-	for (RuleList::iterator rule = rules->begin(); rule != rules->end(); rule++) {
+	for (RuleList::iterator rule = rules->begin(); rule != rules->end(); ++rule) {
 		if (((*rule)->RuleType == GOFORWARD) && ((*rule)->Param1 == (Direction + 1))) {
 			if (checkConditions((*rule)->Condition)) {
 				doActions((*rule)->ActionList, LCPtr);
@@ -752,7 +752,7 @@ bool doTurn(uint16 from, uint16 to, CloseDataPtr *LCPtr) {
 
 	RuleList *rules = Rooms[RoomNum].rules;
 
-	for (RuleList::iterator rule = rules->begin(); rule != rules->end(); rule++) {
+	for (RuleList::iterator rule = rules->begin(); rule != rules->end(); ++rule) {
 		if (((*rule)->RuleType == TURN) ||
 		        (((*rule)->RuleType == TURNFROMTO) &&
 		         ((*rule)->Param1   == from) && ((*rule)->Param2 == to))) {
@@ -771,7 +771,7 @@ bool doTurn(uint16 from, uint16 to, CloseDataPtr *LCPtr) {
 /*****************************************************************************/
 bool doMainView(CloseDataPtr *LCPtr) {
 	RuleList *rules = Rooms[RoomNum].rules;
-	for (RuleList::iterator rule = rules->begin(); rule != rules->end(); rule++) {
+	for (RuleList::iterator rule = rules->begin(); rule != rules->end(); ++rule) {
 		if ((*rule)->RuleType == GOMAINVIEW) {
 			if (checkConditions((*rule)->Condition)) {
 				doActions((*rule)->ActionList, LCPtr);

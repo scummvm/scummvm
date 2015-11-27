@@ -1307,10 +1307,8 @@ from_crumbs:
 
 
 void LabEngine::go() {
-	bool mem, dointro = false;
 	uint16 counter;
-
-	dointro = true;
+	bool dointro = true;
 
 	IsHiRes = ((getFeatures() & GF_LOWRES) == 0);
 
@@ -1320,6 +1318,8 @@ void LabEngine::go() {
 	else
 		warning("Running in LowRes mode");
 #endif
+
+	bool mem = false;
 	if (initBuffer(BUFFERSIZE, true)) {
 		mem = true;
 	} else {
@@ -1345,7 +1345,6 @@ void LabEngine::go() {
 
 	if (dointro && mem) {
 		Intro intro;
-
 		intro.introSequence();
 	} else
 		DoBlack = true;

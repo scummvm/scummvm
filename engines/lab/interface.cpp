@@ -64,10 +64,10 @@ Gadget *createButton(uint16 x, uint16 y, uint16 id, uint16 key, Image *im, Image
 
 
 void freeButtonList(Gadget *gptrlist) {
-	Gadget *gptr, *next = gptrlist;
+	Gadget *next = gptrlist;
 
 	while (next) {
-		gptr = next;
+		Gadget *gptr = next;
 		next = next->NextGadget;
 
 		free(gptr);

@@ -373,7 +373,6 @@ static void doTileScroll(uint16 col, uint16 row, uint16 scrolltype) {
 /* Changes the combination number of one of the slots                        */
 /*****************************************************************************/
 static void changeTile(uint16 col, uint16 row) {
-	bool check;
 	int16 scrolltype = -1;
 
 	if (row > 0) {
@@ -417,7 +416,7 @@ static void changeTile(uint16 col, uint16 row) {
 			return;
 		}
 
-		check = true;
+		bool check = true;
 		row   = 0;
 		col   = 0;
 

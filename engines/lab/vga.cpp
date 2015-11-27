@@ -82,13 +82,10 @@ bool LabEngine::WSDL_HasNextChar() {
 }
 
 void LabEngine::WSDL_ProcessInput(bool can_delay) {
-	int n;
-	int lastMouseAtEdge;
-	int flags = 0;
-
 	Common::Event event;
 
 	if (1 /*!g_IgnoreProcessInput*/) {
+		int flags = 0;
 		while (g_system->getEventManager()->pollEvent(event)) {
 			switch (event.type) {
 			case Common::EVENT_RBUTTONDOWN:
@@ -101,8 +98,8 @@ void LabEngine::WSDL_ProcessInput(bool can_delay) {
 				mouseHandler(flags, _mouseX, _mouseY);
 				break;
 
-			case Common::EVENT_MOUSEMOVE:
-				lastMouseAtEdge = _mouseAtEdge;
+			case Common::EVENT_MOUSEMOVE: {
+				int lastMouseAtEdge = _mouseAtEdge;
 				_mouseAtEdge = false;
 				_mouseX = event.mouse.x;
 				if (event.mouse.x <= 0) {
@@ -127,6 +124,7 @@ void LabEngine::WSDL_ProcessInput(bool can_delay) {
 				if (!lastMouseAtEdge || !_mouseAtEdge)
 					mouseHandler(1, _mouseX, _mouseY);
 
+				}
 				break;
 
 			case Common::EVENT_KEYDOWN:
@@ -143,13 +141,14 @@ void LabEngine::WSDL_ProcessInput(bool can_delay) {
 					//saveSettings();
 					break;
 
-				default:
-					n = ((((unsigned int)((_nextKeyIn + 1) >> 31) >> 26) + (byte)_nextKeyIn + 1) & 0x3F)
+				default: {
+					int n = ((((unsigned int)((_nextKeyIn + 1) >> 31) >> 26) + (byte)_nextKeyIn + 1) & 0x3F)
 					- ((unsigned int)((_nextKeyIn + 1) >> 31) >> 26);
 					if (n != _nextKeyOut) {
 						_keyBuf[_nextKeyIn] = event.kbd.keycode;
 						_nextKeyIn = n;
 					}
+				}
 				}
 				break;
 
