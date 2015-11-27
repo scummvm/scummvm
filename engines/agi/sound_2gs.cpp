@@ -345,7 +345,7 @@ void SoundGen2GS::advanceMidiPlayer() {
 		case MIDI_PITCH_WHEEL:
 			parm1 = *p++;
 			parm2 = *p++;
-			debugC(3, kDebugLevelSound, "channel %X: pitch wheel (unimplemented)", chn);
+			debugC(3, kDebugLevelSound, "channel %X: pitch wheel (unimplemented) %02X, %02X", chn, parm1, parm2);
 			break;
 
 		default:
