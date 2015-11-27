@@ -99,7 +99,7 @@ static void freeRoom(uint16 RMarker) {
 		Rooms[RoomNum].WestView  = NULL;
 
 		RuleList *rules = Rooms[RoomNum].rules;
-		for (RuleList::iterator rule = rules->begin(); rule != rules->end(); rule++)
+		for (RuleList::iterator rule = rules->begin(); rule != rules->end(); ++rule)
 			delete *rule;
 		Rooms[RoomNum].rules->clear();
 		delete Rooms[RoomNum].rules;
@@ -119,28 +119,25 @@ static void freeRoom(uint16 RMarker) {
 /* Gets a chunk of memory from the buffer.                                   */
 /*****************************************************************************/
 static void *getCurMem(uint16 Size) {
-	uint16 counter;
-	void *Ptr, *Start0, *Start1, *End0, *End1;
-
 	if (((int32) Size) > MemLeftInBuffer) {
 		MemPlace = RoomBuffer;
 		MemLeftInBuffer = ROOMBUFFERSIZE;
 		NextMemPlace = NULL;
 	}
 
-	Ptr = MemPlace;
+	void *Ptr = MemPlace;
 	MemPlace = (char *)MemPlace + Size;
 	MemLeftInBuffer -= Size;
 
 	if (MemPlace > NextMemPlace) {
 		NextMemPlace = NULL;
 
-		for (counter = 0; counter < MAXMARKERS; counter++) {
+		for (uint16 counter = 0; counter < MAXMARKERS; counter++) {
 			if (RoomMarkers[counter].RoomNum != EMPTYROOM) {
-				Start0 = RoomMarkers[counter].Start0;
-				Start1 = RoomMarkers[counter].Start1;
-				End0   = RoomMarkers[counter].End0;
-				End1   = RoomMarkers[counter].End1;
+				void *Start0 = RoomMarkers[counter].Start0;
+				void *Start1 = RoomMarkers[counter].Start1;
+				void *End0   = RoomMarkers[counter].End0;
+				void *End1   = RoomMarkers[counter].End1;
 
 				if (((Start0 >= Ptr) && (Start0 < MemPlace))  ||
 				        ((End0 >= Ptr) && (End0 < MemPlace))    ||
