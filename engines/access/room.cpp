@@ -706,6 +706,7 @@ void Room::executeCommand(int commandId) {
 	delete iconData;
 
 	// Draw the button as selected
+	roomMenu();
 	_vm->_screen->plotImage(spr, _selectCommand + 2,
 		Common::Point(_rMouse[_selectCommand][0], (_vm->getGameID() == GType_MartianMemorandum) ? 184 : 176));
 
