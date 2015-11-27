@@ -31,7 +31,7 @@ CharEntry::CharEntry(const byte *data, AccessEngine *vm) {
 	Common::MemoryReadStream s(data, 999);
 
 	_charFlag = s.readByte();
-	if (vm->getGameID() == GType_MartianMemorandum) {
+	if (vm->getGameID() != GType_Amazon || vm->isDemo()) {
 		_screenFile.load(s);
 		_estabIndex = s.readSint16LE();
 	} else {
