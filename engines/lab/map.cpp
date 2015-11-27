@@ -63,10 +63,10 @@ void setAmigaPal(uint16 *pal, uint16 numcolors) {
 	if (numcolors > 16)
 		numcolors = 16;
 
-	for (uint16 counter = 0; counter < numcolors; counter++) {
-		vgapal[vgacount++] = (byte)(((pal[counter] & 0xf00) >> 8) << 2);
-		vgapal[vgacount++] = (byte)(((pal[counter] & 0x0f0) >> 4) << 2);
-		vgapal[vgacount++] = (byte)(((pal[counter] & 0x00f)) << 2);
+	for (uint16 i = 0; i < numcolors; i++) {
+		vgapal[vgacount++] = (byte)(((pal[i] & 0xf00) >> 8) << 2);
+		vgapal[vgacount++] = (byte)(((pal[i] & 0x0f0) >> 4) << 2);
+		vgapal[vgacount++] = (byte)(((pal[i] & 0x00f)) << 2);
 	}
 
 	g_lab->writeColorRegsSmooth(vgapal, 0, 16);
@@ -294,18 +294,18 @@ static uint16 fadeNumOut(uint16 num, uint16 res, uint16 counter) {
 /* Does the fading of the Palette on the screen.                             */
 /*****************************************************************************/
 void fade(bool fadein, uint16 res) {
-	uint16 pennum, counter, newpal[16];
+	uint16 newpal[16];
 
-	for (counter = 0; counter < 16; counter++) {
-		for (pennum = 0; pennum < 16; pennum++) {
+	for (uint16 i = 0; i < 16; i++) {
+		for (uint16 palIdx = 0; palIdx < 16; palIdx++) {
 			if (fadein)
-				newpal[pennum] = (0x00F & fadeNumIn(0x00F & FadePalette[pennum], 0x00F & res, counter)) +
-				                 (0x0F0 & fadeNumIn(0x0F0 & FadePalette[pennum], 0x0F0 & res, counter)) +
-				                 (0xF00 & fadeNumIn(0xF00 & FadePalette[pennum], 0xF00 & res, counter));
+				newpal[palIdx] = (0x00F & fadeNumIn(0x00F & FadePalette[palIdx], 0x00F & res, i)) +
+				                 (0x0F0 & fadeNumIn(0x0F0 & FadePalette[palIdx], 0x0F0 & res, i)) +
+				                 (0xF00 & fadeNumIn(0xF00 & FadePalette[palIdx], 0xF00 & res, i));
 			else
-				newpal[pennum] = (0x00F & fadeNumOut(0x00F & FadePalette[pennum], 0x00F & res, counter)) +
-				                 (0x0F0 & fadeNumOut(0x0F0 & FadePalette[pennum], 0x0F0 & res, counter)) +
-				                 (0xF00 & fadeNumOut(0xF00 & FadePalette[pennum], 0xF00 & res, counter));
+				newpal[palIdx] = (0x00F & fadeNumOut(0x00F & FadePalette[palIdx], 0x00F & res, i)) +
+				                 (0x0F0 & fadeNumOut(0x0F0 & FadePalette[palIdx], 0x0F0 & res, i)) +
+				                 (0xF00 & fadeNumOut(0xF00 & FadePalette[palIdx], 0xF00 & res, i));
 		}
 
 		setAmigaPal(newpal, 16);
@@ -313,8 +313,6 @@ void fade(bool fadein, uint16 res) {
 		g_music->updateMusic();
 	}
 }
-
-
 
 /*****************************************************************************/
 /* Figures out what a room's coordinates should be.                          */
@@ -349,10 +347,6 @@ static void roomCords(uint16 CurRoom, uint16 *x1, uint16 *y1, uint16 *x2, uint16
 		break;
 	}
 }
-
-
-
-
 
 /*****************************************************************************/
 /* Draws a room to the bitmap.                                               */
@@ -489,27 +483,17 @@ static void drawRoom(uint16 CurRoom, bool drawx) {
 		g_lab->drawImage(XMark, xx, xy);
 }
 
-
-
 /*****************************************************************************/
 /* Checks if a floor has been visitted.                                      */
 /*****************************************************************************/
 static bool onFloor(uint16 Floor) {
-	uint16 drawroom;
-
-	for (drawroom = 1; drawroom <= MaxRooms; drawroom++) {
-		if ((Maps[drawroom].PageNumber == Floor)
-		        && g_lab->_roomsFound->in(drawroom)
-		        && Maps[drawroom].x) {
+	for (uint16 i = 1; i <= MaxRooms; i++) {
+		if ((Maps[i].PageNumber == Floor) && g_lab->_roomsFound->in(i) && Maps[i].x)
 			return true;
-		}
 	}
 
 	return false;
 }
-
-
-
 
 /*****************************************************************************/
 /* Figures out which floor, if any, should be gone to if the up arrow is hit */
@@ -570,7 +554,6 @@ static void getDownFloor(uint16 *Floor, bool *isfloor) {
 /* Draws the map                                                             */
 /*****************************************************************************/
 static void drawMap(uint16 CurRoom, uint16 CurMsg, uint16 Floor, bool fadeout, bool fadein) {
-	uint16 drawroom;
 	char *sptr;
 
 	uint16 tempfloor;
@@ -587,11 +570,9 @@ static void drawMap(uint16 CurRoom, uint16 CurMsg, uint16 Floor, bool fadeout, b
 	g_lab->drawImage(Map, 0, 0);
 	drawGadgetList(MapGadgetList);
 
-	for (drawroom = 1; drawroom <= MaxRooms; drawroom++) {
-		if ((Maps[drawroom].PageNumber == Floor)
-		        && g_lab->_roomsFound->in(drawroom)
-		        && Maps[drawroom].x) {
-			drawRoom(drawroom, (bool)(drawroom == CurRoom));
+	for (uint16 i = 1; i <= MaxRooms; i++) {
+		if ((Maps[i].PageNumber == Floor) && g_lab->_roomsFound->in(i) && Maps[i].x) {
+			drawRoom(i, (bool)(i == CurRoom));
 			g_music->updateMusic();
 		}
 	}
@@ -674,14 +655,12 @@ static void drawMap(uint16 CurRoom, uint16 CurMsg, uint16 Floor, bool fadeout, b
 	mouseShow();
 }
 
-
-
 /*****************************************************************************/
 /* Processes the map.                                                        */
 /*****************************************************************************/
 void processMap(uint16 CurRoom) {
 	uint32 Class, place = 1;
-	uint16 Code, Qualifier, MouseX, MouseY, GadgetID, CurFloor, OldFloor, OldMsg, CurMsg, drawroom, x1, y1, x2, y2;
+	uint16 Code, Qualifier, MouseX, MouseY, GadgetID, CurFloor, OldFloor, OldMsg, CurMsg, x1, y1, x2, y2;
 	char *sptr;
 	byte newcolor[3];
 	bool drawmap;
@@ -804,14 +783,14 @@ void processMap(uint16 CurRoom) {
 				else if (MouseX > mapScaleX(314)) {
 					OldMsg = CurMsg;
 
-					for (drawroom = 1; drawroom <= MaxRooms; drawroom++) {
-						roomCords(drawroom, &x1, &y1, &x2, &y2);
+					for (uint16 i = 1; i <= MaxRooms; i++) {
+						roomCords(i, &x1, &y1, &x2, &y2);
 
-						if ((Maps[drawroom].PageNumber == CurFloor)
-						        && g_lab->_roomsFound->in(drawroom)
+						if ((Maps[i].PageNumber == CurFloor)
+						        && g_lab->_roomsFound->in(i)
 						        && (MouseX >= x1) && (MouseX <= x2)
 						        && (MouseY >= y1) && (MouseY <= y2)) {
-							CurMsg = drawroom;
+							CurMsg = i;
 						}
 					}
 

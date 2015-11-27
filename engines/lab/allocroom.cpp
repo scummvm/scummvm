@@ -56,24 +56,19 @@ static int32 MemLeftInBuffer = 0L;
 /* Allocates the memory for the room buffers.                                */
 /*****************************************************************************/
 bool initRoomBuffer() {
-	uint16 counter;
-
 	CurMarker = 0;
 
 	if ((RoomBuffer = calloc(ROOMBUFFERSIZE, 1))) {
 		MemPlace = RoomBuffer;
 		MemLeftInBuffer = ROOMBUFFERSIZE;
 
-		for (counter = 0; counter < MAXMARKERS; counter++)
-			RoomMarkers[counter].RoomNum = EMPTYROOM;
+		for (uint16 i = 0; i < MAXMARKERS; i++)
+			RoomMarkers[i].RoomNum = EMPTYROOM;
 
 		return true;
 	} else
 		return false;
 }
-
-
-
 
 /*****************************************************************************/
 /* Frees the memory for the room buffers.                                    */
@@ -82,7 +77,6 @@ void freeRoomBuffer() {
 	if (RoomBuffer)
 		free(RoomBuffer);
 }
-
 
 /*****************************************************************************/
 /* Frees a room's resources.                                                 */
@@ -132,12 +126,12 @@ static void *getCurMem(uint16 Size) {
 	if (MemPlace > NextMemPlace) {
 		NextMemPlace = NULL;
 
-		for (uint16 counter = 0; counter < MAXMARKERS; counter++) {
-			if (RoomMarkers[counter].RoomNum != EMPTYROOM) {
-				void *Start0 = RoomMarkers[counter].Start0;
-				void *Start1 = RoomMarkers[counter].Start1;
-				void *End0   = RoomMarkers[counter].End0;
-				void *End1   = RoomMarkers[counter].End1;
+		for (uint16 i = 0; i < MAXMARKERS; i++) {
+			if (RoomMarkers[i].RoomNum != EMPTYROOM) {
+				void *Start0 = RoomMarkers[i].Start0;
+				void *Start1 = RoomMarkers[i].Start1;
+				void *End0   = RoomMarkers[i].End0;
+				void *End1   = RoomMarkers[i].End1;
 
 				if (((Start0 >= Ptr) && (Start0 < MemPlace))  ||
 				        ((End0 >= Ptr) && (End0 < MemPlace))    ||
@@ -146,7 +140,7 @@ static void *getCurMem(uint16 Size) {
 				        ((Start1 >= Ptr) && (Start1 < MemPlace))  ||
 				        ((End1 >= Ptr) && (End1 < MemPlace))    ||
 				        ((Ptr >= Start1) && (Ptr <= End1))) {
-					freeRoom(counter);
+					freeRoom(i);
 				} else {
 					if (Start0 >= MemPlace)
 						if ((NextMemPlace == NULL) || (Start0 < NextMemPlace))
