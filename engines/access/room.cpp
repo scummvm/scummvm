@@ -111,8 +111,7 @@ void Room::takePicture() {
 			return;
 		}
 
-		// TODO: simplify the second part of the test when tested
-		if ((_vm->_scrollCol < 35) || ((_vm->_scrollRow >= 10) && (_vm->_scrollRow >= 20))){
+		if ((_vm->_scrollCol < 35) || (_vm->_scrollRow >= 20)){
 			Common::String msg = "THAT ISN'T INTERESTING ENOUGH TO WASTE FILM ON.";
 			_vm->_scripts->doCmdPrint_v1(msg);
 			return;
