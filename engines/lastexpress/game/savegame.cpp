@@ -497,9 +497,6 @@ void SaveLoad::loadLastGame() {
 		return;
 	}
 
-	if (!_savegame)
-		error("[SaveLoad::loadGame] No savegame stream present");
-
 	// Load the last entry
 	_savegame->seek(header.offsetEntry);
 
