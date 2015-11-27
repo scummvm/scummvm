@@ -74,7 +74,7 @@ bool Resources::load(Common::String &errorMessage) {
 
 	// Load in the data for the game
 	load(f);
-	
+
 	return true;
 }
 
@@ -147,7 +147,7 @@ uint Resources::findEntry(byte gameId, byte discType, byte demoType, Common::Lan
 Common::String Resources::readString(Common::SeekableReadStream &s) {
 	Common::String result;
 	char c;
-	
+
 	while ((c = s.readByte()) != 0)
 		result += c;
 
@@ -180,14 +180,14 @@ const byte INITIAL_PALETTE[18 * 3] = {
 const char *const GENERAL_MESSAGES[] = {
 	"LOOKING THERE REVEALS NOTHING OF INTEREST.", // LOOK_MESSAGE
 	"THAT DOESN'T OPEN.",               // OPEN_MESSAGE
-	"THAT WON'T MOVE."                  // MOVE_MESSAGE
+	"THAT WON'T MOVE.",                 // MOVE_MESSAGE
 	"YOU CAN'T TAKE THAT.",             // GET_MESSAGE
 	"THAT DOESN'T SEEM TO WORK.",       // USE_MESSAGE
 	"YOU CAN'T CLIMB THAT.",            // GO_MESSAGE
 	"THERE SEEMS TO BE NO RESPONSE.",   // TALK_MESSAGE
 	"THIS OBJECT REQUIRES NO HINTS",    // HELP_MESSAGE
 	"THIS OBJECT REQUIRES NO HINTS",    // HELP_MESSAGE
-	"THAT DOESN'T SEEM TO WORK.",       // USE_MESSAGE
+	"THAT DOESN'T SEEM TO WORK."        // USE_MESSAGE
 };
 
 const int INVCOORDS[][4] = {
