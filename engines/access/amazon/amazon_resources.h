@@ -140,7 +140,8 @@ public:
 	Common::String HELPLVLTXT[3];
 	Common::String IQLABELS[9];
 public:
-	AmazonResources(AccessEngine *vm);
+	AmazonResources(AccessEngine *vm) : Resources(vm) {}
+	virtual ~AmazonResources() {}
 };
 
 #define AMRES (*((Amazon::AmazonResources *)_vm->_res))

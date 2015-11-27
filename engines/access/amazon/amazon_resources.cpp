@@ -27,9 +27,6 @@ namespace Access {
 
 namespace Amazon {
 
-AmazonResources::AmazonResources(AccessEngine *vm): Resources(vm) {
-}
-
 void AmazonResources::load(Common::SeekableReadStream &s) {
 	Resources::load(s);
 	uint count;

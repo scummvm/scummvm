@@ -88,7 +88,8 @@ public:
 	Common::Array< Common::Array<byte> > CURSORS;
 	Common::String CANT_GET_THERE;
 public:
-	Resources(AccessEngine *vm);
+	Resources(AccessEngine *vm) : _vm(vm) {}
+	virtual ~Resources() {}
 	static Resources *init(AccessEngine *vm);
 
 	/**

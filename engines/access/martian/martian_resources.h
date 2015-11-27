@@ -58,7 +58,8 @@ class MartianResources : public Resources {
 public:
 
 public:
-	MartianResources(AccessEngine *vm);
+	MartianResources(AccessEngine *vm) : Resources(vm) {}
+	virtual ~MartianResources() {}
 };
 
 #define MMRES (*((Martian::MartianResources *)_vm->_res))

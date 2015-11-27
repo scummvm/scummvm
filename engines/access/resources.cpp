@@ -36,9 +36,6 @@ Resources *Resources::init(AccessEngine *vm) {
 	error("Unknown game");
 }
 
-Resources::Resources(AccessEngine *vm): _vm(vm) {
-}
-
 bool Resources::load(Common::String &errorMessage) {
 	Common::File f;
 	if (!f.open("access.dat")) {
