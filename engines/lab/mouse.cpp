@@ -69,12 +69,12 @@ static Gadget *hitgad = NULL;
 /* Checks whether or not the cords fall within one of the gadgets in a list  */
 /* of gadgets.                                                               */
 /*****************************************************************************/
-static Gadget *checkGadgetHit(Gadget *gadlist, uint16 x, uint16 y) {
+static Gadget *checkGadgetHit(Gadget *gadlist, Common::Point pos) {
 	while (gadlist != NULL) {
-		if ((x >= gadlist->x) && (y >= gadlist->y) &&
-		        (x <= (gadlist->x + gadlist->Im->Width)) &&
-		        (y <= (gadlist->y + gadlist->Im->Height)) &&
-		        !(GADGETOFF & gadlist->GadgetFlags)) {
+		if ((pos.x >= gadlist->x) && (pos.y >= gadlist->y) &&
+		    (pos.x <= (gadlist->x + gadlist->Im->Width)) &&
+		    (pos.y <= (gadlist->y + gadlist->Im->Height)) &&
+		     !(GADGETOFF & gadlist->GadgetFlags)) {
 			if (IsHiRes) {
 				hitgad = gadlist;
 			} else {
@@ -108,17 +108,14 @@ void attachGadgetList(Gadget *GadList) {
 	ScreenGadgetList = GadList;
 }
 
-void mouseHandler(int32 flag, int32 mouseX, int32 mouseY) {
+void mouseHandler(int flag, Common::Point pos) {
 	if (NumHidden >= 2)
 		return;
-
-	if (!IsHiRes)
-		mouseX /= 2;
 
 	if (flag & 0x02) { /* Left mouse button click */
 		Gadget *tmp = NULL;
 		if (ScreenGadgetList)
-			tmp = checkGadgetHit(ScreenGadgetList, mouseX, mouseY);
+			tmp = checkGadgetHit(ScreenGadgetList, IsHiRes ? pos : Common::Point(pos.x / 2, pos.y));
 
 		if (tmp)
 			LastGadgetHit = tmp;
@@ -163,7 +160,7 @@ void initMouse() {
 	g_system->setMouseCursor(MouseData, MOUSE_WIDTH, MOUSE_HEIGHT, 0, 0, 0);
 	g_system->showMouse(false);
 
-	mouseMove(0, 0);
+	setMousePos(Common::Point(0, 0));
 }
 
 
@@ -199,23 +196,22 @@ void mouseHide() {
 /* Gets the current mouse co-ordinates.  NOTE: On IBM version, will scale    */
 /* from virtual to screen co-ordinates automatically.                        */
 /*****************************************************************************/
-void mouseXY(uint16 *x, uint16 *y) {
-	*x = (uint16)g_lab->_mouseX;
-	*y = (uint16)g_lab->_mouseY;
-
-	if (!IsHiRes)
-		(*x) /= 2;
+Common::Point getMousePos() {
+	if (IsHiRes)
+		return g_lab->_mousePos;
+	else
+		return Common::Point(g_lab->_mousePos.x / 2, g_lab->_mousePos.y);
 }
 
 
 /*****************************************************************************/
 /* Moves the mouse to new co-ordinates.                                      */
 /*****************************************************************************/
-void mouseMove(uint16 x, uint16 y) {
-	if (!IsHiRes)
-		x *= 2;
-
-	g_system->warpMouse(x, y);
+void setMousePos(Common::Point pos) {
+	if (IsHiRes)
+		g_system->warpMouse(pos.x, pos.y);
+	else
+		g_system->warpMouse(pos.x * 2, pos.y);
 
 	if (!MouseHidden)
 		g_lab->WSDL_ProcessInput(0);
@@ -230,15 +226,15 @@ void mouseMove(uint16 x, uint16 y) {
 bool mouseButton(uint16 *x, uint16 *y, bool leftbutton) {
 	if (leftbutton) {
 		if (LeftClick) {
-			*x = (!IsHiRes) ? (uint16)g_lab->_mouseX / 2 : (uint16)g_lab->_mouseX;
-			*y = (uint16)g_lab->_mouseY;
+			*x = (!IsHiRes) ? (uint16)g_lab->_mousePos.x / 2 : (uint16)g_lab->_mousePos.x;
+			*y = (uint16)g_lab->_mousePos.y;
 			LeftClick = false;
 			return true;
 		}
 	} else {
 		if (RightClick) {
-			*x = (!IsHiRes) ? (uint16)g_lab->_mouseX / 2 : (uint16)g_lab->_mouseX;
-			*y = (uint16)g_lab->_mouseY;
+			*x = (!IsHiRes) ? (uint16)g_lab->_mousePos.x / 2 : (uint16)g_lab->_mousePos.x;
+			*y = (uint16)g_lab->_mousePos.y;
 			RightClick = false;
 			return true;
 		}

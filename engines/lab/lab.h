@@ -32,6 +32,7 @@
 #define LAB_H
 
 #include "common/array.h"
+#include "common/events.h"
 
 #include "engines/engine.h"
 #include "lab/labfun.h"
@@ -96,9 +97,7 @@ private:
 
 public:
 	byte *_currentDsplayBuffer;
-
-	uint32 _mouseX;
-	uint32 _mouseY;
+	Common::Point _mousePos;
 
 private:
 	byte *_displayBuffer;
@@ -145,7 +144,7 @@ private:
 	/*---------- Drawing Routines ----------*/
 
 	void drawMaskImage(Image *Im, uint16 x, uint16 y);
-	void WSDL_GetMousePos(int *x, int *y);
+	Common::Point WSDL_GetMousePos();
 	void changeVolume(int delta);
 	void WSDL_SetColors(byte *buf, uint16 first, uint16 numreg, uint16 slow);
 

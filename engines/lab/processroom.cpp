@@ -259,7 +259,7 @@ bool processArrow(uint16 *direction, uint16 Arrow) {
 /*****************************************************************************/
 /* Sets the current close up data.                                           */
 /*****************************************************************************/
-void setCurClose(uint16 x, uint16 y, CloseDataPtr *cptr, bool useAbsoluteCoords) {
+void setCurClose(Common::Point pos, CloseDataPtr *cptr, bool useAbsoluteCoords) {
 	ViewData *VPtr;
 	CloseDataPtr LCPtr;
 	uint16 x1, y1, x2, y2;
@@ -283,7 +283,7 @@ void setCurClose(uint16 x, uint16 y, CloseDataPtr *cptr, bool useAbsoluteCoords)
 			y2 = scaleY(LCPtr->y2);
 		}
 
-		if (x >= x1 && y >= y1 && x <= x2 && y <= y2 && LCPtr->GraphicName) {
+		if (pos.x >= x1 && pos.y >= y1 && pos.x <= x2 && pos.y <= y2 && LCPtr->GraphicName) {
 			*cptr = LCPtr;
 			return;
 		}
@@ -640,7 +640,7 @@ static bool doActionRuleSub(int16 action, int16 roomNum, CloseDataPtr LCPtr, Clo
 /*****************************************************************************/
 /* Goes through the rules if an action is taken.                             */
 /*****************************************************************************/
-bool doActionRule(int16 x, int16 y, int16 action, int16 roomNum, CloseDataPtr *LCPtr) {
+bool doActionRule(Common::Point pos, int16 action, int16 roomNum, CloseDataPtr *LCPtr) {
 	CloseDataPtr TLCPtr;
 
 	if (roomNum)
@@ -648,7 +648,7 @@ bool doActionRule(int16 x, int16 y, int16 action, int16 roomNum, CloseDataPtr *L
 	else
 		NewFileName = CurFileName;
 
-	TLCPtr = getObject(x, y, *LCPtr);
+	TLCPtr = getObject(pos.x, pos.y, *LCPtr);
 
 	if (doActionRuleSub(action, roomNum, TLCPtr, LCPtr, false))
 		return true;

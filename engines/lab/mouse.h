@@ -28,6 +28,7 @@
  *
  */
 
+#include "common/events.h"
 #include "lab/stddefines.h"
 
 #ifndef LAB_MOUSE_H
@@ -45,9 +46,9 @@ void mouseShow();
 
 void mouseHide();
 
-void mouseXY(uint16 *x, uint16 *y);
+Common::Point getMousePos();
 
-void mouseMove(uint16 x, uint16 y);
+void setMousePos(Common::Point pos);
 
 bool mouseButton(uint16 *x, uint16 *y, bool leftbutton);
 
@@ -55,7 +56,7 @@ Gadget *mouseGadget();
 
 void attachGadgetList(Gadget *GadList);
 
-void mouseHandler(int32 flag, int32 mouseX, int32 mouseY);
+void mouseHandler(int flag, Common::Point pos);
 
 } // End of namespace Lab
 
