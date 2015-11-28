@@ -103,6 +103,7 @@ protected:
 	void opAddMenuChoice(ScriptThread *scriptThread, OpCall &opCall);
 	void opDisplayMenu(ScriptThread *scriptThread, OpCall &opCall);
 	void opSwitchMenuChoice(ScriptThread *scriptThread, OpCall &opCall);
+	void opQuitGame(ScriptThread *scriptThread, OpCall &opCall);
 	void opResetGame(ScriptThread *scriptThread, OpCall &opCall);
 	void opDeactivateButton(ScriptThread *scriptThread, OpCall &opCall);
 	void opActivateButton(ScriptThread *scriptThread, OpCall &opCall);
