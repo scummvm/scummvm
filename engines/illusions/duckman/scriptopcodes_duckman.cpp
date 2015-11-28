@@ -67,13 +67,16 @@ void ScriptOpcodes_Duckman::initOpcodes() {
 	OPCODE(5, opJump);
 	OPCODE(6, opStartScriptThread);
 	OPCODE(7, opStartTimerThread);
+	OPCODE(8, opRerunThreads);
 	OPCODE(9, opNotifyThread);
 	OPCODE(10, opSuspendThread);
+	// 11-15 unused
 	OPCODE(16, opLoadResource);
 	OPCODE(17, opUnloadResource);
 	OPCODE(18, opEnterScene18);
 	OPCODE(19, opUnloadResourcesBySceneId);
 	OPCODE(20, opChangeScene);
+	// TODO OPCODE(21, );
 	OPCODE(22, opStartModalScene);
 	OPCODE(23, opExitModalScene);
 	OPCODE(24, opEnterScene24);
@@ -81,6 +84,7 @@ void ScriptOpcodes_Duckman::initOpcodes() {
 	OPCODE(26, opEnterDebugger);
 	OPCODE(27, opLeaveDebugger);
 	OPCODE(28, opDumpCurrentSceneFiles);
+	// 29-31 unused
 	OPCODE(32, opPanCenterObject);
 	OPCODE(33, opPanTrackObject);
 	OPCODE(34, opPanToObject);
@@ -90,6 +94,7 @@ void ScriptOpcodes_Duckman::initOpcodes() {
 	OPCODE(38, opStartFade);
 	OPCODE(39, opSetDisplay);
 	OPCODE(40, opSetCameraBounds);
+	// 41-47 unused
 	OPCODE(48, opSetProperty);
 	OPCODE(49, opPlaceActor);
 	OPCODE(50, opFaceActor);
@@ -104,25 +109,38 @@ void ScriptOpcodes_Duckman::initOpcodes() {
 	OPCODE(59, opActivateObject);
 	OPCODE(60, opDeactivateObject);
 	OPCODE(61, opSetDefaultSequence);
+	// 62-63 unused
 	OPCODE(64, opStopCursorHoldingObject);
 	OPCODE(65, opStartCursorHoldingObject);
 	OPCODE(66, opPlayVideo);
+	// 67-68 unused
 	OPCODE(69, opRunSpecialCode);
 	OPCODE(70, opPause);
 	OPCODE(71, opUnpause);
 	OPCODE(72, opStartSound);
+	// TODO OPCODE(73, );
+	// 74 unused
 	OPCODE(75, opStopSound);
 	OPCODE(76, opStartMidiMusic);
 	OPCODE(77, opStopMidiMusic);
 	OPCODE(78, opFadeMidiMusic);
+	// 79 unused
 	OPCODE(80, opAddMenuChoice);
 	OPCODE(81, opDisplayMenu);
 	OPCODE(82, opSwitchMenuChoice);
+	// TODO OPCODE(83, );
 	OPCODE(84, opResetGame);
+	// TODO OPCODE(85, );
+	// TODO OPCODE(86, );
 	OPCODE(87, opDeactivateButton);
 	OPCODE(88, opActivateButton);
+	// 89-95 unused
 	OPCODE(96, opIncBlockCounter);
 	OPCODE(97, opClearBlockCounter);
+	// 98-99 unused
+	// TODO OPCODE(100, );
+	// TODO OPCODE(101, );
+	// 102-103 unused
 	OPCODE(104, opJumpIf);
 	OPCODE(105, opIsPrevSceneId);
 	OPCODE(106, opNot);
@@ -130,6 +148,7 @@ void ScriptOpcodes_Duckman::initOpcodes() {
 	OPCODE(108, opOr);
 	OPCODE(109, opGetProperty);
 	OPCODE(110, opCompareBlockCounter);
+	// 111 unused
 	OPCODE(112, opAddDialogItem);
 	OPCODE(113, opStartDialog);
 	OPCODE(114, opJumpToDialogChoice);
@@ -137,6 +156,7 @@ void ScriptOpcodes_Duckman::initOpcodes() {
 	OPCODE(116, opSetBlockCounter116);
 	OPCODE(117, opSetBlockCounter117);
 	OPCODE(118, opSetBlockCounter118);
+	// 119-125 unused
 	OPCODE(126, opDebug126);
 	OPCODE(127, opDebug127);
 #if 0		
@@ -220,6 +240,10 @@ duration = 5;
 		_vm->startAbortableTimerThread(duration, opCall._threadId);
 	else
 		_vm->startTimerThread(duration, opCall._threadId);
+}
+
+void ScriptOpcodes_Duckman::opRerunThreads(ScriptThread *scriptThread, OpCall &opCall) {
+	_vm->_rerunThreads = true;
 }
 
 void ScriptOpcodes_Duckman::opNotifyThread(ScriptThread *scriptThread, OpCall &opCall) {
