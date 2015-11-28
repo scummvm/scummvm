@@ -134,13 +134,13 @@ struct Rule {
 typedef Common::List<Rule *> RuleList;
 
 struct RoomData {
-	uint16 NorthDoor, SouthDoor, EastDoor, WestDoor;
+	uint16 _northDoor, _southDoor, _eastDoor, _westDoor;
 
-	byte WipeType;
+	byte _wipeType;
 
-	ViewData *NorthView, *SouthView, *EastView, *WestView;
-	RuleList *rules;
-	char *RoomMsg;
+	ViewData *_northView, *_southView, *_eastView, *_westView;
+	RuleList *_rules;
+	char *_roomMsg;
 };
 
 struct InventoryData {

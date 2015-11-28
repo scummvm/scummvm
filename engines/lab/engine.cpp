@@ -51,7 +51,7 @@ extern bool DoBlack, waitForEffect, stopsound, DoNotDrawMessage, IsHiRes, nopalc
 
 /* Global parser data */
 
-extern RoomData *Rooms;
+extern RoomData *_rooms;
 extern InventoryData *Inventory;
 extern uint16 NumInv, RoomNum, ManyRooms, HighestCondition, Direction;
 CloseDataPtr CPtr;
@@ -1282,8 +1282,10 @@ from_crumbs:
 	delete g_lab->_conditions;
 	delete g_lab->_roomsFound;
 
-	if (Rooms)
-		free(Rooms);
+	if (_rooms) {
+		free(_rooms);
+		_rooms = nullptr;
+	}
 
 	if (Inventory) {
 		for (code = 1; code <= NumInv; code++) {

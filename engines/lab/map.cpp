@@ -127,7 +127,7 @@ void readImage(byte **buffer, Image **im) {
 /*------------------------------ The Map stuff ------------------------------*/
 /*---------------------------------------------------------------------------*/
 
-extern RoomData *Rooms;
+extern RoomData *_rooms;
 
 static Image *Map, *Room, *UpArrowRoom, *DownArrowRoom, *Bridge,
 			 *HRoom, *VRoom, *Maze, *HugeMaze, *Path, *MapNorth,
@@ -646,7 +646,7 @@ static void drawMap(uint16 CurRoom, uint16 CurMsg, uint16 Floor, bool fadeout, b
 	if (sptr)
 		flowText(MsgFont, 0, 5, 3, true, true, true, true, VGAScaleX(14), VGAScaleY(75), VGAScaleX(134), VGAScaleY(97), sptr);
 
-	if ((sptr = Rooms[CurMsg].RoomMsg))
+	if ((sptr = _rooms[CurMsg]._roomMsg))
 		flowText(MsgFont, 0, 5, 3, true, true, true, true, VGAScaleX(14), VGAScaleY(148), VGAScaleX(134), VGAScaleY(186), sptr);
 
 	if (fadein)
@@ -795,10 +795,10 @@ void processMap(uint16 CurRoom) {
 					}
 
 					if (OldMsg != CurMsg) {
-						if (Rooms[CurMsg].RoomMsg == NULL)
+						if (_rooms[CurMsg]._roomMsg == nullptr)
 							g_resource->readViews(CurMsg);
 
-						if ((sptr = Rooms[CurMsg].RoomMsg)) {
+						if ((sptr = _rooms[CurMsg]._roomMsg)) {
 							mouseHide();
 							g_lab->setAPen(3);
 							g_lab->rectFill(VGAScaleX(13), VGAScaleY(148), VGAScaleX(135), VGAScaleY(186));

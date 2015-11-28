@@ -39,7 +39,7 @@ namespace Lab {
 #define EMPTYROOM      ((uint16) -1)
 #define MAXMARKERS     10
 
-extern RoomData *Rooms;
+extern RoomData *_rooms;
 
 typedef struct {
 	uint16 RoomNum;
@@ -87,19 +87,19 @@ static void freeRoom(uint16 RMarker) {
 	RoomNum = RoomMarkers[RMarker].RoomNum;
 
 	if (RoomNum != EMPTYROOM) {
-		Rooms[RoomNum].NorthView = NULL;
-		Rooms[RoomNum].SouthView = NULL;
-		Rooms[RoomNum].EastView  = NULL;
-		Rooms[RoomNum].WestView  = NULL;
+		_rooms[RoomNum]._northView = nullptr;
+		_rooms[RoomNum]._southView = nullptr;
+		_rooms[RoomNum]._eastView = nullptr;
+		_rooms[RoomNum]._westView = nullptr;
 
-		RuleList *rules = Rooms[RoomNum].rules;
+		RuleList *rules = _rooms[RoomNum]._rules;
 		for (RuleList::iterator rule = rules->begin(); rule != rules->end(); ++rule)
 			delete *rule;
-		Rooms[RoomNum].rules->clear();
-		delete Rooms[RoomNum].rules;
-		Rooms[RoomNum].rules  = NULL;
+		_rooms[RoomNum]._rules->clear();
+		delete _rooms[RoomNum]._rules;
+		_rooms[RoomNum]._rules = nullptr;
 
-		Rooms[RoomNum].RoomMsg   = NULL;
+		_rooms[RoomNum]._roomMsg = nullptr;
 	}
 
 	RoomMarkers[RMarker].RoomNum = EMPTYROOM;
