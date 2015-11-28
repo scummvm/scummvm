@@ -35,7 +35,7 @@ namespace Lab {
 
 static uint16 allocroom;
 
-extern RoomData *Rooms;
+extern RoomData *_rooms;
 extern InventoryData *Inventory;
 extern uint16 NumInv, ManyRooms, HighestCondition;
 
@@ -87,22 +87,22 @@ bool Resource::readRoomData(const char *fileName) {
 
 	ManyRooms = dataFile->readUint16LE();
 	HighestCondition = dataFile->readUint16LE();
-	Rooms = (RoomData *)malloc((ManyRooms + 1) * sizeof(RoomData));
-	memset(Rooms, 0, (ManyRooms + 1) * sizeof(RoomData));
+	_rooms = (RoomData *)malloc((ManyRooms + 1) * sizeof(RoomData));
+	memset(_rooms, 0, (ManyRooms + 1) * sizeof(RoomData));
 
 	for (uint16 i = 1; i <= ManyRooms; i++) {
-		Rooms[i].NorthDoor = dataFile->readUint16LE();
-		Rooms[i].SouthDoor = dataFile->readUint16LE();
-		Rooms[i].EastDoor = dataFile->readUint16LE();
-		Rooms[i].WestDoor = dataFile->readUint16LE();
-		Rooms[i].WipeType = dataFile->readByte();
+		_rooms[i]._northDoor = dataFile->readUint16LE();
+		_rooms[i]._southDoor = dataFile->readUint16LE();
+		_rooms[i]._eastDoor = dataFile->readUint16LE();
+		_rooms[i]._westDoor = dataFile->readUint16LE();
+		_rooms[i]._wipeType = dataFile->readByte();
 
-		Rooms[i].NorthView = NULL;
-		Rooms[i].SouthView = NULL;
-		Rooms[i].EastView = NULL;
-		Rooms[i].WestView = NULL;
-		Rooms[i].rules = NULL;
-		Rooms[i].RoomMsg = NULL;
+		_rooms[i]._northView = nullptr;
+		_rooms[i]._southView = nullptr;
+		_rooms[i]._eastView = nullptr;
+		_rooms[i]._westView = nullptr;
+		_rooms[i]._rules = nullptr;
+		_rooms[i]._roomMsg = nullptr;
 	}
 
 	delete dataFile;
@@ -135,12 +135,12 @@ bool Resource::readViews(uint16 roomNum) {
 
 	allocroom = roomNum;
 
-	Rooms[roomNum].RoomMsg = readString(dataFile);
-	Rooms[roomNum].NorthView = readView(dataFile);
-	Rooms[roomNum].SouthView = readView(dataFile);
-	Rooms[roomNum].EastView = readView(dataFile);
-	Rooms[roomNum].WestView = readView(dataFile);
-	Rooms[roomNum].rules = readRule(dataFile);
+	_rooms[roomNum]._roomMsg = readString(dataFile);
+	_rooms[roomNum]._northView = readView(dataFile);
+	_rooms[roomNum]._southView = readView(dataFile);
+	_rooms[roomNum]._eastView = readView(dataFile);
+	_rooms[roomNum]._westView = readView(dataFile);
+	_rooms[roomNum]._rules = readRule(dataFile);
 
 	g_music->updateMusic();
 
