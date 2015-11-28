@@ -128,7 +128,7 @@ void ScriptOpcodes_Duckman::initOpcodes() {
 	OPCODE(80, opAddMenuChoice);
 	OPCODE(81, opDisplayMenu);
 	OPCODE(82, opSwitchMenuChoice);
-	// TODO OPCODE(83, );
+	OPCODE(83, opQuitGame);
 	OPCODE(84, opResetGame);
 	// TODO OPCODE(85, );
 	// TODO OPCODE(86, );
@@ -698,6 +698,10 @@ void ScriptOpcodes_Duckman::opDisplayMenu(ScriptThread *scriptThread, OpCall &op
 void ScriptOpcodes_Duckman::opSwitchMenuChoice(ScriptThread *scriptThread, OpCall &opCall) {
 	//_vm->_menuChoiceOfs = 156; // DEBUG Chose "Start game"
 	opCall._deltaOfs += _vm->_menuChoiceOfs;
+}
+
+void ScriptOpcodes_Duckman::opQuitGame(ScriptThread *scriptThread, OpCall &opCall) {
+	_vm->quitGame();
 }
 
 void ScriptOpcodes_Duckman::opResetGame(ScriptThread *scriptThread, OpCall &opCall) {
