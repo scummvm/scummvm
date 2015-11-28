@@ -84,7 +84,7 @@ void DialogPanel::renderOptions() {
 		visibleOptions++;
 
 		pos += _options[i]->getHeight();
-		if (pos >= _optionsHeight - _optionHeight) {
+		if (pos >= _optionsHeight) {
 			break;
 		}
 	}

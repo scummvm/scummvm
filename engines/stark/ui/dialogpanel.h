@@ -85,7 +85,6 @@ private:
 	static const uint32 _optionsTop = 4;
 	static const uint32 _optionsLeft = 30;
 	static const uint32 _optionsHeight = 71;
-	static const uint32 _optionHeight = 12;
 };
 
 } // End of namespace Stark
