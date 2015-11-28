@@ -638,7 +638,7 @@ void LabEngine::mainGameLoop() {
 	IntuiMessage *Msg;
 	uint32 Class;
 
-	uint16 Qualifier, MouseX, MouseY, ActionMode = 4;
+	uint16 Qualifier, ActionMode = 4;
 	uint16 CurInv = MAPNUM, LastInv = MAPNUM, Old;
 
 	bool ForceDraw = false, doit, GotMessage = true;
@@ -742,6 +742,7 @@ void LabEngine::mainGameLoop() {
 		interfaceOn();
 		Msg = getMsg();
 
+		Common::Point curPos;
 		if (Msg == NULL) { /* Does music load and next animation frame when you've run out of messages */
 			GotMessage = false;
 			g_music->checkRoomMusic();
@@ -752,22 +753,16 @@ void LabEngine::mainGameLoop() {
 				int result = followCrumbs();
 
 				if (result != 0) {
-					int x = 0, y = 0;
-
-					WSDL_GetMousePos(&x, &y);
-
+					curPos = WSDL_GetMousePos();
 					Class     = GADGETUP;
 					Qualifier = 0;
-					MouseX    = x;
-					MouseY    = y;
 
-					if (result == VKEY_UPARROW) {
+					if (result == VKEY_UPARROW)
 						code = GadID = 7;
-					} else if (result == VKEY_LTARROW) {
+					else if (result == VKEY_LTARROW)
 						code = GadID = 6;
-					} else if (result == VKEY_RTARROW) {
+					else if (result == VKEY_RTARROW)
 						code = GadID = 8;
-					}
 
 					GotMessage = true;
 					mayShowCrumbIndicator();
@@ -784,8 +779,8 @@ void LabEngine::mainGameLoop() {
 			Class     = Msg->msgClass;
 			code      = Msg->code;
 			Qualifier = Msg->qualifier;
-			MouseX    = Msg->mouseX;
-			MouseY    = Msg->mouseY;
+			curPos.x  = Msg->mouseX;
+			curPos.y  = Msg->mouseY;
 			GadID     = Msg->gadgetID;
 
 			FollowingCrumbs = false;
@@ -797,7 +792,7 @@ from_crumbs:
 				if (code == 13) { /* The return key */
 					Class     = MOUSEBUTTONS;
 					Qualifier = IEQUALIFIER_LEFTBUTTON;
-					mouseXY(&MouseX, &MouseY);
+					curPos = getMousePos();
 				} else if (g_lab->getPlatform() == Common::kPlatformWindows &&
 						(code == 'b' || code == 'B')) {  /* Start bread crumbs */
 					BreadCrumbs[0].RoomNum = 0;
@@ -1169,10 +1164,10 @@ from_crumbs:
 				doit = false;
 
 				if (CPtr) {
-					if ((CPtr->CloseUpType == SPECIALLOCK) && MainDisplay) /* LAB: Labrinth specific code */
-						mouseCombination(MouseX, MouseY);
+					if ((CPtr->CloseUpType == SPECIALLOCK) && MainDisplay) /* LAB: Labyrinth specific code */
+						mouseCombination(curPos);
 					else if ((CPtr->CloseUpType == SPECIALBRICK) && MainDisplay)
-						mouseTile(MouseX, MouseY);
+						mouseTile(curPos);
 					else
 						doit = true;
 				} else
@@ -1184,48 +1179,48 @@ from_crumbs:
 					eatMessages();
 
 					if (ActionMode == 0) { /* Take something. */
-						if (doActionRule(MouseX, MouseY, ActionMode, RoomNum, &CPtr))
+						if (doActionRule(Common::Point(curPos.x, curPos.y), ActionMode, RoomNum, &CPtr))
 							CurFileName = NewFileName;
-						else if (takeItem(MouseX, MouseY, &CPtr))
+						else if (takeItem(curPos.x, curPos.y, &CPtr))
 							drawStaticMessage(kTextTakeItem);
-						else if (doActionRule(MouseX, MouseY, TAKEDEF - 1, RoomNum, &CPtr))
+						else if (doActionRule(curPos, TAKEDEF - 1, RoomNum, &CPtr))
 							CurFileName = NewFileName;
-						else if (doActionRule(MouseX, MouseY, TAKE - 1, 0, &CPtr))
+						else if (doActionRule(curPos, TAKE - 1, 0, &CPtr))
 							CurFileName = NewFileName;
-						else if (MouseY < (VGAScaleY(149) + SVGACord(2)))
+						else if (curPos.y < (VGAScaleY(149) + SVGACord(2)))
 							drawStaticMessage(kTextNothing);
 					} else if ((ActionMode == 1) /* Manipulate an object */  ||
 					         (ActionMode == 2) /* Open up a "door" */      ||
 					         (ActionMode == 3)) { /* Close a "door" */
-						if (doActionRule(MouseX, MouseY, ActionMode, RoomNum, &CPtr))
+						if (doActionRule(curPos, ActionMode, RoomNum, &CPtr))
 							CurFileName = NewFileName;
-						else if (!doActionRule(MouseX, MouseY, ActionMode, 0, &CPtr)) {
-							if (MouseY < (VGAScaleY(149) + SVGACord(2)))
+						else if (!doActionRule(curPos, ActionMode, 0, &CPtr)) {
+							if (curPos.y < (VGAScaleY(149) + SVGACord(2)))
 								drawStaticMessage(kTextNothing);
 						}
 					} else if (ActionMode == 4) { /* Look at closeups */
 						TempCPtr = CPtr;
-						setCurClose(MouseX, MouseY, &TempCPtr);
+						setCurClose(curPos, &TempCPtr);
 
 						if (CPtr == TempCPtr) {
-							if (MouseY < (VGAScaleY(149) + SVGACord(2)))
+							if (curPos.y < (VGAScaleY(149) + SVGACord(2)))
 								drawStaticMessage(kTextNothing);
 						} else if (TempCPtr->GraphicName) {
 							if (*(TempCPtr->GraphicName)) {
 								DoBlack = true;
 								CPtr = TempCPtr;
-							} else if (MouseY < (VGAScaleY(149) + SVGACord(2)))
+							} else if (curPos.y < (VGAScaleY(149) + SVGACord(2)))
 								drawStaticMessage(kTextNothing);
-						} else if (MouseY < (VGAScaleY(149) + SVGACord(2)))
+						} else if (curPos.y < (VGAScaleY(149) + SVGACord(2)))
 							drawStaticMessage(kTextNothing);
 					} else if ((ActionMode == 5)  &&
 					         g_lab->_conditions->in(CurInv)) { /* Use an item on something else */
-						if (doOperateRule(MouseX, MouseY, CurInv, &CPtr)) {
+						if (doOperateRule(curPos.x, curPos.y, CurInv, &CPtr)) {
 							CurFileName = NewFileName;
 
 							if (!g_lab->_conditions->in(CurInv))
 								decIncInv(&CurInv, false);
-						} else if (MouseY < (VGAScaleY(149) + SVGACord(2)))
+						} else if (curPos.y < (VGAScaleY(149) + SVGACord(2)))
 							drawStaticMessage(kTextNothing);
 					}
 				}
@@ -1238,7 +1233,7 @@ from_crumbs:
 
 				if (HCPtr == NULL) {
 					TempCPtr = CPtr;
-					setCurClose(MouseX, MouseY, &TempCPtr);
+					setCurClose(curPos, &TempCPtr);
 
 					if ((TempCPtr == NULL) || (TempCPtr == CPtr)) {
 						if (CPtr == NULL)
@@ -1259,7 +1254,7 @@ from_crumbs:
 				}
 
 				if (HCPtr)
-					mouseMove(scaleX((HCPtr->x1 + HCPtr->x2) / 2), scaleY((HCPtr->y1 + HCPtr->y2) / 2));
+					setMousePos(Common::Point(scaleX((HCPtr->x1 + HCPtr->x2) / 2), scaleY((HCPtr->y1 + HCPtr->y2) / 2)));
 			} else if ((Class == MOUSEBUTTONS) && (IEQUALIFIER_RBUTTON & Qualifier)) {
 				eatMessages();
 				Alternate = !Alternate;

@@ -66,12 +66,11 @@ LabEngine::LabEngine(OSystem *syst, const ADGameDescription *gameDesc)
 
     _lastWaitTOFTicks = 0;
 
-    _mouseX = 0;
-    _mouseY = 0;
+	_mousePos = Common::Point(0, 0);
+	_mouseAtEdge = false;
 
-     _nextKeyIn = 0;
+    _nextKeyIn = 0;
     _nextKeyOut = 0;
-    _mouseAtEdge = false;
 
 	//const Common::FSNode gameDataDir(ConfMan.get("path"));
 	//SearchMan.addSubDirectoryMatching(gameDataDir, "game");

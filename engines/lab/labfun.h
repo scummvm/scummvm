@@ -31,6 +31,7 @@
 #ifndef LAB_LABFUN_H
 #define LAB_LABFUN_H
 
+#include "common/events.h"
 #include "lab/stddefines.h"
 #include "lab/parsetypes.h"
 
@@ -228,8 +229,8 @@ uint16 scaleY(uint16 y);
 int16 VGAScaleX(int16 x);
 int16 VGAScaleY(int16 y);
 uint16 SVGACord(uint16 cord);
-uint16 VGAUnScaleX(uint16 x);
-uint16 VGAUnScaleY(uint16 y);
+int VGAUnScaleX(int x);
+int VGAUnScaleY(int y);
 char *translateFileName(const char *filename);
 
 /*---------------------------*/
@@ -260,9 +261,9 @@ bool readSaveGameHeader(Common::InSaveFile *in, SaveGameHeader &header);
 /*--------------------------*/
 
 void showCombination(const char *filename);
-void mouseCombination(uint16 x, uint16 y);
+void mouseCombination(Common::Point pos);
 void showTile(const char *filename, bool showsolution);
-void mouseTile(uint16 x, uint16 y);
+void mouseTile(Common::Point pos);
 
 } // End of namespace Lab
 

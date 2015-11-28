@@ -213,11 +213,11 @@ static void changeCombination(uint16 number) {
 /*****************************************************************************/
 /* Processes mouse clicks and changes the combination.                       */
 /*****************************************************************************/
-void mouseCombination(uint16 x, uint16 y) {
+void mouseCombination(Common::Point pos) {
 	uint16 number;
 
-	x = VGAUnScaleX(x);
-	y = VGAUnScaleY(y);
+	int x = VGAUnScaleX(pos.x);
+	int y = VGAUnScaleY(pos.y);
 
 	if ((y >= 63) && (y <= 99)) {
 		if ((x >= 44) && (x < 83))
@@ -437,9 +437,9 @@ static void changeTile(uint16 col, uint16 row) {
 /*****************************************************************************/
 /* Processes mouse clicks and changes the combination.                       */
 /*****************************************************************************/
-void mouseTile(uint16 x, uint16 y) {
-	x = VGAUnScaleX(x);
-	y = VGAUnScaleY(y);
+void mouseTile(Common::Point pos) {
+	int x = VGAUnScaleX(pos.x);
+	int y = VGAUnScaleY(pos.y);
 
 	if ((x < 101) || (y < 26))
 		return;
@@ -1007,7 +1007,7 @@ static void processMonitor(char *ntext, bool isinteractive, uint16 x1, uint16 y1
 					TestCPtr = CPtr;
 					MouseY = 64 + (MouseY / MonGadHeight) * 42;
 					MouseX = 101;
-					setCurClose(MouseX, MouseY, &CPtr, true);
+					setCurClose(Common::Point(MouseX, MouseY), &CPtr, true);
 
 					if (TestCPtr != CPtr) {
 						LastCPtr[depth] = TestCPtr;

@@ -88,7 +88,7 @@ uint16 SVGACord(uint16 cord) {
 /*****************************************************************************/
 /* Converts SVGA cords to VGA if necessary, otherwise returns VGA cords.     */
 /*****************************************************************************/
-uint16 VGAUnScaleX(uint16 x) {
+int VGAUnScaleX(int x) {
 	if (IsHiRes)
 		return (x / 2);
 	else
@@ -98,7 +98,7 @@ uint16 VGAUnScaleX(uint16 x) {
 /*****************************************************************************/
 /* Converts SVGA cords to VGA if necessary, otherwise returns VGA cords.     */
 /*****************************************************************************/
-uint16 VGAUnScaleY(uint16 y) {
+int VGAUnScaleY(int y) {
 	if (IsHiRes)
 		return ((y * 5) / 12);
 	else

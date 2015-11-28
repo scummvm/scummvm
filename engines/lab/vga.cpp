@@ -90,40 +90,39 @@ void LabEngine::WSDL_ProcessInput(bool can_delay) {
 			switch (event.type) {
 			case Common::EVENT_RBUTTONDOWN:
 				flags |= 8;
-				mouseHandler(flags, _mouseX, _mouseY);
+				mouseHandler(flags, _mousePos);
 				break;
 
 			case Common::EVENT_LBUTTONDOWN:
 				flags |= 2;
-				mouseHandler(flags, _mouseX, _mouseY);
+				mouseHandler(flags, _mousePos);
 				break;
 
 			case Common::EVENT_MOUSEMOVE: {
 				int lastMouseAtEdge = _mouseAtEdge;
 				_mouseAtEdge = false;
-				_mouseX = event.mouse.x;
+				_mousePos.x = event.mouse.x;
 				if (event.mouse.x <= 0) {
-					_mouseX = 0;
+					_mousePos.x = 0;
 					_mouseAtEdge = true;
 				}
-				if (_mouseX > g_lab->_screenWidth - 1) {
-					_mouseX = g_lab->_screenWidth;
+				if (_mousePos.x > g_lab->_screenWidth - 1) {
+					_mousePos.x = g_lab->_screenWidth;
 					_mouseAtEdge = true;
 				}
 
-				_mouseY = event.mouse.y;
+				_mousePos.y = event.mouse.y;
 				if (event.mouse.y <= 0) {
-					_mouseY = 0;
+					_mousePos.y = 0;
 					_mouseAtEdge = true;
 				}
-				if (_mouseY > g_lab->_screenHeight - 1) {
-					_mouseY = g_lab->_screenHeight;
+				if (_mousePos.y > g_lab->_screenHeight - 1) {
+					_mousePos.y = g_lab->_screenHeight;
 					_mouseAtEdge = true;
 				}
 
 				if (!lastMouseAtEdge || !_mouseAtEdge)
-					mouseHandler(1, _mouseX, _mouseY);
-
+					mouseHandler(1, _mousePos);
 				}
 				break;
 
@@ -167,11 +166,10 @@ void LabEngine::WSDL_ProcessInput(bool can_delay) {
 		g_system->delayMillis(10);
 }
 
-void LabEngine::WSDL_GetMousePos(int *x, int *y) {
+Common::Point LabEngine::WSDL_GetMousePos() {
 	WSDL_ProcessInput(0);
 
-	*x = _mouseX;
-	*y = _mouseY;
+	return _mousePos;
 }
 
 void LabEngine::waitTOF() {
@@ -278,13 +276,13 @@ void LabEngine::drawImage(Image *Im, uint16 x, uint16 y) {
 		dy = 0;
 	}
 
-	if ((uint)(dx + w) > g_lab->_screenWidth)
+	if (dx + w > g_lab->_screenWidth)
 		w = g_lab->_screenWidth - dx;
 
-	if ((uint)(dy + h) > g_lab->_screenHeight)
+	if (dy + h > g_lab->_screenHeight)
 		h = g_lab->_screenHeight - dy;
 
-	if (w > 0 && h > 0) {
+	if ((w > 0) && (h > 0)) {
 		byte *s = Im->ImageData + sy * Im->Width + sx;
 		byte *d = getVGABaseAddr() + dy * g_lab->_screenWidth + dx;
 
@@ -321,13 +319,13 @@ void LabEngine::drawMaskImage(Image *Im, uint16 x, uint16 y) {
 		dy = 0;
 	}
 
-	if ((uint)(dx + w) > g_lab->_screenWidth)
+	if (dx + w > g_lab->_screenWidth)
 		w = g_lab->_screenWidth - dx;
 
-	if ((uint)(dy + h) > g_lab->_screenHeight)
+	if (dy + h > g_lab->_screenHeight)
 		h = g_lab->_screenHeight - dy;
 
-	if (w > 0 && h > 0) {
+	if ((w > 0) && (h > 0)) {
 		byte *s = Im->ImageData + sy * Im->Width + sx;
 		byte *d = getVGABaseAddr() + dy * g_lab->_screenWidth + dx;
 
@@ -374,13 +372,13 @@ void LabEngine::readScreenImage(Image *Im, uint16 x, uint16 y) {
 		dy = 0;
 	}
 
-	if ((uint)(dx + w) > g_lab->_screenWidth)
+	if (dx + w > g_lab->_screenWidth)
 		w = g_lab->_screenWidth - dx;
 
-	if ((uint)(dy + h) > g_lab->_screenHeight)
+	if (dy + h > g_lab->_screenHeight)
 		h = g_lab->_screenHeight - dy;
 
-	if (w > 0 && h > 0) {
+	if ((w > 0) && (h > 0)) {
 		byte *s = Im->ImageData + sy * Im->Width + sx;
 		byte *d = getVGABaseAddr() + dy * g_lab->_screenWidth + dx;
 
@@ -551,13 +549,13 @@ void LabEngine::rectFill(uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
 		dy = 0;
 	}
 
-	if ((uint)(dx + w) > g_lab->_screenWidth)
+	if (dx + w > g_lab->_screenWidth)
 		w = g_lab->_screenWidth - dx;
 
-	if ((uint)(dy + h) > g_lab->_screenHeight)
+	if (dy + h > g_lab->_screenHeight)
 		h = g_lab->_screenHeight - dy;
 
-	if (w > 0 && h > 0) {
+	if ((w > 0) && (h > 0)) {
 		char *d = (char *)getVGABaseAddr() + dy * g_lab->_screenWidth + dx;
 
 		while (h-- > 0) {
@@ -608,13 +606,13 @@ void LabEngine::ghoastRect(uint16 pencolor, uint16 x1, uint16 y1, uint16 x2, uin
 		dy = 0;
 	}
 
-	if ((uint)(dx + w) > g_lab->_screenWidth)
+	if (dx + w > g_lab->_screenWidth)
 		w = g_lab->_screenWidth - dx;
 
-	if ((uint)(dy + h) > g_lab->_screenHeight)
+	if (dy + h > g_lab->_screenHeight)
 		h = g_lab->_screenHeight - dy;
 
-	if (w > 0 && h > 0) {
+	if ((w > 0) && (h > 0)) {
 		char *d = (char *)getVGABaseAddr() + dy * g_lab->_screenWidth + dx;
 
 		while (h-- > 0) {
