@@ -51,6 +51,11 @@ public:
 	 */
 	const Graphics::Font *getFont(FontType type, int32 customFontIndex);
 
+	/**
+	 * Get the height of the font matching the specified parameters
+	 */
+	int getFontHeight(FontType type, int32 customFontIndex);
+
 private:
 	struct FontHolder {
 		Common::String _name;
@@ -63,6 +68,7 @@ private:
 	};
 
 	void initFonts();
+	FontHolder *getFontHolder(FontType type, int32 customFontIndex);
 
 	FontHolder _smallFont;
 	FontHolder _bigFont;

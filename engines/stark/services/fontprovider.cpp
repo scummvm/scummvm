@@ -80,24 +80,30 @@ FontProvider::FontHolder::FontHolder(FontProvider *fontProvider, Common::String 
 	}
 }
 
-const Graphics::Font *FontProvider::getFont(FontProvider::FontType type, int32 customFontIndex) {
-	// Get the font holder
-	FontHolder *holder;
+FontProvider::FontHolder *FontProvider::getFontHolder(FontProvider::FontType type, int32 customFontIndex) {
 	if (type == kSmallFont) {
-		holder = &_smallFont;
+		return &_smallFont;
 	} else if (type == kBigFont) {
-		holder = &_bigFont;
+		return &_bigFont;
 	} else {
 		assert(customFontIndex >= 0 && customFontIndex < 8);
-		holder = &_customFonts[customFontIndex];
+		return &_customFonts[customFontIndex];
 	}
+}
 
+const Graphics::Font *FontProvider::getFont(FontProvider::FontType type, int32 customFontIndex) {
+	FontHolder *holder = getFontHolder(type, customFontIndex);
 	if (holder->_font) {
 		return holder->_font.get();
 	} else {
 		// Fallback to a default font
 		return FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
 	}
+}
+
+int FontProvider::getFontHeight(FontProvider::FontType type, int32 customFontIndex) {
+	FontHolder *holder = getFontHolder(type, customFontIndex);
+	return holder->_height;
 }
 
 } // End of namespace Stark
