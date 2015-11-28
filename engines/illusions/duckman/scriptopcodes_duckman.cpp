@@ -118,7 +118,7 @@ void ScriptOpcodes_Duckman::initOpcodes() {
 	OPCODE(70, opPause);
 	OPCODE(71, opUnpause);
 	OPCODE(72, opStartSound);
-	// TODO OPCODE(73, );
+	OPCODE(73, opStartSoundAtPosition);
 	// 74 unused
 	OPCODE(75, opStopSound);
 	OPCODE(76, opStartMidiMusic);
@@ -629,6 +629,15 @@ void ScriptOpcodes_Duckman::opStartSound(ScriptThread *scriptThread, OpCall &opC
 	ARG_INT16(volume);
 	ARG_UINT32(soundEffectId);
 	_vm->_soundMan->playSound(soundEffectId, volume, 0);
+}
+
+void ScriptOpcodes_Duckman::opStartSoundAtPosition(ScriptThread *scriptThread, OpCall &opCall) {
+	ARG_INT16(volume);
+	ARG_UINT32(soundEffectId);
+	ARG_UINT32(namedPointId);
+	Common::Point pos = _vm->getNamedPointPosition(namedPointId);
+	int16 pan = _vm->convertPanXCoord(pos.x);
+	_vm->_soundMan->playSound(soundEffectId, volume, pan);
 }
 
 void ScriptOpcodes_Duckman::opStopSound(ScriptThread *scriptThread, OpCall &opCall) {

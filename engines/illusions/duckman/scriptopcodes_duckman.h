@@ -95,6 +95,7 @@ protected:
 	void opPause(ScriptThread *scriptThread, OpCall &opCall);
 	void opUnpause(ScriptThread *scriptThread, OpCall &opCall);
 	void opStartSound(ScriptThread *scriptThread, OpCall &opCall);
+	void opStartSoundAtPosition(ScriptThread *scriptThread, OpCall &opCall);
 	void opStopSound(ScriptThread *scriptThread, OpCall &opCall);
 	void opStartMidiMusic(ScriptThread *scriptThread, OpCall &opCall);
 	void opStopMidiMusic(ScriptThread *scriptThread, OpCall &opCall);
