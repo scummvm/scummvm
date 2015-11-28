@@ -164,7 +164,7 @@ void Scripts::charLoop() {
 	_sequence = 2000;
 	searchForSequence();
 	_vm->_images.clear();
-	_vm->_buffer2.blitFrom(_vm->_buffer1);
+	_vm->_buffer2.copyBlock(&_vm->_buffer1, Common::Rect(0, 0, _vm->_buffer2.w, _vm->_buffer2.h));
 	_vm->_newRects.clear();
 
 	executeScript();
