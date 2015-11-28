@@ -33,12 +33,15 @@
 
 #include "common/singleton.h"
 #include "common/stream.h"
+#include "common/memstream.h"
 #include "common/hashmap.h"
+#include "common/ptr.h"
 
 #include <ft2build.h>
 #include FT_FREETYPE_H
 #include FT_GLYPH_H
 #include FT_TRUETYPE_TABLES_H
+#include FT_TRUETYPE_TAGS_H
 
 namespace Graphics {
 
@@ -141,7 +144,12 @@ private:
 	mutable GlyphCache _glyphs;
 	bool _allowLateCaching;
 	void assureCached(uint32 chr) const;
-	int computePointSize(int size, TTFSizeMode sizeMode);
+
+	Common::SeekableReadStream *readTTFTable(FT_ULong tag) const;
+
+	int computePointSize(int size, TTFSizeMode sizeMode) const;
+	int readPointSizeFromVDMXTable(int height) const;
+	int computePointSizeFromHeaders(int height) const;
 
 	FT_Int32 _loadFlags;
 	FT_Render_Mode _renderMode;
@@ -268,18 +276,17 @@ bool TTFFont::load(Common::SeekableReadStream &stream, int size, TTFSizeMode siz
 	return _initialized;
 }
 
-int TTFFont::computePointSize(int size, TTFSizeMode sizeMode) {
+int TTFFont::computePointSize(int size, TTFSizeMode sizeMode) const {
 	int ptSize;
 	switch (sizeMode) {
 	case kTTFSizeModeCell: {
-		TT_OS2 *os2Header = (TT_OS2 *) FT_Get_Sfnt_Table(_face, ft_sfnt_os2);
-		TT_HoriHeader *horiHeader = (TT_HoriHeader *) FT_Get_Sfnt_Table(_face, ft_sfnt_hhea);
+		ptSize = readPointSizeFromVDMXTable(size);
 
-		if (os2Header && (os2Header->usWinAscent + os2Header->usWinDescent != 0)) {
-			ptSize = divRoundToNearest(_face->units_per_EM * size, os2Header->usWinAscent + os2Header->usWinDescent);
-		} else if (horiHeader && (horiHeader->Ascender + horiHeader->Descender != 0)) {
-			ptSize = divRoundToNearest(_face->units_per_EM * size, horiHeader->Ascender + horiHeader->Descender);
-		} else {
+		if (ptSize == 0) {
+			ptSize = computePointSizeFromHeaders(size);
+		}
+
+		if (ptSize == 0) {
 			warning("Unable to compute point size for font '%s'", _face->family_name);
 			ptSize = 1;
 		}
@@ -289,6 +296,106 @@ int TTFFont::computePointSize(int size, TTFSizeMode sizeMode) {
 		ptSize = size;
 		break;
 	}
+
+	return ptSize;
+}
+
+Common::SeekableReadStream *TTFFont::readTTFTable(FT_ULong tag) const {
+	FT_ULong needed = 0;
+	FT_Error err = FT_Load_Sfnt_Table(_face, tag, 0, nullptr, &needed);
+	if (err) {
+		return nullptr;
+	}
+
+	byte *buf = (byte *) malloc(needed);
+	if (!buf) {
+		return nullptr;
+	}
+
+	err = FT_Load_Sfnt_Table(_face, tag, 0, buf, &needed);
+	if (err) {
+		free(buf);
+		return nullptr;
+	}
+
+	return new Common::MemoryReadStream(buf, needed, DisposeAfterUse::YES);
+}
+
+int TTFFont::readPointSizeFromVDMXTable(int height) const {
+	// The Vertical Device Metrics table matches font heights with point sizes.
+	// FreeType does not expose it, we have to parse it ourselves.
+	// See https://www.microsoft.com/typography/otspec/vdmx.htm
+
+	Common::ScopedPtr<Common::SeekableReadStream> vdmxBuf(readTTFTable(TTAG_VDMX));
+	if (!vdmxBuf) {
+		return 0;
+	}
+
+	// Read the main header
+	vdmxBuf->skip(4); // Skip the version
+	uint16 numRatios = vdmxBuf->readUint16BE();
+
+	// Compute the starting position for the group table positions table
+	int32 offsetTableStart = vdmxBuf->pos() + 4 * numRatios;
+
+	// Search the ratio table for the 1:1 ratio, or the default record (0, 0, 0)
+	int32 selectedRatio = -1;
+	for (uint16 i = 0; i < numRatios; i++) {
+		vdmxBuf->skip(1); // Skip the charset subset
+		uint8 xRatio = vdmxBuf->readByte();
+		uint8 yRatio1 = vdmxBuf->readByte();
+		uint8 yRatio2 = vdmxBuf->readByte();
+
+		if ((xRatio == 1 && yRatio1 <= 1 && yRatio2 >= 1)
+		    || (xRatio == 0 && yRatio1 == 0 && yRatio2 == 0)) {
+			selectedRatio = i;
+			break;
+		}
+	}
+	if (selectedRatio < 0) {
+		return 0;
+	}
+
+	// Read from group table positions table to get the group table offset
+	vdmxBuf->seek(offsetTableStart + sizeof(uint16) * selectedRatio);
+	uint16 groupOffset = vdmxBuf->readUint16BE();
+
+	// Read the group table header
+	vdmxBuf->seek(groupOffset);
+	uint16 numRecords = vdmxBuf->readUint16BE();
+	vdmxBuf->skip(2); // Skip the table bounds
+
+	// Search a record matching the required height
+	for (uint16 i = 0; i < numRecords; i++) {
+		uint16 pointSize = vdmxBuf->readUint16BE();
+		int16 yMax = vdmxBuf->readSint16BE();
+		int16 yMin = vdmxBuf->readSint16BE();
+
+		if (yMax + -yMin > height) {
+			return 0;
+		}
+		if (yMax + -yMin == height) {
+			return pointSize;
+		}
+	}
+
+	return 0;
+}
+
+int TTFFont::computePointSizeFromHeaders(int height) const {
+	TT_OS2 *os2Header = (TT_OS2 *) FT_Get_Sfnt_Table(_face, ft_sfnt_os2);
+	TT_HoriHeader *horiHeader = (TT_HoriHeader *) FT_Get_Sfnt_Table(_face, ft_sfnt_hhea);
+
+	int ptSize;
+	if (os2Header && (os2Header->usWinAscent + os2Header->usWinDescent != 0)) {
+		ptSize = divRoundToNearest(_face->units_per_EM * height, os2Header->usWinAscent + os2Header->usWinDescent);
+	} else if (horiHeader && (horiHeader->Ascender + horiHeader->Descender != 0)) {
+		ptSize = divRoundToNearest(_face->units_per_EM * height, horiHeader->Ascender + horiHeader->Descender);
+	} else {
+		warning("Unable to compute point size for font '%s'", _face->family_name);
+		ptSize = 1;
+	}
+
 	return ptSize;
 }
 
