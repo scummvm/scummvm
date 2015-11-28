@@ -105,6 +105,8 @@ protected:
 	void opSwitchMenuChoice(ScriptThread *scriptThread, OpCall &opCall);
 	void opQuitGame(ScriptThread *scriptThread, OpCall &opCall);
 	void opResetGame(ScriptThread *scriptThread, OpCall &opCall);
+	void opLoadGame(ScriptThread *scriptThread, OpCall &opCall);
+	void opSaveGame(ScriptThread *scriptThread, OpCall &opCall);
 	void opDeactivateButton(ScriptThread *scriptThread, OpCall &opCall);
 	void opActivateButton(ScriptThread *scriptThread, OpCall &opCall);
 	void opIncBlockCounter(ScriptThread *scriptThread, OpCall &opCall);
