@@ -48,6 +48,12 @@ private:
 	void processTrans();
 	void processRGB();
 
+	uint32 _width;
+	uint32 _height;
+
+	uint32 _currX;
+	uint32 _currY;
+
 	uint32 *_pixels;
 	Common::ReadStream *_stream;
 

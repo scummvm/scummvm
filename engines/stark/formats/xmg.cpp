@@ -51,20 +51,20 @@ Graphics::Surface *XMGDecoder::decodeImage(Common::ReadStream *stream) {
 	_transColor = stream->readUint32LE();
 
 	// Read the image size
-	uint32 width = stream->readUint32LE();
-	uint32 height = stream->readUint32LE();
-	if (width % 2) {
-		width++;
+	_width = stream->readUint32LE();
+	_height = stream->readUint32LE();
+	if (_width % 2) {
+		_width++;
 	}
-	debugC(10, kDebugXMG, "Stark::XMG: Version=%d, TransparencyColor=0x%08x, size=%dx%d", version, _transColor, width, height);
+	debugC(10, kDebugXMG, "Stark::XMG: Version=%d, TransparencyColor=0x%08x, size=%dx%d", version, _transColor, _width, _height);
 
 	// Read the scan length
 	_scanLen = stream->readUint32LE();
-	if (_scanLen != 3 * width) {
-		warning("Stark::XMG: The scan length (%d) doesn't match the width bytes (%d)", _scanLen, 3 * width);
+	if (_scanLen != 3 * _width) {
+		warning("Stark::XMG: The scan length (%d) doesn't match the width bytes (%d)", _scanLen, 3 * _width);
 	}
 	// We're using RGBA instead of RGB, so we use our own scanlength
-	_scanLen = width;
+	_scanLen = _width;
 
 	// Unknown
 	uint32 unknown2 = stream->readUint32LE();
@@ -76,18 +76,18 @@ Graphics::Surface *XMGDecoder::decodeImage(Common::ReadStream *stream) {
 	Graphics::Surface *surface = new Graphics::Surface();
 	if (!surface)
 		return NULL;
-	surface->create(width, height, Graphics::PixelFormat(4,8,8,8,8,24,16,8,0));
+	surface->create(_width, _height, Graphics::PixelFormat(4,8,8,8,8,24,16,8,0));
 
 	_pixels = (uint32 *)surface->getPixels();
-	uint32 currX = 0, currY = 0;
+	_currX = 0, _currY = 0;
 	while (!stream->eos()) {
 		// TODO: Handle odd-sized images
-		if (currX >= width) {
+		if (_currX >= _width) {
 			//assert (currX == width);
-			currX -= width;
-			currY += 2;
+			_currX -= _width;
+			_currY += 2;
 			_pixels += _scanLen;
-			if (currY + 1 >= height)
+			if (_currY >= _height)
 				break;
 		}
 
@@ -123,7 +123,7 @@ Graphics::Surface *XMGDecoder::decodeImage(Common::ReadStream *stream) {
 			}
 			_pixels += 2;
 		}
-		currX += 2 * count;
+		_currX += 2 * count;
 	}
 
 	return surface;
@@ -148,19 +148,23 @@ void XMGDecoder::processYCrCb() {
 	Graphics::YUV2RGB(y1, cb, cr, r, g, b);
 	_pixels[1] = (255 << 24) + (b << 16) + (g << 8) + r;
 
-	Graphics::YUV2RGB(y2, cb, cr, r, g, b);
-	_pixels[_scanLen + 0] = (255 << 24) + (b << 16) + (g << 8) + r;
+	if (_currY + 1 < _height) {
+		Graphics::YUV2RGB(y2, cb, cr, r, g, b);
+		_pixels[_scanLen + 0] = (255 << 24) + (b << 16) + (g << 8) + r;
 
-	Graphics::YUV2RGB(y3, cb, cr, r, g, b);
-	_pixels[_scanLen + 1] = (255 << 24) + (b << 16) + (g << 8) + r;
+		Graphics::YUV2RGB(y3, cb, cr, r, g, b);
+		_pixels[_scanLen + 1] = (255 << 24) + (b << 16) + (g << 8) + r;
+	}
 }
 
 void XMGDecoder::processTrans() {
 	_pixels[0] = _transColor;
 	_pixels[1] = _transColor;
 
-	_pixels[_scanLen + 0] = _transColor;
-	_pixels[_scanLen + 1] = _transColor;
+	if (_currY + 1 < _height) {
+		_pixels[_scanLen + 0] = _transColor;
+		_pixels[_scanLen + 1] = _transColor;
+	}
 }
 
 void XMGDecoder::processRGB() {
@@ -180,15 +184,21 @@ void XMGDecoder::processRGB() {
 
 	color = _stream->readUint16LE();
 	color += _stream->readByte() << 16;
-	if (color != _transColor)
-		color += 255 << 24;
-	_pixels[_scanLen + 0] = color;
+
+	if (_currY + 1 < _height) {
+		if (color != _transColor)
+			color += 255 << 24;
+		_pixels[_scanLen + 0] = color;
+	}
 
 	color = _stream->readUint16LE();
 	color += _stream->readByte() << 16;
-	if (color != _transColor)
-		color += 255 << 24;
-	_pixels[_scanLen + 1] = color;
+
+	if (_currY + 1 < _height) {
+		if (color != _transColor)
+			color += 255 << 24;
+		_pixels[_scanLen + 1] = color;
+	}
 }
 
 } // End of namespace Formats
