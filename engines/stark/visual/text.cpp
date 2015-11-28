@@ -41,7 +41,8 @@ VisualText::VisualText(Gfx::Driver *gfx) :
 		_color(0),
 		_backgroundColor(0),
 		_targetWidth(600),
-		_font(nullptr) {
+		_fontCustomIndex(-1),
+		_fontType(FontProvider::kBigFont) {
 }
 
 VisualText::~VisualText() {
@@ -76,16 +77,23 @@ void VisualText::setTargetWidth(uint32 width) {
 	_targetWidth = width;
 }
 
+void VisualText::setFont(FontProvider::FontType type, int32 customFontIndex) {
+	freeTexture();
+
+	_fontType = type;
+	_fontCustomIndex = customFontIndex;
+}
+
 void VisualText::createTexture() {
-	assert(_font);
+	const Graphics::Font *font = StarkFontProvider->getFont(_fontType, _fontCustomIndex);
+	int height = StarkFontProvider->getFontHeight(_fontType, _fontCustomIndex);
 
 	Common::Array<Common::String> lines;
-	_font->wordWrapText(_text, _targetWidth, lines);
+	font->wordWrapText(_text, _targetWidth, lines);
 
-	int height = _font->getFontHeight() + 1;
 	int width = 0;
 	for (uint i = 0; i < lines.size(); i++) {
-		width = MAX(width, _font->getStringWidth(lines[i]));
+		width = MAX(width, font->getStringWidth(lines[i]));
 	}
 
 	Common::Rect boundingRect = Common::Rect(width, height * lines.size());
@@ -95,7 +103,7 @@ void VisualText::createTexture() {
 	surface.fillRect(boundingRect, _backgroundColor);
 
 	for (uint i = 0; i < lines.size(); i++) {
-		_font->drawString(&surface, lines[i], 0, height * i, _targetWidth, _color);
+		font->drawString(&surface, lines[i], 0, height * i, _targetWidth, _color);
 	}
 	_texture = _gfx->createTexture(&surface);
 	surface.free();
@@ -112,10 +120,6 @@ void VisualText::render(const Common::Point &position) {
 	}
 
 	_gfx->drawSurface(_texture, position);
-}
-
-void VisualText::setFont(FontProvider::FontType type, int32 customFontIndex) {
-	_font = StarkFontProvider->getFont(type, customFontIndex);
 }
 
 } // End of namespace Stark

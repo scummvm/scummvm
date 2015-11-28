@@ -63,11 +63,13 @@ private:
 	Gfx::Driver *_gfx;
 
 	Common::String _text;
-	const Graphics::Font *_font;
 	uint32 _color;
 	uint32 _backgroundColor;
 	uint32 _targetWidth;
 	Gfx::Texture *_texture;
+
+	FontProvider::FontType _fontType;
+	int32 _fontCustomIndex;
 };
 
 } // End of namespace Stark
