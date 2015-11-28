@@ -122,6 +122,7 @@ public:
 	bool _doScriptThreadInit;
 	ScriptStack *_stack;
 	ScriptResource *_scriptResource;
+	bool _rerunThreads;
 
 	Fader *_fader;
 

@@ -53,6 +53,7 @@ protected:
 	void opLoadResource(ScriptThread *scriptThread, OpCall &opCall);
 	void opUnloadResource(ScriptThread *scriptThread, OpCall &opCall);
 	void opStartTimerThread(ScriptThread *scriptThread, OpCall &opCall);
+	void opRerunThreads(ScriptThread *scriptThread, OpCall &opCall);
 	void opEnterScene18(ScriptThread *scriptThread, OpCall &opCall);
 	void opUnloadResourcesBySceneId(ScriptThread *scriptThread, OpCall &opCall);
 	void opChangeScene(ScriptThread *scriptThread, OpCall &opCall);

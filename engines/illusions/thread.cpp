@@ -157,11 +157,9 @@ void ThreadList::updateThreads() {
 				++it;
 			}
 		}
-		/* TODO
-		if (script->threadUpdateContinueFlag)
-			script->_threadUpdateContinueFlag = false;
+		if (_vm->_rerunThreads)
+			_vm->_rerunThreads = false;
 		else
-		*/
 			break;		
 	}
 }

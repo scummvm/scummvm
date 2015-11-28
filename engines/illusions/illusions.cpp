@@ -63,6 +63,8 @@ IllusionsEngine::IllusionsEngine(OSystem *syst, const IllusionsGameDescription *
 	Engine(syst), _gameDescription(gd) {
 	
 	_random = new Common::RandomSource("illusions");
+
+	_rerunThreads = false;
 	
 	Engine::syncSoundSettings();
 
