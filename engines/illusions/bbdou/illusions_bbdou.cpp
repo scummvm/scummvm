@@ -463,6 +463,10 @@ uint32 IllusionsEngine_BBDOU::startTalkThread(int16 duration, uint32 objectId, u
 	return tempThreadId;
 }
 
+void IllusionsEngine_BBDOU::resumeFromSavegame(uint32 callingThreadId) {
+	// TODO
+}
+
 uint32 IllusionsEngine_BBDOU::startTempScriptThread(byte *scriptCodeIp, uint32 callingThreadId,
 	uint32 value8, uint32 valueC, uint32 value10) {
 	uint32 tempThreadId = newTempThreadId();

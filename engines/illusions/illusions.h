@@ -132,6 +132,9 @@ public:
 	uint32 _resGetTime;
 	bool _unpauseControlActorFlag;
 	uint32 _lastUpdateTime;
+	
+	uint32 _savegameSceneId;
+	uint32 _savegameThreadId;
 
 	uint32 _fontId;
 	int _field8;
@@ -195,6 +198,7 @@ public:
 	virtual void startScriptThreadSimple(uint32 threadId, uint32 callingThreadId) = 0;
 	virtual uint32 startTempScriptThread(byte *scriptCodeIp, uint32 callingThreadId,
 		uint32 value8, uint32 valueC, uint32 value10) = 0;
+	virtual void resumeFromSavegame(uint32 callingThreadId) = 0;
 		
 #if 0
 

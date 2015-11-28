@@ -150,6 +150,8 @@ public:
 		uint32 sequenceId2, uint32 callingThreadId);
 	uint32 startTempScriptThread(byte *scriptCodeIp, uint32 callingThreadId,
 		uint32 value8, uint32 valueC, uint32 value10);
+	void resumeFromSavegame(uint32 callingThreadId);
+	
 	void newScriptThread(uint32 threadId, uint32 callingThreadId, uint notifyFlags,
 		byte *scriptCodeIp);
 	uint32 newTimerThread(uint32 duration, uint32 callingThreadId, bool isAbortable);

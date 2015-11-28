@@ -76,7 +76,7 @@ void ScriptOpcodes_Duckman::initOpcodes() {
 	OPCODE(18, opEnterScene18);
 	OPCODE(19, opUnloadResourcesBySceneId);
 	OPCODE(20, opChangeScene);
-	// TODO OPCODE(21, );
+	OPCODE(21, opResumeFromSavegame);
 	OPCODE(22, opStartModalScene);
 	OPCODE(23, opExitModalScene);
 	OPCODE(24, opEnterScene24);
@@ -326,6 +326,10 @@ void ScriptOpcodes_Duckman::opChangeScene(ScriptThread *scriptThread, OpCall &op
 	} else {
 		_vm->changeScene(sceneId, threadId, opCall._callerThreadId);
 	}
+}
+
+void ScriptOpcodes_Duckman::opResumeFromSavegame(ScriptThread *scriptThread, OpCall &opCall) {
+	_vm->resumeFromSavegame(opCall._callerThreadId);
 }
 
 void ScriptOpcodes_Duckman::opStartModalScene(ScriptThread *scriptThread, OpCall &opCall) {

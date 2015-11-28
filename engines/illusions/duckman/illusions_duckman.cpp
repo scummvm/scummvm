@@ -694,6 +694,14 @@ uint32 IllusionsEngine_Duckman::startTempScriptThread(byte *scriptCodeIp, uint32
 	return tempThreadId;
 }
 
+void IllusionsEngine_Duckman::resumeFromSavegame(uint32 callingThreadId) {
+	_input->discardAllEvents();
+	if (changeScene(_savegameSceneId, _savegameThreadId, callingThreadId)) {
+		_savegameSceneId = 0;
+		_savegameThreadId = 0;
+	}
+}
+
 void IllusionsEngine_Duckman::newScriptThread(uint32 threadId, uint32 callingThreadId, uint notifyFlags,
 	byte *scriptCodeIp) {
 	ScriptThread *scriptThread = new ScriptThread(this, threadId, callingThreadId, notifyFlags,
