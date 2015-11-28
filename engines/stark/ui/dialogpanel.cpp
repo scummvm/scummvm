@@ -79,7 +79,8 @@ void DialogPanel::renderOptions() {
 	for (uint i = _firstVisibleOption; i < _options.size(); i++) {
 		_options[i]->setPosition(Common::Point(_optionsLeft, pos));
 		_options[i]->render();
-		// TODO: Add buttons
+
+		_dialogOptionBullet->render(Common::Point(_optionsLeft - 13, pos + 3), false);
 
 		visibleOptions++;
 
