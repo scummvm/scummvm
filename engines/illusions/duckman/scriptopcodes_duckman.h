@@ -57,6 +57,7 @@ protected:
 	void opEnterScene18(ScriptThread *scriptThread, OpCall &opCall);
 	void opUnloadResourcesBySceneId(ScriptThread *scriptThread, OpCall &opCall);
 	void opChangeScene(ScriptThread *scriptThread, OpCall &opCall);
+	void opResumeFromSavegame(ScriptThread *scriptThread, OpCall &opCall);
 	void opStartModalScene(ScriptThread *scriptThread, OpCall &opCall);
 	void opExitModalScene(ScriptThread *scriptThread, OpCall &opCall);
 	void opEnterScene24(ScriptThread *scriptThread, OpCall &opCall);
