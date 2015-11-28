@@ -88,9 +88,11 @@ const Resources::FloorEdge *ShortestPath::popEdgeWithLowestCost(NodeList &fronti
 		}
 	}
 
+	const Resources::FloorEdge *result = *lowestCostItem;
+
 	frontier.erase(lowestCostItem);
 
-	return *lowestCostItem;
+	return result;
 }
 
 } // End of namespace Stark
