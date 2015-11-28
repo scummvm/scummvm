@@ -111,6 +111,8 @@ protected:
 	void opActivateButton(ScriptThread *scriptThread, OpCall &opCall);
 	void opIncBlockCounter(ScriptThread *scriptThread, OpCall &opCall);
 	void opClearBlockCounter(ScriptThread *scriptThread, OpCall &opCall);
+	void opStackPushRandom(ScriptThread *scriptThread, OpCall &opCall);
+	void opStackSwitchRandom(ScriptThread *scriptThread, OpCall &opCall);
 	void opJumpIf(ScriptThread *scriptThread, OpCall &opCall);
 	void opIsPrevSceneId(ScriptThread *scriptThread, OpCall &opCall);
 	void opNot(ScriptThread *scriptThread, OpCall &opCall);
@@ -141,8 +143,6 @@ protected:
 	void opSetDenySfx(ScriptThread *scriptThread, OpCall &opCall);
 	void opSetAdjustUpSfx(ScriptThread *scriptThread, OpCall &opCall);
 	void opSetAdjustDnSfx(ScriptThread *scriptThread, OpCall &opCall);
-	void opStackPushRandom(ScriptThread *scriptThread, OpCall &opCall);
-	void opIfLte(ScriptThread *scriptThread, OpCall &opCall);
 	void opIsCurrentSceneId(ScriptThread *scriptThread, OpCall &opCall);
 	void opIsActiveSceneId(ScriptThread *scriptThread, OpCall &opCall);
 	void opStackPop(ScriptThread *scriptThread, OpCall &opCall);

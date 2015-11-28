@@ -138,8 +138,8 @@ void ScriptOpcodes_Duckman::initOpcodes() {
 	OPCODE(96, opIncBlockCounter);
 	OPCODE(97, opClearBlockCounter);
 	// 98-99 unused
-	// TODO OPCODE(100, );
-	// TODO OPCODE(101, );
+	OPCODE(100, opStackPushRandom);
+	OPCODE(101, opStackSwitchRandom);
 	// 102-103 unused
 	OPCODE(104, opJumpIf);
 	OPCODE(105, opIsPrevSceneId);
@@ -172,8 +172,6 @@ void ScriptOpcodes_Duckman::initOpcodes() {
 	OPCODE(65, opSetDenySfx);
 	OPCODE(66, opSetAdjustUpSfx);
 	OPCODE(67, opSetAdjustDnSfx);
-	OPCODE(78, opStackPushRandom);
-	OPCODE(79, opIfLte);
 	OPCODE(105, opIsCurrentSceneId);
 	OPCODE(106, opIsActiveSceneId);
 	OPCODE(146, opStackPop);
@@ -749,6 +747,22 @@ void ScriptOpcodes_Duckman::opClearBlockCounter(ScriptThread *scriptThread, OpCa
 	_vm->_scriptResource->_blockCounters.set(index, 0);
 }
 
+void ScriptOpcodes_Duckman::opStackPushRandom(ScriptThread *scriptThread, OpCall &opCall) {
+	ARG_INT16(maxValue);
+	_vm->_stack->push(_vm->getRandom(maxValue) + 1);
+}
+
+void ScriptOpcodes_Duckman::opStackSwitchRandom(ScriptThread *scriptThread, OpCall &opCall) {
+	ARG_SKIP(2);
+	ARG_INT16(rvalue);
+	ARG_INT16(jumpOffs);
+	int16 lvalue = _vm->_stack->peek();
+	if (lvalue < rvalue) {
+		_vm->_stack->pop();
+		opCall._deltaOfs += jumpOffs;
+	}
+}
+
 void ScriptOpcodes_Duckman::opJumpIf(ScriptThread *scriptThread, OpCall &opCall) {
 	ARG_INT16(jumpOffs);
 	int16 value = _vm->_stack->pop();
@@ -950,20 +964,6 @@ void ScriptOpcodes_Duckman::opSetAdjustDnSfx(ScriptThread *scriptThread, OpCall 
 	ARG_SKIP(2);
 	ARG_UINT32(soundEffectId);
 	// TODO _vm->setAdjustDnSfx(soundEffectId);
-}
-
-void ScriptOpcodes_Duckman::opStackPushRandom(ScriptThread *scriptThread, OpCall &opCall) {
-	ARG_INT16(maxValue);
-	_vm->_stack->push(_vm->getRandom(maxValue) + 1);
-}
-
-void ScriptOpcodes_Duckman::opIfLte(ScriptThread *scriptThread, OpCall &opCall) {
-	ARG_SKIP(2);
-	ARG_INT16(rvalue);
-	ARG_INT16(elseJumpOffs);
-	int16 lvalue = _vm->_stack->pop();
-	if (!(lvalue <= rvalue))
-		opCall._deltaOfs += elseJumpOffs;
 }
 
 void ScriptOpcodes_Duckman::opIsCurrentSceneId(ScriptThread *scriptThread, OpCall &opCall) {
