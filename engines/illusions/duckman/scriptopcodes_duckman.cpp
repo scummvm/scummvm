@@ -130,8 +130,8 @@ void ScriptOpcodes_Duckman::initOpcodes() {
 	OPCODE(82, opSwitchMenuChoice);
 	OPCODE(83, opQuitGame);
 	OPCODE(84, opResetGame);
-	// TODO OPCODE(85, );
-	// TODO OPCODE(86, );
+	OPCODE(85, opLoadGame);
+	OPCODE(86, opSaveGame);
 	OPCODE(87, opDeactivateButton);
 	OPCODE(88, opActivateButton);
 	// 89-95 unused
@@ -709,6 +709,22 @@ void ScriptOpcodes_Duckman::opResetGame(ScriptThread *scriptThread, OpCall &opCa
 	_vm->_input->activateButton(0xFFFF);
 	// TODO _vm->stopMusic();
 	// TODO _vm->_gameStates->clear();
+}
+
+void ScriptOpcodes_Duckman::opLoadGame(ScriptThread *scriptThread, OpCall &opCall) {
+	ARG_SKIP(2);
+	ARG_INT16(bankNum)
+	ARG_INT16(slotNum)
+	bool success = _vm->loadSavegame(slotNum, opCall._callerThreadId);
+	_vm->_stack->push(success ? 1 : 0);
+}
+
+void ScriptOpcodes_Duckman::opSaveGame(ScriptThread *scriptThread, OpCall &opCall) {
+	ARG_SKIP(2);
+	ARG_INT16(bankNum)
+	ARG_INT16(slotNum)
+	bool success = _vm->saveSavegame(slotNum, opCall._callerThreadId);
+	_vm->_stack->push(success ? 1 : 0);
 }
 
 void ScriptOpcodes_Duckman::opDeactivateButton(ScriptThread *scriptThread, OpCall &opCall) {

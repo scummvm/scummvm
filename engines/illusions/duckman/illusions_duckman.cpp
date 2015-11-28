@@ -1107,4 +1107,34 @@ uint32 IllusionsEngine_Duckman::runTriggerCause(uint32 verbId, uint32 objectId2,
 	return tempThreadId;
 }
 
+bool IllusionsEngine_Duckman::loadSavegame(int16 slotNum, uint32 callingThreadId) {
+#if 0	
+	// TODO
+	bool success = _gameStates->load(slotNum);
+	if (success) {
+		_vm->_screen->setDisplayOn(false);
+		uint32 currSceneId = getCurrentScene();
+		if (currSceneId != 0x10003)
+			dumpCurrSceneFiles(currSceneId, callerThreadId);
+		reset();
+		stopMidi();
+		clearMidiPlayList();
+		_gameStates->readStates();
+		pushActiveScene(0x10000);
+	}
+	_gameStates->freeGameStateReadBuffer();
+	return success;
+#endif	
+	return true;
+}
+
+bool IllusionsEngine_Duckman::saveSavegame(int16 slotNum, uint32 callingThreadId) {
+#if 0
+	// TODO
+	bool success = _gameStates->save(slotNum);
+	return success;
+#endif	
+	return true;
+}
+
 } // End of namespace Illusions
