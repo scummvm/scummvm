@@ -461,7 +461,7 @@ void doNotes() {
 	/* Load in the data */
 	BigMsgFont = &bmfont;
 
-	if (!(BigMsgFont = g_resource->getFont("P:Note.fon"))) {
+	if (!(BigMsgFont = g_lab->_resource->getFont("P:Note.fon"))) {
 		BigMsgFont = NULL;
 		return;
 	}
@@ -487,7 +487,7 @@ void doWestPaper() {
 
 	BigMsgFont = &bmfont;
 
-	if (!(BigMsgFont = g_resource->getFont("P:News22.fon"))) {
+	if (!(BigMsgFont = g_lab->_resource->getFont("P:News22.fon"))) {
 		BigMsgFont = NULL;
 		return;
 	}
@@ -499,7 +499,7 @@ void doWestPaper() {
 
 	BigMsgFont = &bmfont;
 
-	if (!(BigMsgFont = g_resource->getFont("P:News32.fon"))) {
+	if (!(BigMsgFont = g_lab->_resource->getFont("P:News32.fon"))) {
 		BigMsgFont = NULL;
 		return;
 	}
@@ -518,7 +518,7 @@ void doWestPaper() {
 
 	BigMsgFont = &bmfont;
 
-	if (!(BigMsgFont = g_resource->getFont("P:Note.fon"))) {
+	if (!(BigMsgFont = g_lab->_resource->getFont("P:Note.fon"))) {
 		BigMsgFont = NULL;
 		return;
 	}
@@ -548,7 +548,7 @@ static bool loadJournalData() {
 
 	BigMsgFont = &bmfont;
 
-	if (!(BigMsgFont = g_resource->getFont("P:Journal.fon"))) {
+	if (!(BigMsgFont = g_lab->_resource->getFont("P:Journal.fon"))) {
 		BigMsgFont = NULL;
 		return false;
 	}
@@ -1047,7 +1047,7 @@ void LabEngine::doMonitor(char *background, char *textfile, bool isinteractive, 
 
 	BigMsgFont = &bmfont;
 
-	if (!(BigMsgFont = g_resource->getFont("P:Map.fon"))) {
+	if (!(BigMsgFont = _resource->getFont("P:Map.fon"))) {
 		freeAllStolenMem();
 		BigMsgFont = NULL;
 		return;

@@ -73,6 +73,10 @@ LabEngine::LabEngine(OSystem *syst, const ADGameDescription *gameDesc)
     _nextKeyOut = 0;
 
 	_isHiRes = false;
+
+	_event = nullptr;
+	_resource = nullptr;
+
 	//const Common::FSNode gameDataDir(ConfMan.get("path"));
 	//SearchMan.addSubDirectoryMatching(gameDataDir, "game");
 	//SearchMan.addSubDirectoryMatching(gameDataDir, "game/pict");
@@ -83,6 +87,9 @@ LabEngine::LabEngine(OSystem *syst, const ADGameDescription *gameDesc)
 LabEngine::~LabEngine() {
 	// Remove all of our debug levels here
 	DebugMan.clearAllDebugChannels();
+
+	delete _event;
+	delete _resource;
 }
 
 Common::Error LabEngine::run() {
@@ -92,9 +99,9 @@ Common::Error LabEngine::run() {
 		initGraphics(640, 480, true);
 
 	_event = new EventManager(this);
+	_resource = new Resource(this);
 
 	g_music = new Music();
-	g_resource = new Resource();
 
 	if (getPlatform() == Common::kPlatformWindows) {
 		// Check if this is the Wyrmkeep trial

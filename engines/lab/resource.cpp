@@ -39,9 +39,7 @@ extern RoomData *_rooms;
 extern InventoryData *Inventory;
 extern uint16 NumInv, ManyRooms, HighestCondition;
 
-Resource *g_resource;
-
-Resource::Resource() {
+Resource::Resource(LabEngine *vm) : _vm(vm) {
 	readStaticText();
 }
 

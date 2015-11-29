@@ -93,7 +93,7 @@ bool readPict(const char *filename, bool PlayOnce) {
 /* Reads in a music file.  Ignores any graphics.                             */
 /*****************************************************************************/
 bool readMusic(const char *filename, bool waitTillFinished) {
-	Common::File *file = g_resource->openDataFile(filename, MKTAG('D', 'I', 'F', 'F'));
+	Common::File *file = g_lab->_resource->openDataFile(filename, MKTAG('D', 'I', 'F', 'F'));
 	g_music->updateMusic();
 	if (!g_music->_doNotFilestopSoundEffect)
 		g_music->stopSoundEffect();
@@ -360,7 +360,7 @@ int32 LabEngine::longDrawMessage(const char *str) {
 }
 
 void LabEngine::drawStaticMessage(byte index) {
-	drawMessage(g_resource->getStaticText((StaticText)index).c_str());
+	drawMessage(_resource->getStaticText((StaticText)index).c_str());
 }
 
 /******************************************************************************/

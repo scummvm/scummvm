@@ -28,13 +28,14 @@
  *
  */
 
+#include "lab/lab.h"
 #include "lab/stddefines.h"
 #include "lab/labfun.h"
 #include "lab/resource.h"
 
 namespace Lab {
 
-LargeSet::LargeSet(uint16 last) {
+	LargeSet::LargeSet(uint16 last, LabEngine *vm) : _vm(vm) {
 	last = (((last + 15) >> 4) << 4);
 
 	_array = (uint16 *)calloc(last >> 3, 2);
@@ -60,7 +61,7 @@ void LargeSet::exclElement(uint16 element) {
 bool LargeSet::readInitialConditions(const char *fileName) {
 	Common::File *file;
 
-	if (file = g_resource->openDataFile(fileName, MKTAG('C', 'O', 'N', '0'))) {
+	if (file = _vm->_resource->openDataFile(fileName, MKTAG('C', 'O', 'N', '0'))) {
 		uint16 conditions = file->readUint16LE();
 		for (int i = 0; i < conditions; i++) {
 			inclElement(file->readUint16LE());
