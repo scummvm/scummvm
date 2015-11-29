@@ -36,6 +36,8 @@
 
 #include "engines/engine.h"
 #include "lab/labfun.h"
+#include "lab/interface.h"
+#include "lab/mouse.h"
 
 struct ADGameDescription;
 
@@ -96,6 +98,7 @@ private:
 	byte _curapen;
 
 public:
+	EventManager *_event;
 	byte *_currentDsplayBuffer;
 	Common::Point _mousePos;
 
@@ -137,6 +140,32 @@ public:
 	void writeColorRegsSmooth(byte *buf, uint16 first, uint16 numreg);
 
 	void drawPanel();
+	void drawRoomMessage(uint16 CurInv, CloseDataPtr cptr);
+	void interfaceOff();
+	void interfaceOn();
+	void decIncInv(uint16 *CurInv, bool dec);
+	int32 longDrawMessage(const char *str);
+	void drawMessage(const char *str);
+	void doScrollBlack();
+	void doScrollWipe(char *filename);
+	void doScrollBounce();
+	void doWipe(uint16 WipeType, CloseDataPtr *CPtr, char *filename);
+	void doTransWipe(CloseDataPtr *CPtr, char *filename);
+	Gadget *checkNumGadgetHit(Gadget *gadlist, uint16 key);
+	IntuiMessage *getMsg();
+	void drawMap(uint16 CurRoom, uint16 CurMsg, uint16 Floor, bool fadeout, bool fadein);
+	void processMap(uint16 CurRoom);
+	void doMap(uint16 CurRoom);
+	void diffNextFrame();
+	void drawJournal(uint16 wipenum, bool needFade);
+	void processJournal();
+	void doJournal();
+	void drawMonText(char *text, uint16 x1, uint16 y1, uint16 x2, uint16 y2, bool isinteractive);
+	void processMonitor(char *ntext, bool isinteractive, uint16 x1, uint16 y1, uint16 x2, uint16 y2);
+	void doMonitor(char *background, char *textfile, bool isinteractive, uint16 x1, uint16 y1, uint16 x2, uint16 y2);
+	void eatMessages();
+	void drawStaticMessage(byte index);
+	void drawDirection(CloseDataPtr LCPtr);
 
 private:
 	void quickWaitTOF();

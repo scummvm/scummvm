@@ -90,12 +90,12 @@ void LabEngine::WSDL_ProcessInput(bool can_delay) {
 			switch (event.type) {
 			case Common::EVENT_RBUTTONDOWN:
 				flags |= 8;
-				mouseHandler(flags, _mousePos);
+				_event->mouseHandler(flags, _mousePos);
 				break;
 
 			case Common::EVENT_LBUTTONDOWN:
 				flags |= 2;
-				mouseHandler(flags, _mousePos);
+				_event->mouseHandler(flags, _mousePos);
 				break;
 
 			case Common::EVENT_MOUSEMOVE: {
@@ -122,7 +122,7 @@ void LabEngine::WSDL_ProcessInput(bool can_delay) {
 				}
 
 				if (!lastMouseAtEdge || !_mouseAtEdge)
-					mouseHandler(1, _mousePos);
+					_event->mouseHandler(1, _mousePos);
 				}
 				break;
 

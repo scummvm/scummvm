@@ -52,7 +52,7 @@ Intro::Intro() {
 /******************************************************************************/
 void Intro::introEatMessages() {
 	while (1) {
-		IntuiMessage *msg = getMsg();
+		IntuiMessage *msg = g_lab->getMsg();
 
 		if (g_engine->shouldQuit()) {
 			_quitIntro = true;
@@ -121,7 +121,7 @@ void Intro::doPictText(const char *filename, bool isscreen) {
 				Drawn = flowText(_msgfont, (!IsHiRes) * -1, 5, 7, false, false, true, true, VGAScaleX(14), VGAScaleY(11), VGAScaleX(306), VGAScaleY(189), (char *)curplace);
 				fade(true, 0);
 			} else {
-				Drawn = longDrawMessage((char *)curplace);
+				Drawn = g_lab->longDrawMessage((char *)curplace);
 			}
 
 			curplace += Drawn;
@@ -141,12 +141,11 @@ void Intro::doPictText(const char *filename, bool isscreen) {
 			g_lab->getTime(&lastsecs, &lastmicros);
 		}
 
-		msg = getMsg();
+		msg = g_lab->getMsg();
 
 		if (msg == NULL) {
 			g_music->updateMusic();
-			diffNextFrame();
-
+			g_lab->diffNextFrame();
 			g_lab->getTime(&secs, &micros);
 			g_lab->anyTimeDiff(lastsecs, lastmicros, secs, micros, &secs, &micros);
 
