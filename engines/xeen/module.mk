@@ -1,6 +1,7 @@
 MODULE := engines/xeen
 
 MODULE_OBJS := \
+	worldofxeen/darkside_intro.o \
 	worldofxeen/worldofxeen_game.o \
 	character.o \
 	combat.o \

@@ -20,22 +20,17 @@
  *
  */
 
-#include "xeen/worldofxeen/worldofxeen_game.h"
-#include "xeen/worldofxeen/darkside_intro.h"
-#include "xeen/sound.h"
+#ifndef XEEN_DARKSIDE_INTRO_H
+#define XEEN_DARKSIDE_INTRO_H
+
+#include "xeen/xeen.h"
 
 namespace Xeen {
 
-WorldOfXeenEngine::WorldOfXeenEngine(OSystem *syst, const XeenGameDescription *gameDesc)
-		: XeenEngine(syst, gameDesc) {
-}
+void showDarkSideTitle(XeenEngine &vm);
 
-void WorldOfXeenEngine::showIntro() {
-	// **DEBUG**
-	if (gDebugLevel == 0)
-		return;
-
-	showDarkSideTitle(*this);
-}
+void showDarkSideIntro(XeenEngine &vm);
 
 } // End of namespace Xeen
+
+#endif /* XEEN_DARKSIDE_INTRO_H */

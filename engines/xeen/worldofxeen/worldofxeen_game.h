@@ -33,16 +33,6 @@ namespace Xeen {
  * game code
  */
 class WorldOfXeenEngine: public XeenEngine {
-private:
-	/**
-	 * Shows the Dark Side of Xeen title sequence
-	 */
-	void showDarkSideTitle();
-
-	/**
-	 * Shows the Dark Side of Xeen introduction sequence
-	 */
-	void showDarkSideIntro();
 protected:
 	virtual void showIntro();
 public:
