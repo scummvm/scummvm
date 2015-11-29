@@ -196,7 +196,7 @@ static bool loadMapData() {
 
 	BigMsgFont = &bmf;
 
-	if (!(BigMsgFont = g_resource->getFont("P:Map.fon")))
+	if (!(BigMsgFont = g_lab->_resource->getFont("P:Map.fon")))
 		BigMsgFont = MsgFont;
 
 	resetBuffer();  /* Make images load into start of buffer */
@@ -249,7 +249,7 @@ static bool loadMapData() {
 		counter++;
 	}
 
-	Common::File *mapFile = g_resource->openDataFile("Lab:Maps", MKTAG('M', 'A', 'P', '0'));
+	Common::File *mapFile = g_lab->_resource->openDataFile("Lab:Maps", MKTAG('M', 'A', 'P', '0'));
 	if (!mapFile)
 		error("Corrupt map file");
 	g_music->updateMusic();
@@ -611,31 +611,31 @@ void LabEngine::drawMap(uint16 CurRoom, uint16 CurMsg, uint16 Floor, bool fadeou
 		if (onFloor(HEDGEMAZEFLOOR))
 			drawImage(HugeMaze, mapScaleX(524), mapScaleY(97));
 	} else if (Floor == SURMAZEFLOOR) {
-		sptr = (char *)g_resource->getStaticText(kTextSurmazeMessage).c_str();
+		sptr = (char *)_resource->getStaticText(kTextSurmazeMessage).c_str();
 		flowText(MsgFont, 0, 7, 0, true, true, true, true, mapScaleX(360), 0, mapScaleX(660), mapScaleY(450), sptr);
 	}
 
 	switch (Floor) {
 	case LOWERFLOOR:
-		sptr = (char *)g_resource->getStaticText(kTextLowerFloor).c_str();
+		sptr = (char *)_resource->getStaticText(kTextLowerFloor).c_str();
 		break;
 	case MIDDLEFLOOR:
-		sptr = (char *)g_resource->getStaticText(kTextMiddleFloor).c_str();
+		sptr = (char *)_resource->getStaticText(kTextMiddleFloor).c_str();
 		break;
 	case UPPERFLOOR:
-		sptr = (char *)g_resource->getStaticText(kTextUpperFloor).c_str();
+		sptr = (char *)_resource->getStaticText(kTextUpperFloor).c_str();
 		break;
 	case MEDMAZEFLOOR:
-		sptr = (char *)g_resource->getStaticText(kTextMedMazeFloor).c_str();
+		sptr = (char *)_resource->getStaticText(kTextMedMazeFloor).c_str();
 		break;
 	case HEDGEMAZEFLOOR:
-		sptr = (char *)g_resource->getStaticText(kTextHedgeMazeFloor).c_str();
+		sptr = (char *)_resource->getStaticText(kTextHedgeMazeFloor).c_str();
 		break;
 	case SURMAZEFLOOR:
-		sptr = (char *)g_resource->getStaticText(kTextSurMazeFloor).c_str();
+		sptr = (char *)_resource->getStaticText(kTextSurMazeFloor).c_str();
 		break;
 	case CARNIVAL:
-		sptr = (char *)g_resource->getStaticText(kTextCarnivalFloor).c_str();
+		sptr = (char *)_resource->getStaticText(kTextCarnivalFloor).c_str();
 		break;
 	default:
 		sptr = NULL;
@@ -795,7 +795,7 @@ void LabEngine::processMap(uint16 CurRoom) {
 
 					if (OldMsg != CurMsg) {
 						if (_rooms[CurMsg]._roomMsg == nullptr)
-							g_resource->readViews(CurMsg);
+							_resource->readViews(CurMsg);
 
 						if ((sptr = _rooms[CurMsg]._roomMsg)) {
 							_event->mouseHide();

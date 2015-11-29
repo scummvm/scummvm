@@ -96,7 +96,7 @@ ViewData *getViewData(uint16 roomNum, uint16 direction) {
 	ViewData *view = NULL;
 
 	if (!_rooms[roomNum]._roomMsg)
-		g_resource->readViews(roomNum);
+		g_lab->_resource->readViews(roomNum);
 
 	if (direction == NORTH)
 		view = _rooms[roomNum]._northView;
@@ -202,13 +202,13 @@ void LabEngine::drawDirection(CloseDataPtr LCPtr) {
 	}
 
 	if (Direction == NORTH)
-		message += g_resource->getStaticText(kTextFacingNorth);
+		message += _resource->getStaticText(kTextFacingNorth);
 	else if (Direction == EAST)
-		message += g_resource->getStaticText(kTextFacingEast);
+		message += _resource->getStaticText(kTextFacingEast);
 	else if (Direction == SOUTH)
-		message += g_resource->getStaticText(kTextFacingSouth);
+		message += _resource->getStaticText(kTextFacingSouth);
 	else if (Direction == WEST)
-		message += g_resource->getStaticText(kTextFacingWest);
+		message += _resource->getStaticText(kTextFacingWest);
 
 	drawMessage(message.c_str());
 }
@@ -614,7 +614,7 @@ static bool doActionRuleSub(int16 action, int16 roomNum, CloseDataPtr LCPtr, Clo
 		RuleList *rules = _rooms[RoomNum]._rules;
 
 		if ((rules == NULL) && (roomNum == 0)) {
-			g_resource->readViews(roomNum);
+			g_lab->_resource->readViews(roomNum);
 			rules = _rooms[roomNum]._rules;
 		}
 
@@ -671,7 +671,7 @@ static bool doOperateRuleSub(int16 ItemNum, int16 roomNum, CloseDataPtr LCPtr, C
 			RuleList *rules = _rooms[roomNum]._rules;
 
 			if ((rules == NULL) && (roomNum == 0)) {
-				g_resource->readViews(roomNum);
+				g_lab->_resource->readViews(roomNum);
 				rules = _rooms[roomNum]._rules;
 			}
 

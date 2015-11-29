@@ -47,6 +47,8 @@
 
 namespace Lab {
 
+class LabEngine;
+
 /* Direction defines */
 #define NORTH   0
 #define SOUTH   1
@@ -209,12 +211,16 @@ extern Music *g_music;
 
 class LargeSet {
 public:
-    LargeSet(uint16 last);
+    LargeSet(uint16 last, LabEngine *vm);
     ~LargeSet();
     bool in(uint16 element);
     void inclElement(uint16 element);
     void exclElement(uint16 element);
     bool readInitialConditions(const char *fileName);
+
+private:
+	LabEngine *_vm;
+
 public:
     uint16 _lastElement;
     uint16 *_array;

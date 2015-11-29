@@ -650,13 +650,13 @@ void LabEngine::mainGameLoop() {
 	RoomNum = 1;
 	Direction = NORTH;
 
-	g_resource->readRoomData("LAB:Doors");
-	g_resource->readInventory("LAB:Inventor");
+	_resource->readRoomData("LAB:Doors");
+	_resource->readInventory("LAB:Inventor");
 
-	if (!(_conditions = new LargeSet(HighestCondition + 1)))
+	if (!(_conditions = new LargeSet(HighestCondition + 1, this)))
 		return;
 
-	if (!(_roomsFound = new LargeSet(ManyRooms + 1)))
+	if (!(_roomsFound = new LargeSet(ManyRooms + 1, this)))
 		return;
 
 	_conditions->readInitialConditions("LAB:Conditio");
@@ -1328,7 +1328,7 @@ void LabEngine::go() {
 	if (!dointro)
 		g_music->initMusic();
 
-	MsgFont = g_resource->getFont("P:AvanteG.12");
+	MsgFont = _resource->getFont("P:AvanteG.12");
 
 	_event->mouseHide();
 

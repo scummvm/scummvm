@@ -38,6 +38,7 @@
 #include "lab/labfun.h"
 #include "lab/interface.h"
 #include "lab/mouse.h"
+#include "lab/resource.h"
 
 struct ADGameDescription;
 
@@ -99,6 +100,8 @@ private:
 
 public:
 	EventManager *_event;
+	Resource *_resource;
+
 	byte *_currentDsplayBuffer;
 	Common::Point _mousePos;
 

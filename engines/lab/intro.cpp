@@ -347,7 +347,7 @@ void Intro::introSequence() {
 	blackAllScreen();
 	g_music->updateMusic();
 
-	_msgfont = g_resource->getFont("P:Map.fon");
+	_msgfont = g_lab->_resource->getFont("P:Map.fon");
 
 	nopalchange = true;
 	nReadPict("Intro.1", true);

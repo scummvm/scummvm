@@ -95,7 +95,7 @@ enum StaticText {
 
 class Resource {
 public:
-	Resource();
+	Resource(LabEngine *vm);
 	~Resource() {}
 
 	Common::File *openDataFile(const char * fileName, uint32 fileHeader);
@@ -106,6 +106,7 @@ public:
 	Common::String getStaticText(byte index) const { return _staticText[index]; }
 
 private:
+	LabEngine *_vm;
 	char *readString(Common::File *file);
 	int16 *readConditions(Common::File *file);
 	RuleList *readRule(Common::File *file);
@@ -116,8 +117,6 @@ private:
 
 	Common::String _staticText[48];
 };
-
-extern Resource *g_resource;
 
 } // End of namespace Lab
 
