@@ -79,14 +79,14 @@ Gadget *EventManager::checkGadgetHit(Gadget *gadlist, Common::Point pos) {
 				hitgad = gadlist;
 			} else {
 				mouseHide();
-				g_lab->drawImage(gadlist->ImAlt, gadlist->x, gadlist->y);
+				_vm->drawImage(gadlist->ImAlt, gadlist->x, gadlist->y);
 				mouseShow();
 
 				for (uint16 i = 0; i < 3; i++)
-					g_lab->waitTOF();
+					_vm->waitTOF();
 
 				mouseHide();
-				g_lab->drawImage(gadlist->Im, gadlist->x, gadlist->y);
+				_vm->drawImage(gadlist->Im, gadlist->x, gadlist->y);
 				mouseShow();
 			}
 
@@ -138,21 +138,21 @@ void EventManager::updateMouse() {
 
 	if (hitgad) {
 		mouseHide();
-		g_lab->drawImage(hitgad->ImAlt, hitgad->x, hitgad->y);
+		_vm->drawImage(hitgad->ImAlt, hitgad->x, hitgad->y);
 		mouseShow();
 
 		for (uint16 i = 0; i < 3; i++)
-			g_lab->waitTOF();
+			_vm->waitTOF();
 
 		mouseHide();
-		g_lab->drawImage(hitgad->Im, hitgad->x, hitgad->y);
+		_vm->drawImage(hitgad->Im, hitgad->x, hitgad->y);
 		mouseShow();
 		doUpdateDisplay = true;
 		hitgad = NULL;
 	}
 
 	if (doUpdateDisplay)
-		g_lab->WSDL_UpdateScreen();
+		_vm->WSDL_UpdateScreen();
 }
 
 
@@ -175,7 +175,7 @@ void EventManager::mouseShow() {
 		NumHidden--;
 
 	if ((NumHidden == 0) && MouseHidden) {
-		g_lab->WSDL_ProcessInput(0);
+		_vm->WSDL_ProcessInput(0);
 		MouseHidden = false;
 	}
 
@@ -201,9 +201,9 @@ void EventManager::mouseHide() {
 /*****************************************************************************/
 Common::Point EventManager::getMousePos() {
 	if (IsHiRes)
-		return g_lab->_mousePos;
+		return _vm->_mousePos;
 	else
-		return Common::Point(g_lab->_mousePos.x / 2, g_lab->_mousePos.y);
+		return Common::Point(_vm->_mousePos.x / 2, _vm->_mousePos.y);
 }
 
 
@@ -217,7 +217,7 @@ void EventManager::setMousePos(Common::Point pos) {
 		g_system->warpMouse(pos.x * 2, pos.y);
 
 	if (!MouseHidden)
-		g_lab->WSDL_ProcessInput(0);
+		_vm->WSDL_ProcessInput(0);
 }
 
 
@@ -229,15 +229,15 @@ void EventManager::setMousePos(Common::Point pos) {
 bool EventManager::mouseButton(uint16 *x, uint16 *y, bool leftbutton) {
 	if (leftbutton) {
 		if (LeftClick) {
-			*x = (!IsHiRes) ? (uint16)g_lab->_mousePos.x / 2 : (uint16)g_lab->_mousePos.x;
-			*y = (uint16)g_lab->_mousePos.y;
+			*x = (!IsHiRes) ? (uint16)_vm->_mousePos.x / 2 : (uint16)_vm->_mousePos.x;
+			*y = (uint16)_vm->_mousePos.y;
 			LeftClick = false;
 			return true;
 		}
 	} else {
 		if (RightClick) {
-			*x = (!IsHiRes) ? (uint16)g_lab->_mousePos.x / 2 : (uint16)g_lab->_mousePos.x;
-			*y = (uint16)g_lab->_mousePos.y;
+			*x = (!IsHiRes) ? (uint16)_vm->_mousePos.x / 2 : (uint16)_vm->_mousePos.x;
+			*y = (uint16)_vm->_mousePos.y;
 			RightClick = false;
 			return true;
 		}
