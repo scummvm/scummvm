@@ -48,6 +48,8 @@ Resource::Resource() {
 void Resource::readStaticText() {
 	Common::File labTextFile;
 	labTextFile.open(translateFileName("Lab:Rooms/LabText"));
+	if (!labTextFile.isOpen())
+		error("Unable to open file %s (Lab:Rooms/LabText)", translateFileName("Lab:Rooms/LabText"));
 
 	for (int i = 0; i < 48; i++)
 		_staticText[i] = labTextFile.readLine();
@@ -151,9 +153,12 @@ bool Resource::readViews(uint16 roomNum) {
 Common::File *Resource::openDataFile(const char *fileName, uint32 fileHeader) {
 	Common::File *dataFile = new Common::File();
 	dataFile->open(translateFileName(fileName));
+	if (!dataFile->isOpen())
+		error("openDataFile couldn't open %s (%s)", translateFileName(fileName), fileName);
+
 	if (dataFile->readUint32BE() != fileHeader) {
 		dataFile->close();
-		return NULL;
+		return nullptr;
 	}
 
 	return dataFile;

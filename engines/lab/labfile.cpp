@@ -289,6 +289,7 @@ Common::File *openPartial(const char *name) {
 	f->open(translateFileName(name));
 
 	if (!f->isOpen()) {
+		warning("openPartial skipped %s", translateFileName(name));
 		delete f;
 		return 0;
 	}
