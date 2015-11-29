@@ -118,7 +118,7 @@ void LabEngine::diffNextFrame() {
 		return;
 
 	if (DispBitMap->Flags & BITMAPF_VIDEO) {
-		DispBitMap->Planes[0] = g_lab->getVGABaseAddr();
+		DispBitMap->Planes[0] = getVGABaseAddr();
 		DispBitMap->Planes[1] = DispBitMap->Planes[0] + 0x10000;
 		DispBitMap->Planes[2] = DispBitMap->Planes[1] + 0x10000;
 		DispBitMap->Planes[3] = DispBitMap->Planes[2] + 0x10000;
@@ -133,12 +133,12 @@ void LabEngine::diffNextFrame() {
 
 			if (!IsBM) {
 				if (headerdata.fps) {
-					g_lab->waitForTime(WaitSec, WaitMicros);
-					g_lab->addCurTime(0L, DelayMicros, &WaitSec, &WaitMicros);
+					waitForTime(WaitSec, WaitMicros);
+					addCurTime(0L, DelayMicros, &WaitSec, &WaitMicros);
 				}
 
 				if (IsPal && !nopalchange) {
-					g_lab->VGASetPal(diffcmap, 256);
+					VGASetPal(diffcmap, 256);
 					IsPal = false;
 				}
 
@@ -146,7 +146,7 @@ void LabEngine::diffNextFrame() {
 			}
 
 			if (IsPal && !nopalchange && !IsBM && !donepal) {
-				g_lab->VGASetPal(diffcmap, 256);
+				VGASetPal(diffcmap, 256);
 				IsPal = false;
 			}
 
@@ -161,7 +161,7 @@ void LabEngine::diffNextFrame() {
 			CurBit = 0;
 
 			if (DispBitMap->Flags & BITMAPF_VIDEO)
-				g_lab->WSDL_UpdateScreen();
+				WSDL_UpdateScreen();
 
 			return; /* done with the next frame. */
 		}
@@ -229,7 +229,7 @@ void LabEngine::diffNextFrame() {
 			if (waitForEffect) {
 				while (g_music->isSoundEffectActive()) {
 					g_music->updateMusic();
-					g_lab->waitTOF();
+					waitTOF();
 				}
 			}
 
@@ -255,7 +255,7 @@ void LabEngine::diffNextFrame() {
 				if (waitForEffect) {
 					while (g_music->isSoundEffectActive()) {
 						g_music->updateMusic();
-						g_lab->waitTOF();
+						waitTOF();
 
 						if (DispBitMap->Flags & BITMAPF_VIDEO)
 							didTOF = 1;
@@ -266,7 +266,7 @@ void LabEngine::diffNextFrame() {
 				_event->mouseShow();
 
 				if (!didTOF)
-					g_lab->WSDL_UpdateScreen();
+					WSDL_UpdateScreen();
 
 				return;
 			}

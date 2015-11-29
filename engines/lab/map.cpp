@@ -564,21 +564,21 @@ void LabEngine::drawMap(uint16 CurRoom, uint16 CurMsg, uint16 Floor, bool fadeou
 	if (fadeout)
 		fade(false, 0);
 
-	g_lab->setAPen(0);
-	g_lab->rectFill(0, 0, g_lab->_screenWidth - 1, g_lab->_screenHeight - 1);
+	setAPen(0);
+	rectFill(0, 0, _screenWidth - 1, _screenHeight - 1);
 
-	g_lab->drawImage(Map, 0, 0);
+	drawImage(Map, 0, 0);
 	drawGadgetList(MapGadgetList);
 
 	for (uint16 i = 1; i <= MaxRooms; i++) {
-		if ((Maps[i].PageNumber == Floor) && g_lab->_roomsFound->in(i) && Maps[i].x) {
+		if ((Maps[i].PageNumber == Floor) && _roomsFound->in(i) && Maps[i].x) {
 			drawRoom(i, (bool)(i == CurRoom));
 			g_music->updateMusic();
 		}
 	}
 
 	if ((Maps[CurRoom].PageNumber == Floor)   /* Makes sure the X is drawn in corridors */
-	        && g_lab->_roomsFound->in(CurRoom) /* NOTE: this here on purpose just in case there's some weird condition, like the surreal maze where there are no rooms */
+	        && _roomsFound->in(CurRoom) /* NOTE: this here on purpose just in case there's some weird condition, like the surreal maze where there are no rooms */
 	        && Maps[CurRoom].x)
 		drawRoom(CurRoom, true);
 
@@ -601,16 +601,16 @@ void LabEngine::drawMap(uint16 CurRoom, uint16 CurMsg, uint16 Floor, bool fadeou
 	// Labyrinth specific code
 	if (Floor == LOWERFLOOR) {
 		if (onFloor(SURMAZEFLOOR))
-			g_lab->drawImage(Maze, mapScaleX(538), mapScaleY(277));
+			drawImage(Maze, mapScaleX(538), mapScaleY(277));
 	} else if (Floor == MIDDLEFLOOR) {
 		if (onFloor(CARNIVAL))
-			g_lab->drawImage(Maze, mapScaleX(358), mapScaleY(72));
+			drawImage(Maze, mapScaleX(358), mapScaleY(72));
 
 		if (onFloor(MEDMAZEFLOOR))
-			g_lab->drawImage(Maze, mapScaleX(557), mapScaleY(325));
+			drawImage(Maze, mapScaleX(557), mapScaleY(325));
 	} else if (Floor == UPPERFLOOR) {
 		if (onFloor(HEDGEMAZEFLOOR))
-			g_lab->drawImage(HugeMaze, mapScaleX(524), mapScaleY(97));
+			drawImage(HugeMaze, mapScaleX(524), mapScaleY(97));
 	} else if (Floor == SURMAZEFLOOR) {
 		sptr = (char *)g_resource->getStaticText(kTextSurmazeMessage).c_str();
 		flowText(MsgFont, 0, 7, 0, true, true, true, true, mapScaleX(360), 0, mapScaleX(660), mapScaleY(450), sptr);
@@ -686,14 +686,14 @@ void LabEngine::processMap(uint16 CurRoom) {
 				newcolor[2] = newcolor[1];
 			}
 
-			g_lab->waitTOF();
-			g_lab->writeColorReg(newcolor, 1);
+			waitTOF();
+			writeColorReg(newcolor, 1);
 			_event->updateMouse();
-			g_lab->waitTOF();
+			waitTOF();
 			_event->updateMouse();
-			g_lab->waitTOF();
+			waitTOF();
 			_event->updateMouse();
-			g_lab->waitTOF();
+			waitTOF();
 			_event->updateMouse();
 
 			place++;
@@ -787,7 +787,7 @@ void LabEngine::processMap(uint16 CurRoom) {
 						roomCords(i, &x1, &y1, &x2, &y2);
 
 						if ((Maps[i].PageNumber == CurFloor)
-						        && g_lab->_roomsFound->in(i)
+						        && _roomsFound->in(i)
 						        && (MouseX >= x1) && (MouseX <= x2)
 						        && (MouseY >= y1) && (MouseY <= y2)) {
 							CurMsg = i;
@@ -800,8 +800,8 @@ void LabEngine::processMap(uint16 CurRoom) {
 
 						if ((sptr = _rooms[CurMsg]._roomMsg)) {
 							_event->mouseHide();
-							g_lab->setAPen(3);
-							g_lab->rectFill(VGAScaleX(13), VGAScaleY(148), VGAScaleX(135), VGAScaleY(186));
+							setAPen(3);
+							rectFill(VGAScaleX(13), VGAScaleY(148), VGAScaleX(135), VGAScaleY(186));
 							flowText(MsgFont, 0, 5, 3, true, true, true, true, VGAScaleX(14), VGAScaleY(148), VGAScaleX(134), VGAScaleY(186), sptr);
 
 							if (Maps[OldMsg].PageNumber == CurFloor)
@@ -812,8 +812,8 @@ void LabEngine::processMap(uint16 CurRoom) {
 							y1 = (y1 + y2) / 2;
 
 							if ((CurMsg != CurRoom) && (Maps[CurMsg].PageNumber == CurFloor)) {
-								g_lab->setAPen(1);
-								g_lab->rectFill(x1 - 1, y1, x1, y1);
+								setAPen(1);
+								rectFill(x1 - 1, y1, x1, y1);
 							}
 
 							_event->mouseShow();
@@ -822,7 +822,7 @@ void LabEngine::processMap(uint16 CurRoom) {
 				}
 			}
 
-			g_lab->WSDL_UpdateScreen();
+			WSDL_UpdateScreen();
 		}
 	}
 }
@@ -850,18 +850,18 @@ void LabEngine::doMap(uint16 CurRoom) {
 	drawMap(CurRoom, CurRoom, Maps[CurRoom].PageNumber, false, true);
 	_event->mouseShow();
 	_event->attachGadgetList(MapGadgetList);
-	g_lab->WSDL_UpdateScreen();
+	WSDL_UpdateScreen();
 	processMap(CurRoom);
 	_event->attachGadgetList(NULL);
 	fade(false, 0);
 	blackAllScreen();
 	_event->mouseHide();
-	g_lab->setAPen(0);
-	g_lab->rectFill(0, 0, g_lab->_screenWidth - 1, g_lab->_screenHeight - 1);
+	setAPen(0);
+	rectFill(0, 0, _screenWidth - 1, _screenHeight - 1);
 	freeMapData();
 	blackAllScreen();
 	_event->mouseShow();
-	g_lab->WSDL_UpdateScreen();
+	WSDL_UpdateScreen();
 }
 
 } // End of namespace Lab

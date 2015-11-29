@@ -43,15 +43,15 @@ namespace Lab {
 /*****************************************************************************/
 bool LabEngine::createScreen(bool HiRes) {
 	if (HiRes) {
-		g_lab->_screenWidth  = 640;
-		g_lab->_screenHeight = 480;
+		_screenWidth  = 640;
+		_screenHeight = 480;
 	} else {
-		g_lab->_screenWidth  = 320;
-		g_lab->_screenHeight = 200;
+		_screenWidth  = 320;
+		_screenHeight = 200;
 	}
-	g_lab->_screenBytesPerPage = g_lab->_screenWidth * g_lab->_screenHeight;
+	_screenBytesPerPage = _screenWidth * _screenHeight;
 
-	_displayBuffer = (byte *)malloc(g_lab->_screenBytesPerPage);
+	_displayBuffer = (byte *)malloc(_screenBytesPerPage);
 
 	return true;
 }
@@ -106,8 +106,8 @@ void LabEngine::WSDL_ProcessInput(bool can_delay) {
 					_mousePos.x = 0;
 					_mouseAtEdge = true;
 				}
-				if (_mousePos.x > g_lab->_screenWidth - 1) {
-					_mousePos.x = g_lab->_screenWidth;
+				if (_mousePos.x > _screenWidth - 1) {
+					_mousePos.x = _screenWidth;
 					_mouseAtEdge = true;
 				}
 
@@ -116,8 +116,8 @@ void LabEngine::WSDL_ProcessInput(bool can_delay) {
 					_mousePos.y = 0;
 					_mouseAtEdge = true;
 				}
-				if (_mousePos.y > g_lab->_screenHeight - 1) {
-					_mousePos.y = g_lab->_screenHeight;
+				if (_mousePos.y > _screenHeight - 1) {
+					_mousePos.y = _screenHeight;
 					_mouseAtEdge = true;
 				}
 
@@ -157,7 +157,7 @@ void LabEngine::WSDL_ProcessInput(bool can_delay) {
 				break;
 			}
 
-			g_system->copyRectToScreen(_displayBuffer, g_lab->_screenWidth, 0, 0, g_lab->_screenWidth, g_lab->_screenHeight);
+			g_system->copyRectToScreen(_displayBuffer, _screenWidth, 0, 0, _screenWidth, _screenHeight);
 			g_system->updateScreen();
 		}
 	}
@@ -173,7 +173,7 @@ Common::Point LabEngine::WSDL_GetMousePos() {
 }
 
 void LabEngine::waitTOF() {
-	g_system->copyRectToScreen(_displayBuffer, g_lab->_screenWidth, 0, 0, g_lab->_screenWidth, g_lab->_screenHeight);
+	g_system->copyRectToScreen(_displayBuffer, _screenWidth, 0, 0, _screenWidth, _screenHeight);
 	g_system->updateScreen();
 
   	WSDL_ProcessInput(0);
@@ -235,7 +235,7 @@ void LabEngine::VGASetPal(void *cmap, uint16 numcolors) {
 }
 
 void LabEngine::WSDL_UpdateScreen() {
-	g_system->copyRectToScreen(_displayBuffer, g_lab->_screenWidth, 0, 0, g_lab->_screenWidth, g_lab->_screenHeight);
+	g_system->copyRectToScreen(_displayBuffer, _screenWidth, 0, 0, _screenWidth, _screenHeight);
 	g_system->updateScreen();
 
 	WSDL_ProcessInput(0);
@@ -276,20 +276,20 @@ void LabEngine::drawImage(Image *Im, uint16 x, uint16 y) {
 		dy = 0;
 	}
 
-	if (dx + w > g_lab->_screenWidth)
-		w = g_lab->_screenWidth - dx;
+	if (dx + w > _screenWidth)
+		w = _screenWidth - dx;
 
-	if (dy + h > g_lab->_screenHeight)
-		h = g_lab->_screenHeight - dy;
+	if (dy + h > _screenHeight)
+		h = _screenHeight - dy;
 
 	if ((w > 0) && (h > 0)) {
 		byte *s = Im->ImageData + sy * Im->Width + sx;
-		byte *d = getVGABaseAddr() + dy * g_lab->_screenWidth + dx;
+		byte *d = getVGABaseAddr() + dy * _screenWidth + dx;
 
 		while (h-- > 0) {
 			memcpy(d, s, w);
 			s += Im->Width;
-			d += g_lab->_screenWidth;
+			d += _screenWidth;
 		}
 	}
 }
@@ -319,15 +319,15 @@ void LabEngine::drawMaskImage(Image *Im, uint16 x, uint16 y) {
 		dy = 0;
 	}
 
-	if (dx + w > g_lab->_screenWidth)
-		w = g_lab->_screenWidth - dx;
+	if (dx + w > _screenWidth)
+		w = _screenWidth - dx;
 
-	if (dy + h > g_lab->_screenHeight)
-		h = g_lab->_screenHeight - dy;
+	if (dy + h > _screenHeight)
+		h = _screenHeight - dy;
 
 	if ((w > 0) && (h > 0)) {
 		byte *s = Im->ImageData + sy * Im->Width + sx;
-		byte *d = getVGABaseAddr() + dy * g_lab->_screenWidth + dx;
+		byte *d = getVGABaseAddr() + dy * _screenWidth + dx;
 
 		while (h-- > 0) {
 			byte *ss = s;
@@ -342,7 +342,7 @@ void LabEngine::drawMaskImage(Image *Im, uint16 x, uint16 y) {
 			}
 
 			s += Im->Width;
-			d += g_lab->_screenWidth;
+			d += _screenWidth;
 		}
 	}
 }
@@ -372,20 +372,20 @@ void LabEngine::readScreenImage(Image *Im, uint16 x, uint16 y) {
 		dy = 0;
 	}
 
-	if (dx + w > g_lab->_screenWidth)
-		w = g_lab->_screenWidth - dx;
+	if (dx + w > _screenWidth)
+		w = _screenWidth - dx;
 
-	if (dy + h > g_lab->_screenHeight)
-		h = g_lab->_screenHeight - dy;
+	if (dy + h > _screenHeight)
+		h = _screenHeight - dy;
 
 	if ((w > 0) && (h > 0)) {
 		byte *s = Im->ImageData + sy * Im->Width + sx;
-		byte *d = getVGABaseAddr() + dy * g_lab->_screenWidth + dx;
+		byte *d = getVGABaseAddr() + dy * _screenWidth + dx;
 
 		while (h-- > 0) {
 			memcpy(s, d, w);
 			s += Im->Width;
-			d += g_lab->_screenWidth;
+			d += _screenWidth;
 		}
 	}
 }
@@ -549,14 +549,14 @@ void LabEngine::rectFill(uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
 		dy = 0;
 	}
 
-	if (dx + w > g_lab->_screenWidth)
-		w = g_lab->_screenWidth - dx;
+	if (dx + w > _screenWidth)
+		w = _screenWidth - dx;
 
-	if (dy + h > g_lab->_screenHeight)
-		h = g_lab->_screenHeight - dy;
+	if (dy + h > _screenHeight)
+		h = _screenHeight - dy;
 
 	if ((w > 0) && (h > 0)) {
-		char *d = (char *)getVGABaseAddr() + dy * g_lab->_screenWidth + dx;
+		char *d = (char *)getVGABaseAddr() + dy * _screenWidth + dx;
 
 		while (h-- > 0) {
 			char *dd = d;
@@ -566,7 +566,7 @@ void LabEngine::rectFill(uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
 				*dd++ = _curapen;
 			}
 
-			d += g_lab->_screenWidth;
+			d += _screenWidth;
 		}
 	}
 }
@@ -606,14 +606,14 @@ void LabEngine::ghoastRect(uint16 pencolor, uint16 x1, uint16 y1, uint16 x2, uin
 		dy = 0;
 	}
 
-	if (dx + w > g_lab->_screenWidth)
-		w = g_lab->_screenWidth - dx;
+	if (dx + w > _screenWidth)
+		w = _screenWidth - dx;
 
-	if (dy + h > g_lab->_screenHeight)
-		h = g_lab->_screenHeight - dy;
+	if (dy + h > _screenHeight)
+		h = _screenHeight - dy;
 
 	if ((w > 0) && (h > 0)) {
-		char *d = (char *)getVGABaseAddr() + dy * g_lab->_screenWidth + dx;
+		char *d = (char *)getVGABaseAddr() + dy * _screenWidth + dx;
 
 		while (h-- > 0) {
 			char *dd = d;
@@ -630,7 +630,7 @@ void LabEngine::ghoastRect(uint16 pencolor, uint16 x1, uint16 y1, uint16 x2, uin
 				ww -= 2;
 			}
 
-			d += g_lab->_screenWidth;
+			d += _screenWidth;
 			dy++;
 		}
 	}

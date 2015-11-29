@@ -151,7 +151,7 @@ void LabEngine::drawPanel() {
 		drawHLine(0, VGAScaleY(170) + 1, VGAScaleX(319)); /* The horizontal lines under the black one */
 		drawGadgetList(MoveGadgetList);
 	} else {
-		if (g_lab->getPlatform() != Common::kPlatformWindows) {
+		if (getPlatform() != Common::kPlatformWindows) {
 			drawVLine(VGAScaleX(124), VGAScaleY(170) + 1, VGAScaleY(199)); /* Vertical Black lines */
 			drawVLine(VGAScaleX(194), VGAScaleY(170) + 1, VGAScaleY(199));
 		} else {
@@ -166,7 +166,7 @@ void LabEngine::drawPanel() {
 		drawHLine(VGAScaleX(196), VGAScaleY(170) + 1, VGAScaleX(319));
 
 		drawVLine(VGAScaleX(1), VGAScaleY(170) + 2, VGAScaleY(198)); /* The vertical high light lines */
-		if (g_lab->getPlatform() != Common::kPlatformWindows) {
+		if (getPlatform() != Common::kPlatformWindows) {
 			drawVLine(VGAScaleX(126), VGAScaleY(170) + 2, VGAScaleY(198));
 			drawVLine(VGAScaleX(196), VGAScaleY(170) + 2, VGAScaleY(198));
 		} else {
@@ -199,8 +199,8 @@ void LabEngine::drawRoomMessage(uint16 CurInv, CloseDataPtr cptr) {
 	}
 
 	if (Alternate) {
-		if ((CurInv <= NumInv) && g_lab->_conditions->in(CurInv) && Inventory[CurInv].BInvName) {
-			if ((CurInv == LAMPNUM) && g_lab->_conditions->in(LAMPON))  /* LAB: Labyrith specific */
+		if ((CurInv <= NumInv) && _conditions->in(CurInv) && Inventory[CurInv].BInvName) {
+			if ((CurInv == LAMPNUM) && _conditions->in(LAMPON))  /* LAB: Labyrith specific */
 				drawStaticMessage(kTextLampOn);
 			else if (Inventory[CurInv].Many > 1) {
 				Common::String roomMessage = Common::String(Inventory[CurInv].name) + "  (" + Common::String::format("%d", Inventory[CurInv].Many) + ")";
@@ -250,7 +250,7 @@ bool LabEngine::setUpScreens() {
 	/* Creates the gadgets for the movement control panel */
 	y = VGAScaleY(173) - SVGACord(2);
 
-	if (g_lab->getPlatform() == Common::kPlatformWindows) {
+	if (getPlatform() == Common::kPlatformWindows) {
 		MoveGadgetList = createButton(1, y, 0, 't', MoveImages[0], MoveImages[1]);
 		curgad = MoveGadgetList;
 		curgad->NextGadget = createButton(33, y, 1, 'm', MoveImages[2], MoveImages[3]);
@@ -307,7 +307,7 @@ bool LabEngine::setUpScreens() {
 
 	buffer = InvPanelBuffer;
 
-	if (g_lab->getPlatform() == Common::kPlatformWindows) {
+	if (getPlatform() == Common::kPlatformWindows) {
 		for (uint16 imgIdx = 0; imgIdx < 10; imgIdx++)
 			readImage(&buffer, &(InvImages[imgIdx]));
 
@@ -401,7 +401,7 @@ bool LabEngine::doCloseUp(CloseDataPtr cptr) {
 
 	int monltmargin, monrtmargin, montopmargin, lutertmargin;
 
-	if (g_lab->getPlatform() != Common::kPlatformWindows) {
+	if (getPlatform() != Common::kPlatformWindows) {
 		monltmargin = 0;
 		monrtmargin = 319;
 		montopmargin = 0;
@@ -595,7 +595,7 @@ void LabEngine::decIncInv(uint16 *CurInv, bool dec) {
 		(*CurInv)++;
 
 	while (*CurInv && (*CurInv <= NumInv)) {
-		if (g_lab->_conditions->in(*CurInv) && Inventory[*CurInv].BInvName) {
+		if (_conditions->in(*CurInv) && Inventory[*CurInv].BInvName) {
 			Test = getInvName(*CurInv);
 			break;
 		}
@@ -613,7 +613,7 @@ void LabEngine::decIncInv(uint16 *CurInv, bool dec) {
 			*CurInv = 1;
 
 		while (*CurInv && (*CurInv <= NumInv)) {
-			if (g_lab->_conditions->in(*CurInv) && Inventory[*CurInv].BInvName) {
+			if (_conditions->in(*CurInv) && Inventory[*CurInv].BInvName) {
 				Test = getInvName(*CurInv);
 				break;
 			}
@@ -653,13 +653,13 @@ void LabEngine::mainGameLoop() {
 	g_resource->readRoomData("LAB:Doors");
 	g_resource->readInventory("LAB:Inventor");
 
-	if (!(g_lab->_conditions = new LargeSet(HighestCondition + 1)))
+	if (!(_conditions = new LargeSet(HighestCondition + 1)))
 		return;
 
-	if (!(g_lab->_roomsFound = new LargeSet(ManyRooms + 1)))
+	if (!(_roomsFound = new LargeSet(ManyRooms + 1)))
 		return;
 
-	g_lab->_conditions->readInitialConditions("LAB:Conditio");
+	_conditions->readInitialConditions("LAB:Conditio");
 
 	LongWinInFront = false;
 	drawPanel();
@@ -693,7 +693,7 @@ void LabEngine::mainGameLoop() {
 				Test = getPictName(&CPtr);
 
 			if (noupdatediff) {
-				g_lab->_roomsFound->inclElement(RoomNum); /* Potentially entered another room */
+				_roomsFound->inclElement(RoomNum); /* Potentially entered another room */
 				ForceDraw = (strcmp(Test, CurFileName) != 0) || ForceDraw;
 
 				noupdatediff = false;
@@ -702,7 +702,7 @@ void LabEngine::mainGameLoop() {
 
 			else if (strcmp(Test, CurFileName) != 0) {
 				interfaceOff();
-				g_lab->_roomsFound->inclElement(RoomNum); /* Potentially entered another room */
+				_roomsFound->inclElement(RoomNum); /* Potentially entered another room */
 				CurFileName = Test;
 
 				if (CPtr) {
@@ -789,7 +789,7 @@ from_crumbs:
 					Class     = MOUSEBUTTONS;
 					Qualifier = IEQUALIFIER_LEFTBUTTON;
 					curPos = _event->getMousePos();
-				} else if (g_lab->getPlatform() == Common::kPlatformWindows &&
+				} else if (getPlatform() == Common::kPlatformWindows &&
 						(code == 'b' || code == 'B')) {  /* Start bread crumbs */
 					BreadCrumbs[0].RoomNum = 0;
 					NumCrumbs = 0;
@@ -804,7 +804,7 @@ from_crumbs:
 							FollowCrumbsFast = (code == 'r' || code == 'R');
 							IsCrumbTurning = false;
 							IsCrumbWaiting = false;
-							g_lab->getTime(&CrumbSecs, &CrumbMicros);
+							getTime(&CrumbSecs, &CrumbMicros);
 
 							if (Alternate) {
 								eatMessages();
@@ -903,7 +903,7 @@ from_crumbs:
 
 						MainDisplay = false;
 
-						if (LastInv && g_lab->_conditions->in(LastInv)) {
+						if (LastInv && _conditions->in(LastInv)) {
 							CurInv = LastInv;
 							Test = getInvName(CurInv);
 						} else
@@ -976,7 +976,7 @@ from_crumbs:
 
 							if (OldRoomNum != RoomNum) {
 								drawStaticMessage(kTextGoForward);
-								g_lab->_roomsFound->inclElement(RoomNum); /* Potentially entered a new room */
+								_roomsFound->inclElement(RoomNum); /* Potentially entered a new room */
 								CurFileName = " ";
 								ForceDraw = true;
 							} else {
@@ -1095,11 +1095,11 @@ from_crumbs:
 					if ((CurInv == 0) || (CurInv > NumInv)) {
 						CurInv = 1;
 
-						while ((CurInv <= NumInv) && (!g_lab->_conditions->in(CurInv)))
+						while ((CurInv <= NumInv) && (!_conditions->in(CurInv)))
 							CurInv++;
 					}
 
-					if ((CurInv <= NumInv) && g_lab->_conditions->in(CurInv) &&
+					if ((CurInv <= NumInv) && _conditions->in(CurInv) &&
 					        Inventory[CurInv].BInvName)
 						Test = getInvName(CurInv);
 
@@ -1131,7 +1131,7 @@ from_crumbs:
 							FollowCrumbsFast = false;
 							IsCrumbTurning = false;
 							IsCrumbWaiting = false;
-							g_lab->getTime(&CrumbSecs, &CrumbMicros);
+							getTime(&CrumbSecs, &CrumbMicros);
 
 							eatMessages();
 							Alternate = false;
@@ -1210,11 +1210,11 @@ from_crumbs:
 						} else if (curPos.y < (VGAScaleY(149) + SVGACord(2)))
 							drawStaticMessage(kTextNothing);
 					} else if ((ActionMode == 5)  &&
-					         g_lab->_conditions->in(CurInv)) { /* Use an item on something else */
+					         _conditions->in(CurInv)) { /* Use an item on something else */
 						if (doOperateRule(curPos.x, curPos.y, CurInv, &CPtr)) {
 							CurFileName = NewFileName;
 
-							if (!g_lab->_conditions->in(CurInv))
+							if (!_conditions->in(CurInv))
 								decIncInv(&CurInv, false);
 						} else if (curPos.y < (VGAScaleY(149) + SVGACord(2)))
 							drawStaticMessage(kTextNothing);
@@ -1260,7 +1260,7 @@ from_crumbs:
 				interfaceOn(); /* Sets the correct gadget list */
 
 				if (Alternate) {
-					if (LastInv && g_lab->_conditions->in(LastInv))
+					if (LastInv && _conditions->in(LastInv))
 						CurInv = LastInv;
 					else
 						decIncInv(&CurInv, false);
@@ -1275,8 +1275,8 @@ from_crumbs:
 		}
 	}
 
-	delete g_lab->_conditions;
-	delete g_lab->_roomsFound;
+	delete _conditions;
+	delete _roomsFound;
 
 	if (_rooms) {
 		free(_rooms);

@@ -692,10 +692,10 @@ void LabEngine::drawJournal(uint16 wipenum, bool needFade) {
 
 	drawJournalText();
 
-	ScreenImage.ImageData = g_lab->getVGABaseAddr();
+	ScreenImage.ImageData = getVGABaseAddr();
 
 	if (wipenum == 0)
-		g_lab->bltBitMap(&JBackImage, 0, 0, &ScreenImage, 0, 0, g_lab->_screenWidth, g_lab->_screenHeight);
+		bltBitMap(&JBackImage, 0, 0, &ScreenImage, 0, 0, _screenWidth, _screenHeight);
 	else
 		turnPage((bool)(wipenum == 1));
 
@@ -714,7 +714,7 @@ void LabEngine::drawJournal(uint16 wipenum, bool needFade) {
 		fade(true, 0);
 
 	nopalchange = true;
-	JBackImage.ImageData = readPictToMem("P:Journal.pic", g_lab->_screenWidth, g_lab->_screenHeight);
+	JBackImage.ImageData = readPictToMem("P:Journal.pic", _screenWidth, _screenHeight);
 	GotBackImage = true;
 
 	eatMessages();
@@ -775,15 +775,15 @@ void LabEngine::doJournal() {
 	lastpage    = false;
 	GotBackImage = false;
 
-	JBackImage.Width = g_lab->_screenWidth;
-	JBackImage.Height = g_lab->_screenHeight;
+	JBackImage.Width = _screenWidth;
+	JBackImage.Height = _screenHeight;
 	JBackImage.ImageData   = NULL;
 
 	BackG.NextGadget = &CancelG;
 	CancelG.NextGadget = &ForwardG;
 
 	ScreenImage = JBackImage;
-	ScreenImage.ImageData = g_lab->getVGABaseAddr();
+	ScreenImage.ImageData = getVGABaseAddr();
 
 	g_music->updateMusic();
 	loadJournalData();
@@ -797,10 +797,10 @@ void LabEngine::doJournal() {
 	fade(false, 0);
 	_event->mouseHide();
 
-	ScreenImage.ImageData = g_lab->getVGABaseAddr();
+	ScreenImage.ImageData = getVGABaseAddr();
 
-	g_lab->setAPen(0);
-	g_lab->rectFill(0, 0, g_lab->_screenWidth - 1, g_lab->_screenHeight - 1);
+	setAPen(0);
+	rectFill(0, 0, _screenWidth - 1, _screenHeight - 1);
 	blackScreen();
 
 	freeAllStolenMem();
@@ -892,17 +892,17 @@ void LabEngine::drawMonText(char *text, uint16 x1, uint16 y1, uint16 x2, uint16 
 		else
 			MonGadHeight = fheight;
 
-		g_lab->setAPen(0);
-		g_lab->rectFill(0, 0, g_lab->_screenWidth - 1, y2);
+		setAPen(0);
+		rectFill(0, 0, _screenWidth - 1, y2);
 
 		for (uint16 i = 0; i < numlines; i++)
-			g_lab->drawImage(MonButton, 0, i * MonGadHeight);
+			drawImage(MonButton, 0, i * MonGadHeight);
 	} else if (isinteractive) {
-		g_lab->setAPen(0);
-		g_lab->rectFill(0, 0, g_lab->_screenWidth - 1, y2);
+		setAPen(0);
+		rectFill(0, 0, _screenWidth - 1, y2);
 	} else {
-		g_lab->setAPen(0);
-		g_lab->rectFill(x1, y1, x2, y2);
+		setAPen(0);
+		rectFill(x1, y1, x2, y2);
 	}
 
 	while (DrawingToPage < monitorPage) {
@@ -1072,8 +1072,8 @@ void LabEngine::doMonitor(char *background, char *textfile, bool isinteractive, 
 
 	freeAllStolenMem();
 
-	g_lab->setAPen(0);
-	g_lab->rectFill(0, 0, g_lab->_screenWidth - 1, g_lab->_screenHeight - 1);
+	setAPen(0);
+	rectFill(0, 0, _screenWidth - 1, _screenHeight - 1);
 	blackAllScreen();
 }
 
