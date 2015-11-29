@@ -230,6 +230,9 @@ bool LabEngine::setUpScreens() {
 	/* Loads in the graphics for the movement control panel */
 	Common::File file;
 	file.open(translateFileName("P:Control"));
+	if (!file.isOpen())
+		warning("setUpScreens couldn't open %s", translateFileName("P:Control"));
+
 	if (file.err() || file.size() == 0)
 		return false;
 
@@ -290,6 +293,9 @@ bool LabEngine::setUpScreens() {
 	}
 
 	file.open(translateFileName("P:Inv"));
+	if (!file.isOpen())
+		warning("setUpScreens couldn't open %s", translateFileName("P:Inv"));
+
 	if (file.err() || file.size() == 0)
 		return false;
 
