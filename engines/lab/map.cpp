@@ -47,7 +47,6 @@ static TextFont bmf;
 
 
 extern uint16 Direction;
-extern bool IsHiRes;
 
 extern CloseDataPtr CPtr;
 extern uint16 RoomNum;
@@ -170,7 +169,7 @@ static uint16 AmigaMapPalette[] = {
 
 
 static uint16 mapScaleX(uint16 x) {
-	if (IsHiRes)
+	if (g_lab->_isHiRes)
 		return (x - 45);
 	else
 		return ((x - 45) >> 1);
@@ -179,7 +178,7 @@ static uint16 mapScaleX(uint16 x) {
 
 
 static uint16 mapScaleY(uint16 y) {
-	if (IsHiRes)
+	if (g_lab->_isHiRes)
 		return y;
 	else
 		return ((y - 35) >> 1) - (y >> 6);

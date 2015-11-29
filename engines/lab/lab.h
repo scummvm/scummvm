@@ -113,6 +113,7 @@ private:
 	bool _mouseAtEdge;
 public:
 	byte *_tempScrollData;
+	bool _isHiRes;
 
 private:
 	bool createScreen(bool HiRes);

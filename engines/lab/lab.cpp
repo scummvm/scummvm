@@ -72,6 +72,7 @@ LabEngine::LabEngine(OSystem *syst, const ADGameDescription *gameDesc)
     _nextKeyIn = 0;
     _nextKeyOut = 0;
 
+	_isHiRes = false;
 	//const Common::FSNode gameDataDir(ConfMan.get("path"));
 	//SearchMan.addSubDirectoryMatching(gameDataDir, "game");
 	//SearchMan.addSubDirectoryMatching(gameDataDir, "game/pict");

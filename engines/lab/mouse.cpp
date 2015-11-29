@@ -35,8 +35,6 @@
 
 namespace Lab {
 
-extern bool IsHiRes;
-
 static bool LeftClick = false;
 static bool RightClick = false;
 
@@ -75,7 +73,7 @@ Gadget *EventManager::checkGadgetHit(Gadget *gadlist, Common::Point pos) {
 		    (pos.x <= (gadlist->x + gadlist->Im->Width)) &&
 		    (pos.y <= (gadlist->y + gadlist->Im->Height)) &&
 		     !(GADGETOFF & gadlist->GadgetFlags)) {
-			if (IsHiRes) {
+			if (_vm->_isHiRes) {
 				hitgad = gadlist;
 			} else {
 				mouseHide();
@@ -118,7 +116,7 @@ void EventManager::mouseHandler(int flag, Common::Point pos) {
 	if (flag & 0x02) { /* Left mouse button click */
 		Gadget *tmp = NULL;
 		if (ScreenGadgetList)
-			tmp = checkGadgetHit(ScreenGadgetList, IsHiRes ? pos : Common::Point(pos.x / 2, pos.y));
+			tmp = checkGadgetHit(ScreenGadgetList, _vm->_isHiRes ? pos : Common::Point(pos.x / 2, pos.y));
 
 		if (tmp)
 			LastGadgetHit = tmp;
@@ -200,7 +198,7 @@ void EventManager::mouseHide() {
 /* from virtual to screen co-ordinates automatically.                        */
 /*****************************************************************************/
 Common::Point EventManager::getMousePos() {
-	if (IsHiRes)
+	if (_vm->_isHiRes)
 		return _vm->_mousePos;
 	else
 		return Common::Point(_vm->_mousePos.x / 2, _vm->_mousePos.y);
@@ -211,7 +209,7 @@ Common::Point EventManager::getMousePos() {
 /* Moves the mouse to new co-ordinates.                                      */
 /*****************************************************************************/
 void EventManager::setMousePos(Common::Point pos) {
-	if (IsHiRes)
+	if (_vm->_isHiRes)
 		g_system->warpMouse(pos.x, pos.y);
 	else
 		g_system->warpMouse(pos.x * 2, pos.y);
@@ -229,14 +227,14 @@ void EventManager::setMousePos(Common::Point pos) {
 bool EventManager::mouseButton(uint16 *x, uint16 *y, bool leftbutton) {
 	if (leftbutton) {
 		if (LeftClick) {
-			*x = (!IsHiRes) ? (uint16)_vm->_mousePos.x / 2 : (uint16)_vm->_mousePos.x;
+			*x = (!_vm->_isHiRes) ? (uint16)_vm->_mousePos.x / 2 : (uint16)_vm->_mousePos.x;
 			*y = (uint16)_vm->_mousePos.y;
 			LeftClick = false;
 			return true;
 		}
 	} else {
 		if (RightClick) {
-			*x = (!IsHiRes) ? (uint16)_vm->_mousePos.x / 2 : (uint16)_vm->_mousePos.x;
+			*x = (!_vm->_isHiRes) ? (uint16)_vm->_mousePos.x / 2 : (uint16)_vm->_mousePos.x;
 			*y = (uint16)_vm->_mousePos.y;
 			RightClick = false;
 			return true;
@@ -249,7 +247,7 @@ bool EventManager::mouseButton(uint16 *x, uint16 *y, bool leftbutton) {
 Gadget *EventManager::mouseGadget() {
 	Gadget *Temp = LastGadgetHit;
 
-	LastGadgetHit = NULL;
+	LastGadgetHit = nullptr;
 	return Temp;
 }
 

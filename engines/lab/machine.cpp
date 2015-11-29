@@ -30,18 +30,17 @@
 
 #include "common/str.h"
 
+#include "lab/lab.h"
 #include "lab/stddefines.h"
 
 namespace Lab {
-
-bool IsHiRes = false;
 
 /*****************************************************************************/
 /* Scales the x co-ordinates to that of the new display.  In the room parser */
 /* file, co-ordinates are set up on a 360x336 display.                       */
 /*****************************************************************************/
 uint16 scaleX(uint16 x) {
-	if (IsHiRes)
+	if (g_lab->_isHiRes)
 		return (uint16)((x * 16) / 9);
 	else
 		return (uint16)((x * 8) / 9);
@@ -52,7 +51,7 @@ uint16 scaleX(uint16 x) {
 /* file, co-ordinates are set up on a 368x336 display.                       */
 /*****************************************************************************/
 uint16 scaleY(uint16 y) {
-	if (IsHiRes)
+	if (g_lab->_isHiRes)
 		return (y + (y / 14));
 	else
 		return ((y * 10) / 24);
@@ -62,7 +61,7 @@ uint16 scaleY(uint16 y) {
 /* Scales the VGA cords to SVGA if necessary; otherwise, returns VGA cords.  */
 /*****************************************************************************/
 int16 VGAScaleX(int16 x) {
-	if (IsHiRes)
+	if (g_lab->_isHiRes)
 		return (x * 2);
 	else
 		return x;
@@ -72,14 +71,14 @@ int16 VGAScaleX(int16 x) {
 /* Scales the VGA cords to SVGA if necessary; otherwise, returns VGA cords.  */
 /*****************************************************************************/
 int16 VGAScaleY(int16 y) {
-	if (IsHiRes)
+	if (g_lab->_isHiRes)
 		return ((y * 12) / 5);
 	else
 		return y;
 }
 
 uint16 SVGACord(uint16 cord) {
-	if (IsHiRes)
+	if (g_lab->_isHiRes)
 		return cord;
 	else
 		return 0;
@@ -89,7 +88,7 @@ uint16 SVGACord(uint16 cord) {
 /* Converts SVGA cords to VGA if necessary, otherwise returns VGA cords.     */
 /*****************************************************************************/
 int VGAUnScaleX(int x) {
-	if (IsHiRes)
+	if (g_lab->_isHiRes)
 		return (x / 2);
 	else
 		return x;
@@ -99,7 +98,7 @@ int VGAUnScaleX(int x) {
 /* Converts SVGA cords to VGA if necessary, otherwise returns VGA cords.     */
 /*****************************************************************************/
 int VGAUnScaleY(int y) {
-	if (IsHiRes)
+	if (g_lab->_isHiRes)
 		return ((y * 5) / 12);
 	else
 		return y;
@@ -108,7 +107,7 @@ int VGAUnScaleY(int y) {
 static char NewFileName[255];
 
 /*****************************************************************************/
-/* Modifes the filename so that paths and stuff are correct.  Should mostly  */
+/* Modifies the filename so that paths and stuff are correct.  Should mostly  */
 /* deal with assigns and the '/' instead of '\' on IBM systems.              */
 /*                                                                           */
 /* NOTE: Make a *copy* of the string, and modify that.  It would be a real   */
@@ -122,7 +121,7 @@ char *translateFileName(const char *filename) {
 	Common::String fileNameStrFinal;
 
 	if (fileNameStr.hasPrefix("P:")) {
-		if (IsHiRes)
+		if (g_lab->_isHiRes)
 			fileNameStrFinal = "GAME/SPICT/";
 		else
 			fileNameStrFinal = "GAME/PICT/";
