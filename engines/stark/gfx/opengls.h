@@ -58,7 +58,7 @@ public:
 	VisualProp *createPropRenderer() override;
 	Graphics::Shader *createActorShaderInstance();
 
-	void drawSurface(const Texture *texture, const Common::Point &dest) override;
+	void drawSurface(const Texture *texture, const Common::Point &dest, bool noScalingOverride = false) override;
 
 	void set3DMode();
 

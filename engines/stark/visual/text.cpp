@@ -40,7 +40,7 @@ VisualText::VisualText(Gfx::Driver *gfx) :
 		_texture(nullptr),
 		_color(0),
 		_backgroundColor(0),
-		_targetWidth(600),
+		_originalRect(600, 0),
 		_fontCustomIndex(-1),
 		_fontType(FontProvider::kBigFont) {
 }
@@ -54,7 +54,7 @@ Common::Rect VisualText::getRect() {
 		createTexture();
 	}
 
-	return Common::Rect(_texture->width(), _texture->height());
+	return _originalRect;
 }
 
 void VisualText::setText(const Common::String &text) {
@@ -74,7 +74,7 @@ void VisualText::setBackgroundColor(uint32 color) {
 
 void VisualText::setTargetWidth(uint32 width) {
 	freeTexture();
-	_targetWidth = width;
+	_originalRect.right = width;
 }
 
 void VisualText::setFont(FontProvider::FontType type, int32 customFontIndex) {
@@ -85,26 +85,30 @@ void VisualText::setFont(FontProvider::FontType type, int32 customFontIndex) {
 }
 
 void VisualText::createTexture() {
-	const Graphics::Font *font = StarkFontProvider->getFont(_fontType, _fontCustomIndex);
-	int height = StarkFontProvider->getFontHeight(_fontType, _fontCustomIndex);
+	// Get the font and required metrics
+	const Graphics::Font *font = StarkFontProvider->getScaledFont(_fontType, _fontCustomIndex);
+	uint scaledLineHeight = StarkFontProvider->getScaledFontHeight(_fontType, _fontCustomIndex);
+	uint originalLineHeight = StarkFontProvider->getOriginalFontHeight(_fontType, _fontCustomIndex);
+	uint maxScaledLineWidth = StarkFontProvider->scaleWidthOriginalToCurrent(_originalRect.width());
 
+	// Word wrap the text and compute the scaled and original resolution bounding boxes
+	Common::Rect scaledRect;
 	Common::Array<Common::String> lines;
-	font->wordWrapText(_text, _targetWidth, lines);
+	scaledRect.right = scaledRect.left + font->wordWrapText(_text, maxScaledLineWidth, lines);
+	scaledRect.bottom = scaledRect.top + scaledLineHeight * lines.size();
+	_originalRect.bottom = _originalRect.top + originalLineHeight * lines.size();
 
-	int width = 0;
-	for (uint i = 0; i < lines.size(); i++) {
-		width = MAX(width, font->getStringWidth(lines[i]));
-	}
-
-	Common::Rect boundingRect = Common::Rect(width, height * lines.size());
-
+	// Create a surface to render to
 	Graphics::Surface surface;
-	surface.create(boundingRect.width(), boundingRect.height(), _gfx->getScreenFormat());
-	surface.fillRect(boundingRect, _backgroundColor);
+	surface.create(scaledRect.width(), scaledRect.height(), _gfx->getScreenFormat());
+	surface.fillRect(scaledRect, _backgroundColor);
 
+	// Render the lines to the surface
 	for (uint i = 0; i < lines.size(); i++) {
-		font->drawString(&surface, lines[i], 0, height * i, _targetWidth, _color);
+		font->drawString(&surface, lines[i], 0, scaledLineHeight * i, scaledRect.width(), _color);
 	}
+
+	// Create a texture from the surface
 	_texture = _gfx->createTexture(&surface);
 	surface.free();
 }
@@ -119,7 +123,7 @@ void VisualText::render(const Common::Point &position) {
 		createTexture();
 	}
 
-	_gfx->drawSurface(_texture, position);
+	_gfx->drawSurface(_texture, position, true);
 }
 
 } // End of namespace Stark

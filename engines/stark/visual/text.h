@@ -65,8 +65,8 @@ private:
 	Common::String _text;
 	uint32 _color;
 	uint32 _backgroundColor;
-	uint32 _targetWidth;
 	Gfx::Texture *_texture;
+	Common::Rect _originalRect;
 
 	FontProvider::FontType _fontType;
 	int32 _fontCustomIndex;

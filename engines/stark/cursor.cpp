@@ -90,7 +90,7 @@ Common::Point Cursor::getMousePosition(bool unscaled) const {
 		return _mousePos;
 	} else {
 		// Most of the engine expects 640x480 coordinates
-		return _gfx->scalePoint(_mousePos);
+		return _gfx->convertCoordinateCurrentToOriginal(_mousePos);
 	}
 }
 

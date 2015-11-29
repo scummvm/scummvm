@@ -136,6 +136,7 @@ Common::Error StarkEngine::run() {
 	// Load global resources
 	_resourceProvider->initGlobal();
 	_staticProvider->init();
+	_fontProvider->initFonts();
 	_cursor->init();
 	// Initialize the UI
 	_userInterface->init();

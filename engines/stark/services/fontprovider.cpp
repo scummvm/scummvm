@@ -22,6 +22,9 @@
 
 #include "engines/stark/services/fontprovider.h"
 
+#include "engines/stark/services/services.h"
+#include "engines/stark/gfx/driver.h"
+
 #include "common/archive.h"
 
 #include "graphics/font.h"
@@ -31,7 +34,6 @@
 namespace Stark {
 
 FontProvider::FontProvider() {
-	initFonts();
 }
 
 FontProvider::~FontProvider() {
@@ -62,7 +64,8 @@ void FontProvider::initFonts() {
 
 FontProvider::FontHolder::FontHolder(FontProvider *fontProvider, Common::String name, uint32 height, uint32 charset) {
 	_name = name;
-	_height = height;
+	_originalHeight = height;
+	_scaledHeight = StarkGfx->scaleHeightOriginalToCurrent(_originalHeight);
 	_charset = charset;
 
 	// Fetch the font file name
@@ -72,7 +75,7 @@ FontProvider::FontHolder::FontHolder(FontProvider *fontProvider, Common::String 
 	Common::SeekableReadStream *s = SearchMan.createReadStreamForMember(ttfFileName);
 	if (s) {
 		_font = Common::SharedPtr<Graphics::Font>(
-				Graphics::loadTTFFont(*s, _height, Graphics::kTTFSizeModeCell, 0, Graphics::kTTFRenderModeMonochrome)
+				Graphics::loadTTFFont(*s, _scaledHeight, Graphics::kTTFSizeModeCell, 0, Graphics::kTTFRenderModeMonochrome)
 		);
 		delete s;
 	} else {
@@ -91,7 +94,7 @@ FontProvider::FontHolder *FontProvider::getFontHolder(FontProvider::FontType typ
 	}
 }
 
-const Graphics::Font *FontProvider::getFont(FontProvider::FontType type, int32 customFontIndex) {
+const Graphics::Font *FontProvider::getScaledFont(FontProvider::FontType type, int32 customFontIndex) {
 	FontHolder *holder = getFontHolder(type, customFontIndex);
 	if (holder->_font) {
 		return holder->_font.get();
@@ -101,9 +104,17 @@ const Graphics::Font *FontProvider::getFont(FontProvider::FontType type, int32 c
 	}
 }
 
-int FontProvider::getFontHeight(FontProvider::FontType type, int32 customFontIndex) {
+uint FontProvider::getScaledFontHeight(FontProvider::FontType type, int32 customFontIndex) {
 	FontHolder *holder = getFontHolder(type, customFontIndex);
-	return holder->_height;
+	return holder->_scaledHeight;
 }
 
+uint FontProvider::getOriginalFontHeight(FontProvider::FontType type, int32 customFontIndex) {
+	FontHolder *holder = getFontHolder(type, customFontIndex);
+	return holder->_originalHeight;
+}
+
+uint FontProvider::scaleWidthOriginalToCurrent(uint width) {
+	return StarkGfx->scaleWidthOriginalToCurrent(width);
+}
 } // End of namespace Stark

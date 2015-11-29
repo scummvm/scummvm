@@ -49,25 +49,35 @@ public:
 	/**
 	 * Request a font matching the specified parameters
 	 */
-	const Graphics::Font *getFont(FontType type, int32 customFontIndex);
+	const Graphics::Font *getScaledFont(FontType type, int32 customFontIndex);
 
 	/**
 	 * Get the height of the font matching the specified parameters
 	 */
-	int getFontHeight(FontType type, int32 customFontIndex);
+	uint getScaledFontHeight(FontType type, int32 customFontIndex);
+	uint getOriginalFontHeight(FontType type, int32 customFontIndex);
+
+	/** Load all the fonts to memory */
+	void initFonts();
+
+	/** Scale a width value from original resolution to current resolution */
+	uint scaleWidthOriginalToCurrent(uint width);
 
 private:
 	struct FontHolder {
 		Common::String _name;
-		uint32 _height;
+
+		uint32 _originalHeight;
+		uint32 _scaledHeight;
+
 		uint32 _charset;
 		Common::SharedPtr<Graphics::Font> _font;
 
-		FontHolder() : _height(0), _charset(0) {}
+		FontHolder() : _originalHeight(0), _scaledHeight(0), _charset(0) {}
 		FontHolder(FontProvider *fontProvider, Common::String name, uint32 height, uint32 charset = 0);
+
 	};
 
-	void initFonts();
 	FontHolder *getFontHolder(FontType type, int32 customFontIndex);
 
 	FontHolder _smallFont;

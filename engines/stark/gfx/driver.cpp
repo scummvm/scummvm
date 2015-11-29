@@ -69,23 +69,31 @@ Common::Rect Driver::gameViewport() const {
 	return game;
 }
 
-Common::Point Driver::getScreenPosBounded(Common::Point point) {
+Common::Point Driver::getScreenPosBounded(const Common::Point &point) const {
 	Common::Point boundedPos = point;
 	boundedPos.x = CLIP<int16>(boundedPos.x, _screenViewport.left, _screenViewport.right);
 	return boundedPos;
 }
 
-Common::Point Driver::scalePoint(Common::Point point) {
+Common::Point Driver::convertCoordinateCurrentToOriginal(const Common::Point &point) const {
 	// Most of the engine expects 640x480 coordinates
 	Common::Point scaledPosition = point;
 	scaledPosition.x -= _screenViewport.left;
 	scaledPosition.y -= _screenViewport.top;
 	scaledPosition.x = CLIP<int16>(scaledPosition.x, 0, _screenViewport.width());
 	scaledPosition.y = CLIP<int16>(scaledPosition.y, 0, _screenViewport.height());
-	scaledPosition.x *= Gfx::Driver::kOriginalWidth / (float)_screenViewport.width();
-	scaledPosition.y *= Gfx::Driver::kOriginalHeight / (float)_screenViewport.height();
+	scaledPosition.x *= kOriginalWidth / (float)_screenViewport.width();
+	scaledPosition.y *= kOriginalHeight / (float)_screenViewport.height();
 
 	return scaledPosition;
+}
+
+uint Driver::scaleWidthOriginalToCurrent(uint width) const {
+	return _screenViewport.width() * width / kOriginalWidth;
+}
+
+uint Driver::scaleHeightOriginalToCurrent(uint height) const {
+	return _screenViewport.height() * height / kOriginalHeight;
 }
 
 } // End of namespace Gfx

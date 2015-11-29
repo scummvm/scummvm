@@ -80,14 +80,21 @@ public:
 	virtual VisualProp *createPropRenderer() = 0;
 
 	/** Bound a screen coordinate coord within the actual game area */
-	Common::Point getScreenPosBounded(Common::Point point);
+	Common::Point getScreenPosBounded(const Common::Point &point) const;
 
-	/** Scale a coordinate from original to current coordinates */
-	Common::Point scalePoint(Common::Point point);
+	/** Convert a coordinate from current to original resolution */
+	Common::Point convertCoordinateCurrentToOriginal(const Common::Point &point) const;
+
+	/** Scale a width value from original resolution to current resolution */
+	uint scaleWidthOriginalToCurrent(uint width) const;
+
+	/** Scale a height value from original resolution to current resolution */
+	uint scaleHeightOriginalToCurrent(uint height) const;
+
 	/**
 	 * Draw a 2D surface from the specified texture
 	 */
-	virtual void drawSurface(const Texture *texture, const Common::Point &dest) = 0;
+	virtual void drawSurface(const Texture *texture, const Common::Point &dest, bool noScalingOverride = false) = 0;
 
 	virtual Graphics::PixelFormat getScreenFormat();
 
