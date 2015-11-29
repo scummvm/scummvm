@@ -48,7 +48,6 @@ extern char diffcmap[256 * 3];
 extern bool IsBM, nopalchange;
 
 extern bool DoBlack, stopsound;
-extern bool IsHiRes;
 extern TextFont *MsgFont;
 extern const char *CurFileName;
 
@@ -438,7 +437,7 @@ void LabEngine::doScrollBlack() {
 	while (nheight) {
 		g_music->updateMusic();
 
-		if (!IsHiRes)
+		if (!_isHiRes)
 			g_lab->waitTOF();
 
 		BaseAddr = (uint32 *)g_lab->getVGABaseAddr();
@@ -468,7 +467,7 @@ void LabEngine::doScrollBlack() {
 
 		g_lab->WSDL_UpdateScreen();
 
-		if (!IsHiRes) {
+		if (!_isHiRes) {
 			if (nheight <= (height / 8))
 				by = 1;
 			else if (nheight <= (height / 4))
@@ -626,7 +625,7 @@ void LabEngine::doTransWipe(CloseDataPtr *CPtr, char *filename) {
 	uint16 LastY, CurY, linesdone = 0, lineslast;
 	Image ImSource, ImDest;
 
-	if (IsHiRes) {
+	if (_isHiRes) {
 		lineslast = 3;
 		LastY = 358;
 	} else {

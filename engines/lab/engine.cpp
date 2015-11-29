@@ -47,7 +47,7 @@ bool LongWinInFront = false;
 
 TextFont *MsgFont;
 
-extern bool DoBlack, waitForEffect, stopsound, DoNotDrawMessage, IsHiRes, nopalchange;
+extern bool DoBlack, waitForEffect, stopsound, DoNotDrawMessage, nopalchange;
 
 /* Global parser data */
 
@@ -224,7 +224,7 @@ bool LabEngine::setUpScreens() {
 	Gadget *curgad;
 	uint16 y;
 
-	if (!createScreen(IsHiRes))
+	if (!createScreen(_isHiRes))
 		return false;
 
 	/* Loads in the graphics for the movement control panel */
@@ -1299,10 +1299,10 @@ from_crumbs:
 void LabEngine::go() {
 	bool dointro = true;
 
-	IsHiRes = ((getFeatures() & GF_LOWRES) == 0);
+	_isHiRes = ((getFeatures() & GF_LOWRES) == 0);
 
 #if 0
-	if (IsHiRes)
+	if (_isHiRes)
 		warning("Running in HiRes mode");
 	else
 		warning("Running in LowRes mode");
@@ -1317,7 +1317,7 @@ void LabEngine::go() {
 	}
 
 	if (!setUpScreens()) {
-		IsHiRes = false;
+		_isHiRes = false;
 		mem = mem && setUpScreens();
 	}
 

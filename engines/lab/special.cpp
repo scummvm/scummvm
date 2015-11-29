@@ -85,7 +85,7 @@ uint16 CurTile[4][4] = {
 
 extern TextFont *MsgFont;
 extern uint16 *FadePalette;
-extern bool nopalchange, DoBlack, IsHiRes;
+extern bool nopalchange, DoBlack;
 extern BitMap *DispBitMap, *DrawBitMap;
 extern char diffcmap[3 * 256];
 extern CloseDataPtr CPtr;
@@ -187,7 +187,7 @@ static void changeCombination(uint16 number) {
 	display.Height    = g_lab->_screenHeight;
 
 	for (uint16 i = 1; i <= (Images[combnum]->Height / 2); i++) {
-		if (IsHiRes) {
+		if (g_lab->_isHiRes) {
 			if (i & 1)
 				g_lab->waitTOF();
 		} else

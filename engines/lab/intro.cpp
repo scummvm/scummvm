@@ -37,7 +37,7 @@
 #include "lab/interface.h"
 
 namespace Lab {
-extern bool nopalchange, DoBlack, IsHiRes;
+extern bool nopalchange, DoBlack;
 extern char diffcmap[256 * 3];
 extern uint16 *FadePalette;
 
@@ -118,7 +118,7 @@ void Intro::doPictText(const char *filename, bool isscreen) {
 				g_lab->setAPen(7L);
 				g_lab->rectFill(VGAScaleX(10), VGAScaleY(10), VGAScaleX(310), VGAScaleY(190));
 
-				Drawn = flowText(_msgfont, (!IsHiRes) * -1, 5, 7, false, false, true, true, VGAScaleX(14), VGAScaleY(11), VGAScaleX(306), VGAScaleY(189), (char *)curplace);
+				Drawn = flowText(_msgfont, (!g_lab->_isHiRes) * -1, 5, 7, false, false, true, true, VGAScaleX(14), VGAScaleY(11), VGAScaleX(306), VGAScaleY(189), (char *)curplace);
 				fade(true, 0);
 			} else {
 				Drawn = g_lab->longDrawMessage((char *)curplace);
