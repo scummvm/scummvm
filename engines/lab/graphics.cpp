@@ -338,14 +338,14 @@ void createBox(uint16 y2) {
 
 bool LastMessageLong = false;
 
-int32 longDrawMessage(const char *str) {
+int32 LabEngine::longDrawMessage(const char *str) {
 	char NewText[512];
 
 	if (str == NULL)
 		return 0;
 
-	attachGadgetList(NULL);
-	mouseHide();
+	_event->attachGadgetList(NULL);
+	_event->mouseHide();
 	strcpy(NewText, str);
 
 	if (!LongWinInFront) {
@@ -355,21 +355,19 @@ int32 longDrawMessage(const char *str) {
 	}
 
 	createBox(198);
-	mouseShow();
+	_event->mouseShow();
 
 	return flowText(MsgFont, 0, 1, 7, false, true, true, true, VGAScaleX(6), VGAScaleY(155), VGAScaleX(313), VGAScaleY(195), str);
 }
 
-
-
-void drawStaticMessage(byte index) {
+void LabEngine::drawStaticMessage(byte index) {
 	drawMessage(g_resource->getStaticText((StaticText)index).c_str());
 }
 
 /******************************************************************************/
 /* Draws a message to the message box.                                        */
 /******************************************************************************/
-void drawMessage(const char *str) {
+void LabEngine::drawMessage(const char *str) {
 	if (DoNotDrawMessage) {
 		DoNotDrawMessage = false;
 		return;
@@ -385,10 +383,10 @@ void drawMessage(const char *str) {
 				g_lab->drawPanel();
 			}
 
-			mouseHide();
+			_event->mouseHide();
 			createBox(168);
 			text(MsgFont, VGAScaleX(7), VGAScaleY(155) + SVGACord(2), 1, str, strlen(str));
-			mouseShow();
+			_event->mouseShow();
 			LastMessageLong = false;
 		}
 	}
@@ -412,14 +410,14 @@ void drawMessage(const char *str) {
 /*****************************************************************************/
 /* Scrolls the display to black.                                             */
 /*****************************************************************************/
-static void doScrollBlack() {
+void LabEngine::doScrollBlack() {
 	byte *mem, *tempmem;
 	Image Im;
 	uint16 width, height, by, nheight;
 	uint32 size, copysize;
 	uint32 *BaseAddr;
 
-	mouseHide();
+	_event->mouseHide();
 	width = VGAScaleX(320);
 	height = VGAScaleY(149) + SVGACord(2);
 
@@ -481,17 +479,11 @@ static void doScrollBlack() {
 	}
 
 	freeAllStolenMem();
-	mouseShow();
+	_event->mouseShow();
 }
-
-
-
 
 extern BitMap RawDiffBM;
 extern DIFFHeader headerdata;
-
-
-
 
 static void copyPage(uint16 width, uint16 height, uint16 nheight, uint16 startline, byte *mem) {
 	uint32 size, OffSet, copysize;
@@ -524,11 +516,11 @@ static void copyPage(uint16 width, uint16 height, uint16 nheight, uint16 startli
 /*****************************************************************************/
 /* Scrolls the display to a new picture from a black screen.                 */
 /*****************************************************************************/
-static void doScrollWipe(char *filename) {
+void LabEngine::doScrollWipe(char *filename) {
 	byte *mem;
 	uint16 width, height, by, nheight, startline = 0, onrow = 0;
 
-	mouseHide();
+	_event->mouseHide();
 	width = VGAScaleX(320);
 	height = VGAScaleY(149) + SVGACord(2);
 
@@ -576,16 +568,13 @@ static void doScrollWipe(char *filename) {
 			by = VGAScaleX(3);
 	}
 
-	mouseShow();
+	_event->mouseShow();
 }
-
-
-
 
 /*****************************************************************************/
 /* Does the scroll bounce.  Assumes bitmap already in memory.                */
 /*****************************************************************************/
-static void doScrollBounce() {
+void LabEngine::doScrollBounce() {
 	const uint16 *newby, *newby1;
 
 	const uint16 newbyd[5] = {5, 4, 3, 2, 1}, newby1d[8] = {3, 3, 2, 2, 2, 1, 1, 1};
@@ -600,7 +589,7 @@ static void doScrollBounce() {
 	}
 
 
-	mouseHide();
+	_event->mouseHide();
 	int width = VGAScaleX(320);
 	int height = VGAScaleY(149) + SVGACord(2);
 	byte *mem = RawDiffBM.Planes[0];
@@ -627,15 +616,13 @@ static void doScrollBounce() {
 
 	}
 
-	mouseShow();
+	_event->mouseShow();
 }
-
-
 
 /*****************************************************************************/
 /* Does the transporter wipe.                                                */
 /*****************************************************************************/
-static void doTransWipe(CloseDataPtr *CPtr, char *filename) {
+void LabEngine::doTransWipe(CloseDataPtr *CPtr, char *filename) {
 	uint16 LastY, CurY, linesdone = 0, lineslast;
 	Image ImSource, ImDest;
 
@@ -743,12 +730,10 @@ static void doTransWipe(CloseDataPtr *CPtr, char *filename) {
 	}
 }
 
-
-
 /*****************************************************************************/
 /* Does a certain number of pre-programmed wipes.                            */
 /*****************************************************************************/
-void doWipe(uint16 WipeType, CloseDataPtr *CPtr, char *filename) {
+void LabEngine::doWipe(uint16 WipeType, CloseDataPtr *CPtr, char *filename) {
 	if ((WipeType == TRANSWIPE) || (WipeType == TRANSPORTER))
 		doTransWipe(CPtr, filename);
 	else if (WipeType == SCROLLWIPE)

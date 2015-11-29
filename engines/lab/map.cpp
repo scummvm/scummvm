@@ -553,13 +553,13 @@ static void getDownFloor(uint16 *Floor, bool *isfloor) {
 /*****************************************************************************/
 /* Draws the map                                                             */
 /*****************************************************************************/
-static void drawMap(uint16 CurRoom, uint16 CurMsg, uint16 Floor, bool fadeout, bool fadein) {
+void LabEngine::drawMap(uint16 CurRoom, uint16 CurMsg, uint16 Floor, bool fadeout, bool fadein) {
 	char *sptr;
 
 	uint16 tempfloor;
 	bool noghoast;
 
-	mouseHide();
+	_event->mouseHide();
 
 	if (fadeout)
 		fade(false, 0);
@@ -652,13 +652,13 @@ static void drawMap(uint16 CurRoom, uint16 CurMsg, uint16 Floor, bool fadeout, b
 	if (fadein)
 		fade(true, 0);
 
-	mouseShow();
+	_event->mouseShow();
 }
 
 /*****************************************************************************/
 /* Processes the map.                                                        */
 /*****************************************************************************/
-void processMap(uint16 CurRoom) {
+void LabEngine::processMap(uint16 CurRoom) {
 	uint32 Class, place = 1;
 	uint16 Code, Qualifier, MouseX, MouseY, GadgetID, CurFloor, OldFloor, OldMsg, CurMsg, x1, y1, x2, y2;
 	char *sptr;
@@ -688,13 +688,13 @@ void processMap(uint16 CurRoom) {
 
 			g_lab->waitTOF();
 			g_lab->writeColorReg(newcolor, 1);
-			updateMouse();
+			_event->updateMouse();
 			g_lab->waitTOF();
-			updateMouse();
+			_event->updateMouse();
 			g_lab->waitTOF();
-			updateMouse();
+			_event->updateMouse();
 			g_lab->waitTOF();
-			updateMouse();
+			_event->updateMouse();
 
 			place++;
 
@@ -799,7 +799,7 @@ void processMap(uint16 CurRoom) {
 							g_resource->readViews(CurMsg);
 
 						if ((sptr = _rooms[CurMsg]._roomMsg)) {
-							mouseHide();
+							_event->mouseHide();
 							g_lab->setAPen(3);
 							g_lab->rectFill(VGAScaleX(13), VGAScaleY(148), VGAScaleX(135), VGAScaleY(186));
 							flowText(MsgFont, 0, 5, 3, true, true, true, true, VGAScaleX(14), VGAScaleY(148), VGAScaleX(134), VGAScaleY(186), sptr);
@@ -816,7 +816,7 @@ void processMap(uint16 CurRoom) {
 								g_lab->rectFill(x1 - 1, y1, x1, y1);
 							}
 
-							mouseShow();
+							_event->mouseShow();
 						}
 					}
 				}
@@ -831,7 +831,7 @@ void processMap(uint16 CurRoom) {
 /*****************************************************************************/
 /* Does the map processing.                                                  */
 /*****************************************************************************/
-void doMap(uint16 CurRoom) {
+void LabEngine::doMap(uint16 CurRoom) {
 	FadePalette = AmigaMapPalette;
 
 	g_music->updateMusic();
@@ -848,19 +848,19 @@ void doMap(uint16 CurRoom) {
 		XMark = MapWest;
 
 	drawMap(CurRoom, CurRoom, Maps[CurRoom].PageNumber, false, true);
-	mouseShow();
-	attachGadgetList(MapGadgetList);
+	_event->mouseShow();
+	_event->attachGadgetList(MapGadgetList);
 	g_lab->WSDL_UpdateScreen();
 	processMap(CurRoom);
-	attachGadgetList(NULL);
+	_event->attachGadgetList(NULL);
 	fade(false, 0);
 	blackAllScreen();
-	mouseHide();
+	_event->mouseHide();
 	g_lab->setAPen(0);
 	g_lab->rectFill(0, 0, g_lab->_screenWidth - 1, g_lab->_screenHeight - 1);
 	freeMapData();
 	blackAllScreen();
-	mouseShow();
+	_event->mouseShow();
 	g_lab->WSDL_UpdateScreen();
 }
 

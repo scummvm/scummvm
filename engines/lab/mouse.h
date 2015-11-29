@@ -38,25 +38,27 @@ namespace Lab {
 
 struct Gadget;
 
-void initMouse();
+class LabEngine;
 
-void updateMouse();
+class EventManager {
+private:
+	LabEngine *_vm;
 
-void mouseShow();
+public:
+	EventManager (LabEngine *vm);
 
-void mouseHide();
-
-Common::Point getMousePos();
-
-void setMousePos(Common::Point pos);
-
-bool mouseButton(uint16 *x, uint16 *y, bool leftbutton);
-
-Gadget *mouseGadget();
-
-void attachGadgetList(Gadget *GadList);
-
-void mouseHandler(int flag, Common::Point pos);
+	Gadget *checkGadgetHit(Gadget *gadlist, Common::Point pos);
+	void initMouse();
+	void updateMouse();
+	void mouseShow();
+	void mouseHide();
+	Common::Point getMousePos();
+	void setMousePos(Common::Point pos);
+	bool mouseButton(uint16 *x, uint16 *y, bool leftbutton);
+	Gadget *mouseGadget();
+	void attachGadgetList(Gadget *GadList);
+	void mouseHandler(int flag, Common::Point pos);
+};
 
 } // End of namespace Lab
 

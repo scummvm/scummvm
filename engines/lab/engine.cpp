@@ -132,7 +132,7 @@ static char initcolors[] = { '\x00', '\x00', '\x00', '\x30',
 /* Draws the control panel display.                                           */
 /******************************************************************************/
 void LabEngine::drawPanel() {
-	mouseHide();
+	_event->mouseHide();
 
 	setAPen(3);                 /* Clear Area */
 	rectFill(0, VGAScaleY(149) + SVGACord(2), VGAScaleX(319), VGAScaleY(199));
@@ -178,7 +178,7 @@ void LabEngine::drawPanel() {
 		drawGadgetList(InvGadgetList);
 	}
 
-	mouseShow();
+	_event->mouseShow();
 }
 
 
@@ -192,7 +192,7 @@ static bool LastTooLong = false;
 /******************************************************************************/
 /* Draws the message for the room.                                            */
 /******************************************************************************/
-static void drawRoomMessage(uint16 CurInv, CloseDataPtr cptr) {
+void LabEngine::drawRoomMessage(uint16 CurInv, CloseDataPtr cptr) {
 	if (LastTooLong) {
 		LastTooLong = false;
 		return;
@@ -360,9 +360,9 @@ void LabEngine::perFlipGadget(uint16 GadID) {
 			TopGad->ImAlt = Temp;
 
 			if (!Alternate) {
-				mouseHide();
+				_event->mouseHide();
 				drawImage(TopGad->Im, TopGad->x, TopGad->y);
-				mouseShow();
+				_event->mouseShow();
 			}
 
 			return;
@@ -376,7 +376,7 @@ void LabEngine::perFlipGadget(uint16 GadID) {
 /******************************************************************************/
 /* Eats all the available messages.                                           */
 /******************************************************************************/
-void eatMessages() {
+void LabEngine::eatMessages() {
 	IntuiMessage *Msg;
 
 	do {
@@ -479,48 +479,38 @@ static const char *getInvName(uint16 CurInv) {
 	return Inventory[CurInv].BInvName;
 }
 
-
-
-
 static bool interfaceisoff = false;
-
 
 /******************************************************************************/
 /* Turns the interface off.                                                   */
 /******************************************************************************/
-static void interfaceOff() {
+void LabEngine::interfaceOff() {
 	if (!interfaceisoff) {
-		attachGadgetList(NULL);
-		mouseHide();
+		_event->attachGadgetList(NULL);
+		_event->mouseHide();
 		interfaceisoff = true;
 	}
 }
 
-
-
-
 /******************************************************************************/
 /* Turns the interface on.                                                    */
 /******************************************************************************/
-static void interfaceOn() {
+void LabEngine::interfaceOn() {
 	if (interfaceisoff) {
 		interfaceisoff = false;
 
-		mouseShow();
+		_event->mouseShow();
 	}
 
 	if (LongWinInFront)
-		attachGadgetList(NULL);
+		_event->attachGadgetList(NULL);
 	else if (Alternate)
-		attachGadgetList(InvGadgetList);
+		_event->attachGadgetList(InvGadgetList);
 	else
-		attachGadgetList(MoveGadgetList);
+		_event->attachGadgetList(MoveGadgetList);
 }
 
-
-
 static const char *Test;
-
 
 /******************************************************************************/
 /* If the user hits the "Use" gadget; things that can get used on themselves. */
@@ -590,7 +580,7 @@ bool LabEngine::doUse(uint16 CurInv) {
 /******************************************************************************/
 /* Decrements the current inventory number.                                   */
 /******************************************************************************/
-static void decIncInv(uint16 *CurInv, bool dec) {
+void LabEngine::decIncInv(uint16 *CurInv, bool dec) {
 	interfaceOff();
 
 	if (dec)
@@ -792,7 +782,7 @@ from_crumbs:
 				if (code == 13) { /* The return key */
 					Class     = MOUSEBUTTONS;
 					Qualifier = IEQUALIFIER_LEFTBUTTON;
-					curPos = getMousePos();
+					curPos = _event->getMousePos();
 				} else if (g_lab->getPlatform() == Common::kPlatformWindows &&
 						(code == 'b' || code == 'B')) {  /* Start bread crumbs */
 					BreadCrumbs[0].RoomNum = 0;
@@ -1254,7 +1244,7 @@ from_crumbs:
 				}
 
 				if (HCPtr)
-					setMousePos(Common::Point(scaleX((HCPtr->x1 + HCPtr->x2) / 2), scaleY((HCPtr->y1 + HCPtr->y2) / 2)));
+					_event->setMousePos(Common::Point(scaleX((HCPtr->x1 + HCPtr->x2) / 2), scaleY((HCPtr->y1 + HCPtr->y2) / 2)));
 			} else if ((Class == MOUSEBUTTONS) && (IEQUALIFIER_RBUTTON & Qualifier)) {
 				eatMessages();
 				Alternate = !Alternate;
@@ -1325,7 +1315,7 @@ void LabEngine::go() {
 		mem = mem && setUpScreens();
 	}
 
-	initMouse();
+	_event->initMouse();
 
 	mem = mem && initRoomBuffer();
 
@@ -1334,7 +1324,7 @@ void LabEngine::go() {
 
 	MsgFont = g_resource->getFont("P:AvanteG.12");
 
-	mouseHide();
+	_event->mouseHide();
 
 	if (dointro && mem) {
 		Intro intro;
@@ -1343,7 +1333,7 @@ void LabEngine::go() {
 		DoBlack = true;
 
 	if (mem) {
-		mouseShow();
+		_event->mouseShow();
 		mainGameLoop();
 	} else
 		debug("\n\nNot enough memory to start game.\n\n");
@@ -1454,9 +1444,9 @@ void LabEngine::mayShowCrumbIndicator() {
 		return;
 
 	if (DroppingCrumbs && MainDisplay) {
-		mouseHide();
+		_event->mouseHide();
 		drawMaskImage(&DropCrumbsImage, 612, 4);
-		mouseShow();
+		_event->mouseShow();
 	}
 }
 
@@ -1465,9 +1455,9 @@ void LabEngine::mayShowCrumbIndicatorOff() {
 		return;
 
 	if (MainDisplay) {
-		mouseHide();
+		_event->mouseHide();
 		drawMaskImage(&DropCrumbsOffImage, 612, 4);
-		mouseShow();
+		_event->mouseShow();
 	}
 }
 

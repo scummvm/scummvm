@@ -188,7 +188,7 @@ char *getPictName(CloseDataPtr *LCPtr) {
 /*****************************************************************************/
 /* Draws the current direction to the screen.                                */
 /*****************************************************************************/
-void drawDirection(CloseDataPtr LCPtr) {
+void LabEngine::drawDirection(CloseDataPtr LCPtr) {
 	if (LCPtr != NULL && LCPtr->Message) {
 		drawMessage(LCPtr->Message);
 		return;
@@ -375,7 +375,7 @@ static void doActions(Action * APtr, CloseDataPtr *LCPtr) {
 			break;
 
 		case WIPECMD:
-			doWipe(APtr->Param1, LCPtr, (char *)APtr->Data);
+			g_lab->doWipe(APtr->Param1, LCPtr, (char *)APtr->Data);
 			break;
 
 		case NOUPDATE:
@@ -409,9 +409,9 @@ static void doActions(Action * APtr, CloseDataPtr *LCPtr) {
 			DoNotDrawMessage = false;
 
 			if (LongWinInFront)
-				longDrawMessage((char *)APtr->Data);
+				g_lab->longDrawMessage((char *)APtr->Data);
 			else
-				drawMessage((char *)APtr->Data);
+				g_lab->drawMessage((char *)APtr->Data);
 
 			DoNotDrawMessage = true;
 			break;
@@ -419,7 +419,7 @@ static void doActions(Action * APtr, CloseDataPtr *LCPtr) {
 		case CSHOWMESSAGE:
 			if (*LCPtr == NULL) {
 				DoNotDrawMessage = false;
-				drawMessage((char *)APtr->Data);
+				g_lab->drawMessage((char *)APtr->Data);
 				DoNotDrawMessage = true;
 			}
 
@@ -428,7 +428,7 @@ static void doActions(Action * APtr, CloseDataPtr *LCPtr) {
 		case SHOWMESSAGES:
 			str = (char **)APtr->Data;
 			DoNotDrawMessage = false;
-			drawMessage(str[getRandom(APtr->Param1)]);
+			g_lab->drawMessage(str[getRandom(APtr->Param1)]);
 			DoNotDrawMessage = true;
 			break;
 
@@ -486,7 +486,7 @@ static void doActions(Action * APtr, CloseDataPtr *LCPtr) {
 
 			while (1) {
 				g_music->updateMusic();
-				diffNextFrame();
+				g_lab->diffNextFrame();
 				g_lab->getTime(&CurSecs, &CurMicros);
 
 				if ((CurSecs > StartSecs) || ((CurSecs == StartSecs) &&
@@ -521,7 +521,7 @@ static void doActions(Action * APtr, CloseDataPtr *LCPtr) {
 		case WAITSOUND:
 			while (g_music->isSoundEffectActive()) {
 				g_music->updateMusic();
-				diffNextFrame();
+				g_lab->diffNextFrame();
 				g_lab->waitTOF();
 			}
 
@@ -596,7 +596,7 @@ static void doActions(Action * APtr, CloseDataPtr *LCPtr) {
 	} else {
 		while (g_music->isSoundEffectActive()) {
 			g_music->updateMusic();
-			diffNextFrame();
+			g_lab->diffNextFrame();
 			g_lab->waitTOF();
 		}
 	}

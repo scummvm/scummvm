@@ -90,6 +90,8 @@ Common::Error LabEngine::run() {
 	else
 		initGraphics(640, 480, true);
 
+	_event = new EventManager(this);
+
 	g_music = new Music();
 	g_resource = new Resource();
 

@@ -73,7 +73,7 @@ Music::Music() {
 void Music::updateMusic() {
 	g_lab->WSDL_ProcessInput(0);
 
-	updateMouse();
+	g_lab->_event->updateMouse();
 
 	if (_musicOn && getPlayingBufferCount() < MAXBUFFERS) {
 		// NOTE: We need to use malloc(), cause this will be freed with free()

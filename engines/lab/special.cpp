@@ -682,8 +682,8 @@ static void turnPage(bool FromLeft) {
 /*****************************************************************************/
 /* Draws the journal from page x.                                            */
 /*****************************************************************************/
-static void drawJournal(uint16 wipenum, bool needFade) {
-	mouseHide();
+void LabEngine::drawJournal(uint16 wipenum, bool needFade) {
+	_event->mouseHide();
 
 	g_music->updateMusic();
 
@@ -718,7 +718,7 @@ static void drawJournal(uint16 wipenum, bool needFade) {
 	GotBackImage = true;
 
 	eatMessages();
-	mouseShow();
+	_event->mouseShow();
 
 	nopalchange = false;
 }
@@ -726,14 +726,14 @@ static void drawJournal(uint16 wipenum, bool needFade) {
 /*****************************************************************************/
 /* Processes user input.                                                     */
 /*****************************************************************************/
-static void processJournal() {
+void LabEngine::processJournal() {
 	IntuiMessage *Msg;
 	uint32 Class;
 	uint16 Qualifier, GadID;
 
 	while (1) {
 		g_music->updateMusic();  /* Make sure we check the music at least after every message */
-		Msg = (IntuiMessage *)getMsg();
+		Msg = getMsg();
 
 		if (Msg == NULL) {
 			g_music->updateMusic();
@@ -768,7 +768,7 @@ static void processJournal() {
 /*****************************************************************************/
 /* Does the journal processing.                                              */
 /*****************************************************************************/
-void doJournal() {
+void LabEngine::doJournal() {
 	resetBuffer();
 	blackAllScreen();
 
@@ -790,12 +790,12 @@ void doJournal() {
 
 	drawJournal(0, true);
 
-	attachGadgetList(&BackG);
-	mouseShow();
+	_event->attachGadgetList(&BackG);
+	_event->mouseShow();
 	processJournal();
-	attachGadgetList(NULL);
+	_event->attachGadgetList(NULL);
 	fade(false, 0);
-	mouseHide();
+	_event->mouseHide();
 
 	ScreenImage.ImageData = g_lab->getVGABaseAddr();
 
@@ -869,12 +869,12 @@ static void getMonImages() {
 /*****************************************************************************/
 /* Draws the text for the monitor.                                           */
 /*****************************************************************************/
-static void drawMonText(char *text, uint16 x1, uint16 y1, uint16 x2, uint16 y2, bool isinteractive) {
+void LabEngine::drawMonText(char *text, uint16 x1, uint16 y1, uint16 x2, uint16 y2, bool isinteractive) {
 	uint16 DrawingToPage = 0, yspacing = 0, numlines, fheight;
 	int32 CharsDrawn    = 0L;
 	char *CurText = text;
 
-	mouseHide();
+	_event->mouseHide();
 
 	if (*text == '%') {
 		text++;
@@ -923,13 +923,13 @@ static void drawMonText(char *text, uint16 x1, uint16 y1, uint16 x2, uint16 y2, 
 	CurText += CharsDrawn;
 	lastpage = lastpage || (*CurText == 0);
 
-	mouseShow();
+	_event->mouseShow();
 }
 
 /*****************************************************************************/
 /* Processes user input.                                                     */
 /*****************************************************************************/
-static void processMonitor(char *ntext, bool isinteractive, uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
+void LabEngine::processMonitor(char *ntext, bool isinteractive, uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
 	IntuiMessage *Msg;
 	uint32 Class;
 	uint16 Qualifier, Code, MouseX, MouseY;
@@ -1022,7 +1022,7 @@ static void processMonitor(char *ntext, bool isinteractive, uint16 x1, uint16 y1
 /*****************************************************************************/
 /* Does what's necessary for the monitor.                                    */
 /*****************************************************************************/
-void doMonitor(char *background, char *textfile, bool isinteractive, uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
+void LabEngine::doMonitor(char *background, char *textfile, bool isinteractive, uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
 	char *ntext;
 
 	x1 = VGAScaleX(x1);
@@ -1064,11 +1064,11 @@ void doMonitor(char *background, char *textfile, bool isinteractive, uint16 x1, 
 
 	drawMonText(ntext, x1, y1, x2, y2, isinteractive);
 
-	mouseShow();
+	_event->mouseShow();
 	fade(true, 0);
 	processMonitor(ntext, isinteractive, x1, y1, x2, y2);
 	fade(false, 0);
-	mouseHide();
+	_event->mouseHide();
 
 	freeAllStolenMem();
 

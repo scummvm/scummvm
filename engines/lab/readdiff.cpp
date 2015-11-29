@@ -113,8 +113,7 @@ void blackAllScreen() {
 	g_system->delayMillis(32);
 }
 
-
-void diffNextFrame() {
+void LabEngine::diffNextFrame() {
 	if (header == 65535)  /* Already done. */
 		return;
 
@@ -126,11 +125,11 @@ void diffNextFrame() {
 		DispBitMap->Planes[4] = DispBitMap->Planes[3] + 0x10000;
 	}
 
-	mouseHide();
+	_event->mouseHide();
 
 	while (1) {
 		if (CurBit >= numchunks) {
-			mouseShow();
+			_event->mouseShow();
 
 			if (!IsBM) {
 				if (headerdata.fps) {
@@ -264,7 +263,7 @@ void diffNextFrame() {
 				}
 
 				IsPlaying = false;
-				mouseShow();
+				_event->mouseShow();
 
 				if (!didTOF)
 					g_lab->WSDL_UpdateScreen();
@@ -282,8 +281,6 @@ void diffNextFrame() {
 		}
 	}
 }
-
-
 
 /*****************************************************************************/
 /* A separate task launched by readDiff.  Plays the DIFF.                    */
@@ -306,10 +303,8 @@ void playDiff() {
 		blackScreen();
 	}
 
-
 	start = *startoffile;            /* Make a copy of the pointer to the start of the file    */
 	*difffile = start;               /* Now can modify the file without modifying the original */
-
 
 	if (start == NULL) {
 		IsPlaying = false;
@@ -373,9 +368,9 @@ void playDiff() {
 
 	if (PlayOnce) {
 		while (header != 65535)
-			diffNextFrame();
+			g_lab->diffNextFrame();
 	} else
-		diffNextFrame();
+		g_lab->diffNextFrame();
 }
 
 
@@ -399,7 +394,7 @@ void stopDiffEnd() {
 	if (IsPlaying) {
 		while (IsPlaying) {
 			g_music->updateMusic();
-			diffNextFrame();
+			g_lab->diffNextFrame();
 		}
 	}
 }

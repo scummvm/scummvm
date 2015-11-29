@@ -125,20 +125,20 @@ uint16 makeGadgetKeyEquiv(uint16 key) {
 /* Checks whether or not the cords fall within one of the gadgets in a list  */
 /* of gadgets.                                                               */
 /*****************************************************************************/
-static Gadget *checkNumGadgetHit(Gadget *gadlist, uint16 key) {
+Gadget *LabEngine::checkNumGadgetHit(Gadget *gadlist, uint16 key) {
 	uint16 gkey = key - '0';
 
 	while (gadlist != NULL) {
 		if ((gkey - 1 == gadlist->GadgetID || (gkey == 0 && gadlist->GadgetID == 9) ||
 		        (gadlist->KeyEquiv != 0 && makeGadgetKeyEquiv(key) == gadlist->KeyEquiv))
 		        && !(GADGETOFF & gadlist->GadgetFlags)) {
-			mouseHide();
+			_event->mouseHide();
 			g_lab->drawImage(gadlist->ImAlt, gadlist->x, gadlist->y);
-			mouseShow();
+			_event->mouseShow();
 			g_system->delayMillis(80);
-			mouseHide();
+			_event->mouseHide();
 			g_lab->drawImage(gadlist->Im, gadlist->x, gadlist->y);
-			mouseShow();
+			_event->mouseShow();
 
 			return gadlist;
 		} else {
@@ -163,30 +163,29 @@ static bool keyPress(uint16 *KeyCode) {
 	return false;
 }
 
-
 IntuiMessage IMessage;
 extern Gadget *ScreenGadgetList;
 
-IntuiMessage *getMsg() {
+IntuiMessage *LabEngine::getMsg() {
 	Gadget *curgad;
 	int Qualifiers;
 
-	updateMouse();
+	_event->updateMouse();
 
 	Qualifiers = _keyPressed.flags;
 
-	if ((curgad = mouseGadget()) != NULL) {
-		updateMouse();
+	if ((curgad = _event->mouseGadget()) != NULL) {
+		_event->updateMouse();
 		IMessage.msgClass = GADGETUP;
 		IMessage.code  = curgad->GadgetID;
 		IMessage.gadgetID = curgad->GadgetID;
 		IMessage.qualifier = Qualifiers;
 		return &IMessage;
-	} else if (mouseButton(&IMessage.mouseX, &IMessage.mouseY, true)) { /* Left Button */
+	} else if (_event->mouseButton(&IMessage.mouseX, &IMessage.mouseY, true)) { /* Left Button */
 		IMessage.qualifier = IEQUALIFIER_LEFTBUTTON | Qualifiers;
 		IMessage.msgClass = MOUSEBUTTONS;
 		return &IMessage;
-	} else if (mouseButton(&IMessage.mouseX, &IMessage.mouseY, false)) { /* Right Button */
+	} else if (_event->mouseButton(&IMessage.mouseX, &IMessage.mouseY, false)) { /* Right Button */
 		IMessage.qualifier = IEQUALIFIER_RBUTTON | Qualifiers;
 		IMessage.msgClass = MOUSEBUTTONS;
 		return &IMessage;

@@ -69,7 +69,7 @@ static Gadget *hitgad = NULL;
 /* Checks whether or not the cords fall within one of the gadgets in a list  */
 /* of gadgets.                                                               */
 /*****************************************************************************/
-static Gadget *checkGadgetHit(Gadget *gadlist, Common::Point pos) {
+Gadget *EventManager::checkGadgetHit(Gadget *gadlist, Common::Point pos) {
 	while (gadlist != NULL) {
 		if ((pos.x >= gadlist->x) && (pos.y >= gadlist->y) &&
 		    (pos.x <= (gadlist->x + gadlist->Im->Width)) &&
@@ -101,14 +101,17 @@ static Gadget *checkGadgetHit(Gadget *gadlist, Common::Point pos) {
 
 
 
-void attachGadgetList(Gadget *GadList) {
+void EventManager::attachGadgetList(Gadget *GadList) {
 	if (ScreenGadgetList != GadList)
 		LastGadgetHit = NULL;
 
 	ScreenGadgetList = GadList;
 }
 
-void mouseHandler(int flag, Common::Point pos) {
+EventManager::EventManager(LabEngine *vm) : _vm(vm) {
+}
+
+void EventManager::mouseHandler(int flag, Common::Point pos) {
 	if (NumHidden >= 2)
 		return;
 
@@ -127,7 +130,7 @@ void mouseHandler(int flag, Common::Point pos) {
 		RightClick = true;
 }
 
-void updateMouse() {
+void EventManager::updateMouse() {
 	bool doUpdateDisplay = false;
 
 	if (!MouseHidden)
@@ -156,7 +159,7 @@ void updateMouse() {
 /*****************************************************************************/
 /* Initializes the mouse.                                                    */
 /*****************************************************************************/
-void initMouse() {
+void EventManager::initMouse() {
 	g_system->setMouseCursor(MouseData, MOUSE_WIDTH, MOUSE_HEIGHT, 0, 0, 0);
 	g_system->showMouse(false);
 
@@ -167,7 +170,7 @@ void initMouse() {
 /*****************************************************************************/
 /* Shows the mouse.                                                          */
 /*****************************************************************************/
-void mouseShow() {
+void EventManager::mouseShow() {
 	if (NumHidden)
 		NumHidden--;
 
@@ -182,7 +185,7 @@ void mouseShow() {
 /*****************************************************************************/
 /* Hides the mouse.                                                          */
 /*****************************************************************************/
-void mouseHide() {
+void EventManager::mouseHide() {
 	NumHidden++;
 
 	if (NumHidden && !MouseHidden) {
@@ -196,7 +199,7 @@ void mouseHide() {
 /* Gets the current mouse co-ordinates.  NOTE: On IBM version, will scale    */
 /* from virtual to screen co-ordinates automatically.                        */
 /*****************************************************************************/
-Common::Point getMousePos() {
+Common::Point EventManager::getMousePos() {
 	if (IsHiRes)
 		return g_lab->_mousePos;
 	else
@@ -207,7 +210,7 @@ Common::Point getMousePos() {
 /*****************************************************************************/
 /* Moves the mouse to new co-ordinates.                                      */
 /*****************************************************************************/
-void setMousePos(Common::Point pos) {
+void EventManager::setMousePos(Common::Point pos) {
 	if (IsHiRes)
 		g_system->warpMouse(pos.x, pos.y);
 	else
@@ -223,7 +226,7 @@ void setMousePos(Common::Point pos) {
 /* co-ordinates of the button press.  leftbutton tells whether to check the  */
 /* left or right button.                                                     */
 /*****************************************************************************/
-bool mouseButton(uint16 *x, uint16 *y, bool leftbutton) {
+bool EventManager::mouseButton(uint16 *x, uint16 *y, bool leftbutton) {
 	if (leftbutton) {
 		if (LeftClick) {
 			*x = (!IsHiRes) ? (uint16)g_lab->_mousePos.x / 2 : (uint16)g_lab->_mousePos.x;
@@ -243,10 +246,7 @@ bool mouseButton(uint16 *x, uint16 *y, bool leftbutton) {
 	return false;
 }
 
-
-
-
-Gadget *mouseGadget() {
+Gadget *EventManager::mouseGadget() {
 	Gadget *Temp = LastGadgetHit;
 
 	LastGadgetHit = NULL;
