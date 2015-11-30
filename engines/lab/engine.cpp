@@ -618,17 +618,10 @@ void LabEngine::decIncInv(uint16 *CurInv, bool dec) {
 /* The main game loop                                                         */
 /******************************************************************************/
 void LabEngine::mainGameLoop() {
-	uint32 Class;
+	uint16 actionMode = 4;
+	uint16 curInv = MAPNUM;
 
-	uint16 Qualifier, ActionMode = 4;
-	uint16 CurInv = MAPNUM, LastInv = MAPNUM, Old;
-
-	bool ForceDraw = false, doit, GotMessage = true;
-
-	uint16 OldRoomNum, OldDirection = 0, GadID = 0, NewDir;
-
-	CloseDataPtr OldCPtr, TempCPtr, HCPtr = NULL;
-	ViewData *VPtr;
+	bool forceDraw = false, GotMessage = true;
 
 	VGASetPal(initcolors, 8);
 
@@ -650,11 +643,10 @@ void LabEngine::mainGameLoop() {
 	LongWinInFront = false;
 	drawPanel();
 
-	perFlipGadget(ActionMode);
+	perFlipGadget(actionMode);
 
 	/* Set up initial picture. */
 
-	uint16 code = 0;
 	while (1) {
 		WSDL_ProcessInput(1);
 
@@ -680,7 +672,7 @@ void LabEngine::mainGameLoop() {
 
 			if (noupdatediff) {
 				_roomsFound->inclElement(_roomNum); /* Potentially entered another room */
-				ForceDraw = (strcmp(Test, CurFileName) != 0) || ForceDraw;
+				forceDraw = (strcmp(Test, CurFileName) != 0) || forceDraw;
 
 				noupdatediff = false;
 				CurFileName = Test;
@@ -703,8 +695,8 @@ void LabEngine::mainGameLoop() {
 				} else
 					readPict(CurFileName, false);
 
-				drawRoomMessage(CurInv, CPtr);
-				ForceDraw = false;
+				drawRoomMessage(curInv, CPtr);
+				forceDraw = false;
 
 				mayShowCrumbIndicator();
 				WSDL_UpdateScreen();
@@ -713,9 +705,9 @@ void LabEngine::mainGameLoop() {
 					eatMessages();
 			}
 
-			if (ForceDraw) {
-				drawRoomMessage(CurInv, CPtr);
-				ForceDraw = false;
+			if (forceDraw) {
+				drawRoomMessage(curInv, CPtr);
+				forceDraw = false;
 				WSDL_UpdateScreen();
 			}
 		}
@@ -724,7 +716,6 @@ void LabEngine::mainGameLoop() {
 		interfaceOn();
 		IntuiMessage *curMsg = getMsg();
 
-		Common::Point curPos;
 		if (curMsg == NULL) { /* Does music load and next animation frame when you've run out of messages */
 			GotMessage = false;
 			_music->checkRoomMusic();
@@ -735,21 +726,19 @@ void LabEngine::mainGameLoop() {
 				int result = followCrumbs();
 
 				if (result != 0) {
-					curPos = WSDL_GetMousePos();
-					Class     = GADGETUP;
-					Qualifier = 0;
-
+					uint16 code = 0;
 					if (result == VKEY_UPARROW)
-						code = GadID = 7;
+						code = 7;
 					else if (result == VKEY_LTARROW)
-						code = GadID = 6;
+						code = 6;
 					else if (result == VKEY_RTARROW)
-						code = GadID = 8;
+						code = 8;
 
 					GotMessage = true;
 					mayShowCrumbIndicator();
 					WSDL_UpdateScreen();
-					goto from_crumbs;
+					if (!from_crumbs(GADGETUP, code, 0, WSDL_GetMousePos(), curInv, curMsg, forceDraw, code, actionMode))
+						break;
 				}
 			}
 
@@ -758,506 +747,13 @@ void LabEngine::mainGameLoop() {
 		} else {
 			GotMessage = true;
 
-			Class     = curMsg->msgClass;
-			code      = curMsg->code;
-			Qualifier = curMsg->qualifier;
+			Common::Point curPos;
 			curPos.x  = curMsg->mouseX;
 			curPos.y  = curMsg->mouseY;
-			GadID     = curMsg->gadgetID;
 
 			_followingCrumbs = false;
-
-from_crumbs:
-			DoBlack = false;
-
-			if ((Class == RAWKEY) && (!LongWinInFront)) {
-				if (code == 13) { /* The return key */
-					Class     = MOUSEBUTTONS;
-					Qualifier = IEQUALIFIER_LEFTBUTTON;
-					curPos = _event->getMousePos();
-				} else if (getPlatform() == Common::kPlatformWindows &&
-						(code == 'b' || code == 'B')) {  /* Start bread crumbs */
-					_breadCrumbs[0]._roomNum = 0;
-					_numCrumbs = 0;
-					_droppingCrumbs = true;
-					mayShowCrumbIndicator();
-					WSDL_UpdateScreen();
-				} else if (code == 'f' || code == 'F' ||
-				         code == 'r' || code == 'R') {  /* Follow bread crumbs */
-					if (_droppingCrumbs) {
-						if (_numCrumbs > 0) {
-							_followingCrumbs = true;
-							_followCrumbsFast = (code == 'r' || code == 'R');
-							_isCrumbTurning = false;
-							_isCrumbWaiting = false;
-							getTime(&_crumbSecs, &_crumbMicros);
-
-							if (Alternate) {
-								eatMessages();
-								Alternate = false;
-								DoBlack = true;
-								DoNotDrawMessage = false;
-
-								MainDisplay = true;
-								interfaceOn(); /* Sets the correct gadget list */
-								drawPanel();
-								drawRoomMessage(CurInv, CPtr);
-								WSDL_UpdateScreen();
-							}
-						} else {
-							_breadCrumbs[0]._roomNum = 0;
-							_droppingCrumbs = false;
-
-							// Need to hide indicator!!!!
-							mayShowCrumbIndicatorOff();
-							WSDL_UpdateScreen();
-						}
-					}
-				} else if ((code == 315) || (code == 'x') || (code == 'X')
-				         || (code == 'q') || (code == 'Q')) {  /* Quit? */
-					DoNotDrawMessage = false;
-					drawMessage("Do you want to quit? (Y/N)");
-					doit = false;
-					eatMessages();
-					interfaceOff();
-
-					while (1) {
-						_music->updateMusic();  /* Make sure we check the music at least after every message */
-						curMsg = getMsg();
-
-						if (curMsg == NULL) { /* Does music load and next animation frame when you've run out of messages */
-							_music->updateMusic();
-							diffNextFrame();
-						} else {
-							if (curMsg->msgClass == RAWKEY) {
-								if ((curMsg->code == 'Y') || (curMsg->code == 'y') || (curMsg->code == 'Q') || (curMsg->code == 'q')) {
-									doit = true;
-									break;
-								} else if (curMsg->code < 128) {
-									break;
-								}
-							} else if (curMsg->msgClass == MOUSEBUTTONS) {
-								break;
-							}
-						}
-					}
-
-					if (doit) {
-						stopDiff();
-						break;
-					} else {
-						ForceDraw = true;
-						interfaceOn();
-					}
-				} else if (code == 9) { /* TAB key */
-					Class = DELTAMOVE;
-				} else if (code == 27) { /* ESC key */
-					CPtr = NULL;
-				}
-
-				eatMessages();
-			}
-
-			if (LongWinInFront) {
-				if ((Class == RAWKEY) ||
-				        ((Class == MOUSEBUTTONS) &&
-				         ((IEQUALIFIER_LEFTBUTTON & Qualifier) ||
-				          (IEQUALIFIER_RBUTTON & Qualifier)))) {
-					LongWinInFront = false;
-					DoNotDrawMessage = false;
-					drawPanel();
-					drawRoomMessage(CurInv, CPtr);
-					WSDL_UpdateScreen();
-				}
-			} else if ((Class == GADGETUP) && !Alternate) {
-				if (GadID <= 5) {
-					if ((ActionMode == 4) && (GadID == 4) && (CPtr != NULL)) {
-						doMainView(&CPtr);
-
-						DoBlack = true;
-						HCPtr = NULL;
-						CPtr = NULL;
-						mayShowCrumbIndicator();
-						WSDL_UpdateScreen();
-					} else if (GadID == 5) {
-						eatMessages();
-
-						Alternate = true;
-						DoBlack = true;
-						DoNotDrawMessage = false;
-						interfaceOn(); /* Sets the correct gadget list */
-
-						MainDisplay = false;
-
-						if (LastInv && _conditions->in(LastInv)) {
-							CurInv = LastInv;
-							Test = getInvName(CurInv);
-						} else
-							decIncInv(&CurInv, false);
-
-						drawPanel();
-						drawRoomMessage(CurInv, CPtr);
-
-						mayShowCrumbIndicator();
-						WSDL_UpdateScreen();
-					} else {
-						Old        = ActionMode;
-						ActionMode = GadID;
-
-						if (Old < 5)
-							perFlipGadget(Old);
-
-						perFlipGadget(ActionMode);
-
-						if (GadID == 0)
-							drawStaticMessage(kTextTakeWhat);
-						else if (GadID == 1)
-							drawStaticMessage(kTextMoveWhat);
-						else if (GadID == 2)
-							drawStaticMessage(kTextOpenWhat);
-						else if (GadID == 3)
-							drawStaticMessage(kTextCloseWhat);
-						else if (GadID == 4)
-							drawStaticMessage(kTextLookWhat);
-
-						WSDL_UpdateScreen();
-					}
-				} else if (GadID == 9) {
-					doUse(MAPNUM);
-
-					mayShowCrumbIndicator();
-					WSDL_UpdateScreen();
-				} else if (GadID >= 6) { /* Arrow Gadgets */
-					CPtr = NULL;
-					HCPtr = NULL;
-
-					if ((GadID == 6) || (GadID == 8)) {
-						if (GadID == 6)
-							drawStaticMessage(kTextTurnLeft);
-						else
-							drawStaticMessage(kTextTurnRight);
-
-						CurFileName = " ";
-
-						OldDirection = Direction;
-
-						NewDir = Direction;
-						processArrow(&NewDir, GadID - 6);
-						doTurn(Direction, NewDir, &CPtr);
-						DoBlack = true;
-						Direction = NewDir;
-						ForceDraw = true;
-
-						mayShowCrumbIndicator();
-						WSDL_UpdateScreen();
-					} else if (GadID == 7) {
-						OldRoomNum = _roomNum;
-
-						if (doGoForward(&CPtr)) {
-							if (OldRoomNum == _roomNum)
-								DoBlack = true;
-						} else {
-							DoBlack = true;
-							processArrow(&Direction, GadID - 6);
-
-							if (OldRoomNum != _roomNum) {
-								drawStaticMessage(kTextGoForward);
-								_roomsFound->inclElement(_roomNum); /* Potentially entered a new room */
-								CurFileName = " ";
-								ForceDraw = true;
-							} else {
-								DoBlack = true;
-								drawStaticMessage(kTextNoPath);
-							}
-						}
-
-						if (_followingCrumbs) {
-							if (_isCrumbTurning) {
-								if (Direction == OldDirection) {
-									_followingCrumbs = false;
-								}
-							} else {
-								if (_roomNum == OldRoomNum) { // didn't get there?
-									_followingCrumbs = false;
-								}
-							}
-						} else if (_droppingCrumbs && OldRoomNum != _roomNum) {
-							// If in surreal maze, turn off DroppingCrumbs.
-							// Note: These numbers were generated by parsing the
-							// "Maps" file, which is why they are hard-coded. Bleh!
-							if (_roomNum >= 245 && _roomNum <= 280) {
-								_followingCrumbs = false;
-								_droppingCrumbs = false;
-								_numCrumbs = 0;
-								_breadCrumbs[0]._roomNum = 0;
-							} else {
-								bool intersect = false;
-								for (int idx = 0; idx < _numCrumbs; idx++) {
-									if (_breadCrumbs[idx]._roomNum == _roomNum) {
-										_numCrumbs = idx + 1;
-										_breadCrumbs[_numCrumbs]._roomNum = 0;
-										intersect = true;
-									}
-								}
-
-								if (!intersect) {
-									if (_numCrumbs == MAX_CRUMBS) {
-										_numCrumbs = MAX_CRUMBS - 1;
-										memcpy(&_breadCrumbs[0], &_breadCrumbs[1], _numCrumbs * sizeof _breadCrumbs[0]);
-									}
-
-									_breadCrumbs[_numCrumbs]._roomNum = _roomNum;
-									_breadCrumbs[_numCrumbs++]._direction = Direction;
-								}
-							}
-						}
-
-						mayShowCrumbIndicator();
-						WSDL_UpdateScreen();
-					}
-				}
-			} else if ((Class == GADGETUP) && Alternate) {
-				DoBlack = true;
-
-				if (GadID == 0) {
-					eatMessages();
-					Alternate = false;
-					DoBlack = true;
-					DoNotDrawMessage = false;
-
-					MainDisplay = true;
-					interfaceOn(); /* Sets the correct gadget list */
-					drawPanel();
-					drawRoomMessage(CurInv, CPtr);
-
-					WSDL_UpdateScreen();
-				}
-
-				GadID--;
-
-				if (GadID == 0) {
-					interfaceOff();
-					stopDiff();
-					CurFileName = " ";
-
-					doit = !saveRestoreGame();
-					CPtr = NULL;
-
-					MainDisplay = true;
-
-					CurInv = MAPNUM;
-					LastInv = MAPNUM;
-
-					Test = getInvName(CurInv);
-
-					drawPanel();
-
-					if (doit) {
-						drawMessage("Disk operation failed.");
-						VGASetPal(initcolors, 8);
-
-						WSDL_UpdateScreen();
-
-						g_system->delayMillis(1000);
-					} else {
-						WSDL_UpdateScreen();
-					}
-				} else if (GadID == 1) {
-					if (!doUse(CurInv)) {
-						Old        = ActionMode;
-						ActionMode = 5;  /* Use button */
-
-						if (Old < 5)
-							perFlipGadget(Old);
-
-						drawStaticMessage(kTextUseOnWhat);
-						MainDisplay = true;
-
-						WSDL_UpdateScreen();
-					}
-				} else if (GadID == 2) {
-					MainDisplay = !MainDisplay;
-
-					if ((CurInv == 0) || (CurInv > NumInv)) {
-						CurInv = 1;
-
-						while ((CurInv <= NumInv) && (!_conditions->in(CurInv)))
-							CurInv++;
-					}
-
-					if ((CurInv <= NumInv) && _conditions->in(CurInv) &&
-					        Inventory[CurInv].BInvName)
-						Test = getInvName(CurInv);
-
-					WSDL_UpdateScreen();
-				} else if (GadID == 3) { /* Left gadget */
-					decIncInv(&CurInv, true);
-					LastInv = CurInv;
-					DoNotDrawMessage = false;
-					drawRoomMessage(CurInv, CPtr);
-
-					WSDL_UpdateScreen();
-				} else if (GadID == 4) { /* Right gadget */
-					decIncInv(&CurInv, false);
-					LastInv = CurInv;
-					DoNotDrawMessage = false;
-					drawRoomMessage(CurInv, CPtr);
-
-					WSDL_UpdateScreen();
-				} else if (GadID == 5) { /* bread crumbs */
-					_breadCrumbs[0]._roomNum = 0;
-					_numCrumbs = 0;
-					_droppingCrumbs = true;
-					mayShowCrumbIndicator();
-					WSDL_UpdateScreen();
-				} else if (GadID == 6) { /* follow crumbs */
-					if (_droppingCrumbs) {
-						if (_numCrumbs > 0) {
-							_followingCrumbs = true;
-							_followCrumbsFast = false;
-							_isCrumbTurning = false;
-							_isCrumbWaiting = false;
-							getTime(&_crumbSecs, &_crumbMicros);
-
-							eatMessages();
-							Alternate = false;
-							DoBlack = true;
-							DoNotDrawMessage = false;
-
-							MainDisplay = true;
-							interfaceOn(); /* Sets the correct gadget list */
-							drawPanel();
-							drawRoomMessage(CurInv, CPtr);
-							WSDL_UpdateScreen();
-						} else {
-							_breadCrumbs[0]._roomNum = 0;
-							_droppingCrumbs = false;
-
-							// Need to hide indicator!!!!
-							mayShowCrumbIndicatorOff();
-							WSDL_UpdateScreen();
-						}
-					}
-				}
-			} else if ((Class == MOUSEBUTTONS) && (IEQUALIFIER_LEFTBUTTON & Qualifier) && MainDisplay) {
-				interfaceOff();
-				MainDisplay = true;
-
-				doit = false;
-
-				if (CPtr) {
-					if ((CPtr->CloseUpType == SPECIALLOCK) && MainDisplay) /* LAB: Labyrinth specific code */
-						mouseCombination(curPos);
-					else if ((CPtr->CloseUpType == SPECIALBRICK) && MainDisplay)
-						mouseTile(curPos);
-					else
-						doit = true;
-				} else
-					doit = true;
-
-
-				if (doit) {
-					HCPtr = NULL;
-					eatMessages();
-
-					if (ActionMode == 0) { /* Take something. */
-						if (doActionRule(Common::Point(curPos.x, curPos.y), ActionMode, _roomNum, &CPtr))
-							CurFileName = NewFileName;
-						else if (takeItem(curPos.x, curPos.y, &CPtr))
-							drawStaticMessage(kTextTakeItem);
-						else if (doActionRule(curPos, TAKEDEF - 1, _roomNum, &CPtr))
-							CurFileName = NewFileName;
-						else if (doActionRule(curPos, TAKE - 1, 0, &CPtr))
-							CurFileName = NewFileName;
-						else if (curPos.y < (VGAScaleY(149) + SVGACord(2)))
-							drawStaticMessage(kTextNothing);
-					} else if ((ActionMode == 1) /* Manipulate an object */  ||
-					         (ActionMode == 2) /* Open up a "door" */      ||
-					         (ActionMode == 3)) { /* Close a "door" */
-						if (doActionRule(curPos, ActionMode, _roomNum, &CPtr))
-							CurFileName = NewFileName;
-						else if (!doActionRule(curPos, ActionMode, 0, &CPtr)) {
-							if (curPos.y < (VGAScaleY(149) + SVGACord(2)))
-								drawStaticMessage(kTextNothing);
-						}
-					} else if (ActionMode == 4) { /* Look at closeups */
-						TempCPtr = CPtr;
-						setCurClose(curPos, &TempCPtr);
-
-						if (CPtr == TempCPtr) {
-							if (curPos.y < (VGAScaleY(149) + SVGACord(2)))
-								drawStaticMessage(kTextNothing);
-						} else if (TempCPtr->GraphicName) {
-							if (*(TempCPtr->GraphicName)) {
-								DoBlack = true;
-								CPtr = TempCPtr;
-							} else if (curPos.y < (VGAScaleY(149) + SVGACord(2)))
-								drawStaticMessage(kTextNothing);
-						} else if (curPos.y < (VGAScaleY(149) + SVGACord(2)))
-							drawStaticMessage(kTextNothing);
-					} else if ((ActionMode == 5)  &&
-					         _conditions->in(CurInv)) { /* Use an item on something else */
-						if (doOperateRule(curPos.x, curPos.y, CurInv, &CPtr)) {
-							CurFileName = NewFileName;
-
-							if (!_conditions->in(CurInv))
-								decIncInv(&CurInv, false);
-						} else if (curPos.y < (VGAScaleY(149) + SVGACord(2)))
-							drawStaticMessage(kTextNothing);
-					}
-				}
-
-				mayShowCrumbIndicator();
-				WSDL_UpdateScreen();
-			} else if (Class == DELTAMOVE) {
-				VPtr = getViewData(_roomNum, Direction);
-				OldCPtr = VPtr->closeUps;
-
-				if (HCPtr == NULL) {
-					TempCPtr = CPtr;
-					setCurClose(curPos, &TempCPtr);
-
-					if ((TempCPtr == NULL) || (TempCPtr == CPtr)) {
-						if (CPtr == NULL)
-							HCPtr = OldCPtr;
-						else
-							HCPtr = CPtr->SubCloseUps;
-					} else
-						HCPtr = TempCPtr->NextCloseUp;
-				} else
-					HCPtr = HCPtr->NextCloseUp;
-
-
-				if (HCPtr == NULL) {
-					if (CPtr == NULL)
-						HCPtr = OldCPtr;
-					else
-						HCPtr = CPtr->SubCloseUps;
-				}
-
-				if (HCPtr)
-					_event->setMousePos(Common::Point(scaleX((HCPtr->x1 + HCPtr->x2) / 2), scaleY((HCPtr->y1 + HCPtr->y2) / 2)));
-			} else if ((Class == MOUSEBUTTONS) && (IEQUALIFIER_RBUTTON & Qualifier)) {
-				eatMessages();
-				Alternate = !Alternate;
-				DoBlack = true;
-				DoNotDrawMessage = false;
-				MainDisplay = true;
-				interfaceOn(); /* Sets the correct gadget list */
-
-				if (Alternate) {
-					if (LastInv && _conditions->in(LastInv))
-						CurInv = LastInv;
-					else
-						decIncInv(&CurInv, false);
-				}
-
-				drawPanel();
-				drawRoomMessage(CurInv, CPtr);
-
-				mayShowCrumbIndicator();
-				WSDL_UpdateScreen();
-			}
+			if (!from_crumbs(curMsg->msgClass, curMsg->code, curMsg->qualifier, curPos, curInv, curMsg, forceDraw, curMsg->gadgetID, actionMode))
+				break;
 		}
 	}
 
@@ -1270,16 +766,521 @@ from_crumbs:
 	}
 
 	if (Inventory) {
-		for (code = 1; code <= NumInv; code++) {
-			if (Inventory[code].name)
-				free(Inventory[code].name);
+		for (int i = 1; i <= NumInv; i++) {
+			if (Inventory[i].name)
+				free(Inventory[i].name);
 
-			if (Inventory[code].BInvName)
-				free(Inventory[code].BInvName);
+			if (Inventory[i].BInvName)
+				free(Inventory[i].BInvName);
 		}
 
 		free(Inventory);
 	}
+}
+
+bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Common::Point tmpPos, uint16 &curInv, IntuiMessage *curMsg, bool &forceDraw, uint16 gadgetId, uint16 &actionMode) {
+	uint32 msgClass = tmpClass;
+	Common::Point curPos = tmpPos;
+
+	uint16 OldRoomNum, OldDirection = 0;
+	uint16 LastInv = MAPNUM, Old;
+	CloseDataPtr OldCPtr, TempCPtr, HCPtr = NULL;
+	ViewData *VPtr;
+	bool doit;
+	uint16 NewDir;
+
+
+	DoBlack = false;
+
+	if ((msgClass == RAWKEY) && (!LongWinInFront)) {
+		if (code == 13) { /* The return key */
+			msgClass     = MOUSEBUTTONS;
+			Qualifier = IEQUALIFIER_LEFTBUTTON;
+			curPos = _event->getMousePos();
+		} else if (getPlatform() == Common::kPlatformWindows &&
+				(code == 'b' || code == 'B')) {  /* Start bread crumbs */
+			_breadCrumbs[0]._roomNum = 0;
+			_numCrumbs = 0;
+			_droppingCrumbs = true;
+			mayShowCrumbIndicator();
+			WSDL_UpdateScreen();
+		} else if (code == 'f' || code == 'F' ||
+		         code == 'r' || code == 'R') {  /* Follow bread crumbs */
+			if (_droppingCrumbs) {
+				if (_numCrumbs > 0) {
+					_followingCrumbs = true;
+					_followCrumbsFast = (code == 'r' || code == 'R');
+					_isCrumbTurning = false;
+					_isCrumbWaiting = false;
+					getTime(&_crumbSecs, &_crumbMicros);
+
+					if (Alternate) {
+						eatMessages();
+						Alternate = false;
+						DoBlack = true;
+						DoNotDrawMessage = false;
+
+						MainDisplay = true;
+						interfaceOn(); /* Sets the correct gadget list */
+						drawPanel();
+						drawRoomMessage(curInv, CPtr);
+						WSDL_UpdateScreen();
+					}
+				} else {
+					_breadCrumbs[0]._roomNum = 0;
+					_droppingCrumbs = false;
+
+					// Need to hide indicator!!!!
+					mayShowCrumbIndicatorOff();
+					WSDL_UpdateScreen();
+				}
+			}
+		} else if ((code == 315) || (code == 'x') || (code == 'X')
+		         || (code == 'q') || (code == 'Q')) {  /* Quit? */
+			DoNotDrawMessage = false;
+			drawMessage("Do you want to quit? (Y/N)");
+			doit = false;
+			eatMessages();
+			interfaceOff();
+
+			while (1) {
+				_music->updateMusic();  /* Make sure we check the music at least after every message */
+				curMsg = getMsg();
+
+				if (curMsg == NULL) { /* Does music load and next animation frame when you've run out of messages */
+					_music->updateMusic();
+					diffNextFrame();
+				} else {
+					if (curMsg->msgClass == RAWKEY) {
+						if ((curMsg->code == 'Y') || (curMsg->code == 'y') || (curMsg->code == 'Q') || (curMsg->code == 'q')) {
+							doit = true;
+							break;
+						} else if (curMsg->code < 128) {
+							break;
+						}
+					} else if (curMsg->msgClass == MOUSEBUTTONS) {
+						break;
+					}
+				}
+			}
+
+			if (doit) {
+				stopDiff();
+				return false;
+			} else {
+				forceDraw = true;
+				interfaceOn();
+			}
+		} else if (code == 9) { /* TAB key */
+			msgClass = DELTAMOVE;
+		} else if (code == 27) { /* ESC key */
+			CPtr = NULL;
+		}
+
+		eatMessages();
+	}
+
+	if (LongWinInFront) {
+		if ((msgClass == RAWKEY) ||
+		        ((msgClass == MOUSEBUTTONS) &&
+		         ((IEQUALIFIER_LEFTBUTTON & Qualifier) ||
+		          (IEQUALIFIER_RBUTTON & Qualifier)))) {
+			LongWinInFront = false;
+			DoNotDrawMessage = false;
+			drawPanel();
+			drawRoomMessage(curInv, CPtr);
+			WSDL_UpdateScreen();
+		}
+	} else if ((msgClass == GADGETUP) && !Alternate) {
+		if (gadgetId <= 5) {
+			if ((actionMode == 4) && (gadgetId == 4) && (CPtr != NULL)) {
+				doMainView(&CPtr);
+
+				DoBlack = true;
+				HCPtr = NULL;
+				CPtr = NULL;
+				mayShowCrumbIndicator();
+				WSDL_UpdateScreen();
+			} else if (gadgetId == 5) {
+				eatMessages();
+
+				Alternate = true;
+				DoBlack = true;
+				DoNotDrawMessage = false;
+				interfaceOn(); /* Sets the correct gadget list */
+
+				MainDisplay = false;
+
+				if (LastInv && _conditions->in(LastInv)) {
+					curInv = LastInv;
+					Test = getInvName(curInv);
+				} else
+					decIncInv(&curInv, false);
+
+				drawPanel();
+				drawRoomMessage(curInv, CPtr);
+
+				mayShowCrumbIndicator();
+				WSDL_UpdateScreen();
+			} else {
+				Old        = actionMode;
+				actionMode = gadgetId;
+
+				if (Old < 5)
+					perFlipGadget(Old);
+
+				perFlipGadget(actionMode);
+
+				if (gadgetId == 0)
+					drawStaticMessage(kTextTakeWhat);
+				else if (gadgetId == 1)
+					drawStaticMessage(kTextMoveWhat);
+				else if (gadgetId == 2)
+					drawStaticMessage(kTextOpenWhat);
+				else if (gadgetId == 3)
+					drawStaticMessage(kTextCloseWhat);
+				else if (gadgetId == 4)
+					drawStaticMessage(kTextLookWhat);
+
+				WSDL_UpdateScreen();
+			}
+		} else if (gadgetId == 9) {
+			doUse(MAPNUM);
+
+			mayShowCrumbIndicator();
+			WSDL_UpdateScreen();
+		} else if (gadgetId >= 6) { /* Arrow Gadgets */
+			CPtr = NULL;
+			HCPtr = NULL;
+
+			if ((gadgetId == 6) || (gadgetId == 8)) {
+				if (gadgetId == 6)
+					drawStaticMessage(kTextTurnLeft);
+				else
+					drawStaticMessage(kTextTurnRight);
+
+				CurFileName = " ";
+
+				OldDirection = Direction;
+
+				NewDir = Direction;
+				processArrow(&NewDir, gadgetId - 6);
+				doTurn(Direction, NewDir, &CPtr);
+				DoBlack = true;
+				Direction = NewDir;
+				forceDraw = true;
+
+				mayShowCrumbIndicator();
+				WSDL_UpdateScreen();
+			} else if (gadgetId == 7) {
+				OldRoomNum = _roomNum;
+
+				if (doGoForward(&CPtr)) {
+					if (OldRoomNum == _roomNum)
+						DoBlack = true;
+				} else {
+					DoBlack = true;
+					processArrow(&Direction, gadgetId - 6);
+
+					if (OldRoomNum != _roomNum) {
+						drawStaticMessage(kTextGoForward);
+						_roomsFound->inclElement(_roomNum); /* Potentially entered a new room */
+						CurFileName = " ";
+						forceDraw = true;
+					} else {
+						DoBlack = true;
+						drawStaticMessage(kTextNoPath);
+					}
+				}
+
+				if (_followingCrumbs) {
+					if (_isCrumbTurning) {
+						if (Direction == OldDirection) {
+							_followingCrumbs = false;
+						}
+					} else {
+						if (_roomNum == OldRoomNum) { // didn't get there?
+							_followingCrumbs = false;
+						}
+					}
+				} else if (_droppingCrumbs && OldRoomNum != _roomNum) {
+					// If in surreal maze, turn off DroppingCrumbs.
+					// Note: These numbers were generated by parsing the
+					// "Maps" file, which is why they are hard-coded. Bleh!
+					if (_roomNum >= 245 && _roomNum <= 280) {
+						_followingCrumbs = false;
+						_droppingCrumbs = false;
+						_numCrumbs = 0;
+						_breadCrumbs[0]._roomNum = 0;
+					} else {
+						bool intersect = false;
+						for (int idx = 0; idx < _numCrumbs; idx++) {
+							if (_breadCrumbs[idx]._roomNum == _roomNum) {
+								_numCrumbs = idx + 1;
+								_breadCrumbs[_numCrumbs]._roomNum = 0;
+								intersect = true;
+							}
+						}
+
+						if (!intersect) {
+							if (_numCrumbs == MAX_CRUMBS) {
+								_numCrumbs = MAX_CRUMBS - 1;
+								memcpy(&_breadCrumbs[0], &_breadCrumbs[1], _numCrumbs * sizeof _breadCrumbs[0]);
+							}
+
+							_breadCrumbs[_numCrumbs]._roomNum = _roomNum;
+							_breadCrumbs[_numCrumbs++]._direction = Direction;
+						}
+					}
+				}
+
+				mayShowCrumbIndicator();
+				WSDL_UpdateScreen();
+			}
+		}
+	} else if ((msgClass == GADGETUP) && Alternate) {
+		DoBlack = true;
+
+		if (gadgetId == 0) {
+			eatMessages();
+			Alternate = false;
+			DoBlack = true;
+			DoNotDrawMessage = false;
+
+			MainDisplay = true;
+			interfaceOn(); /* Sets the correct gadget list */
+			drawPanel();
+			drawRoomMessage(curInv, CPtr);
+
+			WSDL_UpdateScreen();
+		}
+
+		gadgetId--;
+
+		if (gadgetId == 0) {
+			interfaceOff();
+			stopDiff();
+			CurFileName = " ";
+
+			doit = !saveRestoreGame();
+			CPtr = NULL;
+
+			MainDisplay = true;
+
+			curInv = MAPNUM;
+			LastInv = MAPNUM;
+
+			Test = getInvName(curInv);
+
+			drawPanel();
+
+			if (doit) {
+				drawMessage("Disk operation failed.");
+				VGASetPal(initcolors, 8);
+
+				WSDL_UpdateScreen();
+
+				g_system->delayMillis(1000);
+			} else {
+				WSDL_UpdateScreen();
+			}
+		} else if (gadgetId == 1) {
+			if (!doUse(curInv)) {
+				Old        = actionMode;
+				actionMode = 5;  /* Use button */
+
+				if (Old < 5)
+					perFlipGadget(Old);
+
+				drawStaticMessage(kTextUseOnWhat);
+				MainDisplay = true;
+
+				WSDL_UpdateScreen();
+			}
+		} else if (gadgetId == 2) {
+			MainDisplay = !MainDisplay;
+
+			if ((curInv == 0) || (curInv > NumInv)) {
+				curInv = 1;
+
+				while ((curInv <= NumInv) && (!_conditions->in(curInv)))
+					curInv++;
+			}
+
+			if ((curInv <= NumInv) && _conditions->in(curInv) &&
+			        Inventory[curInv].BInvName)
+				Test = getInvName(curInv);
+
+			WSDL_UpdateScreen();
+		} else if (gadgetId == 3) { /* Left gadget */
+			decIncInv(&curInv, true);
+			LastInv = curInv;
+			DoNotDrawMessage = false;
+			drawRoomMessage(curInv, CPtr);
+
+			WSDL_UpdateScreen();
+		} else if (gadgetId == 4) { /* Right gadget */
+			decIncInv(&curInv, false);
+			LastInv = curInv;
+			DoNotDrawMessage = false;
+			drawRoomMessage(curInv, CPtr);
+
+			WSDL_UpdateScreen();
+		} else if (gadgetId == 5) { /* bread crumbs */
+			_breadCrumbs[0]._roomNum = 0;
+			_numCrumbs = 0;
+			_droppingCrumbs = true;
+			mayShowCrumbIndicator();
+			WSDL_UpdateScreen();
+		} else if (gadgetId == 6) { /* follow crumbs */
+			if (_droppingCrumbs) {
+				if (_numCrumbs > 0) {
+					_followingCrumbs = true;
+					_followCrumbsFast = false;
+					_isCrumbTurning = false;
+					_isCrumbWaiting = false;
+					getTime(&_crumbSecs, &_crumbMicros);
+
+					eatMessages();
+					Alternate = false;
+					DoBlack = true;
+					DoNotDrawMessage = false;
+
+					MainDisplay = true;
+					interfaceOn(); /* Sets the correct gadget list */
+					drawPanel();
+					drawRoomMessage(curInv, CPtr);
+					WSDL_UpdateScreen();
+				} else {
+					_breadCrumbs[0]._roomNum = 0;
+					_droppingCrumbs = false;
+
+					// Need to hide indicator!!!!
+					mayShowCrumbIndicatorOff();
+					WSDL_UpdateScreen();
+				}
+			}
+		}
+	} else if ((msgClass == MOUSEBUTTONS) && (IEQUALIFIER_LEFTBUTTON & Qualifier) && MainDisplay) {
+		interfaceOff();
+		MainDisplay = true;
+
+		doit = false;
+
+		if (CPtr) {
+			if ((CPtr->CloseUpType == SPECIALLOCK) && MainDisplay) /* LAB: Labyrinth specific code */
+				mouseCombination(curPos);
+			else if ((CPtr->CloseUpType == SPECIALBRICK) && MainDisplay)
+				mouseTile(curPos);
+			else
+				doit = true;
+		} else
+			doit = true;
+
+
+		if (doit) {
+			HCPtr = NULL;
+			eatMessages();
+
+			if (actionMode == 0) { /* Take something. */
+				if (doActionRule(Common::Point(curPos.x, curPos.y), actionMode, _roomNum, &CPtr))
+					CurFileName = NewFileName;
+				else if (takeItem(curPos.x, curPos.y, &CPtr))
+					drawStaticMessage(kTextTakeItem);
+				else if (doActionRule(curPos, TAKEDEF - 1, _roomNum, &CPtr))
+					CurFileName = NewFileName;
+				else if (doActionRule(curPos, TAKE - 1, 0, &CPtr))
+					CurFileName = NewFileName;
+				else if (curPos.y < (VGAScaleY(149) + SVGACord(2)))
+					drawStaticMessage(kTextNothing);
+			} else if ((actionMode == 1) /* Manipulate an object */  ||
+			         (actionMode == 2) /* Open up a "door" */      ||
+			         (actionMode == 3)) { /* Close a "door" */
+				if (doActionRule(curPos, actionMode, _roomNum, &CPtr))
+					CurFileName = NewFileName;
+				else if (!doActionRule(curPos, actionMode, 0, &CPtr)) {
+					if (curPos.y < (VGAScaleY(149) + SVGACord(2)))
+						drawStaticMessage(kTextNothing);
+				}
+			} else if (actionMode == 4) { /* Look at closeups */
+				TempCPtr = CPtr;
+				setCurClose(curPos, &TempCPtr);
+
+				if (CPtr == TempCPtr) {
+					if (curPos.y < (VGAScaleY(149) + SVGACord(2)))
+						drawStaticMessage(kTextNothing);
+				} else if (TempCPtr->GraphicName) {
+					if (*(TempCPtr->GraphicName)) {
+						DoBlack = true;
+						CPtr = TempCPtr;
+					} else if (curPos.y < (VGAScaleY(149) + SVGACord(2)))
+						drawStaticMessage(kTextNothing);
+				} else if (curPos.y < (VGAScaleY(149) + SVGACord(2)))
+					drawStaticMessage(kTextNothing);
+			} else if ((actionMode == 5)  &&
+			         _conditions->in(curInv)) { /* Use an item on something else */
+				if (doOperateRule(curPos.x, curPos.y, curInv, &CPtr)) {
+					CurFileName = NewFileName;
+
+					if (!_conditions->in(curInv))
+						decIncInv(&curInv, false);
+				} else if (curPos.y < (VGAScaleY(149) + SVGACord(2)))
+					drawStaticMessage(kTextNothing);
+			}
+		}
+
+		mayShowCrumbIndicator();
+		WSDL_UpdateScreen();
+	} else if (msgClass == DELTAMOVE) {
+		VPtr = getViewData(_roomNum, Direction);
+		OldCPtr = VPtr->closeUps;
+
+		if (HCPtr == NULL) {
+			TempCPtr = CPtr;
+			setCurClose(curPos, &TempCPtr);
+
+			if ((TempCPtr == NULL) || (TempCPtr == CPtr)) {
+				if (CPtr == NULL)
+					HCPtr = OldCPtr;
+				else
+					HCPtr = CPtr->SubCloseUps;
+			} else
+				HCPtr = TempCPtr->NextCloseUp;
+		} else
+			HCPtr = HCPtr->NextCloseUp;
+
+
+		if (HCPtr == NULL) {
+			if (CPtr == NULL)
+				HCPtr = OldCPtr;
+			else
+				HCPtr = CPtr->SubCloseUps;
+		}
+
+		if (HCPtr)
+			_event->setMousePos(Common::Point(scaleX((HCPtr->x1 + HCPtr->x2) / 2), scaleY((HCPtr->y1 + HCPtr->y2) / 2)));
+	} else if ((msgClass == MOUSEBUTTONS) && (IEQUALIFIER_RBUTTON & Qualifier)) {
+		eatMessages();
+		Alternate = !Alternate;
+		DoBlack = true;
+		DoNotDrawMessage = false;
+		MainDisplay = true;
+		interfaceOn(); /* Sets the correct gadget list */
+
+		if (Alternate) {
+			if (LastInv && _conditions->in(LastInv))
+				curInv = LastInv;
+			else
+				decIncInv(&curInv, false);
+		}
+
+		drawPanel();
+		drawRoomMessage(curInv, CPtr);
+
+		mayShowCrumbIndicator();
+		WSDL_UpdateScreen();
+	}
+	return true;
 }
 
 void LabEngine::go() {

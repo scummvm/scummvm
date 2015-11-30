@@ -131,6 +131,7 @@ private:
 
 private:
 	bool createScreen(bool HiRes);
+	bool from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Common::Point tmpPos, uint16 &curInv, IntuiMessage * curMsg, bool &forceDraw, uint16 gadgetId, uint16 &actionMode);
 
 public:
 	void waitTOF();
