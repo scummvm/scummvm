@@ -54,10 +54,6 @@ namespace Lab {
 /* Lab: Labyrinth specific */
 extern byte combination[6];
 extern uint16 CurTile[4] [4];
-extern CrumbData BreadCrumbs[MAX_CRUMBS];
-extern uint16 NumCrumbs;
-extern bool DroppingCrumbs;
-extern bool FollowingCrumbs;
 extern char *getPictName(CloseDataPtr *LCPtr);
 
 void writeSaveGameHeader(Common::OutSaveFile *out, const Common::String &saveName) {
@@ -168,9 +164,9 @@ bool saveGame(uint16 Direction, uint16 Quarters, int slot, Common::String desc) 
 			file->writeUint16LE(CurTile[i][j]);
 
 	// Breadcrumbs
-	for (i = 0; i < sizeof(BreadCrumbs); i++) {
-		file->writeUint16LE(BreadCrumbs[i].RoomNum);
-		file->writeUint16LE(BreadCrumbs[i].Direction);
+	for (i = 0; i < sizeof(g_lab->_breadCrumbs); i++) {
+		file->writeUint16LE(g_lab->_breadCrumbs[i]._roomNum);
+		file->writeUint16LE(g_lab->_breadCrumbs[i]._direction);
 	}
 
 	file->flush();
@@ -219,17 +215,17 @@ bool loadGame(uint16 *Direction, uint16 *Quarters, int slot) {
 
 	// Breadcrumbs
 	for (i = 0; i < 128; i++) {
-		BreadCrumbs[i].RoomNum = file->readUint16LE();
-		BreadCrumbs[i].Direction = file->readUint16LE();
+		g_lab->_breadCrumbs[i]._roomNum = file->readUint16LE();
+		g_lab->_breadCrumbs[i]._direction = file->readUint16LE();
 	}
 
-	DroppingCrumbs = (BreadCrumbs[0].RoomNum != 0);
-	FollowingCrumbs = false;
+	g_lab->_droppingCrumbs = (g_lab->_breadCrumbs[0]._roomNum != 0);
+	g_lab->_followingCrumbs = false;
 
 	for (i = 0; i < 128; i++) {
-		if (BreadCrumbs[i].RoomNum == 0)
+		if (g_lab->_breadCrumbs[i]._roomNum == 0)
 			break;
-		NumCrumbs = i;
+		g_lab->_numCrumbs = i;
 	}
 
 	delete file;

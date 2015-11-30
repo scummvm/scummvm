@@ -108,6 +108,17 @@ public:
 	byte *_currentDsplayBuffer;
 	Common::Point _mousePos;
 
+	CrumbData _breadCrumbs[MAX_CRUMBS];
+	uint16 _numCrumbs;
+	bool _droppingCrumbs;
+	bool _followingCrumbs;
+	bool _followCrumbsFast;
+	bool _isCrumbTurning;
+	uint32 _crumbSecs, _crumbMicros;
+	bool _isCrumbWaiting;
+	byte *_tempScrollData;
+	bool _isHiRes;
+
 private:
 	byte *_displayBuffer;
 
@@ -117,9 +128,6 @@ private:
 	uint16 _keyBuf[64];
 	uint16 _nextKeyOut;
 	bool _mouseAtEdge;
-public:
-	byte *_tempScrollData;
-	bool _isHiRes;
 
 private:
 	bool createScreen(bool HiRes);
@@ -173,6 +181,7 @@ public:
 	void eatMessages();
 	void drawStaticMessage(byte index);
 	void drawDirection(CloseDataPtr LCPtr);
+	int followCrumbs();
 
 private:
 	void quickWaitTOF();
