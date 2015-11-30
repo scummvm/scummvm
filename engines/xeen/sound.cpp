@@ -39,5 +39,8 @@ void SoundManager::startMusic(int v1) {
 
 }
 
+void SoundManager::stopMusic(int id) {
+}
+
 
 } // End of namespace Xeen

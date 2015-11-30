@@ -25,7 +25,7 @@
 
 namespace Xeen {
 
-void showDarkSideTitle(XeenEngine &vm) {
+bool showDarkSideTitle(XeenEngine &vm) {
 	EventsManager &events = *vm._events;
 	Screen &screen = *vm._screen;
 	SoundManager &sound = *vm._sound;
@@ -41,18 +41,7 @@ void showDarkSideTitle(XeenEngine &vm) {
 	voc[0].open("dragon1.voc");
 	voc[1].open("dragon2.voc");
 	voc[2].open("dragon3.voc");
-/*
-	Common::File f;
-	f.open("adsnd");
-	Common::DumpFile df;
-	byte *b = new byte[f.size()];
-	f.read(b, f.size());
-	df.open("d:\\temp\\adsnd.bin");
-	df.write(b, f.size());
-	df.close();
-	f.close();
-	delete[] b;
-	*/
+
 	// Load backgrounds
 	screen.loadBackground("nwc1.raw");
 	screen.loadPage(0);
@@ -90,10 +79,8 @@ void showDarkSideTitle(XeenEngine &vm) {
 		}
 
 		if (events.wait(2, true))
-			return;
+			return false;
 	}
-	if (vm.shouldQuit())
-		return;
 
 	// Loop for dragon using flyspray
 	for (int idx = 0; idx < 42 && !vm.shouldQuit(); ++idx) {
@@ -123,35 +110,41 @@ void showDarkSideTitle(XeenEngine &vm) {
 		}
 
 		if (events.wait(2, true))
-			return;
+			return false;
 	}
 
 	// Pause for a bit
 	if (events.wait(10, true))
-		return;
-	if (vm.shouldQuit())
-		return;
+		return false;
 
 	voc[0].stop();
 	voc[1].stop();
 	voc[2].stop();
-
-
-	screen.fadeOut(8);
-	//TODO: Stuff
+	sound.stopMusic(95);
 
 	screen.loadBackground("jvc.raw");
+	screen.fadeOut(8);
 	screen.draw();
 	screen.fadeIn(4);
 
 	events.updateGameCounter();
 	events.wait(60, true);
+	return true;
 }
 
-void showDarkSideIntro(XeenEngine &vm) {
+bool showDarkSideIntro(XeenEngine &vm) {
 	EventsManager &events = *vm._events;
 	Screen &screen = *vm._screen;
 	SoundManager &sound = *vm._sound;
+	const int XLIST1[] = {
+		0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 58, 60, 62
+	};
+	const int YLIST1[] = {
+		0, 5, 10, 15, 20, 25, 30, 35, 40, 40, 39, 37, 35, 33, 31
+	};
+	const int XLIST2[] = {
+		160, 155, 150, 145, 140, 135, 130, 125, 120, 115, 110, 105, 98, 90, 82
+	};
 
 	screen.fadeOut(8);
 	screen.loadBackground("pyramid2.raw");
@@ -171,38 +164,42 @@ void showDarkSideIntro(XeenEngine &vm) {
 	screen.loadPage(0);
 	screen.loadPage(1);
 
+	// Show Might and Magic Darkside of Xeen title, and gradualy scroll
+	// the background vertically down to show the Pharoah's base
 	int yp = 0;
-	int frame = 0;
+	int frameNum = 0;
 	int idx1 = 0;
 	bool skipElapsed = false;
 	uint32 timeExpired = 0;
-	//	bool fadeFlag = true;
+	bool fadeFlag = true;
 
-	for (int idx = 200; idx > 0; ) {
+	for (int yCtr = SCREEN_HEIGHT; yCtr > 0; ) {
 		events.updateGameCounter();
 		screen.vertMerge(yp);
 
 		sprites[0].draw(screen, 0);
-		if (frame)
-			sprites[0].draw(screen, frame);
+		if (frameNum)
+			sprites[0].draw(screen, frameNum);
 
 		idx1 = (idx1 + 1) % 4;
 		if (!idx1)
-			frame = (frame + 1) % 10;
+			frameNum = (frameNum + 1) % 10;
 
 		screen.draw();
 		if (!skipElapsed) {
-			timeExpired = MAX(events.timeElapsed(), (uint32)1);
+			timeExpired = MAX((int)events.timeElapsed() - 1, 1);
 			skipElapsed = true;
 		}
 
-		idx -= timeExpired;
-		frame = MIN(frame + timeExpired, (uint)200);
+		yCtr -= timeExpired;
+		yp = MIN(yp + timeExpired, (uint)200);
 		 
-		while (events.timeElapsed() < 1) {
-			events.pollEventsAndWait();
-			if (events.isKeyMousePressed())
-				return;
+		if (events.wait(1, true))
+			return false;
+
+		if (fadeFlag) {
+			screen.fadeIn(4);
+			fadeFlag = false;
 		}
 	}
 
@@ -214,9 +211,24 @@ void showDarkSideIntro(XeenEngine &vm) {
 	events.updateGameCounter();
 	events.wait(30, true);
 
+	// Zoom into the Pharoah's base closeup view
+	for (int idx = 14; idx >= 0; --idx) {
+		events.updateGameCounter();
+		sprites[1].draw(screen, 0, Common::Point(XLIST1[idx], YLIST1[idx]));
+		sprites[1].draw(screen, 1, Common::Point(XLIST2[idx], YLIST1[idx]));
+		screen.draw();
+
+		if (idx == 2)
+			sound.stopMusic(48);
+		if (events.wait(2, true))
+			return false;
+	}
+
 	// TODO: More
 	sound.playSong(voc[0]);
 	sound.playSong(voc[1]);
+
+	return true;
 }
 
 } // End of namespace Xeen

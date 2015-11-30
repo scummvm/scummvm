@@ -28,6 +28,7 @@ namespace Xeen {
 
 WorldOfXeenEngine::WorldOfXeenEngine(OSystem *syst, const XeenGameDescription *gameDesc)
 		: XeenEngine(syst, gameDesc) {
+	_seenDarkSideIntro = false;
 }
 
 void WorldOfXeenEngine::showIntro() {
@@ -35,7 +36,9 @@ void WorldOfXeenEngine::showIntro() {
 	if (gDebugLevel == 0)
 		return;
 
-	showDarkSideTitle(*this);
+	bool completed = showDarkSideTitle(*this);
+	if (!_seenDarkSideIntro && completed)
+		showDarkSideIntro(*this);
 }
 
 } // End of namespace Xeen

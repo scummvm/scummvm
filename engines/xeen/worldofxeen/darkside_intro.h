@@ -27,9 +27,9 @@
 
 namespace Xeen {
 
-void showDarkSideTitle(XeenEngine &vm);
+bool showDarkSideTitle(XeenEngine &vm);
 
-void showDarkSideIntro(XeenEngine &vm);
+bool showDarkSideIntro(XeenEngine &vm);
 
 } // End of namespace Xeen
 

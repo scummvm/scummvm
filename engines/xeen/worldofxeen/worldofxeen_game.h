@@ -36,6 +36,8 @@ class WorldOfXeenEngine: public XeenEngine {
 protected:
 	virtual void showIntro();
 public:
+	bool _seenDarkSideIntro;
+public:
 	WorldOfXeenEngine(OSystem *syst, const XeenGameDescription *gameDesc);
 	virtual ~WorldOfXeenEngine() {}
 };

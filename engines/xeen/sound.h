@@ -57,6 +57,8 @@ public:
 
 	void startMusic(int v1);
 
+	void stopMusic(int id);
+
 	void playSong(Common::SeekableReadStream &f) {}
 
 	void playSound(VOC &voc) {}
