@@ -482,7 +482,7 @@ static void doActions(Action * APtr, CloseDataPtr *LCPtr) {
 		case WAITSECS:
 			g_lab->addCurTime(APtr->Param1, 0, &StartSecs, &StartMicros);
 
-			g_lab->WSDL_UpdateScreen();
+			g_lab->screenUpdate();
 
 			while (1) {
 				g_lab->_music->updateMusic();
@@ -566,7 +566,7 @@ static void doActions(Action * APtr, CloseDataPtr *LCPtr) {
 					diffcmap[idx] = 255 - diffcmap[idx];
 
 				g_lab->waitTOF();
-				g_lab->VGASetPal(diffcmap, 256);
+				g_lab->setPalette(diffcmap, 256);
 				g_lab->waitTOF();
 				g_lab->waitTOF();
 			} else if (APtr->Param1 == 4) { /* white the palette */
@@ -575,7 +575,7 @@ static void doActions(Action * APtr, CloseDataPtr *LCPtr) {
 				g_lab->waitTOF();
 			} else if (APtr->Param1 == 6) { /* Restore the palette */
 				g_lab->waitTOF();
-				g_lab->VGASetPal(diffcmap, 256);
+				g_lab->setPalette(diffcmap, 256);
 				g_lab->waitTOF();
 				g_lab->waitTOF();
 			} else if (APtr->Param1 == 7) { /* Quick pause */

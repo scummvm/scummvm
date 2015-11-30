@@ -155,8 +155,8 @@ Gadget *LabEngine::checkNumGadgetHit(Gadget *gadlist, uint16 key) {
 /* Checks whether or not a key has been pressed.                             */
 /*****************************************************************************/
 static bool keyPress(uint16 *KeyCode) {
-	if (g_lab->WSDL_HasNextChar()) {
-        *KeyCode = g_lab->WSDL_GetNextChar();
+	if (g_lab->haveNextChar()) {
+        *KeyCode = g_lab->getNextChar();
 		return true;
 	}
 

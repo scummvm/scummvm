@@ -465,7 +465,7 @@ void LabEngine::doScrollBlack() {
 		g_lab->setAPen(0);
 		g_lab->rectFill(0, nheight, width - 1, nheight + by - 1);
 
-		g_lab->WSDL_UpdateScreen();
+		g_lab->screenUpdate();
 
 		if (!_isHiRes) {
 			if (nheight <= (height / 8))
@@ -530,7 +530,7 @@ void LabEngine::doScrollWipe(char *filename) {
 
 	IsBM = true;
 	readPict(filename, true);
-	g_lab->VGASetPal(diffcmap, 256);
+	g_lab->setPalette(diffcmap, 256);
 	IsBM = false;
 	mem = RawDiffBM.Planes[0];
 
@@ -552,7 +552,7 @@ void LabEngine::doScrollWipe(char *filename) {
 
 		copyPage(width, height, nheight, startline, mem);
 
-		g_lab->WSDL_UpdateScreen();
+		g_lab->screenUpdate();
 
 		if (!nheight)
 			startline += by;
@@ -601,7 +601,7 @@ void LabEngine::doScrollBounce() {
 		startline -= newby[i];
 		copyPage(width, height, 0, startline, mem);
 
-		g_lab->WSDL_UpdateScreen();
+		g_lab->screenUpdate();
 		g_lab->waitTOF();
 	}
 
@@ -610,7 +610,7 @@ void LabEngine::doScrollBounce() {
 		startline += newby1[i - 1];
 		copyPage(width, height, 0, startline, mem);
 
-		g_lab->WSDL_UpdateScreen();
+		g_lab->screenUpdate();
 		g_lab->waitTOF();
 
 	}
@@ -675,7 +675,7 @@ void LabEngine::doTransWipe(CloseDataPtr *CPtr, char *filename) {
 		CurFileName = getPictName(CPtr);
 
 	byte *BitMapMem = readPictToMem(CurFileName, g_lab->_screenWidth, LastY + 5);
-	g_lab->VGASetPal(diffcmap, 256);
+	g_lab->setPalette(diffcmap, 256);
 
 	if (BitMapMem) {
 		ImSource.Width = g_lab->_screenWidth;

@@ -820,7 +820,7 @@ void LabEngine::processMap(uint16 CurRoom) {
 				}
 			}
 
-			WSDL_UpdateScreen();
+			screenUpdate();
 		}
 	}
 }
@@ -848,7 +848,7 @@ void LabEngine::doMap(uint16 CurRoom) {
 	drawMap(CurRoom, CurRoom, Maps[CurRoom].PageNumber, false, true);
 	_event->mouseShow();
 	_event->attachGadgetList(MapGadgetList);
-	WSDL_UpdateScreen();
+	screenUpdate();
 	processMap(CurRoom);
 	_event->attachGadgetList(NULL);
 	fade(false, 0);
@@ -859,7 +859,7 @@ void LabEngine::doMap(uint16 CurRoom) {
 	freeMapData();
 	blackAllScreen();
 	_event->mouseShow();
-	WSDL_UpdateScreen();
+	screenUpdate();
 }
 
 } // End of namespace Lab

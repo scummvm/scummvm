@@ -69,7 +69,7 @@ Music::Music(LabEngine *vm) : _vm(vm) {
 /* it from the Audio device.                                                 */
 /*****************************************************************************/
 void Music::updateMusic() {
-	_vm->WSDL_ProcessInput(0);
+	_vm->processInput();
 
 	_vm->_event->updateMouse();
 

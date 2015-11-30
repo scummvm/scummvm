@@ -150,7 +150,7 @@ void EventManager::updateMouse() {
 	}
 
 	if (doUpdateDisplay)
-		_vm->WSDL_UpdateScreen();
+		_vm->screenUpdate();
 }
 
 
@@ -173,7 +173,7 @@ void EventManager::mouseShow() {
 		NumHidden--;
 
 	if ((NumHidden == 0) && MouseHidden) {
-		_vm->WSDL_ProcessInput(0);
+		_vm->processInput();
 		MouseHidden = false;
 	}
 
@@ -215,7 +215,7 @@ void EventManager::setMousePos(Common::Point pos) {
 		g_system->warpMouse(pos.x * 2, pos.y);
 
 	if (!MouseHidden)
-		_vm->WSDL_ProcessInput(0);
+		_vm->processInput();
 }
 
 
