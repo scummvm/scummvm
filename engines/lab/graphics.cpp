@@ -225,8 +225,8 @@ static void getLine(TextFont *tf, char *LineBuffer, const char **MainBuffer, uin
 /******************************************************************************/
 uint32 flowText(void *font,      /* the TextAttr pointer */
                 int16 spacing,          /* How much vertical spacing between the lines */
-                uint16 pencolor,         /* pen number to use for text */
-                uint16 backpen,          /* the background color */
+                byte pencolor,         /* pen number to use for text */
+                byte backpen,          /* the background color */
                 bool fillback,                /* Whether to fill the background */
                 bool centerh,                 /* Whether to center the text horizontally */
                 bool centerv,                 /* Whether to center the text vertically */
@@ -292,8 +292,8 @@ uint32 flowText(void *font,      /* the TextAttr pointer */
 /******************************************************************************/
 uint32 flowTextToMem(Image *DestIm, void *font,     /* the TextAttr pointer */
                      int16 spacing,          /* How much vertical spacing between the lines */
-                     uint16 pencolor,         /* pen number to use for text */
-                     uint16 backpen,          /* the background color */
+                     byte pencolor,         /* pen number to use for text */
+                     byte backpen,          /* the background color */
                      bool fillback,                /* Whether to fill the background */
                      bool centerh,                 /* Whether to center the text horizontally */
                      bool centerv,                 /* Whether to center the text vertically */

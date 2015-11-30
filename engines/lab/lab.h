@@ -125,7 +125,7 @@ private:
 
 public:
 	void waitTOF();
-	void setAPen(uint16 pennum);
+	void setAPen(byte pennum);
 	void writeColorRegs(byte *buf, uint16 first, uint16 numreg);
 	byte *getVGABaseAddr();
 	void readScreenImage(Image *Im, uint16 x, uint16 y);

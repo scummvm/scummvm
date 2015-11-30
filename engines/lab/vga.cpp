@@ -524,8 +524,8 @@ void LabEngine::scrollDisplayY(int16 dy, uint16 x1, uint16 y1, uint16 x2, uint16
 /*****************************************************************************/
 /* Sets the pen number to use on all the drawing operations.                 */
 /*****************************************************************************/
-void LabEngine::setAPen(uint16 pennum) {
-	_curapen = (unsigned char)pennum;
+void LabEngine::setAPen(byte pennum) {
+	_curapen = pennum;
 }
 
 /*****************************************************************************/

@@ -115,7 +115,7 @@ void Intro::doPictText(const char *filename, bool isscreen) {
 				fade(false, 0);
 
 			if (isscreen) {
-				g_lab->setAPen(7L);
+				g_lab->setAPen(7);
 				g_lab->rectFill(VGAScaleX(10), VGAScaleY(10), VGAScaleX(310), VGAScaleY(190));
 
 				Drawn = flowText(_msgfont, (!g_lab->_isHiRes) * -1, 5, 7, false, false, true, true, VGAScaleX(14), VGAScaleY(11), VGAScaleX(306), VGAScaleY(189), (char *)curplace);
