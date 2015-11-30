@@ -38,6 +38,7 @@
 #include "lab/labfun.h"
 #include "lab/interface.h"
 #include "lab/mouse.h"
+#include "lab/music.h"
 #include "lab/resource.h"
 
 struct ADGameDescription;
