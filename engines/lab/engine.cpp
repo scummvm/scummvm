@@ -678,7 +678,7 @@ void LabEngine::mainGameLoop() {
 				break;
 			}
 
-			g_music->resumeBackMusic();
+			_music->resumeBackMusic();
 
 			/* Sees what kind of close up we're in and does the appropriate stuff, if any. */
 			if (doCloseUp(CPtr)) {
@@ -734,15 +734,15 @@ void LabEngine::mainGameLoop() {
 			}
 		}
 
-		g_music->updateMusic();  /* Make sure we check the music at least after every message */
+		_music->updateMusic();  /* Make sure we check the music at least after every message */
 		interfaceOn();
 		Msg = getMsg();
 
 		Common::Point curPos;
 		if (Msg == NULL) { /* Does music load and next animation frame when you've run out of messages */
 			GotMessage = false;
-			g_music->checkRoomMusic();
-			g_music->updateMusic();
+			_music->checkRoomMusic();
+			_music->updateMusic();
 			diffNextFrame();
 
 			if (FollowingCrumbs) {
@@ -836,11 +836,11 @@ from_crumbs:
 					interfaceOff();
 
 					while (1) {
-						g_music->updateMusic();  /* Make sure we check the music at least after every message */
+						_music->updateMusic();  /* Make sure we check the music at least after every message */
 						Msg = getMsg();
 
 						if (Msg == NULL) { /* Does music load and next animation frame when you've run out of messages */
-							g_music->updateMusic();
+							_music->updateMusic();
 							diffNextFrame();
 						} else {
 							if (Msg->msgClass == RAWKEY) {
@@ -1326,7 +1326,7 @@ void LabEngine::go() {
 	mem = mem && initRoomBuffer();
 
 	if (!dointro)
-		g_music->initMusic();
+		_music->initMusic();
 
 	MsgFont = _resource->getFont("P:AvanteG.12");
 
@@ -1349,7 +1349,7 @@ void LabEngine::go() {
 		readPict("P:End/L2In.1", true);
 
 		for (uint16 i = 0; i < 120; i++) {
-			g_music->updateMusic();
+			_music->updateMusic();
 			waitTOF();
 		}
 
@@ -1358,7 +1358,7 @@ void LabEngine::go() {
 
 		warning("STUB: waitForPress");
 		while (!1) { // 1 means ignore SDL_ProcessInput calls
-			g_music->updateMusic();
+			_music->updateMusic();
 			diffNextFrame();
 			waitTOF();
 		}
@@ -1369,7 +1369,7 @@ void LabEngine::go() {
 	freeRoomBuffer();
 	freeBuffer();
 
-	g_music->freeMusic();
+	_music->freeMusic();
 }
 
 /*****************************************************************************/

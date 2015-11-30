@@ -68,7 +68,7 @@ bool readPict(const char *filename, bool PlayOnce) {
 
 	stopDiff();
 
-	file = g_lab->g_music->newOpen(filename);
+	file = g_lab->_music->newOpen(filename);
 
 	if (file == NULL) {
 		if ((filename[0] == 'p') || (filename[0] == 'P'))
@@ -94,9 +94,9 @@ bool readPict(const char *filename, bool PlayOnce) {
 /*****************************************************************************/
 bool readMusic(const char *filename, bool waitTillFinished) {
 	Common::File *file = g_lab->_resource->openDataFile(filename, MKTAG('D', 'I', 'F', 'F'));
-	g_lab->g_music->updateMusic();
-	if (!g_lab->g_music->_doNotFilestopSoundEffect)
-		g_lab->g_music->stopSoundEffect();
+	g_lab->_music->updateMusic();
+	if (!g_lab->_music->_doNotFilestopSoundEffect)
+		g_lab->_music->stopSoundEffect();
 	if (!file)
 		return false;
 
@@ -121,7 +121,7 @@ byte *readPictToMem(const char *filename, uint16 x, uint16 y) {
 	allocFile((void **)&Mem, (int32) x * (int32) y, "Bitmap");
 	CurMem = Mem;
 
-	file = g_lab->g_music->newOpen(filename);
+	file = g_lab->_music->newOpen(filename);
 
 	if (file == NULL)
 		return NULL;
@@ -425,9 +425,9 @@ void LabEngine::doScrollBlack() {
 	Im.Width = width;
 	Im.Height = height;
 	Im.ImageData = mem;
-	g_music->updateMusic();
+	_music->updateMusic();
 	g_lab->readScreenImage(&Im, 0, 0);
-	g_music->updateMusic();
+	_music->updateMusic();
 
 	BaseAddr = (uint32 *)g_lab->getVGABaseAddr();
 
@@ -435,7 +435,7 @@ void LabEngine::doScrollBlack() {
 	nheight = height;
 
 	while (nheight) {
-		g_music->updateMusic();
+		_music->updateMusic();
 
 		if (!_isHiRes)
 			g_lab->waitTOF();
@@ -523,8 +523,8 @@ void LabEngine::doScrollWipe(char *filename) {
 	width = VGAScaleX(320);
 	height = VGAScaleY(149) + SVGACord(2);
 
-	while (g_music->isSoundEffectActive()) {
-		g_music->updateMusic();
+	while (_music->isSoundEffectActive()) {
+		_music->updateMusic();
 		g_lab->waitTOF();
 	}
 
@@ -534,12 +534,12 @@ void LabEngine::doScrollWipe(char *filename) {
 	IsBM = false;
 	mem = RawDiffBM.Planes[0];
 
-	g_music->updateMusic();
+	_music->updateMusic();
 	by      = VGAScaleX(3);
 	nheight = height;
 
 	while (onrow < headerdata.y) {
-		g_music->updateMusic();
+		_music->updateMusic();
 
 		if ((by > nheight) && nheight)
 			by = nheight;
@@ -593,11 +593,11 @@ void LabEngine::doScrollBounce() {
 	int height = VGAScaleY(149) + SVGACord(2);
 	byte *mem = RawDiffBM.Planes[0];
 
-	g_music->updateMusic();
+	_music->updateMusic();
 	int startline = headerdata.y - height - 1;
 
 	for (int i = 0; i < 5; i++) {
-		g_music->updateMusic();
+		_music->updateMusic();
 		startline -= newby[i];
 		copyPage(width, height, 0, startline, mem);
 
@@ -606,7 +606,7 @@ void LabEngine::doScrollBounce() {
 	}
 
 	for (int i = 8; i > 0; i--) {
-		g_music->updateMusic();
+		_music->updateMusic();
 		startline += newby1[i - 1];
 		copyPage(width, height, 0, startline, mem);
 
@@ -638,7 +638,7 @@ void LabEngine::doTransWipe(CloseDataPtr *CPtr, char *filename) {
 
 		while (CurY < LastY) {
 			if (linesdone >= lineslast) {
-				g_music->updateMusic();
+				_music->updateMusic();
 				g_lab->waitTOF();
 				linesdone = 0;
 			}
@@ -656,7 +656,7 @@ void LabEngine::doTransWipe(CloseDataPtr *CPtr, char *filename) {
 
 		while (CurY <= LastY) {
 			if (linesdone >= lineslast) {
-				g_music->updateMusic();
+				_music->updateMusic();
 				g_lab->waitTOF();
 				linesdone = 0;
 			}
@@ -691,7 +691,7 @@ void LabEngine::doTransWipe(CloseDataPtr *CPtr, char *filename) {
 
 			while (CurY < LastY) {
 				if (linesdone >= lineslast) {
-					g_music->updateMusic();
+					_music->updateMusic();
 					g_lab->waitTOF();
 					linesdone = 0;
 				}
@@ -710,7 +710,7 @@ void LabEngine::doTransWipe(CloseDataPtr *CPtr, char *filename) {
 
 			while (CurY <= LastY) {
 				if (linesdone >= lineslast) {
-					g_music->updateMusic();
+					_music->updateMusic();
 					g_lab->waitTOF();
 					linesdone = 0;
 				}

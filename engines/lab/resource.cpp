@@ -65,7 +65,7 @@ TextFont *Resource::getFont(const char *fileName) {
 	if (fileSize <= headerSize)
 		return NULL;
 
-	_vm->g_music->updateMusic();
+	_vm->_music->updateMusic();
 
 	TextFont *textfont = (TextFont *)malloc(sizeof(TextFont));
 	textfont->DataLength = fileSize - headerSize;
@@ -142,7 +142,7 @@ bool Resource::readViews(uint16 roomNum) {
 	_rooms[roomNum]._westView = readView(dataFile);
 	_rooms[roomNum]._rules = readRule(dataFile);
 
-	_vm->g_music->updateMusic();
+	_vm->_music->updateMusic();
 
 	delete dataFile;
 	return true;

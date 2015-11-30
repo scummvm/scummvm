@@ -76,7 +76,7 @@ LabEngine::LabEngine(OSystem *syst, const ADGameDescription *gameDesc)
 
 	_event = nullptr;
 	_resource = nullptr;
-	g_music = nullptr;
+	_music = nullptr;
 
 	//const Common::FSNode gameDataDir(ConfMan.get("path"));
 	//SearchMan.addSubDirectoryMatching(gameDataDir, "game");
@@ -91,6 +91,7 @@ LabEngine::~LabEngine() {
 
 	delete _event;
 	delete _resource;
+	delete _music;
 }
 
 Common::Error LabEngine::run() {
@@ -101,7 +102,7 @@ Common::Error LabEngine::run() {
 
 	_event = new EventManager(this);
 	_resource = new Resource(this);
-	g_music = new Music(this);
+	_music = new Music(this);
 
 	if (getPlatform() == Common::kPlatformWindows) {
 		// Check if this is the Wyrmkeep trial

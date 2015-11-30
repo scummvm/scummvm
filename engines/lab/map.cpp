@@ -84,9 +84,9 @@ char *getText(const char *filename) {
 	bool dodecrypt;
 	byte **tfile;
 
-	g_lab->g_music->updateMusic();
+	g_lab->_music->updateMusic();
 	dodecrypt = (isBuffered(filename) == NULL);
-	tfile = g_lab->g_music->newOpen(filename);
+	tfile = g_lab->_music->newOpen(filename);
 
 	if (!tfile)
 		return NULL;
@@ -200,7 +200,7 @@ static bool loadMapData() {
 		BigMsgFont = MsgFont;
 
 	resetBuffer();  /* Make images load into start of buffer */
-	buffer = g_lab->g_music->newOpen("P:MapImage", Size);
+	buffer = g_lab->_music->newOpen("P:MapImage", Size);
 
 	if (!buffer)
 		return false;
@@ -252,9 +252,9 @@ static bool loadMapData() {
 	Common::File *mapFile = g_lab->_resource->openDataFile("Lab:Maps", MKTAG('M', 'A', 'P', '0'));
 	if (!mapFile)
 		error("Corrupt map file");
-	g_lab->g_music->updateMusic();
-	if (!g_lab->g_music->_doNotFilestopSoundEffect)
-		g_lab->g_music->stopSoundEffect();
+	g_lab->_music->updateMusic();
+	if (!g_lab->_music->_doNotFilestopSoundEffect)
+		g_lab->_music->stopSoundEffect();
 
 	MaxRooms = mapFile->readUint16LE();
 	Maps = new MapData[MaxRooms];	// will be freed when the user exits the map
@@ -309,7 +309,7 @@ void fade(bool fadein, uint16 res) {
 
 		setAmigaPal(newpal, 16);
 		g_lab->waitTOF();
-		g_lab->g_music->updateMusic();
+		g_lab->_music->updateMusic();
 	}
 }
 
@@ -572,7 +572,7 @@ void LabEngine::drawMap(uint16 CurRoom, uint16 CurMsg, uint16 Floor, bool fadeou
 	for (uint16 i = 1; i <= MaxRooms; i++) {
 		if ((Maps[i].PageNumber == Floor) && _roomsFound->in(i) && Maps[i].x) {
 			drawRoom(i, (bool)(i == CurRoom));
-			g_music->updateMusic();
+			_music->updateMusic();
 		}
 	}
 
@@ -669,11 +669,11 @@ void LabEngine::processMap(uint16 CurRoom) {
 	CurFloor = Maps[CurRoom].PageNumber;
 
 	while (1) {
-		g_music->updateMusic();  /* Make sure we check the music at least after every message */
+		_music->updateMusic();  /* Make sure we check the music at least after every message */
 		Msg = getMsg();
 
 		if (Msg == NULL) {
-			g_music->updateMusic();
+			_music->updateMusic();
 
 			if (place <= 14) {
 				newcolor[0] = 14 << 2;
@@ -833,7 +833,7 @@ void LabEngine::processMap(uint16 CurRoom) {
 void LabEngine::doMap(uint16 CurRoom) {
 	FadePalette = AmigaMapPalette;
 
-	g_music->updateMusic();
+	_music->updateMusic();
 	loadMapData();
 	blackAllScreen();
 

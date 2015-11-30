@@ -166,7 +166,7 @@ void LabEngine::diffNextFrame() {
 			return; /* done with the next frame. */
 		}
 
-		g_music->updateMusic();
+		_music->updateMusic();
 		readBlock(&header, 4L, difffile);
 		swapULong(&header);
 		readBlock(&size, 4L, difffile);
@@ -227,8 +227,8 @@ void LabEngine::diffNextFrame() {
 		case 30L:
 		case 31L: {
 			if (waitForEffect) {
-				while (g_music->isSoundEffectActive()) {
-					g_music->updateMusic();
+				while (_music->isSoundEffectActive()) {
+					_music->updateMusic();
 					waitTOF();
 				}
 			}
@@ -245,7 +245,7 @@ void LabEngine::diffNextFrame() {
 			uint32 musicsize = size;
 			(*difffile) += size;
 
-			g_music->playSoundEffect(samplespeed, musicsize, music);
+			_music->playSoundEffect(samplespeed, musicsize, music);
 			break;
 		}
 		case 65535L:
@@ -253,8 +253,8 @@ void LabEngine::diffNextFrame() {
 				int didTOF = 0;
 
 				if (waitForEffect) {
-					while (g_music->isSoundEffectActive()) {
-						g_music->updateMusic();
+					while (_music->isSoundEffectActive()) {
+						_music->updateMusic();
 						waitTOF();
 
 						if (DispBitMap->Flags & BITMAPF_VIDEO)
@@ -393,7 +393,7 @@ void stopDiff() {
 void stopDiffEnd() {
 	if (IsPlaying) {
 		while (IsPlaying) {
-			g_lab->g_music->updateMusic();
+			g_lab->_music->updateMusic();
 			g_lab->diffNextFrame();
 		}
 	}
@@ -431,14 +431,14 @@ void readSound(bool waitTillFinished, Common::File *file) {
 		return;
 
 	while (soundTag != 65535) {
-		g_lab->g_music->updateMusic();
+		g_lab->_music->updateMusic();
 		soundTag = file->readUint32LE();
 		soundSize = file->readUint32LE() - 8;
 
 		if ((soundTag == 30) || (soundTag == 31)) {
 			if (waitTillFinished) {
-				while (g_lab->g_music->isSoundEffectActive()) {
-					g_lab->g_music->updateMusic();
+				while (g_lab->_music->isSoundEffectActive()) {
+					g_lab->_music->updateMusic();
 					g_lab->waitTOF();
 				}
 			}
@@ -449,11 +449,11 @@ void readSound(bool waitTillFinished, Common::File *file) {
 			file->skip(2);
 			byte *soundData = (byte *)malloc(soundSize);
 			file->read(soundData, soundSize);
-			g_lab->g_music->playSoundEffect(sampleRate, soundSize, soundData);
+			g_lab->_music->playSoundEffect(sampleRate, soundSize, soundData);
 		} else if (soundTag == 65535L) {
 			if (waitTillFinished) {
-				while (g_lab->g_music->isSoundEffectActive()) {
-					g_lab->g_music->updateMusic();
+				while (g_lab->_music->isSoundEffectActive()) {
+					g_lab->_music->updateMusic();
 					g_lab->waitTOF();
 				}
 			}
