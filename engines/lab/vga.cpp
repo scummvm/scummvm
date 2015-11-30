@@ -166,7 +166,7 @@ void LabEngine::processInput(bool can_delay) {
 		g_system->delayMillis(10);
 }
 
-Common::Point LabEngine::WSDL_GetMousePos() {
+Common::Point LabEngine::getMousePos() {
 	processInput();
 
 	return _mousePos;
