@@ -256,8 +256,8 @@ bool saveRestoreGame();
 /*----- From saveGame.c ----*/
 /*--------------------------*/
 
-bool saveGame(uint16 RoomNum, uint16 Direction, uint16 Quarters, int slot, Common::String desc);
-bool loadGame(uint16 *RoomNum, uint16 *Direction, uint16 *Quarters, int slot);
+bool saveGame(uint16 Direction, uint16 Quarters, int slot, Common::String desc);
+bool loadGame(uint16 *Direction, uint16 *Quarters, int slot);
 bool readSaveGameHeader(Common::InSaveFile *in, SaveGameHeader &header);
 
 /*--------------------------*/

@@ -73,7 +73,7 @@ uint16 textHeight(struct TextFont *tf) {
 /*****************************************************************************/
 /* Draws the text to the screen.                                             */
 /*****************************************************************************/
-void text(struct TextFont *tf, uint16 x, uint16 y, uint16 color, const char *text, uint16 numchars) {
+void text(TextFont *tf, uint16 x, uint16 y, uint16 color, const char *text, uint16 numchars) {
 	byte *VGATop, *VGACur, *VGATemp, *VGATempLine, *cdata;
 	uint32 RealOffset, SegmentOffset;
 	int32 templeft, LeftInSegment;

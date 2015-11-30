@@ -103,6 +103,7 @@ public:
 	Resource *_resource;
 	Music *_music;
 
+	int _roomNum;
 	byte *_currentDsplayBuffer;
 	Common::Point _mousePos;
 

@@ -47,7 +47,7 @@ namespace Lab {
 
 RoomData *_rooms;
 InventoryData *Inventory;
-uint16 NumInv, RoomNum, ManyRooms, HighestCondition, Direction;
+uint16 NumInv, ManyRooms, HighestCondition, Direction;
 const char *NewFileName;
 
 extern bool DoNotDrawMessage, IsBM, noupdatediff, QuitLab, MusicOn, DoBlack, LongWinInFront;
@@ -124,7 +124,7 @@ static CloseData *getObject(uint16 x, uint16 y, CloseDataPtr LCPtr) {
 	ViewData *VPtr;
 
 	if (LCPtr == NULL) {
-		VPtr = getViewData(RoomNum, Direction);
+		VPtr = getViewData(g_lab->_roomNum, Direction);
 		LCPtr = VPtr->closeUps;
 	}
 
@@ -173,7 +173,7 @@ static CloseDataPtr findCPtrMatch(CloseDataPtr Main, CloseDataPtr List) {
 /* Returns the current picture name.                                         */
 /*****************************************************************************/
 char *getPictName(CloseDataPtr *LCPtr) {
-	ViewData *ViewPtr = getViewData(RoomNum, Direction);
+	ViewData *ViewPtr = getViewData(g_lab->_roomNum, Direction);
 
 	if (*LCPtr != NULL) {
 		*LCPtr = findCPtrMatch(*LCPtr, ViewPtr->closeUps);
@@ -196,8 +196,8 @@ void LabEngine::drawDirection(CloseDataPtr LCPtr) {
 
 	Common::String message;
 
-	if (_rooms[RoomNum]._roomMsg) {
-		message += _rooms[RoomNum]._roomMsg;
+	if (_rooms[_roomNum]._roomMsg) {
+		message += _rooms[_roomNum]._roomMsg;
 		message += ", ";
 	}
 
@@ -221,18 +221,18 @@ bool processArrow(uint16 *direction, uint16 Arrow) {
 
 	if (Arrow == 1) { /* Forward */
 		if (*direction == NORTH)
-			room = _rooms[RoomNum]._northDoor;
+			room = _rooms[g_lab->_roomNum]._northDoor;
 		else if (*direction == SOUTH)
-			room = _rooms[RoomNum]._southDoor;
+			room = _rooms[g_lab->_roomNum]._southDoor;
 		else if (*direction == EAST)
-			room = _rooms[RoomNum]._eastDoor;
+			room = _rooms[g_lab->_roomNum]._eastDoor;
 		else if (*direction == WEST)
-			room = _rooms[RoomNum]._westDoor;
+			room = _rooms[g_lab->_roomNum]._westDoor;
 
 		if (room == 0)
 			return false;
 		else
-			RoomNum = room;
+			g_lab->_roomNum = room;
 	} else if (Arrow == 0) { /* Left */
 		if (*direction == NORTH)
 			*direction = WEST;
@@ -265,7 +265,7 @@ void setCurClose(Common::Point pos, CloseDataPtr *cptr, bool useAbsoluteCoords) 
 	uint16 x1, y1, x2, y2;
 
 	if (*cptr == NULL) {
-		VPtr = getViewData(RoomNum, Direction);
+		VPtr = getViewData(g_lab->_roomNum, Direction);
 		LCPtr = VPtr->closeUps;
 	} else
 		LCPtr = (*cptr)->SubCloseUps;
@@ -300,7 +300,7 @@ bool takeItem(uint16 x, uint16 y, CloseDataPtr *cptr) {
 	CloseDataPtr LCPtr;
 
 	if (*cptr == NULL) {
-		VPtr = getViewData(RoomNum, Direction);
+		VPtr = getViewData(g_lab->_roomNum, Direction);
 		LCPtr = VPtr->closeUps;
 	} else if ((*cptr)->CloseUpType < 0) {
 		g_lab->_conditions->inclElement(abs((*cptr)->CloseUpType));
@@ -443,7 +443,7 @@ static void doActions(Action * APtr, CloseDataPtr *LCPtr) {
 				continue;
 			}
 
-			RoomNum   = APtr->Param1;
+			g_lab->_roomNum   = APtr->Param1;
 			Direction = APtr->Param2 - 1;
 			*LCPtr      = NULL;
 			DoBlack    = true;
@@ -611,7 +611,7 @@ static bool doActionRuleSub(int16 action, int16 roomNum, CloseDataPtr LCPtr, Clo
 	action++;
 
 	if (LCPtr) {
-		RuleList *rules = _rooms[RoomNum]._rules;
+		RuleList *rules = _rooms[g_lab->_roomNum]._rules;
 
 		if ((rules == NULL) && (roomNum == 0)) {
 			g_lab->_resource->readViews(roomNum);
@@ -700,13 +700,13 @@ bool doOperateRule(int16 x, int16 y, int16 ItemNum, CloseDataPtr *LCPtr) {
 
 	TLCPtr = getObject(x, y, *LCPtr);
 
-	if (doOperateRuleSub(ItemNum, RoomNum, TLCPtr, LCPtr, false))
+	if (doOperateRuleSub(ItemNum, g_lab->_roomNum, TLCPtr, LCPtr, false))
 		return true;
-	else if (doOperateRuleSub(ItemNum, RoomNum, *LCPtr, LCPtr, false))
+	else if (doOperateRuleSub(ItemNum, g_lab->_roomNum, *LCPtr, LCPtr, false))
 		return true;
-	else if (doOperateRuleSub(ItemNum, RoomNum, TLCPtr, LCPtr, true))
+	else if (doOperateRuleSub(ItemNum, g_lab->_roomNum, TLCPtr, LCPtr, true))
 		return true;
-	else if (doOperateRuleSub(ItemNum, RoomNum, *LCPtr, LCPtr, true))
+	else if (doOperateRuleSub(ItemNum, g_lab->_roomNum, *LCPtr, LCPtr, true))
 		return true;
 	else {
 		NewFileName = CurFileName;
@@ -728,7 +728,7 @@ bool doOperateRule(int16 x, int16 y, int16 ItemNum, CloseDataPtr *LCPtr) {
 /* Goes thru the rules if the user tries to go forward.                      */
 /*****************************************************************************/
 bool doGoForward(CloseDataPtr *LCPtr) {
-	RuleList *rules = _rooms[RoomNum]._rules;
+	RuleList *rules = _rooms[g_lab->_roomNum]._rules;
 
 	for (RuleList::iterator rule = rules->begin(); rule != rules->end(); ++rule) {
 		if (((*rule)->RuleType == GOFORWARD) && ((*rule)->Param1 == (Direction + 1))) {
@@ -749,7 +749,7 @@ bool doTurn(uint16 from, uint16 to, CloseDataPtr *LCPtr) {
 	from++;
 	to++;
 
-	RuleList *rules = _rooms[RoomNum]._rules;
+	RuleList *rules = _rooms[g_lab->_roomNum]._rules;
 
 	for (RuleList::iterator rule = rules->begin(); rule != rules->end(); ++rule) {
 		if (((*rule)->RuleType == TURN) ||
@@ -769,7 +769,7 @@ bool doTurn(uint16 from, uint16 to, CloseDataPtr *LCPtr) {
 /* Goes thru the rules if the user tries to go to the main view              */
 /*****************************************************************************/
 bool doMainView(CloseDataPtr *LCPtr) {
-	RuleList *rules = _rooms[RoomNum]._rules;
+	RuleList *rules = _rooms[g_lab->_roomNum]._rules;
 	for (RuleList::iterator rule = rules->begin(); rule != rules->end(); ++rule) {
 		if ((*rule)->RuleType == GOMAINVIEW) {
 			if (checkConditions((*rule)->Condition)) {
