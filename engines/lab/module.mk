@@ -9,11 +9,11 @@ MODULE_OBJS := \
 	intro.o \
 	lab.o \
 	labfile.o \
-	labmusic.o \
 	labsets.o \
 	machine.o \
 	map.o \
 	mouse.o \
+	music.o \
 	processroom.o \
 	readdiff.o \
 	resource.o \
