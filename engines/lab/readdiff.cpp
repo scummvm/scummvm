@@ -36,6 +36,8 @@
 namespace Lab {
 
 static bool PlayOnce = false;
+static bool StopPlayingEnd = false;
+
 static uint32 header, size, WaitSec = 0L, WaitMicros = 0L, DelayMicros = 0L;
 static uint16 CurBit = 0, framenumber = 0, samplespeed, numchunks = 1;
 static byte *Buffer, temp[5];
@@ -249,7 +251,7 @@ void LabEngine::diffNextFrame() {
 			break;
 		}
 		case 65535L:
-			if ((framenumber == 1) || PlayOnce) {
+			if ((framenumber == 1) || PlayOnce || StopPlayingEnd) {
 				int didTOF = 0;
 
 				if (waitForEffect) {
@@ -294,6 +296,7 @@ void playDiff() {
 	framenumber = 0;
 	numchunks   = 1;
 	donepal     = false;
+	StopPlayingEnd = false;
 	difffile    = &storagefordifffile;
 
 	IsPlaying   = true;
@@ -385,13 +388,12 @@ void stopDiff() {
 	}
 }
 
-
-
 /*****************************************************************************/
 /* Stops an animation from running.                                          */
 /*****************************************************************************/
 void stopDiffEnd() {
 	if (IsPlaying) {
+		StopPlayingEnd = true;
 		while (IsPlaying) {
 			g_lab->_music->updateMusic();
 			g_lab->diffNextFrame();
