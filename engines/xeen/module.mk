@@ -1,6 +1,9 @@
 MODULE := engines/xeen
 
 MODULE_OBJS := \
+	worldofxeen/clouds_ending.o \
+	worldofxeen/clouds_intro.o \
+	worldofxeen/darkside_ending.o \
 	worldofxeen/darkside_intro.o \
 	worldofxeen/worldofxeen_game.o \
 	character.o \

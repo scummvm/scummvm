@@ -20,7 +20,7 @@
  *
  */
 
-#include "xeen/worldofxeen/worldofxeen_game.h"
+#include "xeen/worldofxeen/darkside_intro.h"
 #include "xeen/sound.h"
 
 namespace Xeen {
