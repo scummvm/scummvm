@@ -195,8 +195,8 @@ struct MapData {
 #endif
 
 struct CrumbData {
-	uint16 RoomNum;
-	uint16 Direction;
+	uint16 _roomNum;
+	uint16 _direction;
 };
 
 #define MAX_CRUMBS          128

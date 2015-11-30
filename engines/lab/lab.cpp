@@ -74,11 +74,23 @@ LabEngine::LabEngine(OSystem *syst, const ADGameDescription *gameDesc)
 
 	_isHiRes = false;
 	_roomNum = -1;
+	for (int i = 0; i < MAX_CRUMBS; i++) {
+		_breadCrumbs[i]._roomNum = 0;
+		_breadCrumbs[i]._direction = NORTH;
+	}
+
+	_numCrumbs = 0;
+	_droppingCrumbs = false;
+	_followingCrumbs = false;
+	_followCrumbsFast = false;
+	_isCrumbTurning = false;
+	_isCrumbWaiting = false;
+	_crumbSecs = 0;
+	_crumbMicros = 0;
 
 	_event = nullptr;
 	_resource = nullptr;
 	_music = nullptr;
-
 
 	//const Common::FSNode gameDataDir(ConfMan.get("path"));
 	//SearchMan.addSubDirectoryMatching(gameDataDir, "game");

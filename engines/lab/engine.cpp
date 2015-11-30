@@ -56,19 +56,6 @@ extern InventoryData *Inventory;
 extern uint16 NumInv, ManyRooms, HighestCondition, Direction;
 CloseDataPtr CPtr;
 
-CrumbData BreadCrumbs[MAX_CRUMBS];
-uint16 NumCrumbs;
-bool DroppingCrumbs;
-bool FollowingCrumbs;
-bool FollowCrumbsFast;
-bool IsCrumbTurning;
-uint32 CrumbSecs, CrumbMicros;
-bool IsCrumbWaiting;
-
-int     followCrumbs();
-void    mayShowCrumbIndicator();
-void    mayShowCrumbIndicatorOff();
-
 bool Alternate = false, ispal = false, noupdatediff = false, MainDisplay = true, QuitLab = false;
 
 extern const char *NewFileName;  /* When ProcessRoom.c decides to change the filename
@@ -142,9 +129,9 @@ void LabEngine::drawPanel() {
 	setAPen(5);                 /* Second Line */
 	drawHLine(0, VGAScaleY(149) + 1 + SVGACord(2), VGAScaleX(319));
 
-	/* Gadget Seperators */
+	/* Gadget Separators */
 	setAPen(0);
-	drawHLine(0, VGAScaleY(170), VGAScaleX(319));     /* First black line to seperate buttons */
+	drawHLine(0, VGAScaleY(170), VGAScaleX(319));     /* First black line to separate buttons */
 
 	if (!Alternate) {
 		setAPen(4);
@@ -631,7 +618,6 @@ void LabEngine::decIncInv(uint16 *CurInv, bool dec) {
 /* The main game loop                                                         */
 /******************************************************************************/
 void LabEngine::mainGameLoop() {
-	IntuiMessage *Msg;
 	uint32 Class;
 
 	uint16 Qualifier, ActionMode = 4;
@@ -723,7 +709,7 @@ void LabEngine::mainGameLoop() {
 				mayShowCrumbIndicator();
 				WSDL_UpdateScreen();
 
-				if (!FollowingCrumbs)
+				if (!_followingCrumbs)
 					eatMessages();
 			}
 
@@ -736,16 +722,16 @@ void LabEngine::mainGameLoop() {
 
 		_music->updateMusic();  /* Make sure we check the music at least after every message */
 		interfaceOn();
-		Msg = getMsg();
+		IntuiMessage *curMsg = getMsg();
 
 		Common::Point curPos;
-		if (Msg == NULL) { /* Does music load and next animation frame when you've run out of messages */
+		if (curMsg == NULL) { /* Does music load and next animation frame when you've run out of messages */
 			GotMessage = false;
 			_music->checkRoomMusic();
 			_music->updateMusic();
 			diffNextFrame();
 
-			if (FollowingCrumbs) {
+			if (_followingCrumbs) {
 				int result = followCrumbs();
 
 				if (result != 0) {
@@ -772,14 +758,14 @@ void LabEngine::mainGameLoop() {
 		} else {
 			GotMessage = true;
 
-			Class     = Msg->msgClass;
-			code      = Msg->code;
-			Qualifier = Msg->qualifier;
-			curPos.x  = Msg->mouseX;
-			curPos.y  = Msg->mouseY;
-			GadID     = Msg->gadgetID;
+			Class     = curMsg->msgClass;
+			code      = curMsg->code;
+			Qualifier = curMsg->qualifier;
+			curPos.x  = curMsg->mouseX;
+			curPos.y  = curMsg->mouseY;
+			GadID     = curMsg->gadgetID;
 
-			FollowingCrumbs = false;
+			_followingCrumbs = false;
 
 from_crumbs:
 			DoBlack = false;
@@ -791,20 +777,20 @@ from_crumbs:
 					curPos = _event->getMousePos();
 				} else if (getPlatform() == Common::kPlatformWindows &&
 						(code == 'b' || code == 'B')) {  /* Start bread crumbs */
-					BreadCrumbs[0].RoomNum = 0;
-					NumCrumbs = 0;
-					DroppingCrumbs = true;
+					_breadCrumbs[0]._roomNum = 0;
+					_numCrumbs = 0;
+					_droppingCrumbs = true;
 					mayShowCrumbIndicator();
 					WSDL_UpdateScreen();
 				} else if (code == 'f' || code == 'F' ||
 				         code == 'r' || code == 'R') {  /* Follow bread crumbs */
-					if (DroppingCrumbs) {
-						if (NumCrumbs > 0) {
-							FollowingCrumbs = true;
-							FollowCrumbsFast = (code == 'r' || code == 'R');
-							IsCrumbTurning = false;
-							IsCrumbWaiting = false;
-							getTime(&CrumbSecs, &CrumbMicros);
+					if (_droppingCrumbs) {
+						if (_numCrumbs > 0) {
+							_followingCrumbs = true;
+							_followCrumbsFast = (code == 'r' || code == 'R');
+							_isCrumbTurning = false;
+							_isCrumbWaiting = false;
+							getTime(&_crumbSecs, &_crumbMicros);
 
 							if (Alternate) {
 								eatMessages();
@@ -819,8 +805,8 @@ from_crumbs:
 								WSDL_UpdateScreen();
 							}
 						} else {
-							BreadCrumbs[0].RoomNum = 0;
-							DroppingCrumbs = false;
+							_breadCrumbs[0]._roomNum = 0;
+							_droppingCrumbs = false;
 
 							// Need to hide indicator!!!!
 							mayShowCrumbIndicatorOff();
@@ -837,20 +823,20 @@ from_crumbs:
 
 					while (1) {
 						_music->updateMusic();  /* Make sure we check the music at least after every message */
-						Msg = getMsg();
+						curMsg = getMsg();
 
-						if (Msg == NULL) { /* Does music load and next animation frame when you've run out of messages */
+						if (curMsg == NULL) { /* Does music load and next animation frame when you've run out of messages */
 							_music->updateMusic();
 							diffNextFrame();
 						} else {
-							if (Msg->msgClass == RAWKEY) {
-								if ((Msg->code == 'Y') || (Msg->code == 'y') || (Msg->code == 'Q') || (Msg->code == 'q')) {
+							if (curMsg->msgClass == RAWKEY) {
+								if ((curMsg->code == 'Y') || (curMsg->code == 'y') || (curMsg->code == 'Q') || (curMsg->code == 'q')) {
 									doit = true;
 									break;
-								} else if (Msg->code < 128) {
+								} else if (curMsg->code < 128) {
 									break;
 								}
-							} else if (Msg->msgClass == MOUSEBUTTONS) {
+							} else if (curMsg->msgClass == MOUSEBUTTONS) {
 								break;
 							}
 						}
@@ -985,43 +971,43 @@ from_crumbs:
 							}
 						}
 
-						if (FollowingCrumbs) {
-							if (IsCrumbTurning) {
+						if (_followingCrumbs) {
+							if (_isCrumbTurning) {
 								if (Direction == OldDirection) {
-									FollowingCrumbs = false;
+									_followingCrumbs = false;
 								}
 							} else {
 								if (_roomNum == OldRoomNum) { // didn't get there?
-									FollowingCrumbs = false;
+									_followingCrumbs = false;
 								}
 							}
-						} else if (DroppingCrumbs && OldRoomNum != _roomNum) {
+						} else if (_droppingCrumbs && OldRoomNum != _roomNum) {
 							// If in surreal maze, turn off DroppingCrumbs.
 							// Note: These numbers were generated by parsing the
 							// "Maps" file, which is why they are hard-coded. Bleh!
 							if (_roomNum >= 245 && _roomNum <= 280) {
-								FollowingCrumbs = false;
-								DroppingCrumbs = false;
-								NumCrumbs = 0;
-								BreadCrumbs[0].RoomNum = 0;
+								_followingCrumbs = false;
+								_droppingCrumbs = false;
+								_numCrumbs = 0;
+								_breadCrumbs[0]._roomNum = 0;
 							} else {
 								bool intersect = false;
-								for (int idx = 0; idx < NumCrumbs; idx++) {
-									if (BreadCrumbs[idx].RoomNum == _roomNum) {
-										NumCrumbs = idx + 1;
-										BreadCrumbs[NumCrumbs].RoomNum = 0;
+								for (int idx = 0; idx < _numCrumbs; idx++) {
+									if (_breadCrumbs[idx]._roomNum == _roomNum) {
+										_numCrumbs = idx + 1;
+										_breadCrumbs[_numCrumbs]._roomNum = 0;
 										intersect = true;
 									}
 								}
 
 								if (!intersect) {
-									if (NumCrumbs == MAX_CRUMBS) {
-										NumCrumbs = MAX_CRUMBS - 1;
-										memcpy(&BreadCrumbs[0], &BreadCrumbs[1], NumCrumbs * sizeof BreadCrumbs[0]);
+									if (_numCrumbs == MAX_CRUMBS) {
+										_numCrumbs = MAX_CRUMBS - 1;
+										memcpy(&_breadCrumbs[0], &_breadCrumbs[1], _numCrumbs * sizeof _breadCrumbs[0]);
 									}
 
-									BreadCrumbs[NumCrumbs].RoomNum = _roomNum;
-									BreadCrumbs[NumCrumbs++].Direction = Direction;
+									_breadCrumbs[_numCrumbs]._roomNum = _roomNum;
+									_breadCrumbs[_numCrumbs++]._direction = Direction;
 								}
 							}
 						}
@@ -1119,19 +1105,19 @@ from_crumbs:
 
 					WSDL_UpdateScreen();
 				} else if (GadID == 5) { /* bread crumbs */
-					BreadCrumbs[0].RoomNum = 0;
-					NumCrumbs = 0;
-					DroppingCrumbs = true;
+					_breadCrumbs[0]._roomNum = 0;
+					_numCrumbs = 0;
+					_droppingCrumbs = true;
 					mayShowCrumbIndicator();
 					WSDL_UpdateScreen();
 				} else if (GadID == 6) { /* follow crumbs */
-					if (DroppingCrumbs) {
-						if (NumCrumbs > 0) {
-							FollowingCrumbs = true;
-							FollowCrumbsFast = false;
-							IsCrumbTurning = false;
-							IsCrumbWaiting = false;
-							getTime(&CrumbSecs, &CrumbMicros);
+					if (_droppingCrumbs) {
+						if (_numCrumbs > 0) {
+							_followingCrumbs = true;
+							_followCrumbsFast = false;
+							_isCrumbTurning = false;
+							_isCrumbWaiting = false;
+							getTime(&_crumbSecs, &_crumbMicros);
 
 							eatMessages();
 							Alternate = false;
@@ -1144,8 +1130,8 @@ from_crumbs:
 							drawRoomMessage(CurInv, CPtr);
 							WSDL_UpdateScreen();
 						} else {
-							BreadCrumbs[0].RoomNum = 0;
-							DroppingCrumbs = false;
+							_breadCrumbs[0]._roomNum = 0;
+							_droppingCrumbs = false;
 
 							// Need to hide indicator!!!!
 							mayShowCrumbIndicatorOff();
@@ -1297,7 +1283,7 @@ from_crumbs:
 }
 
 void LabEngine::go() {
-	bool dointro = true;
+	bool doIntro = true;
 
 	_isHiRes = ((getFeatures() & GF_LOWRES) == 0);
 
@@ -1325,14 +1311,14 @@ void LabEngine::go() {
 
 	mem = mem && initRoomBuffer();
 
-	if (!dointro)
+	if (!doIntro)
 		_music->initMusic();
 
 	MsgFont = _resource->getFont("P:AvanteG.12");
 
 	_event->mouseHide();
 
-	if (dointro && mem) {
+	if (doIntro && mem) {
 		Intro intro;
 		intro.introSequence();
 	} else
@@ -1375,7 +1361,7 @@ void LabEngine::go() {
 /*****************************************************************************/
 /* New code to allow quick(er) return navigation in game.                    */
 /*****************************************************************************/
-int followCrumbs() {
+int LabEngine::followCrumbs() {
 	// NORTH, SOUTH, EAST, WEST
 	static int movement[4][4] = {
 		{ VKEY_UPARROW, VKEY_RTARROW, VKEY_RTARROW, VKEY_LTARROW },
@@ -1384,74 +1370,71 @@ int followCrumbs() {
 		{ VKEY_RTARROW, VKEY_LTARROW, VKEY_RTARROW, VKEY_UPARROW }
 	};
 
-	if (IsCrumbWaiting) {
+	if (_isCrumbWaiting) {
 		uint32 Secs;
 		uint32 Micros;
 
-		g_lab->timeDiff(CrumbSecs, CrumbMicros, &Secs, &Micros);
+		g_lab->timeDiff(_crumbSecs, _crumbMicros, &Secs, &Micros);
 
 		if (Secs != 0 || Micros != 0)
 			return 0;
 
-		IsCrumbWaiting = false;
+		_isCrumbWaiting = false;
 	}
 
-	if (!IsCrumbTurning)
-		BreadCrumbs[NumCrumbs--].RoomNum = 0;
+	if (!_isCrumbTurning)
+		_breadCrumbs[_numCrumbs--]._roomNum = 0;
 
 	// Is the current crumb this room? If not, logic error.
-	if (g_lab->_roomNum != BreadCrumbs[NumCrumbs].RoomNum) {
-		NumCrumbs = 0;
-		BreadCrumbs[0].RoomNum = 0;
-		DroppingCrumbs = false;
-		FollowingCrumbs = false;
+	if (g_lab->_roomNum != _breadCrumbs[_numCrumbs]._roomNum) {
+		_numCrumbs = 0;
+		_breadCrumbs[0]._roomNum = 0;
+		_droppingCrumbs = false;
+		_followingCrumbs = false;
 		return 0;
 	}
 
-	int ExitDir;
+	int exitDir;
 
 	// which direction is last crumb
-	if (BreadCrumbs[NumCrumbs].Direction == EAST)
-		ExitDir = WEST;
-	else if (BreadCrumbs[NumCrumbs].Direction == WEST)
-		ExitDir = EAST;
-	else if (BreadCrumbs[NumCrumbs].Direction == NORTH)
-		ExitDir = SOUTH;
+	if (_breadCrumbs[_numCrumbs]._direction == EAST)
+		exitDir = WEST;
+	else if (_breadCrumbs[_numCrumbs]._direction == WEST)
+		exitDir = EAST;
+	else if (_breadCrumbs[_numCrumbs]._direction == NORTH)
+		exitDir = SOUTH;
 	else
-		ExitDir = NORTH;
+		exitDir = NORTH;
 
-	int MoveDir = movement[Direction][ExitDir];
+	int moveDir = movement[Direction][exitDir];
 
-	if (NumCrumbs == 0) {
-		IsCrumbTurning = false;
-		BreadCrumbs[0].RoomNum = 0;
-		DroppingCrumbs = false;
-		FollowingCrumbs = false;
+	if (_numCrumbs == 0) {
+		_isCrumbTurning = false;
+		_breadCrumbs[0]._roomNum = 0;
+		_droppingCrumbs = false;
+		_followingCrumbs = false;
 	} else {
-		int theDelay = (FollowCrumbsFast ? ONESECOND / 4 : ONESECOND);
+		int theDelay = (_followCrumbsFast ? ONESECOND / 4 : ONESECOND);
 
-		IsCrumbTurning = (MoveDir != VKEY_UPARROW);
-		IsCrumbWaiting = true;
+		_isCrumbTurning = (moveDir != VKEY_UPARROW);
+		_isCrumbWaiting = true;
 
-		g_lab->addCurTime(theDelay / ONESECOND, theDelay % ONESECOND, &CrumbSecs, &CrumbMicros);
+		g_lab->addCurTime(theDelay / ONESECOND, theDelay % ONESECOND, &_crumbSecs, &_crumbMicros);
 	}
 
-	return MoveDir;
+	return moveDir;
 }
-
-byte dropCrumbs[] = { 0x00 };
-byte dropCrumbsOff[] = { 0x00 };
-
-Image DropCrumbsImage = { 24, 24, dropCrumbs };
-Image DropCrumbsOffImage = { 24, 24, dropCrumbsOff };
 
 void LabEngine::mayShowCrumbIndicator() {
 	if (getPlatform() != Common::kPlatformWindows)
 		return;
 
-	if (DroppingCrumbs && MainDisplay) {
+	if (_droppingCrumbs && MainDisplay) {
+		static byte dropCrumbs[] = { 0x00 };
+		static Image dropCrumbsImage = { 24, 24, dropCrumbs };
+
 		_event->mouseHide();
-		drawMaskImage(&DropCrumbsImage, 612, 4);
+		drawMaskImage(&dropCrumbsImage, 612, 4);
 		_event->mouseShow();
 	}
 }
@@ -1461,8 +1444,11 @@ void LabEngine::mayShowCrumbIndicatorOff() {
 		return;
 
 	if (MainDisplay) {
+		static byte dropCrumbsOff[] = { 0x00 };
+		static Image dropCrumbsOffImage = { 24, 24, dropCrumbsOff };
+
 		_event->mouseHide();
-		drawMaskImage(&DropCrumbsOffImage, 612, 4);
+		drawMaskImage(&dropCrumbsOffImage, 612, 4);
 		_event->mouseShow();
 	}
 }
