@@ -1384,7 +1384,7 @@ void BbvsEngine::checkEasterEgg(char key) {
 	};
 
 	if (_currSceneNum == kCredits) {
-		memcpy(&_easterEggInput[1], &_easterEggInput[0], 6);
+		memmove(&_easterEggInput[1], &_easterEggInput[0], 6);
 		_easterEggInput[0] = key;
 		for (int i = 0; i < ARRAYSIZE(kEasterEggStrings); ++i) {
 			if (!scumm_strnicmp(kEasterEggStrings[i], _easterEggInput, kEasterEggLengths[i])) {
