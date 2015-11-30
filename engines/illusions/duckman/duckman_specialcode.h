@@ -67,8 +67,11 @@ public:
 	void spcSetPropertyTimer(OpCall &opCall);
 	void spcRemovePropertyTimer(OpCall &opCall);
 	void spcCenterNewspaper(OpCall &opCall);
-	void spcSetCursorInventoryMode(OpCall &opCall);
 	void spcUpdateObject272Sequence(OpCall &opCall);
+	void spcSetCursorInventoryMode(OpCall &opCall);
+	void spcCenterCurrentScreenText(OpCall &opCall);
+	void spcSetDefaultTextCoords(OpCall &opCall);
+	void spcSetTextDuration(OpCall &opCall);
 
 };
 
