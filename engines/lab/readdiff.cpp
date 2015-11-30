@@ -393,7 +393,7 @@ void stopDiff() {
 void stopDiffEnd() {
 	if (IsPlaying) {
 		while (IsPlaying) {
-			g_music->updateMusic();
+			g_lab->g_music->updateMusic();
 			g_lab->diffNextFrame();
 		}
 	}
@@ -431,14 +431,14 @@ void readSound(bool waitTillFinished, Common::File *file) {
 		return;
 
 	while (soundTag != 65535) {
-		g_music->updateMusic();
+		g_lab->g_music->updateMusic();
 		soundTag = file->readUint32LE();
 		soundSize = file->readUint32LE() - 8;
 
 		if ((soundTag == 30) || (soundTag == 31)) {
 			if (waitTillFinished) {
-				while (g_music->isSoundEffectActive()) {
-					g_music->updateMusic();
+				while (g_lab->g_music->isSoundEffectActive()) {
+					g_lab->g_music->updateMusic();
 					g_lab->waitTOF();
 				}
 			}
@@ -449,11 +449,11 @@ void readSound(bool waitTillFinished, Common::File *file) {
 			file->skip(2);
 			byte *soundData = (byte *)malloc(soundSize);
 			file->read(soundData, soundSize);
-			g_music->playSoundEffect(sampleRate, soundSize, soundData);
+			g_lab->g_music->playSoundEffect(sampleRate, soundSize, soundData);
 		} else if (soundTag == 65535L) {
 			if (waitTillFinished) {
-				while (g_music->isSoundEffectActive()) {
-					g_music->updateMusic();
+				while (g_lab->g_music->isSoundEffectActive()) {
+					g_lab->g_music->updateMusic();
 					g_lab->waitTOF();
 				}
 			}

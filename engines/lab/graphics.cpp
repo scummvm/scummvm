@@ -68,7 +68,7 @@ bool readPict(const char *filename, bool PlayOnce) {
 
 	stopDiff();
 
-	file = g_music->newOpen(filename);
+	file = g_lab->g_music->newOpen(filename);
 
 	if (file == NULL) {
 		if ((filename[0] == 'p') || (filename[0] == 'P'))
@@ -94,9 +94,9 @@ bool readPict(const char *filename, bool PlayOnce) {
 /*****************************************************************************/
 bool readMusic(const char *filename, bool waitTillFinished) {
 	Common::File *file = g_lab->_resource->openDataFile(filename, MKTAG('D', 'I', 'F', 'F'));
-	g_music->updateMusic();
-	if (!g_music->_doNotFilestopSoundEffect)
-		g_music->stopSoundEffect();
+	g_lab->g_music->updateMusic();
+	if (!g_lab->g_music->_doNotFilestopSoundEffect)
+		g_lab->g_music->stopSoundEffect();
 	if (!file)
 		return false;
 
@@ -121,7 +121,7 @@ byte *readPictToMem(const char *filename, uint16 x, uint16 y) {
 	allocFile((void **)&Mem, (int32) x * (int32) y, "Bitmap");
 	CurMem = Mem;
 
-	file = g_music->newOpen(filename);
+	file = g_lab->g_music->newOpen(filename);
 
 	if (file == NULL)
 		return NULL;

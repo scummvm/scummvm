@@ -153,7 +153,7 @@ void showCombination(const char *filename) {
 
 	blackScreen();
 
-	buffer = g_music->newOpen("P:Numbers");
+	buffer = g_lab->g_music->newOpen("P:Numbers");
 
 	for (uint16 CurBit = 0; CurBit < 10; CurBit++)
 		readImage(buffer, &(Images[CurBit]));
@@ -297,10 +297,10 @@ void showTile(const char *filename, bool showsolution) {
 
 	if (showsolution) {
 		start  = 0;
-		buffer = g_music->newOpen("P:TileSolution");
+		buffer = g_lab->g_music->newOpen("P:TileSolution");
 	} else {
 		start  = 1;
-		buffer = g_music->newOpen("P:Tile");
+		buffer = g_lab->g_music->newOpen("P:Tile");
 	}
 
 	if (!buffer)
@@ -553,7 +553,7 @@ static bool loadJournalData() {
 		return false;
 	}
 
-	g_music->updateMusic();
+	g_lab->g_music->updateMusic();
 
 	strcpy(filename, "Lab:Rooms/j0");
 	bridge = g_lab->_conditions->in(BRIDGE0) || g_lab->_conditions->in(BRIDGE1);
@@ -586,7 +586,7 @@ static bool loadJournalData() {
 	if ((journaltexttitle = getText("Lab:Rooms/jt")) == NULL)
 		return false;
 
-	buffer = g_music->newOpen("P:JImage");
+	buffer = g_lab->g_music->newOpen("P:JImage");
 
 	if (!buffer)
 		return false;
@@ -628,7 +628,7 @@ static void drawJournalText() {
 	char *CurText = journaltext;
 
 	while (DrawingToPage < JPage) {
-		g_music->updateMusic();
+		g_lab->g_music->updateMusic();
 		CurText = (char *)(journaltext + CharsDrawn);
 		CharsDrawn += flowText(BigMsgFont, -2, 2, 0, false, false, false, false, VGAScaleX(52), VGAScaleY(32), VGAScaleX(152), VGAScaleY(148), CurText);
 
@@ -648,7 +648,7 @@ static void drawJournalText() {
 		CharsDrawn += flowTextToMem(&JBackImage, BigMsgFont, -2, 2, 0, false, false, false, true, VGAScaleX(52), VGAScaleY(32), VGAScaleX(152), VGAScaleY(148), CurText);
 	}
 
-	g_music->updateMusic();
+	g_lab->g_music->updateMusic();
 	CurText = (char *)(journaltext + CharsDrawn);
 	lastpage = (*CurText == 0);
 	flowTextToMem(&JBackImage, BigMsgFont, -2, 2, 0, false, false, false, true, VGAScaleX(171), VGAScaleY(32), VGAScaleX(271), VGAScaleY(148), CurText);
@@ -663,14 +663,14 @@ static void drawJournalText() {
 static void turnPage(bool FromLeft) {
 	if (FromLeft) {
 		for (int i = 0; i < g_lab->_screenWidth; i += 8) {
-			g_music->updateMusic();
+			g_lab->g_music->updateMusic();
 			g_lab->waitTOF();
 			ScreenImage.ImageData = g_lab->getVGABaseAddr();
 			g_lab->bltBitMap(&JBackImage, i, 0, &ScreenImage, i, 0, 8, g_lab->_screenHeight);
 		}
 	} else {
 		for (int i = (g_lab->_screenWidth - 8); i > 0; i -= 8) {
-			g_music->updateMusic();
+			g_lab->g_music->updateMusic();
 			g_lab->waitTOF();
 			ScreenImage.ImageData = g_lab->getVGABaseAddr();
 			g_lab->bltBitMap(&JBackImage, i, 0, &ScreenImage, i, 0, 8, g_lab->_screenHeight);
@@ -837,7 +837,7 @@ bool saveRestoreGame() {
 		if (slot >= 0) {
 			isOK = loadGame(&RoomNum, &Direction, &(Inventory[QUARTERNUM].Many), slot);
 			if (isOK)
-				g_music->resetMusic();
+				g_lab->g_music->resetMusic();
 		}
 	}
 
@@ -855,7 +855,7 @@ static void getMonImages() {
 
 	resetBuffer();
 
-	buffer = g_music->newOpen("P:MonImage", bufferSize);
+	buffer = g_lab->g_music->newOpen("P:MonImage", bufferSize);
 
 	if (!buffer)
 		return;

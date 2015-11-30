@@ -28,13 +28,13 @@
  *
  */
 
+#include "lab/lab.h"
 #include "lab/text.h"
 #include "lab/resource.h"
 
 namespace Lab {
 
 static uint16 allocroom;
-
 extern RoomData *_rooms;
 extern InventoryData *Inventory;
 extern uint16 NumInv, ManyRooms, HighestCondition;
@@ -65,7 +65,7 @@ TextFont *Resource::getFont(const char *fileName) {
 	if (fileSize <= headerSize)
 		return NULL;
 
-	g_music->updateMusic();
+	_vm->g_music->updateMusic();
 
 	TextFont *textfont = (TextFont *)malloc(sizeof(TextFont));
 	textfont->DataLength = fileSize - headerSize;
@@ -142,7 +142,7 @@ bool Resource::readViews(uint16 roomNum) {
 	_rooms[roomNum]._westView = readView(dataFile);
 	_rooms[roomNum]._rules = readRule(dataFile);
 
-	g_music->updateMusic();
+	_vm->g_music->updateMusic();
 
 	delete dataFile;
 	return true;

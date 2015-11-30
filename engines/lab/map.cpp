@@ -84,9 +84,9 @@ char *getText(const char *filename) {
 	bool dodecrypt;
 	byte **tfile;
 
-	g_music->updateMusic();
+	g_lab->g_music->updateMusic();
 	dodecrypt = (isBuffered(filename) == NULL);
-	tfile = g_music->newOpen(filename);
+	tfile = g_lab->g_music->newOpen(filename);
 
 	if (!tfile)
 		return NULL;
@@ -200,7 +200,7 @@ static bool loadMapData() {
 		BigMsgFont = MsgFont;
 
 	resetBuffer();  /* Make images load into start of buffer */
-	buffer = g_music->newOpen("P:MapImage", Size);
+	buffer = g_lab->g_music->newOpen("P:MapImage", Size);
 
 	if (!buffer)
 		return false;
@@ -252,9 +252,9 @@ static bool loadMapData() {
 	Common::File *mapFile = g_lab->_resource->openDataFile("Lab:Maps", MKTAG('M', 'A', 'P', '0'));
 	if (!mapFile)
 		error("Corrupt map file");
-	g_music->updateMusic();
-	if (!g_music->_doNotFilestopSoundEffect)
-		g_music->stopSoundEffect();
+	g_lab->g_music->updateMusic();
+	if (!g_lab->g_music->_doNotFilestopSoundEffect)
+		g_lab->g_music->stopSoundEffect();
 
 	MaxRooms = mapFile->readUint16LE();
 	Maps = new MapData[MaxRooms];	// will be freed when the user exits the map
@@ -309,7 +309,7 @@ void fade(bool fadein, uint16 res) {
 
 		setAmigaPal(newpal, 16);
 		g_lab->waitTOF();
-		g_music->updateMusic();
+		g_lab->g_music->updateMusic();
 	}
 }
 
