@@ -303,6 +303,22 @@ bool IllusionsEngine::checkActiveTalkThreads() {
 	return _threads->isActiveThread(kMsgQueryTalkThreadActive);
 }
 
+void IllusionsEngine::setTextDuration(int kind, uint32 duration) {
+	_field8 = kind;
+	switch (_field8) {
+	case 1:
+	case 2:
+		_fieldA = 0;
+		break;
+	case 3:
+	case 4:
+		_fieldA = duration;
+		break;
+	default:
+		break;
+	}
+}
+
 uint32 IllusionsEngine::clipTextDuration(uint32 duration) {
 	switch (_field8) {
 	case 2:

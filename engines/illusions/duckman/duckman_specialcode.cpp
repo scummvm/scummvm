@@ -3,7 +3,7 @@
  * ScummVM is the legal property of its developers, whose names
  * are too numerous to list here. Please refer to the COPYRIGHT
  * file distributed with this source distribution.
- *
+ *                                                                                                                                  
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -66,6 +66,9 @@ void DuckmanSpecialCode::init() {
 	SPECIAL(0x00160010, spcCenterNewspaper);
 	SPECIAL(0x00160014, spcUpdateObject272Sequence);
 	SPECIAL(0x0016001C, spcSetCursorInventoryMode);
+	SPECIAL(0x0016001D, spcCenterCurrentScreenText);
+	SPECIAL(0x0016001E, spcSetDefaultTextCoords);
+	SPECIAL(0x0016001F, spcSetTextDuration);
 }
 
 #undef SPECIAL
@@ -157,13 +160,6 @@ void DuckmanSpecialCode::spcCenterNewspaper(OpCall &opCall) {
 	_vm->notifyThreadId(opCall._threadId);
 }
 
-void DuckmanSpecialCode::spcSetCursorInventoryMode(OpCall &opCall) {
-	ARG_BYTE(mode);
-	ARG_BYTE(value);
-	_vm->setCursorInventoryMode(mode, value);
-	_vm->notifyThreadId(opCall._threadId);
-}
-
 void DuckmanSpecialCode::spcUpdateObject272Sequence(OpCall &opCall) {
 	byte flags = 0;
 	uint32 sequenceId;
@@ -204,6 +200,33 @@ void DuckmanSpecialCode::spcUpdateObject272Sequence(OpCall &opCall) {
 	}
 	Control *control = _vm->getObjectControl(0x40110);
 	control->startSequenceActor(sequenceId, 2, opCall._threadId);
+}
+
+void DuckmanSpecialCode::spcSetCursorInventoryMode(OpCall &opCall) {
+	ARG_BYTE(mode);
+	ARG_BYTE(value);
+	_vm->setCursorInventoryMode(mode, value);
+	_vm->notifyThreadId(opCall._threadId);
+}
+
+void DuckmanSpecialCode::spcCenterCurrentScreenText(OpCall &opCall) {
+	WidthHeight dimensions;
+	_vm->getDefaultTextDimensions(dimensions);
+	Common::Point pt(160, dimensions._height / 2 + 8);
+	_vm->setDefaultTextPosition(pt);
+	_vm->notifyThreadId(opCall._threadId);
+}
+
+void DuckmanSpecialCode::spcSetDefaultTextCoords(OpCall &opCall) {
+	_vm->setDefaultTextCoords();
+	_vm->notifyThreadId(opCall._threadId);
+}
+
+void DuckmanSpecialCode::spcSetTextDuration(OpCall &opCall) {
+	ARG_INT16(kind);
+	ARG_INT16(duration);
+	_vm->setTextDuration(kind, duration);
+	_vm->notifyThreadId(opCall._threadId);
 }
 
 } // End of namespace Illusions

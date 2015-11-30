@@ -170,6 +170,7 @@ public:
 
 	void setCurrFontId(uint32 fontId);
 	bool checkActiveTalkThreads();
+	void setTextDuration(int kind, uint32 duration);
 	uint32 clipTextDuration(uint32 duration);
 	void getDefaultTextDimensions(WidthHeight &dimensions);
 	void setDefaultTextDimensions(WidthHeight &dimensions);
