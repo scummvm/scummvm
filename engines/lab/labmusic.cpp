@@ -43,10 +43,9 @@ namespace Lab {
 #define CLOWNROOM           123
 #define DIMROOM              80
 
-Music *g_music;
 extern uint16 RoomNum;	// TODO: Move into a class
 
-Music::Music() {
+Music::Music(LabEngine *vm) : _vm(vm) {
 	_file = 0;
 	_tFile = 0;
 	_musicPaused = false;

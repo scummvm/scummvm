@@ -101,6 +101,7 @@ private:
 public:
 	EventManager *_event;
 	Resource *_resource;
+	Music *g_music;
 
 	byte *_currentDsplayBuffer;
 	Common::Point _mousePos;

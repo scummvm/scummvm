@@ -333,26 +333,26 @@ static void doActions(Action * APtr, CloseDataPtr *LCPtr) {
 	uint32 StartSecs, StartMicros, CurSecs, CurMicros;
 
 	while (APtr) {
-		g_music->updateMusic();
+		g_lab->g_music->updateMusic();
 
 		switch (APtr->ActionType) {
 		case PLAYSOUND:
-			g_music->_loopSoundEffect = false;
-			g_music->_waitTillFinished = true;
+			g_lab->g_music->_loopSoundEffect = false;
+			g_lab->g_music->_waitTillFinished = true;
 			readMusic((char *)APtr->Data, true);
-			g_music->_waitTillFinished = false;
+			g_lab->g_music->_waitTillFinished = false;
 			break;
 
 		case PLAYSOUNDB:
-			g_music->_loopSoundEffect = false;
-			g_music->_waitTillFinished = false;
+			g_lab->g_music->_loopSoundEffect = false;
+			g_lab->g_music->_waitTillFinished = false;
 			readMusic((char *)APtr->Data, false);
 			break;
 
 		case PLAYSOUNDCONT:
-			g_music->_doNotFilestopSoundEffect = true;
-			g_music->_loopSoundEffect = true;
-			readMusic((char *)APtr->Data, g_music->_waitTillFinished);
+			g_lab->g_music->_doNotFilestopSoundEffect = true;
+			g_lab->g_music->_loopSoundEffect = true;
+			readMusic((char *)APtr->Data, g_lab->g_music->_waitTillFinished);
 			break;
 
 		case SHOWDIFF:
@@ -370,7 +370,7 @@ static void doActions(Action * APtr, CloseDataPtr *LCPtr) {
 			}
 
 			if (APtr->Data)
-				g_music->newOpen((char *)APtr->Data);          /* Puts a file into memory */
+				g_lab->g_music->newOpen((char *)APtr->Data);          /* Puts a file into memory */
 
 			break;
 
@@ -485,7 +485,7 @@ static void doActions(Action * APtr, CloseDataPtr *LCPtr) {
 			g_lab->WSDL_UpdateScreen();
 
 			while (1) {
-				g_music->updateMusic();
+				g_lab->g_music->updateMusic();
 				g_lab->diffNextFrame();
 				g_lab->getTime(&CurSecs, &CurMicros);
 
@@ -497,30 +497,30 @@ static void doActions(Action * APtr, CloseDataPtr *LCPtr) {
 			break;
 
 		case STOPMUSIC:
-			g_music->setMusic(false);
+			g_lab->g_music->setMusic(false);
 			break;
 
 		case STARTMUSIC:
-			g_music->setMusic(true);
+			g_lab->g_music->setMusic(true);
 			break;
 
 		case CHANGEMUSIC:
-			g_music->changeMusic((const char *)APtr->Data);
-			g_music->setMusicReset(false);
+			g_lab->g_music->changeMusic((const char *)APtr->Data);
+			g_lab->g_music->setMusicReset(false);
 			break;
 
 		case RESETMUSIC:
-			g_music->resetMusic();
-			g_music->setMusicReset(true);
+			g_lab->g_music->resetMusic();
+			g_lab->g_music->setMusicReset(true);
 			break;
 
 		case FILLMUSIC:
-			g_music->updateMusic();
+			g_lab->g_music->updateMusic();
 			break;
 
 		case WAITSOUND:
-			while (g_music->isSoundEffectActive()) {
-				g_music->updateMusic();
+			while (g_lab->g_music->isSoundEffectActive()) {
+				g_lab->g_music->updateMusic();
 				g_lab->diffNextFrame();
 				g_lab->waitTOF();
 			}
@@ -528,18 +528,18 @@ static void doActions(Action * APtr, CloseDataPtr *LCPtr) {
 			break;
 
 		case CLEARSOUND:
-			if (g_music->_loopSoundEffect) {
-				g_music->_loopSoundEffect = false;
-				g_music->stopSoundEffect();
-			} else if (g_music->isSoundEffectActive())
-				g_music->stopSoundEffect();
+			if (g_lab->g_music->_loopSoundEffect) {
+				g_lab->g_music->_loopSoundEffect = false;
+				g_lab->g_music->stopSoundEffect();
+			} else if (g_lab->g_music->isSoundEffectActive())
+				g_lab->g_music->stopSoundEffect();
 
 			break;
 
 		case WINMUSIC:
-			g_music->_winmusic = true;
-			g_music->freeMusic();
-			g_music->initMusic();
+			g_lab->g_music->_winmusic = true;
+			g_lab->g_music->freeMusic();
+			g_lab->g_music->initMusic();
 			break;
 
 		case WINGAME:
@@ -590,18 +590,18 @@ static void doActions(Action * APtr, CloseDataPtr *LCPtr) {
 		APtr = APtr->NextAction;
 	}
 
-	if (g_music->_loopSoundEffect) {
-		g_music->_loopSoundEffect = false;
-		g_music->stopSoundEffect();
+	if (g_lab->g_music->_loopSoundEffect) {
+		g_lab->g_music->_loopSoundEffect = false;
+		g_lab->g_music->stopSoundEffect();
 	} else {
-		while (g_music->isSoundEffectActive()) {
-			g_music->updateMusic();
+		while (g_lab->g_music->isSoundEffectActive()) {
+			g_lab->g_music->updateMusic();
 			g_lab->diffNextFrame();
 			g_lab->waitTOF();
 		}
 	}
 
-	g_music->_doNotFilestopSoundEffect = false;
+	g_lab->g_music->_doNotFilestopSoundEffect = false;
 }
 
 /*****************************************************************************/

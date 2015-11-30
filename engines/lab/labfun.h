@@ -157,7 +157,7 @@ void closePartial(int32 File);
 
 class Music {
 public:
-	Music();
+	Music(LabEngine *vm);
 
 	byte **newOpen(const char *name);
 	byte **newOpen(const char *name, uint32 &size);
@@ -185,6 +185,7 @@ public:
 	bool _doReset;
 
 private:
+	LabEngine *_vm;
 	void fillbuffer(byte *musicBuffer);
 	void startMusic(bool startatbegin);
 
@@ -201,9 +202,6 @@ private:
 
 	Audio::QueuingAudioStream *_queuingAudioStream;
 };
-
-
-extern Music *g_music;
 
 /*---------------------------*/
 /*----- From LabSets.c ------*/
