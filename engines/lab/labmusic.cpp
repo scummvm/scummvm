@@ -43,8 +43,6 @@ namespace Lab {
 #define CLOWNROOM           123
 #define DIMROOM              80
 
-extern uint16 RoomNum;	// TODO: Move into a class
-
 Music::Music(LabEngine *vm) : _vm(vm) {
 	_file = 0;
 	_tFile = 0;
@@ -70,9 +68,9 @@ Music::Music(LabEngine *vm) : _vm(vm) {
 /* it from the Audio device.                                                 */
 /*****************************************************************************/
 void Music::updateMusic() {
-	g_lab->WSDL_ProcessInput(0);
+	_vm->WSDL_ProcessInput(0);
 
-	g_lab->_event->updateMouse();
+	_vm->_event->updateMouse();
 
 	if (_musicOn && getPlayingBufferCount() < MAXBUFFERS) {
 		// NOTE: We need to use malloc(), cause this will be freed with free()
@@ -89,7 +87,7 @@ void Music::updateMusic() {
 		}
 
 		byte soundFlags = Audio::FLAG_LITTLE_ENDIAN;
-		if (g_lab->getPlatform() == Common::kPlatformWindows)
+		if (_vm->getPlatform() == Common::kPlatformWindows)
 			soundFlags |= Audio::FLAG_16BITS;
 		else
 			soundFlags |= Audio::FLAG_UNSIGNED;
@@ -97,7 +95,7 @@ void Music::updateMusic() {
 		_queuingAudioStream->queueBuffer(musicBuffer, MUSICBUFSIZE, DisposeAfterUse::YES, soundFlags);
 
 		if (startMusic)
-			g_lab->_mixer->playStream(Audio::Mixer::kMusicSoundType, &_musicHandle, _queuingAudioStream);
+			_vm->_mixer->playStream(Audio::Mixer::kMusicSoundType, &_musicHandle, _queuingAudioStream);
 	}
 }
 
@@ -113,7 +111,7 @@ void Music::playSoundEffect(uint16 SampleSpeed, uint32 Length, void *Data) {
 		SampleSpeed = 4000;
 
 	byte soundFlags = Audio::FLAG_LITTLE_ENDIAN;
-	if (g_lab->getPlatform() == Common::kPlatformWindows)
+	if (_vm->getPlatform() == Common::kPlatformWindows)
 		soundFlags |= Audio::FLAG_16BITS;
 	else
 		soundFlags |= Audio::FLAG_UNSIGNED;
@@ -121,16 +119,16 @@ void Music::playSoundEffect(uint16 SampleSpeed, uint32 Length, void *Data) {
 	Audio::SeekableAudioStream *audioStream = Audio::makeRawStream((const byte *)Data, Length, SampleSpeed, soundFlags, DisposeAfterUse::NO);
 	uint loops = (_loopSoundEffect) ? 0 : 1;
 	Audio::LoopingAudioStream *loopingAudioStream = new Audio::LoopingAudioStream(audioStream, loops);
-	g_lab->_mixer->playStream(Audio::Mixer::kSFXSoundType, &_sfxHandle, loopingAudioStream);
+	_vm->_mixer->playStream(Audio::Mixer::kSFXSoundType, &_sfxHandle, loopingAudioStream);
 }
 
 void Music::stopSoundEffect() {
 	if (isSoundEffectActive())
-		g_lab->_mixer->stopHandle(_sfxHandle);
+		_vm->_mixer->stopHandle(_sfxHandle);
 }
 
 bool Music::isSoundEffectActive() const {
-	return g_lab->_mixer->isSoundHandleActive(_sfxHandle);
+	return _vm->_mixer->isSoundHandleActive(_sfxHandle);
 }
 
 void Music::fillbuffer(byte *musicBuffer) {
@@ -196,10 +194,10 @@ bool Music::initMusic() {
 void Music::freeMusic() {
 	_musicOn = false;
 
-	g_lab->_mixer->stopHandle(_musicHandle);
+	_vm->_mixer->stopHandle(_musicHandle);
 	_queuingAudioStream = NULL;
 
-	g_lab->_mixer->stopHandle(_sfxHandle);
+	_vm->_mixer->stopHandle(_sfxHandle);
 
 	delete _file;
 	_file = NULL;
@@ -214,7 +212,7 @@ void Music::pauseBackMusic() {
 		_musicOn = false;
 		stopSoundEffect();
 
-		g_lab->_mixer->pauseHandle(_musicHandle, true);
+		_vm->_mixer->pauseHandle(_musicHandle, true);
 
 		_musicPaused = true;
 	}
@@ -228,7 +226,7 @@ void Music::resumeBackMusic() {
 		stopSoundEffect();
 		_musicOn = true;
 
-		g_lab->_mixer->pauseHandle(_musicHandle, false);
+		_vm->_mixer->pauseHandle(_musicHandle, false);
 
 		updateMusic();
 		_musicPaused = false;
@@ -255,17 +253,17 @@ void Music::setMusic(bool on) {
 /* Checks the music that should be playing in a particular room.              */
 /******************************************************************************/
 void Music::checkRoomMusic() {
-	if ((_lastMusicRoom == RoomNum) || !_musicOn)
+	if ((_lastMusicRoom == _vm->_roomNum) || !_musicOn)
 		return;
 
-	if (RoomNum == CLOWNROOM)
+	if (_vm->_roomNum == CLOWNROOM)
 		changeMusic("Music:Laugh");
-	else if (RoomNum == DIMROOM)
+	else if (_vm->_roomNum == DIMROOM)
 		changeMusic("Music:Rm81");
 	else if (_doReset)
 		resetMusic();
 
-	_lastMusicRoom = RoomNum;
+	_lastMusicRoom = _vm->_roomNum;
 }
 
 /*****************************************************************************/

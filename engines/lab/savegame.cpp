@@ -132,7 +132,7 @@ bool readSaveGameHeader(Common::InSaveFile *in, SaveGameHeader &header) {
 /*****************************************************************************/
 /* Writes the game out to disk.                                              */
 /*****************************************************************************/
-bool saveGame(uint16 RoomNum, uint16 Direction, uint16 Quarters, int slot, Common::String desc) {
+bool saveGame(uint16 Direction, uint16 Quarters, int slot, Common::String desc) {
 	uint16 i, j;
 	Common::String fileName = g_lab->generateSaveFileName(slot);
 	Common::SaveFileManager *saveFileManager = g_system->getSavefileManager();
@@ -146,7 +146,7 @@ bool saveGame(uint16 RoomNum, uint16 Direction, uint16 Quarters, int slot, Commo
 	readPict(getPictName(&CPtr), true);
 
 	writeSaveGameHeader(file, desc);
-	file->writeUint16LE(RoomNum);
+	file->writeUint16LE(g_lab->_roomNum);
 	file->writeUint16LE(Direction);
 	file->writeUint16LE(Quarters);
 
@@ -185,7 +185,7 @@ bool saveGame(uint16 RoomNum, uint16 Direction, uint16 Quarters, int slot, Commo
 /*****************************************************************************/
 /* Reads the game from disk.                                                 */
 /*****************************************************************************/
-bool loadGame(uint16 *RoomNum, uint16 *Direction, uint16 *Quarters, int slot) {
+bool loadGame(uint16 *Direction, uint16 *Quarters, int slot) {
 	uint16 i, j;
 	Common::String fileName = g_lab->generateSaveFileName(slot);
 	Common::SaveFileManager *saveFileManager = g_system->getSavefileManager();
@@ -196,7 +196,7 @@ bool loadGame(uint16 *RoomNum, uint16 *Direction, uint16 *Quarters, int slot) {
 
 	SaveGameHeader header;
 	readSaveGameHeader(file, header);
-	*RoomNum = file->readUint16LE();
+	g_lab->_roomNum = file->readUint16LE();
 	*Direction = file->readUint16LE();
 	*Quarters = file->readUint16LE();
 

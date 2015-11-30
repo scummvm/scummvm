@@ -49,7 +49,6 @@ static TextFont bmf;
 extern uint16 Direction;
 
 extern CloseDataPtr CPtr;
-extern uint16 RoomNum;
 
 /*****************************************************************************/
 /* Converts an Amiga palette (up to 16 colors) to a VGA palette, then sets   */

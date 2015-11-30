@@ -73,10 +73,12 @@ LabEngine::LabEngine(OSystem *syst, const ADGameDescription *gameDesc)
     _nextKeyOut = 0;
 
 	_isHiRes = false;
+	_roomNum = -1;
 
 	_event = nullptr;
 	_resource = nullptr;
 	_music = nullptr;
+
 
 	//const Common::FSNode gameDataDir(ConfMan.get("path"));
 	//SearchMan.addSubDirectoryMatching(gameDataDir, "game");

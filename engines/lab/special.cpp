@@ -90,7 +90,7 @@ extern BitMap *DispBitMap, *DrawBitMap;
 extern char diffcmap[3 * 256];
 extern CloseDataPtr CPtr;
 extern InventoryData *Inventory;
-extern uint16 RoomNum, Direction;
+extern uint16 Direction;
 
 #define COMBINATIONUNLOCKED  130
 #define BRICKOPEN            115
@@ -828,14 +828,14 @@ bool saveRestoreGame() {
 				desc = dialog->createDefaultSaveDescription(slot);
 			}
 
-			isOK = saveGame(RoomNum, Direction, Inventory[QUARTERNUM].Many, slot, desc);
+			isOK = saveGame(Direction, Inventory[QUARTERNUM].Many, slot, desc);
 		}
 	} else {
 		// Restore
 		GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Restore game:"), _("Restore"), false);
 		int slot = dialog->runModalWithCurrentTarget();
 		if (slot >= 0) {
-			isOK = loadGame(&RoomNum, &Direction, &(Inventory[QUARTERNUM].Many), slot);
+			isOK = loadGame(&Direction, &(Inventory[QUARTERNUM].Many), slot);
 			if (isOK)
 				g_lab->_music->resetMusic();
 		}
