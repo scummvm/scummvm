@@ -400,7 +400,7 @@ void Intro::introSequence() {
 
 			g_lab->_music->updateMusic();
 			g_lab->waitTOF();
-			g_lab->VGASetPal(diffcmap, 256);
+			g_lab->setPalette(diffcmap, 256);
 			g_lab->	waitTOF();
 			g_lab->waitTOF();
 		}

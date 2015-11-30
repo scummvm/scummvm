@@ -140,7 +140,7 @@ void LabEngine::diffNextFrame() {
 				}
 
 				if (IsPal && !nopalchange) {
-					VGASetPal(diffcmap, 256);
+					setPalette(diffcmap, 256);
 					IsPal = false;
 				}
 
@@ -148,7 +148,7 @@ void LabEngine::diffNextFrame() {
 			}
 
 			if (IsPal && !nopalchange && !IsBM && !donepal) {
-				VGASetPal(diffcmap, 256);
+				setPalette(diffcmap, 256);
 				IsPal = false;
 			}
 
@@ -163,7 +163,7 @@ void LabEngine::diffNextFrame() {
 			CurBit = 0;
 
 			if (DispBitMap->Flags & BITMAPF_VIDEO)
-				WSDL_UpdateScreen();
+				screenUpdate();
 
 			return; /* done with the next frame. */
 		}
@@ -268,7 +268,7 @@ void LabEngine::diffNextFrame() {
 				_event->mouseShow();
 
 				if (!didTOF)
-					WSDL_UpdateScreen();
+					screenUpdate();
 
 				return;
 			}

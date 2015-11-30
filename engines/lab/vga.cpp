@@ -63,10 +63,10 @@ void LabEngine::changeVolume(int delta) {
 	warning("STUB: changeVolume()");
 }
 
-uint16 LabEngine::WSDL_GetNextChar() {
+uint16 LabEngine::getNextChar() {
 	uint16 c = 0;
 
-	WSDL_ProcessInput(0);
+	processInput();
 	if (_nextKeyIn != _nextKeyOut) {
 		c = _keyBuf[_nextKeyOut];
 		_nextKeyOut = ((((unsigned int)((_nextKeyOut + 1) >> 31) >> 26) + (byte)_nextKeyOut + 1) & 0x3F)
@@ -76,12 +76,12 @@ uint16 LabEngine::WSDL_GetNextChar() {
 	return c;
 }
 
-bool LabEngine::WSDL_HasNextChar() {
-	WSDL_ProcessInput(0);
+bool LabEngine::haveNextChar() {
+	processInput();
 	return _nextKeyIn != _nextKeyOut;
 }
 
-void LabEngine::WSDL_ProcessInput(bool can_delay) {
+void LabEngine::processInput(bool can_delay) {
 	Common::Event event;
 
 	if (1 /*!g_IgnoreProcessInput*/) {
@@ -167,7 +167,7 @@ void LabEngine::WSDL_ProcessInput(bool can_delay) {
 }
 
 Common::Point LabEngine::WSDL_GetMousePos() {
-	WSDL_ProcessInput(0);
+	processInput();
 
 	return _mousePos;
 }
@@ -176,7 +176,7 @@ void LabEngine::waitTOF() {
 	g_system->copyRectToScreen(_displayBuffer, _screenWidth, 0, 0, _screenWidth, _screenHeight);
 	g_system->updateScreen();
 
-  	WSDL_ProcessInput(0);
+  	processInput();
 
   	uint32 now;
 
@@ -186,7 +186,7 @@ void LabEngine::waitTOF() {
 	_lastWaitTOFTicks = now;
 }
 
-void LabEngine::WSDL_SetColors(byte *buf, uint16 first, uint16 numreg, uint16 slow) {
+void LabEngine::applyPalette(byte *buf, uint16 first, uint16 numreg, uint16 slow) {
 	byte tmp[256 * 3];
 
 	for (int i = 0; i < 256 * 3; i++) {
@@ -211,12 +211,12 @@ void LabEngine::WSDL_SetColors(byte *buf, uint16 first, uint16 numreg, uint16 sl
 /*           selected.                                                       */
 /*****************************************************************************/
 void LabEngine::writeColorRegs(byte *buf, uint16 first, uint16 numreg) {
-	WSDL_SetColors(buf, first, numreg, 0);
+	applyPalette(buf, first, numreg, 0);
 	memcpy(&(_curvgapal[first * 3]), buf, numreg * 3);
 }
 
 void LabEngine::writeColorRegsSmooth(byte *buf, uint16 first, uint16 numreg) {
-	WSDL_SetColors(buf, first, numreg, 1);
+	applyPalette(buf, first, numreg, 1);
 	memcpy(&(_curvgapal[first * 3]), buf, numreg * 3);
 }
 
@@ -229,16 +229,16 @@ void LabEngine::writeColorReg(byte *buf, uint16 regnum) {
 	writeColorRegs(buf, regnum, 1);
 }
 
-void LabEngine::VGASetPal(void *cmap, uint16 numcolors) {
+void LabEngine::setPalette(void *cmap, uint16 numcolors) {
 	if (memcmp(cmap, _curvgapal, numcolors * 3) != 0)
 		writeColorRegs((byte *)cmap, 0, numcolors);
 }
 
-void LabEngine::WSDL_UpdateScreen() {
+void LabEngine::screenUpdate() {
 	g_system->copyRectToScreen(_displayBuffer, _screenWidth, 0, 0, _screenWidth, _screenHeight);
 	g_system->updateScreen();
 
-	WSDL_ProcessInput(0);
+	processInput();
 }
 
 /*****************************************************************************/

@@ -516,7 +516,7 @@ bool LabEngine::doUse(uint16 CurInv) {
 		CurFileName = " ";
 		CPtr = NULL;
 		doMap(_roomNum);
-		VGASetPal(initcolors, 8);
+		setPalette(initcolors, 8);
 		drawMessage(NULL);
 		drawPanel();
 	} else if (CurInv == JOURNALNUM) {         /* LAB: Labyrinth specific */
@@ -623,7 +623,7 @@ void LabEngine::mainGameLoop() {
 
 	bool forceDraw = false, GotMessage = true;
 
-	VGASetPal(initcolors, 8);
+	setPalette(initcolors, 8);
 
 	CPtr    = NULL;
 	_roomNum = 1;
@@ -648,7 +648,7 @@ void LabEngine::mainGameLoop() {
 	/* Set up initial picture. */
 
 	while (1) {
-		WSDL_ProcessInput(1);
+		processInput(true);
 
 		if (GotMessage) {
 			if (QuitLab || g_engine->shouldQuit()) {
@@ -663,7 +663,7 @@ void LabEngine::mainGameLoop() {
 				CPtr = NULL;
 
 				mayShowCrumbIndicator();
-				WSDL_UpdateScreen();
+				screenUpdate();
 			}
 
 			/* Sets the current picture properly on the screen */
@@ -699,7 +699,7 @@ void LabEngine::mainGameLoop() {
 				forceDraw = false;
 
 				mayShowCrumbIndicator();
-				WSDL_UpdateScreen();
+				screenUpdate();
 
 				if (!_followingCrumbs)
 					eatMessages();
@@ -708,7 +708,7 @@ void LabEngine::mainGameLoop() {
 			if (forceDraw) {
 				drawRoomMessage(curInv, CPtr);
 				forceDraw = false;
-				WSDL_UpdateScreen();
+				screenUpdate();
 			}
 		}
 
@@ -736,14 +736,14 @@ void LabEngine::mainGameLoop() {
 
 					GotMessage = true;
 					mayShowCrumbIndicator();
-					WSDL_UpdateScreen();
+					screenUpdate();
 					if (!from_crumbs(GADGETUP, code, 0, WSDL_GetMousePos(), curInv, curMsg, forceDraw, code, actionMode))
 						break;
 				}
 			}
 
 			mayShowCrumbIndicator();
-			WSDL_UpdateScreen();
+			screenUpdate();
 		} else {
 			GotMessage = true;
 
@@ -803,7 +803,7 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 			_numCrumbs = 0;
 			_droppingCrumbs = true;
 			mayShowCrumbIndicator();
-			WSDL_UpdateScreen();
+			screenUpdate();
 		} else if (code == 'f' || code == 'F' ||
 		         code == 'r' || code == 'R') {  /* Follow bread crumbs */
 			if (_droppingCrumbs) {
@@ -824,7 +824,7 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 						interfaceOn(); /* Sets the correct gadget list */
 						drawPanel();
 						drawRoomMessage(curInv, CPtr);
-						WSDL_UpdateScreen();
+						screenUpdate();
 					}
 				} else {
 					_breadCrumbs[0]._roomNum = 0;
@@ -832,7 +832,7 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 
 					// Need to hide indicator!!!!
 					mayShowCrumbIndicatorOff();
-					WSDL_UpdateScreen();
+					screenUpdate();
 				}
 			}
 		} else if ((code == 315) || (code == 'x') || (code == 'X')
@@ -889,7 +889,7 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 			DoNotDrawMessage = false;
 			drawPanel();
 			drawRoomMessage(curInv, CPtr);
-			WSDL_UpdateScreen();
+			screenUpdate();
 		}
 	} else if ((msgClass == GADGETUP) && !Alternate) {
 		if (gadgetId <= 5) {
@@ -900,7 +900,7 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 				HCPtr = NULL;
 				CPtr = NULL;
 				mayShowCrumbIndicator();
-				WSDL_UpdateScreen();
+				screenUpdate();
 			} else if (gadgetId == 5) {
 				eatMessages();
 
@@ -921,7 +921,7 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 				drawRoomMessage(curInv, CPtr);
 
 				mayShowCrumbIndicator();
-				WSDL_UpdateScreen();
+				screenUpdate();
 			} else {
 				Old        = actionMode;
 				actionMode = gadgetId;
@@ -942,13 +942,13 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 				else if (gadgetId == 4)
 					drawStaticMessage(kTextLookWhat);
 
-				WSDL_UpdateScreen();
+				screenUpdate();
 			}
 		} else if (gadgetId == 9) {
 			doUse(MAPNUM);
 
 			mayShowCrumbIndicator();
-			WSDL_UpdateScreen();
+			screenUpdate();
 		} else if (gadgetId >= 6) { /* Arrow Gadgets */
 			CPtr = NULL;
 			HCPtr = NULL;
@@ -971,7 +971,7 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 				forceDraw = true;
 
 				mayShowCrumbIndicator();
-				WSDL_UpdateScreen();
+				screenUpdate();
 			} else if (gadgetId == 7) {
 				OldRoomNum = _roomNum;
 
@@ -1035,7 +1035,7 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 				}
 
 				mayShowCrumbIndicator();
-				WSDL_UpdateScreen();
+				screenUpdate();
 			}
 		}
 	} else if ((msgClass == GADGETUP) && Alternate) {
@@ -1052,7 +1052,7 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 			drawPanel();
 			drawRoomMessage(curInv, CPtr);
 
-			WSDL_UpdateScreen();
+			screenUpdate();
 		}
 
 		gadgetId--;
@@ -1076,13 +1076,13 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 
 			if (doit) {
 				drawMessage("Disk operation failed.");
-				VGASetPal(initcolors, 8);
+				setPalette(initcolors, 8);
 
-				WSDL_UpdateScreen();
+				screenUpdate();
 
 				g_system->delayMillis(1000);
 			} else {
-				WSDL_UpdateScreen();
+				screenUpdate();
 			}
 		} else if (gadgetId == 1) {
 			if (!doUse(curInv)) {
@@ -1095,7 +1095,7 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 				drawStaticMessage(kTextUseOnWhat);
 				MainDisplay = true;
 
-				WSDL_UpdateScreen();
+				screenUpdate();
 			}
 		} else if (gadgetId == 2) {
 			MainDisplay = !MainDisplay;
@@ -1111,27 +1111,27 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 			        Inventory[curInv].BInvName)
 				Test = getInvName(curInv);
 
-			WSDL_UpdateScreen();
+			screenUpdate();
 		} else if (gadgetId == 3) { /* Left gadget */
 			decIncInv(&curInv, true);
 			LastInv = curInv;
 			DoNotDrawMessage = false;
 			drawRoomMessage(curInv, CPtr);
 
-			WSDL_UpdateScreen();
+			screenUpdate();
 		} else if (gadgetId == 4) { /* Right gadget */
 			decIncInv(&curInv, false);
 			LastInv = curInv;
 			DoNotDrawMessage = false;
 			drawRoomMessage(curInv, CPtr);
 
-			WSDL_UpdateScreen();
+			screenUpdate();
 		} else if (gadgetId == 5) { /* bread crumbs */
 			_breadCrumbs[0]._roomNum = 0;
 			_numCrumbs = 0;
 			_droppingCrumbs = true;
 			mayShowCrumbIndicator();
-			WSDL_UpdateScreen();
+			screenUpdate();
 		} else if (gadgetId == 6) { /* follow crumbs */
 			if (_droppingCrumbs) {
 				if (_numCrumbs > 0) {
@@ -1150,14 +1150,14 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 					interfaceOn(); /* Sets the correct gadget list */
 					drawPanel();
 					drawRoomMessage(curInv, CPtr);
-					WSDL_UpdateScreen();
+					screenUpdate();
 				} else {
 					_breadCrumbs[0]._roomNum = 0;
 					_droppingCrumbs = false;
 
 					// Need to hide indicator!!!!
 					mayShowCrumbIndicatorOff();
-					WSDL_UpdateScreen();
+					screenUpdate();
 				}
 			}
 		}
@@ -1230,7 +1230,7 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 		}
 
 		mayShowCrumbIndicator();
-		WSDL_UpdateScreen();
+		screenUpdate();
 	} else if (msgClass == DELTAMOVE) {
 		VPtr = getViewData(_roomNum, Direction);
 		OldCPtr = VPtr->closeUps;
@@ -1278,7 +1278,7 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 		drawRoomMessage(curInv, CPtr);
 
 		mayShowCrumbIndicator();
-		WSDL_UpdateScreen();
+		screenUpdate();
 	}
 	return true;
 }

@@ -139,19 +139,19 @@ public:
 	void writeColorRegs(byte *buf, uint16 first, uint16 numreg);
 	byte *getVGABaseAddr();
 	void readScreenImage(Image *Im, uint16 x, uint16 y);
-	void WSDL_UpdateScreen();
+	void screenUpdate();
 	void rectFill(uint16 x1, uint16 y1, uint16 x2, uint16 y2);
 	void scrollDisplayX(int16 dx, uint16 x1, uint16 y1, uint16 x2, uint16 y2);
 	void scrollDisplayY(int16 dy, uint16 x1, uint16 y1, uint16 x2, uint16 y2);
 	void ghoastRect(uint16 pencolor, uint16 x1, uint16 y1, uint16 x2, uint16 y2);
 	void bltBitMap(Image *ImSource, uint16 xs, uint16 ys, Image *ImDest, uint16 xd, uint16 yd, uint16 width, uint16 height);
-	void VGASetPal(void *cmap, uint16 numcolors);
+	void setPalette(void *cmap, uint16 numcolors);
 	void drawHLine(uint16 x, uint16 y1, uint16 y2);
 	void drawVLine(uint16 x1, uint16 y, uint16 x2);
 	void drawImage(Image *Im, uint16 x, uint16 y);
-	bool WSDL_HasNextChar();
-	uint16 WSDL_GetNextChar();
-	void WSDL_ProcessInput(bool can_delay);
+	bool haveNextChar();
+	uint16 getNextChar();
+	void processInput(bool can_delay = false);
 	void writeColorReg(byte *buf, uint16 regnum);
 	void writeColorRegsSmooth(byte *buf, uint16 first, uint16 numreg);
 
@@ -192,7 +192,7 @@ private:
 	void drawMaskImage(Image *Im, uint16 x, uint16 y);
 	Common::Point WSDL_GetMousePos();
 	void changeVolume(int delta);
-	void WSDL_SetColors(byte *buf, uint16 first, uint16 numreg, uint16 slow);
+	void applyPalette(byte *buf, uint16 first, uint16 numreg, uint16 slow);
 
 	// engine.cpp
 	bool setUpScreens();

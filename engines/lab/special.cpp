@@ -162,7 +162,7 @@ void showCombination(const char *filename) {
 
 	doCombination();
 
-	g_lab->VGASetPal(diffcmap, 256);
+	g_lab->setPalette(diffcmap, 256);
 }
 
 
@@ -313,7 +313,7 @@ void showTile(const char *filename, bool showsolution) {
 
 	doTile(showsolution);
 
-	g_lab->VGASetPal(diffcmap, 256);
+	g_lab->setPalette(diffcmap, 256);
 }
 
 static void scrollRaster(int16 dx, int16 dy, uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
@@ -471,7 +471,7 @@ void doNotes() {
 
 	flowText(BigMsgFont, -2 + SVGACord(1), 0, 0, false, false, true, true, VGAScaleX(25) + SVGACord(15), VGAScaleY(50), VGAScaleX(295) - SVGACord(15), VGAScaleY(148), ntext);
 
-	g_lab->VGASetPal(diffcmap, 256);
+	g_lab->setPalette(diffcmap, 256);
 	freeAllStolenMem();
 }
 
@@ -533,7 +533,7 @@ void doWestPaper() {
 
 	CharsPrinted = flowText(BigMsgFont, -4, 0, 0, false, false, false, true, VGAScaleX(162), VGAScaleY(y), VGAScaleX(275), VGAScaleY(148), ntext);
 
-	g_lab->VGASetPal(diffcmap, 256);
+	g_lab->setPalette(diffcmap, 256);
 	freeAllStolenMem();
 }
 
@@ -841,7 +841,7 @@ bool saveRestoreGame() {
 		}
 	}
 
-	g_lab->WSDL_UpdateScreen();
+	g_lab->screenUpdate();
 
 	return isOK;
 }
