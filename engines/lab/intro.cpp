@@ -90,10 +90,10 @@ void Intro::doPictText(const char *filename, bool isscreen) {
 	strcat(path, filename);
 
 	if (isscreen) {
-		g_lab->g_music->updateMusic();
+		g_lab->_music->updateMusic();
 		timedelay = 35;
 	} else {
-		g_lab->g_music->updateMusic();
+		g_lab->_music->updateMusic();
 		timedelay = 7;
 	}
 
@@ -105,7 +105,7 @@ void Intro::doPictText(const char *filename, bool isscreen) {
 			if (begin) {
 				begin = false;
 
-				tfile = g_lab->g_music->newOpen(path);
+				tfile = g_lab->_music->newOpen(path);
 
 				if (!tfile)
 					return;
@@ -144,7 +144,7 @@ void Intro::doPictText(const char *filename, bool isscreen) {
 		msg = g_lab->getMsg();
 
 		if (msg == NULL) {
-			g_lab->g_music->updateMusic();
+			g_lab->_music->updateMusic();
 			g_lab->diffNextFrame();
 			g_lab->getTime(&secs, &micros);
 			g_lab->anyTimeDiff(lastsecs, lastmicros, secs, micros, &secs, &micros);
@@ -216,13 +216,13 @@ void Intro::doPictText(const char *filename, bool isscreen) {
 /* Does a one second delay, but checks the music while doing it.             */
 /*****************************************************************************/
 void Intro::musicDelay() {
-	g_lab->g_music->updateMusic();
+	g_lab->_music->updateMusic();
 
 	if (_quitIntro)
 		return;
 
 	for (uint16 i = 0; i < 20; i++) {
-		g_lab->g_music->updateMusic();
+		g_lab->_music->updateMusic();
 		g_lab->waitTOF();
 		g_lab->waitTOF();
 		g_lab->waitTOF();
@@ -234,7 +234,7 @@ void Intro::musicDelay() {
 void Intro::nReadPict(const char *filename, bool playOnce) {
 	Common::String finalFileName = Common::String("P:Intro/") + filename;
 
-	g_lab->g_music->updateMusic();
+	g_lab->_music->updateMusic();
 	introEatMessages();
 
 	if (_quitIntro)
@@ -277,7 +277,7 @@ void Intro::introSequence() {
 
 	blackAllScreen();
 
-	g_lab->g_music->initMusic();
+	g_lab->_music->initMusic();
 
 	nopalchange = true;
 	if (g_lab->getPlatform() != Common::kPlatformWindows)
@@ -297,14 +297,14 @@ void Intro::introSequence() {
 		                   (diffcmap[i * 3 + 2] >> 2);
 	}
 
-	g_lab->g_music->updateMusic();
+	g_lab->_music->updateMusic();
 	fade(true, 0);
 
 	for (int times = 0; times < 150; times++) {
 		if (_quitIntro)
 			break;
 
-		g_lab->g_music->updateMusic();
+		g_lab->_music->updateMusic();
 		uint16 temp = palette[2];
 
 		for (uint16 i = 2; i < 15; i++)
@@ -319,7 +319,7 @@ void Intro::introSequence() {
 	fade(false, 0);
 	blackAllScreen();
 
-	g_lab->g_music->updateMusic();
+	g_lab->_music->updateMusic();
 
 	nReadPict("Title.A", true);
 	nReadPict("AB", true);
@@ -341,11 +341,11 @@ void Intro::introSequence() {
 	nReadPict("DA", true);
 	musicDelay();
 
-	g_lab->g_music->newOpen("p:Intro/Intro.1");  /* load the picture into the buffer */
+	g_lab->_music->newOpen("p:Intro/Intro.1");  /* load the picture into the buffer */
 
-	g_lab->g_music->updateMusic();
+	g_lab->_music->updateMusic();
 	blackAllScreen();
-	g_lab->g_music->updateMusic();
+	g_lab->_music->updateMusic();
 
 	_msgfont = g_lab->_resource->getFont("P:Map.fon");
 
@@ -366,7 +366,7 @@ void Intro::introSequence() {
 	freeAllStolenMem();
 
 	blackAllScreen();
-	g_lab->g_music->updateMusic();
+	g_lab->_music->updateMusic();
 
 	_introDoBlack = true;
 	nReadPict("Station1", true);
@@ -398,7 +398,7 @@ void Intro::introSequence() {
 			for (uint16 idx = (8 * 3); idx < (255 * 3); idx++)
 				diffcmap[idx] = 255 - diffcmap[idx];
 
-			g_lab->g_music->updateMusic();
+			g_lab->_music->updateMusic();
 			g_lab->waitTOF();
 			g_lab->VGASetPal(diffcmap, 256);
 			g_lab->	waitTOF();
