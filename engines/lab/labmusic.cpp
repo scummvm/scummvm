@@ -33,6 +33,7 @@
 #include "lab/stddefines.h"
 #include "lab/labfun.h"
 #include "lab/mouse.h"
+#include "lab/music.h"
 #include "lab/lab.h"
 
 namespace Lab {

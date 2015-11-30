@@ -150,60 +150,6 @@ Common::File *openPartial(const char *name);
 void closePartial(int32 File);
 
 /*---------------------------*/
-/*----- From LabMusic.c -----*/
-/*---------------------------*/
-
-#define MAXBUFFERS         5L
-
-class Music {
-public:
-	Music(LabEngine *vm);
-
-	byte **newOpen(const char *name);
-	byte **newOpen(const char *name, uint32 &size);
-	bool initMusic();
-	void freeMusic();
-	void updateMusic();
-	uint16 getPlayingBufferCount();
-	void closeMusic();
-	void setMusic(bool on);
-	void resumeBackMusic();
-	void pauseBackMusic();
-	void changeMusic(const char *newmusic);
-	void checkRoomMusic();
-	void resetMusic();
-	void setMusicReset(bool reset) { _doReset = reset; }
-	void playSoundEffect(uint16 SampleSpeed, uint32 Length, void *Data);
-	void stopSoundEffect();
-	bool isSoundEffectActive() const;
-
-	bool _winmusic, _doNotFilestopSoundEffect;
-	bool _musicOn;
-	bool _loopSoundEffect;
-	bool _waitTillFinished;
-	uint16 _lastMusicRoom ;
-	bool _doReset;
-
-private:
-	LabEngine *_vm;
-	void fillbuffer(byte *musicBuffer);
-	void startMusic(bool startatbegin);
-
-	Common::File *_file;
-	Common::File *_tFile;
-	bool _musicPaused;
-
-	bool _tMusicOn;
-	uint32 _tLeftInFile;
-	uint32 _leftinfile;
-
-	Audio::SoundHandle _musicHandle;
-	Audio::SoundHandle _sfxHandle;
-
-	Audio::QueuingAudioStream *_queuingAudioStream;
-};
-
-/*---------------------------*/
 /*----- From LabSets.c ------*/
 /*---------------------------*/
 
