@@ -737,7 +737,7 @@ void LabEngine::mainGameLoop() {
 					GotMessage = true;
 					mayShowCrumbIndicator();
 					screenUpdate();
-					if (!from_crumbs(GADGETUP, code, 0, WSDL_GetMousePos(), curInv, curMsg, forceDraw, code, actionMode))
+					if (!from_crumbs(GADGETUP, code, 0, getMousePos(), curInv, curMsg, forceDraw, code, actionMode))
 						break;
 				}
 			}

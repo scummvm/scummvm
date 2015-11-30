@@ -190,7 +190,7 @@ private:
 	/*---------- Drawing Routines ----------*/
 
 	void drawMaskImage(Image *Im, uint16 x, uint16 y);
-	Common::Point WSDL_GetMousePos();
+	Common::Point getMousePos();
 	void changeVolume(int delta);
 	void applyPalette(byte *buf, uint16 first, uint16 numreg, uint16 slow);
 
