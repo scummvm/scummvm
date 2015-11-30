@@ -41,8 +41,8 @@ namespace Lab {
 /*****************************************************************************/
 /* Sets up either a low-res or a high-res 256 color screen.                  */
 /*****************************************************************************/
-bool LabEngine::createScreen(bool HiRes) {
-	if (HiRes) {
+bool LabEngine::createScreen(bool hiRes) {
+	if (hiRes) {
 		_screenWidth  = 640;
 		_screenHeight = 480;
 	} else {
@@ -254,15 +254,11 @@ byte *LabEngine::getVGABaseAddr() {
 /*****************************************************************************/
 /* Draws an image to the screen.                                             */
 /*****************************************************************************/
-void LabEngine::drawImage(Image *Im, uint16 x, uint16 y) {
-	int sx, sy, dx, dy, w, h;
-
-	sx = 0;
-	sy = 0;
-	dx = x;
-	dy = y;
-	w = Im->Width;
-	h = Im->Height;
+void LabEngine::drawImage(Image *im, uint16 x, uint16 y) {
+	int sx = 0, sy = 0;
+	int dx = x, dy = y;
+	int w = im->Width;
+	int h = im->Height;
 
 	if (dx < 0) {
 		sx -= dx;
@@ -283,12 +279,12 @@ void LabEngine::drawImage(Image *Im, uint16 x, uint16 y) {
 		h = _screenHeight - dy;
 
 	if ((w > 0) && (h > 0)) {
-		byte *s = Im->ImageData + sy * Im->Width + sx;
+		byte *s = im->ImageData + sy * im->Width + sx;
 		byte *d = getVGABaseAddr() + dy * _screenWidth + dx;
 
 		while (h-- > 0) {
 			memcpy(d, s, w);
-			s += Im->Width;
+			s += im->Width;
 			d += _screenWidth;
 		}
 	}
@@ -297,15 +293,11 @@ void LabEngine::drawImage(Image *Im, uint16 x, uint16 y) {
 /*****************************************************************************/
 /* Draws an image to the screen.                                             */
 /*****************************************************************************/
-void LabEngine::drawMaskImage(Image *Im, uint16 x, uint16 y) {
-	int sx, sy, dx, dy, w, h;
-
-	sx = 0;
-	sy = 0;
-	dx = x;
-	dy = y;
-	w = Im->Width;
-	h = Im->Height;
+void LabEngine::drawMaskImage(Image *im, uint16 x, uint16 y) {
+	int sx = 0, sy = 0;
+	int dx = x, dy = y;
+	int w = im->Width;
+	int h = im->Height;
 
 	if (dx < 0) {
 		sx -= dx;
@@ -326,7 +318,7 @@ void LabEngine::drawMaskImage(Image *Im, uint16 x, uint16 y) {
 		h = _screenHeight - dy;
 
 	if ((w > 0) && (h > 0)) {
-		byte *s = Im->ImageData + sy * Im->Width + sx;
+		byte *s = im->ImageData + sy * im->Width + sx;
 		byte *d = getVGABaseAddr() + dy * _screenWidth + dx;
 
 		while (h-- > 0) {
@@ -341,7 +333,7 @@ void LabEngine::drawMaskImage(Image *Im, uint16 x, uint16 y) {
 				else dd++;
 			}
 
-			s += Im->Width;
+			s += im->Width;
 			d += _screenWidth;
 		}
 	}
@@ -350,15 +342,11 @@ void LabEngine::drawMaskImage(Image *Im, uint16 x, uint16 y) {
 /*****************************************************************************/
 /* Reads an image from the screen.                                           */
 /*****************************************************************************/
-void LabEngine::readScreenImage(Image *Im, uint16 x, uint16 y) {
-	int sx, sy, dx, dy, w, h;
-
-	sx = 0;
-	sy = 0;
-	dx = x;
-	dy = y;
-	w = Im->Width;
-	h = Im->Height;
+void LabEngine::readScreenImage(Image *im, uint16 x, uint16 y) {
+	int sx = 0, sy = 0;
+	int	dx = x, dy = y;
+	int w = im->Width;
+	int h = im->Height;
 
 	if (dx < 0) {
 		sx -= dx;
@@ -379,12 +367,12 @@ void LabEngine::readScreenImage(Image *Im, uint16 x, uint16 y) {
 		h = _screenHeight - dy;
 
 	if ((w > 0) && (h > 0)) {
-		byte *s = Im->ImageData + sy * Im->Width + sx;
+		byte *s = im->ImageData + sy * im->Width + sx;
 		byte *d = getVGABaseAddr() + dy * _screenWidth + dx;
 
 		while (h-- > 0) {
 			memcpy(s, d, w);
-			s += Im->Width;
+			s += im->Width;
 			d += _screenWidth;
 		}
 	}
@@ -394,18 +382,16 @@ void LabEngine::readScreenImage(Image *Im, uint16 x, uint16 y) {
 /* Blits a piece of one image to another.                                    */
 /* NOTE: for our purposes, assumes that ImDest is to be in VGA memory.       */
 /*****************************************************************************/
-void LabEngine::bltBitMap(Image *ImSource, uint16 xs, uint16 ys, Image *ImDest,
+void LabEngine::bltBitMap(Image *imSource, uint16 xs, uint16 ys, Image *imDest,
 					uint16 xd, uint16 yd, uint16 width, uint16 height) {
 	// I think the old code assumed that the source image data was valid for the given box.
 	// I will proceed on that assumption.
-	int sx, sy, dx, dy, w, h;
-
-	sx = xs;
-	sy = ys;
-	dx = xd;
-	dy = yd;
-	w = width;
-	h = height;
+	int sx = xs;
+	int sy = ys;
+	int dx = xd;
+	int dy = yd;
+	int w = width;
+	int h = height;
 
 	if (dx < 0) {
 		sx -= dx;
@@ -419,18 +405,20 @@ void LabEngine::bltBitMap(Image *ImSource, uint16 xs, uint16 ys, Image *ImDest,
 		dy = 0;
 	}
 
-	if (dx + w > ImDest->Width) w = ImDest->Width - dx;
+	if (dx + w > imDest->Width)
+		w = imDest->Width - dx;
 
-	if (dy + h > ImDest->Height) h = ImDest->Height - dy;
+	if (dy + h > imDest->Height)
+		h = imDest->Height - dy;
 
 	if (w > 0 && h > 0) {
-		byte *s = ImSource->ImageData + sy * ImSource->Width + sx;
-		byte *d = ImDest->ImageData + dy * ImDest->Width + dx;
+		byte *s = imSource->ImageData + sy * imSource->Width + sx;
+		byte *d = imDest->ImageData + dy * imDest->Width + dx;
 
 		while (h-- > 0) {
 			memcpy(d, s, w);
-			s += ImSource->Width;
-			d += ImDest->Width;
+			s += imSource->Width;
+			d += imDest->Width;
 		}
 	}
 }
@@ -441,10 +429,10 @@ void LabEngine::bltBitMap(Image *ImSource, uint16 xs, uint16 ys, Image *ImDest,
 /* function will fail.                                                       */
 /*****************************************************************************/
 void LabEngine::scrollDisplayX(int16 dx, uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
-	Image Im;
+	Image im;
 	uint16 temp;
 
-	Im.ImageData = _tempScrollData;
+	im.ImageData = _tempScrollData;
 
 	if (x1 > x2) {
 		temp = x2;
@@ -459,20 +447,20 @@ void LabEngine::scrollDisplayX(int16 dx, uint16 x1, uint16 y1, uint16 x2, uint16
 	}
 
 	if (dx > 0) {
-		Im.Width = x2 - x1 + 1 - dx;
-		Im.Height = y2 - y1 + 1;
+		im.Width = x2 - x1 + 1 - dx;
+		im.Height = y2 - y1 + 1;
 
-		readScreenImage(&Im, x1, y1);
-		drawImage(&Im, x1 + dx, y1);
+		readScreenImage(&im, x1, y1);
+		drawImage(&im, x1 + dx, y1);
 
 		setAPen(0);
 		rectFill(x1, y1, x1 + dx - 1, y2);
 	} else if (dx < 0) {
-		Im.Width = x2 - x1 + 1 + dx;
-		Im.Height = y2 - y1 + 1;
+		im.Width = x2 - x1 + 1 + dx;
+		im.Height = y2 - y1 + 1;
 
-		readScreenImage(&Im, x1 - dx, y1);
-		drawImage(&Im, x1, y1);
+		readScreenImage(&im, x1 - dx, y1);
+		drawImage(&im, x1, y1);
 
 		setAPen(0);
 		rectFill(x2 + dx + 1, y1, x2, y2);
@@ -483,10 +471,10 @@ void LabEngine::scrollDisplayX(int16 dx, uint16 x1, uint16 y1, uint16 x2, uint16
 /* Scrolls the display in the y direction by blitting.                       */
 /*****************************************************************************/
 void LabEngine::scrollDisplayY(int16 dy, uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
-	Image Im;
+	Image im;
 	uint16 temp;
 
-	Im.ImageData = _tempScrollData;
+	im.ImageData = _tempScrollData;
 
 	if (x1 > x2) {
 		temp = x2;
@@ -501,20 +489,20 @@ void LabEngine::scrollDisplayY(int16 dy, uint16 x1, uint16 y1, uint16 x2, uint16
 	}
 
 	if (dy > 0) {
-		Im.Width = x2 - x1 + 1;
-		Im.Height = y2 - y1 + 1 - dy;
+		im.Width = x2 - x1 + 1;
+		im.Height = y2 - y1 + 1 - dy;
 
-		readScreenImage(&Im, x1, y1);
-		drawImage(&Im, x1, y1 + dy);
+		readScreenImage(&im, x1, y1);
+		drawImage(&im, x1, y1 + dy);
 
 		setAPen(0);
 		rectFill(x1, y1, x2, y1 + dy - 1);
 	} else if (dy < 0) {
-		Im.Width = x2 - x1 + 1;
-		Im.Height = y2 - y1 + 1 + dy;
+		im.Width = x2 - x1 + 1;
+		im.Height = y2 - y1 + 1 + dy;
 
-		readScreenImage(&Im, x1, y1 - dy);
-		drawImage(&Im, x1, y1);
+		readScreenImage(&im, x1, y1 - dy);
+		drawImage(&im, x1, y1);
 
 		setAPen(0);
 		rectFill(x1, y2 + dy + 1, x2, y2);
@@ -532,12 +520,10 @@ void LabEngine::setAPen(byte pennum) {
 /* Fills in a rectangle.                                                     */
 /*****************************************************************************/
 void LabEngine::rectFill(uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
-	int dx, dy, w, h;
-
-	dx = x1;
-	dy = y1;
-	w = x2 - x1 + 1;
-	h = y2 - y1 + 1;
+	int dx = x1;
+	int dy = y1;
+	int w = x2 - x1 + 1;
+	int h = y2 - y1 + 1;
 
 	if (dx < 0) {
 		w += dx;
@@ -589,12 +575,10 @@ void LabEngine::drawHLine(uint16 x1, uint16 y, uint16 x2) {
 /* Ghoasts a region on the screen using the desired pen color.               */
 /*****************************************************************************/
 void LabEngine::ghoastRect(uint16 pencolor, uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
-	int dx, dy, w, h;
-
-	dx = x1;
-	dy = y1;
-	w = x2 - x1 + 1;
-	h = y2 - y1 + 1;
+	int dx = x1;
+	int dy = y1;
+	int w = x2 - x1 + 1;
+	int h = y2 - y1 + 1;
 
 	if (dx < 0) {
 		w += dx;
