@@ -372,6 +372,7 @@ AccessVIDMovieDecoder::StreamVideoTrack::StreamVideoTrack(uint32 width, uint32 h
 	_curFrame = -1;
 	_nextFrameStartTime = 0;
 	_endOfTrack = false;
+	_dirtyPalette = false;
 
 	memset(&_palette, 0, sizeof(_palette));
 

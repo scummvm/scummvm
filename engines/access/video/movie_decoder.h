@@ -143,7 +143,6 @@ private:
 	private:
 		int16 decodeSample(uint8 dataNibble);
 
-		uint32 _codecTag;
 		uint16 _sampleRate;
 		bool   _stereo;
 	};
