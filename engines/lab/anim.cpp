@@ -33,7 +33,6 @@
 
 namespace Lab {
 
-extern uint16 _dataBytesPerRow;
 extern BitMap *DrawBitMap;
 extern byte **startoffile;
 extern BitMap *DispBitMap;
@@ -75,7 +74,7 @@ Anim::Anim(LabEngine *vm) : _vm(vm) {
 	diffwidth = 0;
 	diffheight = 0;
 	stopsound = false;
-
+	_dataBytesPerRow = 0;
 
 	for (int i = 0; i < 3 * 256; i++)
 		diffcmap[i] = 0;
@@ -88,7 +87,7 @@ Anim::Anim(LabEngine *vm) : _vm(vm) {
 /* Undiffs a piece of memory when header size is a byte, and copy/skip size  */
 /* is also a byte.                                                           */
 /*****************************************************************************/
-static void unDIFFByteByte(byte *dest, byte *diff) {
+void Anim::unDIFFByteByte(byte *dest, byte *diff) {
 	uint16 skip, copy;
 
 	while (1) {
@@ -118,7 +117,7 @@ static void unDIFFByteByte(byte *dest, byte *diff) {
 /* Undiffs a piece of memory when header size is a byte, and copy/skip size  */
 /* is a word.                                                                */
 /*****************************************************************************/
-static void unDIFFByteWord(uint16 *dest, uint16 *diff) {
+void Anim::unDIFFByteWord(uint16 *dest, uint16 *diff) {
 	uint16 skip, copy;
 
 	while (1) {
@@ -193,7 +192,7 @@ bool Anim::unDIFFMemory(byte *dest, byte *diff, uint16 headerSize, uint16 copySi
 /* Undiffs a piece of memory when header size is a byte, and copy/skip size  */
 /* is a byte.                                                                */
 /*****************************************************************************/
-static void VUnDIFFByteByte(byte *Dest, byte *diff, uint16 bytesperrow) {
+void Anim::VUnDIFFByteByte(byte *Dest, byte *diff, uint16 bytesperrow) {
 	byte *CurPtr;
 	uint16 skip, copy;
 	uint16 counter = 0;
@@ -231,7 +230,7 @@ static void VUnDIFFByteByte(byte *Dest, byte *diff, uint16 bytesperrow) {
 /* Undiffs a piece of memory when header size is a byte, and copy/skip size  */
 /* is a word.                                                                */
 /*****************************************************************************/
-static void VUnDIFFByteWord(uint16 *Dest, uint16 *diff, uint16 bytesperrow) {
+void Anim::VUnDIFFByteWord(uint16 *Dest, uint16 *diff, uint16 bytesperrow) {
 	uint16 *CurPtr;
 	uint16 skip, copy;
 	uint16 counter = 0, wordsperrow;
@@ -272,7 +271,7 @@ static void VUnDIFFByteWord(uint16 *Dest, uint16 *diff, uint16 bytesperrow) {
 /* Undiffs a piece of memory when header size is a byte, and copy/skip size  */
 /* is a long.                                                                */
 /*****************************************************************************/
-static void VUnDIFFByteLong(uint32 *Dest, uint32 *diff, uint16 bytesperrow) {
+void Anim::VUnDIFFByteLong(uint32 *Dest, uint32 *diff, uint16 bytesperrow) {
 	uint32 *CurPtr;
 	uint16 skip, copy;
 	uint16 counter = 0, longsperrow;
@@ -725,4 +724,48 @@ bool Anim::readDiff(bool playonce) {
 	return true;
 }
 
+void Anim::readSound(bool waitTillFinished, Common::File *file) {
+	uint32 magicBytes = file->readUint32LE();
+	if (magicBytes != 1219009121L)
+		return;
+
+	uint32 soundTag = file->readUint32LE();
+	uint32 soundSize = file->readUint32LE();
+
+	if (soundTag == 0)
+		file->skip(soundSize);	// skip the header
+	else
+		return;
+
+	while (soundTag != 65535) {
+		g_lab->_music->updateMusic();
+		soundTag = file->readUint32LE();
+		soundSize = file->readUint32LE() - 8;
+
+		if ((soundTag == 30) || (soundTag == 31)) {
+			if (waitTillFinished) {
+				while (g_lab->_music->isSoundEffectActive()) {
+					g_lab->_music->updateMusic();
+					g_lab->waitTOF();
+				}
+			}
+
+			file->skip(4);
+
+			uint16 sampleRate = file->readUint16LE();
+			file->skip(2);
+			byte *soundData = (byte *)malloc(soundSize);
+			file->read(soundData, soundSize);
+			g_lab->_music->playSoundEffect(sampleRate, soundSize, soundData);
+		} else if (soundTag == 65535L) {
+			if (waitTillFinished) {
+				while (g_lab->_music->isSoundEffectActive()) {
+					g_lab->_music->updateMusic();
+					g_lab->waitTOF();
+				}
+			}
+		} else
+			file->skip(soundSize);
+	}
+}
 } // End of namespace Lab
