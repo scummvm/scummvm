@@ -41,11 +41,11 @@ namespace Lab {
 extern RoomData *_rooms;
 
 typedef struct {
-	uint16 RoomNum;
-	void *Start0, *End0, *Start1, *End1;
+	uint16 _roomNum;
+	void *_start0, *_end0, *_start1, *_end1;
 } RoomMarker;
 
-static RoomMarker RoomMarkers[MAXMARKERS];
+static RoomMarker _roomMarkers[MAXMARKERS];
 static void *RoomBuffer = NULL;
 static uint16 CurMarker  = 0;
 static void *MemPlace = NULL, *NextMemPlace = NULL;
@@ -62,7 +62,7 @@ bool initRoomBuffer() {
 		MemLeftInBuffer = ROOMBUFFERSIZE;
 
 		for (uint16 i = 0; i < MAXMARKERS; i++)
-			RoomMarkers[i].RoomNum = EMPTYROOM;
+			_roomMarkers[i]._roomNum = EMPTYROOM;
 
 		return true;
 	} else
@@ -80,32 +80,29 @@ void freeRoomBuffer() {
 /*****************************************************************************/
 /* Frees a room's resources.                                                 */
 /*****************************************************************************/
-static void freeRoom(uint16 RMarker) {
-	uint16 RoomNum;
+static void freeRoom(uint16 roomMarkerId) {
+	uint16 roomNum = _roomMarkers[roomMarkerId]._roomNum;
 
-	RoomNum = RoomMarkers[RMarker].RoomNum;
+	if (roomNum != EMPTYROOM) {
+		_rooms[roomNum]._northView = nullptr;
+		_rooms[roomNum]._southView = nullptr;
+		_rooms[roomNum]._eastView = nullptr;
+		_rooms[roomNum]._westView = nullptr;
 
-	if (RoomNum != EMPTYROOM) {
-		_rooms[RoomNum]._northView = nullptr;
-		_rooms[RoomNum]._southView = nullptr;
-		_rooms[RoomNum]._eastView = nullptr;
-		_rooms[RoomNum]._westView = nullptr;
-
-		RuleList *rules = _rooms[RoomNum]._rules;
+		RuleList *rules = _rooms[roomNum]._rules;
 		for (RuleList::iterator rule = rules->begin(); rule != rules->end(); ++rule)
 			delete *rule;
-		_rooms[RoomNum]._rules->clear();
-		delete _rooms[RoomNum]._rules;
-		_rooms[RoomNum]._rules = nullptr;
-
-		_rooms[RoomNum]._roomMsg = nullptr;
+		_rooms[roomNum]._rules->clear();
+		delete _rooms[roomNum]._rules;
+		_rooms[roomNum]._rules = nullptr;
+		_rooms[roomNum]._roomMsg = nullptr;
 	}
 
-	RoomMarkers[RMarker].RoomNum = EMPTYROOM;
-	RoomMarkers[RMarker].Start0  = NULL;
-	RoomMarkers[RMarker].End0    = NULL;
-	RoomMarkers[RMarker].Start1  = NULL;
-	RoomMarkers[RMarker].End1    = NULL;
+	_roomMarkers[roomMarkerId]._roomNum = EMPTYROOM;
+	_roomMarkers[roomMarkerId]._start0  = nullptr;
+	_roomMarkers[roomMarkerId]._end0    = nullptr;
+	_roomMarkers[roomMarkerId]._start1  = nullptr;
+	_roomMarkers[roomMarkerId]._end1    = nullptr;
 }
 
 /*****************************************************************************/
@@ -126,11 +123,11 @@ static void *getCurMem(uint16 Size) {
 		NextMemPlace = NULL;
 
 		for (uint16 i = 0; i < MAXMARKERS; i++) {
-			if (RoomMarkers[i].RoomNum != EMPTYROOM) {
-				void *Start0 = RoomMarkers[i].Start0;
-				void *Start1 = RoomMarkers[i].Start1;
-				void *End0   = RoomMarkers[i].End0;
-				void *End1   = RoomMarkers[i].End1;
+			if (_roomMarkers[i]._roomNum != EMPTYROOM) {
+				void *Start0 = _roomMarkers[i]._start0;
+				void *Start1 = _roomMarkers[i]._start1;
+				void *End0   = _roomMarkers[i]._end0;
+				void *End1   = _roomMarkers[i]._end1;
 
 				if (((Start0 >= Ptr) && (Start0 < MemPlace))  ||
 				        ((End0 >= Ptr) && (End0 < MemPlace))    ||
@@ -166,43 +163,41 @@ static void *getCurMem(uint16 Size) {
 /* particular room.                                                          */
 /*****************************************************************************/
 void allocRoom(void **Ptr, uint16 size, uint16 roomNum) {
-	uint16 rMarker;
-
 	if (1 & size)  /* Memory is required to be even aligned */
 		size++;
 
-	rMarker = 0;
+	uint16 roomMarkerId = 0;
 
-	while ((rMarker < MAXMARKERS)) {
-		if (RoomMarkers[rMarker].RoomNum == roomNum)
+	while ((roomMarkerId < MAXMARKERS)) {
+		if (_roomMarkers[roomMarkerId]._roomNum == roomNum)
 			break;
 		else
-			rMarker++;
+			roomMarkerId++;
 	}
 
-	if (rMarker >= MAXMARKERS) {
-		rMarker = CurMarker;
+	if (roomMarkerId >= MAXMARKERS) {
+		roomMarkerId = CurMarker;
 		CurMarker++;
 
 		if (CurMarker >= MAXMARKERS)
 			CurMarker = 0;
 
-		freeRoom(rMarker);
-		RoomMarkers[rMarker].RoomNum = roomNum;
+		freeRoom(roomMarkerId);
+		_roomMarkers[roomMarkerId]._roomNum = roomNum;
 	}
 
 	*Ptr = getCurMem(size);
 
-	if (RoomMarkers[rMarker].Start0 == NULL) {
-		RoomMarkers[rMarker].Start0 = *Ptr;
-		RoomMarkers[rMarker].End0   = (void *)(((char *)(*Ptr)) + size - 1);
-	} else if (*Ptr < RoomMarkers[rMarker].Start0) {
-		if (RoomMarkers[rMarker].Start1 == NULL)
-			RoomMarkers[rMarker].Start1 = *Ptr;
+	if (!_roomMarkers[roomMarkerId]._start0) {
+		_roomMarkers[roomMarkerId]._start0 = *Ptr;
+		_roomMarkers[roomMarkerId]._end0   = (void *)(((char *)(*Ptr)) + size - 1);
+	} else if (*Ptr < _roomMarkers[roomMarkerId]._start0) {
+		if (_roomMarkers[roomMarkerId]._start1 == nullptr)
+			_roomMarkers[roomMarkerId]._start1 = *Ptr;
 
-		RoomMarkers[rMarker].End1 = (void *)(((char *)(*Ptr)) + size - 1);
+		_roomMarkers[roomMarkerId]._end1 = (void *)(((char *)(*Ptr)) + size - 1);
 	} else
-		RoomMarkers[rMarker].End0 = (void *)(((char *)(*Ptr)) + size - 1);
+		_roomMarkers[roomMarkerId]._end0 = (void *)(((char *)(*Ptr)) + size - 1);
 }
 
 } // End of namespace Lab
