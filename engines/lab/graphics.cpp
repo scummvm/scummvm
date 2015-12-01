@@ -29,7 +29,6 @@
  */
 
 #include "lab/lab.h"
-#include "lab/stddefines.h"
 #include "lab/diff.h"
 #include "lab/parsetypes.h"
 #include "lab/labfun.h"

@@ -169,10 +169,11 @@ void LabEngine::diffNextFrame() {
 		}
 
 		_music->updateMusic();
-		readBlock(&header, 4L, difffile);
-		swapULong(&header);
-		readBlock(&size, 4L, difffile);
-		swapULong(&size);
+ 		header = READ_LE_UINT32(*difffile);
+		*difffile += 4;
+
+		size = READ_LE_UINT32(*difffile);
+		*difffile += 4;
 
 		switch (header) {
 		case 8L:
@@ -239,9 +240,8 @@ void LabEngine::diffNextFrame() {
 
 
 			(*difffile) += 4;
-			readBlock(&samplespeed, 2L, difffile);
-			swapUShortPtr(&samplespeed, 1);
-			(*difffile) += 2;
+			samplespeed = READ_LE_UINT16(*difffile);
+			(*difffile) += 4;
 
 			byte *music = *difffile;
 			uint32 musicsize = size;
@@ -315,40 +315,43 @@ void playDiff() {
 	}
 
 	continuous = false;
-	readBlock(temp, 4L, difffile);
-	temp[4] = '\0';
+	uint32 signature = READ_BE_UINT32(*difffile);
+	(*difffile) += 4;
 
-	readBlock(&header, 4L, difffile);
-	swapULong(&header);
+	header = READ_LE_UINT32(*difffile);
+	(*difffile) += 4;
 
-	if (!((strcmp((char *)temp, "DIFF") == 0) && (header == 1219009121L))) {
+	if ((signature != MKTAG('D', 'I', 'F', 'F')) || (header != 1219009121L)) {
 		IsPlaying = false;
 		return;
 	}
 
-	readBlock(&header, 4L, difffile);
-	swapULong(&header);
+	header = READ_LE_UINT32(*difffile);
+	(*difffile) += 4;
 
-	readBlock(&size, 4L, difffile);
-	swapULong(&size);
+	size = READ_LE_UINT32(*difffile);
+	(*difffile) += 4;
 
 	if (header == 0) {
 		// sizeof(headerdata) != 18, but the padding might be at the end
-		readBlock(&headerdata.Version, 2, difffile);
-		readBlock(&headerdata.x, 2, difffile);
-		readBlock(&headerdata.y, 2, difffile);
-		readBlock(&headerdata.depth, 1, difffile);
-		readBlock(&headerdata.fps, 1, difffile);
-		readBlock(&headerdata.BufferSize, 4, difffile);
-		readBlock(&headerdata.Machine, 2, difffile);
-		readBlock(&headerdata.Flags, 4, difffile);
+		headerdata.Version = READ_LE_UINT16(*difffile);
+		(*difffile) += 2;
+		headerdata.x = READ_LE_UINT16(*difffile);
+		(*difffile) += 2;
+		headerdata.y = READ_LE_UINT16(*difffile);
+		(*difffile) += 2;
+		headerdata.depth = *difffile[0];
+		(*difffile)++;
+		headerdata.fps = *difffile[0];
+		(*difffile)++;
+		headerdata.BufferSize = READ_LE_UINT32(*difffile);
+		(*difffile) += 4;
+		headerdata.Machine = READ_LE_UINT16(*difffile);
+		(*difffile) += 2;
+		headerdata.Flags = READ_LE_UINT32(*difffile);
+		(*difffile) += 4;
 
 		(*difffile) += size - 18;
-
-		swapUShortPtr(&headerdata.Version, 3);
-		swapULong(&headerdata.BufferSize);
-		swapUShortPtr(&headerdata.Machine, 1);
-		swapULong(&headerdata.Flags);
 
 		continuous = CONTINUOUS & headerdata.Flags;
 		diffwidth = headerdata.x;

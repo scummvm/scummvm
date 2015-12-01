@@ -31,17 +31,18 @@
 #ifndef LAB_DIFF_H
 #define LAB_DIFF_H
 
-#include "lab/stddefines.h"
 #include "common/file.h"
 
 namespace Lab {
 
 
 struct DIFFHeader {
-	uint16 Version, x, y;
-	char depth, fps;
-	uint32 BufferSize;
-	uint16 Machine;
+	uint16 Version;    // unused
+	uint16 x, y;
+	char depth;        // unused
+	char fps;
+	uint32 BufferSize; // unused
+	uint16 Machine;    // unused
 	uint32 Flags;
 };
 

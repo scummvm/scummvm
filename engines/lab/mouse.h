@@ -29,7 +29,6 @@
  */
 
 #include "common/events.h"
-#include "lab/stddefines.h"
 
 #ifndef LAB_MOUSE_H
 #define LAB_MOUSE_H

@@ -31,6 +31,8 @@
 #ifndef LAB_PARSETYPES_H
 #define LAB_PARSETYPES_H
 
+#include "common/system.h"
+
 namespace Lab {
 
 #define MAXFILELEN 31

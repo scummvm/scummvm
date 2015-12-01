@@ -32,7 +32,6 @@
 #define LAB_LABFUN_H
 
 #include "common/events.h"
-#include "lab/stddefines.h"
 #include "lab/parsetypes.h"
 
 // For the Music class - TODO: Move to another header file

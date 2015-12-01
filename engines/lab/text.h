@@ -31,9 +31,6 @@
 #ifndef LAB_TEXT_H
 #define LAB_TEXT_H
 
-
-#include "lab/stddefines.h"
-
 namespace Lab {
 
 #if defined(WIN32)

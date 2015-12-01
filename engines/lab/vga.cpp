@@ -28,13 +28,11 @@
  *
  */
 
-#include "lab/lab.h"
-#include "lab/stddefines.h"
-#include "lab/mouse.h"
-
 #include "graphics/palette.h"
-
 #include "common/events.h"
+
+#include "lab/lab.h"
+#include "lab/mouse.h"
 
 namespace Lab {
 
