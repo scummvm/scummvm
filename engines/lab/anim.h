@@ -86,6 +86,13 @@ private:
 	uint32 diffwidth;
 	uint32 diffheight;
 	bool stopsound;
+	uint16 _dataBytesPerRow;
+
+	void unDIFFByteByte(byte *dest, byte *diff);
+	void unDIFFByteWord(uint16 *dest, uint16 *diff);
+	void VUnDIFFByteByte(byte *Dest, byte *diff, uint16 bytesperrow);
+	void VUnDIFFByteWord(uint16 *Dest, uint16 *diff, uint16 bytesperrow);
+	void VUnDIFFByteLong(uint32 *Dest, uint32 *diff, uint16 bytesperrow);
 
 public:
 	Anim(LabEngine *vm);
