@@ -40,7 +40,6 @@
 #include "lab/diff.h"
 #include "lab/text.h"
 #include "lab/mouse.h"
-#include "lab/stddefines.h"
 #include "lab/parsetypes.h"
 #include "lab/resource.h"
 

@@ -30,7 +30,6 @@
 
 #include "audio/mixer.h"
 
-#include "lab/stddefines.h"
 #include "lab/labfun.h"
 #include "lab/mouse.h"
 #include "lab/music.h"

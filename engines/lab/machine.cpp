@@ -29,9 +29,7 @@
  */
 
 #include "common/str.h"
-
 #include "lab/lab.h"
-#include "lab/stddefines.h"
 
 namespace Lab {
 

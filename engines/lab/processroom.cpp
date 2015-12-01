@@ -31,7 +31,6 @@
 #include "gui/message.h"
 
 #include "lab/lab.h"
-#include "lab/stddefines.h"
 #include "lab/labfun.h"
 #include "lab/parsetypes.h"
 #include "lab/parsefun.h"

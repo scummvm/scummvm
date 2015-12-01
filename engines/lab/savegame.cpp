@@ -34,7 +34,6 @@
 #include "graphics/thumbnail.h"
 
 #include "lab/lab.h"
-#include "lab/stddefines.h"
 #include "lab/labfun.h"
 
 namespace Lab {

@@ -31,7 +31,6 @@
 #ifndef LAB_PARSEFUN_H
 #define LAB_PARSEFUN_H
 
-#include "lab/stddefines.h"
 #include "lab/labfun.h"
 #include "lab/parsetypes.h"
 

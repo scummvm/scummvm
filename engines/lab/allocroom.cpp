@@ -28,7 +28,6 @@
  *
  */
 
-#include "lab/stddefines.h"
 #include "lab/parsetypes.h"
 
 namespace Lab {
