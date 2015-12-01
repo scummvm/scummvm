@@ -461,8 +461,7 @@ void doNotes() {
 	flowText(noteFont, -2 + SVGACord(1), 0, 0, false, false, true, true, VGAScaleX(25) + SVGACord(15), VGAScaleY(50), VGAScaleX(295) - SVGACord(15), VGAScaleY(148), ntext);
 	g_lab->setPalette(diffcmap, 256);
 
-	delete[] noteFont->data;
-	free(noteFont);
+	closeFont(noteFont);
 	delete[] ntext;
 }
 
@@ -480,8 +479,7 @@ void doWestPaper() {
 	paperFont = g_lab->_resource->getFont("P:News22.fon");
 	ntext = g_lab->_resource->getText("Lab:Rooms/Date");
 	flowText(paperFont, 0, 0, 0, false, true, false, true, VGAScaleX(57), VGAScaleY(77) + SVGACord(2), VGAScaleX(262), VGAScaleY(91), ntext);
-	delete[] paperFont->data;
-	free(paperFont);
+	closeFont(paperFont);
 	delete[] ntext;
 
 	paperFont = g_lab->_resource->getFont("P:News32.fon");
@@ -493,8 +491,7 @@ void doWestPaper() {
 		flowText(paperFont, -8 - SVGACord(1), 0, 0, false, true, false, true, VGAScaleX(57), VGAScaleY(86) - SVGACord(2), VGAScaleX(262), VGAScaleY(132), ntext);
 	} else
 		y = 115 - SVGACord(5);
-	delete[] paperFont->data;
-	free(paperFont);
+	closeFont(paperFont);
 	delete[] ntext;
 
 	paperFont = g_lab->_resource->getFont("P:Note.fon");
@@ -504,8 +501,7 @@ void doWestPaper() {
 	ntext = g_lab->_resource->getText("Lab:Rooms/Col2");
 	CharsPrinted = flowText(paperFont, -4, 0, 0, false, false, false, true, VGAScaleX(162), VGAScaleY(y), VGAScaleX(275), VGAScaleY(148), ntext);
 	delete[] ntext;
-	delete[] paperFont->data;
-	free(paperFont);
+	closeFont(paperFont);
 
 	g_lab->setPalette(diffcmap, 256);
 	freeAllStolenMem();
@@ -520,7 +516,7 @@ static bool loadJournalData() {
 	Gadget *TopGadget = &BackG;
 	bool bridge, dirty, news, clean;
 
-	journalFont = g_lab->_resource->getFont("P:Journal.fon");
+	journalFont = g_lab->_resource->getFont("P:Journal.fon");	// FIXME: memory leak
 
 	g_lab->_music->updateMusic();
 
@@ -1024,8 +1020,7 @@ void LabEngine::doMonitor(char *background, char *textfile, bool isinteractive, 
 	fade(false, 0);
 	_event->mouseHide();
 	delete[] ntext;
-	delete[] monitorFont->data;
-	free(monitorFont);
+	closeFont(monitorFont);
 	freeAllStolenMem();
 
 	setAPen(0);

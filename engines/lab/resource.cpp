@@ -67,14 +67,13 @@ TextFont *Resource::getFont(const char *fileName) {
 
 	_vm->_music->updateMusic();
 
-	TextFont *textfont = (TextFont *)malloc(sizeof(TextFont));
+	TextFont *textfont = new TextFont();
 	textfont->DataLength = fileSize - headerSize;
 	textfont->Height = dataFile->readUint16LE();
 	dataFile->read(textfont->Widths, 256);
 	for (int i = 0; i < 256; i++)
 		textfont->Offsets[i] = dataFile->readUint16LE();
 	dataFile->skip(4);
-	// TODO: Fix memory leak!!
 	textfont->data = new byte[textfont->DataLength + 4];
 	dataFile->read(textfont->data, textfont->DataLength);
 	return textfont;

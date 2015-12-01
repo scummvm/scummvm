@@ -42,7 +42,6 @@ extern char diffcmap[256 * 3];
 extern uint16 *FadePalette;
 
 Intro::Intro() {
-	_msgfont = &_filler;
 	_quitIntro = false;
 }
 
@@ -76,7 +75,7 @@ void Intro::introEatMessages() {
 /*****************************************************************************/
 /* Reads in a picture.                                                       */
 /*****************************************************************************/
-void Intro::doPictText(const char *filename, bool isscreen) {
+void Intro::doPictText(const char *filename, TextFont *msgFont, bool isscreen) {
 	uint32 lastsecs = 0L, lastmicros = 0L, secs = 0L, micros = 0L;
 	IntuiMessage *msg;
 	char path[50] = "Lab:rooms/Intro/";
@@ -118,7 +117,7 @@ void Intro::doPictText(const char *filename, bool isscreen) {
 				g_lab->setAPen(7);
 				g_lab->rectFill(VGAScaleX(10), VGAScaleY(10), VGAScaleX(310), VGAScaleY(190));
 
-				Drawn = flowText(_msgfont, (!g_lab->_isHiRes) * -1, 5, 7, false, false, true, true, VGAScaleX(14), VGAScaleY(11), VGAScaleX(306), VGAScaleY(189), (char *)curplace);
+				Drawn = flowText(msgFont, (!g_lab->_isHiRes) * -1, 5, 7, false, false, true, true, VGAScaleX(14), VGAScaleY(11), VGAScaleX(306), VGAScaleY(189), (char *)curplace);
 				fade(true, 0);
 			} else {
 				Drawn = g_lab->longDrawMessage((char *)curplace);
@@ -347,7 +346,7 @@ void Intro::introSequence() {
 	blackAllScreen();
 	g_lab->_music->updateMusic();
 
-	_msgfont = g_lab->_resource->getFont("P:Map.fon");
+	TextFont *msgFont = g_lab->_resource->getFont("P:Map.fon");
 
 	nopalchange = true;
 	nReadPict("Intro.1", true);
@@ -359,9 +358,9 @@ void Intro::introSequence() {
 		             (diffcmap[i * 3 + 2] >> 2);
 	}
 
-	doPictText("i.1", true);
-	doPictText("i.2A", true);
-	doPictText("i.2B", true);
+	doPictText("i.1", msgFont, true);
+	doPictText("i.2A", msgFont, true);
+	doPictText("i.2B", msgFont, true);
 
 	freeAllStolenMem();
 
@@ -370,28 +369,28 @@ void Intro::introSequence() {
 
 	_introDoBlack = true;
 	nReadPict("Station1", true);
-	doPictText("i.3", false);
+	doPictText("i.3", msgFont, false);
 
 	nReadPict("Station2", true);
-	doPictText("i.4", false);
+	doPictText("i.4", msgFont, false);
 
 	nReadPict("Stiles4", true);
-	doPictText("i.5", false);
+	doPictText("i.5", msgFont, false);
 
 	nReadPict("Stiles3", true);
-	doPictText("i.6", false);
+	doPictText("i.6", msgFont, false);
 
 	nReadPict("Platform2", true);
-	doPictText("i.7", false);
+	doPictText("i.7", msgFont, false);
 
 	nReadPict("Subway.1", true);
-	doPictText("i.8", false);
+	doPictText("i.8", msgFont, false);
 
 	nReadPict("Subway.2", true);
 
-	doPictText("i.9", false);
-	doPictText("i.10", false);
-	doPictText("i.11", false);
+	doPictText("i.9", msgFont, false);
+	doPictText("i.10", msgFont, false);
+	doPictText("i.11", msgFont, false);
 
 	if (!_quitIntro)
 		for (uint16 i = 0; i < 50; i++) {
@@ -401,60 +400,60 @@ void Intro::introSequence() {
 			g_lab->_music->updateMusic();
 			g_lab->waitTOF();
 			g_lab->setPalette(diffcmap, 256);
-			g_lab->	waitTOF();
+			g_lab->waitTOF();
 			g_lab->waitTOF();
 		}
 
-	doPictText("i.12", false);
-	doPictText("i.13", false);
+	doPictText("i.12", msgFont, false);
+	doPictText("i.13", msgFont, false);
 
 	_introDoBlack = false;
 	nReadPict("Daed0", true);
-	doPictText("i.14", false);
+	doPictText("i.14", msgFont, false);
 
 	nReadPict("Daed1", true);
-	doPictText("i.15", false);
+	doPictText("i.15", msgFont, false);
 
 	nReadPict("Daed2", true);
-	doPictText("i.16", false);
-	doPictText("i.17", false);
-	doPictText("i.18", false);
+	doPictText("i.16", msgFont, false);
+	doPictText("i.17", msgFont, false);
+	doPictText("i.18", msgFont, false);
 
 	nReadPict("Daed3", true);
-	doPictText("i.19", false);
-	doPictText("i.20", false);
+	doPictText("i.19", msgFont, false);
+	doPictText("i.20", msgFont, false);
 
 	nReadPict("Daed4", true);
-	doPictText("i.21", false);
+	doPictText("i.21", msgFont, false);
 
 	nReadPict("Daed5", true);
-	doPictText("i.22", false);
-	doPictText("i.23", false);
-	doPictText("i.24", false);
+	doPictText("i.22", msgFont, false);
+	doPictText("i.23", msgFont, false);
+	doPictText("i.24", msgFont, false);
 
 	nReadPict("Daed6", true);
-	doPictText("i.25", false);
-	doPictText("i.26", false);
+	doPictText("i.25", msgFont, false);
+	doPictText("i.26", msgFont, false);
 
 	nReadPict("Daed7", false);
-	doPictText("i.27", false);
-	doPictText("i.28", false);
+	doPictText("i.27", msgFont, false);
+	doPictText("i.28", msgFont, false);
 	stopDiffEnd();
 
 	nReadPict("Daed8", true);
-	doPictText("i.29", false);
-	doPictText("i.30", false);
+	doPictText("i.29", msgFont, false);
+	doPictText("i.30", msgFont, false);
 
 	nReadPict("Daed9", true);
-	doPictText("i.31", false);
-	doPictText("i.32", false);
-	doPictText("i.33", false);
+	doPictText("i.31", msgFont, false);
+	doPictText("i.32", msgFont, false);
+	doPictText("i.33", msgFont, false);
 
 	nReadPict("Daed9a", true);
 	nReadPict("Daed10", true);
-	doPictText("i.34", false);
-	doPictText("i.35", false);
-	doPictText("i.36", false);
+	doPictText("i.34", msgFont, false);
+	doPictText("i.35", msgFont, false);
+	doPictText("i.36", msgFont, false);
 
 	nReadPict("SubX", true);
 
@@ -463,6 +462,8 @@ void Intro::introSequence() {
 		g_lab->rectFill(0, 0, g_lab->_screenWidth - 1, g_lab->_screenHeight - 1);
 		DoBlack = true;
 	}
+
+	closeFont(msgFont);
 }
 
 } // End of namespace Lab

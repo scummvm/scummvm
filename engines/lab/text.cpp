@@ -38,19 +38,19 @@ namespace Lab {
 /*****************************************************************************/
 /* Closes a font and frees all memory associated with it.                    */
 /*****************************************************************************/
-void closeFont(struct TextFont *tf) {
+void closeFont(TextFont *tf) {
 	if (tf) {
 		if (tf->data && tf->DataLength)
 			delete[] tf->data;
 
-		free(tf);
+		delete tf;
 	}
 }
 
 /*****************************************************************************/
 /* Returns the length of a text in the specified font.                       */
 /*****************************************************************************/
-uint16 textLength(struct TextFont *tf, const char *text, uint16 numchars) {
+uint16 textLength(TextFont *tf, const char *text, uint16 numchars) {
 	uint16 length = 0;
 
 	if (tf) {
@@ -66,7 +66,7 @@ uint16 textLength(struct TextFont *tf, const char *text, uint16 numchars) {
 /*****************************************************************************/
 /* Returns the height of a specified font.                                   */
 /*****************************************************************************/
-uint16 textHeight(struct TextFont *tf) {
+uint16 textHeight(TextFont *tf) {
 	return (tf) ? tf->Height : 0;
 }
 
