@@ -665,6 +665,18 @@ String lastPathComponent(const String &path, const char sep) {
 	return String(first, last);
 }
 
+String String::stringByAppendingPathComponent(String component, char sep) const {
+	if (lastChar() == sep && component.firstChar() == sep) {
+		return String::format("%s%s", c_str(), component.c_str() + 1);
+	}
+
+	if (lastChar() == sep || component.firstChar() == sep) {
+		return String::format("%s%s", c_str(), component.c_str());
+	}
+
+	return String::format("%s%c%s", c_str(), sep, component.c_str());
+}
+
 String normalizePath(const String &path, const char sep) {
 	if (path.empty())
 		return path;
