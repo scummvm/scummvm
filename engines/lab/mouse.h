@@ -42,20 +42,28 @@ class LabEngine;
 class EventManager {
 private:
 	LabEngine *_vm;
+	bool _leftClick;
+	bool _rightClick;
+
+	bool _mouseHidden;
+	int32 _numHidden;
+	Gadget *_lastGadgetHit;
 
 public:
 	EventManager (LabEngine *vm);
 
-	Gadget *checkGadgetHit(Gadget *gadlist, Common::Point pos);
+	Gadget *_screenGadgetList;
+
+	Gadget *checkGadgetHit(Gadget *gadgetList, Common::Point pos);
 	void initMouse();
 	void updateMouse();
 	void mouseShow();
 	void mouseHide();
 	Common::Point getMousePos();
 	void setMousePos(Common::Point pos);
-	bool mouseButton(uint16 *x, uint16 *y, bool leftbutton);
+	bool mouseButton(uint16 *x, uint16 *y, bool leftButton);
 	Gadget *mouseGadget();
-	void attachGadgetList(Gadget *GadList);
+	void attachGadgetList(Gadget *gadgetList);
 	void mouseHandler(int flag, Common::Point pos);
 };
 
