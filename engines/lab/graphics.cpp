@@ -59,11 +59,9 @@ extern const char *CurFileName;
 /* Reads in a picture into the dest bitmap.                                  */
 /*****************************************************************************/
 bool readPict(const char *filename, bool playOnce) {
-	byte **file = NULL;
-
 	stopDiff();
 
-	file = g_lab->_music->newOpen(filename);
+	byte **file = g_lab->_music->newOpen(filename);
 
 	if (file == NULL) {
 		if ((filename[0] == 'p') || (filename[0] == 'P'))
@@ -102,15 +100,14 @@ bool readMusic(const char *filename, bool waitTillFinished) {
 /* Reads in a picture into buffer memory.                                    */
 /*****************************************************************************/
 byte *readPictToMem(const char *filename, uint16 x, uint16 y) {
-	byte **file = NULL;
-	byte *Mem, *CurMem;
+	byte *mem;
 
 	stopDiff();
 
-	allocFile((void **)&Mem, (int32) x * (int32) y, "Bitmap");
-	CurMem = Mem;
+	allocFile((void **)&mem, (int32)x * (int32)y, "Bitmap");
+	byte *curMem = mem;
 
-	file = g_lab->_music->newOpen(filename);
+	byte **file = g_lab->_music->newOpen(filename);
 
 	if (file == NULL)
 		return NULL;
@@ -118,7 +115,7 @@ byte *readPictToMem(const char *filename, uint16 x, uint16 y) {
 	DispBitMap->BytesPerRow = x;
 	DispBitMap->Rows        = y;
 	DispBitMap->Flags       = 0;
-	DispBitMap->Planes[0] = CurMem;
+	DispBitMap->Planes[0] = curMem;
 	DispBitMap->Planes[1] = DispBitMap->Planes[0] + 0x10000;
 	DispBitMap->Planes[2] = DispBitMap->Planes[1] + 0x10000;
 	DispBitMap->Planes[3] = DispBitMap->Planes[2] + 0x10000;
@@ -126,7 +123,7 @@ byte *readPictToMem(const char *filename, uint16 x, uint16 y) {
 
 	readDiff(true);
 
-	return Mem;
+	return mem;
 }
 
 /*---------------------------------------------------------------------------*/
@@ -312,8 +309,8 @@ int32 LabEngine::longDrawMessage(const char *str) {
 
 	if (!LongWinInFront) {
 		LongWinInFront = true;
-		g_lab->setAPen(3);                 /* Clear Area */
-		g_lab->rectFill(0, VGAScaleY(149) + SVGACord(2), VGAScaleX(319), VGAScaleY(199));
+		setAPen(3);                 /* Clear Area */
+		rectFill(0, VGAScaleY(149) + SVGACord(2), VGAScaleX(319), VGAScaleY(199));
 	}
 
 	createBox(198);
@@ -342,7 +339,7 @@ void LabEngine::drawMessage(const char *str) {
 		} else {
 			if (LongWinInFront) {
 				LongWinInFront = false;
-				g_lab->drawPanel();
+				drawPanel();
 			}
 
 			_event->mouseHide();
@@ -372,13 +369,12 @@ void LabEngine::drawMessage(const char *str) {
 void LabEngine::doScrollBlack() {
 	byte *mem, *tempmem;
 	Image im;
-	uint16 width, height, by, nheight;
 	uint32 size, copysize;
 	uint32 *baseAddr;
 
 	_event->mouseHide();
-	width = VGAScaleX(320);
-	height = VGAScaleY(149) + SVGACord(2);
+	uint16 width = VGAScaleX(320);
+	uint16 height = VGAScaleY(149) + SVGACord(2);
 
 	allocFile((void **)&mem, (int32)width * (int32)height, "Temp Mem");
 
@@ -386,21 +382,21 @@ void LabEngine::doScrollBlack() {
 	im.Height = height;
 	im.ImageData = mem;
 	_music->updateMusic();
-	g_lab->readScreenImage(&im, 0, 0);
+	readScreenImage(&im, 0, 0);
 	_music->updateMusic();
 
-	baseAddr = (uint32 *)g_lab->getCurrentDrawingBuffer();
+	baseAddr = (uint32 *)getCurrentDrawingBuffer();
 
-	by      = VGAScaleX(4);
-	nheight = height;
+	uint16 by      = VGAScaleX(4);
+	uint16 nheight = height;
 
 	while (nheight) {
 		_music->updateMusic();
 
 		if (!_isHiRes)
-			g_lab->waitTOF();
+			waitTOF();
 
-		baseAddr = (uint32 *)g_lab->getCurrentDrawingBuffer();
+		baseAddr = (uint32 *)getCurrentDrawingBuffer();
 
 		if (by > nheight)
 			by = nheight;
@@ -411,8 +407,8 @@ void LabEngine::doScrollBlack() {
 		tempmem = mem;
 
 		while (size) {
-			if (size > g_lab->_screenBytesPerPage)
-				copysize = g_lab->_screenBytesPerPage;
+			if (size > _screenBytesPerPage)
+				copysize = _screenBytesPerPage;
 			else
 				copysize = size;
 
@@ -422,10 +418,10 @@ void LabEngine::doScrollBlack() {
 			tempmem += copysize;
 		}
 
-		g_lab->setAPen(0);
-		g_lab->rectFill(0, nheight, width - 1, nheight + by - 1);
+		setAPen(0);
+		rectFill(0, nheight, width - 1, nheight + by - 1);
 
-		g_lab->screenUpdate();
+		screenUpdate();
 
 		if (!_isHiRes) {
 			if (nheight <= (height / 8))
@@ -475,27 +471,26 @@ static void copyPage(uint16 width, uint16 height, uint16 nheight, uint16 startli
 /* Scrolls the display to a new picture from a black screen.                 */
 /*****************************************************************************/
 void LabEngine::doScrollWipe(char *filename) {
-	byte *mem;
-	uint16 width, height, by, nheight, startline = 0, onrow = 0;
+	uint16 startline = 0, onrow = 0;
 
 	_event->mouseHide();
-	width = VGAScaleX(320);
-	height = VGAScaleY(149) + SVGACord(2);
+	uint16 width = VGAScaleX(320);
+	uint16 height = VGAScaleY(149) + SVGACord(2);
 
 	while (_music->isSoundEffectActive()) {
 		_music->updateMusic();
-		g_lab->waitTOF();
+		waitTOF();
 	}
 
 	IsBM = true;
 	readPict(filename, true);
-	g_lab->setPalette(diffcmap, 256);
+	setPalette(diffcmap, 256);
 	IsBM = false;
-	mem = RawDiffBM.Planes[0];
+	byte *mem = RawDiffBM.Planes[0];
 
 	_music->updateMusic();
-	by      = VGAScaleX(3);
-	nheight = height;
+	uint16 by = VGAScaleX(3);
+	uint16 nheight = height;
 
 	while (onrow < headerdata.y) {
 		_music->updateMusic();
@@ -511,7 +506,7 @@ void LabEngine::doScrollWipe(char *filename) {
 
 		copyPage(width, height, nheight, startline, mem);
 
-		g_lab->screenUpdate();
+		screenUpdate();
 
 		if (!nheight)
 			startline += by;
@@ -538,7 +533,7 @@ void LabEngine::doScrollBounce() {
 	const uint16 newbyd[5] = {5, 4, 3, 2, 1}, newby1d[8] = {3, 3, 2, 2, 2, 1, 1, 1};
 	const uint16 newbyw[5] = {10, 8, 6, 4, 2}, newby1w[8] = {6, 6, 4, 4, 4, 2, 2, 2};
 
-	if (g_lab->getPlatform() != Common::kPlatformWindows) {
+	if (getPlatform() != Common::kPlatformWindows) {
 		newby = newbyd;
 		newby1 = newby1d;
 	} else {
@@ -559,8 +554,8 @@ void LabEngine::doScrollBounce() {
 		startline -= newby[i];
 		copyPage(width, height, 0, startline, mem);
 
-		g_lab->screenUpdate();
-		g_lab->waitTOF();
+		screenUpdate();
+		waitTOF();
 	}
 
 	for (int i = 8; i > 0; i--) {
@@ -568,8 +563,8 @@ void LabEngine::doScrollBounce() {
 		startline += newby1[i - 1];
 		copyPage(width, height, 0, startline, mem);
 
-		g_lab->screenUpdate();
-		g_lab->waitTOF();
+		screenUpdate();
+		waitTOF();
 
 	}
 
@@ -597,17 +592,17 @@ void LabEngine::doTransWipe(CloseDataPtr *cPtr, char *filename) {
 		while (curY < lastY) {
 			if (linesdone >= lineslast) {
 				_music->updateMusic();
-				g_lab->waitTOF();
+				waitTOF();
 				linesdone = 0;
 			}
 
-			g_lab->ghoastRect(0, 0, curY, g_lab->_screenWidth - 1, curY + 1);
+			ghoastRect(0, 0, curY, _screenWidth - 1, curY + 1);
 			curY += 4;
 			linesdone++;
 		}
 	}
 
-	g_lab->setAPen(0);
+	setAPen(0);
 
 	for (uint16 i = 0; i < 2; i++) {
 		curY = i * 2;
@@ -615,11 +610,11 @@ void LabEngine::doTransWipe(CloseDataPtr *cPtr, char *filename) {
 		while (curY <= lastY) {
 			if (linesdone >= lineslast) {
 				_music->updateMusic();
-				g_lab->waitTOF();
+				waitTOF();
 				linesdone = 0;
 			}
 
-			g_lab->rectFill(0, curY, g_lab->_screenWidth - 1, curY + 1);
+			rectFill(0, curY, _screenWidth - 1, curY + 1);
 			curY += 4;
 			linesdone++;
 		}
@@ -632,17 +627,17 @@ void LabEngine::doTransWipe(CloseDataPtr *cPtr, char *filename) {
 	else
 		CurFileName = getPictName(cPtr);
 
-	byte *BitMapMem = readPictToMem(CurFileName, g_lab->_screenWidth, lastY + 5);
-	g_lab->setPalette(diffcmap, 256);
+	byte *BitMapMem = readPictToMem(CurFileName, _screenWidth, lastY + 5);
+	setPalette(diffcmap, 256);
 
 	if (BitMapMem) {
-		imSource.Width = g_lab->_screenWidth;
+		imSource.Width = _screenWidth;
 		imSource.Height = lastY;
 		imSource.ImageData = BitMapMem;
 
-		imDest.Width = g_lab->_screenWidth;
-		imDest.Height = g_lab->_screenHeight;
-		imDest.ImageData = g_lab->getCurrentDrawingBuffer();
+		imDest.Width = _screenWidth;
+		imDest.Height = _screenHeight;
+		imDest.ImageData = getCurrentDrawingBuffer();
 
 		for (uint16 i = 0; i < 2; i++) {
 			curY = i * 2;
@@ -650,14 +645,14 @@ void LabEngine::doTransWipe(CloseDataPtr *cPtr, char *filename) {
 			while (curY < lastY) {
 				if (linesdone >= lineslast) {
 					_music->updateMusic();
-					g_lab->waitTOF();
+					waitTOF();
 					linesdone = 0;
 				}
 
-				imDest.ImageData = g_lab->getCurrentDrawingBuffer();
+				imDest.ImageData = getCurrentDrawingBuffer();
 
-				g_lab->bltBitMap(&imSource, 0, curY, &imDest, 0, curY, g_lab->_screenWidth, 2);
-				g_lab->ghoastRect(0, 0, curY, g_lab->_screenWidth - 1, curY + 1);
+				bltBitMap(&imSource, 0, curY, &imDest, 0, curY, _screenWidth, 2);
+				ghoastRect(0, 0, curY, _screenWidth - 1, curY + 1);
 				curY += 4;
 				linesdone++;
 			}
@@ -669,16 +664,16 @@ void LabEngine::doTransWipe(CloseDataPtr *cPtr, char *filename) {
 			while (curY <= lastY) {
 				if (linesdone >= lineslast) {
 					_music->updateMusic();
-					g_lab->waitTOF();
+					waitTOF();
 					linesdone = 0;
 				}
 
-				imDest.ImageData = g_lab->getCurrentDrawingBuffer();
+				imDest.ImageData = getCurrentDrawingBuffer();
 
 				if (curY == lastY)
-					g_lab->bltBitMap(&imSource, 0, curY, &imDest, 0, curY, g_lab->_screenWidth, 1);
+					bltBitMap(&imSource, 0, curY, &imDest, 0, curY, _screenWidth, 1);
 				else
-					g_lab->bltBitMap(&imSource, 0, curY, &imDest, 0, curY, g_lab->_screenWidth, 2);
+					bltBitMap(&imSource, 0, curY, &imDest, 0, curY, _screenWidth, 2);
 
 				curY += 4;
 				linesdone++;
