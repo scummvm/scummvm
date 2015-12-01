@@ -40,6 +40,8 @@ DuckmanMenuSystem::~DuckmanMenuSystem() {
 
 void DuckmanMenuSystem::runMenu(MenuChoiceOffsets menuChoiceOffsets, int16 *menuChoiceOffset,
 	uint32 menuId, uint32 duration, uint timeOutMenuChoiceIndex, uint32 menuCallerThreadId) {
+	
+	debug("DuckmanMenuSystem::runMenu(%08X)", menuId);
 
 	setTimeOutDuration(duration, timeOutMenuChoiceIndex);
 	setMenuCallerThreadId(menuCallerThreadId);

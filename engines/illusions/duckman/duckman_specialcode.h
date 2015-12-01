@@ -51,6 +51,8 @@ public:
 	uint _chinesePuzzleIndex;
 	byte _chinesePuzzleAnswers[3];
 	
+	Common::Point _teleporterPosition;
+	
 	PropertyTimers *_propertyTimers;
 	DuckmanInventory *_inventory;
 
@@ -66,12 +68,17 @@ public:
 	void spcAddPropertyTimer(OpCall &opCall);
 	void spcSetPropertyTimer(OpCall &opCall);
 	void spcRemovePropertyTimer(OpCall &opCall);
+	void spcInitTeleporterPosition(OpCall &opCall);
+	void spcUpdateTeleporterPosition(OpCall &opCall);
 	void spcCenterNewspaper(OpCall &opCall);
+	void spcStopScreenShaker(OpCall &opCall);
 	void spcUpdateObject272Sequence(OpCall &opCall);
 	void spcSetCursorInventoryMode(OpCall &opCall);
 	void spcCenterCurrentScreenText(OpCall &opCall);
 	void spcSetDefaultTextCoords(OpCall &opCall);
 	void spcSetTextDuration(OpCall &opCall);
+
+	void updateTeleporterProperties();
 
 };
 

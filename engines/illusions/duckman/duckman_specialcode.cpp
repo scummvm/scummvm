@@ -63,7 +63,10 @@ void DuckmanSpecialCode::init() {
 	SPECIAL(0x0016000A, spcAddPropertyTimer);
 	SPECIAL(0x0016000B, spcSetPropertyTimer);
 	SPECIAL(0x0016000C, spcRemovePropertyTimer);
+	SPECIAL(0x0016000E, spcInitTeleporterPosition);
+	SPECIAL(0x0016000F, spcUpdateTeleporterPosition);
 	SPECIAL(0x00160010, spcCenterNewspaper);
+	SPECIAL(0x00160012, spcStopScreenShaker);
 	SPECIAL(0x00160014, spcUpdateObject272Sequence);
 	SPECIAL(0x0016001C, spcSetCursorInventoryMode);
 	SPECIAL(0x0016001D, spcCenterCurrentScreenText);
@@ -152,11 +155,74 @@ void DuckmanSpecialCode::spcRemovePropertyTimer(OpCall &opCall) {
 	_vm->notifyThreadId(opCall._threadId);
 }
 
+void DuckmanSpecialCode::spcInitTeleporterPosition(OpCall &opCall) {
+	_teleporterPosition.x = 4;
+	_teleporterPosition.y = 3;
+	updateTeleporterProperties();
+	_vm->_scriptResource->_properties.set(0x000E007A, false);
+	_vm->notifyThreadId(opCall._threadId);
+}
+
+void DuckmanSpecialCode::spcUpdateTeleporterPosition(OpCall &opCall) {
+	// TODO
+	ARG_BYTE(direction);
+	int16 deltaX = 0;
+	int16 deltaY = 0;
+	uint32 sequenceId = 0;
+	
+	Control *control = _vm->getObjectControl(0x400C0);
+	switch (direction) {
+	case 1:
+		if (_teleporterPosition.y > 1) {
+			deltaY = -1;
+			sequenceId = 0x60386;
+		}
+		break;
+	case 4:
+		if (_teleporterPosition.x < 4) {
+			deltaX = 1;
+			sequenceId = 0x60387;
+		}
+		break;
+	case 0x10:
+		if (_teleporterPosition.y < 3) {
+			deltaY = 1;
+			sequenceId = 0x60385;
+		}
+		break;
+	case 0x40:
+		if (_teleporterPosition.x > 1) {
+			deltaX = -1;
+			sequenceId = 0x60388;
+		}
+		break;
+	default:
+		break;
+	}
+	
+	if (sequenceId) {
+		control->startSequenceActor(sequenceId, 2, opCall._threadId);
+		_teleporterPosition.x += deltaX;
+		_teleporterPosition.y += deltaY;
+		updateTeleporterProperties();
+		_vm->_scriptResource->_properties.set(0x000E007A, false);
+	} else {
+		_vm->notifyThreadId(opCall._threadId);
+	}
+
+	_vm->notifyThreadId(opCall._threadId);
+}
+
 void DuckmanSpecialCode::spcCenterNewspaper(OpCall &opCall) {
 	Control *control = _vm->getObjectControl(0x40017);
 	control->_flags |= 8;
 	control->_actor->_position.x = 160;
 	control->_actor->_position.y = 100;
+	_vm->notifyThreadId(opCall._threadId);
+}
+
+void DuckmanSpecialCode::spcStopScreenShaker(OpCall &opCall) {
+	_vm->stopScreenShaker();
 	_vm->notifyThreadId(opCall._threadId);
 }
 
@@ -227,6 +293,14 @@ void DuckmanSpecialCode::spcSetTextDuration(OpCall &opCall) {
 	ARG_INT16(duration);
 	_vm->setTextDuration(kind, duration);
 	_vm->notifyThreadId(opCall._threadId);
+}
+
+void DuckmanSpecialCode::updateTeleporterProperties() {
+	_vm->_scriptResource->_properties.set(0x000E0074, _teleporterPosition.x == 4 && _teleporterPosition.y == 2);
+	_vm->_scriptResource->_properties.set(0x000E0075, _teleporterPosition.x == 4 && _teleporterPosition.y == 3);
+	_vm->_scriptResource->_properties.set(0x000E0076, _teleporterPosition.x == 3 && _teleporterPosition.y == 3);
+	_vm->_scriptResource->_properties.set(0x000E0077, _teleporterPosition.x == 2 && _teleporterPosition.y == 2);
+	_vm->_scriptResource->_properties.set(0x000E0078, _teleporterPosition.x == 1 && _teleporterPosition.y == 1);	
 }
 
 } // End of namespace Illusions

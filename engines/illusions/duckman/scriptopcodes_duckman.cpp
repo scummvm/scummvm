@@ -204,7 +204,8 @@ void ScriptOpcodes_Duckman::opStartTimerThread(ScriptThread *scriptThread, OpCal
 		duration += _vm->getRandom(maxDuration);
 		
 //duration = 1;//DEBUG Speeds up things
-duration = 5;
+//duration = 5;
+debug("duration: %d", duration);
 		
 	if (isAbortable)
 		_vm->startAbortableTimerThread(duration, opCall._threadId);
@@ -258,7 +259,7 @@ void ScriptOpcodes_Duckman::opUnloadResourcesBySceneId(ScriptThread *scriptThrea
 
 //static uint dsceneId = 0, dthreadId = 0;
 //static uint dsceneId = 0x00010008, dthreadId = 0x00020029;//Beginning in Jac
-static uint dsceneId = 0x0001000A, dthreadId = 0x00020043;//Home front
+//static uint dsceneId = 0x0001000A, dthreadId = 0x00020043;//Home front
 //static uint dsceneId = 0x0001000E, dthreadId = 0x0002007C;
 //static uint dsceneId = 0x00010012, dthreadId = 0x0002009D;//Paramount
 //static uint dsceneId = 0x00010020, dthreadId = 0x00020112;//Xmas
@@ -273,6 +274,7 @@ static uint dsceneId = 0x0001000A, dthreadId = 0x00020043;//Home front
 //static uint dsceneId = 0x0001005B, dthreadId = 0x00020341;
 //static uint dsceneId = 0x00010010, dthreadId = 0x0002008A;
 //static uint dsceneId = 0x10002, dthreadId = 0x20001;//Debug menu, not supported
+static uint dsceneId = 0x10044, dthreadId = 0x000202B8; // Starship Enterprise
 
 void ScriptOpcodes_Duckman::opChangeScene(ScriptThread *scriptThread, OpCall &opCall) {
 	ARG_SKIP(2);
@@ -283,13 +285,13 @@ void ScriptOpcodes_Duckman::opChangeScene(ScriptThread *scriptThread, OpCall &op
 	debug(1, "changeScene(%08X, %08X)", sceneId, threadId);
 	
 	//DEBUG
-	/*
+#if 1
 	if (dsceneId) {
 		sceneId = dsceneId;
 		threadId = dthreadId;
 		dsceneId = 0;
 	}
-	*/
+#endif
 	
 	if (_vm->_scriptResource->_properties.get(31)) {
 		_vm->changeScene(0x10002, 0x20001, opCall._callerThreadId);
@@ -645,6 +647,7 @@ void ScriptOpcodes_Duckman::opDisplayMenu(ScriptThread *scriptThread, OpCall &op
 	ARG_UINT32(menuId);
 	ARG_UINT32(timeOutMenuChoiceIndex);
 	
+	debug("menuId: %08X", menuId);
 	debug("timeOutMenuChoiceIndex: %d", timeOutMenuChoiceIndex);
 	
 	MenuChoiceOffsets menuChoiceOffsets;

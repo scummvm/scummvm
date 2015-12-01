@@ -108,6 +108,7 @@ public:
 	int updateScript(uint flags);
 
 	void startScreenShaker(uint pointsCount, uint32 duration, const ScreenShakerPoint *points, uint32 threadId);
+	void stopScreenShaker();
 	int updateScreenShaker(uint flags);
 
 	void startFader(int duration, int minValue, int maxValue, int firstIndex, int lastIndex, uint32 threadId);
