@@ -1288,13 +1288,6 @@ void LabEngine::go() {
 
 	_isHiRes = ((getFeatures() & GF_LOWRES) == 0);
 
-#if 0
-	if (_isHiRes)
-		warning("Running in HiRes mode");
-	else
-		warning("Running in LowRes mode");
-#endif
-
 	bool mem = false;
 	if (initBuffer(BUFFERSIZE, true)) {
 		mem = true;
