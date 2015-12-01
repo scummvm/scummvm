@@ -32,13 +32,11 @@
 #include "lab/intro.h"
 #include "lab/labfun.h"
 #include "lab/resource.h"
-#include "lab/diff.h"
+#include "lab/anim.h"
 #include "lab/text.h"
 #include "lab/interface.h"
 
 namespace Lab {
-extern bool nopalchange, DoBlack;
-extern char diffcmap[256 * 3];
 extern uint16 *FadePalette;
 
 Intro::Intro() {
@@ -144,7 +142,7 @@ void Intro::doPictText(const char *filename, TextFont *msgFont, bool isscreen) {
 
 		if (msg == NULL) {
 			g_lab->_music->updateMusic();
-			g_lab->diffNextFrame();
+			g_lab->_anim->diffNextFrame();
 			g_lab->getTime(&secs, &micros);
 			g_lab->anyTimeDiff(lastsecs, lastmicros, secs, micros, &secs, &micros);
 
@@ -239,8 +237,8 @@ void Intro::nReadPict(const char *filename, bool playOnce) {
 	if (_quitIntro)
 		return;
 
-	DoBlack = _introDoBlack;
-	stopDiffEnd();
+	g_lab->_anim->DoBlack = _introDoBlack;
+	g_lab->_anim->stopDiffEnd();
 	readPict(finalFileName.c_str(), playOnce);
 }
 
@@ -256,7 +254,7 @@ void Intro::introSequence() {
 		0x0CB3, 0x0DC4, 0x0DD6, 0x0EE7
 	};
 
-	DoBlack = true;
+	g_lab->_anim->DoBlack = true;
 
 	if (g_lab->getPlatform() != Common::kPlatformWindows) {
 		nReadPict("EA0", true);
@@ -278,12 +276,12 @@ void Intro::introSequence() {
 
 	g_lab->_music->initMusic();
 
-	nopalchange = true;
+	g_lab->_anim->nopalchange = true;
 	if (g_lab->getPlatform() != Common::kPlatformWindows)
 		nReadPict("TNDcycle.pic", true);
 	else
 		nReadPict("TNDcycle2.pic", true);
-	nopalchange = false;
+	g_lab->_anim->nopalchange = false;
 
 	FadePalette = palette;
 
@@ -291,9 +289,9 @@ void Intro::introSequence() {
 		if (_quitIntro)
 			break;
 
-		palette[i] = ((diffcmap[i * 3] >> 2) << 8) +
-		                   ((diffcmap[i * 3 + 1] >> 2) << 4) +
-		                   (diffcmap[i * 3 + 2] >> 2);
+		palette[i] = ((g_lab->_anim->diffcmap[i * 3] >> 2) << 8) +
+		             ((g_lab->_anim->diffcmap[i * 3 + 1] >> 2) << 4) +
+		              (g_lab->_anim->diffcmap[i * 3 + 2] >> 2);
 	}
 
 	g_lab->_music->updateMusic();
@@ -348,14 +346,14 @@ void Intro::introSequence() {
 
 	TextFont *msgFont = g_lab->_resource->getFont("P:Map.fon");
 
-	nopalchange = true;
+	g_lab->_anim->nopalchange = true;
 	nReadPict("Intro.1", true);
-	nopalchange = false;
+	g_lab->_anim->nopalchange = false;
 
 	for (uint16 i = 0; i < 16; i++) {
-		palette[i] = ((diffcmap[i * 3] >> 2) << 8) +
-		             ((diffcmap[i * 3 + 1] >> 2) << 4) +
-		             (diffcmap[i * 3 + 2] >> 2);
+		palette[i] = ((g_lab->_anim->diffcmap[i * 3] >> 2) << 8) +
+		             ((g_lab->_anim->diffcmap[i * 3 + 1] >> 2) << 4) +
+		              (g_lab->_anim->diffcmap[i * 3 + 2] >> 2);
 	}
 
 	doPictText("i.1", msgFont, true);
@@ -395,11 +393,11 @@ void Intro::introSequence() {
 	if (!_quitIntro)
 		for (uint16 i = 0; i < 50; i++) {
 			for (uint16 idx = (8 * 3); idx < (255 * 3); idx++)
-				diffcmap[idx] = 255 - diffcmap[idx];
+				g_lab->_anim->diffcmap[idx] = 255 - g_lab->_anim->diffcmap[idx];
 
 			g_lab->_music->updateMusic();
 			g_lab->waitTOF();
-			g_lab->setPalette(diffcmap, 256);
+			g_lab->setPalette(g_lab->_anim->diffcmap, 256);
 			g_lab->waitTOF();
 			g_lab->waitTOF();
 		}
@@ -438,7 +436,7 @@ void Intro::introSequence() {
 	nReadPict("Daed7", false);
 	doPictText("i.27", msgFont, false);
 	doPictText("i.28", msgFont, false);
-	stopDiffEnd();
+	g_lab->_anim->stopDiffEnd();
 
 	nReadPict("Daed8", true);
 	doPictText("i.29", msgFont, false);
@@ -460,7 +458,7 @@ void Intro::introSequence() {
 	if (_quitIntro) {
 		g_lab->setAPen(0);
 		g_lab->rectFill(0, 0, g_lab->_screenWidth - 1, g_lab->_screenHeight - 1);
-		DoBlack = true;
+		g_lab->_anim->DoBlack = true;
 	}
 
 	closeFont(msgFont);

@@ -2,6 +2,7 @@ MODULE := engines/lab
 
 MODULE_OBJS := \
 	allocroom.o \
+	anim.o \
 	detection.o \
 	engine.o \
 	graphics.o \
@@ -21,7 +22,6 @@ MODULE_OBJS := \
 	special.o \
 	text.o \
 	timing.o \
-	undiff.o \
 	vga.o
 
 

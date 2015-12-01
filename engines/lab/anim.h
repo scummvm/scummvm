@@ -35,6 +35,8 @@
 
 namespace Lab {
 
+class LabEngine;
+#define CONTINUOUS      0xFFFF
 
 struct DIFFHeader {
 	uint16 _version;    // unused
@@ -57,30 +59,63 @@ struct BitMap {
 #define BITMAPF_NONE  0
 #define BITMAPF_VIDEO (1<<7)
 
-/* unDiff.c */
+class Anim {
+private:
+	LabEngine *_vm;
 
-void initOffsets(uint16 bytesPerRow);
+	uint32 header;
+	uint16 CurBit;
+	uint16 numchunks;
+	uint32 WaitSec;
+	uint32 WaitMicros;
+	uint32 DelayMicros;
+	bool continuous;
+	bool IsPlaying;
+	bool IsAnim;
+	bool IsPal;
+	bool donepal;
+	uint16 framenumber;
+	bool PlayOnce;
+	byte *Buffer;
+	byte *storagefordifffile;
+	byte **difffile;
+	uint32 size;
+	bool StopPlayingEnd;
+	uint16 samplespeed;
+	byte *start;
+	uint32 diffwidth;
+	uint32 diffheight;
+	bool stopsound;
 
-bool unDIFFMemory(byte *dest,           /* Where to Un-DIFF */
+public:
+	Anim(LabEngine *vm);
+
+	DIFFHeader headerdata;
+	char diffcmap[256 * 3];
+	bool IsBM;          /* Just fill in the RawDIFFBM structure */
+	bool waitForEffect; /* Wait for each sound effect to finish before continuing. */
+	bool DoBlack;       /* Black the screen before new picture  */
+	bool nopalchange;   /* Don't change the palette.            */
+	BitMap RawDiffBM;
+
+	void unDiff(byte *NewBuf, byte *OldBuf, byte *DiffData, uint16 bytesperrow, bool IsV);
+	bool unDIFFMemory(byte *dest,           /* Where to Un-DIFF */
                   byte *diff,           /* The DIFFed code. */
                   uint16 headerSize,    /* Size of header (1, 2 or 4 bytes) (only supports 1 currently */
                   uint16 copySize);     /* Size of minimum copy or skip. (1, 2 or 4 bytes) */
 
-bool VUnDIFFMemory(byte *Dest, byte *diff, uint16 HeaderSize, uint16 CopySize, uint16 bytesperrow);
-void runLengthDecode(byte *Dest, byte *Source);
-void VRunLengthDecode(byte *Dest, byte *Source, uint16 bytesperrow);
+	bool VUnDIFFMemory(byte *dest, byte *diff, uint16 headerSize, uint16 copySize, uint16 bytesPerRow);
+	void runLengthDecode(byte *dest, byte *source);
+	void VRunLengthDecode(byte *dest, byte *source, uint16 bytesPerRow);
+	bool readDiff(bool playonce);
+	void diffNextFrame();
+	void readSound(bool waitTillFinished, Common::File *file);
+	void stopDiff();
+	void stopDiffEnd();
+	void stopSound();
+	void playDiff();
 
-/* readDiff.c */
-
-void blackScreen();
-void blackAllScreen();
-void whiteScreen();
-bool readDiff(bool playonce);
-void diffNextFrame();
-void readSound(bool waitTillFinished, Common::File *file);
-void stopDiff();
-void stopDiffEnd();
-void stopSound();
+};
 
 } // End of namespace Lab
 

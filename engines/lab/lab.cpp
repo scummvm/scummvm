@@ -38,14 +38,14 @@
 #include "engines/dialogs.h"
 #include "engines/engine.h"
 #include "engines/util.h"
-
 #include "gui/message.h"
+#include "engines/advancedDetector.h"
 
 #include "lab/lab.h"
 #include "lab/labfun.h"
 #include "lab/resource.h"
+#include "lab/anim.h"
 
-#include "engines/advancedDetector.h"
 
 namespace Lab {
 
@@ -91,6 +91,7 @@ LabEngine::LabEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	_event = nullptr;
 	_resource = nullptr;
 	_music = nullptr;
+	_anim = nullptr;
 
     _lastMessageLong = false;
     _lastTooLong = false;
@@ -109,6 +110,7 @@ LabEngine::~LabEngine() {
 	delete _event;
 	delete _resource;
 	delete _music;
+	delete _anim;
 }
 
 Common::Error LabEngine::run() {
@@ -120,6 +122,7 @@ Common::Error LabEngine::run() {
 	_event = new EventManager(this);
 	_resource = new Resource(this);
 	_music = new Music(this);
+	_anim = new Anim(this);
 
 	if (getPlatform() == Common::kPlatformWindows) {
 		// Check if this is the Wyrmkeep trial

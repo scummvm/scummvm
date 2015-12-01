@@ -35,7 +35,7 @@
 #include "lab/parsetypes.h"
 #include "lab/parsefun.h"
 #include "lab/resource.h"
-#include "lab/diff.h"
+#include "lab/anim.h"
 #include "lab/interface.h"
 
 namespace Lab {
@@ -49,8 +49,7 @@ InventoryData *Inventory;
 uint16 NumInv, ManyRooms, HighestCondition, Direction;
 const char *NewFileName;
 
-extern bool DoNotDrawMessage, IsBM, noupdatediff, QuitLab, MusicOn, DoBlack, LongWinInFront;
-extern char diffcmap[256 * 3];
+extern bool DoNotDrawMessage, noupdatediff, QuitLab, MusicOn, LongWinInFront;
 extern const char *CurFileName;
 extern CloseDataPtr CPtr;
 
@@ -379,7 +378,7 @@ static void doActions(Action * APtr, CloseDataPtr *LCPtr) {
 
 		case NOUPDATE:
 			noupdatediff = true;
-			DoBlack = false;
+			g_lab->_anim->DoBlack = false;
 			break;
 
 		case FORCEUPDATE:
@@ -445,7 +444,7 @@ static void doActions(Action * APtr, CloseDataPtr *LCPtr) {
 			g_lab->_roomNum   = APtr->Param1;
 			Direction = APtr->Param2 - 1;
 			*LCPtr      = NULL;
-			DoBlack    = true;
+			g_lab->_anim->DoBlack = true;
 			break;
 
 		case SETCLOSEUP:
@@ -485,7 +484,7 @@ static void doActions(Action * APtr, CloseDataPtr *LCPtr) {
 
 			while (1) {
 				g_lab->_music->updateMusic();
-				g_lab->diffNextFrame();
+				g_lab->_anim->diffNextFrame();
 				g_lab->getTime(&CurSecs, &CurMicros);
 
 				if ((CurSecs > StartSecs) || ((CurSecs == StartSecs) &&
@@ -520,7 +519,7 @@ static void doActions(Action * APtr, CloseDataPtr *LCPtr) {
 		case WAITSOUND:
 			while (g_lab->_music->isSoundEffectActive()) {
 				g_lab->_music->updateMusic();
-				g_lab->diffNextFrame();
+				g_lab->_anim->diffNextFrame();
 				g_lab->waitTOF();
 			}
 
@@ -555,17 +554,17 @@ static void doActions(Action * APtr, CloseDataPtr *LCPtr) {
 
 		case SPECIALCMD:
 			if (APtr->Param1 == 0)
-				DoBlack = true;
+				g_lab->_anim->DoBlack = true;
 			else if (APtr->Param1 == 1)
-				DoBlack = (CPtr == NULL);
+				g_lab->_anim->DoBlack = (CPtr == NULL);
 			else if (APtr->Param1 == 2)
-				DoBlack = (CPtr != NULL);
+				g_lab->_anim->DoBlack = (CPtr != NULL);
 			else if (APtr->Param1 == 5) { /* inverse the palette */
 				for (uint16 idx = (8 * 3); idx < (255 * 3); idx++)
-					diffcmap[idx] = 255 - diffcmap[idx];
+					g_lab->_anim->diffcmap[idx] = 255 - g_lab->_anim->diffcmap[idx];
 
 				g_lab->waitTOF();
-				g_lab->setPalette(diffcmap, 256);
+				g_lab->setPalette(g_lab->_anim->diffcmap, 256);
 				g_lab->waitTOF();
 				g_lab->waitTOF();
 			} else if (APtr->Param1 == 4) { /* white the palette */
@@ -574,7 +573,7 @@ static void doActions(Action * APtr, CloseDataPtr *LCPtr) {
 				g_lab->waitTOF();
 			} else if (APtr->Param1 == 6) { /* Restore the palette */
 				g_lab->waitTOF();
-				g_lab->setPalette(diffcmap, 256);
+				g_lab->setPalette(g_lab->_anim->diffcmap, 256);
 				g_lab->waitTOF();
 				g_lab->waitTOF();
 			} else if (APtr->Param1 == 7) { /* Quick pause */
@@ -595,7 +594,7 @@ static void doActions(Action * APtr, CloseDataPtr *LCPtr) {
 	} else {
 		while (g_lab->_music->isSoundEffectActive()) {
 			g_lab->_music->updateMusic();
-			g_lab->diffNextFrame();
+			g_lab->_anim->diffNextFrame();
 			g_lab->waitTOF();
 		}
 	}
