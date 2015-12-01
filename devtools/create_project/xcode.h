@@ -314,12 +314,12 @@ private:
 
 	// Setup objects
 	void setupCopyFilesBuildPhase();
-	void setupFrameworksBuildPhase();
+	void setupFrameworksBuildPhase(const BuildSetup &setup);
 	void setupNativeTarget();
 	void setupProject();
 	void setupResourcesBuildPhase();
 	void setupSourcesBuildPhase();
-	void setupBuildConfiguration();
+	void setupBuildConfiguration(const BuildSetup &setup);
 
 	// Misc
 	void setupDefines(const BuildSetup &setup); // Setup the list of defines to be used on build configurations

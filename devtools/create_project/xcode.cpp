@@ -90,6 +90,53 @@ bool producesObjectFileOnOSX(const std::string &fileName) {
 		return false;
 }
 
+bool targetIsIOS(const std::string &targetName) {
+	return targetName.length() > 4 && targetName.substr(targetName.length() - 4) == "-iOS";
+}
+
+bool shouldSkipFileForTarget(const std::string &fileID, const std::string &targetName, const std::string &fileName) {
+	// There are 3 rules used to determine if a specific file belongs to a target:
+	// 1) if the parent directory is "backends/platform/iphone", the file belongs to the iOS target.
+	// 2) if the parent directory is "/sdl", the file belongs to the OS X target.
+	// 3) if the file has a suffix, like "_osx", or "_ios", the file belongs to one of the target.
+	std::string name, ext;
+	splitFilename(fileName, name, ext);
+	if (targetIsIOS(targetName)) {
+		// iOS target: we skip all files with the "_osx" suffix
+		if (name.length() > 4 && name.substr(name.length() - 4) == "_osx") {
+			return true;
+		}
+		// We don't need SDL for the iOS target
+		static const std::string sdl_directory = "/sdl/";
+		static const std::string surfacesdl_directory = "/surfacesdl/";
+		static const std::string doublebufferdl_directory = "/doublebuffersdl/";
+		if (fileID.find(sdl_directory) != std::string::npos
+		 || fileID.find(surfacesdl_directory) != std::string::npos
+		 || fileID.find(doublebufferdl_directory) != std::string::npos) {
+			return true;
+		 }
+	}
+	else {
+		// Ugly hack: explicitely remove the browser.cpp file.
+		// The problem is that we have only one project for two different targets,
+		// and the parsing of the "mk" files added this file for both targets...
+		if (fileID.length() > 12 && fileID.substr(fileID.length() - 12) == "/browser.cpp") {
+			return true;
+		}
+		// OS X target: we skip all files with the "_ios" suffix
+		if (name.length() > 4 && name.substr(name.length() - 4) == "_ios") {
+			return true;
+		}
+		// parent directory
+		const std::string directory = fileID.substr(0, fileID.length() - fileName.length());
+		static const std::string iphone_directory = "backends/platform/iphone";
+		if (directory.length() > iphone_directory.length() && directory.substr(directory.length() - iphone_directory.length()) == iphone_directory) {
+			return true;
+		}
+	}
+	return false;
+}
+
 XcodeProvider::Group::Group(XcodeProvider *objectParent, const std::string &groupName, const std::string &uniqueName, const std::string &path) : Object(objectParent, uniqueName, groupName, "PBXGroup", "", groupName) {
 	addProperty("name", name, "", SettingsNoValue|SettingsQuoteVariable);
 	addProperty("sourceTree", "<group>", "", SettingsNoValue|SettingsQuoteVariable);
@@ -211,6 +258,11 @@ XcodeProvider::XcodeProvider(StringList &global_warnings, std::map<std::string, 
 }
 
 void XcodeProvider::addResourceFiles(const BuildSetup &setup, StringList &includeList, StringList &excludeList) {
+	includeList.push_back(setup.srcDir + "/dists/iphone/Images.xcassets");
+	includeList.push_back(setup.srcDir + "/dists/iphone/Info.plist");
+
+	StringList td;
+	createModuleList(setup.srcDir + "/backends/platform/iphone", setup.defines, td, includeList, excludeList);
 }
 
 void XcodeProvider::createWorkspace(const BuildSetup &setup) {
@@ -225,11 +277,11 @@ void XcodeProvider::createWorkspace(const BuildSetup &setup) {
 	_targets.push_back(PROJECT_DESCRIPTION "-iOS");
 	_targets.push_back(PROJECT_DESCRIPTION "-OS X");
 	setupCopyFilesBuildPhase();
-	setupFrameworksBuildPhase();
+	setupFrameworksBuildPhase(setup);
 	setupNativeTarget();
 	setupProject();
 	setupResourcesBuildPhase();
-	setupBuildConfiguration();
+	setupBuildConfiguration(setup);
 }
 
 // We are done with constructing all the object graph and we got through every project, output the main project file
@@ -329,16 +381,19 @@ void XcodeProvider::setupCopyFilesBuildPhase() {
 
 #define DEF_SYSFRAMEWORK(framework) properties[framework".framework"] = FileProperty("wrapper.framework", framework".framework", "System/Library/Frameworks/" framework ".framework", "SDKROOT"); \
 	ADD_SETTING_ORDER_NOVALUE(children, getHash(framework".framework"), framework".framework", fwOrder++);
-	
-#define DEF_LOCALLIB_STATIC(lib) properties[lib".a"] = FileProperty("archive.ar", lib".a", "/opt/local/lib/" lib ".a", "\"<group>\""); \
+
+#define DEF_LOCALLIB_STATIC_PATH(path,lib) properties[lib".a"] = FileProperty("archive.ar", lib ".a", path, "\"<group>\""); \
 	ADD_SETTING_ORDER_NOVALUE(children, getHash(lib".a"), lib".a", fwOrder++);
+
+#define DEF_LOCALLIB_STATIC(lib) DEF_LOCALLIB_STATIC_PATH("/opt/local/lib/" lib ".a", lib)
+
 
 /**
  * Sets up the frameworks build phase.
  *
  * (each native target has different build rules)
  */
-void XcodeProvider::setupFrameworksBuildPhase() {
+void XcodeProvider::setupFrameworksBuildPhase(const BuildSetup &setup) {
 	_frameworksBuildPhase.comment = "PBXFrameworksBuildPhase";
 
 	// Just use a hardcoded id for the Frameworks-group
@@ -358,6 +413,7 @@ void XcodeProvider::setupFrameworksBuildPhase() {
 	DEF_SYSFRAMEWORK("Carbon");
 	DEF_SYSFRAMEWORK("Cocoa");
 	DEF_SYSFRAMEWORK("CoreAudio");
+	DEF_SYSFRAMEWORK("CoreGraphics");
 	DEF_SYSFRAMEWORK("CoreFoundation");
 	DEF_SYSFRAMEWORK("CoreMIDI");
 	DEF_SYSFRAMEWORK("Foundation");
@@ -376,6 +432,19 @@ void XcodeProvider::setupFrameworksBuildPhase() {
 	DEF_LOCALLIB_STATIC("libfreetype");
 //	DEF_LOCALLIB_STATIC("libmpeg2");
 
+	std::string absoluteOutputDir;
+#ifdef POSIX
+	absoluteOutputDir = realpath((setup.outputDir + "/lib").c_str(), NULL);
+#else
+	absoluteOutputDir = "lib";
+#endif
+
+	DEF_LOCALLIB_STATIC_PATH(absoluteOutputDir + "/libFLACiOS.a",   "libFLACiOS");
+	DEF_LOCALLIB_STATIC_PATH(absoluteOutputDir + "/libFreetype2.a", "libFreetype2");
+	DEF_LOCALLIB_STATIC_PATH(absoluteOutputDir + "/libogg.a",       "libogg");
+	DEF_LOCALLIB_STATIC_PATH(absoluteOutputDir + "/libpng.a",       "libpng");
+	DEF_LOCALLIB_STATIC_PATH(absoluteOutputDir + "/libvorbis.a",    "libvorbis");
+
 	frameworksGroup->properties["children"] = children;
 	_groups.add(frameworksGroup);
 	// Force this to be added as a sub-group in the root.
@@ -384,6 +453,7 @@ void XcodeProvider::setupFrameworksBuildPhase() {
 
 	// Declare this here, as it's used across all the targets
 	int order = 0;
+
 	//////////////////////////////////////////////////////////////////////////
 	// ScummVM-iOS
 	Object *framework_iPhone = new Object(this, "PBXFrameworksBuildPhase_" + _targets[IOS_TARGET], "PBXFrameworksBuildPhase", "PBXFrameworksBuildPhase", "", "Frameworks");
@@ -392,35 +462,39 @@ void XcodeProvider::setupFrameworksBuildPhase() {
 	framework_iPhone->addProperty("runOnlyForDeploymentPostprocessing", "0", "", SettingsNoValue);
 
 	// List of frameworks
-	Property iPhone_files;
-	iPhone_files.hasOrder = true;
-	iPhone_files.flags = SettingsAsList;
+	Property iOS_files;
+	iOS_files.hasOrder = true;
+	iOS_files.flags = SettingsAsList;
 
-	ValueList frameworks_iPhone;
-	frameworks_iPhone.push_back("CoreAudio.framework");
-	frameworks_iPhone.push_back("CoreFoundation.framework");
-	frameworks_iPhone.push_back("Foundation.framework");
-	frameworks_iPhone.push_back("UIKit.framework");
-	frameworks_iPhone.push_back("AudioToolbox.framework");
-	frameworks_iPhone.push_back("QuartzCore.framework");
-	frameworks_iPhone.push_back("libmad.a");
-	//frameworks_iPhone.push_back("libmpeg2.a");
-	frameworks_iPhone.push_back("libFLAC.a");
-	frameworks_iPhone.push_back("libvorbisidec.a");
-	frameworks_iPhone.push_back("OpenGLES.framework");
+	ValueList frameworks_iOS;
+	frameworks_iOS.push_back("CoreAudio.framework");
+	frameworks_iOS.push_back("CoreGraphics.framework");
+	frameworks_iOS.push_back("CoreFoundation.framework");
+	frameworks_iOS.push_back("Foundation.framework");
+	frameworks_iOS.push_back("UIKit.framework");
+	frameworks_iOS.push_back("AudioToolbox.framework");
+	frameworks_iOS.push_back("QuartzCore.framework");
+	frameworks_iOS.push_back("OpenGLES.framework");
 
-	for (ValueList::iterator framework = frameworks_iPhone.begin(); framework != frameworks_iPhone.end(); framework++) {
+	frameworks_iOS.push_back("libFLACiOS.a");
+	frameworks_iOS.push_back("libFreetype2.a");
+	frameworks_iOS.push_back("libogg.a");
+	frameworks_iOS.push_back("libpng.a");
+	frameworks_iOS.push_back("libvorbis.a");
+
+	for (ValueList::iterator framework = frameworks_iOS.begin(); framework != frameworks_iOS.end(); framework++) {
 		std::string id = "Frameworks_" + *framework + "_iphone";
 		std::string comment = *framework + " in Frameworks";
 
-		ADD_SETTING_ORDER_NOVALUE(iPhone_files, getHash(id), comment, order++);
+		ADD_SETTING_ORDER_NOVALUE(iOS_files, getHash(id), comment, order++);
 		ADD_BUILD_FILE(id, *framework, getHash(*framework), comment);
 		ADD_FILE_REFERENCE(*framework, *framework, properties[*framework]);
 	}
 
-	framework_iPhone->properties["files"] = iPhone_files;
+	framework_iPhone->properties["files"] = iOS_files;
 
 	_frameworksBuildPhase.add(framework_iPhone);
+
 	//////////////////////////////////////////////////////////////////////////
 	// ScummVM-OS X
 	Object *framework_OSX = new Object(this, "PBXFrameworksBuildPhase_" + _targets[OSX_TARGET], "PBXFrameworksBuildPhase", "PBXFrameworksBuildPhase", "", "Frameworks");
@@ -553,6 +627,7 @@ void XcodeProvider::setupResourcesBuildPhase() {
 	properties["teenagent.dat"]    = FileProperty("file", "", "teenagent.dat", "\"<group>\"");
 	properties["toon.dat"]         = FileProperty("file", "", "toon.dat", "\"<group>\"");
 
+    properties["Images.xcassets"]  = FileProperty("Images.xcassets", "", "Images.xcassets", "\"<group>\"");
 	properties["Default.png"]      = FileProperty("image.png", "", "Default.png", "\"<group>\"");
 	properties["icon.png"]         = FileProperty("image.png", "", "icon.png", "\"<group>\"");
 	properties["icon-72.png"]      = FileProperty("image.png", "", "icon-72.png", "\"<group>\"");
@@ -584,6 +659,7 @@ void XcodeProvider::setupResourcesBuildPhase() {
 		files_list.push_back("hugo.dat");
 		files_list.push_back("teenagent.dat");
 		files_list.push_back("toon.dat");
+		files_list.push_back("Images.xcassets");
 
 		int order = 0;
 		for (ValueList::iterator file = files_list.begin(); file != files_list.end(); file++) {
@@ -621,6 +697,7 @@ void XcodeProvider::setupSourcesBuildPhase() {
 
 	// Same as for containers: a rule for each native target
 	for (unsigned int i = 0; i < _targets.size(); i++) {
+		const std::string &targetName = _targets[i];
 		Object *source = new Object(this, "PBXSourcesBuildPhase_" + _targets[i], "PBXSourcesBuildPhase", "PBXSourcesBuildPhase", "", "Sources");
 
 		source->addProperty("buildActionMask", "2147483647", "", SettingsNoValue);
@@ -631,10 +708,14 @@ void XcodeProvider::setupSourcesBuildPhase() {
 
 		int order = 0;
 		for (std::vector<Object*>::iterator file = _buildFile.objects.begin(); file !=_buildFile.objects.end(); ++file) {
-			if (!producesObjectFileOnOSX((*file)->name)) {
+            const std::string &fileName = (*file)->name;
+            if (shouldSkipFileForTarget((*file)->id, targetName, fileName)) {
+                continue;
+            }
+			if (!producesObjectFileOnOSX(fileName)) {
 				continue;
 			}
-			std::string comment = (*file)->name + " in Sources";
+			std::string comment = fileName + " in Sources";
 			ADD_SETTING_ORDER_NOVALUE(files, getHash((*file)->id), comment, order++);
 		}
 
@@ -647,18 +728,26 @@ void XcodeProvider::setupSourcesBuildPhase() {
 }
 
 // Setup all build configurations
-void XcodeProvider::setupBuildConfiguration() {
+void XcodeProvider::setupBuildConfiguration(const BuildSetup &setup) {
 
 	_buildConfiguration.comment = "XCBuildConfiguration";
 	_buildConfiguration.flags = SettingsAsList;
 
+	std::string projectOutputDirectory;
+#ifdef POSIX
+	char *rp = realpath(setup.outputDir.c_str(), NULL);
+	projectOutputDirectory = rp;
+	free(rp);
+#endif
+
 	///****************************************
 	// * iPhone
 	// ****************************************/
+
 	// Debug
 	Object *iPhone_Debug_Object = new Object(this, "XCBuildConfiguration_" PROJECT_DESCRIPTION "-iPhone_Debug", _targets[IOS_TARGET] /* ScummVM-iPhone */, "XCBuildConfiguration", "PBXNativeTarget", "Debug");
 	Property iPhone_Debug;
-	ADD_SETTING_QUOTE(iPhone_Debug, "ARCHS", "$(ARCHS_UNIVERSAL_IPHONE_OS)");
+	ADD_SETTING_QUOTE(iPhone_Debug, "ARCHS", "$(ARCHS_STANDARD)");
 	ADD_SETTING_QUOTE(iPhone_Debug, "CODE_SIGN_IDENTITY", "iPhone Developer");
 	ADD_SETTING_QUOTE_VAR(iPhone_Debug, "CODE_SIGN_IDENTITY[sdk=iphoneos*]", "iPhone Developer");
 	ADD_SETTING(iPhone_Debug, "COMPRESS_PNG_FILES", "NO");
@@ -673,25 +762,29 @@ void XcodeProvider::setupBuildConfiguration() {
 	ADD_SETTING(iPhone_Debug, "GCC_ENABLE_FIX_AND_CONTINUE", "NO");
 	ADD_SETTING(iPhone_Debug, "GCC_OPTIMIZATION_LEVEL", "0");
 	ADD_SETTING(iPhone_Debug, "GCC_PRECOMPILE_PREFIX_HEADER", "NO");
+    ADD_SETTING(iPhone_Debug, "GCC_WARN_64_TO_32_BIT_CONVERSION", "NO");
 	ADD_SETTING_QUOTE(iPhone_Debug, "GCC_PREFIX_HEADER", "");
 	ADD_SETTING(iPhone_Debug, "GCC_THUMB_SUPPORT", "NO");
 	ADD_SETTING(iPhone_Debug, "GCC_UNROLL_LOOPS", "YES");
 	ValueList iPhone_HeaderSearchPaths;
 	iPhone_HeaderSearchPaths.push_back("$(SRCROOT)/engines/");
 	iPhone_HeaderSearchPaths.push_back("$(SRCROOT)");
-	iPhone_HeaderSearchPaths.push_back("include/");
+	iPhone_HeaderSearchPaths.push_back("\"" + projectOutputDirectory + "\"");
+	iPhone_HeaderSearchPaths.push_back("\"" + projectOutputDirectory + "/include\"");
 	ADD_SETTING_LIST(iPhone_Debug, "HEADER_SEARCH_PATHS", iPhone_HeaderSearchPaths, SettingsAsList|SettingsQuoteVariable, 5);
-	ADD_SETTING(iPhone_Debug, "INFOPLIST_FILE", "Info.plist");
+	ADD_SETTING_QUOTE(iPhone_Debug, "INFOPLIST_FILE", "$(SRCROOT)/dists/iphone/Info.plist");
 	ValueList iPhone_LibPaths;
 	iPhone_LibPaths.push_back("$(inherited)");
-	iPhone_LibPaths.push_back("\"$(SRCROOT)/lib\"");
+	iPhone_LibPaths.push_back("\"" + projectOutputDirectory + "/lib\"");
 	ADD_SETTING_LIST(iPhone_Debug, "LIBRARY_SEARCH_PATHS", iPhone_LibPaths, SettingsAsList, 5);
 	ADD_SETTING(iPhone_Debug, "ONLY_ACTIVE_ARCH", "YES");
 	ADD_SETTING(iPhone_Debug, "PREBINDING", "NO");
 	ADD_SETTING(iPhone_Debug, "PRODUCT_NAME", PROJECT_DESCRIPTION);
-	ADD_SETTING_QUOTE(iPhone_Debug, "PROVISIONING_PROFILE", "EF590570-5FAC-4346-9071-D609DE2B28D8");
+	ADD_SETTING(iPhone_Debug, "PRODUCT_BUNDLE_IDENTIFIER", "\"org.scummvm.${PRODUCT_NAME}\"");
+	ADD_SETTING(iPhone_Debug, "IPHONEOS_DEPLOYMENT_TARGET", "9.0");
+	//ADD_SETTING_QUOTE(iPhone_Debug, "PROVISIONING_PROFILE", "EF590570-5FAC-4346-9071-D609DE2B28D8");
 	ADD_SETTING_QUOTE_VAR(iPhone_Debug, "PROVISIONING_PROFILE[sdk=iphoneos*]", "");
-	ADD_SETTING(iPhone_Debug, "SDKROOT", "iphoneos4.0");
+	ADD_SETTING(iPhone_Debug, "SDKROOT", "iphoneos");
 	ADD_SETTING_QUOTE(iPhone_Debug, "TARGETED_DEVICE_FAMILY", "1,2");
 	ValueList scummvmIOS_defines(_defines);
 	REMOVE_DEFINE(scummvmIOS_defines, "MACOSX");
@@ -715,6 +808,7 @@ void XcodeProvider::setupBuildConfiguration() {
 
 	_buildConfiguration.add(iPhone_Debug_Object);
 	_buildConfiguration.add(iPhone_Release_Object);
+
 	/****************************************
 	 * scummvm
 	 ****************************************/
