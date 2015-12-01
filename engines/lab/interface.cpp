@@ -164,7 +164,6 @@ static bool keyPress(uint16 *KeyCode) {
 }
 
 IntuiMessage IMessage;
-extern Gadget *ScreenGadgetList;
 
 IntuiMessage *LabEngine::getMsg() {
 	Gadget *curgad;
@@ -190,7 +189,7 @@ IntuiMessage *LabEngine::getMsg() {
 		IMessage.msgClass = MOUSEBUTTONS;
 		return &IMessage;
 	} else if (keyPress(&IMessage.code)) { /* Keyboard key */
-		curgad = checkNumGadgetHit(ScreenGadgetList, IMessage.code);
+		curgad = checkNumGadgetHit(_event->_screenGadgetList, IMessage.code);
 
 		if (curgad) {
 			IMessage.msgClass = GADGETUP;

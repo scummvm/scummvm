@@ -35,13 +35,6 @@
 
 namespace Lab {
 
-static bool LeftClick = false;
-static bool RightClick = false;
-
-static bool MouseHidden = true;
-static int32 NumHidden   = 1;
-static Gadget *LastGadgetHit = NULL;
-Gadget *ScreenGadgetList = NULL;
 static byte MouseData[] = {1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
 						   1, 7, 1, 0, 0, 0, 0, 0, 0, 0,
 						   1, 7, 7, 1, 0, 0, 0, 0, 0, 0,
@@ -67,30 +60,30 @@ static Gadget *hitgad = NULL;
 /* Checks whether or not the cords fall within one of the gadgets in a list  */
 /* of gadgets.                                                               */
 /*****************************************************************************/
-Gadget *EventManager::checkGadgetHit(Gadget *gadlist, Common::Point pos) {
-	while (gadlist != NULL) {
-		if ((pos.x >= gadlist->x) && (pos.y >= gadlist->y) &&
-		    (pos.x <= (gadlist->x + gadlist->Im->Width)) &&
-		    (pos.y <= (gadlist->y + gadlist->Im->Height)) &&
-		     !(GADGETOFF & gadlist->GadgetFlags)) {
+Gadget *EventManager::checkGadgetHit(Gadget *gadgetList, Common::Point pos) {
+	while (gadgetList != NULL) {
+		if ((pos.x >= gadgetList->x) && (pos.y >= gadgetList->y) &&
+		    (pos.x <= (gadgetList->x + gadgetList->Im->Width)) &&
+		    (pos.y <= (gadgetList->y + gadgetList->Im->Height)) &&
+		     !(GADGETOFF & gadgetList->GadgetFlags)) {
 			if (_vm->_isHiRes) {
-				hitgad = gadlist;
+				hitgad = gadgetList;
 			} else {
 				mouseHide();
-				gadlist->ImAlt->drawImage(gadlist->x, gadlist->y);
+				gadgetList->ImAlt->drawImage(gadgetList->x, gadgetList->y);
 				mouseShow();
 
 				for (uint16 i = 0; i < 3; i++)
 					_vm->waitTOF();
 
 				mouseHide();
-				gadlist->Im->drawImage(gadlist->x, gadlist->y);
+				gadgetList->Im->drawImage(gadgetList->x, gadgetList->y);
 				mouseShow();
 			}
 
-			return gadlist;
+			return gadgetList;
 		} else {
-			gadlist = gadlist->NextGadget;
+			gadgetList = gadgetList->NextGadget;
 		}
 	}
 
@@ -99,39 +92,46 @@ Gadget *EventManager::checkGadgetHit(Gadget *gadlist, Common::Point pos) {
 
 
 
-void EventManager::attachGadgetList(Gadget *GadList) {
-	if (ScreenGadgetList != GadList)
-		LastGadgetHit = NULL;
+void EventManager::attachGadgetList(Gadget *gadgetList) {
+	if (_screenGadgetList != gadgetList)
+		_lastGadgetHit = nullptr;
 
-	ScreenGadgetList = GadList;
+	_screenGadgetList = gadgetList;
 }
 
 EventManager::EventManager(LabEngine *vm) : _vm(vm) {
+	_leftClick = false;
+	_rightClick = false;
+
+	_mouseHidden = true;
+	_numHidden   = 1;
+	_lastGadgetHit = nullptr;
+	_screenGadgetList = nullptr;
 }
 
 void EventManager::mouseHandler(int flag, Common::Point pos) {
-	if (NumHidden >= 2)
+	if (_numHidden >= 2)
 		return;
 
 	if (flag & 0x02) { /* Left mouse button click */
 		Gadget *tmp = NULL;
-		if (ScreenGadgetList)
-			tmp = checkGadgetHit(ScreenGadgetList, _vm->_isHiRes ? pos : Common::Point(pos.x / 2, pos.y));
+		if (_screenGadgetList)
+			tmp = checkGadgetHit(_screenGadgetList, _vm->_isHiRes ? pos : Common::Point(pos.x / 2, pos.y));
 
 		if (tmp)
-			LastGadgetHit = tmp;
+			_lastGadgetHit = tmp;
 		else
-			LeftClick = true;
+			_leftClick = true;
 	}
 
 	if (flag & 0x08) /* Right mouse button click */
-		RightClick = true;
+		_rightClick = true;
 }
 
 void EventManager::updateMouse() {
 	bool doUpdateDisplay = false;
 
-	if (!MouseHidden)
+	if (!_mouseHidden)
 		doUpdateDisplay = true;
 
 	if (hitgad) {
@@ -169,12 +169,12 @@ void EventManager::initMouse() {
 /* Shows the mouse.                                                          */
 /*****************************************************************************/
 void EventManager::mouseShow() {
-	if (NumHidden)
-		NumHidden--;
+	if (_numHidden)
+		_numHidden--;
 
-	if ((NumHidden == 0) && MouseHidden) {
+	if ((_numHidden == 0) && _mouseHidden) {
 		_vm->processInput();
-		MouseHidden = false;
+		_mouseHidden = false;
 	}
 
 	g_system->showMouse(true);
@@ -184,10 +184,10 @@ void EventManager::mouseShow() {
 /* Hides the mouse.                                                          */
 /*****************************************************************************/
 void EventManager::mouseHide() {
-	NumHidden++;
+	_numHidden++;
 
-	if (NumHidden && !MouseHidden) {
-		MouseHidden = true;
+	if (_numHidden && !_mouseHidden) {
+		_mouseHidden = true;
 
 		g_system->showMouse(false);
 	}
@@ -214,7 +214,7 @@ void EventManager::setMousePos(Common::Point pos) {
 	else
 		g_system->warpMouse(pos.x * 2, pos.y);
 
-	if (!MouseHidden)
+	if (!_mouseHidden)
 		_vm->processInput();
 }
 
@@ -226,17 +226,17 @@ void EventManager::setMousePos(Common::Point pos) {
 /*****************************************************************************/
 bool EventManager::mouseButton(uint16 *x, uint16 *y, bool leftbutton) {
 	if (leftbutton) {
-		if (LeftClick) {
+		if (_leftClick) {
 			*x = (!_vm->_isHiRes) ? (uint16)_vm->_mousePos.x / 2 : (uint16)_vm->_mousePos.x;
 			*y = (uint16)_vm->_mousePos.y;
-			LeftClick = false;
+			_leftClick = false;
 			return true;
 		}
 	} else {
-		if (RightClick) {
+		if (_rightClick) {
 			*x = (!_vm->_isHiRes) ? (uint16)_vm->_mousePos.x / 2 : (uint16)_vm->_mousePos.x;
 			*y = (uint16)_vm->_mousePos.y;
-			RightClick = false;
+			_rightClick = false;
 			return true;
 		}
 	}
@@ -245,10 +245,10 @@ bool EventManager::mouseButton(uint16 *x, uint16 *y, bool leftbutton) {
 }
 
 Gadget *EventManager::mouseGadget() {
-	Gadget *Temp = LastGadgetHit;
+	Gadget *temp = _lastGadgetHit;
 
-	LastGadgetHit = nullptr;
-	return Temp;
+	_lastGadgetHit = nullptr;
+	return temp;
 }
 
 } // End of namespace Lab
