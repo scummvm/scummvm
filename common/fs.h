@@ -58,10 +58,11 @@ class FSList : public Array<FSNode> {};
 class FSNode : public ArchiveMember {
 private:
 	SharedPtr<AbstractFSNode>	_realNode;
-	FSNode(AbstractFSNode *realNode);
 
 public:
-	/**
+    FSNode(AbstractFSNode *realNode);
+
+    /**
 	 * Flag to tell listDir() which kind of files to list.
 	 */
 	enum ListMode {
