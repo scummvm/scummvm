@@ -37,33 +37,34 @@ namespace Lab {
 
 
 struct DIFFHeader {
-	uint16 Version;    // unused
-	uint16 x, y;
-	char depth;        // unused
-	char fps;
-	uint32 BufferSize; // unused
-	uint16 Machine;    // unused
-	uint32 Flags;
+	uint16 _version;    // unused
+	uint16 _width;
+	uint16 _height;
+	char _depth;        // unused
+	char _fps;
+	uint32 _bufferSize; // unused
+	uint16 _machine;    // unused
+	uint32 _flags;
 };
 
 struct BitMap {
-	uint16 BytesPerRow, Rows;
-	byte Flags;
-	byte *Planes[16];
+	uint16 _bytesPerRow;
+	uint16 _rows;       // unused
+	byte _flags;
+	byte *_planes[16];
 };
 
+#define BITMAPF_NONE  0
 #define BITMAPF_VIDEO (1<<7)
 
 /* unDiff.c */
 
-void initOffsets(uint16 bytesperrow);
+void initOffsets(uint16 bytesPerRow);
 
-bool unDIFFMemory(byte *Dest,       /* Where to Un-DIFF               */
-                  byte *diff,          /* The DIFFed code.               */
-                  uint16 HeaderSize,    /* Size of header (1, 2 or 4 bytes)
-                                                   (only supports 1 currently     */
-                  uint16 CopySize);     /* Size of minimum copy or skip.
-                                                   (1, 2 or 4 bytes)              */
+bool unDIFFMemory(byte *dest,           /* Where to Un-DIFF */
+                  byte *diff,           /* The DIFFed code. */
+                  uint16 headerSize,    /* Size of header (1, 2 or 4 bytes) (only supports 1 currently */
+                  uint16 copySize);     /* Size of minimum copy or skip. (1, 2 or 4 bytes) */
 
 bool VUnDIFFMemory(byte *Dest, byte *diff, uint16 HeaderSize, uint16 CopySize, uint16 bytesperrow);
 void runLengthDecode(byte *Dest, byte *Source);

@@ -33,39 +33,15 @@
 
 namespace Lab {
 
-extern uint16 DataBytesPerRow;
-
-
-
-/*****************************************************************************/
-/* Copies memory.                                                            */
-/*****************************************************************************/
-
-static void copytwo(byte *Dest, byte *Source) {
-#if defined(USE_SWAP)
-	Dest[1] = Source[0];
-	Dest[0] = Source[1];
-#else
-	*Dest = *Source;
-	Dest++;
-	Source++;
-	*Dest = *Source;
-#endif
-}
-
-
-
+extern uint16 _dataBytesPerRow;
 
 /*------------------------ unDiff Horizontal Memory -------------------------*/
-
-
-
 
 /*****************************************************************************/
 /* Undiffs a piece of memory when header size is a byte, and copy/skip size  */
 /* is also a byte.                                                           */
 /*****************************************************************************/
-static void unDIFFByteByte(byte *Dest, byte *diff) {
+static void unDIFFByteByte(byte *dest, byte *diff) {
 	uint16 skip, copy;
 
 	while (1) {
@@ -76,17 +52,17 @@ static void unDIFFByteByte(byte *Dest, byte *diff) {
 
 		if (skip == 255) {
 			if (copy == 0) {
-				copytwo((byte *) &skip, diff);
+				skip = READ_LE_UINT16(diff);
 				diff += 2;
-				copytwo((byte *) &copy, diff);
+				copy = READ_LE_UINT16(diff);
 				diff += 2;
 			} else if (copy == 255)
 				return;
 		}
 
-		Dest += skip;
-		memcpy(Dest, diff, copy);
-		Dest += copy;
+		dest += skip;
+		memcpy(dest, diff, copy);
+		dest += copy;
 		diff += copy;
 	}
 }
@@ -97,7 +73,7 @@ static void unDIFFByteByte(byte *Dest, byte *diff) {
 /* Undiffs a piece of memory when header size is a byte, and copy/skip size  */
 /* is a word.                                                                */
 /*****************************************************************************/
-static void unDIFFByteWord(uint16 *Dest, uint16 *diff) {
+static void unDIFFByteWord(uint16 *dest, uint16 *diff) {
 	uint16 skip, copy;
 
 	while (1) {
@@ -116,31 +92,31 @@ static void unDIFFByteWord(uint16 *Dest, uint16 *diff) {
 				return;
 		}
 
-		Dest += skip;
+		dest += skip;
 
 		while (copy > 3) {
-			*Dest = READ_LE_UINT16(diff);
-			Dest++;
+			*dest = READ_LE_UINT16(diff);
+			dest++;
 			diff++;
 
-			*Dest = READ_LE_UINT16(diff);
-			Dest++;
+			*dest = READ_LE_UINT16(diff);
+			dest++;
 			diff++;
 
-			*Dest = READ_LE_UINT16(diff);
-			Dest++;
+			*dest = READ_LE_UINT16(diff);
+			dest++;
 			diff++;
 
-			*Dest = READ_LE_UINT16(diff);
-			Dest++;
+			*dest = READ_LE_UINT16(diff);
+			dest++;
 			diff++;
 
 			copy -= 4;
 		}
 
 		while (copy) {
-			*Dest = READ_LE_UINT16(diff);
-			Dest++;
+			*dest = READ_LE_UINT16(diff);
+			dest++;
 			diff++;
 			copy--;
 		}
@@ -152,29 +128,23 @@ static void unDIFFByteWord(uint16 *Dest, uint16 *diff) {
 /*****************************************************************************/
 /* UnDiffs a coded DIFF string onto an already initialized piece of memory.  */
 /*****************************************************************************/
-bool unDIFFMemory(byte *Dest, byte *diff, uint16 HeaderSize, uint16 CopySize) {
-	if (HeaderSize == 1) {
-		if (CopySize == 1)
-			unDIFFByteByte(Dest, diff);
+bool unDIFFMemory(byte *dest, byte *diff, uint16 headerSize, uint16 copySize) {
+	if (headerSize == 1) {
+		if (copySize == 1)
+			unDIFFByteByte(dest, diff);
 
-		else if (CopySize == 2)
-			unDIFFByteWord((uint16 *)Dest, (uint16 *)diff);
+		else if (copySize == 2)
+			unDIFFByteWord((uint16 *)dest, (uint16 *)diff);
 
 		else
 			return false;
 	} else
-		error("unDIFFMemory: HeaderSize is %d", HeaderSize);
+		error("unDIFFMemory: HeaderSize is %d", headerSize);
 
 	return true;
 }
 
-
-
-
 /*------------------------- unDiff Vertical Memory --------------------------*/
-
-
-
 
 /*****************************************************************************/
 /* Undiffs a piece of memory when header size is a byte, and copy/skip size  */
@@ -186,7 +156,7 @@ static void VUnDIFFByteByte(byte *Dest, byte *diff, uint16 bytesperrow) {
 	uint16 counter = 0;
 
 
-	while (counter < DataBytesPerRow) {
+	while (counter < _dataBytesPerRow) {
 		CurPtr = Dest + counter;
 
 		for (;;) {
@@ -229,7 +199,7 @@ static void VUnDIFFByteWord(uint16 *Dest, uint16 *diff, uint16 bytesperrow) {
 
 	wordsperrow = bytesperrow / 2;
 
-	while (counter < (DataBytesPerRow >> 1)) {
+	while (counter < (_dataBytesPerRow >> 1)) {
 		CurPtr = Dest + counter;
 
 		for (;;) {
@@ -274,7 +244,7 @@ static void VUnDIFFByteLong(uint32 *Dest, uint32 *diff, uint16 bytesperrow) {
 
 	longsperrow = bytesperrow / 4;
 
-	while (counter < (DataBytesPerRow >> 2)) {
+	while (counter < (_dataBytesPerRow >> 2)) {
 		CurPtr = Dest + counter;
 
 		for (;;) {
@@ -373,7 +343,7 @@ void VRunLengthDecode(byte *Dest, byte *Source, uint16 bytesperrow) {
 	int16 count;
 	byte *Top = Dest;
 
-	for (uint16 i = 0; i < DataBytesPerRow; i++) {
+	for (uint16 i = 0; i < _dataBytesPerRow; i++) {
 		Dest = Top;
 		Dest += i;
 
