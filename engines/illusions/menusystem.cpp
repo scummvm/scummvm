@@ -105,6 +105,8 @@ void BaseMenuSystem::playSoundEffect14() {
 }
 
 void BaseMenuSystem::selectMenuChoiceIndex(uint choiceIndex) {
+	debug("choiceIndex: %d", choiceIndex);
+	debug("_menuChoiceOffset: %p", (void*)_menuChoiceOffset);
 	if (choiceIndex > 0 && _menuChoiceOffset) {
 		*_menuChoiceOffset = _menuChoiceOffsets[choiceIndex - 1];
 		debug(0, "*_menuChoiceOffset: %04X", *_menuChoiceOffset);		
@@ -211,7 +213,7 @@ bool BaseMenuSystem::calcMenuItemIndexAtPoint(Common::Point pt, uint &menuItemIn
 }
 
 void BaseMenuSystem::setMousePos(Common::Point &mousePos) {
-	_vm->_input->setCursorPosition(mousePos);
+	//TODO Strange behavior _vm->_input->setCursorPosition(mousePos);
 	Control *mouseCursor = _vm->getObjectControl(0x40004);
 	mouseCursor->_actor->_position = mousePos;
 }
@@ -372,6 +374,7 @@ void BaseMenuSystem::closeMenu() {
 }
 
 void BaseMenuSystem::handleClick(uint menuItemIndex, const Common::Point &mousePos) {
+	debug("BaseMenuSystem::handleClick() menuItemIndex: %d", menuItemIndex);
 
 	if (menuItemIndex == 0) {
 	    playSoundEffect14();
@@ -439,15 +442,17 @@ void BaseMenuSystem::update(Control *cursorControl) {
 	uint newHoveredMenuItemIndex;
 	bool resetTimeOut = false;
 	
-	if (calcMenuItemIndexAtPoint(mousePos, newHoveredMenuItemIndex) && newHoveredMenuItemIndex != _hoveredMenuItemIndex) {
-		if (_hoveredMenuItemIndex == 0)
-			initActor318();
-		_hoveredMenuItemIndex = newHoveredMenuItemIndex;
-		_hoveredMenuItemIndex2 = newHoveredMenuItemIndex;
-		setMenuCursorNum(2);
-		updateActor318();
-		resetTimeOut = true;
-	} else if (_hoveredMenuItemIndex == 0) {
+	if (calcMenuItemIndexAtPoint(mousePos, newHoveredMenuItemIndex)) {
+		if (newHoveredMenuItemIndex != _hoveredMenuItemIndex) {
+			if (_hoveredMenuItemIndex == 0)
+				initActor318();
+			_hoveredMenuItemIndex = newHoveredMenuItemIndex;
+			_hoveredMenuItemIndex2 = newHoveredMenuItemIndex;
+			setMenuCursorNum(2);
+			updateActor318();
+			resetTimeOut = true;
+		}
+	} else if (_hoveredMenuItemIndex != 0) {
 		setMenuCursorNum(1);
 		hideActor318();
 		_hoveredMenuItemIndex = 0;
@@ -511,12 +516,9 @@ void BaseMenuSystem::updateTimeOut(bool resetTimeOut) {
 			_timeOutStartTime = getCurrentTime();
 			_timeOutEndTime = _timeOutDuration + _timeOutStartTime;
 		} else if (isTimerExpired(_timeOutStartTime, _timeOutEndTime)) {
+			debug("timeout reached");
 			_isTimeOutEnabled = false;
 			selectMenuChoiceIndex(_timeOutMenuChoiceIndex);
-			// TODO *_menuChoiceOffset = *((_WORD *)&_menuCallerThreadId + _timeOutMenuChoiceIndex + 1);
-			//_vm->_threads->notifyId(_menuCallerThreadId);
-			//_menuCallerThreadId = 0;
-			//closeMenu();
 		}
 	}
 
