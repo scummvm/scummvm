@@ -35,34 +35,21 @@ namespace Lab {
 /* Have to make sure that ROOMBUFFERSIZE is bigger than the biggest piece of memory
    that we need */
 #define ROOMBUFFERSIZE (2 * 20480L)
-#define EMPTYROOM      ((uint16) -1)
-#define MAXMARKERS     10
 
 extern RoomData *_rooms;
 
-typedef struct {
-	uint16 _roomNum;
-	void *_start0, *_end0, *_start1, *_end1;
-} RoomMarker;
-
-static RoomMarker _roomMarkers[MAXMARKERS];
-static void *RoomBuffer = NULL;
-static uint16 CurMarker  = 0;
-static void *MemPlace = NULL, *NextMemPlace = NULL;
-static int32 MemLeftInBuffer = 0L;
+static void *_roomBuffer = nullptr;
+static uint16 _curMarker  = 0;
+static void *_memPlace = nullptr;
 
 /*****************************************************************************/
 /* Allocates the memory for the room buffers.                                */
 /*****************************************************************************/
 bool initRoomBuffer() {
-	CurMarker = 0;
+	_curMarker = 0;
 
-	if ((RoomBuffer = calloc(ROOMBUFFERSIZE, 1))) {
-		MemPlace = RoomBuffer;
-		MemLeftInBuffer = ROOMBUFFERSIZE;
-
-		for (uint16 i = 0; i < MAXMARKERS; i++)
-			_roomMarkers[i]._roomNum = EMPTYROOM;
+	if ((_roomBuffer = calloc(ROOMBUFFERSIZE, 1))) {
+		_memPlace = _roomBuffer;
 
 		return true;
 	} else
@@ -73,8 +60,10 @@ bool initRoomBuffer() {
 /* Frees the memory for the room buffers.                                    */
 /*****************************************************************************/
 void freeRoomBuffer() {
-	if (RoomBuffer)
-		free(RoomBuffer);
+	if (_roomBuffer) {
+		free(_roomBuffer);
+		_roomBuffer = nullptr;
+	}
 }
 
 } // End of namespace Lab

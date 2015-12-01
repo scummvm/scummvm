@@ -53,8 +53,8 @@ struct FileMarker {
 
 
 static FileMarker FileMarkers[MAXMARKERS];
-static uint16 CurMarker  = 0;
-static void *MemPlace   = NULL;
+static uint16 _curMarker  = 0;
+static void *_memPlace   = NULL;
 
 
 
@@ -79,17 +79,17 @@ static void freeFile(uint16 RMarker) {
 static void *getCurMemLabFile(uint32 size) {
 	void *ptr = 0;
 
-	if ((((char *) MemPlace) + size - 1) >=
+	if ((((char *) _memPlace) + size - 1) >=
 	        (((char *) buffer) + buffersize))
-		MemPlace = buffer;
+		_memPlace = buffer;
 
-	ptr = MemPlace;
-	MemPlace = (char *)MemPlace + size;
+	ptr = _memPlace;
+	_memPlace = (char *)_memPlace + size;
 
 	for (int i = 0; i < MAXMARKERS; i++) {
 		if (FileMarkers[i].name[0]) {
-			if ( ((FileMarkers[i].Start >= ptr) && (FileMarkers[i].Start < MemPlace))
-			  || ((FileMarkers[i].End >= ptr) && (FileMarkers[i].End < MemPlace))
+			if ( ((FileMarkers[i].Start >= ptr) && (FileMarkers[i].Start < _memPlace))
+			  || ((FileMarkers[i].End >= ptr) && (FileMarkers[i].End < _memPlace))
 			  || ((ptr >= FileMarkers[i].Start) && (ptr <= FileMarkers[i].End)))
 				freeFile(i);
 		}
@@ -139,11 +139,11 @@ bool allocFile(void **Ptr, uint32 Size, const char *fileName) {
 		return true;
 	}
 
-	RMarker = CurMarker;
-	CurMarker++;
+	RMarker = _curMarker;
+	_curMarker++;
 
-	if (CurMarker >= MAXMARKERS)
-		CurMarker = 0;
+	if (_curMarker >= MAXMARKERS)
+		_curMarker = 0;
 
 	freeFile(RMarker);
 	strcpy(FileMarkers[RMarker].name, fileName);
@@ -204,9 +204,9 @@ void readBlock(void *Buffer, uint32 Size, byte **File) {
 void resetBuffer() {
 	uint16 RMarker;
 
-	CurMarker = 0;
+	_curMarker = 0;
 	RMarker   = 0;
-	MemPlace  = buffer;
+	_memPlace  = buffer;
 
 	while (RMarker < MAXMARKERS) {
 		freeFile(RMarker);
@@ -276,7 +276,7 @@ void *stealBufMem(int32 Size) {
 
 	buffer += Size;
 	buffersize -= Size;
-	MemPlace = buffer;
+	_memPlace = buffer;
 
 	return Mem;
 }
@@ -306,7 +306,7 @@ void freeAllStolenMem() {
 
 	buffer = realbufferstart;
 	buffersize = realbuffersize;
-	MemPlace = buffer;
+	_memPlace = buffer;
 }
 
 } // End of namespace Lab
