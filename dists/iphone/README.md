@@ -16,7 +16,7 @@ All the needed libraries are embedded as Xcode sub-projects, and added to the re
 
 In order to download the project, run this command in the Terminal application:
 ```
-git clone --recursive https://github.com/bSr43/scummvm.git
+git clone -b ios-fix --recursive https://github.com/bSr43/scummvm.git
 ```
 
 Once done, double-click on the Xcode project that you'll find in the path **dists/iphone/scummvm.xcodeproj**.
