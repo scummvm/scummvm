@@ -140,6 +140,8 @@
 /* Begin PBXProject section */
 		F9A66C1E1396D36100CEE494 /* Project object */ = {
 			isa = PBXProject;
+			attributes = {
+			};
 			buildConfigurationList = F9A66C211396D36100CEE494 /* Build configuration list for PBXProject "create_project" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
@@ -213,6 +215,10 @@
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					DEBUG,
+					POSIX,
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -224,6 +230,7 @@
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = POSIX;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
