@@ -36,6 +36,9 @@ namespace CreateProjectTool {
 #define ADD_DEFINE(defines, name) \
 	defines.push_back(name);
 
+#define REMOVE_DEFINE(defines, name) \
+	{ auto i = std::find(defines.begin(), defines.end(), name); if (i != defines.end()) defines.erase(i); }
+
 #define ADD_SETTING(config, key, value) \
 	config.settings[key] = Setting(value, "", SettingsNoQuote);
 
@@ -690,6 +693,11 @@ void XcodeProvider::setupBuildConfiguration() {
 	ADD_SETTING_QUOTE_VAR(iPhone_Debug, "PROVISIONING_PROFILE[sdk=iphoneos*]", "");
 	ADD_SETTING(iPhone_Debug, "SDKROOT", "iphoneos4.0");
 	ADD_SETTING_QUOTE(iPhone_Debug, "TARGETED_DEVICE_FAMILY", "1,2");
+	ValueList scummvmIOS_defines(_defines);
+	REMOVE_DEFINE(scummvmIOS_defines, "MACOSX");
+	ADD_DEFINE(scummvmIOS_defines, "IPHONE");
+	ADD_DEFINE(scummvmIOS_defines, "IPHONE_OFFICIAL");
+	ADD_SETTING_LIST(iPhone_Debug, "GCC_PREPROCESSOR_DEFINITIONS", scummvmIOS_defines, SettingsNoQuote|SettingsAsList, 5);
 
 	iPhone_Debug_Object->addProperty("name", "Debug", "", SettingsNoValue);
 	iPhone_Debug_Object->properties["buildSettings"] = iPhone_Debug;
@@ -726,9 +734,9 @@ void XcodeProvider::setupBuildConfiguration() {
 	ADD_SETTING(scummvm_Debug, "GCC_INPUT_FILETYPE", "automatic");
 	ADD_SETTING(scummvm_Debug, "GCC_OPTIMIZATION_LEVEL", "0");
 	ValueList scummvm_defines(_defines);
-	ADD_DEFINE(scummvm_defines, "IPHONE");
+	REMOVE_DEFINE(scummvm_defines, "MACOSX");
+	REMOVE_DEFINE(scummvm_defines, "IPHONE");
 	ADD_DEFINE(scummvm_defines, "XCODE");
-	ADD_DEFINE(scummvm_defines, "IPHONE_OFFICIAL");
 	ADD_SETTING_LIST(scummvm_Debug, "GCC_PREPROCESSOR_DEFINITIONS", scummvm_defines, SettingsNoQuote|SettingsAsList, 5);
 	ADD_SETTING(scummvm_Debug, "GCC_THUMB_SUPPORT", "NO");
 	ADD_SETTING(scummvm_Debug, "GCC_USE_GCC3_PFE_SUPPORT", "NO");
@@ -784,6 +792,7 @@ void XcodeProvider::setupBuildConfiguration() {
 	ADD_SETTING(scummvmOSX_Debug, "GCC_PRECOMPILE_PREFIX_HEADER", "NO");
 	ADD_SETTING_QUOTE(scummvmOSX_Debug, "GCC_PREFIX_HEADER", "");
 	ValueList scummvmOSX_defines(_defines);
+	REMOVE_DEFINE(scummvmOSX_defines, "IPHONE");
 	ADD_DEFINE(scummvmOSX_defines, "SDL_BACKEND");
 	ADD_DEFINE(scummvmOSX_defines, "MACOSX");
 	ADD_SETTING_LIST(scummvmOSX_Debug, "GCC_PREPROCESSOR_DEFINITIONS", scummvmOSX_defines, SettingsNoQuote|SettingsAsList, 5);
