@@ -32,12 +32,20 @@ MODULE_OBJS := \
 	widgets/scrollbar.o \
 	widgets/tab.o
 
+# Even if it seems redundant, please keep
+# these directives in that order!
+# This is needed by the "create_project" tool, for the OS X / iOS Xcode project
+ifdef IPHONE
+MODULE_OBJS += \
+	browser.o
+else
 ifdef MACOSX
 MODULE_OBJS += \
 	browser_osx.o
 else
 MODULE_OBJS += \
 	browser.o
+endif
 endif
 
 ifdef ENABLE_EVENTRECORDER
