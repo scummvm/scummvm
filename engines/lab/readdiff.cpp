@@ -120,7 +120,7 @@ void LabEngine::diffNextFrame() {
 		return;
 
 	if (DispBitMap->Flags & BITMAPF_VIDEO) {
-		DispBitMap->Planes[0] = getVGABaseAddr();
+		DispBitMap->Planes[0] = getCurrentDrawingBuffer();
 		DispBitMap->Planes[1] = DispBitMap->Planes[0] + 0x10000;
 		DispBitMap->Planes[2] = DispBitMap->Planes[1] + 0x10000;
 		DispBitMap->Planes[3] = DispBitMap->Planes[2] + 0x10000;

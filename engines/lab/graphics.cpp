@@ -50,10 +50,6 @@ extern bool DoBlack, stopsound;
 extern TextFont *MsgFont;
 extern const char *CurFileName;
 
-
-
-
-
 /*---------------------------------------------------------------------------*/
 /*------ From readPict.c.  Reads in pictures and animations from disk. ------*/
 /*---------------------------------------------------------------------------*/
@@ -62,7 +58,7 @@ extern const char *CurFileName;
 /*****************************************************************************/
 /* Reads in a picture into the dest bitmap.                                  */
 /*****************************************************************************/
-bool readPict(const char *filename, bool PlayOnce) {
+bool readPict(const char *filename, bool playOnce) {
 	byte **file = NULL;
 
 	stopDiff();
@@ -80,13 +76,10 @@ bool readPict(const char *filename, bool PlayOnce) {
 	DispBitMap->Rows        = g_lab->_screenHeight;
 	DispBitMap->Flags       = BITMAPF_VIDEO;
 
-	readDiff(PlayOnce);
+	readDiff(playOnce);
 
 	return true;
 }
-
-
-
 
 /*****************************************************************************/
 /* Reads in a music file.  Ignores any graphics.                             */
@@ -104,9 +97,6 @@ bool readMusic(const char *filename, bool waitTillFinished) {
 
 	return true;
 }
-
-
-
 
 /*****************************************************************************/
 /* Reads in a picture into buffer memory.                                    */
@@ -139,80 +129,64 @@ byte *readPictToMem(const char *filename, uint16 x, uint16 y) {
 	return Mem;
 }
 
-
-
-
 /*---------------------------------------------------------------------------*/
 /*------------ Does all the text rendering to the message boxes. ------------*/
 /*---------------------------------------------------------------------------*/
-
-
 bool DoNotDrawMessage = false;
 
 extern bool LongWinInFront, Alternate;
 
-
 /*----- The flowText routines -----*/
-
-
-
 
 /******************************************************************************/
 /* Extracts the first word from a string.                                     */
 /******************************************************************************/
-static void getWord(char *WordBuffer, const char *MainBuffer, uint16 *WordWidth) {
+static void getWord(char *wordBuffer, const char *mainBuffer, uint16 *wordWidth) {
 	uint16 width = 0;
 
-	while ((MainBuffer[width] != ' ') && MainBuffer[width] &&
-	        (MainBuffer[width] != '\n')) {
-		WordBuffer[width] = MainBuffer[width];
+	while ((mainBuffer[width] != ' ') && mainBuffer[width] &&
+	        (mainBuffer[width] != '\n')) {
+		wordBuffer[width] = mainBuffer[width];
 		width++;
 	}
 
-	WordBuffer[width] = 0;
+	wordBuffer[width] = 0;
 
-	*WordWidth = width;
+	*wordWidth = width;
 }
-
-
-
-
 
 /******************************************************************************/
 /* Gets a line of text for flowText; makes sure that its length is less than  */
 /* or equal to the maximum width.                                             */
 /******************************************************************************/
-static void getLine(TextFont *tf, char *LineBuffer, const char **MainBuffer, uint16 LineWidth) {
-	uint16 CurWidth = 0, WordWidth;
-	char WordBuffer[100];
+static void getLine(TextFont *tf, char *lineBuffer, const char **mainBuffer, uint16 lineWidth) {
+	uint16 curWidth = 0, wordWidth;
+	char wordBuffer[100];
 	bool doit = true;
 
-	LineWidth += textLength(tf, " ", 1);
+	lineWidth += textLength(tf, " ", 1);
 
-	LineBuffer[0] = 0;
+	lineBuffer[0] = 0;
 
-	while ((*MainBuffer)[0] && doit) {
-		getWord(WordBuffer, *MainBuffer, &WordWidth);
-		strcat(WordBuffer, " ");
+	while ((*mainBuffer)[0] && doit) {
+		getWord(wordBuffer, *mainBuffer, &wordWidth);
+		strcat(wordBuffer, " ");
 
-		if ((CurWidth + textLength(tf, WordBuffer, WordWidth + 1)) <= LineWidth) {
-			strcat(LineBuffer, WordBuffer);
-			(*MainBuffer) += WordWidth;
+		if ((curWidth + textLength(tf, wordBuffer, wordWidth + 1)) <= lineWidth) {
+			strcat(lineBuffer, wordBuffer);
+			(*mainBuffer) += wordWidth;
 
-			if ((*MainBuffer)[0] == '\n')
+			if ((*mainBuffer)[0] == '\n')
 				doit = false;
 
-			if ((*MainBuffer)[0])
-				(*MainBuffer)++;
+			if ((*mainBuffer)[0])
+				(*mainBuffer)++;
 
-			CurWidth = textLength(tf, LineBuffer, strlen(LineBuffer));
+			curWidth = textLength(tf, lineBuffer, strlen(lineBuffer));
 		} else
 			doit = false;
 	}
 }
-
-
-
 
 /******************************************************************************/
 /* Dumps a chunk of text to an arbitrary box; flows it within that box and    */
@@ -289,7 +263,7 @@ uint32 flowText(void *font,      /* the TextAttr pointer */
 /******************************************************************************/
 /* Calls flowText, but flows it to memory.  Same restrictions as flowText.    */
 /******************************************************************************/
-uint32 flowTextToMem(Image *DestIm, void *font,     /* the TextAttr pointer */
+uint32 flowTextToMem(Image *destIm, void *font,     /* the TextAttr pointer */
                      int16 spacing,          /* How much vertical spacing between the lines */
                      byte pencolor,         /* pen number to use for text */
                      byte backpen,          /* the background color */
@@ -300,25 +274,20 @@ uint32 flowTextToMem(Image *DestIm, void *font,     /* the TextAttr pointer */
                      uint16 x1,               /* Cords */
                      uint16 y1, uint16 x2, uint16 y2, const char *str) { /* The text itself */
 	uint32 res, vgabyte = g_lab->_screenBytesPerPage;
-	byte *tmp = g_lab->_currentDsplayBuffer;
+	byte *tmp = g_lab->_currentDisplayBuffer;
 
-	g_lab->_currentDsplayBuffer = DestIm->ImageData;
-	g_lab->_screenBytesPerPage = (uint32) DestIm->Width * (int32) DestIm->Height;
+	g_lab->_currentDisplayBuffer = destIm->ImageData;
+	g_lab->_screenBytesPerPage = (uint32)destIm->Width * (int32)destIm->Height;
 
 	res = flowText(font, spacing, pencolor, backpen, fillback, centerh, centerv, output, x1, y1, x2, y2, str);
 
 	g_lab->_screenBytesPerPage = vgabyte;
-	g_lab->_currentDsplayBuffer = tmp;
+	g_lab->_currentDisplayBuffer = tmp;
 
 	return res;
 }
 
-
-
-
 /*----- The control panel stuff -----*/
-
-
 
 void createBox(uint16 y2) {
 	g_lab->setAPen(7);                 /* Message box area */
@@ -331,20 +300,15 @@ void createBox(uint16 y2) {
 	g_lab->drawVLine(VGAScaleX(2), VGAScaleY(152), VGAScaleY(y2));
 }
 
-
-
-
-bool LastMessageLong = false;
-
 int32 LabEngine::longDrawMessage(const char *str) {
-	char NewText[512];
+	char newText[512];
 
 	if (str == NULL)
 		return 0;
 
 	_event->attachGadgetList(NULL);
 	_event->mouseHide();
-	strcpy(NewText, str);
+	strcpy(newText, str);
 
 	if (!LongWinInFront) {
 		LongWinInFront = true;
@@ -374,7 +338,7 @@ void LabEngine::drawMessage(const char *str) {
 	if (str) {
 		if ((textLength(MsgFont, str, strlen(str)) > VGAScaleX(306))) {
 			longDrawMessage(str);
-			LastMessageLong = true;
+			_lastMessageLong = true;
 		} else {
 			if (LongWinInFront) {
 				LongWinInFront = false;
@@ -385,17 +349,14 @@ void LabEngine::drawMessage(const char *str) {
 			createBox(168);
 			text(MsgFont, VGAScaleX(7), VGAScaleY(155) + SVGACord(2), 1, str, strlen(str));
 			_event->mouseShow();
-			LastMessageLong = false;
+			_lastMessageLong = false;
 		}
 	}
 }
 
-
 /*---------------------------------------------------------------------------*/
 /*--------------------------- All the wipe stuff. ---------------------------*/
 /*---------------------------------------------------------------------------*/
-
-
 
 #define TRANSWIPE      1
 #define SCROLLWIPE     2
@@ -410,25 +371,25 @@ void LabEngine::drawMessage(const char *str) {
 /*****************************************************************************/
 void LabEngine::doScrollBlack() {
 	byte *mem, *tempmem;
-	Image Im;
+	Image im;
 	uint16 width, height, by, nheight;
 	uint32 size, copysize;
-	uint32 *BaseAddr;
+	uint32 *baseAddr;
 
 	_event->mouseHide();
 	width = VGAScaleX(320);
 	height = VGAScaleY(149) + SVGACord(2);
 
-	allocFile((void **) &mem, (int32) width * (int32) height, "Temp Mem");
+	allocFile((void **)&mem, (int32)width * (int32)height, "Temp Mem");
 
-	Im.Width = width;
-	Im.Height = height;
-	Im.ImageData = mem;
+	im.Width = width;
+	im.Height = height;
+	im.ImageData = mem;
 	_music->updateMusic();
-	g_lab->readScreenImage(&Im, 0, 0);
+	g_lab->readScreenImage(&im, 0, 0);
 	_music->updateMusic();
 
-	BaseAddr = (uint32 *)g_lab->getVGABaseAddr();
+	baseAddr = (uint32 *)g_lab->getCurrentDrawingBuffer();
 
 	by      = VGAScaleX(4);
 	nheight = height;
@@ -439,14 +400,14 @@ void LabEngine::doScrollBlack() {
 		if (!_isHiRes)
 			g_lab->waitTOF();
 
-		BaseAddr = (uint32 *)g_lab->getVGABaseAddr();
+		baseAddr = (uint32 *)g_lab->getCurrentDrawingBuffer();
 
 		if (by > nheight)
 			by = nheight;
 
 		mem += by * width;
 		nheight -= by;
-		size = (int32) nheight * (int32) width;
+		size = (int32)nheight * (int32)width;
 		tempmem = mem;
 
 		while (size) {
@@ -457,7 +418,7 @@ void LabEngine::doScrollBlack() {
 
 			size -= copysize;
 
-			memcpy(BaseAddr, tempmem, copysize);
+			memcpy(baseAddr, tempmem, copysize);
 			tempmem += copysize;
 		}
 
@@ -484,32 +445,31 @@ extern BitMap RawDiffBM;
 extern DIFFHeader headerdata;
 
 static void copyPage(uint16 width, uint16 height, uint16 nheight, uint16 startline, byte *mem) {
-	uint32 size, OffSet, copysize;
-	uint16 CurPage;
-	uint32 *BaseAddr;
+	uint32 size, offSet, copysize;
+	uint16 curPage;
+	uint32 *baseAddr;
 
-	BaseAddr = (uint32 *)g_lab->getVGABaseAddr();
+	baseAddr = (uint32 *)g_lab->getCurrentDrawingBuffer();
 
-	size = (int32)(height - nheight) * (int32) width;
+	size = (int32)(height - nheight) * (int32)width;
 	mem += startline * width;
-	CurPage = ((int32) nheight * (int32) width) / g_lab->_screenBytesPerPage;
-	OffSet = ((int32) nheight * (int32) width) - (CurPage * g_lab->_screenBytesPerPage);
+	curPage = ((int32)nheight * (int32)width) / g_lab->_screenBytesPerPage;
+	offSet = ((int32)nheight * (int32)width) - (curPage * g_lab->_screenBytesPerPage);
 
 	while (size) {
-		if (size > (g_lab->_screenBytesPerPage - OffSet))
-			copysize = g_lab->_screenBytesPerPage - OffSet;
+		if (size > (g_lab->_screenBytesPerPage - offSet))
+			copysize = g_lab->_screenBytesPerPage - offSet;
 		else
 			copysize = size;
 
 		size -= copysize;
 
-		memcpy(BaseAddr + (OffSet >> 2), mem, copysize);
+		memcpy(baseAddr + (offSet >> 2), mem, copysize);
 		mem += copysize;
-		CurPage++;
-		OffSet = 0;
+		curPage++;
+		offSet = 0;
 	}
 }
-
 
 /*****************************************************************************/
 /* Scrolls the display to a new picture from a black screen.                 */
@@ -586,7 +546,6 @@ void LabEngine::doScrollBounce() {
 		newby1 = newby1w;
 	}
 
-
 	_event->mouseHide();
 	int width = VGAScaleX(320);
 	int height = VGAScaleY(149) + SVGACord(2);
@@ -620,30 +579,30 @@ void LabEngine::doScrollBounce() {
 /*****************************************************************************/
 /* Does the transporter wipe.                                                */
 /*****************************************************************************/
-void LabEngine::doTransWipe(CloseDataPtr *CPtr, char *filename) {
-	uint16 LastY, CurY, linesdone = 0, lineslast;
-	Image ImSource, ImDest;
+void LabEngine::doTransWipe(CloseDataPtr *cPtr, char *filename) {
+	uint16 lastY, curY, linesdone = 0, lineslast;
+	Image imSource, imDest;
 
 	if (_isHiRes) {
 		lineslast = 3;
-		LastY = 358;
+		lastY = 358;
 	} else {
 		lineslast = 1;
-		LastY = 148;
+		lastY = 148;
 	}
 
 	for (uint16 i = 0; i < 2; i++) {
-		CurY = i * 2;
+		curY = i * 2;
 
-		while (CurY < LastY) {
+		while (curY < lastY) {
 			if (linesdone >= lineslast) {
 				_music->updateMusic();
 				g_lab->waitTOF();
 				linesdone = 0;
 			}
 
-			g_lab->ghoastRect(0, 0, CurY, g_lab->_screenWidth - 1, CurY + 1);
-			CurY += 4;
+			g_lab->ghoastRect(0, 0, curY, g_lab->_screenWidth - 1, curY + 1);
+			curY += 4;
 			linesdone++;
 		}
 	}
@@ -651,77 +610,77 @@ void LabEngine::doTransWipe(CloseDataPtr *CPtr, char *filename) {
 	g_lab->setAPen(0);
 
 	for (uint16 i = 0; i < 2; i++) {
-		CurY = i * 2;
+		curY = i * 2;
 
-		while (CurY <= LastY) {
+		while (curY <= lastY) {
 			if (linesdone >= lineslast) {
 				_music->updateMusic();
 				g_lab->waitTOF();
 				linesdone = 0;
 			}
 
-			g_lab->rectFill(0, CurY, g_lab->_screenWidth - 1, CurY + 1);
-			CurY += 4;
+			g_lab->rectFill(0, curY, g_lab->_screenWidth - 1, curY + 1);
+			curY += 4;
 			linesdone++;
 		}
 	}
 
 	if (filename == NULL)
-		CurFileName = getPictName(CPtr);
+		CurFileName = getPictName(cPtr);
 	else if (filename[0] > ' ')
 		CurFileName = filename;
 	else
-		CurFileName = getPictName(CPtr);
+		CurFileName = getPictName(cPtr);
 
-	byte *BitMapMem = readPictToMem(CurFileName, g_lab->_screenWidth, LastY + 5);
+	byte *BitMapMem = readPictToMem(CurFileName, g_lab->_screenWidth, lastY + 5);
 	g_lab->setPalette(diffcmap, 256);
 
 	if (BitMapMem) {
-		ImSource.Width = g_lab->_screenWidth;
-		ImSource.Height = LastY;
-		ImSource.ImageData = BitMapMem;
+		imSource.Width = g_lab->_screenWidth;
+		imSource.Height = lastY;
+		imSource.ImageData = BitMapMem;
 
-		ImDest.Width = g_lab->_screenWidth;
-		ImDest.Height = g_lab->_screenHeight;
-		ImDest.ImageData = g_lab->getVGABaseAddr();
+		imDest.Width = g_lab->_screenWidth;
+		imDest.Height = g_lab->_screenHeight;
+		imDest.ImageData = g_lab->getCurrentDrawingBuffer();
 
 		for (uint16 i = 0; i < 2; i++) {
-			CurY = i * 2;
+			curY = i * 2;
 
-			while (CurY < LastY) {
+			while (curY < lastY) {
 				if (linesdone >= lineslast) {
 					_music->updateMusic();
 					g_lab->waitTOF();
 					linesdone = 0;
 				}
 
-				ImDest.ImageData = g_lab->getVGABaseAddr();
+				imDest.ImageData = g_lab->getCurrentDrawingBuffer();
 
-				g_lab->bltBitMap(&ImSource, 0, CurY, &ImDest, 0, CurY, g_lab->_screenWidth, 2);
-				g_lab->ghoastRect(0, 0, CurY, g_lab->_screenWidth - 1, CurY + 1);
-				CurY += 4;
+				g_lab->bltBitMap(&imSource, 0, curY, &imDest, 0, curY, g_lab->_screenWidth, 2);
+				g_lab->ghoastRect(0, 0, curY, g_lab->_screenWidth - 1, curY + 1);
+				curY += 4;
 				linesdone++;
 			}
 		}
 
 		for (uint16 i = 0; i < 2; i++) {
-			CurY = i * 2;
+			curY = i * 2;
 
-			while (CurY <= LastY) {
+			while (curY <= lastY) {
 				if (linesdone >= lineslast) {
 					_music->updateMusic();
 					g_lab->waitTOF();
 					linesdone = 0;
 				}
 
-				ImDest.ImageData = g_lab->getVGABaseAddr();
+				imDest.ImageData = g_lab->getCurrentDrawingBuffer();
 
-				if (CurY == LastY)
-					g_lab->bltBitMap(&ImSource, 0, CurY, &ImDest, 0, CurY, g_lab->_screenWidth, 1);
+				if (curY == lastY)
+					g_lab->bltBitMap(&imSource, 0, curY, &imDest, 0, curY, g_lab->_screenWidth, 1);
 				else
-					g_lab->bltBitMap(&ImSource, 0, CurY, &ImDest, 0, CurY, g_lab->_screenWidth, 2);
+					g_lab->bltBitMap(&imSource, 0, curY, &imDest, 0, curY, g_lab->_screenWidth, 2);
 
-				CurY += 4;
+				curY += 4;
 				linesdone++;
 			}
 		}
@@ -731,18 +690,18 @@ void LabEngine::doTransWipe(CloseDataPtr *CPtr, char *filename) {
 /*****************************************************************************/
 /* Does a certain number of pre-programmed wipes.                            */
 /*****************************************************************************/
-void LabEngine::doWipe(uint16 WipeType, CloseDataPtr *CPtr, char *filename) {
-	if ((WipeType == TRANSWIPE) || (WipeType == TRANSPORTER))
-		doTransWipe(CPtr, filename);
-	else if (WipeType == SCROLLWIPE)
+void LabEngine::doWipe(uint16 wipeType, CloseDataPtr *cPtr, char *filename) {
+	if ((wipeType == TRANSWIPE) || (wipeType == TRANSPORTER))
+		doTransWipe(cPtr, filename);
+	else if (wipeType == SCROLLWIPE)
 		doScrollWipe(filename);
-	else if (WipeType == SCROLLBLACK)
+	else if (wipeType == SCROLLBLACK)
 		doScrollBlack();
-	else if (WipeType == SCROLLBOUNCE)
+	else if (wipeType == SCROLLBOUNCE)
 		doScrollBounce();
-	else if (WipeType == READFIRSTFRAME)
+	else if (wipeType == READFIRSTFRAME)
 		readPict(filename, false);
-	else if (WipeType == READNEXTFRAME)
+	else if (wipeType == READNEXTFRAME)
 		diffNextFrame();
 }
 

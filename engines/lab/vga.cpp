@@ -242,9 +242,9 @@ void LabEngine::screenUpdate() {
 /*****************************************************************************/
 /* Returns the base address of the current VGA display.                      */
 /*****************************************************************************/
-byte *LabEngine::getVGABaseAddr() {
-	if (_currentDsplayBuffer)
-		return _currentDsplayBuffer;
+byte *LabEngine::getCurrentDrawingBuffer() {
+	if (_currentDisplayBuffer)
+		return _currentDisplayBuffer;
 
 	return _displayBuffer;
 }
@@ -278,7 +278,7 @@ void LabEngine::drawImage(Image *im, uint16 x, uint16 y) {
 
 	if ((w > 0) && (h > 0)) {
 		byte *s = im->ImageData + sy * im->Width + sx;
-		byte *d = getVGABaseAddr() + dy * _screenWidth + dx;
+		byte *d = getCurrentDrawingBuffer() + dy * _screenWidth + dx;
 
 		while (h-- > 0) {
 			memcpy(d, s, w);
@@ -317,7 +317,7 @@ void LabEngine::drawMaskImage(Image *im, uint16 x, uint16 y) {
 
 	if ((w > 0) && (h > 0)) {
 		byte *s = im->ImageData + sy * im->Width + sx;
-		byte *d = getVGABaseAddr() + dy * _screenWidth + dx;
+		byte *d = getCurrentDrawingBuffer() + dy * _screenWidth + dx;
 
 		while (h-- > 0) {
 			byte *ss = s;
@@ -366,7 +366,7 @@ void LabEngine::readScreenImage(Image *im, uint16 x, uint16 y) {
 
 	if ((w > 0) && (h > 0)) {
 		byte *s = im->ImageData + sy * im->Width + sx;
-		byte *d = getVGABaseAddr() + dy * _screenWidth + dx;
+		byte *d = getCurrentDrawingBuffer() + dy * _screenWidth + dx;
 
 		while (h-- > 0) {
 			memcpy(s, d, w);
@@ -540,7 +540,7 @@ void LabEngine::rectFill(uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
 		h = _screenHeight - dy;
 
 	if ((w > 0) && (h > 0)) {
-		char *d = (char *)getVGABaseAddr() + dy * _screenWidth + dx;
+		char *d = (char *)getCurrentDrawingBuffer() + dy * _screenWidth + dx;
 
 		while (h-- > 0) {
 			char *dd = d;
@@ -595,7 +595,7 @@ void LabEngine::ghoastRect(uint16 pencolor, uint16 x1, uint16 y1, uint16 x2, uin
 		h = _screenHeight - dy;
 
 	if ((w > 0) && (h > 0)) {
-		char *d = (char *)getVGABaseAddr() + dy * _screenWidth + dx;
+		char *d = (char *)getCurrentDrawingBuffer() + dy * _screenWidth + dx;
 
 		while (h-- > 0) {
 			char *dd = d;

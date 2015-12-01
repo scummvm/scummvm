@@ -105,7 +105,7 @@ public:
 	Music *_music;
 
 	int _roomNum;
-	byte *_currentDsplayBuffer;
+	byte *_currentDisplayBuffer;
 	Common::Point _mousePos;
 
 	CrumbData _breadCrumbs[MAX_CRUMBS];
@@ -129,6 +129,9 @@ private:
 	uint16 _nextKeyOut;
 	bool _mouseAtEdge;
 
+	bool _lastMessageLong;
+	bool _lastTooLong;
+
 private:
 	bool createScreen(bool HiRes);
 	bool from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Common::Point tmpPos, uint16 &curInv, IntuiMessage * curMsg, bool &forceDraw, uint16 gadgetId, uint16 &actionMode);
@@ -137,7 +140,7 @@ public:
 	void waitTOF();
 	void setAPen(byte pennum);
 	void writeColorRegs(byte *buf, uint16 first, uint16 numreg);
-	byte *getVGABaseAddr();
+	byte *getCurrentDrawingBuffer();
 	void readScreenImage(Image *Im, uint16 x, uint16 y);
 	void screenUpdate();
 	void rectFill(uint16 x1, uint16 y1, uint16 x2, uint16 y2);

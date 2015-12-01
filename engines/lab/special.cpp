@@ -180,7 +180,7 @@ static void changeCombination(uint16 number) {
 
 	combnum = combination[number];
 
-	display.ImageData = g_lab->getVGABaseAddr();
+	display.ImageData = g_lab->getCurrentDrawingBuffer();
 	display.Width     = g_lab->_screenWidth;
 	display.Height    = g_lab->_screenHeight;
 
@@ -191,7 +191,7 @@ static void changeCombination(uint16 number) {
 		} else
 			g_lab->waitTOF();
 
-		display.ImageData = g_lab->getVGABaseAddr();
+		display.ImageData = g_lab->getCurrentDrawingBuffer();
 
 		g_lab->scrollDisplayY(2, VGAScaleX(combx[number]), VGAScaleY(65), VGAScaleX(combx[number]) + (Images[combnum])->Width - 1, VGAScaleY(65) + (Images[combnum])->Height);
 
@@ -626,14 +626,14 @@ static void turnPage(bool FromLeft) {
 		for (int i = 0; i < g_lab->_screenWidth; i += 8) {
 			g_lab->_music->updateMusic();
 			g_lab->waitTOF();
-			ScreenImage.ImageData = g_lab->getVGABaseAddr();
+			ScreenImage.ImageData = g_lab->getCurrentDrawingBuffer();
 			g_lab->bltBitMap(&JBackImage, i, 0, &ScreenImage, i, 0, 8, g_lab->_screenHeight);
 		}
 	} else {
 		for (int i = (g_lab->_screenWidth - 8); i > 0; i -= 8) {
 			g_lab->_music->updateMusic();
 			g_lab->waitTOF();
-			ScreenImage.ImageData = g_lab->getVGABaseAddr();
+			ScreenImage.ImageData = g_lab->getCurrentDrawingBuffer();
 			g_lab->bltBitMap(&JBackImage, i, 0, &ScreenImage, i, 0, 8, g_lab->_screenHeight);
 		}
 	}
@@ -653,7 +653,7 @@ void LabEngine::drawJournal(uint16 wipenum, bool needFade) {
 
 	drawJournalText();
 
-	ScreenImage.ImageData = getVGABaseAddr();
+	ScreenImage.ImageData = getCurrentDrawingBuffer();
 
 	if (wipenum == 0)
 		bltBitMap(&JBackImage, 0, 0, &ScreenImage, 0, 0, _screenWidth, _screenHeight);
@@ -744,7 +744,7 @@ void LabEngine::doJournal() {
 	CancelG.NextGadget = &ForwardG;
 
 	ScreenImage = JBackImage;
-	ScreenImage.ImageData = getVGABaseAddr();
+	ScreenImage.ImageData = getCurrentDrawingBuffer();
 
 	_music->updateMusic();
 	loadJournalData();
@@ -758,7 +758,7 @@ void LabEngine::doJournal() {
 	fade(false, 0);
 	_event->mouseHide();
 
-	ScreenImage.ImageData = getVGABaseAddr();
+	ScreenImage.ImageData = getCurrentDrawingBuffer();
 
 	setAPen(0);
 	rectFill(0, 0, _screenWidth - 1, _screenHeight - 1);
