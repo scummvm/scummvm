@@ -32,6 +32,7 @@
 #include "common/events.h"
 
 #include "lab/lab.h"
+#include "lab/image.h"
 #include "lab/mouse.h"
 
 namespace Lab {
@@ -250,133 +251,6 @@ byte *LabEngine::getCurrentDrawingBuffer() {
 }
 
 /*****************************************************************************/
-/* Draws an image to the screen.                                             */
-/*****************************************************************************/
-void LabEngine::drawImage(Image *im, uint16 x, uint16 y) {
-	int sx = 0, sy = 0;
-	int dx = x, dy = y;
-	int w = im->Width;
-	int h = im->Height;
-
-	if (dx < 0) {
-		sx -= dx;
-		w += dx;
-		dx = 0;
-	}
-
-	if (dy < 0) {
-		sy -= dy;
-		w += dy;
-		dy = 0;
-	}
-
-	if (dx + w > _screenWidth)
-		w = _screenWidth - dx;
-
-	if (dy + h > _screenHeight)
-		h = _screenHeight - dy;
-
-	if ((w > 0) && (h > 0)) {
-		byte *s = im->ImageData + sy * im->Width + sx;
-		byte *d = getCurrentDrawingBuffer() + dy * _screenWidth + dx;
-
-		while (h-- > 0) {
-			memcpy(d, s, w);
-			s += im->Width;
-			d += _screenWidth;
-		}
-	}
-}
-
-/*****************************************************************************/
-/* Draws an image to the screen.                                             */
-/*****************************************************************************/
-void LabEngine::drawMaskImage(Image *im, uint16 x, uint16 y) {
-	int sx = 0, sy = 0;
-	int dx = x, dy = y;
-	int w = im->Width;
-	int h = im->Height;
-
-	if (dx < 0) {
-		sx -= dx;
-		w += dx;
-		dx = 0;
-	}
-
-	if (dy < 0) {
-		sy -= dy;
-		w += dy;
-		dy = 0;
-	}
-
-	if (dx + w > _screenWidth)
-		w = _screenWidth - dx;
-
-	if (dy + h > _screenHeight)
-		h = _screenHeight - dy;
-
-	if ((w > 0) && (h > 0)) {
-		byte *s = im->ImageData + sy * im->Width + sx;
-		byte *d = getCurrentDrawingBuffer() + dy * _screenWidth + dx;
-
-		while (h-- > 0) {
-			byte *ss = s;
-			byte *dd = d;
-			int ww = w;
-
-			while (ww-- > 0) {
-				byte c = *ss++;
-
-				if (c) *dd++ = c - 1;
-				else dd++;
-			}
-
-			s += im->Width;
-			d += _screenWidth;
-		}
-	}
-}
-
-/*****************************************************************************/
-/* Reads an image from the screen.                                           */
-/*****************************************************************************/
-void LabEngine::readScreenImage(Image *im, uint16 x, uint16 y) {
-	int sx = 0, sy = 0;
-	int	dx = x, dy = y;
-	int w = im->Width;
-	int h = im->Height;
-
-	if (dx < 0) {
-		sx -= dx;
-		w += dx;
-		dx = 0;
-	}
-
-	if (dy < 0) {
-		sy -= dy;
-		w += dy;
-		dy = 0;
-	}
-
-	if (dx + w > _screenWidth)
-		w = _screenWidth - dx;
-
-	if (dy + h > _screenHeight)
-		h = _screenHeight - dy;
-
-	if ((w > 0) && (h > 0)) {
-		byte *s = im->ImageData + sy * im->Width + sx;
-		byte *d = getCurrentDrawingBuffer() + dy * _screenWidth + dx;
-
-		while (h-- > 0) {
-			memcpy(s, d, w);
-			s += im->Width;
-			d += _screenWidth;
-		}
-	}
-}
-
-/*****************************************************************************/
 /* Blits a piece of one image to another.                                    */
 /* NOTE: for our purposes, assumes that ImDest is to be in VGA memory.       */
 /*****************************************************************************/
@@ -448,8 +322,8 @@ void LabEngine::scrollDisplayX(int16 dx, uint16 x1, uint16 y1, uint16 x2, uint16
 		im.Width = x2 - x1 + 1 - dx;
 		im.Height = y2 - y1 + 1;
 
-		readScreenImage(&im, x1, y1);
-		drawImage(&im, x1 + dx, y1);
+		im.readScreenImage(x1, y1);
+		im.drawImage(x1 + dx, y1);
 
 		setAPen(0);
 		rectFill(x1, y1, x1 + dx - 1, y2);
@@ -457,8 +331,8 @@ void LabEngine::scrollDisplayX(int16 dx, uint16 x1, uint16 y1, uint16 x2, uint16
 		im.Width = x2 - x1 + 1 + dx;
 		im.Height = y2 - y1 + 1;
 
-		readScreenImage(&im, x1 - dx, y1);
-		drawImage(&im, x1, y1);
+		im.readScreenImage(x1 - dx, y1);
+		im.drawImage(x1, y1);
 
 		setAPen(0);
 		rectFill(x2 + dx + 1, y1, x2, y2);
@@ -490,8 +364,8 @@ void LabEngine::scrollDisplayY(int16 dy, uint16 x1, uint16 y1, uint16 x2, uint16
 		im.Width = x2 - x1 + 1;
 		im.Height = y2 - y1 + 1 - dy;
 
-		readScreenImage(&im, x1, y1);
-		drawImage(&im, x1, y1 + dy);
+		im.readScreenImage(x1, y1);
+		im.drawImage(x1, y1 + dy);
 
 		setAPen(0);
 		rectFill(x1, y1, x2, y1 + dy - 1);
@@ -499,8 +373,8 @@ void LabEngine::scrollDisplayY(int16 dy, uint16 x1, uint16 y1, uint16 x2, uint16
 		im.Width = x2 - x1 + 1;
 		im.Height = y2 - y1 + 1 + dy;
 
-		readScreenImage(&im, x1, y1 - dy);
-		drawImage(&im, x1, y1);
+		im.readScreenImage(x1, y1 - dy);
+		im.drawImage(x1, y1);
 
 		setAPen(0);
 		rectFill(x1, y2 + dy + 1, x2, y2);

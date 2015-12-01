@@ -51,12 +51,6 @@ enum GameFeatures {
 	GF_WINDOWS_TRIAL = 1 << 1
 };
 
-struct Image {
-	uint16 Width;
-	uint16 Height;
-	byte *ImageData;
-};
-
 #define ONESECOND 1000
 
 class LabEngine : public Engine {
@@ -143,7 +137,6 @@ public:
 	void setAPen(byte pennum);
 	void writeColorRegs(byte *buf, uint16 first, uint16 numreg);
 	byte *getCurrentDrawingBuffer();
-	void readScreenImage(Image *Im, uint16 x, uint16 y);
 	void screenUpdate();
 	void rectFill(uint16 x1, uint16 y1, uint16 x2, uint16 y2);
 	void scrollDisplayX(int16 dx, uint16 x1, uint16 y1, uint16 x2, uint16 y2);
@@ -153,7 +146,6 @@ public:
 	void setPalette(void *cmap, uint16 numcolors);
 	void drawHLine(uint16 x, uint16 y1, uint16 y2);
 	void drawVLine(uint16 x1, uint16 y, uint16 x2);
-	void drawImage(Image *Im, uint16 x, uint16 y);
 	bool haveNextChar();
 	uint16 getNextChar();
 	void processInput(bool can_delay = false);
@@ -193,7 +185,6 @@ private:
 
 	/*---------- Drawing Routines ----------*/
 
-	void drawMaskImage(Image *Im, uint16 x, uint16 y);
 	Common::Point getMousePos();
 	void changeVolume(int delta);
 	void applyPalette(byte *buf, uint16 first, uint16 numreg, uint16 slow);

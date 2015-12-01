@@ -31,6 +31,7 @@
 #include "lab/lab.h"
 #include "lab/labfun.h"
 #include "lab/anim.h"
+#include "lab/image.h"
 #include "lab/text.h"
 #include "lab/mouse.h"
 #include "lab/parsefun.h"
@@ -64,30 +65,6 @@ void setAmigaPal(uint16 *pal, uint16 numcolors) {
 
 	g_lab->writeColorRegsSmooth(vgapal, 0, 16);
 }
-
-
-/*****************************************************************************/
-/* Reads in an image from disk.                                              */
-/*****************************************************************************/
-void readImage(byte **buffer, Image **im) {
-	uint32 size;
-
-	(*im) = (Image *)(*buffer);
-
-	(*im)->Width = READ_LE_UINT16(*buffer);
-	(*im)->Height = READ_LE_UINT16(*buffer + 2);
-
-	*buffer += 8; /* sizeof(struct Image); */
-
-	size = (*im)->Width * (*im)->Height;
-
-	if (1L & size)
-		size++;
-
-	(*im)->ImageData = (byte *)(*buffer);
-	(*buffer) += size;
-}
-
 
 /*---------------------------------------------------------------------------*/
 /*------------------------------ The Map stuff ------------------------------*/
@@ -169,30 +146,30 @@ static bool loadMapData() {
 
 	stealBufMem(Size); /* Now freeze that buffer from further use */
 
-	readImage(buffer, &Map);
+	Map = new Image(buffer);
 
-	readImage(buffer, &Room);
-	readImage(buffer, &UpArrowRoom);
-	readImage(buffer, &DownArrowRoom);
-	readImage(buffer, &HRoom);
-	readImage(buffer, &VRoom);
-	readImage(buffer, &Maze);
-	readImage(buffer, &HugeMaze);
+	Room = new Image(buffer);
+	UpArrowRoom = new Image(buffer);
+	DownArrowRoom = new Image(buffer);
+	HRoom = new Image(buffer);
+	VRoom = new Image(buffer);
+	Maze = new Image(buffer);
+	HugeMaze = new Image(buffer);
 
-	readImage(buffer, &MapNorth);
-	readImage(buffer, &MapEast);
-	readImage(buffer, &MapSouth);
-	readImage(buffer, &MapWest);
+	MapNorth = new Image(buffer);
+	MapEast = new Image(buffer);
+	MapSouth = new Image(buffer);
+	MapWest = new Image(buffer);
 
-	readImage(buffer, &Path);
-	readImage(buffer, &Bridge);
+	Path = new Image(buffer);
+	Bridge = new Image(buffer);
 
-	readImage(buffer, &Back);
-	readImage(buffer, &BackAlt);
-	readImage(buffer, &Up);
-	readImage(buffer, &UpAlt);
-	readImage(buffer, &Down);
-	readImage(buffer, &DownAlt);
+	Back = new Image(buffer);
+	BackAlt = new Image(buffer);
+	Up = new Image(buffer);
+	UpAlt = new Image(buffer);
+	Down = new Image(buffer);
+	DownAlt = new Image(buffer);
 
 	backgadget.Im    = Back;
 	backgadget.ImAlt = BackAlt;
@@ -325,27 +302,27 @@ static void drawRoom(uint16 CurRoom, bool drawx) {
 	case UPARROWROOM:
 	case DOWNARROWROOM:
 		if (Maps[CurRoom].SpecialID == NORMAL)
-			g_lab->drawImage(Room, x, y);
+			Room->drawImage(x, y);
 		else if (Maps[CurRoom].SpecialID == DOWNARROWROOM)
-			g_lab->drawImage(DownArrowRoom, x, y);
+			DownArrowRoom->drawImage(x, y);
 		else
-			g_lab->drawImage(UpArrowRoom, x, y);
+			UpArrowRoom->drawImage(x, y);
 
 		offset = (Room->Width - Path->Width) / 2;
 
 		if ((NORTHDOOR & flags) && (y >= Path->Height))
-			g_lab->drawImage(Path, x + offset, y - Path->Height);
+			Path->drawImage(x + offset, y - Path->Height);
 
 		if (SOUTHDOOR & flags)
-			g_lab->drawImage(Path, x + offset, y + Room->Height);
+			Path->drawImage(x + offset, y + Room->Height);
 
 		offset = (Room->Height - Path->Height) / 2;
 
 		if (EASTDOOR & flags)
-			g_lab->drawImage(Path, x + Room->Width, y + offset);
+			Path->drawImage(x + Room->Width, y + offset);
 
 		if (WESTDOOR & flags)
-			g_lab->drawImage(Path, x - Path->Width, y + offset);
+			Path->drawImage(x - Path->Width, y + offset);
 
 		xx = x + (Room->Width - XMark->Width) / 2;
 		xy = y + (Room->Height - XMark->Height) / 2;
@@ -353,7 +330,7 @@ static void drawRoom(uint16 CurRoom, bool drawx) {
 		break;
 
 	case BRIDGEROOM:
-		g_lab->drawImage(Bridge, x, y);
+		Bridge->drawImage(x, y);
 
 		xx = x + (Bridge->Width - XMark->Width) / 2;
 		xy = y + (Bridge->Height - XMark->Height) / 2;
@@ -361,37 +338,37 @@ static void drawRoom(uint16 CurRoom, bool drawx) {
 		break;
 
 	case VCORRIDOR:
-		g_lab->drawImage(VRoom, x, y);
+		VRoom->drawImage(x, y);
 
 		offset = (VRoom->Width - Path->Width) / 2;
 
 		if (NORTHDOOR & flags)
-			g_lab->drawImage(Path, x + offset, y - Path->Height);
+			Path->drawImage(x + offset, y - Path->Height);
 
 		if (SOUTHDOOR & flags)
-			g_lab->drawImage(Path, x + offset, y + VRoom->Height);
+			Path->drawImage(x + offset, y + VRoom->Height);
 
 		offset = (Room->Height - Path->Height) / 2;
 
 		if (EASTDOOR & flags)
-			g_lab->drawImage(Path, x + VRoom->Width, y + offset);
+			Path->drawImage(x + VRoom->Width, y + offset);
 
 		if (WESTDOOR & flags)
-			g_lab->drawImage(Path, x - Path->Width, y + offset);
+			Path->drawImage(x - Path->Width, y + offset);
 
 		if (EASTBDOOR & flags)
-			g_lab->drawImage(Path, x + VRoom->Width, y - offset - Path->Height + VRoom->Height);
+			Path->drawImage(x + VRoom->Width, y - offset - Path->Height + VRoom->Height);
 
 		if (WESTBDOOR & flags)
-			g_lab->drawImage(Path, x - Path->Width, y - offset - Path->Height + VRoom->Height);
+			Path->drawImage(x - Path->Width, y - offset - Path->Height + VRoom->Height);
 
 		offset = (VRoom->Height - Path->Height) / 2;
 
 		if (EASTMDOOR & flags)
-			g_lab->drawImage(Path, x + VRoom->Width, y - offset - Path->Height + VRoom->Height);
+			Path->drawImage(x + VRoom->Width, y - offset - Path->Height + VRoom->Height);
 
 		if (WESTMDOOR & flags)
-			g_lab->drawImage(Path, x - Path->Width, y - offset - Path->Height + VRoom->Height);
+			Path->drawImage(x - Path->Width, y - offset - Path->Height + VRoom->Height);
 
 		xx = x + (VRoom->Width - XMark->Width) / 2;
 		xy = y + (VRoom->Height - XMark->Height) / 2;
@@ -399,37 +376,37 @@ static void drawRoom(uint16 CurRoom, bool drawx) {
 		break;
 
 	case HCORRIDOR:
-		g_lab->drawImage(HRoom, x, y);
+		HRoom->drawImage(x, y);
 
 		offset = (Room->Width - Path->Width) / 2;
 
 		if (NORTHDOOR & flags)
-			g_lab->drawImage(Path, x + offset, y - Path->Height);
+			Path->drawImage(x + offset, y - Path->Height);
 
 		if (SOUTHDOOR & flags)
-			g_lab->drawImage(Path, x + offset, y + Room->Height);
+			Path->drawImage(x + offset, y + Room->Height);
 
 		if (NORTHRDOOR & flags)
-			g_lab->drawImage(Path, x - offset - Path->Width + HRoom->Width, y - Path->Height);
+			Path->drawImage(x - offset - Path->Width + HRoom->Width, y - Path->Height);
 
 		if (SOUTHRDOOR & flags)
-			g_lab->drawImage(Path, x - offset - Path->Width + HRoom->Width, y + Room->Height);
+			Path->drawImage(x - offset - Path->Width + HRoom->Width, y + Room->Height);
 
 		offset = (HRoom->Width - Path->Width) / 2;
 
 		if (NORTHMDOOR & flags)
-			g_lab->drawImage(Path, x - offset - Path->Width + HRoom->Width, y - Path->Height);
+			Path->drawImage(x - offset - Path->Width + HRoom->Width, y - Path->Height);
 
 		if (SOUTHMDOOR & flags)
-			g_lab->drawImage(Path, x - offset - Path->Width + HRoom->Width, y + Room->Height);
+			Path->drawImage(x - offset - Path->Width + HRoom->Width, y + Room->Height);
 
 		offset = (Room->Height - Path->Height) / 2;
 
 		if (EASTDOOR & flags)
-			g_lab->drawImage(Path, x + HRoom->Width, y + offset);
+			Path->drawImage(x + HRoom->Width, y + offset);
 
 		if (WESTDOOR & flags)
-			g_lab->drawImage(Path, x - Path->Width, y + offset);
+			Path->drawImage(x - Path->Width, y + offset);
 
 		xx = x + (HRoom->Width - XMark->Width) / 2;
 		xy = y + (HRoom->Height - XMark->Height) / 2;
@@ -441,7 +418,7 @@ static void drawRoom(uint16 CurRoom, bool drawx) {
 	}
 
 	if (drawx)
-		g_lab->drawImage(XMark, xx, xy);
+		XMark->drawImage(xx, xy);
 }
 
 /*****************************************************************************/
@@ -528,7 +505,7 @@ void LabEngine::drawMap(uint16 CurRoom, uint16 CurMsg, uint16 Floor, bool fadeou
 	setAPen(0);
 	rectFill(0, 0, _screenWidth - 1, _screenHeight - 1);
 
-	drawImage(Map, 0, 0);
+	Map->drawImage(0, 0);
 	drawGadgetList(MapGadgetList);
 
 	for (uint16 i = 1; i <= MaxRooms; i++) {
@@ -562,16 +539,16 @@ void LabEngine::drawMap(uint16 CurRoom, uint16 CurMsg, uint16 Floor, bool fadeou
 	// Labyrinth specific code
 	if (Floor == LOWERFLOOR) {
 		if (onFloor(SURMAZEFLOOR))
-			drawImage(Maze, mapScaleX(538), mapScaleY(277));
+			Maze->drawImage(mapScaleX(538), mapScaleY(277));
 	} else if (Floor == MIDDLEFLOOR) {
 		if (onFloor(CARNIVAL))
-			drawImage(Maze, mapScaleX(358), mapScaleY(72));
+			Maze->drawImage(mapScaleX(358), mapScaleY(72));
 
 		if (onFloor(MEDMAZEFLOOR))
-			drawImage(Maze, mapScaleX(557), mapScaleY(325));
+			Maze->drawImage(mapScaleX(557), mapScaleY(325));
 	} else if (Floor == UPPERFLOOR) {
 		if (onFloor(HEDGEMAZEFLOOR))
-			drawImage(HugeMaze, mapScaleX(524), mapScaleY(97));
+			HugeMaze->drawImage(mapScaleX(524), mapScaleY(97));
 	} else if (Floor == SURMAZEFLOOR) {
 		sptr = (char *)_resource->getStaticText(kTextSurmazeMessage).c_str();
 		flowText(MsgFont, 0, 7, 0, true, true, true, true, mapScaleX(360), 0, mapScaleX(660), mapScaleY(450), sptr);

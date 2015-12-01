@@ -35,6 +35,7 @@
 
 #include "lab/lab.h"
 #include "lab/labfun.h"
+#include "lab/image.h"
 #include "lab/parsefun.h"
 #include "lab/interface.h"
 #include "lab/anim.h"
@@ -132,7 +133,7 @@ static byte *loadBackPict(const char *fileName, bool tomem) {
 /*****************************************************************************/
 static void doCombination() {
 	for (uint16 i = 0; i <= 5; i++)
-		g_lab->drawImage(Images[combination[i]], VGAScaleX(combx[i]), VGAScaleY(65));
+		Images[combination[i]]->drawImage(VGAScaleX(combx[i]), VGAScaleY(65));
 }
 
 /*****************************************************************************/
@@ -152,7 +153,7 @@ void showCombination(const char *filename) {
 	buffer = g_lab->_music->newOpen("P:Numbers");
 
 	for (uint16 CurBit = 0; CurBit < 10; CurBit++)
-		readImage(buffer, &(Images[CurBit]));
+		Images[CurBit] = new Image(buffer);
 
 	allocFile((void **)&g_lab->_tempScrollData, Images[0]->Width * Images[0]->Height * 2L, "tempdata");
 
@@ -267,7 +268,7 @@ static void doTile(bool showsolution) {
 				num = CurTile[col] [row];
 
 			if (showsolution || num)
-				g_lab->drawImage(Tiles[num], cols + (col * colm), rows + (row * rowm));
+				Tiles[num]->drawImage(cols + (col * colm), rows + (row * rowm));
 
 			col++;
 		}
@@ -303,7 +304,7 @@ void showTile(const char *filename, bool showsolution) {
 		return;
 
 	for (uint16 curBit = start; curBit < 16; curBit++)
-		readImage(buffer, &(Tiles[curBit]));
+		Tiles[curBit] = new Image(buffer);
 
 	allocFile((void **)&g_lab->_tempScrollData, Tiles[1]->Width * Tiles[1]->Height * 2L, "tempdata");
 
@@ -550,12 +551,12 @@ static bool loadJournalData() {
 	if (!buffer)
 		return false;
 
-	readImage(buffer, &(BackG.Im));
-	readImage(buffer, &(BackG.ImAlt));
-	readImage(buffer, &(ForwardG.Im));
-	readImage(buffer, &(ForwardG.ImAlt));
-	readImage(buffer, &(CancelG.Im));
-	readImage(buffer, &(CancelG.ImAlt));
+	BackG.Im = new Image(buffer);
+	BackG.ImAlt = new Image(buffer);
+	ForwardG.Im = new Image(buffer);
+	ForwardG.ImAlt = new Image(buffer);
+	CancelG.Im = new Image(buffer);
+	CancelG.ImAlt = new Image(buffer);
 
 	BackG.KeyEquiv = VKEY_LTARROW;
 	ForwardG.KeyEquiv = VKEY_RTARROW;
@@ -819,7 +820,7 @@ static void getMonImages() {
 	if (!buffer)
 		return;
 
-	readImage(buffer, &MonButton);
+	MonButton = new Image(buffer);
 
 	stealBufMem(bufferSize);  /* Trick: protects the memory where the buttons are so they won't be over-written */
 }
@@ -855,7 +856,7 @@ void LabEngine::drawMonText(char *text, TextFont *monitorFont, uint16 x1, uint16
 		rectFill(0, 0, _screenWidth - 1, y2);
 
 		for (uint16 i = 0; i < numlines; i++)
-			drawImage(MonButton, 0, i * MonGadHeight);
+			MonButton->drawImage(0, i * MonGadHeight);
 	} else if (isinteractive) {
 		setAPen(0);
 		rectFill(0, 0, _screenWidth - 1, y2);

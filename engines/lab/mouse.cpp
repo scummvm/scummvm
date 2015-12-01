@@ -29,6 +29,7 @@
  */
 
 #include "lab/lab.h"
+#include "lab/image.h"
 #include "lab/mouse.h"
 #include "lab/interface.h"
 
@@ -76,14 +77,14 @@ Gadget *EventManager::checkGadgetHit(Gadget *gadlist, Common::Point pos) {
 				hitgad = gadlist;
 			} else {
 				mouseHide();
-				_vm->drawImage(gadlist->ImAlt, gadlist->x, gadlist->y);
+				gadlist->ImAlt->drawImage(gadlist->x, gadlist->y);
 				mouseShow();
 
 				for (uint16 i = 0; i < 3; i++)
 					_vm->waitTOF();
 
 				mouseHide();
-				_vm->drawImage(gadlist->Im, gadlist->x, gadlist->y);
+				gadlist->Im->drawImage(gadlist->x, gadlist->y);
 				mouseShow();
 			}
 
@@ -135,14 +136,14 @@ void EventManager::updateMouse() {
 
 	if (hitgad) {
 		mouseHide();
-		_vm->drawImage(hitgad->ImAlt, hitgad->x, hitgad->y);
+		hitgad->ImAlt->drawImage(hitgad->x, hitgad->y);
 		mouseShow();
 
 		for (uint16 i = 0; i < 3; i++)
 			_vm->waitTOF();
 
 		mouseHide();
-		_vm->drawImage(hitgad->Im, hitgad->x, hitgad->y);
+		hitgad->Im->drawImage(hitgad->x, hitgad->y);
 		mouseShow();
 		doUpdateDisplay = true;
 		hitgad = NULL;

@@ -31,6 +31,7 @@
 #include "lab/lab.h"
 #include "lab/labfun.h"
 #include "lab/anim.h"
+#include "lab/image.h"
 #include "lab/text.h"
 #include "lab/intro.h"
 #include "lab/parsefun.h"
@@ -223,7 +224,7 @@ bool LabEngine::setUpScreens() {
 	buffer = MovePanelBuffer;
 
 	for (uint16 i = 0; i < 20; i++)
-		readImage(&buffer, &(MoveImages[i]));
+		MoveImages[i] = new Image(&buffer);
 
 	/* Creates the gadgets for the movement control panel */
 	y = VGAScaleY(173) - SVGACord(2);
@@ -287,7 +288,7 @@ bool LabEngine::setUpScreens() {
 
 	if (getPlatform() == Common::kPlatformWindows) {
 		for (uint16 imgIdx = 0; imgIdx < 10; imgIdx++)
-			readImage(&buffer, &(InvImages[imgIdx]));
+			InvImages[imgIdx] = new Image(&buffer);
 
 		InvGadgetList = createButton(24, y, 0, 'm', InvImages[0], InvImages[1]);
 		curgad = InvGadgetList;
@@ -307,7 +308,7 @@ bool LabEngine::setUpScreens() {
 		curgad = curgad->NextGadget;
 	} else {
 		for (uint16 imgIdx = 0; imgIdx < 6; imgIdx++)
-			readImage(&buffer, &(InvImages[imgIdx]));
+			InvImages[imgIdx] = new Image(&buffer);
 
 		InvGadgetList = createButton(58, y, 0, 0, InvImages[0], InvImages[1]);
 		curgad = InvGadgetList;
@@ -345,7 +346,7 @@ void LabEngine::perFlipGadget(uint16 GadID) {
 
 			if (!Alternate) {
 				_event->mouseHide();
-				drawImage(TopGad->Im, TopGad->x, TopGad->y);
+				TopGad->Im->drawImage(TopGad->x, TopGad->y);
 				_event->mouseShow();
 			}
 
@@ -1410,30 +1411,30 @@ int LabEngine::followCrumbs() {
 	return moveDir;
 }
 
+byte dropCrumbs[] = { 0x00 };
+Image dropCrumbsImage(24, 24, dropCrumbs);
+
 void LabEngine::mayShowCrumbIndicator() {
 	if (getPlatform() != Common::kPlatformWindows)
 		return;
 
 	if (_droppingCrumbs && MainDisplay) {
-		static byte dropCrumbs[] = { 0x00 };
-		static Image dropCrumbsImage = { 24, 24, dropCrumbs };
-
 		_event->mouseHide();
-		drawMaskImage(&dropCrumbsImage, 612, 4);
+		dropCrumbsImage.drawMaskImage(612, 4);
 		_event->mouseShow();
 	}
 }
+
+byte dropCrumbsOff[] = { 0x00 };
+Image dropCrumbsOffImage(24, 24, dropCrumbsOff);
 
 void LabEngine::mayShowCrumbIndicatorOff() {
 	if (getPlatform() != Common::kPlatformWindows)
 		return;
 
 	if (MainDisplay) {
-		static byte dropCrumbsOff[] = { 0x00 };
-		static Image dropCrumbsOffImage = { 24, 24, dropCrumbsOff };
-
 		_event->mouseHide();
-		drawMaskImage(&dropCrumbsOffImage, 612, 4);
+		dropCrumbsOffImage.drawMaskImage(612, 4);
 		_event->mouseShow();
 	}
 }
