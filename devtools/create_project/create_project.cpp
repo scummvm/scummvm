@@ -340,7 +340,13 @@ int main(int argc, char *argv[]) {
 		setup.defines.push_back("WIN32");
 	} else {
 		setup.defines.push_back("POSIX");
-		setup.defines.push_back("MACOSX"); // This will break iOS, but allows OS X to catch up on browser_osx.
+		// Define both MACOSX, and IPHONE, but only one of them will be associated to the
+		// correct target by the Xcode project provider.
+		// This define will help catching up target dependend files, like "browser_osx.mm"
+		// The suffix ("_osx", or "_ios") will be used by the project provider to filter out
+		// the files, according to the target.
+		setup.defines.push_back("MACOSX");
+		setup.defines.push_back("IPHONE");
 	}
 	setup.defines.push_back("SDL_BACKEND");
 	if (!useSDL2) {
