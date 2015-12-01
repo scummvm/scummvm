@@ -54,8 +54,7 @@ static Image *Images[10];
 byte combination[6] = { 0, 0, 0, 0, 0, 0 }, solution[] = { 0, 4, 0, 8, 7, 2 };
 static uint16 combx[] = { 45, 83, 129, 166, 211, 248 };
 
-static TextFont *BigMsgFont;
-static TextFont bmfont;
+static TextFont *journalFont;
 static char *journaltext, *journaltexttitle;
 static uint16 JPage = 0;
 static bool lastpage = false;
@@ -456,23 +455,15 @@ void mouseTile(Common::Point pos) {
 /* Does the things to properly set up the detective notes.                   */
 /*****************************************************************************/
 void doNotes() {
-	char *ntext;
+	TextFont *noteFont = g_lab->_resource->getFont("P:Note.fon");
+	char *ntext = g_lab->_resource->getText("Lab:Rooms/Notes");
 
-	/* Load in the data */
-	BigMsgFont = &bmfont;
-
-	if (!(BigMsgFont = g_lab->_resource->getFont("P:Note.fon"))) {
-		BigMsgFont = NULL;
-		return;
-	}
-
-	if ((ntext = getText("Lab:Rooms/Notes")) == NULL)
-		return;
-
-	flowText(BigMsgFont, -2 + SVGACord(1), 0, 0, false, false, true, true, VGAScaleX(25) + SVGACord(15), VGAScaleY(50), VGAScaleX(295) - SVGACord(15), VGAScaleY(148), ntext);
-
+	flowText(noteFont, -2 + SVGACord(1), 0, 0, false, false, true, true, VGAScaleX(25) + SVGACord(15), VGAScaleY(50), VGAScaleX(295) - SVGACord(15), VGAScaleY(148), ntext);
 	g_lab->setPalette(diffcmap, 256);
-	freeAllStolenMem();
+
+	delete[] noteFont->data;
+	free(noteFont);
+	delete[] ntext;
 }
 
 
@@ -482,56 +473,39 @@ void doNotes() {
 /*****************************************************************************/
 void doWestPaper() {
 	char *ntext;
+	TextFont *paperFont;
 	int32 FileLen, CharsPrinted;
 	uint16 y = 268;
 
-	BigMsgFont = &bmfont;
+	paperFont = g_lab->_resource->getFont("P:News22.fon");
+	ntext = g_lab->_resource->getText("Lab:Rooms/Date");
+	flowText(paperFont, 0, 0, 0, false, true, false, true, VGAScaleX(57), VGAScaleY(77) + SVGACord(2), VGAScaleX(262), VGAScaleY(91), ntext);
+	delete[] paperFont->data;
+	free(paperFont);
+	delete[] ntext;
 
-	if (!(BigMsgFont = g_lab->_resource->getFont("P:News22.fon"))) {
-		BigMsgFont = NULL;
-		return;
-	}
-
-	if ((ntext = getText("Lab:Rooms/Date")) == NULL)
-		return;
-
-	flowText(BigMsgFont, 0, 0, 0, false, true, false, true, VGAScaleX(57), VGAScaleY(77) + SVGACord(2), VGAScaleX(262), VGAScaleY(91), ntext);
-
-	BigMsgFont = &bmfont;
-
-	if (!(BigMsgFont = g_lab->_resource->getFont("P:News32.fon"))) {
-		BigMsgFont = NULL;
-		return;
-	}
-
-	if ((ntext = getText("Lab:Rooms/Headline")) == NULL)
-		return;
-
+	paperFont = g_lab->_resource->getFont("P:News32.fon");
+	ntext = g_lab->_resource->getText("Lab:Rooms/Headline");
 	FileLen = strlen(ntext) - 1;
-	CharsPrinted = flowText(BigMsgFont, -8, 0, 0, false, true, false, true, VGAScaleX(57), VGAScaleY(86) - SVGACord(2), VGAScaleX(262), VGAScaleY(118), ntext);
-
+	CharsPrinted = flowText(paperFont, -8, 0, 0, false, true, false, true, VGAScaleX(57), VGAScaleY(86) - SVGACord(2), VGAScaleX(262), VGAScaleY(118), ntext);
 	if (CharsPrinted < FileLen) {
 		y = 130 - SVGACord(5);
-		flowText(BigMsgFont, -8 - SVGACord(1), 0, 0, false, true, false, true, VGAScaleX(57), VGAScaleY(86) - SVGACord(2), VGAScaleX(262), VGAScaleY(132), ntext);
+		flowText(paperFont, -8 - SVGACord(1), 0, 0, false, true, false, true, VGAScaleX(57), VGAScaleY(86) - SVGACord(2), VGAScaleX(262), VGAScaleY(132), ntext);
 	} else
 		y = 115 - SVGACord(5);
+	delete[] paperFont->data;
+	free(paperFont);
+	delete[] ntext;
 
-	BigMsgFont = &bmfont;
-
-	if (!(BigMsgFont = g_lab->_resource->getFont("P:Note.fon"))) {
-		BigMsgFont = NULL;
-		return;
-	}
-
-	if ((ntext = getText("Lab:Rooms/Col1")) == NULL)
-		return;
-
-	CharsPrinted = flowText(BigMsgFont, -4, 0, 0, false, false, false, true, VGAScaleX(45), VGAScaleY(y), VGAScaleX(158), VGAScaleY(148), ntext);
-
-	if ((ntext = getText("Lab:Rooms/Col2")) == NULL)
-		return;
-
-	CharsPrinted = flowText(BigMsgFont, -4, 0, 0, false, false, false, true, VGAScaleX(162), VGAScaleY(y), VGAScaleX(275), VGAScaleY(148), ntext);
+	paperFont = g_lab->_resource->getFont("P:Note.fon");
+	ntext = g_lab->_resource->getText("Lab:Rooms/Col1");
+	CharsPrinted = flowText(paperFont, -4, 0, 0, false, false, false, true, VGAScaleX(45), VGAScaleY(y), VGAScaleX(158), VGAScaleY(148), ntext);
+	delete[] ntext;
+	ntext = g_lab->_resource->getText("Lab:Rooms/Col2");
+	CharsPrinted = flowText(paperFont, -4, 0, 0, false, false, false, true, VGAScaleX(162), VGAScaleY(y), VGAScaleX(275), VGAScaleY(148), ntext);
+	delete[] ntext;
+	delete[] paperFont->data;
+	free(paperFont);
 
 	g_lab->setPalette(diffcmap, 256);
 	freeAllStolenMem();
@@ -546,12 +520,7 @@ static bool loadJournalData() {
 	Gadget *TopGadget = &BackG;
 	bool bridge, dirty, news, clean;
 
-	BigMsgFont = &bmfont;
-
-	if (!(BigMsgFont = g_lab->_resource->getFont("P:Journal.fon"))) {
-		BigMsgFont = NULL;
-		return false;
-	}
+	journalFont = g_lab->_resource->getFont("P:Journal.fon");
 
 	g_lab->_music->updateMusic();
 
@@ -580,11 +549,8 @@ static bool loadJournalData() {
 	else if (bridge)
 		filename[11] = '1';
 
-	if ((journaltext = getText(filename)) == NULL)
-		return false;
-
-	if ((journaltexttitle = getText("Lab:Rooms/jt")) == NULL)
-		return false;
+	journaltext = g_lab->_resource->getText(filename);
+	journaltexttitle = g_lab->_resource->getText("Lab:Rooms/jt");
 
 	buffer = g_lab->_music->newOpen("P:JImage");
 
@@ -630,7 +596,7 @@ static void drawJournalText() {
 	while (DrawingToPage < JPage) {
 		g_lab->_music->updateMusic();
 		CurText = (char *)(journaltext + CharsDrawn);
-		CharsDrawn += flowText(BigMsgFont, -2, 2, 0, false, false, false, false, VGAScaleX(52), VGAScaleY(32), VGAScaleX(152), VGAScaleY(148), CurText);
+		CharsDrawn += flowText(journalFont, -2, 2, 0, false, false, false, false, VGAScaleX(52), VGAScaleY(32), VGAScaleX(152), VGAScaleY(148), CurText);
 
 		lastpage = (*CurText == 0);
 
@@ -642,16 +608,16 @@ static void drawJournalText() {
 
 	if (JPage <= 1) {
 		CurText = journaltexttitle;
-		flowTextToMem(&JBackImage, BigMsgFont, -2, 2, 0, false, true, true, true, VGAScaleX(52), VGAScaleY(32), VGAScaleX(152), VGAScaleY(148), CurText);
+		flowTextToMem(&JBackImage, journalFont, -2, 2, 0, false, true, true, true, VGAScaleX(52), VGAScaleY(32), VGAScaleX(152), VGAScaleY(148), CurText);
 	} else {
 		CurText = (char *)(journaltext + CharsDrawn);
-		CharsDrawn += flowTextToMem(&JBackImage, BigMsgFont, -2, 2, 0, false, false, false, true, VGAScaleX(52), VGAScaleY(32), VGAScaleX(152), VGAScaleY(148), CurText);
+		CharsDrawn += flowTextToMem(&JBackImage, journalFont, -2, 2, 0, false, false, false, true, VGAScaleX(52), VGAScaleY(32), VGAScaleX(152), VGAScaleY(148), CurText);
 	}
 
 	g_lab->_music->updateMusic();
 	CurText = (char *)(journaltext + CharsDrawn);
 	lastpage = (*CurText == 0);
-	flowTextToMem(&JBackImage, BigMsgFont, -2, 2, 0, false, false, false, true, VGAScaleX(171), VGAScaleY(32), VGAScaleX(271), VGAScaleY(148), CurText);
+	flowTextToMem(&JBackImage, journalFont, -2, 2, 0, false, false, false, true, VGAScaleX(171), VGAScaleY(32), VGAScaleX(271), VGAScaleY(148), CurText);
 
 	CurText = (char *)(journaltext + CharsDrawn);
 	lastpage = lastpage || (*CurText == 0);
@@ -869,7 +835,7 @@ static void getMonImages() {
 /*****************************************************************************/
 /* Draws the text for the monitor.                                           */
 /*****************************************************************************/
-void LabEngine::drawMonText(char *text, uint16 x1, uint16 y1, uint16 x2, uint16 y2, bool isinteractive) {
+void LabEngine::drawMonText(char *text, TextFont *monitorFont, uint16 x1, uint16 y1, uint16 x2, uint16 y2, bool isinteractive) {
 	uint16 DrawingToPage = 0, yspacing = 0, numlines, fheight;
 	int32 CharsDrawn    = 0L;
 	char *CurText = text;
@@ -883,7 +849,7 @@ void LabEngine::drawMonText(char *text, uint16 x1, uint16 y1, uint16 x2, uint16 
 		numlines += (*text - '0');
 		text += 2;
 
-		fheight = textHeight(BigMsgFont);
+		fheight = textHeight(monitorFont);
 		x1 = MonButton->Width + VGAScaleX(3);
 		MonGadHeight = MonButton->Height + VGAScaleY(3);
 
@@ -908,7 +874,7 @@ void LabEngine::drawMonText(char *text, uint16 x1, uint16 y1, uint16 x2, uint16 
 	while (DrawingToPage < monitorPage) {
 		_music->updateMusic();
 		CurText = (char *)(text + CharsDrawn);
-		CharsDrawn += flowText(BigMsgFont, yspacing, 0, 0, false, false, false, false, x1, y1, x2, y2, CurText);
+		CharsDrawn += flowText(monitorFont, yspacing, 0, 0, false, false, false, false, x1, y1, x2, y2, CurText);
 		lastpage = (*CurText == 0);
 
 		if (lastpage)
@@ -919,7 +885,7 @@ void LabEngine::drawMonText(char *text, uint16 x1, uint16 y1, uint16 x2, uint16 
 
 	CurText = (char *)(text + CharsDrawn);
 	lastpage = (*CurText == 0);
-	CharsDrawn = flowText(BigMsgFont, yspacing, 2, 0, false, false, false, true, x1, y1, x2, y2, CurText);
+	CharsDrawn = flowText(monitorFont, yspacing, 2, 0, false, false, false, true, x1, y1, x2, y2, CurText);
 	CurText += CharsDrawn;
 	lastpage = lastpage || (*CurText == 0);
 
@@ -929,7 +895,7 @@ void LabEngine::drawMonText(char *text, uint16 x1, uint16 y1, uint16 x2, uint16 
 /*****************************************************************************/
 /* Processes user input.                                                     */
 /*****************************************************************************/
-void LabEngine::processMonitor(char *ntext, bool isinteractive, uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
+void LabEngine::processMonitor(char *ntext, TextFont *monitorFont, bool isinteractive, uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
 	IntuiMessage *Msg;
 	uint32 Class;
 	uint16 Qualifier, Code, MouseX, MouseY;
@@ -953,10 +919,11 @@ void LabEngine::processMonitor(char *ntext, bool isinteractive, uint16 x1, uint1
 				monitorPage      = 0;
 				TextFileName = Test;
 
-				ntext = getText(TextFileName);
+				ntext = g_lab->_resource->getText(TextFileName);
 				fade(false, 0);
-				drawMonText(ntext, x1, y1, x2, y2, isinteractive);
+				drawMonText(ntext, monitorFont, x1, y1, x2, y2, isinteractive);
 				fade(true, 0);
+				delete[] ntext;
 			}
 		}
 
@@ -981,14 +948,14 @@ void LabEngine::processMonitor(char *ntext, bool isinteractive, uint16 x1, uint1
 					if ((MouseX >= VGAScaleX(259)) && (MouseX <= VGAScaleX(289))) {
 						if (!lastpage) {
 							monitorPage += 1;
-							drawMonText(ntext, x1, y1, x2, y2, isinteractive);
+							drawMonText(ntext, monitorFont, x1, y1, x2, y2, isinteractive);
 						}
 					} else if ((MouseX >= VGAScaleX(0)) && (MouseX <= VGAScaleX(31))) {
 						return;
 					} else if ((MouseX >= VGAScaleX(290)) && (MouseX <= VGAScaleX(320))) {
 						if (monitorPage >= 1) {
 							monitorPage -= 1;
-							drawMonText(ntext, x1, y1, x2, y2, isinteractive);
+							drawMonText(ntext, monitorFont, x1, y1, x2, y2, isinteractive);
 						}
 					} else if ((MouseX >= VGAScaleX(31)) && (MouseX <= VGAScaleX(59))) {
 						if (isinteractive) {
@@ -1000,7 +967,7 @@ void LabEngine::processMonitor(char *ntext, bool isinteractive, uint16 x1, uint1
 							}
 						} else if (monitorPage > 0) {
 							monitorPage = 0;
-							drawMonText(ntext, x1, y1, x2, y2, isinteractive);
+							drawMonText(ntext, monitorFont, x1, y1, x2, y2, isinteractive);
 						}
 					}
 				} else if (isinteractive) {
@@ -1045,31 +1012,20 @@ void LabEngine::doMonitor(char *background, char *textfile, bool isinteractive, 
 	lastpage = false;
 	FadePalette = hipal;
 
-	BigMsgFont = &bmfont;
-
-	if (!(BigMsgFont = _resource->getFont("P:Map.fon"))) {
-		freeAllStolenMem();
-		BigMsgFont = NULL;
-		return;
-	}
-
+	TextFont *monitorFont = _resource->getFont("P:Map.fon");
 	getMonImages();
 
-	if ((ntext = getText(textfile)) == NULL) {
-		freeAllStolenMem();
-		return;
-	}
-
+	ntext = _resource->getText(textfile);
 	loadBackPict(background, false);
-
-	drawMonText(ntext, x1, y1, x2, y2, isinteractive);
-
+	drawMonText(ntext, monitorFont, x1, y1, x2, y2, isinteractive);
 	_event->mouseShow();
 	fade(true, 0);
-	processMonitor(ntext, isinteractive, x1, y1, x2, y2);
+	processMonitor(ntext, monitorFont, isinteractive, x1, y1, x2, y2);
 	fade(false, 0);
 	_event->mouseHide();
-
+	delete[] ntext;
+	delete[] monitorFont->data;
+	free(monitorFont);
 	freeAllStolenMem();
 
 	setAPen(0);

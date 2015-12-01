@@ -42,10 +42,6 @@
 
 namespace Lab {
 
-static TextFont *BigMsgFont;
-static TextFont bmf;
-
-
 extern uint16 Direction;
 
 extern CloseDataPtr CPtr;
@@ -69,33 +65,6 @@ void setAmigaPal(uint16 *pal, uint16 numcolors) {
 
 	g_lab->writeColorRegsSmooth(vgapal, 0, 16);
 }
-
-void decrypt(byte *text) {
-	while (text && *text != '\0') {
-		*text++ -= (byte)95;
-	}
-}
-
-/*****************************************************************************/
-/* Gets a chunk of text and puts it into the graphics memory.                */
-/*****************************************************************************/
-char *getText(const char *filename) {
-	bool dodecrypt;
-	byte **tfile;
-
-	g_lab->_music->updateMusic();
-	dodecrypt = (isBuffered(filename) == NULL);
-	tfile = g_lab->_music->newOpen(filename);
-
-	if (!tfile)
-		return NULL;
-
-	if (dodecrypt)
-		decrypt(*tfile);
-
-	return (char *)*tfile;
-}
-
 
 
 /*****************************************************************************/
@@ -192,11 +161,6 @@ static bool loadMapData() {
 	uint32 Size;
 	Gadget *gptr;
 	uint16 counter;
-
-	BigMsgFont = &bmf;
-
-	if (!(BigMsgFont = g_lab->_resource->getFont("P:Map.fon")))
-		BigMsgFont = MsgFont;
 
 	resetBuffer();  /* Make images load into start of buffer */
 	buffer = g_lab->_music->newOpen("P:MapImage", Size);
