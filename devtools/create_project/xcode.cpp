@@ -212,6 +212,9 @@ XcodeProvider::XcodeProvider(StringList &global_warnings, std::map<std::string, 
 	_rootSourceGroup = NULL;
 }
 
+void XcodeProvider::addResourceFiles(const BuildSetup &setup, StringList &includeList, StringList &excludeList) {
+}
+
 void XcodeProvider::createWorkspace(const BuildSetup &setup) {
 	// Create project folder
 	std::string workspace = setup.outputDir + '/' + PROJECT_NAME ".xcodeproj";

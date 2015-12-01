@@ -1334,8 +1334,7 @@ void ProjectProvider::createProject(BuildSetup &setup) {
 		createModuleList(setup.srcDir + "/image", setup.defines, setup.testDirs, in, ex);
 
 		// Resource files
-		in.push_back(setup.srcDir + "/icons/" + setup.projectName + ".ico");
-		in.push_back(setup.srcDir + "/dists/" + setup.projectName + ".rc");
+		addResourceFiles(setup, in, ex);
 
 		// Various text files
 		in.push_back(setup.srcDir + "/AUTHORS");

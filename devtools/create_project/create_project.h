@@ -419,6 +419,13 @@ protected:
 	virtual void createOtherBuildFiles(const BuildSetup &setup) = 0;
 
 	/**
+	 *  Add resources to the project
+	 *
+	 * @param setup Description of the desired build setup.
+	 */
+	virtual void addResourceFiles(const BuildSetup &setup, StringList &includeList, StringList &excludeList) = 0;
+
+	/**
 	 * Create a project file for the specified list of files.
 	 *
 	 * @param name Name of the project file.
