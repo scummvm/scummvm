@@ -32,7 +32,6 @@ namespace CreateProjectTool {
 
 #define IOS_TARGET 0
 #define OSX_TARGET 1
-#define SIM_TARGET 2
 
 #define ADD_DEFINE(defines, name) \
 	defines.push_back(name);
@@ -220,9 +219,8 @@ void XcodeProvider::createWorkspace(const BuildSetup &setup) {
 	
 	// Setup global objects
 	setupDefines(setup);
-	_targets.push_back(PROJECT_DESCRIPTION "-iPhone");
+	_targets.push_back(PROJECT_DESCRIPTION "-iOS");
 	_targets.push_back(PROJECT_DESCRIPTION "-OS X");
-	_targets.push_back(PROJECT_DESCRIPTION "-Simulator");
 	setupCopyFilesBuildPhase();
 	setupFrameworksBuildPhase();
 	setupNativeTarget();
@@ -381,10 +379,10 @@ void XcodeProvider::setupFrameworksBuildPhase() {
 	_rootSourceGroup->addChildGroup(frameworksGroup);
 
 
-	// Declare this here, as it's used across the three targets
+	// Declare this here, as it's used across all the targets
 	int order = 0;
 	//////////////////////////////////////////////////////////////////////////
-	// iPhone
+	// ScummVM-iOS
 	Object *framework_iPhone = new Object(this, "PBXFrameworksBuildPhase_" + _targets[IOS_TARGET], "PBXFrameworksBuildPhase", "PBXFrameworksBuildPhase", "", "Frameworks");
 
 	framework_iPhone->addProperty("buildActionMask", "2147483647", "", SettingsNoValue);
@@ -461,40 +459,6 @@ void XcodeProvider::setupFrameworksBuildPhase() {
 	framework_OSX->properties["files"] = osx_files;
 
 	_frameworksBuildPhase.add(framework_OSX);
-	//////////////////////////////////////////////////////////////////////////
-	// Simulator
-	Object *framework_simulator = new Object(this, "PBXFrameworksBuildPhase_" + _targets[SIM_TARGET], "PBXFrameworksBuildPhase", "PBXFrameworksBuildPhase", "", "Frameworks");
-
-	framework_simulator->addProperty("buildActionMask", "2147483647", "", SettingsNoValue);
-	framework_simulator->addProperty("runOnlyForDeploymentPostprocessing", "0", "", SettingsNoValue);
-
-	// List of frameworks
-	Property simulator_files;
-	simulator_files.hasOrder = true;
-	simulator_files.flags = SettingsAsList;
-
-	ValueList frameworks_simulator;
-	frameworks_simulator.push_back("CoreAudio.framework");
-	frameworks_simulator.push_back("CoreFoundation.framework");
-	frameworks_simulator.push_back("Foundation.framework");
-	frameworks_simulator.push_back("UIKit.framework");
-	frameworks_simulator.push_back("AudioToolbox.framework");
-	frameworks_simulator.push_back("QuartzCore.framework");
-	frameworks_simulator.push_back("OpenGLES.framework");
-
-	order = 0;
-	for (ValueList::iterator framework = frameworks_simulator.begin(); framework != frameworks_simulator.end(); framework++) {
-		std::string id = "Frameworks_" + *framework + "_simulator";
-		std::string comment = *framework + " in Frameworks";
-
-		ADD_SETTING_ORDER_NOVALUE(simulator_files, getHash(id), comment, order++);
-		ADD_BUILD_FILE(id, *framework, getHash(*framework), comment);
-		ADD_FILE_REFERENCE(*framework, *framework, properties[*framework]);
-	}
-
-	framework_simulator->properties["files"] = simulator_files;
-
-	_frameworksBuildPhase.add(framework_simulator);
 }
 
 void XcodeProvider::setupNativeTarget() {
@@ -561,7 +525,6 @@ void XcodeProvider::setupProject() {
 	targets.flags = SettingsAsList;
 	targets.settings[getHash("PBXNativeTarget_" + _targets[IOS_TARGET])] = Setting("", _targets[IOS_TARGET], SettingsNoValue, 0, 0);
 	targets.settings[getHash("PBXNativeTarget_" + _targets[OSX_TARGET])] = Setting("", _targets[OSX_TARGET], SettingsNoValue, 0, 1);
-	targets.settings[getHash("PBXNativeTarget_" + _targets[SIM_TARGET])] = Setting("", _targets[SIM_TARGET], SettingsNoValue, 0, 2);
 	project->properties["targets"] = targets;
 
 	// Force list even when there is only a single target
@@ -874,40 +837,7 @@ void XcodeProvider::setupBuildConfiguration() {
 
 	_buildConfiguration.add(scummvmOSX_Debug_Object);
 	_buildConfiguration.add(scummvmOSX_Release_Object);
-	/****************************************
-	 * ScummVM-Simulator
-	 ****************************************/
 
-	// Debug
-	Object *scummvmSimulator_Debug_Object = new Object(this, "XCBuildConfiguration_" PROJECT_DESCRIPTION "-Simulator_Debug", _targets[SIM_TARGET] /* ScummVM-Simulator */, "XCBuildConfiguration", "PBXNativeTarget", "Debug");
-	Property scummvmSimulator_Debug(iPhone_Debug);
-	ADD_SETTING_QUOTE(scummvmSimulator_Debug, "FRAMEWORK_SEARCH_PATHS", "$(inherited)");
-	ADD_SETTING_LIST(scummvmSimulator_Debug, "GCC_PREPROCESSOR_DEFINITIONS", scummvm_defines, SettingsNoQuote|SettingsAsList, 5);
-	ADD_SETTING(scummvmSimulator_Debug, "SDKROOT", "iphonesimulator3.2");
-	ADD_SETTING_QUOTE(scummvmSimulator_Debug, "VALID_ARCHS", "i386 x86_64");
-	REMOVE_SETTING(scummvmSimulator_Debug, "TARGETED_DEVICE_FAMILY");
-
-	scummvmSimulator_Debug_Object->addProperty("name", "Debug", "", SettingsNoValue);
-	scummvmSimulator_Debug_Object->properties["buildSettings"] = scummvmSimulator_Debug;
-
-	// Release
-	Object *scummvmSimulator_Release_Object = new Object(this, "XCBuildConfiguration_" PROJECT_DESCRIPTION "-Simulator_Release", _targets[SIM_TARGET] /* ScummVM-Simulator */, "XCBuildConfiguration", "PBXNativeTarget", "Release");
-	Property scummvmSimulator_Release(scummvmSimulator_Debug);
-	ADD_SETTING(scummvmSimulator_Release, "COPY_PHASE_STRIP", "YES");
-	ADD_SETTING(scummvmSimulator_Release, "GCC_OPTIMIZATION_LEVEL", "3");
-	REMOVE_SETTING(scummvmSimulator_Release, "GCC_DYNAMIC_NO_PIC");
-	ADD_SETTING(scummvmSimulator_Release, "WRAPPER_EXTENSION", "app");
-
-	scummvmSimulator_Release_Object->addProperty("name", "Release", "", SettingsNoValue);
-	scummvmSimulator_Release_Object->properties["buildSettings"] = scummvmSimulator_Release;
-
-	_buildConfiguration.add(scummvmSimulator_Debug_Object);
-	_buildConfiguration.add(scummvmSimulator_Release_Object);
-
-	//////////////////////////////////////////////////////////////////////////
-	// Configuration List
-	_configurationList.comment = "XCConfigurationList";
-	_configurationList.flags = SettingsAsList;
 	// Warning: This assumes we have all configurations with a Debug & Release pair
 	for (std::vector<Object *>::iterator config = _buildConfiguration.objects.begin(); config != _buildConfiguration.objects.end(); config++) {
 
