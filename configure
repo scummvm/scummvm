@@ -2049,16 +2049,23 @@ define_in_config_h_if_yes $_need_memalign 'SCUMM_NEED_ALIGNMENT'
 echo_n "Checking host CPU architecture... "
 case $_host_cpu in
 	arm*)
-		echo "ARM"
-		define_in_config_if_yes yes 'USE_ARM_SCALER_ASM'
-		define_in_config_if_yes yes 'USE_ARM_SOUND_ASM'
-		define_in_config_if_yes yes 'USE_ARM_SMUSH_ASM'
-		define_in_config_if_yes yes 'USE_ARM_GFX_ASM'
-		# FIXME: The following feature exhibits a bug during the intro scene of Indy 4
-		# (on Pandora and iPhone at least)
-		#define_in_config_if_yes yes 'USE_ARM_COSTUME_ASM'
+		case $_host_alias in
+			arm-apple*)
+				echo "Apple iPhone - ARM assembly disabled"
+				;;
+			*)
+				echo "ARM"
+				define_in_config_if_yes yes 'USE_ARM_SCALER_ASM'
+				define_in_config_if_yes yes 'USE_ARM_SOUND_ASM'
+				define_in_config_if_yes yes 'USE_ARM_SMUSH_ASM'
+				define_in_config_if_yes yes 'USE_ARM_GFX_ASM'
+				# FIXME: The following feature exhibits a bug during the intro scene of Indy 4
+				# (on Pandora and iPhone at least)
+				#define_in_config_if_yes yes 'USE_ARM_COSTUME_ASM'
 
-		append_var DEFINES "-DARM_TARGET"
+				append_var DEFINES "-DARM_TARGET"
+				;;
+		esac
 		;;
 	i[3-6]86)
 		echo "x86"
@@ -2691,12 +2698,16 @@ if test -n "$_host"; then
 			;;
 		iphone)
 			append_var DEFINES "-DIPHONE"
-			append_var ASFLAGS "-arch armv6"
+			append_var CFLAGS "-Wno-shift-count-overflow"
+			append_var CXXFLAGS "-Wno-shift-count-overflow"
 			_backend="iphone"
 			_build_scalers=no
 			_mt32emu=no
 			_seq_midi=no
 			_timidity=no
+			_ar="ar cru"
+			_ranlib=ranlib
+			_strip=strip
 			;;
 		m68k-atari-mint)
 			append_var DEFINES "-DSYSTEM_NOT_SUPPORTING_D_TYPE"
@@ -2990,6 +3001,9 @@ case $_backend in
 		append_var LIBS "-lobjc -framework UIKit -framework CoreGraphics -framework OpenGLES"
 		append_var LIBS "-framework QuartzCore -framework CoreFoundation -framework Foundation"
 		append_var LIBS "-framework AudioToolbox -framework CoreAudio"
+		append_var LDFLAGS "-isysroot $SDKROOT -miphoneos-version-min=9.0 -arch armv7"
+		append_var CFLAGS "-isysroot $SDKROOT -miphoneos-version-min=9.0 -arch armv7"
+		append_var CXXFLAGS "-isysroot $SDKROOT -miphoneos-version-min=9.0 -arch armv7"
 		;;
 	linuxmoto)
 		append_var DEFINES "-DLINUXMOTO"
