@@ -14,28 +14,36 @@ Table of Contents:
 2.0) Contact
  * 2.1 Reporting Bugs
 3.0) Supported Games
- * 3.1 Copy Protection
- * 3.2 Day of the Tentacle notes
- * 3.3 Commodore64 games notes
- * 3.4 Maniac Mansion NES notes
- * 3.5 Macintosh games notes
- * 3.6 Multi-CD games notes
- * 3.7 The Curse of Monkey Island notes
- * 3.8 Broken Sword games notes
- * 3.9 Beneath a Steel Sky notes
- * 3.10 Flight of the Amazon Queen notes
- * 3.11 Gobliiins notes
- * 3.12 Inherit the Earth: Quest for the Orb notes
- * 3.13 Simon the Sorcerer notes
+ * 3.1 Beneath a Steel Sky notes 
+ * 3.2 Broken Sword games notes
+ * * 3.2.1 Broken Sword
+ * * 3.2.2 Broken Sword II
+ * * 3.2.3 Broken Sword games cutscenes
+ * * 3.2.4 Broken Sword games cutscenes, in retrospect
+ * 3.3 Day of the Tentacle notes
+ * 3.4 Discworld II notes
+ * 3.5 Dragon History notes
+ * 3.6 Flight of the Amazon Queen notes
+ * 3.7 Gobliiins notes
+ * 3.8 Inherit the Earth: Quest for the Orb notes 
+ * 3.9 Maniac Mansion Apple II/NES notes
+ * 3.10 Mickey's Space Adventure notes
+ * 3.11 Nippon Safes Inc. Amiga notes
+ * 3.12 Simon the Sorcerer notes
+ * 3.13 The Curse of Monkey Island notes 
  * 3.14 The Feeble Files notes
  * 3.15 The Legend of Kyrandia notes
- * 3.16 Sierra AGI games Predictive Input Dialog notes
- * 3.17 Mickey's Space Adventure notes
- * 3.18 Winnie the Pooh notes
- * 3.19 Troll's Tale notes
- * 3.20 Dragon History notes
- * 3.21 Simultaneous speech and subtitles in Sierra SCI games
- * 3.22 Known Problems
+ * 3.16 Troll's Tale notes
+ * 3.17 Winnie the Pooh notes
+ * 3.18 Sierra AGI games: Predictive Input Dialog notes
+ * 3.19 Sierra SCI games: Simultaneous speech and subtitles
+ * 3.20 Zork games notes
+ * 3.21 Commodore64 games notes 
+ * 3.22 Macintosh games notes 
+ * 3.23 Copy Protection
+ * 3.24 Datafiles
+ * 3.25 Multi-CD games notes
+ * 3.26 Known Problems
 4.0) Supported Platforms
 5.0) Running ScummVM
  * 5.1 Command Line Options
@@ -53,9 +61,21 @@ Table of Contents:
  * 7.3 MT-32 emulation
  * 7.4 MIDI emulation
  * 7.5 Native MIDI support
+ * 7.5.1 Using MIDI options to customize Native MIDI output
  * 7.6 UNIX native, ALSA and dmedia sequencer support
- * 7.7 TiMidity++ MIDI server support
- * 7.8 Using compressed audio files (MP3, Ogg Vorbis, Flac)
+ * * 7.6.1 ALSA sequencer [UNIX ONLY]
+ * * 7.6.2 IRIX dmedia sequencer [UNIX ONLY]
+ * * 7.7 TiMidity++ MIDI server support
+ * * 7.8 Using compressed audio files (MP3, Ogg Vorbis, Flac)
+ * * 7.8.1 Using MP3 files for CD audio
+ * * 7.8.2 Using Ogg Vorbis files for CD audio
+ * * 7.8.3 Using Flac files for CD audio
+ * * 7.8.4 Compressing MONSTER.SOU with MP3
+ * * 7.8.5 Compressing MONSTER.SOU with Ogg Vorbis
+ * * 7.8.6 Compressing MONSTER.SOU with Flac
+ * * 7.8.7 Compressing music/sfx/speech in AGOS games
+ * * 7.8.8 Compressing speech/music in Broken Sword
+ * * 7.8.9 Compressing speech/music in Broken Sword II
  * 7.9 Output sample rate
 8.0) Configuration file
  * 8.1 Recognized configuration keywords
@@ -146,7 +166,7 @@ subdirectories for supported games.
 2.0) Contact:
 ---- --------
 The easiest way to contact the ScummVM team is by submitting bug reports
-(see section 2.1) or by using our forums at http://forums.scummvm.org .
+(see section 2.1) or by using our forums at http://forums.scummvm.org.
 You can also join and e-mail the scummvm-devel mailing list, or chat
 with us on IRC (#scummvm on irc.freenode.net) Please do not ask us to
 support an unsupported game -- read the FAQ on our web site first.
@@ -454,165 +474,18 @@ often, and please file a bug report (instructions on submitting bug
 reports are above) if you encounter such a bug in a 'supported' game.
 
 
-3.1) Copy Protection:
----- ----------------
-The ScummVM team does not condone piracy. However, there are cases where
-the game companies (such as LucasArts) themselves bundled 'cracked'
-executables with their games -- in these cases the data files still
-contain the copy protection scripts, but the interpreter bypasses them
-(similar to what an illegally cracked version might do, only that here
-the producer of the game did it). There is no way for us to tell the
-difference between legitimate and pirated data files, so for the games
-where we know that a cracked version of the original interpreter was
-sold at some point, ScummVM will always have to bypass the copy
-protection.
-
-In some cases ScummVM will still show the copy protection screen. Try
-entering any answer. Chances are that it will work.
-
-ScummVM will skip copy protection in the following games:
-
-  * Beneath a Steel Sky
-      -- bypassed with kind permission from Revolution Software.
-  * Dreamweb
-      -- a list of available commands in the in-game terminals is now shown
-         when the player uses the 'help' command
-  * Inherit the Earth: Quest for the Orb (Floppy version)
-      -- bypassed with kind permission from Wyrmkeep Entertainment,
-         since it was bypassed in all CD releases of the game.
-  * Loom (EGA DOS)
-  * Maniac Mansion
-  * Monkey Island 2: LeChuck's Revenge
-  * Simon the Sorcerer 1 (Floppy version)
-  * Simon the Sorcerer 2 (Floppy version)
-      -- bypassed with kind permission from Adventure Soft,
-         since it was bypassed in all CD releases of the game.
-  * The Secret of Monkey Island (VGA)
-  * Waxworks
-  * Zak McKracken and the Alien Mindbenders
-
-
-3.2) Day of the Tentacle notes:
+3.1) Beneath a Steel Sky notes:
 ---- --------------------------
+Starting with ScummVM 0.8.0 you need the additional 'SKY.CPT' file to
+run Beneath a Steel Sky.
 
-At one point in the game, you come across a computer that allows you
-to play the original Maniac Mansion as an easter egg. ScummVM supports
-this, with a few caveats:
-
-ScummVM will scan your configuration file for a game that's in a
-'Maniac' sub-folder of your Day of the Tentacle folder. If you've
-copied the data files from the CD version, this should already be the
-case but you have to add the game to ScummVM as well.
-
-To return to Day of the Tentacle, press F5 and select "Return to
-Launcher".
-
-This means that you could in theory use any game as the easter egg.
-Indeed, there is a "secret" configuration setting, "easter_egg", to
-override the ID of the game to run. Be aware, though, that not all
-games support returning to the launcher, and setting it up to use Day
-of the Tentacle itself as the easter egg game is not recommended.
+This file is available on the 'Downloads' page of the ScummVM website.
+You can place it in either the directory containing the other game data
+files (SKY.DNR, SKY.DSK), in your extrapath, or in the directory where
+your ScummVM executable resides.
 
 
-3.3) Commodore64 games notes:
----- ------------------------
-Both Maniac Mansion and Zak McKracken run but Maniac Mansion is not yet
-playable. Simply name the D64 disks "maniac1.d64" and "maniac2.d64"
-respectively "zak1.d64" and "zak2.d64", then ScummVM should be able to
-automatically detect the game if you point it at the right directory.
-
-Alternatively, you can use 'extract_mm_c64' from the tools package to
-extract the data files. But then the game will not be properly
-autodetected by ScummVM, and you must make sure that the platform is set
-to Commodore64. We recommend using the much simpler approach described
-in the previous paragraph.
-
-
-3.4) Maniac Mansion NES notes:
----- -------------------------
-Supported versions are English GB (E), French (F), German (G), Italian (I),
-Swedish (SW) and English US (U). ScummVM requires just the PRG section
-to run and not the whole ROM.
-
-In order to get the game working, you will have to strip out the first
-16 bytes from the ROM you are trying to work with. Any hex editor will
-work as long as you are able to copy/paste.  After you open the ROM with
-the hex editor, copy everything from the second row (17th byte) to the
-end. After you do this, paste it to a new hex file. Name the new file
-"Maniac Mansion (XX).prg" while XX stands for the version you are
-working with (E, F, G, I, SW, or U).  The final size should be exactly
-262144 bytes.
-
-If you add the game manually make sure that the platform is set to NES.
-
-Most common mistakes which prevents the game from running:
-
-  * Bad file
-  * ROM extracted with the 0.7.0 tools
-  * You try to feed ScummVM with the FULL ROM and not just the PRG
-    section.
-
-It is also possible to extract the separate LFL files from the PRG
-section. To do so use the 'extract_mm_nes' utility from the tools
-package.
-
-
-3.5) Macintosh games notes:
----- ----------------------
-All LucasArts SCUMM based adventures, except COMI, also exist in versions
-for the Macintosh. ScummVM can use most (all?) of them, however, in some
-cases some additional work is required. First off, if you are not using
-a Macintosh for this, accessing the CD/floppy data might be tricky. The
-reason for this is that the mac uses a special disk format called HFS
-which other systems usually do not support. However, there are various
-free tools which allow reading such HFS volumes. For example
-"HFVExplorer" for Windows and "hfsutils" for Linux and other Unix-like
-operating systems.
-
-Most of the newer games on the Macintosh shipped with only a single data
-file (note that in some cases this data file was made invisible, so you
-may need extra tools in order to copy it). ScummVM is able to directly
-use such a data file; simply point ScummVM at the directory containing
-it, and it should work (just like with every other supported game).
-
-We also provide a tool called 'extract_scumm_mac' in the tools package
-to extract the data from these data files, but this is neither required
-nor recommended.
-
-For further information on copying Macintosh game files to your hard
-disk see:
-
-  http://wiki.scummvm.org/index.php/HOWTO-Mac_Games
-
-
-3.6) Multi-CD games notes:
----- ---------------------
-In general, ScummVM does not deal very well with Multi-CD games. This is
-because ScummVM assumes everything about a game can be found in one
-directory. Even if ScummVM does make some provisions for asking the user
-to change CD, the original game executables usually installed a small
-number of files to the hard disk. Unless these files can be found on all
-the CDs, ScummVM will be in trouble.
-
-Fortunately, ScummVM has no problems running the games entirely from
-hard disk, if you create a directory with the correct combination of
-files. Usually, when a file appears on more than one CD you can pick
-either of them.
-
-
-3.7) The Curse of Monkey Island notes:
----- ---------------------------------
-For this game, you will need the comi.la0, comi.la1 and comi.la2 files.
-The comi.la0 file can be found on either CD, but since they are
-identical it doesn't matter which one of them you use.
-
-In addition, you will need to create a "resource" subdirectory
-containing all of the files from -both- "resource" subdirectories on the
-two CDs. Some of the files appear on both CDs, but again they're
-identical.
-
-
-3.8) Broken Sword games notes:
+3.2) Broken Sword games notes:
 ---- -------------------------
 The instructions for the Broken Sword games are for the Sold-Out
 Software versions, with each game on two CDs, since these were the
@@ -621,7 +494,39 @@ them. Hopefully they are general enough to be useful to other releases
 as well.
 
 
-3.8.1) Broken Sword games cutscenes:
+3.2.1) Broken Sword:
+------ -------------
+For this game, you will need all of the files from the clusters
+directories on both CDs. For the Windows and Macintosh versions, you
+will also need the speech.clu files from the speech directories, but
+since they are not identical you will need to rename them speech1.clu
+and speech2.clu for CD 1 and 2 respectively. The PlayStation version
+requires the speech.tab, speech.dat, speech.lis, and speech.inf.
+
+In addition, the Windows and Macintosh versions require a music
+subdirectory with all of the files from the music subdirectories on
+both CDs. Some of these files appear on both CDs, but in these cases
+they are either identical or, in one case, so nearly identical that it
+makes little difference. The PlayStation version requires tunes.dat and
+tunes.tab.
+
+
+3.2.2) Broken Sword II:
+------ ----------------
+For this game, you will need all of the files from the clusters
+directories on both CDs. (Actually, a few of them may not be strictly
+necessary, but the ones that I'm uncertain about are all fairly small.)
+You will need to rename the speech.clu and music.clu files speech1.clu,
+speech2.clu, music1.clu and music2.clu so that ScummVM can tell which
+ones are from CD 1 and which ones are from CD 2. Any other files that
+appear in both cluster directories are identical. Use whichever you
+like.
+
+In addition, you will need the cd.inf and, optionally, the startup.inf
+files from the sword2 directory on CD 1.
+
+
+3.2.3) Broken Sword games cutscenes:
 ------ -----------------------------
 The cutscenes for the Broken Sword games have a bit of a history (see
 the next section, if you are interested), but in general all you need to
@@ -662,7 +567,7 @@ currently does not work when running PlayStation videos. (Broken Sword
 II already has subtitles; no extra work is needed for them.)
 
 
-3.8.2) Broken Sword games cutscenes, in retrospect:
+3.2.4) Broken Sword games cutscenes, in retrospect:
 ------ --------------------------------------------
 The original releases of the Broken Sword games used RAD Game Tools's
 Smacker(tm) format. As RAD was unwilling to open the older legacy
@@ -687,50 +592,59 @@ decoding MPEG movies added a lot of complexity, and they didn't look as
 good as the Smacker and DXA versions anyway.
 
 
-3.8.3) Broken Sword:
------- -------------
-For this game, you will need all of the files from the clusters
-directories on both CDs. For the Windows and Macintosh versions, you
-will also need the speech.clu files from the speech directories, but
-since they are not identical you will need to rename them speech1.clu
-and speech2.clu for CD 1 and 2 respectively. The PlayStation version
-requires the speech.tab, speech.dat, speech.lis, and speech.inf.
-
-In addition, the Windows and Macintosh versions require a music
-subdirectory with all of the files from the music subdirectories on
-both CDs. Some of these files appear on both CDs, but in these cases
-they are either identical or, in one case, so nearly identical that it
-makes little difference. The PlayStation version requires tunes.dat and
-tunes.tab.
-
-
-3.8.4) Broken Sword II:
------- ----------------
-For this game, you will need all of the files from the clusters
-directories on both CDs. (Actually, a few of them may not be strictly
-necessary, but the ones that I'm uncertain about are all fairly small.)
-You will need to rename the speech.clu and music.clu files speech1.clu,
-speech2.clu, music1.clu and music2.clu so that ScummVM can tell which
-ones are from CD 1 and which ones are from CD 2. Any other files that
-appear in both cluster directories are identical. Use whichever you
-like.
-
-In addition, you will need the cd.inf and, optionally, the startup.inf
-files from the sword2 directory on CD 1.
-
-
-3.9) Beneath a Steel Sky notes:
+3.3) Day of the Tentacle notes:
 ---- --------------------------
-Starting with ScummVM 0.8.0 you need the additional 'SKY.CPT' file to
-run Beneath a Steel Sky.
 
-This file is available on the 'Downloads' page of the ScummVM website.
-You can place it in either the directory containing the other game data
-files (SKY.DNR, SKY.DSK), in your extrapath, or in the directory where
-your ScummVM executable resides.
+At one point in the game, you come across a computer that allows you
+to play the original Maniac Mansion as an easter egg. ScummVM supports
+this, with a few caveats:
+
+ScummVM will scan your configuration file for a game that's in a
+'Maniac' sub-folder of your Day of the Tentacle folder. If you've
+copied the data files from the CD version, this should already be the
+case but you have to add the game to ScummVM as well.
+
+To return to Day of the Tentacle, press F5 and select "Return to
+Launcher".
+
+This means that you could in theory use any game as the easter egg.
+Indeed, there is a "secret" configuration setting, "easter_egg", to
+override the ID of the game to run. Be aware, though, that not all
+games support returning to the launcher, and setting it up to use Day
+of the Tentacle itself as the easter egg game is not recommended.
 
 
-3.10) Flight of the Amazon Queen notes:
+3.4) Discworld II notes:
+---- -------------------
+For this game, you will need all of the files in the DW2 subdirectory
+on both CDs.
+In addition, you will need the SAMPLE.BNK file.
+
+You will need to rename ENGLISH.SMP, ENGLISH.IDX and ENGLISH.TXT
+on CD1 to ENGLISH1.SMP, ENGLISH1.IDX and ENGLISH1.txt.
+The same files on CD2 need to be renamed to ENGLISH2.SMP, ENGLISH2.IDX
+and ENGLISH2.TXT.
+
+
+3.5) Dragon History notes:
+---- ---------------------
+There are 4 language variants of the game: Czech, English, Polish and
+German.  Each of them is distributed in a separate archive.  The only
+official version is the Czech one, and the English, Polish and German
+ports have always been work in progress and never officially released.
+Although all texts are fully translated, it is known that some of them
+contain typos.
+
+There exists an optional Czech dubbing for the game.  For bandwidth
+reasons, you can download it separately and then unpack it to the
+directory of the game.  You can listen to the Czech dubbing with all
+language variants of the game, while reading the subtitles.
+
+All game files and the walkthrough can be downloaded from
+http://www.ucw.cz/draci-historie/index-en.html
+
+
+3.6) Flight of the Amazon Queen notes:
 ---- ---------------------------------
 In order to use a non-freeware version of Flight of the Amazon Queen
 (from original CD), you will need to place the 'queen.tbl' file
@@ -745,8 +659,8 @@ specific version, and thus removing the run-time dependency on the
 sound effects with MP3, OGG or FLAC.
 
 
-3.11) Gobliiins notes:
------ ----------------
+3.7) Gobliiins notes:
+---- ----------------
 The CD versions of the Gobliiins series contain one big audio track
 which you need to rip (see the section on using compressed audio files)
 and copy into the game directory if you want to have in-game music
@@ -755,8 +669,8 @@ track and its volume is therefore changed with the music volume control
 as well.
 
 
-3.12) Inherit the Earth: Quest for the Orb notes:
------ -------------------------------------------
+3.8) Inherit the Earth: Quest for the Orb notes:
+---- -------------------------------------------
 In order to run the Mac OS X Wyrmkeep re-release of the game you will
 need to copy over data from the CD to your hard disk. If you're on a PC
 then consult:
@@ -775,15 +689,93 @@ format, as they should include both resource and data forks. Copy all
 'ITE *' files.
 
 
-3.13) Simon the Sorcerer 1 and 2 notes:
------ ---------------------------------
+3.9) Maniac Mansion Apple II/NES notes:
+---- ----------------------------------
+Apple II:
+You need to rename disk image 1 to maniac1.dsk
+You need to rename disk image 1 to maniac2.dsk
+
+NES:
+Supported versions are English GB (E), French (F), German (G), Italian (I),
+Swedish (SW) and English US (U). ScummVM requires just the PRG section
+to run and not the whole ROM.
+
+In order to get the game working, you will have to strip out the first
+16 bytes from the ROM you are trying to work with. Any hex editor will
+work as long as you are able to copy/paste.  After you open the ROM with
+the hex editor, copy everything from the second row (17th byte) to the
+end. After you do this, paste it to a new hex file. Name the new file
+"Maniac Mansion (XX).prg" while XX stands for the version you are
+working with (E, F, G, I, SW, or U).  The final size should be exactly
+262144 bytes.
+
+If you add the game manually make sure that the platform is set to NES.
+
+Most common mistakes which prevents the game from running:
+
+  * Bad file
+  * ROM extracted with the 0.7.0 tools
+  * You try to feed ScummVM with the FULL ROM and not just the PRG
+    section.
+
+It is also possible to extract the separate LFL files from the PRG
+section. To do so use the 'extract_mm_nes' utility from the tools
+package.
+
+
+3.10) Mickey's Space Adventure notes:
+----- -------------------------------
+To run Mickey's Space Adventure under ScummVM, the original executable
+of the game (mickey.exe) is needed together with the game's data files.
+
+There is extensive mouse support for the game under ScummVM, even though
+there wasn't any mouse support in the original game. Menu items can be
+selected using the mouse, and it is possible to move to other locations
+using the mouse as well. When the mouse cursor is hovered on the edges
+of the screen, it changes color to red if it is possible to walk towards
+that direction. The player can then simply click on the edges of the
+game's screen to change location, similar to many adventure games, which
+is simpler and more straightforward than moving around using the menu.
+
+
+3.11) Nippon Safes Inc. Amiga notes:
+----- ------------------------------
+For this game, you will need disk0, it (en, fr, ge for the
+international version), global.table and pointer.
+
+In addtition, you will need to rename disk image 2 to disk1,
+disk image 3 to disk2, disk image 4 to disk3 and disk image 5 to disk4.
+
+
+3.12) Simon the Sorcerer games notes:
+----- -------------------------------
 If you have the dual version of Simon the Sorcerer 1 or 2 on CD, you
 will find the Windows version in the main directory of the CD and the
 DOS version in the DOS directory of the CD.
 
 
+3.13) The Curse of Monkey Island notes:
+----- ---------------------------------
+For this game, you will need the comi.la0, comi.la1 and comi.la2 files.
+The comi.la0 file can be found on either CD, but since they are
+identical it doesn't matter which one of them you use.
+
+In addition, you will need to create a "resource" subdirectory
+containing all of the files from -both- "resource" subdirectories on the
+two CDs. Some of the files appear on both CDs, but again they're
+identical.
+
+
 3.14) The Feeble Files notes:
 ----- -----------------------
+Amiga/Macintosh:
+You need to install a small pack of cutscenes that are missing in both
+of these versions of The Feeble Files.
+It's called "The Feeble Files - Omni TV and epilogue cutscenes for the
+Amiga and Macintosh versions" and you can get it here:
+<http://www.scummvm.org/games/#feeble>
+
+Windows:
 If you have the Windows version of The Feeble Files, there are several
 things to note.
 
@@ -811,8 +803,30 @@ thus you only need to grab it in case ScummVM complains about the file
 being missing.
 
 
-3.16) Sierra AGI games Predictive Input Dialog notes:
------ -----------------------------------------------
+3.16) Troll's Tale notes:
+----- -------------------
+The original game came in a PC booter disk, therefore it is necessary to
+dump the contents of that disk in an image file and name it "troll.img"
+to be able to play the game under ScummVM.
+
+
+3.17) Winnie the Pooh notes:
+----- ----------------------
+It is possible to import saved games from the original interpreter of the
+game into ScummVM.
+
+There is extensive mouse support for the game under ScummVM, even though
+there wasn't any mouse support in the original game. Menu items can be
+selected using the mouse, and it is possible to move to other locations
+using the mouse as well. When the mouse cursor is hovered on the edges
+of the screen, it changes color to red if it is possible to walk towards
+that direction. The player can then simply click on the edges of the
+game's screen to change location, similar to many adventure games, which
+is simpler and more straightforward than moving around using the menu.
+
+
+3.18) Sierra AGI games: Predictive Input Dialog:
+----- ------------------------------------------
 The Predictive Input Dialog is a ScummVM aid for running AGI engine
 games (which notoriously require command line input) on devices with
 limited keyboard support. In these situations, since typing with emulated
@@ -865,63 +879,8 @@ naturally mapping the functionality to the numeric keypad. Also, the
 dialog's buttons can be navigated with the arrow and the enter keys.
 
 
-3.17) Mickey's Space Adventure notes:
------ -------------------------------
-To run Mickey's Space Adventure under ScummVM, the original executable
-of the game (mickey.exe) is needed together with the game's data files.
-
-There is extensive mouse support for the game under ScummVM, even though
-there wasn't any mouse support in the original game. Menu items can be
-selected using the mouse, and it is possible to move to other locations
-using the mouse as well. When the mouse cursor is hovered on the edges
-of the screen, it changes color to red if it is possible to walk towards
-that direction. The player can then simply click on the edges of the
-game's screen to change location, similar to many adventure games, which
-is simpler and more straightforward than moving around using the menu.
-
-
-3.18) Winnie the Pooh notes:
------ ----------------------
-It is possible to import saved games from the original interpreter of the
-game into ScummVM.
-
-There is extensive mouse support for the game under ScummVM, even though
-there wasn't any mouse support in the original game. Menu items can be
-selected using the mouse, and it is possible to move to other locations
-using the mouse as well. When the mouse cursor is hovered on the edges
-of the screen, it changes color to red if it is possible to walk towards
-that direction. The player can then simply click on the edges of the
-game's screen to change location, similar to many adventure games, which
-is simpler and more straightforward than moving around using the menu.
-
-
-3.19) Troll's Tale notes:
------ -------------------
-The original game came in a PC booter disk, therefore it is necessary to
-dump the contents of that disk in an image file and name it "troll.img"
-to be able to play the game under ScummVM.
-
-
-3.20) Dragon History notes:
------ ---------------------
-There are 4 language variants of the game: Czech, English, Polish and
-German.  Each of them is distributed in a separate archive.  The only
-official version is the Czech one, and the English, Polish and German
-ports have always been work in progress and never officially released.
-Although all texts are fully translated, it is known that some of them
-contain typos.
-
-There exists an optional Czech dubbing for the game.  For bandwidth
-reasons, you can download it separately and then unpack it to the
-directory of the game.  You can listen to the Czech dubbing with all
-language variants of the game, while reading the subtitles.
-
-All game files and the walkthrough can be downloaded from
-http://www.ucw.cz/draci-historie/index-en.html
-
-
-3.21) Simultaneous speech and subtitles in Sierra SCI games:
------ ------------------------------------------------------
+3.19) Sierra SCI games: Simultaneous speech and subtitles:
+----- ----------------------------------------------------
 Certain CD versions of Sierra SCI games had both speech and text
 resources. Some have an option to toggle between the two, but there are
 some cases where there wasn't any option to enable both simultaneously.
@@ -968,7 +927,205 @@ Space Quest 4 CD:
     options dialog, or via ScummVM's audio options.
 
 
-3.22) Known Problems:
+3.20) Zork games notes:
+----- -----------------
+To run the supported Zork games (Zork Nemesis: The Forbidden Lands
+and Zork: Grand Inquisitor) you need to copy some (extra) data to it's
+corresponding destination.
+
+Zork Nemesis: The Forbidden Lands
+
+All versions
+
+Download the Liberation(tm) fonts package
+<https://fedorahosted.org/releases/l/i/liberation-fonts/liberation-fonts-ttf-2.00.1.tar.gz>
+and unpack all the ttf files into your ScummVM extras directory.
+Alternatively, download the GNU FreeFont TTF package
+<https://ftp.gnu.org/gnu/freefont/freefont-ttf.zip> and unzip all the
+ttf files from the sfd directory into your ScummVM extras directory,
+though at the time of writing these fonts cause some text rendering issues.
+Download the subtitles patch
+<http://www.thezorklibrary.com/installguides/znpatch.zip> and unzip
+the addon directory into the game root directory
+
+GoG version
+
+Use the GoG installer, no further file copying is needed
+
+CD version
+
+Copy the following from the nemesis directory of CD1 into the game root directory:
+The znemmx directory
+The znemscr directory
+nemesis.str
+From CD1, copy the zassets directory into the game root directory
+From CD2, copy the zassets directory into the game root directory, overwriting any duplicate files
+From CD3, copy the zassets directory into the game root directory, overwriting any duplicate files
+
+DVD version
+
+Copy the following from the nemesis directory into the game root directory:
+The znemmx directory
+The znemscr directory
+nemesis.str
+Note: You'll also need to move cursor.zfs from the zassets/global directory into the znemscr directory
+Copy the disc2 directory into the game root directory
+Copy the disc3 directory into the game root directory
+Copy the zassets directory into the game root directory
+
+
+Zork: Grand Inquisitor
+
+All versions
+
+Download the Liberation(tm) fonts package
+<https://fedorahosted.org/releases/l/i/liberation-fonts/liberation-fonts-ttf-2.00.1.tar.gz>
+and unpack all the ttf files into your ScummVM extras directory.
+Alternatively, download the GNU FreeFont TTF package
+<https://ftp.gnu.org/gnu/freefont/freefont-ttf.zip> and unzip all the
+ttf files from the sfd directory into your ScummVM extras directory,
+though at the time of writing these fonts cause some text rendering issues.
+
+GoG version
+
+Use the GoG installer, no further file copying is needed
+
+CD version
+
+Copy the following from the zgi directory of CD1 into the game root directory:
+The zgi_mx directory
+cursor.zfs
+death.zfs
+inquis.str
+inquis.zix
+r.svr
+scripts.zfs
+subtitle.zfs
+From CD1, copy the zassets1 directory into the game root directory
+From CD2, copy the zassets2 directory into the game root directory
+It's recommended to apply patch 1.2
+<http://www.thezorklibrary.com/installguides/Zpatch.exe>, but you may
+have to install the game normally for that, as the patch has its own installer.
+
+DVD version
+
+Copy the following from the zgi_e directory into the game root directory:
+The addon directory (game patch 1.2)
+The zgi_mx directory
+cursor.zfs
+death.zfs
+inquis.str
+inquis.zix
+r.svr
+scripts.zfs
+subtitle.zfs
+Copy the eng_mpeg directory (hires MPEG2 video files) into the game root directory
+Copy the zassetsc directory into the game root directory
+Copy the zassetse directory into the game root directory
+
+
+3.21) Commodore64 games notes:
+----- ------------------------
+Both Maniac Mansion and Zak McKracken run but Maniac Mansion is not yet
+playable. Simply name the D64 disks "maniac1.d64" and "maniac2.d64"
+respectively "zak1.d64" and "zak2.d64", then ScummVM should be able to
+automatically detect the game if you point it at the right directory.
+
+Alternatively, you can use 'extract_mm_c64' from the tools package to
+extract the data files. But then the game will not be properly
+autodetected by ScummVM, and you must make sure that the platform is set
+to Commodore64. We recommend using the much simpler approach described
+in the previous paragraph.
+
+
+3.22) Macintosh games notes:
+----- ----------------------
+All LucasArts SCUMM based adventures, except COMI, also exist in versions
+for the Macintosh. ScummVM can use most (all?) of them, however, in some
+cases some additional work is required. First off, if you are not using
+a Macintosh for this, accessing the CD/floppy data might be tricky. The
+reason for this is that the mac uses a special disk format called HFS
+which other systems usually do not support. However, there are various
+free tools which allow reading such HFS volumes. For example
+"HFVExplorer" for Windows and "hfsutils" for Linux and other Unix-like
+operating systems.
+
+Most of the newer games on the Macintosh shipped with only a single data
+file (note that in some cases this data file was made invisible, so you
+may need extra tools in order to copy it). ScummVM is able to directly
+use such a data file; simply point ScummVM at the directory containing
+it, and it should work (just like with every other supported game).
+
+We also provide a tool called 'extract_scumm_mac' in the tools package
+to extract the data from these data files, but this is neither required
+nor recommended.
+
+For further information on copying Macintosh game files to your hard
+disk see:
+
+  http://wiki.scummvm.org/index.php/HOWTO-Mac_Games
+
+
+3.23) Copy Protection:
+----- ----------------
+The ScummVM team does not condone piracy. However, there are cases where
+the game companies (such as LucasArts) themselves bundled 'cracked'
+executables with their games -- in these cases the data files still
+contain the copy protection scripts, but the interpreter bypasses them
+(similar to what an illegally cracked version might do, only that here
+the producer of the game did it). There is no way for us to tell the
+difference between legitimate and pirated data files, so for the games
+where we know that a cracked version of the original interpreter was
+sold at some point, ScummVM will always have to bypass the copy
+protection.
+
+In some cases ScummVM will still show the copy protection screen. Try
+entering any answer. Chances are that it will work.
+
+ScummVM will skip copy protection in the following games:
+
+  * Beneath a Steel Sky
+      -- bypassed with kind permission from Revolution Software.
+  * Dreamweb
+      -- a list of available commands in the in-game terminals is now shown
+         when the player uses the 'help' command
+  * Inherit the Earth: Quest for the Orb (Floppy version)
+      -- bypassed with kind permission from Wyrmkeep Entertainment,
+         since it was bypassed in all CD releases of the game.
+  * Loom (EGA DOS)
+  * Maniac Mansion
+  * Monkey Island 2: LeChuck's Revenge
+  * Simon the Sorcerer 1 (Floppy version)
+  * Simon the Sorcerer 2 (Floppy version)
+      -- bypassed with kind permission from Adventure Soft,
+         since it was bypassed in all CD releases of the game.
+  * The Secret of Monkey Island (VGA)
+  * Waxworks
+  * Zak McKracken and the Alien Mindbenders
+
+
+3.24) Datafiles:
+----- ----------
+For a comprehensive list of required Datafiles for supported games
+visit: <http://wiki.scummvm.org/index.php/Datafiles>
+
+
+3.25) Multi-CD games notes:
+----- ---------------------
+In general, ScummVM does not deal very well with Multi-CD games. This is
+because ScummVM assumes everything about a game can be found in one
+directory. Even if ScummVM does make some provisions for asking the user
+to change CD, the original game executables usually installed a small
+number of files to the hard disk. Unless these files can be found on all
+the CDs, ScummVM will be in trouble.
+
+Fortunately, ScummVM has no problems running the games entirely from
+hard disk, if you create a directory with the correct combination of
+files. Usually, when a file appears on more than one CD you can pick
+either of them.
+
+
+3.26) Known Problems:
 ----- ---------------
 This release has the following known problems. There is no need to
 report them, although patches to fix them are welcome. If you discover a
@@ -1138,7 +1295,7 @@ arguments -- see the next section.
   --list-themes            Display list of all usable GUI themes
   -e, --music-driver=MODE  Select music driver (see also section 7.0)
   --list-audio-devices     List all available audio devices
-  -q, --language=LANG      Select game's language (see also section 5.2)
+  -q, --language=LANG      Select game's language (see also section 5.5)
   -m, --music-volume=NUM   Set the music volume, 0-255 (default: 192)
   -s, --sfx-volume=NUM     Set the sfx volume, 0-255 (default: 192)
   -r, --speech-volume=NUM  Set the voice volume, 0-255 (default: 192)
@@ -1207,63 +1364,49 @@ Examples:
    /path/to/scummvm -f -n -p/cdrom/resource/ ft
 
 
-5.2) Language options:
----- -----------------
-ScummVM includes a language option for Maniac Mansion, Zak McKracken,
-The Dig, The Curse of Monkey Island, Beneath a Steel Sky and
-Broken Sword.
+5.2) Global Menu:
+---- ------------
+The Global Menu is a general menu which is available to all of the game
+engines by pressing Ctrl-F5.  From this menu there are the following
+buttons: Resume, Options, About, Return to Launcher, and Quit. Selecting
+'Options' will display a dialog where basic audio settings, such as
+volume levels, can be adjusted. Selecting 'Return to Launcher' will
+close the current game and return the user back to the ScummVM Launcher,
+where another game may be selected to play.
 
-Note that with the exception of Beneath a Steel Sky, Broken Sword,
-multilanguage versions of Goblins games and Nippon Safes Inc., using
-this option does *not* change the language of the game (which usually is
-hardcoded), but rather is only used to select the appropriate font (e.g.
-for a German version of a game, one containing umlauts).
+Note: Returning to the Launcher is not supported by all of the engines,
+and the button will be disabled in the Global Menu if it is not
+supported.
 
-An exception are The Dig and The Curse of Monkey Island -- non-English
-versions can be set to 'English.' This however only affects subtitles;
-game speech will remain the same.
+Engines which currently support returning to the Launcher are:
 
-Maniac Mansion and Zak McKracken
-    en  - English (default)
-    de  - German
-    fr  - French
-    it  - Italian
-    es  - Spanish
-
-The Dig
-    jp  - Japanese
-    zh  - Chinese
-    kr  - Korean
-
-The Curse of Monkey Island
-    en  - English (default)
-    de  - German
-    fr  - French
-    it  - Italian
-    pt  - Portuguese
-    es  - Spanish
-    jp  - Japanese
-    zh  - Chinese
-    kr  - Korean
-
-Beneath a Steel Sky
-    gb  - English (Great Britain) (default)
-    en  - English (USA)
-    de  - German
-    fr  - French
-    it  - Italian
-    pt  - Portuguese
-    es  - Spanish
-    se  - Swedish
-
-Broken Sword
-    en  - English (default)
-    de  - German
-    fr  - French
-    it  - Italian
-    es  - Spanish
-    pt  - Portuguese
-    cz  - Czech
+    AGI
+    AGOS
+    CINE
+    COMPOSER
+    CRUISE
+    DRACI
+    DRASCULA
+    GOB
+    GROOVIE
+    HUGO
+    KYRA
+    LURE
+    MADE
+    MOHAWK
+    PARALLACTION
+    QUEEN
+    SAGA
+    SCI
+    SCUMM
+    SKY
+    SWORD1
+    SWORD2
+    TEENAGENT
+    TOUCHE
+    TSAGE
+    TUCKER
+    ZVISION
 
 
 5.3) Graphics filters:
@@ -1311,52 +1454,7 @@ Curse of Monkey Island or Broken Sword) will be scaled to 1280x960 and
 1920x1440.
 
 
-5.4) Global Menu:
----- ------------
-The Global Menu is a general menu which is available to all of the game
-engines by pressing Ctrl-F5.  From this menu there are the following
-buttons: Resume, Options, About, Return to Launcher, and Quit. Selecting
-'Options' will display a dialog where basic audio settings, such as
-volume levels, can be adjusted. Selecting 'Return to Launcher' will
-close the current game and return the user back to the ScummVM Launcher,
-where another game may be selected to play.
-
-Note: Returning to the Launcher is not supported by all of the engines,
-and the button will be disabled in the Global Menu if it is not
-supported.
-
-Engines which currently support returning to the Launcher are:
-
-    AGI
-    AGOS
-    CINE
-    COMPOSER
-    CRUISE
-    DRACI
-    DRASCULA
-    GOB
-    GROOVIE
-    HUGO
-    KYRA
-    LURE
-    MADE
-    MOHAWK
-    PARALLACTION
-    QUEEN
-    SAGA
-    SCI
-    SCUMM
-    SKY
-    SWORD1
-    SWORD2
-    TEENAGENT
-    TOUCHE
-    TSAGE
-    TUCKER
-    ZVISION
-
-
-5.5) Hotkeys:
+5.4) Hotkeys:
 ---- --------
 ScummVM supports various in-game hotkeys. They differ between SCUMM games and
 other games.
@@ -1545,6 +1643,65 @@ synchronisation.
 Note for WinCE users: Due to the limited keyboard input in most devices,
 a small subset of these hot keys are supported via key remapping and/or
 panel actions. Please consult the README-WinCE.txt file.
+
+
+5.5) Language options:
+---- -----------------
+ScummVM includes a language option for Maniac Mansion, Zak McKracken,
+The Dig, The Curse of Monkey Island, Beneath a Steel Sky and
+Broken Sword.
+
+Note that with the exception of Beneath a Steel Sky, Broken Sword,
+multilanguage versions of Goblins games and Nippon Safes Inc., using
+this option does *not* change the language of the game (which usually is
+hardcoded), but rather is only used to select the appropriate font (e.g.
+for a German version of a game, one containing umlauts).
+
+An exception are The Dig and The Curse of Monkey Island -- non-English
+versions can be set to 'English.' This however only affects subtitles;
+game speech will remain the same.
+
+Maniac Mansion and Zak McKracken
+    en  - English (default)
+    de  - German
+    fr  - French
+    it  - Italian
+    es  - Spanish
+
+The Dig
+    jp  - Japanese
+    zh  - Chinese
+    kr  - Korean
+
+The Curse of Monkey Island
+    en  - English (default)
+    de  - German
+    fr  - French
+    it  - Italian
+    pt  - Portuguese
+    es  - Spanish
+    jp  - Japanese
+    zh  - Chinese
+    kr  - Korean
+
+Beneath a Steel Sky
+    gb  - English (Great Britain) (default)
+    en  - English (USA)
+    de  - German
+    fr  - French
+    it  - Italian
+    pt  - Portuguese
+    es  - Spanish
+    se  - Swedish
+
+Broken Sword
+    en  - English (default)
+    de  - German
+    fr  - French
+    it  - Italian
+    es  - Spanish
+    pt  - Portuguese
+    cz  - Czech
 
 
 6.0) Saved Games:
@@ -1941,7 +2098,7 @@ a "device number" using the "SCUMMVM_MIDIPORT" environment variable.
 7.8) Using compressed audio files
 ---- ----------------------------
 
-7.8.0) Using MP3 files for CD audio:
+7.8.1) Using MP3 files for CD audio:
 ------ -----------------------------
 Use LAME or some other MP3 encoder to rip the cd audio tracks to files.
 Name the files track1.mp3 track2.mp3 etc. ScummVM must be compiled with
@@ -1952,7 +2109,7 @@ can be done with the following LAME command line:
   lame -t -q 0 -b 96 track1.wav track1.mp3
 
 
-7.8.1) Using Ogg Vorbis files for CD audio:
+7.8.2) Using Ogg Vorbis files for CD audio:
 ------ ------------------------------------
 Use oggenc or some other vorbis encoder to encode the audio tracks to
 files. Name the files track1.ogg track2.ogg etc. ScummVM must be
@@ -1964,7 +2121,7 @@ q specifying the desired quality from 0 to 10:
   oggenc -q 5 track1.wav
 
 
-7.8.2) Using Flac files for CD audio:
+7.8.3) Using Flac files for CD audio:
 ------ ------------------------------
 Use flac or some other flac encoder to encode the audio tracks to files.
 Name the files track1.flac track2.flac etc. If your filesystem only
@@ -1979,7 +2136,7 @@ Remember that the quality is always the same, varying encoder options
 will only affect the encoding time and resulting filesize.
 
 
-7.8.3) Compressing MONSTER.SOU with MP3:
+7.8.4) Compressing MONSTER.SOU with MP3:
 ------ ---------------------------------
 You need LAME, and our 'compress_scumm_sou' utility from the
 scummvm-tools package to perform this task, and ScummVM must be compiled
@@ -1991,7 +2148,7 @@ Eventually you will have a much smaller monster.so3 file, copy this file
 to your game directory. You can safely remove the monster.sou file.
 
 
-7.8.4) Compressing MONSTER.SOU with Ogg Vorbis:
+7.8.5) Compressing MONSTER.SOU with Ogg Vorbis:
 ------ ----------------------------------------
 As above, but ScummVM must be compiled with OGG support. Run:
 
@@ -2002,7 +2159,7 @@ your game directory. Ogg encoding may take a considerable longer amount
 of time than MP3, so have a good book handy.
 
 
-7.8.5) Compressing MONSTER.SOU with Flac:
+7.8.6) Compressing MONSTER.SOU with Flac:
 ------ ----------------------------------
 As above, but ScummVM must be compiled with Flac support. Run:
 
@@ -2017,7 +2174,7 @@ those kind of soundfiles. Be sure to read the encoder documentation
 before you use other values.
 
 
-7.8.6) Compressing music/sfx/speech in AGOS games:
+7.8.7) Compressing music/sfx/speech in AGOS games:
 ------ -------------------------------------------
 Use our 'compress_agos' utility from the scummvm-tools package to
 perform this task. You can choose between multiple target formats, but
@@ -2052,7 +2209,7 @@ Eventually you will have a much smaller *.mp3, *.ogg or *.fla file, copy
 this file to your game directory. You can safely remove the old file.
 
 
-7.8.7) Compressing speech/music in Broken Sword:
+7.8.8) Compressing speech/music in Broken Sword:
 ------ -----------------------------------------
 The 'compress_sword1' tool from the scummvm-tools package can encode
 music and speech to MP3, Ogg Vorbis as well as Flac. The easiest way
@@ -2070,7 +2227,7 @@ instead of MP3.
 Use "compress_sword1 --help" to get a full list of the options.
 
 
-7.8.8) Compressing speech/music in Broken Sword II:
+7.8.9) Compressing speech/music in Broken Sword II:
 ------ --------------------------------------------
 Use our 'compress_sword2' utility from the scummvm-tools package to
 perform this task. You can choose between multiple target formats, but
@@ -2478,6 +2635,17 @@ debug messages (see https://technet.microsoft.com/en-us/sysinternals/debugview.a
       if the libraries are in /Users/foo/lib).
     * For more information refer to:
       http://wiki.scummvm.org/index.php/Compiling_ScummVM/MacOS_X_Crosscompiling
+
+AmigaOS 4:
+    * Get and install the latest SDK from here:
+    <http://hyperion-entertainment.biz/index.php/downloads?view=files&parent=30>
+    * Make sure that you have SDL installed, you may also need
+      libogg, libvorbis, libvorbisfile, libFLAC, libtheoradec, libfaad,
+      libmpeg2, libfreetype, libmad and libGL.
+    * In a shell, run 'sh'.
+    * Type './configure'.
+    * Check the 'config.mk' and 'config.log' files and if everything seems to be fine:
+    * Run 'make'.
 
   AmigaOS 4 (Cross-compiling with Cygwin):
     * Make sure that you have SDL installed, you may also need
