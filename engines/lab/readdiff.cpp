@@ -59,7 +59,7 @@ static bool continuous,
 	IsAnim         = false,
 	IsPal          = false;
 
-uint16 DataBytesPerRow;
+uint16 _dataBytesPerRow;
 DIFFHeader headerdata;
 char diffcmap[256 * 3];
 BitMap RawDiffBM;
@@ -119,12 +119,12 @@ void LabEngine::diffNextFrame() {
 	if (header == 65535)  /* Already done. */
 		return;
 
-	if (DispBitMap->Flags & BITMAPF_VIDEO) {
-		DispBitMap->Planes[0] = getCurrentDrawingBuffer();
-		DispBitMap->Planes[1] = DispBitMap->Planes[0] + 0x10000;
-		DispBitMap->Planes[2] = DispBitMap->Planes[1] + 0x10000;
-		DispBitMap->Planes[3] = DispBitMap->Planes[2] + 0x10000;
-		DispBitMap->Planes[4] = DispBitMap->Planes[3] + 0x10000;
+	if (DispBitMap->_flags & BITMAPF_VIDEO) {
+		DispBitMap->_planes[0] = getCurrentDrawingBuffer();
+		DispBitMap->_planes[1] = DispBitMap->_planes[0] + 0x10000;
+		DispBitMap->_planes[2] = DispBitMap->_planes[1] + 0x10000;
+		DispBitMap->_planes[3] = DispBitMap->_planes[2] + 0x10000;
+		DispBitMap->_planes[4] = DispBitMap->_planes[3] + 0x10000;
 	}
 
 	_event->mouseHide();
@@ -134,7 +134,7 @@ void LabEngine::diffNextFrame() {
 			_event->mouseShow();
 
 			if (!IsBM) {
-				if (headerdata.fps) {
+				if (headerdata._fps) {
 					waitForTime(WaitSec, WaitMicros);
 					addCurTime(0L, DelayMicros, &WaitSec, &WaitMicros);
 				}
@@ -162,7 +162,7 @@ void LabEngine::diffNextFrame() {
 			IsAnim = (framenumber >= 3) && (!PlayOnce);
 			CurBit = 0;
 
-			if (DispBitMap->Flags & BITMAPF_VIDEO)
+			if (DispBitMap->_flags & BITMAPF_VIDEO)
 				screenUpdate();
 
 			return; /* done with the next frame. */
@@ -182,12 +182,12 @@ void LabEngine::diffNextFrame() {
 			break;
 
 		case 10L:
-			RawDiffBM.Planes[CurBit] = *difffile;
+			RawDiffBM._planes[CurBit] = *difffile;
 
 			if (IsBM)
 				(*difffile) += size;
 			else {
-				readBlock(DrawBitMap->Planes[CurBit], size, difffile);
+				readBlock(DrawBitMap->_planes[CurBit], size, difffile);
 			}
 
 			CurBit++;
@@ -195,26 +195,26 @@ void LabEngine::diffNextFrame() {
 
 		case 11L:
 			(*difffile) += 4;
-			runLengthDecode(DrawBitMap->Planes[CurBit], *difffile);
+			runLengthDecode(DrawBitMap->_planes[CurBit], *difffile);
 			CurBit++;
 			(*difffile) += size - 4;
 			break;
 
 		case 12L:
 			(*difffile) += 4;
-			VRunLengthDecode(DrawBitMap->Planes[CurBit], *difffile, DrawBitMap->BytesPerRow);
+			VRunLengthDecode(DrawBitMap->_planes[CurBit], *difffile, DrawBitMap->_bytesPerRow);
 			CurBit++;
 			(*difffile) += size - 4;
 			break;
 
 		case 20L:
-			unDiff(DrawBitMap->Planes[CurBit], DispBitMap->Planes[CurBit], *difffile, DrawBitMap->BytesPerRow, false);
+			unDiff(DrawBitMap->_planes[CurBit], DispBitMap->_planes[CurBit], *difffile, DrawBitMap->_bytesPerRow, false);
 			CurBit++;
 			(*difffile) += size;
 			break;
 
 		case 21L:
-			unDiff(DrawBitMap->Planes[CurBit], DispBitMap->Planes[CurBit], *difffile, DrawBitMap->BytesPerRow, true);
+			unDiff(DrawBitMap->_planes[CurBit], DispBitMap->_planes[CurBit], *difffile, DrawBitMap->_bytesPerRow, true);
 			CurBit++;
 			(*difffile) += size;
 			break;
@@ -259,7 +259,7 @@ void LabEngine::diffNextFrame() {
 						_music->updateMusic();
 						waitTOF();
 
-						if (DispBitMap->Flags & BITMAPF_VIDEO)
+						if (DispBitMap->_flags & BITMAPF_VIDEO)
 							didTOF = 1;
 					}
 				}
@@ -334,29 +334,29 @@ void playDiff() {
 
 	if (header == 0) {
 		// sizeof(headerdata) != 18, but the padding might be at the end
-		headerdata.Version = READ_LE_UINT16(*difffile);
+		headerdata._version = READ_LE_UINT16(*difffile);
 		(*difffile) += 2;
-		headerdata.x = READ_LE_UINT16(*difffile);
+		headerdata._width = READ_LE_UINT16(*difffile);
 		(*difffile) += 2;
-		headerdata.y = READ_LE_UINT16(*difffile);
+		headerdata._height = READ_LE_UINT16(*difffile);
 		(*difffile) += 2;
-		headerdata.depth = *difffile[0];
+		headerdata._depth = *difffile[0];
 		(*difffile)++;
-		headerdata.fps = *difffile[0];
+		headerdata._fps = *difffile[0];
 		(*difffile)++;
-		headerdata.BufferSize = READ_LE_UINT32(*difffile);
+		headerdata._bufferSize = READ_LE_UINT32(*difffile);
 		(*difffile) += 4;
-		headerdata.Machine = READ_LE_UINT16(*difffile);
+		headerdata._machine = READ_LE_UINT16(*difffile);
 		(*difffile) += 2;
-		headerdata.Flags = READ_LE_UINT32(*difffile);
+		headerdata._flags = READ_LE_UINT32(*difffile);
 		(*difffile) += 4;
 
 		(*difffile) += size - 18;
 
-		continuous = CONTINUOUS & headerdata.Flags;
-		diffwidth = headerdata.x;
-		diffheight = headerdata.y;
-		DataBytesPerRow = diffwidth;
+		continuous = CONTINUOUS & headerdata._flags;
+		diffwidth = headerdata._width;
+		diffheight = headerdata._height;
+		_dataBytesPerRow = diffwidth;
 
 		numchunks = (((int32) diffwidth) * diffheight) / 0x10000;
 
@@ -367,10 +367,10 @@ void playDiff() {
 	}
 
 	for (header = 0; header < 8; header++)
-		RawDiffBM.Planes[header] = NULL;
+		RawDiffBM._planes[header] = NULL;
 
-	if (headerdata.fps)
-		DelayMicros = ONESECOND / headerdata.fps;
+	if (headerdata._fps)
+		DelayMicros = ONESECOND / headerdata._fps;
 
 	if (PlayOnce) {
 		while (header != 65535)

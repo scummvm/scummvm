@@ -70,9 +70,9 @@ bool readPict(const char *filename, bool playOnce) {
 		return false;
 	}
 
-	DispBitMap->BytesPerRow = g_lab->_screenWidth;
-	DispBitMap->Rows        = g_lab->_screenHeight;
-	DispBitMap->Flags       = BITMAPF_VIDEO;
+	DispBitMap->_bytesPerRow = g_lab->_screenWidth;
+	DispBitMap->_rows        = g_lab->_screenHeight;
+	DispBitMap->_flags       = BITMAPF_VIDEO;
 
 	readDiff(playOnce);
 
@@ -112,14 +112,14 @@ byte *readPictToMem(const char *filename, uint16 x, uint16 y) {
 	if (file == NULL)
 		return NULL;
 
-	DispBitMap->BytesPerRow = x;
-	DispBitMap->Rows        = y;
-	DispBitMap->Flags       = 0;
-	DispBitMap->Planes[0] = curMem;
-	DispBitMap->Planes[1] = DispBitMap->Planes[0] + 0x10000;
-	DispBitMap->Planes[2] = DispBitMap->Planes[1] + 0x10000;
-	DispBitMap->Planes[3] = DispBitMap->Planes[2] + 0x10000;
-	DispBitMap->Planes[4] = DispBitMap->Planes[3] + 0x10000;
+	DispBitMap->_bytesPerRow = x;
+	DispBitMap->_rows        = y;
+	DispBitMap->_flags       = BITMAPF_NONE;
+	DispBitMap->_planes[0] = curMem;
+	DispBitMap->_planes[1] = DispBitMap->_planes[0] + 0x10000;
+	DispBitMap->_planes[2] = DispBitMap->_planes[1] + 0x10000;
+	DispBitMap->_planes[3] = DispBitMap->_planes[2] + 0x10000;
+	DispBitMap->_planes[4] = DispBitMap->_planes[3] + 0x10000;
 
 	readDiff(true);
 
@@ -486,19 +486,19 @@ void LabEngine::doScrollWipe(char *filename) {
 	readPict(filename, true);
 	setPalette(diffcmap, 256);
 	IsBM = false;
-	byte *mem = RawDiffBM.Planes[0];
+	byte *mem = RawDiffBM._planes[0];
 
 	_music->updateMusic();
 	uint16 by = VGAScaleX(3);
 	uint16 nheight = height;
 
-	while (onrow < headerdata.y) {
+	while (onrow < headerdata._height) {
 		_music->updateMusic();
 
 		if ((by > nheight) && nheight)
 			by = nheight;
 
-		if ((startline + by) > (headerdata.y - height - 1))
+		if ((startline + by) > (headerdata._height - height - 1))
 			break;
 
 		if (nheight)
@@ -544,10 +544,10 @@ void LabEngine::doScrollBounce() {
 	_event->mouseHide();
 	int width = VGAScaleX(320);
 	int height = VGAScaleY(149) + SVGACord(2);
-	byte *mem = RawDiffBM.Planes[0];
+	byte *mem = RawDiffBM._planes[0];
 
 	_music->updateMusic();
-	int startline = headerdata.y - height - 1;
+	int startline = headerdata._height - height - 1;
 
 	for (int i = 0; i < 5; i++) {
 		_music->updateMusic();
