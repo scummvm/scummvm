@@ -30,7 +30,7 @@
 
 #include "lab/lab.h"
 #include "lab/labfun.h"
-#include "lab/diff.h"
+#include "lab/anim.h"
 #include "lab/text.h"
 #include "lab/mouse.h"
 #include "lab/parsefun.h"

@@ -29,7 +29,7 @@
  */
 
 #include "lab/lab.h"
-#include "lab/diff.h"
+#include "lab/anim.h"
 #include "lab/parsetypes.h"
 #include "lab/labfun.h"
 #include "lab/parsefun.h"
@@ -41,12 +41,7 @@ namespace Lab {
 
 BitMap bit1, bit2, *DispBitMap = &bit1, *DrawBitMap = &bit1;
 
-
-extern BitMap RawDiffBM;
-extern char diffcmap[256 * 3];
-extern bool IsBM, nopalchange;
-
-extern bool DoBlack, stopsound;
+extern bool stopsound;
 extern TextFont *MsgFont;
 extern const char *CurFileName;
 
@@ -54,12 +49,11 @@ extern const char *CurFileName;
 /*------ From readPict.c.  Reads in pictures and animations from disk. ------*/
 /*---------------------------------------------------------------------------*/
 
-
 /*****************************************************************************/
 /* Reads in a picture into the dest bitmap.                                  */
 /*****************************************************************************/
 bool readPict(const char *filename, bool playOnce) {
-	stopDiff();
+	g_lab->_anim->stopDiff();
 
 	byte **file = g_lab->_music->newOpen(filename);
 
@@ -74,7 +68,7 @@ bool readPict(const char *filename, bool playOnce) {
 	DispBitMap->_rows        = g_lab->_screenHeight;
 	DispBitMap->_flags       = BITMAPF_VIDEO;
 
-	readDiff(playOnce);
+	g_lab->_anim->readDiff(playOnce);
 
 	return true;
 }
@@ -90,8 +84,8 @@ bool readMusic(const char *filename, bool waitTillFinished) {
 	if (!file)
 		return false;
 
-	DoBlack = false;
-	readSound(waitTillFinished, file);
+	g_lab->_anim->DoBlack = false;
+	g_lab->_anim->readSound(waitTillFinished, file);
 
 	return true;
 }
@@ -102,7 +96,7 @@ bool readMusic(const char *filename, bool waitTillFinished) {
 byte *readPictToMem(const char *filename, uint16 x, uint16 y) {
 	byte *mem;
 
-	stopDiff();
+	g_lab->_anim->stopDiff();
 
 	allocFile((void **)&mem, (int32)x * (int32)y, "Bitmap");
 	byte *curMem = mem;
@@ -121,7 +115,7 @@ byte *readPictToMem(const char *filename, uint16 x, uint16 y) {
 	DispBitMap->_planes[3] = DispBitMap->_planes[2] + 0x10000;
 	DispBitMap->_planes[4] = DispBitMap->_planes[3] + 0x10000;
 
-	readDiff(true);
+	g_lab->_anim->readDiff(true);
 
 	return mem;
 }
@@ -437,9 +431,6 @@ void LabEngine::doScrollBlack() {
 	_event->mouseShow();
 }
 
-extern BitMap RawDiffBM;
-extern DIFFHeader headerdata;
-
 static void copyPage(uint16 width, uint16 height, uint16 nheight, uint16 startline, byte *mem) {
 	uint32 size, offSet, copysize;
 	uint16 curPage;
@@ -482,23 +473,23 @@ void LabEngine::doScrollWipe(char *filename) {
 		waitTOF();
 	}
 
-	IsBM = true;
+	_anim->IsBM = true;
 	readPict(filename, true);
-	setPalette(diffcmap, 256);
-	IsBM = false;
-	byte *mem = RawDiffBM._planes[0];
+	setPalette(_anim->diffcmap, 256);
+	_anim->IsBM = false;
+	byte *mem = _anim->RawDiffBM._planes[0];
 
 	_music->updateMusic();
 	uint16 by = VGAScaleX(3);
 	uint16 nheight = height;
 
-	while (onrow < headerdata._height) {
+	while (onrow < _anim->headerdata._height) {
 		_music->updateMusic();
 
 		if ((by > nheight) && nheight)
 			by = nheight;
 
-		if ((startline + by) > (headerdata._height - height - 1))
+		if ((startline + by) > (_anim->headerdata._height - height - 1))
 			break;
 
 		if (nheight)
@@ -544,10 +535,10 @@ void LabEngine::doScrollBounce() {
 	_event->mouseHide();
 	int width = VGAScaleX(320);
 	int height = VGAScaleY(149) + SVGACord(2);
-	byte *mem = RawDiffBM._planes[0];
+	byte *mem = _anim->RawDiffBM._planes[0];
 
 	_music->updateMusic();
-	int startline = headerdata._height - height - 1;
+	int startline = _anim->headerdata._height - height - 1;
 
 	for (int i = 0; i < 5; i++) {
 		_music->updateMusic();
@@ -628,7 +619,7 @@ void LabEngine::doTransWipe(CloseDataPtr *cPtr, char *filename) {
 		CurFileName = getPictName(cPtr);
 
 	byte *BitMapMem = readPictToMem(CurFileName, _screenWidth, lastY + 5);
-	setPalette(diffcmap, 256);
+	setPalette(_anim->diffcmap, 256);
 
 	if (BitMapMem) {
 		imSource.Width = _screenWidth;
@@ -697,7 +688,37 @@ void LabEngine::doWipe(uint16 wipeType, CloseDataPtr *cPtr, char *filename) {
 	else if (wipeType == READFIRSTFRAME)
 		readPict(filename, false);
 	else if (wipeType == READNEXTFRAME)
-		diffNextFrame();
+		_anim->diffNextFrame();
+}
+
+static byte blackbuffer[256 * 3];
+
+/*****************************************************************************/
+/* Changes the front screen to black.                                        */
+/*****************************************************************************/
+void blackScreen() {
+	memset(blackbuffer, 0, 248 * 3);
+	g_lab->writeColorRegs(blackbuffer, 8, 248);
+
+	g_system->delayMillis(32);
+}
+
+/*****************************************************************************/
+/* Changes the front screen to white.                                        */
+/*****************************************************************************/
+void whiteScreen() {
+	memset(blackbuffer, 255, 248 * 3);
+	g_lab->writeColorRegs(blackbuffer, 8, 248);
+}
+
+/*****************************************************************************/
+/* Changes the entire screen to black.                                       */
+/*****************************************************************************/
+void blackAllScreen() {
+	memset(blackbuffer, 0, 256 * 3);
+	g_lab->writeColorRegs(blackbuffer, 0, 256);
+
+	g_system->delayMillis(32);
 }
 
 } // End of namespace Lab

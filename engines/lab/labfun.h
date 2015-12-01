@@ -213,6 +213,10 @@ void mouseCombination(Common::Point pos);
 void showTile(const char *filename, bool showsolution);
 void mouseTile(Common::Point pos);
 
+void blackScreen();
+void blackAllScreen();
+void whiteScreen();
+
 } // End of namespace Lab
 
 #endif /* LAB_LABFUN_H */

@@ -40,6 +40,7 @@
 #include "lab/mouse.h"
 #include "lab/music.h"
 #include "lab/resource.h"
+#include "lab/anim.h"
 
 struct ADGameDescription;
 
@@ -103,6 +104,7 @@ public:
 	EventManager *_event;
 	Resource *_resource;
 	Music *_music;
+	Anim *_anim;
 
 	int _roomNum;
 	byte *_currentDisplayBuffer;
@@ -175,7 +177,6 @@ public:
 	void drawMap(uint16 CurRoom, uint16 CurMsg, uint16 Floor, bool fadeout, bool fadein);
 	void processMap(uint16 CurRoom);
 	void doMap(uint16 CurRoom);
-	void diffNextFrame();
 	void drawJournal(uint16 wipenum, bool needFade);
 	void processJournal();
 	void doJournal();

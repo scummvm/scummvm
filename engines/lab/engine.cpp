@@ -30,7 +30,7 @@
 
 #include "lab/lab.h"
 #include "lab/labfun.h"
-#include "lab/diff.h"
+#include "lab/anim.h"
 #include "lab/text.h"
 #include "lab/intro.h"
 #include "lab/parsefun.h"
@@ -46,7 +46,7 @@ bool LongWinInFront = false;
 
 TextFont *MsgFont;
 
-extern bool DoBlack, waitForEffect, stopsound, DoNotDrawMessage, nopalchange;
+extern bool stopsound, DoNotDrawMessage;
 
 /* Global parser data */
 
@@ -446,17 +446,17 @@ static const char *getInvName(uint16 CurInv) {
 
 	else if (CurInv == WESTPAPERNUM) {
 		CurFileName = Inventory[CurInv].BInvName;
-		nopalchange = true;
+		g_lab->_anim->nopalchange = true;
 		readPict(CurFileName, false);
-		nopalchange = false;
+		g_lab->_anim->nopalchange = false;
 		doWestPaper();
 	}
 
 	else if (CurInv == NOTESNUM) {
 		CurFileName = Inventory[CurInv].BInvName;
-		nopalchange = true;
+		g_lab->_anim->nopalchange = true;
 		readPict(CurFileName, false);
-		nopalchange = false;
+		g_lab->_anim->nopalchange = false;
 		doNotes();
 	}
 
@@ -503,7 +503,7 @@ bool LabEngine::doUse(uint16 CurInv) {
 	if (CurInv == MAPNUM) {                  /* LAB: Labyrinth specific */
 		drawStaticMessage(kTextUseMap);
 		interfaceOff();
-		stopDiff();
+		_anim->stopDiff();
 		CurFileName = " ";
 		CPtr = NULL;
 		doMap(_roomNum);
@@ -513,7 +513,7 @@ bool LabEngine::doUse(uint16 CurInv) {
 	} else if (CurInv == JOURNALNUM) {         /* LAB: Labyrinth specific */
 		drawStaticMessage(kTextUseJournal);
 		interfaceOff();
-		stopDiff();
+		_anim->stopDiff();
 		CurFileName = " ";
 		CPtr = NULL;
 		doJournal();
@@ -530,18 +530,18 @@ bool LabEngine::doUse(uint16 CurInv) {
 			_conditions->inclElement(LAMPON);
 		}
 
-		DoBlack = false;
-		waitForEffect = true;
+		_anim->DoBlack = false;
+		_anim->waitForEffect = true;
 		readPict("Music:Click", true);
-		waitForEffect = false;
+		_anim->waitForEffect = false;
 
-		DoBlack = false;
+		_anim->DoBlack = false;
 		Test = getInvName(CurInv);
 	} else if (CurInv == BELTNUM) {                    /* LAB: Labyrinth specific */
 		if (!_conditions->in(BELTGLOW))
 			_conditions->inclElement(BELTGLOW);
 
-		DoBlack = false;
+		_anim->DoBlack = false;
 		Test = getInvName(CurInv);
 	} else if (CurInv == WHISKEYNUM) {                 /* LAB: Labyrinth specific */
 		_conditions->inclElement(USEDHELMET);
@@ -643,7 +643,7 @@ void LabEngine::mainGameLoop() {
 
 		if (GotMessage) {
 			if (QuitLab || g_engine->shouldQuit()) {
-				stopDiff();
+				_anim->stopDiff();
 				break;
 			}
 
@@ -711,7 +711,7 @@ void LabEngine::mainGameLoop() {
 			GotMessage = false;
 			_music->checkRoomMusic();
 			_music->updateMusic();
-			diffNextFrame();
+			_anim->diffNextFrame();
 
 			if (_followingCrumbs) {
 				int result = followCrumbs();
@@ -781,7 +781,7 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 	uint16 NewDir;
 
 
-	DoBlack = false;
+	_anim->DoBlack = false;
 
 	if ((msgClass == RAWKEY) && (!LongWinInFront)) {
 		if (code == 13) { /* The return key */
@@ -808,7 +808,7 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 					if (Alternate) {
 						eatMessages();
 						Alternate = false;
-						DoBlack = true;
+						_anim->DoBlack = true;
 						DoNotDrawMessage = false;
 
 						MainDisplay = true;
@@ -840,7 +840,7 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 
 				if (curMsg == NULL) { /* Does music load and next animation frame when you've run out of messages */
 					_music->updateMusic();
-					diffNextFrame();
+					_anim->diffNextFrame();
 				} else {
 					if (curMsg->msgClass == RAWKEY) {
 						if ((curMsg->code == 'Y') || (curMsg->code == 'y') || (curMsg->code == 'Q') || (curMsg->code == 'q')) {
@@ -856,7 +856,7 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 			}
 
 			if (doit) {
-				stopDiff();
+				_anim->stopDiff();
 				return false;
 			} else {
 				forceDraw = true;
@@ -887,7 +887,7 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 			if ((actionMode == 4) && (gadgetId == 4) && (CPtr != NULL)) {
 				doMainView(&CPtr);
 
-				DoBlack = true;
+				_anim->DoBlack = true;
 				HCPtr = NULL;
 				CPtr = NULL;
 				mayShowCrumbIndicator();
@@ -896,7 +896,7 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 				eatMessages();
 
 				Alternate = true;
-				DoBlack = true;
+				_anim->DoBlack = true;
 				DoNotDrawMessage = false;
 				interfaceOn(); /* Sets the correct gadget list */
 
@@ -957,7 +957,7 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 				NewDir = Direction;
 				processArrow(&NewDir, gadgetId - 6);
 				doTurn(Direction, NewDir, &CPtr);
-				DoBlack = true;
+				_anim->DoBlack = true;
 				Direction = NewDir;
 				forceDraw = true;
 
@@ -968,9 +968,9 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 
 				if (doGoForward(&CPtr)) {
 					if (OldRoomNum == _roomNum)
-						DoBlack = true;
+						_anim->DoBlack = true;
 				} else {
-					DoBlack = true;
+					_anim->DoBlack = true;
 					processArrow(&Direction, gadgetId - 6);
 
 					if (OldRoomNum != _roomNum) {
@@ -979,7 +979,7 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 						CurFileName = " ";
 						forceDraw = true;
 					} else {
-						DoBlack = true;
+						_anim->DoBlack = true;
 						drawStaticMessage(kTextNoPath);
 					}
 				}
@@ -1030,12 +1030,12 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 			}
 		}
 	} else if ((msgClass == GADGETUP) && Alternate) {
-		DoBlack = true;
+		_anim->DoBlack = true;
 
 		if (gadgetId == 0) {
 			eatMessages();
 			Alternate = false;
-			DoBlack = true;
+			_anim->DoBlack = true;
 			DoNotDrawMessage = false;
 
 			MainDisplay = true;
@@ -1050,7 +1050,7 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 
 		if (gadgetId == 0) {
 			interfaceOff();
-			stopDiff();
+			_anim->stopDiff();
 			CurFileName = " ";
 
 			doit = !saveRestoreGame();
@@ -1134,7 +1134,7 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 
 					eatMessages();
 					Alternate = false;
-					DoBlack = true;
+					_anim->DoBlack = true;
 					DoNotDrawMessage = false;
 
 					MainDisplay = true;
@@ -1202,7 +1202,7 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 						drawStaticMessage(kTextNothing);
 				} else if (TempCPtr->GraphicName) {
 					if (*(TempCPtr->GraphicName)) {
-						DoBlack = true;
+						_anim->DoBlack = true;
 						CPtr = TempCPtr;
 					} else if (curPos.y < (VGAScaleY(149) + SVGACord(2)))
 						drawStaticMessage(kTextNothing);
@@ -1253,7 +1253,7 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 	} else if ((msgClass == MOUSEBUTTONS) && (IEQUALIFIER_RBUTTON & Qualifier)) {
 		eatMessages();
 		Alternate = !Alternate;
-		DoBlack = true;
+		_anim->DoBlack = true;
 		DoNotDrawMessage = false;
 		MainDisplay = true;
 		interfaceOn(); /* Sets the correct gadget list */
@@ -1307,7 +1307,7 @@ void LabEngine::go() {
 		Intro intro;
 		intro.introSequence();
 	} else
-		DoBlack = true;
+		_anim->DoBlack = true;
 
 	if (mem) {
 		_event->mouseShow();
@@ -1330,7 +1330,7 @@ void LabEngine::go() {
 		warning("STUB: waitForPress");
 		while (!1) { // 1 means ignore SDL_ProcessInput calls
 			_music->updateMusic();
-			diffNextFrame();
+			_anim->diffNextFrame();
 			waitTOF();
 		}
 	}
