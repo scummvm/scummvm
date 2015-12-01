@@ -419,7 +419,7 @@ void Anim::diffNextFrame() {
 		return;
 
 	if (DispBitMap->_flags & BITMAPF_VIDEO) {
-		DispBitMap->_planes[0] = g_lab->getCurrentDrawingBuffer();
+		DispBitMap->_planes[0] = _vm->getCurrentDrawingBuffer();
 		DispBitMap->_planes[1] = DispBitMap->_planes[0] + 0x10000;
 		DispBitMap->_planes[2] = DispBitMap->_planes[1] + 0x10000;
 		DispBitMap->_planes[3] = DispBitMap->_planes[2] + 0x10000;
@@ -693,7 +693,7 @@ void Anim::stopDiffEnd() {
 	if (_isPlaying) {
 		_stopPlayingEnd = true;
 		while (_isPlaying) {
-			g_lab->_music->updateMusic();
+			_vm->_music->updateMusic();
 			diffNextFrame();
 		}
 	}
@@ -729,15 +729,15 @@ void Anim::readSound(bool waitTillFinished, Common::File *file) {
 		return;
 
 	while (soundTag != 65535) {
-		g_lab->_music->updateMusic();
+		_vm->_music->updateMusic();
 		soundTag = file->readUint32LE();
 		soundSize = file->readUint32LE() - 8;
 
 		if ((soundTag == 30) || (soundTag == 31)) {
 			if (waitTillFinished) {
-				while (g_lab->_music->isSoundEffectActive()) {
-					g_lab->_music->updateMusic();
-					g_lab->waitTOF();
+				while (_vm->_music->isSoundEffectActive()) {
+					_vm->_music->updateMusic();
+					_vm->waitTOF();
 				}
 			}
 
@@ -747,12 +747,12 @@ void Anim::readSound(bool waitTillFinished, Common::File *file) {
 			file->skip(2);
 			byte *soundData = (byte *)malloc(soundSize);
 			file->read(soundData, soundSize);
-			g_lab->_music->playSoundEffect(sampleRate, soundSize, soundData);
+			_vm->_music->playSoundEffect(sampleRate, soundSize, soundData);
 		} else if (soundTag == 65535L) {
 			if (waitTillFinished) {
-				while (g_lab->_music->isSoundEffectActive()) {
-					g_lab->_music->updateMusic();
-					g_lab->waitTOF();
+				while (_vm->_music->isSoundEffectActive()) {
+					_vm->_music->updateMusic();
+					_vm->waitTOF();
 				}
 			}
 		} else
