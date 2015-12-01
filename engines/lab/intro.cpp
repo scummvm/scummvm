@@ -237,7 +237,7 @@ void Intro::nReadPict(const char *filename, bool playOnce) {
 	if (_quitIntro)
 		return;
 
-	g_lab->_anim->DoBlack = _introDoBlack;
+	g_lab->_anim->_doBlack = _introDoBlack;
 	g_lab->_anim->stopDiffEnd();
 	readPict(finalFileName.c_str(), playOnce);
 }
@@ -254,7 +254,7 @@ void Intro::introSequence() {
 		0x0CB3, 0x0DC4, 0x0DD6, 0x0EE7
 	};
 
-	g_lab->_anim->DoBlack = true;
+	g_lab->_anim->_doBlack = true;
 
 	if (g_lab->getPlatform() != Common::kPlatformWindows) {
 		nReadPict("EA0", true);
@@ -276,12 +276,12 @@ void Intro::introSequence() {
 
 	g_lab->_music->initMusic();
 
-	g_lab->_anim->nopalchange = true;
+	g_lab->_anim->_noPalChange = true;
 	if (g_lab->getPlatform() != Common::kPlatformWindows)
 		nReadPict("TNDcycle.pic", true);
 	else
 		nReadPict("TNDcycle2.pic", true);
-	g_lab->_anim->nopalchange = false;
+	g_lab->_anim->_noPalChange = false;
 
 	FadePalette = palette;
 
@@ -289,9 +289,9 @@ void Intro::introSequence() {
 		if (_quitIntro)
 			break;
 
-		palette[i] = ((g_lab->_anim->diffcmap[i * 3] >> 2) << 8) +
-		             ((g_lab->_anim->diffcmap[i * 3 + 1] >> 2) << 4) +
-		              (g_lab->_anim->diffcmap[i * 3 + 2] >> 2);
+		palette[i] = ((g_lab->_anim->_diffPalette[i * 3] >> 2) << 8) +
+		             ((g_lab->_anim->_diffPalette[i * 3 + 1] >> 2) << 4) +
+		              (g_lab->_anim->_diffPalette[i * 3 + 2] >> 2);
 	}
 
 	g_lab->_music->updateMusic();
@@ -346,14 +346,14 @@ void Intro::introSequence() {
 
 	TextFont *msgFont = g_lab->_resource->getFont("P:Map.fon");
 
-	g_lab->_anim->nopalchange = true;
+	g_lab->_anim->_noPalChange = true;
 	nReadPict("Intro.1", true);
-	g_lab->_anim->nopalchange = false;
+	g_lab->_anim->_noPalChange = false;
 
 	for (uint16 i = 0; i < 16; i++) {
-		palette[i] = ((g_lab->_anim->diffcmap[i * 3] >> 2) << 8) +
-		             ((g_lab->_anim->diffcmap[i * 3 + 1] >> 2) << 4) +
-		              (g_lab->_anim->diffcmap[i * 3 + 2] >> 2);
+		palette[i] = ((g_lab->_anim->_diffPalette[i * 3] >> 2) << 8) +
+		             ((g_lab->_anim->_diffPalette[i * 3 + 1] >> 2) << 4) +
+		              (g_lab->_anim->_diffPalette[i * 3 + 2] >> 2);
 	}
 
 	doPictText("i.1", msgFont, true);
@@ -393,11 +393,11 @@ void Intro::introSequence() {
 	if (!_quitIntro)
 		for (uint16 i = 0; i < 50; i++) {
 			for (uint16 idx = (8 * 3); idx < (255 * 3); idx++)
-				g_lab->_anim->diffcmap[idx] = 255 - g_lab->_anim->diffcmap[idx];
+				g_lab->_anim->_diffPalette[idx] = 255 - g_lab->_anim->_diffPalette[idx];
 
 			g_lab->_music->updateMusic();
 			g_lab->waitTOF();
-			g_lab->setPalette(g_lab->_anim->diffcmap, 256);
+			g_lab->setPalette(g_lab->_anim->_diffPalette, 256);
 			g_lab->waitTOF();
 			g_lab->waitTOF();
 		}
@@ -458,7 +458,7 @@ void Intro::introSequence() {
 	if (_quitIntro) {
 		g_lab->setAPen(0);
 		g_lab->rectFill(0, 0, g_lab->_screenWidth - 1, g_lab->_screenHeight - 1);
-		g_lab->_anim->DoBlack = true;
+		g_lab->_anim->_doBlack = true;
 	}
 
 	closeFont(msgFont);

@@ -63,29 +63,29 @@ class Anim {
 private:
 	LabEngine *_vm;
 
-	uint32 header;
-	uint16 CurBit;
-	uint16 numchunks;
-	uint32 WaitSec;
-	uint32 WaitMicros;
-	uint32 DelayMicros;
-	bool continuous;
-	bool IsPlaying;
-	bool IsAnim;
-	bool IsPal;
-	bool donepal;
-	uint16 framenumber;
-	bool PlayOnce;
-	byte *Buffer;
-	byte *storagefordifffile;
-	byte **difffile;
-	uint32 size;
-	bool StopPlayingEnd;
-	uint16 samplespeed;
-	byte *start;
-	uint32 diffwidth;
-	uint32 diffheight;
-	bool stopsound;
+	uint32 _header;
+	uint16 _curBit;
+	uint16 _numChunks;
+	uint32 _waitSec;
+	uint32 _waitMicros;
+	uint32 _delayMicros;
+	bool _continuous;
+	bool _isPlaying;
+	bool _isAnim;
+	bool _isPal;
+	bool _donePal;
+	uint16 _frameNum;
+	bool _playOnce;
+	byte *_buffer;
+	byte *_storeDiffFile;
+	byte **_diffFile;
+	uint32 _size;
+	bool _stopPlayingEnd;
+	uint16 _sampleSpeed;
+	byte *_start;
+	uint32 _diffWidth;
+	uint32 _diffHeight;
+	bool _stopSound;
 	uint16 _dataBytesPerRow;
 
 	void unDIFFByteByte(byte *dest, byte *diff);
@@ -97,24 +97,24 @@ private:
 public:
 	Anim(LabEngine *vm);
 
-	DIFFHeader headerdata;
-	char diffcmap[256 * 3];
-	bool IsBM;          /* Just fill in the RawDIFFBM structure */
-	bool waitForEffect; /* Wait for each sound effect to finish before continuing. */
-	bool DoBlack;       /* Black the screen before new picture  */
-	bool nopalchange;   /* Don't change the palette.            */
-	BitMap RawDiffBM;
+	DIFFHeader _headerdata;
+	char _diffPalette[256 * 3];
+	bool _isBM;          /* Just fill in the RawDIFFBM structure */
+	bool _waitForEffect; /* Wait for each sound effect to finish before continuing. */
+	bool _doBlack;       /* Black the screen before new picture  */
+	bool _noPalChange;   /* Don't change the palette.            */
+	BitMap _rawDiffBM;
 
-	void unDiff(byte *NewBuf, byte *OldBuf, byte *DiffData, uint16 bytesperrow, bool IsV);
+	void unDiff(byte *newBuf, byte *oldBuf, byte *diffData, uint16 bytesperrow, bool isV);
 	bool unDIFFMemory(byte *dest,           /* Where to Un-DIFF */
-                  byte *diff,           /* The DIFFed code. */
-                  uint16 headerSize,    /* Size of header (1, 2 or 4 bytes) (only supports 1 currently */
-                  uint16 copySize);     /* Size of minimum copy or skip. (1, 2 or 4 bytes) */
+					  byte *diff,           /* The DIFFed code. */
+					  uint16 headerSize,    /* Size of header (1, 2 or 4 bytes) (only supports 1 currently */
+					  uint16 copySize);     /* Size of minimum copy or skip. (1, 2 or 4 bytes) */
 
 	bool VUnDIFFMemory(byte *dest, byte *diff, uint16 headerSize, uint16 copySize, uint16 bytesPerRow);
 	void runLengthDecode(byte *dest, byte *source);
 	void VRunLengthDecode(byte *dest, byte *source, uint16 bytesPerRow);
-	bool readDiff(bool playonce);
+	bool readDiff(bool playOnce);
 	void diffNextFrame();
 	void readSound(bool waitTillFinished, Common::File *file);
 	void stopDiff();

@@ -85,7 +85,7 @@ bool readMusic(const char *filename, bool waitTillFinished) {
 	if (!file)
 		return false;
 
-	g_lab->_anim->DoBlack = false;
+	g_lab->_anim->_doBlack = false;
 	g_lab->_anim->readSound(waitTillFinished, file);
 
 	return true;
@@ -474,23 +474,23 @@ void LabEngine::doScrollWipe(char *filename) {
 		waitTOF();
 	}
 
-	_anim->IsBM = true;
+	_anim->_isBM = true;
 	readPict(filename, true);
-	setPalette(_anim->diffcmap, 256);
-	_anim->IsBM = false;
-	byte *mem = _anim->RawDiffBM._planes[0];
+	setPalette(_anim->_diffPalette, 256);
+	_anim->_isBM = false;
+	byte *mem = _anim->_rawDiffBM._planes[0];
 
 	_music->updateMusic();
 	uint16 by = VGAScaleX(3);
 	uint16 nheight = height;
 
-	while (onrow < _anim->headerdata._height) {
+	while (onrow < _anim->_headerdata._height) {
 		_music->updateMusic();
 
 		if ((by > nheight) && nheight)
 			by = nheight;
 
-		if ((startline + by) > (_anim->headerdata._height - height - 1))
+		if ((startline + by) > (_anim->_headerdata._height - height - 1))
 			break;
 
 		if (nheight)
@@ -536,10 +536,10 @@ void LabEngine::doScrollBounce() {
 	_event->mouseHide();
 	int width = VGAScaleX(320);
 	int height = VGAScaleY(149) + SVGACord(2);
-	byte *mem = _anim->RawDiffBM._planes[0];
+	byte *mem = _anim->_rawDiffBM._planes[0];
 
 	_music->updateMusic();
-	int startline = _anim->headerdata._height - height - 1;
+	int startline = _anim->_headerdata._height - height - 1;
 
 	for (int i = 0; i < 5; i++) {
 		_music->updateMusic();
@@ -620,7 +620,7 @@ void LabEngine::doTransWipe(CloseDataPtr *cPtr, char *filename) {
 		CurFileName = getPictName(cPtr);
 
 	byte *BitMapMem = readPictToMem(CurFileName, _screenWidth, lastY + 5);
-	setPalette(_anim->diffcmap, 256);
+	setPalette(_anim->_diffPalette, 256);
 
 	if (BitMapMem) {
 		imSource.Width = _screenWidth;

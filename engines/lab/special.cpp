@@ -110,7 +110,7 @@ static byte *loadBackPict(const char *fileName, bool tomem) {
 	byte *res = NULL;
 
 	FadePalette = hipal;
-	g_lab->_anim->nopalchange = true;
+	g_lab->_anim->_noPalChange = true;
 
 	if (tomem)
 		res = readPictToMem(fileName, g_lab->_screenWidth, g_lab->_screenHeight);
@@ -118,12 +118,12 @@ static byte *loadBackPict(const char *fileName, bool tomem) {
 		readPict(fileName, true);
 
 	for (uint16 i = 0; i < 16; i++) {
-		hipal[i] = ((g_lab->_anim->diffcmap[i * 3] >> 2) << 8) +
-		           ((g_lab->_anim->diffcmap[i * 3 + 1] >> 2) << 4) +
-		           ((g_lab->_anim->diffcmap[i * 3 + 2] >> 2));
+		hipal[i] = ((g_lab->_anim->_diffPalette[i * 3] >> 2) << 8) +
+		           ((g_lab->_anim->_diffPalette[i * 3 + 1] >> 2) << 4) +
+		           ((g_lab->_anim->_diffPalette[i * 3 + 2] >> 2));
 	}
 
-	g_lab->_anim->nopalchange = false;
+	g_lab->_anim->_noPalChange = false;
 
 	return res;
 }
@@ -143,10 +143,10 @@ void showCombination(const char *filename) {
 	byte **buffer;
 
 	resetBuffer();
-	g_lab->_anim->DoBlack = true;
-	g_lab->_anim->nopalchange = true;
+	g_lab->_anim->_doBlack = true;
+	g_lab->_anim->_noPalChange = true;
 	readPict(filename, true);
-	g_lab->_anim->nopalchange = false;
+	g_lab->_anim->_noPalChange = false;
 
 	blackScreen();
 
@@ -159,7 +159,7 @@ void showCombination(const char *filename) {
 
 	doCombination();
 
-	g_lab->setPalette(g_lab->_anim->diffcmap, 256);
+	g_lab->setPalette(g_lab->_anim->_diffPalette, 256);
 }
 
 
@@ -286,10 +286,10 @@ void showTile(const char *filename, bool showsolution) {
 	byte **buffer;
 
 	resetBuffer();
-	g_lab->_anim->DoBlack = true;
-	g_lab->_anim->nopalchange = true;
+	g_lab->_anim->_doBlack = true;
+	g_lab->_anim->_noPalChange = true;
 	readPict(filename, true);
-	g_lab->_anim->nopalchange = false;
+	g_lab->_anim->_noPalChange = false;
 	blackScreen();
 
 	if (showsolution) {
@@ -310,7 +310,7 @@ void showTile(const char *filename, bool showsolution) {
 
 	doTile(showsolution);
 
-	g_lab->setPalette(g_lab->_anim->diffcmap, 256);
+	g_lab->setPalette(g_lab->_anim->_diffPalette, 256);
 }
 
 static void scrollRaster(int16 dx, int16 dy, uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
@@ -424,7 +424,7 @@ static void changeTile(uint16 col, uint16 row) {
 
 		if (check) {
 			g_lab->_conditions->inclElement(BRICKOPEN);  /* unlocked combination */
-			g_lab->_anim->DoBlack = true;
+			g_lab->_anim->_doBlack = true;
 			check = readPict("p:Up/BDOpen", true);
 		}
 	}
@@ -457,7 +457,7 @@ void doNotes() {
 	char *ntext = g_lab->_resource->getText("Lab:Rooms/Notes");
 
 	flowText(noteFont, -2 + SVGACord(1), 0, 0, false, false, true, true, VGAScaleX(25) + SVGACord(15), VGAScaleY(50), VGAScaleX(295) - SVGACord(15), VGAScaleY(148), ntext);
-	g_lab->setPalette(g_lab->_anim->diffcmap, 256);
+	g_lab->setPalette(g_lab->_anim->_diffPalette, 256);
 
 	closeFont(noteFont);
 	delete[] ntext;
@@ -501,7 +501,7 @@ void doWestPaper() {
 	delete[] ntext;
 	closeFont(paperFont);
 
-	g_lab->setPalette(g_lab->_anim->diffcmap, 256);
+	g_lab->setPalette(g_lab->_anim->_diffPalette, 256);
 	freeAllStolenMem();
 }
 
@@ -673,14 +673,14 @@ void LabEngine::drawJournal(uint16 wipenum, bool needFade) {
 	if (needFade)
 		fade(true, 0);
 
-	g_lab->_anim->nopalchange = true;
+	g_lab->_anim->_noPalChange = true;
 	JBackImage.ImageData = readPictToMem("P:Journal.pic", _screenWidth, _screenHeight);
 	GotBackImage = true;
 
 	eatMessages();
 	_event->mouseShow();
 
-	g_lab->_anim->nopalchange = false;
+	g_lab->_anim->_noPalChange = false;
 }
 
 /*****************************************************************************/

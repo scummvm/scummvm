@@ -378,7 +378,7 @@ static void doActions(Action * APtr, CloseDataPtr *LCPtr) {
 
 		case NOUPDATE:
 			noupdatediff = true;
-			g_lab->_anim->DoBlack = false;
+			g_lab->_anim->_doBlack = false;
 			break;
 
 		case FORCEUPDATE:
@@ -444,7 +444,7 @@ static void doActions(Action * APtr, CloseDataPtr *LCPtr) {
 			g_lab->_roomNum   = APtr->Param1;
 			Direction = APtr->Param2 - 1;
 			*LCPtr      = NULL;
-			g_lab->_anim->DoBlack = true;
+			g_lab->_anim->_doBlack = true;
 			break;
 
 		case SETCLOSEUP:
@@ -554,17 +554,17 @@ static void doActions(Action * APtr, CloseDataPtr *LCPtr) {
 
 		case SPECIALCMD:
 			if (APtr->Param1 == 0)
-				g_lab->_anim->DoBlack = true;
+				g_lab->_anim->_doBlack = true;
 			else if (APtr->Param1 == 1)
-				g_lab->_anim->DoBlack = (CPtr == NULL);
+				g_lab->_anim->_doBlack = (CPtr == NULL);
 			else if (APtr->Param1 == 2)
-				g_lab->_anim->DoBlack = (CPtr != NULL);
+				g_lab->_anim->_doBlack = (CPtr != NULL);
 			else if (APtr->Param1 == 5) { /* inverse the palette */
 				for (uint16 idx = (8 * 3); idx < (255 * 3); idx++)
-					g_lab->_anim->diffcmap[idx] = 255 - g_lab->_anim->diffcmap[idx];
+					g_lab->_anim->_diffPalette[idx] = 255 - g_lab->_anim->_diffPalette[idx];
 
 				g_lab->waitTOF();
-				g_lab->setPalette(g_lab->_anim->diffcmap, 256);
+				g_lab->setPalette(g_lab->_anim->_diffPalette, 256);
 				g_lab->waitTOF();
 				g_lab->waitTOF();
 			} else if (APtr->Param1 == 4) { /* white the palette */
@@ -573,7 +573,7 @@ static void doActions(Action * APtr, CloseDataPtr *LCPtr) {
 				g_lab->waitTOF();
 			} else if (APtr->Param1 == 6) { /* Restore the palette */
 				g_lab->waitTOF();
-				g_lab->setPalette(g_lab->_anim->diffcmap, 256);
+				g_lab->setPalette(g_lab->_anim->_diffPalette, 256);
 				g_lab->waitTOF();
 				g_lab->waitTOF();
 			} else if (APtr->Param1 == 7) { /* Quick pause */

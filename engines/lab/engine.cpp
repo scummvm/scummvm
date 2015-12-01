@@ -447,17 +447,17 @@ static const char *getInvName(uint16 CurInv) {
 
 	else if (CurInv == WESTPAPERNUM) {
 		CurFileName = Inventory[CurInv].BInvName;
-		g_lab->_anim->nopalchange = true;
+		g_lab->_anim->_noPalChange = true;
 		readPict(CurFileName, false);
-		g_lab->_anim->nopalchange = false;
+		g_lab->_anim->_noPalChange = false;
 		doWestPaper();
 	}
 
 	else if (CurInv == NOTESNUM) {
 		CurFileName = Inventory[CurInv].BInvName;
-		g_lab->_anim->nopalchange = true;
+		g_lab->_anim->_noPalChange = true;
 		readPict(CurFileName, false);
-		g_lab->_anim->nopalchange = false;
+		g_lab->_anim->_noPalChange = false;
 		doNotes();
 	}
 
@@ -531,18 +531,18 @@ bool LabEngine::doUse(uint16 CurInv) {
 			_conditions->inclElement(LAMPON);
 		}
 
-		_anim->DoBlack = false;
-		_anim->waitForEffect = true;
+		_anim->_doBlack = false;
+		_anim->_waitForEffect = true;
 		readPict("Music:Click", true);
-		_anim->waitForEffect = false;
+		_anim->_waitForEffect = false;
 
-		_anim->DoBlack = false;
+		_anim->_doBlack = false;
 		Test = getInvName(CurInv);
 	} else if (CurInv == BELTNUM) {                    /* LAB: Labyrinth specific */
 		if (!_conditions->in(BELTGLOW))
 			_conditions->inclElement(BELTGLOW);
 
-		_anim->DoBlack = false;
+		_anim->_doBlack = false;
 		Test = getInvName(CurInv);
 	} else if (CurInv == WHISKEYNUM) {                 /* LAB: Labyrinth specific */
 		_conditions->inclElement(USEDHELMET);
@@ -782,7 +782,7 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 	uint16 NewDir;
 
 
-	_anim->DoBlack = false;
+	_anim->_doBlack = false;
 
 	if ((msgClass == RAWKEY) && (!LongWinInFront)) {
 		if (code == 13) { /* The return key */
@@ -809,7 +809,7 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 					if (Alternate) {
 						eatMessages();
 						Alternate = false;
-						_anim->DoBlack = true;
+						_anim->_doBlack = true;
 						DoNotDrawMessage = false;
 
 						MainDisplay = true;
@@ -888,7 +888,7 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 			if ((actionMode == 4) && (gadgetId == 4) && (CPtr != NULL)) {
 				doMainView(&CPtr);
 
-				_anim->DoBlack = true;
+				_anim->_doBlack = true;
 				HCPtr = NULL;
 				CPtr = NULL;
 				mayShowCrumbIndicator();
@@ -897,7 +897,7 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 				eatMessages();
 
 				Alternate = true;
-				_anim->DoBlack = true;
+				_anim->_doBlack = true;
 				DoNotDrawMessage = false;
 				interfaceOn(); /* Sets the correct gadget list */
 
@@ -958,7 +958,7 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 				NewDir = Direction;
 				processArrow(&NewDir, gadgetId - 6);
 				doTurn(Direction, NewDir, &CPtr);
-				_anim->DoBlack = true;
+				_anim->_doBlack = true;
 				Direction = NewDir;
 				forceDraw = true;
 
@@ -969,9 +969,9 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 
 				if (doGoForward(&CPtr)) {
 					if (OldRoomNum == _roomNum)
-						_anim->DoBlack = true;
+						_anim->_doBlack = true;
 				} else {
-					_anim->DoBlack = true;
+					_anim->_doBlack = true;
 					processArrow(&Direction, gadgetId - 6);
 
 					if (OldRoomNum != _roomNum) {
@@ -980,7 +980,7 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 						CurFileName = " ";
 						forceDraw = true;
 					} else {
-						_anim->DoBlack = true;
+						_anim->_doBlack = true;
 						drawStaticMessage(kTextNoPath);
 					}
 				}
@@ -1031,12 +1031,12 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 			}
 		}
 	} else if ((msgClass == GADGETUP) && Alternate) {
-		_anim->DoBlack = true;
+		_anim->_doBlack = true;
 
 		if (gadgetId == 0) {
 			eatMessages();
 			Alternate = false;
-			_anim->DoBlack = true;
+			_anim->_doBlack = true;
 			DoNotDrawMessage = false;
 
 			MainDisplay = true;
@@ -1135,7 +1135,7 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 
 					eatMessages();
 					Alternate = false;
-					_anim->DoBlack = true;
+					_anim->_doBlack = true;
 					DoNotDrawMessage = false;
 
 					MainDisplay = true;
@@ -1203,7 +1203,7 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 						drawStaticMessage(kTextNothing);
 				} else if (TempCPtr->GraphicName) {
 					if (*(TempCPtr->GraphicName)) {
-						_anim->DoBlack = true;
+						_anim->_doBlack = true;
 						CPtr = TempCPtr;
 					} else if (curPos.y < (VGAScaleY(149) + SVGACord(2)))
 						drawStaticMessage(kTextNothing);
@@ -1254,7 +1254,7 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 	} else if ((msgClass == MOUSEBUTTONS) && (IEQUALIFIER_RBUTTON & Qualifier)) {
 		eatMessages();
 		Alternate = !Alternate;
-		_anim->DoBlack = true;
+		_anim->_doBlack = true;
 		DoNotDrawMessage = false;
 		MainDisplay = true;
 		interfaceOn(); /* Sets the correct gadget list */
@@ -1308,7 +1308,7 @@ void LabEngine::go() {
 		Intro intro;
 		intro.introSequence();
 	} else
-		_anim->DoBlack = true;
+		_anim->_doBlack = true;
 
 	if (mem) {
 		_event->mouseShow();
