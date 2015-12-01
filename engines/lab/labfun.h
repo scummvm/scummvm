@@ -189,7 +189,6 @@ char *translateFileName(const char *filename);
 
 void fade(bool fadein, uint16 res);
 void setAmigaPal(uint16 *pal, uint16 numcolors);
-char *getText(const char *filename);
 void readImage(byte **buffer, Image **im);
 void doMap(uint16 CurRoom);
 void doJournal();

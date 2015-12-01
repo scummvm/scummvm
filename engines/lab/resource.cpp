@@ -58,7 +58,7 @@ void Resource::readStaticText() {
 TextFont *Resource::getFont(const char *fileName) {
 	Common::File *dataFile;
 	if (!(dataFile = openDataFile(fileName, MKTAG('V', 'G', 'A', 'F'))))
-		return NULL;
+		error("getFont: couldn't open %s (%s)", translateFileName(fileName), fileName);
 
 	uint32 headerSize = 4L + 2L + 256 * 3 + 4L;
 	uint32 fileSize = dataFile->size();
@@ -78,6 +78,25 @@ TextFont *Resource::getFont(const char *fileName) {
 	textfont->data = new byte[textfont->DataLength + 4];
 	dataFile->read(textfont->data, textfont->DataLength);
 	return textfont;
+}
+
+char *Resource::getText(const char *fileName) {
+	Common::File *dataFile = new Common::File();
+	dataFile->open(translateFileName(fileName));
+	if (!dataFile->isOpen())
+		error("getText: couldn't open %s (%s)", translateFileName(fileName), fileName);
+
+	g_lab->_music->updateMusic();
+
+	byte count = dataFile->size();
+	byte *buffer = new byte[count];
+	byte *text = buffer;
+	dataFile->read(buffer, count);
+
+	while (text && *text != '\0')
+		*text++ -= (byte)95;
+
+	return (char *)buffer;
 }
 
 bool Resource::readRoomData(const char *fileName) {

@@ -176,8 +176,8 @@ public:
 	void drawJournal(uint16 wipenum, bool needFade);
 	void processJournal();
 	void doJournal();
-	void drawMonText(char *text, uint16 x1, uint16 y1, uint16 x2, uint16 y2, bool isinteractive);
-	void processMonitor(char *ntext, bool isinteractive, uint16 x1, uint16 y1, uint16 x2, uint16 y2);
+	void drawMonText(char *text, TextFont *monitorFont, uint16 x1, uint16 y1, uint16 x2, uint16 y2, bool isinteractive);
+	void processMonitor(char *ntext, TextFont *monitorFont, bool isinteractive, uint16 x1, uint16 y1, uint16 x2, uint16 y2);
 	void doMonitor(char *background, char *textfile, bool isinteractive, uint16 x1, uint16 y1, uint16 x2, uint16 y2);
 	void eatMessages();
 	void drawStaticMessage(byte index);
