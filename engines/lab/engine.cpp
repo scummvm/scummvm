@@ -167,20 +167,12 @@ void LabEngine::drawPanel() {
 	_event->mouseShow();
 }
 
-
-extern bool LastMessageLong;
-
-static bool LastTooLong = false;
-
-
-
-
 /******************************************************************************/
 /* Draws the message for the room.                                            */
 /******************************************************************************/
 void LabEngine::drawRoomMessage(uint16 CurInv, CloseDataPtr cptr) {
-	if (LastTooLong) {
-		LastTooLong = false;
+	if (_lastTooLong) {
+		_lastTooLong = false;
 		return;
 	}
 
@@ -197,7 +189,7 @@ void LabEngine::drawRoomMessage(uint16 CurInv, CloseDataPtr cptr) {
 	} else
 		drawDirection(cptr);
 
-	LastTooLong = LastMessageLong;
+	_lastTooLong = _lastMessageLong;
 }
 
 

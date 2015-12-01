@@ -78,7 +78,7 @@ void text(TextFont *tf, uint16 x, uint16 y, uint16 color, const char *text, uint
 	int32 templeft, LeftInSegment;
 	uint16 bwidth, mask, curpage, data;
 
-	VGATop = g_lab->getVGABaseAddr();
+	VGATop = g_lab->getCurrentDrawingBuffer();
 
 	for (uint16 i = 0; i < numchars; i++) {
 		RealOffset = (g_lab->_screenWidth * y) + x;

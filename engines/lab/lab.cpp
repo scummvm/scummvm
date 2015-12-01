@@ -61,7 +61,7 @@ LabEngine::LabEngine(OSystem *syst, const ADGameDescription *gameDesc)
 
     _curapen = 0;
 
-    _currentDsplayBuffer = 0;
+    _currentDisplayBuffer = 0;
     _displayBuffer = 0;
 
     _lastWaitTOFTicks = 0;
@@ -91,6 +91,9 @@ LabEngine::LabEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	_event = nullptr;
 	_resource = nullptr;
 	_music = nullptr;
+
+    _lastMessageLong = false;
+    _lastTooLong = false;
 
 	//const Common::FSNode gameDataDir(ConfMan.get("path"));
 	//SearchMan.addSubDirectoryMatching(gameDataDir, "game");
