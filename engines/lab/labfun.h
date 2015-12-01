@@ -54,7 +54,7 @@ class LabEngine;
 #define EAST    2
 #define WEST    3
 
-struct Image;
+class Image;
 struct TextFont;
 struct Gadget;
 
@@ -188,7 +188,6 @@ char *translateFileName(const char *filename);
 
 void fade(bool fadein, uint16 res);
 void setAmigaPal(uint16 *pal, uint16 numcolors);
-void readImage(byte **buffer, Image **im);
 void doMap(uint16 CurRoom);
 void doJournal();
 void doNotes();

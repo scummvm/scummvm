@@ -30,6 +30,7 @@
 
 #include "lab/lab.h"
 #include "lab/labfun.h"
+#include "lab/image.h"
 #include "lab/interface.h"
 #include "lab/mouse.h"
 #include "common/util.h"
@@ -81,7 +82,7 @@ void freeButtonList(Gadget *gptrlist) {
 /*****************************************************************************/
 void drawGadgetList(Gadget *gadlist) {
 	while (gadlist) {
-		g_lab->drawImage(gadlist->Im, gadlist->x, gadlist->y);
+		gadlist->Im->drawImage(gadlist->x, gadlist->y);
 
 		if (GADGETOFF & gadlist->GadgetFlags)
 			ghoastGadget(gadlist, 1);
@@ -105,7 +106,7 @@ void ghoastGadget(Gadget *curgad, uint16 pencolor) {
 /* Unghoasts a gadget, and makes it available again.                         */
 /*****************************************************************************/
 void unGhoastGadget(Gadget *curgad) {
-	g_lab->drawImage(curgad->Im, curgad->x, curgad->y);
+	curgad->Im->drawImage(curgad->x, curgad->y);
 	curgad->GadgetFlags &= !(GADGETOFF);
 }
 
@@ -132,11 +133,11 @@ Gadget *LabEngine::checkNumGadgetHit(Gadget *gadlist, uint16 key) {
 		        (gadlist->KeyEquiv != 0 && makeGadgetKeyEquiv(key) == gadlist->KeyEquiv))
 		        && !(GADGETOFF & gadlist->GadgetFlags)) {
 			_event->mouseHide();
-			g_lab->drawImage(gadlist->ImAlt, gadlist->x, gadlist->y);
+			gadlist->ImAlt->drawImage(gadlist->x, gadlist->y);
 			_event->mouseShow();
 			g_system->delayMillis(80);
 			_event->mouseHide();
-			g_lab->drawImage(gadlist->Im, gadlist->x, gadlist->y);
+			gadlist->Im->drawImage(gadlist->x, gadlist->y);
 			_event->mouseShow();
 
 			return gadlist;

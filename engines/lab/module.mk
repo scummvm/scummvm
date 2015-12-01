@@ -6,6 +6,7 @@ MODULE_OBJS := \
 	detection.o \
 	engine.o \
 	graphics.o \
+	image.o \
 	interface.o \
 	intro.o \
 	lab.o \
@@ -32,4 +33,3 @@ endif
 
 # Include common rules
 include $(srcdir)/rules.mk
-

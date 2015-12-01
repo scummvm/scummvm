@@ -31,6 +31,7 @@
 #include "lab/lab.h"
 #include "lab/anim.h"
 #include "lab/parsetypes.h"
+#include "lab/image.h"
 #include "lab/labfun.h"
 #include "lab/parsefun.h"
 #include "lab/mouse.h"
@@ -376,7 +377,7 @@ void LabEngine::doScrollBlack() {
 	im.Height = height;
 	im.ImageData = mem;
 	_music->updateMusic();
-	readScreenImage(&im, 0, 0);
+	im.readScreenImage(0, 0);
 	_music->updateMusic();
 
 	baseAddr = (uint32 *)getCurrentDrawingBuffer();
