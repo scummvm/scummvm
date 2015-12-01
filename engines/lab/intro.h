@@ -43,11 +43,10 @@ public:
 
 private:
 	void introEatMessages();
-	void doPictText(const char *Filename, bool isscreen);
+	void doPictText(const char *Filename, TextFont *msgFont, bool isscreen);
 	void musicDelay();
 	void nReadPict(const char *Filename, bool PlayOnce);
 
-	TextFont _filler, *_msgfont;
 	bool _quitIntro, _introDoBlack;
 };
 
