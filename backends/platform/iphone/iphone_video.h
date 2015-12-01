@@ -50,8 +50,6 @@
 	GLuint _overlayTexture;
 	GLuint _mouseCursorTexture;
 
-	UIDeviceOrientation _orientation;
-
 	GLint _renderBufferWidth;
 	GLint _renderBufferHeight;
 
@@ -79,8 +77,6 @@
 - (id)initWithFrame:(struct CGRect)frame;
 
 - (VideoContext *)getVideoContext;
-
-- (void)drawRect:(CGRect)frame;
 
 - (void)createScreenTexture;
 - (void)initSurface;

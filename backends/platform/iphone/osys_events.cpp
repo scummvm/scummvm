@@ -64,6 +64,17 @@ bool OSystem_IPHONE::pollEvent(Common::Event &event) {
 			if (!handleEvent_mouseDragged(event, internalEvent.value1, internalEvent.value2))
 				return false;
 			break;
+
+		case kInputOrientationChanged:
+			handleEvent_orientationChanged(internalEvent.value1);
+			return false;
+			break;
+
+		case kInputApplicationSuspended:
+			suspendLoop();
+			return false;
+			break;
+
 		case kInputMouseSecondDragged:
 			if (!handleEvent_mouseSecondDragged(event, internalEvent.value1, internalEvent.value2))
 				return false;
@@ -78,29 +89,25 @@ bool OSystem_IPHONE::pollEvent(Common::Event &event) {
 			if (!handleEvent_secondMouseUp(event, internalEvent.value1, internalEvent.value2))
 				return false;
 			break;
-		case kInputOrientationChanged:
-			handleEvent_orientationChanged(internalEvent.value1);
-			return false;
-			break;
-
-		case kInputApplicationSuspended:
-			suspendLoop();
-			return false;
-			break;
-
+			
 		case kInputKeyPressed:
 			handleEvent_keyPressed(event, internalEvent.value1);
 			break;
-
+			
 		case kInputSwipe:
-			if (!handleEvent_swipe(event, internalEvent.value1))
+			if (!handleEvent_swipe(event, internalEvent.value1, internalEvent.value2))
+				return false;
+			break;
+			
+		case kInputTap:
+			if (!handleEvent_tap(event, (UIViewTapDescription) internalEvent.value1, internalEvent.value2))
 				return false;
 			break;
 
 		default:
 			break;
 		}
-
+		
 		return true;
 	}
 	return false;
@@ -419,71 +426,137 @@ void  OSystem_IPHONE::handleEvent_keyPressed(Common::Event &event, int keyPresse
 	_queuedEventTime = getMillis() + kQueuedInputEventDelay;
 }
 
-bool OSystem_IPHONE::handleEvent_swipe(Common::Event &event, int direction) {
-	Common::KeyCode keycode = Common::KEYCODE_INVALID;
-	switch (_screenOrientation) {
-	case kScreenOrientationPortrait:
-		switch ((UIViewSwipeDirection)direction) {
-		case kUIViewSwipeUp:
-			keycode = Common::KEYCODE_UP;
+bool OSystem_IPHONE::handleEvent_swipe(Common::Event &event, int direction, int touches) {
+	if (touches == 1) {
+		Common::KeyCode keycode = Common::KEYCODE_INVALID;
+		switch (_screenOrientation) {
+		case kScreenOrientationPortrait:
+			switch ((UIViewSwipeDirection)direction) {
+				case kUIViewSwipeUp:
+					keycode = Common::KEYCODE_UP;
+					break;
+				case kUIViewSwipeDown:
+					keycode = Common::KEYCODE_DOWN;
+					break;
+				case kUIViewSwipeLeft:
+					keycode = Common::KEYCODE_LEFT;
+					break;
+				case kUIViewSwipeRight:
+					keycode = Common::KEYCODE_RIGHT;
+					break;
+				default:
+					return false;
+			}
 			break;
-		case kUIViewSwipeDown:
-			keycode = Common::KEYCODE_DOWN;
+		case kScreenOrientationLandscape:
+			switch ((UIViewSwipeDirection)direction) {
+				case kUIViewSwipeUp:
+					keycode = Common::KEYCODE_LEFT;
+					break;
+				case kUIViewSwipeDown:
+					keycode = Common::KEYCODE_RIGHT;
+					break;
+				case kUIViewSwipeLeft:
+					keycode = Common::KEYCODE_DOWN;
+					break;
+				case kUIViewSwipeRight:
+					keycode = Common::KEYCODE_UP;
+					break;
+				default:
+					return false;
+			}
 			break;
-		case kUIViewSwipeLeft:
-			keycode = Common::KEYCODE_LEFT;
+		case kScreenOrientationFlippedLandscape:
+			switch ((UIViewSwipeDirection)direction) {
+				case kUIViewSwipeUp:
+					keycode = Common::KEYCODE_RIGHT;
+					break;
+				case kUIViewSwipeDown:
+					keycode = Common::KEYCODE_LEFT;
+					break;
+				case kUIViewSwipeLeft:
+					keycode = Common::KEYCODE_UP;
+					break;
+				case kUIViewSwipeRight:
+					keycode = Common::KEYCODE_DOWN;
+					break;
+				default:
+					return false;
+			}
 			break;
-		case kUIViewSwipeRight:
-			keycode = Common::KEYCODE_RIGHT;
-			break;
-		default:
-			return false;
 		}
-		break;
-	case kScreenOrientationLandscape:
-		switch ((UIViewSwipeDirection)direction) {
-		case kUIViewSwipeUp:
-			keycode = Common::KEYCODE_LEFT;
-			break;
-		case kUIViewSwipeDown:
-			keycode = Common::KEYCODE_RIGHT;
-			break;
-		case kUIViewSwipeLeft:
-			keycode = Common::KEYCODE_DOWN;
-			break;
-		case kUIViewSwipeRight:
-			keycode = Common::KEYCODE_UP;
-			break;
-		default:
-			return false;
-		}
-		break;
-	case kScreenOrientationFlippedLandscape:
-		switch ((UIViewSwipeDirection)direction) {
-		case kUIViewSwipeUp:
-			keycode = Common::KEYCODE_RIGHT;
-			break;
-		case kUIViewSwipeDown:
-			keycode = Common::KEYCODE_LEFT;
-			break;
-		case kUIViewSwipeLeft:
-			keycode = Common::KEYCODE_UP;
-			break;
-		case kUIViewSwipeRight:
-			keycode = Common::KEYCODE_DOWN;
-			break;
-		default:
-			return false;
-		}
-		break;
+		
+		event.kbd.keycode = _queuedInputEvent.kbd.keycode = keycode;
+		event.kbd.ascii = _queuedInputEvent.kbd.ascii = 0;
+		event.type = Common::EVENT_KEYDOWN;
+		_queuedInputEvent.type = Common::EVENT_KEYUP;
+		event.kbd.flags = _queuedInputEvent.kbd.flags = 0;
+		_queuedEventTime = getMillis() + kQueuedInputEventDelay;
+		
+		return true;
 	}
+	else if (touches == 2) {
+		switch ((UIViewSwipeDirection)direction) {
+		case kUIViewSwipeUp: {
+			_mouseClickAndDragEnabled = !_mouseClickAndDragEnabled;
+			const char *dialogMsg;
+			if (_mouseClickAndDragEnabled) {
+				_touchpadModeEnabled = false;
+				dialogMsg = _("Mouse-click-and-drag mode enabled.");
+			} else
+				dialogMsg = _("Mouse-click-and-drag mode disabled.");
+			GUI::TimedMessageDialog dialog(dialogMsg, 1500);
+			dialog.runModal();
+			return false;
+		}
 
-	event.kbd.keycode = _queuedInputEvent.kbd.keycode = keycode;
-	event.kbd.ascii = _queuedInputEvent.kbd.ascii = 0;
-	event.type = Common::EVENT_KEYDOWN;
-	_queuedInputEvent.type = Common::EVENT_KEYUP;
-	event.kbd.flags = _queuedInputEvent.kbd.flags = 0;
-	_queuedEventTime = getMillis() + kQueuedInputEventDelay;
+		case kUIViewSwipeDown: {
+			// Swipe down
+			event.type = Common::EVENT_MAINMENU;
+			_queuedInputEvent.type = Common::EVENT_INVALID;
+			_queuedEventTime = getMillis() + kQueuedInputEventDelay;
+			return true;
+		}
 
-	return true;
+		case kUIViewSwipeRight: {
+			// Swipe right
+			_touchpadModeEnabled = !_touchpadModeEnabled;
+			const char *dialogMsg;
+			if (_touchpadModeEnabled)
+				dialogMsg = _("Touchpad mode enabled.");
+			else
+				dialogMsg = _("Touchpad mode disabled.");
+			GUI::TimedMessageDialog dialog(dialogMsg, 1500);
+			dialog.runModal();
+			return false;
+		}
+
+		default:
+			break;
+		}
+	}
+	return false;
+}
+
+bool OSystem_IPHONE::handleEvent_tap(Common::Event &event, UIViewTapDescription type, int touches) {
+	if (touches == 1) {
+		if (type == kUIViewTapDouble) {
+			event.type = Common::EVENT_RBUTTONDOWN;
+			_queuedInputEvent.type = Common::EVENT_RBUTTONUP;
+			_queuedEventTime = getMillis() + kQueuedInputEventDelay;
+			return true;
+		}
+	}
+	else if (touches == 2) {
+		if (type == kUIViewTapDouble) {
+			event.kbd.keycode = _queuedInputEvent.kbd.keycode = Common::KEYCODE_ESCAPE;
+			event.kbd.ascii = _queuedInputEvent.kbd.ascii = Common::ASCII_ESCAPE;
+			event.type = Common::EVENT_KEYDOWN;
+			_queuedInputEvent.type = Common::EVENT_KEYUP;
+			event.kbd.flags = _queuedInputEvent.kbd.flags = 0;
+			_queuedEventTime = getMillis() + kQueuedInputEventDelay;
+			return true;
+		}
+	}
+	return false;
 }

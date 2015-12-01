@@ -26,6 +26,7 @@
 #include "iphone_video.h"
 
 #include "graphics/colormasks.h"
+#include "common/system.h"
 
 iPhoneView *g_iPhoneViewInstance = nil;
 static int g_fullWidth;
@@ -37,6 +38,8 @@ static int g_needsScreenUpdate = 0;
 static long g_lastTick = 0;
 static int g_frames = 0;
 #endif
+
+extern bool iphone_touchpadModeEnabled();
 
 #define printOpenGLError() printOglError(__FILE__, __LINE__)
 
@@ -102,8 +105,10 @@ const char *iPhone_getDocumentsDir() {
 	CAEAGLLayer *eaglLayer = (CAEAGLLayer *)self.layer;
 
 	eaglLayer.opaque = YES;
-	eaglLayer.drawableProperties = [NSDictionary dictionaryWithObjectsAndKeys:
-	                                [NSNumber numberWithBool:FALSE], kEAGLDrawablePropertyRetainedBacking, kEAGLColorFormatRGB565, kEAGLDrawablePropertyColorFormat, nil];
+	eaglLayer.drawableProperties = @{
+	                                 kEAGLDrawablePropertyRetainedBacking: @NO,
+	                                 kEAGLDrawablePropertyColorFormat: kEAGLColorFormatRGB565
+	                                };
 
 	_context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES1];
 
@@ -132,11 +137,14 @@ const char *iPhone_getDocumentsDir() {
 			NSLog(@"Failed to make complete framebuffer object %x.", glCheckFramebufferStatusOES(GL_FRAMEBUFFER_OES));
 			return;
 		}
+		uint maxValue = MAX(_renderBufferWidth, _renderBufferHeight), maxValuePOT = getSizeNextPOT(maxValue);
+		uint minValue = MIN(_renderBufferWidth, _renderBufferHeight), minValuePOT = getSizeNextPOT(minValue);
 
-		_videoContext.overlayHeight = _renderBufferWidth;
-		_videoContext.overlayWidth = _renderBufferHeight;
-		uint overlayTextureWidth = getSizeNextPOT(_videoContext.overlayHeight);
-		uint overlayTextureHeight = getSizeNextPOT(_videoContext.overlayWidth);
+		_videoContext.overlayWidth = maxValue;
+		_videoContext.overlayHeight = minValue;
+
+		uint overlayTextureWidth = maxValuePOT;
+		uint overlayTextureHeight = minValuePOT;
 
 		// Since the overlay size won't change the whole run, we can
 		// precalculate the texture coordinates for the overlay texture here
@@ -158,31 +166,65 @@ const char *iPhone_getDocumentsDir() {
 	}
 }
 
+- (void)setupGestureRecognizers {
+	UISwipeGestureRecognizer *swipeRight = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(twoFingersSwipeRight:)];
+	swipeRight.direction = UISwipeGestureRecognizerDirectionRight;
+	swipeRight.numberOfTouchesRequired = 2;
+
+	UISwipeGestureRecognizer *swipeLeft = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(twoFingersSwipeLeft:)];
+	swipeLeft.direction = UISwipeGestureRecognizerDirectionLeft;
+	swipeLeft.numberOfTouchesRequired = 2;
+
+	UISwipeGestureRecognizer *swipeUp = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(twoFingersSwipeUp:)];
+	swipeUp.direction = UISwipeGestureRecognizerDirectionUp;
+	swipeUp.numberOfTouchesRequired = 2;
+
+	UISwipeGestureRecognizer *swipeDown = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(twoFingersSwipeDown:)];
+	swipeDown.direction = UISwipeGestureRecognizerDirectionDown;
+	swipeDown.numberOfTouchesRequired = 2;
+
+	UITapGestureRecognizer *doubleTapTwoFingers = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(twoFingersDoubleTap:)];
+	doubleTapTwoFingers.numberOfTapsRequired = 2;
+	doubleTapTwoFingers.numberOfTouchesRequired = 2;
+
+	[self addGestureRecognizer:swipeRight];
+	[self addGestureRecognizer:swipeLeft];
+	[self addGestureRecognizer:swipeUp];
+	[self addGestureRecognizer:swipeDown];
+	[self addGestureRecognizer:doubleTapTwoFingers];
+}
+
+- (CGFloat)optimalScale {
+	CGFloat screenScale = [[UIScreen mainScreen] scale];
+	if (screenScale < 2) return screenScale;
+
+	if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
+		return 1;
+	}
+
+	CGSize screenSize = [[UIScreen mainScreen] nativeBounds].size;
+	CGFloat mxSize = MAX(screenSize.width, screenSize.height);
+
+	if (mxSize <= 1136) {
+		// iPhone 4S / 5 / 5S / 5C
+		return 1;
+	}
+	else {
+		// iPhone 6 / 6S / 6+ / 6S+
+		return 2;
+	}
+}
+
 - (id)initWithFrame:(struct CGRect)frame {
 	self = [super initWithFrame: frame];
 
-	_contentScaleFactor = 1;
-	if ([[UIScreen mainScreen] respondsToSelector:@selector(scale)]) {
-		if ([self respondsToSelector:@selector(setContentScaleFactor:)]) {
-			// Horrible and crazy method to get the proper return value of
-			// scale when the SDK used for building does not know anything
-			// about the selector scale...
-			NSMethodSignature *scaleSignature = [UIScreen instanceMethodSignatureForSelector:@selector(scale)];
-			NSInvocation *scaleInvocation = [NSInvocation invocationWithMethodSignature:scaleSignature];
-			[scaleInvocation setTarget:[UIScreen mainScreen]];
-			[scaleInvocation setSelector:@selector(scale)];
-			[scaleInvocation invoke];
+	[self setupGestureRecognizers];
 
-			NSInteger returnLength = [[scaleInvocation methodSignature] methodReturnLength];
-			if (returnLength == sizeof(CGFloat)) {
-				[scaleInvocation getReturnValue:&_contentScaleFactor];
-				[self setContentScaleFactor:_contentScaleFactor];
-			}
-		}
-	}
+	g_fullWidth = (int)MAX(frame.size.width, frame.size.height);
+	g_fullHeight = (int)MIN(frame.size.width, frame.size.height);
 
-	g_fullWidth = (int)frame.size.width;
-	g_fullHeight = (int)frame.size.height;
+	_contentScaleFactor = [self optimalScale];
+	[self setContentScaleFactor:_contentScaleFactor];
 
 	g_iPhoneViewInstance = self;
 
@@ -199,34 +241,34 @@ const char *iPhone_getDocumentsDir() {
 	_eventLock = [[NSLock alloc] init];
 
 	_gameScreenVertCoords[0] = _gameScreenVertCoords[1] =
-	    _gameScreenVertCoords[2] = _gameScreenVertCoords[3] =
-	    _gameScreenVertCoords[4] = _gameScreenVertCoords[5] =
-	    _gameScreenVertCoords[6] = _gameScreenVertCoords[7] = 0;
+		_gameScreenVertCoords[2] = _gameScreenVertCoords[3] =
+		_gameScreenVertCoords[4] = _gameScreenVertCoords[5] =
+		_gameScreenVertCoords[6] = _gameScreenVertCoords[7] = 0;
 
 	_gameScreenTexCoords[0] = _gameScreenTexCoords[1] =
-	    _gameScreenTexCoords[2] = _gameScreenTexCoords[3] =
-	    _gameScreenTexCoords[4] = _gameScreenTexCoords[5] =
-	    _gameScreenTexCoords[6] = _gameScreenTexCoords[7] = 0;
+		_gameScreenTexCoords[2] = _gameScreenTexCoords[3] =
+		_gameScreenTexCoords[4] = _gameScreenTexCoords[5] =
+		_gameScreenTexCoords[6] = _gameScreenTexCoords[7] = 0;
 
 	_overlayVertCoords[0] = _overlayVertCoords[1] =
-	    _overlayVertCoords[2] = _overlayVertCoords[3] =
-	    _overlayVertCoords[4] = _overlayVertCoords[5] =
-	    _overlayVertCoords[6] = _overlayVertCoords[7] = 0;
+		_overlayVertCoords[2] = _overlayVertCoords[3] =
+		_overlayVertCoords[4] = _overlayVertCoords[5] =
+		_overlayVertCoords[6] = _overlayVertCoords[7] = 0;
 
 	_overlayTexCoords[0] = _overlayTexCoords[1] =
-	    _overlayTexCoords[2] = _overlayTexCoords[3] =
-	    _overlayTexCoords[4] = _overlayTexCoords[5] =
-	    _overlayTexCoords[6] = _overlayTexCoords[7] = 0;
+		_overlayTexCoords[2] = _overlayTexCoords[3] =
+		_overlayTexCoords[4] = _overlayTexCoords[5] =
+		_overlayTexCoords[6] = _overlayTexCoords[7] = 0;
 
 	_mouseVertCoords[0] = _mouseVertCoords[1] =
-	    _mouseVertCoords[2] = _mouseVertCoords[3] =
-	    _mouseVertCoords[4] = _mouseVertCoords[5] =
-	    _mouseVertCoords[6] = _mouseVertCoords[7] = 0;
+		_mouseVertCoords[2] = _mouseVertCoords[3] =
+		_mouseVertCoords[4] = _mouseVertCoords[5] =
+		_mouseVertCoords[6] = _mouseVertCoords[7] = 0;
 
 	_mouseTexCoords[0] = _mouseTexCoords[1] =
-	    _mouseTexCoords[2] = _mouseTexCoords[3] =
-	    _mouseTexCoords[4] = _mouseTexCoords[5] =
-	    _mouseTexCoords[6] = _mouseTexCoords[7] = 0;
+		_mouseTexCoords[2] = _mouseTexCoords[3] =
+		_mouseTexCoords[4] = _mouseTexCoords[5] =
+		_mouseTexCoords[6] = _mouseTexCoords[7] = 0;
 
 	// Initialize the OpenGL ES context
 	[self createContext];
@@ -247,8 +289,8 @@ const char *iPhone_getDocumentsDir() {
 	[super dealloc];
 }
 
-- (void)drawRect:(CGRect)frame {
 #if 0
+- (void)drawRect:(CGRect)frame {
 	if (g_lastTick == 0) {
 		g_lastTick = time(0);
 	}
@@ -259,8 +301,8 @@ const char *iPhone_getDocumentsDir() {
 		printf("FPS: %i\n", g_frames);
 		g_frames = 0;
 	}
-#endif
 }
+#endif
 
 - (void)setFilterModeForTexture:(GLuint)tex {
 	if (!tex)
@@ -412,44 +454,6 @@ const char *iPhone_getDocumentsDir() {
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4); printOpenGLError();
 }
 
-- (void)setUpOrientation:(UIDeviceOrientation)orientation width:(int *)width height:(int *)height {
-	_orientation = orientation;
-
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-
-	// We always force the origin (0,0) to be in the upper left corner.
-	switch (_orientation) {
-	case UIDeviceOrientationLandscapeRight:
-		glRotatef( 90, 0, 0, 1); printOpenGLError();
-		glOrthof(0, _renderBufferHeight, _renderBufferWidth, 0, 0, 1); printOpenGLError();
-
-		*width = _renderBufferHeight;
-		*height = _renderBufferWidth;
-		break;
-
-	case UIDeviceOrientationLandscapeLeft:
-		glRotatef(-90, 0, 0, 1); printOpenGLError();
-		glOrthof(0, _renderBufferHeight, _renderBufferWidth, 0, 0, 1); printOpenGLError();
-
-		*width = _renderBufferHeight;
-		*height = _renderBufferWidth;
-		break;
-
-	case UIDeviceOrientationPortrait:
-	default:
-		// We must force the portrait orientation here, since we might not know
-		// the real orientation.
-		_orientation = UIDeviceOrientationPortrait;
-
-		glOrthof(0, _renderBufferWidth, _renderBufferHeight, 0, 0, 1); printOpenGLError();
-
-		*width = _renderBufferWidth;
-		*height = _renderBufferHeight;
-		break;
-	}
-}
-
 - (void)createScreenTexture {
 	const uint screenTexWidth = getSizeNextPOT(_videoContext.screenWidth);
 	const uint screenTexHeight = getSizeNextPOT(_videoContext.screenHeight);
@@ -461,19 +465,60 @@ const char *iPhone_getDocumentsDir() {
 }
 
 - (void)initSurface {
-	int screenWidth, screenHeight;
-	[self setUpOrientation:[[UIDevice currentDevice] orientation] width:&screenWidth height:&screenHeight];
-
-	if (_screenTexture > 0) {
+	if (_context) {
 		glDeleteTextures(1, &_screenTexture); printOpenGLError();
+		glDeleteTextures(1, &_overlayTexture); printOpenGLError();
+
+		glDeleteRenderbuffersOES(1, &_viewRenderbuffer);
+		glDeleteFramebuffersOES(1, &_viewFramebuffer);
+
+		glGenFramebuffersOES(1, &_viewFramebuffer); printOpenGLError();
+		glGenRenderbuffersOES(1, &_viewRenderbuffer); printOpenGLError();
+
+		glBindFramebufferOES(GL_FRAMEBUFFER_OES, _viewFramebuffer); printOpenGLError();
+		glBindRenderbufferOES(GL_RENDERBUFFER_OES, _viewRenderbuffer); printOpenGLError();
+		[_context renderbufferStorage:GL_RENDERBUFFER_OES fromDrawable:(id<EAGLDrawable>)self.layer];
+
+		glFramebufferRenderbufferOES(GL_FRAMEBUFFER_OES, GL_COLOR_ATTACHMENT0_OES, GL_RENDERBUFFER_OES, _viewRenderbuffer); printOpenGLError();
+
+		glGetRenderbufferParameterivOES(GL_RENDERBUFFER_OES, GL_RENDERBUFFER_WIDTH_OES, &_renderBufferWidth); printOpenGLError();
+		glGetRenderbufferParameterivOES(GL_RENDERBUFFER_OES, GL_RENDERBUFFER_HEIGHT_OES, &_renderBufferHeight); printOpenGLError();
+
+		if (glCheckFramebufferStatusOES(GL_FRAMEBUFFER_OES) != GL_FRAMEBUFFER_COMPLETE_OES) {
+			NSLog(@"Failed to make complete framebuffer object %x.", glCheckFramebufferStatusOES(GL_FRAMEBUFFER_OES));
+			return;
+		}
+
+		glViewport(0, 0, _renderBufferWidth, _renderBufferHeight); printOpenGLError();
+		glClearColor(0.0f, 0.0f, 0.0f, 1.0f); printOpenGLError();
+
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+		glEnable(GL_TEXTURE_2D); printOpenGLError();
+		glEnableClientState(GL_TEXTURE_COORD_ARRAY); printOpenGLError();
+		glEnableClientState(GL_VERTEX_ARRAY); printOpenGLError();
+	}
+
+	BOOL isLandscape = (self.bounds.size.width > self.bounds.size.height); // UIDeviceOrientationIsLandscape([[UIDevice currentDevice] orientation]);
+
+//	glMatrixMode(GL_PROJECTION);
+//	glLoadIdentity();
+
+	int screenWidth, screenHeight;
+	if (isLandscape) {
+		screenWidth = MAX(_renderBufferWidth, _renderBufferHeight);
+		screenHeight = MIN(_renderBufferWidth, _renderBufferHeight);
+//		glOrthof(0, screenWidth, screenHeight, 0, 0, 1); printOpenGLError();
+	}
+	else {
+		screenWidth = MIN(_renderBufferWidth, _renderBufferHeight);
+		screenHeight = MAX(_renderBufferWidth, _renderBufferHeight);
+//		glOrthof(0, screenHeight, screenWidth, 0, 0, 1); printOpenGLError();
 	}
 
 	glGenTextures(1, &_screenTexture); printOpenGLError();
 	[self setFilterModeForTexture:_screenTexture];
-
-	if (_overlayTexture > 0) {
-		glDeleteTextures(1, &_overlayTexture); printOpenGLError();
-	}
 
 	glGenTextures(1, &_overlayTexture); printOpenGLError();
 	[self setFilterModeForTexture:_overlayTexture];
@@ -482,10 +527,10 @@ const char *iPhone_getDocumentsDir() {
 
 	[self clearColorBuffer];
 
-	if (_keyboardView != nil) {
-		[_keyboardView removeFromSuperview];
-		[[_keyboardView inputView] removeFromSuperview];
-	}
+//	if (_keyboardView != nil) {
+//		[_keyboardView removeFromSuperview];
+//		[[_keyboardView inputView] removeFromSuperview];
+//	}
 
 	GLfloat adjustedWidth = _videoContext.screenWidth;
 	GLfloat adjustedHeight = _videoContext.screenHeight;
@@ -498,7 +543,7 @@ const char *iPhone_getDocumentsDir() {
 
 	float overlayPortraitRatio;
 
-	if (_orientation == UIDeviceOrientationLandscapeLeft || _orientation ==  UIDeviceOrientationLandscapeRight) {
+	if (isLandscape) {
 		GLfloat gameScreenRatio = adjustedWidth / adjustedHeight;
 		GLfloat screenRatio = (GLfloat)screenWidth / (GLfloat)screenHeight;
 
@@ -524,6 +569,8 @@ const char *iPhone_getDocumentsDir() {
 			yOffset = (screenHeight - rectHeight) / 2;
 		}
 
+		[_keyboardView hideKeyboard];
+
 		//printf("Rect: %i, %i, %i, %i\n", xOffset, yOffset, rectWidth, rectHeight);
 		_gameScreenRect = CGRectMake(xOffset, yOffset, rectWidth, rectHeight);
 		overlayPortraitRatio = 1.0f;
@@ -537,14 +584,13 @@ const char *iPhone_getDocumentsDir() {
 		if (_keyboardView == nil) {
 			_keyboardView = [[SoftKeyboard alloc] initWithFrame:keyFrame];
 			[_keyboardView setInputDelegate:self];
+			[self addSubview:[_keyboardView inputView]];
+			[self addSubview: _keyboardView];
 		}
 
-		[self addSubview:[_keyboardView inputView]];
-		[self addSubview: _keyboardView];
-		[[_keyboardView inputView] becomeFirstResponder];
+		[_keyboardView showKeyboard];
 		overlayPortraitRatio = (_videoContext.overlayHeight * ratio) / _videoContext.overlayWidth;
 	}
-
 	_overlayRect = CGRectMake(0, 0, screenWidth, screenHeight * overlayPortraitRatio);
 
 	_gameScreenVertCoords[0] = _gameScreenVertCoords[4] = CGRectGetMinX(_gameScreenRect);
@@ -554,6 +600,10 @@ const char *iPhone_getDocumentsDir() {
 
 	_overlayVertCoords[2] = _overlayVertCoords[6] = CGRectGetMaxX(_overlayRect);
 	_overlayVertCoords[5] = _overlayVertCoords[7] = CGRectGetMaxY(_overlayRect);
+
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glOrthof(0, screenWidth, screenHeight, 0, 0, 1);
 
 	[self setViewTransformation];
 	[self updateMouseCursorScaling];
@@ -601,39 +651,11 @@ const char *iPhone_getDocumentsDir() {
 	return true;
 }
 
-/**
- * Converts portrait mode coordinates into rotated mode coordinates.
- */
-- (bool)convertToRotatedCoords:(CGPoint)point result:(CGPoint *)result {
-	switch (_orientation) {
-	case UIDeviceOrientationLandscapeLeft:
-		result->x = point.y;
-		result->y = _renderBufferWidth - point.x;
-		return true;
-
-	case UIDeviceOrientationLandscapeRight:
-		result->x = _renderBufferHeight - point.y;
-		result->y = point.x;
-		return true;
-
-	case UIDeviceOrientationPortrait:
-		result->x = point.x;
-		result->y = point.y;
-		return true;
-
-	default:
-		return false;
-	}
-}
-
 - (bool)getMouseCoords:(CGPoint)point eventX:(int *)x eventY:(int *)y {
 	// We scale the input according to our scale factor to get actual screen
 	// cooridnates.
 	point.x *= _contentScaleFactor;
 	point.y *= _contentScaleFactor;
-
-	if (![self convertToRotatedCoords:point result:&point])
-		return false;
 
 	CGRect *area;
 	int width, height, offsetY;
@@ -657,62 +679,58 @@ const char *iPhone_getDocumentsDir() {
 	// thus we need to add it here.
 	*y = (int)(point.y * height + offsetY);
 
-	// Clip coordinates
-	if (*x < 0 || *x > width || *y < 0 || *y > height)
-		return false;
+	if (!iphone_touchpadModeEnabled()) {
+		// Clip coordinates
+		if (*x < 0 || *x > width || *y < 0 || *y > height)
+			return false;
+	}
 
 	return true;
 }
 
 - (void)deviceOrientationChanged:(UIDeviceOrientation)orientation {
-	switch (orientation) {
-	case UIDeviceOrientationLandscapeLeft:
-	case UIDeviceOrientationLandscapeRight:
-	case UIDeviceOrientationPortrait:
-		_orientation = orientation;
-		break;
-
-	default:
-		return;
-	}
-
 	[self addEvent:InternalEvent(kInputOrientationChanged, orientation, 0)];
 }
 
+- (UITouch *)secondTouchOtherTouchThan:(UITouch *)touch in:(NSSet *)set {
+	NSArray *all = [set allObjects];
+	for (UITouch *t in all) {
+		if (t != touch) {
+			return t;
+		}
+	}
+	return nil;
+}
+
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
-	NSSet *allTouches = [event allTouches];
 	int x, y;
 
-	switch ([allTouches count]) {
-	case 1: {
-		UITouch *touch = [touches anyObject];
-		CGPoint point = [touch locationInView:self];
+	NSSet<UITouch *> *allTouches = [event allTouches];
+	if (allTouches.count == 1) {
+		_firstTouch = [allTouches anyObject];
+		CGPoint point = [_firstTouch locationInView:self];
 		if (![self getMouseCoords:point eventX:&x eventY:&y])
 			return;
 
-		_firstTouch = touch;
 		[self addEvent:InternalEvent(kInputMouseDown, x, y)];
-		break;
-		}
+	}
+	else if (allTouches.count == 2) {
+		_secondTouch = [self secondTouchOtherTouchThan:_firstTouch in:allTouches];
+		if (_secondTouch) {
+			CGPoint point = [_secondTouch locationInView:self];
+			if (![self getMouseCoords:point eventX:&x eventY:&y])
+				return;
 
-	case 2: {
-		UITouch *touch = [touches anyObject];
-		CGPoint point = [touch locationInView:self];
-		if (![self getMouseCoords:point eventX:&x eventY:&y])
-			return;
-
-		_secondTouch = touch;
-		[self addEvent:InternalEvent(kInputMouseSecondDown, x, y)];
-		break;
+			[self addEvent:InternalEvent(kInputMouseSecondDown, x, y)];
 		}
 	}
 }
 
 - (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event {
-	//NSSet *allTouches = [event allTouches];
 	int x, y;
 
-	for (UITouch *touch in touches) {
+	NSSet<UITouch *> *allTouches = [event allTouches];
+	for (UITouch *touch in allTouches) {
 		if (touch == _firstTouch) {
 			CGPoint point = [touch locationInView:self];
 			if (![self getMouseCoords:point eventX:&x eventY:&y])
@@ -723,55 +741,64 @@ const char *iPhone_getDocumentsDir() {
 			CGPoint point = [touch locationInView:self];
 			if (![self getMouseCoords:point eventX:&x eventY:&y])
 				return;
-
+			
 			[self addEvent:InternalEvent(kInputMouseSecondDragged, x, y)];
 		}
 	}
 }
 
 - (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event {
-	NSSet *allTouches = [event allTouches];
 	int x, y;
 
-	switch ([allTouches count]) {
-	case 1: {
-		UITouch *touch = [[allTouches allObjects] objectAtIndex:0];
+	NSSet<UITouch *> *allTouches = [event allTouches];
+	if (allTouches.count == 1) {
+		UITouch *touch = [allTouches anyObject];
 		CGPoint point = [touch locationInView:self];
-		if (![self getMouseCoords:point eventX:&x eventY:&y])
+		if (![self getMouseCoords:point eventX:&x eventY:&y]) {
 			return;
-
-		[self addEvent:InternalEvent(kInputMouseUp, x, y)];
-		break;
 		}
 
-	case 2: {
+		[self addEvent:InternalEvent(kInputMouseUp, x, y)];
+	}
+	else if (allTouches.count == 2) {
 		UITouch *touch = [[allTouches allObjects] objectAtIndex:1];
 		CGPoint point = [touch locationInView:self];
 		if (![self getMouseCoords:point eventX:&x eventY:&y])
 			return;
 
 		[self addEvent:InternalEvent(kInputMouseSecondUp, x, y)];
-		break;
-		}
 	}
+	_firstTouch = nil;
+	_secondTouch = nil;
 }
 
 - (void)touchesCancelled:(NSSet *)touches withEvent:(UIEvent *)event {
+	_firstTouch = nil;
+	_secondTouch = nil;
+}
+
+- (void)twoFingersSwipeRight:(UISwipeGestureRecognizer *)recognizer {
+	[self addEvent:InternalEvent(kInputSwipe, kUIViewSwipeRight, 2)];
+}
+
+- (void)twoFingersSwipeLeft:(UISwipeGestureRecognizer *)recognizer {
+	[self addEvent:InternalEvent(kInputSwipe, kUIViewSwipeLeft, 2)];
+}
+
+- (void)twoFingersSwipeUp:(UISwipeGestureRecognizer *)recognizer {
+	[self addEvent:InternalEvent(kInputSwipe, kUIViewSwipeUp, 2)];
+}
+
+- (void)twoFingersSwipeDown:(UISwipeGestureRecognizer *)recognizer {
+	[self addEvent:InternalEvent(kInputSwipe, kUIViewSwipeDown, 2)];
+}
+
+- (void)twoFingersDoubleTap:(UITapGestureRecognizer *)recognizer {
+	[self addEvent:InternalEvent(kInputTap, kUIViewTapDouble, 2)];
 }
 
 - (void)handleKeyPress:(unichar)c {
 	[self addEvent:InternalEvent(kInputKeyPressed, c, 0)];
-}
-
-- (BOOL)canHandleSwipes {
-	return TRUE;
-}
-
-- (int)swipe:(int)num withEvent:(struct __GSEvent *)event {
-	//printf("swipe: %i\n", num);
-
-	[self addEvent:InternalEvent(kInputSwipe, num, 0)];
-	return 0;
 }
 
 - (void)applicationSuspend {
