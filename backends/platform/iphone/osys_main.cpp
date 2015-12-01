@@ -83,6 +83,10 @@ OSystem_IPHONE::~OSystem_IPHONE() {
 	_mouseBuffer.free();
 }
 
+bool OSystem_IPHONE::touchpadModeEnabled() const {
+    return _touchpadModeEnabled;
+}
+
 int OSystem_IPHONE::timerHandler(int t) {
 	DefaultTimerManager *tm = (DefaultTimerManager *)g_system->getTimerManager();
 	tm->handler();
@@ -286,6 +290,11 @@ void OSystem_IPHONE::logMessage(LogMessageType::Type type, const char *message) 
 
 	fputs(message, output);
 	fflush(output);
+}
+
+bool iphone_touchpadModeEnabled() {
+	OSystem_IPHONE *sys = (OSystem_IPHONE *) g_system;
+	return sys && sys->touchpadModeEnabled();
 }
 
 void iphone_main(int argc, char *argv[]) {
