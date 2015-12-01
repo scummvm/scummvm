@@ -1,0 +1,15 @@
+[submodule "dists/iphone/External/FLACiOS"]
+	path = dists/iphone/External/FLACiOS
+	url = https://github.com/bSr43/FLACiOS.git
+[submodule "dists/iphone/External/freetype2-ios"]
+	path = dists/iphone/External/freetype2-ios
+	url = https://github.com/bSr43/freetype2-ios
+[submodule "dists/iphone/External/libogg"]
+	path = dists/iphone/External/libogg
+	url = https://github.com/bSr43/libogg.git
+[submodule "dists/iphone/External/libpng-ios"]
+	path = dists/iphone/External/libpng-ios
+	url = https://github.com/bSr43/libpng-ios.git
+[submodule "dists/iphone/External/libvorbis"]
+	path = dists/iphone/External/libvorbis
+	url = https://github.com/bSr43/libvorbis.git
