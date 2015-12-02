@@ -241,34 +241,34 @@ const char *iPhone_getDocumentsDir() {
 	_eventLock = [[NSLock alloc] init];
 
 	_gameScreenVertCoords[0] = _gameScreenVertCoords[1] =
-		_gameScreenVertCoords[2] = _gameScreenVertCoords[3] =
-		_gameScreenVertCoords[4] = _gameScreenVertCoords[5] =
-		_gameScreenVertCoords[6] = _gameScreenVertCoords[7] = 0;
+	    _gameScreenVertCoords[2] = _gameScreenVertCoords[3] =
+	    _gameScreenVertCoords[4] = _gameScreenVertCoords[5] =
+	    _gameScreenVertCoords[6] = _gameScreenVertCoords[7] = 0;
 
 	_gameScreenTexCoords[0] = _gameScreenTexCoords[1] =
-		_gameScreenTexCoords[2] = _gameScreenTexCoords[3] =
-		_gameScreenTexCoords[4] = _gameScreenTexCoords[5] =
-		_gameScreenTexCoords[6] = _gameScreenTexCoords[7] = 0;
+	    _gameScreenTexCoords[2] = _gameScreenTexCoords[3] =
+	    _gameScreenTexCoords[4] = _gameScreenTexCoords[5] =
+	    _gameScreenTexCoords[6] = _gameScreenTexCoords[7] = 0;
 
 	_overlayVertCoords[0] = _overlayVertCoords[1] =
-		_overlayVertCoords[2] = _overlayVertCoords[3] =
-		_overlayVertCoords[4] = _overlayVertCoords[5] =
-		_overlayVertCoords[6] = _overlayVertCoords[7] = 0;
+	    _overlayVertCoords[2] = _overlayVertCoords[3] =
+	    _overlayVertCoords[4] = _overlayVertCoords[5] =
+	    _overlayVertCoords[6] = _overlayVertCoords[7] = 0;
 
 	_overlayTexCoords[0] = _overlayTexCoords[1] =
-		_overlayTexCoords[2] = _overlayTexCoords[3] =
-		_overlayTexCoords[4] = _overlayTexCoords[5] =
-		_overlayTexCoords[6] = _overlayTexCoords[7] = 0;
+	    _overlayTexCoords[2] = _overlayTexCoords[3] =
+	    _overlayTexCoords[4] = _overlayTexCoords[5] =
+	    _overlayTexCoords[6] = _overlayTexCoords[7] = 0;
 
 	_mouseVertCoords[0] = _mouseVertCoords[1] =
-		_mouseVertCoords[2] = _mouseVertCoords[3] =
-		_mouseVertCoords[4] = _mouseVertCoords[5] =
-		_mouseVertCoords[6] = _mouseVertCoords[7] = 0;
+	    _mouseVertCoords[2] = _mouseVertCoords[3] =
+	    _mouseVertCoords[4] = _mouseVertCoords[5] =
+	    _mouseVertCoords[6] = _mouseVertCoords[7] = 0;
 
 	_mouseTexCoords[0] = _mouseTexCoords[1] =
-		_mouseTexCoords[2] = _mouseTexCoords[3] =
-		_mouseTexCoords[4] = _mouseTexCoords[5] =
-		_mouseTexCoords[6] = _mouseTexCoords[7] = 0;
+	    _mouseTexCoords[2] = _mouseTexCoords[3] =
+	    _mouseTexCoords[4] = _mouseTexCoords[5] =
+	    _mouseTexCoords[6] = _mouseTexCoords[7] = 0;
 
 	// Initialize the OpenGL ES context
 	[self createContext];
