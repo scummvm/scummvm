@@ -37,7 +37,7 @@ namespace CreateProjectTool {
 	defines.push_back(name);
 
 #define REMOVE_DEFINE(defines, name) \
-	{ auto i = std::find(defines.begin(), defines.end(), name); if (i != defines.end()) defines.erase(i); }
+	{ ValueList::iterator i = std::find(defines.begin(), defines.end(), name); if (i != defines.end()) defines.erase(i); }
 
 #define ADD_SETTING(config, key, value) \
 	config.settings[key] = Setting(value, "", SettingsNoQuote);
