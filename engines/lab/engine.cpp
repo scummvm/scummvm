@@ -1416,4 +1416,36 @@ void LabEngine::mayShowCrumbIndicatorOff() {
 	}
 }
 
+/* Have to make sure that ROOMBUFFERSIZE is bigger than the biggest piece of memory
+   that we need */
+#define ROOMBUFFERSIZE (2 * 20480L)
+
+static void *_roomBuffer = nullptr;
+static uint16 _curMarker  = 0;
+static void *_memPlace = nullptr;
+
+/*****************************************************************************/
+/* Allocates the memory for the room buffers.                                */
+/*****************************************************************************/
+bool initRoomBuffer() {
+	_curMarker = 0;
+
+	if ((_roomBuffer = calloc(ROOMBUFFERSIZE, 1))) {
+		_memPlace = _roomBuffer;
+
+		return true;
+	} else
+		return false;
+}
+
+/*****************************************************************************/
+/* Frees the memory for the room buffers.                                    */
+/*****************************************************************************/
+void freeRoomBuffer() {
+	if (_roomBuffer) {
+		free(_roomBuffer);
+		_roomBuffer = nullptr;
+	}
+}
+
 } // End of namespace Lab
