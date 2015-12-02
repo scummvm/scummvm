@@ -335,6 +335,9 @@ private:
 	// Misc
 	void setupDefines(const BuildSetup &setup); // Setup the list of defines to be used on build configurations
 
+	// Retrieve information
+	ValueList& getResourceFiles() const;
+
 	// Hash generation
 	std::string getHash(std::string key);
 	std::string newHash() const;

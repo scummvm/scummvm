@@ -95,10 +95,11 @@ bool targetIsIOS(const std::string &targetName) {
 }
 
 bool shouldSkipFileForTarget(const std::string &fileID, const std::string &targetName, const std::string &fileName) {
-	// There are 3 rules used to determine if a specific file belongs to a target:
-	// 1) if the parent directory is "backends/platform/iphone", the file belongs to the iOS target.
-	// 2) if the parent directory is "/sdl", the file belongs to the OS X target.
-	// 3) if the file has a suffix, like "_osx", or "_ios", the file belongs to one of the target.
+	// Rules:
+	// - if the parent directory is "backends/platform/iphone", the file belongs to the iOS target.
+	// - if the parent directory is "/sdl", the file belongs to the OS X target.
+	// - if the file has a suffix, like "_osx", or "_ios", the file belongs to one of the target.
+	// - if the file is an OS X icon file (icns), it belongs to the OS X target.
 	std::string name, ext;
 	splitFilename(fileName, name, ext);
 	if (targetIsIOS(targetName)) {
@@ -115,6 +116,9 @@ bool shouldSkipFileForTarget(const std::string &fileID, const std::string &targe
 		 || fileID.find(doublebufferdl_directory) != std::string::npos) {
 			return true;
 		 }
+		if (ext == "icns") {
+			return true;
+		}
 	}
 	else {
 		// Ugly hack: explicitly remove the browser.cpp file.
@@ -259,6 +263,11 @@ XcodeProvider::XcodeProvider(StringList &global_warnings, std::map<std::string, 
 
 void XcodeProvider::addResourceFiles(const BuildSetup &setup, StringList &includeList, StringList &excludeList) {
 	includeList.push_back(setup.srcDir + "/dists/iphone/Info.plist");
+
+	ValueList &resources = getResourceFiles();
+	for (ValueList::iterator it = resources.begin(); it != resources.end(); ++it) {
+		includeList.push_back(setup.srcDir + "/" + *it);
+	}
 
 	StringList td;
 	createModuleList(setup.srcDir + "/backends/platform/iphone", setup.defines, td, includeList, excludeList);
@@ -610,27 +619,34 @@ void XcodeProvider::setupProject() {
 	_project.add(project);
 }
 
+XcodeProvider::ValueList& XcodeProvider::getResourceFiles() const {
+	static ValueList files;
+	if (files.empty()) {
+		files.push_back("gui/themes/scummclassic.zip");
+		files.push_back("gui/themes/scummmodern.zip");
+		files.push_back("gui/themes/translations.dat");
+		files.push_back("dists/engine-data/drascula.dat");
+		files.push_back("dists/engine-data/hugo.dat");
+		files.push_back("dists/engine-data/kyra.dat");
+		files.push_back("dists/engine-data/lure.dat");
+		files.push_back("dists/engine-data/mort.dat");
+		files.push_back("dists/engine-data/neverhood.dat");
+		files.push_back("dists/engine-data/queen.tbl");
+		files.push_back("dists/engine-data/sky.cpt");
+		files.push_back("dists/engine-data/teenagent.dat");
+		files.push_back("dists/engine-data/tony.dat");
+		files.push_back("dists/engine-data/toon.dat");
+		files.push_back("dists/engine-data/wintermute.zip");
+		files.push_back("dists/pred.dic");
+		files.push_back("icons/scummvm.icns");
+	}
+	return files;
+}
+
 void XcodeProvider::setupResourcesBuildPhase() {
 	_resourcesBuildPhase.comment = "PBXResourcesBuildPhase";
 
-	// Setup resource file properties
-	std::map<std::string, FileProperty> properties;
-	properties["scummclassic.zip"] = FileProperty("archive.zip", "", "scummclassic.zip", "\"<group>\"");
-	properties["scummmodern.zip"]  = FileProperty("archive.zip", "", "scummmodern.zip", "\"<group>\"");
-
-	properties["kyra.dat"]         = FileProperty("file", "", "kyra.dat", "\"<group>\"");
-	properties["lure.dat"]         = FileProperty("file", "", "lure.dat", "\"<group>\"");
-	properties["queen.tbl"]        = FileProperty("file", "", "queen.tbl", "\"<group>\"");
-	properties["sky.cpt"]          = FileProperty("file", "", "sky.cpt", "\"<group>\"");
-	properties["drascula.dat"]     = FileProperty("file", "", "drascula.dat", "\"<group>\"");
-	properties["hugo.dat"]         = FileProperty("file", "", "hugo.dat", "\"<group>\"");
-	properties["teenagent.dat"]    = FileProperty("file", "", "teenagent.dat", "\"<group>\"");
-	properties["toon.dat"]         = FileProperty("file", "", "toon.dat", "\"<group>\"");
-
-	properties["Default.png"]      = FileProperty("image.png", "", "Default.png", "\"<group>\"");
-	properties["icon.png"]         = FileProperty("image.png", "", "icon.png", "\"<group>\"");
-	properties["icon-72.png"]      = FileProperty("image.png", "", "icon-72.png", "\"<group>\"");
-	properties["icon4.png"]        = FileProperty("image.png", "", "icon4.png", "\"<group>\"");
+	ValueList &files_list = getResourceFiles();
 
 	// Same as for containers: a rule for each native target
 	for (unsigned int i = 0; i < _targets.size(); i++) {
@@ -643,40 +659,17 @@ void XcodeProvider::setupResourcesBuildPhase() {
 		files.hasOrder = true;
 		files.flags = SettingsAsList;
 
-		ValueList files_list;
-		files_list.push_back("scummclassic.zip");
-		files_list.push_back("scummmodern.zip");
-		files_list.push_back("kyra.dat");
-		files_list.push_back("lure.dat");
-		files_list.push_back("queen.tbl");
-		files_list.push_back("sky.cpt");
-		files_list.push_back("Default.png");
-		files_list.push_back("icon.png");
-		files_list.push_back("icon-72.png");
-		files_list.push_back("icon4.png");
-		files_list.push_back("drascula.dat");
-		files_list.push_back("hugo.dat");
-		files_list.push_back("teenagent.dat");
-		files_list.push_back("toon.dat");
-
 		int order = 0;
 		for (ValueList::iterator file = files_list.begin(); file != files_list.end(); file++) {
-			std::string id = "PBXResources_" + *file;
-			std::string comment = *file + " in Resources";
-
-			ADD_SETTING_ORDER_NOVALUE(files, getHash(id), comment, order++);
-			// TODO Fix crash when adding build file for data
-			//ADD_BUILD_FILE(id, *file, comment);
-			ADD_FILE_REFERENCE(*file, *file, properties[*file]);
-		}
-
-		// Add custom files depending on the target
-		if (_targets[i] == PROJECT_DESCRIPTION "-OS X") {
-			files.settings[getHash("PBXResources_" PROJECT_NAME ".icns")] = Setting("", PROJECT_NAME ".icns in Resources", SettingsNoValue, 0, 6);
-
-			// Remove 2 iphone icon files
-			files.settings.erase(getHash("PBXResources_Default.png"));
-			files.settings.erase(getHash("PBXResources_icon.png"));
+			if (shouldSkipFileForTarget(*file, _targets[i], *file)) {
+				continue;
+			}
+			std::string resourceAbsolutePath = _projectRoot + "/" + *file;
+			std::string file_id = "FileReference_" + resourceAbsolutePath;
+			std::string base = basename(*file);
+			std::string comment = base + " in Resources";
+			addBuildFile(resourceAbsolutePath, base, getHash(file_id), comment);
+			ADD_SETTING_ORDER_NOVALUE(files, getHash(resourceAbsolutePath), comment, order++);
 		}
 
 		resource->properties["files"] = files;
