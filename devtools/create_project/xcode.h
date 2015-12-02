@@ -244,6 +244,15 @@ private:
 			objectMap[obj->id] = true;
 		}
 
+		Object *find(std::string id) {
+			for (std::vector<Object *>::iterator it = objects.begin(); it != objects.end(); ++it) {
+				if ((*it)->id == id) {
+					return *it;
+				}
+			}
+			return NULL;
+		}
+
 		std::string toString() {
 			std::string output;
 
@@ -320,6 +329,8 @@ private:
 	void setupResourcesBuildPhase();
 	void setupSourcesBuildPhase();
 	void setupBuildConfiguration(const BuildSetup &setup);
+	void setupImageAssetCatalog(const BuildSetup &setup);
+	void addAdditionalSources(std::string targetName, Property &files, int &order);
 
 	// Misc
 	void setupDefines(const BuildSetup &setup); // Setup the list of defines to be used on build configurations

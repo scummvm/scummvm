@@ -258,7 +258,6 @@ XcodeProvider::XcodeProvider(StringList &global_warnings, std::map<std::string, 
 }
 
 void XcodeProvider::addResourceFiles(const BuildSetup &setup, StringList &includeList, StringList &excludeList) {
-	includeList.push_back(setup.srcDir + "/dists/iphone/Images.xcassets");
 	includeList.push_back(setup.srcDir + "/dists/iphone/Info.plist");
 
 	StringList td;
@@ -282,6 +281,7 @@ void XcodeProvider::createWorkspace(const BuildSetup &setup) {
 	setupProject();
 	setupResourcesBuildPhase();
 	setupBuildConfiguration(setup);
+	setupImageAssetCatalog(setup);
 }
 
 // We are done with constructing all the object graph and we got through every project, output the main project file
@@ -627,7 +627,6 @@ void XcodeProvider::setupResourcesBuildPhase() {
 	properties["teenagent.dat"]    = FileProperty("file", "", "teenagent.dat", "\"<group>\"");
 	properties["toon.dat"]         = FileProperty("file", "", "toon.dat", "\"<group>\"");
 
-    properties["Images.xcassets"]  = FileProperty("Images.xcassets", "", "Images.xcassets", "\"<group>\"");
 	properties["Default.png"]      = FileProperty("image.png", "", "Default.png", "\"<group>\"");
 	properties["icon.png"]         = FileProperty("image.png", "", "icon.png", "\"<group>\"");
 	properties["icon-72.png"]      = FileProperty("image.png", "", "icon-72.png", "\"<group>\"");
@@ -659,7 +658,6 @@ void XcodeProvider::setupResourcesBuildPhase() {
 		files_list.push_back("hugo.dat");
 		files_list.push_back("teenagent.dat");
 		files_list.push_back("toon.dat");
-		files_list.push_back("Images.xcassets");
 
 		int order = 0;
 		for (ValueList::iterator file = files_list.begin(); file != files_list.end(); file++) {
@@ -718,6 +716,8 @@ void XcodeProvider::setupSourcesBuildPhase() {
 			std::string comment = fileName + " in Sources";
 			ADD_SETTING_ORDER_NOVALUE(files, getHash((*file)->id), comment, order++);
 		}
+
+		addAdditionalSources(targetName, files, order);
 
 		source->properties["files"] = files;
 
@@ -791,6 +791,8 @@ void XcodeProvider::setupBuildConfiguration(const BuildSetup &setup) {
 	ADD_DEFINE(scummvmIOS_defines, "IPHONE");
 	ADD_DEFINE(scummvmIOS_defines, "IPHONE_OFFICIAL");
 	ADD_SETTING_LIST(iPhone_Debug, "GCC_PREPROCESSOR_DEFINITIONS", scummvmIOS_defines, SettingsNoQuote|SettingsAsList, 5);
+	ADD_SETTING(iPhone_Debug, "ASSETCATALOG_COMPILER_APPICON_NAME", "AppIcon");
+	ADD_SETTING(iPhone_Debug, "ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME", "LaunchImage");
 
 	iPhone_Debug_Object->addProperty("name", "Debug", "", SettingsNoValue);
 	iPhone_Debug_Object->properties["buildSettings"] = iPhone_Debug;
@@ -958,6 +960,22 @@ void XcodeProvider::setupBuildConfiguration(const BuildSetup &setup) {
 		configList->addProperty("defaultConfigurationName", "Release", "", SettingsNoValue);
 
 		_configurationList.add(configList);
+	}
+}
+
+void XcodeProvider::setupImageAssetCatalog(const BuildSetup &setup) {
+	const std::string filename = "Images.xcassets";
+	const std::string absoluteCatalogPath = _projectRoot + "/dists/iphone/" + filename;
+	const std::string id = "FileReference_" + absoluteCatalogPath;
+	Group *group = touchGroupsForPath(absoluteCatalogPath);
+	group->addChildFile(filename);
+	addBuildFile(absoluteCatalogPath, filename, getHash(id), "Image Asset Catalog");
+}
+
+void XcodeProvider::addAdditionalSources(std::string targetName, Property &files, int &order) {
+	if (targetIsIOS(targetName)) {
+		const std::string absoluteCatalogPath = _projectRoot + "/dists/iphone/Images.xcassets";
+		ADD_SETTING_ORDER_NOVALUE(files, getHash(absoluteCatalogPath), "Image Asset Catalog", order++);
 	}
 }
 
