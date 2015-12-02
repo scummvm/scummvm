@@ -299,7 +299,7 @@ CloseData *Resource::readCloseUps(uint16 depth, Common::File *file) {
 			prev = closeup;
 		}
 	} while (c != '\0');
-	
+
 	return head;
 }
 

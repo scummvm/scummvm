@@ -96,7 +96,7 @@ void drawGadgetList(Gadget *gadlist) {
 /* Ghoasts a gadget, and makes it unavailable for using.                     */
 /*****************************************************************************/
 void ghoastGadget(Gadget *curgad, uint16 pencolor) {
-	g_lab->ghoastRect(pencolor, curgad->x, curgad->y, curgad->x + curgad->_image->Width - 1, curgad->y + curgad->_image->Height - 1);
+	g_lab->ghoastRect(pencolor, curgad->x, curgad->y, curgad->x + curgad->_image->_width - 1, curgad->y + curgad->_image->_height - 1);
 	curgad->GadgetFlags |= GADGETOFF;
 }
 

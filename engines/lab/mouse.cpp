@@ -61,8 +61,8 @@ static byte MouseData[] = {1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
 Gadget *EventManager::checkGadgetHit(Gadget *gadgetList, Common::Point pos) {
 	while (gadgetList != NULL) {
 		if ((pos.x >= gadgetList->x) && (pos.y >= gadgetList->y) &&
-		    (pos.x <= (gadgetList->x + gadgetList->_image->Width)) &&
-		    (pos.y <= (gadgetList->y + gadgetList->_image->Height)) &&
+		    (pos.x <= (gadgetList->x + gadgetList->_image->_width)) &&
+		    (pos.y <= (gadgetList->y + gadgetList->_image->_height)) &&
 		     !(GADGETOFF & gadgetList->GadgetFlags)) {
 			if (_vm->_isHiRes) {
 				_hitGadget = gadgetList;

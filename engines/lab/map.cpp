@@ -265,23 +265,23 @@ static void roomCords(uint16 CurRoom, uint16 *x1, uint16 *y1, uint16 *x2, uint16
 	case NORMAL:
 	case UPARROWROOM:
 	case DOWNARROWROOM:
-		(*x2) += Room->Width;
-		(*y2) += Room->Height;
+		(*x2) += Room->_width;
+		(*y2) += Room->_height;
 		break;
 
 	case BRIDGEROOM:
-		(*x2) += Bridge->Width;
-		(*y2) += Bridge->Height;
+		(*x2) += Bridge->_width;
+		(*y2) += Bridge->_height;
 		break;
 
 	case VCORRIDOR:
-		(*x2) += VRoom->Width;
-		(*y2) += VRoom->Height;
+		(*x2) += VRoom->_width;
+		(*y2) += VRoom->_height;
 		break;
 
 	case HCORRIDOR:
-		(*x2) += HRoom->Width;
-		(*y2) += HRoom->Height;
+		(*x2) += HRoom->_width;
+		(*y2) += HRoom->_height;
 		break;
 	}
 }
@@ -308,108 +308,108 @@ static void drawRoom(uint16 CurRoom, bool drawx) {
 		else
 			UpArrowRoom->drawImage(x, y);
 
-		offset = (Room->Width - Path->Width) / 2;
+		offset = (Room->_width - Path->_width) / 2;
 
-		if ((NORTHDOOR & flags) && (y >= Path->Height))
-			Path->drawImage(x + offset, y - Path->Height);
+		if ((NORTHDOOR & flags) && (y >= Path->_height))
+			Path->drawImage(x + offset, y - Path->_height);
 
 		if (SOUTHDOOR & flags)
-			Path->drawImage(x + offset, y + Room->Height);
+			Path->drawImage(x + offset, y + Room->_height);
 
-		offset = (Room->Height - Path->Height) / 2;
+		offset = (Room->_height - Path->_height) / 2;
 
 		if (EASTDOOR & flags)
-			Path->drawImage(x + Room->Width, y + offset);
+			Path->drawImage(x + Room->_width, y + offset);
 
 		if (WESTDOOR & flags)
-			Path->drawImage(x - Path->Width, y + offset);
+			Path->drawImage(x - Path->_width, y + offset);
 
-		xx = x + (Room->Width - XMark->Width) / 2;
-		xy = y + (Room->Height - XMark->Height) / 2;
+		xx = x + (Room->_width - XMark->_width) / 2;
+		xy = y + (Room->_height - XMark->_height) / 2;
 
 		break;
 
 	case BRIDGEROOM:
 		Bridge->drawImage(x, y);
 
-		xx = x + (Bridge->Width - XMark->Width) / 2;
-		xy = y + (Bridge->Height - XMark->Height) / 2;
+		xx = x + (Bridge->_width - XMark->_width) / 2;
+		xy = y + (Bridge->_height - XMark->_height) / 2;
 
 		break;
 
 	case VCORRIDOR:
 		VRoom->drawImage(x, y);
 
-		offset = (VRoom->Width - Path->Width) / 2;
+		offset = (VRoom->_width - Path->_width) / 2;
 
 		if (NORTHDOOR & flags)
-			Path->drawImage(x + offset, y - Path->Height);
+			Path->drawImage(x + offset, y - Path->_height);
 
 		if (SOUTHDOOR & flags)
-			Path->drawImage(x + offset, y + VRoom->Height);
+			Path->drawImage(x + offset, y + VRoom->_height);
 
-		offset = (Room->Height - Path->Height) / 2;
+		offset = (Room->_height - Path->_height) / 2;
 
 		if (EASTDOOR & flags)
-			Path->drawImage(x + VRoom->Width, y + offset);
+			Path->drawImage(x + VRoom->_width, y + offset);
 
 		if (WESTDOOR & flags)
-			Path->drawImage(x - Path->Width, y + offset);
+			Path->drawImage(x - Path->_width, y + offset);
 
 		if (EASTBDOOR & flags)
-			Path->drawImage(x + VRoom->Width, y - offset - Path->Height + VRoom->Height);
+			Path->drawImage(x + VRoom->_width, y - offset - Path->_height + VRoom->_height);
 
 		if (WESTBDOOR & flags)
-			Path->drawImage(x - Path->Width, y - offset - Path->Height + VRoom->Height);
+			Path->drawImage(x - Path->_width, y - offset - Path->_height + VRoom->_height);
 
-		offset = (VRoom->Height - Path->Height) / 2;
+		offset = (VRoom->_height - Path->_height) / 2;
 
 		if (EASTMDOOR & flags)
-			Path->drawImage(x + VRoom->Width, y - offset - Path->Height + VRoom->Height);
+			Path->drawImage(x + VRoom->_width, y - offset - Path->_height + VRoom->_height);
 
 		if (WESTMDOOR & flags)
-			Path->drawImage(x - Path->Width, y - offset - Path->Height + VRoom->Height);
+			Path->drawImage(x - Path->_width, y - offset - Path->_height + VRoom->_height);
 
-		xx = x + (VRoom->Width - XMark->Width) / 2;
-		xy = y + (VRoom->Height - XMark->Height) / 2;
+		xx = x + (VRoom->_width - XMark->_width) / 2;
+		xy = y + (VRoom->_height - XMark->_height) / 2;
 
 		break;
 
 	case HCORRIDOR:
 		HRoom->drawImage(x, y);
 
-		offset = (Room->Width - Path->Width) / 2;
+		offset = (Room->_width - Path->_width) / 2;
 
 		if (NORTHDOOR & flags)
-			Path->drawImage(x + offset, y - Path->Height);
+			Path->drawImage(x + offset, y - Path->_height);
 
 		if (SOUTHDOOR & flags)
-			Path->drawImage(x + offset, y + Room->Height);
+			Path->drawImage(x + offset, y + Room->_height);
 
 		if (NORTHRDOOR & flags)
-			Path->drawImage(x - offset - Path->Width + HRoom->Width, y - Path->Height);
+			Path->drawImage(x - offset - Path->_width + HRoom->_width, y - Path->_height);
 
 		if (SOUTHRDOOR & flags)
-			Path->drawImage(x - offset - Path->Width + HRoom->Width, y + Room->Height);
+			Path->drawImage(x - offset - Path->_width + HRoom->_width, y + Room->_height);
 
-		offset = (HRoom->Width - Path->Width) / 2;
+		offset = (HRoom->_width - Path->_width) / 2;
 
 		if (NORTHMDOOR & flags)
-			Path->drawImage(x - offset - Path->Width + HRoom->Width, y - Path->Height);
+			Path->drawImage(x - offset - Path->_width + HRoom->_width, y - Path->_height);
 
 		if (SOUTHMDOOR & flags)
-			Path->drawImage(x - offset - Path->Width + HRoom->Width, y + Room->Height);
+			Path->drawImage(x - offset - Path->_width + HRoom->_width, y + Room->_height);
 
-		offset = (Room->Height - Path->Height) / 2;
+		offset = (Room->_height - Path->_height) / 2;
 
 		if (EASTDOOR & flags)
-			Path->drawImage(x + HRoom->Width, y + offset);
+			Path->drawImage(x + HRoom->_width, y + offset);
 
 		if (WESTDOOR & flags)
-			Path->drawImage(x - Path->Width, y + offset);
+			Path->drawImage(x - Path->_width, y + offset);
 
-		xx = x + (HRoom->Width - XMark->Width) / 2;
-		xy = y + (HRoom->Height - XMark->Height) / 2;
+		xx = x + (HRoom->_width - XMark->_width) / 2;
+		xy = y + (HRoom->_height - XMark->_height) / 2;
 
 		break;
 

@@ -155,7 +155,7 @@ void showCombination(const char *filename) {
 	for (uint16 CurBit = 0; CurBit < 10; CurBit++)
 		Images[CurBit] = new Image(buffer);
 
-	allocFile((void **)&g_lab->_tempScrollData, Images[0]->Width * Images[0]->Height * 2L, "tempdata");
+	allocFile((void **)&g_lab->_tempScrollData, Images[0]->_width * Images[0]->_height * 2L, "tempdata");
 
 	doCombination();
 
@@ -179,22 +179,22 @@ static void changeCombination(uint16 number) {
 
 	combnum = combination[number];
 
-	display.ImageData = g_lab->getCurrentDrawingBuffer();
-	display.Width     = g_lab->_screenWidth;
-	display.Height    = g_lab->_screenHeight;
+	display._imageData = g_lab->getCurrentDrawingBuffer();
+	display._width     = g_lab->_screenWidth;
+	display._height    = g_lab->_screenHeight;
 
-	for (uint16 i = 1; i <= (Images[combnum]->Height / 2); i++) {
+	for (uint16 i = 1; i <= (Images[combnum]->_height / 2); i++) {
 		if (g_lab->_isHiRes) {
 			if (i & 1)
 				g_lab->waitTOF();
 		} else
 			g_lab->waitTOF();
 
-		display.ImageData = g_lab->getCurrentDrawingBuffer();
+		display._imageData = g_lab->getCurrentDrawingBuffer();
 
-		g_lab->scrollDisplayY(2, VGAScaleX(combx[number]), VGAScaleY(65), VGAScaleX(combx[number]) + (Images[combnum])->Width - 1, VGAScaleY(65) + (Images[combnum])->Height);
+		g_lab->scrollDisplayY(2, VGAScaleX(combx[number]), VGAScaleY(65), VGAScaleX(combx[number]) + (Images[combnum])->_width - 1, VGAScaleY(65) + (Images[combnum])->_height);
 
-		g_lab->bltBitMap(Images[combnum], 0, (Images[combnum])->Height - (2 * i), &(display), VGAScaleX(combx[number]), VGAScaleY(65), (Images[combnum])->Width, 2);
+		g_lab->bltBitMap(Images[combnum], 0, (Images[combnum])->_height - (2 * i), &(display), VGAScaleX(combx[number]), VGAScaleY(65), (Images[combnum])->_width, 2);
 	}
 
 	for (uint16 i = 0; i < 6; i++)
@@ -306,7 +306,7 @@ void showTile(const char *filename, bool showsolution) {
 	for (uint16 curBit = start; curBit < 16; curBit++)
 		Tiles[curBit] = new Image(buffer);
 
-	allocFile((void **)&g_lab->_tempScrollData, Tiles[1]->Width * Tiles[1]->Height * 2L, "tempdata");
+	allocFile((void **)&g_lab->_tempScrollData, Tiles[1]->_width * Tiles[1]->_height * 2L, "tempdata");
 
 	doTile(showsolution);
 
@@ -625,14 +625,14 @@ static void turnPage(bool FromLeft) {
 		for (int i = 0; i < g_lab->_screenWidth; i += 8) {
 			g_lab->_music->updateMusic();
 			g_lab->waitTOF();
-			ScreenImage.ImageData = g_lab->getCurrentDrawingBuffer();
+			ScreenImage._imageData = g_lab->getCurrentDrawingBuffer();
 			g_lab->bltBitMap(&JBackImage, i, 0, &ScreenImage, i, 0, 8, g_lab->_screenHeight);
 		}
 	} else {
 		for (int i = (g_lab->_screenWidth - 8); i > 0; i -= 8) {
 			g_lab->_music->updateMusic();
 			g_lab->waitTOF();
-			ScreenImage.ImageData = g_lab->getCurrentDrawingBuffer();
+			ScreenImage._imageData = g_lab->getCurrentDrawingBuffer();
 			g_lab->bltBitMap(&JBackImage, i, 0, &ScreenImage, i, 0, 8, g_lab->_screenHeight);
 		}
 	}
@@ -648,11 +648,11 @@ void LabEngine::drawJournal(uint16 wipenum, bool needFade) {
 	_music->updateMusic();
 
 	if (!GotBackImage)
-		JBackImage.ImageData = loadBackPict("P:Journal.pic", true);
+		JBackImage._imageData = loadBackPict("P:Journal.pic", true);
 
 	drawJournalText();
 
-	ScreenImage.ImageData = getCurrentDrawingBuffer();
+	ScreenImage._imageData = getCurrentDrawingBuffer();
 
 	if (wipenum == 0)
 		bltBitMap(&JBackImage, 0, 0, &ScreenImage, 0, 0, _screenWidth, _screenHeight);
@@ -674,7 +674,7 @@ void LabEngine::drawJournal(uint16 wipenum, bool needFade) {
 		fade(true, 0);
 
 	g_lab->_anim->_noPalChange = true;
-	JBackImage.ImageData = readPictToMem("P:Journal.pic", _screenWidth, _screenHeight);
+	JBackImage._imageData = readPictToMem("P:Journal.pic", _screenWidth, _screenHeight);
 	GotBackImage = true;
 
 	eatMessages();
@@ -735,15 +735,15 @@ void LabEngine::doJournal() {
 	lastpage    = false;
 	GotBackImage = false;
 
-	JBackImage.Width = _screenWidth;
-	JBackImage.Height = _screenHeight;
-	JBackImage.ImageData   = NULL;
+	JBackImage._width = _screenWidth;
+	JBackImage._height = _screenHeight;
+	JBackImage._imageData   = NULL;
 
 	BackG.NextGadget = &CancelG;
 	CancelG.NextGadget = &ForwardG;
 
 	ScreenImage = JBackImage;
-	ScreenImage.ImageData = getCurrentDrawingBuffer();
+	ScreenImage._imageData = getCurrentDrawingBuffer();
 
 	_music->updateMusic();
 	loadJournalData();
@@ -757,7 +757,7 @@ void LabEngine::doJournal() {
 	fade(false, 0);
 	_event->mouseHide();
 
-	ScreenImage.ImageData = getCurrentDrawingBuffer();
+	ScreenImage._imageData = getCurrentDrawingBuffer();
 
 	setAPen(0);
 	rectFill(0, 0, _screenWidth - 1, _screenHeight - 1);
@@ -844,8 +844,8 @@ void LabEngine::drawMonText(char *text, TextFont *monitorFont, uint16 x1, uint16
 		text += 2;
 
 		fheight = textHeight(monitorFont);
-		x1 = MonButton->Width + VGAScaleX(3);
-		MonGadHeight = MonButton->Height + VGAScaleY(3);
+		x1 = MonButton->_width + VGAScaleX(3);
+		MonGadHeight = MonButton->_height + VGAScaleY(3);
 
 		if (MonGadHeight > fheight)
 			yspacing = MonGadHeight - fheight;

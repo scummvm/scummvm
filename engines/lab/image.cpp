@@ -39,17 +39,17 @@ namespace Lab {
 Image::Image(byte **buffer) {
 	uint32 size;
 
-	Width = READ_LE_UINT16(*buffer);
-	Height = READ_LE_UINT16(*buffer + 2);
+	_width = READ_LE_UINT16(*buffer);
+	_height = READ_LE_UINT16(*buffer + 2);
 
 	*buffer += 8; /* sizeof(struct Image); */
 
-	size = Width * Height;
+	size = _width * _height;
 
 	if (1L & size)
 		size++;
 
-	ImageData = (byte *)(*buffer);
+	_imageData = (byte *)(*buffer);
 	(*buffer) += size;
 }
 
@@ -59,8 +59,8 @@ Image::Image(byte **buffer) {
 void Image::drawImage(uint16 x, uint16 y) {
 	int sx = 0, sy = 0;
 	int dx = x, dy = y;
-	int w = Width;
-	int h = Height;
+	int w = _width;
+	int h = _height;
 
 	if (dx < 0) {
 		sx -= dx;
@@ -81,12 +81,12 @@ void Image::drawImage(uint16 x, uint16 y) {
 		h = g_lab->_screenHeight - dy;
 
 	if ((w > 0) && (h > 0)) {
-		byte *s = ImageData + sy * Width + sx;
+		byte *s = _imageData + sy * _width + sx;
 		byte *d = g_lab->getCurrentDrawingBuffer() + dy * g_lab->_screenWidth + dx;
 
 		while (h-- > 0) {
 			memcpy(d, s, w);
-			s += Width;
+			s += _width;
 			d += g_lab->_screenWidth;
 		}
 	}
@@ -98,8 +98,8 @@ void Image::drawImage(uint16 x, uint16 y) {
 void Image::drawMaskImage(uint16 x, uint16 y) {
 	int sx = 0, sy = 0;
 	int dx = x, dy = y;
-	int w = Width;
-	int h = Height;
+	int w = _width;
+	int h = _height;
 
 	if (dx < 0) {
 		sx -= dx;
@@ -120,7 +120,7 @@ void Image::drawMaskImage(uint16 x, uint16 y) {
 		h = g_lab->_screenHeight - dy;
 
 	if ((w > 0) && (h > 0)) {
-		byte *s = ImageData + sy * Width + sx;
+		byte *s = _imageData + sy * _width + sx;
 		byte *d = g_lab->getCurrentDrawingBuffer() + dy * g_lab->_screenWidth + dx;
 
 		while (h-- > 0) {
@@ -135,7 +135,7 @@ void Image::drawMaskImage(uint16 x, uint16 y) {
 				else dd++;
 			}
 
-			s += Width;
+			s += _width;
 			d += g_lab->_screenWidth;
 		}
 	}
@@ -147,8 +147,8 @@ void Image::drawMaskImage(uint16 x, uint16 y) {
 void Image::readScreenImage(uint16 x, uint16 y) {
 	int sx = 0, sy = 0;
 	int	dx = x, dy = y;
-	int w = Width;
-	int h = Height;
+	int w = _width;
+	int h = _height;
 
  	if (dx < 0) {
 		sx -= dx;
@@ -169,12 +169,12 @@ void Image::readScreenImage(uint16 x, uint16 y) {
 		h = g_lab->_screenHeight - dy;
 
 	if ((w > 0) && (h > 0)) {
-		byte *s = ImageData + sy * Width + sx;
+		byte *s = _imageData + sy * _width + sx;
 		byte *d = g_lab->getCurrentDrawingBuffer() + dy * g_lab->_screenWidth + dx;
 
 		while (h-- > 0) {
 			memcpy(s, d, w);
-			s += Width;
+			s += _width;
 			d += g_lab->_screenWidth;
 		}
 	}
