@@ -190,6 +190,7 @@ private:
 
 	// engine.cpp
 	bool setUpScreens();
+	void freeScreens();
 	void perFlipGadget(uint16 gadID);
 	bool doCloseUp(CloseDataPtr cptr);
 	void mainGameLoop();

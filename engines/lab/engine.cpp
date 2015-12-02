@@ -309,6 +309,20 @@ bool LabEngine::setUpScreens() {
 	return true;
 }
 
+void LabEngine::freeScreens() {
+	for (uint16 i = 0; i < 20; i++)
+		delete _moveImages[i];
+
+	if (getPlatform() == Common::kPlatformWindows) {
+		for (uint16 imgIdx = 0; imgIdx < 10; imgIdx++)
+			delete _invImages[imgIdx];
+	} else {
+		for (uint16 imgIdx = 0; imgIdx < 6; imgIdx++)
+			delete _invImages[imgIdx];
+	}
+}
+
+
 /******************************************************************************/
 /* Permanently flips the imagery of a gadget.                                 */
 /******************************************************************************/
@@ -1301,6 +1315,8 @@ void LabEngine::go() {
 
 	freeRoomBuffer();
 	freeBuffer();
+
+	freeScreens();
 
 	_music->freeMusic();
 }
