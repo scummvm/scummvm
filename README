@@ -14,36 +14,36 @@ Table of Contents:
 2.0) Contact
  * 2.1 Reporting Bugs
 3.0) Supported Games
- * 3.1 Beneath a Steel Sky notes 
- * 3.2 Broken Sword games notes
- * * 3.2.1 Broken Sword
- * * 3.2.2 Broken Sword II
- * * 3.2.3 Broken Sword games cutscenes
- * * 3.2.4 Broken Sword games cutscenes, in retrospect
- * 3.3 Day of the Tentacle notes
- * 3.4 Discworld II notes
- * 3.5 Dragon History notes
- * 3.6 Flight of the Amazon Queen notes
- * 3.7 Gobliiins notes
- * 3.8 Inherit the Earth: Quest for the Orb notes 
- * 3.9 Maniac Mansion Apple II/NES notes
- * 3.10 Mickey's Space Adventure notes
- * 3.11 Nippon Safes Inc. Amiga notes
- * 3.12 Simon the Sorcerer notes
- * 3.13 The Curse of Monkey Island notes 
- * 3.14 The Feeble Files notes
- * 3.15 The Legend of Kyrandia notes
- * 3.16 Troll's Tale notes
- * 3.17 Winnie the Pooh notes
- * 3.18 Sierra AGI games: Predictive Input Dialog notes
- * 3.19 Sierra SCI games: Simultaneous speech and subtitles
- * 3.20 Zork games notes
- * 3.21 Commodore64 games notes 
- * 3.22 Macintosh games notes 
- * 3.23 Copy Protection
- * 3.24 Datafiles
- * 3.25 Multi-CD games notes
- * 3.26 Known Problems
+ * 3.1 Copy Protection
+ * 3.2 Datafiles
+ * 3.3 Multi-CD games notes
+ * 3.4 Known Problems
+ * 3.5 Beneath a Steel Sky notes 
+ * 3.6 Broken Sword games notes
+ * * 3.6.1 Broken Sword
+ * * 3.6.2 Broken Sword II
+ * * 3.6.3 Broken Sword games cutscenes
+ * * 3.6.4 Broken Sword games cutscenes, in retrospect
+ * 3.7 Day of the Tentacle notes
+ * 3.8 Discworld II notes
+ * 3.9 Dragon History notes
+ * 3.10 Flight of the Amazon Queen notes
+ * 3.11 Gobliiins notes
+ * 3.12 Inherit the Earth: Quest for the Orb notes 
+ * 3.13 Maniac Mansion Apple II/NES notes
+ * 3.14 Mickey's Space Adventure notes
+ * 3.15 Nippon Safes Inc. Amiga notes
+ * 3.16 Simon the Sorcerer notes
+ * 3.17 The Curse of Monkey Island notes 
+ * 3.18 The Feeble Files notes
+ * 3.19 The Legend of Kyrandia notes
+ * 3.20 Troll's Tale notes
+ * 3.21 Winnie the Pooh notes
+ * 3.22 Sierra AGI games: Predictive Input Dialog notes
+ * 3.23 Sierra SCI games: Simultaneous speech and subtitles
+ * 3.24 Zork games notes
+ * 3.25 Commodore64 games notes 
+ * 3.26 Macintosh games notes 
 4.0) Supported Platforms
 5.0) Running ScummVM
  * 5.1 Command Line Options
@@ -474,7 +474,143 @@ often, and please file a bug report (instructions on submitting bug
 reports are above) if you encounter such a bug in a 'supported' game.
 
 
-3.1) Beneath a Steel Sky notes:
+3.1) Copy Protection:
+---- ----------------
+The ScummVM team does not condone piracy. However, there are cases where
+the game companies (such as LucasArts) themselves bundled 'cracked'
+executables with their games -- in these cases the data files still
+contain the copy protection scripts, but the interpreter bypasses them
+(similar to what an illegally cracked version might do, only that here
+the producer of the game did it). There is no way for us to tell the
+difference between legitimate and pirated data files, so for the games
+where we know that a cracked version of the original interpreter was
+sold at some point, ScummVM will always have to bypass the copy
+protection.
+
+In some cases ScummVM will still show the copy protection screen. Try
+entering any answer. Chances are that it will work.
+
+ScummVM will skip copy protection in the following games:
+
+  * Beneath a Steel Sky
+      -- bypassed with kind permission from Revolution Software.
+  * Dreamweb
+      -- a list of available commands in the in-game terminals is now shown
+         when the player uses the 'help' command
+  * Inherit the Earth: Quest for the Orb (Floppy version)
+      -- bypassed with kind permission from Wyrmkeep Entertainment,
+         since it was bypassed in all CD releases of the game.
+  * Loom (EGA DOS)
+  * Maniac Mansion
+  * Monkey Island 2: LeChuck's Revenge
+  * Simon the Sorcerer 1 (Floppy version)
+  * Simon the Sorcerer 2 (Floppy version)
+      -- bypassed with kind permission from Adventure Soft,
+         since it was bypassed in all CD releases of the game.
+  * The Secret of Monkey Island (VGA)
+  * Waxworks
+  * Zak McKracken and the Alien Mindbenders
+
+
+3.2) Datafiles:
+---- ----------
+For a comprehensive list of required Datafiles for supported games
+visit: <http://wiki.scummvm.org/index.php/Datafiles>
+
+
+3.3) Multi-CD games notes:
+---- ---------------------
+In general, ScummVM does not deal very well with Multi-CD games. This is
+because ScummVM assumes everything about a game can be found in one
+directory. Even if ScummVM does make some provisions for asking the user
+to change CD, the original game executables usually installed a small
+number of files to the hard disk. Unless these files can be found on all
+the CDs, ScummVM will be in trouble.
+
+Fortunately, ScummVM has no problems running the games entirely from
+hard disk, if you create a directory with the correct combination of
+files. Usually, when a file appears on more than one CD you can pick
+either of them.
+
+
+3.4) Known Problems:
+---- ---------------
+This release has the following known problems. There is no need to
+report them, although patches to fix them are welcome. If you discover a
+bug that is not listed here, nor in the compatibility list on the web
+site, please see the section on reporting bugs.
+
+  CD Audio Games:
+    - When playing games that use CD Audio (FM-TOWNS games, Loom CD, etc)
+      users of Microsoft Windows 2000/XP may experience random crashes.
+      This is due to a long-standing Windows bug, resulting in corrupt
+      game files being read from the CD. Please copy the game data to
+      your hard disk to avoid this.
+
+  FM-TOWNS versions:
+    - The Kanji versions require the FM-TOWNS Font ROM
+
+  Loom:
+    - Turning off the subtitles via the config file does not work reliably
+      as the Loom scripts automatically turn them on again
+    - MIDI support in the EGA version requires the Roland update from
+      LucasArts
+    - The PC-Engine Kanji version requires the system card rom
+
+  The Secret of Monkey Island:
+    - MIDI support in the EGA version requires the Roland update from
+      LucasArts
+
+  Beneath a Steel Sky:
+    - Amiga versions aren't supported
+    - Floppy demos aren't supported
+    - Not a bug: CD version is missing speech for some dialogs, this is
+      normal.
+
+  Elvira - Mistress of the Dark
+    - No music in the Atari ST version
+
+  Elvira II - The Jaws of Cerberus
+    - No music in the Atari ST version
+    - No sound effects in the PC version
+    - Palette issues in the Atari ST version
+
+  Inherit the Earth: Quest for the Orb
+    - Amiga versions aren't supported
+
+  Lure of the Temptress
+    - No Roland MT-32 support
+    - Sound support is incomplete and doesn't sound like original
+
+ Simon the Sorcerer 1:
+    - Subtitles aren't available in the English and German CD versions
+      as they are missing the majority of subtitles.
+
+  Simon the Sorcerer 2:
+    - Combined speech and subtitles will often cause speech to be
+      cut off early, this is a limitation of the original game.
+    - Only default language (English) of data files is supported
+      in Amiga and Macintosh versions.
+
+  Simon the Sorcerer's Puzzle Pack:
+    - No support for displaying, entering, loading or saving high scores.
+    - No support for displaying names of items, when hovering over them
+      in Swampy Adventures.
+
+  The Feeble Files:
+    - Subtitles are often incomplete, they were always disabled in the
+      original game.
+
+  The Legend of Kyrandia:
+    - No music or sound effects in the Macintosh floppy versions.
+    - Macintosh CD is using included DOS music and sound effects.
+
+  Humongous Entertainment games:
+    - Only the original load and save interface can be used.
+    - No support for multiplayer or printing images
+
+
+3.5) Beneath a Steel Sky notes:
 ---- --------------------------
 Starting with ScummVM 0.8.0 you need the additional 'SKY.CPT' file to
 run Beneath a Steel Sky.
@@ -485,7 +621,7 @@ files (SKY.DNR, SKY.DSK), in your extrapath, or in the directory where
 your ScummVM executable resides.
 
 
-3.2) Broken Sword games notes:
+3.6) Broken Sword games notes:
 ---- -------------------------
 The instructions for the Broken Sword games are for the Sold-Out
 Software versions, with each game on two CDs, since these were the
@@ -494,7 +630,7 @@ them. Hopefully they are general enough to be useful to other releases
 as well.
 
 
-3.2.1) Broken Sword:
+3.6.1) Broken Sword:
 ------ -------------
 For this game, you will need all of the files from the clusters
 directories on both CDs. For the Windows and Macintosh versions, you
@@ -511,7 +647,7 @@ makes little difference. The PlayStation version requires tunes.dat and
 tunes.tab.
 
 
-3.2.2) Broken Sword II:
+3.6.2) Broken Sword II:
 ------ ----------------
 For this game, you will need all of the files from the clusters
 directories on both CDs. (Actually, a few of them may not be strictly
@@ -526,7 +662,7 @@ In addition, you will need the cd.inf and, optionally, the startup.inf
 files from the sword2 directory on CD 1.
 
 
-3.2.3) Broken Sword games cutscenes:
+3.6.3) Broken Sword games cutscenes:
 ------ -----------------------------
 The cutscenes for the Broken Sword games have a bit of a history (see
 the next section, if you are interested), but in general all you need to
@@ -567,7 +703,7 @@ currently does not work when running PlayStation videos. (Broken Sword
 II already has subtitles; no extra work is needed for them.)
 
 
-3.2.4) Broken Sword games cutscenes, in retrospect:
+3.6.4) Broken Sword games cutscenes, in retrospect:
 ------ --------------------------------------------
 The original releases of the Broken Sword games used RAD Game Tools's
 Smacker(tm) format. As RAD was unwilling to open the older legacy
@@ -592,7 +728,7 @@ decoding MPEG movies added a lot of complexity, and they didn't look as
 good as the Smacker and DXA versions anyway.
 
 
-3.3) Day of the Tentacle notes:
+3.7) Day of the Tentacle notes:
 ---- --------------------------
 
 At one point in the game, you come across a computer that allows you
@@ -614,7 +750,7 @@ games support returning to the launcher, and setting it up to use Day
 of the Tentacle itself as the easter egg game is not recommended.
 
 
-3.4) Discworld II notes:
+3.8) Discworld II notes:
 ---- -------------------
 For this game, you will need all of the files in the DW2 subdirectory
 on both CDs.
@@ -626,7 +762,7 @@ The same files on CD2 need to be renamed to ENGLISH2.SMP, ENGLISH2.IDX
 and ENGLISH2.TXT.
 
 
-3.5) Dragon History notes:
+3.9) Dragon History notes:
 ---- ---------------------
 There are 4 language variants of the game: Czech, English, Polish and
 German.  Each of them is distributed in a separate archive.  The only
@@ -644,8 +780,8 @@ All game files and the walkthrough can be downloaded from
 http://www.ucw.cz/draci-historie/index-en.html
 
 
-3.6) Flight of the Amazon Queen notes:
----- ---------------------------------
+3.10) Flight of the Amazon Queen notes:
+----- ---------------------------------
 In order to use a non-freeware version of Flight of the Amazon Queen
 (from original CD), you will need to place the 'queen.tbl' file
 (available from the 'Downloads' page on our website) in either the
@@ -659,8 +795,8 @@ specific version, and thus removing the run-time dependency on the
 sound effects with MP3, OGG or FLAC.
 
 
-3.7) Gobliiins notes:
----- ----------------
+3.11) Gobliiins notes:
+----- ----------------
 The CD versions of the Gobliiins series contain one big audio track
 which you need to rip (see the section on using compressed audio files)
 and copy into the game directory if you want to have in-game music
@@ -669,8 +805,8 @@ track and its volume is therefore changed with the music volume control
 as well.
 
 
-3.8) Inherit the Earth: Quest for the Orb notes:
----- -------------------------------------------
+3.12) Inherit the Earth: Quest for the Orb notes:
+----- -------------------------------------------
 In order to run the Mac OS X Wyrmkeep re-release of the game you will
 need to copy over data from the CD to your hard disk. If you're on a PC
 then consult:
@@ -689,8 +825,8 @@ format, as they should include both resource and data forks. Copy all
 'ITE *' files.
 
 
-3.9) Maniac Mansion Apple II/NES notes:
----- ----------------------------------
+3.13) Maniac Mansion Apple II/NES notes:
+----- ----------------------------------
 Apple II:
 You need to rename disk image 1 to maniac1.dsk
 You need to rename disk image 1 to maniac2.dsk
@@ -723,7 +859,7 @@ section. To do so use the 'extract_mm_nes' utility from the tools
 package.
 
 
-3.10) Mickey's Space Adventure notes:
+3.14) Mickey's Space Adventure notes:
 ----- -------------------------------
 To run Mickey's Space Adventure under ScummVM, the original executable
 of the game (mickey.exe) is needed together with the game's data files.
@@ -738,7 +874,7 @@ game's screen to change location, similar to many adventure games, which
 is simpler and more straightforward than moving around using the menu.
 
 
-3.11) Nippon Safes Inc. Amiga notes:
+3.15) Nippon Safes Inc. Amiga notes:
 ----- ------------------------------
 For this game, you will need disk0, it (en, fr, ge for the
 international version), global.table and pointer.
@@ -747,14 +883,14 @@ In addtition, you will need to rename disk image 2 to disk1,
 disk image 3 to disk2, disk image 4 to disk3 and disk image 5 to disk4.
 
 
-3.12) Simon the Sorcerer games notes:
+3.16) Simon the Sorcerer games notes:
 ----- -------------------------------
 If you have the dual version of Simon the Sorcerer 1 or 2 on CD, you
 will find the Windows version in the main directory of the CD and the
 DOS version in the DOS directory of the CD.
 
 
-3.13) The Curse of Monkey Island notes:
+3.17) The Curse of Monkey Island notes:
 ----- ---------------------------------
 For this game, you will need the comi.la0, comi.la1 and comi.la2 files.
 The comi.la0 file can be found on either CD, but since they are
@@ -766,7 +902,7 @@ two CDs. Some of the files appear on both CDs, but again they're
 identical.
 
 
-3.14) The Feeble Files notes:
+3.18) The Feeble Files notes:
 ----- -----------------------
 Amiga/Macintosh:
 You need to install a small pack of cutscenes that are missing in both
@@ -792,7 +928,7 @@ Rename voices.wav on CD3 to voices3.wav
 Rename voices.wav on CD4 to voices4.wav
 
 
-3.15) The Legend of Kyrandia notes:
+3.19) The Legend of Kyrandia notes:
 ----- -----------------------------
 To run The Legend of Kyrandia under ScummVM you need the 'kyra.dat'
 file. The file should always be included in official ScummVM packages.
@@ -803,14 +939,14 @@ thus you only need to grab it in case ScummVM complains about the file
 being missing.
 
 
-3.16) Troll's Tale notes:
+3.20) Troll's Tale notes:
 ----- -------------------
 The original game came in a PC booter disk, therefore it is necessary to
 dump the contents of that disk in an image file and name it "troll.img"
 to be able to play the game under ScummVM.
 
 
-3.17) Winnie the Pooh notes:
+3.21) Winnie the Pooh notes:
 ----- ----------------------
 It is possible to import saved games from the original interpreter of the
 game into ScummVM.
@@ -825,7 +961,7 @@ game's screen to change location, similar to many adventure games, which
 is simpler and more straightforward than moving around using the menu.
 
 
-3.18) Sierra AGI games: Predictive Input Dialog:
+3.22) Sierra AGI games: Predictive Input Dialog:
 ----- ------------------------------------------
 The Predictive Input Dialog is a ScummVM aid for running AGI engine
 games (which notoriously require command line input) on devices with
@@ -879,7 +1015,7 @@ naturally mapping the functionality to the numeric keypad. Also, the
 dialog's buttons can be navigated with the arrow and the enter keys.
 
 
-3.19) Sierra SCI games: Simultaneous speech and subtitles:
+3.23) Sierra SCI games: Simultaneous speech and subtitles:
 ----- ----------------------------------------------------
 Certain CD versions of Sierra SCI games had both speech and text
 resources. Some have an option to toggle between the two, but there are
@@ -927,7 +1063,7 @@ Space Quest 4 CD:
     options dialog, or via ScummVM's audio options.
 
 
-3.20) Zork games notes:
+3.24) Zork games notes:
 ----- -----------------
 To run the supported Zork games (Zork Nemesis: The Forbidden Lands
 and Zork: Grand Inquisitor) you need to copy some (extra) data to it's
@@ -1024,7 +1160,7 @@ Copy the zassetsc directory into the game root directory
 Copy the zassetse directory into the game root directory
 
 
-3.21) Commodore64 games notes:
+3.25) Commodore64 games notes:
 ----- ------------------------
 Both Maniac Mansion and Zak McKracken run but Maniac Mansion is not yet
 playable. Simply name the D64 disks "maniac1.d64" and "maniac2.d64"
@@ -1038,7 +1174,7 @@ to Commodore64. We recommend using the much simpler approach described
 in the previous paragraph.
 
 
-3.22) Macintosh games notes:
+3.26) Macintosh games notes:
 ----- ----------------------
 All LucasArts SCUMM based adventures, except COMI, also exist in versions
 for the Macintosh. ScummVM can use most (all?) of them, however, in some
@@ -1064,142 +1200,6 @@ For further information on copying Macintosh game files to your hard
 disk see:
 
   http://wiki.scummvm.org/index.php/HOWTO-Mac_Games
-
-
-3.23) Copy Protection:
------ ----------------
-The ScummVM team does not condone piracy. However, there are cases where
-the game companies (such as LucasArts) themselves bundled 'cracked'
-executables with their games -- in these cases the data files still
-contain the copy protection scripts, but the interpreter bypasses them
-(similar to what an illegally cracked version might do, only that here
-the producer of the game did it). There is no way for us to tell the
-difference between legitimate and pirated data files, so for the games
-where we know that a cracked version of the original interpreter was
-sold at some point, ScummVM will always have to bypass the copy
-protection.
-
-In some cases ScummVM will still show the copy protection screen. Try
-entering any answer. Chances are that it will work.
-
-ScummVM will skip copy protection in the following games:
-
-  * Beneath a Steel Sky
-      -- bypassed with kind permission from Revolution Software.
-  * Dreamweb
-      -- a list of available commands in the in-game terminals is now shown
-         when the player uses the 'help' command
-  * Inherit the Earth: Quest for the Orb (Floppy version)
-      -- bypassed with kind permission from Wyrmkeep Entertainment,
-         since it was bypassed in all CD releases of the game.
-  * Loom (EGA DOS)
-  * Maniac Mansion
-  * Monkey Island 2: LeChuck's Revenge
-  * Simon the Sorcerer 1 (Floppy version)
-  * Simon the Sorcerer 2 (Floppy version)
-      -- bypassed with kind permission from Adventure Soft,
-         since it was bypassed in all CD releases of the game.
-  * The Secret of Monkey Island (VGA)
-  * Waxworks
-  * Zak McKracken and the Alien Mindbenders
-
-
-3.24) Datafiles:
------ ----------
-For a comprehensive list of required Datafiles for supported games
-visit: <http://wiki.scummvm.org/index.php/Datafiles>
-
-
-3.25) Multi-CD games notes:
------ ---------------------
-In general, ScummVM does not deal very well with Multi-CD games. This is
-because ScummVM assumes everything about a game can be found in one
-directory. Even if ScummVM does make some provisions for asking the user
-to change CD, the original game executables usually installed a small
-number of files to the hard disk. Unless these files can be found on all
-the CDs, ScummVM will be in trouble.
-
-Fortunately, ScummVM has no problems running the games entirely from
-hard disk, if you create a directory with the correct combination of
-files. Usually, when a file appears on more than one CD you can pick
-either of them.
-
-
-3.26) Known Problems:
------ ---------------
-This release has the following known problems. There is no need to
-report them, although patches to fix them are welcome. If you discover a
-bug that is not listed here, nor in the compatibility list on the web
-site, please see the section on reporting bugs.
-
-  CD Audio Games:
-    - When playing games that use CD Audio (FM-TOWNS games, Loom CD, etc)
-      users of Microsoft Windows 2000/XP may experience random crashes.
-      This is due to a long-standing Windows bug, resulting in corrupt
-      game files being read from the CD. Please copy the game data to
-      your hard disk to avoid this.
-
-  FM-TOWNS versions:
-    - The Kanji versions require the FM-TOWNS Font ROM
-
-  Loom:
-    - Turning off the subtitles via the config file does not work reliably
-      as the Loom scripts automatically turn them on again
-    - MIDI support in the EGA version requires the Roland update from
-      LucasArts
-    - The PC-Engine Kanji version requires the system card rom
-
-  The Secret of Monkey Island:
-    - MIDI support in the EGA version requires the Roland update from
-      LucasArts
-
-  Beneath a Steel Sky:
-    - Amiga versions aren't supported
-    - Floppy demos aren't supported
-    - Not a bug: CD version is missing speech for some dialogs, this is
-      normal.
-
-  Elvira - Mistress of the Dark
-    - No music in the Atari ST version
-
-  Elvira II - The Jaws of Cerberus
-    - No music in the Atari ST version
-    - No sound effects in the PC version
-    - Palette issues in the Atari ST version
-
-  Inherit the Earth: Quest for the Orb
-    - Amiga versions aren't supported
-
-  Lure of the Temptress
-    - No Roland MT-32 support
-    - Sound support is incomplete and doesn't sound like original
-
- Simon the Sorcerer 1:
-    - Subtitles aren't available in the English and German CD versions
-      as they are missing the majority of subtitles.
-
-  Simon the Sorcerer 2:
-    - Combined speech and subtitles will often cause speech to be
-      cut off early, this is a limitation of the original game.
-    - Only default language (English) of data files is supported
-      in Amiga and Macintosh versions.
-
-  Simon the Sorcerer's Puzzle Pack:
-    - No support for displaying, entering, loading or saving high scores.
-    - No support for displaying names of items, when hovering over them
-      in Swampy Adventures.
-
-  The Feeble Files:
-    - Subtitles are often incomplete, they were always disabled in the
-      original game.
-
-  The Legend of Kyrandia:
-    - No music or sound effects in the Macintosh floppy versions.
-    - Macintosh CD is using included DOS music and sound effects.
-
-  Humongous Entertainment games:
-    - Only the original load and save interface can be used.
-    - No support for multiplayer or printing images
 
 
 4.0) Supported Platforms:
