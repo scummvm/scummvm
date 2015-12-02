@@ -32,7 +32,6 @@
 #include "lab/labfun.h"
 #include "lab/image.h"
 #include "lab/interface.h"
-#include "lab/mouse.h"
 #include "common/util.h"
 
 namespace Lab {

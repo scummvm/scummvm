@@ -28,10 +28,8 @@
  *
  */
 
-#include "common/events.h"
-
-#ifndef LAB_MOUSE_H
-#define LAB_MOUSE_H
+#ifndef LAB_EVENTMAN_H
+#define LAB_EVENTMAN_H
 
 namespace Lab {
 
@@ -80,4 +78,4 @@ public:
 
 } // End of namespace Lab
 
-#endif /* LAB_MOUSE_H */
+#endif /* LAB_EVENTMAN_H */

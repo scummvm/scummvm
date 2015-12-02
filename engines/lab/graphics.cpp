@@ -34,7 +34,6 @@
 #include "lab/image.h"
 #include "lab/labfun.h"
 #include "lab/parsefun.h"
-#include "lab/mouse.h"
 #include "lab/text.h"
 #include "lab/resource.h"
 

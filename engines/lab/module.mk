@@ -5,6 +5,7 @@ MODULE_OBJS := \
 	anim.o \
 	detection.o \
 	engine.o \
+	eventman.o \
 	graphics.o \
 	image.o \
 	interface.o \
@@ -13,7 +14,6 @@ MODULE_OBJS := \
 	labfile.o \
 	labsets.o \
 	map.o \
-	mouse.o \
 	music.o \
 	processroom.o \
 	resource.o \
