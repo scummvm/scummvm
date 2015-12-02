@@ -197,6 +197,7 @@ private:
 	bool doUse(uint16 curInv);
 	void mayShowCrumbIndicator();
 	void mayShowCrumbIndicatorOff();
+	const char *getInvName(uint16 curInv);
 };
 
 extern LabEngine *g_lab;

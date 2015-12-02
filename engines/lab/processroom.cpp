@@ -322,7 +322,7 @@ bool takeItem(uint16 x, uint16 y, CloseDataPtr *cptr) {
 /*****************************************************************************/
 /* Processes the action list.                                                */
 /*****************************************************************************/
-static void doActions(Action * APtr, CloseDataPtr *LCPtr) {
+static void doActions(Action *APtr, CloseDataPtr *LCPtr) {
 	CloseDataPtr TLCPtr;
 	bool FirstLoaded = true;
 	char **str, *Test;
