@@ -117,7 +117,7 @@ bool shouldSkipFileForTarget(const std::string &fileID, const std::string &targe
 		 }
 	}
 	else {
-		// Ugly hack: explicitely remove the browser.cpp file.
+		// Ugly hack: explicitly remove the browser.cpp file.
 		// The problem is that we have only one project for two different targets,
 		// and the parsing of the "mk" files added this file for both targets...
 		if (fileID.length() > 12 && fileID.substr(fileID.length() - 12) == "/browser.cpp") {
