@@ -35,12 +35,12 @@ namespace Lab {
 
 class Image {
 public:
-	uint16 Width;
-    uint16 Height;
-	byte *ImageData;
+	uint16 _width;
+    uint16 _height;
+	byte *_imageData;
 
-    Image() : Width(0), Height(0), ImageData(0) {}
-    Image(int w, int h, byte *d) : Width(w), Height(h), ImageData(d) {}
+    Image() : _width(0), _height(0), _imageData(0) {}
+    Image(int w, int h, byte *d) : _width(w), _height(h), _imageData(d) {}
     Image(byte **buffer);
 
     void drawImage(uint16 x, uint16 y);

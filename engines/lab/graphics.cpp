@@ -267,8 +267,8 @@ uint32 flowTextToMem(Image *destIm, void *font,     /* the TextAttr pointer */
 	uint32 res, vgabyte = g_lab->_screenBytesPerPage;
 	byte *tmp = g_lab->_currentDisplayBuffer;
 
-	g_lab->_currentDisplayBuffer = destIm->ImageData;
-	g_lab->_screenBytesPerPage = (uint32)destIm->Width * (int32)destIm->Height;
+	g_lab->_currentDisplayBuffer = destIm->_imageData;
+	g_lab->_screenBytesPerPage = (uint32)destIm->_width * (int32)destIm->_height;
 
 	res = flowText(font, spacing, pencolor, backpen, fillback, centerh, centerv, output, x1, y1, x2, y2, str);
 
@@ -372,9 +372,9 @@ void LabEngine::doScrollBlack() {
 
 	allocFile((void **)&mem, (int32)width * (int32)height, "Temp Mem");
 
-	im.Width = width;
-	im.Height = height;
-	im.ImageData = mem;
+	im._width = width;
+	im._height = height;
+	im._imageData = mem;
 	_music->updateMusic();
 	im.readScreenImage(0, 0);
 	_music->updateMusic();
@@ -622,13 +622,13 @@ void LabEngine::doTransWipe(CloseDataPtr *cPtr, char *filename) {
 	setPalette(_anim->_diffPalette, 256);
 
 	if (BitMapMem) {
-		imSource.Width = _screenWidth;
-		imSource.Height = lastY;
-		imSource.ImageData = BitMapMem;
+		imSource._width = _screenWidth;
+		imSource._height = lastY;
+		imSource._imageData = BitMapMem;
 
-		imDest.Width = _screenWidth;
-		imDest.Height = _screenHeight;
-		imDest.ImageData = getCurrentDrawingBuffer();
+		imDest._width = _screenWidth;
+		imDest._height = _screenHeight;
+		imDest._imageData = getCurrentDrawingBuffer();
 
 		for (uint16 i = 0; i < 2; i++) {
 			curY = i * 2;
@@ -640,7 +640,7 @@ void LabEngine::doTransWipe(CloseDataPtr *cPtr, char *filename) {
 					linesdone = 0;
 				}
 
-				imDest.ImageData = getCurrentDrawingBuffer();
+				imDest._imageData = getCurrentDrawingBuffer();
 
 				bltBitMap(&imSource, 0, curY, &imDest, 0, curY, _screenWidth, 2);
 				ghoastRect(0, 0, curY, _screenWidth - 1, curY + 1);
@@ -659,7 +659,7 @@ void LabEngine::doTransWipe(CloseDataPtr *cPtr, char *filename) {
 					linesdone = 0;
 				}
 
-				imDest.ImageData = getCurrentDrawingBuffer();
+				imDest._imageData = getCurrentDrawingBuffer();
 
 				if (curY == lastY)
 					bltBitMap(&imSource, 0, curY, &imDest, 0, curY, _screenWidth, 1);

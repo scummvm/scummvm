@@ -169,20 +169,20 @@ void LabEngine::bltBitMap(Image *imSource, uint16 xs, uint16 ys, Image *imDest,
 		dy = 0;
 	}
 
-	if (dx + w > imDest->Width)
-		w = imDest->Width - dx;
+	if (dx + w > imDest->_width)
+		w = imDest->_width - dx;
 
-	if (dy + h > imDest->Height)
-		h = imDest->Height - dy;
+	if (dy + h > imDest->_height)
+		h = imDest->_height - dy;
 
 	if (w > 0 && h > 0) {
-		byte *s = imSource->ImageData + sy * imSource->Width + sx;
-		byte *d = imDest->ImageData + dy * imDest->Width + dx;
+		byte *s = imSource->_imageData + sy * imSource->_width + sx;
+		byte *d = imDest->_imageData + dy * imDest->_width + dx;
 
 		while (h-- > 0) {
 			memcpy(d, s, w);
-			s += imSource->Width;
-			d += imDest->Width;
+			s += imSource->_width;
+			d += imDest->_width;
 		}
 	}
 }
@@ -196,7 +196,7 @@ void LabEngine::scrollDisplayX(int16 dx, uint16 x1, uint16 y1, uint16 x2, uint16
 	Image im;
 	uint16 temp;
 
-	im.ImageData = _tempScrollData;
+	im._imageData = _tempScrollData;
 
 	if (x1 > x2) {
 		temp = x2;
@@ -211,8 +211,8 @@ void LabEngine::scrollDisplayX(int16 dx, uint16 x1, uint16 y1, uint16 x2, uint16
 	}
 
 	if (dx > 0) {
-		im.Width = x2 - x1 + 1 - dx;
-		im.Height = y2 - y1 + 1;
+		im._width = x2 - x1 + 1 - dx;
+		im._height = y2 - y1 + 1;
 
 		im.readScreenImage(x1, y1);
 		im.drawImage(x1 + dx, y1);
@@ -220,8 +220,8 @@ void LabEngine::scrollDisplayX(int16 dx, uint16 x1, uint16 y1, uint16 x2, uint16
 		setAPen(0);
 		rectFill(x1, y1, x1 + dx - 1, y2);
 	} else if (dx < 0) {
-		im.Width = x2 - x1 + 1 + dx;
-		im.Height = y2 - y1 + 1;
+		im._width = x2 - x1 + 1 + dx;
+		im._height = y2 - y1 + 1;
 
 		im.readScreenImage(x1 - dx, y1);
 		im.drawImage(x1, y1);
@@ -238,7 +238,7 @@ void LabEngine::scrollDisplayY(int16 dy, uint16 x1, uint16 y1, uint16 x2, uint16
 	Image im;
 	uint16 temp;
 
-	im.ImageData = _tempScrollData;
+	im._imageData = _tempScrollData;
 
 	if (x1 > x2) {
 		temp = x2;
@@ -253,8 +253,8 @@ void LabEngine::scrollDisplayY(int16 dy, uint16 x1, uint16 y1, uint16 x2, uint16
 	}
 
 	if (dy > 0) {
-		im.Width = x2 - x1 + 1;
-		im.Height = y2 - y1 + 1 - dy;
+		im._width = x2 - x1 + 1;
+		im._height = y2 - y1 + 1 - dy;
 
 		im.readScreenImage(x1, y1);
 		im.drawImage(x1, y1 + dy);
@@ -262,8 +262,8 @@ void LabEngine::scrollDisplayY(int16 dy, uint16 x1, uint16 y1, uint16 x2, uint16
 		setAPen(0);
 		rectFill(x1, y1, x2, y1 + dy - 1);
 	} else if (dy < 0) {
-		im.Width = x2 - x1 + 1;
-		im.Height = y2 - y1 + 1 + dy;
+		im._width = x2 - x1 + 1;
+		im._height = y2 - y1 + 1 + dy;
 
 		im.readScreenImage(x1, y1 - dy);
 		im.drawImage(x1, y1);
