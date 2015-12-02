@@ -57,6 +57,7 @@ protected:
 	void opStartForeignSequence(Control *control, OpCall &opCall);
 	void opBeginLoop(Control *control, OpCall &opCall);
 	void opNextLoop(Control *control, OpCall &opCall);
+	void opSetActorIndex(Control *control, OpCall &opCall);
 	void opSwitchActorIndex(Control *control, OpCall &opCall);
 	void opSwitchFacing(Control *control, OpCall &opCall);
 	void opAppearActor(Control *control, OpCall &opCall);

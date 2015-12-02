@@ -44,6 +44,9 @@ void KeyMap::add(Common::KeyCode key, int mouseButton) {
 
 // InputEvent
 
+InputEvent::InputEvent() : _bitMask(0) {
+}
+
 InputEvent& InputEvent::setBitMask(uint bitMask) {
 	_bitMask = bitMask;
 	return *this;
