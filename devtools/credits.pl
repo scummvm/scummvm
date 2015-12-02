@@ -826,8 +826,9 @@ begin_credits("Credits");
 				add_person("John Willis", "DJWillis", "");
 			end_section();
 
-			begin_section("iPhone");
+			begin_section("iPhone / iPad");
 				add_person("Oystein Eftevaag", "vinterstum", "");
+				add_person("Vincent B&eacute;nony", "bSr43", "");
 			end_section();
 
 			begin_section("LinuxMoto");
