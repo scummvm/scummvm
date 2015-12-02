@@ -1,6 +1,6 @@
-# ScummVM for iOS 9 #
+# ScummVM for iOS 7.1+ #
 
-This is a quick fix of the latest ScummVM (1.8.0) for iOS 9. It has been tested on real iPhone 6S+, and iPad Pro, and also on all the available Xcode simulators.
+This is a quick fix of the latest ScummVM (1.8.0) for iOS 7.1. It has been tested on real iPhone 6S+, and iPad Pro, and also on all the available Xcode simulators.
 
 I tried to use all the latest iOS features to replace the old code. For instance, it uses gesture recognizers most of the time, it supports the new iPhones 6 / 6+ / 6s / 6s+ resolution, and you can copy your game files using iTunes.
 
