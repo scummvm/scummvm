@@ -205,7 +205,7 @@ void ScriptOpcodes_Duckman::opStartTimerThread(ScriptThread *scriptThread, OpCal
 		
 //duration = 1;//DEBUG Speeds up things
 //duration = 5;
-debug("duration: %d", duration);
+//debug("duration: %d", duration);
 		
 	if (isAbortable)
 		_vm->startAbortableTimerThread(duration, opCall._threadId);

@@ -69,6 +69,7 @@ void SequenceOpcodes::initOpcodes() {
 	OPCODE(10, opStartForeignSequence);
 	OPCODE(11, opBeginLoop);
 	OPCODE(12, opNextLoop);
+	OPCODE(13, opSetActorIndex);
 	OPCODE(14, opSwitchActorIndex);
 	OPCODE(15, opSwitchFacing);
 	OPCODE(16, opAppearActor);
@@ -77,9 +78,13 @@ void SequenceOpcodes::initOpcodes() {
 	OPCODE(19, opDisappearForeignActor);
 	OPCODE(20, opSetNamedPointPosition);
 	OPCODE(21, opMoveDelta);
+	// 22-24 unused in Duckman, CHECKME BBDOU
 	OPCODE(25, opFaceActor);
+	// 26-27 unused in Duckman, CHECKME BBDOU
 	OPCODE(28, opNotifyThreadId1);
 	OPCODE(29, opSetPathCtrY);
+	// 30-31 unused in Duckman, CHECKME BBDOU
+	// TODO OPCODE(32, );
 	OPCODE(33, opSetPathWalkPoints);
 	OPCODE(34, opDisableAutoScale);
 	OPCODE(35, opSetScale);
@@ -90,6 +95,7 @@ void SequenceOpcodes::initOpcodes() {
 	OPCODE(40, opSetPriorityLayer);
 	OPCODE(41, opDisableAutoRegionLayer);
 	OPCODE(42, opSetRegionLayer);
+	// 43-47 unused in Duckman, CHECKME BBDOU
 	OPCODE(48, opSetPalette);
 	OPCODE(49, opShiftPalette);
 	OPCODE(50, opPlaySound);
@@ -211,6 +217,11 @@ void SequenceOpcodes::opNextLoop(Control *control, OpCall &opCall) {
 		control->_actor->pushSequenceStack(currLoopCount - 1);
 		opCall._deltaOfs = -jumpOffs;
 	}
+}
+
+void SequenceOpcodes::opSetActorIndex(Control *control, OpCall &opCall) {
+	ARG_BYTE(actorIndex);
+	control->setActorIndex(actorIndex);
 }
 
 void SequenceOpcodes::opSwitchActorIndex(Control *control, OpCall &opCall) {

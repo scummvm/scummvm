@@ -311,7 +311,7 @@ static char *debugW2I(byte *wstr) {
 }
 
 int TalkThread_Duckman::insertText() {
-	debug("%08X %08X [%s]", _threadId, _talkId, debugW2I(_currEntryText));
+	debug(0, "%08X %08X [%s]", _threadId, _talkId, debugW2I(_currEntryText));
 	WidthHeight dimensions;
 	_vm->getDefaultTextDimensions(dimensions);
 	uint16 *outTextPtr;

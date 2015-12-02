@@ -64,6 +64,7 @@ protected:
 
 class InputEvent {
 public:
+	InputEvent();
 	InputEvent& setBitMask(uint bitMask);
 	InputEvent& addKey(Common::KeyCode key);
 	InputEvent& addMouseButton(int mouseButton);

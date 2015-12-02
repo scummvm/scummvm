@@ -67,6 +67,7 @@ void DuckmanSpecialCode::init() {
 	SPECIAL(0x0016000F, spcUpdateTeleporterPosition);
 	SPECIAL(0x00160010, spcCenterNewspaper);
 	SPECIAL(0x00160012, spcStopScreenShaker);
+	SPECIAL(0x00160013, spcIncrCounter);
 	SPECIAL(0x00160014, spcUpdateObject272Sequence);
 	SPECIAL(0x0016001C, spcSetCursorInventoryMode);
 	SPECIAL(0x0016001D, spcCenterCurrentScreenText);
@@ -223,6 +224,20 @@ void DuckmanSpecialCode::spcCenterNewspaper(OpCall &opCall) {
 
 void DuckmanSpecialCode::spcStopScreenShaker(OpCall &opCall) {
 	_vm->stopScreenShaker();
+	_vm->notifyThreadId(opCall._threadId);
+}
+
+void DuckmanSpecialCode::spcIncrCounter(OpCall &opCall) {
+	ARG_BYTE(maxCount);
+	ARG_BYTE(incr);
+	_vm->_scriptResource->_properties.set(0x000E0088, false);
+	if (incr) {
+		_counter += incr;
+		if (_counter >= maxCount)
+			_vm->_scriptResource->_properties.set(0x000E0088, true);
+	} else {
+		_counter = 0;
+	}
 	_vm->notifyThreadId(opCall._threadId);
 }
 

@@ -289,7 +289,8 @@ void IllusionsEngine_Duckman::startScreenShaker(uint pointsCount, uint32 duratio
 }
 
 void IllusionsEngine_Duckman::stopScreenShaker() {
-	_screenShaker->_finished = true;
+	if (_screenShaker)
+		_screenShaker->_finished = true;
 }
 
 int IllusionsEngine_Duckman::updateScreenShaker(uint flags) {
@@ -892,8 +893,6 @@ void IllusionsEngine_Duckman::updateGameState2() {
 
 	_cursor._control->_actor->_position = cursorPos;
 	
-	debug("IllusionsEngine_Duckman::updateGameState2() #1");
-
 	foundOverlapped = _controls->getOverlappedObject(_cursor._control, convMousePos, &overlappedControl, 0);
 
 	if (cursorPos.y < 8 && !_camera->isAtPanLimit(1)) {
@@ -913,7 +912,6 @@ void IllusionsEngine_Duckman::updateGameState2() {
 		startCursorSequence();
 	}
 
-	debug("IllusionsEngine_Duckman::updateGameState2() #2");
 	if (trackCursorIndex >= 0) {
 		if (_cursor._actorIndex != 10 && _cursor._actorIndex != 11 && _cursor._actorIndex != 12 && _cursor._actorIndex != 13 && _cursor._actorIndex != 3)
 			_cursor._savedActorIndex = _cursor._actorIndex;
@@ -926,7 +924,6 @@ void IllusionsEngine_Duckman::updateGameState2() {
 		foundOverlapped = false;
 	}
 
-	debug("IllusionsEngine_Duckman::updateGameState2() #3");
 	if (foundOverlapped) {
 		if (_cursor._currOverlappedControl != overlappedControl) {
 			int cursorValue2 = 0;
@@ -952,9 +949,7 @@ void IllusionsEngine_Duckman::updateGameState2() {
 		_cursor._currOverlappedControl = 0;
 	}
 
-	debug("IllusionsEngine_Duckman::updateGameState2() #4");
 	if (_input->pollEvent(kEventLeftClick)) {
-	debug("IllusionsEngine_Duckman::updateGameState2() #5");
 		if (_cursor._currOverlappedControl) {
 			runTriggerCause(_cursor._actorIndex, _cursor._objectId, _cursor._currOverlappedControl->_objectId);
 		} else {
@@ -966,7 +961,6 @@ void IllusionsEngine_Duckman::updateGameState2() {
 				runTriggerCause(_cursor._actorIndex, _cursor._objectId, 0x40003);
 		}
 	} else if (_input->pollEvent(kEventRightClick)) {
-	debug("IllusionsEngine_Duckman::updateGameState2() #6");
 		if (_cursor._actorIndex != 3 && _cursor._actorIndex != 10 && _cursor._actorIndex != 11 && _cursor._actorIndex != 12 && _cursor._actorIndex != 13) {
 			int newActorIndex = getCursorActorIndex();
 			if (newActorIndex != _cursor._actorIndex) {
@@ -979,14 +973,12 @@ void IllusionsEngine_Duckman::updateGameState2() {
 			}
 		}
 	} else if (_input->pollEvent(kEventInventory)) {
-	debug("IllusionsEngine_Duckman::updateGameState2() #7");
 		if (_cursor._field14[0] == 1) {
 			runTriggerCause(1, 0, _scriptResource->getMainActorObjectId());
 		} else if (_cursor._field14[1] == 1) {
 			runTriggerCause(2, 0, _scriptResource->getMainActorObjectId());
 		}
 	}
-	debug("IllusionsEngine_Duckman::updateGameState2() #XXX");
 
 }
 

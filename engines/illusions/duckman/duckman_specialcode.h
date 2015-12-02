@@ -55,6 +55,8 @@ public:
 	
 	PropertyTimers *_propertyTimers;
 	DuckmanInventory *_inventory;
+	
+	int16 _counter;
 
 	// Special code interface functions
 	void runSpecialCode(uint32 specialCodeId, OpCall &opCall);
@@ -72,6 +74,7 @@ public:
 	void spcUpdateTeleporterPosition(OpCall &opCall);
 	void spcCenterNewspaper(OpCall &opCall);
 	void spcStopScreenShaker(OpCall &opCall);
+	void spcIncrCounter(OpCall &opCall);
 	void spcUpdateObject272Sequence(OpCall &opCall);
 	void spcSetCursorInventoryMode(OpCall &opCall);
 	void spcCenterCurrentScreenText(OpCall &opCall);
