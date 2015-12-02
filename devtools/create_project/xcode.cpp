@@ -706,10 +706,10 @@ void XcodeProvider::setupSourcesBuildPhase() {
 
 		int order = 0;
 		for (std::vector<Object*>::iterator file = _buildFile.objects.begin(); file !=_buildFile.objects.end(); ++file) {
-            const std::string &fileName = (*file)->name;
-            if (shouldSkipFileForTarget((*file)->id, targetName, fileName)) {
-                continue;
-            }
+			const std::string &fileName = (*file)->name;
+			if (shouldSkipFileForTarget((*file)->id, targetName, fileName)) {
+				continue;
+			}
 			if (!producesObjectFileOnOSX(fileName)) {
 				continue;
 			}
