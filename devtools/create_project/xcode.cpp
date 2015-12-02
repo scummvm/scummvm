@@ -717,7 +717,7 @@ void XcodeProvider::setupSourcesBuildPhase() {
 			ADD_SETTING_ORDER_NOVALUE(files, getHash((*file)->id), comment, order++);
 		}
 
-		addAdditionalSources(targetName, files, order);
+		setupAdditionalSources(targetName, files, order);
 
 		source->properties["files"] = files;
 
@@ -972,7 +972,7 @@ void XcodeProvider::setupImageAssetCatalog(const BuildSetup &setup) {
 	addBuildFile(absoluteCatalogPath, filename, getHash(id), "Image Asset Catalog");
 }
 
-void XcodeProvider::addAdditionalSources(std::string targetName, Property &files, int &order) {
+void XcodeProvider::setupAdditionalSources(std::string targetName, Property &files, int &order) {
 	if (targetIsIOS(targetName)) {
 		const std::string absoluteCatalogPath = _projectRoot + "/dists/iphone/Images.xcassets";
 		ADD_SETTING_ORDER_NOVALUE(files, getHash(absoluteCatalogPath), "Image Asset Catalog", order++);

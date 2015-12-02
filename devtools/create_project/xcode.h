@@ -330,7 +330,7 @@ private:
 	void setupSourcesBuildPhase();
 	void setupBuildConfiguration(const BuildSetup &setup);
 	void setupImageAssetCatalog(const BuildSetup &setup);
-	void addAdditionalSources(std::string targetName, Property &files, int &order);
+	void setupAdditionalSources(std::string targetName, Property &files, int &order);
 
 	// Misc
 	void setupDefines(const BuildSetup &setup); // Setup the list of defines to be used on build configurations
