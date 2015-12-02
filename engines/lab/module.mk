@@ -17,7 +17,6 @@ MODULE_OBJS := \
 	mouse.o \
 	music.o \
 	processroom.o \
-	readdiff.o \
 	resource.o \
 	savegame.o \
 	special.o \
