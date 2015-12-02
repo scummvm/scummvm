@@ -149,20 +149,6 @@ Gadget *LabEngine::checkNumGadgetHit(Gadget *gadlist, uint16 key) {
 	return NULL;
 }
 
-
-
-/*****************************************************************************/
-/* Checks whether or not a key has been pressed.                             */
-/*****************************************************************************/
-static bool keyPress(uint16 *KeyCode) {
-	if (g_lab->haveNextChar()) {
-        *KeyCode = g_lab->getNextChar();
-		return true;
-	}
-
-	return false;
-}
-
 IntuiMessage IMessage;
 
 IntuiMessage *LabEngine::getMsg() {
@@ -188,7 +174,7 @@ IntuiMessage *LabEngine::getMsg() {
 		IMessage.qualifier = IEQUALIFIER_RBUTTON | Qualifiers;
 		IMessage.msgClass = MOUSEBUTTONS;
 		return &IMessage;
-	} else if (keyPress(&IMessage.code)) { /* Keyboard key */
+	} else if (_event->keyPress(&IMessage.code)) { /* Keyboard key */
 		curgad = checkNumGadgetHit(_event->_screenGadgetList, IMessage.code);
 
 		if (curgad) {

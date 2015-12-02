@@ -62,120 +62,12 @@ void LabEngine::changeVolume(int delta) {
 	warning("STUB: changeVolume()");
 }
 
-uint16 LabEngine::getNextChar() {
-	uint16 c = 0;
-
-	processInput();
-	if (_nextKeyIn != _nextKeyOut) {
-		c = _keyBuf[_nextKeyOut];
-		_nextKeyOut = ((((unsigned int)((_nextKeyOut + 1) >> 31) >> 26) + (byte)_nextKeyOut + 1) & 0x3F)
-                 - ((unsigned int)((_nextKeyOut + 1) >> 31) >> 26);
-  	}
-
-	return c;
-}
-
-bool LabEngine::haveNextChar() {
-	processInput();
-	return _nextKeyIn != _nextKeyOut;
-}
-
-void LabEngine::processInput(bool can_delay) {
-	Common::Event event;
-
-	if (1 /*!g_IgnoreProcessInput*/) {
-		int flags = 0;
-		while (g_system->getEventManager()->pollEvent(event)) {
-			switch (event.type) {
-			case Common::EVENT_RBUTTONDOWN:
-				flags |= 8;
-				_event->mouseHandler(flags, _mousePos);
-				break;
-
-			case Common::EVENT_LBUTTONDOWN:
-				flags |= 2;
-				_event->mouseHandler(flags, _mousePos);
-				break;
-
-			case Common::EVENT_MOUSEMOVE: {
-				int lastMouseAtEdge = _mouseAtEdge;
-				_mouseAtEdge = false;
-				_mousePos.x = event.mouse.x;
-				if (event.mouse.x <= 0) {
-					_mousePos.x = 0;
-					_mouseAtEdge = true;
-				}
-				if (_mousePos.x > _screenWidth - 1) {
-					_mousePos.x = _screenWidth;
-					_mouseAtEdge = true;
-				}
-
-				_mousePos.y = event.mouse.y;
-				if (event.mouse.y <= 0) {
-					_mousePos.y = 0;
-					_mouseAtEdge = true;
-				}
-				if (_mousePos.y > _screenHeight - 1) {
-					_mousePos.y = _screenHeight;
-					_mouseAtEdge = true;
-				}
-
-				if (!lastMouseAtEdge || !_mouseAtEdge)
-					_event->mouseHandler(1, _mousePos);
-				}
-				break;
-
-			case Common::EVENT_KEYDOWN:
-				switch (event.kbd.keycode) {
-				case Common::KEYCODE_LEFTBRACKET:
-					changeVolume(-1);
-					break;
-
-				case Common::KEYCODE_RIGHTBRACKET:
-					changeVolume(1);
-					break;
-
-				case Common::KEYCODE_z:
-					//saveSettings();
-					break;
-
-				default: {
-					int n = ((((unsigned int)((_nextKeyIn + 1) >> 31) >> 26) + (byte)_nextKeyIn + 1) & 0x3F)
-					- ((unsigned int)((_nextKeyIn + 1) >> 31) >> 26);
-					if (n != _nextKeyOut) {
-						_keyBuf[_nextKeyIn] = event.kbd.keycode;
-						_nextKeyIn = n;
-					}
-				}
-				}
-				break;
-
-			case Common::EVENT_QUIT:
-			case Common::EVENT_RTL:
-			default:
-				break;
-			}
-
-			g_system->copyRectToScreen(_displayBuffer, _screenWidth, 0, 0, _screenWidth, _screenHeight);
-			g_system->updateScreen();
-		}
-	}
-
-	if (can_delay)
-		g_system->delayMillis(10);
-}
-
-Common::Point LabEngine::getMousePos() {
-	processInput();
-
-	return _mousePos;
-}
 
 void LabEngine::waitTOF() {
 	g_system->copyRectToScreen(_displayBuffer, _screenWidth, 0, 0, _screenWidth, _screenHeight);
 	g_system->updateScreen();
 
-  	processInput();
+  	_event->processInput();
 
   	uint32 now;
 
@@ -237,7 +129,7 @@ void LabEngine::screenUpdate() {
 	g_system->copyRectToScreen(_displayBuffer, _screenWidth, 0, 0, _screenWidth, _screenHeight);
 	g_system->updateScreen();
 
-	processInput();
+	_event->processInput();
 }
 
 /*****************************************************************************/

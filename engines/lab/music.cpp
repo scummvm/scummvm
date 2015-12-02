@@ -68,8 +68,7 @@ Music::Music(LabEngine *vm) : _vm(vm) {
 /* it from the Audio device.                                                 */
 /*****************************************************************************/
 void Music::updateMusic() {
-	_vm->processInput();
-
+	_vm->_event->processInput();
 	_vm->_event->updateMouse();
 
 	if (_musicOn && getPlayingBufferCount() < MAXBUFFERS) {

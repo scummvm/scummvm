@@ -54,8 +54,6 @@ static byte MouseData[] = {1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
 #define MOUSE_WIDTH 10
 #define MOUSE_HEIGHT 15
 
-static Gadget *hitgad = NULL;
-
 /*****************************************************************************/
 /* Checks whether or not the cords fall within one of the gadgets in a list  */
 /* of gadgets.                                                               */
@@ -67,7 +65,7 @@ Gadget *EventManager::checkGadgetHit(Gadget *gadgetList, Common::Point pos) {
 		    (pos.y <= (gadgetList->y + gadgetList->Im->Height)) &&
 		     !(GADGETOFF & gadgetList->GadgetFlags)) {
 			if (_vm->_isHiRes) {
-				hitgad = gadgetList;
+				_hitGadget = gadgetList;
 			} else {
 				mouseHide();
 				gadgetList->ImAlt->drawImage(gadgetList->x, gadgetList->y);
@@ -107,6 +105,15 @@ EventManager::EventManager(LabEngine *vm) : _vm(vm) {
 	_numHidden   = 1;
 	_lastGadgetHit = nullptr;
 	_screenGadgetList = nullptr;
+	_hitGadget = nullptr;
+	_nextKeyIn = 0;
+	_nextKeyOut = 0;
+	_mousePos = Common::Point(0, 0);
+	_mouseAtEdge = false;
+
+	for (int i = 0; i < 64; i++)
+		_keyBuf[i] = 0;
+
 }
 
 void EventManager::mouseHandler(int flag, Common::Point pos) {
@@ -134,19 +141,19 @@ void EventManager::updateMouse() {
 	if (!_mouseHidden)
 		doUpdateDisplay = true;
 
-	if (hitgad) {
+	if (_hitGadget) {
 		mouseHide();
-		hitgad->ImAlt->drawImage(hitgad->x, hitgad->y);
+		_hitGadget->ImAlt->drawImage(_hitGadget->x, _hitGadget->y);
 		mouseShow();
 
 		for (uint16 i = 0; i < 3; i++)
 			_vm->waitTOF();
 
 		mouseHide();
-		hitgad->Im->drawImage(hitgad->x, hitgad->y);
+		_hitGadget->Im->drawImage(_hitGadget->x, _hitGadget->y);
 		mouseShow();
 		doUpdateDisplay = true;
-		hitgad = NULL;
+		_hitGadget = nullptr;
 	}
 
 	if (doUpdateDisplay)
@@ -173,7 +180,7 @@ void EventManager::mouseShow() {
 		_numHidden--;
 
 	if ((_numHidden == 0) && _mouseHidden) {
-		_vm->processInput();
+		processInput();
 		_mouseHidden = false;
 	}
 
@@ -199,9 +206,9 @@ void EventManager::mouseHide() {
 /*****************************************************************************/
 Common::Point EventManager::getMousePos() {
 	if (_vm->_isHiRes)
-		return _vm->_mousePos;
+		return _mousePos;
 	else
-		return Common::Point(_vm->_mousePos.x / 2, _vm->_mousePos.y);
+		return Common::Point(_mousePos.x / 2, _mousePos.y);
 }
 
 
@@ -215,7 +222,7 @@ void EventManager::setMousePos(Common::Point pos) {
 		g_system->warpMouse(pos.x * 2, pos.y);
 
 	if (!_mouseHidden)
-		_vm->processInput();
+		processInput();
 }
 
 
@@ -227,15 +234,15 @@ void EventManager::setMousePos(Common::Point pos) {
 bool EventManager::mouseButton(uint16 *x, uint16 *y, bool leftbutton) {
 	if (leftbutton) {
 		if (_leftClick) {
-			*x = (!_vm->_isHiRes) ? (uint16)_vm->_mousePos.x / 2 : (uint16)_vm->_mousePos.x;
-			*y = (uint16)_vm->_mousePos.y;
+			*x = (!_vm->_isHiRes) ? (uint16)_mousePos.x / 2 : (uint16)_mousePos.x;
+			*y = (uint16)_mousePos.y;
 			_leftClick = false;
 			return true;
 		}
 	} else {
 		if (_rightClick) {
-			*x = (!_vm->_isHiRes) ? (uint16)_vm->_mousePos.x / 2 : (uint16)_vm->_mousePos.x;
-			*y = (uint16)_vm->_mousePos.y;
+			*x = (!_vm->_isHiRes) ? (uint16)_mousePos.x / 2 : (uint16)_mousePos.x;
+			*y = (uint16)_mousePos.y;
 			_rightClick = false;
 			return true;
 		}
@@ -251,4 +258,124 @@ Gadget *EventManager::mouseGadget() {
 	return temp;
 }
 
+/*****************************************************************************/
+/* Checks whether or not a key has been pressed.                             */
+/*****************************************************************************/
+bool EventManager::keyPress(uint16 *keyCode) {
+	if (haveNextChar()) {
+		*keyCode = getNextChar();
+		return true;
+	}
+
+	return false;
+}
+
+bool EventManager::haveNextChar() {
+	processInput();
+	return _nextKeyIn != _nextKeyOut;
+}
+
+void EventManager::processInput(bool can_delay) {
+	Common::Event event;
+
+	if (1 /*!g_IgnoreProcessInput*/) {
+		int flags = 0;
+		while (g_system->getEventManager()->pollEvent(event)) {
+			switch (event.type) {
+			case Common::EVENT_RBUTTONDOWN:
+				flags |= 8;
+				mouseHandler(flags, _mousePos);
+				break;
+
+			case Common::EVENT_LBUTTONDOWN:
+				flags |= 2;
+				mouseHandler(flags, _mousePos);
+				break;
+
+			case Common::EVENT_MOUSEMOVE: {
+				int lastMouseAtEdge = _mouseAtEdge;
+				_mouseAtEdge = false;
+				_mousePos.x = event.mouse.x;
+				if (event.mouse.x <= 0) {
+					_mousePos.x = 0;
+					_mouseAtEdge = true;
+				}
+				if (_mousePos.x > _vm->_screenWidth - 1) {
+					_mousePos.x = _vm->_screenWidth;
+					_mouseAtEdge = true;
+				}
+
+				_mousePos.y = event.mouse.y;
+				if (event.mouse.y <= 0) {
+					_mousePos.y = 0;
+					_mouseAtEdge = true;
+				}
+				if (_mousePos.y > _vm->_screenHeight - 1) {
+					_mousePos.y = _vm->_screenHeight;
+					_mouseAtEdge = true;
+				}
+
+				if (!lastMouseAtEdge || !_mouseAtEdge)
+					mouseHandler(1, _mousePos);
+				}
+				break;
+
+			case Common::EVENT_KEYDOWN:
+				switch (event.kbd.keycode) {
+				case Common::KEYCODE_LEFTBRACKET:
+					_vm->changeVolume(-1);
+					break;
+
+				case Common::KEYCODE_RIGHTBRACKET:
+					_vm->changeVolume(1);
+					break;
+
+				case Common::KEYCODE_z:
+					//saveSettings();
+					break;
+
+				default: {
+					int n = ((((unsigned int)((_nextKeyIn + 1) >> 31) >> 26) + (byte)_nextKeyIn + 1) & 0x3F)
+						- ((unsigned int)((_nextKeyIn + 1) >> 31) >> 26);
+					if (n != _nextKeyOut) {
+						_keyBuf[_nextKeyIn] = event.kbd.keycode;
+						_nextKeyIn = n;
+					}
+					}
+				}
+				break;
+
+			case Common::EVENT_QUIT:
+			case Common::EVENT_RTL:
+			default:
+				break;
+			}
+
+			g_system->copyRectToScreen(_vm->_displayBuffer, _vm->_screenWidth, 0, 0, _vm->_screenWidth, _vm->_screenHeight);
+			g_system->updateScreen();
+		}
+	}
+
+	if (can_delay)
+		g_system->delayMillis(10);
+}
+
+uint16 EventManager::getNextChar() {
+	uint16 c = 0;
+
+	processInput();
+	if (_nextKeyIn != _nextKeyOut) {
+		c = _keyBuf[_nextKeyOut];
+		_nextKeyOut = ((((unsigned int)((_nextKeyOut + 1) >> 31) >> 26) + (byte)_nextKeyOut + 1) & 0x3F)
+			- ((unsigned int)((_nextKeyOut + 1) >> 31) >> 26);
+	}
+
+	return c;
+}
+
+Common::Point EventManager::updateAndGetMousePos() {
+	processInput();
+
+	return _mousePos;
+}
 } // End of namespace Lab
