@@ -94,7 +94,7 @@ LabEngine::LabEngine(OSystem *syst, const ADGameDescription *gameDesc)
 
 	for (int i = 0; i < 20; i++)
 		_moveImages[20] = nullptr;
-	
+
 	for (int i = 0; i < 10; i++)
 		_invImages[10] = nullptr;
 

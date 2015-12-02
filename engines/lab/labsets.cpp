@@ -34,7 +34,7 @@
 
 namespace Lab {
 
-	LargeSet::LargeSet(uint16 last, LabEngine *vm) : _vm(vm) {
+LargeSet::LargeSet(uint16 last, LabEngine *vm) : _vm(vm) {
 	last = (((last + 15) >> 4) << 4);
 
 	_array = (uint16 *)calloc(last >> 3, 2);
