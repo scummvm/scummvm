@@ -46,6 +46,7 @@ public:
     void drawImage(uint16 x, uint16 y);
     void drawMaskImage(uint16 x, uint16 y);
     void readScreenImage(uint16 x, uint16 y);
+	void bltBitMap(uint16 xs, uint16 ys, Image *ImDest, uint16 xd, uint16 yd, uint16 width, uint16 height);
 };
 
 

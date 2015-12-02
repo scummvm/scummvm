@@ -143,51 +143,6 @@ byte *LabEngine::getCurrentDrawingBuffer() {
 }
 
 /*****************************************************************************/
-/* Blits a piece of one image to another.                                    */
-/* NOTE: for our purposes, assumes that ImDest is to be in VGA memory.       */
-/*****************************************************************************/
-void LabEngine::bltBitMap(Image *imSource, uint16 xs, uint16 ys, Image *imDest,
-					uint16 xd, uint16 yd, uint16 width, uint16 height) {
-	// I think the old code assumed that the source image data was valid for the given box.
-	// I will proceed on that assumption.
-	int sx = xs;
-	int sy = ys;
-	int dx = xd;
-	int dy = yd;
-	int w = width;
-	int h = height;
-
-	if (dx < 0) {
-		sx -= dx;
-		w += dx;
-		dx = 0;
-	}
-
-	if (dy < 0) {
-		sy -= dy;
-		w += dy;
-		dy = 0;
-	}
-
-	if (dx + w > imDest->_width)
-		w = imDest->_width - dx;
-
-	if (dy + h > imDest->_height)
-		h = imDest->_height - dy;
-
-	if (w > 0 && h > 0) {
-		byte *s = imSource->_imageData + sy * imSource->_width + sx;
-		byte *d = imDest->_imageData + dy * imDest->_width + dx;
-
-		while (h-- > 0) {
-			memcpy(d, s, w);
-			s += imSource->_width;
-			d += imDest->_width;
-		}
-	}
-}
-
-/*****************************************************************************/
 /* Scrolls the display in the x direction by blitting.                       */
 /* The _tempScrollData variable must be initialized to some memory, or this   */
 /* function will fail.                                                       */
