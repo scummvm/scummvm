@@ -28,6 +28,7 @@
  *
  */
 
+#include "lab/lab.h"
 #include "lab/labfun.h"
 #include "lab/mouse.h"
 #include "common/file.h"
@@ -308,5 +309,47 @@ void freeAllStolenMem() {
 	buffersize = realbuffersize;
 	_memPlace = buffer;
 }
+
+static char NewFileName[255];
+
+/*****************************************************************************/
+/* Modifies the filename so that paths and stuff are correct.  Should mostly  */
+/* deal with assigns and the '/' instead of '\' on IBM systems.              */
+/*                                                                           */
+/* NOTE: Make a *copy* of the string, and modify that.  It would be a real   */
+/* *bad* idea to modify the original.  Since Labyrinth only focuses its      */
+/* attention to one file at a time, it would be fine to have one variable    */
+/* not on the stack which is used to store the new filename.                 */
+/*****************************************************************************/
+char *translateFileName(const char *filename) {
+	Common::String fileNameStr = filename;
+	fileNameStr.toUppercase();
+	Common::String fileNameStrFinal;
+
+	if (fileNameStr.hasPrefix("P:")) {
+		if (g_lab->_isHiRes)
+			fileNameStrFinal = "GAME/SPICT/";
+		else
+			fileNameStrFinal = "GAME/PICT/";
+	} else if (fileNameStr.hasPrefix("LAB:"))
+		fileNameStrFinal = "GAME/";
+	else if (fileNameStr.hasPrefix("MUSIC:"))
+		fileNameStrFinal = "GAME/MUSIC/";
+
+	if (fileNameStr.contains(':')) {
+		while (fileNameStr[0] != ':') {
+			fileNameStr.deleteChar(0);
+		}
+
+		fileNameStr.deleteChar(0);
+	}
+
+	fileNameStrFinal += fileNameStr;
+
+	strcpy(NewFileName, fileNameStrFinal.c_str());
+
+	return NewFileName;
+}
+
 
 } // End of namespace Lab
