@@ -36,7 +36,6 @@
 #include "lab/intro.h"
 #include "lab/parsefun.h"
 #include "lab/interface.h"
-#include "lab/mouse.h"
 #include "lab/resource.h"
 
 namespace Lab {

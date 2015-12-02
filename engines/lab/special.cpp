@@ -40,7 +40,6 @@
 #include "lab/interface.h"
 #include "lab/anim.h"
 #include "lab/text.h"
-#include "lab/mouse.h"
 #include "lab/parsetypes.h"
 #include "lab/resource.h"
 

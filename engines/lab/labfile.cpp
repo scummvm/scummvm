@@ -30,7 +30,6 @@
 
 #include "lab/lab.h"
 #include "lab/labfun.h"
-#include "lab/mouse.h"
 #include "common/file.h"
 
 namespace Lab {
