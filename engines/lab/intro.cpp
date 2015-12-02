@@ -30,11 +30,7 @@
 
 #include "lab/lab.h"
 #include "lab/intro.h"
-#include "lab/labfun.h"
-#include "lab/resource.h"
 #include "lab/anim.h"
-#include "lab/text.h"
-#include "lab/interface.h"
 
 namespace Lab {
 extern uint16 *FadePalette;
