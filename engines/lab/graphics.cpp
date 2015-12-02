@@ -642,7 +642,7 @@ void LabEngine::doTransWipe(CloseDataPtr *cPtr, char *filename) {
 
 				imDest._imageData = getCurrentDrawingBuffer();
 
-				bltBitMap(&imSource, 0, curY, &imDest, 0, curY, _screenWidth, 2);
+				imSource.bltBitMap(0, curY, &imDest, 0, curY, _screenWidth, 2);
 				ghoastRect(0, 0, curY, _screenWidth - 1, curY + 1);
 				curY += 4;
 				linesdone++;
@@ -662,9 +662,9 @@ void LabEngine::doTransWipe(CloseDataPtr *cPtr, char *filename) {
 				imDest._imageData = getCurrentDrawingBuffer();
 
 				if (curY == lastY)
-					bltBitMap(&imSource, 0, curY, &imDest, 0, curY, _screenWidth, 1);
+					imSource.bltBitMap(0, curY, &imDest, 0, curY, _screenWidth, 1);
 				else
-					bltBitMap(&imSource, 0, curY, &imDest, 0, curY, _screenWidth, 2);
+					imSource.bltBitMap(0, curY, &imDest, 0, curY, _screenWidth, 2);
 
 				curY += 4;
 				linesdone++;

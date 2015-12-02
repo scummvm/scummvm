@@ -145,7 +145,6 @@ public:
 	void scrollDisplayX(int16 dx, uint16 x1, uint16 y1, uint16 x2, uint16 y2);
 	void scrollDisplayY(int16 dy, uint16 x1, uint16 y1, uint16 x2, uint16 y2);
 	void ghoastRect(uint16 pencolor, uint16 x1, uint16 y1, uint16 x2, uint16 y2);
-	void bltBitMap(Image *ImSource, uint16 xs, uint16 ys, Image *ImDest, uint16 xd, uint16 yd, uint16 width, uint16 height);
 	void setPalette(void *cmap, uint16 numcolors);
 	void drawHLine(uint16 x, uint16 y1, uint16 y2);
 	void drawVLine(uint16 x1, uint16 y, uint16 x2);

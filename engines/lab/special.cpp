@@ -194,7 +194,7 @@ static void changeCombination(uint16 number) {
 
 		g_lab->scrollDisplayY(2, VGAScaleX(combx[number]), VGAScaleY(65), VGAScaleX(combx[number]) + (Images[combnum])->_width - 1, VGAScaleY(65) + (Images[combnum])->_height);
 
-		g_lab->bltBitMap(Images[combnum], 0, (Images[combnum])->_height - (2 * i), &(display), VGAScaleX(combx[number]), VGAScaleY(65), (Images[combnum])->_width, 2);
+		Images[combnum]->bltBitMap(0, (Images[combnum])->_height - (2 * i), &(display), VGAScaleX(combx[number]), VGAScaleY(65), (Images[combnum])->_width, 2);
 	}
 
 	for (uint16 i = 0; i < 6; i++)
@@ -626,14 +626,14 @@ static void turnPage(bool FromLeft) {
 			g_lab->_music->updateMusic();
 			g_lab->waitTOF();
 			ScreenImage._imageData = g_lab->getCurrentDrawingBuffer();
-			g_lab->bltBitMap(&JBackImage, i, 0, &ScreenImage, i, 0, 8, g_lab->_screenHeight);
+			JBackImage.bltBitMap(i, 0, &ScreenImage, i, 0, 8, g_lab->_screenHeight);
 		}
 	} else {
 		for (int i = (g_lab->_screenWidth - 8); i > 0; i -= 8) {
 			g_lab->_music->updateMusic();
 			g_lab->waitTOF();
 			ScreenImage._imageData = g_lab->getCurrentDrawingBuffer();
-			g_lab->bltBitMap(&JBackImage, i, 0, &ScreenImage, i, 0, 8, g_lab->_screenHeight);
+			JBackImage.bltBitMap(i, 0, &ScreenImage, i, 0, 8, g_lab->_screenHeight);
 		}
 	}
 }
@@ -655,7 +655,7 @@ void LabEngine::drawJournal(uint16 wipenum, bool needFade) {
 	ScreenImage._imageData = getCurrentDrawingBuffer();
 
 	if (wipenum == 0)
-		bltBitMap(&JBackImage, 0, 0, &ScreenImage, 0, 0, _screenWidth, _screenHeight);
+		JBackImage.bltBitMap(0, 0, &ScreenImage, 0, 0, _screenWidth, _screenHeight);
 	else
 		turnPage((bool)(wipenum == 1));
 
