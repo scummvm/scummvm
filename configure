@@ -3001,9 +3001,9 @@ case $_backend in
 		append_var LIBS "-lobjc -framework UIKit -framework CoreGraphics -framework OpenGLES"
 		append_var LIBS "-framework QuartzCore -framework CoreFoundation -framework Foundation"
 		append_var LIBS "-framework AudioToolbox -framework CoreAudio"
-		append_var LDFLAGS "-isysroot $SDKROOT -miphoneos-version-min=9.0 -arch armv7"
-		append_var CFLAGS "-isysroot $SDKROOT -miphoneos-version-min=9.0 -arch armv7"
-		append_var CXXFLAGS "-isysroot $SDKROOT -miphoneos-version-min=9.0 -arch armv7"
+		append_var LDFLAGS "-isysroot $SDKROOT -miphoneos-version-min=7.0 -arch armv7"
+		append_var CFLAGS "-isysroot $SDKROOT -miphoneos-version-min=7.0 -arch armv7"
+		append_var CXXFLAGS "-isysroot $SDKROOT -miphoneos-version-min=7.0 -arch armv7"
 		;;
 	linuxmoto)
 		append_var DEFINES "-DLINUXMOTO"
