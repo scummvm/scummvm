@@ -12,7 +12,6 @@ MODULE_OBJS := \
 	lab.o \
 	labfile.o \
 	labsets.o \
-	machine.o \
 	map.o \
 	mouse.o \
 	music.o \
