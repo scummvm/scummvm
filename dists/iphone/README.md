@@ -4,24 +4,32 @@ This is a quick fix of the latest ScummVM (1.8.0) for iOS 9. It has been tested 
 
 I tried to use all the latest iOS features to replace the old code. For instance, it uses gesture recognizers most of the time, it supports the new iPhones 6 / 6+ / 6s / 6s+ resolution, and you can copy your game files using iTunes.
 
-*That being said, this port has been done in only a few hours, and without any knowledge about the project architecture. Feel free to improve!*
-
-For instance, I should have modified the **create_project** tool in order to generate an iOS Xcode project. But instead of struggling with this *meta-level* from the start, I generated an OS X Xcode project, and then I cleaned the project in order to build the iOS version.
-
-*The support for the iOS project generation will come later (maybe...)*
-
 ## Compilation ##
 
-All the needed libraries are embedded as Xcode sub-projects, and added to the repository as GIT submodules.
-
-In order to download the project, run this command in the Terminal application:
+First, clone the repository:
 ```
-git clone -b ios-fix --recursive https://github.com/bSr43/scummvm.git
+$ git clone -b ios-fix --recursive https://github.com/bSr43/scummvm.git
 ```
 
-Once done, double-click on the Xcode project that you'll find in the path **dists/iphone/scummvm.xcodeproj**.
+The next step is to compile the **create_project** tool. Open the Xcode project you'll found in the **devtools/create\_project/xcode/** directory. Once compiled, copy the binary somewhere in your *PATH*, and create a **build** directory somewhere on your harddisk. It is recommended to create this directory next to the cloned repository (they share the same parent).
 
-By default, Xcode should have selected the correct scheme (*ScummVM-iPhone*). Choose a target device, or a simulator, and click on the Xcode build button.
+Execute the following commands in a terminal:
+```
+$ cd path_to_the_build_directory
+$ create_project path_to_scummvm_repository --xcode --disable-mad --disable-jpeg --disable-bink --disable-scalers --disable-hqscalers --disable-16bit --disable-mt32emu --disable-nasm --disable-opengl --disable-theora --disable-taskbar
+```
+
+This will create an Xcode project for ScummVM, for both the OS X, and the iOS target.
+
+Now, download the external libraries from http://bsr43.free.fr/scummvm/ScummVM-iOS-libraries.zip. Unzip the archive in your **build** directory. Please make sure that the **lib**, and **include** directories are at the root of the **build** directory, not in a subdirectory.
+
+Now, your **build** directory should contain:
+* a generated **engines** directory,
+* a generated **scummvm.xcodeproj** project,
+* an **include** directory,
+* a **lib** directory.
+
+You are ready to compile ScummVM: open the **scummvm.xcodeproj** project, and build it.
 
 ## Usage ##
 
