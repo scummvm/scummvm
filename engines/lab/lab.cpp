@@ -113,6 +113,7 @@ LabEngine::LabEngine(OSystem *syst, const ADGameDescription *gameDesc)
     _moveGadgetList = 0;
     _invGadgetList = 0;
 
+    _curFileName = " ";
 
 	//const Common::FSNode gameDataDir(ConfMan.get("path"));
 	//SearchMan.addSubDirectoryMatching(gameDataDir, "game");

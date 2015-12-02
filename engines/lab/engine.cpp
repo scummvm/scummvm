@@ -421,11 +421,11 @@ bool LabEngine::doCloseUp(CloseDataPtr closePtr) {
 /******************************************************************************/
 /* Gets the current inventory name.                                           */
 /******************************************************************************/
-static const char *getInvName(uint16 CurInv) {
+const char *LabEngine::getInvName(uint16 CurInv) {
 	if (MainDisplay)
 		return Inventory[CurInv].BInvName;
 
-	if ((CurInv == LAMPNUM) && g_lab->_conditions->in(LAMPON))
+	if ((CurInv == LAMPNUM) && _conditions->in(LAMPON))
 		return "P:Mines/120";
 
 	if ((CurInv == BELTNUM) && g_lab->_conditions->in(BELTGLOW))
