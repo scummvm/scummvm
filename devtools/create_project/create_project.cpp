@@ -1056,6 +1056,12 @@ void splitFilename(const std::string &fileName, std::string &name, std::string &
 	ext = (dot == std::string::npos) ? std::string() : fileName.substr(dot + 1);
 }
 
+std::string basename(const std::string &fileName) {
+	const std::string::size_type slash = fileName.find_last_of('/');
+	if (slash == std::string::npos) return fileName;
+	return fileName.substr(slash + 1);
+}
+
 bool producesObjectFile(const std::string &fileName) {
 	std::string n, ext;
 	splitFilename(fileName, n, ext);

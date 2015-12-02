@@ -316,6 +316,17 @@ std::string convertPathToWin(const std::string &path);
 void splitFilename(const std::string &fileName, std::string &name, std::string &ext);
 
 /**
+ * Returns the basename of a path.
+ * examples:
+ *   a/b/c/d.ext -> d.ext
+ *   d.ext       -> d.ext
+ *
+ * @param fileName Filename
+ * @return The basename
+ */
+std::string basename(const std::string &fileName);
+
+/**
  * Checks whether the given file will produce an object file or not.
  *
  * @param fileName Name of the file.
