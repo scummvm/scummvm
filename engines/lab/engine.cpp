@@ -1305,8 +1305,9 @@ void LabEngine::go() {
 	_event->mouseHide();
 
 	if (doIntro && mem) {
-		Intro intro;
-		intro.introSequence();
+		Intro *intro = new Intro(this);
+		intro->introSequence();
+		delete intro;
 	} else
 		_anim->_doBlack = true;
 

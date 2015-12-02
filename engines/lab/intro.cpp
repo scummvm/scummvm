@@ -39,7 +39,7 @@
 namespace Lab {
 extern uint16 *FadePalette;
 
-Intro::Intro() {
+Intro::Intro(LabEngine *vm) : _vm(vm) {
 	_quitIntro = false;
 }
 
@@ -49,7 +49,7 @@ Intro::Intro() {
 /******************************************************************************/
 void Intro::introEatMessages() {
 	while (1) {
-		IntuiMessage *msg = g_lab->getMsg();
+		IntuiMessage *msg = _vm->getMsg();
 
 		if (g_engine->shouldQuit()) {
 			_quitIntro = true;
@@ -68,87 +68,85 @@ void Intro::introEatMessages() {
 }
 
 
-
-
 /*****************************************************************************/
 /* Reads in a picture.                                                       */
 /*****************************************************************************/
-void Intro::doPictText(const char *filename, TextFont *msgFont, bool isscreen) {
-	uint32 lastsecs = 0L, lastmicros = 0L, secs = 0L, micros = 0L;
-	IntuiMessage *msg;
+void Intro::doPictText(const char *filename, TextFont *msgFont, bool isScreen) {
 	char path[50] = "Lab:rooms/Intro/";
-	byte *curplace, **tfile;
-	bool drawNextText = true, end = false, begin = true;
-
-	int32 cls, code, Drawn;
-	int16 qualifier;
-	uint timedelay;
-
 	strcat(path, filename);
 
-	if (isscreen) {
-		g_lab->_music->updateMusic();
-		timedelay = 35;
+	uint timeDelay;
+	if (isScreen) {
+		_vm->_music->updateMusic();
+		timeDelay = 35;
 	} else {
-		g_lab->_music->updateMusic();
-		timedelay = 7;
+		_vm->_music->updateMusic();
+		timeDelay = 7;
 	}
 
 	if (_quitIntro)
 		return;
+
+	uint32 lastSecs = 0L, lastMicros = 0L, secs = 0L, micros = 0L;
+	IntuiMessage *msg;
+	byte *curPlace, **tFile;
+	bool drawNextText = true, end = false, begin = true;
+
+	int32 cls, code, Drawn;
+	int16 qualifier;
 
 	while (1) {
 		if (drawNextText) {
 			if (begin) {
 				begin = false;
 
-				tfile = g_lab->_music->newOpen(path);
+				tFile = _vm->_music->newOpen(path);
 
-				if (!tfile)
+				if (!tFile)
 					return;
 
-				curplace = *tfile;
-			} else if (isscreen)
+				curPlace = *tFile;
+			} else if (isScreen)
 				fade(false, 0);
 
-			if (isscreen) {
-				g_lab->setAPen(7);
-				g_lab->rectFill(VGAScaleX(10), VGAScaleY(10), VGAScaleX(310), VGAScaleY(190));
+			if (isScreen) {
+				_vm->setAPen(7);
+				_vm->rectFill(VGAScaleX(10), VGAScaleY(10), VGAScaleX(310), VGAScaleY(190));
 
-				Drawn = flowText(msgFont, (!g_lab->_isHiRes) * -1, 5, 7, false, false, true, true, VGAScaleX(14), VGAScaleY(11), VGAScaleX(306), VGAScaleY(189), (char *)curplace);
+				Drawn = flowText(msgFont, (!_vm->_isHiRes) * -1, 5, 7, false, false, true, true, VGAScaleX(14), VGAScaleY(11), VGAScaleX(306), VGAScaleY(189), (char *)curPlace);
 				fade(true, 0);
 			} else {
-				Drawn = g_lab->longDrawMessage((char *)curplace);
+				Drawn = _vm->longDrawMessage((char *)curPlace);
 			}
 
-			curplace += Drawn;
+			curPlace += Drawn;
 
-			end = (*curplace == 0);
+			end = (*curPlace == 0);
 
 			drawNextText = false;
 			introEatMessages();
 
 			if (_quitIntro) {
-				if (isscreen)
+				if (isScreen)
 					fade(false, 0);
 
 				return;
 			}
 
-			g_lab->getTime(&lastsecs, &lastmicros);
+			_vm->getTime(&lastSecs, &lastMicros);
 		}
 
-		msg = g_lab->getMsg();
+		msg = _vm->getMsg();
 
 		if (msg == NULL) {
-			g_lab->_music->updateMusic();
-			g_lab->_anim->diffNextFrame();
-			g_lab->getTime(&secs, &micros);
-			g_lab->anyTimeDiff(lastsecs, lastmicros, secs, micros, &secs, &micros);
+			_vm->_music->updateMusic();
+			_vm->_anim->diffNextFrame();
+			_vm->getTime(&secs, &micros);
+			_vm->anyTimeDiff(lastSecs, lastMicros, secs, micros, &secs, &micros);
 
-			if (secs > timedelay) {
+			if (secs > timeDelay) {
 				if (end) {
-					if (isscreen)
+					if (isScreen)
 						fade(false, 0);
 
 					return;
@@ -157,7 +155,7 @@ void Intro::doPictText(const char *filename, TextFont *msgFont, bool isscreen) {
 				}
 			}
 
-			g_lab->waitTOF();
+			_vm->waitTOF();
 		} else {
 			cls       = msg->msgClass;
 			qualifier = msg->qualifier;
@@ -167,7 +165,7 @@ void Intro::doPictText(const char *filename, TextFont *msgFont, bool isscreen) {
 			        ((cls == RAWKEY) && (code == 27))) {
 				_quitIntro = true;
 
-				if (isscreen)
+				if (isScreen)
 					fade(false, 0);
 
 				return;
@@ -176,7 +174,7 @@ void Intro::doPictText(const char *filename, TextFont *msgFont, bool isscreen) {
 			else if (cls == MOUSEBUTTONS) {
 				if (IEQUALIFIER_LEFTBUTTON & qualifier) {
 					if (end) {
-						if (isscreen)
+						if (isScreen)
 							fade(false, 0);
 
 						return;
@@ -187,7 +185,7 @@ void Intro::doPictText(const char *filename, TextFont *msgFont, bool isscreen) {
 				introEatMessages();
 
 				if (_quitIntro) {
-					if (isscreen)
+					if (isScreen)
 						fade(false, 0);
 
 					return;
@@ -195,7 +193,7 @@ void Intro::doPictText(const char *filename, TextFont *msgFont, bool isscreen) {
 			}
 
 			if (end) {
-				if (isscreen)
+				if (isScreen)
 					fade(false, 0);
 
 				return;
@@ -205,43 +203,36 @@ void Intro::doPictText(const char *filename, TextFont *msgFont, bool isscreen) {
 	}
 }
 
-
-
-
-
 /*****************************************************************************/
 /* Does a one second delay, but checks the music while doing it.             */
 /*****************************************************************************/
 void Intro::musicDelay() {
-	g_lab->_music->updateMusic();
+	_vm->_music->updateMusic();
 
 	if (_quitIntro)
 		return;
 
 	for (uint16 i = 0; i < 20; i++) {
-		g_lab->_music->updateMusic();
-		g_lab->waitTOF();
-		g_lab->waitTOF();
-		g_lab->waitTOF();
+		_vm->_music->updateMusic();
+		_vm->waitTOF();
+		_vm->waitTOF();
+		_vm->waitTOF();
 	}
 }
-
-
 
 void Intro::nReadPict(const char *filename, bool playOnce) {
 	Common::String finalFileName = Common::String("P:Intro/") + filename;
 
-	g_lab->_music->updateMusic();
+	_vm->_music->updateMusic();
 	introEatMessages();
 
 	if (_quitIntro)
 		return;
 
-	g_lab->_anim->_doBlack = _introDoBlack;
-	g_lab->_anim->stopDiffEnd();
+	_vm->_anim->_doBlack = _introDoBlack;
+	_vm->_anim->stopDiffEnd();
 	readPict(finalFileName.c_str(), playOnce);
 }
-
 
 /*****************************************************************************/
 /* Does the introduction sequence for Labyrinth.                             */
@@ -254,9 +245,9 @@ void Intro::introSequence() {
 		0x0CB3, 0x0DC4, 0x0DD6, 0x0EE7
 	};
 
-	g_lab->_anim->_doBlack = true;
+	_vm->_anim->_doBlack = true;
 
-	if (g_lab->getPlatform() != Common::kPlatformWindows) {
+	if (_vm->getPlatform() != Common::kPlatformWindows) {
 		nReadPict("EA0", true);
 		nReadPict("EA1", true);
 		nReadPict("EA2", true);
@@ -274,14 +265,14 @@ void Intro::introSequence() {
 
 	blackAllScreen();
 
-	g_lab->_music->initMusic();
+	_vm->_music->initMusic();
 
-	g_lab->_anim->_noPalChange = true;
-	if (g_lab->getPlatform() != Common::kPlatformWindows)
+	_vm->_anim->_noPalChange = true;
+	if (_vm->getPlatform() != Common::kPlatformWindows)
 		nReadPict("TNDcycle.pic", true);
 	else
 		nReadPict("TNDcycle2.pic", true);
-	g_lab->_anim->_noPalChange = false;
+	_vm->_anim->_noPalChange = false;
 
 	FadePalette = palette;
 
@@ -289,19 +280,19 @@ void Intro::introSequence() {
 		if (_quitIntro)
 			break;
 
-		palette[i] = ((g_lab->_anim->_diffPalette[i * 3] >> 2) << 8) +
-		             ((g_lab->_anim->_diffPalette[i * 3 + 1] >> 2) << 4) +
-		              (g_lab->_anim->_diffPalette[i * 3 + 2] >> 2);
+		palette[i] = ((_vm->_anim->_diffPalette[i * 3] >> 2) << 8) +
+		             ((_vm->_anim->_diffPalette[i * 3 + 1] >> 2) << 4) +
+		              (_vm->_anim->_diffPalette[i * 3 + 2] >> 2);
 	}
 
-	g_lab->_music->updateMusic();
+	_vm->_music->updateMusic();
 	fade(true, 0);
 
 	for (int times = 0; times < 150; times++) {
 		if (_quitIntro)
 			break;
 
-		g_lab->_music->updateMusic();
+		_vm->_music->updateMusic();
 		uint16 temp = palette[2];
 
 		for (uint16 i = 2; i < 15; i++)
@@ -310,13 +301,13 @@ void Intro::introSequence() {
 		palette[15] = temp;
 
 		setAmigaPal(palette, 16);
-		g_lab->waitTOF();
+		_vm->waitTOF();
 	}
 
 	fade(false, 0);
 	blackAllScreen();
 
-	g_lab->_music->updateMusic();
+	_vm->_music->updateMusic();
 
 	nReadPict("Title.A", true);
 	nReadPict("AB", true);
@@ -325,35 +316,35 @@ void Intro::introSequence() {
 	nReadPict("AC", true);
 	musicDelay();
 
-	if (g_lab->getPlatform() == Common::kPlatformWindows)
+	if (_vm->getPlatform() == Common::kPlatformWindows)
 		musicDelay(); // more credits on this page now
 
 	nReadPict("CA", true);
 	nReadPict("AD", true);
 	musicDelay();
 
-	if (g_lab->getPlatform() == Common::kPlatformWindows)
+	if (_vm->getPlatform() == Common::kPlatformWindows)
 		musicDelay(); // more credits on this page now
 
 	nReadPict("DA", true);
 	musicDelay();
 
-	g_lab->_music->newOpen("p:Intro/Intro.1");  /* load the picture into the buffer */
+	_vm->_music->newOpen("p:Intro/Intro.1");  /* load the picture into the buffer */
 
-	g_lab->_music->updateMusic();
+	_vm->_music->updateMusic();
 	blackAllScreen();
-	g_lab->_music->updateMusic();
+	_vm->_music->updateMusic();
 
-	TextFont *msgFont = g_lab->_resource->getFont("P:Map.fon");
+	TextFont *msgFont = _vm->_resource->getFont("P:Map.fon");
 
-	g_lab->_anim->_noPalChange = true;
+	_vm->_anim->_noPalChange = true;
 	nReadPict("Intro.1", true);
-	g_lab->_anim->_noPalChange = false;
+	_vm->_anim->_noPalChange = false;
 
 	for (uint16 i = 0; i < 16; i++) {
-		palette[i] = ((g_lab->_anim->_diffPalette[i * 3] >> 2) << 8) +
-		             ((g_lab->_anim->_diffPalette[i * 3 + 1] >> 2) << 4) +
-		              (g_lab->_anim->_diffPalette[i * 3 + 2] >> 2);
+		palette[i] = ((_vm->_anim->_diffPalette[i * 3] >> 2) << 8) +
+		             ((_vm->_anim->_diffPalette[i * 3 + 1] >> 2) << 4) +
+		              (_vm->_anim->_diffPalette[i * 3 + 2] >> 2);
 	}
 
 	doPictText("i.1", msgFont, true);
@@ -363,7 +354,7 @@ void Intro::introSequence() {
 	freeAllStolenMem();
 
 	blackAllScreen();
-	g_lab->_music->updateMusic();
+	_vm->_music->updateMusic();
 
 	_introDoBlack = true;
 	nReadPict("Station1", true);
@@ -393,13 +384,13 @@ void Intro::introSequence() {
 	if (!_quitIntro)
 		for (uint16 i = 0; i < 50; i++) {
 			for (uint16 idx = (8 * 3); idx < (255 * 3); idx++)
-				g_lab->_anim->_diffPalette[idx] = 255 - g_lab->_anim->_diffPalette[idx];
+				_vm->_anim->_diffPalette[idx] = 255 - _vm->_anim->_diffPalette[idx];
 
-			g_lab->_music->updateMusic();
-			g_lab->waitTOF();
-			g_lab->setPalette(g_lab->_anim->_diffPalette, 256);
-			g_lab->waitTOF();
-			g_lab->waitTOF();
+			_vm->_music->updateMusic();
+			_vm->waitTOF();
+			_vm->setPalette(_vm->_anim->_diffPalette, 256);
+			_vm->waitTOF();
+			_vm->waitTOF();
 		}
 
 	doPictText("i.12", msgFont, false);
@@ -436,7 +427,7 @@ void Intro::introSequence() {
 	nReadPict("Daed7", false);
 	doPictText("i.27", msgFont, false);
 	doPictText("i.28", msgFont, false);
-	g_lab->_anim->stopDiffEnd();
+	_vm->_anim->stopDiffEnd();
 
 	nReadPict("Daed8", true);
 	doPictText("i.29", msgFont, false);
@@ -456,9 +447,9 @@ void Intro::introSequence() {
 	nReadPict("SubX", true);
 
 	if (_quitIntro) {
-		g_lab->setAPen(0);
-		g_lab->rectFill(0, 0, g_lab->_screenWidth - 1, g_lab->_screenHeight - 1);
-		g_lab->_anim->_doBlack = true;
+		_vm->setAPen(0);
+		_vm->rectFill(0, 0, _vm->_screenWidth - 1, _vm->_screenHeight - 1);
+		_vm->_anim->_doBlack = true;
 	}
 
 	closeFont(msgFont);

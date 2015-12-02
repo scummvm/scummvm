@@ -38,7 +38,7 @@ namespace Lab {
 
 class Intro {
 public:
-	Intro();
+	Intro(LabEngine *vm);
 	void introSequence();
 
 private:
@@ -47,6 +47,7 @@ private:
 	void musicDelay();
 	void nReadPict(const char *Filename, bool PlayOnce);
 
+	LabEngine *_vm;
 	bool _quitIntro, _introDoBlack;
 };
 
