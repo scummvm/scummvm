@@ -640,7 +640,7 @@ void LabEngine::mainGameLoop() {
 	/* Set up initial picture. */
 
 	while (1) {
-		processInput(true);
+		_event->processInput(true);
 
 		if (GotMessage) {
 			if (QuitLab || g_engine->shouldQuit()) {
@@ -729,7 +729,7 @@ void LabEngine::mainGameLoop() {
 					GotMessage = true;
 					mayShowCrumbIndicator();
 					screenUpdate();
-					if (!from_crumbs(GADGETUP, code, 0, getMousePos(), curInv, curMsg, forceDraw, code, actionMode))
+					if (!from_crumbs(GADGETUP, code, 0, _event->updateAndGetMousePos(), curInv, curMsg, forceDraw, code, actionMode))
 						break;
 				}
 			}

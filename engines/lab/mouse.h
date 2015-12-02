@@ -48,11 +48,17 @@ private:
 	bool _mouseHidden;
 	int32 _numHidden;
 	Gadget *_lastGadgetHit;
+	uint16 _nextKeyIn;
+	uint16 _nextKeyOut;
+	Common::Point _mousePos;
+	bool _mouseAtEdge;
+	uint16 _keyBuf[64];
 
 public:
 	EventManager (LabEngine *vm);
 
 	Gadget *_screenGadgetList;
+	Gadget *_hitGadget;
 
 	Gadget *checkGadgetHit(Gadget *gadgetList, Common::Point pos);
 	void initMouse();
@@ -65,6 +71,11 @@ public:
 	Gadget *mouseGadget();
 	void attachGadgetList(Gadget *gadgetList);
 	void mouseHandler(int flag, Common::Point pos);
+	bool keyPress(uint16 *keyCode);
+	bool haveNextChar();
+	void processInput(bool can_delay = false);
+	uint16 getNextChar();
+	Common::Point updateAndGetMousePos();
 };
 
 } // End of namespace Lab

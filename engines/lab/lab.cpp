@@ -66,12 +66,6 @@ LabEngine::LabEngine(OSystem *syst, const ADGameDescription *gameDesc)
 
     _lastWaitTOFTicks = 0;
 
-	_mousePos = Common::Point(0, 0);
-	_mouseAtEdge = false;
-
-    _nextKeyIn = 0;
-    _nextKeyOut = 0;
-
 	_isHiRes = false;
 	_roomNum = -1;
 	for (int i = 0; i < MAX_CRUMBS; i++) {

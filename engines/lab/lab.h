@@ -102,7 +102,6 @@ public:
 
 	int _roomNum;
 	byte *_currentDisplayBuffer;
-	Common::Point _mousePos;
 
 	CrumbData _breadCrumbs[MAX_CRUMBS];
 	uint16 _numCrumbs;
@@ -114,17 +113,10 @@ public:
 	bool _isCrumbWaiting;
 	byte *_tempScrollData;
 	bool _isHiRes;
-
-private:
 	byte *_displayBuffer;
 
+private:
 	int _lastWaitTOFTicks;
-
-	uint16 _nextKeyIn;
-	uint16 _keyBuf[64];
-	uint16 _nextKeyOut;
-	bool _mouseAtEdge;
-
 	bool _lastMessageLong;
 	bool _lastTooLong;
 
@@ -146,9 +138,6 @@ public:
 	void setPalette(void *cmap, uint16 numcolors);
 	void drawHLine(uint16 x, uint16 y1, uint16 y2);
 	void drawVLine(uint16 x1, uint16 y, uint16 x2);
-	bool haveNextChar();
-	uint16 getNextChar();
-	void processInput(bool can_delay = false);
 	void writeColorReg(byte *buf, uint16 regnum);
 	void writeColorRegsSmooth(byte *buf, uint16 first, uint16 numreg);
 
@@ -180,13 +169,13 @@ public:
 	void drawDirection(CloseDataPtr LCPtr);
 	int followCrumbs();
 
+	void changeVolume(int delta);
+
 private:
 	void quickWaitTOF();
 
 	/*---------- Drawing Routines ----------*/
 
-	Common::Point getMousePos();
-	void changeVolume(int delta);
 	void applyPalette(byte *buf, uint16 first, uint16 numreg, uint16 slow);
 
 	// engine.cpp
