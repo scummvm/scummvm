@@ -63,22 +63,19 @@ uint16 getRandom(uint16 max) {
 /*****************************************************************************/
 /* Checks whether all the conditions in a condition list are met.            */
 /*****************************************************************************/
-static bool checkConditions(int16 *Condition) {
-	int16 Counter;
-	bool res;
-
-	if (Condition == NULL)
+static bool checkConditions(int16 *condition) {
+	if (condition == NULL)
 		return true;
 
-	if (Condition[0] == 0)
+	if (condition[0] == 0)
 		return true;
 
-	Counter = 1;
-	res     = g_lab->_conditions->in(Condition[0]);
+	int counter = 1;
+	bool res = g_lab->_conditions->in(condition[0]);
 
-	while (Condition[Counter] && res) {
-		res = g_lab->_conditions->in(Condition[Counter]);
-		Counter++;
+	while (condition[counter] && res) {
+		res = g_lab->_conditions->in(condition[counter]);
+		counter++;
 	}
 
 	return res;
@@ -88,12 +85,10 @@ static bool checkConditions(int16 *Condition) {
 /* Gets the current ViewDataPointer.                                         */
 /*****************************************************************************/
 ViewData *getViewData(uint16 roomNum, uint16 direction) {
-	ViewData *view = NULL;
-
 	if (!_rooms[roomNum]._roomMsg)
 		g_lab->_resource->readViews(roomNum);
 
-	view = _rooms[roomNum]._view[direction];
+	ViewData *view = _rooms[roomNum]._view[direction];
 
 	do {
 		if (checkConditions(view->Condition))
@@ -109,16 +104,11 @@ ViewData *getViewData(uint16 roomNum, uint16 direction) {
 /* Gets an object, if any, from the user's click on the screen.              */
 /*****************************************************************************/
 static CloseData *getObject(uint16 x, uint16 y, CloseDataPtr lcptr) {
-	ViewData *VPtr;
-
 	if (lcptr == NULL) {
-		VPtr = getViewData(g_lab->_roomNum, Direction);
-		lcptr = VPtr->closeUps;
-	}
-
-	else
+		lcptr = getViewData(g_lab->_roomNum, Direction)->closeUps;
+	} else {
 		lcptr = lcptr->SubCloseUps;
-
+	}
 
 	while (lcptr != NULL) {
 		if ((x >= scaleX(lcptr->x1)) && (y >= scaleY(lcptr->y1)) &&
@@ -137,21 +127,21 @@ static CloseData *getObject(uint16 x, uint16 y, CloseDataPtr lcptr) {
 /*      some of the closeups have the same hit boxes, then this returns the  */
 /*      first occurence of the object with the same hit box.                 */
 /*****************************************************************************/
-static CloseDataPtr findCPtrMatch(CloseDataPtr Main, CloseDataPtr List) {
+static CloseDataPtr findCPtrMatch(CloseDataPtr cpmain, CloseDataPtr list) {
 	CloseDataPtr cptr;
 
-	while (List) {
-		if ((Main->x1 == List->x1) && (Main->x2 == List->x2) &&
-		        (Main->y1 == List->y1) && (Main->y2 == List->y2) &&
-		        (Main->depth == List->depth))
-			return List;
+	while (list) {
+		if ((cpmain->x1 == list->x1) && (cpmain->x2 == list->x2) &&
+		        (cpmain->y1 == list->y1) && (cpmain->y2 == list->y2) &&
+		        (cpmain->depth == list->depth))
+			return list;
 
-		cptr = findCPtrMatch(Main, List->SubCloseUps);
+		cptr = findCPtrMatch(cpmain, list->SubCloseUps);
 
 		if (cptr)
 			return cptr;
 		else
-			List = List->NextCloseUp;
+			list = list->NextCloseUp;
 	}
 
 	return NULL;
@@ -161,16 +151,16 @@ static CloseDataPtr findCPtrMatch(CloseDataPtr Main, CloseDataPtr List) {
 /* Returns the current picture name.                                         */
 /*****************************************************************************/
 char *getPictName(CloseDataPtr *lcptr) {
-	ViewData *ViewPtr = getViewData(g_lab->_roomNum, Direction);
+	ViewData *viewPtr = getViewData(g_lab->_roomNum, Direction);
 
 	if (*lcptr != NULL) {
-		*lcptr = findCPtrMatch(*lcptr, ViewPtr->closeUps);
+		*lcptr = findCPtrMatch(*lcptr, viewPtr->closeUps);
 
 		if (*lcptr)
 			return (*lcptr)->GraphicName;
 	}
 
-	return ViewPtr->GraphicName;
+	return viewPtr->GraphicName;
 }
 
 /*****************************************************************************/
@@ -204,10 +194,10 @@ void LabEngine::drawDirection(CloseDataPtr lcptr) {
 /*****************************************************************************/
 /* process a arrow gadget movement.                                          */
 /*****************************************************************************/
-bool processArrow(uint16 *direction, uint16 Arrow) {
-	uint16 room = 1;
+bool processArrow(uint16 *direction, uint16 arrow) {
+	if (arrow == 1) { /* Forward */
+		uint16 room = 1;
 
-	if (Arrow == 1) { /* Forward */
 		if (*direction == NORTH)
 			room = _rooms[g_lab->_roomNum]._northDoor;
 		else if (*direction == SOUTH)
@@ -221,7 +211,7 @@ bool processArrow(uint16 *direction, uint16 Arrow) {
 			return false;
 		else
 			g_lab->_roomNum = room;
-	} else if (Arrow == 0) { /* Left */
+	} else if (arrow == 0) { /* Left */
 		if (*direction == NORTH)
 			*direction = WEST;
 		else if (*direction == WEST)
@@ -230,7 +220,7 @@ bool processArrow(uint16 *direction, uint16 Arrow) {
 			*direction = EAST;
 		else
 			*direction = NORTH;
-	} else if (Arrow == 2) { /* Right */
+	} else if (arrow == 2) { /* Right */
 		if (*direction == NORTH)
 			*direction = EAST;
 		else if (*direction == EAST)
@@ -248,13 +238,11 @@ bool processArrow(uint16 *direction, uint16 Arrow) {
 /* Sets the current close up data.                                           */
 /*****************************************************************************/
 void setCurClose(Common::Point pos, CloseDataPtr *cptr, bool useAbsoluteCoords) {
-	ViewData *VPtr;
 	CloseDataPtr lcptr;
 	uint16 x1, y1, x2, y2;
 
 	if (*cptr == NULL) {
-		VPtr = getViewData(g_lab->_roomNum, Direction);
-		lcptr = VPtr->closeUps;
+		lcptr = getViewData(g_lab->_roomNum, Direction)->closeUps;
 	} else
 		lcptr = (*cptr)->SubCloseUps;
 
@@ -284,12 +272,10 @@ void setCurClose(Common::Point pos, CloseDataPtr *cptr, bool useAbsoluteCoords) 
 /* Takes the currently selected item.                                        */
 /*****************************************************************************/
 bool takeItem(uint16 x, uint16 y, CloseDataPtr *cptr) {
-	ViewData *VPtr;
 	CloseDataPtr lcptr;
 
 	if (*cptr == NULL) {
-		VPtr = getViewData(g_lab->_roomNum, Direction);
-		lcptr = VPtr->closeUps;
+		lcptr = getViewData(g_lab->_roomNum, Direction)->closeUps;
 	} else if ((*cptr)->CloseUpType < 0) {
 		g_lab->_conditions->inclElement(abs((*cptr)->CloseUpType));
 		return true;
@@ -315,10 +301,7 @@ bool takeItem(uint16 x, uint16 y, CloseDataPtr *cptr) {
 /* Processes the action list.                                                */
 /*****************************************************************************/
 void LabEngine::doActions(Action *aptr, CloseDataPtr *lcptr) {
-	CloseDataPtr tlcptr;
 	bool firstLoaded = true;
-	char **str;
-	uint32 startSecs, startMicros, curSecs, curMicros;
 
 	while (aptr) {
 		_music->updateMusic();
@@ -413,11 +396,12 @@ void LabEngine::doActions(Action *aptr, CloseDataPtr *lcptr) {
 
 			break;
 
-		case SHOWMESSAGES:
-			str = (char **)aptr->Data;
-			DoNotDrawMessage = false;
-			drawMessage(str[getRandom(aptr->Param1)]);
-			DoNotDrawMessage = true;
+		case SHOWMESSAGES: {
+				char **str = (char **)aptr->Data;
+				DoNotDrawMessage = false;
+				drawMessage(str[getRandom(aptr->Param1)]);
+				DoNotDrawMessage = true;
+			}
 			break;
 
 		case SETPOSITION:
@@ -437,12 +421,12 @@ void LabEngine::doActions(Action *aptr, CloseDataPtr *lcptr) {
 			_anim->_doBlack = true;
 			break;
 
-		case SETCLOSEUP:
-			tlcptr = getObject(scaleX(aptr->Param1), scaleY(aptr->Param2), *lcptr);
+		case SETCLOSEUP: {
+				CloseDataPtr tlcptr = getObject(scaleX(aptr->Param1), scaleY(aptr->Param2), *lcptr);
 
-			if (tlcptr)
-				*lcptr = tlcptr;
-
+				if (tlcptr)
+					*lcptr = tlcptr;
+			}
 			break;
 
 		case MAINVIEW:
@@ -467,21 +451,23 @@ void LabEngine::doActions(Action *aptr, CloseDataPtr *lcptr) {
 			DoNotDrawMessage = false;
 			break;
 
-		case WAITSECS:
-			addCurTime(aptr->Param1, 0, &startSecs, &startMicros);
+		case WAITSECS: {
+				uint32 startSecs, startMicros, curSecs, curMicros;
 
-			screenUpdate();
+				addCurTime(aptr->Param1, 0, &startSecs, &startMicros);
 
-			while (1) {
-				_music->updateMusic();
-				_anim->diffNextFrame();
-				getTime(&curSecs, &curMicros);
+				screenUpdate();
 
-				if ((curSecs > startSecs) || ((curSecs == startSecs) &&
-				                              (curMicros >= startMicros)))
-					break;
+				while (1) {
+					_music->updateMusic();
+					_anim->diffNextFrame();
+					getTime(&curSecs, &curMicros);
+
+					if ((curSecs > startSecs) || ((curSecs == startSecs) &&
+					                              (curMicros >= startMicros)))
+						break;
+				}
 			}
-
 			break;
 
 		case STOPMUSIC:
@@ -595,7 +581,7 @@ void LabEngine::doActions(Action *aptr, CloseDataPtr *lcptr) {
 /*****************************************************************************/
 /* Does the work for doActionRule.                                           */
 /*****************************************************************************/
-static bool doActionRuleSub(int16 action, int16 roomNum, CloseDataPtr lcptr, CloseDataPtr *Set, bool AllowDefaults) {
+static bool doActionRuleSub(int16 action, int16 roomNum, CloseDataPtr lcptr, CloseDataPtr *set, bool allowDefaults) {
 	action++;
 
 	if (lcptr) {
@@ -608,13 +594,13 @@ static bool doActionRuleSub(int16 action, int16 roomNum, CloseDataPtr lcptr, Clo
 
 		for (RuleList::iterator rule = rules->begin(); rule != rules->end(); ++rule) {
 			if (((*rule)->RuleType == ACTION) &&
-				(((*rule)->Param1 == action) || (((*rule)->Param1 == 0) && AllowDefaults))) {
+				(((*rule)->Param1 == action) || (((*rule)->Param1 == 0) && allowDefaults))) {
 				if ((((*rule)->Param2 == lcptr->CloseUpType) ||
-					(((*rule)->Param2 == 0) && AllowDefaults))
+					(((*rule)->Param2 == 0) && allowDefaults))
 				        ||
 						((action == 1) && ((*rule)->Param2 == (-lcptr->CloseUpType)))) {
 					if (checkConditions((*rule)->Condition)) {
-						g_lab->doActions((*rule)->ActionList, Set);
+						g_lab->doActions((*rule)->ActionList, set);
 						return true;
 					}
 				}
@@ -629,14 +615,12 @@ static bool doActionRuleSub(int16 action, int16 roomNum, CloseDataPtr lcptr, Clo
 /* Goes through the rules if an action is taken.                             */
 /*****************************************************************************/
 bool doActionRule(Common::Point pos, int16 action, int16 roomNum, CloseDataPtr *lcptr) {
-	CloseDataPtr tlcptr;
-
 	if (roomNum)
 		g_lab->_newFileName = NOFILE;
 	else
 		g_lab->_newFileName = g_lab->_curFileName;
 
-	tlcptr = getObject(pos.x, pos.y, *lcptr);
+	CloseDataPtr tlcptr = getObject(pos.x, pos.y, *lcptr);
 
 	if (doActionRuleSub(action, roomNum, tlcptr, lcptr, false))
 		return true;
@@ -653,7 +637,7 @@ bool doActionRule(Common::Point pos, int16 action, int16 roomNum, CloseDataPtr *
 /*****************************************************************************/
 /* Does the work for doActionRule.                                           */
 /*****************************************************************************/
-static bool doOperateRuleSub(int16 ItemNum, int16 roomNum, CloseDataPtr lcptr, CloseDataPtr *Set, bool AllowDefaults) {
+static bool doOperateRuleSub(int16 itemNum, int16 roomNum, CloseDataPtr lcptr, CloseDataPtr *set, bool allowDefaults) {
 	if (lcptr)
 		if (lcptr->CloseUpType > 0) {
 			RuleList *rules = _rooms[roomNum]._rules;
@@ -665,10 +649,10 @@ static bool doOperateRuleSub(int16 ItemNum, int16 roomNum, CloseDataPtr lcptr, C
 
 			for (RuleList::iterator rule = rules->begin(); rule != rules->end(); ++rule) {
 				if (((*rule)->RuleType == OPERATE) &&
-				        (((*rule)->Param1 == ItemNum) || (((*rule)->Param1 == 0) && AllowDefaults)) &&
-						(((*rule)->Param2 == lcptr->CloseUpType) || (((*rule)->Param2 == 0) && AllowDefaults))) {
+				        (((*rule)->Param1 == itemNum) || (((*rule)->Param1 == 0) && allowDefaults)) &&
+						(((*rule)->Param2 == lcptr->CloseUpType) || (((*rule)->Param2 == 0) && allowDefaults))) {
 					if (checkConditions((*rule)->Condition)) {
-						g_lab->doActions((*rule)->ActionList, Set);
+						g_lab->doActions((*rule)->ActionList, set);
 						return true;
 					}
 				}
