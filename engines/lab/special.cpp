@@ -137,8 +137,6 @@ static void doCombination() {
 /* Reads in a backdrop picture.                                              */
 /*****************************************************************************/
 void showCombination(const char *filename) {
-	byte **buffer;
-
 	resetBuffer();
 	g_lab->_anim->_doBlack = true;
 	g_lab->_anim->_noPalChange = true;
@@ -147,10 +145,12 @@ void showCombination(const char *filename) {
 
 	blackScreen();
 
-	buffer = g_lab->_music->newOpen("P:Numbers");
+	Common::File *numFile = g_lab->_resource->openDataFile("P:Numbers");
 
 	for (uint16 CurBit = 0; CurBit < 10; CurBit++)
-		Images[CurBit] = new Image(buffer);
+		Images[CurBit] = new Image(numFile);
+
+	delete numFile;
 
 	allocFile((void **)&g_lab->_tempScrollData, Images[0]->_width * Images[0]->_height * 2L, "tempdata");
 
@@ -279,8 +279,7 @@ static void doTile(bool showsolution) {
 /* Reads in a backdrop picture.                                              */
 /*****************************************************************************/
 void showTile(const char *filename, bool showsolution) {
-	uint16 start;
-	byte **buffer;
+	uint16 start = showsolution ? 0 : 1;
 
 	resetBuffer();
 	g_lab->_anim->_doBlack = true;
@@ -289,19 +288,12 @@ void showTile(const char *filename, bool showsolution) {
 	g_lab->_anim->_noPalChange = false;
 	blackScreen();
 
-	if (showsolution) {
-		start  = 0;
-		buffer = g_lab->_music->newOpen("P:TileSolution");
-	} else {
-		start  = 1;
-		buffer = g_lab->_music->newOpen("P:Tile");
-	}
-
-	if (!buffer)
-		return;
+	Common::File *tileFile = tileFile = g_lab->_resource->openDataFile(showsolution ? "P:TileSolution" : "P:Tile");
 
 	for (uint16 curBit = start; curBit < 16; curBit++)
-		Tiles[curBit] = new Image(buffer);
+		Tiles[curBit] = new Image(tileFile);
+
+	delete tileFile;
 
 	allocFile((void **)&g_lab->_tempScrollData, Tiles[1]->_width * Tiles[1]->_height * 2L, "tempdata");
 
@@ -506,7 +498,6 @@ void doWestPaper() {
 /* Loads in the data for the journal.                                        */
 /*****************************************************************************/
 static bool loadJournalData() {
-	byte **buffer;
 	char filename[20];
 	Gadget *TopGadget = &BackG;
 	bool bridge, dirty, news, clean;
@@ -543,17 +534,16 @@ static bool loadJournalData() {
 	journaltext = g_lab->_resource->getText(filename);
 	journaltexttitle = g_lab->_resource->getText("Lab:Rooms/jt");
 
-	buffer = g_lab->_music->newOpen("P:JImage");
+	Common::File *journalFile = g_lab->_resource->openDataFile("P:JImage");
 
-	if (!buffer)
-		return false;
+	BackG._image = new Image(journalFile);
+	BackG._altImage = new Image(journalFile);
+	ForwardG._image = new Image(journalFile);
+	ForwardG._altImage = new Image(journalFile);
+	CancelG._image = new Image(journalFile);
+	CancelG._altImage = new Image(journalFile);
 
-	BackG._image = new Image(buffer);
-	BackG._altImage = new Image(buffer);
-	ForwardG._image = new Image(buffer);
-	ForwardG._altImage = new Image(buffer);
-	CancelG._image = new Image(buffer);
-	CancelG._altImage = new Image(buffer);
+	delete journalFile;
 
 	BackG.KeyEquiv = VKEY_LTARROW;
 	ForwardG.KeyEquiv = VKEY_RTARROW;
@@ -807,19 +797,9 @@ bool saveRestoreGame() {
 /* Makes sure that the buttons are in memory.                                */
 /*****************************************************************************/
 static void getMonImages() {
-	byte **buffer;
-	uint32 bufferSize;
-
-	resetBuffer();
-
-	buffer = g_lab->_music->newOpen("P:MonImage", bufferSize);
-
-	if (!buffer)
-		return;
-
-	MonButton = new Image(buffer);
-
-	stealBufMem(bufferSize);  /* Trick: protects the memory where the buttons are so they won't be over-written */
+	Common::File *buttonFile = g_lab->_resource->openDataFile("P:MonImage");
+	MonButton = new Image(buttonFile);
+	delete buttonFile;
 }
 
 

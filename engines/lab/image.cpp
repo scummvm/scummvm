@@ -36,21 +36,17 @@ namespace Lab {
 /*****************************************************************************/
 /* Reads in an image from disk.                                              */
 /*****************************************************************************/
-Image::Image(byte **buffer) {
-	uint32 size;
+Image::Image(Common::File *s) {
+	_width = s->readUint16LE();
+	_height = s->readUint16LE();
+	s->skip(4);
 
-	_width = READ_LE_UINT16(*buffer);
-	_height = READ_LE_UINT16(*buffer + 2);
-
-	*buffer += 8; /* sizeof(struct Image); */
-
-	size = _width * _height;
-
-	if (1L & size)
+	uint32 size = _width * _height;
+	if (size & 1)
 		size++;
 
-	_imageData = (byte *)(*buffer);
-	(*buffer) += size;
+	_imageData = new byte[size];	// FIXME: Memory leak!
+	s->read(_imageData, size);
 }
 
 /*****************************************************************************/

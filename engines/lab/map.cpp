@@ -129,43 +129,37 @@ static uint16 mapScaleY(uint16 y) {
 /* Loads in the map data.                                                    */
 /*****************************************************************************/
 static bool loadMapData() {
-	byte **buffer;
-	uint32 Size;
 	Gadget *gptr;
 	uint16 counter;
 
-	resetBuffer();  /* Make images load into start of buffer */
-	buffer = g_lab->_music->newOpen("P:MapImage", Size);
+	Common::File *mapImages = g_lab->_resource->openDataFile("P:MapImage");
 
-	if (!buffer)
-		return false;
+	Map = new Image(mapImages);
 
-	stealBufMem(Size); /* Now freeze that buffer from further use */
+	Room = new Image(mapImages);
+	UpArrowRoom = new Image(mapImages);
+	DownArrowRoom = new Image(mapImages);
+	HRoom = new Image(mapImages);
+	VRoom = new Image(mapImages);
+	Maze = new Image(mapImages);
+	HugeMaze = new Image(mapImages);
 
-	Map = new Image(buffer);
+	MapNorth = new Image(mapImages);
+	MapEast = new Image(mapImages);
+	MapSouth = new Image(mapImages);
+	MapWest = new Image(mapImages);
 
-	Room = new Image(buffer);
-	UpArrowRoom = new Image(buffer);
-	DownArrowRoom = new Image(buffer);
-	HRoom = new Image(buffer);
-	VRoom = new Image(buffer);
-	Maze = new Image(buffer);
-	HugeMaze = new Image(buffer);
+	Path = new Image(mapImages);
+	Bridge = new Image(mapImages);
 
-	MapNorth = new Image(buffer);
-	MapEast = new Image(buffer);
-	MapSouth = new Image(buffer);
-	MapWest = new Image(buffer);
+	Back = new Image(mapImages);
+	BackAlt = new Image(mapImages);
+	Up = new Image(mapImages);
+	UpAlt = new Image(mapImages);
+	Down = new Image(mapImages);
+	DownAlt = new Image(mapImages);
 
-	Path = new Image(buffer);
-	Bridge = new Image(buffer);
-
-	Back = new Image(buffer);
-	BackAlt = new Image(buffer);
-	Up = new Image(buffer);
-	UpAlt = new Image(buffer);
-	Down = new Image(buffer);
-	DownAlt = new Image(buffer);
+	delete mapImages;
 
 	backgadget._image    = Back;
 	backgadget._altImage = BackAlt;
