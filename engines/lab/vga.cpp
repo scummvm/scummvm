@@ -49,7 +49,7 @@ bool LabEngine::createScreen(bool hiRes) {
 	}
 	_screenBytesPerPage = _screenWidth * _screenHeight;
 
-	_displayBuffer = (byte *)malloc(_screenBytesPerPage);
+	_displayBuffer = new byte[_screenBytesPerPage];	// FIXME: Memory leak!
 
 	return true;
 }
@@ -76,19 +76,6 @@ void LabEngine::waitTOF() {
 	_lastWaitTOFTicks = now;
 }
 
-void LabEngine::applyPalette(byte *buf, uint16 first, uint16 numreg, uint16 slow) {
-	byte tmp[256 * 3];
-
-	for (int i = 0; i < 256 * 3; i++) {
-		tmp[i] = buf[i] * 4;
-	}
-
-	g_system->getPaletteManager()->setPalette(tmp, first, numreg);
-
-	if (slow)
-    	waitTOF();
-}
-
 /*****************************************************************************/
 /* Writes any number of the 256 color registers.                             */
 /* first:    the number of the first color register to write.                */
@@ -101,22 +88,15 @@ void LabEngine::applyPalette(byte *buf, uint16 first, uint16 numreg, uint16 slow
 /*           selected.                                                       */
 /*****************************************************************************/
 void LabEngine::writeColorRegs(byte *buf, uint16 first, uint16 numreg) {
-	applyPalette(buf, first, numreg, 0);
-	memcpy(&(_curvgapal[first * 3]), buf, numreg * 3);
-}
+	byte tmp[256 * 3];
 
-void LabEngine::writeColorRegsSmooth(byte *buf, uint16 first, uint16 numreg) {
-	applyPalette(buf, first, numreg, 1);
-	memcpy(&(_curvgapal[first * 3]), buf, numreg * 3);
-}
+	for (int i = 0; i < 256 * 3; i++) {
+		tmp[i] = buf[i] * 4;
+	}
 
-/*****************************************************************************/
-/* Sets one of the 256 (0..255) color registers.  buf is a char pointer,     */
-/* the first character in the string is the red value, then green, then      */
-/* blue.  Each color value is a 6 bit value.                                 */
-/*****************************************************************************/
-void LabEngine::writeColorReg(byte *buf, uint16 regnum) {
-	writeColorRegs(buf, regnum, 1);
+	g_system->getPaletteManager()->setPalette(tmp, first, numreg);
+
+	memcpy(&(_curvgapal[first * 3]), buf, numreg * 3);
 }
 
 void LabEngine::setPalette(void *cmap, uint16 numcolors) {
