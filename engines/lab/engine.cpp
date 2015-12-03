@@ -47,7 +47,6 @@ extern bool stopsound, DoNotDrawMessage;
 extern RoomData *_rooms;
 extern InventoryData *Inventory;
 extern uint16 NumInv, ManyRooms, HighestCondition, Direction;
-CloseDataPtr CPtr;
 
 bool ispal = false, noupdatediff = false, MainDisplay = true, QuitLab = false;
 
@@ -481,7 +480,7 @@ bool LabEngine::doUse(uint16 CurInv) {
 		interfaceOff();
 		_anim->stopDiff();
 		_curFileName = " ";
-		CPtr = NULL;
+		_cptr = NULL;
 		doMap(_roomNum);
 		setPalette(initcolors, 8);
 		drawMessage(NULL);
@@ -491,7 +490,7 @@ bool LabEngine::doUse(uint16 CurInv) {
 		interfaceOff();
 		_anim->stopDiff();
 		_curFileName = " ";
-		CPtr = NULL;
+		_cptr = NULL;
 		doJournal();
 		drawPanel();
 		drawMessage(NULL);
@@ -589,7 +588,7 @@ void LabEngine::mainGameLoop() {
 
 	setPalette(initcolors, 8);
 
-	CPtr    = NULL;
+	_cptr    = NULL;
 	_roomNum = 1;
 	Direction = NORTH;
 
@@ -623,8 +622,8 @@ void LabEngine::mainGameLoop() {
 			_music->resumeBackMusic();
 
 			/* Sees what kind of close up we're in and does the appropriate stuff, if any. */
-			if (doCloseUp(CPtr)) {
-				CPtr = NULL;
+			if (doCloseUp(_cptr)) {
+				_cptr = NULL;
 
 				mayShowCrumbIndicator();
 				screenUpdate();
@@ -632,7 +631,7 @@ void LabEngine::mainGameLoop() {
 
 			/* Sets the current picture properly on the screen */
 			if (MainDisplay)
-				_nextFileName = getPictName(&CPtr);
+				_nextFileName = getPictName(&_cptr);
 
 			if (noupdatediff) {
 				_roomsFound->inclElement(_roomNum); /* Potentially entered another room */
@@ -645,19 +644,19 @@ void LabEngine::mainGameLoop() {
 				_roomsFound->inclElement(_roomNum); /* Potentially entered another room */
 				_curFileName = _nextFileName;
 
-				if (CPtr) {
-					if ((CPtr->CloseUpType == SPECIALLOCK) && MainDisplay)  /* LAB: Labyrinth specific code */
+				if (_cptr) {
+					if ((_cptr->CloseUpType == SPECIALLOCK) && MainDisplay)  /* LAB: Labyrinth specific code */
 						showCombination(_curFileName);
-					else if (((CPtr->CloseUpType == SPECIALBRICK)  ||
-					          (CPtr->CloseUpType == SPECIALBRICKNOMOUSE)) &&
+					else if (((_cptr->CloseUpType == SPECIALBRICK)  ||
+					          (_cptr->CloseUpType == SPECIALBRICKNOMOUSE)) &&
 					         MainDisplay) /* LAB: Labyrinth specific code */
-						showTile(_curFileName, (bool)(CPtr->CloseUpType == SPECIALBRICKNOMOUSE));
+						showTile(_curFileName, (bool)(_cptr->CloseUpType == SPECIALBRICKNOMOUSE));
 					else
 						readPict(_curFileName, false);
 				} else
 					readPict(_curFileName, false);
 
-				drawRoomMessage(curInv, CPtr);
+				drawRoomMessage(curInv, _cptr);
 				forceDraw = false;
 
 				mayShowCrumbIndicator();
@@ -668,7 +667,7 @@ void LabEngine::mainGameLoop() {
 			}
 
 			if (forceDraw) {
-				drawRoomMessage(curInv, CPtr);
+				drawRoomMessage(curInv, _cptr);
 				forceDraw = false;
 				screenUpdate();
 			}
@@ -785,7 +784,7 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 						MainDisplay = true;
 						interfaceOn(); /* Sets the correct gadget list */
 						drawPanel();
-						drawRoomMessage(curInv, CPtr);
+						drawRoomMessage(curInv, _cptr);
 						screenUpdate();
 					}
 				} else {
@@ -836,7 +835,7 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 		} else if (code == 9) { /* TAB key */
 			msgClass = DELTAMOVE;
 		} else if (code == 27) { /* ESC key */
-			CPtr = NULL;
+			_cptr = NULL;
 		}
 
 		eatMessages();
@@ -850,17 +849,17 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 			_longWinInFront = false;
 			DoNotDrawMessage = false;
 			drawPanel();
-			drawRoomMessage(curInv, CPtr);
+			drawRoomMessage(curInv, _cptr);
 			screenUpdate();
 		}
 	} else if ((msgClass == GADGETUP) && !_alternate) {
 		if (gadgetId <= 5) {
-			if ((actionMode == 4) && (gadgetId == 4) && (CPtr != NULL)) {
-				doMainView(&CPtr);
+			if ((actionMode == 4) && (gadgetId == 4) && (_cptr != NULL)) {
+				doMainView(&_cptr);
 
 				_anim->_doBlack = true;
 				hcptr = NULL;
-				CPtr = NULL;
+				_cptr = NULL;
 				mayShowCrumbIndicator();
 				screenUpdate();
 			} else if (gadgetId == 5) {
@@ -880,7 +879,7 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 					decIncInv(&curInv, false);
 
 				drawPanel();
-				drawRoomMessage(curInv, CPtr);
+				drawRoomMessage(curInv, _cptr);
 
 				mayShowCrumbIndicator();
 				screenUpdate();
@@ -912,7 +911,7 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 			mayShowCrumbIndicator();
 			screenUpdate();
 		} else if (gadgetId >= 6) { /* Arrow Gadgets */
-			CPtr = NULL;
+			_cptr = NULL;
 			hcptr = NULL;
 
 			if ((gadgetId == 6) || (gadgetId == 8)) {
@@ -927,7 +926,7 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 
 				NewDir = Direction;
 				processArrow(&NewDir, gadgetId - 6);
-				doTurn(Direction, NewDir, &CPtr);
+				doTurn(Direction, NewDir, &_cptr);
 				_anim->_doBlack = true;
 				Direction = NewDir;
 				forceDraw = true;
@@ -937,7 +936,7 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 			} else if (gadgetId == 7) {
 				OldRoomNum = _roomNum;
 
-				if (doGoForward(&CPtr)) {
+				if (doGoForward(&_cptr)) {
 					if (OldRoomNum == _roomNum)
 						_anim->_doBlack = true;
 				} else {
@@ -1012,7 +1011,7 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 			MainDisplay = true;
 			interfaceOn(); /* Sets the correct gadget list */
 			drawPanel();
-			drawRoomMessage(curInv, CPtr);
+			drawRoomMessage(curInv, _cptr);
 
 			screenUpdate();
 		}
@@ -1025,7 +1024,7 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 			_curFileName = " ";
 
 			doit = !saveRestoreGame();
-			CPtr = NULL;
+			_cptr = NULL;
 
 			MainDisplay = true;
 
@@ -1078,14 +1077,14 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 			decIncInv(&curInv, true);
 			LastInv = curInv;
 			DoNotDrawMessage = false;
-			drawRoomMessage(curInv, CPtr);
+			drawRoomMessage(curInv, _cptr);
 
 			screenUpdate();
 		} else if (gadgetId == 4) { /* Right gadget */
 			decIncInv(&curInv, false);
 			LastInv = curInv;
 			DoNotDrawMessage = false;
-			drawRoomMessage(curInv, CPtr);
+			drawRoomMessage(curInv, _cptr);
 
 			screenUpdate();
 		} else if (gadgetId == 5) { /* bread crumbs */
@@ -1111,7 +1110,7 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 					MainDisplay = true;
 					interfaceOn(); /* Sets the correct gadget list */
 					drawPanel();
-					drawRoomMessage(curInv, CPtr);
+					drawRoomMessage(curInv, _cptr);
 					screenUpdate();
 				} else {
 					_breadCrumbs[0]._roomNum = 0;
@@ -1129,10 +1128,10 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 
 		doit = false;
 
-		if (CPtr) {
-			if ((CPtr->CloseUpType == SPECIALLOCK) && MainDisplay) /* LAB: Labyrinth specific code */
+		if (_cptr) {
+			if ((_cptr->CloseUpType == SPECIALLOCK) && MainDisplay) /* LAB: Labyrinth specific code */
 				mouseCombination(curPos);
-			else if ((CPtr->CloseUpType == SPECIALBRICK) && MainDisplay)
+			else if ((_cptr->CloseUpType == SPECIALBRICK) && MainDisplay)
 				mouseTile(curPos);
 			else
 				doit = true;
@@ -1145,43 +1144,43 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 			eatMessages();
 
 			if (actionMode == 0) { /* Take something. */
-				if (doActionRule(Common::Point(curPos.x, curPos.y), actionMode, _roomNum, &CPtr))
+				if (doActionRule(Common::Point(curPos.x, curPos.y), actionMode, _roomNum, &_cptr))
 					_curFileName = _newFileName;
-				else if (takeItem(curPos.x, curPos.y, &CPtr))
+				else if (takeItem(curPos.x, curPos.y, &_cptr))
 					drawStaticMessage(kTextTakeItem);
-				else if (doActionRule(curPos, TAKEDEF - 1, _roomNum, &CPtr))
+				else if (doActionRule(curPos, TAKEDEF - 1, _roomNum, &_cptr))
 					_curFileName = _newFileName;
-				else if (doActionRule(curPos, TAKE - 1, 0, &CPtr))
+				else if (doActionRule(curPos, TAKE - 1, 0, &_cptr))
 					_curFileName = _newFileName;
 				else if (curPos.y < (VGAScaleY(149) + SVGACord(2)))
 					drawStaticMessage(kTextNothing);
 			} else if ((actionMode == 1) /* Manipulate an object */  ||
 			         (actionMode == 2) /* Open up a "door" */      ||
 			         (actionMode == 3)) { /* Close a "door" */
-				if (doActionRule(curPos, actionMode, _roomNum, &CPtr))
+				if (doActionRule(curPos, actionMode, _roomNum, &_cptr))
 					_curFileName = _newFileName;
-				else if (!doActionRule(curPos, actionMode, 0, &CPtr)) {
+				else if (!doActionRule(curPos, actionMode, 0, &_cptr)) {
 					if (curPos.y < (VGAScaleY(149) + SVGACord(2)))
 						drawStaticMessage(kTextNothing);
 				}
 			} else if (actionMode == 4) { /* Look at closeups */
-				tempcptr = CPtr;
+				tempcptr = _cptr;
 				setCurClose(curPos, &tempcptr);
 
-				if (CPtr == tempcptr) {
+				if (_cptr == tempcptr) {
 					if (curPos.y < (VGAScaleY(149) + SVGACord(2)))
 						drawStaticMessage(kTextNothing);
 				} else if (tempcptr->GraphicName) {
 					if (*(tempcptr->GraphicName)) {
 						_anim->_doBlack = true;
-						CPtr = tempcptr;
+						_cptr = tempcptr;
 					} else if (curPos.y < (VGAScaleY(149) + SVGACord(2)))
 						drawStaticMessage(kTextNothing);
 				} else if (curPos.y < (VGAScaleY(149) + SVGACord(2)))
 					drawStaticMessage(kTextNothing);
 			} else if ((actionMode == 5)  &&
 			         _conditions->in(curInv)) { /* Use an item on something else */
-				if (doOperateRule(curPos.x, curPos.y, curInv, &CPtr)) {
+				if (doOperateRule(curPos.x, curPos.y, curInv, &_cptr)) {
 					_curFileName = _newFileName;
 
 					if (!_conditions->in(curInv))
@@ -1198,14 +1197,14 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 		oldcptr = VPtr->closeUps;
 
 		if (hcptr == NULL) {
-			tempcptr = CPtr;
+			tempcptr = _cptr;
 			setCurClose(curPos, &tempcptr);
 
-			if ((tempcptr == NULL) || (tempcptr == CPtr)) {
-				if (CPtr == NULL)
+			if ((tempcptr == NULL) || (tempcptr == _cptr)) {
+				if (_cptr == NULL)
 					hcptr = oldcptr;
 				else
-					hcptr = CPtr->SubCloseUps;
+					hcptr = _cptr->SubCloseUps;
 			} else
 				hcptr = tempcptr->NextCloseUp;
 		} else
@@ -1213,10 +1212,10 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 
 
 		if (hcptr == NULL) {
-			if (CPtr == NULL)
+			if (_cptr == NULL)
 				hcptr = oldcptr;
 			else
-				hcptr = CPtr->SubCloseUps;
+				hcptr = _cptr->SubCloseUps;
 		}
 
 		if (hcptr)
@@ -1237,7 +1236,7 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 		}
 
 		drawPanel();
-		drawRoomMessage(curInv, CPtr);
+		drawRoomMessage(curInv, _cptr);
 
 		mayShowCrumbIndicator();
 		screenUpdate();
