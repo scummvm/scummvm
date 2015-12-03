@@ -321,92 +321,92 @@ bool takeItem(uint16 x, uint16 y, CloseDataPtr *cptr) {
 /*****************************************************************************/
 /* Processes the action list.                                                */
 /*****************************************************************************/
-static void doActions(Action *APtr, CloseDataPtr *lcptr) {
+void LabEngine::doActions(Action *aptr, CloseDataPtr *lcptr) {
 	CloseDataPtr tlcptr;
-	bool FirstLoaded = true;
-	char **str, *Test;
-	uint32 StartSecs, StartMicros, CurSecs, CurMicros;
+	bool firstLoaded = true;
+	char **str;
+	uint32 startSecs, startMicros, curSecs, curMicros;
 
-	while (APtr) {
-		g_lab->_music->updateMusic();
+	while (aptr) {
+		_music->updateMusic();
 
-		switch (APtr->ActionType) {
+		switch (aptr->ActionType) {
 		case PLAYSOUND:
-			g_lab->_music->_loopSoundEffect = false;
-			g_lab->_music->_waitTillFinished = true;
-			readMusic((char *)APtr->Data, true);
-			g_lab->_music->_waitTillFinished = false;
+			_music->_loopSoundEffect = false;
+			_music->_waitTillFinished = true;
+			readMusic((char *)aptr->Data, true);
+			_music->_waitTillFinished = false;
 			break;
 
 		case PLAYSOUNDB:
-			g_lab->_music->_loopSoundEffect = false;
-			g_lab->_music->_waitTillFinished = false;
-			readMusic((char *)APtr->Data, false);
+			_music->_loopSoundEffect = false;
+			_music->_waitTillFinished = false;
+			readMusic((char *)aptr->Data, false);
 			break;
 
 		case PLAYSOUNDCONT:
-			g_lab->_music->_doNotFilestopSoundEffect = true;
-			g_lab->_music->_loopSoundEffect = true;
-			readMusic((char *)APtr->Data, g_lab->_music->_waitTillFinished);
+			_music->_doNotFilestopSoundEffect = true;
+			_music->_loopSoundEffect = true;
+			readMusic((char *)aptr->Data, _music->_waitTillFinished);
 			break;
 
 		case SHOWDIFF:
-			readPict((char *)APtr->Data, true);
+			readPict((char *)aptr->Data, true);
 			break;
 
 		case SHOWDIFFCONT:
-			readPict((char *)APtr->Data, false);
+			readPict((char *)aptr->Data, false);
 			break;
 
 		case LOADDIFF:
-			if (FirstLoaded) {
+			if (firstLoaded) {
 				resetBuffer();
-				FirstLoaded = false;
+				firstLoaded = false;
 			}
 
-			if (APtr->Data)
-				g_lab->_music->newOpen((char *)APtr->Data);          /* Puts a file into memory */
+			if (aptr->Data)
+				_music->newOpen((char *)aptr->Data);          /* Puts a file into memory */
 
 			break;
 
 		case WIPECMD:
-			g_lab->doWipe(APtr->Param1, lcptr, (char *)APtr->Data);
+			doWipe(aptr->Param1, lcptr, (char *)aptr->Data);
 			break;
 
 		case NOUPDATE:
 			noupdatediff = true;
-			g_lab->_anim->_doBlack = false;
+			_anim->_doBlack = false;
 			break;
 
 		case FORCEUPDATE:
-			g_lab->_curFileName = " ";
+			_curFileName = " ";
 			break;
 
-		case SHOWCURPICT:
-			Test = getPictName(lcptr);
+		case SHOWCURPICT: {
+				char *test = getPictName(lcptr);
 
-			if (strcmp(Test, g_lab->_curFileName) != 0) {
-				g_lab->_curFileName = Test;
-				readPict(g_lab->_curFileName, true);
+				if (strcmp(test, _curFileName) != 0) {
+					_curFileName = test;
+					readPict(_curFileName, true);
+				}
 			}
-
 			break;
 
 		case SETELEMENT:
-			g_lab->_conditions->inclElement(APtr->Param1);
+			_conditions->inclElement(aptr->Param1);
 			break;
 
 		case UNSETELEMENT:
-			g_lab->_conditions->exclElement(APtr->Param1);
+			_conditions->exclElement(aptr->Param1);
 			break;
 
 		case SHOWMESSAGE:
 			DoNotDrawMessage = false;
 
-			if (g_lab->_longWinInFront)
-				g_lab->longDrawMessage((char *)APtr->Data);
+			if (_longWinInFront)
+				longDrawMessage((char *)aptr->Data);
 			else
-				g_lab->drawMessage((char *)APtr->Data);
+				drawMessage((char *)aptr->Data);
 
 			DoNotDrawMessage = true;
 			break;
@@ -414,38 +414,38 @@ static void doActions(Action *APtr, CloseDataPtr *lcptr) {
 		case CSHOWMESSAGE:
 			if (*lcptr == NULL) {
 				DoNotDrawMessage = false;
-				g_lab->drawMessage((char *)APtr->Data);
+				drawMessage((char *)aptr->Data);
 				DoNotDrawMessage = true;
 			}
 
 			break;
 
 		case SHOWMESSAGES:
-			str = (char **)APtr->Data;
+			str = (char **)aptr->Data;
 			DoNotDrawMessage = false;
-			g_lab->drawMessage(str[getRandom(APtr->Param1)]);
+			drawMessage(str[getRandom(aptr->Param1)]);
 			DoNotDrawMessage = true;
 			break;
 
 		case SETPOSITION:
-			if (APtr->Param1 & 0x8000) {
+			if (aptr->Param1 & 0x8000) {
 				// This is a Wyrmkeep Windows trial version, thus stop at this
 				// point, since we can't check for game payment status
 				readPict(getPictName(lcptr), true);
-				APtr = NULL;
+				aptr = NULL;
 				GUI::MessageDialog trialMessage("This is the end of the trial version. You can play the full game using the original interpreter from Wyrmkeep");
 				trialMessage.runModal();
 				continue;
 			}
 
-			g_lab->_roomNum   = APtr->Param1;
-			Direction = APtr->Param2 - 1;
+			_roomNum   = aptr->Param1;
+			Direction = aptr->Param2 - 1;
 			*lcptr      = NULL;
-			g_lab->_anim->_doBlack = true;
+			_anim->_doBlack = true;
 			break;
 
 		case SETCLOSEUP:
-			tlcptr = getObject(scaleX(APtr->Param1), scaleY(APtr->Param2), *lcptr);
+			tlcptr = getObject(scaleX(aptr->Param1), scaleY(aptr->Param2), *lcptr);
 
 			if (tlcptr)
 				*lcptr = tlcptr;
@@ -457,17 +457,17 @@ static void doActions(Action *APtr, CloseDataPtr *lcptr) {
 			break;
 
 		case SUBINV:
-			if (Inventory[APtr->Param1].Many)
-				(Inventory[APtr->Param1].Many)--;
+			if (Inventory[aptr->Param1].Many)
+				(Inventory[aptr->Param1].Many)--;
 
-			if (Inventory[APtr->Param1].Many == 0)
-				g_lab->_conditions->exclElement(APtr->Param1);
+			if (Inventory[aptr->Param1].Many == 0)
+				_conditions->exclElement(aptr->Param1);
 
 			break;
 
 		case ADDINV:
-			(Inventory[APtr->Param1].Many) += APtr->Param2;
-			g_lab->_conditions->inclElement(APtr->Param1);
+			(Inventory[aptr->Param1].Many) += aptr->Param2;
+			_conditions->inclElement(aptr->Param1);
 			break;
 
 		case SHOWDIR:
@@ -475,66 +475,66 @@ static void doActions(Action *APtr, CloseDataPtr *lcptr) {
 			break;
 
 		case WAITSECS:
-			g_lab->addCurTime(APtr->Param1, 0, &StartSecs, &StartMicros);
+			addCurTime(aptr->Param1, 0, &startSecs, &startMicros);
 
-			g_lab->screenUpdate();
+			screenUpdate();
 
 			while (1) {
-				g_lab->_music->updateMusic();
-				g_lab->_anim->diffNextFrame();
-				g_lab->getTime(&CurSecs, &CurMicros);
+				_music->updateMusic();
+				_anim->diffNextFrame();
+				getTime(&curSecs, &curMicros);
 
-				if ((CurSecs > StartSecs) || ((CurSecs == StartSecs) &&
-				                              (CurMicros >= StartMicros)))
+				if ((curSecs > startSecs) || ((curSecs == startSecs) &&
+				                              (curMicros >= startMicros)))
 					break;
 			}
 
 			break;
 
 		case STOPMUSIC:
-			g_lab->_music->setMusic(false);
+			_music->setMusic(false);
 			break;
 
 		case STARTMUSIC:
-			g_lab->_music->setMusic(true);
+			_music->setMusic(true);
 			break;
 
 		case CHANGEMUSIC:
-			g_lab->_music->changeMusic((const char *)APtr->Data);
-			g_lab->_music->setMusicReset(false);
+			_music->changeMusic((const char *)aptr->Data);
+			_music->setMusicReset(false);
 			break;
 
 		case RESETMUSIC:
-			g_lab->_music->resetMusic();
-			g_lab->_music->setMusicReset(true);
+			_music->resetMusic();
+			_music->setMusicReset(true);
 			break;
 
 		case FILLMUSIC:
-			g_lab->_music->updateMusic();
+			_music->updateMusic();
 			break;
 
 		case WAITSOUND:
-			while (g_lab->_music->isSoundEffectActive()) {
-				g_lab->_music->updateMusic();
-				g_lab->_anim->diffNextFrame();
-				g_lab->waitTOF();
+			while (_music->isSoundEffectActive()) {
+				_music->updateMusic();
+				_anim->diffNextFrame();
+				waitTOF();
 			}
 
 			break;
 
 		case CLEARSOUND:
-			if (g_lab->_music->_loopSoundEffect) {
-				g_lab->_music->_loopSoundEffect = false;
-				g_lab->_music->stopSoundEffect();
-			} else if (g_lab->_music->isSoundEffectActive())
-				g_lab->_music->stopSoundEffect();
+			if (_music->_loopSoundEffect) {
+				_music->_loopSoundEffect = false;
+				_music->stopSoundEffect();
+			} else if (_music->isSoundEffectActive())
+				_music->stopSoundEffect();
 
 			break;
 
 		case WINMUSIC:
-			g_lab->_music->_winmusic = true;
-			g_lab->_music->freeMusic();
-			g_lab->_music->initMusic();
+			_music->_winmusic = true;
+			_music->freeMusic();
+			_music->initMusic();
 			break;
 
 		case WINGAME:
@@ -550,53 +550,53 @@ static void doActions(Action *APtr, CloseDataPtr *lcptr) {
 			break;
 
 		case SPECIALCMD:
-			if (APtr->Param1 == 0)
-				g_lab->_anim->_doBlack = true;
-			else if (APtr->Param1 == 1)
-				g_lab->_anim->_doBlack = (g_lab->_cptr == NULL);
-			else if (APtr->Param1 == 2)
-				g_lab->_anim->_doBlack = (g_lab->_cptr != NULL);
-			else if (APtr->Param1 == 5) { /* inverse the palette */
+			if (aptr->Param1 == 0)
+				_anim->_doBlack = true;
+			else if (aptr->Param1 == 1)
+				_anim->_doBlack = (_cptr == NULL);
+			else if (aptr->Param1 == 2)
+				_anim->_doBlack = (_cptr != NULL);
+			else if (aptr->Param1 == 5) { /* inverse the palette */
 				for (uint16 idx = (8 * 3); idx < (255 * 3); idx++)
-					g_lab->_anim->_diffPalette[idx] = 255 - g_lab->_anim->_diffPalette[idx];
+					_anim->_diffPalette[idx] = 255 - _anim->_diffPalette[idx];
 
-				g_lab->waitTOF();
-				g_lab->setPalette(g_lab->_anim->_diffPalette, 256);
-				g_lab->waitTOF();
-				g_lab->waitTOF();
-			} else if (APtr->Param1 == 4) { /* white the palette */
+				waitTOF();
+				setPalette(_anim->_diffPalette, 256);
+				waitTOF();
+				waitTOF();
+			} else if (aptr->Param1 == 4) { /* white the palette */
 				whiteScreen();
-				g_lab->waitTOF();
-				g_lab->waitTOF();
-			} else if (APtr->Param1 == 6) { /* Restore the palette */
-				g_lab->waitTOF();
-				g_lab->setPalette(g_lab->_anim->_diffPalette, 256);
-				g_lab->waitTOF();
-				g_lab->waitTOF();
-			} else if (APtr->Param1 == 7) { /* Quick pause */
-				g_lab->waitTOF();
-				g_lab->waitTOF();
-				g_lab->waitTOF();
+				waitTOF();
+				waitTOF();
+			} else if (aptr->Param1 == 6) { /* Restore the palette */
+				waitTOF();
+				setPalette(_anim->_diffPalette, 256);
+				waitTOF();
+				waitTOF();
+			} else if (aptr->Param1 == 7) { /* Quick pause */
+				waitTOF();
+				waitTOF();
+				waitTOF();
 			}
 
 			break;
 		}
 
-		APtr = APtr->NextAction;
+		aptr = aptr->NextAction;
 	}
 
-	if (g_lab->_music->_loopSoundEffect) {
-		g_lab->_music->_loopSoundEffect = false;
-		g_lab->_music->stopSoundEffect();
+	if (_music->_loopSoundEffect) {
+		_music->_loopSoundEffect = false;
+		_music->stopSoundEffect();
 	} else {
-		while (g_lab->_music->isSoundEffectActive()) {
-			g_lab->_music->updateMusic();
-			g_lab->_anim->diffNextFrame();
-			g_lab->waitTOF();
+		while (_music->isSoundEffectActive()) {
+			_music->updateMusic();
+			_anim->diffNextFrame();
+			waitTOF();
 		}
 	}
 
-	g_lab->_music->_doNotFilestopSoundEffect = false;
+	_music->_doNotFilestopSoundEffect = false;
 }
 
 /*****************************************************************************/
@@ -621,7 +621,7 @@ static bool doActionRuleSub(int16 action, int16 roomNum, CloseDataPtr lcptr, Clo
 				        ||
 						((action == 1) && ((*rule)->Param2 == (-lcptr->CloseUpType)))) {
 					if (checkConditions((*rule)->Condition)) {
-						doActions((*rule)->ActionList, Set);
+						g_lab->doActions((*rule)->ActionList, Set);
 						return true;
 					}
 				}
@@ -675,7 +675,7 @@ static bool doOperateRuleSub(int16 ItemNum, int16 roomNum, CloseDataPtr lcptr, C
 				        (((*rule)->Param1 == ItemNum) || (((*rule)->Param1 == 0) && AllowDefaults)) &&
 						(((*rule)->Param2 == lcptr->CloseUpType) || (((*rule)->Param2 == 0) && AllowDefaults))) {
 					if (checkConditions((*rule)->Condition)) {
-						doActions((*rule)->ActionList, Set);
+						g_lab->doActions((*rule)->ActionList, Set);
 						return true;
 					}
 				}
@@ -728,7 +728,7 @@ bool doGoForward(CloseDataPtr *lcptr) {
 	for (RuleList::iterator rule = rules->begin(); rule != rules->end(); ++rule) {
 		if (((*rule)->RuleType == GOFORWARD) && ((*rule)->Param1 == (Direction + 1))) {
 			if (checkConditions((*rule)->Condition)) {
-				doActions((*rule)->ActionList, lcptr);
+				g_lab->doActions((*rule)->ActionList, lcptr);
 				return true;
 			}
 		}
@@ -751,7 +751,7 @@ bool doTurn(uint16 from, uint16 to, CloseDataPtr *lcptr) {
 		        (((*rule)->RuleType == TURNFROMTO) &&
 		         ((*rule)->Param1   == from) && ((*rule)->Param2 == to))) {
 			if (checkConditions((*rule)->Condition)) {
-				doActions((*rule)->ActionList, lcptr);
+				g_lab->doActions((*rule)->ActionList, lcptr);
 				return true;
 			}
 		}
@@ -768,7 +768,7 @@ bool doMainView(CloseDataPtr *lcptr) {
 	for (RuleList::iterator rule = rules->begin(); rule != rules->end(); ++rule) {
 		if ((*rule)->RuleType == GOMAINVIEW) {
 			if (checkConditions((*rule)->Condition)) {
-				doActions((*rule)->ActionList, lcptr);
+				g_lab->doActions((*rule)->ActionList, lcptr);
 				return true;
 			}
 		}

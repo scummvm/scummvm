@@ -131,8 +131,6 @@ private:
 	bool _lastMessageLong;
 	bool _lastTooLong;
 	TextFont *_msgFont;
-
-public:
 	bool _longWinInFront;
 	CloseDataPtr _cptr;
 
@@ -203,6 +201,10 @@ private:
 	void mayShowCrumbIndicator();
 	void mayShowCrumbIndicatorOff();
 	const char *getInvName(uint16 curInv);
+
+public:
+	void doActions(Action *aPtr, CloseDataPtr *lcptr);
+
 };
 
 extern LabEngine *g_lab;
