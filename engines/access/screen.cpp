@@ -181,7 +181,7 @@ void Screen::forceFadeOut() {
 			int v = *srcP;
 			if (v) {
 				repeatFlag = true;
-				*srcP = MAX(*srcP - FADE_AMOUNT, 0);
+				*srcP = MAX((int)*srcP - FADE_AMOUNT, 0);
 			}
 		}
 
