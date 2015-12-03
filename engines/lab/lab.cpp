@@ -112,6 +112,8 @@ LabEngine::LabEngine(OSystem *syst, const ADGameDescription *gameDesc)
     _longWinInFront = false;
     _msgFont = 0;
 
+    _inventory = 0;
+
 	//const Common::FSNode gameDataDir(ConfMan.get("path"));
 	//SearchMan.addSubDirectoryMatching(gameDataDir, "game");
 	//SearchMan.addSubDirectoryMatching(gameDataDir, "game/pict");

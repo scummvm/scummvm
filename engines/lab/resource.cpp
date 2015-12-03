@@ -36,7 +36,6 @@ namespace Lab {
 
 static uint16 allocroom;
 extern RoomData *_rooms;
-extern InventoryData *Inventory;
 extern uint16 NumInv, ManyRooms, HighestCondition;
 
 Resource::Resource(LabEngine *vm) : _vm(vm) {
@@ -127,22 +126,23 @@ bool Resource::readRoomData(const char *fileName) {
 	return true;
 }
 
-bool Resource::readInventory(const char *fileName) {
+InventoryData *Resource::readInventory(const char *fileName) {
 	Common::File *dataFile;
 	if (!(dataFile = openDataFile(fileName, MKTAG('I', 'N', 'V', '1'))))
-		return false;
+		return nullptr;
 
 	NumInv = dataFile->readUint16LE();
-	Inventory = (InventoryData *)malloc((NumInv + 1) * sizeof(InventoryData));
+	InventoryData *inventory = (InventoryData *)malloc((NumInv + 1) * sizeof(InventoryData));
 
 	for (uint16 i = 1; i <= NumInv; i++) {
-		Inventory[i].Many = dataFile->readUint16LE();
-		Inventory[i].name = readString(dataFile);
-		Inventory[i].BInvName = readString(dataFile);
+		inventory[i].Many = dataFile->readUint16LE();
+		inventory[i].name = readString(dataFile);
+		inventory[i].BInvName = readString(dataFile);
 	}
 
 	delete dataFile;
-	return true;
+
+	return inventory;
 }
 
 bool Resource::readViews(uint16 roomNum) {
