@@ -43,8 +43,6 @@ namespace Lab {
 
 extern uint16 Direction;
 
-extern CloseDataPtr CPtr;
-
 /*****************************************************************************/
 /* Converts an Amiga palette (up to 16 colors) to a VGA palette, then sets   */
 /* the VGA palette.                                                          */

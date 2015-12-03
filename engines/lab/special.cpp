@@ -83,7 +83,6 @@ uint16 CurTile[4][4] = {
 
 extern uint16 *FadePalette;
 extern BitMap *DispBitMap, *DrawBitMap;
-extern CloseDataPtr CPtr;
 extern InventoryData *Inventory;
 extern uint16 Direction;
 
@@ -892,20 +891,20 @@ void LabEngine::processMonitor(char *ntext, TextFont *monitorFont, bool isintera
 	uint32 Class;
 	uint16 Qualifier, Code, MouseX, MouseY;
 	const char *Test = " ", *StartFileName = TextFileName;
-	CloseDataPtr startcptr = CPtr, testcptr, lastcptr[10];
+	CloseDataPtr startcptr = _cptr, testcptr, lastcptr[10];
 	uint16 depth = 0;
 
-	lastcptr[0] = CPtr;
+	lastcptr[0] = _cptr;
 
 	while (1) {
 		if (isinteractive) {
-			if (CPtr == NULL)
-				CPtr = startcptr;
+			if (_cptr == NULL)
+				_cptr = startcptr;
 
-			if (CPtr == startcptr)
+			if (_cptr == startcptr)
 				Test = StartFileName;
 			else
-				Test = CPtr->GraphicName;
+				Test = _cptr->GraphicName;
 
 			if (strcmp(Test, TextFileName)) {
 				monitorPage      = 0;
@@ -955,7 +954,7 @@ void LabEngine::processMonitor(char *ntext, TextFont *monitorFont, bool isintera
 
 							if (depth) {
 								depth--;
-								CPtr = lastcptr[depth];
+								_cptr = lastcptr[depth];
 							}
 						} else if (monitorPage > 0) {
 							monitorPage = 0;
@@ -963,12 +962,12 @@ void LabEngine::processMonitor(char *ntext, TextFont *monitorFont, bool isintera
 						}
 					}
 				} else if (isinteractive) {
-					testcptr = CPtr;
+					testcptr = _cptr;
 					MouseY = 64 + (MouseY / MonGadHeight) * 42;
 					MouseX = 101;
-					setCurClose(Common::Point(MouseX, MouseY), &CPtr, true);
+					setCurClose(Common::Point(MouseX, MouseY), &_cptr, true);
 
-					if (testcptr != CPtr) {
+					if (testcptr != _cptr) {
 						lastcptr[depth] = testcptr;
 						depth++;
 					}

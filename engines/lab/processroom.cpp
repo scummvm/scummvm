@@ -49,7 +49,6 @@ InventoryData *Inventory;
 uint16 NumInv, ManyRooms, HighestCondition, Direction;
 
 extern bool DoNotDrawMessage, noupdatediff, QuitLab, MusicOn;
-extern CloseDataPtr CPtr;
 
 /*****************************************************************************/
 /* Generates a random number.                                                */
@@ -554,9 +553,9 @@ static void doActions(Action *APtr, CloseDataPtr *lcptr) {
 			if (APtr->Param1 == 0)
 				g_lab->_anim->_doBlack = true;
 			else if (APtr->Param1 == 1)
-				g_lab->_anim->_doBlack = (CPtr == NULL);
+				g_lab->_anim->_doBlack = (g_lab->_cptr == NULL);
 			else if (APtr->Param1 == 2)
-				g_lab->_anim->_doBlack = (CPtr != NULL);
+				g_lab->_anim->_doBlack = (g_lab->_cptr != NULL);
 			else if (APtr->Param1 == 5) { /* inverse the palette */
 				for (uint16 idx = (8 * 3); idx < (255 * 3); idx++)
 					g_lab->_anim->_diffPalette[idx] = 255 - g_lab->_anim->_diffPalette[idx];

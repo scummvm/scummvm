@@ -134,6 +134,7 @@ private:
 
 public:
 	bool _longWinInFront;
+	CloseDataPtr _cptr;
 
 private:
 	bool createScreen(bool HiRes);
