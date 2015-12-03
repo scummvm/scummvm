@@ -892,17 +892,17 @@ void LabEngine::processMonitor(char *ntext, TextFont *monitorFont, bool isintera
 	uint32 Class;
 	uint16 Qualifier, Code, MouseX, MouseY;
 	const char *Test = " ", *StartFileName = TextFileName;
-	CloseDataPtr StartCPtr = CPtr, TestCPtr, LastCPtr[10];
+	CloseDataPtr startcptr = CPtr, testcptr, lastcptr[10];
 	uint16 depth = 0;
 
-	LastCPtr[0] = CPtr;
+	lastcptr[0] = CPtr;
 
 	while (1) {
 		if (isinteractive) {
 			if (CPtr == NULL)
-				CPtr = StartCPtr;
+				CPtr = startcptr;
 
-			if (CPtr == StartCPtr)
+			if (CPtr == startcptr)
 				Test = StartFileName;
 			else
 				Test = CPtr->GraphicName;
@@ -955,7 +955,7 @@ void LabEngine::processMonitor(char *ntext, TextFont *monitorFont, bool isintera
 
 							if (depth) {
 								depth--;
-								CPtr = LastCPtr[depth];
+								CPtr = lastcptr[depth];
 							}
 						} else if (monitorPage > 0) {
 							monitorPage = 0;
@@ -963,13 +963,13 @@ void LabEngine::processMonitor(char *ntext, TextFont *monitorFont, bool isintera
 						}
 					}
 				} else if (isinteractive) {
-					TestCPtr = CPtr;
+					testcptr = CPtr;
 					MouseY = 64 + (MouseY / MonGadHeight) * 42;
 					MouseX = 101;
 					setCurClose(Common::Point(MouseX, MouseY), &CPtr, true);
 
-					if (TestCPtr != CPtr) {
-						LastCPtr[depth] = TestCPtr;
+					if (testcptr != CPtr) {
+						lastcptr[depth] = testcptr;
 						depth++;
 					}
 				}

@@ -105,7 +105,7 @@ int32 longDrawMessage(const char *text);
 
 /* The Wipes */
 
-void doWipe(uint16 WipeType, CloseDataPtr *CPtr, char *filename);
+void doWipe(uint16 WipeType, CloseDataPtr *cptr, char *filename);
 
 /* Double Buffer stuff */
 
