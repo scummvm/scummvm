@@ -125,7 +125,6 @@ public:
 	const char *_newFileName;  /* When ProcessRoom.c decides to change the filename
                                     of the current picture. */
 
-
 private:
 	int _lastWaitTOFTicks;
 	bool _lastMessageLong;
@@ -133,6 +132,7 @@ private:
 	TextFont *_msgFont;
 	bool _longWinInFront;
 	CloseDataPtr _cptr;
+	InventoryData *_inventory;
 
 private:
 	bool createScreen(bool HiRes);
@@ -193,6 +193,8 @@ private:
 	void mayShowCrumbIndicator();
 	void mayShowCrumbIndicatorOff();
 	const char *getInvName(uint16 curInv);
+
+	bool saveRestoreGame();
 
 public:
 	void doActions(Action *aPtr, CloseDataPtr *lcptr);

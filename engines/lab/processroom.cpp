@@ -45,7 +45,6 @@ namespace Lab {
 #define NOFILE         "no file"
 
 RoomData *_rooms;
-InventoryData *Inventory;
 uint16 NumInv, ManyRooms, HighestCondition, Direction;
 
 extern bool DoNotDrawMessage, noupdatediff, QuitLab, MusicOn;
@@ -434,16 +433,16 @@ void LabEngine::doActions(Action *aptr, CloseDataPtr *lcptr) {
 			break;
 
 		case SUBINV:
-			if (Inventory[aptr->Param1].Many)
-				(Inventory[aptr->Param1].Many)--;
+			if (_inventory[aptr->Param1].Many)
+				(_inventory[aptr->Param1].Many)--;
 
-			if (Inventory[aptr->Param1].Many == 0)
+			if (_inventory[aptr->Param1].Many == 0)
 				_conditions->exclElement(aptr->Param1);
 
 			break;
 
 		case ADDINV:
-			(Inventory[aptr->Param1].Many) += aptr->Param2;
+			(_inventory[aptr->Param1].Many) += aptr->Param2;
 			_conditions->inclElement(aptr->Param1);
 			break;
 

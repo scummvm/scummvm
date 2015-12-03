@@ -83,7 +83,6 @@ uint16 CurTile[4][4] = {
 
 extern uint16 *FadePalette;
 extern BitMap *DispBitMap, *DrawBitMap;
-extern InventoryData *Inventory;
 extern uint16 Direction;
 
 #define COMBINATIONUNLOCKED  130
@@ -753,7 +752,7 @@ void LabEngine::doJournal() {
 	freeAllStolenMem();
 }
 
-bool saveRestoreGame() {
+bool LabEngine::saveRestoreGame() {
 	bool isOK = false;
 
 	//g_lab->showMainMenu();
@@ -775,14 +774,14 @@ bool saveRestoreGame() {
 				desc = dialog->createDefaultSaveDescription(slot);
 			}
 
-			isOK = saveGame(Direction, Inventory[QUARTERNUM].Many, slot, desc);
+			isOK = saveGame(Direction, _inventory[QUARTERNUM].Many, slot, desc);
 		}
 	} else {
 		// Restore
 		GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Restore game:"), _("Restore"), false);
 		int slot = dialog->runModalWithCurrentTarget();
 		if (slot >= 0) {
-			isOK = loadGame(&Direction, &(Inventory[QUARTERNUM].Many), slot);
+			isOK = loadGame(&Direction, &(_inventory[QUARTERNUM].Many), slot);
 			if (isOK)
 				g_lab->_music->resetMusic();
 		}

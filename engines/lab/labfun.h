@@ -193,7 +193,6 @@ void doJournal();
 void doNotes();
 void doWestPaper();
 void doMonitor(char *background, char *textfile, bool isinteractive, uint16 x1, uint16 y1, uint16 x2, uint16 y2);
-bool saveRestoreGame();
 
 /*--------------------------*/
 /*----- From saveGame.c ----*/

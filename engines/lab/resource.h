@@ -100,7 +100,7 @@ public:
 
 	Common::File *openDataFile(const char * fileName, uint32 fileHeader = 0);
 	bool readRoomData(const char *fileName);
-	bool readInventory(const char *fileName);
+	InventoryData *readInventory(const char *fileName);
 	bool readViews(uint16 roomNum);
 	TextFont *getFont(const char *fileName);
 	char *getText(const char *fileName);

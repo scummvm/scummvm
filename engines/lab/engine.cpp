@@ -45,7 +45,6 @@ extern bool stopsound, DoNotDrawMessage;
 /* Global parser data */
 
 extern RoomData *_rooms;
-extern InventoryData *Inventory;
 extern uint16 NumInv, ManyRooms, HighestCondition, Direction;
 
 bool ispal = false, noupdatediff = false, MainDisplay = true, QuitLab = false;
@@ -159,14 +158,14 @@ void LabEngine::drawRoomMessage(uint16 curInv, CloseDataPtr closePtr) {
 	}
 
 	if (_alternate) {
-		if ((curInv <= NumInv) && _conditions->in(curInv) && Inventory[curInv].BInvName) {
+		if ((curInv <= NumInv) && _conditions->in(curInv) && _inventory[curInv].BInvName) {
 			if ((curInv == LAMPNUM) && _conditions->in(LAMPON))  /* LAB: Labyrinth specific */
 				drawStaticMessage(kTextLampOn);
-			else if (Inventory[curInv].Many > 1) {
-				Common::String roomMessage = Common::String(Inventory[curInv].name) + "  (" + Common::String::format("%d", Inventory[curInv].Many) + ")";
+			else if (_inventory[curInv].Many > 1) {
+				Common::String roomMessage = Common::String(_inventory[curInv].name) + "  (" + Common::String::format("%d", _inventory[curInv].Many) + ")";
 				drawMessage(roomMessage.c_str());
 			} else
-				drawMessage(Inventory[curInv].name);
+				drawMessage(_inventory[curInv].name);
 		}
 	} else
 		drawDirection(closePtr);
@@ -390,7 +389,7 @@ bool LabEngine::doCloseUp(CloseDataPtr closePtr) {
 /******************************************************************************/
 const char *LabEngine::getInvName(uint16 CurInv) {
 	if (MainDisplay)
-		return Inventory[CurInv].BInvName;
+		return _inventory[CurInv].BInvName;
 
 	if ((CurInv == LAMPNUM) && _conditions->in(LAMPON))
 		return "P:Mines/120";
@@ -399,20 +398,20 @@ const char *LabEngine::getInvName(uint16 CurInv) {
 		return "P:Future/BeltGlow";
 
 	if (CurInv == WESTPAPERNUM) {
-		g_lab->_curFileName = Inventory[CurInv].BInvName;
+		g_lab->_curFileName = _inventory[CurInv].BInvName;
 		g_lab->_anim->_noPalChange = true;
 		readPict(g_lab->_curFileName, false);
 		g_lab->_anim->_noPalChange = false;
 		doWestPaper();
 	} else if (CurInv == NOTESNUM) {
-		g_lab->_curFileName = Inventory[CurInv].BInvName;
+		g_lab->_curFileName = _inventory[CurInv].BInvName;
 		g_lab->_anim->_noPalChange = true;
 		readPict(g_lab->_curFileName, false);
 		g_lab->_anim->_noPalChange = false;
 		doNotes();
 	}
 
-	return Inventory[CurInv].BInvName;
+	return _inventory[CurInv].BInvName;
 }
 
 /******************************************************************************/
@@ -517,7 +516,7 @@ void LabEngine::decIncInv(uint16 *CurInv, bool dec) {
 		(*CurInv)++;
 
 	while (*CurInv && (*CurInv <= NumInv)) {
-		if (_conditions->in(*CurInv) && Inventory[*CurInv].BInvName) {
+		if (_conditions->in(*CurInv) && _inventory[*CurInv].BInvName) {
 			_nextFileName = getInvName(*CurInv);
 			break;
 		}
@@ -535,7 +534,7 @@ void LabEngine::decIncInv(uint16 *CurInv, bool dec) {
 			*CurInv = 1;
 
 		while (*CurInv && (*CurInv <= NumInv)) {
-			if (_conditions->in(*CurInv) && Inventory[*CurInv].BInvName) {
+			if (_conditions->in(*CurInv) && _inventory[*CurInv].BInvName) {
 				_nextFileName = getInvName(*CurInv);
 				break;
 			}
@@ -565,7 +564,8 @@ void LabEngine::mainGameLoop() {
 	Direction = NORTH;
 
 	_resource->readRoomData("LAB:Doors");
-	_resource->readInventory("LAB:Inventor");
+	if (!(_inventory = _resource->readInventory("LAB:Inventor")))
+		return;
 
 	if (!(_conditions = new LargeSet(HighestCondition + 1, this)))
 		return;
@@ -698,16 +698,16 @@ void LabEngine::mainGameLoop() {
 		_rooms = nullptr;
 	}
 
-	if (Inventory) {
+	if (_inventory) {
 		for (int i = 1; i <= NumInv; i++) {
-			if (Inventory[i].name)
-				free(Inventory[i].name);
+			if (_inventory[i].name)
+				free(_inventory[i].name);
 
-			if (Inventory[i].BInvName)
-				free(Inventory[i].BInvName);
+			if (_inventory[i].BInvName)
+				free(_inventory[i].BInvName);
 		}
 
-		free(Inventory);
+		free(_inventory);
 	}
 }
 
@@ -1041,7 +1041,7 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 			}
 
 			if ((curInv <= NumInv) && _conditions->in(curInv) &&
-			        Inventory[curInv].BInvName)
+			        _inventory[curInv].BInvName)
 				_nextFileName = getInvName(curInv);
 
 			screenUpdate();
