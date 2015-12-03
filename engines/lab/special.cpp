@@ -551,12 +551,12 @@ static bool loadJournalData() {
 	if (!buffer)
 		return false;
 
-	BackG.Im = new Image(buffer);
-	BackG.ImAlt = new Image(buffer);
-	ForwardG.Im = new Image(buffer);
-	ForwardG.ImAlt = new Image(buffer);
-	CancelG.Im = new Image(buffer);
-	CancelG.ImAlt = new Image(buffer);
+	BackG._image = new Image(buffer);
+	BackG._altImage = new Image(buffer);
+	ForwardG._image = new Image(buffer);
+	ForwardG._altImage = new Image(buffer);
+	CancelG._image = new Image(buffer);
+	CancelG._altImage = new Image(buffer);
 
 	BackG.KeyEquiv = VKEY_LTARROW;
 	ForwardG.KeyEquiv = VKEY_RTARROW;

@@ -59,10 +59,10 @@ struct TextFont;
 struct Gadget;
 
 struct SaveGameHeader {
-	byte version;
-	SaveStateDescriptor desc;
-	uint16 roomNumber;
-	uint16 direction;
+	byte _version;
+	SaveStateDescriptor _descr;
+	uint16 _roomNumber;
+	uint16 _direction;
 };
 
 /*----------------------------*/

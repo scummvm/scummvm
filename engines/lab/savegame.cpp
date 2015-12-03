@@ -89,10 +89,10 @@ bool readSaveGameHeader(Common::InSaveFile *in, SaveGameHeader &header) {
 		return false;
 
 	// Read in the version
-	header.version = in->readByte();
+	header._version = in->readByte();
 
 	// Check that the save version isn't newer than this binary
-	if (header.version > SAVEGAME_VERSION)
+	if (header._version > SAVEGAME_VERSION)
 		return false;
 
 	// Read in the save name
@@ -100,10 +100,10 @@ bool readSaveGameHeader(Common::InSaveFile *in, SaveGameHeader &header) {
 	char ch;
 	while ((ch = (char)in->readByte()) != '\0')
 		saveName += ch;
-	header.desc.setDescription(saveName);
+	header._descr.setDescription(saveName);
 
 	// Get the thumbnail
-	header.desc.setThumbnail(Graphics::loadThumbnail(*in));
+	header._descr.setThumbnail(Graphics::loadThumbnail(*in));
 
 	uint32 saveDate = in->readUint32BE();
 	uint16 saveTime = in->readUint16BE();
@@ -112,13 +112,13 @@ bool readSaveGameHeader(Common::InSaveFile *in, SaveGameHeader &header) {
 	int day = (saveDate >> 24) & 0xFF;
 	int month = (saveDate >> 16) & 0xFF;
 	int year = saveDate & 0xFFFF;
-	header.desc.setSaveDate(year, month, day);
+	header._descr.setSaveDate(year, month, day);
 
 	int hour = (saveTime >> 8) & 0xFF;
 	int minutes = saveTime & 0xFF;
-	header.desc.setSaveTime(hour, minutes);
+	header._descr.setSaveTime(hour, minutes);
 
-	header.desc.setPlayTime(playTime * 1000);
+	header._descr.setPlayTime(playTime * 1000);
 	g_engine->setTotalPlayTime(playTime * 1000);
 
 	return true;

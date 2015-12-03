@@ -185,8 +185,6 @@ struct InventoryData {
 #define     MULTIMAZEF2     10
 #define     MULTIMAZEF3     11
 
-
-
 struct MapData {
 	uint16 x, y, PageNumber, SpecialID;
 	uint32 MapFlags;

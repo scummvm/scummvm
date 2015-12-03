@@ -194,7 +194,7 @@ SaveStateList LabMetaEngine::listSaves(const char *target) const {
 	            Common::InSaveFile *in = saveFileMan->openForLoading(file->c_str());
 	            if (in) {
 					if (Lab::readSaveGameHeader(in, header))
-	                    saveList.push_back(SaveStateDescriptor(slotNum, header.desc.getDescription()));
+	                    saveList.push_back(SaveStateDescriptor(slotNum, header._descr.getDescription()));
 	                delete in;
 	            }
 	        }
@@ -242,13 +242,13 @@ SaveStateDescriptor LabMetaEngine::querySaveMetaInfos(const char *target, int sl
 	    delete in;
 
 	    if (successfulRead) {
-	        SaveStateDescriptor desc(slot, header.desc.getDescription());
+	        SaveStateDescriptor desc(slot, header._descr.getDescription());
 			// Do not allow save slot 0 (used for auto-saving) to be deleted or
 			// overwritten.
 			//desc.setDeletableFlag(slot != 0);
 			//desc.setWriteProtectedFlag(slot == 0);
 
-	        return header.desc;
+	        return header._descr;
 	    }
 	}
 

@@ -86,6 +86,12 @@ public:
 
 private:
 	uint32 _extraGameFeatures;
+	bool _interfaceOff;
+	bool _alternate;
+	Image *_moveImages[20];
+	Image *_invImages[10];
+	Gadget *_moveGadgetList;
+	Gadget *_invGadgetList;
 
 	// timing.cpp
 	void microDelay(uint32 secs, uint32 micros);
@@ -114,6 +120,11 @@ public:
 	byte *_tempScrollData;
 	bool _isHiRes;
 	byte *_displayBuffer;
+	const char *_curFileName;
+	const char *_nextFileName;
+	const char *_newFileName;  /* When ProcessRoom.c decides to change the filename
+                                    of the current picture. */
+
 
 private:
 	int _lastWaitTOFTicks;

@@ -89,6 +89,20 @@ LabEngine::LabEngine(OSystem *syst, const ADGameDescription *gameDesc)
 
     _lastMessageLong = false;
     _lastTooLong = false;
+	_interfaceOff = false;
+	_alternate = false;
+
+	for (int i = 0; i < 20; i++)
+		_moveImages[20] = nullptr;
+	
+	for (int i = 0; i < 10; i++)
+		_invImages[10] = nullptr;
+
+	_moveGadgetList = nullptr;
+	_invGadgetList = nullptr;
+	_curFileName = nullptr;
+	_nextFileName = nullptr;
+	_newFileName = nullptr;
 
 	//const Common::FSNode gameDataDir(ConfMan.get("path"));
 	//SearchMan.addSubDirectoryMatching(gameDataDir, "game");
