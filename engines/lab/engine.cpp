@@ -746,7 +746,7 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 
 	uint16 OldRoomNum, OldDirection = 0;
 	uint16 LastInv = MAPNUM, Old;
-	CloseDataPtr OldCPtr, TempCPtr, HCPtr = NULL;
+	CloseDataPtr oldcptr, tempcptr, hcptr = NULL;
 	ViewData *VPtr;
 	bool doit;
 	uint16 NewDir;
@@ -859,7 +859,7 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 				doMainView(&CPtr);
 
 				_anim->_doBlack = true;
-				HCPtr = NULL;
+				hcptr = NULL;
 				CPtr = NULL;
 				mayShowCrumbIndicator();
 				screenUpdate();
@@ -913,7 +913,7 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 			screenUpdate();
 		} else if (gadgetId >= 6) { /* Arrow Gadgets */
 			CPtr = NULL;
-			HCPtr = NULL;
+			hcptr = NULL;
 
 			if ((gadgetId == 6) || (gadgetId == 8)) {
 				if (gadgetId == 6)
@@ -1141,7 +1141,7 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 
 
 		if (doit) {
-			HCPtr = NULL;
+			hcptr = NULL;
 			eatMessages();
 
 			if (actionMode == 0) { /* Take something. */
@@ -1165,16 +1165,16 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 						drawStaticMessage(kTextNothing);
 				}
 			} else if (actionMode == 4) { /* Look at closeups */
-				TempCPtr = CPtr;
-				setCurClose(curPos, &TempCPtr);
+				tempcptr = CPtr;
+				setCurClose(curPos, &tempcptr);
 
-				if (CPtr == TempCPtr) {
+				if (CPtr == tempcptr) {
 					if (curPos.y < (VGAScaleY(149) + SVGACord(2)))
 						drawStaticMessage(kTextNothing);
-				} else if (TempCPtr->GraphicName) {
-					if (*(TempCPtr->GraphicName)) {
+				} else if (tempcptr->GraphicName) {
+					if (*(tempcptr->GraphicName)) {
 						_anim->_doBlack = true;
-						CPtr = TempCPtr;
+						CPtr = tempcptr;
 					} else if (curPos.y < (VGAScaleY(149) + SVGACord(2)))
 						drawStaticMessage(kTextNothing);
 				} else if (curPos.y < (VGAScaleY(149) + SVGACord(2)))
@@ -1195,32 +1195,32 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 		screenUpdate();
 	} else if (msgClass == DELTAMOVE) {
 		VPtr = getViewData(_roomNum, Direction);
-		OldCPtr = VPtr->closeUps;
+		oldcptr = VPtr->closeUps;
 
-		if (HCPtr == NULL) {
-			TempCPtr = CPtr;
-			setCurClose(curPos, &TempCPtr);
+		if (hcptr == NULL) {
+			tempcptr = CPtr;
+			setCurClose(curPos, &tempcptr);
 
-			if ((TempCPtr == NULL) || (TempCPtr == CPtr)) {
+			if ((tempcptr == NULL) || (tempcptr == CPtr)) {
 				if (CPtr == NULL)
-					HCPtr = OldCPtr;
+					hcptr = oldcptr;
 				else
-					HCPtr = CPtr->SubCloseUps;
+					hcptr = CPtr->SubCloseUps;
 			} else
-				HCPtr = TempCPtr->NextCloseUp;
+				hcptr = tempcptr->NextCloseUp;
 		} else
-			HCPtr = HCPtr->NextCloseUp;
+			hcptr = hcptr->NextCloseUp;
 
 
-		if (HCPtr == NULL) {
+		if (hcptr == NULL) {
 			if (CPtr == NULL)
-				HCPtr = OldCPtr;
+				hcptr = oldcptr;
 			else
-				HCPtr = CPtr->SubCloseUps;
+				hcptr = CPtr->SubCloseUps;
 		}
 
-		if (HCPtr)
-			_event->setMousePos(Common::Point(scaleX((HCPtr->x1 + HCPtr->x2) / 2), scaleY((HCPtr->y1 + HCPtr->y2) / 2)));
+		if (hcptr)
+			_event->setMousePos(Common::Point(scaleX((hcptr->x1 + hcptr->x2) / 2), scaleY((hcptr->y1 + hcptr->y2) / 2)));
 	} else if ((msgClass == MOUSEBUTTONS) && (IEQUALIFIER_RBUTTON & Qualifier)) {
 		eatMessages();
 		_alternate = !_alternate;
