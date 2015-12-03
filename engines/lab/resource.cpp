@@ -172,7 +172,7 @@ Common::File *Resource::openDataFile(const char *fileName, uint32 fileHeader) {
 	if (!dataFile->isOpen())
 		error("openDataFile couldn't open %s (%s)", translateFileName(fileName), fileName);
 
-	if (dataFile->readUint32BE() != fileHeader) {
+	if (fileHeader > 0 && dataFile->readUint32BE() != fileHeader) {
 		dataFile->close();
 		return nullptr;
 	}
