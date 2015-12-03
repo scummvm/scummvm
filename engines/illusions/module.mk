@@ -33,6 +33,7 @@ MODULE_OBJS := \
 	resources/actorresource.o \
 	resources/backgroundresource.o \
 	resources/fontresource.o \
+	resources/genericresource.o \
 	resources/midiresource.o \
 	resources/scriptresource.o \
 	resources/soundresource.o \

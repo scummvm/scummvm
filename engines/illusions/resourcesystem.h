@@ -97,6 +97,7 @@ public:
 	void unloadResourceById(uint32 resId);
 	void unloadResourcesBySceneId(uint32 sceneId);
 	void unloadSceneResources(uint32 sceneId1, uint32 sceneId2);
+	Resource *getResource(uint32 resId);
 	
 protected:
 	typedef Common::HashMap<uint32, BaseResourceLoader*> ResourceLoadersMap;
@@ -141,7 +142,6 @@ protected:
 		}
 	};
 
-	Resource *getResource(uint32 resId);
 	void unloadResource(Resource *resource);
 	
 };

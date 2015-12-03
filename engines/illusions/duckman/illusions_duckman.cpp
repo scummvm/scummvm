@@ -35,6 +35,7 @@
 #include "illusions/resources/actorresource.h"
 #include "illusions/resources/backgroundresource.h"
 #include "illusions/resources/fontresource.h"
+#include "illusions/resources/genericresource.h"
 #include "illusions/resources/midiresource.h"
 #include "illusions/resources/scriptresource.h"
 #include "illusions/resources/soundresource.h"
@@ -99,6 +100,7 @@ Common::Error IllusionsEngine_Duckman::run() {
 	_resSys->addResourceLoader(0x00100000, new ActorResourceLoader(this));
 	_resSys->addResourceLoader(0x00110000, new BackgroundResourceLoader(this));
 	_resSys->addResourceLoader(0x00120000, new FontResourceLoader(this));
+	_resSys->addResourceLoader(0x00190000, new GenericResourceLoader(this));
 
 	_screen = new Screen(this, 320, 200, 8);
 	_screenText = new ScreenText(this);

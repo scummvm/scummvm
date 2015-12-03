@@ -35,6 +35,13 @@ class PropertyTimers;
 
 typedef Common::Functor1<OpCall&, void> SpecialCodeFunction;
 
+struct CreditsItem {
+	uint32 objectId;
+	bool active;
+	int16 scrollPosIndex;
+	int16 scrollPosY;
+};
+
 class DuckmanSpecialCode : public SpecialCode {
 public:
 	DuckmanSpecialCode(IllusionsEngine_Duckman *vm);
@@ -44,6 +51,7 @@ public:
 public:	
 	typedef Common::HashMap<uint32, SpecialCodeFunction*> SpecialCodeMap;
 	typedef SpecialCodeMap::iterator SpecialCodeMapIterator;
+	typedef Common::Array<CreditsItem> CreditsItems;
 
 	IllusionsEngine_Duckman *_vm;
 	SpecialCodeMap _specialCodeMap;
@@ -56,6 +64,15 @@ public:
 	Common::Point _teleporterPosition;
 	int16 _counter;
 	bool _wasCursorHoldingElvisPoster;
+	int16 _savedTempMasterSfxVolume;
+	int16 _lastRandomSoundIndex;
+
+	uint32 _creditsLastUpdateTicks;
+	uint32 _creditsNextUpdateTicks;
+	int _lastCreditsItemIndex;
+	bool _creditsEndReached;
+	CreditsItems _creditsItems;
+	char *_creditsCurrText;
 
 	// Special code interface functions
 	void runSpecialCode(uint32 specialCodeId, OpCall &opCall);
@@ -75,13 +92,23 @@ public:
 	void spcStopScreenShaker(OpCall &opCall);
 	void spcIncrCounter(OpCall &opCall);
 	void spcUpdateObject272Sequence(OpCall &opCall);
+	void spcPlayRandomSound(OpCall &opCall);
 	void spcHoldGlowingElvisPoster(OpCall &opCall);
+	void spcStartCredits(OpCall &opCall);
 	void spcSetCursorInventoryMode(OpCall &opCall);
 	void spcCenterCurrentScreenText(OpCall &opCall);
 	void spcSetDefaultTextCoords(OpCall &opCall);
 	void spcSetTextDuration(OpCall &opCall);
+	void spcSetTempMasterSfxVolume(OpCall &opCall);
+	void spcRestoreTempMasterSfxVolume(OpCall &opCall);
 
 	void updateTeleporterProperties();
+
+	void startCredits();
+	int updateCredits(uint flags);
+	char *readNextCreditsLine();
+	Common::Point getCreditsItemPosition(int index);
+	void charToWChar(char *text, uint16 *wtext, uint size);
 
 };
 
