@@ -652,7 +652,7 @@ void LabEngine::doTransWipe(CloseDataPtr *cPtr, char *filename) {
 				linesdone = 0;
 			}
 
-			ghoastRect(0, 0, curY, _screenWidth - 1, curY + 1);
+			overlayRect(0, 0, curY, _screenWidth - 1, curY + 1);
 			curY += 4;
 			linesdone++;
 		}
@@ -708,7 +708,7 @@ void LabEngine::doTransWipe(CloseDataPtr *cPtr, char *filename) {
 				imDest._imageData = getCurrentDrawingBuffer();
 
 				imSource.bltBitMap(0, curY, &imDest, 0, curY, _screenWidth, 2);
-				ghoastRect(0, 0, curY, _screenWidth - 1, curY + 1);
+				overlayRect(0, 0, curY, _screenWidth - 1, curY + 1);
 				curY += 4;
 				linesdone++;
 			}
@@ -756,14 +756,13 @@ void LabEngine::doWipe(uint16 wipeType, CloseDataPtr *cPtr, char *filename) {
 		_anim->diffNextFrame();
 }
 
-static byte blackbuffer[256 * 3];
-
 /*****************************************************************************/
 /* Changes the front screen to black.                                        */
 /*****************************************************************************/
 void blackScreen() {
-	memset(blackbuffer, 0, 248 * 3);
-	g_lab->writeColorRegs(blackbuffer, 8, 248);
+	byte pal[256 * 3];
+	memset(pal, 0, 248 * 3);
+	g_lab->writeColorRegs(pal, 8, 248);
 
 	g_system->delayMillis(32);
 }
@@ -772,16 +771,18 @@ void blackScreen() {
 /* Changes the front screen to white.                                        */
 /*****************************************************************************/
 void whiteScreen() {
-	memset(blackbuffer, 255, 248 * 3);
-	g_lab->writeColorRegs(blackbuffer, 8, 248);
+	byte pal[256 * 3];
+	memset(pal, 255, 248 * 3);
+	g_lab->writeColorRegs(pal, 8, 248);
 }
 
 /*****************************************************************************/
 /* Changes the entire screen to black.                                       */
 /*****************************************************************************/
 void blackAllScreen() {
-	memset(blackbuffer, 0, 256 * 3);
-	g_lab->writeColorRegs(blackbuffer, 0, 256);
+	byte pal[256 * 3];
+	memset(pal, 0, 256 * 3);
+	g_lab->writeColorRegs(pal, 0, 256);
 
 	g_system->delayMillis(32);
 }

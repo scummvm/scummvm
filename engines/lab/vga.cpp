@@ -270,9 +270,9 @@ void LabEngine::drawHLine(uint16 x1, uint16 y, uint16 x2) {
 }
 
 /*****************************************************************************/
-/* Ghoasts a region on the screen using the desired pen color.               */
+/* Overlays a region on the screen using the desired pen color.              */
 /*****************************************************************************/
-void LabEngine::ghoastRect(uint16 pencolor, uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
+void LabEngine::overlayRect(uint16 pencolor, uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
 	int dx = x1;
 	int dy = y1;
 	int w = x2 - x1 + 1;
