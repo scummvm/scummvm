@@ -44,7 +44,6 @@ BitMap bit1, bit2, *DispBitMap = &bit1, *DrawBitMap = &bit1;
 
 extern bool stopsound;
 extern TextFont *MsgFont;
-extern const char *CurFileName;
 
 /*---------------------------------------------------------------------------*/
 /*------ From readPict.c.  Reads in pictures and animations from disk. ------*/
@@ -613,13 +612,13 @@ void LabEngine::doTransWipe(CloseDataPtr *cPtr, char *filename) {
 	}
 
 	if (filename == NULL)
-		CurFileName = getPictName(cPtr);
+		g_lab->_curFileName = getPictName(cPtr);
 	else if (filename[0] > ' ')
-		CurFileName = filename;
+		g_lab->_curFileName = filename;
 	else
-		CurFileName = getPictName(cPtr);
+		g_lab->_curFileName = getPictName(cPtr);
 
-	byte *BitMapMem = readPictToMem(CurFileName, _screenWidth, lastY + 5);
+	byte *BitMapMem = readPictToMem(g_lab->_curFileName, _screenWidth, lastY + 5);
 	setPalette(_anim->_diffPalette, 256);
 
 	if (BitMapMem) {

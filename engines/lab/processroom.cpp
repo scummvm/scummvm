@@ -47,10 +47,8 @@ namespace Lab {
 RoomData *_rooms;
 InventoryData *Inventory;
 uint16 NumInv, ManyRooms, HighestCondition, Direction;
-const char *NewFileName;
 
 extern bool DoNotDrawMessage, noupdatediff, QuitLab, MusicOn, LongWinInFront;
-extern const char *CurFileName;
 extern CloseDataPtr CPtr;
 
 /*****************************************************************************/
@@ -382,15 +380,15 @@ static void doActions(Action * APtr, CloseDataPtr *LCPtr) {
 			break;
 
 		case FORCEUPDATE:
-			CurFileName = " ";
+			g_lab->_curFileName = " ";
 			break;
 
 		case SHOWCURPICT:
 			Test = getPictName(LCPtr);
 
-			if (strcmp(Test, CurFileName) != 0) {
-				CurFileName = Test;
-				readPict(CurFileName, true);
+			if (strcmp(Test, g_lab->_curFileName) != 0) {
+				g_lab->_curFileName = Test;
+				readPict(g_lab->_curFileName, true);
 			}
 
 			break;
@@ -642,9 +640,9 @@ bool doActionRule(Common::Point pos, int16 action, int16 roomNum, CloseDataPtr *
 	CloseDataPtr TLCPtr;
 
 	if (roomNum)
-		NewFileName = NOFILE;
+		g_lab->_newFileName = NOFILE;
 	else
-		NewFileName = CurFileName;
+		g_lab->_newFileName = g_lab->_curFileName;
 
 	TLCPtr = getObject(pos.x, pos.y, *LCPtr);
 
@@ -694,7 +692,7 @@ static bool doOperateRuleSub(int16 ItemNum, int16 roomNum, CloseDataPtr LCPtr, C
 bool doOperateRule(int16 x, int16 y, int16 ItemNum, CloseDataPtr *LCPtr) {
 	CloseDataPtr TLCPtr;
 
-	NewFileName = NOFILE;
+	g_lab->_newFileName = NOFILE;
 
 	TLCPtr = getObject(x, y, *LCPtr);
 
@@ -707,7 +705,7 @@ bool doOperateRule(int16 x, int16 y, int16 ItemNum, CloseDataPtr *LCPtr) {
 	else if (doOperateRuleSub(ItemNum, g_lab->_roomNum, *LCPtr, LCPtr, true))
 		return true;
 	else {
-		NewFileName = CurFileName;
+		g_lab->_newFileName = g_lab->_curFileName;
 
 		if (doOperateRuleSub(ItemNum, 0, TLCPtr, LCPtr, false))
 			return true;

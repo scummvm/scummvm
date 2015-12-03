@@ -46,7 +46,7 @@ struct Gadget {
 	uint16 x, y, GadgetID;
 	uint16 KeyEquiv; // if not zero, a key that activates gadget
 	uint32 GadgetFlags;
-	Image *Im, *ImAlt;
+	Image *_image, *_altImage;
 	Gadget *NextGadget;
 };
 

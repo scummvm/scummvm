@@ -171,12 +171,12 @@ static bool loadMapData() {
 	Down = new Image(buffer);
 	DownAlt = new Image(buffer);
 
-	backgadget.Im    = Back;
-	backgadget.ImAlt = BackAlt;
-	upgadget.Im      = Up;
-	upgadget.ImAlt   = UpAlt;
-	downgadget.Im    = Down;
-	downgadget.ImAlt = DownAlt;
+	backgadget._image    = Back;
+	backgadget._altImage = BackAlt;
+	upgadget._image      = Up;
+	upgadget._altImage   = UpAlt;
+	downgadget._image    = Down;
+	downgadget._altImage = DownAlt;
 
 	counter = 0;
 	gptr = MapGadgetList;

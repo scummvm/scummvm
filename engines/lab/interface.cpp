@@ -51,8 +51,8 @@ Gadget *createButton(uint16 x, uint16 y, uint16 id, uint16 key, Image *im, Image
 		gptr->y = y;
 		gptr->GadgetID = id;
 		gptr->KeyEquiv = key;
-		gptr->Im = im;
-		gptr->ImAlt = imalt;
+		gptr->_image = im;
+		gptr->_altImage = imalt;
 		gptr->NextGadget = NULL;
 
 		return gptr;
@@ -82,7 +82,7 @@ void freeButtonList(Gadget *gptrlist) {
 /*****************************************************************************/
 void drawGadgetList(Gadget *gadlist) {
 	while (gadlist) {
-		gadlist->Im->drawImage(gadlist->x, gadlist->y);
+		gadlist->_image->drawImage(gadlist->x, gadlist->y);
 
 		if (GADGETOFF & gadlist->GadgetFlags)
 			ghoastGadget(gadlist, 1);
@@ -96,7 +96,7 @@ void drawGadgetList(Gadget *gadlist) {
 /* Ghoasts a gadget, and makes it unavailable for using.                     */
 /*****************************************************************************/
 void ghoastGadget(Gadget *curgad, uint16 pencolor) {
-	g_lab->ghoastRect(pencolor, curgad->x, curgad->y, curgad->x + curgad->Im->Width - 1, curgad->y + curgad->Im->Height - 1);
+	g_lab->ghoastRect(pencolor, curgad->x, curgad->y, curgad->x + curgad->_image->Width - 1, curgad->y + curgad->_image->Height - 1);
 	curgad->GadgetFlags |= GADGETOFF;
 }
 
@@ -106,7 +106,7 @@ void ghoastGadget(Gadget *curgad, uint16 pencolor) {
 /* Unghoasts a gadget, and makes it available again.                         */
 /*****************************************************************************/
 void unGhoastGadget(Gadget *curgad) {
-	curgad->Im->drawImage(curgad->x, curgad->y);
+	curgad->_image->drawImage(curgad->x, curgad->y);
 	curgad->GadgetFlags &= !(GADGETOFF);
 }
 
@@ -133,11 +133,11 @@ Gadget *LabEngine::checkNumGadgetHit(Gadget *gadlist, uint16 key) {
 		        (gadlist->KeyEquiv != 0 && makeGadgetKeyEquiv(key) == gadlist->KeyEquiv))
 		        && !(GADGETOFF & gadlist->GadgetFlags)) {
 			_event->mouseHide();
-			gadlist->ImAlt->drawImage(gadlist->x, gadlist->y);
+			gadlist->_altImage->drawImage(gadlist->x, gadlist->y);
 			_event->mouseShow();
 			g_system->delayMillis(80);
 			_event->mouseHide();
-			gadlist->Im->drawImage(gadlist->x, gadlist->y);
+			gadlist->_image->drawImage(gadlist->x, gadlist->y);
 			_event->mouseShow();
 
 			return gadlist;

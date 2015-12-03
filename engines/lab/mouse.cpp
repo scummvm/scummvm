@@ -61,21 +61,21 @@ static byte MouseData[] = {1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
 Gadget *EventManager::checkGadgetHit(Gadget *gadgetList, Common::Point pos) {
 	while (gadgetList != NULL) {
 		if ((pos.x >= gadgetList->x) && (pos.y >= gadgetList->y) &&
-		    (pos.x <= (gadgetList->x + gadgetList->Im->Width)) &&
-		    (pos.y <= (gadgetList->y + gadgetList->Im->Height)) &&
+		    (pos.x <= (gadgetList->x + gadgetList->_image->Width)) &&
+		    (pos.y <= (gadgetList->y + gadgetList->_image->Height)) &&
 		     !(GADGETOFF & gadgetList->GadgetFlags)) {
 			if (_vm->_isHiRes) {
 				_hitGadget = gadgetList;
 			} else {
 				mouseHide();
-				gadgetList->ImAlt->drawImage(gadgetList->x, gadgetList->y);
+				gadgetList->_altImage->drawImage(gadgetList->x, gadgetList->y);
 				mouseShow();
 
 				for (uint16 i = 0; i < 3; i++)
 					_vm->waitTOF();
 
 				mouseHide();
-				gadgetList->Im->drawImage(gadgetList->x, gadgetList->y);
+				gadgetList->_image->drawImage(gadgetList->x, gadgetList->y);
 				mouseShow();
 			}
 
@@ -143,14 +143,14 @@ void EventManager::updateMouse() {
 
 	if (_hitGadget) {
 		mouseHide();
-		_hitGadget->ImAlt->drawImage(_hitGadget->x, _hitGadget->y);
+		_hitGadget->_altImage->drawImage(_hitGadget->x, _hitGadget->y);
 		mouseShow();
 
 		for (uint16 i = 0; i < 3; i++)
 			_vm->waitTOF();
 
 		mouseHide();
-		_hitGadget->Im->drawImage(_hitGadget->x, _hitGadget->y);
+		_hitGadget->_image->drawImage(_hitGadget->x, _hitGadget->y);
 		mouseShow();
 		doUpdateDisplay = true;
 		_hitGadget = nullptr;

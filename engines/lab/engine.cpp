@@ -41,8 +41,6 @@
 
 namespace Lab {
 
-const char *CurFileName = " ";
-
 bool LongWinInFront = false;
 
 TextFont *MsgFont;
@@ -56,10 +54,7 @@ extern InventoryData *Inventory;
 extern uint16 NumInv, ManyRooms, HighestCondition, Direction;
 CloseDataPtr CPtr;
 
-bool Alternate = false, ispal = false, noupdatediff = false, MainDisplay = true, QuitLab = false;
-
-extern const char *NewFileName;  /* When ProcessRoom.c decides to change the filename
-                                    of the current picture. */
+bool ispal = false, noupdatediff = false, MainDisplay = true, QuitLab = false;
 
 #define BUFFERSIZE 850000L
 
@@ -100,20 +95,12 @@ extern const char *NewFileName;  /* When ProcessRoom.c decides to change the fil
 #define TERMINALMONITOR      81
 #define LEVERSMONITOR        82
 
-
-static Image *MoveImages[20], *InvImages[10];
-static Gadget *MoveGadgetList, *InvGadgetList;
-
-
 static char initcolors[] = { '\x00', '\x00', '\x00', '\x30',
 							 '\x30', '\x30', '\x10', '\x10',
 							 '\x10', '\x14', '\x14', '\x14',
 							 '\x20', '\x20', '\x20', '\x24',
 							 '\x24', '\x24', '\x2c', '\x2c',
 							 '\x2c', '\x08', '\x08', '\x08'};
-
-
-
 
 /******************************************************************************/
 /* Draws the control panel display.                                           */
@@ -133,10 +120,10 @@ void LabEngine::drawPanel() {
 	setAPen(0);
 	drawHLine(0, VGAScaleY(170), VGAScaleX(319));     /* First black line to separate buttons */
 
-	if (!Alternate) {
+	if (!_alternate) {
 		setAPen(4);
 		drawHLine(0, VGAScaleY(170) + 1, VGAScaleX(319)); /* The horizontal lines under the black one */
-		drawGadgetList(MoveGadgetList);
+		drawGadgetList(_moveGadgetList);
 	} else {
 		if (getPlatform() != Common::kPlatformWindows) {
 			drawVLine(VGAScaleX(124), VGAScaleY(170) + 1, VGAScaleY(199)); /* Vertical Black lines */
@@ -162,7 +149,7 @@ void LabEngine::drawPanel() {
 			drawVLine(VGAScaleX(232), VGAScaleY(170) + 2, VGAScaleY(198));
 		}
 
-		drawGadgetList(InvGadgetList);
+		drawGadgetList(_invGadgetList);
 	}
 
 	_event->mouseShow();
@@ -171,38 +158,32 @@ void LabEngine::drawPanel() {
 /******************************************************************************/
 /* Draws the message for the room.                                            */
 /******************************************************************************/
-void LabEngine::drawRoomMessage(uint16 CurInv, CloseDataPtr cptr) {
+void LabEngine::drawRoomMessage(uint16 curInv, CloseDataPtr closePtr) {
 	if (_lastTooLong) {
 		_lastTooLong = false;
 		return;
 	}
 
-	if (Alternate) {
-		if ((CurInv <= NumInv) && _conditions->in(CurInv) && Inventory[CurInv].BInvName) {
-			if ((CurInv == LAMPNUM) && _conditions->in(LAMPON))  /* LAB: Labyrith specific */
+	if (_alternate) {
+		if ((curInv <= NumInv) && _conditions->in(curInv) && Inventory[curInv].BInvName) {
+			if ((curInv == LAMPNUM) && _conditions->in(LAMPON))  /* LAB: Labyrinth specific */
 				drawStaticMessage(kTextLampOn);
-			else if (Inventory[CurInv].Many > 1) {
-				Common::String roomMessage = Common::String(Inventory[CurInv].name) + "  (" + Common::String::format("%d", Inventory[CurInv].Many) + ")";
+			else if (Inventory[curInv].Many > 1) {
+				Common::String roomMessage = Common::String(Inventory[curInv].name) + "  (" + Common::String::format("%d", Inventory[curInv].Many) + ")";
 				drawMessage(roomMessage.c_str());
 			} else
-				drawMessage(Inventory[CurInv].name);
+				drawMessage(Inventory[curInv].name);
 		}
 	} else
-		drawDirection(cptr);
+		drawDirection(closePtr);
 
 	_lastTooLong = _lastMessageLong;
 }
-
 
 /******************************************************************************/
 /* Sets up the Labyrinth screens, and opens up the initial windows.           */
 /******************************************************************************/
 bool LabEngine::setUpScreens() {
-	byte *buffer;
-	byte *MovePanelBuffer, *InvPanelBuffer;
-	Gadget *curgad;
-	uint16 y;
-
 	if (!createScreen(_isHiRes))
 		return false;
 
@@ -215,60 +196,61 @@ bool LabEngine::setUpScreens() {
 	if (file.err() || file.size() == 0)
 		return false;
 
-	if (!(MovePanelBuffer = (byte *)calloc(file.size(), 1)))
+	byte *movePanelBuffer;
+	if (!(movePanelBuffer = (byte *)calloc(file.size(), 1)))
 		return false;
 
-	file.read(MovePanelBuffer, file.size());
+	file.read(movePanelBuffer, file.size());
 	file.close();
 
-	buffer = MovePanelBuffer;
+	byte *buffer = movePanelBuffer;
 
 	for (uint16 i = 0; i < 20; i++)
-		MoveImages[i] = new Image(&buffer);
+		_moveImages[i] = new Image(&buffer);
 
 	/* Creates the gadgets for the movement control panel */
-	y = VGAScaleY(173) - SVGACord(2);
+	uint16 y = VGAScaleY(173) - SVGACord(2);
 
 	if (getPlatform() == Common::kPlatformWindows) {
-		MoveGadgetList = createButton(1, y, 0, 't', MoveImages[0], MoveImages[1]);
-		curgad = MoveGadgetList;
-		curgad->NextGadget = createButton(33, y, 1, 'm', MoveImages[2], MoveImages[3]);
-		curgad = curgad->NextGadget;
-		curgad->NextGadget = createButton(65, y, 2, 'o', MoveImages[4], MoveImages[5]);
-		curgad = curgad->NextGadget;
-		curgad->NextGadget = createButton(97, y, 3, 'c', MoveImages[6], MoveImages[7]);
-		curgad = curgad->NextGadget;
-		curgad->NextGadget = createButton(129, y, 4, 'l', MoveImages[8], MoveImages[9]);
-		curgad = curgad->NextGadget;
-		curgad->NextGadget = createButton(161, y, 5, 'i', MoveImages[12], MoveImages[13]);
-		curgad = curgad->NextGadget;
-		curgad->NextGadget = createButton(193, y, 6, VKEY_LTARROW, MoveImages[14], MoveImages[15]);
-		curgad = curgad->NextGadget;
-		curgad->NextGadget = createButton(225, y, 7, VKEY_UPARROW, MoveImages[16], MoveImages[17]);
-		curgad = curgad->NextGadget;
-		curgad->NextGadget = createButton(257, y, 8, VKEY_RTARROW, MoveImages[18], MoveImages[19]);
-		curgad = curgad->NextGadget;
-		curgad->NextGadget = createButton(289, y, 9, 'p', MoveImages[10], MoveImages[11]);
+		_moveGadgetList = createButton(1, y, 0, 't', _moveImages[0], _moveImages[1]);
+		Gadget *curGadget = _moveGadgetList;
+		curGadget->NextGadget = createButton(33, y, 1, 'm', _moveImages[2], _moveImages[3]);
+		curGadget = curGadget->NextGadget;
+		curGadget->NextGadget = createButton(65, y, 2, 'o', _moveImages[4], _moveImages[5]);
+		curGadget = curGadget->NextGadget;
+		curGadget->NextGadget = createButton(97, y, 3, 'c', _moveImages[6], _moveImages[7]);
+		curGadget = curGadget->NextGadget;
+		curGadget->NextGadget = createButton(129, y, 4, 'l', _moveImages[8], _moveImages[9]);
+		curGadget = curGadget->NextGadget;
+		curGadget->NextGadget = createButton(161, y, 5, 'i', _moveImages[12], _moveImages[13]);
+		curGadget = curGadget->NextGadget;
+		curGadget->NextGadget = createButton(193, y, 6, VKEY_LTARROW, _moveImages[14], _moveImages[15]);
+		curGadget = curGadget->NextGadget;
+		curGadget->NextGadget = createButton(225, y, 7, VKEY_UPARROW, _moveImages[16], _moveImages[17]);
+		curGadget = curGadget->NextGadget;
+		curGadget->NextGadget = createButton(257, y, 8, VKEY_RTARROW, _moveImages[18], _moveImages[19]);
+		curGadget = curGadget->NextGadget;
+		curGadget->NextGadget = createButton(289, y, 9, 'p', _moveImages[10], _moveImages[11]);
 	} else {
-		MoveGadgetList = createButton(1, y, 0, 0, MoveImages[0], MoveImages[1]);
-		curgad = MoveGadgetList;
-		curgad->NextGadget = createButton(33, y, 1, 0, MoveImages[2], MoveImages[3]);
-		curgad = curgad->NextGadget;
-		curgad->NextGadget = createButton(65, y, 2, 0, MoveImages[4], MoveImages[5]);
-		curgad = curgad->NextGadget;
-		curgad->NextGadget = createButton(97, y, 3, 0, MoveImages[6], MoveImages[7]);
-		curgad = curgad->NextGadget;
-		curgad->NextGadget = createButton(129, y, 4, 0, MoveImages[8], MoveImages[9]);
-		curgad = curgad->NextGadget;
-		curgad->NextGadget = createButton(161, y, 5, 0, MoveImages[12], MoveImages[13]);
-		curgad = curgad->NextGadget;
-		curgad->NextGadget = createButton(193, y, 6, 0, MoveImages[14], MoveImages[15]);
-		curgad = curgad->NextGadget;
-		curgad->NextGadget = createButton(225, y, 7, 0, MoveImages[16], MoveImages[17]);
-		curgad = curgad->NextGadget;
-		curgad->NextGadget = createButton(257, y, 8, 0, MoveImages[18], MoveImages[19]);
-		curgad = curgad->NextGadget;
-		curgad->NextGadget = createButton(289, y, 9, 0, MoveImages[10], MoveImages[11]);
+		_moveGadgetList = createButton(1, y, 0, 0, _moveImages[0], _moveImages[1]);
+		Gadget *curGadget = _moveGadgetList;
+		curGadget->NextGadget = createButton(33, y, 1, 0, _moveImages[2], _moveImages[3]);
+		curGadget = curGadget->NextGadget;
+		curGadget->NextGadget = createButton(65, y, 2, 0, _moveImages[4], _moveImages[5]);
+		curGadget = curGadget->NextGadget;
+		curGadget->NextGadget = createButton(97, y, 3, 0, _moveImages[6], _moveImages[7]);
+		curGadget = curGadget->NextGadget;
+		curGadget->NextGadget = createButton(129, y, 4, 0, _moveImages[8], _moveImages[9]);
+		curGadget = curGadget->NextGadget;
+		curGadget->NextGadget = createButton(161, y, 5, 0, _moveImages[12], _moveImages[13]);
+		curGadget = curGadget->NextGadget;
+		curGadget->NextGadget = createButton(193, y, 6, 0, _moveImages[14], _moveImages[15]);
+		curGadget = curGadget->NextGadget;
+		curGadget->NextGadget = createButton(225, y, 7, 0, _moveImages[16], _moveImages[17]);
+		curGadget = curGadget->NextGadget;
+		curGadget->NextGadget = createButton(257, y, 8, 0, _moveImages[18], _moveImages[19]);
+		curGadget = curGadget->NextGadget;
+		curGadget->NextGadget = createButton(289, y, 9, 0, _moveImages[10], _moveImages[11]);
 	}
 
 	file.open(translateFileName("P:Inv"));
@@ -278,95 +260,89 @@ bool LabEngine::setUpScreens() {
 	if (file.err() || file.size() == 0)
 		return false;
 
-	if (!(InvPanelBuffer = (byte *)calloc(file.size(), 1)))
+	byte *invPanelBuffer;
+	if (!(invPanelBuffer = (byte *)calloc(file.size(), 1)))
 		return false;
 
-	file.read(InvPanelBuffer, file.size());
+	file.read(invPanelBuffer, file.size());
 	file.close();
 
-	buffer = InvPanelBuffer;
+	buffer = invPanelBuffer;
 
 	if (getPlatform() == Common::kPlatformWindows) {
 		for (uint16 imgIdx = 0; imgIdx < 10; imgIdx++)
-			InvImages[imgIdx] = new Image(&buffer);
+			_invImages[imgIdx] = new Image(&buffer);
 
-		InvGadgetList = createButton(24, y, 0, 'm', InvImages[0], InvImages[1]);
-		curgad = InvGadgetList;
-		curgad->NextGadget = createButton(56, y, 1, 'g', InvImages[2], InvImages[3]);
-		curgad = curgad->NextGadget;
-		curgad->NextGadget = createButton(94, y, 2, 'u', InvImages[4], InvImages[5]);
-		curgad = curgad->NextGadget;
-		curgad->NextGadget = createButton(126, y, 3, 'l', MoveImages[8], MoveImages[9]);
-		curgad = curgad->NextGadget;
-		curgad->NextGadget = createButton(164, y, 4, VKEY_LTARROW, MoveImages[14], MoveImages[15]);
-		curgad = curgad->NextGadget;
-		curgad->NextGadget = createButton(196, y, 5, VKEY_RTARROW, MoveImages[18], MoveImages[19]);
-		curgad = curgad->NextGadget;
-		curgad->NextGadget = createButton(234, y, 6, 'b', InvImages[6], InvImages[7]);
-		curgad = curgad->NextGadget;
-		curgad->NextGadget = createButton(266, y, 7, 'f', InvImages[8], InvImages[9]);
-		curgad = curgad->NextGadget;
+		_invGadgetList = createButton(24, y, 0, 'm', _invImages[0], _invImages[1]);
+		Gadget *curGadget = _invGadgetList;
+		curGadget->NextGadget = createButton(56, y, 1, 'g', _invImages[2], _invImages[3]);
+		curGadget = curGadget->NextGadget;
+		curGadget->NextGadget = createButton(94, y, 2, 'u', _invImages[4], _invImages[5]);
+		curGadget = curGadget->NextGadget;
+		curGadget->NextGadget = createButton(126, y, 3, 'l', _moveImages[8], _moveImages[9]);
+		curGadget = curGadget->NextGadget;
+		curGadget->NextGadget = createButton(164, y, 4, VKEY_LTARROW, _moveImages[14], _moveImages[15]);
+		curGadget = curGadget->NextGadget;
+		curGadget->NextGadget = createButton(196, y, 5, VKEY_RTARROW, _moveImages[18], _moveImages[19]);
+		curGadget = curGadget->NextGadget;
+		curGadget->NextGadget = createButton(234, y, 6, 'b', _invImages[6], _invImages[7]);
+		curGadget = curGadget->NextGadget;
+		curGadget->NextGadget = createButton(266, y, 7, 'f', _invImages[8], _invImages[9]);
+		curGadget = curGadget->NextGadget;
 	} else {
 		for (uint16 imgIdx = 0; imgIdx < 6; imgIdx++)
-			InvImages[imgIdx] = new Image(&buffer);
+			_invImages[imgIdx] = new Image(&buffer);
 
-		InvGadgetList = createButton(58, y, 0, 0, InvImages[0], InvImages[1]);
-		curgad = InvGadgetList;
-		curgad->NextGadget = createButton(90, y, 1, 0, InvImages[2], InvImages[3]);
-		curgad = curgad->NextGadget;
-		curgad->NextGadget = createButton(128, y, 2, 0, InvImages[4], InvImages[5]);
-		curgad = curgad->NextGadget;
-		curgad->NextGadget = createButton(160, y, 3, 0, MoveImages[8], MoveImages[9]);
-		curgad = curgad->NextGadget;
-		curgad->NextGadget = createButton(198, y, 4, 0, MoveImages[14], MoveImages[15]);
-		curgad = curgad->NextGadget;
-		curgad->NextGadget = createButton(230, y, 5, 0, MoveImages[18], MoveImages[19]);
-		curgad = curgad->NextGadget;
+		_invGadgetList = createButton(58, y, 0, 0, _invImages[0], _invImages[1]);
+		Gadget *curGadget = _invGadgetList;
+		curGadget->NextGadget = createButton(90, y, 1, 0, _invImages[2], _invImages[3]);
+		curGadget = curGadget->NextGadget;
+		curGadget->NextGadget = createButton(128, y, 2, 0, _invImages[4], _invImages[5]);
+		curGadget = curGadget->NextGadget;
+		curGadget->NextGadget = createButton(160, y, 3, 0, _moveImages[8], _moveImages[9]);
+		curGadget = curGadget->NextGadget;
+		curGadget->NextGadget = createButton(198, y, 4, 0, _moveImages[14], _moveImages[15]);
+		curGadget = curGadget->NextGadget;
+		curGadget->NextGadget = createButton(230, y, 5, 0, _moveImages[18], _moveImages[19]);
+		curGadget = curGadget->NextGadget;
 	}
 
 	return true;
 }
 
-
-
 /******************************************************************************/
-/* Permanently flips the imagry of a gadget.                                  */
+/* Permanently flips the imagery of a gadget.                                 */
 /******************************************************************************/
-void LabEngine::perFlipGadget(uint16 GadID) {
-	Image *Temp;
-	Gadget *TopGad;
+void LabEngine::perFlipGadget(uint16 gadgetId) {
+	Gadget *topGadget = _moveGadgetList;
 
-	TopGad = MoveGadgetList;
+	while (topGadget) {
+		if (topGadget->GadgetID == gadgetId) {
+			Image *tmpImage = topGadget->_image;
+			topGadget->_image = topGadget->_altImage;
+			topGadget->_altImage = tmpImage;
 
-	while (TopGad) {
-		if (TopGad->GadgetID == GadID) {
-			Temp = TopGad->Im;
-			TopGad->Im = TopGad->ImAlt;
-			TopGad->ImAlt = Temp;
-
-			if (!Alternate) {
+			if (!_alternate) {
 				_event->mouseHide();
-				TopGad->Im->drawImage(TopGad->x, TopGad->y);
+				topGadget->_image->drawImage(topGadget->x, topGadget->y);
 				_event->mouseShow();
 			}
 
 			return;
 		} else
-			TopGad = TopGad->NextGadget;
+			topGadget = topGadget->NextGadget;
 	}
 }
-
-
 
 /******************************************************************************/
 /* Eats all the available messages.                                           */
 /******************************************************************************/
 void LabEngine::eatMessages() {
-	IntuiMessage *Msg;
+	IntuiMessage *msg;
 
 	do {
-		Msg = getMsg();
-	} while (Msg);
+		msg = getMsg();
+	} while (msg);
 
 	return;
 }
@@ -374,8 +350,8 @@ void LabEngine::eatMessages() {
 /******************************************************************************/
 /* Checks whether the close up is one of the special case closeups.           */
 /******************************************************************************/
-bool LabEngine::doCloseUp(CloseDataPtr cptr) {
-	if (cptr == NULL)
+bool LabEngine::doCloseUp(CloseDataPtr closePtr) {
+	if (closePtr == NULL)
 		return false;
 
 	int monltmargin, monrtmargin, montopmargin, lutertmargin;
@@ -392,45 +368,42 @@ bool LabEngine::doCloseUp(CloseDataPtr cptr) {
 		lutertmargin = 128;
 	}
 
-	switch (cptr->CloseUpType) {
+	switch (closePtr->CloseUpType) {
 	case MUSEUMMONITOR:
 	case LIBRARYMONITOR:
 	case WINDOWMONITOR:
-		doMonitor(cptr->GraphicName, cptr->Message, false, monltmargin, montopmargin, monrtmargin, 165);
+		doMonitor(closePtr->GraphicName, closePtr->Message, false, monltmargin, montopmargin, monrtmargin, 165);
 		break;
 	case GRAMAPHONEMONITOR:
-		doMonitor(cptr->GraphicName, cptr->Message, false, monltmargin, montopmargin, 171, 165);
+		doMonitor(closePtr->GraphicName, closePtr->Message, false, monltmargin, montopmargin, 171, 165);
 		break;
 	case UNICYCLEMONITOR:
-		doMonitor(cptr->GraphicName, cptr->Message, false, 100, montopmargin, monrtmargin, 165);
+		doMonitor(closePtr->GraphicName, closePtr->Message, false, 100, montopmargin, monrtmargin, 165);
 		break;
 	case STATUEMONITOR:
-		doMonitor(cptr->GraphicName, cptr->Message, false, 117, montopmargin, monrtmargin, 165);
+		doMonitor(closePtr->GraphicName, closePtr->Message, false, 117, montopmargin, monrtmargin, 165);
 		break;
 	case TALISMANMONITOR:
-		doMonitor(cptr->GraphicName, cptr->Message, false, monltmargin, montopmargin, 184, 165);
+		doMonitor(closePtr->GraphicName, closePtr->Message, false, monltmargin, montopmargin, 184, 165);
 		break;
 	case LUTEMONITOR:
-		doMonitor(cptr->GraphicName, cptr->Message, false, monltmargin, montopmargin, lutertmargin, 165);
+		doMonitor(closePtr->GraphicName, closePtr->Message, false, monltmargin, montopmargin, lutertmargin, 165);
 		break;
 	case CLOCKMONITOR:
-		doMonitor(cptr->GraphicName, cptr->Message, false, monltmargin, montopmargin, 206, 165);
+		doMonitor(closePtr->GraphicName, closePtr->Message, false, monltmargin, montopmargin, 206, 165);
 		break;
 	case TERMINALMONITOR:
-		doMonitor(cptr->GraphicName, cptr->Message, true, monltmargin, montopmargin, monrtmargin, 165);
+		doMonitor(closePtr->GraphicName, closePtr->Message, true, monltmargin, montopmargin, monrtmargin, 165);
 		break;
 	default:
 		return false;
 	}
 
-	CurFileName = " ";
+	_curFileName = " ";
 	drawPanel();
 
 	return true;
 }
-
-
-
 
 /******************************************************************************/
 /* Gets the current inventory name.                                           */
@@ -442,21 +415,19 @@ static const char *getInvName(uint16 CurInv) {
 	if ((CurInv == LAMPNUM) && g_lab->_conditions->in(LAMPON))
 		return "P:Mines/120";
 
-	else if ((CurInv == BELTNUM) && g_lab->_conditions->in(BELTGLOW))
+	if ((CurInv == BELTNUM) && g_lab->_conditions->in(BELTGLOW))
 		return "P:Future/BeltGlow";
 
-	else if (CurInv == WESTPAPERNUM) {
-		CurFileName = Inventory[CurInv].BInvName;
+	if (CurInv == WESTPAPERNUM) {
+		g_lab->_curFileName = Inventory[CurInv].BInvName;
 		g_lab->_anim->_noPalChange = true;
-		readPict(CurFileName, false);
+		readPict(g_lab->_curFileName, false);
 		g_lab->_anim->_noPalChange = false;
 		doWestPaper();
-	}
-
-	else if (CurInv == NOTESNUM) {
-		CurFileName = Inventory[CurInv].BInvName;
+	} else if (CurInv == NOTESNUM) {
+		g_lab->_curFileName = Inventory[CurInv].BInvName;
 		g_lab->_anim->_noPalChange = true;
-		readPict(CurFileName, false);
+		readPict(g_lab->_curFileName, false);
 		g_lab->_anim->_noPalChange = false;
 		doNotes();
 	}
@@ -464,16 +435,14 @@ static const char *getInvName(uint16 CurInv) {
 	return Inventory[CurInv].BInvName;
 }
 
-static bool interfaceisoff = false;
-
 /******************************************************************************/
 /* Turns the interface off.                                                   */
 /******************************************************************************/
 void LabEngine::interfaceOff() {
-	if (!interfaceisoff) {
+	if (!_interfaceOff) {
 		_event->attachGadgetList(NULL);
 		_event->mouseHide();
-		interfaceisoff = true;
+		_interfaceOff = true;
 	}
 }
 
@@ -481,21 +450,18 @@ void LabEngine::interfaceOff() {
 /* Turns the interface on.                                                    */
 /******************************************************************************/
 void LabEngine::interfaceOn() {
-	if (interfaceisoff) {
-		interfaceisoff = false;
-
+	if (_interfaceOff) {
+		_interfaceOff = false;
 		_event->mouseShow();
 	}
 
 	if (LongWinInFront)
 		_event->attachGadgetList(NULL);
-	else if (Alternate)
-		_event->attachGadgetList(InvGadgetList);
+	else if (_alternate)
+		_event->attachGadgetList(_invGadgetList);
 	else
-		_event->attachGadgetList(MoveGadgetList);
+		_event->attachGadgetList(_moveGadgetList);
 }
-
-static const char *Test;
 
 /******************************************************************************/
 /* If the user hits the "Use" gadget; things that can get used on themselves. */
@@ -505,7 +471,7 @@ bool LabEngine::doUse(uint16 CurInv) {
 		drawStaticMessage(kTextUseMap);
 		interfaceOff();
 		_anim->stopDiff();
-		CurFileName = " ";
+		_curFileName = " ";
 		CPtr = NULL;
 		doMap(_roomNum);
 		setPalette(initcolors, 8);
@@ -515,7 +481,7 @@ bool LabEngine::doUse(uint16 CurInv) {
 		drawStaticMessage(kTextUseJournal);
 		interfaceOff();
 		_anim->stopDiff();
-		CurFileName = " ";
+		_curFileName = " ";
 		CPtr = NULL;
 		doJournal();
 		drawPanel();
@@ -537,13 +503,13 @@ bool LabEngine::doUse(uint16 CurInv) {
 		_anim->_waitForEffect = false;
 
 		_anim->_doBlack = false;
-		Test = getInvName(CurInv);
+		_nextFileName = getInvName(CurInv);
 	} else if (CurInv == BELTNUM) {                    /* LAB: Labyrinth specific */
 		if (!_conditions->in(BELTGLOW))
 			_conditions->inclElement(BELTGLOW);
 
 		_anim->_doBlack = false;
-		Test = getInvName(CurInv);
+		_nextFileName = getInvName(CurInv);
 	} else if (CurInv == WHISKEYNUM) {                 /* LAB: Labyrinth specific */
 		_conditions->inclElement(USEDHELMET);
 		drawStaticMessage(kTextUseWhiskey);
@@ -559,9 +525,6 @@ bool LabEngine::doUse(uint16 CurInv) {
 	return true;
 }
 
-
-
-
 /******************************************************************************/
 /* Decrements the current inventory number.                                   */
 /******************************************************************************/
@@ -575,7 +538,7 @@ void LabEngine::decIncInv(uint16 *CurInv, bool dec) {
 
 	while (*CurInv && (*CurInv <= NumInv)) {
 		if (_conditions->in(*CurInv) && Inventory[*CurInv].BInvName) {
-			Test = getInvName(*CurInv);
+			_nextFileName = getInvName(*CurInv);
 			break;
 		}
 
@@ -593,7 +556,7 @@ void LabEngine::decIncInv(uint16 *CurInv, bool dec) {
 
 		while (*CurInv && (*CurInv <= NumInv)) {
 			if (_conditions->in(*CurInv) && Inventory[*CurInv].BInvName) {
-				Test = getInvName(*CurInv);
+				_nextFileName = getInvName(*CurInv);
 				break;
 			}
 
@@ -660,32 +623,30 @@ void LabEngine::mainGameLoop() {
 
 			/* Sets the current picture properly on the screen */
 			if (MainDisplay)
-				Test = getPictName(&CPtr);
+				_nextFileName = getPictName(&CPtr);
 
 			if (noupdatediff) {
 				_roomsFound->inclElement(_roomNum); /* Potentially entered another room */
-				forceDraw = (strcmp(Test, CurFileName) != 0) || forceDraw;
+				forceDraw |= (strcmp(_nextFileName, _curFileName) != 0);
 
 				noupdatediff = false;
-				CurFileName = Test;
-			}
-
-			else if (strcmp(Test, CurFileName) != 0) {
+				_curFileName = _nextFileName;
+			} else if (strcmp(_nextFileName, _curFileName) != 0) {
 				interfaceOff();
 				_roomsFound->inclElement(_roomNum); /* Potentially entered another room */
-				CurFileName = Test;
+				_curFileName = _nextFileName;
 
 				if (CPtr) {
 					if ((CPtr->CloseUpType == SPECIALLOCK) && MainDisplay)  /* LAB: Labyrinth specific code */
-						showCombination(CurFileName);
+						showCombination(_curFileName);
 					else if (((CPtr->CloseUpType == SPECIALBRICK)  ||
 					          (CPtr->CloseUpType == SPECIALBRICKNOMOUSE)) &&
 					         MainDisplay) /* LAB: Labyrinth specific code */
-						showTile(CurFileName, (bool)(CPtr->CloseUpType == SPECIALBRICKNOMOUSE));
+						showTile(_curFileName, (bool)(CPtr->CloseUpType == SPECIALBRICKNOMOUSE));
 					else
-						readPict(CurFileName, false);
+						readPict(_curFileName, false);
 				} else
-					readPict(CurFileName, false);
+					readPict(_curFileName, false);
 
 				drawRoomMessage(curInv, CPtr);
 				forceDraw = false;
@@ -806,9 +767,9 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 					_isCrumbWaiting = false;
 					getTime(&_crumbSecs, &_crumbMicros);
 
-					if (Alternate) {
+					if (_alternate) {
 						eatMessages();
-						Alternate = false;
+						_alternate = false;
 						_anim->_doBlack = true;
 						DoNotDrawMessage = false;
 
@@ -883,7 +844,7 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 			drawRoomMessage(curInv, CPtr);
 			screenUpdate();
 		}
-	} else if ((msgClass == GADGETUP) && !Alternate) {
+	} else if ((msgClass == GADGETUP) && !_alternate) {
 		if (gadgetId <= 5) {
 			if ((actionMode == 4) && (gadgetId == 4) && (CPtr != NULL)) {
 				doMainView(&CPtr);
@@ -896,7 +857,7 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 			} else if (gadgetId == 5) {
 				eatMessages();
 
-				Alternate = true;
+				_alternate = true;
 				_anim->_doBlack = true;
 				DoNotDrawMessage = false;
 				interfaceOn(); /* Sets the correct gadget list */
@@ -905,7 +866,7 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 
 				if (LastInv && _conditions->in(LastInv)) {
 					curInv = LastInv;
-					Test = getInvName(curInv);
+					_nextFileName = getInvName(curInv);
 				} else
 					decIncInv(&curInv, false);
 
@@ -951,7 +912,7 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 				else
 					drawStaticMessage(kTextTurnRight);
 
-				CurFileName = " ";
+				_curFileName = " ";
 
 				OldDirection = Direction;
 
@@ -977,7 +938,7 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 					if (OldRoomNum != _roomNum) {
 						drawStaticMessage(kTextGoForward);
 						_roomsFound->inclElement(_roomNum); /* Potentially entered a new room */
-						CurFileName = " ";
+						_curFileName = " ";
 						forceDraw = true;
 					} else {
 						_anim->_doBlack = true;
@@ -1030,12 +991,12 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 				screenUpdate();
 			}
 		}
-	} else if ((msgClass == GADGETUP) && Alternate) {
+	} else if ((msgClass == GADGETUP) && _alternate) {
 		_anim->_doBlack = true;
 
 		if (gadgetId == 0) {
 			eatMessages();
-			Alternate = false;
+			_alternate = false;
 			_anim->_doBlack = true;
 			DoNotDrawMessage = false;
 
@@ -1052,7 +1013,7 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 		if (gadgetId == 0) {
 			interfaceOff();
 			_anim->stopDiff();
-			CurFileName = " ";
+			_curFileName = " ";
 
 			doit = !saveRestoreGame();
 			CPtr = NULL;
@@ -1062,7 +1023,7 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 			curInv = MAPNUM;
 			LastInv = MAPNUM;
 
-			Test = getInvName(curInv);
+			_nextFileName = getInvName(curInv);
 
 			drawPanel();
 
@@ -1101,7 +1062,7 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 
 			if ((curInv <= NumInv) && _conditions->in(curInv) &&
 			        Inventory[curInv].BInvName)
-				Test = getInvName(curInv);
+				_nextFileName = getInvName(curInv);
 
 			screenUpdate();
 		} else if (gadgetId == 3) { /* Left gadget */
@@ -1134,7 +1095,7 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 					getTime(&_crumbSecs, &_crumbMicros);
 
 					eatMessages();
-					Alternate = false;
+					_alternate = false;
 					_anim->_doBlack = true;
 					DoNotDrawMessage = false;
 
@@ -1176,20 +1137,20 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 
 			if (actionMode == 0) { /* Take something. */
 				if (doActionRule(Common::Point(curPos.x, curPos.y), actionMode, _roomNum, &CPtr))
-					CurFileName = NewFileName;
+					_curFileName = _newFileName;
 				else if (takeItem(curPos.x, curPos.y, &CPtr))
 					drawStaticMessage(kTextTakeItem);
 				else if (doActionRule(curPos, TAKEDEF - 1, _roomNum, &CPtr))
-					CurFileName = NewFileName;
+					_curFileName = _newFileName;
 				else if (doActionRule(curPos, TAKE - 1, 0, &CPtr))
-					CurFileName = NewFileName;
+					_curFileName = _newFileName;
 				else if (curPos.y < (VGAScaleY(149) + SVGACord(2)))
 					drawStaticMessage(kTextNothing);
 			} else if ((actionMode == 1) /* Manipulate an object */  ||
 			         (actionMode == 2) /* Open up a "door" */      ||
 			         (actionMode == 3)) { /* Close a "door" */
 				if (doActionRule(curPos, actionMode, _roomNum, &CPtr))
-					CurFileName = NewFileName;
+					_curFileName = _newFileName;
 				else if (!doActionRule(curPos, actionMode, 0, &CPtr)) {
 					if (curPos.y < (VGAScaleY(149) + SVGACord(2)))
 						drawStaticMessage(kTextNothing);
@@ -1212,7 +1173,7 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 			} else if ((actionMode == 5)  &&
 			         _conditions->in(curInv)) { /* Use an item on something else */
 				if (doOperateRule(curPos.x, curPos.y, curInv, &CPtr)) {
-					CurFileName = NewFileName;
+					_curFileName = _newFileName;
 
 					if (!_conditions->in(curInv))
 						decIncInv(&curInv, false);
@@ -1253,13 +1214,13 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 			_event->setMousePos(Common::Point(scaleX((HCPtr->x1 + HCPtr->x2) / 2), scaleY((HCPtr->y1 + HCPtr->y2) / 2)));
 	} else if ((msgClass == MOUSEBUTTONS) && (IEQUALIFIER_RBUTTON & Qualifier)) {
 		eatMessages();
-		Alternate = !Alternate;
+		_alternate = !_alternate;
 		_anim->_doBlack = true;
 		DoNotDrawMessage = false;
 		MainDisplay = true;
 		interfaceOn(); /* Sets the correct gadget list */
 
-		if (Alternate) {
+		if (_alternate) {
 			if (LastInv && _conditions->in(LastInv))
 				curInv = LastInv;
 			else
