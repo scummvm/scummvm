@@ -60,7 +60,8 @@ void setAmigaPal(uint16 *pal, uint16 numcolors) {
 		vgapal[vgacount++] = (byte)(((pal[i] & 0x00f)) << 2);
 	}
 
-	g_lab->writeColorRegsSmooth(vgapal, 0, 16);
+	g_lab->writeColorRegs(vgapal, 0, 16);
+	g_lab->waitTOF();
 }
 
 /*---------------------------------------------------------------------------*/
@@ -620,7 +621,7 @@ void LabEngine::processMap(uint16 CurRoom) {
 			}
 
 			waitTOF();
-			writeColorReg(newcolor, 1);
+			writeColorRegs(newcolor, 1, 1);
 			_event->updateMouse();
 			waitTOF();
 			_event->updateMouse();

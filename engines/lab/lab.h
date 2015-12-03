@@ -74,7 +74,7 @@ public:
 
 	int _screenWidth;
 	int _screenHeight;
-	int _screenBytesPerPage;
+	uint32 _screenBytesPerPage;
 
 
 	// timing.cpp
@@ -151,8 +151,6 @@ public:
 	void setPalette(void *cmap, uint16 numcolors);
 	void drawHLine(uint16 x, uint16 y1, uint16 y2);
 	void drawVLine(uint16 x1, uint16 y, uint16 x2);
-	void writeColorReg(byte *buf, uint16 regnum);
-	void writeColorRegsSmooth(byte *buf, uint16 first, uint16 numreg);
 
 	void drawPanel();
 	void drawRoomMessage(uint16 CurInv, CloseDataPtr cptr);
@@ -185,12 +183,6 @@ public:
 	void changeVolume(int delta);
 
 private:
-	void quickWaitTOF();
-
-	/*---------- Drawing Routines ----------*/
-
-	void applyPalette(byte *buf, uint16 first, uint16 numreg, uint16 slow);
-
 	// engine.cpp
 	bool setUpScreens();
 	void freeScreens();
