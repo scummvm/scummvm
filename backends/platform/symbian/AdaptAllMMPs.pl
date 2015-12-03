@@ -56,6 +56,7 @@ chdir("../../../");
 	"mmp/scummvm_lastexpress.mmp",
 	"mmp/scummvm_mads.mmp",
 	"mmp/scummvm_prince.mmp",
+	"mmp/scummvm_sherlock.mmp",
 	"mmp/scummvm_sword25.mmp",
 	"mmp/scummvm_testbed.mmp",
 	"mmp/scummvm_zvision.mmp",
@@ -203,6 +204,7 @@ ParseModule("_lastexpress","lastexpress",	\@section_empty);
 ParseModule("_m4",		"m4",		\@section_empty);
 ParseModule("_mads"			,"mads",	\@section_empty);
 ParseModule("_prince"			,"prince",	\@section_empty);
+ParseModule("_sherlock"     ,"sherlock",	\@section_empty);
 ParseModule("_sword25"     ,"sword25",	\@section_empty);
 ParseModule("_testbed"     ,"testbed",	\@section_empty);
 ParseModule("_zvision"     ,"zvision",	\@section_empty);
