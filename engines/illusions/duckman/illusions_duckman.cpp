@@ -167,9 +167,15 @@ Common::Error IllusionsEngine_Duckman::run() {
 	_scriptResource->_properties.set(0x000E0024, true);
 #endif
 
-#if 1
+#if 0
 	// DEBUG Enterprise
 	_scriptResource->_blockCounters.set(238, 1);
+#endif
+
+#if 1
+	// DEBUG Map / special code 0016001A
+	_scriptResource->_properties.set(0x000E0017, true);
+	_scriptResource->_properties.set(0x000E0022, false);
 #endif
 
 	while (!shouldQuit()) {

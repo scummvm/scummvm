@@ -48,15 +48,14 @@ public:
 	IllusionsEngine_Duckman *_vm;
 	SpecialCodeMap _specialCodeMap;
 
-	uint _chinesePuzzleIndex;
-	byte _chinesePuzzleAnswers[3];
-	
-	Common::Point _teleporterPosition;
-	
 	PropertyTimers *_propertyTimers;
 	DuckmanInventory *_inventory;
-	
+
+	uint _chinesePuzzleIndex;
+	byte _chinesePuzzleAnswers[3];
+	Common::Point _teleporterPosition;
 	int16 _counter;
+	bool _wasCursorHoldingElvisPoster;
 
 	// Special code interface functions
 	void runSpecialCode(uint32 specialCodeId, OpCall &opCall);
@@ -76,6 +75,7 @@ public:
 	void spcStopScreenShaker(OpCall &opCall);
 	void spcIncrCounter(OpCall &opCall);
 	void spcUpdateObject272Sequence(OpCall &opCall);
+	void spcHoldGlowingElvisPoster(OpCall &opCall);
 	void spcSetCursorInventoryMode(OpCall &opCall);
 	void spcCenterCurrentScreenText(OpCall &opCall);
 	void spcSetDefaultTextCoords(OpCall &opCall);

@@ -41,6 +41,8 @@ DuckmanSpecialCode::DuckmanSpecialCode(IllusionsEngine_Duckman *vm)
 
 	_propertyTimers = new PropertyTimers(_vm);
 	_inventory = new DuckmanInventory(_vm);
+	_wasCursorHoldingElvisPoster = false;
+	_counter = 0;
 }
 
 DuckmanSpecialCode::~DuckmanSpecialCode() {
@@ -69,6 +71,7 @@ void DuckmanSpecialCode::init() {
 	SPECIAL(0x00160012, spcStopScreenShaker);
 	SPECIAL(0x00160013, spcIncrCounter);
 	SPECIAL(0x00160014, spcUpdateObject272Sequence);
+	SPECIAL(0x0016001A, spcHoldGlowingElvisPoster);
 	SPECIAL(0x0016001C, spcSetCursorInventoryMode);
 	SPECIAL(0x0016001D, spcCenterCurrentScreenText);
 	SPECIAL(0x0016001E, spcSetDefaultTextCoords);
@@ -281,6 +284,32 @@ void DuckmanSpecialCode::spcUpdateObject272Sequence(OpCall &opCall) {
 	}
 	Control *control = _vm->getObjectControl(0x40110);
 	control->startSequenceActor(sequenceId, 2, opCall._threadId);
+}
+
+void DuckmanSpecialCode::spcHoldGlowingElvisPoster(OpCall &opCall) {
+	const uint32 kPosterObjectId = 0x40072;
+	const uint32 kPosterSequenceId = 0x60034;
+	ARG_BYTE(mode);
+	switch (mode) {
+	case 0:
+		if (_vm->_cursor._objectId == kPosterObjectId) {
+			_wasCursorHoldingElvisPoster = true;
+			_inventory->addInventoryItem(_vm->_cursor._objectId);
+			_vm->stopCursorHoldingObject();
+		} else {
+			_wasCursorHoldingElvisPoster = false;
+		}
+		break;
+	case 1:
+		if (_wasCursorHoldingElvisPoster) {
+			_inventory->clearInventorySlot(kPosterObjectId);
+			_vm->_cursor._objectId = kPosterObjectId;
+			_vm->_cursor._sequenceId2 = kPosterSequenceId;
+			_vm->_cursor._field14[_vm->_cursor._actorIndex - 1] = true;
+		}
+		break;
+	}
+	_vm->notifyThreadId(opCall._threadId);
 }
 
 void DuckmanSpecialCode::spcSetCursorInventoryMode(OpCall &opCall) {
