@@ -130,6 +130,10 @@ private:
 	int _lastWaitTOFTicks;
 	bool _lastMessageLong;
 	bool _lastTooLong;
+	TextFont *_msgFont;
+
+public:
+	bool _longWinInFront;
 
 private:
 	bool createScreen(bool HiRes);
@@ -161,8 +165,8 @@ public:
 	void doScrollBlack();
 	void doScrollWipe(char *filename);
 	void doScrollBounce();
-	void doWipe(uint16 WipeType, CloseDataPtr *CPtr, char *filename);
-	void doTransWipe(CloseDataPtr *CPtr, char *filename);
+	void doWipe(uint16 WipeType, CloseDataPtr *cPtr, char *filename);
+	void doTransWipe(CloseDataPtr *cPtr, char *filename);
 	Gadget *checkNumGadgetHit(Gadget *gadlist, uint16 key);
 	IntuiMessage *getMsg();
 	void drawMap(uint16 CurRoom, uint16 CurMsg, uint16 Floor, bool fadeout, bool fadein);
@@ -176,7 +180,7 @@ public:
 	void doMonitor(char *background, char *textfile, bool isinteractive, uint16 x1, uint16 y1, uint16 x2, uint16 y2);
 	void eatMessages();
 	void drawStaticMessage(byte index);
-	void drawDirection(CloseDataPtr LCPtr);
+	void drawDirection(CloseDataPtr lcPtr);
 	int followCrumbs();
 
 	void changeVolume(int delta);

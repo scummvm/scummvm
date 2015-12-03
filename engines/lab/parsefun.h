@@ -49,16 +49,16 @@ void freeRoomBuffer();
 /* From ProcessRoom.c */
 
 ViewData *getViewData(uint16 RoomNum, uint16 Direction);
-char *getPictName(CloseDataPtr *LCPtr);
-void drawDirection(CloseDataPtr LCPtr);
+char *getPictName(CloseDataPtr *lcptr);
+void drawDirection(CloseDataPtr lcptr);
 bool processArrow(uint16 *Direction, uint16 Arrow);
 void setCurClose(Common::Point pos, CloseDataPtr *cptr, bool useAbsoluteCoords = false);
 bool takeItem(uint16 x, uint16 y, CloseDataPtr *cptr);
-bool doActionRule(Common::Point pos, int16 action, int16 RoomNum, CloseDataPtr *LCPtr);
-bool doOperateRule(int16 x, int16 y, int16 ItemNum, CloseDataPtr *LCPtr);
-bool doGoForward(CloseDataPtr *LCPtr);
-bool doTurn(uint16 from, uint16 to, CloseDataPtr *LCPtr);
-bool doMainView(CloseDataPtr *LCPtr);
+bool doActionRule(Common::Point pos, int16 action, int16 RoomNum, CloseDataPtr *lcptr);
+bool doOperateRule(int16 x, int16 y, int16 ItemNum, CloseDataPtr *lcptr);
+bool doGoForward(CloseDataPtr *lcptr);
+bool doTurn(uint16 from, uint16 to, CloseDataPtr *lcptr);
+bool doMainView(CloseDataPtr *lcptr);
 
 } // End of namespace Lab
 

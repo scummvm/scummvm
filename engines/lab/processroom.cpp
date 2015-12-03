@@ -48,7 +48,7 @@ RoomData *_rooms;
 InventoryData *Inventory;
 uint16 NumInv, ManyRooms, HighestCondition, Direction;
 
-extern bool DoNotDrawMessage, noupdatediff, QuitLab, MusicOn, LongWinInFront;
+extern bool DoNotDrawMessage, noupdatediff, QuitLab, MusicOn;
 extern CloseDataPtr CPtr;
 
 /*****************************************************************************/
@@ -116,24 +116,24 @@ ViewData *getViewData(uint16 roomNum, uint16 direction) {
 /*****************************************************************************/
 /* Gets an object, if any, from the user's click on the screen.              */
 /*****************************************************************************/
-static CloseData *getObject(uint16 x, uint16 y, CloseDataPtr LCPtr) {
+static CloseData *getObject(uint16 x, uint16 y, CloseDataPtr lcptr) {
 	ViewData *VPtr;
 
-	if (LCPtr == NULL) {
+	if (lcptr == NULL) {
 		VPtr = getViewData(g_lab->_roomNum, Direction);
-		LCPtr = VPtr->closeUps;
+		lcptr = VPtr->closeUps;
 	}
 
 	else
-		LCPtr = LCPtr->SubCloseUps;
+		lcptr = lcptr->SubCloseUps;
 
 
-	while (LCPtr != NULL) {
-		if ((x >= scaleX(LCPtr->x1)) && (y >= scaleY(LCPtr->y1)) &&
-		        (x <= scaleX(LCPtr->x2)) && (y <= scaleY(LCPtr->y2)))
-			return LCPtr;
+	while (lcptr != NULL) {
+		if ((x >= scaleX(lcptr->x1)) && (y >= scaleY(lcptr->y1)) &&
+		        (x <= scaleX(lcptr->x2)) && (y <= scaleY(lcptr->y2)))
+			return lcptr;
 
-		LCPtr = LCPtr->NextCloseUp;
+		lcptr = lcptr->NextCloseUp;
 	}
 
 	return NULL;
@@ -168,14 +168,14 @@ static CloseDataPtr findCPtrMatch(CloseDataPtr Main, CloseDataPtr List) {
 /*****************************************************************************/
 /* Returns the current picture name.                                         */
 /*****************************************************************************/
-char *getPictName(CloseDataPtr *LCPtr) {
+char *getPictName(CloseDataPtr *lcptr) {
 	ViewData *ViewPtr = getViewData(g_lab->_roomNum, Direction);
 
-	if (*LCPtr != NULL) {
-		*LCPtr = findCPtrMatch(*LCPtr, ViewPtr->closeUps);
+	if (*lcptr != NULL) {
+		*lcptr = findCPtrMatch(*lcptr, ViewPtr->closeUps);
 
-		if (*LCPtr)
-			return (*LCPtr)->GraphicName;
+		if (*lcptr)
+			return (*lcptr)->GraphicName;
 	}
 
 	return ViewPtr->GraphicName;
@@ -184,9 +184,9 @@ char *getPictName(CloseDataPtr *LCPtr) {
 /*****************************************************************************/
 /* Draws the current direction to the screen.                                */
 /*****************************************************************************/
-void LabEngine::drawDirection(CloseDataPtr LCPtr) {
-	if (LCPtr != NULL && LCPtr->Message) {
-		drawMessage(LCPtr->Message);
+void LabEngine::drawDirection(CloseDataPtr lcptr) {
+	if (lcptr != NULL && lcptr->Message) {
+		drawMessage(lcptr->Message);
 		return;
 	}
 
@@ -257,34 +257,34 @@ bool processArrow(uint16 *direction, uint16 Arrow) {
 /*****************************************************************************/
 void setCurClose(Common::Point pos, CloseDataPtr *cptr, bool useAbsoluteCoords) {
 	ViewData *VPtr;
-	CloseDataPtr LCPtr;
+	CloseDataPtr lcptr;
 	uint16 x1, y1, x2, y2;
 
 	if (*cptr == NULL) {
 		VPtr = getViewData(g_lab->_roomNum, Direction);
-		LCPtr = VPtr->closeUps;
+		lcptr = VPtr->closeUps;
 	} else
-		LCPtr = (*cptr)->SubCloseUps;
+		lcptr = (*cptr)->SubCloseUps;
 
-	while (LCPtr != NULL) {
+	while (lcptr != NULL) {
 		if (!useAbsoluteCoords) {
-			x1 = LCPtr->x1;
-			y1 = LCPtr->y1;
-			x2 = LCPtr->x2;
-			y2 = LCPtr->y2;
+			x1 = lcptr->x1;
+			y1 = lcptr->y1;
+			x2 = lcptr->x2;
+			y2 = lcptr->y2;
 		} else {
-			x1 = scaleX(LCPtr->x1);
-			y1 = scaleY(LCPtr->y1);
-			x2 = scaleX(LCPtr->x2);
-			y2 = scaleY(LCPtr->y2);
+			x1 = scaleX(lcptr->x1);
+			y1 = scaleY(lcptr->y1);
+			x2 = scaleX(lcptr->x2);
+			y2 = scaleY(lcptr->y2);
 		}
 
-		if (pos.x >= x1 && pos.y >= y1 && pos.x <= x2 && pos.y <= y2 && LCPtr->GraphicName) {
-			*cptr = LCPtr;
+		if (pos.x >= x1 && pos.y >= y1 && pos.x <= x2 && pos.y <= y2 && lcptr->GraphicName) {
+			*cptr = lcptr;
 			return;
 		}
 
-		LCPtr = LCPtr->NextCloseUp;
+		lcptr = lcptr->NextCloseUp;
 	}
 }
 
@@ -293,27 +293,27 @@ void setCurClose(Common::Point pos, CloseDataPtr *cptr, bool useAbsoluteCoords) 
 /*****************************************************************************/
 bool takeItem(uint16 x, uint16 y, CloseDataPtr *cptr) {
 	ViewData *VPtr;
-	CloseDataPtr LCPtr;
+	CloseDataPtr lcptr;
 
 	if (*cptr == NULL) {
 		VPtr = getViewData(g_lab->_roomNum, Direction);
-		LCPtr = VPtr->closeUps;
+		lcptr = VPtr->closeUps;
 	} else if ((*cptr)->CloseUpType < 0) {
 		g_lab->_conditions->inclElement(abs((*cptr)->CloseUpType));
 		return true;
 	} else
-		LCPtr = (*cptr)->SubCloseUps;
+		lcptr = (*cptr)->SubCloseUps;
 
 
-	while (LCPtr != NULL) {
-		if ((x >= scaleX(LCPtr->x1)) && (y >= scaleY(LCPtr->y1)) &&
-		        (x <= scaleX(LCPtr->x2)) && (y <= scaleY(LCPtr->y2)) &&
-		        (LCPtr->CloseUpType < 0)) {
-			g_lab->_conditions->inclElement(abs(LCPtr->CloseUpType));
+	while (lcptr != NULL) {
+		if ((x >= scaleX(lcptr->x1)) && (y >= scaleY(lcptr->y1)) &&
+		        (x <= scaleX(lcptr->x2)) && (y <= scaleY(lcptr->y2)) &&
+		        (lcptr->CloseUpType < 0)) {
+			g_lab->_conditions->inclElement(abs(lcptr->CloseUpType));
 			return true;
 		}
 
-		LCPtr = LCPtr->NextCloseUp;
+		lcptr = lcptr->NextCloseUp;
 	}
 
 	return false;
@@ -322,8 +322,8 @@ bool takeItem(uint16 x, uint16 y, CloseDataPtr *cptr) {
 /*****************************************************************************/
 /* Processes the action list.                                                */
 /*****************************************************************************/
-static void doActions(Action *APtr, CloseDataPtr *LCPtr) {
-	CloseDataPtr TLCPtr;
+static void doActions(Action *APtr, CloseDataPtr *lcptr) {
+	CloseDataPtr tlcptr;
 	bool FirstLoaded = true;
 	char **str, *Test;
 	uint32 StartSecs, StartMicros, CurSecs, CurMicros;
@@ -371,7 +371,7 @@ static void doActions(Action *APtr, CloseDataPtr *LCPtr) {
 			break;
 
 		case WIPECMD:
-			g_lab->doWipe(APtr->Param1, LCPtr, (char *)APtr->Data);
+			g_lab->doWipe(APtr->Param1, lcptr, (char *)APtr->Data);
 			break;
 
 		case NOUPDATE:
@@ -384,7 +384,7 @@ static void doActions(Action *APtr, CloseDataPtr *LCPtr) {
 			break;
 
 		case SHOWCURPICT:
-			Test = getPictName(LCPtr);
+			Test = getPictName(lcptr);
 
 			if (strcmp(Test, g_lab->_curFileName) != 0) {
 				g_lab->_curFileName = Test;
@@ -404,7 +404,7 @@ static void doActions(Action *APtr, CloseDataPtr *LCPtr) {
 		case SHOWMESSAGE:
 			DoNotDrawMessage = false;
 
-			if (LongWinInFront)
+			if (g_lab->_longWinInFront)
 				g_lab->longDrawMessage((char *)APtr->Data);
 			else
 				g_lab->drawMessage((char *)APtr->Data);
@@ -413,7 +413,7 @@ static void doActions(Action *APtr, CloseDataPtr *LCPtr) {
 			break;
 
 		case CSHOWMESSAGE:
-			if (*LCPtr == NULL) {
+			if (*lcptr == NULL) {
 				DoNotDrawMessage = false;
 				g_lab->drawMessage((char *)APtr->Data);
 				DoNotDrawMessage = true;
@@ -432,7 +432,7 @@ static void doActions(Action *APtr, CloseDataPtr *LCPtr) {
 			if (APtr->Param1 & 0x8000) {
 				// This is a Wyrmkeep Windows trial version, thus stop at this
 				// point, since we can't check for game payment status
-				readPict(getPictName(LCPtr), true);
+				readPict(getPictName(lcptr), true);
 				APtr = NULL;
 				GUI::MessageDialog trialMessage("This is the end of the trial version. You can play the full game using the original interpreter from Wyrmkeep");
 				trialMessage.runModal();
@@ -441,20 +441,20 @@ static void doActions(Action *APtr, CloseDataPtr *LCPtr) {
 
 			g_lab->_roomNum   = APtr->Param1;
 			Direction = APtr->Param2 - 1;
-			*LCPtr      = NULL;
+			*lcptr      = NULL;
 			g_lab->_anim->_doBlack = true;
 			break;
 
 		case SETCLOSEUP:
-			TLCPtr = getObject(scaleX(APtr->Param1), scaleY(APtr->Param2), *LCPtr);
+			tlcptr = getObject(scaleX(APtr->Param1), scaleY(APtr->Param2), *lcptr);
 
-			if (TLCPtr)
-				*LCPtr = TLCPtr;
+			if (tlcptr)
+				*lcptr = tlcptr;
 
 			break;
 
 		case MAINVIEW:
-			*LCPtr = NULL;
+			*lcptr = NULL;
 			break;
 
 		case SUBINV:
@@ -603,10 +603,10 @@ static void doActions(Action *APtr, CloseDataPtr *LCPtr) {
 /*****************************************************************************/
 /* Does the work for doActionRule.                                           */
 /*****************************************************************************/
-static bool doActionRuleSub(int16 action, int16 roomNum, CloseDataPtr LCPtr, CloseDataPtr *Set, bool AllowDefaults) {
+static bool doActionRuleSub(int16 action, int16 roomNum, CloseDataPtr lcptr, CloseDataPtr *Set, bool AllowDefaults) {
 	action++;
 
-	if (LCPtr) {
+	if (lcptr) {
 		RuleList *rules = _rooms[g_lab->_roomNum]._rules;
 
 		if ((rules == NULL) && (roomNum == 0)) {
@@ -617,10 +617,10 @@ static bool doActionRuleSub(int16 action, int16 roomNum, CloseDataPtr LCPtr, Clo
 		for (RuleList::iterator rule = rules->begin(); rule != rules->end(); ++rule) {
 			if (((*rule)->RuleType == ACTION) &&
 				(((*rule)->Param1 == action) || (((*rule)->Param1 == 0) && AllowDefaults))) {
-				if ((((*rule)->Param2 == LCPtr->CloseUpType) ||
+				if ((((*rule)->Param2 == lcptr->CloseUpType) ||
 					(((*rule)->Param2 == 0) && AllowDefaults))
 				        ||
-						((action == 1) && ((*rule)->Param2 == (-LCPtr->CloseUpType)))) {
+						((action == 1) && ((*rule)->Param2 == (-lcptr->CloseUpType)))) {
 					if (checkConditions((*rule)->Condition)) {
 						doActions((*rule)->ActionList, Set);
 						return true;
@@ -636,23 +636,23 @@ static bool doActionRuleSub(int16 action, int16 roomNum, CloseDataPtr LCPtr, Clo
 /*****************************************************************************/
 /* Goes through the rules if an action is taken.                             */
 /*****************************************************************************/
-bool doActionRule(Common::Point pos, int16 action, int16 roomNum, CloseDataPtr *LCPtr) {
-	CloseDataPtr TLCPtr;
+bool doActionRule(Common::Point pos, int16 action, int16 roomNum, CloseDataPtr *lcptr) {
+	CloseDataPtr tlcptr;
 
 	if (roomNum)
 		g_lab->_newFileName = NOFILE;
 	else
 		g_lab->_newFileName = g_lab->_curFileName;
 
-	TLCPtr = getObject(pos.x, pos.y, *LCPtr);
+	tlcptr = getObject(pos.x, pos.y, *lcptr);
 
-	if (doActionRuleSub(action, roomNum, TLCPtr, LCPtr, false))
+	if (doActionRuleSub(action, roomNum, tlcptr, lcptr, false))
 		return true;
-	else if (doActionRuleSub(action, roomNum, *LCPtr, LCPtr, false))
+	else if (doActionRuleSub(action, roomNum, *lcptr, lcptr, false))
 		return true;
-	else if (doActionRuleSub(action, roomNum, TLCPtr, LCPtr, true))
+	else if (doActionRuleSub(action, roomNum, tlcptr, lcptr, true))
 		return true;
-	else if (doActionRuleSub(action, roomNum, *LCPtr, LCPtr, true))
+	else if (doActionRuleSub(action, roomNum, *lcptr, lcptr, true))
 		return true;
 
 	return false;
@@ -661,9 +661,9 @@ bool doActionRule(Common::Point pos, int16 action, int16 roomNum, CloseDataPtr *
 /*****************************************************************************/
 /* Does the work for doActionRule.                                           */
 /*****************************************************************************/
-static bool doOperateRuleSub(int16 ItemNum, int16 roomNum, CloseDataPtr LCPtr, CloseDataPtr *Set, bool AllowDefaults) {
-	if (LCPtr)
-		if (LCPtr->CloseUpType > 0) {
+static bool doOperateRuleSub(int16 ItemNum, int16 roomNum, CloseDataPtr lcptr, CloseDataPtr *Set, bool AllowDefaults) {
+	if (lcptr)
+		if (lcptr->CloseUpType > 0) {
 			RuleList *rules = _rooms[roomNum]._rules;
 
 			if ((rules == NULL) && (roomNum == 0)) {
@@ -674,7 +674,7 @@ static bool doOperateRuleSub(int16 ItemNum, int16 roomNum, CloseDataPtr LCPtr, C
 			for (RuleList::iterator rule = rules->begin(); rule != rules->end(); ++rule) {
 				if (((*rule)->RuleType == OPERATE) &&
 				        (((*rule)->Param1 == ItemNum) || (((*rule)->Param1 == 0) && AllowDefaults)) &&
-						(((*rule)->Param2 == LCPtr->CloseUpType) || (((*rule)->Param2 == 0) && AllowDefaults))) {
+						(((*rule)->Param2 == lcptr->CloseUpType) || (((*rule)->Param2 == 0) && AllowDefaults))) {
 					if (checkConditions((*rule)->Condition)) {
 						doActions((*rule)->ActionList, Set);
 						return true;
@@ -689,31 +689,31 @@ static bool doOperateRuleSub(int16 ItemNum, int16 roomNum, CloseDataPtr LCPtr, C
 /*****************************************************************************/
 /* Goes thru the rules if the user tries to operate an item on an object.    */
 /*****************************************************************************/
-bool doOperateRule(int16 x, int16 y, int16 ItemNum, CloseDataPtr *LCPtr) {
-	CloseDataPtr TLCPtr;
+bool doOperateRule(int16 x, int16 y, int16 ItemNum, CloseDataPtr *lcptr) {
+	CloseDataPtr tlcptr;
 
 	g_lab->_newFileName = NOFILE;
 
-	TLCPtr = getObject(x, y, *LCPtr);
+	tlcptr = getObject(x, y, *lcptr);
 
-	if (doOperateRuleSub(ItemNum, g_lab->_roomNum, TLCPtr, LCPtr, false))
+	if (doOperateRuleSub(ItemNum, g_lab->_roomNum, tlcptr, lcptr, false))
 		return true;
-	else if (doOperateRuleSub(ItemNum, g_lab->_roomNum, *LCPtr, LCPtr, false))
+	else if (doOperateRuleSub(ItemNum, g_lab->_roomNum, *lcptr, lcptr, false))
 		return true;
-	else if (doOperateRuleSub(ItemNum, g_lab->_roomNum, TLCPtr, LCPtr, true))
+	else if (doOperateRuleSub(ItemNum, g_lab->_roomNum, tlcptr, lcptr, true))
 		return true;
-	else if (doOperateRuleSub(ItemNum, g_lab->_roomNum, *LCPtr, LCPtr, true))
+	else if (doOperateRuleSub(ItemNum, g_lab->_roomNum, *lcptr, lcptr, true))
 		return true;
 	else {
 		g_lab->_newFileName = g_lab->_curFileName;
 
-		if (doOperateRuleSub(ItemNum, 0, TLCPtr, LCPtr, false))
+		if (doOperateRuleSub(ItemNum, 0, tlcptr, lcptr, false))
 			return true;
-		else if (doOperateRuleSub(ItemNum, 0, *LCPtr, LCPtr, false))
+		else if (doOperateRuleSub(ItemNum, 0, *lcptr, lcptr, false))
 			return true;
-		else if (doOperateRuleSub(ItemNum, 0, TLCPtr, LCPtr, true))
+		else if (doOperateRuleSub(ItemNum, 0, tlcptr, lcptr, true))
 			return true;
-		else if (doOperateRuleSub(ItemNum, 0, *LCPtr, LCPtr, true))
+		else if (doOperateRuleSub(ItemNum, 0, *lcptr, lcptr, true))
 			return true;
 	}
 
@@ -723,13 +723,13 @@ bool doOperateRule(int16 x, int16 y, int16 ItemNum, CloseDataPtr *LCPtr) {
 /*****************************************************************************/
 /* Goes thru the rules if the user tries to go forward.                      */
 /*****************************************************************************/
-bool doGoForward(CloseDataPtr *LCPtr) {
+bool doGoForward(CloseDataPtr *lcptr) {
 	RuleList *rules = _rooms[g_lab->_roomNum]._rules;
 
 	for (RuleList::iterator rule = rules->begin(); rule != rules->end(); ++rule) {
 		if (((*rule)->RuleType == GOFORWARD) && ((*rule)->Param1 == (Direction + 1))) {
 			if (checkConditions((*rule)->Condition)) {
-				doActions((*rule)->ActionList, LCPtr);
+				doActions((*rule)->ActionList, lcptr);
 				return true;
 			}
 		}
@@ -741,7 +741,7 @@ bool doGoForward(CloseDataPtr *LCPtr) {
 /*****************************************************************************/
 /* Goes thru the rules if the user tries to turn.                            */
 /*****************************************************************************/
-bool doTurn(uint16 from, uint16 to, CloseDataPtr *LCPtr) {
+bool doTurn(uint16 from, uint16 to, CloseDataPtr *lcptr) {
 	from++;
 	to++;
 
@@ -752,7 +752,7 @@ bool doTurn(uint16 from, uint16 to, CloseDataPtr *LCPtr) {
 		        (((*rule)->RuleType == TURNFROMTO) &&
 		         ((*rule)->Param1   == from) && ((*rule)->Param2 == to))) {
 			if (checkConditions((*rule)->Condition)) {
-				doActions((*rule)->ActionList, LCPtr);
+				doActions((*rule)->ActionList, lcptr);
 				return true;
 			}
 		}
@@ -764,12 +764,12 @@ bool doTurn(uint16 from, uint16 to, CloseDataPtr *LCPtr) {
 /*****************************************************************************/
 /* Goes thru the rules if the user tries to go to the main view              */
 /*****************************************************************************/
-bool doMainView(CloseDataPtr *LCPtr) {
+bool doMainView(CloseDataPtr *lcptr) {
 	RuleList *rules = _rooms[g_lab->_roomNum]._rules;
 	for (RuleList::iterator rule = rules->begin(); rule != rules->end(); ++rule) {
 		if ((*rule)->RuleType == GOMAINVIEW) {
 			if (checkConditions((*rule)->Condition)) {
-				doActions((*rule)->ActionList, LCPtr);
+				doActions((*rule)->ActionList, lcptr);
 				return true;
 			}
 		}

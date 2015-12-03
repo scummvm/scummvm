@@ -81,7 +81,6 @@ uint16 CurTile[4][4] = {
 	{ 10, 13, 12, 0 }
 };
 
-extern TextFont *MsgFont;
 extern uint16 *FadePalette;
 extern BitMap *DispBitMap, *DrawBitMap;
 extern CloseDataPtr CPtr;

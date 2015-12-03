@@ -53,7 +53,7 @@ namespace Lab {
 /* Lab: Labyrinth specific */
 extern byte combination[6];
 extern uint16 CurTile[4] [4];
-extern char *getPictName(CloseDataPtr *LCPtr);
+extern char *getPictName(CloseDataPtr *lcptr);
 
 void writeSaveGameHeader(Common::OutSaveFile *out, const Common::String &saveName) {
 	out->writeUint32BE(SAVEGAME_ID);
@@ -83,7 +83,7 @@ void writeSaveGameHeader(Common::OutSaveFile *out, const Common::String &saveNam
 
 bool readSaveGameHeader(Common::InSaveFile *in, SaveGameHeader &header) {
 	uint32 id = in->readUint32BE();
-	
+
 	// Check if it's a valid ScummVM savegame
 	if (id != SAVEGAME_ID)
 		return false;
@@ -137,8 +137,8 @@ bool saveGame(uint16 Direction, uint16 Quarters, int slot, Common::String desc) 
 		return false;
 
 	// Load scene pic
-	CloseDataPtr CPtr = NULL;
-	readPict(getPictName(&CPtr), true);
+	CloseDataPtr cPtr = NULL;
+	readPict(getPictName(&cPtr), true);
 
 	writeSaveGameHeader(file, desc);
 	file->writeUint16LE(g_lab->_roomNum);
@@ -185,7 +185,7 @@ bool loadGame(uint16 *Direction, uint16 *Quarters, int slot) {
 	Common::String fileName = g_lab->generateSaveFileName(slot);
 	Common::SaveFileManager *saveFileManager = g_system->getSavefileManager();
 	Common::InSaveFile *file = saveFileManager->openForLoading(fileName);
-	
+
 	if (!file)
 		return false;
 

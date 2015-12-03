@@ -40,10 +40,6 @@
 
 namespace Lab {
 
-bool LongWinInFront = false;
-
-TextFont *MsgFont;
-
 extern bool stopsound, DoNotDrawMessage;
 
 /* Global parser data */
@@ -468,7 +464,7 @@ void LabEngine::interfaceOn() {
 		_event->mouseShow();
 	}
 
-	if (LongWinInFront)
+	if (_longWinInFront)
 		_event->attachGadgetList(NULL);
 	else if (_alternate)
 		_event->attachGadgetList(_invGadgetList);
@@ -608,7 +604,7 @@ void LabEngine::mainGameLoop() {
 
 	_conditions->readInitialConditions("LAB:Conditio");
 
-	LongWinInFront = false;
+	_longWinInFront = false;
 	drawPanel();
 
 	perFlipGadget(actionMode);
@@ -758,7 +754,7 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 
 	_anim->_doBlack = false;
 
-	if ((msgClass == RAWKEY) && (!LongWinInFront)) {
+	if ((msgClass == RAWKEY) && (!_longWinInFront)) {
 		if (code == 13) { /* The return key */
 			msgClass     = MOUSEBUTTONS;
 			Qualifier = IEQUALIFIER_LEFTBUTTON;
@@ -846,12 +842,12 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 		eatMessages();
 	}
 
-	if (LongWinInFront) {
+	if (_longWinInFront) {
 		if ((msgClass == RAWKEY) ||
 		        ((msgClass == MOUSEBUTTONS) &&
 		         ((IEQUALIFIER_LEFTBUTTON & Qualifier) ||
 		          (IEQUALIFIER_RBUTTON & Qualifier)))) {
-			LongWinInFront = false;
+			_longWinInFront = false;
 			DoNotDrawMessage = false;
 			drawPanel();
 			drawRoomMessage(curInv, CPtr);
@@ -1274,7 +1270,7 @@ void LabEngine::go() {
 	if (!doIntro)
 		_music->initMusic();
 
-	MsgFont = _resource->getFont("P:AvanteG.12");
+	_msgFont = _resource->getFont("P:AvanteG.12");
 
 	_event->mouseHide();
 
@@ -1311,7 +1307,7 @@ void LabEngine::go() {
 		}
 	}
 
-	closeFont(MsgFont);
+	closeFont(_msgFont);
 
 	freeRoomBuffer();
 	freeBuffer();
