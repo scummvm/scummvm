@@ -81,8 +81,6 @@ static MapData *Maps;
 
 extern char *LOWERFLOORS, *MIDDLEFLOORS, *UPPERFLOORS, *MEDMAZEFLOORS, *HEDGEMAZEFLOORS, *SURMAZEFLOORS, *CARNIVALFLOOR, *SURMAZEMSG;
 
-extern TextFont *MsgFont;
-
 uint16 *FadePalette;
 
 static uint16 MapGadX[3] = {101, 55, 8}, MapGadY[3] = {105, 105, 105};
@@ -550,7 +548,7 @@ void LabEngine::drawMap(uint16 CurRoom, uint16 CurMsg, uint16 Floor, bool fadeou
 			HugeMaze->drawImage(mapScaleX(524), mapScaleY(97));
 	} else if (Floor == SURMAZEFLOOR) {
 		sptr = (char *)_resource->getStaticText(kTextSurmazeMessage).c_str();
-		flowText(MsgFont, 0, 7, 0, true, true, true, true, mapScaleX(360), 0, mapScaleX(660), mapScaleY(450), sptr);
+		flowText(_msgFont, 0, 7, 0, true, true, true, true, mapScaleX(360), 0, mapScaleX(660), mapScaleY(450), sptr);
 	}
 
 	switch (Floor) {
@@ -581,10 +579,10 @@ void LabEngine::drawMap(uint16 CurRoom, uint16 CurMsg, uint16 Floor, bool fadeou
 	}
 
 	if (sptr)
-		flowText(MsgFont, 0, 5, 3, true, true, true, true, VGAScaleX(14), VGAScaleY(75), VGAScaleX(134), VGAScaleY(97), sptr);
+		flowText(_msgFont, 0, 5, 3, true, true, true, true, VGAScaleX(14), VGAScaleY(75), VGAScaleX(134), VGAScaleY(97), sptr);
 
 	if ((sptr = _rooms[CurMsg]._roomMsg))
-		flowText(MsgFont, 0, 5, 3, true, true, true, true, VGAScaleX(14), VGAScaleY(148), VGAScaleX(134), VGAScaleY(186), sptr);
+		flowText(_msgFont, 0, 5, 3, true, true, true, true, VGAScaleX(14), VGAScaleY(148), VGAScaleX(134), VGAScaleY(186), sptr);
 
 	if (fadein)
 		fade(true, 0);
@@ -739,7 +737,7 @@ void LabEngine::processMap(uint16 CurRoom) {
 							_event->mouseHide();
 							setAPen(3);
 							rectFill(VGAScaleX(13), VGAScaleY(148), VGAScaleX(135), VGAScaleY(186));
-							flowText(MsgFont, 0, 5, 3, true, true, true, true, VGAScaleX(14), VGAScaleY(148), VGAScaleX(134), VGAScaleY(186), sptr);
+							flowText(_msgFont, 0, 5, 3, true, true, true, true, VGAScaleX(14), VGAScaleY(148), VGAScaleX(134), VGAScaleY(186), sptr);
 
 							if (Maps[OldMsg].PageNumber == CurFloor)
 								drawRoom(OldMsg, (bool)(OldMsg == CurRoom));

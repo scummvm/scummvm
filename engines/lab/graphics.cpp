@@ -42,8 +42,6 @@ namespace Lab {
 BitMap bit1, bit2, *DispBitMap = &bit1, *DrawBitMap = &bit1;
 
 extern bool stopsound;
-extern TextFont *MsgFont;
-
 
 /*****************************************************************************/
 /* Scales the x co-ordinates to that of the new display.  In the room parser */
@@ -194,8 +192,6 @@ byte *readPictToMem(const char *filename, uint16 x, uint16 y) {
 /*---------------------------------------------------------------------------*/
 bool DoNotDrawMessage = false;
 
-extern bool LongWinInFront, Alternate;
-
 /*----- The flowText routines -----*/
 
 /******************************************************************************/
@@ -266,7 +262,7 @@ uint32 flowText(void *font,      /* the TextAttr pointer */
                 bool output,                  /* Whether to output any text */
                 uint16 x1,               /* Cords */
                 uint16 y1, uint16 x2, uint16 y2, const char *str) { /* The text itself */
-	TextFont *msgfont = (TextFont *)font;
+	TextFont *_msgFont = (TextFont *)font;
 	char linebuffer[256];
 	const char *temp;
 	uint16 numlines, actlines, fontheight, width;
@@ -282,7 +278,7 @@ uint32 flowText(void *font,      /* the TextAttr pointer */
 
 	g_lab->setAPen(pencolor);
 
-	fontheight = textHeight(msgfont) + spacing;
+	fontheight = textHeight(_msgFont) + spacing;
 	numlines   = (y2 - y1 + 1) / fontheight;
 	width      = x2 - x1 + 1;
 	y          = y1;
@@ -292,7 +288,7 @@ uint32 flowText(void *font,      /* the TextAttr pointer */
 		actlines = 0;
 
 		while (temp[0]) {
-			getLine(msgfont, linebuffer, &temp, width);
+			getLine(_msgFont, linebuffer, &temp, width);
 			actlines++;
 		}
 
@@ -303,15 +299,15 @@ uint32 flowText(void *font,      /* the TextAttr pointer */
 	temp = str;
 
 	while (numlines && str[0]) {
-		getLine(msgfont, linebuffer, &str, width);
+		getLine(_msgFont, linebuffer, &str, width);
 
 		x = x1;
 
 		if (centerh)
-			x += (width - textLength(msgfont, linebuffer, strlen(linebuffer))) / 2;
+			x += (width - textLength(_msgFont, linebuffer, strlen(linebuffer))) / 2;
 
 		if (output)
-			text(msgfont, x, y, pencolor, linebuffer, strlen(linebuffer));
+			text(_msgFont, x, y, pencolor, linebuffer, strlen(linebuffer));
 
 		numlines--;
 		y += fontheight;
@@ -370,8 +366,8 @@ int32 LabEngine::longDrawMessage(const char *str) {
 	_event->mouseHide();
 	strcpy(newText, str);
 
-	if (!LongWinInFront) {
-		LongWinInFront = true;
+	if (!_longWinInFront) {
+		_longWinInFront = true;
 		setAPen(3);                 /* Clear Area */
 		rectFill(0, VGAScaleY(149) + SVGACord(2), VGAScaleX(319), VGAScaleY(199));
 	}
@@ -379,7 +375,7 @@ int32 LabEngine::longDrawMessage(const char *str) {
 	createBox(198);
 	_event->mouseShow();
 
-	return flowText(MsgFont, 0, 1, 7, false, true, true, true, VGAScaleX(6), VGAScaleY(155), VGAScaleX(313), VGAScaleY(195), str);
+	return flowText(_msgFont, 0, 1, 7, false, true, true, true, VGAScaleX(6), VGAScaleY(155), VGAScaleX(313), VGAScaleY(195), str);
 }
 
 void LabEngine::drawStaticMessage(byte index) {
@@ -396,18 +392,18 @@ void LabEngine::drawMessage(const char *str) {
 	}
 
 	if (str) {
-		if ((textLength(MsgFont, str, strlen(str)) > VGAScaleX(306))) {
+		if ((textLength(_msgFont, str, strlen(str)) > VGAScaleX(306))) {
 			longDrawMessage(str);
 			_lastMessageLong = true;
 		} else {
-			if (LongWinInFront) {
-				LongWinInFront = false;
+			if (_longWinInFront) {
+				_longWinInFront = false;
 				drawPanel();
 			}
 
 			_event->mouseHide();
 			createBox(168);
-			text(MsgFont, VGAScaleX(7), VGAScaleY(155) + SVGACord(2), 1, str, strlen(str));
+			text(_msgFont, VGAScaleX(7), VGAScaleY(155) + SVGACord(2), 1, str, strlen(str));
 			_event->mouseShow();
 			_lastMessageLong = false;
 		}
