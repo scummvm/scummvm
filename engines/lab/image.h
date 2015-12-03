@@ -41,7 +41,7 @@ public:
 
     Image() : _width(0), _height(0), _imageData(0) {}
     Image(int w, int h, byte *d) : _width(w), _height(h), _imageData(d) {}
-    Image(byte **buffer);
+	Image(Common::File *s);
 
     void drawImage(uint16 x, uint16 y);
     void drawMaskImage(uint16 x, uint16 y);

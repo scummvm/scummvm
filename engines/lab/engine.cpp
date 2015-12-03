@@ -181,26 +181,10 @@ bool LabEngine::setUpScreens() {
 	if (!createScreen(_isHiRes))
 		return false;
 
-	/* Loads in the graphics for the movement control panel */
-	Common::File file;
-	file.open(translateFileName("P:Control"));
-	if (!file.isOpen())
-		warning("setUpScreens couldn't open %s", translateFileName("P:Control"));
-
-	if (file.err() || file.size() == 0)
-		return false;
-
-	byte *movePanelBuffer;
-	if (!(movePanelBuffer = (byte *)calloc(file.size(), 1)))
-		return false;
-
-	file.read(movePanelBuffer, file.size());
-	file.close();
-
-	byte *buffer = movePanelBuffer;
-
+	Common::File *controlFile = g_lab->_resource->openDataFile("P:Control");
 	for (uint16 i = 0; i < 20; i++)
-		_moveImages[i] = new Image(&buffer);
+		_moveImages[i] = new Image(controlFile);
+	delete controlFile;
 
 	/* Creates the gadgets for the movement control panel */
 	uint16 y = VGAScaleY(173) - SVGACord(2);
@@ -247,25 +231,11 @@ bool LabEngine::setUpScreens() {
 		curGadget->NextGadget = createButton(289, y, 9, 0, _moveImages[10], _moveImages[11]);
 	}
 
-	file.open(translateFileName("P:Inv"));
-	if (!file.isOpen())
-		warning("setUpScreens couldn't open %s", translateFileName("P:Inv"));
-
-	if (file.err() || file.size() == 0)
-		return false;
-
-	byte *invPanelBuffer;
-	if (!(invPanelBuffer = (byte *)calloc(file.size(), 1)))
-		return false;
-
-	file.read(invPanelBuffer, file.size());
-	file.close();
-
-	buffer = invPanelBuffer;
+	Common::File *invFile = g_lab->_resource->openDataFile("P:Inv");
 
 	if (getPlatform() == Common::kPlatformWindows) {
 		for (uint16 imgIdx = 0; imgIdx < 10; imgIdx++)
-			_invImages[imgIdx] = new Image(&buffer);
+			_invImages[imgIdx] = new Image(invFile);
 
 		_invGadgetList = createButton(24, y, 0, 'm', _invImages[0], _invImages[1]);
 		Gadget *curGadget = _invGadgetList;
@@ -285,7 +255,7 @@ bool LabEngine::setUpScreens() {
 		curGadget = curGadget->NextGadget;
 	} else {
 		for (uint16 imgIdx = 0; imgIdx < 6; imgIdx++)
-			_invImages[imgIdx] = new Image(&buffer);
+			_invImages[imgIdx] = new Image(invFile);
 
 		_invGadgetList = createButton(58, y, 0, 0, _invImages[0], _invImages[1]);
 		Gadget *curGadget = _invGadgetList;
@@ -300,6 +270,8 @@ bool LabEngine::setUpScreens() {
 		curGadget->NextGadget = createButton(230, y, 5, 0, _moveImages[18], _moveImages[19]);
 		curGadget = curGadget->NextGadget;
 	}
+
+	delete invFile;
 
 	return true;
 }
