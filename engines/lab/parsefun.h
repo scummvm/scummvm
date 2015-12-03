@@ -38,7 +38,7 @@ namespace Lab {
 
 /* From Parser.c */
 
-bool parse(const char *InputFile);
+bool parse(const char *inputFile);
 
 
 /* From allocRoom.c */
@@ -48,14 +48,14 @@ void freeRoomBuffer();
 
 /* From ProcessRoom.c */
 
-ViewData *getViewData(uint16 RoomNum, uint16 Direction);
+ViewData *getViewData(uint16 roomNum, uint16 direction);
 char *getPictName(CloseDataPtr *lcptr);
 void drawDirection(CloseDataPtr lcptr);
-bool processArrow(uint16 *Direction, uint16 Arrow);
+bool processArrow(uint16 *direction, uint16 arrow);
 void setCurClose(Common::Point pos, CloseDataPtr *cptr, bool useAbsoluteCoords = false);
 bool takeItem(uint16 x, uint16 y, CloseDataPtr *cptr);
-bool doActionRule(Common::Point pos, int16 action, int16 RoomNum, CloseDataPtr *lcptr);
-bool doOperateRule(int16 x, int16 y, int16 ItemNum, CloseDataPtr *lcptr);
+bool doActionRule(Common::Point pos, int16 action, int16 roomNum, CloseDataPtr *lcptr);
+bool doOperateRule(int16 x, int16 y, int16 itemNum, CloseDataPtr *lcptr);
 bool doGoForward(CloseDataPtr *lcptr);
 bool doTurn(uint16 from, uint16 to, CloseDataPtr *lcptr);
 bool doMainView(CloseDataPtr *lcptr);
