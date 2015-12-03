@@ -202,7 +202,16 @@ const char *iPhone_getDocumentsDir() {
 		return 1;
 	}
 
-	CGSize screenSize = [[UIScreen mainScreen] nativeBounds].size;
+	CGSize screenSize;
+	UIScreen *mainScreen = [UIScreen mainScreen];
+	if ([mainScreen respondsToSelector:@selector(nativeBounds)]) {
+		screenSize = [mainScreen nativeBounds].size;
+	}
+	else {
+		screenSize = [mainScreen bounds].size;
+		screenSize.width *= screenScale;
+		screenSize.height *= screenScale;
+	}
 	CGFloat mxSize = MAX(screenSize.width, screenSize.height);
 
 	if (mxSize <= 1136) {
