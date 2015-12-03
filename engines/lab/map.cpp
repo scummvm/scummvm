@@ -72,8 +72,7 @@ extern RoomData *_rooms;
 
 static Image *Map, *Room, *UpArrowRoom, *DownArrowRoom, *Bridge,
 			 *HRoom, *VRoom, *Maze, *HugeMaze, *Path, *MapNorth,
-			 *MapEast, *MapSouth, *MapWest, *XMark, *Back, *BackAlt,
-			 *Down, *DownAlt, *Up, *UpAlt;
+			 *MapEast, *MapSouth, *MapWest, *XMark;
 
 static uint16 MaxRooms;
 static MapData *Maps;
@@ -152,21 +151,14 @@ static bool loadMapData() {
 	Path = new Image(mapImages);
 	Bridge = new Image(mapImages);
 
-	Back = new Image(mapImages);
-	BackAlt = new Image(mapImages);
-	Up = new Image(mapImages);
-	UpAlt = new Image(mapImages);
-	Down = new Image(mapImages);
-	DownAlt = new Image(mapImages);
+	backgadget._image = new Image(mapImages);
+	backgadget._altImage = new Image(mapImages);
+	upgadget._image = new Image(mapImages);
+	upgadget._altImage = new Image(mapImages);
+	downgadget._image = new Image(mapImages);
+	downgadget._altImage = new Image(mapImages);
 
 	delete mapImages;
-
-	backgadget._image    = Back;
-	backgadget._altImage = BackAlt;
-	upgadget._image      = Up;
-	upgadget._altImage   = UpAlt;
-	downgadget._image    = Down;
-	downgadget._altImage = DownAlt;
 
 	counter = 0;
 	gptr = MapGadgetList;
