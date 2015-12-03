@@ -69,38 +69,6 @@ static void freeFile(uint16 RMarker) {
 	FileMarkers[RMarker].End    = NULL;
 }
 
-
-
-
-
-/*****************************************************************************/
-/* Gets a chunk of memory from the buffer.                                   */
-/*****************************************************************************/
-static void *getCurMemLabFile(uint32 size) {
-	void *ptr = 0;
-
-	if ((((char *) _memPlace) + size - 1) >=
-	        (((char *) buffer) + buffersize))
-		_memPlace = buffer;
-
-	ptr = _memPlace;
-	_memPlace = (char *)_memPlace + size;
-
-	for (int i = 0; i < MAXMARKERS; i++) {
-		if (FileMarkers[i].name[0]) {
-			if ( ((FileMarkers[i].Start >= ptr) && (FileMarkers[i].Start < _memPlace))
-			  || ((FileMarkers[i].End >= ptr) && (FileMarkers[i].End < _memPlace))
-			  || ((ptr >= FileMarkers[i].Start) && (ptr <= FileMarkers[i].End)))
-				freeFile(i);
-		}
-	}
-
-	return ptr;
-}
-
-
-
-
 /*****************************************************************************/
 /* Checks if a file is already buffered.                                     */
 /*****************************************************************************/
@@ -117,9 +85,6 @@ byte **isBuffered(const char *fileName) {
 
 	return NULL;
 }
-
-
-
 
 /*****************************************************************************/
 /* Grabs a chunk of memory from the room buffer, and manages it for a        */
@@ -148,16 +113,29 @@ bool allocFile(void **Ptr, uint32 Size, const char *fileName) {
 	freeFile(RMarker);
 	strcpy(FileMarkers[RMarker].name, fileName);
 
-	*Ptr = getCurMemLabFile(Size);
+	*Ptr = 0;
+
+	if ((((char *)_memPlace) + Size - 1) >=
+		(((char *)buffer) + buffersize))
+		_memPlace = buffer;
+
+	*Ptr = _memPlace;
+	_memPlace = (char *)_memPlace + Size;
+
+	for (int i = 0; i < MAXMARKERS; i++) {
+		if (FileMarkers[i].name[0]) {
+			if (((FileMarkers[i].Start >= Ptr) && (FileMarkers[i].Start < _memPlace))
+				|| ((FileMarkers[i].End >= Ptr) && (FileMarkers[i].End < _memPlace))
+				|| ((Ptr >= FileMarkers[i].Start) && (Ptr <= FileMarkers[i].End)))
+				freeFile(i);
+		}
+	}
+
 	FileMarkers[RMarker].Start = *Ptr;
 	FileMarkers[RMarker].End   = (void *)(((char *)(*Ptr)) + Size - 1);
 
 	return false;
 }
-
-
-
-
 
 /*----- Main routines -----*/
 
@@ -215,7 +193,6 @@ void resetBuffer() {
 }
 
 
-
 /*****************************************************************************/
 /* Initializes the buffer.                                                   */
 /*****************************************************************************/
@@ -231,9 +208,6 @@ bool initBuffer(uint32 BufSize, bool IsGraphicsMem) {
 	return (buffer != NULL);
 }
 
-
-
-
 /*****************************************************************************/
 /* Frees the buffer.                                                         */
 /*****************************************************************************/
@@ -243,9 +217,6 @@ void freeBuffer() {
 	if (buffer)
 		free(buffer);
 }
-
-
-
 
 /*------------------------------------------------------------------------*/
 /* The following routines allow stealing of memory from the buffer (which */
