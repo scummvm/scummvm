@@ -53,7 +53,6 @@ public:
 	Music(LabEngine *vm);
 
 	byte **newOpen(const char *name);
-	byte **newOpen(const char *name, uint32 &size);
 	bool initMusic();
 	void freeMusic();
 	void updateMusic();

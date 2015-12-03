@@ -320,11 +320,6 @@ void Music::resetMusic() {
 	_tFile = 0;
 }
 
-byte **Music::newOpen(const char *name) {
-	uint32 unused;
-	return newOpen(name, unused);
-}
-
 /*****************************************************************************/
 /* Checks whether or note enough memory in music buffer before loading any   */
 /* files.  Fills it if not.  Does not take into account the current buffer   */
@@ -333,7 +328,7 @@ byte **Music::newOpen(const char *name) {
 /*                                                                           */
 /* Here, the seconds are multipled by 10.                                    */
 /*****************************************************************************/
-byte **Music::newOpen(const char *name, uint32 &size) {
+byte **Music::newOpen(const char *name) {
 	byte **file;
 
 	if (!name || !strcmp(name, "") || !strcmp(name, " "))
@@ -347,7 +342,8 @@ byte **Music::newOpen(const char *name, uint32 &size) {
 	if (!_doNotFilestopSoundEffect)
 		stopSoundEffect();
 
-	file = openFile(name, size);
+	uint32 unused;
+	file = openFile(name, unused);
 	updateMusic();
 	return file;
 }
