@@ -940,7 +940,6 @@ void Control::drawActorRect(const Common::Rect r, byte color) {
 }
 
 void Control::fillActor(byte color) {
-	debug("FILL %d, %d", _actor->_surface->w, _actor->_surface->h);
 	Common::Rect r = Common::Rect(_actor->_surface->w, _actor->_surface->h);
 	_actor->_surface->fillRect(r, color);
 	_actor->_flags |= 0x4000;
