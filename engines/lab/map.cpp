@@ -252,34 +252,29 @@ void fade(bool fadein, uint16 res) {
 /* Figures out what a room's coordinates should be.                          */
 /*****************************************************************************/
 static void roomCords(uint16 CurRoom, uint16 *x1, uint16 *y1, uint16 *x2, uint16 *y2) {
-	*x1 = mapScaleX(Maps[CurRoom].x);
-	*y1 = mapScaleY(Maps[CurRoom].y);
-	*x2 = *x1;
-	*y2 = *y1;
+	Image *curRoomImg = NULL;
 
 	switch (Maps[CurRoom].SpecialID) {
 	case NORMAL:
 	case UPARROWROOM:
 	case DOWNARROWROOM:
-		(*x2) += Room->_width;
-		(*y2) += Room->_height;
+		curRoomImg = Room;
 		break;
-
 	case BRIDGEROOM:
-		(*x2) += Bridge->_width;
-		(*y2) += Bridge->_height;
+		curRoomImg = Bridge;
 		break;
-
 	case VCORRIDOR:
-		(*x2) += VRoom->_width;
-		(*y2) += VRoom->_height;
+		curRoomImg = VRoom;
 		break;
-
 	case HCORRIDOR:
-		(*x2) += HRoom->_width;
-		(*y2) += HRoom->_height;
+		curRoomImg = HRoom;
 		break;
 	}
+
+	*x1 = mapScaleX(Maps[CurRoom].x);
+	*y1 = mapScaleY(Maps[CurRoom].y);
+	*x2 = *x1 + curRoomImg->_width;
+	*y2 = *y1 + curRoomImg->_height;
 }
 
 /*****************************************************************************/
