@@ -94,12 +94,14 @@ int main(int argc, char **argv) {
 	CGRect  rect = [[UIScreen mainScreen] bounds];
 
 	// Create the directory for savegames
+#ifdef IPHONE_OFFICIAL
 	NSFileManager *fm = [NSFileManager defaultManager];
 	NSString *documentPath = [NSString stringWithUTF8String:iPhone_getDocumentsDir()];
-	NSString *savePath = [documentPath stringByAppendingPathComponent:@"savegames"];
+	NSString *savePath = [documentPath stringByAppendingPathComponent:@"Savegames"];
 	if (![fm fileExistsAtPath:savePath]) {
 		[fm createDirectoryAtPath:savePath withIntermediateDirectories:YES attributes:nil error:nil];
 	}
+#endif
 
 	_window = [[UIWindow alloc] initWithFrame:rect];
 	[_window retain];

@@ -101,7 +101,7 @@ int OSystem_IPHONE::timerHandler(int t) {
 
 void OSystem_IPHONE::initBackend() {
 #ifdef IPHONE_OFFICIAL
-	_savefileManager = new DefaultSaveFileManager("/savegames");
+	_savefileManager = new DefaultSaveFileManager("/Savegames");
 #else
 	_savefileManager = new DefaultSaveFileManager(SCUMMVM_SAVE_PATH);
 #endif
