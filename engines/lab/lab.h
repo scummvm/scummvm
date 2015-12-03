@@ -147,7 +147,7 @@ public:
 	void rectFill(uint16 x1, uint16 y1, uint16 x2, uint16 y2);
 	void scrollDisplayX(int16 dx, uint16 x1, uint16 y1, uint16 x2, uint16 y2);
 	void scrollDisplayY(int16 dy, uint16 x1, uint16 y1, uint16 x2, uint16 y2);
-	void ghoastRect(uint16 pencolor, uint16 x1, uint16 y1, uint16 x2, uint16 y2);
+	void overlayRect(uint16 pencolor, uint16 x1, uint16 y1, uint16 x2, uint16 y2);
 	void setPalette(void *cmap, uint16 numcolors);
 	void drawHLine(uint16 x, uint16 y1, uint16 y2);
 	void drawVLine(uint16 x1, uint16 y, uint16 x2);

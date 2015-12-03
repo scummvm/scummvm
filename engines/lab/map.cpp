@@ -491,7 +491,7 @@ void LabEngine::drawMap(uint16 CurRoom, uint16 CurMsg, uint16 Floor, bool fadeou
 	char *sptr;
 
 	uint16 tempfloor;
-	bool noghoast;
+	bool noOverlay;
 
 	_event->mouseHide();
 
@@ -517,20 +517,20 @@ void LabEngine::drawMap(uint16 CurRoom, uint16 CurMsg, uint16 Floor, bool fadeou
 		drawRoom(CurRoom, true);
 
 	tempfloor = Floor;
-	getUpFloor(&tempfloor, &noghoast);
+	getUpFloor(&tempfloor, &noOverlay);
 
-	if (noghoast)
-		unGhoastGadget(&upgadget);
+	if (noOverlay)
+		enableGadget(&upgadget);
 	else
-		ghoastGadget(&upgadget, 12);
+		disableGadget(&upgadget, 12);
 
 	tempfloor = Floor;
-	getDownFloor(&tempfloor, &noghoast);
+	getDownFloor(&tempfloor, &noOverlay);
 
-	if (noghoast)
-		unGhoastGadget(&downgadget);
+	if (noOverlay)
+		enableGadget(&downgadget);
 	else
-		ghoastGadget(&downgadget, 12);
+		disableGadget(&downgadget, 12);
 
 	// Labyrinth specific code
 	if (Floor == LOWERFLOOR) {

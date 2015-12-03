@@ -657,14 +657,14 @@ void LabEngine::drawJournal(uint16 wipenum, bool needFade) {
 		turnPage((bool)(wipenum == 1));
 
 	if (JPage == 0)
-		ghoastGadget(&BackG, 15);
+		disableGadget(&BackG, 15);
 	else
-		unGhoastGadget(&BackG);
+		enableGadget(&BackG);
 
 	if (lastpage)
-		ghoastGadget(&ForwardG, 15);
+		disableGadget(&ForwardG, 15);
 	else
-		unGhoastGadget(&ForwardG);
+		enableGadget(&ForwardG);
 
 
 	if (needFade)

@@ -84,7 +84,7 @@ void drawGadgetList(Gadget *gadlist) {
 		gadlist->_image->drawImage(gadlist->x, gadlist->y);
 
 		if (GADGETOFF & gadlist->GadgetFlags)
-			ghoastGadget(gadlist, 1);
+			disableGadget(gadlist, 1);
 
 		gadlist = gadlist->NextGadget;
 	}
@@ -92,19 +92,19 @@ void drawGadgetList(Gadget *gadlist) {
 
 
 /*****************************************************************************/
-/* Ghoasts a gadget, and makes it unavailable for using.                     */
+/* Dims a gadget, and makes it unavailable for using.                        */
 /*****************************************************************************/
-void ghoastGadget(Gadget *curgad, uint16 pencolor) {
-	g_lab->ghoastRect(pencolor, curgad->x, curgad->y, curgad->x + curgad->_image->_width - 1, curgad->y + curgad->_image->_height - 1);
+void disableGadget(Gadget *curgad, uint16 pencolor) {
+	g_lab->overlayRect(pencolor, curgad->x, curgad->y, curgad->x + curgad->_image->_width - 1, curgad->y + curgad->_image->_height - 1);
 	curgad->GadgetFlags |= GADGETOFF;
 }
 
 
 
 /*****************************************************************************/
-/* Unghoasts a gadget, and makes it available again.                         */
+/* Undims a gadget, and makes it available again.                            */
 /*****************************************************************************/
-void unGhoastGadget(Gadget *curgad) {
+void enableGadget(Gadget *curgad) {
 	curgad->_image->drawImage(curgad->x, curgad->y);
 	curgad->GadgetFlags &= !(GADGETOFF);
 }
