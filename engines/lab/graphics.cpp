@@ -141,23 +141,6 @@ bool readPict(const char *filename, bool playOnce) {
 }
 
 /*****************************************************************************/
-/* Reads in a music file.  Ignores any graphics.                             */
-/*****************************************************************************/
-bool readMusic(const char *filename, bool waitTillFinished) {
-	Common::File *file = g_lab->_resource->openDataFile(filename, MKTAG('D', 'I', 'F', 'F'));
-	g_lab->_music->updateMusic();
-	if (!g_lab->_music->_doNotFilestopSoundEffect)
-		g_lab->_music->stopSoundEffect();
-	if (!file)
-		return false;
-
-	g_lab->_anim->_doBlack = false;
-	g_lab->_anim->readSound(waitTillFinished, file);
-
-	return true;
-}
-
-/*****************************************************************************/
 /* Reads in a picture into buffer memory.                                    */
 /*****************************************************************************/
 byte *readPictToMem(const char *filename, uint16 x, uint16 y) {
@@ -174,8 +157,8 @@ byte *readPictToMem(const char *filename, uint16 x, uint16 y) {
 		return NULL;
 
 	DispBitMap->_bytesPerRow = x;
-	DispBitMap->_rows        = y;
-	DispBitMap->_flags       = BITMAPF_NONE;
+	DispBitMap->_rows = y;
+	DispBitMap->_flags = BITMAPF_NONE;
 	DispBitMap->_planes[0] = curMem;
 	DispBitMap->_planes[1] = DispBitMap->_planes[0] + 0x10000;
 	DispBitMap->_planes[2] = DispBitMap->_planes[1] + 0x10000;
@@ -185,6 +168,23 @@ byte *readPictToMem(const char *filename, uint16 x, uint16 y) {
 	g_lab->_anim->readDiff(true);
 
 	return mem;
+}
+
+/*****************************************************************************/
+/* Reads in a music file.  Ignores any graphics.                             */
+/*****************************************************************************/
+bool readMusic(const char *filename, bool waitTillFinished) {
+	Common::File *file = g_lab->_resource->openDataFile(filename, MKTAG('D', 'I', 'F', 'F'));
+	g_lab->_music->updateMusic();
+	if (!g_lab->_music->_doNotFilestopSoundEffect)
+		g_lab->_music->stopSoundEffect();
+	if (!file)
+		return false;
+
+	g_lab->_anim->_doBlack = false;
+	g_lab->_anim->readSound(waitTillFinished, file);
+
+	return true;
 }
 
 /*---------------------------------------------------------------------------*/
