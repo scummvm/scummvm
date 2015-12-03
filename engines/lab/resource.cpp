@@ -115,10 +115,10 @@ bool Resource::readRoomData(const char *fileName) {
 		_rooms[i]._westDoor = dataFile->readUint16LE();
 		_rooms[i]._wipeType = dataFile->readByte();
 
-		_rooms[i]._northView = nullptr;
-		_rooms[i]._southView = nullptr;
-		_rooms[i]._eastView = nullptr;
-		_rooms[i]._westView = nullptr;
+		_rooms[i]._view[NORTH] = nullptr;
+		_rooms[i]._view[SOUTH] = nullptr;
+		_rooms[i]._view[EAST] = nullptr;
+		_rooms[i]._view[WEST] = nullptr;
 		_rooms[i]._rules = nullptr;
 		_rooms[i]._roomMsg = nullptr;
 	}
@@ -154,10 +154,10 @@ bool Resource::readViews(uint16 roomNum) {
 	allocroom = roomNum;
 
 	_rooms[roomNum]._roomMsg = readString(dataFile);
-	_rooms[roomNum]._northView = readView(dataFile);
-	_rooms[roomNum]._southView = readView(dataFile);
-	_rooms[roomNum]._eastView = readView(dataFile);
-	_rooms[roomNum]._westView = readView(dataFile);
+	_rooms[roomNum]._view[NORTH] = readView(dataFile);
+	_rooms[roomNum]._view[SOUTH] = readView(dataFile);
+	_rooms[roomNum]._view[EAST] = readView(dataFile);
+	_rooms[roomNum]._view[WEST] = readView(dataFile);
 	_rooms[roomNum]._rules = readRule(dataFile);
 
 	_vm->_music->updateMusic();

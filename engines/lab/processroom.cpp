@@ -93,14 +93,7 @@ ViewData *getViewData(uint16 roomNum, uint16 direction) {
 	if (!_rooms[roomNum]._roomMsg)
 		g_lab->_resource->readViews(roomNum);
 
-	if (direction == NORTH)
-		view = _rooms[roomNum]._northView;
-	else if (direction == SOUTH)
-		view = _rooms[roomNum]._southView;
-	else if (direction == EAST)
-		view = _rooms[roomNum]._eastView;
-	else if (direction == WEST)
-		view = _rooms[roomNum]._westView;
+	view = _rooms[roomNum]._view[direction];
 
 	do {
 		if (checkConditions(view->Condition))

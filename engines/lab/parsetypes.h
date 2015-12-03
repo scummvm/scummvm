@@ -140,7 +140,7 @@ struct RoomData {
 
 	byte _wipeType;
 
-	ViewData *_northView, *_southView, *_eastView, *_westView;
+	ViewData *_view[4];
 	RuleList *_rules;
 	char *_roomMsg;
 };
