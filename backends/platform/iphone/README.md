@@ -11,6 +11,10 @@ First, clone the repository:
 $ git clone -b ios-fix --recursive https://github.com/bSr43/scummvm.git
 ```
 
+### Compilation from Xcode ###
+
+This is the recommanded way to compile ScummVM, and the only one which makes it possible to run ScummVM on a non-jailbroken device!
+
 The next step is to compile the **create_project** tool. Open the Xcode project you'll found in the **devtools/create\_project/xcode/** directory. Once compiled, copy the binary somewhere in your *PATH*, and create a **build** directory somewhere on your harddisk. It is recommended to create this directory next to the cloned repository (they share the same parent).
 
 Execute the following commands in a terminal:
@@ -30,6 +34,20 @@ Now, your **build** directory should contain:
 * a **lib** directory.
 
 You are ready to compile ScummVM: open the **scummvm.xcodeproj** project, and build it.
+
+### Compilation from command line ###
+
+For jailbroken devices, it is also possible to compile the project from command line. You'll need some tools, like **ldid**, to fake the code signature.
+
+Open a terminal, and execute the following commands:
+```
+$ cd path_to_the_scummvm_sources
+$ SDKROOT=$(xcrun --sdk iphoneos --show-sdk-path) CC=clang CXX=clang++ ./configure --host=iphone --disable-scalers --disable-mt32emu --enable-release
+$ make iphone
+$ make iphonebundle
+```
+
+At the end of the compilation, you'll find a **ScummVM.app** application: copy it over SSH, and reboot your device.
 
 ## Usage ##
 
