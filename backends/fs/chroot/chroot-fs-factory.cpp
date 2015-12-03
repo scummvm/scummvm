@@ -32,29 +32,29 @@
 #include "backends/fs/posix/posix-fs-factory.h"
 
 ChRootFilesystemFactory::ChRootFilesystemFactory(Common::String root) {
-    _root = root;
+	_root = root;
 }
 
 AbstractFSNode *ChRootFilesystemFactory::makeRootFileNode() const {
-    return new ChRootFilesystemNode(_root, "/");
+	return new ChRootFilesystemNode(_root, "/");
 }
 
 AbstractFSNode *ChRootFilesystemFactory::makeCurrentDirectoryFileNode() const {
-    char buf[MAXPATHLEN];
-    if (getcwd(buf, MAXPATHLEN) == NULL) {
-        return NULL;
-    }
+	char buf[MAXPATHLEN];
+	if (getcwd(buf, MAXPATHLEN) == NULL) {
+		return NULL;
+	}
 
-    if (Common::String(buf).hasPrefix(_root + Common::String("/"))) {
-        return new ChRootFilesystemNode(_root, buf + _root.size());
-    }
+	if (Common::String(buf).hasPrefix(_root + Common::String("/"))) {
+		return new ChRootFilesystemNode(_root, buf + _root.size());
+	}
 
-    return new ChRootFilesystemNode(_root, "/");
+	return new ChRootFilesystemNode(_root, "/");
 }
 
 AbstractFSNode *ChRootFilesystemFactory::makeFileNodePath(const Common::String &path) const {
-    assert(!path.empty());
-    return new ChRootFilesystemNode(_root, path);
+	assert(!path.empty());
+	return new ChRootFilesystemNode(_root, path);
 }
 
 #endif

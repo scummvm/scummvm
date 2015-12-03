@@ -104,13 +104,13 @@ int main(int argc, char **argv) {
 	_window = [[UIWindow alloc] initWithFrame:rect];
 	[_window retain];
 
-    _controller = [[ScummVMViewController alloc] init];
+	_controller = [[ScummVMViewController alloc] init];
 
 	_view = [[iPhoneView alloc] initWithFrame:rect];
 	_view.multipleTouchEnabled = YES;
 	_controller.view = _view;
 
-    [_window setRootViewController:_controller];
+	[_window setRootViewController:_controller];
 	[_window makeKeyAndVisible];
 
 	[[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];

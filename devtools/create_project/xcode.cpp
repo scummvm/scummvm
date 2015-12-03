@@ -755,7 +755,7 @@ void XcodeProvider::setupBuildConfiguration(const BuildSetup &setup) {
 	ADD_SETTING(iPhone_Debug, "GCC_ENABLE_FIX_AND_CONTINUE", "NO");
 	ADD_SETTING(iPhone_Debug, "GCC_OPTIMIZATION_LEVEL", "0");
 	ADD_SETTING(iPhone_Debug, "GCC_PRECOMPILE_PREFIX_HEADER", "NO");
-    ADD_SETTING(iPhone_Debug, "GCC_WARN_64_TO_32_BIT_CONVERSION", "NO");
+	ADD_SETTING(iPhone_Debug, "GCC_WARN_64_TO_32_BIT_CONVERSION", "NO");
 	ADD_SETTING_QUOTE(iPhone_Debug, "GCC_PREFIX_HEADER", "");
 	ADD_SETTING(iPhone_Debug, "GCC_THUMB_SUPPORT", "NO");
 	ADD_SETTING(iPhone_Debug, "GCC_UNROLL_LOOPS", "YES");

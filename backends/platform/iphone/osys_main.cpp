@@ -90,7 +90,7 @@ OSystem_IPHONE::~OSystem_IPHONE() {
 }
 
 bool OSystem_IPHONE::touchpadModeEnabled() const {
-    return _touchpadModeEnabled;
+	return _touchpadModeEnabled;
 }
 
 int OSystem_IPHONE::timerHandler(int t) {

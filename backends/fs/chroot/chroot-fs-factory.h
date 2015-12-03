@@ -27,15 +27,15 @@
 
 class ChRootFilesystemFactory : public FilesystemFactory {
 private:
-    Common::String _root;
+	Common::String _root;
 
 protected:
-    virtual AbstractFSNode *makeRootFileNode() const;
-    virtual AbstractFSNode *makeCurrentDirectoryFileNode() const;
-    virtual AbstractFSNode *makeFileNodePath(const Common::String &path) const;
+	virtual AbstractFSNode *makeRootFileNode() const;
+	virtual AbstractFSNode *makeCurrentDirectoryFileNode() const;
+	virtual AbstractFSNode *makeFileNodePath(const Common::String &path) const;
 
 public:
-    ChRootFilesystemFactory(Common::String root);
+	ChRootFilesystemFactory(Common::String root);
 };
 
 #endif /* CHROOT_FS_FACTORY_H */

@@ -26,29 +26,29 @@
 #include "backends/fs/posix/posix-fs.h"
 
 class ChRootFilesystemNode : public AbstractFSNode {
-    Common::String _root;
-    POSIXFilesystemNode *_realNode;
+	Common::String _root;
+	POSIXFilesystemNode *_realNode;
 
-    ChRootFilesystemNode(const Common::String &root, POSIXFilesystemNode *);
+	ChRootFilesystemNode(const Common::String &root, POSIXFilesystemNode *);
 
 public:
-    ChRootFilesystemNode(const Common::String &root, const Common::String &path);
-    virtual ~ChRootFilesystemNode();
+	ChRootFilesystemNode(const Common::String &root, const Common::String &path);
+	virtual ~ChRootFilesystemNode();
 
-    virtual bool exists() const;
-    virtual Common::String getDisplayName() const;
-    virtual Common::String getName() const;
-    virtual Common::String getPath() const;
-    virtual bool isDirectory() const;
-    virtual bool isReadable() const;
-    virtual bool isWritable() const;
+	virtual bool exists() const;
+	virtual Common::String getDisplayName() const;
+	virtual Common::String getName() const;
+	virtual Common::String getPath() const;
+	virtual bool isDirectory() const;
+	virtual bool isReadable() const;
+	virtual bool isWritable() const;
 
-    virtual AbstractFSNode *getChild(const Common::String &n) const;
-    virtual bool getChildren(AbstractFSList &list, ListMode mode, bool hidden) const;
-    virtual AbstractFSNode *getParent() const;
+	virtual AbstractFSNode *getChild(const Common::String &n) const;
+	virtual bool getChildren(AbstractFSList &list, ListMode mode, bool hidden) const;
+	virtual AbstractFSNode *getParent() const;
 
-    virtual Common::SeekableReadStream *createReadStream();
-    virtual Common::WriteStream *createWriteStream();
+	virtual Common::SeekableReadStream *createReadStream();
+	virtual Common::WriteStream *createWriteStream();
 };
 
 #endif /* CHROOT_FS_H */
