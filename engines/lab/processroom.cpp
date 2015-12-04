@@ -110,8 +110,8 @@ static CloseData *getObject(uint16 x, uint16 y, CloseDataPtr lcptr) {
 	}
 
 	while (lcptr != NULL) {
-		if ((x >= scaleX(lcptr->x1)) && (y >= scaleY(lcptr->y1)) &&
-		        (x <= scaleX(lcptr->x2)) && (y <= scaleY(lcptr->y2)))
+		if ((x >= g_lab->_graphics->scaleX(lcptr->x1)) && (y >= g_lab->_graphics->scaleY(lcptr->y1)) &&
+		        (x <= g_lab->_graphics->scaleX(lcptr->x2)) && (y <= g_lab->_graphics->scaleY(lcptr->y2)))
 			return lcptr;
 
 		lcptr = lcptr->NextCloseUp;
@@ -167,7 +167,7 @@ char *getPictName(CloseDataPtr *lcptr) {
 /*****************************************************************************/
 void LabEngine::drawDirection(CloseDataPtr lcptr) {
 	if (lcptr != NULL && lcptr->Message) {
-		drawMessage(lcptr->Message);
+		_graphics->drawMessage(lcptr->Message);
 		return;
 	}
 
@@ -187,7 +187,7 @@ void LabEngine::drawDirection(CloseDataPtr lcptr) {
 	else if (Direction == WEST)
 		message += _resource->getStaticText(kTextFacingWest);
 
-	drawMessage(message.c_str());
+	_graphics->drawMessage(message.c_str());
 }
 
 /*****************************************************************************/
@@ -252,10 +252,10 @@ void setCurClose(Common::Point pos, CloseDataPtr *cptr, bool useAbsoluteCoords) 
 			x2 = lcptr->x2;
 			y2 = lcptr->y2;
 		} else {
-			x1 = scaleX(lcptr->x1);
-			y1 = scaleY(lcptr->y1);
-			x2 = scaleX(lcptr->x2);
-			y2 = scaleY(lcptr->y2);
+			x1 = g_lab->_graphics->scaleX(lcptr->x1);
+			y1 = g_lab->_graphics->scaleY(lcptr->y1);
+			x2 = g_lab->_graphics->scaleX(lcptr->x2);
+			y2 = g_lab->_graphics->scaleY(lcptr->y2);
 		}
 
 		if (pos.x >= x1 && pos.y >= y1 && pos.x <= x2 && pos.y <= y2 && lcptr->GraphicName) {
@@ -283,8 +283,8 @@ bool takeItem(uint16 x, uint16 y, CloseDataPtr *cptr) {
 
 
 	while (lcptr != NULL) {
-		if ((x >= scaleX(lcptr->x1)) && (y >= scaleY(lcptr->y1)) &&
-		        (x <= scaleX(lcptr->x2)) && (y <= scaleY(lcptr->y2)) &&
+		if ((x >= g_lab->_graphics->scaleX(lcptr->x1)) && (y >= g_lab->_graphics->scaleY(lcptr->y1)) &&
+		        (x <= g_lab->_graphics->scaleX(lcptr->x2)) && (y <= g_lab->_graphics->scaleY(lcptr->y2)) &&
 		        (lcptr->CloseUpType < 0)) {
 			g_lab->_conditions->inclElement(abs(lcptr->CloseUpType));
 			return true;
@@ -326,11 +326,11 @@ void LabEngine::doActions(Action *aptr, CloseDataPtr *lcptr) {
 			break;
 
 		case SHOWDIFF:
-			readPict((char *)aptr->Data, true);
+			_graphics->readPict((char *)aptr->Data, true);
 			break;
 
 		case SHOWDIFFCONT:
-			readPict((char *)aptr->Data, false);
+			_graphics->readPict((char *)aptr->Data, false);
 			break;
 
 		case LOADDIFF:
@@ -345,7 +345,7 @@ void LabEngine::doActions(Action *aptr, CloseDataPtr *lcptr) {
 			break;
 
 		case WIPECMD:
-			doWipe(aptr->Param1, lcptr, (char *)aptr->Data);
+			_graphics->doWipe(aptr->Param1, lcptr, (char *)aptr->Data);
 			break;
 
 		case NOUPDATE:
@@ -362,7 +362,7 @@ void LabEngine::doActions(Action *aptr, CloseDataPtr *lcptr) {
 
 				if (strcmp(test, _curFileName) != 0) {
 					_curFileName = test;
-					readPict(_curFileName, true);
+					_graphics->readPict(_curFileName, true);
 				}
 			}
 			break;
@@ -378,10 +378,10 @@ void LabEngine::doActions(Action *aptr, CloseDataPtr *lcptr) {
 		case SHOWMESSAGE:
 			DoNotDrawMessage = false;
 
-			if (_longWinInFront)
-				longDrawMessage((char *)aptr->Data);
+			if (_graphics->_longWinInFront)
+				_graphics->longDrawMessage((char *)aptr->Data);
 			else
-				drawMessage((char *)aptr->Data);
+				_graphics->drawMessage((char *)aptr->Data);
 
 			DoNotDrawMessage = true;
 			break;
@@ -389,7 +389,7 @@ void LabEngine::doActions(Action *aptr, CloseDataPtr *lcptr) {
 		case CSHOWMESSAGE:
 			if (*lcptr == NULL) {
 				DoNotDrawMessage = false;
-				drawMessage((char *)aptr->Data);
+				_graphics->drawMessage((char *)aptr->Data);
 				DoNotDrawMessage = true;
 			}
 
@@ -398,7 +398,7 @@ void LabEngine::doActions(Action *aptr, CloseDataPtr *lcptr) {
 		case SHOWMESSAGES: {
 				char **str = (char **)aptr->Data;
 				DoNotDrawMessage = false;
-				drawMessage(str[getRandom(aptr->Param1)]);
+				_graphics->drawMessage(str[getRandom(aptr->Param1)]);
 				DoNotDrawMessage = true;
 			}
 			break;
@@ -407,7 +407,7 @@ void LabEngine::doActions(Action *aptr, CloseDataPtr *lcptr) {
 			if (aptr->Param1 & 0x8000) {
 				// This is a Wyrmkeep Windows trial version, thus stop at this
 				// point, since we can't check for game payment status
-				readPict(getPictName(lcptr), true);
+				_graphics->readPict(getPictName(lcptr), true);
 				aptr = NULL;
 				GUI::MessageDialog trialMessage("This is the end of the trial version. You can play the full game using the original interpreter from Wyrmkeep");
 				trialMessage.runModal();
@@ -421,7 +421,7 @@ void LabEngine::doActions(Action *aptr, CloseDataPtr *lcptr) {
 			break;
 
 		case SETCLOSEUP: {
-				CloseDataPtr tlcptr = getObject(scaleX(aptr->Param1), scaleY(aptr->Param2), *lcptr);
+				CloseDataPtr tlcptr = getObject(g_lab->_graphics->scaleX(aptr->Param1), g_lab->_graphics->scaleY(aptr->Param2), *lcptr);
 
 				if (tlcptr)
 					*lcptr = tlcptr;
@@ -455,7 +455,7 @@ void LabEngine::doActions(Action *aptr, CloseDataPtr *lcptr) {
 
 				addCurTime(aptr->Param1, 0, &startSecs, &startMicros);
 
-				screenUpdate();
+				_graphics->screenUpdate();
 
 				while (1) {
 					_music->updateMusic();
@@ -543,7 +543,7 @@ void LabEngine::doActions(Action *aptr, CloseDataPtr *lcptr) {
 				waitTOF();
 				waitTOF();
 			} else if (aptr->Param1 == 4) { /* white the palette */
-				whiteScreen();
+				_graphics->whiteScreen();
 				waitTOF();
 				waitTOF();
 			} else if (aptr->Param1 == 6) { /* Restore the palette */

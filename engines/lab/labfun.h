@@ -71,41 +71,8 @@ struct SaveGameHeader {
 
 /* Reads in pictures */
 
-bool readPict(const char *filename, bool PlayOnce);
 bool readMusic(const char *filename, bool waitTillFinished);
-byte *readPictToMem(const char *filename, uint16 x, uint16 y);
-
-/* Window text stuff */
-
-uint32 flowText(void *font,  /* the TextAttr pointer */
-                int16 spacing,          /* How much vertical spacing between the lines */
-                byte pencolor,         /* pen number to use for text */
-                byte backpen,          /* the background color */
-                bool fillback,                /* Whether to fill the background */
-                bool centerh,                 /* Whether to center the text horizontally */
-                bool centerv,                 /* Whether to center the text vertically */
-                bool output,                  /* Whether to output any text */
-                uint16 x1,               /* Cords */
-                uint16 y1, uint16 x2, uint16 y2, const char *text); /* The text itself */
-
-uint32 flowTextToMem(Image *DestIm, void *font,     /* the TextAttr pointer */
-                     int16 spacing,          /* How much vertical spacing between the lines */
-                     byte pencolor,         /* pen number to use for text */
-                     byte backpen,          /* the background color */
-                     bool fillback,                /* Whether to fill the background */
-                     bool centerh,                 /* Whether to center the text horizontally */
-                     bool centerv,                 /* Whether to center the text vertically */
-                     bool output,                  /* Whether to output any text */
-                     uint16 x1,               /* Cords */
-                     uint16 y1, uint16 x2, uint16 y2, const char *text); /* The text itself */
-
-void drawMessage(const char *text);
 void drawStaticMessage(byte index);
-int32 longDrawMessage(const char *text);
-
-/* The Wipes */
-
-void doWipe(uint16 WipeType, CloseDataPtr *cptr, char *filename);
 
 /* Double Buffer stuff */
 
@@ -173,11 +140,6 @@ public:
 /*----- From Machine.c ------*/
 /*---------------------------*/
 
-uint16 scaleX(uint16 x);
-uint16 scaleY(uint16 y);
-int16 VGAScaleX(int16 x);
-int16 VGAScaleY(int16 y);
-uint16 SVGACord(uint16 cord);
 int VGAUnScaleX(int x);
 int VGAUnScaleY(int y);
 char *translateFileName(const char *filename);
@@ -210,10 +172,6 @@ void showCombination(const char *filename);
 void mouseCombination(Common::Point pos);
 void showTile(const char *filename, bool showsolution);
 void mouseTile(Common::Point pos);
-
-void blackScreen();
-void blackAllScreen();
-void whiteScreen();
 
 } // End of namespace Lab
 

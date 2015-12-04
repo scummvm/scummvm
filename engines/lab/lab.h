@@ -41,6 +41,7 @@
 #include "lab/music.h"
 #include "lab/resource.h"
 #include "lab/anim.h"
+#include "lab/graphics.h"
 
 struct ADGameDescription;
 
@@ -74,8 +75,6 @@ public:
 
 	int _screenWidth;
 	int _screenHeight;
-	uint32 _screenBytesPerPage;
-
 
 	// timing.cpp
 	void getTime(uint32 *secs, uint32 *micros);
@@ -87,24 +86,19 @@ public:
 private:
 	uint32 _extraGameFeatures;
 	bool _interfaceOff;
-	bool _alternate;
-	Image *_moveImages[20];
-	Image *_invImages[10];
-	Gadget *_moveGadgetList;
-	Gadget *_invGadgetList;
 
 	// timing.cpp
 	void microDelay(uint32 secs, uint32 micros);
 
 	// vga.cpp
 	byte _curvgapal[256 * 3];
-	byte _curapen;
 
 public:
 	EventManager *_event;
 	Resource *_resource;
 	Music *_music;
 	Anim *_anim;
+	DisplayMan *_graphics;
 
 	int _roomNum;
 	byte *_currentDisplayBuffer;
@@ -117,6 +111,7 @@ public:
 	bool _isCrumbTurning;
 	uint32 _crumbSecs, _crumbMicros;
 	bool _isCrumbWaiting;
+	bool _alternate;
 	byte *_tempScrollData;
 	bool _isHiRes;
 	byte *_displayBuffer;
@@ -124,46 +119,34 @@ public:
 	const char *_nextFileName;
 	const char *_newFileName;  /* When ProcessRoom.c decides to change the filename
                                     of the current picture. */
+	TextFont *_msgFont;
+	Gadget *_moveGadgetList;
+	Gadget *_invGadgetList;
+	Image *_moveImages[20];
+	Image *_invImages[10];
 
 private:
 	int _lastWaitTOFTicks;
-	bool _lastMessageLong;
 	bool _lastTooLong;
-	TextFont *_msgFont;
-	bool _longWinInFront;
 	CloseDataPtr _cptr;
 	InventoryData *_inventory;
 
 private:
-	bool createScreen(bool HiRes);
 	bool from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Common::Point tmpPos, uint16 &curInv, IntuiMessage * curMsg, bool &forceDraw, uint16 gadgetId, uint16 &actionMode);
 
 public:
 	void waitTOF();
-	void setAPen(byte pennum);
 	void writeColorRegs(byte *buf, uint16 first, uint16 numreg);
 	byte *getCurrentDrawingBuffer();
-	void screenUpdate();
-	void rectFill(uint16 x1, uint16 y1, uint16 x2, uint16 y2);
 	void scrollDisplayX(int16 dx, uint16 x1, uint16 y1, uint16 x2, uint16 y2);
 	void scrollDisplayY(int16 dy, uint16 x1, uint16 y1, uint16 x2, uint16 y2);
 	void overlayRect(uint16 pencolor, uint16 x1, uint16 y1, uint16 x2, uint16 y2);
 	void setPalette(void *cmap, uint16 numcolors);
-	void drawHLine(uint16 x, uint16 y1, uint16 y2);
-	void drawVLine(uint16 x1, uint16 y, uint16 x2);
 
-	void drawPanel();
 	void drawRoomMessage(uint16 CurInv, CloseDataPtr cptr);
 	void interfaceOff();
 	void interfaceOn();
 	void decIncInv(uint16 *CurInv, bool dec);
-	int32 longDrawMessage(const char *str);
-	void drawMessage(const char *str);
-	void doScrollBlack();
-	void doScrollWipe(char *filename);
-	void doScrollBounce();
-	void doWipe(uint16 WipeType, CloseDataPtr *cPtr, char *filename);
-	void doTransWipe(CloseDataPtr *cPtr, char *filename);
 	Gadget *checkNumGadgetHit(Gadget *gadlist, uint16 key);
 	IntuiMessage *getMsg();
 	void drawMap(uint16 CurRoom, uint16 CurMsg, uint16 Floor, bool fadeout, bool fadein);
@@ -184,7 +167,6 @@ public:
 
 private:
 	// engine.cpp
-	bool setUpScreens();
 	void freeScreens();
 	void perFlipGadget(uint16 gadID);
 	bool doCloseUp(CloseDataPtr cptr);
