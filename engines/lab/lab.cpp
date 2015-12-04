@@ -119,12 +119,8 @@ LabEngine::LabEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	_nextFileName = nullptr;
 	_newFileName = nullptr;
 
-	_moveGadgetList = 0;
-	_invGadgetList = 0;
-
 	_curFileName = " ";
 	_msgFont = 0;
-
 	_inventory = 0;
 
 	for (int i = 0; i < 16; i++)
