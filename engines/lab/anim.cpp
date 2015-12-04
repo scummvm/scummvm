@@ -414,6 +414,11 @@ void Anim::unDiff(byte *newBuf, byte *oldBuf, byte *diffData, uint16 bytesPerRow
 		unDIFFMemory(newBuf, diffData, 1, bufType + 1);
 }
 
+void Anim::readBlock(void *Buffer, uint32 Size, byte **File) {
+	memcpy(Buffer, *File, (size_t)Size);
+	(*File) += Size;
+}
+
 void Anim::diffNextFrame() {
 	if (_header == 65535)  /* Already done. */
 		return;
