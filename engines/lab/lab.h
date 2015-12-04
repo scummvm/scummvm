@@ -197,6 +197,7 @@ private:
 	void scrollRaster(int16 dx, int16 dy, uint16 x1, uint16 y1, uint16 x2, uint16 y2);
 	void doCombination();
 	void showCombination(const char *filename);
+	void initTilePuzzle();
 
 	bool saveRestoreGame();
 

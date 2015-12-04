@@ -18,6 +18,7 @@ MODULE_OBJS := \
 	savegame.o \
 	special.o \
 	text.o \
+	tilepuzzle.o \
 	timing.o \
 	vga.o
 
