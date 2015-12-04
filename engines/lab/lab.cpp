@@ -299,8 +299,8 @@ void LabEngine::changeTile(uint16 col, uint16 row) {
 		}
 
 		bool check = true;
-		row   = 0;
-		col   = 0;
+		row = 0;
+		col = 0;
 
 		while (row < 4) {
 			while (col < 4) {
@@ -398,23 +398,23 @@ void LabEngine::showTile(const char *filename, bool showsolution) {
 	uint16 start = showsolution ? 0 : 1;
 
 	resetBuffer();
-	g_lab->_anim->_doBlack = true;
-	g_lab->_anim->_noPalChange = true;
-	g_lab->_graphics->readPict(filename, true);
-	g_lab->_anim->_noPalChange = false;
-	g_lab->_graphics->blackScreen();
+	_anim->_doBlack = true;
+	_anim->_noPalChange = true;
+	_graphics->readPict(filename, true);
+	_anim->_noPalChange = false;
+	_graphics->blackScreen();
 
-	Common::File *tileFile = tileFile = g_lab->_resource->openDataFile(showsolution ? "P:TileSolution" : "P:Tile");
+	Common::File *tileFile = tileFile = _resource->openDataFile(showsolution ? "P:TileSolution" : "P:Tile");
 
 	for (uint16 curBit = start; curBit < 16; curBit++)
 		Tiles[curBit] = new Image(tileFile);
 
 	delete tileFile;
 
-	allocFile((void **)&g_lab->_tempScrollData, Tiles[1]->_width * Tiles[1]->_height * 2L, "tempdata");
+	allocFile((void **)&_tempScrollData, Tiles[1]->_width * Tiles[1]->_height * 2L, "tempdata");
 
-	g_lab->doTile(showsolution);
-	g_lab->setPalette(g_lab->_anim->_diffPalette, 256);
+	doTile(showsolution);
+	setPalette(_anim->_diffPalette, 256);
 }
 
 /*****************************************************************************/
@@ -425,33 +425,33 @@ void LabEngine::doTileScroll(uint16 col, uint16 row, uint16 scrolltype) {
 	uint16 last = 0, x1, y1;
 
 	if (scrolltype == LEFTSCROLL) {
-		dX =  g_lab->_graphics->VGAScaleX(5);
-		sx =  g_lab->_graphics->VGAScaleX(5);
+		dX = _graphics->VGAScaleX(5);
+		sx = _graphics->VGAScaleX(5);
 		last = 6;
 	} else if (scrolltype == RIGHTSCROLL) {
-		dX = g_lab->_graphics->VGAScaleX(-5);
-		dx = g_lab->_graphics->VGAScaleX(-5);
-		sx =  g_lab->_graphics->VGAScaleX(5);
+		dX = _graphics->VGAScaleX(-5);
+		dx = _graphics->VGAScaleX(-5);
+		sx = _graphics->VGAScaleX(5);
 		last = 6;
 	} else if (scrolltype == UPSCROLL) {
-		dY =  g_lab->_graphics->VGAScaleY(5);
-		sy =  g_lab->_graphics->VGAScaleY(5);
+		dY = _graphics->VGAScaleY(5);
+		sy = _graphics->VGAScaleY(5);
 		last = 5;
 	} else if (scrolltype == DOWNSCROLL) {
-		dY = g_lab->_graphics->VGAScaleY(-5);
-		dy = g_lab->_graphics->VGAScaleY(-5);
-		sy =  g_lab->_graphics->VGAScaleY(5);
+		dY = _graphics->VGAScaleY(-5);
+		dy = _graphics->VGAScaleY(-5);
+		sy = _graphics->VGAScaleY(5);
 		last = 5;
 	}
 
-	sx += g_lab->_graphics->SVGACord(2);
+	sx += _graphics->SVGACord(2);
 
-	x1 = g_lab->_graphics->VGAScaleX(100) + (col * g_lab->_graphics->VGAScaleX(30)) + dx;
-	y1 = g_lab->_graphics->VGAScaleY(25) + (row * g_lab->_graphics->VGAScaleY(25)) + dy;
+	x1 = _graphics->VGAScaleX(100) + (col * _graphics->VGAScaleX(30)) + dx;
+	y1 = _graphics->VGAScaleY(25) + (row * _graphics->VGAScaleY(25)) + dy;
 
 	for (uint16 i = 0; i < last; i++) {
-		g_lab->waitTOF();
-		scrollRaster(dX, dY, x1, y1, x1 + g_lab->_graphics->VGAScaleX(28) + sx, y1 + g_lab->_graphics->VGAScaleY(23) + sy);
+		waitTOF();
+		scrollRaster(dX, dY, x1, y1, x1 + _graphics->VGAScaleX(28) + sx, y1 + _graphics->VGAScaleY(23) + sy);
 		x1 += dX;
 		y1 += dY;
 	}
@@ -474,22 +474,22 @@ void LabEngine::changeCombination(uint16 number) {
 
 	combnum = combination[number];
 
-	display._imageData = g_lab->getCurrentDrawingBuffer();
-	display._width     = g_lab->_screenWidth;
-	display._height    = g_lab->_screenHeight;
+	display._imageData = getCurrentDrawingBuffer();
+	display._width     = _screenWidth;
+	display._height    = _screenHeight;
 
 	for (uint16 i = 1; i <= (Images[combnum]->_height / 2); i++) {
-		if (g_lab->_isHiRes) {
+		if (_isHiRes) {
 			if (i & 1)
-				g_lab->waitTOF();
+				waitTOF();
 		} else
-			g_lab->waitTOF();
+			waitTOF();
 
-		display._imageData = g_lab->getCurrentDrawingBuffer();
+		display._imageData = getCurrentDrawingBuffer();
 
-		g_lab->scrollDisplayY(2, g_lab->_graphics->VGAScaleX(COMBINATION_X[number]), g_lab->_graphics->VGAScaleY(65), g_lab->_graphics->VGAScaleX(COMBINATION_X[number]) + (Images[combnum])->_width - 1, g_lab->_graphics->VGAScaleY(65) + (Images[combnum])->_height);
+		scrollDisplayY(2, _graphics->VGAScaleX(COMBINATION_X[number]), _graphics->VGAScaleY(65), _graphics->VGAScaleX(COMBINATION_X[number]) + (Images[combnum])->_width - 1, _graphics->VGAScaleY(65) + (Images[combnum])->_height);
 
-		Images[combnum]->bltBitMap(0, (Images[combnum])->_height - (2 * i), &(display), g_lab->_graphics->VGAScaleX(COMBINATION_X[number]), g_lab->_graphics->VGAScaleY(65), (Images[combnum])->_width, 2);
+		Images[combnum]->bltBitMap(0, (Images[combnum])->_height - (2 * i), &(display), _graphics->VGAScaleX(COMBINATION_X[number]), _graphics->VGAScaleY(65), (Images[combnum])->_width, 2);
 	}
 
 	for (uint16 i = 0; i < 6; i++)
@@ -522,25 +522,25 @@ void LabEngine::doCombination() {
 /*****************************************************************************/
 void LabEngine::showCombination(const char *filename) {
 	resetBuffer();
-	g_lab->_anim->_doBlack = true;
-	g_lab->_anim->_noPalChange = true;
-	g_lab->_graphics->readPict(filename, true);
-	g_lab->_anim->_noPalChange = false;
+	_anim->_doBlack = true;
+	_anim->_noPalChange = true;
+	_graphics->readPict(filename, true);
+	_anim->_noPalChange = false;
 
-	g_lab->_graphics->blackScreen();
+	_graphics->blackScreen();
 
-	Common::File *numFile = g_lab->_resource->openDataFile("P:Numbers");
+	Common::File *numFile = _resource->openDataFile("P:Numbers");
 
 	for (uint16 CurBit = 0; CurBit < 10; CurBit++)
 		Images[CurBit] = new Image(numFile);
 
 	delete numFile;
 
-	allocFile((void **)&g_lab->_tempScrollData, Images[0]->_width * Images[0]->_height * 2L, "tempdata");
+	allocFile((void **)&_tempScrollData, Images[0]->_width * Images[0]->_height * 2L, "tempdata");
 
 	doCombination();
 
-	g_lab->setPalette(g_lab->_anim->_diffPalette, 256);
+	setPalette(_anim->_diffPalette, 256);
 }
 
 } // End of namespace Lab
