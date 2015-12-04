@@ -686,9 +686,6 @@ void XcodeProvider::setupResourcesBuildPhase() {
 void XcodeProvider::setupSourcesBuildPhase() {
 	_sourcesBuildPhase.comment = "PBXSourcesBuildPhase";
 
-	// Setup source file properties
-	std::map<std::string, FileProperty> properties;
-
 	// Same as for containers: a rule for each native target
 	for (unsigned int i = 0; i < _targets.size(); i++) {
 		const std::string &targetName = _targets[i];
