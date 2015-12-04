@@ -2589,6 +2589,11 @@ if test -n "$_host"; then
 			if test "$_opengl" = yes; then
 				_opengles=yes
 			fi
+			# We tell the build system to use cxx11 because the raspberry pi official
+			# crosscompiler supports it but it's not automatically detected.
+			_use_cxx11="yes"
+			# We always use SDL2 on the Raspberry Pi. SDL1 is bit-rotten on this platform.
+			_sdlconfig=sdl2-config
 			;;	
 		dreamcast)
 			append_var DEFINES "-DDISABLE_DEFAULT_SAVEFILEMANAGER"
