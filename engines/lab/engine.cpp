@@ -864,17 +864,8 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 
 				perFlipGadget(actionMode);
 
-				if (gadgetId == 0)
-					drawStaticMessage(kTextTakeWhat);
-				else if (gadgetId == 1)
-					drawStaticMessage(kTextMoveWhat);
-				else if (gadgetId == 2)
-					drawStaticMessage(kTextOpenWhat);
-				else if (gadgetId == 3)
-					drawStaticMessage(kTextCloseWhat);
-				else if (gadgetId == 4)
-					drawStaticMessage(kTextLookWhat);
-
+				if (gadgetId <= 4)
+					drawStaticMessage(kTextTakeWhat + gadgetId);
 				screenUpdate();
 			}
 		} else if (gadgetId == 9) {
