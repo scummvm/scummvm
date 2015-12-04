@@ -4,12 +4,9 @@ ScummVM-RASPBERRYPI README
 Notes
 ============
 
-This version of ScummVM is specially tailored to use DispmanX, the native 2D
-API on the Raspberry Pi. The idea is that scaling and drawing on a double
-buffer with a non-blocking vsync wait is all done using the on-board VideoCore
-hardware, thus using only a small fraction of the CPU ScummVM uses when ran
-on a clunky, software-scaled and desynced X11 environment using the X11 API.
-Thus, running this version under an X11 session is not supported.
+This version of ScummVM uses SDL2 hardware accelerated graphics, be it
+plain SDL2 which in turn uses dispmanx/gles2 or by using gles1 via an
+SDL2-configured GLES1 context.
 
 Requirements
 ============
@@ -67,40 +64,14 @@ works as in any other system ScummVM runs on.
 Building from sources
 ==============================
 
-We have two options to build once we have the sources in our main GNU/Linux desktop
-class PC or in our Raspberry Pi:
-
-1) Building on the Raspberry Pi itself, although possible, is an SLOW task for the
-little computer unless you use distributed gcc (or distcc for short).
-
-Local compilation would simply consist of the "standard" GNU/Linux building process:
-
-cd <sources_dir>
-
-./configure --enable-dispmanx -disable-debug --enable-release 
---enable-optimizations --disable-mt32emu --disable-flac --disable-mad --disable-vorbis 
---disable-tremor --disable-fluidsynth --disable-taskbar --disable-timidity --disable-alsa 
---disable-scalers --disable-hq-scalers --disable-savegame-timestamp --disable-eventrecorder
-
-make
-
-As you can see, we're manually disabling scalers because we prefer dispmanx for that, which 
-makes scalers unnecessary on a CPU limited platform like this, timestamps because most people
-doesn't have an RTC on the Raspberry Pi, and event recorder to save SD card write cycles.
-All these are automatically disabled when we crosscompile by passing "--host=raspberrypi",
-which is not the case.
-
-¡¡It will be an SLOW process, taking several hours to complete, unless you
-are running distcc against a fast compilation server!!
-
-2) If we want to build by cross-compiling on a GNU/Linux X86-based computer,
-we can find concise instructions for this can be found on the ScummVM wiki:
+Recommended method is building by cross-compiling on a GNU/Linux X86-based computer.
+You can find concise instructions for this on the ScummVM wiki:
 
 http://wiki.scummvm.org/index.php/Compiling_ScummVM/RPI 
 
-NOTE: Distcc is my preferred method as it does cross-compiling totally transparent
-(we build ON the Pi but the actual CPU-intensive compilation is made on an external 
-server), but it involves building a custom gcc version on the compilation server and 
-configuring a server and client in both the Raspberry Pi and the server.
+The configure script is disabling scalers because we prefer dispmanx for that, which 
+makes scalers unnecessary on a CPU limited platform like this, timestamps because most people
+doesn't have an RTC on the Raspberry Pi, and event recorder to save SD card write cycles.
+All these are automatically disabled when we crosscompile by passing "--host=raspberrypi".
 
 Enjoy!
