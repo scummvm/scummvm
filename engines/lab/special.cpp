@@ -273,14 +273,14 @@ static void turnPage(bool FromLeft) {
 			g_lab->_music->updateMusic();
 			g_lab->waitTOF();
 			ScreenImage._imageData = g_lab->getCurrentDrawingBuffer();
-			JBackImage.bltBitMap(i, 0, &ScreenImage, i, 0, 8, g_lab->_screenHeight);
+			JBackImage.blitBitmap(i, 0, &ScreenImage, i, 0, 8, g_lab->_screenHeight, false);
 		}
 	} else {
 		for (int i = (g_lab->_screenWidth - 8); i > 0; i -= 8) {
 			g_lab->_music->updateMusic();
 			g_lab->waitTOF();
 			ScreenImage._imageData = g_lab->getCurrentDrawingBuffer();
-			JBackImage.bltBitMap(i, 0, &ScreenImage, i, 0, 8, g_lab->_screenHeight);
+			JBackImage.blitBitmap(i, 0, &ScreenImage, i, 0, 8, g_lab->_screenHeight, false);
 		}
 	}
 }
@@ -302,7 +302,7 @@ void LabEngine::drawJournal(uint16 wipenum, bool needFade) {
 	ScreenImage._imageData = getCurrentDrawingBuffer();
 
 	if (wipenum == 0)
-		JBackImage.bltBitMap(0, 0, &ScreenImage, 0, 0, _screenWidth, _screenHeight);
+		JBackImage.blitBitmap(0, 0, &ScreenImage, 0, 0, _screenWidth, _screenHeight, false);
 	else
 		turnPage((bool)(wipenum == 1));
 
