@@ -92,27 +92,7 @@ void gadgetsOnOff(void *gptr, void *win, int32 num, bool on);
 void eatMessages();
 bool quitPlaying();
 
-/*---------------------------*/
-/*------ From LabFile.c -----*/
-/*---------------------------*/
-
-/* Buffer a whole file */
-byte **isBuffered(const char *fileName);
-byte **openFile(const char *name, uint32 &size);
 void readBlock(void *Buffer, uint32 Size, byte **File);
-void resetBuffer();
-bool initBuffer(uint32 BufSize, bool IsGraphicsMem);
-void freeBuffer();
-
-/* Functions that borrow memory from the buffer */
-bool allocFile(void **Ptr, uint32 Size, const char *fileName);
-void *stealBufMem(int32 Size);
-void freeAllStolenMem();
-
-
-/* Read chunks of a file */
-Common::File *openPartial(const char *name);
-void closePartial(int32 File);
 
 /*---------------------------*/
 /*----- From LabSets.c ------*/

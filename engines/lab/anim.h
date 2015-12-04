@@ -114,14 +114,13 @@ public:
 	bool VUnDIFFMemory(byte *dest, byte *diff, uint16 headerSize, uint16 copySize, uint16 bytesPerRow);
 	void runLengthDecode(byte *dest, byte *source);
 	void VRunLengthDecode(byte *dest, byte *source, uint16 bytesPerRow);
-	bool readDiff(bool playOnce);
+	bool readDiff(byte *buffer, bool playOnce);
+	void playDiff(byte *buffer);
 	void diffNextFrame();
 	void readSound(bool waitTillFinished, Common::File *file);
 	void stopDiff();
 	void stopDiffEnd();
 	void stopSound();
-	void playDiff();
-
 };
 
 } // End of namespace Lab

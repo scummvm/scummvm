@@ -85,39 +85,37 @@ void Intro::doPictText(const char *filename, TextFont *msgFont, bool isScreen) {
 
 	uint32 lastSecs = 0L, lastMicros = 0L, secs = 0L, micros = 0L;
 	IntuiMessage *msg;
-	byte *curPlace, **tFile;
 	bool drawNextText = true, end = false, begin = true;
 
 	int32 cls, code, Drawn;
 	int16 qualifier;
 
+	Common::File *textFile = g_lab->_resource->openDataFile(path);
+	byte *textBuffer = new byte[textFile->size()];
+	textFile->read(textBuffer, textFile->size());
+	delete textFile;
+	byte *curText = textBuffer;
+
 	while (1) {
 		if (drawNextText) {
-			if (begin) {
+			if (begin)
 				begin = false;
-
-				tFile = _vm->_music->newOpen(path);
-
-				if (!tFile)
-					return;
-
-				curPlace = *tFile;
-			} else if (isScreen)
+			else if (isScreen)
 				fade(false, 0);
 
 			if (isScreen) {
 				_vm->_graphics->setAPen(7);
 				_vm->_graphics->rectFill(_vm->_graphics->VGAScaleX(10), _vm->_graphics->VGAScaleY(10), _vm->_graphics->VGAScaleX(310), _vm->_graphics->VGAScaleY(190));
 
-				Drawn = _vm->_graphics->flowText(msgFont, (!_vm->_isHiRes) * -1, 5, 7, false, false, true, true, _vm->_graphics->VGAScaleX(14), _vm->_graphics->VGAScaleY(11), _vm->_graphics->VGAScaleX(306), _vm->_graphics->VGAScaleY(189), (char *)curPlace);
+				Drawn = _vm->_graphics->flowText(msgFont, (!_vm->_isHiRes) * -1, 5, 7, false, false, true, true, _vm->_graphics->VGAScaleX(14), _vm->_graphics->VGAScaleY(11), _vm->_graphics->VGAScaleX(306), _vm->_graphics->VGAScaleY(189), (char *)curText);
 				fade(true, 0);
 			} else {
-				Drawn = _vm->_graphics->longDrawMessage((char *)curPlace);
+				Drawn = _vm->_graphics->longDrawMessage((char *)curText);
 			}
 
-			curPlace += Drawn;
+			curText += Drawn;
 
-			end = (*curPlace == 0);
+			end = (*curText == 0);
 
 			drawNextText = false;
 			introEatMessages();
@@ -126,6 +124,7 @@ void Intro::doPictText(const char *filename, TextFont *msgFont, bool isScreen) {
 				if (isScreen)
 					fade(false, 0);
 
+				delete[] textBuffer;
 				return;
 			}
 
@@ -145,6 +144,7 @@ void Intro::doPictText(const char *filename, TextFont *msgFont, bool isScreen) {
 					if (isScreen)
 						fade(false, 0);
 
+					delete[] textBuffer;
 					return;
 				} else {
 					drawNextText = true;
@@ -164,6 +164,7 @@ void Intro::doPictText(const char *filename, TextFont *msgFont, bool isScreen) {
 				if (isScreen)
 					fade(false, 0);
 
+				delete[] textBuffer;
 				return;
 			}
 
@@ -173,6 +174,7 @@ void Intro::doPictText(const char *filename, TextFont *msgFont, bool isScreen) {
 						if (isScreen)
 							fade(false, 0);
 
+						delete[] textBuffer;
 						return;
 					} else
 						drawNextText = true;
@@ -184,6 +186,7 @@ void Intro::doPictText(const char *filename, TextFont *msgFont, bool isScreen) {
 					if (isScreen)
 						fade(false, 0);
 
+					delete[] textBuffer;
 					return;
 				}
 			}
@@ -192,11 +195,12 @@ void Intro::doPictText(const char *filename, TextFont *msgFont, bool isScreen) {
 				if (isScreen)
 					fade(false, 0);
 
+				delete[] textBuffer;
 				return;
 			} else
 				drawNextText = true;
 		}
-	}
+	}	// while(1)
 }
 
 /*****************************************************************************/
@@ -323,8 +327,6 @@ void Intro::introSequence() {
 	nReadPict("DA", true);
 	musicDelay();
 
-	_vm->_music->newOpen("p:Intro/Intro.1");  /* load the picture into the buffer */
-
 	_vm->_music->updateMusic();
 	_vm->_graphics->blackAllScreen();
 	_vm->_music->updateMusic();
@@ -344,8 +346,6 @@ void Intro::introSequence() {
 	doPictText("i.1", msgFont, true);
 	doPictText("i.2A", msgFont, true);
 	doPictText("i.2B", msgFont, true);
-
-	freeAllStolenMem();
 
 	_vm->_graphics->blackAllScreen();
 	_vm->_music->updateMusic();

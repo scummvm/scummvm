@@ -300,8 +300,6 @@ bool takeItem(uint16 x, uint16 y, CloseDataPtr *cptr) {
 /* Processes the action list.                                                */
 /*****************************************************************************/
 void LabEngine::doActions(Action *aptr, CloseDataPtr *lcptr) {
-	bool firstLoaded = true;
-
 	while (aptr) {
 		_music->updateMusic();
 
@@ -334,13 +332,8 @@ void LabEngine::doActions(Action *aptr, CloseDataPtr *lcptr) {
 			break;
 
 		case LOADDIFF:
-			if (firstLoaded) {
-				resetBuffer();
-				firstLoaded = false;
-			}
-
 			if (aptr->Data)
-				_music->newOpen((char *)aptr->Data);          /* Puts a file into memory */
+				_graphics->loadPict((char *)aptr->Data);          /* Puts a file into memory */
 
 			break;
 
@@ -524,7 +517,7 @@ void LabEngine::doActions(Action *aptr, CloseDataPtr *lcptr) {
 			break;
 
 		case RESETBUFFER:
-			resetBuffer();
+			g_lab->_graphics->freePict();
 			break;
 
 		case SPECIALCMD:

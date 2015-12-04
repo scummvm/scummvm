@@ -48,6 +48,11 @@ DisplayMan::DisplayMan(LabEngine *vm) : _vm(vm) {
 
 	_screenBytesPerPage = 65536;
 	_curapen = 0;
+	_curBitmap = NULL;
+}
+
+DisplayMan::~DisplayMan() {
+	freePict();
 }
 
 /*****************************************************************************/
@@ -103,26 +108,32 @@ uint16 DisplayMan::SVGACord(uint16 cord) {
 /*------ From readPict.c.  Reads in pictures and animations from disk. ------*/
 /*---------------------------------------------------------------------------*/
 
+void DisplayMan::loadPict(const char *filename) {
+	Common::File *bitmapFile = _vm->_resource->openDataFile(filename);
+	freePict();
+	_curBitmap = new byte[bitmapFile->size()];
+	bitmapFile->read(_curBitmap, bitmapFile->size());
+	delete bitmapFile;
+}
+
 /*****************************************************************************/
 /* Reads in a picture into the dest bitmap.                                  */
 /*****************************************************************************/
 bool DisplayMan::readPict(const char *filename, bool playOnce) {
 	_vm->_anim->stopDiff();
 
-	byte **file = _vm->_music->newOpen(filename);
+	loadPict(filename);
 
-	if (file == NULL) {
-		if ((filename[0] == 'p') || (filename[0] == 'P'))
-			blackScreen();
+	_vm->_music->updateMusic();
 
-		return false;
-	}
+	if (!_vm->_music->_doNotFilestopSoundEffect)
+		_vm->_music->stopSoundEffect();
 
 	DispBitMap->_bytesPerRow = _vm->_screenWidth;
 	DispBitMap->_rows        = _vm->_screenHeight;
 	DispBitMap->_flags       = BITMAPF_VIDEO;
 
-	_vm->_anim->readDiff(playOnce);
+	_vm->_anim->readDiff(_curBitmap, playOnce);
 
 	return true;
 }
@@ -131,30 +142,32 @@ bool DisplayMan::readPict(const char *filename, bool playOnce) {
 /* Reads in a picture into buffer memory.                                    */
 /*****************************************************************************/
 byte *DisplayMan::readPictToMem(const char *filename, uint16 x, uint16 y) {
-	byte *mem;
-
 	_vm->_anim->stopDiff();
 
-	allocFile((void **)&mem, (int32)x * (int32)y, "Bitmap");
-	byte *curMem = mem;
+	loadPict(filename);
 
-	byte **file = _vm->_music->newOpen(filename);
+	_vm->_music->updateMusic();
 
-	if (file == NULL)
-		return NULL;
+	if (!_vm->_music->_doNotFilestopSoundEffect)
+		_vm->_music->stopSoundEffect();
 
 	DispBitMap->_bytesPerRow = x;
 	DispBitMap->_rows = y;
 	DispBitMap->_flags = BITMAPF_NONE;
-	DispBitMap->_planes[0] = curMem;
+	DispBitMap->_planes[0] = _curBitmap;
 	DispBitMap->_planes[1] = DispBitMap->_planes[0] + 0x10000;
 	DispBitMap->_planes[2] = DispBitMap->_planes[1] + 0x10000;
 	DispBitMap->_planes[3] = DispBitMap->_planes[2] + 0x10000;
 	DispBitMap->_planes[4] = DispBitMap->_planes[3] + 0x10000;
 
-	_vm->_anim->readDiff(true);
+	_vm->_anim->readDiff(_curBitmap, true);
 
-	return mem;
+	return _curBitmap;
+}
+
+void DisplayMan::freePict() {
+	delete _curBitmap;
+	_curBitmap = NULL;
 }
 
 /*****************************************************************************/
@@ -413,16 +426,15 @@ void DisplayMan::drawMessage(const char *str) {
 /* Scrolls the display to black.                                             */
 /*****************************************************************************/
 void DisplayMan::doScrollBlack() {
-	byte *mem, *tempmem;
+	byte *tempmem;
 	Image im;
 	uint32 size, copysize;
 	uint32 *baseAddr;
-
-	_vm->_event->mouseHide();
 	uint16 width = VGAScaleX(320);
 	uint16 height = VGAScaleY(149) + SVGACord(2);
+	byte *mem = new byte[width * height];
 
-	allocFile((void **)&mem, (int32)width * (int32)height, "Temp Mem");
+	_vm->_event->mouseHide();
 
 	im._width = width;
 	im._height = height;
@@ -479,7 +491,8 @@ void DisplayMan::doScrollBlack() {
 		}
 	}
 
-	freeAllStolenMem();
+	delete[] mem;
+	freePict();
 	_vm->_event->mouseShow();
 }
 
