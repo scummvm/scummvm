@@ -28,6 +28,9 @@
 #include "illusions/screentext.h"
 #include "illusions/thread.h"
 #include "illusions/time.h"
+#include "common/config-manager.h"
+#include "common/translation.h"
+#include "gui/saveload.h"
 
 namespace Illusions {
 
@@ -105,11 +108,11 @@ void BaseMenuSystem::playSoundEffect14() {
 }
 
 void BaseMenuSystem::selectMenuChoiceIndex(uint choiceIndex) {
-	debug("choiceIndex: %d", choiceIndex);
-	debug("_menuChoiceOffset: %p", (void*)_menuChoiceOffset);
+	debug(0, "choiceIndex: %d", choiceIndex);
+	debug(0, "_menuChoiceOffset: %p", (void*)_menuChoiceOffset);
 	if (choiceIndex > 0 && _menuChoiceOffset) {
 		*_menuChoiceOffset = _menuChoiceOffsets[choiceIndex - 1];
-		debug(0, "*_menuChoiceOffset: %04X", *_menuChoiceOffset);		
+		debug(0, "*_menuChoiceOffset: %04X", *_menuChoiceOffset);
 	}
 	_vm->_threads->notifyId(_menuCallerThreadId);
 	_menuCallerThreadId = 0;
@@ -374,7 +377,7 @@ void BaseMenuSystem::closeMenu() {
 }
 
 void BaseMenuSystem::handleClick(uint menuItemIndex, const Common::Point &mousePos) {
-	debug("BaseMenuSystem::handleClick() menuItemIndex: %d", menuItemIndex);
+	debug(0, "BaseMenuSystem::handleClick() menuItemIndex: %d", menuItemIndex);
 
 	if (menuItemIndex == 0) {
 	    playSoundEffect14();
@@ -497,6 +500,10 @@ void BaseMenuSystem::setMenuChoiceOffsets(MenuChoiceOffsets menuChoiceOffsets, i
 	_menuChoiceOffset = menuChoiceOffset;
 }
 
+void BaseMenuSystem::setSavegameSlotNum(int slotNum) {
+	_vm->_savegameSlotNum = slotNum;
+}
+
 void BaseMenuSystem::updateTimeOut(bool resetTimeOut) {
 
 	if (!_isTimeOutEnabled)
@@ -516,7 +523,6 @@ void BaseMenuSystem::updateTimeOut(bool resetTimeOut) {
 			_timeOutStartTime = getCurrentTime();
 			_timeOutEndTime = _timeOutDuration + _timeOutStartTime;
 		} else if (isTimerExpired(_timeOutStartTime, _timeOutEndTime)) {
-			debug("timeout reached");
 			_isTimeOutEnabled = false;
 			selectMenuChoiceIndex(_timeOutMenuChoiceIndex);
 		}
@@ -588,6 +594,31 @@ MenuActionEnterQueryMenu::MenuActionEnterQueryMenu(BaseMenuSystem *menuSystem, i
 void MenuActionEnterQueryMenu::execute() {
 	_menuSystem->setQueryConfirmationChoiceIndex(_confirmationChoiceIndex);
 	_menuSystem->enterSubMenuById(_menuId);
+}
+
+// MenuActionLoadGame
+
+MenuActionLoadGame::MenuActionLoadGame(BaseMenuSystem *menuSystem, uint choiceIndex)
+	: BaseMenuAction(menuSystem), _choiceIndex(choiceIndex) {
+}
+
+void MenuActionLoadGame::execute() {
+	const EnginePlugin *plugin = NULL;
+	EngineMan.findGame(ConfMan.get("gameid"), &plugin);
+	GUI::SaveLoadChooser *dialog;
+	Common::String desc;
+	int slot;
+
+	dialog = new GUI::SaveLoadChooser(_("Restore game:"), _("Restore"), false);
+	slot = dialog->runModalWithPluginAndTarget(plugin, ConfMan.getActiveDomainName());
+
+	delete dialog;
+
+	if (slot >= 0) {
+		_menuSystem->setSavegameSlotNum(slot);
+		_menuSystem->selectMenuChoiceIndex(_choiceIndex);
+	}
+
 }
 
 } // End of namespace Illusions

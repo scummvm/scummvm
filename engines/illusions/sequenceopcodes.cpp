@@ -45,7 +45,7 @@ SequenceOpcodes::~SequenceOpcodes() {
 void SequenceOpcodes::execOpcode(Control *control, OpCall &opCall) {
 	if (!_opcodes[opCall._op])
 		error("SequenceOpcodes::execOpcode() Unimplemented opcode %d", opCall._op);
-	debug(1, "execOpcode(%d)", opCall._op);
+	debug(3, "execOpcode(%d)", opCall._op);
 	(*_opcodes[opCall._op])(control, opCall);
 }
 
