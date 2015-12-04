@@ -66,7 +66,7 @@ uint16 DisplayMan::scaleX(uint16 x) {
 /* file, co-ordinates are set up on a 368x336 display.                       */
 /*****************************************************************************/
 uint16 DisplayMan::scaleY(uint16 y) {
-	if (g_lab->_isHiRes)
+	if (_vm->_isHiRes)
 		return (y + (y / 14));
 	else
 		return ((y * 10) / 24);
@@ -76,7 +76,7 @@ uint16 DisplayMan::scaleY(uint16 y) {
 /* Scales the VGA cords to SVGA if necessary; otherwise, returns VGA cords.  */
 /*****************************************************************************/
 int16 DisplayMan::VGAScaleX(int16 x) {
-	if (g_lab->_isHiRes)
+	if (_vm->_isHiRes)
 		return (x * 2);
 	else
 		return x;
@@ -86,14 +86,14 @@ int16 DisplayMan::VGAScaleX(int16 x) {
 /* Scales the VGA cords to SVGA if necessary; otherwise, returns VGA cords.  */
 /*****************************************************************************/
 int16 DisplayMan::VGAScaleY(int16 y) {
-	if (g_lab->_isHiRes)
+	if (_vm->_isHiRes)
 		return ((y * 12) / 5);
 	else
 		return y;
 }
 
 uint16 DisplayMan::SVGACord(uint16 cord) {
-	if (g_lab->_isHiRes)
+	if (_vm->_isHiRes)
 		return cord;
 	else
 		return 0;
@@ -133,12 +133,12 @@ bool DisplayMan::readPict(const char *filename, bool playOnce) {
 byte *DisplayMan::readPictToMem(const char *filename, uint16 x, uint16 y) {
 	byte *mem;
 
-	g_lab->_anim->stopDiff();
+	_vm->_anim->stopDiff();
 
 	allocFile((void **)&mem, (int32)x * (int32)y, "Bitmap");
 	byte *curMem = mem;
 
-	byte **file = g_lab->_music->newOpen(filename);
+	byte **file = _vm->_music->newOpen(filename);
 
 	if (file == NULL)
 		return NULL;
@@ -152,7 +152,7 @@ byte *DisplayMan::readPictToMem(const char *filename, uint16 x, uint16 y) {
 	DispBitMap->_planes[3] = DispBitMap->_planes[2] + 0x10000;
 	DispBitMap->_planes[4] = DispBitMap->_planes[3] + 0x10000;
 
-	g_lab->_anim->readDiff(true);
+	_vm->_anim->readDiff(true);
 
 	return mem;
 }
@@ -488,16 +488,16 @@ void DisplayMan::copyPage(uint16 width, uint16 height, uint16 nheight, uint16 st
 	uint16 curPage;
 	uint32 *baseAddr;
 
-	baseAddr = (uint32 *)g_lab->getCurrentDrawingBuffer();
+	baseAddr = (uint32 *)_vm->getCurrentDrawingBuffer();
 
 	size = (int32)(height - nheight) * (int32)width;
 	mem += startline * width;
-	curPage = ((int32)nheight * (int32)width) / g_lab->_graphics->_screenBytesPerPage;
-	offSet = ((int32)nheight * (int32)width) - (curPage * g_lab->_graphics->_screenBytesPerPage);
+	curPage = ((int32)nheight * (int32)width) / _vm->_graphics->_screenBytesPerPage;
+	offSet = ((int32)nheight * (int32)width) - (curPage * _vm->_graphics->_screenBytesPerPage);
 
 	while (size) {
-		if (size > (g_lab->_graphics->_screenBytesPerPage - offSet))
-			copysize = g_lab->_graphics->_screenBytesPerPage - offSet;
+		if (size > (_vm->_graphics->_screenBytesPerPage - offSet))
+			copysize = _vm->_graphics->_screenBytesPerPage - offSet;
 		else
 			copysize = size;
 
@@ -669,7 +669,7 @@ void DisplayMan::doTransWipe(CloseDataPtr *cPtr, char *filename) {
 	else
 		_vm->_curFileName = getPictName(cPtr);
 
-	byte *BitMapMem = readPictToMem(g_lab->_curFileName, _vm->_screenWidth, lastY + 5);
+	byte *BitMapMem = readPictToMem(_vm->_curFileName, _vm->_screenWidth, lastY + 5);
 	_vm->setPalette(_vm->_anim->_diffPalette, 256);
 
 	if (BitMapMem) {
@@ -833,7 +833,7 @@ bool DisplayMan::setUpScreens() {
 	if (!createScreen(_vm->_isHiRes))
 		return false;
 
-	Common::File *controlFile = g_lab->_resource->openDataFile("P:Control");
+	Common::File *controlFile = _vm->_resource->openDataFile("P:Control");
 	for (uint16 i = 0; i < 20; i++)
 		_vm->_moveImages[i] = new Image(controlFile);
 	delete controlFile;
@@ -883,7 +883,7 @@ bool DisplayMan::setUpScreens() {
 		curGadget->NextGadget = createButton(289, y, 9, 0, _vm->_moveImages[10], _vm->_moveImages[11]);
 	}
 
-	Common::File *invFile = g_lab->_resource->openDataFile("P:Inv");
+	Common::File *invFile = _vm->_resource->openDataFile("P:Inv");
 
 	if (_vm->getPlatform() == Common::kPlatformWindows) {
 		for (uint16 imgIdx = 0; imgIdx < 10; imgIdx++)
