@@ -53,32 +53,18 @@ Image::Image(Common::File *s) {
 /* Draws an image to the screen.                                             */
 /*****************************************************************************/
 void Image::drawImage(uint16 x, uint16 y) {
-	int sx = 0, sy = 0;
-	int dx = x, dy = y;
 	int w = _width;
 	int h = _height;
 
-	if (dx < 0) {
-		sx -= dx;
-		w += dx;
-		dx = 0;
-	}
+	if (x + w > g_lab->_screenWidth)
+		w = g_lab->_screenWidth - x;
 
-	if (dy < 0) {
-		sy -= dy;
-		w += dy;
-		dy = 0;
-	}
-
-	if (dx + w > g_lab->_screenWidth)
-		w = g_lab->_screenWidth - dx;
-
-	if (dy + h > g_lab->_screenHeight)
-		h = g_lab->_screenHeight - dy;
+	if (y + h > g_lab->_screenHeight)
+		h = g_lab->_screenHeight - y;
 
 	if ((w > 0) && (h > 0)) {
-		byte *s = _imageData + sy * _width + sx;
-		byte *d = g_lab->getCurrentDrawingBuffer() + dy * g_lab->_screenWidth + dx;
+		byte *s = _imageData;
+		byte *d = g_lab->getCurrentDrawingBuffer() + y * g_lab->_screenWidth + x;
 
 		while (h-- > 0) {
 			memcpy(d, s, w);
@@ -92,32 +78,18 @@ void Image::drawImage(uint16 x, uint16 y) {
 /* Draws an image to the screen.                                             */
 /*****************************************************************************/
 void Image::drawMaskImage(uint16 x, uint16 y) {
-	int sx = 0, sy = 0;
-	int dx = x, dy = y;
 	int w = _width;
 	int h = _height;
 
-	if (dx < 0) {
-		sx -= dx;
-		w += dx;
-		dx = 0;
-	}
+	if (x + w > g_lab->_screenWidth)
+		w = g_lab->_screenWidth - x;
 
-	if (dy < 0) {
-		sy -= dy;
-		w += dy;
-		dy = 0;
-	}
-
-	if (dx + w > g_lab->_screenWidth)
-		w = g_lab->_screenWidth - dx;
-
-	if (dy + h > g_lab->_screenHeight)
-		h = g_lab->_screenHeight - dy;
+	if (y + h > g_lab->_screenHeight)
+		h = g_lab->_screenHeight - y;
 
 	if ((w > 0) && (h > 0)) {
-		byte *s = _imageData + sy * _width + sx;
-		byte *d = g_lab->getCurrentDrawingBuffer() + dy * g_lab->_screenWidth + dx;
+		byte *s = _imageData;
+		byte *d = g_lab->getCurrentDrawingBuffer() + y * g_lab->_screenWidth + x;
 
 		while (h-- > 0) {
 			byte *ss = s;
@@ -141,32 +113,18 @@ void Image::drawMaskImage(uint16 x, uint16 y) {
 /* Reads an image from the screen.                                           */
 /*****************************************************************************/
 void Image::readScreenImage(uint16 x, uint16 y) {
-	int sx = 0, sy = 0;
-	int	dx = x, dy = y;
 	int w = _width;
 	int h = _height;
 
- 	if (dx < 0) {
-		sx -= dx;
-		w += dx;
-		dx = 0;
-	}
+	if (x + w > g_lab->_screenWidth)
+		w = g_lab->_screenWidth - x;
 
-	if (dy < 0) {
-		sy -= dy;
-		w += dy;
-		dy = 0;
-	}
-
-	if (dx + w > g_lab->_screenWidth)
-		w = g_lab->_screenWidth - dx;
-
-	if (dy + h > g_lab->_screenHeight)
-		h = g_lab->_screenHeight - dy;
+	if (y + h > g_lab->_screenHeight)
+		h = g_lab->_screenHeight - y;
 
 	if ((w > 0) && (h > 0)) {
-		byte *s = _imageData + sy * _width + sx;
-		byte *d = g_lab->getCurrentDrawingBuffer() + dy * g_lab->_screenWidth + dx;
+		byte *s = _imageData;
+		byte *d = g_lab->getCurrentDrawingBuffer() + y * g_lab->_screenWidth + x;
 
 		while (h-- > 0) {
 			memcpy(s, d, w);
@@ -184,34 +142,18 @@ void Image::bltBitMap(uint16 xs, uint16 ys, Image *imDest,
 					uint16 xd, uint16 yd, uint16 width, uint16 height) {
 	// I think the old code assumed that the source image data was valid for the given box.
 	// I will proceed on that assumption.
-	int sx = xs;
-	int sy = ys;
-	int dx = xd;
-	int dy = yd;
 	int w = width;
 	int h = height;
 
-	if (dx < 0) {
-		sx -= dx;
-		w += dx;
-		dx = 0;
-	}
+	if (xd + w > imDest->_width)
+		w = imDest->_width - xd;
 
-	if (dy < 0) {
-		sy -= dy;
-		w += dy;
-		dy = 0;
-	}
-
-	if (dx + w > imDest->_width)
-		w = imDest->_width - dx;
-
-	if (dy + h > imDest->_height)
-		h = imDest->_height - dy;
+	if (yd + h > imDest->_height)
+		h = imDest->_height - yd;
 
 	if (w > 0 && h > 0) {
-		byte *s = _imageData + sy * _width + sx;
-		byte *d = imDest->_imageData + dy * imDest->_width + dx;
+		byte *s = _imageData + ys * _width + xs;
+		byte *d = imDest->_imageData + yd * imDest->_width + xd;
 
 		while (h-- > 0) {
 			memcpy(d, s, w);

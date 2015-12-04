@@ -144,25 +144,14 @@ void LabEngine::scrollDisplayX(int16 dx, uint16 x1, uint16 y1, uint16 x2, uint16
 		y1 = temp;
 	}
 
-	if (dx > 0) {
-		im._width = x2 - x1 + 1 - dx;
-		im._height = y2 - y1 + 1;
+	im._width = x2 - x1 + 1 - dx;
+	im._height = y2 - y1 + 1;
 
-		im.readScreenImage(x1, y1);
-		im.drawImage(x1 + dx, y1);
+	im.readScreenImage(x1, y1);
+	im.drawImage(x1 + dx, y1);
 
-		setAPen(0);
-		rectFill(x1, y1, x1 + dx - 1, y2);
-	} else if (dx < 0) {
-		im._width = x2 - x1 + 1 + dx;
-		im._height = y2 - y1 + 1;
-
-		im.readScreenImage(x1 - dx, y1);
-		im.drawImage(x1, y1);
-
-		setAPen(0);
-		rectFill(x2 + dx + 1, y1, x2, y2);
-	}
+	setAPen(0);
+	rectFill(x1, y1, x1 + dx - 1, y2);
 }
 
 /*****************************************************************************/
@@ -186,25 +175,14 @@ void LabEngine::scrollDisplayY(int16 dy, uint16 x1, uint16 y1, uint16 x2, uint16
 		y1 = temp;
 	}
 
-	if (dy > 0) {
-		im._width = x2 - x1 + 1;
-		im._height = y2 - y1 + 1 - dy;
+	im._width = x2 - x1 + 1;
+	im._height = y2 - y1 + 1 - dy;
 
-		im.readScreenImage(x1, y1);
-		im.drawImage(x1, y1 + dy);
+	im.readScreenImage(x1, y1);
+	im.drawImage(x1, y1 + dy);
 
-		setAPen(0);
-		rectFill(x1, y1, x2, y1 + dy - 1);
-	} else if (dy < 0) {
-		im._width = x2 - x1 + 1;
-		im._height = y2 - y1 + 1 + dy;
-
-		im.readScreenImage(x1, y1 - dy);
-		im.drawImage(x1, y1);
-
-		setAPen(0);
-		rectFill(x1, y2 + dy + 1, x2, y2);
-	}
+	setAPen(0);
+	rectFill(x1, y1, x2, y1 + dy - 1);
 }
 
 /*****************************************************************************/
@@ -218,29 +196,17 @@ void LabEngine::setAPen(byte pennum) {
 /* Fills in a rectangle.                                                     */
 /*****************************************************************************/
 void LabEngine::rectFill(uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
-	int dx = x1;
-	int dy = y1;
 	int w = x2 - x1 + 1;
 	int h = y2 - y1 + 1;
 
-	if (dx < 0) {
-		w += dx;
-		dx = 0;
-	}
+	if (x1 + w > _screenWidth)
+		w = _screenWidth - x1;
 
-	if (dy < 0) {
-		w += dy;
-		dy = 0;
-	}
-
-	if (dx + w > _screenWidth)
-		w = _screenWidth - dx;
-
-	if (dy + h > _screenHeight)
-		h = _screenHeight - dy;
+	if (y1 + h > _screenHeight)
+		h = _screenHeight - y1;
 
 	if ((w > 0) && (h > 0)) {
-		char *d = (char *)getCurrentDrawingBuffer() + dy * _screenWidth + dx;
+		char *d = (char *)getCurrentDrawingBuffer() + y1 * _screenWidth + x1;
 
 		while (h-- > 0) {
 			char *dd = d;
@@ -273,35 +239,23 @@ void LabEngine::drawHLine(uint16 x1, uint16 y, uint16 x2) {
 /* Overlays a region on the screen using the desired pen color.              */
 /*****************************************************************************/
 void LabEngine::overlayRect(uint16 pencolor, uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
-	int dx = x1;
-	int dy = y1;
 	int w = x2 - x1 + 1;
 	int h = y2 - y1 + 1;
 
-	if (dx < 0) {
-		w += dx;
-		dx = 0;
-	}
+	if (x1 + w > _screenWidth)
+		w = _screenWidth - x1;
 
-	if (dy < 0) {
-		w += dy;
-		dy = 0;
-	}
-
-	if (dx + w > _screenWidth)
-		w = _screenWidth - dx;
-
-	if (dy + h > _screenHeight)
-		h = _screenHeight - dy;
+	if (y1 + h > _screenHeight)
+		h = _screenHeight - y1;
 
 	if ((w > 0) && (h > 0)) {
-		char *d = (char *)getCurrentDrawingBuffer() + dy * _screenWidth + dx;
+		char *d = (char *)getCurrentDrawingBuffer() + y1 * _screenWidth + x1;
 
 		while (h-- > 0) {
 			char *dd = d;
 			int ww = w;
 
-			if (dy & 1) {
+			if (y1 & 1) {
 				dd++;
 				ww--;
 			}
@@ -313,7 +267,7 @@ void LabEngine::overlayRect(uint16 pencolor, uint16 x1, uint16 y1, uint16 x2, ui
 			}
 
 			d += _screenWidth;
-			dy++;
+			y1++;
 		}
 	}
 }
