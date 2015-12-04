@@ -1053,8 +1053,6 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 }
 
 void LabEngine::go() {
-	bool doIntro = true;
-
 	_isHiRes = ((getFeatures() & GF_LOWRES) == 0);
 
 	if (!_graphics->setUpScreens()) {
@@ -1066,19 +1064,13 @@ void LabEngine::go() {
 
 	initRoomBuffer();
 
-	if (!doIntro)
-		_music->initMusic();
-
 	_msgFont = _resource->getFont("P:AvanteG.12");
 
 	_event->mouseHide();
 
-	if (doIntro) {
-		Intro *intro = new Intro(this);
-		intro->introSequence();
-		delete intro;
-	} else
-		_anim->_doBlack = true;
+	Intro *intro = new Intro(this);
+	intro->introSequence();
+	delete intro;
 
 	_event->mouseShow();
 	mainGameLoop();
