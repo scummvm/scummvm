@@ -29,6 +29,7 @@
  */
 
 #include "common/keyboard.h"
+#include "lab/image.h"
 
 #ifndef LAB_INTEFACE_H
 #define LAB_INTEFACE_H

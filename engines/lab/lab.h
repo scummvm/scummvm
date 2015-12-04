@@ -52,7 +52,13 @@ enum GameFeatures {
 	GF_WINDOWS_TRIAL = 1 << 1
 };
 
-#define ONESECOND 1000
+#define ONESECOND      1000
+#define BRICKOPEN      115
+#define COMBINATIONUNLOCKED  130
+#define LEFTSCROLL     1
+#define RIGHTSCROLL    2
+#define UPSCROLL       3
+#define DOWNSCROLL     4
 
 class LabEngine : public Engine {
 public:
@@ -124,12 +130,16 @@ public:
 	Gadget *_invGadgetList;
 	Image *_moveImages[20];
 	Image *_invImages[10];
+	Image *Images[10];
+	uint16 CurTile[4][4];
+	byte combination[6];
 
 private:
 	int _lastWaitTOFTicks;
 	bool _lastTooLong;
 	CloseDataPtr _cptr;
 	InventoryData *_inventory;
+	Image *Tiles[16];
 
 private:
 	bool from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Common::Point tmpPos, uint16 &curInv, IntuiMessage * curMsg, bool &forceDraw, uint16 gadgetId, uint16 &actionMode);
@@ -175,6 +185,18 @@ private:
 	void mayShowCrumbIndicator();
 	void mayShowCrumbIndicatorOff();
 	const char *getInvName(uint16 curInv);
+	int VGAUnScaleX(int x);
+	int VGAUnScaleY(int y);
+	void mouseTile(Common::Point pos);
+	void changeTile(uint16 col, uint16 row);
+	void mouseCombination(Common::Point pos);
+	void doTile(bool showsolution);
+	void showTile(const char *filename, bool showsolution);
+	void doTileScroll(uint16 col, uint16 row, uint16 scrolltype);
+	void changeCombination(uint16 number);
+	void scrollRaster(int16 dx, int16 dy, uint16 x1, uint16 y1, uint16 x2, uint16 y2);
+	void doCombination();
+	void showCombination(const char *filename);
 
 	bool saveRestoreGame();
 

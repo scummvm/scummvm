@@ -51,8 +51,6 @@ namespace Lab {
 
 
 /* Lab: Labyrinth specific */
-extern byte combination[6];
-extern uint16 CurTile[4] [4];
 extern char *getPictName(CloseDataPtr *lcptr);
 
 void writeSaveGameHeader(Common::OutSaveFile *out, const Common::String &saveName) {
@@ -155,12 +153,12 @@ bool saveGame(uint16 Direction, uint16 Quarters, int slot, Common::String desc) 
 
 	// Combination lock and tile stuff
 	for (i = 0; i < 6; i++)
-		file->writeByte(combination[i]);
+		file->writeByte(g_lab->combination[i]);
 
 	// Tiles
 	for (i = 0; i < 4; i++)
 		for (j = 0; j < 4; j++)
-			file->writeUint16LE(CurTile[i][j]);
+			file->writeUint16LE(g_lab->CurTile[i][j]);
 
 	// Breadcrumbs
 	for (i = 0; i < sizeof(g_lab->_breadCrumbs); i++) {
@@ -205,12 +203,12 @@ bool loadGame(uint16 *Direction, uint16 *Quarters, int slot) {
 
 	// Combination lock and tile stuff
 	for (i = 0; i < 6; i++)
-		combination[i] = file->readByte();
+		g_lab->combination[i] = file->readByte();
 
 	// Tiles
 	for (i = 0; i < 4; i++)
 		for (j = 0; j < 4; j++)
-			CurTile[i][j] = file->readUint16LE();
+			g_lab->CurTile[i][j] = file->readUint16LE();
 
 	// Breadcrumbs
 	for (i = 0; i < 128; i++) {

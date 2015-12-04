@@ -53,8 +53,6 @@ public:
 	int16 VGAScaleX(int16 x);
 	int16 VGAScaleY(int16 y);
 	uint16 SVGACord(uint16 cord);
-	int VGAUnScaleX(int x);
-	int VGAUnScaleY(int y);
 	bool readPict(const char *filename, bool playOnce);
 	byte *readPictToMem(const char *filename, uint16 x, uint16 y);
 	void doScrollBlack();

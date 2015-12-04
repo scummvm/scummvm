@@ -54,7 +54,6 @@ class LabEngine;
 #define EAST    2
 #define WEST    3
 
-class Image;
 struct TextFont;
 struct Gadget;
 
@@ -140,8 +139,6 @@ public:
 /*----- From Machine.c ------*/
 /*---------------------------*/
 
-int VGAUnScaleX(int x);
-int VGAUnScaleY(int y);
 char *translateFileName(const char *filename);
 
 /*---------------------------*/
@@ -169,9 +166,6 @@ bool readSaveGameHeader(Common::InSaveFile *in, SaveGameHeader &header);
 /*--------------------------*/
 
 void showCombination(const char *filename);
-void mouseCombination(Common::Point pos);
-void showTile(const char *filename, bool showsolution);
-void mouseTile(Common::Point pos);
 
 } // End of namespace Lab
 
