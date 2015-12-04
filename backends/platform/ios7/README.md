@@ -42,9 +42,8 @@ For jailbroken devices, it is also possible to compile the project from command 
 Open a terminal, and execute the following commands:
 ```
 $ cd path_to_the_scummvm_sources
-$ SDKROOT=$(xcrun --sdk iphoneos --show-sdk-path) CC=clang CXX=clang++ ./configure --host=iphone --disable-scalers --disable-mt32emu --enable-release
-$ make iphone
-$ make iphonebundle
+$ SDKROOT=$(xcrun --sdk iphoneos --show-sdk-path) CC=clang CXX=clang++ ./configure --host=ios7 --disable-scalers --disable-mt32emu --enable-release
+$ make ios7bundle
 ```
 
 At the end of the compilation, you'll find a **ScummVM.app** application: copy it over SSH, and reboot your device.
