@@ -386,6 +386,12 @@ bool OpenGLSdlGraphicsManager::setupMode(uint width, uint height) {
 		}
 	}
 
+#ifdef USE_GLES
+	// SDL2 will create a GLES2 context by default, so this is needed for GLES1-profile
+	// functions to work.
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 1);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
+#endif
 	_glContext = SDL_GL_CreateContext(_window->getSDLWindow());
 	if (!_glContext) {
 		return false;
