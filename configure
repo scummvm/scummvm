@@ -2589,6 +2589,10 @@ if test -n "$_host"; then
 			if test "$_opengl" = yes; then
 				_opengles=yes
 			fi
+			# We prefer SDL2 on the Raspberry Pi: acceleration now depends on it 
+			# since SDL2 manages dispmanx/GLES2 very well internally.
+			# SDL1 is bit-rotten on this platform.
+			_sdlconfig=sdl2-config
 			;;
 		dreamcast)
 			append_var DEFINES "-DDISABLE_DEFAULT_SAVEFILEMANAGER"
