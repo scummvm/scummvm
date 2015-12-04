@@ -237,7 +237,7 @@ void fade(bool fadein, uint16 res) {
 /*****************************************************************************/
 /* Figures out what a room's coordinates should be.                          */
 /*****************************************************************************/
-static void roomCords(uint16 CurRoom, uint16 *x1, uint16 *y1, uint16 *x2, uint16 *y2) {
+static void roomCoords(uint16 CurRoom, uint16 *x1, uint16 *y1, uint16 *x2, uint16 *y2) {
 	Image *curRoomImg = NULL;
 
 	switch (Maps[CurRoom].SpecialID) {
@@ -699,7 +699,7 @@ void LabEngine::processMap(uint16 CurRoom) {
 					OldMsg = CurMsg;
 
 					for (uint16 i = 1; i <= MaxRooms; i++) {
-						roomCords(i, &x1, &y1, &x2, &y2);
+						roomCoords(i, &x1, &y1, &x2, &y2);
 
 						if ((Maps[i].PageNumber == CurFloor)
 						        && _roomsFound->in(i)
@@ -722,7 +722,7 @@ void LabEngine::processMap(uint16 CurRoom) {
 							if (Maps[OldMsg].PageNumber == CurFloor)
 								drawRoom(OldMsg, (bool)(OldMsg == CurRoom));
 
-							roomCords(CurMsg, &x1, &y1, &x2, &y2);
+							roomCoords(CurMsg, &x1, &y1, &x2, &y2);
 							x1 = (x1 + x2) / 2;
 							y1 = (y1 + y2) / 2;
 
