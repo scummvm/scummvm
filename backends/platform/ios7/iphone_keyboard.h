@@ -26,7 +26,7 @@
 #include <UIKit/UIKit.h>
 #include <UIKit/UITextView.h>
 
-@interface SoftKeyboard : UIView {
+@interface SoftKeyboard : UIView<UITextViewDelegate> {
 	id inputDelegate;
 	UITextView *inputView;
 }
@@ -35,6 +35,9 @@
 - (UITextView *)inputView;
 - (void)setInputDelegate:(id)delegate;
 - (void)handleKeyPress:(unichar)c;
+
+- (void)showKeyboard;
+- (void)hideKeyboard;
 
 @end
 

@@ -36,7 +36,8 @@ enum InputEvent {
 	kInputKeyPressed,
 	kInputApplicationSuspended,
 	kInputApplicationResumed,
-	kInputSwipe
+	kInputSwipe,
+	kInputTap
 };
 
 enum ScreenOrientation {
@@ -50,6 +51,11 @@ enum UIViewSwipeDirection {
 	kUIViewSwipeDown = 2,
 	kUIViewSwipeLeft = 4,
 	kUIViewSwipeRight = 8
+};
+
+enum UIViewTapDescription {
+	kUIViewTapSingle = 1,
+	kUIViewTapDouble = 2
 };
 
 enum GraphicsModes {

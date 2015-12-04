@@ -835,7 +835,7 @@ Usage: $0 [OPTIONS]...
 Configuration:
   -h, --help              display this help and exit
   --backend=BACKEND       backend to build (android, tizen, dc, dingux, ds, gcw0,
-                          gph, iphone, linuxmoto, maemo, n64, null, openpandora,
+                          gph, iphone, ios7, linuxmoto, maemo, n64, null, openpandora,
                           ps2, psp, samsungtv, sdl, webos, wii, wince) [sdl]
 
 Installation directories:
@@ -875,7 +875,8 @@ Special configuration feature:
                                            gcw0 for GCW Zero
                                            gp2x for GP2X
                                            gp2xwiz for GP2X Wiz
-                                           iphone for Apple iPhone
+                                           iphone for Apple iPhone (iOS <= 6)
+                                           ios7 for Apple iPhone / iPad (iOS >= 7)
                                            linupy for Yopy PDA
                                            maemo for Nokia Maemo
                                            motoezx for MotoEZX
@@ -1361,6 +1362,11 @@ iphone)
 	_host_os=iphone
 	_host_cpu=arm
 	_host_alias=arm-apple-darwin9
+	;;
+ios7)
+	_host_os=iphone
+	_host_cpu=arm
+	_host_alias=arm-apple-darwin11
 	;;
 linupy)
 	_host_os=linux
@@ -2698,9 +2704,18 @@ if test -n "$_host"; then
 			;;
 		iphone)
 			append_var DEFINES "-DIPHONE"
+			append_var ASFLAGS "-arch armv6"
+			_backend="iphone"
+			_build_scalers=no
+			_mt32emu=no
+			_seq_midi=no
+			_timidity=no
+			;;
+		ios7)
+			append_var DEFINES "-DIPHONE"
 			append_var CFLAGS "-Wno-shift-count-overflow"
 			append_var CXXFLAGS "-Wno-shift-count-overflow"
-			_backend="iphone"
+			_backend="ios7"
 			_build_scalers=no
 			_mt32emu=no
 			_seq_midi=no
@@ -3001,13 +3016,18 @@ case $_backend in
 		append_var LIBS "-lobjc -framework UIKit -framework CoreGraphics -framework OpenGLES"
 		append_var LIBS "-framework QuartzCore -framework CoreFoundation -framework Foundation"
 		append_var LIBS "-framework AudioToolbox -framework CoreAudio"
+		;;
+	ios7)
+		append_var LIBS "-lobjc -framework UIKit -framework CoreGraphics -framework OpenGLES"
+		append_var LIBS "-framework QuartzCore -framework CoreFoundation -framework Foundation"
+		append_var LIBS "-framework AudioToolbox -framework CoreAudio"
 		append_var LDFLAGS "-miphoneos-version-min=7.1 -arch armv7"
 		append_var CFLAGS "-miphoneos-version-min=7.1 -arch armv7"
 		append_var CXXFLAGS "-miphoneos-version-min=7.1 -arch armv7"
 		if test -n "$SDKROOT"; then
-			append_var LDFLAGS "-isysroot $SDKROOT"
-			append_var CFLAGS "-isysroot $SDKROOT"
-			append_var CXXFLAGS "-isysroot $SDKROOT"
+			append_var LDFLAGS "-isysroot $SDKROOT -I $SDKROOT/usr/include"
+			append_var CFLAGS "-isysroot $SDKROOT -I $SDKROOT/usr/include"
+			append_var CXXFLAGS "-isysroot $SDKROOT -I $SDKROOT/usr/include"
 		fi
 		;;
 	linuxmoto)
@@ -3144,7 +3164,7 @@ esac
 # Enable 16bit support only for backends which support it
 #
 case $_backend in
-	android | dingux | dc | gph | iphone | maemo | openpandora | psp | samsungtv | sdl | tizen | webos | wii)
+	android | dingux | dc | gph | iphone | ios7 | maemo | openpandora | psp | samsungtv | sdl | tizen | webos | wii)
 		if test "$_16bit" = auto ; then
 			_16bit=yes
 		else
@@ -3203,7 +3223,7 @@ case $_host_os in
 	amigaos* | cygwin* | dreamcast | ds | gamecube | mingw* | n64 | ps2 | ps3 | psp | wii | wince)
 		_posix=no
 		;;
-	android | beos* | bsd* | darwin* | freebsd* | gnu* | gph-linux | haiku* | hpux* | iphone | irix*| k*bsd*-gnu* | linux* | maemo | mint* | netbsd* | openbsd* | solaris* | sunos* | uclinux* | webos)
+	android | beos* | bsd* | darwin* | freebsd* | gnu* | gph-linux | haiku* | hpux* | iphone | ios7 | irix*| k*bsd*-gnu* | linux* | maemo | mint* | netbsd* | openbsd* | solaris* | sunos* | uclinux* | webos)
 		_posix=yes
 		;;
 	os2-emx*)

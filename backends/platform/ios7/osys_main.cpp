@@ -38,6 +38,8 @@
 
 #include "backends/saves/default/default-saves.h"
 #include "backends/timer/default/default-timer.h"
+#include "backends/fs/chroot/chroot-fs-factory.h"
+#include "backends/fs/posix/posix-fs.h"
 #include "audio/mixer.h"
 #include "audio/mixer_intern.h"
 
@@ -63,7 +65,11 @@ OSystem_IPHONE::OSystem_IPHONE() :
 	_mouseCursorPaletteEnabled(false), _gfxTransactionError(kTransactionSuccess) {
 	_queuedInputEvent.type = Common::EVENT_INVALID;
 	_touchpadModeEnabled = !iPhone_isHighResDevice();
+#ifdef IPHONE_OFFICIAL
+	_fsFactory = new ChRootFilesystemFactory(iPhone_getDocumentsDir());
+#else
 	_fsFactory = new POSIXFilesystemFactory();
+#endif
 	initVideoContext();
 
 	memset(_gamePalette, 0, sizeof(_gamePalette));
@@ -83,6 +89,10 @@ OSystem_IPHONE::~OSystem_IPHONE() {
 	_mouseBuffer.free();
 }
 
+bool OSystem_IPHONE::touchpadModeEnabled() const {
+	return _touchpadModeEnabled;
+}
+
 int OSystem_IPHONE::timerHandler(int t) {
 	DefaultTimerManager *tm = (DefaultTimerManager *)g_system->getTimerManager();
 	tm->handler();
@@ -91,7 +101,7 @@ int OSystem_IPHONE::timerHandler(int t) {
 
 void OSystem_IPHONE::initBackend() {
 #ifdef IPHONE_OFFICIAL
-	_savefileManager = new DefaultSaveFileManager(iPhone_getDocumentsDir());
+	_savefileManager = new DefaultSaveFileManager("/Savegames");
 #else
 	_savefileManager = new DefaultSaveFileManager(SCUMMVM_SAVE_PATH);
 #endif
@@ -253,8 +263,7 @@ OSystem *OSystem_IPHONE_create() {
 
 Common::String OSystem_IPHONE::getDefaultConfigFileName() {
 #ifdef IPHONE_OFFICIAL
-	Common::String path = iPhone_getDocumentsDir();
-	path += "/Preferences";
+	Common::String path = "/Preferences";
 	return path;
 #else
 	return SCUMMVM_PREFS_PATH;
@@ -270,7 +279,14 @@ void OSystem_IPHONE::addSysArchivesToSearchSet(Common::SearchSet &s, int priorit
 		if (CFURLGetFileSystemRepresentation(fileUrl, true, buf, sizeof(buf))) {
 			// Success: Add it to the search path
 			Common::String bundlePath((const char *)buf);
+#ifdef IPHONE_OFFICIAL
+			POSIXFilesystemNode *posixNode = new POSIXFilesystemNode(bundlePath);
+			Common::FSNode *node = new Common::FSNode(posixNode);
+			s.add("__OSX_BUNDLE__", new Common::FSDirectory(*node), priority);
+#else
+			// OS X
 			s.add("__OSX_BUNDLE__", new Common::FSDirectory(bundlePath), priority);
+#endif
 		}
 		CFRelease(fileUrl);
 	}
@@ -286,6 +302,11 @@ void OSystem_IPHONE::logMessage(LogMessageType::Type type, const char *message) 
 
 	fputs(message, output);
 	fflush(output);
+}
+
+bool iphone_touchpadModeEnabled() {
+	OSystem_IPHONE *sys = (OSystem_IPHONE *) g_system;
+	return sys && sys->touchpadModeEnabled();
 }
 
 void iphone_main(int argc, char *argv[]) {

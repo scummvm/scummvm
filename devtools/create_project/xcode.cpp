@@ -96,7 +96,7 @@ bool targetIsIOS(const std::string &targetName) {
 
 bool shouldSkipFileForTarget(const std::string &fileID, const std::string &targetName, const std::string &fileName) {
 	// Rules:
-	// - if the parent directory is "backends/platform/iphone", the file belongs to the iOS target.
+	// - if the parent directory is "backends/platform/ios7", the file belongs to the iOS target.
 	// - if the parent directory is "/sdl", the file belongs to the OS X target.
 	// - if the file has a suffix, like "_osx", or "_ios", the file belongs to one of the target.
 	// - if the file is an OS X icon file (icns), it belongs to the OS X target.
@@ -133,7 +133,7 @@ bool shouldSkipFileForTarget(const std::string &fileID, const std::string &targe
 		}
 		// parent directory
 		const std::string directory = fileID.substr(0, fileID.length() - fileName.length());
-		static const std::string iphone_directory = "backends/platform/iphone";
+		static const std::string iphone_directory = "backends/platform/ios7";
 		if (directory.length() > iphone_directory.length() && directory.substr(directory.length() - iphone_directory.length()) == iphone_directory) {
 			return true;
 		}
@@ -262,7 +262,7 @@ XcodeProvider::XcodeProvider(StringList &global_warnings, std::map<std::string, 
 }
 
 void XcodeProvider::addResourceFiles(const BuildSetup &setup, StringList &includeList, StringList &excludeList) {
-	includeList.push_back(setup.srcDir + "/dists/iphone/Info.plist");
+	includeList.push_back(setup.srcDir + "/dists/ios7/Info.plist");
 
 	ValueList &resources = getResourceFiles();
 	for (ValueList::iterator it = resources.begin(); it != resources.end(); ++it) {
@@ -270,7 +270,7 @@ void XcodeProvider::addResourceFiles(const BuildSetup &setup, StringList &includ
 	}
 
 	StringList td;
-	createModuleList(setup.srcDir + "/backends/platform/iphone", setup.defines, td, includeList, excludeList);
+	createModuleList(setup.srcDir + "/backends/platform/ios7", setup.defines, td, includeList, excludeList);
 }
 
 void XcodeProvider::createWorkspace(const BuildSetup &setup) {
@@ -765,7 +765,7 @@ void XcodeProvider::setupBuildConfiguration(const BuildSetup &setup) {
 	iPhone_HeaderSearchPaths.push_back("\"" + projectOutputDirectory + "\"");
 	iPhone_HeaderSearchPaths.push_back("\"" + projectOutputDirectory + "/include\"");
 	ADD_SETTING_LIST(iPhone_Debug, "HEADER_SEARCH_PATHS", iPhone_HeaderSearchPaths, SettingsAsList|SettingsQuoteVariable, 5);
-	ADD_SETTING_QUOTE(iPhone_Debug, "INFOPLIST_FILE", "$(SRCROOT)/dists/iphone/Info.plist");
+	ADD_SETTING_QUOTE(iPhone_Debug, "INFOPLIST_FILE", "$(SRCROOT)/dists/ios7/Info.plist");
 	ValueList iPhone_LibPaths;
 	iPhone_LibPaths.push_back("$(inherited)");
 	iPhone_LibPaths.push_back("\"" + projectOutputDirectory + "/lib\"");
@@ -958,7 +958,7 @@ void XcodeProvider::setupBuildConfiguration(const BuildSetup &setup) {
 
 void XcodeProvider::setupImageAssetCatalog(const BuildSetup &setup) {
 	const std::string filename = "Images.xcassets";
-	const std::string absoluteCatalogPath = _projectRoot + "/dists/iphone/" + filename;
+	const std::string absoluteCatalogPath = _projectRoot + "/dists/ios7/" + filename;
 	const std::string id = "FileReference_" + absoluteCatalogPath;
 	Group *group = touchGroupsForPath(absoluteCatalogPath);
 	group->addChildFile(filename);
@@ -967,7 +967,7 @@ void XcodeProvider::setupImageAssetCatalog(const BuildSetup &setup) {
 
 void XcodeProvider::setupAdditionalSources(std::string targetName, Property &files, int &order) {
 	if (targetIsIOS(targetName)) {
-		const std::string absoluteCatalogPath = _projectRoot + "/dists/iphone/Images.xcassets";
+		const std::string absoluteCatalogPath = _projectRoot + "/dists/ios7/Images.xcassets";
 		ADD_SETTING_ORDER_NOVALUE(files, getHash(absoluteCatalogPath), "Image Asset Catalog", order++);
 	}
 }

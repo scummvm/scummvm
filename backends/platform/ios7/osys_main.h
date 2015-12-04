@@ -131,6 +131,8 @@ public:
 	virtual int16 getHeight();
 	virtual int16 getWidth();
 
+    bool touchpadModeEnabled() const;
+
 #ifdef USE_RGB_COLOR
 	virtual Graphics::PixelFormat getScreenFormat() const { return _framebuffer.format; }
 	virtual Common::List<Graphics::PixelFormat> getSupportedFormats() const;
@@ -204,7 +206,8 @@ protected:
 	static void AQBufferCallback(void *in, AudioQueueRef inQ, AudioQueueBufferRef outQB);
 	static int timerHandler(int t);
 
-	bool handleEvent_swipe(Common::Event &event, int direction);
+	bool handleEvent_swipe(Common::Event &event, int direction, int touches);
+	bool handleEvent_tap(Common::Event &event, UIViewTapDescription type, int touches);
 	void handleEvent_keyPressed(Common::Event &event, int keyPressed);
 	void handleEvent_orientationChanged(int orientation);
 

@@ -30,8 +30,21 @@
 
 void iphone_main(int argc, char *argv[]);
 
+@interface ScummVMViewController : UIViewController
+
+@end
+
+@implementation ScummVMViewController
+
+- (BOOL)prefersStatusBarHidden {
+    return YES;
+}
+
+@end
+
 @interface iPhoneMain : UIApplication {
 	UIWindow *_window;
+	ScummVMViewController *_controller;
 	iPhoneView *_view;
 }
 
@@ -80,19 +93,26 @@ int main(int argc, char **argv) {
 - (void)applicationDidFinishLaunching:(UIApplication *)application {
 	CGRect  rect = [[UIScreen mainScreen] bounds];
 
-	// hide the status bar
-	[application setStatusBarStyle:UIStatusBarStyleBlackTranslucent animated:NO];
-	[application setStatusBarHidden:YES animated:YES];
+	// Create the directory for savegames
+#ifdef IPHONE_OFFICIAL
+	NSFileManager *fm = [NSFileManager defaultManager];
+	NSString *documentPath = [NSString stringWithUTF8String:iPhone_getDocumentsDir()];
+	NSString *savePath = [documentPath stringByAppendingPathComponent:@"Savegames"];
+	if (![fm fileExistsAtPath:savePath]) {
+		[fm createDirectoryAtPath:savePath withIntermediateDirectories:YES attributes:nil error:nil];
+	}
+#endif
 
 	_window = [[UIWindow alloc] initWithFrame:rect];
 	[_window retain];
 
+	_controller = [[ScummVMViewController alloc] init];
+
 	_view = [[iPhoneView alloc] initWithFrame:rect];
 	_view.multipleTouchEnabled = YES;
+	_controller.view = _view;
 
-	[_window setContentView:_view];
-
-  	[_window addSubview:_view];
+	[_window setRootViewController:_controller];
 	[_window makeKeyAndVisible];
 
 	[[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
@@ -120,12 +140,6 @@ int main(int argc, char **argv) {
 
 - (void)applicationResume:(struct __GSEvent *)event {
 	[_view applicationResume];
-
-	// Workaround, need to "hide" and unhide the statusbar to properly remove it,
-	// since the Springboard has put it back without apparently flagging our application.
-	[self setStatusBarHidden:YES animated:YES];
-	[self setStatusBarStyle:UIStatusBarStyleBlackTranslucent animated:NO];
-	[self setStatusBarHidden:YES animated:YES];
 }
 
 - (void)didRotate:(NSNotification *)notification {

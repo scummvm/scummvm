@@ -43,29 +43,11 @@
 	self = [super initWithFrame:CGRectMake(0.0f, 0.0f, 0.0f, 0.0f)];
 	softKeyboard = keyboard;
 
-	[[self textInputTraits] setAutocorrectionType:(UITextAutocorrectionType)1];
-	[[self textInputTraits] setAutocapitalizationType:(UITextAutocapitalizationType)0];
-	[[self textInputTraits] setEnablesReturnKeyAutomatically:NO];
+	[self setAutocorrectionType:UITextAutocorrectionTypeNo];
+	[self setAutocapitalizationType:UITextAutocapitalizationTypeNone];
+	[self setEnablesReturnKeyAutomatically:NO];
 
 	return self;
-}
-
-- (void) keyboardInputShouldDelete:(id)input {
-	[softKeyboard handleKeyPress:0x08];
-}
-
-- (BOOL)webView:(id)fp8 shouldInsertText:(id)character
-                       replacingDOMRange:(id)fp16
-                             givenAction:(int)fp20 {
-
-	if ([character length] != 1) {
-		[NSException raise:@"Unsupported" format:@"Unhandled multi-char insert!"];
-		return NO;
-	}
-
-	[softKeyboard handleKeyPress:[character characterAtIndex:0]];
-
-	return NO;
 }
 
 @end
@@ -77,7 +59,20 @@
 	self = [super initWithFrame:frame];
 	inputDelegate = nil;
 	inputView = [[TextInputHandler alloc] initWithKeyboard:self];
+	inputView.delegate = self;
 	return self;
+}
+
+- (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text {
+	unichar c;
+	if (text.length) {
+		c = [text characterAtIndex:0];
+	}
+	else {
+		c = '\b';
+	}
+	[inputDelegate handleKeyPress:c];
+	return YES;
 }
 
 - (UITextView *)inputView {
@@ -90,6 +85,14 @@
 
 - (void)handleKeyPress:(unichar)c {
 	[inputDelegate handleKeyPress:c];
+}
+
+- (void)showKeyboard {
+	[inputView becomeFirstResponder];
+}
+
+- (void)hideKeyboard {
+	[inputView endEditing:YES];
 }
 
 @end
