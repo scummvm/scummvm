@@ -443,8 +443,10 @@ void XcodeProvider::setupFrameworksBuildPhase(const BuildSetup &setup) {
 
 	std::string absoluteOutputDir;
 #ifdef POSIX
-	absoluteOutputDir = realpath(setup.outputDir.c_str(), NULL);
+	char *c_path = realpath(setup.outputDir.c_str(), NULL);
+	absoluteOutputDir = c_path;
 	absoluteOutputDir += "/lib";
+	free(c_path);
 #else
 	absoluteOutputDir = "lib";
 #endif
