@@ -40,12 +40,6 @@ namespace Lab {
 
 bool parse(const char *inputFile);
 
-
-/* From allocRoom.c */
-
-bool initRoomBuffer();
-void freeRoomBuffer();
-
 /* From ProcessRoom.c */
 
 ViewData *getViewData(uint16 roomNum, uint16 direction);
