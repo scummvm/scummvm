@@ -86,7 +86,7 @@ char *Resource::getText(const char *fileName) {
 
 	g_lab->_music->updateMusic();
 
-	byte count = dataFile->size();
+	uint32 count = dataFile->size();
 	byte *buffer = new byte[count];
 	byte *text = buffer;
 	dataFile->read(buffer, count);
