@@ -253,12 +253,20 @@ static void roomCoords(uint16 CurRoom, uint16 *x1, uint16 *y1, uint16 *x2, uint1
 	case HCORRIDOR:
 		curRoomImg = HRoom;
 		break;
+	default:
+		// Some rooms (like the map) do not have an image
+		break;
 	}
 
 	*x1 = mapScaleX(Maps[CurRoom].x);
 	*y1 = mapScaleY(Maps[CurRoom].y);
-	*x2 = *x1 + curRoomImg->_width;
-	*y2 = *y1 + curRoomImg->_height;
+	*x2 = *x1;
+	*y2 = *y1;
+
+	if (curRoomImg) {
+		*x2 += curRoomImg->_width;
+		*y2 += curRoomImg->_height;
+	}
 }
 
 /*****************************************************************************/
