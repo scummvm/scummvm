@@ -115,6 +115,7 @@ private:
 	CloseData *readCloseUps(uint16 depth, Common::File *file);
 	ViewData *readView(Common::File *file);
 	void readStaticText();
+	Common::String translateFileName(Common::String filename);
 
 	Common::String _staticText[48];
 };

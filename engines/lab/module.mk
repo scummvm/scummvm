@@ -10,7 +10,6 @@ MODULE_OBJS := \
 	interface.o \
 	intro.o \
 	lab.o \
-	labfile.o \
 	labsets.o \
 	map.o \
 	music.o \

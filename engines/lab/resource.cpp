@@ -43,21 +43,16 @@ Resource::Resource(LabEngine *vm) : _vm(vm) {
 }
 
 void Resource::readStaticText() {
-	Common::File labTextFile;
-	labTextFile.open(translateFileName("Lab:Rooms/LabText"));
-	if (!labTextFile.isOpen())
-		error("Unable to open file %s (Lab:Rooms/LabText)", translateFileName("Lab:Rooms/LabText"));
+	Common::File *labTextFile = openDataFile("Lab:Rooms/LabText");
 
 	for (int i = 0; i < 48; i++)
-		_staticText[i] = labTextFile.readLine();
+		_staticText[i] = labTextFile->readLine();
 
-	labTextFile.close();
+	delete labTextFile;
 }
 
 TextFont *Resource::getFont(const char *fileName) {
-	Common::File *dataFile;
-	if (!(dataFile = openDataFile(fileName, MKTAG('V', 'G', 'A', 'F'))))
-		error("getFont: couldn't open %s (%s)", translateFileName(fileName), fileName);
+	Common::File *dataFile = openDataFile(fileName, MKTAG('V', 'G', 'A', 'F'));
 
 	uint32 headerSize = 4L + 2L + 256 * 3 + 4L;
 	uint32 fileSize = dataFile->size();
@@ -79,10 +74,7 @@ TextFont *Resource::getFont(const char *fileName) {
 }
 
 char *Resource::getText(const char *fileName) {
-	Common::File *dataFile = new Common::File();
-	dataFile->open(translateFileName(fileName));
-	if (!dataFile->isOpen())
-		error("getText: couldn't open %s (%s)", translateFileName(fileName), fileName);
+	Common::File *dataFile = openDataFile(fileName);
 
 	g_lab->_music->updateMusic();
 
@@ -94,6 +86,7 @@ char *Resource::getText(const char *fileName) {
 	while (text && *text != '\0')
 		*text++ -= (byte)95;
 
+	delete dataFile;
 	return (char *)buffer;
 }
 
@@ -164,6 +157,34 @@ bool Resource::readViews(uint16 roomNum) {
 
 	delete dataFile;
 	return true;
+}
+
+Common::String Resource::translateFileName(Common::String filename) {
+	filename.toUppercase();
+	Common::String fileNameStrFinal;
+
+	if (filename.hasPrefix("P:")) {
+		if (g_lab->_isHiRes)
+			fileNameStrFinal = "GAME/SPICT/";
+		else
+			fileNameStrFinal = "GAME/PICT/";
+	}
+	else if (filename.hasPrefix("LAB:"))
+		fileNameStrFinal = "GAME/";
+	else if (filename.hasPrefix("MUSIC:"))
+		fileNameStrFinal = "GAME/MUSIC/";
+
+	if (filename.contains(':')) {
+		while (filename[0] != ':') {
+			filename.deleteChar(0);
+		}
+
+		filename.deleteChar(0);
+	}
+
+	fileNameStrFinal += filename;
+
+	return fileNameStrFinal;
 }
 
 Common::File *Resource::openDataFile(const char *fileName, uint32 fileHeader) {

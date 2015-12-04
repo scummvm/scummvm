@@ -93,6 +93,7 @@ private:
 	void VUnDIFFByteByte(byte *Dest, byte *diff, uint16 bytesperrow);
 	void VUnDIFFByteWord(uint16 *Dest, uint16 *diff, uint16 bytesperrow);
 	void VUnDIFFByteLong(uint32 *Dest, uint32 *diff, uint16 bytesperrow);
+	void readBlock(void *Buffer, uint32 Size, byte **File);
 
 public:
 	Anim(LabEngine *vm);
