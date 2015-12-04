@@ -444,7 +444,7 @@ void XcodeProvider::setupFrameworksBuildPhase(const BuildSetup &setup) {
 	std::string absoluteOutputDir;
 #ifdef POSIX
 	absoluteOutputDir = realpath(setup.outputDir.c_str(), NULL);
-    absoluteOutputDir += "/lib";
+	absoluteOutputDir += "/lib";
 #else
 	absoluteOutputDir = "lib";
 #endif
