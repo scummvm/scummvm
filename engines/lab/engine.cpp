@@ -49,8 +49,6 @@ extern uint16 NumInv, ManyRooms, HighestCondition, Direction;
 
 bool ispal = false, noupdatediff = false, MainDisplay = true, QuitLab = false;
 
-#define BUFFERSIZE 850000L
-
 /* LAB: Labyrinth specific code for the special puzzles */
 #define SPECIALLOCK         100
 #define SPECIALBRICK        101
@@ -1062,8 +1060,6 @@ void LabEngine::go() {
 
 	_event->initMouse();
 
-	initRoomBuffer();
-
 	_msgFont = _resource->getFont("P:AvanteG.12");
 
 	_event->mouseHide();
@@ -1097,7 +1093,6 @@ void LabEngine::go() {
 
 	closeFont(_msgFont);
 
-	freeRoomBuffer();
 	_graphics->freePict();
 
 	freeScreens();
@@ -1197,38 +1192,6 @@ void LabEngine::mayShowCrumbIndicatorOff() {
 		_event->mouseHide();
 		dropCrumbsOffImage.drawMaskImage(612, 4);
 		_event->mouseShow();
-	}
-}
-
-/* Have to make sure that ROOMBUFFERSIZE is bigger than the biggest piece of memory
-   that we need */
-#define ROOMBUFFERSIZE (2 * 20480L)
-
-static void *_roomBuffer = nullptr;
-static uint16 _curMarker  = 0;
-static void *_memPlace = nullptr;
-
-/*****************************************************************************/
-/* Allocates the memory for the room buffers.                                */
-/*****************************************************************************/
-bool initRoomBuffer() {
-	_curMarker = 0;
-
-	if ((_roomBuffer = calloc(ROOMBUFFERSIZE, 1))) {
-		_memPlace = _roomBuffer;
-
-		return true;
-	} else
-		return false;
-}
-
-/*****************************************************************************/
-/* Frees the memory for the room buffers.                                    */
-/*****************************************************************************/
-void freeRoomBuffer() {
-	if (_roomBuffer) {
-		free(_roomBuffer);
-		_roomBuffer = nullptr;
 	}
 }
 
