@@ -40,7 +40,7 @@
 
 namespace Lab {
 
-extern bool stopsound, DoNotDrawMessage;
+extern bool DoNotDrawMessage;
 
 /* Global parser data */
 
@@ -96,59 +96,6 @@ static char initcolors[] = { '\x00', '\x00', '\x00', '\x30',
 							 '\x2c', '\x08', '\x08', '\x08'};
 
 /******************************************************************************/
-/* Draws the control panel display.                                           */
-/******************************************************************************/
-void LabEngine::drawPanel() {
-	_event->mouseHide();
-
-	setAPen(3);                 /* Clear Area */
-	rectFill(0, VGAScaleY(149) + SVGACord(2), VGAScaleX(319), VGAScaleY(199));
-
-	setAPen(0);                 /* First Line */
-	drawHLine(0, VGAScaleY(149) + SVGACord(2), VGAScaleX(319));
-	setAPen(5);                 /* Second Line */
-	drawHLine(0, VGAScaleY(149) + 1 + SVGACord(2), VGAScaleX(319));
-
-	/* Gadget Separators */
-	setAPen(0);
-	drawHLine(0, VGAScaleY(170), VGAScaleX(319));     /* First black line to separate buttons */
-
-	if (!_alternate) {
-		setAPen(4);
-		drawHLine(0, VGAScaleY(170) + 1, VGAScaleX(319)); /* The horizontal lines under the black one */
-		drawGadgetList(_moveGadgetList);
-	} else {
-		if (getPlatform() != Common::kPlatformWindows) {
-			drawVLine(VGAScaleX(124), VGAScaleY(170) + 1, VGAScaleY(199)); /* Vertical Black lines */
-			drawVLine(VGAScaleX(194), VGAScaleY(170) + 1, VGAScaleY(199));
-		} else {
-			drawVLine(VGAScaleX(90), VGAScaleY(170) + 1, VGAScaleY(199));  /* Vertical Black lines */
-			drawVLine(VGAScaleX(160), VGAScaleY(170) + 1, VGAScaleY(199));
-			drawVLine(VGAScaleX(230), VGAScaleY(170) + 1, VGAScaleY(199));
-		}
-
-		setAPen(4);
-		drawHLine(0, VGAScaleY(170) + 1, VGAScaleX(122));   /* The horizontal lines under the black one */
-		drawHLine(VGAScaleX(126), VGAScaleY(170) + 1, VGAScaleX(192));
-		drawHLine(VGAScaleX(196), VGAScaleY(170) + 1, VGAScaleX(319));
-
-		drawVLine(VGAScaleX(1), VGAScaleY(170) + 2, VGAScaleY(198)); /* The vertical high light lines */
-		if (getPlatform() != Common::kPlatformWindows) {
-			drawVLine(VGAScaleX(126), VGAScaleY(170) + 2, VGAScaleY(198));
-			drawVLine(VGAScaleX(196), VGAScaleY(170) + 2, VGAScaleY(198));
-		} else {
-			drawVLine(VGAScaleX(92), VGAScaleY(170) + 2, VGAScaleY(198));
-			drawVLine(VGAScaleX(162), VGAScaleY(170) + 2, VGAScaleY(198));
-			drawVLine(VGAScaleX(232), VGAScaleY(170) + 2, VGAScaleY(198));
-		}
-
-		drawGadgetList(_invGadgetList);
-	}
-
-	_event->mouseShow();
-}
-
-/******************************************************************************/
 /* Draws the message for the room.                                            */
 /******************************************************************************/
 void LabEngine::drawRoomMessage(uint16 curInv, CloseDataPtr closePtr) {
@@ -163,116 +110,14 @@ void LabEngine::drawRoomMessage(uint16 curInv, CloseDataPtr closePtr) {
 				drawStaticMessage(kTextLampOn);
 			else if (_inventory[curInv].Many > 1) {
 				Common::String roomMessage = Common::String(_inventory[curInv].name) + "  (" + Common::String::format("%d", _inventory[curInv].Many) + ")";
-				drawMessage(roomMessage.c_str());
+				_graphics->drawMessage(roomMessage.c_str());
 			} else
-				drawMessage(_inventory[curInv].name);
+				_graphics->drawMessage(_inventory[curInv].name);
 		}
 	} else
 		drawDirection(closePtr);
 
-	_lastTooLong = _lastMessageLong;
-}
-
-/******************************************************************************/
-/* Sets up the Labyrinth screens, and opens up the initial windows.           */
-/******************************************************************************/
-bool LabEngine::setUpScreens() {
-	if (!createScreen(_isHiRes))
-		return false;
-
-	Common::File *controlFile = g_lab->_resource->openDataFile("P:Control");
-	for (uint16 i = 0; i < 20; i++)
-		_moveImages[i] = new Image(controlFile);
-	delete controlFile;
-
-	/* Creates the gadgets for the movement control panel */
-	uint16 y = VGAScaleY(173) - SVGACord(2);
-
-	if (getPlatform() == Common::kPlatformWindows) {
-		_moveGadgetList = createButton(1, y, 0, 't', _moveImages[0], _moveImages[1]);
-		Gadget *curGadget = _moveGadgetList;
-		curGadget->NextGadget = createButton(33, y, 1, 'm', _moveImages[2], _moveImages[3]);
-		curGadget = curGadget->NextGadget;
-		curGadget->NextGadget = createButton(65, y, 2, 'o', _moveImages[4], _moveImages[5]);
-		curGadget = curGadget->NextGadget;
-		curGadget->NextGadget = createButton(97, y, 3, 'c', _moveImages[6], _moveImages[7]);
-		curGadget = curGadget->NextGadget;
-		curGadget->NextGadget = createButton(129, y, 4, 'l', _moveImages[8], _moveImages[9]);
-		curGadget = curGadget->NextGadget;
-		curGadget->NextGadget = createButton(161, y, 5, 'i', _moveImages[12], _moveImages[13]);
-		curGadget = curGadget->NextGadget;
-		curGadget->NextGadget = createButton(193, y, 6, VKEY_LTARROW, _moveImages[14], _moveImages[15]);
-		curGadget = curGadget->NextGadget;
-		curGadget->NextGadget = createButton(225, y, 7, VKEY_UPARROW, _moveImages[16], _moveImages[17]);
-		curGadget = curGadget->NextGadget;
-		curGadget->NextGadget = createButton(257, y, 8, VKEY_RTARROW, _moveImages[18], _moveImages[19]);
-		curGadget = curGadget->NextGadget;
-		curGadget->NextGadget = createButton(289, y, 9, 'p', _moveImages[10], _moveImages[11]);
-	} else {
-		_moveGadgetList = createButton(1, y, 0, 0, _moveImages[0], _moveImages[1]);
-		Gadget *curGadget = _moveGadgetList;
-		curGadget->NextGadget = createButton(33, y, 1, 0, _moveImages[2], _moveImages[3]);
-		curGadget = curGadget->NextGadget;
-		curGadget->NextGadget = createButton(65, y, 2, 0, _moveImages[4], _moveImages[5]);
-		curGadget = curGadget->NextGadget;
-		curGadget->NextGadget = createButton(97, y, 3, 0, _moveImages[6], _moveImages[7]);
-		curGadget = curGadget->NextGadget;
-		curGadget->NextGadget = createButton(129, y, 4, 0, _moveImages[8], _moveImages[9]);
-		curGadget = curGadget->NextGadget;
-		curGadget->NextGadget = createButton(161, y, 5, 0, _moveImages[12], _moveImages[13]);
-		curGadget = curGadget->NextGadget;
-		curGadget->NextGadget = createButton(193, y, 6, 0, _moveImages[14], _moveImages[15]);
-		curGadget = curGadget->NextGadget;
-		curGadget->NextGadget = createButton(225, y, 7, 0, _moveImages[16], _moveImages[17]);
-		curGadget = curGadget->NextGadget;
-		curGadget->NextGadget = createButton(257, y, 8, 0, _moveImages[18], _moveImages[19]);
-		curGadget = curGadget->NextGadget;
-		curGadget->NextGadget = createButton(289, y, 9, 0, _moveImages[10], _moveImages[11]);
-	}
-
-	Common::File *invFile = g_lab->_resource->openDataFile("P:Inv");
-
-	if (getPlatform() == Common::kPlatformWindows) {
-		for (uint16 imgIdx = 0; imgIdx < 10; imgIdx++)
-			_invImages[imgIdx] = new Image(invFile);
-
-		_invGadgetList = createButton(24, y, 0, 'm', _invImages[0], _invImages[1]);
-		Gadget *curGadget = _invGadgetList;
-		curGadget->NextGadget = createButton(56, y, 1, 'g', _invImages[2], _invImages[3]);
-		curGadget = curGadget->NextGadget;
-		curGadget->NextGadget = createButton(94, y, 2, 'u', _invImages[4], _invImages[5]);
-		curGadget = curGadget->NextGadget;
-		curGadget->NextGadget = createButton(126, y, 3, 'l', _moveImages[8], _moveImages[9]);
-		curGadget = curGadget->NextGadget;
-		curGadget->NextGadget = createButton(164, y, 4, VKEY_LTARROW, _moveImages[14], _moveImages[15]);
-		curGadget = curGadget->NextGadget;
-		curGadget->NextGadget = createButton(196, y, 5, VKEY_RTARROW, _moveImages[18], _moveImages[19]);
-		curGadget = curGadget->NextGadget;
-		curGadget->NextGadget = createButton(234, y, 6, 'b', _invImages[6], _invImages[7]);
-		curGadget = curGadget->NextGadget;
-		curGadget->NextGadget = createButton(266, y, 7, 'f', _invImages[8], _invImages[9]);
-		curGadget = curGadget->NextGadget;
-	} else {
-		for (uint16 imgIdx = 0; imgIdx < 6; imgIdx++)
-			_invImages[imgIdx] = new Image(invFile);
-
-		_invGadgetList = createButton(58, y, 0, 0, _invImages[0], _invImages[1]);
-		Gadget *curGadget = _invGadgetList;
-		curGadget->NextGadget = createButton(90, y, 1, 0, _invImages[2], _invImages[3]);
-		curGadget = curGadget->NextGadget;
-		curGadget->NextGadget = createButton(128, y, 2, 0, _invImages[4], _invImages[5]);
-		curGadget = curGadget->NextGadget;
-		curGadget->NextGadget = createButton(160, y, 3, 0, _moveImages[8], _moveImages[9]);
-		curGadget = curGadget->NextGadget;
-		curGadget->NextGadget = createButton(198, y, 4, 0, _moveImages[14], _moveImages[15]);
-		curGadget = curGadget->NextGadget;
-		curGadget->NextGadget = createButton(230, y, 5, 0, _moveImages[18], _moveImages[19]);
-		curGadget = curGadget->NextGadget;
-	}
-
-	delete invFile;
-
-	return true;
+	_lastTooLong = _graphics->_lastMessageLong;
 }
 
 void LabEngine::freeScreens() {
@@ -379,7 +224,7 @@ bool LabEngine::doCloseUp(CloseDataPtr closePtr) {
 	}
 
 	_curFileName = " ";
-	drawPanel();
+	_graphics->drawPanel();
 
 	return true;
 }
@@ -394,20 +239,20 @@ const char *LabEngine::getInvName(uint16 CurInv) {
 	if ((CurInv == LAMPNUM) && _conditions->in(LAMPON))
 		return "P:Mines/120";
 
-	if ((CurInv == BELTNUM) && g_lab->_conditions->in(BELTGLOW))
+	if ((CurInv == BELTNUM) && _conditions->in(BELTGLOW))
 		return "P:Future/BeltGlow";
 
 	if (CurInv == WESTPAPERNUM) {
-		g_lab->_curFileName = _inventory[CurInv].BInvName;
-		g_lab->_anim->_noPalChange = true;
-		readPict(g_lab->_curFileName, false);
-		g_lab->_anim->_noPalChange = false;
+		_curFileName = _inventory[CurInv].BInvName;
+		_anim->_noPalChange = true;
+		_graphics->readPict(_curFileName, false);
+		_anim->_noPalChange = false;
 		doWestPaper();
 	} else if (CurInv == NOTESNUM) {
-		g_lab->_curFileName = _inventory[CurInv].BInvName;
-		g_lab->_anim->_noPalChange = true;
-		readPict(g_lab->_curFileName, false);
-		g_lab->_anim->_noPalChange = false;
+		_curFileName = _inventory[CurInv].BInvName;
+		_anim->_noPalChange = true;
+		_graphics->readPict(_curFileName, false);
+		_anim->_noPalChange = false;
 		doNotes();
 	}
 
@@ -434,7 +279,7 @@ void LabEngine::interfaceOn() {
 		_event->mouseShow();
 	}
 
-	if (_longWinInFront)
+	if (_graphics->_longWinInFront)
 		_event->attachGadgetList(NULL);
 	else if (_alternate)
 		_event->attachGadgetList(_invGadgetList);
@@ -454,8 +299,8 @@ bool LabEngine::doUse(uint16 CurInv) {
 		_cptr = NULL;
 		doMap(_roomNum);
 		setPalette(initcolors, 8);
-		drawMessage(NULL);
-		drawPanel();
+		_graphics->drawMessage(NULL);
+		_graphics->drawPanel();
 	} else if (CurInv == JOURNALNUM) {         /* LAB: Labyrinth specific */
 		drawStaticMessage(kTextUseJournal);
 		interfaceOff();
@@ -463,8 +308,8 @@ bool LabEngine::doUse(uint16 CurInv) {
 		_curFileName = " ";
 		_cptr = NULL;
 		doJournal();
-		drawPanel();
-		drawMessage(NULL);
+		_graphics->drawPanel();
+		_graphics->drawMessage(NULL);
 	} else if (CurInv == LAMPNUM) {            /* LAB: Labyrinth specific */
 		interfaceOff();
 
@@ -478,7 +323,7 @@ bool LabEngine::doUse(uint16 CurInv) {
 
 		_anim->_doBlack = false;
 		_anim->_waitForEffect = true;
-		readPict("Music:Click", true);
+		_graphics->readPict("Music:Click", true);
 		_anim->_waitForEffect = false;
 
 		_anim->_doBlack = false;
@@ -575,8 +420,8 @@ void LabEngine::mainGameLoop() {
 
 	_conditions->readInitialConditions("LAB:Conditio");
 
-	_longWinInFront = false;
-	drawPanel();
+	_graphics->_longWinInFront = false;
+	_graphics->drawPanel();
 
 	perFlipGadget(actionMode);
 
@@ -598,7 +443,7 @@ void LabEngine::mainGameLoop() {
 				_cptr = NULL;
 
 				mayShowCrumbIndicator();
-				screenUpdate();
+				_graphics->screenUpdate();
 			}
 
 			/* Sets the current picture properly on the screen */
@@ -624,15 +469,15 @@ void LabEngine::mainGameLoop() {
 					         MainDisplay) /* LAB: Labyrinth specific code */
 						showTile(_curFileName, (bool)(_cptr->CloseUpType == SPECIALBRICKNOMOUSE));
 					else
-						readPict(_curFileName, false);
+						_graphics->readPict(_curFileName, false);
 				} else
-					readPict(_curFileName, false);
+					_graphics->readPict(_curFileName, false);
 
 				drawRoomMessage(curInv, _cptr);
 				forceDraw = false;
 
 				mayShowCrumbIndicator();
-				screenUpdate();
+				_graphics->screenUpdate();
 
 				if (!_followingCrumbs)
 					eatMessages();
@@ -641,7 +486,7 @@ void LabEngine::mainGameLoop() {
 			if (forceDraw) {
 				drawRoomMessage(curInv, _cptr);
 				forceDraw = false;
-				screenUpdate();
+				_graphics->screenUpdate();
 			}
 		}
 
@@ -669,14 +514,14 @@ void LabEngine::mainGameLoop() {
 
 					GotMessage = true;
 					mayShowCrumbIndicator();
-					screenUpdate();
+					_graphics->screenUpdate();
 					if (!from_crumbs(GADGETUP, code, 0, _event->updateAndGetMousePos(), curInv, curMsg, forceDraw, code, actionMode))
 						break;
 				}
 			}
 
 			mayShowCrumbIndicator();
-			screenUpdate();
+			_graphics->screenUpdate();
 		} else {
 			GotMessage = true;
 
@@ -725,7 +570,7 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 
 	_anim->_doBlack = false;
 
-	if ((msgClass == RAWKEY) && (!_longWinInFront)) {
+	if ((msgClass == RAWKEY) && (!_graphics->_longWinInFront)) {
 		if (code == 13) { /* The return key */
 			msgClass     = MOUSEBUTTONS;
 			Qualifier = IEQUALIFIER_LEFTBUTTON;
@@ -736,7 +581,7 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 			_numCrumbs = 0;
 			_droppingCrumbs = true;
 			mayShowCrumbIndicator();
-			screenUpdate();
+			_graphics->screenUpdate();
 		} else if (code == 'f' || code == 'F' ||
 		         code == 'r' || code == 'R') {  /* Follow bread crumbs */
 			if (_droppingCrumbs) {
@@ -755,9 +600,9 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 
 						MainDisplay = true;
 						interfaceOn(); /* Sets the correct gadget list */
-						drawPanel();
+						_graphics->drawPanel();
 						drawRoomMessage(curInv, _cptr);
-						screenUpdate();
+						_graphics->screenUpdate();
 					}
 				} else {
 					_breadCrumbs[0]._roomNum = 0;
@@ -765,13 +610,13 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 
 					// Need to hide indicator!!!!
 					mayShowCrumbIndicatorOff();
-					screenUpdate();
+					_graphics->screenUpdate();
 				}
 			}
 		} else if ((code == 315) || (code == 'x') || (code == 'X')
 		         || (code == 'q') || (code == 'Q')) {  /* Quit? */
 			DoNotDrawMessage = false;
-			drawMessage("Do you want to quit? (Y/N)");
+			_graphics->drawMessage("Do you want to quit? (Y/N)");
 			doit = false;
 			eatMessages();
 			interfaceOff();
@@ -813,16 +658,16 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 		eatMessages();
 	}
 
-	if (_longWinInFront) {
+	if (_graphics->_longWinInFront) {
 		if ((msgClass == RAWKEY) ||
 		        ((msgClass == MOUSEBUTTONS) &&
 		         ((IEQUALIFIER_LEFTBUTTON & Qualifier) ||
 		          (IEQUALIFIER_RBUTTON & Qualifier)))) {
-			_longWinInFront = false;
+			_graphics->_longWinInFront = false;
 			DoNotDrawMessage = false;
-			drawPanel();
+			_graphics->drawPanel();
 			drawRoomMessage(curInv, _cptr);
-			screenUpdate();
+			_graphics->screenUpdate();
 		}
 	} else if ((msgClass == GADGETUP) && !_alternate) {
 		if (gadgetId <= 5) {
@@ -833,7 +678,7 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 				hcptr = NULL;
 				_cptr = NULL;
 				mayShowCrumbIndicator();
-				screenUpdate();
+				_graphics->screenUpdate();
 			} else if (gadgetId == 5) {
 				eatMessages();
 
@@ -850,11 +695,11 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 				} else
 					decIncInv(&curInv, false);
 
-				drawPanel();
+				_graphics->drawPanel();
 				drawRoomMessage(curInv, _cptr);
 
 				mayShowCrumbIndicator();
-				screenUpdate();
+				_graphics->screenUpdate();
 			} else {
 				Old        = actionMode;
 				actionMode = gadgetId;
@@ -866,13 +711,13 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 
 				if (gadgetId <= 4)
 					drawStaticMessage(kTextTakeWhat + gadgetId);
-				screenUpdate();
+				_graphics->screenUpdate();
 			}
 		} else if (gadgetId == 9) {
 			doUse(MAPNUM);
 
 			mayShowCrumbIndicator();
-			screenUpdate();
+			_graphics->screenUpdate();
 		} else if (gadgetId >= 6) { /* Arrow Gadgets */
 			_cptr = NULL;
 			hcptr = NULL;
@@ -895,7 +740,7 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 				forceDraw = true;
 
 				mayShowCrumbIndicator();
-				screenUpdate();
+				_graphics->screenUpdate();
 			} else if (gadgetId == 7) {
 				OldRoomNum = _roomNum;
 
@@ -959,7 +804,7 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 				}
 
 				mayShowCrumbIndicator();
-				screenUpdate();
+				_graphics->screenUpdate();
 			}
 		}
 	} else if ((msgClass == GADGETUP) && _alternate) {
@@ -973,10 +818,10 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 
 			MainDisplay = true;
 			interfaceOn(); /* Sets the correct gadget list */
-			drawPanel();
+			_graphics->drawPanel();
 			drawRoomMessage(curInv, _cptr);
 
-			screenUpdate();
+			_graphics->screenUpdate();
 		}
 
 		gadgetId--;
@@ -996,17 +841,17 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 
 			_nextFileName = getInvName(curInv);
 
-			drawPanel();
+			_graphics->drawPanel();
 
 			if (doit) {
-				drawMessage("Disk operation failed.");
+				_graphics->drawMessage("Disk operation failed.");
 				setPalette(initcolors, 8);
 
-				screenUpdate();
+				_graphics->screenUpdate();
 
 				g_system->delayMillis(1000);
 			} else {
-				screenUpdate();
+				_graphics->screenUpdate();
 			}
 		} else if (gadgetId == 1) {
 			if (!doUse(curInv)) {
@@ -1019,7 +864,7 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 				drawStaticMessage(kTextUseOnWhat);
 				MainDisplay = true;
 
-				screenUpdate();
+				_graphics->screenUpdate();
 			}
 		} else if (gadgetId == 2) {
 			MainDisplay = !MainDisplay;
@@ -1035,27 +880,27 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 			        _inventory[curInv].BInvName)
 				_nextFileName = getInvName(curInv);
 
-			screenUpdate();
+			_graphics->screenUpdate();
 		} else if (gadgetId == 3) { /* Left gadget */
 			decIncInv(&curInv, true);
 			LastInv = curInv;
 			DoNotDrawMessage = false;
 			drawRoomMessage(curInv, _cptr);
 
-			screenUpdate();
+			_graphics->screenUpdate();
 		} else if (gadgetId == 4) { /* Right gadget */
 			decIncInv(&curInv, false);
 			LastInv = curInv;
 			DoNotDrawMessage = false;
 			drawRoomMessage(curInv, _cptr);
 
-			screenUpdate();
+			_graphics->screenUpdate();
 		} else if (gadgetId == 5) { /* bread crumbs */
 			_breadCrumbs[0]._roomNum = 0;
 			_numCrumbs = 0;
 			_droppingCrumbs = true;
 			mayShowCrumbIndicator();
-			screenUpdate();
+			_graphics->screenUpdate();
 		} else if (gadgetId == 6) { /* follow crumbs */
 			if (_droppingCrumbs) {
 				if (_numCrumbs > 0) {
@@ -1072,16 +917,16 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 
 					MainDisplay = true;
 					interfaceOn(); /* Sets the correct gadget list */
-					drawPanel();
+					_graphics->drawPanel();
 					drawRoomMessage(curInv, _cptr);
-					screenUpdate();
+					_graphics->screenUpdate();
 				} else {
 					_breadCrumbs[0]._roomNum = 0;
 					_droppingCrumbs = false;
 
 					// Need to hide indicator!!!!
 					mayShowCrumbIndicatorOff();
-					screenUpdate();
+					_graphics->screenUpdate();
 				}
 			}
 		}
@@ -1115,7 +960,7 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 					_curFileName = _newFileName;
 				else if (doActionRule(curPos, TAKE - 1, 0, &_cptr))
 					_curFileName = _newFileName;
-				else if (curPos.y < (VGAScaleY(149) + SVGACord(2)))
+				else if (curPos.y < (_graphics->VGAScaleY(149) + _graphics->SVGACord(2)))
 					drawStaticMessage(kTextNothing);
 			} else if ((actionMode == 1) /* Manipulate an object */  ||
 			         (actionMode == 2) /* Open up a "door" */      ||
@@ -1123,7 +968,7 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 				if (doActionRule(curPos, actionMode, _roomNum, &_cptr))
 					_curFileName = _newFileName;
 				else if (!doActionRule(curPos, actionMode, 0, &_cptr)) {
-					if (curPos.y < (VGAScaleY(149) + SVGACord(2)))
+					if (curPos.y < (_graphics->VGAScaleY(149) + _graphics->SVGACord(2)))
 						drawStaticMessage(kTextNothing);
 				}
 			} else if (actionMode == 4) { /* Look at closeups */
@@ -1131,15 +976,15 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 				setCurClose(curPos, &tempcptr);
 
 				if (_cptr == tempcptr) {
-					if (curPos.y < (VGAScaleY(149) + SVGACord(2)))
+					if (curPos.y < (_graphics->VGAScaleY(149) + _graphics->SVGACord(2)))
 						drawStaticMessage(kTextNothing);
 				} else if (tempcptr->GraphicName) {
 					if (*(tempcptr->GraphicName)) {
 						_anim->_doBlack = true;
 						_cptr = tempcptr;
-					} else if (curPos.y < (VGAScaleY(149) + SVGACord(2)))
+					} else if (curPos.y < (_graphics->VGAScaleY(149) + _graphics->SVGACord(2)))
 						drawStaticMessage(kTextNothing);
-				} else if (curPos.y < (VGAScaleY(149) + SVGACord(2)))
+				} else if (curPos.y < (_graphics->VGAScaleY(149) + _graphics->SVGACord(2)))
 					drawStaticMessage(kTextNothing);
 			} else if ((actionMode == 5)  &&
 			         _conditions->in(curInv)) { /* Use an item on something else */
@@ -1148,13 +993,13 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 
 					if (!_conditions->in(curInv))
 						decIncInv(&curInv, false);
-				} else if (curPos.y < (VGAScaleY(149) + SVGACord(2)))
+				} else if (curPos.y < (_graphics->VGAScaleY(149) + _graphics->SVGACord(2)))
 					drawStaticMessage(kTextNothing);
 			}
 		}
 
 		mayShowCrumbIndicator();
-		screenUpdate();
+		_graphics->screenUpdate();
 	} else if (msgClass == DELTAMOVE) {
 		VPtr = getViewData(_roomNum, Direction);
 		oldcptr = VPtr->closeUps;
@@ -1182,7 +1027,7 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 		}
 
 		if (hcptr)
-			_event->setMousePos(Common::Point(scaleX((hcptr->x1 + hcptr->x2) / 2), scaleY((hcptr->y1 + hcptr->y2) / 2)));
+			_event->setMousePos(Common::Point(_graphics->scaleX((hcptr->x1 + hcptr->x2) / 2), _graphics->scaleY((hcptr->y1 + hcptr->y2) / 2)));
 	} else if ((msgClass == MOUSEBUTTONS) && (IEQUALIFIER_RBUTTON & Qualifier)) {
 		eatMessages();
 		_alternate = !_alternate;
@@ -1198,11 +1043,11 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 				decIncInv(&curInv, false);
 		}
 
-		drawPanel();
+		_graphics->drawPanel();
 		drawRoomMessage(curInv, _cptr);
 
 		mayShowCrumbIndicator();
-		screenUpdate();
+		_graphics->screenUpdate();
 	}
 	return true;
 }
@@ -1220,9 +1065,9 @@ void LabEngine::go() {
 		return;
 	}
 
-	if (!setUpScreens()) {
+	if (!_graphics->setUpScreens()) {
 		_isHiRes = false;
-		mem = mem && setUpScreens();
+		mem = mem && _graphics->setUpScreens();
 	}
 
 	_event->initMouse();
@@ -1250,16 +1095,16 @@ void LabEngine::go() {
 		debug("\n\nNot enough memory to start game.\n\n");
 
 	if (QuitLab) { /* Won the game */
-		blackAllScreen();
-		readPict("P:End/L2In.1", true);
+		_graphics->blackAllScreen();
+		_graphics->readPict("P:End/L2In.1", true);
 
 		for (uint16 i = 0; i < 120; i++) {
 			_music->updateMusic();
 			waitTOF();
 		}
 
-		readPict("P:End/L2In.9", true);
-		readPict("P:End/Lost", true);
+		_graphics->readPict("P:End/L2In.9", true);
+		_graphics->readPict("P:End/Lost", true);
 
 		warning("STUB: waitForPress");
 		while (!1) { // 1 means ignore SDL_ProcessInput calls

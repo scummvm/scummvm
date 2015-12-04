@@ -106,13 +106,13 @@ void Intro::doPictText(const char *filename, TextFont *msgFont, bool isScreen) {
 				fade(false, 0);
 
 			if (isScreen) {
-				_vm->setAPen(7);
-				_vm->rectFill(VGAScaleX(10), VGAScaleY(10), VGAScaleX(310), VGAScaleY(190));
+				_vm->_graphics->setAPen(7);
+				_vm->_graphics->rectFill(_vm->_graphics->VGAScaleX(10), _vm->_graphics->VGAScaleY(10), _vm->_graphics->VGAScaleX(310), _vm->_graphics->VGAScaleY(190));
 
-				Drawn = flowText(msgFont, (!_vm->_isHiRes) * -1, 5, 7, false, false, true, true, VGAScaleX(14), VGAScaleY(11), VGAScaleX(306), VGAScaleY(189), (char *)curPlace);
+				Drawn = _vm->_graphics->flowText(msgFont, (!_vm->_isHiRes) * -1, 5, 7, false, false, true, true, _vm->_graphics->VGAScaleX(14), _vm->_graphics->VGAScaleY(11), _vm->_graphics->VGAScaleX(306), _vm->_graphics->VGAScaleY(189), (char *)curPlace);
 				fade(true, 0);
 			} else {
-				Drawn = _vm->longDrawMessage((char *)curPlace);
+				Drawn = _vm->_graphics->longDrawMessage((char *)curPlace);
 			}
 
 			curPlace += Drawn;
@@ -227,7 +227,7 @@ void Intro::nReadPict(const char *filename, bool playOnce) {
 
 	_vm->_anim->_doBlack = _introDoBlack;
 	_vm->_anim->stopDiffEnd();
-	readPict(finalFileName.c_str(), playOnce);
+	_vm->_graphics->readPict(finalFileName.c_str(), playOnce);
 }
 
 /*****************************************************************************/
@@ -259,8 +259,7 @@ void Intro::introSequence() {
 		}
 	}
 
-	blackAllScreen();
-
+	_vm->_graphics->blackAllScreen();
 	_vm->_music->initMusic();
 
 	_vm->_anim->_noPalChange = true;
@@ -301,8 +300,7 @@ void Intro::introSequence() {
 	}
 
 	fade(false, 0);
-	blackAllScreen();
-
+	_vm->_graphics->blackAllScreen();
 	_vm->_music->updateMusic();
 
 	nReadPict("Title.A", true);
@@ -328,7 +326,7 @@ void Intro::introSequence() {
 	_vm->_music->newOpen("p:Intro/Intro.1");  /* load the picture into the buffer */
 
 	_vm->_music->updateMusic();
-	blackAllScreen();
+	_vm->_graphics->blackAllScreen();
 	_vm->_music->updateMusic();
 
 	TextFont *msgFont = _vm->_resource->getFont("P:Map.fon");
@@ -349,7 +347,7 @@ void Intro::introSequence() {
 
 	freeAllStolenMem();
 
-	blackAllScreen();
+	_vm->_graphics->blackAllScreen();
 	_vm->_music->updateMusic();
 
 	_introDoBlack = true;
@@ -443,8 +441,8 @@ void Intro::introSequence() {
 	nReadPict("SubX", true);
 
 	if (_quitIntro) {
-		_vm->setAPen(0);
-		_vm->rectFill(0, 0, _vm->_screenWidth - 1, _vm->_screenHeight - 1);
+		_vm->_graphics->setAPen(0);
+		_vm->_graphics->rectFill(0, 0, _vm->_screenWidth - 1, _vm->_screenHeight - 1);
 		_vm->_anim->_doBlack = true;
 	}
 

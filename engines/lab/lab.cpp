@@ -55,16 +55,13 @@ LabEngine::LabEngine(OSystem *syst, const ADGameDescription *gameDesc)
  : Engine(syst), _gameDescription(gameDesc), _extraGameFeatures(0) {
 	g_lab = this;
 
-    _screenWidth = 320;
+	_screenWidth = 320;
 	_screenHeight = 200;
-	_screenBytesPerPage = 65536;
 
-    _curapen = 0;
+	_currentDisplayBuffer = 0;
+	_displayBuffer = 0;
 
-    _currentDisplayBuffer = 0;
-    _displayBuffer = 0;
-
-    _lastWaitTOFTicks = 0;
+	_lastWaitTOFTicks = 0;
 
 	_isHiRes = false;
 	_roomNum = -1;
@@ -86,9 +83,9 @@ LabEngine::LabEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	_resource = nullptr;
 	_music = nullptr;
 	_anim = nullptr;
+	_graphics = nullptr;
 
-    _lastMessageLong = false;
-    _lastTooLong = false;
+	_lastTooLong = false;
 	_interfaceOff = false;
 	_alternate = false;
 
@@ -104,15 +101,13 @@ LabEngine::LabEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	_nextFileName = nullptr;
 	_newFileName = nullptr;
 
-    _moveGadgetList = 0;
-    _invGadgetList = 0;
+	_moveGadgetList = 0;
+	_invGadgetList = 0;
 
-    _curFileName = " ";
+	_curFileName = " ";
+	_msgFont = 0;
 
-    _longWinInFront = false;
-    _msgFont = 0;
-
-    _inventory = 0;
+	_inventory = 0;
 
 	//const Common::FSNode gameDataDir(ConfMan.get("path"));
 	//SearchMan.addSubDirectoryMatching(gameDataDir, "game");
@@ -129,6 +124,7 @@ LabEngine::~LabEngine() {
 	delete _resource;
 	delete _music;
 	delete _anim;
+	delete _graphics;
 }
 
 Common::Error LabEngine::run() {
@@ -141,6 +137,7 @@ Common::Error LabEngine::run() {
 	_resource = new Resource(this);
 	_music = new Music(this);
 	_anim = new Anim(this);
+	_graphics = new DisplayMan(this);
 
 	if (getPlatform() == Common::kPlatformWindows) {
 		// Check if this is the Wyrmkeep trial

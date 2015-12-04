@@ -82,9 +82,9 @@ void text(TextFont *tf, uint16 x, uint16 y, uint16 color, const char *text, uint
 
 	for (uint16 i = 0; i < numchars; i++) {
 		RealOffset = (g_lab->_screenWidth * y) + x;
-		curpage    = RealOffset / g_lab->_screenBytesPerPage;
-		SegmentOffset = RealOffset - (curpage * g_lab->_screenBytesPerPage);
-		LeftInSegment = g_lab->_screenBytesPerPage - SegmentOffset;
+		curpage    = RealOffset / g_lab->_graphics->_screenBytesPerPage;
+		SegmentOffset = RealOffset - (curpage * g_lab->_graphics->_screenBytesPerPage);
+		LeftInSegment = g_lab->_graphics->_screenBytesPerPage - SegmentOffset;
 		VGACur = VGATop + SegmentOffset;
 
 		if (tf->Widths[(uint)*text]) {
@@ -117,10 +117,10 @@ void text(TextFont *tf, uint16 x, uint16 y, uint16 color, const char *text, uint
 								curpage++;
 								VGATemp = (byte *)(VGATop - templeft);
 								/* Set up VGATempLine for next line */
-								VGATempLine -= g_lab->_screenBytesPerPage;
+								VGATempLine -= g_lab->_graphics->_screenBytesPerPage;
 								/* Set up LeftInSegment for next line */
-								LeftInSegment += g_lab->_screenBytesPerPage + templeft;
-								templeft += g_lab->_screenBytesPerPage;
+								LeftInSegment += g_lab->_graphics->_screenBytesPerPage + templeft;
+								templeft += g_lab->_graphics->_screenBytesPerPage;
 							}
 
 							if (mask & data)
@@ -142,8 +142,8 @@ void text(TextFont *tf, uint16 x, uint16 y, uint16 color, const char *text, uint
 
 				if (LeftInSegment <= 0) {
 					curpage++;
-					VGATempLine -= g_lab->_screenBytesPerPage;
-					LeftInSegment += g_lab->_screenBytesPerPage;
+					VGATempLine -= g_lab->_graphics->_screenBytesPerPage;
+					LeftInSegment += g_lab->_graphics->_screenBytesPerPage;
 				}
 			}
 		}

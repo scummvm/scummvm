@@ -164,8 +164,8 @@ static bool loadMapData() {
 	gptr = MapGadgetList;
 
 	while (gptr) {
-		gptr->x = VGAScaleX(MapGadX[counter]);
-		gptr->y = VGAScaleY(MapGadY[counter]);
+		gptr->x = g_lab->_graphics->VGAScaleX(MapGadX[counter]);
+		gptr->y = g_lab->_graphics->VGAScaleY(MapGadY[counter]);
 		gptr = gptr->NextGadget;
 		counter++;
 	}
@@ -479,8 +479,8 @@ void LabEngine::drawMap(uint16 CurRoom, uint16 CurMsg, uint16 Floor, bool fadeou
 	if (fadeout)
 		fade(false, 0);
 
-	setAPen(0);
-	rectFill(0, 0, _screenWidth - 1, _screenHeight - 1);
+	_graphics->setAPen(0);
+	_graphics->rectFill(0, 0, _screenWidth - 1, _screenHeight - 1);
 
 	Map->drawImage(0, 0);
 	drawGadgetList(MapGadgetList);
@@ -528,7 +528,7 @@ void LabEngine::drawMap(uint16 CurRoom, uint16 CurMsg, uint16 Floor, bool fadeou
 			HugeMaze->drawImage(mapScaleX(524), mapScaleY(97));
 	} else if (Floor == SURMAZEFLOOR) {
 		sptr = (char *)_resource->getStaticText(kTextSurmazeMessage).c_str();
-		flowText(_msgFont, 0, 7, 0, true, true, true, true, mapScaleX(360), 0, mapScaleX(660), mapScaleY(450), sptr);
+		_graphics->flowText(_msgFont, 0, 7, 0, true, true, true, true, mapScaleX(360), 0, mapScaleX(660), mapScaleY(450), sptr);
 	}
 
 	switch (Floor) {
@@ -559,10 +559,10 @@ void LabEngine::drawMap(uint16 CurRoom, uint16 CurMsg, uint16 Floor, bool fadeou
 	}
 
 	if (sptr)
-		flowText(_msgFont, 0, 5, 3, true, true, true, true, VGAScaleX(14), VGAScaleY(75), VGAScaleX(134), VGAScaleY(97), sptr);
+		_graphics->flowText(_msgFont, 0, 5, 3, true, true, true, true, _graphics->VGAScaleX(14), _graphics->VGAScaleY(75), _graphics->VGAScaleX(134), _graphics->VGAScaleY(97), sptr);
 
 	if ((sptr = _rooms[CurMsg]._roomMsg))
-		flowText(_msgFont, 0, 5, 3, true, true, true, true, VGAScaleX(14), VGAScaleY(148), VGAScaleX(134), VGAScaleY(186), sptr);
+		_graphics->flowText(_msgFont, 0, 5, 3, true, true, true, true, _graphics->VGAScaleX(14), _graphics->VGAScaleY(148), _graphics->VGAScaleX(134), _graphics->VGAScaleY(186), sptr);
 
 	if (fadein)
 		fade(true, 0);
@@ -715,9 +715,9 @@ void LabEngine::processMap(uint16 CurRoom) {
 
 						if ((sptr = _rooms[CurMsg]._roomMsg)) {
 							_event->mouseHide();
-							setAPen(3);
-							rectFill(VGAScaleX(13), VGAScaleY(148), VGAScaleX(135), VGAScaleY(186));
-							flowText(_msgFont, 0, 5, 3, true, true, true, true, VGAScaleX(14), VGAScaleY(148), VGAScaleX(134), VGAScaleY(186), sptr);
+							_graphics->setAPen(3);
+							_graphics->rectFill(_graphics->VGAScaleX(13), _graphics->VGAScaleY(148), _graphics->VGAScaleX(135), _graphics->VGAScaleY(186));
+							_graphics->flowText(_msgFont, 0, 5, 3, true, true, true, true, _graphics->VGAScaleX(14), _graphics->VGAScaleY(148), _graphics->VGAScaleX(134), _graphics->VGAScaleY(186), sptr);
 
 							if (Maps[OldMsg].PageNumber == CurFloor)
 								drawRoom(OldMsg, (bool)(OldMsg == CurRoom));
@@ -727,8 +727,8 @@ void LabEngine::processMap(uint16 CurRoom) {
 							y1 = (y1 + y2) / 2;
 
 							if ((CurMsg != CurRoom) && (Maps[CurMsg].PageNumber == CurFloor)) {
-								setAPen(1);
-								rectFill(x1 - 1, y1, x1, y1);
+								_graphics->setAPen(1);
+								_graphics->rectFill(x1 - 1, y1, x1, y1);
 							}
 
 							_event->mouseShow();
@@ -737,7 +737,7 @@ void LabEngine::processMap(uint16 CurRoom) {
 				}
 			}
 
-			screenUpdate();
+			_graphics->screenUpdate();
 		}
 	}
 }
@@ -751,7 +751,7 @@ void LabEngine::doMap(uint16 CurRoom) {
 
 	_music->updateMusic();
 	loadMapData();
-	blackAllScreen();
+	_graphics->blackAllScreen();
 
 	if (Direction == NORTH)
 		XMark = MapNorth;
@@ -765,18 +765,18 @@ void LabEngine::doMap(uint16 CurRoom) {
 	drawMap(CurRoom, CurRoom, Maps[CurRoom].PageNumber, false, true);
 	_event->mouseShow();
 	_event->attachGadgetList(MapGadgetList);
-	screenUpdate();
+	_graphics->screenUpdate();
 	processMap(CurRoom);
 	_event->attachGadgetList(NULL);
 	fade(false, 0);
-	blackAllScreen();
+	_graphics->blackAllScreen();
 	_event->mouseHide();
-	setAPen(0);
-	rectFill(0, 0, _screenWidth - 1, _screenHeight - 1);
+	_graphics->setAPen(0);
+	_graphics->rectFill(0, 0, _screenWidth - 1, _screenHeight - 1);
 	freeMapData();
-	blackAllScreen();
+	_graphics->blackAllScreen();
 	_event->mouseShow();
-	screenUpdate();
+	_graphics->screenUpdate();
 }
 
 } // End of namespace Lab

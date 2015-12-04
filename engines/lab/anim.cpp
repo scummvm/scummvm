@@ -462,7 +462,7 @@ void Anim::diffNextFrame() {
 			_curBit = 0;
 
 			if (DispBitMap->_flags & BITMAPF_VIDEO)
-				_vm->screenUpdate();
+				_vm->_graphics->screenUpdate();
 
 			return; /* done with the next frame. */
 		}
@@ -567,7 +567,7 @@ void Anim::diffNextFrame() {
 				_vm->_event->mouseShow();
 
 				if (!didTOF)
-					_vm->screenUpdate();
+					_vm->_graphics->screenUpdate();
 
 				return;
 			}
@@ -602,7 +602,7 @@ void Anim::playDiff() {
 
 	if (_doBlack) {
 		_doBlack = false;
-		blackScreen();
+		_vm->_graphics->blackScreen();
 	}
 
 	_start = *startoffile;            /* Make a copy of the pointer to the start of the file    */
@@ -683,7 +683,7 @@ void Anim::playDiff() {
 /*****************************************************************************/
 void Anim::stopDiff() {
 	if (_isPlaying && _isAnim)
-		blackScreen();
+		_vm->_graphics->blackScreen();
 }
 
 /*****************************************************************************/

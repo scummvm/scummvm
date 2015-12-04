@@ -156,7 +156,7 @@ void EventManager::updateMouse() {
 	}
 
 	if (doUpdateDisplay)
-		_vm->screenUpdate();
+		_vm->_graphics->screenUpdate();
 }
 
 

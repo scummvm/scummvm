@@ -37,24 +37,6 @@
 namespace Lab {
 
 /*****************************************************************************/
-/* Sets up either a low-res or a high-res 256 color screen.                  */
-/*****************************************************************************/
-bool LabEngine::createScreen(bool hiRes) {
-	if (hiRes) {
-		_screenWidth  = 640;
-		_screenHeight = 480;
-	} else {
-		_screenWidth  = 320;
-		_screenHeight = 200;
-	}
-	_screenBytesPerPage = _screenWidth * _screenHeight;
-
-	_displayBuffer = new byte[_screenBytesPerPage];	// FIXME: Memory leak!
-
-	return true;
-}
-
-/*****************************************************************************/
 /* Sets the current page on the VGA card.                                    */
 /*****************************************************************************/
 void LabEngine::changeVolume(int delta) {
@@ -104,13 +86,6 @@ void LabEngine::setPalette(void *cmap, uint16 numcolors) {
 		writeColorRegs((byte *)cmap, 0, numcolors);
 }
 
-void LabEngine::screenUpdate() {
-	g_system->copyRectToScreen(_displayBuffer, _screenWidth, 0, 0, _screenWidth, _screenHeight);
-	g_system->updateScreen();
-
-	_event->processInput();
-}
-
 /*****************************************************************************/
 /* Returns the base address of the current VGA display.                      */
 /*****************************************************************************/
@@ -150,8 +125,8 @@ void LabEngine::scrollDisplayX(int16 dx, uint16 x1, uint16 y1, uint16 x2, uint16
 	im.readScreenImage(x1, y1);
 	im.drawImage(x1 + dx, y1);
 
-	setAPen(0);
-	rectFill(x1, y1, x1 + dx - 1, y2);
+	_graphics->setAPen(0);
+	_graphics->rectFill(x1, y1, x1 + dx - 1, y2);
 }
 
 /*****************************************************************************/
@@ -181,58 +156,8 @@ void LabEngine::scrollDisplayY(int16 dy, uint16 x1, uint16 y1, uint16 x2, uint16
 	im.readScreenImage(x1, y1);
 	im.drawImage(x1, y1 + dy);
 
-	setAPen(0);
-	rectFill(x1, y1, x2, y1 + dy - 1);
-}
-
-/*****************************************************************************/
-/* Sets the pen number to use on all the drawing operations.                 */
-/*****************************************************************************/
-void LabEngine::setAPen(byte pennum) {
-	_curapen = pennum;
-}
-
-/*****************************************************************************/
-/* Fills in a rectangle.                                                     */
-/*****************************************************************************/
-void LabEngine::rectFill(uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
-	int w = x2 - x1 + 1;
-	int h = y2 - y1 + 1;
-
-	if (x1 + w > _screenWidth)
-		w = _screenWidth - x1;
-
-	if (y1 + h > _screenHeight)
-		h = _screenHeight - y1;
-
-	if ((w > 0) && (h > 0)) {
-		char *d = (char *)getCurrentDrawingBuffer() + y1 * _screenWidth + x1;
-
-		while (h-- > 0) {
-			char *dd = d;
-			int ww = w;
-
-			while (ww-- > 0) {
-				*dd++ = _curapen;
-			}
-
-			d += _screenWidth;
-		}
-	}
-}
-
-/*****************************************************************************/
-/* Draws a horizontal line.                                                  */
-/*****************************************************************************/
-void LabEngine::drawVLine(uint16 x, uint16 y1, uint16 y2) {
-	rectFill(x, y1, x, y2);
-}
-
-/*****************************************************************************/
-/* Draws a vertical line.                                                    */
-/*****************************************************************************/
-void LabEngine::drawHLine(uint16 x1, uint16 y, uint16 x2) {
-	rectFill(x1, y, x2, y);
+	_graphics->setAPen(0);
+	_graphics->rectFill(x1, y1, x2, y1 + dy - 1);
 }
 
 /*****************************************************************************/

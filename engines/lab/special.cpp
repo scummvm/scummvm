@@ -109,9 +109,9 @@ static byte *loadBackPict(const char *fileName, bool tomem) {
 	g_lab->_anim->_noPalChange = true;
 
 	if (tomem)
-		res = readPictToMem(fileName, g_lab->_screenWidth, g_lab->_screenHeight);
+		res = g_lab->_graphics->readPictToMem(fileName, g_lab->_screenWidth, g_lab->_screenHeight);
 	else
-		readPict(fileName, true);
+		g_lab->_graphics->readPict(fileName, true);
 
 	for (uint16 i = 0; i < 16; i++) {
 		hipal[i] = ((g_lab->_anim->_diffPalette[i * 3] >> 2) << 8) +
@@ -129,7 +129,7 @@ static byte *loadBackPict(const char *fileName, bool tomem) {
 /*****************************************************************************/
 static void doCombination() {
 	for (uint16 i = 0; i <= 5; i++)
-		Images[combination[i]]->drawImage(VGAScaleX(combx[i]), VGAScaleY(65));
+		Images[combination[i]]->drawImage(g_lab->_graphics->VGAScaleX(combx[i]), g_lab->_graphics->VGAScaleY(65));
 }
 
 /*****************************************************************************/
@@ -139,10 +139,10 @@ void showCombination(const char *filename) {
 	resetBuffer();
 	g_lab->_anim->_doBlack = true;
 	g_lab->_anim->_noPalChange = true;
-	readPict(filename, true);
+	g_lab->_graphics->readPict(filename, true);
 	g_lab->_anim->_noPalChange = false;
 
-	blackScreen();
+	g_lab->_graphics->blackScreen();
 
 	Common::File *numFile = g_lab->_resource->openDataFile("P:Numbers");
 
@@ -188,9 +188,9 @@ static void changeCombination(uint16 number) {
 
 		display._imageData = g_lab->getCurrentDrawingBuffer();
 
-		g_lab->scrollDisplayY(2, VGAScaleX(combx[number]), VGAScaleY(65), VGAScaleX(combx[number]) + (Images[combnum])->_width - 1, VGAScaleY(65) + (Images[combnum])->_height);
+		g_lab->scrollDisplayY(2, g_lab->_graphics->VGAScaleX(combx[number]), g_lab->_graphics->VGAScaleY(65), g_lab->_graphics->VGAScaleX(combx[number]) + (Images[combnum])->_width - 1, g_lab->_graphics->VGAScaleY(65) + (Images[combnum])->_height);
 
-		Images[combnum]->bltBitMap(0, (Images[combnum])->_height - (2 * i), &(display), VGAScaleX(combx[number]), VGAScaleY(65), (Images[combnum])->_width, 2);
+		Images[combnum]->bltBitMap(0, (Images[combnum])->_height - (2 * i), &(display), g_lab->_graphics->VGAScaleX(combx[number]), g_lab->_graphics->VGAScaleY(65), (Images[combnum])->_width, 2);
 	}
 
 	for (uint16 i = 0; i < 6; i++)
@@ -240,20 +240,20 @@ static void doTile(bool showsolution) {
 	int16 rows, cols;
 
 	if (showsolution) {
-		rowm = VGAScaleY(23);
-		colm = VGAScaleX(27);
+		rowm = g_lab->_graphics->VGAScaleY(23);
+		colm = g_lab->_graphics->VGAScaleX(27);
 
-		rows = VGAScaleY(31);
-		cols = VGAScaleX(105);
+		rows = g_lab->_graphics->VGAScaleY(31);
+		cols = g_lab->_graphics->VGAScaleX(105);
 	} else {
-		g_lab->setAPen(0);
-		g_lab->rectFill(VGAScaleX(97), VGAScaleY(22), VGAScaleX(220), VGAScaleY(126));
+		g_lab->_graphics->setAPen(0);
+		g_lab->_graphics->rectFill(g_lab->_graphics->VGAScaleX(97), g_lab->_graphics->VGAScaleY(22), g_lab->_graphics->VGAScaleX(220), g_lab->_graphics->VGAScaleY(126));
 
-		rowm = VGAScaleY(25);
-		colm = VGAScaleX(30);
+		rowm = g_lab->_graphics->VGAScaleY(25);
+		colm = g_lab->_graphics->VGAScaleX(30);
 
-		rows = VGAScaleY(25);
-		cols = VGAScaleX(100);
+		rows = g_lab->_graphics->VGAScaleY(25);
+		cols = g_lab->_graphics->VGAScaleX(100);
 	}
 
 	while (row < 4) {
@@ -283,9 +283,9 @@ void showTile(const char *filename, bool showsolution) {
 	resetBuffer();
 	g_lab->_anim->_doBlack = true;
 	g_lab->_anim->_noPalChange = true;
-	readPict(filename, true);
+	g_lab->_graphics->readPict(filename, true);
 	g_lab->_anim->_noPalChange = false;
-	blackScreen();
+	g_lab->_graphics->blackScreen();
 
 	Common::File *tileFile = tileFile = g_lab->_resource->openDataFile(showsolution ? "P:TileSolution" : "P:Tile");
 
@@ -317,33 +317,33 @@ static void doTileScroll(uint16 col, uint16 row, uint16 scrolltype) {
 	uint16 last = 0, x1, y1;
 
 	if (scrolltype == LEFTSCROLL) {
-		dX =  VGAScaleX(5);
-		sx =  VGAScaleX(5);
+		dX =  g_lab->_graphics->VGAScaleX(5);
+		sx =  g_lab->_graphics->VGAScaleX(5);
 		last = 6;
 	} else if (scrolltype == RIGHTSCROLL) {
-		dX = VGAScaleX(-5);
-		dx = VGAScaleX(-5);
-		sx =  VGAScaleX(5);
+		dX = g_lab->_graphics->VGAScaleX(-5);
+		dx = g_lab->_graphics->VGAScaleX(-5);
+		sx =  g_lab->_graphics->VGAScaleX(5);
 		last = 6;
 	} else if (scrolltype == UPSCROLL) {
-		dY =  VGAScaleY(5);
-		sy =  VGAScaleY(5);
+		dY =  g_lab->_graphics->VGAScaleY(5);
+		sy =  g_lab->_graphics->VGAScaleY(5);
 		last = 5;
 	} else if (scrolltype == DOWNSCROLL) {
-		dY = VGAScaleY(-5);
-		dy = VGAScaleY(-5);
-		sy =  VGAScaleY(5);
+		dY = g_lab->_graphics->VGAScaleY(-5);
+		dy = g_lab->_graphics->VGAScaleY(-5);
+		sy =  g_lab->_graphics->VGAScaleY(5);
 		last = 5;
 	}
 
-	sx += SVGACord(2);
+	sx += g_lab->_graphics->SVGACord(2);
 
-	x1 = VGAScaleX(100) + (col * VGAScaleX(30)) + dx;
-	y1 = VGAScaleY(25) + (row * VGAScaleY(25)) + dy;
+	x1 = g_lab->_graphics->VGAScaleX(100) + (col * g_lab->_graphics->VGAScaleX(30)) + dx;
+	y1 = g_lab->_graphics->VGAScaleY(25) + (row * g_lab->_graphics->VGAScaleY(25)) + dy;
 
 	for (uint16 i = 0; i < last; i++) {
 		g_lab->waitTOF();
-		scrollRaster(dX, dY, x1, y1, x1 + VGAScaleX(28) + sx, y1 + VGAScaleY(23) + sy);
+		scrollRaster(dX, dY, x1, y1, x1 + g_lab->_graphics->VGAScaleX(28) + sx, y1 + g_lab->_graphics->VGAScaleY(23) + sy);
 		x1 += dX;
 		y1 += dY;
 	}
@@ -413,7 +413,7 @@ static void changeTile(uint16 col, uint16 row) {
 		if (check) {
 			g_lab->_conditions->inclElement(BRICKOPEN);  /* unlocked combination */
 			g_lab->_anim->_doBlack = true;
-			check = readPict("p:Up/BDOpen", true);
+			check = g_lab->_graphics->readPict("p:Up/BDOpen", true);
 		}
 	}
 }
@@ -444,7 +444,7 @@ void doNotes() {
 	TextFont *noteFont = g_lab->_resource->getFont("P:Note.fon");
 	char *ntext = g_lab->_resource->getText("Lab:Rooms/Notes");
 
-	flowText(noteFont, -2 + SVGACord(1), 0, 0, false, false, true, true, VGAScaleX(25) + SVGACord(15), VGAScaleY(50), VGAScaleX(295) - SVGACord(15), VGAScaleY(148), ntext);
+	g_lab->_graphics->flowText(noteFont, -2 + g_lab->_graphics->SVGACord(1), 0, 0, false, false, true, true, g_lab->_graphics->VGAScaleX(25) + g_lab->_graphics->SVGACord(15), g_lab->_graphics->VGAScaleY(50), g_lab->_graphics->VGAScaleX(295) - g_lab->_graphics->SVGACord(15), g_lab->_graphics->VGAScaleY(148), ntext);
 	g_lab->setPalette(g_lab->_anim->_diffPalette, 256);
 
 	closeFont(noteFont);
@@ -464,28 +464,28 @@ void doWestPaper() {
 
 	paperFont = g_lab->_resource->getFont("P:News22.fon");
 	ntext = g_lab->_resource->getText("Lab:Rooms/Date");
-	flowText(paperFont, 0, 0, 0, false, true, false, true, VGAScaleX(57), VGAScaleY(77) + SVGACord(2), VGAScaleX(262), VGAScaleY(91), ntext);
+	g_lab->_graphics->flowText(paperFont, 0, 0, 0, false, true, false, true, g_lab->_graphics->VGAScaleX(57), g_lab->_graphics->VGAScaleY(77) + g_lab->_graphics->SVGACord(2), g_lab->_graphics->VGAScaleX(262), g_lab->_graphics->VGAScaleY(91), ntext);
 	closeFont(paperFont);
 	delete[] ntext;
 
 	paperFont = g_lab->_resource->getFont("P:News32.fon");
 	ntext = g_lab->_resource->getText("Lab:Rooms/Headline");
 	FileLen = strlen(ntext) - 1;
-	CharsPrinted = flowText(paperFont, -8, 0, 0, false, true, false, true, VGAScaleX(57), VGAScaleY(86) - SVGACord(2), VGAScaleX(262), VGAScaleY(118), ntext);
+	CharsPrinted = g_lab->_graphics->flowText(paperFont, -8, 0, 0, false, true, false, true, g_lab->_graphics->VGAScaleX(57), g_lab->_graphics->VGAScaleY(86) - g_lab->_graphics->SVGACord(2), g_lab->_graphics->VGAScaleX(262), g_lab->_graphics->VGAScaleY(118), ntext);
 	if (CharsPrinted < FileLen) {
-		y = 130 - SVGACord(5);
-		flowText(paperFont, -8 - SVGACord(1), 0, 0, false, true, false, true, VGAScaleX(57), VGAScaleY(86) - SVGACord(2), VGAScaleX(262), VGAScaleY(132), ntext);
+		y = 130 - g_lab->_graphics->SVGACord(5);
+		g_lab->_graphics->flowText(paperFont, -8 - g_lab->_graphics->SVGACord(1), 0, 0, false, true, false, true, g_lab->_graphics->VGAScaleX(57), g_lab->_graphics->VGAScaleY(86) - g_lab->_graphics->SVGACord(2), g_lab->_graphics->VGAScaleX(262), g_lab->_graphics->VGAScaleY(132), ntext);
 	} else
-		y = 115 - SVGACord(5);
+		y = 115 - g_lab->_graphics->SVGACord(5);
 	closeFont(paperFont);
 	delete[] ntext;
 
 	paperFont = g_lab->_resource->getFont("P:Note.fon");
 	ntext = g_lab->_resource->getText("Lab:Rooms/Col1");
-	CharsPrinted = flowText(paperFont, -4, 0, 0, false, false, false, true, VGAScaleX(45), VGAScaleY(y), VGAScaleX(158), VGAScaleY(148), ntext);
+	CharsPrinted = g_lab->_graphics->flowText(paperFont, -4, 0, 0, false, false, false, true, g_lab->_graphics->VGAScaleX(45), g_lab->_graphics->VGAScaleY(y), g_lab->_graphics->VGAScaleX(158), g_lab->_graphics->VGAScaleY(148), ntext);
 	delete[] ntext;
 	ntext = g_lab->_resource->getText("Lab:Rooms/Col2");
-	CharsPrinted = flowText(paperFont, -4, 0, 0, false, false, false, true, VGAScaleX(162), VGAScaleY(y), VGAScaleX(275), VGAScaleY(148), ntext);
+	CharsPrinted = g_lab->_graphics->flowText(paperFont, -4, 0, 0, false, false, false, true, g_lab->_graphics->VGAScaleX(162), g_lab->_graphics->VGAScaleY(y), g_lab->_graphics->VGAScaleX(275), g_lab->_graphics->VGAScaleY(148), ntext);
 	delete[] ntext;
 	closeFont(paperFont);
 
@@ -550,12 +550,12 @@ static bool loadJournalData() {
 	uint16 counter = 0;
 
 	while (TopGadget) {
-		TopGadget->x = VGAScaleX(JGadX[counter]);
+		TopGadget->x = g_lab->_graphics->VGAScaleX(JGadX[counter]);
 
 		if (counter == 1)
-			TopGadget->y = VGAScaleY(JGadY[counter]) + SVGACord(1);
+			TopGadget->y = g_lab->_graphics->VGAScaleY(JGadY[counter]) + g_lab->_graphics->SVGACord(1);
 		else
-			TopGadget->y = VGAScaleY(JGadY[counter]) - SVGACord(1);
+			TopGadget->y = g_lab->_graphics->VGAScaleY(JGadY[counter]) - g_lab->_graphics->SVGACord(1);
 
 		TopGadget->GadgetID = counter;
 		TopGadget = TopGadget->NextGadget;
@@ -576,7 +576,7 @@ static void drawJournalText() {
 	while (DrawingToPage < JPage) {
 		g_lab->_music->updateMusic();
 		CurText = (char *)(journaltext + CharsDrawn);
-		CharsDrawn += flowText(journalFont, -2, 2, 0, false, false, false, false, VGAScaleX(52), VGAScaleY(32), VGAScaleX(152), VGAScaleY(148), CurText);
+		CharsDrawn += g_lab->_graphics->flowText(journalFont, -2, 2, 0, false, false, false, false, g_lab->_graphics->VGAScaleX(52), g_lab->_graphics->VGAScaleY(32), g_lab->_graphics->VGAScaleX(152), g_lab->_graphics->VGAScaleY(148), CurText);
 
 		lastpage = (*CurText == 0);
 
@@ -588,16 +588,16 @@ static void drawJournalText() {
 
 	if (JPage <= 1) {
 		CurText = journaltexttitle;
-		flowTextToMem(&JBackImage, journalFont, -2, 2, 0, false, true, true, true, VGAScaleX(52), VGAScaleY(32), VGAScaleX(152), VGAScaleY(148), CurText);
+		g_lab->_graphics->flowTextToMem(&JBackImage, journalFont, -2, 2, 0, false, true, true, true, g_lab->_graphics->VGAScaleX(52), g_lab->_graphics->VGAScaleY(32), g_lab->_graphics->VGAScaleX(152), g_lab->_graphics->VGAScaleY(148), CurText);
 	} else {
 		CurText = (char *)(journaltext + CharsDrawn);
-		CharsDrawn += flowTextToMem(&JBackImage, journalFont, -2, 2, 0, false, false, false, true, VGAScaleX(52), VGAScaleY(32), VGAScaleX(152), VGAScaleY(148), CurText);
+		CharsDrawn += g_lab->_graphics->flowTextToMem(&JBackImage, journalFont, -2, 2, 0, false, false, false, true, g_lab->_graphics->VGAScaleX(52), g_lab->_graphics->VGAScaleY(32), g_lab->_graphics->VGAScaleX(152), g_lab->_graphics->VGAScaleY(148), CurText);
 	}
 
 	g_lab->_music->updateMusic();
 	CurText = (char *)(journaltext + CharsDrawn);
 	lastpage = (*CurText == 0);
-	flowTextToMem(&JBackImage, journalFont, -2, 2, 0, false, false, false, true, VGAScaleX(171), VGAScaleY(32), VGAScaleX(271), VGAScaleY(148), CurText);
+	g_lab->_graphics->flowTextToMem(&JBackImage, journalFont, -2, 2, 0, false, false, false, true, g_lab->_graphics->VGAScaleX(171), g_lab->_graphics->VGAScaleY(32), g_lab->_graphics->VGAScaleX(271), g_lab->_graphics->VGAScaleY(148), CurText);
 
 	CurText = (char *)(journaltext + CharsDrawn);
 	lastpage = lastpage || (*CurText == 0);
@@ -660,7 +660,7 @@ void LabEngine::drawJournal(uint16 wipenum, bool needFade) {
 		fade(true, 0);
 
 	g_lab->_anim->_noPalChange = true;
-	JBackImage._imageData = readPictToMem("P:Journal.pic", _screenWidth, _screenHeight);
+	JBackImage._imageData = _graphics->readPictToMem("P:Journal.pic", _screenWidth, _screenHeight);
 	GotBackImage = true;
 
 	eatMessages();
@@ -716,7 +716,7 @@ void LabEngine::processJournal() {
 /*****************************************************************************/
 void LabEngine::doJournal() {
 	resetBuffer();
-	blackAllScreen();
+	_graphics->blackAllScreen();
 
 	lastpage    = false;
 	GotBackImage = false;
@@ -745,9 +745,9 @@ void LabEngine::doJournal() {
 
 	ScreenImage._imageData = getCurrentDrawingBuffer();
 
-	setAPen(0);
-	rectFill(0, 0, _screenWidth - 1, _screenHeight - 1);
-	blackScreen();
+	_graphics->setAPen(0);
+	_graphics->rectFill(0, 0, _screenWidth - 1, _screenHeight - 1);
+	_graphics->blackScreen();
 
 	freeAllStolenMem();
 }
@@ -783,11 +783,11 @@ bool LabEngine::saveRestoreGame() {
 		if (slot >= 0) {
 			isOK = loadGame(&Direction, &(_inventory[QUARTERNUM].Many), slot);
 			if (isOK)
-				g_lab->_music->resetMusic();
+				_music->resetMusic();
 		}
 	}
 
-	g_lab->screenUpdate();
+	_graphics->screenUpdate();
 
 	return isOK;
 }
@@ -820,31 +820,31 @@ void LabEngine::drawMonText(char *text, TextFont *monitorFont, uint16 x1, uint16
 		text += 2;
 
 		fheight = textHeight(monitorFont);
-		x1 = MonButton->_width + VGAScaleX(3);
-		MonGadHeight = MonButton->_height + VGAScaleY(3);
+		x1 = MonButton->_width + _graphics->VGAScaleX(3);
+		MonGadHeight = MonButton->_height + _graphics->VGAScaleY(3);
 
 		if (MonGadHeight > fheight)
 			yspacing = MonGadHeight - fheight;
 		else
 			MonGadHeight = fheight;
 
-		setAPen(0);
-		rectFill(0, 0, _screenWidth - 1, y2);
+		_graphics->setAPen(0);
+		_graphics->rectFill(0, 0, _screenWidth - 1, y2);
 
 		for (uint16 i = 0; i < numlines; i++)
 			MonButton->drawImage(0, i * MonGadHeight);
 	} else if (isinteractive) {
-		setAPen(0);
-		rectFill(0, 0, _screenWidth - 1, y2);
+		_graphics->setAPen(0);
+		_graphics->rectFill(0, 0, _screenWidth - 1, y2);
 	} else {
-		setAPen(0);
-		rectFill(x1, y1, x2, y2);
+		_graphics->setAPen(0);
+		_graphics->rectFill(x1, y1, x2, y2);
 	}
 
 	while (DrawingToPage < monitorPage) {
 		_music->updateMusic();
 		CurText = (char *)(text + CharsDrawn);
-		CharsDrawn += flowText(monitorFont, yspacing, 0, 0, false, false, false, false, x1, y1, x2, y2, CurText);
+		CharsDrawn += _graphics->flowText(monitorFont, yspacing, 0, 0, false, false, false, false, x1, y1, x2, y2, CurText);
 		lastpage = (*CurText == 0);
 
 		if (lastpage)
@@ -855,7 +855,7 @@ void LabEngine::drawMonText(char *text, TextFont *monitorFont, uint16 x1, uint16
 
 	CurText = (char *)(text + CharsDrawn);
 	lastpage = (*CurText == 0);
-	CharsDrawn = flowText(monitorFont, yspacing, 2, 0, false, false, false, true, x1, y1, x2, y2, CurText);
+	CharsDrawn = _graphics->flowText(monitorFont, yspacing, 2, 0, false, false, false, true, x1, y1, x2, y2, CurText);
 	CurText += CharsDrawn;
 	lastpage = lastpage || (*CurText == 0);
 
@@ -914,20 +914,20 @@ void LabEngine::processMonitor(char *ntext, TextFont *monitorFont, bool isintera
 				return;
 
 			else if ((Class == MOUSEBUTTONS) && (IEQUALIFIER_LEFTBUTTON & Qualifier)) {
-				if ((MouseY >= VGAScaleY(171)) && (MouseY <= VGAScaleY(200))) {
-					if ((MouseX >= VGAScaleX(259)) && (MouseX <= VGAScaleX(289))) {
+				if ((MouseY >= g_lab->_graphics->VGAScaleY(171)) && (MouseY <= g_lab->_graphics->VGAScaleY(200))) {
+					if ((MouseX >= g_lab->_graphics->VGAScaleX(259)) && (MouseX <= g_lab->_graphics->VGAScaleX(289))) {
 						if (!lastpage) {
 							monitorPage += 1;
 							drawMonText(ntext, monitorFont, x1, y1, x2, y2, isinteractive);
 						}
-					} else if ((MouseX >= VGAScaleX(0)) && (MouseX <= VGAScaleX(31))) {
+					} else if ((MouseX >= g_lab->_graphics->VGAScaleX(0)) && (MouseX <= g_lab->_graphics->VGAScaleX(31))) {
 						return;
-					} else if ((MouseX >= VGAScaleX(290)) && (MouseX <= VGAScaleX(320))) {
+					} else if ((MouseX >= g_lab->_graphics->VGAScaleX(290)) && (MouseX <= g_lab->_graphics->VGAScaleX(320))) {
 						if (monitorPage >= 1) {
 							monitorPage -= 1;
 							drawMonText(ntext, monitorFont, x1, y1, x2, y2, isinteractive);
 						}
-					} else if ((MouseX >= VGAScaleX(31)) && (MouseX <= VGAScaleX(59))) {
+					} else if ((MouseX >= g_lab->_graphics->VGAScaleX(31)) && (MouseX <= g_lab->_graphics->VGAScaleX(59))) {
 						if (isinteractive) {
 							monitorPage = 0;
 
@@ -962,20 +962,19 @@ void LabEngine::processMonitor(char *ntext, TextFont *monitorFont, bool isintera
 void LabEngine::doMonitor(char *background, char *textfile, bool isinteractive, uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
 	char *ntext;
 
-	x1 = VGAScaleX(x1);
-	x2 = VGAScaleX(x2);
-	y1 = VGAScaleY(y1);
-	y2 = VGAScaleY(y2);
+	x1 = _graphics->VGAScaleX(x1);
+	x2 = _graphics->VGAScaleX(x2);
+	y1 = _graphics->VGAScaleY(y1);
+	y2 = _graphics->VGAScaleY(y2);
 
 	TextFileName = textfile;
 
-	blackAllScreen();
-
-	readPict("P:Mon/Monitor.1", true);
-	readPict("P:Mon/NWD1", true);
-	readPict("P:Mon/NWD2", true);
-	readPict("P:Mon/NWD3", true);
-	blackAllScreen();
+	_graphics->blackAllScreen();
+	_graphics->readPict("P:Mon/Monitor.1", true);
+	_graphics->readPict("P:Mon/NWD1", true);
+	_graphics->readPict("P:Mon/NWD2", true);
+	_graphics->readPict("P:Mon/NWD3", true);
+	_graphics->blackAllScreen();
 
 	resetBuffer();
 	monitorPage = 0;
@@ -997,9 +996,9 @@ void LabEngine::doMonitor(char *background, char *textfile, bool isinteractive, 
 	closeFont(monitorFont);
 	freeAllStolenMem();
 
-	setAPen(0);
-	rectFill(0, 0, _screenWidth - 1, _screenHeight - 1);
-	blackAllScreen();
+	_graphics->setAPen(0);
+	_graphics->rectFill(0, 0, _screenWidth - 1, _screenHeight - 1);
+	_graphics->blackAllScreen();
 }
 
 } // End of namespace Lab
