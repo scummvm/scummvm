@@ -186,6 +186,7 @@ public:
 	void playSoundEffect(int index);
 	bool getTriggerCause(uint32 verbId, uint32 objectId2, uint32 objectId, uint32 &outThreadId);
 	uint32 runTriggerCause(uint32 verbId, uint32 objectId2, uint32 objectId);
+	void playTriggerCauseSound(uint32 verbId, uint32 objectId2, uint32 objectId);
 	
 	bool loadSavegameFromScript(int16 slotNum, uint32 callingThreadId);
 	bool saveSavegameFromScript(int16 slotNum, uint32 callingThreadId);

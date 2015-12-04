@@ -1086,8 +1086,19 @@ uint32 IllusionsEngine_Duckman::runTriggerCause(uint32 verbId, uint32 objectId2,
 
 	if (!getTriggerCause(verbId, objectId2, objectId, triggerThreadId))
 		return 0;
+		
+	playTriggerCauseSound(verbId, objectId2, objectId);
 
-	// TODO Extract sound effect playing to method
+	uint32 tempThreadId = newTempThreadId();
+	debug(1, "Starting cause thread %08X with triggerThreadId %08X", tempThreadId, triggerThreadId);
+	CauseThread_Duckman *causeThread = new CauseThread_Duckman(this, tempThreadId, 0, 0,
+		triggerThreadId);
+	_threads->startThread(causeThread);
+
+	return tempThreadId;
+}
+
+void IllusionsEngine_Duckman::playTriggerCauseSound(uint32 verbId, uint32 objectId2, uint32 objectId) {
 	bool soundWasPlayed = false;
 	if (_scriptResource->_properties.get(0x000E003C)) {
 		if (verbId == 7 && objectId == 0x40003) {
@@ -1103,7 +1114,6 @@ uint32 IllusionsEngine_Duckman::runTriggerCause(uint32 verbId, uint32 objectId2,
 			soundWasPlayed = true;
 		}
 	}
-
 	if (!soundWasPlayed) {
 		if (objectId == 0x40003) {
 			playSoundEffect(14);
@@ -1123,14 +1133,6 @@ uint32 IllusionsEngine_Duckman::runTriggerCause(uint32 verbId, uint32 objectId2,
 			playSoundEffect(5);
 		}
 	}
-
-	uint32 tempThreadId = newTempThreadId();
-	debug(1, "Starting cause thread %08X with triggerThreadId %08X", tempThreadId, triggerThreadId);
-	CauseThread_Duckman *causeThread = new CauseThread_Duckman(this, tempThreadId, 0, 0,
-		triggerThreadId);
-	_threads->startThread(causeThread);
-
-	return tempThreadId;
 }
 
 bool IllusionsEngine_Duckman::loadSavegameFromScript(int16 slotNum, uint32 callingThreadId) {
