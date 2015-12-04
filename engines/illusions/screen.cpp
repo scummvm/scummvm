@@ -635,10 +635,10 @@ void Screen::drawSurface82(Common::Rect &dstRect, Graphics::Surface *surface, Co
 	const int srcWidth = srcRect.width(), srcHeight = srcRect.height();
 	const int errYStart = srcHeight / dstHeight;
 	const int errYIncr = srcHeight % dstHeight;
-	const int midY = dstHeight / 2;
+//	const int midY = dstHeight / 2;
 	const int errXStart = srcWidth / dstWidth;
 	const int errXIncr = srcWidth % dstWidth;
-	const int midX = dstWidth / 2;
+//	const int midX = dstWidth / 2;
 	int h = dstHeight, errY = 0, skipY, srcY = srcRect.top;
 	byte *dst = (byte*)_backSurface->getBasePtr(dstRect.left, dstRect.top);
 	skipY = (dstHeight < srcHeight) ? 0 : dstHeight / (2*srcHeight) + 1;
@@ -807,6 +807,8 @@ void Screen::drawSurface20(Common::Rect &dstRect, Graphics::Surface *surface, Co
 	//debug("Screen::drawSurface20");
 }
 
+//#define TEST_SMOOTHING
+#ifdef TEST_SMOOTHING
 static uint16 average(const uint16 a, const uint16 b) {
 	byte r1, g1, b1, r2, g2, b2;
 	g_system->getScreenFormat().colorToRGB(a, r1, g1, b1);
@@ -814,6 +816,7 @@ static uint16 average(const uint16 a, const uint16 b) {
 //	return g_system->getScreenFormat().RGBToColor((r1 + r1 + r2) / 3, (g1 + g1 + g2) / 3, (b1 + b1 + b2) / 3);
 	return g_system->getScreenFormat().RGBToColor((r1 + r2) / 2, (g1 + g2) / 2, (b1 + b2) / 2);
 }
+#endif
 
 void Screen::drawSurface21(Common::Rect &dstRect, Graphics::Surface *surface, Common::Rect &srcRect) {
 	// Scaled
@@ -821,10 +824,10 @@ void Screen::drawSurface21(Common::Rect &dstRect, Graphics::Surface *surface, Co
 	const int srcWidth = srcRect.width(), srcHeight = srcRect.height();
 	const int errYStart = srcHeight / dstHeight;
 	const int errYIncr = srcHeight % dstHeight;
-	const int midY = dstHeight / 2;
+//	const int midY = dstHeight / 2;
 	const int errXStart = srcWidth / dstWidth;
 	const int errXIncr = srcWidth % dstWidth;
-	const int midX = dstWidth / 2;
+//	const int midX = dstWidth / 2;
 	int h = dstHeight, errY = 0, skipY, srcY = srcRect.top;
 	byte *dst = (byte*)_backSurface->getBasePtr(dstRect.left, dstRect.top);
 	skipY = (dstHeight < srcHeight) ? 0 : dstHeight / (2*srcHeight) + 1;
@@ -838,12 +841,14 @@ void Screen::drawSurface21(Common::Rect &dstRect, Graphics::Surface *surface, Co
 		while (w-- > 0) {
 			uint16 pixel = READ_LE_UINT16(src);
 			if (pixel != _colorKey1) {
+#ifdef TEST_SMOOTHING
 				if (errX >= midX) {
 					uint16 npixel = READ_LE_UINT16(src + 2);
 					if (npixel == _colorKey1)
 						npixel = READ_LE_UINT16(dstRow);
 					pixel = average(pixel, npixel);
 				}
+#endif
 				WRITE_LE_UINT16(dstRow, pixel);
 			}
 			dstRow += 2;

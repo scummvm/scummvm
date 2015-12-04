@@ -17,6 +17,7 @@ MODULE_OBJS := \
 	duckman/duckman_inventory.o \
 	duckman/duckman_screenshakereffects.o \
 	duckman/duckman_specialcode.o \
+	duckman/gamestate_duckman.o \
 	duckman/illusions_duckman.o \
 	duckman/menusystem_duckman.o \
 	duckman/propertytimers.o \
@@ -24,6 +25,7 @@ MODULE_OBJS := \
 	fileresourcereader.o \
 	fixedpoint.o \
 	gamarchive.o \
+	gamestate.o \
 	gamresourcereader.o \
 	graphics.o \
 	illusions.o \
@@ -39,6 +41,7 @@ MODULE_OBJS := \
 	resources/soundresource.o \
 	resources/talkresource.o \
 	resourcesystem.o \
+	saveload.o \
 	screen.o \
 	screentext.o \
 	scriptstack.o \

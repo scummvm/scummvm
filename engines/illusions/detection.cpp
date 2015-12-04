@@ -95,28 +95,21 @@ public:
 
 	virtual bool hasFeature(MetaEngineFeature f) const;
 	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
-#if 0
 	virtual int getMaximumSaveSlot() const;
 	virtual SaveStateList listSaves(const char *target) const;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const;
 	virtual void removeSaveState(const char *target, int slot) const;
-#endif
 };
 
 bool IllusionsMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
-		false;
-		/*
 		(f == kSupportsListSaves) ||
 		(f == kSupportsDeleteSave) ||
 		(f == kSupportsLoadingDuringStartup) ||
 		(f == kSavesSupportMetaInfo) ||
 		(f == kSavesSupportThumbnail) ||
 		(f == kSavesSupportCreationDate);
-		*/
 }
-
-#if 0
 
 void IllusionsMetaEngine::removeSaveState(const char *target, int slot) const {
 	Common::String fileName = Common::String::format("%s.%03d", target, slot);
@@ -174,8 +167,6 @@ SaveStateDescriptor IllusionsMetaEngine::querySaveMetaInfos(const char *target, 
 	}
 	return SaveStateDescriptor();
 }
-
-#endif
 
 bool IllusionsMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	const Illusions::IllusionsGameDescription *gd = (const Illusions::IllusionsGameDescription *)desc;

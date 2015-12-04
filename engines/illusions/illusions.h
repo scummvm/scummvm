@@ -76,6 +76,7 @@ class SpecialCode;
 class TalkInstanceList;
 class ThreadList;
 class UpdateFunctions;
+class GameState;
 
 enum {
 	kGameIdBBDOU   = 1,
@@ -102,6 +103,7 @@ public:
 	ResourceSystem *_resSys;
 	BaseResourceReader *_resReader;
 	UpdateFunctions *_updateFunctions;
+	GameState *_gameState;
 	
 	void updateEvents();
 
@@ -132,7 +134,8 @@ public:
 	uint32 _resGetTime;
 	bool _unpauseControlActorFlag;
 	uint32 _lastUpdateTime;
-	
+
+	int _resumeFromSavegameRequested;
 	uint32 _savegameSceneId;
 	uint32 _savegameThreadId;
 
@@ -201,8 +204,6 @@ public:
 		uint32 value8, uint32 valueC, uint32 value10) = 0;
 	virtual void resumeFromSavegame(uint32 callingThreadId) = 0;
 		
-#if 0
-
 	// Savegame API
 
 	enum kReadSaveHeaderError {
@@ -229,15 +230,14 @@ public:
 	bool canSaveGameStateCurrently() { return _isSaveAllowed; }
 	Common::Error loadGameState(int slot);
 	Common::Error saveGameState(int slot, const Common::String &description);
-	void savegame(const char *filename, const char *description);
-	void loadgame(const char *filename);
+	Common::Error removeGameState(int slot);
+	bool savegame(const char *filename, const char *description);
+	bool loadgame(const char *filename);
 	const char *getSavegameFilename(int num);
 	bool existsSavegame(int num);
 	static Common::String getSavegameFilename(const Common::String &target, int num);
 	static kReadSaveHeaderError readSaveHeader(Common::SeekableReadStream *in, bool loadThumbnail, SaveHeader &header);
 
-#endif
-	
 };
 
 } // End of namespace Illusions

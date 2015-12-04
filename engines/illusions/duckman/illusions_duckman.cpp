@@ -23,6 +23,7 @@
 #include "illusions/duckman/illusions_duckman.h"
 #include "illusions/duckman/duckman_dialog.h"
 #include "illusions/duckman/duckman_specialcode.h"
+#include "illusions/duckman/gamestate_duckman.h"
 #include "illusions/duckman/menusystem_duckman.h"
 #include "illusions/duckman/scriptopcodes_duckman.h"
 #include "illusions/actor.h"
@@ -114,6 +115,7 @@ Common::Error IllusionsEngine_Duckman::run() {
 	_updateFunctions = new UpdateFunctions();
 	_soundMan = new SoundMan(this);
 	_menuSystem = new DuckmanMenuSystem(this);
+	_gameState = new Duckman_GameState(this);
 
 	_fader = new Fader();
 	
@@ -153,10 +155,7 @@ Common::Error IllusionsEngine_Duckman::run() {
 	_resSys->loadResource(0x120001, 0x00010001, 0);
 	_resSys->loadResource(0x120002, 0x00010001, 0);
 	_resSys->loadResource(0x120003, 0x00010001, 0);
-	
 	_resSys->loadResource(0x000D0001, 0x00010001, 0);
-	startScriptThread(0x00020004, 0);
-	_doScriptThreadInit = true;
 
 #if 0
 	//DEBUG
@@ -174,13 +173,28 @@ Common::Error IllusionsEngine_Duckman::run() {
 	_scriptResource->_blockCounters.set(238, 1);
 #endif
 
-#if 1
+#if 0
 	// DEBUG Map / special code 0016001A
 	_scriptResource->_properties.set(0x000E0017, true);
 	_scriptResource->_properties.set(0x000E0022, false);
 #endif
 
+	if (ConfMan.hasKey("save_slot")) {
+		_doScriptThreadInit = true;
+		// Load global resources manually, usually done by the game script
+		enterScene(0x00010003, 0);
+		loadGameState(ConfMan.getInt("save_slot"));
+	} else {
+		startScriptThread(0x00020004, 0);
+		_doScriptThreadInit = true;
+	}
+
 	while (!shouldQuit()) {
+		if (_resumeFromSavegameRequested) {
+			activateSavegame(0);
+			resumeFromSavegame(0);
+			_resumeFromSavegameRequested = false;
+		}
 		runUpdateFunctions();
 		_system->updateScreen();
 		updateEvents();
@@ -195,6 +209,7 @@ Common::Error IllusionsEngine_Duckman::run() {
 
 	delete _fader;
 
+    delete _gameState;
 	delete _menuSystem;
 	delete _soundMan;
 	delete _updateFunctions;
@@ -218,12 +233,9 @@ Common::Error IllusionsEngine_Duckman::run() {
 
 bool IllusionsEngine_Duckman::hasFeature(EngineFeature f) const {
 	return
-		false;
-		/*
 		(f == kSupportsRTL) ||
 		(f == kSupportsLoadingDuringRuntime) ||
 		(f == kSupportsSavingDuringRuntime);
-		*/
 }
 
 void IllusionsEngine_Duckman::initInput() {
@@ -793,7 +805,7 @@ bool IllusionsEngine_Duckman::changeScene(uint32 sceneId, uint32 threadId, uint3
 	_controls->destroyControls();
 	_resSys->unloadSceneResources(0x10003, 0x10001);
 	if (enterScene(sceneId, threadId)) {
-		// TODO GameStates_writeStates(sceneId, threadId);
+		_gameState->writeState(sceneId, threadId);
 		return true;
 	}
 	return false;
@@ -1075,23 +1087,24 @@ uint32 IllusionsEngine_Duckman::runTriggerCause(uint32 verbId, uint32 objectId2,
 	if (!getTriggerCause(verbId, objectId2, objectId, triggerThreadId))
 		return 0;
 
-	bool flag = false;
+	// TODO Extract sound effect playing to method
+	bool soundWasPlayed = false;
 	if (_scriptResource->_properties.get(0x000E003C)) {
 		if (verbId == 7 && objectId == 0x40003) {
 			playSoundEffect(7);
-			flag = true;
+			soundWasPlayed = true;
 		} else if (objectId == 0x40003) {
 			playSoundEffect(14);
-			flag = true;
+			soundWasPlayed = true;
 		} else if (verbId == 3) {
 			playSoundEffect(16);
-			flag = true;
+			soundWasPlayed = true;
 		} else if (verbId == 2) {
-			flag = true;
+			soundWasPlayed = true;
 		}
 	}
 
-	if (!flag) {
+	if (!soundWasPlayed) {
 		if (objectId == 0x40003) {
 			playSoundEffect(14);
 		} else if ((verbId == 1 || verbId == 2) && _scriptResource->getMainActorObjectId() == objectId) {
@@ -1120,34 +1133,33 @@ uint32 IllusionsEngine_Duckman::runTriggerCause(uint32 verbId, uint32 objectId2,
 	return tempThreadId;
 }
 
-bool IllusionsEngine_Duckman::loadSavegame(int16 slotNum, uint32 callingThreadId) {
-#if 0	
-	// TODO
-	bool success = _gameStates->load(slotNum);
-	if (success) {
-		_vm->_screen->setDisplayOn(false);
-		uint32 currSceneId = getCurrentScene();
-		if (currSceneId != 0x10003)
-			dumpCurrSceneFiles(currSceneId, callerThreadId);
-		reset();
-		stopMidi();
-		clearMidiPlayList();
-		_gameStates->readStates();
-		pushActiveScene(0x10000);
-	}
-	_gameStates->freeGameStateReadBuffer();
+bool IllusionsEngine_Duckman::loadSavegameFromScript(int16 slotNum, uint32 callingThreadId) {
+	const char *fileName = getSavegameFilename(slotNum);
+	bool success = loadgame(fileName);
+	if (success)
+		activateSavegame(callingThreadId);
+	_gameState->deleteReadStream();
 	return success;
-#endif	
-	return true;
 }
 
-bool IllusionsEngine_Duckman::saveSavegame(int16 slotNum, uint32 callingThreadId) {
-#if 0
+bool IllusionsEngine_Duckman::saveSavegameFromScript(int16 slotNum, uint32 callingThreadId) {
 	// TODO
-	bool success = _gameStates->save(slotNum);
+	const char *fileName = getSavegameFilename(slotNum);
+	bool success = false;//savegame(fileName, _savegameDescription.c_str());
 	return success;
-#endif	
-	return true;
+}
+
+void IllusionsEngine_Duckman::activateSavegame(uint32 callingThreadId) {
+	// TODO _screen->setDisplayOn(false);
+	uint32 currSceneId = getCurrentScene();
+	if (currSceneId != 0x10003)
+		dumpCurrSceneFiles(currSceneId, callingThreadId);
+	reset();
+	// TODO stopMidi();
+	// TODO clearMidiPlayList();
+	_gameState->readState(_savegameSceneId, _savegameThreadId);
+	pushActiveScene(0x10000);
+	_gameState->deleteReadStream();
 }
 
 } // End of namespace Illusions

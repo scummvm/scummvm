@@ -50,8 +50,8 @@ void Properties::init(uint count, byte *properties) {
 }
 
 void Properties::clear() {
-	uint size = (_count >> 3) + 1;
-	for (uint i = 0; i < size; ++i)
+	uint32 size = getSize();
+	for (uint32 i = 0; i < size; ++i)
 		_properties[i] = 0;
 }
 
@@ -70,6 +70,24 @@ void Properties::set(uint32 propertyId, bool value) {
 		_properties[index] |= mask;
 	else
 		_properties[index] &= ~mask;
+}
+
+uint32 Properties::getSize() {
+	return (_count >> 3) + 1;
+}
+
+void Properties::writeToStream(Common::WriteStream *out) {
+	const uint32 size = getSize();
+	out->writeUint32LE(size);
+	out->write(_properties, size);
+}
+
+bool Properties::readFromStream(Common::ReadStream *in) {
+	uint32 size = in->readUint32LE();
+	if (size != getSize())
+		return false;
+	in->read(_properties, size);
+	return true;
 }
 
 void Properties::getProperyPos(uint32 propertyId, uint &index, byte &mask) {
@@ -111,6 +129,24 @@ void BlockCounters::setC0(uint index, byte value) {
 	if (value & 0x80)
 		value = value & 0xBF;
 	_blockCounters[index - 1] = oldValue | (value & 0xC0);
+}
+
+uint32 BlockCounters::getSize() {
+	return _count;
+}
+
+void BlockCounters::writeToStream(Common::WriteStream *out) {
+	const uint32 size = getSize();
+	out->writeUint32LE(size);
+	out->write(_blockCounters, size);
+}
+
+bool BlockCounters::readFromStream(Common::ReadStream *in) {
+	uint32 size = in->readUint32LE();
+	if (size != getSize())
+		return false;
+	in->read(_blockCounters, size);
+	return true;
 }
 
 // TriggerCause
