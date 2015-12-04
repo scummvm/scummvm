@@ -121,15 +121,15 @@ void LabEngine::drawRoomMessage(uint16 curInv, CloseDataPtr closePtr) {
 }
 
 void LabEngine::freeScreens() {
-	for (uint16 i = 0; i < 20; i++)
+	for (uint16 i = 0; i < 20; i++) {
 		delete _moveImages[i];
+		_moveImages[i] = nullptr;
+	}
 
-	if (getPlatform() == Common::kPlatformWindows) {
-		for (uint16 imgIdx = 0; imgIdx < 10; imgIdx++)
-			delete _invImages[imgIdx];
-	} else {
-		for (uint16 imgIdx = 0; imgIdx < 6; imgIdx++)
-			delete _invImages[imgIdx];
+	for (uint16 imgIdx = 0; imgIdx < 10; imgIdx++) {
+		delete _invImages[imgIdx];
+		delete Images[imgIdx];
+		_invImages[imgIdx] = Images[imgIdx] = nullptr;
 	}
 }
 

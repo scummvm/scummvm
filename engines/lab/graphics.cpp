@@ -99,26 +99,6 @@ uint16 DisplayMan::SVGACord(uint16 cord) {
 		return 0;
 }
 
-/*****************************************************************************/
-/* Converts SVGA cords to VGA if necessary, otherwise returns VGA cords.     */
-/*****************************************************************************/
-int VGAUnScaleX(int x) {
-	if (g_lab->_isHiRes)
-		return (x / 2);
-	else
-		return x;
-}
-
-/*****************************************************************************/
-/* Converts SVGA cords to VGA if necessary, otherwise returns VGA cords.     */
-/*****************************************************************************/
-int VGAUnScaleY(int y) {
-	if (g_lab->_isHiRes)
-		return ((y * 5) / 12);
-	else
-		return y;
-}
-
 /*---------------------------------------------------------------------------*/
 /*------ From readPict.c.  Reads in pictures and animations from disk. ------*/
 /*---------------------------------------------------------------------------*/
