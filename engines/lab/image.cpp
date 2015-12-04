@@ -50,26 +50,48 @@ Image::Image(Common::File *s) {
 }
 
 /*****************************************************************************/
-/* Draws an image to the screen.                                             */
+/* Blits a piece of one image to another.                                    */
 /*****************************************************************************/
-void Image::drawImage(uint16 x, uint16 y) {
-	int w = _width;
-	int h = _height;
+void Image::blitBitmap(uint16 xs, uint16 ys, Image *imDest,
+	uint16 xd, uint16 yd, uint16 width, uint16 height, byte masked) {
+	int w = width;
+	int h = height;
+	int destWidth = (imDest) ? imDest->_width : g_lab->_screenWidth;
+	int destHeight = (imDest) ? imDest->_height : g_lab->_screenHeight;
+	byte *destBuffer = (imDest) ? imDest->_imageData : g_lab->getCurrentDrawingBuffer();
 
-	if (x + w > g_lab->_screenWidth)
-		w = g_lab->_screenWidth - x;
+	if (xd + w > destWidth)
+		w = destWidth - xd;
 
-	if (y + h > g_lab->_screenHeight)
-		h = g_lab->_screenHeight - y;
+	if (yd + h > destHeight)
+		h = destHeight - yd;
 
-	if ((w > 0) && (h > 0)) {
-		byte *s = _imageData;
-		byte *d = g_lab->getCurrentDrawingBuffer() + y * g_lab->_screenWidth + x;
+	if (w > 0 && h > 0) {
+		byte *s = _imageData + ys * _width + xs;
+		byte *d = destBuffer + yd * destWidth + xd;
 
-		while (h-- > 0) {
-			memcpy(d, s, w);
-			s += _width;
-			d += g_lab->_screenWidth;
+		if (!masked) {
+			while (h-- > 0) {
+				memcpy(d, s, w);
+				s += _width;
+				d += destWidth;
+			}
+		} else {
+			while (h-- > 0) {
+				byte *ss = s;
+				byte *dd = d;
+				int ww = w;
+
+				while (ww-- > 0) {
+					byte c = *ss++;
+
+					if (c) *dd++ = c - 1;
+					else dd++;
+				}
+
+				s += _width;
+				d += destWidth;
+			}
 		}
 	}
 }
@@ -77,36 +99,15 @@ void Image::drawImage(uint16 x, uint16 y) {
 /*****************************************************************************/
 /* Draws an image to the screen.                                             */
 /*****************************************************************************/
+void Image::drawImage(uint16 x, uint16 y) {
+	blitBitmap(0, 0, NULL, x, y, _width, _height, false);
+}
+
+/*****************************************************************************/
+/* Draws an image to the screen with transparency.                           */
+/*****************************************************************************/
 void Image::drawMaskImage(uint16 x, uint16 y) {
-	int w = _width;
-	int h = _height;
-
-	if (x + w > g_lab->_screenWidth)
-		w = g_lab->_screenWidth - x;
-
-	if (y + h > g_lab->_screenHeight)
-		h = g_lab->_screenHeight - y;
-
-	if ((w > 0) && (h > 0)) {
-		byte *s = _imageData;
-		byte *d = g_lab->getCurrentDrawingBuffer() + y * g_lab->_screenWidth + x;
-
-		while (h-- > 0) {
-			byte *ss = s;
-			byte *dd = d;
-			int ww = w;
-
-			while (ww-- > 0) {
-				byte c = *ss++;
-
-				if (c) *dd++ = c - 1;
-				else dd++;
-			}
-
-			s += _width;
-			d += g_lab->_screenWidth;
-		}
-	}
+	blitBitmap(0, 0, NULL, x, y, _width, _height, true);
 }
 
 /*****************************************************************************/
@@ -130,35 +131,6 @@ void Image::readScreenImage(uint16 x, uint16 y) {
 			memcpy(s, d, w);
 			s += _width;
 			d += g_lab->_screenWidth;
-		}
-	}
-}
-
-/*****************************************************************************/
-/* Blits a piece of one image to another.                                    */
-/* NOTE: for our purposes, assumes that ImDest is to be in VGA memory.       */
-/*****************************************************************************/
-void Image::bltBitMap(uint16 xs, uint16 ys, Image *imDest,
-					uint16 xd, uint16 yd, uint16 width, uint16 height) {
-	// I think the old code assumed that the source image data was valid for the given box.
-	// I will proceed on that assumption.
-	int w = width;
-	int h = height;
-
-	if (xd + w > imDest->_width)
-		w = imDest->_width - xd;
-
-	if (yd + h > imDest->_height)
-		h = imDest->_height - yd;
-
-	if (w > 0 && h > 0) {
-		byte *s = _imageData + ys * _width + xs;
-		byte *d = imDest->_imageData + yd * imDest->_width + xd;
-
-		while (h-- > 0) {
-			memcpy(d, s, w);
-			s += _width;
-			d += imDest->_width;
 		}
 	}
 }

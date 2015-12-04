@@ -706,7 +706,7 @@ void DisplayMan::doTransWipe(CloseDataPtr *cPtr, char *filename) {
 
 				imDest._imageData = _vm->getCurrentDrawingBuffer();
 
-				imSource.bltBitMap(0, curY, &imDest, 0, curY, _vm->_screenWidth, 2);
+				imSource.blitBitmap(0, curY, &imDest, 0, curY, _vm->_screenWidth, 2, false);
 				_vm->overlayRect(0, 0, curY, _vm->_screenWidth - 1, curY + 1);
 				curY += 4;
 				linesdone++;
@@ -726,9 +726,9 @@ void DisplayMan::doTransWipe(CloseDataPtr *cPtr, char *filename) {
 				imDest._imageData = _vm->getCurrentDrawingBuffer();
 
 				if (curY == lastY)
-					imSource.bltBitMap(0, curY, &imDest, 0, curY, _vm->_screenWidth, 1);
+					imSource.blitBitmap(0, curY, &imDest, 0, curY, _vm->_screenWidth, 1, false);
 				else
-					imSource.bltBitMap(0, curY, &imDest, 0, curY, _vm->_screenWidth, 2);
+					imSource.blitBitmap(0, curY, &imDest, 0, curY, _vm->_screenWidth, 2, false);
 
 				curY += 4;
 				linesdone++;
