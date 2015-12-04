@@ -13,7 +13,7 @@ $ git clone -b ios-fix --recursive https://github.com/bSr43/scummvm.git
 
 ### Compilation from Xcode ###
 
-This is the recommanded way to compile ScummVM, and the only one which makes it possible to run ScummVM on a non-jailbroken device!
+This is the recommended way to compile ScummVM, and the only one which makes it possible to run ScummVM on a non-jailbroken device!
 
 The next step is to compile the **create_project** tool. Open the Xcode project you'll found in the **devtools/create\_project/xcode/** directory. Once compiled, copy the binary somewhere in your *PATH*, and create a **build** directory somewhere on your harddisk. It is recommended to create this directory next to the cloned repository (they share the same parent).
 
