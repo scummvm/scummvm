@@ -176,14 +176,8 @@ bool Music::initMusic() {
 		filename = "Music:BackGrou";
 
 	_file = g_lab->_resource->openDataFile(filename);
-
-	if (_file) {
-		startMusic(true);
-		return true;
-	}
-
-	_musicOn = false;
-	return false;
+	startMusic(true);
+	return true;
 }
 
 /*****************************************************************************/
@@ -278,16 +272,10 @@ void Music::changeMusic(const char *newmusic) {
 	}
 
 	_file = g_lab->_resource->openDataFile(newmusic);
-
-	if (_file) {
-		_musicOn = true;   /* turn it off */
-		setMusic(false);
-		_musicOn = false;  /* turn it back on */
-		setMusic(true);
-	} else {
-		_file  = _tFile;
-		_tFile = 0;
-	}
+	_musicOn = true;   /* turn it off */
+	setMusic(false);
+	_musicOn = false;  /* turn it back on */
+	setMusic(true);
 }
 
 /*****************************************************************************/

@@ -58,19 +58,15 @@ void LargeSet::exclElement(uint16 element) {
 }
 
 bool LargeSet::readInitialConditions(const char *fileName) {
-	Common::File *file;
+	Common::File *file = _vm->_resource->openDataFile(fileName, MKTAG('C', 'O', 'N', '0'));
 
-	if ((file = _vm->_resource->openDataFile(fileName, MKTAG('C', 'O', 'N', '0')))) {
-		uint16 conditions = file->readUint16LE();
-		for (int i = 0; i < conditions; i++) {
-			inclElement(file->readUint16LE());
-		}
-
-		delete file;
-		return true;
+	uint16 conditions = file->readUint16LE();
+	for (int i = 0; i < conditions; i++) {
+		inclElement(file->readUint16LE());
 	}
 
-	return false;
+	delete file;
+	return true;
 }
 
 
