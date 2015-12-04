@@ -152,7 +152,6 @@ void doWestPaper() {
 	closeFont(paperFont);
 
 	g_lab->setPalette(g_lab->_anim->_diffPalette, 256);
-	freeAllStolenMem();
 }
 
 /*****************************************************************************/
@@ -377,7 +376,6 @@ void LabEngine::processJournal() {
 /* Does the journal processing.                                              */
 /*****************************************************************************/
 void LabEngine::doJournal() {
-	resetBuffer();
 	_graphics->blackAllScreen();
 
 	lastpage    = false;
@@ -410,8 +408,6 @@ void LabEngine::doJournal() {
 	_graphics->setAPen(0);
 	_graphics->rectFill(0, 0, _screenWidth - 1, _screenHeight - 1);
 	_graphics->blackScreen();
-
-	freeAllStolenMem();
 }
 
 bool LabEngine::saveRestoreGame() {
@@ -638,7 +634,6 @@ void LabEngine::doMonitor(char *background, char *textfile, bool isinteractive, 
 	_graphics->readPict("P:Mon/NWD3", true);
 	_graphics->blackAllScreen();
 
-	resetBuffer();
 	monitorPage = 0;
 	lastpage = false;
 	FadePalette = hipal;
@@ -656,11 +651,11 @@ void LabEngine::doMonitor(char *background, char *textfile, bool isinteractive, 
 	_event->mouseHide();
 	delete[] ntext;
 	closeFont(monitorFont);
-	freeAllStolenMem();
 
 	_graphics->setAPen(0);
 	_graphics->rectFill(0, 0, _screenWidth - 1, _screenHeight - 1);
 	_graphics->blackAllScreen();
+	_graphics->freePict();
 }
 
 } // End of namespace Lab

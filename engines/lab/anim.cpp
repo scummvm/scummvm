@@ -586,7 +586,7 @@ void Anim::diffNextFrame() {
 /*****************************************************************************/
 /* A separate task launched by readDiff.  Plays the DIFF.                    */
 /*****************************************************************************/
-void Anim::playDiff() {
+void Anim::playDiff(byte *buffer) {
 	_waitSec   = 0L;
 	_waitMicros = 0L;
 	_delayMicros = 0L;
@@ -605,7 +605,7 @@ void Anim::playDiff() {
 		_vm->_graphics->blackScreen();
 	}
 
-	_start = *startoffile;            /* Make a copy of the pointer to the start of the file    */
+	_start = buffer;				   /* Make a copy of the pointer to the start of the file    */
 	*_diffFile = _start;               /* Now can modify the file without modifying the original */
 
 	if (_start == NULL) {
@@ -709,9 +709,9 @@ void Anim::stopSound() {
 /*****************************************************************************/
 /* Reads in a DIFF file.                                                     */
 /*****************************************************************************/
-bool Anim::readDiff(bool playOnce) {
+bool Anim::readDiff(byte *buffer, bool playOnce) {
 	_playOnce = playOnce;
-	playDiff();
+	playDiff(buffer);
 	return true;
 }
 

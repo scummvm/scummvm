@@ -52,7 +52,6 @@ class Music {
 public:
 	Music(LabEngine *vm);
 
-	byte **newOpen(const char *name);
 	bool initMusic();
 	void freeMusic();
 	void updateMusic();

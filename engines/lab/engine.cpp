@@ -1057,22 +1057,14 @@ void LabEngine::go() {
 
 	_isHiRes = ((getFeatures() & GF_LOWRES) == 0);
 
-	bool mem = false;
-	if (initBuffer(BUFFERSIZE, true)) {
-		mem = true;
-	} else {
-		warning("initBuffer() failed");
-		return;
-	}
-
 	if (!_graphics->setUpScreens()) {
 		_isHiRes = false;
-		mem = mem && _graphics->setUpScreens();
+		_graphics->setUpScreens();
 	}
 
 	_event->initMouse();
 
-	mem = mem && initRoomBuffer();
+	initRoomBuffer();
 
 	if (!doIntro)
 		_music->initMusic();
@@ -1081,18 +1073,15 @@ void LabEngine::go() {
 
 	_event->mouseHide();
 
-	if (doIntro && mem) {
+	if (doIntro) {
 		Intro *intro = new Intro(this);
 		intro->introSequence();
 		delete intro;
 	} else
 		_anim->_doBlack = true;
 
-	if (mem) {
-		_event->mouseShow();
-		mainGameLoop();
-	} else
-		debug("\n\nNot enough memory to start game.\n\n");
+	_event->mouseShow();
+	mainGameLoop();
 
 	if (QuitLab) { /* Won the game */
 		_graphics->blackAllScreen();
@@ -1117,7 +1106,7 @@ void LabEngine::go() {
 	closeFont(_msgFont);
 
 	freeRoomBuffer();
-	freeBuffer();
+	_graphics->freePict();
 
 	freeScreens();
 

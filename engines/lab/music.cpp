@@ -175,7 +175,7 @@ bool Music::initMusic() {
 	else
 		filename = "Music:BackGrou";
 
-	_file = openPartial(filename);
+	_file = g_lab->_resource->openDataFile(filename);
 
 	if (_file) {
 		startMusic(true);
@@ -277,7 +277,7 @@ void Music::changeMusic(const char *newmusic) {
 			_tLeftInFile = _leftinfile;
 	}
 
-	_file = openPartial(newmusic);
+	_file = g_lab->_resource->openDataFile(newmusic);
 
 	if (_file) {
 		_musicOn = true;   /* turn it off */
@@ -318,34 +318,6 @@ void Music::resetMusic() {
 	startMusic(false);
 
 	_tFile = 0;
-}
-
-/*****************************************************************************/
-/* Checks whether or note enough memory in music buffer before loading any   */
-/* files.  Fills it if not.  Does not take into account the current buffer   */
-/* playing; a built in fudge factor.  We've also got another FUDGEFACTOR     */
-/* defined above in case things go wrong.                                    */
-/*                                                                           */
-/* Here, the seconds are multipled by 10.                                    */
-/*****************************************************************************/
-byte **Music::newOpen(const char *name) {
-	byte **file;
-
-	if (!name || !strcmp(name, "") || !strcmp(name, " "))
-		return NULL;
-
-	if ((file = isBuffered(name)))
-		return file;
-
-	updateMusic();
-
-	if (!_doNotFilestopSoundEffect)
-		stopSoundEffect();
-
-	uint32 unused;
-	file = openFile(name, unused);
-	updateMusic();
-	return file;
 }
 
 } // End of namespace Lab

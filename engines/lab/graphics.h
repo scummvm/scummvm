@@ -40,20 +40,20 @@ private:
 	LabEngine *_vm;
 
 	byte _curapen;
+	byte *_curBitmap;
 
 public:
-	bool _longWinInFront;
-	bool _lastMessageLong;
-	uint32 _screenBytesPerPage;
-
 	DisplayMan(LabEngine *lab);
+	virtual ~DisplayMan();
 
 	uint16 scaleX(uint16 x);
 	uint16 scaleY(uint16 y);
 	int16 VGAScaleX(int16 x);
 	int16 VGAScaleY(int16 y);
 	uint16 SVGACord(uint16 cord);
+	void loadPict(const char *filename);
 	bool readPict(const char *filename, bool playOnce);
+	void freePict();
 	byte *readPictToMem(const char *filename, uint16 x, uint16 y);
 	void doScrollBlack();
 	void copyPage(uint16 width, uint16 height, uint16 nheight, uint16 startline, byte *mem);
@@ -101,6 +101,10 @@ public:
 	void drawVLine(uint16 x1, uint16 y, uint16 x2);
 	void screenUpdate();
 	bool createScreen(bool HiRes);
+
+	bool _longWinInFront;
+	bool _lastMessageLong;
+	uint32 _screenBytesPerPage;
 };
 
 } // End of namespace Lab

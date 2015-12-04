@@ -397,7 +397,6 @@ void LabEngine::doTile(bool showsolution) {
 void LabEngine::showTile(const char *filename, bool showsolution) {
 	uint16 start = showsolution ? 0 : 1;
 
-	resetBuffer();
 	_anim->_doBlack = true;
 	_anim->_noPalChange = true;
 	_graphics->readPict(filename, true);
@@ -410,8 +409,6 @@ void LabEngine::showTile(const char *filename, bool showsolution) {
 		Tiles[curBit] = new Image(tileFile);
 
 	delete tileFile;
-
-	allocFile((void **)&_tempScrollData, Tiles[1]->_width * Tiles[1]->_height * 2L, "tempdata");
 
 	doTile(showsolution);
 	setPalette(_anim->_diffPalette, 256);
@@ -521,7 +518,6 @@ void LabEngine::doCombination() {
 /* Reads in a backdrop picture.                                              */
 /*****************************************************************************/
 void LabEngine::showCombination(const char *filename) {
-	resetBuffer();
 	_anim->_doBlack = true;
 	_anim->_noPalChange = true;
 	_graphics->readPict(filename, true);
@@ -535,8 +531,6 @@ void LabEngine::showCombination(const char *filename) {
 		Images[CurBit] = new Image(numFile);
 
 	delete numFile;
-
-	allocFile((void **)&_tempScrollData, Images[0]->_width * Images[0]->_height * 2L, "tempdata");
 
 	doCombination();
 
