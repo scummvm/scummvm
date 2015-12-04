@@ -66,6 +66,11 @@ IllusionsEngine::IllusionsEngine(OSystem *syst, const IllusionsGameDescription *
 
 	_rerunThreads = false;
 	
+	_isSaveAllowed = true; // TODO
+	_resumeFromSavegameRequested = false;
+	_savegameSceneId = 0;
+	_savegameThreadId = 0;
+
 	Engine::syncSoundSettings();
 
 }

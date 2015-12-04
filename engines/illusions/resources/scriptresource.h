@@ -24,6 +24,7 @@
 #define ILLUSIONS_SCRIPTRESOURCE_H
 
 #include "illusions/resourcesystem.h"
+#include "common/file.h"
 
 namespace Illusions {
 
@@ -46,6 +47,9 @@ public:
 	void clear();
 	bool get(uint32 propertyId);
 	void set(uint32 propertyId, bool value);
+	uint32 getSize();
+	void writeToStream(Common::WriteStream *out);
+	bool readFromStream(Common::ReadStream *in);
 public:
 	uint _count;
 	byte *_properties;
@@ -61,6 +65,9 @@ public:
 	void set(uint index, byte value);
 	byte getC0(uint index);
 	void setC0(uint index, byte value);
+	uint32 getSize();
+	void writeToStream(Common::WriteStream *out);
+	bool readFromStream(Common::ReadStream *in);
 public:
 	uint _count;
 	byte *_blockCounters;

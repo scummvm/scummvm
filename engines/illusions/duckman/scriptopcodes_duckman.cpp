@@ -259,7 +259,7 @@ void ScriptOpcodes_Duckman::opUnloadResourcesBySceneId(ScriptThread *scriptThrea
 
 //static uint dsceneId = 0, dthreadId = 0;
 //static uint dsceneId = 0x00010008, dthreadId = 0x00020029;//Beginning in Jac
-//static uint dsceneId = 0x0001000A, dthreadId = 0x00020043;//Home front
+static uint dsceneId = 0x0001000A, dthreadId = 0x00020043;//Home front
 //static uint dsceneId = 0x0001000E, dthreadId = 0x0002007C;
 //static uint dsceneId = 0x00010012, dthreadId = 0x0002009D;//Paramount
 //static uint dsceneId = 0x00010020, dthreadId = 0x00020112;//Xmas
@@ -276,7 +276,7 @@ void ScriptOpcodes_Duckman::opUnloadResourcesBySceneId(ScriptThread *scriptThrea
 //static uint dsceneId = 0x10002, dthreadId = 0x20001;//Debug menu, not supported
 //static uint dsceneId = 0x10044, dthreadId = 0x000202B8; // Starship Enterprise
 //static uint dsceneId = 0x00010039, dthreadId = 0x00020089; // Map
-static uint dsceneId = 0x00010052, dthreadId = 0x00020347; // Credits
+//static uint dsceneId = 0x00010052, dthreadId = 0x00020347; // Credits
 
 void ScriptOpcodes_Duckman::opChangeScene(ScriptThread *scriptThread, OpCall &opCall) {
 	ARG_SKIP(2);
@@ -348,12 +348,12 @@ void ScriptOpcodes_Duckman::opLeaveScene24(ScriptThread *scriptThread, OpCall &o
 void ScriptOpcodes_Duckman::opEnterDebugger(ScriptThread *scriptThread, OpCall &opCall) {
 	// Used for debugging purposes in the original engine
 	// This is not supported and only reachable by code not implemented here!
-	error("ScriptOpcodes_Duckman::opEnterDebugger() Debugger function called");
+	//error("ScriptOpcodes_Duckman::opEnterDebugger() Debugger function called");
 }
 
 void ScriptOpcodes_Duckman::opLeaveDebugger(ScriptThread *scriptThread, OpCall &opCall) {
 	// See opEnterDebugger
-	error("ScriptOpcodes_Duckman::opLeaveDebugger() Debugger function called");
+	//error("ScriptOpcodes_Duckman::opLeaveDebugger() Debugger function called");
 }
 
 void ScriptOpcodes_Duckman::opDumpCurrentSceneFiles(ScriptThread *scriptThread, OpCall &opCall) {
@@ -690,7 +690,7 @@ void ScriptOpcodes_Duckman::opLoadGame(ScriptThread *scriptThread, OpCall &opCal
 	ARG_SKIP(2);
 	ARG_INT16(bankNum)
 	ARG_INT16(slotNum)
-	bool success = _vm->loadSavegame(slotNum, opCall._callerThreadId);
+	bool success = _vm->loadSavegameFromScript(slotNum, opCall._callerThreadId);
 	_vm->_stack->push(success ? 1 : 0);
 }
 
@@ -698,7 +698,7 @@ void ScriptOpcodes_Duckman::opSaveGame(ScriptThread *scriptThread, OpCall &opCal
 	ARG_SKIP(2);
 	ARG_INT16(bankNum)
 	ARG_INT16(slotNum)
-	bool success = _vm->saveSavegame(slotNum, opCall._callerThreadId);
+	bool success = _vm->saveSavegameFromScript(slotNum, opCall._callerThreadId);
 	_vm->_stack->push(success ? 1 : 0);
 }
 
