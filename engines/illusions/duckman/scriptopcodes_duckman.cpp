@@ -203,14 +203,14 @@ void ScriptOpcodes_Duckman::opStartTimerThread(ScriptThread *scriptThread, OpCal
 	if (maxDuration)
 		duration += _vm->getRandom(maxDuration);
 		
-//duration = 1;//DEBUG Speeds up things
-//duration = 5;
-//debug("duration: %d", duration);
+	//duration = 1;//DEBUG Speeds up things
+	//duration = 5;
+	//debug("duration: %d", duration);
 		
 	if (isAbortable)
-		_vm->startAbortableTimerThread(duration, opCall._threadId);
+		_vm->startAbortableTimerThread(duration, opCall._callerThreadId);
 	else
-		_vm->startTimerThread(duration, opCall._threadId);
+		_vm->startTimerThread(duration, opCall._callerThreadId);
 }
 
 void ScriptOpcodes_Duckman::opRerunThreads(ScriptThread *scriptThread, OpCall &opCall) {
@@ -592,11 +592,11 @@ void ScriptOpcodes_Duckman::opRunSpecialCode(ScriptThread *scriptThread, OpCall 
 }
 
 void ScriptOpcodes_Duckman::opPause(ScriptThread *scriptThread, OpCall &opCall) {
-	_vm->pause(opCall._threadId);
+	_vm->pause(opCall._callerThreadId);
 }
 
 void ScriptOpcodes_Duckman::opUnpause(ScriptThread *scriptThread, OpCall &opCall) {
-	_vm->unpause(opCall._threadId);
+	_vm->unpause(opCall._callerThreadId);
 }
 
 void ScriptOpcodes_Duckman::opStartSound(ScriptThread *scriptThread, OpCall &opCall) {
@@ -649,21 +649,17 @@ void ScriptOpcodes_Duckman::opDisplayMenu(ScriptThread *scriptThread, OpCall &op
 	ARG_UINT32(menuId);
 	ARG_UINT32(timeOutMenuChoiceIndex);
 	
-	debug("menuId: %08X", menuId);
-	debug("timeOutMenuChoiceIndex: %d", timeOutMenuChoiceIndex);
-	
 	MenuChoiceOffsets menuChoiceOffsets;
 
 	// Load menu choices from the stack
 	do {
 		int16 choiceOffs = _vm->_stack->pop();
-		debug("choiceOffs: %04X", choiceOffs);
 		menuChoiceOffsets.push_back(choiceOffs);
 	} while (_vm->_stack->pop() == 0);
 	
 	_vm->_menuSystem->runMenu(menuChoiceOffsets, &_vm->_menuChoiceOfs, 
 		menuId, timeOutDuration, timeOutMenuChoiceIndex,
-		opCall._threadId);
+		opCall._callerThreadId);
 	
 	//DEBUG Resume calling thread, later done by the video player
 	//_vm->notifyThreadId(opCall._callerThreadId);

@@ -136,6 +136,7 @@ public:
 	uint32 _lastUpdateTime;
 
 	int _resumeFromSavegameRequested;
+	int _savegameSlotNum;
 	uint32 _savegameSceneId;
 	uint32 _savegameThreadId;
 

@@ -1080,7 +1080,6 @@ bool IllusionsEngine_Duckman::getTriggerCause(uint32 verbId, uint32 objectId2, u
 }
 
 uint32 IllusionsEngine_Duckman::runTriggerCause(uint32 verbId, uint32 objectId2, uint32 objectId) {
-	// TODO
 	debug(1, "runTriggerCause(%08X, %08X, %08X)", verbId, objectId2, objectId);
 	uint32 triggerThreadId;
 
@@ -1136,7 +1135,7 @@ void IllusionsEngine_Duckman::playTriggerCauseSound(uint32 verbId, uint32 object
 }
 
 bool IllusionsEngine_Duckman::loadSavegameFromScript(int16 slotNum, uint32 callingThreadId) {
-	const char *fileName = getSavegameFilename(slotNum);
+	const char *fileName = getSavegameFilename(_savegameSlotNum);
 	bool success = loadgame(fileName);
 	if (success)
 		activateSavegame(callingThreadId);

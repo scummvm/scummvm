@@ -102,6 +102,7 @@ public:
 	void setTimeOutDuration(uint32 duration, uint timeOutMenuChoiceIndex);
 	void setMenuCallerThreadId(uint32 menuCallerThreadId);
 	void setMenuChoiceOffsets(MenuChoiceOffsets menuChoiceOffsets, int16 *menuChoiceOffset);
+	void setSavegameSlotNum(int slotNum);
 	virtual bool initMenuCursor() = 0;
 	virtual int getGameState() = 0;
 	virtual void setGameState(int gameState) = 0;
@@ -228,6 +229,14 @@ public:
 protected:
 	int _menuId;
 	uint _confirmationChoiceIndex;
+};
+
+class MenuActionLoadGame : public BaseMenuAction {
+public:
+	MenuActionLoadGame(BaseMenuSystem *menuSystem, uint choiceIndex);
+	virtual void execute();
+protected:
+	uint _choiceIndex;
 };
 
 } // End of namespace Illusions

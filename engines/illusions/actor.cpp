@@ -623,7 +623,7 @@ void Control::sequenceActor() {
 	while (_actor->_seqCodeValue3 <= 0 && !sequenceFinished) {
 		bool breakInner = false;
 		while (!breakInner) {
-			debug(1, "[%08X] SEQ[%08X] op: %08X", _objectId, _actor->_sequenceId, _actor->_seqCodeIp[0]);
+			//debug(1, "[%08X] SEQ[%08X] op: %08X", _objectId, _actor->_sequenceId, _actor->_seqCodeIp[0]);
 			opCall._op = _actor->_seqCodeIp[0] & 0x7F;
 			opCall._opSize = _actor->_seqCodeIp[1];
 			opCall._code = _actor->_seqCodeIp + 2;
@@ -643,18 +643,18 @@ void Control::sequenceActor() {
 	}
 
 	if (_actor->_newFrameIndex != 0) {
-		debug(1, "New frame %d", _actor->_newFrameIndex);
+		//debug(1, "New frame %d", _actor->_newFrameIndex);
 		setActorFrameIndex(_actor->_newFrameIndex);
 		if (_vm->getGameId() == kGameIdBBDOU &&
 			!(_actor->_flags & 1) && (_actor->_flags & 0x1000) && (_objectId != 0x40004)) {
 			appearActor();
 			_actor->_flags &= ~0x1000;
 		}
-		debug(1, "New frame OK");
+		//debug(1, "New frame OK");
 	}
 	
 	if (sequenceFinished) {
-		debug(1, "Sequence has finished");
+		//debug(1, "Sequence has finished");
 		_actor->_seqCodeIp = 0;
 	}
 	
@@ -772,7 +772,7 @@ PointArray *Control::createPath(Common::Point destPt) {
 	WidthHeight bgDimensions = _vm->_backgroundInstances->getMasterBgDimensions();
 	PointArray *path = pathFinder.findPath(_actor->_position, destPt, walkPoints, walkRects, bgDimensions);
 	for (uint i = 0; i < path->size(); ++i) {
-		debug(0, "Path(%d) (%d, %d)", i, (*path)[i].x, (*path)[i].y);
+		//debug(0, "Path(%d) (%d, %d)", i, (*path)[i].x, (*path)[i].y);
 	}
 	return path;
 }
@@ -963,7 +963,7 @@ void Control::startSequenceActorIntern(uint32 sequenceId, int value, byte *entry
 	Sequence *sequence = _vm->_dict->findSequence(sequenceId);
 
 	if (!sequence && _vm->getGameId() == kGameIdDuckman) {
-		debug(1, "Load external sequence...");
+		//debug(1, "Load external sequence...");
 		_vm->_resSys->loadResource(0x00060000 | (sequenceId & 0xFFFF), _vm->getCurrentScene(), 0);
 		sequence = _vm->_dict->findSequence(sequenceId);
 		_actor->_flags |= 0x800;
@@ -1394,7 +1394,7 @@ void Controls::actorControlRoutine(Control *control, uint32 deltaTime) {
 				int savedSeqCodeValue1 = actor->_seqCodeValue1;
 				int savedSeqCodeValue3 = actor->_seqCodeValue3;
 				uint32 regionSequenceId = actor->_regionLayer->getRegionSequenceId(regionIndex);
-				debug(1, "Running transition sequence %08X", regionSequenceId);
+				//debug(1, "Running transition sequence %08X", regionSequenceId);
 				Sequence *sequence = _vm->_dict->findSequence(regionSequenceId);
 				actor->_sequenceId = regionSequenceId;
 				actor->_seqCodeIp = sequence->_sequenceCode;

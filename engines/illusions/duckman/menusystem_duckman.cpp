@@ -41,7 +41,7 @@ DuckmanMenuSystem::~DuckmanMenuSystem() {
 void DuckmanMenuSystem::runMenu(MenuChoiceOffsets menuChoiceOffsets, int16 *menuChoiceOffset,
 	uint32 menuId, uint32 duration, uint timeOutMenuChoiceIndex, uint32 menuCallerThreadId) {
 	
-	debug("DuckmanMenuSystem::runMenu(%08X)", menuId);
+	debug(0, "DuckmanMenuSystem::runMenu(%08X)", menuId);
 
 	setTimeOutDuration(duration, timeOutMenuChoiceIndex);
 	setMenuCallerThreadId(menuCallerThreadId);
@@ -87,11 +87,7 @@ BaseMenu *DuckmanMenuSystem::createMenuById(int menuId) {
 BaseMenu *DuckmanMenuSystem::createMainMenu() {
 	BaseMenu *menu = new BaseMenu(this, 0x00120003, 12, 17, 11, 27, 0);
 	menu->addMenuItem(new MenuItem("Start New Game", new MenuActionReturnChoice(this, 11)));
-
-	menu->addMenuItem(new MenuItem("Load Saved Game", new MenuActionReturnChoice(this, 0)));
-	menu->addMenuItem(new MenuItem("Options", new MenuActionReturnChoice(this, 0)));
-
-	// TODO menu->addMenuItem(new MenuItem("Load Saved Game", new MenuActionEnterMenu(this, kDuckmanLoadGameMenu)));
+	menu->addMenuItem(new MenuItem("Load Saved Game", new MenuActionLoadGame(this, 1)));
 	// TODO menu->addMenuItem(new MenuItem("Options", new MenuActionEnterMenu(this, kDuckmanOptionsMenu)));
 	menu->addMenuItem(new MenuItem("Quit Game", new MenuActionEnterQueryMenu(this, kDuckmanQueryQuitMenu, 12)));
 	return menu;
@@ -109,10 +105,12 @@ BaseMenu *DuckmanMenuSystem::createPauseMenu() {
 	BaseMenu *menu = new BaseMenu(this, 0x00120003, 12, 17, 11, 27, 1);
 	menu->addText("   Game Paused");
 	menu->addText("-------------------");
-	menu->addMenuItem(new MenuItem("Resume", new MenuActionReturnChoice(this, 1)));
-	//menu->addMenuItem(new MenuItem("Restart Game", new MenuActionEnterQueryMenu(this, kDuckmanQueryRestartMenu, 2)));
+	menu->addMenuItem(new MenuItem("Resume", new MenuActionReturnChoice(this, 21)));
+	menu->addMenuItem(new MenuItem("Load Game", new MenuActionLoadGame(this, 1)));
+	// TODO menu->addMenuItem(new MenuItem("Save Game", new MenuActionSaveGame(this, 11)));
+	// TODO menu->addMenuItem(new MenuItem("Restart Game", new MenuActionEnterQueryMenu(this, kDuckmanQueryRestartMenu, 2)));
 	// TODO menu->addMenuItem(new MenuItem("Options", new MenuActionEnterMenu(this, kDuckmanOptionsMenu)));
-	menu->addMenuItem(new MenuItem("Quit Game", new MenuActionEnterQueryMenu(this, kDuckmanQueryQuitMenu, 3)));
+	menu->addMenuItem(new MenuItem("Quit Game", new MenuActionEnterQueryMenu(this, kDuckmanQueryQuitMenu, 23)));
 	return menu;
 }
 
