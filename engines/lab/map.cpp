@@ -171,8 +171,6 @@ static bool loadMapData() {
 	}
 
 	Common::File *mapFile = g_lab->_resource->openDataFile("Lab:Maps", MKTAG('M', 'A', 'P', '0'));
-	if (!mapFile)
-		error("Corrupt map file");
 	g_lab->_music->updateMusic();
 	if (!g_lab->_music->_doNotFilestopSoundEffect)
 		g_lab->_music->stopSoundEffect();

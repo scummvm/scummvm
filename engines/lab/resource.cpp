@@ -34,7 +34,6 @@
 
 namespace Lab {
 
-static uint16 allocroom;
 extern RoomData *_rooms;
 extern uint16 NumInv, ManyRooms, HighestCondition;
 
@@ -91,9 +90,7 @@ char *Resource::getText(const char *fileName) {
 }
 
 bool Resource::readRoomData(const char *fileName) {
-	Common::File *dataFile;
-	if (!(dataFile = openDataFile(fileName, MKTAG('D', 'O', 'R', '1'))))
-		return false;
+	Common::File *dataFile = openDataFile(fileName, MKTAG('D', 'O', 'R', '1'));
 
 	ManyRooms = dataFile->readUint16LE();
 	HighestCondition = dataFile->readUint16LE();
@@ -120,9 +117,7 @@ bool Resource::readRoomData(const char *fileName) {
 }
 
 InventoryData *Resource::readInventory(const char *fileName) {
-	Common::File *dataFile;
-	if (!(dataFile = openDataFile(fileName, MKTAG('I', 'N', 'V', '1'))))
-		return nullptr;
+	Common::File *dataFile = openDataFile(fileName, MKTAG('I', 'N', 'V', '1'));
 
 	NumInv = dataFile->readUint16LE();
 	InventoryData *inventory = (InventoryData *)malloc((NumInv + 1) * sizeof(InventoryData));
@@ -140,11 +135,7 @@ InventoryData *Resource::readInventory(const char *fileName) {
 
 bool Resource::readViews(uint16 roomNum) {
 	Common::String fileName = "LAB:Rooms/" + Common::String::format("%d", roomNum);
-	Common::File *dataFile;
-	if (!(dataFile = openDataFile(fileName.c_str(), MKTAG('R', 'O', 'M', '4'))))
-		return false;
-
-	allocroom = roomNum;
+	Common::File *dataFile = openDataFile(fileName.c_str(), MKTAG('R', 'O', 'M', '4'));
 
 	_rooms[roomNum]._roomMsg = readString(dataFile);
 	_rooms[roomNum]._view[NORTH] = readView(dataFile);
@@ -191,11 +182,14 @@ Common::File *Resource::openDataFile(const char *fileName, uint32 fileHeader) {
 	Common::File *dataFile = new Common::File();
 	dataFile->open(translateFileName(fileName));
 	if (!dataFile->isOpen())
-		error("openDataFile couldn't open %s (%s)", translateFileName(fileName), fileName);
+		error("openDataFile: Couldn't open %s (%s)", translateFileName(fileName), fileName);
 
-	if (fileHeader > 0 && dataFile->readUint32BE() != fileHeader) {
-		dataFile->close();
-		return nullptr;
+	if (fileHeader > 0) {
+		uint32 headerTag = dataFile->readUint32BE();
+		if (headerTag != fileHeader) {
+			dataFile->close();
+			error("openDataFile: Unexpected header in %s (%s) - expected: %d, got: %d", translateFileName(fileName), fileName, fileHeader, headerTag);
+		}
 	}
 
 	return dataFile;
