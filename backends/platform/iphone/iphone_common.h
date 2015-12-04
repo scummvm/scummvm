@@ -55,7 +55,7 @@ enum UIViewSwipeDirection {
 
 enum UIViewTapDescription {
 	kUIViewTapSingle = 1,
-	kUIViewTapDouble = 2,
+	kUIViewTapDouble = 2
 };
 
 enum GraphicsModes {
