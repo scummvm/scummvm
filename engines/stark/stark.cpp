@@ -310,6 +310,7 @@ Common::Error StarkEngine::loadGameState(int slot) {
 
 	// 3. Initialize the world resources with the loaded state
 	_resourceProvider->initGlobal();
+	_resourceProvider->setShouldRestoreCurrentState();
 	_resourceProvider->requestLocationChange(levelIndex, locationIndex);
 
 	return Common::kNoError;
