@@ -88,15 +88,32 @@ Gfx::RenderEntryArray Location::listRenderEntries() {
 }
 
 Gfx::LightEntryArray Location::listLightEntries() {
-	Gfx::LightEntryArray lightEntries;
+	Gfx::LightEntry *ambient = nullptr;
+	Gfx::LightEntryArray others;
 
+	// Build a list of lights from all the layers ...
 	for (uint i = 0; i < _layers.size(); i++) {
 		Layer *layer = _layers[i];
 		if (layer->isEnabled()) {
-			lightEntries.push_back(layer->listLightEntries());
+			Gfx::LightEntryArray layerLights = layer->listLightEntries();
+
+			for (uint j = 0; j < layerLights.size(); j++) {
+				Gfx::LightEntry *light = layerLights[j];
+
+				// ... but store the ambient light in a separate variable ...
+				if (light->type == Gfx::LightEntry::kAmbient) {
+					ambient = light;
+				} else {
+					others.push_back(light);
+				}
+			}
 		}
 	}
 
+	// ... so that it is first in the final light list
+	Gfx::LightEntryArray lightEntries;
+	lightEntries.push_back(ambient);
+	lightEntries.push_back(others);
 	return lightEntries;
 }
 
