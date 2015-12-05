@@ -240,7 +240,7 @@ void OpenGLSActorRenderer::setBoneRotationArrayUniform(const char *uniform) {
 }
 
 void OpenGLSActorRenderer::setLightArrayUniform(const char *uniform, const LightEntryArray &lights) {
-	static const uint maxLights = 8;
+	static const uint maxLights = 10;
 
 	assert(lights.size() >= 1);
 	assert(lights.size() <= maxLights);

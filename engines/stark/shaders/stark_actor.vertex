@@ -20,7 +20,7 @@ const int lightTypePoint       = 1;
 const int lightTypeDirectional = 2;
 const int lightTypeSpot        = 4;
 
-const int maxLights = 8;
+const int maxLights = 10;
 const int maxBones = 70;
 
 uniform mat4 modelViewMatrix;
