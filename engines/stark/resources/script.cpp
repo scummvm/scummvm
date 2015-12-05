@@ -92,6 +92,15 @@ void Script::onGameLoop() {
 }
 
 void Script::reset() {
+	if (_suspendingResource && _suspendingResource->getType() == Type::kItem) {
+		Item *item = _suspendingResource->cast<Item>(_suspendingResource);
+		item->setMovement(nullptr);
+	}
+
+	_suspendingResource = nullptr;
+	_resumeStatus = kResumeSuspend;
+	_pauseTimeLeft = -1;
+
 	_nextCommand = getBeginCommand();
 }
 
@@ -260,6 +269,7 @@ void Script::updateSuspended() {
 void Script::stop() {
 	reset();
 	_enabled = false;
+	_returnObjects.clear();
 }
 
 void Script::pause(int32 msecs) {
