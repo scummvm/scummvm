@@ -44,6 +44,7 @@ public:
 
 	// Movement API
 	void start() override;
+	void stop() override;
 	void onGameLoop() override;
 
 	/** Set the destination */

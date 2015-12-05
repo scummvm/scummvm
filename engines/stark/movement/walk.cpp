@@ -58,6 +58,12 @@ void Walk::start() {
 	location->startFollowingCharacter();
 }
 
+void Walk::stop() {
+	Movement::stop();
+
+	changeItemAnim();
+}
+
 void Walk::updatePath() const {
 	Resources::Floor *floor = StarkGlobal->getCurrent()->getFloor();
 
