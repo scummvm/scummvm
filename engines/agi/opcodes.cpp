@@ -60,7 +60,7 @@ AgiInstruction insV1[] = {
 	{ "subv",				"vv",		&cmdSubV },				// 08
 	{ "load.view",			"n",		&cmdLoadView },			// 09
 	{ "animate.obj",		"n",		&cmdAnimateObj },		// 0A
-	{ "new.room",			"n",		&cmdNewRoomV1 },		// 0B
+	{ "new.room",			"n",		&cmdNewRoom },			// 0B
 	{ "draw.pic",			"v",		&cmdDrawPicV1 },		// 0C
 	{ "print",				"s",		&cmdPrint },			// 0D TODO
 	{ "status",				"",			&cmdStatus },			// 0E TODO
@@ -112,7 +112,7 @@ AgiInstruction insV1[] = {
 	{ "set.v",				"v",		&cmdSetV },				// 3C
 	{ "reset.v",			"v",		&cmdResetV },			// 3D
 	{ "toggle.v",			"v",		&cmdToggleV },			// 3E
-	{ "new.room.v",			"v",		&cmdNewRoomVV1 },		// 3F TODO
+	{ "new.room.v",			"v",		&cmdNewRoom },			// 3F
 	{ "call",				"n",		&cmdCallV1 },			// 40 TODO
 	{ "quit",				"",			&cmdQuitV1 },			// 41
 	{ "set.speed",			"v",		&cmdSetSpeed },			// 42
