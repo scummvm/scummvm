@@ -867,86 +867,56 @@ bool DisplayMan::setUpScreens() {
 	/* Creates the gadgets for the movement control panel */
 	uint16 y = VGAScaleY(173) - SVGACord(2);
 
-	if (_vm->getPlatform() == Common::kPlatformWindows) {
-		_vm->_moveGadgetList = createButton(1, y, 0, 't', _vm->_moveImages[0], _vm->_moveImages[1]);
-		Gadget *curGadget = _vm->_moveGadgetList;
-		curGadget->NextGadget = createButton(33, y, 1, 'm', _vm->_moveImages[2], _vm->_moveImages[3]);
-		curGadget = curGadget->NextGadget;
-		curGadget->NextGadget = createButton(65, y, 2, 'o', _vm->_moveImages[4], _vm->_moveImages[5]);
-		curGadget = curGadget->NextGadget;
-		curGadget->NextGadget = createButton(97, y, 3, 'c', _vm->_moveImages[6], _vm->_moveImages[7]);
-		curGadget = curGadget->NextGadget;
-		curGadget->NextGadget = createButton(129, y, 4, 'l', _vm->_moveImages[8], _vm->_moveImages[9]);
-		curGadget = curGadget->NextGadget;
-		curGadget->NextGadget = createButton(161, y, 5, 'i', _vm->_moveImages[12], _vm->_moveImages[13]);
-		curGadget = curGadget->NextGadget;
-		curGadget->NextGadget = createButton(193, y, 6, VKEY_LTARROW, _vm->_moveImages[14], _vm->_moveImages[15]);
-		curGadget = curGadget->NextGadget;
-		curGadget->NextGadget = createButton(225, y, 7, VKEY_UPARROW, _vm->_moveImages[16], _vm->_moveImages[17]);
-		curGadget = curGadget->NextGadget;
-		curGadget->NextGadget = createButton(257, y, 8, VKEY_RTARROW, _vm->_moveImages[18], _vm->_moveImages[19]);
-		curGadget = curGadget->NextGadget;
-		curGadget->NextGadget = createButton(289, y, 9, 'p', _vm->_moveImages[10], _vm->_moveImages[11]);
-	} else {
-		_vm->_moveGadgetList = createButton(1, y, 0, 0, _vm->_moveImages[0], _vm->_moveImages[1]);
-		Gadget *curGadget = _vm->_moveGadgetList;
-		curGadget->NextGadget = createButton(33, y, 1, 0, _vm->_moveImages[2], _vm->_moveImages[3]);
-		curGadget = curGadget->NextGadget;
-		curGadget->NextGadget = createButton(65, y, 2, 0, _vm->_moveImages[4], _vm->_moveImages[5]);
-		curGadget = curGadget->NextGadget;
-		curGadget->NextGadget = createButton(97, y, 3, 0, _vm->_moveImages[6], _vm->_moveImages[7]);
-		curGadget = curGadget->NextGadget;
-		curGadget->NextGadget = createButton(129, y, 4, 0, _vm->_moveImages[8], _vm->_moveImages[9]);
-		curGadget = curGadget->NextGadget;
-		curGadget->NextGadget = createButton(161, y, 5, 0, _vm->_moveImages[12], _vm->_moveImages[13]);
-		curGadget = curGadget->NextGadget;
-		curGadget->NextGadget = createButton(193, y, 6, 0, _vm->_moveImages[14], _vm->_moveImages[15]);
-		curGadget = curGadget->NextGadget;
-		curGadget->NextGadget = createButton(225, y, 7, 0, _vm->_moveImages[16], _vm->_moveImages[17]);
-		curGadget = curGadget->NextGadget;
-		curGadget->NextGadget = createButton(257, y, 8, 0, _vm->_moveImages[18], _vm->_moveImages[19]);
-		curGadget = curGadget->NextGadget;
-		curGadget->NextGadget = createButton(289, y, 9, 0, _vm->_moveImages[10], _vm->_moveImages[11]);
-	}
+	// The key mapping was only set for the Windows version.
+	// It's very convenient to have those shortcut, so I added them
+	// for all versions. (Strangerke)
+	_vm->_moveGadgetList = createButton(1, y, 0, 't', _vm->_moveImages[0], _vm->_moveImages[1]);
+	Gadget *curGadget = _vm->_moveGadgetList;
+	curGadget->NextGadget = createButton(33, y, 1, 'm', _vm->_moveImages[2], _vm->_moveImages[3]);
+	curGadget = curGadget->NextGadget;
+	curGadget->NextGadget = createButton(65, y, 2, 'o', _vm->_moveImages[4], _vm->_moveImages[5]);
+	curGadget = curGadget->NextGadget;
+	curGadget->NextGadget = createButton(97, y, 3, 'c', _vm->_moveImages[6], _vm->_moveImages[7]);
+	curGadget = curGadget->NextGadget;
+	curGadget->NextGadget = createButton(129, y, 4, 'l', _vm->_moveImages[8], _vm->_moveImages[9]);
+	curGadget = curGadget->NextGadget;
+	curGadget->NextGadget = createButton(161, y, 5, 'i', _vm->_moveImages[12], _vm->_moveImages[13]);
+	curGadget = curGadget->NextGadget;
+	curGadget->NextGadget = createButton(193, y, 6, VKEY_LTARROW, _vm->_moveImages[14], _vm->_moveImages[15]);
+	curGadget = curGadget->NextGadget;
+	curGadget->NextGadget = createButton(225, y, 7, VKEY_UPARROW, _vm->_moveImages[16], _vm->_moveImages[17]);
+	curGadget = curGadget->NextGadget;
+	curGadget->NextGadget = createButton(257, y, 8, VKEY_RTARROW, _vm->_moveImages[18], _vm->_moveImages[19]);
+	curGadget = curGadget->NextGadget;
+	curGadget->NextGadget = createButton(289, y, 9, 'p', _vm->_moveImages[10], _vm->_moveImages[11]);
 
 	Common::File *invFile = _vm->_resource->openDataFile("P:Inv");
-
 	if (_vm->getPlatform() == Common::kPlatformWindows) {
 		for (uint16 imgIdx = 0; imgIdx < 10; imgIdx++)
 			_vm->_invImages[imgIdx] = new Image(invFile);
+	} else {
+		for (uint16 imgIdx = 0; imgIdx < 6; imgIdx++)
+			_vm->_invImages[imgIdx] = new Image(invFile);
+	}
+	_vm->_invGadgetList = createButton(24, y, 0, 'm', _vm->_invImages[0], _vm->_invImages[1]);
+	curGadget = _vm->_invGadgetList;
+	curGadget->NextGadget = createButton(56, y, 1, 'g', _vm->_invImages[2], _vm->_invImages[3]);
+	curGadget = curGadget->NextGadget;
+	curGadget->NextGadget = createButton(94, y, 2, 'u', _vm->_invImages[4], _vm->_invImages[5]);
+	curGadget = curGadget->NextGadget;
+	curGadget->NextGadget = createButton(126, y, 3, 'l', _vm->_moveImages[8], _vm->_moveImages[9]);
+	curGadget = curGadget->NextGadget;
+	curGadget->NextGadget = createButton(164, y, 4, VKEY_LTARROW, _vm->_moveImages[14], _vm->_moveImages[15]);
+	curGadget = curGadget->NextGadget;
+	curGadget->NextGadget = createButton(196, y, 5, VKEY_RTARROW, _vm->_moveImages[18], _vm->_moveImages[19]);
 
-		_vm->_invGadgetList = createButton(24, y, 0, 'm', _vm->_invImages[0], _vm->_invImages[1]);
-		Gadget *curGadget = _vm->_invGadgetList;
-		curGadget->NextGadget = createButton(56, y, 1, 'g', _vm->_invImages[2], _vm->_invImages[3]);
-		curGadget = curGadget->NextGadget;
-		curGadget->NextGadget = createButton(94, y, 2, 'u', _vm->_invImages[4], _vm->_invImages[5]);
-		curGadget = curGadget->NextGadget;
-		curGadget->NextGadget = createButton(126, y, 3, 'l', _vm->_moveImages[8], _vm->_moveImages[9]);
-		curGadget = curGadget->NextGadget;
-		curGadget->NextGadget = createButton(164, y, 4, VKEY_LTARROW, _vm->_moveImages[14], _vm->_moveImages[15]);
-		curGadget = curGadget->NextGadget;
-		curGadget->NextGadget = createButton(196, y, 5, VKEY_RTARROW, _vm->_moveImages[18], _vm->_moveImages[19]);
+	// The windows version has 2 extra gadgets for breadcrumb trail
+	// TODO: the game is really hard to play without those, maybe we could add something to enable that.
+	if (_vm->getPlatform() == Common::kPlatformWindows) {
 		curGadget = curGadget->NextGadget;
 		curGadget->NextGadget = createButton(234, y, 6, 'b', _vm->_invImages[6], _vm->_invImages[7]);
 		curGadget = curGadget->NextGadget;
 		curGadget->NextGadget = createButton(266, y, 7, 'f', _vm->_invImages[8], _vm->_invImages[9]);
-		curGadget = curGadget->NextGadget;
-	} else {
-		for (uint16 imgIdx = 0; imgIdx < 6; imgIdx++)
-			_vm->_invImages[imgIdx] = new Image(invFile);
-
-		_vm->_invGadgetList = createButton(58, y, 0, 0, _vm->_invImages[0], _vm->_invImages[1]);
-		Gadget *curGadget = _vm->_invGadgetList;
-		curGadget->NextGadget = createButton(90, y, 1, 0, _vm->_invImages[2], _vm->_invImages[3]);
-		curGadget = curGadget->NextGadget;
-		curGadget->NextGadget = createButton(128, y, 2, 0, _vm->_invImages[4], _vm->_invImages[5]);
-		curGadget = curGadget->NextGadget;
-		curGadget->NextGadget = createButton(160, y, 3, 0, _vm->_moveImages[8], _vm->_moveImages[9]);
-		curGadget = curGadget->NextGadget;
-		curGadget->NextGadget = createButton(198, y, 4, 0, _vm->_moveImages[14], _vm->_moveImages[15]);
-		curGadget = curGadget->NextGadget;
-		curGadget->NextGadget = createButton(230, y, 5, 0, _vm->_moveImages[18], _vm->_moveImages[19]);
-		curGadget = curGadget->NextGadget;
 	}
 
 	delete invFile;
