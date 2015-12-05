@@ -147,6 +147,8 @@ Command *Command::execute(uint32 callMode, Script *script) {
 		return opKnowledgeAssignBool(_arguments[1].referenceValue, _arguments[2].referenceValue);
 	case kKnowledgeAssignNegatedBool:
 		return opKnowledgeAssignNegatedBool(_arguments[1].referenceValue, _arguments[2].referenceValue);
+	case kKnowledgeAssignInteger:
+		return opKnowledgeAssignInteger(_arguments[1].referenceValue, _arguments[2].referenceValue);
 	case kLocationScrollTo:
 		return opLocationScrollTo(script, _arguments[1].referenceValue, _arguments[2].intValue);
 	case kSoundPlay:
@@ -163,6 +165,8 @@ Command *Command::execute(uint32 callMode, Script *script) {
 		return opLocationScrollSet(_arguments[1].referenceValue);
 	case kPlayFullMotionVideo:
 		return opPlayFullMotionVideo(script, _arguments[1].referenceValue, _arguments[2].intValue);
+	case kAnimSetFrame:
+		return opAnimSetFrame(_arguments[1].referenceValue, _arguments[2].referenceValue);
 	case kEnableDiaryEntry:
 		return opEnableDiaryEntry(_arguments[1].referenceValue);
 	case kPATChangeTooltip:
@@ -702,6 +706,15 @@ Command *Command::opKnowledgeAssignNegatedBool(const ResourceReference &knowledg
 	return nextCommand();
 }
 
+Command *Command::opKnowledgeAssignInteger(const ResourceReference &knowledgeRef1, const ResourceReference &knowledgeRef2) {
+	Knowledge *src = knowledgeRef1.resolve<Knowledge>();
+	Knowledge *dst = knowledgeRef2.resolve<Knowledge>();
+
+	dst->setIntegerValue(src->getIntegerValue());
+
+	return nextCommand();
+}
+
 Command *Command::opLocationScrollTo(Script *script, const ResourceReference &scrollRef, bool suspend) {
 	Scroll *scroll = scrollRef.resolve<Scroll>();
 	Location *location = scroll->findParent<Location>();
@@ -819,6 +832,15 @@ Command *Command::opPlayFullMotionVideo(Script *script, const ResourceReference 
 	script->suspend(movie);
 
 	return this; // Stay on the same command while suspended
+}
+
+Command *Command::opAnimSetFrame(const ResourceReference &animRef, const ResourceReference &knowledgeRef) {
+	Anim *anim = animRef.resolve<Anim>();
+	Knowledge *knowledge = knowledgeRef.resolve<Knowledge>();
+
+	anim->selectFrame(knowledge->getIntegerValue());
+
+	return nextCommand();
 }
 
 Command *Command::opEnableDiaryEntry(const ResourceReference &knowledgeRef) {
