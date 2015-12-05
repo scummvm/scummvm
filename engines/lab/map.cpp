@@ -537,35 +537,10 @@ void LabEngine::drawMap(uint16 CurRoom, uint16 CurMsg, uint16 Floor, bool fadeou
 		_graphics->flowText(_msgFont, 0, 7, 0, true, true, true, true, mapScaleX(360), 0, mapScaleX(660), mapScaleY(450), sptr);
 	}
 
-	switch (Floor) {
-	case LOWERFLOOR:
-		sptr = (char *)_resource->getStaticText(kTextLowerFloor).c_str();
-		break;
-	case MIDDLEFLOOR:
-		sptr = (char *)_resource->getStaticText(kTextMiddleFloor).c_str();
-		break;
-	case UPPERFLOOR:
-		sptr = (char *)_resource->getStaticText(kTextUpperFloor).c_str();
-		break;
-	case MEDMAZEFLOOR:
-		sptr = (char *)_resource->getStaticText(kTextMedMazeFloor).c_str();
-		break;
-	case HEDGEMAZEFLOOR:
-		sptr = (char *)_resource->getStaticText(kTextHedgeMazeFloor).c_str();
-		break;
-	case SURMAZEFLOOR:
-		sptr = (char *)_resource->getStaticText(kTextSurMazeFloor).c_str();
-		break;
-	case CARNIVAL:
-		sptr = (char *)_resource->getStaticText(kTextCarnivalFloor).c_str();
-		break;
-	default:
-		sptr = NULL;
-		break;
-	}
-
-	if (sptr)
+	if (Floor >= LOWERFLOOR && Floor <= CARNIVAL) {
+		sptr = (char *)_resource->getStaticText(Floor - 1).c_str();
 		_graphics->flowTextScaled(_msgFont, 0, 5, 3, true, true, true, true, 14, 75, 134, 97, sptr);
+	}
 
 	if ((sptr = _rooms[CurMsg]._roomMsg))
 		_graphics->flowTextScaled(_msgFont, 0, 5, 3, true, true, true, true, 14, 148, 134, 186, sptr);
