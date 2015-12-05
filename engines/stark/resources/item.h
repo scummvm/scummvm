@@ -208,6 +208,7 @@ public:
 
 	// Resource API
 	void onAllLoaded() override;
+	void saveLoadCurrent(ResourceSerializer *serializer) override;
 
 	// Item API
 	ItemVisual *getSceneInstance() override;

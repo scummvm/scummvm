@@ -369,6 +369,15 @@ void ItemTemplate::onAllLoaded() {
 	}
 }
 
+void ItemTemplate::saveLoadCurrent(ResourceSerializer *serializer) {
+	Item::saveLoadCurrent(serializer);
+
+	serializer->syncAsSint32LE(_meshIndex);
+	serializer->syncAsSint32LE(_textureNormalIndex);
+	serializer->syncAsSint32LE(_textureFaceIndex);
+	serializer->syncAsSint32LE(_animHierarchyIndex);
+}
+
 void ItemTemplate::setInstanciatedItem(Item *instance) {
 	_instanciatedItem = instance;
 }
