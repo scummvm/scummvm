@@ -130,7 +130,7 @@ public:
 
 		kActivateTexture = 135,
 		kActivateMesh = 136,
-		kSetTarget = 137,
+		kItem3DSetWalkTarget = 137,
 
 		kSpeakWithoutTalking = 139,
 
@@ -240,7 +240,7 @@ protected:
 	Command *opItemPlaceDirection(const ResourceReference &itemRef, int32 direction);
 	Command *opActivateTexture(const ResourceReference &textureRef);
 	Command *opActivateMesh(const ResourceReference &meshRef);
-	Command *opSetTarget(const ResourceReference &itemRef1, const ResourceReference &itemRef2);
+	Command *opItem3DSetWalkTarget(const ResourceReference &itemRef, const ResourceReference &targetRef);
 	Command *opSpeakWithoutTalking(Script *script, const ResourceReference &speechRef, int32 unknown);
 	Command *opIsOnFloorField(const ResourceReference &itemRef, const ResourceReference &floorFieldRef);
 	Command *opIsItemEnabled(const ResourceReference &itemRef);

@@ -49,6 +49,9 @@ public:
 	/** Set the destination */
 	void setDestination(const Math::Vector3d &destination);
 
+	/** Change the destination and recompute the path */
+	void changeDestination(const Math::Vector3d &destination);
+
 	/** Set the running flag */
 	void setRunning();
 

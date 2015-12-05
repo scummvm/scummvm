@@ -178,4 +178,8 @@ void Walk::changeItemAnim() {
 	}
 }
 
+void Walk::changeDestination(const Math::Vector3d &destination) {
+	setDestination(destination);
+	updatePath();
+}
 } // End of namespace Stark
