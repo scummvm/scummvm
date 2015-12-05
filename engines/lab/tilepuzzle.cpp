@@ -212,7 +212,7 @@ void LabEngine::doTile(bool showsolution) {
 		cols = _graphics->VGAScaleX(105);
 	} else {
 		_graphics->setAPen(0);
-		_graphics->rectFill(_graphics->VGAScaleX(97), _graphics->VGAScaleY(22), _graphics->VGAScaleX(220), _graphics->VGAScaleY(126));
+		_graphics->rectFillScaled(97, 22, 220, 126);
 
 		rowm = _graphics->VGAScaleY(25);
 		colm = _graphics->VGAScaleX(30);
