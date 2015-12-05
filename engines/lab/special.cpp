@@ -59,8 +59,7 @@ static bool GotBackImage = false;
 static uint16 monitorPage;
 static const char *TextFileName;
 
-Image *MonButton, *AltMonButton, *MonQuit, *AltMonQuit, *MonBack, *AltMonBack,
-*MonDown, *AltMonDown, *MonUp, *AltMonUp;
+Image *MonButton;
 
 extern uint16 *FadePalette;
 extern BitMap *DispBitMap, *DrawBitMap;
@@ -451,16 +450,6 @@ bool LabEngine::saveRestoreGame() {
 }
 
 /*****************************************************************************/
-/* Makes sure that the buttons are in memory.                                */
-/*****************************************************************************/
-static void getMonImages() {
-	Common::File *buttonFile = g_lab->_resource->openDataFile("P:MonImage");
-	MonButton = new Image(buttonFile);
-	delete buttonFile;
-}
-
-
-/*****************************************************************************/
 /* Draws the text for the monitor.                                           */
 /*****************************************************************************/
 void LabEngine::drawMonText(char *text, TextFont *monitorFont, uint16 x1, uint16 y1, uint16 x2, uint16 y2, bool isinteractive) {
@@ -639,7 +628,9 @@ void LabEngine::doMonitor(char *background, char *textfile, bool isinteractive, 
 	FadePalette = hipal;
 
 	TextFont *monitorFont = _resource->getFont("P:Map.fon");
-	getMonImages();
+	Common::File *buttonFile = g_lab->_resource->openDataFile("P:MonImage");
+	MonButton = new Image(buttonFile);
+	delete buttonFile;
 
 	ntext = _resource->getText(textfile);
 	loadBackPict(background, false);
