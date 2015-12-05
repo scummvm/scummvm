@@ -29,6 +29,7 @@
 
 #include "engines/stark/resources/anim.h"
 #include "engines/stark/resources/item.h"
+#include "engines/stark/resources/level.h"
 #include "engines/stark/resources/location.h"
 #include "engines/stark/resources/sound.h"
 
@@ -55,6 +56,8 @@ void Speech::playSound() {
 	if (_playTalkAnim) {
 		setCharacterTalkAnim();
 	}
+
+	stopOtherSpeechesFromSameCharacter();
 
 	_soundResource = findChild<Sound>();
 	_soundResource->play();
@@ -146,6 +149,28 @@ void Speech::printData() {
 
 void Speech::setPlayTalkAnim(bool playTalkAnim) {
 	_playTalkAnim = playTalkAnim;
+}
+
+void Speech::stopOtherSpeechesFromSameCharacter() {
+	Level *globalLevel = StarkGlobal->getLevel();
+	Level *currentLevel = StarkGlobal->getCurrent()->getLevel();
+	Location *currentLocation = StarkGlobal->getCurrent()->getLocation();
+
+	Common::Array<Speech *> globalLevelSpeeches = globalLevel->listChildrenRecursive<Speech>();
+	Common::Array<Speech *> currentLevelSpeeches = currentLevel->listChildrenRecursive<Speech>();
+	Common::Array<Speech *> currentLocationSpeeches = currentLocation->listChildrenRecursive<Speech>();
+
+	Common::Array<Speech *> speeches;
+	speeches.push_back(globalLevelSpeeches);
+	speeches.push_back(currentLevelSpeeches);
+	speeches.push_back(currentLocationSpeeches);
+
+	for (uint i = 0; i < speeches.size(); i++) {
+		Speech *speech = speeches[i];
+		if (speech->_character == _character && speech->isPlaying()) {
+			speech->stop();
+		}
+	}
 }
 
 } // End of namespace Resources

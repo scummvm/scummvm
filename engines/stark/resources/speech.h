@@ -83,6 +83,8 @@ protected:
 	void removeCharacterTalkAnim() const;
 	ItemVisual *getCharacterItem() const;
 
+	void stopOtherSpeechesFromSameCharacter();
+
 	Common::String _phrase;
 	int32 _character;
 	bool _playTalkAnim;
