@@ -565,10 +565,10 @@ void LabEngine::drawMap(uint16 CurRoom, uint16 CurMsg, uint16 Floor, bool fadeou
 	}
 
 	if (sptr)
-		_graphics->flowText(_msgFont, 0, 5, 3, true, true, true, true, _graphics->VGAScaleX(14), _graphics->VGAScaleY(75), _graphics->VGAScaleX(134), _graphics->VGAScaleY(97), sptr);
+		_graphics->flowTextScaled(_msgFont, 0, 5, 3, true, true, true, true, 14, 75, 134, 97, sptr);
 
 	if ((sptr = _rooms[CurMsg]._roomMsg))
-		_graphics->flowText(_msgFont, 0, 5, 3, true, true, true, true, _graphics->VGAScaleX(14), _graphics->VGAScaleY(148), _graphics->VGAScaleX(134), _graphics->VGAScaleY(186), sptr);
+		_graphics->flowTextScaled(_msgFont, 0, 5, 3, true, true, true, true, 14, 148, 134, 186, sptr);
 
 	if (fadein)
 		fade(true, 0);
@@ -722,8 +722,8 @@ void LabEngine::processMap(uint16 CurRoom) {
 						if ((sptr = _rooms[CurMsg]._roomMsg)) {
 							_event->mouseHide();
 							_graphics->setAPen(3);
-							_graphics->rectFill(_graphics->VGAScaleX(13), _graphics->VGAScaleY(148), _graphics->VGAScaleX(135), _graphics->VGAScaleY(186));
-							_graphics->flowText(_msgFont, 0, 5, 3, true, true, true, true, _graphics->VGAScaleX(14), _graphics->VGAScaleY(148), _graphics->VGAScaleX(134), _graphics->VGAScaleY(186), sptr);
+							_graphics->rectFillScaled(13, 148, 135, 186);
+							_graphics->flowTextScaled(_msgFont, 0, 5, 3, true, true, true, true, 14, 148, 134, 186, sptr);
 
 							if (Maps[OldMsg].PageNumber == CurFloor)
 								drawRoom(OldMsg, (bool)(OldMsg == CurRoom));

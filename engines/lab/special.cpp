@@ -143,10 +143,10 @@ void doWestPaper() {
 
 	paperFont = g_lab->_resource->getFont("P:Note.fon");
 	ntext = g_lab->_resource->getText("Lab:Rooms/Col1");
-	CharsPrinted = g_lab->_graphics->flowText(paperFont, -4, 0, 0, false, false, false, true, g_lab->_graphics->VGAScaleX(45), g_lab->_graphics->VGAScaleY(y), g_lab->_graphics->VGAScaleX(158), g_lab->_graphics->VGAScaleY(148), ntext);
+	CharsPrinted = g_lab->_graphics->flowTextScaled(paperFont, -4, 0, 0, false, false, false, true, 45, y, 158, 148, ntext);
 	delete[] ntext;
 	ntext = g_lab->_resource->getText("Lab:Rooms/Col2");
-	CharsPrinted = g_lab->_graphics->flowText(paperFont, -4, 0, 0, false, false, false, true, g_lab->_graphics->VGAScaleX(162), g_lab->_graphics->VGAScaleY(y), g_lab->_graphics->VGAScaleX(275), g_lab->_graphics->VGAScaleY(148), ntext);
+	CharsPrinted = g_lab->_graphics->flowTextScaled(paperFont, -4, 0, 0, false, false, false, true, 162, y, 275, 148, ntext);
 	delete[] ntext;
 	closeFont(paperFont);
 
@@ -236,7 +236,7 @@ static void drawJournalText() {
 	while (DrawingToPage < JPage) {
 		g_lab->_music->updateMusic();
 		CurText = (char *)(journaltext + CharsDrawn);
-		CharsDrawn += g_lab->_graphics->flowText(journalFont, -2, 2, 0, false, false, false, false, g_lab->_graphics->VGAScaleX(52), g_lab->_graphics->VGAScaleY(32), g_lab->_graphics->VGAScaleX(152), g_lab->_graphics->VGAScaleY(148), CurText);
+		CharsDrawn += g_lab->_graphics->flowTextScaled(journalFont, -2, 2, 0, false, false, false, false, 52, 32, 152, 148, CurText);
 
 		lastpage = (*CurText == 0);
 

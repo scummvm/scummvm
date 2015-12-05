@@ -316,6 +316,19 @@ uint32 DisplayMan::flowText(void *font,      /* the TextAttr pointer */
 	return (str - temp);
 }
 
+uint32 DisplayMan::flowTextScaled(void *font,      /* the TextAttr pointer */
+	int16 spacing,          /* How much vertical spacing between the lines */
+	byte pencolor,         /* pen number to use for text */
+	byte backpen,          /* the background color */
+	bool fillback,                /* Whether to fill the background */
+	bool centerh,                 /* Whether to center the text horizontally */
+	bool centerv,                 /* Whether to center the text vertically */
+	bool output,                  /* Whether to output any text */
+	uint16 x1,               /* Cords */
+	uint16 y1, uint16 x2, uint16 y2, const char *str) {
+	return flowText(font, spacing, pencolor, backpen, fillback, centerh, centerv, output, VGAScaleX(x1), VGAScaleY(y1), VGAScaleX(x2), VGAScaleY(y2), str);
+}
+
 /******************************************************************************/
 /* Calls flowText, but flows it to memory.  Same restrictions as flowText.    */
 /******************************************************************************/
@@ -347,7 +360,7 @@ uint32 DisplayMan::flowTextToMem(Image *destIm, void *font,     /* the TextAttr 
 
 void DisplayMan::createBox(uint16 y2) {
 	setAPen(7);                 /* Message box area */
-	rectFill(VGAScaleX(4), VGAScaleY(154), VGAScaleX(315), VGAScaleY(y2 - 2));
+	rectFillScaled(4, 154, 315, y2 - 2);
 
 	setAPen(0);                 /* Box around message area */
 	drawHLine(VGAScaleX(2), VGAScaleY(152), VGAScaleX(317));
@@ -375,7 +388,7 @@ int32 DisplayMan::longDrawMessage(const char *str) {
 	createBox(198);
 	_vm->_event->mouseShow();
 
-	return flowText(_vm->_msgFont, 0, 1, 7, false, true, true, true, VGAScaleX(6), VGAScaleY(155), VGAScaleX(313), VGAScaleY(195), str);
+	return flowTextScaled(_vm->_msgFont, 0, 1, 7, false, true, true, true, 6, 155, 313, 195, str);
 }
 
 void LabEngine::drawStaticMessage(byte index) {
@@ -975,6 +988,10 @@ void DisplayMan::rectFill(uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
 			d += _vm->_screenWidth;
 		}
 	}
+}
+
+void DisplayMan::rectFillScaled(uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
+	rectFill(VGAScaleX(x1), VGAScaleY(y1), VGAScaleX(x2), VGAScaleY(y2));
 }
 
 /*****************************************************************************/

@@ -105,9 +105,9 @@ void Intro::doPictText(const char *filename, TextFont *msgFont, bool isScreen) {
 
 			if (isScreen) {
 				_vm->_graphics->setAPen(7);
-				_vm->_graphics->rectFill(_vm->_graphics->VGAScaleX(10), _vm->_graphics->VGAScaleY(10), _vm->_graphics->VGAScaleX(310), _vm->_graphics->VGAScaleY(190));
+				_vm->_graphics->rectFillScaled(10, 10, 310, 190);
 
-				Drawn = _vm->_graphics->flowText(msgFont, (!_vm->_isHiRes) * -1, 5, 7, false, false, true, true, _vm->_graphics->VGAScaleX(14), _vm->_graphics->VGAScaleY(11), _vm->_graphics->VGAScaleX(306), _vm->_graphics->VGAScaleY(189), (char *)curText);
+				Drawn = _vm->_graphics->flowTextScaled(msgFont, (!_vm->_isHiRes) * -1, 5, 7, false, false, true, true, 14, 11, 306, 189, (char *)curText);
 				fade(true, 0);
 			} else {
 				Drawn = _vm->_graphics->longDrawMessage((char *)curText);
