@@ -152,7 +152,9 @@ void AnimImages::onAllLoaded() {
 
 void AnimImages::selectFrame(uint32 frameIndex) {
 	if (frameIndex > _numFrames) {
-		error("Error setting frame %d for anim '%s'", frameIndex, getName().c_str());
+		// The original silently ignores this as well
+		warning("Request for frame %d for anim '%s' has been ignored, it is above max frame %d", frameIndex, getName().c_str(), _numFrames);
+		_currentFrame = 0;
 	}
 
 	_currentFrame = frameIndex;
