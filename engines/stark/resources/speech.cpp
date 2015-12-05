@@ -25,9 +25,11 @@
 #include "engines/stark/formats/xrc.h"
 
 #include "engines/stark/services/services.h"
-#include <engines/stark/services/global.h>
+#include "engines/stark/services/global.h"
 
+#include "engines/stark/resources/anim.h"
 #include "engines/stark/resources/item.h"
+#include "engines/stark/resources/location.h"
 #include "engines/stark/resources/sound.h"
 
 namespace Stark {
@@ -39,7 +41,9 @@ Speech::~Speech() {
 Speech::Speech(Object *parent, byte subType, uint16 index, const Common::String &name) :
 				Object(parent, subType, index, name),
 				_character(0),
-				_soundResource(nullptr) {
+				_soundResource(nullptr),
+				_playTalkAnim(true),
+				_removeTalkAnimWhenComplete(true) {
 	_type = TYPE;
 }
 
@@ -48,8 +52,40 @@ Common::String Speech::getPhrase() const {
 }
 
 void Speech::playSound() {
+	if (_playTalkAnim) {
+		setCharacterTalkAnim();
+	}
+
 	_soundResource = findChild<Sound>();
 	_soundResource->play();
+}
+
+void Speech::setCharacterTalkAnim() const {
+	ItemVisual *characterItem = getCharacterItem();
+	if (characterItem) {
+		characterItem->setAnimKind(Anim::kActorUsageTalk);
+	}
+}
+
+void Speech::removeCharacterTalkAnim() const {
+	ItemVisual *characterItem = getCharacterItem();
+	if (characterItem && characterItem->getAnimKind() == Anim::kActorUsageTalk) {
+		characterItem->setAnimKind(Anim::kActorUsageIdle);
+	}
+}
+
+ItemVisual *Speech::getCharacterItem() const {
+	Current *current = StarkGlobal->getCurrent();
+	if (!current) {
+		return nullptr;
+	}
+
+	Location *location = current->getLocation();
+	if (!location) {
+		return nullptr;
+	}
+
+	return location->getCharacterItem(_character);
 }
 
 bool Speech::isPlaying() {
@@ -61,6 +97,13 @@ void Speech::stop() {
 		_soundResource->stop();
 		_soundResource = nullptr;
 	}
+
+	if (_removeTalkAnimWhenComplete) {
+		removeCharacterTalkAnim();
+	}
+
+	_removeTalkAnimWhenComplete = true;
+	_playTalkAnim = true;
 }
 
 bool Speech::characterIsApril() const {
@@ -72,7 +115,18 @@ void Speech::readData(Formats::XRCReadStream *stream) {
 	Object::readData(stream);
 
 	_phrase = stream->readString();
-	_character = stream->readUint32LE();
+	_character = stream->readSint32LE();
+}
+
+void Speech::onGameLoop() {
+	Object::onGameLoop();
+
+	// TODO: Add delay between the end of the sound resource and the end of the speech
+
+	if (_soundResource && !_soundResource->isPlaying()) {
+		// The speech just stopped, reset our state
+		stop();
+	}
 }
 
 void Speech::onExitLocation() {
@@ -88,6 +142,10 @@ void Speech::printData() {
 
 	debug("phrase: %s", _phrase.c_str());
 	debug("character: %d", _character);
+}
+
+void Speech::setPlayTalkAnim(bool playTalkAnim) {
+	_playTalkAnim = playTalkAnim;
 }
 
 } // End of namespace Resources

@@ -32,6 +32,7 @@
 #include "engines/stark/resources/bookmark.h"
 #include "engines/stark/resources/floor.h"
 #include "engines/stark/resources/floorface.h"
+#include "engines/stark/resources/location.h"
 #include "engines/stark/resources/pattable.h"
 #include "engines/stark/resources/script.h"
 #include "engines/stark/resources/textureset.h"
@@ -192,6 +193,11 @@ void ItemVisual::onAllLoaded() {
 
 	if (!_enabled) {
 		setEnabled(false);
+	}
+
+	Location *location = findParent<Location>();
+	if (location) {
+		location->registerCharacterItem(_characterIndex, this);
 	}
 }
 

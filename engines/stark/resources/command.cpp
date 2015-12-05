@@ -582,14 +582,14 @@ Command *Command::opScriptEnable(const ResourceReference &scriptRef, int32 enabl
 
 Command *Command::opShowPlay(Script *script, const ResourceReference &ref, int32 suspend) {
 	assert(_arguments.size() == 3);
-	Speech *speechObj = ref.resolve<Speech>();
-	assert(speechObj->getType().get() == Type::kSpeech);
-	warning("(TODO: Implement) opShowPlay(%s %d) %s : %s", speechObj->getName().c_str(), suspend, speechObj->getPhrase().c_str(), ref.describe().c_str());
+	Speech *speech = ref.resolve<Speech>();
+	warning("(TODO: Implement) opShowPlay(%s %d) %s : %s", speech->getName().c_str(), suspend, speech->getPhrase().c_str(), ref.describe().c_str());
 
-	StarkDialogPlayer->playSingle(speechObj);
+	speech->setPlayTalkAnim(true);
+	StarkDialogPlayer->playSingle(speech);
 
 	if (suspend) {
-		script->suspend(speechObj);
+		script->suspend(speech);
 		return this; // Stay on the same command while suspended
 	} else {
 		return nextCommand();
@@ -953,6 +953,7 @@ Command *Command::opSpeakWithoutTalking(Script *script, const ResourceReference 
 	warning("(TODO: Implement) opSpeakWithoutTalking(%s, %d) : %s", speech->getName().c_str(), suspend, speechRef.describe().c_str());
 
 	// TODO: Complete
+	speech->setPlayTalkAnim(false);
 	StarkDialogPlayer->playSingle(speech);
 
 	if (suspend) {

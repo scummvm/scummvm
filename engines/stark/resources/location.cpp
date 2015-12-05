@@ -309,6 +309,16 @@ void Location::goToLayer(Layer *layer) {
 	_currentLayer = layer;
 }
 
+ItemVisual *Location::getCharacterItem(int32 character) const {
+	return _characterItemMap.getVal(character, nullptr);
+}
+
+void Location::registerCharacterItem(int32 character, ItemVisual *item) {
+	if (character >= 0) {
+		_characterItemMap[character] = item;
+	}
+}
+
 void Location::printData() {
 }
 

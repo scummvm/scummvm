@@ -35,6 +35,7 @@ class XRCReadStream;
 
 namespace Resources {
 
+class ItemVisual;
 class Sound;
 
 /**
@@ -53,9 +54,9 @@ public:
 
 	// Resource API
 	void readData(Formats::XRCReadStream *stream) override;
+	void onGameLoop() override;
 	void onExitLocation() override;
 	void onPreDestroy() override;
-
 
 	/** Obtain the text associated to the speech line */
 	Common::String getPhrase() const;
@@ -72,11 +73,20 @@ public:
 	/** Is the character saying the line April ? */
 	bool characterIsApril() const;
 
+	/** Should the character change to the talk anim while this is playing? */
+	void setPlayTalkAnim(bool playTalkAnim);
+
 protected:
 	void printData() override;
 
+	void setCharacterTalkAnim() const;
+	void removeCharacterTalkAnim() const;
+	ItemVisual *getCharacterItem() const;
+
 	Common::String _phrase;
-	uint32 _character;
+	int32 _character;
+	bool _playTalkAnim;
+	bool _removeTalkAnimWhenComplete;
 
 	Sound *_soundResource;
 };

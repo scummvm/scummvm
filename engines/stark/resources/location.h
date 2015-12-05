@@ -23,6 +23,7 @@
 #ifndef STARK_RESOURCES_LOCATION_H
 #define STARK_RESOURCES_LOCATION_H
 
+#include "common/hashmap.h"
 #include "common/rect.h"
 #include "common/str.h"
 
@@ -38,6 +39,7 @@ class XRCReadStream;
 namespace Resources {
 
 class Layer;
+class ItemVisual;
 
 /**
  * A location is a scene of the game
@@ -103,6 +105,12 @@ public:
 
 	void scrollToCoordinateImmediate(uint32 coordinate);
 
+	/** Get an item from its character index */
+	ItemVisual *getCharacterItem(int32 character) const;
+
+	/** Register an item as a character to the location */
+	void registerCharacterItem(int32 character, ItemVisual *item);
+
 protected:
 	void printData() override;
 
@@ -121,6 +129,8 @@ private:
 	bool _scrollFollowCharacter;
 	Common::Point _scroll;
 	Common::Point _maxScroll;
+
+	Common::HashMap<int32, ItemVisual *> _characterItemMap;
 
 	uint getScrollStep();
 };
