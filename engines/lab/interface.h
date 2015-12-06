@@ -48,7 +48,6 @@ struct Gadget {
 	uint16 KeyEquiv; // if not zero, a key that activates gadget
 	uint32 GadgetFlags;
 	Image *_image, *_altImage;
-	Gadget *NextGadget;
 };
 
 extern Common::KeyState _keyPressed;
@@ -57,7 +56,7 @@ extern Common::KeyState _keyPressed;
 
 #define GADGETOFF 0x01
 
-
+typedef Common::List<Gadget *> GadgetList;
 
 /* Defines for the Class variable in IntuiMessage */
 #define SIZEVERIFY  0x00000001
@@ -112,8 +111,8 @@ extern Common::KeyState _keyPressed;
 /*---------------------------------------------------------------------------*/
 
 Gadget *createButton(uint16 x, uint16 y, uint16 id, uint16 key, Image *im, Image *imalt);
-void freeButtonList(void *gptrlist);
-void drawGadgetList(Gadget *gadlist);
+void freeButtonList(GadgetList *gadgetList);
+void drawGadgetList(GadgetList *gadgetList);
 void disableGadget(Gadget *curgad, uint16 pencolor);
 void enableGadget(Gadget *curgad);
 IntuiMessage *getMsg();

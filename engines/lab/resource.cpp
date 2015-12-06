@@ -224,7 +224,7 @@ int16 *Resource::readConditions(Common::File *file) {
 
 RuleList *Resource::readRule(Common::File *file) {
 	char c;
-	RuleList *rules = new Common::List<Rule *>();
+	RuleList *rules = new RuleList();
 
 	do {
 		c = file->readByte();

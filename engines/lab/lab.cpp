@@ -103,8 +103,6 @@ LabEngine::LabEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	for (int i = 0; i < 16; i++)
 		_tiles[i] = nullptr;
 
-	_moveGadgetList = nullptr;
-	_invGadgetList = nullptr;
 	_curFileName = nullptr;
 	_nextFileName = nullptr;
 	_newFileName = nullptr;

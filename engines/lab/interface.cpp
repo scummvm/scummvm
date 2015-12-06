@@ -52,7 +52,6 @@ Gadget *createButton(uint16 x, uint16 y, uint16 id, uint16 key, Image *im, Image
 		gptr->KeyEquiv = key;
 		gptr->_image = im;
 		gptr->_altImage = imalt;
-		gptr->NextGadget = NULL;
 
 		return gptr;
 	} else
@@ -62,15 +61,12 @@ Gadget *createButton(uint16 x, uint16 y, uint16 id, uint16 key, Image *im, Image
 
 
 
-void freeButtonList(Gadget *gptrlist) {
-	Gadget *next = gptrlist;
-
-	while (next) {
-		Gadget *gptr = next;
-		next = next->NextGadget;
-
-		free(gptr);
+void freeButtonList(GadgetList *gadgetList) {
+	for (GadgetList::iterator gadget = gadgetList->begin(); gadget != gadgetList->end(); ++gadget) {
+		free(*gadget);
 	}
+
+	gadgetList->clear();
 }
 
 
@@ -79,14 +75,12 @@ void freeButtonList(Gadget *gptrlist) {
 /*****************************************************************************/
 /* Draws a gadget list to the screen.                                        */
 /*****************************************************************************/
-void drawGadgetList(Gadget *gadlist) {
-	while (gadlist) {
-		gadlist->_image->drawImage(gadlist->x, gadlist->y);
+void drawGadgetList(GadgetList *gadgetList) {
+	for (GadgetList::iterator gadget = gadgetList->begin(); gadget != gadgetList->end(); ++gadget) {
+		(*gadget)->_image->drawImage((*gadget)->x, (*gadget)->y);
 
-		if (GADGETOFF & gadlist->GadgetFlags)
-			disableGadget(gadlist, 1);
-
-		gadlist = gadlist->NextGadget;
+		if (GADGETOFF & (*gadget)->GadgetFlags)
+			disableGadget((*gadget), 1);
 	}
 }
 
@@ -124,24 +118,26 @@ uint16 makeGadgetKeyEquiv(uint16 key) {
 /* Checks whether or not the cords fall within one of the gadgets in a list  */
 /* of gadgets.                                                               */
 /*****************************************************************************/
-Gadget *LabEngine::checkNumGadgetHit(Gadget *gadlist, uint16 key) {
+Gadget *LabEngine::checkNumGadgetHit(GadgetList *gadgetList, uint16 key) {
 	uint16 gkey = key - '0';
 
-	while (gadlist != NULL) {
-		if ((gkey - 1 == gadlist->GadgetID || (gkey == 0 && gadlist->GadgetID == 9) ||
-		        (gadlist->KeyEquiv != 0 && makeGadgetKeyEquiv(key) == gadlist->KeyEquiv))
-		        && !(GADGETOFF & gadlist->GadgetFlags)) {
+	if (!gadgetList)
+		return NULL;
+
+	for (GadgetList::iterator gadgetItr = gadgetList->begin(); gadgetItr != gadgetList->end(); ++gadgetItr) {
+		Gadget *gadget = *gadgetItr;
+		if ((gkey - 1 == gadget->GadgetID || (gkey == 0 && gadget->GadgetID == 9) ||
+			(gadget->KeyEquiv != 0 && makeGadgetKeyEquiv(key) == gadget->KeyEquiv))
+		        && !(GADGETOFF & gadget->GadgetFlags)) {
 			_event->mouseHide();
-			gadlist->_altImage->drawImage(gadlist->x, gadlist->y);
+			gadget->_altImage->drawImage(gadget->x, gadget->y);
 			_event->mouseShow();
 			g_system->delayMillis(80);
 			_event->mouseHide();
-			gadlist->_image->drawImage(gadlist->x, gadlist->y);
+			gadget->_image->drawImage(gadget->x, gadget->y);
 			_event->mouseShow();
 
-			return gadlist;
-		} else {
-			gadlist = gadlist->NextGadget;
+			return gadget;
 		}
 	}
 

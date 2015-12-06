@@ -61,6 +61,8 @@ enum GameFeatures {
 #define UPSCROLL       3
 #define DOWNSCROLL     4
 
+typedef Common::List<Gadget *> GadgetList;
+
 class LabEngine : public Engine {
 public:
 	LabEngine(OSystem *syst, const ADGameDescription *gameDesc);
@@ -123,8 +125,8 @@ public:
 	const char *_newFileName;  /* When ProcessRoom.c decides to change the filename
                                     of the current picture. */
 	TextFont *_msgFont;
-	Gadget *_moveGadgetList;
-	Gadget *_invGadgetList;
+	GadgetList _moveGadgetList;
+	GadgetList _invGadgetList;
 	Image *_moveImages[20];
 	Image *_invImages[10];
 	Image *_numberImages[10];
@@ -147,7 +149,7 @@ public:
 	void interfaceOff();
 	void interfaceOn();
 	void decIncInv(uint16 *CurInv, bool dec);
-	Gadget *checkNumGadgetHit(Gadget *gadlist, uint16 key);
+	Gadget *checkNumGadgetHit(GadgetList *gadgetList, uint16 key);
 	IntuiMessage *getMsg();
 	void drawMap(uint16 CurRoom, uint16 CurMsg, uint16 Floor, bool fadeout, bool fadein);
 	void processMap(uint16 CurRoom);

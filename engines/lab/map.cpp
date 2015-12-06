@@ -56,11 +56,12 @@ extern char *LOWERFLOORS, *MIDDLEFLOORS, *UPPERFLOORS, *MEDMAZEFLOORS, *HEDGEMAZ
 
 static uint16 MapGadX[3] = {101, 55, 8}, MapGadY[3] = {105, 105, 105};
 
-static Gadget downgadget = { 101, 105, 2, VKEY_DNARROW, 0L, NULL, NULL, NULL },
-			  upgadget   = {  55, 105, 1, VKEY_UPARROW, 0L, NULL, NULL, &downgadget },
-			  backgadget = {   8, 105, 0, 0, 0L, NULL, NULL, &upgadget };
+static Gadget
+	backgadget = { 8, 105, 0, 0, 0L, NULL, NULL },
+	upgadget = { 55, 105, 1, VKEY_UPARROW, 0L, NULL, NULL },
+	downgadget = { 101, 105, 2, VKEY_DNARROW, 0L, NULL, NULL };
 
-static Gadget *MapGadgetList = &backgadget;
+static GadgetList *MapGadgetList;
 
 #define LOWERFLOOR     1
 #define MIDDLEFLOOR    2
@@ -93,8 +94,12 @@ static uint16 mapScaleY(uint16 y) {
 /* Loads in the map data.                                                    */
 /*****************************************************************************/
 static bool loadMapData() {
-	Gadget *gptr;
 	uint16 counter;
+
+	MapGadgetList = new GadgetList();
+	MapGadgetList->push_back(&backgadget);
+	MapGadgetList->push_back(&upgadget);
+	MapGadgetList->push_back(&downgadget);
 
 	Common::File *mapImages = g_lab->_resource->openDataFile("P:MapImage");
 
@@ -126,12 +131,10 @@ static bool loadMapData() {
 	delete mapImages;
 
 	counter = 0;
-	gptr = MapGadgetList;
 
-	while (gptr) {
-		gptr->x = g_lab->_graphics->VGAScaleX(MapGadX[counter]);
-		gptr->y = g_lab->_graphics->VGAScaleY(MapGadY[counter]);
-		gptr = gptr->NextGadget;
+	for (GadgetList::iterator gadget = MapGadgetList->begin(); gadget != MapGadgetList->end(); ++gadget) {
+		(*gadget)->x = g_lab->_graphics->VGAScaleX(MapGadX[counter]);
+		(*gadget)->y = g_lab->_graphics->VGAScaleY(MapGadY[counter]);
 		counter++;
 	}
 
@@ -156,6 +159,9 @@ static bool loadMapData() {
 }
 
 static void freeMapData() {
+	MapGadgetList->clear();
+	delete MapGadgetList;
+
 	delete[] Maps;
 	Maps = NULL;
 }
