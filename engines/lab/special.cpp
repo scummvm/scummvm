@@ -101,7 +101,7 @@ static byte *loadBackPict(const char *fileName, bool tomem) {
 /*****************************************************************************/
 /* Does the things to properly set up the detective notes.                   */
 /*****************************************************************************/
-void doNotes() {
+void LabEngine::doNotes() {
 	TextFont *noteFont = g_lab->_resource->getFont("P:Note.fon");
 	char *ntext = g_lab->_resource->getText("Lab:Rooms/Notes");
 
@@ -117,7 +117,7 @@ void doNotes() {
 /* Does the things to properly set up the old west newspaper.  Assumes that  */
 /* OpenHiRes already called.                                                 */
 /*****************************************************************************/
-void doWestPaper() {
+void LabEngine::doWestPaper() {
 	char *ntext;
 	TextFont *paperFont;
 	int32 FileLen, CharsPrinted;

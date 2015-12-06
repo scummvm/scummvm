@@ -565,7 +565,6 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 	bool doit;
 	uint16 NewDir;
 
-
 	_anim->_doBlack = false;
 
 	if ((msgClass == RAWKEY) && (!_graphics->_longWinInFront)) {
@@ -1055,9 +1054,7 @@ void LabEngine::go() {
 	}
 
 	_event->initMouse();
-
 	_msgFont = _resource->getFont("P:AvanteG.12");
-
 	_event->mouseHide();
 
 	Intro *intro = new Intro(this);

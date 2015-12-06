@@ -42,6 +42,7 @@
 #include "lab/resource.h"
 #include "lab/anim.h"
 #include "lab/graphics.h"
+#include "lab/labsets.h"
 
 struct ADGameDescription;
 
@@ -149,6 +150,8 @@ public:
 	void drawMonText(char *text, TextFont *monitorFont, uint16 x1, uint16 y1, uint16 x2, uint16 y2, bool isinteractive);
 	void processMonitor(char *ntext, TextFont *monitorFont, bool isinteractive, uint16 x1, uint16 y1, uint16 x2, uint16 y2);
 	void doMonitor(char *background, char *textfile, bool isinteractive, uint16 x1, uint16 y1, uint16 x2, uint16 y2);
+	void doNotes();
+	void doWestPaper();
 	void eatMessages();
 	void drawStaticMessage(byte index);
 	void drawDirection(CloseDataPtr lcPtr);

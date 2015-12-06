@@ -20,7 +20,7 @@
  *
  */
 
-/*
+ /*
  * This code is based on Labyrinth of Time code with assistance of
  *
  * Copyright (c) 1993 Terra Nova Development
@@ -28,62 +28,34 @@
  *
  */
 
-#ifndef LAB_LABFUN_H
-#define LAB_LABFUN_H
-
-#include "common/events.h"
-#include "lab/parsetypes.h"
-
-// For the Music class - TODO: Move to another header file
-#include "audio/mixer.h"
-#include "audio/audiostream.h"
-#include "audio/decoders/raw.h"
-
-#include "common/file.h"
-#include "common/savefile.h"
-
-#include "engines/savestate.h"
+#ifndef LAB_LABSETS_H
+#define LAB_LABSETS_H
 
 namespace Lab {
 
+/*---------------------------*/
+/*----- From LabSets.c ------*/
+/*---------------------------*/
+
 class LabEngine;
 
-/* Direction defines */
-#define NORTH   0
-#define SOUTH   1
-#define EAST    2
-#define WEST    3
+class LargeSet {
+public:
+    LargeSet(uint16 last, LabEngine *vm);
+    ~LargeSet();
+    bool in(uint16 element);
+    void inclElement(uint16 element);
+    void exclElement(uint16 element);
+    bool readInitialConditions(const char *fileName);
 
-struct TextFont;
-struct Gadget;
+private:
+	LabEngine *_vm;
 
-struct SaveGameHeader {
-	byte _version;
-	SaveStateDescriptor _descr;
-	uint16 _roomNumber;
-	uint16 _direction;
+public:
+    uint16 _lastElement;
+    uint16 *_array;
 };
-
-/*----------------------------*/
-/*----- From graphics.c ------*/
-/*----------------------------*/
-
-bool readMusic(const char *filename, bool waitTillFinished);
-
-/*---------------------------*/
-/*-------- From Map.c -------*/
-/*---------------------------*/
-
-void fade(bool fadein, uint16 res);
-
-/*--------------------------*/
-/*----- From saveGame.c ----*/
-/*--------------------------*/
-
-bool saveGame(uint16 Direction, uint16 Quarters, int slot, Common::String desc);
-bool loadGame(uint16 *Direction, uint16 *Quarters, int slot);
-bool readSaveGameHeader(Common::InSaveFile *in, SaveGameHeader &header);
 
 } // End of namespace Lab
 
-#endif /* LAB_LABFUN_H */
+#endif // LAB_LABSETS_H

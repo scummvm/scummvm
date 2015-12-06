@@ -42,14 +42,7 @@ namespace Lab {
 #define SAVEGAME_ID       MKTAG('L', 'O', 'T', 'S')
 #define SAVEGAME_VERSION  1
 
-#define BOOKMARK  0
-#define CARDMARK  1
-#define FLOPPY    2
-
-
 /*----- The machine independent section of saveGame.c -----*/
-
-
 /* Lab: Labyrinth specific */
 extern char *getPictName(CloseDataPtr *lcptr);
 
