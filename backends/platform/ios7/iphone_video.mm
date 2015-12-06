@@ -714,7 +714,7 @@ const char *iPhone_getDocumentsDir() {
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
 	int x, y;
 
-	NSSet<UITouch *> *allTouches = [event allTouches];
+	NSSet *allTouches = [event allTouches];
 	if (allTouches.count == 1) {
 		_firstTouch = [allTouches anyObject];
 		CGPoint point = [_firstTouch locationInView:self];
@@ -738,7 +738,7 @@ const char *iPhone_getDocumentsDir() {
 - (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event {
 	int x, y;
 
-	NSSet<UITouch *> *allTouches = [event allTouches];
+	NSSet *allTouches = [event allTouches];
 	for (UITouch *touch in allTouches) {
 		if (touch == _firstTouch) {
 			CGPoint point = [touch locationInView:self];
@@ -759,7 +759,7 @@ const char *iPhone_getDocumentsDir() {
 - (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event {
 	int x, y;
 
-	NSSet<UITouch *> *allTouches = [event allTouches];
+	NSSet *allTouches = [event allTouches];
 	if (allTouches.count == 1) {
 		UITouch *touch = [allTouches anyObject];
 		CGPoint point = [touch locationInView:self];
