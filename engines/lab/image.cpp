@@ -56,9 +56,9 @@ void Image::blitBitmap(uint16 xs, uint16 ys, Image *imDest,
 	uint16 xd, uint16 yd, uint16 width, uint16 height, byte masked) {
 	int w = width;
 	int h = height;
-	int destWidth = (imDest) ? imDest->_width : g_lab->_screenWidth;
-	int destHeight = (imDest) ? imDest->_height : g_lab->_screenHeight;
-	byte *destBuffer = (imDest) ? imDest->_imageData : g_lab->getCurrentDrawingBuffer();
+	int destWidth = (imDest) ? imDest->_width : g_lab->_graphics->_screenWidth;
+	int destHeight = (imDest) ? imDest->_height : g_lab->_graphics->_screenHeight;
+	byte *destBuffer = (imDest) ? imDest->_imageData : g_lab->_graphics->getCurrentDrawingBuffer();
 
 	if (xd + w > destWidth)
 		w = destWidth - xd;
@@ -117,20 +117,20 @@ void Image::readScreenImage(uint16 x, uint16 y) {
 	int w = _width;
 	int h = _height;
 
-	if (x + w > g_lab->_screenWidth)
-		w = g_lab->_screenWidth - x;
+	if (x + w > g_lab->_graphics->_screenWidth)
+		w = g_lab->_graphics->_screenWidth - x;
 
-	if (y + h > g_lab->_screenHeight)
-		h = g_lab->_screenHeight - y;
+	if (y + h > g_lab->_graphics->_screenHeight)
+		h = g_lab->_graphics->_screenHeight - y;
 
 	if ((w > 0) && (h > 0)) {
 		byte *s = _imageData;
-		byte *d = g_lab->getCurrentDrawingBuffer() + y * g_lab->_screenWidth + x;
+		byte *d = g_lab->_graphics->getCurrentDrawingBuffer() + y * g_lab->_graphics->_screenWidth + x;
 
 		while (h-- > 0) {
 			memcpy(s, d, w);
 			s += _width;
-			d += g_lab->_screenWidth;
+			d += g_lab->_graphics->_screenWidth;
 		}
 	}
 }

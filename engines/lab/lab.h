@@ -75,12 +75,7 @@ public:
 	bool hasFeature(EngineFeature f) const;
 	Common::String generateSaveFileName(uint slot);
 
-	//void showMainMenu();
-
 	LargeSet *_conditions, *_roomsFound;
-
-	int _screenWidth;
-	int _screenHeight;
 
 	// timing.cpp
 	void getTime(uint32 *secs, uint32 *micros);
@@ -96,9 +91,6 @@ private:
 	// timing.cpp
 	void microDelay(uint32 secs, uint32 micros);
 
-	// vga.cpp
-	byte _curvgapal[256 * 3];
-
 public:
 	EventManager *_event;
 	Resource *_resource;
@@ -107,8 +99,6 @@ public:
 	DisplayMan *_graphics;
 
 	int _roomNum;
-	byte *_currentDisplayBuffer;
-
 	CrumbData _breadCrumbs[MAX_CRUMBS];
 	uint16 _numCrumbs;
 	bool _droppingCrumbs;
@@ -118,9 +108,7 @@ public:
 	uint32 _crumbSecs, _crumbMicros;
 	bool _isCrumbWaiting;
 	bool _alternate;
-	byte *_tempScrollData;
 	bool _isHiRes;
-	byte *_displayBuffer;
 	const char *_curFileName;
 	const char *_nextFileName;
 	const char *_newFileName;  /* When ProcessRoom.c decides to change the filename
@@ -146,13 +134,6 @@ private:
 
 public:
 	void waitTOF();
-	void writeColorRegs(byte *buf, uint16 first, uint16 numreg);
-	byte *getCurrentDrawingBuffer();
-	void scrollDisplayX(int16 dx, uint16 x1, uint16 y1, uint16 x2, uint16 y2);
-	void scrollDisplayY(int16 dy, uint16 x1, uint16 y1, uint16 x2, uint16 y2);
-	void overlayRect(uint16 pencolor, uint16 x1, uint16 y1, uint16 x2, uint16 y2);
-	void setPalette(void *cmap, uint16 numcolors);
-
 	void drawRoomMessage(uint16 CurInv, CloseDataPtr cptr);
 	void interfaceOff();
 	void interfaceOn();

@@ -532,7 +532,7 @@ void LabEngine::doActions(Action *aptr, CloseDataPtr *lcptr) {
 					_anim->_diffPalette[idx] = 255 - _anim->_diffPalette[idx];
 
 				waitTOF();
-				setPalette(_anim->_diffPalette, 256);
+				_graphics->setPalette(_anim->_diffPalette, 256);
 				waitTOF();
 				waitTOF();
 			} else if (aptr->Param1 == 4) { /* white the palette */
@@ -541,7 +541,7 @@ void LabEngine::doActions(Action *aptr, CloseDataPtr *lcptr) {
 				waitTOF();
 			} else if (aptr->Param1 == 6) { /* Restore the palette */
 				waitTOF();
-				setPalette(_anim->_diffPalette, 256);
+				_graphics->setPalette(_anim->_diffPalette, 256);
 				waitTOF();
 				waitTOF();
 			} else if (aptr->Param1 == 7) { /* Quick pause */

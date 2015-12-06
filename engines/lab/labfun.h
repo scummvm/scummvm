@@ -120,7 +120,6 @@ public:
 /*---------------------------*/
 
 void fade(bool fadein, uint16 res);
-void setAmigaPal(uint16 *pal, uint16 numcolors);
 void doMap(uint16 CurRoom);
 void doJournal();
 void doNotes();

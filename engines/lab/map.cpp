@@ -43,27 +43,6 @@ namespace Lab {
 
 extern uint16 Direction;
 
-/*****************************************************************************/
-/* Converts an Amiga palette (up to 16 colors) to a VGA palette, then sets   */
-/* the VGA palette.                                                          */
-/*****************************************************************************/
-void setAmigaPal(uint16 *pal, uint16 numcolors) {
-	byte vgapal[16 * 3];
-	uint16 vgacount = 0;
-
-	if (numcolors > 16)
-		numcolors = 16;
-
-	for (uint16 i = 0; i < numcolors; i++) {
-		vgapal[vgacount++] = (byte)(((pal[i] & 0xf00) >> 8) << 2);
-		vgapal[vgacount++] = (byte)(((pal[i] & 0x0f0) >> 4) << 2);
-		vgapal[vgacount++] = (byte)(((pal[i] & 0x00f)) << 2);
-	}
-
-	g_lab->writeColorRegs(vgapal, 0, 16);
-	g_lab->waitTOF();
-}
-
 /*---------------------------------------------------------------------------*/
 /*------------------------------ The Map stuff ------------------------------*/
 /*---------------------------------------------------------------------------*/
@@ -226,7 +205,7 @@ void fade(bool fadein, uint16 res) {
 				                 (0xF00 & fadeNumOut(0xF00 & FadePalette[palIdx], 0xF00 & res, i));
 		}
 
-		setAmigaPal(newpal, 16);
+		g_lab->_graphics->setAmigaPal(newpal, 16);
 		g_lab->waitTOF();
 		g_lab->_music->updateMusic();
 	}
@@ -486,7 +465,7 @@ void LabEngine::drawMap(uint16 CurRoom, uint16 CurMsg, uint16 Floor, bool fadeou
 		fade(false, 0);
 
 	_graphics->setAPen(0);
-	_graphics->rectFill(0, 0, _screenWidth - 1, _screenHeight - 1);
+	_graphics->rectFill(0, 0, _graphics->_screenWidth - 1, _graphics->_screenHeight - 1);
 
 	Map->drawImage(0, 0);
 	drawGadgetList(MapGadgetList);
@@ -583,7 +562,7 @@ void LabEngine::processMap(uint16 CurRoom) {
 			}
 
 			waitTOF();
-			writeColorRegs(newcolor, 1, 1);
+			_graphics->writeColorRegs(newcolor, 1, 1);
 			_event->updateMouse();
 			waitTOF();
 			_event->updateMouse();
@@ -753,7 +732,7 @@ void LabEngine::doMap(uint16 CurRoom) {
 	_graphics->blackAllScreen();
 	_event->mouseHide();
 	_graphics->setAPen(0);
-	_graphics->rectFill(0, 0, _screenWidth - 1, _screenHeight - 1);
+	_graphics->rectFill(0, 0, _graphics->_screenWidth - 1, _graphics->_screenHeight - 1);
 	freeMapData();
 	_graphics->blackAllScreen();
 	_event->mouseShow();
