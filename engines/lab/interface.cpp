@@ -95,7 +95,7 @@ void drawGadgetList(Gadget *gadlist) {
 /* Dims a gadget, and makes it unavailable for using.                        */
 /*****************************************************************************/
 void disableGadget(Gadget *curgad, uint16 pencolor) {
-	g_lab->overlayRect(pencolor, curgad->x, curgad->y, curgad->x + curgad->_image->_width - 1, curgad->y + curgad->_image->_height - 1);
+	g_lab->_graphics->overlayRect(pencolor, curgad->x, curgad->y, curgad->x + curgad->_image->_width - 1, curgad->y + curgad->_image->_height - 1);
 	curgad->GadgetFlags |= GADGETOFF;
 }
 

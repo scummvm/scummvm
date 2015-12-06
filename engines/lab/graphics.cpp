@@ -48,7 +48,16 @@ DisplayMan::DisplayMan(LabEngine *vm) : _vm(vm) {
 
 	_screenBytesPerPage = 65536;
 	_curapen = 0;
-	_curBitmap = NULL;
+	_curBitmap = nullptr;
+	_displayBuffer = nullptr;
+	_currentDisplayBuffer = nullptr;
+	_tempScrollData = nullptr;
+
+	_screenWidth = 0;
+	_screenHeight = 0;
+
+	for (int i = 0; i < 256 * 3; i++)
+		_curvgapal[i] = 0;
 }
 
 DisplayMan::~DisplayMan() {
@@ -129,8 +138,8 @@ bool DisplayMan::readPict(const char *filename, bool playOnce) {
 	if (!_vm->_music->_doNotFilestopSoundEffect)
 		_vm->_music->stopSoundEffect();
 
-	DispBitMap->_bytesPerRow = _vm->_screenWidth;
-	DispBitMap->_rows        = _vm->_screenHeight;
+	DispBitMap->_bytesPerRow = _screenWidth;
+	DispBitMap->_rows        = _screenHeight;
 	DispBitMap->_flags       = BITMAPF_VIDEO;
 
 	_vm->_anim->readDiff(_curBitmap, playOnce);
@@ -343,15 +352,15 @@ uint32 DisplayMan::flowTextToMem(Image *destIm, void *font,     /* the TextAttr 
                      uint16 x1,               /* Cords */
                      uint16 y1, uint16 x2, uint16 y2, const char *str) { /* The text itself */
 	uint32 res, vgabyte = _screenBytesPerPage;
-	byte *tmp = _vm->_currentDisplayBuffer;
+	byte *tmp = _currentDisplayBuffer;
 
-	_vm->_currentDisplayBuffer = destIm->_imageData;
+	_currentDisplayBuffer = destIm->_imageData;
 	_screenBytesPerPage = (uint32)destIm->_width * (int32)destIm->_height;
 
-	res = _vm->_graphics->flowText(font, spacing, pencolor, backpen, fillback, centerh, centerv, output, x1, y1, x2, y2, str);
+	res = flowText(font, spacing, pencolor, backpen, fillback, centerh, centerv, output, x1, y1, x2, y2, str);
 
 	_screenBytesPerPage = vgabyte;
-	_vm->_currentDisplayBuffer = tmp;
+	_currentDisplayBuffer = tmp;
 
 	return res;
 }
@@ -389,10 +398,6 @@ int32 DisplayMan::longDrawMessage(const char *str) {
 	_vm->_event->mouseShow();
 
 	return flowTextScaled(_vm->_msgFont, 0, 1, 7, false, true, true, true, 6, 155, 313, 195, str);
-}
-
-void LabEngine::drawStaticMessage(byte index) {
-	_graphics->drawMessage(_resource->getStaticText((StaticText)index).c_str());
 }
 
 /******************************************************************************/
@@ -442,7 +447,7 @@ void DisplayMan::doScrollBlack() {
 	byte *tempmem;
 	Image im;
 	uint32 size, copysize;
-	uint32 *baseAddr;
+	byte *baseAddr;
 	uint16 width = VGAScaleX(320);
 	uint16 height = VGAScaleY(149) + SVGACord(2);
 	byte *mem = new byte[width * height];
@@ -456,7 +461,7 @@ void DisplayMan::doScrollBlack() {
 	im.readScreenImage(0, 0);
 	_vm->_music->updateMusic();
 
-	baseAddr = (uint32 *)_vm->getCurrentDrawingBuffer();
+	baseAddr = getCurrentDrawingBuffer();
 
 	uint16 by      = VGAScaleX(4);
 	uint16 nheight = height;
@@ -467,7 +472,7 @@ void DisplayMan::doScrollBlack() {
 		if (!_vm->_isHiRes)
 			_vm->waitTOF();
 
-		baseAddr = (uint32 *)_vm->getCurrentDrawingBuffer();
+		baseAddr = getCurrentDrawingBuffer();
 
 		if (by > nheight)
 			by = nheight;
@@ -510,20 +515,17 @@ void DisplayMan::doScrollBlack() {
 }
 
 void DisplayMan::copyPage(uint16 width, uint16 height, uint16 nheight, uint16 startline, byte *mem) {
-	uint32 size, offSet, copysize;
-	uint16 curPage;
-	uint32 *baseAddr;
+	byte *baseAddr = getCurrentDrawingBuffer();
 
-	baseAddr = (uint32 *)_vm->getCurrentDrawingBuffer();
-
-	size = (int32)(height - nheight) * (int32)width;
+	uint32 size = (int32)(height - nheight) * (int32)width;
 	mem += startline * width;
-	curPage = ((int32)nheight * (int32)width) / _vm->_graphics->_screenBytesPerPage;
-	offSet = ((int32)nheight * (int32)width) - (curPage * _vm->_graphics->_screenBytesPerPage);
+	uint16 curPage = ((int32)nheight * (int32)width) / _screenBytesPerPage;
+	uint32 offSet = ((int32)nheight * (int32)width) - (curPage * _screenBytesPerPage);
 
 	while (size) {
-		if (size > (_vm->_graphics->_screenBytesPerPage - offSet))
-			copysize = _vm->_graphics->_screenBytesPerPage - offSet;
+		uint32 copysize;
+		if (size > (_screenBytesPerPage - offSet))
+			copysize = _screenBytesPerPage - offSet;
 		else
 			copysize = size;
 
@@ -553,7 +555,7 @@ void DisplayMan::doScrollWipe(char *filename) {
 
 	_vm->_anim->_isBM = true;
 	readPict(filename, true);
-	_vm->setPalette(_vm->_anim->_diffPalette, 256);
+	setPalette(_vm->_anim->_diffPalette, 256);
 	_vm->_anim->_isBM = false;
 	byte *mem = _vm->_anim->_rawDiffBM._planes[0];
 
@@ -664,7 +666,7 @@ void DisplayMan::doTransWipe(CloseDataPtr *cPtr, char *filename) {
 				linesdone = 0;
 			}
 
-			_vm->overlayRect(0, 0, curY, _vm->_screenWidth - 1, curY + 1);
+			overlayRect(0, 0, curY, _screenWidth - 1, curY + 1);
 			curY += 4;
 			linesdone++;
 		}
@@ -682,7 +684,7 @@ void DisplayMan::doTransWipe(CloseDataPtr *cPtr, char *filename) {
 				linesdone = 0;
 			}
 
-			rectFill(0, curY, _vm->_screenWidth - 1, curY + 1);
+			rectFill(0, curY, _screenWidth - 1, curY + 1);
 			curY += 4;
 			linesdone++;
 		}
@@ -695,17 +697,17 @@ void DisplayMan::doTransWipe(CloseDataPtr *cPtr, char *filename) {
 	else
 		_vm->_curFileName = getPictName(cPtr);
 
-	byte *BitMapMem = readPictToMem(_vm->_curFileName, _vm->_screenWidth, lastY + 5);
-	_vm->setPalette(_vm->_anim->_diffPalette, 256);
+	byte *BitMapMem = readPictToMem(_vm->_curFileName, _screenWidth, lastY + 5);
+	setPalette(_vm->_anim->_diffPalette, 256);
 
 	if (BitMapMem) {
-		imSource._width = _vm->_screenWidth;
+		imSource._width = _screenWidth;
 		imSource._height = lastY;
 		imSource._imageData = BitMapMem;
 
-		imDest._width = _vm->_screenWidth;
-		imDest._height = _vm->_screenHeight;
-		imDest._imageData = _vm->getCurrentDrawingBuffer();
+		imDest._width = _screenWidth;
+		imDest._height = _screenHeight;
+		imDest._imageData = getCurrentDrawingBuffer();
 
 		for (uint16 i = 0; i < 2; i++) {
 			curY = i * 2;
@@ -717,10 +719,10 @@ void DisplayMan::doTransWipe(CloseDataPtr *cPtr, char *filename) {
 					linesdone = 0;
 				}
 
-				imDest._imageData = _vm->getCurrentDrawingBuffer();
+				imDest._imageData = getCurrentDrawingBuffer();
 
-				imSource.blitBitmap(0, curY, &imDest, 0, curY, _vm->_screenWidth, 2, false);
-				_vm->overlayRect(0, 0, curY, _vm->_screenWidth - 1, curY + 1);
+				imSource.blitBitmap(0, curY, &imDest, 0, curY, _screenWidth, 2, false);
+				overlayRect(0, 0, curY, _screenWidth - 1, curY + 1);
 				curY += 4;
 				linesdone++;
 			}
@@ -736,12 +738,12 @@ void DisplayMan::doTransWipe(CloseDataPtr *cPtr, char *filename) {
 					linesdone = 0;
 				}
 
-				imDest._imageData = _vm->getCurrentDrawingBuffer();
+				imDest._imageData = getCurrentDrawingBuffer();
 
 				if (curY == lastY)
-					imSource.blitBitmap(0, curY, &imDest, 0, curY, _vm->_screenWidth, 1, false);
+					imSource.blitBitmap(0, curY, &imDest, 0, curY, _screenWidth, 1, false);
 				else
-					imSource.blitBitmap(0, curY, &imDest, 0, curY, _vm->_screenWidth, 2, false);
+					imSource.blitBitmap(0, curY, &imDest, 0, curY, _screenWidth, 2, false);
 
 				curY += 4;
 				linesdone++;
@@ -774,7 +776,7 @@ void DisplayMan::doWipe(uint16 wipeType, CloseDataPtr *cPtr, char *filename) {
 void DisplayMan::blackScreen() {
 	byte pal[256 * 3];
 	memset(pal, 0, 248 * 3);
-	_vm->writeColorRegs(pal, 8, 248);
+	writeColorRegs(pal, 8, 248);
 
 	g_system->delayMillis(32);
 }
@@ -785,7 +787,7 @@ void DisplayMan::blackScreen() {
 void DisplayMan::whiteScreen() {
 	byte pal[256 * 3];
 	memset(pal, 255, 248 * 3);
-	_vm->writeColorRegs(pal, 8, 248);
+	writeColorRegs(pal, 8, 248);
 }
 
 /*****************************************************************************/
@@ -794,7 +796,7 @@ void DisplayMan::whiteScreen() {
 void DisplayMan::blackAllScreen() {
 	byte pal[256 * 3];
 	memset(pal, 0, 256 * 3);
-	_vm->writeColorRegs(pal, 0, 256);
+	writeColorRegs(pal, 0, 256);
 
 	g_system->delayMillis(32);
 }
@@ -938,14 +940,14 @@ void DisplayMan::rectFill(uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
 	int w = x2 - x1 + 1;
 	int h = y2 - y1 + 1;
 
-	if (x1 + w > _vm->_screenWidth)
-		w = _vm->_screenWidth - x1;
+	if (x1 + w > _screenWidth)
+		w = _screenWidth - x1;
 
-	if (y1 + h > _vm->_screenHeight)
-		h = _vm->_screenHeight - y1;
+	if (y1 + h > _screenHeight)
+		h = _screenHeight - y1;
 
 	if ((w > 0) && (h > 0)) {
-		char *d = (char *)_vm->getCurrentDrawingBuffer() + y1 * _vm->_screenWidth + x1;
+		char *d = (char *)getCurrentDrawingBuffer() + y1 * _screenWidth + x1;
 
 		while (h-- > 0) {
 			char *dd = d;
@@ -955,7 +957,7 @@ void DisplayMan::rectFill(uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
 				*dd++ = _curapen;
 			}
 
-			d += _vm->_screenWidth;
+			d += _screenWidth;
 		}
 	}
 }
@@ -979,7 +981,7 @@ void DisplayMan::drawHLine(uint16 x1, uint16 y, uint16 x2) {
 }
 
 void DisplayMan::screenUpdate() {
-	g_system->copyRectToScreen(_vm->_displayBuffer, _vm->_screenWidth, 0, 0, _vm->_screenWidth, _vm->_screenHeight);
+	g_system->copyRectToScreen(_displayBuffer, _screenWidth, 0, 0, _screenWidth, _screenHeight);
 	g_system->updateScreen();
 
 	_vm->_event->processInput();
@@ -990,17 +992,176 @@ void DisplayMan::screenUpdate() {
 /*****************************************************************************/
 bool DisplayMan::createScreen(bool hiRes) {
 	if (hiRes) {
-		_vm->_screenWidth  = 640;
-		_vm->_screenHeight = 480;
+		_screenWidth  = 640;
+		_screenHeight = 480;
 	} else {
-		_vm->_screenWidth  = 320;
-		_vm->_screenHeight = 200;
+		_screenWidth  = 320;
+		_screenHeight = 200;
 	}
-	_screenBytesPerPage = _vm->_screenWidth * _vm->_screenHeight;
-
-	_vm->_displayBuffer = new byte[_screenBytesPerPage];	// FIXME: Memory leak!
+	_screenBytesPerPage = _screenWidth * _screenHeight;
+	_displayBuffer = new byte[_screenBytesPerPage];	// FIXME: Memory leak!
 
 	return true;
+}
+
+/*****************************************************************************/
+/* Converts an Amiga palette (up to 16 colors) to a VGA palette, then sets   */
+/* the VGA palette.                                                          */
+/*****************************************************************************/
+void DisplayMan::setAmigaPal(uint16 *pal, uint16 numColors) {
+	byte vgaPal[16 * 3];
+	uint16 vgaIdx = 0;
+
+	if (numColors > 16)
+		numColors = 16;
+
+	for (uint16 i = 0; i < numColors; i++) {
+		vgaPal[vgaIdx++] = (byte)(((pal[i] & 0xf00) >> 8) << 2);
+		vgaPal[vgaIdx++] = (byte)(((pal[i] & 0x0f0) >> 4) << 2);
+		vgaPal[vgaIdx++] = (byte)(((pal[i] & 0x00f)) << 2);
+	}
+
+	writeColorRegs(vgaPal, 0, 16);
+	_vm->waitTOF();
+}
+
+/*****************************************************************************/
+/* Writes any number of the 256 color registers.                             */
+/* first:    the number of the first color register to write.                */
+/* numreg:   the number of registers to write                                */
+/* buf:      a char pointer which contains the selected color registers.     */
+/*           Each value representing a color register occupies 3 bytes in    */
+/*           the array.  The order is red, green then blue.  The first byte  */
+/*           in the array is the red component of the first element selected.*/
+/*           The length of the buffer is 3 times the number of registers     */
+/*           selected.                                                       */
+/*****************************************************************************/
+void DisplayMan::writeColorRegs(byte *buf, uint16 first, uint16 numreg) {
+	byte tmp[256 * 3];
+
+	for (int i = 0; i < 256 * 3; i++) {
+		tmp[i] = buf[i] * 4;
+	}
+
+	g_system->getPaletteManager()->setPalette(tmp, first, numreg);
+
+	memcpy(&(_curvgapal[first * 3]), buf, numreg * 3);
+}
+
+void DisplayMan::setPalette(void *cmap, uint16 numcolors) {
+	if (memcmp(cmap, _curvgapal, numcolors * 3) != 0)
+		writeColorRegs((byte *)cmap, 0, numcolors);
+}
+
+/*****************************************************************************/
+/* Returns the base address of the current VGA display.                      */
+/*****************************************************************************/
+byte *DisplayMan::getCurrentDrawingBuffer() {
+	if (_currentDisplayBuffer)
+		return _currentDisplayBuffer;
+
+	return _displayBuffer;
+}
+
+/*****************************************************************************/
+/* Overlays a region on the screen using the desired pen color.              */
+/*****************************************************************************/
+void DisplayMan::overlayRect(uint16 pencolor, uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
+	int w = x2 - x1 + 1;
+	int h = y2 - y1 + 1;
+
+	if (x1 + w > _screenWidth)
+		w = _screenWidth - x1;
+
+	if (y1 + h > _screenHeight)
+		h = _screenHeight - y1;
+
+	if ((w > 0) && (h > 0)) {
+		char *d = (char *)getCurrentDrawingBuffer() + y1 * _screenWidth + x1;
+
+		while (h-- > 0) {
+			char *dd = d;
+			int ww = w;
+
+			if (y1 & 1) {
+				dd++;
+				ww--;
+			}
+
+			while (ww > 0) {
+				*dd = pencolor;
+				dd += 2;
+				ww -= 2;
+			}
+
+			d += _screenWidth;
+			y1++;
+		}
+	}
+}
+
+/*****************************************************************************/
+/* Scrolls the display in the x direction by blitting.                       */
+/* The _tempScrollData variable must be initialized to some memory, or this   */
+/* function will fail.                                                       */
+/*****************************************************************************/
+void DisplayMan::scrollDisplayX(int16 dx, uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
+	Image im;
+	uint16 temp;
+
+	im._imageData = _tempScrollData;
+
+	if (x1 > x2) {
+		temp = x2;
+		x2 = x1;
+		x1 = temp;
+	}
+
+	if (y1 > y2) {
+		temp = y2;
+		y2 = y1;
+		y1 = temp;
+	}
+
+	im._width = x2 - x1 + 1 - dx;
+	im._height = y2 - y1 + 1;
+
+	im.readScreenImage(x1, y1);
+	im.drawImage(x1 + dx, y1);
+
+	setAPen(0);
+	rectFill(x1, y1, x1 + dx - 1, y2);
+}
+
+/*****************************************************************************/
+/* Scrolls the display in the y direction by blitting.                       */
+/*****************************************************************************/
+void DisplayMan::scrollDisplayY(int16 dy, uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
+	Image im;
+	uint16 temp;
+
+	im._imageData = _tempScrollData;
+
+	if (x1 > x2) {
+		temp = x2;
+		x2 = x1;
+		x1 = temp;
+	}
+
+	if (y1 > y2) {
+		temp = y2;
+		y2 = y1;
+		y1 = temp;
+	}
+
+	im._width = x2 - x1 + 1;
+	im._height = y2 - y1 + 1 - dy;
+
+	im.readScreenImage(x1, y1);
+	im.drawImage(x1, y1 + dy);
+
+	setAPen(0);
+	rectFill(x1, y1, x2, y1 + dy - 1);
 }
 
 } // End of namespace Lab

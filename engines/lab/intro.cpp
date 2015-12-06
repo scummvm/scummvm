@@ -299,7 +299,7 @@ void Intro::introSequence() {
 
 		palette[15] = temp;
 
-		setAmigaPal(palette, 16);
+		_vm->_graphics->setAmigaPal(palette, 16);
 		_vm->waitTOF();
 	}
 
@@ -382,7 +382,7 @@ void Intro::introSequence() {
 
 			_vm->_music->updateMusic();
 			_vm->waitTOF();
-			_vm->setPalette(_vm->_anim->_diffPalette, 256);
+			_vm->_graphics->setPalette(_vm->_anim->_diffPalette, 256);
 			_vm->waitTOF();
 			_vm->waitTOF();
 		}
@@ -442,7 +442,7 @@ void Intro::introSequence() {
 
 	if (_quitIntro) {
 		_vm->_graphics->setAPen(0);
-		_vm->_graphics->rectFill(0, 0, _vm->_screenWidth - 1, _vm->_screenHeight - 1);
+		_vm->_graphics->rectFill(0, 0, _vm->_graphics->_screenWidth - 1, _vm->_graphics->_screenHeight - 1);
 		_vm->_anim->_doBlack = true;
 	}
 

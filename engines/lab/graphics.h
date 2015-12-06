@@ -31,6 +31,8 @@
 #ifndef LAB_GRAPHICS_H
 #define LAB_GRAPHICS_H
 
+#include "graphics/palette.h"
+
 namespace Lab {
 
 class LabEngine;
@@ -41,6 +43,8 @@ private:
 
 	byte _curapen;
 	byte *_curBitmap;
+	byte _curvgapal[256 * 3];
+	byte *_tempScrollData;
 
 public:
 	DisplayMan(LabEngine *lab);
@@ -114,10 +118,21 @@ public:
 	void drawVLine(uint16 x1, uint16 y, uint16 x2);
 	void screenUpdate();
 	bool createScreen(bool HiRes);
+	void setAmigaPal(uint16 *pal, uint16 numColors);
+	void writeColorRegs(byte *buf, uint16 first, uint16 numreg);
+	void setPalette(void *cmap, uint16 numcolors);
+	void overlayRect(uint16 pencolor, uint16 x1, uint16 y1, uint16 x2, uint16 y2);
+	byte *getCurrentDrawingBuffer();
+	void scrollDisplayX(int16 dx, uint16 x1, uint16 y1, uint16 x2, uint16 y2);
+	void scrollDisplayY(int16 dy, uint16 x1, uint16 y1, uint16 x2, uint16 y2);
 
 	bool _longWinInFront;
 	bool _lastMessageLong;
 	uint32 _screenBytesPerPage;
+	int _screenWidth;
+	int _screenHeight;
+	byte *_displayBuffer;
+	byte *_currentDisplayBuffer;
 };
 
 } // End of namespace Lab

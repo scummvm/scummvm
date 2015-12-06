@@ -299,8 +299,9 @@ void EventManager::processInput(bool can_delay) {
 					_mousePos.x = 0;
 					_mouseAtEdge = true;
 				}
-				if (_mousePos.x > _vm->_screenWidth - 1) {
-					_mousePos.x = _vm->_screenWidth;
+
+				if (_mousePos.x >= _vm->_graphics->_screenWidth) {
+					_mousePos.x = _vm->_graphics->_screenWidth;
 					_mouseAtEdge = true;
 				}
 
@@ -309,8 +310,9 @@ void EventManager::processInput(bool can_delay) {
 					_mousePos.y = 0;
 					_mouseAtEdge = true;
 				}
-				if (_mousePos.y > _vm->_screenHeight - 1) {
-					_mousePos.y = _vm->_screenHeight;
+
+				if (_mousePos.y >= _vm->_graphics->_screenHeight) {
+					_mousePos.y = _vm->_graphics->_screenHeight;
 					_mouseAtEdge = true;
 				}
 
@@ -350,7 +352,7 @@ void EventManager::processInput(bool can_delay) {
 				break;
 			}
 
-			g_system->copyRectToScreen(_vm->_displayBuffer, _vm->_screenWidth, 0, 0, _vm->_screenWidth, _vm->_screenHeight);
+			g_system->copyRectToScreen(_vm->_graphics->_displayBuffer, _vm->_graphics->_screenWidth, 0, 0, _vm->_graphics->_screenWidth, _vm->_graphics->_screenHeight);
 			g_system->updateScreen();
 		}
 	}

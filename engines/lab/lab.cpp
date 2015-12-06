@@ -55,12 +55,6 @@ LabEngine::LabEngine(OSystem *syst, const ADGameDescription *gameDesc)
  : Engine(syst), _gameDescription(gameDesc), _extraGameFeatures(0) {
 	g_lab = this;
 
-	_screenWidth = 320;
-	_screenHeight = 200;
-
-	_currentDisplayBuffer = 0;
-	_displayBuffer = 0;
-
 	_lastWaitTOFTicks = 0;
 
 	_isHiRes = false;
@@ -183,6 +177,10 @@ Common::Error LabEngine::run() {
 
 Common::String LabEngine::generateSaveFileName(uint slot) {
 	return Common::String::format("%s.%03u", _targetName.c_str(), slot);
+}
+
+void LabEngine::drawStaticMessage(byte index) {
+	_graphics->drawMessage(_resource->getStaticText((StaticText)index).c_str());
 }
 
 } // End of namespace Lab

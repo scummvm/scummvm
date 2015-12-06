@@ -296,7 +296,7 @@ bool LabEngine::doUse(uint16 CurInv) {
 		_curFileName = " ";
 		_cptr = NULL;
 		doMap(_roomNum);
-		setPalette(initcolors, 8);
+		_graphics->setPalette(initcolors, 8);
 		_graphics->drawMessage(NULL);
 		_graphics->drawPanel();
 	} else if (CurInv == JOURNALNUM) {         /* LAB: Labyrinth specific */
@@ -400,7 +400,7 @@ void LabEngine::mainGameLoop() {
 
 	bool forceDraw = false, GotMessage = true;
 
-	setPalette(initcolors, 8);
+	_graphics->setPalette(initcolors, 8);
 
 	_cptr    = NULL;
 	_roomNum = 1;
@@ -843,14 +843,10 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 
 			if (doit) {
 				_graphics->drawMessage("Disk operation failed.");
-				setPalette(initcolors, 8);
-
-				_graphics->screenUpdate();
-
+				_graphics->setPalette(initcolors, 8);
 				g_system->delayMillis(1000);
-			} else {
-				_graphics->screenUpdate();
 			}
+			_graphics->screenUpdate();
 		} else if (gadgetId == 1) {
 			if (!doUse(curInv)) {
 				Old        = actionMode;

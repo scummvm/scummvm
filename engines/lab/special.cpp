@@ -77,13 +77,13 @@ extern uint16 Direction;
 
 
 static byte *loadBackPict(const char *fileName, bool tomem) {
-	byte *res = NULL;
+	byte *res = nullptr;
 
 	FadePalette = hipal;
 	g_lab->_anim->_noPalChange = true;
 
 	if (tomem)
-		res = g_lab->_graphics->readPictToMem(fileName, g_lab->_screenWidth, g_lab->_screenHeight);
+		res = g_lab->_graphics->readPictToMem(fileName, g_lab->_graphics->_screenWidth, g_lab->_graphics->_screenHeight);
 	else
 		g_lab->_graphics->readPict(fileName, true);
 
@@ -106,7 +106,7 @@ void doNotes() {
 	char *ntext = g_lab->_resource->getText("Lab:Rooms/Notes");
 
 	g_lab->_graphics->flowText(noteFont, -2 + g_lab->_graphics->SVGACord(1), 0, 0, false, false, true, true, g_lab->_graphics->VGAScaleX(25) + g_lab->_graphics->SVGACord(15), g_lab->_graphics->VGAScaleY(50), g_lab->_graphics->VGAScaleX(295) - g_lab->_graphics->SVGACord(15), g_lab->_graphics->VGAScaleY(148), ntext);
-	g_lab->setPalette(g_lab->_anim->_diffPalette, 256);
+	g_lab->_graphics->setPalette(g_lab->_anim->_diffPalette, 256);
 
 	closeFont(noteFont);
 	delete[] ntext;
@@ -150,7 +150,7 @@ void doWestPaper() {
 	delete[] ntext;
 	closeFont(paperFont);
 
-	g_lab->setPalette(g_lab->_anim->_diffPalette, 256);
+	g_lab->_graphics->setPalette(g_lab->_anim->_diffPalette, 256);
 }
 
 /*****************************************************************************/
@@ -268,18 +268,18 @@ static void drawJournalText() {
 /*****************************************************************************/
 static void turnPage(bool FromLeft) {
 	if (FromLeft) {
-		for (int i = 0; i < g_lab->_screenWidth; i += 8) {
+		for (int i = 0; i < g_lab->_graphics->_screenWidth; i += 8) {
 			g_lab->_music->updateMusic();
 			g_lab->waitTOF();
-			ScreenImage._imageData = g_lab->getCurrentDrawingBuffer();
-			JBackImage.blitBitmap(i, 0, &ScreenImage, i, 0, 8, g_lab->_screenHeight, false);
+			ScreenImage._imageData = g_lab->_graphics->getCurrentDrawingBuffer();
+			JBackImage.blitBitmap(i, 0, &ScreenImage, i, 0, 8, g_lab->_graphics->_screenHeight, false);
 		}
 	} else {
-		for (int i = (g_lab->_screenWidth - 8); i > 0; i -= 8) {
+		for (int i = (g_lab->_graphics->_screenWidth - 8); i > 0; i -= 8) {
 			g_lab->_music->updateMusic();
 			g_lab->waitTOF();
-			ScreenImage._imageData = g_lab->getCurrentDrawingBuffer();
-			JBackImage.blitBitmap(i, 0, &ScreenImage, i, 0, 8, g_lab->_screenHeight, false);
+			ScreenImage._imageData = g_lab->_graphics->getCurrentDrawingBuffer();
+			JBackImage.blitBitmap(i, 0, &ScreenImage, i, 0, 8, g_lab->_graphics->_screenHeight, false);
 		}
 	}
 }
@@ -298,10 +298,10 @@ void LabEngine::drawJournal(uint16 wipenum, bool needFade) {
 
 	drawJournalText();
 
-	ScreenImage._imageData = getCurrentDrawingBuffer();
+	ScreenImage._imageData = _graphics->getCurrentDrawingBuffer();
 
 	if (wipenum == 0)
-		JBackImage.blitBitmap(0, 0, &ScreenImage, 0, 0, _screenWidth, _screenHeight, false);
+		JBackImage.blitBitmap(0, 0, &ScreenImage, 0, 0, _graphics->_screenWidth, _graphics->_screenHeight, false);
 	else
 		turnPage((bool)(wipenum == 1));
 
@@ -320,7 +320,7 @@ void LabEngine::drawJournal(uint16 wipenum, bool needFade) {
 		fade(true, 0);
 
 	g_lab->_anim->_noPalChange = true;
-	JBackImage._imageData = _graphics->readPictToMem("P:Journal.pic", _screenWidth, _screenHeight);
+	JBackImage._imageData = _graphics->readPictToMem("P:Journal.pic", _graphics->_screenWidth, _graphics->_screenHeight);
 	GotBackImage = true;
 
 	eatMessages();
@@ -380,15 +380,15 @@ void LabEngine::doJournal() {
 	lastpage    = false;
 	GotBackImage = false;
 
-	JBackImage._width = _screenWidth;
-	JBackImage._height = _screenHeight;
+	JBackImage._width = _graphics->_screenWidth;
+	JBackImage._height = _graphics->_screenHeight;
 	JBackImage._imageData   = NULL;
 
 	BackG.NextGadget = &CancelG;
 	CancelG.NextGadget = &ForwardG;
 
 	ScreenImage = JBackImage;
-	ScreenImage._imageData = getCurrentDrawingBuffer();
+	ScreenImage._imageData = _graphics->getCurrentDrawingBuffer();
 
 	_music->updateMusic();
 	loadJournalData();
@@ -402,10 +402,10 @@ void LabEngine::doJournal() {
 	fade(false, 0);
 	_event->mouseHide();
 
-	ScreenImage._imageData = getCurrentDrawingBuffer();
+	ScreenImage._imageData = _graphics->getCurrentDrawingBuffer();
 
 	_graphics->setAPen(0);
-	_graphics->rectFill(0, 0, _screenWidth - 1, _screenHeight - 1);
+	_graphics->rectFill(0, 0, _graphics->_screenWidth - 1, _graphics->_screenHeight - 1);
 	_graphics->blackScreen();
 }
 
@@ -476,13 +476,13 @@ void LabEngine::drawMonText(char *text, TextFont *monitorFont, uint16 x1, uint16
 			MonGadHeight = fheight;
 
 		_graphics->setAPen(0);
-		_graphics->rectFill(0, 0, _screenWidth - 1, y2);
+		_graphics->rectFill(0, 0, _graphics->_screenWidth - 1, y2);
 
 		for (uint16 i = 0; i < numlines; i++)
 			MonButton->drawImage(0, i * MonGadHeight);
 	} else if (isinteractive) {
 		_graphics->setAPen(0);
-		_graphics->rectFill(0, 0, _screenWidth - 1, y2);
+		_graphics->rectFill(0, 0, _graphics->_screenWidth - 1, y2);
 	} else {
 		_graphics->setAPen(0);
 		_graphics->rectFill(x1, y1, x2, y2);
@@ -644,7 +644,7 @@ void LabEngine::doMonitor(char *background, char *textfile, bool isinteractive, 
 	closeFont(monitorFont);
 
 	_graphics->setAPen(0);
-	_graphics->rectFill(0, 0, _screenWidth - 1, _screenHeight - 1);
+	_graphics->rectFill(0, 0, _graphics->_screenWidth - 1, _graphics->_screenHeight - 1);
 	_graphics->blackAllScreen();
 	_graphics->freePict();
 }

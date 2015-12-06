@@ -424,7 +424,7 @@ void Anim::diffNextFrame() {
 		return;
 
 	if (DispBitMap->_flags & BITMAPF_VIDEO) {
-		DispBitMap->_planes[0] = _vm->getCurrentDrawingBuffer();
+		DispBitMap->_planes[0] = _vm->_graphics->getCurrentDrawingBuffer();
 		DispBitMap->_planes[1] = DispBitMap->_planes[0] + 0x10000;
 		DispBitMap->_planes[2] = DispBitMap->_planes[1] + 0x10000;
 		DispBitMap->_planes[3] = DispBitMap->_planes[2] + 0x10000;
@@ -444,7 +444,7 @@ void Anim::diffNextFrame() {
 				}
 
 				if (_isPal && !_noPalChange) {
-					_vm->setPalette(_diffPalette, 256);
+					_vm->_graphics->setPalette(_diffPalette, 256);
 					_isPal = false;
 				}
 
@@ -452,7 +452,7 @@ void Anim::diffNextFrame() {
 			}
 
 			if (_isPal && !_noPalChange && !_isBM && !_donePal) {
-				_vm->setPalette(_diffPalette, 256);
+				_vm->_graphics->setPalette(_diffPalette, 256);
 				_isPal = false;
 			}
 

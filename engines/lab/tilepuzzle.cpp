@@ -259,7 +259,7 @@ void LabEngine::showTile(const char *filename, bool showsolution) {
 	delete tileFile;
 
 	doTile(showsolution);
-	setPalette(_anim->_diffPalette, 256);
+	_graphics->setPalette(_anim->_diffPalette, 256);
 }
 
 /*****************************************************************************/
@@ -319,9 +319,9 @@ void LabEngine::changeCombination(uint16 number) {
 
 	combnum = combination[number];
 
-	display._imageData = getCurrentDrawingBuffer();
-	display._width     = _screenWidth;
-	display._height    = _screenHeight;
+	display._imageData = _graphics->getCurrentDrawingBuffer();
+	display._width     = _graphics->_screenWidth;
+	display._height    = _graphics->_screenHeight;
 
 	for (uint16 i = 1; i <= (Images[combnum]->_height / 2); i++) {
 		if (_isHiRes) {
@@ -330,10 +330,8 @@ void LabEngine::changeCombination(uint16 number) {
 		} else
 			waitTOF();
 
-		display._imageData = getCurrentDrawingBuffer();
-
-		scrollDisplayY(2, _graphics->VGAScaleX(COMBINATION_X[number]), _graphics->VGAScaleY(65), _graphics->VGAScaleX(COMBINATION_X[number]) + (Images[combnum])->_width - 1, _graphics->VGAScaleY(65) + (Images[combnum])->_height);
-
+		display._imageData = _graphics->getCurrentDrawingBuffer();
+		_graphics->scrollDisplayY(2, _graphics->VGAScaleX(COMBINATION_X[number]), _graphics->VGAScaleY(65), _graphics->VGAScaleX(COMBINATION_X[number]) + (Images[combnum])->_width - 1, _graphics->VGAScaleY(65) + (Images[combnum])->_height);
 		Images[combnum]->blitBitmap(0, (Images[combnum])->_height - (2 * i), &(display), _graphics->VGAScaleX(COMBINATION_X[number]), _graphics->VGAScaleY(65), (Images[combnum])->_width, 2, false);
 	}
 
@@ -348,10 +346,10 @@ void LabEngine::changeCombination(uint16 number) {
 
 void LabEngine::scrollRaster(int16 dx, int16 dy, uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
 	if (dx)
-		scrollDisplayX(dx, x1, y1, x2, y2);
+		_graphics->scrollDisplayX(dx, x1, y1, x2, y2);
 
 	if (dy)
-		scrollDisplayY(dy, x1, y1, x2, y2);
+		_graphics->scrollDisplayY(dy, x1, y1, x2, y2);
 }
 
 /*****************************************************************************/
@@ -382,7 +380,7 @@ void LabEngine::showCombination(const char *filename) {
 
 	doCombination();
 
-	setPalette(_anim->_diffPalette, 256);
+	_graphics->setPalette(_anim->_diffPalette, 256);
 }
 
 } // End of namespace Lab
