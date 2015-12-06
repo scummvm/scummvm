@@ -37,8 +37,6 @@ namespace Lab {
 
 #define MAXFILELEN 31
 
-
-
 /*------------------------------- Action types ------------------------------*/
 #define PLAYSOUND     1
 #define PLAYSOUNDCONT 2
@@ -77,8 +75,6 @@ namespace Lab {
 #define CSHOWMESSAGE 35
 #define PLAYSOUNDB   36
 
-
-
 /* Rule Types */
 #define ACTION      1
 #define OPERATE     2
@@ -87,8 +83,6 @@ namespace Lab {
 #define TURN        5
 #define GOMAINVIEW  6
 #define TURNFROMTO  7
-
-
 
 /*----------------------------- Rule Type Action ----------------------------*/
 #define TAKE        1
@@ -101,50 +95,60 @@ namespace Lab {
 #pragma pack(push, 1)
 #endif
 
-typedef struct closeData {
+typedef struct CloseData {
 	uint16 x1, y1, x2, y2;
-	int16 CloseUpType;          /* if > 0, an object.  If < 0, an item */
-	uint16 depth;               /* Level of the closeup. */
-	char *GraphicName, *Message;
-	closeData *NextCloseUp, *SubCloseUps;
+	int16 _closeUpType;          /* if > 0, an object.  If < 0, an item */
+	uint16 _depth;               /* Level of the closeup. */
+	char *_graphicName;
+	char *_message;
+	CloseData *_nextCloseUp;
+	CloseData *_subCloseUps;
 } CloseData;
 
 typedef CloseData *CloseDataPtr;
 
 struct ViewData {
-	int16 *Condition;
-	char *GraphicName;
-	struct ViewData *NextCondition;
-	CloseDataPtr closeUps;
+	int16 *_condition;
+	char *_graphicName;
+	struct ViewData *_nextCondition;
+	CloseDataPtr _closeUps;
 };
 
 struct Action {
-	int16 ActionType, Param1, Param2, Param3;
-	byte *Data;            /* Message, or a pointer to array of messages. */
-	Action *NextAction;
+	int16 _actionType;
+	int16 _param1;
+	int16 _param2;
+	int16 _param3;
+	byte *_data;            /* Message, or a pointer to array of messages. */
+	Action *_nextAction;
 };
 
 struct Rule {
-	int16 RuleType, Param1, Param2, *Condition;
-	Action *ActionList;
-	Rule *NextRule;
+	int16 _ruleType;
+	int16 _param1;
+	int16 _param2;
+	int16 *_condition;
+	Action *_actionList;
+	Rule *_nextRule;
 };
 
 typedef Common::List<Rule *> RuleList;
 
 struct RoomData {
-	uint16 _northDoor, _southDoor, _eastDoor, _westDoor;
-
+	uint16 _northDoor;
+	uint16 _southDoor;
+	uint16 _eastDoor;
+	uint16 _westDoor;
 	byte _wipeType;
-
 	ViewData *_view[4];
 	RuleList *_rules;
 	char *_roomMsg;
 };
 
 struct InventoryData {
-	uint16 Many;
-	char *name, *BInvName;
+	uint16 _many;
+	char *_name;
+	char *_bitmapName;
 };
 
 /* Map Flags */

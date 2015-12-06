@@ -97,14 +97,14 @@ void LabEngine::drawRoomMessage(uint16 curInv, CloseDataPtr closePtr) {
 	}
 
 	if (_alternate) {
-		if ((curInv <= _numInv) && _conditions->in(curInv) && _inventory[curInv].BInvName) {
+		if ((curInv <= _numInv) && _conditions->in(curInv) && _inventory[curInv]._bitmapName) {
 			if ((curInv == LAMPNUM) && _conditions->in(LAMPON))  /* LAB: Labyrinth specific */
 				drawStaticMessage(kTextLampOn);
-			else if (_inventory[curInv].Many > 1) {
-				Common::String roomMessage = Common::String(_inventory[curInv].name) + "  (" + Common::String::format("%d", _inventory[curInv].Many) + ")";
+			else if (_inventory[curInv]._many > 1) {
+				Common::String roomMessage = Common::String(_inventory[curInv]._name) + "  (" + Common::String::format("%d", _inventory[curInv]._many) + ")";
 				_graphics->drawMessage(roomMessage.c_str());
 			} else
-				_graphics->drawMessage(_inventory[curInv].name);
+				_graphics->drawMessage(_inventory[curInv]._name);
 		}
 	} else
 		drawDirection(closePtr);
@@ -182,32 +182,32 @@ bool LabEngine::doCloseUp(CloseDataPtr closePtr) {
 		lutertmargin = 128;
 	}
 
-	switch (closePtr->CloseUpType) {
+	switch (closePtr->_closeUpType) {
 	case MUSEUMMONITOR:
 	case LIBRARYMONITOR:
 	case WINDOWMONITOR:
-		doMonitor(closePtr->GraphicName, closePtr->Message, false, monltmargin, montopmargin, monrtmargin, 165);
+		doMonitor(closePtr->_graphicName, closePtr->_message, false, monltmargin, montopmargin, monrtmargin, 165);
 		break;
 	case GRAMAPHONEMONITOR:
-		doMonitor(closePtr->GraphicName, closePtr->Message, false, monltmargin, montopmargin, 171, 165);
+		doMonitor(closePtr->_graphicName, closePtr->_message, false, monltmargin, montopmargin, 171, 165);
 		break;
 	case UNICYCLEMONITOR:
-		doMonitor(closePtr->GraphicName, closePtr->Message, false, 100, montopmargin, monrtmargin, 165);
+		doMonitor(closePtr->_graphicName, closePtr->_message, false, 100, montopmargin, monrtmargin, 165);
 		break;
 	case STATUEMONITOR:
-		doMonitor(closePtr->GraphicName, closePtr->Message, false, 117, montopmargin, monrtmargin, 165);
+		doMonitor(closePtr->_graphicName, closePtr->_message, false, 117, montopmargin, monrtmargin, 165);
 		break;
 	case TALISMANMONITOR:
-		doMonitor(closePtr->GraphicName, closePtr->Message, false, monltmargin, montopmargin, 184, 165);
+		doMonitor(closePtr->_graphicName, closePtr->_message, false, monltmargin, montopmargin, 184, 165);
 		break;
 	case LUTEMONITOR:
-		doMonitor(closePtr->GraphicName, closePtr->Message, false, monltmargin, montopmargin, lutertmargin, 165);
+		doMonitor(closePtr->_graphicName, closePtr->_message, false, monltmargin, montopmargin, lutertmargin, 165);
 		break;
 	case CLOCKMONITOR:
-		doMonitor(closePtr->GraphicName, closePtr->Message, false, monltmargin, montopmargin, 206, 165);
+		doMonitor(closePtr->_graphicName, closePtr->_message, false, monltmargin, montopmargin, 206, 165);
 		break;
 	case TERMINALMONITOR:
-		doMonitor(closePtr->GraphicName, closePtr->Message, true, monltmargin, montopmargin, monrtmargin, 165);
+		doMonitor(closePtr->_graphicName, closePtr->_message, true, monltmargin, montopmargin, monrtmargin, 165);
 		break;
 	default:
 		return false;
@@ -224,7 +224,7 @@ bool LabEngine::doCloseUp(CloseDataPtr closePtr) {
 /******************************************************************************/
 const char *LabEngine::getInvName(uint16 curInv) {
 	if (_mainDisplay)
-		return _inventory[curInv].BInvName;
+		return _inventory[curInv]._bitmapName;
 
 	if ((curInv == LAMPNUM) && _conditions->in(LAMPON))
 		return "P:Mines/120";
@@ -233,20 +233,20 @@ const char *LabEngine::getInvName(uint16 curInv) {
 		return "P:Future/BeltGlow";
 
 	if (curInv == WESTPAPERNUM) {
-		_curFileName = _inventory[curInv].BInvName;
+		_curFileName = _inventory[curInv]._bitmapName;
 		_anim->_noPalChange = true;
 		_graphics->readPict(_curFileName, false);
 		_anim->_noPalChange = false;
 		doWestPaper();
 	} else if (curInv == NOTESNUM) {
-		_curFileName = _inventory[curInv].BInvName;
+		_curFileName = _inventory[curInv]._bitmapName;
 		_anim->_noPalChange = true;
 		_graphics->readPict(_curFileName, false);
 		_anim->_noPalChange = false;
 		doNotes();
 	}
 
-	return _inventory[curInv].BInvName;
+	return _inventory[curInv]._bitmapName;
 }
 
 /******************************************************************************/
@@ -351,7 +351,7 @@ void LabEngine::decIncInv(uint16 *curInv, bool decreaseFl) {
 		(*curInv)++;
 
 	while (*curInv && (*curInv <= _numInv)) {
-		if (_conditions->in(*curInv) && _inventory[*curInv].BInvName) {
+		if (_conditions->in(*curInv) && _inventory[*curInv]._bitmapName) {
 			_nextFileName = getInvName(*curInv);
 			break;
 		}
@@ -369,7 +369,7 @@ void LabEngine::decIncInv(uint16 *curInv, bool decreaseFl) {
 			*curInv = 1;
 
 		while (*curInv && (*curInv <= _numInv)) {
-			if (_conditions->in(*curInv) && _inventory[*curInv].BInvName) {
+			if (_conditions->in(*curInv) && _inventory[*curInv]._bitmapName) {
 				_nextFileName = getInvName(*curInv);
 				break;
 			}
@@ -452,12 +452,12 @@ void LabEngine::mainGameLoop() {
 				_curFileName = _nextFileName;
 
 				if (_cptr) {
-					if ((_cptr->CloseUpType == SPECIALLOCK) && _mainDisplay)  /* LAB: Labyrinth specific code */
+					if ((_cptr->_closeUpType == SPECIALLOCK) && _mainDisplay)  /* LAB: Labyrinth specific code */
 						showCombination(_curFileName);
-					else if (((_cptr->CloseUpType == SPECIALBRICK)  ||
-					          (_cptr->CloseUpType == SPECIALBRICKNOMOUSE)) &&
+					else if (((_cptr->_closeUpType == SPECIALBRICK)  ||
+					          (_cptr->_closeUpType == SPECIALBRICKNOMOUSE)) &&
 					         _mainDisplay) /* LAB: Labyrinth specific code */
-						showTile(_curFileName, (bool)(_cptr->CloseUpType == SPECIALBRICKNOMOUSE));
+						showTile(_curFileName, (bool)(_cptr->_closeUpType == SPECIALBRICKNOMOUSE));
 					else
 						_graphics->readPict(_curFileName, false);
 				} else
@@ -535,11 +535,11 @@ void LabEngine::mainGameLoop() {
 
 	if (_inventory) {
 		for (int i = 1; i <= _numInv; i++) {
-			if (_inventory[i].name)
-				free(_inventory[i].name);
+			if (_inventory[i]._name)
+				free(_inventory[i]._name);
 
-			if (_inventory[i].BInvName)
-				free(_inventory[i].BInvName);
+			if (_inventory[i]._bitmapName)
+				free(_inventory[i]._bitmapName);
 		}
 
 		free(_inventory);
@@ -552,7 +552,7 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 
 	uint16 oldDirection = 0;
 	uint16 lastInv = MAPNUM;
-	CloseDataPtr oldcptr, tempcptr, hcptr = NULL;
+	CloseDataPtr oldcptr, tempcptr, hcptr = nullptr;
 	ViewData *VPtr;
 	bool doit;
 	uint16 NewDir;
@@ -862,7 +862,7 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 			}
 
 			if ((curInv <= _numInv) && _conditions->in(curInv) &&
-			        _inventory[curInv].BInvName)
+			        _inventory[curInv]._bitmapName)
 				_nextFileName = getInvName(curInv);
 
 			_graphics->screenUpdate();
@@ -922,9 +922,9 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 		doit = false;
 
 		if (_cptr) {
-			if ((_cptr->CloseUpType == SPECIALLOCK) && _mainDisplay) /* LAB: Labyrinth specific code */
+			if ((_cptr->_closeUpType == SPECIALLOCK) && _mainDisplay) /* LAB: Labyrinth specific code */
 				mouseCombination(curPos);
-			else if ((_cptr->CloseUpType == SPECIALBRICK) && _mainDisplay)
+			else if ((_cptr->_closeUpType == SPECIALBRICK) && _mainDisplay)
 				mouseTile(curPos);
 			else
 				doit = true;
@@ -963,8 +963,8 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 				if (_cptr == tempcptr) {
 					if (curPos.y < (_graphics->VGAScaleY(149) + _graphics->SVGACord(2)))
 						drawStaticMessage(kTextNothing);
-				} else if (tempcptr->GraphicName) {
-					if (*(tempcptr->GraphicName)) {
+				} else if (tempcptr->_graphicName) {
+					if (*(tempcptr->_graphicName)) {
 						_anim->_doBlack = true;
 						_cptr = tempcptr;
 					} else if (curPos.y < (_graphics->VGAScaleY(149) + _graphics->SVGACord(2)))
@@ -987,7 +987,7 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 		_graphics->screenUpdate();
 	} else if (msgClass == DELTAMOVE) {
 		VPtr = getViewData(_roomNum, _direction);
-		oldcptr = VPtr->closeUps;
+		oldcptr = VPtr->_closeUps;
 
 		if (hcptr == NULL) {
 			tempcptr = _cptr;
@@ -997,18 +997,18 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 				if (_cptr == NULL)
 					hcptr = oldcptr;
 				else
-					hcptr = _cptr->SubCloseUps;
+					hcptr = _cptr->_subCloseUps;
 			} else
-				hcptr = tempcptr->NextCloseUp;
+				hcptr = tempcptr->_nextCloseUp;
 		} else
-			hcptr = hcptr->NextCloseUp;
+			hcptr = hcptr->_nextCloseUp;
 
 
 		if (hcptr == NULL) {
 			if (_cptr == NULL)
 				hcptr = oldcptr;
 			else
-				hcptr = _cptr->SubCloseUps;
+				hcptr = _cptr->_subCloseUps;
 		}
 
 		if (hcptr)
