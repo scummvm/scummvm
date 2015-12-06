@@ -67,6 +67,7 @@ public:
 	void playSoundEffect(uint16 SampleSpeed, uint32 Length, void *Data);
 	void stopSoundEffect();
 	bool isSoundEffectActive() const;
+	bool readMusic(const char *filename, bool waitTillFinished);
 
 	bool _winmusic, _doNotFilestopSoundEffect;
 	bool _musicOn;

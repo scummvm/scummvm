@@ -308,4 +308,22 @@ void Music::resetMusic() {
 	_tFile = 0;
 }
 
+/*****************************************************************************/
+/* Reads in a music file.  Ignores any graphics.                             */
+/*****************************************************************************/
+bool Music::readMusic(const char *filename, bool waitTillFinished) {
+	Common::File *file = _vm->_resource->openDataFile(filename, MKTAG('D', 'I', 'F', 'F'));
+	updateMusic();
+	if (!_doNotFilestopSoundEffect)
+		stopSoundEffect();
+
+	if (!file)
+		return false;
+
+	_vm->_anim->_doBlack = false;
+	_vm->_anim->readSound(waitTillFinished, file);
+
+	return true;
+}
+
 } // End of namespace Lab
