@@ -19,9 +19,7 @@ MODULE_OBJS := \
 	special.o \
 	text.o \
 	tilepuzzle.o \
-	timing.o \
-	vga.o
-
+	timing.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_LAB), DYNAMIC_PLUGIN)
