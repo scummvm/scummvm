@@ -64,12 +64,6 @@ struct SaveGameHeader {
 	uint16 _direction;
 };
 
-/*----------------------------*/
-/*----- From graphics.c ------*/
-/*----------------------------*/
-
-bool readMusic(const char *filename, bool waitTillFinished);
-
 /*--------------------------*/
 /*----- From saveGame.c ----*/
 /*--------------------------*/

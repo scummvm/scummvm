@@ -304,20 +304,20 @@ void LabEngine::doActions(Action *aptr, CloseDataPtr *lcptr) {
 		case PLAYSOUND:
 			_music->_loopSoundEffect = false;
 			_music->_waitTillFinished = true;
-			readMusic((char *)aptr->Data, true);
+			_music->readMusic((char *)aptr->Data, true);
 			_music->_waitTillFinished = false;
 			break;
 
 		case PLAYSOUNDB:
 			_music->_loopSoundEffect = false;
 			_music->_waitTillFinished = false;
-			readMusic((char *)aptr->Data, false);
+			_music->readMusic((char *)aptr->Data, false);
 			break;
 
 		case PLAYSOUNDCONT:
 			_music->_doNotFilestopSoundEffect = true;
 			_music->_loopSoundEffect = true;
-			readMusic((char *)aptr->Data, _music->_waitTillFinished);
+			_music->readMusic((char *)aptr->Data, _music->_waitTillFinished);
 			break;
 
 		case SHOWDIFF:

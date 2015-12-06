@@ -181,23 +181,6 @@ void DisplayMan::freePict() {
 	_curBitmap = NULL;
 }
 
-/*****************************************************************************/
-/* Reads in a music file.  Ignores any graphics.                             */
-/*****************************************************************************/
-bool readMusic(const char *filename, bool waitTillFinished) {
-	Common::File *file = g_lab->_resource->openDataFile(filename, MKTAG('D', 'I', 'F', 'F'));
-	g_lab->_music->updateMusic();
-	if (!g_lab->_music->_doNotFilestopSoundEffect)
-		g_lab->_music->stopSoundEffect();
-	if (!file)
-		return false;
-
-	g_lab->_anim->_doBlack = false;
-	g_lab->_anim->readSound(waitTillFinished, file);
-
-	return true;
-}
-
 /*---------------------------------------------------------------------------*/
 /*------------ Does all the text rendering to the message boxes. ------------*/
 /*---------------------------------------------------------------------------*/
