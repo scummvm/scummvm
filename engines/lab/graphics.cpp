@@ -45,6 +45,7 @@ BitMap bit1, bit2, *DispBitMap = &bit1, *DrawBitMap = &bit1;
 DisplayMan::DisplayMan(LabEngine *vm) : _vm(vm) {
 	_longWinInFront = false;
 	_lastMessageLong = false;
+	_doNotDrawMessage = false;
 
 	_screenBytesPerPage = 65536;
 	_curapen = 0;
@@ -199,7 +200,6 @@ bool readMusic(const char *filename, bool waitTillFinished) {
 /*---------------------------------------------------------------------------*/
 /*------------ Does all the text rendering to the message boxes. ------------*/
 /*---------------------------------------------------------------------------*/
-bool DoNotDrawMessage = false;
 
 /*----- The flowText routines -----*/
 
@@ -404,8 +404,8 @@ int32 DisplayMan::longDrawMessage(const char *str) {
 /* Draws a message to the message box.                                        */
 /******************************************************************************/
 void DisplayMan::drawMessage(const char *str) {
-	if (DoNotDrawMessage) {
-		DoNotDrawMessage = false;
+	if (_doNotDrawMessage) {
+		_doNotDrawMessage = false;
 		return;
 	}
 

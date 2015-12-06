@@ -35,7 +35,6 @@
 namespace Lab {
 
 extern RoomData *_rooms;
-extern uint16 NumInv, ManyRooms, HighestCondition;
 
 Resource::Resource(LabEngine *vm) : _vm(vm) {
 	readStaticText();
@@ -92,12 +91,12 @@ char *Resource::getText(const char *fileName) {
 bool Resource::readRoomData(const char *fileName) {
 	Common::File *dataFile = openDataFile(fileName, MKTAG('D', 'O', 'R', '1'));
 
-	ManyRooms = dataFile->readUint16LE();
-	HighestCondition = dataFile->readUint16LE();
-	_rooms = (RoomData *)malloc((ManyRooms + 1) * sizeof(RoomData));
-	memset(_rooms, 0, (ManyRooms + 1) * sizeof(RoomData));
+	_vm->_manyRooms = dataFile->readUint16LE();
+	_vm->_highestCondition = dataFile->readUint16LE();
+	_rooms = (RoomData *)malloc((_vm->_manyRooms + 1) * sizeof(RoomData));
+	memset(_rooms, 0, (_vm->_manyRooms + 1) * sizeof(RoomData));
 
-	for (uint16 i = 1; i <= ManyRooms; i++) {
+	for (uint16 i = 1; i <= _vm->_manyRooms; i++) {
 		_rooms[i]._northDoor = dataFile->readUint16LE();
 		_rooms[i]._southDoor = dataFile->readUint16LE();
 		_rooms[i]._eastDoor = dataFile->readUint16LE();
@@ -119,10 +118,10 @@ bool Resource::readRoomData(const char *fileName) {
 InventoryData *Resource::readInventory(const char *fileName) {
 	Common::File *dataFile = openDataFile(fileName, MKTAG('I', 'N', 'V', '1'));
 
-	NumInv = dataFile->readUint16LE();
-	InventoryData *inventory = (InventoryData *)malloc((NumInv + 1) * sizeof(InventoryData));
+	_vm->_numInv = dataFile->readUint16LE();
+	InventoryData *inventory = (InventoryData *)malloc((_vm->_numInv + 1) * sizeof(InventoryData));
 
-	for (uint16 i = 1; i <= NumInv; i++) {
+	for (uint16 i = 1; i <= _vm->_numInv; i++) {
 		inventory[i].Many = dataFile->readUint16LE();
 		inventory[i].name = readString(dataFile);
 		inventory[i].BInvName = readString(dataFile);

@@ -70,6 +70,13 @@ LabEngine::LabEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	_followCrumbsFast = false;
 	_isCrumbTurning = false;
 	_isCrumbWaiting = false;
+	_noUpdateDiff = false;
+	_quitLab = false;
+	_numInv = 0;
+	_manyRooms = 0;
+	_direction = 0;
+	_highestCondition = 0;
+
 	_crumbSecs = 0;
 	_crumbMicros = 0;
 
@@ -98,8 +105,8 @@ LabEngine::LabEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	_newFileName = nullptr;
 
 	_curFileName = " ";
-	_msgFont = 0;
-	_inventory = 0;
+	_msgFont = nullptr;
+	_inventory = nullptr;
 
 	initTilePuzzle();
 
