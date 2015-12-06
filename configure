@@ -2056,8 +2056,8 @@ echo_n "Checking host CPU architecture... "
 case $_host_cpu in
 	arm*)
 		case $_host_alias in
-			arm-apple*)
-				echo "Apple iPhone - ARM assembly disabled"
+			arm-apple-darwin11)
+				echo "Apple iOS 7+ - ARM assembly disabled"
 				;;
 			*)
 				echo "ARM"
@@ -2720,9 +2720,6 @@ if test -n "$_host"; then
 			_mt32emu=no
 			_seq_midi=no
 			_timidity=no
-			_ar="ar cru"
-			_ranlib=ranlib
-			_strip=strip
 			;;
 		m68k-atari-mint)
 			append_var DEFINES "-DSYSTEM_NOT_SUPPORTING_D_TYPE"
@@ -3025,9 +3022,9 @@ case $_backend in
 		append_var CFLAGS "-miphoneos-version-min=7.1 -arch armv7"
 		append_var CXXFLAGS "-miphoneos-version-min=7.1 -arch armv7"
 		if test -n "$SDKROOT"; then
-			append_var LDFLAGS "-isysroot $SDKROOT -I $SDKROOT/usr/include"
-			append_var CFLAGS "-isysroot $SDKROOT -I $SDKROOT/usr/include"
-			append_var CXXFLAGS "-isysroot $SDKROOT -I $SDKROOT/usr/include"
+			append_var LDFLAGS "-mlinker-version=134.9 -B/usr/local/bin/arm-apple-darwin11-"
+			append_var CFLAGS "-isysroot $SDKROOT -F$SDKROOT/System/Library/Frameworks"
+			append_var CXXFLAGS "-isysroot $SDKROOT -I$SDKROOT/usr/include/c++/4.2.1 -F$SDKROOT/System/Library/Frameworks"
 		fi
 		;;
 	linuxmoto)
