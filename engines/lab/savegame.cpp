@@ -146,12 +146,12 @@ bool saveGame(uint16 Direction, uint16 Quarters, int slot, Common::String desc) 
 
 	// Combination lock and tile stuff
 	for (i = 0; i < 6; i++)
-		file->writeByte(g_lab->combination[i]);
+		file->writeByte(g_lab->_combination[i]);
 
 	// Tiles
 	for (i = 0; i < 4; i++)
 		for (j = 0; j < 4; j++)
-			file->writeUint16LE(g_lab->CurTile[i][j]);
+			file->writeUint16LE(g_lab->_curTile[i][j]);
 
 	// Breadcrumbs
 	for (i = 0; i < sizeof(g_lab->_breadCrumbs); i++) {
@@ -196,12 +196,12 @@ bool loadGame(uint16 *Direction, uint16 *Quarters, int slot) {
 
 	// Combination lock and tile stuff
 	for (i = 0; i < 6; i++)
-		g_lab->combination[i] = file->readByte();
+		g_lab->_combination[i] = file->readByte();
 
 	// Tiles
 	for (i = 0; i < 4; i++)
 		for (j = 0; j < 4; j++)
-			g_lab->CurTile[i][j] = file->readUint16LE();
+			g_lab->_curTile[i][j] = file->readUint16LE();
 
 	// Breadcrumbs
 	for (i = 0; i < 128; i++) {

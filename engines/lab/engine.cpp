@@ -122,8 +122,8 @@ void LabEngine::freeScreens() {
 
 	for (uint16 imgIdx = 0; imgIdx < 10; imgIdx++) {
 		delete _invImages[imgIdx];
-		delete Images[imgIdx];
-		_invImages[imgIdx] = Images[imgIdx] = nullptr;
+		delete _numberImages[imgIdx];
+		_invImages[imgIdx] = _numberImages[imgIdx] = nullptr;
 	}
 }
 

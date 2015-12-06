@@ -56,8 +56,6 @@ static MapData *Maps;
 
 extern char *LOWERFLOORS, *MIDDLEFLOORS, *UPPERFLOORS, *MEDMAZEFLOORS, *HEDGEMAZEFLOORS, *SURMAZEFLOORS, *CARNIVALFLOOR, *SURMAZEMSG;
 
-uint16 *FadePalette;
-
 static uint16 MapGadX[3] = {101, 55, 8}, MapGadY[3] = {105, 105, 105};
 
 static Gadget downgadget = { 101, 105, 2, VKEY_DNARROW, 0L, NULL, NULL, NULL },
@@ -65,14 +63,6 @@ static Gadget downgadget = { 101, 105, 2, VKEY_DNARROW, 0L, NULL, NULL, NULL },
 			  backgadget = {   8, 105, 0, 0, 0L, NULL, NULL, &upgadget };
 
 static Gadget *MapGadgetList = &backgadget;
-
-static uint16 AmigaMapPalette[] = {
-	0x0BA8, 0x0C11, 0x0A74, 0x0076,
-	0x0A96, 0x0DCB, 0x0CCA, 0x0222,
-	0x0444, 0x0555, 0x0777, 0x0999,
-	0x0AAA, 0x0ED0, 0x0EEE, 0x0694
-};
-
 
 #define LOWERFLOOR     1
 #define MIDDLEFLOOR    2
@@ -167,46 +157,9 @@ static bool loadMapData() {
 	return true;
 }
 
-
 static void freeMapData() {
 	delete[] Maps;
 	Maps = NULL;
-}
-
-
-static uint16 fadeNumIn(uint16 num, uint16 res, uint16 counter) {
-	return (num - ((((int32)(15 - counter)) * ((int32)(num - res))) / 15));
-}
-
-
-static uint16 fadeNumOut(uint16 num, uint16 res, uint16 counter) {
-	return (num - ((((int32) counter) * ((int32)(num - res))) / 15));
-}
-
-
-
-/*****************************************************************************/
-/* Does the fading of the Palette on the screen.                             */
-/*****************************************************************************/
-void fade(bool fadein, uint16 res) {
-	uint16 newpal[16];
-
-	for (uint16 i = 0; i < 16; i++) {
-		for (uint16 palIdx = 0; palIdx < 16; palIdx++) {
-			if (fadein)
-				newpal[palIdx] = (0x00F & fadeNumIn(0x00F & FadePalette[palIdx], 0x00F & res, i)) +
-				                 (0x0F0 & fadeNumIn(0x0F0 & FadePalette[palIdx], 0x0F0 & res, i)) +
-				                 (0xF00 & fadeNumIn(0xF00 & FadePalette[palIdx], 0xF00 & res, i));
-			else
-				newpal[palIdx] = (0x00F & fadeNumOut(0x00F & FadePalette[palIdx], 0x00F & res, i)) +
-				                 (0x0F0 & fadeNumOut(0x0F0 & FadePalette[palIdx], 0x0F0 & res, i)) +
-				                 (0xF00 & fadeNumOut(0xF00 & FadePalette[palIdx], 0xF00 & res, i));
-		}
-
-		g_lab->_graphics->setAmigaPal(newpal, 16);
-		g_lab->waitTOF();
-		g_lab->_music->updateMusic();
-	}
 }
 
 /*****************************************************************************/
@@ -460,7 +413,7 @@ void LabEngine::drawMap(uint16 CurRoom, uint16 CurMsg, uint16 Floor, bool fadeou
 	_event->mouseHide();
 
 	if (fadeout)
-		fade(false, 0);
+		_graphics->fade(false, 0);
 
 	_graphics->setAPen(0);
 	_graphics->rectFill(0, 0, _graphics->_screenWidth - 1, _graphics->_screenHeight - 1);
@@ -523,7 +476,7 @@ void LabEngine::drawMap(uint16 CurRoom, uint16 CurMsg, uint16 Floor, bool fadeou
 		_graphics->flowTextScaled(_msgFont, 0, 5, 3, true, true, true, true, 14, 148, 134, 186, sptr);
 
 	if (fadein)
-		fade(true, 0);
+		_graphics->fade(true, 0);
 
 	_event->mouseShow();
 }
@@ -594,9 +547,9 @@ void LabEngine::processMap(uint16 CurRoom) {
 					getUpFloor(&CurFloor, &drawmap);
 
 					if (drawmap) {
-						fade(false, 0);
+						_graphics->fade(false, 0);
 						drawMap(CurRoom, CurMsg, CurFloor, false, false);
-						fade(true, 0);
+						_graphics->fade(true, 0);
 					} else
 						CurFloor = OldFloor;
 				} else if (GadgetID == 2) { /* Down arrow */
@@ -604,9 +557,9 @@ void LabEngine::processMap(uint16 CurRoom) {
 					getDownFloor(&CurFloor, &drawmap);
 
 					if (drawmap) {
-						fade(false, 0);
+						_graphics->fade(false, 0);
 						drawMap(CurRoom, CurMsg, CurFloor, false, false);
-						fade(true, 0);
+						_graphics->fade(true, 0);
 					} else
 						CurFloor = OldFloor;
 				}
@@ -618,9 +571,9 @@ void LabEngine::processMap(uint16 CurRoom) {
 				        && onFloor(SURMAZEFLOOR)) {
 					CurFloor = SURMAZEFLOOR;
 
-					fade(false, 0);
+					_graphics->fade(false, 0);
 					drawMap(CurRoom, CurMsg, CurFloor, false, false);
-					fade(true, 0);
+					_graphics->fade(true, 0);
 				}
 
 				else if ((CurFloor == MIDDLEFLOOR) && (MouseX >= mapScaleX(358)) && (MouseY >= mapScaleY(71))
@@ -628,9 +581,9 @@ void LabEngine::processMap(uint16 CurRoom) {
 				         && onFloor(CARNIVAL)) {
 					CurFloor = CARNIVAL;
 
-					fade(false, 0);
+					_graphics->fade(false, 0);
 					drawMap(CurRoom, CurMsg, CurFloor, false, false);
-					fade(true, 0);
+					_graphics->fade(true, 0);
 				}
 
 				else if ((CurFloor == MIDDLEFLOOR) && (MouseX >= mapScaleX(557)) && (MouseY >= mapScaleY(325))
@@ -638,9 +591,9 @@ void LabEngine::processMap(uint16 CurRoom) {
 				         && onFloor(MEDMAZEFLOOR)) {
 					CurFloor = MEDMAZEFLOOR;
 
-					fade(false, 0);
+					_graphics->fade(false, 0);
 					drawMap(CurRoom, CurMsg, CurFloor, false, false);
-					fade(true, 0);
+					_graphics->fade(true, 0);
 				}
 
 				else if ((CurFloor == UPPERFLOOR) && (MouseX >= mapScaleX(524)) && (MouseY >=  mapScaleY(97))
@@ -648,9 +601,9 @@ void LabEngine::processMap(uint16 CurRoom) {
 				         && onFloor(HEDGEMAZEFLOOR)) {
 					CurFloor = HEDGEMAZEFLOOR;
 
-					fade(false, 0);
+					_graphics->fade(false, 0);
 					drawMap(CurRoom, CurMsg, CurFloor, false, false);
-					fade(true, 0);
+					_graphics->fade(true, 0);
 				}
 
 				else if (MouseX > mapScaleX(314)) {
@@ -705,7 +658,14 @@ void LabEngine::processMap(uint16 CurRoom) {
 /* Does the map processing.                                                  */
 /*****************************************************************************/
 void LabEngine::doMap(uint16 CurRoom) {
-	FadePalette = AmigaMapPalette;
+	static uint16 AmigaMapPalette[] = {
+		0x0BA8, 0x0C11, 0x0A74, 0x0076,
+		0x0A96, 0x0DCB, 0x0CCA, 0x0222,
+		0x0444, 0x0555, 0x0777, 0x0999,
+		0x0AAA, 0x0ED0, 0x0EEE, 0x0694
+	};
+
+	_graphics->FadePalette = AmigaMapPalette;
 
 	_music->updateMusic();
 	loadMapData();
@@ -726,7 +686,7 @@ void LabEngine::doMap(uint16 CurRoom) {
 	_graphics->screenUpdate();
 	processMap(CurRoom);
 	_event->attachGadgetList(NULL);
-	fade(false, 0);
+	_graphics->fade(false, 0);
 	_graphics->blackAllScreen();
 	_event->mouseHide();
 	_graphics->setAPen(0);

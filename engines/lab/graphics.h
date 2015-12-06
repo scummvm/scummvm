@@ -41,6 +41,9 @@ class DisplayMan {
 private:
 	LabEngine *_vm;
 
+	uint16 fadeNumIn(uint16 num, uint16 res, uint16 counter);
+	uint16 fadeNumOut(uint16 num, uint16 res, uint16 counter);
+
 	byte _curapen;
 	byte *_curBitmap;
 	byte _curvgapal[256 * 3];
@@ -125,6 +128,7 @@ public:
 	byte *getCurrentDrawingBuffer();
 	void scrollDisplayX(int16 dx, uint16 x1, uint16 y1, uint16 x2, uint16 y2);
 	void scrollDisplayY(int16 dy, uint16 x1, uint16 y1, uint16 x2, uint16 y2);
+	void fade(bool fadein, uint16 res);
 
 	bool _longWinInFront;
 	bool _lastMessageLong;
@@ -134,6 +138,7 @@ public:
 	byte *_displayBuffer;
 	byte *_currentDisplayBuffer;
 	bool _doNotDrawMessage;
+	uint16 *FadePalette;
 };
 
 } // End of namespace Lab

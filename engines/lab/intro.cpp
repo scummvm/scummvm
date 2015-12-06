@@ -33,8 +33,6 @@
 #include "lab/anim.h"
 
 namespace Lab {
-extern uint16 *FadePalette;
-
 Intro::Intro(LabEngine *vm) : _vm(vm) {
 	_quitIntro = false;
 }
@@ -101,14 +99,14 @@ void Intro::doPictText(const char *filename, TextFont *msgFont, bool isScreen) {
 			if (begin)
 				begin = false;
 			else if (isScreen)
-				fade(false, 0);
+				_vm->_graphics->fade(false, 0);
 
 			if (isScreen) {
 				_vm->_graphics->setAPen(7);
 				_vm->_graphics->rectFillScaled(10, 10, 310, 190);
 
 				Drawn = _vm->_graphics->flowTextScaled(msgFont, (!_vm->_isHiRes) * -1, 5, 7, false, false, true, true, 14, 11, 306, 189, (char *)curText);
-				fade(true, 0);
+				_vm->_graphics->fade(true, 0);
 			} else {
 				Drawn = _vm->_graphics->longDrawMessage((char *)curText);
 			}
@@ -122,7 +120,7 @@ void Intro::doPictText(const char *filename, TextFont *msgFont, bool isScreen) {
 
 			if (_quitIntro) {
 				if (isScreen)
-					fade(false, 0);
+					_vm->_graphics->fade(false, 0);
 
 				delete[] textBuffer;
 				return;
@@ -142,7 +140,7 @@ void Intro::doPictText(const char *filename, TextFont *msgFont, bool isScreen) {
 			if (secs > timeDelay) {
 				if (end) {
 					if (isScreen)
-						fade(false, 0);
+						_vm->_graphics->fade(false, 0);
 
 					delete[] textBuffer;
 					return;
@@ -162,7 +160,7 @@ void Intro::doPictText(const char *filename, TextFont *msgFont, bool isScreen) {
 				_quitIntro = true;
 
 				if (isScreen)
-					fade(false, 0);
+					_vm->_graphics->fade(false, 0);
 
 				delete[] textBuffer;
 				return;
@@ -172,7 +170,7 @@ void Intro::doPictText(const char *filename, TextFont *msgFont, bool isScreen) {
 				if (IEQUALIFIER_LEFTBUTTON & qualifier) {
 					if (end) {
 						if (isScreen)
-							fade(false, 0);
+							_vm->_graphics->fade(false, 0);
 
 						delete[] textBuffer;
 						return;
@@ -184,7 +182,7 @@ void Intro::doPictText(const char *filename, TextFont *msgFont, bool isScreen) {
 
 				if (_quitIntro) {
 					if (isScreen)
-						fade(false, 0);
+						_vm->_graphics->fade(false, 0);
 
 					delete[] textBuffer;
 					return;
@@ -193,7 +191,7 @@ void Intro::doPictText(const char *filename, TextFont *msgFont, bool isScreen) {
 
 			if (end) {
 				if (isScreen)
-					fade(false, 0);
+					_vm->_graphics->fade(false, 0);
 
 				delete[] textBuffer;
 				return;
@@ -273,7 +271,7 @@ void Intro::introSequence() {
 		nReadPict("TNDcycle2.pic", true);
 	_vm->_anim->_noPalChange = false;
 
-	FadePalette = palette;
+	_vm->_graphics->FadePalette = palette;
 
 	for (uint16 i = 0; i < 16; i++) {
 		if (_quitIntro)
@@ -285,7 +283,7 @@ void Intro::introSequence() {
 	}
 
 	_vm->_music->updateMusic();
-	fade(true, 0);
+	_vm->_graphics->fade(true, 0);
 
 	for (int times = 0; times < 150; times++) {
 		if (_quitIntro)
@@ -303,7 +301,7 @@ void Intro::introSequence() {
 		_vm->waitTOF();
 	}
 
-	fade(false, 0);
+	_vm->_graphics->fade(false, 0);
 	_vm->_graphics->blackAllScreen();
 	_vm->_music->updateMusic();
 

@@ -51,15 +51,15 @@ const int COMBINATION_X[6] = { 45, 83, 129, 166, 211, 248 };
 
 void LabEngine::initTilePuzzle() {
 	for (int i = 0; i < 16; i++)
-		Tiles[i] = nullptr;
+		_tiles[i] = nullptr;
 
 	for (int i = 0; i < 4; i++) {
 		for (int j = 0; j < 4; j++)
-			CurTile[i][j] = INIT_TILE[i][j];
+			_curTile[i][j] = INIT_TILE[i][j];
 	}
 
 	for (int i = 0; i < 6; i++)
-		combination[i] = 0;
+		_combination[i] = 0;
 }
 
 /*****************************************************************************/
@@ -106,33 +106,33 @@ void LabEngine::changeTile(uint16 col, uint16 row) {
 	int16 scrolltype = -1;
 
 	if (row > 0) {
-		if (CurTile[col] [row - 1] == 0) {
-			CurTile[col] [row - 1] = CurTile[col] [row];
-			CurTile[col] [row] = 0;
+		if (_curTile[col] [row - 1] == 0) {
+			_curTile[col] [row - 1] = _curTile[col] [row];
+			_curTile[col] [row] = 0;
 			scrolltype = DOWNSCROLL;
 		}
 	}
 
 	if (col > 0) {
-		if (CurTile[col - 1] [row] == 0) {
-			CurTile[col - 1] [row] = CurTile[col] [row];
-			CurTile[col] [row] = 0;
+		if (_curTile[col - 1] [row] == 0) {
+			_curTile[col - 1] [row] = _curTile[col] [row];
+			_curTile[col] [row] = 0;
 			scrolltype = RIGHTSCROLL;
 		}
 	}
 
 	if (row < 3) {
-		if (CurTile[col] [row + 1] == 0) {
-			CurTile[col] [row + 1] = CurTile[col] [row];
-			CurTile[col] [row] = 0;
+		if (_curTile[col] [row + 1] == 0) {
+			_curTile[col] [row + 1] = _curTile[col] [row];
+			_curTile[col] [row] = 0;
 			scrolltype = UPSCROLL;
 		}
 	}
 
 	if (col < 3) {
-		if (CurTile[col + 1] [row] == 0) {
-			CurTile[col + 1] [row] = CurTile[col] [row];
-			CurTile[col] [row] = 0;
+		if (_curTile[col + 1] [row] == 0) {
+			_curTile[col + 1] [row] = _curTile[col] [row];
+			_curTile[col] [row] = 0;
 			scrolltype = LEFTSCROLL;
 		}
 	}
@@ -152,7 +152,7 @@ void LabEngine::changeTile(uint16 col, uint16 row) {
 
 		while (row < 4) {
 			while (col < 4) {
-				check = check && (CurTile[row] [col] == SOLUTION[row] [col]);
+				check = check && (_curTile[row] [col] == SOLUTION[row] [col]);
 				col++;
 			}
 
@@ -226,10 +226,10 @@ void LabEngine::doTile(bool showsolution) {
 			if (showsolution)
 				num = SOLUTION[col] [row];
 			else
-				num = CurTile[col] [row];
+				num = _curTile[col] [row];
 
 			if (showsolution || num)
-				Tiles[num]->drawImage(cols + (col * colm), rows + (row * rowm));
+				_tiles[num]->drawImage(cols + (col * colm), rows + (row * rowm));
 
 			col++;
 		}
@@ -254,7 +254,7 @@ void LabEngine::showTile(const char *filename, bool showsolution) {
 	Common::File *tileFile = tileFile = _resource->openDataFile(showsolution ? "P:TileSolution" : "P:Tile");
 
 	for (uint16 curBit = start; curBit < 16; curBit++)
-		Tiles[curBit] = new Image(tileFile);
+		_tiles[curBit] = new Image(tileFile);
 
 	delete tileFile;
 
@@ -312,18 +312,18 @@ void LabEngine::changeCombination(uint16 number) {
 	uint16 combnum;
 	bool unlocked = true;
 
-	if (combination[number] < 9)
-		(combination[number])++;
+	if (_combination[number] < 9)
+		(_combination[number])++;
 	else
-		combination[number] = 0;
+		_combination[number] = 0;
 
-	combnum = combination[number];
+	combnum = _combination[number];
 
 	display._imageData = _graphics->getCurrentDrawingBuffer();
 	display._width     = _graphics->_screenWidth;
 	display._height    = _graphics->_screenHeight;
 
-	for (uint16 i = 1; i <= (Images[combnum]->_height / 2); i++) {
+	for (uint16 i = 1; i <= (_numberImages[combnum]->_height / 2); i++) {
 		if (_isHiRes) {
 			if (i & 1)
 				waitTOF();
@@ -331,12 +331,12 @@ void LabEngine::changeCombination(uint16 number) {
 			waitTOF();
 
 		display._imageData = _graphics->getCurrentDrawingBuffer();
-		_graphics->scrollDisplayY(2, _graphics->VGAScaleX(COMBINATION_X[number]), _graphics->VGAScaleY(65), _graphics->VGAScaleX(COMBINATION_X[number]) + (Images[combnum])->_width - 1, _graphics->VGAScaleY(65) + (Images[combnum])->_height);
-		Images[combnum]->blitBitmap(0, (Images[combnum])->_height - (2 * i), &(display), _graphics->VGAScaleX(COMBINATION_X[number]), _graphics->VGAScaleY(65), (Images[combnum])->_width, 2, false);
+		_graphics->scrollDisplayY(2, _graphics->VGAScaleX(COMBINATION_X[number]), _graphics->VGAScaleY(65), _graphics->VGAScaleX(COMBINATION_X[number]) + (_numberImages[combnum])->_width - 1, _graphics->VGAScaleY(65) + (_numberImages[combnum])->_height);
+		_numberImages[combnum]->blitBitmap(0, (_numberImages[combnum])->_height - (2 * i), &(display), _graphics->VGAScaleX(COMBINATION_X[number]), _graphics->VGAScaleY(65), (_numberImages[combnum])->_width, 2, false);
 	}
 
 	for (uint16 i = 0; i < 6; i++)
-		unlocked = (combination[i] == solution[i]) && unlocked;
+		unlocked = (_combination[i] == solution[i]) && unlocked;
 
 	if (unlocked)
 		_conditions->inclElement(COMBINATIONUNLOCKED);
@@ -357,7 +357,7 @@ void LabEngine::scrollRaster(int16 dx, int16 dy, uint16 x1, uint16 y1, uint16 x2
 /*****************************************************************************/
 void LabEngine::doCombination() {
 	for (uint16 i = 0; i <= 5; i++)
-		Images[combination[i]]->drawImage(_graphics->VGAScaleX(COMBINATION_X[i]), _graphics->VGAScaleY(65));
+		_numberImages[_combination[i]]->drawImage(_graphics->VGAScaleX(COMBINATION_X[i]), _graphics->VGAScaleY(65));
 }
 
 /*****************************************************************************/
@@ -374,7 +374,7 @@ void LabEngine::showCombination(const char *filename) {
 	Common::File *numFile = _resource->openDataFile("P:Numbers");
 
 	for (uint16 CurBit = 0; CurBit < 10; CurBit++)
-		Images[CurBit] = new Image(numFile);
+		_numberImages[CurBit] = new Image(numFile);
 
 	delete numFile;
 
