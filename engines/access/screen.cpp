@@ -89,6 +89,9 @@ void Screen::setPanel(int num) {
 }
 
 void Screen::updateScreen() {
+	if (_vm->_startup > 0)
+		return;
+
 	// Merge the dirty rects
 	mergeDirtyRects();
 
