@@ -143,7 +143,6 @@ bool Console::Cmd_Version(int argc, const char **argv) {
 	const char *wordScanPtr = NULL;
 	const char *wordStartPtr = NULL;
 	const char *versionStartPtr = NULL;
-	const char *versionPtr = NULL;
 	int wordLen = 0;
 	char curChar = 0;
 	int versionLen = 0;
@@ -179,7 +178,6 @@ bool Console::Cmd_Version(int argc, const char **argv) {
 
 				// Now scan this text for version information
 				wordScanPtr = scriptTextPtr;
-				versionPtr = NULL;
 
 				do {
 					curChar = *wordScanPtr;
