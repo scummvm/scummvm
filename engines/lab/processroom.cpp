@@ -85,10 +85,10 @@ ViewData *getViewData(uint16 roomNum, uint16 direction) {
 	ViewData *view = g_lab->_rooms[roomNum]._view[direction];
 
 	do {
-		if (checkConditions(view->Condition))
+		if (checkConditions(view->_condition))
 			break;
 
-		view = view->NextCondition;
+		view = view->_nextCondition;
 	} while (true);
 
 	return view;
@@ -99,9 +99,9 @@ ViewData *getViewData(uint16 roomNum, uint16 direction) {
 /*****************************************************************************/
 static CloseData *getObject(uint16 x, uint16 y, CloseDataPtr lcptr) {
 	if (lcptr == NULL) {
-		lcptr = getViewData(g_lab->_roomNum, g_lab->_direction)->closeUps;
+		lcptr = getViewData(g_lab->_roomNum, g_lab->_direction)->_closeUps;
 	} else {
-		lcptr = lcptr->SubCloseUps;
+		lcptr = lcptr->_subCloseUps;
 	}
 
 	while (lcptr != NULL) {
@@ -109,7 +109,7 @@ static CloseData *getObject(uint16 x, uint16 y, CloseDataPtr lcptr) {
 		        (x <= g_lab->_graphics->scaleX(lcptr->x2)) && (y <= g_lab->_graphics->scaleY(lcptr->y2)))
 			return lcptr;
 
-		lcptr = lcptr->NextCloseUp;
+		lcptr = lcptr->_nextCloseUp;
 	}
 
 	return NULL;
@@ -127,15 +127,15 @@ static CloseDataPtr findCPtrMatch(CloseDataPtr cpmain, CloseDataPtr list) {
 	while (list) {
 		if ((cpmain->x1 == list->x1) && (cpmain->x2 == list->x2) &&
 		        (cpmain->y1 == list->y1) && (cpmain->y2 == list->y2) &&
-		        (cpmain->depth == list->depth))
+		        (cpmain->_depth == list->_depth))
 			return list;
 
-		cptr = findCPtrMatch(cpmain, list->SubCloseUps);
+		cptr = findCPtrMatch(cpmain, list->_subCloseUps);
 
 		if (cptr)
 			return cptr;
 		else
-			list = list->NextCloseUp;
+			list = list->_nextCloseUp;
 	}
 
 	return NULL;
@@ -148,21 +148,21 @@ char *getPictName(CloseDataPtr *lcptr) {
 	ViewData *viewPtr = getViewData(g_lab->_roomNum, g_lab->_direction);
 
 	if (*lcptr != NULL) {
-		*lcptr = findCPtrMatch(*lcptr, viewPtr->closeUps);
+		*lcptr = findCPtrMatch(*lcptr, viewPtr->_closeUps);
 
 		if (*lcptr)
-			return (*lcptr)->GraphicName;
+			return (*lcptr)->_graphicName;
 	}
 
-	return viewPtr->GraphicName;
+	return viewPtr->_graphicName;
 }
 
 /*****************************************************************************/
 /* Draws the current direction to the screen.                                */
 /*****************************************************************************/
 void LabEngine::drawDirection(CloseDataPtr lcptr) {
-	if (lcptr != NULL && lcptr->Message) {
-		_graphics->drawMessage(lcptr->Message);
+	if (lcptr != NULL && lcptr->_message) {
+		_graphics->drawMessage(lcptr->_message);
 		return;
 	}
 
@@ -236,9 +236,9 @@ void setCurClose(Common::Point pos, CloseDataPtr *cptr, bool useAbsoluteCoords) 
 	uint16 x1, y1, x2, y2;
 
 	if (*cptr == NULL) {
-		lcptr = getViewData(g_lab->_roomNum, g_lab->_direction)->closeUps;
+		lcptr = getViewData(g_lab->_roomNum, g_lab->_direction)->_closeUps;
 	} else
-		lcptr = (*cptr)->SubCloseUps;
+		lcptr = (*cptr)->_subCloseUps;
 
 	while (lcptr != NULL) {
 		if (!useAbsoluteCoords) {
@@ -253,12 +253,12 @@ void setCurClose(Common::Point pos, CloseDataPtr *cptr, bool useAbsoluteCoords) 
 			y2 = g_lab->_graphics->scaleY(lcptr->y2);
 		}
 
-		if (pos.x >= x1 && pos.y >= y1 && pos.x <= x2 && pos.y <= y2 && lcptr->GraphicName) {
+		if (pos.x >= x1 && pos.y >= y1 && pos.x <= x2 && pos.y <= y2 && lcptr->_graphicName) {
 			*cptr = lcptr;
 			return;
 		}
 
-		lcptr = lcptr->NextCloseUp;
+		lcptr = lcptr->_nextCloseUp;
 	}
 }
 
@@ -269,23 +269,23 @@ bool takeItem(uint16 x, uint16 y, CloseDataPtr *cptr) {
 	CloseDataPtr lcptr;
 
 	if (*cptr == NULL) {
-		lcptr = getViewData(g_lab->_roomNum, g_lab->_direction)->closeUps;
-	} else if ((*cptr)->CloseUpType < 0) {
-		g_lab->_conditions->inclElement(abs((*cptr)->CloseUpType));
+		lcptr = getViewData(g_lab->_roomNum, g_lab->_direction)->_closeUps;
+	} else if ((*cptr)->_closeUpType < 0) {
+		g_lab->_conditions->inclElement(abs((*cptr)->_closeUpType));
 		return true;
 	} else
-		lcptr = (*cptr)->SubCloseUps;
+		lcptr = (*cptr)->_subCloseUps;
 
 
 	while (lcptr != NULL) {
 		if ((x >= g_lab->_graphics->scaleX(lcptr->x1)) && (y >= g_lab->_graphics->scaleY(lcptr->y1)) &&
 		        (x <= g_lab->_graphics->scaleX(lcptr->x2)) && (y <= g_lab->_graphics->scaleY(lcptr->y2)) &&
-		        (lcptr->CloseUpType < 0)) {
-			g_lab->_conditions->inclElement(abs(lcptr->CloseUpType));
+		        (lcptr->_closeUpType < 0)) {
+			g_lab->_conditions->inclElement(abs(lcptr->_closeUpType));
 			return true;
 		}
 
-		lcptr = lcptr->NextCloseUp;
+		lcptr = lcptr->_nextCloseUp;
 	}
 
 	return false;
@@ -298,42 +298,42 @@ void LabEngine::doActions(Action *aptr, CloseDataPtr *lcptr) {
 	while (aptr) {
 		_music->updateMusic();
 
-		switch (aptr->ActionType) {
+		switch (aptr->_actionType) {
 		case PLAYSOUND:
 			_music->_loopSoundEffect = false;
 			_music->_waitTillFinished = true;
-			_music->readMusic((char *)aptr->Data, true);
+			_music->readMusic((char *)aptr->_data, true);
 			_music->_waitTillFinished = false;
 			break;
 
 		case PLAYSOUNDB:
 			_music->_loopSoundEffect = false;
 			_music->_waitTillFinished = false;
-			_music->readMusic((char *)aptr->Data, false);
+			_music->readMusic((char *)aptr->_data, false);
 			break;
 
 		case PLAYSOUNDCONT:
 			_music->_doNotFilestopSoundEffect = true;
 			_music->_loopSoundEffect = true;
-			_music->readMusic((char *)aptr->Data, _music->_waitTillFinished);
+			_music->readMusic((char *)aptr->_data, _music->_waitTillFinished);
 			break;
 
 		case SHOWDIFF:
-			_graphics->readPict((char *)aptr->Data, true);
+			_graphics->readPict((char *)aptr->_data, true);
 			break;
 
 		case SHOWDIFFCONT:
-			_graphics->readPict((char *)aptr->Data, false);
+			_graphics->readPict((char *)aptr->_data, false);
 			break;
 
 		case LOADDIFF:
-			if (aptr->Data)
-				_graphics->loadPict((char *)aptr->Data);          /* Puts a file into memory */
+			if (aptr->_data)
+				_graphics->loadPict((char *)aptr->_data);          /* Puts a file into memory */
 
 			break;
 
 		case WIPECMD:
-			_graphics->doWipe(aptr->Param1, lcptr, (char *)aptr->Data);
+			_graphics->doWipe(aptr->_param1, lcptr, (char *)aptr->_data);
 			break;
 
 		case NOUPDATE:
@@ -356,20 +356,20 @@ void LabEngine::doActions(Action *aptr, CloseDataPtr *lcptr) {
 			break;
 
 		case SETELEMENT:
-			_conditions->inclElement(aptr->Param1);
+			_conditions->inclElement(aptr->_param1);
 			break;
 
 		case UNSETELEMENT:
-			_conditions->exclElement(aptr->Param1);
+			_conditions->exclElement(aptr->_param1);
 			break;
 
 		case SHOWMESSAGE:
 			_graphics->_doNotDrawMessage = false;
 
 			if (_graphics->_longWinInFront)
-				_graphics->longDrawMessage((char *)aptr->Data);
+				_graphics->longDrawMessage((char *)aptr->_data);
 			else
-				_graphics->drawMessage((char *)aptr->Data);
+				_graphics->drawMessage((char *)aptr->_data);
 
 			_graphics->_doNotDrawMessage = true;
 			break;
@@ -377,22 +377,22 @@ void LabEngine::doActions(Action *aptr, CloseDataPtr *lcptr) {
 		case CSHOWMESSAGE:
 			if (*lcptr == NULL) {
 				_graphics->_doNotDrawMessage = false;
-				_graphics->drawMessage((char *)aptr->Data);
+				_graphics->drawMessage((char *)aptr->_data);
 				_graphics->_doNotDrawMessage = true;
 			}
 
 			break;
 
 		case SHOWMESSAGES: {
-				char **str = (char **)aptr->Data;
+				char **str = (char **)aptr->_data;
 				_graphics->_doNotDrawMessage = false;
-				_graphics->drawMessage(str[getRandom(aptr->Param1)]);
+				_graphics->drawMessage(str[getRandom(aptr->_param1)]);
 				_graphics->_doNotDrawMessage = true;
 			}
 			break;
 
 		case SETPOSITION:
-			if (aptr->Param1 & 0x8000) {
+			if (aptr->_param1 & 0x8000) {
 				// This is a Wyrmkeep Windows trial version, thus stop at this
 				// point, since we can't check for game payment status
 				_graphics->readPict(getPictName(lcptr), true);
@@ -402,14 +402,14 @@ void LabEngine::doActions(Action *aptr, CloseDataPtr *lcptr) {
 				continue;
 			}
 
-			_roomNum   = aptr->Param1;
-			_direction = aptr->Param2 - 1;
+			_roomNum   = aptr->_param1;
+			_direction = aptr->_param2 - 1;
 			*lcptr      = NULL;
 			_anim->_doBlack = true;
 			break;
 
 		case SETCLOSEUP: {
-				CloseDataPtr tlcptr = getObject(g_lab->_graphics->scaleX(aptr->Param1), g_lab->_graphics->scaleY(aptr->Param2), *lcptr);
+				CloseDataPtr tlcptr = getObject(g_lab->_graphics->scaleX(aptr->_param1), g_lab->_graphics->scaleY(aptr->_param2), *lcptr);
 
 				if (tlcptr)
 					*lcptr = tlcptr;
@@ -421,17 +421,17 @@ void LabEngine::doActions(Action *aptr, CloseDataPtr *lcptr) {
 			break;
 
 		case SUBINV:
-			if (_inventory[aptr->Param1].Many)
-				(_inventory[aptr->Param1].Many)--;
+			if (_inventory[aptr->_param1]._many)
+				(_inventory[aptr->_param1]._many)--;
 
-			if (_inventory[aptr->Param1].Many == 0)
-				_conditions->exclElement(aptr->Param1);
+			if (_inventory[aptr->_param1]._many == 0)
+				_conditions->exclElement(aptr->_param1);
 
 			break;
 
 		case ADDINV:
-			(_inventory[aptr->Param1].Many) += aptr->Param2;
-			_conditions->inclElement(aptr->Param1);
+			(_inventory[aptr->_param1]._many) += aptr->_param2;
+			_conditions->inclElement(aptr->_param1);
 			break;
 
 		case SHOWDIR:
@@ -441,7 +441,7 @@ void LabEngine::doActions(Action *aptr, CloseDataPtr *lcptr) {
 		case WAITSECS: {
 				uint32 startSecs, startMicros, curSecs, curMicros;
 
-				addCurTime(aptr->Param1, 0, &startSecs, &startMicros);
+				addCurTime(aptr->_param1, 0, &startSecs, &startMicros);
 
 				_graphics->screenUpdate();
 
@@ -466,7 +466,7 @@ void LabEngine::doActions(Action *aptr, CloseDataPtr *lcptr) {
 			break;
 
 		case CHANGEMUSIC:
-			_music->changeMusic((const char *)aptr->Data);
+			_music->changeMusic((const char *)aptr->_data);
 			_music->setMusicReset(false);
 			break;
 
@@ -516,13 +516,13 @@ void LabEngine::doActions(Action *aptr, CloseDataPtr *lcptr) {
 			break;
 
 		case SPECIALCMD:
-			if (aptr->Param1 == 0)
+			if (aptr->_param1 == 0)
 				_anim->_doBlack = true;
-			else if (aptr->Param1 == 1)
+			else if (aptr->_param1 == 1)
 				_anim->_doBlack = (_cptr == NULL);
-			else if (aptr->Param1 == 2)
+			else if (aptr->_param1 == 2)
 				_anim->_doBlack = (_cptr != NULL);
-			else if (aptr->Param1 == 5) { /* inverse the palette */
+			else if (aptr->_param1 == 5) { /* inverse the palette */
 				for (uint16 idx = (8 * 3); idx < (255 * 3); idx++)
 					_anim->_diffPalette[idx] = 255 - _anim->_diffPalette[idx];
 
@@ -530,16 +530,16 @@ void LabEngine::doActions(Action *aptr, CloseDataPtr *lcptr) {
 				_graphics->setPalette(_anim->_diffPalette, 256);
 				waitTOF();
 				waitTOF();
-			} else if (aptr->Param1 == 4) { /* white the palette */
+			} else if (aptr->_param1 == 4) { /* white the palette */
 				_graphics->whiteScreen();
 				waitTOF();
 				waitTOF();
-			} else if (aptr->Param1 == 6) { /* Restore the palette */
+			} else if (aptr->_param1 == 6) { /* Restore the palette */
 				waitTOF();
 				_graphics->setPalette(_anim->_diffPalette, 256);
 				waitTOF();
 				waitTOF();
-			} else if (aptr->Param1 == 7) { /* Quick pause */
+			} else if (aptr->_param1 == 7) { /* Quick pause */
 				waitTOF();
 				waitTOF();
 				waitTOF();
@@ -548,7 +548,7 @@ void LabEngine::doActions(Action *aptr, CloseDataPtr *lcptr) {
 			break;
 		}
 
-		aptr = aptr->NextAction;
+		aptr = aptr->_nextAction;
 	}
 
 	if (_music->_loopSoundEffect) {
@@ -580,14 +580,14 @@ static bool doActionRuleSub(int16 action, int16 roomNum, CloseDataPtr lcptr, Clo
 		}
 
 		for (RuleList::iterator rule = rules->begin(); rule != rules->end(); ++rule) {
-			if (((*rule)->RuleType == ACTION) &&
-				(((*rule)->Param1 == action) || (((*rule)->Param1 == 0) && allowDefaults))) {
-				if ((((*rule)->Param2 == lcptr->CloseUpType) ||
-					(((*rule)->Param2 == 0) && allowDefaults))
+			if (((*rule)->_ruleType == ACTION) &&
+				(((*rule)->_param1 == action) || (((*rule)->_param1 == 0) && allowDefaults))) {
+				if ((((*rule)->_param2 == lcptr->_closeUpType) ||
+					(((*rule)->_param2 == 0) && allowDefaults))
 				        ||
-						((action == 1) && ((*rule)->Param2 == (-lcptr->CloseUpType)))) {
-					if (checkConditions((*rule)->Condition)) {
-						g_lab->doActions((*rule)->ActionList, set);
+						((action == 1) && ((*rule)->_param2 == (-lcptr->_closeUpType)))) {
+					if (checkConditions((*rule)->_condition)) {
+						g_lab->doActions((*rule)->_actionList, set);
 						return true;
 					}
 				}
@@ -626,7 +626,7 @@ bool doActionRule(Common::Point pos, int16 action, int16 roomNum, CloseDataPtr *
 /*****************************************************************************/
 static bool doOperateRuleSub(int16 itemNum, int16 roomNum, CloseDataPtr lcptr, CloseDataPtr *set, bool allowDefaults) {
 	if (lcptr)
-		if (lcptr->CloseUpType > 0) {
+		if (lcptr->_closeUpType > 0) {
 			RuleList *rules = g_lab->_rooms[roomNum]._rules;
 
 			if ((rules == NULL) && (roomNum == 0)) {
@@ -635,11 +635,11 @@ static bool doOperateRuleSub(int16 itemNum, int16 roomNum, CloseDataPtr lcptr, C
 			}
 
 			for (RuleList::iterator rule = rules->begin(); rule != rules->end(); ++rule) {
-				if (((*rule)->RuleType == OPERATE) &&
-				        (((*rule)->Param1 == itemNum) || (((*rule)->Param1 == 0) && allowDefaults)) &&
-						(((*rule)->Param2 == lcptr->CloseUpType) || (((*rule)->Param2 == 0) && allowDefaults))) {
-					if (checkConditions((*rule)->Condition)) {
-						g_lab->doActions((*rule)->ActionList, set);
+				if (((*rule)->_ruleType == OPERATE) &&
+				        (((*rule)->_param1 == itemNum) || (((*rule)->_param1 == 0) && allowDefaults)) &&
+						(((*rule)->_param2 == lcptr->_closeUpType) || (((*rule)->_param2 == 0) && allowDefaults))) {
+					if (checkConditions((*rule)->_condition)) {
+						g_lab->doActions((*rule)->_actionList, set);
 						return true;
 					}
 				}
@@ -690,9 +690,9 @@ bool doGoForward(CloseDataPtr *lcptr) {
 	RuleList *rules = g_lab->_rooms[g_lab->_roomNum]._rules;
 
 	for (RuleList::iterator rule = rules->begin(); rule != rules->end(); ++rule) {
-		if (((*rule)->RuleType == GOFORWARD) && ((*rule)->Param1 == (g_lab->_direction + 1))) {
-			if (checkConditions((*rule)->Condition)) {
-				g_lab->doActions((*rule)->ActionList, lcptr);
+		if (((*rule)->_ruleType == GOFORWARD) && ((*rule)->_param1 == (g_lab->_direction + 1))) {
+			if (checkConditions((*rule)->_condition)) {
+				g_lab->doActions((*rule)->_actionList, lcptr);
 				return true;
 			}
 		}
@@ -711,11 +711,11 @@ bool doTurn(uint16 from, uint16 to, CloseDataPtr *lcptr) {
 	RuleList *rules = g_lab->_rooms[g_lab->_roomNum]._rules;
 
 	for (RuleList::iterator rule = rules->begin(); rule != rules->end(); ++rule) {
-		if (((*rule)->RuleType == TURN) ||
-		        (((*rule)->RuleType == TURNFROMTO) &&
-		         ((*rule)->Param1   == from) && ((*rule)->Param2 == to))) {
-			if (checkConditions((*rule)->Condition)) {
-				g_lab->doActions((*rule)->ActionList, lcptr);
+		if (((*rule)->_ruleType == TURN) ||
+		        (((*rule)->_ruleType == TURNFROMTO) &&
+		         ((*rule)->_param1   == from) && ((*rule)->_param2 == to))) {
+			if (checkConditions((*rule)->_condition)) {
+				g_lab->doActions((*rule)->_actionList, lcptr);
 				return true;
 			}
 		}
@@ -730,9 +730,9 @@ bool doTurn(uint16 from, uint16 to, CloseDataPtr *lcptr) {
 bool doMainView(CloseDataPtr *lcptr) {
 	RuleList *rules = g_lab->_rooms[g_lab->_roomNum]._rules;
 	for (RuleList::iterator rule = rules->begin(); rule != rules->end(); ++rule) {
-		if ((*rule)->RuleType == GOMAINVIEW) {
-			if (checkConditions((*rule)->Condition)) {
-				g_lab->doActions((*rule)->ActionList, lcptr);
+		if ((*rule)->_ruleType == GOMAINVIEW) {
+			if (checkConditions((*rule)->_condition)) {
+				g_lab->doActions((*rule)->_actionList, lcptr);
 				return true;
 			}
 		}

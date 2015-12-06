@@ -435,14 +435,14 @@ bool LabEngine::saveRestoreGame() {
 				desc = dialog->createDefaultSaveDescription(slot);
 			}
 
-			isOK = saveGame(_direction, _inventory[QUARTERNUM].Many, slot, desc);
+			isOK = saveGame(_direction, _inventory[QUARTERNUM]._many, slot, desc);
 		}
 	} else {
 		// Restore
 		GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Restore game:"), _("Restore"), false);
 		int slot = dialog->runModalWithCurrentTarget();
 		if (slot >= 0) {
-			isOK = loadGame(&_direction, &(_inventory[QUARTERNUM].Many), slot);
+			isOK = loadGame(&_direction, &(_inventory[QUARTERNUM]._many), slot);
 			if (isOK)
 				_music->resetMusic();
 		}
@@ -534,7 +534,7 @@ void LabEngine::processMonitor(char *ntext, TextFont *monitorFont, bool isintera
 			if (_cptr == startcptr)
 				Test = StartFileName;
 			else
-				Test = _cptr->GraphicName;
+				Test = _cptr->_graphicName;
 
 			if (strcmp(Test, TextFileName)) {
 				monitorPage      = 0;

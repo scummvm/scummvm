@@ -120,9 +120,9 @@ InventoryData *Resource::readInventory(const char *fileName) {
 	InventoryData *inventory = (InventoryData *)malloc((_vm->_numInv + 1) * sizeof(InventoryData));
 
 	for (uint16 i = 1; i <= _vm->_numInv; i++) {
-		inventory[i].Many = dataFile->readUint16LE();
-		inventory[i].name = readString(dataFile);
-		inventory[i].BInvName = readString(dataFile);
+		inventory[i]._many = dataFile->readUint16LE();
+		inventory[i]._name = readString(dataFile);
+		inventory[i]._bitmapName = readString(dataFile);
 	}
 
 	delete dataFile;
@@ -231,11 +231,11 @@ RuleList *Resource::readRule(Common::File *file) {
 
 		if (c == 1) {
 			Rule *rule = new Rule();;
-			rule->RuleType = file->readSint16LE();
-			rule->Param1 = file->readSint16LE();
-			rule->Param2 = file->readSint16LE();
-			rule->Condition = readConditions(file);
-			rule->ActionList = readAction(file);
+			rule->_ruleType = file->readSint16LE();
+			rule->_param1 = file->readSint16LE();
+			rule->_param2 = file->readSint16LE();
+			rule->_condition = readConditions(file);
+			rule->_actionList = readAction(file);
 			rules->push_back(rule);
 		}
 	} while (c == 1);
@@ -258,24 +258,24 @@ Action *Resource::readAction(Common::File *file) {
 			if (!head)
 				head = action;
 			if (prev)
-				prev->NextAction = action;
-			action->ActionType = file->readSint16LE();
-			action->Param1 = file->readSint16LE();
-			action->Param2 = file->readSint16LE();
-			action->Param3 = file->readSint16LE();
+				prev->_nextAction = action;
+			action->_actionType = file->readSint16LE();
+			action->_param1 = file->readSint16LE();
+			action->_param2 = file->readSint16LE();
+			action->_param3 = file->readSint16LE();
 
-			if (action->ActionType == SHOWMESSAGES) {
-				messages = (char **)malloc(action->Param1 * 4);
+			if (action->_actionType == SHOWMESSAGES) {
+				messages = (char **)malloc(action->_param1 * 4);
 
-				for (int i = 0; i < action->Param1; i++)
+				for (int i = 0; i < action->_param1; i++)
 					messages[i] = readString(file);
 
-				action->Data = (byte *)messages;
+				action->_data = (byte *)messages;
 			} else {
-				action->Data = (byte *)readString(file);
+				action->_data = (byte *)readString(file);
 			}
 
-			action->NextAction = NULL;
+			action->_nextAction = NULL;
 			prev = action;
 		}
 	} while (c == 1);
@@ -297,17 +297,17 @@ CloseData *Resource::readCloseUps(uint16 depth, Common::File *file) {
 			if (!head)
 				head = closeup;
 			if (prev)
-				prev->NextCloseUp = closeup;
+				prev->_nextCloseUp = closeup;
 			closeup->x1 = file->readUint16LE();
 			closeup->y1 = file->readUint16LE();
 			closeup->x2 = file->readUint16LE();
 			closeup->y2 = file->readUint16LE();
-			closeup->CloseUpType = file->readSint16LE();
-			closeup->depth = depth;
-			closeup->GraphicName = readString(file);
-			closeup->Message = readString(file);
-			closeup->SubCloseUps = readCloseUps(depth + 1, file);
-			closeup->NextCloseUp = NULL;
+			closeup->_closeUpType = file->readSint16LE();
+			closeup->_depth = depth;
+			closeup->_graphicName = readString(file);
+			closeup->_message = readString(file);
+			closeup->_subCloseUps = readCloseUps(depth + 1, file);
+			closeup->_nextCloseUp = NULL;
 			prev = closeup;
 		}
 	} while (c != '\0');
@@ -329,11 +329,11 @@ ViewData *Resource::readView(Common::File *file) {
 			if (!head)
 				head = view;
 			if (prev)
-				prev->NextCondition = view;
-			view->Condition = readConditions(file);
-			view->GraphicName = readString(file);
-			view->closeUps = readCloseUps(0, file);
-			view->NextCondition = NULL;
+				prev->_nextCondition = view;
+			view->_condition = readConditions(file);
+			view->_graphicName = readString(file);
+			view->_closeUps = readCloseUps(0, file);
+			view->_nextCondition = NULL;
 			prev = view;
 		}
 	} while (c == 1);
