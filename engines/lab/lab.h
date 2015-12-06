@@ -88,6 +88,8 @@ public:
 private:
 	uint32 _extraGameFeatures;
 	bool _interfaceOff;
+	bool _noUpdateDiff;
+	bool _quitLab;
 
 	// timing.cpp
 	void microDelay(uint32 secs, uint32 micros);
@@ -110,6 +112,11 @@ public:
 	bool _isCrumbWaiting;
 	bool _alternate;
 	bool _isHiRes;
+	uint16 _numInv;
+	uint16 _manyRooms;
+	uint16 _direction;
+	uint16 _highestCondition;
+
 	const char *_curFileName;
 	const char *_nextFileName;
 	const char *_newFileName;  /* When ProcessRoom.c decides to change the filename

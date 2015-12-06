@@ -45,9 +45,6 @@ namespace Lab {
 #define NOFILE         "no file"
 
 RoomData *_rooms;
-uint16 NumInv, ManyRooms, HighestCondition, Direction;
-
-extern bool DoNotDrawMessage, noupdatediff, QuitLab, MusicOn;
 
 /*****************************************************************************/
 /* Generates a random number.                                                */
@@ -104,7 +101,7 @@ ViewData *getViewData(uint16 roomNum, uint16 direction) {
 /*****************************************************************************/
 static CloseData *getObject(uint16 x, uint16 y, CloseDataPtr lcptr) {
 	if (lcptr == NULL) {
-		lcptr = getViewData(g_lab->_roomNum, Direction)->closeUps;
+		lcptr = getViewData(g_lab->_roomNum, g_lab->_direction)->closeUps;
 	} else {
 		lcptr = lcptr->SubCloseUps;
 	}
@@ -150,7 +147,7 @@ static CloseDataPtr findCPtrMatch(CloseDataPtr cpmain, CloseDataPtr list) {
 /* Returns the current picture name.                                         */
 /*****************************************************************************/
 char *getPictName(CloseDataPtr *lcptr) {
-	ViewData *viewPtr = getViewData(g_lab->_roomNum, Direction);
+	ViewData *viewPtr = getViewData(g_lab->_roomNum, g_lab->_direction);
 
 	if (*lcptr != NULL) {
 		*lcptr = findCPtrMatch(*lcptr, viewPtr->closeUps);
@@ -178,13 +175,13 @@ void LabEngine::drawDirection(CloseDataPtr lcptr) {
 		message += ", ";
 	}
 
-	if (Direction == NORTH)
+	if (_direction == NORTH)
 		message += _resource->getStaticText(kTextFacingNorth);
-	else if (Direction == EAST)
+	else if (_direction == EAST)
 		message += _resource->getStaticText(kTextFacingEast);
-	else if (Direction == SOUTH)
+	else if (_direction == SOUTH)
 		message += _resource->getStaticText(kTextFacingSouth);
-	else if (Direction == WEST)
+	else if (_direction == WEST)
 		message += _resource->getStaticText(kTextFacingWest);
 
 	_graphics->drawMessage(message.c_str());
@@ -241,7 +238,7 @@ void setCurClose(Common::Point pos, CloseDataPtr *cptr, bool useAbsoluteCoords) 
 	uint16 x1, y1, x2, y2;
 
 	if (*cptr == NULL) {
-		lcptr = getViewData(g_lab->_roomNum, Direction)->closeUps;
+		lcptr = getViewData(g_lab->_roomNum, g_lab->_direction)->closeUps;
 	} else
 		lcptr = (*cptr)->SubCloseUps;
 
@@ -274,7 +271,7 @@ bool takeItem(uint16 x, uint16 y, CloseDataPtr *cptr) {
 	CloseDataPtr lcptr;
 
 	if (*cptr == NULL) {
-		lcptr = getViewData(g_lab->_roomNum, Direction)->closeUps;
+		lcptr = getViewData(g_lab->_roomNum, g_lab->_direction)->closeUps;
 	} else if ((*cptr)->CloseUpType < 0) {
 		g_lab->_conditions->inclElement(abs((*cptr)->CloseUpType));
 		return true;
@@ -342,7 +339,7 @@ void LabEngine::doActions(Action *aptr, CloseDataPtr *lcptr) {
 			break;
 
 		case NOUPDATE:
-			noupdatediff = true;
+			_noUpdateDiff = true;
 			_anim->_doBlack = false;
 			break;
 
@@ -369,30 +366,30 @@ void LabEngine::doActions(Action *aptr, CloseDataPtr *lcptr) {
 			break;
 
 		case SHOWMESSAGE:
-			DoNotDrawMessage = false;
+			_graphics->_doNotDrawMessage = false;
 
 			if (_graphics->_longWinInFront)
 				_graphics->longDrawMessage((char *)aptr->Data);
 			else
 				_graphics->drawMessage((char *)aptr->Data);
 
-			DoNotDrawMessage = true;
+			_graphics->_doNotDrawMessage = true;
 			break;
 
 		case CSHOWMESSAGE:
 			if (*lcptr == NULL) {
-				DoNotDrawMessage = false;
+				_graphics->_doNotDrawMessage = false;
 				_graphics->drawMessage((char *)aptr->Data);
-				DoNotDrawMessage = true;
+				_graphics->_doNotDrawMessage = true;
 			}
 
 			break;
 
 		case SHOWMESSAGES: {
 				char **str = (char **)aptr->Data;
-				DoNotDrawMessage = false;
+				_graphics->_doNotDrawMessage = false;
 				_graphics->drawMessage(str[getRandom(aptr->Param1)]);
-				DoNotDrawMessage = true;
+				_graphics->_doNotDrawMessage = true;
 			}
 			break;
 
@@ -408,7 +405,7 @@ void LabEngine::doActions(Action *aptr, CloseDataPtr *lcptr) {
 			}
 
 			_roomNum   = aptr->Param1;
-			Direction = aptr->Param2 - 1;
+			_direction = aptr->Param2 - 1;
 			*lcptr      = NULL;
 			_anim->_doBlack = true;
 			break;
@@ -440,7 +437,7 @@ void LabEngine::doActions(Action *aptr, CloseDataPtr *lcptr) {
 			break;
 
 		case SHOWDIR:
-			DoNotDrawMessage = false;
+			_graphics->_doNotDrawMessage = false;
 			break;
 
 		case WAITSECS: {
@@ -509,11 +506,11 @@ void LabEngine::doActions(Action *aptr, CloseDataPtr *lcptr) {
 			break;
 
 		case WINGAME:
-			QuitLab = true;
+			_quitLab = true;
 			break;
 
 		case LOSTGAME:
-			QuitLab = true;
+			_quitLab = true;
 			break;
 
 		case RESETBUFFER:
@@ -695,7 +692,7 @@ bool doGoForward(CloseDataPtr *lcptr) {
 	RuleList *rules = _rooms[g_lab->_roomNum]._rules;
 
 	for (RuleList::iterator rule = rules->begin(); rule != rules->end(); ++rule) {
-		if (((*rule)->RuleType == GOFORWARD) && ((*rule)->Param1 == (Direction + 1))) {
+		if (((*rule)->RuleType == GOFORWARD) && ((*rule)->Param1 == (g_lab->_direction + 1))) {
 			if (checkConditions((*rule)->Condition)) {
 				g_lab->doActions((*rule)->ActionList, lcptr);
 				return true;

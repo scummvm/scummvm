@@ -133,6 +133,7 @@ public:
 	int _screenHeight;
 	byte *_displayBuffer;
 	byte *_currentDisplayBuffer;
+	bool _doNotDrawMessage;
 };
 
 } // End of namespace Lab

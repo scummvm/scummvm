@@ -63,7 +63,6 @@ Image *MonButton;
 
 extern uint16 *FadePalette;
 extern BitMap *DispBitMap, *DrawBitMap;
-extern uint16 Direction;
 
 #define INCL(BITSET,BIT) ((BITSET) |= (BIT))
 #define SETBIT(BITSET,BITNUM)   INCL(BITSET, (1 << (BITNUM)))
@@ -431,14 +430,14 @@ bool LabEngine::saveRestoreGame() {
 				desc = dialog->createDefaultSaveDescription(slot);
 			}
 
-			isOK = saveGame(Direction, _inventory[QUARTERNUM].Many, slot, desc);
+			isOK = saveGame(_direction, _inventory[QUARTERNUM].Many, slot, desc);
 		}
 	} else {
 		// Restore
 		GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Restore game:"), _("Restore"), false);
 		int slot = dialog->runModalWithCurrentTarget();
 		if (slot >= 0) {
-			isOK = loadGame(&Direction, &(_inventory[QUARTERNUM].Many), slot);
+			isOK = loadGame(&_direction, &(_inventory[QUARTERNUM].Many), slot);
 			if (isOK)
 				_music->resetMusic();
 		}

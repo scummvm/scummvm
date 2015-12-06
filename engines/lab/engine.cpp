@@ -40,14 +40,10 @@
 
 namespace Lab {
 
-extern bool DoNotDrawMessage;
-
 /* Global parser data */
-
 extern RoomData *_rooms;
-extern uint16 NumInv, ManyRooms, HighestCondition, Direction;
 
-bool ispal = false, noupdatediff = false, MainDisplay = true, QuitLab = false;
+bool ispal = false, MainDisplay = true;
 
 /* LAB: Labyrinth specific code for the special puzzles */
 #define SPECIALLOCK         100
@@ -103,7 +99,7 @@ void LabEngine::drawRoomMessage(uint16 curInv, CloseDataPtr closePtr) {
 	}
 
 	if (_alternate) {
-		if ((curInv <= NumInv) && _conditions->in(curInv) && _inventory[curInv].BInvName) {
+		if ((curInv <= _numInv) && _conditions->in(curInv) && _inventory[curInv].BInvName) {
 			if ((curInv == LAMPNUM) && _conditions->in(LAMPON))  /* LAB: Labyrinth specific */
 				drawStaticMessage(kTextLampOn);
 			else if (_inventory[curInv].Many > 1) {
@@ -358,7 +354,7 @@ void LabEngine::decIncInv(uint16 *CurInv, bool dec) {
 	else
 		(*CurInv)++;
 
-	while (*CurInv && (*CurInv <= NumInv)) {
+	while (*CurInv && (*CurInv <= _numInv)) {
 		if (_conditions->in(*CurInv) && _inventory[*CurInv].BInvName) {
 			_nextFileName = getInvName(*CurInv);
 			break;
@@ -370,13 +366,13 @@ void LabEngine::decIncInv(uint16 *CurInv, bool dec) {
 			(*CurInv)++;
 	}
 
-	if ((*CurInv == 0) || (*CurInv > NumInv)) {
+	if ((*CurInv == 0) || (*CurInv > _numInv)) {
 		if (dec)
-			*CurInv = NumInv;
+			*CurInv = _numInv;
 		else
 			*CurInv = 1;
 
-		while (*CurInv && (*CurInv <= NumInv)) {
+		while (*CurInv && (*CurInv <= _numInv)) {
 			if (_conditions->in(*CurInv) && _inventory[*CurInv].BInvName) {
 				_nextFileName = getInvName(*CurInv);
 				break;
@@ -404,16 +400,16 @@ void LabEngine::mainGameLoop() {
 
 	_cptr    = NULL;
 	_roomNum = 1;
-	Direction = NORTH;
+	_direction = NORTH;
 
 	_resource->readRoomData("LAB:Doors");
 	if (!(_inventory = _resource->readInventory("LAB:Inventor")))
 		return;
 
-	if (!(_conditions = new LargeSet(HighestCondition + 1, this)))
+	if (!(_conditions = new LargeSet(_highestCondition + 1, this)))
 		return;
 
-	if (!(_roomsFound = new LargeSet(ManyRooms + 1, this)))
+	if (!(_roomsFound = new LargeSet(_manyRooms + 1, this)))
 		return;
 
 	_conditions->readInitialConditions("LAB:Conditio");
@@ -429,7 +425,7 @@ void LabEngine::mainGameLoop() {
 		_event->processInput(true);
 
 		if (GotMessage) {
-			if (QuitLab || g_engine->shouldQuit()) {
+			if (_quitLab || g_engine->shouldQuit()) {
 				_anim->stopDiff();
 				break;
 			}
@@ -448,11 +444,11 @@ void LabEngine::mainGameLoop() {
 			if (MainDisplay)
 				_nextFileName = getPictName(&_cptr);
 
-			if (noupdatediff) {
+			if (_noUpdateDiff) {
 				_roomsFound->inclElement(_roomNum); /* Potentially entered another room */
 				forceDraw |= (strcmp(_nextFileName, _curFileName) != 0);
 
-				noupdatediff = false;
+				_noUpdateDiff = false;
 				_curFileName = _nextFileName;
 			} else if (strcmp(_nextFileName, _curFileName) != 0) {
 				interfaceOff();
@@ -542,7 +538,7 @@ void LabEngine::mainGameLoop() {
 	}
 
 	if (_inventory) {
-		for (int i = 1; i <= NumInv; i++) {
+		for (int i = 1; i <= _numInv; i++) {
 			if (_inventory[i].name)
 				free(_inventory[i].name);
 
@@ -558,8 +554,8 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 	uint32 msgClass = tmpClass;
 	Common::Point curPos = tmpPos;
 
-	uint16 OldRoomNum, OldDirection = 0;
-	uint16 LastInv = MAPNUM, Old;
+	uint16 oldDirection = 0;
+	uint16 lastInv = MAPNUM;
 	CloseDataPtr oldcptr, tempcptr, hcptr = NULL;
 	ViewData *VPtr;
 	bool doit;
@@ -593,7 +589,7 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 						eatMessages();
 						_alternate = false;
 						_anim->_doBlack = true;
-						DoNotDrawMessage = false;
+						_graphics->_doNotDrawMessage = false;
 
 						MainDisplay = true;
 						interfaceOn(); /* Sets the correct gadget list */
@@ -612,7 +608,7 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 			}
 		} else if ((code == 315) || (code == 'x') || (code == 'X')
 		         || (code == 'q') || (code == 'Q')) {  /* Quit? */
-			DoNotDrawMessage = false;
+			_graphics->_doNotDrawMessage = false;
 			_graphics->drawMessage("Do you want to quit? (Y/N)");
 			doit = false;
 			eatMessages();
@@ -661,7 +657,7 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 		         ((IEQUALIFIER_LEFTBUTTON & Qualifier) ||
 		          (IEQUALIFIER_RBUTTON & Qualifier)))) {
 			_graphics->_longWinInFront = false;
-			DoNotDrawMessage = false;
+			_graphics->_doNotDrawMessage = false;
 			_graphics->drawPanel();
 			drawRoomMessage(curInv, _cptr);
 			_graphics->screenUpdate();
@@ -681,13 +677,13 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 
 				_alternate = true;
 				_anim->_doBlack = true;
-				DoNotDrawMessage = false;
+				_graphics->_doNotDrawMessage = false;
 				interfaceOn(); /* Sets the correct gadget list */
 
 				MainDisplay = false;
 
-				if (LastInv && _conditions->in(LastInv)) {
-					curInv = LastInv;
+				if (lastInv && _conditions->in(lastInv)) {
+					curInv = lastInv;
 					_nextFileName = getInvName(curInv);
 				} else
 					decIncInv(&curInv, false);
@@ -698,11 +694,11 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 				mayShowCrumbIndicator();
 				_graphics->screenUpdate();
 			} else {
-				Old        = actionMode;
+				uint16 oldActionMode = actionMode;
 				actionMode = gadgetId;
 
-				if (Old < 5)
-					perFlipGadget(Old);
+				if (oldActionMode < 5)
+					perFlipGadget(oldActionMode);
 
 				perFlipGadget(actionMode);
 
@@ -727,28 +723,28 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 
 				_curFileName = " ";
 
-				OldDirection = Direction;
+				oldDirection = _direction;
 
-				NewDir = Direction;
+				NewDir = _direction;
 				processArrow(&NewDir, gadgetId - 6);
-				doTurn(Direction, NewDir, &_cptr);
+				doTurn(_direction, NewDir, &_cptr);
 				_anim->_doBlack = true;
-				Direction = NewDir;
+				_direction = NewDir;
 				forceDraw = true;
 
 				mayShowCrumbIndicator();
 				_graphics->screenUpdate();
 			} else if (gadgetId == 7) {
-				OldRoomNum = _roomNum;
+				uint16 oldRoomNum = _roomNum;
 
 				if (doGoForward(&_cptr)) {
-					if (OldRoomNum == _roomNum)
+					if (oldRoomNum == _roomNum)
 						_anim->_doBlack = true;
 				} else {
 					_anim->_doBlack = true;
-					processArrow(&Direction, gadgetId - 6);
+					processArrow(&_direction, gadgetId - 6);
 
-					if (OldRoomNum != _roomNum) {
+					if (oldRoomNum != _roomNum) {
 						drawStaticMessage(kTextGoForward);
 						_roomsFound->inclElement(_roomNum); /* Potentially entered a new room */
 						_curFileName = " ";
@@ -761,15 +757,15 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 
 				if (_followingCrumbs) {
 					if (_isCrumbTurning) {
-						if (Direction == OldDirection) {
+						if (_direction == oldDirection) {
 							_followingCrumbs = false;
 						}
 					} else {
-						if (_roomNum == OldRoomNum) { // didn't get there?
+						if (_roomNum == oldRoomNum) { // didn't get there?
 							_followingCrumbs = false;
 						}
 					}
-				} else if (_droppingCrumbs && OldRoomNum != _roomNum) {
+				} else if (_droppingCrumbs && oldRoomNum != _roomNum) {
 					// If in surreal maze, turn off DroppingCrumbs.
 					// Note: These numbers were generated by parsing the
 					// "Maps" file, which is why they are hard-coded. Bleh!
@@ -795,7 +791,7 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 							}
 
 							_breadCrumbs[_numCrumbs]._roomNum = _roomNum;
-							_breadCrumbs[_numCrumbs++]._direction = Direction;
+							_breadCrumbs[_numCrumbs++]._direction = _direction;
 						}
 					}
 				}
@@ -811,7 +807,7 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 			eatMessages();
 			_alternate = false;
 			_anim->_doBlack = true;
-			DoNotDrawMessage = false;
+			_graphics->_doNotDrawMessage = false;
 
 			MainDisplay = true;
 			interfaceOn(); /* Sets the correct gadget list */
@@ -834,7 +830,7 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 			MainDisplay = true;
 
 			curInv = MAPNUM;
-			LastInv = MAPNUM;
+			lastInv = MAPNUM;
 
 			_nextFileName = getInvName(curInv);
 
@@ -848,11 +844,11 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 			_graphics->screenUpdate();
 		} else if (gadgetId == 1) {
 			if (!doUse(curInv)) {
-				Old        = actionMode;
+				uint16 oldActionMode = actionMode;
 				actionMode = 5;  /* Use button */
 
-				if (Old < 5)
-					perFlipGadget(Old);
+				if (oldActionMode < 5)
+					perFlipGadget(oldActionMode);
 
 				drawStaticMessage(kTextUseOnWhat);
 				MainDisplay = true;
@@ -862,29 +858,29 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 		} else if (gadgetId == 2) {
 			MainDisplay = !MainDisplay;
 
-			if ((curInv == 0) || (curInv > NumInv)) {
+			if ((curInv == 0) || (curInv > _numInv)) {
 				curInv = 1;
 
-				while ((curInv <= NumInv) && (!_conditions->in(curInv)))
+				while ((curInv <= _numInv) && (!_conditions->in(curInv)))
 					curInv++;
 			}
 
-			if ((curInv <= NumInv) && _conditions->in(curInv) &&
+			if ((curInv <= _numInv) && _conditions->in(curInv) &&
 			        _inventory[curInv].BInvName)
 				_nextFileName = getInvName(curInv);
 
 			_graphics->screenUpdate();
 		} else if (gadgetId == 3) { /* Left gadget */
 			decIncInv(&curInv, true);
-			LastInv = curInv;
-			DoNotDrawMessage = false;
+			lastInv = curInv;
+			_graphics->_doNotDrawMessage = false;
 			drawRoomMessage(curInv, _cptr);
 
 			_graphics->screenUpdate();
 		} else if (gadgetId == 4) { /* Right gadget */
 			decIncInv(&curInv, false);
-			LastInv = curInv;
-			DoNotDrawMessage = false;
+			lastInv = curInv;
+			_graphics->_doNotDrawMessage = false;
 			drawRoomMessage(curInv, _cptr);
 
 			_graphics->screenUpdate();
@@ -906,7 +902,7 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 					eatMessages();
 					_alternate = false;
 					_anim->_doBlack = true;
-					DoNotDrawMessage = false;
+					_graphics->_doNotDrawMessage = false;
 
 					MainDisplay = true;
 					interfaceOn(); /* Sets the correct gadget list */
@@ -994,7 +990,7 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 		mayShowCrumbIndicator();
 		_graphics->screenUpdate();
 	} else if (msgClass == DELTAMOVE) {
-		VPtr = getViewData(_roomNum, Direction);
+		VPtr = getViewData(_roomNum, _direction);
 		oldcptr = VPtr->closeUps;
 
 		if (hcptr == NULL) {
@@ -1025,13 +1021,13 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 		eatMessages();
 		_alternate = !_alternate;
 		_anim->_doBlack = true;
-		DoNotDrawMessage = false;
+		_graphics->_doNotDrawMessage = false;
 		MainDisplay = true;
 		interfaceOn(); /* Sets the correct gadget list */
 
 		if (_alternate) {
-			if (LastInv && _conditions->in(LastInv))
-				curInv = LastInv;
+			if (lastInv && _conditions->in(lastInv))
+				curInv = lastInv;
 			else
 				decIncInv(&curInv, false);
 		}
@@ -1064,7 +1060,7 @@ void LabEngine::go() {
 	_event->mouseShow();
 	mainGameLoop();
 
-	if (QuitLab) { /* Won the game */
+	if (_quitLab) { /* Won the game */
 		_graphics->blackAllScreen();
 		_graphics->readPict("P:End/L2In.1", true);
 
@@ -1141,7 +1137,7 @@ int LabEngine::followCrumbs() {
 	else
 		exitDir = NORTH;
 
-	int moveDir = movement[Direction][exitDir];
+	int moveDir = movement[_direction][exitDir];
 
 	if (_numCrumbs == 0) {
 		_isCrumbTurning = false;

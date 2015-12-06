@@ -41,8 +41,6 @@
 
 namespace Lab {
 
-extern uint16 Direction;
-
 /*---------------------------------------------------------------------------*/
 /*------------------------------ The Map stuff ------------------------------*/
 /*---------------------------------------------------------------------------*/
@@ -713,13 +711,13 @@ void LabEngine::doMap(uint16 CurRoom) {
 	loadMapData();
 	_graphics->blackAllScreen();
 
-	if (Direction == NORTH)
+	if (_direction == NORTH)
 		XMark = MapNorth;
-	else if (Direction == SOUTH)
+	else if (_direction == SOUTH)
 		XMark = MapSouth;
-	else if (Direction == EAST)
+	else if (_direction == EAST)
 		XMark = MapEast;
-	else if (Direction == WEST)
+	else if (_direction == WEST)
 		XMark = MapWest;
 
 	drawMap(CurRoom, CurRoom, Maps[CurRoom].PageNumber, false, true);
