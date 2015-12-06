@@ -28,34 +28,6 @@
  *
  */
 
-#include "graphics/palette.h"
-#include "common/events.h"
-
-#include "lab/lab.h"
-#include "lab/image.h"
-
 namespace Lab {
-
-/*****************************************************************************/
-/* Sets the current page on the VGA card.                                    */
-/*****************************************************************************/
-void LabEngine::changeVolume(int delta) {
-	warning("STUB: changeVolume()");
-}
-
-
-void LabEngine::waitTOF() {
-	g_system->copyRectToScreen(_graphics->_displayBuffer, _graphics->_screenWidth, 0, 0, _graphics->_screenWidth, _graphics->_screenHeight);
-	g_system->updateScreen();
-
-  	_event->processInput();
-
-  	uint32 now;
-
-	for (now = g_system->getMillis(); now - _lastWaitTOFTicks <= 0xF; now = g_system->getMillis() )
-		g_system->delayMillis(_lastWaitTOFTicks - now + 17);
-
-	_lastWaitTOFTicks = now;
-}
 
 } // End of namespace Lab
