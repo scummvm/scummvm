@@ -72,11 +72,12 @@ LabEngine::LabEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	_isCrumbWaiting = false;
 	_noUpdateDiff = false;
 	_quitLab = false;
+	_mainDisplay = true;
+
 	_numInv = 0;
 	_manyRooms = 0;
 	_direction = 0;
 	_highestCondition = 0;
-
 	_crumbSecs = 0;
 	_crumbMicros = 0;
 
@@ -85,6 +86,7 @@ LabEngine::LabEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	_music = nullptr;
 	_anim = nullptr;
 	_graphics = nullptr;
+	_rooms = nullptr;
 
 	_lastTooLong = false;
 	_interfaceOff = false;
@@ -129,6 +131,7 @@ LabEngine::~LabEngine() {
 	delete _music;
 	delete _anim;
 	delete _graphics;
+	free(_rooms);
 
 	for (int i = 0; i < 16; i++)
 		delete _tiles[i];

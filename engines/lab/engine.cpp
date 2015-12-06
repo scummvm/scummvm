@@ -41,9 +41,7 @@
 namespace Lab {
 
 /* Global parser data */
-extern RoomData *_rooms;
-
-bool ispal = false, MainDisplay = true;
+bool ispal = false;
 
 /* LAB: Labyrinth specific code for the special puzzles */
 #define SPECIALLOCK         100
@@ -226,31 +224,31 @@ bool LabEngine::doCloseUp(CloseDataPtr closePtr) {
 /******************************************************************************/
 /* Gets the current inventory name.                                           */
 /******************************************************************************/
-const char *LabEngine::getInvName(uint16 CurInv) {
-	if (MainDisplay)
-		return _inventory[CurInv].BInvName;
+const char *LabEngine::getInvName(uint16 curInv) {
+	if (_mainDisplay)
+		return _inventory[curInv].BInvName;
 
-	if ((CurInv == LAMPNUM) && _conditions->in(LAMPON))
+	if ((curInv == LAMPNUM) && _conditions->in(LAMPON))
 		return "P:Mines/120";
 
-	if ((CurInv == BELTNUM) && _conditions->in(BELTGLOW))
+	if ((curInv == BELTNUM) && _conditions->in(BELTGLOW))
 		return "P:Future/BeltGlow";
 
-	if (CurInv == WESTPAPERNUM) {
-		_curFileName = _inventory[CurInv].BInvName;
+	if (curInv == WESTPAPERNUM) {
+		_curFileName = _inventory[curInv].BInvName;
 		_anim->_noPalChange = true;
 		_graphics->readPict(_curFileName, false);
 		_anim->_noPalChange = false;
 		doWestPaper();
-	} else if (CurInv == NOTESNUM) {
-		_curFileName = _inventory[CurInv].BInvName;
+	} else if (curInv == NOTESNUM) {
+		_curFileName = _inventory[curInv].BInvName;
 		_anim->_noPalChange = true;
 		_graphics->readPict(_curFileName, false);
 		_anim->_noPalChange = false;
 		doNotes();
 	}
 
-	return _inventory[CurInv].BInvName;
+	return _inventory[curInv].BInvName;
 }
 
 /******************************************************************************/
@@ -274,7 +272,7 @@ void LabEngine::interfaceOn() {
 	}
 
 	if (_graphics->_longWinInFront)
-		_event->attachGadgetList(NULL);
+		_event->attachGadgetList(nullptr);
 	else if (_alternate)
 		_event->attachGadgetList(_invGadgetList);
 	else
@@ -284,8 +282,8 @@ void LabEngine::interfaceOn() {
 /******************************************************************************/
 /* If the user hits the "Use" gadget; things that can get used on themselves. */
 /******************************************************************************/
-bool LabEngine::doUse(uint16 CurInv) {
-	if (CurInv == MAPNUM) {                  /* LAB: Labyrinth specific */
+bool LabEngine::doUse(uint16 curInv) {
+	if (curInv == MAPNUM) {                  /* LAB: Labyrinth specific */
 		drawStaticMessage(kTextUseMap);
 		interfaceOff();
 		_anim->stopDiff();
@@ -295,7 +293,7 @@ bool LabEngine::doUse(uint16 CurInv) {
 		_graphics->setPalette(initcolors, 8);
 		_graphics->drawMessage(NULL);
 		_graphics->drawPanel();
-	} else if (CurInv == JOURNALNUM) {         /* LAB: Labyrinth specific */
+	} else if (curInv == JOURNALNUM) {         /* LAB: Labyrinth specific */
 		drawStaticMessage(kTextUseJournal);
 		interfaceOff();
 		_anim->stopDiff();
@@ -304,7 +302,7 @@ bool LabEngine::doUse(uint16 CurInv) {
 		doJournal();
 		_graphics->drawPanel();
 		_graphics->drawMessage(NULL);
-	} else if (CurInv == LAMPNUM) {            /* LAB: Labyrinth specific */
+	} else if (curInv == LAMPNUM) {            /* LAB: Labyrinth specific */
 		interfaceOff();
 
 		if (_conditions->in(LAMPON)) {
@@ -321,20 +319,20 @@ bool LabEngine::doUse(uint16 CurInv) {
 		_anim->_waitForEffect = false;
 
 		_anim->_doBlack = false;
-		_nextFileName = getInvName(CurInv);
-	} else if (CurInv == BELTNUM) {                    /* LAB: Labyrinth specific */
+		_nextFileName = getInvName(curInv);
+	} else if (curInv == BELTNUM) {                    /* LAB: Labyrinth specific */
 		if (!_conditions->in(BELTGLOW))
 			_conditions->inclElement(BELTGLOW);
 
 		_anim->_doBlack = false;
-		_nextFileName = getInvName(CurInv);
-	} else if (CurInv == WHISKEYNUM) {                 /* LAB: Labyrinth specific */
+		_nextFileName = getInvName(curInv);
+	} else if (curInv == WHISKEYNUM) {                 /* LAB: Labyrinth specific */
 		_conditions->inclElement(USEDHELMET);
 		drawStaticMessage(kTextUseWhiskey);
-	} else if (CurInv == PITHHELMETNUM) {              /* LAB: Labyrinth specific */
+	} else if (curInv == PITHHELMETNUM) {              /* LAB: Labyrinth specific */
 		_conditions->inclElement(USEDHELMET);
 		drawStaticMessage(kTextUsePith);
-	} else if (CurInv == HELMETNUM) {                  /* LAB: Labyrinth specific */
+	} else if (curInv == HELMETNUM) {                  /* LAB: Labyrinth specific */
 		_conditions->inclElement(USEDHELMET);
 		drawStaticMessage(kTextUseHelmet);
 	} else
@@ -346,46 +344,45 @@ bool LabEngine::doUse(uint16 CurInv) {
 /******************************************************************************/
 /* Decrements the current inventory number.                                   */
 /******************************************************************************/
-void LabEngine::decIncInv(uint16 *CurInv, bool dec) {
+void LabEngine::decIncInv(uint16 *curInv, bool decreaseFl) {
 	interfaceOff();
 
-	if (dec)
-		(*CurInv)--;
+	if (decreaseFl)
+		(*curInv)--;
 	else
-		(*CurInv)++;
+		(*curInv)++;
 
-	while (*CurInv && (*CurInv <= _numInv)) {
-		if (_conditions->in(*CurInv) && _inventory[*CurInv].BInvName) {
-			_nextFileName = getInvName(*CurInv);
+	while (*curInv && (*curInv <= _numInv)) {
+		if (_conditions->in(*curInv) && _inventory[*curInv].BInvName) {
+			_nextFileName = getInvName(*curInv);
 			break;
 		}
 
-		if (dec)
-			(*CurInv)--;
+		if (decreaseFl)
+			(*curInv)--;
 		else
-			(*CurInv)++;
+			(*curInv)++;
 	}
 
-	if ((*CurInv == 0) || (*CurInv > _numInv)) {
-		if (dec)
-			*CurInv = _numInv;
+	if ((*curInv == 0) || (*curInv > _numInv)) {
+		if (decreaseFl)
+			*curInv = _numInv;
 		else
-			*CurInv = 1;
+			*curInv = 1;
 
-		while (*CurInv && (*CurInv <= _numInv)) {
-			if (_conditions->in(*CurInv) && _inventory[*CurInv].BInvName) {
-				_nextFileName = getInvName(*CurInv);
+		while (*curInv && (*curInv <= _numInv)) {
+			if (_conditions->in(*curInv) && _inventory[*curInv].BInvName) {
+				_nextFileName = getInvName(*curInv);
 				break;
 			}
 
-			if (dec)
-				(*CurInv)--;
+			if (decreaseFl)
+				(*curInv)--;
 			else
-				(*CurInv)++;
+				(*curInv)++;
 		}
 	}
 }
-
 
 /******************************************************************************/
 /* The main game loop                                                         */
@@ -394,7 +391,8 @@ void LabEngine::mainGameLoop() {
 	uint16 actionMode = 4;
 	uint16 curInv = MAPNUM;
 
-	bool forceDraw = false, GotMessage = true;
+	bool forceDraw = false;
+	bool gotMessage = true;
 
 	_graphics->setPalette(initcolors, 8);
 
@@ -424,7 +422,7 @@ void LabEngine::mainGameLoop() {
 	while (1) {
 		_event->processInput(true);
 
-		if (GotMessage) {
+		if (gotMessage) {
 			if (_quitLab || g_engine->shouldQuit()) {
 				_anim->stopDiff();
 				break;
@@ -441,7 +439,7 @@ void LabEngine::mainGameLoop() {
 			}
 
 			/* Sets the current picture properly on the screen */
-			if (MainDisplay)
+			if (_mainDisplay)
 				_nextFileName = getPictName(&_cptr);
 
 			if (_noUpdateDiff) {
@@ -456,11 +454,11 @@ void LabEngine::mainGameLoop() {
 				_curFileName = _nextFileName;
 
 				if (_cptr) {
-					if ((_cptr->CloseUpType == SPECIALLOCK) && MainDisplay)  /* LAB: Labyrinth specific code */
+					if ((_cptr->CloseUpType == SPECIALLOCK) && _mainDisplay)  /* LAB: Labyrinth specific code */
 						showCombination(_curFileName);
 					else if (((_cptr->CloseUpType == SPECIALBRICK)  ||
 					          (_cptr->CloseUpType == SPECIALBRICKNOMOUSE)) &&
-					         MainDisplay) /* LAB: Labyrinth specific code */
+					         _mainDisplay) /* LAB: Labyrinth specific code */
 						showTile(_curFileName, (bool)(_cptr->CloseUpType == SPECIALBRICKNOMOUSE));
 					else
 						_graphics->readPict(_curFileName, false);
@@ -489,7 +487,7 @@ void LabEngine::mainGameLoop() {
 		IntuiMessage *curMsg = getMsg();
 
 		if (curMsg == NULL) { /* Does music load and next animation frame when you've run out of messages */
-			GotMessage = false;
+			gotMessage = false;
 			_music->checkRoomMusic();
 			_music->updateMusic();
 			_anim->diffNextFrame();
@@ -506,7 +504,7 @@ void LabEngine::mainGameLoop() {
 					else if (result == VKEY_RTARROW)
 						code = 8;
 
-					GotMessage = true;
+					gotMessage = true;
 					mayShowCrumbIndicator();
 					_graphics->screenUpdate();
 					if (!from_crumbs(GADGETUP, code, 0, _event->updateAndGetMousePos(), curInv, curMsg, forceDraw, code, actionMode))
@@ -517,7 +515,7 @@ void LabEngine::mainGameLoop() {
 			mayShowCrumbIndicator();
 			_graphics->screenUpdate();
 		} else {
-			GotMessage = true;
+			gotMessage = true;
 
 			Common::Point curPos;
 			curPos.x  = curMsg->mouseX;
@@ -591,7 +589,7 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 						_anim->_doBlack = true;
 						_graphics->_doNotDrawMessage = false;
 
-						MainDisplay = true;
+						_mainDisplay = true;
 						interfaceOn(); /* Sets the correct gadget list */
 						_graphics->drawPanel();
 						drawRoomMessage(curInv, _cptr);
@@ -680,7 +678,7 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 				_graphics->_doNotDrawMessage = false;
 				interfaceOn(); /* Sets the correct gadget list */
 
-				MainDisplay = false;
+				_mainDisplay = false;
 
 				if (lastInv && _conditions->in(lastInv)) {
 					curInv = lastInv;
@@ -809,7 +807,7 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 			_anim->_doBlack = true;
 			_graphics->_doNotDrawMessage = false;
 
-			MainDisplay = true;
+			_mainDisplay = true;
 			interfaceOn(); /* Sets the correct gadget list */
 			_graphics->drawPanel();
 			drawRoomMessage(curInv, _cptr);
@@ -827,7 +825,7 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 			doit = !saveRestoreGame();
 			_cptr = NULL;
 
-			MainDisplay = true;
+			_mainDisplay = true;
 
 			curInv = MAPNUM;
 			lastInv = MAPNUM;
@@ -851,12 +849,12 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 					perFlipGadget(oldActionMode);
 
 				drawStaticMessage(kTextUseOnWhat);
-				MainDisplay = true;
+				_mainDisplay = true;
 
 				_graphics->screenUpdate();
 			}
 		} else if (gadgetId == 2) {
-			MainDisplay = !MainDisplay;
+			_mainDisplay = !_mainDisplay;
 
 			if ((curInv == 0) || (curInv > _numInv)) {
 				curInv = 1;
@@ -904,7 +902,7 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 					_anim->_doBlack = true;
 					_graphics->_doNotDrawMessage = false;
 
-					MainDisplay = true;
+					_mainDisplay = true;
 					interfaceOn(); /* Sets the correct gadget list */
 					_graphics->drawPanel();
 					drawRoomMessage(curInv, _cptr);
@@ -919,16 +917,16 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 				}
 			}
 		}
-	} else if ((msgClass == MOUSEBUTTONS) && (IEQUALIFIER_LEFTBUTTON & Qualifier) && MainDisplay) {
+	} else if ((msgClass == MOUSEBUTTONS) && (IEQUALIFIER_LEFTBUTTON & Qualifier) && _mainDisplay) {
 		interfaceOff();
-		MainDisplay = true;
+		_mainDisplay = true;
 
 		doit = false;
 
 		if (_cptr) {
-			if ((_cptr->CloseUpType == SPECIALLOCK) && MainDisplay) /* LAB: Labyrinth specific code */
+			if ((_cptr->CloseUpType == SPECIALLOCK) && _mainDisplay) /* LAB: Labyrinth specific code */
 				mouseCombination(curPos);
-			else if ((_cptr->CloseUpType == SPECIALBRICK) && MainDisplay)
+			else if ((_cptr->CloseUpType == SPECIALBRICK) && _mainDisplay)
 				mouseTile(curPos);
 			else
 				doit = true;
@@ -1022,7 +1020,7 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 		_alternate = !_alternate;
 		_anim->_doBlack = true;
 		_graphics->_doNotDrawMessage = false;
-		MainDisplay = true;
+		_mainDisplay = true;
 		interfaceOn(); /* Sets the correct gadget list */
 
 		if (_alternate) {
@@ -1163,7 +1161,7 @@ void LabEngine::mayShowCrumbIndicator() {
 	if (getPlatform() != Common::kPlatformWindows)
 		return;
 
-	if (_droppingCrumbs && MainDisplay) {
+	if (_droppingCrumbs && _mainDisplay) {
 		_event->mouseHide();
 		dropCrumbsImage.drawMaskImage(612, 4);
 		_event->mouseShow();
@@ -1177,7 +1175,7 @@ void LabEngine::mayShowCrumbIndicatorOff() {
 	if (getPlatform() != Common::kPlatformWindows)
 		return;
 
-	if (MainDisplay) {
+	if (_mainDisplay) {
 		_event->mouseHide();
 		dropCrumbsOffImage.drawMaskImage(612, 4);
 		_event->mouseShow();

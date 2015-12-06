@@ -34,8 +34,6 @@
 
 namespace Lab {
 
-extern RoomData *_rooms;
-
 Resource::Resource(LabEngine *vm) : _vm(vm) {
 	readStaticText();
 }
@@ -93,22 +91,22 @@ bool Resource::readRoomData(const char *fileName) {
 
 	_vm->_manyRooms = dataFile->readUint16LE();
 	_vm->_highestCondition = dataFile->readUint16LE();
-	_rooms = (RoomData *)malloc((_vm->_manyRooms + 1) * sizeof(RoomData));
-	memset(_rooms, 0, (_vm->_manyRooms + 1) * sizeof(RoomData));
+	_vm->_rooms = (RoomData *)malloc((_vm->_manyRooms + 1) * sizeof(RoomData));
+	memset(_vm->_rooms, 0, (_vm->_manyRooms + 1) * sizeof(RoomData));
 
 	for (uint16 i = 1; i <= _vm->_manyRooms; i++) {
-		_rooms[i]._northDoor = dataFile->readUint16LE();
-		_rooms[i]._southDoor = dataFile->readUint16LE();
-		_rooms[i]._eastDoor = dataFile->readUint16LE();
-		_rooms[i]._westDoor = dataFile->readUint16LE();
-		_rooms[i]._wipeType = dataFile->readByte();
+		_vm->_rooms[i]._northDoor = dataFile->readUint16LE();
+		_vm->_rooms[i]._southDoor = dataFile->readUint16LE();
+		_vm->_rooms[i]._eastDoor = dataFile->readUint16LE();
+		_vm->_rooms[i]._westDoor = dataFile->readUint16LE();
+		_vm->_rooms[i]._wipeType = dataFile->readByte();
 
-		_rooms[i]._view[NORTH] = nullptr;
-		_rooms[i]._view[SOUTH] = nullptr;
-		_rooms[i]._view[EAST] = nullptr;
-		_rooms[i]._view[WEST] = nullptr;
-		_rooms[i]._rules = nullptr;
-		_rooms[i]._roomMsg = nullptr;
+		_vm->_rooms[i]._view[NORTH] = nullptr;
+		_vm->_rooms[i]._view[SOUTH] = nullptr;
+		_vm->_rooms[i]._view[EAST] = nullptr;
+		_vm->_rooms[i]._view[WEST] = nullptr;
+		_vm->_rooms[i]._rules = nullptr;
+		_vm->_rooms[i]._roomMsg = nullptr;
 	}
 
 	delete dataFile;
@@ -136,12 +134,12 @@ bool Resource::readViews(uint16 roomNum) {
 	Common::String fileName = "LAB:Rooms/" + Common::String::format("%d", roomNum);
 	Common::File *dataFile = openDataFile(fileName.c_str(), MKTAG('R', 'O', 'M', '4'));
 
-	_rooms[roomNum]._roomMsg = readString(dataFile);
-	_rooms[roomNum]._view[NORTH] = readView(dataFile);
-	_rooms[roomNum]._view[SOUTH] = readView(dataFile);
-	_rooms[roomNum]._view[EAST] = readView(dataFile);
-	_rooms[roomNum]._view[WEST] = readView(dataFile);
-	_rooms[roomNum]._rules = readRule(dataFile);
+	_vm->_rooms[roomNum]._roomMsg = readString(dataFile);
+	_vm->_rooms[roomNum]._view[NORTH] = readView(dataFile);
+	_vm->_rooms[roomNum]._view[SOUTH] = readView(dataFile);
+	_vm->_rooms[roomNum]._view[EAST] = readView(dataFile);
+	_vm->_rooms[roomNum]._view[WEST] = readView(dataFile);
+	_vm->_rooms[roomNum]._rules = readRule(dataFile);
 
 	_vm->_music->updateMusic();
 

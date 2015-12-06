@@ -44,8 +44,6 @@ namespace Lab {
 
 #define NOFILE         "no file"
 
-RoomData *_rooms;
-
 /*****************************************************************************/
 /* Generates a random number.                                                */
 /*****************************************************************************/
@@ -81,10 +79,10 @@ static bool checkConditions(int16 *condition) {
 /* Gets the current ViewDataPointer.                                         */
 /*****************************************************************************/
 ViewData *getViewData(uint16 roomNum, uint16 direction) {
-	if (!_rooms[roomNum]._roomMsg)
+	if (!g_lab->_rooms[roomNum]._roomMsg)
 		g_lab->_resource->readViews(roomNum);
 
-	ViewData *view = _rooms[roomNum]._view[direction];
+	ViewData *view = g_lab->_rooms[roomNum]._view[direction];
 
 	do {
 		if (checkConditions(view->Condition))
@@ -195,13 +193,13 @@ bool processArrow(uint16 *direction, uint16 arrow) {
 		uint16 room = 1;
 
 		if (*direction == NORTH)
-			room = _rooms[g_lab->_roomNum]._northDoor;
+			room = g_lab->_rooms[g_lab->_roomNum]._northDoor;
 		else if (*direction == SOUTH)
-			room = _rooms[g_lab->_roomNum]._southDoor;
+			room = g_lab->_rooms[g_lab->_roomNum]._southDoor;
 		else if (*direction == EAST)
-			room = _rooms[g_lab->_roomNum]._eastDoor;
+			room = g_lab->_rooms[g_lab->_roomNum]._eastDoor;
 		else if (*direction == WEST)
-			room = _rooms[g_lab->_roomNum]._westDoor;
+			room = g_lab->_rooms[g_lab->_roomNum]._westDoor;
 
 		if (room == 0)
 			return false;
@@ -574,11 +572,11 @@ static bool doActionRuleSub(int16 action, int16 roomNum, CloseDataPtr lcptr, Clo
 	action++;
 
 	if (lcptr) {
-		RuleList *rules = _rooms[g_lab->_roomNum]._rules;
+		RuleList *rules = g_lab->_rooms[g_lab->_roomNum]._rules;
 
 		if ((rules == NULL) && (roomNum == 0)) {
 			g_lab->_resource->readViews(roomNum);
-			rules = _rooms[roomNum]._rules;
+			rules = g_lab->_rooms[roomNum]._rules;
 		}
 
 		for (RuleList::iterator rule = rules->begin(); rule != rules->end(); ++rule) {
@@ -629,11 +627,11 @@ bool doActionRule(Common::Point pos, int16 action, int16 roomNum, CloseDataPtr *
 static bool doOperateRuleSub(int16 itemNum, int16 roomNum, CloseDataPtr lcptr, CloseDataPtr *set, bool allowDefaults) {
 	if (lcptr)
 		if (lcptr->CloseUpType > 0) {
-			RuleList *rules = _rooms[roomNum]._rules;
+			RuleList *rules = g_lab->_rooms[roomNum]._rules;
 
 			if ((rules == NULL) && (roomNum == 0)) {
 				g_lab->_resource->readViews(roomNum);
-				rules = _rooms[roomNum]._rules;
+				rules = g_lab->_rooms[roomNum]._rules;
 			}
 
 			for (RuleList::iterator rule = rules->begin(); rule != rules->end(); ++rule) {
@@ -689,7 +687,7 @@ bool doOperateRule(int16 x, int16 y, int16 ItemNum, CloseDataPtr *lcptr) {
 /* Goes thru the rules if the user tries to go forward.                      */
 /*****************************************************************************/
 bool doGoForward(CloseDataPtr *lcptr) {
-	RuleList *rules = _rooms[g_lab->_roomNum]._rules;
+	RuleList *rules = g_lab->_rooms[g_lab->_roomNum]._rules;
 
 	for (RuleList::iterator rule = rules->begin(); rule != rules->end(); ++rule) {
 		if (((*rule)->RuleType == GOFORWARD) && ((*rule)->Param1 == (g_lab->_direction + 1))) {
@@ -710,7 +708,7 @@ bool doTurn(uint16 from, uint16 to, CloseDataPtr *lcptr) {
 	from++;
 	to++;
 
-	RuleList *rules = _rooms[g_lab->_roomNum]._rules;
+	RuleList *rules = g_lab->_rooms[g_lab->_roomNum]._rules;
 
 	for (RuleList::iterator rule = rules->begin(); rule != rules->end(); ++rule) {
 		if (((*rule)->RuleType == TURN) ||
@@ -730,7 +728,7 @@ bool doTurn(uint16 from, uint16 to, CloseDataPtr *lcptr) {
 /* Goes thru the rules if the user tries to go to the main view              */
 /*****************************************************************************/
 bool doMainView(CloseDataPtr *lcptr) {
-	RuleList *rules = _rooms[g_lab->_roomNum]._rules;
+	RuleList *rules = g_lab->_rooms[g_lab->_roomNum]._rules;
 	for (RuleList::iterator rule = rules->begin(); rule != rules->end(); ++rule) {
 		if ((*rule)->RuleType == GOMAINVIEW) {
 			if (checkConditions((*rule)->Condition)) {
