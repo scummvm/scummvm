@@ -155,7 +155,6 @@ void LabEngine::doWestPaper() {
 /*****************************************************************************/
 static bool loadJournalData() {
 	char filename[20];
-	Gadget *TopGadget = &BackG;
 	bool bridge, dirty, news, clean;
 
 	journalFont = g_lab->_resource->getFont("P:Journal.fon");	// FIXME: memory leak
@@ -206,16 +205,21 @@ static bool loadJournalData() {
 
 	uint16 counter = 0;
 
-	while (TopGadget) {
-		TopGadget->x = g_lab->_graphics->VGAScaleX(JGadX[counter]);
+	GadgetList journalGadgetList;
+	journalGadgetList.push_back(&BackG);
+	journalGadgetList.push_back(&CancelG);
+	journalGadgetList.push_back(&ForwardG);
+
+	for (GadgetList::iterator gadgetIter = journalGadgetList.begin(); gadgetIter != journalGadgetList.end(); ++gadgetIter) {
+		Gadget *gadget = *gadgetIter;
+		gadget->x = g_lab->_graphics->VGAScaleX(JGadX[counter]);
 
 		if (counter == 1)
-			TopGadget->y = g_lab->_graphics->VGAScaleY(JGadY[counter]) + g_lab->_graphics->SVGACord(1);
+			gadget->y = g_lab->_graphics->VGAScaleY(JGadY[counter]) + g_lab->_graphics->SVGACord(1);
 		else
-			TopGadget->y = g_lab->_graphics->VGAScaleY(JGadY[counter]) - g_lab->_graphics->SVGACord(1);
+			gadget->y = g_lab->_graphics->VGAScaleY(JGadY[counter]) - g_lab->_graphics->SVGACord(1);
 
-		TopGadget->GadgetID = counter;
-		TopGadget = TopGadget->NextGadget;
+		gadget->GadgetID = counter;
 		counter++;
 	}
 
@@ -372,6 +376,11 @@ void LabEngine::processJournal() {
 /* Does the journal processing.                                              */
 /*****************************************************************************/
 void LabEngine::doJournal() {
+	GadgetList journalGadgetList;
+	journalGadgetList.push_back(&BackG);
+	journalGadgetList.push_back(&CancelG);
+	journalGadgetList.push_back(&ForwardG);
+
 	_graphics->blackAllScreen();
 
 	lastpage    = false;
@@ -381,9 +390,6 @@ void LabEngine::doJournal() {
 	JBackImage._height = _graphics->_screenHeight;
 	JBackImage._imageData   = NULL;
 
-	BackG.NextGadget = &CancelG;
-	CancelG.NextGadget = &ForwardG;
-
 	ScreenImage = JBackImage;
 	ScreenImage._imageData = _graphics->getCurrentDrawingBuffer();
 
@@ -392,12 +398,13 @@ void LabEngine::doJournal() {
 
 	drawJournal(0, true);
 
-	_event->attachGadgetList(&BackG);
+	_event->attachGadgetList(&journalGadgetList);
 	_event->mouseShow();
 	processJournal();
 	_event->attachGadgetList(NULL);
 	_graphics->fade(false, 0);
 	_event->mouseHide();
+	journalGadgetList.clear();
 
 	ScreenImage._imageData = _graphics->getCurrentDrawingBuffer();
 

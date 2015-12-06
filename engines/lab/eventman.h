@@ -55,10 +55,10 @@ private:
 public:
 	EventManager (LabEngine *vm);
 
-	Gadget *_screenGadgetList;
+	GadgetList *_screenGadgetList;
 	Gadget *_hitGadget;
 
-	Gadget *checkGadgetHit(Gadget *gadgetList, Common::Point pos);
+	Gadget *checkGadgetHit(GadgetList *gadgetList, Common::Point pos);
 	void initMouse();
 	void updateMouse();
 	void mouseShow();
@@ -67,7 +67,7 @@ public:
 	void setMousePos(Common::Point pos);
 	bool mouseButton(uint16 *x, uint16 *y, bool leftButton);
 	Gadget *mouseGadget();
-	void attachGadgetList(Gadget *gadgetList);
+	void attachGadgetList(GadgetList *gadgetList);
 	void mouseHandler(int flag, Common::Point pos);
 	bool keyPress(uint16 *keyCode);
 	bool haveNextChar();

@@ -57,30 +57,29 @@ static byte MouseData[] = {1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
 /* Checks whether or not the cords fall within one of the gadgets in a list  */
 /* of gadgets.                                                               */
 /*****************************************************************************/
-Gadget *EventManager::checkGadgetHit(Gadget *gadgetList, Common::Point pos) {
-	while (gadgetList != NULL) {
-		if ((pos.x >= gadgetList->x) && (pos.y >= gadgetList->y) &&
-		    (pos.x <= (gadgetList->x + gadgetList->_image->_width)) &&
-		    (pos.y <= (gadgetList->y + gadgetList->_image->_height)) &&
-		     !(GADGETOFF & gadgetList->GadgetFlags)) {
+Gadget *EventManager::checkGadgetHit(GadgetList *gadgetList, Common::Point pos) {
+	for (GadgetList::iterator gadgetItr = gadgetList->begin(); gadgetItr != gadgetList->end(); ++gadgetItr) {
+		Gadget *gadget = *gadgetItr;
+		if ((pos.x >= gadget->x) && (pos.y >= gadget->y) &&
+			(pos.x <= (gadget->x + gadget->_image->_width)) &&
+			(pos.y <= (gadget->y + gadget->_image->_height)) &&
+			!(GADGETOFF & gadget->GadgetFlags)) {
 			if (_vm->_isHiRes) {
-				_hitGadget = gadgetList;
+				_hitGadget = gadget;
 			} else {
 				mouseHide();
-				gadgetList->_altImage->drawImage(gadgetList->x, gadgetList->y);
+				gadget->_altImage->drawImage(gadget->x, gadget->y);
 				mouseShow();
 
 				for (uint16 i = 0; i < 3; i++)
 					_vm->waitTOF();
 
 				mouseHide();
-				gadgetList->_image->drawImage(gadgetList->x, gadgetList->y);
+				gadget->_image->drawImage(gadget->x, gadget->y);
 				mouseShow();
 			}
 
-			return gadgetList;
-		} else {
-			gadgetList = gadgetList->NextGadget;
+			return gadget;
 		}
 	}
 
@@ -89,7 +88,7 @@ Gadget *EventManager::checkGadgetHit(Gadget *gadgetList, Common::Point pos) {
 
 
 
-void EventManager::attachGadgetList(Gadget *gadgetList) {
+void EventManager::attachGadgetList(GadgetList *gadgetList) {
 	if (_screenGadgetList != gadgetList)
 		_lastGadgetHit = nullptr;
 

@@ -130,9 +130,8 @@ void LabEngine::freeScreens() {
 /* Permanently flips the imagery of a gadget.                                 */
 /******************************************************************************/
 void LabEngine::perFlipGadget(uint16 gadgetId) {
-	Gadget *topGadget = _moveGadgetList;
-
-	while (topGadget) {
+	for (GadgetList::iterator gadget = _moveGadgetList.begin(); gadget != _moveGadgetList.end(); ++gadget) {
+		Gadget *topGadget = *gadget;
 		if (topGadget->GadgetID == gadgetId) {
 			Image *tmpImage = topGadget->_image;
 			topGadget->_image = topGadget->_altImage;
@@ -144,9 +143,8 @@ void LabEngine::perFlipGadget(uint16 gadgetId) {
 				_event->mouseShow();
 			}
 
-			return;
-		} else
-			topGadget = topGadget->NextGadget;
+			break;
+		}
 	}
 }
 
@@ -274,9 +272,9 @@ void LabEngine::interfaceOn() {
 	if (_graphics->_longWinInFront)
 		_event->attachGadgetList(nullptr);
 	else if (_alternate)
-		_event->attachGadgetList(_invGadgetList);
+		_event->attachGadgetList(&_invGadgetList);
 	else
-		_event->attachGadgetList(_moveGadgetList);
+		_event->attachGadgetList(&_moveGadgetList);
 }
 
 /******************************************************************************/
