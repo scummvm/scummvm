@@ -109,7 +109,7 @@ void SoundManager::playSound(Resource *res, int priority, bool loop) {
 		byte internalSampleRate = resourceData[5];
 		int sampleSize = READ_LE_UINT16(resourceData + 7);
 
-		assert( (sampleSize + 32) == res->_size);
+		assert( (sampleSize + 32) <= res->_size);
 
 		int sampleRate = 0;
 		switch (internalSampleRate) {
