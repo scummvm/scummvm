@@ -1105,7 +1105,7 @@ int LabEngine::followCrumbs() {
 		uint32 Secs;
 		uint32 Micros;
 
-		g_lab->timeDiff(_crumbSecs, _crumbMicros, &Secs, &Micros);
+		timeDiff(_crumbSecs, _crumbMicros, &Secs, &Micros);
 
 		if (Secs != 0 || Micros != 0)
 			return 0;
@@ -1117,7 +1117,7 @@ int LabEngine::followCrumbs() {
 		_breadCrumbs[_numCrumbs--]._roomNum = 0;
 
 	// Is the current crumb this room? If not, logic error.
-	if (g_lab->_roomNum != _breadCrumbs[_numCrumbs]._roomNum) {
+	if (_roomNum != _breadCrumbs[_numCrumbs]._roomNum) {
 		_numCrumbs = 0;
 		_breadCrumbs[0]._roomNum = 0;
 		_droppingCrumbs = false;
@@ -1150,7 +1150,7 @@ int LabEngine::followCrumbs() {
 		_isCrumbTurning = (moveDir != VKEY_UPARROW);
 		_isCrumbWaiting = true;
 
-		g_lab->addCurTime(theDelay / ONESECOND, theDelay % ONESECOND, &_crumbSecs, &_crumbMicros);
+		addCurTime(theDelay / ONESECOND, theDelay % ONESECOND, &_crumbSecs, &_crumbMicros);
 	}
 
 	return moveDir;
