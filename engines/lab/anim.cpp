@@ -530,7 +530,7 @@ void Anim::diffNextFrame() {
 			break;
 
 		case 30L:
-		case 31L: {
+		case 31L:
 			if (_waitForEffect) {
 				while (_vm->_music->isSoundEffectActive()) {
 					_vm->_music->updateMusic();
@@ -545,13 +545,9 @@ void Anim::diffNextFrame() {
 			_sampleSpeed = READ_LE_UINT16(_diffFile);
 			_diffFile += 4;
 
-			byte *music = _diffFile;
-			uint32 musicsize = _size;
+			_vm->_music->playSoundEffect(_sampleSpeed, _size, _diffFile);
 			_diffFile += _size;
-
-			_vm->_music->playSoundEffect(_sampleSpeed, musicsize, music);
 			break;
-				  }
 		case 65535L:
 			if ((_frameNum == 1) || _playOnce || _stopPlayingEnd) {
 				int didTOF = 0;
