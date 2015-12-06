@@ -77,12 +77,10 @@ private:
 	uint16 _frameNum;
 	bool _playOnce;
 	byte *_buffer;
-	byte *_storeDiffFile;
-	byte **_diffFile;
+	byte *_diffFile;
 	uint32 _size;
 	bool _stopPlayingEnd;
 	uint16 _sampleSpeed;
-	byte *_start;
 	uint32 _diffWidth;
 	uint32 _diffHeight;
 	bool _stopSound;

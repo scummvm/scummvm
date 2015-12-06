@@ -58,8 +58,7 @@ Anim::Anim(LabEngine *vm) : _vm(vm) {
 	_frameNum = 0;
 	_playOnce = false;
 	_buffer = nullptr;
-	_storeDiffFile = nullptr;
-	_diffFile = &_storeDiffFile;
+	_diffFile = nullptr;
 	_size = 0;
 	_rawDiffBM._bytesPerRow = 0;
 	_rawDiffBM._flags = 0;
@@ -70,7 +69,6 @@ Anim::Anim(LabEngine *vm) : _vm(vm) {
 	_stopPlayingEnd = false;
 	_sampleSpeed = 0;
 	_doBlack = false;
-	_start = nullptr;
 	_diffWidth = 0;
 	_diffHeight = 0;
 	_stopSound = false;
@@ -461,7 +459,7 @@ void Anim::diffNextFrame() {
 			_frameNum++;
 
 			if ((_frameNum == 1) && (_continuous || (!_playOnce)))
-				_buffer = *_diffFile;
+				_buffer = _diffFile;
 
 			_isAnim = (_frameNum >= 3) && (!_playOnce);
 			_curBit = 0;
@@ -473,54 +471,54 @@ void Anim::diffNextFrame() {
 		}
 
 		_vm->_music->updateMusic();
-		_header = READ_LE_UINT32(*_diffFile);
-		*_diffFile += 4;
+		_header = READ_LE_UINT32(_diffFile);
+		_diffFile += 4;
 
-		_size = READ_LE_UINT32(*_diffFile);
-		*_diffFile += 4;
+		_size = READ_LE_UINT32(_diffFile);
+		_diffFile += 4;
 
 		switch (_header) {
 		case 8L:
-			readBlock(_diffPalette, _size, _diffFile);
+			readBlock(_diffPalette, _size, &_diffFile);
 			_isPal = true;
 			break;
 
 		case 10L:
-			_rawDiffBM._planes[_curBit] = *_diffFile;
+			_rawDiffBM._planes[_curBit] = _diffFile;
 
 			if (_isBM)
-				(*_diffFile) += _size;
+				_diffFile += _size;
 			else {
-				readBlock(DrawBitMap->_planes[_curBit], _size, _diffFile);
+				readBlock(DrawBitMap->_planes[_curBit], _size, &_diffFile);
 			}
 
 			_curBit++;
 			break;
 
 		case 11L:
-			(*_diffFile) += 4;
-			runLengthDecode(DrawBitMap->_planes[_curBit], *_diffFile);
+			_diffFile += 4;
+			runLengthDecode(DrawBitMap->_planes[_curBit], _diffFile);
 			_curBit++;
-			(*_diffFile) += _size - 4;
+			_diffFile += _size - 4;
 			break;
 
 		case 12L:
-			(*_diffFile) += 4;
-			VRunLengthDecode(DrawBitMap->_planes[_curBit], *_diffFile, DrawBitMap->_bytesPerRow);
+			_diffFile += 4;
+			VRunLengthDecode(DrawBitMap->_planes[_curBit], _diffFile, DrawBitMap->_bytesPerRow);
 			_curBit++;
-			(*_diffFile) += _size - 4;
+			_diffFile += _size - 4;
 			break;
 
 		case 20L:
-			unDiff(DrawBitMap->_planes[_curBit], DispBitMap->_planes[_curBit], *_diffFile, DrawBitMap->_bytesPerRow, false);
+			unDiff(DrawBitMap->_planes[_curBit], DispBitMap->_planes[_curBit], _diffFile, DrawBitMap->_bytesPerRow, false);
 			_curBit++;
-			(*_diffFile) += _size;
+			_diffFile += _size;
 			break;
 
 		case 21L:
-			unDiff(DrawBitMap->_planes[_curBit], DispBitMap->_planes[_curBit], *_diffFile, DrawBitMap->_bytesPerRow, true);
+			unDiff(DrawBitMap->_planes[_curBit], DispBitMap->_planes[_curBit], _diffFile, DrawBitMap->_bytesPerRow, true);
 			_curBit++;
-			(*_diffFile) += _size;
+			_diffFile += _size;
 			break;
 
 		case 25L:
@@ -543,13 +541,13 @@ void Anim::diffNextFrame() {
 			_size -= 8L;
 
 
-			(*_diffFile) += 4;
-			_sampleSpeed = READ_LE_UINT16(*_diffFile);
-			(*_diffFile) += 4;
+			_diffFile += 4;
+			_sampleSpeed = READ_LE_UINT16(_diffFile);
+			_diffFile += 4;
 
-			byte *music = *_diffFile;
+			byte *music = _diffFile;
 			uint32 musicsize = _size;
-			(*_diffFile) += _size;
+			_diffFile += _size;
 
 			_vm->_music->playSoundEffect(_sampleSpeed, musicsize, music);
 			break;
@@ -578,11 +576,11 @@ void Anim::diffNextFrame() {
 			}
 
 			_frameNum = 4;  /* Random frame number so it never gets back to 2 */
-			*_diffFile = _buffer;
+			_diffFile = _buffer;
 			break;
 
 		default:
-			(*_diffFile) += _size;
+			_diffFile += _size;
 			break;
 		}
 	}
@@ -601,7 +599,6 @@ void Anim::playDiff(byte *buffer) {
 	_numChunks   = 1;
 	_donePal     = false;
 	_stopPlayingEnd = false;
-	_diffFile    = &_storeDiffFile;
 
 	_isPlaying   = true;
 
@@ -610,52 +607,46 @@ void Anim::playDiff(byte *buffer) {
 		_vm->_graphics->blackScreen();
 	}
 
-	_start = buffer;				   /* Make a copy of the pointer to the start of the file    */
-	*_diffFile = _start;               /* Now can modify the file without modifying the original */
-
-	if (_start == NULL) {
-		_isPlaying = false;
-		return;
-	}
+	_diffFile = buffer;
 
 	_continuous = false;
-	uint32 signature = READ_BE_UINT32(*_diffFile);
-	(*_diffFile) += 4;
+	uint32 signature = READ_BE_UINT32(_diffFile);
+	_diffFile += 4;
 
-	_header = READ_LE_UINT32(*_diffFile);
-	(*_diffFile) += 4;
+	_header = READ_LE_UINT32(_diffFile);
+	_diffFile += 4;
 
 	if ((signature != MKTAG('D', 'I', 'F', 'F')) || (_header != 1219009121L)) {
 		_isPlaying = false;
 		return;
 	}
 
-	_header = READ_LE_UINT32(*_diffFile);
-	(*_diffFile) += 4;
+	_header = READ_LE_UINT32(_diffFile);
+	_diffFile += 4;
 
-	_size = READ_LE_UINT32(*_diffFile);
-	(*_diffFile) += 4;
+	_size = READ_LE_UINT32(_diffFile);
+	_diffFile += 4;
 
 	if (_header == 0) {
 		// sizeof(headerdata) != 18, but the padding might be at the end
-		_headerdata._version = READ_LE_UINT16(*_diffFile);
-		(*_diffFile) += 2;
-		_headerdata._width = READ_LE_UINT16(*_diffFile);
-		(*_diffFile) += 2;
-		_headerdata._height = READ_LE_UINT16(*_diffFile);
-		(*_diffFile) += 2;
-		_headerdata._depth = *_diffFile[0];
-		(*_diffFile)++;
-		_headerdata._fps = *_diffFile[0];
-		(*_diffFile)++;
-		_headerdata._bufferSize = READ_LE_UINT32(*_diffFile);
-		(*_diffFile) += 4;
-		_headerdata._machine = READ_LE_UINT16(*_diffFile);
-		(*_diffFile) += 2;
-		_headerdata._flags = READ_LE_UINT32(*_diffFile);
-		(*_diffFile) += 4;
+		_headerdata._version = READ_LE_UINT16(_diffFile);
+		_diffFile += 2;
+		_headerdata._width = READ_LE_UINT16(_diffFile);
+		_diffFile += 2;
+		_headerdata._height = READ_LE_UINT16(_diffFile);
+		_diffFile += 2;
+		_headerdata._depth = _diffFile[0];
+		_diffFile++;
+		_headerdata._fps = _diffFile[0];
+		_diffFile++;
+		_headerdata._bufferSize = READ_LE_UINT32(_diffFile);
+		_diffFile += 4;
+		_headerdata._machine = READ_LE_UINT16(_diffFile);
+		_diffFile += 2;
+		_headerdata._flags = READ_LE_UINT32(_diffFile);
+		_diffFile += 4;
 
-		(*_diffFile) += _size - 18;
+		_diffFile += _size - 18;
 
 		_continuous = CONTINUOUS & _headerdata._flags;
 		_diffWidth = _headerdata._width;
