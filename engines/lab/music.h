@@ -79,7 +79,7 @@ public:
 private:
 	LabEngine *_vm;
 	void fillbuffer(byte *musicBuffer);
-	void startMusic(bool startatbegin);
+	void startMusic(bool restartFl);
 
 	Common::File *_file;
 	Common::File *_tFile;

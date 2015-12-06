@@ -103,8 +103,7 @@ namespace Lab {
 
 typedef struct closeData {
 	uint16 x1, y1, x2, y2;
-	int16 CloseUpType;                  /* if > 0, an object.  If < 0,
-                                                        an item */
+	int16 CloseUpType;          /* if > 0, an object.  If < 0, an item */
 	uint16 depth;               /* Level of the closeup. */
 	char *GraphicName, *Message;
 	closeData *NextCloseUp, *SubCloseUps;
@@ -121,14 +120,12 @@ struct ViewData {
 
 struct Action {
 	int16 ActionType, Param1, Param2, Param3;
-	byte *Data;            /* Message, or a pointer to array
-                                                  of messages. */
+	byte *Data;            /* Message, or a pointer to array of messages. */
 	Action *NextAction;
 };
 
 struct Rule {
 	int16 RuleType, Param1, Param2, *Condition;
-
 	Action *ActionList;
 	Rule *NextRule;
 };
@@ -149,8 +146,6 @@ struct InventoryData {
 	uint16 Many;
 	char *name, *BInvName;
 };
-
-
 
 /* Map Flags */
 

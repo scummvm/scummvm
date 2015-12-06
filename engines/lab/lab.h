@@ -90,7 +90,7 @@ private:
 	bool _interfaceOff;
 	bool _noUpdateDiff;
 	bool _quitLab;
-
+	bool _mainDisplay;
 	// timing.cpp
 	void microDelay(uint32 secs, uint32 micros);
 
@@ -100,6 +100,7 @@ public:
 	Music *_music;
 	Anim *_anim;
 	DisplayMan *_graphics;
+	RoomData *_rooms;
 
 	int _roomNum;
 	CrumbData _breadCrumbs[MAX_CRUMBS];

@@ -45,8 +45,6 @@ namespace Lab {
 /*------------------------------ The Map stuff ------------------------------*/
 /*---------------------------------------------------------------------------*/
 
-extern RoomData *_rooms;
-
 static Image *Map, *Room, *UpArrowRoom, *DownArrowRoom, *Bridge,
 			 *HRoom, *VRoom, *Maze, *HugeMaze, *Path, *MapNorth,
 			 *MapEast, *MapSouth, *MapWest, *XMark;

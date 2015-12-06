@@ -146,13 +146,13 @@ void Music::fillbuffer(byte *musicBuffer) {
 /*****************************************************************************/
 /* Starts up the music initially.                                            */
 /*****************************************************************************/
-void Music::startMusic(bool startatbegin) {
+void Music::startMusic(bool restartFl) {
 	if (!_musicOn)
 		return;
 
 	stopSoundEffect();
 
-	if (startatbegin) {
+	if (restartFl) {
 		_file->seek(0);
 		_leftinfile  = _file->size();
 	}
