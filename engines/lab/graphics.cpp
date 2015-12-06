@@ -53,6 +53,7 @@ DisplayMan::DisplayMan(LabEngine *vm) : _vm(vm) {
 	_displayBuffer = nullptr;
 	_currentDisplayBuffer = nullptr;
 	_tempScrollData = nullptr;
+	FadePalette = nullptr;
 
 	_screenWidth = 0;
 	_screenHeight = 0;
@@ -1164,4 +1165,36 @@ void DisplayMan::scrollDisplayY(int16 dy, uint16 x1, uint16 y1, uint16 x2, uint1
 	rectFill(x1, y1, x2, y1 + dy - 1);
 }
 
+/*****************************************************************************/
+/* Does the fading of the Palette on the screen.                             */
+/*****************************************************************************/
+uint16 DisplayMan::fadeNumIn(uint16 num, uint16 res, uint16 counter) {
+	return (num - ((((int32)(15 - counter)) * ((int32)(num - res))) / 15));
+}
+
+
+uint16 DisplayMan::fadeNumOut(uint16 num, uint16 res, uint16 counter) {
+	return (num - ((((int32) counter) * ((int32)(num - res))) / 15));
+}
+
+void DisplayMan::fade(bool fadein, uint16 res) {
+	uint16 newpal[16];
+
+	for (uint16 i = 0; i < 16; i++) {
+		for (uint16 palIdx = 0; palIdx < 16; palIdx++) {
+			if (fadein)
+				newpal[palIdx] = (0x00F & fadeNumIn(0x00F & FadePalette[palIdx], 0x00F & res, i)) +
+				(0x0F0 & fadeNumIn(0x0F0 & FadePalette[palIdx], 0x0F0 & res, i)) +
+				(0xF00 & fadeNumIn(0xF00 & FadePalette[palIdx], 0xF00 & res, i));
+			else
+				newpal[palIdx] = (0x00F & fadeNumOut(0x00F & FadePalette[palIdx], 0x00F & res, i)) +
+				(0x0F0 & fadeNumOut(0x0F0 & FadePalette[palIdx], 0x0F0 & res, i)) +
+				(0xF00 & fadeNumOut(0xF00 & FadePalette[palIdx], 0xF00 & res, i));
+		}
+
+		g_lab->_graphics->setAmigaPal(newpal, 16);
+		g_lab->waitTOF();
+		g_lab->_music->updateMusic();
+	}
+}
 } // End of namespace Lab

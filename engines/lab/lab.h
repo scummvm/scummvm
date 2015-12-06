@@ -126,16 +126,16 @@ public:
 	Gadget *_invGadgetList;
 	Image *_moveImages[20];
 	Image *_invImages[10];
-	Image *Images[10];
-	uint16 CurTile[4][4];
-	byte combination[6];
+	Image *_numberImages[10];
+	uint16 _curTile[4][4];
+	byte _combination[6];
 
 private:
 	int _lastWaitTOFTicks;
 	bool _lastTooLong;
 	CloseDataPtr _cptr;
 	InventoryData *_inventory;
-	Image *Tiles[16];
+	Image *_tiles[16];
 
 private:
 	bool from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Common::Point tmpPos, uint16 &curInv, IntuiMessage * curMsg, bool &forceDraw, uint16 gadgetId, uint16 &actionMode);

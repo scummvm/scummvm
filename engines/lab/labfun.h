@@ -70,12 +70,6 @@ struct SaveGameHeader {
 
 bool readMusic(const char *filename, bool waitTillFinished);
 
-/*---------------------------*/
-/*-------- From Map.c -------*/
-/*---------------------------*/
-
-void fade(bool fadein, uint16 res);
-
 /*--------------------------*/
 /*----- From saveGame.c ----*/
 /*--------------------------*/

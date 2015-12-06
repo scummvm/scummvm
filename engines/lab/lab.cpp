@@ -95,8 +95,11 @@ LabEngine::LabEngine(OSystem *syst, const ADGameDescription *gameDesc)
 
 	for (int i = 0; i < 10; i++) {
 		_invImages[i] = nullptr;
-		Images[i] = nullptr;
+		_numberImages[i] = nullptr;
 	}
+
+	for (int i = 0; i < 16; i++)
+		_tiles[i] = nullptr;
 
 	_moveGadgetList = nullptr;
 	_invGadgetList = nullptr;
@@ -128,7 +131,7 @@ LabEngine::~LabEngine() {
 	delete _graphics;
 
 	for (int i = 0; i < 16; i++)
-		delete Tiles[i];
+		delete _tiles[i];
 }
 
 Common::Error LabEngine::run() {

@@ -60,8 +60,6 @@ static uint16 monitorPage;
 static const char *TextFileName;
 
 Image *MonButton;
-
-extern uint16 *FadePalette;
 extern BitMap *DispBitMap, *DrawBitMap;
 
 #define INCL(BITSET,BIT) ((BITSET) |= (BIT))
@@ -78,7 +76,7 @@ extern BitMap *DispBitMap, *DrawBitMap;
 static byte *loadBackPict(const char *fileName, bool tomem) {
 	byte *res = nullptr;
 
-	FadePalette = hipal;
+	g_lab->_graphics->FadePalette = hipal;
 	g_lab->_anim->_noPalChange = true;
 
 	if (tomem)
@@ -316,7 +314,7 @@ void LabEngine::drawJournal(uint16 wipenum, bool needFade) {
 
 
 	if (needFade)
-		fade(true, 0);
+		_graphics->fade(true, 0);
 
 	g_lab->_anim->_noPalChange = true;
 	JBackImage._imageData = _graphics->readPictToMem("P:Journal.pic", _graphics->_screenWidth, _graphics->_screenHeight);
@@ -398,7 +396,7 @@ void LabEngine::doJournal() {
 	_event->mouseShow();
 	processJournal();
 	_event->attachGadgetList(NULL);
-	fade(false, 0);
+	_graphics->fade(false, 0);
 	_event->mouseHide();
 
 	ScreenImage._imageData = _graphics->getCurrentDrawingBuffer();
@@ -536,9 +534,9 @@ void LabEngine::processMonitor(char *ntext, TextFont *monitorFont, bool isintera
 				TextFileName = Test;
 
 				ntext = g_lab->_resource->getText(TextFileName);
-				fade(false, 0);
+				_graphics->fade(false, 0);
 				drawMonText(ntext, monitorFont, x1, y1, x2, y2, isinteractive);
-				fade(true, 0);
+				_graphics->fade(true, 0);
 				delete[] ntext;
 			}
 		}
@@ -624,7 +622,7 @@ void LabEngine::doMonitor(char *background, char *textfile, bool isinteractive, 
 
 	monitorPage = 0;
 	lastpage = false;
-	FadePalette = hipal;
+	_graphics->FadePalette = hipal;
 
 	TextFont *monitorFont = _resource->getFont("P:Map.fon");
 	Common::File *buttonFile = g_lab->_resource->openDataFile("P:MonImage");
@@ -635,9 +633,9 @@ void LabEngine::doMonitor(char *background, char *textfile, bool isinteractive, 
 	loadBackPict(background, false);
 	drawMonText(ntext, monitorFont, x1, y1, x2, y2, isinteractive);
 	_event->mouseShow();
-	fade(true, 0);
+	_graphics->fade(true, 0);
 	processMonitor(ntext, monitorFont, isinteractive, x1, y1, x2, y2);
-	fade(false, 0);
+	_graphics->fade(false, 0);
 	_event->mouseHide();
 	delete[] ntext;
 	closeFont(monitorFont);
