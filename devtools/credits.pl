@@ -1310,7 +1310,7 @@ begin_credits("Credits");
     "James M. Ferguson and Barry Duncan for their tenacious efforts to recover the sources.");
 
 	add_paragraph(
-    "The Mindfactory team for writing Broken Sword 2.5, a splendid fan-made sequel, and for sharing ".
+    "The mindFactory team for writing Broken Sword 2.5, a splendid fan-made sequel, and for sharing ".
     "the source code with us.");
 
 	end_section();
