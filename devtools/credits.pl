@@ -1309,6 +1309,10 @@ begin_credits("Credits");
     "Electronic Arts for providing the source code of the two Lost Files of Sherlock Holmes games. ".
     "James M. Ferguson and Barry Duncan for their tenacious efforts to recover the sources.");
 
+	add_paragraph(
+    "The Mindfactory team for writing Broken Sword 2.5, a splendid fan-made sequel, and for sharing ".
+    "the source code with us.");
+
 	end_section();
 
 end_credits();
