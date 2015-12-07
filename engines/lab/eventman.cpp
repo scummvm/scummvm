@@ -60,10 +60,10 @@ static byte MouseData[] = {1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
 Gadget *EventManager::checkGadgetHit(GadgetList *gadgetList, Common::Point pos) {
 	for (GadgetList::iterator gadgetItr = gadgetList->begin(); gadgetItr != gadgetList->end(); ++gadgetItr) {
 		Gadget *gadget = *gadgetItr;
-		if ((pos.x >= gadget->x) && (pos.y >= gadget->y) &&
-			(pos.x <= (gadget->x + gadget->_image->_width)) &&
-			(pos.y <= (gadget->y + gadget->_image->_height)) &&
-			!(GADGETOFF & gadget->_flags)) {
+		Common::Rect gadgetRect(gadget->x, gadget->y, gadget->x + gadget->_image->_width - 1, gadget->y + gadget->_image->_height - 1);
+		bool gadgetIsEnabled = !(gadget->_flags & GADGETOFF);
+
+		if (gadgetRect.contains(pos) && gadgetIsEnabled) {
 			if (_vm->_isHiRes) {
 				_hitGadget = gadget;
 			} else {
@@ -85,8 +85,6 @@ Gadget *EventManager::checkGadgetHit(GadgetList *gadgetList, Common::Point pos) 
 
 	return NULL;
 }
-
-
 
 void EventManager::attachGadgetList(GadgetList *gadgetList) {
 	if (_screenGadgetList != gadgetList)
