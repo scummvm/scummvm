@@ -96,6 +96,39 @@ void BbdouCursor::disable(uint32 objectId) {
 	hide(objectId);
 }
 
+void BbdouCursor::reset(uint32 objectId) {
+	Control *control = _vm->_dict->getObjectControl(objectId);
+
+	_data._item10._field0 = 1;
+	_data._mode = 1;
+	_data._mode2 = 0;
+	_data._verbId1 = 0x1B0000;
+	_data._currOverlappedObjectId = 0;
+	_data._overlappedObjectId = 0;
+	_data._sequenceId = 0x6000F;
+	_data._holdingObjectId = 0;
+	_data._holdingObjectId2 = 0;
+	_data._visibleCtr = 0;
+	_data._causeThreadId1 = 0;
+	_data._flags = 0;
+	_data._item10._field58 = 1;
+	_data._sequenceId98 = 0;
+	_data._idleCtr = 0;
+	_data._item10._verbId = 0x1B0000;
+	_data._item10._playSound48 = 0;
+	_data._item10._objectIds[0] = 0;
+	_data._item10._objectIds[1] = 0;
+	_data._item10._index = 0;
+	_data._item10._flag56 = 0;
+	clearCursorDataField14();
+	control->setActorIndexTo1();
+	control->startSequenceActor(0x60029, 2, 0);
+
+	_bbdou->resetItem10(control->_objectId, &_data._item10);
+	// TODO? control->_actor->setControlRoutine(new Common::Functor2Mem<Control*, uint32, void, BbdouCursor>(this, &BbdouCursor::cursorInteractControlRoutine));
+	
+}
+
 void BbdouCursor::addCursorSequence(uint32 objectId, uint32 sequenceId) {
 	for (uint i = 0; i < kMaxCursorSequences; ++i)
 		if (_cursorSequences[i]._objectId == 0) {

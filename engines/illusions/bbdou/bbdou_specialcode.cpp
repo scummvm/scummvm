@@ -124,6 +124,7 @@ typedef Common::Functor1Mem<OpCall&, void, BbdouSpecialCode> SpecialCodeFunction
 
 void BbdouSpecialCode::init() {
 	// TODO
+	// 0x00160001 only used for original debugging purposes
 	SPECIAL(0x00160006, spcInitCursor);
 	SPECIAL(0x00160008, spcEnableCursor);
 	SPECIAL(0x00160009, spcDisableCursor);
@@ -141,6 +142,7 @@ void BbdouSpecialCode::init() {
 	SPECIAL(0x0016001E, spcRemoveInventoryItem);
 	SPECIAL(0x0016001F, spcHasInventoryItem);
 	SPECIAL(0x00160025, spcCloseInventory);
+	SPECIAL(0x00160030, spcResetCursor);
 	SPECIAL(0x00160032, spcSetCursorField90);
 	SPECIAL(0x00160037, spcIsCursorHoldingObjectId);
 	SPECIAL(0x00160038, spcInitRadarMicrophone);
@@ -264,6 +266,12 @@ void BbdouSpecialCode::spcHasInventoryItem(OpCall &opCall) {
 
 void BbdouSpecialCode::spcCloseInventory(OpCall &opCall) {
 	_inventory->close();
+}
+
+void BbdouSpecialCode::spcResetCursor(OpCall &opCall) {
+	ARG_UINT32(objectId);
+	_cursor->reset(objectId);
+	_vm->notifyThreadId(opCall._threadId);
 }
 
 void BbdouSpecialCode::spcSetCursorField90(OpCall &opCall) {
