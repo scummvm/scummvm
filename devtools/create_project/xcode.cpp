@@ -142,8 +142,9 @@ bool shouldSkipFileForTarget(const std::string &fileID, const std::string &targe
 }
 
 XcodeProvider::Group::Group(XcodeProvider *objectParent, const std::string &groupName, const std::string &uniqueName, const std::string &path) : Object(objectParent, uniqueName, groupName, "PBXGroup", "", groupName) {
+	bool path_is_absolute = (path.length() > 0 && path.at(0) == '/');
 	addProperty("name", name, "", SettingsNoValue|SettingsQuoteVariable);
-	addProperty("sourceTree", "<group>", "", SettingsNoValue|SettingsQuoteVariable);
+	addProperty("sourceTree", path_is_absolute ? "<absolute>" : "<group>", "", SettingsNoValue|SettingsQuoteVariable);
 	
 	if (path != "") {
 		addProperty("path", path, "", SettingsNoValue|SettingsQuoteVariable);
