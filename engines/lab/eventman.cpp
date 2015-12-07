@@ -63,7 +63,7 @@ Gadget *EventManager::checkGadgetHit(GadgetList *gadgetList, Common::Point pos) 
 		if ((pos.x >= gadget->x) && (pos.y >= gadget->y) &&
 			(pos.x <= (gadget->x + gadget->_image->_width)) &&
 			(pos.y <= (gadget->y + gadget->_image->_height)) &&
-			!(GADGETOFF & gadget->GadgetFlags)) {
+			!(GADGETOFF & gadget->_flags)) {
 			if (_vm->_isHiRes) {
 				_hitGadget = gadget;
 			} else {

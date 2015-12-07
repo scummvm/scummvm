@@ -132,7 +132,7 @@ void LabEngine::freeScreens() {
 void LabEngine::perFlipGadget(uint16 gadgetId) {
 	for (GadgetList::iterator gadget = _moveGadgetList.begin(); gadget != _moveGadgetList.end(); ++gadget) {
 		Gadget *topGadget = *gadget;
-		if (topGadget->GadgetID == gadgetId) {
+		if (topGadget->_gadgetID == gadgetId) {
 			Image *tmpImage = topGadget->_image;
 			topGadget->_image = topGadget->_altImage;
 			topGadget->_altImage = tmpImage;
@@ -516,11 +516,11 @@ void LabEngine::mainGameLoop() {
 			gotMessage = true;
 
 			Common::Point curPos;
-			curPos.x  = curMsg->mouseX;
-			curPos.y  = curMsg->mouseY;
+			curPos.x  = curMsg->_mouseX;
+			curPos.y  = curMsg->_mouseY;
 
 			_followingCrumbs = false;
-			if (!from_crumbs(curMsg->msgClass, curMsg->code, curMsg->qualifier, curPos, curInv, curMsg, forceDraw, curMsg->gadgetID, actionMode))
+			if (!from_crumbs(curMsg->_msgClass, curMsg->_code, curMsg->_qualifier, curPos, curInv, curMsg, forceDraw, curMsg->_gadgetID, actionMode))
 				break;
 		}
 	}
@@ -618,14 +618,14 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 					_music->updateMusic();
 					_anim->diffNextFrame();
 				} else {
-					if (curMsg->msgClass == RAWKEY) {
-						if ((curMsg->code == 'Y') || (curMsg->code == 'y') || (curMsg->code == 'Q') || (curMsg->code == 'q')) {
+					if (curMsg->_msgClass == RAWKEY) {
+						if ((curMsg->_code == 'Y') || (curMsg->_code == 'y') || (curMsg->_code == 'Q') || (curMsg->_code == 'q')) {
 							doit = true;
 							break;
-						} else if (curMsg->code < 128) {
+						} else if (curMsg->_code < 128) {
 							break;
 						}
-					} else if (curMsg->msgClass == MOUSEBUTTONS) {
+					} else if (curMsg->_msgClass == MOUSEBUTTONS) {
 						break;
 					}
 				}

@@ -48,8 +48,8 @@ Gadget *createButton(uint16 x, uint16 y, uint16 id, uint16 key, Image *im, Image
 	if ((gptr = new Gadget())) {
 		gptr->x = x;
 		gptr->y = y;
-		gptr->GadgetID = id;
-		gptr->KeyEquiv = key;
+		gptr->_gadgetID = id;
+		gptr->_keyEquiv = key;
 		gptr->_image = im;
 		gptr->_altImage = imalt;
 
@@ -79,7 +79,7 @@ void drawGadgetList(GadgetList *gadgetList) {
 	for (GadgetList::iterator gadget = gadgetList->begin(); gadget != gadgetList->end(); ++gadget) {
 		(*gadget)->_image->drawImage((*gadget)->x, (*gadget)->y);
 
-		if (GADGETOFF & (*gadget)->GadgetFlags)
+		if (GADGETOFF & (*gadget)->_flags)
 			disableGadget((*gadget), 1);
 	}
 }
@@ -90,7 +90,7 @@ void drawGadgetList(GadgetList *gadgetList) {
 /*****************************************************************************/
 void disableGadget(Gadget *curgad, uint16 pencolor) {
 	g_lab->_graphics->overlayRect(pencolor, curgad->x, curgad->y, curgad->x + curgad->_image->_width - 1, curgad->y + curgad->_image->_height - 1);
-	curgad->GadgetFlags |= GADGETOFF;
+	curgad->_flags |= GADGETOFF;
 }
 
 
@@ -100,7 +100,7 @@ void disableGadget(Gadget *curgad, uint16 pencolor) {
 /*****************************************************************************/
 void enableGadget(Gadget *curgad) {
 	curgad->_image->drawImage(curgad->x, curgad->y);
-	curgad->GadgetFlags &= !(GADGETOFF);
+	curgad->_flags &= !(GADGETOFF);
 }
 
 
@@ -126,9 +126,9 @@ Gadget *LabEngine::checkNumGadgetHit(GadgetList *gadgetList, uint16 key) {
 
 	for (GadgetList::iterator gadgetItr = gadgetList->begin(); gadgetItr != gadgetList->end(); ++gadgetItr) {
 		Gadget *gadget = *gadgetItr;
-		if ((gkey - 1 == gadget->GadgetID || (gkey == 0 && gadget->GadgetID == 9) ||
-			(gadget->KeyEquiv != 0 && makeGadgetKeyEquiv(key) == gadget->KeyEquiv))
-		        && !(GADGETOFF & gadget->GadgetFlags)) {
+		if ((gkey - 1 == gadget->_gadgetID || (gkey == 0 && gadget->_gadgetID == 9) ||
+			(gadget->_keyEquiv != 0 && makeGadgetKeyEquiv(key) == gadget->_keyEquiv))
+		        && !(GADGETOFF & gadget->_flags)) {
 			_event->mouseHide();
 			gadget->_altImage->drawImage(gadget->x, gadget->y);
 			_event->mouseShow();
@@ -156,30 +156,30 @@ IntuiMessage *LabEngine::getMsg() {
 
 	if ((curgad = _event->mouseGadget()) != NULL) {
 		_event->updateMouse();
-		IMessage.msgClass = GADGETUP;
-		IMessage.code  = curgad->GadgetID;
-		IMessage.gadgetID = curgad->GadgetID;
-		IMessage.qualifier = Qualifiers;
+		IMessage._msgClass = GADGETUP;
+		IMessage._code  = curgad->_gadgetID;
+		IMessage._gadgetID = curgad->_gadgetID;
+		IMessage._qualifier = Qualifiers;
 		return &IMessage;
-	} else if (_event->mouseButton(&IMessage.mouseX, &IMessage.mouseY, true)) { /* Left Button */
-		IMessage.qualifier = IEQUALIFIER_LEFTBUTTON | Qualifiers;
-		IMessage.msgClass = MOUSEBUTTONS;
+	} else if (_event->mouseButton(&IMessage._mouseX, &IMessage._mouseY, true)) { /* Left Button */
+		IMessage._qualifier = IEQUALIFIER_LEFTBUTTON | Qualifiers;
+		IMessage._msgClass = MOUSEBUTTONS;
 		return &IMessage;
-	} else if (_event->mouseButton(&IMessage.mouseX, &IMessage.mouseY, false)) { /* Right Button */
-		IMessage.qualifier = IEQUALIFIER_RBUTTON | Qualifiers;
-		IMessage.msgClass = MOUSEBUTTONS;
+	} else if (_event->mouseButton(&IMessage._mouseX, &IMessage._mouseY, false)) { /* Right Button */
+		IMessage._qualifier = IEQUALIFIER_RBUTTON | Qualifiers;
+		IMessage._msgClass = MOUSEBUTTONS;
 		return &IMessage;
-	} else if (_event->keyPress(&IMessage.code)) { /* Keyboard key */
-		curgad = checkNumGadgetHit(_event->_screenGadgetList, IMessage.code);
+	} else if (_event->keyPress(&IMessage._code)) { /* Keyboard key */
+		curgad = checkNumGadgetHit(_event->_screenGadgetList, IMessage._code);
 
 		if (curgad) {
-			IMessage.msgClass = GADGETUP;
-			IMessage.code  = curgad->GadgetID;
-			IMessage.gadgetID = curgad->GadgetID;
+			IMessage._msgClass = GADGETUP;
+			IMessage._code  = curgad->_gadgetID;
+			IMessage._gadgetID = curgad->_gadgetID;
 		} else
-			IMessage.msgClass = RAWKEY;
+			IMessage._msgClass = RAWKEY;
 
-		IMessage.qualifier = Qualifiers;
+		IMessage._qualifier = Qualifiers;
 		return &IMessage;
 	} else
 		return NULL;

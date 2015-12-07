@@ -200,8 +200,8 @@ static bool loadJournalData() {
 
 	delete journalFile;
 
-	BackG.KeyEquiv = VKEY_LTARROW;
-	ForwardG.KeyEquiv = VKEY_RTARROW;
+	BackG._keyEquiv = VKEY_LTARROW;
+	ForwardG._keyEquiv = VKEY_RTARROW;
 
 	uint16 counter = 0;
 
@@ -219,7 +219,7 @@ static bool loadJournalData() {
 		else
 			gadget->y = g_lab->_graphics->VGAScaleY(JGadY[counter]) - g_lab->_graphics->SVGACord(1);
 
-		gadget->GadgetID = counter;
+		gadget->_gadgetID = counter;
 		counter++;
 	}
 
@@ -345,9 +345,9 @@ void LabEngine::processJournal() {
 		if (Msg == NULL) {
 			_music->updateMusic();
 		} else {
-			Class     = Msg->msgClass;
-			Qualifier = Msg->qualifier;
-			GadID     = Msg->code;
+			Class     = Msg->_msgClass;
+			Qualifier = Msg->_qualifier;
+			GadID     = Msg->_code;
 
 			if (((Class == MOUSEBUTTONS) && (IEQUALIFIER_RBUTTON & Qualifier)) ||
 			        ((Class == RAWKEY) && (GadID == 27)))
@@ -554,11 +554,11 @@ void LabEngine::processMonitor(char *ntext, TextFont *monitorFont, bool isintera
 		if (Msg == NULL) {
 			_music->updateMusic();
 		} else {
-			Class     = Msg->msgClass;
-			Qualifier = Msg->qualifier;
-			MouseX    = Msg->mouseX;
-			MouseY    = Msg->mouseY;
-			Code      = Msg->code;
+			Class     = Msg->_msgClass;
+			Qualifier = Msg->_qualifier;
+			MouseX    = Msg->_mouseX;
+			MouseY    = Msg->_mouseY;
+			Code      = Msg->_code;
 
 			if (((Class == MOUSEBUTTONS) && (IEQUALIFIER_RBUTTON & Qualifier)) ||
 			        ((Class == RAWKEY) && (Code == 27)))
