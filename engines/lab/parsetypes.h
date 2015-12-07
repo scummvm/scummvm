@@ -35,8 +35,6 @@
 
 namespace Lab {
 
-#define MAXFILELEN 31
-
 /*------------------------------- Action types ------------------------------*/
 #define PLAYSOUND     1
 #define PLAYSOUNDCONT 2

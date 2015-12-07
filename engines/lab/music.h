@@ -33,7 +33,6 @@
 
 #include "common/events.h"
 
-// For the Music class - TODO: Move to another header file
 #include "audio/mixer.h"
 #include "audio/audiostream.h"
 #include "audio/decoders/raw.h"

@@ -41,7 +41,6 @@
 namespace Lab {
 
 /* Global parser data */
-
 #define NOFILE         "no file"
 
 /*****************************************************************************/
