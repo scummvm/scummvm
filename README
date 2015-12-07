@@ -876,10 +876,10 @@ is simpler and more straightforward than moving around using the menu.
 
 3.15) Nippon Safes Inc. Amiga notes:
 ----- ------------------------------
-For this game, you will need disk0, it (en, fr, ge for the
-international version), global.table and pointer.
+For this game, you will need disk0, , global.table, pointer and
+it (en, fr, ge for the international version).
 
-In addtition, you will need to rename disk image 2 to disk1,
+In addition, you will need to rename disk image 2 to disk1,
 disk image 3 to disk2, disk image 4 to disk3 and disk image 5 to disk4.
 
 
@@ -2587,7 +2587,7 @@ compressed sound. For compressed save states, zlib is required.
 
 Some parts of ScummVM, particularly scalers, have highly optimized
 versions written in assembler. If you wish to use this option, you will
-need to install nasm assembler (see http://nasm.sf.net). Note that
+need to install nasm assembler (see http://www.nasm.us/). Note that
 currently we have only x86 MMX optimized versions, and they will not
 compile on other processors.
 
