@@ -409,18 +409,6 @@ void DisplayMan::drawMessage(const char *str) {
 	}
 }
 
-/*---------------------------------------------------------------------------*/
-/*--------------------------- All the wipe stuff. ---------------------------*/
-/*---------------------------------------------------------------------------*/
-
-#define TRANSWIPE      1
-#define SCROLLWIPE     2
-#define SCROLLBLACK    3
-#define SCROLLBOUNCE   4
-#define TRANSPORTER    5
-#define READFIRSTFRAME 6
-#define READNEXTFRAME  7
-
 /*****************************************************************************/
 /* Scrolls the display to black.                                             */
 /*****************************************************************************/
@@ -736,19 +724,31 @@ void DisplayMan::doTransWipe(CloseDataPtr *cPtr, char *filename) {
 /*****************************************************************************/
 /* Does a certain number of pre-programmed wipes.                            */
 /*****************************************************************************/
-void DisplayMan::doWipe(uint16 wipeType, CloseDataPtr *cPtr, char *filename) {
-	if ((wipeType == TRANSWIPE) || (wipeType == TRANSPORTER))
+void DisplayMan::doTransition(TransitionType transitionType, CloseDataPtr *cPtr, char *filename) {
+	switch (transitionType) {
+	case kTransitionWipe:
+	case kTransitionTransporter:
 		doTransWipe(cPtr, filename);
-	else if (wipeType == SCROLLWIPE)
+		break;
+	case kTransitionScrollWipe:
 		doScrollWipe(filename);
-	else if (wipeType == SCROLLBLACK)
+		break;
+	case kTransitionScrollBlack:
 		doScrollBlack();
-	else if (wipeType == SCROLLBOUNCE)
+		break;
+	case kTransitionScrollBounce:
 		doScrollBounce();
-	else if (wipeType == READFIRSTFRAME)
+		break;
+	case kTransitionReadFirstFrame:
 		readPict(filename, false);
-	else if (wipeType == READNEXTFRAME)
+		break;
+	case kTransitionReadNextFrame:
 		_vm->_anim->diffNextFrame();
+		break;
+	case kTransitionNone:
+	default:
+		break;
+	}
 }
 
 /*****************************************************************************/
