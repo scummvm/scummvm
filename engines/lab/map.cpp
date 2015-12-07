@@ -52,8 +52,6 @@ static Image *Map, *Room, *UpArrowRoom, *DownArrowRoom, *Bridge,
 static uint16 MaxRooms;
 static MapData *Maps;
 
-extern char *LOWERFLOORS, *MIDDLEFLOORS, *UPPERFLOORS, *MEDMAZEFLOORS, *HEDGEMAZEFLOORS, *SURMAZEFLOORS, *CARNIVALFLOOR, *SURMAZEMSG;
-
 static uint16 MapGadX[3] = {101, 55, 8}, MapGadY[3] = {105, 105, 105};
 
 static Gadget
@@ -71,8 +69,6 @@ static GadgetList *MapGadgetList;
 #define SURMAZEFLOOR   6
 #define CARNIVAL       7
 
-
-
 static uint16 mapScaleX(uint16 x) {
 	if (g_lab->_isHiRes)
 		return (x - 45);
@@ -80,15 +76,12 @@ static uint16 mapScaleX(uint16 x) {
 		return ((x - 45) >> 1);
 }
 
-
-
 static uint16 mapScaleY(uint16 y) {
 	if (g_lab->_isHiRes)
 		return y;
 	else
 		return ((y - 35) >> 1) - (y >> 6);
 }
-
 
 /*****************************************************************************/
 /* Loads in the map data.                                                    */
@@ -532,12 +525,12 @@ void LabEngine::processMap(uint16 CurRoom) {
 				place = 1;
 
 		} else {
-			Class     = Msg->msgClass;
-			Code      = Msg->code;
-			GadgetID  = Msg->gadgetID;
-			Qualifier = Msg->qualifier;
-			MouseX    = Msg->mouseX;
-			MouseY    = Msg->mouseY;
+			Class     = Msg->_msgClass;
+			Code      = Msg->_code;
+			GadgetID  = Msg->_gadgetID;
+			Qualifier = Msg->_qualifier;
+			MouseX    = Msg->_mouseX;
+			MouseY    = Msg->_mouseY;
 
 			if (((Class == MOUSEBUTTONS) && (IEQUALIFIER_RBUTTON & Qualifier)) ||
 			        ((Class == RAWKEY) && (Code == 27)))

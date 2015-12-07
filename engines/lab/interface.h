@@ -37,16 +37,16 @@
 namespace Lab {
 
 struct IntuiMessage {
-	uint32 msgClass;
-	uint16 code, qualifier, mouseX, mouseY, gadgetID;
-	uint32 seconds, micros;
+	uint32 _msgClass;
+	uint16 _code, _qualifier, _mouseX, _mouseY, _gadgetID;
+	uint32 _seconds, _micros;
 };
 
 
 struct Gadget {
-	uint16 x, y, GadgetID;
-	uint16 KeyEquiv; // if not zero, a key that activates gadget
-	uint32 GadgetFlags;
+	uint16 x, y, _gadgetID;
+	uint16 _keyEquiv; // if not zero, a key that activates gadget
+	uint32 _flags;
 	Image *_image, *_altImage;
 };
 
