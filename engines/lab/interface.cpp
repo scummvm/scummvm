@@ -63,7 +63,7 @@ Gadget *createButton(uint16 x, uint16 y, uint16 id, uint16 key, Image *im, Image
 
 void freeButtonList(GadgetList *gadgetList) {
 	for (GadgetList::iterator gadget = gadgetList->begin(); gadget != gadgetList->end(); ++gadget) {
-		free(*gadget);
+		delete *gadget;
 	}
 
 	gadgetList->clear();

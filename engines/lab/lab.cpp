@@ -129,7 +129,7 @@ LabEngine::~LabEngine() {
 	delete _music;
 	delete _anim;
 	delete _graphics;
-	free(_rooms);
+	delete[] _rooms;
 
 	for (int i = 0; i < 16; i++)
 		delete _tiles[i];

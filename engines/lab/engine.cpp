@@ -526,20 +526,20 @@ void LabEngine::mainGameLoop() {
 	delete _roomsFound;
 
 	if (_rooms) {
-		free(_rooms);
+		delete[] _rooms;
 		_rooms = nullptr;
 	}
 
 	if (_inventory) {
 		for (int i = 1; i <= _numInv; i++) {
 			if (_inventory[i]._name)
-				free(_inventory[i]._name);
+				delete _inventory[i]._name;
 
 			if (_inventory[i]._bitmapName)
-				free(_inventory[i]._bitmapName);
+				delete _inventory[i]._bitmapName;
 		}
 
-		free(_inventory);
+		delete[] _inventory;
 	}
 }
 
