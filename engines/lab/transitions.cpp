@@ -250,59 +250,48 @@ void DisplayMan::doTransWipe(CloseDataPtr *cPtr, char *filename) {
 		lastY = 148;
 	}
 
-	for (uint16 i = 0; i < 2; i++) {
-		curY = i * 2;
+	for (uint16 j = 0; j < 2; j++) {
+		for (uint16 i = 0; i < 2; i++) {
+			curY = i * 2;
 
-		while (curY < lastY) {
-			if (linesdone >= lineslast) {
-				_vm->_music->updateMusic();
-				_vm->waitTOF();
-				linesdone = 0;
-			}
+			while (curY < lastY) {
+				if (linesdone >= lineslast) {
+					_vm->_music->updateMusic();
+					_vm->waitTOF();
+					linesdone = 0;
+				}
 
-			overlayRect(0, 0, curY, _screenWidth - 1, curY + 1);
-			curY += 4;
-			linesdone++;
-		}
-	}
+				if (j == 9)
+					overlayRect(0, 0, curY, _screenWidth - 1, curY + 1);
+				else
+					rectFill(0, curY, _screenWidth - 1, curY + 1);
+				curY += 4;
+				linesdone++;
+			}	// while
+		}	// for i
 
-	setAPen(0);
-
-	for (uint16 i = 0; i < 2; i++) {
-		curY = i * 2;
-
-		while (curY <= lastY) {
-			if (linesdone >= lineslast) {
-				_vm->_music->updateMusic();
-				_vm->waitTOF();
-				linesdone = 0;
-			}
-
-			rectFill(0, curY, _screenWidth - 1, curY + 1);
-			curY += 4;
-			linesdone++;
-		}
-	}
+		setAPen(0);
+	}	// for j
 
 	if (filename == NULL)
-		_vm->_curFileName = _vm->getPictName(cPtr);
+		_vm->_curFileName = g_lab->getPictName(cPtr);
 	else if (filename[0] > ' ')
 		_vm->_curFileName = filename;
 	else
-		_vm->_curFileName = _vm->getPictName(cPtr);
+		_vm->_curFileName = g_lab->getPictName(cPtr);
 
 	byte *BitMapMem = readPictToMem(_vm->_curFileName, _screenWidth, lastY + 5);
 	setPalette(_vm->_anim->_diffPalette, 256);
 
-	if (BitMapMem) {
-		imSource._width = _screenWidth;
-		imSource._height = lastY;
-		imSource._imageData = BitMapMem;
+	imSource._width = _screenWidth;
+	imSource._height = lastY;
+	imSource._imageData = BitMapMem;
 
-		imDest._width = _screenWidth;
-		imDest._height = _screenHeight;
-		imDest._imageData = getCurrentDrawingBuffer();
+	imDest._width = _screenWidth;
+	imDest._height = _screenHeight;
+	imDest._imageData = getCurrentDrawingBuffer();
 
+	for (uint16 j = 0; j < 2; j++) {
 		for (uint16 i = 0; i < 2; i++) {
 			curY = i * 2;
 
@@ -315,35 +304,18 @@ void DisplayMan::doTransWipe(CloseDataPtr *cPtr, char *filename) {
 
 				imDest._imageData = getCurrentDrawingBuffer();
 
-				imSource.blitBitmap(0, curY, &imDest, 0, curY, _screenWidth, 2, false);
-				overlayRect(0, 0, curY, _screenWidth - 1, curY + 1);
-				curY += 4;
-				linesdone++;
-			}
-		}
-
-		for (uint16 i = 0; i < 2; i++) {
-			curY = i * 2;
-
-			while (curY <= lastY) {
-				if (linesdone >= lineslast) {
-					_vm->_music->updateMusic();
-					_vm->waitTOF();
-					linesdone = 0;
-				}
-
-				imDest._imageData = getCurrentDrawingBuffer();
-
-				if (curY == lastY)
-					imSource.blitBitmap(0, curY, &imDest, 0, curY, _screenWidth, 1, false);
-				else
+				if (j == 0) {
 					imSource.blitBitmap(0, curY, &imDest, 0, curY, _screenWidth, 2, false);
-
+					overlayRect(0, 0, curY, _screenWidth - 1, curY + 1);
+				} else {
+					uint16 bitmapHeight = (curY == lastY) ? 1 : 2;
+					imSource.blitBitmap(0, curY, &imDest, 0, curY, _screenWidth, bitmapHeight, false);
+				}
 				curY += 4;
 				linesdone++;
-			}
-		}
-	}
+			}	// while
+		}	// for i
+	}	// for j
 }
 
 /*****************************************************************************/
