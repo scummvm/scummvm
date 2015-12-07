@@ -36,10 +36,9 @@
 #include "lab/lab.h"
 #include "lab/labfun.h"
 #include "lab/image.h"
-#include "lab/parsefun.h"
+#include "lab/processroom.h"
 #include "lab/interface.h"
 #include "lab/anim.h"
-#include "lab/parsetypes.h"
 #include "lab/resource.h"
 
 namespace Lab {

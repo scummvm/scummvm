@@ -30,7 +30,6 @@
 
 #include "engines/advancedDetector.h"
 
-#include "common/system.h"
 #include "common/str-array.h"
 #include "common/savefile.h"
 

@@ -33,6 +33,7 @@
 
 #include "graphics/palette.h"
 #include "lab/anim.h"
+#include "lab/processroom.h"
 
 namespace Lab {
 

@@ -29,7 +29,7 @@
  */
 
 #include "lab/lab.h"
-#include "lab/parsefun.h"
+#include "lab/processroom.h"
 #include "lab/graphics.h"
 
 namespace Lab {
