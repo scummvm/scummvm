@@ -29,7 +29,6 @@
  */
 
 #include "lab/lab.h"
-#include "lab/text.h"
 #include "lab/resource.h"
 
 namespace Lab {
@@ -58,14 +57,14 @@ TextFont *Resource::getFont(const char *fileName) {
 	_vm->_music->updateMusic();
 
 	TextFont *textfont = new TextFont();
-	textfont->DataLength = fileSize - headerSize;
-	textfont->Height = dataFile->readUint16LE();
-	dataFile->read(textfont->Widths, 256);
+	textfont->_dataLength = fileSize - headerSize;
+	textfont->_height = dataFile->readUint16LE();
+	dataFile->read(textfont->_widths, 256);
 	for (int i = 0; i < 256; i++)
-		textfont->Offsets[i] = dataFile->readUint16LE();
+		textfont->_offsets[i] = dataFile->readUint16LE();
 	dataFile->skip(4);
-	textfont->data = new byte[textfont->DataLength + 4];
-	dataFile->read(textfont->data, textfont->DataLength);
+	textfont->_data = new byte[textfont->_dataLength + 4];
+	dataFile->read(textfont->_data, textfont->_dataLength);
 	return textfont;
 }
 

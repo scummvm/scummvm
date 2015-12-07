@@ -32,7 +32,6 @@
 #define LAB_INTRO_H
 
 #include "lab/intro.h"
-#include "lab/text.h"
 
 namespace Lab {
 

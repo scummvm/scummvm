@@ -32,7 +32,6 @@
 #include "lab/labfun.h"
 #include "lab/anim.h"
 #include "lab/image.h"
-#include "lab/text.h"
 #include "lab/intro.h"
 #include "lab/parsefun.h"
 #include "lab/interface.h"
@@ -1076,8 +1075,7 @@ void LabEngine::go() {
 		}
 	}
 
-	closeFont(_msgFont);
-
+	_graphics->closeFont(_msgFont);
 	_graphics->freePict();
 
 	freeScreens();

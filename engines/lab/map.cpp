@@ -32,12 +32,10 @@
 #include "lab/labfun.h"
 #include "lab/anim.h"
 #include "lab/image.h"
-#include "lab/text.h"
 #include "lab/parsefun.h"
 #include "lab/parsetypes.h"
 #include "lab/resource.h"
 #include "lab/interface.h"
-#include "lab/text.h"
 
 namespace Lab {
 

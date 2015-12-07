@@ -39,7 +39,6 @@
 #include "lab/parsefun.h"
 #include "lab/interface.h"
 #include "lab/anim.h"
-#include "lab/text.h"
 #include "lab/parsetypes.h"
 #include "lab/resource.h"
 
@@ -105,7 +104,7 @@ void LabEngine::doNotes() {
 	g_lab->_graphics->flowText(noteFont, -2 + g_lab->_graphics->SVGACord(1), 0, 0, false, false, true, true, g_lab->_graphics->VGAScaleX(25) + g_lab->_graphics->SVGACord(15), g_lab->_graphics->VGAScaleY(50), g_lab->_graphics->VGAScaleX(295) - g_lab->_graphics->SVGACord(15), g_lab->_graphics->VGAScaleY(148), ntext);
 	g_lab->_graphics->setPalette(g_lab->_anim->_diffPalette, 256);
 
-	closeFont(noteFont);
+	g_lab->_graphics->closeFont(noteFont);
 	delete[] ntext;
 }
 
@@ -123,7 +122,7 @@ void LabEngine::doWestPaper() {
 	paperFont = g_lab->_resource->getFont("P:News22.fon");
 	ntext = g_lab->_resource->getText("Lab:Rooms/Date");
 	g_lab->_graphics->flowText(paperFont, 0, 0, 0, false, true, false, true, g_lab->_graphics->VGAScaleX(57), g_lab->_graphics->VGAScaleY(77) + g_lab->_graphics->SVGACord(2), g_lab->_graphics->VGAScaleX(262), g_lab->_graphics->VGAScaleY(91), ntext);
-	closeFont(paperFont);
+	g_lab->_graphics->closeFont(paperFont);
 	delete[] ntext;
 
 	paperFont = g_lab->_resource->getFont("P:News32.fon");
@@ -135,7 +134,7 @@ void LabEngine::doWestPaper() {
 		g_lab->_graphics->flowText(paperFont, -8 - g_lab->_graphics->SVGACord(1), 0, 0, false, true, false, true, g_lab->_graphics->VGAScaleX(57), g_lab->_graphics->VGAScaleY(86) - g_lab->_graphics->SVGACord(2), g_lab->_graphics->VGAScaleX(262), g_lab->_graphics->VGAScaleY(132), ntext);
 	} else
 		y = 115 - g_lab->_graphics->SVGACord(5);
-	closeFont(paperFont);
+	g_lab->_graphics->closeFont(paperFont);
 	delete[] ntext;
 
 	paperFont = g_lab->_resource->getFont("P:Note.fon");
@@ -145,7 +144,7 @@ void LabEngine::doWestPaper() {
 	ntext = g_lab->_resource->getText("Lab:Rooms/Col2");
 	CharsPrinted = g_lab->_graphics->flowTextScaled(paperFont, -4, 0, 0, false, false, false, true, 162, y, 275, 148, ntext);
 	delete[] ntext;
-	closeFont(paperFont);
+	g_lab->_graphics->closeFont(paperFont);
 
 	g_lab->_graphics->setPalette(g_lab->_anim->_diffPalette, 256);
 }
@@ -470,7 +469,7 @@ void LabEngine::drawMonText(char *text, TextFont *monitorFont, uint16 x1, uint16
 		numlines += (*text - '0');
 		text += 2;
 
-		fheight = textHeight(monitorFont);
+		fheight = g_lab->_graphics->textHeight(monitorFont);
 		x1 = MonButton->_width + _graphics->VGAScaleX(3);
 		MonGadHeight = MonButton->_height + _graphics->VGAScaleY(3);
 
@@ -645,7 +644,7 @@ void LabEngine::doMonitor(char *background, char *textfile, bool isinteractive, 
 	_graphics->fade(false, 0);
 	_event->mouseHide();
 	delete[] ntext;
-	closeFont(monitorFont);
+	g_lab->_graphics->closeFont(monitorFont);
 
 	_graphics->setAPen(0);
 	_graphics->rectFill(0, 0, _graphics->_screenWidth - 1, _graphics->_screenHeight - 1);

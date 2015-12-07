@@ -17,7 +17,6 @@ MODULE_OBJS := \
 	resource.o \
 	savegame.o \
 	special.o \
-	text.o \
 	tilepuzzle.o \
 	timing.o
 
