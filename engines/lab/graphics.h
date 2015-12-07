@@ -32,6 +32,7 @@
 #define LAB_GRAPHICS_H
 
 #include "graphics/palette.h"
+#include "lab/anim.h"
 
 namespace Lab {
 
@@ -67,7 +68,7 @@ public:
 	int16 VGAScaleY(int16 y);
 	uint16 SVGACord(uint16 cord);
 	void loadPict(const char *filename);
-	bool readPict(const char *filename, bool playOnce);
+	void readPict(const char *filename, bool playOnce);
 	void freePict();
 	byte *readPictToMem(const char *filename, uint16 x, uint16 y);
 	void doScrollBlack();
@@ -152,6 +153,8 @@ public:
 	byte *_currentDisplayBuffer;
 	bool _doNotDrawMessage;
 	uint16 *FadePalette;
+	BitMap bit1;
+	BitMap *_dispBitMap;
 };
 
 } // End of namespace Lab

@@ -33,9 +33,7 @@
 
 namespace Lab {
 
-extern BitMap *DrawBitMap;
 extern byte **startoffile;
-extern BitMap *DispBitMap;
 
 Anim::Anim(LabEngine *vm) : _vm(vm) {
 	_header = 0;
@@ -71,12 +69,11 @@ Anim::Anim(LabEngine *vm) : _vm(vm) {
 	_doBlack = false;
 	_diffWidth = 0;
 	_diffHeight = 0;
-	_stopSound = false;
 	_dataBytesPerRow = 0;
+	DrawBitMap = &bit2;
 
 	for (int i = 0; i < 3 * 256; i++)
 		_diffPalette[i] = 0;
-
 }
 
 /*------------------------ unDiff Horizontal Memory -------------------------*/
@@ -85,7 +82,7 @@ Anim::Anim(LabEngine *vm) : _vm(vm) {
 /* Undiffs a piece of memory when header size is a byte, and copy/skip size  */
 /* is also a byte.                                                           */
 /*****************************************************************************/
-void Anim::unDIFFByteByte(byte *dest, byte *diff) {
+void Anim::unDiffByteByte(byte *dest, byte *diff) {
 	uint16 skip, copy;
 
 	while (1) {
@@ -115,7 +112,7 @@ void Anim::unDIFFByteByte(byte *dest, byte *diff) {
 /* Undiffs a piece of memory when header size is a byte, and copy/skip size  */
 /* is a word.                                                                */
 /*****************************************************************************/
-void Anim::unDIFFByteWord(uint16 *dest, uint16 *diff) {
+void Anim::unDiffByteWord(uint16 *dest, uint16 *diff) {
 	uint16 skip, copy;
 
 	while (1) {
@@ -168,13 +165,13 @@ void Anim::unDIFFByteWord(uint16 *dest, uint16 *diff) {
 /*****************************************************************************/
 /* UnDiffs a coded DIFF string onto an already initialized piece of memory.  */
 /*****************************************************************************/
-bool Anim::unDIFFMemory(byte *dest, byte *diff, uint16 headerSize, uint16 copySize) {
+bool Anim::unDiffMemory(byte *dest, byte *diff, uint16 headerSize, uint16 copySize) {
 	if (headerSize == 1) {
 		if (copySize == 1)
-			unDIFFByteByte(dest, diff);
+			unDiffByteByte(dest, diff);
 
 		else if (copySize == 2)
-			unDIFFByteWord((uint16 *)dest, (uint16 *)diff);
+			unDiffByteWord((uint16 *)dest, (uint16 *)diff);
 
 		else
 			return false;
@@ -190,7 +187,7 @@ bool Anim::unDIFFMemory(byte *dest, byte *diff, uint16 headerSize, uint16 copySi
 /* Undiffs a piece of memory when header size is a byte, and copy/skip size  */
 /* is a byte.                                                                */
 /*****************************************************************************/
-void Anim::VUnDIFFByteByte(byte *dest, byte *diff, uint16 bytesPerRow) {
+void Anim::VUnDiffByteByte(byte *dest, byte *diff, uint16 bytesPerRow) {
 	byte *curPtr;
 	uint16 skip, copy;
 	uint16 counter = 0;
@@ -228,7 +225,7 @@ void Anim::VUnDIFFByteByte(byte *dest, byte *diff, uint16 bytesPerRow) {
 /* Undiffs a piece of memory when header size is a byte, and copy/skip size  */
 /* is a word.                                                                */
 /*****************************************************************************/
-void Anim::VUnDIFFByteWord(uint16 *dest, uint16 *diff, uint16 bytesPerRow) {
+void Anim::VUnDiffByteWord(uint16 *dest, uint16 *diff, uint16 bytesPerRow) {
 	uint16 *curPtr;
 	uint16 skip, copy;
 	uint16 counter = 0;
@@ -268,7 +265,7 @@ void Anim::VUnDIFFByteWord(uint16 *dest, uint16 *diff, uint16 bytesPerRow) {
 /* Undiffs a piece of memory when header size is a byte, and copy/skip size  */
 /* is a long.                                                                */
 /*****************************************************************************/
-void Anim::VUnDIFFByteLong(uint32 *dest, uint32 *diff, uint16 bytesPerRow) {
+void Anim::VUnDiffByteLong(uint32 *dest, uint32 *diff, uint16 bytesPerRow) {
 	uint32 *_curPtr;
 	uint16 skip, copy;
 
@@ -310,14 +307,14 @@ void Anim::VUnDIFFByteLong(uint32 *dest, uint32 *diff, uint16 bytesPerRow) {
 /*****************************************************************************/
 /* UnDiffs a coded DIFF string onto an already initialized piece of memory.  */
 /*****************************************************************************/
-bool Anim::VUnDIFFMemory(byte *dest, byte *diff, uint16 headerSize, uint16 copySize, uint16 bytesPerRow) {
+bool Anim::VUnDiffMemory(byte *dest, byte *diff, uint16 headerSize, uint16 copySize, uint16 bytesPerRow) {
 	if (headerSize == 1) {
 		if (copySize == 1)
-			VUnDIFFByteByte(dest, diff, bytesPerRow);
+			VUnDiffByteByte(dest, diff, bytesPerRow);
 		else if (copySize == 2)
-			VUnDIFFByteWord((uint16 *)dest, (uint16 *)diff, bytesPerRow);
+			VUnDiffByteWord((uint16 *)dest, (uint16 *)diff, bytesPerRow);
 		else if (copySize == 4)
-			VUnDIFFByteLong((uint32 *)dest, (uint32 *)diff, bytesPerRow);
+			VUnDiffByteLong((uint32 *)dest, (uint32 *)diff, bytesPerRow);
 		else
 			return false;
 	} else
@@ -407,9 +404,9 @@ void Anim::unDiff(byte *newBuf, byte *oldBuf, byte *diffData, uint16 bytesPerRow
 	diffData++;
 
 	if (isV)
-		VUnDIFFMemory(newBuf, diffData, 1, bufType + 1, bytesPerRow);
+		VUnDiffMemory(newBuf, diffData, 1, bufType + 1, bytesPerRow);
 	else
-		unDIFFMemory(newBuf, diffData, 1, bufType + 1);
+		unDiffMemory(newBuf, diffData, 1, bufType + 1);
 }
 
 void Anim::readBlock(void *Buffer, uint32 Size, byte **File) {
@@ -421,12 +418,12 @@ void Anim::diffNextFrame() {
 	if (_header == 65535)  /* Already done. */
 		return;
 
-	if (DispBitMap->_flags & BITMAPF_VIDEO) {
-		DispBitMap->_planes[0] = _vm->_graphics->getCurrentDrawingBuffer();
-		DispBitMap->_planes[1] = DispBitMap->_planes[0] + 0x10000;
-		DispBitMap->_planes[2] = DispBitMap->_planes[1] + 0x10000;
-		DispBitMap->_planes[3] = DispBitMap->_planes[2] + 0x10000;
-		DispBitMap->_planes[4] = DispBitMap->_planes[3] + 0x10000;
+	if (_vm->_graphics->_dispBitMap->_flags & BITMAPF_VIDEO) {
+		_vm->_graphics->_dispBitMap->_planes[0] = _vm->_graphics->getCurrentDrawingBuffer();
+		_vm->_graphics->_dispBitMap->_planes[1] = _vm->_graphics->_dispBitMap->_planes[0] + 0x10000;
+		_vm->_graphics->_dispBitMap->_planes[2] = _vm->_graphics->_dispBitMap->_planes[1] + 0x10000;
+		_vm->_graphics->_dispBitMap->_planes[3] = _vm->_graphics->_dispBitMap->_planes[2] + 0x10000;
+		_vm->_graphics->_dispBitMap->_planes[4] = _vm->_graphics->_dispBitMap->_planes[3] + 0x10000;
 	}
 
 	_vm->_event->mouseHide();
@@ -464,7 +461,7 @@ void Anim::diffNextFrame() {
 			_isAnim = (_frameNum >= 3) && (!_playOnce);
 			_curBit = 0;
 
-			if (DispBitMap->_flags & BITMAPF_VIDEO)
+			if (_vm->_graphics->_dispBitMap->_flags & BITMAPF_VIDEO)
 				_vm->_graphics->screenUpdate();
 
 			return; /* done with the next frame. */
@@ -510,13 +507,13 @@ void Anim::diffNextFrame() {
 			break;
 
 		case 20L:
-			unDiff(DrawBitMap->_planes[_curBit], DispBitMap->_planes[_curBit], _diffFile, DrawBitMap->_bytesPerRow, false);
+			unDiff(DrawBitMap->_planes[_curBit], _vm->_graphics->_dispBitMap->_planes[_curBit], _diffFile, DrawBitMap->_bytesPerRow, false);
 			_curBit++;
 			_diffFile += _size;
 			break;
 
 		case 21L:
-			unDiff(DrawBitMap->_planes[_curBit], DispBitMap->_planes[_curBit], _diffFile, DrawBitMap->_bytesPerRow, true);
+			unDiff(DrawBitMap->_planes[_curBit], _vm->_graphics->_dispBitMap->_planes[_curBit], _diffFile, DrawBitMap->_bytesPerRow, true);
 			_curBit++;
 			_diffFile += _size;
 			break;
@@ -550,15 +547,15 @@ void Anim::diffNextFrame() {
 			break;
 		case 65535L:
 			if ((_frameNum == 1) || _playOnce || _stopPlayingEnd) {
-				int didTOF = 0;
+				bool didTOF = false;
 
 				if (_waitForEffect) {
 					while (_vm->_music->isSoundEffectActive()) {
 						_vm->_music->updateMusic();
 						_vm->waitTOF();
 
-						if (DispBitMap->_flags & BITMAPF_VIDEO)
-							didTOF = 1;
+						if (_vm->_graphics->_dispBitMap->_flags & BITMAPF_VIDEO)
+							didTOF = true;
 					}
 				}
 
@@ -689,13 +686,6 @@ void Anim::stopDiffEnd() {
 			diffNextFrame();
 		}
 	}
-}
-
-/*****************************************************************************/
-/* Stops the continuous sound from playing.                                  */
-/*****************************************************************************/
-void Anim::stopSound() {
-	_stopSound = true;
 }
 
 /*****************************************************************************/
