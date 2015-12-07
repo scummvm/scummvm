@@ -90,7 +90,7 @@ bool Resource::readRoomData(const char *fileName) {
 
 	_vm->_manyRooms = dataFile->readUint16LE();
 	_vm->_highestCondition = dataFile->readUint16LE();
-	_vm->_rooms = (RoomData *)malloc((_vm->_manyRooms + 1) * sizeof(RoomData));
+	_vm->_rooms = new RoomData[_vm->_manyRooms + 1];
 	memset(_vm->_rooms, 0, (_vm->_manyRooms + 1) * sizeof(RoomData));
 
 	for (uint16 i = 1; i <= _vm->_manyRooms; i++) {
@@ -116,7 +116,7 @@ InventoryData *Resource::readInventory(const char *fileName) {
 	Common::File *dataFile = openDataFile(fileName, MKTAG('I', 'N', 'V', '1'));
 
 	_vm->_numInv = dataFile->readUint16LE();
-	InventoryData *inventory = (InventoryData *)malloc((_vm->_numInv + 1) * sizeof(InventoryData));
+	InventoryData *inventory = new InventoryData[_vm->_numInv + 1];
 
 	for (uint16 i = 1; i <= _vm->_numInv; i++) {
 		inventory[i]._many = dataFile->readUint16LE();
@@ -195,7 +195,7 @@ char *Resource::readString(Common::File *file) {
 	byte size = file->readByte();
 	if (!size)
 		return NULL;
-	char *str = (char *)malloc(size);
+	char *str = new char[size];
 	char *c = str;
 	for (int i = 0; i < size; i++) {
 		*c = file->readByte();
@@ -208,8 +208,7 @@ char *Resource::readString(Common::File *file) {
 
 int16 *Resource::readConditions(Common::File *file) {
 	int16 i = 0, cond;
-	//int16 *list = new int16[25];
-	int16 *list = (int16 *)malloc(25 * 2);
+	int16 *list = new int16[25];
 	memset(list, 0, 25 * 2);
 
 	do {
@@ -253,7 +252,7 @@ Action *Resource::readAction(Common::File *file) {
 		c = file->readByte();
 
 		if (c == 1) {
-			action = (Action *)malloc(sizeof(Action));
+			action = new Action();
 			if (!head)
 				head = action;
 			if (prev)
@@ -292,7 +291,7 @@ CloseData *Resource::readCloseUps(uint16 depth, Common::File *file) {
 		c = file->readByte();
 
 		if (c != '\0') {
-			closeup = (CloseData *)malloc(sizeof(CloseData));
+			closeup = new CloseData();
 			if (!head)
 				head = closeup;
 			if (prev)
@@ -324,7 +323,7 @@ ViewData *Resource::readView(Common::File *file) {
 		c = file->readByte();
 
 		if (c == 1) {
-			view = (ViewData *)malloc(sizeof(ViewData));
+			view = new ViewData();
 			if (!head)
 				head = view;
 			if (prev)

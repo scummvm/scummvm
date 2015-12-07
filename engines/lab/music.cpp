@@ -356,6 +356,8 @@ void Music::readSound(bool waitTillFinished, Common::File *file) {
 
 			uint16 sampleRate = file->readUint16LE();
 			file->skip(2);
+			// NOTE: We need to use malloc(), cause this will be freed with free()
+			// by the music code
 			byte *soundData = (byte *)malloc(soundSize);
 			file->read(soundData, soundSize);
 			playSoundEffect(sampleRate, soundSize, soundData);
