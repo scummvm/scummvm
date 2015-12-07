@@ -77,9 +77,11 @@ public:
 	bool _doReset;
 
 private:
-	LabEngine *_vm;
 	void fillbuffer(byte *musicBuffer);
 	void startMusic(bool restartFl);
+	void readSound(bool waitTillFinished, Common::File *file);
+
+	LabEngine *_vm;
 
 	Common::File *_file;
 	Common::File *_tFile;
