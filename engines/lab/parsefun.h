@@ -43,7 +43,6 @@ bool parse(const char *inputFile);
 /* From ProcessRoom.c */
 
 ViewData *getViewData(uint16 roomNum, uint16 direction);
-char *getPictName(CloseDataPtr *lcptr);
 void drawDirection(CloseDataPtr lcptr);
 uint16 processArrow(uint16 curDirection, uint16 arrow);
 void setCurClose(Common::Point pos, CloseDataPtr *cptr, bool useAbsoluteCoords = false);

@@ -191,13 +191,6 @@ struct MapData {
 #pragma pack(pop)
 #endif
 
-struct CrumbData {
-	uint16 _roomNum;
-	uint16 _direction;
-};
-
-#define MAX_CRUMBS          128
-
 } // End of namespace Lab
 
 #endif /* LAB_PARSETYPES_H */

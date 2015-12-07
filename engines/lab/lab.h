@@ -64,6 +64,13 @@ enum GameFeatures {
 
 typedef Common::List<Gadget *> GadgetList;
 
+struct CrumbData {
+	uint16 _roomNum;
+	uint16 _direction;
+};
+
+#define MAX_CRUMBS          128
+
 class LabEngine : public Engine {
 public:
 	LabEngine(OSystem *syst, const ADGameDescription *gameDesc);
@@ -170,6 +177,7 @@ public:
 	int followCrumbs();
 
 	void changeVolume(int delta);
+	char *getPictName(CloseDataPtr *lcptr);
 
 private:
 	// engine.cpp

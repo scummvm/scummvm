@@ -285,11 +285,11 @@ void DisplayMan::doTransWipe(CloseDataPtr *cPtr, char *filename) {
 	}
 
 	if (filename == NULL)
-		_vm->_curFileName = getPictName(cPtr);
+		_vm->_curFileName = _vm->getPictName(cPtr);
 	else if (filename[0] > ' ')
 		_vm->_curFileName = filename;
 	else
-		_vm->_curFileName = getPictName(cPtr);
+		_vm->_curFileName = _vm->getPictName(cPtr);
 
 	byte *BitMapMem = readPictToMem(_vm->_curFileName, _screenWidth, lastY + 5);
 	setPalette(_vm->_anim->_diffPalette, 256);

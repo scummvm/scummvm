@@ -143,7 +143,7 @@ static CloseDataPtr findCPtrMatch(CloseDataPtr cpmain, CloseDataPtr list) {
 /*****************************************************************************/
 /* Returns the current picture name.                                         */
 /*****************************************************************************/
-char *getPictName(CloseDataPtr *lcptr) {
+char *LabEngine::getPictName(CloseDataPtr *lcptr) {
 	ViewData *viewPtr = getViewData(g_lab->_roomNum, g_lab->_direction);
 
 	if (*lcptr != NULL) {

@@ -50,10 +50,7 @@ struct Gadget {
 	Image *_image, *_altImage;
 };
 
-extern Common::KeyState _keyPressed;
-
 /* Defines for the GadgetFlags portion */
-
 #define GADGETOFF 0x01
 
 typedef Common::List<Gadget *> GadgetList;
