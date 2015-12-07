@@ -179,13 +179,13 @@ Common::File *Resource::openDataFile(const char *fileName, uint32 fileHeader) {
 	Common::File *dataFile = new Common::File();
 	dataFile->open(translateFileName(fileName));
 	if (!dataFile->isOpen())
-		error("openDataFile: Couldn't open %s (%s)", translateFileName(fileName), fileName);
+		error("openDataFile: Couldn't open %s (%s)", translateFileName(fileName).c_str(), fileName);
 
 	if (fileHeader > 0) {
 		uint32 headerTag = dataFile->readUint32BE();
 		if (headerTag != fileHeader) {
 			dataFile->close();
-			error("openDataFile: Unexpected header in %s (%s) - expected: %d, got: %d", translateFileName(fileName), fileName, fileHeader, headerTag);
+			error("openDataFile: Unexpected header in %s (%s) - expected: %d, got: %d", translateFileName(fileName).c_str(), fileName, fileHeader, headerTag);
 		}
 	}
 
