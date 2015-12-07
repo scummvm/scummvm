@@ -241,7 +241,7 @@ void XcodeProvider::addFileReference(const std::string &id, const std::string &n
 
 void XcodeProvider::addProductFileReference(const std::string &id, const std::string &name) {
 	Object *fileRef = new Object(this, id, name, "PBXFileReference", "PBXFileReference", name);
-	fileRef->addProperty("explicitFileType", "compiled.mach-o.executable", "", SettingsNoValue|SettingsQuoteVariable);
+	fileRef->addProperty("explicitFileType", "wrapper.application", "", SettingsNoValue|SettingsQuoteVariable);
 	fileRef->addProperty("includeInIndex", "0", "", SettingsNoValue);
 	fileRef->addProperty("path", name, "", SettingsNoValue|SettingsQuoteVariable);
 	fileRef->addProperty("sourceTree", "BUILT_PRODUCTS_DIR", "", SettingsNoValue);
@@ -741,7 +741,6 @@ void XcodeProvider::setupBuildConfiguration(const BuildSetup &setup) {
 	// Debug
 	Object *iPhone_Debug_Object = new Object(this, "XCBuildConfiguration_" PROJECT_DESCRIPTION "-iPhone_Debug", _targets[IOS_TARGET] /* ScummVM-iPhone */, "XCBuildConfiguration", "PBXNativeTarget", "Debug");
 	Property iPhone_Debug;
-	ADD_SETTING_QUOTE(iPhone_Debug, "ARCHS", "$(ARCHS_STANDARD)");
 	ADD_SETTING_QUOTE(iPhone_Debug, "CODE_SIGN_IDENTITY", "iPhone Developer");
 	ADD_SETTING_QUOTE_VAR(iPhone_Debug, "CODE_SIGN_IDENTITY[sdk=iphoneos*]", "iPhone Developer");
 	ADD_SETTING(iPhone_Debug, "COMPRESS_PNG_FILES", "NO");
@@ -787,6 +786,7 @@ void XcodeProvider::setupBuildConfiguration(const BuildSetup &setup) {
 	ADD_SETTING_LIST(iPhone_Debug, "GCC_PREPROCESSOR_DEFINITIONS", scummvmIOS_defines, SettingsNoQuote|SettingsAsList, 5);
 	ADD_SETTING(iPhone_Debug, "ASSETCATALOG_COMPILER_APPICON_NAME", "AppIcon");
 	ADD_SETTING(iPhone_Debug, "ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME", "LaunchImage");
+	ADD_SETTING(iPhone_Debug, "ENABLE_TESTABILITY", "YES");
 
 	iPhone_Debug_Object->addProperty("name", "Debug", "", SettingsNoValue);
 	iPhone_Debug_Object->properties["buildSettings"] = iPhone_Debug;
@@ -797,6 +797,7 @@ void XcodeProvider::setupBuildConfiguration(const BuildSetup &setup) {
 	ADD_SETTING(iPhone_Release, "GCC_OPTIMIZATION_LEVEL", "3");
 	ADD_SETTING(iPhone_Release, "COPY_PHASE_STRIP", "YES");
 	REMOVE_SETTING(iPhone_Release, "GCC_DYNAMIC_NO_PIC");
+	REMOVE_SETTING(iPhone_Release, "ENABLE_TESTABILITY");
 	ADD_SETTING(iPhone_Release, "WRAPPER_EXTENSION", "app");
 
 	iPhone_Release_Object->addProperty("name", "Release", "", SettingsNoValue);
@@ -814,7 +815,6 @@ void XcodeProvider::setupBuildConfiguration(const BuildSetup &setup) {
 	Property scummvm_Debug;
 	ADD_SETTING(scummvm_Debug, "ALWAYS_SEARCH_USER_PATHS", "NO");
 	ADD_SETTING_QUOTE(scummvm_Debug, "USER_HEADER_SEARCH_PATHS", "$(SRCROOT) $(SRCROOT)/engines");
-	ADD_SETTING_QUOTE(scummvm_Debug, "ARCHS", "$(ARCHS_STANDARD_32_BIT)");
 	ADD_SETTING_QUOTE(scummvm_Debug, "CODE_SIGN_IDENTITY", "Don't Code Sign");
 	ADD_SETTING_QUOTE_VAR(scummvm_Debug, "CODE_SIGN_IDENTITY[sdk=iphoneos*]", "Don't Code Sign");
 	ADD_SETTING_QUOTE(scummvm_Debug, "FRAMEWORK_SEARCH_PATHS", "");
@@ -843,6 +843,7 @@ void XcodeProvider::setupBuildConfiguration(const BuildSetup &setup) {
 	ADD_SETTING_QUOTE(scummvm_Debug, "OTHER_LDFLAGS", "-lz");
 	ADD_SETTING(scummvm_Debug, "PREBINDING", "NO");
 	ADD_SETTING(scummvm_Debug, "SDKROOT", "macosx");
+	ADD_SETTING(scummvm_Debug, "ENABLE_TESTABILITY", "YES");
 
 	scummvm_Debug_Object->addProperty("name", "Debug", "", SettingsNoValue);
 	scummvm_Debug_Object->properties["buildSettings"] = scummvm_Debug;
@@ -854,6 +855,7 @@ void XcodeProvider::setupBuildConfiguration(const BuildSetup &setup) {
 	REMOVE_SETTING(scummvm_Release, "GCC_WARN_ABOUT_RETURN_TYPE");
 	REMOVE_SETTING(scummvm_Release, "GCC_WARN_UNUSED_VARIABLE");
 	REMOVE_SETTING(scummvm_Release, "ONLY_ACTIVE_ARCH");
+	REMOVE_SETTING(scummvm_Release, "ENABLE_TESTABILITY");
 
 	scummvm_Release_Object->addProperty("name", "Release", "", SettingsNoValue);
 	scummvm_Release_Object->properties["buildSettings"] = scummvm_Release;
@@ -868,7 +870,7 @@ void XcodeProvider::setupBuildConfiguration(const BuildSetup &setup) {
 	// Debug
 	Object *scummvmOSX_Debug_Object = new Object(this, "XCBuildConfiguration_" PROJECT_DESCRIPTION "-OSX_Debug", _targets[OSX_TARGET] /* ScummVM-OS X */, "XCBuildConfiguration", "PBXNativeTarget", "Debug");
 	Property scummvmOSX_Debug;
-	ADD_SETTING_QUOTE(scummvmOSX_Debug, "ARCHS", "$(NATIVE_ARCH)");
+	ADD_SETTING(scummvmOSX_Debug, "COMBINE_HIDPI_IMAGES", "YES");
 	ADD_SETTING(scummvmOSX_Debug, "COMPRESS_PNG_FILES", "NO");
 	ADD_SETTING(scummvmOSX_Debug, "COPY_PHASE_STRIP", "NO");
 	ADD_SETTING_QUOTE(scummvmOSX_Debug, "DEBUG_INFORMATION_FORMAT", "dwarf-with-dsym");
