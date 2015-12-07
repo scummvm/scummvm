@@ -98,7 +98,6 @@ EventManager::EventManager(LabEngine *vm) : _vm(vm) {
 	_rightClick = false;
 
 	_mouseHidden = true;
-	_numHidden   = 1;
 	_lastGadgetHit = nullptr;
 	_screenGadgetList = nullptr;
 	_hitGadget = nullptr;
@@ -113,9 +112,6 @@ EventManager::EventManager(LabEngine *vm) : _vm(vm) {
 }
 
 void EventManager::mouseHandler(int flag, Common::Point pos) {
-	if (_numHidden >= 2)
-		return;
-
 	if (flag & 0x02) { /* Left mouse button click */
 		Gadget *tmp = NULL;
 		if (_screenGadgetList)
@@ -172,10 +168,7 @@ void EventManager::initMouse() {
 /* Shows the mouse.                                                          */
 /*****************************************************************************/
 void EventManager::mouseShow() {
-	if (_numHidden)
-		_numHidden--;
-
-	if ((_numHidden == 0) && _mouseHidden) {
+	if (_mouseHidden) {
 		processInput();
 		_mouseHidden = false;
 	}
@@ -187,9 +180,7 @@ void EventManager::mouseShow() {
 /* Hides the mouse.                                                          */
 /*****************************************************************************/
 void EventManager::mouseHide() {
-	_numHidden++;
-
-	if (_numHidden && !_mouseHidden) {
+	if (!_mouseHidden) {
 		_mouseHidden = true;
 
 		g_system->showMouse(false);

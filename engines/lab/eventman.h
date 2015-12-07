@@ -44,7 +44,6 @@ private:
 	bool _rightClick;
 
 	bool _mouseHidden;
-	int32 _numHidden;
 	Gadget *_lastGadgetHit;
 	uint16 _nextKeyIn;
 	uint16 _nextKeyOut;
