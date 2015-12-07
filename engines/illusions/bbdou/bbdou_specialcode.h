@@ -119,6 +119,7 @@ public:
 	void spcRemoveInventoryItem(OpCall &opCall);
 	void spcHasInventoryItem(OpCall &opCall);
 	void spcCloseInventory(OpCall &opCall);
+	void spcResetCursor(OpCall &opCall);
 	void spcSetCursorField90(OpCall &opCall);
 	void spcIsCursorHoldingObjectId(OpCall &opCall);
 	void spcInitRadarMicrophone(OpCall &opCall);

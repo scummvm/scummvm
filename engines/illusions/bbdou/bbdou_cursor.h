@@ -90,6 +90,7 @@ public:
 	void init(uint32 objectId, uint32 progResKeywordId);
 	void enable(uint32 objectId);
 	void disable(uint32 objectId);
+	void reset(uint32 objectId);
 	void addCursorSequence(uint32 objectId, uint32 sequenceId);
 	uint32 findCursorSequenceId(uint32 objectId);
 	void setStruct8bsValue(uint32 objectId, int value);
