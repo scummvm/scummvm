@@ -33,8 +33,6 @@
 
 namespace Lab {
 
-extern byte **startoffile;
-
 Anim::Anim(LabEngine *vm) : _vm(vm) {
 	_header = 0;
 	_curBit = 0;

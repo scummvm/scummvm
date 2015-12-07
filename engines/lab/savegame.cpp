@@ -43,8 +43,6 @@ namespace Lab {
 #define SAVEGAME_VERSION  1
 
 /*----- The machine independent section of saveGame.c -----*/
-/* Lab: Labyrinth specific */
-extern char *getPictName(CloseDataPtr *lcptr);
 
 void writeSaveGameHeader(Common::OutSaveFile *out, const Common::String &saveName) {
 	out->writeUint32BE(SAVEGAME_ID);
@@ -129,7 +127,7 @@ bool saveGame(uint16 Direction, uint16 Quarters, int slot, Common::String desc) 
 
 	// Load scene pic
 	CloseDataPtr cPtr = nullptr;
-	g_lab->_graphics->readPict(getPictName(&cPtr), true);
+	g_lab->_graphics->readPict(g_lab->getPictName(&cPtr), true);
 
 	writeSaveGameHeader(file, desc);
 	file->writeUint16LE(g_lab->_roomNum);
