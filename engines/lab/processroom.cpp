@@ -188,44 +188,45 @@ void LabEngine::drawDirection(CloseDataPtr lcptr) {
 /*****************************************************************************/
 /* process a arrow gadget movement.                                          */
 /*****************************************************************************/
-bool processArrow(uint16 *direction, uint16 arrow) {
-	if (arrow == 1) { /* Forward */
+uint16 processArrow(uint16 curDirection, uint16 arrow) {
+	if (arrow == 1) { // Forward
 		uint16 room = 1;
 
-		if (*direction == NORTH)
+		if (curDirection == NORTH)
 			room = g_lab->_rooms[g_lab->_roomNum]._northDoor;
-		else if (*direction == SOUTH)
+		else if (curDirection == SOUTH)
 			room = g_lab->_rooms[g_lab->_roomNum]._southDoor;
-		else if (*direction == EAST)
+		else if (curDirection == EAST)
 			room = g_lab->_rooms[g_lab->_roomNum]._eastDoor;
-		else if (*direction == WEST)
+		else if (curDirection == WEST)
 			room = g_lab->_rooms[g_lab->_roomNum]._westDoor;
 
-		if (room == 0)
-			return false;
-		else
+		if (room != 0)
 			g_lab->_roomNum = room;
-	} else if (arrow == 0) { /* Left */
-		if (*direction == NORTH)
-			*direction = WEST;
-		else if (*direction == WEST)
-			*direction = SOUTH;
-		else if (*direction == SOUTH)
-			*direction = EAST;
+
+		return curDirection;
+	} else if (arrow == 0) { // Left
+		if (curDirection == NORTH)
+			return WEST;
+		else if (curDirection == WEST)
+			return SOUTH;
+		else if (curDirection == SOUTH)
+			return EAST;
 		else
-			*direction = NORTH;
-	} else if (arrow == 2) { /* Right */
-		if (*direction == NORTH)
-			*direction = EAST;
-		else if (*direction == EAST)
-			*direction = SOUTH;
-		else if (*direction == SOUTH)
-			*direction = WEST;
+			return NORTH;
+	} else if (arrow == 2) { // Right
+		if (curDirection == NORTH)
+			return EAST;
+		else if (curDirection == EAST)
+			return SOUTH;
+		else if (curDirection == SOUTH)
+			return WEST;
 		else
-			*direction = NORTH;
+			return NORTH;
 	}
 
-	return true;
+	// Should never reach here!
+	return curDirection;
 }
 
 /*****************************************************************************/
