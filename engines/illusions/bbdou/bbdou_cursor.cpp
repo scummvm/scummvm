@@ -46,7 +46,7 @@ void BbdouCursor::init(uint32 objectId, uint32 progResKeywordId) {
 	_vm->_controls->placeActor(0x50001, pos, 0x6000C, objectId, 0);
 
 	Control *control = _vm->_dict->getObjectControl(objectId);
-	//control->_actor->setControlRoutine(new Common::Functor2Mem<Control*, uint32, void, BbdouCursor>(this, &BbdouCursor::actorControlRoutine1));
+	// TODO? control->_actor->setControlRoutine(new Common::Functor2Mem<Control*, uint32, void, BbdouCursor>(this, &BbdouCursor::actorControlRoutine1));
 	control->_flags |= 8;
 	
 	_data._mode = 1;

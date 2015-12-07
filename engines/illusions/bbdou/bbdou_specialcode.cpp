@@ -131,6 +131,7 @@ void BbdouSpecialCode::init() {
 	SPECIAL(0x0016000A, spcAddCursorSequence);
 	SPECIAL(0x0016000B, spcCursorStartHoldingObjectId);
 	SPECIAL(0x0016000C, spcCursorStopHoldingObjectId);
+	SPECIAL(0x0016000F, spcSetCursorState);
 	SPECIAL(0x00160013, spcInitBubble);
 	SPECIAL(0x00160014, spcSetupBubble);
 	SPECIAL(0x00160015, spcSetObjectInteractMode);
@@ -205,6 +206,18 @@ void BbdouSpecialCode::spcCursorStopHoldingObjectId(OpCall &opCall) {
 	_vm->notifyThreadId(opCall._threadId);
 }
 
+void BbdouSpecialCode::spcSetCursorState(OpCall &opCall) {
+	ARG_UINT32(objectId);
+	ARG_UINT32(newState);
+	_cursor->_data._item10._field0 = newState;
+	_cursor->clearCursorDataField14();
+	if (newState == 5)
+		setCursorControlRoutine(objectId, 1);
+	else
+		setCursorControlRoutine(objectId, 0);
+	_vm->notifyThreadId(opCall._threadId);
+}
+
 void BbdouSpecialCode::spcInitBubble(OpCall &opCall) {
 	_bubble->init();
 	_vm->notifyThreadId(opCall._threadId);
@@ -271,6 +284,7 @@ void BbdouSpecialCode::spcCloseInventory(OpCall &opCall) {
 void BbdouSpecialCode::spcResetCursor(OpCall &opCall) {
 	ARG_UINT32(objectId);
 	_cursor->reset(objectId);
+	setCursorControlRoutine(objectId, 0);
 	_vm->notifyThreadId(opCall._threadId);
 }
 
