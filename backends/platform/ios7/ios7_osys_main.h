@@ -24,7 +24,7 @@
 #define BACKENDS_PLATFORM_IPHONE_OSYS_MAIN_H
 
 #include "graphics/surface.h"
-#include "iphone_common.h"
+#include "ios7_common.h"
 #include "backends/base-backend.h"
 #include "common/events.h"
 #include "audio/mixer_intern.h"
@@ -52,7 +52,7 @@ struct AQCallbackStruct {
 	AudioStreamBasicDescription dataFormat;
 };
 
-class OSystem_IPHONE : public EventsBaseBackend, public PaletteManager {
+class OSystem_iOS7 : public EventsBaseBackend, public PaletteManager {
 protected:
 	static const OSystem::GraphicsMode s_supportedGraphicsModes[];
 	static AQCallbackStruct s_AudioQueue;
@@ -111,8 +111,8 @@ protected:
 
 public:
 
-	OSystem_IPHONE();
-	virtual ~OSystem_IPHONE();
+	OSystem_iOS7();
+	virtual ~OSystem_iOS7();
 
 	virtual void initBackend();
 

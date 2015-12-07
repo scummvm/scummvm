@@ -23,9 +23,9 @@
 // Disable symbol overrides so that we can use system headers.
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
-#include "osys_main.h"
+#include "ios7_osys_main.h"
 
-void OSystem_IPHONE::AQBufferCallback(void *in, AudioQueueRef inQ, AudioQueueBufferRef outQB) {
+void OSystem_iOS7::AQBufferCallback(void *in, AudioQueueRef inQ, AudioQueueBufferRef outQB) {
 	//printf("AQBufferCallback()\n");
 	if (s_AudioQueue.frameCount > 0 && s_soundCallback != NULL) {
 		outQB->mAudioDataByteSize = 4 * s_AudioQueue.frameCount;
@@ -36,8 +36,8 @@ void OSystem_IPHONE::AQBufferCallback(void *in, AudioQueueRef inQ, AudioQueueBuf
 	}
 }
 
-void OSystem_IPHONE::mixCallback(void *sys, byte *samples, int len) {
-	OSystem_IPHONE *this_ = (OSystem_IPHONE *)sys;
+void OSystem_iOS7::mixCallback(void *sys, byte *samples, int len) {
+	OSystem_iOS7 *this_ = (OSystem_iOS7 *)sys;
 	assert(this_);
 
 	if (this_->_mixer) {
@@ -45,7 +45,7 @@ void OSystem_IPHONE::mixCallback(void *sys, byte *samples, int len) {
 	}
 }
 
-void OSystem_IPHONE::setupMixer() {
+void OSystem_iOS7::setupMixer() {
 	_mixer = new Audio::MixerImpl(this, AUDIO_SAMPLE_RATE);
 
 	s_soundCallback = mixCallback;
@@ -54,7 +54,7 @@ void OSystem_IPHONE::setupMixer() {
 	startSoundsystem();
 }
 
-void OSystem_IPHONE::startSoundsystem() {
+void OSystem_iOS7::startSoundsystem() {
 	s_AudioQueue.dataFormat.mSampleRate = AUDIO_SAMPLE_RATE;
 	s_AudioQueue.dataFormat.mFormatID = kAudioFormatLinearPCM;
 	s_AudioQueue.dataFormat.mFormatFlags = kLinearPCMFormatFlagIsSignedInteger | kAudioFormatFlagIsPacked;
@@ -93,7 +93,7 @@ void OSystem_IPHONE::startSoundsystem() {
 	_mixer->setReady(true);
 }
 
-void OSystem_IPHONE::stopSoundsystem() {
+void OSystem_iOS7::stopSoundsystem() {
 	AudioQueueStop(s_AudioQueue.queue, true);
 
 	for (int i = 0; i < AUDIO_BUFFERS; i++) {

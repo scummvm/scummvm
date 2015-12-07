@@ -31,8 +31,8 @@
 #include <OpenGLES/ES1/gl.h>
 #include <OpenGLES/ES1/glext.h>
 
-#include "iphone_keyboard.h"
-#include "iphone_common.h"
+#include "ios7_keyboard.h"
+#include "ios7_common.h"
 
 #include "common/list.h"
 

@@ -101,10 +101,16 @@ struct InternalEvent {
 };
 
 // On the ObjC side
-void iPhone_updateScreen();
-bool iPhone_fetchEvent(InternalEvent *event);
-const char *iPhone_getDocumentsDir();
-bool iPhone_isHighResDevice();
+
+extern int iOS7_argc;
+extern char **iOS7_argv;
+
+void iOS7_updateScreen();
+bool iOS7_fetchEvent(InternalEvent *event);
+bool iOS7_isHighResDevice();
+
+void iOS7_main(int argc, char **argv);
+const char *iOS7_getDocumentsDir();
 
 uint getSizeNextPOT(uint size);
 

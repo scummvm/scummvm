@@ -20,59 +20,18 @@
  *
  */
 
-// Disable symbol overrides so that we can use system headers.
+
+#import "iOS7MainApplication.h"
+#import "iOS7ScummVMViewController.h"
+
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
+#import "ios7_common.h"
+#import "ios7_video.h"
 
-#include <UIKit/UIKit.h>
-#include <Foundation/NSThread.h>
 
-#include "iphone_video.h"
+@implementation iOS7MainApplication
 
-void iphone_main(int argc, char *argv[]);
-
-@interface ScummVMViewController : UIViewController
-
-@end
-
-@implementation ScummVMViewController
-
-- (BOOL)prefersStatusBarHidden {
-    return YES;
-}
-
-@end
-
-@interface iPhoneMain : UIApplication {
-	UIWindow *_window;
-	ScummVMViewController *_controller;
-	iPhoneView *_view;
-}
-
-- (void)mainLoop:(id)param;
-- (iPhoneView *)getView;
-- (UIWindow *)getWindow;
-- (void)didRotate:(NSNotification *)notification;
-@end
-
-static int g_argc;
-static char **g_argv;
-
-int main(int argc, char **argv) {
-	g_argc = argc;
-	g_argv = argv;
-
-	NSAutoreleasePool *autoreleasePool = [
-		[NSAutoreleasePool alloc] init
-	];
-
-	int returnCode = UIApplicationMain(argc, argv, @"iPhoneMain", @"iPhoneMain");
-	[autoreleasePool release];
-	return returnCode;
-}
-
-@implementation iPhoneMain
-
--(id) init {
+-(id)init {
 	[super init];
 	_window = nil;
 	_view = nil;
@@ -80,9 +39,10 @@ int main(int argc, char **argv) {
 }
 
 - (void)mainLoop:(id)param {
-	[[NSAutoreleasePool alloc] init];
+	@autoreleasepool {
+		iOS7_main(iOS7_argc, iOS7_argv);
+	}
 
-	iphone_main(g_argc, g_argv);
 	exit(0);
 }
 
@@ -96,7 +56,7 @@ int main(int argc, char **argv) {
 	// Create the directory for savegames
 #ifdef IPHONE_OFFICIAL
 	NSFileManager *fm = [NSFileManager defaultManager];
-	NSString *documentPath = [NSString stringWithUTF8String:iPhone_getDocumentsDir()];
+	NSString *documentPath = [NSString stringWithUTF8String:iOS7_getDocumentsDir()];
 	NSString *savePath = [documentPath stringByAppendingPathComponent:@"Savegames"];
 	if (![fm fileExistsAtPath:savePath]) {
 		[fm createDirectoryAtPath:savePath withIntermediateDirectories:YES attributes:nil error:nil];
@@ -106,7 +66,7 @@ int main(int argc, char **argv) {
 	_window = [[UIWindow alloc] initWithFrame:rect];
 	[_window retain];
 
-	_controller = [[ScummVMViewController alloc] init];
+	_controller = [[iOS7ScummVMViewController alloc] init];
 
 	_view = [[iPhoneView alloc] initWithFrame:rect];
 	_view.multipleTouchEnabled = YES;
@@ -152,3 +112,10 @@ int main(int argc, char **argv) {
 }
 
 @end
+
+
+const char *iOS7_getDocumentsDir() {
+	NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+	NSString *documentsDirectory = [paths objectAtIndex:0];
+	return [documentsDirectory UTF8String];
+}

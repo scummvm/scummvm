@@ -43,20 +43,20 @@
 #include "audio/mixer.h"
 #include "audio/mixer_intern.h"
 
-#include "osys_main.h"
+#include "ios7_osys_main.h"
 
 
-const OSystem::GraphicsMode OSystem_IPHONE::s_supportedGraphicsModes[] = {
+const OSystem::GraphicsMode OSystem_iOS7::s_supportedGraphicsModes[] = {
 	{ "linear", "Linear filtering", kGraphicsModeLinear },
 	{ "none", "No filtering", kGraphicsModeNone },
 	{ 0, 0, 0 }
 };
 
-AQCallbackStruct OSystem_IPHONE::s_AudioQueue;
-SoundProc OSystem_IPHONE::s_soundCallback = NULL;
-void *OSystem_IPHONE::s_soundParam = NULL;
+AQCallbackStruct OSystem_iOS7::s_AudioQueue;
+SoundProc OSystem_iOS7::s_soundCallback = NULL;
+void *OSystem_iOS7::s_soundParam = NULL;
 
-OSystem_IPHONE::OSystem_IPHONE() :
+OSystem_iOS7::OSystem_iOS7() :
 	_mixer(NULL), _lastMouseTap(0), _queuedEventTime(0),
 	_mouseNeedTextureUpdate(false), _secondaryTapped(false), _lastSecondaryTap(0),
 	_screenOrientation(kScreenOrientationFlippedLandscape), _mouseClickAndDragEnabled(false),
@@ -64,9 +64,9 @@ OSystem_IPHONE::OSystem_IPHONE() :
 	_mouseDirty(false), _timeSuspended(0), _lastDragPosX(-1), _lastDragPosY(-1), _screenChangeCount(0),
 	_mouseCursorPaletteEnabled(false), _gfxTransactionError(kTransactionSuccess) {
 	_queuedInputEvent.type = Common::EVENT_INVALID;
-	_touchpadModeEnabled = !iPhone_isHighResDevice();
+	_touchpadModeEnabled = !iOS7_isHighResDevice();
 #ifdef IPHONE_OFFICIAL
-	_fsFactory = new ChRootFilesystemFactory(iPhone_getDocumentsDir());
+	_fsFactory = new ChRootFilesystemFactory(iOS7_getDocumentsDir());
 #else
 	_fsFactory = new POSIXFilesystemFactory();
 #endif
@@ -77,7 +77,7 @@ OSystem_IPHONE::OSystem_IPHONE() :
 	memset(_mouseCursorPalette, 0, sizeof(_mouseCursorPalette));
 }
 
-OSystem_IPHONE::~OSystem_IPHONE() {
+OSystem_iOS7::~OSystem_iOS7() {
 	AudioQueueDispose(s_AudioQueue.queue, true);
 
 	delete _mixer;
@@ -89,17 +89,17 @@ OSystem_IPHONE::~OSystem_IPHONE() {
 	_mouseBuffer.free();
 }
 
-bool OSystem_IPHONE::touchpadModeEnabled() const {
+bool OSystem_iOS7::touchpadModeEnabled() const {
 	return _touchpadModeEnabled;
 }
 
-int OSystem_IPHONE::timerHandler(int t) {
+int OSystem_iOS7::timerHandler(int t) {
 	DefaultTimerManager *tm = (DefaultTimerManager *)g_system->getTimerManager();
 	tm->handler();
 	return t;
 }
 
-void OSystem_IPHONE::initBackend() {
+void OSystem_iOS7::initBackend() {
 #ifdef IPHONE_OFFICIAL
 	_savefileManager = new DefaultSaveFileManager("/Savegames");
 #else
@@ -112,12 +112,12 @@ void OSystem_IPHONE::initBackend() {
 
 	setupMixer();
 
-	setTimerCallback(&OSystem_IPHONE::timerHandler, 10);
+	setTimerCallback(&OSystem_iOS7::timerHandler, 10);
 
 	EventsBaseBackend::initBackend();
 }
 
-bool OSystem_IPHONE::hasFeature(Feature f) {
+bool OSystem_iOS7::hasFeature(Feature f) {
 	switch (f) {
 	case kFeatureCursorPalette:
 		return true;
@@ -127,7 +127,7 @@ bool OSystem_IPHONE::hasFeature(Feature f) {
 	}
 }
 
-void OSystem_IPHONE::setFeatureState(Feature f, bool enable) {
+void OSystem_iOS7::setFeatureState(Feature f, bool enable) {
 	switch (f) {
 	case kFeatureCursorPalette:
 		if (_mouseCursorPaletteEnabled != enable) {
@@ -145,7 +145,7 @@ void OSystem_IPHONE::setFeatureState(Feature f, bool enable) {
 	}
 }
 
-bool OSystem_IPHONE::getFeatureState(Feature f) {
+bool OSystem_iOS7::getFeatureState(Feature f) {
 	switch (f) {
 	case kFeatureCursorPalette:
 		return _mouseCursorPaletteEnabled;
@@ -157,7 +157,7 @@ bool OSystem_IPHONE::getFeatureState(Feature f) {
 	}
 }
 
-void OSystem_IPHONE::suspendLoop() {
+void OSystem_iOS7::suspendLoop() {
 	bool done = false;
 	uint32 startTime = getMillis();
 
@@ -165,7 +165,7 @@ void OSystem_IPHONE::suspendLoop() {
 
 	InternalEvent event;
 	while (!done) {
-		if (iPhone_fetchEvent(&event))
+		if (iOS7_fetchEvent(&event))
 			if (event.type == kInputApplicationResumed)
 				done = true;
 		usleep(100000);
@@ -176,7 +176,7 @@ void OSystem_IPHONE::suspendLoop() {
 	_timeSuspended += getMillis() - startTime;
 }
 
-uint32 OSystem_IPHONE::getMillis(bool skipRecord) {
+uint32 OSystem_iOS7::getMillis(bool skipRecord) {
 	//printf("getMillis()\n");
 
 	struct timeval currentTime;
@@ -185,12 +185,12 @@ uint32 OSystem_IPHONE::getMillis(bool skipRecord) {
 	                ((currentTime.tv_usec - _startTime.tv_usec) / 1000)) - _timeSuspended;
 }
 
-void OSystem_IPHONE::delayMillis(uint msecs) {
+void OSystem_iOS7::delayMillis(uint msecs) {
 	//printf("delayMillis(%d)\n", msecs);
 	usleep(msecs * 1000);
 }
 
-OSystem::MutexRef OSystem_IPHONE::createMutex(void) {
+OSystem::MutexRef OSystem_iOS7::createMutex(void) {
 	pthread_mutexattr_t attr;
 	pthread_mutexattr_init(&attr);
 	pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE);
@@ -205,19 +205,19 @@ OSystem::MutexRef OSystem_IPHONE::createMutex(void) {
 	return (MutexRef)mutex;
 }
 
-void OSystem_IPHONE::lockMutex(MutexRef mutex) {
+void OSystem_iOS7::lockMutex(MutexRef mutex) {
 	if (pthread_mutex_lock((pthread_mutex_t *) mutex) != 0) {
 		printf("pthread_mutex_lock() failed!\n");
 	}
 }
 
-void OSystem_IPHONE::unlockMutex(MutexRef mutex) {
+void OSystem_iOS7::unlockMutex(MutexRef mutex) {
 	if (pthread_mutex_unlock((pthread_mutex_t *) mutex) != 0) {
 		printf("pthread_mutex_unlock() failed!\n");
 	}
 }
 
-void OSystem_IPHONE::deleteMutex(MutexRef mutex) {
+void OSystem_iOS7::deleteMutex(MutexRef mutex) {
 	if (pthread_mutex_destroy((pthread_mutex_t *) mutex) != 0) {
 		printf("pthread_mutex_destroy() failed!\n");
 	} else {
@@ -226,7 +226,7 @@ void OSystem_IPHONE::deleteMutex(MutexRef mutex) {
 }
 
 
-void OSystem_IPHONE::setTimerCallback(TimerProc callback, int interval) {
+void OSystem_iOS7::setTimerCallback(TimerProc callback, int interval) {
 	//printf("setTimerCallback()\n");
 
 	if (callback != NULL) {
@@ -237,10 +237,10 @@ void OSystem_IPHONE::setTimerCallback(TimerProc callback, int interval) {
 		_timerCallback = NULL;
 }
 
-void OSystem_IPHONE::quit() {
+void OSystem_iOS7::quit() {
 }
 
-void OSystem_IPHONE::getTimeAndDate(TimeDate &td) const {
+void OSystem_iOS7::getTimeAndDate(TimeDate &td) const {
 	time_t curTime = time(0);
 	struct tm t = *localtime(&curTime);
 	td.tm_sec = t.tm_sec;
@@ -252,16 +252,16 @@ void OSystem_IPHONE::getTimeAndDate(TimeDate &td) const {
 	td.tm_wday = t.tm_wday;
 }
 
-Audio::Mixer *OSystem_IPHONE::getMixer() {
+Audio::Mixer *OSystem_iOS7::getMixer() {
 	assert(_mixer);
 	return _mixer;
 }
 
-OSystem *OSystem_IPHONE_create() {
-	return new OSystem_IPHONE();
+OSystem *OSystem_iOS7_create() {
+	return new OSystem_iOS7();
 }
 
-Common::String OSystem_IPHONE::getDefaultConfigFileName() {
+Common::String OSystem_iOS7::getDefaultConfigFileName() {
 #ifdef IPHONE_OFFICIAL
 	Common::String path = "/Preferences";
 	return path;
@@ -270,7 +270,7 @@ Common::String OSystem_IPHONE::getDefaultConfigFileName() {
 #endif
 }
 
-void OSystem_IPHONE::addSysArchivesToSearchSet(Common::SearchSet &s, int priority) {
+void OSystem_iOS7::addSysArchivesToSearchSet(Common::SearchSet &s, int priority) {
 	// Get URL of the Resource directory of the .app bundle
 	CFURLRef fileUrl = CFBundleCopyResourcesDirectoryURL(CFBundleGetMainBundle());
 	if (fileUrl) {
@@ -292,7 +292,7 @@ void OSystem_IPHONE::addSysArchivesToSearchSet(Common::SearchSet &s, int priorit
 	}
 }
 
-void OSystem_IPHONE::logMessage(LogMessageType::Type type, const char *message) {
+void OSystem_iOS7::logMessage(LogMessageType::Type type, const char *message) {
 	FILE *output = 0;
 
 	if (type == LogMessageType::kInfo || type == LogMessageType::kDebug)
@@ -304,14 +304,14 @@ void OSystem_IPHONE::logMessage(LogMessageType::Type type, const char *message) 
 	fflush(output);
 }
 
-bool iphone_touchpadModeEnabled() {
-	OSystem_IPHONE *sys = (OSystem_IPHONE *) g_system;
+bool iOS7_touchpadModeEnabled() {
+	OSystem_iOS7 *sys = (OSystem_iOS7 *) g_system;
 	return sys && sys->touchpadModeEnabled();
 }
 
-void iphone_main(int argc, char *argv[]) {
+void iOS7_main(int argc, char **argv) {
 
-	//OSystem_IPHONE::migrateApp();
+	//OSystem_iOS7::migrateApp();
 
 	FILE *newfp = fopen("/var/mobile/.scummvm.log", "a");
 	if (newfp != NULL) {
@@ -327,7 +327,7 @@ void iphone_main(int argc, char *argv[]) {
 	}
 
 #ifdef IPHONE_OFFICIAL
-	chdir(iPhone_getDocumentsDir());
+	chdir(iOS7_getDocumentsDir());
 #else
 	system("mkdir " SCUMMVM_ROOT_PATH);
 	system("mkdir " SCUMMVM_SAVE_PATH);
@@ -335,7 +335,7 @@ void iphone_main(int argc, char *argv[]) {
 	chdir("/var/mobile/");
 #endif
 
-	g_system = OSystem_IPHONE_create();
+	g_system = OSystem_iOS7_create();
 	assert(g_system);
 
 	// Invoke the actual ScummVM main entry point:

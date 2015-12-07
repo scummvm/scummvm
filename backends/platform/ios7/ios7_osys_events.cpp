@@ -26,11 +26,11 @@
 #include "gui/message.h"
 #include "common/translation.h"
 
-#include "osys_main.h"
+#include "ios7_osys_main.h"
 
 static const int kQueuedInputEventDelay = 50;
 
-bool OSystem_IPHONE::pollEvent(Common::Event &event) {
+bool OSystem_iOS7::pollEvent(Common::Event &event) {
 	//printf("pollEvent()\n");
 
 	long curTime = getMillis();
@@ -48,7 +48,7 @@ bool OSystem_IPHONE::pollEvent(Common::Event &event) {
 
 	InternalEvent internalEvent;
 
-	if (iPhone_fetchEvent(&internalEvent)) {
+	if (iOS7_fetchEvent(&internalEvent)) {
 		switch (internalEvent.type) {
 		case kInputMouseDown:
 			if (!handleEvent_mouseDown(event, internalEvent.value1, internalEvent.value2))
@@ -113,7 +113,7 @@ bool OSystem_IPHONE::pollEvent(Common::Event &event) {
 	return false;
 }
 
-bool OSystem_IPHONE::handleEvent_mouseDown(Common::Event &event, int x, int y) {
+bool OSystem_iOS7::handleEvent_mouseDown(Common::Event &event, int x, int y) {
 	//printf("Mouse down at (%u, %u)\n", x, y);
 
 	// Workaround: kInputMouseSecondToggled isn't always sent when the
@@ -137,7 +137,7 @@ bool OSystem_IPHONE::handleEvent_mouseDown(Common::Event &event, int x, int y) {
 	return false;
 }
 
-bool OSystem_IPHONE::handleEvent_mouseUp(Common::Event &event, int x, int y) {
+bool OSystem_iOS7::handleEvent_mouseUp(Common::Event &event, int x, int y) {
 	//printf("Mouse up at (%u, %u)\n", x, y);
 
 	if (_secondaryTapped) {
@@ -166,7 +166,7 @@ bool OSystem_IPHONE::handleEvent_mouseUp(Common::Event &event, int x, int y) {
 	return true;
 }
 
-bool OSystem_IPHONE::handleEvent_secondMouseDown(Common::Event &event, int x, int y) {
+bool OSystem_iOS7::handleEvent_secondMouseDown(Common::Event &event, int x, int y) {
 	_lastSecondaryDown = getMillis();
 	_gestureStartX = x;
 	_gestureStartY = y;
@@ -185,7 +185,7 @@ bool OSystem_IPHONE::handleEvent_secondMouseDown(Common::Event &event, int x, in
 	return true;
 }
 
-bool OSystem_IPHONE::handleEvent_secondMouseUp(Common::Event &event, int x, int y) {
+bool OSystem_iOS7::handleEvent_secondMouseUp(Common::Event &event, int x, int y) {
 	int curTime = getMillis();
 
 	if (curTime - _lastSecondaryDown < 400) {
@@ -224,7 +224,7 @@ bool OSystem_IPHONE::handleEvent_secondMouseUp(Common::Event &event, int x, int 
 	return true;
 }
 
-bool OSystem_IPHONE::handleEvent_mouseDragged(Common::Event &event, int x, int y) {
+bool OSystem_iOS7::handleEvent_mouseDragged(Common::Event &event, int x, int y) {
 	if (_lastDragPosX == x && _lastDragPosY == y)
 		return false;
 
@@ -269,7 +269,7 @@ bool OSystem_IPHONE::handleEvent_mouseDragged(Common::Event &event, int x, int y
 	return true;
 }
 
-bool OSystem_IPHONE::handleEvent_mouseSecondDragged(Common::Event &event, int x, int y) {
+bool OSystem_iOS7::handleEvent_mouseSecondDragged(Common::Event &event, int x, int y) {
 	if (_gestureStartX == -1 || _gestureStartY == -1) {
 		return false;
 	}
@@ -335,7 +335,7 @@ bool OSystem_IPHONE::handleEvent_mouseSecondDragged(Common::Event &event, int x,
 	return false;
 }
 
-void  OSystem_IPHONE::handleEvent_orientationChanged(int orientation) {
+void  OSystem_iOS7::handleEvent_orientationChanged(int orientation) {
 	//printf("Orientation: %i\n", orientation);
 
 	ScreenOrientation newOrientation;
@@ -365,7 +365,7 @@ void  OSystem_IPHONE::handleEvent_orientationChanged(int orientation) {
 	}
 }
 
-void  OSystem_IPHONE::handleEvent_keyPressed(Common::Event &event, int keyPressed) {
+void  OSystem_iOS7::handleEvent_keyPressed(Common::Event &event, int keyPressed) {
 	int ascii = keyPressed;
 	//printf("key: %i\n", keyPressed);
 
@@ -426,7 +426,7 @@ void  OSystem_IPHONE::handleEvent_keyPressed(Common::Event &event, int keyPresse
 	_queuedEventTime = getMillis() + kQueuedInputEventDelay;
 }
 
-bool OSystem_IPHONE::handleEvent_swipe(Common::Event &event, int direction, int touches) {
+bool OSystem_iOS7::handleEvent_swipe(Common::Event &event, int direction, int touches) {
 	if (touches == 1) {
 		Common::KeyCode keycode = Common::KEYCODE_INVALID;
 		switch (_screenOrientation) {
@@ -538,7 +538,7 @@ bool OSystem_IPHONE::handleEvent_swipe(Common::Event &event, int direction, int 
 	return false;
 }
 
-bool OSystem_IPHONE::handleEvent_tap(Common::Event &event, UIViewTapDescription type, int touches) {
+bool OSystem_iOS7::handleEvent_tap(Common::Event &event, UIViewTapDescription type, int touches) {
 	if (touches == 1) {
 		if (type == kUIViewTapDouble) {
 			event.type = Common::EVENT_RBUTTONDOWN;

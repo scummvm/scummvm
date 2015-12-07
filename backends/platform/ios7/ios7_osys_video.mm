@@ -23,24 +23,24 @@
 // Disable symbol overrides so that we can use system headers.
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
-#include "osys_main.h"
-#include "iphone_video.h"
+#include "ios7_osys_main.h"
+#include "ios7_video.h"
 
 #include "graphics/conversion.h"
 
-void OSystem_IPHONE::initVideoContext() {
+void OSystem_iOS7::initVideoContext() {
 	_videoContext = [g_iPhoneViewInstance getVideoContext];
 }
 
-const OSystem::GraphicsMode *OSystem_IPHONE::getSupportedGraphicsModes() const {
+const OSystem::GraphicsMode *OSystem_iOS7::getSupportedGraphicsModes() const {
 	return s_supportedGraphicsModes;
 }
 
-int OSystem_IPHONE::getDefaultGraphicsMode() const {
+int OSystem_iOS7::getDefaultGraphicsMode() const {
 	return kGraphicsModeLinear;
 }
 
-bool OSystem_IPHONE::setGraphicsMode(int mode) {
+bool OSystem_iOS7::setGraphicsMode(int mode) {
 	switch (mode) {
 	case kGraphicsModeNone:
 	case kGraphicsModeLinear:
@@ -52,12 +52,12 @@ bool OSystem_IPHONE::setGraphicsMode(int mode) {
 	}
 }
 
-int OSystem_IPHONE::getGraphicsMode() const {
+int OSystem_iOS7::getGraphicsMode() const {
 	return _videoContext->graphicsMode;
 }
 
 #ifdef USE_RGB_COLOR
-Common::List<Graphics::PixelFormat> OSystem_IPHONE::getSupportedFormats() const {
+Common::List<Graphics::PixelFormat> OSystem_iOS7::getSupportedFormats() const {
 	Common::List<Graphics::PixelFormat> list;
 	// RGB565
 	list.push_back(Graphics::createPixelFormat<565>());
@@ -67,7 +67,7 @@ Common::List<Graphics::PixelFormat> OSystem_IPHONE::getSupportedFormats() const 
 }
 #endif
 
-void OSystem_IPHONE::initSize(uint width, uint height, const Graphics::PixelFormat *format) {
+void OSystem_iOS7::initSize(uint width, uint height, const Graphics::PixelFormat *format) {
 	//printf("initSize(%u, %u, %p)\n", width, height, (const void *)format);
 
 	_videoContext->screenWidth = width;
@@ -112,11 +112,11 @@ void OSystem_IPHONE::initSize(uint width, uint height, const Graphics::PixelForm
 	_mouseCursorPaletteEnabled = false;
 }
 
-void OSystem_IPHONE::beginGFXTransaction() {
+void OSystem_iOS7::beginGFXTransaction() {
 	_gfxTransactionError = kTransactionSuccess;
 }
 
-OSystem::TransactionError OSystem_IPHONE::endGFXTransaction() {
+OSystem::TransactionError OSystem_iOS7::endGFXTransaction() {
 	_screenChangeCount++;
 	updateOutputSurface();
 	[g_iPhoneViewInstance performSelectorOnMainThread:@selector(setGraphicsMode) withObject:nil waitUntilDone: YES];
@@ -124,19 +124,19 @@ OSystem::TransactionError OSystem_IPHONE::endGFXTransaction() {
 	return _gfxTransactionError;
 }
 
-void OSystem_IPHONE::updateOutputSurface() {
+void OSystem_iOS7::updateOutputSurface() {
 	[g_iPhoneViewInstance performSelectorOnMainThread:@selector(initSurface) withObject:nil waitUntilDone: YES];
 }
 
-int16 OSystem_IPHONE::getHeight() {
+int16 OSystem_iOS7::getHeight() {
 	return _videoContext->screenHeight;
 }
 
-int16 OSystem_IPHONE::getWidth() {
+int16 OSystem_iOS7::getWidth() {
 	return _videoContext->screenWidth;
 }
 
-void OSystem_IPHONE::setPalette(const byte *colors, uint start, uint num) {
+void OSystem_iOS7::setPalette(const byte *colors, uint start, uint num) {
 	//printf("setPalette(%p, %u, %u)\n", colors, start, num);
 	assert(start + num <= 256);
 	const byte *b = colors;
@@ -155,7 +155,7 @@ void OSystem_IPHONE::setPalette(const byte *colors, uint start, uint num) {
 		_mouseDirty = _mouseNeedTextureUpdate = true;
 }
 
-void OSystem_IPHONE::grabPalette(byte *colors, uint start, uint num) {
+void OSystem_iOS7::grabPalette(byte *colors, uint start, uint num) {
 	//printf("grabPalette(%p, %u, %u)\n", colors, start, num);
 	assert(start + num <= 256);
 	byte *b = colors;
@@ -166,7 +166,7 @@ void OSystem_IPHONE::grabPalette(byte *colors, uint start, uint num) {
 	}
 }
 
-void OSystem_IPHONE::copyRectToScreen(const void *buf, int pitch, int x, int y, int w, int h) {
+void OSystem_iOS7::copyRectToScreen(const void *buf, int pitch, int x, int y, int w, int h) {
 	//printf("copyRectToScreen(%p, %d, %i, %i, %i, %i)\n", buf, pitch, x, y, w, h);
 	//Clip the coordinates
 	const byte *src = (const byte *)buf;
@@ -209,7 +209,7 @@ void OSystem_IPHONE::copyRectToScreen(const void *buf, int pitch, int x, int y, 
 	}
 }
 
-void OSystem_IPHONE::updateScreen() {
+void OSystem_iOS7::updateScreen() {
 	if (_dirtyRects.size() == 0 && _dirtyOverlayRects.size() == 0 && !_mouseDirty)
 		return;
 
@@ -220,10 +220,10 @@ void OSystem_IPHONE::updateScreen() {
 	_fullScreenIsDirty = false;
 	_fullScreenOverlayIsDirty = false;
 
-	iPhone_updateScreen();
+	iOS7_updateScreen();
 }
 
-void OSystem_IPHONE::internUpdateScreen() {
+void OSystem_iOS7::internUpdateScreen() {
 	if (_mouseNeedTextureUpdate) {
 		updateMouseTexture();
 		_mouseNeedTextureUpdate = false;
@@ -250,7 +250,7 @@ void OSystem_IPHONE::internUpdateScreen() {
 	}
 }
 
-void OSystem_IPHONE::drawDirtyRect(const Common::Rect &dirtyRect) {
+void OSystem_iOS7::drawDirtyRect(const Common::Rect &dirtyRect) {
 	// We only need to do a color look up for CLUT8
 	if (_framebuffer.format.bytesPerPixel != 1)
 		return;
@@ -272,17 +272,17 @@ void OSystem_IPHONE::drawDirtyRect(const Common::Rect &dirtyRect) {
 	}
 }
 
-Graphics::Surface *OSystem_IPHONE::lockScreen() {
+Graphics::Surface *OSystem_iOS7::lockScreen() {
 	//printf("lockScreen()\n");
 	return &_framebuffer;
 }
 
-void OSystem_IPHONE::unlockScreen() {
+void OSystem_iOS7::unlockScreen() {
 	//printf("unlockScreen()\n");
 	dirtyFullScreen();
 }
 
-void OSystem_IPHONE::setShakePos(int shakeOffset) {
+void OSystem_iOS7::setShakePos(int shakeOffset) {
 	//printf("setShakePos(%i)\n", shakeOffset);
 	_videoContext->shakeOffsetY = shakeOffset;
 	[g_iPhoneViewInstance performSelectorOnMainThread:@selector(setViewTransformation) withObject:nil waitUntilDone: YES];
@@ -290,7 +290,7 @@ void OSystem_IPHONE::setShakePos(int shakeOffset) {
 	_mouseDirty = true;
 }
 
-void OSystem_IPHONE::showOverlay() {
+void OSystem_iOS7::showOverlay() {
 	//printf("showOverlay()\n");
 	_videoContext->overlayVisible = true;
 	dirtyFullOverlayScreen();
@@ -299,7 +299,7 @@ void OSystem_IPHONE::showOverlay() {
 	[g_iPhoneViewInstance performSelectorOnMainThread:@selector(clearColorBuffer) withObject:nil waitUntilDone: YES];
 }
 
-void OSystem_IPHONE::hideOverlay() {
+void OSystem_iOS7::hideOverlay() {
 	//printf("hideOverlay()\n");
 	_videoContext->overlayVisible = false;
 	_dirtyOverlayRects.clear();
@@ -308,13 +308,13 @@ void OSystem_IPHONE::hideOverlay() {
 	[g_iPhoneViewInstance performSelectorOnMainThread:@selector(clearColorBuffer) withObject:nil waitUntilDone: YES];
 }
 
-void OSystem_IPHONE::clearOverlay() {
+void OSystem_iOS7::clearOverlay() {
 	//printf("clearOverlay()\n");
 	bzero(_videoContext->overlayTexture.getPixels(), _videoContext->overlayTexture.h * _videoContext->overlayTexture.pitch);
 	dirtyFullOverlayScreen();
 }
 
-void OSystem_IPHONE::grabOverlay(void *buf, int pitch) {
+void OSystem_iOS7::grabOverlay(void *buf, int pitch) {
 	//printf("grabOverlay()\n");
 	int h = _videoContext->overlayHeight;
 
@@ -327,7 +327,7 @@ void OSystem_IPHONE::grabOverlay(void *buf, int pitch) {
 	} while (--h);
 }
 
-void OSystem_IPHONE::copyRectToOverlay(const void *buf, int pitch, int x, int y, int w, int h) {
+void OSystem_iOS7::copyRectToOverlay(const void *buf, int pitch, int x, int y, int w, int h) {
 	//printf("copyRectToOverlay(%p, pitch=%i, x=%i, y=%i, w=%i, h=%i)\n", (const void *)buf, pitch, x, y, w, h);
 	const byte *src = (const byte *)buf;
 
@@ -365,15 +365,15 @@ void OSystem_IPHONE::copyRectToOverlay(const void *buf, int pitch, int x, int y,
 	} while (--h);
 }
 
-int16 OSystem_IPHONE::getOverlayHeight() {
+int16 OSystem_iOS7::getOverlayHeight() {
 	return _videoContext->overlayHeight;
 }
 
-int16 OSystem_IPHONE::getOverlayWidth() {
+int16 OSystem_iOS7::getOverlayWidth() {
 	return _videoContext->overlayWidth;
 }
 
-bool OSystem_IPHONE::showMouse(bool visible) {
+bool OSystem_iOS7::showMouse(bool visible) {
 	//printf("showMouse(%d)\n", visible);
 	bool last = _videoContext->mouseIsVisible;
 	_videoContext->mouseIsVisible = visible;
@@ -382,7 +382,7 @@ bool OSystem_IPHONE::showMouse(bool visible) {
 	return last;
 }
 
-void OSystem_IPHONE::warpMouse(int x, int y) {
+void OSystem_iOS7::warpMouse(int x, int y) {
 	//printf("warpMouse(%d, %d)\n", x, y);
 	_videoContext->mouseX = x;
 	_videoContext->mouseY = y;
@@ -390,7 +390,7 @@ void OSystem_IPHONE::warpMouse(int x, int y) {
 	_mouseDirty = true;
 }
 
-void OSystem_IPHONE::dirtyFullScreen() {
+void OSystem_iOS7::dirtyFullScreen() {
 	if (!_fullScreenIsDirty) {
 		_dirtyRects.clear();
 		_dirtyRects.push_back(Common::Rect(0, 0, _videoContext->screenWidth, _videoContext->screenHeight));
@@ -398,7 +398,7 @@ void OSystem_IPHONE::dirtyFullScreen() {
 	}
 }
 
-void OSystem_IPHONE::dirtyFullOverlayScreen() {
+void OSystem_iOS7::dirtyFullOverlayScreen() {
 	if (!_fullScreenOverlayIsDirty) {
 		_dirtyOverlayRects.clear();
 		_dirtyOverlayRects.push_back(Common::Rect(0, 0, _videoContext->overlayWidth, _videoContext->overlayHeight));
@@ -406,7 +406,7 @@ void OSystem_IPHONE::dirtyFullOverlayScreen() {
 	}
 }
 
-void OSystem_IPHONE::setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale, const Graphics::PixelFormat *format) {
+void OSystem_iOS7::setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale, const Graphics::PixelFormat *format) {
 	//printf("setMouseCursor(%p, %u, %u, %i, %i, %u, %d, %p)\n", (const void *)buf, w, h, hotspotX, hotspotY, keycolor, dontScale, (const void *)format);
 
 	const Graphics::PixelFormat pixelFormat = format ? *format : Graphics::PixelFormat::createFormatCLUT8();
@@ -434,7 +434,7 @@ void OSystem_IPHONE::setMouseCursor(const void *buf, uint w, uint h, int hotspot
 	_mouseNeedTextureUpdate = true;
 }
 
-void OSystem_IPHONE::setCursorPalette(const byte *colors, uint start, uint num) {
+void OSystem_iOS7::setCursorPalette(const byte *colors, uint start, uint num) {
 	//printf("setCursorPalette(%p, %u, %u)\n", (const void *)colors, start, num);
 	assert(start + num <= 256);
 
@@ -449,7 +449,7 @@ void OSystem_IPHONE::setCursorPalette(const byte *colors, uint start, uint num) 
 		_mouseDirty = _mouseNeedTextureUpdate = true;
 }
 
-void OSystem_IPHONE::updateMouseTexture() {
+void OSystem_iOS7::updateMouseTexture() {
 	uint texWidth = getSizeNextPOT(_videoContext->mouseWidth);
 	uint texHeight = getSizeNextPOT(_videoContext->mouseHeight);
 

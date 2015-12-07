@@ -23,7 +23,7 @@
 // Disable symbol overrides so that we can use system headers.
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
-#include "iphone_video.h"
+#include "ios7_video.h"
 
 #include "graphics/colormasks.h"
 #include "common/system.h"
@@ -39,7 +39,7 @@ static long g_lastTick = 0;
 static int g_frames = 0;
 #endif
 
-extern bool iphone_touchpadModeEnabled();
+extern bool iOS7_touchpadModeEnabled();
 
 #define printOpenGLError() printOglError(__FILE__, __LINE__)
 
@@ -56,11 +56,11 @@ int printOglError(const char *file, int line) {
 	return retCode;
 }
 
-bool iPhone_isHighResDevice() {
+bool iOS7_isHighResDevice() {
 	return g_fullHeight > 480;
 }
 
-void iPhone_updateScreen() {
+void iOS7_updateScreen() {
 	//printf("Mouse: (%i, %i)\n", mouseX, mouseY);
 	if (!g_needsScreenUpdate) {
 		g_needsScreenUpdate = 1;
@@ -68,7 +68,7 @@ void iPhone_updateScreen() {
 	}
 }
 
-bool iPhone_fetchEvent(InternalEvent *event) {
+bool iOS7_fetchEvent(InternalEvent *event) {
 	return [g_iPhoneViewInstance fetchEvent:event];
 }
 
@@ -83,12 +83,6 @@ uint getSizeNextPOT(uint size) {
 	}
 
 	return size;
-}
-
-const char *iPhone_getDocumentsDir() {
-	NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-	NSString *documentsDirectory = [paths objectAtIndex:0];
-	return [documentsDirectory UTF8String];
 }
 
 @implementation iPhoneView
@@ -688,7 +682,7 @@ const char *iPhone_getDocumentsDir() {
 	// thus we need to add it here.
 	*y = (int)(point.y * height + offsetY);
 
-	if (!iphone_touchpadModeEnabled()) {
+	if (!iOS7_touchpadModeEnabled()) {
 		// Clip coordinates
 		if (*x < 0 || *x > width || *y < 0 || *y > height)
 			return false;
