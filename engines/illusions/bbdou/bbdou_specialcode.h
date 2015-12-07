@@ -108,6 +108,7 @@ public:
 	void spcAddCursorSequence(OpCall &opCall);
 	void spcCursorStartHoldingObjectId(OpCall &opCall);
 	void spcCursorStopHoldingObjectId(OpCall &opCall);
+	void spcSetCursorState(OpCall &opCall);
 	void spcInitBubble(OpCall &opCall);
 	void spcSetupBubble(OpCall &opCall);
 	void spcSetObjectInteractMode(OpCall &opCall);
