@@ -38,8 +38,8 @@ Intro::Intro(LabEngine *vm) : _vm(vm) {
 }
 
 /******************************************************************************/
-/* Goes thru, and responds to all the intuition messages currently in the     */
-/* the message port.                                                          */
+/* Goes through, and responds to all the intuition messages currently in the  */
+/* message queue.                                                             */
 /******************************************************************************/
 void Intro::introEatMessages() {
 	while (1) {

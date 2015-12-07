@@ -651,7 +651,7 @@ static bool doOperateRuleSub(int16 itemNum, int16 roomNum, CloseDataPtr lcptr, C
 }
 
 /*****************************************************************************/
-/* Goes thru the rules if the user tries to operate an item on an object.    */
+/* Goes through the rules if the user tries to operate an item on an object. */
 /*****************************************************************************/
 bool doOperateRule(int16 x, int16 y, int16 ItemNum, CloseDataPtr *lcptr) {
 	CloseDataPtr tlcptr;
@@ -685,7 +685,7 @@ bool doOperateRule(int16 x, int16 y, int16 ItemNum, CloseDataPtr *lcptr) {
 }
 
 /*****************************************************************************/
-/* Goes thru the rules if the user tries to go forward.                      */
+/* Goes through the rules if the user tries to go forward.                   */
 /*****************************************************************************/
 bool doGoForward(CloseDataPtr *lcptr) {
 	RuleList *rules = g_lab->_rooms[g_lab->_roomNum]._rules;
@@ -703,7 +703,7 @@ bool doGoForward(CloseDataPtr *lcptr) {
 }
 
 /*****************************************************************************/
-/* Goes thru the rules if the user tries to turn.                            */
+/* Goes through the rules if the user tries to turn.                         */
 /*****************************************************************************/
 bool doTurn(uint16 from, uint16 to, CloseDataPtr *lcptr) {
 	from++;
@@ -726,7 +726,7 @@ bool doTurn(uint16 from, uint16 to, CloseDataPtr *lcptr) {
 }
 
 /*****************************************************************************/
-/* Goes thru the rules if the user tries to go to the main view              */
+/* Goes through the rules if the user tries to go to the main view           */
 /*****************************************************************************/
 bool doMainView(CloseDataPtr *lcptr) {
 	RuleList *rules = g_lab->_rooms[g_lab->_roomNum]._rules;
