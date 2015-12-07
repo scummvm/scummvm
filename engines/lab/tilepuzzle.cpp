@@ -86,33 +86,33 @@ void LabEngine::changeTile(uint16 col, uint16 row) {
 	int16 scrolltype = -1;
 
 	if (row > 0) {
-		if (_curTile[col] [row - 1] == 0) {
-			_curTile[col] [row - 1] = _curTile[col] [row];
-			_curTile[col] [row] = 0;
+		if (_curTile[col][row - 1] == 0) {
+			_curTile[col][row - 1] = _curTile[col][row];
+			_curTile[col][row] = 0;
 			scrolltype = DOWNSCROLL;
 		}
 	}
 
 	if (col > 0) {
-		if (_curTile[col - 1] [row] == 0) {
-			_curTile[col - 1] [row] = _curTile[col] [row];
-			_curTile[col] [row] = 0;
+		if (_curTile[col - 1][row] == 0) {
+			_curTile[col - 1][row] = _curTile[col][row];
+			_curTile[col][row] = 0;
 			scrolltype = RIGHTSCROLL;
 		}
 	}
 
 	if (row < 3) {
-		if (_curTile[col] [row + 1] == 0) {
-			_curTile[col] [row + 1] = _curTile[col] [row];
-			_curTile[col] [row] = 0;
+		if (_curTile[col][row + 1] == 0) {
+			_curTile[col][row + 1] = _curTile[col][row];
+			_curTile[col][row] = 0;
 			scrolltype = UPSCROLL;
 		}
 	}
 
 	if (col < 3) {
-		if (_curTile[col + 1] [row] == 0) {
-			_curTile[col + 1] [row] = _curTile[col] [row];
-			_curTile[col] [row] = 0;
+		if (_curTile[col + 1][row] == 0) {
+			_curTile[col + 1][row] = _curTile[col][row];
+			_curTile[col][row] = 0;
 			scrolltype = LEFTSCROLL;
 		}
 	}
@@ -132,7 +132,7 @@ void LabEngine::changeTile(uint16 col, uint16 row) {
 
 		while (row < 4) {
 			while (col < 4) {
-				check = check && (_curTile[row] [col] == SOLUTION[row] [col]);
+				check &= (_curTile[row][col] == SOLUTION[row][col]);
 				col++;
 			}
 
@@ -204,9 +204,9 @@ void LabEngine::doTile(bool showsolution) {
 	while (row < 4) {
 		while (col < 4) {
 			if (showsolution)
-				num = SOLUTION[col] [row];
+				num = SOLUTION[col][row];
 			else
-				num = _curTile[col] [row];
+				num = _curTile[col][row];
 
 			if (showsolution || num)
 				_tiles[num]->drawImage(cols + (col * colm), rows + (row * rowm));
@@ -316,7 +316,7 @@ void LabEngine::changeCombination(uint16 number) {
 	}
 
 	for (uint16 i = 0; i < 6; i++)
-		unlocked = (_combination[i] == solution[i]) && unlocked;
+		unlocked &= (_combination[i] == solution[i]);
 
 	if (unlocked)
 		_conditions->inclElement(COMBINATIONUNLOCKED);
