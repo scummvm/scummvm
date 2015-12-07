@@ -33,6 +33,7 @@
 
 #include "common/array.h"
 #include "common/events.h"
+#include "common/system.h"
 
 #include "engines/engine.h"
 #include "lab/labfun.h"

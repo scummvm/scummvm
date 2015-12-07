@@ -32,8 +32,7 @@
 
 #include "lab/lab.h"
 #include "lab/labfun.h"
-#include "lab/parsetypes.h"
-#include "lab/parsefun.h"
+#include "lab/processroom.h"
 #include "lab/resource.h"
 #include "lab/anim.h"
 #include "lab/interface.h"

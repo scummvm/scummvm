@@ -32,11 +32,8 @@
 #define LAB_LABFUN_H
 
 #include "common/events.h"
-#include "lab/parsetypes.h"
-
 #include "common/file.h"
 #include "common/savefile.h"
-
 #include "engines/savestate.h"
 
 namespace Lab {

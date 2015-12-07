@@ -28,14 +28,12 @@
  *
  */
 
-#ifndef LAB_PARSETYPES_H
-#define LAB_PARSETYPES_H
-
-#include "common/system.h"
+#ifndef LAB_PROCESSROOM_H
+#define LAB_PROCESSROOM_H
 
 namespace Lab {
 
-/*------------------------------- Action types ------------------------------*/
+	/*------------------------------- Action types ------------------------------*/
 #define PLAYSOUND     1
 #define PLAYSOUNDCONT 2
 #define SHOWDIFF      3
@@ -73,7 +71,7 @@ namespace Lab {
 #define CSHOWMESSAGE 35
 #define PLAYSOUNDB   36
 
-/* Rule Types */
+	/* Rule Types */
 #define ACTION      1
 #define OPERATE     2
 #define GOFORWARD   3
@@ -82,7 +80,7 @@ namespace Lab {
 #define GOMAINVIEW  6
 #define TURNFROMTO  7
 
-/*----------------------------- Rule Type Action ----------------------------*/
+	/*----------------------------- Rule Type Action ----------------------------*/
 #define TAKE        1
 #define MOVE        2
 #define OPENDOOR    3
@@ -191,6 +189,18 @@ struct MapData {
 #pragma pack(pop)
 #endif
 
+bool parse(const char *inputFile);
+ViewData *getViewData(uint16 roomNum, uint16 direction);
+void drawDirection(CloseDataPtr lcptr);
+uint16 processArrow(uint16 curDirection, uint16 arrow);
+void setCurClose(Common::Point pos, CloseDataPtr *cptr, bool useAbsoluteCoords = false);
+bool takeItem(uint16 x, uint16 y, CloseDataPtr *cptr);
+bool doActionRule(Common::Point pos, int16 action, int16 roomNum, CloseDataPtr *lcptr);
+bool doOperateRule(int16 x, int16 y, int16 itemNum, CloseDataPtr *lcptr);
+bool doGoForward(CloseDataPtr *lcptr);
+bool doTurn(uint16 from, uint16 to, CloseDataPtr *lcptr);
+bool doMainView(CloseDataPtr *lcptr);
+
 } // End of namespace Lab
 
-#endif /* LAB_PARSETYPES_H */
+#endif /* LAB_PROCESSROOM_H */
