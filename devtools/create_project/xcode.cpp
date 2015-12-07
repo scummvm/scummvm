@@ -392,10 +392,10 @@ void XcodeProvider::setupCopyFilesBuildPhase() {
 #define DEF_SYSFRAMEWORK(framework) properties[framework".framework"] = FileProperty("wrapper.framework", framework".framework", "System/Library/Frameworks/" framework ".framework", "SDKROOT"); \
 	ADD_SETTING_ORDER_NOVALUE(children, getHash(framework".framework"), framework".framework", fwOrder++);
 
-#define DEF_LOCALLIB_STATIC_PATH(path,lib) properties[lib".a"] = FileProperty("archive.ar", lib ".a", path, "\"<group>\""); \
+#define DEF_LOCALLIB_STATIC_PATH(path,lib,absolute) properties[lib".a"] = FileProperty("archive.ar", lib ".a", path, (absolute ? "\"<absolute>\"" : "\"<group>\"")); \
 	ADD_SETTING_ORDER_NOVALUE(children, getHash(lib".a"), lib".a", fwOrder++);
 
-#define DEF_LOCALLIB_STATIC(lib) DEF_LOCALLIB_STATIC_PATH("/opt/local/lib/" lib ".a", lib)
+#define DEF_LOCALLIB_STATIC(lib) DEF_LOCALLIB_STATIC_PATH("/opt/local/lib/" lib ".a", lib, true)
 
 
 /**
@@ -452,11 +452,11 @@ void XcodeProvider::setupFrameworksBuildPhase(const BuildSetup &setup) {
 	absoluteOutputDir = "lib";
 #endif
 
-	DEF_LOCALLIB_STATIC_PATH(absoluteOutputDir + "/libFLACiOS.a",   "libFLACiOS");
-	DEF_LOCALLIB_STATIC_PATH(absoluteOutputDir + "/libFreetype2.a", "libFreetype2");
-	DEF_LOCALLIB_STATIC_PATH(absoluteOutputDir + "/libogg.a",       "libogg");
-	DEF_LOCALLIB_STATIC_PATH(absoluteOutputDir + "/libpng.a",       "libpng");
-	DEF_LOCALLIB_STATIC_PATH(absoluteOutputDir + "/libvorbis.a",    "libvorbis");
+	DEF_LOCALLIB_STATIC_PATH(absoluteOutputDir + "/libFLACiOS.a",   "libFLACiOS",   true);
+	DEF_LOCALLIB_STATIC_PATH(absoluteOutputDir + "/libFreetype2.a", "libFreetype2", true);
+	DEF_LOCALLIB_STATIC_PATH(absoluteOutputDir + "/libogg.a",       "libogg",       true);
+	DEF_LOCALLIB_STATIC_PATH(absoluteOutputDir + "/libpng.a",       "libpng",       true);
+	DEF_LOCALLIB_STATIC_PATH(absoluteOutputDir + "/libvorbis.a",    "libvorbis",    true);
 
 	frameworksGroup->properties["children"] = children;
 	_groups.add(frameworksGroup);
