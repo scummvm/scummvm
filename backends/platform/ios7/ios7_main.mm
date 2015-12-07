@@ -39,7 +39,7 @@ int main(int argc, char **argv) {
 		iOS7_argc = argc;
 		iOS7_argv = argv;
 
-		returnCode = UIApplicationMain(argc, argv, @"iOS7MainApplication", @"iOS7MainApplication");
+		returnCode = UIApplicationMain(argc, argv, @"UIApplication", @"iOS7AppDelegate");
 	}
 
 	return returnCode;

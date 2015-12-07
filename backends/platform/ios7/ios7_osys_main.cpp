@@ -339,6 +339,6 @@ void iOS7_main(int argc, char **argv) {
 	assert(g_system);
 
 	// Invoke the actual ScummVM main entry point:
-	scummvm_main(argc, argv);
+	scummvm_main(argc, (const char *const *) argv);
 	g_system->quit();       // TODO: Consider removing / replacing this!
 }

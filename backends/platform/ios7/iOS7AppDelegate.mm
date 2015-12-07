@@ -1,40 +1,23 @@
-/* ScummVM - Graphic Adventure Engine
- *
- * ScummVM is the legal property of its developers, whose names
- * are too numerous to list here. Please refer to the COPYRIGHT
- * file distributed with this source distribution.
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- */
-
-
-#import "iOS7MainApplication.h"
-#import "iOS7ScummVMViewController.h"
+//
+// Created by Vincent Bénony on 07/12/2015.
+//
 
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
-#import "ios7_common.h"
+#import "iOS7AppDelegate.h"
+#import "iOS7ScummVMViewController.h"
 #import "ios7_video.h"
 
+@implementation iOS7AppDelegate {
+	UIWindow *_window;
+	iOS7ScummVMViewController *_controller;
+	iPhoneView *_view;
+}
 
-@implementation iOS7MainApplication
-
--(id)init {
-	[super init];
-	_window = nil;
-	_view = nil;
+- (id)init {
+	if (self = [super init]) {
+		_window = nil;
+		_view = nil;
+	}
 	return self;
 }
 
@@ -44,10 +27,6 @@
 	}
 
 	exit(0);
-}
-
-- (iPhoneView *)getView {
-	return _view;
 }
 
 - (void)applicationDidFinishLaunching:(UIApplication *)application {
@@ -84,21 +63,11 @@
 	[NSThread detachNewThreadSelector:@selector(mainLoop:) toTarget:self withObject:nil];
 }
 
-- (void)applicationDidResume {
-}
-
-- (void)applicationWillSuspend {
-}
-
-- (void)applicationWillTerminate {
-}
-
-- (void)applicationSuspend:(struct __GSEvent *)event {
-	//[self setApplicationBadge:NSLocalizedString(@"ON", nil)];
+- (void)applicationDidEnterBackground:(UIApplication *)application {
 	[_view applicationSuspend];
 }
 
-- (void)applicationResume:(struct __GSEvent *)event {
+- (void)applicationWillEnterForeground:(UIApplication *)application {
 	[_view applicationResume];
 }
 
@@ -107,12 +76,7 @@
 	[_view deviceOrientationChanged:screenOrientation];
 }
 
-- (UIWindow*) getWindow {
-	return _window;
-}
-
 @end
-
 
 const char *iOS7_getDocumentsDir() {
 	NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);

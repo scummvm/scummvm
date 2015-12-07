@@ -210,6 +210,8 @@ protected:
 	bool handleEvent_tap(Common::Event &event, UIViewTapDescription type, int touches);
 	void handleEvent_keyPressed(Common::Event &event, int keyPressed);
 	void handleEvent_orientationChanged(int orientation);
+	void handleEvent_applicationSuspended();
+	void handleEvent_applicationResumed();
 
 	bool handleEvent_mouseDown(Common::Event &event, int x, int y);
 	bool handleEvent_mouseUp(Common::Event &event, int x, int y);
@@ -219,6 +221,8 @@ protected:
 
 	bool handleEvent_mouseDragged(Common::Event &event, int x, int y);
 	bool handleEvent_mouseSecondDragged(Common::Event &event, int x, int y);
+
+	void rebuildSurface();
 };
 
 #endif

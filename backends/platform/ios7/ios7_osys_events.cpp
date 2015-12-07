@@ -68,12 +68,14 @@ bool OSystem_iOS7::pollEvent(Common::Event &event) {
 		case kInputOrientationChanged:
 			handleEvent_orientationChanged(internalEvent.value1);
 			return false;
-			break;
 
 		case kInputApplicationSuspended:
-			suspendLoop();
+			handleEvent_applicationSuspended();
 			return false;
-			break;
+
+		case kInputApplicationResumed:
+			handleEvent_applicationResumed();
+			return false;
 
 		case kInputMouseSecondDragged:
 			if (!handleEvent_mouseSecondDragged(event, internalEvent.value1, internalEvent.value2))
@@ -353,16 +355,28 @@ void  OSystem_iOS7::handleEvent_orientationChanged(int orientation) {
 		return;
 	}
 
-
 	if (_screenOrientation != newOrientation) {
 		_screenOrientation = newOrientation;
-		updateOutputSurface();
-
-		dirtyFullScreen();
-		if (_videoContext->overlayVisible)
-			dirtyFullOverlayScreen();
-		updateScreen();
+		rebuildSurface();
 	}
+}
+
+void OSystem_iOS7::rebuildSurface() {
+	updateOutputSurface();
+
+	dirtyFullScreen();
+	if (_videoContext->overlayVisible) {
+			dirtyFullOverlayScreen();
+		}
+	updateScreen();
+}
+
+void OSystem_iOS7::handleEvent_applicationSuspended() {
+	suspendLoop();
+}
+
+void OSystem_iOS7::handleEvent_applicationResumed() {
+	rebuildSurface();
 }
 
 void  OSystem_iOS7::handleEvent_keyPressed(Common::Event &event, int keyPressed) {
