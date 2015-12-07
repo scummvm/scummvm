@@ -111,7 +111,6 @@ public:
 	void unDiff(byte *newBuf, byte *oldBuf, byte *diffData, uint16 bytesperrow, bool isV);
 	bool readDiff(byte *buffer, bool playOnce);
 	void diffNextFrame();
-	void readSound(bool waitTillFinished, Common::File *file);
 	void stopDiff();
 	void stopDiffEnd();
 };

@@ -321,9 +321,56 @@ bool Music::readMusic(const char *filename, bool waitTillFinished) {
 		return false;
 
 	_vm->_anim->_doBlack = false;
-	_vm->_anim->readSound(waitTillFinished, file);
+	readSound(waitTillFinished, file);
 
 	return true;
+}
+
+void Music::readSound(bool waitTillFinished, Common::File *file) {
+	uint32 magicBytes = file->readUint32LE();
+	if (magicBytes != 1219009121L)
+		return;
+
+	uint32 soundTag = file->readUint32LE();
+	uint32 soundSize = file->readUint32LE();
+
+	if (soundTag == 0)
+		file->skip(soundSize);	// skip the header
+	else
+		return;
+
+	while (soundTag != 65535) {
+		updateMusic();
+		soundTag = file->readUint32LE();
+		soundSize = file->readUint32LE() - 8;
+
+		if ((soundTag == 30) || (soundTag == 31)) {
+			if (waitTillFinished) {
+				while (isSoundEffectActive()) {
+					updateMusic();
+					_vm->waitTOF();
+				}
+			}
+
+			file->skip(4);
+
+			uint16 sampleRate = file->readUint16LE();
+			file->skip(2);
+			byte *soundData = (byte *)malloc(soundSize);
+			file->read(soundData, soundSize);
+			playSoundEffect(sampleRate, soundSize, soundData);
+		}
+		else if (soundTag == 65535L) {
+			if (waitTillFinished) {
+				while (isSoundEffectActive()) {
+					updateMusic();
+					_vm->waitTOF();
+				}
+			}
+		}
+		else
+			file->skip(soundSize);
+	}
 }
 
 } // End of namespace Lab
