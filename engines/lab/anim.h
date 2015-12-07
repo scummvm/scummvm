@@ -84,7 +84,6 @@ private:
 	uint32 _diffWidth;
 	uint32 _diffHeight;
 	uint16 _dataBytesPerRow;
-	BitMap bit2;
 	BitMap *DrawBitMap;
 
 	void runLengthDecode(byte *dest, byte *source);

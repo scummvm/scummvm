@@ -144,8 +144,8 @@ Common::Error LabEngine::run() {
 	_event = new EventManager(this);
 	_resource = new Resource(this);
 	_music = new Music(this);
-	_anim = new Anim(this);
 	_graphics = new DisplayMan(this);
+	_anim = new Anim(this);
 
 	if (getPlatform() == Common::kPlatformWindows) {
 		// Check if this is the Wyrmkeep trial

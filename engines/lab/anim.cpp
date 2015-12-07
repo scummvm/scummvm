@@ -70,7 +70,7 @@ Anim::Anim(LabEngine *vm) : _vm(vm) {
 	_diffWidth = 0;
 	_diffHeight = 0;
 	_dataBytesPerRow = 0;
-	DrawBitMap = &bit2;
+	DrawBitMap = &_vm->_graphics->bit1;
 
 	for (int i = 0; i < 3 * 256; i++)
 		_diffPalette[i] = 0;
