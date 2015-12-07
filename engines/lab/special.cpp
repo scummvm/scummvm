@@ -59,7 +59,6 @@ static uint16 monitorPage;
 static const char *TextFileName;
 
 Image *MonButton;
-extern BitMap *DispBitMap, *DrawBitMap;
 
 #define INCL(BITSET,BIT) ((BITSET) |= (BIT))
 #define SETBIT(BITSET,BITNUM)   INCL(BITSET, (1 << (BITNUM)))

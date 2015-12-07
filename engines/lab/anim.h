@@ -83,15 +83,25 @@ private:
 	uint16 _sampleSpeed;
 	uint32 _diffWidth;
 	uint32 _diffHeight;
-	bool _stopSound;
 	uint16 _dataBytesPerRow;
+	BitMap bit2;
+	BitMap *DrawBitMap;
 
-	void unDIFFByteByte(byte *dest, byte *diff);
-	void unDIFFByteWord(uint16 *dest, uint16 *diff);
-	void VUnDIFFByteByte(byte *Dest, byte *diff, uint16 bytesperrow);
-	void VUnDIFFByteWord(uint16 *Dest, uint16 *diff, uint16 bytesperrow);
-	void VUnDIFFByteLong(uint32 *Dest, uint32 *diff, uint16 bytesperrow);
+	bool unDiffMemory(byte *dest,           /* Where to Un-DIFF */
+		byte *diff,           /* The DIFFed code. */
+		uint16 headerSize,    /* Size of header (1, 2 or 4 bytes) (only supports 1 currently */
+		uint16 copySize);     /* Size of minimum copy or skip. (1, 2 or 4 bytes) */
+
+	void runLengthDecode(byte *dest, byte *source);
+	void VRunLengthDecode(byte *dest, byte *source, uint16 bytesPerRow);
+	void unDiffByteByte(byte *dest, byte *diff);
+	void unDiffByteWord(uint16 *dest, uint16 *diff);
+	bool VUnDiffMemory(byte *dest, byte *diff, uint16 headerSize, uint16 copySize, uint16 bytesPerRow);
+	void VUnDiffByteByte(byte *Dest, byte *diff, uint16 bytesperrow);
+	void VUnDiffByteWord(uint16 *Dest, uint16 *diff, uint16 bytesperrow);
+	void VUnDiffByteLong(uint32 *Dest, uint32 *diff, uint16 bytesperrow);
 	void readBlock(void *Buffer, uint32 Size, byte **File);
+	void playDiff(byte *buffer);
 
 public:
 	Anim(LabEngine *vm);
@@ -105,21 +115,11 @@ public:
 	BitMap _rawDiffBM;
 
 	void unDiff(byte *newBuf, byte *oldBuf, byte *diffData, uint16 bytesperrow, bool isV);
-	bool unDIFFMemory(byte *dest,           /* Where to Un-DIFF */
-					  byte *diff,           /* The DIFFed code. */
-					  uint16 headerSize,    /* Size of header (1, 2 or 4 bytes) (only supports 1 currently */
-					  uint16 copySize);     /* Size of minimum copy or skip. (1, 2 or 4 bytes) */
-
-	bool VUnDIFFMemory(byte *dest, byte *diff, uint16 headerSize, uint16 copySize, uint16 bytesPerRow);
-	void runLengthDecode(byte *dest, byte *source);
-	void VRunLengthDecode(byte *dest, byte *source, uint16 bytesPerRow);
 	bool readDiff(byte *buffer, bool playOnce);
-	void playDiff(byte *buffer);
 	void diffNextFrame();
 	void readSound(bool waitTillFinished, Common::File *file);
 	void stopDiff();
 	void stopDiffEnd();
-	void stopSound();
 };
 
 } // End of namespace Lab
