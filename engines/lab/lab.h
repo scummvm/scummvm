@@ -43,6 +43,7 @@
 #include "lab/anim.h"
 #include "lab/graphics.h"
 #include "lab/labsets.h"
+#include "lab/utils.h"
 
 struct ADGameDescription;
 
@@ -103,6 +104,7 @@ public:
 	Anim *_anim;
 	DisplayMan *_graphics;
 	RoomData *_rooms;
+	Utils *_utils;
 
 	int _roomNum;
 	CrumbData _breadCrumbs[MAX_CRUMBS];
@@ -179,8 +181,6 @@ private:
 	void mayShowCrumbIndicator();
 	void mayShowCrumbIndicatorOff();
 	const char *getInvName(uint16 curInv);
-	int VGAUnScaleX(int x);
-	int VGAUnScaleY(int y);
 	void mouseTile(Common::Point pos);
 	void changeTile(uint16 col, uint16 row);
 	void mouseCombination(Common::Point pos);

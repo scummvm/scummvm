@@ -73,11 +73,6 @@ public:
 	DisplayMan(LabEngine *lab);
 	virtual ~DisplayMan();
 
-	uint16 scaleX(uint16 x);
-	uint16 scaleY(uint16 y);
-	int16 VGAScaleX(int16 x);
-	int16 VGAScaleY(int16 y);
-	uint16 SVGACord(uint16 cord);
 	void loadPict(const char *filename);
 	void readPict(const char *filename, bool playOnce);
 	void freePict();

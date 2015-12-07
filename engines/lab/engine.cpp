@@ -941,7 +941,7 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 					_curFileName = _newFileName;
 				else if (doActionRule(curPos, TAKE - 1, 0, &_cptr))
 					_curFileName = _newFileName;
-				else if (curPos.y < (_graphics->VGAScaleY(149) + _graphics->SVGACord(2)))
+				else if (curPos.y < (_utils->vgaScaleY(149) + _utils->svgaCord(2)))
 					drawStaticMessage(kTextNothing);
 			} else if ((actionMode == 1) /* Manipulate an object */  ||
 			         (actionMode == 2) /* Open up a "door" */      ||
@@ -949,7 +949,7 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 				if (doActionRule(curPos, actionMode, _roomNum, &_cptr))
 					_curFileName = _newFileName;
 				else if (!doActionRule(curPos, actionMode, 0, &_cptr)) {
-					if (curPos.y < (_graphics->VGAScaleY(149) + _graphics->SVGACord(2)))
+					if (curPos.y < (_utils->vgaScaleY(149) + _utils->svgaCord(2)))
 						drawStaticMessage(kTextNothing);
 				}
 			} else if (actionMode == 4) { /* Look at closeups */
@@ -957,15 +957,15 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 				setCurClose(curPos, &tempcptr);
 
 				if (_cptr == tempcptr) {
-					if (curPos.y < (_graphics->VGAScaleY(149) + _graphics->SVGACord(2)))
+					if (curPos.y < (_utils->vgaScaleY(149) + _utils->svgaCord(2)))
 						drawStaticMessage(kTextNothing);
 				} else if (tempcptr->_graphicName) {
 					if (*(tempcptr->_graphicName)) {
 						_anim->_doBlack = true;
 						_cptr = tempcptr;
-					} else if (curPos.y < (_graphics->VGAScaleY(149) + _graphics->SVGACord(2)))
+					} else if (curPos.y < (_utils->vgaScaleY(149) + _utils->svgaCord(2)))
 						drawStaticMessage(kTextNothing);
-				} else if (curPos.y < (_graphics->VGAScaleY(149) + _graphics->SVGACord(2)))
+				} else if (curPos.y < (_utils->vgaScaleY(149) + _utils->svgaCord(2)))
 					drawStaticMessage(kTextNothing);
 			} else if ((actionMode == 5)  &&
 			         _conditions->in(curInv)) { /* Use an item on something else */
@@ -974,7 +974,7 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 
 					if (!_conditions->in(curInv))
 						decIncInv(&curInv, false);
-				} else if (curPos.y < (_graphics->VGAScaleY(149) + _graphics->SVGACord(2)))
+				} else if (curPos.y < (_utils->vgaScaleY(149) + _utils->svgaCord(2)))
 					drawStaticMessage(kTextNothing);
 			}
 		}
@@ -1008,7 +1008,7 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 		}
 
 		if (hcptr)
-			_event->setMousePos(Common::Point(_graphics->scaleX((hcptr->x1 + hcptr->x2) / 2), _graphics->scaleY((hcptr->y1 + hcptr->y2) / 2)));
+			_event->setMousePos(Common::Point(_utils->scaleX((hcptr->x1 + hcptr->x2) / 2), _utils->scaleY((hcptr->y1 + hcptr->y2) / 2)));
 	} else if ((msgClass == MOUSEBUTTONS) && (IEQUALIFIER_RBUTTON & Qualifier)) {
 		eatMessages();
 		_alternate = !_alternate;

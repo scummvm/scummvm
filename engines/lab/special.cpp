@@ -100,7 +100,7 @@ void LabEngine::doNotes() {
 	TextFont *noteFont = g_lab->_resource->getFont("P:Note.fon");
 	char *ntext = g_lab->_resource->getText("Lab:Rooms/Notes");
 
-	g_lab->_graphics->flowText(noteFont, -2 + g_lab->_graphics->SVGACord(1), 0, 0, false, false, true, true, g_lab->_graphics->VGAScaleX(25) + g_lab->_graphics->SVGACord(15), g_lab->_graphics->VGAScaleY(50), g_lab->_graphics->VGAScaleX(295) - g_lab->_graphics->SVGACord(15), g_lab->_graphics->VGAScaleY(148), ntext);
+	g_lab->_graphics->flowText(noteFont, -2 + g_lab->_utils->svgaCord(1), 0, 0, false, false, true, true, g_lab->_utils->vgaScaleX(25) + g_lab->_utils->svgaCord(15), g_lab->_utils->vgaScaleY(50), g_lab->_utils->vgaScaleX(295) - g_lab->_utils->svgaCord(15), g_lab->_utils->vgaScaleY(148), ntext);
 	g_lab->_graphics->setPalette(g_lab->_anim->_diffPalette, 256);
 
 	g_lab->_graphics->closeFont(noteFont);
@@ -120,19 +120,19 @@ void LabEngine::doWestPaper() {
 
 	paperFont = g_lab->_resource->getFont("P:News22.fon");
 	ntext = g_lab->_resource->getText("Lab:Rooms/Date");
-	g_lab->_graphics->flowText(paperFont, 0, 0, 0, false, true, false, true, g_lab->_graphics->VGAScaleX(57), g_lab->_graphics->VGAScaleY(77) + g_lab->_graphics->SVGACord(2), g_lab->_graphics->VGAScaleX(262), g_lab->_graphics->VGAScaleY(91), ntext);
+	g_lab->_graphics->flowText(paperFont, 0, 0, 0, false, true, false, true, g_lab->_utils->vgaScaleX(57), g_lab->_utils->vgaScaleY(77) + g_lab->_utils->svgaCord(2), g_lab->_utils->vgaScaleX(262), g_lab->_utils->vgaScaleY(91), ntext);
 	g_lab->_graphics->closeFont(paperFont);
 	delete[] ntext;
 
 	paperFont = g_lab->_resource->getFont("P:News32.fon");
 	ntext = g_lab->_resource->getText("Lab:Rooms/Headline");
 	FileLen = strlen(ntext) - 1;
-	CharsPrinted = g_lab->_graphics->flowText(paperFont, -8, 0, 0, false, true, false, true, g_lab->_graphics->VGAScaleX(57), g_lab->_graphics->VGAScaleY(86) - g_lab->_graphics->SVGACord(2), g_lab->_graphics->VGAScaleX(262), g_lab->_graphics->VGAScaleY(118), ntext);
+	CharsPrinted = g_lab->_graphics->flowText(paperFont, -8, 0, 0, false, true, false, true, g_lab->_utils->vgaScaleX(57), g_lab->_utils->vgaScaleY(86) - g_lab->_utils->svgaCord(2), g_lab->_utils->vgaScaleX(262), g_lab->_utils->vgaScaleY(118), ntext);
 	if (CharsPrinted < FileLen) {
-		y = 130 - g_lab->_graphics->SVGACord(5);
-		g_lab->_graphics->flowText(paperFont, -8 - g_lab->_graphics->SVGACord(1), 0, 0, false, true, false, true, g_lab->_graphics->VGAScaleX(57), g_lab->_graphics->VGAScaleY(86) - g_lab->_graphics->SVGACord(2), g_lab->_graphics->VGAScaleX(262), g_lab->_graphics->VGAScaleY(132), ntext);
+		y = 130 - g_lab->_utils->svgaCord(5);
+		g_lab->_graphics->flowText(paperFont, -8 - g_lab->_utils->svgaCord(1), 0, 0, false, true, false, true, g_lab->_utils->vgaScaleX(57), g_lab->_utils->vgaScaleY(86) - g_lab->_utils->svgaCord(2), g_lab->_utils->vgaScaleX(262), g_lab->_utils->vgaScaleY(132), ntext);
 	} else
-		y = 115 - g_lab->_graphics->SVGACord(5);
+		y = 115 - g_lab->_utils->svgaCord(5);
 	g_lab->_graphics->closeFont(paperFont);
 	delete[] ntext;
 
@@ -210,12 +210,12 @@ static bool loadJournalData() {
 
 	for (GadgetList::iterator gadgetIter = journalGadgetList.begin(); gadgetIter != journalGadgetList.end(); ++gadgetIter) {
 		Gadget *gadget = *gadgetIter;
-		gadget->x = g_lab->_graphics->VGAScaleX(JGadX[counter]);
+		gadget->x = g_lab->_utils->vgaScaleX(JGadX[counter]);
 
 		if (counter == 1)
-			gadget->y = g_lab->_graphics->VGAScaleY(JGadY[counter]) + g_lab->_graphics->SVGACord(1);
+			gadget->y = g_lab->_utils->vgaScaleY(JGadY[counter]) + g_lab->_utils->svgaCord(1);
 		else
-			gadget->y = g_lab->_graphics->VGAScaleY(JGadY[counter]) - g_lab->_graphics->SVGACord(1);
+			gadget->y = g_lab->_utils->vgaScaleY(JGadY[counter]) - g_lab->_utils->svgaCord(1);
 
 		gadget->_gadgetID = counter;
 		counter++;
@@ -247,16 +247,16 @@ static void drawJournalText() {
 
 	if (JPage <= 1) {
 		CurText = journaltexttitle;
-		g_lab->_graphics->flowTextToMem(&JBackImage, journalFont, -2, 2, 0, false, true, true, true, g_lab->_graphics->VGAScaleX(52), g_lab->_graphics->VGAScaleY(32), g_lab->_graphics->VGAScaleX(152), g_lab->_graphics->VGAScaleY(148), CurText);
+		g_lab->_graphics->flowTextToMem(&JBackImage, journalFont, -2, 2, 0, false, true, true, true, g_lab->_utils->vgaScaleX(52), g_lab->_utils->vgaScaleY(32), g_lab->_utils->vgaScaleX(152), g_lab->_utils->vgaScaleY(148), CurText);
 	} else {
 		CurText = (char *)(journaltext + CharsDrawn);
-		CharsDrawn += g_lab->_graphics->flowTextToMem(&JBackImage, journalFont, -2, 2, 0, false, false, false, true, g_lab->_graphics->VGAScaleX(52), g_lab->_graphics->VGAScaleY(32), g_lab->_graphics->VGAScaleX(152), g_lab->_graphics->VGAScaleY(148), CurText);
+		CharsDrawn += g_lab->_graphics->flowTextToMem(&JBackImage, journalFont, -2, 2, 0, false, false, false, true, g_lab->_utils->vgaScaleX(52), g_lab->_utils->vgaScaleY(32), g_lab->_utils->vgaScaleX(152), g_lab->_utils->vgaScaleY(148), CurText);
 	}
 
 	g_lab->_music->updateMusic();
 	CurText = (char *)(journaltext + CharsDrawn);
 	lastpage = (*CurText == 0);
-	g_lab->_graphics->flowTextToMem(&JBackImage, journalFont, -2, 2, 0, false, false, false, true, g_lab->_graphics->VGAScaleX(171), g_lab->_graphics->VGAScaleY(32), g_lab->_graphics->VGAScaleX(271), g_lab->_graphics->VGAScaleY(148), CurText);
+	g_lab->_graphics->flowTextToMem(&JBackImage, journalFont, -2, 2, 0, false, false, false, true, g_lab->_utils->vgaScaleX(171), g_lab->_utils->vgaScaleY(32), g_lab->_utils->vgaScaleX(271), g_lab->_utils->vgaScaleY(148), CurText);
 
 	CurText = (char *)(journaltext + CharsDrawn);
 	lastpage = lastpage || (*CurText == 0);
@@ -469,8 +469,8 @@ void LabEngine::drawMonText(char *text, TextFont *monitorFont, uint16 x1, uint16
 		text += 2;
 
 		fheight = g_lab->_graphics->textHeight(monitorFont);
-		x1 = MonButton->_width + _graphics->VGAScaleX(3);
-		MonGadHeight = MonButton->_height + _graphics->VGAScaleY(3);
+		x1 = MonButton->_width + _utils->vgaScaleX(3);
+		MonGadHeight = MonButton->_height + _utils->vgaScaleY(3);
 
 		if (MonGadHeight > fheight)
 			yspacing = MonGadHeight - fheight;
@@ -563,20 +563,20 @@ void LabEngine::processMonitor(char *ntext, TextFont *monitorFont, bool isintera
 				return;
 
 			else if ((Class == MOUSEBUTTONS) && (IEQUALIFIER_LEFTBUTTON & Qualifier)) {
-				if ((MouseY >= g_lab->_graphics->VGAScaleY(171)) && (MouseY <= g_lab->_graphics->VGAScaleY(200))) {
-					if ((MouseX >= g_lab->_graphics->VGAScaleX(259)) && (MouseX <= g_lab->_graphics->VGAScaleX(289))) {
+				if ((MouseY >= g_lab->_utils->vgaScaleY(171)) && (MouseY <= g_lab->_utils->vgaScaleY(200))) {
+					if ((MouseX >= g_lab->_utils->vgaScaleX(259)) && (MouseX <= g_lab->_utils->vgaScaleX(289))) {
 						if (!lastpage) {
 							monitorPage += 1;
 							drawMonText(ntext, monitorFont, x1, y1, x2, y2, isinteractive);
 						}
-					} else if ((MouseX >= g_lab->_graphics->VGAScaleX(0)) && (MouseX <= g_lab->_graphics->VGAScaleX(31))) {
+					} else if ((MouseX >= g_lab->_utils->vgaScaleX(0)) && (MouseX <= g_lab->_utils->vgaScaleX(31))) {
 						return;
-					} else if ((MouseX >= g_lab->_graphics->VGAScaleX(290)) && (MouseX <= g_lab->_graphics->VGAScaleX(320))) {
+					} else if ((MouseX >= g_lab->_utils->vgaScaleX(290)) && (MouseX <= g_lab->_utils->vgaScaleX(320))) {
 						if (monitorPage >= 1) {
 							monitorPage -= 1;
 							drawMonText(ntext, monitorFont, x1, y1, x2, y2, isinteractive);
 						}
-					} else if ((MouseX >= g_lab->_graphics->VGAScaleX(31)) && (MouseX <= g_lab->_graphics->VGAScaleX(59))) {
+					} else if ((MouseX >= g_lab->_utils->vgaScaleX(31)) && (MouseX <= g_lab->_utils->vgaScaleX(59))) {
 						if (isinteractive) {
 							monitorPage = 0;
 
@@ -611,10 +611,10 @@ void LabEngine::processMonitor(char *ntext, TextFont *monitorFont, bool isintera
 void LabEngine::doMonitor(char *background, char *textfile, bool isinteractive, uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
 	char *ntext;
 
-	x1 = _graphics->VGAScaleX(x1);
-	x2 = _graphics->VGAScaleX(x2);
-	y1 = _graphics->VGAScaleY(y1);
-	y2 = _graphics->VGAScaleY(y2);
+	x1 = _utils->vgaScaleX(x1);
+	x2 = _utils->vgaScaleX(x2);
+	y1 = _utils->vgaScaleY(y1);
+	y2 = _utils->vgaScaleY(y2);
 
 	TextFileName = textfile;
 

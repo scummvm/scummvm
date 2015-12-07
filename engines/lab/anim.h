@@ -83,16 +83,8 @@ private:
 	uint16 _sampleSpeed;
 	uint32 _diffWidth;
 	uint32 _diffHeight;
-	uint16 _dataBytesPerRow;
 	BitMap *DrawBitMap;
 
-	void runLengthDecode(byte *dest, byte *source);
-	void VRunLengthDecode(byte *dest, byte *source, uint16 bytesPerRow);
-	void unDiffByteByte(byte *dest, byte *diff);
-	void unDiffByteWord(uint16 *dest, uint16 *diff);
-	void VUnDiffByteByte(byte *Dest, byte *diff, uint16 bytesperrow);
-	void VUnDiffByteWord(uint16 *Dest, uint16 *diff, uint16 bytesperrow);
-	void VUnDiffByteLong(uint32 *Dest, uint32 *diff, uint16 bytesperrow);
 	void readBlock(void *Buffer, uint32 Size, byte **File);
 	void playDiff(byte *buffer);
 
@@ -107,7 +99,6 @@ public:
 	bool _noPalChange;   /* Don't change the palette.            */
 	BitMap _rawDiffBM;
 
-	void unDiff(byte *newBuf, byte *oldBuf, byte *diffData, uint16 bytesperrow, bool isV);
 	bool readDiff(byte *buffer, bool playOnce);
 	void diffNextFrame();
 	void stopDiff();

@@ -43,7 +43,7 @@ Common::KeyState _keyPressed;
 Gadget *createButton(uint16 x, uint16 y, uint16 id, uint16 key, Image *im, Image *imalt) {
 	Gadget *gptr;
 
-	x = g_lab->_graphics->VGAScaleX(x);
+	x = g_lab->_utils->vgaScaleX(x);
 
 	if ((gptr = new Gadget())) {
 		gptr->x = x;

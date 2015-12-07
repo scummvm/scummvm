@@ -18,7 +18,8 @@ MODULE_OBJS := \
 	savegame.o \
 	special.o \
 	tilepuzzle.o \
-	timing.o
+	timing.o \
+	utils.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_LAB), DYNAMIC_PLUGIN)
