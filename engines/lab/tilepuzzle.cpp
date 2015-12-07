@@ -63,31 +63,11 @@ void LabEngine::initTilePuzzle() {
 }
 
 /*****************************************************************************/
-/* Converts SVGA cords to VGA if necessary, otherwise returns VGA cords.     */
-/*****************************************************************************/
-int LabEngine::VGAUnScaleX(int x) {
-	if (_isHiRes)
-		return (x / 2);
-	else
-		return x;
-}
-
-/*****************************************************************************/
-/* Converts SVGA cords to VGA if necessary, otherwise returns VGA cords.     */
-/*****************************************************************************/
-int LabEngine::VGAUnScaleY(int y) {
-	if (_isHiRes)
-		return ((y * 5) / 12);
-	else
-		return y;
-}
-
-/*****************************************************************************/
 /* Processes mouse clicks and changes the combination.                       */
 /*****************************************************************************/
 void LabEngine::mouseTile(Common::Point pos) {
-	int x = VGAUnScaleX(pos.x);
-	int y = VGAUnScaleY(pos.y);
+	int x = _utils->vgaUnscaleX(pos.x);
+	int y = _utils->vgaUnscaleY(pos.y);
 
 	if ((x < 101) || (y < 26))
 		return;
@@ -174,8 +154,8 @@ void LabEngine::changeTile(uint16 col, uint16 row) {
 void LabEngine::mouseCombination(Common::Point pos) {
 	uint16 number;
 
-	int x = VGAUnScaleX(pos.x);
-	int y = VGAUnScaleY(pos.y);
+	int x = _utils->vgaUnscaleX(pos.x);
+	int y = _utils->vgaUnscaleY(pos.y);
 
 	if ((y >= 63) && (y <= 99)) {
 		if ((x >= 44) && (x < 83))
@@ -205,20 +185,20 @@ void LabEngine::doTile(bool showsolution) {
 	int16 rows, cols;
 
 	if (showsolution) {
-		rowm = _graphics->VGAScaleY(23);
-		colm = _graphics->VGAScaleX(27);
+		rowm = _utils->vgaScaleY(23);
+		colm = _utils->vgaScaleX(27);
 
-		rows = _graphics->VGAScaleY(31);
-		cols = _graphics->VGAScaleX(105);
+		rows = _utils->vgaScaleY(31);
+		cols = _utils->vgaScaleX(105);
 	} else {
 		_graphics->setAPen(0);
 		_graphics->rectFillScaled(97, 22, 220, 126);
 
-		rowm = _graphics->VGAScaleY(25);
-		colm = _graphics->VGAScaleX(30);
+		rowm = _utils->vgaScaleY(25);
+		colm = _utils->vgaScaleX(30);
 
-		rows = _graphics->VGAScaleY(25);
-		cols = _graphics->VGAScaleX(100);
+		rows = _utils->vgaScaleY(25);
+		cols = _utils->vgaScaleX(100);
 	}
 
 	while (row < 4) {
@@ -270,33 +250,33 @@ void LabEngine::doTileScroll(uint16 col, uint16 row, uint16 scrolltype) {
 	uint16 last = 0, x1, y1;
 
 	if (scrolltype == LEFTSCROLL) {
-		dX = _graphics->VGAScaleX(5);
-		sx = _graphics->VGAScaleX(5);
+		dX = _utils->vgaScaleX(5);
+		sx = _utils->vgaScaleX(5);
 		last = 6;
 	} else if (scrolltype == RIGHTSCROLL) {
-		dX = _graphics->VGAScaleX(-5);
-		dx = _graphics->VGAScaleX(-5);
-		sx = _graphics->VGAScaleX(5);
+		dX = _utils->vgaScaleX(-5);
+		dx = _utils->vgaScaleX(-5);
+		sx = _utils->vgaScaleX(5);
 		last = 6;
 	} else if (scrolltype == UPSCROLL) {
-		dY = _graphics->VGAScaleY(5);
-		sy = _graphics->VGAScaleY(5);
+		dY = _utils->vgaScaleY(5);
+		sy = _utils->vgaScaleY(5);
 		last = 5;
 	} else if (scrolltype == DOWNSCROLL) {
-		dY = _graphics->VGAScaleY(-5);
-		dy = _graphics->VGAScaleY(-5);
-		sy = _graphics->VGAScaleY(5);
+		dY = _utils->vgaScaleY(-5);
+		dy = _utils->vgaScaleY(-5);
+		sy = _utils->vgaScaleY(5);
 		last = 5;
 	}
 
-	sx += _graphics->SVGACord(2);
+	sx += _utils->svgaCord(2);
 
-	x1 = _graphics->VGAScaleX(100) + (col * _graphics->VGAScaleX(30)) + dx;
-	y1 = _graphics->VGAScaleY(25) + (row * _graphics->VGAScaleY(25)) + dy;
+	x1 = _utils->vgaScaleX(100) + (col * _utils->vgaScaleX(30)) + dx;
+	y1 = _utils->vgaScaleY(25) + (row * _utils->vgaScaleY(25)) + dy;
 
 	for (uint16 i = 0; i < last; i++) {
 		waitTOF();
-		scrollRaster(dX, dY, x1, y1, x1 + _graphics->VGAScaleX(28) + sx, y1 + _graphics->VGAScaleY(23) + sy);
+		scrollRaster(dX, dY, x1, y1, x1 + _utils->vgaScaleX(28) + sx, y1 + _utils->vgaScaleY(23) + sy);
 		x1 += dX;
 		y1 += dY;
 	}
@@ -331,8 +311,8 @@ void LabEngine::changeCombination(uint16 number) {
 			waitTOF();
 
 		display._imageData = _graphics->getCurrentDrawingBuffer();
-		_graphics->scrollDisplayY(2, _graphics->VGAScaleX(COMBINATION_X[number]), _graphics->VGAScaleY(65), _graphics->VGAScaleX(COMBINATION_X[number]) + (_numberImages[combnum])->_width - 1, _graphics->VGAScaleY(65) + (_numberImages[combnum])->_height);
-		_numberImages[combnum]->blitBitmap(0, (_numberImages[combnum])->_height - (2 * i), &(display), _graphics->VGAScaleX(COMBINATION_X[number]), _graphics->VGAScaleY(65), (_numberImages[combnum])->_width, 2, false);
+		_graphics->scrollDisplayY(2, _utils->vgaScaleX(COMBINATION_X[number]), _utils->vgaScaleY(65), _utils->vgaScaleX(COMBINATION_X[number]) + (_numberImages[combnum])->_width - 1, _utils->vgaScaleY(65) + (_numberImages[combnum])->_height);
+		_numberImages[combnum]->blitBitmap(0, (_numberImages[combnum])->_height - (2 * i), &(display), _utils->vgaScaleX(COMBINATION_X[number]), _utils->vgaScaleY(65), (_numberImages[combnum])->_width, 2, false);
 	}
 
 	for (uint16 i = 0; i < 6; i++)
@@ -357,7 +337,7 @@ void LabEngine::scrollRaster(int16 dx, int16 dy, uint16 x1, uint16 y1, uint16 x2
 /*****************************************************************************/
 void LabEngine::doCombination() {
 	for (uint16 i = 0; i <= 5; i++)
-		_numberImages[_combination[i]]->drawImage(_graphics->VGAScaleX(COMBINATION_X[i]), _graphics->VGAScaleY(65));
+		_numberImages[_combination[i]]->drawImage(_utils->vgaScaleX(COMBINATION_X[i]), _utils->vgaScaleY(65));
 }
 
 /*****************************************************************************/

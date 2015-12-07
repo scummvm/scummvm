@@ -105,8 +105,8 @@ static CloseData *getObject(uint16 x, uint16 y, CloseDataPtr lcptr) {
 	}
 
 	while (lcptr != NULL) {
-		if ((x >= g_lab->_graphics->scaleX(lcptr->x1)) && (y >= g_lab->_graphics->scaleY(lcptr->y1)) &&
-		        (x <= g_lab->_graphics->scaleX(lcptr->x2)) && (y <= g_lab->_graphics->scaleY(lcptr->y2)))
+		if ((x >= g_lab->_utils->scaleX(lcptr->x1)) && (y >= g_lab->_utils->scaleY(lcptr->y1)) &&
+		        (x <= g_lab->_utils->scaleX(lcptr->x2)) && (y <= g_lab->_utils->scaleY(lcptr->y2)))
 			return lcptr;
 
 		lcptr = lcptr->_nextCloseUp;
@@ -248,10 +248,10 @@ void setCurClose(Common::Point pos, CloseDataPtr *cptr, bool useAbsoluteCoords) 
 			x2 = lcptr->x2;
 			y2 = lcptr->y2;
 		} else {
-			x1 = g_lab->_graphics->scaleX(lcptr->x1);
-			y1 = g_lab->_graphics->scaleY(lcptr->y1);
-			x2 = g_lab->_graphics->scaleX(lcptr->x2);
-			y2 = g_lab->_graphics->scaleY(lcptr->y2);
+			x1 = g_lab->_utils->scaleX(lcptr->x1);
+			y1 = g_lab->_utils->scaleY(lcptr->y1);
+			x2 = g_lab->_utils->scaleX(lcptr->x2);
+			y2 = g_lab->_utils->scaleY(lcptr->y2);
 		}
 
 		if (pos.x >= x1 && pos.y >= y1 && pos.x <= x2 && pos.y <= y2 && lcptr->_graphicName) {
@@ -279,8 +279,8 @@ bool takeItem(uint16 x, uint16 y, CloseDataPtr *cptr) {
 
 
 	while (lcptr != NULL) {
-		if ((x >= g_lab->_graphics->scaleX(lcptr->x1)) && (y >= g_lab->_graphics->scaleY(lcptr->y1)) &&
-		        (x <= g_lab->_graphics->scaleX(lcptr->x2)) && (y <= g_lab->_graphics->scaleY(lcptr->y2)) &&
+		if ((x >= g_lab->_utils->scaleX(lcptr->x1)) && (y >= g_lab->_utils->scaleY(lcptr->y1)) &&
+		        (x <= g_lab->_utils->scaleX(lcptr->x2)) && (y <= g_lab->_utils->scaleY(lcptr->y2)) &&
 		        (lcptr->_closeUpType < 0)) {
 			g_lab->_conditions->inclElement(abs(lcptr->_closeUpType));
 			return true;
@@ -410,7 +410,7 @@ void LabEngine::doActions(Action *aptr, CloseDataPtr *lcptr) {
 			break;
 
 		case SETCLOSEUP: {
-				CloseDataPtr tlcptr = getObject(g_lab->_graphics->scaleX(aptr->_param1), g_lab->_graphics->scaleY(aptr->_param2), *lcptr);
+				CloseDataPtr tlcptr = getObject(g_lab->_utils->scaleX(aptr->_param1), g_lab->_utils->scaleY(aptr->_param2), *lcptr);
 
 				if (tlcptr)
 					*lcptr = tlcptr;

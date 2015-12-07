@@ -87,6 +87,7 @@ LabEngine::LabEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	_anim = nullptr;
 	_graphics = nullptr;
 	_rooms = nullptr;
+	_utils = nullptr;
 
 	_lastTooLong = false;
 	_interfaceOff = false;
@@ -130,6 +131,7 @@ LabEngine::~LabEngine() {
 	delete _anim;
 	delete _graphics;
 	delete[] _rooms;
+	delete _utils;
 
 	for (int i = 0; i < 16; i++)
 		delete _tiles[i];
@@ -146,6 +148,7 @@ Common::Error LabEngine::run() {
 	_music = new Music(this);
 	_graphics = new DisplayMan(this);
 	_anim = new Anim(this);
+	_utils = new Utils(this);
 
 	if (getPlatform() == Common::kPlatformWindows) {
 		// Check if this is the Wyrmkeep trial

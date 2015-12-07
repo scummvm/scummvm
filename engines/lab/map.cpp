@@ -124,8 +124,8 @@ static bool loadMapData() {
 	counter = 0;
 
 	for (GadgetList::iterator gadget = MapGadgetList->begin(); gadget != MapGadgetList->end(); ++gadget) {
-		(*gadget)->x = g_lab->_graphics->VGAScaleX(MapGadX[counter]);
-		(*gadget)->y = g_lab->_graphics->VGAScaleY(MapGadY[counter]);
+		(*gadget)->x = g_lab->_utils->vgaScaleX(MapGadX[counter]);
+		(*gadget)->y = g_lab->_utils->vgaScaleY(MapGadY[counter]);
 		counter++;
 	}
 

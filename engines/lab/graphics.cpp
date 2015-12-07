@@ -63,55 +63,6 @@ DisplayMan::~DisplayMan() {
 	freePict();
 }
 
-/*****************************************************************************/
-/* Scales the x co-ordinates to that of the new display.  In the room parser */
-/* file, co-ordinates are set up on a 360x336 display.                       */
-/*****************************************************************************/
-uint16 DisplayMan::scaleX(uint16 x) {
-	if (_vm->_isHiRes)
-		return (uint16)((x * 16) / 9);
-	else
-		return (uint16)((x * 8) / 9);
-}
-
-/*****************************************************************************/
-/* Scales the y co-ordinates to that of the new display.  In the room parser */
-/* file, co-ordinates are set up on a 368x336 display.                       */
-/*****************************************************************************/
-uint16 DisplayMan::scaleY(uint16 y) {
-	if (_vm->_isHiRes)
-		return (y + (y / 14));
-	else
-		return ((y * 10) / 24);
-}
-
-/*****************************************************************************/
-/* Scales the VGA cords to SVGA if necessary; otherwise, returns VGA cords.  */
-/*****************************************************************************/
-int16 DisplayMan::VGAScaleX(int16 x) {
-	if (_vm->_isHiRes)
-		return (x * 2);
-	else
-		return x;
-}
-
-/*****************************************************************************/
-/* Scales the VGA cords to SVGA if necessary; otherwise, returns VGA cords.  */
-/*****************************************************************************/
-int16 DisplayMan::VGAScaleY(int16 y) {
-	if (_vm->_isHiRes)
-		return ((y * 12) / 5);
-	else
-		return y;
-}
-
-uint16 DisplayMan::SVGACord(uint16 cord) {
-	if (_vm->_isHiRes)
-		return cord;
-	else
-		return 0;
-}
-
 /*---------------------------------------------------------------------------*/
 /*------ From readPict.c.  Reads in pictures and animations from disk. ------*/
 /*---------------------------------------------------------------------------*/
@@ -305,16 +256,18 @@ uint32 DisplayMan::flowText(void *font,      /* the TextAttr pointer */
 }
 
 uint32 DisplayMan::flowTextScaled(void *font,      /* the TextAttr pointer */
-	int16 spacing,          /* How much vertical spacing between the lines */
-	byte pencolor,         /* pen number to use for text */
-	byte backpen,          /* the background color */
-	bool fillback,                /* Whether to fill the background */
-	bool centerh,                 /* Whether to center the text horizontally */
-	bool centerv,                 /* Whether to center the text vertically */
+	int16 spacing,                /* How much vertical spacing between the lines */
+	byte penColor,                /* pen number to use for text */
+	byte backPen,                 /* the background color */
+	bool fillBack,                /* Whether to fill the background */
+	bool centerX,                 /* Whether to center the text horizontally */
+	bool centerY,                 /* Whether to center the text vertically */
 	bool output,                  /* Whether to output any text */
-	uint16 x1,               /* Cords */
-	uint16 y1, uint16 x2, uint16 y2, const char *str) {
-	return flowText(font, spacing, pencolor, backpen, fillback, centerh, centerv, output, VGAScaleX(x1), VGAScaleY(y1), VGAScaleX(x2), VGAScaleY(y2), str);
+	uint16 x1, uint16 y1,         /* Cords */
+	uint16 x2, uint16 y2, const char *str) {
+	return flowText(font, spacing, penColor, backPen, fillBack, centerX, centerY, output,
+					_vm->_utils->vgaScaleX(x1), _vm->_utils->vgaScaleY(y1),
+					_vm->_utils->vgaScaleX(x2), _vm->_utils->vgaScaleY(y2), str);
 }
 
 /******************************************************************************/
@@ -351,10 +304,10 @@ void DisplayMan::createBox(uint16 y2) {
 	rectFillScaled(4, 154, 315, y2 - 2);
 
 	setAPen(0);                 /* Box around message area */
-	drawHLine(VGAScaleX(2), VGAScaleY(152), VGAScaleX(317));
-	drawVLine(VGAScaleX(317), VGAScaleY(152), VGAScaleY(y2));
-	drawHLine(VGAScaleX(2), VGAScaleY(y2), VGAScaleX(317));
-	drawVLine(VGAScaleX(2), VGAScaleY(152), VGAScaleY(y2));
+	drawHLine(_vm->_utils->vgaScaleX(2), _vm->_utils->vgaScaleY(152), _vm->_utils->vgaScaleX(317));
+	drawVLine(_vm->_utils->vgaScaleX(317), _vm->_utils->vgaScaleY(152), _vm->_utils->vgaScaleY(y2));
+	drawHLine(_vm->_utils->vgaScaleX(2), _vm->_utils->vgaScaleY(y2), _vm->_utils->vgaScaleX(317));
+	drawVLine(_vm->_utils->vgaScaleX(2), _vm->_utils->vgaScaleY(152), _vm->_utils->vgaScaleY(y2));
 }
 
 int32 DisplayMan::longDrawMessage(const char *str) {
@@ -370,7 +323,7 @@ int32 DisplayMan::longDrawMessage(const char *str) {
 	if (!_longWinInFront) {
 		_longWinInFront = true;
 		setAPen(3);                 /* Clear Area */
-		rectFill(0, VGAScaleY(149) + SVGACord(2), VGAScaleX(319), VGAScaleY(199));
+		rectFill(0, _vm->_utils->vgaScaleY(149) + _vm->_utils->svgaCord(2), _vm->_utils->vgaScaleX(319), _vm->_utils->vgaScaleY(199));
 	}
 
 	createBox(198);
@@ -389,7 +342,7 @@ void DisplayMan::drawMessage(const char *str) {
 	}
 
 	if (str) {
-		if ((textLength(_vm->_msgFont, str, strlen(str)) > VGAScaleX(306))) {
+		if ((textLength(_vm->_msgFont, str, strlen(str)) > _vm->_utils->vgaScaleX(306))) {
 			longDrawMessage(str);
 			_lastMessageLong = true;
 		} else {
@@ -400,7 +353,7 @@ void DisplayMan::drawMessage(const char *str) {
 
 			_vm->_event->mouseHide();
 			createBox(168);
-			text(_vm->_msgFont, VGAScaleX(7), VGAScaleY(155) + SVGACord(2), 1, str, strlen(str));
+			text(_vm->_msgFont, _vm->_utils->vgaScaleX(7), _vm->_utils->vgaScaleY(155) + _vm->_utils->svgaCord(2), 1, str, strlen(str));
 			_vm->_event->mouseShow();
 			_lastMessageLong = false;
 		}
@@ -415,8 +368,8 @@ void DisplayMan::doScrollBlack() {
 	Image im;
 	uint32 size, copysize;
 	byte *baseAddr;
-	uint16 width = VGAScaleX(320);
-	uint16 height = VGAScaleY(149) + SVGACord(2);
+	uint16 width = _vm->_utils->vgaScaleX(320);
+	uint16 height = _vm->_utils->vgaScaleY(149) + _vm->_utils->svgaCord(2);
 	byte *mem = new byte[width * height];
 
 	_vm->_event->mouseHide();
@@ -430,7 +383,7 @@ void DisplayMan::doScrollBlack() {
 
 	baseAddr = getCurrentDrawingBuffer();
 
-	uint16 by      = VGAScaleX(4);
+	uint16 by = _vm->_utils->vgaScaleX(4);
 	uint16 nheight = height;
 
 	while (nheight) {
@@ -512,8 +465,8 @@ void DisplayMan::doScrollWipe(char *filename) {
 	uint16 startline = 0, onrow = 0;
 
 	_vm->_event->mouseHide();
-	uint16 width = VGAScaleX(320);
-	uint16 height = VGAScaleY(149) + SVGACord(2);
+	uint16 width = _vm->_utils->vgaScaleX(320);
+	uint16 height = _vm->_utils->vgaScaleY(149) + _vm->_utils->svgaCord(2);
 
 	while (_vm->_music->isSoundEffectActive()) {
 		_vm->_music->updateMusic();
@@ -527,7 +480,7 @@ void DisplayMan::doScrollWipe(char *filename) {
 	byte *mem = _vm->_anim->_rawDiffBM._planes[0];
 
 	_vm->_music->updateMusic();
-	uint16 by = VGAScaleX(3);
+	uint16 by = _vm->_utils->vgaScaleX(3);
 	uint16 nheight = height;
 
 	while (onrow < _vm->_anim->_headerdata._height) {
@@ -552,11 +505,11 @@ void DisplayMan::doScrollWipe(char *filename) {
 		onrow += by;
 
 		if (nheight <= (height / 4))
-			by = VGAScaleX(5);
+			by = _vm->_utils->vgaScaleX(5);
 		else if (nheight <= (height / 3))
-			by = VGAScaleX(4);
+			by = _vm->_utils->vgaScaleX(4);
 		else if (nheight <= (height / 2))
-			by = VGAScaleX(3);
+			by = _vm->_utils->vgaScaleX(3);
 	}
 
 	_vm->_event->mouseShow();
@@ -580,8 +533,8 @@ void DisplayMan::doScrollBounce() {
 	}
 
 	_vm->_event->mouseHide();
-	int width = VGAScaleX(320);
-	int height = VGAScaleY(149) + SVGACord(2);
+	int width = _vm->_utils->vgaScaleX(320);
+	int height = _vm->_utils->vgaScaleY(149) + _vm->_utils->svgaCord(2);
 	byte *mem = _vm->_anim->_rawDiffBM._planes[0];
 
 	_vm->_music->updateMusic();
@@ -787,44 +740,44 @@ void DisplayMan::drawPanel() {
 	_vm->_event->mouseHide();
 
 	setAPen(3);                 /* Clear Area */
-	rectFill(0, VGAScaleY(149) + SVGACord(2), VGAScaleX(319), VGAScaleY(199));
+	rectFill(0, _vm->_utils->vgaScaleY(149) + _vm->_utils->svgaCord(2), _vm->_utils->vgaScaleX(319), _vm->_utils->vgaScaleY(199));
 
 	setAPen(0);                 /* First Line */
-	drawHLine(0, VGAScaleY(149) + SVGACord(2), VGAScaleX(319));
+	drawHLine(0, _vm->_utils->vgaScaleY(149) + _vm->_utils->svgaCord(2), _vm->_utils->vgaScaleX(319));
 	setAPen(5);                 /* Second Line */
-	drawHLine(0, VGAScaleY(149) + 1 + SVGACord(2), VGAScaleX(319));
+	drawHLine(0, _vm->_utils->vgaScaleY(149) + 1 + _vm->_utils->svgaCord(2), _vm->_utils->vgaScaleX(319));
 
 	/* Gadget Separators */
 	setAPen(0);
-	drawHLine(0, VGAScaleY(170), VGAScaleX(319));     /* First black line to separate buttons */
+	drawHLine(0, _vm->_utils->vgaScaleY(170), _vm->_utils->vgaScaleX(319));     /* First black line to separate buttons */
 
 	if (!_vm->_alternate) {
 		setAPen(4);
-		drawHLine(0, VGAScaleY(170) + 1, VGAScaleX(319)); /* The horizontal lines under the black one */
+		drawHLine(0, _vm->_utils->vgaScaleY(170) + 1, _vm->_utils->vgaScaleX(319)); /* The horizontal lines under the black one */
 		drawGadgetList(&_vm->_moveGadgetList);
 	} else {
 		if (_vm->getPlatform() != Common::kPlatformWindows) {
-			drawVLine(VGAScaleX(124), VGAScaleY(170) + 1, VGAScaleY(199)); /* Vertical Black lines */
-			drawVLine(VGAScaleX(194), VGAScaleY(170) + 1, VGAScaleY(199));
+			drawVLine(_vm->_utils->vgaScaleX(124), _vm->_utils->vgaScaleY(170) + 1, _vm->_utils->vgaScaleY(199)); /* Vertical Black lines */
+			drawVLine(_vm->_utils->vgaScaleX(194), _vm->_utils->vgaScaleY(170) + 1, _vm->_utils->vgaScaleY(199));
 		} else {
-			drawVLine(VGAScaleX(90), VGAScaleY(170) + 1, VGAScaleY(199));  /* Vertical Black lines */
-			drawVLine(VGAScaleX(160), VGAScaleY(170) + 1, VGAScaleY(199));
-			drawVLine(VGAScaleX(230), VGAScaleY(170) + 1, VGAScaleY(199));
+			drawVLine(_vm->_utils->vgaScaleX(90), _vm->_utils->vgaScaleY(170) + 1, _vm->_utils->vgaScaleY(199));  /* Vertical Black lines */
+			drawVLine(_vm->_utils->vgaScaleX(160), _vm->_utils->vgaScaleY(170) + 1, _vm->_utils->vgaScaleY(199));
+			drawVLine(_vm->_utils->vgaScaleX(230), _vm->_utils->vgaScaleY(170) + 1, _vm->_utils->vgaScaleY(199));
 		}
 
 		setAPen(4);
-		drawHLine(0, VGAScaleY(170) + 1, VGAScaleX(122));   /* The horizontal lines under the black one */
-		drawHLine(VGAScaleX(126), VGAScaleY(170) + 1, VGAScaleX(192));
-		drawHLine(VGAScaleX(196), VGAScaleY(170) + 1, VGAScaleX(319));
+		drawHLine(0, _vm->_utils->vgaScaleY(170) + 1, _vm->_utils->vgaScaleX(122));   /* The horizontal lines under the black one */
+		drawHLine(_vm->_utils->vgaScaleX(126), _vm->_utils->vgaScaleY(170) + 1, _vm->_utils->vgaScaleX(192));
+		drawHLine(_vm->_utils->vgaScaleX(196), _vm->_utils->vgaScaleY(170) + 1, _vm->_utils->vgaScaleX(319));
+		drawVLine(_vm->_utils->vgaScaleX(1), _vm->_utils->vgaScaleY(170) + 2, _vm->_utils->vgaScaleY(198)); /* The vertical high light lines */
 
-		drawVLine(VGAScaleX(1), VGAScaleY(170) + 2, VGAScaleY(198)); /* The vertical high light lines */
 		if (_vm->getPlatform() != Common::kPlatformWindows) {
-			drawVLine(VGAScaleX(126), VGAScaleY(170) + 2, VGAScaleY(198));
-			drawVLine(VGAScaleX(196), VGAScaleY(170) + 2, VGAScaleY(198));
+			drawVLine(_vm->_utils->vgaScaleX(126), _vm->_utils->vgaScaleY(170) + 2, _vm->_utils->vgaScaleY(198));
+			drawVLine(_vm->_utils->vgaScaleX(196), _vm->_utils->vgaScaleY(170) + 2, _vm->_utils->vgaScaleY(198));
 		} else {
-			drawVLine(VGAScaleX(92), VGAScaleY(170) + 2, VGAScaleY(198));
-			drawVLine(VGAScaleX(162), VGAScaleY(170) + 2, VGAScaleY(198));
-			drawVLine(VGAScaleX(232), VGAScaleY(170) + 2, VGAScaleY(198));
+			drawVLine(_vm->_utils->vgaScaleX(92), _vm->_utils->vgaScaleY(170) + 2, _vm->_utils->vgaScaleY(198));
+			drawVLine(_vm->_utils->vgaScaleX(162), _vm->_utils->vgaScaleY(170) + 2, _vm->_utils->vgaScaleY(198));
+			drawVLine(_vm->_utils->vgaScaleX(232), _vm->_utils->vgaScaleY(170) + 2, _vm->_utils->vgaScaleY(198));
 		}
 
 		drawGadgetList(&_vm->_invGadgetList);
@@ -846,16 +799,16 @@ bool DisplayMan::setUpScreens() {
 	delete controlFile;
 
 	/* Creates the gadgets for the movement control panel */
-	uint16 y = VGAScaleY(173) - SVGACord(2);
+	uint16 y = _vm->_utils->vgaScaleY(173) - _vm->_utils->svgaCord(2);
 
 	// The key mapping was only set for the Windows version.
 	// It's very convenient to have those shortcut, so I added them
 	// for all versions. (Strangerke)
-	_vm->_moveGadgetList.push_back(createButton(  1, y, 0,          't',  _vm->_moveImages[0],  _vm->_moveImages[1]));
-	_vm->_moveGadgetList.push_back(createButton( 33, y, 1,          'm',  _vm->_moveImages[2],  _vm->_moveImages[3]));
-	_vm->_moveGadgetList.push_back(createButton( 65, y, 2,          'o',  _vm->_moveImages[4],  _vm->_moveImages[5]));
-	_vm->_moveGadgetList.push_back(createButton( 97, y, 3,          'c',  _vm->_moveImages[6],  _vm->_moveImages[7]));
-	_vm->_moveGadgetList.push_back(createButton(129, y, 4,          'l',  _vm->_moveImages[8],  _vm->_moveImages[9]));
+	_vm->_moveGadgetList.push_back(createButton(  1, y, 0,          't', _vm->_moveImages[0],  _vm->_moveImages[1]));
+	_vm->_moveGadgetList.push_back(createButton( 33, y, 1,          'm', _vm->_moveImages[2],  _vm->_moveImages[3]));
+	_vm->_moveGadgetList.push_back(createButton( 65, y, 2,          'o', _vm->_moveImages[4],  _vm->_moveImages[5]));
+	_vm->_moveGadgetList.push_back(createButton( 97, y, 3,          'c', _vm->_moveImages[6],  _vm->_moveImages[7]));
+	_vm->_moveGadgetList.push_back(createButton(129, y, 4,          'l', _vm->_moveImages[8],  _vm->_moveImages[9]));
 	_vm->_moveGadgetList.push_back(createButton(161, y, 5,          'i', _vm->_moveImages[12], _vm->_moveImages[13]));
 	_vm->_moveGadgetList.push_back(createButton(193, y, 6, VKEY_LTARROW, _vm->_moveImages[14], _vm->_moveImages[15]));
 	_vm->_moveGadgetList.push_back(createButton(225, y, 7, VKEY_UPARROW, _vm->_moveImages[16], _vm->_moveImages[17]));
@@ -870,10 +823,10 @@ bool DisplayMan::setUpScreens() {
 		for (uint16 imgIdx = 0; imgIdx < 6; imgIdx++)
 			_vm->_invImages[imgIdx] = new Image(invFile);
 	}
-	_vm->_invGadgetList.push_back(createButton( 24, y, 0,          'm',   _vm->_invImages[0],   _vm->_invImages[1]));
-	_vm->_invGadgetList.push_back(createButton( 56, y, 1,          'g',   _vm->_invImages[2],   _vm->_invImages[3]));
-	_vm->_invGadgetList.push_back(createButton( 94, y, 2,          'u',   _vm->_invImages[4],   _vm->_invImages[5]));
-	_vm->_invGadgetList.push_back(createButton(126, y, 3,          'l',  _vm->_moveImages[8],  _vm->_moveImages[9]));
+	_vm->_invGadgetList.push_back(createButton( 24, y, 0,          'm', _vm->_invImages[0],   _vm->_invImages[1]));
+	_vm->_invGadgetList.push_back(createButton( 56, y, 1,          'g', _vm->_invImages[2],   _vm->_invImages[3]));
+	_vm->_invGadgetList.push_back(createButton( 94, y, 2,          'u', _vm->_invImages[4],   _vm->_invImages[5]));
+	_vm->_invGadgetList.push_back(createButton(126, y, 3,          'l', _vm->_moveImages[8],  _vm->_moveImages[9]));
 	_vm->_invGadgetList.push_back(createButton(164, y, 4, VKEY_LTARROW, _vm->_moveImages[14], _vm->_moveImages[15]));
 	_vm->_invGadgetList.push_back(createButton(196, y, 5, VKEY_RTARROW, _vm->_moveImages[18], _vm->_moveImages[19]));
 
@@ -926,7 +879,7 @@ void DisplayMan::rectFill(uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
 }
 
 void DisplayMan::rectFillScaled(uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
-	rectFill(VGAScaleX(x1), VGAScaleY(y1), VGAScaleX(x2), VGAScaleY(y2));
+	rectFill(_vm->_utils->vgaScaleX(x1), _vm->_utils->vgaScaleY(y1), _vm->_utils->vgaScaleX(x2), _vm->_utils->vgaScaleY(y2));
 }
 
 /*****************************************************************************/
