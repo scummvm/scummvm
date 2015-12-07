@@ -779,8 +779,8 @@ void XcodeProvider::setupBuildConfiguration(const BuildSetup &setup) {
 	ADD_SETTING_QUOTE_VAR(iPhone_Debug, "PROVISIONING_PROFILE[sdk=iphoneos*]", "");
 	ADD_SETTING(iPhone_Debug, "SDKROOT", "iphoneos");
 	ADD_SETTING_QUOTE(iPhone_Debug, "TARGETED_DEVICE_FAMILY", "1,2");
-	ValueList scummvmIOS_defines(_defines);
-	REMOVE_DEFINE(scummvmIOS_defines, "MACOSX");
+	ValueList scummvmIOS_defines;
+	ADD_DEFINE(scummvmIOS_defines, "\"$(inherited)\"");
 	ADD_DEFINE(scummvmIOS_defines, "IPHONE");
 	ADD_DEFINE(scummvmIOS_defines, "IPHONE_OFFICIAL");
 	ADD_SETTING_LIST(iPhone_Debug, "GCC_PREPROCESSOR_DEFINITIONS", scummvmIOS_defines, SettingsNoQuote|SettingsAsList, 5);
@@ -826,7 +826,8 @@ void XcodeProvider::setupBuildConfiguration(const BuildSetup &setup) {
 	ValueList scummvm_defines(_defines);
 	REMOVE_DEFINE(scummvm_defines, "MACOSX");
 	REMOVE_DEFINE(scummvm_defines, "IPHONE");
-	ADD_DEFINE(scummvm_defines, "XCODE");
+	REMOVE_DEFINE(scummvm_defines, "IPHONE_OFFICIAL");
+	REMOVE_DEFINE(scummvm_defines, "SDL_BACKEND");
 	ADD_SETTING_LIST(scummvm_Debug, "GCC_PREPROCESSOR_DEFINITIONS", scummvm_defines, SettingsNoQuote|SettingsAsList, 5);
 	ADD_SETTING(scummvm_Debug, "GCC_THUMB_SUPPORT", "NO");
 	ADD_SETTING(scummvm_Debug, "GCC_USE_GCC3_PFE_SUPPORT", "NO");
@@ -883,8 +884,8 @@ void XcodeProvider::setupBuildConfiguration(const BuildSetup &setup) {
 	ADD_SETTING(scummvmOSX_Debug, "GCC_OPTIMIZATION_LEVEL", "0");
 	ADD_SETTING(scummvmOSX_Debug, "GCC_PRECOMPILE_PREFIX_HEADER", "NO");
 	ADD_SETTING_QUOTE(scummvmOSX_Debug, "GCC_PREFIX_HEADER", "");
-	ValueList scummvmOSX_defines(_defines);
-	REMOVE_DEFINE(scummvmOSX_defines, "IPHONE");
+	ValueList scummvmOSX_defines;
+	ADD_DEFINE(scummvmOSX_defines, "\"$(inherited)\"");
 	ADD_DEFINE(scummvmOSX_defines, "SDL_BACKEND");
 	ADD_DEFINE(scummvmOSX_defines, "MACOSX");
 	ADD_SETTING_LIST(scummvmOSX_Debug, "GCC_PREPROCESSOR_DEFINITIONS", scummvmOSX_defines, SettingsNoQuote|SettingsAsList, 5);
@@ -989,10 +990,13 @@ void XcodeProvider::setupDefines(const BuildSetup &setup) {
 		ADD_DEFINE(_defines, *i);
 	}
 	// Add special defines for Mac support
+	REMOVE_DEFINE(_defines, "MACOSX");
+	REMOVE_DEFINE(_defines, "IPHONE");
+	REMOVE_DEFINE(_defines, "IPHONE_OFFICIAL");
+	REMOVE_DEFINE(_defines, "SDL_BACKEND");
 	ADD_DEFINE(_defines, "CONFIG_H");
-	ADD_DEFINE(_defines, "SCUMM_NEED_ALIGNMENT");
-	ADD_DEFINE(_defines, "SCUMM_LITTLE_ENDIAN");
 	ADD_DEFINE(_defines, "UNIX");
+	ADD_DEFINE(_defines, "XCODE");
 	ADD_DEFINE(_defines, "SCUMMVM");
 }
 
