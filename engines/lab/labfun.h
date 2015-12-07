@@ -34,11 +34,6 @@
 #include "common/events.h"
 #include "lab/parsetypes.h"
 
-// For the Music class - TODO: Move to another header file
-#include "audio/mixer.h"
-#include "audio/audiostream.h"
-#include "audio/decoders/raw.h"
-
 #include "common/file.h"
 #include "common/savefile.h"
 
@@ -53,9 +48,6 @@ class LabEngine;
 #define SOUTH   1
 #define EAST    2
 #define WEST    3
-
-struct TextFont;
-struct Gadget;
 
 struct SaveGameHeader {
 	byte _version;

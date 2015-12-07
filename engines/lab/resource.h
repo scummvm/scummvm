@@ -32,6 +32,7 @@
 #define LAB_RESOURCE_H
 
 #include "lab/labfun.h"
+#include "lab/graphics.h"
 
 namespace Lab {
 
