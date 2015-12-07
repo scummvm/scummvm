@@ -34,7 +34,6 @@
 #include "lab/image.h"
 #include "lab/labfun.h"
 #include "lab/parsefun.h"
-#include "lab/text.h"
 #include "lab/resource.h"
 #include "lab/graphics.h"
 
@@ -208,7 +207,7 @@ static void getWord(char *wordBuffer, const char *mainBuffer, uint16 *wordWidth)
 /* Gets a line of text for flowText; makes sure that its length is less than  */
 /* or equal to the maximum width.                                             */
 /******************************************************************************/
-static void getLine(TextFont *tf, char *lineBuffer, const char **mainBuffer, uint16 lineWidth) {
+void DisplayMan::getLine(TextFont *tf, char *lineBuffer, const char **mainBuffer, uint16 lineWidth) {
 	uint16 curWidth = 0, wordWidth;
 	char wordBuffer[100];
 	bool doit = true;
@@ -1159,9 +1158,128 @@ void DisplayMan::fade(bool fadein, uint16 res) {
 				(0xF00 & fadeNumOut(0xF00 & FadePalette[palIdx], 0xF00 & res, i));
 		}
 
-		g_lab->_graphics->setAmigaPal(newpal, 16);
-		g_lab->waitTOF();
-		g_lab->_music->updateMusic();
+		setAmigaPal(newpal, 16);
+		_vm->waitTOF();
+		_vm->_music->updateMusic();
+	}
+}
+
+/*****************************************************************************/
+/* Closes a font and frees all memory associated with it.                    */
+/*****************************************************************************/
+void DisplayMan::closeFont(TextFont *tf) {
+	if (tf) {
+		if (tf->_data && tf->_dataLength)
+			delete[] tf->_data;
+
+		delete tf;
+	}
+}
+
+/*****************************************************************************/
+/* Returns the length of a text in the specified font.                       */
+/*****************************************************************************/
+uint16 DisplayMan::textLength(TextFont *tf, const char *text, uint16 numchars) {
+	uint16 length = 0;
+
+	if (tf) {
+		for (uint16 i = 0; i < numchars; i++) {
+			length += tf->_widths[(uint)*text];
+			text++;
+		}
+	}
+
+	return length;
+}
+
+/*****************************************************************************/
+/* Returns the height of a specified font.                                   */
+/*****************************************************************************/
+uint16 DisplayMan::textHeight(TextFont *tf) {
+	return (tf) ? tf->_height : 0;
+}
+
+/*****************************************************************************/
+/* Draws the text to the screen.                                             */
+/*****************************************************************************/
+void DisplayMan::text(TextFont *tf, uint16 x, uint16 y, uint16 color, const char *text, uint16 numchars) {
+	byte *VGATop, *VGACur, *VGATemp, *VGATempLine, *cdata;
+	uint32 RealOffset, SegmentOffset;
+	int32 templeft, LeftInSegment;
+	uint16 bwidth, mask, curpage, data;
+
+	VGATop = getCurrentDrawingBuffer();
+
+	for (uint16 i = 0; i < numchars; i++) {
+		RealOffset = (_screenWidth * y) + x;
+		curpage    = RealOffset / _screenBytesPerPage;
+		SegmentOffset = RealOffset - (curpage * _screenBytesPerPage);
+		LeftInSegment = _screenBytesPerPage - SegmentOffset;
+		VGACur = VGATop + SegmentOffset;
+
+		if (tf->_widths[(uint)*text]) {
+			cdata = tf->_data + tf->_offsets[(uint)*text];
+			bwidth = *cdata++;
+			VGATemp = VGACur;
+			VGATempLine = VGACur;
+
+			for (uint16 rows = 0; rows < tf->_height; rows++) {
+				VGATemp = VGATempLine;
+				templeft = LeftInSegment;
+
+				for (uint16 cols = 0; cols < bwidth; cols++) {
+					data = *cdata++;
+
+					if (data && (templeft >= 8)) {
+						for (int j = 7; j >= 0; j--) {
+							if ((1 << j) & data)
+								*VGATemp = color;
+							VGATemp++;
+						}
+
+						templeft -= 8;
+					} else if (data) {
+						mask = 0x80;
+						templeft = LeftInSegment;
+
+						for (uint16 counterb = 0; counterb < 8; counterb++) {
+							if (templeft <= 0) {
+								curpage++;
+								VGATemp = (byte *)(VGATop - templeft);
+								/* Set up VGATempLine for next line */
+								VGATempLine -= _screenBytesPerPage;
+								/* Set up LeftInSegment for next line */
+								LeftInSegment += _screenBytesPerPage + templeft;
+								templeft += _screenBytesPerPage;
+							}
+
+							if (mask & data)
+								*VGATemp = color;
+
+							VGATemp++;
+
+							mask = mask >> 1;
+							templeft--;
+						}
+					} else {
+						templeft -= 8;
+						VGATemp += 8;
+					}
+				}
+
+				VGATempLine += _screenWidth;
+				LeftInSegment -= _screenWidth;
+
+				if (LeftInSegment <= 0) {
+					curpage++;
+					VGATempLine -= _screenBytesPerPage;
+					LeftInSegment += _screenBytesPerPage;
+				}
+			}
+		}
+
+		x += tf->_widths[(int)*text];
+		text++;
 	}
 }
 } // End of namespace Lab

@@ -37,6 +37,14 @@ namespace Lab {
 
 class LabEngine;
 
+struct TextFont {
+	uint32 _dataLength;
+	uint16 _height;
+	byte _widths[256];
+	uint16 _offsets[256];
+	byte *_data;
+};
+
 class DisplayMan {
 private:
 	LabEngine *_vm;
@@ -129,6 +137,11 @@ public:
 	void scrollDisplayX(int16 dx, uint16 x1, uint16 y1, uint16 x2, uint16 y2);
 	void scrollDisplayY(int16 dy, uint16 x1, uint16 y1, uint16 x2, uint16 y2);
 	void fade(bool fadein, uint16 res);
+	void closeFont(TextFont *tf);
+	uint16 textLength(TextFont *tf, const char *text, uint16 numchars);
+	uint16 textHeight(TextFont *tf);
+	void text(TextFont *tf, uint16 x, uint16 y, uint16 color, const char *text, uint16 numchars);
+	void getLine(TextFont *tf, char *lineBuffer, const char **mainBuffer, uint16 lineWidth);
 
 	bool _longWinInFront;
 	bool _lastMessageLong;
