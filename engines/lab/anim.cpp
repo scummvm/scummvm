@@ -162,25 +162,6 @@ void Anim::unDiffByteWord(uint16 *dest, uint16 *diff) {
 	}
 }
 
-/*****************************************************************************/
-/* UnDiffs a coded DIFF string onto an already initialized piece of memory.  */
-/*****************************************************************************/
-bool Anim::unDiffMemory(byte *dest, byte *diff, uint16 headerSize, uint16 copySize) {
-	if (headerSize == 1) {
-		if (copySize == 1)
-			unDiffByteByte(dest, diff);
-
-		else if (copySize == 2)
-			unDiffByteWord((uint16 *)dest, (uint16 *)diff);
-
-		else
-			return false;
-	} else
-		error("unDIFFMemory: HeaderSize is %d", headerSize);
-
-	return true;
-}
-
 /*------------------------- unDiff Vertical Memory --------------------------*/
 
 /*****************************************************************************/
@@ -305,25 +286,6 @@ void Anim::VUnDiffByteLong(uint32 *dest, uint32 *diff, uint16 bytesPerRow) {
 }
 
 /*****************************************************************************/
-/* UnDiffs a coded DIFF string onto an already initialized piece of memory.  */
-/*****************************************************************************/
-bool Anim::VUnDiffMemory(byte *dest, byte *diff, uint16 headerSize, uint16 copySize, uint16 bytesPerRow) {
-	if (headerSize == 1) {
-		if (copySize == 1)
-			VUnDiffByteByte(dest, diff, bytesPerRow);
-		else if (copySize == 2)
-			VUnDiffByteWord((uint16 *)dest, (uint16 *)diff, bytesPerRow);
-		else if (copySize == 4)
-			VUnDiffByteLong((uint32 *)dest, (uint32 *)diff, bytesPerRow);
-		else
-			return false;
-	} else
-		return (false);
-
-	return true;
-}
-
-/*****************************************************************************/
 /* Runlength decodes a chunk of memory.                                      */
 /*****************************************************************************/
 void Anim::runLengthDecode(byte *dest, byte *source) {
@@ -403,10 +365,19 @@ void Anim::unDiff(byte *newBuf, byte *oldBuf, byte *diffData, uint16 bytesPerRow
 	byte bufType = *diffData;
 	diffData++;
 
-	if (isV)
-		VUnDiffMemory(newBuf, diffData, 1, bufType + 1, bytesPerRow);
-	else
-		unDiffMemory(newBuf, diffData, 1, bufType + 1);
+	if (isV) {
+		if (bufType == 0)
+			VUnDiffByteByte(newBuf, diffData, bytesPerRow);
+		else if (bufType == 1)
+			VUnDiffByteWord((uint16 *)newBuf, (uint16 *)diffData, bytesPerRow);
+		else if (bufType == 3)
+			VUnDiffByteLong((uint32 *)newBuf, (uint32 *)diffData, bytesPerRow);
+	} else {
+		if (bufType == 0)
+			unDiffByteByte(newBuf, diffData);
+		else if (bufType == 1)
+			unDiffByteWord((uint16 *)newBuf, (uint16 *)diffData);
+	}
 }
 
 void Anim::readBlock(void *Buffer, uint32 Size, byte **File) {
