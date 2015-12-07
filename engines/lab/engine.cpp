@@ -720,8 +720,7 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 
 				oldDirection = _direction;
 
-				NewDir = _direction;
-				processArrow(&NewDir, gadgetId - 6);
+				NewDir = processArrow(_direction, gadgetId - 6);
 				doTurn(_direction, NewDir, &_cptr);
 				_anim->_doBlack = true;
 				_direction = NewDir;
@@ -737,7 +736,7 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 						_anim->_doBlack = true;
 				} else {
 					_anim->_doBlack = true;
-					processArrow(&_direction, gadgetId - 6);
+					_direction = processArrow(_direction, gadgetId - 6);
 
 					if (oldRoomNum != _roomNum) {
 						drawStaticMessage(kTextGoForward);
