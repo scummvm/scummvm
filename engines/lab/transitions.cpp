@@ -386,21 +386,14 @@ void DisplayMan::blackAllScreen() {
 /*****************************************************************************/
 void DisplayMan::scrollDisplayX(int16 dx, uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
 	Image im;
-	uint16 temp;
 
 	im._imageData = _tempScrollData;
 
-	if (x1 > x2) {
-		temp = x2;
-		x2 = x1;
-		x1 = temp;
-	}
+	if (x1 > x2)
+		SWAP<uint16>(x1, x2);
 
-	if (y1 > y2) {
-		temp = y2;
-		y2 = y1;
-		y1 = temp;
-	}
+	if (y1 > y2)
+		SWAP<uint16>(y1, y2);
 
 	im._width = x2 - x1 + 1 - dx;
 	im._height = y2 - y1 + 1;
@@ -417,21 +410,14 @@ void DisplayMan::scrollDisplayX(int16 dx, uint16 x1, uint16 y1, uint16 x2, uint1
 /*****************************************************************************/
 void DisplayMan::scrollDisplayY(int16 dy, uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
 	Image im;
-	uint16 temp;
 
 	im._imageData = _tempScrollData;
 
-	if (x1 > x2) {
-		temp = x2;
-		x2 = x1;
-		x1 = temp;
-	}
+	if (x1 > x2)
+		SWAP<uint16>(x1, x2);
 
-	if (y1 > y2) {
-		temp = y2;
-		y2 = y1;
-		y1 = temp;
-	}
+	if (y1 > y2)
+		SWAP<uint16>(y1, y2);
 
 	im._width = x2 - x1 + 1;
 	im._height = y2 - y1 + 1 - dy;
