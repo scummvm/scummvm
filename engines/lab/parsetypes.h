@@ -45,7 +45,7 @@ namespace Lab {
 #define LOADDIFF      5
 #define LOADBM        6
 #define SHOWBM        7
-#define WIPECMD       8
+#define TRANSITION    8
 #define NOUPDATE      9
 #define FORCEUPDATE  10
 #define SHOWCURPICT  11
@@ -139,7 +139,7 @@ struct RoomData {
 	uint16 _southDoor;
 	uint16 _eastDoor;
 	uint16 _westDoor;
-	byte _wipeType;
+	byte _transitionType;
 	ViewData *_view[4];
 	RuleList *_rules;
 	char *_roomMsg;

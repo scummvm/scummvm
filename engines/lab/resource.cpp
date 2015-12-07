@@ -98,7 +98,7 @@ bool Resource::readRoomData(const char *fileName) {
 		_vm->_rooms[i]._southDoor = dataFile->readUint16LE();
 		_vm->_rooms[i]._eastDoor = dataFile->readUint16LE();
 		_vm->_rooms[i]._westDoor = dataFile->readUint16LE();
-		_vm->_rooms[i]._wipeType = dataFile->readByte();
+		_vm->_rooms[i]._transitionType = dataFile->readByte();
 
 		_vm->_rooms[i]._view[NORTH] = nullptr;
 		_vm->_rooms[i]._view[SOUTH] = nullptr;

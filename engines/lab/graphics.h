@@ -46,6 +46,17 @@ struct TextFont {
 	byte *_data;
 };
 
+enum TransitionType {
+	kTransitionNone,
+	kTransitionWipe,
+	kTransitionScrollWipe,
+	kTransitionScrollBlack,
+	kTransitionScrollBounce,
+	kTransitionTransporter,
+	kTransitionReadFirstFrame,
+	kTransitionReadNextFrame
+};
+
 class DisplayMan {
 private:
 	LabEngine *_vm;
@@ -76,7 +87,7 @@ public:
 	void doScrollWipe(char *filename);
 	void doScrollBounce();
 	void doTransWipe(CloseDataPtr *cPtr, char *filename);
-	void doWipe(uint16 wipeType, CloseDataPtr *cPtr, char *filename);
+	void doTransition(TransitionType transitionType, CloseDataPtr *cPtr, char *filename);
 	void blackScreen();
 	void whiteScreen();
 	void blackAllScreen();

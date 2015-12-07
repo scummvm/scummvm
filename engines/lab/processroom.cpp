@@ -332,8 +332,8 @@ void LabEngine::doActions(Action *aptr, CloseDataPtr *lcptr) {
 
 			break;
 
-		case WIPECMD:
-			_graphics->doWipe(aptr->_param1, lcptr, (char *)aptr->_data);
+		case TRANSITION:
+			_graphics->doTransition((TransitionType)aptr->_param1, lcptr, (char *)aptr->_data);
 			break;
 
 		case NOUPDATE:
