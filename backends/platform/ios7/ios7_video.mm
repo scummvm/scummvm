@@ -280,15 +280,13 @@ uint getSizeNextPOT(uint size) {
 }
 
 - (void)dealloc {
-	if (_keyboardView != nil) {
-		[_keyboardView dealloc];
-	}
+	[_keyboardView release];
 
 	_videoContext.screenTexture.free();
 	_videoContext.overlayTexture.free();
 	_videoContext.mouseTexture.free();
 
-	[_eventLock dealloc];
+	[_eventLock release];
 	[super dealloc];
 }
 
