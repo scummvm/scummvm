@@ -164,8 +164,7 @@ public:
 	byte *_currentDisplayBuffer;
 	bool _doNotDrawMessage;
 	uint16 *FadePalette;
-	BitMap bit1;
-	BitMap *_dispBitMap;
+	BitMap _dispBitMap;
 };
 
 } // End of namespace Lab
