@@ -399,11 +399,15 @@ void Utils::unDiff(byte *newBuf, byte *oldBuf, byte *diffData, uint16 bytesPerRo
 			VUnDiffByteWord((uint16 *)newBuf, (uint16 *)diffData, bytesPerRow);
 		else if (bufType == 3)
 			VUnDiffByteLong((uint32 *)newBuf, (uint32 *)diffData, bytesPerRow);
+		else
+			error("Unexpected variable compression scheme %d", bufType);
 	} else {
 		if (bufType == 0)
 			unDiffByteByte(newBuf, diffData);
 		else if (bufType == 1)
 			unDiffByteWord((uint16 *)newBuf, (uint16 *)diffData);
+		else
+			error("Unexpected compression scheme %d", bufType);
 	}
 }
 
