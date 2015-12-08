@@ -202,11 +202,22 @@ void PathWalkRects::load(byte *dataStart, Common::SeekableReadStream &stream) {
 
 // BackgroundResource
 
-BackgroundResource::BackgroundResource() {
+BackgroundResource::BackgroundResource()
+	: _bgInfos(0), _scaleLayers(0), _priorityLayers(0), _regionLayers(0),
+	_regionSequences(0), _backgroundObjects(0), _pathWalkPoints(0),
+	_pathWalkRects(0), _palettes(0) {
 }
 
 BackgroundResource::~BackgroundResource() {
-	// TODO Free stuff
+	delete[] _bgInfos;
+	delete[] _scaleLayers;
+	delete[] _priorityLayers;
+	delete[] _regionLayers;
+	delete[] _regionSequences;
+	delete[] _backgroundObjects;
+	delete[] _pathWalkPoints;
+	delete[] _pathWalkRects;
+	delete[] _palettes;
 }
 
 void BackgroundResource::load(byte *data, uint32 dataSize) {

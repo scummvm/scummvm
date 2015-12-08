@@ -54,6 +54,8 @@ protected:
 	void opLoadResource(ScriptThread *scriptThread, OpCall &opCall);
 	void opUnloadResource(ScriptThread *scriptThread, OpCall &opCall);
 	void opEnterScene(ScriptThread *scriptThread, OpCall &opCall);
+	void opLeaveScene(ScriptThread *scriptThread, OpCall &opCall);
+	void opUnloadActiveScenes(ScriptThread *scriptThread, OpCall &opCall);
 	void opChangeScene(ScriptThread *scriptThread, OpCall &opCall);
 	void opStartModalScene(ScriptThread *scriptThread, OpCall &opCall);
 	void opExitModalScene(ScriptThread *scriptThread, OpCall &opCall);
@@ -64,7 +66,9 @@ protected:
 	void opPanToNamedPoint(ScriptThread *scriptThread, OpCall &opCall);
 	void opPanToPoint(ScriptThread *scriptThread, OpCall &opCall);
 	void opPanStop(ScriptThread *scriptThread, OpCall &opCall);
-	void opSetDisplay(ScriptThread *scriptThread, OpCall &opCall);	
+	void opSetDisplay(ScriptThread *scriptThread, OpCall &opCall);
+	void opSetCameraBounds(ScriptThread *scriptThread, OpCall &opCall);	
+	void opSetCameraBoundsToMasterBg(ScriptThread *scriptThread, OpCall &opCall);
 	void opIncBlockCounter(ScriptThread *scriptThread, OpCall &opCall);
 	void opClearBlockCounter(ScriptThread *scriptThread, OpCall &opCall);
 	void opSetProperty(ScriptThread *scriptThread, OpCall &opCall);
@@ -77,6 +81,7 @@ protected:
 	void opStartTalkThread(ScriptThread *scriptThread, OpCall &opCall);
 	void opAppearActor(ScriptThread *scriptThread, OpCall &opCall);
 	void opDisappearActor(ScriptThread *scriptThread, OpCall &opCall);
+	void opIsActorVisible(ScriptThread *scriptThread, OpCall &opCall);
 	void opActivateObject(ScriptThread *scriptThread, OpCall &opCall);
 	void opDeactivateObject(ScriptThread *scriptThread, OpCall &opCall);
 	void opSetDefaultSequence(ScriptThread *scriptThread, OpCall &opCall);
@@ -107,11 +112,14 @@ protected:
 	void opGetProperty(ScriptThread *scriptThread, OpCall &opCall);
 	void opCompareBlockCounter(ScriptThread *scriptThread, OpCall &opCall);
 	void opDebug126(ScriptThread *scriptThread, OpCall &opCall);
+	void opDebug127(ScriptThread *scriptThread, OpCall &opCall);
 	void opPlayVideo(ScriptThread *scriptThread, OpCall &opCall);
 	void opStackPop(ScriptThread *scriptThread, OpCall &opCall);
 	void opStackDup(ScriptThread *scriptThread, OpCall &opCall);
 	void opLoadSpecialCodeModule(ScriptThread *scriptThread, OpCall &opCall);
 	void opRunSpecialCode(ScriptThread *scriptThread, OpCall &opCall);
+	void opLinkObjectToObject(ScriptThread *scriptThread, OpCall &opCall);
+	void opUnlinkObject(ScriptThread *scriptThread, OpCall &opCall);
 	void opStopActor(ScriptThread *scriptThread, OpCall &opCall);
 	void opSetActorUsePan(ScriptThread *scriptThread, OpCall &opCall);
 	void opStartAbortableThread(ScriptThread *scriptThread, OpCall &opCall);

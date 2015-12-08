@@ -179,7 +179,12 @@ int TalkThread::onUpdate() {
 			}
 			_flags |= 2;
 		}
+//#define DEBUG_SPEEDUP_TALK
+#ifdef DEBUG_SPEEDUP_TALK
+if (true) {
+#else
 		if (_objectId && _vm->_input->pollEvent(kEventSkip)) {
+#endif
 			if (!(_flags & 8)) {
 				_vm->_screenText->removeText();
 				if (_entryText && *_entryText)

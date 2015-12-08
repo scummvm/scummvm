@@ -211,6 +211,9 @@ void Camera::pushCameraMode() {
 }
 
 void Camera::popCameraMode() {
+	if (_stack.empty())
+		return;
+
 	CameraModeStackItem item = _stack.pop();
 
 	if (item._panObjectId && !_vm->getObjectActorPositionPtr(item._panObjectId)) {

@@ -72,6 +72,8 @@ public:
 	uint32 _theThreadId;
 	uint32 _globalSceneId;
 
+	bool _walkthroughStarted;
+
 	void initInput();
 
 	void initUpdateFunctions();

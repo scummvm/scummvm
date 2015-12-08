@@ -62,37 +62,56 @@ void ScriptOpcodes_BBDOU::initOpcodes() {
 	OPCODE(4, opTerminate);
 	OPCODE(5, opJump);
 	OPCODE(6, opStartScriptThread);
+	// 7 unused
 	OPCODE(8, opStartTempScriptThread);
 	OPCODE(9, opStartTimerThread);
+	// 10-11 unused
 	OPCODE(12, opNotifyThreadId);
+	// 13 unused
 	OPCODE(14, opSetThreadSceneId);
 	OPCODE(15, opEndTalkThreads);
 	OPCODE(16, opLoadResource);
 	OPCODE(17, opUnloadResource);
+	// TODO OPCODE(18, opPauseText);
+	// TODO OPCODE(19, opResumeText);
 	OPCODE(20, opEnterScene);
+	OPCODE(21, opLeaveScene);
+	// TODO OPCODE(22, opEnterPause);
+	// TODO OPCODE(23, opLeavePause);
+	OPCODE(24, opUnloadActiveScenes);
 	OPCODE(25, opChangeScene);
 	OPCODE(26, opStartModalScene);
 	OPCODE(27, opExitModalScene);
+	// 28-29 unused
 	OPCODE(30, opEnterCloseUpScene);
 	OPCODE(31, opExitCloseUpScene);
 	OPCODE(32, opPanCenterObject);
+	// 33 unused
 	OPCODE(34, opPanToObject);
 	OPCODE(35, opPanToNamedPoint);
 	OPCODE(36, opPanToPoint);
 	OPCODE(37, opPanStop);
 	OPCODE(39, opSetDisplay);
+	OPCODE(40, opSetCameraBounds);
+	OPCODE(41, opSetCameraBoundsToMasterBg);
 	OPCODE(42, opIncBlockCounter);
 	OPCODE(43, opClearBlockCounter);
+	// 44 unused
 	OPCODE(45, opSetProperty);
 	OPCODE(46, opPlaceActor);
 	OPCODE(47, opFaceActor);
 	OPCODE(48, opFaceActorToObject);	
 	OPCODE(49, opStartSequenceActor);
+	// 50 unused
 	OPCODE(51, opStartMoveActor);
+	// 52 unused
 	OPCODE(53, opSetActorToNamedPoint);
+	// TODO OPCODE(54, opSetActorPosition);
+	// 55 unused
 	OPCODE(56, opStartTalkThread);
 	OPCODE(57, opAppearActor);
 	OPCODE(58, opDisappearActor);
+	OPCODE(59, opIsActorVisible);
 	OPCODE(60, opActivateObject);
 	OPCODE(61, opDeactivateObject);
 	OPCODE(62, opSetDefaultSequence);
@@ -101,18 +120,31 @@ void ScriptOpcodes_BBDOU::initOpcodes() {
 	OPCODE(65, opSetDenySfx);
 	OPCODE(66, opSetAdjustUpSfx);
 	OPCODE(67, opSetAdjustDnSfx);
+	// 68 unused
+	// TODO OPCODE(69, opPause);
+	// TODO OPCODE(70, opResume);
 	OPCODE(71, opStartSound);
+	// TODO OPCODE(72, opStartSoundAtNamedPoint);
+	// TODO OPCODE(73, opStartSoundAtActor);
 	OPCODE(74, opStopSound);
 	OPCODE(75, opStartMusic);
 	OPCODE(76, opStopMusic);
+	// 77 unused
 	OPCODE(78, opStackPushRandom);
 	OPCODE(79, opIfLte);
 	OPCODE(80, opAddMenuChoice);
 	OPCODE(81, opDisplayMenu);
 	OPCODE(82, opSwitchMenuChoice);
+	// TODO OPCODE(83, opQuitGame);
 	OPCODE(84, opResetGame);
+	// TODO OPCODE(85, opSaveGame);
+	// TODO OPCODE(86, opRestoreGame);
 	OPCODE(87, opDeactivateButton);
 	OPCODE(88, opActivateButton);
+	// TODO 89 NOP
+	// 90 unused
+	// TODO 91 NOP
+	// 92-102 unused
 	OPCODE(103, opJumpIf);
 	OPCODE(104, opIsPrevSceneId);
 	OPCODE(105, opIsCurrentSceneId);
@@ -123,11 +155,14 @@ void ScriptOpcodes_BBDOU::initOpcodes() {
 	OPCODE(110, opGetProperty);
 	OPCODE(111, opCompareBlockCounter);
 	OPCODE(126, opDebug126);
+	OPCODE(127, opDebug127);
 	OPCODE(144, opPlayVideo);
 	OPCODE(146, opStackPop);
 	OPCODE(147, opStackDup);
 	OPCODE(148, opLoadSpecialCodeModule);
 	OPCODE(150, opRunSpecialCode);
+	OPCODE(152, opLinkObjectToObject);
+	OPCODE(153, opUnlinkObject);
 	OPCODE(160, opStopActor);
 	OPCODE(161, opSetActorUsePan);
 	OPCODE(168, opStartAbortableThread);
@@ -185,7 +220,7 @@ void ScriptOpcodes_BBDOU::opStartTimerThread(ScriptThread *scriptThread, OpCall 
 	if (maxDuration)
 		duration += _vm->getRandom(maxDuration);
 		
-duration = 1;//DEBUG Speeds up things		
+//duration = 1;//DEBUG Speeds up things
 		
 	if (isAbortable)
 		_vm->startAbortableTimerThread(duration, opCall._threadId);
@@ -237,6 +272,16 @@ void ScriptOpcodes_BBDOU::opEnterScene(ScriptThread *scriptThread, OpCall &opCal
 		opCall._result = kTSTerminate;
 }
 
+void ScriptOpcodes_BBDOU::opLeaveScene(ScriptThread *scriptThread, OpCall &opCall) {
+	_vm->exitScene(opCall._callerThreadId);
+}
+
+void ScriptOpcodes_BBDOU::opUnloadActiveScenes(ScriptThread *scriptThread, OpCall &opCall) {
+	ARG_SKIP(2);
+	ARG_UINT32(sceneId);
+	_vm->dumpActiveScenes(sceneId, opCall._callerThreadId);
+}
+
 //DEBUG Scenes
 //uint32 dsceneId = 0x00010031, dthreadId = 0x00020036;//MAP
 //uint32 dsceneId = 0x00010028, dthreadId = 0x000202A1;
@@ -249,7 +294,8 @@ void ScriptOpcodes_BBDOU::opEnterScene(ScriptThread *scriptThread, OpCall &opCal
 //uint32 dsceneId = 0x00010067, dthreadId = 0x0002022A;
 //uint32 dsceneId = 0x0001000C, dthreadId = 0x00020011;//Cafeteria
 //uint32 dsceneId = 0x0001000B, dthreadId = 0x00020010;
-uint32 dsceneId = 0x0001001A, dthreadId = 0x0002001F;
+//uint32 dsceneId = 0x0001001A, dthreadId = 0x0002001F;
+uint32 dsceneId = 0x00010047, dthreadId = 0x0002005F;
 
 void ScriptOpcodes_BBDOU::opChangeScene(ScriptThread *scriptThread, OpCall &opCall) {
 	ARG_SKIP(2);
@@ -257,6 +303,12 @@ void ScriptOpcodes_BBDOU::opChangeScene(ScriptThread *scriptThread, OpCall &opCa
 	ARG_UINT32(threadId);
 
 	if (dsceneId) {
+//#define RUN_WALKTHROUGH
+#ifdef RUN_WALKTHROUGH
+		_vm->_walkthroughStarted = true;
+		dsceneId = 0;
+		return;
+#endif
 		sceneId = dsceneId;
 		threadId = dthreadId;
 		dsceneId = 0;
@@ -346,6 +398,20 @@ void ScriptOpcodes_BBDOU::opSetDisplay(ScriptThread *scriptThread, OpCall &opCal
 	_vm->_screen->setDisplayOn(flag != 0);
 }
 
+void ScriptOpcodes_BBDOU::opSetCameraBounds(ScriptThread *scriptThread, OpCall &opCall) {
+	ARG_SKIP(2);
+	ARG_INT16(x1);
+	ARG_INT16(y1);
+	ARG_INT16(x2);
+	ARG_INT16(y2);
+	_vm->_camera->setBounds(Common::Point(x1, y1), Common::Point(x2, y2));
+}
+
+void ScriptOpcodes_BBDOU::opSetCameraBoundsToMasterBg(ScriptThread *scriptThread, OpCall &opCall) {
+	WidthHeight bgDimensions = _vm->_backgroundInstances->getMasterBgDimensions();
+	_vm->_camera->setBoundsToDimensions(bgDimensions);
+}
+
 void ScriptOpcodes_BBDOU::opIncBlockCounter(ScriptThread *scriptThread, OpCall &opCall) {
 	ARG_INT16(index);	
 	byte value = _vm->_scriptResource->_blockCounters.get(index) + 1;
@@ -410,6 +476,8 @@ void ScriptOpcodes_BBDOU::opStartMoveActor(ScriptThread *scriptThread, OpCall &o
 	ARG_UINT32(namedPointId);
 	// NOTE Skipped checking for stalled sequence, not sure if needed
 	Control *control = _vm->_dict->getObjectControl(objectId);
+	//if (!control) { opCall._deltaOfs = 0; return; }// TODO CHECKME
+	if (!control) { return; }// TODO CHECKME
 	Common::Point pos = _vm->getNamedPointPosition(namedPointId);
 	control->startMoveActor(sequenceId, pos, opCall._callerThreadId, opCall._threadId);
 }
@@ -452,6 +520,14 @@ void ScriptOpcodes_BBDOU::opDisappearActor(ScriptThread *scriptThread, OpCall &o
 	ARG_UINT32(objectId);
 	Control *control = _vm->_dict->getObjectControl(objectId);
 	control->disappearActor();
+}
+
+void ScriptOpcodes_BBDOU::opIsActorVisible(ScriptThread *scriptThread, OpCall &opCall) {
+	ARG_SKIP(2);
+	ARG_UINT32(objectId);
+	Control *control = _vm->_dict->getObjectControl(objectId);
+	const bool visible = control && control->isActorVisible();
+	_vm->_stack->push(visible ? 1 : 0);
 }
 
 void ScriptOpcodes_BBDOU::opActivateObject(ScriptThread *scriptThread, OpCall &opCall) {
@@ -675,7 +751,12 @@ void ScriptOpcodes_BBDOU::opCompareBlockCounter(ScriptThread *scriptThread, OpCa
 
 void ScriptOpcodes_BBDOU::opDebug126(ScriptThread *scriptThread, OpCall &opCall) {
 	// NOTE Prints some debug text
-	debug(1, "[DBG] %s", (char*)opCall._code);
+	debug(1, "[DBG126] %s", (char*)opCall._code);
+}
+
+void ScriptOpcodes_BBDOU::opDebug127(ScriptThread *scriptThread, OpCall &opCall) {
+	// NOTE Prints some debug text
+	debug(1, "[DBG127] %s", (char*)opCall._code);
 }
 
 void ScriptOpcodes_BBDOU::opPlayVideo(ScriptThread *scriptThread, OpCall &opCall) {
@@ -709,6 +790,22 @@ void ScriptOpcodes_BBDOU::opRunSpecialCode(ScriptThread *scriptThread, OpCall &o
 	ARG_SKIP(2);
 	ARG_UINT32(specialCodeId);
 	_vm->_specialCode->run(specialCodeId, opCall);
+}
+
+void ScriptOpcodes_BBDOU::opLinkObjectToObject(ScriptThread *scriptThread, OpCall &opCall) {
+	ARG_SKIP(2);
+	ARG_UINT32(objectId);
+	ARG_UINT32(parentObjectId);
+	ARG_UINT32(linkedObjectValue);
+	Control *control = _vm->_dict->getObjectControl(objectId);
+	control->linkToObject(parentObjectId, linkedObjectValue);
+}
+
+void ScriptOpcodes_BBDOU::opUnlinkObject(ScriptThread *scriptThread, OpCall &opCall) {
+	ARG_SKIP(2);
+	ARG_UINT32(objectId);
+	Control *control = _vm->_dict->getObjectControl(objectId);
+	control->unlinkObject();
 }
 
 void ScriptOpcodes_BBDOU::opStopActor(ScriptThread *scriptThread, OpCall &opCall) {

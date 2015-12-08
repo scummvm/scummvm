@@ -196,7 +196,14 @@ Common::Error IllusionsEngine_BBDOU::run() {
 	startScriptThread(0x00020004, 0, 0, 0, 0);
 	_doScriptThreadInit = true;
 
+	_walkthroughStarted = false;
+
 	while (!shouldQuit()) {
+		if (_walkthroughStarted) {
+			//enterScene(0x10003, 0);
+			startScriptThread(0x00020404, 0, 0, 0, 0);
+			_walkthroughStarted = false;
+		}
 		runUpdateFunctions();
 		_system->updateScreen();
 		updateEvents();

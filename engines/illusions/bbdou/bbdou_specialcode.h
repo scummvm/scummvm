@@ -82,6 +82,11 @@ public:
 	RadarMicrophoneZone _zones[8];
 };
 
+struct ShooterStatus {
+	int gridX;
+	bool flag;
+};
+
 class BbdouSpecialCode : public SpecialCode {
 public:
 	BbdouSpecialCode(IllusionsEngine_BBDOU *vm);
@@ -100,6 +105,9 @@ public:
 	// Salad
 	uint _saladCount;
 	uint32 _saladObjectIds[12];
+
+	// Shooter
+	ShooterStatus _shooterStatus[2];
 
 	// Special code interface functions
 	void spcInitCursor(OpCall &opCall);
@@ -125,6 +133,7 @@ public:
 	void spcIsCursorHoldingObjectId(OpCall &opCall);
 	void spcInitRadarMicrophone(OpCall &opCall);
 	void spcSaladCtl(OpCall &opCall);
+	void spcRunCause(OpCall &opCall);
 
 	void playSoundEffect(int soundIndex);
 	void resetItem10(uint32 objectId, Item10 *item10);

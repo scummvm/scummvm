@@ -148,6 +148,7 @@ void BbdouSpecialCode::init() {
 	SPECIAL(0x00160037, spcIsCursorHoldingObjectId);
 	SPECIAL(0x00160038, spcInitRadarMicrophone);
 	SPECIAL(0x0016003A, spcSaladCtl);
+	SPECIAL(0x0016003B, spcRunCause);
 }
 
 void BbdouSpecialCode::run(uint32 specialCodeId, OpCall &opCall) {
@@ -327,6 +328,16 @@ void BbdouSpecialCode::spcSaladCtl(OpCall &opCall) {
 		addSalad(sequenceId);
 		break;
 	}
+}
+
+void BbdouSpecialCode::spcRunCause(OpCall &opCall) {
+	ARG_UINT32(cursorObjectId);
+	ARG_UINT32(verbId);
+	ARG_UINT32(objectId1);
+	ARG_UINT32(objectId2);
+	Control *cursorControl = _vm->getObjectControl(cursorObjectId);
+	debug("runCause(%08X, %08X, %08X)", verbId, objectId1, objectId2);
+	runCause(cursorControl, _cursor->_data, verbId, objectId1, objectId2, 0);
 }
 
 void BbdouSpecialCode::playSoundEffect(int soundIndex) {
@@ -595,7 +606,60 @@ void BbdouSpecialCode::cursorInteractControlRoutine(Control *cursorControl, uint
 }
 
 void BbdouSpecialCode::cursorControlRoutine2(Control *cursorControl, uint32 deltaTime) {
+
+	static const struct ShooterAnim {
+		uint32 objectId;
+		uint32 sequenceIds1[8];
+		uint32 sequenceIds2[8];
+	} kShooterAnims[] = {
+		{0x401C4,
+		{0x60637, 0x60638, 0x60639, 0x6063A, 0x6063B, 0x6063C, 0x6063D, 0x6063E},
+		{0x6063F, 0x60640, 0x60641, 0x60642, 0x60643, 0x60644, 0x60645, 0x60646}},
+		{0x401C3,
+		{0x6064A, 0x6064B, 0x6064C, 0x6064D, 0x6064E, 0x6064F, 0x60650, 0x60651},
+		{0x60652, 0x60653, 0x60654, 0x60655, 0x60656, 0x60657, 0x60658, 0x60659}}
+	};
+
+	Actor *actor = cursorControl->_actor;
+	CursorData &cursorData = _cursor->_data;
+
 	// TODO
+	//debug("BbdouSpecialCode::cursorControlRoutine2()");
+
+	if (cursorData._visibleCtr <= 0) {
+		if (cursorData._currOverlappedObjectId || cursorData._mode == 3) {
+			if (cursorData._mode == 3)
+				_cursor->restoreInfo();
+			cursorControl->setActorIndexTo1();
+		}
+		cursorData._currOverlappedObjectId = 0;
+		return;
+	}
+
+	Common::Point cursorPos = _vm->_input->getCursorPosition();
+
+	if (cursorPos != actor->_position) {
+		actor->_position = cursorPos;
+		int16 gridX = 8 * cursorPos.x / 640;
+		if (gridX >= 8)
+			gridX = 4;
+
+		for (uint i = 0; i < 2; ++i) {
+			const ShooterAnim &anim = kShooterAnims[i];
+			Control *control2 = _vm->getObjectControl(anim.objectId);
+			if (control2 && control2->_actor) {
+				if (_shooterStatus[i].gridX != gridX && (!_shooterStatus[i].flag || !control2->_actor->_seqCodeIp)) {
+					_shooterStatus[i].gridX = gridX;
+					control2->_actor->_seqCodeIp = 0;
+					control2->startSequenceActor(anim.sequenceIds1[gridX], 2, 0);
+				}
+			}
+		}
+
+	}
+
+	// TODO A lot of stuff
+
 }
 
 bool BbdouSpecialCode::testVerbId(uint32 verbId, uint32 holdingObjectId, uint32 overlappedObjectId) {
