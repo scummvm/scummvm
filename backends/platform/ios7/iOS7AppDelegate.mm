@@ -76,6 +76,16 @@
 	[_view deviceOrientationChanged:screenOrientation];
 }
 
++ (iOS7AppDelegate *)iOS7AppDelegate {
+	UIApplication *app = [UIApplication sharedApplication];
+	return (iOS7AppDelegate *) app.delegate;
+}
+
++ (iPhoneView *)iPhoneView {
+	iOS7AppDelegate *appDelegate = [self iOS7AppDelegate];
+	return appDelegate->_view;
+}
+
 @end
 
 const char *iOS7_getDocumentsDir() {

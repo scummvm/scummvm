@@ -27,8 +27,8 @@
 
 #include "graphics/colormasks.h"
 #include "common/system.h"
+#import "iOS7AppDelegate.h"
 
-iPhoneView *g_iPhoneViewInstance = nil;
 static int g_fullWidth;
 static int g_fullHeight;
 
@@ -62,12 +62,12 @@ void iOS7_updateScreen() {
 	//printf("Mouse: (%i, %i)\n", mouseX, mouseY);
 	if (!g_needsScreenUpdate) {
 		g_needsScreenUpdate = 1;
-		[g_iPhoneViewInstance performSelectorOnMainThread:@selector(updateSurface) withObject:nil waitUntilDone: NO];
+		[[iOS7AppDelegate iPhoneView] performSelectorOnMainThread:@selector(updateSurface) withObject:nil waitUntilDone: NO];
 	}
 }
 
 bool iOS7_fetchEvent(InternalEvent *event) {
-	return [g_iPhoneViewInstance fetchEvent:event];
+	return [[iOS7AppDelegate iPhoneView] fetchEvent:event];
 }
 
 uint getSizeNextPOT(uint size) {
@@ -232,8 +232,6 @@ uint getSizeNextPOT(uint size) {
 
 	_contentScaleFactor = [self optimalScale];
 	[self setContentScaleFactor:_contentScaleFactor];
-
-	g_iPhoneViewInstance = self;
 
 	_keyboardView = nil;
 	_screenTexture = 0;

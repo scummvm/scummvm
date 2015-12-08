@@ -104,6 +104,4 @@
 
 @end
 
-extern iPhoneView *g_iPhoneViewInstance;
-
 #endif
