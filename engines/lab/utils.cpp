@@ -59,7 +59,7 @@ uint16 Utils::scaleY(uint16 y) {
 }
 
 /*****************************************************************************/
-/* Scales the VGA cords to SVGA if necessary; otherwise, returns VGA cords.  */
+/* Scales the VGA coords to SVGA if necessary; otherwise, returns VGA coords.*/
 /*****************************************************************************/
 int16 Utils::vgaScaleX(int16 x) {
 	if (_vm->_isHiRes)
@@ -69,7 +69,7 @@ int16 Utils::vgaScaleX(int16 x) {
 }
 
 /*****************************************************************************/
-/* Scales the VGA cords to SVGA if necessary; otherwise, returns VGA cords.  */
+/* Scales the VGA coords to SVGA if necessary; otherwise, returns VGA coords.*/
 /*****************************************************************************/
 int16 Utils::vgaScaleY(int16 y) {
 	if (_vm->_isHiRes)
@@ -86,23 +86,18 @@ uint16 Utils::svgaCord(uint16 cord) {
 }
 
 /*****************************************************************************/
-/* Converts SVGA cords to VGA if necessary, otherwise returns VGA cords.     */
+/* Converts SVGA coords to VGA if necessary, otherwise returns VGA coords.   */
 /*****************************************************************************/
-int Utils::vgaUnscaleX(int x) {
-	if (_vm->_isHiRes)
-		return (x / 2);
-	else
-		return x;
-}
+Common::Point Utils::vgaUnscale(Common::Point pos) {
+	Common::Point result;
+	if (_vm->_isHiRes) {
+		result.x = pos.x / 2;
+		result.y = (pos.y * 5) / 12;
+	} else {
+		result = pos;
+	}
 
-/*****************************************************************************/
-/* Converts SVGA cords to VGA if necessary, otherwise returns VGA cords.     */
-/*****************************************************************************/
-int Utils::vgaUnscaleY(int y) {
-	if (_vm->_isHiRes)
-		return ((y * 5) / 12);
-	else
-		return y;
+	return result;
 }
 
 /*****************************************************************************/
