@@ -29,8 +29,6 @@
  */
 
 #include "lab/lab.h"
-#include "lab/labfun.h"
-#include "lab/resource.h"
 
 namespace Lab {
 

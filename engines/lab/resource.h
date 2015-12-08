@@ -31,7 +31,6 @@
 #ifndef LAB_RESOURCE_H
 #define LAB_RESOURCE_H
 
-#include "lab/labfun.h"
 #include "lab/dispman.h"
 
 namespace Lab {

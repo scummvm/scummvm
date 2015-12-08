@@ -28,7 +28,6 @@
  *
  */
 
-#include "common/endian.h"
 #include "lab/lab.h"
 
 namespace Lab {

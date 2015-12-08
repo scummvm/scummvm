@@ -29,10 +29,6 @@
  */
 
 #include "lab/lab.h"
-#include "lab/labfun.h"
-#include "lab/image.h"
-#include "lab/interface.h"
-#include "common/util.h"
 
 namespace Lab {
 

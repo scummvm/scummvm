@@ -31,7 +31,6 @@
 #ifndef LAB_DISPMAN_H
 #define LAB_DISPMAN_H
 
-#include "graphics/palette.h"
 #include "lab/anim.h"
 #include "lab/processroom.h"
 

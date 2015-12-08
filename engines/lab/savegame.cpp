@@ -28,13 +28,9 @@
  *
  */
 
-#include "common/savefile.h"
-
-#include "graphics/surface.h"
 #include "graphics/thumbnail.h"
 
 #include "lab/lab.h"
-#include "lab/labfun.h"
 
 namespace Lab {
 #define SAVEGAME_ID       MKTAG('L', 'O', 'T', 'S')

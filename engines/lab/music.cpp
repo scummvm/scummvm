@@ -28,10 +28,8 @@
  *
  */
 
-#include "audio/mixer.h"
+#include "audio/decoders/raw.h"
 
-#include "lab/labfun.h"
-#include "lab/music.h"
 #include "lab/lab.h"
 
 namespace Lab {

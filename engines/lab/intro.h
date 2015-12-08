@@ -31,8 +31,6 @@
 #ifndef LAB_INTRO_H
 #define LAB_INTRO_H
 
-#include "lab/intro.h"
-
 namespace Lab {
 
 class Intro {
