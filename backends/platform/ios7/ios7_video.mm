@@ -39,8 +39,6 @@ static long g_lastTick = 0;
 static int g_frames = 0;
 #endif
 
-extern bool iOS7_touchpadModeEnabled();
-
 #define printOpenGLError() printOglError(__FILE__, __LINE__)
 
 int printOglError(const char *file, int line) {

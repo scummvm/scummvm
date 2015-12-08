@@ -111,6 +111,7 @@ bool iOS7_isHighResDevice();
 
 void iOS7_main(int argc, char **argv);
 const char *iOS7_getDocumentsDir();
+bool iOS7_touchpadModeEnabled();
 
 uint getSizeNextPOT(uint size);
 
