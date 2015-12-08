@@ -31,10 +31,6 @@
 #ifndef LAB_LABFUN_H
 #define LAB_LABFUN_H
 
-#include "common/file.h"
-#include "common/savefile.h"
-#include "engines/savestate.h"
-
 namespace Lab {
 
 class LabEngine;
