@@ -28,13 +28,12 @@
  *
  */
 
-#include "common/keyboard.h"
-#include "lab/image.h"
-
 #ifndef LAB_INTEFACE_H
 #define LAB_INTEFACE_H
 
 namespace Lab {
+
+class Image;
 
 struct IntuiMessage {
 	uint32 _msgClass;
