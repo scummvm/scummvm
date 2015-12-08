@@ -30,6 +30,7 @@
 
 #include "lab/lab.h"
 
+#include "lab/anim.h"
 #include "lab/dispman.h"
 #include "lab/interface.h"
 #include "lab/intro.h"

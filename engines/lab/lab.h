@@ -35,7 +35,6 @@
 #include "common/events.h"
 
 #include "engines/engine.h"
-#include "lab/anim.h"
 #include "lab/processroom.h"
 
 struct ADGameDescription;

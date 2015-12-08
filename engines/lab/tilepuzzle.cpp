@@ -34,6 +34,7 @@
 
 #include "lab/lab.h"
 
+#include "lab/anim.h"
 #include "lab/dispman.h"
 #include "lab/image.h"
 #include "lab/labsets.h"
