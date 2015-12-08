@@ -32,6 +32,8 @@
 #include "engines/savestate.h"
 
 #include "lab/lab.h"
+
+#include "lab/dispman.h"
 #include "lab/labsets.h"
 #include "lab/savegame.h"
 
