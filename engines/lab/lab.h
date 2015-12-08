@@ -169,7 +169,8 @@ private:
 	GadgetList _mapGadgetList;
 
 private:
-	bool from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Common::Point tmpPos, uint16 &curInv, IntuiMessage * curMsg, bool &forceDraw, uint16 gadgetId, uint16 &actionMode);
+	bool from_crumbs(uint32 tmpClass, uint16 code, uint16 qualifier, Common::Point tmpPos,
+			uint16 &curInv, IntuiMessage *curMsg, bool &forceDraw, uint16 gadgetId, uint16 &actionMode);
 
 public:
 	void waitTOF();
