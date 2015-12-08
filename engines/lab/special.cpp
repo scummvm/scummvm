@@ -152,7 +152,7 @@ void LabEngine::loadJournalData() {
 	char filename[20];
 	bool bridge, dirty, news, clean;
 
-	journalFont = g_lab->_resource->getFont("P:Journal.fon");	// FIXME: memory leak
+	journalFont = g_lab->_resource->getFont("P:Journal.fon");
 
 	g_lab->_music->updateMusic();
 
@@ -368,7 +368,9 @@ void LabEngine::doJournal() {
 	_event->attachGadgetList(NULL);
 	_graphics->fade(false, 0);
 	_event->mouseHide();
+
 	freeButtonList(&_journalGadgetList);
+	g_lab->_graphics->closeFont(journalFont);
 
 	ScreenImage._imageData = _graphics->getCurrentDrawingBuffer();
 
