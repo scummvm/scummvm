@@ -66,7 +66,6 @@ private:
 	byte _curapen;
 	byte *_curBitmap;
 	byte _curvgapal[256 * 3];
-	byte *_tempScrollData;
 
 public:
 	DisplayMan(LabEngine *lab);
@@ -141,8 +140,8 @@ public:
 	void setPalette(void *cmap, uint16 numcolors);
 	void overlayRect(uint16 pencolor, uint16 x1, uint16 y1, uint16 x2, uint16 y2);
 	byte *getCurrentDrawingBuffer();
-	void scrollDisplayX(int16 dx, uint16 x1, uint16 y1, uint16 x2, uint16 y2);
-	void scrollDisplayY(int16 dy, uint16 x1, uint16 y1, uint16 x2, uint16 y2);
+	void scrollDisplayX(int16 dx, uint16 x1, uint16 y1, uint16 x2, uint16 y2, byte *buffer);
+	void scrollDisplayY(int16 dy, uint16 x1, uint16 y1, uint16 x2, uint16 y2, byte *buffer);
 	void fade(bool fadein, uint16 res);
 	void closeFont(TextFont *tf);
 	uint16 textLength(TextFont *tf, const char *text, uint16 numchars);

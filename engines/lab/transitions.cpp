@@ -387,10 +387,10 @@ void DisplayMan::blackAllScreen() {
  * The _tempScrollData variable must be initialized to some memory, or this
  * function will fail.
  */
-void DisplayMan::scrollDisplayX(int16 dx, uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
+void DisplayMan::scrollDisplayX(int16 dx, uint16 x1, uint16 y1, uint16 x2, uint16 y2, byte *buffer) {
 	Image im;
 
-	im._imageData = _tempScrollData;
+	im._imageData = buffer;
 
 	if (x1 > x2)
 		SWAP<uint16>(x1, x2);
@@ -411,10 +411,10 @@ void DisplayMan::scrollDisplayX(int16 dx, uint16 x1, uint16 y1, uint16 x2, uint1
 /**
  * Scrolls the display in the y direction by blitting.
  */
-void DisplayMan::scrollDisplayY(int16 dy, uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
+void DisplayMan::scrollDisplayY(int16 dy, uint16 x1, uint16 y1, uint16 x2, uint16 y2, byte *buffer) {
 	Image im;
 
-	im._imageData = _tempScrollData;
+	im._imageData = buffer;
 
 	if (x1 > x2)
 		SWAP<uint16>(x1, x2);

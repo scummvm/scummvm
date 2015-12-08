@@ -281,19 +281,23 @@ void LabEngine::doTileScroll(uint16 col, uint16 row, uint16 scrolltype) {
 	uint16 x1 = _utils->vgaScaleX(100) + (col * _utils->vgaScaleX(30)) + dx;
 	uint16 y1 = _utils->vgaScaleY(25) + (row * _utils->vgaScaleY(25)) + dy;
 
+	byte *buffer = new byte[_tiles[1]->_width * _tiles[1]->_height * 2L];
+
 	for (uint16 i = 0; i < last; i++) {
 		waitTOF();
-		scrollRaster(dX, dY, x1, y1, x1 + _utils->vgaScaleX(28) + sx, y1 + _utils->vgaScaleY(23) + sy);
+		scrollRaster(dX, dY, x1, y1, x1 + _utils->vgaScaleX(28) + sx, y1 + _utils->vgaScaleY(23) + sy, buffer);
 		x1 += dX;
 		y1 += dY;
 	}
+
+	delete[] buffer;
 }
 
 /**
  * Changes the combination number of one of the slots
  */
 void LabEngine::changeCombination(uint16 number) {
-	static const int solution[6] = { 0, 4, 0, 8, 7, 2 };
+	const int solution[6] = { 0, 4, 0, 8, 7, 2 };
 
 	Image display;
 	uint16 combnum;
@@ -310,6 +314,8 @@ void LabEngine::changeCombination(uint16 number) {
 	display._width     = _graphics->_screenWidth;
 	display._height    = _graphics->_screenHeight;
 
+	byte *buffer = new byte[_tiles[1]->_width * _tiles[1]->_height * 2L];
+
 	for (uint16 i = 1; i <= (_numberImages[combnum]->_height / 2); i++) {
 		if (_isHiRes) {
 			if (i & 1)
@@ -318,9 +324,11 @@ void LabEngine::changeCombination(uint16 number) {
 			waitTOF();
 
 		display._imageData = _graphics->getCurrentDrawingBuffer();
-		_graphics->scrollDisplayY(2, _utils->vgaScaleX(COMBINATION_X[number]), _utils->vgaScaleY(65), _utils->vgaScaleX(COMBINATION_X[number]) + (_numberImages[combnum])->_width - 1, _utils->vgaScaleY(65) + (_numberImages[combnum])->_height);
+		_graphics->scrollDisplayY(2, _utils->vgaScaleX(COMBINATION_X[number]), _utils->vgaScaleY(65), _utils->vgaScaleX(COMBINATION_X[number]) + (_numberImages[combnum])->_width - 1, _utils->vgaScaleY(65) + (_numberImages[combnum])->_height, buffer);
 		_numberImages[combnum]->blitBitmap(0, (_numberImages[combnum])->_height - (2 * i), &(display), _utils->vgaScaleX(COMBINATION_X[number]), _utils->vgaScaleY(65), (_numberImages[combnum])->_width, 2, false);
 	}
+
+	delete[] buffer;
 
 	for (uint16 i = 0; i < 6; i++)
 		unlocked &= (_combination[i] == solution[i]);
@@ -331,12 +339,12 @@ void LabEngine::changeCombination(uint16 number) {
 		_conditions->exclElement(COMBINATIONUNLOCKED);
 }
 
-void LabEngine::scrollRaster(int16 dx, int16 dy, uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
+void LabEngine::scrollRaster(int16 dx, int16 dy, uint16 x1, uint16 y1, uint16 x2, uint16 y2, byte *buffer) {
 	if (dx)
-		_graphics->scrollDisplayX(dx, x1, y1, x2, y2);
+		_graphics->scrollDisplayX(dx, x1, y1, x2, y2, buffer);
 
 	if (dy)
-		_graphics->scrollDisplayY(dy, x1, y1, x2, y2);
+		_graphics->scrollDisplayY(dy, x1, y1, x2, y2, buffer);
 }
 
 /**

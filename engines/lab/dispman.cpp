@@ -53,7 +53,6 @@ DisplayMan::DisplayMan(LabEngine *vm) : _vm(vm) {
 	_curBitmap = nullptr;
 	_displayBuffer = nullptr;
 	_currentDisplayBuffer = nullptr;
-	_tempScrollData = nullptr;
 	FadePalette = nullptr;
 
 	_screenWidth = 0;
