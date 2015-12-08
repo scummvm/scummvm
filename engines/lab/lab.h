@@ -37,15 +37,17 @@
 #include "engines/engine.h"
 #include "lab/anim.h"
 #include "lab/processroom.h"
-#include "lab/interface.h"
-//#include "lab/eventman.h"
 
 struct ADGameDescription;
 
 namespace Lab {
 
+class Anim;
 class DisplayMan;
 class EventManager;
+struct Gadget;
+class Image;
+struct IntuiMessage;
 class LargeSet;
 class Music;
 class Resource;
