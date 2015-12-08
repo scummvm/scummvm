@@ -1063,11 +1063,7 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 
 void LabEngine::go() {
 	_isHiRes = ((getFeatures() & GF_LOWRES) == 0);
-
-	if (!_graphics->setUpScreens()) {
-		_isHiRes = false;
-		_graphics->setUpScreens();
-	}
+	_graphics->setUpScreens();
 
 	_event->initMouse();
 	_msgFont = _resource->getFont("P:AvanteG.12");
