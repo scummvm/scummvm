@@ -113,9 +113,9 @@ bool readSaveGameHeader(Common::InSaveFile *in, SaveGameHeader &header) {
 	return true;
 }
 
-/*****************************************************************************/
-/* Writes the game out to disk.                                              */
-/*****************************************************************************/
+/**
+ * Writes the game out to disk.
+ */
 bool saveGame(uint16 Direction, uint16 Quarters, int slot, Common::String desc) {
 	uint16 i, j;
 	Common::String fileName = g_lab->generateSaveFileName(slot);
@@ -164,9 +164,9 @@ bool saveGame(uint16 Direction, uint16 Quarters, int slot, Common::String desc) 
 	return true;
 }
 
-/*****************************************************************************/
-/* Reads the game from disk.                                                 */
-/*****************************************************************************/
+/**
+ * Reads the game from disk.
+ */
 bool loadGame(uint16 *Direction, uint16 *Quarters, int slot) {
 	uint16 i, j;
 	Common::String fileName = g_lab->generateSaveFileName(slot);

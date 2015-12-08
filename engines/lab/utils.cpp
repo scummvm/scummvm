@@ -36,10 +36,10 @@ Utils::Utils(LabEngine *vm) : _vm(vm) {
 	_dataBytesPerRow = 0;
 }
 
-/*****************************************************************************/
-/* Scales the x co-ordinates to that of the new display.  In the room parser */
-/* file, co-ordinates are set up on a 360x336 display.                       */
-/*****************************************************************************/
+/**
+ * Scales the x co-ordinates to that of the new display.  In the room parser
+ * file, co-ordinates are set up on a 360x336 display.
+ */
 uint16 Utils::scaleX(uint16 x) {
 	if (_vm->_isHiRes)
 		return (uint16)((x * 16) / 9);
@@ -47,10 +47,10 @@ uint16 Utils::scaleX(uint16 x) {
 		return (uint16)((x * 8) / 9);
 }
 
-/*****************************************************************************/
-/* Scales the y co-ordinates to that of the new display.  In the room parser */
-/* file, co-ordinates are set up on a 368x336 display.                       */
-/*****************************************************************************/
+/**
+ * Scales the y co-ordinates to that of the new display.  In the room parser
+ * file, co-ordinates are set up on a 368x336 display.
+ */
 uint16 Utils::scaleY(uint16 y) {
 	if (_vm->_isHiRes)
 		return (y + (y / 14));
@@ -58,9 +58,9 @@ uint16 Utils::scaleY(uint16 y) {
 		return ((y * 10) / 24);
 }
 
-/*****************************************************************************/
-/* Scales the VGA coords to SVGA if necessary; otherwise, returns VGA coords.*/
-/*****************************************************************************/
+/**
+ * Scales the VGA coords to SVGA if necessary; otherwise, returns VGA coords.
+ */
 int16 Utils::vgaScaleX(int16 x) {
 	if (_vm->_isHiRes)
 		return (x * 2);
@@ -68,9 +68,9 @@ int16 Utils::vgaScaleX(int16 x) {
 		return x;
 }
 
-/*****************************************************************************/
-/* Scales the VGA coords to SVGA if necessary; otherwise, returns VGA coords.*/
-/*****************************************************************************/
+/**
+ * Scales the VGA coords to SVGA if necessary; otherwise, returns VGA coords.
+ */
 int16 Utils::vgaScaleY(int16 y) {
 	if (_vm->_isHiRes)
 		return ((y * 12) / 5);
@@ -85,9 +85,9 @@ uint16 Utils::svgaCord(uint16 cord) {
 		return 0;
 }
 
-/*****************************************************************************/
-/* Converts SVGA coords to VGA if necessary, otherwise returns VGA coords.   */
-/*****************************************************************************/
+/**
+ * Converts SVGA coords to VGA if necessary, otherwise returns VGA coords.
+ */
 Common::Point Utils::vgaUnscale(Common::Point pos) {
 	Common::Point result;
 	if (_vm->_isHiRes) {
@@ -100,10 +100,10 @@ Common::Point Utils::vgaUnscale(Common::Point pos) {
 	return result;
 }
 
-/*****************************************************************************/
-/* Undiffs a piece of memory when header size is a byte, and copy/skip size  */
-/* is also a byte.                                                           */
-/*****************************************************************************/
+/**
+ * Undiffs a piece of memory when header size is a byte, and copy/skip size
+ * is also a byte.
+ */
 void Utils::unDiffByteByte(byte *dest, byte *diff) {
 	uint16 skip, copy;
 
@@ -130,10 +130,10 @@ void Utils::unDiffByteByte(byte *dest, byte *diff) {
 	}
 }
 
-/*****************************************************************************/
-/* Undiffs a piece of memory when header size is a byte, and copy/skip size  */
-/* is a word.                                                                */
-/*****************************************************************************/
+/**
+ * Undiffs a piece of memory when header size is a byte, and copy/skip size
+ * is a word.
+ */
 void Utils::unDiffByteWord(uint16 *dest, uint16 *diff) {
 	uint16 skip, copy;
 
@@ -186,10 +186,10 @@ void Utils::unDiffByteWord(uint16 *dest, uint16 *diff) {
 
 /*------------------------- unDiff Vertical Memory --------------------------*/
 
-/*****************************************************************************/
-/* Undiffs a piece of memory when header size is a byte, and copy/skip size  */
-/* is a byte.                                                                */
-/*****************************************************************************/
+/**
+ * Undiffs a piece of memory when header size is a byte, and copy/skip size
+ * is a byte.
+ */
 void Utils::VUnDiffByteByte(byte *dest, byte *diff, uint16 bytesPerRow) {
 	byte *curPtr;
 	uint16 skip, copy;
@@ -224,10 +224,10 @@ void Utils::VUnDiffByteByte(byte *dest, byte *diff, uint16 bytesPerRow) {
 	}
 }
 
-/*****************************************************************************/
-/* Undiffs a piece of memory when header size is a byte, and copy/skip size  */
-/* is a word.                                                                */
-/*****************************************************************************/
+/**
+ * Undiffs a piece of memory when header size is a byte, and copy/skip size
+ * is a word.
+ */
 void Utils::VUnDiffByteWord(uint16 *dest, uint16 *diff, uint16 bytesPerRow) {
 	uint16 *curPtr;
 	uint16 skip, copy;
@@ -264,10 +264,10 @@ void Utils::VUnDiffByteWord(uint16 *dest, uint16 *diff, uint16 bytesPerRow) {
 	}
 }
 
-/*****************************************************************************/
-/* Undiffs a piece of memory when header size is a byte, and copy/skip size  */
-/* is a long.                                                                */
-/*****************************************************************************/
+/**
+ * Undiffs a piece of memory when header size is a byte, and copy/skip size
+ * is a long.
+ */
 void Utils::VUnDiffByteLong(uint32 *dest, uint32 *diff, uint16 bytesPerRow) {
 	uint32 *_curPtr;
 	uint16 skip, copy;
@@ -307,9 +307,9 @@ void Utils::VUnDiffByteLong(uint32 *dest, uint32 *diff, uint16 bytesPerRow) {
 	}
 }
 
-/*****************************************************************************/
-/* Runlength decodes a chunk of memory.                                      */
-/*****************************************************************************/
+/**
+ * Runlength decodes a chunk of memory.
+ */
 void Utils::runLengthDecode(byte *dest, byte *source) {
 	int8 num;
 	int16 count;
@@ -338,9 +338,9 @@ void Utils::runLengthDecode(byte *dest, byte *source) {
 	}
 }
 
-/*****************************************************************************/
-/* Does a vertical run length decode.                                        */
-/*****************************************************************************/
+/**
+ * Does a vertical run length decode.
+ */
 void Utils::VRunLengthDecode(byte *dest, byte *source, uint16 bytesPerRow) {
 	int8 num;
 	int16 count;
@@ -379,9 +379,9 @@ void Utils::VRunLengthDecode(byte *dest, byte *source, uint16 bytesPerRow) {
 	}
 }
 
-/*****************************************************************************/
-/* Does the undiffing between the bitmaps.                                   */
-/*****************************************************************************/
+/**
+ * Does the undiffing between the bitmaps.
+ */
 void Utils::unDiff(byte *newBuf, byte *oldBuf, byte *diffData, uint16 bytesPerRow, bool isV) {
 	diffData++;
 	byte bufType = *diffData;

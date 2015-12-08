@@ -80,9 +80,9 @@ static uint16 mapScaleY(uint16 y) {
 		return ((y - 35) >> 1) - (y >> 6);
 }
 
-/*****************************************************************************/
-/* Loads in the map data.                                                    */
-/*****************************************************************************/
+/**
+ * Loads in the map data.
+ */
 static bool loadMapData() {
 	uint16 counter;
 
@@ -156,9 +156,9 @@ static void freeMapData() {
 	Maps = NULL;
 }
 
-/*****************************************************************************/
-/* Figures out what a room's coordinates should be.                          */
-/*****************************************************************************/
+/**
+ * Figures out what a room's coordinates should be.
+ */
 static void roomCoords(uint16 CurRoom, uint16 *x1, uint16 *y1, uint16 *x2, uint16 *y2) {
 	Image *curRoomImg = NULL;
 
@@ -193,9 +193,9 @@ static void roomCoords(uint16 CurRoom, uint16 *x1, uint16 *y1, uint16 *x2, uint1
 	}
 }
 
-/*****************************************************************************/
-/* Draws a room to the bitmap.                                               */
-/*****************************************************************************/
+/**
+ * Draws a room to the bitmap.
+ */
 static void drawRoom(uint16 CurRoom, bool drawx) {
 	uint16 x, y, xx, xy, offset;
 	uint32 flags;
@@ -328,9 +328,9 @@ static void drawRoom(uint16 CurRoom, bool drawx) {
 		XMark->drawImage(xx, xy);
 }
 
-/*****************************************************************************/
-/* Checks if a floor has been visitted.                                      */
-/*****************************************************************************/
+/**
+ * Checks if a floor has been visitted.
+ */
 static bool onFloor(uint16 Floor) {
 	for (uint16 i = 1; i <= MaxRooms; i++) {
 		if ((Maps[i].PageNumber == Floor) && g_lab->_roomsFound->in(i) && Maps[i].x)
@@ -340,9 +340,9 @@ static bool onFloor(uint16 Floor) {
 	return false;
 }
 
-/*****************************************************************************/
-/* Figures out which floor, if any, should be gone to if the up arrow is hit */
-/*****************************************************************************/
+/**
+ * Figures out which floor, if any, should be gone to if the up arrow is hit
+ */
 static void getUpFloor(uint16 *Floor, bool *isfloor) {
 	do {
 		*isfloor = true;
@@ -357,10 +357,10 @@ static void getUpFloor(uint16 *Floor, bool *isfloor) {
 	} while ((!onFloor(*Floor)) && (*Floor <= CARNIVAL));
 }
 
-/*****************************************************************************/
-/* Figures out which floor, if any, should be gone to if the down arrow is   */
-/* hit.                                                                      */
-/*****************************************************************************/
+/**
+ * Figures out which floor, if any, should be gone to if the down arrow is
+ * hit.
+ */
 static void getDownFloor(uint16 *Floor, bool *isfloor) {
 	do {
 		*isfloor = true;
@@ -388,9 +388,9 @@ static void getDownFloor(uint16 *Floor, bool *isfloor) {
 	} while ((!onFloor(*Floor)) && *Floor);
 }
 
-/*****************************************************************************/
-/* Draws the map                                                             */
-/*****************************************************************************/
+/**
+ * Draws the map
+ */
 void LabEngine::drawMap(uint16 CurRoom, uint16 CurMsg, uint16 Floor, bool fadeout, bool fadein) {
 	char *sptr;
 
@@ -468,9 +468,9 @@ void LabEngine::drawMap(uint16 CurRoom, uint16 CurMsg, uint16 Floor, bool fadeou
 	_event->mouseShow();
 }
 
-/*****************************************************************************/
-/* Processes the map.                                                        */
-/*****************************************************************************/
+/**
+ * Processes the map.
+ */
 void LabEngine::processMap(uint16 CurRoom) {
 	uint32 Class, place = 1;
 	uint16 Code, Qualifier, MouseX, MouseY, GadgetID, CurFloor, OldFloor, OldMsg, CurMsg, x1, y1, x2, y2;
@@ -629,9 +629,9 @@ void LabEngine::processMap(uint16 CurRoom) {
 	}
 }
 
-/*****************************************************************************/
-/* Does the map processing.                                                  */
-/*****************************************************************************/
+/**
+ * Does the map processing.
+ */
 void LabEngine::doMap(uint16 CurRoom) {
 	static uint16 AmigaMapPalette[] = {
 		0x0BA8, 0x0C11, 0x0A74, 0x0076,

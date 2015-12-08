@@ -86,9 +86,9 @@ static char initcolors[] = { '\x00', '\x00', '\x00', '\x30',
 							 '\x24', '\x24', '\x2c', '\x2c',
 							 '\x2c', '\x08', '\x08', '\x08'};
 
-/******************************************************************************/
-/* Draws the message for the room.                                            */
-/******************************************************************************/
+/**
+ * Draws the message for the room.
+ */
 void LabEngine::drawRoomMessage(uint16 curInv, CloseDataPtr closePtr) {
 	if (_lastTooLong) {
 		_lastTooLong = false;
@@ -124,10 +124,9 @@ void LabEngine::freeScreens() {
 	}
 }
 
-
-/******************************************************************************/
-/* Permanently flips the imagery of a gadget.                                 */
-/******************************************************************************/
+/**
+ * Permanently flips the imagery of a gadget.
+ */
 void LabEngine::perFlipGadget(uint16 gadgetId) {
 	for (GadgetList::iterator gadget = _moveGadgetList.begin(); gadget != _moveGadgetList.end(); ++gadget) {
 		Gadget *topGadget = *gadget;
@@ -147,9 +146,9 @@ void LabEngine::perFlipGadget(uint16 gadgetId) {
 	}
 }
 
-/******************************************************************************/
-/* Eats all the available messages.                                           */
-/******************************************************************************/
+/**
+ * Eats all the available messages.
+ */
 void LabEngine::eatMessages() {
 	IntuiMessage *msg;
 
@@ -158,9 +157,9 @@ void LabEngine::eatMessages() {
 	} while (msg);
 }
 
-/******************************************************************************/
-/* Checks whether the close up is one of the special case closeups.           */
-/******************************************************************************/
+/**
+ * Checks whether the close up is one of the special case closeups.
+ */
 bool LabEngine::doCloseUp(CloseDataPtr closePtr) {
 	if (closePtr == NULL)
 		return false;
@@ -216,9 +215,9 @@ bool LabEngine::doCloseUp(CloseDataPtr closePtr) {
 	return true;
 }
 
-/******************************************************************************/
-/* Gets the current inventory name.                                           */
-/******************************************************************************/
+/**
+ * Gets the current inventory name.
+ */
 const char *LabEngine::getInvName(uint16 curInv) {
 	if (_mainDisplay)
 		return _inventory[curInv]._bitmapName;
@@ -246,9 +245,9 @@ const char *LabEngine::getInvName(uint16 curInv) {
 	return _inventory[curInv]._bitmapName;
 }
 
-/******************************************************************************/
-/* Turns the interface off.                                                   */
-/******************************************************************************/
+/**
+ * Turns the interface off.
+ */
 void LabEngine::interfaceOff() {
 	if (!_interfaceOff) {
 		_event->attachGadgetList(NULL);
@@ -257,9 +256,9 @@ void LabEngine::interfaceOff() {
 	}
 }
 
-/******************************************************************************/
-/* Turns the interface on.                                                    */
-/******************************************************************************/
+/**
+ * Turns the interface on.
+ */
 void LabEngine::interfaceOn() {
 	if (_interfaceOff) {
 		_interfaceOff = false;
@@ -274,9 +273,9 @@ void LabEngine::interfaceOn() {
 		_event->attachGadgetList(&_moveGadgetList);
 }
 
-/******************************************************************************/
-/* If the user hits the "Use" gadget; things that can get used on themselves. */
-/******************************************************************************/
+/**
+ * If the user hits the "Use" gadget; things that can get used on themselves.
+ */
 bool LabEngine::doUse(uint16 curInv) {
 	if (curInv == MAPNUM) {                  /* LAB: Labyrinth specific */
 		drawStaticMessage(kTextUseMap);
@@ -336,9 +335,9 @@ bool LabEngine::doUse(uint16 curInv) {
 	return true;
 }
 
-/******************************************************************************/
-/* Decrements the current inventory number.                                   */
-/******************************************************************************/
+/**
+ * Decrements the current inventory number.
+ */
 void LabEngine::decIncInv(uint16 *curInv, bool decreaseFl) {
 	interfaceOff();
 
@@ -379,9 +378,9 @@ void LabEngine::decIncInv(uint16 *curInv, bool decreaseFl) {
 	}
 }
 
-/******************************************************************************/
-/* The main game loop                                                         */
-/******************************************************************************/
+/**
+ * The main game loop.
+ */
 void LabEngine::mainGameLoop() {
 	uint16 actionMode = 4;
 	uint16 curInv = MAPNUM;
@@ -1075,9 +1074,9 @@ void LabEngine::go() {
 	_music->freeMusic();
 }
 
-/*****************************************************************************/
-/* New code to allow quick(er) return navigation in game.                    */
-/*****************************************************************************/
+/**
+ * New code to allow quick(er) return navigation in game.
+ */
 int LabEngine::followCrumbs() {
 	// NORTH, SOUTH, EAST, WEST
 	static int movement[4][4] = {

@@ -33,9 +33,9 @@
 
 namespace Lab {
 
-/*****************************************************************************/
-/* Reads in an image from disk.                                              */
-/*****************************************************************************/
+/**
+ * Reads in an image from disk.
+ */
 Image::Image(Common::File *s) {
 	_width = s->readUint16LE();
 	_height = s->readUint16LE();
@@ -49,9 +49,9 @@ Image::Image(Common::File *s) {
 	s->read(_imageData, size);
 }
 
-/*****************************************************************************/
-/* Blits a piece of one image to another.                                    */
-/*****************************************************************************/
+/**
+ * Blits a piece of one image to another.
+ */
 void Image::blitBitmap(uint16 xs, uint16 ys, Image *imDest,
 	uint16 xd, uint16 yd, uint16 width, uint16 height, byte masked) {
 	int w = width;
@@ -96,23 +96,23 @@ void Image::blitBitmap(uint16 xs, uint16 ys, Image *imDest,
 	}
 }
 
-/*****************************************************************************/
-/* Draws an image to the screen.                                             */
-/*****************************************************************************/
+/**
+ * Draws an image to the screen.
+ */
 void Image::drawImage(uint16 x, uint16 y) {
 	blitBitmap(0, 0, NULL, x, y, _width, _height, false);
 }
 
-/*****************************************************************************/
-/* Draws an image to the screen with transparency.                           */
-/*****************************************************************************/
+/**
+ * Draws an image to the screen with transparency.
+ */
 void Image::drawMaskImage(uint16 x, uint16 y) {
 	blitBitmap(0, 0, NULL, x, y, _width, _height, true);
 }
 
-/*****************************************************************************/
-/* Reads an image from the screen.                                           */
-/*****************************************************************************/
+/**
+ * Reads an image from the screen.
+ */
 void Image::readScreenImage(uint16 x, uint16 y) {
 	int w = _width;
 	int h = _height;

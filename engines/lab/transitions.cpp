@@ -34,9 +34,9 @@
 
 namespace Lab {
 
-/*****************************************************************************/
-/* Scrolls the display to black.                                             */
-/*****************************************************************************/
+/**
+ * Scrolls the display to black.
+ */
 void DisplayMan::doScrollBlack() {
 	byte *tempmem;
 	Image im;
@@ -132,9 +132,9 @@ void DisplayMan::copyPage(uint16 width, uint16 height, uint16 nheight, uint16 st
 	}
 }
 
-/*****************************************************************************/
-/* Scrolls the display to a new picture from a black screen.                 */
-/*****************************************************************************/
+/**
+ * Scrolls the display to a new picture from a black screen.
+ */
 void DisplayMan::doScrollWipe(char *filename) {
 	uint16 startline = 0, onrow = 0;
 
@@ -189,9 +189,9 @@ void DisplayMan::doScrollWipe(char *filename) {
 	_vm->_event->mouseShow();
 }
 
-/*****************************************************************************/
-/* Does the scroll bounce.  Assumes bitmap already in memory.                */
-/*****************************************************************************/
+/**
+ * Does the scroll bounce.  Assumes bitmap already in memory.
+ */
 void DisplayMan::doScrollBounce() {
 	const uint16 *newby, *newby1;
 
@@ -235,9 +235,9 @@ void DisplayMan::doScrollBounce() {
 	_vm->_event->mouseShow();
 }
 
-/*****************************************************************************/
-/* Does the transporter wipe.                                                */
-/*****************************************************************************/
+/**
+ * Does the transporter wipe.
+ */
 void DisplayMan::doTransWipe(CloseDataPtr *cPtr, char *filename) {
 	uint16 lastY, curY, linesdone = 0, lineslast;
 	Image imSource, imDest;
@@ -318,9 +318,9 @@ void DisplayMan::doTransWipe(CloseDataPtr *cPtr, char *filename) {
 	}	// for j
 }
 
-/*****************************************************************************/
-/* Does a certain number of pre-programmed wipes.                            */
-/*****************************************************************************/
+/**
+ * Does a certain number of pre-programmed wipes.
+ */
 void DisplayMan::doTransition(TransitionType transitionType, CloseDataPtr *cPtr, char *filename) {
 	switch (transitionType) {
 	case kTransitionWipe:
@@ -348,9 +348,9 @@ void DisplayMan::doTransition(TransitionType transitionType, CloseDataPtr *cPtr,
 	}
 }
 
-/*****************************************************************************/
-/* Changes the front screen to black.                                        */
-/*****************************************************************************/
+/**
+ * Changes the front screen to black.
+ */
 void DisplayMan::blackScreen() {
 	byte pal[256 * 3];
 	memset(pal, 0, 248 * 3);
@@ -359,18 +359,18 @@ void DisplayMan::blackScreen() {
 	g_system->delayMillis(32);
 }
 
-/*****************************************************************************/
-/* Changes the front screen to white.                                        */
-/*****************************************************************************/
+/**
+ * Changes the front screen to white.
+ */
 void DisplayMan::whiteScreen() {
 	byte pal[256 * 3];
 	memset(pal, 255, 248 * 3);
 	writeColorRegs(pal, 8, 248);
 }
 
-/*****************************************************************************/
-/* Changes the entire screen to black.                                       */
-/*****************************************************************************/
+/**
+ * Changes the entire screen to black.
+*/
 void DisplayMan::blackAllScreen() {
 	byte pal[256 * 3];
 	memset(pal, 0, 256 * 3);
@@ -379,11 +379,11 @@ void DisplayMan::blackAllScreen() {
 	g_system->delayMillis(32);
 }
 
-/*****************************************************************************/
-/* Scrolls the display in the x direction by blitting.                       */
-/* The _tempScrollData variable must be initialized to some memory, or this   */
-/* function will fail.                                                       */
-/*****************************************************************************/
+/**
+ * Scrolls the display in the x direction by blitting.
+ * The _tempScrollData variable must be initialized to some memory, or this
+ * function will fail.
+ */
 void DisplayMan::scrollDisplayX(int16 dx, uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
 	Image im;
 
@@ -405,9 +405,9 @@ void DisplayMan::scrollDisplayX(int16 dx, uint16 x1, uint16 y1, uint16 x2, uint1
 	rectFill(x1, y1, x1 + dx - 1, y2);
 }
 
-/*****************************************************************************/
-/* Scrolls the display in the y direction by blitting.                       */
-/*****************************************************************************/
+/**
+ * Scrolls the display in the y direction by blitting.
+ */
 void DisplayMan::scrollDisplayY(int16 dy, uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
 	Image im;
 
@@ -429,9 +429,9 @@ void DisplayMan::scrollDisplayY(int16 dy, uint16 x1, uint16 y1, uint16 x2, uint1
 	rectFill(x1, y1, x2, y1 + dy - 1);
 }
 
-/*****************************************************************************/
-/* Does the fading of the Palette on the screen.                             */
-/*****************************************************************************/
+/**
+ * Does the fading of the Palette on the screen.
+ */
 uint16 DisplayMan::fadeNumIn(uint16 num, uint16 res, uint16 counter) {
 	return (num - ((((int32)(15 - counter)) * ((int32)(num - res))) / 15));
 }
