@@ -28,8 +28,8 @@
  *
  */
 
-#ifndef LAB_LABFUN_H
-#define LAB_LABFUN_H
+#ifndef LAB_SAVEGAME_H
+#define LAB_SAVEGAME_H
 
 namespace Lab {
 
@@ -42,14 +42,10 @@ struct SaveGameHeader {
 	uint16 _direction;
 };
 
-//--------------------------
-//----- From saveGame.c ----
-//--------------------------
-
 bool saveGame(uint16 Direction, uint16 Quarters, int slot, Common::String desc);
 bool loadGame(uint16 *Direction, uint16 *Quarters, int slot);
 bool readSaveGameHeader(Common::InSaveFile *in, SaveGameHeader &header);
 
 } // End of namespace Lab
 
-#endif // LAB_LABFUN_H
+#endif // LAB_SAVEGAME_H
