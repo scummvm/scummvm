@@ -49,13 +49,16 @@ static Image *Map, *Room, *UpArrowRoom, *DownArrowRoom, *Bridge,
 static uint16 MaxRooms;
 static MapData *Maps;
 
-#define LOWERFLOOR     1
-#define MIDDLEFLOOR    2
-#define UPPERFLOOR     3
-#define MEDMAZEFLOOR   4
-#define HEDGEMAZEFLOOR 5
-#define SURMAZEFLOOR   6
-#define CARNIVAL       7
+enum MapFloor {
+	kFloorNone,
+	kFloorLower,
+	kFloorMiddle,
+	kFloorUpper,
+	kFloorMedMaze,
+	kFloorHedgeMaze,
+	kFloorSurMaze,
+	kFloorCarnival
+};
 
 static uint16 mapScaleX(uint16 x) {
 	if (g_lab->_isHiRes)
@@ -165,9 +168,9 @@ static void roomCoords(uint16 CurRoom, uint16 *x1, uint16 *y1, uint16 *x2, uint1
 }
 
 /**
- * Draws a room to the bitmap.
+ * Draws a room map.
  */
-static void drawRoom(uint16 CurRoom, bool drawx) {
+static void drawRoomMap(uint16 CurRoom, bool drawx) {
 	uint16 x, y, xx, xy, offset;
 	uint32 flags;
 
@@ -318,14 +321,14 @@ static void getUpFloor(uint16 *Floor, bool *isfloor) {
 	do {
 		*isfloor = true;
 
-		if (*Floor < UPPERFLOOR)
+		if (*Floor < kFloorUpper)
 			(*Floor)++;
 		else {
-			*Floor   = CARNIVAL + 1;
+			*Floor   = kFloorCarnival + 1;
 			*isfloor = false;
 			return;
 		}
-	} while ((!onFloor(*Floor)) && (*Floor <= CARNIVAL));
+	} while ((!onFloor(*Floor)) && (*Floor <= kFloorCarnival));
 }
 
 /**
@@ -336,18 +339,18 @@ static void getDownFloor(uint16 *Floor, bool *isfloor) {
 	do {
 		*isfloor = true;
 
-		if ((*Floor == LOWERFLOOR) || (*Floor == 0)) {
+		if ((*Floor == kFloorLower) || (*Floor == 0)) {
 			*Floor   = 0;
 			*isfloor = false;
 			return;
-		} else if (*Floor > UPPERFLOOR) {
+		} else if (*Floor > kFloorUpper) {
 			// Labyrinth specific code
-			if (*Floor == HEDGEMAZEFLOOR)
-				*Floor = UPPERFLOOR;
-			else if ((*Floor == CARNIVAL) || (*Floor == MEDMAZEFLOOR))
-				*Floor = MIDDLEFLOOR;
-			else if (*Floor == SURMAZEFLOOR)
-				*Floor = LOWERFLOOR;
+			if (*Floor == kFloorHedgeMaze)
+				*Floor = kFloorUpper;
+			else if ((*Floor == kFloorCarnival) || (*Floor == kFloorMedMaze))
+				*Floor = kFloorMiddle;
+			else if (*Floor == kFloorSurMaze)
+				*Floor = kFloorLower;
 			else {
 				*Floor = 0;
 				*isfloor = false;
@@ -381,7 +384,7 @@ void LabEngine::drawMap(uint16 CurRoom, uint16 CurMsg, uint16 Floor, bool fadeou
 
 	for (uint16 i = 1; i <= MaxRooms; i++) {
 		if ((Maps[i].PageNumber == Floor) && _roomsFound->in(i) && Maps[i].x) {
-			drawRoom(i, (bool)(i == CurRoom));
+			drawRoomMap(i, (bool)(i == CurRoom));
 			_music->updateMusic();
 		}
 	}
@@ -390,7 +393,7 @@ void LabEngine::drawMap(uint16 CurRoom, uint16 CurMsg, uint16 Floor, bool fadeou
 	// NOTE: this here on purpose just in case there's some weird
 	// condition, like the surreal maze where there are no rooms
 	if ((Maps[CurRoom].PageNumber == Floor) && _roomsFound->in(CurRoom) && Maps[CurRoom].x)
-		drawRoom(CurRoom, true);
+		drawRoomMap(CurRoom, true);
 
 	tempfloor = Floor;
 	getUpFloor(&tempfloor, &noOverlay);
@@ -412,24 +415,24 @@ void LabEngine::drawMap(uint16 CurRoom, uint16 CurMsg, uint16 Floor, bool fadeou
 		disableGadget(downGadget, 12);
 
 	// Labyrinth specific code
-	if (Floor == LOWERFLOOR) {
-		if (onFloor(SURMAZEFLOOR))
+	if (Floor == kFloorLower) {
+		if (onFloor(kFloorSurMaze))
 			Maze->drawImage(mapScaleX(538), mapScaleY(277));
-	} else if (Floor == MIDDLEFLOOR) {
-		if (onFloor(CARNIVAL))
+	} else if (Floor == kFloorMiddle) {
+		if (onFloor(kFloorCarnival))
 			Maze->drawImage(mapScaleX(358), mapScaleY(72));
 
-		if (onFloor(MEDMAZEFLOOR))
+		if (onFloor(kFloorMedMaze))
 			Maze->drawImage(mapScaleX(557), mapScaleY(325));
-	} else if (Floor == UPPERFLOOR) {
-		if (onFloor(HEDGEMAZEFLOOR))
+	} else if (Floor == kFloorUpper) {
+		if (onFloor(kFloorHedgeMaze))
 			HugeMaze->drawImage(mapScaleX(524), mapScaleY(97));
-	} else if (Floor == SURMAZEFLOOR) {
+	} else if (Floor == kFloorSurMaze) {
 		sptr = (char *)_resource->getStaticText(kTextSurmazeMessage).c_str();
 		_graphics->flowText(_msgFont, 0, 7, 0, true, true, true, true, mapScaleX(360), 0, mapScaleX(660), mapScaleY(450), sptr);
 	}
 
-	if (Floor >= LOWERFLOOR && Floor <= CARNIVAL) {
+	if (Floor >= kFloorLower && Floor <= kFloorCarnival) {
 		sptr = (char *)_resource->getStaticText(Floor - 1).c_str();
 		_graphics->flowTextScaled(_msgFont, 0, 5, 3, true, true, true, true, 14, 75, 134, 97, sptr);
 	}
@@ -529,34 +532,34 @@ void LabEngine::processMap(uint16 CurRoom) {
 						CurFloor = OldFloor;
 				}
 			} else if ((Class == MOUSEBUTTONS) && (IEQUALIFIER_LEFTBUTTON & Qualifier)) {
-				if ((CurFloor == LOWERFLOOR) && (MouseX >= mapScaleX(538)) && (MouseY >= mapScaleY(277))
+				if ((CurFloor == kFloorLower) && (MouseX >= mapScaleX(538)) && (MouseY >= mapScaleY(277))
 					  && (MouseX <= mapScaleX(633)) && (MouseY <= mapScaleY(352))
-					  && onFloor(SURMAZEFLOOR)) {
-					CurFloor = SURMAZEFLOOR;
+					  && onFloor(kFloorSurMaze)) {
+					CurFloor = kFloorSurMaze;
 
 					_graphics->fade(false, 0);
 					drawMap(CurRoom, CurMsg, CurFloor, false, false);
 					_graphics->fade(true, 0);
-				} else if ((CurFloor == MIDDLEFLOOR) && (MouseX >= mapScaleX(358)) && (MouseY >= mapScaleY(71))
+				} else if ((CurFloor == kFloorMiddle) && (MouseX >= mapScaleX(358)) && (MouseY >= mapScaleY(71))
 							  && (MouseX <= mapScaleX(452)) && (MouseY <= mapScaleY(147))
-							  && onFloor(CARNIVAL)) {
-					CurFloor = CARNIVAL;
+							  && onFloor(kFloorCarnival)) {
+					CurFloor = kFloorCarnival;
 
 					_graphics->fade(false, 0);
 					drawMap(CurRoom, CurMsg, CurFloor, false, false);
 					_graphics->fade(true, 0);
-				} else if ((CurFloor == MIDDLEFLOOR) && (MouseX >= mapScaleX(557)) && (MouseY >= mapScaleY(325))
+				} else if ((CurFloor == kFloorMiddle) && (MouseX >= mapScaleX(557)) && (MouseY >= mapScaleY(325))
 						  && (MouseX <= mapScaleX(653)) && (MouseY <= mapScaleY(401))
-						  && onFloor(MEDMAZEFLOOR)) {
-					CurFloor = MEDMAZEFLOOR;
+						  && onFloor(kFloorMedMaze)) {
+					CurFloor = kFloorMedMaze;
 
 					_graphics->fade(false, 0);
 					drawMap(CurRoom, CurMsg, CurFloor, false, false);
 					_graphics->fade(true, 0);
-				} else if ((CurFloor == UPPERFLOOR) && (MouseX >= mapScaleX(524)) && (MouseY >=  mapScaleY(97))
+				} else if ((CurFloor == kFloorUpper) && (MouseX >= mapScaleX(524)) && (MouseY >=  mapScaleY(97))
 						  && (MouseX <= mapScaleX(645)) && (MouseY <= mapScaleY(207))
-						  && onFloor(HEDGEMAZEFLOOR)) {
-					CurFloor = HEDGEMAZEFLOOR;
+						  && onFloor(kFloorHedgeMaze)) {
+					CurFloor = kFloorHedgeMaze;
 
 					_graphics->fade(false, 0);
 					drawMap(CurRoom, CurMsg, CurFloor, false, false);
@@ -586,7 +589,7 @@ void LabEngine::processMap(uint16 CurRoom) {
 							_graphics->flowTextScaled(_msgFont, 0, 5, 3, true, true, true, true, 14, 148, 134, 186, sptr);
 
 							if (Maps[OldMsg].PageNumber == CurFloor)
-								drawRoom(OldMsg, (bool)(OldMsg == CurRoom));
+								drawRoomMap(OldMsg, (bool)(OldMsg == CurRoom));
 
 							roomCoords(CurMsg, &x1, &y1, &x2, &y2);
 							x1 = (x1 + x2) / 2;
