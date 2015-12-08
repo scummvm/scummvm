@@ -28,8 +28,12 @@
  *
  */
 
+#include "common/file.h"
+
 #include "lab/lab.h"
+
 #include "lab/labsets.h"
+#include "lab/resource.h"
 
 namespace Lab {
 

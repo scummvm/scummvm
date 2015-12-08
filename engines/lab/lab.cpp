@@ -29,13 +29,16 @@
  */
 
 #include "common/debug-channels.h"
+#include "common/error.h"
 
 #include "engines/util.h"
 #include "gui/message.h"
 
 #include "lab/lab.h"
+
 #include "lab/music.h"
 #include "lab/image.h"
+#include "lab/resource.h"
 #include "lab/utils.h"
 
 namespace Lab {

@@ -28,6 +28,8 @@
  *
  */
 
+#include "common/file.h"
+
 #include "lab/lab.h"
 #include "lab/image.h"
 

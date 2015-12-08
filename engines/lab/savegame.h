@@ -31,6 +31,8 @@
 #ifndef LAB_SAVEGAME_H
 #define LAB_SAVEGAME_H
 
+#include "common/savefile.h"
+
 namespace Lab {
 
 class LabEngine;

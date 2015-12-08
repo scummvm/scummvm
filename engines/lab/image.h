@@ -31,6 +31,10 @@
 #ifndef LAB_IMAGE_H
 #define LAB_IMAGE_H
 
+namespace Common {
+	class File;
+}
+
 namespace Lab {
 
 class Image {

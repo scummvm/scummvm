@@ -31,6 +31,7 @@
 #ifndef LAB_MUSIC_H
 #define LAB_MUSIC_H
 
+#include "common/file.h"
 #include "audio/mixer.h"
 #include "audio/audiostream.h"
 
