@@ -243,7 +243,7 @@ void LabEngine::showTile(const char *filename, bool showsolution) {
 /*****************************************************************************/
 void LabEngine::doTileScroll(uint16 col, uint16 row, uint16 scrolltype) {
 	int16 dX = 0, dY = 0, dx = 0, dy = 0, sx = 0, sy = 0;
-	uint16 last = 0, x1, y1;
+	uint16 last = 0;
 
 	if (scrolltype == LEFTSCROLL) {
 		dX = _utils->vgaScaleX(5);
@@ -267,8 +267,8 @@ void LabEngine::doTileScroll(uint16 col, uint16 row, uint16 scrolltype) {
 
 	sx += _utils->svgaCord(2);
 
-	x1 = _utils->vgaScaleX(100) + (col * _utils->vgaScaleX(30)) + dx;
-	y1 = _utils->vgaScaleY(25) + (row * _utils->vgaScaleY(25)) + dy;
+	uint16 x1 = _utils->vgaScaleX(100) + (col * _utils->vgaScaleX(30)) + dx;
+	uint16 y1 = _utils->vgaScaleY(25) + (row * _utils->vgaScaleY(25)) + dy;
 
 	for (uint16 i = 0; i < last; i++) {
 		waitTOF();
