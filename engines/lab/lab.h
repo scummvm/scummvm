@@ -32,12 +32,15 @@
 #define LAB_H
 
 #include "common/system.h"
+#include "common/events.h"
 
 #include "engines/engine.h"
+#include "lab/anim.h"
 #include "lab/labfun.h"
+#include "lab/processroom.h"
 #include "lab/interface.h"
 #include "lab/eventman.h"
-//#include "lab/music.h"
+#include "lab/dispman.h"
 #include "lab/resource.h"
 #include "lab/anim.h"
 #include "lab/labsets.h"

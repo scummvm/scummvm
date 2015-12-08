@@ -31,12 +31,10 @@
 #ifndef LAB_DISPMAN_H
 #define LAB_DISPMAN_H
 
-#include "lab/anim.h"
-#include "lab/processroom.h"
-
 namespace Lab {
 
 class LabEngine;
+class Image;
 
 struct TextFont {
 	uint32 _dataLength;

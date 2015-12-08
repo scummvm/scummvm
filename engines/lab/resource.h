@@ -31,8 +31,6 @@
 #ifndef LAB_RESOURCE_H
 #define LAB_RESOURCE_H
 
-#include "lab/dispman.h"
-
 namespace Lab {
 
 enum StaticText {

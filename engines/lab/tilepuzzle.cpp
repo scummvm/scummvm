@@ -30,6 +30,7 @@
 
 #include "lab/lab.h"
 #include "gui/message.h"
+#include "lab/image.h"
 
 namespace Lab {
 

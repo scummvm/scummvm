@@ -31,7 +31,6 @@
 #ifndef LAB_LABFUN_H
 #define LAB_LABFUN_H
 
-#include "common/events.h"
 #include "common/file.h"
 #include "common/savefile.h"
 #include "engines/savestate.h"
