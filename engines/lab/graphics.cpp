@@ -426,9 +426,8 @@ void DisplayMan::drawPanel() {
 /**
  * Sets up the Labyrinth screens, and opens up the initial windows.
  */
-bool DisplayMan::setUpScreens() {
-	if (!createScreen(_vm->_isHiRes))
-		return false;
+void DisplayMan::setUpScreens() {
+	createScreen(_vm->_isHiRes);
 
 	Common::File *controlFile = _vm->_resource->openDataFile("P:Control");
 	for (uint16 i = 0; i < 20; i++)
@@ -475,8 +474,6 @@ bool DisplayMan::setUpScreens() {
 	}
 
 	delete invFile;
-
-	return true;
 }
 
 /**
@@ -543,7 +540,7 @@ void DisplayMan::screenUpdate() {
 /**
  * Sets up either a low-res or a high-res 256 color screen.
  */
-bool DisplayMan::createScreen(bool hiRes) {
+void DisplayMan::createScreen(bool hiRes) {
 	if (hiRes) {
 		_screenWidth  = 640;
 		_screenHeight = 480;
@@ -553,8 +550,6 @@ bool DisplayMan::createScreen(bool hiRes) {
 	}
 	_screenBytesPerPage = _screenWidth * _screenHeight;
 	_displayBuffer = new byte[_screenBytesPerPage];	// FIXME: Memory leak!
-
-	return true;
 }
 
 /**

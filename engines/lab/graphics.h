@@ -89,7 +89,7 @@ public:
 	void blackAllScreen();
 	void createBox(uint16 y2);
 	void drawPanel();
-	bool setUpScreens();
+	void setUpScreens();
 	int32 longDrawMessage(const char *str);
 	void drawMessage(const char *str);
 	void setAPen(byte pennum);
@@ -137,7 +137,7 @@ public:
 	void drawHLine(uint16 x, uint16 y1, uint16 y2);
 	void drawVLine(uint16 x1, uint16 y, uint16 x2);
 	void screenUpdate();
-	bool createScreen(bool HiRes);
+	void createScreen(bool HiRes);
 	void setAmigaPal(uint16 *pal, uint16 numColors);
 	void writeColorRegs(byte *buf, uint16 first, uint16 numreg);
 	void setPalette(void *cmap, uint16 numcolors);
