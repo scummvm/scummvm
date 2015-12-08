@@ -44,9 +44,6 @@
 
 namespace Lab {
 
-// Global parser data
-bool ispal = false;
-
 // LAB: Labyrinth specific code for the special puzzles
 #define SPECIALLOCK         100
 #define SPECIALBRICK        101
@@ -89,7 +86,7 @@ static char initcolors[] = { '\x00', '\x00', '\x00', '\x30',
 							 '\x10', '\x14', '\x14', '\x14',
 							 '\x20', '\x20', '\x20', '\x24',
 							 '\x24', '\x24', '\x2c', '\x2c',
-							 '\x2c', '\x08', '\x08', '\x08'};
+							 '\x2c', '\x08', '\x08', '\x08' };
 
 /**
  * Draws the message for the room.
@@ -567,10 +564,8 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 qualifier, Comm
 
 	uint16 oldDirection = 0;
 	uint16 lastInv = MAPNUM;
-	CloseDataPtr oldcptr, tempcptr, hcptr = nullptr;
-	ViewData *vptr;
+	CloseDataPtr hcptr = nullptr;
 	bool doit;
-	uint16 newDir;
 
 	_anim->_doBlack = false;
 
@@ -742,7 +737,7 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 qualifier, Comm
 
 				oldDirection = _direction;
 
-				newDir = processArrow(_direction, gadgetId - 6);
+				uint16 newDir = processArrow(_direction, gadgetId - 6);
 				doTurn(_direction, newDir, &_cptr);
 				_anim->_doBlack = true;
 				_direction = newDir;
@@ -986,7 +981,7 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 qualifier, Comm
 				}
 			} else if (actionMode == 4) {
 				// Look at closeups
-				tempcptr = _cptr;
+				CloseDataPtr tempcptr = _cptr;
 				setCurClose(curPos, &tempcptr);
 
 				if (_cptr == tempcptr) {
@@ -1015,11 +1010,11 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 qualifier, Comm
 		mayShowCrumbIndicator();
 		_graphics->screenUpdate();
 	} else if (msgClass == DELTAMOVE) {
-		vptr = getViewData(_roomNum, _direction);
-		oldcptr = vptr->_closeUps;
+		ViewData *vptr = getViewData(_roomNum, _direction);
+		CloseDataPtr oldcptr = vptr->_closeUps;
 
 		if (hcptr == NULL) {
-			tempcptr = _cptr;
+			CloseDataPtr tempcptr = _cptr;
 			setCurClose(curPos, &tempcptr);
 
 			if ((tempcptr == NULL) || (tempcptr == _cptr)) {
