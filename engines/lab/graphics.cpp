@@ -138,8 +138,7 @@ void DisplayMan::freePict() {
 static void getWord(char *wordBuffer, const char *mainBuffer, uint16 *wordWidth) {
 	uint16 width = 0;
 
-	while ((mainBuffer[width] != ' ') && mainBuffer[width] &&
-	        (mainBuffer[width] != '\n')) {
+	while ((mainBuffer[width] != ' ') && mainBuffer[width] && (mainBuffer[width] != '\n')) {
 		wordBuffer[width] = mainBuffer[width];
 		width++;
 	}
@@ -190,16 +189,18 @@ void DisplayMan::getLine(TextFont *tf, char *lineBuffer, const char **mainBuffer
 /* Note: Every individual word MUST be int16 enough to fit on a line, and     */
 /* each line less than 255 characters.                                        */
 /******************************************************************************/
-uint32 DisplayMan::flowText(void *font,      /* the TextAttr pointer */
-                int16 spacing,          /* How much vertical spacing between the lines */
-                byte pencolor,         /* pen number to use for text */
-                byte backpen,          /* the background color */
-                bool fillback,                /* Whether to fill the background */
-                bool centerh,                 /* Whether to center the text horizontally */
-                bool centerv,                 /* Whether to center the text vertically */
-                bool output,                  /* Whether to output any text */
-                uint16 x1,               /* Cords */
-                uint16 y1, uint16 x2, uint16 y2, const char *str) { /* The text itself */
+uint32 DisplayMan::flowText(
+			void *font,            /* the TextAttr pointer */
+			int16 spacing,         /* How much vertical spacing between the lines */
+			byte pencolor,         /* pen number to use for text */
+			byte backpen,          /* the background color */
+			bool fillback,         /* Whether to fill the background */
+			bool centerh,          /* Whether to center the text horizontally */
+			bool centerv,          /* Whether to center the text vertically */
+			bool output,           /* Whether to output any text */
+			uint16 x1, uint16 y1,  /* Cords */
+			uint16 x2, uint16 y2,
+			const char *str) {     /* The text itself */
 	TextFont *_msgFont = (TextFont *)font;
 	char linebuffer[256];
 	const char *temp;
@@ -272,16 +273,18 @@ uint32 DisplayMan::flowTextScaled(void *font,      /* the TextAttr pointer */
 /******************************************************************************/
 /* Calls flowText, but flows it to memory.  Same restrictions as flowText.    */
 /******************************************************************************/
-uint32 DisplayMan::flowTextToMem(Image *destIm, void *font,     /* the TextAttr pointer */
-                     int16 spacing,          /* How much vertical spacing between the lines */
-                     byte pencolor,         /* pen number to use for text */
-                     byte backpen,          /* the background color */
-                     bool fillback,                /* Whether to fill the background */
-                     bool centerh,                 /* Whether to center the text horizontally */
-                     bool centerv,                 /* Whether to center the text vertically */
-                     bool output,                  /* Whether to output any text */
-                     uint16 x1,               /* Cords */
-                     uint16 y1, uint16 x2, uint16 y2, const char *str) { /* The text itself */
+uint32 DisplayMan::flowTextToMem(Image *destIm,
+			void *font,            /* the TextAttr pointer */
+			int16 spacing,         /* How much vertical spacing between the lines */
+			byte pencolor,         /* pen number to use for text */
+			byte backpen,          /* the background color */
+			bool fillback,         /* Whether to fill the background */
+			bool centerh,          /* Whether to center the text horizontally */
+			bool centerv,          /* Whether to center the text vertically */
+			bool output,           /* Whether to output any text */
+			uint16 x1, uint16 y1,  /* Cords */
+			uint16 x2, uint16 y2,
+			const char *str) {     /* The text itself */
 	uint32 res, vgabyte = _screenBytesPerPage;
 	byte *tmp = _currentDisplayBuffer;
 

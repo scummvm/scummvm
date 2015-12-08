@@ -56,7 +56,7 @@ void LabEngine::microDelay(uint32 secs, uint32 micros) {
 void LabEngine::getTime(uint32 *secs, uint32 *micros) {
 	uint32 t = g_system->getMillis();
 
-	*secs   = t / 1000;
+	*secs = t / 1000;
 	*micros = t % 1000;
 }
 
@@ -66,7 +66,7 @@ void LabEngine::getTime(uint32 *secs, uint32 *micros) {
 void LabEngine::addCurTime(uint32 sec, uint32 micros, uint32 *timeSec, uint32 *timeMicros) {
 	getTime(timeSec, timeMicros);
 
-	(*timeSec)    += sec;
+	(*timeSec) += sec;
 	(*timeMicros) += micros;
 
 	if (*timeMicros >= ONESECOND) {
@@ -80,7 +80,7 @@ void LabEngine::addCurTime(uint32 sec, uint32 micros, uint32 *timeSec, uint32 *t
 /* time2, returns 0.                                                         */
 /*****************************************************************************/
 void LabEngine::anyTimeDiff(uint32 sec1, uint32 micros1, uint32 sec2, uint32 micros2, uint32 *diffSecs, uint32 *diffMicros) {
-	*diffSecs   = 0;
+	*diffSecs = 0;
 	*diffMicros = 0;
 
 	if (sec1 > sec2)
@@ -89,10 +89,10 @@ void LabEngine::anyTimeDiff(uint32 sec1, uint32 micros1, uint32 sec2, uint32 mic
 		return;
 
 	if (micros1 > micros2) {
-		*diffSecs   = sec2 - sec1 - 1;
+		*diffSecs = sec2 - sec1 - 1;
 		*diffMicros = (ONESECOND - micros1) + micros2;
 	} else {
-		*diffSecs   = sec2 - sec1;
+		*diffSecs = sec2 - sec1;
 		*diffMicros = micros2 - micros1;
 	}
 }

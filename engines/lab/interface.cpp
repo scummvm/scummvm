@@ -113,8 +113,8 @@ Gadget *LabEngine::checkNumGadgetHit(GadgetList *gadgetList, uint16 key) {
 	for (GadgetList::iterator gadgetItr = gadgetList->begin(); gadgetItr != gadgetList->end(); ++gadgetItr) {
 		Gadget *gadget = *gadgetItr;
 		if ((gkey - 1 == gadget->_gadgetID || (gkey == 0 && gadget->_gadgetID == 9) ||
-			(gadget->_keyEquiv != 0 && makeGadgetKeyEquiv(key) == gadget->_keyEquiv))
-		        && !(GADGETOFF & gadget->_flags)) {
+			  (gadget->_keyEquiv != 0 && makeGadgetKeyEquiv(key) == gadget->_keyEquiv))
+			  && !(GADGETOFF & gadget->_flags)) {
 			_event->mouseHide();
 			gadget->_altImage->drawImage(gadget->x, gadget->y);
 			_event->mouseShow();

@@ -54,13 +54,12 @@ void Intro::introEatMessages() {
 			return;
 		else {
 			if (((msg->_msgClass == MOUSEBUTTONS) && (IEQUALIFIER_RBUTTON & msg->_qualifier)) ||
-			        ((msg->_msgClass == RAWKEY) && (msg->_code == 27))
+				  ((msg->_msgClass == RAWKEY) && (msg->_code == 27))
 				)
 				_quitIntro = true;
 		}
 	}
 }
-
 
 /*****************************************************************************/
 /* Reads in a picture.                                                       */
@@ -156,7 +155,7 @@ void Intro::doPictText(const char *filename, TextFont *msgFont, bool isScreen) {
 			code      = msg->_code;
 
 			if (((cls == MOUSEBUTTONS) && (IEQUALIFIER_RBUTTON & qualifier)) ||
-			        ((cls == RAWKEY) && (code == 27))) {
+				  ((cls == RAWKEY) && (code == 27))) {
 				_quitIntro = true;
 
 				if (isScreen)
@@ -278,8 +277,8 @@ void Intro::introSequence() {
 			break;
 
 		palette[i] = ((_vm->_anim->_diffPalette[i * 3] >> 2) << 8) +
-		             ((_vm->_anim->_diffPalette[i * 3 + 1] >> 2) << 4) +
-		              (_vm->_anim->_diffPalette[i * 3 + 2] >> 2);
+					((_vm->_anim->_diffPalette[i * 3 + 1] >> 2) << 4) +
+					(_vm->_anim->_diffPalette[i * 3 + 2] >> 2);
 	}
 
 	_vm->_music->updateMusic();
@@ -337,8 +336,8 @@ void Intro::introSequence() {
 
 	for (uint16 i = 0; i < 16; i++) {
 		palette[i] = ((_vm->_anim->_diffPalette[i * 3] >> 2) << 8) +
-		             ((_vm->_anim->_diffPalette[i * 3 + 1] >> 2) << 4) +
-		              (_vm->_anim->_diffPalette[i * 3 + 2] >> 2);
+					((_vm->_anim->_diffPalette[i * 3 + 1] >> 2) << 4) +
+					(_vm->_anim->_diffPalette[i * 3 + 2] >> 2);
 	}
 
 	doPictText("i.1", msgFont, true);

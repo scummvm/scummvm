@@ -452,8 +452,8 @@ void LabEngine::mainGameLoop() {
 					if ((_cptr->_closeUpType == SPECIALLOCK) && _mainDisplay)  /* LAB: Labyrinth specific code */
 						showCombination(_curFileName);
 					else if (((_cptr->_closeUpType == SPECIALBRICK)  ||
-					          (_cptr->_closeUpType == SPECIALBRICKNOMOUSE)) &&
-					         _mainDisplay) /* LAB: Labyrinth specific code */
+								  (_cptr->_closeUpType == SPECIALBRICKNOMOUSE)) &&
+								  _mainDisplay) /* LAB: Labyrinth specific code */
 						showTile(_curFileName, (bool)(_cptr->_closeUpType == SPECIALBRICKNOMOUSE));
 					else
 						_graphics->readPict(_curFileName, false);
@@ -558,7 +558,7 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 
 	if ((msgClass == RAWKEY) && (!_graphics->_longWinInFront)) {
 		if (code == 13) { /* The return key */
-			msgClass     = MOUSEBUTTONS;
+			msgClass = MOUSEBUTTONS;
 			Qualifier = IEQUALIFIER_LEFTBUTTON;
 			curPos = _event->getMousePos();
 		} else if (getPlatform() == Common::kPlatformWindows &&
@@ -568,8 +568,7 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 			_droppingCrumbs = true;
 			mayShowCrumbIndicator();
 			_graphics->screenUpdate();
-		} else if (code == 'f' || code == 'F' ||
-		         code == 'r' || code == 'R') {  /* Follow bread crumbs */
+		} else if (code == 'f' || code == 'F' || code == 'r' || code == 'R') {  /* Follow bread crumbs */
 			if (_droppingCrumbs) {
 				if (_numCrumbs > 0) {
 					_followingCrumbs = true;
@@ -599,8 +598,7 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 					_graphics->screenUpdate();
 				}
 			}
-		} else if ((code == 315) || (code == 'x') || (code == 'X')
-		         || (code == 'q') || (code == 'Q')) {  /* Quit? */
+		} else if ((code == 315) || (code == 'x') || (code == 'X') || (code == 'q') || (code == 'Q')) {  /* Quit? */
 			_graphics->_doNotDrawMessage = false;
 			_graphics->drawMessage("Do you want to quit? (Y/N)");
 			doit = false;
@@ -645,10 +643,9 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 	}
 
 	if (_graphics->_longWinInFront) {
-		if ((msgClass == RAWKEY) ||
-		        ((msgClass == MOUSEBUTTONS) &&
-		         ((IEQUALIFIER_LEFTBUTTON & Qualifier) ||
-		          (IEQUALIFIER_RBUTTON & Qualifier)))) {
+		if ((msgClass == RAWKEY) || ((msgClass == MOUSEBUTTONS) &&
+			  ((IEQUALIFIER_LEFTBUTTON & Qualifier) ||
+				(IEQUALIFIER_RBUTTON & Qualifier)))) {
 			_graphics->_longWinInFront = false;
 			_graphics->_doNotDrawMessage = false;
 			_graphics->drawPanel();
@@ -857,8 +854,7 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 					curInv++;
 			}
 
-			if ((curInv <= _numInv) && _conditions->in(curInv) &&
-			        _inventory[curInv]._bitmapName)
+			if ((curInv <= _numInv) && _conditions->in(curInv) && _inventory[curInv]._bitmapName)
 				_nextFileName = getInvName(curInv);
 
 			_graphics->screenUpdate();
@@ -944,8 +940,8 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 				else if (curPos.y < (_utils->vgaScaleY(149) + _utils->svgaCord(2)))
 					drawStaticMessage(kTextNothing);
 			} else if ((actionMode == 1) /* Manipulate an object */  ||
-			         (actionMode == 2) /* Open up a "door" */      ||
-			         (actionMode == 3)) { /* Close a "door" */
+						  (actionMode == 2) /* Open up a "door" */      ||
+						  (actionMode == 3)) { /* Close a "door" */
 				if (doActionRule(curPos, actionMode, _roomNum, &_cptr))
 					_curFileName = _newFileName;
 				else if (!doActionRule(curPos, actionMode, 0, &_cptr)) {
@@ -967,8 +963,7 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 						drawStaticMessage(kTextNothing);
 				} else if (curPos.y < (_utils->vgaScaleY(149) + _utils->svgaCord(2)))
 					drawStaticMessage(kTextNothing);
-			} else if ((actionMode == 5)  &&
-			         _conditions->in(curInv)) { /* Use an item on something else */
+			} else if ((actionMode == 5)  && _conditions->in(curInv)) { /* Use an item on something else */
 				if (doOperateRule(curPos.x, curPos.y, curInv, &_cptr)) {
 					_curFileName = _newFileName;
 

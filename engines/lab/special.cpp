@@ -62,12 +62,12 @@ Image *MonButton;
 #define INCL(BITSET,BIT) ((BITSET) |= (BIT))
 #define SETBIT(BITSET,BITNUM)   INCL(BITSET, (1 << (BITNUM)))
 #define INBIT(BITSET,BITNUM)    ( ((1 << (BITNUM)) & (BITSET)) > 0 )
-#define BRIDGE0   148
-#define BRIDGE1   104
-#define DIRTY     175
-#define NONEWS    135
-#define NOCLEAN   152
-#define QUARTERNUM           30
+#define BRIDGE0     148
+#define BRIDGE1     104
+#define DIRTY       175
+#define NONEWS      135
+#define NOCLEAN     152
+#define QUARTERNUM  30
 
 
 static byte *loadBackPict(const char *fileName, bool tomem) {
@@ -83,8 +83,8 @@ static byte *loadBackPict(const char *fileName, bool tomem) {
 
 	for (uint16 i = 0; i < 16; i++) {
 		hipal[i] = ((g_lab->_anim->_diffPalette[i * 3] >> 2) << 8) +
-		           ((g_lab->_anim->_diffPalette[i * 3 + 1] >> 2) << 4) +
-		           ((g_lab->_anim->_diffPalette[i * 3 + 2] >> 2));
+				((g_lab->_anim->_diffPalette[i * 3 + 1] >> 2) << 4) +
+				((g_lab->_anim->_diffPalette[i * 3 + 2] >> 2));
 	}
 
 	g_lab->_anim->_noPalChange = false;
@@ -282,7 +282,6 @@ static void turnPage(bool FromLeft) {
 	}
 }
 
-
 /*****************************************************************************/
 /* Draws the journal from page x.                                            */
 /*****************************************************************************/
@@ -347,7 +346,7 @@ void LabEngine::processJournal() {
 			GadID     = Msg->_code;
 
 			if (((Class == MOUSEBUTTONS) && (IEQUALIFIER_RBUTTON & Qualifier)) ||
-			        ((Class == RAWKEY) && (GadID == 27)))
+				  ((Class == RAWKEY) && (GadID == 27)))
 				return;
 
 			else if (Class == GADGETUP) {
@@ -385,7 +384,7 @@ void LabEngine::doJournal() {
 
 	JBackImage._width = _graphics->_screenWidth;
 	JBackImage._height = _graphics->_screenHeight;
-	JBackImage._imageData   = NULL;
+	JBackImage._imageData = NULL;
 
 	ScreenImage = JBackImage;
 	ScreenImage._imageData = _graphics->getCurrentDrawingBuffer();
@@ -558,7 +557,7 @@ void LabEngine::processMonitor(char *ntext, TextFont *monitorFont, bool isintera
 			Code      = Msg->_code;
 
 			if (((Class == MOUSEBUTTONS) && (IEQUALIFIER_RBUTTON & Qualifier)) ||
-			        ((Class == RAWKEY) && (Code == 27)))
+				  ((Class == RAWKEY) && (Code == 27)))
 				return;
 
 			else if ((Class == MOUSEBUTTONS) && (IEQUALIFIER_LEFTBUTTON & Qualifier)) {

@@ -164,8 +164,6 @@ bool saveGame(uint16 Direction, uint16 Quarters, int slot, Common::String desc) 
 	return true;
 }
 
-
-
 /*****************************************************************************/
 /* Reads the game from disk.                                                 */
 /*****************************************************************************/
