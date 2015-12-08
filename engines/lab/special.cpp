@@ -564,7 +564,7 @@ void LabEngine::processMonitor(char *ntext, TextFont *monitorFont, bool isintera
 					testcptr = _cptr;
 					MouseY = 64 + (MouseY / MonGadHeight) * 42;
 					MouseX = 101;
-					setCurClose(Common::Point(MouseX, MouseY), &_cptr, true);
+					setCurClose(Common::Point(MouseX, MouseY), &_cptr, false);
 
 					if (testcptr != _cptr) {
 						lastcptr[depth] = testcptr;
