@@ -132,8 +132,7 @@ public:
 
 	const char *_curFileName;
 	const char *_nextFileName;
-	const char *_newFileName;  /* When ProcessRoom.c decides to change the filename
-                                    of the current picture. */
+	const char *_newFileName;  /* When ProcessRoom.c decides to change the filename of the current picture. */
 	TextFont *_msgFont;
 	GadgetList _moveGadgetList;
 	GadgetList _invGadgetList;

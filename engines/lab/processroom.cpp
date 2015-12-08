@@ -104,7 +104,7 @@ static CloseData *getObject(uint16 x, uint16 y, CloseDataPtr lcptr) {
 
 	while (lcptr != NULL) {
 		if ((x >= g_lab->_utils->scaleX(lcptr->x1)) && (y >= g_lab->_utils->scaleY(lcptr->y1)) &&
-		        (x <= g_lab->_utils->scaleX(lcptr->x2)) && (y <= g_lab->_utils->scaleY(lcptr->y2)))
+			  (x <= g_lab->_utils->scaleX(lcptr->x2)) && (y <= g_lab->_utils->scaleY(lcptr->y2)))
 			return lcptr;
 
 		lcptr = lcptr->_nextCloseUp;
@@ -124,8 +124,8 @@ static CloseDataPtr findCPtrMatch(CloseDataPtr cpmain, CloseDataPtr list) {
 
 	while (list) {
 		if ((cpmain->x1 == list->x1) && (cpmain->x2 == list->x2) &&
-		        (cpmain->y1 == list->y1) && (cpmain->y2 == list->y2) &&
-		        (cpmain->_depth == list->_depth))
+			  (cpmain->y1 == list->y1) && (cpmain->y2 == list->y2) &&
+			  (cpmain->_depth == list->_depth))
 			return list;
 
 		cptr = findCPtrMatch(cpmain, list->_subCloseUps);
@@ -278,8 +278,8 @@ bool takeItem(uint16 x, uint16 y, CloseDataPtr *cptr) {
 
 	while (lcptr != NULL) {
 		if ((x >= g_lab->_utils->scaleX(lcptr->x1)) && (y >= g_lab->_utils->scaleY(lcptr->y1)) &&
-		        (x <= g_lab->_utils->scaleX(lcptr->x2)) && (y <= g_lab->_utils->scaleY(lcptr->y2)) &&
-		        (lcptr->_closeUpType < 0)) {
+			  (x <= g_lab->_utils->scaleX(lcptr->x2)) && (y <= g_lab->_utils->scaleY(lcptr->y2)) &&
+			  (lcptr->_closeUpType < 0)) {
 			g_lab->_conditions->inclElement(abs(lcptr->_closeUpType));
 			return true;
 		}
@@ -449,8 +449,7 @@ void LabEngine::doActions(Action *aptr, CloseDataPtr *lcptr) {
 					_anim->diffNextFrame();
 					getTime(&curSecs, &curMicros);
 
-					if ((curSecs > startSecs) || ((curSecs == startSecs) &&
-					                              (curMicros >= startMicros)))
+					if ((curSecs > startSecs) || ((curSecs == startSecs) && (curMicros >= startMicros)))
 						break;
 				}
 			}
@@ -582,9 +581,8 @@ static bool doActionRuleSub(int16 action, int16 roomNum, CloseDataPtr lcptr, Clo
 			if (((*rule)->_ruleType == ACTION) &&
 				(((*rule)->_param1 == action) || (((*rule)->_param1 == 0) && allowDefaults))) {
 				if ((((*rule)->_param2 == lcptr->_closeUpType) ||
-					(((*rule)->_param2 == 0) && allowDefaults))
-				        ||
-						((action == 1) && ((*rule)->_param2 == (-lcptr->_closeUpType)))) {
+					  (((*rule)->_param2 == 0) && allowDefaults)) ||
+					  ((action == 1) && ((*rule)->_param2 == (-lcptr->_closeUpType)))) {
 					if (checkConditions((*rule)->_condition)) {
 						g_lab->doActions((*rule)->_actionList, set);
 						return true;
@@ -635,7 +633,7 @@ static bool doOperateRuleSub(int16 itemNum, int16 roomNum, CloseDataPtr lcptr, C
 
 			for (RuleList::iterator rule = rules->begin(); rule != rules->end(); ++rule) {
 				if (((*rule)->_ruleType == OPERATE) &&
-				        (((*rule)->_param1 == itemNum) || (((*rule)->_param1 == 0) && allowDefaults)) &&
+					  (((*rule)->_param1 == itemNum) || (((*rule)->_param1 == 0) && allowDefaults)) &&
 						(((*rule)->_param2 == lcptr->_closeUpType) || (((*rule)->_param2 == 0) && allowDefaults))) {
 					if (checkConditions((*rule)->_condition)) {
 						g_lab->doActions((*rule)->_actionList, set);
@@ -711,8 +709,8 @@ bool doTurn(uint16 from, uint16 to, CloseDataPtr *lcptr) {
 
 	for (RuleList::iterator rule = rules->begin(); rule != rules->end(); ++rule) {
 		if (((*rule)->_ruleType == TURN) ||
-		        (((*rule)->_ruleType == TURNFROMTO) &&
-		         ((*rule)->_param1   == from) && ((*rule)->_param2 == to))) {
+			  (((*rule)->_ruleType == TURNFROMTO) &&
+			  ((*rule)->_param1 == from) && ((*rule)->_param2 == to))) {
 			if (checkConditions((*rule)->_condition)) {
 				g_lab->doActions((*rule)->_actionList, lcptr);
 				return true;

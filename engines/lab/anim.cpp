@@ -247,17 +247,16 @@ void Anim::diffNextFrame() {
 /* A separate task launched by readDiff.  Plays the DIFF.                    */
 /*****************************************************************************/
 void Anim::playDiff(byte *buffer) {
-	_waitSec   = 0L;
+	_waitSec = 0L;
 	_waitMicros = 0L;
 	_delayMicros = 0L;
-	_header      = 0;
+	_header = 0;
 	_curBit = 0;
 	_frameNum = 0;
-	_numChunks   = 1;
-	_donePal     = false;
+	_numChunks = 1;
+	_donePal = false;
 	_stopPlayingEnd = false;
-
-	_isPlaying   = true;
+	_isPlaying = true;
 
 	if (_doBlack) {
 		_doBlack = false;

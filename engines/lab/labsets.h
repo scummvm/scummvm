@@ -41,19 +41,19 @@ class LabEngine;
 
 class LargeSet {
 public:
-    LargeSet(uint16 last, LabEngine *vm);
-    ~LargeSet();
-    bool in(uint16 element);
-    void inclElement(uint16 element);
-    void exclElement(uint16 element);
-    bool readInitialConditions(const char *fileName);
+	LargeSet(uint16 last, LabEngine *vm);
+	~LargeSet();
+	bool in(uint16 element);
+	void inclElement(uint16 element);
+	void exclElement(uint16 element);
+	bool readInitialConditions(const char *fileName);
 
 private:
 	LabEngine *_vm;
 
 public:
-    uint16 _lastElement;
-    uint16 *_array;
+	uint16 _lastElement;
+	uint16 *_array;
 };
 
 } // End of namespace Lab

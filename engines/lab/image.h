@@ -36,19 +36,18 @@ namespace Lab {
 class Image {
 public:
 	uint16 _width;
-    uint16 _height;
+	uint16 _height;
 	byte *_imageData;
 
-    Image() : _width(0), _height(0), _imageData(0) {}
-    Image(int w, int h, byte *d) : _width(w), _height(h), _imageData(d) {}
+	Image() : _width(0), _height(0), _imageData(0) {}
+	Image(int w, int h, byte *d) : _width(w), _height(h), _imageData(d) {}
 	Image(Common::File *s);
 
-    void drawImage(uint16 x, uint16 y);
-    void drawMaskImage(uint16 x, uint16 y);
-    void readScreenImage(uint16 x, uint16 y);
+	void drawImage(uint16 x, uint16 y);
+	void drawMaskImage(uint16 x, uint16 y);
+	void readScreenImage(uint16 x, uint16 y);
 	void blitBitmap(uint16 xs, uint16 ys, Image *ImDest, uint16 xd, uint16 yd, uint16 width, uint16 height, byte masked);
 };
-
 
 } // End of namespace Lab
 
