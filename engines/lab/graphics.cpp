@@ -77,7 +77,7 @@ void DisplayMan::loadPict(const char *filename) {
 /**
  * Reads in a picture into the dest bitmap.
  */
-void DisplayMan::readPict(const char *filename, bool playOnce) {
+void DisplayMan::readPict(const char *filename, bool playOnce, bool onlyDiffData) {
 	_vm->_anim->stopDiff();
 
 	loadPict(filename);
@@ -91,7 +91,7 @@ void DisplayMan::readPict(const char *filename, bool playOnce) {
 	_dispBitMap._rows        = _screenHeight;
 	_dispBitMap._flags       = BITMAPF_VIDEO;
 
-	_vm->_anim->readDiff(_curBitmap, playOnce);
+	_vm->_anim->readDiff(_curBitmap, playOnce, onlyDiffData);
 }
 
 /**

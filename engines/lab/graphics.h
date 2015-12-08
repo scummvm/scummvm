@@ -75,7 +75,7 @@ public:
 	virtual ~DisplayMan();
 
 	void loadPict(const char *filename);
-	void readPict(const char *filename, bool playOnce);
+	void readPict(const char *filename, bool playOnce, bool onlyDiffData = false);
 	void freePict();
 	byte *readPictToMem(const char *filename, uint16 x, uint16 y);
 	void doScrollBlack();
