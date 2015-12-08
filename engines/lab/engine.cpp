@@ -560,16 +560,17 @@ void LabEngine::mainGameLoop() {
 	}
 }
 
-bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Common::Point tmpPos, uint16 &curInv, IntuiMessage *curMsg, bool &forceDraw, uint16 gadgetId, uint16 &actionMode) {
+bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 qualifier, Common::Point tmpPos,
+			uint16 &curInv, IntuiMessage *curMsg, bool &forceDraw, uint16 gadgetId, uint16 &actionMode) {
 	uint32 msgClass = tmpClass;
 	Common::Point curPos = tmpPos;
 
 	uint16 oldDirection = 0;
 	uint16 lastInv = MAPNUM;
 	CloseDataPtr oldcptr, tempcptr, hcptr = nullptr;
-	ViewData *VPtr;
+	ViewData *vptr;
 	bool doit;
-	uint16 NewDir;
+	uint16 newDir;
 
 	_anim->_doBlack = false;
 
@@ -577,7 +578,7 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 		if (code == 13) {
 			// The return key
 			msgClass = MOUSEBUTTONS;
-			Qualifier = IEQUALIFIER_LEFTBUTTON;
+			qualifier = IEQUALIFIER_LEFTBUTTON;
 			curPos = _event->getMousePos();
 		} else if (getPlatform() == Common::kPlatformWindows && (code == 'b' || code == 'B')) {
 			// Start bread crumbs
@@ -669,8 +670,8 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 
 	if (_graphics->_longWinInFront) {
 		if ((msgClass == RAWKEY) || ((msgClass == MOUSEBUTTONS) &&
-			  ((IEQUALIFIER_LEFTBUTTON & Qualifier) ||
-				(IEQUALIFIER_RBUTTON & Qualifier)))) {
+			  ((IEQUALIFIER_LEFTBUTTON & qualifier) ||
+				(IEQUALIFIER_RBUTTON & qualifier)))) {
 			_graphics->_longWinInFront = false;
 			_graphics->_doNotDrawMessage = false;
 			_graphics->drawPanel();
@@ -741,10 +742,10 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 
 				oldDirection = _direction;
 
-				NewDir = processArrow(_direction, gadgetId - 6);
-				doTurn(_direction, NewDir, &_cptr);
+				newDir = processArrow(_direction, gadgetId - 6);
+				doTurn(_direction, newDir, &_cptr);
 				_anim->_doBlack = true;
-				_direction = NewDir;
+				_direction = newDir;
 				forceDraw = true;
 
 				mayShowCrumbIndicator();
@@ -941,7 +942,7 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 				}
 			}
 		}
-	} else if ((msgClass == MOUSEBUTTONS) && (IEQUALIFIER_LEFTBUTTON & Qualifier) && _mainDisplay) {
+	} else if ((msgClass == MOUSEBUTTONS) && (IEQUALIFIER_LEFTBUTTON & qualifier) && _mainDisplay) {
 		interfaceOff();
 		_mainDisplay = true;
 
@@ -1014,8 +1015,8 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 		mayShowCrumbIndicator();
 		_graphics->screenUpdate();
 	} else if (msgClass == DELTAMOVE) {
-		VPtr = getViewData(_roomNum, _direction);
-		oldcptr = VPtr->_closeUps;
+		vptr = getViewData(_roomNum, _direction);
+		oldcptr = vptr->_closeUps;
 
 		if (hcptr == NULL) {
 			tempcptr = _cptr;
@@ -1041,7 +1042,7 @@ bool LabEngine::from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Comm
 
 		if (hcptr)
 			_event->setMousePos(Common::Point(_utils->scaleX((hcptr->x1 + hcptr->x2) / 2), _utils->scaleY((hcptr->y1 + hcptr->y2) / 2)));
-	} else if ((msgClass == MOUSEBUTTONS) && (IEQUALIFIER_RBUTTON & Qualifier)) {
+	} else if ((msgClass == MOUSEBUTTONS) && (IEQUALIFIER_RBUTTON & qualifier)) {
 		eatMessages();
 		_alternate = !_alternate;
 		_anim->_doBlack = true;
