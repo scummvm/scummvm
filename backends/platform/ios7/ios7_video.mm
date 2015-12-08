@@ -184,6 +184,12 @@ uint getSizeNextPOT(uint size) {
 	[self addGestureRecognizer:swipeUp];
 	[self addGestureRecognizer:swipeDown];
 	[self addGestureRecognizer:doubleTapTwoFingers];
+
+	[swipeRight release];
+	[swipeLeft release];
+	[swipeUp release];
+	[swipeDown release];
+	[doubleTapTwoFingers release];
 }
 
 - (CGFloat)optimalScale {
