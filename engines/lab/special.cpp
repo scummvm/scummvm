@@ -412,7 +412,8 @@ bool LabEngine::saveRestoreGame() {
 		}
 	}
 
-	//_event->attachGadgetList(&_moveGadgetList);
+	_alternate = false;
+	_mainDisplay = true;
 	_graphics->screenUpdate();
 
 	return isOK;
