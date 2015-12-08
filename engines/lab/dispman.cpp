@@ -29,7 +29,9 @@
  */
 
 #include "graphics/palette.h"
+
 #include "lab/lab.h"
+#include "lab/music.h"
 
 namespace Lab {
 

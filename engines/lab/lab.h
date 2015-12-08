@@ -37,7 +37,7 @@
 #include "lab/labfun.h"
 #include "lab/interface.h"
 #include "lab/eventman.h"
-#include "lab/music.h"
+//#include "lab/music.h"
 #include "lab/resource.h"
 #include "lab/anim.h"
 #include "lab/labsets.h"
@@ -46,6 +46,8 @@
 struct ADGameDescription;
 
 namespace Lab {
+
+class Music;
 
 enum GameFeatures {
 	GF_LOWRES = 1 << 0,

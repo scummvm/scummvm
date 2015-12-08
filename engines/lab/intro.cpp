@@ -30,6 +30,7 @@
 
 #include "lab/lab.h"
 #include "lab/intro.h"
+#include "lab/music.h"
 
 namespace Lab {
 Intro::Intro(LabEngine *vm) : _vm(vm) {
