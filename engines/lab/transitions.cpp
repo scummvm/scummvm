@@ -147,10 +147,8 @@ void DisplayMan::doScrollWipe(char *filename) {
 		_vm->waitTOF();
 	}
 
-	_vm->_anim->_isBM = true;
-	readPict(filename, true);
+	readPict(filename, true, true);
 	setPalette(_vm->_anim->_diffPalette, 256);
-	_vm->_anim->_isBM = false;
 	byte *mem = _vm->_anim->_rawDiffBM._planes[0];
 
 	_vm->_music->updateMusic();

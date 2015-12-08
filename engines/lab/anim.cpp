@@ -37,7 +37,6 @@ Anim::Anim(LabEngine *vm) : _vm(vm) {
 	_header = 0;
 	_curBit = 0;
 	_numChunks = 1;
-	_isBM = false;
 	_headerdata._width = 0;
 	_headerdata._height = 0;
 	_headerdata._fps = 0;
@@ -78,7 +77,7 @@ void Anim::readBlock(void *Buffer, uint32 Size, byte **File) {
 	(*File) += Size;
 }
 
-void Anim::diffNextFrame() {
+void Anim::diffNextFrame(bool onlyDiffData) {
 	if (_header == 65535)  /* Already done. */
 		return;
 
@@ -96,7 +95,7 @@ void Anim::diffNextFrame() {
 		if (_curBit >= _numChunks) {
 			_vm->_event->mouseShow();
 
-			if (!_isBM) {
+			if (!onlyDiffData) {
 				if (_headerdata._fps) {
 					_vm->waitForTime(_waitSec, _waitMicros);
 					_vm->addCurTime(0L, _delayMicros, &_waitSec, &_waitMicros);
@@ -110,7 +109,7 @@ void Anim::diffNextFrame() {
 				_donePal = true;
 			}
 
-			if (_isPal && !_noPalChange && !_isBM && !_donePal) {
+			if (_isPal && !_noPalChange && !onlyDiffData && !_donePal) {
 				_vm->_graphics->setPalette(_diffPalette, 256);
 				_isPal = false;
 			}
@@ -147,7 +146,7 @@ void Anim::diffNextFrame() {
 		case 10L:
 			_rawDiffBM._planes[_curBit] = _diffFile;
 
-			if (_isBM)
+			if (onlyDiffData)
 				_diffFile += _size;
 			else {
 				readBlock(DrawBitMap->_planes[_curBit], _size, &_diffFile);
@@ -246,7 +245,7 @@ void Anim::diffNextFrame() {
 /**
  * A separate task launched by readDiff.  Plays the DIFF.
  */
-void Anim::playDiff(byte *buffer) {
+void Anim::playDiff(byte *buffer, bool onlyDiffData) {
 	_waitSec = 0L;
 	_waitMicros = 0L;
 	_delayMicros = 0L;
@@ -325,9 +324,9 @@ void Anim::playDiff(byte *buffer) {
 
 	if (_playOnce) {
 		while (_header != 65535)
-			diffNextFrame();
+			diffNextFrame(onlyDiffData);
 	} else
-		diffNextFrame();
+		diffNextFrame(onlyDiffData);
 }
 
 /**
@@ -354,9 +353,9 @@ void Anim::stopDiffEnd() {
 /**
  * Reads in a DIFF file.
  */
-bool Anim::readDiff(byte *buffer, bool playOnce) {
+bool Anim::readDiff(byte *buffer, bool playOnce, bool onlyDiffData) {
 	_playOnce = playOnce;
-	playDiff(buffer);
+	playDiff(buffer, onlyDiffData);
 	return true;
 }
 

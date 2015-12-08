@@ -86,21 +86,20 @@ private:
 	BitMap *DrawBitMap;
 
 	void readBlock(void *Buffer, uint32 Size, byte **File);
-	void playDiff(byte *buffer);
+	void playDiff(byte *buffer, bool onlyDiffData = false);
 
 public:
 	Anim(LabEngine *vm);
 
 	DIFFHeader _headerdata;
 	char _diffPalette[256 * 3];
-	bool _isBM;          /* Just fill in the RawDIFFBM structure */
 	bool _waitForEffect; /* Wait for each sound effect to finish before continuing. */
 	bool _doBlack;       /* Black the screen before new picture  */
 	bool _noPalChange;   /* Don't change the palette.            */
 	BitMap _rawDiffBM;
 
-	bool readDiff(byte *buffer, bool playOnce);
-	void diffNextFrame();
+	bool readDiff(byte *buffer, bool playOnce, bool onlyDiffData = false);
+	void diffNextFrame(bool onlyDiffData = false);
 	void stopDiff();
 	void stopDiffEnd();
 };
