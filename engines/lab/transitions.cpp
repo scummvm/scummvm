@@ -398,14 +398,25 @@ void DisplayMan::scrollDisplayX(int16 dx, uint16 x1, uint16 y1, uint16 x2, uint1
 	if (y1 > y2)
 		SWAP<uint16>(y1, y2);
 
-	im._width = x2 - x1 + 1 - dx;
-	im._height = y2 - y1 + 1;
+	if (dx > 0) {
+		im._width = x2 - x1 + 1 - dx;
+		im._height = y2 - y1 + 1;
 
-	im.readScreenImage(x1, y1);
-	im.drawImage(x1 + dx, y1);
+		im.readScreenImage(x1, y1);
+		im.drawImage(x1 + dx, y1);
 
-	setAPen(0);
-	rectFill(x1, y1, x1 + dx - 1, y2);
+		setAPen(0);
+		rectFill(x1, y1, x1 + dx - 1, y2);
+	} else if (dx < 0) {
+		im._width = x2 - x1 + 1 + dx;
+		im._height = y2 - y1 + 1;
+
+		im.readScreenImage(x1 - dx, y1);
+		im.drawImage(x1, y1);
+
+		setAPen(0);
+		rectFill(x2 + dx + 1, y1, x2, y2);
+	}
 }
 
 /**
@@ -422,14 +433,25 @@ void DisplayMan::scrollDisplayY(int16 dy, uint16 x1, uint16 y1, uint16 x2, uint1
 	if (y1 > y2)
 		SWAP<uint16>(y1, y2);
 
-	im._width = x2 - x1 + 1;
-	im._height = y2 - y1 + 1 - dy;
+	if (dy > 0) {
+		im._width = x2 - x1 + 1;
+		im._height = y2 - y1 + 1 - dy;
 
-	im.readScreenImage(x1, y1);
-	im.drawImage(x1, y1 + dy);
+		im.readScreenImage(x1, y1);
+		im.drawImage(x1, y1 + dy);
 
-	setAPen(0);
-	rectFill(x1, y1, x2, y1 + dy - 1);
+		setAPen(0);
+		rectFill(x1, y1, x2, y1 + dy - 1);
+	} else if (dy < 0) {
+		im._width = x2 - x1 + 1;
+		im._height = y2 - y1 + 1 + dy;
+
+		im.readScreenImage(x1, y1 - dy);
+		im.drawImage(x1, y1);
+
+		setAPen(0);
+		rectFill(x1, y2 + dy + 1, x2, y2);
+	}
 }
 
 /**
