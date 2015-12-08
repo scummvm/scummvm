@@ -49,15 +49,6 @@ static Image *Map, *Room, *UpArrowRoom, *DownArrowRoom, *Bridge,
 static uint16 MaxRooms;
 static MapData *Maps;
 
-static uint16 MapGadX[3] = {101, 55, 8}, MapGadY[3] = {105, 105, 105};
-
-static Gadget
-	backgadget = { 8, 105, 0, 0, 0L, NULL, NULL },
-	upgadget = { 55, 105, 1, VKEY_UPARROW, 0L, NULL, NULL },
-	downgadget = { 101, 105, 2, VKEY_DNARROW, 0L, NULL, NULL };
-
-static GadgetList *MapGadgetList;
-
 #define LOWERFLOOR     1
 #define MIDDLEFLOOR    2
 #define UPPERFLOOR     3
@@ -83,14 +74,8 @@ static uint16 mapScaleY(uint16 y) {
 /**
  * Loads in the map data.
  */
-static bool loadMapData() {
-	uint16 counter;
-
-	MapGadgetList = new GadgetList();
-	MapGadgetList->push_back(&backgadget);
-	MapGadgetList->push_back(&upgadget);
-	MapGadgetList->push_back(&downgadget);
-
+void LabEngine::loadMapData() {
+	Utils *utils = g_lab->_utils;
 	Common::File *mapImages = g_lab->_resource->openDataFile("P:MapImage");
 
 	Map = new Image(mapImages);
@@ -111,22 +96,11 @@ static bool loadMapData() {
 	Path = new Image(mapImages);
 	Bridge = new Image(mapImages);
 
-	backgadget._image = new Image(mapImages);
-	backgadget._altImage = new Image(mapImages);
-	upgadget._image = new Image(mapImages);
-	upgadget._altImage = new Image(mapImages);
-	downgadget._image = new Image(mapImages);
-	downgadget._altImage = new Image(mapImages);
+	_mapGadgetList.push_back(createButton( 8,  utils->vgaScaleY(105), 0, VKEY_LTARROW, new Image(mapImages), new Image(mapImages)));	// back
+	_mapGadgetList.push_back(createButton( 55, utils->vgaScaleY(105), 1, VKEY_UPARROW, new Image(mapImages), new Image(mapImages)));	// up
+	_mapGadgetList.push_back(createButton(101, utils->vgaScaleY(105), 2, VKEY_DNARROW, new Image(mapImages), new Image(mapImages)));	// down
 
 	delete mapImages;
-
-	counter = 0;
-
-	for (GadgetList::iterator gadget = MapGadgetList->begin(); gadget != MapGadgetList->end(); ++gadget) {
-		(*gadget)->x = g_lab->_utils->vgaScaleX(MapGadX[counter]);
-		(*gadget)->y = g_lab->_utils->vgaScaleY(MapGadY[counter]);
-		counter++;
-	}
 
 	Common::File *mapFile = g_lab->_resource->openDataFile("Lab:Maps", MKTAG('M', 'A', 'P', '0'));
 	g_lab->_music->updateMusic();
@@ -144,13 +118,10 @@ static bool loadMapData() {
 	}
 
 	delete mapFile;
-
-	return true;
 }
 
-static void freeMapData() {
-	MapGadgetList->clear();
-	delete MapGadgetList;
+void LabEngine::freeMapData() {
+	freeButtonList(&_mapGadgetList);
 
 	delete[] Maps;
 	Maps = NULL;
@@ -406,7 +377,7 @@ void LabEngine::drawMap(uint16 CurRoom, uint16 CurMsg, uint16 Floor, bool fadeou
 	_graphics->rectFill(0, 0, _graphics->_screenWidth - 1, _graphics->_screenHeight - 1);
 
 	Map->drawImage(0, 0);
-	drawGadgetList(MapGadgetList);
+	drawGadgetList(&_mapGadgetList);
 
 	for (uint16 i = 1; i <= MaxRooms; i++) {
 		if ((Maps[i].PageNumber == Floor) && _roomsFound->in(i) && Maps[i].x) {
@@ -424,18 +395,21 @@ void LabEngine::drawMap(uint16 CurRoom, uint16 CurMsg, uint16 Floor, bool fadeou
 	tempfloor = Floor;
 	getUpFloor(&tempfloor, &noOverlay);
 
+	Gadget *upGadget = _event->getGadget(1);
+	Gadget *downGadget = _event->getGadget(2);
+
 	if (noOverlay)
-		enableGadget(&upgadget);
+		enableGadget(upGadget);
 	else
-		disableGadget(&upgadget, 12);
+		disableGadget(upGadget, 12);
 
 	tempfloor = Floor;
 	getDownFloor(&tempfloor, &noOverlay);
 
 	if (noOverlay)
-		enableGadget(&downgadget);
+		enableGadget(downGadget);
 	else
-		disableGadget(&downgadget, 12);
+		disableGadget(downGadget, 12);
 
 	// Labyrinth specific code
 	if (Floor == LOWERFLOOR) {
@@ -660,9 +634,9 @@ void LabEngine::doMap(uint16 CurRoom) {
 	else if (_direction == WEST)
 		XMark = MapWest;
 
+	_event->attachGadgetList(&_mapGadgetList);
 	drawMap(CurRoom, CurRoom, Maps[CurRoom].PageNumber, false, true);
 	_event->mouseShow();
-	_event->attachGadgetList(MapGadgetList);
 	_graphics->screenUpdate();
 	processMap(CurRoom);
 	_event->attachGadgetList(NULL);

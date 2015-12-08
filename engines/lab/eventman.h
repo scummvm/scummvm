@@ -67,6 +67,7 @@ public:
 	bool mouseButton(uint16 *x, uint16 *y, bool leftButton);
 	Gadget *mouseGadget();
 	void attachGadgetList(GadgetList *gadgetList);
+	Gadget *getGadget(uint16 id);
 	void mouseHandler(int flag, Common::Point pos);
 	bool keyPress(uint16 *keyCode);
 	bool haveNextChar();

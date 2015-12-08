@@ -51,8 +51,6 @@ static char *journaltext, *journaltexttitle;
 static uint16 JPage = 0;
 static bool lastpage = false;
 static Image JBackImage, ScreenImage;
-static uint16 JGadX[3] = { 80, 144, 194 }, JGadY[3] = { 162, 164, 162 };
-static Gadget ForwardG, CancelG, BackG;
 static bool GotBackImage = false;
 static uint16 monitorPage;
 static const char *TextFileName;
@@ -150,7 +148,7 @@ void LabEngine::doWestPaper() {
 /**
  * Loads in the data for the journal.
  */
-static bool loadJournalData() {
+void LabEngine::loadJournalData() {
 	char filename[20];
 	bool bridge, dirty, news, clean;
 
@@ -187,40 +185,11 @@ static bool loadJournalData() {
 	journaltexttitle = g_lab->_resource->getText("Lab:Rooms/jt");
 
 	Common::File *journalFile = g_lab->_resource->openDataFile("P:JImage");
-
-	BackG._image = new Image(journalFile);
-	BackG._altImage = new Image(journalFile);
-	ForwardG._image = new Image(journalFile);
-	ForwardG._altImage = new Image(journalFile);
-	CancelG._image = new Image(journalFile);
-	CancelG._altImage = new Image(journalFile);
-
+	Utils *utils = g_lab->_utils;
+	_journalGadgetList.push_back(createButton( 80, utils->vgaScaleY(162) + utils->svgaCord(1), 0, VKEY_LTARROW, new Image(journalFile), new Image(journalFile)));	// back
+	_journalGadgetList.push_back(createButton(144, utils->vgaScaleY(164) - utils->svgaCord(1), 1, VKEY_RTARROW, new Image(journalFile), new Image(journalFile)));	// foward
+	_journalGadgetList.push_back(createButton(194, utils->vgaScaleY(162) + utils->svgaCord(1), 2,            0, new Image(journalFile), new Image(journalFile)));	// cancel
 	delete journalFile;
-
-	BackG._keyEquiv = VKEY_LTARROW;
-	ForwardG._keyEquiv = VKEY_RTARROW;
-
-	uint16 counter = 0;
-
-	GadgetList journalGadgetList;
-	journalGadgetList.push_back(&BackG);
-	journalGadgetList.push_back(&CancelG);
-	journalGadgetList.push_back(&ForwardG);
-
-	for (GadgetList::iterator gadgetIter = journalGadgetList.begin(); gadgetIter != journalGadgetList.end(); ++gadgetIter) {
-		Gadget *gadget = *gadgetIter;
-		gadget->x = g_lab->_utils->vgaScaleX(JGadX[counter]);
-
-		if (counter == 1)
-			gadget->y = g_lab->_utils->vgaScaleY(JGadY[counter]) + g_lab->_utils->svgaCord(1);
-		else
-			gadget->y = g_lab->_utils->vgaScaleY(JGadY[counter]) - g_lab->_utils->svgaCord(1);
-
-		gadget->_gadgetID = counter;
-		counter++;
-	}
-
-	return true;
 }
 
 /**
@@ -302,15 +271,18 @@ void LabEngine::drawJournal(uint16 wipenum, bool needFade) {
 	else
 		turnPage((bool)(wipenum == 1));
 
+	Gadget *backGadget = _event->getGadget(0);
+	Gadget *forwardGadget = _event->getGadget(1);
+
 	if (JPage == 0)
-		disableGadget(&BackG, 15);
+		disableGadget(backGadget, 15);
 	else
-		enableGadget(&BackG);
+		enableGadget(backGadget);
 
 	if (lastpage)
-		disableGadget(&ForwardG, 15);
+		disableGadget(forwardGadget, 15);
 	else
-		enableGadget(&ForwardG);
+		enableGadget(forwardGadget);
 
 
 	if (needFade)
@@ -373,11 +345,6 @@ void LabEngine::processJournal() {
  * Does the journal processing.
  */
 void LabEngine::doJournal() {
-	GadgetList journalGadgetList;
-	journalGadgetList.push_back(&BackG);
-	journalGadgetList.push_back(&CancelG);
-	journalGadgetList.push_back(&ForwardG);
-
 	_graphics->blackAllScreen();
 
 	lastpage    = false;
@@ -395,13 +362,13 @@ void LabEngine::doJournal() {
 
 	drawJournal(0, true);
 
-	_event->attachGadgetList(&journalGadgetList);
+	_event->attachGadgetList(&_journalGadgetList);
 	_event->mouseShow();
 	processJournal();
 	_event->attachGadgetList(NULL);
 	_graphics->fade(false, 0);
 	_event->mouseHide();
-	journalGadgetList.clear();
+	freeButtonList(&_journalGadgetList);
 
 	ScreenImage._imageData = _graphics->getCurrentDrawingBuffer();
 
@@ -445,6 +412,7 @@ bool LabEngine::saveRestoreGame() {
 		}
 	}
 
+	//_event->attachGadgetList(&_moveGadgetList);
 	_graphics->screenUpdate();
 
 	return isOK;

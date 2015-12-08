@@ -149,6 +149,8 @@ private:
 	CloseDataPtr _cptr;
 	InventoryData *_inventory;
 	Image *_tiles[16];
+	GadgetList _journalGadgetList;
+	GadgetList _mapGadgetList;
 
 private:
 	bool from_crumbs(uint32 tmpClass, uint16 code, uint16 Qualifier, Common::Point tmpPos, uint16 &curInv, IntuiMessage * curMsg, bool &forceDraw, uint16 gadgetId, uint16 &actionMode);
@@ -161,9 +163,12 @@ public:
 	void decIncInv(uint16 *CurInv, bool dec);
 	Gadget *checkNumGadgetHit(GadgetList *gadgetList, uint16 key);
 	IntuiMessage *getMsg();
+	void loadMapData();
 	void drawMap(uint16 CurRoom, uint16 CurMsg, uint16 Floor, bool fadeout, bool fadein);
 	void processMap(uint16 CurRoom);
 	void doMap(uint16 CurRoom);
+	void freeMapData();
+	void loadJournalData();
 	void drawJournal(uint16 wipenum, bool needFade);
 	void processJournal();
 	void doJournal();
