@@ -39,7 +39,7 @@
 
 #include "engines/engine.h"
 #include "lab/anim.h"
-#include "lab/labfun.h"
+#include "lab/savegame.h"
 #include "lab/processroom.h"
 #include "lab/interface.h"
 #include "lab/eventman.h"
