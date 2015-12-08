@@ -2380,12 +2380,21 @@ void SurfaceSdlGraphicsManager::deinitializeRenderer() {
 SDL_Surface *SurfaceSdlGraphicsManager::SDL_SetVideoMode(int width, int height, int bpp, Uint32 flags) {
 	deinitializeRenderer();
 
-	if (!_window->createWindow(width, height, (flags & SDL_FULLSCREEN) ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0)) {
+	const bool isFullscreen = (flags & SDL_FULLSCREEN) != 0;
+	if (!_window->createWindow(width, height, isFullscreen ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0)) {
 		return nullptr;
 	}
 
 	_renderer = SDL_CreateRenderer(_window->getSDLWindow(), -1, 0);
 	if (!_renderer) {
+		deinitializeRenderer();
+		return nullptr;
+	}
+
+	// We set the logical renderer size to the requested resolution in
+	// fullscreen. This assures that SDL2 adds black bars if needed to prevent
+	// stretching.
+	if (isFullscreen && SDL_RenderSetLogicalSize(_renderer, width, height) < 0) {
 		deinitializeRenderer();
 		return nullptr;
 	}
