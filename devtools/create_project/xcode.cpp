@@ -607,6 +607,7 @@ void XcodeProvider::setupProject() {
 	project->properties["knownRegions"] = regions;
 
 	project->addProperty("mainGroup", _rootSourceGroup->getHashRef(), "CustomTemplate", SettingsNoValue);
+	project->addProperty("productRefGroup", getHash("PBXGroup_CustomTemplate_Products_"), "" , SettingsNoValue);
 	project->addProperty("projectDirPath", _projectRoot, "", SettingsNoValue|SettingsQuoteVariable);
 	project->addProperty("projectRoot", "", "", SettingsNoValue|SettingsQuoteVariable);
 
@@ -772,7 +773,7 @@ void XcodeProvider::setupBuildConfiguration(const BuildSetup &setup) {
 	ADD_SETTING_LIST(iPhone_Debug, "LIBRARY_SEARCH_PATHS", iPhone_LibPaths, SettingsAsList, 5);
 	ADD_SETTING(iPhone_Debug, "ONLY_ACTIVE_ARCH", "YES");
 	ADD_SETTING(iPhone_Debug, "PREBINDING", "NO");
-	ADD_SETTING(iPhone_Debug, "PRODUCT_NAME", PROJECT_DESCRIPTION);
+	ADD_SETTING(iPhone_Debug, "PRODUCT_NAME", PROJECT_NAME);
 	ADD_SETTING(iPhone_Debug, "PRODUCT_BUNDLE_IDENTIFIER", "\"org.scummvm.${PRODUCT_NAME}\"");
 	ADD_SETTING(iPhone_Debug, "IPHONEOS_DEPLOYMENT_TARGET", "7.1");
 	//ADD_SETTING_QUOTE(iPhone_Debug, "PROVISIONING_PROFILE", "EF590570-5FAC-4346-9071-D609DE2B28D8");
@@ -921,7 +922,7 @@ void XcodeProvider::setupBuildConfiguration(const BuildSetup &setup) {
 	scummvmOSX_LdFlags.push_back("-lz");
 	ADD_SETTING_LIST(scummvmOSX_Debug, "OTHER_LDFLAGS", scummvmOSX_LdFlags, SettingsAsList, 5);
 	ADD_SETTING(scummvmOSX_Debug, "PREBINDING", "NO");
-	ADD_SETTING(scummvmOSX_Debug, "PRODUCT_NAME", PROJECT_DESCRIPTION);
+	ADD_SETTING(scummvmOSX_Debug, "PRODUCT_NAME", PROJECT_NAME);
 
 	scummvmOSX_Debug_Object->addProperty("name", "Debug", "", SettingsNoValue);
 	scummvmOSX_Debug_Object->properties["buildSettings"] = scummvmOSX_Debug;
