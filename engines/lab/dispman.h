@@ -33,6 +33,7 @@
 
 namespace Lab {
 
+struct BitMap;
 class LabEngine;
 class Image;
 
@@ -158,7 +159,7 @@ public:
 	byte *_currentDisplayBuffer;
 	bool _doNotDrawMessage;
 	uint16 *FadePalette;
-	BitMap _dispBitMap;
+	BitMap *_dispBitMap;
 };
 
 } // End of namespace Lab
