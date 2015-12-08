@@ -125,6 +125,7 @@ SurfaceSdlGraphicsManager::SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSou
 	_hwscreen(0),
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	_renderer(nullptr), _screenTexture(nullptr),
+	_viewportX(0), _viewportY(0), _mouseScaleX(1.0f), _mouseScaleY(1.0f),
 #else
 	_originalBitsPerPixel(0),
 #endif
@@ -2353,6 +2354,16 @@ void SurfaceSdlGraphicsManager::notifyVideoExpose() {
 }
 
 void SurfaceSdlGraphicsManager::transformMouseCoordinates(Common::Point &point) {
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	// In fullscreen mode we can easily get coordinates outside the actual
+	// screen area. For example, if black bars are added left/right we can end
+	// up with negative x coordinates if the user moves the mouse inside the
+	// black bar. Here, we post process the received cooridnates to give the
+	// user the feeling the black bars do not exist.
+	point.x = (int)((point.x + _viewportX) * _mouseScaleX);
+	point.y = (int)((point.y + _viewportY) * _mouseScaleY);
+#endif
+
 	if (!_overlayVisible) {
 		point.x /= _videoMode.scaleFactor;
 		point.y /= _videoMode.scaleFactor;
@@ -2398,6 +2409,25 @@ SDL_Surface *SurfaceSdlGraphicsManager::SDL_SetVideoMode(int width, int height, 
 		deinitializeRenderer();
 		return nullptr;
 	}
+
+	// To provide smooth mouse handling in case black borders are added, we
+	// obtain the actual window size and the internal renderer scaling.
+	// Based on this we calculate scale factors to scale received mouse
+	// coordinates into actual screen area coordinates.
+	float scaleX = 0, scaleY = 0;
+	SDL_RenderGetScale(_renderer, &scaleX, &scaleY);
+	int windowWidth = 1, windowHeight = 1;
+	SDL_GetWindowSize(_window->getSDLWindow(), &windowWidth, &windowHeight);
+
+	_mouseScaleX = (width  * scaleX) / windowWidth;
+	_mouseScaleY = (height * scaleY) / windowHeight;
+
+	// Obtain viewport top left coordinates to transform received coordinates
+	// into visible area coordinates (i.e. including black borders).
+	SDL_Rect viewport;
+	SDL_RenderGetViewport(_renderer, &viewport);
+	_viewportX = viewport.x;
+	_viewportY = viewport.y;
 
 	_screenTexture = SDL_CreateTexture(_renderer, SDL_PIXELFORMAT_RGB565, SDL_TEXTUREACCESS_STREAMING, width, height);
 	if (!_screenTexture) {
