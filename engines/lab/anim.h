@@ -31,8 +31,6 @@
 #ifndef LAB_DIFF_H
 #define LAB_DIFF_H
 
-#include "common/file.h"
-
 namespace Lab {
 
 class LabEngine;
@@ -107,5 +105,3 @@ public:
 } // End of namespace Lab
 
 #endif // LAB_DIFF_H
-
-

@@ -29,13 +29,7 @@
  */
 
 #include "lab/lab.h"
-#include "lab/labfun.h"
-#include "lab/anim.h"
-#include "lab/image.h"
 #include "lab/intro.h"
-#include "lab/processroom.h"
-#include "lab/interface.h"
-#include "lab/resource.h"
 
 namespace Lab {
 

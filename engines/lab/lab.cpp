@@ -28,23 +28,12 @@
  *
  */
 
-#include "common/config-manager.h"
 #include "common/debug-channels.h"
-#include "common/scummsys.h"
-#include "common/error.h"
-#include "common/fs.h"
-#include "common/rect.h"
 
-#include "engines/dialogs.h"
-#include "engines/engine.h"
 #include "engines/util.h"
 #include "gui/message.h"
-#include "engines/advancedDetector.h"
 
 #include "lab/lab.h"
-#include "lab/labfun.h"
-#include "lab/resource.h"
-#include "lab/anim.h"
 
 namespace Lab {
 

@@ -30,15 +30,7 @@
 
 #include "engines/advancedDetector.h"
 
-#include "common/str-array.h"
-#include "common/savefile.h"
-
-#include "base/plugins.h"
-
-#include "graphics/surface.h"
-
 #include "lab/lab.h"
-#include "lab/labfun.h"
 
 static const PlainGameDescriptor lab_setting[] = {
 	{ "lab", "Labyrith of Time" },

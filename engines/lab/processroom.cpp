@@ -31,11 +31,6 @@
 #include "gui/message.h"
 
 #include "lab/lab.h"
-#include "lab/labfun.h"
-#include "lab/processroom.h"
-#include "lab/resource.h"
-#include "lab/anim.h"
-#include "lab/interface.h"
 
 namespace Lab {
 

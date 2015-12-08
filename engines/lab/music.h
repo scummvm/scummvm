@@ -31,11 +31,8 @@
 #ifndef LAB_MUSIC_H
 #define LAB_MUSIC_H
 
-#include "common/events.h"
-
 #include "audio/mixer.h"
 #include "audio/audiostream.h"
-#include "audio/decoders/raw.h"
 
 namespace Lab {
 

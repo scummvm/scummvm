@@ -34,12 +34,6 @@
 #include "gui/saveload.h"
 
 #include "lab/lab.h"
-#include "lab/labfun.h"
-#include "lab/image.h"
-#include "lab/processroom.h"
-#include "lab/interface.h"
-#include "lab/anim.h"
-#include "lab/resource.h"
 
 namespace Lab {
 

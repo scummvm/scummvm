@@ -28,12 +28,8 @@
  *
  */
 
+#include "graphics/palette.h"
 #include "lab/lab.h"
-#include "lab/anim.h"
-#include "lab/image.h"
-#include "lab/labfun.h"
-#include "lab/processroom.h"
-#include "lab/resource.h"
 
 namespace Lab {
 

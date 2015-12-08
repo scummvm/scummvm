@@ -29,8 +29,6 @@
  */
 
 #include "lab/lab.h"
-#include "lab/image.h"
-#include "lab/interface.h"
 
 namespace Lab {
 
