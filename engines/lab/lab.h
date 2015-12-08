@@ -77,6 +77,12 @@ struct CrumbData {
 
 #define MAX_CRUMBS          128
 
+// Direction defines
+#define NORTH   0
+#define SOUTH   1
+#define EAST    2
+#define WEST    3
+
 class LabEngine : public Engine {
 public:
 	LabEngine(OSystem *syst, const ADGameDescription *gameDesc);

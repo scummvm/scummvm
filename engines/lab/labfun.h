@@ -35,12 +35,6 @@ namespace Lab {
 
 class LabEngine;
 
-// Direction defines
-#define NORTH   0
-#define SOUTH   1
-#define EAST    2
-#define WEST    3
-
 struct SaveGameHeader {
 	byte _version;
 	SaveStateDescriptor _descr;
