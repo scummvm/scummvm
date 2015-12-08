@@ -101,8 +101,6 @@ typedef struct CloseData {
 	CloseData *_subCloseUps;
 } CloseData;
 
-typedef CloseData *CloseDataPtr;
-
 struct ViewData {
 	int16 *_condition;
 	char *_graphicName;
@@ -127,8 +125,6 @@ struct Rule {
 	Action *_actionList;
 	Rule *_nextRule;
 };
-
-typedef Common::List<Rule *> RuleList;
 
 struct RoomData {
 	uint16 _northDoor;

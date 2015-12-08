@@ -32,6 +32,7 @@
 
 #include "lab/dispman.h"
 #include "lab/music.h"
+#include "lab/processroom.h"
 #include "lab/resource.h"
 
 namespace Lab {

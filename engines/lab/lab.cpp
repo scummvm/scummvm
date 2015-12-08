@@ -41,6 +41,7 @@
 #include "lab/eventman.h"
 #include "lab/image.h"
 #include "lab/music.h"
+#include "lab/processroom.h"
 #include "lab/resource.h"
 #include "lab/utils.h"
 

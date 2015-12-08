@@ -33,6 +33,8 @@
 
 namespace Lab {
 
+struct ViewData;
+
 enum StaticText {
 	kTextLowerFloor,
 	kTextMiddleFloor,
