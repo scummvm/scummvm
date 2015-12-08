@@ -29,6 +29,7 @@
  */
 
 #include "graphics/thumbnail.h"
+#include "engines/savestate.h"
 
 #include "lab/lab.h"
 #include "lab/labsets.h"
