@@ -183,7 +183,6 @@ void ActorInstance::load(Resource *resource) {
 	_sceneId = resource->_sceneId;
 	_pauseCtr = 0;
 	initActorTypes();
-	registerResources();
 }
 
 void ActorInstance::unload() {
@@ -219,6 +218,11 @@ void ActorInstance::initActorTypes() {
 			if (actorType->_value1E == 0)
 				actorType->_value1E = actorType2->_value1E;
 		}
+		_vm->_dict->addActorType(actorType->_actorTypeId, actorType);
+	}
+	for (uint i = 0; i < _actorResource->_sequences.size(); ++i) {
+		Sequence *sequence = &_actorResource->_sequences[i];
+		_vm->_dict->addSequence(sequence->_sequenceId, sequence);
 	}
 }
 
