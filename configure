@@ -2584,11 +2584,8 @@ if test -n "$_host"; then
 			_eventrec=no
 			_build_scalers=no
 			_build_hq_scalers=no
-			# This is so OpenGL detection works for OpenGL_ES, only if OpenGL has been
-			# explicitly activated.
-			if test "$_opengl" = yes; then
-				_opengles=yes
-			fi
+			# This is so OpenGL detection works for OpenGL_ES.
+			_opengles=yes
 			# We prefer SDL2 on the Raspberry Pi: acceleration now depends on it 
 			# since SDL2 manages dispmanx/gles2 very well internally.
 			# SDL1 is bit-rotten on this platform.
