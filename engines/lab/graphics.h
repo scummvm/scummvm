@@ -95,43 +95,44 @@ public:
 	void setAPen(byte pennum);
 	void rectFill(uint16 x1, uint16 y1, uint16 x2, uint16 y2);
 	void rectFillScaled(uint16 x1, uint16 y1, uint16 x2, uint16 y2);
-	/* Window text stuff */
-	uint32 flowText(void *font,				/* the TextAttr pointer */
-					int16 spacing,			/* How much vertical spacing between the lines */
-					byte pencolor,			/* pen number to use for text */
-					byte backpen,			/* the background color */
-					bool fillback,			/* Whether to fill the background */
-					bool centerh,			/* Whether to center the text horizontally */
-					bool centerv,			/* Whether to center the text vertically */
-					bool output,			/* Whether to output any text */
-					uint16 x1, uint16 y1,	/* Cords */
-					uint16 x2, uint16 y2,
-					const char *text);		/* The text itself */
+	// Window text stuff
+	uint32 flowText(void *font,	// the TextAttr pointer
+				int16 spacing,				// How much vertical spacing between the lines
+				byte pencolor,				// pen number to use for text
+				byte backpen,					// the background color
+				bool fillback,				// Whether to fill the background
+				bool centerh,					// Whether to center the text horizontally
+				bool centerv,					// Whether to center the text vertically
+				bool output,					// Whether to output any text
+				uint16 x1, uint16 y1,	// Cords
+				uint16 x2, uint16 y2,
+				const char *text);		// The text itself
 
-	uint32 flowTextScaled(void *font,		/* the TextAttr pointer */
-		int16 spacing,			/* How much vertical spacing between the lines */
-		byte pencolor,			/* pen number to use for text */
-		byte backpen,			/* the background color */
-		bool fillback,			/* Whether to fill the background */
-		bool centerh,			/* Whether to center the text horizontally */
-		bool centerv,			/* Whether to center the text vertically */
-		bool output,			/* Whether to output any text */
-		uint16 x1, uint16 y1,	/* Cords */
-		uint16 x2, uint16 y2,
-		const char *text);		/* The text itself */
+	uint32 flowTextScaled(
+				void *font,						// the TextAttr pointer
+				int16 spacing,				// How much vertical spacing between the lines
+				byte pencolor,				// pen number to use for text
+				byte backpen,					// the background color
+				bool fillback,				// Whether to fill the background
+				bool centerh,					// Whether to center the text horizontally
+				bool centerv,					// Whether to center the text vertically
+				bool output,					// Whether to output any text
+				uint16 x1, uint16 y1,	// Cords
+				uint16 x2, uint16 y2,
+				const char *text);		// The text itself
 
 	uint32 flowTextToMem(Image *destIm,
-					void *font,				/* the TextAttr pointer */
-					int16 spacing,			/* How much vertical spacing between the lines */
-					byte pencolor,			/* pen number to use for text */
-					byte backpen,			/* the background color */
-					bool fillback,			/* Whether to fill the background */
-					bool centerh,			/* Whether to center the text horizontally */
-					bool centerv,			/* Whether to center the text vertically */
-					bool output,			/* Whether to output any text */
-					uint16 x1, uint16 y1,	/* Cords */
-					uint16 x2, uint16 y2,
-					const char *str);		/* The text itself */
+				void *font,						// the TextAttr pointer
+				int16 spacing,				// How much vertical spacing between the lines
+				byte pencolor,				// pen number to use for text
+				byte backpen,					// the background color
+				bool fillback,				// Whether to fill the background
+				bool centerh,					// Whether to center the text horizontally
+				bool centerv,					// Whether to center the text vertically
+				bool output,					// Whether to output any text
+				uint16 x1, uint16 y1,	// Cords
+				uint16 x2, uint16 y2,
+				const char *str);			// The text itself
 
 	void drawHLine(uint16 x, uint16 y1, uint16 y2);
 	void drawVLine(uint16 x1, uint16 y, uint16 x2);

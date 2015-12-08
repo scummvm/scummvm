@@ -37,12 +37,8 @@
 #include "lab/labfun.h"
 
 namespace Lab {
-
-// Labyrinth of Time ScummVM
 #define SAVEGAME_ID       MKTAG('L', 'O', 'T', 'S')
 #define SAVEGAME_VERSION  1
-
-/*----- The machine independent section of saveGame.c -----*/
 
 void writeSaveGameHeader(Common::OutSaveFile *out, const Common::String &saveName) {
 	out->writeUint32BE(SAVEGAME_ID);

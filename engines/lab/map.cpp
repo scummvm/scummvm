@@ -415,8 +415,9 @@ void LabEngine::drawMap(uint16 CurRoom, uint16 CurMsg, uint16 Floor, bool fadeou
 		}
 	}
 
-	/* Makes sure the X is drawn in corridors */
-	/* NOTE: this here on purpose just in case there's some weird condition, like the surreal maze where there are no rooms */
+	// Makes sure the X is drawn in corridors
+	// NOTE: this here on purpose just in case there's some weird
+	// condition, like the surreal maze where there are no rooms
 	if ((Maps[CurRoom].PageNumber == Floor) && _roomsFound->in(CurRoom) && Maps[CurRoom].x)
 		drawRoom(CurRoom, true);
 
@@ -483,7 +484,8 @@ void LabEngine::processMap(uint16 CurRoom) {
 	CurFloor = Maps[CurRoom].PageNumber;
 
 	while (1) {
-		_music->updateMusic();  /* Make sure we check the music at least after every message */
+		// Make sure we check the music at least after every message
+		_music->updateMusic();
 		Msg = getMsg();
 
 		if (Msg == NULL) {
@@ -526,9 +528,11 @@ void LabEngine::processMap(uint16 CurRoom) {
 				return;
 
 			if (Class == GADGETUP) {
-				if (GadgetID == 0) { /* Quit menu button */
+				if (GadgetID == 0) {
+					// Quit menu button
 					return;
-				} else if (GadgetID == 1) { /* Up arrow */
+				} else if (GadgetID == 1) {
+					// Up arrow
 					OldFloor = CurFloor;
 					getUpFloor(&CurFloor, &drawmap);
 
@@ -538,7 +542,8 @@ void LabEngine::processMap(uint16 CurRoom) {
 						_graphics->fade(true, 0);
 					} else
 						CurFloor = OldFloor;
-				} else if (GadgetID == 2) { /* Down arrow */
+				} else if (GadgetID == 2) {
+					// Down arrow
 					OldFloor = CurFloor;
 					getDownFloor(&CurFloor, &drawmap);
 

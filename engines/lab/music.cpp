@@ -272,9 +272,12 @@ void Music::changeMusic(const char *newmusic) {
 	}
 
 	_file = g_lab->_resource->openDataFile(newmusic);
-	_musicOn = true;   /* turn it off */
+	// turn music off
+	_musicOn = true;
 	setMusic(false);
-	_musicOn = false;  /* turn it back on */
+
+	// turn it back on
+	_musicOn = false;
 	setMusic(true);
 }
 

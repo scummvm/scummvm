@@ -114,7 +114,8 @@ EventManager::EventManager(LabEngine *vm) : _vm(vm) {
 }
 
 void EventManager::mouseHandler(int flag, Common::Point pos) {
-	if (flag & 0x02) { /* Left mouse button click */
+	if (flag & 0x02) {
+		// Left mouse button click
 		Gadget *tmp = NULL;
 		if (_screenGadgetList)
 			tmp = checkGadgetHit(_screenGadgetList, _vm->_isHiRes ? pos : Common::Point(pos.x / 2, pos.y));
@@ -125,7 +126,8 @@ void EventManager::mouseHandler(int flag, Common::Point pos) {
 			_leftClick = true;
 	}
 
-	if (flag & 0x08) /* Right mouse button click */
+	if (flag & 0x08)
+		// Right mouse button click
 		_rightClick = true;
 }
 
@@ -263,7 +265,7 @@ bool EventManager::haveNextChar() {
 void EventManager::processInput(bool can_delay) {
 	Common::Event event;
 
-	if (1 /*!g_IgnoreProcessInput*/) {
+	if (1) { //!g_IgnoreProcessInput
 		int flags = 0;
 		while (g_system->getEventManager()->pollEvent(event)) {
 			switch (event.type) {

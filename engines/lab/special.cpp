@@ -335,7 +335,8 @@ void LabEngine::processJournal() {
 	uint16 Qualifier, GadID;
 
 	while (1) {
-		_music->updateMusic();  /* Make sure we check the music at least after every message */
+		// Make sure we check the music at least after every message
+		_music->updateMusic();
 		Msg = getMsg();
 
 		if (Msg == NULL) {
@@ -544,7 +545,8 @@ void LabEngine::processMonitor(char *ntext, TextFont *monitorFont, bool isintera
 			}
 		}
 
-		_music->updateMusic();  /* Make sure we check the music at least after every message */
+		// Make sure we check the music at least after every message
+		_music->updateMusic();
 		Msg = getMsg();
 
 		if (Msg == NULL) {

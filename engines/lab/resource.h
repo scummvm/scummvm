@@ -122,4 +122,4 @@ private:
 
 } // End of namespace Lab
 
-#endif /* LAB_RESOURCE_H */
+#endif // LAB_RESOURCE_H

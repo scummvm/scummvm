@@ -39,12 +39,11 @@
 
 namespace Lab {
 
-/* Global parser data */
 #define NOFILE         "no file"
 
-/*****************************************************************************/
-/* Generates a random number.                                                */
-/*****************************************************************************/
+/**
+ * Generates a random number.
+ */
 uint16 getRandom(uint16 max) {
 	uint32 secs, micros;
 
@@ -52,9 +51,9 @@ uint16 getRandom(uint16 max) {
 	return ((micros + secs) % max);
 }
 
-/*****************************************************************************/
-/* Checks whether all the conditions in a condition list are met.            */
-/*****************************************************************************/
+/**
+ * Checks whether all the conditions in a condition list are met.
+ */
 static bool checkConditions(int16 *condition) {
 	if (condition == NULL)
 		return true;
@@ -73,9 +72,9 @@ static bool checkConditions(int16 *condition) {
 	return res;
 }
 
-/*****************************************************************************/
-/* Gets the current ViewDataPointer.                                         */
-/*****************************************************************************/
+/**
+ * Gets the current ViewDataPointer.
+ */
 ViewData *getViewData(uint16 roomNum, uint16 direction) {
 	if (!g_lab->_rooms[roomNum]._roomMsg)
 		g_lab->_resource->readViews(roomNum);
@@ -92,9 +91,9 @@ ViewData *getViewData(uint16 roomNum, uint16 direction) {
 	return view;
 }
 
-/*****************************************************************************/
-/* Gets an object, if any, from the user's click on the screen.              */
-/*****************************************************************************/
+/**
+ * Gets an object, if any, from the user's click on the screen.
+ */
 static CloseData *getObject(uint16 x, uint16 y, CloseDataPtr lcptr) {
 	if (lcptr == NULL) {
 		lcptr = getViewData(g_lab->_roomNum, g_lab->_direction)->_closeUps;
@@ -113,12 +112,12 @@ static CloseData *getObject(uint16 x, uint16 y, CloseDataPtr lcptr) {
 	return NULL;
 }
 
-/*****************************************************************************/
-/* Goes through the list of closeups to find a match.                        */
-/* NYI: Known bug here.  If there are two objects that have closeups, and    */
-/*      some of the closeups have the same hit boxes, then this returns the  */
-/*      first occurence of the object with the same hit box.                 */
-/*****************************************************************************/
+/**
+ * Goes through the list of closeups to find a match.
+ * NYI: Known bug here.  If there are two objects that have closeups, and
+ *      some of the closeups have the same hit boxes, then this returns the
+ *      first occurence of the object with the same hit box.
+ */
 static CloseDataPtr findCPtrMatch(CloseDataPtr cpmain, CloseDataPtr list) {
 	CloseDataPtr cptr;
 
@@ -139,9 +138,9 @@ static CloseDataPtr findCPtrMatch(CloseDataPtr cpmain, CloseDataPtr list) {
 	return NULL;
 }
 
-/*****************************************************************************/
-/* Returns the current picture name.                                         */
-/*****************************************************************************/
+/**
+ * Returns the current picture name.
+ */
 char *LabEngine::getPictName(CloseDataPtr *lcptr) {
 	ViewData *viewPtr = getViewData(g_lab->_roomNum, g_lab->_direction);
 
@@ -155,9 +154,9 @@ char *LabEngine::getPictName(CloseDataPtr *lcptr) {
 	return viewPtr->_graphicName;
 }
 
-/*****************************************************************************/
-/* Draws the current direction to the screen.                                */
-/*****************************************************************************/
+/**
+ * Draws the current direction to the screen.
+ */
 void LabEngine::drawDirection(CloseDataPtr lcptr) {
 	if (lcptr != NULL && lcptr->_message) {
 		_graphics->drawMessage(lcptr->_message);
@@ -183,9 +182,9 @@ void LabEngine::drawDirection(CloseDataPtr lcptr) {
 	_graphics->drawMessage(message.c_str());
 }
 
-/*****************************************************************************/
-/* process a arrow gadget movement.                                          */
-/*****************************************************************************/
+/**
+ * process a arrow gadget movement.
+ */
 uint16 processArrow(uint16 curDirection, uint16 arrow) {
 	if (arrow == 1) { // Forward
 		uint16 room = 1;
@@ -227,9 +226,9 @@ uint16 processArrow(uint16 curDirection, uint16 arrow) {
 	return curDirection;
 }
 
-/*****************************************************************************/
-/* Sets the current close up data.                                           */
-/*****************************************************************************/
+/**
+ * Sets the current close up data.
+ */
 void setCurClose(Common::Point pos, CloseDataPtr *cptr, bool useAbsoluteCoords) {
 	CloseDataPtr lcptr;
 	uint16 x1, y1, x2, y2;
@@ -261,9 +260,9 @@ void setCurClose(Common::Point pos, CloseDataPtr *cptr, bool useAbsoluteCoords) 
 	}
 }
 
-/*****************************************************************************/
-/* Takes the currently selected item.                                        */
-/*****************************************************************************/
+/**
+ * Takes the currently selected item.
+ */
 bool takeItem(uint16 x, uint16 y, CloseDataPtr *cptr) {
 	CloseDataPtr lcptr;
 
@@ -290,9 +289,9 @@ bool takeItem(uint16 x, uint16 y, CloseDataPtr *cptr) {
 	return false;
 }
 
-/*****************************************************************************/
-/* Processes the action list.                                                */
-/*****************************************************************************/
+/**
+ * Processes the action list.
+ */
 void LabEngine::doActions(Action *aptr, CloseDataPtr *lcptr) {
 	while (aptr) {
 		_music->updateMusic();
@@ -327,7 +326,8 @@ void LabEngine::doActions(Action *aptr, CloseDataPtr *lcptr) {
 
 		case LOADDIFF:
 			if (aptr->_data)
-				_graphics->loadPict((char *)aptr->_data);          /* Puts a file into memory */
+				// Puts a file into memory
+				_graphics->loadPict((char *)aptr->_data);
 
 			break;
 
@@ -520,7 +520,8 @@ void LabEngine::doActions(Action *aptr, CloseDataPtr *lcptr) {
 				_anim->_doBlack = (_cptr == NULL);
 			else if (aptr->_param1 == 2)
 				_anim->_doBlack = (_cptr != NULL);
-			else if (aptr->_param1 == 5) { /* inverse the palette */
+			else if (aptr->_param1 == 5) {
+				// inverse the palette
 				for (uint16 idx = (8 * 3); idx < (255 * 3); idx++)
 					_anim->_diffPalette[idx] = 255 - _anim->_diffPalette[idx];
 
@@ -528,16 +529,19 @@ void LabEngine::doActions(Action *aptr, CloseDataPtr *lcptr) {
 				_graphics->setPalette(_anim->_diffPalette, 256);
 				waitTOF();
 				waitTOF();
-			} else if (aptr->_param1 == 4) { /* white the palette */
+			} else if (aptr->_param1 == 4) {
+				// white the palette
 				_graphics->whiteScreen();
 				waitTOF();
 				waitTOF();
-			} else if (aptr->_param1 == 6) { /* Restore the palette */
+			} else if (aptr->_param1 == 6) {
+				// Restore the palette
 				waitTOF();
 				_graphics->setPalette(_anim->_diffPalette, 256);
 				waitTOF();
 				waitTOF();
-			} else if (aptr->_param1 == 7) { /* Quick pause */
+			} else if (aptr->_param1 == 7) {
+				// Quick pause
 				waitTOF();
 				waitTOF();
 				waitTOF();
@@ -563,9 +567,9 @@ void LabEngine::doActions(Action *aptr, CloseDataPtr *lcptr) {
 	_music->_doNotFilestopSoundEffect = false;
 }
 
-/*****************************************************************************/
-/* Does the work for doActionRule.                                           */
-/*****************************************************************************/
+/**
+ * Does the work for doActionRule.
+ */
 static bool doActionRuleSub(int16 action, int16 roomNum, CloseDataPtr lcptr, CloseDataPtr *set, bool allowDefaults) {
 	action++;
 
@@ -595,9 +599,9 @@ static bool doActionRuleSub(int16 action, int16 roomNum, CloseDataPtr lcptr, Clo
 	return false;
 }
 
-/*****************************************************************************/
-/* Goes through the rules if an action is taken.                             */
-/*****************************************************************************/
+/**
+ * Goes through the rules if an action is taken.
+ */
 bool doActionRule(Common::Point pos, int16 action, int16 roomNum, CloseDataPtr *lcptr) {
 	if (roomNum)
 		g_lab->_newFileName = NOFILE;
@@ -618,9 +622,9 @@ bool doActionRule(Common::Point pos, int16 action, int16 roomNum, CloseDataPtr *
 	return false;
 }
 
-/*****************************************************************************/
-/* Does the work for doActionRule.                                           */
-/*****************************************************************************/
+/**
+ * Does the work for doActionRule.
+ */
 static bool doOperateRuleSub(int16 itemNum, int16 roomNum, CloseDataPtr lcptr, CloseDataPtr *set, bool allowDefaults) {
 	if (lcptr)
 		if (lcptr->_closeUpType > 0) {
@@ -646,9 +650,9 @@ static bool doOperateRuleSub(int16 itemNum, int16 roomNum, CloseDataPtr lcptr, C
 	return false;
 }
 
-/*****************************************************************************/
-/* Goes through the rules if the user tries to operate an item on an object. */
-/*****************************************************************************/
+/**
+ * Goes through the rules if the user tries to operate an item on an object.
+ */
 bool doOperateRule(int16 x, int16 y, int16 ItemNum, CloseDataPtr *lcptr) {
 	CloseDataPtr tlcptr;
 
@@ -680,9 +684,9 @@ bool doOperateRule(int16 x, int16 y, int16 ItemNum, CloseDataPtr *lcptr) {
 	return false;
 }
 
-/*****************************************************************************/
-/* Goes through the rules if the user tries to go forward.                   */
-/*****************************************************************************/
+/**
+ * Goes through the rules if the user tries to go forward.
+ */
 bool doGoForward(CloseDataPtr *lcptr) {
 	RuleList *rules = g_lab->_rooms[g_lab->_roomNum]._rules;
 
@@ -698,9 +702,9 @@ bool doGoForward(CloseDataPtr *lcptr) {
 	return false;
 }
 
-/*****************************************************************************/
-/* Goes through the rules if the user tries to turn.                         */
-/*****************************************************************************/
+/**
+ * Goes through the rules if the user tries to turn.
+ */
 bool doTurn(uint16 from, uint16 to, CloseDataPtr *lcptr) {
 	from++;
 	to++;
@@ -721,9 +725,9 @@ bool doTurn(uint16 from, uint16 to, CloseDataPtr *lcptr) {
 	return false;
 }
 
-/*****************************************************************************/
-/* Goes through the rules if the user tries to go to the main view           */
-/*****************************************************************************/
+/**
+ * Goes through the rules if the user tries to go to the main view
+ */
 bool doMainView(CloseDataPtr *lcptr) {
 	RuleList *rules = g_lab->_rooms[g_lab->_roomNum]._rules;
 	for (RuleList::iterator rule = rules->begin(); rule != rules->end(); ++rule) {

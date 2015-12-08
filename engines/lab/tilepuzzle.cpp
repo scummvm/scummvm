@@ -140,7 +140,8 @@ void LabEngine::changeTile(uint16 col, uint16 row) {
 		}
 
 		if (check) {
-			_conditions->inclElement(BRICKOPEN);  /* unlocked combination */
+			// unlocked combination
+			_conditions->inclElement(BRICKOPEN);
 			_anim->_doBlack = true;
 			_graphics->readPict("p:Up/BDOpen", true);
 		}

@@ -41,9 +41,9 @@ namespace Lab {
 
 class LabEngine;
 
-/*---------------------------*/
-/*----- From LabMusic.c -----*/
-/*---------------------------*/
+//---------------------------
+//----- From LabMusic.c -----
+//---------------------------
 
 #define MAXBUFFERS         5L
 
@@ -98,4 +98,4 @@ private:
 
 } // End of namespace Lab
 
-#endif /* LAB_MUSIC_H */
+#endif // LAB_MUSIC_H
