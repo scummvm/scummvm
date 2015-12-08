@@ -48,6 +48,7 @@ Gadget *createButton(uint16 x, uint16 y, uint16 id, uint16 key, Image *im, Image
 		gptr->_keyEquiv = key;
 		gptr->_image = im;
 		gptr->_altImage = imalt;
+		gptr->isEnabled = true;
 
 		return gptr;
 	} else
@@ -69,7 +70,7 @@ void drawGadgetList(GadgetList *gadgetList) {
 	for (GadgetList::iterator gadget = gadgetList->begin(); gadget != gadgetList->end(); ++gadget) {
 		(*gadget)->_image->drawImage((*gadget)->x, (*gadget)->y);
 
-		if (GADGETOFF & (*gadget)->_flags)
+		if (!(*gadget)->isEnabled)
 			disableGadget((*gadget), 1);
 	}
 }
@@ -79,7 +80,7 @@ void drawGadgetList(GadgetList *gadgetList) {
  */
 void disableGadget(Gadget *curgad, uint16 pencolor) {
 	g_lab->_graphics->overlayRect(pencolor, curgad->x, curgad->y, curgad->x + curgad->_image->_width - 1, curgad->y + curgad->_image->_height - 1);
-	curgad->_flags |= GADGETOFF;
+	curgad->isEnabled = false;
 }
 
 /**
@@ -87,7 +88,7 @@ void disableGadget(Gadget *curgad, uint16 pencolor) {
  */
 void enableGadget(Gadget *curgad) {
 	curgad->_image->drawImage(curgad->x, curgad->y);
-	curgad->_flags &= !(GADGETOFF);
+	curgad->isEnabled = true;
 }
 
 /**
@@ -114,7 +115,7 @@ Gadget *LabEngine::checkNumGadgetHit(GadgetList *gadgetList, uint16 key) {
 		Gadget *gadget = *gadgetItr;
 		if ((gkey - 1 == gadget->_gadgetID || (gkey == 0 && gadget->_gadgetID == 9) ||
 			  (gadget->_keyEquiv != 0 && makeGadgetKeyEquiv(key) == gadget->_keyEquiv))
-			  && !(GADGETOFF & gadget->_flags)) {
+			  && gadget->isEnabled) {
 			_event->mouseHide();
 			gadget->_altImage->drawImage(gadget->x, gadget->y);
 			_event->mouseShow();
