@@ -62,9 +62,7 @@ DisplayMan::~DisplayMan() {
 	freePict();
 }
 
-/*---------------------------------------------------------------------------*/
-/*------ From readPict.c.  Reads in pictures and animations from disk. ------*/
-/*---------------------------------------------------------------------------*/
+// From readPict.c.  Reads in pictures and animations from disk.
 
 void DisplayMan::loadPict(const char *filename) {
 	Common::File *bitmapFile = _vm->_resource->openDataFile(filename);
@@ -126,11 +124,9 @@ void DisplayMan::freePict() {
 	_curBitmap = NULL;
 }
 
-/*---------------------------------------------------------------------------*/
-/*------------ Does all the text rendering to the message boxes. ------------*/
-/*---------------------------------------------------------------------------*/
-
-/*----- The flowText routines -----*/
+//---------------------------------------------------------------------------
+//------------ Does all the text rendering to the message boxes. ------------
+//---------------------------------------------------------------------------
 
 /**
  * Extracts the first word from a string.
@@ -189,17 +185,17 @@ void DisplayMan::getLine(TextFont *tf, char *lineBuffer, const char **mainBuffer
  * each line less than 255 characters.
  */
 uint32 DisplayMan::flowText(
-			void *font,            /* the TextAttr pointer */
-			int16 spacing,         /* How much vertical spacing between the lines */
-			byte pencolor,         /* pen number to use for text */
-			byte backpen,          /* the background color */
-			bool fillback,         /* Whether to fill the background */
-			bool centerh,          /* Whether to center the text horizontally */
-			bool centerv,          /* Whether to center the text vertically */
-			bool output,           /* Whether to output any text */
-			uint16 x1, uint16 y1,  /* Cords */
+			void *font,            // the TextAttr pointer
+			int16 spacing,         // How much vertical spacing between the lines
+			byte pencolor,         // pen number to use for text
+			byte backpen,          // the background color
+			bool fillback,         // Whether to fill the background
+			bool centerh,          // Whether to center the text horizontally
+			bool centerv,          // Whether to center the text vertically
+			bool output,           // Whether to output any text
+			uint16 x1, uint16 y1,  // Cords
 			uint16 x2, uint16 y2,
-			const char *str) {     /* The text itself */
+			const char *str) {     // The text itself
 	TextFont *_msgFont = (TextFont *)font;
 	char linebuffer[256];
 	const char *temp;
@@ -254,16 +250,18 @@ uint32 DisplayMan::flowText(
 	return (str - temp);
 }
 
-uint32 DisplayMan::flowTextScaled(void *font,      /* the TextAttr pointer */
-	int16 spacing,                /* How much vertical spacing between the lines */
-	byte penColor,                /* pen number to use for text */
-	byte backPen,                 /* the background color */
-	bool fillBack,                /* Whether to fill the background */
-	bool centerX,                 /* Whether to center the text horizontally */
-	bool centerY,                 /* Whether to center the text vertically */
-	bool output,                  /* Whether to output any text */
-	uint16 x1, uint16 y1,         /* Cords */
-	uint16 x2, uint16 y2, const char *str) {
+uint32 DisplayMan::flowTextScaled(
+	void *font,                // the TextAttr pointer
+	int16 spacing,             // How much vertical spacing between the lines
+	byte penColor,             // pen number to use for text
+	byte backPen,              // the background color
+	bool fillBack,             // Whether to fill the background
+	bool centerX,              // Whether to center the text horizontally
+	bool centerY,              // Whether to center the text vertically
+	bool output,               // Whether to output any text
+	uint16 x1, uint16 y1,      // Cords
+	uint16 x2, uint16 y2,
+	const char *str) {
 	return flowText(font, spacing, penColor, backPen, fillBack, centerX, centerY, output,
 					_vm->_utils->vgaScaleX(x1), _vm->_utils->vgaScaleY(y1),
 					_vm->_utils->vgaScaleX(x2), _vm->_utils->vgaScaleY(y2), str);
@@ -273,17 +271,17 @@ uint32 DisplayMan::flowTextScaled(void *font,      /* the TextAttr pointer */
  * Calls flowText, but flows it to memory.  Same restrictions as flowText.
  */
 uint32 DisplayMan::flowTextToMem(Image *destIm,
-			void *font,            /* the TextAttr pointer */
-			int16 spacing,         /* How much vertical spacing between the lines */
-			byte pencolor,         /* pen number to use for text */
-			byte backpen,          /* the background color */
-			bool fillback,         /* Whether to fill the background */
-			bool centerh,          /* Whether to center the text horizontally */
-			bool centerv,          /* Whether to center the text vertically */
-			bool output,           /* Whether to output any text */
-			uint16 x1, uint16 y1,  /* Cords */
+			void *font,            // the TextAttr pointer
+			int16 spacing,         // How much vertical spacing between the lines
+			byte pencolor,         // pen number to use for text
+			byte backpen,          // the background color
+			bool fillback,         // Whether to fill the background
+			bool centerh,          // Whether to center the text horizontally
+			bool centerv,          // Whether to center the text vertically
+			bool output,           // Whether to output any text
+			uint16 x1, uint16 y1,  // Cords
 			uint16 x2, uint16 y2,
-			const char *str) {     /* The text itself */
+			const char *str) {     // The text itself
 	uint32 res, vgabyte = _screenBytesPerPage;
 	byte *tmp = _currentDisplayBuffer;
 
@@ -298,13 +296,15 @@ uint32 DisplayMan::flowTextToMem(Image *destIm,
 	return res;
 }
 
-/*----- The control panel stuff -----*/
+//----- The control panel stuff -----
 
 void DisplayMan::createBox(uint16 y2) {
-	setAPen(7);                 /* Message box area */
+	// Message box area
+	setAPen(7);
 	rectFillScaled(4, 154, 315, y2 - 2);
 
-	setAPen(0);                 /* Box around message area */
+	// Box around message area
+	setAPen(0);
 	drawHLine(_vm->_utils->vgaScaleX(2), _vm->_utils->vgaScaleY(152), _vm->_utils->vgaScaleX(317));
 	drawVLine(_vm->_utils->vgaScaleX(317), _vm->_utils->vgaScaleY(152), _vm->_utils->vgaScaleY(y2));
 	drawHLine(_vm->_utils->vgaScaleX(2), _vm->_utils->vgaScaleY(y2), _vm->_utils->vgaScaleX(317));
@@ -323,7 +323,8 @@ int32 DisplayMan::longDrawMessage(const char *str) {
 
 	if (!_longWinInFront) {
 		_longWinInFront = true;
-		setAPen(3);                 /* Clear Area */
+		// Clear Area
+		setAPen(3);
 		rectFill(0, _vm->_utils->vgaScaleY(149) + _vm->_utils->svgaCord(2), _vm->_utils->vgaScaleX(319), _vm->_utils->vgaScaleY(199));
 	}
 
@@ -367,37 +368,45 @@ void DisplayMan::drawMessage(const char *str) {
 void DisplayMan::drawPanel() {
 	_vm->_event->mouseHide();
 
-	setAPen(3);                 /* Clear Area */
+	// Clear Area
+	setAPen(3);
 	rectFill(0, _vm->_utils->vgaScaleY(149) + _vm->_utils->svgaCord(2), _vm->_utils->vgaScaleX(319), _vm->_utils->vgaScaleY(199));
 
-	setAPen(0);                 /* First Line */
-	drawHLine(0, _vm->_utils->vgaScaleY(149) + _vm->_utils->svgaCord(2), _vm->_utils->vgaScaleX(319));
-	setAPen(5);                 /* Second Line */
-	drawHLine(0, _vm->_utils->vgaScaleY(149) + 1 + _vm->_utils->svgaCord(2), _vm->_utils->vgaScaleX(319));
-
-	/* Gadget Separators */
+	// First Line
 	setAPen(0);
-	drawHLine(0, _vm->_utils->vgaScaleY(170), _vm->_utils->vgaScaleX(319));     /* First black line to separate buttons */
+	drawHLine(0, _vm->_utils->vgaScaleY(149) + _vm->_utils->svgaCord(2), _vm->_utils->vgaScaleX(319));
+	// Second Line
+	setAPen(5);
+	drawHLine(0, _vm->_utils->vgaScaleY(149) + 1 + _vm->_utils->svgaCord(2), _vm->_utils->vgaScaleX(319));
+	// Gadget Separators
+	setAPen(0);
+	// First black line to separate buttons
+	drawHLine(0, _vm->_utils->vgaScaleY(170), _vm->_utils->vgaScaleX(319));
 
 	if (!_vm->_alternate) {
 		setAPen(4);
-		drawHLine(0, _vm->_utils->vgaScaleY(170) + 1, _vm->_utils->vgaScaleX(319)); /* The horizontal lines under the black one */
+		// The horizontal lines under the black one
+		drawHLine(0, _vm->_utils->vgaScaleY(170) + 1, _vm->_utils->vgaScaleX(319));
 		drawGadgetList(&_vm->_moveGadgetList);
 	} else {
 		if (_vm->getPlatform() != Common::kPlatformWindows) {
-			drawVLine(_vm->_utils->vgaScaleX(124), _vm->_utils->vgaScaleY(170) + 1, _vm->_utils->vgaScaleY(199)); /* Vertical Black lines */
+			// Vertical Black lines
+			drawVLine(_vm->_utils->vgaScaleX(124), _vm->_utils->vgaScaleY(170) + 1, _vm->_utils->vgaScaleY(199));
 			drawVLine(_vm->_utils->vgaScaleX(194), _vm->_utils->vgaScaleY(170) + 1, _vm->_utils->vgaScaleY(199));
 		} else {
-			drawVLine(_vm->_utils->vgaScaleX(90), _vm->_utils->vgaScaleY(170) + 1, _vm->_utils->vgaScaleY(199));  /* Vertical Black lines */
+			// Vertical Black lines
+			drawVLine(_vm->_utils->vgaScaleX(90), _vm->_utils->vgaScaleY(170) + 1, _vm->_utils->vgaScaleY(199));
 			drawVLine(_vm->_utils->vgaScaleX(160), _vm->_utils->vgaScaleY(170) + 1, _vm->_utils->vgaScaleY(199));
 			drawVLine(_vm->_utils->vgaScaleX(230), _vm->_utils->vgaScaleY(170) + 1, _vm->_utils->vgaScaleY(199));
 		}
 
 		setAPen(4);
-		drawHLine(0, _vm->_utils->vgaScaleY(170) + 1, _vm->_utils->vgaScaleX(122));   /* The horizontal lines under the black one */
+		// The horizontal lines under the black one
+		drawHLine(0, _vm->_utils->vgaScaleY(170) + 1, _vm->_utils->vgaScaleX(122));
 		drawHLine(_vm->_utils->vgaScaleX(126), _vm->_utils->vgaScaleY(170) + 1, _vm->_utils->vgaScaleX(192));
 		drawHLine(_vm->_utils->vgaScaleX(196), _vm->_utils->vgaScaleY(170) + 1, _vm->_utils->vgaScaleX(319));
-		drawVLine(_vm->_utils->vgaScaleX(1), _vm->_utils->vgaScaleY(170) + 2, _vm->_utils->vgaScaleY(198)); /* The vertical high light lines */
+		// The vertical high light lines
+		drawVLine(_vm->_utils->vgaScaleX(1), _vm->_utils->vgaScaleY(170) + 2, _vm->_utils->vgaScaleY(198));
 
 		if (_vm->getPlatform() != Common::kPlatformWindows) {
 			drawVLine(_vm->_utils->vgaScaleX(126), _vm->_utils->vgaScaleY(170) + 2, _vm->_utils->vgaScaleY(198));
@@ -426,7 +435,7 @@ bool DisplayMan::setUpScreens() {
 		_vm->_moveImages[i] = new Image(controlFile);
 	delete controlFile;
 
-	/* Creates the gadgets for the movement control panel */
+	// Creates the gadgets for the movement control panel
 	uint16 y = _vm->_utils->vgaScaleY(173) - _vm->_utils->svgaCord(2);
 
 	// The key mapping was only set for the Windows version.
@@ -726,9 +735,9 @@ void DisplayMan::text(TextFont *tf, uint16 x, uint16 y, uint16 color, const char
 							if (templeft <= 0) {
 								curpage++;
 								VGATemp = (byte *)(VGATop - templeft);
-								/* Set up VGATempLine for next line */
+								// Set up VGATempLine for next line
 								VGATempLine -= _screenBytesPerPage;
-								/* Set up LeftInSegment for next line */
+								// Set up LeftInSegment for next line
 								LeftInSegment += _screenBytesPerPage + templeft;
 								templeft += _screenBytesPerPage;
 							}

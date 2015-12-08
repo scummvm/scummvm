@@ -77,4 +77,4 @@ public:
 
 } // End of namespace Lab
 
-#endif /* LAB_EVENTMAN_H */
+#endif // LAB_EVENTMAN_H

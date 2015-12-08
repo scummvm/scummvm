@@ -33,7 +33,7 @@
 
 namespace Lab {
 
-	/*------------------------------- Action types ------------------------------*/
+//------------------------------- Action types ------------------------------
 #define PLAYSOUND     1
 #define PLAYSOUNDCONT 2
 #define SHOWDIFF      3
@@ -71,7 +71,7 @@ namespace Lab {
 #define CSHOWMESSAGE 35
 #define PLAYSOUNDB   36
 
-	/* Rule Types */
+// Rule Types
 #define ACTION      1
 #define OPERATE     2
 #define GOFORWARD   3
@@ -80,7 +80,7 @@ namespace Lab {
 #define GOMAINVIEW  6
 #define TURNFROMTO  7
 
-	/*----------------------------- Rule Type Action ----------------------------*/
+//----------------------------- Rule Type Action ----------------------------
 #define TAKE        1
 #define MOVE        2
 #define OPENDOOR    3
@@ -93,8 +93,8 @@ namespace Lab {
 
 typedef struct CloseData {
 	uint16 x1, y1, x2, y2;
-	int16 _closeUpType;          /* if > 0, an object.  If < 0, an item */
-	uint16 _depth;               /* Level of the closeup. */
+	int16 _closeUpType;          // if > 0, an object.  If < 0, an item
+	uint16 _depth;               // Level of the closeup.
 	char *_graphicName;
 	char *_message;
 	CloseData *_nextCloseUp;
@@ -115,7 +115,7 @@ struct Action {
 	int16 _param1;
 	int16 _param2;
 	int16 _param3;
-	byte *_data;            /* Message, or a pointer to array of messages. */
+	byte *_data;            // Message, or a pointer to array of messages.
 	Action *_nextAction;
 };
 
@@ -147,15 +147,15 @@ struct InventoryData {
 	char *_bitmapName;
 };
 
-/* Map Flags */
+// Map Flags
 
-/* Where the doors are; in a corridor, assumed to be left doors */
+// Where the doors are; in a corridor, assumed to be left doors
 #define     NORTHDOOR        1L
 #define     EASTDOOR         2L
 #define     SOUTHDOOR        4L
 #define     WESTDOOR         8L
 
-/* Where the doors are in corridors; M means middle, R means right, B means bottom */
+// Where the doors are in corridors; M means middle, R means right, B means bottom
 #define     NORTHMDOOR      16L
 #define     NORTHRDOOR      32L
 #define     SOUTHMDOOR      64L
@@ -166,7 +166,7 @@ struct InventoryData {
 #define     WESTMDOOR       64L
 #define     WESTBDOOR      128L
 
-/* Special Map ID's */
+// Special Map ID's
 #define     NORMAL           0
 #define     UPARROWROOM      1
 #define     DOWNARROWROOM    2
@@ -203,4 +203,4 @@ bool doMainView(CloseDataPtr *lcptr);
 
 } // End of namespace Lab
 
-#endif /* LAB_PROCESSROOM_H */
+#endif // LAB_PROCESSROOM_H

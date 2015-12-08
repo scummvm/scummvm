@@ -78,7 +78,8 @@ void Anim::readBlock(void *Buffer, uint32 Size, byte **File) {
 }
 
 void Anim::diffNextFrame(bool onlyDiffData) {
-	if (_header == 65535)  /* Already done. */
+	if (_header == 65535)
+		// Already done.
 		return;
 
 	if (_vm->_graphics->_dispBitMap._flags & BITMAPF_VIDEO) {
@@ -127,7 +128,8 @@ void Anim::diffNextFrame(bool onlyDiffData) {
 			if (_vm->_graphics->_dispBitMap._flags & BITMAPF_VIDEO)
 				_vm->_graphics->screenUpdate();
 
-			return; /* done with the next frame. */
+			// done with the next frame.
+			return;
 		}
 
 		_vm->_music->updateMusic();
@@ -231,7 +233,8 @@ void Anim::diffNextFrame(bool onlyDiffData) {
 				return;
 			}
 
-			_frameNum = 4;  /* Random frame number so it never gets back to 2 */
+			// Random frame number so it never gets back to 2
+			_frameNum = 4;
 			_diffFile = _buffer;
 			break;
 

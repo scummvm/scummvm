@@ -50,12 +50,12 @@ struct Gadget {
 	Image *_image, *_altImage;
 };
 
-/* Defines for the GadgetFlags portion */
+// Defines for the GadgetFlags portion
 #define GADGETOFF 0x01
 
 typedef Common::List<Gadget *> GadgetList;
 
-/* Defines for the Class variable in IntuiMessage */
+// Defines for the Class variable in IntuiMessage
 #define SIZEVERIFY  0x00000001
 #define NEWSIZE     0x00000002
 #define REFRESHWINDOW   0x00000004
@@ -73,14 +73,14 @@ typedef Common::List<Gadget *> GadgetList;
 #define NEWPREFS    0x00004000
 #define DISKINSERTED    0x00008000
 #define DISKREMOVED 0x00010000
-#define WBENCHMESSAGE   0x00020000  /*  System use only     */
+#define WBENCHMESSAGE   0x00020000  // System use only
 #define ACTIVEWINDOW    0x00040000
 #define INACTIVEWINDOW  0x00080000
 #define DELTAMOVE   0x00100000
 #define VANULLLAKEY  0x00200000
 
 
-/* Defines for the Qualifier variable in IntuiMessage */
+// Defines for the Qualifier variable in IntuiMessage
 #define IEQUALIFIER_LSHIFT      0x0001
 #define IEQUALIFIER_RSHIFT      0x0002
 #define IEQUALIFIER_CAPSLOCK        0x0004
@@ -103,9 +103,9 @@ typedef Common::List<Gadget *> GadgetList;
 #define VKEY_LTARROW    276
 
 
-/*---------------------------------------------------------------------------*/
-/*--------------------------- Function Prototypes ---------------------------*/
-/*---------------------------------------------------------------------------*/
+//---------------------------------------------------------------------------
+//--------------------------- Function Prototypes ---------------------------
+//---------------------------------------------------------------------------
 
 Gadget *createButton(uint16 x, uint16 y, uint16 id, uint16 key, Image *im, Image *imalt);
 void freeButtonList(GadgetList *gadgetList);
@@ -116,4 +116,4 @@ IntuiMessage *getMsg();
 
 } // End of namespace Lab
 
-#endif /* LAB_INTEFACE_H */
+#endif // LAB_INTEFACE_H

@@ -145,15 +145,18 @@ IntuiMessage *LabEngine::getMsg() {
 		IMessage._gadgetID = curgad->_gadgetID;
 		IMessage._qualifier = qualifiers;
 		return &IMessage;
-	} else if (_event->mouseButton(&IMessage._mouseX, &IMessage._mouseY, true)) { /* Left Button */
+	} else if (_event->mouseButton(&IMessage._mouseX, &IMessage._mouseY, true)) {
+		// Left Button
 		IMessage._qualifier = IEQUALIFIER_LEFTBUTTON | qualifiers;
 		IMessage._msgClass = MOUSEBUTTONS;
 		return &IMessage;
-	} else if (_event->mouseButton(&IMessage._mouseX, &IMessage._mouseY, false)) { /* Right Button */
+	} else if (_event->mouseButton(&IMessage._mouseX, &IMessage._mouseY, false)) {
+		// Right Button
 		IMessage._qualifier = IEQUALIFIER_RBUTTON | qualifiers;
 		IMessage._msgClass = MOUSEBUTTONS;
 		return &IMessage;
-	} else if (_event->keyPress(&IMessage._code)) { /* Keyboard key */
+	} else if (_event->keyPress(&IMessage._code)) {
+		// Keyboard key
 		curgad = checkNumGadgetHit(_event->_screenGadgetList, IMessage._code);
 
 		if (curgad) {

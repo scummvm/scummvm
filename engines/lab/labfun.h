@@ -40,7 +40,7 @@ namespace Lab {
 
 class LabEngine;
 
-/* Direction defines */
+// Direction defines
 #define NORTH   0
 #define SOUTH   1
 #define EAST    2
@@ -53,9 +53,9 @@ struct SaveGameHeader {
 	uint16 _direction;
 };
 
-/*--------------------------*/
-/*----- From saveGame.c ----*/
-/*--------------------------*/
+//--------------------------
+//----- From saveGame.c ----
+//--------------------------
 
 bool saveGame(uint16 Direction, uint16 Quarters, int slot, Common::String desc);
 bool loadGame(uint16 *Direction, uint16 *Quarters, int slot);
@@ -63,4 +63,4 @@ bool readSaveGameHeader(Common::InSaveFile *in, SaveGameHeader &header);
 
 } // End of namespace Lab
 
-#endif /* LAB_LABFUN_H */
+#endif // LAB_LABFUN_H
