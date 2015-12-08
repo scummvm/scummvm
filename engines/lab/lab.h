@@ -38,16 +38,18 @@
 #include "lab/anim.h"
 #include "lab/processroom.h"
 #include "lab/interface.h"
-#include "lab/eventman.h"
-#include "lab/dispman.h"
+//#include "lab/eventman.h"
 
 struct ADGameDescription;
 
 namespace Lab {
 
+class DisplayMan;
+class EventManager;
 class LargeSet;
 class Music;
 class Resource;
+struct TextFont;
 class Utils;
 
 enum GameFeatures {

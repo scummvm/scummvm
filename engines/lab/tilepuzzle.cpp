@@ -28,10 +28,13 @@
  *
  */
 
+#include "common/file.h"
+
 #include "gui/message.h"
 
 #include "lab/lab.h"
 
+#include "lab/dispman.h"
 #include "lab/image.h"
 #include "lab/labsets.h"
 #include "lab/resource.h"

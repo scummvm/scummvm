@@ -36,8 +36,10 @@
 
 #include "lab/lab.h"
 
-#include "lab/music.h"
+#include "lab/dispman.h"
+#include "lab/eventman.h"
 #include "lab/image.h"
+#include "lab/music.h"
 #include "lab/resource.h"
 #include "lab/utils.h"
 
