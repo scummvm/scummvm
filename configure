@@ -135,7 +135,6 @@ _faad=auto
 _fluidsynth=auto
 _opengl=auto
 _opengles=auto
-_dispmanx=no
 _readline=auto
 _freetype2=auto
 _taskbar=auto
@@ -1061,8 +1060,6 @@ for ac_option in $@; do
 	--disable-libunity)       _libunity=no    ;;
 	--enable-opengl)          _opengl=yes     ;;
 	--disable-opengl)         _opengl=no      ;;
-	--enable-dispmanx)        _dispmanx=yes   ;;
-	--disable-dispmanx)       _dispmanx=no    ;;
 	--enable-bink)            _bink=yes       ;;
 	--disable-bink)           _bink=no        ;;
 	--enable-verbose-build)   _verbose_build=yes ;;
@@ -2574,23 +2571,26 @@ if test -n "$_host"; then
 			# This is needed because the official cross compiler doesn't have multiarch enabled
 			# but Raspbian does.
 			# Be careful as it's the linker (LDFLAGS) which must know about sysroot.	
-			# These are needed to build against Raspbian's libSDL even if we don't activate 
-			# dispmanx support. 
+			# These are needed to build against basic Raspbian's libSDL. 
 			append_var LDFLAGS "--sysroot=$RPI_ROOT"
 			append_var LDFLAGS "-B$RPI_ROOT/usr/lib/arm-linux-gnueabihf"
 			append_var LDFLAGS "-Xlinker --rpath-link=$RPI_ROOT/usr/lib/arm-linux-gnueabihf"
 			append_var LDFLAGS "-Xlinker --rpath-link=$RPI_ROOT/lib/arm-linux-gnueabihf"
 			append_var LDFLAGS "-Xlinker --rpath-link=$RPI_ROOT/opt/vc/lib"
 			append_var LDFLAGS "-L$RPI_ROOT/opt/vc/lib"
-			append_var LDFLAGS "-L/opt/rpi_root/lib/arm-linux-gnueabihf -L$RPI_ROOT/usr/lib -L$RPI_ROOT/opt/vc/lib -lbcm_host -lvcos"
+			# This is so optional OpenGL_ES includes are found	
+			append_var CXXFLAGS "-I$RPI_ROOT/opt/vc/include"
 			_savegame_timestamp=no
 			_eventrec=no
 			_build_scalers=no
 			_build_hq_scalers=no
-			# It makes no sense to have both GL and dispmanx rendering support.
-			_opengl=no
-			_opengles=no
-			;;
+			# We prefer SDL2 on the Raspberry Pi: acceleration now depends on it 
+			# since SDL2 manages dispmanx/gles2 very well internally.
+			# SDL1 is bit-rotten on this platform.
+			_sdlconfig=sdl2-config
+			# We should add _opengles=yes later here if we wanted the GLES renderer.
+			# For now, we use plain SDL2 only, which in turn uses GLES2 by default.
+			;;	
 		dreamcast)
 			append_var DEFINES "-DDISABLE_DEFAULT_SAVEFILEMANAGER"
 			append_var DEFINES "-DDISABLE_TEXT_CONSOLE"
@@ -4037,6 +4037,13 @@ EOF
 int main(void) { return GL_OES_VERSION_1_1; }
 EOF
 			cc_check $DEFINES $OPENGL_CFLAGS $OPENGL_LIBS && _opengl=yes && _opengles=yes && break
+			
+			# Test the current header for OpenGL ES on SBCs (Raspberry Pi, Cubieboard, etc)
+			cat > $TMPC << EOF
+#include <$i>
+int main(void) { return GL_VERSION_ES_CM_1_1; }
+EOF
+			cc_check $DEFINES $OPENGL_CFLAGS $OPENGL_LIBS && _opengl=yes && _opengles=yes && break
 		done
 	fi
 fi
@@ -4103,35 +4110,6 @@ fi
 
 define_in_config_if_yes "$_opengl" "USE_OPENGL"
 define_in_config_if_yes "$_opengles" "USE_GLES"
-
-# Check if Raspberry Pi's Dispmanx graphics have been enabled and everything is in place. 
-# If dispmanx is disabled, we fall back to plain SDL rendering.
-if test "$_dispmanx" = "yes" ; then
-		echocheck "DispmanX graphics"
-		_use_dispmanx=no
-
-		# These are only needed if, appart from cross-building for Raspberry Pi,
-		# we are activating dispmanx support.
-		DISPMANX_CXXFLAGS="-I$RPI_ROOT/usr/include -I$RPI_ROOT/usr/include/arm-linux-gnueabihf -I$RPI_ROOT/opt/vc/include -I$RPI_ROOT/opt/vc/include/interface/vmcs_host/linux -I$RPI_ROOT/opt/vc/include/interface/vcos/pthreads -I$RPI_ROOT/usr/include/SDL"
-		DISPMANX_LIBS="$RPI_LIBS -L/opt/rpi_root/lib/arm-linux-gnueabihf -L$RPI_ROOT/usr/lib -L$RPI_ROOT/opt/vc/lib -lbcm_host -lvcos -lvchiq_arm"
-		
-		cat > $TMPC << EOF
-#include <bcm_host.h>
-
-		int main(int argc, char *argv[]) {
-	bcm_host_init();
-}
-EOF
-		cc_check $DISPMANX_CXXFLAGS $DISPMANX_LIBS && _use_dispmanx=yes
-		if test "$_use_dispmanx" = "yes"; then
-			append_var CXXFLAGS "$DISPMANX_CXXFLAGS"
-			append_var LIBS "$DISPMANX_LIBS"
-			append_var DEFINES "-DDISPMANX"
-			add_line_to_config_mk 'DISPMANX = 1'
-			echo $_use_dispmanx
-		else echo "no"
-		fi
-fi
 
 #
 # Check for nasm
