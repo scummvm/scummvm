@@ -193,7 +193,7 @@ bool parse(const char *inputFile);
 ViewData *getViewData(uint16 roomNum, uint16 direction);
 void drawDirection(CloseDataPtr lcptr);
 uint16 processArrow(uint16 curDirection, uint16 arrow);
-void setCurClose(Common::Point pos, CloseDataPtr *cptr, bool useAbsoluteCoords = false);
+void setCurClose(Common::Point pos, CloseDataPtr *cptr, bool useAbsoluteCoords = true);
 bool takeItem(uint16 x, uint16 y, CloseDataPtr *cptr);
 bool doActionRule(Common::Point pos, int16 action, int16 roomNum, CloseDataPtr *lcptr);
 bool doOperateRule(int16 x, int16 y, int16 itemNum, CloseDataPtr *lcptr);
