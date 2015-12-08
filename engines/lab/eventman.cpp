@@ -94,6 +94,16 @@ void EventManager::attachGadgetList(GadgetList *gadgetList) {
 	_screenGadgetList = gadgetList;
 }
 
+Gadget *EventManager::getGadget(uint16 id) {
+	for (GadgetList::iterator gadgetItr = _screenGadgetList->begin(); gadgetItr != _screenGadgetList->end(); ++gadgetItr) {
+		Gadget *gadget = *gadgetItr;
+		if (gadget->_gadgetID == id)
+			return gadget;
+	}
+
+	return nullptr;
+}
+
 EventManager::EventManager(LabEngine *vm) : _vm(vm) {
 	_leftClick = false;
 	_rightClick = false;
