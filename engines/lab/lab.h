@@ -42,7 +42,6 @@
 #include "lab/music.h"
 #include "lab/resource.h"
 #include "lab/anim.h"
-#include "lab/graphics.h"
 #include "lab/labsets.h"
 #include "lab/utils.h"
 

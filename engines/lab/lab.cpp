@@ -45,7 +45,6 @@
 #include "lab/labfun.h"
 #include "lab/resource.h"
 #include "lab/anim.h"
-#include "lab/graphics.h"
 
 namespace Lab {
 

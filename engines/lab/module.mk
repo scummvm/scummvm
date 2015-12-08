@@ -3,9 +3,9 @@ MODULE := engines/lab
 MODULE_OBJS := \
 	anim.o \
 	detection.o \
+	dispman.o \
 	engine.o \
 	eventman.o \
-	graphics.o \
 	image.o \
 	interface.o \
 	intro.o \
