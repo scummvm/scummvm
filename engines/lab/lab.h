@@ -32,7 +32,7 @@
 #define LAB_H
 
 #include "common/system.h"
-#include "common/events.h"
+#include "common/rect.h"
 
 #include "engines/engine.h"
 #include "lab/processroom.h"
