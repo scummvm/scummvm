@@ -54,8 +54,8 @@ int printOglError(const char *file, int line) {
 	return retCode;
 }
 
-bool iOS7_isHighResDevice() {
-	return g_fullHeight > 480;
+bool iOS7_isBigDevice() {
+	return UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad;
 }
 
 void iOS7_updateScreen() {
@@ -129,22 +129,30 @@ uint getSizeNextPOT(uint size) {
 			NSLog(@"Failed to make complete framebuffer object %x.", glCheckFramebufferStatusOES(GL_FRAMEBUFFER_OES));
 			return;
 		}
-		uint maxValue = MAX(_renderBufferWidth, _renderBufferHeight), maxValuePOT = getSizeNextPOT(maxValue);
-		uint minValue = MIN(_renderBufferWidth, _renderBufferHeight), minValuePOT = getSizeNextPOT(minValue);
+		uint overlayWidth = MAX(_renderBufferWidth, _renderBufferHeight);
+		uint overlayHeight = MIN(_renderBufferWidth, _renderBufferHeight);
 
-		_videoContext.overlayWidth = maxValue;
-		_videoContext.overlayHeight = minValue;
+		if (!iOS7_isBigDevice()) {
+			// On small devices, we force the user interface to use the small theme
+			while (overlayHeight > 480) {
+				overlayWidth /= 2;
+				overlayHeight /= 2;
+			}
+		}
 
-		uint overlayTextureWidth = maxValuePOT;
-		uint overlayTextureHeight = minValuePOT;
+		_videoContext.overlayWidth = overlayWidth;
+		_videoContext.overlayHeight = overlayHeight;
+
+		uint overlayTextureWidthPOT  = getSizeNextPOT(overlayWidth);
+		uint overlayTextureHeightPOT = getSizeNextPOT(overlayHeight);
 
 		// Since the overlay size won't change the whole run, we can
 		// precalculate the texture coordinates for the overlay texture here
 		// and just use it later on.
-		_overlayTexCoords[2] = _overlayTexCoords[6] = _videoContext.overlayWidth / (GLfloat)overlayTextureWidth;
-		_overlayTexCoords[5] = _overlayTexCoords[7] = _videoContext.overlayHeight / (GLfloat)overlayTextureHeight;
+		_overlayTexCoords[2] = _overlayTexCoords[6] = _videoContext.overlayWidth / (GLfloat) overlayTextureWidthPOT;
+		_overlayTexCoords[5] = _overlayTexCoords[7] = _videoContext.overlayHeight / (GLfloat) overlayTextureHeightPOT;
 
-		_videoContext.overlayTexture.create(overlayTextureWidth, overlayTextureHeight, Graphics::createPixelFormat<5551>());
+		_videoContext.overlayTexture.create(overlayTextureWidthPOT, overlayTextureHeightPOT, Graphics::createPixelFormat<5551>());
 
 		glViewport(0, 0, _renderBufferWidth, _renderBufferHeight); printOpenGLError();
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f); printOpenGLError();
@@ -192,36 +200,6 @@ uint getSizeNextPOT(uint size) {
 	[doubleTapTwoFingers release];
 }
 
-- (CGFloat)optimalScale {
-	CGFloat screenScale = [[UIScreen mainScreen] scale];
-	if (screenScale < 2) return screenScale;
-
-	if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
-		return 1;
-	}
-
-	CGSize screenSize;
-	UIScreen *mainScreen = [UIScreen mainScreen];
-	if ([mainScreen respondsToSelector:@selector(nativeBounds)]) {
-		screenSize = [mainScreen nativeBounds].size;
-	}
-	else {
-		screenSize = [mainScreen bounds].size;
-		screenSize.width *= screenScale;
-		screenSize.height *= screenScale;
-	}
-	CGFloat mxSize = MAX(screenSize.width, screenSize.height);
-
-	if (mxSize <= 1136) {
-		// iPhone 4S / 5 / 5S / 5C
-		return 1;
-	}
-	else {
-		// iPhone 6 / 6S / 6+ / 6S+
-		return 2;
-	}
-}
-
 - (id)initWithFrame:(struct CGRect)frame {
 	self = [super initWithFrame: frame];
 
@@ -230,7 +208,7 @@ uint getSizeNextPOT(uint size) {
 	g_fullWidth = (int)MAX(frame.size.width, frame.size.height);
 	g_fullHeight = (int)MIN(frame.size.width, frame.size.height);
 
-	_contentScaleFactor = [self optimalScale];
+	_contentScaleFactor = [[UIScreen mainScreen] scale];
 	[self setContentScaleFactor:_contentScaleFactor];
 
 	_keyboardView = nil;

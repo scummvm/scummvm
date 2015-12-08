@@ -38,7 +38,7 @@ const OSystem::GraphicsMode *OSystem_iOS7::getSupportedGraphicsModes() const {
 }
 
 int OSystem_iOS7::getDefaultGraphicsMode() const {
-	return kGraphicsModeLinear;
+	return kGraphicsModeNone;
 }
 
 bool OSystem_iOS7::setGraphicsMode(int mode) {

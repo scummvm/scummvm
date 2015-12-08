@@ -107,7 +107,7 @@ extern char **iOS7_argv;
 
 void iOS7_updateScreen();
 bool iOS7_fetchEvent(InternalEvent *event);
-bool iOS7_isHighResDevice();
+bool iOS7_isBigDevice();
 
 void iOS7_main(int argc, char **argv);
 const char *iOS7_getDocumentsDir();

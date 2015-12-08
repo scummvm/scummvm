@@ -64,7 +64,7 @@ OSystem_iOS7::OSystem_iOS7() :
 	_mouseDirty(false), _timeSuspended(0), _lastDragPosX(-1), _lastDragPosY(-1), _screenChangeCount(0),
 	_mouseCursorPaletteEnabled(false), _gfxTransactionError(kTransactionSuccess) {
 	_queuedInputEvent.type = Common::EVENT_INVALID;
-	_touchpadModeEnabled = !iOS7_isHighResDevice();
+	_touchpadModeEnabled = !iOS7_isBigDevice();
 #ifdef IPHONE_OFFICIAL
 	_fsFactory = new ChRootFilesystemFactory(iOS7_getDocumentsDir());
 #else
