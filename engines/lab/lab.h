@@ -35,21 +35,25 @@
 #include "common/rect.h"
 
 #include "engines/engine.h"
-#include "lab/processroom.h"
 
 struct ADGameDescription;
 
 namespace Lab {
 
+struct Action;
 class Anim;
+struct CloseData;
 class DisplayMan;
 class EventManager;
 struct Gadget;
 class Image;
 struct IntuiMessage;
+struct InventoryData;
 class LargeSet;
 class Music;
 class Resource;
+struct RoomData;
+struct Rule;
 struct TextFont;
 class Utils;
 
@@ -74,6 +78,9 @@ struct CrumbData {
 };
 
 #define MAX_CRUMBS          128
+
+typedef CloseData *CloseDataPtr;
+typedef Common::List<Rule *> RuleList;
 
 // Direction defines
 #define NORTH   0

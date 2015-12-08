@@ -36,6 +36,7 @@
 #include "lab/interface.h"
 #include "lab/labsets.h"
 #include "lab/music.h"
+#include "lab/processroom.h"
 #include "lab/resource.h"
 #include "lab/utils.h"
 
