@@ -690,10 +690,11 @@ bool doOperateRule(int16 x, int16 y, int16 ItemNum, CloseDataPtr *lcptr) {
 bool doGoForward(CloseDataPtr *lcptr) {
 	RuleList *rules = g_lab->_rooms[g_lab->_roomNum]._rules;
 
-	for (RuleList::iterator rule = rules->begin(); rule != rules->end(); ++rule) {
-		if (((*rule)->_ruleType == GOFORWARD) && ((*rule)->_param1 == (g_lab->_direction + 1))) {
-			if (checkConditions((*rule)->_condition)) {
-				g_lab->doActions((*rule)->_actionList, lcptr);
+	for (RuleList::iterator ruleIter = rules->begin(); ruleIter != rules->end(); ++ruleIter) {
+		Rule *rule = *ruleIter;
+		if ((rule->_ruleType == GOFORWARD) && (rule->_param1 == (g_lab->_direction + 1))) {
+			if (checkConditions(rule->_condition)) {
+				g_lab->doActions(rule->_actionList, lcptr);
 				return true;
 			}
 		}
