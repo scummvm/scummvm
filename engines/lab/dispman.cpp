@@ -61,10 +61,13 @@ DisplayMan::DisplayMan(LabEngine *vm) : _vm(vm) {
 
 	for (int i = 0; i < 256 * 3; i++)
 		_curvgapal[i] = 0;
+
+	_dispBitMap = new BitMap;
 }
 
 DisplayMan::~DisplayMan() {
 	freePict();
+	delete _dispBitMap;
 }
 
 // From readPict.c.  Reads in pictures and animations from disk.
@@ -90,9 +93,9 @@ void DisplayMan::readPict(const char *filename, bool playOnce, bool onlyDiffData
 	if (!_vm->_music->_doNotFilestopSoundEffect)
 		_vm->_music->stopSoundEffect();
 
-	_dispBitMap._bytesPerRow = _screenWidth;
-	_dispBitMap._rows        = _screenHeight;
-	_dispBitMap._flags       = BITMAPF_VIDEO;
+	_dispBitMap->_bytesPerRow = _screenWidth;
+	_dispBitMap->_rows        = _screenHeight;
+	_dispBitMap->_flags       = BITMAPF_VIDEO;
 
 	_vm->_anim->readDiff(_curBitmap, playOnce, onlyDiffData);
 }
@@ -110,14 +113,14 @@ byte *DisplayMan::readPictToMem(const char *filename, uint16 x, uint16 y) {
 	if (!_vm->_music->_doNotFilestopSoundEffect)
 		_vm->_music->stopSoundEffect();
 
-	_dispBitMap._bytesPerRow = x;
-	_dispBitMap._rows = y;
-	_dispBitMap._flags = BITMAPF_NONE;
-	_dispBitMap._planes[0] = _curBitmap;
-	_dispBitMap._planes[1] = _dispBitMap._planes[0] + 0x10000;
-	_dispBitMap._planes[2] = _dispBitMap._planes[1] + 0x10000;
-	_dispBitMap._planes[3] = _dispBitMap._planes[2] + 0x10000;
-	_dispBitMap._planes[4] = _dispBitMap._planes[3] + 0x10000;
+	_dispBitMap->_bytesPerRow = x;
+	_dispBitMap->_rows = y;
+	_dispBitMap->_flags = BITMAPF_NONE;
+	_dispBitMap->_planes[0] = _curBitmap;
+	_dispBitMap->_planes[1] = _dispBitMap->_planes[0] + 0x10000;
+	_dispBitMap->_planes[2] = _dispBitMap->_planes[1] + 0x10000;
+	_dispBitMap->_planes[3] = _dispBitMap->_planes[2] + 0x10000;
+	_dispBitMap->_planes[4] = _dispBitMap->_planes[3] + 0x10000;
 
 	_vm->_anim->readDiff(_curBitmap, true);
 
