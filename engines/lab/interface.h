@@ -46,12 +46,9 @@ struct IntuiMessage {
 struct Gadget {
 	uint16 x, y, _gadgetID;
 	uint16 _keyEquiv; // if not zero, a key that activates gadget
-	uint32 _flags;
+	bool isEnabled;
 	Image *_image, *_altImage;
 };
-
-// Defines for the GadgetFlags portion
-#define GADGETOFF 0x01
 
 typedef Common::List<Gadget *> GadgetList;
 

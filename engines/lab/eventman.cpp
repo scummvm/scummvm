@@ -63,9 +63,8 @@ Gadget *EventManager::checkGadgetHit(GadgetList *gadgetList, Common::Point pos) 
 	for (GadgetList::iterator gadgetItr = gadgetList->begin(); gadgetItr != gadgetList->end(); ++gadgetItr) {
 		Gadget *gadget = *gadgetItr;
 		Common::Rect gadgetRect(gadget->x, gadget->y, gadget->x + gadget->_image->_width - 1, gadget->y + gadget->_image->_height - 1);
-		bool gadgetIsEnabled = !(gadget->_flags & GADGETOFF);
 
-		if (gadgetRect.contains(pos) && gadgetIsEnabled) {
+		if (gadgetRect.contains(pos) && gadget->isEnabled) {
 			if (_vm->_isHiRes) {
 				_hitGadget = gadget;
 			} else {
