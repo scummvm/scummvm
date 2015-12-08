@@ -29,6 +29,7 @@
  */
 
 #include "lab/lab.h"
+#include "lab/labsets.h"
 
 namespace Lab {
 

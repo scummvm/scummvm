@@ -31,6 +31,7 @@
 #include "graphics/thumbnail.h"
 
 #include "lab/lab.h"
+#include "lab/labsets.h"
 #include "lab/savegame.h"
 
 namespace Lab {

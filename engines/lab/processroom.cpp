@@ -31,7 +31,9 @@
 #include "gui/message.h"
 
 #include "lab/lab.h"
+#include "lab/labsets.h"
 #include "lab/music.h"
+#include "lab/utils.h"
 
 namespace Lab {
 
