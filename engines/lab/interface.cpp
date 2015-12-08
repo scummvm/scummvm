@@ -39,12 +39,10 @@ namespace Lab {
 Common::KeyState _keyPressed;
 
 Gadget *createButton(uint16 x, uint16 y, uint16 id, uint16 key, Image *im, Image *imalt) {
-	Gadget *gptr;
+	Gadget *gptr = new Gadget();
 
-	x = g_lab->_utils->vgaScaleX(x);
-
-	if ((gptr = new Gadget())) {
-		gptr->x = x;
+	if (gptr) {
+		gptr->x = g_lab->_utils->vgaScaleX(x);
 		gptr->y = y;
 		gptr->_gadgetID = id;
 		gptr->_keyEquiv = key;
@@ -53,11 +51,8 @@ Gadget *createButton(uint16 x, uint16 y, uint16 id, uint16 key, Image *im, Image
 
 		return gptr;
 	} else
-		return NULL;
+		return nullptr;
 }
-
-
-
 
 void freeButtonList(GadgetList *gadgetList) {
 	for (GadgetList::iterator gadget = gadgetList->begin(); gadget != gadgetList->end(); ++gadget) {
@@ -66,9 +61,6 @@ void freeButtonList(GadgetList *gadgetList) {
 
 	gadgetList->clear();
 }
-
-
-
 
 /*****************************************************************************/
 /* Draws a gadget list to the screen.                                        */
@@ -82,7 +74,6 @@ void drawGadgetList(GadgetList *gadgetList) {
 	}
 }
 
-
 /*****************************************************************************/
 /* Dims a gadget, and makes it unavailable for using.                        */
 /*****************************************************************************/
@@ -91,8 +82,6 @@ void disableGadget(Gadget *curgad, uint16 pencolor) {
 	curgad->_flags |= GADGETOFF;
 }
 
-
-
 /*****************************************************************************/
 /* Undims a gadget, and makes it available again.                            */
 /*****************************************************************************/
@@ -100,7 +89,6 @@ void enableGadget(Gadget *curgad) {
 	curgad->_image->drawImage(curgad->x, curgad->y);
 	curgad->_flags &= !(GADGETOFF);
 }
-
 
 /*****************************************************************************/
 /* Make a key press have the right case for a gadget KeyEquiv value.         */
@@ -113,14 +101,14 @@ uint16 makeGadgetKeyEquiv(uint16 key) {
 }
 
 /*****************************************************************************/
-/* Checks whether or not the cords fall within one of the gadgets in a list  */
+/* Checks whether or not the coords fall within one of the gadgets in a list  */
 /* of gadgets.                                                               */
 /*****************************************************************************/
 Gadget *LabEngine::checkNumGadgetHit(GadgetList *gadgetList, uint16 key) {
 	uint16 gkey = key - '0';
 
 	if (!gadgetList)
-		return NULL;
+		return nullptr;
 
 	for (GadgetList::iterator gadgetItr = gadgetList->begin(); gadgetItr != gadgetList->end(); ++gadgetItr) {
 		Gadget *gadget = *gadgetItr;
@@ -145,26 +133,24 @@ Gadget *LabEngine::checkNumGadgetHit(GadgetList *gadgetList, uint16 key) {
 IntuiMessage IMessage;
 
 IntuiMessage *LabEngine::getMsg() {
-	Gadget *curgad;
-	int Qualifiers;
-
 	_event->updateMouse();
 
-	Qualifiers = _keyPressed.flags;
+	int qualifiers = _keyPressed.flags;
+	Gadget *curgad  = _event->mouseGadget();
 
-	if ((curgad = _event->mouseGadget()) != NULL) {
+	if (curgad) {
 		_event->updateMouse();
 		IMessage._msgClass = GADGETUP;
 		IMessage._code  = curgad->_gadgetID;
 		IMessage._gadgetID = curgad->_gadgetID;
-		IMessage._qualifier = Qualifiers;
+		IMessage._qualifier = qualifiers;
 		return &IMessage;
 	} else if (_event->mouseButton(&IMessage._mouseX, &IMessage._mouseY, true)) { /* Left Button */
-		IMessage._qualifier = IEQUALIFIER_LEFTBUTTON | Qualifiers;
+		IMessage._qualifier = IEQUALIFIER_LEFTBUTTON | qualifiers;
 		IMessage._msgClass = MOUSEBUTTONS;
 		return &IMessage;
 	} else if (_event->mouseButton(&IMessage._mouseX, &IMessage._mouseY, false)) { /* Right Button */
-		IMessage._qualifier = IEQUALIFIER_RBUTTON | Qualifiers;
+		IMessage._qualifier = IEQUALIFIER_RBUTTON | qualifiers;
 		IMessage._msgClass = MOUSEBUTTONS;
 		return &IMessage;
 	} else if (_event->keyPress(&IMessage._code)) { /* Keyboard key */
@@ -177,10 +163,10 @@ IntuiMessage *LabEngine::getMsg() {
 		} else
 			IMessage._msgClass = RAWKEY;
 
-		IMessage._qualifier = Qualifiers;
+		IMessage._qualifier = qualifiers;
 		return &IMessage;
 	} else
-		return NULL;
+		return nullptr;
 }
 
 } // End of namespace Lab
