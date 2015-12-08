@@ -28,6 +28,8 @@
  *
  */
 
+#include "common/events.h"
+
 #include "lab/lab.h"
 
 #include "lab/dispman.h"
