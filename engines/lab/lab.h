@@ -44,15 +44,14 @@
 #include "lab/eventman.h"
 #include "lab/dispman.h"
 #include "lab/resource.h"
-#include "lab/anim.h"
-#include "lab/labsets.h"
-#include "lab/utils.h"
 
 struct ADGameDescription;
 
 namespace Lab {
 
 class Music;
+class Utils;
+class LargeSet;
 
 enum GameFeatures {
 	GF_LOWRES = 1 << 0,

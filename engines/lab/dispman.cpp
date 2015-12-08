@@ -33,6 +33,7 @@
 #include "lab/lab.h"
 #include "lab/music.h"
 #include "lab/image.h"
+#include "lab/utils.h"
 
 namespace Lab {
 
