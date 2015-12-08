@@ -74,9 +74,9 @@ void DisplayMan::loadPict(const char *filename) {
 	delete bitmapFile;
 }
 
-/*****************************************************************************/
-/* Reads in a picture into the dest bitmap.                                  */
-/*****************************************************************************/
+/**
+ * Reads in a picture into the dest bitmap.
+ */
 void DisplayMan::readPict(const char *filename, bool playOnce) {
 	_vm->_anim->stopDiff();
 
@@ -94,9 +94,9 @@ void DisplayMan::readPict(const char *filename, bool playOnce) {
 	_vm->_anim->readDiff(_curBitmap, playOnce);
 }
 
-/*****************************************************************************/
-/* Reads in a picture into buffer memory.                                    */
-/*****************************************************************************/
+/**
+ * Reads in a picture into buffer memory.
+ */
 byte *DisplayMan::readPictToMem(const char *filename, uint16 x, uint16 y) {
 	_vm->_anim->stopDiff();
 
@@ -132,9 +132,9 @@ void DisplayMan::freePict() {
 
 /*----- The flowText routines -----*/
 
-/******************************************************************************/
-/* Extracts the first word from a string.                                     */
-/******************************************************************************/
+/**
+ * Extracts the first word from a string.
+ */
 static void getWord(char *wordBuffer, const char *mainBuffer, uint16 *wordWidth) {
 	uint16 width = 0;
 
@@ -148,10 +148,10 @@ static void getWord(char *wordBuffer, const char *mainBuffer, uint16 *wordWidth)
 	*wordWidth = width;
 }
 
-/******************************************************************************/
-/* Gets a line of text for flowText; makes sure that its length is less than  */
-/* or equal to the maximum width.                                             */
-/******************************************************************************/
+/**
+ * Gets a line of text for flowText; makes sure that its length is less than
+ * or equal to the maximum width.
+ */
 void DisplayMan::getLine(TextFont *tf, char *lineBuffer, const char **mainBuffer, uint16 lineWidth) {
 	uint16 curWidth = 0, wordWidth;
 	char wordBuffer[100];
@@ -181,14 +181,13 @@ void DisplayMan::getLine(TextFont *tf, char *lineBuffer, const char **mainBuffer
 	}
 }
 
-/******************************************************************************/
-/* Dumps a chunk of text to an arbitrary box; flows it within that box and    */
-/* optionally centers it. Returns the number of characters that were          */
-/* processed.                                                                 */
-/*                                                                            */
-/* Note: Every individual word MUST be int16 enough to fit on a line, and     */
-/* each line less than 255 characters.                                        */
-/******************************************************************************/
+/**
+ * Dumps a chunk of text to an arbitrary box; flows it within that box and
+ * optionally centers it. Returns the number of characters that were
+ * processed.
+ * Note: Every individual word MUST be int16 enough to fit on a line, and
+ * each line less than 255 characters.
+ */
 uint32 DisplayMan::flowText(
 			void *font,            /* the TextAttr pointer */
 			int16 spacing,         /* How much vertical spacing between the lines */
@@ -270,9 +269,9 @@ uint32 DisplayMan::flowTextScaled(void *font,      /* the TextAttr pointer */
 					_vm->_utils->vgaScaleX(x2), _vm->_utils->vgaScaleY(y2), str);
 }
 
-/******************************************************************************/
-/* Calls flowText, but flows it to memory.  Same restrictions as flowText.    */
-/******************************************************************************/
+/**
+ * Calls flowText, but flows it to memory.  Same restrictions as flowText.
+ */
 uint32 DisplayMan::flowTextToMem(Image *destIm,
 			void *font,            /* the TextAttr pointer */
 			int16 spacing,         /* How much vertical spacing between the lines */
@@ -334,9 +333,9 @@ int32 DisplayMan::longDrawMessage(const char *str) {
 	return flowTextScaled(_vm->_msgFont, 0, 1, 7, false, true, true, true, 6, 155, 313, 195, str);
 }
 
-/******************************************************************************/
-/* Draws a message to the message box.                                        */
-/******************************************************************************/
+/**
+ * Draws a message to the message box.
+ */
 void DisplayMan::drawMessage(const char *str) {
 	if (_doNotDrawMessage) {
 		_doNotDrawMessage = false;
@@ -362,9 +361,9 @@ void DisplayMan::drawMessage(const char *str) {
 	}
 }
 
-/******************************************************************************/
-/* Draws the control panel display.                                           */
-/******************************************************************************/
+/**
+ * Draws the control panel display.
+ */
 void DisplayMan::drawPanel() {
 	_vm->_event->mouseHide();
 
@@ -415,9 +414,9 @@ void DisplayMan::drawPanel() {
 	_vm->_event->mouseShow();
 }
 
-/******************************************************************************/
-/* Sets up the Labyrinth screens, and opens up the initial windows.           */
-/******************************************************************************/
+/**
+ * Sets up the Labyrinth screens, and opens up the initial windows.
+ */
 bool DisplayMan::setUpScreens() {
 	if (!createScreen(_vm->_isHiRes))
 		return false;
@@ -471,16 +470,16 @@ bool DisplayMan::setUpScreens() {
 	return true;
 }
 
-/*****************************************************************************/
-/* Sets the pen number to use on all the drawing operations.                 */
-/*****************************************************************************/
+/**
+ * Sets the pen number to use on all the drawing operations.
+ */
 void DisplayMan::setAPen(byte pennum) {
 	_curapen = pennum;
 }
 
-/*****************************************************************************/
-/* Fills in a rectangle.                                                     */
-/*****************************************************************************/
+/**
+ * Fills in a rectangle.
+ */
 void DisplayMan::rectFill(uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
 	int w = x2 - x1 + 1;
 	int h = y2 - y1 + 1;
@@ -511,16 +510,16 @@ void DisplayMan::rectFillScaled(uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
 	rectFill(_vm->_utils->vgaScaleX(x1), _vm->_utils->vgaScaleY(y1), _vm->_utils->vgaScaleX(x2), _vm->_utils->vgaScaleY(y2));
 }
 
-/*****************************************************************************/
-/* Draws a horizontal line.                                                  */
-/*****************************************************************************/
+/**
+ * Draws a horizontal line.
+ */
 void DisplayMan::drawVLine(uint16 x, uint16 y1, uint16 y2) {
 	rectFill(x, y1, x, y2);
 }
 
-/*****************************************************************************/
-/* Draws a vertical line.                                                    */
-/*****************************************************************************/
+/**
+ * Draws a vertical line.
+ */
 void DisplayMan::drawHLine(uint16 x1, uint16 y, uint16 x2) {
 	rectFill(x1, y, x2, y);
 }
@@ -532,9 +531,9 @@ void DisplayMan::screenUpdate() {
 	_vm->_event->processInput();
 }
 
-/*****************************************************************************/
-/* Sets up either a low-res or a high-res 256 color screen.                  */
-/*****************************************************************************/
+/**
+ * Sets up either a low-res or a high-res 256 color screen.
+ */
 bool DisplayMan::createScreen(bool hiRes) {
 	if (hiRes) {
 		_screenWidth  = 640;
@@ -549,10 +548,10 @@ bool DisplayMan::createScreen(bool hiRes) {
 	return true;
 }
 
-/*****************************************************************************/
-/* Converts an Amiga palette (up to 16 colors) to a VGA palette, then sets   */
-/* the VGA palette.                                                          */
-/*****************************************************************************/
+/**
+ * Converts an Amiga palette (up to 16 colors) to a VGA palette, then sets
+ * the VGA palette.
+ */
 void DisplayMan::setAmigaPal(uint16 *pal, uint16 numColors) {
 	byte vgaPal[16 * 3];
 	uint16 vgaIdx = 0;
@@ -570,17 +569,17 @@ void DisplayMan::setAmigaPal(uint16 *pal, uint16 numColors) {
 	_vm->waitTOF();
 }
 
-/*****************************************************************************/
-/* Writes any number of the 256 color registers.                             */
-/* first:    the number of the first color register to write.                */
-/* numreg:   the number of registers to write                                */
-/* buf:      a char pointer which contains the selected color registers.     */
-/*           Each value representing a color register occupies 3 bytes in    */
-/*           the array.  The order is red, green then blue.  The first byte  */
-/*           in the array is the red component of the first element selected.*/
-/*           The length of the buffer is 3 times the number of registers     */
-/*           selected.                                                       */
-/*****************************************************************************/
+/**
+ * Writes any number of the 256 color registers.
+ * first:    the number of the first color register to write.
+ * numreg:   the number of registers to write
+ * buf:      a char pointer which contains the selected color registers.
+ *           Each value representing a color register occupies 3 bytes in
+ *           the array.  The order is red, green then blue.  The first byte
+ *           in the array is the red component of the first element selected.
+ *           The length of the buffer is 3 times the number of registers
+ *           selected.
+ */
 void DisplayMan::writeColorRegs(byte *buf, uint16 first, uint16 numreg) {
 	byte tmp[256 * 3];
 
@@ -598,9 +597,9 @@ void DisplayMan::setPalette(void *cmap, uint16 numcolors) {
 		writeColorRegs((byte *)cmap, 0, numcolors);
 }
 
-/*****************************************************************************/
-/* Returns the base address of the current VGA display.                      */
-/*****************************************************************************/
+/**
+ * Returns the base address of the current VGA display.
+ */
 byte *DisplayMan::getCurrentDrawingBuffer() {
 	if (_currentDisplayBuffer)
 		return _currentDisplayBuffer;
@@ -608,9 +607,9 @@ byte *DisplayMan::getCurrentDrawingBuffer() {
 	return _displayBuffer;
 }
 
-/*****************************************************************************/
-/* Overlays a region on the screen using the desired pen color.              */
-/*****************************************************************************/
+/**
+ * Overlays a region on the screen using the desired pen color.
+ */
 void DisplayMan::overlayRect(uint16 pencolor, uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
 	int w = x2 - x1 + 1;
 	int h = y2 - y1 + 1;
@@ -645,9 +644,9 @@ void DisplayMan::overlayRect(uint16 pencolor, uint16 x1, uint16 y1, uint16 x2, u
 	}
 }
 
-/*****************************************************************************/
-/* Closes a font and frees all memory associated with it.                    */
-/*****************************************************************************/
+/**
+ * Closes a font and frees all memory associated with it.
+ */
 void DisplayMan::closeFont(TextFont *tf) {
 	if (tf) {
 		if (tf->_data && tf->_dataLength)
@@ -657,9 +656,9 @@ void DisplayMan::closeFont(TextFont *tf) {
 	}
 }
 
-/*****************************************************************************/
-/* Returns the length of a text in the specified font.                       */
-/*****************************************************************************/
+/**
+ * Returns the length of a text in the specified font.
+ */
 uint16 DisplayMan::textLength(TextFont *tf, const char *text, uint16 numchars) {
 	uint16 length = 0;
 
@@ -673,16 +672,16 @@ uint16 DisplayMan::textLength(TextFont *tf, const char *text, uint16 numchars) {
 	return length;
 }
 
-/*****************************************************************************/
-/* Returns the height of a specified font.                                   */
-/*****************************************************************************/
+/**
+ * Returns the height of a specified font.
+ */
 uint16 DisplayMan::textHeight(TextFont *tf) {
 	return (tf) ? tf->_height : 0;
 }
 
-/*****************************************************************************/
-/* Draws the text to the screen.                                             */
-/*****************************************************************************/
+/**
+ * Draws the text to the screen.
+ */
 void DisplayMan::text(TextFont *tf, uint16 x, uint16 y, uint16 color, const char *text, uint16 numchars) {
 	byte *VGATop, *VGACur, *VGATemp, *VGATempLine, *cdata;
 	uint32 RealOffset, SegmentOffset;

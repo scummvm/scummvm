@@ -55,10 +55,10 @@ static byte MouseData[] = {
 #define MOUSE_WIDTH 10
 #define MOUSE_HEIGHT 15
 
-/*****************************************************************************/
-/* Checks whether or not the cords fall within one of the gadgets in a list  */
-/* of gadgets.                                                               */
-/*****************************************************************************/
+/**
+ * Checks whether or not the cords fall within one of the gadgets in a list
+ * of gadgets.
+ */
 Gadget *EventManager::checkGadgetHit(GadgetList *gadgetList, Common::Point pos) {
 	for (GadgetList::iterator gadgetItr = gadgetList->begin(); gadgetItr != gadgetList->end(); ++gadgetItr) {
 		Gadget *gadget = *gadgetItr;
@@ -154,9 +154,9 @@ void EventManager::updateMouse() {
 		_vm->_graphics->screenUpdate();
 }
 
-/*****************************************************************************/
-/* Initializes the mouse.                                                    */
-/*****************************************************************************/
+/**
+ * Initializes the mouse.
+ */
 void EventManager::initMouse() {
 	g_system->setMouseCursor(MouseData, MOUSE_WIDTH, MOUSE_HEIGHT, 0, 0, 0);
 	g_system->showMouse(false);
@@ -164,9 +164,9 @@ void EventManager::initMouse() {
 	setMousePos(Common::Point(0, 0));
 }
 
-/*****************************************************************************/
-/* Shows the mouse.                                                          */
-/*****************************************************************************/
+/**
+ * Shows the mouse.
+ */
 void EventManager::mouseShow() {
 	if (_mouseHidden) {
 		processInput();
@@ -176,9 +176,9 @@ void EventManager::mouseShow() {
 	g_system->showMouse(true);
 }
 
-/*****************************************************************************/
-/* Hides the mouse.                                                          */
-/*****************************************************************************/
+/**
+ * Hides the mouse.
+ */
 void EventManager::mouseHide() {
 	if (!_mouseHidden) {
 		_mouseHidden = true;
@@ -187,10 +187,10 @@ void EventManager::mouseHide() {
 	}
 }
 
-/*****************************************************************************/
-/* Gets the current mouse co-ordinates.  NOTE: On IBM version, will scale    */
-/* from virtual to screen co-ordinates automatically.                        */
-/*****************************************************************************/
+/**
+ * Gets the current mouse co-ordinates.  NOTE: On IBM version, will scale
+ * from virtual to screen co-ordinates automatically.
+ */
 Common::Point EventManager::getMousePos() {
 	if (_vm->_isHiRes)
 		return _mousePos;
@@ -198,9 +198,9 @@ Common::Point EventManager::getMousePos() {
 		return Common::Point(_mousePos.x / 2, _mousePos.y);
 }
 
-/*****************************************************************************/
-/* Moves the mouse to new co-ordinates.                                      */
-/*****************************************************************************/
+/**
+ * Moves the mouse to new co-ordinates.
+ */
 void EventManager::setMousePos(Common::Point pos) {
 	if (_vm->_isHiRes)
 		g_system->warpMouse(pos.x, pos.y);
@@ -211,11 +211,11 @@ void EventManager::setMousePos(Common::Point pos) {
 		processInput();
 }
 
-/*****************************************************************************/
-/* Checks whether or not the mouse buttons have been pressed, and the last   */
-/* co-ordinates of the button press.  leftbutton tells whether to check the  */
-/* left or right button.                                                     */
-/*****************************************************************************/
+/**
+ * Checks whether or not the mouse buttons have been pressed, and the last
+ * co-ordinates of the button press.  leftbutton tells whether to check the
+ * left or right button.
+ */
 bool EventManager::mouseButton(uint16 *x, uint16 *y, bool leftbutton) {
 	if (leftbutton) {
 		if (_leftClick) {
@@ -243,9 +243,9 @@ Gadget *EventManager::mouseGadget() {
 	return temp;
 }
 
-/*****************************************************************************/
-/* Checks whether or not a key has been pressed.                             */
-/*****************************************************************************/
+/**
+ * Checks whether or not a key has been pressed.
+ */
 bool EventManager::keyPress(uint16 *keyCode) {
 	if (haveNextChar()) {
 		*keyCode = getNextChar();

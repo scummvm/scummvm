@@ -243,9 +243,9 @@ void Anim::diffNextFrame() {
 	}
 }
 
-/*****************************************************************************/
-/* A separate task launched by readDiff.  Plays the DIFF.                    */
-/*****************************************************************************/
+/**
+ * A separate task launched by readDiff.  Plays the DIFF.
+ */
 void Anim::playDiff(byte *buffer) {
 	_waitSec = 0L;
 	_waitMicros = 0L;
@@ -330,17 +330,17 @@ void Anim::playDiff(byte *buffer) {
 		diffNextFrame();
 }
 
-/*****************************************************************************/
-/* Stops an animation from running.                                          */
-/*****************************************************************************/
+/**
+ * Stops an animation from running.
+ */
 void Anim::stopDiff() {
 	if (_isPlaying && _isAnim)
 		_vm->_graphics->blackScreen();
 }
 
-/*****************************************************************************/
-/* Stops an animation from running.                                          */
-/*****************************************************************************/
+/**
+ * Stops an animation from running.
+ */
 void Anim::stopDiffEnd() {
 	if (_isPlaying) {
 		_stopPlayingEnd = true;
@@ -351,9 +351,9 @@ void Anim::stopDiffEnd() {
 	}
 }
 
-/*****************************************************************************/
-/* Reads in a DIFF file.                                                     */
-/*****************************************************************************/
+/**
+ * Reads in a DIFF file.
+ */
 bool Anim::readDiff(byte *buffer, bool playOnce) {
 	_playOnce = playOnce;
 	playDiff(buffer);

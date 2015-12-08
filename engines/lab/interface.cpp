@@ -62,9 +62,9 @@ void freeButtonList(GadgetList *gadgetList) {
 	gadgetList->clear();
 }
 
-/*****************************************************************************/
-/* Draws a gadget list to the screen.                                        */
-/*****************************************************************************/
+/**
+ * Draws a gadget list to the screen.
+ */
 void drawGadgetList(GadgetList *gadgetList) {
 	for (GadgetList::iterator gadget = gadgetList->begin(); gadget != gadgetList->end(); ++gadget) {
 		(*gadget)->_image->drawImage((*gadget)->x, (*gadget)->y);
@@ -74,25 +74,25 @@ void drawGadgetList(GadgetList *gadgetList) {
 	}
 }
 
-/*****************************************************************************/
-/* Dims a gadget, and makes it unavailable for using.                        */
-/*****************************************************************************/
+/**
+ * Dims a gadget, and makes it unavailable for using.
+ */
 void disableGadget(Gadget *curgad, uint16 pencolor) {
 	g_lab->_graphics->overlayRect(pencolor, curgad->x, curgad->y, curgad->x + curgad->_image->_width - 1, curgad->y + curgad->_image->_height - 1);
 	curgad->_flags |= GADGETOFF;
 }
 
-/*****************************************************************************/
-/* Undims a gadget, and makes it available again.                            */
-/*****************************************************************************/
+/**
+ * Undims a gadget, and makes it available again.
+ */
 void enableGadget(Gadget *curgad) {
 	curgad->_image->drawImage(curgad->x, curgad->y);
 	curgad->_flags &= !(GADGETOFF);
 }
 
-/*****************************************************************************/
-/* Make a key press have the right case for a gadget KeyEquiv value.         */
-/*****************************************************************************/
+/**
+ * Make a key press have the right case for a gadget KeyEquiv value.
+ */
 uint16 makeGadgetKeyEquiv(uint16 key) {
 	if (Common::isAlnum(key))
 		key = tolower(key);
@@ -100,10 +100,10 @@ uint16 makeGadgetKeyEquiv(uint16 key) {
 	return key;
 }
 
-/*****************************************************************************/
-/* Checks whether or not the coords fall within one of the gadgets in a list  */
-/* of gadgets.                                                               */
-/*****************************************************************************/
+/**
+ * Checks whether or not the coords fall within one of the gadgets in a list
+ * of gadgets.
+ */
 Gadget *LabEngine::checkNumGadgetHit(GadgetList *gadgetList, uint16 key) {
 	uint16 gkey = key - '0';
 

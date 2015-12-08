@@ -92,9 +92,9 @@ static byte *loadBackPict(const char *fileName, bool tomem) {
 	return res;
 }
 
-/*****************************************************************************/
-/* Does the things to properly set up the detective notes.                   */
-/*****************************************************************************/
+/**
+ * Does the things to properly set up the detective notes.
+ */
 void LabEngine::doNotes() {
 	TextFont *noteFont = g_lab->_resource->getFont("P:Note.fon");
 	char *ntext = g_lab->_resource->getText("Lab:Rooms/Notes");
@@ -107,10 +107,10 @@ void LabEngine::doNotes() {
 }
 
 
-/*****************************************************************************/
-/* Does the things to properly set up the old west newspaper.  Assumes that  */
-/* OpenHiRes already called.                                                 */
-/*****************************************************************************/
+/**
+ * Does the things to properly set up the old west newspaper.  Assumes that
+ * OpenHiRes already called.
+ */
 void LabEngine::doWestPaper() {
 	char *ntext;
 	TextFont *paperFont;
@@ -147,9 +147,9 @@ void LabEngine::doWestPaper() {
 	g_lab->_graphics->setPalette(g_lab->_anim->_diffPalette, 256);
 }
 
-/*****************************************************************************/
-/* Loads in the data for the journal.                                        */
-/*****************************************************************************/
+/**
+ * Loads in the data for the journal.
+ */
 static bool loadJournalData() {
 	char filename[20];
 	bool bridge, dirty, news, clean;
@@ -223,9 +223,9 @@ static bool loadJournalData() {
 	return true;
 }
 
-/*****************************************************************************/
-/* Draws the text to the back journal screen to the appropriate Page number  */
-/*****************************************************************************/
+/**
+ * Draws the text to the back journal screen to the appropriate Page number
+ */
 static void drawJournalText() {
 	uint16 DrawingToPage = 1;
 	int32 CharsDrawn    = 0L;
@@ -261,9 +261,9 @@ static void drawJournalText() {
 	lastpage = lastpage || (*CurText == 0);
 }
 
-/*****************************************************************************/
-/* Does the turn page wipe.                                                  */
-/*****************************************************************************/
+/**
+ * Does the turn page wipe.
+ */
 static void turnPage(bool FromLeft) {
 	if (FromLeft) {
 		for (int i = 0; i < g_lab->_graphics->_screenWidth; i += 8) {
@@ -282,9 +282,9 @@ static void turnPage(bool FromLeft) {
 	}
 }
 
-/*****************************************************************************/
-/* Draws the journal from page x.                                            */
-/*****************************************************************************/
+/**
+ * Draws the journal from page x.
+ */
 void LabEngine::drawJournal(uint16 wipenum, bool needFade) {
 	_event->mouseHide();
 
@@ -326,9 +326,9 @@ void LabEngine::drawJournal(uint16 wipenum, bool needFade) {
 	g_lab->_anim->_noPalChange = false;
 }
 
-/*****************************************************************************/
-/* Processes user input.                                                     */
-/*****************************************************************************/
+/**
+ * Processes user input.
+ */
 void LabEngine::processJournal() {
 	IntuiMessage *Msg;
 	uint32 Class;
@@ -368,9 +368,9 @@ void LabEngine::processJournal() {
 	}
 }
 
-/*****************************************************************************/
-/* Does the journal processing.                                              */
-/*****************************************************************************/
+/**
+ * Does the journal processing.
+ */
 void LabEngine::doJournal() {
 	GadgetList journalGadgetList;
 	journalGadgetList.push_back(&BackG);
@@ -449,9 +449,9 @@ bool LabEngine::saveRestoreGame() {
 	return isOK;
 }
 
-/*****************************************************************************/
-/* Draws the text for the monitor.                                           */
-/*****************************************************************************/
+/**
+ * Draws the text for the monitor.
+ */
 void LabEngine::drawMonText(char *text, TextFont *monitorFont, uint16 x1, uint16 y1, uint16 x2, uint16 y2, bool isinteractive) {
 	uint16 DrawingToPage = 0, yspacing = 0, numlines, fheight;
 	int32 CharsDrawn    = 0L;
@@ -509,9 +509,9 @@ void LabEngine::drawMonText(char *text, TextFont *monitorFont, uint16 x1, uint16
 	_event->mouseShow();
 }
 
-/*****************************************************************************/
-/* Processes user input.                                                     */
-/*****************************************************************************/
+/**
+ * Processes user input.
+ */
 void LabEngine::processMonitor(char *ntext, TextFont *monitorFont, bool isinteractive, uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
 	IntuiMessage *Msg;
 	uint32 Class;
@@ -603,9 +603,9 @@ void LabEngine::processMonitor(char *ntext, TextFont *monitorFont, bool isintera
 	}
 }
 
-/*****************************************************************************/
-/* Does what's necessary for the monitor.                                    */
-/*****************************************************************************/
+/**
+ * Does what's necessary for the monitor.
+ */
 void LabEngine::doMonitor(char *background, char *textfile, bool isinteractive, uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
 	char *ntext;
 
