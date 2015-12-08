@@ -28,8 +28,8 @@
  *
  */
 
-#ifndef LAB_GRAPHICS_H
-#define LAB_GRAPHICS_H
+#ifndef LAB_DISPMAN_H
+#define LAB_DISPMAN_H
 
 #include "graphics/palette.h"
 #include "lab/anim.h"
@@ -166,4 +166,4 @@ public:
 
 } // End of namespace Lab
 
-#endif // LAB_GRAPHICS_H
+#endif // LAB_DISPMAN_H

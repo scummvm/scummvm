@@ -34,7 +34,6 @@
 #include "lab/labfun.h"
 #include "lab/processroom.h"
 #include "lab/resource.h"
-#include "lab/graphics.h"
 
 namespace Lab {
 
