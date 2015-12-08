@@ -33,6 +33,9 @@
 
 #include "common/system.h"
 #include "common/events.h"
+#include "common/file.h"
+#include "common/savefile.h"
+#include "engines/savestate.h"
 
 #include "engines/engine.h"
 #include "lab/anim.h"
