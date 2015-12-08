@@ -31,6 +31,7 @@
 #include "engines/advancedDetector.h"
 
 #include "lab/lab.h"
+#include "lab/savegame.h"
 
 static const PlainGameDescriptor lab_setting[] = {
 	{ "lab", "Labyrith of Time" },
