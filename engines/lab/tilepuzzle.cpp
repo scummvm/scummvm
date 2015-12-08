@@ -66,17 +66,16 @@ void LabEngine::initTilePuzzle() {
 /* Processes mouse clicks and changes the combination.                       */
 /*****************************************************************************/
 void LabEngine::mouseTile(Common::Point pos) {
-	int x = _utils->vgaUnscaleX(pos.x);
-	int y = _utils->vgaUnscaleY(pos.y);
+	Common::Point realPos = _utils->vgaUnscale(pos);
 
-	if ((x < 101) || (y < 26))
+	if ((realPos.x < 101) || (realPos.y < 26))
 		return;
 
-	x = (x - 101) / 30;
-	y = (y -  26) / 25;
+	int tileX = (realPos.x - 101) / 30;
+	int tileY = (realPos.y -  26) / 25;
 
-	if ((x < 4) && (y < 4))
-		changeTile(x, y);
+	if ((tileX < 4) && (tileY < 4))
+		changeTile(tileX, tileY);
 }
 
 /*****************************************************************************/
@@ -152,29 +151,26 @@ void LabEngine::changeTile(uint16 col, uint16 row) {
 /* Processes mouse clicks and changes the combination.                       */
 /*****************************************************************************/
 void LabEngine::mouseCombination(Common::Point pos) {
-	uint16 number;
+	Common::Point realPos = _utils->vgaUnscale(pos);
 
-	int x = _utils->vgaUnscaleX(pos.x);
-	int y = _utils->vgaUnscaleY(pos.y);
+	if (!Common::Rect(44, 63, 285, 99).contains(realPos))
+		return;
 
-	if ((y >= 63) && (y <= 99)) {
-		if ((x >= 44) && (x < 83))
-			number = 0;
-		else if (x < 127)
-			number = 1;
-		else if (x < 165)
-			number = 2;
-		else if (x < 210)
-			number = 3;
-		else if (x < 245)
-			number = 4;
-		else if (x < 286)
-			number = 5;
-		else
-			return;
+	uint16 number = 0;
+	if (realPos.x < 83)
+		number = 0;
+	else if (realPos.x < 127)
+		number = 1;
+	else if (realPos.x < 165)
+		number = 2;
+	else if (realPos.x < 210)
+		number = 3;
+	else if (realPos.x < 245)
+		number = 4;
+	else if (realPos.x < 286)
+		number = 5;
 
-		changeCombination(number);
-	}
+	changeCombination(number);
 }
 
 /*****************************************************************************/
