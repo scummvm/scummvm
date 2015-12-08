@@ -219,7 +219,7 @@ private:
 	void showTile(const char *filename, bool showsolution);
 	void doTileScroll(uint16 col, uint16 row, uint16 scrolltype);
 	void changeCombination(uint16 number);
-	void scrollRaster(int16 dx, int16 dy, uint16 x1, uint16 y1, uint16 x2, uint16 y2);
+	void scrollRaster(int16 dx, int16 dy, uint16 x1, uint16 y1, uint16 x2, uint16 y2, byte *buffer);
 	void doCombination();
 	void showCombination(const char *filename);
 	void initTilePuzzle();
