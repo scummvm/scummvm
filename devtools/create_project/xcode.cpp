@@ -26,6 +26,12 @@
 #include <fstream>
 #include <algorithm>
 
+#ifdef MACOSX
+#include <sstream>
+#include <iomanip>
+#include <CommonCrypto/CommonCrypto.h>
+#endif
+
 namespace CreateProjectTool {
 
 #define DEBUG_XCODE_HASH 0
@@ -1008,7 +1014,6 @@ void XcodeProvider::setupDefines(const BuildSetup &setup) {
 // Object hash
 //////////////////////////////////////////////////////////////////////////
 
-// TODO use md5 to compute a file hash (and fall back to standard key generation if not passed a file)
 std::string XcodeProvider::getHash(std::string key) {
 
 #if DEBUG_XCODE_HASH
@@ -1020,7 +1025,12 @@ std::string XcodeProvider::getHash(std::string key) {
 		return hashIterator->second;
 
 	// Generate a new key from the file hash and insert it into the dictionary
+#ifdef MACOSX
+	std::string hash = md5(key);
+#else
 	std::string hash = newHash();
+#endif
+
 	_hashDictionnary[key] = hash;
 
 	return hash;
@@ -1028,6 +1038,19 @@ std::string XcodeProvider::getHash(std::string key) {
 }
 
 bool isSeparator (char s) { return (s == '-'); }
+
+#ifdef MACOSX
+std::string XcodeProvider::md5(std::string key) {
+	unsigned char md[CC_MD5_DIGEST_LENGTH];
+	CC_MD5(key.c_str(), (CC_LONG) key.length(), md);
+	std::stringstream stream;
+	stream << std::hex << std::setfill('0') << std::setw(2);
+	for (int i=0; i<CC_MD5_DIGEST_LENGTH; i++) {
+		stream << (unsigned int) md[i];
+	}
+	return stream.str();
+}
+#endif
 
 std::string XcodeProvider::newHash() const {
 	std::string hash = createUUID();
