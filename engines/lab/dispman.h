@@ -62,6 +62,7 @@ private:
 
 	uint16 fadeNumIn(uint16 num, uint16 res, uint16 counter);
 	uint16 fadeNumOut(uint16 num, uint16 res, uint16 counter);
+	void getWord(char *wordBuffer, const char *mainBuffer, uint16 *wordWidth);
 
 	byte _curapen;
 	byte *_curBitmap;
