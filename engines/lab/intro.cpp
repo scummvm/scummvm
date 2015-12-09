@@ -38,6 +38,7 @@
 #include "lab/resource.h"
 
 namespace Lab {
+
 Intro::Intro(LabEngine *vm) : _vm(vm) {
 	_quitIntro = false;
 }
