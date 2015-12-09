@@ -377,7 +377,7 @@ void BbdouSpecialCode::setCursorControlRoutine(uint32 objectId, int num) {
 			new Common::Functor2Mem<Control*, uint32, void, BbdouSpecialCode>(this, &BbdouSpecialCode::cursorInteractControlRoutine));
 	else
 		control->_actor->setControlRoutine(
-			new Common::Functor2Mem<Control*, uint32, void, BbdouSpecialCode>(this, &BbdouSpecialCode::cursorControlRoutine2));
+			new Common::Functor2Mem<Control*, uint32, void, BbdouSpecialCode>(this, &BbdouSpecialCode::cursorCrosshairControlRoutine));
 }
 
 Common::Point BbdouSpecialCode::getBackgroundCursorPos(Common::Point cursorPos) {
@@ -605,7 +605,7 @@ void BbdouSpecialCode::cursorInteractControlRoutine(Control *cursorControl, uint
 
 }
 
-void BbdouSpecialCode::cursorControlRoutine2(Control *cursorControl, uint32 deltaTime) {
+void BbdouSpecialCode::cursorCrosshairControlRoutine(Control *cursorControl, uint32 deltaTime) {
 
 	static const struct ShooterAnim {
 		uint32 objectId;
@@ -620,11 +620,13 @@ void BbdouSpecialCode::cursorControlRoutine2(Control *cursorControl, uint32 delt
 		{0x60652, 0x60653, 0x60654, 0x60655, 0x60656, 0x60657, 0x60658, 0x60659}}
 	};
 
+	static const uint32 kShooterObjectIds[] = {
+		0x401DF, 0x401E0, 0x401E1, 0x401E2,
+		0x401E3, 0x401E4, 0x401E5, 0x401E6,
+	};
+
 	Actor *actor = cursorControl->_actor;
 	CursorData &cursorData = _cursor->_data;
-
-	// TODO
-	//debug("BbdouSpecialCode::cursorControlRoutine2()");
 
 	if (cursorData._visibleCtr <= 0) {
 		if (cursorData._currOverlappedObjectId || cursorData._mode == 3) {
@@ -636,11 +638,11 @@ void BbdouSpecialCode::cursorControlRoutine2(Control *cursorControl, uint32 delt
 		return;
 	}
 
-	Common::Point cursorPos = _vm->_input->getCursorPosition();
+	Common::Point screenCursorPos = _vm->_input->getCursorPosition();
 
-	if (cursorPos != actor->_position) {
-		actor->_position = cursorPos;
-		int16 gridX = 8 * cursorPos.x / 640;
+	if (screenCursorPos != actor->_position) {
+		actor->_position = screenCursorPos;
+		int16 gridX = 8 * screenCursorPos.x / 640;
 		if (gridX >= 8)
 			gridX = 4;
 
@@ -658,7 +660,146 @@ void BbdouSpecialCode::cursorControlRoutine2(Control *cursorControl, uint32 delt
 
 	}
 
-	// TODO A lot of stuff
+	Common::Point cursorPos = getBackgroundCursorPos(cursorPos);
+	bool foundOverlapped = false;
+	Control *overlappedControl = 0;
+
+	if (cursorData._flags & 1)
+		foundOverlapped = false;
+    else {
+		/* TODO Implement getOverlappedObjectAccurate
+		foundOverlapped = _vm->_controls->getOverlappedObjectAccurate(cursorControl, cursorPos,
+			&overlappedControl, cursorData._item10._field58);
+		*/
+	}
+
+	if (foundOverlapped) {
+		if (overlappedControl->_objectId != cursorData._currOverlappedObjectId) {
+			resetItem10(cursorControl->_objectId, &cursorData._item10);
+			int value = _cursor->findStruct8bsValue(overlappedControl->_objectId);
+			if (value == 2 || value == 3 || value == 4 || value == 5 || value == 6 || value == 7) {
+				if (cursorData._mode != 3) {
+					_cursor->saveInfo();
+					cursorData._mode = 3;
+					cursorData._item10._verbId = 0x1B0006;
+					cursorData._holdingObjectId = 0;
+				}
+				switch (value) {
+				case 2:
+					cursorData._sequenceId = 0x60010;
+					break;
+				case 3:
+					cursorData._sequenceId = 0x60011;
+					break;
+				case 4:
+					cursorData._sequenceId = 0x60012;
+					break;
+				case 5:
+					cursorData._sequenceId = 0x60013;
+					break;
+				case 6:
+					cursorData._sequenceId = 0x60015;
+					break;
+				case 7:
+					cursorData._sequenceId = 0x60014;
+					break;
+				}
+				_cursor->show(cursorControl);
+				cursorData._currOverlappedObjectId = overlappedControl->_objectId;
+			} else {
+				if (cursorData._mode == 3)
+					_cursor->restoreInfo();
+				_cursor->show(cursorControl);
+				cursorControl->setActorIndexTo2();
+				if (overlappedControl->_objectId) {
+					cursorData._item10._verbId = 0x1B0003;
+					cursorData._currOverlappedObjectId = overlappedControl->_objectId;
+				} else {
+					cursorData._item10._verbId = 0x1B0002;
+					cursorData._currOverlappedObjectId = overlappedControl->_objectId;
+				}
+			}
+		}
+	} else {
+		if (cursorData._currOverlappedObjectId || cursorData._mode == 3) {
+			if (cursorData._mode == 3)
+				_cursor->restoreInfo();
+			_cursor->show(cursorControl);
+			cursorControl->setActorIndexTo1();
+			resetItem10(cursorControl->_objectId, &cursorData._item10);
+		}
+		cursorData._currOverlappedObjectId = 0;
+	}
+
+	actor->_seqCodeValue1 = 100 * deltaTime;
+
+	if (cursorData._currOverlappedObjectId) {
+
+		if (_vm->_input->pollEvent(kEventLeftClick)) {
+
+			uint32 outSceneId, outVerbId, outObjectId2, outObjectId;
+			bool success = getShooterCause(_vm->getCurrentScene(),
+				cursorData._item10._verbId, cursorData._holdingObjectId, cursorData._currOverlappedObjectId,
+				outSceneId, outVerbId, outObjectId2, outObjectId);
+
+			uint index = (uint)_vm->getRandom(2);
+			const ShooterAnim &anim = kShooterAnims[index];
+			uint32 objectId = anim.objectId;
+			int gridX = _shooterStatus[index].gridX;
+			Control *gunControl = _vm->getObjectControl(objectId);
+			if (gunControl) {
+				_shooterStatus[index].flag = true;
+				gunControl->startSequenceActor(anim.sequenceIds2[gridX], 2, 0);
+			}
+			Control *hitControl = _vm->getObjectControl(kShooterObjectIds[_shooterObjectIdIndex]);
+			if (hitControl) {
+				hitControl->setActorPosition(actor->_position);
+				hitControl->startSequenceActor(0x6068D, 2, 0);
+			}
+			++_shooterObjectIdIndex;
+			if (_shooterObjectIdIndex >= ARRAYSIZE(kShooterObjectIds))
+				_shooterObjectIdIndex = 0;
+
+			if (success) {
+				_cursor->hide(cursorControl->_objectId);
+				uint32 threadId = startCauseThread(cursorControl->_objectId, _vm->getCurrentScene(), outVerbId, outObjectId2, outObjectId);
+				if (cursorData._field90) {
+					_vm->_threads->killThread(cursorData._causeThreadId2);
+					cursorData._field90 = 0;
+				}
+				cursorData._causeThreadId1 = _vm->causeTrigger(outSceneId, outVerbId, outObjectId2, outObjectId, threadId);
+				cursorData._causeThreadId2 = cursorData._causeThreadId1;
+				resetItem10(cursorControl->_objectId, &cursorData._item10);
+				cursorData._currOverlappedObjectId = 0;
+				cursorControl->setActorIndexTo1();
+			}
+
+		} else if (_vm->_input->pollEvent(kEventRightClick) && cursorData._item10._playSound48 == 1 && !cursorData._item10._flag56) {
+			// TODO I don't think this is used; _playSound48 seems to be always 0 here
+			debug("Cursor_sub_10004DD0 TODO");
+			// TODO Cursor_sub_10004DD0(controla->objectId, cursorData->currOverlappedObjectId, cursorData->holdingObjectId, &cursorData->item10);
+		}
+
+	} else if (_vm->_input->pollEvent(kEventLeftClick)) {
+	    uint index = (uint)_vm->getRandom(2);
+		const ShooterAnim &anim = kShooterAnims[index];
+		uint32 objectId = anim.objectId;
+		int gridX = _shooterStatus[index].gridX;
+		Control *gunControl = _vm->getObjectControl(objectId);
+		if (gunControl) {
+			_shooterStatus[index].flag = true;
+			gunControl->startSequenceActor(anim.sequenceIds2[gridX], 2, 0);
+		}
+		Control *hitControl = _vm->getObjectControl(kShooterObjectIds[_shooterObjectIdIndex]);
+		if (hitControl) {
+			hitControl->setActorPosition(actor->_position);
+			hitControl->startSequenceActor(0x6068D, 2, 0);
+		}
+		++_shooterObjectIdIndex;
+		if (_shooterObjectIdIndex >= ARRAYSIZE(kShooterObjectIds))
+			_shooterObjectIdIndex = 0;
+
+	}
 
 }
 
@@ -830,6 +971,62 @@ void BbdouSpecialCode::addSalad(uint32 sequenceId) {
 	control->startSequenceActor(sequenceId, 2, 0);
 	control->setPriority(_saladCount + 9);
 	control->deactivateObject();
+}
+
+bool BbdouSpecialCode::getShooterCause(uint32 sceneId, uint32 verbId, uint32 objectId2, uint32 objectId,
+	uint32 &outSceneId, uint32 &outVerbId, uint32 &outObjectId2, uint32 &outObjectId) {
+	bool success = false;
+	objectId2 = verbId != 0x1B0003 ? 0 : objectId2;
+	if (_vm->causeIsDeclared(sceneId, verbId, objectId2, objectId)) {
+		outSceneId = sceneId;
+		outVerbId = verbId;
+		outObjectId2 = objectId2;
+		outObjectId = objectId;
+		success = true;
+	} else if (verbId == 0x1B0003 && _vm->causeIsDeclared(sceneId, 0x1B0008, 0, objectId)) {
+		outSceneId = sceneId;
+		outVerbId = 0x1B0003;
+		outObjectId2 = 0;
+		outObjectId = objectId;
+		success = true;
+	} else if (_vm->causeIsDeclared(sceneId, verbId, objectId2, 0x40001)) {
+		outSceneId = sceneId;
+		outVerbId = verbId;
+		outObjectId2 = objectId2;
+		outObjectId = 0x40001;
+		success = true;
+	} else if (verbId == 0x1B0003 && _vm->causeIsDeclared(sceneId, 0x1B0008, 0, 0x40001)) {
+		outSceneId = sceneId;
+		outVerbId = 0x1B0008;
+		outObjectId2 = 0;
+		outObjectId = 0x40001;
+		success = true;
+	} else if (_vm->causeIsDeclared(0x10003, verbId, objectId2, objectId)) {
+		outSceneId = 0x10003;
+		outVerbId = verbId;
+		outObjectId2 = objectId2;
+		outObjectId = objectId;
+		success = true;
+	} else if (verbId == 0x1B0003 && _vm->causeIsDeclared(0x10003, 0x1B0008, 0, objectId)) {
+		outSceneId = 0x10003;
+		outVerbId = verbId;
+		outObjectId2 = 0;
+		outObjectId = objectId;
+		success = true;
+	} else if (_vm->causeIsDeclared(0x10003, verbId, objectId2, 0x40001)) {
+		outSceneId = 0x10003;
+		outVerbId = verbId;
+		outObjectId2 = objectId2;
+		outObjectId = 0x40001;
+		success = true;
+	} else if (verbId == 0x1B0003 && _vm->causeIsDeclared(0x10003, 0x1B0008, 0, 0x40001)) {
+		outSceneId = 0x10003;
+		outVerbId = verbId;
+		outObjectId2 = 0;
+		outObjectId = 0x40001;
+		success = true;
+	}
+	return success;
 }
 
 } // End of namespace Illusions

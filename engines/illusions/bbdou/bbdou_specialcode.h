@@ -108,6 +108,7 @@ public:
 
 	// Shooter
 	ShooterStatus _shooterStatus[2];
+	uint _shooterObjectIdIndex;
 
 	// Special code interface functions
 	void spcInitCursor(OpCall &opCall);
@@ -150,7 +151,7 @@ protected:
 		Item10 *item10, uint32 progResKeywordId);
 	bool findVerbId(Item10 *item10, uint32 currOverlappedObjectId, int always0, uint32 &outVerbId);
 	void cursorInteractControlRoutine(Control *cursorControl, uint32 deltaTime);
-	void cursorControlRoutine2(Control *cursorControl, uint32 deltaTime);
+	void cursorCrosshairControlRoutine(Control *cursorControl, uint32 deltaTime);
 	bool testVerbId(uint32 verbId, uint32 holdingObjectId, uint32 overlappedObjectId);
 	bool getCause(uint32 sceneId, uint32 verbId, uint32 objectId2, uint32 objectId,
 		uint32 &outVerbId, uint32 &outObjectId2, uint32 &outObjectId);
@@ -160,6 +161,9 @@ protected:
 	// Salad
 	void initSalad();
 	void addSalad(uint32 sequenceId);
+	// Shooter
+	bool getShooterCause(uint32 sceneId, uint32 verbId, uint32 objectId2, uint32 objectId,
+		uint32 &outSceneId, uint32 &outVerbId, uint32 &outObjectId2, uint32 &outObjectId);
 };
 
 } // End of namespace Illusions
