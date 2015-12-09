@@ -735,80 +735,8 @@ void XcodeProvider::setupBuildConfiguration(const BuildSetup &setup) {
 	free(rp);
 #endif
 
-	///****************************************
-	// * iPhone
-	// ****************************************/
-
-	// Debug
-	Object *iPhone_Debug_Object = new Object(this, "XCBuildConfiguration_" PROJECT_DESCRIPTION "-iPhone_Debug", _targets[IOS_TARGET] /* ScummVM-iPhone */, "XCBuildConfiguration", "PBXNativeTarget", "Debug");
-	Property iPhone_Debug;
-	ADD_SETTING_QUOTE(iPhone_Debug, "CODE_SIGN_IDENTITY", "iPhone Developer");
-	ADD_SETTING_QUOTE_VAR(iPhone_Debug, "CODE_SIGN_IDENTITY[sdk=iphoneos*]", "iPhone Developer");
-	ADD_SETTING(iPhone_Debug, "COMPRESS_PNG_FILES", "NO");
-	ADD_SETTING(iPhone_Debug, "COPY_PHASE_STRIP", "NO");
-	ADD_SETTING_QUOTE(iPhone_Debug, "DEBUG_INFORMATION_FORMAT", "dwarf-with-dsym");
-	ValueList iPhone_FrameworkSearchPaths;
-	iPhone_FrameworkSearchPaths.push_back("$(inherited)");
-	iPhone_FrameworkSearchPaths.push_back("\"$(SDKROOT)$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks\"");
-	ADD_SETTING_LIST(iPhone_Debug, "FRAMEWORK_SEARCH_PATHS", iPhone_FrameworkSearchPaths, SettingsAsList, 5);
-	ADD_SETTING(iPhone_Debug, "GCC_DYNAMIC_NO_PIC", "NO");
-	ADD_SETTING(iPhone_Debug, "GCC_ENABLE_CPP_EXCEPTIONS", "NO");
-	ADD_SETTING(iPhone_Debug, "GCC_ENABLE_FIX_AND_CONTINUE", "NO");
-	ADD_SETTING(iPhone_Debug, "GCC_OPTIMIZATION_LEVEL", "0");
-	ADD_SETTING(iPhone_Debug, "GCC_PRECOMPILE_PREFIX_HEADER", "NO");
-	ADD_SETTING(iPhone_Debug, "GCC_WARN_64_TO_32_BIT_CONVERSION", "NO");
-	ADD_SETTING_QUOTE(iPhone_Debug, "GCC_PREFIX_HEADER", "");
-	ADD_SETTING(iPhone_Debug, "GCC_THUMB_SUPPORT", "NO");
-	ADD_SETTING(iPhone_Debug, "GCC_UNROLL_LOOPS", "YES");
-	ValueList iPhone_HeaderSearchPaths;
-	iPhone_HeaderSearchPaths.push_back("$(SRCROOT)/engines/");
-	iPhone_HeaderSearchPaths.push_back("$(SRCROOT)");
-	iPhone_HeaderSearchPaths.push_back("\"" + projectOutputDirectory + "\"");
-	iPhone_HeaderSearchPaths.push_back("\"" + projectOutputDirectory + "/include\"");
-	ADD_SETTING_LIST(iPhone_Debug, "HEADER_SEARCH_PATHS", iPhone_HeaderSearchPaths, SettingsAsList|SettingsQuoteVariable, 5);
-	ADD_SETTING_QUOTE(iPhone_Debug, "INFOPLIST_FILE", "$(SRCROOT)/dists/ios7/Info.plist");
-	ValueList iPhone_LibPaths;
-	iPhone_LibPaths.push_back("$(inherited)");
-	iPhone_LibPaths.push_back("\"" + projectOutputDirectory + "/lib\"");
-	ADD_SETTING_LIST(iPhone_Debug, "LIBRARY_SEARCH_PATHS", iPhone_LibPaths, SettingsAsList, 5);
-	ADD_SETTING(iPhone_Debug, "ONLY_ACTIVE_ARCH", "YES");
-	ADD_SETTING(iPhone_Debug, "PREBINDING", "NO");
-	ADD_SETTING(iPhone_Debug, "PRODUCT_NAME", PROJECT_NAME);
-	ADD_SETTING(iPhone_Debug, "PRODUCT_BUNDLE_IDENTIFIER", "\"org.scummvm.${PRODUCT_NAME}\"");
-	ADD_SETTING(iPhone_Debug, "IPHONEOS_DEPLOYMENT_TARGET", "7.1");
-	//ADD_SETTING_QUOTE(iPhone_Debug, "PROVISIONING_PROFILE", "EF590570-5FAC-4346-9071-D609DE2B28D8");
-	ADD_SETTING_QUOTE_VAR(iPhone_Debug, "PROVISIONING_PROFILE[sdk=iphoneos*]", "");
-	ADD_SETTING(iPhone_Debug, "SDKROOT", "iphoneos");
-	ADD_SETTING_QUOTE(iPhone_Debug, "TARGETED_DEVICE_FAMILY", "1,2");
-	ValueList scummvmIOS_defines;
-	ADD_DEFINE(scummvmIOS_defines, "\"$(inherited)\"");
-	ADD_DEFINE(scummvmIOS_defines, "IPHONE");
-	ADD_DEFINE(scummvmIOS_defines, "IPHONE_OFFICIAL");
-	ADD_SETTING_LIST(iPhone_Debug, "GCC_PREPROCESSOR_DEFINITIONS", scummvmIOS_defines, SettingsNoQuote|SettingsAsList, 5);
-	ADD_SETTING(iPhone_Debug, "ASSETCATALOG_COMPILER_APPICON_NAME", "AppIcon");
-	ADD_SETTING(iPhone_Debug, "ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME", "LaunchImage");
-	ADD_SETTING(iPhone_Debug, "ENABLE_TESTABILITY", "YES");
-
-	iPhone_Debug_Object->addProperty("name", "Debug", "", SettingsNoValue);
-	iPhone_Debug_Object->properties["buildSettings"] = iPhone_Debug;
-
-	// Release
-	Object *iPhone_Release_Object = new Object(this, "XCBuildConfiguration_" PROJECT_DESCRIPTION "-iPhone_Release", _targets[IOS_TARGET] /* ScummVM-iPhone */, "XCBuildConfiguration", "PBXNativeTarget", "Release");
-	Property iPhone_Release(iPhone_Debug);
-	ADD_SETTING(iPhone_Release, "GCC_OPTIMIZATION_LEVEL", "3");
-	ADD_SETTING(iPhone_Release, "COPY_PHASE_STRIP", "YES");
-	REMOVE_SETTING(iPhone_Release, "GCC_DYNAMIC_NO_PIC");
-	REMOVE_SETTING(iPhone_Release, "ENABLE_TESTABILITY");
-	ADD_SETTING(iPhone_Release, "WRAPPER_EXTENSION", "app");
-
-	iPhone_Release_Object->addProperty("name", "Release", "", SettingsNoValue);
-	iPhone_Release_Object->properties["buildSettings"] = iPhone_Release;
-
-	_buildConfiguration.add(iPhone_Debug_Object);
-	_buildConfiguration.add(iPhone_Release_Object);
-
 	/****************************************
-	 * scummvm
+	 * ScummVM - Project Level
 	 ****************************************/
 
 	// Debug
@@ -844,7 +772,6 @@ void XcodeProvider::setupBuildConfiguration(const BuildSetup &setup) {
 	ADD_SETTING_QUOTE(scummvm_Debug, "OTHER_CFLAGS", "");
 	ADD_SETTING_QUOTE(scummvm_Debug, "OTHER_LDFLAGS", "-lz");
 	ADD_SETTING(scummvm_Debug, "PREBINDING", "NO");
-	ADD_SETTING(scummvm_Debug, "SDKROOT", "macosx");
 	ADD_SETTING(scummvm_Debug, "ENABLE_TESTABILITY", "YES");
 
 	scummvm_Debug_Object->addProperty("name", "Debug", "", SettingsNoValue);
@@ -865,14 +792,86 @@ void XcodeProvider::setupBuildConfiguration(const BuildSetup &setup) {
 	_buildConfiguration.add(scummvm_Debug_Object);
 	_buildConfiguration.add(scummvm_Release_Object);
 
+	///****************************************
+	// * ScummVM - iOS Target
+	// ****************************************/
+
+	// Debug
+	Object *iPhone_Debug_Object = new Object(this, "XCBuildConfiguration_" PROJECT_DESCRIPTION "-iPhone_Debug", _targets[IOS_TARGET] /* ScummVM-iPhone */, "XCBuildConfiguration", "PBXNativeTarget", "Debug");
+	Property iPhone_Debug;
+	ADD_SETTING_QUOTE(iPhone_Debug, "CODE_SIGN_IDENTITY", "iPhone Developer");
+	ADD_SETTING_QUOTE_VAR(iPhone_Debug, "CODE_SIGN_IDENTITY[sdk=iphoneos*]", "iPhone Developer");
+	ADD_SETTING(iPhone_Debug, "COMPRESS_PNG_FILES", "NO");
+	ADD_SETTING(iPhone_Debug, "COPY_PHASE_STRIP", "NO");
+	ADD_SETTING_QUOTE(iPhone_Debug, "DEBUG_INFORMATION_FORMAT", "dwarf-with-dsym");
+	ValueList iPhone_FrameworkSearchPaths;
+	iPhone_FrameworkSearchPaths.push_back("$(inherited)");
+	iPhone_FrameworkSearchPaths.push_back("\"$(SDKROOT)$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks\"");
+	ADD_SETTING_LIST(iPhone_Debug, "FRAMEWORK_SEARCH_PATHS", iPhone_FrameworkSearchPaths, SettingsAsList, 5);
+	ADD_SETTING(iPhone_Debug, "GCC_DYNAMIC_NO_PIC", "NO");
+	ADD_SETTING(iPhone_Debug, "GCC_ENABLE_CPP_EXCEPTIONS", "NO");
+	ADD_SETTING(iPhone_Debug, "GCC_ENABLE_FIX_AND_CONTINUE", "NO");
+	ADD_SETTING(iPhone_Debug, "GCC_OPTIMIZATION_LEVEL", "0");
+	ADD_SETTING(iPhone_Debug, "GCC_PRECOMPILE_PREFIX_HEADER", "NO");
+	ADD_SETTING(iPhone_Debug, "GCC_WARN_64_TO_32_BIT_CONVERSION", "NO");
+	ADD_SETTING(iPhone_Debug, "WARNING_CFLAGS", "-Wno-multichar");
+	ADD_SETTING_QUOTE(iPhone_Debug, "GCC_PREFIX_HEADER", "");
+	ADD_SETTING(iPhone_Debug, "GCC_THUMB_SUPPORT", "NO");
+	ADD_SETTING(iPhone_Debug, "GCC_UNROLL_LOOPS", "YES");
+	ValueList iPhone_HeaderSearchPaths;
+	iPhone_HeaderSearchPaths.push_back("$(SRCROOT)/engines/");
+	iPhone_HeaderSearchPaths.push_back("$(SRCROOT)");
+	iPhone_HeaderSearchPaths.push_back("\"" + projectOutputDirectory + "\"");
+	iPhone_HeaderSearchPaths.push_back("\"" + projectOutputDirectory + "/include\"");
+	ADD_SETTING_LIST(iPhone_Debug, "HEADER_SEARCH_PATHS", iPhone_HeaderSearchPaths, SettingsAsList|SettingsQuoteVariable, 5);
+	ADD_SETTING_QUOTE(iPhone_Debug, "INFOPLIST_FILE", "$(SRCROOT)/dists/ios7/Info.plist");
+	ValueList iPhone_LibPaths;
+	iPhone_LibPaths.push_back("$(inherited)");
+	iPhone_LibPaths.push_back("\"" + projectOutputDirectory + "/lib\"");
+	ADD_SETTING_LIST(iPhone_Debug, "LIBRARY_SEARCH_PATHS", iPhone_LibPaths, SettingsAsList, 5);
+	ADD_SETTING(iPhone_Debug, "ONLY_ACTIVE_ARCH", "YES");
+	ADD_SETTING(iPhone_Debug, "PREBINDING", "NO");
+	ADD_SETTING(iPhone_Debug, "PRODUCT_NAME", PROJECT_NAME);
+	ADD_SETTING(iPhone_Debug, "PRODUCT_BUNDLE_IDENTIFIER", "\"org.scummvm.${PRODUCT_NAME}\"");
+	ADD_SETTING(iPhone_Debug, "IPHONEOS_DEPLOYMENT_TARGET", "7.1");
+	//ADD_SETTING_QUOTE(iPhone_Debug, "PROVISIONING_PROFILE", "EF590570-5FAC-4346-9071-D609DE2B28D8");
+	ADD_SETTING_QUOTE_VAR(iPhone_Debug, "PROVISIONING_PROFILE[sdk=iphoneos*]", "");
+	ADD_SETTING(iPhone_Debug, "SDKROOT", "iphoneos");
+	ADD_SETTING_QUOTE(iPhone_Debug, "TARGETED_DEVICE_FAMILY", "1,2");
+	ValueList scummvmIOS_defines;
+	ADD_DEFINE(scummvmIOS_defines, "\"$(inherited)\"");
+	ADD_DEFINE(scummvmIOS_defines, "IPHONE");
+	ADD_DEFINE(scummvmIOS_defines, "IPHONE_OFFICIAL");
+	ADD_SETTING_LIST(iPhone_Debug, "GCC_PREPROCESSOR_DEFINITIONS", scummvmIOS_defines, SettingsNoQuote|SettingsAsList, 5);
+	ADD_SETTING(iPhone_Debug, "ASSETCATALOG_COMPILER_APPICON_NAME", "AppIcon");
+	ADD_SETTING(iPhone_Debug, "ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME", "LaunchImage");
+
+	iPhone_Debug_Object->addProperty("name", "Debug", "", SettingsNoValue);
+	iPhone_Debug_Object->properties["buildSettings"] = iPhone_Debug;
+
+	// Release
+	Object *iPhone_Release_Object = new Object(this, "XCBuildConfiguration_" PROJECT_DESCRIPTION "-iPhone_Release", _targets[IOS_TARGET] /* ScummVM-iPhone */, "XCBuildConfiguration", "PBXNativeTarget", "Release");
+	Property iPhone_Release(iPhone_Debug);
+	ADD_SETTING(iPhone_Release, "GCC_OPTIMIZATION_LEVEL", "3");
+	ADD_SETTING(iPhone_Release, "COPY_PHASE_STRIP", "YES");
+	REMOVE_SETTING(iPhone_Release, "GCC_DYNAMIC_NO_PIC");
+	ADD_SETTING(iPhone_Release, "WRAPPER_EXTENSION", "app");
+
+	iPhone_Release_Object->addProperty("name", "Release", "", SettingsNoValue);
+	iPhone_Release_Object->properties["buildSettings"] = iPhone_Release;
+
+	_buildConfiguration.add(iPhone_Debug_Object);
+	_buildConfiguration.add(iPhone_Release_Object);
+
 	/****************************************
-	 * ScummVM-OS X
+	 * ScummVM - OS X Target
 	 ****************************************/
 
 	// Debug
 	Object *scummvmOSX_Debug_Object = new Object(this, "XCBuildConfiguration_" PROJECT_DESCRIPTION "-OSX_Debug", _targets[OSX_TARGET] /* ScummVM-OS X */, "XCBuildConfiguration", "PBXNativeTarget", "Debug");
 	Property scummvmOSX_Debug;
 	ADD_SETTING(scummvmOSX_Debug, "COMBINE_HIDPI_IMAGES", "YES");
+	ADD_SETTING(scummvmOSX_Debug, "SDKROOT", "macosx");
 	ADD_SETTING(scummvmOSX_Debug, "COMPRESS_PNG_FILES", "NO");
 	ADD_SETTING(scummvmOSX_Debug, "COPY_PHASE_STRIP", "NO");
 	ADD_SETTING_QUOTE(scummvmOSX_Debug, "DEBUG_INFORMATION_FORMAT", "dwarf-with-dsym");
