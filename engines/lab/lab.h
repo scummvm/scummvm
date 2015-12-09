@@ -70,6 +70,8 @@ enum GameFeatures {
 #define UPSCROLL       3
 #define DOWNSCROLL     4
 
+#define QUARTERNUM  30
+
 typedef Common::List<Gadget *> GadgetList;
 
 struct CrumbData {
