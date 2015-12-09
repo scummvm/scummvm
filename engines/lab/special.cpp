@@ -28,11 +28,6 @@
  *
  */
 
-#include "common/translation.h"
-
-#include "gui/message.h"
-#include "gui/saveload.h"
-
 #include "lab/lab.h"
 
 #include "lab/anim.h"
@@ -44,7 +39,6 @@
 #include "lab/music.h"
 #include "lab/processroom.h"
 #include "lab/resource.h"
-#include "lab/savegame.h"
 #include "lab/utils.h"
 
 namespace Lab {
@@ -71,7 +65,6 @@ Image *MonButton;
 #define DIRTY       175
 #define NONEWS      135
 #define NOCLEAN     152
-#define QUARTERNUM  30
 
 
 static byte *loadBackPict(const char *fileName, bool tomem) {
@@ -383,48 +376,6 @@ void LabEngine::doJournal() {
 	_graphics->setAPen(0);
 	_graphics->rectFill(0, 0, _graphics->_screenWidth - 1, _graphics->_screenHeight - 1);
 	_graphics->blackScreen();
-}
-
-bool LabEngine::saveRestoreGame() {
-	bool isOK = false;
-
-	//g_lab->showMainMenu();
-
-	// The original had one screen for saving/loading. We have two.
-	// Ask the user which screen to use.
-	GUI::MessageDialog saveOrLoad(_("Would you like to save or restore a game?"), _("Save"), _("Restore"));
-
-	int choice = saveOrLoad.runModal();
-	if (choice == GUI::kMessageOK) {
-		// Save
-		GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
-		int slot = dialog->runModalWithCurrentTarget();
-		if (slot >= 0) {
-			Common::String desc = dialog->getResultString();
-
-			if (desc.empty()) {
-				// create our own description for the saved game, the user didn't enter it
-				desc = dialog->createDefaultSaveDescription(slot);
-			}
-
-			isOK = saveGame(_direction, _inventory[QUARTERNUM]._many, slot, desc);
-		}
-	} else {
-		// Restore
-		GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Restore game:"), _("Restore"), false);
-		int slot = dialog->runModalWithCurrentTarget();
-		if (slot >= 0) {
-			isOK = loadGame(&_direction, &(_inventory[QUARTERNUM]._many), slot);
-			if (isOK)
-				_music->resetMusic();
-		}
-	}
-
-	_alternate = false;
-	_mainDisplay = true;
-	_graphics->screenUpdate();
-
-	return isOK;
 }
 
 /**
