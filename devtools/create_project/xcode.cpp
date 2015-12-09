@@ -803,7 +803,7 @@ void XcodeProvider::setupBuildConfiguration(const BuildSetup &setup) {
 	ADD_SETTING_QUOTE_VAR(iPhone_Debug, "CODE_SIGN_IDENTITY[sdk=iphoneos*]", "iPhone Developer");
 	ADD_SETTING(iPhone_Debug, "COMPRESS_PNG_FILES", "NO");
 	ADD_SETTING(iPhone_Debug, "COPY_PHASE_STRIP", "NO");
-	ADD_SETTING_QUOTE(iPhone_Debug, "DEBUG_INFORMATION_FORMAT", "dwarf-with-dsym");
+	ADD_SETTING_QUOTE(iPhone_Debug, "DEBUG_INFORMATION_FORMAT", "dwarf");
 	ValueList iPhone_FrameworkSearchPaths;
 	iPhone_FrameworkSearchPaths.push_back("$(inherited)");
 	iPhone_FrameworkSearchPaths.push_back("\"$(SDKROOT)$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks\"");
@@ -856,6 +856,8 @@ void XcodeProvider::setupBuildConfiguration(const BuildSetup &setup) {
 	ADD_SETTING(iPhone_Release, "COPY_PHASE_STRIP", "YES");
 	REMOVE_SETTING(iPhone_Release, "GCC_DYNAMIC_NO_PIC");
 	ADD_SETTING(iPhone_Release, "WRAPPER_EXTENSION", "app");
+	REMOVE_SETTING(iPhone_Release, "DEBUG_INFORMATION_FORMAT");
+	ADD_SETTING_QUOTE(iPhone_Release, "DEBUG_INFORMATION_FORMAT", "dwarf-with-dsym");
 
 	iPhone_Release_Object->addProperty("name", "Release", "", SettingsNoValue);
 	iPhone_Release_Object->properties["buildSettings"] = iPhone_Release;
@@ -874,7 +876,7 @@ void XcodeProvider::setupBuildConfiguration(const BuildSetup &setup) {
 	ADD_SETTING(scummvmOSX_Debug, "SDKROOT", "macosx");
 	ADD_SETTING(scummvmOSX_Debug, "COMPRESS_PNG_FILES", "NO");
 	ADD_SETTING(scummvmOSX_Debug, "COPY_PHASE_STRIP", "NO");
-	ADD_SETTING_QUOTE(scummvmOSX_Debug, "DEBUG_INFORMATION_FORMAT", "dwarf-with-dsym");
+	ADD_SETTING_QUOTE(scummvmOSX_Debug, "DEBUG_INFORMATION_FORMAT", "dwarf");
 	ADD_SETTING_QUOTE(scummvmOSX_Debug, "FRAMEWORK_SEARCH_PATHS", "");
 	ADD_SETTING(scummvmOSX_Debug, "GCC_C_LANGUAGE_STANDARD", "c99");
 	ADD_SETTING(scummvmOSX_Debug, "GCC_ENABLE_CPP_EXCEPTIONS", "NO");
@@ -933,6 +935,8 @@ void XcodeProvider::setupBuildConfiguration(const BuildSetup &setup) {
 	REMOVE_SETTING(scummvmOSX_Release, "GCC_DYNAMIC_NO_PIC");
 	REMOVE_SETTING(scummvmOSX_Release, "GCC_OPTIMIZATION_LEVEL");
 	ADD_SETTING(scummvmOSX_Release, "WRAPPER_EXTENSION", "app");
+	REMOVE_SETTING(scummvmOSX_Release, "DEBUG_INFORMATION_FORMAT");
+	ADD_SETTING_QUOTE(scummvmOSX_Release, "DEBUG_INFORMATION_FORMAT", "dwarf-with-dsym");
 
 	scummvmOSX_Release_Object->addProperty("name", "Release", "", SettingsNoValue);
 	scummvmOSX_Release_Object->properties["buildSettings"] = scummvmOSX_Release;
