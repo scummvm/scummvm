@@ -138,7 +138,7 @@ void DisplayMan::freePict() {
 /**
  * Extracts the first word from a string.
  */
-static void getWord(char *wordBuffer, const char *mainBuffer, uint16 *wordWidth) {
+void DisplayMan::getWord(char *wordBuffer, const char *mainBuffer, uint16 *wordWidth) {
 	uint16 width = 0;
 
 	while ((mainBuffer[width] != ' ') && mainBuffer[width] && (mainBuffer[width] != '\n')) {
