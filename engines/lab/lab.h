@@ -49,6 +49,8 @@ struct InventoryData;
 struct RoomData;
 struct Rule;
 struct TextFont;
+struct ViewData;
+
 class Anim;
 class DisplayMan;
 class EventManager;
@@ -237,6 +239,20 @@ private:
 	bool onFloor(uint16 floorNum);
 	bool getUpFloor(uint16 *floorNum);
 	bool getDownFloor(uint16 *floorNum);
+	bool checkConditions(int16 *condition);
+	ViewData *getViewData(uint16 roomNum, uint16 direction);
+	CloseData *getObject(Common::Point pos, CloseDataPtr closePtr);
+	CloseDataPtr findClosePtrMatch(CloseDataPtr closePtr, CloseDataPtr closePtrList);
+	uint16 processArrow(uint16 curDirection, uint16 arrow);
+	void setCurrentClose(Common::Point pos, CloseDataPtr *closePtrList, bool useAbsoluteCoords);
+	bool takeItem(uint16 x, uint16 y, CloseDataPtr *closePtrList);
+	bool doActionRuleSub(int16 action, int16 roomNum, CloseDataPtr closePtr, CloseDataPtr *setCloseList, bool allowDefaults);
+	bool doActionRule(Common::Point pos, int16 action, int16 roomNum, CloseDataPtr *closePtrList);
+	bool doOperateRuleSub(int16 itemNum, int16 roomNum, CloseDataPtr closePtr, CloseDataPtr *setCloseList, bool allowDefaults);
+	bool doOperateRule(Common::Point pos, int16 ItemNum, CloseDataPtr *closePtrList);
+	bool doGoForward(CloseDataPtr *closePtrList);
+	bool doTurn(uint16 from, uint16 to, CloseDataPtr *closePtrList);
+	bool doMainView(CloseDataPtr *closePtrList);
 
 public:
 	void doActions(Action *actionList, CloseDataPtr *closePtrList);

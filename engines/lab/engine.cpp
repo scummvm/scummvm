@@ -980,7 +980,7 @@ bool LabEngine::fromCrumbs(uint32 tmpClass, uint16 code, uint16 qualifier, Commo
 			} else if (actionMode == 4) {
 				// Look at closeups
 				CloseDataPtr tmpClosePtr = _closeDataPtr;
-				setCurrentClose(curPos, &tmpClosePtr);
+				setCurrentClose(curPos, &tmpClosePtr, true);
 
 				if (_closeDataPtr == tmpClosePtr) {
 					if (curPos.y < (_utils->vgaScaleY(149) + _utils->svgaCord(2)))
@@ -1013,7 +1013,7 @@ bool LabEngine::fromCrumbs(uint32 tmpClass, uint16 code, uint16 qualifier, Commo
 
 		if (!wrkClosePtr) {
 			CloseDataPtr tmpClosePtr = _closeDataPtr;
-			setCurrentClose(curPos, &tmpClosePtr);
+			setCurrentClose(curPos, &tmpClosePtr, true);
 
 			if (!tmpClosePtr || (tmpClosePtr == _closeDataPtr)) {
 				if (!_closeDataPtr)
