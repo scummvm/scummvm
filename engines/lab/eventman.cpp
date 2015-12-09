@@ -39,7 +39,7 @@
 
 namespace Lab {
 
-static byte MouseData[] = {
+static byte mouseData[] = {
 	1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
 	1, 7, 1, 0, 0, 0, 0, 0, 0, 0,
 	1, 7, 7, 1, 0, 0, 0, 0, 0, 0,
@@ -174,7 +174,7 @@ void EventManager::updateMouse() {
  * Initializes the mouse.
  */
 void EventManager::initMouse() {
-	g_system->setMouseCursor(MouseData, MOUSE_WIDTH, MOUSE_HEIGHT, 0, 0, 0);
+	g_system->setMouseCursor(mouseData, MOUSE_WIDTH, MOUSE_HEIGHT, 0, 0, 0);
 	g_system->showMouse(false);
 
 	setMousePos(Common::Point(0, 0));
