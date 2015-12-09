@@ -60,14 +60,24 @@ enum UIViewTapDescription {
 
 enum GraphicsModes {
 	kGraphicsModeLinear = 0,
-	kGraphicsModeNone = 1
+	kGraphicsModeNone = 1,
+
+	kGraphicsMode2xSaI,
+	kGraphicsModeSuper2xSaI,
+	kGraphicsModeSuperEagle,
+	kGraphicsModeAdvMame2x,
+	kGraphicsModeAdvMame3x,
+	kGraphicsModeHQ2x,
+	kGraphicsModeHQ3x,
+	kGraphicsModeTV2x,
+	kGraphicsModeDotMatrix
 };
 
 struct VideoContext {
 	VideoContext() : asprectRatioCorrection(), screenWidth(), screenHeight(), overlayVisible(false),
 	                 overlayWidth(), overlayHeight(), mouseX(), mouseY(),
 	                 mouseHotspotX(), mouseHotspotY(), mouseWidth(), mouseHeight(),
-	                 mouseIsVisible(), graphicsMode(kGraphicsModeLinear), shakeOffsetY() {
+	                 mouseIsVisible(), graphicsMode(kGraphicsModeNone), shakeOffsetY() {
 	}
 
 	// Game screen state

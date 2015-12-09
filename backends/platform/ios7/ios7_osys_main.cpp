@@ -43,12 +43,30 @@
 #include "audio/mixer.h"
 #include "audio/mixer_intern.h"
 
+#include "graphics/scaler.h"
+#include "graphics/scaler/aspect.h"
+
 #include "ios7_osys_main.h"
 
 
 const OSystem::GraphicsMode OSystem_iOS7::s_supportedGraphicsModes[] = {
-	{ "linear", "Linear filtering", kGraphicsModeLinear },
 	{ "none", "No filtering", kGraphicsModeNone },
+	{ "linear", "Linear filtering", kGraphicsModeLinear },
+#ifdef USE_SCALERS
+//	{"2x", "2x", GFX_DOUBLESIZE},
+//	{"3x", "3x", GFX_TRIPLESIZE},
+	{ "2xsai", "2xSAI", kGraphicsMode2xSaI},
+	{"super2xsai", "Super2xSAI", kGraphicsModeSuper2xSaI},
+	{"supereagle", "SuperEagle", kGraphicsModeSuperEagle},
+	{"advmame2x", "AdvMAME2x", kGraphicsModeAdvMame2x},
+	{"advmame3x", "AdvMAME3x", kGraphicsModeAdvMame3x},
+#ifdef USE_HQ_SCALERS
+	{"hq2x", "HQ2x", kGraphicsModeHQ2x},
+	{"hq3x", "HQ3x", kGraphicsModeHQ3x},
+#endif
+	{"tv2x", "TV2x", kGraphicsModeTV2x},
+	{"dotmatrix", "DotMatrix", kGraphicsModeDotMatrix},
+#endif
 	{ 0, 0, 0 }
 };
 

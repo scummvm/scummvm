@@ -211,6 +211,10 @@ uint getSizeNextPOT(uint size) {
 - (id)initWithFrame:(struct CGRect)frame {
 	self = [super initWithFrame: frame];
 
+#if defined(USE_SCALERS) || defined(USE_HQ_SCALERS)
+	InitScalers(565);
+#endif
+
 	[self setupGestureRecognizers];
 
 	g_fullWidth = (int)MAX(frame.size.width, frame.size.height);
@@ -218,6 +222,13 @@ uint getSizeNextPOT(uint size) {
 
 	_contentScaleFactor = [[UIScreen mainScreen] scale];
 	[self setContentScaleFactor:_contentScaleFactor];
+
+	_scalerMemorySrc = NULL;
+	_scalerMemoryDst = NULL;
+	_scalerMemorySrcSize = 0;
+	_scalerMemoryDstSize = 0;
+	_scaler = NULL;
+	_scalerScale = 1;
 
 	_keyboardView = nil;
 	_screenTexture = 0;
@@ -274,6 +285,9 @@ uint getSizeNextPOT(uint size) {
 	_videoContext.overlayTexture.free();
 	_videoContext.mouseTexture.free();
 
+	free(_scalerMemorySrc);
+	free(_scalerMemoryDst);
+
 	[_eventLock release];
 	[super dealloc];
 }
@@ -300,6 +314,8 @@ uint getSizeNextPOT(uint size) {
 	glBindTexture(GL_TEXTURE_2D, tex); printOpenGLError();
 
 	GLint filter = GL_LINEAR;
+	ScalerProc *scaler = NULL;
+	int scalerScale = 1;
 
 	switch (_videoContext.graphicsMode) {
 	case kGraphicsModeLinear:
@@ -309,6 +325,64 @@ uint getSizeNextPOT(uint size) {
 	case kGraphicsModeNone:
 		filter = GL_NEAREST;
 		break;
+#ifdef USE_SCALERS
+	case kGraphicsMode2xSaI:
+		filter = GL_LINEAR;
+		scaler = _2xSaI;
+		scalerScale = 2;
+		break;
+
+	case kGraphicsModeSuper2xSaI:
+		filter = GL_LINEAR;
+		scaler = Super2xSaI;
+		scalerScale = 2;
+		break;
+
+	case kGraphicsModeSuperEagle:
+		filter = GL_LINEAR;
+		scaler = SuperEagle;
+		scalerScale = 2;
+		break;
+
+	case kGraphicsModeAdvMame2x:
+		filter = GL_LINEAR;
+		scaler = AdvMame2x;
+		scalerScale = 2;
+		break;
+
+	case kGraphicsModeAdvMame3x:
+		filter = GL_LINEAR;
+		scaler = AdvMame3x;
+		scalerScale = 3;
+		break;
+
+#ifdef USE_HQ_SCALERS
+	case kGraphicsModeHQ2x:
+		filter = GL_LINEAR;
+		scaler = HQ2x;
+		scalerScale = 2;
+		break;
+
+	case kGraphicsModeHQ3x:
+		filter = GL_LINEAR;
+		scaler = HQ3x;
+		scalerScale = 3;
+		break;
+#endif
+
+	case kGraphicsModeTV2x:
+		filter = GL_LINEAR;
+		scaler = TV2x;
+		scalerScale = 2;
+		break;
+
+	case kGraphicsModeDotMatrix:
+		filter = GL_LINEAR;
+		scaler = DotMatrix;
+		scalerScale = 2;
+		break;
+
+#endif
 	}
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filter); printOpenGLError();
@@ -318,6 +392,9 @@ uint getSizeNextPOT(uint size) {
 	// have a line/border artifact on the right side of the covered rect.
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE); printOpenGLError();
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE); printOpenGLError();
+
+	_scaler = scaler;
+	_scalerScale = scalerScale;
 }
 
 - (void)setGraphicsMode {
@@ -422,7 +499,36 @@ uint getSizeNextPOT(uint size) {
 	// Unfortunately we have to update the whole texture every frame, since glTexSubImage2D is actually slower in all cases
 	// due to the iPhone internals having to convert the whole texture back from its internal format when used.
 	// In the future we could use several tiled textures instead.
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, _videoContext.screenTexture.w, _videoContext.screenTexture.h, 0, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, _videoContext.screenTexture.getPixels()); printOpenGLError();
+	if (_scaler) {
+		size_t neededSrcMemorySize = (size_t) (_videoContext.screenTexture.pitch * (_videoContext.screenTexture.h + 4));
+		size_t neededDstMemorySize = (size_t) (_videoContext.screenTexture.pitch * (_videoContext.screenTexture.h + 4) * _scalerScale * _scalerScale);
+		if (neededSrcMemorySize != _scalerMemorySrcSize) {
+			_scalerMemorySrc = (uint8_t *) realloc(_scalerMemorySrc, neededSrcMemorySize);
+			_scalerMemorySrcSize = neededSrcMemorySize;
+		}
+		if (neededDstMemorySize != _scalerMemoryDstSize) {
+			_scalerMemoryDst = (uint8_t *) realloc(_scalerMemoryDst, neededDstMemorySize);
+			_scalerMemoryDstSize = neededDstMemorySize;
+		}
+
+		// Clear two lines before
+		memset(_scalerMemorySrc, 0, _videoContext.screenTexture.pitch * 2);
+		// Copy original buffer
+		memcpy(_scalerMemorySrc + _videoContext.screenTexture.pitch * 2, _videoContext.screenTexture.getPixels(), _videoContext.screenTexture.pitch * _videoContext.screenTexture.h);
+		// Clear two linex after
+		memset(_scalerMemorySrc + _videoContext.screenTexture.pitch * (2 + _videoContext.screenTexture.h), 0, _videoContext.screenTexture.pitch * 2);
+		// Apply scaler
+		_scaler(_scalerMemorySrc + _videoContext.screenTexture.pitch * 2,
+		        _videoContext.screenTexture.pitch,
+		        _scalerMemoryDst,
+				(uint32) (_videoContext.screenTexture.pitch * _scalerScale),
+		        _videoContext.screenTexture.w,
+		        _videoContext.screenTexture.h);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, _videoContext.screenTexture.w * _scalerScale, _videoContext.screenTexture.h * _scalerScale, 0, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, _scalerMemoryDst); printOpenGLError();
+	}
+	else {
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, _videoContext.screenTexture.w, _videoContext.screenTexture.h, 0, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, _videoContext.screenTexture.getPixels()); printOpenGLError();
+	}
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4); printOpenGLError();
 }
 

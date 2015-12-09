@@ -45,6 +45,15 @@ bool OSystem_iOS7::setGraphicsMode(int mode) {
 	switch (mode) {
 	case kGraphicsModeNone:
 	case kGraphicsModeLinear:
+	case kGraphicsMode2xSaI:
+	case kGraphicsModeSuper2xSaI:
+	case kGraphicsModeSuperEagle:
+	case kGraphicsModeAdvMame2x:
+	case kGraphicsModeAdvMame3x:
+	case kGraphicsModeHQ2x:
+	case kGraphicsModeHQ3x:
+	case kGraphicsModeTV2x:
+	case kGraphicsModeDotMatrix:
 		_videoContext->graphicsMode = (GraphicsModes)mode;
 		return true;
 

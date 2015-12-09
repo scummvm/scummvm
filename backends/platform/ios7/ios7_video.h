@@ -35,6 +35,7 @@
 #include "ios7_common.h"
 
 #include "common/list.h"
+#import "graphics/scaler.h"
 
 @interface iPhoneView : UIView {
 	VideoContext _videoContext;
@@ -72,6 +73,13 @@
 
 	UITouch *_firstTouch;
 	UITouch *_secondTouch;
+
+	uint8_t *_scalerMemorySrc;
+	uint8_t *_scalerMemoryDst;
+	size_t _scalerMemorySrcSize;
+	size_t _scalerMemoryDstSize;
+	int _scalerScale;
+	ScalerProc *_scaler;
 }
 
 - (id)initWithFrame:(struct CGRect)frame;
