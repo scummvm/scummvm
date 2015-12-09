@@ -40,21 +40,22 @@ struct ADGameDescription;
 
 namespace Lab {
 
+struct MapData;
 struct Action;
-class Anim;
 struct CloseData;
-class DisplayMan;
-class EventManager;
 struct Gadget;
-class Image;
 struct IntuiMessage;
 struct InventoryData;
-class LargeSet;
-class Music;
-class Resource;
 struct RoomData;
 struct Rule;
 struct TextFont;
+class Anim;
+class DisplayMan;
+class EventManager;
+class Image;
+class LargeSet;
+class Music;
+class Resource;
 class Utils;
 
 enum GameFeatures {
@@ -169,6 +170,11 @@ private:
 	Image *_tiles[16];
 	GadgetList _journalGadgetList;
 	GadgetList _mapGadgetList;
+	Image *_imgMap, *_imgRoom, *_imgUpArrowRoom, *_imgDownArrowRoom, *_imgBridge;
+	Image *_imgHRoom, *_imgVRoom, *_imgMaze, *_imgHugeMaze, *_imgPath, *_imgMapNorth;
+	Image *_imgMapEast, *_imgMapSouth, *_imgMapWest, *_imgXMark;
+	uint16 _maxRooms;
+	MapData *_maps;
 
 private:
 	bool fromCrumbs(uint32 tmpClass, uint16 code, uint16 qualifier, Common::Point tmpPos,
@@ -183,9 +189,9 @@ public:
 	Gadget *checkNumGadgetHit(GadgetList *gadgetList, uint16 key);
 	IntuiMessage *getMsg();
 	void loadMapData();
-	void drawMap(uint16 CurRoom, uint16 CurMsg, uint16 Floor, bool fadeout, bool fadein);
-	void processMap(uint16 CurRoom);
-	void doMap(uint16 CurRoom);
+	void drawMap(uint16 curRoom, uint16 curMsg, uint16 floorNum, bool fadeOut, bool fadeIn);
+	void processMap(uint16 curRoom);
+	void doMap(uint16 curRoom);
 	void freeMapData();
 	void loadJournalData();
 	void drawJournal(uint16 wipenum, bool needFade);
@@ -227,6 +233,10 @@ private:
 	void initTilePuzzle();
 	bool saveRestoreGame();
 	Common::Rect roomCoords(uint16 curRoom);
+	void drawRoomMap(uint16 curRoom, bool drawMarkFl);
+	bool onFloor(uint16 floorNum);
+	bool getUpFloor(uint16 *floorNum);
+	bool getDownFloor(uint16 *floorNum);
 
 public:
 	void doActions(Action *actionList, CloseDataPtr *closePtrList);

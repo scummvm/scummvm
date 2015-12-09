@@ -46,13 +46,6 @@ namespace Lab {
 /*------------------------------ The Map stuff ------------------------------*/
 /*---------------------------------------------------------------------------*/
 
-static Image *Map, *Room, *UpArrowRoom, *DownArrowRoom, *Bridge,
-			 *HRoom, *VRoom, *Maze, *HugeMaze, *Path, *MapNorth,
-			 *MapEast, *MapSouth, *MapWest, *XMark;
-
-static uint16 MaxRooms;
-static MapData *Maps;
-
 enum MapFloor {
 	kFloorNone,
 	kFloorLower,
@@ -68,46 +61,43 @@ enum MapFloor {
  * Loads in the map data.
  */
 void LabEngine::loadMapData() {
-	Utils *utils = g_lab->_utils;
-	Common::File *mapImages = g_lab->_resource->openDataFile("P:MapImage");
+	Common::File *mapImages = _resource->openDataFile("P:MapImage");
 
-	Map = new Image(mapImages);
+	_imgMap = new Image(mapImages);
+	_imgRoom = new Image(mapImages);
+	_imgUpArrowRoom = new Image(mapImages);
+	_imgDownArrowRoom = new Image(mapImages);
+	_imgHRoom = new Image(mapImages);
+	_imgVRoom = new Image(mapImages);
+	_imgMaze = new Image(mapImages);
+	_imgHugeMaze = new Image(mapImages);
 
-	Room = new Image(mapImages);
-	UpArrowRoom = new Image(mapImages);
-	DownArrowRoom = new Image(mapImages);
-	HRoom = new Image(mapImages);
-	VRoom = new Image(mapImages);
-	Maze = new Image(mapImages);
-	HugeMaze = new Image(mapImages);
+	_imgMapNorth = new Image(mapImages);
+	_imgMapEast = new Image(mapImages);
+	_imgMapSouth = new Image(mapImages);
+	_imgMapWest = new Image(mapImages);
+	_imgPath = new Image(mapImages);
+	_imgBridge = new Image(mapImages);
 
-	MapNorth = new Image(mapImages);
-	MapEast = new Image(mapImages);
-	MapSouth = new Image(mapImages);
-	MapWest = new Image(mapImages);
-
-	Path = new Image(mapImages);
-	Bridge = new Image(mapImages);
-
-	_mapGadgetList.push_back(createButton( 8,  utils->vgaScaleY(105), 0, VKEY_LTARROW, new Image(mapImages), new Image(mapImages)));	// back
-	_mapGadgetList.push_back(createButton( 55, utils->vgaScaleY(105), 1, VKEY_UPARROW, new Image(mapImages), new Image(mapImages)));	// up
-	_mapGadgetList.push_back(createButton(101, utils->vgaScaleY(105), 2, VKEY_DNARROW, new Image(mapImages), new Image(mapImages)));	// down
+	_mapGadgetList.push_back(createButton( 8,  _utils->vgaScaleY(105), 0, VKEY_LTARROW, new Image(mapImages), new Image(mapImages)));	// back
+	_mapGadgetList.push_back(createButton( 55, _utils->vgaScaleY(105), 1, VKEY_UPARROW, new Image(mapImages), new Image(mapImages)));	// up
+	_mapGadgetList.push_back(createButton(101, _utils->vgaScaleY(105), 2, VKEY_DNARROW, new Image(mapImages), new Image(mapImages)));	// down
 
 	delete mapImages;
 
-	Common::File *mapFile = g_lab->_resource->openDataFile("Lab:Maps", MKTAG('M', 'A', 'P', '0'));
-	g_lab->_music->updateMusic();
-	if (!g_lab->_music->_doNotFilestopSoundEffect)
-		g_lab->_music->stopSoundEffect();
+	Common::File *mapFile = _resource->openDataFile("Lab:Maps", MKTAG('M', 'A', 'P', '0'));
+	_music->updateMusic();
+	if (!_music->_doNotFilestopSoundEffect)
+		_music->stopSoundEffect();
 
-	MaxRooms = mapFile->readUint16LE();
-	Maps = new MapData[MaxRooms];	// will be freed when the user exits the map
-	for (int i = 0; i < MaxRooms; i++) {
-		Maps[i]._x = mapFile->readUint16LE();
-		Maps[i]._y = mapFile->readUint16LE();
-		Maps[i]._pageNumber = mapFile->readUint16LE();
-		Maps[i]._specialID = mapFile->readUint16LE();
-		Maps[i]._mapFlags = mapFile->readUint32LE();
+	_maxRooms = mapFile->readUint16LE();
+	_maps = new MapData[_maxRooms];	// will be freed when the user exits the map
+	for (int i = 0; i < _maxRooms; i++) {
+		_maps[i]._x = mapFile->readUint16LE();
+		_maps[i]._y = mapFile->readUint16LE();
+		_maps[i]._pageNumber = mapFile->readUint16LE();
+		_maps[i]._specialID = mapFile->readUint16LE();
+		_maps[i]._mapFlags = mapFile->readUint32LE();
 	}
 
 	delete mapFile;
@@ -116,8 +106,40 @@ void LabEngine::loadMapData() {
 void LabEngine::freeMapData() {
 	freeButtonList(&_mapGadgetList);
 
-	delete[] Maps;
-	Maps = NULL;
+	delete[] _maps;
+	delete _imgMap;
+	delete _imgRoom;
+	delete _imgUpArrowRoom;
+	delete _imgDownArrowRoom;
+	delete _imgBridge;
+	delete _imgHRoom;
+	delete _imgVRoom;
+	delete _imgMaze;
+	delete _imgHugeMaze;
+	delete _imgPath;
+	delete _imgMapNorth;
+	delete _imgMapEast;
+	delete _imgMapSouth;
+	delete _imgMapWest;
+	delete _imgXMark;
+	delete _maps;
+
+	_imgMap = nullptr;
+	_imgRoom = nullptr;
+	_imgUpArrowRoom = nullptr;
+	_imgDownArrowRoom = nullptr;
+	_imgBridge = nullptr;
+	_imgHRoom = nullptr;
+	_imgVRoom = nullptr;
+	_imgMaze = nullptr;
+	_imgHugeMaze = nullptr;
+	_imgPath = nullptr;
+	_imgMapNorth = nullptr;
+	_imgMapEast = nullptr;
+	_imgMapSouth = nullptr;
+	_imgMapWest = nullptr;
+	_imgXMark = nullptr;
+	_maps = nullptr;
 }
 
 /**
@@ -126,28 +148,28 @@ void LabEngine::freeMapData() {
 Common::Rect LabEngine::roomCoords(uint16 curRoom) {
 	Image *curRoomImg = nullptr;
 
-	switch (Maps[curRoom]._specialID) {
+	switch (_maps[curRoom]._specialID) {
 	case NORMAL:
 	case UPARROWROOM:
 	case DOWNARROWROOM:
-		curRoomImg = Room;
+		curRoomImg = _imgRoom;
 		break;
 	case BRIDGEROOM:
-		curRoomImg = Bridge;
+		curRoomImg = _imgBridge;
 		break;
 	case VCORRIDOR:
-		curRoomImg = VRoom;
+		curRoomImg = _imgVRoom;
 		break;
 	case HCORRIDOR:
-		curRoomImg = HRoom;
+		curRoomImg = _imgHRoom;
 		break;
 	default:
 		// Some rooms (like the map) do not have an image
 		break;
 	}
 
-	int x1 = _utils->mapScaleX(Maps[curRoom]._x);
-	int y1 = _utils->mapScaleY(Maps[curRoom]._y);
+	int x1 = _utils->mapScaleX(_maps[curRoom]._x);
+	int y1 = _utils->mapScaleY(_maps[curRoom]._y);
 	int x2 = x1;
 	int y2 = y1;
 
@@ -162,126 +184,126 @@ Common::Rect LabEngine::roomCoords(uint16 curRoom) {
 /**
  * Draws a room map.
  */
-static void drawRoomMap(uint16 curRoom, bool drawMarkFl) {
+void LabEngine::drawRoomMap(uint16 curRoom, bool drawMarkFl) {
 	uint16 drawX, drawY, offset;
 
-	uint16 x = g_lab->_utils->mapScaleX(Maps[curRoom]._x);
-	uint16 y = g_lab->_utils->mapScaleY(Maps[curRoom]._y);
-	uint32 flags = Maps[curRoom]._mapFlags;
+	uint16 x = _utils->mapScaleX(_maps[curRoom]._x);
+	uint16 y = _utils->mapScaleY(_maps[curRoom]._y);
+	uint32 flags = _maps[curRoom]._mapFlags;
 
-	switch (Maps[curRoom]._specialID) {
+	switch (_maps[curRoom]._specialID) {
 	case NORMAL:
 	case UPARROWROOM:
 	case DOWNARROWROOM:
-		if (Maps[curRoom]._specialID == NORMAL)
-			Room->drawImage(x, y);
-		else if (Maps[curRoom]._specialID == DOWNARROWROOM)
-			DownArrowRoom->drawImage(x, y);
+		if (_maps[curRoom]._specialID == NORMAL)
+			_imgRoom->drawImage(x, y);
+		else if (_maps[curRoom]._specialID == DOWNARROWROOM)
+			_imgDownArrowRoom->drawImage(x, y);
 		else
-			UpArrowRoom->drawImage(x, y);
+			_imgUpArrowRoom->drawImage(x, y);
 
-		offset = (Room->_width - Path->_width) / 2;
+		offset = (_imgRoom->_width - _imgPath->_width) / 2;
 
-		if ((NORTHDOOR & flags) && (y >= Path->_height))
-			Path->drawImage(x + offset, y - Path->_height);
+		if ((NORTHDOOR & flags) && (y >= _imgPath->_height))
+			_imgPath->drawImage(x + offset, y - _imgPath->_height);
 
 		if (SOUTHDOOR & flags)
-			Path->drawImage(x + offset, y + Room->_height);
+			_imgPath->drawImage(x + offset, y + _imgRoom->_height);
 
-		offset = (Room->_height - Path->_height) / 2;
+		offset = (_imgRoom->_height - _imgPath->_height) / 2;
 
 		if (EASTDOOR & flags)
-			Path->drawImage(x + Room->_width, y + offset);
+			_imgPath->drawImage(x + _imgRoom->_width, y + offset);
 
 		if (WESTDOOR & flags)
-			Path->drawImage(x - Path->_width, y + offset);
+			_imgPath->drawImage(x - _imgPath->_width, y + offset);
 
-		drawX = x + (Room->_width - XMark->_width) / 2;
-		drawY = y + (Room->_height - XMark->_height) / 2;
+		drawX = x + (_imgRoom->_width - _imgXMark->_width) / 2;
+		drawY = y + (_imgRoom->_height - _imgXMark->_height) / 2;
 
 		break;
 
 	case BRIDGEROOM:
-		Bridge->drawImage(x, y);
+		_imgBridge->drawImage(x, y);
 
-		drawX = x + (Bridge->_width - XMark->_width) / 2;
-		drawY = y + (Bridge->_height - XMark->_height) / 2;
+		drawX = x + (_imgBridge->_width - _imgXMark->_width) / 2;
+		drawY = y + (_imgBridge->_height - _imgXMark->_height) / 2;
 
 		break;
 
 	case VCORRIDOR:
-		VRoom->drawImage(x, y);
+		_imgVRoom->drawImage(x, y);
 
-		offset = (VRoom->_width - Path->_width) / 2;
+		offset = (_imgVRoom->_width - _imgPath->_width) / 2;
 
 		if (NORTHDOOR & flags)
-			Path->drawImage(x + offset, y - Path->_height);
+			_imgPath->drawImage(x + offset, y - _imgPath->_height);
 
 		if (SOUTHDOOR & flags)
-			Path->drawImage(x + offset, y + VRoom->_height);
+			_imgPath->drawImage(x + offset, y + _imgVRoom->_height);
 
-		offset = (Room->_height - Path->_height) / 2;
+		offset = (_imgRoom->_height - _imgPath->_height) / 2;
 
 		if (EASTDOOR & flags)
-			Path->drawImage(x + VRoom->_width, y + offset);
+			_imgPath->drawImage(x + _imgVRoom->_width, y + offset);
 
 		if (WESTDOOR & flags)
-			Path->drawImage(x - Path->_width, y + offset);
+			_imgPath->drawImage(x - _imgPath->_width, y + offset);
 
 		if (EASTBDOOR & flags)
-			Path->drawImage(x + VRoom->_width, y - offset - Path->_height + VRoom->_height);
+			_imgPath->drawImage(x + _imgVRoom->_width, y - offset - _imgPath->_height + _imgVRoom->_height);
 
 		if (WESTBDOOR & flags)
-			Path->drawImage(x - Path->_width, y - offset - Path->_height + VRoom->_height);
+			_imgPath->drawImage(x - _imgPath->_width, y - offset - _imgPath->_height + _imgVRoom->_height);
 
-		offset = (VRoom->_height - Path->_height) / 2;
+		offset = (_imgVRoom->_height - _imgPath->_height) / 2;
 
 		if (EASTMDOOR & flags)
-			Path->drawImage(x + VRoom->_width, y - offset - Path->_height + VRoom->_height);
+			_imgPath->drawImage(x + _imgVRoom->_width, y - offset - _imgPath->_height + _imgVRoom->_height);
 
 		if (WESTMDOOR & flags)
-			Path->drawImage(x - Path->_width, y - offset - Path->_height + VRoom->_height);
+			_imgPath->drawImage(x - _imgPath->_width, y - offset - _imgPath->_height + _imgVRoom->_height);
 
-		drawX = x + (VRoom->_width - XMark->_width) / 2;
-		drawY = y + (VRoom->_height - XMark->_height) / 2;
+		drawX = x + (_imgVRoom->_width - _imgXMark->_width) / 2;
+		drawY = y + (_imgVRoom->_height - _imgXMark->_height) / 2;
 
 		break;
 
 	case HCORRIDOR:
-		HRoom->drawImage(x, y);
+		_imgHRoom->drawImage(x, y);
 
-		offset = (Room->_width - Path->_width) / 2;
+		offset = (_imgRoom->_width - _imgPath->_width) / 2;
 
 		if (NORTHDOOR & flags)
-			Path->drawImage(x + offset, y - Path->_height);
+			_imgPath->drawImage(x + offset, y - _imgPath->_height);
 
 		if (SOUTHDOOR & flags)
-			Path->drawImage(x + offset, y + Room->_height);
+			_imgPath->drawImage(x + offset, y + _imgRoom->_height);
 
 		if (NORTHRDOOR & flags)
-			Path->drawImage(x - offset - Path->_width + HRoom->_width, y - Path->_height);
+			_imgPath->drawImage(x - offset - _imgPath->_width + _imgHRoom->_width, y - _imgPath->_height);
 
 		if (SOUTHRDOOR & flags)
-			Path->drawImage(x - offset - Path->_width + HRoom->_width, y + Room->_height);
+			_imgPath->drawImage(x - offset - _imgPath->_width + _imgHRoom->_width, y + _imgRoom->_height);
 
-		offset = (HRoom->_width - Path->_width) / 2;
+		offset = (_imgHRoom->_width - _imgPath->_width) / 2;
 
 		if (NORTHMDOOR & flags)
-			Path->drawImage(x - offset - Path->_width + HRoom->_width, y - Path->_height);
+			_imgPath->drawImage(x - offset - _imgPath->_width + _imgHRoom->_width, y - _imgPath->_height);
 
 		if (SOUTHMDOOR & flags)
-			Path->drawImage(x - offset - Path->_width + HRoom->_width, y + Room->_height);
+			_imgPath->drawImage(x - offset - _imgPath->_width + _imgHRoom->_width, y + _imgRoom->_height);
 
-		offset = (Room->_height - Path->_height) / 2;
+		offset = (_imgRoom->_height - _imgPath->_height) / 2;
 
 		if (EASTDOOR & flags)
-			Path->drawImage(x + HRoom->_width, y + offset);
+			_imgPath->drawImage(x + _imgHRoom->_width, y + offset);
 
 		if (WESTDOOR & flags)
-			Path->drawImage(x - Path->_width, y + offset);
+			_imgPath->drawImage(x - _imgPath->_width, y + offset);
 
-		drawX = x + (HRoom->_width - XMark->_width) / 2;
-		drawY = y + (HRoom->_height - XMark->_height) / 2;
+		drawX = x + (_imgHRoom->_width - _imgXMark->_width) / 2;
+		drawY = y + (_imgHRoom->_height - _imgXMark->_height) / 2;
 
 		break;
 
@@ -290,15 +312,15 @@ static void drawRoomMap(uint16 curRoom, bool drawMarkFl) {
 	}
 
 	if (drawMarkFl)
-		XMark->drawImage(drawX, drawY);
+		_imgXMark->drawImage(drawX, drawY);
 }
 
 /**
  * Checks if a floor has been visited.
  */
-static bool onFloor(uint16 flr) {
-	for (uint16 i = 1; i <= MaxRooms; i++) {
-		if ((Maps[i]._pageNumber == flr) && g_lab->_roomsFound->in(i) && Maps[i]._x)
+bool LabEngine::onFloor(uint16 floorNum) {
+	for (uint16 i = 1; i <= _maxRooms; i++) {
+		if ((_maps[i]._pageNumber == floorNum) && _roomsFound->in(i) && _maps[i]._x)
 			return true;
 	}
 
@@ -308,15 +330,15 @@ static bool onFloor(uint16 flr) {
 /**
  * Figures out which floor, if any, should be gone to if the up arrow is hit
  */
-static bool getUpFloor(uint16 *flr) {
+bool LabEngine::getUpFloor(uint16 *floorNum) {
 	do {
-		if (*flr < kFloorUpper)
-			(*flr)++;
+		if (*floorNum < kFloorUpper)
+			(*floorNum)++;
 		else {
-			*flr   = kFloorCarnival + 1;
+			*floorNum   = kFloorCarnival + 1;
 			return false;
 		}
-	} while ((!onFloor(*flr)) && (*flr <= kFloorCarnival));
+	} while ((!onFloor(*floorNum)) && (*floorNum <= kFloorCarnival));
 
 	return true;
 }
@@ -325,27 +347,27 @@ static bool getUpFloor(uint16 *flr) {
  * Figures out which floor, if any, should be gone to if the down arrow is
  * hit.
  */
-static bool getDownFloor(uint16 *flr) {
+bool LabEngine::getDownFloor(uint16 *floorNum) {
 	do {
-		if ((*flr == kFloorLower) || (*flr == 0)) {
-			*flr   = 0;
+		if ((*floorNum == kFloorLower) || (*floorNum == kFloorNone)) {
+			*floorNum = kFloorNone;
 			return false;
-		} else if (*flr > kFloorUpper) {
+		} else if (*floorNum > kFloorUpper) {
 			// Labyrinth specific code
-			if (*flr == kFloorHedgeMaze)
-				*flr = kFloorUpper;
-			else if ((*flr == kFloorCarnival) || (*flr == kFloorMedMaze))
-				*flr = kFloorMiddle;
-			else if (*flr == kFloorSurMaze)
-				*flr = kFloorLower;
+			if (*floorNum == kFloorHedgeMaze)
+				*floorNum = kFloorUpper;
+			else if ((*floorNum == kFloorCarnival) || (*floorNum == kFloorMedMaze))
+				*floorNum = kFloorMiddle;
+			else if (*floorNum == kFloorSurMaze)
+				*floorNum = kFloorLower;
 			else {
-				*flr = 0;
+				*floorNum = kFloorNone;
 				return false;
 			}
 		} else
-			(*flr)--;
+			(*floorNum)--;
 
-	} while ((!onFloor(*flr)) && *flr);
+	} while ((!onFloor(*floorNum)) && (*floorNum != kFloorNone));
 
 	return true;
 }
@@ -353,20 +375,20 @@ static bool getDownFloor(uint16 *flr) {
 /**
  * Draws the map
  */
-void LabEngine::drawMap(uint16 curRoom, uint16 curMsg, uint16 flr, bool fadeout, bool fadein) {
+void LabEngine::drawMap(uint16 curRoom, uint16 curMsg, uint16 floorNum, bool fadeOut, bool fadeIn) {
 	_event->mouseHide();
 
-	if (fadeout)
+	if (fadeOut)
 		_graphics->fade(false, 0);
 
 	_graphics->setAPen(0);
 	_graphics->rectFill(0, 0, _graphics->_screenWidth - 1, _graphics->_screenHeight - 1);
 
-	Map->drawImage(0, 0);
+	_imgMap->drawImage(0, 0);
 	drawGadgetList(&_mapGadgetList);
 
-	for (uint16 i = 1; i <= MaxRooms; i++) {
-		if ((Maps[i]._pageNumber == flr) && _roomsFound->in(i) && Maps[i]._x) {
+	for (uint16 i = 1; i <= _maxRooms; i++) {
+		if ((_maps[i]._pageNumber == floorNum) && _roomsFound->in(i) && _maps[i]._x) {
 			drawRoomMap(i, (bool)(i == curRoom));
 			_music->updateMusic();
 		}
@@ -375,11 +397,10 @@ void LabEngine::drawMap(uint16 curRoom, uint16 curMsg, uint16 flr, bool fadeout,
 	// Makes sure the X is drawn in corridors
 	// NOTE: this here on purpose just in case there's some weird
 	// condition, like the surreal maze where there are no rooms
-	if ((Maps[curRoom]._pageNumber == flr) && _roomsFound->in(curRoom) && Maps[curRoom]._x)
+	if ((_maps[curRoom]._pageNumber == floorNum) && _roomsFound->in(curRoom) && _maps[curRoom]._x)
 		drawRoomMap(curRoom, true);
 
-	uint16 tempfloor = flr;
-
+	uint16 tempfloor = floorNum;
 	bool noOverlay = getUpFloor(&tempfloor);
 
 	Gadget *upGadget = _event->getGadget(1);
@@ -390,7 +411,7 @@ void LabEngine::drawMap(uint16 curRoom, uint16 curMsg, uint16 flr, bool fadeout,
 	else
 		disableGadget(upGadget, 12);
 
-	tempfloor = flr;
+	tempfloor = floorNum;
 	noOverlay = getDownFloor(&tempfloor);
 
 	if (noOverlay)
@@ -398,35 +419,33 @@ void LabEngine::drawMap(uint16 curRoom, uint16 curMsg, uint16 flr, bool fadeout,
 	else
 		disableGadget(downGadget, 12);
 
-	char *sptr;
-
 	// Labyrinth specific code
-	if (flr == kFloorLower) {
+	if (floorNum == kFloorLower) {
 		if (onFloor(kFloorSurMaze))
-			Maze->drawImage(_utils->mapScaleX(538), _utils->mapScaleY(277));
-	} else if (flr == kFloorMiddle) {
+			_imgMaze->drawImage(_utils->mapScaleX(538), _utils->mapScaleY(277));
+	} else if (floorNum == kFloorMiddle) {
 		if (onFloor(kFloorCarnival))
-			Maze->drawImage(_utils->mapScaleX(358), _utils->mapScaleY(72));
+			_imgMaze->drawImage(_utils->mapScaleX(358), _utils->mapScaleY(72));
 
 		if (onFloor(kFloorMedMaze))
-			Maze->drawImage(_utils->mapScaleX(557), _utils->mapScaleY(325));
-	} else if (flr == kFloorUpper) {
+			_imgMaze->drawImage(_utils->mapScaleX(557), _utils->mapScaleY(325));
+	} else if (floorNum == kFloorUpper) {
 		if (onFloor(kFloorHedgeMaze))
-			HugeMaze->drawImage(_utils->mapScaleX(524), _utils->mapScaleY(97));
-	} else if (flr == kFloorSurMaze) {
-		sptr = (char *)_resource->getStaticText(kTextSurmazeMessage).c_str();
+			_imgHugeMaze->drawImage(_utils->mapScaleX(524), _utils->mapScaleY(97));
+	} else if (floorNum == kFloorSurMaze) {
+		char *sptr = (char *)_resource->getStaticText(kTextSurmazeMessage).c_str();
 		_graphics->flowText(_msgFont, 0, 7, 0, true, true, true, true, _utils->mapScaleX(360), 0, _utils->mapScaleX(660), _utils->mapScaleY(450), sptr);
 	}
 
-	if (flr >= kFloorLower && flr <= kFloorCarnival) {
-		sptr = (char *)_resource->getStaticText(flr - 1).c_str();
+	if ((floorNum >= kFloorLower) && (floorNum <= kFloorCarnival)) {
+		char *sptr = (char *)_resource->getStaticText(floorNum - 1).c_str();
 		_graphics->flowTextScaled(_msgFont, 0, 5, 3, true, true, true, true, 14, 75, 134, 97, sptr);
 	}
 
-	if ((sptr = _rooms[curMsg]._roomMsg))
-		_graphics->flowTextScaled(_msgFont, 0, 5, 3, true, true, true, true, 14, 148, 134, 186, sptr);
+	if (_rooms[curMsg]._roomMsg)
+		_graphics->flowTextScaled(_msgFont, 0, 5, 3, true, true, true, true, 14, 148, 134, 186, _rooms[curMsg]._roomMsg);
 
-	if (fadein)
+	if (fadeIn)
 		_graphics->fade(true, 0);
 
 	_event->mouseShow();
@@ -437,16 +456,15 @@ void LabEngine::drawMap(uint16 curRoom, uint16 curMsg, uint16 flr, bool fadeout,
  */
 void LabEngine::processMap(uint16 curRoom) {
 	uint32 place = 1;
-
-	uint16 curMsg   = curRoom;
-	uint16 curFloor = Maps[curRoom]._pageNumber;
+	uint16 curMsg = curRoom;
+	uint16 curFloor = _maps[curRoom]._pageNumber;
 
 	while (1) {
 		// Make sure we check the music at least after every message
 		_music->updateMusic();
 		IntuiMessage *msg = getMsg();
 
-		if (msg == NULL) {
+		if (!msg) {
 			_music->updateMusic();
 
 			byte newcolor[3];
@@ -551,10 +569,10 @@ void LabEngine::processMap(uint16 curRoom) {
 					uint16 oldMsg = curMsg;
 					Common::Rect curCoords;
 
-					for (uint16 i = 1; i <= MaxRooms; i++) {
+					for (uint16 i = 1; i <= _maxRooms; i++) {
 						curCoords = roomCoords(i);
 
-						if ((Maps[i]._pageNumber == curFloor)
+						if ((_maps[i]._pageNumber == curFloor)
 							  && _roomsFound->in(i) && curCoords.contains(Common::Point(mouseX, mouseY))) {
 							curMsg = i;
 						}
@@ -571,7 +589,7 @@ void LabEngine::processMap(uint16 curRoom) {
 							_graphics->rectFillScaled(13, 148, 135, 186);
 							_graphics->flowTextScaled(_msgFont, 0, 5, 3, true, true, true, true, 14, 148, 134, 186, sptr);
 
-							if (Maps[oldMsg]._pageNumber == curFloor)
+							if (_maps[oldMsg]._pageNumber == curFloor)
 								drawRoomMap(oldMsg, (bool)(oldMsg == curRoom));
 
 							curCoords = roomCoords(curMsg);
@@ -580,7 +598,7 @@ void LabEngine::processMap(uint16 curRoom) {
 							int top, bottom;
 							top = bottom = (curCoords.top + curCoords.bottom) / 2;
 
-							if ((curMsg != curRoom) && (Maps[curMsg]._pageNumber == curFloor)) {
+							if ((curMsg != curRoom) && (_maps[curMsg]._pageNumber == curFloor)) {
 								_graphics->setAPen(1);
 								_graphics->rectFill(left, top, right, bottom);
 							}
@@ -614,20 +632,20 @@ void LabEngine::doMap(uint16 curRoom) {
 	_graphics->blackAllScreen();
 
 	if (_direction == NORTH)
-		XMark = MapNorth;
+		_imgXMark = _imgMapNorth;
 	else if (_direction == SOUTH)
-		XMark = MapSouth;
+		_imgXMark = _imgMapSouth;
 	else if (_direction == EAST)
-		XMark = MapEast;
+		_imgXMark = _imgMapEast;
 	else if (_direction == WEST)
-		XMark = MapWest;
+		_imgXMark = _imgMapWest;
 
 	_event->attachGadgetList(&_mapGadgetList);
-	drawMap(curRoom, curRoom, Maps[curRoom]._pageNumber, false, true);
+	drawMap(curRoom, curRoom, _maps[curRoom]._pageNumber, false, true);
 	_event->mouseShow();
 	_graphics->screenUpdate();
 	processMap(curRoom);
-	_event->attachGadgetList(NULL);
+	_event->attachGadgetList(nullptr);
 	_graphics->fade(false, 0);
 	_graphics->blackAllScreen();
 	_event->mouseHide();

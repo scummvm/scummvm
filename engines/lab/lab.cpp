@@ -78,6 +78,7 @@ LabEngine::LabEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	_highestCondition = 0;
 	_crumbSecs = 0;
 	_crumbMicros = 0;
+	_maxRooms = 0;
 
 	_event = nullptr;
 	_resource = nullptr;
@@ -110,6 +111,23 @@ LabEngine::LabEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	_msgFont = nullptr;
 	_inventory = nullptr;
 
+	_imgMap = nullptr;
+	_imgRoom = nullptr;
+	_imgUpArrowRoom = nullptr;
+	_imgDownArrowRoom = nullptr;
+	_imgBridge = nullptr;
+	_imgHRoom = nullptr;
+	_imgVRoom = nullptr;
+	_imgMaze = nullptr;
+	_imgHugeMaze = nullptr;
+	_imgPath = nullptr;
+	_imgMapNorth = nullptr;
+	_imgMapEast = nullptr;
+	_imgMapSouth = nullptr;
+	_imgMapWest = nullptr;
+	_imgXMark = nullptr;
+	_maps = nullptr;
+
 	initTilePuzzle();
 
 	//const Common::FSNode gameDataDir(ConfMan.get("path"));
@@ -130,6 +148,22 @@ LabEngine::~LabEngine() {
 	delete _graphics;
 	delete[] _rooms;
 	delete _utils;
+	delete _imgMap;
+	delete _imgRoom;
+	delete _imgUpArrowRoom;
+	delete _imgDownArrowRoom;
+	delete _imgBridge;
+	delete _imgHRoom;
+	delete _imgVRoom;
+	delete _imgMaze;
+	delete _imgHugeMaze;
+	delete _imgPath;
+	delete _imgMapNorth;
+	delete _imgMapEast;
+	delete _imgMapSouth;
+	delete _imgMapWest;
+	delete _imgXMark;
+	delete _maps;
 
 	for (int i = 0; i < 16; i++)
 		delete _tiles[i];
