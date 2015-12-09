@@ -91,7 +91,7 @@ namespace Lab {
 #pragma pack(push, 1)
 #endif
 
-typedef struct CloseData {
+struct CloseData {
 	uint16 _x1, _y1, _x2, _y2;
 	int16 _closeUpType;          // if > 0, an object.  If < 0, an item
 	uint16 _depth;               // Level of the closeup.
@@ -99,12 +99,12 @@ typedef struct CloseData {
 	char *_message;
 	CloseData *_nextCloseUp;
 	CloseData *_subCloseUps;
-} CloseData;
+};
 
 struct ViewData {
 	int16 *_condition;
 	char *_graphicName;
-	struct ViewData *_nextCondition;
+	ViewData *_nextCondition;
 	CloseDataPtr _closeUps;
 };
 
