@@ -117,11 +117,11 @@ void LabEngine::loadMapData() {
 	MaxRooms = mapFile->readUint16LE();
 	Maps = new MapData[MaxRooms];	// will be freed when the user exits the map
 	for (int i = 0; i < MaxRooms; i++) {
-		Maps[i].x = mapFile->readUint16LE();
-		Maps[i].y = mapFile->readUint16LE();
-		Maps[i].PageNumber = mapFile->readUint16LE();
-		Maps[i].SpecialID = mapFile->readUint16LE();
-		Maps[i].MapFlags = mapFile->readUint32LE();
+		Maps[i]._x = mapFile->readUint16LE();
+		Maps[i]._y = mapFile->readUint16LE();
+		Maps[i]._pageNumber = mapFile->readUint16LE();
+		Maps[i]._specialID = mapFile->readUint16LE();
+		Maps[i]._mapFlags = mapFile->readUint32LE();
 	}
 
 	delete mapFile;
@@ -140,7 +140,7 @@ void LabEngine::freeMapData() {
 static void roomCoords(uint16 curRoom, uint16 *x1, uint16 *y1, uint16 *x2, uint16 *y2) {
 	Image *curRoomImg = NULL;
 
-	switch (Maps[curRoom].SpecialID) {
+	switch (Maps[curRoom]._specialID) {
 	case NORMAL:
 	case UPARROWROOM:
 	case DOWNARROWROOM:
@@ -160,8 +160,8 @@ static void roomCoords(uint16 curRoom, uint16 *x1, uint16 *y1, uint16 *x2, uint1
 		break;
 	}
 
-	*x1 = mapScaleX(Maps[curRoom].x);
-	*y1 = mapScaleY(Maps[curRoom].y);
+	*x1 = mapScaleX(Maps[curRoom]._x);
+	*y1 = mapScaleY(Maps[curRoom]._y);
 	*x2 = *x1;
 	*y2 = *y1;
 
@@ -178,17 +178,17 @@ static void drawRoomMap(uint16 curRoom, bool drawx) {
 	uint16 x, y, xx, xy, offset;
 	uint32 flags;
 
-	x = mapScaleX(Maps[curRoom].x);
-	y = mapScaleY(Maps[curRoom].y);
-	flags = Maps[curRoom].MapFlags;
+	x = mapScaleX(Maps[curRoom]._x);
+	y = mapScaleY(Maps[curRoom]._y);
+	flags = Maps[curRoom]._mapFlags;
 
-	switch (Maps[curRoom].SpecialID) {
+	switch (Maps[curRoom]._specialID) {
 	case NORMAL:
 	case UPARROWROOM:
 	case DOWNARROWROOM:
-		if (Maps[curRoom].SpecialID == NORMAL)
+		if (Maps[curRoom]._specialID == NORMAL)
 			Room->drawImage(x, y);
-		else if (Maps[curRoom].SpecialID == DOWNARROWROOM)
+		else if (Maps[curRoom]._specialID == DOWNARROWROOM)
 			DownArrowRoom->drawImage(x, y);
 		else
 			UpArrowRoom->drawImage(x, y);
@@ -311,7 +311,7 @@ static void drawRoomMap(uint16 curRoom, bool drawx) {
  */
 static bool onFloor(uint16 flr) {
 	for (uint16 i = 1; i <= MaxRooms; i++) {
-		if ((Maps[i].PageNumber == flr) && g_lab->_roomsFound->in(i) && Maps[i].x)
+		if ((Maps[i]._pageNumber == flr) && g_lab->_roomsFound->in(i) && Maps[i]._x)
 			return true;
 	}
 
@@ -379,7 +379,7 @@ void LabEngine::drawMap(uint16 curRoom, uint16 curMsg, uint16 flr, bool fadeout,
 	drawGadgetList(&_mapGadgetList);
 
 	for (uint16 i = 1; i <= MaxRooms; i++) {
-		if ((Maps[i].PageNumber == flr) && _roomsFound->in(i) && Maps[i].x) {
+		if ((Maps[i]._pageNumber == flr) && _roomsFound->in(i) && Maps[i]._x) {
 			drawRoomMap(i, (bool)(i == curRoom));
 			_music->updateMusic();
 		}
@@ -388,7 +388,7 @@ void LabEngine::drawMap(uint16 curRoom, uint16 curMsg, uint16 flr, bool fadeout,
 	// Makes sure the X is drawn in corridors
 	// NOTE: this here on purpose just in case there's some weird
 	// condition, like the surreal maze where there are no rooms
-	if ((Maps[curRoom].PageNumber == flr) && _roomsFound->in(curRoom) && Maps[curRoom].x)
+	if ((Maps[curRoom]._pageNumber == flr) && _roomsFound->in(curRoom) && Maps[curRoom]._x)
 		drawRoomMap(curRoom, true);
 
 	uint16 tempfloor = flr;
@@ -452,7 +452,7 @@ void LabEngine::processMap(uint16 curRoom) {
 	uint32 place = 1;
 
 	uint16 curMsg   = curRoom;
-	uint16 curFloor = Maps[curRoom].PageNumber;
+	uint16 curFloor = Maps[curRoom]._pageNumber;
 
 	while (1) {
 		// Make sure we check the music at least after every message
@@ -567,7 +567,7 @@ void LabEngine::processMap(uint16 curRoom) {
 					for (uint16 i = 1; i <= MaxRooms; i++) {
 						roomCoords(i, &x1, &y1, &x2, &y2);
 
-						if ((Maps[i].PageNumber == curFloor)
+						if ((Maps[i]._pageNumber == curFloor)
 							  && _roomsFound->in(i)
 							  && (mouseX >= x1) && (mouseX <= x2)
 							  && (mouseY >= y1) && (mouseY <= y2)) {
@@ -586,14 +586,14 @@ void LabEngine::processMap(uint16 curRoom) {
 							_graphics->rectFillScaled(13, 148, 135, 186);
 							_graphics->flowTextScaled(_msgFont, 0, 5, 3, true, true, true, true, 14, 148, 134, 186, sptr);
 
-							if (Maps[oldMsg].PageNumber == curFloor)
+							if (Maps[oldMsg]._pageNumber == curFloor)
 								drawRoomMap(oldMsg, (bool)(oldMsg == curRoom));
 
 							roomCoords(curMsg, &x1, &y1, &x2, &y2);
 							x1 = (x1 + x2) / 2;
 							y1 = (y1 + y2) / 2;
 
-							if ((curMsg != curRoom) && (Maps[curMsg].PageNumber == curFloor)) {
+							if ((curMsg != curRoom) && (Maps[curMsg]._pageNumber == curFloor)) {
 								_graphics->setAPen(1);
 								_graphics->rectFill(x1 - 1, y1, x1, y1);
 							}
@@ -636,7 +636,7 @@ void LabEngine::doMap(uint16 curRoom) {
 		XMark = MapWest;
 
 	_event->attachGadgetList(&_mapGadgetList);
-	drawMap(curRoom, curRoom, Maps[curRoom].PageNumber, false, true);
+	drawMap(curRoom, curRoom, Maps[curRoom]._pageNumber, false, true);
 	_event->mouseShow();
 	_graphics->screenUpdate();
 	processMap(curRoom);

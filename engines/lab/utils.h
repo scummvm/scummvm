@@ -57,6 +57,7 @@ public:
 	void runLengthDecode(byte *dest, byte *source);
 	void VRunLengthDecode(byte *dest, byte *source, uint16 bytesPerRow);
 	void setBytesPerRow(int num);
+	uint16 getRandom(uint16 max);
 };
 
 

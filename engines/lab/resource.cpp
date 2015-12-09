@@ -300,10 +300,10 @@ CloseData *Resource::readCloseUps(uint16 depth, Common::File *file) {
 				head = closeup;
 			if (prev)
 				prev->_nextCloseUp = closeup;
-			closeup->x1 = file->readUint16LE();
-			closeup->y1 = file->readUint16LE();
-			closeup->x2 = file->readUint16LE();
-			closeup->y2 = file->readUint16LE();
+			closeup->_x1 = file->readUint16LE();
+			closeup->_y1 = file->readUint16LE();
+			closeup->_x2 = file->readUint16LE();
+			closeup->_y2 = file->readUint16LE();
 			closeup->_closeUpType = file->readSint16LE();
 			closeup->_depth = depth;
 			closeup->_graphicName = readString(file);
