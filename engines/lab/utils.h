@@ -52,6 +52,8 @@ public:
 	int16 vgaScaleX(int16 x);
 	int16 vgaScaleY(int16 y);
 	uint16 svgaCord(uint16 cord);
+	uint16 mapScaleX(uint16 x);
+	uint16 mapScaleY(uint16 y);
 	Common::Point vgaUnscale(Common::Point pos);
 	void unDiff(byte *newBuf, byte *oldBuf, byte *diffData, uint16 bytesperrow, bool isV);
 	void runLengthDecode(byte *dest, byte *source);
