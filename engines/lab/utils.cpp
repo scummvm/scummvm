@@ -418,7 +418,22 @@ void Utils::setBytesPerRow(int num) {
 uint16 Utils::getRandom(uint16 max) {
 	uint32 secs, micros;
 
-	g_lab->getTime(&secs, &micros);
+	_vm->getTime(&secs, &micros);
 	return ((micros + secs) % max);
 }
+
+uint16 Utils::mapScaleX(uint16 x) {
+	if (_vm->_isHiRes)
+		return (x - 45);
+	else
+		return ((x - 45) >> 1);
+}
+
+uint16 Utils::mapScaleY(uint16 y) {
+	if (_vm->_isHiRes)
+		return y;
+	else
+		return ((y - 35) >> 1) - (y >> 6);
+}
+
 } // End of namespace Lab
