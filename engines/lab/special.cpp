@@ -442,24 +442,24 @@ void LabEngine::drawMonText(char *text, TextFont *monitorFont, uint16 x1, uint16
  * Processes user input.
  */
 void LabEngine::processMonitor(char *ntext, TextFont *monitorFont, bool isinteractive, uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
-	IntuiMessage *Msg;
-	uint32 Class;
-	uint16 Qualifier, Code, MouseX, MouseY;
+	IntuiMessage *msg;
+	uint32 msgClass;
+	uint16 qualifier, code, mouseX, mouseY;
 	const char *Test = " ", *StartFileName = TextFileName;
-	CloseDataPtr startcptr = _cptr, testcptr, lastcptr[10];
+	CloseDataPtr startClosePtr = _closeDataPtr, lastClosePtr[10];
 	uint16 depth = 0;
 
-	lastcptr[0] = _cptr;
+	lastClosePtr[0] = _closeDataPtr;
 
 	while (1) {
 		if (isinteractive) {
-			if (_cptr == NULL)
-				_cptr = startcptr;
+			if (_closeDataPtr == NULL)
+				_closeDataPtr = startClosePtr;
 
-			if (_cptr == startcptr)
+			if (_closeDataPtr == startClosePtr)
 				Test = StartFileName;
 			else
-				Test = _cptr->_graphicName;
+				Test = _closeDataPtr->_graphicName;
 
 			if (strcmp(Test, TextFileName)) {
 				monitorPage      = 0;
@@ -475,42 +475,42 @@ void LabEngine::processMonitor(char *ntext, TextFont *monitorFont, bool isintera
 
 		// Make sure we check the music at least after every message
 		_music->updateMusic();
-		Msg = getMsg();
+		msg = getMsg();
 
-		if (Msg == NULL) {
+		if (msg == NULL) {
 			_music->updateMusic();
 		} else {
-			Class     = Msg->_msgClass;
-			Qualifier = Msg->_qualifier;
-			MouseX    = Msg->_mouseX;
-			MouseY    = Msg->_mouseY;
-			Code      = Msg->_code;
+			msgClass     = msg->_msgClass;
+			qualifier = msg->_qualifier;
+			mouseX    = msg->_mouseX;
+			mouseY    = msg->_mouseY;
+			code      = msg->_code;
 
-			if (((Class == MOUSEBUTTONS) && (IEQUALIFIER_RBUTTON & Qualifier)) ||
-				  ((Class == RAWKEY) && (Code == 27)))
+			if (((msgClass == MOUSEBUTTONS) && (IEQUALIFIER_RBUTTON & qualifier)) ||
+				  ((msgClass == RAWKEY) && (code == 27)))
 				return;
 
-			else if ((Class == MOUSEBUTTONS) && (IEQUALIFIER_LEFTBUTTON & Qualifier)) {
-				if ((MouseY >= g_lab->_utils->vgaScaleY(171)) && (MouseY <= g_lab->_utils->vgaScaleY(200))) {
-					if ((MouseX >= g_lab->_utils->vgaScaleX(259)) && (MouseX <= g_lab->_utils->vgaScaleX(289))) {
+			else if ((msgClass == MOUSEBUTTONS) && (IEQUALIFIER_LEFTBUTTON & qualifier)) {
+				if ((mouseY >= g_lab->_utils->vgaScaleY(171)) && (mouseY <= g_lab->_utils->vgaScaleY(200))) {
+					if ((mouseX >= g_lab->_utils->vgaScaleX(259)) && (mouseX <= g_lab->_utils->vgaScaleX(289))) {
 						if (!lastpage) {
 							monitorPage += 1;
 							drawMonText(ntext, monitorFont, x1, y1, x2, y2, isinteractive);
 						}
-					} else if ((MouseX >= g_lab->_utils->vgaScaleX(0)) && (MouseX <= g_lab->_utils->vgaScaleX(31))) {
+					} else if ((mouseX >= g_lab->_utils->vgaScaleX(0)) && (mouseX <= g_lab->_utils->vgaScaleX(31))) {
 						return;
-					} else if ((MouseX >= g_lab->_utils->vgaScaleX(290)) && (MouseX <= g_lab->_utils->vgaScaleX(320))) {
+					} else if ((mouseX >= g_lab->_utils->vgaScaleX(290)) && (mouseX <= g_lab->_utils->vgaScaleX(320))) {
 						if (monitorPage >= 1) {
 							monitorPage -= 1;
 							drawMonText(ntext, monitorFont, x1, y1, x2, y2, isinteractive);
 						}
-					} else if ((MouseX >= g_lab->_utils->vgaScaleX(31)) && (MouseX <= g_lab->_utils->vgaScaleX(59))) {
+					} else if ((mouseX >= g_lab->_utils->vgaScaleX(31)) && (mouseX <= g_lab->_utils->vgaScaleX(59))) {
 						if (isinteractive) {
 							monitorPage = 0;
 
 							if (depth) {
 								depth--;
-								_cptr = lastcptr[depth];
+								_closeDataPtr = lastClosePtr[depth];
 							}
 						} else if (monitorPage > 0) {
 							monitorPage = 0;
@@ -518,13 +518,13 @@ void LabEngine::processMonitor(char *ntext, TextFont *monitorFont, bool isintera
 						}
 					}
 				} else if (isinteractive) {
-					testcptr = _cptr;
-					MouseY = 64 + (MouseY / MonGadHeight) * 42;
-					MouseX = 101;
-					setCurClose(Common::Point(MouseX, MouseY), &_cptr, false);
+					CloseDataPtr tmpClosePtr = _closeDataPtr;
+					mouseY = 64 + (mouseY / MonGadHeight) * 42;
+					mouseX = 101;
+					setCurrentClose(Common::Point(mouseX, mouseY), &_closeDataPtr, false);
 
-					if (testcptr != _cptr) {
-						lastcptr[depth] = testcptr;
+					if (tmpClosePtr != _closeDataPtr) {
+						lastClosePtr[depth] = tmpClosePtr;
 						depth++;
 					}
 				}

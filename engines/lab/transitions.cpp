@@ -241,7 +241,7 @@ void DisplayMan::doScrollBounce() {
 /**
  * Does the transporter wipe.
  */
-void DisplayMan::doTransWipe(CloseDataPtr *cPtr, char *filename) {
+void DisplayMan::doTransWipe(CloseDataPtr *closePtrList, char *filename) {
 	uint16 lastY, curY, linesdone = 0, lineslast;
 	Image imSource, imDest;
 
@@ -277,11 +277,11 @@ void DisplayMan::doTransWipe(CloseDataPtr *cPtr, char *filename) {
 	}	// for j
 
 	if (filename == NULL)
-		_vm->_curFileName = _vm->getPictName(cPtr);
+		_vm->_curFileName = _vm->getPictName(closePtrList);
 	else if (filename[0] > ' ')
 		_vm->_curFileName = filename;
 	else
-		_vm->_curFileName = _vm->getPictName(cPtr);
+		_vm->_curFileName = _vm->getPictName(closePtrList);
 
 	byte *BitMapMem = readPictToMem(_vm->_curFileName, _screenWidth, lastY + 5);
 	setPalette(_vm->_anim->_diffPalette, 256);
@@ -324,11 +324,11 @@ void DisplayMan::doTransWipe(CloseDataPtr *cPtr, char *filename) {
 /**
  * Does a certain number of pre-programmed wipes.
  */
-void DisplayMan::doTransition(TransitionType transitionType, CloseDataPtr *cPtr, char *filename) {
+void DisplayMan::doTransition(TransitionType transitionType, CloseDataPtr *closePtrList, char *filename) {
 	switch (transitionType) {
 	case kTransitionWipe:
 	case kTransitionTransporter:
-		doTransWipe(cPtr, filename);
+		doTransWipe(closePtrList, filename);
 		break;
 	case kTransitionScrollWipe:
 		doScrollWipe(filename);

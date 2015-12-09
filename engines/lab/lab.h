@@ -164,19 +164,19 @@ public:
 private:
 	int _lastWaitTOFTicks;
 	bool _lastTooLong;
-	CloseDataPtr _cptr;
+	CloseDataPtr _closeDataPtr;
 	InventoryData *_inventory;
 	Image *_tiles[16];
 	GadgetList _journalGadgetList;
 	GadgetList _mapGadgetList;
 
 private:
-	bool from_crumbs(uint32 tmpClass, uint16 code, uint16 qualifier, Common::Point tmpPos,
+	bool fromCrumbs(uint32 tmpClass, uint16 code, uint16 qualifier, Common::Point tmpPos,
 			uint16 &curInv, IntuiMessage *curMsg, bool &forceDraw, uint16 gadgetId, uint16 &actionMode);
 
 public:
 	void waitTOF();
-	void drawRoomMessage(uint16 CurInv, CloseDataPtr cptr);
+	void drawRoomMessage(uint16 curInv, CloseDataPtr closePtr);
 	void interfaceOff();
 	void interfaceOn();
 	void decIncInv(uint16 *CurInv, bool dec);
@@ -198,17 +198,17 @@ public:
 	void doWestPaper();
 	void eatMessages();
 	void drawStaticMessage(byte index);
-	void drawDirection(CloseDataPtr lcPtr);
+	void drawDirection(CloseDataPtr closePtr);
 	int followCrumbs();
 
 	void changeVolume(int delta);
-	char *getPictName(CloseDataPtr *lcptr);
+	char *getPictName(CloseDataPtr *closePtrList);
 
 private:
 	// engine.cpp
 	void freeScreens();
 	void perFlipGadget(uint16 gadID);
-	bool doCloseUp(CloseDataPtr cptr);
+	bool doCloseUp(CloseDataPtr closePtr);
 	void mainGameLoop();
 	bool doUse(uint16 curInv);
 	void mayShowCrumbIndicator();
@@ -229,7 +229,7 @@ private:
 	bool saveRestoreGame();
 
 public:
-	void doActions(Action *aPtr, CloseDataPtr *lcptr);
+	void doActions(Action *actionList, CloseDataPtr *closePtrList);
 
 };
 

@@ -131,8 +131,8 @@ bool saveGame(uint16 Direction, uint16 Quarters, int slot, Common::String desc) 
 		return false;
 
 	// Load scene pic
-	CloseDataPtr cPtr = nullptr;
-	g_lab->_graphics->readPict(g_lab->getPictName(&cPtr), true);
+	CloseDataPtr closePtr = nullptr;
+	g_lab->_graphics->readPict(g_lab->getPictName(&closePtr), true);
 
 	writeSaveGameHeader(file, desc);
 	file->writeUint16LE(g_lab->_roomNum);

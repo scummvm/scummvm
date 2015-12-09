@@ -411,4 +411,14 @@ void Utils::unDiff(byte *newBuf, byte *oldBuf, byte *diffData, uint16 bytesPerRo
 void Utils::setBytesPerRow(int num) {
 	_dataBytesPerRow = num;
 }
+
+/**
+ * Generates a random number.
+ */
+uint16 Utils::getRandom(uint16 max) {
+	uint32 secs, micros;
+
+	g_lab->getTime(&secs, &micros);
+	return ((micros + secs) % max);
+}
 } // End of namespace Lab

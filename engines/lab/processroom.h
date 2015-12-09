@@ -92,7 +92,7 @@ namespace Lab {
 #endif
 
 typedef struct CloseData {
-	uint16 x1, y1, x2, y2;
+	uint16 _x1, _y1, _x2, _y2;
 	int16 _closeUpType;          // if > 0, an object.  If < 0, an item
 	uint16 _depth;               // Level of the closeup.
 	char *_graphicName;
@@ -177,8 +177,8 @@ struct InventoryData {
 #define     MULTIMAZEF3     11
 
 struct MapData {
-	uint16 x, y, PageNumber, SpecialID;
-	uint32 MapFlags;
+	uint16 _x, _y, _pageNumber, _specialID;
+	uint32 _mapFlags;
 };
 
 #if defined(WIN32)
@@ -187,15 +187,14 @@ struct MapData {
 
 bool parse(const char *inputFile);
 ViewData *getViewData(uint16 roomNum, uint16 direction);
-void drawDirection(CloseDataPtr lcptr);
 uint16 processArrow(uint16 curDirection, uint16 arrow);
-void setCurClose(Common::Point pos, CloseDataPtr *cptr, bool useAbsoluteCoords = true);
-bool takeItem(uint16 x, uint16 y, CloseDataPtr *cptr);
-bool doActionRule(Common::Point pos, int16 action, int16 roomNum, CloseDataPtr *lcptr);
-bool doOperateRule(int16 x, int16 y, int16 itemNum, CloseDataPtr *lcptr);
-bool doGoForward(CloseDataPtr *lcptr);
-bool doTurn(uint16 from, uint16 to, CloseDataPtr *lcptr);
-bool doMainView(CloseDataPtr *lcptr);
+void setCurrentClose(Common::Point pos, CloseDataPtr *closePtrList, bool useAbsoluteCoords = true);
+bool takeItem(uint16 x, uint16 y, CloseDataPtr *closePtrList);
+bool doActionRule(Common::Point pos, int16 action, int16 roomNum, CloseDataPtr *closePtrList);
+bool doOperateRule(Common::Point pos, int16 itemNum, CloseDataPtr *closePtrList);
+bool doGoForward(CloseDataPtr *closePtrList);
+bool doTurn(uint16 from, uint16 to, CloseDataPtr *closePtrList);
+bool doMainView(CloseDataPtr *closePtrList);
 
 } // End of namespace Lab
 

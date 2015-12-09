@@ -79,8 +79,8 @@ public:
 	void copyPage(uint16 width, uint16 height, uint16 nheight, uint16 startline, byte *mem);
 	void doScrollWipe(char *filename);
 	void doScrollBounce();
-	void doTransWipe(CloseDataPtr *cPtr, char *filename);
-	void doTransition(TransitionType transitionType, CloseDataPtr *cPtr, char *filename);
+	void doTransWipe(CloseDataPtr *closePtrList, char *filename);
+	void doTransition(TransitionType transitionType, CloseDataPtr *closePtrList, char *filename);
 	void blackScreen();
 	void whiteScreen();
 	void blackAllScreen();
