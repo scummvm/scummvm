@@ -225,8 +225,8 @@ private:
 	void doCombination();
 	void showCombination(const char *filename);
 	void initTilePuzzle();
-
 	bool saveRestoreGame();
+	Common::Rect roomCoords(uint16 curRoom);
 
 public:
 	void doActions(Action *actionList, CloseDataPtr *closePtrList);

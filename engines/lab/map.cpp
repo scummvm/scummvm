@@ -123,8 +123,8 @@ void LabEngine::freeMapData() {
 /**
  * Figures out what a room's coordinates should be.
  */
-static void roomCoords(uint16 curRoom, uint16 *x1, uint16 *y1, uint16 *x2, uint16 *y2) {
-	Image *curRoomImg = NULL;
+Common::Rect LabEngine::roomCoords(uint16 curRoom) {
+	Image *curRoomImg = nullptr;
 
 	switch (Maps[curRoom]._specialID) {
 	case NORMAL:
@@ -146,27 +146,28 @@ static void roomCoords(uint16 curRoom, uint16 *x1, uint16 *y1, uint16 *x2, uint1
 		break;
 	}
 
-	*x1 = g_lab->_utils->mapScaleX(Maps[curRoom]._x);
-	*y1 = g_lab->_utils->mapScaleY(Maps[curRoom]._y);
-	*x2 = *x1;
-	*y2 = *y1;
+	int x1 = _utils->mapScaleX(Maps[curRoom]._x);
+	int y1 = _utils->mapScaleY(Maps[curRoom]._y);
+	int x2 = x1;
+	int y2 = y1;
 
 	if (curRoomImg) {
-		*x2 += curRoomImg->_width;
-		*y2 += curRoomImg->_height;
+		x2 += curRoomImg->_width;
+		y2 += curRoomImg->_height;
 	}
+
+	return Common::Rect(x1, y1, x2, y2);
 }
 
 /**
  * Draws a room map.
  */
-static void drawRoomMap(uint16 curRoom, bool drawx) {
-	uint16 x, y, xx, xy, offset;
-	uint32 flags;
+static void drawRoomMap(uint16 curRoom, bool drawMarkFl) {
+	uint16 drawX, drawY, offset;
 
-	x = g_lab->_utils->mapScaleX(Maps[curRoom]._x);
-	y = g_lab->_utils->mapScaleY(Maps[curRoom]._y);
-	flags = Maps[curRoom]._mapFlags;
+	uint16 x = g_lab->_utils->mapScaleX(Maps[curRoom]._x);
+	uint16 y = g_lab->_utils->mapScaleY(Maps[curRoom]._y);
+	uint32 flags = Maps[curRoom]._mapFlags;
 
 	switch (Maps[curRoom]._specialID) {
 	case NORMAL:
@@ -195,16 +196,16 @@ static void drawRoomMap(uint16 curRoom, bool drawx) {
 		if (WESTDOOR & flags)
 			Path->drawImage(x - Path->_width, y + offset);
 
-		xx = x + (Room->_width - XMark->_width) / 2;
-		xy = y + (Room->_height - XMark->_height) / 2;
+		drawX = x + (Room->_width - XMark->_width) / 2;
+		drawY = y + (Room->_height - XMark->_height) / 2;
 
 		break;
 
 	case BRIDGEROOM:
 		Bridge->drawImage(x, y);
 
-		xx = x + (Bridge->_width - XMark->_width) / 2;
-		xy = y + (Bridge->_height - XMark->_height) / 2;
+		drawX = x + (Bridge->_width - XMark->_width) / 2;
+		drawY = y + (Bridge->_height - XMark->_height) / 2;
 
 		break;
 
@@ -241,8 +242,8 @@ static void drawRoomMap(uint16 curRoom, bool drawx) {
 		if (WESTMDOOR & flags)
 			Path->drawImage(x - Path->_width, y - offset - Path->_height + VRoom->_height);
 
-		xx = x + (VRoom->_width - XMark->_width) / 2;
-		xy = y + (VRoom->_height - XMark->_height) / 2;
+		drawX = x + (VRoom->_width - XMark->_width) / 2;
+		drawY = y + (VRoom->_height - XMark->_height) / 2;
 
 		break;
 
@@ -279,8 +280,8 @@ static void drawRoomMap(uint16 curRoom, bool drawx) {
 		if (WESTDOOR & flags)
 			Path->drawImage(x - Path->_width, y + offset);
 
-		xx = x + (HRoom->_width - XMark->_width) / 2;
-		xy = y + (HRoom->_height - XMark->_height) / 2;
+		drawX = x + (HRoom->_width - XMark->_width) / 2;
+		drawY = y + (HRoom->_height - XMark->_height) / 2;
 
 		break;
 
@@ -288,12 +289,12 @@ static void drawRoomMap(uint16 curRoom, bool drawx) {
 		return;
 	}
 
-	if (drawx)
-		XMark->drawImage(xx, xy);
+	if (drawMarkFl)
+		XMark->drawImage(drawX, drawY);
 }
 
 /**
- * Checks if a floor has been visitted.
+ * Checks if a floor has been visited.
  */
 static bool onFloor(uint16 flr) {
 	for (uint16 i = 1; i <= MaxRooms; i++) {
@@ -548,15 +549,13 @@ void LabEngine::processMap(uint16 curRoom) {
 					_graphics->fade(true, 0);
 				} else if (mouseX > _utils->mapScaleX(314)) {
 					uint16 oldMsg = curMsg;
-					uint16 x1, y1, x2, y2;
+					Common::Rect curCoords;
 
 					for (uint16 i = 1; i <= MaxRooms; i++) {
-						roomCoords(i, &x1, &y1, &x2, &y2);
+						curCoords = roomCoords(i);
 
 						if ((Maps[i]._pageNumber == curFloor)
-							  && _roomsFound->in(i)
-							  && (mouseX >= x1) && (mouseX <= x2)
-							  && (mouseY >= y1) && (mouseY <= y2)) {
+							  && _roomsFound->in(i) && curCoords.contains(Common::Point(mouseX, mouseY))) {
 							curMsg = i;
 						}
 					}
@@ -575,13 +574,15 @@ void LabEngine::processMap(uint16 curRoom) {
 							if (Maps[oldMsg]._pageNumber == curFloor)
 								drawRoomMap(oldMsg, (bool)(oldMsg == curRoom));
 
-							roomCoords(curMsg, &x1, &y1, &x2, &y2);
-							x1 = (x1 + x2) / 2;
-							y1 = (y1 + y2) / 2;
+							curCoords = roomCoords(curMsg);
+							int right = (curCoords.left + curCoords.right) / 2;
+							int left = right - 1;
+							int top, bottom;
+							top = bottom = (curCoords.top + curCoords.bottom) / 2;
 
 							if ((curMsg != curRoom) && (Maps[curMsg]._pageNumber == curFloor)) {
 								_graphics->setAPen(1);
-								_graphics->rectFill(x1 - 1, y1, x1, y1);
+								_graphics->rectFill(left, top, right, bottom);
 							}
 
 							_event->mouseShow();
