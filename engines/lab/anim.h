@@ -83,8 +83,6 @@ private:
 	uint32 _diffHeight;
 	BitMap *DrawBitMap;
 
-	void readBlock(void *Buffer, uint32 Size, byte **File);
-
 public:
 	Anim(LabEngine *vm);
 

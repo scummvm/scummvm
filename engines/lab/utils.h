@@ -60,6 +60,7 @@ public:
 	void VRunLengthDecode(byte *dest, byte *source, uint16 bytesPerRow);
 	void setBytesPerRow(int num);
 	uint16 getRandom(uint16 max);
+	void readBlock(void *Buffer, uint32 Size, byte **File);
 };
 
 
