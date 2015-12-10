@@ -102,7 +102,7 @@ uint getSizeNextPOT(uint size) {
 	                                 kEAGLDrawablePropertyColorFormat: kEAGLColorFormatRGB565
 	                                };
 
-	_context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES1];
+	_context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2];
 
 	// In case creating the OpenGL ES context failed, we will error out here.
 	if (_context == nil) {
@@ -111,66 +111,226 @@ uint getSizeNextPOT(uint size) {
 	}
 
 	if ([EAGLContext setCurrentContext:_context]) {
-		glGenFramebuffersOES(1, &_viewFramebuffer); printOpenGLError();
-		glGenRenderbuffersOES(1, &_viewRenderbuffer); printOpenGLError();
+		// glEnableClientState(GL_TEXTURE_COORD_ARRAY); printOpenGLError();
+		// glEnableClientState(GL_VERTEX_ARRAY); printOpenGLError();
+		[self setupOpenGL];
+	}
+}
 
-		glBindFramebufferOES(GL_FRAMEBUFFER_OES, _viewFramebuffer); printOpenGLError();
-		glBindRenderbufferOES(GL_RENDERBUFFER_OES, _viewRenderbuffer); printOpenGLError();
-		[_context renderbufferStorage:GL_RENDERBUFFER_OES fromDrawable:(id<EAGLDrawable>)self.layer];
+- (void)setupOpenGL {
+	[self setupFramebuffer];
+	[self createOverlaySurface];
+	[self compileShaders];
+	[self setupVBOs];
+	[self setupTextures];
 
-		glFramebufferRenderbufferOES(GL_FRAMEBUFFER_OES, GL_COLOR_ATTACHMENT0_OES, GL_RENDERBUFFER_OES, _viewRenderbuffer); printOpenGLError();
+	[self finishGLSetup];
+}
 
-		// Retrieve the render buffer size. This *should* match the frame size,
-		// i.e. g_fullWidth and g_fullHeight.
-		glGetRenderbufferParameterivOES(GL_RENDERBUFFER_OES, GL_RENDERBUFFER_WIDTH_OES, &_renderBufferWidth); printOpenGLError();
-		glGetRenderbufferParameterivOES(GL_RENDERBUFFER_OES, GL_RENDERBUFFER_HEIGHT_OES, &_renderBufferHeight); printOpenGLError();
+- (void)finishGLSetup {
+	glViewport(0, 0, _renderBufferWidth, _renderBufferHeight); printOpenGLError();
+	glClearColor(0.0f, 0.0f, 0.0f, 1.0f); printOpenGLError();
 
-		if (glCheckFramebufferStatusOES(GL_FRAMEBUFFER_OES) != GL_FRAMEBUFFER_COMPLETE_OES) {
-			NSLog(@"Failed to make complete framebuffer object %x.", glCheckFramebufferStatusOES(GL_FRAMEBUFFER_OES));
-			return;
+	glUniform2f(_screenSizeSlot, _renderBufferWidth, _renderBufferHeight);
+
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+}
+
+- (void)freeOpenGL {
+	[self deleteTextures];
+	[self deleteVBOs];
+	[self deleteShaders];
+	[self deleteFramebuffer];
+}
+
+- (void)rebuildFrameBuffer {
+	[self deleteFramebuffer];
+	[self setupFramebuffer];
+	[self finishGLSetup];
+}
+
+- (void)setupFramebuffer {
+	glGenRenderbuffers(1, &_viewRenderbuffer);
+	printOpenGLError();
+	glBindRenderbuffer(GL_RENDERBUFFER, _viewRenderbuffer);
+	printOpenGLError();
+	[_context renderbufferStorage:GL_RENDERBUFFER fromDrawable:(id <EAGLDrawable>) self.layer];
+
+	glGenFramebuffers(1, &_viewFramebuffer);
+	printOpenGLError();
+	glBindFramebuffer(GL_FRAMEBUFFER, _viewFramebuffer);
+	printOpenGLError();
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, _viewRenderbuffer);
+	printOpenGLError();
+
+	// Retrieve the render buffer size. This *should* match the frame size,
+	// i.e. g_fullWidth and g_fullHeight.
+	glGetRenderbufferParameteriv(GL_RENDERBUFFER, GL_RENDERBUFFER_WIDTH, &_renderBufferWidth);
+	printOpenGLError();
+	glGetRenderbufferParameteriv(GL_RENDERBUFFER, GL_RENDERBUFFER_HEIGHT, &_renderBufferHeight);
+	printOpenGLError();
+
+	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+		NSLog(@"Failed to make complete framebuffer object %x.", glCheckFramebufferStatus(GL_FRAMEBUFFER));
+		return;
+	}
+}
+
+- (void)createOverlaySurface {
+	uint overlayWidth = (uint) MAX(_renderBufferWidth, _renderBufferHeight);
+	uint overlayHeight = (uint) MIN(_renderBufferWidth, _renderBufferHeight);
+
+	if (iOS7_isBigDevice()) {
+		// On really big displays, like the iPad Pro, we scale the interface down
+		// so that the controls are not too small..
+		while (overlayHeight > 1024) {
+			overlayWidth /= 2;
+			overlayHeight /= 2;
 		}
-		uint overlayWidth = MAX(_renderBufferWidth, _renderBufferHeight);
-		uint overlayHeight = MIN(_renderBufferWidth, _renderBufferHeight);
-
-		if (iOS7_isBigDevice()) {
-			// On really big displays, like the iPad Pro, we scale the interface down
-			// so that the controls are not too small..
-			while (overlayHeight > 1024) {
-				overlayWidth /= 2;
-				overlayHeight /= 2;
-			}
+	}
+	else {
+		// On small devices, we force the user interface to use the small theme
+		while (overlayHeight > 480) {
+			overlayWidth /= 2;
+			overlayHeight /= 2;
 		}
-		else {
-			// On small devices, we force the user interface to use the small theme
-			while (overlayHeight > 480) {
-				overlayWidth /= 2;
-				overlayHeight /= 2;
-			}
-		}
+	}
 
-		_videoContext.overlayWidth = overlayWidth;
-		_videoContext.overlayHeight = overlayHeight;
+	_videoContext.overlayWidth = overlayWidth;
+	_videoContext.overlayHeight = overlayHeight;
 
-		uint overlayTextureWidthPOT  = getSizeNextPOT(overlayWidth);
-		uint overlayTextureHeightPOT = getSizeNextPOT(overlayHeight);
+	uint overlayTextureWidthPOT  = getSizeNextPOT(overlayWidth);
+	uint overlayTextureHeightPOT = getSizeNextPOT(overlayHeight);
 
-		// Since the overlay size won't change the whole run, we can
-		// precalculate the texture coordinates for the overlay texture here
-		// and just use it later on.
-		_overlayTexCoords[2] = _overlayTexCoords[6] = _videoContext.overlayWidth / (GLfloat) overlayTextureWidthPOT;
-		_overlayTexCoords[5] = _overlayTexCoords[7] = _videoContext.overlayHeight / (GLfloat) overlayTextureHeightPOT;
+	// Since the overlay size won't change the whole run, we can
+	// precalculate the texture coordinates for the overlay texture here
+	// and just use it later on.
+	GLfloat u = _videoContext.overlayWidth / (GLfloat) overlayTextureWidthPOT;
+	GLfloat v = _videoContext.overlayHeight / (GLfloat) overlayTextureHeightPOT;
+	_overlayCoords[0].x = 0; _overlayCoords[0].y = 0; _overlayCoords[0].u = 0; _overlayCoords[0].v = 0;
+	_overlayCoords[1].x = 0; _overlayCoords[1].y = 0; _overlayCoords[1].u = u; _overlayCoords[1].v = 0;
+	_overlayCoords[2].x = 0; _overlayCoords[2].y = 0; _overlayCoords[2].u = 0; _overlayCoords[2].v = v;
+	_overlayCoords[3].x = 0; _overlayCoords[3].y = 0; _overlayCoords[3].u = u; _overlayCoords[3].v = v;
 
-		_videoContext.overlayTexture.create(overlayTextureWidthPOT, overlayTextureHeightPOT, Graphics::createPixelFormat<5551>());
+	_videoContext.overlayTexture.create((uint16) overlayTextureWidthPOT, (uint16) overlayTextureHeightPOT, Graphics::createPixelFormat<5551>());
+}
 
-		glViewport(0, 0, _renderBufferWidth, _renderBufferHeight); printOpenGLError();
-		glClearColor(0.0f, 0.0f, 0.0f, 1.0f); printOpenGLError();
+- (void)deleteFramebuffer {
+	glDeleteRenderbuffers(1, &_viewRenderbuffer);
+	glDeleteFramebuffers(1, &_viewFramebuffer);
+}
 
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+- (void)setupVBOs {
+	glGenBuffers(1, &_vertexBuffer);
+	glBindBuffer(GL_ARRAY_BUFFER, _vertexBuffer);
+}
 
-		glEnable(GL_TEXTURE_2D); printOpenGLError();
-		glEnableClientState(GL_TEXTURE_COORD_ARRAY); printOpenGLError();
-		glEnableClientState(GL_VERTEX_ARRAY); printOpenGLError();
+- (void)deleteVBOs {
+	glDeleteBuffers(1, &_vertexBuffer);
+}
+
+- (GLuint)compileShader:(const char*)shaderPrg withType:(GLenum)shaderType {
+	GLuint shaderHandle = glCreateShader(shaderType);
+
+	int shaderPrgLength = strlen(shaderPrg);
+	glShaderSource(shaderHandle, 1, &shaderPrg, &shaderPrgLength);
+
+	glCompileShader(shaderHandle);
+
+	GLint compileSuccess;
+	glGetShaderiv(shaderHandle, GL_COMPILE_STATUS, &compileSuccess);
+	if (compileSuccess == GL_FALSE) {
+		GLchar messages[256];
+		glGetShaderInfoLog(shaderHandle, sizeof(messages), 0, &messages[0]);
+		NSString *messageString = [NSString stringWithUTF8String:messages];
+		NSLog(@"%@", messageString);
+		exit(1);
+	}
+
+	return shaderHandle;
+}
+
+- (void)compileShaders {
+	const char *vertexPrg =
+			"uniform vec2 ScreenSize;"
+			"uniform float Shake;"
+			""
+			"attribute vec2 Position;"
+			"attribute vec2 TexCoord;"
+			""
+			"varying vec4 DestColor;"
+			"varying vec2 o_TexCoord;"
+			""
+			"void main(void) {"
+			"	DestColor = vec4(Position.x, Position.y, 0, 1);"
+			"	o_TexCoord = TexCoord;"
+			"	gl_Position = vec4((Position.x / ScreenSize.x) * 2.0 - 1.0, (1.0 - (Position.y + Shake) / ScreenSize.y) * 2.0 - 1.0, 0, 1);"
+			"}";
+
+	const char *fragmentPrg =
+			"uniform sampler2D Texture;"
+			""
+			"varying lowp vec4 DestColor;"
+			"varying lowp vec2 o_TexCoord;"
+			""
+			"void main(void) {"
+			"	gl_FragColor = texture2D(Texture, o_TexCoord);"
+			"}";
+
+	_vertexShader = [self compileShader:vertexPrg withType:GL_VERTEX_SHADER];
+	_fragmentShader = [self compileShader:fragmentPrg withType:GL_FRAGMENT_SHADER];
+
+	GLuint programHandle = glCreateProgram();
+	glAttachShader(programHandle, _vertexShader);
+	glAttachShader(programHandle, _fragmentShader);
+	glLinkProgram(programHandle);
+
+	GLint linkSuccess;
+	glGetProgramiv(programHandle, GL_LINK_STATUS, &linkSuccess);
+	if (linkSuccess == GL_FALSE) {
+		printOpenGLError();
+		exit(1);
+	}
+
+	glUseProgram(programHandle);
+
+	_screenSizeSlot = (GLuint) glGetUniformLocation(programHandle, "ScreenSize");
+	_textureSlot = (GLuint) glGetUniformLocation(programHandle, "Texture");
+	_shakeSlot = (GLuint) glGetUniformLocation(programHandle, "Shake");
+
+	_positionSlot = (GLuint) glGetAttribLocation(programHandle, "Position");
+	_textureCoordSlot = (GLuint) glGetAttribLocation(programHandle, "TexCoord");
+
+	glEnableVertexAttribArray(_positionSlot);
+	glEnableVertexAttribArray(_textureCoordSlot);
+}
+
+- (void)deleteShaders {
+	glDeleteShader(_vertexShader);
+	glDeleteShader(_fragmentShader);
+}
+
+- (void)setupTextures {
+	glGenTextures(1, &_screenTexture); printOpenGLError();
+	glGenTextures(1, &_overlayTexture); printOpenGLError();
+	glGenTextures(1, &_mouseCursorTexture); printOpenGLError();
+
+	[self setGraphicsMode];
+}
+
+- (void)deleteTextures {
+	if (_screenTexture) {
+		glDeleteTextures(1, &_screenTexture); printOpenGLError();
+		_screenTexture = 0;
+	}
+	if (_overlayTexture) {
+		glDeleteTextures(1, &_overlayTexture); printOpenGLError();
+		_overlayTexture = 0;
+	}
+	if (_mouseCursorTexture) {
+		glDeleteTextures(1, &_mouseCursorTexture); printOpenGLError();
+		_mouseCursorTexture = 0;
 	}
 }
 
@@ -242,35 +402,9 @@ uint getSizeNextPOT(uint size) {
 
 	_eventLock = [[NSLock alloc] init];
 
-	_gameScreenVertCoords[0] = _gameScreenVertCoords[1] =
-	    _gameScreenVertCoords[2] = _gameScreenVertCoords[3] =
-	    _gameScreenVertCoords[4] = _gameScreenVertCoords[5] =
-	    _gameScreenVertCoords[6] = _gameScreenVertCoords[7] = 0;
-
-	_gameScreenTexCoords[0] = _gameScreenTexCoords[1] =
-	    _gameScreenTexCoords[2] = _gameScreenTexCoords[3] =
-	    _gameScreenTexCoords[4] = _gameScreenTexCoords[5] =
-	    _gameScreenTexCoords[6] = _gameScreenTexCoords[7] = 0;
-
-	_overlayVertCoords[0] = _overlayVertCoords[1] =
-	    _overlayVertCoords[2] = _overlayVertCoords[3] =
-	    _overlayVertCoords[4] = _overlayVertCoords[5] =
-	    _overlayVertCoords[6] = _overlayVertCoords[7] = 0;
-
-	_overlayTexCoords[0] = _overlayTexCoords[1] =
-	    _overlayTexCoords[2] = _overlayTexCoords[3] =
-	    _overlayTexCoords[4] = _overlayTexCoords[5] =
-	    _overlayTexCoords[6] = _overlayTexCoords[7] = 0;
-
-	_mouseVertCoords[0] = _mouseVertCoords[1] =
-	    _mouseVertCoords[2] = _mouseVertCoords[3] =
-	    _mouseVertCoords[4] = _mouseVertCoords[5] =
-	    _mouseVertCoords[6] = _mouseVertCoords[7] = 0;
-
-	_mouseTexCoords[0] = _mouseTexCoords[1] =
-	    _mouseTexCoords[2] = _mouseTexCoords[3] =
-	    _mouseTexCoords[4] = _mouseTexCoords[5] =
-	    _mouseTexCoords[6] = _mouseTexCoords[7] = 0;
+	memset(_gameScreenCoords, 0, sizeof(GLVertex) * 4);
+	memset(_overlayCoords, 0, sizeof(GLVertex) * 4);
+	memset(_mouseCoords, 0, sizeof(GLVertex) * 4);
 
 	// Initialize the OpenGL ES context
 	[self createContext];
@@ -292,97 +426,32 @@ uint getSizeNextPOT(uint size) {
 	[super dealloc];
 }
 
-#if 0
-- (void)drawRect:(CGRect)frame {
-	if (g_lastTick == 0) {
-		g_lastTick = time(0);
-	}
-
-	g_frames++;
-	if (time(0) > g_lastTick) {
-		g_lastTick = time(0);
-		printf("FPS: %i\n", g_frames);
-		g_frames = 0;
-	}
-}
-#endif
-
 - (void)setFilterModeForTexture:(GLuint)tex {
 	if (!tex)
 		return;
 
+	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, tex); printOpenGLError();
 
 	GLint filter = GL_LINEAR;
-	ScalerProc *scaler = NULL;
-	int scalerScale = 1;
 
 	switch (_videoContext.graphicsMode) {
-	case kGraphicsModeLinear:
-		filter = GL_LINEAR;
-		break;
-
 	case kGraphicsModeNone:
 		filter = GL_NEAREST;
 		break;
-#ifdef USE_SCALERS
+
+	case kGraphicsModeLinear:
 	case kGraphicsMode2xSaI:
-		filter = GL_LINEAR;
-		scaler = _2xSaI;
-		scalerScale = 2;
-		break;
-
 	case kGraphicsModeSuper2xSaI:
-		filter = GL_LINEAR;
-		scaler = Super2xSaI;
-		scalerScale = 2;
-		break;
-
 	case kGraphicsModeSuperEagle:
-		filter = GL_LINEAR;
-		scaler = SuperEagle;
-		scalerScale = 2;
-		break;
-
 	case kGraphicsModeAdvMame2x:
-		filter = GL_LINEAR;
-		scaler = AdvMame2x;
-		scalerScale = 2;
-		break;
-
 	case kGraphicsModeAdvMame3x:
-		filter = GL_LINEAR;
-		scaler = AdvMame3x;
-		scalerScale = 3;
-		break;
-
-#ifdef USE_HQ_SCALERS
 	case kGraphicsModeHQ2x:
-		filter = GL_LINEAR;
-		scaler = HQ2x;
-		scalerScale = 2;
-		break;
-
 	case kGraphicsModeHQ3x:
-		filter = GL_LINEAR;
-		scaler = HQ3x;
-		scalerScale = 3;
-		break;
-#endif
-
 	case kGraphicsModeTV2x:
-		filter = GL_LINEAR;
-		scaler = TV2x;
-		scalerScale = 2;
-		break;
-
 	case kGraphicsModeDotMatrix:
 		filter = GL_LINEAR;
-		scaler = DotMatrix;
-		scalerScale = 2;
 		break;
-
-#endif
 	}
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filter); printOpenGLError();
@@ -392,6 +461,70 @@ uint getSizeNextPOT(uint size) {
 	// have a line/border artifact on the right side of the covered rect.
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE); printOpenGLError();
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE); printOpenGLError();
+}
+
+- (void)setScaler {
+	ScalerProc *scaler = NULL;
+	int scalerScale = 1;
+
+	switch (_videoContext.graphicsMode) {
+	case kGraphicsModeLinear:
+		break;
+
+	case kGraphicsModeNone:
+		break;
+#ifdef USE_SCALERS
+	case kGraphicsMode2xSaI:
+		scaler = _2xSaI;
+		scalerScale = 2;
+		break;
+
+	case kGraphicsModeSuper2xSaI:
+		scaler = Super2xSaI;
+		scalerScale = 2;
+		break;
+
+	case kGraphicsModeSuperEagle:
+		scaler = SuperEagle;
+		scalerScale = 2;
+		break;
+
+	case kGraphicsModeAdvMame2x:
+		scaler = AdvMame2x;
+		scalerScale = 2;
+		break;
+
+	case kGraphicsModeAdvMame3x:
+		scaler = AdvMame3x;
+		scalerScale = 3;
+		break;
+
+#ifdef USE_HQ_SCALERS
+	case kGraphicsModeHQ2x:
+		scaler = HQ2x;
+		scalerScale = 2;
+		break;
+
+	case kGraphicsModeHQ3x:
+		scaler = HQ3x;
+		scalerScale = 3;
+		break;
+#endif
+
+	case kGraphicsModeTV2x:
+		scaler = TV2x;
+		scalerScale = 2;
+		break;
+
+	case kGraphicsModeDotMatrix:
+		scaler = DotMatrix;
+		scalerScale = 2;
+		break;
+#endif
+
+	default:
+		break;
+	}
 
 	_scaler = scaler;
 	_scalerScale = scalerScale;
@@ -401,6 +534,7 @@ uint getSizeNextPOT(uint size) {
 	[self setFilterModeForTexture:_screenTexture];
 	[self setFilterModeForTexture:_overlayTexture];
 	[self setFilterModeForTexture:_mouseCursorTexture];
+	[self setScaler];
 }
 
 - (void)updateSurface {
@@ -419,19 +553,18 @@ uint getSizeNextPOT(uint size) {
 	if (_videoContext.mouseIsVisible)
 		[self updateMouseSurface];
 
-	glBindRenderbufferOES(GL_RENDERBUFFER_OES, _viewRenderbuffer); printOpenGLError();
-	[_context presentRenderbuffer:GL_RENDERBUFFER_OES];
-
+	[_context presentRenderbuffer:GL_RENDERBUFFER];
+	glFinish();
 }
 
 - (void)notifyMouseMove {
 	const GLint mouseX = (GLint)(_videoContext.mouseX * _mouseScaleX) - _mouseHotspotX;
 	const GLint mouseY = (GLint)(_videoContext.mouseY * _mouseScaleY) - _mouseHotspotY;
 
-	_mouseVertCoords[0] = _mouseVertCoords[4] = mouseX;
-	_mouseVertCoords[1] = _mouseVertCoords[3] = mouseY;
-	_mouseVertCoords[2] = _mouseVertCoords[6] = mouseX + _mouseWidth;
-	_mouseVertCoords[5] = _mouseVertCoords[7] = mouseY + _mouseHeight;
+	_mouseCoords[0].x = _mouseCoords[2].x = mouseX;
+	_mouseCoords[0].y = _mouseCoords[1].y = mouseY;
+	_mouseCoords[1].x = _mouseCoords[3].x = mouseX + _mouseWidth;
+	_mouseCoords[2].y = _mouseCoords[3].y = mouseY + _mouseHeight;
 }
 
 - (void)updateMouseCursorScaling {
@@ -476,25 +609,23 @@ uint getSizeNextPOT(uint size) {
 }
 
 - (void)updateMouseCursor {
-	if (_mouseCursorTexture == 0) {
-		glGenTextures(1, &_mouseCursorTexture); printOpenGLError();
-		[self setFilterModeForTexture:_mouseCursorTexture];
-	}
-
 	[self updateMouseCursorScaling];
 
-	_mouseTexCoords[2] = _mouseTexCoords[6] = _videoContext.mouseWidth / (GLfloat)_videoContext.mouseTexture.w;
-	_mouseTexCoords[5] = _mouseTexCoords[7] = _videoContext.mouseHeight / (GLfloat)_videoContext.mouseTexture.h;
+	_mouseCoords[1].u = _mouseCoords[3].u = _videoContext.mouseWidth / (GLfloat)_videoContext.mouseTexture.w;
+	_mouseCoords[2].v = _mouseCoords[3].v = _videoContext.mouseHeight / (GLfloat)_videoContext.mouseTexture.h;
 
-	glBindTexture(GL_TEXTURE_2D, _mouseCursorTexture); printOpenGLError();
+	[self setFilterModeForTexture:_mouseCursorTexture];
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, _videoContext.mouseTexture.w, _videoContext.mouseTexture.h, 0, GL_RGBA, GL_UNSIGNED_SHORT_5_5_5_1, _videoContext.mouseTexture.getPixels()); printOpenGLError();
+	glUniform1i(_textureSlot, 0); printOpenGLError();
 }
 
 - (void)updateMainSurface {
-	glVertexPointer(2, GL_FLOAT, 0, _gameScreenVertCoords); printOpenGLError();
-	glTexCoordPointer(2, GL_FLOAT, 0, _gameScreenTexCoords); printOpenGLError();
+	glBufferData(GL_ARRAY_BUFFER, sizeof(GLVertex) * 4, _gameScreenCoords, GL_STATIC_DRAW);
+	glVertexAttribPointer(_positionSlot, 2, GL_FLOAT, GL_FALSE, sizeof(GLVertex), 0);
+	glVertexAttribPointer(_textureCoordSlot, 2, GL_FLOAT, GL_FALSE, sizeof(GLVertex), (GLvoid *) (sizeof(GLfloat) * 2));
 
-	glBindTexture(GL_TEXTURE_2D, _screenTexture); printOpenGLError();
+	[self setFilterModeForTexture:_screenTexture];
+	glUniform1i(_textureSlot, 0); printOpenGLError();
 
 	// Unfortunately we have to update the whole texture every frame, since glTexSubImage2D is actually slower in all cases
 	// due to the iPhone internals having to convert the whole texture back from its internal format when used.
@@ -512,16 +643,16 @@ uint getSizeNextPOT(uint size) {
 		}
 
 		// Clear two lines before
-		memset(_scalerMemorySrc, 0, _videoContext.screenTexture.pitch * 2);
+		memset(_scalerMemorySrc, 0, (size_t) (_videoContext.screenTexture.pitch * 2));
 		// Copy original buffer
 		memcpy(_scalerMemorySrc + _videoContext.screenTexture.pitch * 2, _videoContext.screenTexture.getPixels(), _videoContext.screenTexture.pitch * _videoContext.screenTexture.h);
 		// Clear two lines after
-		memset(_scalerMemorySrc + _videoContext.screenTexture.pitch * (2 + _videoContext.screenTexture.h), 0, _videoContext.screenTexture.pitch * 2);
+		memset(_scalerMemorySrc + _videoContext.screenTexture.pitch * (2 + _videoContext.screenTexture.h), 0, (size_t) (_videoContext.screenTexture.pitch * 2));
 		// Apply scaler
 		_scaler(_scalerMemorySrc + _videoContext.screenTexture.pitch * 2,
 		        _videoContext.screenTexture.pitch,
 		        _scalerMemoryDst,
-				(uint32) (_videoContext.screenTexture.pitch * _scalerScale),
+		        (uint32) (_videoContext.screenTexture.pitch * _scalerScale),
 		        _videoContext.screenTexture.w,
 		        _videoContext.screenTexture.h);
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, _videoContext.screenTexture.w * _scalerScale, _videoContext.screenTexture.h * _scalerScale, 0, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, _scalerMemoryDst); printOpenGLError();
@@ -529,23 +660,30 @@ uint getSizeNextPOT(uint size) {
 	else {
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, _videoContext.screenTexture.w, _videoContext.screenTexture.h, 0, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, _videoContext.screenTexture.getPixels()); printOpenGLError();
 	}
+
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4); printOpenGLError();
 }
 
 - (void)updateOverlaySurface {
-	glVertexPointer(2, GL_FLOAT, 0, _overlayVertCoords); printOpenGLError();
-	glTexCoordPointer(2, GL_FLOAT, 0, _overlayTexCoords); printOpenGLError();
+	glBufferData(GL_ARRAY_BUFFER, sizeof(GLVertex) * 4, _overlayCoords, GL_STATIC_DRAW);
+	glVertexAttribPointer(_positionSlot, 2, GL_FLOAT, GL_FALSE, sizeof(GLVertex), 0);
+	glVertexAttribPointer(_textureCoordSlot, 2, GL_FLOAT, GL_FALSE, sizeof(GLVertex), (GLvoid *) (sizeof(GLfloat) * 2));
 
-	glBindTexture(GL_TEXTURE_2D, _overlayTexture); printOpenGLError();
+	[self setFilterModeForTexture:_overlayTexture];
+	glUniform1i(_textureSlot, 0); printOpenGLError();
+
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, _videoContext.overlayTexture.w, _videoContext.overlayTexture.h, 0, GL_RGBA, GL_UNSIGNED_SHORT_5_5_5_1, _videoContext.overlayTexture.getPixels()); printOpenGLError();
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4); printOpenGLError();
 }
 
 - (void)updateMouseSurface {
-	glVertexPointer(2, GL_FLOAT, 0, _mouseVertCoords); printOpenGLError();
-	glTexCoordPointer(2, GL_FLOAT, 0, _mouseTexCoords); printOpenGLError();
+	glBufferData(GL_ARRAY_BUFFER, sizeof(GLVertex) * 4, _mouseCoords, GL_STATIC_DRAW);
+	glVertexAttribPointer(_positionSlot, 2, GL_FLOAT, GL_FALSE, sizeof(GLVertex), 0);
+	glVertexAttribPointer(_textureCoordSlot, 2, GL_FLOAT, GL_FALSE, sizeof(GLVertex), (GLvoid *) (sizeof(GLfloat) * 2));
 
 	glBindTexture(GL_TEXTURE_2D, _mouseCursorTexture); printOpenGLError();
+	glUniform1i(_textureSlot, 0); printOpenGLError();
+
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4); printOpenGLError();
 }
 
@@ -553,79 +691,32 @@ uint getSizeNextPOT(uint size) {
 	const uint screenTexWidth = getSizeNextPOT(_videoContext.screenWidth);
 	const uint screenTexHeight = getSizeNextPOT(_videoContext.screenHeight);
 
-	_gameScreenTexCoords[2] = _gameScreenTexCoords[6] = _videoContext.screenWidth / (GLfloat)screenTexWidth;
-	_gameScreenTexCoords[5] = _gameScreenTexCoords[7] = _videoContext.screenHeight / (GLfloat)screenTexHeight;
+	_gameScreenCoords[1].u = _gameScreenCoords[3].u = _videoContext.screenWidth / (GLfloat)screenTexWidth;
+	_gameScreenCoords[2].v = _gameScreenCoords[3].v = _videoContext.screenHeight / (GLfloat)screenTexHeight;
 
-	_videoContext.screenTexture.create(screenTexWidth, screenTexHeight, Graphics::createPixelFormat<565>());
+	_videoContext.screenTexture.create((uint16) screenTexWidth, (uint16) screenTexHeight, Graphics::createPixelFormat<565>());
 }
 
 - (void)initSurface {
 	if (_context) {
-		glDeleteTextures(1, &_screenTexture); printOpenGLError();
-		glDeleteTextures(1, &_overlayTexture); printOpenGLError();
-
-		glDeleteRenderbuffersOES(1, &_viewRenderbuffer);
-		glDeleteFramebuffersOES(1, &_viewFramebuffer);
-
-		glGenFramebuffersOES(1, &_viewFramebuffer); printOpenGLError();
-		glGenRenderbuffersOES(1, &_viewRenderbuffer); printOpenGLError();
-
-		glBindFramebufferOES(GL_FRAMEBUFFER_OES, _viewFramebuffer); printOpenGLError();
-		glBindRenderbufferOES(GL_RENDERBUFFER_OES, _viewRenderbuffer); printOpenGLError();
-		[_context renderbufferStorage:GL_RENDERBUFFER_OES fromDrawable:(id<EAGLDrawable>)self.layer];
-
-		glFramebufferRenderbufferOES(GL_FRAMEBUFFER_OES, GL_COLOR_ATTACHMENT0_OES, GL_RENDERBUFFER_OES, _viewRenderbuffer); printOpenGLError();
-
-		glGetRenderbufferParameterivOES(GL_RENDERBUFFER_OES, GL_RENDERBUFFER_WIDTH_OES, &_renderBufferWidth); printOpenGLError();
-		glGetRenderbufferParameterivOES(GL_RENDERBUFFER_OES, GL_RENDERBUFFER_HEIGHT_OES, &_renderBufferHeight); printOpenGLError();
-
-		if (glCheckFramebufferStatusOES(GL_FRAMEBUFFER_OES) != GL_FRAMEBUFFER_COMPLETE_OES) {
-			NSLog(@"Failed to make complete framebuffer object %x.", glCheckFramebufferStatusOES(GL_FRAMEBUFFER_OES));
-			return;
-		}
-
-		glViewport(0, 0, _renderBufferWidth, _renderBufferHeight); printOpenGLError();
-		glClearColor(0.0f, 0.0f, 0.0f, 1.0f); printOpenGLError();
-
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-		glEnable(GL_TEXTURE_2D); printOpenGLError();
-		glEnableClientState(GL_TEXTURE_COORD_ARRAY); printOpenGLError();
-		glEnableClientState(GL_VERTEX_ARRAY); printOpenGLError();
+		[self rebuildFrameBuffer];
 	}
 
 	BOOL isLandscape = (self.bounds.size.width > self.bounds.size.height); // UIDeviceOrientationIsLandscape([[UIDevice currentDevice] orientation]);
-
-//	glMatrixMode(GL_PROJECTION);
-//	glLoadIdentity();
 
 	int screenWidth, screenHeight;
 	if (isLandscape) {
 		screenWidth = MAX(_renderBufferWidth, _renderBufferHeight);
 		screenHeight = MIN(_renderBufferWidth, _renderBufferHeight);
-//		glOrthof(0, screenWidth, screenHeight, 0, 0, 1); printOpenGLError();
 	}
 	else {
 		screenWidth = MIN(_renderBufferWidth, _renderBufferHeight);
 		screenHeight = MAX(_renderBufferWidth, _renderBufferHeight);
-//		glOrthof(0, screenHeight, screenWidth, 0, 0, 1); printOpenGLError();
 	}
 
-	glGenTextures(1, &_screenTexture); printOpenGLError();
-	[self setFilterModeForTexture:_screenTexture];
-
-	glGenTextures(1, &_overlayTexture); printOpenGLError();
-	[self setFilterModeForTexture:_overlayTexture];
-
-	glBindRenderbufferOES(GL_RENDERBUFFER_OES, _viewRenderbuffer); printOpenGLError();
+	glBindRenderbuffer(GL_RENDERBUFFER, _viewRenderbuffer); printOpenGLError();
 
 	[self clearColorBuffer];
-
-//	if (_keyboardView != nil) {
-//		[_keyboardView removeFromSuperview];
-//		[[_keyboardView inputView] removeFromSuperview];
-//	}
 
 	GLfloat adjustedWidth = _videoContext.screenWidth;
 	GLfloat adjustedHeight = _videoContext.screenHeight;
@@ -688,34 +779,24 @@ uint getSizeNextPOT(uint size) {
 	}
 	_overlayRect = CGRectMake(0, 0, screenWidth, screenHeight * overlayPortraitRatio);
 
-	_gameScreenVertCoords[0] = _gameScreenVertCoords[4] = CGRectGetMinX(_gameScreenRect);
-	_gameScreenVertCoords[1] = _gameScreenVertCoords[3] = CGRectGetMinY(_gameScreenRect);
-	_gameScreenVertCoords[2] = _gameScreenVertCoords[6] = CGRectGetMaxX(_gameScreenRect);
-	_gameScreenVertCoords[5] = _gameScreenVertCoords[7] = CGRectGetMaxY(_gameScreenRect);
+	_gameScreenCoords[0].x = _gameScreenCoords[2].x = CGRectGetMinX(_gameScreenRect);
+	_gameScreenCoords[0].y = _gameScreenCoords[1].y = CGRectGetMinY(_gameScreenRect);
+	_gameScreenCoords[1].x = _gameScreenCoords[3].x = CGRectGetMaxX(_gameScreenRect);
+	_gameScreenCoords[2].y = _gameScreenCoords[3].y = CGRectGetMaxY(_gameScreenRect);
 
-	_overlayVertCoords[2] = _overlayVertCoords[6] = CGRectGetMaxX(_overlayRect);
-	_overlayVertCoords[5] = _overlayVertCoords[7] = CGRectGetMaxY(_overlayRect);
-
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	glOrthof(0, screenWidth, screenHeight, 0, 0, 1);
+	_overlayCoords[1].x = _overlayCoords[3].x = CGRectGetMaxX(_overlayRect);
+	_overlayCoords[2].y = _overlayCoords[3].y = CGRectGetMaxY(_overlayRect);
 
 	[self setViewTransformation];
 	[self updateMouseCursorScaling];
 }
 
 - (void)setViewTransformation {
-	// Set the modelview matrix. This matrix will be used for the shake offset
-	// support.
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-
 	// Scale the shake offset according to the overlay size. We need this to
 	// adjust the overlay mouse click coordinates when an offset is set.
 	_scaledShakeOffsetY = (int)(_videoContext.shakeOffsetY / (GLfloat)_videoContext.screenHeight * CGRectGetHeight(_overlayRect));
 
-	// Apply the shakeing to the output screen.
-	glTranslatef(0, -_scaledShakeOffsetY, 0);
+	glUniform1f(_shakeSlot, _scaledShakeOffsetY);
 }
 
 - (void)clearColorBuffer {
@@ -723,7 +804,8 @@ uint getSizeNextPOT(uint size) {
 	int clearCount = 5;
 	while (clearCount-- > 0) {
 		glClear(GL_COLOR_BUFFER_BIT); printOpenGLError();
-		[_context presentRenderbuffer:GL_RENDERBUFFER_OES];
+		[_context presentRenderbuffer:GL_RENDERBUFFER];
+		glFinish();
 	}
 }
 
@@ -748,7 +830,7 @@ uint getSizeNextPOT(uint size) {
 
 - (bool)getMouseCoords:(CGPoint)point eventX:(int *)x eventY:(int *)y {
 	// We scale the input according to our scale factor to get actual screen
-	// cooridnates.
+	// coordinates.
 	point.x *= _contentScaleFactor;
 	point.y *= _contentScaleFactor;
 

@@ -28,14 +28,19 @@
 #include <QuartzCore/QuartzCore.h>
 
 #include <OpenGLES/EAGL.h>
-#include <OpenGLES/ES1/gl.h>
-#include <OpenGLES/ES1/glext.h>
+#include <OpenGLES/ES2/gl.h>
+#include <OpenGLES/ES2/glext.h>
 
 #include "ios7_keyboard.h"
 #include "ios7_common.h"
 
 #include "common/list.h"
 #import "graphics/scaler.h"
+
+typedef struct {
+	GLfloat x, y;
+	GLfloat u,v;
+} GLVertex;
 
 @interface iPhoneView : UIView {
 	VideoContext _videoContext;
@@ -51,19 +56,29 @@
 	GLuint _overlayTexture;
 	GLuint _mouseCursorTexture;
 
+	GLuint _vertexShader;
+	GLuint _fragmentShader;
+
+	GLuint _vertexBuffer;
+
+	GLuint _screenSizeSlot;
+	GLuint _textureSlot;
+	GLuint _shakeSlot;
+
+	GLuint _positionSlot;
+	GLuint _textureCoordSlot;
+
 	GLint _renderBufferWidth;
 	GLint _renderBufferHeight;
 
-	GLfloat _gameScreenVertCoords[4 * 2];
-	GLfloat _gameScreenTexCoords[4 * 2];
+	GLVertex _gameScreenCoords[4];
 	CGRect _gameScreenRect;
 
-	GLfloat _overlayVertCoords[4 * 2];
-	GLfloat _overlayTexCoords[4 * 2];
+	GLVertex _overlayCoords[4];
 	CGRect _overlayRect;
 
-	GLfloat _mouseVertCoords[4 * 2];
-	GLfloat _mouseTexCoords[4 * 2];
+	GLVertex _mouseCoords[4];
+
 	GLint _mouseHotspotX, _mouseHotspotY;
 	GLint _mouseWidth, _mouseHeight;
 	GLfloat _mouseScaleX, _mouseScaleY;
