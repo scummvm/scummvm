@@ -37,12 +37,97 @@ You are ready to compile ScummVM: open the **scummvm.xcodeproj** project, and bu
 
 ### Compilation from command line ###
 
-For jailbroken devices, it is also possible to compile the project from command line. You'll need some tools, like **ldid**, to fake the code signature.
+For jailbroken devices, it is also possible to compile the project from command line. You'll need a working toolchain, and some tools, like **ldid**, to fake the code signature.
 
-Open a terminal, and execute the following commands:
+Here is a script to download, and compile all the required tools. This script has been wrote for Debian 8.2, and should be run as root.
+
 ```
-$ cd path_to_the_scummvm_sources
-$ SDKROOT=$(xcrun --sdk iphoneos --show-sdk-path) CC=clang CXX=clang++ ./configure --host=ios7 --disable-scalers --disable-mt32emu --enable-release
+#!/bin/bash
+
+if [ $UID -ne 0 ]; then
+	echo "This script should be run by the root user"
+	exit 1
+fi
+
+# Install the Clang compiler
+apt-get install -y clang-3.4 libclang-3.4-dev llvm-3.4 libtool bison flex automake subversion git pkg-config wget libssl-dev uuid-dev libxml2-dev || exit 1
+
+# Add LLVM to the linker library path
+echo /usr/lib/llvm-3.4/lib > /etc/ld.so.conf.d/libllvm-3.4.conf
+ldconfig
+
+# Add symlinks for the LLVM headers
+ln -s /usr/lib/llvm-3.4/bin/llvm-config /usr/bin/llvm-config || exit 1
+ln -s /usr/include/llvm-3.4/llvm /usr/include/llvm || exit 1
+ln -s /usr/include/llvm-c-3.4/llvm-c /usr/include/llvm-c || exit 1
+ln -s /usr/bin/clang-3.4 /usr/bin/clang || exit 1
+ln -s /usr/bin/clang++-3.4 /usr/bin/clang++ || exit 1
+
+# Build the linker
+svn checkout http://ios-toolchain-based-on-clang-for-linux.googlecode.com/svn/trunk/cctools-porting || exit 1
+cd cctools-porting
+sed -i'' 's/proz -k=20  --no-curses/wget/g' cctools-ld64.sh
+./cctools-ld64.sh || exit 1
+
+cd cctools-855-ld64-236.3
+./autogen.sh || exit 1
+./configure --prefix=/usr/local --target=arm-apple-darwin11 || exit 1
+make || exit 1
+make install || exit 1
+cd ../..
+
+# Install ios-tools
+wget https://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/iphonesdk-utils-2.0.tar.gz || exit 1
+tar xzf iphonesdk-utils-2.0.tar.gz
+cd iphonesdk-utils-2.0
+patch -p0 <<_EOF
+*** genLocalization2/getLocalizedStringFromFile.cpp    2015-04-02 04:45:39.309837816 +0530
+--- genLocalization2/getLocalizedStringFromFile.cpp    2015-04-02 04:45:11.525700021 +0530
+***************
+*** 113,115 ****
+      clang::HeaderSearch headerSearch(headerSearchOptions,
+-                                      fileManager,
+                                       *pDiagnosticsEngine,
+--- 113,115 ----
+      clang::HeaderSearch headerSearch(headerSearchOptions,
++                                      sourceManager,
+                                       *pDiagnosticsEngine,
+***************
+*** 129,134 ****
+                  false);
+-     clang::HeaderSearch headerSearch(fileManager,
+                                       *pDiagnosticsEngine,
+                                       languageOptions,
+-                                      pTargetInfo);
+      ApplyHeaderSearchOptions(headerSearch, headerSearchOptions, languageOptions, pTargetInfo->getTriple());
+--- 129,134 ----
+                  false);
++     clang::HeaderSearch headerSearch(fileManager);/*,
+                                       *pDiagnosticsEngine,
+                                       languageOptions,
++                                      pTargetInfo);*/
+      ApplyHeaderSearchOptions(headerSearch, headerSearchOptions, languageOptio
+_EOF
+
+./autogen.sh || exit 1
+CC=clang CXX=clang++ ./configure --prefix=/usr/local || exit 1
+make || exit 1
+make install || exit 1
+
+# Install the iOS SDK 8.1
+mkdir -p /usr/share/ios-sdk
+cd /usr/share/ios-sdk
+wget http://iphone.howett.net/sdks/dl/iPhoneOS8.1.sdk.tbz2 || exit 1
+tar xjf iPhoneOS8.1.sdk.tbz2
+rm iPhoneOS8.1.sdk.tbz2
+```
+
+Now, in order to compile ScummVM, execute the following commands:
+```
+$ export SDKROOT=/usr/share/ios-sdk/iPhoneOS8.1.sdk
+$ export CC=ios-clang
+$ export CXX=ios-clang++
+$ ./configure --host=ios7 --disable-mt32emu --enable-release
 $ make ios7bundle
 ```
 
