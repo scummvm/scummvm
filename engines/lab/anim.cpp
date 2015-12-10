@@ -61,7 +61,7 @@ Anim::Anim(LabEngine *vm) : _vm(vm) {
 	_diffFile = nullptr;
 	_size = 0;
 	_rawDiffBM._bytesPerRow = 0;
-	_rawDiffBM._flags = 0;
+	_rawDiffBM._drawOnScreen = false;
 	for (int i = 0; i < 16; i++)
 		_rawDiffBM._planes[i] = nullptr;
 	_rawDiffBM._rows = 0;
@@ -82,7 +82,7 @@ void Anim::diffNextFrame(bool onlyDiffData) {
 		// Already done.
 		return;
 
-	if (_vm->_graphics->_dispBitMap->_flags & BITMAPF_VIDEO) {
+	if (_vm->_graphics->_dispBitMap->_drawOnScreen) {
 		_vm->_graphics->_dispBitMap->_planes[0] = _vm->_graphics->getCurrentDrawingBuffer();
 		_vm->_graphics->_dispBitMap->_planes[1] = _vm->_graphics->_dispBitMap->_planes[0] + 0x10000;
 		_vm->_graphics->_dispBitMap->_planes[2] = _vm->_graphics->_dispBitMap->_planes[1] + 0x10000;
@@ -125,7 +125,7 @@ void Anim::diffNextFrame(bool onlyDiffData) {
 			_isAnim = (_frameNum >= 3) && (!_playOnce);
 			_curBit = 0;
 
-			if (_vm->_graphics->_dispBitMap->_flags & BITMAPF_VIDEO)
+			if (_vm->_graphics->_dispBitMap->_drawOnScreen)
 				_vm->_graphics->screenUpdate();
 
 			// done with the next frame.
@@ -218,7 +218,7 @@ void Anim::diffNextFrame(bool onlyDiffData) {
 						_vm->_music->updateMusic();
 						_vm->waitTOF();
 
-						if (_vm->_graphics->_dispBitMap->_flags & BITMAPF_VIDEO)
+						if (_vm->_graphics->_dispBitMap->_drawOnScreen)
 							didTOF = true;
 					}
 				}
