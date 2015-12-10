@@ -83,7 +83,7 @@ void Anim::diffNextFrame(bool onlyDiffData) {
 		return;
 
 	if (_vm->_graphics->_dispBitMap->_drawOnScreen)
-		_vm->_graphics->_dispBitMap->_planes[0] = _vm->_graphics->getCurrentDrawingBuffer();	
+		_vm->_graphics->_dispBitMap->_planes[0] = _vm->_graphics->getCurrentDrawingBuffer();
 
 	_vm->_graphics->_dispBitMap->_planes[1] = _vm->_graphics->_dispBitMap->_planes[0] + 0x10000;
 	_vm->_graphics->_dispBitMap->_planes[2] = _vm->_graphics->_dispBitMap->_planes[1] + 0x10000;

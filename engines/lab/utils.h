@@ -46,7 +46,7 @@ private:
 
 public:
 	Utils(LabEngine *vm);
-	
+
 	uint16 scaleX(uint16 x);
 	uint16 scaleY(uint16 y);
 	int16 vgaScaleX(int16 x);
