@@ -181,6 +181,9 @@ public:
 	void drawSurface20(Common::Rect &dstRect, Graphics::Surface *surface, Common::Rect &srcRect, uint16 colorKey);
 	void drawSurface21(Common::Rect &dstRect, Graphics::Surface *surface, Common::Rect &srcRect);
 	
+	bool isSpritePixelSolid16(Common::Point &testPt, Common::Point &drawPosition, Common::Point &drawOffset,
+		const SurfInfo &surfInfo, int16 scale, uint flags, byte *compressedPixels);
+
 	uint16 convertFontColor(byte color);
 };
 

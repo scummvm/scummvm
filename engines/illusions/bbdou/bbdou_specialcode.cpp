@@ -489,10 +489,10 @@ void BbdouSpecialCode::cursorInteractControlRoutine(Control *cursorControl, uint
 		Control *overlappedControl = 0;
 		
 		if (cursorData._flags & 1) {
-			foundOverlapped = 0;
+			foundOverlapped = false;
 		} else if (_vm->getCurrentScene() == 0x1000D) {
-			/* TODO foundOverlapped = artcntrlGetOverlappedObjectAccurate(cursorControl, cursorPos,
-			&overlappedControl, cursorData._item10._field58);*/
+			foundOverlapped = _vm->_controls->getOverlappedObjectAccurate(cursorControl, cursorPos,
+				&overlappedControl, cursorData._item10._field58);
 		} else {
 			foundOverlapped = _vm->_controls->getOverlappedObject(cursorControl, cursorPos,
 				&overlappedControl, cursorData._item10._field58);
@@ -660,17 +660,15 @@ void BbdouSpecialCode::cursorCrosshairControlRoutine(Control *cursorControl, uin
 
 	}
 
-	Common::Point cursorPos = getBackgroundCursorPos(cursorPos);
+	Common::Point cursorPos = getBackgroundCursorPos(screenCursorPos);
 	bool foundOverlapped = false;
 	Control *overlappedControl = 0;
 
 	if (cursorData._flags & 1)
 		foundOverlapped = false;
     else {
-		/* TODO Implement getOverlappedObjectAccurate
 		foundOverlapped = _vm->_controls->getOverlappedObjectAccurate(cursorControl, cursorPos,
 			&overlappedControl, cursorData._item10._field58);
-		*/
 	}
 
 	if (foundOverlapped) {

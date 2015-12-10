@@ -204,6 +204,7 @@ public:
 	void getActorFrameDimensions(WidthHeight &dimensions);
 	void drawActorRect(const Common::Rect r, byte color);
 	void fillActor(byte color);
+	bool isPixelCollision(Common::Point &pt);
 public:
 	IllusionsEngine *_vm;
 	uint _flags;
@@ -245,6 +246,7 @@ public:
 	void pauseControlsBySceneId(uint32 sceneId);
 	void unpauseControlsBySceneId(uint32 sceneId);
 	bool getOverlappedObject(Control *control, Common::Point pt, Control **outOverlappedControl, int minPriority);
+	bool getOverlappedObjectAccurate(Control *control, Common::Point pt, Control **outOverlappedControl, int minPriority);
 	bool getDialogItemAtPos(Control *control, Common::Point pt, Control **outOverlappedControl);
 	bool getOverlappedWalkObject(Control *control, Common::Point pt, Control **outOverlappedControl);
 	void destroyControl(Control *control);

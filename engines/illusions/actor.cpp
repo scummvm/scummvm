@@ -945,6 +945,12 @@ void Control::fillActor(byte color) {
 	_actor->_flags |= 0x4000;
 }
 
+bool Control::isPixelCollision(Common::Point &pt) {
+	Frame *frame = &(*_actor->_frames)[_actor->_frameIndex - 1];
+	return _vm->_screen->isSpritePixelSolid16(pt, _position, _actor->_position,
+		_actor->_surfInfo, _actor->_scale, frame->_flags, frame->_compressedPixels);
+}
+
 void Control::startSequenceActorIntern(uint32 sequenceId, int value, byte *entryTblPtr, uint32 notifyThreadId) {
 	stopActor();
 
@@ -1297,6 +1303,41 @@ bool Controls::getOverlappedObject(Control *control, Common::Point pt, Control *
 					foundPriority = testPriority;
 				}
 			}		
+		}
+	}
+
+	if (foundControl) {
+		if (foundControl->_actor && foundControl->_actor->_parentObjectId && (foundControl->_actor->_flags & 0x40)) {
+			uint32 parentObjectId = foundControl->getSubActorParent();
+			foundControl = _vm->_dict->getObjectControl(parentObjectId);
+		}
+		*outOverlappedControl = foundControl;
+	}
+
+	return foundControl != 0;
+}
+
+bool Controls::getOverlappedObjectAccurate(Control *control, Common::Point pt, Control **outOverlappedControl, int minPriority) {
+	Control *foundControl = 0;
+	uint32 foundPriority = 0;
+	uint32 minPriorityExt = _vm->getPriorityFromBase(minPriority);
+
+	for (ItemsIterator it = _controls.begin(); it != _controls.end(); ++it) {
+		Control *testControl = *it;
+		if (testControl != control && testControl->_pauseCtr == 0 &&
+			(testControl->_flags & 1) && !(testControl->_flags & 0x10) &&
+			(!testControl->_actor || (testControl->_actor->_flags & 1))) {
+			Common::Rect collisionRect;
+			testControl->getCollisionRectAccurate(collisionRect);
+			if (!collisionRect.isEmpty() && collisionRect.contains(pt) &&
+				(!testControl->_actor || testControl->isPixelCollision(pt))) {
+				uint32 testPriority = testControl->getOverlapPriority();
+				if ((!foundControl || foundPriority < testPriority) &&
+					testPriority >= minPriorityExt) {
+					foundControl = testControl;
+					foundPriority = testPriority;
+				}
+			}
 		}
 	}
 
