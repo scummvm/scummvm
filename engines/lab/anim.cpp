@@ -251,9 +251,31 @@ void Anim::diffNextFrame(bool onlyDiffData) {
 }
 
 /**
- * A separate task launched by readDiff.  Plays the DIFF.
+ * Stops an animation from running.
  */
-void Anim::playDiff(byte *buffer, bool onlyDiffData) {
+void Anim::stopDiff() {
+	if (_isPlaying && _isAnim)
+		_vm->_graphics->blackScreen();
+}
+
+/**
+ * Stops an animation from running.
+ */
+void Anim::stopDiffEnd() {
+	if (_isPlaying) {
+		_stopPlayingEnd = true;
+		while (_isPlaying) {
+			_vm->_music->updateMusic();
+			diffNextFrame();
+		}
+	}
+}
+
+/**
+ * Reads in a DIFF file.
+ */
+void Anim::readDiff(byte *buffer, bool playOnce, bool onlyDiffData) {
+	_playOnce = playOnce;
 	_waitSec = 0L;
 	_waitMicros = 0L;
 	_delayMicros = 0L;
@@ -316,9 +338,9 @@ void Anim::playDiff(byte *buffer, bool onlyDiffData) {
 		_diffHeight = _headerdata._height;
 		_vm->_utils->setBytesPerRow(_diffWidth);
 
-		_numChunks = (((int32) _diffWidth) * _diffHeight) / 0x10000;
+		_numChunks = (((int32)_diffWidth) * _diffHeight) / 0x10000;
 
-		if ((uint32)(_numChunks * 0x10000) < (uint32)(((int32) _diffWidth) * _diffHeight))
+		if ((uint32)(_numChunks * 0x10000) < (uint32)(((int32)_diffWidth) * _diffHeight))
 			_numChunks++;
 	} else {
 		return;
@@ -333,38 +355,9 @@ void Anim::playDiff(byte *buffer, bool onlyDiffData) {
 	if (_playOnce) {
 		while (_header != 65535)
 			diffNextFrame(onlyDiffData);
-	} else
-		diffNextFrame(onlyDiffData);
-}
-
-/**
- * Stops an animation from running.
- */
-void Anim::stopDiff() {
-	if (_isPlaying && _isAnim)
-		_vm->_graphics->blackScreen();
-}
-
-/**
- * Stops an animation from running.
- */
-void Anim::stopDiffEnd() {
-	if (_isPlaying) {
-		_stopPlayingEnd = true;
-		while (_isPlaying) {
-			_vm->_music->updateMusic();
-			diffNextFrame();
-		}
 	}
-}
-
-/**
- * Reads in a DIFF file.
- */
-bool Anim::readDiff(byte *buffer, bool playOnce, bool onlyDiffData) {
-	_playOnce = playOnce;
-	playDiff(buffer, onlyDiffData);
-	return true;
+	else
+		diffNextFrame(onlyDiffData);
 }
 
 } // End of namespace Lab

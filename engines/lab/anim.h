@@ -84,7 +84,6 @@ private:
 	BitMap *DrawBitMap;
 
 	void readBlock(void *Buffer, uint32 Size, byte **File);
-	void playDiff(byte *buffer, bool onlyDiffData = false);
 
 public:
 	Anim(LabEngine *vm);
@@ -96,7 +95,7 @@ public:
 	bool _noPalChange;   // Don't change the palette.
 	BitMap _rawDiffBM;
 
-	bool readDiff(byte *buffer, bool playOnce, bool onlyDiffData = false);
+	void readDiff(byte *buffer, bool playOnce, bool onlyDiffData = false);
 	void diffNextFrame(bool onlyDiffData = false);
 	void stopDiff();
 	void stopDiffEnd();
