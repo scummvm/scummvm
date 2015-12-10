@@ -60,6 +60,21 @@ uint16 Utils::scaleY(uint16 y) {
 		return ((y * 10) / 24);
 }
 
+
+uint16 Utils::mapScaleX(uint16 x) {
+	if (_vm->_isHiRes)
+		return (x - 45);
+	else
+		return ((x - 45) >> 1);
+}
+
+uint16 Utils::mapScaleY(uint16 y) {
+	if (_vm->_isHiRes)
+		return y;
+	else
+		return ((y - 35) >> 1) - (y >> 6);
+}
+
 /**
  * Scales the VGA coords to SVGA if necessary; otherwise, returns VGA coords.
  */
@@ -422,18 +437,9 @@ uint16 Utils::getRandom(uint16 max) {
 	return ((micros + secs) % max);
 }
 
-uint16 Utils::mapScaleX(uint16 x) {
-	if (_vm->_isHiRes)
-		return (x - 45);
-	else
-		return ((x - 45) >> 1);
-}
-
-uint16 Utils::mapScaleY(uint16 y) {
-	if (_vm->_isHiRes)
-		return y;
-	else
-		return ((y - 35) >> 1) - (y >> 6);
+void Utils::readBlock(void *Buffer, uint32 Size, byte **File) {
+	memcpy(Buffer, *File, (size_t)Size);
+	(*File) += Size;
 }
 
 } // End of namespace Lab

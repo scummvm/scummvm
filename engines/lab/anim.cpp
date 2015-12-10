@@ -77,11 +77,6 @@ Anim::Anim(LabEngine *vm) : _vm(vm) {
 		_diffPalette[i] = 0;
 }
 
-void Anim::readBlock(void *Buffer, uint32 Size, byte **File) {
-	memcpy(Buffer, *File, (size_t)Size);
-	(*File) += Size;
-}
-
 void Anim::diffNextFrame(bool onlyDiffData) {
 	if (_header == 65535)
 		// Already done.
@@ -145,59 +140,58 @@ void Anim::diffNextFrame(bool onlyDiffData) {
 		_diffFile += 4;
 
 		switch (_header) {
-		case 8L:
-			readBlock(_diffPalette, _size, &_diffFile);
+		case 8:
+			_vm->_utils->readBlock(_diffPalette, _size, &_diffFile);
 			_isPal = true;
 			break;
 
-		case 10L:
+		case 10:
 			_rawDiffBM._planes[_curBit] = _diffFile;
 
 			if (onlyDiffData)
 				_diffFile += _size;
-			else {
-				readBlock(DrawBitMap->_planes[_curBit], _size, &_diffFile);
-			}
+			else
+				_vm->_utils->readBlock(DrawBitMap->_planes[_curBit], _size, &_diffFile);
 
 			_curBit++;
 			break;
 
-		case 11L:
+		case 11:
 			_diffFile += 4;
 			_vm->_utils->runLengthDecode(DrawBitMap->_planes[_curBit], _diffFile);
 			_curBit++;
 			_diffFile += _size - 4;
 			break;
 
-		case 12L:
+		case 12:
 			_diffFile += 4;
 			_vm->_utils->VRunLengthDecode(DrawBitMap->_planes[_curBit], _diffFile, DrawBitMap->_bytesPerRow);
 			_curBit++;
 			_diffFile += _size - 4;
 			break;
 
-		case 20L:
+		case 20:
 			_vm->_utils->unDiff(DrawBitMap->_planes[_curBit], _vm->_graphics->_dispBitMap->_planes[_curBit], _diffFile, DrawBitMap->_bytesPerRow, false);
 			_curBit++;
 			_diffFile += _size;
 			break;
 
-		case 21L:
+		case 21:
 			_vm->_utils->unDiff(DrawBitMap->_planes[_curBit], _vm->_graphics->_dispBitMap->_planes[_curBit], _diffFile, DrawBitMap->_bytesPerRow, true);
 			_curBit++;
 			_diffFile += _size;
 			break;
 
-		case 25L:
+		case 25:
 			_curBit++;
 			break;
 
-		case 26L:
+		case 26:
 			_curBit++;
 			break;
 
-		case 30L:
-		case 31L:
+		case 30:
+		case 31:
 			if (_waitForEffect) {
 				while (_vm->_music->isSoundEffectActive()) {
 					_vm->_music->updateMusic();
@@ -205,8 +199,7 @@ void Anim::diffNextFrame(bool onlyDiffData) {
 				}
 			}
 
-			_size -= 8L;
-
+			_size -= 8;
 
 			_diffFile += 4;
 			_sampleSpeed = READ_LE_UINT16(_diffFile);
@@ -215,7 +208,8 @@ void Anim::diffNextFrame(bool onlyDiffData) {
 			_vm->_music->playSoundEffect(_sampleSpeed, _size, _diffFile);
 			_diffFile += _size;
 			break;
-		case 65535L:
+
+		case 65535:
 			if ((_frameNum == 1) || _playOnce || _stopPlayingEnd) {
 				bool didTOF = false;
 
@@ -262,12 +256,13 @@ void Anim::stopDiff() {
  * Stops an animation from running.
  */
 void Anim::stopDiffEnd() {
-	if (_isPlaying) {
-		_stopPlayingEnd = true;
-		while (_isPlaying) {
-			_vm->_music->updateMusic();
-			diffNextFrame();
-		}
+	if (!_isPlaying)
+		return;
+
+	_stopPlayingEnd = true;
+	while (_isPlaying) {
+		_vm->_music->updateMusic();
+		diffNextFrame();
 	}
 }
 
@@ -276,9 +271,9 @@ void Anim::stopDiffEnd() {
  */
 void Anim::readDiff(byte *buffer, bool playOnce, bool onlyDiffData) {
 	_playOnce = playOnce;
-	_waitSec = 0L;
-	_waitMicros = 0L;
-	_delayMicros = 0L;
+	_waitSec = 0;
+	_waitMicros = 0;
+	_delayMicros = 0;
 	_header = 0;
 	_curBit = 0;
 	_frameNum = 0;
@@ -342,9 +337,8 @@ void Anim::readDiff(byte *buffer, bool playOnce, bool onlyDiffData) {
 
 		if ((uint32)(_numChunks * 0x10000) < (uint32)(((int32)_diffWidth) * _diffHeight))
 			_numChunks++;
-	} else {
+	} else
 		return;
-	}
 
 	for (_header = 0; _header < 8; _header++)
 		_rawDiffBM._planes[_header] = NULL;
@@ -355,8 +349,7 @@ void Anim::readDiff(byte *buffer, bool playOnce, bool onlyDiffData) {
 	if (_playOnce) {
 		while (_header != 65535)
 			diffNextFrame(onlyDiffData);
-	}
-	else
+	} else
 		diffNextFrame(onlyDiffData);
 }
 
