@@ -106,7 +106,6 @@ void LabEngine::loadMapData() {
 void LabEngine::freeMapData() {
 	freeButtonList(&_mapGadgetList);
 
-	delete[] _maps;
 	delete _imgMap;
 	delete _imgRoom;
 	delete _imgUpArrowRoom;
@@ -121,8 +120,8 @@ void LabEngine::freeMapData() {
 	delete _imgMapEast;
 	delete _imgMapSouth;
 	delete _imgMapWest;
-	delete _imgXMark;
-	delete _maps;
+	// _imgXMark is a pointer to one of the four buffers above
+	delete[] _maps;
 
 	_imgMap = nullptr;
 	_imgRoom = nullptr;
