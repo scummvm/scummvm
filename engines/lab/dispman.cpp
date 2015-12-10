@@ -94,7 +94,7 @@ void DisplayMan::readPict(const char *filename, bool playOnce, bool onlyDiffData
 
 	_dispBitMap->_bytesPerRow = _screenWidth;
 	_dispBitMap->_rows        = _screenHeight;
-	_dispBitMap->_flags       = BITMAPF_VIDEO;
+	_dispBitMap->_drawOnScreen = true;
 
 	_vm->_anim->readDiff(_curBitmap, playOnce, onlyDiffData);
 }
@@ -102,7 +102,7 @@ void DisplayMan::readPict(const char *filename, bool playOnce, bool onlyDiffData
 /**
  * Reads in a picture into buffer memory.
  */
-byte *DisplayMan::readPictToMem(const char *filename, uint16 x, uint16 y) {
+byte *DisplayMan::readPictToMem(const char *filename, uint16 width, uint16 height) {
 	_vm->_anim->stopDiff();
 
 	loadPict(filename);
@@ -112,9 +112,9 @@ byte *DisplayMan::readPictToMem(const char *filename, uint16 x, uint16 y) {
 	if (!_vm->_music->_doNotFilestopSoundEffect)
 		_vm->_music->stopSoundEffect();
 
-	_dispBitMap->_bytesPerRow = x;
-	_dispBitMap->_rows = y;
-	_dispBitMap->_flags = BITMAPF_NONE;
+	_dispBitMap->_bytesPerRow = width;
+	_dispBitMap->_rows = height;
+	_dispBitMap->_drawOnScreen = false;
 	_dispBitMap->_planes[0] = _curBitmap;
 	_dispBitMap->_planes[1] = _dispBitMap->_planes[0] + 0x10000;
 	_dispBitMap->_planes[2] = _dispBitMap->_planes[1] + 0x10000;

@@ -50,12 +50,9 @@ struct DIFFHeader {
 struct BitMap {
 	uint16 _bytesPerRow;
 	uint16 _rows;       // unused
-	byte _flags;
+	bool _drawOnScreen;
 	byte *_planes[16];
 };
-
-#define BITMAPF_NONE  0
-#define BITMAPF_VIDEO (1<<7)
 
 class Anim {
 private:
