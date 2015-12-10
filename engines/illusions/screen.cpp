@@ -877,6 +877,62 @@ void Screen::drawSurface21(Common::Rect &dstRect, Graphics::Surface *surface, Co
 
 }
 
+bool Screen::isSpritePixelSolid16(Common::Point &testPt, Common::Point &drawPosition, Common::Point &drawOffset,
+	const SurfInfo &surfInfo, int16 scale, uint flags, byte *compressedPixels) {
+
+	int ptX = scale * drawPosition.x / 100 + testPt.x - drawOffset.x;
+	int ptY = scale * drawPosition.y / 100 + testPt.y - drawOffset.y;
+
+	if (flags & 1) {
+		const int scaledWidth = scale * surfInfo._dimensions._width / 100;
+		ptX += 2 * (scaledWidth - scaledWidth / 2 - ptX);
+	}
+
+	if (flags & 2) {
+		const int scaledHeight = scale * surfInfo._dimensions._height / 100;
+		ptY += 2 * (scaledHeight - scaledHeight / 2 - ptY);
+	}
+
+	const int pixelLookX = 100 * ptX / scale;
+	const int pixelLookY = 100 * ptY / scale;
+	const int lookOffset = pixelLookX + surfInfo._dimensions._width * pixelLookY;
+	const int dstSize = surfInfo._dimensions._width * surfInfo._dimensions._height;
+
+	if (pixelLookX < 0 || pixelLookX >= surfInfo._dimensions._width ||
+		pixelLookY < 0 || pixelLookY >= surfInfo._dimensions._height ||
+		lookOffset < 0 || lookOffset >= dstSize)
+		return false;
+
+	byte *src = compressedPixels;
+	int processedSize = 0;
+
+	while (processedSize < dstSize) {
+		int16 op = READ_LE_UINT16(src);
+		src += 2;
+		if (op & 0x8000) {
+			int runCount = (op & 0x7FFF) + 1;
+			uint16 runColor = READ_LE_UINT16(src);
+			src += 2;
+			while (runCount--) {
+				if (processedSize == lookOffset)
+					return runColor != _colorKey1;
+				++processedSize;
+			}
+		} else {
+			int copyCount = op + 1;
+			while (copyCount--) {
+				uint16 color = READ_LE_UINT16(src);
+				src += 2;
+				if (processedSize == lookOffset)
+					return color != _colorKey1;
+				++processedSize;
+			}
+		}
+	}
+
+	return false;
+}
+
 uint16 Screen::convertFontColor(byte color) {
 	if (color) {
 		byte r, g, b;
