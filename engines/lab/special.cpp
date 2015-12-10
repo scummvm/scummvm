@@ -93,13 +93,13 @@ static byte *loadBackPict(const char *fileName, bool tomem) {
  * Does the things to properly set up the detective notes.
  */
 void LabEngine::doNotes() {
-	TextFont *noteFont = g_lab->_resource->getFont("P:Note.fon");
-	char *ntext = g_lab->_resource->getText("Lab:Rooms/Notes");
+	TextFont *noteFont = _resource->getFont("P:Note.fon");
+	char *ntext = _resource->getText("Lab:Rooms/Notes");
 
-	g_lab->_graphics->flowText(noteFont, -2 + g_lab->_utils->svgaCord(1), 0, 0, false, false, true, true, g_lab->_utils->vgaScaleX(25) + g_lab->_utils->svgaCord(15), g_lab->_utils->vgaScaleY(50), g_lab->_utils->vgaScaleX(295) - g_lab->_utils->svgaCord(15), g_lab->_utils->vgaScaleY(148), ntext);
-	g_lab->_graphics->setPalette(g_lab->_anim->_diffPalette, 256);
+	_graphics->flowText(noteFont, -2 + _utils->svgaCord(1), 0, 0, false, false, true, true, _utils->vgaScaleX(25) + _utils->svgaCord(15), _utils->vgaScaleY(50), _utils->vgaScaleX(295) - _utils->svgaCord(15), _utils->vgaScaleY(148), ntext);
+	_graphics->setPalette(_anim->_diffPalette, 256);
 
-	g_lab->_graphics->closeFont(noteFont);
+	_graphics->closeFont(noteFont);
 	delete[] ntext;
 }
 
@@ -114,34 +114,34 @@ void LabEngine::doWestPaper() {
 	int32 FileLen, CharsPrinted;
 	uint16 y = 268;
 
-	paperFont = g_lab->_resource->getFont("P:News22.fon");
-	ntext = g_lab->_resource->getText("Lab:Rooms/Date");
-	g_lab->_graphics->flowText(paperFont, 0, 0, 0, false, true, false, true, g_lab->_utils->vgaScaleX(57), g_lab->_utils->vgaScaleY(77) + g_lab->_utils->svgaCord(2), g_lab->_utils->vgaScaleX(262), g_lab->_utils->vgaScaleY(91), ntext);
-	g_lab->_graphics->closeFont(paperFont);
+	paperFont = _resource->getFont("P:News22.fon");
+	ntext = _resource->getText("Lab:Rooms/Date");
+	_graphics->flowText(paperFont, 0, 0, 0, false, true, false, true, _utils->vgaScaleX(57), _utils->vgaScaleY(77) + _utils->svgaCord(2), _utils->vgaScaleX(262), _utils->vgaScaleY(91), ntext);
+	_graphics->closeFont(paperFont);
 	delete[] ntext;
 
-	paperFont = g_lab->_resource->getFont("P:News32.fon");
-	ntext = g_lab->_resource->getText("Lab:Rooms/Headline");
+	paperFont = _resource->getFont("P:News32.fon");
+	ntext = _resource->getText("Lab:Rooms/Headline");
 	FileLen = strlen(ntext) - 1;
-	CharsPrinted = g_lab->_graphics->flowText(paperFont, -8, 0, 0, false, true, false, true, g_lab->_utils->vgaScaleX(57), g_lab->_utils->vgaScaleY(86) - g_lab->_utils->svgaCord(2), g_lab->_utils->vgaScaleX(262), g_lab->_utils->vgaScaleY(118), ntext);
+	CharsPrinted = _graphics->flowText(paperFont, -8, 0, 0, false, true, false, true, _utils->vgaScaleX(57), _utils->vgaScaleY(86) - _utils->svgaCord(2), _utils->vgaScaleX(262), _utils->vgaScaleY(118), ntext);
 	if (CharsPrinted < FileLen) {
-		y = 130 - g_lab->_utils->svgaCord(5);
-		g_lab->_graphics->flowText(paperFont, -8 - g_lab->_utils->svgaCord(1), 0, 0, false, true, false, true, g_lab->_utils->vgaScaleX(57), g_lab->_utils->vgaScaleY(86) - g_lab->_utils->svgaCord(2), g_lab->_utils->vgaScaleX(262), g_lab->_utils->vgaScaleY(132), ntext);
+		y = 130 - _utils->svgaCord(5);
+		_graphics->flowText(paperFont, -8 - _utils->svgaCord(1), 0, 0, false, true, false, true, _utils->vgaScaleX(57), _utils->vgaScaleY(86) - _utils->svgaCord(2), _utils->vgaScaleX(262), _utils->vgaScaleY(132), ntext);
 	} else
-		y = 115 - g_lab->_utils->svgaCord(5);
-	g_lab->_graphics->closeFont(paperFont);
+		y = 115 - _utils->svgaCord(5);
+	_graphics->closeFont(paperFont);
 	delete[] ntext;
 
-	paperFont = g_lab->_resource->getFont("P:Note.fon");
-	ntext = g_lab->_resource->getText("Lab:Rooms/Col1");
-	CharsPrinted = g_lab->_graphics->flowTextScaled(paperFont, -4, 0, 0, false, false, false, true, 45, y, 158, 148, ntext);
+	paperFont = _resource->getFont("P:Note.fon");
+	ntext = _resource->getText("Lab:Rooms/Col1");
+	CharsPrinted = _graphics->flowTextScaled(paperFont, -4, 0, 0, false, false, false, true, 45, y, 158, 148, ntext);
 	delete[] ntext;
-	ntext = g_lab->_resource->getText("Lab:Rooms/Col2");
-	CharsPrinted = g_lab->_graphics->flowTextScaled(paperFont, -4, 0, 0, false, false, false, true, 162, y, 275, 148, ntext);
+	ntext = _resource->getText("Lab:Rooms/Col2");
+	CharsPrinted = _graphics->flowTextScaled(paperFont, -4, 0, 0, false, false, false, true, 162, y, 275, 148, ntext);
 	delete[] ntext;
-	g_lab->_graphics->closeFont(paperFont);
+	_graphics->closeFont(paperFont);
 
-	g_lab->_graphics->setPalette(g_lab->_anim->_diffPalette, 256);
+	_graphics->setPalette(_anim->_diffPalette, 256);
 }
 
 /**
@@ -151,15 +151,15 @@ void LabEngine::loadJournalData() {
 	char filename[20];
 	bool bridge, dirty, news, clean;
 
-	journalFont = g_lab->_resource->getFont("P:Journal.fon");
+	journalFont = _resource->getFont("P:Journal.fon");
 
-	g_lab->_music->updateMusic();
+	_music->updateMusic();
 
 	strcpy(filename, "Lab:Rooms/j0");
-	bridge = g_lab->_conditions->in(BRIDGE0) || g_lab->_conditions->in(BRIDGE1);
-	dirty  = g_lab->_conditions->in(DIRTY);
-	news   = !g_lab->_conditions->in(NONEWS);
-	clean  = !g_lab->_conditions->in(NOCLEAN);
+	bridge = _conditions->in(BRIDGE0) || _conditions->in(BRIDGE1);
+	dirty  = _conditions->in(DIRTY);
+	news   = !_conditions->in(NONEWS);
+	clean  = !_conditions->in(NOCLEAN);
 
 	if (bridge && clean && news)
 		filename[11] = '8';
@@ -180,11 +180,11 @@ void LabEngine::loadJournalData() {
 	else if (bridge)
 		filename[11] = '1';
 
-	journaltext = g_lab->_resource->getText(filename);
-	journaltexttitle = g_lab->_resource->getText("Lab:Rooms/jt");
+	journaltext = _resource->getText(filename);
+	journaltexttitle = _resource->getText("Lab:Rooms/jt");
 
-	Common::File *journalFile = g_lab->_resource->openDataFile("P:JImage");
-	Utils *utils = g_lab->_utils;
+	Common::File *journalFile = _resource->openDataFile("P:JImage");
+	Utils *utils = _utils;
 	_journalGadgetList.push_back(createButton( 80, utils->vgaScaleY(162) + utils->svgaCord(1), 0, VKEY_LTARROW, new Image(journalFile), new Image(journalFile)));	// back
 	_journalGadgetList.push_back(createButton(144, utils->vgaScaleY(164) - utils->svgaCord(1), 1, VKEY_RTARROW, new Image(journalFile), new Image(journalFile)));	// foward
 	_journalGadgetList.push_back(createButton(194, utils->vgaScaleY(162) + utils->svgaCord(1), 2,            0, new Image(journalFile), new Image(journalFile)));	// cancel
@@ -287,14 +287,14 @@ void LabEngine::drawJournal(uint16 wipenum, bool needFade) {
 	if (needFade)
 		_graphics->fade(true, 0);
 
-	g_lab->_anim->_noPalChange = true;
+	_anim->_noPalChange = true;
 	JBackImage._imageData = _graphics->readPictToMem("P:Journal.pic", _graphics->_screenWidth, _graphics->_screenHeight);
 	GotBackImage = true;
 
 	eatMessages();
 	_event->mouseShow();
 
-	g_lab->_anim->_noPalChange = false;
+	_anim->_noPalChange = false;
 }
 
 /**
@@ -369,7 +369,7 @@ void LabEngine::doJournal() {
 	_event->mouseHide();
 
 	freeButtonList(&_journalGadgetList);
-	g_lab->_graphics->closeFont(journalFont);
+	_graphics->closeFont(journalFont);
 
 	ScreenImage._imageData = _graphics->getCurrentDrawingBuffer();
 
@@ -395,7 +395,7 @@ void LabEngine::drawMonText(char *text, TextFont *monitorFont, uint16 x1, uint16
 		numlines += (*text - '0');
 		text += 2;
 
-		fheight = g_lab->_graphics->textHeight(monitorFont);
+		fheight = _graphics->textHeight(monitorFont);
 		x1 = MonButton->_width + _utils->vgaScaleX(3);
 		MonGadHeight = MonButton->_height + _utils->vgaScaleY(3);
 
@@ -465,7 +465,7 @@ void LabEngine::processMonitor(char *ntext, TextFont *monitorFont, bool isintera
 				monitorPage      = 0;
 				TextFileName = Test;
 
-				ntext = g_lab->_resource->getText(TextFileName);
+				ntext = _resource->getText(TextFileName);
 				_graphics->fade(false, 0);
 				drawMonText(ntext, monitorFont, x1, y1, x2, y2, isinteractive);
 				_graphics->fade(true, 0);
@@ -491,20 +491,20 @@ void LabEngine::processMonitor(char *ntext, TextFont *monitorFont, bool isintera
 				return;
 
 			else if ((msgClass == MOUSEBUTTONS) && (IEQUALIFIER_LEFTBUTTON & qualifier)) {
-				if ((mouseY >= g_lab->_utils->vgaScaleY(171)) && (mouseY <= g_lab->_utils->vgaScaleY(200))) {
-					if ((mouseX >= g_lab->_utils->vgaScaleX(259)) && (mouseX <= g_lab->_utils->vgaScaleX(289))) {
+				if ((mouseY >= _utils->vgaScaleY(171)) && (mouseY <= _utils->vgaScaleY(200))) {
+					if ((mouseX >= _utils->vgaScaleX(259)) && (mouseX <= _utils->vgaScaleX(289))) {
 						if (!lastpage) {
 							monitorPage += 1;
 							drawMonText(ntext, monitorFont, x1, y1, x2, y2, isinteractive);
 						}
-					} else if ((mouseX >= g_lab->_utils->vgaScaleX(0)) && (mouseX <= g_lab->_utils->vgaScaleX(31))) {
+					} else if ((mouseX >= _utils->vgaScaleX(0)) && (mouseX <= _utils->vgaScaleX(31))) {
 						return;
-					} else if ((mouseX >= g_lab->_utils->vgaScaleX(290)) && (mouseX <= g_lab->_utils->vgaScaleX(320))) {
+					} else if ((mouseX >= _utils->vgaScaleX(290)) && (mouseX <= _utils->vgaScaleX(320))) {
 						if (monitorPage >= 1) {
 							monitorPage -= 1;
 							drawMonText(ntext, monitorFont, x1, y1, x2, y2, isinteractive);
 						}
-					} else if ((mouseX >= g_lab->_utils->vgaScaleX(31)) && (mouseX <= g_lab->_utils->vgaScaleX(59))) {
+					} else if ((mouseX >= _utils->vgaScaleX(31)) && (mouseX <= _utils->vgaScaleX(59))) {
 						if (isinteractive) {
 							monitorPage = 0;
 
@@ -558,7 +558,7 @@ void LabEngine::doMonitor(char *background, char *textfile, bool isinteractive, 
 	_graphics->FadePalette = hipal;
 
 	TextFont *monitorFont = _resource->getFont("P:Map.fon");
-	Common::File *buttonFile = g_lab->_resource->openDataFile("P:MonImage");
+	Common::File *buttonFile = _resource->openDataFile("P:MonImage");
 	MonButton = new Image(buttonFile);
 	delete buttonFile;
 
@@ -571,7 +571,7 @@ void LabEngine::doMonitor(char *background, char *textfile, bool isinteractive, 
 	_graphics->fade(false, 0);
 	_event->mouseHide();
 	delete[] ntext;
-	g_lab->_graphics->closeFont(monitorFont);
+	_graphics->closeFont(monitorFont);
 
 	_graphics->setAPen(0);
 	_graphics->rectFill(0, 0, _graphics->_screenWidth - 1, _graphics->_screenHeight - 1);

@@ -75,7 +75,7 @@ TextFont *Resource::getFont(const char *fileName) {
 char *Resource::getText(const char *fileName) {
 	Common::File *dataFile = openDataFile(fileName);
 
-	g_lab->_music->updateMusic();
+	_vm->_music->updateMusic();
 
 	uint32 count = dataFile->size();
 	byte *buffer = new byte[count];
@@ -155,7 +155,7 @@ Common::String Resource::translateFileName(Common::String filename) {
 	Common::String fileNameStrFinal;
 
 	if (filename.hasPrefix("P:")) {
-		if (g_lab->_isHiRes)
+		if (_vm->_isHiRes)
 			fileNameStrFinal = "GAME/SPICT/";
 		else
 			fileNameStrFinal = "GAME/PICT/";
