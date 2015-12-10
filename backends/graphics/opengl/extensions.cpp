@@ -22,25 +22,30 @@
 
 #include "backends/graphics/opengl/extensions.h"
 #include "backends/graphics/opengl/opengl-sys.h"
+#include "backends/graphics/opengl/opengl-graphics.h"
 
 #include "common/tokenizer.h"
 
 namespace OpenGL {
 
-bool g_extNPOTSupported = false;
+void ExtensionsDesc::reset() {
+	NPOTSupported = false;
+}
 
-void initializeGLExtensions() {
+ExtensionsDesc g_extensions;
+
+void OpenGLGraphicsManager::initializeGLExtensions() {
 	const char *extString = (const char *)glGetString(GL_EXTENSIONS);
 
 	// Initialize default state.
-	g_extNPOTSupported = false;
+	g_extensions.reset();
 
 	Common::StringTokenizer tokenizer(extString, " ");
 	while (!tokenizer.empty()) {
 		Common::String token = tokenizer.nextToken();
 
 		if (token == "GL_ARB_texture_non_power_of_two") {
-			g_extNPOTSupported = true;
+			g_extensions.NPOTSupported = true;
 		}
 	}
 }

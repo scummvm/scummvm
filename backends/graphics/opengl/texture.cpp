@@ -105,7 +105,7 @@ void Texture::enableLinearFiltering(bool enable) {
 
 void Texture::allocate(uint width, uint height) {
 	uint texWidth = width, texHeight = height;
-	if (!g_extNPOTSupported) {
+	if (!g_extensions.NPOTSupported) {
 		texWidth  = nextHigher2(texWidth);
 		texHeight = nextHigher2(texHeight);
 	}

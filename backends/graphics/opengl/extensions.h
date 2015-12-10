@@ -26,15 +26,28 @@
 namespace OpenGL {
 
 /**
- * Checks for availability of extensions we want to use and initializes them
- * when available.
+ * Description structure of all available extensions.
+ *
+ * This includes information whether extensions we are interested in is
+ * available or not. If extensions we are interested in add additional
+ * functions, we keep function pointers around in here too.
  */
-void initializeGLExtensions();
+struct ExtensionsDesc {
+	/**
+	 * Reset extension state.
+	 *
+	 * This marks all extensions as unavailable.
+	 */
+	void reset();
+
+	/** Whether GL_ARB_texture_non_power_of_two is available or not. */
+	bool NPOTSupported;
+};
 
 /**
- * Whether non power of two textures are supported
+ * Description of all available extensions.
  */
-extern bool g_extNPOTSupported;
+extern ExtensionsDesc g_extensions;
 
 } // End of namespace OpenGL
 

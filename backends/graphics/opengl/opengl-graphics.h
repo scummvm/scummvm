@@ -281,6 +281,12 @@ private:
 	//
 
 	/**
+	 * Checks for availability of extensions we want to use and initializes them
+	 * when available.
+	 */
+	void initializeGLExtensions();
+
+	/**
 	 * Try to determine the internal parameters for a given pixel format.
 	 *
 	 * @return true when the format can be used, false otherwise.
