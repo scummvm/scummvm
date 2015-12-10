@@ -283,12 +283,14 @@ void DisplayMan::doTransWipe(CloseDataPtr *closePtrList, char *filename) {
 	else
 		_vm->_curFileName = _vm->getPictName(closePtrList);
 
-	byte *BitMapMem = readPictToMem(_vm->_curFileName, _screenWidth, lastY + 5);
+	byte *bitMapBuffer = new byte[_screenWidth * (lastY + 5)];
+	readPict(_vm->_curFileName, true, false, bitMapBuffer, lastY + 5);
+
 	setPalette(_vm->_anim->_diffPalette, 256);
 
 	imSource._width = _screenWidth;
 	imSource._height = lastY;
-	imSource._imageData = BitMapMem;
+	imSource._imageData = bitMapBuffer;
 
 	imDest._width = _screenWidth;
 	imDest._height = _screenHeight;
@@ -319,6 +321,8 @@ void DisplayMan::doTransWipe(CloseDataPtr *closePtrList, char *filename) {
 			}	// while
 		}	// for i
 	}	// for j
+
+	delete[] bitMapBuffer;
 }
 
 /**

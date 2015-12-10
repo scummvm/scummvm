@@ -51,7 +51,7 @@ static char *journaltext, *journaltexttitle;
 static uint16 JPage = 0;
 static bool lastpage = false;
 static Image JBackImage, ScreenImage;
-static bool GotBackImage = false;
+static byte *_blankJournal;
 static uint16 monitorPage;
 static const char *TextFileName;
 
@@ -67,16 +67,11 @@ Image *MonButton;
 #define NOCLEAN     152
 
 
-static byte *loadBackPict(const char *fileName, bool tomem) {
-	byte *res = nullptr;
-
+static void loadBackPict(const char *fileName) {
 	g_lab->_graphics->FadePalette = hipal;
-	g_lab->_anim->_noPalChange = true;
 
-	if (tomem)
-		res = g_lab->_graphics->readPictToMem(fileName, g_lab->_graphics->_screenWidth, g_lab->_graphics->_screenHeight);
-	else
-		g_lab->_graphics->readPict(fileName, true);
+	g_lab->_anim->_noPalChange = true;
+	g_lab->_graphics->readPict(fileName, true);
 
 	for (uint16 i = 0; i < 16; i++) {
 		hipal[i] = ((g_lab->_anim->_diffPalette[i * 3] >> 2) << 8) +
@@ -85,8 +80,6 @@ static byte *loadBackPict(const char *fileName, bool tomem) {
 	}
 
 	g_lab->_anim->_noPalChange = false;
-
-	return res;
 }
 
 /**
@@ -184,12 +177,21 @@ void LabEngine::loadJournalData() {
 
 	Common::File *journalFile = _resource->openDataFile("P:JImage");
 	Utils *utils = _utils;
-
 	_journalGadgetList.push_back(createButton( 80, utils->vgaScaleY(162) + utils->svgaCord(1), 0, VKEY_LTARROW, new Image(journalFile), new Image(journalFile)));	// back
-	_journalGadgetList.push_back(createButton(144, utils->vgaScaleY(164) - utils->svgaCord(1), 1, VKEY_RTARROW, new Image(journalFile), new Image(journalFile)));	// foward
 	_journalGadgetList.push_back(createButton(194, utils->vgaScaleY(162) + utils->svgaCord(1), 2,            0, new Image(journalFile), new Image(journalFile)));	// cancel
-
+	_journalGadgetList.push_back(createButton(144, utils->vgaScaleY(164) - utils->svgaCord(1), 1, VKEY_RTARROW, new Image(journalFile), new Image(journalFile)));	// forward
 	delete journalFile;
+
+	_anim->_noPalChange = true;
+	JBackImage._imageData = new byte[_graphics->_screenWidth * _graphics->_screenHeight];
+	_graphics->readPict("P:Journal.pic", true, false, JBackImage._imageData);
+	_anim->_noPalChange = false;
+
+	// Keep a copy of the blank journal
+	_blankJournal = new byte[_graphics->_screenWidth * _graphics->_screenHeight];
+	memcpy(_blankJournal, JBackImage._imageData, _graphics->_screenWidth * _graphics->_screenHeight);
+
+	ScreenImage._imageData = _graphics->getCurrentDrawingBuffer();
 }
 
 /**
@@ -256,15 +258,11 @@ static void turnPage(bool fromLeft) {
  */
 void LabEngine::drawJournal(uint16 wipenum, bool needFade) {
 	_event->mouseHide();
-
 	_music->updateMusic();
-
-	if (!GotBackImage)
-		JBackImage._imageData = loadBackPict("P:Journal.pic", true);
-
 	drawJournalText();
 
-	ScreenImage._imageData = _graphics->getCurrentDrawingBuffer();
+	// TODO: This is only called to set the palette correctly. Refactor, if possible
+	loadBackPict("P:Journal.pic");
 
 	if (wipenum == 0)
 		JBackImage.blitBitmap(0, 0, &ScreenImage, 0, 0, _graphics->_screenWidth, _graphics->_screenHeight, false);
@@ -272,7 +270,7 @@ void LabEngine::drawJournal(uint16 wipenum, bool needFade) {
 		turnPage((bool)(wipenum == 1));
 
 	Gadget *backGadget = _event->getGadget(0);
-	Gadget *forwardGadget = _event->getGadget(1);
+	Gadget *forwardGadget = _event->getGadget(2);
 
 	if (JPage == 0)
 		disableGadget(backGadget, 15);
@@ -284,18 +282,14 @@ void LabEngine::drawJournal(uint16 wipenum, bool needFade) {
 	else
 		enableGadget(forwardGadget);
 
-
 	if (needFade)
 		_graphics->fade(true, 0);
 
-	_anim->_noPalChange = true;
-	JBackImage._imageData = _graphics->readPictToMem("P:Journal.pic", _graphics->_screenWidth, _graphics->_screenHeight);
-	GotBackImage = true;
+	// Reset the journal background, so that all the text that has been blitted on it is erased
+	memcpy(JBackImage._imageData, _blankJournal, _graphics->_screenWidth * _graphics->_screenHeight);
 
 	eatMessages();
 	_event->mouseShow();
-
-	_anim->_noPalChange = false;
 }
 
 /**
@@ -343,7 +337,6 @@ void LabEngine::doJournal() {
 	_graphics->blackAllScreen();
 
 	lastpage    = false;
-	GotBackImage = false;
 
 	JBackImage._width = _graphics->_screenWidth;
 	JBackImage._height = _graphics->_screenHeight;
@@ -355,15 +348,16 @@ void LabEngine::doJournal() {
 	_music->updateMusic();
 	loadJournalData();
 
-	drawJournal(0, true);
-
 	_event->attachGadgetList(&_journalGadgetList);
+	drawJournal(0, true);
 	_event->mouseShow();
 	processJournal();
 	_event->attachGadgetList(NULL);
 	_graphics->fade(false, 0);
 	_event->mouseHide();
 
+	delete[] _blankJournal;
+	delete[] JBackImage._imageData;
 	freeButtonList(&_journalGadgetList);
 	_graphics->closeFont(journalFont);
 
@@ -556,7 +550,7 @@ void LabEngine::doMonitor(char *background, char *textfile, bool isinteractive, 
 	delete buttonFile;
 
 	ntext = _resource->getText(textfile);
-	loadBackPict(background, false);
+	loadBackPict(background);
 	drawMonText(ntext, monitorFont, x1, y1, x2, y2, isinteractive);
 	_event->mouseShow();
 	_graphics->fade(true, 0);

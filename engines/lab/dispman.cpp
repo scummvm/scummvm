@@ -80,9 +80,9 @@ void DisplayMan::loadPict(const char *filename) {
 }
 
 /**
- * Reads in a picture into the dest bitmap.
+ * Reads in a picture into the display bitmap.
  */
-void DisplayMan::readPict(const char *filename, bool playOnce, bool onlyDiffData) {
+void DisplayMan::readPict(const char *filename, bool playOnce, bool onlyDiffData, byte *memoryBuffer, uint16 maxHeight) {
 	_vm->_anim->stopDiff();
 
 	loadPict(filename);
@@ -92,38 +92,13 @@ void DisplayMan::readPict(const char *filename, bool playOnce, bool onlyDiffData
 	if (!_vm->_music->_doNotFilestopSoundEffect)
 		_vm->_music->stopSoundEffect();
 
-	_dispBitMap->_bytesPerRow = _screenWidth;
-	_dispBitMap->_rows        = _screenHeight;
-	_dispBitMap->_drawOnScreen = true;
+	_dispBitMap->_bytesPerRow  = _screenWidth;
+	_dispBitMap->_rows         = (maxHeight > 0) ? maxHeight : _screenHeight;
+	_dispBitMap->_drawOnScreen = (memoryBuffer == nullptr);
+	if (memoryBuffer)
+		_dispBitMap->_planes[0] = memoryBuffer;
 
 	_vm->_anim->readDiff(_curBitmap, playOnce, onlyDiffData);
-}
-
-/**
- * Reads in a picture into buffer memory.
- */
-byte *DisplayMan::readPictToMem(const char *filename, uint16 width, uint16 height) {
-	_vm->_anim->stopDiff();
-
-	loadPict(filename);
-
-	_vm->_music->updateMusic();
-
-	if (!_vm->_music->_doNotFilestopSoundEffect)
-		_vm->_music->stopSoundEffect();
-
-	_dispBitMap->_bytesPerRow = width;
-	_dispBitMap->_rows = height;
-	_dispBitMap->_drawOnScreen = false;
-	_dispBitMap->_planes[0] = _curBitmap;
-	_dispBitMap->_planes[1] = _dispBitMap->_planes[0] + 0x10000;
-	_dispBitMap->_planes[2] = _dispBitMap->_planes[1] + 0x10000;
-	_dispBitMap->_planes[3] = _dispBitMap->_planes[2] + 0x10000;
-	_dispBitMap->_planes[4] = _dispBitMap->_planes[3] + 0x10000;
-
-	_vm->_anim->readDiff(_curBitmap, true);
-
-	return _curBitmap;
 }
 
 void DisplayMan::freePict() {
