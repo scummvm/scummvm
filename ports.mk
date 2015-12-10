@@ -136,6 +136,30 @@ ios7bundle: ios7
 			print "\t<array>";\
 			print "\t\t<dict>";\
 			print "\t\t\t<key>UILaunchImageMinimumOSVersion</key>";\
+			print "\t\t\t<string>8.0</string>";\
+			print "\t\t\t<key>UILaunchImageName</key>";\
+			print "\t\t\t<string>LaunchImage-800-Portrait-736h</string>";\
+			print "\t\t\t<key>UILaunchImageOrientation</key>";\
+			print "\t\t\t<string>Portrait</string>";\
+			print "\t\t\t<key>UILaunchImageSize</key>";\
+			print "\t\t\t<string>{414, 736}</string>";\
+			print "\t\t\t<key>UILaunchImageMinimumOSVersion</key>";\
+			print "\t\t\t<string>8.0</string>";\
+			print "\t\t\t<key>UILaunchImageName</key>";\
+			print "\t\t\t<string>LaunchImage-800-Landscape-736h</string>";\
+			print "\t\t\t<key>UILaunchImageOrientation</key>";\
+			print "\t\t\t<string>Landscape</string>";\
+			print "\t\t\t<key>UILaunchImageSize</key>";\
+			print "\t\t\t<string>{414, 736}</string>";\
+			print "\t\t\t<key>UILaunchImageMinimumOSVersion</key>";\
+			print "\t\t\t<string>8.0</string>";\
+			print "\t\t\t<key>UILaunchImageName</key>";\
+			print "\t\t\t<string>LaunchImage-800-667h</string>";\
+			print "\t\t\t<key>UILaunchImageOrientation</key>";\
+			print "\t\t\t<string>Portrait</string>";\
+			print "\t\t\t<key>UILaunchImageSize</key>";\
+			print "\t\t\t<string>{375, 667}</string>";\
+			print "\t\t\t<key>UILaunchImageMinimumOSVersion</key>";\
 			print "\t\t\t<string>7.0</string>";\
 			print "\t\t\t<key>UILaunchImageName</key>";\
 			print "\t\t\t<string>LaunchImage-700-568h</string>";\
@@ -196,6 +220,9 @@ endif
 	cp $(srcdir)/dists/ios7/Images.xcassets/LaunchImage.launchimage/ScummVM-splash-1024x768.png $(bundle_name)/LaunchImage-700-Landscape~ipad.png
 	cp $(srcdir)/dists/ios7/Images.xcassets/LaunchImage.launchimage/ScummVM-splash-1536x2048.png $(bundle_name)/LaunchImage-700-Portrait@2x~ipad.png
 	cp $(srcdir)/dists/ios7/Images.xcassets/LaunchImage.launchimage/ScummVM-splash-768x1024.png $(bundle_name)/LaunchImage-700-Portrait~ipad.png
+	cp $(srcdir)/dists/ios7/Images.xcassets/LaunchImage.launchimage/ScummVM-splash-1242x2208.png $(bundle_name)/LaunchImage-800-Portrait-736h@3x.png
+	cp $(srcdir)/dists/ios7/Images.xcassets/LaunchImage.launchimage/ScummVM-splash-2208x1242.png $(bundle_name)/LaunchImage-800-Landscape-736h@3x.png
+	cp $(srcdir)/dists/ios7/Images.xcassets/LaunchImage.launchimage/ScummVM-splash-750x1334.png $(bundle_name)/LaunchImage-800-667h@2x.png
 
 # Location of static libs for the iPhone
 ifneq ($(BACKEND), iphone)

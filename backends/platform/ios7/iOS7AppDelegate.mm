@@ -30,7 +30,7 @@
 }
 
 - (void)applicationDidFinishLaunching:(UIApplication *)application {
-	CGRect  rect = [[UIScreen mainScreen] bounds];
+	CGRect rect = [[UIScreen mainScreen] bounds];
 
 	// Create the directory for savegames
 #ifdef IPHONE_OFFICIAL
@@ -63,11 +63,11 @@
 	[NSThread detachNewThreadSelector:@selector(mainLoop:) toTarget:self withObject:nil];
 }
 
-- (void)applicationDidEnterBackground:(UIApplication *)application {
+- (void)applicationWillResignActive:(UIApplication *)application {
 	[_view applicationSuspend];
 }
 
-- (void)applicationWillEnterForeground:(UIApplication *)application {
+- (void)applicationDidBecomeActive:(UIApplication *)application {
 	[_view applicationResume];
 }
 

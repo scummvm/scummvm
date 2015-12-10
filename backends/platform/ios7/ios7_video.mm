@@ -380,8 +380,7 @@ uint getSizeNextPOT(uint size) {
 	g_fullWidth = (int)MAX(frame.size.width, frame.size.height);
 	g_fullHeight = (int)MIN(frame.size.width, frame.size.height);
 
-	_contentScaleFactor = [[UIScreen mainScreen] scale];
-	[self setContentScaleFactor:_contentScaleFactor];
+	[self setContentScaleFactor:[[UIScreen mainScreen] scale]];
 
 	_scalerMemorySrc = NULL;
 	_scalerMemoryDst = NULL;
@@ -831,8 +830,8 @@ uint getSizeNextPOT(uint size) {
 - (bool)getMouseCoords:(CGPoint)point eventX:(int *)x eventY:(int *)y {
 	// We scale the input according to our scale factor to get actual screen
 	// coordinates.
-	point.x *= _contentScaleFactor;
-	point.y *= _contentScaleFactor;
+	point.x *= self.contentScaleFactor;
+	point.y *= self.contentScaleFactor;
 
 	CGRect *area;
 	int width, height, offsetY;
