@@ -515,7 +515,7 @@ uint getSizeNextPOT(uint size) {
 		memset(_scalerMemorySrc, 0, _videoContext.screenTexture.pitch * 2);
 		// Copy original buffer
 		memcpy(_scalerMemorySrc + _videoContext.screenTexture.pitch * 2, _videoContext.screenTexture.getPixels(), _videoContext.screenTexture.pitch * _videoContext.screenTexture.h);
-		// Clear two linex after
+		// Clear two lines after
 		memset(_scalerMemorySrc + _videoContext.screenTexture.pitch * (2 + _videoContext.screenTexture.h), 0, _videoContext.screenTexture.pitch * 2);
 		// Apply scaler
 		_scaler(_scalerMemorySrc + _videoContext.screenTexture.pitch * 2,
