@@ -109,35 +109,35 @@ void LabEngine::doNotes() {
  * OpenHiRes already called.
  */
 void LabEngine::doWestPaper() {
-	char *ntext;
-	TextFont *paperFont;
-	int32 FileLen, CharsPrinted;
-	uint16 y = 268;
-
-	paperFont = _resource->getFont("P:News22.fon");
-	ntext = _resource->getText("Lab:Rooms/Date");
+	TextFont *paperFont = _resource->getFont("P:News22.fon");
+	char *ntext = _resource->getText("Lab:Rooms/Date");
 	_graphics->flowText(paperFont, 0, 0, 0, false, true, false, true, _utils->vgaScaleX(57), _utils->vgaScaleY(77) + _utils->svgaCord(2), _utils->vgaScaleX(262), _utils->vgaScaleY(91), ntext);
 	_graphics->closeFont(paperFont);
 	delete[] ntext;
 
 	paperFont = _resource->getFont("P:News32.fon");
 	ntext = _resource->getText("Lab:Rooms/Headline");
-	FileLen = strlen(ntext) - 1;
-	CharsPrinted = _graphics->flowText(paperFont, -8, 0, 0, false, true, false, true, _utils->vgaScaleX(57), _utils->vgaScaleY(86) - _utils->svgaCord(2), _utils->vgaScaleX(262), _utils->vgaScaleY(118), ntext);
-	if (CharsPrinted < FileLen) {
+
+	int fileLen = strlen(ntext) - 1;
+	int charsPrinted = _graphics->flowText(paperFont, -8, 0, 0, false, true, false, true, _utils->vgaScaleX(57), _utils->vgaScaleY(86) - _utils->svgaCord(2), _utils->vgaScaleX(262), _utils->vgaScaleY(118), ntext);
+
+	uint16 y;
+
+	if (charsPrinted < fileLen) {
 		y = 130 - _utils->svgaCord(5);
 		_graphics->flowText(paperFont, -8 - _utils->svgaCord(1), 0, 0, false, true, false, true, _utils->vgaScaleX(57), _utils->vgaScaleY(86) - _utils->svgaCord(2), _utils->vgaScaleX(262), _utils->vgaScaleY(132), ntext);
 	} else
 		y = 115 - _utils->svgaCord(5);
+
 	_graphics->closeFont(paperFont);
 	delete[] ntext;
 
 	paperFont = _resource->getFont("P:Note.fon");
 	ntext = _resource->getText("Lab:Rooms/Col1");
-	CharsPrinted = _graphics->flowTextScaled(paperFont, -4, 0, 0, false, false, false, true, 45, y, 158, 148, ntext);
+	charsPrinted = _graphics->flowTextScaled(paperFont, -4, 0, 0, false, false, false, true, 45, y, 158, 148, ntext);
 	delete[] ntext;
 	ntext = _resource->getText("Lab:Rooms/Col2");
-	CharsPrinted = _graphics->flowTextScaled(paperFont, -4, 0, 0, false, false, false, true, 162, y, 275, 148, ntext);
+	charsPrinted = _graphics->flowTextScaled(paperFont, -4, 0, 0, false, false, false, true, 162, y, 275, 148, ntext);
 	delete[] ntext;
 	_graphics->closeFont(paperFont);
 
@@ -148,18 +148,17 @@ void LabEngine::doWestPaper() {
  * Loads in the data for the journal.
  */
 void LabEngine::loadJournalData() {
-	char filename[20];
-	bool bridge, dirty, news, clean;
-
 	journalFont = _resource->getFont("P:Journal.fon");
 
 	_music->updateMusic();
 
+	char filename[20];
 	strcpy(filename, "Lab:Rooms/j0");
-	bridge = _conditions->in(BRIDGE0) || _conditions->in(BRIDGE1);
-	dirty  = _conditions->in(DIRTY);
-	news   = !_conditions->in(NONEWS);
-	clean  = !_conditions->in(NOCLEAN);
+
+	bool bridge = _conditions->in(BRIDGE0) || _conditions->in(BRIDGE1);
+	bool dirty  = _conditions->in(DIRTY);
+	bool news   = !_conditions->in(NONEWS);
+	bool clean  = !_conditions->in(NOCLEAN);
 
 	if (bridge && clean && news)
 		filename[11] = '8';
@@ -185,9 +184,11 @@ void LabEngine::loadJournalData() {
 
 	Common::File *journalFile = _resource->openDataFile("P:JImage");
 	Utils *utils = _utils;
+
 	_journalGadgetList.push_back(createButton( 80, utils->vgaScaleY(162) + utils->svgaCord(1), 0, VKEY_LTARROW, new Image(journalFile), new Image(journalFile)));	// back
 	_journalGadgetList.push_back(createButton(144, utils->vgaScaleY(164) - utils->svgaCord(1), 1, VKEY_RTARROW, new Image(journalFile), new Image(journalFile)));	// foward
 	_journalGadgetList.push_back(createButton(194, utils->vgaScaleY(162) + utils->svgaCord(1), 2,            0, new Image(journalFile), new Image(journalFile)));	// cancel
+
 	delete journalFile;
 }
 
@@ -195,45 +196,45 @@ void LabEngine::loadJournalData() {
  * Draws the text to the back journal screen to the appropriate Page number
  */
 static void drawJournalText() {
-	uint16 DrawingToPage = 1;
-	int32 CharsDrawn    = 0L;
-	char *CurText = journaltext;
+	uint16 drawingToPage = 1;
+	int32 charsDrawn    = 0L;
+	char *curText = journaltext;
 
-	while (DrawingToPage < JPage) {
+	while (drawingToPage < JPage) {
 		g_lab->_music->updateMusic();
-		CurText = (char *)(journaltext + CharsDrawn);
-		CharsDrawn += g_lab->_graphics->flowTextScaled(journalFont, -2, 2, 0, false, false, false, false, 52, 32, 152, 148, CurText);
+		curText = (char *)(journaltext + charsDrawn);
+		charsDrawn += g_lab->_graphics->flowTextScaled(journalFont, -2, 2, 0, false, false, false, false, 52, 32, 152, 148, curText);
 
-		lastpage = (*CurText == 0);
+		lastpage = (*curText == 0);
 
 		if (lastpage)
-			JPage = (DrawingToPage / 2) * 2;
+			JPage = (drawingToPage / 2) * 2;
 		else
-			DrawingToPage++;
+			drawingToPage++;
 	}
 
 	if (JPage <= 1) {
-		CurText = journaltexttitle;
-		g_lab->_graphics->flowTextToMem(&JBackImage, journalFont, -2, 2, 0, false, true, true, true, g_lab->_utils->vgaScaleX(52), g_lab->_utils->vgaScaleY(32), g_lab->_utils->vgaScaleX(152), g_lab->_utils->vgaScaleY(148), CurText);
+		curText = journaltexttitle;
+		g_lab->_graphics->flowTextToMem(&JBackImage, journalFont, -2, 2, 0, false, true, true, true, g_lab->_utils->vgaScaleX(52), g_lab->_utils->vgaScaleY(32), g_lab->_utils->vgaScaleX(152), g_lab->_utils->vgaScaleY(148), curText);
 	} else {
-		CurText = (char *)(journaltext + CharsDrawn);
-		CharsDrawn += g_lab->_graphics->flowTextToMem(&JBackImage, journalFont, -2, 2, 0, false, false, false, true, g_lab->_utils->vgaScaleX(52), g_lab->_utils->vgaScaleY(32), g_lab->_utils->vgaScaleX(152), g_lab->_utils->vgaScaleY(148), CurText);
+		curText = (char *)(journaltext + charsDrawn);
+		charsDrawn += g_lab->_graphics->flowTextToMem(&JBackImage, journalFont, -2, 2, 0, false, false, false, true, g_lab->_utils->vgaScaleX(52), g_lab->_utils->vgaScaleY(32), g_lab->_utils->vgaScaleX(152), g_lab->_utils->vgaScaleY(148), curText);
 	}
 
 	g_lab->_music->updateMusic();
-	CurText = (char *)(journaltext + CharsDrawn);
-	lastpage = (*CurText == 0);
-	g_lab->_graphics->flowTextToMem(&JBackImage, journalFont, -2, 2, 0, false, false, false, true, g_lab->_utils->vgaScaleX(171), g_lab->_utils->vgaScaleY(32), g_lab->_utils->vgaScaleX(271), g_lab->_utils->vgaScaleY(148), CurText);
+	curText = (char *)(journaltext + charsDrawn);
+	lastpage = (*curText == 0);
+	g_lab->_graphics->flowTextToMem(&JBackImage, journalFont, -2, 2, 0, false, false, false, true, g_lab->_utils->vgaScaleX(171), g_lab->_utils->vgaScaleY(32), g_lab->_utils->vgaScaleX(271), g_lab->_utils->vgaScaleY(148), curText);
 
-	CurText = (char *)(journaltext + CharsDrawn);
-	lastpage = lastpage || (*CurText == 0);
+	curText = (char *)(journaltext + charsDrawn);
+	lastpage = lastpage || (*curText == 0);
 }
 
 /**
  * Does the turn page wipe.
  */
-static void turnPage(bool FromLeft) {
-	if (FromLeft) {
+static void turnPage(bool fromLeft) {
+	if (fromLeft) {
 		for (int i = 0; i < g_lab->_graphics->_screenWidth; i += 8) {
 			g_lab->_music->updateMusic();
 			g_lab->waitTOF();
@@ -301,35 +302,30 @@ void LabEngine::drawJournal(uint16 wipenum, bool needFade) {
  * Processes user input.
  */
 void LabEngine::processJournal() {
-	IntuiMessage *Msg;
-	uint32 Class;
-	uint16 Qualifier, GadID;
-
 	while (1) {
 		// Make sure we check the music at least after every message
 		_music->updateMusic();
-		Msg = getMsg();
+		IntuiMessage *msg = getMsg();
 
-		if (Msg == NULL) {
+		if (msg == NULL) {
 			_music->updateMusic();
 		} else {
-			Class     = Msg->_msgClass;
-			Qualifier = Msg->_qualifier;
-			GadID     = Msg->_code;
+			uint32 msgClass  = msg->_msgClass;
+			uint16 qualifier = msg->_qualifier;
+			uint16 gadID     = msg->_code;
 
-			if (((Class == MOUSEBUTTONS) && (IEQUALIFIER_RBUTTON & Qualifier)) ||
-				  ((Class == RAWKEY) && (GadID == 27)))
+			if (((msgClass == MOUSEBUTTONS) && (IEQUALIFIER_RBUTTON & qualifier)) ||
+				  ((msgClass == RAWKEY) && (gadID == 27)))
 				return;
-
-			else if (Class == GADGETUP) {
-				if (GadID == 0) {
+			else if (msgClass == GADGETUP) {
+				if (gadID == 0) {
 					if (JPage >= 2) {
 						JPage -= 2;
 						drawJournal(1, false);
 					}
-				} else if (GadID == 1) {
+				} else if (gadID == 1) {
 					return;
-				} else if (GadID == 2) {
+				} else if (gadID == 2) {
 					if (!lastpage) {
 						JPage += 2;
 						drawJournal(2, false);
@@ -382,9 +378,9 @@ void LabEngine::doJournal() {
  * Draws the text for the monitor.
  */
 void LabEngine::drawMonText(char *text, TextFont *monitorFont, uint16 x1, uint16 y1, uint16 x2, uint16 y2, bool isinteractive) {
-	uint16 DrawingToPage = 0, yspacing = 0, numlines, fheight;
-	int32 CharsDrawn    = 0L;
-	char *CurText = text;
+	uint16 drawingToPage = 0, yspacing = 0, numlines, fheight;
+	int32 charsDrawn    = 0L;
+	char *curText = text;
 
 	_event->mouseHide();
 
@@ -417,23 +413,23 @@ void LabEngine::drawMonText(char *text, TextFont *monitorFont, uint16 x1, uint16
 		_graphics->rectFill(x1, y1, x2, y2);
 	}
 
-	while (DrawingToPage < monitorPage) {
+	while (drawingToPage < monitorPage) {
 		_music->updateMusic();
-		CurText = (char *)(text + CharsDrawn);
-		CharsDrawn += _graphics->flowText(monitorFont, yspacing, 0, 0, false, false, false, false, x1, y1, x2, y2, CurText);
-		lastpage = (*CurText == 0);
+		curText = (char *)(text + charsDrawn);
+		charsDrawn += _graphics->flowText(monitorFont, yspacing, 0, 0, false, false, false, false, x1, y1, x2, y2, curText);
+		lastpage = (*curText == 0);
 
 		if (lastpage)
-			monitorPage = DrawingToPage;
+			monitorPage = drawingToPage;
 		else
-			DrawingToPage++;
+			drawingToPage++;
 	}
 
-	CurText = (char *)(text + CharsDrawn);
-	lastpage = (*CurText == 0);
-	CharsDrawn = _graphics->flowText(monitorFont, yspacing, 2, 0, false, false, false, true, x1, y1, x2, y2, CurText);
-	CurText += CharsDrawn;
-	lastpage = lastpage || (*CurText == 0);
+	curText = (char *)(text + charsDrawn);
+	lastpage = (*curText == 0);
+	charsDrawn = _graphics->flowText(monitorFont, yspacing, 2, 0, false, false, false, true, x1, y1, x2, y2, curText);
+	curText += charsDrawn;
+	lastpage = lastpage || (*curText == 0);
 
 	_event->mouseShow();
 }
@@ -442,10 +438,7 @@ void LabEngine::drawMonText(char *text, TextFont *monitorFont, uint16 x1, uint16
  * Processes user input.
  */
 void LabEngine::processMonitor(char *ntext, TextFont *monitorFont, bool isinteractive, uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
-	IntuiMessage *msg;
-	uint32 msgClass;
-	uint16 qualifier, code, mouseX, mouseY;
-	const char *Test = " ", *StartFileName = TextFileName;
+	const char *test = " ", *startFileName = TextFileName;
 	CloseDataPtr startClosePtr = _closeDataPtr, lastClosePtr[10];
 	uint16 depth = 0;
 
@@ -457,13 +450,13 @@ void LabEngine::processMonitor(char *ntext, TextFont *monitorFont, bool isintera
 				_closeDataPtr = startClosePtr;
 
 			if (_closeDataPtr == startClosePtr)
-				Test = StartFileName;
+				test = startFileName;
 			else
-				Test = _closeDataPtr->_graphicName;
+				test = _closeDataPtr->_graphicName;
 
-			if (strcmp(Test, TextFileName)) {
+			if (strcmp(test, TextFileName)) {
 				monitorPage      = 0;
-				TextFileName = Test;
+				TextFileName = test;
 
 				ntext = _resource->getText(TextFileName);
 				_graphics->fade(false, 0);
@@ -475,16 +468,16 @@ void LabEngine::processMonitor(char *ntext, TextFont *monitorFont, bool isintera
 
 		// Make sure we check the music at least after every message
 		_music->updateMusic();
-		msg = getMsg();
+		IntuiMessage *msg = getMsg();
 
 		if (msg == NULL) {
 			_music->updateMusic();
 		} else {
-			msgClass     = msg->_msgClass;
-			qualifier = msg->_qualifier;
-			mouseX    = msg->_mouseX;
-			mouseY    = msg->_mouseY;
-			code      = msg->_code;
+			uint32 msgClass  = msg->_msgClass;
+			uint16 qualifier = msg->_qualifier;
+			uint16 mouseX    = msg->_mouseX;
+			uint16 mouseY    = msg->_mouseY;
+			uint16 code      = msg->_code;
 
 			if (((msgClass == MOUSEBUTTONS) && (IEQUALIFIER_RBUTTON & qualifier)) ||
 				  ((msgClass == RAWKEY) && (code == 27)))
