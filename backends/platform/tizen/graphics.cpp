@@ -206,3 +206,7 @@ bool TizenGraphicsManager::loadVideoMode(uint requestedWidth, uint requestedHeig
 void TizenGraphicsManager::refreshScreen() {
 	eglSwapBuffers(_eglDisplay, _eglSurface);
 }
+
+void *TizenGraphicsManager::getProcAddress(const char *name) const {
+	return eglGetProcAddress(name);
+}

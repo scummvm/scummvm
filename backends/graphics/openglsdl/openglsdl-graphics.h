@@ -67,6 +67,8 @@ protected:
 	virtual bool loadVideoMode(uint requestedWidth, uint requestedHeight, const Graphics::PixelFormat &format);
 
 	virtual void refreshScreen();
+
+	virtual void *getProcAddress(const char *name) const;
 private:
 	bool setupMode(uint width, uint height);
 

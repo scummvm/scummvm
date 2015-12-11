@@ -54,4 +54,10 @@ using namespace Tizen::Graphics::Opengl;
 #include <GL/gl.h>
 #endif
 
+#ifdef SDL_BACKEND
+#define GLCALLCONV APIENTRY
+#else
+#define GLCALLCONV
+#endif
+
 #endif

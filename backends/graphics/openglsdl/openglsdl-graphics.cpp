@@ -305,6 +305,10 @@ void OpenGLSdlGraphicsManager::refreshScreen() {
 #endif
 }
 
+void *OpenGLSdlGraphicsManager::getProcAddress(const char *name) const {
+	return SDL_GL_GetProcAddress(name);
+}
+
 bool OpenGLSdlGraphicsManager::setupMode(uint width, uint height) {
 	// In case we request a fullscreen mode we will use the mode the user
 	// has chosen last time or the biggest mode available.

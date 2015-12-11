@@ -286,6 +286,21 @@ private:
 	 */
 	void initializeGLExtensions();
 
+protected:
+	/**
+	 * Query the address of an OpenGL function by name.
+	 *
+	 * This can only be used after a context has been created.
+	 * Please note that this function can return valid addresses even if the
+	 * OpenGL context does not support the function.
+	 *
+	 * @param name The name of the OpenGL function.
+	 * @return An function pointer for the requested OpenGL function or
+	 *         nullptr in case of failure.
+	 */
+	virtual void *getProcAddress(const char *name) const = 0;
+
+private:
 	/**
 	 * Try to determine the internal parameters for a given pixel format.
 	 *
