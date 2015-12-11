@@ -95,8 +95,9 @@ void BubbleBox::placeBubble1(const Common::String &msg) {
 
 void BubbleBox::calcBubble(const Common::String &msg) {
 	// Save points
-	Common::Point printOrg = _vm->_screen->_printOrg;
-	Common::Point printStart = _vm->_screen->_printStart;
+	Screen &screen = *_vm->_screen;
+	Common::Point printOrg = screen._printOrg;
+	Common::Point printStart = screen._printStart;
 
 	// Figure out maximum width allowed
 	if (_type == kBoxTypeFileDialog) {
@@ -114,15 +115,15 @@ void BubbleBox::calcBubble(const Common::String &msg) {
 	int width = 0;
 	bool lastLine;
 	do {
-		lastLine = _vm->_fonts._font2.getLine(s, _vm->_screen->_maxChars * 6, line, width);
+		lastLine = _vm->_fonts._font2.getLine(s, screen._maxChars * 6, line, width);
 		_vm->_fonts._printMaxX = MAX(width, _vm->_fonts._printMaxX);
 
-		_vm->_screen->_printOrg.y += 6;
-		_vm->_screen->_printOrg.x = _vm->_screen->_printStart.x;
+		screen._printOrg.y += 6;
+		screen._printOrg.x = screen._printStart.x;
 	} while (!lastLine);
 
 	if (_type == kBoxTypeFileDialog)
-		++_vm->_screen->_printOrg.y += 6;
+		++screen._printOrg.y += 6;
 
 	// Determine the width for the area
 	width = (((_vm->_fonts._printMaxX >> 4) + 1) << 4) + 5;
@@ -131,7 +132,7 @@ void BubbleBox::calcBubble(const Common::String &msg) {
 	bounds.setWidth(width);
 
 	// Determine the height for area
-	int y = _vm->_screen->_printOrg.y + 6;
+	int y = screen._printOrg.y + 6;
 	if (_type == kBoxTypeFileDialog)
 		y += 6;
 	int height = y - bounds.top;
@@ -140,6 +141,9 @@ void BubbleBox::calcBubble(const Common::String &msg) {
 	height -= (_type == kBoxTypeFileDialog) ? 30 : 24;
 	if (height >= 0)
 		bounds.setHeight(bounds.height() + 13 - (height % 13));
+
+	if (bounds.bottom > screen.h)
+		bounds.translate(0, screen.h - bounds.bottom);
 
 	// Add the new bounds to the bubbles list
 	_bubbles.push_back(bounds);
