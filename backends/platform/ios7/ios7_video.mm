@@ -304,6 +304,8 @@ uint getSizeNextPOT(uint size) {
 
 	glEnableVertexAttribArray(_positionSlot);
 	glEnableVertexAttribArray(_textureCoordSlot);
+
+	glUniform1i(_textureSlot, 0); printOpenGLError();
 }
 
 - (void)deleteShaders {
@@ -610,12 +612,11 @@ uint getSizeNextPOT(uint size) {
 - (void)updateMouseCursor {
 	[self updateMouseCursorScaling];
 
-	_mouseCoords[1].u = _mouseCoords[3].u = _videoContext.mouseWidth / (GLfloat)_videoContext.mouseTexture.w;
-	_mouseCoords[2].v = _mouseCoords[3].v = _videoContext.mouseHeight / (GLfloat)_videoContext.mouseTexture.h;
+	_mouseCoords[1].u = _mouseCoords[3].u = (_videoContext.mouseWidth - 1) / (GLfloat)_videoContext.mouseTexture.w;
+	_mouseCoords[2].v = _mouseCoords[3].v = (_videoContext.mouseHeight - 1) / (GLfloat)_videoContext.mouseTexture.h;
 
 	[self setFilterModeForTexture:_mouseCursorTexture];
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, _videoContext.mouseTexture.w, _videoContext.mouseTexture.h, 0, GL_RGBA, GL_UNSIGNED_SHORT_5_5_5_1, _videoContext.mouseTexture.getPixels()); printOpenGLError();
-	glUniform1i(_textureSlot, 0); printOpenGLError();
 }
 
 - (void)updateMainSurface {
@@ -624,7 +625,6 @@ uint getSizeNextPOT(uint size) {
 	glVertexAttribPointer(_textureCoordSlot, 2, GL_FLOAT, GL_FALSE, sizeof(GLVertex), (GLvoid *) (sizeof(GLfloat) * 2));
 
 	[self setFilterModeForTexture:_screenTexture];
-	glUniform1i(_textureSlot, 0); printOpenGLError();
 
 	// Unfortunately we have to update the whole texture every frame, since glTexSubImage2D is actually slower in all cases
 	// due to the iPhone internals having to convert the whole texture back from its internal format when used.
@@ -669,7 +669,6 @@ uint getSizeNextPOT(uint size) {
 	glVertexAttribPointer(_textureCoordSlot, 2, GL_FLOAT, GL_FALSE, sizeof(GLVertex), (GLvoid *) (sizeof(GLfloat) * 2));
 
 	[self setFilterModeForTexture:_overlayTexture];
-	glUniform1i(_textureSlot, 0); printOpenGLError();
 
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, _videoContext.overlayTexture.w, _videoContext.overlayTexture.h, 0, GL_RGBA, GL_UNSIGNED_SHORT_5_5_5_1, _videoContext.overlayTexture.getPixels()); printOpenGLError();
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4); printOpenGLError();
@@ -681,7 +680,6 @@ uint getSizeNextPOT(uint size) {
 	glVertexAttribPointer(_textureCoordSlot, 2, GL_FLOAT, GL_FALSE, sizeof(GLVertex), (GLvoid *) (sizeof(GLfloat) * 2));
 
 	glBindTexture(GL_TEXTURE_2D, _mouseCursorTexture); printOpenGLError();
-	glUniform1i(_textureSlot, 0); printOpenGLError();
 
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4); printOpenGLError();
 }
