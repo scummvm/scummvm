@@ -45,6 +45,9 @@ namespace CreateProjectTool {
 #define REMOVE_DEFINE(defines, name) \
 	{ ValueList::iterator i = std::find(defines.begin(), defines.end(), name); if (i != defines.end()) defines.erase(i); }
 
+#define CONTAINS_DEFINE(defines, name) \
+	(std::find(defines.begin(), defines.end(), name) != defines.end())
+
 #define ADD_SETTING(config, key, value) \
 	config.settings[key] = Setting(value, "", SettingsNoQuote);
 
@@ -463,6 +466,7 @@ void XcodeProvider::setupFrameworksBuildPhase(const BuildSetup &setup) {
 	DEF_LOCALLIB_STATIC_PATH(absoluteOutputDir + "/libogg.a",       "libogg",       true);
 	DEF_LOCALLIB_STATIC_PATH(absoluteOutputDir + "/libpng.a",       "libpng",       true);
 	DEF_LOCALLIB_STATIC_PATH(absoluteOutputDir + "/libvorbis.a",    "libvorbis",    true);
+	DEF_LOCALLIB_STATIC_PATH(absoluteOutputDir + "/libmad.a",       "libmad",       true);
 
 	frameworksGroup->properties["children"] = children;
 	_groups.add(frameworksGroup);
@@ -495,11 +499,11 @@ void XcodeProvider::setupFrameworksBuildPhase(const BuildSetup &setup) {
 	frameworks_iOS.push_back("QuartzCore.framework");
 	frameworks_iOS.push_back("OpenGLES.framework");
 
-	frameworks_iOS.push_back("libFLACiOS.a");
-	frameworks_iOS.push_back("libFreetype2.a");
-	frameworks_iOS.push_back("libogg.a");
-	frameworks_iOS.push_back("libpng.a");
-	frameworks_iOS.push_back("libvorbis.a");
+	if (CONTAINS_DEFINE(setup.defines, "USE_FLAC")) frameworks_iOS.push_back("libFLACiOS.a");
+	if (CONTAINS_DEFINE(setup.defines, "USE_FREETYPE2")) frameworks_iOS.push_back("libFreetype2.a");
+	if (CONTAINS_DEFINE(setup.defines, "USE_PNG")) frameworks_iOS.push_back("libpng.a");
+	if (CONTAINS_DEFINE(setup.defines, "USE_VORBIS")) { frameworks_iOS.push_back("libogg.a"); frameworks_iOS.push_back("libvorbis.a"); }
+	if (CONTAINS_DEFINE(setup.defines, "USE_MAD")) frameworks_iOS.push_back("libmad.a");
 
 	for (ValueList::iterator framework = frameworks_iOS.begin(); framework != frameworks_iOS.end(); framework++) {
 		std::string id = "Frameworks_" + *framework + "_iphone";
