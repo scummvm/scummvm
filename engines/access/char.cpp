@@ -164,6 +164,10 @@ void CharManager::charMenu() {
 	} else
 		error("Game not supported");
 
+	// Make a backup copy of the screen including the character buttons,
+	// for restoring when erasing conversation boxes
+	screen.copyTo(&_vm->_buffer1);
+
 	screen.restoreScreen();
 	delete spr;
 }
