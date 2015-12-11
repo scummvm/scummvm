@@ -43,25 +43,21 @@ namespace Lab {
  * Scrolls the display to black.
  */
 void DisplayMan::doScrollBlack() {
-	byte *tempmem;
-	Image im;
-	uint32 size, copysize;
-	byte *baseAddr;
 	uint16 width = _vm->_utils->vgaScaleX(320);
 	uint16 height = _vm->_utils->vgaScaleY(149) + _vm->_utils->svgaCord(2);
 	byte *mem = new byte[width * height];
 
 	_vm->_event->mouseHide();
 
-	im._width = width;
-	im._height = height;
-	im._imageData = mem;
+	Image img;
+	img._width = width;
+	img._height = height;
+	img._imageData = mem;
 	_vm->_music->updateMusic();
-	im.readScreenImage(0, 0);
+	img.readScreenImage(0, 0);
 	_vm->_music->updateMusic();
 
-	baseAddr = getCurrentDrawingBuffer();
-
+	byte *baseAddr = getCurrentDrawingBuffer();
 	uint16 by = _vm->_utils->vgaScaleX(4);
 	uint16 nheight = height;
 
@@ -78,8 +74,9 @@ void DisplayMan::doScrollBlack() {
 
 		mem += by * width;
 		nheight -= by;
-		size = (int32)nheight * (int32)width;
-		tempmem = mem;
+		uint32 copysize;
+		uint32 size = (int32)nheight * (int32)width;
+		byte *tempmem = mem;
 
 		while (size) {
 			if (size > _screenBytesPerPage)
@@ -113,25 +110,25 @@ void DisplayMan::doScrollBlack() {
 	_vm->_event->mouseShow();
 }
 
-void DisplayMan::copyPage(uint16 width, uint16 height, uint16 nheight, uint16 startline, byte *mem) {
+void DisplayMan::copyPage(uint16 width, uint16 height, uint16 nheight, uint16 startLine, byte *mem) {
 	byte *baseAddr = getCurrentDrawingBuffer();
 
 	uint32 size = (int32)(height - nheight) * (int32)width;
-	mem += startline * width;
+	mem += startLine * width;
 	uint16 curPage = ((int32)nheight * (int32)width) / _screenBytesPerPage;
 	uint32 offSet = ((int32)nheight * (int32)width) - (curPage * _screenBytesPerPage);
 
 	while (size) {
-		uint32 copysize;
+		uint32 copySize;
 		if (size > (_screenBytesPerPage - offSet))
-			copysize = _screenBytesPerPage - offSet;
+			copySize = _screenBytesPerPage - offSet;
 		else
-			copysize = size;
+			copySize = size;
 
-		size -= copysize;
+		size -= copySize;
 
-		memcpy(baseAddr + (offSet >> 2), mem, copysize);
-		mem += copysize;
+		memcpy(baseAddr + (offSet >> 2), mem, copySize);
+		mem += copySize;
 		curPage++;
 		offSet = 0;
 	}
@@ -141,7 +138,7 @@ void DisplayMan::copyPage(uint16 width, uint16 height, uint16 nheight, uint16 st
  * Scrolls the display to a new picture from a black screen.
  */
 void DisplayMan::doScrollWipe(char *filename) {
-	uint16 startline = 0, onrow = 0;
+	uint16 startLine = 0, onRow = 0;
 
 	_vm->_event->mouseHide();
 	uint16 width = _vm->_utils->vgaScaleX(320);
@@ -160,26 +157,26 @@ void DisplayMan::doScrollWipe(char *filename) {
 	uint16 by = _vm->_utils->vgaScaleX(3);
 	uint16 nheight = height;
 
-	while (onrow < _vm->_anim->_headerdata._height) {
+	while (onRow < _vm->_anim->_headerdata._height) {
 		_vm->_music->updateMusic();
 
 		if ((by > nheight) && nheight)
 			by = nheight;
 
-		if ((startline + by) > (_vm->_anim->_headerdata._height - height - 1))
+		if ((startLine + by) > (_vm->_anim->_headerdata._height - height - 1))
 			break;
 
 		if (nheight)
 			nheight -= by;
 
-		copyPage(width, height, nheight, startline, mem);
+		copyPage(width, height, nheight, startLine, mem);
 
 		screenUpdate();
 
 		if (!nheight)
-			startline += by;
+			startLine += by;
 
-		onrow += by;
+		onRow += by;
 
 		if (nheight <= (height / 4))
 			by = _vm->_utils->vgaScaleX(5);
@@ -215,12 +212,12 @@ void DisplayMan::doScrollBounce() {
 	byte *mem = _vm->_anim->_rawDiffBM._planes[0];
 
 	_vm->_music->updateMusic();
-	int startline = _vm->_anim->_headerdata._height - height - 1;
+	int startLine = _vm->_anim->_headerdata._height - height - 1;
 
 	for (int i = 0; i < 5; i++) {
 		_vm->_music->updateMusic();
-		startline -= newby[i];
-		copyPage(width, height, 0, startline, mem);
+		startLine -= newby[i];
+		copyPage(width, height, 0, startLine, mem);
 
 		screenUpdate();
 		_vm->waitTOF();
@@ -228,8 +225,8 @@ void DisplayMan::doScrollBounce() {
 
 	for (int i = 8; i > 0; i--) {
 		_vm->_music->updateMusic();
-		startline += newby1[i - 1];
-		copyPage(width, height, 0, startline, mem);
+		startLine += newby1[i - 1];
+		copyPage(width, height, 0, startLine, mem);
 
 		screenUpdate();
 		_vm->waitTOF();
@@ -242,14 +239,13 @@ void DisplayMan::doScrollBounce() {
  * Does the transporter wipe.
  */
 void DisplayMan::doTransWipe(CloseDataPtr *closePtrList, char *filename) {
-	uint16 lastY, curY, linesdone = 0, lineslast;
-	Image imSource, imDest;
+	uint16 lastY, curY, linesDone = 0, linesLast;
 
 	if (_vm->_isHiRes) {
-		lineslast = 3;
+		linesLast = 3;
 		lastY = 358;
 	} else {
-		lineslast = 1;
+		linesLast = 1;
 		lastY = 148;
 	}
 
@@ -258,10 +254,10 @@ void DisplayMan::doTransWipe(CloseDataPtr *closePtrList, char *filename) {
 			curY = i * 2;
 
 			while (curY < lastY) {
-				if (linesdone >= lineslast) {
+				if (linesDone >= linesLast) {
 					_vm->_music->updateMusic();
 					_vm->waitTOF();
-					linesdone = 0;
+					linesDone = 0;
 				}
 
 				if (j == 9)
@@ -269,7 +265,7 @@ void DisplayMan::doTransWipe(CloseDataPtr *closePtrList, char *filename) {
 				else
 					rectFill(0, curY, _screenWidth - 1, curY + 1);
 				curY += 4;
-				linesdone++;
+				linesDone++;
 			}	// while
 		}	// for i
 
@@ -288,10 +284,12 @@ void DisplayMan::doTransWipe(CloseDataPtr *closePtrList, char *filename) {
 
 	setPalette(_vm->_anim->_diffPalette, 256);
 
+	Image imSource;
 	imSource._width = _screenWidth;
 	imSource._height = lastY;
 	imSource._imageData = bitMapBuffer;
 
+	Image imDest;
 	imDest._width = _screenWidth;
 	imDest._height = _screenHeight;
 	imDest._imageData = getCurrentDrawingBuffer();
@@ -301,10 +299,10 @@ void DisplayMan::doTransWipe(CloseDataPtr *closePtrList, char *filename) {
 			curY = i * 2;
 
 			while (curY < lastY) {
-				if (linesdone >= lineslast) {
+				if (linesDone >= linesLast) {
 					_vm->_music->updateMusic();
 					_vm->waitTOF();
-					linesdone = 0;
+					linesDone = 0;
 				}
 
 				imDest._imageData = getCurrentDrawingBuffer();
@@ -317,7 +315,7 @@ void DisplayMan::doTransWipe(CloseDataPtr *closePtrList, char *filename) {
 					imSource.blitBitmap(0, curY, &imDest, 0, curY, _screenWidth, bitmapHeight, false);
 				}
 				curY += 4;
-				linesdone++;
+				linesDone++;
 			}	// while
 		}	// for i
 	}	// for j
@@ -393,7 +391,6 @@ void DisplayMan::blackAllScreen() {
  */
 void DisplayMan::scrollDisplayX(int16 dx, uint16 x1, uint16 y1, uint16 x2, uint16 y2, byte *buffer) {
 	Image im;
-
 	im._imageData = buffer;
 
 	if (x1 > x2)
@@ -428,7 +425,6 @@ void DisplayMan::scrollDisplayX(int16 dx, uint16 x1, uint16 y1, uint16 x2, uint1
  */
 void DisplayMan::scrollDisplayY(int16 dy, uint16 x1, uint16 y1, uint16 x2, uint16 y2, byte *buffer) {
 	Image im;
-
 	im._imageData = buffer;
 
 	if (x1 > x2)
@@ -465,27 +461,26 @@ uint16 DisplayMan::fadeNumIn(uint16 num, uint16 res, uint16 counter) {
 	return (num - ((((int32)(15 - counter)) * ((int32)(num - res))) / 15));
 }
 
-
 uint16 DisplayMan::fadeNumOut(uint16 num, uint16 res, uint16 counter) {
 	return (num - ((((int32) counter) * ((int32)(num - res))) / 15));
 }
 
-void DisplayMan::fade(bool fadein, uint16 res) {
-	uint16 newpal[16];
+void DisplayMan::fade(bool fadeIn, uint16 res) {
+	uint16 newPal[16];
 
 	for (uint16 i = 0; i < 16; i++) {
 		for (uint16 palIdx = 0; palIdx < 16; palIdx++) {
-			if (fadein)
-				newpal[palIdx] = (0x00F & fadeNumIn(0x00F & FadePalette[palIdx], 0x00F & res, i)) +
+			if (fadeIn)
+				newPal[palIdx] = (0x00F & fadeNumIn(0x00F & FadePalette[palIdx], 0x00F & res, i)) +
 				(0x0F0 & fadeNumIn(0x0F0 & FadePalette[palIdx], 0x0F0 & res, i)) +
 				(0xF00 & fadeNumIn(0xF00 & FadePalette[palIdx], 0xF00 & res, i));
 			else
-				newpal[palIdx] = (0x00F & fadeNumOut(0x00F & FadePalette[palIdx], 0x00F & res, i)) +
+				newPal[palIdx] = (0x00F & fadeNumOut(0x00F & FadePalette[palIdx], 0x00F & res, i)) +
 				(0x0F0 & fadeNumOut(0x0F0 & FadePalette[palIdx], 0x0F0 & res, i)) +
 				(0xF00 & fadeNumOut(0xF00 & FadePalette[palIdx], 0xF00 & res, i));
 		}
 
-		setAmigaPal(newpal, 16);
+		setAmigaPal(newPal, 16);
 		_vm->waitTOF();
 		_vm->_music->updateMusic();
 	}
