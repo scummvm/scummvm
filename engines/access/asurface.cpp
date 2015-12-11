@@ -294,6 +294,13 @@ void ASurface::copyBlock(ASurface *src, const Common::Rect &bounds) {
 	copyRectToSurface(*src, bounds.left, bounds.top, bounds);
 }
 
+void ASurface::copyTo(ASurface *dest) { 
+	if (dest->empty())
+		dest->create(this->w, this->h);
+
+	dest->blitFrom(*this); 
+}
+
 void ASurface::saveBlock(const Common::Rect &bounds) {
 	_savedBounds = bounds;
 	_savedBounds.clip(Common::Rect(0, 0, this->w, this->h));
