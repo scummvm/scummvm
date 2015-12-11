@@ -295,7 +295,8 @@ void ScriptOpcodes_BBDOU::opUnloadActiveScenes(ScriptThread *scriptThread, OpCal
 //uint32 dsceneId = 0x0001000C, dthreadId = 0x00020011;//Cafeteria
 //uint32 dsceneId = 0x0001000B, dthreadId = 0x00020010;
 //uint32 dsceneId = 0x0001001A, dthreadId = 0x0002001F;
-uint32 dsceneId = 0x00010047, dthreadId = 0x0002005F;
+//uint32 dsceneId = 0x00010047, dthreadId = 0x0002005F;
+uint32 dsceneId = 0x0001007D, dthreadId = 0x000203B9;
 
 void ScriptOpcodes_BBDOU::opChangeScene(ScriptThread *scriptThread, OpCall &opCall) {
 	ARG_SKIP(2);

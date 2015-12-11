@@ -134,6 +134,8 @@ public:
 	void updateFaderPalette();
 	void setFader(int newValue, int firstIndex, int lastIndex);
 	void drawText(FontResource *font, Graphics::Surface *surface, int16 x, int16 y, uint16 *text, uint count);
+	void fillSurface(Graphics::Surface *surface, byte color);
+	uint16 convertColor(byte color);
 	uint16 getColorKey1() const { return _colorKey1; }
 	void setColorKey1(uint16 colorKey) { _colorKey1 = colorKey; }
 	uint16 getColorKey2() const { return _colorKey2; }

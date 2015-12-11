@@ -24,6 +24,7 @@
 #include "illusions/bbdou/bbdou_specialcode.h"
 #include "illusions/bbdou/bbdou_bubble.h"
 #include "illusions/bbdou/bbdou_inventory.h"
+#include "illusions/bbdou/bbdou_credits.h"
 #include "illusions/bbdou/bbdou_cursor.h"
 #include "illusions/actor.h"
 #include "illusions/camera.h"
@@ -107,7 +108,7 @@ void RadarMicrophoneThread::initZones() {
 // BbdouSpecialCode
 
 BbdouSpecialCode::BbdouSpecialCode(IllusionsEngine_BBDOU *vm)
-	: _vm(vm) {
+	: _vm(vm), _credits(0) {
 	_bubble = new BbdouBubble(_vm, this);
 	_cursor = new BbdouCursor(_vm, this);
 	_inventory = new BbdouInventory(_vm, this);
@@ -150,6 +151,7 @@ void BbdouSpecialCode::init() {
 	SPECIAL(0x00160036, spcInitMenu);
 	SPECIAL(0x00160037, spcIsCursorHoldingObjectId);
 	SPECIAL(0x00160038, spcInitRadarMicrophone);
+	SPECIAL(0x00160039, spcCreditsCtl);
 	SPECIAL(0x0016003A, spcSaladCtl);
 	SPECIAL(0x0016003B, spcRunCause);
 }
@@ -333,6 +335,27 @@ void BbdouSpecialCode::spcInitRadarMicrophone(OpCall &opCall) {
 	_vm->_threads->startThread(radarMicrophoneThread);
 }
 
+void BbdouSpecialCode::spcCreditsCtl(OpCall &opCall) {
+	ARG_UINT32(cmd);
+	switch (cmd) {
+	case 1:
+		{
+			ARG_UINT32(endSignalPropertyId);
+			_credits = new BbdouCredits(_vm);
+			_credits->start(endSignalPropertyId, 0.5);
+		}
+		break;
+	case 2:
+		_credits->drawNextLine();
+		break;
+	case 3:
+		_credits->stop();
+		delete _credits;
+	default:
+		break;
+	}
+}
+
 void BbdouSpecialCode::spcSaladCtl(OpCall &opCall) {
 	ARG_UINT32(cmd);
 	ARG_UINT32(sequenceId);
@@ -352,7 +375,7 @@ void BbdouSpecialCode::spcRunCause(OpCall &opCall) {
 	ARG_UINT32(objectId1);
 	ARG_UINT32(objectId2);
 	Control *cursorControl = _vm->getObjectControl(cursorObjectId);
-	debug("runCause(%08X, %08X, %08X)", verbId, objectId1, objectId2);
+	debug(0, "runCause(%08X, %08X, %08X)", verbId, objectId1, objectId2);
 	runCause(cursorControl, _cursor->_data, verbId, objectId1, objectId2, 0);
 }
 

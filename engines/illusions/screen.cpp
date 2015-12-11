@@ -482,6 +482,30 @@ void Screen::drawText(FontResource *font, Graphics::Surface *surface, int16 x, i
 	}
 }
 
+void Screen::fillSurface(Graphics::Surface *surface, byte color) {
+	Common::Rect r = Common::Rect(surface->w, surface->h);
+	switch (_backSurface->format.bytesPerPixel) {
+	case 1:
+		surface->fillRect(r, color);
+		break;
+	case 2:
+		surface->fillRect(r, convertColor(color));
+		break;
+	default:
+		break;
+	}
+}
+
+uint16 Screen::convertColor(byte color) {
+	if (color == 0)
+		return _colorKey1;
+	if (color == 20)
+		return g_system->getScreenFormat().RGBToColor(255, 255, 255);
+	if (color == 80)
+		return g_system->getScreenFormat().RGBToColor(176, 176, 176);
+	return g_system->getScreenFormat().RGBToColor(16, 16, 16);
+}
+
 void Screen::drawText8(FontResource *font, Graphics::Surface *surface, int16 x, int16 y, uint16 *text, uint count) {
 	for (uint i = 0; i < count; ++i)
 		x += font->_widthC + drawChar8(font, surface, x, y, *text++);
