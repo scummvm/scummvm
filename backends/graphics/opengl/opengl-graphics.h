@@ -469,6 +469,15 @@ private:
 	 */
 	byte _cursorPalette[3 * 256];
 
+	//
+	// Misc
+	//
+
+	/**
+	 * Whether the screen contents shall be forced to redrawn.
+	 */
+	bool _forceRedraw;
+
 	/**
 	 * Draws a rectangle
 	 */

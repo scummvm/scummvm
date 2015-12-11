@@ -51,7 +51,8 @@ OpenGLGraphicsManager::OpenGLGraphicsManager()
       _overlayVisible(false), _cursor(nullptr),
       _cursorX(0), _cursorY(0), _cursorDisplayX(0),_cursorDisplayY(0), _cursorHotspotX(0), _cursorHotspotY(0),
       _cursorHotspotXScaled(0), _cursorHotspotYScaled(0), _cursorWidthScaled(0), _cursorHeightScaled(0),
-      _cursorKeyColor(0), _cursorVisible(false), _cursorDontScale(false), _cursorPaletteEnabled(false)
+      _cursorKeyColor(0), _cursorVisible(false), _cursorDontScale(false), _cursorPaletteEnabled(false),
+      _forceRedraw(false)
 #ifdef USE_OSD
       , _osdAlpha(0), _osdFadeStartTime(0), _osd(nullptr)
 #endif
@@ -343,13 +344,26 @@ void OpenGLGraphicsManager::fillScreen(uint32 col) {
 }
 
 void OpenGLGraphicsManager::setShakePos(int shakeOffset) {
-	_gameScreenShakeOffset = shakeOffset;
+	if (_gameScreenShakeOffset != shakeOffset) {
+		_gameScreenShakeOffset = shakeOffset;
+		_forceRedraw = true;
+	}
 }
 
 void OpenGLGraphicsManager::updateScreen() {
 	if (!_gameScreen) {
 		return;
 	}
+
+	// We only update the screen when there actually have been any changes.
+	if (   !_forceRedraw
+	    && !_gameScreen->isDirty()
+	    && !(_overlayVisible && _overlay->isDirty())
+	    && !(_cursorVisible && _cursor && _cursor->isDirty())
+	    && _osdAlpha == 0) {
+		return;
+	}
+	_forceRedraw = false;
 
 	// Clear the screen buffer.
 	GLCALL(glClear(GL_COLOR_BUFFER_BIT));
@@ -467,6 +481,7 @@ int16 OpenGLGraphicsManager::getOverlayHeight() {
 
 void OpenGLGraphicsManager::showOverlay() {
 	_overlayVisible = true;
+	_forceRedraw = true;
 
 	// Update cursor position.
 	setMousePosition(_cursorX, _cursorY);
@@ -474,6 +489,7 @@ void OpenGLGraphicsManager::showOverlay() {
 
 void OpenGLGraphicsManager::hideOverlay() {
 	_overlayVisible = false;
+	_forceRedraw = true;
 
 	// Update cursor position.
 	setMousePosition(_cursorX, _cursorY);
@@ -505,6 +521,12 @@ void OpenGLGraphicsManager::grabOverlay(void *buf, int pitch) {
 }
 
 bool OpenGLGraphicsManager::showMouse(bool visible) {
+	// In case the mouse cursor visibility changed we need to redraw the whole
+	// screen even when nothing else changed.
+	if (_cursorVisible != visible) {
+		_forceRedraw = true;
+	}
+
 	bool last = _cursorVisible;
 	_cursorVisible = visible;
 	return last;
@@ -940,6 +962,12 @@ void OpenGLGraphicsManager::adjustMousePosition(int16 &x, int16 &y) {
 }
 
 void OpenGLGraphicsManager::setMousePosition(int x, int y) {
+	// Whenever the mouse position changed we force a screen redraw to reflect
+	// changes properly.
+	if (_cursorX != x || _cursorY != y) {
+		_forceRedraw = true;
+	}
+
 	_cursorX = x;
 	_cursorY = y;
 
@@ -1100,6 +1128,9 @@ void OpenGLGraphicsManager::recalculateDisplayArea() {
 
 	// Update the cursor position to adjust for new display area.
 	setMousePosition(_cursorX, _cursorY);
+
+	// Force a redraw to assure screen is properly redrawn.
+	_forceRedraw = true;
 }
 
 void OpenGLGraphicsManager::updateCursorPalette() {
