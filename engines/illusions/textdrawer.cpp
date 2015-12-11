@@ -114,6 +114,8 @@ bool TextDrawer::wrapTextIntern(int16 x, int16 y, int16 maxWidth, int16 maxHeigh
 				if (_textFlags & 2) {
 					textPosX = (_dimensions->_width - currLineWidth) / 2;
 					maxLineWidth = _dimensions->_width;
+				} else if (_textFlags & 4) {
+					textPosX = _dimensions->_width - currLineWidth;
 				} else {
 					textPosX = x;
 				}

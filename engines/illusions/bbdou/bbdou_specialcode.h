@@ -31,6 +31,7 @@ namespace Illusions {
 
 class IllusionsEngine_BBDOU;
 class BbdouBubble;
+class BbdouCredits;
 class BbdouCursor;
 class BbdouInventory;
 struct CursorData;
@@ -101,6 +102,8 @@ public:
 	BbdouCursor *_cursor;
 	BbdouBubble *_bubble;
 	BbdouInventory *_inventory;
+	
+	BbdouCredits *_credits;
 
 	// Salad
 	uint _saladCount;
@@ -136,6 +139,7 @@ public:
 	void spcInitMenu(OpCall &opCall);
 	void spcIsCursorHoldingObjectId(OpCall &opCall);
 	void spcInitRadarMicrophone(OpCall &opCall);
+	void spcCreditsCtl(OpCall &opCall);
 	void spcSaladCtl(OpCall &opCall);
 	void spcRunCause(OpCall &opCall);
 

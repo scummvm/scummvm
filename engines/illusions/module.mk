@@ -4,6 +4,8 @@ MODULE_OBJS := \
 	actor.o \
 	bbdou/bbdou_bubble.o \
 	bbdou/bbdou_cursor.o \
+	bbdou/bbdou_credits.o \
+	bbdou/bbdou_credits_staticdata.o \
 	bbdou/bbdou_inventory.o \
 	bbdou/bbdou_specialcode.o \
 	bbdou/bbdou_triggerfunctions.o \
