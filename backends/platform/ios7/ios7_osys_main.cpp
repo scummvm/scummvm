@@ -25,6 +25,7 @@
 
 #include <unistd.h>
 #include <pthread.h>
+#include <string.h>
 
 #include <sys/time.h>
 
@@ -80,7 +81,7 @@ OSystem_iOS7::OSystem_iOS7() :
 	_screenOrientation(kScreenOrientationFlippedLandscape), _mouseClickAndDragEnabled(false),
 	_gestureStartX(-1), _gestureStartY(-1), _fullScreenIsDirty(false), _fullScreenOverlayIsDirty(false),
 	_mouseDirty(false), _timeSuspended(0), _lastDragPosX(-1), _lastDragPosY(-1), _screenChangeCount(0),
-	_mouseCursorPaletteEnabled(false), _gfxTransactionError(kTransactionSuccess) {
+	_lastErrorMessage(NULL), _mouseCursorPaletteEnabled(false), _gfxTransactionError(kTransactionSuccess) {
 	_queuedInputEvent.type = Common::EVENT_INVALID;
 	_touchpadModeEnabled = !iOS7_isBigDevice();
 #ifdef IPHONE_OFFICIAL
@@ -275,8 +276,9 @@ Audio::Mixer *OSystem_iOS7::getMixer() {
 	return _mixer;
 }
 
-OSystem *OSystem_iOS7_create() {
-	return new OSystem_iOS7();
+OSystem_iOS7 *OSystem_iOS7::sharedInstance() {
+	static OSystem_iOS7 *instance = new OSystem_iOS7();
+	return instance;
 }
 
 Common::String OSystem_iOS7::getDefaultConfigFileName() {
@@ -318,6 +320,11 @@ void OSystem_iOS7::logMessage(LogMessageType::Type type, const char *message) {
 	else
 		output = stderr;
 
+	if (type == LogMessageType::kError) {
+		free(_lastErrorMessage);
+		_lastErrorMessage = strdup(message);
+	}
+
 	fputs(message, output);
 	fflush(output);
 }
@@ -353,7 +360,7 @@ void iOS7_main(int argc, char **argv) {
 	chdir("/var/mobile/");
 #endif
 
-	g_system = OSystem_iOS7_create();
+	g_system = OSystem_iOS7::sharedInstance();
 	assert(g_system);
 
 	// Invoke the actual ScummVM main entry point:

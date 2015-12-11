@@ -401,6 +401,9 @@ void XcodeProvider::setupCopyFilesBuildPhase() {
 #define DEF_SYSFRAMEWORK(framework) properties[framework".framework"] = FileProperty("wrapper.framework", framework".framework", "System/Library/Frameworks/" framework ".framework", "SDKROOT"); \
 	ADD_SETTING_ORDER_NOVALUE(children, getHash(framework".framework"), framework".framework", fwOrder++);
 
+#define DEF_SYSTBD(lib) properties[lib".tbd"] = FileProperty("sourcecode.text-based-dylib-definition", lib".tbd", "usr/lib/" lib ".tbd", "SDKROOT"); \
+	ADD_SETTING_ORDER_NOVALUE(children, getHash(lib".tbd"), lib".tbd", fwOrder++);
+
 #define DEF_LOCALLIB_STATIC_PATH(path,lib,absolute) properties[lib".a"] = FileProperty("archive.ar", lib ".a", path, (absolute ? "\"<absolute>\"" : "\"<group>\"")); \
 	ADD_SETTING_ORDER_NOVALUE(children, getHash(lib".a"), lib".a", fwOrder++);
 
@@ -432,6 +435,7 @@ void XcodeProvider::setupFrameworksBuildPhase(const BuildSetup &setup) {
 	DEF_SYSFRAMEWORK("Carbon");
 	DEF_SYSFRAMEWORK("Cocoa");
 	DEF_SYSFRAMEWORK("CoreAudio");
+	DEF_SYSFRAMEWORK("CoreMIDI");
 	DEF_SYSFRAMEWORK("CoreGraphics");
 	DEF_SYSFRAMEWORK("CoreFoundation");
 	DEF_SYSFRAMEWORK("CoreMIDI");
@@ -441,6 +445,8 @@ void XcodeProvider::setupFrameworksBuildPhase(const BuildSetup &setup) {
 	DEF_SYSFRAMEWORK("QuartzCore");
 	DEF_SYSFRAMEWORK("QuickTime");
 	DEF_SYSFRAMEWORK("UIKit");
+	DEF_SYSTBD("libiconv");
+
 	// Optionals:
 	DEF_SYSFRAMEWORK("OpenGL");
 
@@ -461,12 +467,14 @@ void XcodeProvider::setupFrameworksBuildPhase(const BuildSetup &setup) {
 	absoluteOutputDir = "lib";
 #endif
 
-	DEF_LOCALLIB_STATIC_PATH(absoluteOutputDir + "/libFLACiOS.a",   "libFLACiOS",   true);
-	DEF_LOCALLIB_STATIC_PATH(absoluteOutputDir + "/libFreetype2.a", "libFreetype2", true);
-	DEF_LOCALLIB_STATIC_PATH(absoluteOutputDir + "/libogg.a",       "libogg",       true);
-	DEF_LOCALLIB_STATIC_PATH(absoluteOutputDir + "/libpng.a",       "libpng",       true);
-	DEF_LOCALLIB_STATIC_PATH(absoluteOutputDir + "/libvorbis.a",    "libvorbis",    true);
-	DEF_LOCALLIB_STATIC_PATH(absoluteOutputDir + "/libmad.a",       "libmad",       true);
+	DEF_LOCALLIB_STATIC_PATH(absoluteOutputDir + "/libFLACiOS.a",    "libFLACiOS",    true);
+	DEF_LOCALLIB_STATIC_PATH(absoluteOutputDir + "/libFreetype2.a",  "libFreetype2",  true);
+	DEF_LOCALLIB_STATIC_PATH(absoluteOutputDir + "/libogg.a",        "libogg",        true);
+	DEF_LOCALLIB_STATIC_PATH(absoluteOutputDir + "/libpng.a",        "libpng",        true);
+	DEF_LOCALLIB_STATIC_PATH(absoluteOutputDir + "/libvorbis.a",     "libvorbis",     true);
+	DEF_LOCALLIB_STATIC_PATH(absoluteOutputDir + "/libmad.a",        "libmad",        true);
+	DEF_LOCALLIB_STATIC_PATH(absoluteOutputDir + "/libfluidsynth.a", "libfluidsynth", true);
+	DEF_LOCALLIB_STATIC_PATH(absoluteOutputDir + "/libglib.a",       "libglib",       true);
 
 	frameworksGroup->properties["children"] = children;
 	_groups.add(frameworksGroup);
@@ -499,11 +507,28 @@ void XcodeProvider::setupFrameworksBuildPhase(const BuildSetup &setup) {
 	frameworks_iOS.push_back("QuartzCore.framework");
 	frameworks_iOS.push_back("OpenGLES.framework");
 
-	if (CONTAINS_DEFINE(setup.defines, "USE_FLAC")) frameworks_iOS.push_back("libFLACiOS.a");
-	if (CONTAINS_DEFINE(setup.defines, "USE_FREETYPE2")) frameworks_iOS.push_back("libFreetype2.a");
-	if (CONTAINS_DEFINE(setup.defines, "USE_PNG")) frameworks_iOS.push_back("libpng.a");
-	if (CONTAINS_DEFINE(setup.defines, "USE_VORBIS")) { frameworks_iOS.push_back("libogg.a"); frameworks_iOS.push_back("libvorbis.a"); }
-	if (CONTAINS_DEFINE(setup.defines, "USE_MAD")) frameworks_iOS.push_back("libmad.a");
+	if (CONTAINS_DEFINE(setup.defines, "USE_FLAC")) {
+		frameworks_iOS.push_back("libFLACiOS.a");
+	}
+	if (CONTAINS_DEFINE(setup.defines, "USE_FREETYPE2")) {
+		frameworks_iOS.push_back("libFreetype2.a");
+	}
+	if (CONTAINS_DEFINE(setup.defines, "USE_PNG")) {
+		frameworks_iOS.push_back("libpng.a");
+	}
+	if (CONTAINS_DEFINE(setup.defines, "USE_VORBIS")) {
+		frameworks_iOS.push_back("libogg.a");
+		frameworks_iOS.push_back("libvorbis.a");
+	}
+	if (CONTAINS_DEFINE(setup.defines, "USE_MAD")) {
+		frameworks_iOS.push_back("libmad.a");
+	}
+	if (CONTAINS_DEFINE(setup.defines, "USE_FLUIDSYNTH")) {
+		frameworks_iOS.push_back("libfluidsynth.a");
+		frameworks_iOS.push_back("libglib.a");
+		frameworks_iOS.push_back("CoreMIDI.framework");
+		frameworks_iOS.push_back("libiconv.tbd");
+	}
 
 	for (ValueList::iterator framework = frameworks_iOS.begin(); framework != frameworks_iOS.end(); framework++) {
 		std::string id = "Frameworks_" + *framework + "_iphone";

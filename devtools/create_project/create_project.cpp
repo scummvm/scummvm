@@ -935,16 +935,17 @@ TokenList tokenize(const std::string &input, char separator) {
 namespace {
 const Feature s_features[] = {
 	// Libraries
-	{    "libz",        "USE_ZLIB", "zlib",             true, "zlib (compression) support" },
-	{     "mad",         "USE_MAD", "libmad",           true, "libmad (MP3) support" },
-	{  "vorbis",      "USE_VORBIS", "libvorbisfile_static libvorbis_static libogg_static", true, "Ogg Vorbis support" },
-	{    "flac",        "USE_FLAC", "libFLAC_static win_utf8_io_static",   true, "FLAC support" },
-	{     "png",         "USE_PNG", "libpng",           true, "libpng support" },
-	{    "faad",        "USE_FAAD", "libfaad",          false, "AAC support" },
-	{   "mpeg2",       "USE_MPEG2", "libmpeg2",         false, "MPEG-2 support" },
-	{  "theora",   "USE_THEORADEC", "libtheora_static", true, "Theora decoding support" },
-	{"freetype",   "USE_FREETYPE2", "freetype",         true, "FreeType support" },
-	{    "jpeg",        "USE_JPEG", "jpeg-static",      true, "libjpeg support" },
+	{      "libz",        "USE_ZLIB", "zlib",             true, "zlib (compression) support" },
+	{       "mad",         "USE_MAD", "libmad",           true, "libmad (MP3) support" },
+	{    "vorbis",      "USE_VORBIS", "libvorbisfile_static libvorbis_static libogg_static", true, "Ogg Vorbis support" },
+	{      "flac",        "USE_FLAC", "libFLAC_static win_utf8_io_static",   true, "FLAC support" },
+	{       "png",         "USE_PNG", "libpng",           true, "libpng support" },
+	{      "faad",        "USE_FAAD", "libfaad",          false, "AAC support" },
+	{     "mpeg2",       "USE_MPEG2", "libmpeg2",         false, "MPEG-2 support" },
+	{    "theora",   "USE_THEORADEC", "libtheora_static", true, "Theora decoding support" },
+	{  "freetype",   "USE_FREETYPE2", "freetype",         true, "FreeType support" },
+	{      "jpeg",        "USE_JPEG", "jpeg-static",      true, "libjpeg support" },
+	{"fluidsynth",  "USE_FLUIDSYNTH", "libfluidsynth",    true, "FluidSynth support" },
 
 	// Feature flags
 	{            "bink",             "USE_BINK",         "", true,  "Bink video support" },

@@ -31,6 +31,11 @@
 #include "audio/musicplugin.h"
 #include "audio/mpu401.h"
 #include "audio/softsynth/emumidi.h"
+#ifdef IPHONE_OFFICIAL
+#include <string.h>
+#include <sys/syslimits.h>
+#include "backends/platform/ios7/ios7_common.h"
+#endif
 
 #include <fluidsynth.h>
 
@@ -179,7 +184,16 @@ int MidiDriver_FluidSynth::open() {
 
 	const char *soundfont = ConfMan.get("soundfont").c_str();
 
+#ifdef IPHONE_OFFICIAL
+	char *soundfont_fullpath[PATH_MAX];
+	const char *document_path = iOS7_getDocumentsDir();
+	strcpy((char *) soundfont_fullpath, document_path);
+	strcat((char *) soundfont_fullpath, soundfont);
+	_soundFont = fluid_synth_sfload(_synth, (const char *) soundfont_fullpath, 1);
+#else
 	_soundFont = fluid_synth_sfload(_synth, soundfont, 1);
+#endif
+
 	if (_soundFont == -1)
 		error("Failed loading custom sound font '%s'", soundfont);
 

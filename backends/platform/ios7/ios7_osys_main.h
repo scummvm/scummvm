@@ -109,10 +109,14 @@ protected:
 	bool _fullScreenOverlayIsDirty;
 	int _screenChangeCount;
 
+	char *_lastErrorMessage;
+
 public:
 
 	OSystem_iOS7();
 	virtual ~OSystem_iOS7();
+
+	static OSystem_iOS7 *sharedInstance();
 
 	virtual void initBackend();
 
@@ -192,6 +196,7 @@ public:
 	virtual Common::String getDefaultConfigFileName();
 
 	virtual void logMessage(LogMessageType::Type type, const char *message);
+	virtual void fatalError() override;
 
 protected:
 	void initVideoContext();

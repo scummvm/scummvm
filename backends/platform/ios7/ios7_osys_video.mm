@@ -29,6 +29,38 @@
 #include "graphics/conversion.h"
 #import "iOS7AppDelegate.h"
 
+@interface iOS7AlertHandler : NSObject<UIAlertViewDelegate>
+@end
+
+@implementation iOS7AlertHandler
+
+- (void)alertView:(UIAlertView *)alertView willDismissWithButtonIndex:(NSInteger)buttonIndex {
+	OSystem_iOS7::sharedInstance()->quit();
+	exit(1);
+}
+
+@end
+
+static void displayAlert(void *ctx) {
+	UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Fatal Error"
+	                                                message:[NSString stringWithCString:(const char *)ctx encoding:NSUTF8StringEncoding]
+	                                               delegate:[[iOS7AlertHandler alloc] init]
+	                                      cancelButtonTitle:@"OK"
+	                                      otherButtonTitles:nil];
+	[alert show];
+	[alert autorelease];
+}
+
+void OSystem_iOS7::fatalError() {
+	if (_lastErrorMessage) {
+		dispatch_async_f(dispatch_get_main_queue(), _lastErrorMessage, displayAlert);
+		for(;;);
+	}
+	else {
+		OSystem::fatalError();
+	}
+}
+
 void OSystem_iOS7::initVideoContext() {
 	_videoContext = [[iOS7AppDelegate iPhoneView] getVideoContext];
 }
