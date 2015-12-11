@@ -200,6 +200,12 @@ const char *BaseKeyboardState::scToString() {
 bool BaseKeyboardState::readKey(Common::Event *event) {
 	//_currentPrintable = (event->type == SDL_TEXTINPUT); // TODO
 	_currentCharCode = keyCodeToVKey(event);
+	// convert all lowercase keys to uppercase to make it easier for handling later on for consistency
+	if (Common::isLower(_currentCharCode) && (event->kbd.hasFlags(Common::KBD_SHIFT) || event->kbd.flags & Common::KBD_CAPS)) {
+		if (!(event->kbd.keycode >= Common::KEYCODE_F1 && event->kbd.keycode <= Common::KEYCODE_F12)) {
+			_currentCharCode = toupper(_currentCharCode);
+		}
+	}
 	// Verify that this is a printable ISO-8859-character (including the upper charset)
 	if ((_currentCharCode <= 0x7E && _currentCharCode >= 0x20) || (_currentCharCode <= 0xFF && _currentCharCode >= 0xA0)) {
 		_currentPrintable = true;
@@ -263,7 +269,11 @@ bool BaseKeyboardState::isCurrentPrintable() const {
 
 //////////////////////////////////////////////////////////////////////////
 enum VKeyCodes {
+	kVkBack       = 8,
+	kVkTab        = 9,
+
 	kVkReturn     = 13,
+	kVkPause      = 19,
 
 	kVkEscape     = 27,
 
@@ -274,6 +284,7 @@ enum VKeyCodes {
 	kVkUp         = 38,
 	kVkRight      = 39,
 	kVkDown       = 40,
+	kVkInsert     = 45,
 
 	kVkF1         = 112,
 	kVkF2         = 113,
@@ -297,26 +308,53 @@ uint32 BaseKeyboardState::keyCodeToVKey(Common::Event *event) {
 		return 0;
 	}
 
+	// return ASCII value if key pressed is an alphanumeric key
+	// number keys pressed on numpad are handled in next block
+	if (Common::isAlnum(event->kbd.keycode)) {
+		return event->kbd.ascii;
+	}
+
+	// if NumLock is active, return ASCII for numpad keys
+	// keys pressed on numpad without NumLock are considered as normal keycodes, handled in the next block
+	if (Common::isDigit(event->kbd.ascii) && ((event->kbd.flags & Common::KBD_NUM) != 0)) {
+		return event->kbd.ascii;
+	}
+
 	switch (event->kbd.keycode) {
+	case Common::KEYCODE_BACKSPACE:
+		return kVkBack;
+	case Common::KEYCODE_TAB:
+		return kVkTab;
 	case Common::KEYCODE_RETURN:
 	case Common::KEYCODE_KP_ENTER:
 		return kVkReturn;
+	case Common::KEYCODE_PAUSE:
+		return kVkPause;
 	case Common::KEYCODE_ESCAPE:
 		return kVkEscape;
 	case Common::KEYCODE_SPACE:
 		return kVkSpace;
 	case Common::KEYCODE_END:
+	case Common::KEYCODE_KP1:
 		return kVkEnd;
 	case Common::KEYCODE_HOME:
+	case Common::KEYCODE_KP7:
 		return kVkHome;
 	case Common::KEYCODE_LEFT:
+	case Common::KEYCODE_KP4:
 		return kVkLeft;
 	case Common::KEYCODE_RIGHT:
+	case Common::KEYCODE_KP6:
 		return kVkRight;
 	case Common::KEYCODE_UP:
+	case Common::KEYCODE_KP8:
 		return kVkUp;
 	case Common::KEYCODE_DOWN:
+	case Common::KEYCODE_KP2:
 		return kVkDown;
+	case Common::KEYCODE_INSERT:
+	case Common::KEYCODE_KP0:
+		return kVkInsert;
 	case Common::KEYCODE_F1:
 		return kVkF1;
 	case Common::KEYCODE_F2:
@@ -342,8 +380,12 @@ uint32 BaseKeyboardState::keyCodeToVKey(Common::Event *event) {
 	case Common::KEYCODE_F12:
 		return kVkF12;
 	default:
-		warning("Key not handled: %d '%c'", event->kbd.keycode, event->kbd.keycode);
-		return event->kbd.keycode;
+		// check if any non-sticky keys were used, otherwise key is unknown to us
+		if ((event->kbd.flags & Common::KBD_NON_STICKY) == 0) {
+			warning("Key pressed is not recognized, ASCII returned (%d '%c').", event->kbd.keycode, event->kbd.keycode);
+		}
+		// return ASCII if no match, since it could be used for typing
+		return event->kbd.ascii;
 		break;
 	}
 
