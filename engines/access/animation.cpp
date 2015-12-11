@@ -53,6 +53,13 @@ Animation::Animation(AccessEngine *vm, Common::SeekableReadStream *stream) : Man
 	uint32 startOfs = stream->pos();
 
 	_type = stream->readByte();
+
+	// WORKAROUND: In Amazon floppy English, there's an animation associated with
+	// the librarian that isn't used, and has junk data. Luckily, it's animation
+	// type is also invalid, so if the _type isn't in range, exit immediately
+	if (_type < 0 || _type > 7)
+		return;
+
 	_scaling = stream->readSByte();
 	stream->readByte(); // unk
 	_frameNumber = stream->readByte();
