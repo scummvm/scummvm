@@ -127,7 +127,6 @@ void TizenGraphicsManager::setReady() {
 void TizenGraphicsManager::updateScreen() {
 	if (!_initState) {
 		OpenGLGraphicsManager::updateScreen();
-		eglSwapBuffers(_eglDisplay, _eglSurface);
 	}
 }
 
@@ -202,4 +201,8 @@ bool TizenGraphicsManager::loadVideoMode(uint requestedWidth, uint requestedHeig
 	// We get this whenever a new resolution is requested. Since Tizen is
 	// using a fixed output size we do nothing like that here.
 	return true;
+}
+
+void TizenGraphicsManager::refreshScreen() {
+	eglSwapBuffers(_eglDisplay, _eglSurface);
 }

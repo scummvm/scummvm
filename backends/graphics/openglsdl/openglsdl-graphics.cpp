@@ -236,13 +236,6 @@ void OpenGLSdlGraphicsManager::updateScreen() {
 	}
 
 	OpenGLGraphicsManager::updateScreen();
-
-	// Swap OpenGL buffers
-#if SDL_VERSION_ATLEAST(2, 0, 0)
-	SDL_GL_SwapWindow(_window->getSDLWindow());
-#else
-	SDL_GL_SwapBuffers();
-#endif
 }
 
 void OpenGLSdlGraphicsManager::notifyVideoExpose() {
@@ -299,6 +292,15 @@ bool OpenGLSdlGraphicsManager::loadVideoMode(uint requestedWidth, uint requested
 
 	// Set up the mode.
 	return setupMode(requestedWidth, requestedHeight);
+}
+
+void OpenGLSdlGraphicsManager::refreshScreen() {
+	// Swap OpenGL buffers
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	SDL_GL_SwapWindow(_window->getSDLWindow());
+#else
+	SDL_GL_SwapBuffers();
+#endif
 }
 
 bool OpenGLSdlGraphicsManager::setupMode(uint width, uint height) {

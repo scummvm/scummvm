@@ -431,6 +431,8 @@ void OpenGLGraphicsManager::updateScreen() {
 		GLCALL(glColor4f(1.0f, 1.0f, 1.0f, 1.0f));
 	}
 #endif
+
+	refreshScreen();
 }
 
 Graphics::Surface *OpenGLGraphicsManager::lockScreen() {

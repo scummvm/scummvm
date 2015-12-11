@@ -263,6 +263,11 @@ protected:
 	virtual bool loadVideoMode(uint requestedWidth, uint requestedHeight, const Graphics::PixelFormat &format) = 0;
 
 	/**
+	 * Refresh the screen contents.
+	 */
+	virtual void refreshScreen() = 0;
+
+	/**
 	 * Save a screenshot of the full display as BMP to the given file. This
 	 * uses Common::DumpFile for writing the screenshot.
 	 *

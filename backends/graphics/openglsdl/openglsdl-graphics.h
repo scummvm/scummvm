@@ -65,6 +65,8 @@ protected:
 	virtual void setInternalMousePosition(int x, int y);
 
 	virtual bool loadVideoMode(uint requestedWidth, uint requestedHeight, const Graphics::PixelFormat &format);
+
+	virtual void refreshScreen();
 private:
 	bool setupMode(uint width, uint height);
 
