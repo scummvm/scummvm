@@ -78,6 +78,17 @@ void InventoryBag::removeInventoryItem(InventoryItem *inventoryItem) {
 			(*it)->_inventoryItem = 0;
 }
 
+bool InventoryBag::hasInventoryItem(uint32 objectId) {
+	for (InventorySlotsIterator it = _inventorySlots.begin();
+		it != _inventorySlots.end(); ++it) {
+		InventorySlot *inventorySlot = *it;
+		InventoryItem *inventoryItem = inventorySlot->_inventoryItem;
+		if (inventoryItem && inventoryItem->_objectId == objectId)
+			return true;
+	}
+	return false;
+}
+
 void InventoryBag::buildItems() {
 	for (InventorySlotsIterator it = _inventorySlots.begin();
 		it != _inventorySlots.end(); ++it) {
@@ -333,11 +344,13 @@ void BbdouInventory::putBackInventoryItem(uint32 objectId, Common::Point cursorP
 	if (!flag && !inventoryItem->_assigned)
 		return;
 	for (uint i = 0; i < _inventoryBags.size(); ++i) {
-		if (_inventoryBags[i]->_sceneId == _activeInventorySceneId) {
-			InventorySlot *inventorySlot = _inventoryBags[i]->findClosestSlot(cursorPosition, _index);
-			_inventoryBags[i]->addInventoryItem(inventoryItem, inventorySlot);
+		InventoryBag *inventoryBag = _inventoryBags[i];
+		if (inventoryBag->_sceneId == _activeInventorySceneId) {
+			InventorySlot *inventorySlot = inventoryBag->findClosestSlot(cursorPosition, _index);
+			inventoryBag->addInventoryItem(inventoryItem, inventorySlot);
 		} else {
-			debug("putBackInventoryItem OTHER STUFF TODO");
+			if (!inventoryBag->hasInventoryItem(objectId))
+				inventoryBag->addInventoryItem(inventoryItem, 0);
 		}
 	}
 	refresh();

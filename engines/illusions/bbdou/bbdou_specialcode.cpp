@@ -135,6 +135,7 @@ void BbdouSpecialCode::init() {
 	SPECIAL(0x00160013, spcInitBubble);
 	SPECIAL(0x00160014, spcSetupBubble);
 	SPECIAL(0x00160015, spcSetObjectInteractMode);
+	SPECIAL(0x00160017, spcInitInventory);
 	SPECIAL(0x00160019, spcRegisterInventoryBag);
 	SPECIAL(0x0016001A, spcRegisterInventorySlot);
 	SPECIAL(0x0016001B, spcRegisterInventoryItem);
@@ -143,8 +144,10 @@ void BbdouSpecialCode::init() {
 	SPECIAL(0x0016001E, spcRemoveInventoryItem);
 	SPECIAL(0x0016001F, spcHasInventoryItem);
 	SPECIAL(0x00160025, spcCloseInventory);
+	SPECIAL(0x00160027, spcInitConversation);
 	SPECIAL(0x00160030, spcResetCursor);
 	SPECIAL(0x00160032, spcSetCursorField90);
+	SPECIAL(0x00160036, spcInitMenu);
 	SPECIAL(0x00160037, spcIsCursorHoldingObjectId);
 	SPECIAL(0x00160038, spcInitRadarMicrophone);
 	SPECIAL(0x0016003A, spcSaladCtl);
@@ -243,6 +246,11 @@ void BbdouSpecialCode::spcSetObjectInteractMode(OpCall &opCall) {
 	_vm->notifyThreadId(opCall._threadId);
 }
 
+void BbdouSpecialCode::spcInitInventory(OpCall &opCall) {
+	// Called but not used in the reimplementation since the
+	// inventory is initialized in this class' constructor
+}
+
 void BbdouSpecialCode::spcRegisterInventoryBag(OpCall &opCall) {
 	ARG_UINT32(sceneId);
 	_inventory->registerInventoryBag(sceneId);
@@ -282,6 +290,10 @@ void BbdouSpecialCode::spcCloseInventory(OpCall &opCall) {
 	_inventory->close();
 }
 
+void BbdouSpecialCode::spcInitConversation(OpCall &opCall) {
+	// Conversations seem unused but this is still called
+}
+
 void BbdouSpecialCode::spcResetCursor(OpCall &opCall) {
 	ARG_UINT32(objectId);
 	_cursor->reset(objectId);
@@ -293,6 +305,10 @@ void BbdouSpecialCode::spcSetCursorField90(OpCall &opCall) {
 	ARG_SKIP(4); // objectId unused
 	_cursor->_data._field90 = 1;
 	_vm->notifyThreadId(opCall._threadId);
+}
+
+void BbdouSpecialCode::spcInitMenu(OpCall &opCall) {
+	// Called but not used in the reimplementation
 }
 
 void BbdouSpecialCode::spcIsCursorHoldingObjectId(OpCall &opCall) {
