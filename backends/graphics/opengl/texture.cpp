@@ -22,7 +22,7 @@
 
 #include "backends/graphics/opengl/texture.h"
 #include "backends/graphics/opengl/extensions.h"
-#include "backends/graphics/opengl/debug.h"
+#include "backends/graphics/opengl/opengl-graphics.h"
 
 #include "common/rect.h"
 #include "common/textconsole.h"

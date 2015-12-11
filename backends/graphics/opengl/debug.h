@@ -31,9 +31,9 @@ namespace OpenGL {
 void checkGLError(const char *expr, const char *file, int line);
 } // End of namespace OpenGL
 
-#define GLCALL(x) do { (x); OpenGL::checkGLError(#x, __FILE__, __LINE__); } while (false)
+#define GL_WRAP_DEBUG(call, name) do { (call); OpenGL::checkGLError(#name, __FILE__, __LINE__); } while (false)
 #else
-#define GLCALL(x) do { (x); } while (false)
+#define GL_WRAP_DEBUG(call, name) do { (call); } while (false)
 #endif
 
 #endif

@@ -28,6 +28,8 @@
 
 #include "common/scummsys.h"
 
+#include "backends/graphics/opengl/debug.h"
+
 #ifdef WIN32
 #if defined(ARRAYSIZE) && !defined(_WINDOWS_)
 #undef ARRAYSIZE
@@ -59,5 +61,7 @@ using namespace Tizen::Graphics::Opengl;
 #else
 #define GLCALLCONV
 #endif
+
+#define GLCALL(x) GL_WRAP_DEBUG(x, x)
 
 #endif
