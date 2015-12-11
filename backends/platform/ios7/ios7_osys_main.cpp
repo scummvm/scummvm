@@ -28,6 +28,7 @@
 #include <string.h>
 
 #include <sys/time.h>
+#include <QuartzCore/QuartzCore.h>
 
 #include "common/scummsys.h"
 #include "common/util.h"
@@ -196,12 +197,8 @@ void OSystem_iOS7::suspendLoop() {
 }
 
 uint32 OSystem_iOS7::getMillis(bool skipRecord) {
-	//printf("getMillis()\n");
-
-	struct timeval currentTime;
-	gettimeofday(&currentTime, NULL);
-	return (uint32)(((currentTime.tv_sec - _startTime.tv_sec) * 1000) +
-	                ((currentTime.tv_usec - _startTime.tv_usec) / 1000)) - _timeSuspended;
+	CFTimeInterval timeInSeconds = CACurrentMediaTime();
+	return (uint32) (timeInSeconds * 1000.0);
 }
 
 void OSystem_iOS7::delayMillis(uint msecs) {
