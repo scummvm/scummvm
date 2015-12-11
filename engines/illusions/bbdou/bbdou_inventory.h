@@ -57,6 +57,7 @@ public:
 	void registerInventorySlot(uint32 namedPointId);
 	bool addInventoryItem(InventoryItem *inventoryItem, InventorySlot *inventorySlot);
 	void removeInventoryItem(InventoryItem *inventoryItem);
+	bool hasInventoryItem(uint32 objectId);
 	void buildItems();
 	InventorySlot *getInventorySlot(uint32 objectId);
 	InventorySlot *findClosestSlot(Common::Point putPos, int index);
