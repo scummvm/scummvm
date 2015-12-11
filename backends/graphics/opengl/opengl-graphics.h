@@ -479,9 +479,9 @@ private:
 	bool _forceRedraw;
 
 	/**
-	 * Draws a rectangle
+	 * Number of frames glClear shall ignore scissor testing.
 	 */
-	void drawRect(GLfloat x, GLfloat y, GLfloat w, GLfloat h);
+	uint _scissorOverride;
 
 #ifdef USE_OSD
 	//

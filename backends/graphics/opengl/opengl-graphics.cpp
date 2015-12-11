@@ -52,7 +52,7 @@ OpenGLGraphicsManager::OpenGLGraphicsManager()
       _cursorX(0), _cursorY(0), _cursorDisplayX(0),_cursorDisplayY(0), _cursorHotspotX(0), _cursorHotspotY(0),
       _cursorHotspotXScaled(0), _cursorHotspotYScaled(0), _cursorWidthScaled(0), _cursorHeightScaled(0),
       _cursorKeyColor(0), _cursorVisible(false), _cursorDontScale(false), _cursorPaletteEnabled(false),
-      _forceRedraw(false)
+      _forceRedraw(false), _scissorOverride(3)
 #ifdef USE_OSD
       , _osdAlpha(0), _osdFadeStartTime(0), _osd(nullptr)
 #endif
@@ -366,7 +366,19 @@ void OpenGLGraphicsManager::updateScreen() {
 	_forceRedraw = false;
 
 	// Clear the screen buffer.
-	GLCALL(glClear(GL_COLOR_BUFFER_BIT));
+	if (_scissorOverride) {
+		// In certain cases we need to assure that the whole screen area is
+		// cleared. For example, when switching from overlay visible to
+		// invisible, we need to assure that all contents are cleared to
+		// properly remove all overlay contents.
+		GLCALL(glDisable(GL_SCISSOR_TEST));
+		GLCALL(glClear(GL_COLOR_BUFFER_BIT));
+		GLCALL(glEnable(GL_SCISSOR_TEST));
+
+		--_scissorOverride;
+	} else {
+		GLCALL(glClear(GL_COLOR_BUFFER_BIT));
+	}
 
 	const GLfloat shakeOffset = _gameScreenShakeOffset * (GLfloat)_displayHeight / _gameScreen->getHeight();
 
@@ -389,37 +401,8 @@ void OpenGLGraphicsManager::updateScreen() {
 		              _cursorWidthScaled, _cursorHeightScaled);
 	}
 
-	// Fourth step: Draw black borders around the game screen when no overlay
-	// is visible. This makes sure that the mouse cursor etc. is only drawn
-	// in the actual game screen area in this case.
-	if (!_overlayVisible) {
-		GLCALL(glColor4f(0.0f, 0.0f, 0.0f, 1.0f));
-
-		GLCALL(glDisable(GL_TEXTURE_2D));
-		GLCALL(glDisableClientState(GL_TEXTURE_COORD_ARRAY));
-
-		// Top border.
-		drawRect(0, 0, _outputScreenWidth, _displayY);
-
-		// Left border.
-		drawRect(0, 0, _displayX, _outputScreenHeight);
-
-		// Bottom border.
-		const int y = _displayY + _displayHeight;
-		drawRect(0, y, _outputScreenWidth, _outputScreenHeight - y);
-
-		// Right border.
-		const int x = _displayX + _displayWidth;
-		drawRect(x, 0, _outputScreenWidth - x, _outputScreenHeight);
-
-		GLCALL(glEnableClientState(GL_TEXTURE_COORD_ARRAY));
-		GLCALL(glEnable(GL_TEXTURE_2D));
-
-		GLCALL(glColor4f(1.0f, 1.0f, 1.0f, 1.0f));
-	}
-
 #ifdef USE_OSD
-	// Fifth step: Draw the OSD.
+	// Fourth step: Draw the OSD.
 	if (_osdAlpha > 0) {
 		Common::StackLock lock(_osdMutex);
 
@@ -483,6 +466,9 @@ void OpenGLGraphicsManager::showOverlay() {
 	_overlayVisible = true;
 	_forceRedraw = true;
 
+	// Allow drawing inside full screen area.
+	GLCALL(glDisable(GL_SCISSOR_TEST));
+
 	// Update cursor position.
 	setMousePosition(_cursorX, _cursorY);
 }
@@ -490,6 +476,10 @@ void OpenGLGraphicsManager::showOverlay() {
 void OpenGLGraphicsManager::hideOverlay() {
 	_overlayVisible = false;
 	_forceRedraw = true;
+
+	// Limit drawing to screen area.
+	GLCALL(glEnable(GL_SCISSOR_TEST));
+	_scissorOverride = 3;
 
 	// Update cursor position.
 	setMousePosition(_cursorX, _cursorY);
@@ -875,6 +865,16 @@ void OpenGLGraphicsManager::notifyContextCreate(const Graphics::PixelFormat &def
 
 	GLCALL(glEnable(GL_TEXTURE_2D));
 
+	// Setup scissor state accordingly.
+	if (_overlayVisible) {
+		GLCALL(glDisable(GL_SCISSOR_TEST));
+	} else {
+		GLCALL(glEnable(GL_SCISSOR_TEST));
+	}
+	// Clear the whole screen for the first three frames to assure any
+	// leftovers are cleared.
+	_scissorOverride = 3;
+
 	// We use a "pack" alignment (when reading from textures) to 4 here,
 	// since the only place where we really use it is the BMP screenshot
 	// code and that requires the same alignment too.
@@ -1126,6 +1126,16 @@ void OpenGLGraphicsManager::recalculateDisplayArea() {
 	_displayX = (_outputScreenWidth  - _displayWidth ) / 2;
 	_displayY = (_outputScreenHeight - _displayHeight) / 2;
 
+	// Setup drawing limitation for game graphics.
+	// This invovles some trickery because OpenGL's viewport coordinate system
+	// is upside down compared to ours.
+	GLCALL(glScissor(_displayX,
+	                 _outputScreenHeight - _displayHeight - _displayY,
+	                 _displayWidth,
+	                 _displayHeight));
+	// Clear the whole screen for the first three frames to remove leftovers.
+	_scissorOverride = 3;
+
 	// Update the cursor position to adjust for new display area.
 	setMousePosition(_cursorX, _cursorY);
 
@@ -1246,22 +1256,6 @@ void OpenGLGraphicsManager::saveScreenshot(const Common::String &filename) const
 
 	// Free allocated memory
 	delete[] pixels;
-}
-
-void OpenGLGraphicsManager::drawRect(GLfloat x, GLfloat y, GLfloat w, GLfloat h) {
-	if (w < 0 || h < 0) {
-		return;
-	}
-
-	const GLfloat vertices[4*2] = {
-		x,     y,
-		x + w, y,
-		x,     y + h,
-		x + w, y + h
-	};
-	GLCALL(glVertexPointer(2, GL_FLOAT, 0, vertices));
-
-	GLCALL(glDrawArrays(GL_TRIANGLE_STRIP, 0, 4));
 }
 
 } // End of namespace OpenGL
