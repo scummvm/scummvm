@@ -23,8 +23,8 @@
 #ifndef TOOLS_CREATE_PROJECT_H
 #define TOOLS_CREATE_PROJECT_H
 
-#ifndef __has_feature         // Optional of course.
-  #define __has_feature(x) 0  // Compatibility with non-clang compilers.
+#ifndef __has_feature       // Optional of course.
+#define __has_feature(x) 0  // Compatibility with non-clang compilers.
 #endif
 
 #include <map>
