@@ -18,7 +18,6 @@ MODULE_OBJS := \
 	savegame.o \
 	special.o \
 	tilepuzzle.o \
-	transitions.o \
 	utils.o
 
 # This module can be built as a plugin
