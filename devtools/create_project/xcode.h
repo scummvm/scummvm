@@ -131,12 +131,6 @@ private:
 			_settings[name] = setting;
 		}
 
-		// Copy constructor
-		Property(const Property &rhs) {
-			_settings = rhs._settings;
-			_flags = rhs._flags;
-		}
-
 		OrderedSettingList getOrderedSettingList() {
 			OrderedSettingList list;
 
