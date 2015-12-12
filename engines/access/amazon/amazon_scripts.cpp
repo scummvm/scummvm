@@ -473,12 +473,29 @@ void AmazonScripts::cmdCycleBack() {
 	if (_vm->_startup == -1)
 		_vm->_screen->cyclePaletteBackwards();
 }
+
 void AmazonScripts::cmdChapter() {
+	Resource *activeScript = nullptr;
+
 	if (_vm->isDemo()) {
 		cmdSetHelp();
 	} else {
 		int chapter = _data->readByte();
+
+		if (!_vm->isCD()) {
+			// For floppy version, the current script remains active even
+			// after the end of the chapter start, so we need to save it
+			activeScript = _resource;
+			_resource = nullptr;
+			_data = nullptr;
+		}
+
 		_game->startChapter(chapter);
+
+		if (!_vm->isCD()) {
+			assert(!_resource);
+			setScript(activeScript, false);
+		}
 	}
 }
 

@@ -640,25 +640,27 @@ void AmazonEngine::startChapter(int chapter) {
 		_room->init4Quads();
 	}
 
-	if (chapter == 14) {
-		_conversation = 31;
-		_char->loadChar(_conversation);
-		_events->setCursor(CURSOR_ARROW);
+	if (isCD()) {
+		if (chapter == 14) {
+			_conversation = 31;
+			_char->loadChar(_conversation);
+			_events->setCursor(CURSOR_ARROW);
 
-		_images.clear();
-		_oldRects.clear();
-		_scripts->_sequence = 0;
-		_scripts->searchForSequence();
+			_images.clear();
+			_oldRects.clear();
+			_scripts->_sequence = 0;
+			_scripts->searchForSequence();
 
-		if (_screen->_vesaMode) {
-			_converseMode = 1;
+			if (_screen->_vesaMode) {
+				_converseMode = 1;
+			}
+		} else if (chapter != 1) {
+			_player->_roomNumber = CHAPTER_JUMP[_chapter - 1];
+			_room->_function = FN_CLEAR1;
+			_converseMode = 0;
+
+			_scripts->cmdRetPos();
 		}
-	} else if (chapter != 1) {
-		_player->_roomNumber = CHAPTER_JUMP[_chapter - 1];
-		_room->_function = FN_CLEAR1;
-		_converseMode = 0;
-
-		_scripts->cmdRetPos();
 	}
 }
 
