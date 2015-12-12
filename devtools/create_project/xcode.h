@@ -47,11 +47,11 @@ protected:
 	                            const StringList &duplicate, const std::string &objPrefix, const std::string &filePrefix);
 private:
 	enum {
-		SettingsAsList        = 0x01,
-		SettingsSingleItem    = 0x02,
-		SettingsNoQuote       = 0x04,
-		SettingsQuoteVariable = 0x08,
-		SettingsNoValue       = 0x10
+		kSettingsAsList        = 0x01,
+		kSettingsSingleItem    = 0x02,
+		kSettingsNoQuote       = 0x04,
+		kSettingsQuoteVariable = 0x08,
+		kSettingsNoValue       = 0x10
 	};
 
 	// File properties
@@ -164,7 +164,7 @@ private:
 			assert(!objectName.empty());
 			assert(!objectType.empty());
 
-			addProperty("isa", objectType, "", SettingsNoQuote | SettingsNoValue);
+			addProperty("isa", objectType, "", kSettingsNoQuote | kSettingsNoValue);
 		}
 
 		// Add a simple Property with just a name and a value
@@ -176,7 +176,7 @@ private:
 			std::string output;
 			output = "\t\t" + _parent->getHash(_id) + (_comment.empty() ? "" : " /* " + _comment + " */") + " = {";
 
-			if (flags & SettingsAsList)
+			if (flags & kSettingsAsList)
 				output += "\n";
 
 			// Special case: always output the isa property first
@@ -190,7 +190,7 @@ private:
 				output += _parent->writeProperty(property->first, property->second, flags);
 			}
 
-			if (flags & SettingsAsList)
+			if (flags & kSettingsAsList)
 				output += "\t\t";
 
 			output += "};\n";
