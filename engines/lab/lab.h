@@ -87,6 +87,68 @@ typedef Common::List<Rule *> RuleList;
 #define WEST    3
 
 class LabEngine : public Engine {
+private:
+	bool _interfaceOff;
+	bool _isCrumbWaiting;
+	bool _mainDisplay;
+	bool _noUpdateDiff;
+	bool _quitLab;
+	bool _lastTooLong;
+
+	int _lastWaitTOFTicks;
+
+	uint16 _direction;
+	uint16 _maxRooms;
+
+	uint32 _extraGameFeatures;
+
+	const char *_nextFileName;
+	const char *_newFileName;
+
+	CloseDataPtr _closeDataPtr;
+	GadgetList _journalGadgetList;
+	GadgetList _mapGadgetList;
+	Image *_imgMap, *_imgRoom, *_imgUpArrowRoom, *_imgDownArrowRoom, *_imgBridge;
+	Image *_imgHRoom, *_imgVRoom, *_imgMaze, *_imgHugeMaze, *_imgPath, *_imgMapNorth;
+	Image *_imgMapEast, *_imgMapSouth, *_imgMapWest, *_imgXMark;
+	InventoryData *_inventory;
+	MapData *_maps;
+
+public:
+	bool _alternate;
+	bool _droppingCrumbs;
+	bool _followingCrumbs;
+	bool _followCrumbsFast;
+	bool _isCrumbTurning;
+	bool _isHiRes;
+
+	int _roomNum;
+
+	uint16 _highestCondition;
+	uint16 _manyRooms;
+	uint16 _numCrumbs;
+	uint16 _numInv;
+
+	uint32 _crumbSecs, _crumbMicros;
+
+	const char *_curFileName;
+
+	Anim *_anim;
+	CrumbData _breadCrumbs[MAX_CRUMBS];
+	DisplayMan *_graphics;
+	EventManager *_event;
+	GadgetList _invGadgetList;
+	GadgetList _moveGadgetList;
+	Image *_invImages[10];
+	Image *_moveImages[20];
+	LargeSet *_conditions, *_roomsFound;
+	Music *_music;
+	Resource *_resource;
+	RoomData *_rooms;
+	TextFont *_msgFont;
+	TilePuzzle *_tilePuzzle;
+	Utils *_utils;
+
 public:
 	LabEngine(OSystem *syst, const ADGameDescription *gameDesc);
 	~LabEngine();
@@ -101,137 +163,72 @@ public:
 	bool hasFeature(EngineFeature f) const;
 	Common::String generateSaveFileName(uint slot);
 
-	LargeSet *_conditions, *_roomsFound;
-
-private:
-	uint32 _extraGameFeatures;
-	bool _interfaceOff;
-	bool _noUpdateDiff;
-	bool _quitLab;
-	bool _mainDisplay;
-	// timing.cpp
-
-public:
-	EventManager *_event;
-	Resource *_resource;
-	Music *_music;
-	Anim *_anim;
-	DisplayMan *_graphics;
-	RoomData *_rooms;
-	TilePuzzle *_tilePuzzle;
-	Utils *_utils;
-
-	int _roomNum;
-	CrumbData _breadCrumbs[MAX_CRUMBS];
-	uint16 _numCrumbs;
-	bool _droppingCrumbs;
-	bool _followingCrumbs;
-	bool _followCrumbsFast;
-	bool _isCrumbTurning;
-	uint32 _crumbSecs, _crumbMicros;
-	bool _isCrumbWaiting;
-	bool _alternate;
-	bool _isHiRes;
-	uint16 _numInv;
-	uint16 _manyRooms;
-	uint16 _direction;
-	uint16 _highestCondition;
-
-	const char *_curFileName;
-	const char *_nextFileName;
-	// When ProcessRoom.c decides to change the filename of the current picture.
-	const char *_newFileName;
-	TextFont *_msgFont;
-	GadgetList _moveGadgetList;
-	GadgetList _invGadgetList;
-	Image *_moveImages[20];
-	Image *_invImages[10];
-
-private:
-	int _lastWaitTOFTicks;
-	bool _lastTooLong;
-	CloseDataPtr _closeDataPtr;
-	InventoryData *_inventory;
-	GadgetList _journalGadgetList;
-	GadgetList _mapGadgetList;
-	Image *_imgMap, *_imgRoom, *_imgUpArrowRoom, *_imgDownArrowRoom, *_imgBridge;
-	Image *_imgHRoom, *_imgVRoom, *_imgMaze, *_imgHugeMaze, *_imgPath, *_imgMapNorth;
-	Image *_imgMapEast, *_imgMapSouth, *_imgMapWest, *_imgXMark;
-	uint16 _maxRooms;
-	MapData *_maps;
-
-private:
-	bool fromCrumbs(uint32 tmpClass, uint16 code, uint16 qualifier, Common::Point tmpPos,
-			uint16 &curInv, IntuiMessage *curMsg, bool &forceDraw, uint16 gadgetId, uint16 &actionMode);
-
-public:
-	void waitTOF();
-	void drawRoomMessage(uint16 curInv, CloseDataPtr closePtr);
-	void interfaceOff();
-	void interfaceOn();
-	void decIncInv(uint16 *CurInv, bool dec);
-	Gadget *checkNumGadgetHit(GadgetList *gadgetList, uint16 key);
+	void changeVolume(int delta);
+	uint16 getDirection() { return _direction; }
 	IntuiMessage *getMsg();
-	void loadMapData();
-	void drawMap(uint16 curRoom, uint16 curMsg, uint16 floorNum, bool fadeOut, bool fadeIn);
-	void processMap(uint16 curRoom);
-	void doMap(uint16 curRoom);
-	void freeMapData();
-	void loadJournalData();
-	void drawJournal(uint16 wipenum, bool needFade);
-	void processJournal();
+	char *getPictName(CloseDataPtr *closePtrList);
+	uint16 getQuarters();
+	void setDirection(uint16 direction) { _direction = direction; };
+	void setQuarters(uint16 quarters);
+	void waitTOF();
+
+private:
+	Gadget *checkNumGadgetHit(GadgetList *gadgetList, uint16 key);
+	void decIncInv(uint16 *CurInv, bool dec);
 	void doJournal();
-	void drawMonText(char *text, TextFont *monitorFont, uint16 x1, uint16 y1, uint16 x2, uint16 y2, bool isinteractive);
-	void processMonitor(char *ntext, TextFont *monitorFont, bool isinteractive, uint16 x1, uint16 y1, uint16 x2, uint16 y2);
+	void doMap(uint16 curRoom);
 	void doMonitor(char *background, char *textfile, bool isinteractive, uint16 x1, uint16 y1, uint16 x2, uint16 y2);
 	void doNotes();
 	void doWestPaper();
-	void eatMessages();
-	void drawStaticMessage(byte index);
 	void drawDirection(CloseDataPtr closePtr);
+	void drawJournal(uint16 wipenum, bool needFade);
+	void drawMap(uint16 curRoom, uint16 curMsg, uint16 floorNum, bool fadeOut, bool fadeIn);
+	void drawMonText(char *text, TextFont *monitorFont, uint16 x1, uint16 y1, uint16 x2, uint16 y2, bool isinteractive);
+	void drawRoomMessage(uint16 curInv, CloseDataPtr closePtr);
+	void drawStaticMessage(byte index);
+	void eatMessages();
 	int followCrumbs();
-
-	void changeVolume(int delta);
-	char *getPictName(CloseDataPtr *closePtrList);
-
-	uint16 getQuarters();
-	void setQuarters(uint16 quarters);
-	uint16 getDirection() { return _direction; }
-	void setDirection(uint16 direction) { _direction = direction; };
+	void freeMapData();
+	bool fromCrumbs(uint32 tmpClass, uint16 code, uint16 qualifier, Common::Point tmpPos,
+		uint16 &curInv, IntuiMessage *curMsg, bool &forceDraw, uint16 gadgetId, uint16 &actionMode);
+	void interfaceOff();
+	void interfaceOn();
+	void loadJournalData();
+	void loadMapData();
+	void processJournal();
+	void processMap(uint16 curRoom);
+	void processMonitor(char *ntext, TextFont *monitorFont, bool isinteractive, uint16 x1, uint16 y1, uint16 x2, uint16 y2);
 
 private:
-	void freeScreens();
-	void perFlipGadget(uint16 gadID);
-	bool doCloseUp(CloseDataPtr closePtr);
-	void mainGameLoop();
-	bool doUse(uint16 curInv);
-	void mayShowCrumbIndicator();
-	void mayShowCrumbIndicatorOff();
-	const char *getInvName(uint16 curInv);
-	bool saveRestoreGame();
-	Common::Rect roomCoords(uint16 curRoom);
-	void drawRoomMap(uint16 curRoom, bool drawMarkFl);
-	bool floorVisited(uint16 floorNum);
-	uint16 getUpperFloor(uint16 floorNum);
-	uint16 getLowerFloor(uint16 floorNum);
 	bool checkConditions(int16 *condition);
-	ViewData *getViewData(uint16 roomNum, uint16 direction);
-	CloseData *getObject(Common::Point pos, CloseDataPtr closePtr);
-	CloseDataPtr findClosePtrMatch(CloseDataPtr closePtr, CloseDataPtr closePtrList);
-	uint16 processArrow(uint16 curDirection, uint16 arrow);
-	void setCurrentClose(Common::Point pos, CloseDataPtr *closePtrList, bool useAbsoluteCoords);
-	bool takeItem(uint16 x, uint16 y, CloseDataPtr *closePtrList);
-	bool doActionRuleSub(int16 action, int16 roomNum, CloseDataPtr closePtr, CloseDataPtr *setCloseList, bool allowDefaults);
+	void doActions(Action *actionList, CloseDataPtr *closePtrList);
 	bool doActionRule(Common::Point pos, int16 action, int16 roomNum, CloseDataPtr *closePtrList);
+	bool doActionRuleSub(int16 action, int16 roomNum, CloseDataPtr closePtr, CloseDataPtr *setCloseList, bool allowDefaults);
+	bool doCloseUp(CloseDataPtr closePtr);
+	bool doGoForward(CloseDataPtr *closePtrList);
+	bool doMainView(CloseDataPtr *closePtrList);
 	bool doOperateRuleSub(int16 itemNum, int16 roomNum, CloseDataPtr closePtr, CloseDataPtr *setCloseList, bool allowDefaults);
 	bool doOperateRule(Common::Point pos, int16 ItemNum, CloseDataPtr *closePtrList);
-	bool doGoForward(CloseDataPtr *closePtrList);
 	bool doTurn(uint16 from, uint16 to, CloseDataPtr *closePtrList);
-	bool doMainView(CloseDataPtr *closePtrList);
-
-public:
-	void doActions(Action *actionList, CloseDataPtr *closePtrList);
-
+	bool doUse(uint16 curInv);
+	void drawRoomMap(uint16 curRoom, bool drawMarkFl);
+	CloseDataPtr findClosePtrMatch(CloseDataPtr closePtr, CloseDataPtr closePtrList);
+	bool floorVisited(uint16 floorNum);
+	void freeScreens();
+	const char *getInvName(uint16 curInv);
+	uint16 getLowerFloor(uint16 floorNum);
+	CloseData *getObject(Common::Point pos, CloseDataPtr closePtr);
+	uint16 getUpperFloor(uint16 floorNum);
+	ViewData *getViewData(uint16 roomNum, uint16 direction);
+	void mainGameLoop();
+	void mayShowCrumbIndicator();
+	void mayShowCrumbIndicatorOff();
+	void perFlipGadget(uint16 gadID);
+	uint16 processArrow(uint16 curDirection, uint16 arrow);
+	Common::Rect roomCoords(uint16 curRoom);
+	bool saveRestoreGame();
+	void setCurrentClose(Common::Point pos, CloseDataPtr *closePtrList, bool useAbsoluteCoords);
+	bool takeItem(uint16 x, uint16 y, CloseDataPtr *closePtrList);
 };
 
 extern LabEngine *g_lab;
