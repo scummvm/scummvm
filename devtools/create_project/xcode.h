@@ -62,9 +62,8 @@ private:
 		std::string _filePath;
 		std::string _sourceTree;
 
-		FileProperty(std::string fileType = "", std::string name = "", std::string path = "", std::string source = "") :
-			_fileEncoding(""), _lastKnownFileType(fileType), _fileName(name), _filePath(path), _sourceTree(source)
-		{
+		FileProperty(std::string fileType = "", std::string name = "", std::string path = "", std::string source = "")
+		    : _fileEncoding(""), _lastKnownFileType(fileType), _fileName(name), _filePath(path), _sourceTree(source) {
 		}
 	};
 
@@ -107,7 +106,7 @@ private:
 	typedef std::pair<std::string, Setting> SettingPair;
 	typedef std::vector<SettingPair> OrderedSettingList;
 
-	static bool OrderSortPredicate(const SettingPair& s1, const SettingPair& s2) {
+	static bool OrderSortPredicate(const SettingPair &s1, const SettingPair &s2) {
 		return s1.second._order < s2.second._order;
 	}
 
@@ -160,12 +159,12 @@ private:
 	// be overkill since we only have to generate a single project
 	struct Object {
 	public:
-		std::string _id;					// Unique identifier for this object
- 		std::string _name;				// Name	(may not be unique - for ex. configuration entries)
-		std::string _refType;			// Type of object this references (if any)
-		std::string _comment;			// Main comment (empty for no comment)
+		std::string _id;                // Unique identifier for this object
+		std::string _name;              // Name (may not be unique - for ex. configuration entries)
+		std::string _refType;           // Type of object this references (if any)
+		std::string _comment;           // Main comment (empty for no comment)
 
-		PropertyList _properties;		// List of object properties, including output configuration
+		PropertyList _properties;       // List of object properties, including output configuration
 
 		// Constructs an object and add a default type property
 		Object(XcodeProvider *objectParent, std::string objectId, std::string objectName, std::string objectType, std::string objectRefType = "", std::string objectComment = "")
@@ -175,7 +174,7 @@ private:
 			assert(!objectName.empty());
 			assert(!objectType.empty());
 
-			addProperty("isa", objectType, "", SettingsNoQuote|SettingsNoValue);
+			addProperty("isa", objectType, "", SettingsNoQuote | SettingsNoValue);
 		}
 
 		// Add a simple Property with just a name and a value
@@ -209,7 +208,7 @@ private:
 			return output;
 		}
 
-	// Slight hack, to allow Group access to parent.
+		// Slight hack, to allow Group access to parent.
 	protected:
 		XcodeProvider *_parent;
 	private:
@@ -271,7 +270,7 @@ private:
 		void addChildFile(const std::string &name);
 		void addChildByHash(const std::string &hash, const std::string &name);
 		// Should be passed the hash for the entry
-		void addChildGroup(const Group* group);
+		void addChildGroup(const Group *group);
 		void ensureChildExists(const std::string &name);
 		Group *getChildGroup(const std::string &name);
 		std::string getHashRef() const { return _parent->getHash(_id); }

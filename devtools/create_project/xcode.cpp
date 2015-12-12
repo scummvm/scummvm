@@ -93,18 +93,18 @@ bool producesObjectFileOnOSX(const std::string &fileName) {
 }
 
 XcodeProvider::Group::Group(XcodeProvider *objectParent, const std::string &groupName, const std::string &uniqueName, const std::string &path) : Object(objectParent, uniqueName, groupName, "PBXGroup", "", groupName) {
-	addProperty("name", _name, "", SettingsNoValue|SettingsQuoteVariable);
-	addProperty("sourceTree", "<group>", "", SettingsNoValue|SettingsQuoteVariable);
-	
+	addProperty("name", _name, "", SettingsNoValue | SettingsQuoteVariable);
+	addProperty("sourceTree", "<group>", "", SettingsNoValue | SettingsQuoteVariable);
+
 	if (path != "") {
-		addProperty("path", path, "", SettingsNoValue|SettingsQuoteVariable);
+		addProperty("path", path, "", SettingsNoValue | SettingsQuoteVariable);
 	}
 	_childOrder = 0;
 	_treeName = uniqueName;
 }
 
 void XcodeProvider::Group::ensureChildExists(const std::string &name) {
-	std::map<std::string, Group*>::iterator it = _childGroups.find(name);
+	std::map<std::string, Group *>::iterator it = _childGroups.find(name);
 	if (it == _childGroups.end()) {
 		Group *child = new Group(_parent, name, this->_treeName + '/' + name, name);
 		_childGroups[name] = child;
@@ -131,7 +131,7 @@ void XcodeProvider::Group::addChildInternal(const std::string &id, const std::st
 
 }
 
-void XcodeProvider::Group::addChildGroup(const Group* group) {
+void XcodeProvider::Group::addChildGroup(const Group *group) {
 	addChildInternal(_parent->getHash(group->_treeName), group->_treeName);
 }
 
@@ -151,14 +151,14 @@ void XcodeProvider::Group::addChildByHash(const std::string &hash, const std::st
 }
 
 XcodeProvider::Group *XcodeProvider::Group::getChildGroup(const std::string &name) {
-	std::map<std::string, Group*>::iterator it = _childGroups.find(name);
+	std::map<std::string, Group *>::iterator it = _childGroups.find(name);
 	assert(it != _childGroups.end());
 	return it->second;
 }
 
 XcodeProvider::Group *XcodeProvider::touchGroupsForPath(const std::string &path) {
 	if (_rootSourceGroup == NULL) {
-		assert (path == _projectRoot);
+		assert(path == _projectRoot);
 		_rootSourceGroup = new Group(this, "Sources", path, path);
 		_groups.add(_rootSourceGroup);
 		return _rootSourceGroup;
@@ -181,9 +181,9 @@ XcodeProvider::Group *XcodeProvider::touchGroupsForPath(const std::string &path)
 void XcodeProvider::addFileReference(const std::string &id, const std::string &name, FileProperty properties) {
 	Object *fileRef = new Object(this, id, name, "PBXFileReference", "PBXFileReference", name);
 	if (!properties._fileEncoding.empty()) fileRef->addProperty("fileEncoding", properties._fileEncoding, "", SettingsNoValue);
-	if (!properties._lastKnownFileType.empty()) fileRef->addProperty("lastKnownFileType", properties._lastKnownFileType, "", SettingsNoValue|SettingsQuoteVariable);
-	if (!properties._fileName.empty()) fileRef->addProperty("name", properties._fileName, "", SettingsNoValue|SettingsQuoteVariable);
-	if (!properties._filePath.empty()) fileRef->addProperty("path", properties._filePath, "", SettingsNoValue|SettingsQuoteVariable);
+	if (!properties._lastKnownFileType.empty()) fileRef->addProperty("lastKnownFileType", properties._lastKnownFileType, "", SettingsNoValue | SettingsQuoteVariable);
+	if (!properties._fileName.empty()) fileRef->addProperty("name", properties._fileName, "", SettingsNoValue | SettingsQuoteVariable);
+	if (!properties._filePath.empty()) fileRef->addProperty("path", properties._filePath, "", SettingsNoValue | SettingsQuoteVariable);
 	if (!properties._sourceTree.empty()) fileRef->addProperty("sourceTree", properties._sourceTree, "", SettingsNoValue);
 	_fileReference.add(fileRef);
 	_fileReference._flags = SettingsSingleItem;
@@ -191,9 +191,9 @@ void XcodeProvider::addFileReference(const std::string &id, const std::string &n
 
 void XcodeProvider::addProductFileReference(const std::string &id, const std::string &name) {
 	Object *fileRef = new Object(this, id, name, "PBXFileReference", "PBXFileReference", name);
-	fileRef->addProperty("explicitFileType", "compiled.mach-o.executable", "", SettingsNoValue|SettingsQuoteVariable);
+	fileRef->addProperty("explicitFileType", "compiled.mach-o.executable", "", SettingsNoValue | SettingsQuoteVariable);
 	fileRef->addProperty("includeInIndex", "0", "", SettingsNoValue);
-	fileRef->addProperty("path", name, "", SettingsNoValue|SettingsQuoteVariable);
+	fileRef->addProperty("path", name, "", SettingsNoValue | SettingsQuoteVariable);
 	fileRef->addProperty("sourceTree", "BUILT_PRODUCTS_DIR", "", SettingsNoValue);
 	_fileReference.add(fileRef);
 	_fileReference._flags = SettingsSingleItem;
@@ -218,7 +218,7 @@ void XcodeProvider::createWorkspace(const BuildSetup &setup) {
 	createDirectory(workspace);
 	_projectRoot = setup.srcDir;
 	touchGroupsForPath(_projectRoot);
-	
+
 	// Setup global objects
 	setupDefines(setup);
 #ifdef ENABLE_IOS
@@ -333,7 +333,7 @@ void XcodeProvider::setupCopyFilesBuildPhase() {
 
 #define DEF_SYSFRAMEWORK(framework) properties[framework".framework"] = FileProperty("wrapper.framework", framework".framework", "System/Library/Frameworks/" framework ".framework", "SDKROOT"); \
 	ADD_SETTING_ORDER_NOVALUE(children, getHash(framework".framework"), framework".framework", fwOrder++);
-	
+
 #define DEF_LOCALLIB_STATIC(lib) properties[lib".a"] = FileProperty("archive.ar", lib".a", "/opt/local/lib/" lib ".a", "\"<group>\""); \
 	ADD_SETTING_ORDER_NOVALUE(children, getHash(lib".a"), lib".a", fwOrder++);
 
@@ -530,16 +530,16 @@ void XcodeProvider::setupNativeTarget() {
 		buildPhases._settings[getHash("PBXFrameworksBuildPhase_" + _targets[i])] = Setting("", "Frameworks", SettingsNoValue, 0, 2);
 		target->_properties["buildPhases"] = buildPhases;
 
-		target->addProperty("buildRules", "", "", SettingsNoValue|SettingsAsList);
+		target->addProperty("buildRules", "", "", SettingsNoValue | SettingsAsList);
 
-		target->addProperty("dependencies", "", "", SettingsNoValue|SettingsAsList);
+		target->addProperty("dependencies", "", "", SettingsNoValue | SettingsAsList);
 
-		target->addProperty("name", _targets[i], "", SettingsNoValue|SettingsQuoteVariable);
+		target->addProperty("name", _targets[i], "", SettingsNoValue | SettingsQuoteVariable);
 		target->addProperty("productName", PROJECT_NAME, "", SettingsNoValue);
 		addProductFileReference("PBXFileReference_" PROJECT_DESCRIPTION ".app_" + _targets[i], PROJECT_DESCRIPTION ".app");
 		productsGroup->addChildByHash(getHash("PBXFileReference_" PROJECT_DESCRIPTION ".app_" + _targets[i]), PROJECT_DESCRIPTION ".app");
 		target->addProperty("productReference", getHash("PBXFileReference_" PROJECT_DESCRIPTION ".app_" + _targets[i]), PROJECT_DESCRIPTION ".app", SettingsNoValue);
-		target->addProperty("productType", "com.apple.product-type.application", "", SettingsNoValue|SettingsQuoteVariable);
+		target->addProperty("productType", "com.apple.product-type.application", "", SettingsNoValue | SettingsQuoteVariable);
 
 		_nativeTarget.add(target);
 	}
@@ -553,7 +553,7 @@ void XcodeProvider::setupProject() {
 	Object *project = new Object(this, "PBXProject", "PBXProject", "PBXProject", "", "Project object");
 
 	project->addProperty("buildConfigurationList", getHash("XCConfigurationList_scummvm"), "Build configuration list for PBXProject \"" PROJECT_NAME "\"", SettingsNoValue);
-	project->addProperty("compatibilityVersion", "Xcode 3.2", "", SettingsNoValue|SettingsQuoteVariable);
+	project->addProperty("compatibilityVersion", "Xcode 3.2", "", SettingsNoValue | SettingsQuoteVariable);
 	project->addProperty("developmentRegion", "English", "", SettingsNoValue);
 	project->addProperty("hasScannedForEncodings", "1", "", SettingsNoValue);
 
@@ -567,8 +567,8 @@ void XcodeProvider::setupProject() {
 	project->_properties["knownRegions"] = regions;
 
 	project->addProperty("mainGroup", _rootSourceGroup->getHashRef(), "CustomTemplate", SettingsNoValue);
-	project->addProperty("projectDirPath", _projectRoot, "", SettingsNoValue|SettingsQuoteVariable);
-	project->addProperty("projectRoot", "", "", SettingsNoValue|SettingsQuoteVariable);
+	project->addProperty("projectDirPath", _projectRoot, "", SettingsNoValue | SettingsQuoteVariable);
+	project->addProperty("projectRoot", "", "", SettingsNoValue | SettingsQuoteVariable);
 
 	// List of targets
 	Property targets;
@@ -683,7 +683,7 @@ void XcodeProvider::setupSourcesBuildPhase() {
 		files._flags = SettingsAsList;
 
 		int order = 0;
-		for (std::vector<Object*>::iterator file = _buildFile._objects.begin(); file !=_buildFile._objects.end(); ++file) {
+		for (std::vector<Object *>::iterator file = _buildFile._objects.begin(); file != _buildFile._objects.end(); ++file) {
 			if (!producesObjectFileOnOSX((*file)->_name)) {
 				continue;
 			}
@@ -734,7 +734,7 @@ void XcodeProvider::setupBuildConfiguration() {
 	iPhone_HeaderSearchPaths.push_back("$(SRCROOT)/engines/");
 	iPhone_HeaderSearchPaths.push_back("$(SRCROOT)");
 	iPhone_HeaderSearchPaths.push_back("include/");
-	ADD_SETTING_LIST(iPhone_Debug, "HEADER_SEARCH_PATHS", iPhone_HeaderSearchPaths, SettingsAsList|SettingsQuoteVariable, 5);
+	ADD_SETTING_LIST(iPhone_Debug, "HEADER_SEARCH_PATHS", iPhone_HeaderSearchPaths, SettingsAsList | SettingsQuoteVariable, 5);
 	ADD_SETTING(iPhone_Debug, "INFOPLIST_FILE", "Info.plist");
 	ValueList iPhone_LibPaths;
 	iPhone_LibPaths.push_back("$(inherited)");
@@ -787,7 +787,7 @@ void XcodeProvider::setupBuildConfiguration() {
 	ADD_DEFINE(scummvm_defines, "IPHONE");
 	ADD_DEFINE(scummvm_defines, "XCODE");
 	ADD_DEFINE(scummvm_defines, "IPHONE_OFFICIAL");
-	ADD_SETTING_LIST(scummvm_Debug, "GCC_PREPROCESSOR_DEFINITIONS", scummvm_defines, SettingsNoQuote|SettingsAsList, 5);
+	ADD_SETTING_LIST(scummvm_Debug, "GCC_PREPROCESSOR_DEFINITIONS", scummvm_defines, SettingsNoQuote | SettingsAsList, 5);
 	ADD_SETTING(scummvm_Debug, "GCC_THUMB_SUPPORT", "NO");
 	ADD_SETTING(scummvm_Debug, "GCC_USE_GCC3_PFE_SUPPORT", "NO");
 	ADD_SETTING(scummvm_Debug, "GCC_WARN_ABOUT_RETURN_TYPE", "YES");
@@ -796,7 +796,7 @@ void XcodeProvider::setupBuildConfiguration() {
 	scummvm_HeaderPaths.push_back("include/");
 	scummvm_HeaderPaths.push_back("$(SRCROOT)/engines/");
 	scummvm_HeaderPaths.push_back("$(SRCROOT)");
-	ADD_SETTING_LIST(scummvm_Debug, "HEADER_SEARCH_PATHS", scummvm_HeaderPaths, SettingsQuoteVariable|SettingsAsList, 5);
+	ADD_SETTING_LIST(scummvm_Debug, "HEADER_SEARCH_PATHS", scummvm_HeaderPaths, SettingsQuoteVariable | SettingsAsList, 5);
 	ADD_SETTING_QUOTE(scummvm_Debug, "LIBRARY_SEARCH_PATHS", "");
 	ADD_SETTING(scummvm_Debug, "ONLY_ACTIVE_ARCH", "YES");
 	ADD_SETTING_QUOTE(scummvm_Debug, "OTHER_CFLAGS", "");
@@ -844,7 +844,7 @@ void XcodeProvider::setupBuildConfiguration() {
 	ValueList scummvmOSX_defines(_defines);
 	ADD_DEFINE(scummvmOSX_defines, "SDL_BACKEND");
 	ADD_DEFINE(scummvmOSX_defines, "MACOSX");
-	ADD_SETTING_LIST(scummvmOSX_Debug, "GCC_PREPROCESSOR_DEFINITIONS", scummvmOSX_defines, SettingsNoQuote|SettingsAsList, 5);
+	ADD_SETTING_LIST(scummvmOSX_Debug, "GCC_PREPROCESSOR_DEFINITIONS", scummvmOSX_defines, SettingsNoQuote | SettingsAsList, 5);
 	ADD_SETTING_QUOTE(scummvmOSX_Debug, "GCC_VERSION", "");
 	ValueList scummvmOSX_HeaderPaths;
 	scummvmOSX_HeaderPaths.push_back("/opt/local/include/SDL");
@@ -853,14 +853,14 @@ void XcodeProvider::setupBuildConfiguration() {
 	scummvmOSX_HeaderPaths.push_back("include/");
 	scummvmOSX_HeaderPaths.push_back("$(SRCROOT)/engines/");
 	scummvmOSX_HeaderPaths.push_back("$(SRCROOT)");
-	ADD_SETTING_LIST(scummvmOSX_Debug, "HEADER_SEARCH_PATHS", scummvmOSX_HeaderPaths, SettingsQuoteVariable|SettingsAsList, 5);
+	ADD_SETTING_LIST(scummvmOSX_Debug, "HEADER_SEARCH_PATHS", scummvmOSX_HeaderPaths, SettingsQuoteVariable | SettingsAsList, 5);
 	ADD_SETTING_QUOTE(scummvmOSX_Debug, "INFOPLIST_FILE", "$(SRCROOT)/dists/macosx/Info.plist");
 	ValueList scummvmOSX_LibPaths;
 	scummvmOSX_LibPaths.push_back("/sw/lib");
 	scummvmOSX_LibPaths.push_back("/opt/local/lib");
 	scummvmOSX_LibPaths.push_back("\"$(inherited)\"");
 	scummvmOSX_LibPaths.push_back("\"\\\\\\\"$(SRCROOT)/lib\\\\\\\"\"");  // mmmh, all those slashes, it's almost Christmas \o/
-	ADD_SETTING_LIST(scummvmOSX_Debug, "LIBRARY_SEARCH_PATHS", scummvmOSX_LibPaths, SettingsNoQuote|SettingsAsList, 5);
+	ADD_SETTING_LIST(scummvmOSX_Debug, "LIBRARY_SEARCH_PATHS", scummvmOSX_LibPaths, SettingsNoQuote | SettingsAsList, 5);
 	ADD_SETTING_QUOTE(scummvmOSX_Debug, "OTHER_CFLAGS", "");
 	ValueList scummvmOSX_LdFlags;
 	scummvmOSX_LdFlags.push_back("-lSDLmain");
@@ -904,7 +904,7 @@ void XcodeProvider::setupBuildConfiguration() {
 	Object *scummvmSimulator_Debug_Object = new Object(this, "XCBuildConfiguration_" PROJECT_DESCRIPTION "-Simulator_Debug", _targets[SIM_TARGET] /* ScummVM-Simulator */, "XCBuildConfiguration", "PBXNativeTarget", "Debug");
 	Property scummvmSimulator_Debug(iPhone_Debug);
 	ADD_SETTING_QUOTE(scummvmSimulator_Debug, "FRAMEWORK_SEARCH_PATHS", "$(inherited)");
-	ADD_SETTING_LIST(scummvmSimulator_Debug, "GCC_PREPROCESSOR_DEFINITIONS", scummvm_defines, SettingsNoQuote|SettingsAsList, 5);
+	ADD_SETTING_LIST(scummvmSimulator_Debug, "GCC_PREPROCESSOR_DEFINITIONS", scummvm_defines, SettingsNoQuote | SettingsAsList, 5);
 	ADD_SETTING(scummvmSimulator_Debug, "SDKROOT", "iphonesimulator3.2");
 	ADD_SETTING_QUOTE(scummvmSimulator_Debug, "VALID_ARCHS", "i386 x86_64");
 	REMOVE_SETTING(scummvmSimulator_Debug, "TARGETED_DEVICE_FAMILY");
@@ -934,7 +934,7 @@ void XcodeProvider::setupBuildConfiguration() {
 	// Warning: This assumes we have all configurations with a Debug & Release pair
 	for (std::vector<Object *>::iterator config = _buildConfiguration._objects.begin(); config != _buildConfiguration._objects.end(); config++) {
 
-		Object *configList = new Object(this, "XCConfigurationList_" + (*config)->_name, (*config)->_name, "XCConfigurationList", "", "Build configuration list for " +  (*config)->_refType + " \"" + (*config)->_name + "\"");
+		Object *configList = new Object(this, "XCConfigurationList_" + (*config)->_name, (*config)->_name, "XCConfigurationList", "", "Build configuration list for " + (*config)->_refType + " \"" + (*config)->_name + "\"");
 
 		Property buildConfigs;
 		buildConfigs._flags = SettingsAsList;
@@ -959,7 +959,7 @@ void XcodeProvider::setupBuildConfiguration() {
 void XcodeProvider::setupDefines(const BuildSetup &setup) {
 
 	for (StringList::const_iterator i = setup.defines.begin(); i != setup.defines.end(); ++i) {
-		if (*i == "HAVE_NASM")	// Not supported on Mac (TODO: change how it's handled in main class or add it only in MSVC/CodeBlocks providers?)
+		if (*i == "HAVE_NASM")  // Not supported on Mac (TODO: change how it's handled in main class or add it only in MSVC/CodeBlocks providers?)
 			continue;
 
 		ADD_DEFINE(_defines, *i);
@@ -995,7 +995,7 @@ std::string XcodeProvider::getHash(std::string key) {
 #endif
 }
 
-bool isSeparator (char s) { return (s == '-'); }
+bool isSeparator(char s) { return (s == '-'); }
 
 std::string XcodeProvider::newHash() const {
 	std::string hash = createUUID();
@@ -1018,10 +1018,10 @@ std::string replace(std::string input, const std::string find, std::string repla
 	std::string::size_type findLen = find.length();
 	std::string::size_type replaceLen = replaceStr.length();
 
-	if (findLen == 0 )
+	if (findLen == 0)
 		return input;
 
-	for (;(pos = input.find(find, pos)) != std::string::npos;) {
+	for (; (pos = input.find(find, pos)) != std::string::npos;) {
 		input.replace(pos, findLen, replaceStr);
 		pos += replaceLen;
 	}
@@ -1107,9 +1107,9 @@ std::string XcodeProvider::writeSetting(const std::string &variable, const Setti
 
 		output += (setting._flags & SettingsNoValue) ? "" : " = " + quote;
 
-		for(unsigned int i = 0; i < setting._entries.size(); ++i) {
+		for (unsigned int i = 0; i < setting._entries.size(); ++i) {
 			std::string value = setting._entries.at(i)._value;
-			if(i)
+			if (i)
 				output += " ";
 			output += value;
 
