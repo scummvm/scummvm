@@ -210,16 +210,22 @@ Common::List<Graphics::PixelFormat> OpenGLSdlGraphicsManager::getSupportedFormat
 	// RGBA4444
 	formats.push_back(Graphics::PixelFormat(2, 4, 4, 4, 4, 12, 8, 4, 0));
 
-#ifndef USE_GLES
-#ifdef SCUMM_LITTLE_ENDIAN
-	// RGBA8888
-	formats.push_back(Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0));
-#else
-	// ABGR8888
-	formats.push_back(Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
+#if !USE_FORCED_GLES
+#if !USE_FORCED_GL
+	if (isInitialized() && !isGLESContext()) {
 #endif
-	// RGB555, this is used by SCUMM HE 16 bit games.
-	formats.push_back(Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0));
+#ifdef SCUMM_LITTLE_ENDIAN
+		// RGBA8888
+		formats.push_back(Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0));
+#else
+		// ABGR8888
+		formats.push_back(Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
+#endif
+		// RGB555, this is used by SCUMM HE 16 bit games.
+		formats.push_back(Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0));
+#if !USE_FORCED_GL
+	}
+#endif
 #endif
 
 	formats.push_back(Graphics::PixelFormat::createFormatCLUT8());
@@ -391,7 +397,7 @@ bool OpenGLSdlGraphicsManager::setupMode(uint width, uint height) {
 		}
 	}
 
-#ifdef USE_GLES
+#if USE_FORCED_GLES
 	// SDL2 will create a GLES2 context by default, so this is needed for GLES1-profile
 	// functions to work.
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
@@ -403,7 +409,13 @@ bool OpenGLSdlGraphicsManager::setupMode(uint width, uint height) {
 		return false;
 	}
 
-	notifyContextCreate(rgba8888, rgba8888);
+	notifyContextCreate(rgba8888, rgba8888,
+#if USE_FORCED_GLES
+	                    OpenGL::kContextGLES
+#else
+	                    OpenGL::kContextGL
+#endif
+	                   );
 	int actualWidth, actualHeight;
 	getWindowDimensions(&actualWidth, &actualHeight);
 	setActualScreenSize(actualWidth, actualHeight);
@@ -451,7 +463,7 @@ bool OpenGLSdlGraphicsManager::setupMode(uint width, uint height) {
 	_lastVideoModeLoad = SDL_GetTicks();
 
 	if (_hwScreen) {
-		notifyContextCreate(rgba8888, rgba8888);
+		notifyContextCreate(rgba8888, rgba8888, OpenGL::kContextGL);
 		setActualScreenSize(_hwScreen->w, _hwScreen->h);
 		_eventSource->resetKeyboadEmulation(_hwScreen->w - 1, _hwScreen->h - 1);
 	}

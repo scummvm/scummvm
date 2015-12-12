@@ -117,6 +117,16 @@ public:
 
 protected:
 	/**
+	 * Whether an OpenGL (context) is active.
+	 */
+	bool isInitialized() const { return g_context.ready; }
+
+	/**
+	 * Whether an GLES context is active.
+	 */
+	bool isGLESContext() const { return g_context.type == kContextGLES; }
+
+	/**
 	 * Set up the actual screen size available for the OpenGL code to do any
 	 * drawing.
 	 *
@@ -133,8 +143,9 @@ protected:
 	 *                           (this is used for the CLUT8 game screens).
 	 * @param defaultFormatAlpha The new default format with an alpha channel
 	 *                           (this is used for the overlay and cursor).
+	 * @param type               Type of the created context.
 	 */
-	void notifyContextCreate(const Graphics::PixelFormat &defaultFormat, const Graphics::PixelFormat &defaultFormatAlpha);
+	void notifyContextCreate(const Graphics::PixelFormat &defaultFormat, const Graphics::PixelFormat &defaultFormatAlpha, ContextType type);
 
 	/**
 	 * Notify the manager that the OpenGL context is about to be destroyed.
@@ -282,8 +293,10 @@ private:
 
 	/**
 	 * Initialize the active context for use.
+	 *
+	 * @param type Type of the context to initialize.
 	 */
-	void initializeGLContext();
+	void initializeGLContext(ContextType type);
 
 protected:
 	/**

@@ -133,8 +133,7 @@ _png=auto
 _theoradec=auto
 _faad=auto
 _fluidsynth=auto
-_opengl=auto
-_opengles=no
+_opengl_mode=auto
 _readline=auto
 _freetype2=auto
 _taskbar=auto
@@ -940,6 +939,14 @@ Optional Features:
   --enable-verbose-build   enable regular echoing of commands during build
                            process
   --disable-bink           don't build with Bink video support
+  --opengl-mode=MODE       OpenGL (ES) mode to use for OpenGL output [auto]
+                           available modes: auto for autodetection
+                                            none for disabling any OpenGL usage
+                                            any for runtime detection
+                                            gl for forcing OpenGL
+                                            gles for forcing OpenGL ES
+                           WARNING: only specify this manually if you know what
+                           you are doing!
 
 Optional Libraries:
   --with-alsa-prefix=DIR   Prefix where alsa is installed (optional)
@@ -963,9 +970,6 @@ Optional Libraries:
 
   --with-mpeg2-prefix=DIR  Prefix where libmpeg2 is installed (optional)
   --enable-mpeg2           enable mpeg2 codec for cutscenes [autodetect]
-
-  --disable-opengl         disable OpenGL (ES) support [autodetect]
-  --enable-opengles        enable forced OpenGL ES mode [disabled]
 
   --with-jpeg-prefix=DIR   Prefix where libjpeg is installed (optional)
   --disable-jpeg           disable JPEG decoder [autodetect]
@@ -1071,12 +1075,11 @@ for ac_option in $@; do
 	--disable-updates)        _updates=no     ;;
 	--enable-libunity)        _libunity=yes   ;;
 	--disable-libunity)       _libunity=no    ;;
-	--enable-opengl)          _opengl=yes     ;;
-	--disable-opengl)         _opengl=no      ;;
-	--enable-opengles)        _opengles=yes   ;;
-	--disable-opengles)       _opengles=no    ;;
 	--enable-bink)            _bink=yes       ;;
 	--disable-bink)           _bink=no        ;;
+	--opengl-mode=*)
+		_opengl_mode=`echo $ac_option | cut -d '=' -f 2`
+		;;
 	--enable-verbose-build)   _verbose_build=yes ;;
 	--enable-plugins)         _dynamic_modules=yes ;;
 	--default-dynamic)        _plugins_default=dynamic ;;
@@ -2658,8 +2661,7 @@ if test -n "$_host"; then
 			_sdlconfig=sdl2-config
 			# OpenGL(ES) support is mature enough as to be the best option on
 			# the Raspberry Pi, so it's enabled by default.
-			_opengl=yes
-			_opengles=yes
+			_opengl_mode=gles
 			;;
 		dreamcast)
 			append_var DEFINES "-DDISABLE_DEFAULT_SAVEFILEMANAGER"
@@ -2988,8 +2990,7 @@ if test -n "$_host"; then
 			_timidity=no
 			_vkeybd=yes
 			# Tizen relies on the OpenGL ES output thus we always enable it.
-			_opengl=yes
-			_opengles=yes
+			_opengl_mode=gles
 			;;
 		webos)
 			_backend="webos"
@@ -4150,35 +4151,82 @@ echocheck "OpenGL"
 
 case $_backend in
 	openpandora)
-		# Only enable OpenGL ES on the OpanPandora if --enable-opengl is passed in explicitly.
-		if test "$_opengl" = yes ; then
-			_opengl=yes
-			_opengles=yes
+		# Only enable OpenGL ES on the OpanPandora if --opengl-mode=gles is passed in explicitly.
+		if test "$_opengl_mode" = "gles" ; then
 			append_var LIBS "-lGLES_CM -lEGL -lX11"
+		else
+			_opengl_mode=none
 		fi
 		;;
 esac
 
-if test "$_opengl" = auto ; then
+if test "$_opengl_mode" = auto ; then
 	case $_backend in
 		sdl)
-			_opengl=yes
+			case $_sdlversion in
+				1.2.*)
+					# Stock SDL 1.2 only supports OpenGL contexts.
+					_opengl_mode=gl
+					;;
+
+				2.0.*)
+					# SDL2 supports both OpenGL + OpenGL ES contexts.
+					# However, Mac OS X only allows OpenGL context creation at
+					# this time, thus we limit us to OpenGL on that platform.
+					case $_host_os in
+						darwin*)
+							_opengl_mode=gl
+							;;
+
+						*)
+							_opengl_mode=any
+							;;
+					esac
+					;;
+			esac
+			;;
+
+		tizen)
+			# Tizen always runs in GLES mode
+			_opengl_mode=gles
 			;;
 
 		*)
-			_opengl=no
+			_opengl_mode=none
 			;;
 	esac
 fi
 
-if test "$_opengles" = "yes" ; then
-	echo "yes (OpenGL ES)"
-else
-	echo "$_opengl"
-fi
+_opengl=yes
+case $_opengl_mode in
+	auto)
+		# This case should never occur but better safe than sorry.
+		echo "no"
+		_opengl=no
+		;;
+
+	none)
+		echo "no"
+		_opengl=no
+		;;
+
+	any)
+		echo "yes (runtime detection)"
+		add_line_to_config_h "#undef USE_GLES_MODE"
+		;;
+
+	gl)
+		echo "yes (OpenGL)"
+		add_line_to_config_h "#define USE_GLES_MODE 0"
+		;;
+
+	gles)
+		echo "yes (OpenGL ES)"
+		add_line_to_config_h "#define USE_GLES_MODE 1"
+		;;
+esac
 
 define_in_config_if_yes "$_opengl" "USE_OPENGL"
-define_in_config_if_yes "$_opengles" "USE_GLES"
 
 #
 # Check for nasm

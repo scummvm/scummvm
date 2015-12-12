@@ -30,6 +30,14 @@
 #include "backends/platform/sdl/sdl-sys.h"
 #endif
 
+// We allow to force GL or GLES modes on compile time.
+// For this the USE_GLES_MODE define is used. The following values represent
+// the given selection choices:
+//  0 - Force OpenGL context
+//  1 - Force OpenGL ES context
+#define USE_FORCED_GL   (defined(USE_GLES_MODE) && USE_GLES_MODE == 0)
+#define USE_FORCED_GLES (defined(USE_GLES_MODE) && USE_GLES_MODE == 1)
+
 // On Tizen we include the toolchain's OpenGL file. This is something we
 // actually want to avoid. However, since Tizen uses eglGetProcAddress which
 // is not required to return valid function pointers to non OpenGL extension
@@ -59,10 +67,21 @@
 
 namespace OpenGL {
 
+enum ContextType {
+	kContextGL,
+	kContextGLES
+};
+
 /**
  * Description structure of the OpenGL (ES) context.
  */
 struct Context {
+	/** Whether the context is properly initalized or not. */
+	bool ready;
+
+	/** The type of the active context. */
+	ContextType type;
+
 	/**
 	 * Reset context.
 	 *

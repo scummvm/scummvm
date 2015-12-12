@@ -759,10 +759,16 @@ void OpenGLGraphicsManager::setActualScreenSize(uint width, uint height) {
 
 	GL_CALL(glMatrixMode(GL_PROJECTION));
 	GL_CALL(glLoadIdentity());
-#ifdef USE_GLES
+#if   USE_FORCED_GLES
 	GL_CALL(glOrthof(0, _outputScreenWidth, _outputScreenHeight, 0, -1, 1));
-#else
+#elif USE_FORCED_GL
 	GL_CALL(glOrtho(0, _outputScreenWidth, _outputScreenHeight, 0, -1, 1));
+#else
+	if (isGLESContext()) {
+		GL_CALL(glOrthof(0, _outputScreenWidth, _outputScreenHeight, 0, -1, 1));
+	} else {
+		GL_CALL(glOrtho(0, _outputScreenWidth, _outputScreenHeight, 0, -1, 1));
+	}
 #endif
 	GL_CALL(glMatrixMode(GL_MODELVIEW));
 	GL_CALL(glLoadIdentity());
@@ -834,9 +840,9 @@ void OpenGLGraphicsManager::setActualScreenSize(uint width, uint height) {
 	++_screenChangeID;
 }
 
-void OpenGLGraphicsManager::notifyContextCreate(const Graphics::PixelFormat &defaultFormat, const Graphics::PixelFormat &defaultFormatAlpha) {
+void OpenGLGraphicsManager::notifyContextCreate(const Graphics::PixelFormat &defaultFormat, const Graphics::PixelFormat &defaultFormatAlpha, ContextType type) {
 	// Initialize context for use.
-	initializeGLContext();
+	initializeGLContext(type);
 
 	// Disable 3D properties.
 	GL_CALL(glDisable(GL_CULL_FACE));
@@ -1014,7 +1020,11 @@ bool OpenGLGraphicsManager::getGLPixelFormat(const Graphics::PixelFormat &pixelF
 		glFormat = GL_RGBA;
 		glType = GL_UNSIGNED_SHORT_4_4_4_4;
 		return true;
-#ifndef USE_GLES
+#if !USE_FORCED_GLES
+	// The formats below are not supported by every GLES implementation.
+	// Thus, we do not mark them as supported when a GLES context is setup.
+	} else if (isGLESContext()) {
+		return false;
 #ifdef SCUMM_LITTLE_ENDIAN
 	} else if (pixelFormat == Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0)) { // RGBA8888
 		glIntFormat = GL_RGBA;
@@ -1023,8 +1033,6 @@ bool OpenGLGraphicsManager::getGLPixelFormat(const Graphics::PixelFormat &pixelF
 		return true;
 #endif
 	} else if (pixelFormat == Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0)) { // RGB555
-		// GL_BGRA does not exist in every GLES implementation so should not be configured if
-		// USE_GLES is set.
 		glIntFormat = GL_RGB;
 		glFormat = GL_BGRA;
 		glType = GL_UNSIGNED_SHORT_1_5_5_5_REV;
@@ -1066,7 +1074,7 @@ bool OpenGLGraphicsManager::getGLPixelFormat(const Graphics::PixelFormat &pixelF
 		glFormat = GL_BGRA;
 		glType = GL_UNSIGNED_SHORT_4_4_4_4;
 		return true;
-#endif
+#endif // !USE_FORCED_GLES
 	} else {
 		return false;
 	}

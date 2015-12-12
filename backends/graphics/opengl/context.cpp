@@ -28,14 +28,22 @@
 namespace OpenGL {
 
 void Context::reset() {
+	ready = false;
+	type = kContextGL;
 	NPOTSupported = false;
 }
 
 Context g_context;
 
-void OpenGLGraphicsManager::initializeGLContext() {
+void OpenGLGraphicsManager::initializeGLContext(ContextType type) {
 	// Initialize default state.
 	g_context.reset();
+
+#if USE_FORCED_GL
+	type = kContextGL;
+#elif USE_FORCED_GLES
+	type = kContextGLES;
+#endif
 
 	// Load all functions.
 	// We use horrible trickery to silence C++ compilers.
@@ -64,6 +72,9 @@ void OpenGLGraphicsManager::initializeGLContext() {
 			g_context.NPOTSupported = true;
 		}
 	}
+
+	g_context.ready = true;
+	g_context.type = type;
 }
 
 } // End of namespace OpenGL
