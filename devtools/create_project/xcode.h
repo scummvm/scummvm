@@ -86,16 +86,16 @@ private:
 		int _indent;
 		int _order;
 
-		explicit Setting(std::string value = "", std::string comment = "", int flgs = 0, int idt = 0, int ord = -1) : _flags(flgs), _indent(idt), _order(ord) {
+		Setting(std::string value = "", std::string comment = "", int flgs = 0, int idt = 0, int ord = -1) : _flags(flgs), _indent(idt), _order(ord) {
 			_entries.push_back(Entry(value, comment));
 		}
 
-		explicit Setting(ValueList values, int flgs = 0, int idt = 0, int ord = -1) : _flags(flgs), _indent(idt), _order(ord) {
+		Setting(ValueList values, int flgs = 0, int idt = 0, int ord = -1) : _flags(flgs), _indent(idt), _order(ord) {
 			for (unsigned int i = 0; i < values.size(); i++)
 				_entries.push_back(Entry(values[i], ""));
 		}
 
-		explicit Setting(EntryList ents, int flgs = 0, int idt = 0, int ord = -1) : _entries(ents), _flags(flgs), _indent(idt), _order(ord) {}
+		Setting(EntryList ents, int flgs = 0, int idt = 0, int ord = -1) : _entries(ents), _flags(flgs), _indent(idt), _order(ord) {}
 
 		void addEntry(std::string value, std::string comment = "") {
 			_entries.push_back(Entry(value, comment));
@@ -119,7 +119,7 @@ private:
 		Property() : _flags(0), _hasOrder(false) {}
 
 		// Constructs a simple Property
-		explicit Property(std::string name, std::string value = "", std::string comment = "", int flgs = 0, int indent = 0, bool order = false) : _flags(flgs), _hasOrder(order) {
+		Property(std::string name, std::string value = "", std::string comment = "", int flgs = 0, int indent = 0, bool order = false) : _flags(flgs), _hasOrder(order) {
 			_settings[name] = Setting(value, comment, _flags, indent);
 		}
 
