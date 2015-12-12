@@ -33,12 +33,12 @@
 #include "gui/message.h"
 
 #include "lab/lab.h"
-
 #include "lab/anim.h"
 #include "lab/dispman.h"
 #include "lab/image.h"
 #include "lab/labsets.h"
 #include "lab/resource.h"
+#include "lab/tilepuzzle.h"
 #include "lab/utils.h"
 
 namespace Lab {
@@ -59,7 +59,7 @@ const uint16 SOLUTION[4][4] = {
 
 const int COMBINATION_X[6] = { 45, 83, 129, 166, 211, 248 };
 
-void LabEngine::initTilePuzzle() {
+TilePuzzle::TilePuzzle(LabEngine *vm) : _vm(vm) {
 	for (int i = 0; i < 16; i++)
 		_tiles[i] = nullptr;
 
@@ -70,13 +70,26 @@ void LabEngine::initTilePuzzle() {
 
 	for (int i = 0; i < 6; i++)
 		_combination[i] = 0;
+
+	for (int i = 0; i < 10; i++)
+		_numberImages[i] = nullptr;
+}
+
+TilePuzzle::~TilePuzzle() {
+	for (int i = 0; i < 16; i++)
+		delete _tiles[i];
+
+	for (uint16 imgIdx = 0; imgIdx < 10; imgIdx++) {
+		delete _numberImages[imgIdx];
+		_numberImages[imgIdx] = nullptr;
+	}
 }
 
 /**
  * Processes mouse clicks and changes the combination.
  */
-void LabEngine::mouseTile(Common::Point pos) {
-	Common::Point realPos = _utils->vgaUnscale(pos);
+void TilePuzzle::mouseTile(Common::Point pos) {
+	Common::Point realPos = _vm->_utils->vgaUnscale(pos);
 
 	if ((realPos.x < 101) || (realPos.y < 26))
 		return;
@@ -91,7 +104,7 @@ void LabEngine::mouseTile(Common::Point pos) {
 /**
  * Changes the combination number of one of the slots
  */
-void LabEngine::changeTile(uint16 col, uint16 row) {
+void TilePuzzle::changeTile(uint16 col, uint16 row) {
 	int16 scrolltype = -1;
 
 	if (row > 0) {
@@ -129,7 +142,7 @@ void LabEngine::changeTile(uint16 col, uint16 row) {
 	if (scrolltype != -1) {
 		doTileScroll(col, row, scrolltype);
 
-		if (getFeatures() & GF_WINDOWS_TRIAL) {
+		if (_vm->getFeatures() & GF_WINDOWS_TRIAL) {
 			GUI::MessageDialog trialMessage("This puzzle is not available in the trial version of the game");
 			trialMessage.runModal();
 			return;
@@ -151,9 +164,9 @@ void LabEngine::changeTile(uint16 col, uint16 row) {
 
 		if (check) {
 			// unlocked combination
-			_conditions->inclElement(BRICKOPEN);
-			_anim->_doBlack = true;
-			_graphics->readPict("p:Up/BDOpen", true);
+			_vm->_conditions->inclElement(BRICKOPEN);
+			_vm->_anim->_doBlack = true;
+			_vm->_graphics->readPict("p:Up/BDOpen", true);
 		}
 	}
 }
@@ -161,8 +174,8 @@ void LabEngine::changeTile(uint16 col, uint16 row) {
 /**
  * Processes mouse clicks and changes the combination.
  */
-void LabEngine::mouseCombination(Common::Point pos) {
-	Common::Point realPos = _utils->vgaUnscale(pos);
+void TilePuzzle::mouseCombination(Common::Point pos) {
+	Common::Point realPos = _vm->_utils->vgaUnscale(pos);
 
 	if (!Common::Rect(44, 63, 285, 99).contains(realPos))
 		return;
@@ -187,25 +200,25 @@ void LabEngine::mouseCombination(Common::Point pos) {
 /**
  * Draws the images of the combination lock to the display bitmap.
  */
-void LabEngine::doTile(bool showsolution) {
+void TilePuzzle::doTile(bool showsolution) {
 	uint16 row = 0, col = 0, rowm, colm, num;
 	int16 rows, cols;
 
 	if (showsolution) {
-		rowm = _utils->vgaScaleY(23);
-		colm = _utils->vgaScaleX(27);
+		rowm = _vm->_utils->vgaScaleY(23);
+		colm = _vm->_utils->vgaScaleX(27);
 
-		rows = _utils->vgaScaleY(31);
-		cols = _utils->vgaScaleX(105);
+		rows = _vm->_utils->vgaScaleY(31);
+		cols = _vm->_utils->vgaScaleX(105);
 	} else {
-		_graphics->setAPen(0);
-		_graphics->rectFillScaled(97, 22, 220, 126);
+		_vm->_graphics->setAPen(0);
+		_vm->_graphics->rectFillScaled(97, 22, 220, 126);
 
-		rowm = _utils->vgaScaleY(25);
-		colm = _utils->vgaScaleX(30);
+		rowm = _vm->_utils->vgaScaleY(25);
+		colm = _vm->_utils->vgaScaleX(30);
 
-		rows = _utils->vgaScaleY(25);
-		cols = _utils->vgaScaleX(100);
+		rows = _vm->_utils->vgaScaleY(25);
+		cols = _vm->_utils->vgaScaleX(100);
 	}
 
 	while (row < 4) {
@@ -229,63 +242,63 @@ void LabEngine::doTile(bool showsolution) {
 /**
  * Reads in a backdrop picture.
  */
-void LabEngine::showTile(const char *filename, bool showsolution) {
-	uint16 start = showsolution ? 0 : 1;
+void TilePuzzle::showTile(const char *filename, bool showSolution) {
+	uint16 start = showSolution ? 0 : 1;
 
-	_anim->_doBlack = true;
-	_anim->_noPalChange = true;
-	_graphics->readPict(filename, true);
-	_anim->_noPalChange = false;
-	_graphics->blackScreen();
+	_vm->_anim->_doBlack = true;
+	_vm->_anim->_noPalChange = true;
+	_vm->_graphics->readPict(filename, true);
+	_vm->_anim->_noPalChange = false;
+	_vm->_graphics->blackScreen();
 
-	Common::File *tileFile = tileFile = _resource->openDataFile(showsolution ? "P:TileSolution" : "P:Tile");
+	Common::File *tileFile = _vm->_resource->openDataFile(showSolution ? "P:TileSolution" : "P:Tile");
 
 	for (uint16 curBit = start; curBit < 16; curBit++)
 		_tiles[curBit] = new Image(tileFile);
 
 	delete tileFile;
 
-	doTile(showsolution);
-	_graphics->setPalette(_anim->_diffPalette, 256);
+	doTile(showSolution);
+	_vm->_graphics->setPalette(_vm->_anim->_diffPalette, 256);
 }
 
 /**
  * Does the scrolling for the tiles on the tile puzzle.
  */
-void LabEngine::doTileScroll(uint16 col, uint16 row, uint16 scrolltype) {
+void TilePuzzle::doTileScroll(uint16 col, uint16 row, uint16 scrolltype) {
 	int16 dX = 0, dY = 0, dx = 0, dy = 0, sx = 0, sy = 0;
 	uint16 last = 0;
 
 	if (scrolltype == LEFTSCROLL) {
-		dX = _utils->vgaScaleX(5);
-		sx = _utils->vgaScaleX(5);
+		dX = _vm->_utils->vgaScaleX(5);
+		sx = _vm->_utils->vgaScaleX(5);
 		last = 6;
 	} else if (scrolltype == RIGHTSCROLL) {
-		dX = _utils->vgaScaleX(-5);
-		dx = _utils->vgaScaleX(-5);
-		sx = _utils->vgaScaleX(5);
+		dX = _vm->_utils->vgaScaleX(-5);
+		dx = _vm->_utils->vgaScaleX(-5);
+		sx = _vm->_utils->vgaScaleX(5);
 		last = 6;
 	} else if (scrolltype == UPSCROLL) {
-		dY = _utils->vgaScaleY(5);
-		sy = _utils->vgaScaleY(5);
+		dY = _vm->_utils->vgaScaleY(5);
+		sy = _vm->_utils->vgaScaleY(5);
 		last = 5;
 	} else if (scrolltype == DOWNSCROLL) {
-		dY = _utils->vgaScaleY(-5);
-		dy = _utils->vgaScaleY(-5);
-		sy = _utils->vgaScaleY(5);
+		dY = _vm->_utils->vgaScaleY(-5);
+		dy = _vm->_utils->vgaScaleY(-5);
+		sy = _vm->_utils->vgaScaleY(5);
 		last = 5;
 	}
 
-	sx += _utils->svgaCord(2);
+	sx += _vm->_utils->svgaCord(2);
 
-	uint16 x1 = _utils->vgaScaleX(100) + (col * _utils->vgaScaleX(30)) + dx;
-	uint16 y1 = _utils->vgaScaleY(25) + (row * _utils->vgaScaleY(25)) + dy;
+	uint16 x1 = _vm->_utils->vgaScaleX(100) + (col * _vm->_utils->vgaScaleX(30)) + dx;
+	uint16 y1 = _vm->_utils->vgaScaleY(25) + (row * _vm->_utils->vgaScaleY(25)) + dy;
 
 	byte *buffer = new byte[_tiles[1]->_width * _tiles[1]->_height * 2L];
 
 	for (uint16 i = 0; i < last; i++) {
-		waitTOF();
-		scrollRaster(dX, dY, x1, y1, x1 + _utils->vgaScaleX(28) + sx, y1 + _utils->vgaScaleY(23) + sy, buffer);
+		_vm->waitTOF();
+		scrollRaster(dX, dY, x1, y1, x1 + _vm->_utils->vgaScaleX(28) + sx, y1 + _vm->_utils->vgaScaleY(23) + sy, buffer);
 		x1 += dX;
 		y1 += dY;
 	}
@@ -296,7 +309,7 @@ void LabEngine::doTileScroll(uint16 col, uint16 row, uint16 scrolltype) {
 /**
  * Changes the combination number of one of the slots
  */
-void LabEngine::changeCombination(uint16 number) {
+void TilePuzzle::changeCombination(uint16 number) {
 	const int solution[6] = { 0, 4, 0, 8, 7, 2 };
 
 	Image display;
@@ -310,22 +323,22 @@ void LabEngine::changeCombination(uint16 number) {
 
 	combnum = _combination[number];
 
-	display._imageData = _graphics->getCurrentDrawingBuffer();
-	display._width     = _graphics->_screenWidth;
-	display._height    = _graphics->_screenHeight;
+	display._imageData = _vm->_graphics->getCurrentDrawingBuffer();
+	display._width     = _vm->_graphics->_screenWidth;
+	display._height    = _vm->_graphics->_screenHeight;
 
 	byte *buffer = new byte[_tiles[1]->_width * _tiles[1]->_height * 2L];
 
 	for (uint16 i = 1; i <= (_numberImages[combnum]->_height / 2); i++) {
-		if (_isHiRes) {
+		if (_vm->_isHiRes) {
 			if (i & 1)
-				waitTOF();
+				_vm->waitTOF();
 		} else
-			waitTOF();
+			_vm->waitTOF();
 
-		display._imageData = _graphics->getCurrentDrawingBuffer();
-		_graphics->scrollDisplayY(2, _utils->vgaScaleX(COMBINATION_X[number]), _utils->vgaScaleY(65), _utils->vgaScaleX(COMBINATION_X[number]) + (_numberImages[combnum])->_width - 1, _utils->vgaScaleY(65) + (_numberImages[combnum])->_height, buffer);
-		_numberImages[combnum]->blitBitmap(0, (_numberImages[combnum])->_height - (2 * i), &(display), _utils->vgaScaleX(COMBINATION_X[number]), _utils->vgaScaleY(65), (_numberImages[combnum])->_width, 2, false);
+		display._imageData = _vm->_graphics->getCurrentDrawingBuffer();
+		_vm->_graphics->scrollDisplayY(2, _vm->_utils->vgaScaleX(COMBINATION_X[number]), _vm->_utils->vgaScaleY(65), _vm->_utils->vgaScaleX(COMBINATION_X[number]) + (_numberImages[combnum])->_width - 1, _vm->_utils->vgaScaleY(65) + (_numberImages[combnum])->_height, buffer);
+		_numberImages[combnum]->blitBitmap(0, (_numberImages[combnum])->_height - (2 * i), &(display), _vm->_utils->vgaScaleX(COMBINATION_X[number]), _vm->_utils->vgaScaleY(65), (_numberImages[combnum])->_width, 2, false);
 	}
 
 	delete[] buffer;
@@ -334,39 +347,39 @@ void LabEngine::changeCombination(uint16 number) {
 		unlocked &= (_combination[i] == solution[i]);
 
 	if (unlocked)
-		_conditions->inclElement(COMBINATIONUNLOCKED);
+		_vm->_conditions->inclElement(COMBINATIONUNLOCKED);
 	else
-		_conditions->exclElement(COMBINATIONUNLOCKED);
+		_vm->_conditions->exclElement(COMBINATIONUNLOCKED);
 }
 
-void LabEngine::scrollRaster(int16 dx, int16 dy, uint16 x1, uint16 y1, uint16 x2, uint16 y2, byte *buffer) {
+void TilePuzzle::scrollRaster(int16 dx, int16 dy, uint16 x1, uint16 y1, uint16 x2, uint16 y2, byte *buffer) {
 	if (dx)
-		_graphics->scrollDisplayX(dx, x1, y1, x2, y2, buffer);
+		_vm->_graphics->scrollDisplayX(dx, x1, y1, x2, y2, buffer);
 
 	if (dy)
-		_graphics->scrollDisplayY(dy, x1, y1, x2, y2, buffer);
+		_vm->_graphics->scrollDisplayY(dy, x1, y1, x2, y2, buffer);
 }
 
 /**
  * Draws the images of the combination lock to the display bitmap.
  */
-void LabEngine::doCombination() {
+void TilePuzzle::doCombination() {
 	for (uint16 i = 0; i <= 5; i++)
-		_numberImages[_combination[i]]->drawImage(_utils->vgaScaleX(COMBINATION_X[i]), _utils->vgaScaleY(65));
+		_numberImages[_combination[i]]->drawImage(_vm->_utils->vgaScaleX(COMBINATION_X[i]), _vm->_utils->vgaScaleY(65));
 }
 
 /**
  * Reads in a backdrop picture.
  */
-void LabEngine::showCombination(const char *filename) {
-	_anim->_doBlack = true;
-	_anim->_noPalChange = true;
-	_graphics->readPict(filename, true);
-	_anim->_noPalChange = false;
+void TilePuzzle::showCombination(const char *filename) {
+	_vm->_anim->_doBlack = true;
+	_vm->_anim->_noPalChange = true;
+	_vm->_graphics->readPict(filename, true);
+	_vm->_anim->_noPalChange = false;
 
-	_graphics->blackScreen();
+	_vm->_graphics->blackScreen();
 
-	Common::File *numFile = _resource->openDataFile("P:Numbers");
+	Common::File *numFile = _vm->_resource->openDataFile("P:Numbers");
 
 	for (uint16 CurBit = 0; CurBit < 10; CurBit++)
 		_numberImages[CurBit] = new Image(numFile);
@@ -375,7 +388,33 @@ void LabEngine::showCombination(const char *filename) {
 
 	doCombination();
 
-	_graphics->setPalette(_anim->_diffPalette, 256);
+	_vm->_graphics->setPalette(_vm->_anim->_diffPalette, 256);
+}
+
+void TilePuzzle::save(Common::OutSaveFile *file) {
+	uint16 i, j;
+
+	// Combination lock and tile stuff
+	for (i = 0; i < 6; i++)
+		file->writeByte(_combination[i]);
+
+	// Tiles
+	for (i = 0; i < 4; i++)
+		for (j = 0; j < 4; j++)
+			file->writeUint16LE(_curTile[i][j]);
+}
+
+void TilePuzzle::load(Common::InSaveFile *file) {
+	uint16 i, j;
+
+	// Combination lock and tile stuff
+	for (i = 0; i < 6; i++)
+		_combination[i] = file->readByte();
+
+	// Tiles
+	for (i = 0; i < 4; i++)
+		for (j = 0; j < 4; j++)
+			_curTile[i][j] = file->readUint16LE();
 }
 
 } // End of namespace Lab

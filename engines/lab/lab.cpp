@@ -43,6 +43,7 @@
 #include "lab/music.h"
 #include "lab/processroom.h"
 #include "lab/resource.h"
+#include "lab/tilepuzzle.h"
 #include "lab/utils.h"
 
 namespace Lab {
@@ -86,6 +87,7 @@ LabEngine::LabEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	_anim = nullptr;
 	_graphics = nullptr;
 	_rooms = nullptr;
+	_tilePuzzle = nullptr;
 	_utils = nullptr;
 
 	_lastTooLong = false;
@@ -97,11 +99,7 @@ LabEngine::LabEngine(OSystem *syst, const ADGameDescription *gameDesc)
 
 	for (int i = 0; i < 10; i++) {
 		_invImages[i] = nullptr;
-		_numberImages[i] = nullptr;
 	}
-
-	for (int i = 0; i < 16; i++)
-		_tiles[i] = nullptr;
 
 	_curFileName = nullptr;
 	_nextFileName = nullptr;
@@ -128,8 +126,6 @@ LabEngine::LabEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	_imgXMark = nullptr;
 	_maps = nullptr;
 
-	initTilePuzzle();
-
 	//const Common::FSNode gameDataDir(ConfMan.get("path"));
 	//SearchMan.addSubDirectoryMatching(gameDataDir, "game");
 	//SearchMan.addSubDirectoryMatching(gameDataDir, "game/pict");
@@ -147,6 +143,7 @@ LabEngine::~LabEngine() {
 	delete _anim;
 	delete _graphics;
 	delete[] _rooms;
+	delete _tilePuzzle;
 	delete _utils;
 	delete _imgMap;
 	delete _imgRoom;
@@ -164,9 +161,6 @@ LabEngine::~LabEngine() {
 	delete _imgMapWest;
 	delete _imgXMark;
 	delete _maps;
-
-	for (int i = 0; i < 16; i++)
-		delete _tiles[i];
 }
 
 Common::Error LabEngine::run() {
@@ -180,6 +174,7 @@ Common::Error LabEngine::run() {
 	_music = new Music(this);
 	_graphics = new DisplayMan(this);
 	_anim = new Anim(this);
+	_tilePuzzle = new TilePuzzle(this);
 	_utils = new Utils(this);
 
 	if (getPlatform() == Common::kPlatformWindows) {
