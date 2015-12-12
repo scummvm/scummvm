@@ -50,37 +50,37 @@ namespace Lab {
 #define SPECIALBRICK        101
 #define SPECIALBRICKNOMOUSE 102
 
-#define MAPNUM               28
-#define JOURNALNUM            9
-#define WESTPAPERNUM         18
-#define NOTESNUM             12
-#define WHISKEYNUM           25
-#define PITHHELMETNUM         7
-#define HELMETNUM             1
+enum Items {
+	kItemHelmet = 1,
+	kItemBelt = 3,
+	kItemPithHelmet = 7,
+	kItemJournal = 9,
+	kItemNotes = 12,
+	kItemWestPaper = 18,
+	kItemWhiskey = 25,
+	kItemLamp = 27,
+	kItemMap = 28,
+	kItemQuarter = 30
+};
 
-#define LAMPNUM              27
-#define LAMPON              151
+#define kCondLampOn         151
+#define kCondBeltGlowing     70
+#define kCondUsedHelmet     184
 
-#define BELTNUM               3
-#define BELTGLOW             70
-
-#define USEDHELMET          184
-
-#define QUARTERNUM           30
-
-
-#define MUSEUMMONITOR        71
-#define GRAMAPHONEMONITOR    72
-#define UNICYCLEMONITOR      73
-#define STATUEMONITOR        74
-#define TALISMANMONITOR      75
-#define LUTEMONITOR          76
-#define CLOCKMONITOR         77
-#define WINDOWMONITOR        78
-#define BELTMONITOR          79
-#define LIBRARYMONITOR       80
-#define TERMINALMONITOR      81
-#define LEVERSMONITOR        82
+enum Monitors {
+	kMonitorMuseum = 71,
+	kMonitorGramophone = 72,
+	kMonitorUnicycle = 73,
+	kMonitorStatue = 74,
+	kMonitorTalisman = 75,
+	kMonitorLute = 76,
+	kMonitorClock = 77,
+	kMonitorWindow = 78,
+	//kMonitorBelt = 79,
+	kMonitorLibrary = 80,
+	kMonitorTerminal = 81
+	//kMonitorLevers = 82
+};
 
 static char initcolors[] = { '\x00', '\x00', '\x00', '\x30',
 							 '\x30', '\x30', '\x10', '\x10',
@@ -88,6 +88,14 @@ static char initcolors[] = { '\x00', '\x00', '\x00', '\x30',
 							 '\x20', '\x20', '\x20', '\x24',
 							 '\x24', '\x24', '\x2c', '\x2c',
 							 '\x2c', '\x08', '\x08', '\x08' };
+
+uint16 LabEngine::getQuarters() {
+	return _inventory[kItemQuarter]._many;
+}
+
+void LabEngine::setQuarters(uint16 quarters) {
+	_inventory[kItemQuarter]._many = quarters;
+}
 
 /**
  * Draws the message for the room.
@@ -100,9 +108,9 @@ void LabEngine::drawRoomMessage(uint16 curInv, CloseDataPtr closePtr) {
 
 	if (_alternate) {
 		if ((curInv <= _numInv) && _conditions->in(curInv) && _inventory[curInv]._bitmapName) {
-			if ((curInv == LAMPNUM) && _conditions->in(LAMPON))
+			if ((curInv == kItemLamp) && _conditions->in(kCondLampOn))
 				// LAB: Labyrinth specific
-				drawStaticMessage(kTextLampOn);
+				drawStaticMessage(kTextkLampOn);
 			else if (_inventory[curInv]._many > 1) {
 				Common::String roomMessage = Common::String(_inventory[curInv]._name) + "  (" + Common::String::format("%d", _inventory[curInv]._many) + ")";
 				_graphics->drawMessage(roomMessage.c_str());
@@ -182,30 +190,30 @@ bool LabEngine::doCloseUp(CloseDataPtr closePtr) {
 	}
 
 	switch (closePtr->_closeUpType) {
-	case MUSEUMMONITOR:
-	case LIBRARYMONITOR:
-	case WINDOWMONITOR:
+	case kMonitorMuseum:
+	case kMonitorLibrary:
+	case kMonitorWindow:
 		doMonitor(closePtr->_graphicName, closePtr->_message, false, monltmargin, montopmargin, monrtmargin, 165);
 		break;
-	case GRAMAPHONEMONITOR:
+	case kMonitorGramophone:
 		doMonitor(closePtr->_graphicName, closePtr->_message, false, monltmargin, montopmargin, 171, 165);
 		break;
-	case UNICYCLEMONITOR:
+	case kMonitorUnicycle:
 		doMonitor(closePtr->_graphicName, closePtr->_message, false, 100, montopmargin, monrtmargin, 165);
 		break;
-	case STATUEMONITOR:
+	case kMonitorStatue:
 		doMonitor(closePtr->_graphicName, closePtr->_message, false, 117, montopmargin, monrtmargin, 165);
 		break;
-	case TALISMANMONITOR:
+	case kMonitorTalisman:
 		doMonitor(closePtr->_graphicName, closePtr->_message, false, monltmargin, montopmargin, 184, 165);
 		break;
-	case LUTEMONITOR:
+	case kMonitorLute:
 		doMonitor(closePtr->_graphicName, closePtr->_message, false, monltmargin, montopmargin, lutertmargin, 165);
 		break;
-	case CLOCKMONITOR:
+	case kMonitorClock:
 		doMonitor(closePtr->_graphicName, closePtr->_message, false, monltmargin, montopmargin, 206, 165);
 		break;
-	case TERMINALMONITOR:
+	case kMonitorTerminal:
 		doMonitor(closePtr->_graphicName, closePtr->_message, true, monltmargin, montopmargin, monrtmargin, 165);
 		break;
 	default:
@@ -225,19 +233,19 @@ const char *LabEngine::getInvName(uint16 curInv) {
 	if (_mainDisplay)
 		return _inventory[curInv]._bitmapName;
 
-	if ((curInv == LAMPNUM) && _conditions->in(LAMPON))
+	if ((curInv == kItemLamp) && _conditions->in(kCondLampOn))
 		return "P:Mines/120";
 
-	if ((curInv == BELTNUM) && _conditions->in(BELTGLOW))
-		return "P:Future/BeltGlow";
+	if ((curInv == kItemBelt) && _conditions->in(kCondBeltGlowing))
+		return "P:Future/kCondBeltGlowing";
 
-	if (curInv == WESTPAPERNUM) {
+	if (curInv == kItemWestPaper) {
 		_curFileName = _inventory[curInv]._bitmapName;
 		_anim->_noPalChange = true;
 		_graphics->readPict(_curFileName, false);
 		_anim->_noPalChange = false;
 		doWestPaper();
-	} else if (curInv == NOTESNUM) {
+	} else if (curInv == kItemNotes) {
 		_curFileName = _inventory[curInv]._bitmapName;
 		_anim->_noPalChange = true;
 		_graphics->readPict(_curFileName, false);
@@ -281,7 +289,7 @@ void LabEngine::interfaceOn() {
  */
 bool LabEngine::doUse(uint16 curInv) {
 	switch (curInv) {
-	case MAPNUM:
+	case kItemMap:
 		drawStaticMessage(kTextUseMap);
 		interfaceOff();
 		_anim->stopDiff();
@@ -292,7 +300,7 @@ bool LabEngine::doUse(uint16 curInv) {
 		_graphics->drawMessage(nullptr);
 		_graphics->drawPanel();
 		return true;
-	case JOURNALNUM:
+	case kItemJournal:
 		drawStaticMessage(kTextUseJournal);
 		interfaceOff();
 		_anim->stopDiff();
@@ -302,16 +310,16 @@ bool LabEngine::doUse(uint16 curInv) {
 		_graphics->drawPanel();
 		_graphics->drawMessage(nullptr);
 		return true;
-	case LAMPNUM:
+	case kItemLamp:
 		interfaceOff();
 
-		if (_conditions->in(LAMPON)) {
+		if (_conditions->in(kCondLampOn)) {
 			drawStaticMessage(kTextTurnLampOff);
-			_conditions->exclElement(LAMPON);
+			_conditions->exclElement(kCondLampOn);
 		}
 		else {
-			drawStaticMessage(kTextTurnLampOn);
-			_conditions->inclElement(LAMPON);
+			drawStaticMessage(kTextTurnkLampOn);
+			_conditions->inclElement(kCondLampOn);
 		}
 
 		_anim->_doBlack = false;
@@ -322,23 +330,23 @@ bool LabEngine::doUse(uint16 curInv) {
 		_anim->_doBlack = false;
 		_nextFileName = getInvName(curInv);
 		return true;
-	case BELTNUM:
-		if (!_conditions->in(BELTGLOW))
-			_conditions->inclElement(BELTGLOW);
+	case kItemBelt:
+		if (!_conditions->in(kCondBeltGlowing))
+			_conditions->inclElement(kCondBeltGlowing);
 
 		_anim->_doBlack = false;
 		_nextFileName = getInvName(curInv);
 		return true;
-	case WHISKEYNUM:
-		_conditions->inclElement(USEDHELMET);
+	case kItemWhiskey:
+		_conditions->inclElement(kCondUsedHelmet);
 		drawStaticMessage(kTextUseWhiskey);
 		return true;
-	case PITHHELMETNUM:
-		_conditions->inclElement(USEDHELMET);
+	case kItemPithHelmet:
+		_conditions->inclElement(kCondUsedHelmet);
 		drawStaticMessage(kTextUsePith);
 		return true;
-	case HELMETNUM:
-		_conditions->inclElement(USEDHELMET);
+	case kItemHelmet:
+		_conditions->inclElement(kCondUsedHelmet);
 		drawStaticMessage(kTextUseHelmet);
 		return true;
 	default:
@@ -394,7 +402,7 @@ void LabEngine::decIncInv(uint16 *curInv, bool decreaseFl) {
  */
 void LabEngine::mainGameLoop() {
 	uint16 actionMode = 4;
-	uint16 curInv = MAPNUM;
+	uint16 curInv = kItemMap;
 
 	bool forceDraw = false;
 	bool gotMessage = true;
@@ -574,7 +582,7 @@ bool LabEngine::fromCrumbs(uint32 tmpClass, uint16 code, uint16 qualifier, Commo
 	Common::Point curPos = tmpPos;
 
 	uint16 oldDirection = 0;
-	uint16 lastInv = MAPNUM;
+	uint16 lastInv = kItemMap;
 	CloseDataPtr wrkClosePtr = nullptr;
 	bool doit;
 
@@ -729,7 +737,7 @@ bool LabEngine::fromCrumbs(uint32 tmpClass, uint16 code, uint16 qualifier, Commo
 				_graphics->screenUpdate();
 			}
 		} else if (gadgetId == 9) {
-			doUse(MAPNUM);
+			doUse(kItemMap);
 
 			mayShowCrumbIndicator();
 			_graphics->screenUpdate();
@@ -850,8 +858,8 @@ bool LabEngine::fromCrumbs(uint32 tmpClass, uint16 code, uint16 qualifier, Commo
 			_closeDataPtr = nullptr;
 			_mainDisplay = true;
 
-			curInv = MAPNUM;
-			lastInv = MAPNUM;
+			curInv = kItemMap;
+			lastInv = kItemMap;
 
 			_nextFileName = getInvName(curInv);
 
