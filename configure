@@ -134,7 +134,7 @@ _theoradec=auto
 _faad=auto
 _fluidsynth=auto
 _opengl=auto
-_opengles=auto
+_opengles=no
 _readline=auto
 _freetype2=auto
 _taskbar=auto
@@ -964,8 +964,8 @@ Optional Libraries:
   --with-mpeg2-prefix=DIR  Prefix where libmpeg2 is installed (optional)
   --enable-mpeg2           enable mpeg2 codec for cutscenes [autodetect]
 
-  --with-opengl-prefix=DIR Prefix where OpenGL (ES) is installed (optional)
   --disable-opengl         disable OpenGL (ES) support [autodetect]
+  --enable-opengles        enable forced OpenGL ES mode [disabled]
 
   --with-jpeg-prefix=DIR   Prefix where libjpeg is installed (optional)
   --disable-jpeg           disable JPEG decoder [autodetect]
@@ -1073,6 +1073,8 @@ for ac_option in $@; do
 	--disable-libunity)       _libunity=no    ;;
 	--enable-opengl)          _opengl=yes     ;;
 	--disable-opengl)         _opengl=no      ;;
+	--enable-opengles)        _opengles=yes   ;;
+	--disable-opengles)       _opengles=no    ;;
 	--enable-bink)            _bink=yes       ;;
 	--disable-bink)           _bink=no        ;;
 	--enable-verbose-build)   _verbose_build=yes ;;
@@ -1174,11 +1176,6 @@ for ac_option in $@; do
 		arg=`echo $ac_option | cut -d '=' -f 2`
 		LIBUNITY_CFLAGS="-I$arg/include"
 		LIBUNITY_LIBS="-L$arg/lib"
-		;;
-	--with-opengl-prefix=*)
-		arg=`echo $ac_option | cut -d '=' -f 2`
-		OPENGL_CFLAGS="-I$arg/include"
-		OPENGL_LIBS="-L$arg/lib"
 		;;
 	--backend=*)
 		_backend=`echo $ac_option | cut -d '=' -f 2`
@@ -2990,6 +2987,9 @@ if test -n "$_host"; then
 			_mt32emu=no
 			_timidity=no
 			_vkeybd=yes
+			# Tizen relies on the OpenGL ES output thus we always enable it.
+			_opengl=yes
+			_opengles=yes
 			;;
 		webos)
 			_backend="webos"
@@ -4154,100 +4154,22 @@ case $_backend in
 		if test "$_opengl" = yes ; then
 			_opengl=yes
 			_opengles=yes
-			OPENGL_LIBS="-lGLES_CM -lEGL -lX11"
-			OPENGL_CFLAGS="$OPENGL_LIBS"
-			append_var LIBS "$OPENGL_LIBS"
-			append_var INCLUDES "$OPENGL_CFLAGS"
+			append_var LIBS "-lGLES_CM -lEGL -lX11"
 		fi
 		;;
 esac
 
 if test "$_opengl" = auto ; then
-	_opengl=no
-	if test "$_backend" = "sdl" ; then
-		# Try different header filenames
-		# 1) GL/gl.h         This is usually used on POSIX and Windows systems
-		# 2) OpenGL/gl.h     This is used on Mac OS X
-		# 3) GLES/gl.h       This is used for OpenGL ES 1.x
-		for i in "GL/gl.h" "OpenGL/gl.h" "GLES/gl.h"; do
-			# Test the current header for OpenGL
-			cat > $TMPC << EOF
-#include <$i>
-#include <stdio.h>
-int main(void) { printf("ANTIVIRUS FALSE POSITIVE WORKAROUND"); return GL_VERSION_1_1; }
-EOF
-			cc_check $DEFINES $OPENGL_CFLAGS $OPENGL_LIBS && _opengl=yes && break
+	case $_backend in
+		sdl)
+			_opengl=yes
+			;;
 
-			# Test the current header for OpenGL ES
-			cat > $TMPC << EOF
-#include <$i>
-int main(void) { return GL_OES_VERSION_1_1; }
-EOF
-			cc_check $DEFINES $OPENGL_CFLAGS $OPENGL_LIBS && _opengl=yes && _opengles=yes && break
-
-			# Test the current header for OpenGL ES on SBCs (Raspberry Pi, Cubieboard, etc)
-			cat > $TMPC << EOF
-#include <$i>
-int main(void) { return GL_VERSION_ES_CM_1_1; }
-EOF
-			cc_check $DEFINES $OPENGL_CFLAGS $OPENGL_LIBS && _opengl=yes && _opengles=yes && break
-		done
-	fi
+		*)
+			_opengl=no
+			;;
+	esac
 fi
-if test "$_opengl" = yes ; then
-	# Our simple test case
-	cat > $TMPC << EOF
-int main(void) { return 0; }
-EOF
-
-	_opengl=no
-	# Try different library names
-	if test "$_opengles" = "yes" ; then
-		# 1) GLES_CM    This is usually used for OpenGL ES 1.1 (Common profile)
-		# 2) GLESv1_CM  This is used by the Windows Mali OpenGL ES 1.1 Emulator
-		# 3) glesv1     This is used by the Linux Mali OpenGL ES 1.1 Emulator
-		_opengles=no
-		for lib in "-lGLES_CM" "-lGLESv1_CM" "-lglesv1"; do
-			if cc_check_no_clean $DEFINES $OPENGL_CFLAGS $OPENGL_LIBS $lib
-				then
-				_opengl=yes
-				_opengles=yes
-				OPENGL_LIBS="$OPENGL_LIBS $lib"
-				break
-			fi
-		done
-	else
-		# 1) -framework OpenGL  This is used on Mac OS X
-		# 2) GL                 This is usually used on POSIX systems
-		# 3) opengl32           This is used on Windows
-		#
-		# We try "-framework OpenGL" first here to assure it will always be
-		# picked up by the configure script on Mac OS X, even when a libGL
-		# exists.
-		for lib in "-framework OpenGL" "-lGL" "-lopengl32"; do
-			if cc_check_no_clean $DEFINES $OPENGL_CFLAGS $OPENGL_LIBS $lib
-				then
-				_opengl=yes
-				OPENGL_LIBS="$OPENGL_LIBS $lib"
-				break
-			fi
-		done
-	fi
-	cc_check_clean
-
-	if test "$_opengl" = yes ; then
-		append_var LIBS "$OPENGL_LIBS"
-		append_var INCLUDES "$OPENGL_CFLAGS"
-	fi
-fi
-
-case $_host_os in
-	tizen)
-		# components live in non-standard locations so just assume sane SDK
-		_opengl=yes
-		_opengles=yes
-		;;
-esac
 
 if test "$_opengles" = "yes" ; then
 	echo "yes (OpenGL ES)"

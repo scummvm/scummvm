@@ -52,8 +52,8 @@ endif
 # OpenGL specific source files.
 ifdef USE_OPENGL
 MODULE_OBJS += \
+	graphics/opengl/context.o \
 	graphics/opengl/debug.o \
-	graphics/opengl/extensions.o \
 	graphics/opengl/opengl-graphics.o \
 	graphics/opengl/texture.o
 endif

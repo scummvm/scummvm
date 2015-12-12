@@ -281,10 +281,9 @@ private:
 	//
 
 	/**
-	 * Checks for availability of extensions we want to use and initializes them
-	 * when available.
+	 * Initialize the active context for use.
 	 */
-	void initializeGLExtensions();
+	void initializeGLContext();
 
 protected:
 	/**

@@ -21,8 +21,6 @@
  */
 
 #include "backends/graphics/opengl/texture.h"
-#include "backends/graphics/opengl/extensions.h"
-#include "backends/graphics/opengl/opengl-graphics.h"
 
 #include "common/rect.h"
 #include "common/textconsole.h"
@@ -44,7 +42,7 @@ static GLuint nextHigher2(GLuint v) {
 GLint Texture::_maxTextureSize = 0;
 
 void Texture::queryTextureInformation() {
-	glGetIntegerv(GL_MAX_TEXTURE_SIZE, &_maxTextureSize);
+	GLCALL(glGetIntegerv(GL_MAX_TEXTURE_SIZE, &_maxTextureSize));
 	debug(5, "OpenGL maximum texture size: %d", _maxTextureSize);
 }
 
@@ -105,7 +103,7 @@ void Texture::enableLinearFiltering(bool enable) {
 
 void Texture::allocate(uint width, uint height) {
 	uint texWidth = width, texHeight = height;
-	if (!g_extensions.NPOTSupported) {
+	if (!g_context.NPOTSupported) {
 		texWidth  = nextHigher2(texWidth);
 		texHeight = nextHigher2(texHeight);
 	}

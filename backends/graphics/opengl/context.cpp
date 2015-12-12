@@ -20,7 +20,6 @@
  *
  */
 
-#include "backends/graphics/opengl/extensions.h"
 #include "backends/graphics/opengl/opengl-sys.h"
 #include "backends/graphics/opengl/opengl-graphics.h"
 
@@ -28,24 +27,41 @@
 
 namespace OpenGL {
 
-void ExtensionsDesc::reset() {
+void Context::reset() {
 	NPOTSupported = false;
 }
 
-ExtensionsDesc g_extensions;
+Context g_context;
 
-void OpenGLGraphicsManager::initializeGLExtensions() {
-	const char *extString = (const char *)glGetString(GL_EXTENSIONS);
-
+void OpenGLGraphicsManager::initializeGLContext() {
 	// Initialize default state.
-	g_extensions.reset();
+	g_context.reset();
+
+	// Load all functions.
+	// We use horrible trickery to silence C++ compilers.
+	// See backends/plugins/sdl/sdl-provider.cpp for more information.
+	assert(sizeof(void (*)()) == sizeof(void *));
+	void *fn = nullptr;
+#define GL_EXT_FUNC_DEF(ret, name, param) \
+	fn = getProcAddress(#name); \
+	memcpy(&g_context.name, &fn, sizeof(fn))
+#ifdef USE_BUILTIN_OPENGL
+#define GL_FUNC_DEF(ret, name, param) g_context.name = &name
+#else
+#define GL_FUNC_DEF GL_EXT_FUNC_DEF
+#endif
+#include "backends/graphics/opengl/opengl-func.h"
+#undef GL_EXT_FUNC_DEF
+#undef GL_FUNC_DEF
+
+	const char *extString = (const char *)g_context.glGetString(GL_EXTENSIONS);
 
 	Common::StringTokenizer tokenizer(extString, " ");
 	while (!tokenizer.empty()) {
 		Common::String token = tokenizer.nextToken();
 
 		if (token == "GL_ARB_texture_non_power_of_two") {
-			g_extensions.NPOTSupported = true;
+			g_context.NPOTSupported = true;
 		}
 	}
 }

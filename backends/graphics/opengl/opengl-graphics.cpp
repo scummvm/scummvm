@@ -23,7 +23,6 @@
 
 #include "backends/graphics/opengl/opengl-graphics.h"
 #include "backends/graphics/opengl/texture.h"
-#include "backends/graphics/opengl/extensions.h"
 
 #include "common/textconsole.h"
 #include "common/translation.h"
@@ -57,7 +56,7 @@ OpenGLGraphicsManager::OpenGLGraphicsManager()
 #endif
     {
 	memset(_gamePalette, 0, sizeof(_gamePalette));
-	g_extensions.reset();
+	g_context.reset();
 }
 
 OpenGLGraphicsManager::~OpenGLGraphicsManager() {
@@ -836,8 +835,8 @@ void OpenGLGraphicsManager::setActualScreenSize(uint width, uint height) {
 }
 
 void OpenGLGraphicsManager::notifyContextCreate(const Graphics::PixelFormat &defaultFormat, const Graphics::PixelFormat &defaultFormatAlpha) {
-	// Initialize all extensions.
-	initializeGLExtensions();
+	// Initialize context for use.
+	initializeGLContext();
 
 	// Disable 3D properties.
 	GLCALL(glDisable(GL_CULL_FACE));

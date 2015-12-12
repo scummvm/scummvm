@@ -23,45 +23,70 @@
 #ifndef BACKENDS_GRAPHICS_OPENGL_OPENGL_SYS_H
 #define BACKENDS_GRAPHICS_OPENGL_OPENGL_SYS_H
 
-// The purpose of this header is to include the OpenGL headers in an uniform
-// fashion. A notable example for a non standard port is the Tizen port.
-
 #include "common/scummsys.h"
 
 #include "backends/graphics/opengl/debug.h"
-
-#ifdef WIN32
-#if defined(ARRAYSIZE) && !defined(_WINDOWS_)
-#undef ARRAYSIZE
-#endif
-#define WIN32_LEAN_AND_MEAN
-#include <windows.h>
-#undef ARRAYSIZE
+#ifdef SDL_BACKEND
+#include "backends/platform/sdl/sdl-sys.h"
 #endif
 
-// HACK: In case common/util.h has been included already we need to make sure
-// to define ARRAYSIZE again in case of Windows.
-#if !defined(ARRAYSIZE) && defined(COMMON_UTIL_H)
-#define ARRAYSIZE(x) ((int)(sizeof(x) / sizeof(x[0])))
-#endif
-
+// On Tizen we include the toolchain's OpenGL file. This is something we
+// actually want to avoid. However, since Tizen uses eglGetProcAddress which
+// is not required to return valid function pointers to non OpenGL extension
+// functions, we need the system's definitions to resolve all OpenGL
+// functions.
+// TODO: See if there is an alternative which allows us to avoid including
+// Tizen's OpenGL header here.
 #if defined(TIZEN)
-#include <FGraphicsOpengl.h>
-using namespace Tizen::Graphics::Opengl;
-#elif defined(USE_GLES)
-#include <GLES/gl.h>
-#elif defined(SDL_BACKEND)
-#include <SDL_opengl.h>
+	#include <FGraphicsOpengl.h>
+	using namespace Tizen::Graphics::Opengl;
+	#define USE_BUILTIN_OPENGL
 #else
-#include <GL/gl.h>
+	#include "backends/graphics/opengl/opengl-defs.h"
 #endif
 
 #ifdef SDL_BACKEND
-#define GLCALLCONV APIENTRY
+	// Win32 needs OpenGL functions declared with APIENTRY.
+	// However, SDL does not define APIENTRY in it's SDL.h file on non-Windows
+	// targets, thus if it is not available, we just dummy define it.
+	#ifndef APIENTRY
+		#define APIENTRY
+	#endif
+	#define GL_CALL_CONV APIENTRY
 #else
-#define GLCALLCONV
+	#define GL_CALL_CONV
 #endif
 
-#define GLCALL(x) GL_WRAP_DEBUG(x, x)
+namespace OpenGL {
+
+/**
+ * Description structure of the OpenGL (ES) context.
+ */
+struct Context {
+	/**
+	 * Reset context.
+	 *
+	 * This marks all extensions as unavailable.
+	 */
+	void reset();
+
+	/** Whether GL_ARB_texture_non_power_of_two is available or not. */
+	bool NPOTSupported;
+
+#define GL_FUNC_DEF(ret, name, param) ret (GL_CALL_CONV *name)param
+#define GL_EXT_FUNC_DEF GL_FUNC_DEF
+#include "backends/graphics/opengl/opengl-func.h"
+#undef GL_EXT_FUNC_DEF
+#undef GL_FUNC_DEF
+};
+
+/**
+ * The (active) OpenGL context.
+ */
+extern Context g_context;
+
+} // End of namespace OpenGL
+
+#define GLCALL(x) GL_WRAP_DEBUG(g_context.x, x)
 
 #endif
