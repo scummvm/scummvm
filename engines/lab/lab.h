@@ -58,6 +58,7 @@ class Image;
 class LargeSet;
 class Music;
 class Resource;
+class TilePuzzle;
 class Utils;
 
 enum GameFeatures {
@@ -133,6 +134,7 @@ public:
 	Anim *_anim;
 	DisplayMan *_graphics;
 	RoomData *_rooms;
+	TilePuzzle *_tilePuzzle;
 	Utils *_utils;
 
 	int _roomNum;
@@ -160,16 +162,12 @@ public:
 	GadgetList _invGadgetList;
 	Image *_moveImages[20];
 	Image *_invImages[10];
-	Image *_numberImages[10];
-	uint16 _curTile[4][4];
-	byte _combination[6];
 
 private:
 	int _lastWaitTOFTicks;
 	bool _lastTooLong;
 	CloseDataPtr _closeDataPtr;
 	InventoryData *_inventory;
-	Image *_tiles[16];
 	GadgetList _journalGadgetList;
 	GadgetList _mapGadgetList;
 	Image *_imgMap, *_imgRoom, *_imgUpArrowRoom, *_imgDownArrowRoom, *_imgBridge;
@@ -213,7 +211,6 @@ public:
 	char *getPictName(CloseDataPtr *closePtrList);
 
 private:
-	// engine.cpp
 	void freeScreens();
 	void perFlipGadget(uint16 gadID);
 	bool doCloseUp(CloseDataPtr closePtr);
@@ -222,17 +219,6 @@ private:
 	void mayShowCrumbIndicator();
 	void mayShowCrumbIndicatorOff();
 	const char *getInvName(uint16 curInv);
-	void mouseTile(Common::Point pos);
-	void changeTile(uint16 col, uint16 row);
-	void mouseCombination(Common::Point pos);
-	void doTile(bool showsolution);
-	void showTile(const char *filename, bool showsolution);
-	void doTileScroll(uint16 col, uint16 row, uint16 scrolltype);
-	void changeCombination(uint16 number);
-	void scrollRaster(int16 dx, int16 dy, uint16 x1, uint16 y1, uint16 x2, uint16 y2, byte *buffer);
-	void doCombination();
-	void showCombination(const char *filename);
-	void initTilePuzzle();
 	bool saveRestoreGame();
 	Common::Rect roomCoords(uint16 curRoom);
 	void drawRoomMap(uint16 curRoom, bool drawMarkFl);

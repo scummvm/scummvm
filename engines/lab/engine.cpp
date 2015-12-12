@@ -40,6 +40,7 @@
 #include "lab/music.h"
 #include "lab/processroom.h"
 #include "lab/resource.h"
+#include "lab/tilepuzzle.h"
 #include "lab/utils.h"
 
 namespace Lab {
@@ -122,8 +123,7 @@ void LabEngine::freeScreens() {
 
 	for (uint16 imgIdx = 0; imgIdx < 10; imgIdx++) {
 		delete _invImages[imgIdx];
-		delete _numberImages[imgIdx];
-		_invImages[imgIdx] = _numberImages[imgIdx] = nullptr;
+		_invImages[imgIdx] = nullptr;
 	}
 }
 
@@ -459,13 +459,11 @@ void LabEngine::mainGameLoop() {
 
 				if (_closeDataPtr) {
 					if ((_closeDataPtr->_closeUpType == SPECIALLOCK) && _mainDisplay)
-						// LAB: Labyrinth specific code
-						showCombination(_curFileName);
+						_tilePuzzle->showCombination(_curFileName);
 					else if (((_closeDataPtr->_closeUpType == SPECIALBRICK)  ||
 								  (_closeDataPtr->_closeUpType == SPECIALBRICKNOMOUSE)) &&
 								  _mainDisplay)
-						// LAB: Labyrinth specific code
-						showTile(_curFileName, (bool)(_closeDataPtr->_closeUpType == SPECIALBRICKNOMOUSE));
+						_tilePuzzle->showTile(_curFileName, (bool)(_closeDataPtr->_closeUpType == SPECIALBRICKNOMOUSE));
 					else
 						_graphics->readPict(_curFileName, false);
 				} else
@@ -943,10 +941,9 @@ bool LabEngine::fromCrumbs(uint32 tmpClass, uint16 code, uint16 qualifier, Commo
 
 		if (_closeDataPtr) {
 			if ((_closeDataPtr->_closeUpType == SPECIALLOCK) && _mainDisplay)
-				// LAB: Labyrinth specific code
-				mouseCombination(curPos);
+				_tilePuzzle->mouseCombination(curPos);
 			else if ((_closeDataPtr->_closeUpType == SPECIALBRICK) && _mainDisplay)
-				mouseTile(curPos);
+				_tilePuzzle->mouseTile(curPos);
 			else
 				doit = true;
 		} else

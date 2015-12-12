@@ -28,6 +28,7 @@
  *
  */
 
+#include "common/savefile.h"
 #include "common/translation.h"
 
 #include "gui/message.h"
@@ -43,6 +44,7 @@
 #include "lab/music.h"
 #include "lab/processroom.h"
 #include "lab/savegame.h"
+#include "lab/tilepuzzle.h"
 
 namespace Lab {
 
@@ -122,7 +124,7 @@ bool readSaveGameHeader(Common::InSaveFile *in, SaveGameHeader &header) {
  * Writes the game out to disk.
  */
 bool saveGame(uint16 Direction, uint16 Quarters, int slot, Common::String desc) {
-	uint16 i, j;
+	uint16 i;
 	Common::String fileName = g_lab->generateSaveFileName(slot);
 	Common::SaveFileManager *saveFileManager = g_system->getSavefileManager();
 	Common::OutSaveFile *file = saveFileManager->openForSaving(fileName);
@@ -147,14 +149,7 @@ bool saveGame(uint16 Direction, uint16 Quarters, int slot, Common::String desc) 
 	for (i = 0; i < g_lab->_roomsFound->_lastElement / (8 * 2); i++)
 		file->writeUint16LE(g_lab->_roomsFound->_array[i]);
 
-	// Combination lock and tile stuff
-	for (i = 0; i < 6; i++)
-		file->writeByte(g_lab->_combination[i]);
-
-	// Tiles
-	for (i = 0; i < 4; i++)
-		for (j = 0; j < 4; j++)
-			file->writeUint16LE(g_lab->_curTile[i][j]);
+	g_lab->_tilePuzzle->save(file);
 
 	// Breadcrumbs
 	for (i = 0; i < sizeof(g_lab->_breadCrumbs); i++) {
@@ -173,7 +168,7 @@ bool saveGame(uint16 Direction, uint16 Quarters, int slot, Common::String desc) 
  * Reads the game from disk.
  */
 bool loadGame(uint16 *Direction, uint16 *Quarters, int slot) {
-	uint16 i, j;
+	uint16 i;
 	Common::String fileName = g_lab->generateSaveFileName(slot);
 	Common::SaveFileManager *saveFileManager = g_system->getSavefileManager();
 	Common::InSaveFile *file = saveFileManager->openForLoading(fileName);
@@ -195,14 +190,7 @@ bool loadGame(uint16 *Direction, uint16 *Quarters, int slot) {
 	for (i = 0; i < g_lab->_roomsFound->_lastElement / (8 * 2); i++)
 		g_lab->_roomsFound->_array[i] = file->readUint16LE();
 
-	// Combination lock and tile stuff
-	for (i = 0; i < 6; i++)
-		g_lab->_combination[i] = file->readByte();
-
-	// Tiles
-	for (i = 0; i < 4; i++)
-		for (j = 0; j < 4; j++)
-			g_lab->_curTile[i][j] = file->readUint16LE();
+	g_lab->_tilePuzzle->load(file);
 
 	// Breadcrumbs
 	for (i = 0; i < 128; i++) {
