@@ -317,7 +317,7 @@ void LabEngine::drawRoomMap(uint16 curRoom, bool drawMarkFl) {
 /**
  * Checks if a floor has been visited.
  */
-bool LabEngine::onFloor(uint16 floorNum) {
+bool LabEngine::floorVisited(uint16 floorNum) {
 	for (uint16 i = 1; i <= _maxRooms; i++) {
 		if ((_maps[i]._pageNumber == floorNum) && _roomsFound->in(i) && _maps[i]._x)
 			return true;
@@ -327,48 +327,33 @@ bool LabEngine::onFloor(uint16 floorNum) {
 }
 
 /**
- * Figures out which floor, if any, should be gone to if the up arrow is hit
+ * Returns the floor to show when the up arrow is pressed
+ * Note: The original did not show all the visited floors, but we do
  */
-bool LabEngine::getUpFloor(uint16 *floorNum) {
-	do {
-		if (*floorNum < kFloorUpper)
-			(*floorNum)++;
-		else {
-			*floorNum   = kFloorCarnival + 1;
-			return false;
-		}
-	} while ((!onFloor(*floorNum)) && (*floorNum <= kFloorCarnival));
+uint16 LabEngine::getUpperFloor(uint16 floorNum) {
+	if (floorNum == kFloorCarnival || floorNum == kFloorNone)
+		return kFloorNone;
 
-	return true;
+	for (uint16 i = floorNum; i < kFloorCarnival; i++)
+		if (floorVisited(i + 1))
+			return i + 1;
+
+	return kFloorNone;
 }
 
 /**
- * Figures out which floor, if any, should be gone to if the down arrow is
- * hit.
+ * Returns the floor to show when the down arrow is pressed
+ * Note: The original did not show all the visited floors, but we do
  */
-bool LabEngine::getDownFloor(uint16 *floorNum) {
-	do {
-		if ((*floorNum == kFloorLower) || (*floorNum == kFloorNone)) {
-			*floorNum = kFloorNone;
-			return false;
-		} else if (*floorNum > kFloorUpper) {
-			// Labyrinth specific code
-			if (*floorNum == kFloorHedgeMaze)
-				*floorNum = kFloorUpper;
-			else if ((*floorNum == kFloorCarnival) || (*floorNum == kFloorMedMaze))
-				*floorNum = kFloorMiddle;
-			else if (*floorNum == kFloorSurMaze)
-				*floorNum = kFloorLower;
-			else {
-				*floorNum = kFloorNone;
-				return false;
-			}
-		} else
-			(*floorNum)--;
+uint16 LabEngine::getLowerFloor(uint16 floorNum) {
+	if (floorNum == kFloorLower || floorNum == kFloorNone)
+		return kFloorNone;
 
-	} while ((!onFloor(*floorNum)) && (*floorNum != kFloorNone));
+	for (uint16 i = floorNum; i > kFloorLower; i--)
+		if (floorVisited(i - 1))
+			return i - 1;
 
-	return true;
+	return kFloorNone;
 }
 
 /**
@@ -399,37 +384,31 @@ void LabEngine::drawMap(uint16 curRoom, uint16 curMsg, uint16 floorNum, bool fad
 	if ((_maps[curRoom]._pageNumber == floorNum) && _roomsFound->in(curRoom) && _maps[curRoom]._x)
 		drawRoomMap(curRoom, true);
 
-	uint16 tempfloor = floorNum;
-	bool noOverlay = getUpFloor(&tempfloor);
-
 	Gadget *upGadget = _event->getGadget(1);
 	Gadget *downGadget = _event->getGadget(2);
 
-	if (noOverlay)
+	if (getUpperFloor(floorNum) != kFloorNone)
 		enableGadget(upGadget);
 	else
 		disableGadget(upGadget, 12);
 
-	tempfloor = floorNum;
-	noOverlay = getDownFloor(&tempfloor);
-
-	if (noOverlay)
+	if (getLowerFloor(floorNum) != kFloorNone)
 		enableGadget(downGadget);
 	else
 		disableGadget(downGadget, 12);
 
 	// Labyrinth specific code
 	if (floorNum == kFloorLower) {
-		if (onFloor(kFloorSurMaze))
+		if (floorVisited(kFloorSurMaze))
 			_imgMaze->drawImage(_utils->mapScaleX(538), _utils->mapScaleY(277));
 	} else if (floorNum == kFloorMiddle) {
-		if (onFloor(kFloorCarnival))
+		if (floorVisited(kFloorCarnival))
 			_imgMaze->drawImage(_utils->mapScaleX(358), _utils->mapScaleY(72));
 
-		if (onFloor(kFloorMedMaze))
+		if (floorVisited(kFloorMedMaze))
 			_imgMaze->drawImage(_utils->mapScaleX(557), _utils->mapScaleY(325));
 	} else if (floorNum == kFloorUpper) {
-		if (onFloor(kFloorHedgeMaze))
+		if (floorVisited(kFloorHedgeMaze))
 			_imgHugeMaze->drawImage(_utils->mapScaleX(524), _utils->mapScaleY(97));
 	} else if (floorNum == kFloorSurMaze) {
 		char *sptr = (char *)_resource->getStaticText(kTextSurmazeMessage).c_str();
@@ -510,31 +489,27 @@ void LabEngine::processMap(uint16 curRoom) {
 					return;
 				} else if (gadgetID == 1) {
 					// Up arrow
-					uint16 oldFloor = curFloor;
-					bool drawmap = getUpFloor(&curFloor);
-
-					if (drawmap) {
+					uint16 upperFloor = getUpperFloor(curFloor);
+					if (upperFloor != kFloorNone) {
+						curFloor = upperFloor;
 						_graphics->fade(false, 0);
 						drawMap(curRoom, curMsg, curFloor, false, false);
 						_graphics->fade(true, 0);
-					} else
-						curFloor = oldFloor;
+					}
 				} else if (gadgetID == 2) {
 					// Down arrow
-					uint16 oldFloor = curFloor;
-					bool drawmap = getDownFloor(&curFloor);
-
-					if (drawmap) {
+					uint16 lowerFloor = getLowerFloor(curFloor);
+					if (lowerFloor != kFloorNone) {
+						curFloor = lowerFloor;
 						_graphics->fade(false, 0);
 						drawMap(curRoom, curMsg, curFloor, false, false);
 						_graphics->fade(true, 0);
-					} else
-						curFloor = oldFloor;
+					}
 				}
 			} else if ((msgClass == MOUSEBUTTONS) && (IEQUALIFIER_LEFTBUTTON & qualifier)) {
 				if ((curFloor == kFloorLower) && (mouseX >= _utils->mapScaleX(538)) && (mouseY >= _utils->mapScaleY(277))
 					  && (mouseX <= _utils->mapScaleX(633)) && (mouseY <= _utils->mapScaleY(352))
-					  && onFloor(kFloorSurMaze)) {
+					  && floorVisited(kFloorSurMaze)) {
 					curFloor = kFloorSurMaze;
 
 					_graphics->fade(false, 0);
@@ -542,7 +517,7 @@ void LabEngine::processMap(uint16 curRoom) {
 					_graphics->fade(true, 0);
 				} else if ((curFloor == kFloorMiddle) && (mouseX >= _utils->mapScaleX(358)) && (mouseY >= _utils->mapScaleY(71))
 							  && (mouseX <= _utils->mapScaleX(452)) && (mouseY <= _utils->mapScaleY(147))
-							  && onFloor(kFloorCarnival)) {
+							  && floorVisited(kFloorCarnival)) {
 					curFloor = kFloorCarnival;
 
 					_graphics->fade(false, 0);
@@ -550,7 +525,7 @@ void LabEngine::processMap(uint16 curRoom) {
 					_graphics->fade(true, 0);
 				} else if ((curFloor == kFloorMiddle) && (mouseX >= _utils->mapScaleX(557)) && (mouseY >= _utils->mapScaleY(325))
 						  && (mouseX <= _utils->mapScaleX(653)) && (mouseY <= _utils->mapScaleY(401))
-						  && onFloor(kFloorMedMaze)) {
+						  && floorVisited(kFloorMedMaze)) {
 					curFloor = kFloorMedMaze;
 
 					_graphics->fade(false, 0);
@@ -558,7 +533,7 @@ void LabEngine::processMap(uint16 curRoom) {
 					_graphics->fade(true, 0);
 				} else if ((curFloor == kFloorUpper) && (mouseX >= _utils->mapScaleX(524)) && (mouseY >=  _utils->mapScaleY(97))
 						  && (mouseX <= _utils->mapScaleX(645)) && (mouseY <= _utils->mapScaleY(207))
-						  && onFloor(kFloorHedgeMaze)) {
+						  && floorVisited(kFloorHedgeMaze)) {
 					curFloor = kFloorHedgeMaze;
 
 					_graphics->fade(false, 0);

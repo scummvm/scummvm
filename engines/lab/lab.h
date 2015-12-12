@@ -222,9 +222,9 @@ private:
 	bool saveRestoreGame();
 	Common::Rect roomCoords(uint16 curRoom);
 	void drawRoomMap(uint16 curRoom, bool drawMarkFl);
-	bool onFloor(uint16 floorNum);
-	bool getUpFloor(uint16 *floorNum);
-	bool getDownFloor(uint16 *floorNum);
+	bool floorVisited(uint16 floorNum);
+	uint16 getUpperFloor(uint16 floorNum);
+	uint16 getLowerFloor(uint16 floorNum);
 	bool checkConditions(int16 *condition);
 	ViewData *getViewData(uint16 roomNum, uint16 direction);
 	CloseData *getObject(Common::Point pos, CloseDataPtr closePtr);
