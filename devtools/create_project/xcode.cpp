@@ -69,17 +69,6 @@ namespace CreateProjectTool {
 	_buildFile._flags = kSettingsSingleItem; \
 }
 
-#define ADD_FILE_REFERENCE(id, name, properties) { \
-	Object *fileRef = new Object(this, id, name, "PBXFileReference", "PBXFileReference", name); \
-	if (!properties._fileEncoding.empty()) fileRef->addProperty("fileEncoding", properties._fileEncoding, "", kSettingsNoValue); \
-	if (!properties._lastKnownFileType.empty()) fileRef->addProperty("lastKnownFileType", properties._lastKnownFileType, "", kSettingsNoValue|kSettingsQuoteVariable); \
-	if (!properties._fileName.empty()) fileRef->addProperty("name", properties._fileName, "", kSettingsNoValue|kSettingsQuoteVariable); \
-	if (!properties._filePath.empty()) fileRef->addProperty("path", properties._filePath, "", kSettingsNoValue|kSettingsQuoteVariable); \
-	if (!properties._sourceTree.empty()) fileRef->addProperty("sourceTree", properties._sourceTree, "", kSettingsNoValue); \
-	_fileReference.add(fileRef); \
-	_fileReference._flags = kSettingsSingleItem; \
-}
-
 bool producesObjectFileOnOSX(const std::string &fileName) {
 	std::string n, ext;
 	splitFilename(fileName, n, ext);
@@ -420,7 +409,7 @@ void XcodeProvider::setupFrameworksBuildPhase() {
 
 		ADD_SETTING_ORDER_NOVALUE(iPhone_files, getHash(id), comment, order++);
 		ADD_BUILD_FILE(id, *framework, getHash(*framework), comment);
-		ADD_FILE_REFERENCE(*framework, *framework, properties[*framework]);
+		addFileReference(*framework, *framework, properties[*framework]);
 	}
 
 	framework_iPhone->_properties["files"] = iPhone_files;
@@ -462,7 +451,7 @@ void XcodeProvider::setupFrameworksBuildPhase() {
 
 		ADD_SETTING_ORDER_NOVALUE(osx_files, getHash(id), comment, order++);
 		ADD_BUILD_FILE(id, *framework, getHash(*framework), comment);
-		ADD_FILE_REFERENCE(*framework, *framework, properties[*framework]);
+		addFileReference(*framework, *framework, properties[*framework]);
 	}
 
 	framework_OSX->_properties["files"] = osx_files;
@@ -497,7 +486,7 @@ void XcodeProvider::setupFrameworksBuildPhase() {
 
 		ADD_SETTING_ORDER_NOVALUE(simulator_files, getHash(id), comment, order++);
 		ADD_BUILD_FILE(id, *framework, getHash(*framework), comment);
-		ADD_FILE_REFERENCE(*framework, *framework, properties[*framework]);
+		addFileReference(*framework, *framework, properties[*framework]);
 	}
 
 	framework_simulator->_properties["files"] = simulator_files;
@@ -646,7 +635,7 @@ void XcodeProvider::setupResourcesBuildPhase() {
 			ADD_SETTING_ORDER_NOVALUE(files, getHash(id), comment, order++);
 			// TODO Fix crash when adding build file for data
 			//ADD_BUILD_FILE(id, *file, comment);
-			ADD_FILE_REFERENCE(*file, *file, properties[*file]);
+			addFileReference(*file, *file, properties[*file]);
 		}
 
 		// Add custom files depending on the target
