@@ -218,9 +218,6 @@ Common::List<Graphics::PixelFormat> OpenGLSdlGraphicsManager::getSupportedFormat
 	// ABGR8888
 	formats.push_back(Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
 #endif
-	// ARGB8888, this should not be here, but Sword25 requires it. :-/
-	formats.push_back(Graphics::PixelFormat(4, 8, 8, 8, 8, 16, 8, 0, 24));
-
 	// RGB555, this is used by SCUMM HE 16 bit games.
 	formats.push_back(Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0));
 #endif
