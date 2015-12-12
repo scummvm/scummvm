@@ -28,6 +28,8 @@
 
 namespace Access {
 
+const int TRANSPARENCY = 0;
+
 SpriteResource::SpriteResource(AccessEngine *vm, Resource *res) {
 	Common::Array<uint32> offsets;
 	int count = res->_stream->readUint16LE();
@@ -64,7 +66,7 @@ SpriteFrame::SpriteFrame(AccessEngine *vm, Common::SeekableReadStream *stream, i
 
 	// Empty surface
 	byte *data = (byte *)getPixels();
-	Common::fill(data, data + w * h, 0);
+	Common::fill(data, data + w * h, TRANSPARENCY);
 
 	// Decode the data
 	for (int y = 0; y < h; ++y) {
@@ -202,7 +204,7 @@ void ASurface::transBlitFrom(ASurface *src, const Common::Point &destPos) {
 		byte *destP = (byte *)getBasePtr(destPos.x, destPos.y + yp);
 
 		for (int xp = 0; xp < this->w; ++xp, ++srcP, ++destP) {
-			if (*srcP != 0)
+			if (*srcP != TRANSPARENCY)
 				*destP = *srcP;
 		}
 	}
