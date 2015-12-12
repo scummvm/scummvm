@@ -46,7 +46,7 @@
  * Series of index entries identifying each game:
  * 1 byte  - Game type: 1 = Amazon, 2 = Martian Memorandum, 3 = Noctropolis
  * 1 byte  - disc type: 0 = Floppy, 1 = CD, 2 = Common data shared across
- *			all variations of the given game
+ *           all variations of the given game
  * 1 byte  - Is Demo: 0 = Full game, 1 = Demo
  * 1 byte  - Language (Common::Language)
  * 4 bytes - File offset for the data for the game
@@ -98,7 +98,7 @@ void writeHeader(int numExecutables) {
 
 	// Write out version number
 	outputFile.writeWord(VERSION_NUMBER);
-	
+
 	// Write out the number of entries the data file will contain
 	outputFile.writeWord(numExecutables);
 
@@ -109,8 +109,8 @@ void writeHeader(int numExecutables) {
 void writeAmazonCommonData() {
 	// Write out the header entry
 	outputFile.seek(8);
-	outputFile.writeByte(1);	// Amazon
-	outputFile.writeByte(2);	// Common data
+	outputFile.writeByte(1);    // Amazon
+	outputFile.writeByte(2);    // Common data
 	outputFile.writeByte(0);
 	outputFile.writeByte(0);
 	outputFile.writeLong(outputFile.size());
@@ -144,8 +144,8 @@ void writeAmazonCommonData() {
 void writeMartianCommonData() {
 	// Write out the header entry
 	outputFile.seek(16);
-	outputFile.writeByte(2);	// Martian
-	outputFile.writeByte(2);	// Common data
+	outputFile.writeByte(2);    // Martian
+	outputFile.writeByte(2);    // Common data
 	outputFile.writeByte(0);
 	outputFile.writeByte(0);
 	outputFile.writeLong(outputFile.size());
@@ -304,7 +304,7 @@ bool processExecutable(int exeIdx, const char *name) {
 	for (uint idx = 0; idx < numFilenames; ++idx) {
 		exeFile.seek(filenamesOffset + idx * 2);
 		uint nameOffset = exeFile.readWord();
-		
+
 		exeFile.seek(dataSegmentOffset + nameOffset);
 		outputFile.writeString(exeFile);
 	}
@@ -319,7 +319,7 @@ bool processExecutable(int exeIdx, const char *name) {
 		charOffsets.push_back(exeFile.readWord());
 
 	outputFile.writeWord(charOffsets.size());
-	charOffsets.push_back(charsEnd);	
+	charOffsets.push_back(charsEnd);
 	for (uint idx = 0; idx < charOffsets.size() - 1; ++idx) {
 		if (charOffsets[idx] == 0) {
 			outputFile.writeWord(0);
@@ -353,7 +353,7 @@ bool processExecutable(int exeIdx, const char *name) {
 		travelPos.push_back(Common::Point(xp, yp));
 	}
 
-	outputFile.writeWord(numRooms);	
+	outputFile.writeWord(numRooms);
 	for (uint idx = 0; idx < numRooms; ++idx) {
 		uint dataSize = 0;
 

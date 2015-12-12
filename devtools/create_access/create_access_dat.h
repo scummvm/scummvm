@@ -166,11 +166,9 @@ public:
 			uint32 result = pos();
 			fseek(_f, currentPos, SEEK_SET);
 			return result;
-		}
-		else if (_memPtr) {
+		} else if (_memPtr) {
 			return _size;
-		}
-		else {
+		} else {
 			return 0;
 		}
 	}

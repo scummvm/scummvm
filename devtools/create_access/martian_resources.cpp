@@ -118,8 +118,8 @@ const byte MOUSE3[] = {
 	0, 0
 };
 
-const byte *const CURSORS[MARTIAN_NUM_CURSORS] = { 
-	MOUSE0, MOUSE1, MOUSE2, MOUSE3 
+const byte *const CURSORS[MARTIAN_NUM_CURSORS] = {
+	MOUSE0, MOUSE1, MOUSE2, MOUSE3
 };
 const uint CURSOR_SIZES[MARTIAN_NUM_CURSORS] = {
 	sizeof(MOUSE0), sizeof(MOUSE1), sizeof(MOUSE2), sizeof(MOUSE3)
