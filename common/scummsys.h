@@ -23,8 +23,8 @@
 #ifndef COMMON_SCUMMSYS_H
 #define COMMON_SCUMMSYS_H
 
-#ifndef __has_feature         // Optional of course.
-  #define __has_feature(x) 0  // Compatibility with non-clang compilers.
+#ifndef __has_feature           // Optional of course.
+	#define __has_feature(x) 0  // Compatibility with non-clang compilers.
 #endif
 
 // This is a convenience macro to test whether the compiler used is a GCC
@@ -367,11 +367,11 @@
 #endif
 
 #ifndef STRINGBUFLEN
-  #if defined(__N64__) || defined(__DS__)
-    #define STRINGBUFLEN 256
-  #else
-    #define STRINGBUFLEN 1024
-  #endif
+	#if defined(__N64__) || defined(__DS__)
+		#define STRINGBUFLEN 256
+	#else
+		#define STRINGBUFLEN 1024
+	#endif
 #endif
 
 #ifndef MAXPATHLEN
