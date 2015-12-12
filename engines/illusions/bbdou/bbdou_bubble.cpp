@@ -109,7 +109,7 @@ void BbdouBubble::show() {
 	_prevItem0 = _currItem0;
 	_currItem0 = 0;
 
-	// TODO calcBubbles(_pt1, _pt2);
+	calcBubbles(_pt1, _pt2);
 	
 	Control *control = _vm->_dict->getObjectControl(_prevItem0->_objectId);
 	control->setActorPosition(_pt2);
@@ -181,6 +181,110 @@ uint32 BbdouBubble::addItem(uint positionIndex, uint32 sequenceId) {
 		}
 	}
 	return 0;
+}
+
+void BbdouBubble::calcBubbles(Common::Point &pt1, Common::Point &pt2) {
+	const int kSequenceIdsCount = 10;
+	const float kDistanceBetweenPoints = 30.0;
+	static const uint32 kSequenceIds[] = {
+		0x00060042, 0x00060043, 0x00060044, 0x00060045, 0x00060046,
+		0x00060047, 0x00060048, 0x00060049, 0x0006004A, 0x0006004B
+	};
+	static const int kIndexTbl[kSequenceIdsCount] = {4, 0, 8, 2, 6, 5, 1, 9, 3, 7};
+
+	int sequenceCounters[kSequenceIdsCount];
+	bool swapY;
+	int centerX, centerY;
+	float currentAngle, radius;
+
+	for (int i = 0; i < 32; ++i) {
+		Control *control = _vm->_dict->getObjectControl(_objectIds[i]);
+		control->startSequenceActor(0x00060056, 2, 0);
+	}
+
+	for (int i = 0; i < kSequenceIdsCount; ++i)
+		sequenceCounters[i] = 0;
+	
+	if (pt2.y >= pt1.y) {
+		swapY = true;
+		if (pt1.x == pt2.x)
+			pt2.x = pt2.x + 20;
+	} else {
+		swapY = false;
+		if (pt1.y == pt2.y)
+			pt2.y = pt2.y + 20;
+	}
+
+	if (swapY) {
+		centerX = (pt2.x * pt2.x - (pt2.y - pt1.y) * (pt2.y - pt1.y) - pt1.x * pt1.x) / (2 * (pt2.x - pt1.x));
+		centerY = pt2.y;
+		radius = ABS(pt2.x - centerX);
+	} else {
+		centerX = pt2.x;
+		centerY = (pt2.y * pt2.y - (pt2.x - pt1.x) * (pt2.x - pt1.x) - pt1.y * pt1.y) / (2 * (pt2.y - pt1.y));
+		radius = ABS(pt2.y - centerY);
+	}
+
+	const float fullDistance = sqrt((pt2.y - pt1.y) * (pt2.y - pt1.y) + (pt2.x - pt1.x) * (pt2.x - pt1.x));
+	const float arcAngle = 2 * asin(CLIP(0.5 * fullDistance / radius, -1.0, 1.0));
+	const float arcLength = arcAngle * radius;
+	int pointsCount = (int)(arcLength / kDistanceBetweenPoints);
+	float partAngle = ABS(kDistanceBetweenPoints / radius);
+
+	for (int i = 0; i < pointsCount; ++i)
+		++sequenceCounters[kIndexTbl[i % kSequenceIdsCount]];
+
+	if (!swapY) {
+		if (pt2.y < pt1.y) {
+			currentAngle = M_PI * 0.5;
+		} else {
+			currentAngle = M_PI * 1.5;
+			partAngle = -partAngle;
+		}
+		if (pt2.x < pt1.x)
+			partAngle = -partAngle;
+	} else {
+		if (pt2.x <= pt1.x) {
+			currentAngle = M_PI;
+		} else {
+			currentAngle = 0.0;
+			partAngle = -partAngle;
+		}
+		if (pt2.y > pt1.y)
+			partAngle = -partAngle;
+	}
+
+	int index = kSequenceIdsCount - 1;
+	float angleStep = partAngle / (float)pointsCount * 0.5;
+	float angleIncr = (float)(pointsCount / 2) * angleStep + partAngle;
+
+	if (pointsCount > 32)
+		pointsCount = 32;
+
+	for (int i = 0; i < pointsCount; ++i) {
+
+		currentAngle += angleIncr;
+		angleIncr -= angleStep;
+
+		Common::Point newPoint(
+			centerX + _vm->getRandom(8) - 2 + (int)(cos(currentAngle) * radius),
+			centerY + _vm->getRandom(8) - 2 - (int)(sin(currentAngle) * radius));
+
+		Control *control = _vm->_dict->getObjectControl(_objectIds[i]);
+
+		for (; index >= 0; --index) {
+			if (sequenceCounters[index] > 0) {
+				--sequenceCounters[index];
+				control->setActorPosition(newPoint);
+				control->startSequenceActor(kSequenceIds[index], 2, 0);
+				control->appearActor();
+				control->deactivateObject();
+				break;
+			}
+		}
+
+	}
+
 }
 
 } // End of namespace Illusions

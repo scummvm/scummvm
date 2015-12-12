@@ -431,28 +431,28 @@ void BbdouSpecialCode::showBubble(uint32 objectId, uint32 overlappedObjectId, ui
 	
 	Common::Rect collisionRect;
 	Control *overlappedControl, *control2, *control3;
-	Common::Point pt1(320, 240), pt2, currPan;
+	Common::Point bubbleSourcePt(320, 240), bubbleDestPt, currPan;
 	
 	overlappedControl = _vm->_dict->getObjectControl(overlappedObjectId);
 	overlappedControl->getCollisionRect(collisionRect);
 
 	currPan = _vm->_camera->getCurrentPan();
-	pt2.x = CLIP((collisionRect.right + collisionRect.left) / 2, currPan.x - 274, currPan.x + 274);
-	pt2.y = CLIP(collisionRect.top - (collisionRect.bottom - collisionRect.top) / 8, currPan.y - 204, currPan.y + 204);
+	bubbleDestPt.x = CLIP((collisionRect.right + collisionRect.left) / 2, currPan.x - 274, currPan.x + 274);
+	bubbleDestPt.y = CLIP(collisionRect.top - (collisionRect.bottom - collisionRect.top) / 8, currPan.y - 204, currPan.y + 204);
 
 	control2 = _vm->_dict->getObjectControl(0x4000F);
 	if (!control2 || (control2->_actor && control2->_actor->_frameIndex == 0))
 		control2 = _vm->_dict->getObjectControl(0x4000E);
 
 	if (control2 && control2->_actor && control2->_actor->_frameIndex) {
-		pt1.x = control2->_actor->_surfInfo._dimensions._width / 2 + pt1.x - control2->_position.x;
-		pt1.y = control2->_actor->_position.y - control2->_position.y;
-		pt1.y = pt1.y >= 500 ? 500 : pt1.y + 32;
-		if (ABS(pt1.x - pt2.x) < ABS(pt1.y - pt2.y) / 2)
-			pt1.y += 80;
+		bubbleSourcePt.x = control2->_actor->_position.x - control2->_position.x + control2->_actor->_surfInfo._dimensions._width / 2;
+		bubbleSourcePt.y = control2->_actor->_position.y - control2->_position.y;
+		bubbleSourcePt.y = bubbleSourcePt.y >= 500 ? 500 : bubbleSourcePt.y + 32;
+		if (ABS(bubbleSourcePt.x - bubbleDestPt.x) < ABS(bubbleSourcePt.y - bubbleDestPt.y) / 2)
+			bubbleSourcePt.y += 80;
 	}
 
-	_bubble->setup(1, pt1, pt2, progResKeywordId);
+	_bubble->setup(1, bubbleSourcePt, bubbleDestPt, progResKeywordId);
 
 	item10->_objectIds[0] = _bubble->addItem(0, 0x6005A);
 	item10->_objectIds[1] = _bubble->addItem(0, 0x6005A);

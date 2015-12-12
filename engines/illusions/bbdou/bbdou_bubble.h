@@ -63,6 +63,7 @@ public:
 	void hide();
 	void setup(int16 minCount, Common::Point pt1, Common::Point pt2, uint32 progResKeywordId);
 	uint32 addItem(uint positionIndex, uint32 sequenceId);
+	void calcBubbles(Common::Point &pt1, Common::Point &pt2);
 protected:
 	IllusionsEngine_BBDOU *_vm;
 	BbdouSpecialCode *_bbdou;
