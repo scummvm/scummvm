@@ -67,12 +67,6 @@ enum GameFeatures {
 };
 
 #define ONESECOND      1000
-#define BRICKOPEN      115
-#define COMBINATIONUNLOCKED  130
-#define LEFTSCROLL     1
-#define RIGHTSCROLL    2
-#define UPSCROLL       3
-#define DOWNSCROLL     4
 
 typedef Common::List<Gadget *> GadgetList;
 

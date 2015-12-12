@@ -43,6 +43,16 @@
 
 namespace Lab {
 
+#define BRICKOPEN      115
+#define COMBINATIONUNLOCKED  130
+
+enum TileScroll {
+	kScrollLeft = 1,
+	kScrollRight = 2,
+	kScrollUp = 3,
+	kScrollDown = 4
+};
+
 const uint16 INIT_TILE[4][4] = {
 	{ 1, 5, 9, 13 },
 	{ 2, 6, 10, 14 },
@@ -111,7 +121,7 @@ void TilePuzzle::changeTile(uint16 col, uint16 row) {
 		if (_curTile[col][row - 1] == 0) {
 			_curTile[col][row - 1] = _curTile[col][row];
 			_curTile[col][row] = 0;
-			scrolltype = DOWNSCROLL;
+			scrolltype = kScrollDown;
 		}
 	}
 
@@ -119,7 +129,7 @@ void TilePuzzle::changeTile(uint16 col, uint16 row) {
 		if (_curTile[col - 1][row] == 0) {
 			_curTile[col - 1][row] = _curTile[col][row];
 			_curTile[col][row] = 0;
-			scrolltype = RIGHTSCROLL;
+			scrolltype = kScrollRight;
 		}
 	}
 
@@ -127,7 +137,7 @@ void TilePuzzle::changeTile(uint16 col, uint16 row) {
 		if (_curTile[col][row + 1] == 0) {
 			_curTile[col][row + 1] = _curTile[col][row];
 			_curTile[col][row] = 0;
-			scrolltype = UPSCROLL;
+			scrolltype = kScrollUp;
 		}
 	}
 
@@ -135,7 +145,7 @@ void TilePuzzle::changeTile(uint16 col, uint16 row) {
 		if (_curTile[col + 1][row] == 0) {
 			_curTile[col + 1][row] = _curTile[col][row];
 			_curTile[col][row] = 0;
-			scrolltype = LEFTSCROLL;
+			scrolltype = kScrollLeft;
 		}
 	}
 
@@ -269,20 +279,20 @@ void TilePuzzle::doTileScroll(uint16 col, uint16 row, uint16 scrolltype) {
 	int16 dX = 0, dY = 0, dx = 0, dy = 0, sx = 0, sy = 0;
 	uint16 last = 0;
 
-	if (scrolltype == LEFTSCROLL) {
+	if (scrolltype == kScrollLeft) {
 		dX = _vm->_utils->vgaScaleX(5);
 		sx = _vm->_utils->vgaScaleX(5);
 		last = 6;
-	} else if (scrolltype == RIGHTSCROLL) {
+	} else if (scrolltype == kScrollRight) {
 		dX = _vm->_utils->vgaScaleX(-5);
 		dx = _vm->_utils->vgaScaleX(-5);
 		sx = _vm->_utils->vgaScaleX(5);
 		last = 6;
-	} else if (scrolltype == UPSCROLL) {
+	} else if (scrolltype == kScrollUp) {
 		dY = _vm->_utils->vgaScaleY(5);
 		sy = _vm->_utils->vgaScaleY(5);
 		last = 5;
-	} else if (scrolltype == DOWNSCROLL) {
+	} else if (scrolltype == kScrollDown) {
 		dY = _vm->_utils->vgaScaleY(-5);
 		dy = _vm->_utils->vgaScaleY(-5);
 		sy = _vm->_utils->vgaScaleY(5);
