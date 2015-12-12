@@ -370,13 +370,13 @@ void OpenGLGraphicsManager::updateScreen() {
 		// cleared. For example, when switching from overlay visible to
 		// invisible, we need to assure that all contents are cleared to
 		// properly remove all overlay contents.
-		GLCALL(glDisable(GL_SCISSOR_TEST));
-		GLCALL(glClear(GL_COLOR_BUFFER_BIT));
-		GLCALL(glEnable(GL_SCISSOR_TEST));
+		GL_CALL(glDisable(GL_SCISSOR_TEST));
+		GL_CALL(glClear(GL_COLOR_BUFFER_BIT));
+		GL_CALL(glEnable(GL_SCISSOR_TEST));
 
 		--_scissorOverride;
 	} else {
-		GLCALL(glClear(GL_COLOR_BUFFER_BIT));
+		GL_CALL(glClear(GL_COLOR_BUFFER_BIT));
 	}
 
 	const GLfloat shakeOffset = _gameScreenShakeOffset * (GLfloat)_displayHeight / _gameScreen->getHeight();
@@ -418,13 +418,13 @@ void OpenGLGraphicsManager::updateScreen() {
 		}
 
 		// Set the OSD transparency.
-		GLCALL(glColor4f(1.0f, 1.0f, 1.0f, _osdAlpha / 100.0f));
+		GL_CALL(glColor4f(1.0f, 1.0f, 1.0f, _osdAlpha / 100.0f));
 
 		// Draw the OSD texture.
 		_osd->draw(0, 0, _outputScreenWidth, _outputScreenHeight);
 
 		// Reset color.
-		GLCALL(glColor4f(1.0f, 1.0f, 1.0f, 1.0f));
+		GL_CALL(glColor4f(1.0f, 1.0f, 1.0f, 1.0f));
 	}
 #endif
 
@@ -466,7 +466,7 @@ void OpenGLGraphicsManager::showOverlay() {
 	_forceRedraw = true;
 
 	// Allow drawing inside full screen area.
-	GLCALL(glDisable(GL_SCISSOR_TEST));
+	GL_CALL(glDisable(GL_SCISSOR_TEST));
 
 	// Update cursor position.
 	setMousePosition(_cursorX, _cursorY);
@@ -477,7 +477,7 @@ void OpenGLGraphicsManager::hideOverlay() {
 	_forceRedraw = true;
 
 	// Limit drawing to screen area.
-	GLCALL(glEnable(GL_SCISSOR_TEST));
+	GL_CALL(glEnable(GL_SCISSOR_TEST));
 	_scissorOverride = 3;
 
 	// Update cursor position.
@@ -755,17 +755,17 @@ void OpenGLGraphicsManager::setActualScreenSize(uint width, uint height) {
 	_outputScreenHeight = height;
 
 	// Setup coordinates system.
-	GLCALL(glViewport(0, 0, _outputScreenWidth, _outputScreenHeight));
+	GL_CALL(glViewport(0, 0, _outputScreenWidth, _outputScreenHeight));
 
-	GLCALL(glMatrixMode(GL_PROJECTION));
-	GLCALL(glLoadIdentity());
+	GL_CALL(glMatrixMode(GL_PROJECTION));
+	GL_CALL(glLoadIdentity());
 #ifdef USE_GLES
-	GLCALL(glOrthof(0, _outputScreenWidth, _outputScreenHeight, 0, -1, 1));
+	GL_CALL(glOrthof(0, _outputScreenWidth, _outputScreenHeight, 0, -1, 1));
 #else
-	GLCALL(glOrtho(0, _outputScreenWidth, _outputScreenHeight, 0, -1, 1));
+	GL_CALL(glOrtho(0, _outputScreenWidth, _outputScreenHeight, 0, -1, 1));
 #endif
-	GLCALL(glMatrixMode(GL_MODELVIEW));
-	GLCALL(glLoadIdentity());
+	GL_CALL(glMatrixMode(GL_MODELVIEW));
+	GL_CALL(glLoadIdentity());
 
 	uint overlayWidth = width;
 	uint overlayHeight = height;
@@ -839,33 +839,33 @@ void OpenGLGraphicsManager::notifyContextCreate(const Graphics::PixelFormat &def
 	initializeGLContext();
 
 	// Disable 3D properties.
-	GLCALL(glDisable(GL_CULL_FACE));
-	GLCALL(glDisable(GL_DEPTH_TEST));
-	GLCALL(glDisable(GL_LIGHTING));
-	GLCALL(glDisable(GL_FOG));
-	GLCALL(glDisable(GL_DITHER));
-	GLCALL(glShadeModel(GL_FLAT));
-	GLCALL(glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_FASTEST));
+	GL_CALL(glDisable(GL_CULL_FACE));
+	GL_CALL(glDisable(GL_DEPTH_TEST));
+	GL_CALL(glDisable(GL_LIGHTING));
+	GL_CALL(glDisable(GL_FOG));
+	GL_CALL(glDisable(GL_DITHER));
+	GL_CALL(glShadeModel(GL_FLAT));
+	GL_CALL(glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_FASTEST));
 
 	// Default to black as clear color.
-	GLCALL(glClearColor(0.0f, 0.0f, 0.0f, 0.0f));
-	GLCALL(glColor4f(1.0f, 1.0f, 1.0f, 1.0f));
+	GL_CALL(glClearColor(0.0f, 0.0f, 0.0f, 0.0f));
+	GL_CALL(glColor4f(1.0f, 1.0f, 1.0f, 1.0f));
 
 	// Setup alpha blend (for overlay and cursor).
-	GLCALL(glEnable(GL_BLEND));
-	GLCALL(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
+	GL_CALL(glEnable(GL_BLEND));
+	GL_CALL(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 
 	// Enable rendering with vertex and coord arrays.
-	GLCALL(glEnableClientState(GL_VERTEX_ARRAY));
-	GLCALL(glEnableClientState(GL_TEXTURE_COORD_ARRAY));
+	GL_CALL(glEnableClientState(GL_VERTEX_ARRAY));
+	GL_CALL(glEnableClientState(GL_TEXTURE_COORD_ARRAY));
 
-	GLCALL(glEnable(GL_TEXTURE_2D));
+	GL_CALL(glEnable(GL_TEXTURE_2D));
 
 	// Setup scissor state accordingly.
 	if (_overlayVisible) {
-		GLCALL(glDisable(GL_SCISSOR_TEST));
+		GL_CALL(glDisable(GL_SCISSOR_TEST));
 	} else {
-		GLCALL(glEnable(GL_SCISSOR_TEST));
+		GL_CALL(glEnable(GL_SCISSOR_TEST));
 	}
 	// Clear the whole screen for the first three frames to assure any
 	// leftovers are cleared.
@@ -874,7 +874,7 @@ void OpenGLGraphicsManager::notifyContextCreate(const Graphics::PixelFormat &def
 	// We use a "pack" alignment (when reading from textures) to 4 here,
 	// since the only place where we really use it is the BMP screenshot
 	// code and that requires the same alignment too.
-	GLCALL(glPixelStorei(GL_PACK_ALIGNMENT, 4));
+	GL_CALL(glPixelStorei(GL_PACK_ALIGNMENT, 4));
 
 	// Query information needed by textures.
 	Texture::queryTextureInformation();
@@ -1118,7 +1118,7 @@ void OpenGLGraphicsManager::recalculateDisplayArea() {
 	// Setup drawing limitation for game graphics.
 	// This invovles some trickery because OpenGL's viewport coordinate system
 	// is upside down compared to ours.
-	GLCALL(glScissor(_displayX,
+	GL_CALL(glScissor(_displayX,
 	                 _outputScreenHeight - _displayHeight - _displayY,
 	                 _displayWidth,
 	                 _displayHeight));
@@ -1206,7 +1206,7 @@ void OpenGLGraphicsManager::saveScreenshot(const Common::String &filename) const
 	uint8 *pixels = new uint8[lineSize * height];
 
 	// Get pixel data from OpenGL buffer
-	GLCALL(glReadPixels(0, 0, width, height, GL_RGB, GL_UNSIGNED_BYTE, pixels));
+	GL_CALL(glReadPixels(0, 0, width, height, GL_RGB, GL_UNSIGNED_BYTE, pixels));
 
 	// BMP stores as BGR. Since we can't assume that GL_BGR is supported we
 	// will swap the components from the RGB we read to BGR on our own.

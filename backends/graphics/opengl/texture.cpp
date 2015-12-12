@@ -42,7 +42,7 @@ static GLuint nextHigher2(GLuint v) {
 GLint Texture::_maxTextureSize = 0;
 
 void Texture::queryTextureInformation() {
-	GLCALL(glGetIntegerv(GL_MAX_TEXTURE_SIZE, &_maxTextureSize));
+	GL_CALL(glGetIntegerv(GL_MAX_TEXTURE_SIZE, &_maxTextureSize));
 	debug(5, "OpenGL maximum texture size: %d", _maxTextureSize);
 }
 
@@ -58,7 +58,7 @@ Texture::~Texture() {
 }
 
 void Texture::releaseInternalTexture() {
-	GLCALL(glDeleteTextures(1, &_glTexture));
+	GL_CALL(glDeleteTextures(1, &_glTexture));
 	_glTexture = 0;
 }
 
@@ -67,20 +67,20 @@ void Texture::recreateInternalTexture() {
 	releaseInternalTexture();
 
 	// Get a new texture name.
-	GLCALL(glGenTextures(1, &_glTexture));
+	GL_CALL(glGenTextures(1, &_glTexture));
 
 	// Set up all texture parameters.
-	GLCALL(glBindTexture(GL_TEXTURE_2D, _glTexture));
-	GLCALL(glPixelStorei(GL_UNPACK_ALIGNMENT, 1));
-	GLCALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, _glFilter));
-	GLCALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, _glFilter));
-	GLCALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
-	GLCALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
+	GL_CALL(glBindTexture(GL_TEXTURE_2D, _glTexture));
+	GL_CALL(glPixelStorei(GL_UNPACK_ALIGNMENT, 1));
+	GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, _glFilter));
+	GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, _glFilter));
+	GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
+	GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
 
 	// In case there is an actual texture setup we reinitialize it.
 	if (_textureData.getPixels()) {
 		// Allocate storage for OpenGL texture.
-		GLCALL(glTexImage2D(GL_TEXTURE_2D, 0, _glIntFormat, _textureData.w,
+		GL_CALL(glTexImage2D(GL_TEXTURE_2D, 0, _glIntFormat, _textureData.w,
 		       _textureData.h, 0, _glFormat, _glType, NULL));
 
 		// Mark dirts such that it will be completely refreshed the next time.
@@ -95,10 +95,10 @@ void Texture::enableLinearFiltering(bool enable) {
 		_glFilter = GL_NEAREST;
 	}
 
-	GLCALL(glBindTexture(GL_TEXTURE_2D, _glTexture));
+	GL_CALL(glBindTexture(GL_TEXTURE_2D, _glTexture));
 
-	GLCALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, _glFilter));
-	GLCALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, _glFilter));
+	GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, _glFilter));
+	GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, _glFilter));
 }
 
 void Texture::allocate(uint width, uint height) {
@@ -115,10 +115,10 @@ void Texture::allocate(uint width, uint height) {
 		_textureData.create(texWidth, texHeight, _format);
 
 		// Set the texture.
-		GLCALL(glBindTexture(GL_TEXTURE_2D, _glTexture));
+		GL_CALL(glBindTexture(GL_TEXTURE_2D, _glTexture));
 
 		// Allocate storage for OpenGL texture.
-		GLCALL(glTexImage2D(GL_TEXTURE_2D, 0, _glIntFormat, _textureData.w,
+		GL_CALL(glTexImage2D(GL_TEXTURE_2D, 0, _glIntFormat, _textureData.w,
 		       _textureData.h, 0, _glFormat, _glType, NULL));
 	}
 
@@ -174,7 +174,7 @@ void Texture::draw(GLfloat x, GLfloat y, GLfloat w, GLfloat h) {
 	updateTexture();
 
 	// Set the texture.
-	GLCALL(glBindTexture(GL_TEXTURE_2D, _glTexture));
+	GL_CALL(glBindTexture(GL_TEXTURE_2D, _glTexture));
 
 	// Calculate the texture rect that will be drawn.
 	const GLfloat texWidth = (GLfloat)_userPixelData.w / _textureData.w;
@@ -185,7 +185,7 @@ void Texture::draw(GLfloat x, GLfloat y, GLfloat w, GLfloat h) {
 		0,        texHeight,
 		texWidth, texHeight
 	};
-	GLCALL(glTexCoordPointer(2, GL_FLOAT, 0, texcoords));
+	GL_CALL(glTexCoordPointer(2, GL_FLOAT, 0, texcoords));
 
 	// Calculate the screen rect where the texture will be drawn.
 	const GLfloat vertices[4*2] = {
@@ -194,10 +194,10 @@ void Texture::draw(GLfloat x, GLfloat y, GLfloat w, GLfloat h) {
 		x,     y + h,
 		x + w, y + h
 	};
-	GLCALL(glVertexPointer(2, GL_FLOAT, 0, vertices));
+	GL_CALL(glVertexPointer(2, GL_FLOAT, 0, vertices));
 
 	// Draw the texture to the screen buffer.
-	GLCALL(glDrawArrays(GL_TRIANGLE_STRIP, 0, 4));
+	GL_CALL(glDrawArrays(GL_TRIANGLE_STRIP, 0, 4));
 }
 
 void Texture::updateTexture() {
@@ -237,7 +237,7 @@ void Texture::updateTexture() {
 	}
 
 	// Set the texture.
-	GLCALL(glBindTexture(GL_TEXTURE_2D, _glTexture));
+	GL_CALL(glBindTexture(GL_TEXTURE_2D, _glTexture));
 
 	// Update the actual texture.
 	// Although we keep track of the dirty part of the texture buffer we
@@ -257,7 +257,7 @@ void Texture::updateTexture() {
 	//
 	// 3) Use glTexSubImage2D per line changed. This is what the old OpenGL
 	//    graphics manager did but it is much slower! Thus, we do not use it.
-	GLCALL(glTexSubImage2D(GL_TEXTURE_2D, 0, 0, dirtyArea.top, _textureData.w, dirtyArea.height(),
+	GL_CALL(glTexSubImage2D(GL_TEXTURE_2D, 0, 0, dirtyArea.top, _textureData.w, dirtyArea.height(),
 	                       _glFormat, _glType, _textureData.getBasePtr(0, dirtyArea.top)));
 
 	// We should have handled everything, thus not dirty anymore.

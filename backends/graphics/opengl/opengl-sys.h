@@ -87,6 +87,6 @@ extern Context g_context;
 
 } // End of namespace OpenGL
 
-#define GLCALL(x) GL_WRAP_DEBUG(g_context.x, x)
+#define GL_CALL(x) GL_WRAP_DEBUG(g_context.x, x)
 
 #endif
