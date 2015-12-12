@@ -36,6 +36,7 @@
 #include "lab/intro.h"
 #include "lab/music.h"
 #include "lab/resource.h"
+#include "lab/utils.h"
 
 namespace Lab {
 
@@ -131,7 +132,7 @@ void Intro::doPictText(const char *filename, TextFont *msgFont, bool isScreen) {
 				return;
 			}
 
-			_vm->getTime(&lastSecs, &lastMicros);
+			_vm->_utils->getTime(&lastSecs, &lastMicros);
 		}
 
 		msg = _vm->getMsg();
@@ -139,8 +140,8 @@ void Intro::doPictText(const char *filename, TextFont *msgFont, bool isScreen) {
 		if (msg == NULL) {
 			_vm->_music->updateMusic();
 			_vm->_anim->diffNextFrame();
-			_vm->getTime(&secs, &micros);
-			_vm->anyTimeDiff(lastSecs, lastMicros, secs, micros, &secs, &micros);
+			_vm->_utils->getTime(&secs, &micros);
+			_vm->_utils->anyTimeDiff(lastSecs, lastMicros, secs, micros, &secs, &micros);
 
 			if (secs > timeDelay) {
 				if (end) {

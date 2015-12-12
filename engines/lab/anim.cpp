@@ -98,8 +98,8 @@ void Anim::diffNextFrame(bool onlyDiffData) {
 
 			if (!onlyDiffData) {
 				if (_headerdata._fps) {
-					_vm->waitForTime(_waitSec, _waitMicros);
-					_vm->addCurTime(0L, _delayMicros, &_waitSec, &_waitMicros);
+					_vm->_utils->waitForTime(_waitSec, _waitMicros);
+					_vm->_utils->addCurTime(0L, _delayMicros, &_waitSec, &_waitMicros);
 				}
 
 				if (_isPal && !_noPalChange) {

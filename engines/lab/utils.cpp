@@ -433,7 +433,7 @@ void Utils::setBytesPerRow(int num) {
 uint16 Utils::getRandom(uint16 max) {
 	uint32 secs, micros;
 
-	_vm->getTime(&secs, &micros);
+	getTime(&secs, &micros);
 	return ((micros + secs) % max);
 }
 
@@ -442,4 +442,95 @@ void Utils::readBlock(void *Buffer, uint32 Size, byte **File) {
 	(*File) += Size;
 }
 
+/**
+ * Waits for for Secs seconds and Micros microseconds to pass.
+ */
+void Utils::microDelay(uint32 secs, uint32 micros) {
+	uint32 waitSecs, waitMicros;
+	addCurTime(secs, micros, &waitSecs, &waitMicros);
+
+	while (1) {
+		getTime(&secs, &micros);
+
+		if ((secs > waitSecs) || ((secs == waitSecs) && (micros >= waitMicros)))
+			return;
+
+		g_system->delayMillis(10);
+	}
+}
+
+/**
+ * Gets the current system time.
+ */
+void Utils::getTime(uint32 *secs, uint32 *micros) {
+	uint32 t = g_system->getMillis();
+
+	*secs = t / 1000;
+	*micros = t % 1000;
+}
+
+/**
+ * Adds seconds and microseconds to current time to get a new time.
+ */
+void Utils::addCurTime(uint32 sec, uint32 micros, uint32 *timeSec, uint32 *timeMicros) {
+	getTime(timeSec, timeMicros);
+
+	(*timeSec) += sec;
+	(*timeMicros) += micros;
+
+	if (*timeMicros >= ONESECOND) {
+		(*timeSec)++;
+		(*timeMicros) -= ONESECOND;
+	}
+}
+
+/**
+ * Finds the difference between time1 and time2.  If time1 is later than
+ * time2, returns 0.
+ */
+void Utils::anyTimeDiff(uint32 sec1, uint32 micros1, uint32 sec2, uint32 micros2, uint32 *diffSecs, uint32 *diffMicros) {
+	*diffSecs = 0;
+	*diffMicros = 0;
+
+	if (sec1 > sec2)
+		return;
+	else if ((sec1 == sec2) && (micros1 >= micros2))
+		return;
+
+	if (micros1 > micros2) {
+		*diffSecs = sec2 - sec1 - 1;
+		*diffMicros = (ONESECOND - micros1) + micros2;
+	} else {
+		*diffSecs = sec2 - sec1;
+		*diffMicros = micros2 - micros1;
+	}
+}
+
+/**
+ * Finds the difference between the current time, and a future time. Returns
+ * 0 if the future time is actually before the current time.
+ */
+void Utils::timeDiff(uint32 sec, uint32 micros, uint32 *diffSec, uint32 *diffMicros) {
+	uint32 curSec, curMicros;
+	getTime(&curSec, &curMicros);
+	anyTimeDiff(curSec, curMicros, sec, micros, diffSec, diffMicros);
+}
+
+/**
+ * Waits for a specified time to occur.
+ */
+void Utils::waitForTime(uint32 sec, uint32 micros) {
+	uint32 curSec, curMicros;
+	getTime(&curSec, &curMicros);
+
+	if (curSec > sec)
+		return;
+	else if ((curSec == sec) && (curMicros >= micros))
+		return;
+
+	if (curMicros > micros)
+		microDelay(sec - curSec - 1, (ONESECOND - curMicros) + micros - 1);
+	else
+		microDelay(sec - curSec, micros - curMicros - 1);
+}
 } // End of namespace Lab
