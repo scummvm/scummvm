@@ -160,7 +160,7 @@ void writeMartianCommonData() {
 	}
 }
 
-bool processExecutable(int idx, const char *name) {
+bool processExecutable(int exeIdx, const char *name) {
 	uint dataSegmentOffset;
 	uint filenamesOffset, numFilenames;
 	uint charsStart, charsEnd;
@@ -291,7 +291,7 @@ bool processExecutable(int idx, const char *name) {
 
 	// Write out header entry
 	uint outputOffset = outputFile.size();
-	outputFile.seek(8 + idx * 8);
+	outputFile.seek(8 + exeIdx * 8);
 	outputFile.writeByte(gameId);
 	outputFile.writeByte(discType);
 	outputFile.writeByte(demoType);

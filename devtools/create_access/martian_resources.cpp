@@ -179,4 +179,4 @@ const char *const INVENTORY_NAMES_ENG[55] = {
 	"MONKEY WRENCH", "BIG DICK CARD", "BRA", "BOLT", nullptr
 };
 
-};
+} // End of namespace Amazon

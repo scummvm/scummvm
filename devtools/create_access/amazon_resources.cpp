@@ -754,4 +754,4 @@ const char *const IQLABELS_ENG[9] = {
 
 const char *const CANT_GET_THERE_ENG = "YOU CAN'T GET THERE FROM HERE.";
 
-};
+} // End of namespace Amazon

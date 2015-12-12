@@ -57,6 +57,6 @@ extern const char *const HELPLVLTXT_ENG[3];
 extern const char *const IQLABELS_ENG[9];
 extern const char *const CANT_GET_THERE_ENG;
 
-};
+} // End of namespace Amazon
 
 #endif
