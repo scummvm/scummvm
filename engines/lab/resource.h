@@ -51,7 +51,7 @@ enum StaticText {
 	kTextFacingSouth,
 	kTextFacingWest,
 
-	kTextLampOn,
+	kTextkLampOn,
 
 	kTextTurnLeft,
 	kTextTurnRight,
@@ -85,7 +85,7 @@ enum StaticText {
 
 	kTextUseMap,
 	kTextUseJournal,
-	kTextTurnLampOn,
+	kTextTurnkLampOn,
 	kTextTurnLampOff,
 	kTextUseWhiskey,
 	kTextUsePith,

@@ -123,7 +123,7 @@ bool readSaveGameHeader(Common::InSaveFile *in, SaveGameHeader &header) {
 /**
  * Writes the game out to disk.
  */
-bool saveGame(uint16 Direction, uint16 Quarters, int slot, Common::String desc) {
+bool saveGame(int slot, Common::String desc) {
 	uint16 i;
 	Common::String fileName = g_lab->generateSaveFileName(slot);
 	Common::SaveFileManager *saveFileManager = g_system->getSavefileManager();
@@ -138,8 +138,8 @@ bool saveGame(uint16 Direction, uint16 Quarters, int slot, Common::String desc) 
 
 	writeSaveGameHeader(file, desc);
 	file->writeUint16LE(g_lab->_roomNum);
-	file->writeUint16LE(Direction);
-	file->writeUint16LE(Quarters);
+	file->writeUint16LE(g_lab->getDirection());
+	file->writeUint16LE(g_lab->getQuarters());
 
 	// Conditions
 	for (i = 0; i < g_lab->_conditions->_lastElement / (8 * 2); i++)
@@ -167,7 +167,7 @@ bool saveGame(uint16 Direction, uint16 Quarters, int slot, Common::String desc) 
 /**
  * Reads the game from disk.
  */
-bool loadGame(uint16 *Direction, uint16 *Quarters, int slot) {
+bool loadGame(int slot) {
 	uint16 i;
 	Common::String fileName = g_lab->generateSaveFileName(slot);
 	Common::SaveFileManager *saveFileManager = g_system->getSavefileManager();
@@ -179,8 +179,8 @@ bool loadGame(uint16 *Direction, uint16 *Quarters, int slot) {
 	SaveGameHeader header;
 	readSaveGameHeader(file, header);
 	g_lab->_roomNum = file->readUint16LE();
-	*Direction = file->readUint16LE();
-	*Quarters = file->readUint16LE();
+	g_lab->setDirection(file->readUint16LE());
+	g_lab->setQuarters(file->readUint16LE());
 
 	// Conditions
 	for (i = 0; i < g_lab->_conditions->_lastElement / (8 * 2); i++)
@@ -234,14 +234,14 @@ bool LabEngine::saveRestoreGame() {
 				desc = dialog->createDefaultSaveDescription(slot);
 			}
 
-			isOK = saveGame(_direction, _inventory[QUARTERNUM]._many, slot, desc);
+			isOK = saveGame(slot, desc);
 		}
 	} else {
 		// Restore
 		GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Restore game:"), _("Restore"), false);
 		int slot = dialog->runModalWithCurrentTarget();
 		if (slot >= 0) {
-			isOK = loadGame(&_direction, &(_inventory[QUARTERNUM]._many), slot);
+			isOK = loadGame(slot);
 			if (isOK)
 				_music->resetMusic();
 		}

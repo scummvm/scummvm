@@ -74,8 +74,6 @@ enum GameFeatures {
 #define UPSCROLL       3
 #define DOWNSCROLL     4
 
-#define QUARTERNUM  30
-
 typedef Common::List<Gadget *> GadgetList;
 
 struct CrumbData {
@@ -209,6 +207,11 @@ public:
 
 	void changeVolume(int delta);
 	char *getPictName(CloseDataPtr *closePtrList);
+
+	uint16 getQuarters();
+	void setQuarters(uint16 quarters);
+	uint16 getDirection() { return _direction; }
+	void setDirection(uint16 direction) { _direction = direction; };
 
 private:
 	void freeScreens();

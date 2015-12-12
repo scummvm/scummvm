@@ -44,8 +44,8 @@ struct SaveGameHeader {
 	uint16 _direction;
 };
 
-bool saveGame(uint16 Direction, uint16 Quarters, int slot, Common::String desc);
-bool loadGame(uint16 *Direction, uint16 *Quarters, int slot);
+bool saveGame(int slot, Common::String desc);
+bool loadGame(int slot);
 bool readSaveGameHeader(Common::InSaveFile *in, SaveGameHeader &header);
 
 } // End of namespace Lab
