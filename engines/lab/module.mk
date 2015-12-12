@@ -18,7 +18,6 @@ MODULE_OBJS := \
 	savegame.o \
 	special.o \
 	tilepuzzle.o \
-	timing.o \
 	transitions.o \
 	utils.o
 

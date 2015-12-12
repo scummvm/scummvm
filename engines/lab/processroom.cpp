@@ -425,14 +425,14 @@ void LabEngine::doActions(Action *actionList, CloseDataPtr *closePtrList) {
 
 		case WAITSECS: {
 				uint32 startSecs, startMicros, curSecs, curMicros;
-				addCurTime(actionList->_param1, 0, &startSecs, &startMicros);
+				_utils->addCurTime(actionList->_param1, 0, &startSecs, &startMicros);
 
 				_graphics->screenUpdate();
 
 				while (1) {
 					_music->updateMusic();
 					_anim->diffNextFrame();
-					getTime(&curSecs, &curMicros);
+					_utils->getTime(&curSecs, &curMicros);
 
 					if ((curSecs > startSecs) || ((curSecs == startSecs) && (curMicros >= startMicros)))
 						break;

@@ -609,7 +609,7 @@ bool LabEngine::fromCrumbs(uint32 tmpClass, uint16 code, uint16 qualifier, Commo
 					_followCrumbsFast = (code == 'r' || code == 'R');
 					_isCrumbTurning = false;
 					_isCrumbWaiting = false;
-					getTime(&_crumbSecs, &_crumbMicros);
+					_utils->getTime(&_crumbSecs, &_crumbMicros);
 
 					if (_alternate) {
 						eatMessages();
@@ -930,7 +930,7 @@ bool LabEngine::fromCrumbs(uint32 tmpClass, uint16 code, uint16 qualifier, Commo
 					_followCrumbsFast = false;
 					_isCrumbTurning = false;
 					_isCrumbWaiting = false;
-					getTime(&_crumbSecs, &_crumbMicros);
+					_utils->getTime(&_crumbSecs, &_crumbMicros);
 
 					eatMessages();
 					_alternate = false;
@@ -1144,7 +1144,7 @@ int LabEngine::followCrumbs() {
 		uint32 Secs;
 		uint32 Micros;
 
-		timeDiff(_crumbSecs, _crumbMicros, &Secs, &Micros);
+		_utils->timeDiff(_crumbSecs, _crumbMicros, &Secs, &Micros);
 
 		if (Secs != 0 || Micros != 0)
 			return 0;
@@ -1189,7 +1189,7 @@ int LabEngine::followCrumbs() {
 		_isCrumbTurning = (moveDir != VKEY_UPARROW);
 		_isCrumbWaiting = true;
 
-		addCurTime(theDelay / ONESECOND, theDelay % ONESECOND, &_crumbSecs, &_crumbMicros);
+		_utils->addCurTime(theDelay / ONESECOND, theDelay % ONESECOND, &_crumbSecs, &_crumbMicros);
 	}
 
 	return moveDir;
