@@ -1042,7 +1042,7 @@ std::string XcodeProvider::writeProperty(const std::string &variable, Property &
 		if (settings.size() > 1 || (prop._flags & SettingsSingleItem))
 			output += (flags & SettingsSingleItem ? " " : "\t\t\t\t");
 
-		output += writeSetting((*setting).first, (*setting).second);
+		output += writeSetting(setting->first, setting->second);
 
 		// The combination of SettingsAsList, and SettingsSingleItem should use "," and not ";" (i.e children
 		// in PBXGroup, so we special case that case here.

@@ -120,15 +120,11 @@ private:
 
 		// Constructs a simple Property
 		explicit Property(std::string name, std::string value = "", std::string comment = "", int flgs = 0, int indent = 0, bool order = false) : _flags(flgs), _hasOrder(order) {
-			Setting setting(value, comment, _flags, indent);
-
-			_settings[name] = setting;
+			_settings[name] = Setting(value, comment, _flags, indent);
 		}
 
 		Property(std::string name, ValueList values, int flgs = 0, int indent = 0, bool order = false) : _flags(flgs), _hasOrder(order) {
-			Setting setting(values, _flags, indent);
-
-			_settings[name] = setting;
+			_settings[name] = Setting(values, _flags, indent);
 		}
 
 		OrderedSettingList getOrderedSettingList() {
@@ -188,10 +184,10 @@ private:
 
 			// Write each property
 			for (PropertyList::iterator property = _properties.begin(); property != _properties.end(); ++property) {
-				if ((*property).first == "isa")
+				if (property->first == "isa")
 					continue;
 
-				output += _parent->writeProperty((*property).first, (*property).second, flags);
+				output += _parent->writeProperty(property->first, property->second, flags);
 			}
 
 			if (flags & SettingsAsList)
@@ -212,8 +208,7 @@ private:
 			assert(!_properties["isa"]._settings.empty());
 
 			SettingList::iterator it = _properties["isa"]._settings.begin();
-
-			return (*it).first;
+			return it->first;
 		}
 	};
 
