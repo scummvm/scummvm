@@ -536,6 +536,7 @@ void Scripts::cmdDispInv_v1() {
 
 void Scripts::cmdDispInv_v2() {
 	_vm->_inventory->newDisplayInv();
+	_vm->_events->forceSetCursor(CURSOR_ARROW);
 }
 
 void Scripts::cmdSetAbout() {
