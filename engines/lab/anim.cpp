@@ -348,7 +348,7 @@ void Anim::readDiff(byte *buffer, bool playOnce, bool onlyDiffData) {
 		_rawDiffBM._planes[_header] = NULL;
 
 	if (_headerdata._fps)
-		_delayMicros = ONESECOND / _headerdata._fps;
+		_delayMicros = 1000 / _headerdata._fps;
 
 	if (_playOnce) {
 		while (_header != 65535)

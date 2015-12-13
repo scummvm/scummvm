@@ -69,8 +69,6 @@ enum GameFeatures {
 	GF_WINDOWS_TRIAL = 1 << 1
 };
 
-#define ONESECOND      1000
-
 typedef Common::List<Button *> ButtonList;
 
 struct CrumbData {
@@ -148,7 +146,7 @@ public:
 	uint16 _numCrumbs;
 	uint16 _numInv;
 
-	uint32 _crumbSecs, _crumbMicros;
+	uint32 _crumbTimestamp;
 
 	const char *_curFileName;
 
