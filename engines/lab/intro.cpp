@@ -88,7 +88,7 @@ void Intro::doPictText(const char *filename, TextFont *msgFont, bool isScreen) {
 	int32 cls, code, Drawn;
 	int16 qualifier;
 
-	Common::File *textFile = g_lab->_resource->openDataFile(path);
+	Common::File *textFile = _vm->_resource->openDataFile(path);
 	byte *textBuffer = new byte[textFile->size()];
 	textFile->read(textBuffer, textFile->size());
 	delete textFile;
