@@ -141,18 +141,20 @@ void Anim::diffNextFrame(bool onlyDiffData) {
 
 		switch (_header) {
 		case 8:
-			_vm->_utils->readBlock(_diffPalette, _size, &_diffFile);
+			memcpy(_diffPalette, _diffFile, _size);
+			_diffFile += _size;
 			_isPal = true;
 			break;
 
 		case 10:
 			_rawDiffBM._planes[_curBit] = _diffFile;
 
-			if (onlyDiffData)
+			if (onlyDiffData) {
 				_diffFile += _size;
-			else
-				_vm->_utils->readBlock(DrawBitMap->_planes[_curBit], _size, &_diffFile);
-
+			} else {
+				memcpy(DrawBitMap->_planes[_curBit], _diffFile, _size);
+				_diffFile += _size;
+			}
 			_curBit++;
 			break;
 

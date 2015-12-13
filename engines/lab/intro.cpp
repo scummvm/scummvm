@@ -132,7 +132,9 @@ void Intro::doPictText(const char *filename, TextFont *msgFont, bool isScreen) {
 				return;
 			}
 
-			_vm->_utils->getTime(&lastSecs, &lastMicros);
+			uint32 t = g_system->getMillis();
+			lastSecs = t / 1000;
+			lastMicros = t % 1000;
 		}
 
 		msg = _vm->getMsg();
@@ -140,7 +142,10 @@ void Intro::doPictText(const char *filename, TextFont *msgFont, bool isScreen) {
 		if (msg == NULL) {
 			_vm->_music->updateMusic();
 			_vm->_anim->diffNextFrame();
-			_vm->_utils->getTime(&secs, &micros);
+
+			uint32 t = g_system->getMillis();
+			secs = t / 1000;
+			micros = t % 1000;
 			_vm->_utils->anyTimeDiff(lastSecs, lastMicros, secs, micros, &secs, &micros);
 
 			if (secs > timeDelay) {
