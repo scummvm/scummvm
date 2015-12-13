@@ -88,8 +88,8 @@ LabEngine::LabEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	_rooms = nullptr;
 	_tilePuzzle = nullptr;
 	_utils = nullptr;
-	journalBackImage = nullptr;
-	ScreenImage = nullptr;
+	_journalBackImage = nullptr;
+	_screenImage = nullptr;
 
 	_lastTooLong = false;
 	_interfaceOff = false;
@@ -156,8 +156,8 @@ LabEngine::~LabEngine() {
 	delete[] _rooms;
 	delete _tilePuzzle;
 	delete _utils;
-	delete journalBackImage;
-	delete ScreenImage;
+	delete _journalBackImage;
+	delete _screenImage;
 }
 
 Common::Error LabEngine::run() {
@@ -173,8 +173,8 @@ Common::Error LabEngine::run() {
 	_anim = new Anim(this);
 	_tilePuzzle = new TilePuzzle(this);
 	_utils = new Utils(this);
-	journalBackImage = new Image(this);
-	ScreenImage = new Image(this);
+	_journalBackImage = new Image(this);
+	_screenImage = new Image(this);
 
 	if (getPlatform() == Common::kPlatformWindows) {
 		// Check if this is the Wyrmkeep trial

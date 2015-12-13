@@ -97,6 +97,8 @@ private:
 	bool _noUpdateDiff;
 	bool _quitLab;
 
+	byte *_blankJournal;
+
 	int _lastWaitTOFTicks;
 
 	uint16 _direction;
@@ -122,14 +124,11 @@ private:
 	Image *_imgMapX[4];
 	InventoryData *_inventory;
 	MapData *_maps;
-	byte *_blankJournal;
 	Image *_monitorButton;
+	Image *_journalBackImage;
+	Image *_screenImage;
 	TextFont *_journalFont;
-
 	Common::RandomSource _rnd;
-
-	Image *journalBackImage;
-	Image *ScreenImage;
 
 public:
 	bool _alternate;
