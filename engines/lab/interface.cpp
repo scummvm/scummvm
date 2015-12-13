@@ -135,34 +135,34 @@ Gadget *EventManager::checkNumGadgetHit(GadgetList *gadgetList, uint16 key) {
 	return nullptr;
 }
 
-IntuiMessage *LabEngine::getMsg() {
+IntuiMessage *EventManager::getMsg() {
 	static IntuiMessage message;
 
-	_event->updateMouse();
+	updateMouse();
 
-	int qualifiers = _event->_keyPressed.flags;
-	Gadget *curgad  = _event->mouseGadget();
+	int qualifiers = _keyPressed.flags;
+	Gadget *curgad  = mouseGadget();
 
 	if (curgad) {
-		_event->updateMouse();
+		updateMouse();
 		message._msgClass = GADGETUP;
 		message._code  = curgad->_gadgetID;
 		message._gadgetID = curgad->_gadgetID;
 		message._qualifier = qualifiers;
 		return &message;
-	} else if (_event->mouseButton(&message._mouseX, &message._mouseY, true)) {
+	} else if (mouseButton(&message._mouseX, &message._mouseY, true)) {
 		// Left Button
 		message._qualifier = IEQUALIFIER_LEFTBUTTON | qualifiers;
 		message._msgClass = MOUSEBUTTONS;
 		return &message;
-	} else if (_event->mouseButton(&message._mouseX, &message._mouseY, false)) {
+	} else if (mouseButton(&message._mouseX, &message._mouseY, false)) {
 		// Right Button
 		message._qualifier = IEQUALIFIER_RIGHTBUTTON | qualifiers;
 		message._msgClass = MOUSEBUTTONS;
 		return &message;
-	} else if (_event->keyPress(&message._code)) {
+	} else if (keyPress(&message._code)) {
 		// Keyboard key
-		curgad = _event->checkNumGadgetHit(_event->_screenGadgetList, message._code);
+		curgad = checkNumGadgetHit(_screenGadgetList, message._code);
 
 		if (curgad) {
 			message._msgClass = GADGETUP;

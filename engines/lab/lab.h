@@ -184,7 +184,6 @@ public:
 
 	void changeVolume(int delta);
 	uint16 getDirection() { return _direction; }
-	IntuiMessage *getMsg();
 	char *getPictName(CloseDataPtr *closePtrList);
 	uint16 getQuarters();
 	void setDirection(uint16 direction) { _direction = direction; };

@@ -163,7 +163,7 @@ void LabEngine::eatMessages() {
 	IntuiMessage *msg;
 
 	do {
-		msg = getMsg();
+		msg = _event->getMsg();
 	} while (msg);
 }
 
@@ -503,7 +503,7 @@ void LabEngine::mainGameLoop() {
 		// Make sure we check the music at least after every message
 		_music->updateMusic();
 		interfaceOn();
-		IntuiMessage *curMsg = getMsg();
+		IntuiMessage *curMsg = _event->getMsg();
 
 		if (!curMsg) {
 			// Does music load and next animation frame when you've run out of messages
@@ -645,7 +645,7 @@ bool LabEngine::fromCrumbs(uint32 tmpClass, uint16 code, uint16 qualifier, Commo
 			while (1) {
 				// Make sure we check the music at least after every message
 				_music->updateMusic();
-				curMsg = getMsg();
+				curMsg = _event->getMsg();
 
 				if (!curMsg) {
 					// Does music load and next animation frame when you've run out of messages
