@@ -149,6 +149,7 @@ LabEngine::~LabEngine() {
 	// Remove all of our debug levels here
 	DebugMan.clearAllDebugChannels();
 
+	freeMapData();
 	delete _event;
 	delete _resource;
 	delete _music;
@@ -157,22 +158,6 @@ LabEngine::~LabEngine() {
 	delete[] _rooms;
 	delete _tilePuzzle;
 	delete _utils;
-	delete _imgMap;
-	delete _imgRoom;
-	delete _imgUpArrowRoom;
-	delete _imgDownArrowRoom;
-	delete _imgBridge;
-	delete _imgHRoom;
-	delete _imgVRoom;
-	delete _imgMaze;
-	delete _imgHugeMaze;
-	delete _imgPath;
-	delete _imgMapNorth;
-	delete _imgMapEast;
-	delete _imgMapSouth;
-	delete _imgMapWest;
-	delete _imgXMark;
-	delete _maps;
 }
 
 Common::Error LabEngine::run() {
