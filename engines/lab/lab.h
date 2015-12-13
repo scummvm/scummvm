@@ -234,6 +234,7 @@ private:
 	void loadJournalData();
 	void loadMapData();
 	void mainGameLoop();
+	void showLab2Teaser();
 	void mayShowCrumbIndicator();
 	void mayShowCrumbIndicatorOff();
 	void perFlipGadget(uint16 gadID);
