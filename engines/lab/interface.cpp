@@ -43,13 +43,13 @@ Button *EventManager::createButton(uint16 x, uint16 y, uint16 id, uint16 key, Im
 	Button *button = new Button();
 
 	if (button) {
-		button->x = _vm->_utils->vgaScaleX(x);
-		button->y = y;
+		button->_x = _vm->_utils->vgaScaleX(x);
+		button->_y = y;
 		button->_buttonID = id;
 		button->_keyEquiv = key;
 		button->_image = image;
 		button->_altImage = altImage;
-		button->isEnabled = true;
+		button->_isEnabled = true;
 
 		return button;
 	} else
@@ -72,9 +72,9 @@ void EventManager::freeButtonList(ButtonList *buttonList) {
  */
 void EventManager::drawButtonList(ButtonList *buttonList) {
 	for (ButtonList::iterator button = buttonList->begin(); button != buttonList->end(); ++button) {
-		(*button)->_image->drawImage((*button)->x, (*button)->y);
+		(*button)->_image->drawImage((*button)->_x, (*button)->_y);
 
-		if (!(*button)->isEnabled)
+		if (!(*button)->_isEnabled)
 			disableButton((*button), 1);
 	}
 }
@@ -83,16 +83,16 @@ void EventManager::drawButtonList(ButtonList *buttonList) {
  * Dims a button, and makes it unavailable for using.
  */
 void EventManager::disableButton(Button *button, uint16 penColor) {
-	_vm->_graphics->overlayRect(penColor, button->x, button->y, button->x + button->_image->_width - 1, button->y + button->_image->_height - 1);
-	button->isEnabled = false;
+	_vm->_graphics->overlayRect(penColor, button->_x, button->_y, button->_x + button->_image->_width - 1, button->_y + button->_image->_height - 1);
+	button->_isEnabled = false;
 }
 
 /**
  * Undims a button, and makes it available again.
  */
 void EventManager::enableButton(Button *button) {
-	button->_image->drawImage(button->x, button->y);
-	button->isEnabled = true;
+	button->_image->drawImage(button->_x, button->_y);
+	button->_isEnabled = true;
 }
 
 /**
@@ -119,13 +119,13 @@ Button *EventManager::checkNumButtonHit(ButtonList *buttonList, uint16 key) {
 		Button *button = *buttonItr;
 		if ((gkey - 1 == button->_buttonID || (gkey == 0 && button->_buttonID == 9) ||
 			  (button->_keyEquiv != 0 && makeButtonKeyEquiv(key) == button->_keyEquiv))
-			  && button->isEnabled) {
+			  && button->_isEnabled) {
 			mouseHide();
-			button->_altImage->drawImage(button->x, button->y);
+			button->_altImage->drawImage(button->_x, button->_y);
 			mouseShow();
 			g_system->delayMillis(80);
 			mouseHide();
-			button->_image->drawImage(button->x, button->y);
+			button->_image->drawImage(button->_x, button->_y);
 			mouseShow();
 
 			return button;

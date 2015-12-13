@@ -147,7 +147,7 @@ void LabEngine::perFlipButton(uint16 buttonId) {
 
 			if (!_alternate) {
 				_event->mouseHide();
-				topButton->_image->drawImage(topButton->x, topButton->y);
+				topButton->_image->drawImage(topButton->_x, topButton->_y);
 				_event->mouseShow();
 			}
 

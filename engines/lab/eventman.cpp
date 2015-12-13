@@ -66,21 +66,21 @@ static const byte mouseData[] = {
 Button *EventManager::checkButtonHit(ButtonList *buttonList, Common::Point pos) {
 	for (ButtonList::iterator buttonItr = buttonList->begin(); buttonItr != buttonList->end(); ++buttonItr) {
 		Button *button = *buttonItr;
-		Common::Rect buttonRect(button->x, button->y, button->x + button->_image->_width - 1, button->y + button->_image->_height - 1);
+		Common::Rect buttonRect(button->_x, button->_y, button->_x + button->_image->_width - 1, button->_y + button->_image->_height - 1);
 
-		if (buttonRect.contains(pos) && button->isEnabled) {
+		if (buttonRect.contains(pos) && button->_isEnabled) {
 			if (_vm->_isHiRes) {
 				_hitButton = button;
 			} else {
 				mouseHide();
-				button->_altImage->drawImage(button->x, button->y);
+				button->_altImage->drawImage(button->_x, button->_y);
 				mouseShow();
 
 				for (uint16 i = 0; i < 3; i++)
 					_vm->waitTOF();
 
 				mouseHide();
-				button->_image->drawImage(button->x, button->y);
+				button->_image->drawImage(button->_x, button->_y);
 				mouseShow();
 			}
 
@@ -152,14 +152,14 @@ void EventManager::updateMouse() {
 
 	if (_hitButton) {
 		mouseHide();
-		_hitButton->_altImage->drawImage(_hitButton->x, _hitButton->y);
+		_hitButton->_altImage->drawImage(_hitButton->_x, _hitButton->_y);
 		mouseShow();
 
 		for (uint16 i = 0; i < 3; i++)
 			_vm->waitTOF();
 
 		mouseHide();
-		_hitButton->_image->drawImage(_hitButton->x, _hitButton->y);
+		_hitButton->_image->drawImage(_hitButton->_x, _hitButton->_y);
 		mouseShow();
 		doUpdateDisplay = true;
 		_hitButton = nullptr;
@@ -231,8 +231,8 @@ void EventManager::setMousePos(Common::Point pos) {
  * co-ordinates of the button press.  leftbutton tells whether to check the
  * left or right button.
  */
-bool EventManager::mouseButton(uint16 *x, uint16 *y, bool leftbutton) {
-	if (leftbutton) {
+bool EventManager::mouseButton(uint16 *x, uint16 *y, bool leftButton) {
+	if (leftButton) {
 		if (_leftClick) {
 			*x = (!_vm->_isHiRes) ? (uint16)_mousePos.x / 2 : (uint16)_mousePos.x;
 			*y = (uint16)_mousePos.y;
@@ -275,7 +275,7 @@ bool EventManager::haveNextChar() {
 	return _nextKeyIn != _nextKeyOut;
 }
 
-void EventManager::processInput(bool can_delay) {
+void EventManager::processInput(bool canDelay) {
 	Common::Event event;
 
 	if (1) { //!g_IgnoreProcessInput
@@ -358,21 +358,21 @@ void EventManager::processInput(bool can_delay) {
 		}
 	}
 
-	if (can_delay)
+	if (canDelay)
 		g_system->delayMillis(10);
 }
 
 uint16 EventManager::getNextChar() {
-	uint16 c = 0;
+	uint16 chr = 0;
 
 	processInput();
 	if (_nextKeyIn != _nextKeyOut) {
-		c = _keyBuf[_nextKeyOut];
+		chr = _keyBuf[_nextKeyOut];
 		_nextKeyOut = ((((unsigned int)((_nextKeyOut + 1) >> 31) >> 26) + (byte)_nextKeyOut + 1) & 0x3F)
 			- ((unsigned int)((_nextKeyOut + 1) >> 31) >> 26);
 	}
 
-	return c;
+	return chr;
 }
 
 Common::Point EventManager::updateAndGetMousePos() {

@@ -61,9 +61,9 @@ struct IntuiMessage {
 
 
 struct Button {
-	uint16 x, y, _buttonID;
+	uint16 _x, _y, _buttonID;
 	uint16 _keyEquiv; // if not zero, a key that activates button
-	bool isEnabled;
+	bool _isEnabled;
 	Image *_image, *_altImage;
 };
 
@@ -103,10 +103,10 @@ public:
 	EventManager (LabEngine *vm);
 
 	void attachButtonList(ButtonList *buttonList);
-	Button *createButton(uint16 x, uint16 y, uint16 id, uint16 key, Image *im, Image *imalt);
-	void disableButton(Button *curgad, uint16 pencolor);
+	Button *createButton(uint16 x, uint16 y, uint16 id, uint16 key, Image *image, Image *altImage);
+	void disableButton(Button *button, uint16 penColor);
 	void drawButtonList(ButtonList *buttonList);
-	void enableButton(Button *curgad);
+	void enableButton(Button *button);
 	void freeButtonList(ButtonList *buttonList);
 	Button *getButton(uint16 id);
 	Common::Point getMousePos();
@@ -114,7 +114,7 @@ public:
 	void initMouse();
 	void mouseShow();
 	void mouseHide();
-	void processInput(bool can_delay = false);
+	void processInput(bool canDelay = false);
 	void setMousePos(Common::Point pos);
 	void updateMouse();
 	Common::Point updateAndGetMousePos();
