@@ -72,50 +72,52 @@ typedef Common::List<Button *> ButtonList;
 class EventManager {
 private:
 	LabEngine *_vm;
+
 	bool _leftClick;
 	bool _rightClick;
-
 	bool _mouseHidden;
-	Button *_lastButtonHit;
+	bool _mouseAtEdge;
+
 	uint16 _nextKeyIn;
 	uint16 _nextKeyOut;
-	Common::Point _mousePos;
-	bool _mouseAtEdge;
 	uint16 _keyBuf[64];
+
+	Button *_hitButton;
+	Button *_lastButtonHit;
+	ButtonList *_screenButtonList;
+	Common::Point _mousePos;
+	Common::KeyState _keyPressed;
+
+private:
+	Button *checkButtonHit(ButtonList *buttonList, Common::Point pos);
+	bool mouseButton(uint16 *x, uint16 *y, bool leftButton);
+	Button *mouseButton();
+	void mouseHandler(int flag, Common::Point pos);
+	bool keyPress(uint16 *keyCode);
+	bool haveNextChar();
+	uint16 getNextChar();
+	Button *checkNumButtonHit(ButtonList *buttonList, uint16 key);
+	uint16 makeButtonKeyEquiv(uint16 key);
 
 public:
 	EventManager (LabEngine *vm);
 
-	ButtonList *_screenButtonList;
-	Button *_hitButton;
-	Common::KeyState _keyPressed;
-
-	Button *checkButtonHit(ButtonList *buttonList, Common::Point pos);
+	void attachButtonList(ButtonList *buttonList);
+	Button *createButton(uint16 x, uint16 y, uint16 id, uint16 key, Image *im, Image *imalt);
+	void disableButton(Button *curgad, uint16 pencolor);
+	void drawButtonList(ButtonList *buttonList);
+	void enableButton(Button *curgad);
+	void freeButtonList(ButtonList *buttonList);
+	Button *getButton(uint16 id);
+	Common::Point getMousePos();
+	IntuiMessage *getMsg();
 	void initMouse();
-	void updateMouse();
 	void mouseShow();
 	void mouseHide();
-	Common::Point getMousePos();
-	void setMousePos(Common::Point pos);
-	bool mouseButton(uint16 *x, uint16 *y, bool leftButton);
-	Button *mouseButton();
-	void attachButtonList(ButtonList *buttonList);
-	Button *getButton(uint16 id);
-	void mouseHandler(int flag, Common::Point pos);
-	bool keyPress(uint16 *keyCode);
-	bool haveNextChar();
 	void processInput(bool can_delay = false);
-	uint16 getNextChar();
+	void setMousePos(Common::Point pos);
+	void updateMouse();
 	Common::Point updateAndGetMousePos();
-
-	Button *checkNumButtonHit(ButtonList *buttonList, uint16 key);
-	Button *createButton(uint16 x, uint16 y, uint16 id, uint16 key, Image *im, Image *imalt);
-	void freeButtonList(ButtonList *buttonList);
-	void drawButtonList(ButtonList *buttonList);
-	void disableButton(Button *curgad, uint16 pencolor);
-	void enableButton(Button *curgad);
-	IntuiMessage *getMsg();
-	uint16 makeButtonKeyEquiv(uint16 key);
 };
 
 } // End of namespace Lab
