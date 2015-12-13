@@ -128,8 +128,8 @@ private:
 
 	Common::RandomSource _rnd;
 
-	Image journalBackImage;
-	Image ScreenImage;
+	Image *journalBackImage;
+	Image *ScreenImage;
 
 public:
 	bool _alternate;

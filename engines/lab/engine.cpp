@@ -1184,10 +1184,10 @@ int LabEngine::followCrumbs() {
 	return moveDir;
 }
 
-byte dropCrumbs[] = { 0x00 };
-Image dropCrumbsImage(24, 24, dropCrumbs);
 
 void LabEngine::mayShowCrumbIndicator() {
+	static byte dropCrumbs[] = { 0x00 };
+	static Image dropCrumbsImage(24, 24, dropCrumbs, this);
 	if (getPlatform() != Common::kPlatformWindows)
 		return;
 
@@ -1198,10 +1198,10 @@ void LabEngine::mayShowCrumbIndicator() {
 	}
 }
 
-byte dropCrumbsOff[] = { 0x00 };
-Image dropCrumbsOffImage(24, 24, dropCrumbsOff);
-
 void LabEngine::mayShowCrumbIndicatorOff() {
+	static byte dropCrumbsOff[] = { 0x00 };
+	static Image dropCrumbsOffImage(24, 24, dropCrumbsOff, this);
+
 	if (getPlatform() != Common::kPlatformWindows)
 		return;
 
