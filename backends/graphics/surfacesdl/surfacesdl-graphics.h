@@ -172,6 +172,7 @@ protected:
 	SDL_Renderer *_renderer;
 	SDL_Texture *_screenTexture;
 	int _viewportX, _viewportY;
+	float _renderScaleX, _renderScaleY;
 	float _mouseScaleX, _mouseScaleY;
 	void deinitializeRenderer();
 

@@ -125,7 +125,7 @@ SurfaceSdlGraphicsManager::SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSou
 	_hwscreen(0),
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	_renderer(nullptr), _screenTexture(nullptr),
-	_viewportX(0), _viewportY(0), _mouseScaleX(1.0f), _mouseScaleY(1.0f),
+	_viewportX(0), _viewportY(0), _renderScaleX(1.0f), _renderScaleY(1.0f), _mouseScaleX(1.0f), _mouseScaleY(1.0f),
 #else
 	_originalBitsPerPixel(0),
 #endif
@@ -1757,22 +1757,28 @@ void SurfaceSdlGraphicsManager::setMousePos(int x, int y) {
 }
 
 void SurfaceSdlGraphicsManager::warpMouse(int x, int y) {
-	int y1 = y;
-
 	// Don't change actual mouse position, when mouse is outside of our window (in case of windowed mode)
 	if (!_window->hasMouseFocus()) {
 		setMousePos(x, y); // but change game cursor position
 		return;
 	}
 
+	int x1 = x, y1 = y;
 	if (_videoMode.aspectRatioCorrection && !_overlayVisible)
-		y1 = real2Aspect(y);
+		y1 = real2Aspect(y1);
 
 	if (_mouseCurState.x != x || _mouseCurState.y != y) {
-		if (!_overlayVisible)
-			_window->warpMouseInWindow(x * _videoMode.scaleFactor, y1 * _videoMode.scaleFactor);
-		else
-			_window->warpMouseInWindow(x, y1);
+		if (!_overlayVisible) {
+			x1 *= _videoMode.scaleFactor;
+			y1 *= _videoMode.scaleFactor;
+		}
+
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+		x1 = (int)((x1 + _viewportX) * _renderScaleX);
+		y1 = (int)((y1 + _viewportY) * _renderScaleY);
+#endif
+
+		_window->warpMouseInWindow(x1, y1);
 
 		// SDL_WarpMouse() generates a mouse movement event, so
 		// setMousePos() would be called eventually. However, the
@@ -2414,13 +2420,12 @@ SDL_Surface *SurfaceSdlGraphicsManager::SDL_SetVideoMode(int width, int height, 
 	// obtain the actual window size and the internal renderer scaling.
 	// Based on this we calculate scale factors to scale received mouse
 	// coordinates into actual screen area coordinates.
-	float scaleX = 0, scaleY = 0;
-	SDL_RenderGetScale(_renderer, &scaleX, &scaleY);
+	SDL_RenderGetScale(_renderer, &_renderScaleX, &_renderScaleY);
 	int windowWidth = 1, windowHeight = 1;
 	SDL_GetWindowSize(_window->getSDLWindow(), &windowWidth, &windowHeight);
 
-	_mouseScaleX = (width  * scaleX) / windowWidth;
-	_mouseScaleY = (height * scaleY) / windowHeight;
+	_mouseScaleX = (width  * _renderScaleX) / windowWidth;
+	_mouseScaleY = (height * _renderScaleY) / windowHeight;
 
 	// Obtain viewport top left coordinates to transform received coordinates
 	// into visible area coordinates (i.e. including black borders).
