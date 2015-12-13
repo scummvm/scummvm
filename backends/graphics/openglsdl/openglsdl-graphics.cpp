@@ -21,6 +21,7 @@
  */
 
 #include "backends/graphics/openglsdl/openglsdl-graphics.h"
+#include "backends/events/sdl/sdl-events.h"
 
 #include "common/textconsole.h"
 #include "common/config-manager.h"
@@ -244,6 +245,7 @@ void OpenGLSdlGraphicsManager::notifyVideoExpose() {
 void OpenGLSdlGraphicsManager::notifyResize(const uint width, const uint height) {
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	setActualScreenSize(width, height);
+	_eventSource->resetKeyboadEmulation(width - 1, height - 1);
 #else
 	if (!_ignoreResizeEvents && _hwScreen && !(_hwScreen->flags & SDL_FULLSCREEN)) {
 		// We save that we handled a resize event here. We need to know this
@@ -404,6 +406,7 @@ bool OpenGLSdlGraphicsManager::setupMode(uint width, uint height) {
 	int actualWidth, actualHeight;
 	getWindowDimensions(&actualWidth, &actualHeight);
 	setActualScreenSize(actualWidth, actualHeight);
+	_eventSource->resetKeyboadEmulation(actualWidth - 1, actualHeight - 1);
 	return true;
 #else
 	// WORKAROUND: Working around infamous SDL bugs when switching
@@ -449,6 +452,7 @@ bool OpenGLSdlGraphicsManager::setupMode(uint width, uint height) {
 	if (_hwScreen) {
 		notifyContextCreate(rgba8888, rgba8888);
 		setActualScreenSize(_hwScreen->w, _hwScreen->h);
+		_eventSource->resetKeyboadEmulation(_hwScreen->w - 1, _hwScreen->h - 1);
 	}
 
 	// Ignore resize events (from SDL) for a few frames, if this isn't
