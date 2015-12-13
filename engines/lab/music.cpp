@@ -56,7 +56,6 @@ Music::Music(LabEngine *vm) : _vm(vm) {
 	_leftInFile = 0;
 
 	_musicOn = false;
-	_winMusic = false;
 	_loopSoundEffect = false;
 	_queuingAudioStream = NULL;
 	_lastMusicRoom = 1;
@@ -166,17 +165,9 @@ void Music::startMusic(bool restartFl) {
 /**
  * Initializes the music buffers.
  */
-bool Music::initMusic() {
+bool Music::initMusic(const char *filename) {
 	_musicOn = true;
 	_musicPaused = false;
-
-	const char *filename;
-
-	if (_winMusic)
-		filename = "Music:WinGame";
-	else
-		filename = "Music:BackGrou";
-
 	_file = _vm->_resource->openDataFile(filename);
 	startMusic(true);
 	return true;
