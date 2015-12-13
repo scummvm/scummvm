@@ -79,6 +79,20 @@ void DisplayMan::loadPict(const char *filename) {
 	delete bitmapFile;
 }
 
+void DisplayMan::loadBackPict(const char *fileName, uint16 *highPal) {
+	FadePalette = highPal;
+	_vm->_anim->_noPalChange = true;
+	readPict(fileName, true);
+
+	for (uint16 i = 0; i < 16; i++) {
+		highPal[i] = ((_vm->_anim->_diffPalette[i * 3] >> 2) << 8) +
+			((_vm->_anim->_diffPalette[i * 3 + 1] >> 2) << 4) +
+			((_vm->_anim->_diffPalette[i * 3 + 2] >> 2));
+	}
+
+	_vm->_anim->_noPalChange = false;
+}
+
 /**
  * Reads in a picture into the display bitmap.
  */
