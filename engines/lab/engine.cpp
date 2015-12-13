@@ -575,6 +575,26 @@ void LabEngine::mainGameLoop() {
 	}
 }
 
+void LabEngine::showLab2Teaser() {
+	_graphics->blackAllScreen();
+	_graphics->readPict("P:End/L2In.1", true);
+
+	for (uint16 i = 0; i < 120; i++) {
+		_music->updateMusic();
+		waitTOF();
+	}
+
+	_graphics->readPict("P:End/L2In.9", true);
+	_graphics->readPict("P:End/Lost", true);
+
+	warning("STUB: waitForPress");
+	while (!1) { // 1 means ignore SDL_ProcessInput calls
+		_music->updateMusic();
+		_anim->diffNextFrame();
+		waitTOF();
+	}
+}
+
 bool LabEngine::fromCrumbs(uint32 tmpClass, uint16 code, uint16 qualifier, Common::Point tmpPos,
 			uint16 &curInv, IntuiMessage *curMsg, bool &forceDraw, uint16 gadgetId, uint16 &actionMode) {
 	uint32 msgClass = tmpClass;
@@ -1098,27 +1118,6 @@ void LabEngine::go() {
 
 	_event->mouseShow();
 	mainGameLoop();
-
-	if (_quitLab) {
-		// Won the game
-		_graphics->blackAllScreen();
-		_graphics->readPict("P:End/L2In.1", true);
-
-		for (uint16 i = 0; i < 120; i++) {
-			_music->updateMusic();
-			waitTOF();
-		}
-
-		_graphics->readPict("P:End/L2In.9", true);
-		_graphics->readPict("P:End/Lost", true);
-
-		warning("STUB: waitForPress");
-		while (!1) { // 1 means ignore SDL_ProcessInput calls
-			_music->updateMusic();
-			_anim->diffNextFrame();
-			waitTOF();
-		}
-	}
 
 	_graphics->closeFont(_msgFont);
 	_graphics->freePict();

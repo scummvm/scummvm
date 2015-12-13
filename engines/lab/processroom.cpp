@@ -481,10 +481,12 @@ void LabEngine::doActions(Action *actionList, CloseDataPtr *closePtrList) {
 
 		case WINGAME:
 			_quitLab = true;
+			showLab2Teaser();
 			break;
 
 		case LOSTGAME:
-			_quitLab = true;
+			// This seems to be unused?
+			error("Unused opcode LOSTGAME has been called");
 			break;
 
 		case RESETBUFFER:
