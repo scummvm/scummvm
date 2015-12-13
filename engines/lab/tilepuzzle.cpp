@@ -264,7 +264,7 @@ void TilePuzzle::showTile(const char *filename, bool showSolution) {
 	Common::File *tileFile = _vm->_resource->openDataFile(showSolution ? "P:TileSolution" : "P:Tile");
 
 	for (uint16 curBit = start; curBit < 16; curBit++)
-		_tiles[curBit] = new Image(tileFile);
+		_tiles[curBit] = new Image(tileFile, _vm);
 
 	delete tileFile;
 
@@ -322,7 +322,7 @@ void TilePuzzle::doTileScroll(uint16 col, uint16 row, uint16 scrolltype) {
 void TilePuzzle::changeCombination(uint16 number) {
 	const int solution[6] = { 0, 4, 0, 8, 7, 2 };
 
-	Image display;
+	Image display(_vm);
 	uint16 combnum;
 	bool unlocked = true;
 
@@ -392,7 +392,7 @@ void TilePuzzle::showCombination(const char *filename) {
 	Common::File *numFile = _vm->_resource->openDataFile("P:Numbers");
 
 	for (uint16 CurBit = 0; CurBit < 10; CurBit++)
-		_numberImages[CurBit] = new Image(numFile);
+		_numberImages[CurBit] = new Image(numFile, _vm);
 
 	delete numFile;
 

@@ -62,25 +62,25 @@ enum MapFloor {
 void LabEngine::loadMapData() {
 	Common::File *mapImages = _resource->openDataFile("P:MapImage");
 
-	_imgMap = new Image(mapImages);
-	_imgRoom = new Image(mapImages);
-	_imgUpArrowRoom = new Image(mapImages);
-	_imgDownArrowRoom = new Image(mapImages);
-	_imgHRoom = new Image(mapImages);
-	_imgVRoom = new Image(mapImages);
-	_imgMaze = new Image(mapImages);
-	_imgHugeMaze = new Image(mapImages);
+	_imgMap = new Image(mapImages, this);
+	_imgRoom = new Image(mapImages, this);
+	_imgUpArrowRoom = new Image(mapImages, this);
+	_imgDownArrowRoom = new Image(mapImages, this);
+	_imgHRoom = new Image(mapImages, this);
+	_imgVRoom = new Image(mapImages, this);
+	_imgMaze = new Image(mapImages, this);
+	_imgHugeMaze = new Image(mapImages, this);
 
-	_imgMapX[NORTH] = new Image(mapImages);
-	_imgMapX[EAST] = new Image(mapImages);
-	_imgMapX[SOUTH] = new Image(mapImages);
-	_imgMapX[WEST] = new Image(mapImages);
-	_imgPath = new Image(mapImages);
-	_imgBridge = new Image(mapImages);
+	_imgMapX[NORTH] = new Image(mapImages, this);
+	_imgMapX[EAST] = new Image(mapImages, this);
+	_imgMapX[SOUTH] = new Image(mapImages, this);
+	_imgMapX[WEST] = new Image(mapImages, this);
+	_imgPath = new Image(mapImages, this);
+	_imgBridge = new Image(mapImages, this);
 
-	_mapButtonList.push_back(_event->createButton( 8,  _utils->vgaScaleY(105), 0, VKEY_LTARROW, new Image(mapImages), new Image(mapImages)));	// back
-	_mapButtonList.push_back(_event->createButton( 55, _utils->vgaScaleY(105), 1, VKEY_UPARROW, new Image(mapImages), new Image(mapImages)));	// up
-	_mapButtonList.push_back(_event->createButton(101, _utils->vgaScaleY(105), 2, VKEY_DNARROW, new Image(mapImages), new Image(mapImages)));	// down
+	_mapButtonList.push_back(_event->createButton( 8,  _utils->vgaScaleY(105), 0, VKEY_LTARROW, new Image(mapImages, this), new Image(mapImages, this)));	// back
+	_mapButtonList.push_back(_event->createButton( 55, _utils->vgaScaleY(105), 1, VKEY_UPARROW, new Image(mapImages, this), new Image(mapImages, this)));	// up
+	_mapButtonList.push_back(_event->createButton(101, _utils->vgaScaleY(105), 2, VKEY_DNARROW, new Image(mapImages, this), new Image(mapImages, this)));	// down
 
 	delete mapImages;
 

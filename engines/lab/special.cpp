@@ -106,7 +106,6 @@ void LabEngine::doWestPaper() {
  */
 void LabEngine::loadJournalData() {
 	_journalFont = _resource->getFont("P:Journal.fon");
-
 	_music->updateMusic();
 
 	char filename[20];
@@ -141,21 +140,21 @@ void LabEngine::loadJournalData() {
 
 	Common::File *journalFile = _resource->openDataFile("P:JImage");
 	Utils *utils = _utils;
-	_journalButtonList.push_back(_event->createButton( 80, utils->vgaScaleY(162) + utils->svgaCord(1), 0, VKEY_LTARROW, new Image(journalFile), new Image(journalFile)));	// back
-	_journalButtonList.push_back(_event->createButton(194, utils->vgaScaleY(162) + utils->svgaCord(1), 2,            0, new Image(journalFile), new Image(journalFile)));	// cancel
-	_journalButtonList.push_back(_event->createButton(144, utils->vgaScaleY(164) - utils->svgaCord(1), 1, VKEY_RTARROW, new Image(journalFile), new Image(journalFile)));	// forward
+	_journalButtonList.push_back(_event->createButton( 80, utils->vgaScaleY(162) + utils->svgaCord(1), 0, VKEY_LTARROW, new Image(journalFile, this), new Image(journalFile, this)));	// back
+	_journalButtonList.push_back(_event->createButton(194, utils->vgaScaleY(162) + utils->svgaCord(1), 2,            0, new Image(journalFile, this), new Image(journalFile, this)));	// cancel
+	_journalButtonList.push_back(_event->createButton(144, utils->vgaScaleY(164) - utils->svgaCord(1), 1, VKEY_RTARROW, new Image(journalFile, this), new Image(journalFile, this)));	// forward
 	delete journalFile;
 
 	_anim->_noPalChange = true;
-	journalBackImage._imageData = new byte[_graphics->_screenWidth * _graphics->_screenHeight];
-	_graphics->readPict("P:Journal.pic", true, false, journalBackImage._imageData);
+	journalBackImage->_imageData = new byte[_graphics->_screenWidth * _graphics->_screenHeight];
+	_graphics->readPict("P:Journal.pic", true, false, journalBackImage->_imageData);
 	_anim->_noPalChange = false;
 
 	// Keep a copy of the blank journal
 	_blankJournal = new byte[_graphics->_screenWidth * _graphics->_screenHeight];
-	memcpy(_blankJournal, journalBackImage._imageData, _graphics->_screenWidth * _graphics->_screenHeight);
+	memcpy(_blankJournal, journalBackImage->_imageData, _graphics->_screenWidth * _graphics->_screenHeight);
 
-	ScreenImage._imageData = _graphics->getCurrentDrawingBuffer();
+	ScreenImage->_imageData = _graphics->getCurrentDrawingBuffer();
 }
 
 /**
@@ -181,16 +180,16 @@ void LabEngine::drawJournalText() {
 
 	if (_journalPage <= 1) {
 		curText = _journalTextTitle;
-		_graphics->flowTextToMem(&journalBackImage, _journalFont, -2, 2, 0, false, true, true, true, _utils->vgaScaleX(52), _utils->vgaScaleY(32), _utils->vgaScaleX(152), _utils->vgaScaleY(148), curText);
+		_graphics->flowTextToMem(journalBackImage, _journalFont, -2, 2, 0, false, true, true, true, _utils->vgaScaleX(52), _utils->vgaScaleY(32), _utils->vgaScaleX(152), _utils->vgaScaleY(148), curText);
 	} else {
 		curText = (char *)(_journalText + charsDrawn);
-		charsDrawn += _graphics->flowTextToMem(&journalBackImage, _journalFont, -2, 2, 0, false, false, false, true, _utils->vgaScaleX(52), _utils->vgaScaleY(32), _utils->vgaScaleX(152), _utils->vgaScaleY(148), curText);
+		charsDrawn += _graphics->flowTextToMem(journalBackImage, _journalFont, -2, 2, 0, false, false, false, true, _utils->vgaScaleX(52), _utils->vgaScaleY(32), _utils->vgaScaleX(152), _utils->vgaScaleY(148), curText);
 	}
 
 	_music->updateMusic();
 	curText = (char *)(_journalText + charsDrawn);
 	_lastPage = (*curText == 0);
-	_graphics->flowTextToMem(&journalBackImage, _journalFont, -2, 2, 0, false, false, false, true, _utils->vgaScaleX(171), _utils->vgaScaleY(32), _utils->vgaScaleX(271), _utils->vgaScaleY(148), curText);
+	_graphics->flowTextToMem(journalBackImage, _journalFont, -2, 2, 0, false, false, false, true, _utils->vgaScaleX(171), _utils->vgaScaleY(32), _utils->vgaScaleX(271), _utils->vgaScaleY(148), curText);
 
 	curText = (char *)(_journalText + charsDrawn);
 	_lastPage = _lastPage || (*curText == 0);
@@ -204,15 +203,15 @@ void LabEngine::turnPage(bool fromLeft) {
 		for (int i = 0; i < _graphics->_screenWidth; i += 8) {
 			_music->updateMusic();
 			waitTOF();
-			ScreenImage._imageData = _graphics->getCurrentDrawingBuffer();
-			journalBackImage.blitBitmap(i, 0, &ScreenImage, i, 0, 8, _graphics->_screenHeight, false);
+			ScreenImage->_imageData = _graphics->getCurrentDrawingBuffer();
+			journalBackImage->blitBitmap(i, 0, ScreenImage, i, 0, 8, _graphics->_screenHeight, false);
 		}
 	} else {
 		for (int i = (_graphics->_screenWidth - 8); i > 0; i -= 8) {
 			_music->updateMusic();
 			waitTOF();
-			ScreenImage._imageData = _graphics->getCurrentDrawingBuffer();
-			journalBackImage.blitBitmap(i, 0, &ScreenImage, i, 0, 8, _graphics->_screenHeight, false);
+			ScreenImage->_imageData = _graphics->getCurrentDrawingBuffer();
+			journalBackImage->blitBitmap(i, 0, ScreenImage, i, 0, 8, _graphics->_screenHeight, false);
 		}
 	}
 }
@@ -227,7 +226,7 @@ void LabEngine::drawJournal(uint16 wipenum, bool needFade) {
 	_graphics->loadBackPict("P:Journal.pic", _highPalette);
 
 	if (wipenum == 0)
-		journalBackImage.blitBitmap(0, 0, &ScreenImage, 0, 0, _graphics->_screenWidth, _graphics->_screenHeight, false);
+		journalBackImage->blitBitmap(0, 0, ScreenImage, 0, 0, _graphics->_screenWidth, _graphics->_screenHeight, false);
 	else
 		turnPage((bool)(wipenum == 1));
 
@@ -248,7 +247,7 @@ void LabEngine::drawJournal(uint16 wipenum, bool needFade) {
 		_graphics->fade(true, 0);
 
 	// Reset the journal background, so that all the text that has been blitted on it is erased
-	memcpy(journalBackImage._imageData, _blankJournal, _graphics->_screenWidth * _graphics->_screenHeight);
+	memcpy(journalBackImage->_imageData, _blankJournal, _graphics->_screenWidth * _graphics->_screenHeight);
 
 	eatMessages();
 	_event->mouseShow();
@@ -297,19 +296,15 @@ void LabEngine::processJournal() {
  */
 void LabEngine::doJournal() {
 	_graphics->blackAllScreen();
+	_lastPage = false;
 
-	_lastPage    = false;
-
-	journalBackImage._width = _graphics->_screenWidth;
-	journalBackImage._height = _graphics->_screenHeight;
-	journalBackImage._imageData = NULL;
-
-	ScreenImage = journalBackImage;
-	ScreenImage._imageData = _graphics->getCurrentDrawingBuffer();
+	ScreenImage->_width = journalBackImage->_width = _graphics->_screenWidth;
+	ScreenImage->_height = journalBackImage->_height = _graphics->_screenHeight;
+	journalBackImage->_imageData = nullptr;
+	ScreenImage->_imageData = _graphics->getCurrentDrawingBuffer();
 
 	_music->updateMusic();
 	loadJournalData();
-
 	_event->attachButtonList(&_journalButtonList);
 	drawJournal(0, true);
 	_event->mouseShow();
@@ -319,11 +314,11 @@ void LabEngine::doJournal() {
 	_event->mouseHide();
 
 	delete[] _blankJournal;
-	delete[] journalBackImage._imageData;
+	delete[] journalBackImage->_imageData;
 	_event->freeButtonList(&_journalButtonList);
 	_graphics->closeFont(_journalFont);
 
-	ScreenImage._imageData = _graphics->getCurrentDrawingBuffer();
+	ScreenImage->_imageData = _graphics->getCurrentDrawingBuffer();
 
 	_graphics->setAPen(0);
 	_graphics->rectFill(0, 0, _graphics->_screenWidth - 1, _graphics->_screenHeight - 1);
@@ -508,7 +503,7 @@ void LabEngine::doMonitor(char *background, char *textfile, bool isinteractive, 
 
 	TextFont *monitorFont = _resource->getFont("P:Map.fon");
 	Common::File *buttonFile = _resource->openDataFile("P:MonImage");
-	_monitorButton = new Image(buttonFile);
+	_monitorButton = new Image(buttonFile, this);
 	delete buttonFile;
 
 	ntext = _resource->getText(textfile);

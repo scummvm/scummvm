@@ -426,7 +426,7 @@ void DisplayMan::setUpScreens() {
 
 	Common::File *controlFile = _vm->_resource->openDataFile("P:Control");
 	for (uint16 i = 0; i < 20; i++)
-		_vm->_moveImages[i] = new Image(controlFile);
+		_vm->_moveImages[i] = new Image(controlFile, _vm);
 	delete controlFile;
 
 	// Creates the buttons for the movement control panel
@@ -449,10 +449,10 @@ void DisplayMan::setUpScreens() {
 	Common::File *invFile = _vm->_resource->openDataFile("P:Inv");
 	if (_vm->getPlatform() == Common::kPlatformWindows) {
 		for (uint16 imgIdx = 0; imgIdx < 10; imgIdx++)
-			_vm->_invImages[imgIdx] = new Image(invFile);
+			_vm->_invImages[imgIdx] = new Image(invFile, _vm);
 	} else {
 		for (uint16 imgIdx = 0; imgIdx < 6; imgIdx++)
-			_vm->_invImages[imgIdx] = new Image(invFile);
+			_vm->_invImages[imgIdx] = new Image(invFile, _vm);
 	}
 	_vm->_invButtonList.push_back(_vm->_event->createButton( 24, y, 0,          'm', _vm->_invImages[0],   _vm->_invImages[1]));
 	_vm->_invButtonList.push_back(_vm->_event->createButton( 56, y, 1,          'g', _vm->_invImages[2],   _vm->_invImages[3]));
@@ -772,7 +772,7 @@ void DisplayMan::doScrollBlack() {
 
 	_vm->_event->mouseHide();
 
-	Image img;
+	Image img(_vm);
 	img._width = width;
 	img._height = height;
 	img._imageData = mem;
@@ -1007,12 +1007,12 @@ void DisplayMan::doTransWipe(CloseDataPtr *closePtrList, char *filename) {
 
 	setPalette(_vm->_anim->_diffPalette, 256);
 
-	Image imSource;
+	Image imSource(_vm);
 	imSource._width = _screenWidth;
 	imSource._height = lastY;
 	imSource._imageData = bitMapBuffer;
 
-	Image imDest;
+	Image imDest(_vm);
 	imDest._width = _screenWidth;
 	imDest._height = _screenHeight;
 	imDest._imageData = getCurrentDrawingBuffer();
@@ -1113,7 +1113,7 @@ void DisplayMan::blackAllScreen() {
  * function will fail.
  */
 void DisplayMan::scrollDisplayX(int16 dx, uint16 x1, uint16 y1, uint16 x2, uint16 y2, byte *buffer) {
-	Image im;
+	Image im(_vm);
 	im._imageData = buffer;
 
 	if (x1 > x2)
@@ -1147,7 +1147,7 @@ void DisplayMan::scrollDisplayX(int16 dx, uint16 x1, uint16 y1, uint16 x2, uint1
  * Scrolls the display in the y direction by blitting.
  */
 void DisplayMan::scrollDisplayY(int16 dy, uint16 x1, uint16 y1, uint16 x2, uint16 y2, byte *buffer) {
-	Image im;
+	Image im(_vm);
 	im._imageData = buffer;
 
 	if (x1 > x2)
