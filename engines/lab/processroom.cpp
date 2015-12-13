@@ -296,7 +296,7 @@ void LabEngine::doActions(Action *actionList, CloseDataPtr *closePtrList) {
 			break;
 
 		case PLAYSOUNDCONT:
-			_music->_doNotFilestopSoundEffect = true;
+			_music->_unstoppableSoundEffect = true;
 			_music->_loopSoundEffect = true;
 			_music->readMusic((char *)actionList->_data, _music->_waitTillFinished);
 			break;
@@ -476,7 +476,7 @@ void LabEngine::doActions(Action *actionList, CloseDataPtr *closePtrList) {
 			break;
 
 		case WINMUSIC:
-			_music->_winmusic = true;
+			_music->setWinMusic();
 			_music->freeMusic();
 			_music->initMusic();
 			break;
@@ -544,7 +544,7 @@ void LabEngine::doActions(Action *actionList, CloseDataPtr *closePtrList) {
 		}
 	}
 
-	_music->_doNotFilestopSoundEffect = false;
+	_music->_unstoppableSoundEffect = false;
 }
 
 /**
