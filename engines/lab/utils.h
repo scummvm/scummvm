@@ -60,10 +60,7 @@ public:
 	void runLengthDecode(byte *dest, byte *source);
 	void VRunLengthDecode(byte *dest, byte *source, uint16 bytesPerRow);
 	void setBytesPerRow(int num);
-	uint16 getRandom(uint16 max);
-	void readBlock(void *Buffer, uint32 Size, byte **File);
 	void addCurTime(uint32 sec, uint32 micros, uint32 *timeSec, uint32 *timeMicros);
-	void getTime(uint32 *secs, uint32 *micros);
 	void waitForTime(uint32 sec, uint32 micros);
 	void anyTimeDiff(uint32 sec1, uint32 micros1, uint32 sec2, uint32 micros2, uint32 *diffSecs, uint32 *diffMicros);
 	void timeDiff(uint32 sec, uint32 micros, uint32 *diffSec, uint32 *diffMicros);

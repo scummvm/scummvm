@@ -32,6 +32,7 @@
 #define LAB_H
 
 #include "common/system.h"
+#include "common/random.h"
 #include "common/rect.h"
 
 #include "engines/engine.h"
@@ -113,6 +114,8 @@ private:
 	Image *_imgMapEast, *_imgMapSouth, *_imgMapWest, *_imgXMark;
 	InventoryData *_inventory;
 	MapData *_maps;
+
+	Common::RandomSource _rnd;
 
 public:
 	bool _alternate;

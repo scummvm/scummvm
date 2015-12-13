@@ -370,7 +370,7 @@ void LabEngine::doActions(Action *actionList, CloseDataPtr *closePtrList) {
 		case SHOWMESSAGES: {
 				char **str = (char **)actionList->_data;
 				_graphics->_doNotDrawMessage = false;
-				_graphics->drawMessage(str[_utils->getRandom(actionList->_param1)]);
+				_graphics->drawMessage(str[_rnd.getRandomNumber(actionList->_param1)]);
 				_graphics->_doNotDrawMessage = true;
 			}
 			break;
@@ -424,18 +424,13 @@ void LabEngine::doActions(Action *actionList, CloseDataPtr *closePtrList) {
 			break;
 
 		case WAITSECS: {
-				uint32 startSecs, startMicros, curSecs, curMicros;
-				_utils->addCurTime(actionList->_param1, 0, &startSecs, &startMicros);
+				uint32 targetMillis = g_system->getMillis() + actionList->_param1 * 1000;
 
 				_graphics->screenUpdate();
 
-				while (1) {
+				while (g_system->getMillis() < targetMillis) {
 					_music->updateMusic();
 					_anim->diffNextFrame();
-					_utils->getTime(&curSecs, &curMicros);
-
-					if ((curSecs > startSecs) || ((curSecs == startSecs) && (curMicros >= startMicros)))
-						break;
 				}
 			}
 			break;

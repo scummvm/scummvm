@@ -428,55 +428,12 @@ void Utils::setBytesPerRow(int num) {
 }
 
 /**
- * Generates a random number.
- */
-uint16 Utils::getRandom(uint16 max) {
-	uint32 secs, micros;
-
-	getTime(&secs, &micros);
-	return ((micros + secs) % max);
-}
-
-void Utils::readBlock(void *Buffer, uint32 Size, byte **File) {
-	memcpy(Buffer, *File, (size_t)Size);
-	(*File) += Size;
-}
-
-/**
- * Waits for for Secs seconds and Micros microseconds to pass.
- */
-void Utils::microDelay(uint32 secs, uint32 micros) {
-	uint32 waitSecs, waitMicros;
-	addCurTime(secs, micros, &waitSecs, &waitMicros);
-
-	while (1) {
-		getTime(&secs, &micros);
-
-		if ((secs > waitSecs) || ((secs == waitSecs) && (micros >= waitMicros)))
-			return;
-
-		g_system->delayMillis(10);
-	}
-}
-
-/**
- * Gets the current system time.
- */
-void Utils::getTime(uint32 *secs, uint32 *micros) {
-	uint32 t = g_system->getMillis();
-
-	*secs = t / 1000;
-	*micros = t % 1000;
-}
-
-/**
  * Adds seconds and microseconds to current time to get a new time.
  */
 void Utils::addCurTime(uint32 sec, uint32 micros, uint32 *timeSec, uint32 *timeMicros) {
-	getTime(timeSec, timeMicros);
-
-	(*timeSec) += sec;
-	(*timeMicros) += micros;
+	uint32 t = g_system->getMillis();
+	*timeSec = (t / 1000) + sec;
+	*timeMicros = (t % 1000) + micros;
 
 	if (*timeMicros >= ONESECOND) {
 		(*timeSec)++;
@@ -511,21 +468,32 @@ void Utils::anyTimeDiff(uint32 sec1, uint32 micros1, uint32 sec2, uint32 micros2
  * 0 if the future time is actually before the current time.
  */
 void Utils::timeDiff(uint32 sec, uint32 micros, uint32 *diffSec, uint32 *diffMicros) {
-	uint32 curSec, curMicros;
-	getTime(&curSec, &curMicros);
+	uint32 t = g_system->getMillis();
+	uint32 curSec = t / 1000;
+	uint32 curMicros = t % 1000;
+
 	anyTimeDiff(curSec, curMicros, sec, micros, diffSec, diffMicros);
+}
+
+/**
+* Waits for Secs seconds and Micros microseconds to pass.
+*/
+void Utils::microDelay(uint32 secs, uint32 micros) {
+	uint32 targetMillis = g_system->getMillis() + secs * 1000 + micros;
+	while (g_system->getMillis() < targetMillis)
+		g_system->delayMillis(10);
 }
 
 /**
  * Waits for a specified time to occur.
  */
 void Utils::waitForTime(uint32 sec, uint32 micros) {
-	uint32 curSec, curMicros;
-	getTime(&curSec, &curMicros);
+	uint32 targetMillis = sec * 1000 + micros;
+	uint32 t = g_system->getMillis();
+	uint32 curSec = t / 1000;
+	uint32 curMicros = t % 1000;
 
-	if (curSec > sec)
-		return;
-	else if ((curSec == sec) && (curMicros >= micros))
+	if (t >= targetMillis)
 		return;
 
 	if (curMicros > micros)

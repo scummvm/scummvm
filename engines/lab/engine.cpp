@@ -609,7 +609,9 @@ bool LabEngine::fromCrumbs(uint32 tmpClass, uint16 code, uint16 qualifier, Commo
 					_followCrumbsFast = (code == 'r' || code == 'R');
 					_isCrumbTurning = false;
 					_isCrumbWaiting = false;
-					_utils->getTime(&_crumbSecs, &_crumbMicros);
+					uint32 t = g_system->getMillis();
+					_crumbSecs = t / 1000;
+					_crumbMicros = t % 1000;
 
 					if (_alternate) {
 						eatMessages();
@@ -930,7 +932,9 @@ bool LabEngine::fromCrumbs(uint32 tmpClass, uint16 code, uint16 qualifier, Commo
 					_followCrumbsFast = false;
 					_isCrumbTurning = false;
 					_isCrumbWaiting = false;
-					_utils->getTime(&_crumbSecs, &_crumbMicros);
+					uint32 t = g_system->getMillis();
+					_crumbSecs = t / 1000;
+					_crumbMicros = t % 1000;
 
 					eatMessages();
 					_alternate = false;

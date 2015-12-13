@@ -51,7 +51,7 @@ namespace Lab {
 LabEngine *g_lab;
 
 LabEngine::LabEngine(OSystem *syst, const ADGameDescription *gameDesc)
- : Engine(syst), _gameDescription(gameDesc), _extraGameFeatures(0) {
+ : Engine(syst), _gameDescription(gameDesc), _extraGameFeatures(0), _rnd("lab") {
 	g_lab = this;
 
 	_lastWaitTOFTicks = 0;
