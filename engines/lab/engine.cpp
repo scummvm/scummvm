@@ -1145,12 +1145,7 @@ int LabEngine::followCrumbs() {
 	};
 
 	if (_isCrumbWaiting) {
-		uint32 Secs;
-		uint32 Micros;
-
-		_utils->timeDiff(_crumbSecs, _crumbMicros, &Secs, &Micros);
-
-		if (Secs != 0 || Micros != 0)
+		if (g_system->getMillis() <= _crumbSecs * 1000 + _crumbMicros)
 			return 0;
 
 		_isCrumbWaiting = false;
@@ -1193,7 +1188,8 @@ int LabEngine::followCrumbs() {
 		_isCrumbTurning = (moveDir != VKEY_UPARROW);
 		_isCrumbWaiting = true;
 
-		_utils->addCurTime(theDelay / ONESECOND, theDelay % ONESECOND, &_crumbSecs, &_crumbMicros);
+		_crumbSecs   = (theDelay + g_system->getMillis()) / 1000;
+		_crumbMicros = (theDelay + g_system->getMillis()) % 1000;
 	}
 
 	return moveDir;

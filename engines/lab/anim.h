@@ -61,8 +61,6 @@ private:
 	uint32 _header;
 	uint16 _curBit;
 	uint16 _numChunks;
-	uint32 _waitSec;
-	uint32 _waitMicros;
 	uint32 _delayMicros;
 	bool _continuous;
 	bool _isPlaying;

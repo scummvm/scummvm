@@ -75,19 +75,13 @@ void Intro::doPictText(const char *filename, TextFont *msgFont, bool isScreen) {
 	char path[50] = "Lab:rooms/Intro/";
 	strcat(path, filename);
 
-	uint timeDelay;
-	if (isScreen) {
-		_vm->_music->updateMusic();
-		timeDelay = 35;
-	} else {
-		_vm->_music->updateMusic();
-		timeDelay = 7;
-	}
+	uint timeDelay = (isScreen) ? 35 : 7;
+	_vm->_music->updateMusic();
 
 	if (_quitIntro)
 		return;
 
-	uint32 lastSecs = 0L, lastMicros = 0L, secs = 0L, micros = 0L;
+	uint32 lastMillis = 0;
 	IntuiMessage *msg;
 	bool drawNextText = true, end = false, begin = true;
 
@@ -132,9 +126,7 @@ void Intro::doPictText(const char *filename, TextFont *msgFont, bool isScreen) {
 				return;
 			}
 
-			uint32 t = g_system->getMillis();
-			lastSecs = t / 1000;
-			lastMicros = t % 1000;
+			lastMillis = g_system->getMillis();
 		}
 
 		msg = _vm->getMsg();
@@ -143,12 +135,9 @@ void Intro::doPictText(const char *filename, TextFont *msgFont, bool isScreen) {
 			_vm->_music->updateMusic();
 			_vm->_anim->diffNextFrame();
 
-			uint32 t = g_system->getMillis();
-			secs = t / 1000;
-			micros = t % 1000;
-			_vm->_utils->anyTimeDiff(lastSecs, lastMicros, secs, micros, &secs, &micros);
+			uint32 elapsedSeconds = (g_system->getMillis() - lastMillis) / 1000;
 
-			if (secs > timeDelay) {
+			if (elapsedSeconds > timeDelay) {
 				if (end) {
 					if (isScreen)
 						_vm->_graphics->fade(false, 0);

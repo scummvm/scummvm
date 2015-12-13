@@ -46,8 +46,6 @@ Anim::Anim(LabEngine *vm) : _vm(vm) {
 	_headerdata._height = 0;
 	_headerdata._fps = 0;
 	_headerdata._flags = 0;
-	_waitSec = 0;
-	_waitMicros = 0;
 	_delayMicros = 0;
 	_continuous = false;
 	_isPlaying = false;
@@ -98,8 +96,9 @@ void Anim::diffNextFrame(bool onlyDiffData) {
 
 			if (!onlyDiffData) {
 				if (_headerdata._fps) {
-					_vm->_utils->waitForTime(_waitSec, _waitMicros);
-					_vm->_utils->addCurTime(0L, _delayMicros, &_waitSec, &_waitMicros);
+					uint32 targetMillis = g_system->getMillis() + _delayMicros;
+					while (g_system->getMillis() < targetMillis)
+						g_system->delayMillis(10);
 				}
 
 				if (_isPal && !_noPalChange) {
@@ -273,8 +272,6 @@ void Anim::stopDiffEnd() {
  */
 void Anim::readDiff(byte *buffer, bool playOnce, bool onlyDiffData) {
 	_playOnce = playOnce;
-	_waitSec = 0;
-	_waitMicros = 0;
 	_delayMicros = 0;
 	_header = 0;
 	_curBit = 0;
