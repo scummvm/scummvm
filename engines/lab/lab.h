@@ -28,8 +28,8 @@
  *
  */
 
-#ifndef LAB_H
-#define LAB_H
+#ifndef LAB_LAB_H
+#define LAB_LAB_H
 
 #include "common/system.h"
 #include "common/random.h"
@@ -242,7 +242,7 @@ private:
 	uint16 processArrow(uint16 curDirection, uint16 arrow);
 	void processJournal();
 	void processMap(uint16 curRoom);
-	void processMonitor(char *ntext, TextFont *monitorFont, bool isinteractive, uint16 x1, uint16 y1, uint16 x2, uint16 y2);
+	void processMonitor(char *ntext, TextFont *monitorFont, bool isInteractive, uint16 x1, uint16 y1, uint16 x2, uint16 y2);
 	Common::Rect roomCoords(uint16 curRoom);
 	bool saveRestoreGame();
 	void setCurrentClose(Common::Point pos, CloseDataPtr *closePtrList, bool useAbsoluteCoords);
@@ -254,4 +254,4 @@ extern LabEngine *g_lab;
 
 } // End of namespace Lab
 
-#endif // LAB_H
+#endif // LAB_LAB_H
