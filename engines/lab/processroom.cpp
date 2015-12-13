@@ -180,17 +180,7 @@ void LabEngine::drawDirection(CloseDataPtr closePtr) {
  */
 uint16 LabEngine::processArrow(uint16 curDirection, uint16 arrow) {
 	if (arrow == 1) { // Forward
-		uint16 room = 1;
-
-		if (curDirection == NORTH)
-			room = _rooms[_roomNum]._northDoor;
-		else if (curDirection == SOUTH)
-			room = _rooms[_roomNum]._southDoor;
-		else if (curDirection == EAST)
-			room = _rooms[_roomNum]._eastDoor;
-		else if (curDirection == WEST)
-			room = _rooms[_roomNum]._westDoor;
-
+		uint16 room = _rooms[_roomNum]._doors[curDirection];
 		if (room != 0)
 			_roomNum = room;
 
