@@ -71,10 +71,10 @@ void LabEngine::loadMapData() {
 	_imgMaze = new Image(mapImages);
 	_imgHugeMaze = new Image(mapImages);
 
-	_imgMapNorth = new Image(mapImages);
-	_imgMapEast = new Image(mapImages);
-	_imgMapSouth = new Image(mapImages);
-	_imgMapWest = new Image(mapImages);
+	_imgMapX[NORTH] = new Image(mapImages);
+	_imgMapX[EAST] = new Image(mapImages);
+	_imgMapX[SOUTH] = new Image(mapImages);
+	_imgMapX[WEST] = new Image(mapImages);
 	_imgPath = new Image(mapImages);
 	_imgBridge = new Image(mapImages);
 
@@ -115,11 +115,8 @@ void LabEngine::freeMapData() {
 	delete _imgMaze;
 	delete _imgHugeMaze;
 	delete _imgPath;
-	delete _imgMapNorth;
-	delete _imgMapEast;
-	delete _imgMapSouth;
-	delete _imgMapWest;
-	// _imgXMark is a pointer to one of the four buffers above
+	for (int i = 0; i < 4; i++)
+		delete _imgMapX[i];
 	delete[] _maps;
 
 	_imgMap = nullptr;
@@ -132,11 +129,8 @@ void LabEngine::freeMapData() {
 	_imgMaze = nullptr;
 	_imgHugeMaze = nullptr;
 	_imgPath = nullptr;
-	_imgMapNorth = nullptr;
-	_imgMapEast = nullptr;
-	_imgMapSouth = nullptr;
-	_imgMapWest = nullptr;
-	_imgXMark = nullptr;
+	for (int i = 0; i < 4; i++)
+		_imgMapX[i] = nullptr;
 	_maps = nullptr;
 }
 
@@ -216,16 +210,16 @@ void LabEngine::drawRoomMap(uint16 curRoom, bool drawMarkFl) {
 		if (WESTDOOR & flags)
 			_imgPath->drawImage(x - _imgPath->_width, y + offset);
 
-		drawX = x + (_imgRoom->_width - _imgXMark->_width) / 2;
-		drawY = y + (_imgRoom->_height - _imgXMark->_height) / 2;
+		drawX = x + (_imgRoom->_width - _imgMapX[_direction]->_width) / 2;
+		drawY = y + (_imgRoom->_height - _imgMapX[_direction]->_height) / 2;
 
 		break;
 
 	case BRIDGEROOM:
 		_imgBridge->drawImage(x, y);
 
-		drawX = x + (_imgBridge->_width - _imgXMark->_width) / 2;
-		drawY = y + (_imgBridge->_height - _imgXMark->_height) / 2;
+		drawX = x + (_imgBridge->_width - _imgMapX[_direction]->_width) / 2;
+		drawY = y + (_imgBridge->_height - _imgMapX[_direction]->_height) / 2;
 
 		break;
 
@@ -262,8 +256,8 @@ void LabEngine::drawRoomMap(uint16 curRoom, bool drawMarkFl) {
 		if (WESTMDOOR & flags)
 			_imgPath->drawImage(x - _imgPath->_width, y - offset - _imgPath->_height + _imgVRoom->_height);
 
-		drawX = x + (_imgVRoom->_width - _imgXMark->_width) / 2;
-		drawY = y + (_imgVRoom->_height - _imgXMark->_height) / 2;
+		drawX = x + (_imgVRoom->_width - _imgMapX[_direction]->_width) / 2;
+		drawY = y + (_imgVRoom->_height - _imgMapX[_direction]->_height) / 2;
 
 		break;
 
@@ -300,8 +294,8 @@ void LabEngine::drawRoomMap(uint16 curRoom, bool drawMarkFl) {
 		if (WESTDOOR & flags)
 			_imgPath->drawImage(x - _imgPath->_width, y + offset);
 
-		drawX = x + (_imgHRoom->_width - _imgXMark->_width) / 2;
-		drawY = y + (_imgHRoom->_height - _imgXMark->_height) / 2;
+		drawX = x + (_imgHRoom->_width - _imgMapX[_direction]->_width) / 2;
+		drawY = y + (_imgHRoom->_height - _imgMapX[_direction]->_height) / 2;
 
 		break;
 
@@ -310,7 +304,7 @@ void LabEngine::drawRoomMap(uint16 curRoom, bool drawMarkFl) {
 	}
 
 	if (drawMarkFl)
-		_imgXMark->drawImage(drawX, drawY);
+		_imgMapX[_direction]->drawImage(drawX, drawY);
 }
 
 /**
@@ -603,16 +597,6 @@ void LabEngine::doMap(uint16 curRoom) {
 	_music->updateMusic();
 	loadMapData();
 	_graphics->blackAllScreen();
-
-	if (_direction == NORTH)
-		_imgXMark = _imgMapNorth;
-	else if (_direction == SOUTH)
-		_imgXMark = _imgMapSouth;
-	else if (_direction == EAST)
-		_imgXMark = _imgMapEast;
-	else if (_direction == WEST)
-		_imgXMark = _imgMapWest;
-
 	_event->attachButtonList(&_mapButtonList);
 	drawMap(curRoom, curRoom, _maps[curRoom]._pageNumber, false, true);
 	_event->mouseShow();

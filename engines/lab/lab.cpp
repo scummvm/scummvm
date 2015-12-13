@@ -118,11 +118,8 @@ LabEngine::LabEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	_imgMaze = nullptr;
 	_imgHugeMaze = nullptr;
 	_imgPath = nullptr;
-	_imgMapNorth = nullptr;
-	_imgMapEast = nullptr;
-	_imgMapSouth = nullptr;
-	_imgMapWest = nullptr;
-	_imgXMark = nullptr;
+	for (int i = 0; i < 4; i++)
+		_imgMapX[i] = nullptr;
 	_maps = nullptr;
 
 	_blankJournal = nullptr;
