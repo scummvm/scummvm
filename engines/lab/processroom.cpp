@@ -475,9 +475,8 @@ void LabEngine::doActions(Action *actionList, CloseDataPtr *closePtrList) {
 			break;
 
 		case WINMUSIC:
-			_music->setWinMusic();
 			_music->freeMusic();
-			_music->initMusic();
+			_music->initMusic("Music:WinGame");
 			break;
 
 		case WINGAME:

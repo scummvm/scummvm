@@ -56,7 +56,6 @@ private:
 	bool _musicOn;
 	bool _musicPaused;
 	bool _oldMusicOn;
-	bool _winMusic;
 
 	uint16 _lastMusicRoom ;
 
@@ -84,7 +83,7 @@ public:
 	void changeMusic(const char *newmusic);
 	void checkRoomMusic();
 	void freeMusic();
-	bool initMusic();
+	bool initMusic(const char *filename);
 	bool isSoundEffectActive() const;
 	void playSoundEffect(uint16 sampleSpeed, uint32 length, void *data);
 	bool readMusic(const char *filename, bool waitTillFinished);
@@ -92,7 +91,6 @@ public:
 	void resumeBackMusic();
 	void setMusic(bool on);
 	void setMusicReset(bool reset) { _doReset = reset; }
-	void setWinMusic() { _winMusic = true; }
 	void stopSoundEffect();
 	void updateMusic();
 };

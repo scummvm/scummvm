@@ -262,7 +262,7 @@ void Intro::introSequence() {
 	}
 
 	_vm->_graphics->blackAllScreen();
-	_vm->_music->initMusic();
+	_vm->_music->initMusic("Music:BackGrou");
 
 	_vm->_anim->_noPalChange = true;
 	if (_vm->getPlatform() != Common::kPlatformWindows)
