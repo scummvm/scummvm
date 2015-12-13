@@ -366,7 +366,7 @@ void OpenGLGraphicsManager::updateScreen() {
 	_forceRedraw = false;
 
 	// Clear the screen buffer.
-	if (_scissorOverride) {
+	if (_scissorOverride && !_overlayVisible) {
 		// In certain cases we need to assure that the whole screen area is
 		// cleared. For example, when switching from overlay visible to
 		// invisible, we need to assure that all contents are cleared to
