@@ -39,7 +39,7 @@
 
 namespace Lab {
 
-static byte mouseData[] = {
+static const byte mouseData[] = {
 	1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
 	1, 7, 1, 0, 0, 0, 0, 0, 0, 0,
 	1, 7, 7, 1, 0, 0, 0, 0, 0, 0,
