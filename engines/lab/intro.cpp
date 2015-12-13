@@ -50,7 +50,7 @@ Intro::Intro(LabEngine *vm) : _vm(vm) {
  */
 void Intro::introEatMessages() {
 	while (1) {
-		IntuiMessage *msg = _vm->getMsg();
+		IntuiMessage *msg = _vm->_event->getMsg();
 
 		if (g_engine->shouldQuit()) {
 			_quitIntro = true;
@@ -129,7 +129,7 @@ void Intro::doPictText(const char *filename, TextFont *msgFont, bool isScreen) {
 			lastMillis = g_system->getMillis();
 		}
 
-		msg = _vm->getMsg();
+		msg = _vm->_event->getMsg();
 
 		if (msg == NULL) {
 			_vm->_music->updateMusic();

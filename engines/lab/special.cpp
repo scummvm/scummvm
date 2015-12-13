@@ -261,7 +261,7 @@ void LabEngine::processJournal() {
 	while (1) {
 		// Make sure we check the music at least after every message
 		_music->updateMusic();
-		IntuiMessage *msg = getMsg();
+		IntuiMessage *msg = _event->getMsg();
 
 		if (msg == NULL) {
 			_music->updateMusic();
@@ -424,7 +424,7 @@ void LabEngine::processMonitor(char *ntext, TextFont *monitorFont, bool isIntera
 
 		// Make sure we check the music at least after every message
 		_music->updateMusic();
-		IntuiMessage *msg = getMsg();
+		IntuiMessage *msg = _event->getMsg();
 
 		if (msg == NULL) {
 			_music->updateMusic();
