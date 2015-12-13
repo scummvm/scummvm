@@ -185,7 +185,7 @@ void LabEngine::drawJournalText() {
 		_graphics->flowTextToMem(&journalBackImage, _journalFont, -2, 2, 0, false, true, true, true, _utils->vgaScaleX(52), _utils->vgaScaleY(32), _utils->vgaScaleX(152), _utils->vgaScaleY(148), curText);
 	} else {
 		curText = (char *)(_journalText + charsDrawn);
-		charsDrawn += g_lab->_graphics->flowTextToMem(&journalBackImage, _journalFont, -2, 2, 0, false, false, false, true, _utils->vgaScaleX(52), _utils->vgaScaleY(32), _utils->vgaScaleX(152), _utils->vgaScaleY(148), curText);
+		charsDrawn += _graphics->flowTextToMem(&journalBackImage, _journalFont, -2, 2, 0, false, false, false, true, _utils->vgaScaleX(52), _utils->vgaScaleY(32), _utils->vgaScaleX(152), _utils->vgaScaleY(148), curText);
 	}
 
 	_music->updateMusic();
