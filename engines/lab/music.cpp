@@ -50,16 +50,16 @@ Music::Music(LabEngine *vm) : _vm(vm) {
 	_tFile = 0;
 	_musicPaused = false;
 
-	_tMusicOn = false;
+	_oldMusicOn = false;
 	_tLeftInFile = 0;
 
-	_leftinfile = 0;
+	_leftInFile = 0;
 
 	_musicOn = false;
-	_winmusic = false;
+	_winMusic = false;
 	_loopSoundEffect = false;
 	_queuingAudioStream = NULL;
-	_doNotFilestopSoundEffect = false;
+	_unstoppableSoundEffect = false;
 	_lastMusicRoom = 1;
 	_doReset = true;
 	_waitTillFinished = false;
@@ -104,12 +104,12 @@ uint16 Music::getPlayingBufferCount() {
 	return (_queuingAudioStream) ? _queuingAudioStream->numQueuedStreams() : 0;
 }
 
-void Music::playSoundEffect(uint16 SampleSpeed, uint32 Length, void *Data) {
+void Music::playSoundEffect(uint16 sampleSpeed, uint32 length, void *data) {
 	pauseBackMusic();
 	stopSoundEffect();
 
-	if (SampleSpeed < 4000)
-		SampleSpeed = 4000;
+	if (sampleSpeed < 4000)
+		sampleSpeed = 4000;
 
 	byte soundFlags = Audio::FLAG_LITTLE_ENDIAN;
 	if (_vm->getPlatform() == Common::kPlatformWindows)
@@ -117,7 +117,7 @@ void Music::playSoundEffect(uint16 SampleSpeed, uint32 Length, void *Data) {
 	else
 		soundFlags |= Audio::FLAG_UNSIGNED;
 
-	Audio::SeekableAudioStream *audioStream = Audio::makeRawStream((const byte *)Data, Length, SampleSpeed, soundFlags, DisposeAfterUse::NO);
+	Audio::SeekableAudioStream *audioStream = Audio::makeRawStream((const byte *)data, length, sampleSpeed, soundFlags, DisposeAfterUse::NO);
 	uint loops = (_loopSoundEffect) ? 0 : 1;
 	Audio::LoopingAudioStream *loopingAudioStream = new Audio::LoopingAudioStream(audioStream, loops);
 	_vm->_mixer->playStream(Audio::Mixer::kSFXSoundType, &_sfxHandle, loopingAudioStream);
@@ -133,16 +133,16 @@ bool Music::isSoundEffectActive() const {
 }
 
 void Music::fillbuffer(byte *musicBuffer) {
-	if (MUSICBUFSIZE < _leftinfile) {
+	if (MUSICBUFSIZE < _leftInFile) {
 		_file->read(musicBuffer, MUSICBUFSIZE);
-		_leftinfile -= MUSICBUFSIZE;
+		_leftInFile -= MUSICBUFSIZE;
 	} else {
-		_file->read(musicBuffer, _leftinfile);
+		_file->read(musicBuffer, _leftInFile);
 
-		memset((char *)musicBuffer + _leftinfile, 0, MUSICBUFSIZE - _leftinfile);
+		memset((char *)musicBuffer + _leftInFile, 0, MUSICBUFSIZE - _leftInFile);
 
 		_file->seek(0);
-		_leftinfile = _file->size();
+		_leftInFile = _file->size();
 	}
 }
 
@@ -157,7 +157,7 @@ void Music::startMusic(bool restartFl) {
 
 	if (restartFl) {
 		_file->seek(0);
-		_leftinfile  = _file->size();
+		_leftInFile  = _file->size();
 	}
 
 	_musicOn = true;
@@ -173,7 +173,7 @@ bool Music::initMusic() {
 
 	const char *filename;
 
-	if (_winmusic)
+	if (_winMusic)
 		filename = "Music:WinGame";
 	else
 		filename = "Music:BackGrou";
@@ -267,11 +267,11 @@ void Music::checkRoomMusic() {
 void Music::changeMusic(const char *newmusic) {
 	if (!_tFile) {
 		_tFile = _file;
-		_tMusicOn = _musicOn;
-		_tLeftInFile = _leftinfile + 65536L;
+		_oldMusicOn = _musicOn;
+		_tLeftInFile = _leftInFile + 65536L;
 
 		if (_tLeftInFile > (uint32)_tFile->size())
-			_tLeftInFile = _leftinfile;
+			_tLeftInFile = _leftInFile;
 	}
 
 	_file = _vm->_resource->openDataFile(newmusic);
@@ -295,20 +295,20 @@ void Music::resetMusic() {
 		_file->close();
 
 	_file      = _tFile;
-	_leftinfile = _tLeftInFile;
+	_leftInFile = _tLeftInFile;
 
-	_file->seek(_file->size() - _leftinfile);
+	_file->seek(_file->size() - _leftInFile);
 
 	_musicOn = true;
 	setMusic(false);
 	updateMusic();
 
-	if (!_tMusicOn) {
+	if (!_oldMusicOn) {
 		_tFile = 0;
 		return;
 	}
 
-	_musicOn = _tMusicOn;
+	_musicOn = _oldMusicOn;
 	startMusic(false);
 
 	_tFile = 0;
@@ -320,7 +320,7 @@ void Music::resetMusic() {
 bool Music::readMusic(const char *filename, bool waitTillFinished) {
 	Common::File *file = _vm->_resource->openDataFile(filename, MKTAG('D', 'I', 'F', 'F'));
 	updateMusic();
-	if (!_doNotFilestopSoundEffect)
+	if (!_unstoppableSoundEffect)
 		stopSoundEffect();
 
 	if (!file)
@@ -334,9 +334,10 @@ bool Music::readMusic(const char *filename, bool waitTillFinished) {
 
 void Music::readSound(bool waitTillFinished, Common::File *file) {
 	uint32 magicBytes = file->readUint32LE();
-	if (magicBytes != 1219009121L)
+	if (magicBytes != 1219009121L) {
+		warning("readSound: Bad signature, skipping");
 		return;
-
+	}
 	uint32 soundTag = file->readUint32LE();
 	uint32 soundSize = file->readUint32LE();
 
@@ -367,16 +368,14 @@ void Music::readSound(bool waitTillFinished, Common::File *file) {
 			byte *soundData = (byte *)malloc(soundSize);
 			file->read(soundData, soundSize);
 			playSoundEffect(sampleRate, soundSize, soundData);
-		}
-		else if (soundTag == 65535L) {
+		} else if (soundTag == 65535L) {
 			if (waitTillFinished) {
 				while (isSoundEffectActive()) {
 					updateMusic();
 					_vm->waitTOF();
 				}
 			}
-		}
-		else
+		} else
 			file->skip(soundSize);
 	}
 }

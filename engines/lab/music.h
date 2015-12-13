@@ -46,52 +46,56 @@ class LabEngine;
 #define MAXBUFFERS         5L
 
 class Music {
-public:
-	Music(LabEngine *vm);
-
-	bool initMusic();
-	void freeMusic();
-	void updateMusic();
-	uint16 getPlayingBufferCount();
-	void closeMusic();
-	void setMusic(bool on);
-	void resumeBackMusic();
-	void pauseBackMusic();
-	void changeMusic(const char *newmusic);
-	void checkRoomMusic();
-	void resetMusic();
-	void setMusicReset(bool reset) { _doReset = reset; }
-	void playSoundEffect(uint16 SampleSpeed, uint32 Length, void *Data);
-	void stopSoundEffect();
-	bool isSoundEffectActive() const;
-	bool readMusic(const char *filename, bool waitTillFinished);
-
-	bool _winmusic, _doNotFilestopSoundEffect;
-	bool _musicOn;
-	bool _loopSoundEffect;
-	bool _waitTillFinished;
-	uint16 _lastMusicRoom ;
-	bool _doReset;
-
 private:
-	void fillbuffer(byte *musicBuffer);
-	void startMusic(bool restartFl);
-	void readSound(bool waitTillFinished, Common::File *file);
-
 	LabEngine *_vm;
 
 	Common::File *_file;
 	Common::File *_tFile;
-	bool _musicPaused;
 
-	bool _tMusicOn;
+	bool _doReset;
+	bool _musicOn;
+	bool _musicPaused;
+	bool _oldMusicOn;
+	bool _winMusic;
+
+	uint16 _lastMusicRoom ;
+
 	uint32 _tLeftInFile;
-	uint32 _leftinfile;
+	uint32 _leftInFile;
 
 	Audio::SoundHandle _musicHandle;
 	Audio::SoundHandle _sfxHandle;
-
 	Audio::QueuingAudioStream *_queuingAudioStream;
+
+private:
+	void fillbuffer(byte *musicBuffer);
+	uint16 getPlayingBufferCount();
+	void pauseBackMusic();
+	void readSound(bool waitTillFinished, Common::File *file);
+	void startMusic(bool restartFl);
+
+public:
+	bool _unstoppableSoundEffect;
+	bool _loopSoundEffect;
+	bool _waitTillFinished;
+
+public:
+	Music(LabEngine *vm);
+
+	void changeMusic(const char *newmusic);
+	void checkRoomMusic();
+	void freeMusic();
+	bool initMusic();
+	bool isSoundEffectActive() const;
+	void playSoundEffect(uint16 sampleSpeed, uint32 length, void *data);
+	bool readMusic(const char *filename, bool waitTillFinished);
+	void resetMusic();
+	void resumeBackMusic();
+	void setMusic(bool on);
+	void setMusicReset(bool reset) { _doReset = reset; }
+	void setWinMusic() { _winMusic = true; }
+	void stopSoundEffect();
+	void updateMusic();
 };
 
 } // End of namespace Lab

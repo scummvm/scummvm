@@ -103,7 +103,7 @@ void DisplayMan::readPict(const char *filename, bool playOnce, bool onlyDiffData
 
 	_vm->_music->updateMusic();
 
-	if (!_vm->_music->_doNotFilestopSoundEffect)
+	if (!_vm->_music->_unstoppableSoundEffect)
 		_vm->_music->stopSoundEffect();
 
 	_dispBitMap->_bytesPerRow  = _screenWidth;
