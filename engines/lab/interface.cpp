@@ -40,26 +40,24 @@
 
 namespace Lab {
 
-Common::KeyState _keyPressed;
+Gadget *EventManager::createButton(uint16 x, uint16 y, uint16 id, uint16 key, Image *image, Image *altImage) {
+	Gadget *gadget = new Gadget();
 
-Gadget *createButton(uint16 x, uint16 y, uint16 id, uint16 key, Image *im, Image *imalt) {
-	Gadget *gptr = new Gadget();
+	if (gadget) {
+		gadget->x = _vm->_utils->vgaScaleX(x);
+		gadget->y = y;
+		gadget->_gadgetID = id;
+		gadget->_keyEquiv = key;
+		gadget->_image = image;
+		gadget->_altImage = altImage;
+		gadget->isEnabled = true;
 
-	if (gptr) {
-		gptr->x = g_lab->_utils->vgaScaleX(x);
-		gptr->y = y;
-		gptr->_gadgetID = id;
-		gptr->_keyEquiv = key;
-		gptr->_image = im;
-		gptr->_altImage = imalt;
-		gptr->isEnabled = true;
-
-		return gptr;
+		return gadget;
 	} else
 		return nullptr;
 }
 
-void freeButtonList(GadgetList *gadgetList) {
+void EventManager::freeButtonList(GadgetList *gadgetList) {
 	for (GadgetList::iterator gadgetIter = gadgetList->begin(); gadgetIter != gadgetList->end(); ++gadgetIter) {
 		Gadget *gadget = *gadgetIter;
 		delete gadget->_image;
@@ -73,7 +71,7 @@ void freeButtonList(GadgetList *gadgetList) {
 /**
  * Draws a gadget list to the screen.
  */
-void drawGadgetList(GadgetList *gadgetList) {
+void EventManager::drawGadgetList(GadgetList *gadgetList) {
 	for (GadgetList::iterator gadget = gadgetList->begin(); gadget != gadgetList->end(); ++gadget) {
 		(*gadget)->_image->drawImage((*gadget)->x, (*gadget)->y);
 
@@ -85,23 +83,23 @@ void drawGadgetList(GadgetList *gadgetList) {
 /**
  * Dims a gadget, and makes it unavailable for using.
  */
-void disableGadget(Gadget *curgad, uint16 pencolor) {
-	g_lab->_graphics->overlayRect(pencolor, curgad->x, curgad->y, curgad->x + curgad->_image->_width - 1, curgad->y + curgad->_image->_height - 1);
-	curgad->isEnabled = false;
+void EventManager::disableGadget(Gadget *gadget, uint16 penColor) {
+	_vm->_graphics->overlayRect(penColor, gadget->x, gadget->y, gadget->x + gadget->_image->_width - 1, gadget->y + gadget->_image->_height - 1);
+	gadget->isEnabled = false;
 }
 
 /**
  * Undims a gadget, and makes it available again.
  */
-void enableGadget(Gadget *curgad) {
-	curgad->_image->drawImage(curgad->x, curgad->y);
-	curgad->isEnabled = true;
+void EventManager::enableGadget(Gadget *gadget) {
+	gadget->_image->drawImage(gadget->x, gadget->y);
+	gadget->isEnabled = true;
 }
 
 /**
  * Make a key press have the right case for a gadget KeyEquiv value.
  */
-uint16 makeGadgetKeyEquiv(uint16 key) {
+uint16 EventManager::makeGadgetKeyEquiv(uint16 key) {
 	if (Common::isAlnum(key))
 		key = tolower(key);
 
@@ -112,7 +110,7 @@ uint16 makeGadgetKeyEquiv(uint16 key) {
  * Checks whether or not the coords fall within one of the gadgets in a list
  * of gadgets.
  */
-Gadget *LabEngine::checkNumGadgetHit(GadgetList *gadgetList, uint16 key) {
+Gadget *EventManager::checkNumGadgetHit(GadgetList *gadgetList, uint16 key) {
 	uint16 gkey = key - '0';
 
 	if (!gadgetList)
@@ -123,59 +121,59 @@ Gadget *LabEngine::checkNumGadgetHit(GadgetList *gadgetList, uint16 key) {
 		if ((gkey - 1 == gadget->_gadgetID || (gkey == 0 && gadget->_gadgetID == 9) ||
 			  (gadget->_keyEquiv != 0 && makeGadgetKeyEquiv(key) == gadget->_keyEquiv))
 			  && gadget->isEnabled) {
-			_event->mouseHide();
+			mouseHide();
 			gadget->_altImage->drawImage(gadget->x, gadget->y);
-			_event->mouseShow();
+			mouseShow();
 			g_system->delayMillis(80);
-			_event->mouseHide();
+			mouseHide();
 			gadget->_image->drawImage(gadget->x, gadget->y);
-			_event->mouseShow();
+			mouseShow();
 
 			return gadget;
 		}
 	}
 
-	return NULL;
+	return nullptr;
 }
 
-IntuiMessage IMessage;
-
 IntuiMessage *LabEngine::getMsg() {
+	static IntuiMessage message;
+
 	_event->updateMouse();
 
-	int qualifiers = _keyPressed.flags;
+	int qualifiers = _event->_keyPressed.flags;
 	Gadget *curgad  = _event->mouseGadget();
 
 	if (curgad) {
 		_event->updateMouse();
-		IMessage._msgClass = GADGETUP;
-		IMessage._code  = curgad->_gadgetID;
-		IMessage._gadgetID = curgad->_gadgetID;
-		IMessage._qualifier = qualifiers;
-		return &IMessage;
-	} else if (_event->mouseButton(&IMessage._mouseX, &IMessage._mouseY, true)) {
+		message._msgClass = GADGETUP;
+		message._code  = curgad->_gadgetID;
+		message._gadgetID = curgad->_gadgetID;
+		message._qualifier = qualifiers;
+		return &message;
+	} else if (_event->mouseButton(&message._mouseX, &message._mouseY, true)) {
 		// Left Button
-		IMessage._qualifier = IEQUALIFIER_LEFTBUTTON | qualifiers;
-		IMessage._msgClass = MOUSEBUTTONS;
-		return &IMessage;
-	} else if (_event->mouseButton(&IMessage._mouseX, &IMessage._mouseY, false)) {
+		message._qualifier = IEQUALIFIER_LEFTBUTTON | qualifiers;
+		message._msgClass = MOUSEBUTTONS;
+		return &message;
+	} else if (_event->mouseButton(&message._mouseX, &message._mouseY, false)) {
 		// Right Button
-		IMessage._qualifier = IEQUALIFIER_RBUTTON | qualifiers;
-		IMessage._msgClass = MOUSEBUTTONS;
-		return &IMessage;
-	} else if (_event->keyPress(&IMessage._code)) {
+		message._qualifier = IEQUALIFIER_RBUTTON | qualifiers;
+		message._msgClass = MOUSEBUTTONS;
+		return &message;
+	} else if (_event->keyPress(&message._code)) {
 		// Keyboard key
-		curgad = checkNumGadgetHit(_event->_screenGadgetList, IMessage._code);
+		curgad = _event->checkNumGadgetHit(_event->_screenGadgetList, message._code);
 
 		if (curgad) {
-			IMessage._msgClass = GADGETUP;
-			IMessage._code  = curgad->_gadgetID;
-			IMessage._gadgetID = curgad->_gadgetID;
+			message._msgClass = GADGETUP;
+			message._code  = curgad->_gadgetID;
+			message._gadgetID = curgad->_gadgetID;
 		} else
-			IMessage._msgClass = RAWKEY;
+			message._msgClass = RAWKEY;
 
-		IMessage._qualifier = qualifiers;
-		return &IMessage;
+		message._qualifier = qualifiers;
+		return &message;
 	} else
 		return nullptr;
 }

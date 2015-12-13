@@ -142,9 +142,9 @@ void LabEngine::loadJournalData() {
 
 	Common::File *journalFile = _resource->openDataFile("P:JImage");
 	Utils *utils = _utils;
-	_journalGadgetList.push_back(createButton( 80, utils->vgaScaleY(162) + utils->svgaCord(1), 0, VKEY_LTARROW, new Image(journalFile), new Image(journalFile)));	// back
-	_journalGadgetList.push_back(createButton(194, utils->vgaScaleY(162) + utils->svgaCord(1), 2,            0, new Image(journalFile), new Image(journalFile)));	// cancel
-	_journalGadgetList.push_back(createButton(144, utils->vgaScaleY(164) - utils->svgaCord(1), 1, VKEY_RTARROW, new Image(journalFile), new Image(journalFile)));	// forward
+	_journalGadgetList.push_back(_event->createButton( 80, utils->vgaScaleY(162) + utils->svgaCord(1), 0, VKEY_LTARROW, new Image(journalFile), new Image(journalFile)));	// back
+	_journalGadgetList.push_back(_event->createButton(194, utils->vgaScaleY(162) + utils->svgaCord(1), 2,            0, new Image(journalFile), new Image(journalFile)));	// cancel
+	_journalGadgetList.push_back(_event->createButton(144, utils->vgaScaleY(164) - utils->svgaCord(1), 1, VKEY_RTARROW, new Image(journalFile), new Image(journalFile)));	// forward
 	delete journalFile;
 
 	_anim->_noPalChange = true;
@@ -236,14 +236,14 @@ void LabEngine::drawJournal(uint16 wipenum, bool needFade) {
 	Gadget *forwardGadget = _event->getGadget(2);
 
 	if (_journalPage == 0)
-		disableGadget(backGadget, 15);
+		_event->disableGadget(backGadget, 15);
 	else
-		enableGadget(backGadget);
+		_event->enableGadget(backGadget);
 
 	if (_lastPage)
-		disableGadget(forwardGadget, 15);
+		_event->disableGadget(forwardGadget, 15);
 	else
-		enableGadget(forwardGadget);
+		_event->enableGadget(forwardGadget);
 
 	if (needFade)
 		_graphics->fade(true, 0);
@@ -321,7 +321,7 @@ void LabEngine::doJournal() {
 
 	delete[] _blankJournal;
 	delete[] journalBackImage._imageData;
-	freeButtonList(&_journalGadgetList);
+	_event->freeButtonList(&_journalGadgetList);
 	_graphics->closeFont(_journalFont);
 
 	ScreenImage._imageData = _graphics->getCurrentDrawingBuffer();

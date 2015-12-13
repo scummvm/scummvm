@@ -193,7 +193,6 @@ public:
 
 private:
 	bool checkConditions(int16 *condition);
-	Gadget *checkNumGadgetHit(GadgetList *gadgetList, uint16 key);
 	void decIncInv(uint16 *CurInv, bool dec);
 	void doActions(Action *actionList, CloseDataPtr *closePtrList);
 	bool doActionRule(Common::Point pos, int16 action, int16 roomNum, CloseDataPtr *closePtrList);
