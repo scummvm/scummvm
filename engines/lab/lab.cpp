@@ -77,8 +77,7 @@ LabEngine::LabEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	_manyRooms = 0;
 	_direction = 0;
 	_highestCondition = 0;
-	_crumbSecs = 0;
-	_crumbMicros = 0;
+	_crumbTimestamp = 0;
 	_maxRooms = 0;
 
 	_event = nullptr;
