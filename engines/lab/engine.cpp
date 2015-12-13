@@ -1137,7 +1137,7 @@ void LabEngine::go() {
  */
 int LabEngine::followCrumbs() {
 	// NORTH, SOUTH, EAST, WEST
-	static int movement[4][4] = {
+	int movement[4][4] = {
 		{ VKEY_UPARROW, VKEY_RTARROW, VKEY_RTARROW, VKEY_LTARROW },
 		{ VKEY_RTARROW, VKEY_UPARROW, VKEY_LTARROW, VKEY_RTARROW },
 		{ VKEY_LTARROW, VKEY_RTARROW, VKEY_UPARROW, VKEY_RTARROW },
