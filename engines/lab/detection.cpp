@@ -33,7 +33,7 @@
 #include "lab/lab.h"
 
 static const PlainGameDescriptor lab_setting[] = {
-	{ "lab", "Labyrith of Time" },
+	{ "lab", "Labyrinth of Time" },
 	{ 0, 0 }
 };
 
@@ -131,7 +131,7 @@ public:
 	}
 
 	virtual const char *getOriginalCopyright() const {
-		return "Labytinth of Time (c) 2004 The Wyrmkeep Entertainment Co.";
+		return "Labyrinth of Time (c) 2004 The Wyrmkeep Entertainment Co.";
 	}
 
 	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
