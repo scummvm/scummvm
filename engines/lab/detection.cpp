@@ -31,7 +31,6 @@
 #include "engines/advancedDetector.h"
 
 #include "lab/lab.h"
-#include "lab/savegame.h"
 
 static const PlainGameDescriptor lab_setting[] = {
 	{ "lab", "Labyrith of Time" },
@@ -184,9 +183,9 @@ SaveStateList LabMetaEngine::listSaves(const char *target) const {
 		if (slotNum >= 0 && slotNum <= 999) {
 			Common::InSaveFile *in = saveFileMan->openForLoading(file->c_str());
 			if (in) {
-					if (Lab::readSaveGameHeader(in, header))
-						saveList.push_back(SaveStateDescriptor(slotNum, header._descr.getDescription()));
-					delete in;
+				if (Lab::readSaveGameHeader(in, header))
+					saveList.push_back(SaveStateDescriptor(slotNum, header._descr.getDescription()));
+				delete in;
 			}
 		}
 	}
