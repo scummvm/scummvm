@@ -118,8 +118,8 @@ private:
 	ButtonList _journalButtonList;
 	ButtonList _mapButtonList;
 	Image *_imgMap, *_imgRoom, *_imgUpArrowRoom, *_imgDownArrowRoom, *_imgBridge;
-	Image *_imgHRoom, *_imgVRoom, *_imgMaze, *_imgHugeMaze, *_imgPath, *_imgMapNorth;
-	Image *_imgMapEast, *_imgMapSouth, *_imgMapWest, *_imgXMark;
+	Image *_imgHRoom, *_imgVRoom, *_imgMaze, *_imgHugeMaze, *_imgPath;
+	Image *_imgMapX[4];
 	InventoryData *_inventory;
 	MapData *_maps;
 	byte *_blankJournal;
