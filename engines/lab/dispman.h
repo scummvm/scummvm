@@ -73,6 +73,7 @@ public:
 	virtual ~DisplayMan();
 
 	void loadPict(const char *filename);
+	void loadBackPict(const char *fileName, uint16 *highPal);
 	void readPict(const char *filename, bool playOnce, bool onlyDiffData = false, byte *memoryBuffer = nullptr, uint16 maxHeight = 0);
 	void freePict();
 	void doScrollBlack();

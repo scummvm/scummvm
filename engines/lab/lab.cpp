@@ -126,6 +126,19 @@ LabEngine::LabEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	_imgXMark = nullptr;
 	_maps = nullptr;
 
+	_blankJournal = nullptr;
+	_journalFont = nullptr;
+	_journalText = nullptr;
+	_journalTextTitle = nullptr;
+	_journalPage = 0;
+	_lastPage = false;
+	_monitorPage = 0;
+	_monitorTextFilename = "";
+	_monitorButton = nullptr;
+	_monitorGadgetHeight = 1;
+	for (int i = 0; i < 20; i++)
+		_highPalette[i] = 0;
+
 	//const Common::FSNode gameDataDir(ConfMan.get("path"));
 	//SearchMan.addSubDirectoryMatching(gameDataDir, "game");
 	//SearchMan.addSubDirectoryMatching(gameDataDir, "game/pict");

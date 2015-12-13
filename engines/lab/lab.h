@@ -37,6 +37,8 @@
 
 #include "engines/engine.h"
 
+#include "lab/image.h"
+
 struct ADGameDescription;
 
 namespace Lab {
@@ -91,20 +93,28 @@ class LabEngine : public Engine {
 private:
 	bool _interfaceOff;
 	bool _isCrumbWaiting;
+	bool _lastTooLong;
+	bool _lastPage;
 	bool _mainDisplay;
 	bool _noUpdateDiff;
 	bool _quitLab;
-	bool _lastTooLong;
 
 	int _lastWaitTOFTicks;
 
 	uint16 _direction;
+	uint16 _highPalette[20];
+	uint16 _journalPage;
 	uint16 _maxRooms;
+	uint16 _monitorPage;
+	uint16 _monitorGadgetHeight;
 
 	uint32 _extraGameFeatures;
 
+	char *_journalText;
+	char *_journalTextTitle;
 	const char *_nextFileName;
 	const char *_newFileName;
+	const char *_monitorTextFilename;
 
 	CloseDataPtr _closeDataPtr;
 	GadgetList _journalGadgetList;
@@ -114,8 +124,14 @@ private:
 	Image *_imgMapEast, *_imgMapSouth, *_imgMapWest, *_imgXMark;
 	InventoryData *_inventory;
 	MapData *_maps;
+	byte *_blankJournal;
+	Image *_monitorButton;
+	TextFont *_journalFont;
 
 	Common::RandomSource _rnd;
+
+	Image journalBackImage;
+	Image ScreenImage;
 
 public:
 	bool _alternate;
@@ -176,62 +192,62 @@ public:
 	void waitTOF();
 
 private:
+	bool checkConditions(int16 *condition);
 	Gadget *checkNumGadgetHit(GadgetList *gadgetList, uint16 key);
 	void decIncInv(uint16 *CurInv, bool dec);
-	void doJournal();
-	void doMap(uint16 curRoom);
-	void doMonitor(char *background, char *textfile, bool isinteractive, uint16 x1, uint16 y1, uint16 x2, uint16 y2);
-	void doNotes();
-	void doWestPaper();
-	void drawDirection(CloseDataPtr closePtr);
-	void drawJournal(uint16 wipenum, bool needFade);
-	void drawMap(uint16 curRoom, uint16 curMsg, uint16 floorNum, bool fadeOut, bool fadeIn);
-	void drawMonText(char *text, TextFont *monitorFont, uint16 x1, uint16 y1, uint16 x2, uint16 y2, bool isinteractive);
-	void drawRoomMessage(uint16 curInv, CloseDataPtr closePtr);
-	void drawStaticMessage(byte index);
-	void eatMessages();
-	int followCrumbs();
-	void freeMapData();
-	bool fromCrumbs(uint32 tmpClass, uint16 code, uint16 qualifier, Common::Point tmpPos,
-		uint16 &curInv, IntuiMessage *curMsg, bool &forceDraw, uint16 gadgetId, uint16 &actionMode);
-	void interfaceOff();
-	void interfaceOn();
-	void loadJournalData();
-	void loadMapData();
-	void processJournal();
-	void processMap(uint16 curRoom);
-	void processMonitor(char *ntext, TextFont *monitorFont, bool isinteractive, uint16 x1, uint16 y1, uint16 x2, uint16 y2);
-
-private:
-	bool checkConditions(int16 *condition);
 	void doActions(Action *actionList, CloseDataPtr *closePtrList);
 	bool doActionRule(Common::Point pos, int16 action, int16 roomNum, CloseDataPtr *closePtrList);
 	bool doActionRuleSub(int16 action, int16 roomNum, CloseDataPtr closePtr, CloseDataPtr *setCloseList, bool allowDefaults);
 	bool doCloseUp(CloseDataPtr closePtr);
 	bool doGoForward(CloseDataPtr *closePtrList);
+	void doJournal();
 	bool doMainView(CloseDataPtr *closePtrList);
+	void doMap(uint16 curRoom);
+	void doMonitor(char *background, char *textfile, bool isinteractive, uint16 x1, uint16 y1, uint16 x2, uint16 y2);
+	void doNotes();
 	bool doOperateRuleSub(int16 itemNum, int16 roomNum, CloseDataPtr closePtr, CloseDataPtr *setCloseList, bool allowDefaults);
 	bool doOperateRule(Common::Point pos, int16 ItemNum, CloseDataPtr *closePtrList);
 	bool doTurn(uint16 from, uint16 to, CloseDataPtr *closePtrList);
 	bool doUse(uint16 curInv);
+	void doWestPaper();
+	void drawDirection(CloseDataPtr closePtr);
+	void drawJournal(uint16 wipenum, bool needFade);
+	void drawJournalText();
+	void drawMap(uint16 curRoom, uint16 curMsg, uint16 floorNum, bool fadeOut, bool fadeIn);
+	void drawMonText(char *text, TextFont *monitorFont, uint16 x1, uint16 y1, uint16 x2, uint16 y2, bool isinteractive);
 	void drawRoomMap(uint16 curRoom, bool drawMarkFl);
+	void drawRoomMessage(uint16 curInv, CloseDataPtr closePtr);
+	void drawStaticMessage(byte index);
+	void eatMessages();
 	CloseDataPtr findClosePtrMatch(CloseDataPtr closePtr, CloseDataPtr closePtrList);
 	bool floorVisited(uint16 floorNum);
+	int followCrumbs();
+	void freeMapData();
 	void freeScreens();
+	bool fromCrumbs(uint32 tmpClass, uint16 code, uint16 qualifier, Common::Point tmpPos,
+		uint16 &curInv, IntuiMessage *curMsg, bool &forceDraw, uint16 gadgetId, uint16 &actionMode);
 	const char *getInvName(uint16 curInv);
 	uint16 getLowerFloor(uint16 floorNum);
 	CloseData *getObject(Common::Point pos, CloseDataPtr closePtr);
 	uint16 getUpperFloor(uint16 floorNum);
 	ViewData *getViewData(uint16 roomNum, uint16 direction);
+	void interfaceOff();
+	void interfaceOn();
+	void loadJournalData();
+	void loadMapData();
 	void mainGameLoop();
 	void mayShowCrumbIndicator();
 	void mayShowCrumbIndicatorOff();
 	void perFlipGadget(uint16 gadID);
 	uint16 processArrow(uint16 curDirection, uint16 arrow);
+	void processJournal();
+	void processMap(uint16 curRoom);
+	void processMonitor(char *ntext, TextFont *monitorFont, bool isinteractive, uint16 x1, uint16 y1, uint16 x2, uint16 y2);
 	Common::Rect roomCoords(uint16 curRoom);
 	bool saveRestoreGame();
 	void setCurrentClose(Common::Point pos, CloseDataPtr *closePtrList, bool useAbsoluteCoords);
 	bool takeItem(uint16 x, uint16 y, CloseDataPtr *closePtrList);
+	void turnPage(bool fromLeft);
 };
 
 extern LabEngine *g_lab;
