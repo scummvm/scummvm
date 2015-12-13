@@ -172,6 +172,16 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::ES_ESP, Common::kPlatformDOS, ADGF_ADDENGLISH, GUIO4(GUIO_NOSPEECH, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
+	// Castle of Dr. Brain aka Dr. Brain Puzzle no Shiro - Japanese PC-98 Floppy (from m_kiewitz)
+	// includes both Japanese and English text
+	// Executable scanning reports "x.yyy.zzz", VERSION file reports "1.000"
+	{"castlebrain", "", {
+		{"resource.map", 0, "ff9674d5d0215a7ebae25ee38d5a72af", 2631},
+		{"resource.000", 0, "27ec5fa09cd12a7fd16e86d96a2ed245", 548272},
+		{"resource.001", 0, "7c3e82c390e934de9b7afcab6de9cec4", 1117317},
+		AD_LISTEND},
+		Common::JA_JPN, Common::kPlatformPC98, ADGF_ADDENGLISH, GUIO5(GUIO_NOSPEECH, GUIO_NOASPECT, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
+
 #ifdef ENABLE_SCI32
 	// Inside the Chest / Behind the Developer's Shield
 	// SCI interpreter version 2.000.000
