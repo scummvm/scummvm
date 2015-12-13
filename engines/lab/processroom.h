@@ -127,10 +127,7 @@ struct Rule {
 };
 
 struct RoomData {
-	uint16 _northDoor;
-	uint16 _southDoor;
-	uint16 _eastDoor;
-	uint16 _westDoor;
+	uint16 _doors[4];
 	byte _transitionType;
 	ViewData *_view[4];
 	RuleList *_rules;

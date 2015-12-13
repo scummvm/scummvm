@@ -98,10 +98,10 @@ bool Resource::readRoomData(const char *fileName) {
 	memset(_vm->_rooms, 0, (_vm->_manyRooms + 1) * sizeof(RoomData));
 
 	for (uint16 i = 1; i <= _vm->_manyRooms; i++) {
-		_vm->_rooms[i]._northDoor = dataFile->readUint16LE();
-		_vm->_rooms[i]._southDoor = dataFile->readUint16LE();
-		_vm->_rooms[i]._eastDoor = dataFile->readUint16LE();
-		_vm->_rooms[i]._westDoor = dataFile->readUint16LE();
+		_vm->_rooms[i]._doors[NORTH] = dataFile->readUint16LE();
+		_vm->_rooms[i]._doors[SOUTH] = dataFile->readUint16LE();
+		_vm->_rooms[i]._doors[EAST] = dataFile->readUint16LE();
+		_vm->_rooms[i]._doors[WEST] = dataFile->readUint16LE();
 		_vm->_rooms[i]._transitionType = dataFile->readByte();
 
 		_vm->_rooms[i]._view[NORTH] = nullptr;
