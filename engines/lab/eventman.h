@@ -31,11 +31,28 @@
 #ifndef LAB_EVENTMAN_H
 #define LAB_EVENTMAN_H
 
+#include "common/events.h"
+
 namespace Lab {
 
-struct Gadget;
-
 class LabEngine;
+class Image;
+
+struct IntuiMessage {
+	uint32 _msgClass;
+	uint16 _code, _qualifier, _mouseX, _mouseY, _gadgetID;
+	uint32 _seconds, _micros;
+};
+
+
+struct Gadget {
+	uint16 x, y, _gadgetID;
+	uint16 _keyEquiv; // if not zero, a key that activates gadget
+	bool isEnabled;
+	Image *_image, *_altImage;
+};
+
+typedef Common::List<Gadget *> GadgetList;
 
 class EventManager {
 private:
@@ -56,6 +73,7 @@ public:
 
 	GadgetList *_screenGadgetList;
 	Gadget *_hitGadget;
+	Common::KeyState _keyPressed;
 
 	Gadget *checkGadgetHit(GadgetList *gadgetList, Common::Point pos);
 	void initMouse();
@@ -74,6 +92,15 @@ public:
 	void processInput(bool can_delay = false);
 	uint16 getNextChar();
 	Common::Point updateAndGetMousePos();
+
+	Gadget *checkNumGadgetHit(GadgetList *gadgetList, uint16 key);
+	Gadget *createButton(uint16 x, uint16 y, uint16 id, uint16 key, Image *im, Image *imalt);
+	void freeButtonList(GadgetList *gadgetList);
+	void drawGadgetList(GadgetList *gadgetList);
+	void disableGadget(Gadget *curgad, uint16 pencolor);
+	void enableGadget(Gadget *curgad);
+	IntuiMessage *getMsg();
+	uint16 makeGadgetKeyEquiv(uint16 key);
 };
 
 } // End of namespace Lab

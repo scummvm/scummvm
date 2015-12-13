@@ -79,9 +79,9 @@ void LabEngine::loadMapData() {
 	_imgPath = new Image(mapImages);
 	_imgBridge = new Image(mapImages);
 
-	_mapGadgetList.push_back(createButton( 8,  _utils->vgaScaleY(105), 0, VKEY_LTARROW, new Image(mapImages), new Image(mapImages)));	// back
-	_mapGadgetList.push_back(createButton( 55, _utils->vgaScaleY(105), 1, VKEY_UPARROW, new Image(mapImages), new Image(mapImages)));	// up
-	_mapGadgetList.push_back(createButton(101, _utils->vgaScaleY(105), 2, VKEY_DNARROW, new Image(mapImages), new Image(mapImages)));	// down
+	_mapGadgetList.push_back(_event->createButton( 8,  _utils->vgaScaleY(105), 0, VKEY_LTARROW, new Image(mapImages), new Image(mapImages)));	// back
+	_mapGadgetList.push_back(_event->createButton( 55, _utils->vgaScaleY(105), 1, VKEY_UPARROW, new Image(mapImages), new Image(mapImages)));	// up
+	_mapGadgetList.push_back(_event->createButton(101, _utils->vgaScaleY(105), 2, VKEY_DNARROW, new Image(mapImages), new Image(mapImages)));	// down
 
 	delete mapImages;
 
@@ -104,7 +104,7 @@ void LabEngine::loadMapData() {
 }
 
 void LabEngine::freeMapData() {
-	freeButtonList(&_mapGadgetList);
+	_event->freeButtonList(&_mapGadgetList);
 
 	delete _imgMap;
 	delete _imgRoom;
@@ -369,7 +369,7 @@ void LabEngine::drawMap(uint16 curRoom, uint16 curMsg, uint16 floorNum, bool fad
 	_graphics->rectFill(0, 0, _graphics->_screenWidth - 1, _graphics->_screenHeight - 1);
 
 	_imgMap->drawImage(0, 0);
-	drawGadgetList(&_mapGadgetList);
+	_event->drawGadgetList(&_mapGadgetList);
 
 	for (uint16 i = 1; i <= _maxRooms; i++) {
 		if ((_maps[i]._pageNumber == floorNum) && _roomsFound->in(i) && _maps[i]._x) {
@@ -388,14 +388,14 @@ void LabEngine::drawMap(uint16 curRoom, uint16 curMsg, uint16 floorNum, bool fad
 	Gadget *downGadget = _event->getGadget(2);
 
 	if (getUpperFloor(floorNum) != kFloorNone)
-		enableGadget(upGadget);
+		_event->enableGadget(upGadget);
 	else
-		disableGadget(upGadget, 12);
+		_event->disableGadget(upGadget, 12);
 
 	if (getLowerFloor(floorNum) != kFloorNone)
-		enableGadget(downGadget);
+		_event->enableGadget(downGadget);
 	else
-		disableGadget(downGadget, 12);
+		_event->disableGadget(downGadget, 12);
 
 	// Labyrinth specific code
 	if (floorNum == kFloorLower) {

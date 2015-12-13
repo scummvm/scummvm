@@ -28,28 +28,11 @@
  *
  */
 
-#ifndef LAB_INTEFARCE_H
-#define LAB_INTEFARCE_H
+#ifndef LAB_INTERFARCE_H
+#define LAB_INTERFARCE_H
 
 namespace Lab {
 
-class Image;
-
-struct IntuiMessage {
-	uint32 _msgClass;
-	uint16 _code, _qualifier, _mouseX, _mouseY, _gadgetID;
-	uint32 _seconds, _micros;
-};
-
-
-struct Gadget {
-	uint16 x, y, _gadgetID;
-	uint16 _keyEquiv; // if not zero, a key that activates gadget
-	bool isEnabled;
-	Image *_image, *_altImage;
-};
-
-typedef Common::List<Gadget *> GadgetList;
 
 // Defines for the Class variable in IntuiMessage
 #define SIZEVERIFY  0x00000001
@@ -103,13 +86,7 @@ typedef Common::List<Gadget *> GadgetList;
 //--------------------------- Function Prototypes ---------------------------
 //---------------------------------------------------------------------------
 
-Gadget *createButton(uint16 x, uint16 y, uint16 id, uint16 key, Image *im, Image *imalt);
-void freeButtonList(GadgetList *gadgetList);
-void drawGadgetList(GadgetList *gadgetList);
-void disableGadget(Gadget *curgad, uint16 pencolor);
-void enableGadget(Gadget *curgad);
-IntuiMessage *getMsg();
 
 } // End of namespace Lab
 
-#endif // LAB_INTEFARCE_H
+#endif // LAB_INTERFARCE_H
