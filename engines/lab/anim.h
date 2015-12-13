@@ -69,7 +69,6 @@ private:
 	bool _donePal;
 	uint16 _frameNum;
 	bool _playOnce;
-	byte *_buffer;
 	byte *_diffFile;
 	uint32 _size;
 	bool _stopPlayingEnd;

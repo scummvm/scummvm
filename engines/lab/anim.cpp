@@ -55,7 +55,6 @@ Anim::Anim(LabEngine *vm) : _vm(vm) {
 	_donePal = false;
 	_frameNum = 0;
 	_playOnce = false;
-	_buffer = nullptr;
 	_diffFile = nullptr;
 	_size = 0;
 	_rawDiffBM._bytesPerRow = 0;
@@ -76,6 +75,8 @@ Anim::Anim(LabEngine *vm) : _vm(vm) {
 }
 
 void Anim::diffNextFrame(bool onlyDiffData) {
+	byte *buffer = _diffFile;
+
 	if (_header == 65535)
 		// Already done.
 		return;
@@ -119,7 +120,7 @@ void Anim::diffNextFrame(bool onlyDiffData) {
 			_frameNum++;
 
 			if ((_frameNum == 1) && (_continuous || (!_playOnce)))
-				_buffer = _diffFile;
+				buffer = _diffFile;
 
 			_isAnim = (_frameNum >= 3) && (!_playOnce);
 			_curBit = 0;
@@ -235,7 +236,7 @@ void Anim::diffNextFrame(bool onlyDiffData) {
 
 			// Random frame number so it never gets back to 2
 			_frameNum = 4;
-			_diffFile = _buffer;
+			_diffFile = buffer;
 			break;
 
 		default:
