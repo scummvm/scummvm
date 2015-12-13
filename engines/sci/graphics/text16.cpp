@@ -144,8 +144,14 @@ int16 GfxText16::CodeProcessing(const char *&text, GuiResourceId orgFontId, int1
 }
 
 // Has actually punctuation and characters in it, that may not be the first in a line
-// Table from Quest for Glory 1 PC-98
+// SCI1 didn't check for exclamation nor question marks, us checking for those too shouldn't be bad
 static const uint16 text16_shiftJIS_punctuation[] = {
+	0x4181,	0x4281, 0x7681, 0x7881, 0x4981, 0x4881, 0
+};
+
+// Table from Quest for Glory 1 PC-98 (SCI01)
+// has pronunciation and small combining form characters on top (details right after this table)
+static const uint16 text16_shiftJIS_punctuation_SCI01[] = {
 	0x9F82, 0xA182, 0xA382, 0xA582, 0xA782, 0xC182, 0xE182, 0xE382, 0xE582, 0xEC82,	0x4083, 0x4283,
 	0x4483, 0x4683, 0x4883, 0x6283, 0x8383, 0x8583, 0x8783, 0x8E83, 0x9583, 0x9683,	0x5B81, 0x4181,
 	0x4281, 0x7681, 0x7881, 0x4981, 0x4881, 0
@@ -153,6 +159,25 @@ static const uint16 text16_shiftJIS_punctuation[] = {
 
 // Police Quest 2 (SCI0) only checked for: 0x4181, 0x4281, 0x7681, 0x7881, 0x4981, 0x4881
 // Castle of Dr. Brain/King's Quest 5/Space Quest 4 (SCI1) only checked for: 0x4181, 0x4281, 0x7681, 0x7881
+
+// SCI0/SCI01/SCI1:
+// 0x4181 -> comma,                 0x4281 -> period / full stop
+// 0x7681 -> ending quotation mark, 0x7881 -> secondary quotation mark
+
+// SCI0/SCI01:
+// 0x4981 -> exclamation mark,      0x4881 -> question mark
+
+// SCI01 (Quest for Glory only):
+// 0x9F82, 0xA182, 0xA382, 0xA582, 0xA782 -> specifies vowel part of prev. hiragana char or pronunciation/extension of vowel
+// 0xC182 -> pronunciation
+// 0xE182, 0xE382, 0xE582, 0xEC82 -> small combining form of hiragana
+// 0x4083, 0x4283, 0x4483, 0x4683, 0x4883 -> small combining form of katagana
+// 0x6283 -> glottal stop / sokuon
+// 0x8383, 0x8583 0x8783, 0x8E83 -> small combining form of katagana
+// 0x9583 -> combining form
+// 0x9683 -> abbreviation for the kanji (ka), the counter for months, places or provisions
+// 0x5b81 -> low line / underscore (full width)
+
 
 // return max # of chars to fit maxwidth with full words, does not include
 // breaking space
@@ -269,15 +294,24 @@ int16 GfxText16::GetLongest(const char *&textPtr, int16 maxWidth, GuiResourceId 
 			// Note: PQ2 PC-98 only went back 1 character and not multiple ones
 			uint nonBreakingPos = 0;
 
+			const uint16 *punctuationTable;
+
+			if (getSciVersion() != SCI_VERSION_01) {
+				punctuationTable = text16_shiftJIS_punctuation;
+			} else {
+				// Quest for Glory 1 PC-98 only
+				punctuationTable = text16_shiftJIS_punctuation_SCI01;
+			}
+
 			while (1) {
 				// Look up if character shouldn't be the first on a new line
 				nonBreakingPos = 0;
-				while (text16_shiftJIS_punctuation[nonBreakingPos]) {
-					if (text16_shiftJIS_punctuation[nonBreakingPos] == curChar)
+				while (punctuationTable[nonBreakingPos]) {
+					if (punctuationTable[nonBreakingPos] == curChar)
 						break;
 					nonBreakingPos++;
 				}
-				if (!text16_shiftJIS_punctuation[nonBreakingPos]) {
+				if (!punctuationTable[nonBreakingPos]) {
 					// character is fine
 					break;
 				}
