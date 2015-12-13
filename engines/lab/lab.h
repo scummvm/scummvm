@@ -46,7 +46,7 @@ namespace Lab {
 struct MapData;
 struct Action;
 struct CloseData;
-struct Gadget;
+struct Button;
 struct IntuiMessage;
 struct InventoryData;
 struct RoomData;
@@ -71,7 +71,7 @@ enum GameFeatures {
 
 #define ONESECOND      1000
 
-typedef Common::List<Gadget *> GadgetList;
+typedef Common::List<Button *> ButtonList;
 
 struct CrumbData {
 	uint16 _roomNum;
@@ -106,7 +106,7 @@ private:
 	uint16 _journalPage;
 	uint16 _maxRooms;
 	uint16 _monitorPage;
-	uint16 _monitorGadgetHeight;
+	uint16 _monitorButtonHeight;
 
 	uint32 _extraGameFeatures;
 
@@ -117,8 +117,8 @@ private:
 	const char *_monitorTextFilename;
 
 	CloseDataPtr _closeDataPtr;
-	GadgetList _journalGadgetList;
-	GadgetList _mapGadgetList;
+	ButtonList _journalButtonList;
+	ButtonList _mapButtonList;
 	Image *_imgMap, *_imgRoom, *_imgUpArrowRoom, *_imgDownArrowRoom, *_imgBridge;
 	Image *_imgHRoom, *_imgVRoom, *_imgMaze, *_imgHugeMaze, *_imgPath, *_imgMapNorth;
 	Image *_imgMapEast, *_imgMapSouth, *_imgMapWest, *_imgXMark;
@@ -156,8 +156,8 @@ public:
 	CrumbData _breadCrumbs[MAX_CRUMBS];
 	DisplayMan *_graphics;
 	EventManager *_event;
-	GadgetList _invGadgetList;
-	GadgetList _moveGadgetList;
+	ButtonList _invButtonList;
+	ButtonList _moveButtonList;
 	Image *_invImages[10];
 	Image *_moveImages[20];
 	LargeSet *_conditions, *_roomsFound;
@@ -223,7 +223,7 @@ private:
 	void freeMapData();
 	void freeScreens();
 	bool fromCrumbs(uint32 tmpClass, uint16 code, uint16 qualifier, Common::Point tmpPos,
-		uint16 &curInv, IntuiMessage *curMsg, bool &forceDraw, uint16 gadgetId, uint16 &actionMode);
+		uint16 &curInv, IntuiMessage *curMsg, bool &forceDraw, uint16 buttonId, uint16 &actionMode);
 	const char *getInvName(uint16 curInv);
 	uint16 getLowerFloor(uint16 floorNum);
 	CloseData *getObject(Common::Point pos, CloseDataPtr closePtr);
@@ -237,7 +237,7 @@ private:
 	void showLab2Teaser();
 	void mayShowCrumbIndicator();
 	void mayShowCrumbIndicatorOff();
-	void perFlipGadget(uint16 gadID);
+	void perFlipButton(uint16 gadID);
 	uint16 processArrow(uint16 curDirection, uint16 arrow);
 	void processJournal();
 	void processMap(uint16 curRoom);

@@ -78,9 +78,9 @@ void LabEngine::loadMapData() {
 	_imgPath = new Image(mapImages);
 	_imgBridge = new Image(mapImages);
 
-	_mapGadgetList.push_back(_event->createButton( 8,  _utils->vgaScaleY(105), 0, VKEY_LTARROW, new Image(mapImages), new Image(mapImages)));	// back
-	_mapGadgetList.push_back(_event->createButton( 55, _utils->vgaScaleY(105), 1, VKEY_UPARROW, new Image(mapImages), new Image(mapImages)));	// up
-	_mapGadgetList.push_back(_event->createButton(101, _utils->vgaScaleY(105), 2, VKEY_DNARROW, new Image(mapImages), new Image(mapImages)));	// down
+	_mapButtonList.push_back(_event->createButton( 8,  _utils->vgaScaleY(105), 0, VKEY_LTARROW, new Image(mapImages), new Image(mapImages)));	// back
+	_mapButtonList.push_back(_event->createButton( 55, _utils->vgaScaleY(105), 1, VKEY_UPARROW, new Image(mapImages), new Image(mapImages)));	// up
+	_mapButtonList.push_back(_event->createButton(101, _utils->vgaScaleY(105), 2, VKEY_DNARROW, new Image(mapImages), new Image(mapImages)));	// down
 
 	delete mapImages;
 
@@ -103,7 +103,7 @@ void LabEngine::loadMapData() {
 }
 
 void LabEngine::freeMapData() {
-	_event->freeButtonList(&_mapGadgetList);
+	_event->freeButtonList(&_mapButtonList);
 
 	delete _imgMap;
 	delete _imgRoom;
@@ -368,7 +368,7 @@ void LabEngine::drawMap(uint16 curRoom, uint16 curMsg, uint16 floorNum, bool fad
 	_graphics->rectFill(0, 0, _graphics->_screenWidth - 1, _graphics->_screenHeight - 1);
 
 	_imgMap->drawImage(0, 0);
-	_event->drawGadgetList(&_mapGadgetList);
+	_event->drawButtonList(&_mapButtonList);
 
 	for (uint16 i = 1; i <= _maxRooms; i++) {
 		if ((_maps[i]._pageNumber == floorNum) && _roomsFound->in(i) && _maps[i]._x) {
@@ -383,18 +383,18 @@ void LabEngine::drawMap(uint16 curRoom, uint16 curMsg, uint16 floorNum, bool fad
 	if ((_maps[curRoom]._pageNumber == floorNum) && _roomsFound->in(curRoom) && _maps[curRoom]._x)
 		drawRoomMap(curRoom, true);
 
-	Gadget *upGadget = _event->getGadget(1);
-	Gadget *downGadget = _event->getGadget(2);
+	Button *upButton = _event->getButton(1);
+	Button *downButton = _event->getButton(2);
 
 	if (getUpperFloor(floorNum) != kFloorNone)
-		_event->enableGadget(upGadget);
+		_event->enableButton(upButton);
 	else
-		_event->disableGadget(upGadget, 12);
+		_event->disableButton(upButton, 12);
 
 	if (getLowerFloor(floorNum) != kFloorNone)
-		_event->enableGadget(downGadget);
+		_event->enableButton(downButton);
 	else
-		_event->disableGadget(downGadget, 12);
+		_event->disableButton(downButton, 12);
 
 	// Labyrinth specific code
 	if (floorNum == kFloorLower) {
@@ -474,7 +474,7 @@ void LabEngine::processMap(uint16 curRoom) {
 		} else {
 			uint32 msgClass  = msg->_msgClass;
 			uint16 msgCode   = msg->_code;
-			uint16 gadgetID  = msg->_gadgetID;
+			uint16 buttonID  = msg->_buttonID;
 			uint16 qualifier = msg->_qualifier;
 			uint16 mouseX    = msg->_mouseX;
 			uint16 mouseY    = msg->_mouseY;
@@ -482,11 +482,11 @@ void LabEngine::processMap(uint16 curRoom) {
 			if (((msgClass == MOUSEBUTTONS) && (IEQUALIFIER_RIGHTBUTTON & qualifier)) || ((msgClass == RAWKEY) && (msgCode == 27)))
 				return;
 
-			if (msgClass == GADGETUP) {
-				if (gadgetID == 0) {
+			if (msgClass == BUTTONUP) {
+				if (buttonID == 0) {
 					// Quit menu button
 					return;
-				} else if (gadgetID == 1) {
+				} else if (buttonID == 1) {
 					// Up arrow
 					uint16 upperFloor = getUpperFloor(curFloor);
 					if (upperFloor != kFloorNone) {
@@ -495,7 +495,7 @@ void LabEngine::processMap(uint16 curRoom) {
 						drawMap(curRoom, curMsg, curFloor, false, false);
 						_graphics->fade(true, 0);
 					}
-				} else if (gadgetID == 2) {
+				} else if (buttonID == 2) {
 					// Down arrow
 					uint16 lowerFloor = getLowerFloor(curFloor);
 					if (lowerFloor != kFloorNone) {
@@ -613,12 +613,12 @@ void LabEngine::doMap(uint16 curRoom) {
 	else if (_direction == WEST)
 		_imgXMark = _imgMapWest;
 
-	_event->attachGadgetList(&_mapGadgetList);
+	_event->attachButtonList(&_mapButtonList);
 	drawMap(curRoom, curRoom, _maps[curRoom]._pageNumber, false, true);
 	_event->mouseShow();
 	_graphics->screenUpdate();
 	processMap(curRoom);
-	_event->attachGadgetList(nullptr);
+	_event->attachButtonList(nullptr);
 	_graphics->fade(false, 0);
 	_graphics->blackAllScreen();
 	_event->mouseHide();

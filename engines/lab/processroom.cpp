@@ -176,7 +176,7 @@ void LabEngine::drawDirection(CloseDataPtr closePtr) {
 }
 
 /**
- * process a arrow gadget movement.
+ * process a arrow button movement.
  */
 uint16 LabEngine::processArrow(uint16 curDirection, uint16 arrow) {
 	if (arrow == 1) { // Forward

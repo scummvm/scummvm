@@ -135,19 +135,19 @@ void LabEngine::freeScreens() {
 }
 
 /**
- * Permanently flips the imagery of a gadget.
+ * Permanently flips the imagery of a button.
  */
-void LabEngine::perFlipGadget(uint16 gadgetId) {
-	for (GadgetList::iterator gadget = _moveGadgetList.begin(); gadget != _moveGadgetList.end(); ++gadget) {
-		Gadget *topGadget = *gadget;
-		if (topGadget->_gadgetID == gadgetId) {
-			Image *tmpImage = topGadget->_image;
-			topGadget->_image = topGadget->_altImage;
-			topGadget->_altImage = tmpImage;
+void LabEngine::perFlipButton(uint16 buttonId) {
+	for (ButtonList::iterator button = _moveButtonList.begin(); button != _moveButtonList.end(); ++button) {
+		Button *topButton = *button;
+		if (topButton->_buttonID == buttonId) {
+			Image *tmpImage = topButton->_image;
+			topButton->_image = topButton->_altImage;
+			topButton->_altImage = tmpImage;
 
 			if (!_alternate) {
 				_event->mouseHide();
-				topGadget->_image->drawImage(topGadget->x, topGadget->y);
+				topButton->_image->drawImage(topButton->x, topButton->y);
 				_event->mouseShow();
 			}
 
@@ -260,7 +260,7 @@ const char *LabEngine::getInvName(uint16 curInv) {
  */
 void LabEngine::interfaceOff() {
 	if (!_interfaceOff) {
-		_event->attachGadgetList(nullptr);
+		_event->attachButtonList(nullptr);
 		_event->mouseHide();
 		_interfaceOff = true;
 	}
@@ -276,15 +276,15 @@ void LabEngine::interfaceOn() {
 	}
 
 	if (_graphics->_longWinInFront)
-		_event->attachGadgetList(nullptr);
+		_event->attachButtonList(nullptr);
 	else if (_alternate)
-		_event->attachGadgetList(&_invGadgetList);
+		_event->attachButtonList(&_invButtonList);
 	else
-		_event->attachGadgetList(&_moveGadgetList);
+		_event->attachButtonList(&_moveButtonList);
 }
 
 /**
- * If the user hits the "Use" gadget; things that can get used on themselves.
+ * If the user hits the "Use" button; things that can get used on themselves.
  */
 bool LabEngine::doUse(uint16 curInv) {
 	switch (curInv) {
@@ -427,7 +427,7 @@ void LabEngine::mainGameLoop() {
 	_graphics->_longWinInFront = false;
 	_graphics->drawPanel();
 
-	perFlipGadget(actionMode);
+	perFlipButton(actionMode);
 
 	// Set up initial picture.
 	while (1) {
@@ -534,7 +534,7 @@ void LabEngine::mainGameLoop() {
 					gotMessage = true;
 					mayShowCrumbIndicator();
 					_graphics->screenUpdate();
-					if (!fromCrumbs(GADGETUP, code, 0, _event->updateAndGetMousePos(), curInv, curMsg, forceDraw, code, actionMode))
+					if (!fromCrumbs(BUTTONUP, code, 0, _event->updateAndGetMousePos(), curInv, curMsg, forceDraw, code, actionMode))
 						break;
 				}
 			}
@@ -549,7 +549,7 @@ void LabEngine::mainGameLoop() {
 			curPos.y  = curMsg->_mouseY;
 
 			_followingCrumbs = false;
-			if (!fromCrumbs(curMsg->_msgClass, curMsg->_code, curMsg->_qualifier, curPos, curInv, curMsg, forceDraw, curMsg->_gadgetID, actionMode))
+			if (!fromCrumbs(curMsg->_msgClass, curMsg->_code, curMsg->_qualifier, curPos, curInv, curMsg, forceDraw, curMsg->_buttonID, actionMode))
 				break;
 		}
 	}
@@ -596,7 +596,7 @@ void LabEngine::showLab2Teaser() {
 }
 
 bool LabEngine::fromCrumbs(uint32 tmpClass, uint16 code, uint16 qualifier, Common::Point tmpPos,
-			uint16 &curInv, IntuiMessage *curMsg, bool &forceDraw, uint16 gadgetId, uint16 &actionMode) {
+			uint16 &curInv, IntuiMessage *curMsg, bool &forceDraw, uint16 buttonId, uint16 &actionMode) {
 	uint32 msgClass = tmpClass;
 	Common::Point curPos = tmpPos;
 
@@ -641,7 +641,7 @@ bool LabEngine::fromCrumbs(uint32 tmpClass, uint16 code, uint16 qualifier, Commo
 						_graphics->_doNotDrawMessage = false;
 
 						_mainDisplay = true;
-						// Sets the correct gadget list
+						// Sets the correct button list
 						interfaceOn();
 						_graphics->drawPanel();
 						drawRoomMessage(curInv, _closeDataPtr);
@@ -710,9 +710,9 @@ bool LabEngine::fromCrumbs(uint32 tmpClass, uint16 code, uint16 qualifier, Commo
 			drawRoomMessage(curInv, _closeDataPtr);
 			_graphics->screenUpdate();
 		}
-	} else if ((msgClass == GADGETUP) && !_alternate) {
-		if (gadgetId <= 5) {
-			if ((actionMode == 4) && (gadgetId == 4) && _closeDataPtr) {
+	} else if ((msgClass == BUTTONUP) && !_alternate) {
+		if (buttonId <= 5) {
+			if ((actionMode == 4) && (buttonId == 4) && _closeDataPtr) {
 				doMainView(&_closeDataPtr);
 
 				_anim->_doBlack = true;
@@ -720,13 +720,13 @@ bool LabEngine::fromCrumbs(uint32 tmpClass, uint16 code, uint16 qualifier, Commo
 				_closeDataPtr = nullptr;
 				mayShowCrumbIndicator();
 				_graphics->screenUpdate();
-			} else if (gadgetId == 5) {
+			} else if (buttonId == 5) {
 				eatMessages();
 
 				_alternate = true;
 				_anim->_doBlack = true;
 				_graphics->_doNotDrawMessage = false;
-				// Sets the correct gadget list
+				// Sets the correct button list
 				interfaceOn();
 				_mainDisplay = false;
 
@@ -743,29 +743,29 @@ bool LabEngine::fromCrumbs(uint32 tmpClass, uint16 code, uint16 qualifier, Commo
 				_graphics->screenUpdate();
 			} else {
 				uint16 oldActionMode = actionMode;
-				actionMode = gadgetId;
+				actionMode = buttonId;
 
 				if (oldActionMode < 5)
-					perFlipGadget(oldActionMode);
+					perFlipButton(oldActionMode);
 
-				perFlipGadget(actionMode);
+				perFlipButton(actionMode);
 
-				if (gadgetId <= 4)
-					drawStaticMessage(kTextTakeWhat + gadgetId);
+				if (buttonId <= 4)
+					drawStaticMessage(kTextTakeWhat + buttonId);
 				_graphics->screenUpdate();
 			}
-		} else if (gadgetId == 9) {
+		} else if (buttonId == 9) {
 			doUse(kItemMap);
 
 			mayShowCrumbIndicator();
 			_graphics->screenUpdate();
-		} else if (gadgetId >= 6) {
-			// Arrow Gadgets
+		} else if (buttonId >= 6) {
+			// Arrow Buttons
 			_closeDataPtr = nullptr;
 			wrkClosePtr = nullptr;
 
-			if ((gadgetId == 6) || (gadgetId == 8)) {
-				if (gadgetId == 6)
+			if ((buttonId == 6) || (buttonId == 8)) {
+				if (buttonId == 6)
 					drawStaticMessage(kTextTurnLeft);
 				else
 					drawStaticMessage(kTextTurnRight);
@@ -774,7 +774,7 @@ bool LabEngine::fromCrumbs(uint32 tmpClass, uint16 code, uint16 qualifier, Commo
 
 				oldDirection = _direction;
 
-				uint16 newDir = processArrow(_direction, gadgetId - 6);
+				uint16 newDir = processArrow(_direction, buttonId - 6);
 				doTurn(_direction, newDir, &_closeDataPtr);
 				_anim->_doBlack = true;
 				_direction = newDir;
@@ -782,7 +782,7 @@ bool LabEngine::fromCrumbs(uint32 tmpClass, uint16 code, uint16 qualifier, Commo
 
 				mayShowCrumbIndicator();
 				_graphics->screenUpdate();
-			} else if (gadgetId == 7) {
+			} else if (buttonId == 7) {
 				uint16 oldRoomNum = _roomNum;
 
 				if (doGoForward(&_closeDataPtr)) {
@@ -790,7 +790,7 @@ bool LabEngine::fromCrumbs(uint32 tmpClass, uint16 code, uint16 qualifier, Commo
 						_anim->_doBlack = true;
 				} else {
 					_anim->_doBlack = true;
-					_direction = processArrow(_direction, gadgetId - 6);
+					_direction = processArrow(_direction, buttonId - 6);
 
 					if (oldRoomNum != _roomNum) {
 						drawStaticMessage(kTextGoForward);
@@ -847,17 +847,17 @@ bool LabEngine::fromCrumbs(uint32 tmpClass, uint16 code, uint16 qualifier, Commo
 				_graphics->screenUpdate();
 			}
 		}
-	} else if ((msgClass == GADGETUP) && _alternate) {
+	} else if ((msgClass == BUTTONUP) && _alternate) {
 		_anim->_doBlack = true;
 
-		if (gadgetId == 0) {
+		if (buttonId == 0) {
 			eatMessages();
 			_alternate = false;
 			_anim->_doBlack = true;
 			_graphics->_doNotDrawMessage = false;
 
 			_mainDisplay = true;
-			// Sets the correct gadget list
+			// Sets the correct button list
 			interfaceOn();
 			_graphics->drawPanel();
 			drawRoomMessage(curInv, _closeDataPtr);
@@ -865,9 +865,9 @@ bool LabEngine::fromCrumbs(uint32 tmpClass, uint16 code, uint16 qualifier, Commo
 			_graphics->screenUpdate();
 		}
 
-		gadgetId--;
+		buttonId--;
 
-		if (gadgetId == 0) {
+		if (buttonId == 0) {
 			interfaceOff();
 			_anim->stopDiff();
 			_curFileName = " ";
@@ -889,21 +889,21 @@ bool LabEngine::fromCrumbs(uint32 tmpClass, uint16 code, uint16 qualifier, Commo
 				g_system->delayMillis(1000);
 			}
 			_graphics->screenUpdate();
-		} else if (gadgetId == 1) {
+		} else if (buttonId == 1) {
 			if (!doUse(curInv)) {
 				uint16 oldActionMode = actionMode;
 				// Use button
 				actionMode = 5;
 
 				if (oldActionMode < 5)
-					perFlipGadget(oldActionMode);
+					perFlipButton(oldActionMode);
 
 				drawStaticMessage(kTextUseOnWhat);
 				_mainDisplay = true;
 
 				_graphics->screenUpdate();
 			}
-		} else if (gadgetId == 2) {
+		} else if (buttonId == 2) {
 			_mainDisplay = !_mainDisplay;
 
 			if ((curInv == 0) || (curInv > _numInv)) {
@@ -917,30 +917,30 @@ bool LabEngine::fromCrumbs(uint32 tmpClass, uint16 code, uint16 qualifier, Commo
 				_nextFileName = getInvName(curInv);
 
 			_graphics->screenUpdate();
-		} else if (gadgetId == 3) {
-			// Left gadget
+		} else if (buttonId == 3) {
+			// Left button
 			decIncInv(&curInv, true);
 			lastInv = curInv;
 			_graphics->_doNotDrawMessage = false;
 			drawRoomMessage(curInv, _closeDataPtr);
 
 			_graphics->screenUpdate();
-		} else if (gadgetId == 4) {
-			// Right gadget
+		} else if (buttonId == 4) {
+			// Right button
 			decIncInv(&curInv, false);
 			lastInv = curInv;
 			_graphics->_doNotDrawMessage = false;
 			drawRoomMessage(curInv, _closeDataPtr);
 
 			_graphics->screenUpdate();
-		} else if (gadgetId == 5) {
+		} else if (buttonId == 5) {
 			// bread crumbs
 			_breadCrumbs[0]._roomNum = 0;
 			_numCrumbs = 0;
 			_droppingCrumbs = true;
 			mayShowCrumbIndicator();
 			_graphics->screenUpdate();
-		} else if (gadgetId == 6) {
+		} else if (buttonId == 6) {
 			// follow crumbs
 			if (_droppingCrumbs) {
 				if (_numCrumbs > 0) {
@@ -958,7 +958,7 @@ bool LabEngine::fromCrumbs(uint32 tmpClass, uint16 code, uint16 qualifier, Commo
 					_graphics->_doNotDrawMessage = false;
 
 					_mainDisplay = true;
-					// Sets the correct gadget list
+					// Sets the correct button list
 					interfaceOn();
 					_graphics->drawPanel();
 					drawRoomMessage(curInv, _closeDataPtr);
@@ -1085,7 +1085,7 @@ bool LabEngine::fromCrumbs(uint32 tmpClass, uint16 code, uint16 qualifier, Commo
 		_anim->_doBlack = true;
 		_graphics->_doNotDrawMessage = false;
 		_mainDisplay = true;
-		// Sets the correct gadget list
+		// Sets the correct button list
 		interfaceOn();
 
 		if (_alternate) {

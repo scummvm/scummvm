@@ -60,49 +60,49 @@ static const byte mouseData[] = {
 #define MOUSE_HEIGHT 15
 
 /**
- * Checks whether or not the cords fall within one of the gadgets in a list
- * of gadgets.
+ * Checks whether or not the cords fall within one of the buttons in a list
+ * of buttons.
  */
-Gadget *EventManager::checkGadgetHit(GadgetList *gadgetList, Common::Point pos) {
-	for (GadgetList::iterator gadgetItr = gadgetList->begin(); gadgetItr != gadgetList->end(); ++gadgetItr) {
-		Gadget *gadget = *gadgetItr;
-		Common::Rect gadgetRect(gadget->x, gadget->y, gadget->x + gadget->_image->_width - 1, gadget->y + gadget->_image->_height - 1);
+Button *EventManager::checkButtonHit(ButtonList *buttonList, Common::Point pos) {
+	for (ButtonList::iterator buttonItr = buttonList->begin(); buttonItr != buttonList->end(); ++buttonItr) {
+		Button *button = *buttonItr;
+		Common::Rect buttonRect(button->x, button->y, button->x + button->_image->_width - 1, button->y + button->_image->_height - 1);
 
-		if (gadgetRect.contains(pos) && gadget->isEnabled) {
+		if (buttonRect.contains(pos) && button->isEnabled) {
 			if (_vm->_isHiRes) {
-				_hitGadget = gadget;
+				_hitButton = button;
 			} else {
 				mouseHide();
-				gadget->_altImage->drawImage(gadget->x, gadget->y);
+				button->_altImage->drawImage(button->x, button->y);
 				mouseShow();
 
 				for (uint16 i = 0; i < 3; i++)
 					_vm->waitTOF();
 
 				mouseHide();
-				gadget->_image->drawImage(gadget->x, gadget->y);
+				button->_image->drawImage(button->x, button->y);
 				mouseShow();
 			}
 
-			return gadget;
+			return button;
 		}
 	}
 
 	return NULL;
 }
 
-void EventManager::attachGadgetList(GadgetList *gadgetList) {
-	if (_screenGadgetList != gadgetList)
-		_lastGadgetHit = nullptr;
+void EventManager::attachButtonList(ButtonList *buttonList) {
+	if (_screenButtonList != buttonList)
+		_lastButtonHit = nullptr;
 
-	_screenGadgetList = gadgetList;
+	_screenButtonList = buttonList;
 }
 
-Gadget *EventManager::getGadget(uint16 id) {
-	for (GadgetList::iterator gadgetItr = _screenGadgetList->begin(); gadgetItr != _screenGadgetList->end(); ++gadgetItr) {
-		Gadget *gadget = *gadgetItr;
-		if (gadget->_gadgetID == id)
-			return gadget;
+Button *EventManager::getButton(uint16 id) {
+	for (ButtonList::iterator buttonItr = _screenButtonList->begin(); buttonItr != _screenButtonList->end(); ++buttonItr) {
+		Button *button = *buttonItr;
+		if (button->_buttonID == id)
+			return button;
 	}
 
 	return nullptr;
@@ -113,9 +113,9 @@ EventManager::EventManager(LabEngine *vm) : _vm(vm) {
 	_rightClick = false;
 
 	_mouseHidden = true;
-	_lastGadgetHit = nullptr;
-	_screenGadgetList = nullptr;
-	_hitGadget = nullptr;
+	_lastButtonHit = nullptr;
+	_screenButtonList = nullptr;
+	_hitButton = nullptr;
 	_nextKeyIn = 0;
 	_nextKeyOut = 0;
 	_mousePos = Common::Point(0, 0);
@@ -129,12 +129,12 @@ EventManager::EventManager(LabEngine *vm) : _vm(vm) {
 void EventManager::mouseHandler(int flag, Common::Point pos) {
 	if (flag & 0x02) {
 		// Left mouse button click
-		Gadget *tmp = NULL;
-		if (_screenGadgetList)
-			tmp = checkGadgetHit(_screenGadgetList, _vm->_isHiRes ? pos : Common::Point(pos.x / 2, pos.y));
+		Button *tmp = NULL;
+		if (_screenButtonList)
+			tmp = checkButtonHit(_screenButtonList, _vm->_isHiRes ? pos : Common::Point(pos.x / 2, pos.y));
 
 		if (tmp)
-			_lastGadgetHit = tmp;
+			_lastButtonHit = tmp;
 		else
 			_leftClick = true;
 	}
@@ -150,19 +150,19 @@ void EventManager::updateMouse() {
 	if (!_mouseHidden)
 		doUpdateDisplay = true;
 
-	if (_hitGadget) {
+	if (_hitButton) {
 		mouseHide();
-		_hitGadget->_altImage->drawImage(_hitGadget->x, _hitGadget->y);
+		_hitButton->_altImage->drawImage(_hitButton->x, _hitButton->y);
 		mouseShow();
 
 		for (uint16 i = 0; i < 3; i++)
 			_vm->waitTOF();
 
 		mouseHide();
-		_hitGadget->_image->drawImage(_hitGadget->x, _hitGadget->y);
+		_hitButton->_image->drawImage(_hitButton->x, _hitButton->y);
 		mouseShow();
 		doUpdateDisplay = true;
-		_hitGadget = nullptr;
+		_hitButton = nullptr;
 	}
 
 	if (doUpdateDisplay)
@@ -251,10 +251,10 @@ bool EventManager::mouseButton(uint16 *x, uint16 *y, bool leftbutton) {
 	return false;
 }
 
-Gadget *EventManager::mouseGadget() {
-	Gadget *temp = _lastGadgetHit;
+Button *EventManager::mouseButton() {
+	Button *temp = _lastButtonHit;
 
-	_lastGadgetHit = nullptr;
+	_lastButtonHit = nullptr;
 	return temp;
 }
 
