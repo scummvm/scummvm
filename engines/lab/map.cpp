@@ -33,7 +33,6 @@
 #include "lab/dispman.h"
 #include "lab/eventman.h"
 #include "lab/image.h"
-#include "lab/interface.h"
 #include "lab/labsets.h"
 #include "lab/music.h"
 #include "lab/processroom.h"
@@ -480,7 +479,7 @@ void LabEngine::processMap(uint16 curRoom) {
 			uint16 mouseX    = msg->_mouseX;
 			uint16 mouseY    = msg->_mouseY;
 
-			if (((msgClass == MOUSEBUTTONS) && (IEQUALIFIER_RBUTTON & qualifier)) || ((msgClass == RAWKEY) && (msgCode == 27)))
+			if (((msgClass == MOUSEBUTTONS) && (IEQUALIFIER_RIGHTBUTTON & qualifier)) || ((msgClass == RAWKEY) && (msgCode == 27)))
 				return;
 
 			if (msgClass == GADGETUP) {

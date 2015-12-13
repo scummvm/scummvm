@@ -35,7 +35,6 @@
 #include "lab/dispman.h"
 #include "lab/eventman.h"
 #include "lab/image.h"
-#include "lab/interface.h"
 #include "lab/utils.h"
 
 namespace Lab {
@@ -158,7 +157,7 @@ IntuiMessage *LabEngine::getMsg() {
 		return &message;
 	} else if (_event->mouseButton(&message._mouseX, &message._mouseY, false)) {
 		// Right Button
-		message._qualifier = IEQUALIFIER_RBUTTON | qualifiers;
+		message._qualifier = IEQUALIFIER_RIGHTBUTTON | qualifiers;
 		message._msgClass = MOUSEBUTTONS;
 		return &message;
 	} else if (_event->keyPress(&message._code)) {

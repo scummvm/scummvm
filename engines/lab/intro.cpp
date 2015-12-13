@@ -33,7 +33,6 @@
 #include "lab/anim.h"
 #include "lab/dispman.h"
 #include "lab/eventman.h"
-#include "lab/interface.h"
 #include "lab/intro.h"
 #include "lab/music.h"
 #include "lab/resource.h"
@@ -61,7 +60,7 @@ void Intro::introEatMessages() {
 		if (msg == NULL)
 			return;
 		else {
-			if (((msg->_msgClass == MOUSEBUTTONS) && (IEQUALIFIER_RBUTTON & msg->_qualifier)) ||
+			if (((msg->_msgClass == MOUSEBUTTONS) && (IEQUALIFIER_RIGHTBUTTON & msg->_qualifier)) ||
 				  ((msg->_msgClass == RAWKEY) && (msg->_code == 27))
 				)
 				_quitIntro = true;
@@ -156,7 +155,7 @@ void Intro::doPictText(const char *filename, TextFont *msgFont, bool isScreen) {
 			qualifier = msg->_qualifier;
 			code      = msg->_code;
 
-			if (((cls == MOUSEBUTTONS) && (IEQUALIFIER_RBUTTON & qualifier)) ||
+			if (((cls == MOUSEBUTTONS) && (IEQUALIFIER_RIGHTBUTTON & qualifier)) ||
 				  ((cls == RAWKEY) && (code == 27))) {
 				_quitIntro = true;
 
