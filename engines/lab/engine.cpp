@@ -588,24 +588,26 @@ bool LabEngine::fromCrumbs(uint32 tmpClass, uint16 code, uint16 qualifier, Commo
 	_anim->_doBlack = false;
 
 	if ((msgClass == RAWKEY) && (!_graphics->_longWinInFront)) {
+		byte codeLower = tolower(code);
+
 		if (code == 13) {
 			// The return key
 			msgClass = MOUSEBUTTONS;
 			qualifier = IEQUALIFIER_LEFTBUTTON;
 			curPos = _event->getMousePos();
-		} else if (getPlatform() == Common::kPlatformWindows && (code == 'b' || code == 'B')) {
+		} else if (getPlatform() == Common::kPlatformWindows && codeLower == 'b') {
 			// Start bread crumbs
 			_breadCrumbs[0]._roomNum = 0;
 			_numCrumbs = 0;
 			_droppingCrumbs = true;
 			mayShowCrumbIndicator();
 			_graphics->screenUpdate();
-		} else if (code == 'f' || code == 'F' || code == 'r' || code == 'R') {
+		} else if (codeLower == 'f' || codeLower == 'r') {
 			// Follow bread crumbs
 			if (_droppingCrumbs) {
 				if (_numCrumbs > 0) {
 					_followingCrumbs = true;
-					_followCrumbsFast = (code == 'r' || code == 'R');
+					_followCrumbsFast = (codeLower == 'r');
 					_isCrumbTurning = false;
 					_isCrumbWaiting = false;
 					uint32 t = g_system->getMillis();
@@ -634,11 +636,10 @@ bool LabEngine::fromCrumbs(uint32 tmpClass, uint16 code, uint16 qualifier, Commo
 					_graphics->screenUpdate();
 				}
 			}
-		} else if ((code == 315) || (code == 'x') || (code == 'X') || (code == 'q') || (code == 'Q')) {
+		} else if (code == 315 || codeLower == 'x' || codeLower == 'q') {
 			// Quit?
 			_graphics->_doNotDrawMessage = false;
 			_graphics->drawMessage("Do you want to quit? (Y/N)");
-			doit = false;
 			eatMessages();
 			interfaceOff();
 
@@ -653,9 +654,10 @@ bool LabEngine::fromCrumbs(uint32 tmpClass, uint16 code, uint16 qualifier, Commo
 					_anim->diffNextFrame();
 				} else {
 					if (curMsg->_msgClass == RAWKEY) {
-						if ((curMsg->_code == 'Y') || (curMsg->_code == 'y') || (curMsg->_code == 'Q') || (curMsg->_code == 'q')) {
-							doit = true;
-							break;
+						codeLower = tolower(curMsg->_code);
+						if (codeLower == 'y' || codeLower == 'q') {
+							_anim->stopDiff();
+							return false;
 						} else if (curMsg->_code < 128) {
 							break;
 						}
@@ -665,13 +667,8 @@ bool LabEngine::fromCrumbs(uint32 tmpClass, uint16 code, uint16 qualifier, Commo
 				}
 			}
 
-			if (doit) {
-				_anim->stopDiff();
-				return false;
-			} else {
-				forceDraw = true;
-				interfaceOn();
-			}
+			forceDraw = true;
+			interfaceOn();
 		} else if (code == 9) {
 			// TAB key
 			msgClass = DELTAMOVE;
