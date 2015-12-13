@@ -34,8 +34,9 @@
 #include "common/system.h"
 #include "common/random.h"
 #include "common/rect.h"
-
+#include "common/savefile.h"
 #include "engines/engine.h"
+#include "engines/savestate.h"
 
 #include "lab/image.h"
 
@@ -63,6 +64,13 @@ class Music;
 class Resource;
 class TilePuzzle;
 class Utils;
+
+struct SaveGameHeader {
+	byte _version;
+	SaveStateDescriptor _descr;
+	uint16 _roomNumber;
+	uint16 _direction;
+};
 
 enum GameFeatures {
 	GF_LOWRES = 1 << 0,
@@ -244,9 +252,14 @@ private:
 	void setCurrentClose(Common::Point pos, CloseDataPtr *closePtrList, bool useAbsoluteCoords);
 	bool takeItem(uint16 x, uint16 y, CloseDataPtr *closePtrList);
 	void turnPage(bool fromLeft);
+
+private:
+	bool saveGame(int slot, Common::String desc);
+	bool loadGame(int slot);
+	void writeSaveGameHeader(Common::OutSaveFile *out, const Common::String &saveName);
 };
 
-extern LabEngine *g_lab;
+bool readSaveGameHeader(Common::InSaveFile *in, SaveGameHeader &header);
 
 } // End of namespace Lab
 

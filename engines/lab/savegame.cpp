@@ -38,12 +38,10 @@
 #include "engines/savestate.h"
 
 #include "lab/lab.h"
-
 #include "lab/dispman.h"
 #include "lab/labsets.h"
 #include "lab/music.h"
 #include "lab/processroom.h"
-#include "lab/savegame.h"
 #include "lab/tilepuzzle.h"
 
 namespace Lab {
@@ -51,7 +49,7 @@ namespace Lab {
 #define SAVEGAME_ID       MKTAG('L', 'O', 'T', 'S')
 #define SAVEGAME_VERSION  1
 
-void writeSaveGameHeader(Common::OutSaveFile *out, const Common::String &saveName) {
+void LabEngine::writeSaveGameHeader(Common::OutSaveFile *out, const Common::String &saveName) {
 	out->writeUint32BE(SAVEGAME_ID);
 
 	// Write version
@@ -123,9 +121,9 @@ bool readSaveGameHeader(Common::InSaveFile *in, SaveGameHeader &header) {
 /**
  * Writes the game out to disk.
  */
-bool saveGame(int slot, Common::String desc) {
+bool LabEngine::saveGame(int slot, Common::String desc) {
 	uint16 i;
-	Common::String fileName = g_lab->generateSaveFileName(slot);
+	Common::String fileName = generateSaveFileName(slot);
 	Common::SaveFileManager *saveFileManager = g_system->getSavefileManager();
 	Common::OutSaveFile *file = saveFileManager->openForSaving(fileName);
 
@@ -134,27 +132,27 @@ bool saveGame(int slot, Common::String desc) {
 
 	// Load scene pic
 	CloseDataPtr closePtr = nullptr;
-	g_lab->_graphics->readPict(g_lab->getPictName(&closePtr), true);
+	_graphics->readPict(getPictName(&closePtr), true);
 
 	writeSaveGameHeader(file, desc);
-	file->writeUint16LE(g_lab->_roomNum);
-	file->writeUint16LE(g_lab->getDirection());
-	file->writeUint16LE(g_lab->getQuarters());
+	file->writeUint16LE(_roomNum);
+	file->writeUint16LE(getDirection());
+	file->writeUint16LE(getQuarters());
 
 	// Conditions
-	for (i = 0; i < g_lab->_conditions->_lastElement / (8 * 2); i++)
-		file->writeUint16LE(g_lab->_conditions->_array[i]);
+	for (i = 0; i < _conditions->_lastElement / (8 * 2); i++)
+		file->writeUint16LE(_conditions->_array[i]);
 
 	// Rooms found
-	for (i = 0; i < g_lab->_roomsFound->_lastElement / (8 * 2); i++)
-		file->writeUint16LE(g_lab->_roomsFound->_array[i]);
+	for (i = 0; i < _roomsFound->_lastElement / (8 * 2); i++)
+		file->writeUint16LE(_roomsFound->_array[i]);
 
-	g_lab->_tilePuzzle->save(file);
+	_tilePuzzle->save(file);
 
 	// Breadcrumbs
-	for (i = 0; i < sizeof(g_lab->_breadCrumbs); i++) {
-		file->writeUint16LE(g_lab->_breadCrumbs[i]._roomNum);
-		file->writeUint16LE(g_lab->_breadCrumbs[i]._direction);
+	for (i = 0; i < sizeof(_breadCrumbs); i++) {
+		file->writeUint16LE(_breadCrumbs[i]._roomNum);
+		file->writeUint16LE(_breadCrumbs[i]._direction);
 	}
 
 	file->flush();
@@ -167,9 +165,9 @@ bool saveGame(int slot, Common::String desc) {
 /**
  * Reads the game from disk.
  */
-bool loadGame(int slot) {
+bool LabEngine::loadGame(int slot) {
 	uint16 i;
-	Common::String fileName = g_lab->generateSaveFileName(slot);
+	Common::String fileName = generateSaveFileName(slot);
 	Common::SaveFileManager *saveFileManager = g_system->getSavefileManager();
 	Common::InSaveFile *file = saveFileManager->openForLoading(fileName);
 
@@ -178,33 +176,33 @@ bool loadGame(int slot) {
 
 	SaveGameHeader header;
 	readSaveGameHeader(file, header);
-	g_lab->_roomNum = file->readUint16LE();
-	g_lab->setDirection(file->readUint16LE());
-	g_lab->setQuarters(file->readUint16LE());
+	_roomNum = file->readUint16LE();
+	setDirection(file->readUint16LE());
+	setQuarters(file->readUint16LE());
 
 	// Conditions
-	for (i = 0; i < g_lab->_conditions->_lastElement / (8 * 2); i++)
-		g_lab->_conditions->_array[i] = file->readUint16LE();
+	for (i = 0; i < _conditions->_lastElement / (8 * 2); i++)
+		_conditions->_array[i] = file->readUint16LE();
 
 	// Rooms found
-	for (i = 0; i < g_lab->_roomsFound->_lastElement / (8 * 2); i++)
-		g_lab->_roomsFound->_array[i] = file->readUint16LE();
+	for (i = 0; i < _roomsFound->_lastElement / (8 * 2); i++)
+		_roomsFound->_array[i] = file->readUint16LE();
 
-	g_lab->_tilePuzzle->load(file);
+	_tilePuzzle->load(file);
 
 	// Breadcrumbs
 	for (i = 0; i < 128; i++) {
-		g_lab->_breadCrumbs[i]._roomNum = file->readUint16LE();
-		g_lab->_breadCrumbs[i]._direction = file->readUint16LE();
+		_breadCrumbs[i]._roomNum = file->readUint16LE();
+		_breadCrumbs[i]._direction = file->readUint16LE();
 	}
 
-	g_lab->_droppingCrumbs = (g_lab->_breadCrumbs[0]._roomNum != 0);
-	g_lab->_followingCrumbs = false;
+	_droppingCrumbs = (_breadCrumbs[0]._roomNum != 0);
+	_followingCrumbs = false;
 
 	for (i = 0; i < 128; i++) {
-		if (g_lab->_breadCrumbs[i]._roomNum == 0)
+		if (_breadCrumbs[i]._roomNum == 0)
 			break;
-		g_lab->_numCrumbs = i;
+		_numCrumbs = i;
 	}
 
 	delete file;
@@ -214,8 +212,6 @@ bool loadGame(int slot) {
 
 bool LabEngine::saveRestoreGame() {
 	bool isOK = false;
-
-	//g_lab->showMainMenu();
 
 	// The original had one screen for saving/loading. We have two.
 	// Ask the user which screen to use.
