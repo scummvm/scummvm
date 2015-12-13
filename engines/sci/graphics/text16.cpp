@@ -144,11 +144,15 @@ int16 GfxText16::CodeProcessing(const char *&text, GuiResourceId orgFontId, int1
 }
 
 // Has actually punctuation and characters in it, that may not be the first in a line
+// Table from Quest for Glory 1 PC-98
 static const uint16 text16_shiftJIS_punctuation[] = {
 	0x9F82, 0xA182, 0xA382, 0xA582, 0xA782, 0xC182, 0xE182, 0xE382, 0xE582, 0xEC82,	0x4083, 0x4283,
 	0x4483, 0x4683, 0x4883, 0x6283, 0x8383, 0x8583, 0x8783, 0x8E83, 0x9583, 0x9683,	0x5B81, 0x4181,
 	0x4281, 0x7681, 0x7881, 0x4981, 0x4881, 0
 };
+
+// Police Quest 2 (SCI0) only checked for: 0x4181, 0x4281, 0x7681, 0x7881, 0x4981, 0x4881
+// Castle of Dr. Brain/King's Quest 5/Space Quest 4 (SCI1) only checked for: 0x4181, 0x4281, 0x7681, 0x7881
 
 // return max # of chars to fit maxwidth with full words, does not include
 // breaking space
@@ -201,9 +205,10 @@ int16 GfxText16::GetLongest(const char *&textPtr, int16 maxWidth, GuiResourceId 
 			}
 			// it's meant to pass through here
 		case 0xA:
-		case 0x9781: // this one is used by SQ4/japanese as line break as well
+		case 0x9781: // this one is used by SQ4/japanese as line break as well (was added for SCI1/PC98)
 			curCharCount++; textPtr++;
 			if (curChar > 0xFF) {
+				// skip another byte in case char is double-byte (PC-98)
 				curCharCount++; textPtr++;
 			}
 			// and it's also meant to pass through here
@@ -261,6 +266,7 @@ int16 GfxText16::GetLongest(const char *&textPtr, int16 maxWidth, GuiResourceId 
 
 			// But it also checked, if the current character is not inside a punctuation table and it even
 			//  went backwards in case it found multiple ones inside that table.
+			// Note: PQ2 PC-98 only went back 1 character and not multiple ones
 			uint nonBreakingPos = 0;
 
 			while (1) {
@@ -284,6 +290,14 @@ int16 GfxText16::GetLongest(const char *&textPtr, int16 maxWidth, GuiResourceId 
 				if (!_font->isDoubleByte(curChar))
 					error("Non double byte while seeking back");
 				curChar |= (*(const byte *)(textPtr + 1)) << 8;
+			}
+
+			if (curChar == 0x4081) {
+				// Skip over alphabetic double-byte space
+				// This was introduced for SCI1
+				// Happens in Castle of Dr. Brain PC-98 in room 120, when looking inside the mirror
+				// (game mentions Mixed Up Fairy Tales and uses English letters for that)
+				textPtr += 2;
 			}
 		}
 
