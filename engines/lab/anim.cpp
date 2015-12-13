@@ -56,6 +56,7 @@ Anim::Anim(LabEngine *vm) : _vm(vm) {
 	_frameNum = 0;
 	_playOnce = false;
 	_diffFile = nullptr;
+	_diffFileStart = nullptr;
 	_size = 0;
 	_rawDiffBM._bytesPerRow = 0;
 	_rawDiffBM._drawOnScreen = false;
@@ -75,8 +76,6 @@ Anim::Anim(LabEngine *vm) : _vm(vm) {
 }
 
 void Anim::diffNextFrame(bool onlyDiffData) {
-	byte *buffer = _diffFile;
-
 	if (_header == 65535)
 		// Already done.
 		return;
@@ -120,7 +119,7 @@ void Anim::diffNextFrame(bool onlyDiffData) {
 			_frameNum++;
 
 			if ((_frameNum == 1) && (_continuous || (!_playOnce)))
-				buffer = _diffFile;
+				_diffFileStart = _diffFile;
 
 			_isAnim = (_frameNum >= 3) && (!_playOnce);
 			_curBit = 0;
@@ -236,7 +235,7 @@ void Anim::diffNextFrame(bool onlyDiffData) {
 
 			// Random frame number so it never gets back to 2
 			_frameNum = 4;
-			_diffFile = buffer;
+			_diffFile = _diffFileStart;
 			break;
 
 		default:
@@ -287,7 +286,7 @@ void Anim::readDiff(byte *buffer, bool playOnce, bool onlyDiffData) {
 		_vm->_graphics->blackScreen();
 	}
 
-	_diffFile = buffer;
+	_diffFile = _diffFileStart = buffer;
 
 	_continuous = false;
 	uint32 signature = READ_BE_UINT32(_diffFile);
