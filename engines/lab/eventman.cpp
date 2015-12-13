@@ -35,7 +35,6 @@
 #include "lab/dispman.h"
 #include "lab/eventman.h"
 #include "lab/image.h"
-#include "lab/interface.h"
 
 namespace Lab {
 

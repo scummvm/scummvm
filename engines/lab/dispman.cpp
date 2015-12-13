@@ -35,7 +35,6 @@
 #include "lab/anim.h"
 #include "lab/dispman.h"
 #include "lab/eventman.h"
-#include "lab/interface.h"
 #include "lab/music.h"
 #include "lab/image.h"
 #include "lab/resource.h"

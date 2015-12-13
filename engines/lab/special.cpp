@@ -34,7 +34,6 @@
 #include "lab/dispman.h"
 #include "lab/eventman.h"
 #include "lab/image.h"
-#include "lab/interface.h"
 #include "lab/labsets.h"
 #include "lab/music.h"
 #include "lab/processroom.h"
@@ -271,7 +270,7 @@ void LabEngine::processJournal() {
 			uint16 qualifier = msg->_qualifier;
 			uint16 gadID     = msg->_code;
 
-			if (((msgClass == MOUSEBUTTONS) && (IEQUALIFIER_RBUTTON & qualifier)) ||
+			if (((msgClass == MOUSEBUTTONS) && (IEQUALIFIER_RIGHTBUTTON & qualifier)) ||
 				  ((msgClass == RAWKEY) && (gadID == 27)))
 				return;
 			else if (msgClass == GADGETUP) {
@@ -436,7 +435,7 @@ void LabEngine::processMonitor(char *ntext, TextFont *monitorFont, bool isIntera
 			uint16 mouseY    = msg->_mouseY;
 			uint16 code      = msg->_code;
 
-			if (((msgClass == MOUSEBUTTONS) && (IEQUALIFIER_RBUTTON & qualifier)) ||
+			if (((msgClass == MOUSEBUTTONS) && (IEQUALIFIER_RIGHTBUTTON & qualifier)) ||
 				  ((msgClass == RAWKEY) && (code == 27)))
 				return;
 

@@ -34,7 +34,6 @@
 #include "lab/dispman.h"
 #include "lab/eventman.h"
 #include "lab/image.h"
-#include "lab/interface.h"
 #include "lab/intro.h"
 #include "lab/labsets.h"
 #include "lab/music.h"
@@ -687,7 +686,7 @@ bool LabEngine::fromCrumbs(uint32 tmpClass, uint16 code, uint16 qualifier, Commo
 	if (_graphics->_longWinInFront) {
 		if ((msgClass == RAWKEY) || ((msgClass == MOUSEBUTTONS) &&
 			  ((IEQUALIFIER_LEFTBUTTON & qualifier) ||
-				(IEQUALIFIER_RBUTTON & qualifier)))) {
+				(IEQUALIFIER_RIGHTBUTTON & qualifier)))) {
 			_graphics->_longWinInFront = false;
 			_graphics->_doNotDrawMessage = false;
 			_graphics->drawPanel();
@@ -1063,7 +1062,7 @@ bool LabEngine::fromCrumbs(uint32 tmpClass, uint16 code, uint16 qualifier, Commo
 
 		if (wrkClosePtr)
 			_event->setMousePos(Common::Point(_utils->scaleX((wrkClosePtr->_x1 + wrkClosePtr->_x2) / 2), _utils->scaleY((wrkClosePtr->_y1 + wrkClosePtr->_y2) / 2)));
-	} else if ((msgClass == MOUSEBUTTONS) && (IEQUALIFIER_RBUTTON & qualifier)) {
+	} else if ((msgClass == MOUSEBUTTONS) && (IEQUALIFIER_RIGHTBUTTON & qualifier)) {
 		eatMessages();
 		_alternate = !_alternate;
 		_anim->_doBlack = true;
