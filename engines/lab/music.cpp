@@ -59,7 +59,6 @@ Music::Music(LabEngine *vm) : _vm(vm) {
 	_winMusic = false;
 	_loopSoundEffect = false;
 	_queuingAudioStream = NULL;
-	_unstoppableSoundEffect = false;
 	_lastMusicRoom = 1;
 	_doReset = true;
 	_waitTillFinished = false;
@@ -320,7 +319,7 @@ void Music::resetMusic() {
 bool Music::readMusic(const char *filename, bool waitTillFinished) {
 	Common::File *file = _vm->_resource->openDataFile(filename, MKTAG('D', 'I', 'F', 'F'));
 	updateMusic();
-	if (!_unstoppableSoundEffect)
+	if (!_loopSoundEffect)
 		stopSoundEffect();
 
 	if (!file)

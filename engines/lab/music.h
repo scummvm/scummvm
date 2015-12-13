@@ -75,7 +75,6 @@ private:
 	void startMusic(bool restartFl);
 
 public:
-	bool _unstoppableSoundEffect;
 	bool _loopSoundEffect;
 	bool _waitTillFinished;
 

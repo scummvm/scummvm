@@ -296,7 +296,6 @@ void LabEngine::doActions(Action *actionList, CloseDataPtr *closePtrList) {
 			break;
 
 		case PLAYSOUNDCONT:
-			_music->_unstoppableSoundEffect = true;
 			_music->_loopSoundEffect = true;
 			_music->readMusic((char *)actionList->_data, _music->_waitTillFinished);
 			break;
@@ -543,8 +542,6 @@ void LabEngine::doActions(Action *actionList, CloseDataPtr *closePtrList) {
 			waitTOF();
 		}
 	}
-
-	_music->_unstoppableSoundEffect = false;
 }
 
 /**
