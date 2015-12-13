@@ -141,9 +141,9 @@ void LabEngine::loadJournalData() {
 
 	Common::File *journalFile = _resource->openDataFile("P:JImage");
 	Utils *utils = _utils;
-	_journalGadgetList.push_back(_event->createButton( 80, utils->vgaScaleY(162) + utils->svgaCord(1), 0, VKEY_LTARROW, new Image(journalFile), new Image(journalFile)));	// back
-	_journalGadgetList.push_back(_event->createButton(194, utils->vgaScaleY(162) + utils->svgaCord(1), 2,            0, new Image(journalFile), new Image(journalFile)));	// cancel
-	_journalGadgetList.push_back(_event->createButton(144, utils->vgaScaleY(164) - utils->svgaCord(1), 1, VKEY_RTARROW, new Image(journalFile), new Image(journalFile)));	// forward
+	_journalButtonList.push_back(_event->createButton( 80, utils->vgaScaleY(162) + utils->svgaCord(1), 0, VKEY_LTARROW, new Image(journalFile), new Image(journalFile)));	// back
+	_journalButtonList.push_back(_event->createButton(194, utils->vgaScaleY(162) + utils->svgaCord(1), 2,            0, new Image(journalFile), new Image(journalFile)));	// cancel
+	_journalButtonList.push_back(_event->createButton(144, utils->vgaScaleY(164) - utils->svgaCord(1), 1, VKEY_RTARROW, new Image(journalFile), new Image(journalFile)));	// forward
 	delete journalFile;
 
 	_anim->_noPalChange = true;
@@ -231,18 +231,18 @@ void LabEngine::drawJournal(uint16 wipenum, bool needFade) {
 	else
 		turnPage((bool)(wipenum == 1));
 
-	Gadget *backGadget = _event->getGadget(0);
-	Gadget *forwardGadget = _event->getGadget(2);
+	Button *backButton = _event->getButton(0);
+	Button *forwardButton = _event->getButton(2);
 
 	if (_journalPage == 0)
-		_event->disableGadget(backGadget, 15);
+		_event->disableButton(backButton, 15);
 	else
-		_event->enableGadget(backGadget);
+		_event->enableButton(backButton);
 
 	if (_lastPage)
-		_event->disableGadget(forwardGadget, 15);
+		_event->disableButton(forwardButton, 15);
 	else
-		_event->enableGadget(forwardGadget);
+		_event->enableButton(forwardButton);
 
 	if (needFade)
 		_graphics->fade(true, 0);
@@ -273,7 +273,7 @@ void LabEngine::processJournal() {
 			if (((msgClass == MOUSEBUTTONS) && (IEQUALIFIER_RIGHTBUTTON & qualifier)) ||
 				  ((msgClass == RAWKEY) && (gadID == 27)))
 				return;
-			else if (msgClass == GADGETUP) {
+			else if (msgClass == BUTTONUP) {
 				if (gadID == 0) {
 					if (_journalPage >= 2) {
 						_journalPage -= 2;
@@ -310,17 +310,17 @@ void LabEngine::doJournal() {
 	_music->updateMusic();
 	loadJournalData();
 
-	_event->attachGadgetList(&_journalGadgetList);
+	_event->attachButtonList(&_journalButtonList);
 	drawJournal(0, true);
 	_event->mouseShow();
 	processJournal();
-	_event->attachGadgetList(NULL);
+	_event->attachButtonList(NULL);
 	_graphics->fade(false, 0);
 	_event->mouseHide();
 
 	delete[] _blankJournal;
 	delete[] journalBackImage._imageData;
-	_event->freeButtonList(&_journalGadgetList);
+	_event->freeButtonList(&_journalButtonList);
 	_graphics->closeFont(_journalFont);
 
 	ScreenImage._imageData = _graphics->getCurrentDrawingBuffer();
@@ -349,18 +349,18 @@ void LabEngine::drawMonText(char *text, TextFont *monitorFont, uint16 x1, uint16
 
 		fheight = _graphics->textHeight(monitorFont);
 		x1 = _monitorButton->_width + _utils->vgaScaleX(3);
-		_monitorGadgetHeight = _monitorButton->_height + _utils->vgaScaleY(3);
+		_monitorButtonHeight = _monitorButton->_height + _utils->vgaScaleY(3);
 
-		if (_monitorGadgetHeight > fheight)
-			yspacing = _monitorGadgetHeight - fheight;
+		if (_monitorButtonHeight > fheight)
+			yspacing = _monitorButtonHeight - fheight;
 		else
-			_monitorGadgetHeight = fheight;
+			_monitorButtonHeight = fheight;
 
 		_graphics->setAPen(0);
 		_graphics->rectFill(0, 0, _graphics->_screenWidth - 1, y2);
 
 		for (uint16 i = 0; i < numlines; i++)
-			_monitorButton->drawImage(0, i * _monitorGadgetHeight);
+			_monitorButton->drawImage(0, i * _monitorButtonHeight);
 	} else if (isinteractive) {
 		_graphics->setAPen(0);
 		_graphics->rectFill(0, 0, _graphics->_screenWidth - 1, y2);
@@ -468,7 +468,7 @@ void LabEngine::processMonitor(char *ntext, TextFont *monitorFont, bool isIntera
 					}
 				} else if (isInteractive) {
 					CloseDataPtr tmpClosePtr = _closeDataPtr;
-					mouseY = 64 + (mouseY / _monitorGadgetHeight) * 42;
+					mouseY = 64 + (mouseY / _monitorButtonHeight) * 42;
 					mouseX = 101;
 					setCurrentClose(Common::Point(mouseX, mouseY), &_closeDataPtr, false);
 

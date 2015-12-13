@@ -312,7 +312,7 @@ int32 DisplayMan::longDrawMessage(const char *str) {
 	if (str == NULL)
 		return 0;
 
-	_vm->_event->attachGadgetList(NULL);
+	_vm->_event->attachButtonList(NULL);
 	_vm->_event->mouseHide();
 	strcpy(newText, str);
 
@@ -373,7 +373,7 @@ void DisplayMan::drawPanel() {
 	// Second Line
 	setAPen(5);
 	drawHLine(0, _vm->_utils->vgaScaleY(149) + 1 + _vm->_utils->svgaCord(2), _vm->_utils->vgaScaleX(319));
-	// Gadget Separators
+	// Button Separators
 	setAPen(0);
 	// First black line to separate buttons
 	drawHLine(0, _vm->_utils->vgaScaleY(170), _vm->_utils->vgaScaleX(319));
@@ -382,7 +382,7 @@ void DisplayMan::drawPanel() {
 		setAPen(4);
 		// The horizontal lines under the black one
 		drawHLine(0, _vm->_utils->vgaScaleY(170) + 1, _vm->_utils->vgaScaleX(319));
-		_vm->_event->drawGadgetList(&_vm->_moveGadgetList);
+		_vm->_event->drawButtonList(&_vm->_moveButtonList);
 	} else {
 		if (_vm->getPlatform() != Common::kPlatformWindows) {
 			// Vertical Black lines
@@ -412,7 +412,7 @@ void DisplayMan::drawPanel() {
 			drawVLine(_vm->_utils->vgaScaleX(232), _vm->_utils->vgaScaleY(170) + 2, _vm->_utils->vgaScaleY(198));
 		}
 
-		_vm->_event->drawGadgetList(&_vm->_invGadgetList);
+		_vm->_event->drawButtonList(&_vm->_invButtonList);
 	}
 
 	_vm->_event->mouseShow();
@@ -429,22 +429,22 @@ void DisplayMan::setUpScreens() {
 		_vm->_moveImages[i] = new Image(controlFile);
 	delete controlFile;
 
-	// Creates the gadgets for the movement control panel
+	// Creates the buttons for the movement control panel
 	uint16 y = _vm->_utils->vgaScaleY(173) - _vm->_utils->svgaCord(2);
 
 	// The key mapping was only set for the Windows version.
 	// It's very convenient to have those shortcut, so I added them
 	// for all versions. (Strangerke)
-	_vm->_moveGadgetList.push_back(_vm->_event->createButton(  1, y, 0,          't', _vm->_moveImages[0],  _vm->_moveImages[1]));
-	_vm->_moveGadgetList.push_back(_vm->_event->createButton( 33, y, 1,          'm', _vm->_moveImages[2],  _vm->_moveImages[3]));
-	_vm->_moveGadgetList.push_back(_vm->_event->createButton( 65, y, 2,          'o', _vm->_moveImages[4],  _vm->_moveImages[5]));
-	_vm->_moveGadgetList.push_back(_vm->_event->createButton( 97, y, 3,          'c', _vm->_moveImages[6],  _vm->_moveImages[7]));
-	_vm->_moveGadgetList.push_back(_vm->_event->createButton(129, y, 4,          'l', _vm->_moveImages[8],  _vm->_moveImages[9]));
-	_vm->_moveGadgetList.push_back(_vm->_event->createButton(161, y, 5,          'i', _vm->_moveImages[12], _vm->_moveImages[13]));
-	_vm->_moveGadgetList.push_back(_vm->_event->createButton(193, y, 6, VKEY_LTARROW, _vm->_moveImages[14], _vm->_moveImages[15]));
-	_vm->_moveGadgetList.push_back(_vm->_event->createButton(225, y, 7, VKEY_UPARROW, _vm->_moveImages[16], _vm->_moveImages[17]));
-	_vm->_moveGadgetList.push_back(_vm->_event->createButton(257, y, 8, VKEY_RTARROW, _vm->_moveImages[18], _vm->_moveImages[19]));
-	_vm->_moveGadgetList.push_back(_vm->_event->createButton(289, y, 9,          'p', _vm->_moveImages[10], _vm->_moveImages[11]));
+	_vm->_moveButtonList.push_back(_vm->_event->createButton(  1, y, 0,          't', _vm->_moveImages[0],  _vm->_moveImages[1]));
+	_vm->_moveButtonList.push_back(_vm->_event->createButton( 33, y, 1,          'm', _vm->_moveImages[2],  _vm->_moveImages[3]));
+	_vm->_moveButtonList.push_back(_vm->_event->createButton( 65, y, 2,          'o', _vm->_moveImages[4],  _vm->_moveImages[5]));
+	_vm->_moveButtonList.push_back(_vm->_event->createButton( 97, y, 3,          'c', _vm->_moveImages[6],  _vm->_moveImages[7]));
+	_vm->_moveButtonList.push_back(_vm->_event->createButton(129, y, 4,          'l', _vm->_moveImages[8],  _vm->_moveImages[9]));
+	_vm->_moveButtonList.push_back(_vm->_event->createButton(161, y, 5,          'i', _vm->_moveImages[12], _vm->_moveImages[13]));
+	_vm->_moveButtonList.push_back(_vm->_event->createButton(193, y, 6, VKEY_LTARROW, _vm->_moveImages[14], _vm->_moveImages[15]));
+	_vm->_moveButtonList.push_back(_vm->_event->createButton(225, y, 7, VKEY_UPARROW, _vm->_moveImages[16], _vm->_moveImages[17]));
+	_vm->_moveButtonList.push_back(_vm->_event->createButton(257, y, 8, VKEY_RTARROW, _vm->_moveImages[18], _vm->_moveImages[19]));
+	_vm->_moveButtonList.push_back(_vm->_event->createButton(289, y, 9,          'p', _vm->_moveImages[10], _vm->_moveImages[11]));
 
 	Common::File *invFile = _vm->_resource->openDataFile("P:Inv");
 	if (_vm->getPlatform() == Common::kPlatformWindows) {
@@ -454,18 +454,18 @@ void DisplayMan::setUpScreens() {
 		for (uint16 imgIdx = 0; imgIdx < 6; imgIdx++)
 			_vm->_invImages[imgIdx] = new Image(invFile);
 	}
-	_vm->_invGadgetList.push_back(_vm->_event->createButton( 24, y, 0,          'm', _vm->_invImages[0],   _vm->_invImages[1]));
-	_vm->_invGadgetList.push_back(_vm->_event->createButton( 56, y, 1,          'g', _vm->_invImages[2],   _vm->_invImages[3]));
-	_vm->_invGadgetList.push_back(_vm->_event->createButton( 94, y, 2,          'u', _vm->_invImages[4],   _vm->_invImages[5]));
-	_vm->_invGadgetList.push_back(_vm->_event->createButton(126, y, 3,          'l', _vm->_moveImages[8],  _vm->_moveImages[9]));
-	_vm->_invGadgetList.push_back(_vm->_event->createButton(164, y, 4, VKEY_LTARROW, _vm->_moveImages[14], _vm->_moveImages[15]));
-	_vm->_invGadgetList.push_back(_vm->_event->createButton(196, y, 5, VKEY_RTARROW, _vm->_moveImages[18], _vm->_moveImages[19]));
+	_vm->_invButtonList.push_back(_vm->_event->createButton( 24, y, 0,          'm', _vm->_invImages[0],   _vm->_invImages[1]));
+	_vm->_invButtonList.push_back(_vm->_event->createButton( 56, y, 1,          'g', _vm->_invImages[2],   _vm->_invImages[3]));
+	_vm->_invButtonList.push_back(_vm->_event->createButton( 94, y, 2,          'u', _vm->_invImages[4],   _vm->_invImages[5]));
+	_vm->_invButtonList.push_back(_vm->_event->createButton(126, y, 3,          'l', _vm->_moveImages[8],  _vm->_moveImages[9]));
+	_vm->_invButtonList.push_back(_vm->_event->createButton(164, y, 4, VKEY_LTARROW, _vm->_moveImages[14], _vm->_moveImages[15]));
+	_vm->_invButtonList.push_back(_vm->_event->createButton(196, y, 5, VKEY_RTARROW, _vm->_moveImages[18], _vm->_moveImages[19]));
 
-	// The windows version has 2 extra gadgets for breadcrumb trail
+	// The windows version has 2 extra buttons for breadcrumb trail
 	// TODO: the game is really hard to play without those, maybe we could add something to enable that.
 	if (_vm->getPlatform() == Common::kPlatformWindows) {
-		_vm->_invGadgetList.push_back(_vm->_event->createButton(234, y, 6, 'b', _vm->_invImages[6], _vm->_invImages[7]));
-		_vm->_invGadgetList.push_back(_vm->_event->createButton(266, y, 7, 'f', _vm->_invImages[8], _vm->_invImages[9]));
+		_vm->_invButtonList.push_back(_vm->_event->createButton(234, y, 6, 'b', _vm->_invImages[6], _vm->_invImages[7]));
+		_vm->_invButtonList.push_back(_vm->_event->createButton(266, y, 7, 'f', _vm->_invImages[8], _vm->_invImages[9]));
 	}
 
 	delete invFile;

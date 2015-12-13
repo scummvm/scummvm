@@ -39,66 +39,66 @@
 
 namespace Lab {
 
-Gadget *EventManager::createButton(uint16 x, uint16 y, uint16 id, uint16 key, Image *image, Image *altImage) {
-	Gadget *gadget = new Gadget();
+Button *EventManager::createButton(uint16 x, uint16 y, uint16 id, uint16 key, Image *image, Image *altImage) {
+	Button *button = new Button();
 
-	if (gadget) {
-		gadget->x = _vm->_utils->vgaScaleX(x);
-		gadget->y = y;
-		gadget->_gadgetID = id;
-		gadget->_keyEquiv = key;
-		gadget->_image = image;
-		gadget->_altImage = altImage;
-		gadget->isEnabled = true;
+	if (button) {
+		button->x = _vm->_utils->vgaScaleX(x);
+		button->y = y;
+		button->_buttonID = id;
+		button->_keyEquiv = key;
+		button->_image = image;
+		button->_altImage = altImage;
+		button->isEnabled = true;
 
-		return gadget;
+		return button;
 	} else
 		return nullptr;
 }
 
-void EventManager::freeButtonList(GadgetList *gadgetList) {
-	for (GadgetList::iterator gadgetIter = gadgetList->begin(); gadgetIter != gadgetList->end(); ++gadgetIter) {
-		Gadget *gadget = *gadgetIter;
-		delete gadget->_image;
-		delete gadget->_altImage;
-		delete gadget;
+void EventManager::freeButtonList(ButtonList *buttonList) {
+	for (ButtonList::iterator buttonIter = buttonList->begin(); buttonIter != buttonList->end(); ++buttonIter) {
+		Button *button = *buttonIter;
+		delete button->_image;
+		delete button->_altImage;
+		delete button;
 	}
 
-	gadgetList->clear();
+	buttonList->clear();
 }
 
 /**
- * Draws a gadget list to the screen.
+ * Draws a button list to the screen.
  */
-void EventManager::drawGadgetList(GadgetList *gadgetList) {
-	for (GadgetList::iterator gadget = gadgetList->begin(); gadget != gadgetList->end(); ++gadget) {
-		(*gadget)->_image->drawImage((*gadget)->x, (*gadget)->y);
+void EventManager::drawButtonList(ButtonList *buttonList) {
+	for (ButtonList::iterator button = buttonList->begin(); button != buttonList->end(); ++button) {
+		(*button)->_image->drawImage((*button)->x, (*button)->y);
 
-		if (!(*gadget)->isEnabled)
-			disableGadget((*gadget), 1);
+		if (!(*button)->isEnabled)
+			disableButton((*button), 1);
 	}
 }
 
 /**
- * Dims a gadget, and makes it unavailable for using.
+ * Dims a button, and makes it unavailable for using.
  */
-void EventManager::disableGadget(Gadget *gadget, uint16 penColor) {
-	_vm->_graphics->overlayRect(penColor, gadget->x, gadget->y, gadget->x + gadget->_image->_width - 1, gadget->y + gadget->_image->_height - 1);
-	gadget->isEnabled = false;
+void EventManager::disableButton(Button *button, uint16 penColor) {
+	_vm->_graphics->overlayRect(penColor, button->x, button->y, button->x + button->_image->_width - 1, button->y + button->_image->_height - 1);
+	button->isEnabled = false;
 }
 
 /**
- * Undims a gadget, and makes it available again.
+ * Undims a button, and makes it available again.
  */
-void EventManager::enableGadget(Gadget *gadget) {
-	gadget->_image->drawImage(gadget->x, gadget->y);
-	gadget->isEnabled = true;
+void EventManager::enableButton(Button *button) {
+	button->_image->drawImage(button->x, button->y);
+	button->isEnabled = true;
 }
 
 /**
- * Make a key press have the right case for a gadget KeyEquiv value.
+ * Make a key press have the right case for a button KeyEquiv value.
  */
-uint16 EventManager::makeGadgetKeyEquiv(uint16 key) {
+uint16 EventManager::makeButtonKeyEquiv(uint16 key) {
 	if (Common::isAlnum(key))
 		key = tolower(key);
 
@@ -106,29 +106,29 @@ uint16 EventManager::makeGadgetKeyEquiv(uint16 key) {
 }
 
 /**
- * Checks whether or not the coords fall within one of the gadgets in a list
- * of gadgets.
+ * Checks whether or not the coords fall within one of the buttons in a list
+ * of buttons.
  */
-Gadget *EventManager::checkNumGadgetHit(GadgetList *gadgetList, uint16 key) {
+Button *EventManager::checkNumButtonHit(ButtonList *buttonList, uint16 key) {
 	uint16 gkey = key - '0';
 
-	if (!gadgetList)
+	if (!buttonList)
 		return nullptr;
 
-	for (GadgetList::iterator gadgetItr = gadgetList->begin(); gadgetItr != gadgetList->end(); ++gadgetItr) {
-		Gadget *gadget = *gadgetItr;
-		if ((gkey - 1 == gadget->_gadgetID || (gkey == 0 && gadget->_gadgetID == 9) ||
-			  (gadget->_keyEquiv != 0 && makeGadgetKeyEquiv(key) == gadget->_keyEquiv))
-			  && gadget->isEnabled) {
+	for (ButtonList::iterator buttonItr = buttonList->begin(); buttonItr != buttonList->end(); ++buttonItr) {
+		Button *button = *buttonItr;
+		if ((gkey - 1 == button->_buttonID || (gkey == 0 && button->_buttonID == 9) ||
+			  (button->_keyEquiv != 0 && makeButtonKeyEquiv(key) == button->_keyEquiv))
+			  && button->isEnabled) {
 			mouseHide();
-			gadget->_altImage->drawImage(gadget->x, gadget->y);
+			button->_altImage->drawImage(button->x, button->y);
 			mouseShow();
 			g_system->delayMillis(80);
 			mouseHide();
-			gadget->_image->drawImage(gadget->x, gadget->y);
+			button->_image->drawImage(button->x, button->y);
 			mouseShow();
 
-			return gadget;
+			return button;
 		}
 	}
 
@@ -141,13 +141,13 @@ IntuiMessage *EventManager::getMsg() {
 	updateMouse();
 
 	int qualifiers = _keyPressed.flags;
-	Gadget *curgad  = mouseGadget();
+	Button *curgad  = mouseButton();
 
 	if (curgad) {
 		updateMouse();
-		message._msgClass = GADGETUP;
-		message._code  = curgad->_gadgetID;
-		message._gadgetID = curgad->_gadgetID;
+		message._msgClass = BUTTONUP;
+		message._code  = curgad->_buttonID;
+		message._buttonID = curgad->_buttonID;
 		message._qualifier = qualifiers;
 		return &message;
 	} else if (mouseButton(&message._mouseX, &message._mouseY, true)) {
@@ -162,12 +162,12 @@ IntuiMessage *EventManager::getMsg() {
 		return &message;
 	} else if (keyPress(&message._code)) {
 		// Keyboard key
-		curgad = checkNumGadgetHit(_screenGadgetList, message._code);
+		curgad = checkNumButtonHit(_screenButtonList, message._code);
 
 		if (curgad) {
-			message._msgClass = GADGETUP;
-			message._code  = curgad->_gadgetID;
-			message._gadgetID = curgad->_gadgetID;
+			message._msgClass = BUTTONUP;
+			message._code  = curgad->_buttonID;
+			message._buttonID = curgad->_buttonID;
 		} else
 			message._msgClass = RAWKEY;
 

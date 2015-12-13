@@ -135,7 +135,7 @@ LabEngine::LabEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	_monitorPage = 0;
 	_monitorTextFilename = "";
 	_monitorButton = nullptr;
-	_monitorGadgetHeight = 1;
+	_monitorButtonHeight = 1;
 	for (int i = 0; i < 20; i++)
 		_highPalette[i] = 0;
 

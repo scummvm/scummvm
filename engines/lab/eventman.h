@@ -40,7 +40,7 @@ class Image;
 
 // Defines for the Class variable in IntuiMessage
 #define MOUSEBUTTONS    0x00000008
-#define GADGETUP		0x00000040
+#define BUTTONUP		0x00000040
 #define RAWKEY			0x00000400
 #define DELTAMOVE		0x00100000
 
@@ -55,19 +55,19 @@ class Image;
 
 struct IntuiMessage {
 	uint32 _msgClass;
-	uint16 _code, _qualifier, _mouseX, _mouseY, _gadgetID;
+	uint16 _code, _qualifier, _mouseX, _mouseY, _buttonID;
 	uint32 _seconds, _micros;
 };
 
 
-struct Gadget {
-	uint16 x, y, _gadgetID;
-	uint16 _keyEquiv; // if not zero, a key that activates gadget
+struct Button {
+	uint16 x, y, _buttonID;
+	uint16 _keyEquiv; // if not zero, a key that activates button
 	bool isEnabled;
 	Image *_image, *_altImage;
 };
 
-typedef Common::List<Gadget *> GadgetList;
+typedef Common::List<Button *> ButtonList;
 
 class EventManager {
 private:
@@ -76,7 +76,7 @@ private:
 	bool _rightClick;
 
 	bool _mouseHidden;
-	Gadget *_lastGadgetHit;
+	Button *_lastButtonHit;
 	uint16 _nextKeyIn;
 	uint16 _nextKeyOut;
 	Common::Point _mousePos;
@@ -86,11 +86,11 @@ private:
 public:
 	EventManager (LabEngine *vm);
 
-	GadgetList *_screenGadgetList;
-	Gadget *_hitGadget;
+	ButtonList *_screenButtonList;
+	Button *_hitButton;
 	Common::KeyState _keyPressed;
 
-	Gadget *checkGadgetHit(GadgetList *gadgetList, Common::Point pos);
+	Button *checkButtonHit(ButtonList *buttonList, Common::Point pos);
 	void initMouse();
 	void updateMouse();
 	void mouseShow();
@@ -98,9 +98,9 @@ public:
 	Common::Point getMousePos();
 	void setMousePos(Common::Point pos);
 	bool mouseButton(uint16 *x, uint16 *y, bool leftButton);
-	Gadget *mouseGadget();
-	void attachGadgetList(GadgetList *gadgetList);
-	Gadget *getGadget(uint16 id);
+	Button *mouseButton();
+	void attachButtonList(ButtonList *buttonList);
+	Button *getButton(uint16 id);
 	void mouseHandler(int flag, Common::Point pos);
 	bool keyPress(uint16 *keyCode);
 	bool haveNextChar();
@@ -108,14 +108,14 @@ public:
 	uint16 getNextChar();
 	Common::Point updateAndGetMousePos();
 
-	Gadget *checkNumGadgetHit(GadgetList *gadgetList, uint16 key);
-	Gadget *createButton(uint16 x, uint16 y, uint16 id, uint16 key, Image *im, Image *imalt);
-	void freeButtonList(GadgetList *gadgetList);
-	void drawGadgetList(GadgetList *gadgetList);
-	void disableGadget(Gadget *curgad, uint16 pencolor);
-	void enableGadget(Gadget *curgad);
+	Button *checkNumButtonHit(ButtonList *buttonList, uint16 key);
+	Button *createButton(uint16 x, uint16 y, uint16 id, uint16 key, Image *im, Image *imalt);
+	void freeButtonList(ButtonList *buttonList);
+	void drawButtonList(ButtonList *buttonList);
+	void disableButton(Button *curgad, uint16 pencolor);
+	void enableButton(Button *curgad);
 	IntuiMessage *getMsg();
-	uint16 makeGadgetKeyEquiv(uint16 key);
+	uint16 makeButtonKeyEquiv(uint16 key);
 };
 
 } // End of namespace Lab
