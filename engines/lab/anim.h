@@ -70,6 +70,7 @@ private:
 	uint16 _frameNum;
 	bool _playOnce;
 	byte *_diffFile;
+	byte *_diffFileStart;
 	uint32 _size;
 	bool _stopPlayingEnd;
 	uint16 _sampleSpeed;
