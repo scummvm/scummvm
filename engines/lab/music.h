@@ -43,7 +43,7 @@ class LabEngine;
 //----- From LabMusic.c -----
 //---------------------------
 
-#define MAXBUFFERS         5L
+#define MAXBUFFERS 5
 
 class Music {
 private:

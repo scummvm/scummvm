@@ -28,8 +28,8 @@
  *
  */
 
-#ifndef LAB_INTEFACE_H
-#define LAB_INTEFACE_H
+#ifndef LAB_INTEFARCE_H
+#define LAB_INTEFARCE_H
 
 namespace Lab {
 
@@ -112,4 +112,4 @@ IntuiMessage *getMsg();
 
 } // End of namespace Lab
 
-#endif // LAB_INTEFACE_H
+#endif // LAB_INTEFARCE_H

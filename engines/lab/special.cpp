@@ -394,7 +394,7 @@ void LabEngine::drawMonText(char *text, TextFont *monitorFont, uint16 x1, uint16
 /**
  * Processes user input.
  */
-void LabEngine::processMonitor(char *ntext, TextFont *monitorFont, bool isinteractive, uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
+void LabEngine::processMonitor(char *ntext, TextFont *monitorFont, bool isInteractive, uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
 	const char *test = " ", *startFileName = _monitorTextFilename;
 	CloseDataPtr startClosePtr = _closeDataPtr, lastClosePtr[10];
 	uint16 depth = 0;
@@ -402,7 +402,7 @@ void LabEngine::processMonitor(char *ntext, TextFont *monitorFont, bool isintera
 	lastClosePtr[0] = _closeDataPtr;
 
 	while (1) {
-		if (isinteractive) {
+		if (isInteractive) {
 			if (_closeDataPtr == NULL)
 				_closeDataPtr = startClosePtr;
 
@@ -417,7 +417,7 @@ void LabEngine::processMonitor(char *ntext, TextFont *monitorFont, bool isintera
 
 				ntext = _resource->getText(_monitorTextFilename);
 				_graphics->fade(false, 0);
-				drawMonText(ntext, monitorFont, x1, y1, x2, y2, isinteractive);
+				drawMonText(ntext, monitorFont, x1, y1, x2, y2, isInteractive);
 				_graphics->fade(true, 0);
 				delete[] ntext;
 			}
@@ -445,17 +445,17 @@ void LabEngine::processMonitor(char *ntext, TextFont *monitorFont, bool isintera
 					if ((mouseX >= _utils->vgaScaleX(259)) && (mouseX <= _utils->vgaScaleX(289))) {
 						if (!_lastPage) {
 							_monitorPage += 1;
-							drawMonText(ntext, monitorFont, x1, y1, x2, y2, isinteractive);
+							drawMonText(ntext, monitorFont, x1, y1, x2, y2, isInteractive);
 						}
 					} else if ((mouseX >= _utils->vgaScaleX(0)) && (mouseX <= _utils->vgaScaleX(31))) {
 						return;
 					} else if ((mouseX >= _utils->vgaScaleX(290)) && (mouseX <= _utils->vgaScaleX(320))) {
 						if (_monitorPage >= 1) {
 							_monitorPage -= 1;
-							drawMonText(ntext, monitorFont, x1, y1, x2, y2, isinteractive);
+							drawMonText(ntext, monitorFont, x1, y1, x2, y2, isInteractive);
 						}
 					} else if ((mouseX >= _utils->vgaScaleX(31)) && (mouseX <= _utils->vgaScaleX(59))) {
-						if (isinteractive) {
+						if (isInteractive) {
 							_monitorPage = 0;
 
 							if (depth) {
@@ -464,10 +464,10 @@ void LabEngine::processMonitor(char *ntext, TextFont *monitorFont, bool isintera
 							}
 						} else if (_monitorPage > 0) {
 							_monitorPage = 0;
-							drawMonText(ntext, monitorFont, x1, y1, x2, y2, isinteractive);
+							drawMonText(ntext, monitorFont, x1, y1, x2, y2, isInteractive);
 						}
 					}
-				} else if (isinteractive) {
+				} else if (isInteractive) {
 					CloseDataPtr tmpClosePtr = _closeDataPtr;
 					mouseY = 64 + (mouseY / _monitorGadgetHeight) * 42;
 					mouseX = 101;

@@ -55,4 +55,4 @@ public:
 
 } // End of namespace Lab
 
-#endif // LAB_H
+#endif // LAB_IMAGE_H
