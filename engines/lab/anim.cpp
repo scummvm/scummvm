@@ -314,9 +314,14 @@ void Anim::readDiff(byte *buffer, bool playOnce, bool onlyDiffData) {
 		_diffFile += 2;
 		_headerdata._height = READ_LE_UINT16(_diffFile);
 		_diffFile += 2;
-		_headerdata._depth = _diffFile[0];
+		_headerdata._depth = *_diffFile;
 		_diffFile++;
-		_headerdata._fps = _diffFile[0];
+		_headerdata._fps = *_diffFile;
+		// HACK: The original game defines a 1 second delay when changing screens, which is
+		// very annoying. In this case, we just set it to no delay, to make the game a bit
+		// less frustrating
+		if (_headerdata._fps == 1)
+			_headerdata._fps = 0;
 		_diffFile++;
 		_headerdata._bufferSize = READ_LE_UINT32(_diffFile);
 		_diffFile += 4;
