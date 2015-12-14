@@ -60,7 +60,6 @@ uint16 Utils::scaleY(uint16 y) {
 		return ((y * 10) / 24);
 }
 
-
 uint16 Utils::mapScaleX(uint16 x) {
 	if (_vm->_isHiRes)
 		return (x - 45);
@@ -110,9 +109,8 @@ Common::Point Utils::vgaUnscale(Common::Point pos) {
 	if (_vm->_isHiRes) {
 		result.x = pos.x / 2;
 		result.y = (pos.y * 5) / 12;
-	} else {
+	} else
 		result = pos;
-	}
 
 	return result;
 }
@@ -213,9 +211,7 @@ void Utils::VUnDiffByteByte(byte *dest, byte *diff, uint16 bytesPerRow) {
 			if (skip == 255) {
 				counter += copy;
 				break;
-			}
-
-			else {
+			} else {
 				curPtr += (skip * bytesPerRow);
 
 				while (copy) {
@@ -248,9 +244,7 @@ void Utils::VUnDiffByteWord(uint16 *dest, uint16 *diff, uint16 bytesPerRow) {
 			if (skip == 255) {
 				counter += copy;
 				break;
-			}
-
-			else {
+			} else {
 				curPtr += (skip * wordsPerRow);
 
 				while (copy) {
@@ -283,9 +277,7 @@ void Utils::VUnDiffByteLong(uint32 *dest, uint32 *diff, uint16 bytesPerRow) {
 			if (skip == 255) {
 				counter += copy;
 				break;
-			}
-
-			else {
+			} else {
 				_curPtr += (skip * longsperrow);
 
 				while (copy) {

@@ -315,8 +315,7 @@ bool LabEngine::doUse(uint16 curInv) {
 		if (_conditions->in(kCondLampOn)) {
 			drawStaticMessage(kTextTurnLampOff);
 			_conditions->exclElement(kCondLampOn);
-		}
-		else {
+		} else {
 			drawStaticMessage(kTextTurnkLampOn);
 			_conditions->inclElement(kCondLampOn);
 		}
