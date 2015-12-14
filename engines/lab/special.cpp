@@ -228,7 +228,7 @@ void LabEngine::drawJournal(uint16 wipenum, bool needFade) {
 	if (wipenum == 0)
 		_journalBackImage->blitBitmap(0, 0, _screenImage, 0, 0, _graphics->_screenWidth, _graphics->_screenHeight, false);
 	else
-		turnPage((bool)(wipenum == 1));
+		turnPage((wipenum == 1));
 
 	Button *backButton = _event->getButton(0);
 	Button *forwardButton = _event->getButton(2);
@@ -329,7 +329,7 @@ void LabEngine::doJournal() {
  * Draws the text for the monitor.
  */
 void LabEngine::drawMonText(char *text, TextFont *monitorFont, uint16 x1, uint16 y1, uint16 x2, uint16 y2, bool isinteractive) {
-	uint16 drawingToPage = 0, yspacing = 0, numlines, fheight;
+	uint16 drawingToPage = 0, yspacing = 0;
 	int32 charsDrawn    = 0L;
 	char *curText = text;
 
@@ -337,12 +337,12 @@ void LabEngine::drawMonText(char *text, TextFont *monitorFont, uint16 x1, uint16
 
 	if (*text == '%') {
 		text++;
-		numlines = (*text - '0') * 10;
+		uint16 numlines = (*text - '0') * 10;
 		text++;
 		numlines += (*text - '0');
 		text += 2;
 
-		fheight = _graphics->textHeight(monitorFont);
+		uint16 fheight = _graphics->textHeight(monitorFont);
 		x1 = _monitorButton->_width + _utils->vgaScaleX(3);
 		_monitorButtonHeight = _monitorButton->_height + _utils->vgaScaleY(3);
 
@@ -389,7 +389,7 @@ void LabEngine::drawMonText(char *text, TextFont *monitorFont, uint16 x1, uint16
  * Processes user input.
  */
 void LabEngine::processMonitor(char *ntext, TextFont *monitorFont, bool isInteractive, uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
-	const char *test = " ", *startFileName = _monitorTextFilename;
+	const char *startFileName = _monitorTextFilename;
 	CloseDataPtr startClosePtr = _closeDataPtr, lastClosePtr[10];
 	uint16 depth = 0;
 
@@ -400,6 +400,7 @@ void LabEngine::processMonitor(char *ntext, TextFont *monitorFont, bool isIntera
 			if (_closeDataPtr == NULL)
 				_closeDataPtr = startClosePtr;
 
+			const char *test;
 			if (_closeDataPtr == startClosePtr)
 				test = startFileName;
 			else
@@ -433,7 +434,6 @@ void LabEngine::processMonitor(char *ntext, TextFont *monitorFont, bool isIntera
 			if (((msgClass == MOUSEBUTTONS) && (IEQUALIFIER_RIGHTBUTTON & qualifier)) ||
 				  ((msgClass == RAWKEY) && (code == 27)))
 				return;
-
 			else if ((msgClass == MOUSEBUTTONS) && (IEQUALIFIER_LEFTBUTTON & qualifier)) {
 				if ((mouseY >= _utils->vgaScaleY(171)) && (mouseY <= _utils->vgaScaleY(200))) {
 					if ((mouseX >= _utils->vgaScaleX(259)) && (mouseX <= _utils->vgaScaleX(289))) {
@@ -481,8 +481,6 @@ void LabEngine::processMonitor(char *ntext, TextFont *monitorFont, bool isIntera
  * Does what's necessary for the monitor.
  */
 void LabEngine::doMonitor(char *background, char *textfile, bool isinteractive, uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
-	char *ntext;
-
 	x1 = _utils->vgaScaleX(x1);
 	x2 = _utils->vgaScaleX(x2);
 	y1 = _utils->vgaScaleY(y1);
@@ -506,7 +504,7 @@ void LabEngine::doMonitor(char *background, char *textfile, bool isinteractive, 
 	_monitorButton = new Image(buttonFile, this);
 	delete buttonFile;
 
-	ntext = _resource->getText(textfile);
+	char *ntext = _resource->getText(textfile);
 	_graphics->loadBackPict(background, _highPalette);
 	drawMonText(ntext, monitorFont, x1, y1, x2, y2, isinteractive);
 	_event->mouseShow();
