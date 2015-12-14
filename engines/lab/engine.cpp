@@ -992,7 +992,8 @@ bool LabEngine::fromCrumbs(uint32 tmpClass, uint16 code, uint16 qualifier, Commo
 			wrkClosePtr = nullptr;
 			eatMessages();
 
-			if (actionMode == 0) {
+			switch (actionMode) {
+			case 0:
 				// Take something.
 				if (doActionRule(Common::Point(curPos.x, curPos.y), actionMode, _roomNum, &_closeDataPtr))
 					_curFileName = _newFileName;
@@ -1004,7 +1005,12 @@ bool LabEngine::fromCrumbs(uint32 tmpClass, uint16 code, uint16 qualifier, Commo
 					_curFileName = _newFileName;
 				else if (curPos.y < (_utils->vgaScaleY(149) + _utils->svgaCord(2)))
 					drawStaticMessage(kTextNothing);
-			} else if ((actionMode == 1) || (actionMode == 2) || (actionMode == 3)) {
+
+				break;
+
+			case 1:
+			case 2:
+			case 3:
 				// Manipulate an object, Open up a "door" or Close a "door"
 				if (doActionRule(curPos, actionMode, _roomNum, &_closeDataPtr))
 					_curFileName = _newFileName;
@@ -1012,31 +1018,38 @@ bool LabEngine::fromCrumbs(uint32 tmpClass, uint16 code, uint16 qualifier, Commo
 					if (curPos.y < (_utils->vgaScaleY(149) + _utils->svgaCord(2)))
 						drawStaticMessage(kTextNothing);
 				}
-			} else if (actionMode == 4) {
-				// Look at closeups
-				CloseDataPtr tmpClosePtr = _closeDataPtr;
-				setCurrentClose(curPos, &tmpClosePtr, true);
+				break;
 
-				if (_closeDataPtr == tmpClosePtr) {
-					if (curPos.y < (_utils->vgaScaleY(149) + _utils->svgaCord(2)))
-						drawStaticMessage(kTextNothing);
-				} else if (tmpClosePtr->_graphicName) {
-					if (*(tmpClosePtr->_graphicName)) {
-						_anim->_doBlack = true;
-						_closeDataPtr = tmpClosePtr;
+			case 4: {
+					// Look at closeups
+					CloseDataPtr tmpClosePtr = _closeDataPtr;
+					setCurrentClose(curPos, &tmpClosePtr, true);
+
+					if (_closeDataPtr == tmpClosePtr) {
+						if (curPos.y < (_utils->vgaScaleY(149) + _utils->svgaCord(2)))
+							drawStaticMessage(kTextNothing);
+					} else if (tmpClosePtr->_graphicName) {
+						if (*(tmpClosePtr->_graphicName)) {
+							_anim->_doBlack = true;
+							_closeDataPtr = tmpClosePtr;
+						} else if (curPos.y < (_utils->vgaScaleY(149) + _utils->svgaCord(2)))
+							drawStaticMessage(kTextNothing);
 					} else if (curPos.y < (_utils->vgaScaleY(149) + _utils->svgaCord(2)))
 						drawStaticMessage(kTextNothing);
-				} else if (curPos.y < (_utils->vgaScaleY(149) + _utils->svgaCord(2)))
-					drawStaticMessage(kTextNothing);
-			} else if ((actionMode == 5)  && _conditions->in(curInv)) {
-				// Use an item on something else
-				if (doOperateRule(curPos, curInv, &_closeDataPtr)) {
-					_curFileName = _newFileName;
+				}
+				break;
 
-					if (!_conditions->in(curInv))
-						decIncInv(&curInv, false);
-				} else if (curPos.y < (_utils->vgaScaleY(149) + _utils->svgaCord(2)))
-					drawStaticMessage(kTextNothing);
+			case 5:
+				if (_conditions->in(curInv)) {
+					// Use an item on something else
+					if (doOperateRule(curPos, curInv, &_closeDataPtr)) {
+						_curFileName = _newFileName;
+
+						if (!_conditions->in(curInv))
+							decIncInv(&curInv, false);
+					} else if (curPos.y < (_utils->vgaScaleY(149) + _utils->svgaCord(2)))
+						drawStaticMessage(kTextNothing);
+				}
 			}
 		}
 
