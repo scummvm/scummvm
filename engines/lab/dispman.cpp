@@ -52,7 +52,7 @@ DisplayMan::DisplayMan(LabEngine *vm) : _vm(vm) {
 	_curBitmap = nullptr;
 	_displayBuffer = nullptr;
 	_currentDisplayBuffer = nullptr;
-	FadePalette = nullptr;
+	_fadePalette = nullptr;
 
 	_screenWidth = 0;
 	_screenHeight = 0;
@@ -79,7 +79,7 @@ void DisplayMan::loadPict(const char *filename) {
 }
 
 void DisplayMan::loadBackPict(const char *fileName, uint16 *highPal) {
-	FadePalette = highPal;
+	_fadePalette = highPal;
 	_vm->_anim->_noPalChange = true;
 	readPict(fileName, true);
 
@@ -1194,13 +1194,13 @@ void DisplayMan::fade(bool fadeIn, uint16 res) {
 	for (uint16 i = 0; i < 16; i++) {
 		for (uint16 palIdx = 0; palIdx < 16; palIdx++) {
 			if (fadeIn)
-				newPal[palIdx] = (0x00F & fadeNumIn(0x00F & FadePalette[palIdx], 0x00F & res, i)) +
-				(0x0F0 & fadeNumIn(0x0F0 & FadePalette[palIdx], 0x0F0 & res, i)) +
-				(0xF00 & fadeNumIn(0xF00 & FadePalette[palIdx], 0xF00 & res, i));
+				newPal[palIdx] = (0x00F & fadeNumIn(0x00F & _fadePalette[palIdx], 0x00F & res, i)) +
+				(0x0F0 & fadeNumIn(0x0F0 & _fadePalette[palIdx], 0x0F0 & res, i)) +
+				(0xF00 & fadeNumIn(0xF00 & _fadePalette[palIdx], 0xF00 & res, i));
 			else
-				newPal[palIdx] = (0x00F & fadeNumOut(0x00F & FadePalette[palIdx], 0x00F & res, i)) +
-				(0x0F0 & fadeNumOut(0x0F0 & FadePalette[palIdx], 0x0F0 & res, i)) +
-				(0xF00 & fadeNumOut(0xF00 & FadePalette[palIdx], 0xF00 & res, i));
+				newPal[palIdx] = (0x00F & fadeNumOut(0x00F & _fadePalette[palIdx], 0x00F & res, i)) +
+				(0x0F0 & fadeNumOut(0x0F0 & _fadePalette[palIdx], 0x0F0 & res, i)) +
+				(0xF00 & fadeNumOut(0xF00 & _fadePalette[palIdx], 0xF00 & res, i));
 		}
 
 		setAmigaPal(newPal, 16);

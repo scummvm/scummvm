@@ -592,7 +592,7 @@ void LabEngine::doMap(uint16 curRoom) {
 		0x0AAA, 0x0ED0, 0x0EEE, 0x0694
 	};
 
-	_graphics->FadePalette = amigaMapPalette;
+	_graphics->_fadePalette = amigaMapPalette;
 
 	_music->updateMusic();
 	loadMapData();
