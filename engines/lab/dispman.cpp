@@ -69,7 +69,6 @@ DisplayMan::~DisplayMan() {
 }
 
 // From readPict.c.  Reads in pictures and animations from disk.
-
 void DisplayMan::loadPict(const char *filename) {
 	Common::File *bitmapFile = _vm->_resource->openDataFile(filename);
 	freePict();
@@ -191,12 +190,6 @@ uint32 DisplayMan::flowText(
 			uint16 x1, uint16 y1,  // Cords
 			uint16 x2, uint16 y2,
 			const char *str) {     // The text itself
-	TextFont *_msgFont = (TextFont *)font;
-	char linebuffer[256];
-	const char *temp;
-	uint16 numlines, actlines, fontheight, width;
-	uint16 x, y;
-
 	if (fillback) {
 		setAPen(backpen);
 		rectFill(x1, y1, x2, y2);
@@ -207,17 +200,20 @@ uint32 DisplayMan::flowText(
 
 	setAPen(pencolor);
 
-	fontheight = textHeight(_msgFont) + spacing;
-	numlines   = (y2 - y1 + 1) / fontheight;
-	width      = x2 - x1 + 1;
-	y          = y1;
+	TextFont *msgFont = (TextFont *)font;
+	uint16 fontheight = textHeight(msgFont) + spacing;
+	uint16 numlines   = (y2 - y1 + 1) / fontheight;
+	uint16 width      = x2 - x1 + 1;
+	uint16 y          = y1;
+	char linebuffer[256];
+	const char *temp;
 
 	if (centerv && output) {
 		temp = str;
-		actlines = 0;
+		uint16 actlines = 0;
 
 		while (temp[0]) {
-			getLine(_msgFont, linebuffer, &temp, width);
+			getLine(msgFont, linebuffer, &temp, width);
 			actlines++;
 		}
 
@@ -228,15 +224,15 @@ uint32 DisplayMan::flowText(
 	temp = str;
 
 	while (numlines && str[0]) {
-		getLine(_msgFont, linebuffer, &str, width);
+		getLine(msgFont, linebuffer, &str, width);
 
-		x = x1;
+		uint16 x = x1;
 
 		if (centerh)
-			x += (width - textLength(_msgFont, linebuffer, strlen(linebuffer))) / 2;
+			x += (width - textLength(msgFont, linebuffer, strlen(linebuffer))) / 2;
 
 		if (output)
-			text(_msgFont, x, y, pencolor, linebuffer, strlen(linebuffer));
+			text(msgFont, x, y, pencolor, linebuffer, strlen(linebuffer));
 
 		numlines--;
 		y += fontheight;
@@ -277,13 +273,13 @@ uint32 DisplayMan::flowTextToMem(Image *destIm,
 			uint16 x1, uint16 y1,  // Cords
 			uint16 x2, uint16 y2,
 			const char *str) {     // The text itself
-	uint32 res, vgabyte = _screenBytesPerPage;
 	byte *tmp = _currentDisplayBuffer;
+	uint32 vgabyte = _screenBytesPerPage;
 
 	_currentDisplayBuffer = destIm->_imageData;
 	_screenBytesPerPage = (uint32)destIm->_width * (int32)destIm->_height;
 
-	res = flowText(font, spacing, pencolor, backpen, fillback, centerh, centerv, output, x1, y1, x2, y2, str);
+	uint32 res = flowText(font, spacing, pencolor, backpen, fillback, centerh, centerv, output, x1, y1, x2, y2, str);
 
 	_screenBytesPerPage = vgabyte;
 	_currentDisplayBuffer = tmp;
@@ -307,13 +303,13 @@ void DisplayMan::createBox(uint16 y2) {
 }
 
 int32 DisplayMan::longDrawMessage(const char *str) {
-	char newText[512];
-
 	if (str == NULL)
 		return 0;
 
 	_vm->_event->attachButtonList(NULL);
 	_vm->_event->mouseHide();
+
+	char newText[512];
 	strcpy(newText, str);
 
 	if (!_longWinInFront) {
@@ -682,77 +678,73 @@ uint16 DisplayMan::textHeight(TextFont *tf) {
  * Draws the text to the screen.
  */
 void DisplayMan::text(TextFont *tf, uint16 x, uint16 y, uint16 color, const char *text, uint16 numchars) {
-	byte *VGATop, *VGACur, *VGATemp, *VGATempLine, *cdata;
-	uint32 RealOffset, SegmentOffset;
-	int32 templeft, LeftInSegment;
-	uint16 bwidth, mask, curpage, data;
-
-	VGATop = getCurrentDrawingBuffer();
+	byte *vgaTop = getCurrentDrawingBuffer();
 
 	for (uint16 i = 0; i < numchars; i++) {
-		RealOffset = (_screenWidth * y) + x;
-		curpage    = RealOffset / _screenBytesPerPage;
-		SegmentOffset = RealOffset - (curpage * _screenBytesPerPage);
-		LeftInSegment = _screenBytesPerPage - SegmentOffset;
-		VGACur = VGATop + SegmentOffset;
+		uint32 realOffset = (_screenWidth * y) + x;
+		uint16 curpage    = realOffset / _screenBytesPerPage;
+		uint32 segmentOffset = realOffset - (curpage * _screenBytesPerPage);
+		int32 leftInSegment = _screenBytesPerPage - segmentOffset;
+		byte *vgaCur = vgaTop + segmentOffset;
 
 		if (tf->_widths[(uint)*text]) {
-			cdata = tf->_data + tf->_offsets[(uint)*text];
-			bwidth = *cdata++;
-			VGATemp = VGACur;
-			VGATempLine = VGACur;
+			byte *cdata = tf->_data + tf->_offsets[(uint)*text];
+			uint16 bwidth = *cdata++;
+			byte *vgaTemp = vgaCur;
+			byte *vgaTempLine = vgaCur;
 
 			for (uint16 rows = 0; rows < tf->_height; rows++) {
-				VGATemp = VGATempLine;
-				templeft = LeftInSegment;
+				int32 templeft = leftInSegment;
+
+				vgaTemp = vgaTempLine;
 
 				for (uint16 cols = 0; cols < bwidth; cols++) {
-					data = *cdata++;
+					uint16 data = *cdata++;
 
 					if (data && (templeft >= 8)) {
 						for (int j = 7; j >= 0; j--) {
 							if ((1 << j) & data)
-								*VGATemp = color;
-							VGATemp++;
+								*vgaTemp = color;
+							vgaTemp++;
 						}
 
 						templeft -= 8;
 					} else if (data) {
-						mask = 0x80;
-						templeft = LeftInSegment;
+						uint16 mask = 0x80;
+						templeft = leftInSegment;
 
 						for (uint16 counterb = 0; counterb < 8; counterb++) {
 							if (templeft <= 0) {
 								curpage++;
-								VGATemp = (byte *)(VGATop - templeft);
+								vgaTemp = (byte *)(vgaTop - templeft);
 								// Set up VGATempLine for next line
-								VGATempLine -= _screenBytesPerPage;
+								vgaTempLine -= _screenBytesPerPage;
 								// Set up LeftInSegment for next line
-								LeftInSegment += _screenBytesPerPage + templeft;
+								leftInSegment += _screenBytesPerPage + templeft;
 								templeft += _screenBytesPerPage;
 							}
 
 							if (mask & data)
-								*VGATemp = color;
+								*vgaTemp = color;
 
-							VGATemp++;
+							vgaTemp++;
 
 							mask = mask >> 1;
 							templeft--;
 						}
 					} else {
 						templeft -= 8;
-						VGATemp += 8;
+						vgaTemp += 8;
 					}
 				}
 
-				VGATempLine += _screenWidth;
-				LeftInSegment -= _screenWidth;
+				vgaTempLine += _screenWidth;
+				leftInSegment -= _screenWidth;
 
-				if (LeftInSegment <= 0) {
+				if (leftInSegment <= 0) {
 					curpage++;
-					VGATempLine -= _screenBytesPerPage;
-					LeftInSegment += _screenBytesPerPage;
+					vgaTempLine -= _screenBytesPerPage;
+					leftInSegment += _screenBytesPerPage;
 				}
 			}
 		}
@@ -861,8 +853,6 @@ void DisplayMan::copyPage(uint16 width, uint16 height, uint16 nheight, uint16 st
  * Scrolls the display to a new picture from a black screen.
  */
 void DisplayMan::doScrollWipe(char *filename) {
-	uint16 startLine = 0, onRow = 0;
-
 	_vm->_event->mouseHide();
 	uint16 width = _vm->_utils->vgaScaleX(320);
 	uint16 height = _vm->_utils->vgaScaleY(149) + _vm->_utils->svgaCord(2);
@@ -879,6 +869,7 @@ void DisplayMan::doScrollWipe(char *filename) {
 	_vm->_music->updateMusic();
 	uint16 by = _vm->_utils->vgaScaleX(3);
 	uint16 nheight = height;
+	uint16 startLine = 0, onRow = 0;
 
 	while (onRow < _vm->_anim->_headerdata._height) {
 		_vm->_music->updateMusic();
@@ -962,7 +953,7 @@ void DisplayMan::doScrollBounce() {
  * Does the transporter wipe.
  */
 void DisplayMan::doTransWipe(CloseDataPtr *closePtrList, char *filename) {
-	uint16 lastY, curY, linesDone = 0, linesLast;
+	uint16 lastY, linesLast;
 
 	if (_vm->_isHiRes) {
 		linesLast = 3;
@@ -972,9 +963,11 @@ void DisplayMan::doTransWipe(CloseDataPtr *closePtrList, char *filename) {
 		lastY = 148;
 	}
 
+	uint16 linesDone = 0;
+
 	for (uint16 j = 0; j < 2; j++) {
 		for (uint16 i = 0; i < 2; i++) {
-			curY = i * 2;
+			uint16 curY = i * 2;
 
 			while (curY < lastY) {
 				if (linesDone >= linesLast) {
@@ -1019,7 +1012,7 @@ void DisplayMan::doTransWipe(CloseDataPtr *closePtrList, char *filename) {
 
 	for (uint16 j = 0; j < 2; j++) {
 		for (uint16 i = 0; i < 2; i++) {
-			curY = i * 2;
+			uint16 curY = i * 2;
 
 			while (curY < lastY) {
 				if (linesDone >= linesLast) {
