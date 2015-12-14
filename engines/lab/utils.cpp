@@ -122,12 +122,10 @@ Common::Point Utils::vgaUnscale(Common::Point pos) {
  * is also a byte.
  */
 void Utils::unDiffByteByte(byte *dest, byte *diff) {
-	uint16 skip, copy;
-
 	while (1) {
-		skip = *diff;
+		uint16 skip = *diff;
 		diff++;
-		copy = *diff;
+		uint16 copy = *diff;
 		diff++;
 
 		if (skip == 255) {
@@ -152,11 +150,9 @@ void Utils::unDiffByteByte(byte *dest, byte *diff) {
  * is a word.
  */
 void Utils::unDiffByteWord(uint16 *dest, uint16 *diff) {
-	uint16 skip, copy;
-
 	while (1) {
-		skip = ((byte *)diff)[0];
-		copy = ((byte *)diff)[1];
+		uint16 skip = ((byte *)diff)[0];
+		uint16 copy = ((byte *)diff)[1];
 
 		diff++;
 
@@ -193,8 +189,7 @@ void Utils::unDiffByteWord(uint16 *dest, uint16 *diff) {
 		}
 
 		while (copy) {
-			*dest = READ_LE_UINT16(diff);
-			dest++;
+			*dest++ = READ_LE_UINT16(diff);
 			diff++;
 			copy--;
 		}
@@ -208,19 +203,12 @@ void Utils::unDiffByteWord(uint16 *dest, uint16 *diff) {
  * is a byte.
  */
 void Utils::VUnDiffByteByte(byte *dest, byte *diff, uint16 bytesPerRow) {
-	byte *curPtr;
-	uint16 skip, copy;
-	uint16 counter = 0;
-
-
-	while (counter < _dataBytesPerRow) {
-		curPtr = dest + counter;
+	for (uint16 counter = 0; counter < _dataBytesPerRow; ) {
+		byte *curPtr = dest + counter;
 
 		for (;;) {
-			skip = *diff;
-			diff++;
-			copy = *diff;
-			diff++;
+			uint16 skip = *diff++;
+			uint16 copy = *diff++;
 
 			if (skip == 255) {
 				counter += copy;
@@ -232,9 +220,8 @@ void Utils::VUnDiffByteByte(byte *dest, byte *diff, uint16 bytesPerRow) {
 
 				while (copy) {
 					copy--;
-					*curPtr = *diff;
+					*curPtr = *diff++;
 					curPtr += bytesPerRow;
-					diff++;
 				}
 			}
 		}
@@ -246,21 +233,17 @@ void Utils::VUnDiffByteByte(byte *dest, byte *diff, uint16 bytesPerRow) {
  * is a word.
  */
 void Utils::VUnDiffByteWord(uint16 *dest, uint16 *diff, uint16 bytesPerRow) {
-	uint16 *curPtr;
-	uint16 skip, copy;
 	uint16 counter = 0;
-
 	uint16 wordsPerRow = bytesPerRow / 2;
 
 	while (counter < (_dataBytesPerRow >> 1)) {
-		curPtr = dest + counter;
+		uint16 *curPtr = dest + counter;
 
 		for (;;) {
-			skip = ((byte *)diff)[0];
-			copy = ((byte *)diff)[1];
+			uint16 skip = ((byte *)diff)[0];
+			uint16 copy = ((byte *)diff)[1];
 
 			diff++;
-
 
 			if (skip == 255) {
 				counter += copy;
@@ -271,9 +254,8 @@ void Utils::VUnDiffByteWord(uint16 *dest, uint16 *diff, uint16 bytesPerRow) {
 				curPtr += (skip * wordsPerRow);
 
 				while (copy) {
-					*curPtr = *diff; //swapUShort(*diff);
+					*curPtr = *diff++; //swapUShort(*diff);
 					curPtr += wordsPerRow;
-					diff++;
 					copy--;
 				}
 			}
@@ -286,24 +268,17 @@ void Utils::VUnDiffByteWord(uint16 *dest, uint16 *diff, uint16 bytesPerRow) {
  * is a long.
  */
 void Utils::VUnDiffByteLong(uint32 *dest, uint32 *diff, uint16 bytesPerRow) {
-	uint32 *_curPtr;
-	uint16 skip, copy;
-
 	uint16 counter = 0;
 	byte *diff1 = (byte *)diff;
 
 	uint16 longsperrow = bytesPerRow / 4;
 
 	while (counter < (_dataBytesPerRow >> 2)) {
-		_curPtr = dest + counter;
+		uint32 *_curPtr = dest + counter;
 
 		for (;;) {
-			skip = *diff1;
-			diff1++;
-
-			copy = *diff1;
-			diff1++;
-
+			uint16 skip = *diff1++;
+			uint16 copy = *diff1++;
 
 			if (skip == 255) {
 				counter += copy;
@@ -332,8 +307,7 @@ void Utils::runLengthDecode(byte *dest, byte *source) {
 	int16 count;
 
 	while (1) {
-		num = (int8)*source;
-		source++;
+		num = (int8)*source++;
 
 		if (num == 127) {
 			return;
@@ -343,12 +317,10 @@ void Utils::runLengthDecode(byte *dest, byte *source) {
 			dest   += num;
 		} else {
 			count = (int16)(-num);
-			num   = *source;
-			source++;
+			num   = *source++;
 
 			while (count) {
-				*dest = num;
-				dest++;
+				*dest++ = num;
 				count--;
 			}
 		}
@@ -359,7 +331,6 @@ void Utils::runLengthDecode(byte *dest, byte *source) {
  * Does a vertical run length decode.
  */
 void Utils::VRunLengthDecode(byte *dest, byte *source, uint16 bytesPerRow) {
-	int8 num;
 	int16 count;
 	byte *top = dest;
 
@@ -367,14 +338,13 @@ void Utils::VRunLengthDecode(byte *dest, byte *source, uint16 bytesPerRow) {
 		dest = top;
 		dest += i;
 
-		num = (int8)*source;
+		int8 num = (int8)*source;
 		source++;
 
 		while (num != 127) {
 			if (num > '\0') {
 				while (num) {
-					*dest = *source;
-					source++;
+					*dest = *source++;
 					dest += bytesPerRow;
 					num--;
 				}
@@ -433,4 +403,5 @@ uint16 Utils::getRandom(uint16 max) {
 	else
 		return 0;
 }
+
 } // End of namespace Lab
