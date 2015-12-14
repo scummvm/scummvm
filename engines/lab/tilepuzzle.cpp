@@ -89,7 +89,7 @@ TilePuzzle::~TilePuzzle() {
 	for (int i = 0; i < 16; i++)
 		delete _tiles[i];
 
-	for (uint16 imgIdx = 0; imgIdx < 10; imgIdx++) {
+	for (int imgIdx = 0; imgIdx < 10; imgIdx++) {
 		delete _numberImages[imgIdx];
 		_numberImages[imgIdx] = nullptr;
 	}
@@ -253,8 +253,6 @@ void TilePuzzle::doTile(bool showsolution) {
  * Reads in a backdrop picture.
  */
 void TilePuzzle::showTile(const char *filename, bool showSolution) {
-	uint16 start = showSolution ? 0 : 1;
-
 	_vm->_anim->_doBlack = true;
 	_vm->_anim->_noPalChange = true;
 	_vm->_graphics->readPict(filename, true);
@@ -263,7 +261,9 @@ void TilePuzzle::showTile(const char *filename, bool showSolution) {
 
 	Common::File *tileFile = _vm->_resource->openDataFile(showSolution ? "P:TileSolution" : "P:Tile");
 
-	for (uint16 curBit = start; curBit < 16; curBit++)
+	int start = showSolution ? 0 : 1;
+
+	for (int curBit = start; curBit < 16; curBit++)
 		_tiles[curBit] = new Image(tileFile, _vm);
 
 	delete tileFile;
@@ -277,7 +277,7 @@ void TilePuzzle::showTile(const char *filename, bool showSolution) {
  */
 void TilePuzzle::doTileScroll(uint16 col, uint16 row, uint16 scrolltype) {
 	int16 dX = 0, dY = 0, dx = 0, dy = 0, sx = 0, sy = 0;
-	uint16 last = 0;
+	int last = 0;
 
 	if (scrolltype == kScrollLeft) {
 		dX = _vm->_utils->vgaScaleX(5);
@@ -306,7 +306,7 @@ void TilePuzzle::doTileScroll(uint16 col, uint16 row, uint16 scrolltype) {
 
 	byte *buffer = new byte[_tiles[1]->_width * _tiles[1]->_height * 2L];
 
-	for (uint16 i = 0; i < last; i++) {
+	for (int i = 0; i < last; i++) {
 		_vm->waitTOF();
 		scrollRaster(dX, dY, x1, y1, x1 + _vm->_utils->vgaScaleX(28) + sx, y1 + _vm->_utils->vgaScaleY(23) + sy, buffer);
 		x1 += dX;
@@ -323,15 +323,13 @@ void TilePuzzle::changeCombination(uint16 number) {
 	const int solution[6] = { 0, 4, 0, 8, 7, 2 };
 
 	Image display(_vm);
-	uint16 combnum;
-	bool unlocked = true;
 
 	if (_combination[number] < 9)
 		(_combination[number])++;
 	else
 		_combination[number] = 0;
 
-	combnum = _combination[number];
+	uint16 combnum = _combination[number];
 
 	display._imageData = _vm->_graphics->getCurrentDrawingBuffer();
 	display._width     = _vm->_graphics->_screenWidth;
@@ -353,7 +351,8 @@ void TilePuzzle::changeCombination(uint16 number) {
 
 	delete[] buffer;
 
-	for (uint16 i = 0; i < 6; i++)
+	bool unlocked = true;
+	for (int i = 0; i < 6; i++)
 		unlocked &= (_combination[i] == solution[i]);
 
 	if (unlocked)
@@ -374,7 +373,7 @@ void TilePuzzle::scrollRaster(int16 dx, int16 dy, uint16 x1, uint16 y1, uint16 x
  * Draws the images of the combination lock to the display bitmap.
  */
 void TilePuzzle::doCombination() {
-	for (uint16 i = 0; i <= 5; i++)
+	for (int i = 0; i <= 5; i++)
 		_numberImages[_combination[i]]->drawImage(_vm->_utils->vgaScaleX(COMBINATION_X[i]), _vm->_utils->vgaScaleY(65));
 }
 
@@ -402,28 +401,24 @@ void TilePuzzle::showCombination(const char *filename) {
 }
 
 void TilePuzzle::save(Common::OutSaveFile *file) {
-	uint16 i, j;
-
 	// Combination lock and tile stuff
-	for (i = 0; i < 6; i++)
+	for (int i = 0; i < 6; i++)
 		file->writeByte(_combination[i]);
 
 	// Tiles
-	for (i = 0; i < 4; i++)
-		for (j = 0; j < 4; j++)
+	for (int i = 0; i < 4; i++)
+		for (int j = 0; j < 4; j++)
 			file->writeUint16LE(_curTile[i][j]);
 }
 
 void TilePuzzle::load(Common::InSaveFile *file) {
-	uint16 i, j;
-
 	// Combination lock and tile stuff
-	for (i = 0; i < 6; i++)
+	for (int i = 0; i < 6; i++)
 		_combination[i] = file->readByte();
 
 	// Tiles
-	for (i = 0; i < 4; i++)
-		for (j = 0; j < 4; j++)
+	for (int i = 0; i < 4; i++)
+		for (int j = 0; j < 4; j++)
 			_curTile[i][j] = file->readUint16LE();
 }
 

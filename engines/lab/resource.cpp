@@ -250,7 +250,6 @@ Action *Resource::readAction(Common::File *file) {
 	Action *action = NULL;
 	Action *prev = NULL;
 	Action *head = NULL;
-	char **messages;
 
 	do {
 		c = file->readByte();
@@ -267,7 +266,7 @@ Action *Resource::readAction(Common::File *file) {
 			action->_param3 = file->readSint16LE();
 
 			if (action->_actionType == SHOWMESSAGES) {
-				messages = (char **)malloc(action->_param1 * 4);
+				char **messages = (char **)malloc(action->_param1 * 4);
 
 				for (int i = 0; i < action->_param1; i++)
 					messages[i] = readString(file);
