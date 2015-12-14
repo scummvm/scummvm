@@ -901,6 +901,7 @@ bool LabEngine::processKey(IntuiMessage *curMsg, uint32 &msgClass, uint16 &quali
 
 void LabEngine::processMainButton(CloseDataPtr wrkClosePtr, uint16 &curInv, uint16 &lastInv, uint16 &oldDirection, bool &forceDraw, uint16 buttonId, uint16 &actionMode) {
 	uint16 newDir;
+	uint16 oldRoomNum;
 
 	switch (buttonId) {
 	case kButtonPickup:
@@ -975,7 +976,7 @@ void LabEngine::processMainButton(CloseDataPtr wrkClosePtr, uint16 &curInv, uint
 	case kButtonForward:
 		_closeDataPtr = nullptr;
 		wrkClosePtr = nullptr;
-		uint16 oldRoomNum = _roomNum;
+		oldRoomNum = _roomNum;
 
 		if (doGoForward(&_closeDataPtr)) {
 			if (oldRoomNum == _roomNum)
