@@ -358,7 +358,7 @@ void LabEngine::drawMap(uint16 curRoom, uint16 curMsg, uint16 floorNum, bool fad
 	if (fadeOut)
 		_graphics->fade(false, 0);
 
-	_graphics->setAPen(0);
+	_graphics->setPen(0);
 	_graphics->rectFill(0, 0, _graphics->_screenWidth - 1, _graphics->_screenHeight - 1);
 
 	_imgMap->drawImage(0, 0);
@@ -552,7 +552,7 @@ void LabEngine::processMap(uint16 curRoom) {
 						char *sptr;
 						if ((sptr = _rooms[curMsg]._roomMsg)) {
 							_event->mouseHide();
-							_graphics->setAPen(3);
+							_graphics->setPen(3);
 							_graphics->rectFillScaled(13, 148, 135, 186);
 							_graphics->flowTextScaled(_msgFont, 0, 5, 3, true, true, true, true, 14, 148, 134, 186, sptr);
 
@@ -566,7 +566,7 @@ void LabEngine::processMap(uint16 curRoom) {
 							top = bottom = (curCoords.top + curCoords.bottom) / 2;
 
 							if ((curMsg != curRoom) && (_maps[curMsg]._pageNumber == curFloor)) {
-								_graphics->setAPen(1);
+								_graphics->setPen(1);
 								_graphics->rectFill(left, top, right, bottom);
 							}
 
@@ -606,7 +606,7 @@ void LabEngine::doMap(uint16 curRoom) {
 	_graphics->fade(false, 0);
 	_graphics->blackAllScreen();
 	_event->mouseHide();
-	_graphics->setAPen(0);
+	_graphics->setPen(0);
 	_graphics->rectFill(0, 0, _graphics->_screenWidth - 1, _graphics->_screenHeight - 1);
 	freeMapData();
 	_graphics->blackAllScreen();

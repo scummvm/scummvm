@@ -182,27 +182,27 @@ int DisplayMan::flowText(
 			TextFont *font,        // the TextAttr pointer
 			int16 spacing,         // How much vertical spacing between the lines
 			byte penColor,         // pen number to use for text
-			byte backpen,          // the background color
-			bool fillback,         // Whether to fill the background
+			byte backPen,          // the background color
+			bool fillBack,         // Whether to fill the background
 			bool centerh,          // Whether to center the text horizontally
 			bool centerv,          // Whether to center the text vertically
 			bool output,           // Whether to output any text
 			uint16 x1, uint16 y1,  // Cords
 			uint16 x2, uint16 y2,
 			const char *str) {     // The text itself
-	if (fillback) {
-		setAPen(backpen);
+	if (fillBack) {
+		setPen(backPen);
 		rectFill(x1, y1, x2, y2);
 	}
 
 	if (!str)
 		return 0;
 
-	setAPen(penColor);
+	setPen(penColor);
 
 	TextFont *msgFont = font;
-	uint16 fontheight = textHeight(msgFont) + spacing;
-	uint16 numlines   = (y2 - y1 + 1) / fontheight;
+	uint16 fontHeight = textHeight(msgFont) + spacing;
+	uint16 numLines   = (y2 - y1 + 1) / fontHeight;
 	uint16 width      = x2 - x1 + 1;
 	uint16 y          = y1;
 	char lineBuffer[256];
@@ -217,13 +217,13 @@ int DisplayMan::flowText(
 			actlines++;
 		}
 
-		if (actlines <= numlines)
-			y += ((y2 - y1 + 1) - (actlines * fontheight)) / 2;
+		if (actlines <= numLines)
+			y += ((y2 - y1 + 1) - (actlines * fontHeight)) / 2;
 	}
 
 	temp = str;
 	int len = 0;
-	while (numlines && str[0]) {
+	while (numLines && str[0]) {
 		getLine(msgFont, lineBuffer, &str, width);
 
 		uint16 x = x1;
@@ -235,8 +235,8 @@ int DisplayMan::flowText(
 		if (output)
 			text(msgFont, x, y, penColor, lineBuffer, strlen(lineBuffer));
 
-		numlines--;
-		y += fontheight;
+		numLines--;
+		y += fontHeight;
 	}
 
 	len--;
@@ -267,25 +267,25 @@ int DisplayMan::flowTextScaled(
 int DisplayMan::flowTextToMem(Image *destIm,
 			TextFont *font,        // the TextAttr pointer
 			int16 spacing,         // How much vertical spacing between the lines
-			byte pencolor,         // pen number to use for text
-			byte backpen,          // the background color
-			bool fillback,         // Whether to fill the background
+			byte penColor,         // pen number to use for text
+			byte backPen,          // the background color
+			bool fillBack,         // Whether to fill the background
 			bool centerh,          // Whether to center the text horizontally
 			bool centerv,          // Whether to center the text vertically
 			bool output,           // Whether to output any text
 			uint16 x1, uint16 y1,  // Cords
 			uint16 x2, uint16 y2,
 			const char *str) {     // The text itself
-	byte *tmp = _currentDisplayBuffer;
-	uint32 vgabyte = _screenBytesPerPage;
+	byte *saveDisplayBuffer = _currentDisplayBuffer;
+	uint32 bytesPerPage = _screenBytesPerPage;
 
 	_currentDisplayBuffer = destIm->_imageData;
 	_screenBytesPerPage = (uint32)destIm->_width * (int32)destIm->_height;
 
-	int res = flowText(font, spacing, pencolor, backpen, fillback, centerh, centerv, output, x1, y1, x2, y2, str);
+	int res = flowText(font, spacing, penColor, backPen, fillBack, centerh, centerv, output, x1, y1, x2, y2, str);
 
-	_screenBytesPerPage = vgabyte;
-	_currentDisplayBuffer = tmp;
+	_screenBytesPerPage = bytesPerPage;
+	_currentDisplayBuffer = saveDisplayBuffer;
 
 	return res;
 }
@@ -294,11 +294,11 @@ int DisplayMan::flowTextToMem(Image *destIm,
 
 void DisplayMan::createBox(uint16 y2) {
 	// Message box area
-	setAPen(7);
+	setPen(7);
 	rectFillScaled(4, 154, 315, y2 - 2);
 
 	// Box around message area
-	setAPen(0);
+	setPen(0);
 	drawHLine(_vm->_utils->vgaScaleX(2), _vm->_utils->vgaScaleY(152), _vm->_utils->vgaScaleX(317));
 	drawVLine(_vm->_utils->vgaScaleX(317), _vm->_utils->vgaScaleY(152), _vm->_utils->vgaScaleY(y2));
 	drawHLine(_vm->_utils->vgaScaleX(2), _vm->_utils->vgaScaleY(y2), _vm->_utils->vgaScaleX(317));
@@ -318,7 +318,7 @@ int DisplayMan::longDrawMessage(const char *str) {
 	if (!_longWinInFront) {
 		_longWinInFront = true;
 		// Clear Area
-		setAPen(3);
+		setPen(3);
 		rectFill(0, _vm->_utils->vgaScaleY(149) + _vm->_utils->svgaCord(2), _vm->_utils->vgaScaleX(319), _vm->_utils->vgaScaleY(199));
 	}
 
@@ -363,22 +363,22 @@ void DisplayMan::drawPanel() {
 	_vm->_event->mouseHide();
 
 	// Clear Area
-	setAPen(3);
+	setPen(3);
 	rectFill(0, _vm->_utils->vgaScaleY(149) + _vm->_utils->svgaCord(2), _vm->_utils->vgaScaleX(319), _vm->_utils->vgaScaleY(199));
 
 	// First Line
-	setAPen(0);
+	setPen(0);
 	drawHLine(0, _vm->_utils->vgaScaleY(149) + _vm->_utils->svgaCord(2), _vm->_utils->vgaScaleX(319));
 	// Second Line
-	setAPen(5);
+	setPen(5);
 	drawHLine(0, _vm->_utils->vgaScaleY(149) + 1 + _vm->_utils->svgaCord(2), _vm->_utils->vgaScaleX(319));
 	// Button Separators
-	setAPen(0);
+	setPen(0);
 	// First black line to separate buttons
 	drawHLine(0, _vm->_utils->vgaScaleY(170), _vm->_utils->vgaScaleX(319));
 
 	if (!_vm->_alternate) {
-		setAPen(4);
+		setPen(4);
 		// The horizontal lines under the black one
 		drawHLine(0, _vm->_utils->vgaScaleY(170) + 1, _vm->_utils->vgaScaleX(319));
 		_vm->_event->drawButtonList(&_vm->_moveButtonList);
@@ -394,7 +394,7 @@ void DisplayMan::drawPanel() {
 			drawVLine(_vm->_utils->vgaScaleX(230), _vm->_utils->vgaScaleY(170) + 1, _vm->_utils->vgaScaleY(199));
 		}
 
-		setAPen(4);
+		setPen(4);
 		// The horizontal lines under the black one
 		drawHLine(0, _vm->_utils->vgaScaleY(170) + 1, _vm->_utils->vgaScaleX(122));
 		drawHLine(_vm->_utils->vgaScaleX(126), _vm->_utils->vgaScaleY(170) + 1, _vm->_utils->vgaScaleX(192));
@@ -461,7 +461,7 @@ void DisplayMan::setUpScreens() {
 	_vm->_invButtonList.push_back(_vm->_event->createButton(196, y, 5, VKEY_RTARROW, _vm->_moveImages[18], _vm->_moveImages[19]));
 
 	// The windows version has 2 extra buttons for breadcrumb trail
-	// TODO: the game is really hard to play without those, maybe we could add something to enable that.
+	// CHECKME: the game is really hard to play without those, maybe we could add something to enable that.
 	if (_vm->getPlatform() == Common::kPlatformWindows) {
 		_vm->_invButtonList.push_back(_vm->_event->createButton(234, y, 6, 'b', _vm->_invImages[6], _vm->_invImages[7]));
 		_vm->_invButtonList.push_back(_vm->_event->createButton(266, y, 7, 'f', _vm->_invImages[8], _vm->_invImages[9]));
@@ -473,7 +473,7 @@ void DisplayMan::setUpScreens() {
 /**
  * Sets the pen number to use on all the drawing operations.
  */
-void DisplayMan::setAPen(byte penNum) {
+void DisplayMan::setPen(byte penNum) {
 	_curPen = penNum;
 }
 
@@ -588,9 +588,9 @@ void DisplayMan::writeColorRegs(byte *buf, uint16 first, uint16 numReg) {
 	memcpy(&(_curvgapal[first * 3]), buf, numReg * 3);
 }
 
-void DisplayMan::setPalette(void *cmap, uint16 numColors) {
-	if (memcmp(cmap, _curvgapal, numColors * 3) != 0)
-		writeColorRegs((byte *)cmap, 0, numColors);
+void DisplayMan::setPalette(void *newPal, uint16 numColors) {
+	if (memcmp(newPal, _curvgapal, numColors * 3) != 0)
+		writeColorRegs((byte *)newPal, 0, numColors);
 }
 
 /**
@@ -678,13 +678,13 @@ uint16 DisplayMan::textHeight(TextFont *tf) {
 /**
  * Draws the text to the screen.
  */
-void DisplayMan::text(TextFont *tf, uint16 x, uint16 y, uint16 color, const char *text, uint16 numchars) {
+void DisplayMan::text(TextFont *tf, uint16 x, uint16 y, uint16 color, const char *text, uint16 numChars) {
 	byte *vgaTop = getCurrentDrawingBuffer();
 
-	for (uint16 i = 0; i < numchars; i++) {
+	for (uint16 i = 0; i < numChars; i++) {
 		uint32 realOffset = (_screenWidth * y) + x;
-		uint16 curpage    = realOffset / _screenBytesPerPage;
-		uint32 segmentOffset = realOffset - (curpage * _screenBytesPerPage);
+		uint16 curPage    = realOffset / _screenBytesPerPage;
+		uint32 segmentOffset = realOffset - (curPage * _screenBytesPerPage);
 		int32 leftInSegment = _screenBytesPerPage - segmentOffset;
 		byte *vgaCur = vgaTop + segmentOffset;
 
@@ -716,7 +716,7 @@ void DisplayMan::text(TextFont *tf, uint16 x, uint16 y, uint16 color, const char
 
 						for (uint16 counterb = 0; counterb < 8; counterb++) {
 							if (templeft <= 0) {
-								curpage++;
+								curPage++;
 								vgaTemp = (byte *)(vgaTop - templeft);
 								// Set up VGATempLine for next line
 								vgaTempLine -= _screenBytesPerPage;
@@ -743,7 +743,7 @@ void DisplayMan::text(TextFont *tf, uint16 x, uint16 y, uint16 color, const char
 				leftInSegment -= _screenWidth;
 
 				if (leftInSegment <= 0) {
-					curpage++;
+					curPage++;
 					vgaTempLine -= _screenBytesPerPage;
 					leftInSegment += _screenBytesPerPage;
 				}
@@ -790,23 +790,23 @@ void DisplayMan::doScrollBlack() {
 
 		mem += by * width;
 		nheight -= by;
-		uint32 copysize;
+		uint32 copySize;
 		uint32 size = (int32)nheight * (int32)width;
-		byte *tempmem = mem;
+		byte *tempMem = mem;
 
 		while (size) {
 			if (size > _screenBytesPerPage)
-				copysize = _screenBytesPerPage;
+				copySize = _screenBytesPerPage;
 			else
-				copysize = size;
+				copySize = size;
 
-			size -= copysize;
+			size -= copySize;
 
-			memcpy(baseAddr, tempmem, copysize);
-			tempmem += copysize;
+			memcpy(baseAddr, tempMem, copySize);
+			tempMem += copySize;
 		}
 
-		setAPen(0);
+		setPen(0);
 		rectFill(0, nheight, width - 1, nheight + by - 1);
 
 		screenUpdate();
@@ -986,7 +986,7 @@ void DisplayMan::doTransWipe(CloseDataPtr *closePtrList, char *filename) {
 			}	// while
 		}	// for i
 
-		setAPen(0);
+		setPen(0);
 	}	// for j
 
 	if (filename == NULL)
@@ -1123,7 +1123,7 @@ void DisplayMan::scrollDisplayX(int16 dx, uint16 x1, uint16 y1, uint16 x2, uint1
 		im.readScreenImage(x1, y1);
 		im.drawImage(x1 + dx, y1);
 
-		setAPen(0);
+		setPen(0);
 		rectFill(x1, y1, x1 + dx - 1, y2);
 	} else if (dx < 0) {
 		im._width = x2 - x1 + 1 + dx;
@@ -1132,7 +1132,7 @@ void DisplayMan::scrollDisplayX(int16 dx, uint16 x1, uint16 y1, uint16 x2, uint1
 		im.readScreenImage(x1 - dx, y1);
 		im.drawImage(x1, y1);
 
-		setAPen(0);
+		setPen(0);
 		rectFill(x2 + dx + 1, y1, x2, y2);
 	}
 }
@@ -1157,7 +1157,7 @@ void DisplayMan::scrollDisplayY(int16 dy, uint16 x1, uint16 y1, uint16 x2, uint1
 		im.readScreenImage(x1, y1);
 		im.drawImage(x1, y1 + dy);
 
-		setAPen(0);
+		setPen(0);
 		rectFill(x1, y1, x2, y1 + dy - 1);
 	} else if (dy < 0) {
 		im._width = x2 - x1 + 1;
@@ -1166,7 +1166,7 @@ void DisplayMan::scrollDisplayY(int16 dy, uint16 x1, uint16 y1, uint16 x2, uint1
 		im.readScreenImage(x1, y1 - dy);
 		im.drawImage(x1, y1);
 
-		setAPen(0);
+		setPen(0);
 		rectFill(x1, y2 + dy + 1, x2, y2);
 	}
 }
