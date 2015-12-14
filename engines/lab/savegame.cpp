@@ -39,6 +39,7 @@
 
 #include "lab/lab.h"
 #include "lab/dispman.h"
+#include "lab/eventman.h"
 #include "lab/labsets.h"
 #include "lab/music.h"
 #include "lab/processroom.h"
@@ -122,7 +123,6 @@ bool readSaveGameHeader(Common::InSaveFile *in, SaveGameHeader &header) {
  * Writes the game out to disk.
  */
 bool LabEngine::saveGame(int slot, Common::String desc) {
-	uint16 i;
 	Common::String fileName = generateSaveFileName(slot);
 	Common::SaveFileManager *saveFileManager = g_system->getSavefileManager();
 	Common::OutSaveFile *file = saveFileManager->openForSaving(fileName);
@@ -140,17 +140,17 @@ bool LabEngine::saveGame(int slot, Common::String desc) {
 	file->writeUint16LE(getQuarters());
 
 	// Conditions
-	for (i = 0; i < _conditions->_lastElement / (8 * 2); i++)
+	for (int i = 0; i < _conditions->_lastElement / (8 * 2); i++)
 		file->writeUint16LE(_conditions->_array[i]);
 
 	// Rooms found
-	for (i = 0; i < _roomsFound->_lastElement / (8 * 2); i++)
+	for (int i = 0; i < _roomsFound->_lastElement / (8 * 2); i++)
 		file->writeUint16LE(_roomsFound->_array[i]);
 
 	_tilePuzzle->save(file);
 
 	// Breadcrumbs
-	for (i = 0; i < sizeof(_breadCrumbs); i++) {
+	for (int i = 0; i < sizeof(_breadCrumbs); i++) {
 		file->writeUint16LE(_breadCrumbs[i]._roomNum);
 		file->writeUint16LE(_breadCrumbs[i]._direction);
 	}
@@ -245,6 +245,7 @@ bool LabEngine::saveRestoreGame() {
 
 	_alternate = false;
 	_mainDisplay = true;
+	_event->initMouse();
 	_graphics->screenUpdate();
 
 	return isOK;
