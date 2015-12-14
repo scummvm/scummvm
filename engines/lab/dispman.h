@@ -94,7 +94,7 @@ public:
 	void rectFill(uint16 x1, uint16 y1, uint16 x2, uint16 y2);
 	void rectFillScaled(uint16 x1, uint16 y1, uint16 x2, uint16 y2);
 	// Window text stuff
-	uint32 flowText(TextFont *font,		// the TextAttr pointer
+	int flowText(TextFont *font,		// the TextAttr pointer
 				int16 spacing,			// How much vertical spacing between the lines
 				byte pencolor,			// pen number to use for text
 				byte backpen,			// the background color
@@ -106,7 +106,7 @@ public:
 				uint16 x2, uint16 y2,
 				const char *text);		// The text itself
 
-	uint32 flowTextScaled(
+	int flowTextScaled(
 				TextFont *font,			// the TextAttr pointer
 				int16 spacing,			// How much vertical spacing between the lines
 				byte pencolor,			// pen number to use for text
@@ -119,7 +119,7 @@ public:
 				uint16 x2, uint16 y2,
 				const char *text);		// The text itself
 
-	uint32 flowTextToMem(Image *destIm,
+	int flowTextToMem(Image *destIm,
 				TextFont *font,			// the TextAttr pointer
 				int16 spacing,			// How much vertical spacing between the lines
 				byte pencolor,			// pen number to use for text

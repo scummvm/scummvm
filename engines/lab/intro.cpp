@@ -80,11 +80,9 @@ void Intro::doPictText(const char *filename, TextFont *msgFont, bool isScreen) {
 		return;
 
 	uint32 lastMillis = 0;
-	IntuiMessage *msg;
-	bool drawNextText = true, end = false, begin = true;
-
-	int32 cls, code, Drawn;
-	int16 qualifier;
+	bool drawNextText = true;
+	bool doneFl = false;
+	bool begin = true;
 
 	Common::File *textFile = _vm->_resource->openDataFile(path);
 	byte *textBuffer = new byte[textFile->size()];
@@ -99,19 +97,18 @@ void Intro::doPictText(const char *filename, TextFont *msgFont, bool isScreen) {
 			else if (isScreen)
 				_vm->_graphics->fade(false, 0);
 
+			int charDrawn = 0;
 			if (isScreen) {
 				_vm->_graphics->setAPen(7);
 				_vm->_graphics->rectFillScaled(10, 10, 310, 190);
 
-				Drawn = _vm->_graphics->flowTextScaled(msgFont, (!_vm->_isHiRes) * -1, 5, 7, false, false, true, true, 14, 11, 306, 189, (char *)curText);
+				charDrawn = _vm->_graphics->flowTextScaled(msgFont, (!_vm->_isHiRes) * -1, 5, 7, false, false, true, true, 14, 11, 306, 189, (char *)curText);
 				_vm->_graphics->fade(true, 0);
-			} else {
-				Drawn = _vm->_graphics->longDrawMessage((char *)curText);
-			}
+			} else
+				charDrawn = _vm->_graphics->longDrawMessage((char *)curText);
 
-			curText += Drawn;
-
-			end = (*curText == 0);
+			curText += charDrawn;
+			doneFl = (*curText == 0);
 
 			drawNextText = false;
 			introEatMessages();
@@ -127,7 +124,7 @@ void Intro::doPictText(const char *filename, TextFont *msgFont, bool isScreen) {
 			lastMillis = g_system->getMillis();
 		}
 
-		msg = _vm->_event->getMsg();
+		IntuiMessage *msg = _vm->_event->getMsg();
 
 		if (msg == NULL) {
 			_vm->_music->updateMusic();
@@ -136,7 +133,7 @@ void Intro::doPictText(const char *filename, TextFont *msgFont, bool isScreen) {
 			uint32 elapsedSeconds = (g_system->getMillis() - lastMillis) / 1000;
 
 			if (elapsedSeconds > timeDelay) {
-				if (end) {
+				if (doneFl) {
 					if (isScreen)
 						_vm->_graphics->fade(false, 0);
 
@@ -146,15 +143,14 @@ void Intro::doPictText(const char *filename, TextFont *msgFont, bool isScreen) {
 					drawNextText = true;
 				}
 			}
-
 			_vm->waitTOF();
 		} else {
-			cls       = msg->_msgClass;
-			qualifier = msg->_qualifier;
-			code      = msg->_code;
+			uint32 msgClass = msg->_msgClass;
+			uint16 qualifier = msg->_qualifier;
+			uint16 code = msg->_code;
 
-			if (((cls == MOUSEBUTTONS) && (IEQUALIFIER_RIGHTBUTTON & qualifier)) ||
-				  ((cls == RAWKEY) && (code == 27))) {
+			if (((msgClass == MOUSEBUTTONS) && (IEQUALIFIER_RIGHTBUTTON & qualifier)) ||
+				  ((msgClass == RAWKEY) && (code == 27))) {
 				_quitIntro = true;
 
 				if (isScreen)
@@ -162,9 +158,9 @@ void Intro::doPictText(const char *filename, TextFont *msgFont, bool isScreen) {
 
 				delete[] textBuffer;
 				return;
-			} else if (cls == MOUSEBUTTONS) {
+			} else if (msgClass == MOUSEBUTTONS) {
 				if (IEQUALIFIER_LEFTBUTTON & qualifier) {
-					if (end) {
+					if (doneFl) {
 						if (isScreen)
 							_vm->_graphics->fade(false, 0);
 
@@ -185,7 +181,7 @@ void Intro::doPictText(const char *filename, TextFont *msgFont, bool isScreen) {
 				}
 			}
 
-			if (end) {
+			if (doneFl) {
 				if (isScreen)
 					_vm->_graphics->fade(false, 0);
 

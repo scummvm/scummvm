@@ -178,10 +178,10 @@ void DisplayMan::getLine(TextFont *tf, char *lineBuffer, const char **mainBuffer
  * Note: Every individual word MUST be int16 enough to fit on a line, and
  * each line less than 255 characters.
  */
-uint32 DisplayMan::flowText(
+int DisplayMan::flowText(
 			TextFont *font,        // the TextAttr pointer
 			int16 spacing,         // How much vertical spacing between the lines
-			byte pencolor,         // pen number to use for text
+			byte penColor,         // pen number to use for text
 			byte backpen,          // the background color
 			bool fillback,         // Whether to fill the background
 			bool centerh,          // Whether to center the text horizontally
@@ -195,17 +195,17 @@ uint32 DisplayMan::flowText(
 		rectFill(x1, y1, x2, y2);
 	}
 
-	if (str == NULL)
-		return 0L;
+	if (!str)
+		return 0;
 
-	setAPen(pencolor);
+	setAPen(penColor);
 
 	TextFont *msgFont = font;
 	uint16 fontheight = textHeight(msgFont) + spacing;
 	uint16 numlines   = (y2 - y1 + 1) / fontheight;
 	uint16 width      = x2 - x1 + 1;
 	uint16 y          = y1;
-	char linebuffer[256];
+	char lineBuffer[256];
 	const char *temp;
 
 	if (centerv && output) {
@@ -213,7 +213,7 @@ uint32 DisplayMan::flowText(
 		uint16 actlines = 0;
 
 		while (temp[0]) {
-			getLine(msgFont, linebuffer, &temp, width);
+			getLine(msgFont, lineBuffer, &temp, width);
 			actlines++;
 		}
 
@@ -222,26 +222,29 @@ uint32 DisplayMan::flowText(
 	}
 
 	temp = str;
-
+	int len = 0;
 	while (numlines && str[0]) {
-		getLine(msgFont, linebuffer, &str, width);
+		getLine(msgFont, lineBuffer, &str, width);
 
 		uint16 x = x1;
+		len += strlen(lineBuffer);
 
 		if (centerh)
-			x += (width - textLength(msgFont, linebuffer, strlen(linebuffer))) / 2;
+			x += (width - textLength(msgFont, lineBuffer, strlen(lineBuffer))) / 2;
 
 		if (output)
-			text(msgFont, x, y, pencolor, linebuffer, strlen(linebuffer));
+			text(msgFont, x, y, penColor, lineBuffer, strlen(lineBuffer));
 
 		numlines--;
 		y += fontheight;
 	}
 
-	return (str - temp);
+	len--;
+
+	return len;
 }
 
-uint32 DisplayMan::flowTextScaled(
+int DisplayMan::flowTextScaled(
 	TextFont *font,            // the TextAttr pointer
 	int16 spacing,             // How much vertical spacing between the lines
 	byte penColor,             // pen number to use for text
@@ -261,7 +264,7 @@ uint32 DisplayMan::flowTextScaled(
 /**
  * Calls flowText, but flows it to memory.  Same restrictions as flowText.
  */
-uint32 DisplayMan::flowTextToMem(Image *destIm,
+int DisplayMan::flowTextToMem(Image *destIm,
 			TextFont *font,        // the TextAttr pointer
 			int16 spacing,         // How much vertical spacing between the lines
 			byte pencolor,         // pen number to use for text
@@ -279,7 +282,7 @@ uint32 DisplayMan::flowTextToMem(Image *destIm,
 	_currentDisplayBuffer = destIm->_imageData;
 	_screenBytesPerPage = (uint32)destIm->_width * (int32)destIm->_height;
 
-	uint32 res = flowText(font, spacing, pencolor, backpen, fillback, centerh, centerv, output, x1, y1, x2, y2, str);
+	int res = flowText(font, spacing, pencolor, backpen, fillback, centerh, centerv, output, x1, y1, x2, y2, str);
 
 	_screenBytesPerPage = vgabyte;
 	_currentDisplayBuffer = tmp;
@@ -302,8 +305,8 @@ void DisplayMan::createBox(uint16 y2) {
 	drawVLine(_vm->_utils->vgaScaleX(2), _vm->_utils->vgaScaleY(152), _vm->_utils->vgaScaleY(y2));
 }
 
-int32 DisplayMan::longDrawMessage(const char *str) {
-	if (str == NULL)
+int DisplayMan::longDrawMessage(const char *str) {
+	if (!str)
 		return 0;
 
 	_vm->_event->attachButtonList(NULL);

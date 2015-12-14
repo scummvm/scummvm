@@ -52,13 +52,12 @@ namespace Lab {
  */
 void LabEngine::doNotes() {
 	TextFont *noteFont = _resource->getFont("P:Note.fon");
-	char *ntext = _resource->getText("Lab:Rooms/Notes");
+	char *noteText = _resource->getText("Lab:Rooms/Notes");
 
-	_graphics->flowText(noteFont, -2 + _utils->svgaCord(1), 0, 0, false, false, true, true, _utils->vgaScaleX(25) + _utils->svgaCord(15), _utils->vgaScaleY(50), _utils->vgaScaleX(295) - _utils->svgaCord(15), _utils->vgaScaleY(148), ntext);
+	_graphics->flowText(noteFont, -2 + _utils->svgaCord(1), 0, 0, false, false, true, true, _utils->vgaScaleX(25) + _utils->svgaCord(15), _utils->vgaScaleY(50), _utils->vgaScaleX(295) - _utils->svgaCord(15), _utils->vgaScaleY(148), noteText);
 	_graphics->setPalette(_anim->_diffPalette, 256);
-
 	_graphics->closeFont(noteFont);
-	delete[] ntext;
+	delete[] noteText;
 }
 
 /**
@@ -67,35 +66,35 @@ void LabEngine::doNotes() {
  */
 void LabEngine::doWestPaper() {
 	TextFont *paperFont = _resource->getFont("P:News22.fon");
-	char *ntext = _resource->getText("Lab:Rooms/Date");
-	_graphics->flowText(paperFont, 0, 0, 0, false, true, false, true, _utils->vgaScaleX(57), _utils->vgaScaleY(77) + _utils->svgaCord(2), _utils->vgaScaleX(262), _utils->vgaScaleY(91), ntext);
+	char *paperText = _resource->getText("Lab:Rooms/Date");
+	_graphics->flowText(paperFont, 0, 0, 0, false, true, false, true, _utils->vgaScaleX(57), _utils->vgaScaleY(77) + _utils->svgaCord(2), _utils->vgaScaleX(262), _utils->vgaScaleY(91), paperText);
 	_graphics->closeFont(paperFont);
-	delete[] ntext;
+	delete[] paperText;
 
 	paperFont = _resource->getFont("P:News32.fon");
-	ntext = _resource->getText("Lab:Rooms/Headline");
+	paperText = _resource->getText("Lab:Rooms/Headline");
 
-	int fileLen = strlen(ntext) - 1;
-	int charsPrinted = _graphics->flowText(paperFont, -8, 0, 0, false, true, false, true, _utils->vgaScaleX(57), _utils->vgaScaleY(86) - _utils->svgaCord(2), _utils->vgaScaleX(262), _utils->vgaScaleY(118), ntext);
+	int fileLen = strlen(paperText) - 1;
+	int charsPrinted = _graphics->flowText(paperFont, -8, 0, 0, false, true, false, true, _utils->vgaScaleX(57), _utils->vgaScaleY(86) - _utils->svgaCord(2), _utils->vgaScaleX(262), _utils->vgaScaleY(118), paperText);
 
 	uint16 y;
 
 	if (charsPrinted < fileLen) {
 		y = 130 - _utils->svgaCord(5);
-		_graphics->flowText(paperFont, -8 - _utils->svgaCord(1), 0, 0, false, true, false, true, _utils->vgaScaleX(57), _utils->vgaScaleY(86) - _utils->svgaCord(2), _utils->vgaScaleX(262), _utils->vgaScaleY(132), ntext);
+		_graphics->flowText(paperFont, -8 - _utils->svgaCord(1), 0, 0, false, true, false, true, _utils->vgaScaleX(57), _utils->vgaScaleY(86) - _utils->svgaCord(2), _utils->vgaScaleX(262), _utils->vgaScaleY(132), paperText);
 	} else
 		y = 115 - _utils->svgaCord(5);
 
 	_graphics->closeFont(paperFont);
-	delete[] ntext;
+	delete[] paperText;
 
 	paperFont = _resource->getFont("P:Note.fon");
-	ntext = _resource->getText("Lab:Rooms/Col1");
-	charsPrinted = _graphics->flowTextScaled(paperFont, -4, 0, 0, false, false, false, true, 45, y, 158, 148, ntext);
-	delete[] ntext;
-	ntext = _resource->getText("Lab:Rooms/Col2");
-	charsPrinted = _graphics->flowTextScaled(paperFont, -4, 0, 0, false, false, false, true, 162, y, 275, 148, ntext);
-	delete[] ntext;
+	paperText = _resource->getText("Lab:Rooms/Col1");
+	charsPrinted = _graphics->flowTextScaled(paperFont, -4, 0, 0, false, false, false, true, 45, y, 158, 148, paperText);
+	delete[] paperText;
+	paperText = _resource->getText("Lab:Rooms/Col2");
+	charsPrinted = _graphics->flowTextScaled(paperFont, -4, 0, 0, false, false, false, true, 162, y, 275, 148, paperText);
+	delete[] paperText;
 	_graphics->closeFont(paperFont);
 
 	_graphics->setPalette(_anim->_diffPalette, 256);
@@ -162,7 +161,7 @@ void LabEngine::loadJournalData() {
  */
 void LabEngine::drawJournalText() {
 	uint16 drawingToPage = 1;
-	int32 charsDrawn = 0;
+	int charsDrawn = 0;
 	char *curText = _journalText;
 
 	while (drawingToPage < _journalPage) {
@@ -192,7 +191,7 @@ void LabEngine::drawJournalText() {
 	_graphics->flowTextToMem(_journalBackImage, _journalFont, -2, 2, 0, false, false, false, true, _utils->vgaScaleX(171), _utils->vgaScaleY(32), _utils->vgaScaleX(271), _utils->vgaScaleY(148), curText);
 
 	curText = (char *)(_journalText + charsDrawn);
-	_lastPage = _lastPage || (*curText == 0);
+	_lastPage |= (*curText == 0);
 }
 
 /**
@@ -330,7 +329,7 @@ void LabEngine::doJournal() {
  */
 void LabEngine::drawMonText(char *text, TextFont *monitorFont, uint16 x1, uint16 y1, uint16 x2, uint16 y2, bool isinteractive) {
 	uint16 drawingToPage = 0, yspacing = 0;
-	int32 charsDrawn    = 0L;
+	int charsDrawn = 0;
 	char *curText = text;
 
 	_event->mouseHide();
@@ -380,7 +379,7 @@ void LabEngine::drawMonText(char *text, TextFont *monitorFont, uint16 x1, uint16
 	_lastPage = (*curText == 0);
 	charsDrawn = _graphics->flowText(monitorFont, yspacing, 2, 0, false, false, false, true, x1, y1, x2, y2, curText);
 	curText += charsDrawn;
-	_lastPage = _lastPage || (*curText == 0);
+	_lastPage |= (*curText == 0);
 
 	_event->mouseShow();
 }
