@@ -603,104 +603,21 @@ bool LabEngine::fromCrumbs(uint32 tmpClass, uint16 code, uint16 qualifier, Commo
 	uint16 lastInv = kItemMap;
 	CloseDataPtr wrkClosePtr = nullptr;
 	bool doit;
+	bool leftButtonClick = false;
+	bool rightButtonClick = false;
 
 	_anim->_doBlack = false;
 
 	if ((msgClass == RAWKEY) && (!_graphics->_longWinInFront)) {
-		byte codeLower = tolower(code);
-
-		if (code == 13) {
-			// The return key
-			msgClass = MOUSEBUTTONS;
-			qualifier = IEQUALIFIER_LEFTBUTTON;
-			curPos = _event->getMousePos();
-		} else if (getPlatform() == Common::kPlatformWindows && codeLower == 'b') {
-			// Start bread crumbs
-			_breadCrumbs[0]._roomNum = 0;
-			_numCrumbs = 0;
-			_droppingCrumbs = true;
-			mayShowCrumbIndicator();
-			_graphics->screenUpdate();
-		} else if (codeLower == 'f' || codeLower == 'r') {
-			// Follow bread crumbs
-			if (_droppingCrumbs) {
-				if (_numCrumbs > 0) {
-					_followingCrumbs = true;
-					_followCrumbsFast = (codeLower == 'r');
-					_isCrumbTurning = false;
-					_isCrumbWaiting = false;
-					_crumbTimestamp = g_system->getMillis();
-
-					if (_alternate) {
-						eatMessages();
-						_alternate = false;
-						_anim->_doBlack = true;
-						_graphics->_doNotDrawMessage = false;
-
-						_mainDisplay = true;
-						// Sets the correct button list
-						interfaceOn();
-						_graphics->drawPanel();
-						drawRoomMessage(curInv, _closeDataPtr);
-						_graphics->screenUpdate();
-					}
-				} else {
-					_breadCrumbs[0]._roomNum = 0;
-					_droppingCrumbs = false;
-
-					// Need to hide indicator!!!!
-					mayShowCrumbIndicatorOff();
-					_graphics->screenUpdate();
-				}
-			}
-		} else if (code == 315 || codeLower == 'x' || codeLower == 'q') {
-			// Quit?
-			_graphics->_doNotDrawMessage = false;
-			_graphics->drawMessage("Do you want to quit? (Y/N)");
-			eatMessages();
-			interfaceOff();
-
-			while (1) {
-				// Make sure we check the music at least after every message
-				_music->updateMusic();
-				curMsg = _event->getMsg();
-
-				if (!curMsg) {
-					// Does music load and next animation frame when you've run out of messages
-					_music->updateMusic();
-					_anim->diffNextFrame();
-				} else {
-					if (curMsg->_msgClass == RAWKEY) {
-						codeLower = tolower(curMsg->_code);
-						if (codeLower == 'y' || codeLower == 'q') {
-							_anim->stopDiff();
-							return false;
-						} else if (curMsg->_code < 128) {
-							break;
-						}
-					} else if (curMsg->_msgClass == MOUSEBUTTONS) {
-						break;
-					}
-				}
-			}
-
-			forceDraw = true;
-			interfaceOn();
-		} else if (code == 9) {
-			// TAB key
-			msgClass = DELTAMOVE;
-		} else if (code == 27) {
-			// ESC key
-			_closeDataPtr = nullptr;
-		}
-
-		eatMessages();
+		if (!processKey(curMsg, msgClass, qualifier, curPos, curInv, forceDraw, code))
+			return false;
 	}
 
+	leftButtonClick = (msgClass == MOUSEBUTTONS) && (IEQUALIFIER_LEFTBUTTON & qualifier);
+	rightButtonClick = (msgClass == MOUSEBUTTONS) && (IEQUALIFIER_RIGHTBUTTON & qualifier);
+
 	if (_graphics->_longWinInFront) {
-		if ((msgClass == RAWKEY) || ((msgClass == MOUSEBUTTONS) &&
-			  ((IEQUALIFIER_LEFTBUTTON & qualifier) ||
-				(IEQUALIFIER_RIGHTBUTTON & qualifier)))) {
+		if ((msgClass == RAWKEY) || (leftButtonClick || rightButtonClick)) {
 			_graphics->_longWinInFront = false;
 			_graphics->_doNotDrawMessage = false;
 			_graphics->drawPanel();
@@ -708,275 +625,10 @@ bool LabEngine::fromCrumbs(uint32 tmpClass, uint16 code, uint16 qualifier, Commo
 			_graphics->screenUpdate();
 		}
 	} else if ((msgClass == BUTTONUP) && !_alternate) {
-		uint16 newDir;
-
-		switch (buttonId) {
-		case 0:
-		case 1:
-		case 2:
-		case 3:
-		case 4:
-			if ((actionMode == 4) && (buttonId == 4) && _closeDataPtr) {
-				doMainView(&_closeDataPtr);
-
-				_anim->_doBlack = true;
-				wrkClosePtr = nullptr;
-				_closeDataPtr = nullptr;
-				mayShowCrumbIndicator();
-			} else {
-				uint16 oldActionMode = actionMode;
-				actionMode = buttonId;
-
-				if (oldActionMode < 5)
-					perFlipButton(oldActionMode);
-
-				perFlipButton(actionMode);
-				drawStaticMessage(kTextTakeWhat + buttonId);
-			}
-			break;
-		case 5:
-			eatMessages();
-
-			_alternate = true;
-			_anim->_doBlack = true;
-			_graphics->_doNotDrawMessage = false;
-			// Sets the correct button list
-			interfaceOn();
-			_mainDisplay = false;
-
-			if (lastInv && _conditions->in(lastInv)) {
-				curInv = lastInv;
-				_nextFileName = getInvName(curInv);
-			} else
-				decIncInv(&curInv, false);
-
-			_graphics->drawPanel();
-			drawRoomMessage(curInv, _closeDataPtr);
-
-			mayShowCrumbIndicator();
-			break;
-
-		case 9:
-			doUse(kItemMap);
-
-			mayShowCrumbIndicator();
-			break;
-
-		case 6:
-		case 8:
-			// Arrow Buttons
-			_closeDataPtr = nullptr;
-			wrkClosePtr = nullptr;
-			if (buttonId == 6)
-				drawStaticMessage(kTextTurnLeft);
-			else
-				drawStaticMessage(kTextTurnRight);
-
-			_curFileName = " ";
-
-			oldDirection = _direction;
-
-			newDir = processArrow(_direction, buttonId - 6);
-			doTurn(_direction, newDir, &_closeDataPtr);
-			_anim->_doBlack = true;
-			_direction = newDir;
-			forceDraw = true;
-
-			mayShowCrumbIndicator();
-			break;
-
-		case 7:
-			_closeDataPtr = nullptr;
-			wrkClosePtr = nullptr;
-			uint16 oldRoomNum = _roomNum;
-
-			if (doGoForward(&_closeDataPtr)) {
-				if (oldRoomNum == _roomNum)
-					_anim->_doBlack = true;
-			} else {
-				_anim->_doBlack = true;
-				_direction = processArrow(_direction, buttonId - 6);
-
-				if (oldRoomNum != _roomNum) {
-					drawStaticMessage(kTextGoForward);
-					// Potentially entered a new room
-					_roomsFound->inclElement(_roomNum);
-					_curFileName = " ";
-					forceDraw = true;
-				} else {
-					_anim->_doBlack = true;
-					drawStaticMessage(kTextNoPath);
-				}
-			}
-
-			if (_followingCrumbs) {
-				if (_isCrumbTurning) {
-					if (_direction == oldDirection) {
-						_followingCrumbs = false;
-					}
-				} else {
-					if (_roomNum == oldRoomNum) { // didn't get there?
-						_followingCrumbs = false;
-					}
-				}
-			} else if (_droppingCrumbs && oldRoomNum != _roomNum) {
-				// If in surreal maze, turn off DroppingCrumbs.
-				if (_roomNum >= 245 && _roomNum <= 280) {
-					_followingCrumbs = false;
-					_droppingCrumbs = false;
-					_numCrumbs = 0;
-					_breadCrumbs[0]._roomNum = 0;
-				} else {
-					bool intersect = false;
-					for (int idx = 0; idx < _numCrumbs; idx++) {
-						if (_breadCrumbs[idx]._roomNum == _roomNum) {
-							_numCrumbs = idx + 1;
-							_breadCrumbs[_numCrumbs]._roomNum = 0;
-							intersect = true;
-						}
-					}
-
-					if (!intersect) {
-						if (_numCrumbs == MAX_CRUMBS) {
-							_numCrumbs = MAX_CRUMBS - 1;
-							memcpy(&_breadCrumbs[0], &_breadCrumbs[1], _numCrumbs * sizeof _breadCrumbs[0]);
-						}
-
-						_breadCrumbs[_numCrumbs]._roomNum = _roomNum;
-						_breadCrumbs[_numCrumbs++]._direction = _direction;
-					}
-				}
-			}
-
-			mayShowCrumbIndicator();
-			break;
-		}
-		_graphics->screenUpdate();
+		processMainButton(wrkClosePtr, curInv, lastInv, oldDirection, forceDraw, buttonId, actionMode);
 	} else if ((msgClass == BUTTONUP) && _alternate) {
-		_anim->_doBlack = true;
-
-		switch (buttonId) {
-		case 0:
-			eatMessages();
-			_alternate = false;
-			_anim->_doBlack = true;
-			_graphics->_doNotDrawMessage = false;
-
-			_mainDisplay = true;
-			// Sets the correct button list
-			interfaceOn();
-			_graphics->drawPanel();
-			drawRoomMessage(curInv, _closeDataPtr);
-			break;
-
-		case 1:
-			interfaceOff();
-			_anim->stopDiff();
-			_curFileName = " ";
-
-			doit = !saveRestoreGame();
-			_closeDataPtr = nullptr;
-			_mainDisplay = true;
-
-			curInv = kItemMap;
-			lastInv = kItemMap;
-
-			_nextFileName = getInvName(curInv);
-
-			_graphics->drawPanel();
-
-			if (doit) {
-				_graphics->drawMessage("Disk operation failed.");
-				_graphics->setPalette(initcolors, 8);
-				g_system->delayMillis(1000);
-			}
-			break;
-
-		case 2:
-			if (!doUse(curInv)) {
-				uint16 oldActionMode = actionMode;
-				// Use button
-				actionMode = 5;
-
-				if (oldActionMode < 5)
-					perFlipButton(oldActionMode);
-
-				drawStaticMessage(kTextUseOnWhat);
-				_mainDisplay = true;
-			}
-			break;
-
-		case 3:
-			_mainDisplay = !_mainDisplay;
-
-			if ((curInv == 0) || (curInv > _numInv)) {
-				curInv = 1;
-
-				while ((curInv <= _numInv) && (!_conditions->in(curInv)))
-					curInv++;
-			}
-
-			if ((curInv <= _numInv) && _conditions->in(curInv) && _inventory[curInv]._bitmapName)
-				_nextFileName = getInvName(curInv);
-
-			break;
-
-		case 4:
-			// Left button
-			decIncInv(&curInv, true);
-			lastInv = curInv;
-			_graphics->_doNotDrawMessage = false;
-			drawRoomMessage(curInv, _closeDataPtr);
-			break;
-
-		case 5:
-			// Right button
-			decIncInv(&curInv, false);
-			lastInv = curInv;
-			_graphics->_doNotDrawMessage = false;
-			drawRoomMessage(curInv, _closeDataPtr);
-			break;
-
-		case 6:
-			// bread crumbs
-			_breadCrumbs[0]._roomNum = 0;
-			_numCrumbs = 0;
-			_droppingCrumbs = true;
-			mayShowCrumbIndicator();
-			break;
-
-		case 7:
-			// follow crumbs
-			if (_droppingCrumbs) {
-				if (_numCrumbs > 0) {
-					_followingCrumbs = true;
-					_followCrumbsFast = false;
-					_isCrumbTurning = false;
-					_isCrumbWaiting = false;
-					_crumbTimestamp = g_system->getMillis();
-
-					eatMessages();
-					_alternate = false;
-					_anim->_doBlack = true;
-					_graphics->_doNotDrawMessage = false;
-
-					_mainDisplay = true;
-					// Sets the correct button list
-					interfaceOn();
-					_graphics->drawPanel();
-					drawRoomMessage(curInv, _closeDataPtr);
-				} else {
-					_breadCrumbs[0]._roomNum = 0;
-					_droppingCrumbs = false;
-
-					// Need to hide indicator!!!!
-					mayShowCrumbIndicatorOff();
-				}
-			}
-			break;
-		}
-		_graphics->screenUpdate();
-	} else if ((msgClass == MOUSEBUTTONS) && (IEQUALIFIER_LEFTBUTTON & qualifier) && _mainDisplay) {
+		processAltButton(curInv, lastInv, buttonId, actionMode);
+	} else if (leftButtonClick && _mainDisplay) {
 		interfaceOff();
 		_mainDisplay = true;
 
@@ -1067,6 +719,27 @@ bool LabEngine::fromCrumbs(uint32 tmpClass, uint16 code, uint16 qualifier, Commo
 
 		mayShowCrumbIndicator();
 		_graphics->screenUpdate();
+	} else if (rightButtonClick) {
+		eatMessages();
+		_alternate = !_alternate;
+		_anim->_doBlack = true;
+		_graphics->_doNotDrawMessage = false;
+		_mainDisplay = true;
+		// Sets the correct button list
+		interfaceOn();
+
+		if (_alternate) {
+			if (lastInv && _conditions->in(lastInv))
+				curInv = lastInv;
+			else
+				decIncInv(&curInv, false);
+		}
+
+		_graphics->drawPanel();
+		drawRoomMessage(curInv, _closeDataPtr);
+
+		mayShowCrumbIndicator();
+		_graphics->screenUpdate();
 	} else if (msgClass == DELTAMOVE) {
 		ViewData *vptr = getViewData(_roomNum, _direction);
 		CloseDataPtr oldClosePtr = vptr->_closeUps;
@@ -1095,29 +768,394 @@ bool LabEngine::fromCrumbs(uint32 tmpClass, uint16 code, uint16 qualifier, Commo
 
 		if (wrkClosePtr)
 			_event->setMousePos(Common::Point(_utils->scaleX((wrkClosePtr->_x1 + wrkClosePtr->_x2) / 2), _utils->scaleY((wrkClosePtr->_y1 + wrkClosePtr->_y2) / 2)));
-	} else if ((msgClass == MOUSEBUTTONS) && (IEQUALIFIER_RIGHTBUTTON & qualifier)) {
+	}
+
+	return true;
+}
+
+bool LabEngine::processKey(IntuiMessage *curMsg, uint32 &msgClass, uint16 &qualifier, Common::Point &curPos, uint16 &curInv, bool &forceDraw, uint16 code) {
+	byte codeLower = tolower(code);
+
+	if (code == 13) {
+		// The return key
+		msgClass = MOUSEBUTTONS;
+		qualifier = IEQUALIFIER_LEFTBUTTON;
+		curPos = _event->getMousePos();
+	}
+	else if (getPlatform() == Common::kPlatformWindows && codeLower == 'b') {
+		// Start bread crumbs
+		_breadCrumbs[0]._roomNum = 0;
+		_numCrumbs = 0;
+		_droppingCrumbs = true;
+		mayShowCrumbIndicator();
+		_graphics->screenUpdate();
+	}
+	else if (codeLower == 'f' || codeLower == 'r') {
+		// Follow bread crumbs
+		if (_droppingCrumbs) {
+			if (_numCrumbs > 0) {
+				_followingCrumbs = true;
+				_followCrumbsFast = (codeLower == 'r');
+				_isCrumbTurning = false;
+				_isCrumbWaiting = false;
+				_crumbTimestamp = g_system->getMillis();
+
+				if (_alternate) {
+					eatMessages();
+					_alternate = false;
+					_anim->_doBlack = true;
+					_graphics->_doNotDrawMessage = false;
+
+					_mainDisplay = true;
+					// Sets the correct button list
+					interfaceOn();
+					_graphics->drawPanel();
+					drawRoomMessage(curInv, _closeDataPtr);
+					_graphics->screenUpdate();
+				}
+			}
+			else {
+				_breadCrumbs[0]._roomNum = 0;
+				_droppingCrumbs = false;
+
+				// Need to hide indicator!!!!
+				mayShowCrumbIndicatorOff();
+				_graphics->screenUpdate();
+			}
+		}
+	}
+	else if (code == 315 || codeLower == 'x' || codeLower == 'q') {
+		// Quit?
+		_graphics->_doNotDrawMessage = false;
+		_graphics->drawMessage("Do you want to quit? (Y/N)");
 		eatMessages();
-		_alternate = !_alternate;
+		interfaceOff();
+
+		while (1) {
+			// Make sure we check the music at least after every message
+			_music->updateMusic();
+			curMsg = _event->getMsg();
+
+			if (!curMsg) {
+				// Does music load and next animation frame when you've run out of messages
+				_music->updateMusic();
+				_anim->diffNextFrame();
+			}
+			else {
+				if (curMsg->_msgClass == RAWKEY) {
+					codeLower = tolower(curMsg->_code);
+					if (codeLower == 'y' || codeLower == 'q') {
+						_anim->stopDiff();
+						return false;
+					}
+					else if (curMsg->_code < 128) {
+						break;
+					}
+				}
+				else if (curMsg->_msgClass == MOUSEBUTTONS) {
+					break;
+				}
+			}
+		}
+
+		forceDraw = true;
+		interfaceOn();
+	}
+	else if (code == 9) {
+		// TAB key
+		msgClass = DELTAMOVE;
+	}
+	else if (code == 27) {
+		// ESC key
+		_closeDataPtr = nullptr;
+	}
+
+	eatMessages();
+
+	return true;
+}
+
+void LabEngine::processMainButton(CloseDataPtr wrkClosePtr, uint16 &curInv, uint16 &lastInv, uint16 &oldDirection, bool &forceDraw, uint16 buttonId, uint16 &actionMode) {
+	uint16 newDir;
+
+	switch (buttonId) {
+	case 0:
+	case 1:
+	case 2:
+	case 3:
+	case 4:
+		if ((actionMode == 4) && (buttonId == 4) && _closeDataPtr) {
+			doMainView(&_closeDataPtr);
+
+			_anim->_doBlack = true;
+			wrkClosePtr = nullptr;
+			_closeDataPtr = nullptr;
+			mayShowCrumbIndicator();
+		}
+		else {
+			uint16 oldActionMode = actionMode;
+			actionMode = buttonId;
+
+			if (oldActionMode < 5)
+				perFlipButton(oldActionMode);
+
+			perFlipButton(actionMode);
+			drawStaticMessage(kTextTakeWhat + buttonId);
+		}
+		break;
+	case 5:
+		eatMessages();
+
+		_alternate = true;
 		_anim->_doBlack = true;
 		_graphics->_doNotDrawMessage = false;
-		_mainDisplay = true;
 		// Sets the correct button list
 		interfaceOn();
+		_mainDisplay = false;
 
-		if (_alternate) {
-			if (lastInv && _conditions->in(lastInv))
-				curInv = lastInv;
-			else
-				decIncInv(&curInv, false);
+		if (lastInv && _conditions->in(lastInv)) {
+			curInv = lastInv;
+			_nextFileName = getInvName(curInv);
 		}
+		else
+			decIncInv(&curInv, false);
 
 		_graphics->drawPanel();
 		drawRoomMessage(curInv, _closeDataPtr);
 
 		mayShowCrumbIndicator();
-		_graphics->screenUpdate();
+		break;
+
+	case 9:
+		doUse(kItemMap);
+
+		mayShowCrumbIndicator();
+		break;
+
+	case 6:
+	case 8:
+		// Arrow Buttons
+		_closeDataPtr = nullptr;
+		wrkClosePtr = nullptr;
+		if (buttonId == 6)
+			drawStaticMessage(kTextTurnLeft);
+		else
+			drawStaticMessage(kTextTurnRight);
+
+		_curFileName = " ";
+
+		oldDirection = _direction;
+
+		newDir = processArrow(_direction, buttonId - 6);
+		doTurn(_direction, newDir, &_closeDataPtr);
+		_anim->_doBlack = true;
+		_direction = newDir;
+		forceDraw = true;
+
+		mayShowCrumbIndicator();
+		break;
+
+	case 7:
+		_closeDataPtr = nullptr;
+		wrkClosePtr = nullptr;
+		uint16 oldRoomNum = _roomNum;
+
+		if (doGoForward(&_closeDataPtr)) {
+			if (oldRoomNum == _roomNum)
+				_anim->_doBlack = true;
+		}
+		else {
+			_anim->_doBlack = true;
+			_direction = processArrow(_direction, buttonId - 6);
+
+			if (oldRoomNum != _roomNum) {
+				drawStaticMessage(kTextGoForward);
+				// Potentially entered a new room
+				_roomsFound->inclElement(_roomNum);
+				_curFileName = " ";
+				forceDraw = true;
+			}
+			else {
+				_anim->_doBlack = true;
+				drawStaticMessage(kTextNoPath);
+			}
+		}
+
+		if (_followingCrumbs) {
+			if (_isCrumbTurning) {
+				if (_direction == oldDirection) {
+					_followingCrumbs = false;
+				}
+			}
+			else {
+				if (_roomNum == oldRoomNum) { // didn't get there?
+					_followingCrumbs = false;
+				}
+			}
+		}
+		else if (_droppingCrumbs && oldRoomNum != _roomNum) {
+			// If in surreal maze, turn off DroppingCrumbs.
+			if (_roomNum >= 245 && _roomNum <= 280) {
+				_followingCrumbs = false;
+				_droppingCrumbs = false;
+				_numCrumbs = 0;
+				_breadCrumbs[0]._roomNum = 0;
+			}
+			else {
+				bool intersect = false;
+				for (int idx = 0; idx < _numCrumbs; idx++) {
+					if (_breadCrumbs[idx]._roomNum == _roomNum) {
+						_numCrumbs = idx + 1;
+						_breadCrumbs[_numCrumbs]._roomNum = 0;
+						intersect = true;
+					}
+				}
+
+				if (!intersect) {
+					if (_numCrumbs == MAX_CRUMBS) {
+						_numCrumbs = MAX_CRUMBS - 1;
+						memcpy(&_breadCrumbs[0], &_breadCrumbs[1], _numCrumbs * sizeof _breadCrumbs[0]);
+					}
+
+					_breadCrumbs[_numCrumbs]._roomNum = _roomNum;
+					_breadCrumbs[_numCrumbs++]._direction = _direction;
+				}
+			}
+		}
+
+		mayShowCrumbIndicator();
+		break;
 	}
-	return true;
+	_graphics->screenUpdate();
+}
+
+void LabEngine::processAltButton(uint16 &curInv, uint16 &lastInv, uint16 buttonId, uint16 &actionMode) {
+	bool doit;
+
+	_anim->_doBlack = true;
+
+	switch (buttonId) {
+	case 0:
+		eatMessages();
+		_alternate = false;
+		_anim->_doBlack = true;
+		_graphics->_doNotDrawMessage = false;
+
+		_mainDisplay = true;
+		// Sets the correct button list
+		interfaceOn();
+		_graphics->drawPanel();
+		drawRoomMessage(curInv, _closeDataPtr);
+		break;
+
+	case 1:
+		interfaceOff();
+		_anim->stopDiff();
+		_curFileName = " ";
+
+		doit = !saveRestoreGame();
+		_closeDataPtr = nullptr;
+		_mainDisplay = true;
+
+		curInv = kItemMap;
+		lastInv = kItemMap;
+
+		_nextFileName = getInvName(curInv);
+
+		_graphics->drawPanel();
+
+		if (doit) {
+			_graphics->drawMessage("Disk operation failed.");
+			_graphics->setPalette(initcolors, 8);
+			g_system->delayMillis(1000);
+		}
+		break;
+
+	case 2:
+		if (!doUse(curInv)) {
+			uint16 oldActionMode = actionMode;
+			// Use button
+			actionMode = 5;
+
+			if (oldActionMode < 5)
+				perFlipButton(oldActionMode);
+
+			drawStaticMessage(kTextUseOnWhat);
+			_mainDisplay = true;
+		}
+		break;
+
+	case 3:
+		_mainDisplay = !_mainDisplay;
+
+		if ((curInv == 0) || (curInv > _numInv)) {
+			curInv = 1;
+
+			while ((curInv <= _numInv) && (!_conditions->in(curInv)))
+				curInv++;
+		}
+
+		if ((curInv <= _numInv) && _conditions->in(curInv) && _inventory[curInv]._bitmapName)
+			_nextFileName = getInvName(curInv);
+
+		break;
+
+	case 4:
+		// Left button
+		decIncInv(&curInv, true);
+		lastInv = curInv;
+		_graphics->_doNotDrawMessage = false;
+		drawRoomMessage(curInv, _closeDataPtr);
+		break;
+
+	case 5:
+		// Right button
+		decIncInv(&curInv, false);
+		lastInv = curInv;
+		_graphics->_doNotDrawMessage = false;
+		drawRoomMessage(curInv, _closeDataPtr);
+		break;
+
+	case 6:
+		// bread crumbs
+		_breadCrumbs[0]._roomNum = 0;
+		_numCrumbs = 0;
+		_droppingCrumbs = true;
+		mayShowCrumbIndicator();
+		break;
+
+	case 7:
+		// follow crumbs
+		if (_droppingCrumbs) {
+			if (_numCrumbs > 0) {
+				_followingCrumbs = true;
+				_followCrumbsFast = false;
+				_isCrumbTurning = false;
+				_isCrumbWaiting = false;
+				_crumbTimestamp = g_system->getMillis();
+
+				eatMessages();
+				_alternate = false;
+				_anim->_doBlack = true;
+				_graphics->_doNotDrawMessage = false;
+
+				_mainDisplay = true;
+				// Sets the correct button list
+				interfaceOn();
+				_graphics->drawPanel();
+				drawRoomMessage(curInv, _closeDataPtr);
+			}
+			else {
+				_breadCrumbs[0]._roomNum = 0;
+				_droppingCrumbs = false;
+
+				// Need to hide indicator!!!!
+				mayShowCrumbIndicatorOff();
+			}
+		}
+		break;
+	}
+	_graphics->screenUpdate();
 }
 
 void LabEngine::go() {
