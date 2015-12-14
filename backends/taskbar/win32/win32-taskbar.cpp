@@ -32,17 +32,27 @@
 #if defined(__GNUC__) && defined(__MINGW32__) && !defined(__MINGW64__)
 	#include "backends/taskbar/win32/mingw-compat.h"
 #else
+	// We use functionality introduced with Win7 in this file.
+	// To assure that including the respective system headers gives us all
+	// required definitions we set Win7 as minimum version we target.
+	// See: https://msdn.microsoft.com/en-us/library/windows/desktop/aa383745%28v=vs.85%29.aspx#macros_for_conditional_declarations
+	#undef _WIN32_WINNT
+	#define _WIN32_WINNT _WIN32_WINNT_WIN7
+
+	// TODO: We might not need to include this file, the MSDN docs are
+	// not really helpful to decide whether we require it or not.
+	//
+	// Casing of the name is a bit of a mess. MinGW64 seems to use all
+	// lowercase, while MSDN docs suggest "SdkDdkVer.h". We are stuck with
+	// what MinGW64 uses...
+	#include <sdkddkver.h>
+
 	// We need certain functions that are excluded by default
 	#undef NONLS
 	#undef NOICONS
 	#include <windows.h>
 	#if defined(ARRAYSIZE)
 		#undef ARRAYSIZE
-	#endif
-
-	#if defined(_MSC_VER)
-		// Default MSVC headers for ITaskbarList3 and IShellLink
-		#include <SDKDDKVer.h>
 	#endif
 #endif
 
