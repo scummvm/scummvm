@@ -745,9 +745,7 @@ bool LabEngine::fromCrumbs(uint32 tmpClass, uint16 code, uint16 qualifier, Commo
 					perFlipButton(oldActionMode);
 
 				perFlipButton(actionMode);
-
-				if (buttonId <= 4)
-					drawStaticMessage(kTextTakeWhat + buttonId);
+				drawStaticMessage(kTextTakeWhat + buttonId);
 			}
 		} else if (buttonId == 9) {
 			doUse(kItemMap);
