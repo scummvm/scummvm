@@ -81,6 +81,30 @@ enum Monitors {
 	//kMonitorLevers = 82
 };
 
+enum MainButtons {
+	kButtonPickup,
+	kButtonUse,
+	kButtonOpen,
+	kButtonClose,
+	kButtonLook,
+	kButtonInventory,
+	kButtonLeft,
+	kButtonForward,
+	kButtonRight,
+	kButtonMap
+};
+
+enum AltButtons {
+	kButtonMainDisplay,
+	kButtonSaveLoad,
+	kButtonUseItem,
+	kButtonLookAtItem,
+	kButtonPrevItem,
+	kButtonNextItem,
+	kButtonBreadCrumbs,
+	kButtonFollowCrumbs
+};
+
 static char initcolors[] = { '\x00', '\x00', '\x00', '\x30',
 							 '\x30', '\x30', '\x10', '\x10',
 							 '\x10', '\x14', '\x14', '\x14',
@@ -879,11 +903,11 @@ void LabEngine::processMainButton(CloseDataPtr wrkClosePtr, uint16 &curInv, uint
 	uint16 newDir;
 
 	switch (buttonId) {
-	case 0:
-	case 1:
-	case 2:
-	case 3:
-	case 4:
+	case kButtonPickup:
+	case kButtonUse:
+	case kButtonOpen:
+	case kButtonClose:
+	case kButtonLook:
 		if ((actionMode == 4) && (buttonId == 4) && _closeDataPtr) {
 			doMainView(&_closeDataPtr);
 
@@ -903,7 +927,7 @@ void LabEngine::processMainButton(CloseDataPtr wrkClosePtr, uint16 &curInv, uint
 			drawStaticMessage(kTextTakeWhat + buttonId);
 		}
 		break;
-	case 5:
+	case kButtonInventory:
 		eatMessages();
 
 		_alternate = true;
@@ -926,15 +950,8 @@ void LabEngine::processMainButton(CloseDataPtr wrkClosePtr, uint16 &curInv, uint
 		mayShowCrumbIndicator();
 		break;
 
-	case 9:
-		doUse(kItemMap);
-
-		mayShowCrumbIndicator();
-		break;
-
-	case 6:
-	case 8:
-		// Arrow Buttons
+	case kButtonLeft:
+	case kButtonRight:
 		_closeDataPtr = nullptr;
 		wrkClosePtr = nullptr;
 		if (buttonId == 6)
@@ -955,7 +972,7 @@ void LabEngine::processMainButton(CloseDataPtr wrkClosePtr, uint16 &curInv, uint
 		mayShowCrumbIndicator();
 		break;
 
-	case 7:
+	case kButtonForward:
 		_closeDataPtr = nullptr;
 		wrkClosePtr = nullptr;
 		uint16 oldRoomNum = _roomNum;
@@ -1025,7 +1042,13 @@ void LabEngine::processMainButton(CloseDataPtr wrkClosePtr, uint16 &curInv, uint
 
 		mayShowCrumbIndicator();
 		break;
+	case kButtonMap:
+		doUse(kItemMap);
+
+		mayShowCrumbIndicator();
+		break;
 	}
+
 	_graphics->screenUpdate();
 }
 
@@ -1035,7 +1058,7 @@ void LabEngine::processAltButton(uint16 &curInv, uint16 &lastInv, uint16 buttonI
 	_anim->_doBlack = true;
 
 	switch (buttonId) {
-	case 0:
+	case kButtonMainDisplay:
 		eatMessages();
 		_alternate = false;
 		_anim->_doBlack = true;
@@ -1048,7 +1071,7 @@ void LabEngine::processAltButton(uint16 &curInv, uint16 &lastInv, uint16 buttonI
 		drawRoomMessage(curInv, _closeDataPtr);
 		break;
 
-	case 1:
+	case kButtonSaveLoad:
 		interfaceOff();
 		_anim->stopDiff();
 		_curFileName = " ";
@@ -1071,7 +1094,7 @@ void LabEngine::processAltButton(uint16 &curInv, uint16 &lastInv, uint16 buttonI
 		}
 		break;
 
-	case 2:
+	case kButtonUseItem:
 		if (!doUse(curInv)) {
 			uint16 oldActionMode = actionMode;
 			// Use button
@@ -1085,7 +1108,7 @@ void LabEngine::processAltButton(uint16 &curInv, uint16 &lastInv, uint16 buttonI
 		}
 		break;
 
-	case 3:
+	case kButtonLookAtItem:
 		_mainDisplay = !_mainDisplay;
 
 		if ((curInv == 0) || (curInv > _numInv)) {
@@ -1100,32 +1123,28 @@ void LabEngine::processAltButton(uint16 &curInv, uint16 &lastInv, uint16 buttonI
 
 		break;
 
-	case 4:
-		// Left button
+	case kButtonPrevItem:
 		decIncInv(&curInv, true);
 		lastInv = curInv;
 		_graphics->_doNotDrawMessage = false;
 		drawRoomMessage(curInv, _closeDataPtr);
 		break;
 
-	case 5:
-		// Right button
+	case kButtonNextItem:
 		decIncInv(&curInv, false);
 		lastInv = curInv;
 		_graphics->_doNotDrawMessage = false;
 		drawRoomMessage(curInv, _closeDataPtr);
 		break;
 
-	case 6:
-		// bread crumbs
+	case kButtonBreadCrumbs:
 		_breadCrumbs[0]._roomNum = 0;
 		_numCrumbs = 0;
 		_droppingCrumbs = true;
 		mayShowCrumbIndicator();
 		break;
 
-	case 7:
-		// follow crumbs
+	case kButtonFollowCrumbs:
 		if (_droppingCrumbs) {
 			if (_numCrumbs > 0) {
 				_followingCrumbs = true;
@@ -1155,6 +1174,7 @@ void LabEngine::processAltButton(uint16 &curInv, uint16 &lastInv, uint16 buttonI
 		}
 		break;
 	}
+
 	_graphics->screenUpdate();
 }
 
