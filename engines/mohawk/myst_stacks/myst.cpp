@@ -3683,16 +3683,16 @@ void Myst::boilerFireUpdate(bool init) {
 void Myst::boilerGaugeInit() {
 	if (_vm->getCurCard() == 4098) {
 		_cabinGaugeMovie = _vm->_video->playMovie(_vm->wrapMovieFilename("cabingau", kMystStack));
-		if (!_cabinFireMovie)
+		if (!_cabinGaugeMovie)
 			error("Failed to open cabingau movie");
 
-		_cabinFireMovie->moveTo(243, 96);
+		_cabinGaugeMovie->moveTo(243, 96);
 	} else {
 		_cabinGaugeMovie = _vm->_video->playMovie(_vm->wrapMovieFilename("cabcgfar", kMystStack));
-		if (!_cabinFireMovie)
+		if (!_cabinGaugeMovie)
 			error("Failed to open cabcgfar movie");
 
-		_cabinFireMovie->moveTo(254, 136);
+		_cabinGaugeMovie->moveTo(254, 136);
 	}
 
 	Audio::Timestamp frame;
