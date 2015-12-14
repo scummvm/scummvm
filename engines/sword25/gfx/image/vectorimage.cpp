@@ -311,8 +311,7 @@ VectorImage::~VectorImage() {
 			if (_elements[j].getPathInfo(i).getVec())
 				free(_elements[j].getPathInfo(i).getVec());
 
-	if (_pixelData)
-		free(_pixelData);
+	free(_pixelData);
 }
 
 
