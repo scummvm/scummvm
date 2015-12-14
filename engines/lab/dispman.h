@@ -90,15 +90,15 @@ public:
 	void setUpScreens();
 	int32 longDrawMessage(const char *str);
 	void drawMessage(const char *str);
-	void setAPen(byte pennum);
+	void setPen(byte pennum);
 	void rectFill(uint16 x1, uint16 y1, uint16 x2, uint16 y2);
 	void rectFillScaled(uint16 x1, uint16 y1, uint16 x2, uint16 y2);
 	// Window text stuff
 	int flowText(TextFont *font,		// the TextAttr pointer
 				int16 spacing,			// How much vertical spacing between the lines
-				byte pencolor,			// pen number to use for text
-				byte backpen,			// the background color
-				bool fillback,			// Whether to fill the background
+				byte penColor,			// pen number to use for text
+				byte backPen,			// the background color
+				bool fillBack,			// Whether to fill the background
 				bool centerh,			// Whether to center the text horizontally
 				bool centerv,			// Whether to center the text vertically
 				bool output,			// Whether to output any text
@@ -109,9 +109,9 @@ public:
 	int flowTextScaled(
 				TextFont *font,			// the TextAttr pointer
 				int16 spacing,			// How much vertical spacing between the lines
-				byte pencolor,			// pen number to use for text
-				byte backpen,			// the background color
-				bool fillback,			// Whether to fill the background
+				byte penColor,			// pen number to use for text
+				byte backPen,			// the background color
+				bool fillBack,			// Whether to fill the background
 				bool centerh,			// Whether to center the text horizontally
 				bool centerv,			// Whether to center the text vertically
 				bool output,			// Whether to output any text
@@ -122,9 +122,9 @@ public:
 	int flowTextToMem(Image *destIm,
 				TextFont *font,			// the TextAttr pointer
 				int16 spacing,			// How much vertical spacing between the lines
-				byte pencolor,			// pen number to use for text
-				byte backpen,			// the background color
-				bool fillback,			// Whether to fill the background
+				byte penColor,			// pen number to use for text
+				byte backPen,			// the background color
+				bool fillBack,			// Whether to fill the background
 				bool centerh,			// Whether to center the text horizontally
 				bool centerv,			// Whether to center the text vertically
 				bool output,			// Whether to output any text
@@ -138,7 +138,7 @@ public:
 	void createScreen(bool hiRes);
 	void setAmigaPal(uint16 *pal, uint16 numColors);
 	void writeColorRegs(byte *buf, uint16 first, uint16 numReg);
-	void setPalette(void *cmap, uint16 numColors);
+	void setPalette(void *newPal, uint16 numColors);
 	void overlayRect(uint16 penColor, uint16 x1, uint16 y1, uint16 x2, uint16 y2);
 	byte *getCurrentDrawingBuffer();
 	void scrollDisplayX(int16 dx, uint16 x1, uint16 y1, uint16 x2, uint16 y2, byte *buffer);
@@ -147,7 +147,7 @@ public:
 	void closeFont(TextFont *font);
 	uint16 textLength(TextFont *font, const char *text, uint16 numChars);
 	uint16 textHeight(TextFont *tf);
-	void text(TextFont *tf, uint16 x, uint16 y, uint16 color, const char *text, uint16 numchars);
+	void text(TextFont *tf, uint16 x, uint16 y, uint16 color, const char *text, uint16 numChars);
 	void getLine(TextFont *tf, char *lineBuffer, const char **mainBuffer, uint16 lineWidth);
 
 	bool _longWinInFront;

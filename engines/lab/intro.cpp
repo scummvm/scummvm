@@ -99,7 +99,7 @@ void Intro::doPictText(const char *filename, TextFont *msgFont, bool isScreen) {
 
 			int charDrawn = 0;
 			if (isScreen) {
-				_vm->_graphics->setAPen(7);
+				_vm->_graphics->setPen(7);
 				_vm->_graphics->rectFillScaled(10, 10, 310, 190);
 
 				charDrawn = _vm->_graphics->flowTextScaled(msgFont, (!_vm->_isHiRes) * -1, 5, 7, false, false, true, true, 14, 11, 306, 189, (char *)curText);
@@ -431,7 +431,7 @@ void Intro::introSequence() {
 	nReadPict("SubX", true);
 
 	if (_quitIntro) {
-		_vm->_graphics->setAPen(0);
+		_vm->_graphics->setPen(0);
 		_vm->_graphics->rectFill(0, 0, _vm->_graphics->_screenWidth - 1, _vm->_graphics->_screenHeight - 1);
 		_vm->_anim->_doBlack = true;
 	}
