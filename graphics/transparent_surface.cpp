@@ -116,7 +116,7 @@ void doBlitBinaryFast(byte *ino, byte *outo, uint32 width, uint32 height, uint32
 		in = ino;
 		for (uint32 j = 0; j < width; j++) {
 			uint32 pix = *(uint32 *)in;
-			int a = (pix >> kAModShift) & 0xff;
+			int a = in[kAIndex];
 
 			if (a != 0) {   // Full opacity (Any value not exactly 0 is Opaque here)
 				*(uint32 *)out = pix;
