@@ -75,6 +75,18 @@ struct TransparentSurface : public Graphics::Surface {
 	TransparentSurface();
 	TransparentSurface(const Graphics::Surface &surf, bool copyData = false);
 
+	/**
+	 * Returns the pixel format all operations of TransparentSurface support.
+	 *
+	 * Unlike Surface TransparentSurface only works with a fixed pixel format.
+	 * This format can be queried using this static function.
+	 *
+	 * @return Supported pixel format.
+	 */
+	static PixelFormat getSupportedPixelFormat() {
+		return PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
+	}
+
 	void setColorKey(char r, char g, char b);
 	void disableColorKey();
 
