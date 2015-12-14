@@ -843,7 +843,8 @@ bool LabEngine::fromCrumbs(uint32 tmpClass, uint16 code, uint16 qualifier, Commo
 	} else if ((msgClass == BUTTONUP) && _alternate) {
 		_anim->_doBlack = true;
 
-		if (buttonId == 0) {
+		switch (buttonId) {
+		case 0:
 			eatMessages();
 			_alternate = false;
 			_anim->_doBlack = true;
@@ -854,14 +855,9 @@ bool LabEngine::fromCrumbs(uint32 tmpClass, uint16 code, uint16 qualifier, Commo
 			interfaceOn();
 			_graphics->drawPanel();
 			drawRoomMessage(curInv, _closeDataPtr);
+			break;
 
-			_graphics->screenUpdate();
-		}
-
-		buttonId--;
-
-		switch (buttonId) {
-		case 0:
+		case 1:
 			interfaceOff();
 			_anim->stopDiff();
 			_curFileName = " ";
@@ -884,7 +880,7 @@ bool LabEngine::fromCrumbs(uint32 tmpClass, uint16 code, uint16 qualifier, Commo
 			}
 			break;
 
-		case 1:
+		case 2:
 			if (!doUse(curInv)) {
 				uint16 oldActionMode = actionMode;
 				// Use button
@@ -898,7 +894,7 @@ bool LabEngine::fromCrumbs(uint32 tmpClass, uint16 code, uint16 qualifier, Commo
 			}
 			break;
 
-		case 2:
+		case 3:
 			_mainDisplay = !_mainDisplay;
 
 			if ((curInv == 0) || (curInv > _numInv)) {
@@ -913,7 +909,7 @@ bool LabEngine::fromCrumbs(uint32 tmpClass, uint16 code, uint16 qualifier, Commo
 
 			break;
 
-		case 3:
+		case 4:
 			// Left button
 			decIncInv(&curInv, true);
 			lastInv = curInv;
@@ -921,7 +917,7 @@ bool LabEngine::fromCrumbs(uint32 tmpClass, uint16 code, uint16 qualifier, Commo
 			drawRoomMessage(curInv, _closeDataPtr);
 			break;
 
-		case 4:
+		case 5:
 			// Right button
 			decIncInv(&curInv, false);
 			lastInv = curInv;
@@ -929,7 +925,7 @@ bool LabEngine::fromCrumbs(uint32 tmpClass, uint16 code, uint16 qualifier, Commo
 			drawRoomMessage(curInv, _closeDataPtr);
 			break;
 
-		case 5:
+		case 6:
 			// bread crumbs
 			_breadCrumbs[0]._roomNum = 0;
 			_numCrumbs = 0;
@@ -937,7 +933,7 @@ bool LabEngine::fromCrumbs(uint32 tmpClass, uint16 code, uint16 qualifier, Commo
 			mayShowCrumbIndicator();
 			break;
 
-		case 6:
+		case 7:
 			// follow crumbs
 			if (_droppingCrumbs) {
 				if (_numCrumbs > 0) {
