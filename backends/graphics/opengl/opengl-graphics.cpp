@@ -551,11 +551,8 @@ void OpenGLGraphicsManager::warpMouse(int x, int y) {
 			return;
 		}
 
-		x = (x * _displayWidth)  / _gameScreen->getWidth();
-		y = (y * _displayHeight) / _gameScreen->getHeight();
-
-		x += _displayX;
-		y += _displayY;
+		x = (x * _outputScreenWidth)  / _gameScreen->getWidth();
+		y = (y * _outputScreenHeight) / _gameScreen->getHeight();
 	}
 
 	setMousePosition(x, y);
@@ -946,18 +943,11 @@ void OpenGLGraphicsManager::adjustMousePosition(int16 &x, int16 &y) {
 			y = (y * _overlay->getHeight()) / _outputScreenHeight;
 		}
 	} else if (_gameScreen) {
-		x -= _displayX;
-		y -= _displayY;
-
 		const int16 width  = _gameScreen->getWidth();
 		const int16 height = _gameScreen->getHeight();
 
-		x = (x * width)  / (int)_displayWidth;
-		y = (y * height) / (int)_displayHeight;
-
-		// Make sure we only supply valid coordinates.
-		x = CLIP<int16>(x, 0, width - 1);
-		y = CLIP<int16>(y, 0, height - 1);
+		x = (x * width)  / (int)_outputScreenWidth;
+		y = (y * height) / (int)_outputScreenHeight;
 	}
 }
 
@@ -975,8 +965,8 @@ void OpenGLGraphicsManager::setMousePosition(int x, int y) {
 		_cursorDisplayX = x;
 		_cursorDisplayY = y;
 	} else {
-		_cursorDisplayX = CLIP<int>(x, _displayX, _displayX + _displayWidth  - 1);
-		_cursorDisplayY = CLIP<int>(y, _displayY, _displayY + _displayHeight - 1);
+		_cursorDisplayX = _displayX + (x * _displayWidth)  / _outputScreenWidth;
+		_cursorDisplayY = _displayY + (y * _displayHeight) / _outputScreenHeight;
 	}
 }
 
