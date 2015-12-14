@@ -709,33 +709,20 @@ bool LabEngine::fromCrumbs(uint32 tmpClass, uint16 code, uint16 qualifier, Commo
 			_graphics->screenUpdate();
 		}
 	} else if ((msgClass == BUTTONUP) && !_alternate) {
-		if (buttonId <= 5) {
+		uint16 newDir;
+
+		switch (buttonId) {
+		case 0:
+		case 1:
+		case 2:
+		case 3:
+		case 4:
 			if ((actionMode == 4) && (buttonId == 4) && _closeDataPtr) {
 				doMainView(&_closeDataPtr);
 
 				_anim->_doBlack = true;
 				wrkClosePtr = nullptr;
 				_closeDataPtr = nullptr;
-				mayShowCrumbIndicator();
-			} else if (buttonId == 5) {
-				eatMessages();
-
-				_alternate = true;
-				_anim->_doBlack = true;
-				_graphics->_doNotDrawMessage = false;
-				// Sets the correct button list
-				interfaceOn();
-				_mainDisplay = false;
-
-				if (lastInv && _conditions->in(lastInv)) {
-					curInv = lastInv;
-					_nextFileName = getInvName(curInv);
-				} else
-					decIncInv(&curInv, false);
-
-				_graphics->drawPanel();
-				drawRoomMessage(curInv, _closeDataPtr);
-
 				mayShowCrumbIndicator();
 			} else {
 				uint16 oldActionMode = actionMode;
@@ -747,95 +734,123 @@ bool LabEngine::fromCrumbs(uint32 tmpClass, uint16 code, uint16 qualifier, Commo
 				perFlipButton(actionMode);
 				drawStaticMessage(kTextTakeWhat + buttonId);
 			}
-		} else if (buttonId == 9) {
+			break;
+		case 5:
+			eatMessages();
+
+			_alternate = true;
+			_anim->_doBlack = true;
+			_graphics->_doNotDrawMessage = false;
+			// Sets the correct button list
+			interfaceOn();
+			_mainDisplay = false;
+
+			if (lastInv && _conditions->in(lastInv)) {
+				curInv = lastInv;
+				_nextFileName = getInvName(curInv);
+			} else
+				decIncInv(&curInv, false);
+
+			_graphics->drawPanel();
+			drawRoomMessage(curInv, _closeDataPtr);
+
+			mayShowCrumbIndicator();
+			break;
+
+		case 9:
 			doUse(kItemMap);
 
 			mayShowCrumbIndicator();
-		} else if (buttonId >= 6) {
+			break;
+
+		case 6:
+		case 8:
 			// Arrow Buttons
 			_closeDataPtr = nullptr;
 			wrkClosePtr = nullptr;
+			if (buttonId == 6)
+				drawStaticMessage(kTextTurnLeft);
+			else
+				drawStaticMessage(kTextTurnRight);
 
-			if ((buttonId == 6) || (buttonId == 8)) {
-				if (buttonId == 6)
-					drawStaticMessage(kTextTurnLeft);
-				else
-					drawStaticMessage(kTextTurnRight);
+			_curFileName = " ";
 
-				_curFileName = " ";
+			oldDirection = _direction;
 
-				oldDirection = _direction;
+			newDir = processArrow(_direction, buttonId - 6);
+			doTurn(_direction, newDir, &_closeDataPtr);
+			_anim->_doBlack = true;
+			_direction = newDir;
+			forceDraw = true;
 
-				uint16 newDir = processArrow(_direction, buttonId - 6);
-				doTurn(_direction, newDir, &_closeDataPtr);
+			mayShowCrumbIndicator();
+			break;
+
+		case 7:
+			_closeDataPtr = nullptr;
+			wrkClosePtr = nullptr;
+			uint16 oldRoomNum = _roomNum;
+
+			if (doGoForward(&_closeDataPtr)) {
+				if (oldRoomNum == _roomNum)
+					_anim->_doBlack = true;
+			} else {
 				_anim->_doBlack = true;
-				_direction = newDir;
-				forceDraw = true;
+				_direction = processArrow(_direction, buttonId - 6);
 
-				mayShowCrumbIndicator();
-			} else if (buttonId == 7) {
-				uint16 oldRoomNum = _roomNum;
-
-				if (doGoForward(&_closeDataPtr)) {
-					if (oldRoomNum == _roomNum)
-						_anim->_doBlack = true;
+				if (oldRoomNum != _roomNum) {
+					drawStaticMessage(kTextGoForward);
+					// Potentially entered a new room
+					_roomsFound->inclElement(_roomNum);
+					_curFileName = " ";
+					forceDraw = true;
 				} else {
 					_anim->_doBlack = true;
-					_direction = processArrow(_direction, buttonId - 6);
-
-					if (oldRoomNum != _roomNum) {
-						drawStaticMessage(kTextGoForward);
-						// Potentially entered a new room
-						_roomsFound->inclElement(_roomNum);
-						_curFileName = " ";
-						forceDraw = true;
-					} else {
-						_anim->_doBlack = true;
-						drawStaticMessage(kTextNoPath);
-					}
+					drawStaticMessage(kTextNoPath);
 				}
-
-				if (_followingCrumbs) {
-					if (_isCrumbTurning) {
-						if (_direction == oldDirection) {
-							_followingCrumbs = false;
-						}
-					} else {
-						if (_roomNum == oldRoomNum) { // didn't get there?
-							_followingCrumbs = false;
-						}
-					}
-				} else if (_droppingCrumbs && oldRoomNum != _roomNum) {
-					// If in surreal maze, turn off DroppingCrumbs.
-					if (_roomNum >= 245 && _roomNum <= 280) {
-						_followingCrumbs = false;
-						_droppingCrumbs = false;
-						_numCrumbs = 0;
-						_breadCrumbs[0]._roomNum = 0;
-					} else {
-						bool intersect = false;
-						for (int idx = 0; idx < _numCrumbs; idx++) {
-							if (_breadCrumbs[idx]._roomNum == _roomNum) {
-								_numCrumbs = idx + 1;
-								_breadCrumbs[_numCrumbs]._roomNum = 0;
-								intersect = true;
-							}
-						}
-
-						if (!intersect) {
-							if (_numCrumbs == MAX_CRUMBS) {
-								_numCrumbs = MAX_CRUMBS - 1;
-								memcpy(&_breadCrumbs[0], &_breadCrumbs[1], _numCrumbs * sizeof _breadCrumbs[0]);
-							}
-
-							_breadCrumbs[_numCrumbs]._roomNum = _roomNum;
-							_breadCrumbs[_numCrumbs++]._direction = _direction;
-						}
-					}
-				}
-
-				mayShowCrumbIndicator();
 			}
+
+			if (_followingCrumbs) {
+				if (_isCrumbTurning) {
+					if (_direction == oldDirection) {
+						_followingCrumbs = false;
+					}
+				} else {
+					if (_roomNum == oldRoomNum) { // didn't get there?
+						_followingCrumbs = false;
+					}
+				}
+			} else if (_droppingCrumbs && oldRoomNum != _roomNum) {
+				// If in surreal maze, turn off DroppingCrumbs.
+				if (_roomNum >= 245 && _roomNum <= 280) {
+					_followingCrumbs = false;
+					_droppingCrumbs = false;
+					_numCrumbs = 0;
+					_breadCrumbs[0]._roomNum = 0;
+				} else {
+					bool intersect = false;
+					for (int idx = 0; idx < _numCrumbs; idx++) {
+						if (_breadCrumbs[idx]._roomNum == _roomNum) {
+							_numCrumbs = idx + 1;
+							_breadCrumbs[_numCrumbs]._roomNum = 0;
+							intersect = true;
+						}
+					}
+
+					if (!intersect) {
+						if (_numCrumbs == MAX_CRUMBS) {
+							_numCrumbs = MAX_CRUMBS - 1;
+							memcpy(&_breadCrumbs[0], &_breadCrumbs[1], _numCrumbs * sizeof _breadCrumbs[0]);
+						}
+
+						_breadCrumbs[_numCrumbs]._roomNum = _roomNum;
+						_breadCrumbs[_numCrumbs++]._direction = _direction;
+					}
+				}
+			}
+
+			mayShowCrumbIndicator();
+			break;
 		}
 		_graphics->screenUpdate();
 	} else if ((msgClass == BUTTONUP) && _alternate) {
