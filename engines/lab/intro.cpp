@@ -271,7 +271,7 @@ void Intro::introSequence() {
 		nReadPict("TNDcycle2.pic", true);
 	_vm->_anim->_noPalChange = false;
 
-	_vm->_graphics->FadePalette = palette;
+	_vm->_graphics->_fadePalette = palette;
 
 	for (uint16 i = 0; i < 16; i++) {
 		if (_quitIntro)

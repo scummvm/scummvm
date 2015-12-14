@@ -158,7 +158,7 @@ public:
 	byte *_displayBuffer;
 	byte *_currentDisplayBuffer;
 	bool _doNotDrawMessage;
-	uint16 *FadePalette;
+	uint16 *_fadePalette;
 	BitMap *_dispBitMap;
 };
 

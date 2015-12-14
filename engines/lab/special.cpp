@@ -499,7 +499,7 @@ void LabEngine::doMonitor(char *background, char *textfile, bool isinteractive, 
 
 	_monitorPage = 0;
 	_lastPage = false;
-	_graphics->FadePalette = _highPalette;
+	_graphics->_fadePalette = _highPalette;
 
 	TextFont *monitorFont = _resource->getFont("P:Map.fon");
 	Common::File *buttonFile = _resource->openDataFile("P:MonImage");
