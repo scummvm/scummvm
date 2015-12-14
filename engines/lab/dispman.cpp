@@ -48,7 +48,7 @@ DisplayMan::DisplayMan(LabEngine *vm) : _vm(vm) {
 	_doNotDrawMessage = false;
 
 	_screenBytesPerPage = 65536;
-	_curapen = 0;
+	_curPen = 0;
 	_curBitmap = nullptr;
 	_displayBuffer = nullptr;
 	_currentDisplayBuffer = nullptr;
@@ -179,7 +179,7 @@ void DisplayMan::getLine(TextFont *tf, char *lineBuffer, const char **mainBuffer
  * each line less than 255 characters.
  */
 uint32 DisplayMan::flowText(
-			void *font,            // the TextAttr pointer
+			TextFont *font,        // the TextAttr pointer
 			int16 spacing,         // How much vertical spacing between the lines
 			byte pencolor,         // pen number to use for text
 			byte backpen,          // the background color
@@ -200,7 +200,7 @@ uint32 DisplayMan::flowText(
 
 	setAPen(pencolor);
 
-	TextFont *msgFont = (TextFont *)font;
+	TextFont *msgFont = font;
 	uint16 fontheight = textHeight(msgFont) + spacing;
 	uint16 numlines   = (y2 - y1 + 1) / fontheight;
 	uint16 width      = x2 - x1 + 1;
@@ -242,7 +242,7 @@ uint32 DisplayMan::flowText(
 }
 
 uint32 DisplayMan::flowTextScaled(
-	void *font,                // the TextAttr pointer
+	TextFont *font,            // the TextAttr pointer
 	int16 spacing,             // How much vertical spacing between the lines
 	byte penColor,             // pen number to use for text
 	byte backPen,              // the background color
@@ -262,7 +262,7 @@ uint32 DisplayMan::flowTextScaled(
  * Calls flowText, but flows it to memory.  Same restrictions as flowText.
  */
 uint32 DisplayMan::flowTextToMem(Image *destIm,
-			void *font,            // the TextAttr pointer
+			TextFont *font,        // the TextAttr pointer
 			int16 spacing,         // How much vertical spacing between the lines
 			byte pencolor,         // pen number to use for text
 			byte backpen,          // the background color
@@ -470,8 +470,8 @@ void DisplayMan::setUpScreens() {
 /**
  * Sets the pen number to use on all the drawing operations.
  */
-void DisplayMan::setAPen(byte pennum) {
-	_curapen = pennum;
+void DisplayMan::setAPen(byte penNum) {
+	_curPen = penNum;
 }
 
 /**
@@ -495,7 +495,7 @@ void DisplayMan::rectFill(uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
 			int ww = w;
 
 			while (ww-- > 0) {
-				*dd++ = _curapen;
+				*dd++ = _curPen;
 			}
 
 			d += _screenWidth;
@@ -567,7 +567,7 @@ void DisplayMan::setAmigaPal(uint16 *pal, uint16 numColors) {
 /**
  * Writes any number of the 256 color registers.
  * first:    the number of the first color register to write.
- * numreg:   the number of registers to write
+ * numReg:   the number of registers to write
  * buf:      a char pointer which contains the selected color registers.
  *           Each value representing a color register occupies 3 bytes in
  *           the array.  The order is red, green then blue.  The first byte
@@ -575,21 +575,19 @@ void DisplayMan::setAmigaPal(uint16 *pal, uint16 numColors) {
  *           The length of the buffer is 3 times the number of registers
  *           selected.
  */
-void DisplayMan::writeColorRegs(byte *buf, uint16 first, uint16 numreg) {
+void DisplayMan::writeColorRegs(byte *buf, uint16 first, uint16 numReg) {
 	byte tmp[256 * 3];
 
-	for (int i = 0; i < 256 * 3; i++) {
+	for (int i = 0; i < 256 * 3; i++)
 		tmp[i] = buf[i] * 4;
-	}
 
-	g_system->getPaletteManager()->setPalette(tmp, first, numreg);
-
-	memcpy(&(_curvgapal[first * 3]), buf, numreg * 3);
+	g_system->getPaletteManager()->setPalette(tmp, first, numReg);
+	memcpy(&(_curvgapal[first * 3]), buf, numReg * 3);
 }
 
-void DisplayMan::setPalette(void *cmap, uint16 numcolors) {
-	if (memcmp(cmap, _curvgapal, numcolors * 3) != 0)
-		writeColorRegs((byte *)cmap, 0, numcolors);
+void DisplayMan::setPalette(void *cmap, uint16 numColors) {
+	if (memcmp(cmap, _curvgapal, numColors * 3) != 0)
+		writeColorRegs((byte *)cmap, 0, numColors);
 }
 
 /**
@@ -605,7 +603,7 @@ byte *DisplayMan::getCurrentDrawingBuffer() {
 /**
  * Overlays a region on the screen using the desired pen color.
  */
-void DisplayMan::overlayRect(uint16 pencolor, uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
+void DisplayMan::overlayRect(uint16 penColor, uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
 	int w = x2 - x1 + 1;
 	int h = y2 - y1 + 1;
 
@@ -628,7 +626,7 @@ void DisplayMan::overlayRect(uint16 pencolor, uint16 x1, uint16 y1, uint16 x2, u
 			}
 
 			while (ww > 0) {
-				*dd = pencolor;
+				*dd = penColor;
 				dd += 2;
 				ww -= 2;
 			}
@@ -642,24 +640,24 @@ void DisplayMan::overlayRect(uint16 pencolor, uint16 x1, uint16 y1, uint16 x2, u
 /**
  * Closes a font and frees all memory associated with it.
  */
-void DisplayMan::closeFont(TextFont *tf) {
-	if (tf) {
-		if (tf->_data && tf->_dataLength)
-			delete[] tf->_data;
+void DisplayMan::closeFont(TextFont *font) {
+	if (font) {
+		if (font->_data && font->_dataLength)
+			delete[] font->_data;
 
-		delete tf;
+		delete font;
 	}
 }
 
 /**
  * Returns the length of a text in the specified font.
  */
-uint16 DisplayMan::textLength(TextFont *tf, const char *text, uint16 numchars) {
+uint16 DisplayMan::textLength(TextFont *font, const char *text, uint16 numChars) {
 	uint16 length = 0;
 
-	if (tf) {
-		for (uint16 i = 0; i < numchars; i++) {
-			length += tf->_widths[(uint)*text];
+	if (font) {
+		for (uint16 i = 0; i < numChars; i++) {
+			length += font->_widths[(uint)*text];
 			text++;
 		}
 	}

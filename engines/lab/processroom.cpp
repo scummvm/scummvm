@@ -359,7 +359,7 @@ void LabEngine::doActions(Action *actionList, CloseDataPtr *closePtrList) {
 		case SHOWMESSAGES: {
 				char **str = (char **)actionList->_data;
 				_graphics->_doNotDrawMessage = false;
-				_graphics->drawMessage(str[_rnd.getRandomNumber(actionList->_param1)]);
+				_graphics->drawMessage(str[_utils->getRandom(actionList->_param1)]);
 				_graphics->_doNotDrawMessage = true;
 			}
 			break;

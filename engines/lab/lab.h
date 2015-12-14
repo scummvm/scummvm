@@ -136,7 +136,6 @@ private:
 	Image *_journalBackImage;
 	Image *_screenImage;
 	TextFont *_journalFont;
-	Common::RandomSource _rnd;
 
 public:
 	bool _alternate;

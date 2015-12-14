@@ -64,7 +64,7 @@ private:
 	uint16 fadeNumOut(uint16 num, uint16 res, uint16 counter);
 	void getWord(char *wordBuffer, const char *mainBuffer, uint16 *wordWidth);
 
-	byte _curapen;
+	byte _curPen;
 	byte *_curBitmap;
 	byte _curvgapal[256 * 3];
 
@@ -94,58 +94,58 @@ public:
 	void rectFill(uint16 x1, uint16 y1, uint16 x2, uint16 y2);
 	void rectFillScaled(uint16 x1, uint16 y1, uint16 x2, uint16 y2);
 	// Window text stuff
-	uint32 flowText(void *font,	// the TextAttr pointer
-				int16 spacing,				// How much vertical spacing between the lines
-				byte pencolor,				// pen number to use for text
-				byte backpen,					// the background color
-				bool fillback,				// Whether to fill the background
-				bool centerh,					// Whether to center the text horizontally
-				bool centerv,					// Whether to center the text vertically
-				bool output,					// Whether to output any text
+	uint32 flowText(TextFont *font,		// the TextAttr pointer
+				int16 spacing,			// How much vertical spacing between the lines
+				byte pencolor,			// pen number to use for text
+				byte backpen,			// the background color
+				bool fillback,			// Whether to fill the background
+				bool centerh,			// Whether to center the text horizontally
+				bool centerv,			// Whether to center the text vertically
+				bool output,			// Whether to output any text
 				uint16 x1, uint16 y1,	// Cords
 				uint16 x2, uint16 y2,
 				const char *text);		// The text itself
 
 	uint32 flowTextScaled(
-				void *font,						// the TextAttr pointer
-				int16 spacing,				// How much vertical spacing between the lines
-				byte pencolor,				// pen number to use for text
-				byte backpen,					// the background color
-				bool fillback,				// Whether to fill the background
-				bool centerh,					// Whether to center the text horizontally
-				bool centerv,					// Whether to center the text vertically
-				bool output,					// Whether to output any text
+				TextFont *font,			// the TextAttr pointer
+				int16 spacing,			// How much vertical spacing between the lines
+				byte pencolor,			// pen number to use for text
+				byte backpen,			// the background color
+				bool fillback,			// Whether to fill the background
+				bool centerh,			// Whether to center the text horizontally
+				bool centerv,			// Whether to center the text vertically
+				bool output,			// Whether to output any text
 				uint16 x1, uint16 y1,	// Cords
 				uint16 x2, uint16 y2,
 				const char *text);		// The text itself
 
 	uint32 flowTextToMem(Image *destIm,
-				void *font,						// the TextAttr pointer
-				int16 spacing,				// How much vertical spacing between the lines
-				byte pencolor,				// pen number to use for text
-				byte backpen,					// the background color
-				bool fillback,				// Whether to fill the background
-				bool centerh,					// Whether to center the text horizontally
-				bool centerv,					// Whether to center the text vertically
-				bool output,					// Whether to output any text
+				TextFont *font,			// the TextAttr pointer
+				int16 spacing,			// How much vertical spacing between the lines
+				byte pencolor,			// pen number to use for text
+				byte backpen,			// the background color
+				bool fillback,			// Whether to fill the background
+				bool centerh,			// Whether to center the text horizontally
+				bool centerv,			// Whether to center the text vertically
+				bool output,			// Whether to output any text
 				uint16 x1, uint16 y1,	// Cords
 				uint16 x2, uint16 y2,
-				const char *str);			// The text itself
+				const char *str);		// The text itself
 
 	void drawHLine(uint16 x, uint16 y1, uint16 y2);
 	void drawVLine(uint16 x1, uint16 y, uint16 x2);
 	void screenUpdate();
-	void createScreen(bool HiRes);
+	void createScreen(bool hiRes);
 	void setAmigaPal(uint16 *pal, uint16 numColors);
-	void writeColorRegs(byte *buf, uint16 first, uint16 numreg);
-	void setPalette(void *cmap, uint16 numcolors);
-	void overlayRect(uint16 pencolor, uint16 x1, uint16 y1, uint16 x2, uint16 y2);
+	void writeColorRegs(byte *buf, uint16 first, uint16 numReg);
+	void setPalette(void *cmap, uint16 numColors);
+	void overlayRect(uint16 penColor, uint16 x1, uint16 y1, uint16 x2, uint16 y2);
 	byte *getCurrentDrawingBuffer();
 	void scrollDisplayX(int16 dx, uint16 x1, uint16 y1, uint16 x2, uint16 y2, byte *buffer);
 	void scrollDisplayY(int16 dy, uint16 x1, uint16 y1, uint16 x2, uint16 y2, byte *buffer);
 	void fade(bool fadein, uint16 res);
-	void closeFont(TextFont *tf);
-	uint16 textLength(TextFont *tf, const char *text, uint16 numchars);
+	void closeFont(TextFont *font);
+	uint16 textLength(TextFont *font, const char *text, uint16 numChars);
 	uint16 textHeight(TextFont *tf);
 	void text(TextFont *tf, uint16 x, uint16 y, uint16 color, const char *text, uint16 numchars);
 	void getLine(TextFont *tf, char *lineBuffer, const char **mainBuffer, uint16 lineWidth);
