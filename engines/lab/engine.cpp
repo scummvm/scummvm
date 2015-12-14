@@ -865,7 +865,8 @@ bool LabEngine::fromCrumbs(uint32 tmpClass, uint16 code, uint16 qualifier, Commo
 
 		buttonId--;
 
-		if (buttonId == 0) {
+		switch (buttonId) {
+		case 0:
 			interfaceOff();
 			_anim->stopDiff();
 			_curFileName = " ";
@@ -887,7 +888,10 @@ bool LabEngine::fromCrumbs(uint32 tmpClass, uint16 code, uint16 qualifier, Commo
 				g_system->delayMillis(1000);
 			}
 			_graphics->screenUpdate();
-		} else if (buttonId == 1) {
+
+			break;
+
+		case 1:
 			if (!doUse(curInv)) {
 				uint16 oldActionMode = actionMode;
 				// Use button
@@ -901,7 +905,10 @@ bool LabEngine::fromCrumbs(uint32 tmpClass, uint16 code, uint16 qualifier, Commo
 
 				_graphics->screenUpdate();
 			}
-		} else if (buttonId == 2) {
+
+			break;
+
+		case 2:
 			_mainDisplay = !_mainDisplay;
 
 			if ((curInv == 0) || (curInv > _numInv)) {
@@ -915,7 +922,10 @@ bool LabEngine::fromCrumbs(uint32 tmpClass, uint16 code, uint16 qualifier, Commo
 				_nextFileName = getInvName(curInv);
 
 			_graphics->screenUpdate();
-		} else if (buttonId == 3) {
+
+			break;
+
+		case 3:
 			// Left button
 			decIncInv(&curInv, true);
 			lastInv = curInv;
@@ -923,7 +933,10 @@ bool LabEngine::fromCrumbs(uint32 tmpClass, uint16 code, uint16 qualifier, Commo
 			drawRoomMessage(curInv, _closeDataPtr);
 
 			_graphics->screenUpdate();
-		} else if (buttonId == 4) {
+
+			break;
+
+		case 4:
 			// Right button
 			decIncInv(&curInv, false);
 			lastInv = curInv;
@@ -931,14 +944,20 @@ bool LabEngine::fromCrumbs(uint32 tmpClass, uint16 code, uint16 qualifier, Commo
 			drawRoomMessage(curInv, _closeDataPtr);
 
 			_graphics->screenUpdate();
-		} else if (buttonId == 5) {
+
+			break;
+
+		case 5:
 			// bread crumbs
 			_breadCrumbs[0]._roomNum = 0;
 			_numCrumbs = 0;
 			_droppingCrumbs = true;
 			mayShowCrumbIndicator();
 			_graphics->screenUpdate();
-		} else if (buttonId == 6) {
+
+			break;
+
+		case 6:
 			// follow crumbs
 			if (_droppingCrumbs) {
 				if (_numCrumbs > 0) {
@@ -968,6 +987,7 @@ bool LabEngine::fromCrumbs(uint32 tmpClass, uint16 code, uint16 qualifier, Commo
 					_graphics->screenUpdate();
 				}
 			}
+			break;
 		}
 	} else if ((msgClass == MOUSEBUTTONS) && (IEQUALIFIER_LEFTBUTTON & qualifier) && _mainDisplay) {
 		interfaceOff();
