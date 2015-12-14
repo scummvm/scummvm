@@ -717,7 +717,6 @@ bool LabEngine::fromCrumbs(uint32 tmpClass, uint16 code, uint16 qualifier, Commo
 				wrkClosePtr = nullptr;
 				_closeDataPtr = nullptr;
 				mayShowCrumbIndicator();
-				_graphics->screenUpdate();
 			} else if (buttonId == 5) {
 				eatMessages();
 
@@ -738,7 +737,6 @@ bool LabEngine::fromCrumbs(uint32 tmpClass, uint16 code, uint16 qualifier, Commo
 				drawRoomMessage(curInv, _closeDataPtr);
 
 				mayShowCrumbIndicator();
-				_graphics->screenUpdate();
 			} else {
 				uint16 oldActionMode = actionMode;
 				actionMode = buttonId;
@@ -750,13 +748,11 @@ bool LabEngine::fromCrumbs(uint32 tmpClass, uint16 code, uint16 qualifier, Commo
 
 				if (buttonId <= 4)
 					drawStaticMessage(kTextTakeWhat + buttonId);
-				_graphics->screenUpdate();
 			}
 		} else if (buttonId == 9) {
 			doUse(kItemMap);
 
 			mayShowCrumbIndicator();
-			_graphics->screenUpdate();
 		} else if (buttonId >= 6) {
 			// Arrow Buttons
 			_closeDataPtr = nullptr;
@@ -779,7 +775,6 @@ bool LabEngine::fromCrumbs(uint32 tmpClass, uint16 code, uint16 qualifier, Commo
 				forceDraw = true;
 
 				mayShowCrumbIndicator();
-				_graphics->screenUpdate();
 			} else if (buttonId == 7) {
 				uint16 oldRoomNum = _roomNum;
 
@@ -842,9 +837,9 @@ bool LabEngine::fromCrumbs(uint32 tmpClass, uint16 code, uint16 qualifier, Commo
 				}
 
 				mayShowCrumbIndicator();
-				_graphics->screenUpdate();
 			}
 		}
+		_graphics->screenUpdate();
 	} else if ((msgClass == BUTTONUP) && _alternate) {
 		_anim->_doBlack = true;
 
@@ -887,8 +882,6 @@ bool LabEngine::fromCrumbs(uint32 tmpClass, uint16 code, uint16 qualifier, Commo
 				_graphics->setPalette(initcolors, 8);
 				g_system->delayMillis(1000);
 			}
-			_graphics->screenUpdate();
-
 			break;
 
 		case 1:
@@ -902,10 +895,7 @@ bool LabEngine::fromCrumbs(uint32 tmpClass, uint16 code, uint16 qualifier, Commo
 
 				drawStaticMessage(kTextUseOnWhat);
 				_mainDisplay = true;
-
-				_graphics->screenUpdate();
 			}
-
 			break;
 
 		case 2:
@@ -921,8 +911,6 @@ bool LabEngine::fromCrumbs(uint32 tmpClass, uint16 code, uint16 qualifier, Commo
 			if ((curInv <= _numInv) && _conditions->in(curInv) && _inventory[curInv]._bitmapName)
 				_nextFileName = getInvName(curInv);
 
-			_graphics->screenUpdate();
-
 			break;
 
 		case 3:
@@ -931,9 +919,6 @@ bool LabEngine::fromCrumbs(uint32 tmpClass, uint16 code, uint16 qualifier, Commo
 			lastInv = curInv;
 			_graphics->_doNotDrawMessage = false;
 			drawRoomMessage(curInv, _closeDataPtr);
-
-			_graphics->screenUpdate();
-
 			break;
 
 		case 4:
@@ -942,9 +927,6 @@ bool LabEngine::fromCrumbs(uint32 tmpClass, uint16 code, uint16 qualifier, Commo
 			lastInv = curInv;
 			_graphics->_doNotDrawMessage = false;
 			drawRoomMessage(curInv, _closeDataPtr);
-
-			_graphics->screenUpdate();
-
 			break;
 
 		case 5:
@@ -953,8 +935,6 @@ bool LabEngine::fromCrumbs(uint32 tmpClass, uint16 code, uint16 qualifier, Commo
 			_numCrumbs = 0;
 			_droppingCrumbs = true;
 			mayShowCrumbIndicator();
-			_graphics->screenUpdate();
-
 			break;
 
 		case 6:
@@ -977,18 +957,17 @@ bool LabEngine::fromCrumbs(uint32 tmpClass, uint16 code, uint16 qualifier, Commo
 					interfaceOn();
 					_graphics->drawPanel();
 					drawRoomMessage(curInv, _closeDataPtr);
-					_graphics->screenUpdate();
 				} else {
 					_breadCrumbs[0]._roomNum = 0;
 					_droppingCrumbs = false;
 
 					// Need to hide indicator!!!!
 					mayShowCrumbIndicatorOff();
-					_graphics->screenUpdate();
 				}
 			}
 			break;
 		}
+		_graphics->screenUpdate();
 	} else if ((msgClass == MOUSEBUTTONS) && (IEQUALIFIER_LEFTBUTTON & qualifier) && _mainDisplay) {
 		interfaceOff();
 		_mainDisplay = true;
