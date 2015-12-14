@@ -40,12 +40,14 @@ private:
 
 	void unDiffByteByte(byte *dest, byte *diff);
 	void unDiffByteWord(uint16 *dest, uint16 *diff);
-	void VUnDiffByteByte(byte *Dest, byte *diff, uint16 bytesperrow);
-	void VUnDiffByteWord(uint16 *Dest, uint16 *diff, uint16 bytesperrow);
-	void VUnDiffByteLong(uint32 *Dest, uint32 *diff, uint16 bytesperrow);
+	void VUnDiffByteByte(byte *dest, byte *diff, uint16 bytesPerRow);
+	void VUnDiffByteWord(uint16 *dest, uint16 *diff, uint16 bytesPerRow);
+	void VUnDiffByteLong(uint32 *dest, uint32 *diff, uint16 bytesPerRow);
 
 public:
 	Utils(LabEngine *vm);
+
+	Common::RandomSource _rnd;
 
 	uint16 scaleX(uint16 x);
 	uint16 scaleY(uint16 y);
@@ -55,10 +57,11 @@ public:
 	uint16 mapScaleX(uint16 x);
 	uint16 mapScaleY(uint16 y);
 	Common::Point vgaUnscale(Common::Point pos);
-	void unDiff(byte *newBuf, byte *oldBuf, byte *diffData, uint16 bytesperrow, bool isV);
+	void unDiff(byte *newBuf, byte *oldBuf, byte *diffData, uint16 bytesPerRow, bool isV);
 	void runLengthDecode(byte *dest, byte *source);
 	void VRunLengthDecode(byte *dest, byte *source, uint16 bytesPerRow);
 	void setBytesPerRow(int num);
+	uint16 getRandom(uint16 max);
 };
 
 

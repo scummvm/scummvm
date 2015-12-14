@@ -48,7 +48,7 @@
 
 namespace Lab {
 LabEngine::LabEngine(OSystem *syst, const ADGameDescription *gameDesc)
- : Engine(syst), _gameDescription(gameDesc), _extraGameFeatures(0), _rnd("lab") {
+ : Engine(syst), _gameDescription(gameDesc), _extraGameFeatures(0) {
 	_lastWaitTOFTicks = 0;
 
 	_isHiRes = false;

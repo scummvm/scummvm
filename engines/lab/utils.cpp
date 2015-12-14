@@ -34,7 +34,7 @@
 #include "lab/utils.h"
 
 namespace Lab {
-Utils::Utils(LabEngine *vm) : _vm(vm) {
+Utils::Utils(LabEngine *vm) : _vm(vm), _rnd("lab") {
 	_dataBytesPerRow = 0;
 }
 
@@ -427,4 +427,10 @@ void Utils::setBytesPerRow(int num) {
 	_dataBytesPerRow = num;
 }
 
+uint16 Utils::getRandom(uint16 max) {
+	if (max > 1)
+		return _rnd.getRandomNumber(max - 1);
+	else
+		return 0;
+}
 } // End of namespace Lab
