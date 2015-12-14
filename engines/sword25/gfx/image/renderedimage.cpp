@@ -178,6 +178,9 @@ RenderedImage::RenderedImage() : _isTransparent(true) {
 // -----------------------------------------------------------------------------
 
 RenderedImage::~RenderedImage() {
+	if (_doCleanup) {
+		_surface.free();
+	}
 }
 
 // -----------------------------------------------------------------------------
