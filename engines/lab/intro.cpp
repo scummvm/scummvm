@@ -57,14 +57,12 @@ void Intro::introEatMessages() {
 			return;
 		}
 
-		if (msg == NULL)
+		if (!msg)
 			return;
-		else {
-			if (((msg->_msgClass == MOUSEBUTTONS) && (IEQUALIFIER_RIGHTBUTTON & msg->_qualifier)) ||
-				  ((msg->_msgClass == RAWKEY) && (msg->_code == 27))
-				)
-				_quitIntro = true;
-		}
+
+		if (((msg->_msgClass == MOUSEBUTTONS) && (IEQUALIFIER_RIGHTBUTTON & msg->_qualifier))
+		 || ((msg->_msgClass == RAWKEY) && (msg->_code == 27)))
+			_quitIntro = true;
 	}
 }
 
@@ -164,9 +162,7 @@ void Intro::doPictText(const char *filename, TextFont *msgFont, bool isScreen) {
 
 				delete[] textBuffer;
 				return;
-			}
-
-			else if (cls == MOUSEBUTTONS) {
+			} else if (cls == MOUSEBUTTONS) {
 				if (IEQUALIFIER_LEFTBUTTON & qualifier) {
 					if (end) {
 						if (isScreen)

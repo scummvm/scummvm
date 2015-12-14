@@ -159,8 +159,7 @@ Common::String Resource::translateFileName(Common::String filename) {
 			fileNameStrFinal = "GAME/SPICT/";
 		else
 			fileNameStrFinal = "GAME/PICT/";
-	}
-	else if (filename.hasPrefix("LAB:"))
+	} else if (filename.hasPrefix("LAB:"))
 		fileNameStrFinal = "GAME/";
 	else if (filename.hasPrefix("MUSIC:"))
 		fileNameStrFinal = "GAME/MUSIC/";

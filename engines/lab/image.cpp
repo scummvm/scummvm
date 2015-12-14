@@ -89,8 +89,10 @@ void Image::blitBitmap(uint16 xs, uint16 ys, Image *imDest,
 				while (ww-- > 0) {
 					byte c = *ss++;
 
-					if (c) *dd++ = c - 1;
-					else dd++;
+					if (c)
+						*dd++ = c - 1;
+					else
+						dd++;
 				}
 
 				s += _width;
