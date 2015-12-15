@@ -435,19 +435,9 @@ void LabEngine::processMonitor(char *ntext, TextFont *monitorFont, bool isIntera
 				return;
 			else if ((msgClass == MOUSEBUTTONS) && (IEQUALIFIER_LEFTBUTTON & qualifier)) {
 				if ((mouseY >= _utils->vgaScaleY(171)) && (mouseY <= _utils->vgaScaleY(200))) {
-					if ((mouseX >= _utils->vgaScaleX(259)) && (mouseX <= _utils->vgaScaleX(289))) {
-						if (!_lastPage) {
-							_monitorPage += 1;
-							drawMonText(ntext, monitorFont, x1, y1, x2, y2, isInteractive);
-						}
-					} else if ((mouseX >= _utils->vgaScaleX(0)) && (mouseX <= _utils->vgaScaleX(31))) {
+					if (mouseX <= _utils->vgaScaleX(31)) {
 						return;
-					} else if ((mouseX >= _utils->vgaScaleX(290)) && (mouseX <= _utils->vgaScaleX(320))) {
-						if (_monitorPage >= 1) {
-							_monitorPage -= 1;
-							drawMonText(ntext, monitorFont, x1, y1, x2, y2, isInteractive);
-						}
-					} else if ((mouseX >= _utils->vgaScaleX(31)) && (mouseX <= _utils->vgaScaleX(59))) {
+					} else if (mouseX <= _utils->vgaScaleX(59)) {
 						if (isInteractive) {
 							_monitorPage = 0;
 
@@ -459,6 +449,17 @@ void LabEngine::processMonitor(char *ntext, TextFont *monitorFont, bool isIntera
 							_monitorPage = 0;
 							drawMonText(ntext, monitorFont, x1, y1, x2, y2, isInteractive);
 						}
+					} else if (mouseX < _utils->vgaScaleX(259)) {
+						return;
+					} else if (mouseX <= _utils->vgaScaleX(289)) {
+						if (!_lastPage) {
+							_monitorPage += 1;
+							drawMonText(ntext, monitorFont, x1, y1, x2, y2, isInteractive);
+						}
+					} else if (_monitorPage >= 1) {
+						// mouseX between 290 and 320 (scaled)
+						_monitorPage -= 1;
+						drawMonText(ntext, monitorFont, x1, y1, x2, y2, isInteractive);
 					}
 				} else if (isInteractive) {
 					CloseDataPtr tmpClosePtr = _closeDataPtr;
