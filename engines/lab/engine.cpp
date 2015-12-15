@@ -588,10 +588,10 @@ void LabEngine::mainGameLoop() {
 	if (_inventory) {
 		for (int i = 1; i <= _numInv; i++) {
 			if (_inventory[i]._name)
-				delete _inventory[i]._name;
+				delete[] _inventory[i]._name;
 
 			if (_inventory[i]._bitmapName)
-				delete _inventory[i]._bitmapName;
+				delete[] _inventory[i]._bitmapName;
 		}
 
 		delete[] _inventory;
