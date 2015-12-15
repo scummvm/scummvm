@@ -128,6 +128,7 @@ public:
 	void spcSetupBubble(OpCall &opCall);
 	void spcSetObjectInteractMode(OpCall &opCall);
 	void spcInitInventory(OpCall &opCall);
+	void spcClearInventory(OpCall &opCall);
 	void spcRegisterInventoryBag(OpCall &opCall);
 	void spcRegisterInventorySlot(OpCall &opCall);
 	void spcRegisterInventoryItem(OpCall &opCall);
@@ -137,6 +138,8 @@ public:
 	void spcHasInventoryItem(OpCall &opCall);
 	void spcCloseInventory(OpCall &opCall);
 	void spcInitConversation(OpCall &opCall);
+	void spcClearConversation(OpCall &opCall);
+	void spcClearBlockCounter(OpCall &opCall);
 	void spcResetCursor(OpCall &opCall);
 	void spcSetCursorField90(OpCall &opCall);
 	void spcFoodCtl(OpCall &opCall);

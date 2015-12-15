@@ -27,6 +27,7 @@
 #include "illusions/bbdou/bbdou_credits.h"
 #include "illusions/bbdou/bbdou_cursor.h"
 #include "illusions/bbdou/bbdou_foodctl.h"
+#include "illusions/resources/scriptresource.h"
 #include "illusions/actor.h"
 #include "illusions/camera.h"
 #include "illusions/dictionary.h"
@@ -127,7 +128,6 @@ typedef Common::Functor1Mem<OpCall&, void, BbdouSpecialCode> SpecialCodeFunction
 #define SPECIAL(id, func) _map[id] = new SpecialCodeFunctionI(this, &BbdouSpecialCode::func);
 
 void BbdouSpecialCode::init() {
-	// TODO
 	// 0x00160001 only used for original debugging purposes
 	SPECIAL(0x00160006, spcInitCursor);
 	SPECIAL(0x00160008, spcEnableCursor);
@@ -140,6 +140,7 @@ void BbdouSpecialCode::init() {
 	SPECIAL(0x00160014, spcSetupBubble);
 	SPECIAL(0x00160015, spcSetObjectInteractMode);
 	SPECIAL(0x00160017, spcInitInventory);
+	SPECIAL(0x00160018, spcClearInventory);
 	SPECIAL(0x00160019, spcRegisterInventoryBag);
 	SPECIAL(0x0016001A, spcRegisterInventorySlot);
 	SPECIAL(0x0016001B, spcRegisterInventoryItem);
@@ -149,6 +150,8 @@ void BbdouSpecialCode::init() {
 	SPECIAL(0x0016001F, spcHasInventoryItem);
 	SPECIAL(0x00160025, spcCloseInventory);
 	SPECIAL(0x00160027, spcInitConversation);
+	SPECIAL(0x00160028, spcClearConversation);
+	SPECIAL(0x0016002B, spcClearBlockCounter);
 	SPECIAL(0x00160030, spcResetCursor);
 	SPECIAL(0x00160032, spcSetCursorField90);
 	SPECIAL(0x00160034, spcFoodCtl);
@@ -258,6 +261,10 @@ void BbdouSpecialCode::spcInitInventory(OpCall &opCall) {
 	// inventory is initialized in this class' constructor
 }
 
+void BbdouSpecialCode::spcClearInventory(OpCall &opCall) {
+	_inventory->clear();
+}
+
 void BbdouSpecialCode::spcRegisterInventoryBag(OpCall &opCall) {
 	ARG_UINT32(sceneId);
 	_inventory->registerInventoryBag(sceneId);
@@ -299,6 +306,16 @@ void BbdouSpecialCode::spcCloseInventory(OpCall &opCall) {
 
 void BbdouSpecialCode::spcInitConversation(OpCall &opCall) {
 	// Conversations seem unused but this is still called
+}
+
+void BbdouSpecialCode::spcClearConversation(OpCall &opCall) {
+	// Conversations seem unused but this is still called
+}
+
+void BbdouSpecialCode::spcClearBlockCounter(OpCall &opCall) {
+	// Conversations seem unused but this is still called
+	ARG_UINT32(index);
+	_vm->_scriptResource->_blockCounters.set(index, 0);
 }
 
 void BbdouSpecialCode::spcResetCursor(OpCall &opCall) {
