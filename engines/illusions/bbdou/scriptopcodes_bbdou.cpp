@@ -288,7 +288,7 @@ void ScriptOpcodes_BBDOU::opUnloadActiveScenes(ScriptThread *scriptThread, OpCal
 //uint32 dsceneId = 0x00010007, dthreadId = 0x0002000C;//Auditorium
 //uint32 dsceneId = 0x0001000B, dthreadId = 0x00020010;
 //uint32 dsceneId = 0x00010013, dthreadId = 0x00020018;//Therapist
-uint32 dsceneId = 0x00010016, dthreadId = 0x0002001B;//Dorms ext
+//uint32 dsceneId = 0x00010016, dthreadId = 0x0002001B;//Dorms ext
 //uint32 dsceneId = 0x00010017, dthreadId = 0x0002001C;//Dorms int
 //uint32 dsceneId = 0x0001000D, dthreadId = 0x00020012;//Food minigame
 //uint32 dsceneId = 0x00010067, dthreadId = 0x0002022A;
@@ -297,6 +297,7 @@ uint32 dsceneId = 0x00010016, dthreadId = 0x0002001B;//Dorms ext
 //uint32 dsceneId = 0x0001001A, dthreadId = 0x0002001F;
 //uint32 dsceneId = 0x00010047, dthreadId = 0x0002005F;
 //uint32 dsceneId = 0x0001007D, dthreadId = 0x000203B9;
+uint32 dsceneId = 0x0001000D, dthreadId = 0x00020012;
 
 void ScriptOpcodes_BBDOU::opChangeScene(ScriptThread *scriptThread, OpCall &opCall) {
 	ARG_SKIP(2);
