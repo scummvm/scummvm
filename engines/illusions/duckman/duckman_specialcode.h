@@ -30,17 +30,11 @@
 namespace Illusions {
 
 class IllusionsEngine_Duckman;
+class DuckmanCredits;
 class DuckmanInventory;
 class PropertyTimers;
 
 typedef Common::Functor1<OpCall&, void> SpecialCodeFunction;
-
-struct CreditsItem {
-	uint32 objectId;
-	bool active;
-	int16 scrollPosIndex;
-	int16 scrollPosY;
-};
 
 class DuckmanSpecialCode : public SpecialCode {
 public:
@@ -51,7 +45,6 @@ public:
 public:	
 	typedef Common::HashMap<uint32, SpecialCodeFunction*> SpecialCodeMap;
 	typedef SpecialCodeMap::iterator SpecialCodeMapIterator;
-	typedef Common::Array<CreditsItem> CreditsItems;
 
 	IllusionsEngine_Duckman *_vm;
 	SpecialCodeMap _specialCodeMap;
@@ -67,12 +60,7 @@ public:
 	int16 _savedTempMasterSfxVolume;
 	int16 _lastRandomSoundIndex;
 
-	uint32 _creditsLastUpdateTicks;
-	uint32 _creditsNextUpdateTicks;
-	int _lastCreditsItemIndex;
-	bool _creditsEndReached;
-	CreditsItems _creditsItems;
-	char *_creditsCurrText;
+	DuckmanCredits *_credits;
 
 	// Special code interface functions
 	void runSpecialCode(uint32 specialCodeId, OpCall &opCall);

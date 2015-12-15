@@ -259,7 +259,7 @@ void ScriptOpcodes_Duckman::opUnloadResourcesBySceneId(ScriptThread *scriptThrea
 
 //static uint dsceneId = 0, dthreadId = 0;
 //static uint dsceneId = 0x00010008, dthreadId = 0x00020029;//Beginning in Jac
-static uint dsceneId = 0x0001000A, dthreadId = 0x00020043;//Home front
+//static uint dsceneId = 0x0001000A, dthreadId = 0x00020043;//Home front
 //static uint dsceneId = 0x0001000E, dthreadId = 0x0002007C;
 //static uint dsceneId = 0x00010012, dthreadId = 0x0002009D;//Paramount
 //static uint dsceneId = 0x00010020, dthreadId = 0x00020112;//Xmas
@@ -276,7 +276,7 @@ static uint dsceneId = 0x0001000A, dthreadId = 0x00020043;//Home front
 //static uint dsceneId = 0x10002, dthreadId = 0x20001;//Debug menu, not supported
 //static uint dsceneId = 0x10044, dthreadId = 0x000202B8; // Starship Enterprise
 //static uint dsceneId = 0x00010039, dthreadId = 0x00020089; // Map
-//static uint dsceneId = 0x00010052, dthreadId = 0x00020347; // Credits
+static uint dsceneId = 0x00010052, dthreadId = 0x00020347; // Credits
 
 void ScriptOpcodes_Duckman::opChangeScene(ScriptThread *scriptThread, OpCall &opCall) {
 	ARG_SKIP(2);
