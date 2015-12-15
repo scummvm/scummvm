@@ -21,6 +21,7 @@
  */
 
 #include "illusions/duckman/illusions_duckman.h"
+#include "illusions/duckman/duckman_credits.h"
 #include "illusions/duckman/duckman_screenshakereffects.h"
 #include "illusions/duckman/duckman_specialcode.h"
 #include "illusions/duckman/duckman_inventory.h"
@@ -47,6 +48,8 @@ DuckmanSpecialCode::DuckmanSpecialCode(IllusionsEngine_Duckman *vm)
 
 	_propertyTimers = new PropertyTimers(_vm);
 	_inventory = new DuckmanInventory(_vm);
+	_credits = new DuckmanCredits(_vm);
+	
 	_wasCursorHoldingElvisPoster = false;
 	_counter = 0;
 	_savedTempMasterSfxVolume = 16;
@@ -56,6 +59,7 @@ DuckmanSpecialCode::DuckmanSpecialCode(IllusionsEngine_Duckman *vm)
 DuckmanSpecialCode::~DuckmanSpecialCode() {
 	delete _propertyTimers;
 	delete _inventory;
+	delete _credits;
 }
 
 typedef Common::Functor1Mem<OpCall&, void, DuckmanSpecialCode> SpecialCodeFunctionDM;
@@ -339,7 +343,7 @@ void DuckmanSpecialCode::spcHoldGlowingElvisPoster(OpCall &opCall) {
 void DuckmanSpecialCode::spcStartCredits(OpCall &opCall) {
 	ARG_BYTE(mode);
 	if (mode == 0)
-		startCredits();
+		_credits->start();
 	_vm->notifyThreadId(opCall._threadId);
 }
 
@@ -389,157 +393,6 @@ void DuckmanSpecialCode::updateTeleporterProperties() {
 	_vm->_scriptResource->_properties.set(0x000E0076, _teleporterPosition.x == 3 && _teleporterPosition.y == 3);
 	_vm->_scriptResource->_properties.set(0x000E0077, _teleporterPosition.x == 2 && _teleporterPosition.y == 2);
 	_vm->_scriptResource->_properties.set(0x000E0078, _teleporterPosition.x == 1 && _teleporterPosition.y == 1);	
-}
-
-void DuckmanSpecialCode::startCredits() {
-	static const struct { uint32 objectId; int scrollPosY; } kCreditsItems[] = {
-		{0x40136,   0}, {0x40137,  16}, {0x40138,  32}, {0x40139,  48},
-		{0x4013A,  64}, {0x4013B,  80}, {0x4013C,  96}, {0x4013D, 112}
-	};
-	_creditsCurrText = (char*)_vm->_resSys->getResource(0x190052)->_data;
-	_creditsItems.clear();
-	for (uint i = 0; i < ARRAYSIZE(kCreditsItems);  ++i) {
-		CreditsItem creditsItem;
-		creditsItem.objectId = kCreditsItems[i].objectId;
-		creditsItem.scrollPosY = kCreditsItems[i].scrollPosY;
-		creditsItem.scrollPosIndex = 0;
-		creditsItem.active = false;
-		_creditsItems.push_back(creditsItem);
-	}
-	uint32 currSceneId = _vm->getCurrentScene();
-	_vm->_updateFunctions->add(0, currSceneId, new Common::Functor1Mem<uint, int, DuckmanSpecialCode>(this, &DuckmanSpecialCode::updateCredits));
-	_creditsNextUpdateTicks = getCurrentTime();
-	_creditsLastUpdateTicks = _creditsNextUpdateTicks - 4;
-}
-
-int DuckmanSpecialCode::updateCredits(uint flags) {
-
-	if (_vm->_pauseCtr > 0) {
-		_creditsNextUpdateTicks = getCurrentTime() + 4;
-		return 1;
-	}
-
-	if (flags & 1) {
-		_vm->_scriptResource->_properties.set(0x000E0096, true);
-		_lastCreditsItemIndex = -1;
-		_creditsEndReached = false;
-		return 2;
-	}
-
-	if (!isTimerExpired(_creditsLastUpdateTicks, _creditsNextUpdateTicks)) {
-		return 1;
-	}
-
-	bool creditsRunning = false;
-	int index = 0;
-	for (CreditsItems::iterator it = _creditsItems.begin(); it != _creditsItems.end(); ++it, ++index) {
-		CreditsItem &creditsItem = *it;
-		Control *control = _vm->getObjectControl(creditsItem.objectId);
-		if (!creditsItem.active && creditsItem.scrollPosY == 0 && !_creditsEndReached) {
-			creditsItem.active = true;
-			creditsItem.scrollPosIndex = 0;
-			control->fillActor(0);
-			char *text = readNextCreditsLine();
-			if (!strncmp(text, "&&&END", 6)) {
-				creditsItem.active = false;
-				_creditsEndReached = true;
-			} else {
-				uint16 wtext[128];
-				charToWChar(text, wtext, ARRAYSIZE(wtext));
-
-				FontResource *font = _vm->_dict->findFont(0x120001); 
-				TextDrawer textDrawer;
-				WidthHeight dimensions;
-				uint16 *outText;
-				control->getActorFrameDimensions(dimensions);
-				textDrawer.wrapText(font, wtext, &dimensions, Common::Point(0, 0), 2, outText);
-				textDrawer.drawText(_vm->_screen, control->_actor->_surface, 0, 0);
-				control->_actor->_flags |= 0x4000;
-
-				_lastCreditsItemIndex = index;
-			}
-		}
-		if (creditsItem.active) {
-			if (_creditsEndReached && _creditsItems[_lastCreditsItemIndex].scrollPosIndex > 53) {
-				creditsItem.active = false;
-				creditsItem.scrollPosY = -1;
-			} else {
-				creditsRunning = true;
-				control->_actor->_position = getCreditsItemPosition(creditsItem.scrollPosIndex);
-				++creditsItem.scrollPosIndex;
-				if (getCreditsItemPosition(creditsItem.scrollPosIndex).x < 0)
-					creditsItem.active = false;
-			}
-		}
-		if (creditsItem.scrollPosY > 0)
-			--creditsItem.scrollPosY;
-	}
-	_creditsLastUpdateTicks = _creditsNextUpdateTicks;
-	_creditsNextUpdateTicks = getCurrentTime() + 4;
-
-	if (!creditsRunning) {
-		_vm->_scriptResource->_properties.set(0x000E0096, true);
-		_lastCreditsItemIndex = -1;
-		_creditsEndReached = false;
-		return 2;
-	}
-
-	return 1;
-}
-
-char *DuckmanSpecialCode::readNextCreditsLine() {
-	static char line[256];
-	char *dest = line;
-	char *src = _creditsCurrText;
-	do {
-		if (*src == 10 || *src == 13) {
-			src += 2;
-			*dest = 0;
-			break;
-		}
-		*dest++ = *src++;
-	} while (1);
-	_creditsCurrText = src;
-	return line;
-}
-
-Common::Point DuckmanSpecialCode::getCreditsItemPosition(int index) {
-	static const struct { int16 x, y; } kCreditsItemsPoints[] = {
-		{159, 200}, {158, 195}, {157, 190}, {156, 185}, {156, 180}, {157, 176}, 
-		{158, 172}, {159, 168}, {161, 164}, {162, 161}, {163, 158}, {163, 155}, 
-		{162, 152}, {161, 149}, {159, 147}, {158, 144}, {157, 142}, {156, 140}, 
-		{156, 138}, {157, 136}, {158, 134}, {159, 132}, {161, 130}, {162, 128}, 
-		{163, 127}, {163, 126}, {162, 125}, {161, 124}, {159, 123}, {158, 122}, 
-		{157, 121}, {156, 120}, {156, 119}, {157, 118}, {158, 117}, {159, 116}, 
-		{161, 115}, {162, 114}, {163, 113}, {163, 112}, {162, 111}, {161, 110}, 
-		{159, 109}, {158, 108}, {157, 107}, {156, 106}, {156, 105}, {157, 104}, 
-		{158, 103}, {159, 102}, {161, 101}, {162, 100}, {163,  99}, {163,  98}, 
-		{162,  97}, {161,  96}, {159,  95}, {158,  94}, {157,  93}, {156,  92}, 
-		{156,  91}, {157,  90}, {158,  89}, {159,  88}, {161,  87}, {162,  86}, 
-		{163,  85}, {163,  84}, {162,  83}, {161,  82}, {159,  81}, {158,  80}, 
-		{157,  79}, {156,  78}, {156,  77}, {157,  76}, {158,  75}, {159,  74},
-		{161,  73}, {162,  72}, {163,  71}, {163,  70}, {162,  69}, {161,  68}, 
-		{159,  67}, {158,  66}, {157,  64}, {156,  62}, {156,  60}, {157,  58}, 
-		{158,  56}, {159,  54}, {161,  52}, {162,  50}, {163,  40}, {163,  40}, 
-		{162,  40}, {161,  40}, {159,  40}, {158,  40}, {157,  40}, {156,  40}, 
-		{156,  40}, {157,  40}, {158,  40}, {159,  40}, {161,  40}, {162,  40}, 
-		{163,  40}, {163,  40}, {162,  40}, {161,  40}, {159,  40}, {158,  40}, 
-		{157,  40}, {156,  40}, {156,  40}, {157,  40}, {158,  40}, {159,  40}, 
-		{161,  40}, {162,  40}, {163,  40}, {163,  40}, {162,  40}, {161,  40}, 
-		{159,  40}, {158,  40}, { -1,  -1} 
-	};
-
-	if (index < 0 || index >= ARRAYSIZE(kCreditsItemsPoints))
-		return Common::Point(-1, -1);
-	return Common::Point(kCreditsItemsPoints[index].x, kCreditsItemsPoints[index].y);
-}
-
-void DuckmanSpecialCode::charToWChar(char *text, uint16 *wtext, uint size) {
-	while (*text != 0 && size > 1) {
-		*wtext++ = (byte)*text++;
-		--size;
-	}
-	*wtext++ = 0;
 }
 
 } // End of namespace Illusions

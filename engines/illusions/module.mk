@@ -16,6 +16,7 @@ MODULE_OBJS := \
 	cursor.o \
 	detection.o \
 	dictionary.o \
+	duckman/duckman_credits.o \
 	duckman/duckman_dialog.o \
 	duckman/duckman_inventory.o \
 	duckman/duckman_screenshakereffects.o \
