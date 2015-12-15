@@ -2414,6 +2414,7 @@ case $_host_os in
 		;;
 	ps3)
 		# Force use of SDL and freetype from the ps3 toolchain
+		_sdlconfig=sdl2-config
 		_sdlpath="$PS3DEV/portlibs/ppu:$PS3DEV/portlibs/ppu/bin"
 		_freetypepath="$PS3DEV/portlibs/ppu:$PS3DEV/portlibs/ppu/bin"
 
@@ -3108,9 +3109,6 @@ case $_backend in
 
 		_sdlversion=`$_sdlconfig --version`
 		case $_sdlversion in
-			1.3.*)
-				add_line_to_config_mk "USE_SDL13 = 1"
-				;;
 			2.0.*)
 				add_line_to_config_mk "USE_SDL2 = 1"
 				;;

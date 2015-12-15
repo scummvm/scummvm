@@ -72,12 +72,10 @@ MODULE_OBJS += \
 	plugins/sdl/sdl-provider.o \
 	timer/sdl/sdl-timer.o
 
-# SDL 1.3 removed audio CD support
-ifndef USE_SDL13
+# SDL 2 removed audio CD support
 ifndef USE_SDL2
 MODULE_OBJS += \
 	audiocd/sdl/sdl-audiocd.o
-endif
 endif
 
 ifdef USE_OPENGL
@@ -125,8 +123,7 @@ MODULE_OBJS += \
 	fs/posix/posix-fs.o \
 	fs/posix/posix-fs-factory.o \
 	fs/ps3/ps3-fs-factory.o \
-	events/ps3sdl/ps3sdl-events.o \
-	mixer/sdl13/sdl13-mixer.o
+	events/ps3sdl/ps3sdl-events.o
 endif
 
 ifeq ($(BACKEND),tizen)
