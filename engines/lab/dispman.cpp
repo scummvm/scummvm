@@ -114,8 +114,8 @@ void DisplayMan::readPict(const char *filename, bool playOnce, bool onlyDiffData
 }
 
 void DisplayMan::freePict() {
-	delete _curBitmap;
-	_curBitmap = NULL;
+	delete[] _curBitmap;
+	_curBitmap = nullptr;
 }
 
 //---------------------------------------------------------------------------
