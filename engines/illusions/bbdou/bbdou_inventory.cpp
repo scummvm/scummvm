@@ -102,6 +102,14 @@ void InventoryBag::buildItems() {
 	}
 }
 
+void InventoryBag::clear() {
+	for (InventorySlotsIterator it = _inventorySlots.begin();
+		it != _inventorySlots.end(); ++it) {
+		InventorySlot *inventorySlot = *it;
+		inventorySlot->_inventoryItem = 0;
+	}
+}
+
 InventorySlot *InventoryBag::getInventorySlot(uint32 objectId) {
 	for (uint i = 0; i < _inventorySlots.size(); ++i)
 		if (_inventorySlots[i]->_objectId == objectId)
@@ -268,6 +276,16 @@ void BbdouInventory::buildItems(InventoryBag *inventoryBag) {
 			inventoryItem->_objectId != _bbdou->_cursor->_data._holdingObjectId)
 			inventoryBag->addInventoryItem(inventoryItem, 0);
 	}
+}
+
+void BbdouInventory::clear() {
+	for (InventoryItemsIterator it = _inventoryItems.begin(); it != _inventoryItems.end(); ++it) {
+		InventoryItem *inventoryItem = *it;
+		inventoryItem->_assigned = false;
+		inventoryItem->_flag = false;
+	}
+	for (uint i = 0; i < _inventoryBags.size(); ++i)
+		_inventoryBags[i]->clear();
 }
 
 void BbdouInventory::cause0x1B0001(TriggerFunction *triggerFunction, uint32 callingThreadId) {

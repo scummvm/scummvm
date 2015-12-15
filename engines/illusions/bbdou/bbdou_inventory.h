@@ -59,6 +59,7 @@ public:
 	void removeInventoryItem(InventoryItem *inventoryItem);
 	bool hasInventoryItem(uint32 objectId);
 	void buildItems();
+	void clear();
 	InventorySlot *getInventorySlot(uint32 objectId);
 	InventorySlot *findClosestSlot(Common::Point putPos, int index);
 protected:
@@ -87,6 +88,7 @@ public:
 	InventoryItem *getInventoryItem(uint32 objectId);
 	void refresh();
 	void buildItems(InventoryBag *inventoryBag);
+	void clear();
 	void cause0x1B0001(TriggerFunction *triggerFunction, uint32 callingThreadId);
 	void cause0x1B0002(TriggerFunction *triggerFunction, uint32 callingThreadId);
 	void putBackInventoryItem(uint32 objectId, Common::Point cursorPosition);
