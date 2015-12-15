@@ -53,6 +53,8 @@ protected:
 	void opEndTalkThreads(ScriptThread *scriptThread, OpCall &opCall);
 	void opLoadResource(ScriptThread *scriptThread, OpCall &opCall);
 	void opUnloadResource(ScriptThread *scriptThread, OpCall &opCall);
+	void opEnterMenuPause(ScriptThread *scriptThread, OpCall &opCall);
+	void opLeaveMenuPause(ScriptThread *scriptThread, OpCall &opCall);
 	void opEnterScene(ScriptThread *scriptThread, OpCall &opCall);
 	void opLeaveScene(ScriptThread *scriptThread, OpCall &opCall);
 	void opUnloadActiveScenes(ScriptThread *scriptThread, OpCall &opCall);

@@ -129,6 +129,9 @@ public:
 	void leavePause(uint32 threadId);
 	void dumpActiveScenes(uint32 sceneId, uint32 threadId);
 
+	void enterMenuPause();
+	void leaveMenuPause();
+
 	void setSceneIdThreadId(uint32 theSceneId, uint32 theThreadId);
 	bool findTriggerCause(uint32 sceneId, uint32 verbId, uint32 objectId2, uint32 objectId, uint32 &codeOffs);
 	void reset();

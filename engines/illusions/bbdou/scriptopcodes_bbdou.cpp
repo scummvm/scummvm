@@ -72,8 +72,8 @@ void ScriptOpcodes_BBDOU::initOpcodes() {
 	OPCODE(15, opEndTalkThreads);
 	OPCODE(16, opLoadResource);
 	OPCODE(17, opUnloadResource);
-	// TODO OPCODE(18, opPauseText);
-	// TODO OPCODE(19, opResumeText);
+	OPCODE(18, opEnterMenuPause);
+	OPCODE(19, opLeaveMenuPause);
 	OPCODE(20, opEnterScene);
 	OPCODE(21, opLeaveScene);
 	// TODO OPCODE(22, opEnterPause);
@@ -257,6 +257,14 @@ void ScriptOpcodes_BBDOU::opUnloadResource(ScriptThread *scriptThread, OpCall &o
 	ARG_UINT32(resourceId);
 	// NOTE Skipped checking for stalled resources
 	_vm->_resSys->unloadResourceById(resourceId);
+}
+
+void ScriptOpcodes_BBDOU::opEnterMenuPause(ScriptThread *scriptThread, OpCall &opCall) {
+	_vm->enterMenuPause();
+}
+
+void ScriptOpcodes_BBDOU::opLeaveMenuPause(ScriptThread *scriptThread, OpCall &opCall) {
+	_vm->leaveMenuPause();
 }
 
 void ScriptOpcodes_BBDOU::opEnterScene(ScriptThread *scriptThread, OpCall &opCall) {
