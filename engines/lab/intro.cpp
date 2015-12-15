@@ -126,8 +126,12 @@ void Intro::doPictText(const char *filename, TextFont *msgFont, bool isScreen) {
 		}
 
 		IntuiMessage *msg = _vm->_event->getMsg();
+		if (g_engine->shouldQuit()) {
+			_quitIntro = true;
+			return;
+		}
 
-		if (msg == NULL) {
+		if (!msg) {
 			_vm->_music->updateMusic();
 			_vm->_anim->diffNextFrame();
 

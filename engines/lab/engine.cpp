@@ -188,7 +188,7 @@ void LabEngine::eatMessages() {
 
 	do {
 		msg = _event->getMsg();
-	} while (msg);
+	} while (msg && !g_engine->shouldQuit());
 }
 
 /**
@@ -527,6 +527,10 @@ void LabEngine::mainGameLoop() {
 		_music->updateMusic();
 		interfaceOn();
 		IntuiMessage *curMsg = _event->getMsg();
+		if (g_engine->shouldQuit()) {
+			_quitLab = true;
+			return;
+		}
 
 		if (!curMsg) {
 			// Does music load and next animation frame when you've run out of messages
@@ -631,6 +635,9 @@ bool LabEngine::fromCrumbs(uint32 tmpClass, uint16 code, uint16 qualifier, Commo
 	bool rightButtonClick = false;
 
 	_anim->_doBlack = false;
+
+	if (g_engine->shouldQuit())
+		return false;
 
 	if ((msgClass == RAWKEY) && (!_graphics->_longWinInFront)) {
 		if (!processKey(curMsg, msgClass, qualifier, curPos, curInv, forceDraw, code))
@@ -856,21 +863,22 @@ bool LabEngine::processKey(IntuiMessage *curMsg, uint32 &msgClass, uint16 &quali
 			_music->updateMusic();
 			curMsg = _event->getMsg();
 
+			if (g_engine->shouldQuit())
+				return false;
+
 			if (!curMsg) {
 				// Does music load and next animation frame when you've run out of messages
 				_music->updateMusic();
 				_anim->diffNextFrame();
-			} else {
-				if (curMsg->_msgClass == RAWKEY) {
-					codeLower = tolower(curMsg->_code);
-					if (codeLower == 'y' || codeLower == 'q') {
-						_anim->stopDiff();
-						return false;
-					} else if (curMsg->_code < 128)
-						break;
-				} else if (curMsg->_msgClass == MOUSEBUTTONS)
+			} else if (curMsg->_msgClass == RAWKEY) {
+				codeLower = tolower(curMsg->_code);
+				if (codeLower == 'y' || codeLower == 'q') {
+					_anim->stopDiff();
+					return false;
+				} else if (curMsg->_code < 128)
 					break;
-			}
+			} else if (curMsg->_msgClass == MOUSEBUTTONS)
+				break;
 		}
 
 		forceDraw = true;
