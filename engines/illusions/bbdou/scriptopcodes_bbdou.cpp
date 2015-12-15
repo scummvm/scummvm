@@ -106,7 +106,7 @@ void ScriptOpcodes_BBDOU::initOpcodes() {
 	OPCODE(51, opStartMoveActor);
 	// 52 unused
 	OPCODE(53, opSetActorToNamedPoint);
-	// TODO OPCODE(54, opSetActorPosition);
+	OPCODE(54, opSetActorPosition);
 	// 55 unused
 	OPCODE(56, opStartTalkThread);
 	OPCODE(57, opAppearActor);
@@ -508,6 +508,15 @@ void ScriptOpcodes_BBDOU::opSetActorToNamedPoint(ScriptThread *scriptThread, OpC
 	Control *control = _vm->_dict->getObjectControl(objectId);
 	Common::Point pos = _vm->getNamedPointPosition(namedPointId);
 	control->stopActor();
+	control->setActorPosition(pos);
+}
+
+void ScriptOpcodes_BBDOU::opSetActorPosition(ScriptThread *scriptThread, OpCall &opCall) {
+	ARG_UINT32(objectId);
+	ARG_INT16(x);
+	ARG_INT16(y);
+	Control *control = _vm->_dict->getObjectControl(objectId);
+	Common::Point pos(x, y);
 	control->setActorPosition(pos);
 }
 

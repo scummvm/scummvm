@@ -82,6 +82,7 @@ protected:
 	void opStartSequenceActor(ScriptThread *scriptThread, OpCall &opCall);
 	void opStartMoveActor(ScriptThread *scriptThread, OpCall &opCall);
 	void opSetActorToNamedPoint(ScriptThread *scriptThread, OpCall &opCall);
+	void opSetActorPosition(ScriptThread *scriptThread, OpCall &opCall);
 	void opStartTalkThread(ScriptThread *scriptThread, OpCall &opCall);
 	void opAppearActor(ScriptThread *scriptThread, OpCall &opCall);
 	void opDisappearActor(ScriptThread *scriptThread, OpCall &opCall);
