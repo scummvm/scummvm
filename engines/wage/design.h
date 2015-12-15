@@ -48,9 +48,12 @@
 #ifndef WAGE_DESIGN_H
 #define WAGE_DESIGN_H
 
+#include "graphics/surface.h"
 #include "common/rect.h"
- 
+
 namespace Wage {
+
+struct TexturePaint;
 
 class Design {
 public:
@@ -60,16 +63,19 @@ public:
 	void setBounds(Common::Rect *bounds) {
 		_bounds = new Common::Rect(*bounds);
 	}
-	
+
 	Common::Rect *getBounds() {
 		return new Common::Rect(*_bounds);
 	}
-	
+
+    void paint(Graphics::Surface *canvas, TexturePaint *patterns, bool mask);
+
 private:
 	byte *_data;
+    int _len;
 	Common::Rect *_bounds;
 };
 
 } // End of namespace Wage
- 
+
 #endif

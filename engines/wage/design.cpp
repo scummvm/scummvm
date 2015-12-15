@@ -49,19 +49,59 @@
 #include "wage/design.h"
 
 #include "common/stream.h"
+#include "common/memstream.h"
 
 namespace Wage {
 
 Design::Design(Common::SeekableReadStream *data) {
-	int len = data->readUint16BE() - 2;
-
-	_data = (byte *)malloc(len);
-	for (int i = 0; i < len; i++)
-		_data[i] = data->readByte();
+	_len = data->readUint16BE() - 2;
+	_data = (byte *)malloc(_len);
+	data->read(_data, _len);
 }
 
 Design::~Design() {
 	free(_data);
 }
+
+void Design::paint(Graphics::Surface *canvas, TexturePaint *patterns, bool mask) {
+	Common::MemoryReadStream in(_data, _len);
+
+	if (mask) {
+		//canvas.setColor(Color.WHITE);
+		canvas->fillRect(Common::Rect(0, 0, _bounds->width(), _bounds->height()), 0xff);
+		//canvas.setColor(Color.BLACK);
+	}
+
+	while (!in.eos()) {
+		byte fillType = in.readByte();
+		byte borderThickness = in.readByte();
+		byte borderFillType = in.readByte();
+		int type = in.readByte();
+		switch (type) {
+/*
+		case 4:
+			drawRect(canvas, in, mask, patterns, fillType, borderThickness, borderFillType);
+			break;
+		case 8:
+			drawRoundRect(canvas, in, mask, patterns, fillType, borderThickness, borderFillType);
+			break;
+		case 12:
+			drawOval(canvas, in, mask, patterns, fillType, borderThickness, borderFillType);
+			break;
+		case 16:
+		case 20:
+			drawPolygon(canvas, in, mask, patterns, fillType, borderThickness, borderFillType);
+			break;
+		case 24:
+			drawBitmap(canvas, in, mask);
+			break;
+*/
+		default:
+			error("Unknown type => %d", type);
+			return;
+		}
+	}
+}
+
 
 } // End of namespace Wage
