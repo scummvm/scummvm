@@ -42,6 +42,7 @@ namespace Lab {
 
 Intro::Intro(LabEngine *vm) : _vm(vm) {
 	_quitIntro = false;
+	_introDoBlack = false;
 }
 
 /**
