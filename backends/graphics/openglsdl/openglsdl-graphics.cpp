@@ -221,12 +221,15 @@ Common::List<Graphics::PixelFormat> OpenGLSdlGraphicsManager::getSupportedFormat
 		// ABGR8888
 		formats.push_back(Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
 #endif
-		// RGB555, this is used by SCUMM HE 16 bit games.
-		formats.push_back(Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0));
 #if !USE_FORCED_GL
 	}
 #endif
 #endif
+
+	// RGB555, this is used by SCUMM HE 16 bit games.
+	// This is not natively supported by OpenGL ES implementations, we convert
+	// the pixel format internally.
+	formats.push_back(Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0));
 
 	formats.push_back(Graphics::PixelFormat::createFormatCLUT8());
 

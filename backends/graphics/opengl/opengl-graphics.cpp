@@ -985,6 +985,15 @@ Texture *OpenGLGraphicsManager::createTexture(const Graphics::PixelFormat &forma
 		} else {
 			return new TextureCLUT8(glIntFormat, glFormat, glType, virtFormat);
 		}
+#if !USE_FORCED_GL
+	} else if (isGLESContext() && format == Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0)) {
+		// OpenGL ES does not support a texture format usable for RGB555.
+		// Since SCUMM uses this pixel format for some games (and there is no
+		// hope for this to change anytime soon) we use pixel format
+		// conversion to a supported texture format. However, this is a one
+		// time exception.
+		return new TextureRGB555();
+#endif // !USE_FORCED_GL
 	} else {
 		const bool supported = getGLPixelFormat(format, glIntFormat, glFormat, glType);
 		if (!supported) {

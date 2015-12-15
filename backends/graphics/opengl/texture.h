@@ -170,6 +170,27 @@ private:
 	byte *_palette;
 };
 
+#if !USE_FORCED_GL
+class TextureRGB555 : public Texture {
+public:
+	TextureRGB555();
+	virtual ~TextureRGB555();
+
+	virtual void allocate(uint width, uint height);
+
+	virtual Graphics::PixelFormat getFormat() const;
+
+	virtual Graphics::Surface *getSurface() { return &_rgb555Data; }
+	virtual const Graphics::Surface *getSurface() const { return &_rgb555Data; }
+
+protected:
+	virtual void updateTexture();
+
+private:
+	Graphics::Surface _rgb555Data;
+};
+#endif // !USE_FORCED_GL
+
 } // End of namespace OpenGL
 
 #endif

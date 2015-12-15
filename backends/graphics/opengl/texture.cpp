@@ -369,4 +369,64 @@ void TextureCLUT8::updateTexture() {
 	Texture::updateTexture();
 }
 
+#if !USE_FORCED_GL
+TextureRGB555::TextureRGB555()
+    : Texture(GL_RGB, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0)),
+      _rgb555Data() {
+}
+
+TextureRGB555::~TextureRGB555() {
+	_rgb555Data.free();
+}
+
+void TextureRGB555::allocate(uint width, uint height) {
+	Texture::allocate(width, height);
+
+	// We only need to reinitialize our RGB555 surface when the output size
+	// changed.
+	if (width == _rgb555Data.w && height == _rgb555Data.h) {
+		return;
+	}
+
+	_rgb555Data.create(width, height, Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0));
+}
+
+Graphics::PixelFormat TextureRGB555::getFormat() const {
+	return Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0);
+}
+
+void TextureRGB555::updateTexture() {
+	if (!isDirty()) {
+		return;
+	}
+
+	// Convert color space.
+	Graphics::Surface *outSurf = Texture::getSurface();
+
+	const Common::Rect dirtyArea = getDirtyArea();
+
+	uint16 *dst = (uint16 *)outSurf->getBasePtr(dirtyArea.left, dirtyArea.top);
+	const uint dstAdd = outSurf->pitch - 2 * dirtyArea.width();
+
+	const uint16 *src = (const uint16 *)_rgb555Data.getBasePtr(dirtyArea.left, dirtyArea.top);
+	const uint srcAdd = _rgb555Data.pitch - 2 * dirtyArea.width();
+
+	for (int height = dirtyArea.height(); height > 0; --height) {
+		for (int width = dirtyArea.width(); width > 0; --width) {
+			const uint16 color = *src++;
+
+			*dst++ =   ((color & 0x7C00) << 1)                             // R
+			         | (((color & 0x03E0) << 1) | ((color & 0x0200) >> 4)) // G
+			         | (color & 0x001F);                                   // B
+		}
+
+		src = (const uint16 *)((const byte *)src + srcAdd);
+		dst = (uint16 *)((byte *)dst + dstAdd);
+	}
+
+	// Do generic handling of updating the texture.
+	Texture::updateTexture();
+}
+#endif // !USE_FORCED_GL
+
 } // End of namespace OpenGL
