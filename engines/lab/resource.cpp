@@ -197,13 +197,15 @@ Common::File *Resource::openDataFile(const char *fileName, uint32 fileHeader) {
 char *Resource::readString(Common::File *file) {
 	byte size = file->readByte();
 	if (!size)
-		return NULL;
+		return nullptr;
+
 	char *str = new char[size];
 	char *c = str;
 	for (int i = 0; i < size; i++) {
 		*c = file->readByte();
 		// Decrypt char
-		*c++ = (i < size - 1) ? *c - 95 : '\0';
+		*c = (i < size - 1) ? *c - 95 : '\0';
+		c++;
 	}
 
 	return str;
