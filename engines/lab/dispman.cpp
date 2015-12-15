@@ -66,6 +66,7 @@ DisplayMan::DisplayMan(LabEngine *vm) : _vm(vm) {
 DisplayMan::~DisplayMan() {
 	freePict();
 	delete _dispBitMap;
+	delete[]_displayBuffer;
 }
 
 // From readPict.c.  Reads in pictures and animations from disk.
@@ -543,7 +544,10 @@ void DisplayMan::createScreen(bool hiRes) {
 		_screenHeight = 200;
 	}
 	_screenBytesPerPage = _screenWidth * _screenHeight;
-	_displayBuffer = new byte[_screenBytesPerPage];	// FIXME: Memory leak!
+
+	if (_displayBuffer)
+		delete[] _displayBuffer;
+	_displayBuffer = new byte[_screenBytesPerPage];
 }
 
 /**
