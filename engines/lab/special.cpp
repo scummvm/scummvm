@@ -260,10 +260,14 @@ void LabEngine::processJournal() {
 		// Make sure we check the music at least after every message
 		_music->updateMusic();
 		IntuiMessage *msg = _event->getMsg();
+		if (g_engine->shouldQuit()) {
+			_quitLab = true;
+			return;
+		}
 
-		if (msg == NULL) {
+		if (!msg)
 			_music->updateMusic();
-		} else {
+		else {
 			uint32 msgClass  = msg->_msgClass;
 			uint16 qualifier = msg->_qualifier;
 			uint16 gadID     = msg->_code;
@@ -420,8 +424,12 @@ void LabEngine::processMonitor(char *ntext, TextFont *monitorFont, bool isIntera
 		// Make sure we check the music at least after every message
 		_music->updateMusic();
 		IntuiMessage *msg = _event->getMsg();
+		if (g_engine->shouldQuit()) {
+			_quitLab = true;
+			return;
+		}
 
-		if (msg == NULL) {
+		if (!msg) {
 			_music->updateMusic();
 		} else {
 			uint32 msgClass  = msg->_msgClass;

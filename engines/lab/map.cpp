@@ -426,7 +426,7 @@ void LabEngine::drawMap(uint16 curRoom, uint16 curMsg, uint16 floorNum, bool fad
  * Processes the map.
  */
 void LabEngine::processMap(uint16 curRoom) {
-	uint32 place = 1;
+	byte place = 1;
 	uint16 curMsg = curRoom;
 	uint16 curFloor = _maps[curRoom]._pageNumber;
 
@@ -434,6 +434,10 @@ void LabEngine::processMap(uint16 curRoom) {
 		// Make sure we check the music at least after every message
 		_music->updateMusic();
 		IntuiMessage *msg = _event->getMsg();
+		if (g_engine->shouldQuit()) {
+			_quitLab = true;
+			return;
+		}
 
 		if (!msg) {
 			_music->updateMusic();
