@@ -26,6 +26,7 @@
 #include "illusions/bbdou/bbdou_inventory.h"
 #include "illusions/bbdou/bbdou_credits.h"
 #include "illusions/bbdou/bbdou_cursor.h"
+#include "illusions/bbdou/bbdou_foodctl.h"
 #include "illusions/actor.h"
 #include "illusions/camera.h"
 #include "illusions/dictionary.h"
@@ -112,9 +113,11 @@ BbdouSpecialCode::BbdouSpecialCode(IllusionsEngine_BBDOU *vm)
 	_bubble = new BbdouBubble(_vm, this);
 	_cursor = new BbdouCursor(_vm, this);
 	_inventory = new BbdouInventory(_vm, this);
+	_foodCtl = new BbdouFoodCtl(_vm);
 }
 
 BbdouSpecialCode::~BbdouSpecialCode() {
+	delete _foodCtl;
 	delete _inventory;
 	delete _cursor;
 	delete _bubble;
@@ -148,6 +151,8 @@ void BbdouSpecialCode::init() {
 	SPECIAL(0x00160027, spcInitConversation);
 	SPECIAL(0x00160030, spcResetCursor);
 	SPECIAL(0x00160032, spcSetCursorField90);
+	SPECIAL(0x00160034, spcFoodCtl);
+	SPECIAL(0x00160035, spcTestFoodCtl);
 	SPECIAL(0x00160036, spcInitMenu);
 	SPECIAL(0x00160037, spcIsCursorHoldingObjectId);
 	SPECIAL(0x00160038, spcInitRadarMicrophone);
@@ -307,6 +312,56 @@ void BbdouSpecialCode::spcSetCursorField90(OpCall &opCall) {
 	ARG_SKIP(4); // objectId unused
 	_cursor->_data._field90 = 1;
 	_vm->notifyThreadId(opCall._threadId);
+}
+
+void BbdouSpecialCode::spcFoodCtl(OpCall &opCall) {
+	ARG_UINT32(cmd);
+	switch (cmd) {
+	case 1:
+		{
+			ARG_UINT32(minCount);
+			ARG_UINT32(maxCount);
+			_foodCtl->placeFood(minCount, maxCount);
+		}
+		break;
+	case 2:
+		{
+			ARG_UINT32(propertyId);
+			_foodCtl->addFood(propertyId);
+		}
+		break;
+	case 3:
+		_foodCtl->requestFirstFood();
+		break;
+	case 4:
+		_foodCtl->requestNextFood();
+		break;
+	case 5:
+		_foodCtl->serveFood();
+		break;
+	case 6:
+		_foodCtl->resetFood();
+		break;
+	case 8:
+		_foodCtl->nextRound();
+		break;
+	default:
+		break;
+	}
+}
+
+void BbdouSpecialCode::spcTestFoodCtl(OpCall &opCall) {
+	ARG_UINT32(cmd);
+	switch (cmd) {
+	case 7:
+		_vm->_stack->push(_foodCtl->hasReachedRequestedFoodCount() ? 1 : 0);
+		break;
+	case 9:
+		_vm->_stack->push(_foodCtl->hasRoundFinished() ? 1 : 0);
+		break;
+	default:
+		break;
+	}
 }
 
 void BbdouSpecialCode::spcInitMenu(OpCall &opCall) {
@@ -705,7 +760,7 @@ void BbdouSpecialCode::cursorCrosshairControlRoutine(Control *cursorControl, uin
 
 	if (cursorData._flags & 1)
 		foundOverlapped = false;
-    else {
+	else {
 		foundOverlapped = _vm->_controls->getOverlappedObjectAccurate(cursorControl, cursorPos,
 			&overlappedControl, cursorData._item10._field58);
 	}
@@ -818,7 +873,7 @@ void BbdouSpecialCode::cursorCrosshairControlRoutine(Control *cursorControl, uin
 		}
 
 	} else if (_vm->_input->pollEvent(kEventLeftClick)) {
-	    uint index = (uint)_vm->getRandom(2);
+		uint index = (uint)_vm->getRandom(2);
 		const ShooterAnim &anim = kShooterAnims[index];
 		uint32 objectId = anim.objectId;
 		int gridX = _shooterStatus[index].gridX;

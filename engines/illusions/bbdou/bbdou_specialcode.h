@@ -33,6 +33,7 @@ class IllusionsEngine_BBDOU;
 class BbdouBubble;
 class BbdouCredits;
 class BbdouCursor;
+class BbdouFoodCtl;
 class BbdouInventory;
 struct CursorData;
 struct Item10;
@@ -113,6 +114,8 @@ public:
 	ShooterStatus _shooterStatus[2];
 	uint _shooterObjectIdIndex;
 
+	BbdouFoodCtl *_foodCtl;
+
 	// Special code interface functions
 	void spcInitCursor(OpCall &opCall);
 	void spcEnableCursor(OpCall &opCall);
@@ -136,6 +139,8 @@ public:
 	void spcInitConversation(OpCall &opCall);
 	void spcResetCursor(OpCall &opCall);
 	void spcSetCursorField90(OpCall &opCall);
+	void spcFoodCtl(OpCall &opCall);
+	void spcTestFoodCtl(OpCall &opCall);
 	void spcInitMenu(OpCall &opCall);
 	void spcIsCursorHoldingObjectId(OpCall &opCall);
 	void spcInitRadarMicrophone(OpCall &opCall);
