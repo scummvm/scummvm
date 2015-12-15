@@ -76,8 +76,8 @@ void ScriptOpcodes_BBDOU::initOpcodes() {
 	OPCODE(19, opLeaveMenuPause);
 	OPCODE(20, opEnterScene);
 	OPCODE(21, opLeaveScene);
-	// TODO OPCODE(22, opEnterPause);
-	// TODO OPCODE(23, opLeavePause);
+	OPCODE(22, opEnterPause);
+	OPCODE(23, opLeavePause);
 	OPCODE(24, opUnloadActiveScenes);
 	OPCODE(25, opChangeScene);
 	OPCODE(26, opStartModalScene);
@@ -282,6 +282,15 @@ void ScriptOpcodes_BBDOU::opEnterScene(ScriptThread *scriptThread, OpCall &opCal
 
 void ScriptOpcodes_BBDOU::opLeaveScene(ScriptThread *scriptThread, OpCall &opCall) {
 	_vm->exitScene(opCall._callerThreadId);
+}
+
+void ScriptOpcodes_BBDOU::opEnterPause(ScriptThread *scriptThread, OpCall &opCall) {
+	_vm->enterPause(opCall._callerThreadId);
+	_vm->_talkItems->pauseBySceneId(_vm->getCurrentScene());
+}
+
+void ScriptOpcodes_BBDOU::opLeavePause(ScriptThread *scriptThread, OpCall &opCall) {
+	_vm->leavePause(opCall._callerThreadId);
 }
 
 void ScriptOpcodes_BBDOU::opUnloadActiveScenes(ScriptThread *scriptThread, OpCall &opCall) {

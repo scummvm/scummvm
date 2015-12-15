@@ -57,6 +57,8 @@ protected:
 	void opLeaveMenuPause(ScriptThread *scriptThread, OpCall &opCall);
 	void opEnterScene(ScriptThread *scriptThread, OpCall &opCall);
 	void opLeaveScene(ScriptThread *scriptThread, OpCall &opCall);
+	void opEnterPause(ScriptThread *scriptThread, OpCall &opCall);
+	void opLeavePause(ScriptThread *scriptThread, OpCall &opCall);
 	void opUnloadActiveScenes(ScriptThread *scriptThread, OpCall &opCall);
 	void opChangeScene(ScriptThread *scriptThread, OpCall &opCall);
 	void opStartModalScene(ScriptThread *scriptThread, OpCall &opCall);
