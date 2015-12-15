@@ -567,6 +567,16 @@ void IllusionsEngine_BBDOU::dumpActiveScenes(uint32 sceneId, uint32 threadId) {
 	_camera->clearCameraModeStack();
 }
 
+void IllusionsEngine_BBDOU::enterMenuPause() {
+      // TODO suspendAudio();
+      _screenText->clearText();
+}
+
+void IllusionsEngine_BBDOU::leaveMenuPause() {
+	_screenText->removeText();
+	// TODO unsuspendAudio();
+}
+
 void IllusionsEngine_BBDOU::setSceneIdThreadId(uint32 theSceneId, uint32 theThreadId) {
 	_theSceneId = theSceneId;
 	_theThreadId = theThreadId;
