@@ -805,16 +805,14 @@ bool LabEngine::processKey(IntuiMessage *curMsg, uint32 &msgClass, uint16 &quali
 		msgClass = MOUSEBUTTONS;
 		qualifier = IEQUALIFIER_LEFTBUTTON;
 		curPos = _event->getMousePos();
-	}
-	else if (getPlatform() == Common::kPlatformWindows && codeLower == 'b') {
+	} else if (getPlatform() == Common::kPlatformWindows && codeLower == 'b') {
 		// Start bread crumbs
 		_breadCrumbs[0]._roomNum = 0;
 		_numCrumbs = 0;
 		_droppingCrumbs = true;
 		mayShowCrumbIndicator();
 		_graphics->screenUpdate();
-	}
-	else if (codeLower == 'f' || codeLower == 'r') {
+	} else if (codeLower == 'f' || codeLower == 'r') {
 		// Follow bread crumbs
 		if (_droppingCrumbs) {
 			if (_numCrumbs > 0) {
@@ -837,8 +835,7 @@ bool LabEngine::processKey(IntuiMessage *curMsg, uint32 &msgClass, uint16 &quali
 					drawRoomMessage(curInv, _closeDataPtr);
 					_graphics->screenUpdate();
 				}
-			}
-			else {
+			} else {
 				_breadCrumbs[0]._roomNum = 0;
 				_droppingCrumbs = false;
 
@@ -847,8 +844,7 @@ bool LabEngine::processKey(IntuiMessage *curMsg, uint32 &msgClass, uint16 &quali
 				_graphics->screenUpdate();
 			}
 		}
-	}
-	else if (code == 315 || codeLower == 'x' || codeLower == 'q') {
+	} else if (code == 315 || codeLower == 'x' || codeLower == 'q') {
 		// Quit?
 		_graphics->_doNotDrawMessage = false;
 		_graphics->drawMessage("Do you want to quit? (Y/N)");
@@ -864,32 +860,25 @@ bool LabEngine::processKey(IntuiMessage *curMsg, uint32 &msgClass, uint16 &quali
 				// Does music load and next animation frame when you've run out of messages
 				_music->updateMusic();
 				_anim->diffNextFrame();
-			}
-			else {
+			} else {
 				if (curMsg->_msgClass == RAWKEY) {
 					codeLower = tolower(curMsg->_code);
 					if (codeLower == 'y' || codeLower == 'q') {
 						_anim->stopDiff();
 						return false;
-					}
-					else if (curMsg->_code < 128) {
+					} else if (curMsg->_code < 128)
 						break;
-					}
-				}
-				else if (curMsg->_msgClass == MOUSEBUTTONS) {
+				} else if (curMsg->_msgClass == MOUSEBUTTONS)
 					break;
-				}
 			}
 		}
 
 		forceDraw = true;
 		interfaceOn();
-	}
-	else if (code == 9) {
+	} else if (code == 9) {
 		// TAB key
 		msgClass = DELTAMOVE;
-	}
-	else if (code == 27) {
+	} else if (code == 27) {
 		// ESC key
 		_closeDataPtr = nullptr;
 	}
@@ -916,8 +905,7 @@ void LabEngine::processMainButton(CloseDataPtr wrkClosePtr, uint16 &curInv, uint
 			wrkClosePtr = nullptr;
 			_closeDataPtr = nullptr;
 			mayShowCrumbIndicator();
-		}
-		else {
+		} else {
 			uint16 oldActionMode = actionMode;
 			actionMode = buttonId;
 
@@ -941,8 +929,7 @@ void LabEngine::processMainButton(CloseDataPtr wrkClosePtr, uint16 &curInv, uint
 		if (lastInv && _conditions->in(lastInv)) {
 			curInv = lastInv;
 			_nextFileName = getInvName(curInv);
-		}
-		else
+		} else
 			decIncInv(&curInv, false);
 
 		_graphics->drawPanel();
@@ -981,8 +968,7 @@ void LabEngine::processMainButton(CloseDataPtr wrkClosePtr, uint16 &curInv, uint
 		if (doGoForward(&_closeDataPtr)) {
 			if (oldRoomNum == _roomNum)
 				_anim->_doBlack = true;
-		}
-		else {
+		} else {
 			_anim->_doBlack = true;
 			_direction = processArrow(_direction, buttonId - 6);
 
@@ -992,8 +978,7 @@ void LabEngine::processMainButton(CloseDataPtr wrkClosePtr, uint16 &curInv, uint
 				_roomsFound->inclElement(_roomNum);
 				_curFileName = " ";
 				forceDraw = true;
-			}
-			else {
+			} else {
 				_anim->_doBlack = true;
 				drawStaticMessage(kTextNoPath);
 			}
@@ -1001,25 +986,19 @@ void LabEngine::processMainButton(CloseDataPtr wrkClosePtr, uint16 &curInv, uint
 
 		if (_followingCrumbs) {
 			if (_isCrumbTurning) {
-				if (_direction == oldDirection) {
+				if (_direction == oldDirection)
 					_followingCrumbs = false;
-				}
+			} else if (_roomNum == oldRoomNum) { // didn't get there?
+				_followingCrumbs = false;
 			}
-			else {
-				if (_roomNum == oldRoomNum) { // didn't get there?
-					_followingCrumbs = false;
-				}
-			}
-		}
-		else if (_droppingCrumbs && oldRoomNum != _roomNum) {
+		} else if (_droppingCrumbs && oldRoomNum != _roomNum) {
 			// If in surreal maze, turn off DroppingCrumbs.
 			if (_roomNum >= 245 && _roomNum <= 280) {
 				_followingCrumbs = false;
 				_droppingCrumbs = false;
 				_numCrumbs = 0;
 				_breadCrumbs[0]._roomNum = 0;
-			}
-			else {
+			} else {
 				bool intersect = false;
 				for (int idx = 0; idx < _numCrumbs; idx++) {
 					if (_breadCrumbs[idx]._roomNum == _roomNum) {
@@ -1164,8 +1143,7 @@ void LabEngine::processAltButton(uint16 &curInv, uint16 &lastInv, uint16 buttonI
 				interfaceOn();
 				_graphics->drawPanel();
 				drawRoomMessage(curInv, _closeDataPtr);
-			}
-			else {
+			} else {
 				_breadCrumbs[0]._roomNum = 0;
 				_droppingCrumbs = false;
 
