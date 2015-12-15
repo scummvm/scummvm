@@ -94,9 +94,10 @@ CloseData *LabEngine::getObject(Common::Point pos, CloseDataPtr closePtr) {
 	else
 		wrkClosePtr = closePtr->_subCloseUps;
 
+	Common::Rect objRect;
 	while (wrkClosePtr) {
-		if ((pos.x >= _utils->scaleX(wrkClosePtr->_x1)) && (pos.y >= _utils->scaleY(wrkClosePtr->_y1)) &&
-			  (pos.x <= _utils->scaleX(wrkClosePtr->_x2)) && (pos.y <= _utils->scaleY(wrkClosePtr->_y2)))
+		objRect = Common::Rect(_utils->scaleX(wrkClosePtr->_x1), _utils->scaleX(wrkClosePtr->_y1), _utils->scaleX(wrkClosePtr->_x2), _utils->scaleX(wrkClosePtr->_y2));
+		if (objRect.contains(pos))
 			return wrkClosePtr;
 
 		wrkClosePtr = wrkClosePtr->_nextCloseUp;
@@ -250,10 +251,11 @@ bool LabEngine::takeItem(uint16 x, uint16 y, CloseDataPtr *closePtrList) {
 	} else
 		closePtr = (*closePtrList)->_subCloseUps;
 
+	Common::Point pos = Common::Point(x, y);
+	Common::Rect objRect;
 	while (closePtr) {
-		if ((x >= _utils->scaleX(closePtr->_x1)) && (y >= _utils->scaleY(closePtr->_y1)) &&
-			  (x <= _utils->scaleX(closePtr->_x2)) && (y <= _utils->scaleY(closePtr->_y2)) &&
-			  (closePtr->_closeUpType < 0)) {
+		objRect = Common::Rect(_utils->scaleX(closePtr->_x1), _utils->scaleX(closePtr->_y1), _utils->scaleX(closePtr->_x2), _utils->scaleX(closePtr->_y2));
+		if (objRect.contains(pos) && (closePtr->_closeUpType < 0)) {
 			_conditions->inclElement(abs(closePtr->_closeUpType));
 			return true;
 		}
