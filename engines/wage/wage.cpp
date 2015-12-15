@@ -46,45 +46,45 @@
  */
 
 #include "common/scummsys.h"
- 
+
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
 #include "common/error.h"
-#include "common/EventRecorder.h"
 #include "common/file.h"
 #include "common/fs.h"
 
 #include "engines/util.h"
+#include "gui/EventRecorder.h"
  
 #include "wage/wage.h"
 #include "wage/entities.h"
 #include "wage/world.h"
- 
+
 namespace Wage {
- 
+
 WageEngine::WageEngine(OSystem *syst, const ADGameDescription *desc) : Engine(syst), _gameDescription(desc) {
 	_rnd = new Common::RandomSource("wage");
 
 	_aim = -1;
- 
+
 	debug("WageEngine::WageEngine()");
 }
- 
+
 WageEngine::~WageEngine() {
 	debug("WageEngine::~WageEngine()");
- 
+
 	DebugMan.clearAllDebugChannels();
 	delete _rnd;
 }
- 
+
 Common::Error WageEngine::run() {
 	initGraphics(320, 200, false);
- 
+
 	// Create debugger console. It requires GFX to be initialized
 	_console = new Console(this);
- 
+
 	debug("WageEngine::init");
- 
+
 	// Your main event loop should be (invoked from) here.
 	_resManager = new Common::MacResManager();
 	_resManager->open(getGameFile());
@@ -93,7 +93,7 @@ Common::Error WageEngine::run() {
 
 	if (!_world->loadWorld(_resManager))
 		return Common::kNoGameDataFoundError;
- 
+
 	return Common::kNoError;
 }
 

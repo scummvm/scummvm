@@ -51,7 +51,7 @@ static const ADGameDescription gameDescriptions[] = {
 		"v1.8",
 		AD_ENTRY1s("Another Fine Mess 1.8", "8e5aa915f3253efb2aab52435647b25e", 1456000),
 		Common::EN_ANY,
-		Common::kPlatformPC,
+		Common::kPlatformMacintosh,
 		ADGF_NO_FLAGS,
 		GUIO0()
 	},
