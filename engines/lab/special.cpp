@@ -270,20 +270,20 @@ void LabEngine::processJournal() {
 		else {
 			uint32 msgClass  = msg->_msgClass;
 			uint16 qualifier = msg->_qualifier;
-			uint16 gadID     = msg->_code;
+			uint16 buttonId  = msg->_code;
 
 			if (((msgClass == MOUSEBUTTONS) && (IEQUALIFIER_RIGHTBUTTON & qualifier)) ||
-				  ((msgClass == RAWKEY) && (gadID == 27)))
+				  ((msgClass == RAWKEY) && (buttonId == 27)))
 				return;
 			else if (msgClass == BUTTONUP) {
-				if (gadID == 0) {
+				if (buttonId == 0) {
 					if (_journalPage >= 2) {
 						_journalPage -= 2;
 						drawJournal(1, false);
 					}
-				} else if (gadID == 1) {
+				} else if (buttonId == 1) {
 					return;
-				} else if (gadID == 2) {
+				} else if (buttonId == 2) {
 					if (!_lastPage) {
 						_journalPage += 2;
 						drawJournal(2, false);

@@ -241,7 +241,7 @@ private:
 	void showLab2Teaser();
 	void mayShowCrumbIndicator();
 	void mayShowCrumbIndicatorOff();
-	void perFlipButton(uint16 gadID);
+	void perFlipButton(uint16 buttonId);
 	uint16 processArrow(uint16 curDirection, uint16 arrow);
 	void processJournal();
 	void processMap(uint16 curRoom);

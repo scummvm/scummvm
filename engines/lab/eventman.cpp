@@ -101,7 +101,7 @@ void EventManager::attachButtonList(ButtonList *buttonList) {
 Button *EventManager::getButton(uint16 id) {
 	for (ButtonList::iterator buttonItr = _screenButtonList->begin(); buttonItr != _screenButtonList->end(); ++buttonItr) {
 		Button *button = *buttonItr;
-		if (button->_buttonID == id)
+		if (button->_buttonId == id)
 			return button;
 	}
 

@@ -55,13 +55,13 @@ class Image;
 
 struct IntuiMessage {
 	uint32 _msgClass;
-	uint16 _code, _qualifier, _mouseX, _mouseY, _buttonID;
+	uint16 _code, _qualifier, _mouseX, _mouseY, _buttonId;
 	uint32 _seconds, _micros;
 };
 
 
 struct Button {
-	uint16 _x, _y, _buttonID;
+	uint16 _x, _y, _buttonId;
 	uint16 _keyEquiv; // if not zero, a key that activates button
 	bool _isEnabled;
 	Image *_image, *_altImage;
