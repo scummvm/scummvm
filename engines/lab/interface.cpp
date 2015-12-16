@@ -45,7 +45,7 @@ Button *EventManager::createButton(uint16 x, uint16 y, uint16 id, uint16 key, Im
 	if (button) {
 		button->_x = _vm->_utils->vgaScaleX(x);
 		button->_y = y;
-		button->_buttonID = id;
+		button->_buttonId = id;
 		button->_keyEquiv = key;
 		button->_image = image;
 		button->_altImage = altImage;
@@ -117,7 +117,7 @@ Button *EventManager::checkNumButtonHit(ButtonList *buttonList, uint16 key) {
 
 	for (ButtonList::iterator buttonItr = buttonList->begin(); buttonItr != buttonList->end(); ++buttonItr) {
 		Button *button = *buttonItr;
-		if (((gkey - 1 == button->_buttonID) || ((gkey == 0) && (button->_buttonID == 9))
+		if (((gkey - 1 == button->_buttonId) || ((gkey == 0) && (button->_buttonId == 9))
 		 || ((button->_keyEquiv != 0) && (makeButtonKeyEquiv(key) == button->_keyEquiv)))
 			  && button->_isEnabled) {
 			mouseHide();
@@ -141,13 +141,13 @@ IntuiMessage *EventManager::getMsg() {
 	updateMouse();
 
 	int qualifiers = _keyPressed.flags;
-	Button *curgad  = mouseButton();
+	Button *curButton  = mouseButton();
 
-	if (curgad) {
+	if (curButton) {
 		updateMouse();
 		message._msgClass = BUTTONUP;
-		message._code  = curgad->_buttonID;
-		message._buttonID = curgad->_buttonID;
+		message._code = curButton->_buttonId;
+		message._buttonId = curButton->_buttonId;
 		message._qualifier = qualifiers;
 		return &message;
 	} else if (mouseButton(&message._mouseX, &message._mouseY, true)) {
@@ -162,12 +162,12 @@ IntuiMessage *EventManager::getMsg() {
 		return &message;
 	} else if (keyPress(&message._code)) {
 		// Keyboard key
-		curgad = checkNumButtonHit(_screenButtonList, message._code);
+		curButton = checkNumButtonHit(_screenButtonList, message._code);
 
-		if (curgad) {
+		if (curButton) {
 			message._msgClass = BUTTONUP;
-			message._code  = curgad->_buttonID;
-			message._buttonID = curgad->_buttonID;
+			message._code = curButton->_buttonId;
+			message._buttonId = curButton->_buttonId;
 		} else
 			message._msgClass = RAWKEY;
 

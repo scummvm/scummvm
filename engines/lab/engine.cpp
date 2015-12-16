@@ -164,7 +164,7 @@ void LabEngine::freeScreens() {
 void LabEngine::perFlipButton(uint16 buttonId) {
 	for (ButtonList::iterator button = _moveButtonList.begin(); button != _moveButtonList.end(); ++button) {
 		Button *topButton = *button;
-		if (topButton->_buttonID == buttonId) {
+		if (topButton->_buttonId == buttonId) {
 			Image *tmpImage = topButton->_image;
 			topButton->_image = topButton->_altImage;
 			topButton->_altImage = tmpImage;
@@ -576,7 +576,7 @@ void LabEngine::mainGameLoop() {
 			curPos.y  = curMsg->_mouseY;
 
 			_followingCrumbs = false;
-			if (!fromCrumbs(curMsg->_msgClass, curMsg->_code, curMsg->_qualifier, curPos, curInv, curMsg, forceDraw, curMsg->_buttonID, actionMode))
+			if (!fromCrumbs(curMsg->_msgClass, curMsg->_code, curMsg->_qualifier, curPos, curInv, curMsg, forceDraw, curMsg->_buttonId, actionMode))
 				break;
 		}
 	}
