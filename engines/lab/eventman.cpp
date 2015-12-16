@@ -88,7 +88,7 @@ Button *EventManager::checkButtonHit(ButtonList *buttonList, Common::Point pos) 
 		}
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 void EventManager::attachButtonList(ButtonList *buttonList) {
@@ -129,7 +129,7 @@ EventManager::EventManager(LabEngine *vm) : _vm(vm) {
 void EventManager::mouseHandler(int flag, Common::Point pos) {
 	if (flag & 0x02) {
 		// Left mouse button click
-		Button *tmp = NULL;
+		Button *tmp = nullptr;
 		if (_screenButtonList)
 			tmp = checkButtonHit(_screenButtonList, _vm->_isHiRes ? pos : Common::Point(pos.x / 2, pos.y));
 

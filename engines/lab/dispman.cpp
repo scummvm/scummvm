@@ -310,7 +310,7 @@ int DisplayMan::longDrawMessage(const char *str) {
 	if (!str)
 		return 0;
 
-	_vm->_event->attachButtonList(NULL);
+	_vm->_event->attachButtonList(nullptr);
 	_vm->_event->mouseHide();
 
 	char newText[512];
@@ -993,7 +993,7 @@ void DisplayMan::doTransWipe(CloseDataPtr *closePtrList, char *filename) {
 		setPen(0);
 	}	// for j
 
-	if (filename == NULL)
+	if (!filename)
 		_vm->_curFileName = _vm->getPictName(closePtrList);
 	else if (filename[0] > ' ')
 		_vm->_curFileName = filename;

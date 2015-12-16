@@ -106,14 +106,14 @@ void Image::blitBitmap(uint16 xs, uint16 ys, Image *imDest,
  * Draws an image to the screen.
  */
 void Image::drawImage(uint16 x, uint16 y) {
-	blitBitmap(0, 0, NULL, x, y, _width, _height, false);
+	blitBitmap(0, 0, nullptr, x, y, _width, _height, false);
 }
 
 /**
  * Draws an image to the screen with transparency.
  */
 void Image::drawMaskImage(uint16 x, uint16 y) {
-	blitBitmap(0, 0, NULL, x, y, _width, _height, true);
+	blitBitmap(0, 0, nullptr, x, y, _width, _height, true);
 }
 
 /**

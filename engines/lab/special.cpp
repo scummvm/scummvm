@@ -312,7 +312,7 @@ void LabEngine::doJournal() {
 	drawJournal(0, true);
 	_event->mouseShow();
 	processJournal();
-	_event->attachButtonList(NULL);
+	_event->attachButtonList(nullptr);
 	_graphics->fade(false, 0);
 	_event->mouseHide();
 
@@ -400,7 +400,7 @@ void LabEngine::processMonitor(char *ntext, TextFont *monitorFont, bool isIntera
 
 	while (1) {
 		if (isInteractive) {
-			if (_closeDataPtr == NULL)
+			if (!_closeDataPtr)
 				_closeDataPtr = startClosePtr;
 
 			const char *test;
@@ -410,7 +410,7 @@ void LabEngine::processMonitor(char *ntext, TextFont *monitorFont, bool isIntera
 				test = _closeDataPtr->_graphicName;
 
 			if (strcmp(test, _monitorTextFilename)) {
-				_monitorPage      = 0;
+				_monitorPage = 0;
 				_monitorTextFilename = test;
 
 				ntext = _resource->getText(_monitorTextFilename);

@@ -57,7 +57,7 @@ Music::Music(LabEngine *vm) : _vm(vm) {
 
 	_musicOn = false;
 	_loopSoundEffect = false;
-	_queuingAudioStream = NULL;
+	_queuingAudioStream = nullptr;
 	_lastMusicRoom = 1;
 	_doReset = true;
 	_waitTillFinished = false;
@@ -180,12 +180,11 @@ void Music::freeMusic() {
 	_musicOn = false;
 
 	_vm->_mixer->stopHandle(_musicHandle);
-	_queuingAudioStream = NULL;
-
+	_queuingAudioStream = nullptr;
 	_vm->_mixer->stopHandle(_sfxHandle);
 
 	delete _file;
-	_file = NULL;
+	_file = nullptr;
 }
 
 /**
