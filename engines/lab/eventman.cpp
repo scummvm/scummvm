@@ -119,29 +119,10 @@ EventManager::EventManager(LabEngine *vm) : _vm(vm) {
 	_nextKeyIn = 0;
 	_nextKeyOut = 0;
 	_mousePos = Common::Point(0, 0);
-	_mouseAtEdge = false;
 
 	for (int i = 0; i < 64; i++)
 		_keyBuf[i] = 0;
 
-}
-
-void EventManager::mouseHandler(int flag, Common::Point pos) {
-	if (flag & 0x02) {
-		// Left mouse button click
-		Button *tmp = nullptr;
-		if (_screenButtonList)
-			tmp = checkButtonHit(_screenButtonList, _vm->_isHiRes ? pos : Common::Point(pos.x / 2, pos.y));
-
-		if (tmp)
-			_lastButtonHit = tmp;
-		else
-			_leftClick = true;
-	}
-
-	if (flag & 0x08)
-		// Right mouse button click
-		_rightClick = true;
 }
 
 void EventManager::updateMouse() {
@@ -275,91 +256,56 @@ bool EventManager::haveNextChar() {
 	return _nextKeyIn != _nextKeyOut;
 }
 
-void EventManager::processInput(bool canDelay) {
+void EventManager::processInput() {
 	Common::Event event;
 
-	if (1) { //!g_IgnoreProcessInput
-		int flags = 0;
-		while (g_system->getEventManager()->pollEvent(event)) {
-			switch (event.type) {
-			case Common::EVENT_RBUTTONDOWN:
-				flags |= 8;
-				mouseHandler(flags, _mousePos);
+	while (g_system->getEventManager()->pollEvent(event)) {
+		switch (event.type) {
+		case Common::EVENT_LBUTTONDOWN:
+			if (_screenButtonList)
+				_lastButtonHit = checkButtonHit(_screenButtonList, _vm->_isHiRes ? _mousePos : Common::Point(_mousePos.x / 2, _mousePos.y));
+			else
+				_leftClick = true;
+			break;
+		case Common::EVENT_RBUTTONDOWN:
+			_rightClick = true;
+			break;
+		case Common::EVENT_MOUSEMOVE:
+			_mousePos = event.mouse;
+			break;
+		case Common::EVENT_KEYDOWN:
+			switch (event.kbd.keycode) {
+			case Common::KEYCODE_LEFTBRACKET:
+				_vm->changeVolume(-1);
 				break;
 
-			case Common::EVENT_LBUTTONDOWN:
-				flags |= 2;
-				mouseHandler(flags, _mousePos);
+			case Common::KEYCODE_RIGHTBRACKET:
+				_vm->changeVolume(1);
 				break;
 
-			case Common::EVENT_MOUSEMOVE: {
-				int lastMouseAtEdge = _mouseAtEdge;
-				_mouseAtEdge = false;
-				_mousePos.x = event.mouse.x;
-				if (event.mouse.x <= 0) {
-					_mousePos.x = 0;
-					_mouseAtEdge = true;
-				}
-
-				if (_mousePos.x >= _vm->_graphics->_screenWidth) {
-					_mousePos.x = _vm->_graphics->_screenWidth;
-					_mouseAtEdge = true;
-				}
-
-				_mousePos.y = event.mouse.y;
-				if (event.mouse.y <= 0) {
-					_mousePos.y = 0;
-					_mouseAtEdge = true;
-				}
-
-				if (_mousePos.y >= _vm->_graphics->_screenHeight) {
-					_mousePos.y = _vm->_graphics->_screenHeight;
-					_mouseAtEdge = true;
-				}
-
-				if (!lastMouseAtEdge || !_mouseAtEdge)
-					mouseHandler(1, _mousePos);
-				}
+			case Common::KEYCODE_z:
+				//saveSettings();
 				break;
 
-			case Common::EVENT_KEYDOWN:
-				switch (event.kbd.keycode) {
-				case Common::KEYCODE_LEFTBRACKET:
-					_vm->changeVolume(-1);
-					break;
-
-				case Common::KEYCODE_RIGHTBRACKET:
-					_vm->changeVolume(1);
-					break;
-
-				case Common::KEYCODE_z:
-					//saveSettings();
-					break;
-
-				default: {
-					int n = ((((unsigned int)((_nextKeyIn + 1) >> 31) >> 26) + (byte)_nextKeyIn + 1) & 0x3F)
-						- ((unsigned int)((_nextKeyIn + 1) >> 31) >> 26);
-					if (n != _nextKeyOut) {
-						_keyBuf[_nextKeyIn] = event.kbd.keycode;
-						_nextKeyIn = n;
-					}
-					}
+			default: {
+				int n = ((((unsigned int)((_nextKeyIn + 1) >> 31) >> 26) + (byte)_nextKeyIn + 1) & 0x3F)
+					- ((unsigned int)((_nextKeyIn + 1) >> 31) >> 26);
+				if (n != _nextKeyOut) {
+					_keyBuf[_nextKeyIn] = event.kbd.keycode;
+					_nextKeyIn = n;
 				}
-				break;
-
-			case Common::EVENT_QUIT:
-			case Common::EVENT_RTL:
-			default:
-				break;
+				}
 			}
-
-			g_system->copyRectToScreen(_vm->_graphics->_displayBuffer, _vm->_graphics->_screenWidth, 0, 0, _vm->_graphics->_screenWidth, _vm->_graphics->_screenHeight);
-			g_system->updateScreen();
+			break;
+		case Common::EVENT_QUIT:
+		case Common::EVENT_RTL:
+		default:
+			break;
 		}
-	}
 
-	if (canDelay)
-		g_system->delayMillis(10);
+		g_system->copyRectToScreen(_vm->_graphics->_displayBuffer, _vm->_graphics->_screenWidth, 0, 0, _vm->_graphics->_screenWidth, _vm->_graphics->_screenHeight);
+		g_system->updateScreen();
+	}
 }
 
 uint16 EventManager::getNextChar() {

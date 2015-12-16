@@ -76,7 +76,6 @@ private:
 	bool _leftClick;
 	bool _rightClick;
 	bool _mouseHidden;
-	bool _mouseAtEdge;
 
 	uint16 _nextKeyIn;
 	uint16 _nextKeyOut;
@@ -92,7 +91,6 @@ private:
 	Button *checkButtonHit(ButtonList *buttonList, Common::Point pos);
 	bool mouseButton(uint16 *x, uint16 *y, bool leftButton);
 	Button *mouseButton();
-	void mouseHandler(int flag, Common::Point pos);
 	bool keyPress(uint16 *keyCode);
 	bool haveNextChar();
 	uint16 getNextChar();
@@ -114,7 +112,7 @@ public:
 	void initMouse();
 	void mouseShow();
 	void mouseHide();
-	void processInput(bool canDelay = false);
+	void processInput();
 	void setMousePos(Common::Point pos);
 	void updateMouse();
 	Common::Point updateAndGetMousePos();
