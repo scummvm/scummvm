@@ -807,7 +807,7 @@ bool LabEngine::fromCrumbs(uint32 tmpClass, uint16 code, uint16 qualifier, Commo
 bool LabEngine::processKey(IntuiMessage *curMsg, uint32 &msgClass, uint16 &qualifier, Common::Point &curPos, uint16 &curInv, bool &forceDraw, uint16 code) {
 	byte codeLower = tolower(code);
 
-	if (code == 13) {
+	if (code == Common::KEYCODE_RETURN) {
 		// The return key
 		msgClass = MOUSEBUTTONS;
 		qualifier = IEQUALIFIER_LEFTBUTTON;
@@ -883,13 +883,10 @@ bool LabEngine::processKey(IntuiMessage *curMsg, uint32 &msgClass, uint16 &quali
 
 		forceDraw = true;
 		interfaceOn();
-	} else if (code == 9) {
-		// TAB key
+	} else if (code == Common::KEYCODE_TAB)
 		msgClass = DELTAMOVE;
-	} else if (code == 27) {
-		// ESC key
+	else if (code == Common::KEYCODE_ESCAPE)
 		_closeDataPtr = nullptr;
-	}
 
 	eatMessages();
 

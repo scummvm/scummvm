@@ -62,7 +62,7 @@ void Intro::introEatMessages() {
 			return;
 
 		if (((msg->_msgClass == MOUSEBUTTONS) && (IEQUALIFIER_RIGHTBUTTON & msg->_qualifier))
-		 || ((msg->_msgClass == RAWKEY) && (msg->_code == 27)))
+		 || ((msg->_msgClass == RAWKEY) && (msg->_code == Common::KEYCODE_ESCAPE)))
 			_quitIntro = true;
 	}
 }
