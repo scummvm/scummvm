@@ -117,8 +117,8 @@ Button *EventManager::checkNumButtonHit(ButtonList *buttonList, uint16 key) {
 
 	for (ButtonList::iterator buttonItr = buttonList->begin(); buttonItr != buttonList->end(); ++buttonItr) {
 		Button *button = *buttonItr;
-		if ((gkey - 1 == button->_buttonID || (gkey == 0 && button->_buttonID == 9) ||
-			  (button->_keyEquiv != 0 && makeButtonKeyEquiv(key) == button->_keyEquiv))
+		if (((gkey - 1 == button->_buttonID) || ((gkey == 0) && (button->_buttonID == 9))
+		 || ((button->_keyEquiv != 0) && (makeButtonKeyEquiv(key) == button->_keyEquiv)))
 			  && button->_isEnabled) {
 			mouseHide();
 			button->_altImage->drawImage(button->_x, button->_y);

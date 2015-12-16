@@ -70,7 +70,7 @@ void Image::blitBitmap(uint16 xs, uint16 ys, Image *imDest,
 	if (yd + h > destHeight)
 		h = destHeight - yd;
 
-	if (w > 0 && h > 0) {
+	if ((w > 0) && (h > 0)) {
 		byte *s = _imageData + ys * _width + xs;
 		byte *d = destBuffer + yd * destWidth + xd;
 

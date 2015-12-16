@@ -118,7 +118,7 @@ void Anim::diffNextFrame(bool onlyDiffData) {
 
 			_frameNum++;
 
-			if ((_frameNum == 1) && (_continuous || (!_playOnce)))
+			if ((_frameNum == 1) && (_continuous || !_playOnce))
 				_diffFileStart = _diffFile;
 
 			_isAnim = (_frameNum >= 3) && (!_playOnce);

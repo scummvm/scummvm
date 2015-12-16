@@ -82,7 +82,7 @@ char *Resource::getText(const char *fileName) {
 	byte *text = buffer;
 	dataFile->read(buffer, count);
 
-	while (text && *text != '\0')
+	while (text && (*text != '\0'))
 		*text++ -= (byte)95;
 
 	delete dataFile;

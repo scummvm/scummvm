@@ -638,7 +638,7 @@ bool LabEngine::fromCrumbs(uint32 tmpClass, uint16 code, uint16 qualifier, Commo
 	if (g_engine->shouldQuit())
 		return false;
 
-	if ((msgClass == RAWKEY) && (!_graphics->_longWinInFront)) {
+	if ((msgClass == RAWKEY) && !_graphics->_longWinInFront) {
 		if (!processKey(curMsg, msgClass, qualifier, curPos, curInv, forceDraw, code))
 			return false;
 	}
@@ -990,9 +990,9 @@ void LabEngine::processMainButton(CloseDataPtr wrkClosePtr, uint16 &curInv, uint
 			} else if (_roomNum == oldRoomNum) { // didn't get there?
 				_followingCrumbs = false;
 			}
-		} else if (_droppingCrumbs && oldRoomNum != _roomNum) {
+		} else if (_droppingCrumbs && (oldRoomNum != _roomNum)) {
 			// If in surreal maze, turn off DroppingCrumbs.
-			if (_roomNum >= 245 && _roomNum <= 280) {
+			if ((_roomNum >= 245) && (_roomNum <= 280)) {
 				_followingCrumbs = false;
 				_droppingCrumbs = false;
 				_numCrumbs = 0;
@@ -1091,7 +1091,7 @@ void LabEngine::processAltButton(uint16 &curInv, uint16 &lastInv, uint16 buttonI
 		if ((curInv == 0) || (curInv > _numInv)) {
 			curInv = 1;
 
-			while ((curInv <= _numInv) && (!_conditions->in(curInv)))
+			while ((curInv <= _numInv) && !_conditions->in(curInv))
 				curInv++;
 		}
 
