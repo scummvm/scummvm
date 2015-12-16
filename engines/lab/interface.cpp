@@ -151,18 +151,14 @@ IntuiMessage *EventManager::getMsg() {
 		message._buttonId = curButton->_buttonId;
 		message._qualifier = qualifiers;
 		return &message;
-	} else if (mouseButton(&message._mouseX, &message._mouseY, true)) {
-		// Left Button
-		message._qualifier = IEQUALIFIER_LEFTBUTTON | qualifiers;
+	} else if (_leftClick || _rightClick) {
+		message._qualifier = (_leftClick) ? (IEQUALIFIER_LEFTBUTTON | qualifiers) : (IEQUALIFIER_RIGHTBUTTON | qualifiers);
 		message._msgClass = MOUSEBUTTONS;
-		return &message;
-	} else if (mouseButton(&message._mouseX, &message._mouseY, false)) {
-		// Right Button
-		message._qualifier = IEQUALIFIER_RIGHTBUTTON | qualifiers;
-		message._msgClass = MOUSEBUTTONS;
+		message._mouseX = (!_vm->_isHiRes) ? (uint16)_mousePos.x / 2 : (uint16)_mousePos.x;
+		message._mouseY = (uint16)_mousePos.y;
+		_leftClick = _rightClick = false;
 		return &message;
 	} else if (keyPress(&message._code)) {
-		// Keyboard key
 		curButton = checkNumButtonHit(_screenButtonList, message._code);
 
 		if (curButton) {
