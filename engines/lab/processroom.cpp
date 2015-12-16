@@ -240,7 +240,7 @@ void LabEngine::setCurrentClose(Common::Point pos, CloseDataPtr *closePtrList, b
 /**
  * Takes the currently selected item.
  */
-bool LabEngine::takeItem(uint16 x, uint16 y, CloseDataPtr *closePtrList) {
+bool LabEngine::takeItem(Common::Point pos, CloseDataPtr *closePtrList) {
 	CloseDataPtr closePtr;
 
 	if (!*closePtrList) {
@@ -251,7 +251,6 @@ bool LabEngine::takeItem(uint16 x, uint16 y, CloseDataPtr *closePtrList) {
 	} else
 		closePtr = (*closePtrList)->_subCloseUps;
 
-	Common::Point pos = Common::Point(x, y);
 	Common::Rect objRect;
 	while (closePtr) {
 		objRect = Common::Rect(_utils->scaleX(closePtr->_x1), _utils->scaleX(closePtr->_y1), _utils->scaleX(closePtr->_x2), _utils->scaleX(closePtr->_y2));
