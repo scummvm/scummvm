@@ -207,10 +207,9 @@ int DisplayMan::flowText(
 	uint16 width      = x2 - x1 + 1;
 	uint16 y          = y1;
 	char lineBuffer[256];
-	const char *temp;
 
 	if (centerv && output) {
-		temp = str;
+		const char *temp = str;
 		uint16 actlines = 0;
 
 		while (temp[0]) {
@@ -222,7 +221,6 @@ int DisplayMan::flowText(
 			y += ((y2 - y1 + 1) - (actlines * fontHeight)) / 2;
 	}
 
-	temp = str;
 	int len = 0;
 	while (numLines && str[0]) {
 		getLine(msgFont, lineBuffer, &str, width);
