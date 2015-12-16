@@ -49,11 +49,17 @@
 #define WAGE_DESIGN_H
 
 #include "graphics/surface.h"
+#include "common/memstream.h"
 #include "common/rect.h"
 
 namespace Wage {
 
 struct TexturePaint;
+
+enum {
+    kColorWhite = 0xff,
+    kColorBlack = 0x0
+};
 
 class Design {
 public:
@@ -74,6 +80,11 @@ private:
 	byte *_data;
     int _len;
 	Common::Rect *_bounds;
+
+private:
+    void drawPolygon(Graphics::Surface *surface, Common::ReadStream &in, bool mask,
+        TexturePaint *patterns, byte fillType, byte borderThickness, byte borderFillType);
+
 };
 
 } // End of namespace Wage

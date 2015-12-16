@@ -48,15 +48,14 @@
 #include "wage/wage.h"
 #include "wage/design.h"
 
-#include "common/stream.h"
-#include "common/memstream.h"
-
 namespace Wage {
 
 Design::Design(Common::SeekableReadStream *data) {
 	_len = data->readUint16BE() - 2;
 	_data = (byte *)malloc(_len);
 	data->read(_data, _len);
+
+	paint(0, 0, false);
 }
 
 Design::~Design() {
@@ -68,7 +67,7 @@ void Design::paint(Graphics::Surface *canvas, TexturePaint *patterns, bool mask)
 
 	if (mask) {
 		//canvas.setColor(Color.WHITE);
-		canvas->fillRect(Common::Rect(0, 0, _bounds->width(), _bounds->height()), 0xff);
+		canvas->fillRect(Common::Rect(0, 0, _bounds->width(), _bounds->height()), kColorWhite);
 		//canvas.setColor(Color.BLACK);
 	}
 
@@ -88,10 +87,12 @@ void Design::paint(Graphics::Surface *canvas, TexturePaint *patterns, bool mask)
 		case 12:
 			drawOval(canvas, in, mask, patterns, fillType, borderThickness, borderFillType);
 			break;
+*/
 		case 16:
 		case 20:
 			drawPolygon(canvas, in, mask, patterns, fillType, borderThickness, borderFillType);
 			break;
+/*
 		case 24:
 			drawBitmap(canvas, in, mask);
 			break;
@@ -101,6 +102,105 @@ void Design::paint(Graphics::Surface *canvas, TexturePaint *patterns, bool mask)
 			return;
 		}
 	}
+}
+
+void Design::drawPolygon(Graphics::Surface *surface, Common::ReadStream &in, bool mask,
+	TexturePaint *patterns, byte fillType, byte borderThickness, byte borderFillType) {
+	//surface->setColor(Color.BLACK);
+	//in.readUint16BE();
+	warning("ignored => %d", in.readSint16BE());
+	int numBytes = in.readSint16BE(); // #bytes used by polygon data, including the numBytes
+	warning("Num bytes is %d", numBytes);
+	// Ignoring these values works!!!
+	//in.readUint16BE(); in.readUint16BE(); in.readUint16BE(); in.readUint16BE();
+	warning("Ignoring: %d", in.readSint16BE());
+	warning("Ignoring: %d", in.readSint16BE());
+	warning("Ignoring: %d", in.readSint16BE());
+	warning("Ignoring: %d", in.readSint16BE());
+
+	numBytes -= 8;
+
+	int y1 = in.readSint16BE();
+	int x1 = in.readSint16BE();
+
+	Common::Array<int> xcoords;
+	Common::Array<int> ycoords;
+
+	warning("Start point is (%d,%d)", x1, y1);
+	numBytes -= 6;
+
+	while (numBytes > 0) {
+		int y2 = y1;
+		int x2 = x1;
+		int b = in.readSByte();
+		warning("YB = %x", b);
+		if (b == (byte)0x80) {
+			y2 = in.readSint16BE();
+			numBytes -= 3;
+		} else {
+			warning("Y");
+			y2 += b;
+			numBytes -= 1;
+		}
+		b = in.readSByte();
+		warning("XB = %x", b);
+		if (b == (byte) 0x80) {
+			x2 = in.readSint16BE();
+			numBytes -= 3;
+		} else {
+			warning("X");
+			x2 += b;
+			numBytes -= 1;
+		}
+		//surface->setColor(colors[c++]);
+		//surface->setColor(Color.black);
+		xcoords.push_back(x1);
+		ycoords.push_back(y1);
+		warning("%d %d %d %d", x1, y1, x2, y2);
+		//surface->drawLine(x1, y1, x2, y2);
+		x1 = x2;
+		y1 = y2;
+	}
+	xcoords.push_back(x1);
+	ycoords.push_back(y1);
+
+	int npoints = xcoords.size();
+	int *xpoints = (int *)calloc(npoints, sizeof(int));
+	int *ypoints = (int *)calloc(npoints, sizeof(int));
+	for (int i = 0; i < npoints; i++) {
+		xpoints[i] = xcoords[i];
+		ypoints[i] = ycoords[i];
+	}
+	//	warning(fillType);
+/*
+	if (mask) {
+		surface->fillPolygon(xpoints, ypoints, npoints);
+		if (borderThickness > 0) {
+			Stroke oldStroke = surface->getStroke();
+			surface->setStroke(new BasicStroke(borderThickness - 0.5f, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_BEVEL));
+			for (int i = 1; i < npoints; i++)
+				surface->drawLine(xpoints[i-1], ypoints[i-1], xpoints[i], ypoints[i]);
+			surface->setStroke(oldStroke);
+		}
+		return;
+	}
+	if (setPattern(g2d, patterns, fillType - 1)) {
+		surface->fillPolygon(xpoints, ypoints, npoints);
+	}
+	//	warning(borderFillType);
+	//surface->setColor(Color.black);
+	//if (1==0)
+	if (borderThickness > 0 && setPattern(g2d, patterns, borderFillType - 1)) {
+		Stroke oldStroke = surface->getStroke();
+		//if (borderThickness != 1)
+		surface->setStroke(new BasicStroke(borderThickness - 0.5f, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_BEVEL));
+		for (int i = 1; i < npoints; i++)
+			surface->drawLine(xpoints[i-1], ypoints[i-1], xpoints[i], ypoints[i]);
+		surface->setStroke(oldStroke);
+	}
+*/
+	free(xpoints);
+	free(ypoints);
 }
 
 
