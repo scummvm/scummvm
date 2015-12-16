@@ -54,8 +54,6 @@
 
 namespace Wage {
 
-struct TexturePaint;
-
 enum {
     kColorBlack = 0,
     kColorGray  = 1,
@@ -75,7 +73,7 @@ public:
 		return new Common::Rect(*_bounds);
 	}
 
-    void paint(Graphics::Surface *canvas, TexturePaint *patterns, bool mask);
+    void paint(Graphics::Surface *canvas, Patterns &patterns, bool mask);
 
 private:
 	byte *_data;
@@ -84,9 +82,9 @@ private:
 
 private:
     void drawRect(Graphics::Surface *surface, Common::ReadStream &in, bool mask,
-        TexturePaint *patterns, byte fillType, byte borderThickness, byte borderFillType);
+        Patterns &patterns, byte fillType, byte borderThickness, byte borderFillType);
 	void drawPolygon(Graphics::Surface *surface, Common::ReadStream &in, bool mask,
-        TexturePaint *patterns, byte fillType, byte borderThickness, byte borderFillType);
+        Patterns &patterns, byte fillType, byte borderThickness, byte borderFillType);
 
 };
 

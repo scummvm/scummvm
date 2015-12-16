@@ -62,6 +62,8 @@ Scene::Scene(String name, Common::SeekableReadStream *data) {
 	_name = name;
 	_design = new Design(data);
 
+	warning("Scene %s", _name.c_str());
+
 	setDesignBounds(readRect(data));
 	_worldY = data->readSint16BE();
 	_worldX = data->readSint16BE();

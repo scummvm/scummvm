@@ -61,6 +61,7 @@
 #include "wage/wage.h"
 #include "wage/entities.h"
 #include "wage/world.h"
+#include "wage/design.h"
 
 namespace Wage {
 
@@ -103,6 +104,12 @@ Common::Error WageEngine::run() {
 
 	if (!_world->loadWorld(_resManager))
 		return Common::kNoGameDataFoundError;
+
+	Graphics::Surface screen;
+	screen.create(320, 200, Graphics::PixelFormat::createFormatCLUT8());
+	Common::Rect r(0, 0, 320, 200);
+	_world->_scenes["entry"]->_design->setBounds(&r);
+	_world->_scenes["entry"]->_design->paint(&screen, _world->_patterns, true);
 
 	return Common::kNoError;
 }

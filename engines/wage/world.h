@@ -56,7 +56,7 @@ class World {
 public:
 	World();
 	~World();
- 
+
 	bool loadWorld(Common::MacResManager *resMan);
 	void loadExternalSounds(String fname);
 
@@ -75,7 +75,7 @@ public:
 	Common::Array<Obj *> _orderedObjs;
 	Common::Array<Chr *> _orderedChrs;
 	Common::Array<Sound *> _orderedSounds;
-	Common::Array<byte *> _patterns;
+	Patterns _patterns;
 	Scene _storageScene;
 	Chr *_player;
 	//List<MoveListener> moveListeners;
@@ -112,7 +112,7 @@ public:
 		_orderedSounds.push_back(sound);
 	}
 };
- 
+
 } // End of namespace Wage
- 
+
 #endif

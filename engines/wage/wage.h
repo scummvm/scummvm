@@ -79,6 +79,8 @@ enum {
 Common::String readPascalString(Common::SeekableReadStream *in);
 Common::Rect *readRect(Common::SeekableReadStream *in);
 
+typedef Common::Array<byte *> Patterns;
+
 class WageEngine : public Engine {
 public:
 	WageEngine(OSystem *syst, const ADGameDescription *gameDesc);

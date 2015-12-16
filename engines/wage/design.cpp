@@ -55,19 +55,13 @@ Design::Design(Common::SeekableReadStream *data) {
 	_len = data->readUint16BE() - 2;
 	_data = (byte *)malloc(_len);
 	data->read(_data, _len);
-
-	Graphics::Surface screen;
-	screen.create(320, 200, Graphics::PixelFormat::createFormatCLUT8());
-	Common::Rect r(0, 0, 320, 200);
-	setBounds(&r);
-	paint(&screen, 0, true);
 }
 
 Design::~Design() {
 	free(_data);
 }
 
-void Design::paint(Graphics::Surface *canvas, TexturePaint *patterns, bool mask) {
+void Design::paint(Graphics::Surface *canvas, Patterns &patterns, bool mask) {
 	Common::MemoryReadStream in(_data, _len);
 
 	if (mask) {
@@ -80,6 +74,7 @@ void Design::paint(Graphics::Surface *canvas, TexturePaint *patterns, bool mask)
 		byte fillType = in.readByte();
 		byte borderThickness = in.readByte();
 		byte borderFillType = in.readByte();
+		warning("fill: %d border: %d borderFill: %d", fillType, borderThickness, borderFillType);
 		int type = in.readByte();
 		switch (type) {
 		case 4:
@@ -118,7 +113,7 @@ void Design::paint(Graphics::Surface *canvas, TexturePaint *patterns, bool mask)
 }
 
 void Design::drawRect(Graphics::Surface *surface, Common::ReadStream &in, bool mask,
-	TexturePaint *patterns, byte fillType, byte borderThickness, byte borderFillType) {
+	Patterns &patterns, byte fillType, byte borderThickness, byte borderFillType) {
 	int16 y = in.readSint16BE();
 	int16 x = in.readSint16BE();
 	int16 height = in.readSint16BE();
@@ -135,7 +130,7 @@ void Design::drawRect(Graphics::Surface *surface, Common::ReadStream &in, bool m
 }
 
 void Design::drawPolygon(Graphics::Surface *surface, Common::ReadStream &in, bool mask,
-	TexturePaint *patterns, byte fillType, byte borderThickness, byte borderFillType) {
+	Patterns &patterns, byte fillType, byte borderThickness, byte borderFillType) {
 	//surface->setColor(Color.BLACK);
 	//in.readUint16BE();
 	warning("ignored => %d", in.readSint16BE());
@@ -143,10 +138,11 @@ void Design::drawPolygon(Graphics::Surface *surface, Common::ReadStream &in, boo
 	warning("Num bytes is %d", numBytes);
 	// Ignoring these values works!!!
 	//in.readUint16BE(); in.readUint16BE(); in.readUint16BE(); in.readUint16BE();
-	warning("Ignoring: %d", in.readSint16BE());
-	warning("Ignoring: %d", in.readSint16BE());
-	warning("Ignoring: %d", in.readSint16BE());
-	warning("Ignoring: %d", in.readSint16BE());
+	int16 by1 = in.readSint16BE();
+	int16 bx1 = in.readSint16BE();
+	int16 by2 = in.readSint16BE();
+	int16 bx2 = in.readSint16BE();
+	warning("Bbox: %d, %d, %d, %d", bx1, by1, bx2, by2);
 
 	numBytes -= 8;
 
@@ -186,7 +182,7 @@ void Design::drawPolygon(Graphics::Surface *surface, Common::ReadStream &in, boo
 		//surface->setColor(Color.black);
 		xcoords.push_back(x1);
 		ycoords.push_back(y1);
-		warning("%d %d %d %d", x1, y1, x2, y2);
+		debug(8, "%d %d %d %d", x1, y1, x2, y2);
 		//surface->drawLine(x1, y1, x2, y2);
 		x1 = x2;
 		y1 = y2;
