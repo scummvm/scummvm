@@ -45,6 +45,7 @@
  *
  */
 
+#include "common/system.h"
 #include "wage/wage.h"
 #include "wage/design.h"
 
@@ -55,7 +56,9 @@ Design::Design(Common::SeekableReadStream *data) {
 	_data = (byte *)malloc(_len);
 	data->read(_data, _len);
 
-	paint(0, 0, false);
+	Graphics::Surface screen;
+	screen.create(320, 200, Graphics::PixelFormat::createFormatCLUT8());
+	paint(&screen, 0, false);
 }
 
 Design::~Design() {
@@ -98,9 +101,17 @@ void Design::paint(Graphics::Surface *canvas, TexturePaint *patterns, bool mask)
 			break;
 */
 		default:
-			error("Unknown type => %d", type);
+			warning("Unknown type => %d", type);
+			while (true) {
+				((WageEngine *)g_engine)->processEvents();
+				g_system->updateScreen();
+			}
 			return;
 		}
+
+		g_system->copyRectToScreen(canvas->getPixels(), canvas->pitch, 0, 0, canvas->w, canvas->h);
+		g_system->updateScreen();
+
 	}
 }
 
@@ -133,22 +144,22 @@ void Design::drawPolygon(Graphics::Surface *surface, Common::ReadStream &in, boo
 		int y2 = y1;
 		int x2 = x1;
 		int b = in.readSByte();
-		warning("YB = %x", b);
+		//warning("YB = %x", b);
 		if (b == (byte)0x80) {
 			y2 = in.readSint16BE();
 			numBytes -= 3;
 		} else {
-			warning("Y");
+			//warning("Y");
 			y2 += b;
 			numBytes -= 1;
 		}
 		b = in.readSByte();
-		warning("XB = %x", b);
+		//warning("XB = %x", b);
 		if (b == (byte) 0x80) {
 			x2 = in.readSint16BE();
 			numBytes -= 3;
 		} else {
-			warning("X");
+			//warning("X");
 			x2 += b;
 			numBytes -= 1;
 		}
@@ -194,11 +205,12 @@ void Design::drawPolygon(Graphics::Surface *surface, Common::ReadStream &in, boo
 		Stroke oldStroke = surface->getStroke();
 		//if (borderThickness != 1)
 		surface->setStroke(new BasicStroke(borderThickness - 0.5f, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_BEVEL));
-		for (int i = 1; i < npoints; i++)
-			surface->drawLine(xpoints[i-1], ypoints[i-1], xpoints[i], ypoints[i]);
-		surface->setStroke(oldStroke);
-	}
 */
+		for (int i = 1; i < npoints; i++)
+			surface->drawLine(xpoints[i-1], ypoints[i-1], xpoints[i], ypoints[i], kColorWhite);
+//		surface->setStroke(oldStroke);
+//	}
+
 	free(xpoints);
 	free(ypoints);
 }

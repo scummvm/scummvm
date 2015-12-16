@@ -47,7 +47,7 @@
 
 #ifndef WAGE_H
 #define WAGE_H
- 
+
 #include "engines/engine.h"
 #include "common/debug.h"
 #include "gui/debugger.h"
@@ -59,7 +59,7 @@
 struct ADGameDescription;
 
 namespace Wage {
- 
+
 class Console;
 class World;
 class Scene;
@@ -67,7 +67,7 @@ class Obj;
 class Chr;
 
 using Common::String;
- 
+
 // our engine debug levels
 enum {
 	kWageDebugExample = 1 << 0,
@@ -83,11 +83,11 @@ class WageEngine : public Engine {
 public:
 	WageEngine(OSystem *syst, const ADGameDescription *gameDesc);
 	~WageEngine();
- 
+
 	virtual bool hasFeature(EngineFeature f) const;
 
 	virtual Common::Error run();
- 
+
 	bool canLoadGameStateCurrently();
 	bool canSaveGameStateCurrently();
 
@@ -115,7 +115,7 @@ public:
 	void playSound(String soundName) {}
 	void setMenu(String soundName) {}
 	void appendText(String str) {}
-
+	void processEvents();
 
 private:
 	Console *_console;
@@ -125,14 +125,14 @@ private:
 	Common::MacResManager *_resManager;
 
 };
- 
+
 // Example console class
 class Console : public GUI::Debugger {
 public:
 	Console(WageEngine *vm) {}
 	virtual ~Console(void) {}
 };
- 
+
 } // End of namespace Wage
- 
+
 #endif

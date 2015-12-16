@@ -53,9 +53,11 @@
 #include "common/file.h"
 #include "common/fs.h"
 
+#include "engines/engine.h"
 #include "engines/util.h"
 #include "gui/EventRecorder.h"
- 
+#include "graphics/palette.h"
+
 #include "wage/wage.h"
 #include "wage/entities.h"
 #include "wage/world.h"
@@ -77,8 +79,16 @@ WageEngine::~WageEngine() {
 	delete _rnd;
 }
 
+static byte palette[] = {
+	0, 0, 0,
+	0x80, 0x80, 0x80,
+	0xff, 0xff, 0xff
+};
+
 Common::Error WageEngine::run() {
 	initGraphics(320, 200, false);
+
+	g_system->getPaletteManager()->setPalette(palette, 0, 3);
 
 	// Create debugger console. It requires GFX to be initialized
 	_console = new Console(this);
@@ -95,6 +105,20 @@ Common::Error WageEngine::run() {
 		return Common::kNoGameDataFoundError;
 
 	return Common::kNoError;
+}
+
+void WageEngine::processEvents() {
+	Common::Event event;
+
+	while (_eventMan->pollEvent(event)) {
+		switch (event.type) {
+		case Common::EVENT_QUIT:
+			error("Exiting");
+			break;
+		default:
+			break;
+		}
+	}
 }
 
 } // End of namespace Wage

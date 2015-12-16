@@ -57,8 +57,9 @@ namespace Wage {
 struct TexturePaint;
 
 enum {
-    kColorWhite = 0xff,
-    kColorBlack = 0x0
+    kColorBlack = 0,
+    kColorGray  = 1,
+    kColorWhite = 2
 };
 
 class Design {
