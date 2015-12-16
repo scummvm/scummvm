@@ -630,7 +630,6 @@ bool LabEngine::fromCrumbs(uint32 tmpClass, uint16 code, uint16 qualifier, Commo
 	uint16 oldDirection = 0;
 	uint16 lastInv = kItemMap;
 	CloseDataPtr wrkClosePtr = nullptr;
-	bool doit;
 	bool leftButtonClick = false;
 	bool rightButtonClick = false;
 
@@ -663,7 +662,7 @@ bool LabEngine::fromCrumbs(uint32 tmpClass, uint16 code, uint16 qualifier, Commo
 		interfaceOff();
 		_mainDisplay = true;
 
-		doit = false;
+		bool doit = false;
 
 		if (_closeDataPtr) {
 			switch (_closeDataPtr->_closeUpType) {
@@ -690,9 +689,9 @@ bool LabEngine::fromCrumbs(uint32 tmpClass, uint16 code, uint16 qualifier, Commo
 			switch (actionMode) {
 			case 0:
 				// Take something.
-				if (doActionRule(Common::Point(curPos.x, curPos.y), actionMode, _roomNum, &_closeDataPtr))
+				if (doActionRule(curPos, actionMode, _roomNum, &_closeDataPtr))
 					_curFileName = _newFileName;
-				else if (takeItem(curPos.x, curPos.y, &_closeDataPtr))
+				else if (takeItem(curPos, &_closeDataPtr))
 					drawStaticMessage(kTextTakeItem);
 				else if (doActionRule(curPos, TAKEDEF - 1, _roomNum, &_closeDataPtr))
 					_curFileName = _newFileName;
@@ -1060,9 +1059,7 @@ void LabEngine::processAltButton(uint16 &curInv, uint16 &lastInv, uint16 buttonI
 		_closeDataPtr = nullptr;
 		_mainDisplay = true;
 
-		curInv = kItemMap;
-		lastInv = kItemMap;
-
+		curInv = lastInv = kItemMap;
 		_nextFileName = getInvName(curInv);
 
 		_graphics->drawPanel();
@@ -1212,7 +1209,6 @@ int LabEngine::followCrumbs() {
 	}
 
 	int exitDir;
-
 	// which direction is last crumb
 	if (_breadCrumbs[_numCrumbs]._direction == EAST)
 		exitDir = WEST;

@@ -249,7 +249,7 @@ private:
 	Common::Rect roomCoords(uint16 curRoom);
 	bool saveRestoreGame();
 	void setCurrentClose(Common::Point pos, CloseDataPtr *closePtrList, bool useAbsoluteCoords);
-	bool takeItem(uint16 x, uint16 y, CloseDataPtr *closePtrList);
+	bool takeItem(Common::Point pos, CloseDataPtr *closePtrList);
 	void turnPage(bool fromLeft);
 	bool processKey(IntuiMessage *curMsg, uint32 &msgClass, uint16 &qualifier, Common::Point &curPos, uint16 &curInv, bool &forceDraw, uint16 code);
 	void processMainButton(CloseDataPtr wrkClosePtr, uint16 &curInv, uint16 &lastInv, uint16 &oldDirection, bool &forceDraw, uint16 buttonId, uint16 &actionMode);
