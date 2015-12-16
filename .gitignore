@@ -8,7 +8,6 @@ lib*.a
 
 /config.log
 /scummvm
-/scummvm-iph5
 /scummvm-static
 /config.h
 /config.mk
