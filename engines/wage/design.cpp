@@ -58,7 +58,9 @@ Design::Design(Common::SeekableReadStream *data) {
 
 	Graphics::Surface screen;
 	screen.create(320, 200, Graphics::PixelFormat::createFormatCLUT8());
-	paint(&screen, 0, false);
+	Common::Rect r(0, 0, 320, 200);
+	setBounds(&r);
+	paint(&screen, 0, true);
 }
 
 Design::~Design() {
@@ -80,10 +82,10 @@ void Design::paint(Graphics::Surface *canvas, TexturePaint *patterns, bool mask)
 		byte borderFillType = in.readByte();
 		int type = in.readByte();
 		switch (type) {
-/*
 		case 4:
 			drawRect(canvas, in, mask, patterns, fillType, borderThickness, borderFillType);
 			break;
+			/*
 		case 8:
 			drawRoundRect(canvas, in, mask, patterns, fillType, borderThickness, borderFillType);
 			break;
@@ -113,6 +115,23 @@ void Design::paint(Graphics::Surface *canvas, TexturePaint *patterns, bool mask)
 		g_system->updateScreen();
 
 	}
+}
+
+void Design::drawRect(Graphics::Surface *surface, Common::ReadStream &in, bool mask,
+	TexturePaint *patterns, byte fillType, byte borderThickness, byte borderFillType) {
+	int16 y = in.readSint16BE();
+	int16 x = in.readSint16BE();
+	int16 height = in.readSint16BE();
+	int16 width = in.readSint16BE();
+	Common::Rect outer(x, y, width, height);
+
+	if (mask) {
+		surface->fillRect(outer, kColorBlack);
+		return;
+	}
+	//Shape inner = new Rectangle(x+borderThickness, y+borderThickness, width-2*borderThickness, height-2*borderThickness);
+	//paintShape(g2d, patterns, outer, inner, borderFillType, fillType);
+	surface->frameRect(outer, kColorBlack);
 }
 
 void Design::drawPolygon(Graphics::Surface *surface, Common::ReadStream &in, bool mask,
@@ -207,7 +226,7 @@ void Design::drawPolygon(Graphics::Surface *surface, Common::ReadStream &in, boo
 		surface->setStroke(new BasicStroke(borderThickness - 0.5f, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_BEVEL));
 */
 		for (int i = 1; i < npoints; i++)
-			surface->drawLine(xpoints[i-1], ypoints[i-1], xpoints[i], ypoints[i], kColorWhite);
+			surface->drawLine(xpoints[i-1], ypoints[i-1], xpoints[i], ypoints[i], kColorBlack);
 //		surface->setStroke(oldStroke);
 //	}
 

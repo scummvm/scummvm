@@ -83,7 +83,9 @@ private:
 	Common::Rect *_bounds;
 
 private:
-    void drawPolygon(Graphics::Surface *surface, Common::ReadStream &in, bool mask,
+    void drawRect(Graphics::Surface *surface, Common::ReadStream &in, bool mask,
+        TexturePaint *patterns, byte fillType, byte borderThickness, byte borderFillType);
+	void drawPolygon(Graphics::Surface *surface, Common::ReadStream &in, bool mask,
         TexturePaint *patterns, byte fillType, byte borderThickness, byte borderFillType);
 
 };
