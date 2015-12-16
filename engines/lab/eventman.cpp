@@ -232,13 +232,6 @@ bool EventManager::mouseButton(uint16 *x, uint16 *y, bool leftButton) {
 	return false;
 }
 
-Button *EventManager::mouseButton() {
-	Button *temp = _lastButtonHit;
-
-	_lastButtonHit = nullptr;
-	return temp;
-}
-
 /**
  * Checks whether or not a key has been pressed.
  */

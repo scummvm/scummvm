@@ -141,7 +141,8 @@ IntuiMessage *EventManager::getMsg() {
 	updateMouse();
 
 	int qualifiers = _keyPressed.flags;
-	Button *curButton  = mouseButton();
+	Button *curButton = _lastButtonHit;
+	_lastButtonHit = nullptr;
 
 	if (curButton) {
 		updateMouse();
