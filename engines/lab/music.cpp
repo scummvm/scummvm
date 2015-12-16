@@ -71,7 +71,7 @@ void Music::updateMusic() {
 	_vm->_event->processInput();
 	_vm->_event->updateMouse();
 
-	if (_musicOn && getPlayingBufferCount() < MAXBUFFERS) {
+	if (_musicOn && (getPlayingBufferCount() < MAXBUFFERS)) {
 		// NOTE: We need to use malloc(), cause this will be freed with free()
 		// by the music code
 		byte *musicBuffer = (byte *)malloc(MUSICBUFSIZE);

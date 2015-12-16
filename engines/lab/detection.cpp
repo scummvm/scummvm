@@ -180,7 +180,7 @@ SaveStateList LabMetaEngine::listSaves(const char *target) const {
 		// Obtain the last 3 digits of the filename, since they correspond to the save slot
 		int slotNum = atoi(file->c_str() + file->size() - 3);
 
-		if (slotNum >= 0 && slotNum <= 999) {
+		if ((slotNum >= 0) && (slotNum <= 999)) {
 			Common::InSaveFile *in = saveFileMan->openForLoading(file->c_str());
 			if (in) {
 				if (Lab::readSaveGameHeader(in, header))

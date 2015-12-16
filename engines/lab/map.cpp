@@ -324,7 +324,7 @@ bool LabEngine::floorVisited(uint16 floorNum) {
  * Note: The original did not show all the visited floors, but we do
  */
 uint16 LabEngine::getUpperFloor(uint16 floorNum) {
-	if (floorNum == kFloorCarnival || floorNum == kFloorNone)
+	if ((floorNum == kFloorCarnival) || (floorNum == kFloorNone))
 		return kFloorNone;
 
 	for (uint16 i = floorNum; i < kFloorCarnival; i++)
@@ -339,7 +339,7 @@ uint16 LabEngine::getUpperFloor(uint16 floorNum) {
  * Note: The original did not show all the visited floors, but we do
  */
 uint16 LabEngine::getLowerFloor(uint16 floorNum) {
-	if (floorNum == kFloorLower || floorNum == kFloorNone)
+	if ((floorNum == kFloorLower) || (floorNum == kFloorNone))
 		return kFloorNone;
 
 	for (uint16 i = floorNum; i > kFloorLower; i--)
