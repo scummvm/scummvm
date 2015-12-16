@@ -805,26 +805,24 @@ bool LabEngine::fromCrumbs(uint32 tmpClass, uint16 code, uint16 qualifier, Commo
 }
 
 bool LabEngine::processKey(IntuiMessage *curMsg, uint32 &msgClass, uint16 &qualifier, Common::Point &curPos, uint16 &curInv, bool &forceDraw, uint16 code) {
-	byte codeLower = tolower(code);
-
 	if (code == Common::KEYCODE_RETURN) {
 		// The return key
 		msgClass = MOUSEBUTTONS;
 		qualifier = IEQUALIFIER_LEFTBUTTON;
 		curPos = _event->getMousePos();
-	} else if (getPlatform() == Common::kPlatformWindows && codeLower == 'b') {
+	} else if ((getPlatform() == Common::kPlatformWindows) && (code == Common::KEYCODE_b)) {
 		// Start bread crumbs
 		_breadCrumbs[0]._roomNum = 0;
 		_numCrumbs = 0;
 		_droppingCrumbs = true;
 		mayShowCrumbIndicator();
 		_graphics->screenUpdate();
-	} else if (codeLower == 'f' || codeLower == 'r') {
+	} else if ((code == Common::KEYCODE_f) || (code == Common::KEYCODE_r)) {
 		// Follow bread crumbs
 		if (_droppingCrumbs) {
 			if (_numCrumbs > 0) {
 				_followingCrumbs = true;
-				_followCrumbsFast = (codeLower == 'r');
+				_followCrumbsFast = (code == Common::KEYCODE_r);
 				_isCrumbTurning = false;
 				_isCrumbWaiting = false;
 				_crumbTimestamp = g_system->getMillis();
@@ -851,7 +849,7 @@ bool LabEngine::processKey(IntuiMessage *curMsg, uint32 &msgClass, uint16 &quali
 				_graphics->screenUpdate();
 			}
 		}
-	} else if (code == 315 || codeLower == 'x' || codeLower == 'q') {
+	} else if ((code == Common::KEYCODE_x) || (code == Common::KEYCODE_q)) {
 		// Quit?
 		_graphics->_doNotDrawMessage = false;
 		_graphics->drawMessage("Do you want to quit? (Y/N)");
@@ -871,8 +869,7 @@ bool LabEngine::processKey(IntuiMessage *curMsg, uint32 &msgClass, uint16 &quali
 				_music->updateMusic();
 				_anim->diffNextFrame();
 			} else if (curMsg->_msgClass == RAWKEY) {
-				codeLower = tolower(curMsg->_code);
-				if (codeLower == 'y' || codeLower == 'q') {
+				if ((curMsg->_code == Common::KEYCODE_y) || (curMsg->_code == Common::KEYCODE_q)) {
 					_anim->stopDiff();
 					return false;
 				} else if (curMsg->_code < 128)
