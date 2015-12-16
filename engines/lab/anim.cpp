@@ -317,9 +317,14 @@ void Anim::readDiff(byte *buffer, bool playOnce, bool onlyDiffData) {
 		_headerdata._depth = *_diffFile;
 		_diffFile++;
 		_headerdata._fps = *_diffFile;
+
 		// HACK: The original game defines a 1 second delay when changing screens, which is
-		// very annoying. In this case, we just set it to no delay, to make the game a bit
-		// less frustrating
+		// very annoying. We first removed the delay, but it looked wrong when changing screens
+		// as it was possible to see that something was displayed, without being able to tell
+		// what it was. A shorter delay (150ms) makes it acceptable during gameplay and
+		// readable. The big question is: do we need that message?
+		g_system->delayMillis(150);
+
 		if (_headerdata._fps == 1)
 			_headerdata._fps = 0;
 		_diffFile++;
