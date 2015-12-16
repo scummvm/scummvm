@@ -53,10 +53,10 @@ void Resource::readStaticText() {
 TextFont *Resource::getFont(const char *fileName) {
 	Common::File *dataFile = openDataFile(fileName, MKTAG('V', 'G', 'A', 'F'));
 
-	uint32 headerSize = 4L + 2L + 256 * 3 + 4L;
+	uint32 headerSize = 4 + 2 + 256 * 3 + 4;
 	uint32 fileSize = dataFile->size();
 	if (fileSize <= headerSize)
-		return NULL;
+		return nullptr;
 
 	_vm->_music->updateMusic();
 
@@ -248,9 +248,9 @@ RuleList *Resource::readRule(Common::File *file) {
 
 Action *Resource::readAction(Common::File *file) {
 	char c;
-	Action *action = NULL;
-	Action *prev = NULL;
-	Action *head = NULL;
+	Action *action = nullptr;
+	Action *prev = nullptr;
+	Action *head = nullptr;
 
 	do {
 		c = file->readByte();
@@ -277,7 +277,7 @@ Action *Resource::readAction(Common::File *file) {
 				action->_data = (byte *)readString(file);
 			}
 
-			action->_nextAction = NULL;
+			action->_nextAction = nullptr;
 			prev = action;
 		}
 	} while (c == 1);
@@ -287,9 +287,9 @@ Action *Resource::readAction(Common::File *file) {
 
 CloseData *Resource::readCloseUps(uint16 depth, Common::File *file) {
 	char c;
-	CloseData *closeup = NULL;
-	CloseData *prev = NULL;
-	CloseData *head = NULL;
+	CloseData *closeup = nullptr;
+	CloseData *prev = nullptr;
+	CloseData *head = nullptr;
 
 	do {
 		c = file->readByte();
@@ -309,7 +309,7 @@ CloseData *Resource::readCloseUps(uint16 depth, Common::File *file) {
 			closeup->_graphicName = readString(file);
 			closeup->_message = readString(file);
 			closeup->_subCloseUps = readCloseUps(depth + 1, file);
-			closeup->_nextCloseUp = NULL;
+			closeup->_nextCloseUp = nullptr;
 			prev = closeup;
 		}
 	} while (c != '\0');
@@ -319,9 +319,9 @@ CloseData *Resource::readCloseUps(uint16 depth, Common::File *file) {
 
 ViewData *Resource::readView(Common::File *file) {
 	char c;
-	ViewData *view = NULL;
-	ViewData *prev = NULL;
-	ViewData *head = NULL;
+	ViewData *view = nullptr;
+	ViewData *prev = nullptr;
+	ViewData *head = nullptr;
 
 	do {
 		c = file->readByte();
@@ -335,7 +335,7 @@ ViewData *Resource::readView(Common::File *file) {
 			view->_condition = readConditions(file);
 			view->_graphicName = readString(file);
 			view->_closeUps = readCloseUps(0, file);
-			view->_nextCondition = NULL;
+			view->_nextCondition = nullptr;
 			prev = view;
 		}
 	} while (c == 1);
