@@ -454,7 +454,8 @@ void LabEngine::mainGameLoop() {
 
 	// Set up initial picture.
 	while (1) {
-		_event->processInput(true);
+		_event->processInput();
+		g_system->delayMillis(10);
 
 		if (gotMessage) {
 			if (_quitLab || g_engine->shouldQuit()) {
