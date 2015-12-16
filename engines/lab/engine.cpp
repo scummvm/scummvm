@@ -546,13 +546,13 @@ void LabEngine::mainGameLoop() {
 					uint16 code = 0;
 					switch (result) {
 					case VKEY_UPARROW:
-						code = 7;
+						code = kButtonForward;
 						break;
 					case VKEY_LTARROW:
-						code = 6;
+						code = kButtonLeft;
 						break;
 					case VKEY_RTARROW:
-						code = 8;
+						code = kButtonRight;
 						break;
 					default:
 						break;
@@ -900,7 +900,7 @@ void LabEngine::processMainButton(CloseDataPtr wrkClosePtr, uint16 &curInv, uint
 	case kButtonOpen:
 	case kButtonClose:
 	case kButtonLook:
-		if ((actionMode == 4) && (buttonId == 4) && _closeDataPtr) {
+		if ((actionMode == 4) && (buttonId == kButtonLook) && _closeDataPtr) {
 			doMainView(&_closeDataPtr);
 
 			_anim->_doBlack = true;
@@ -944,13 +944,12 @@ void LabEngine::processMainButton(CloseDataPtr wrkClosePtr, uint16 &curInv, uint
 	case kButtonRight:
 		_closeDataPtr = nullptr;
 		wrkClosePtr = nullptr;
-		if (buttonId == 6)
+		if (buttonId == kButtonLeft)
 			drawStaticMessage(kTextTurnLeft);
 		else
 			drawStaticMessage(kTextTurnRight);
 
 		_curFileName = " ";
-
 		oldDirection = _direction;
 
 		newDir = processArrow(_direction, buttonId - 6);
@@ -958,7 +957,6 @@ void LabEngine::processMainButton(CloseDataPtr wrkClosePtr, uint16 &curInv, uint
 		_anim->_doBlack = true;
 		_direction = newDir;
 		forceDraw = true;
-
 		mayShowCrumbIndicator();
 		break;
 
