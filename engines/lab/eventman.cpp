@@ -208,31 +208,6 @@ void EventManager::setMousePos(Common::Point pos) {
 }
 
 /**
- * Checks whether or not the mouse buttons have been pressed, and the last
- * co-ordinates of the button press.  leftbutton tells whether to check the
- * left or right button.
- */
-bool EventManager::mouseButton(uint16 *x, uint16 *y, bool leftButton) {
-	if (leftButton) {
-		if (_leftClick) {
-			*x = (!_vm->_isHiRes) ? (uint16)_mousePos.x / 2 : (uint16)_mousePos.x;
-			*y = (uint16)_mousePos.y;
-			_leftClick = false;
-			return true;
-		}
-	} else {
-		if (_rightClick) {
-			*x = (!_vm->_isHiRes) ? (uint16)_mousePos.x / 2 : (uint16)_mousePos.x;
-			*y = (uint16)_mousePos.y;
-			_rightClick = false;
-			return true;
-		}
-	}
-
-	return false;
-}
-
-/**
  * Checks whether or not a key has been pressed.
  */
 bool EventManager::keyPress(uint16 *keyCode) {

@@ -89,7 +89,6 @@ private:
 
 private:
 	Button *checkButtonHit(ButtonList *buttonList, Common::Point pos);
-	bool mouseButton(uint16 *x, uint16 *y, bool leftButton);
 	bool keyPress(uint16 *keyCode);
 	bool haveNextChar();
 	uint16 getNextChar();
