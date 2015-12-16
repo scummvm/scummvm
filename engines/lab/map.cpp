@@ -477,7 +477,7 @@ void LabEngine::processMap(uint16 curRoom) {
 			uint16 mouseX    = msg->_mouseX;
 			uint16 mouseY    = msg->_mouseY;
 
-			if (((msgClass == MOUSEBUTTONS) && (IEQUALIFIER_RIGHTBUTTON & qualifier)) || ((msgClass == RAWKEY) && (msgCode == 27)))
+			if (((msgClass == MOUSEBUTTONS) && (IEQUALIFIER_RIGHTBUTTON & qualifier)) || ((msgClass == RAWKEY) && (msgCode == Common::KEYCODE_ESCAPE)))
 				return;
 
 			if (msgClass == BUTTONUP) {

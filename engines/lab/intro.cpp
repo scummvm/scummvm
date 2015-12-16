@@ -155,7 +155,7 @@ void Intro::doPictText(const char *filename, TextFont *msgFont, bool isScreen) {
 			uint16 code = msg->_code;
 
 			if (((msgClass == MOUSEBUTTONS) && (IEQUALIFIER_RIGHTBUTTON & qualifier)) ||
-				  ((msgClass == RAWKEY) && (code == 27))) {
+				((msgClass == RAWKEY) && (code == Common::KEYCODE_ESCAPE))) {
 				_quitIntro = true;
 
 				if (isScreen)

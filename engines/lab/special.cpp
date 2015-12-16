@@ -273,7 +273,7 @@ void LabEngine::processJournal() {
 			uint16 buttonId  = msg->_code;
 
 			if (((msgClass == MOUSEBUTTONS) && (IEQUALIFIER_RIGHTBUTTON & qualifier)) ||
-				  ((msgClass == RAWKEY) && (buttonId == 27)))
+				((msgClass == RAWKEY) && (buttonId == Common::KEYCODE_ESCAPE)))
 				return;
 			else if (msgClass == BUTTONUP) {
 				if (buttonId == 0) {
@@ -439,7 +439,7 @@ void LabEngine::processMonitor(char *ntext, TextFont *monitorFont, bool isIntera
 			uint16 code      = msg->_code;
 
 			if (((msgClass == MOUSEBUTTONS) && (IEQUALIFIER_RIGHTBUTTON & qualifier)) ||
-				  ((msgClass == RAWKEY) && (code == 27)))
+				  ((msgClass == RAWKEY) && (code == Common::KEYCODE_ESCAPE)))
 				return;
 			else if ((msgClass == MOUSEBUTTONS) && (IEQUALIFIER_LEFTBUTTON & qualifier)) {
 				if ((mouseY >= _utils->vgaScaleY(171)) && (mouseY <= _utils->vgaScaleY(200))) {
