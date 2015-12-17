@@ -120,14 +120,9 @@ Button *EventManager::checkNumButtonHit(ButtonList *buttonList, uint16 key) {
 		if (((gkey - 1 == button->_buttonId) || ((gkey == 0) && (button->_buttonId == 9))
 		 || ((button->_keyEquiv != 0) && (makeButtonKeyEquiv(key) == button->_keyEquiv)))
 			  && button->_isEnabled) {
-			mouseHide();
 			button->_altImage->drawImage(button->_x, button->_y);
-			mouseShow();
 			g_system->delayMillis(80);
-			mouseHide();
 			button->_image->drawImage(button->_x, button->_y);
-			mouseShow();
-
 			return button;
 		}
 	}
@@ -140,35 +135,31 @@ IntuiMessage *EventManager::getMsg() {
 
 	updateMouse();
 
-	int qualifiers = _keyPressed.flags;
-	Button *curButton = _lastButtonHit;
-	_lastButtonHit = nullptr;
-
-	if (curButton) {
+	if (_lastButtonHit) {
 		updateMouse();
 		message._msgClass = BUTTONUP;
-		message._code = curButton->_buttonId;
-		message._buttonId = curButton->_buttonId;
-		message._qualifier = qualifiers;
+		message._code = _lastButtonHit->_buttonId;
+		message._buttonId = _lastButtonHit->_buttonId;
+		message._qualifier = _keyPressed.flags;
+		_lastButtonHit = nullptr;
 		return &message;
 	} else if (_leftClick || _rightClick) {
-		message._qualifier = (_leftClick) ? (IEQUALIFIER_LEFTBUTTON | qualifiers) : (IEQUALIFIER_RIGHTBUTTON | qualifiers);
+		message._qualifier = (_leftClick) ? IEQUALIFIER_LEFTBUTTON : IEQUALIFIER_RIGHTBUTTON;
 		message._msgClass = MOUSEBUTTONS;
 		message._mouseX = (!_vm->_isHiRes) ? (uint16)_mousePos.x / 2 : (uint16)_mousePos.x;
 		message._mouseY = (uint16)_mousePos.y;
 		_leftClick = _rightClick = false;
 		return &message;
 	} else if (keyPress(&message._code)) {
-		curButton = checkNumButtonHit(_screenButtonList, message._code);
+		Button *curButton = checkNumButtonHit(_screenButtonList, message._code);
 
 		if (curButton) {
 			message._msgClass = BUTTONUP;
-			message._code = curButton->_buttonId;
-			message._buttonId = curButton->_buttonId;
+			message._code = message._buttonId = curButton->_buttonId;
 		} else
 			message._msgClass = RAWKEY;
 
-		message._qualifier = qualifiers;
+		message._qualifier = _keyPressed.flags;
 		return &message;
 	} else
 		return nullptr;
