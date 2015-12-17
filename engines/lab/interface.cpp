@@ -137,15 +137,14 @@ IntuiMessage *EventManager::getMsg() {
 
 	if (_lastButtonHit) {
 		updateMouse();
-		message._msgClass = BUTTONUP;
+		message._msgClass = kMessageButtonUp;
 		message._code = _lastButtonHit->_buttonId;
-		message._buttonId = _lastButtonHit->_buttonId;
 		message._qualifier = _keyPressed.flags;
 		_lastButtonHit = nullptr;
 		return &message;
 	} else if (_leftClick || _rightClick) {
-		message._qualifier = (_leftClick) ? IEQUALIFIER_LEFTBUTTON : IEQUALIFIER_RIGHTBUTTON;
-		message._msgClass = MOUSEBUTTONS;
+		message._msgClass = (_leftClick) ? kMessageLeftClick : kMessageRightClick;
+		message._qualifier = 0;
 		message._mouseX = (!_vm->_isHiRes) ? (uint16)_mousePos.x / 2 : (uint16)_mousePos.x;
 		message._mouseY = (uint16)_mousePos.y;
 		_leftClick = _rightClick = false;
@@ -154,10 +153,10 @@ IntuiMessage *EventManager::getMsg() {
 		Button *curButton = checkNumButtonHit(_screenButtonList, message._code);
 
 		if (curButton) {
-			message._msgClass = BUTTONUP;
-			message._code = message._buttonId = curButton->_buttonId;
+			message._msgClass = kMessageButtonUp;
+			message._code = curButton->_buttonId;
 		} else
-			message._msgClass = RAWKEY;
+			message._msgClass = kMessageRawKey;
 
 		message._qualifier = _keyPressed.flags;
 		return &message;

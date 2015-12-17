@@ -473,19 +473,17 @@ void LabEngine::processMap(uint16 curRoom) {
 		} else {
 			uint32 msgClass  = msg->_msgClass;
 			uint16 msgCode   = msg->_code;
-			uint16 buttonId  = msg->_buttonId;
-			uint16 qualifier = msg->_qualifier;
 			uint16 mouseX    = msg->_mouseX;
 			uint16 mouseY    = msg->_mouseY;
 
-			if (((msgClass == MOUSEBUTTONS) && (IEQUALIFIER_RIGHTBUTTON & qualifier)) || ((msgClass == RAWKEY) && (msgCode == Common::KEYCODE_ESCAPE)))
+			if ((msgClass == kMessageRightClick) || ((msgClass == kMessageRawKey) && (msgCode == Common::KEYCODE_ESCAPE)))
 				return;
 
-			if (msgClass == BUTTONUP) {
-				if (buttonId == 0) {
+			if (msgClass == kMessageButtonUp) {
+				if (msgCode == 0) {
 					// Quit menu button
 					return;
-				} else if (buttonId == 1) {
+				} else if (msgCode == 1) {
 					// Up arrow
 					uint16 upperFloor = getUpperFloor(curFloor);
 					if (upperFloor != kFloorNone) {
@@ -494,7 +492,7 @@ void LabEngine::processMap(uint16 curRoom) {
 						drawMap(curRoom, curMsg, curFloor, false, false);
 						_graphics->fade(true, 0);
 					}
-				} else if (buttonId == 2) {
+				} else if (msgCode == 2) {
 					// Down arrow
 					uint16 lowerFloor = getLowerFloor(curFloor);
 					if (lowerFloor != kFloorNone) {
@@ -504,7 +502,7 @@ void LabEngine::processMap(uint16 curRoom) {
 						_graphics->fade(true, 0);
 					}
 				}
-			} else if ((msgClass == MOUSEBUTTONS) && (IEQUALIFIER_LEFTBUTTON & qualifier)) {
+			} else if (msgClass == kMessageLeftClick) {
 				if ((curFloor == kFloorLower) && (mouseX >= _utils->mapScaleX(538)) && (mouseY >= _utils->mapScaleY(277))
 					  && (mouseX <= _utils->mapScaleX(633)) && (mouseY <= _utils->mapScaleY(352))
 					  && floorVisited(kFloorSurMaze)) {

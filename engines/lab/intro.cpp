@@ -61,8 +61,8 @@ void Intro::introEatMessages() {
 		if (!msg)
 			return;
 
-		if (((msg->_msgClass == MOUSEBUTTONS) && (IEQUALIFIER_RIGHTBUTTON & msg->_qualifier))
-		 || ((msg->_msgClass == RAWKEY) && (msg->_code == Common::KEYCODE_ESCAPE)))
+		if ((msg->_msgClass == kMessageRightClick)
+		 || ((msg->_msgClass == kMessageRawKey) && (msg->_code == Common::KEYCODE_ESCAPE)))
 			_quitIntro = true;
 	}
 }
@@ -151,11 +151,10 @@ void Intro::doPictText(const char *filename, TextFont *msgFont, bool isScreen) {
 			_vm->waitTOF();
 		} else {
 			uint32 msgClass = msg->_msgClass;
-			uint16 qualifier = msg->_qualifier;
 			uint16 code = msg->_code;
 
-			if (((msgClass == MOUSEBUTTONS) && (IEQUALIFIER_RIGHTBUTTON & qualifier)) ||
-				((msgClass == RAWKEY) && (code == Common::KEYCODE_ESCAPE))) {
+			if ((msgClass == kMessageRightClick) ||
+				((msgClass == kMessageRawKey) && (code == Common::KEYCODE_ESCAPE))) {
 				_quitIntro = true;
 
 				if (isScreen)
@@ -163,8 +162,8 @@ void Intro::doPictText(const char *filename, TextFont *msgFont, bool isScreen) {
 
 				delete[] textBuffer;
 				return;
-			} else if (msgClass == MOUSEBUTTONS) {
-				if (IEQUALIFIER_LEFTBUTTON & qualifier) {
+			} else if ((msgClass == kMessageLeftClick) || (msgClass == kMessageRightClick)) {
+				if (msgClass == kMessageLeftClick) {
 					if (doneFl) {
 						if (isScreen)
 							_vm->_graphics->fade(false, 0);

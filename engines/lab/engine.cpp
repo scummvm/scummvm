@@ -571,7 +571,7 @@ void LabEngine::mainGameLoop() {
 					gotMessage = true;
 					mayShowCrumbIndicator();
 					_graphics->screenUpdate();
-					if (!fromCrumbs(BUTTONUP, code, 0, _event->updateAndGetMousePos(), curInv, curMsg, forceDraw, code, actionMode))
+					if (!fromCrumbs(kMessageButtonUp, code, 0, _event->updateAndGetMousePos(), curInv, curMsg, forceDraw, code, actionMode))
 						break;
 				}
 			}
@@ -586,7 +586,7 @@ void LabEngine::mainGameLoop() {
 			curPos.y  = curMsg->_mouseY;
 
 			_followingCrumbs = false;
-			if (!fromCrumbs(curMsg->_msgClass, curMsg->_code, curMsg->_qualifier, curPos, curInv, curMsg, forceDraw, curMsg->_buttonId, actionMode))
+			if (!fromCrumbs(curMsg->_msgClass, curMsg->_code, curMsg->_qualifier, curPos, curInv, curMsg, forceDraw, curMsg->_code, actionMode))
 				break;
 		}
 	}
@@ -648,25 +648,25 @@ bool LabEngine::fromCrumbs(uint32 tmpClass, uint16 code, uint16 qualifier, Commo
 	if (g_engine->shouldQuit())
 		return false;
 
-	if ((msgClass == RAWKEY) && !_graphics->_longWinInFront) {
+	if ((msgClass == kMessageRawKey) && !_graphics->_longWinInFront) {
 		if (!processKey(curMsg, msgClass, qualifier, curPos, curInv, forceDraw, code))
 			return false;
 	}
 
-	leftButtonClick = (msgClass == MOUSEBUTTONS) && (IEQUALIFIER_LEFTBUTTON & qualifier);
-	rightButtonClick = (msgClass == MOUSEBUTTONS) && (IEQUALIFIER_RIGHTBUTTON & qualifier);
+	leftButtonClick = (msgClass == kMessageLeftClick);
+	rightButtonClick = (msgClass == kMessageRightClick);
 
 	if (_graphics->_longWinInFront) {
-		if ((msgClass == RAWKEY) || (leftButtonClick || rightButtonClick)) {
+		if ((msgClass == kMessageRawKey) || (leftButtonClick || rightButtonClick)) {
 			_graphics->_longWinInFront = false;
 			_graphics->_doNotDrawMessage = false;
 			_graphics->drawPanel();
 			drawRoomMessage(curInv, _closeDataPtr);
 			_graphics->screenUpdate();
 		}
-	} else if ((msgClass == BUTTONUP) && !_alternate) {
+	} else if ((msgClass == kMessageButtonUp) && !_alternate) {
 		processMainButton(wrkClosePtr, curInv, lastInv, oldDirection, forceDraw, buttonId, actionMode);
-	} else if ((msgClass == BUTTONUP) && _alternate) {
+	} else if ((msgClass == kMessageButtonUp) && _alternate) {
 		processAltButton(curInv, lastInv, buttonId, actionMode);
 	} else if (leftButtonClick && _mainDisplay) {
 		interfaceOff();
@@ -780,7 +780,7 @@ bool LabEngine::fromCrumbs(uint32 tmpClass, uint16 code, uint16 qualifier, Commo
 
 		mayShowCrumbIndicator();
 		_graphics->screenUpdate();
-	} else if (msgClass == DELTAMOVE) {
+	} else if (msgClass == kMessageDeltaMove) {
 		ViewData *vptr = getViewData(_roomNum, _direction);
 		CloseDataPtr oldClosePtr = vptr->_closeUps;
 
@@ -816,8 +816,8 @@ bool LabEngine::fromCrumbs(uint32 tmpClass, uint16 code, uint16 qualifier, Commo
 bool LabEngine::processKey(IntuiMessage *curMsg, uint32 &msgClass, uint16 &qualifier, Common::Point &curPos, uint16 &curInv, bool &forceDraw, uint16 code) {
 	if (code == Common::KEYCODE_RETURN) {
 		// The return key
-		msgClass = MOUSEBUTTONS;
-		qualifier = IEQUALIFIER_LEFTBUTTON;
+		msgClass = kMessageLeftClick;
+		qualifier = 0;
 		curPos = _event->getMousePos();
 	} else if ((getPlatform() == Common::kPlatformWindows) && (code == Common::KEYCODE_b)) {
 		// Start bread crumbs
@@ -877,20 +877,20 @@ bool LabEngine::processKey(IntuiMessage *curMsg, uint32 &msgClass, uint16 &quali
 				// Does music load and next animation frame when you've run out of messages
 				_music->updateMusic();
 				_anim->diffNextFrame();
-			} else if (curMsg->_msgClass == RAWKEY) {
+			} else if (curMsg->_msgClass == kMessageRawKey) {
 				if ((curMsg->_code == Common::KEYCODE_y) || (curMsg->_code == Common::KEYCODE_q)) {
 					_anim->stopDiff();
 					return false;
 				} else if (curMsg->_code < 128)
 					break;
-			} else if (curMsg->_msgClass == MOUSEBUTTONS)
+			} else if ((curMsg->_msgClass == kMessageLeftClick) || (curMsg->_msgClass == kMessageRightClick))
 				break;
 		}
 
 		forceDraw = true;
 		interfaceOn();
 	} else if (code == Common::KEYCODE_TAB)
-		msgClass = DELTAMOVE;
+		msgClass = kMessageDeltaMove;
 	else if (code == Common::KEYCODE_ESCAPE)
 		_closeDataPtr = nullptr;
 

@@ -277,10 +277,10 @@ void LabEngine::processJournal() {
 			uint16 qualifier = msg->_qualifier;
 			uint16 buttonId  = msg->_code;
 
-			if (((msgClass == MOUSEBUTTONS) && (IEQUALIFIER_RIGHTBUTTON & qualifier)) ||
-				((msgClass == RAWKEY) && (buttonId == Common::KEYCODE_ESCAPE)))
+			if ((msgClass == kMessageRightClick) ||
+				((msgClass == kMessageRawKey) && (buttonId == Common::KEYCODE_ESCAPE)))
 				return;
-			else if (msgClass == BUTTONUP) {
+			else if (msgClass == kMessageButtonUp) {
 				if (buttonId == 0) {
 					if (_journalPage >= 2) {
 						_journalPage -= 2;
@@ -443,10 +443,10 @@ void LabEngine::processMonitor(char *ntext, TextFont *monitorFont, bool isIntera
 			uint16 mouseY    = msg->_mouseY;
 			uint16 code      = msg->_code;
 
-			if (((msgClass == MOUSEBUTTONS) && (IEQUALIFIER_RIGHTBUTTON & qualifier)) ||
-				  ((msgClass == RAWKEY) && (code == Common::KEYCODE_ESCAPE)))
+			if ((msgClass == kMessageRightClick) ||
+				  ((msgClass == kMessageRawKey) && (code == Common::KEYCODE_ESCAPE)))
 				return;
-			else if ((msgClass == MOUSEBUTTONS) && (IEQUALIFIER_LEFTBUTTON & qualifier)) {
+			else if (msgClass == kMessageLeftClick) {
 				if ((mouseY >= _utils->vgaScaleY(171)) && (mouseY <= _utils->vgaScaleY(200))) {
 					if (mouseX <= _utils->vgaScaleX(31)) {
 						return;
