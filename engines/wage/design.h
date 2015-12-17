@@ -85,6 +85,8 @@ private:
         Patterns &patterns, byte fillType, byte borderThickness, byte borderFillType);
 	void drawPolygon(Graphics::Surface *surface, Common::ReadStream &in, bool mask,
         Patterns &patterns, byte fillType, byte borderThickness, byte borderFillType);
+	void drawOval(Graphics::Surface *surface, Common::ReadStream &in, bool mask,
+		Patterns &patterns, byte fillType, byte borderThickness, byte borderFillType);
 
 	void patternThickRect(Graphics::Surface *surface, Patterns &patterns, Common::Rect &outer,
 		Common::Rect &inner, byte borderFillType, byte fillType);
@@ -92,6 +94,10 @@ private:
 	void patternRect(Graphics::Surface *surface, Patterns &patterns, Common::Rect &rect, byte fillType);
 	void patternThickPolygon(Graphics::Surface *surface, Patterns &patterns, int *xpoints,
 		int *ypoints, int npoints, Common::Rect &bbox, byte borderFillType, byte fillType);
+	void plotEllipseRect(Graphics::Surface *surface, Patterns &patterns,
+		int x0, int y0, int x1, int y1, byte fillType);
+	void patternHLine(Graphics::Surface *surface, Patterns &patterns, byte fillType, int x1, int x2, int y, int x0, int y0);
+
 
 
 };

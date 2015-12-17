@@ -84,10 +84,10 @@ void Design::paint(Graphics::Surface *canvas, Patterns &patterns, bool mask) {
 		case 8:
 			drawRoundRect(canvas, in, mask, patterns, fillType, borderThickness, borderFillType);
 			break;
+			*/
 		case 12:
 			drawOval(canvas, in, mask, patterns, fillType, borderThickness, borderFillType);
 			break;
-*/
 		case 16:
 		case 20:
 			drawPolygon(canvas, in, mask, patterns, fillType, borderThickness, borderFillType);
@@ -238,10 +238,7 @@ void Design::patternThickRect(Graphics::Surface *surface, Patterns &patterns, Co
 
 void Design::patternRect(Graphics::Surface *surface, Patterns &patterns, Common::Rect &rect, byte fillType) {
 	for (int y = rect.top; y < rect.bottom; y++)
-		for (int x = rect.left; x < rect.right; x++)
-			*((byte *)surface->getBasePtr(x, y)) =
-				(patterns[fillType-1][(y - rect.top) % 8] & (1 << (7 - (x - rect.left) % 8))) ?
-					kColorBlack : kColorWhite;
+		patternHLine(surface, patterns, fillType, rect.left, rect.right, y, rect.left, rect.top);
 }
 
 
@@ -286,11 +283,7 @@ void Design::patternThickPolygon(Graphics::Surface *surface, Patterns &patterns,
 				nodeX[i] = MAX<int16>(nodeX[i], bbox.left);
 				nodeX[i + 1] = MIN<int16>(nodeX[i + 1], bbox.right);
 
-				for (int pixelX = nodeX[i]; pixelX < nodeX[i + 1]; pixelX++)
-					if (pixelX >= 0 && pixelX < surface->w && pixelY >= 0 && pixelY < surface->h)
-						*((byte *)surface->getBasePtr(pixelX, pixelY)) =
-							(patterns[fillType - 1][(pixelY - bbox.top) % 8] & (1 << (7 - (pixelX - bbox.left) % 8))) ?
-								kColorBlack : kColorWhite;
+				patternHLine(surface, patterns, fillType, nodeX[i], nodeX[i + 1], pixelY, bbox.left, bbox.top);
 			}
 		}
 	}
@@ -300,5 +293,62 @@ void Design::patternThickPolygon(Graphics::Surface *surface, Patterns &patterns,
 	for (i = 1; i < npoints; i++)
 			surface->drawLine(polyX[i-1], polyY[i-1], polyX[i], polyY[i], kColorBlack);
 }
+
+void Design::drawOval(Graphics::Surface *surface, Common::ReadStream &in, bool mask,
+	Patterns &patterns, byte fillType, byte borderThickness, byte borderFillType) {
+	int16 y1 = in.readSint16BE();
+	int16 x1 = in.readSint16BE();
+	int16 y2 = in.readSint16BE();
+	int16 x2 = in.readSint16BE();
+
+	plotEllipseRect(surface, patterns, x1, y1, x2, y2, borderFillType);
+	plotEllipseRect(surface, patterns, x1+borderThickness, y1+borderThickness, x2-2*borderThickness, y2-2*borderThickness, fillType);
+}
+
+
+void Design::plotEllipseRect(Graphics::Surface *surface, Patterns &patterns,
+			int x0, int y0, int x1, int y1, byte fillType) {
+	int xO = x0, yO = y0;
+	int a = abs(x1-x0), b = abs(y1-y0), b1 = b&1; /* values of diameter */
+	long dx = 4*(1-a)*b*b, dy = 4*(b1+1)*a*a; /* error increment */
+	long err = dx+dy+b1*a*a, e2; /* error of 1.step */
+
+	if (x0 > x1) { x0 = x1; x1 += a; } /* if called with swapped points */
+	if (y0 > y1) y0 = y1; /* .. exchange them */
+	y0 += (b+1)/2; y1 = y0-b1;   /* starting pixel */
+	a *= 8*a; b1 = 8*b*b;
+
+	do {
+		patternHLine(surface, patterns, fillType, x0, x1 + 1, y0, xO, yO);
+		patternHLine(surface, patterns, fillType, x0, x1 + 1, y1, xO, yO);
+		e2 = 2*err;
+		if (e2 <= dy) { y0++; y1--; err += dy += a; }  /* y step */
+		if (e2 >= dx || 2*err > dy) { x0++; x1--; err += dx += b1; } /* x step */
+	} while (x0 <= x1);
+
+	while (y0-y1 < b) {  /* too early stop of flat ellipses a=1 */
+		patternHLine(surface, patterns, fillType, x0-1, x0-1, y0, xO, yO); /* -> finish tip of ellipse */
+		patternHLine(surface, patterns, fillType, x1+1, x1+1, y0, xO, yO);
+		y0++;
+		patternHLine(surface, patterns, fillType, x0-1, x0-1, y1, xO, yO);
+		patternHLine(surface, patterns, fillType, x1+1, x1+1, y1, xO, yO);
+		y1--;
+	}
+}
+
+void Design::patternHLine(Graphics::Surface *surface, Patterns &patterns, byte fillType, int x1, int x2, int y, int x0, int y0) {
+	if (x1 > x2)
+		SWAP(x1, x2);
+
+	if (fillType > patterns.size())
+		return;
+
+	for (int x = x1; x < x2; x++)
+		if (x >= 0 && x < surface->w && y >= 0 && y < surface->h)
+			*((byte *)surface->getBasePtr(x, y)) =
+				(patterns[fillType - 1][(y - y0) % 8] & (1 << (7 - (x - x0) % 8))) ?
+					kColorBlack : kColorWhite;
+}
+
 
 } // End of namespace Wage
