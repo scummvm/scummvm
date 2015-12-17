@@ -123,7 +123,7 @@ bool World::loadWorld(Common::MacResManager *resMan) {
 			scene->_textBounds = readRect(res);
 			scene->_fontType = res->readUint16BE();
 			scene->_fontSize = res->readUint16BE();
-			
+
 			String text;
 			while (res->pos() < res->size()) {
 				char c = res->readByte();
@@ -137,7 +137,7 @@ bool World::loadWorld(Common::MacResManager *resMan) {
 		}
 		addScene(scene);
 	}
-	
+
 	// Load Objects
 	resArray = resMan->getResIDArray(MKTAG('A','O','B','J'));
 	debug(3, "Loading %d objects", resArray.size());
@@ -169,7 +169,7 @@ bool World::loadWorld(Common::MacResManager *resMan) {
 		res = resMan->getResource(MKTAG('A','S','N','D'), *iter);
 		addSound(new Sound(resMan->getResName(MKTAG('A','S','N','D'), *iter), res));
 	}
-	
+
 	if (_soundLibrary1.size() > 0) {
 		loadExternalSounds(_soundLibrary1);
 	}
@@ -187,10 +187,10 @@ bool World::loadWorld(Common::MacResManager *resMan) {
 			byte *pattern = (byte *)malloc(8);
 			for (int j = 0; j < 8; j++) {
 				pattern[j] = res->readByte();
-				_patterns.push_back(pattern);
 			}
+			_patterns.push_back(pattern);
 		}
-		
+
 		delete res;
 	}
 
