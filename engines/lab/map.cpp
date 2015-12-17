@@ -404,14 +404,14 @@ void LabEngine::drawMap(uint16 curRoom, uint16 curMsg, uint16 floorNum, bool fad
 		if (floorVisited(kFloorHedgeMaze))
 			_imgHugeMaze->drawImage(_utils->mapScaleX(524), _utils->mapScaleY(97));
 	} else if (floorNum == kFloorSurMaze) {
-		char *sptr = (char *)_resource->getStaticText(kTextSurmazeMessage).c_str();
 		Common::Rect textRect = Common::Rect(_utils->mapScaleX(360), 0, _utils->mapScaleX(660), _utils->mapScaleY(450));
-		_graphics->flowText(_msgFont, 0, 7, 0, true, true, true, true, textRect, sptr);
+		const char *textPtr = _resource->getStaticText(kTextSurmazeMessage).c_str();
+		_graphics->flowText(_msgFont, 0, 7, 0, true, true, true, true, textRect, textPtr);
 	}
 
 	if ((floorNum >= kFloorLower) && (floorNum <= kFloorCarnival)) {
-		char *sptr = (char *)_resource->getStaticText(floorNum - 1).c_str();
-		_graphics->flowText(_msgFont, 0, 5, 3, true, true, true, true, _utils->vgaRectScale(14, 75, 134, 97), sptr);
+		const char *textPrt = _resource->getStaticText(floorNum - 1).c_str();
+		_graphics->flowText(_msgFont, 0, 5, 3, true, true, true, true, _utils->vgaRectScale(14, 75, 134, 97), textPrt);
 	}
 
 	if (_rooms[curMsg]._roomMsg)
