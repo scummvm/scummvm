@@ -580,13 +580,8 @@ void LabEngine::mainGameLoop() {
 			_graphics->screenUpdate();
 		} else {
 			gotMessage = true;
-
-			Common::Point curPos;
-			curPos.x  = curMsg->_mouseX;
-			curPos.y  = curMsg->_mouseY;
-
 			_followingCrumbs = false;
-			if (!fromCrumbs(curMsg->_msgClass, curMsg->_code, curMsg->_qualifier, curPos, curInv, curMsg, forceDraw, curMsg->_code, actionMode))
+			if (!fromCrumbs(curMsg->_msgClass, curMsg->_code, curMsg->_qualifier, curMsg->_mouse, curInv, curMsg, forceDraw, curMsg->_code, actionMode))
 				break;
 		}
 	}

@@ -473,8 +473,8 @@ void LabEngine::processMap(uint16 curRoom) {
 		} else {
 			uint32 msgClass  = msg->_msgClass;
 			uint16 msgCode   = msg->_code;
-			uint16 mouseX    = msg->_mouseX;
-			uint16 mouseY    = msg->_mouseY;
+			uint16 mouseX    = msg->_mouse.x;
+			uint16 mouseY    = msg->_mouse.y;
 
 			if ((msgClass == kMessageRightClick) || ((msgClass == kMessageRawKey) && (msgCode == Common::KEYCODE_ESCAPE)))
 				return;

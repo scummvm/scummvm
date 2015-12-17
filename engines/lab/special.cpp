@@ -274,7 +274,6 @@ void LabEngine::processJournal() {
 			_music->updateMusic();
 		else {
 			uint32 msgClass  = msg->_msgClass;
-			uint16 qualifier = msg->_qualifier;
 			uint16 buttonId  = msg->_code;
 
 			if ((msgClass == kMessageRightClick) ||
@@ -439,8 +438,8 @@ void LabEngine::processMonitor(char *ntext, TextFont *monitorFont, bool isIntera
 		} else {
 			uint32 msgClass  = msg->_msgClass;
 			uint16 qualifier = msg->_qualifier;
-			uint16 mouseX    = msg->_mouseX;
-			uint16 mouseY    = msg->_mouseY;
+			uint16 mouseX    = msg->_mouse.x;
+			uint16 mouseY    = msg->_mouse.y;
 			uint16 code      = msg->_code;
 
 			if ((msgClass == kMessageRightClick) ||
