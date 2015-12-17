@@ -226,12 +226,16 @@ bool EventManager::haveNextChar() {
 
 void EventManager::processInput() {
 	Common::Event event;
+	Button *curButton = nullptr;
 
 	while (g_system->getEventManager()->pollEvent(event)) {
 		switch (event.type) {
 		case Common::EVENT_LBUTTONDOWN:
 			if (_screenButtonList)
-				_lastButtonHit = checkButtonHit(_screenButtonList, _vm->_isHiRes ? _mousePos : Common::Point(_mousePos.x / 2, _mousePos.y));
+				curButton = checkButtonHit(_screenButtonList, _vm->_isHiRes ? _mousePos : Common::Point(_mousePos.x / 2, _mousePos.y));
+
+			if (curButton)
+				_lastButtonHit = curButton;
 			else
 				_leftClick = true;
 			break;
