@@ -86,6 +86,11 @@ private:
 	void drawPolygon(Graphics::Surface *surface, Common::ReadStream &in, bool mask,
         Patterns &patterns, byte fillType, byte borderThickness, byte borderFillType);
 
+	void patternThickRect(Graphics::Surface *surface, Patterns &patterns, Common::Rect &outer,
+		Common::Rect &inner, byte borderFillType, byte fillType);
+
+	void patternRect(Graphics::Surface *surface, Patterns &patterns, Common::Rect &rect, byte fillType);
+
 };
 
 } // End of namespace Wage

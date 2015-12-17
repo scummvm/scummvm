@@ -64,7 +64,7 @@ Design::~Design() {
 void Design::paint(Graphics::Surface *canvas, Patterns &patterns, bool mask) {
 	Common::MemoryReadStream in(_data, _len);
 
-	if (mask) {
+	if (mask || 1) {
 		//canvas.setColor(Color.WHITE);
 		canvas->fillRect(Common::Rect(0, 0, _bounds->width(), _bounds->height()), kColorWhite);
 		//canvas.setColor(Color.BLACK);
@@ -114,19 +114,19 @@ void Design::paint(Graphics::Surface *canvas, Patterns &patterns, bool mask) {
 
 void Design::drawRect(Graphics::Surface *surface, Common::ReadStream &in, bool mask,
 	Patterns &patterns, byte fillType, byte borderThickness, byte borderFillType) {
-	int16 y = in.readSint16BE();
-	int16 x = in.readSint16BE();
-	int16 height = in.readSint16BE();
-	int16 width = in.readSint16BE();
-	Common::Rect outer(x, y, width, height);
+	int16 y1 = in.readSint16BE();
+	int16 x1 = in.readSint16BE();
+	int16 y2 = in.readSint16BE();
+	int16 x2 = in.readSint16BE();
+	Common::Rect outer(x1, y1, x2, y2);
 
 	if (mask) {
 		surface->fillRect(outer, kColorBlack);
 		return;
 	}
-	//Shape inner = new Rectangle(x+borderThickness, y+borderThickness, width-2*borderThickness, height-2*borderThickness);
-	//paintShape(g2d, patterns, outer, inner, borderFillType, fillType);
-	surface->frameRect(outer, kColorBlack);
+	fillType = 7;
+	Common::Rect inner(x1 + borderThickness, y1 + borderThickness, x2 - borderThickness, y2 - borderThickness);
+	patternThickRect(surface, patterns, outer, inner, borderFillType, fillType);
 }
 
 void Design::drawPolygon(Graphics::Surface *surface, Common::ReadStream &in, bool mask,
@@ -230,5 +230,17 @@ void Design::drawPolygon(Graphics::Surface *surface, Common::ReadStream &in, boo
 	free(ypoints);
 }
 
+void Design::patternThickRect(Graphics::Surface *surface, Patterns &patterns, Common::Rect &outer,
+	Common::Rect &inner, byte borderFillType, byte fillType) {
+	patternRect(surface, patterns, outer, borderFillType);
+	patternRect(surface, patterns, inner, fillType);
+}
+
+void Design::patternRect(Graphics::Surface *surface, Patterns &patterns, Common::Rect &rect, byte fillType) {
+	for (int y = rect.top; y < rect.bottom; y++)
+		for (int x = rect.left; x < rect.right; x++)
+			if (patterns[fillType][(y - rect.top) % 8] & (1 << (7 - (x - rect.left) % 8)))
+				*((byte *)surface->getBasePtr(x, y)) = kColorBlack;
+}
 
 } // End of namespace Wage
