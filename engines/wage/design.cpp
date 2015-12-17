@@ -239,8 +239,9 @@ void Design::patternThickRect(Graphics::Surface *surface, Patterns &patterns, Co
 void Design::patternRect(Graphics::Surface *surface, Patterns &patterns, Common::Rect &rect, byte fillType) {
 	for (int y = rect.top; y < rect.bottom; y++)
 		for (int x = rect.left; x < rect.right; x++)
-			if (patterns[fillType-1][(y - rect.top) % 8] & (1 << (7 - (x - rect.left) % 8)))
-				*((byte *)surface->getBasePtr(x, y)) = kColorBlack;
+			*((byte *)surface->getBasePtr(x, y)) =
+				(patterns[fillType-1][(y - rect.top) % 8] & (1 << (7 - (x - rect.left) % 8))) ?
+					kColorBlack : kColorWhite;
 }
 
 
@@ -259,7 +260,8 @@ void Design::patternThickPolygon(Graphics::Surface *surface, Patterns &patterns,
 
 		for (i = 0; i < npoints; i++) {
 			if ((polyY[i] < pixelY && polyY[j] >= pixelY) || (polyY[j] < pixelY && polyY[i] >= pixelY)) {
-				nodeX[nodes++] = (int)(polyX[i] + (pixelY - polyY[i]) / (polyY[j]-polyY[i]) * (polyX[j] - polyX[i]));
+				nodeX[nodes++] = (int)(polyX[i] + (double)(pixelY - polyY[i]) / (double)(polyY[j]-polyY[i]) *
+														(double)(polyX[j] - polyX[i]) + 0.5);
 			}
 			j = i;
 		}
@@ -286,8 +288,9 @@ void Design::patternThickPolygon(Graphics::Surface *surface, Patterns &patterns,
 
 				for (int pixelX = nodeX[i]; pixelX < nodeX[i + 1]; pixelX++)
 					if (pixelX >= 0 && pixelX < surface->w && pixelY >= 0 && pixelY < surface->h)
-						if (patterns[fillType - 1][(pixelY - bbox.top) % 8] & (1 << (7 - (pixelX - bbox.left) % 8)))
-							*((byte *)surface->getBasePtr(pixelX, pixelY)) = kColorBlack;
+						*((byte *)surface->getBasePtr(pixelX, pixelY)) =
+							(patterns[fillType - 1][(pixelY - bbox.top) % 8] & (1 << (7 - (pixelX - bbox.left) % 8))) ?
+								kColorBlack : kColorWhite;
 			}
 		}
 	}
