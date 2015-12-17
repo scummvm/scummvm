@@ -38,15 +38,13 @@ namespace Lab {
 class LabEngine;
 class Image;
 
-// Defines for the Class variable in IntuiMessage
-#define MOUSEBUTTONS    0x00000008
-#define BUTTONUP		0x00000040
-#define RAWKEY			0x00000400
-#define DELTAMOVE		0x00100000
-
-// Defines for the Qualifier variable in IntuiMessage
-#define IEQUALIFIER_RIGHTBUTTON     0x2000
-#define IEQUALIFIER_LEFTBUTTON      0x4000
+enum MessageClasses {
+	kMessageLeftClick,
+	kMessageRightClick,
+	kMessageButtonUp,
+	kMessageRawKey,
+	kMessageDeltaMove
+};
 
 #define VKEY_UPARROW    273
 #define VKEY_DNARROW    274
@@ -55,7 +53,7 @@ class Image;
 
 struct IntuiMessage {
 	uint32 _msgClass;
-	uint16 _code, _qualifier, _mouseX, _mouseY, _buttonId;
+	uint16 _code, _qualifier, _mouseX, _mouseY;
 	uint32 _seconds, _micros;
 };
 
