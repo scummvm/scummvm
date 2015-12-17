@@ -53,6 +53,7 @@ public:
 	uint16 scaleY(uint16 y);
 	int16 vgaScaleX(int16 x);
 	int16 vgaScaleY(int16 y);
+	Common::Rect vgaRectScale(int16 x1, int16 y1, int16 x2, int16 y2);
 	uint16 svgaCord(uint16 cord);
 	uint16 mapScaleX(uint16 x);
 	uint16 mapScaleY(uint16 y);

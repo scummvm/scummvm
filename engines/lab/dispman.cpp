@@ -188,12 +188,11 @@ int DisplayMan::flowText(
 			bool centerh,          // Whether to center the text horizontally
 			bool centerv,          // Whether to center the text vertically
 			bool output,           // Whether to output any text
-			uint16 x1, uint16 y1,  // Cords
-			uint16 x2, uint16 y2,
+			Common::Rect textRect,	// Cords
 			const char *str) {     // The text itself
 	if (fillBack) {
 		setPen(backPen);
-		rectFill(x1, y1, x2, y2);
+		rectFill(textRect);
 	}
 
 	if (!str)
@@ -203,9 +202,9 @@ int DisplayMan::flowText(
 
 	TextFont *msgFont = font;
 	uint16 fontHeight = textHeight(msgFont) + spacing;
-	uint16 numLines   = (y2 - y1 + 1) / fontHeight;
-	uint16 width      = x2 - x1 + 1;
-	uint16 y          = y1;
+	uint16 numLines   = (textRect.height() + 1) / fontHeight;
+	uint16 width      = textRect.width() + 1;
+	uint16 y          = textRect.top;
 	char lineBuffer[256];
 
 	if (centerv && output) {
@@ -218,14 +217,14 @@ int DisplayMan::flowText(
 		}
 
 		if (actlines <= numLines)
-			y += ((y2 - y1 + 1) - (actlines * fontHeight)) / 2;
+			y += ((textRect.height() + 1) - (actlines * fontHeight)) / 2;
 	}
 
 	int len = 0;
 	while (numLines && str[0]) {
 		getLine(msgFont, lineBuffer, &str, width);
 
-		uint16 x = x1;
+		uint16 x = textRect.left;
 		len += strlen(lineBuffer);
 
 		if (centerh)
@@ -252,12 +251,10 @@ int DisplayMan::flowTextScaled(
 	bool centerX,              // Whether to center the text horizontally
 	bool centerY,              // Whether to center the text vertically
 	bool output,               // Whether to output any text
-	uint16 x1, uint16 y1,      // Cords
-	uint16 x2, uint16 y2,
+	Common::Rect textRect,     // Cords
 	const char *str) {
-	return flowText(font, spacing, penColor, backPen, fillBack, centerX, centerY, output,
-					_vm->_utils->vgaScaleX(x1), _vm->_utils->vgaScaleY(y1),
-					_vm->_utils->vgaScaleX(x2), _vm->_utils->vgaScaleY(y2), str);
+	Common::Rect scaledRect = _vm->_utils->vgaRectScale(textRect.left, textRect.top, textRect.right, textRect.bottom);
+	return flowText(font, spacing, penColor, backPen, fillBack, centerX, centerY, output, scaledRect, str);
 }
 
 /**
@@ -272,8 +269,7 @@ int DisplayMan::flowTextToMem(Image *destIm,
 			bool centerh,          // Whether to center the text horizontally
 			bool centerv,          // Whether to center the text vertically
 			bool output,           // Whether to output any text
-			uint16 x1, uint16 y1,  // Cords
-			uint16 x2, uint16 y2,
+			Common::Rect textRect,  // Cords
 			const char *str) {     // The text itself
 	byte *saveDisplayBuffer = _currentDisplayBuffer;
 	uint32 bytesPerPage = _screenBytesPerPage;
@@ -281,7 +277,7 @@ int DisplayMan::flowTextToMem(Image *destIm,
 	_currentDisplayBuffer = destIm->_imageData;
 	_screenBytesPerPage = (uint32)destIm->_width * (int32)destIm->_height;
 
-	int res = flowText(font, spacing, penColor, backPen, fillBack, centerh, centerv, output, x1, y1, x2, y2, str);
+	int res = flowText(font, spacing, penColor, backPen, fillBack, centerh, centerv, output, textRect, str);
 
 	_screenBytesPerPage = bytesPerPage;
 	_currentDisplayBuffer = saveDisplayBuffer;
@@ -324,7 +320,7 @@ int DisplayMan::longDrawMessage(const char *str) {
 	createBox(198);
 	_vm->_event->mouseShow();
 
-	return flowTextScaled(_vm->_msgFont, 0, 1, 7, false, true, true, true, 6, 155, 313, 195, str);
+	return flowTextScaled(_vm->_msgFont, 0, 1, 7, false, true, true, true, Common::Rect(6, 155, 313, 195), str);
 }
 
 /**
@@ -479,22 +475,22 @@ void DisplayMan::setPen(byte penNum) {
 /**
  * Fills in a rectangle.
  */
-void DisplayMan::rectFill(uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
-	int w = x2 - x1 + 1;
-	int h = y2 - y1 + 1;
+void DisplayMan::rectFill(Common::Rect fillRect) {
+	int width = fillRect.width() + 1;
+	int height = fillRect.height() + 1;
 
-	if (x1 + w > _screenWidth)
-		w = _screenWidth - x1;
+	if (fillRect.left + width > _screenWidth)
+		width = _screenWidth - fillRect.left;
 
-	if (y1 + h > _screenHeight)
-		h = _screenHeight - y1;
+	if (fillRect.top + height > _screenHeight)
+		height = _screenHeight - fillRect.top;
 
-	if ((w > 0) && (h > 0)) {
-		char *d = (char *)getCurrentDrawingBuffer() + y1 * _screenWidth + x1;
+	if ((width > 0) && (height > 0)) {
+		char *d = (char *)getCurrentDrawingBuffer() + fillRect.top * _screenWidth + fillRect.left;
 
-		while (h-- > 0) {
+		while (height-- > 0) {
 			char *dd = d;
-			int ww = w;
+			int ww = width;
 
 			while (ww-- > 0) {
 				*dd++ = _curPen;
@@ -505,8 +501,12 @@ void DisplayMan::rectFill(uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
 	}
 }
 
+void DisplayMan::rectFill(uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
+	rectFill(Common::Rect(x1, y1, x2, y2));
+}
+
 void DisplayMan::rectFillScaled(uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
-	rectFill(_vm->_utils->vgaScaleX(x1), _vm->_utils->vgaScaleY(y1), _vm->_utils->vgaScaleX(x2), _vm->_utils->vgaScaleY(y2));
+	rectFill(_vm->_utils->vgaRectScale(x1, y1, x2, y2));
 }
 
 /**

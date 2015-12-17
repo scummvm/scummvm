@@ -405,16 +405,17 @@ void LabEngine::drawMap(uint16 curRoom, uint16 curMsg, uint16 floorNum, bool fad
 			_imgHugeMaze->drawImage(_utils->mapScaleX(524), _utils->mapScaleY(97));
 	} else if (floorNum == kFloorSurMaze) {
 		char *sptr = (char *)_resource->getStaticText(kTextSurmazeMessage).c_str();
-		_graphics->flowText(_msgFont, 0, 7, 0, true, true, true, true, _utils->mapScaleX(360), 0, _utils->mapScaleX(660), _utils->mapScaleY(450), sptr);
+		Common::Rect textRect = Common::Rect(_utils->mapScaleX(360), 0, _utils->mapScaleX(660), _utils->mapScaleY(450));
+		_graphics->flowText(_msgFont, 0, 7, 0, true, true, true, true, textRect, sptr);
 	}
 
 	if ((floorNum >= kFloorLower) && (floorNum <= kFloorCarnival)) {
 		char *sptr = (char *)_resource->getStaticText(floorNum - 1).c_str();
-		_graphics->flowTextScaled(_msgFont, 0, 5, 3, true, true, true, true, 14, 75, 134, 97, sptr);
+		_graphics->flowTextScaled(_msgFont, 0, 5, 3, true, true, true, true, Common::Rect(14, 75, 134, 97), sptr);
 	}
 
 	if (_rooms[curMsg]._roomMsg)
-		_graphics->flowTextScaled(_msgFont, 0, 5, 3, true, true, true, true, 14, 148, 134, 186, _rooms[curMsg]._roomMsg);
+		_graphics->flowTextScaled(_msgFont, 0, 5, 3, true, true, true, true, Common::Rect(14, 148, 134, 186), _rooms[curMsg]._roomMsg);
 
 	if (fadeIn)
 		_graphics->fade(true, 0);
@@ -558,7 +559,7 @@ void LabEngine::processMap(uint16 curRoom) {
 							_event->mouseHide();
 							_graphics->setPen(3);
 							_graphics->rectFillScaled(13, 148, 135, 186);
-							_graphics->flowTextScaled(_msgFont, 0, 5, 3, true, true, true, true, 14, 148, 134, 186, sptr);
+							_graphics->flowTextScaled(_msgFont, 0, 5, 3, true, true, true, true, Common::Rect(14, 148, 134, 186), sptr);
 
 							if (_maps[oldMsg]._pageNumber == curFloor)
 								drawRoomMap(oldMsg, (bool)(oldMsg == curRoom));

@@ -92,6 +92,7 @@ public:
 	void drawMessage(const char *str);
 	void setPen(byte pennum);
 	void rectFill(uint16 x1, uint16 y1, uint16 x2, uint16 y2);
+	void rectFill(Common::Rect fillRect);
 	void rectFillScaled(uint16 x1, uint16 y1, uint16 x2, uint16 y2);
 	// Window text stuff
 	int flowText(TextFont *font,		// the TextAttr pointer
@@ -102,8 +103,7 @@ public:
 				bool centerh,			// Whether to center the text horizontally
 				bool centerv,			// Whether to center the text vertically
 				bool output,			// Whether to output any text
-				uint16 x1, uint16 y1,	// Cords
-				uint16 x2, uint16 y2,
+				Common::Rect textRect,	// Cords
 				const char *text);		// The text itself
 
 	int flowTextScaled(
@@ -115,8 +115,7 @@ public:
 				bool centerh,			// Whether to center the text horizontally
 				bool centerv,			// Whether to center the text vertically
 				bool output,			// Whether to output any text
-				uint16 x1, uint16 y1,	// Cords
-				uint16 x2, uint16 y2,
+				Common::Rect textRect,	// Cords
 				const char *text);		// The text itself
 
 	int flowTextToMem(Image *destIm,
@@ -128,8 +127,7 @@ public:
 				bool centerh,			// Whether to center the text horizontally
 				bool centerv,			// Whether to center the text vertically
 				bool output,			// Whether to output any text
-				uint16 x1, uint16 y1,	// Cords
-				uint16 x2, uint16 y2,
+				Common::Rect textRect,	// Cords
 				const char *str);		// The text itself
 
 	void drawHLine(uint16 x, uint16 y1, uint16 y2);

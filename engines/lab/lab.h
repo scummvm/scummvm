@@ -205,7 +205,7 @@ private:
 	void doJournal();
 	bool doMainView(CloseDataPtr *closePtrList);
 	void doMap(uint16 curRoom);
-	void doMonitor(char *background, char *textfile, bool isinteractive, uint16 x1, uint16 y1, uint16 x2, uint16 y2);
+	void doMonitor(char *background, char *textfile, bool isinteractive, Common::Rect textRect);
 	void doNotes();
 	bool doOperateRuleSub(int16 itemNum, int16 roomNum, CloseDataPtr closePtr, CloseDataPtr *setCloseList, bool allowDefaults);
 	bool doOperateRule(Common::Point pos, int16 ItemNum, CloseDataPtr *closePtrList);
@@ -216,7 +216,7 @@ private:
 	void drawJournal(uint16 wipenum, bool needFade);
 	void drawJournalText();
 	void drawMap(uint16 curRoom, uint16 curMsg, uint16 floorNum, bool fadeOut, bool fadeIn);
-	void drawMonText(char *text, TextFont *monitorFont, uint16 x1, uint16 y1, uint16 x2, uint16 y2, bool isinteractive);
+	void drawMonText(char *text, TextFont *monitorFont, Common::Rect textRect, bool isinteractive);
 	void drawRoomMap(uint16 curRoom, bool drawMarkFl);
 	void drawRoomMessage(uint16 curInv, CloseDataPtr closePtr);
 	void drawStaticMessage(byte index);
@@ -245,7 +245,7 @@ private:
 	uint16 processArrow(uint16 curDirection, uint16 arrow);
 	void processJournal();
 	void processMap(uint16 curRoom);
-	void processMonitor(char *ntext, TextFont *monitorFont, bool isInteractive, uint16 x1, uint16 y1, uint16 x2, uint16 y2);
+	void processMonitor(char *ntext, TextFont *monitorFont, bool isInteractive, Common::Rect textRect);
 	Common::Rect roomCoords(uint16 curRoom);
 	bool saveRestoreGame();
 	void setCurrentClose(Common::Point pos, CloseDataPtr *closePtrList, bool useAbsoluteCoords);
