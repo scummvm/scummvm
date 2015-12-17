@@ -69,8 +69,8 @@ private:
 	bool _donePal;
 	uint16 _frameNum;
 	bool _playOnce;
-	byte *_diffFile;
-	byte *_diffFileStart;
+	Common::File *_diffFile;
+	uint32 _diffFileStart;
 	uint32 _size;
 	bool _stopPlayingEnd;
 	uint16 _sampleSpeed;
@@ -88,7 +88,7 @@ public:
 	bool _noPalChange;   // Don't change the palette.
 	BitMap _rawDiffBM;
 
-	void readDiff(byte *buffer, bool playOnce, bool onlyDiffData = false);
+	void readDiff(Common::File *diffFile, bool playOnce, bool onlyDiffData = false);
 	void diffNextFrame(bool onlyDiffData = false);
 	void stopDiff();
 	void stopDiffEnd();

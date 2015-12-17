@@ -38,11 +38,11 @@ private:
 	LabEngine *_vm;
 	uint16 _dataBytesPerRow;
 
-	void unDiffByteByte(byte *dest, byte *diff);
-	void unDiffByteWord(uint16 *dest, uint16 *diff);
-	void VUnDiffByteByte(byte *dest, byte *diff, uint16 bytesPerRow);
-	void VUnDiffByteWord(uint16 *dest, uint16 *diff, uint16 bytesPerRow);
-	void VUnDiffByteLong(uint32 *dest, uint32 *diff, uint16 bytesPerRow);
+	void unDiffByteByte(byte *dest, Common::File *sourceFile);
+	void unDiffByteWord(uint16 *dest, Common::File *sourceFile);
+	void VUnDiffByteByte(byte *dest, Common::File *sourceFile, uint16 bytesPerRow);
+	void VUnDiffByteWord(uint16 *dest, Common::File *sourceFile, uint16 bytesPerRow);
+	void VUnDiffByteLong(uint32 *dest, Common::File *sourceFile, uint16 bytesPerRow);
 
 public:
 	Utils(LabEngine *vm);
@@ -58,9 +58,9 @@ public:
 	uint16 mapScaleX(uint16 x);
 	uint16 mapScaleY(uint16 y);
 	Common::Point vgaUnscale(Common::Point pos);
-	void unDiff(byte *newBuf, byte *oldBuf, byte *diffData, uint16 bytesPerRow, bool isV);
-	void runLengthDecode(byte *dest, byte *source);
-	void VRunLengthDecode(byte *dest, byte *source, uint16 bytesPerRow);
+	void unDiff(byte *newBuf, byte *oldBuf, Common::File *sourceFile, uint16 bytesPerRow, bool isV);
+	void runLengthDecode(byte *dest, Common::File *sourceFile);
+	void VRunLengthDecode(byte *dest, Common::File *sourceFile, uint16 bytesPerRow);
 	void setBytesPerRow(int num);
 	uint16 getRandom(uint16 max);
 };

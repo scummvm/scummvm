@@ -85,7 +85,7 @@ public:
 	void freeMusic();
 	bool initMusic(const char *filename);
 	bool isSoundEffectActive() const;
-	void playSoundEffect(uint16 sampleSpeed, uint32 length, void *data);
+	void playSoundEffect(uint16 sampleSpeed, uint32 length, Common::File *dataFile);
 	bool readMusic(const char *filename, bool waitTillFinished);
 	void resetMusic();
 	void resumeBackMusic();

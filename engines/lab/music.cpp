@@ -102,7 +102,7 @@ uint16 Music::getPlayingBufferCount() {
 	return (_queuingAudioStream) ? _queuingAudioStream->numQueuedStreams() : 0;
 }
 
-void Music::playSoundEffect(uint16 sampleSpeed, uint32 length, void *data) {
+void Music::playSoundEffect(uint16 sampleSpeed, uint32 length, Common::File *dataFile) {
 	pauseBackMusic();
 	stopSoundEffect();
 
@@ -115,7 +115,12 @@ void Music::playSoundEffect(uint16 sampleSpeed, uint32 length, void *data) {
 	else
 		soundFlags |= Audio::FLAG_UNSIGNED;
 
-	Audio::SeekableAudioStream *audioStream = Audio::makeRawStream((const byte *)data, length, sampleSpeed, soundFlags, DisposeAfterUse::NO);
+	// NOTE: We need to use malloc(), cause this will be freed with free()
+	// by the music code
+	byte *soundData = (byte *)malloc(length);
+	dataFile->read(soundData, length);
+
+	Audio::SeekableAudioStream *audioStream = Audio::makeRawStream((const byte *)soundData, length, sampleSpeed, soundFlags, DisposeAfterUse::NO);
 	uint loops = (_loopSoundEffect) ? 0 : 1;
 	Audio::LoopingAudioStream *loopingAudioStream = new Audio::LoopingAudioStream(audioStream, loops);
 	_vm->_mixer->playStream(Audio::Mixer::kSFXSoundType, &_sfxHandle, loopingAudioStream);
@@ -352,11 +357,7 @@ void Music::readSound(bool waitTillFinished, Common::File *file) {
 
 			uint16 sampleRate = file->readUint16LE();
 			file->skip(2);
-			// NOTE: We need to use malloc(), cause this will be freed with free()
-			// by the music code
-			byte *soundData = (byte *)malloc(soundSize);
-			file->read(soundData, soundSize);
-			playSoundEffect(sampleRate, soundSize, soundData);
+			playSoundEffect(sampleRate, soundSize, file);
 		} else if (soundTag == 65535L) {
 			if (waitTillFinished) {
 				while (isSoundEffectActive()) {
