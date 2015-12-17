@@ -145,8 +145,9 @@ IntuiMessage *EventManager::getMsg() {
 	} else if (_leftClick || _rightClick) {
 		message._msgClass = (_leftClick) ? kMessageLeftClick : kMessageRightClick;
 		message._qualifier = 0;
-		message._mouseX = (!_vm->_isHiRes) ? (uint16)_mousePos.x / 2 : (uint16)_mousePos.x;
-		message._mouseY = (uint16)_mousePos.y;
+		message._mouse = _mousePos;
+		if (!_vm->_isHiRes)
+			message._mouse.x /= 2;
 		_leftClick = _rightClick = false;
 		return &message;
 	} else if (keyPress(&message._code)) {

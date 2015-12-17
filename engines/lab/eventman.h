@@ -53,8 +53,8 @@ enum MessageClasses {
 
 struct IntuiMessage {
 	uint32 _msgClass;
-	uint16 _code, _qualifier, _mouseX, _mouseY;
-	uint32 _seconds, _micros;
+	uint16 _code, _qualifier;
+	Common::Point _mouse;
 };
 
 
