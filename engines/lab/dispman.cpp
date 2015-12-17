@@ -242,21 +242,6 @@ int DisplayMan::flowText(
 	return len;
 }
 
-int DisplayMan::flowTextScaled(
-	TextFont *font,            // the TextAttr pointer
-	int16 spacing,             // How much vertical spacing between the lines
-	byte penColor,             // pen number to use for text
-	byte backPen,              // the background color
-	bool fillBack,             // Whether to fill the background
-	bool centerX,              // Whether to center the text horizontally
-	bool centerY,              // Whether to center the text vertically
-	bool output,               // Whether to output any text
-	Common::Rect textRect,     // Cords
-	const char *str) {
-	Common::Rect scaledRect = _vm->_utils->vgaRectScale(textRect.left, textRect.top, textRect.right, textRect.bottom);
-	return flowText(font, spacing, penColor, backPen, fillBack, centerX, centerY, output, scaledRect, str);
-}
-
 /**
  * Calls flowText, but flows it to memory.  Same restrictions as flowText.
  */
@@ -320,7 +305,7 @@ int DisplayMan::longDrawMessage(const char *str) {
 	createBox(198);
 	_vm->_event->mouseShow();
 
-	return flowTextScaled(_vm->_msgFont, 0, 1, 7, false, true, true, true, Common::Rect(6, 155, 313, 195), str);
+	return flowText(_vm->_msgFont, 0, 1, 7, false, true, true, true, _vm->_utils->vgaRectScale(6, 155, 313, 195), str);
 }
 
 /**

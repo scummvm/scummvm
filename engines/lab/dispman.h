@@ -106,18 +106,6 @@ public:
 				Common::Rect textRect,	// Cords
 				const char *text);		// The text itself
 
-	int flowTextScaled(
-				TextFont *font,			// the TextAttr pointer
-				int16 spacing,			// How much vertical spacing between the lines
-				byte penColor,			// pen number to use for text
-				byte backPen,			// the background color
-				bool fillBack,			// Whether to fill the background
-				bool centerh,			// Whether to center the text horizontally
-				bool centerv,			// Whether to center the text vertically
-				bool output,			// Whether to output any text
-				Common::Rect textRect,	// Cords
-				const char *text);		// The text itself
-
 	int flowTextToMem(Image *destIm,
 				TextFont *font,			// the TextAttr pointer
 				int16 spacing,			// How much vertical spacing between the lines

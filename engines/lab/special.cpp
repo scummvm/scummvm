@@ -95,10 +95,10 @@ void LabEngine::doWestPaper() {
 
 	paperFont = _resource->getFont("P:Note.fon");
 	paperText = _resource->getText("Lab:Rooms/Col1");
-	charsPrinted = _graphics->flowTextScaled(paperFont, -4, 0, 0, false, false, false, true, Common::Rect(45, y, 158, 148), paperText);
+	charsPrinted = _graphics->flowText(paperFont, -4, 0, 0, false, false, false, true, _utils->vgaRectScale(45, y, 158, 148), paperText);
 	delete[] paperText;
 	paperText = _resource->getText("Lab:Rooms/Col2");
-	charsPrinted = _graphics->flowTextScaled(paperFont, -4, 0, 0, false, false, false, true, Common::Rect(162, y, 275, 148), paperText);
+	charsPrinted = _graphics->flowText(paperFont, -4, 0, 0, false, false, false, true, _utils->vgaRectScale(162, y, 275, 148), paperText);
 	delete[] paperText;
 	_graphics->closeFont(paperFont);
 
@@ -172,7 +172,7 @@ void LabEngine::drawJournalText() {
 	while (drawingToPage < _journalPage) {
 		_music->updateMusic();
 		curText = (char *)(_journalText + charsDrawn);
-		charsDrawn += _graphics->flowTextScaled(_journalFont, -2, 2, 0, false, false, false, false, Common::Rect(52, 32, 152, 148), curText);
+		charsDrawn += _graphics->flowText(_journalFont, -2, 2, 0, false, false, false, false, _utils->vgaRectScale(52, 32, 152, 148), curText);
 
 		_lastPage = (*curText == 0);
 
