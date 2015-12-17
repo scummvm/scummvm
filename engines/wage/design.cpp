@@ -142,6 +142,7 @@ void Design::drawPolygon(Graphics::Surface *surface, Common::ReadStream &in, boo
 	int16 bx1 = in.readSint16BE();
 	int16 by2 = in.readSint16BE();
 	int16 bx2 = in.readSint16BE();
+	Common::Rect bbox(bx1, by1, bx2, by2);
 	warning("Bbox: %d, %d, %d, %d", bx1, by1, bx2, by2);
 
 	numBytes -= 8;
@@ -221,9 +222,8 @@ void Design::drawPolygon(Graphics::Surface *surface, Common::ReadStream &in, boo
 		//if (borderThickness != 1)
 		surface->setStroke(new BasicStroke(borderThickness - 0.5f, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_BEVEL));
 */
-		for (int i = 1; i < npoints; i++)
-			surface->drawLine(xpoints[i-1], ypoints[i-1], xpoints[i], ypoints[i], kColorBlack);
-//		surface->setStroke(oldStroke);
+	patternThickPolygon(surface, patterns, xpoints, ypoints, npoints, bbox, borderFillType, fillType);
+	//	surface->setStroke(oldStroke);
 //	}
 
 	free(xpoints);
@@ -239,8 +239,63 @@ void Design::patternThickRect(Graphics::Surface *surface, Patterns &patterns, Co
 void Design::patternRect(Graphics::Surface *surface, Patterns &patterns, Common::Rect &rect, byte fillType) {
 	for (int y = rect.top; y < rect.bottom; y++)
 		for (int x = rect.left; x < rect.right; x++)
-			if (patterns[fillType][(y - rect.top) % 8] & (1 << (7 - (x - rect.left) % 8)))
+			if (patterns[fillType-1][(y - rect.top) % 8] & (1 << (7 - (x - rect.left) % 8)))
 				*((byte *)surface->getBasePtr(x, y)) = kColorBlack;
+}
+
+
+// Based on public-domain code by Darel Rex Finley, 2007
+// http://alienryderflex.com/polygon_fill/
+void Design::patternThickPolygon(Graphics::Surface *surface, Patterns &patterns, int *polyX,
+	int *polyY, int npoints, Common::Rect &bbox, byte borderFillType, byte fillType) {
+	int *nodeX = (int *)calloc(npoints, sizeof(int));
+	int i, j;
+
+	//  Loop through the rows of the image.
+	for (int pixelY = bbox.top; pixelY < bbox.bottom; pixelY++) {
+		//  Build a list of nodes.
+		int nodes = 0;
+		j = npoints - 1;
+
+		for (i = 0; i < npoints; i++) {
+			if ((polyY[i] < pixelY && polyY[j] >= pixelY) || (polyY[j] < pixelY && polyY[i] >= pixelY)) {
+				nodeX[nodes++] = (int)(polyX[i] + (pixelY - polyY[i]) / (polyY[j]-polyY[i]) * (polyX[j] - polyX[i]));
+			}
+			j = i;
+		}
+
+		//  Sort the nodes, via a simple “Bubble” sort.
+		i = 0;
+		while (i < nodes - 1) {
+			if (nodeX[i] > nodeX[i + 1]) {
+				SWAP(nodeX[i], nodeX[i + 1]);
+				if (i)
+					i--;
+			} else {
+				i++;
+			}
+		}
+
+		//  Fill the pixels between node pairs.
+		for (i = 0; i < nodes; i += 2) {
+			if (nodeX[i  ] >= bbox.right)
+				break;
+			if (nodeX[i + 1] > bbox.left) {
+				nodeX[i] = MAX<int16>(nodeX[i], bbox.left);
+				nodeX[i + 1] = MIN<int16>(nodeX[i + 1], bbox.right);
+
+				for (int pixelX = nodeX[i]; pixelX < nodeX[i + 1]; pixelX++)
+					if (pixelX >= 0 && pixelX < surface->w && pixelY >= 0 && pixelY < surface->h)
+						if (patterns[fillType - 1][(pixelY - bbox.top) % 8] & (1 << (7 - (pixelX - bbox.left) % 8)))
+							*((byte *)surface->getBasePtr(pixelX, pixelY)) = kColorBlack;
+			}
+		}
+	}
+
+	free(nodeX);
+
+	for (i = 1; i < npoints; i++)
+			surface->drawLine(polyX[i-1], polyY[i-1], polyX[i], polyY[i], kColorBlack);
 }
 
 } // End of namespace Wage

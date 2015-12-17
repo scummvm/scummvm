@@ -90,6 +90,9 @@ private:
 		Common::Rect &inner, byte borderFillType, byte fillType);
 
 	void patternRect(Graphics::Surface *surface, Patterns &patterns, Common::Rect &rect, byte fillType);
+	void patternThickPolygon(Graphics::Surface *surface, Patterns &patterns, int *xpoints,
+		int *ypoints, int npoints, Common::Rect &bbox, byte borderFillType, byte fillType);
+
 
 };
 
