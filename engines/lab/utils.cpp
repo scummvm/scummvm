@@ -94,6 +94,10 @@ int16 Utils::vgaScaleY(int16 y) {
 		return y;
 }
 
+Common::Rect Utils::vgaRectScale(int16 x1, int16 y1, int16 x2, int16 y2) {
+	return Common::Rect(vgaScaleX(x1), vgaScaleY(y1), vgaScaleX(x2), vgaScaleY(y2));
+}
+
 uint16 Utils::svgaCord(uint16 cord) {
 	if (_vm->_isHiRes)
 		return cord;

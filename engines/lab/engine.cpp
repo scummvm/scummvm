@@ -198,46 +198,55 @@ bool LabEngine::doCloseUp(CloseDataPtr closePtr) {
 	if (!closePtr)
 		return false;
 
-	int monltmargin, monrtmargin, montopmargin, lutertmargin;
+	int luteRight;
+	Common::Rect textRect;
 
 	if (getPlatform() != Common::kPlatformWindows) {
-		monltmargin = 0;
-		monrtmargin = 319;
-		montopmargin = 0;
-		lutertmargin = 124;
+		textRect.left = 0;
+		textRect.right = 319;
+		textRect.top = 0;
+		textRect.bottom = 165;
+		luteRight = 124;
 	} else {
-		monltmargin = 2;
-		monrtmargin = 317;
-		montopmargin = 2;
-		lutertmargin = 128;
+		textRect.left = 2;
+		textRect.right = 317;
+		textRect.top = 2;
+		textRect.bottom = 165;
+		luteRight = 128;
 	}
 
 	switch (closePtr->_closeUpType) {
 	case kMonitorMuseum:
 	case kMonitorLibrary:
 	case kMonitorWindow:
-		doMonitor(closePtr->_graphicName, closePtr->_message, false, monltmargin, montopmargin, monrtmargin, 165);
+		doMonitor(closePtr->_graphicName, closePtr->_message, false, textRect);
 		break;
 	case kMonitorGramophone:
-		doMonitor(closePtr->_graphicName, closePtr->_message, false, monltmargin, montopmargin, 171, 165);
+		textRect.right = 171;
+		doMonitor(closePtr->_graphicName, closePtr->_message, false, textRect);
 		break;
 	case kMonitorUnicycle:
-		doMonitor(closePtr->_graphicName, closePtr->_message, false, 100, montopmargin, monrtmargin, 165);
+		textRect.left = 100;
+		doMonitor(closePtr->_graphicName, closePtr->_message, false, textRect);
 		break;
 	case kMonitorStatue:
-		doMonitor(closePtr->_graphicName, closePtr->_message, false, 117, montopmargin, monrtmargin, 165);
+		textRect.left = 117;
+		doMonitor(closePtr->_graphicName, closePtr->_message, false, textRect);
 		break;
 	case kMonitorTalisman:
-		doMonitor(closePtr->_graphicName, closePtr->_message, false, monltmargin, montopmargin, 184, 165);
+		textRect.right = 184;
+		doMonitor(closePtr->_graphicName, closePtr->_message, false, textRect);
 		break;
 	case kMonitorLute:
-		doMonitor(closePtr->_graphicName, closePtr->_message, false, monltmargin, montopmargin, lutertmargin, 165);
+		textRect.right = luteRight;
+		doMonitor(closePtr->_graphicName, closePtr->_message, false, textRect);
 		break;
 	case kMonitorClock:
-		doMonitor(closePtr->_graphicName, closePtr->_message, false, monltmargin, montopmargin, 206, 165);
+		textRect.right = 206;
+		doMonitor(closePtr->_graphicName, closePtr->_message, false, textRect);
 		break;
 	case kMonitorTerminal:
-		doMonitor(closePtr->_graphicName, closePtr->_message, true, monltmargin, montopmargin, monrtmargin, 165);
+		doMonitor(closePtr->_graphicName, closePtr->_message, true, textRect);
 		break;
 	default:
 		return false;
