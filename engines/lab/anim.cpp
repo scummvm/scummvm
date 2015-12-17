@@ -56,7 +56,7 @@ Anim::Anim(LabEngine *vm) : _vm(vm) {
 	_frameNum = 0;
 	_playOnce = false;
 	_diffFile = nullptr;
-	_diffFileStart = nullptr;
+	_diffFileStart = 0;
 	_size = 0;
 	_rawDiffBM._bytesPerRow = 0;
 	_rawDiffBM._drawOnScreen = false;
@@ -119,7 +119,7 @@ void Anim::diffNextFrame(bool onlyDiffData) {
 			_frameNum++;
 
 			if ((_frameNum == 1) && (_continuous || !_playOnce))
-				_diffFileStart = _diffFile;
+				_diffFileStart = _diffFile->pos();
 
 			_isAnim = (_frameNum >= 3) && (!_playOnce);
 			_curBit = 0;
@@ -132,55 +132,52 @@ void Anim::diffNextFrame(bool onlyDiffData) {
 		}
 
 		_vm->_music->updateMusic();
-		_header = READ_LE_UINT32(_diffFile);
-		_diffFile += 4;
+		_header = _diffFile->readUint32LE();
+		_size = _diffFile->readUint32LE();
 
-		_size = READ_LE_UINT32(_diffFile);
-		_diffFile += 4;
+		uint32 curPos = 0;
 
 		switch (_header) {
 		case 8:
-			memcpy(_diffPalette, _diffFile, _size);
-			_diffFile += _size;
+			_diffFile->read(_diffPalette, _size);
 			_isPal = true;
 			break;
 
 		case 10:
-			_rawDiffBM._planes[_curBit] = _diffFile;
-
-			if (onlyDiffData) {
-				_diffFile += _size;
-			} else {
-				memcpy(DrawBitMap->_planes[_curBit], _diffFile, _size);
-				_diffFile += _size;
-			}
+			if (onlyDiffData)
+				warning("Boom");
+			_diffFile->read(DrawBitMap->_planes[_curBit], _size);
 			_curBit++;
 			break;
 
 		case 11:
-			_diffFile += 4;
+			curPos = _diffFile->pos();
+			_diffFile->skip(4);
 			_vm->_utils->runLengthDecode(DrawBitMap->_planes[_curBit], _diffFile);
 			_curBit++;
-			_diffFile += _size - 4;
+			_diffFile->seek(curPos + _size, SEEK_SET);
 			break;
 
 		case 12:
-			_diffFile += 4;
+			curPos = _diffFile->pos();
+			_diffFile->skip(4);
 			_vm->_utils->VRunLengthDecode(DrawBitMap->_planes[_curBit], _diffFile, DrawBitMap->_bytesPerRow);
 			_curBit++;
-			_diffFile += _size - 4;
+			_diffFile->seek(curPos + _size, SEEK_SET);
 			break;
 
 		case 20:
+			curPos = _diffFile->pos();
 			_vm->_utils->unDiff(DrawBitMap->_planes[_curBit], _vm->_graphics->_dispBitMap->_planes[_curBit], _diffFile, DrawBitMap->_bytesPerRow, false);
 			_curBit++;
-			_diffFile += _size;
+			_diffFile->seek(curPos + _size, SEEK_SET);
 			break;
 
 		case 21:
+			curPos = _diffFile->pos();
 			_vm->_utils->unDiff(DrawBitMap->_planes[_curBit], _vm->_graphics->_dispBitMap->_planes[_curBit], _diffFile, DrawBitMap->_bytesPerRow, true);
 			_curBit++;
-			_diffFile += _size;
+			_diffFile->seek(curPos + _size, SEEK_SET);
 			break;
 
 		case 25:
@@ -202,12 +199,11 @@ void Anim::diffNextFrame(bool onlyDiffData) {
 
 			_size -= 8;
 
-			_diffFile += 4;
-			_sampleSpeed = READ_LE_UINT16(_diffFile);
-			_diffFile += 4;
+			_diffFile->skip(4);
+			_sampleSpeed = _diffFile->readUint16LE();
+			_diffFile->skip(2);
 
 			_vm->_music->playSoundEffect(_sampleSpeed, _size, _diffFile);
-			_diffFile += _size;
 			break;
 
 		case 65535:
@@ -235,11 +231,11 @@ void Anim::diffNextFrame(bool onlyDiffData) {
 
 			// Random frame number so it never gets back to 2
 			_frameNum = 4;
-			_diffFile = _diffFileStart;
+			_diffFile->seek(_diffFileStart, SEEK_SET);
 			break;
 
 		default:
-			_diffFile += _size;
+			_diffFile->skip(_size);
 			break;
 		}
 	}
@@ -270,7 +266,7 @@ void Anim::stopDiffEnd() {
 /**
  * Reads in a DIFF file.
  */
-void Anim::readDiff(byte *buffer, bool playOnce, bool onlyDiffData) {
+void Anim::readDiff(Common::File *diffFile, bool playOnce, bool onlyDiffData) {
 	_playOnce = playOnce;
 	_delayMicros = 0;
 	_header = 0;
@@ -286,37 +282,27 @@ void Anim::readDiff(byte *buffer, bool playOnce, bool onlyDiffData) {
 		_vm->_graphics->blackScreen();
 	}
 
-	_diffFile = _diffFileStart = buffer;
+	_diffFile = diffFile;
 
 	_continuous = false;
-	uint32 signature = READ_BE_UINT32(_diffFile);
-	_diffFile += 4;
-
-	_header = READ_LE_UINT32(_diffFile);
-	_diffFile += 4;
+	uint32 signature = _diffFile->readUint32BE();
+	_header = _diffFile->readUint32LE();
 
 	if ((signature != MKTAG('D', 'I', 'F', 'F')) || (_header != 1219009121L)) {
 		_isPlaying = false;
 		return;
 	}
 
-	_header = READ_LE_UINT32(_diffFile);
-	_diffFile += 4;
-
-	_size = READ_LE_UINT32(_diffFile);
-	_diffFile += 4;
+	_header = _diffFile->readUint32LE();
+	_size = _diffFile->readUint32LE();
 
 	if (_header == 0) {
 		// sizeof(headerdata) != 18, but the padding might be at the end
-		_headerdata._version = READ_LE_UINT16(_diffFile);
-		_diffFile += 2;
-		_headerdata._width = READ_LE_UINT16(_diffFile);
-		_diffFile += 2;
-		_headerdata._height = READ_LE_UINT16(_diffFile);
-		_diffFile += 2;
-		_headerdata._depth = *_diffFile;
-		_diffFile++;
-		_headerdata._fps = *_diffFile;
+		_headerdata._version = _diffFile->readUint16LE();
+		_headerdata._width = _diffFile->readUint16LE();
+		_headerdata._height = _diffFile->readUint16LE();
+		_headerdata._depth = _diffFile->readByte();
+		_headerdata._fps = _diffFile->readByte();
 
 		// HACK: The original game defines a 1 second delay when changing screens, which is
 		// very annoying. We first removed the delay, but it looked wrong when changing screens
@@ -327,15 +313,11 @@ void Anim::readDiff(byte *buffer, bool playOnce, bool onlyDiffData) {
 
 		if (_headerdata._fps == 1)
 			_headerdata._fps = 0;
-		_diffFile++;
-		_headerdata._bufferSize = READ_LE_UINT32(_diffFile);
-		_diffFile += 4;
-		_headerdata._machine = READ_LE_UINT16(_diffFile);
-		_diffFile += 2;
-		_headerdata._flags = READ_LE_UINT32(_diffFile);
-		_diffFile += 4;
+		_headerdata._bufferSize = _diffFile->readUint32LE();
+		_headerdata._machine = _diffFile->readUint16LE();
+		_headerdata._flags = _diffFile->readUint32LE();
 
-		_diffFile += _size - 18;
+		_diffFile->skip(_size - 18);
 
 		_continuous = CONTINUOUS & _headerdata._flags;
 		_diffWidth = _headerdata._width;

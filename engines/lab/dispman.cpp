@@ -71,11 +71,8 @@ DisplayMan::~DisplayMan() {
 
 // From readPict.c.  Reads in pictures and animations from disk.
 void DisplayMan::loadPict(const char *filename) {
-	Common::File *bitmapFile = _vm->_resource->openDataFile(filename);
 	freePict();
-	_curBitmap = new byte[bitmapFile->size()];
-	bitmapFile->read(_curBitmap, bitmapFile->size());
-	delete bitmapFile;
+	_curBitmap = _vm->_resource->openDataFile(filename);
 }
 
 void DisplayMan::loadBackPict(const char *fileName, uint16 *highPal) {
@@ -115,7 +112,7 @@ void DisplayMan::readPict(const char *filename, bool playOnce, bool onlyDiffData
 }
 
 void DisplayMan::freePict() {
-	delete[] _curBitmap;
+	delete _curBitmap;
 	_curBitmap = nullptr;
 }
 

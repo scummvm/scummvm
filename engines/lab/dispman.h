@@ -65,7 +65,7 @@ private:
 	void getWord(char *wordBuffer, const char *mainBuffer, uint16 *wordWidth);
 
 	byte _curPen;
-	byte *_curBitmap;
+	Common::File *_curBitmap;
 	byte _curvgapal[256 * 3];
 
 public:
