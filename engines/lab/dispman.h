@@ -133,7 +133,7 @@ public:
 	void closeFont(TextFont *font);
 	uint16 textLength(TextFont *font, const char *text, uint16 numChars);
 	uint16 textHeight(TextFont *tf);
-	void text(TextFont *tf, uint16 x, uint16 y, uint16 color, const char *text, uint16 numChars);
+	void drawText(TextFont *tf, uint16 x, uint16 y, uint16 color, const char *text, uint16 numChars);
 	void getLine(TextFont *tf, char *lineBuffer, const char **mainBuffer, uint16 lineWidth);
 
 	bool _longWinInFront;
