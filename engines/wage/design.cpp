@@ -57,6 +57,9 @@ struct plotData {
 	int fillType;
 	int x0;
 	int y0;
+
+	plotData(Graphics::Surface *s, Patterns *p, int f, int x, int y) :
+		surface(s), patterns(p), fillType(f), x0(x), y0(y) {}
 };
 
 Design::Design(Common::SeekableReadStream *data) {
@@ -130,28 +133,28 @@ void drawPixel(int x, int y, int color, void *data) {
 				color : kColorWhite;
 }
 
+void drawPixelPlain(int x, int y, int color, void *data) {
+	plotData *p = (plotData *)data;
+
+	if (x >= 0 && x < p->surface->w && y >= 0 && y < p->surface->h)
+		*((byte *)p->surface->getBasePtr(x, y)) = (byte)color;
+}
+
 void Design::drawRect(Graphics::Surface *surface, Common::ReadStream &in, bool mask,
-	Patterns &patterns, byte fillType, byte borderThickness, byte borderFillType) {
+				Patterns &patterns, byte fillType, byte borderThickness, byte borderFillType) {
 	int16 y1 = in.readSint16BE();
 	int16 x1 = in.readSint16BE();
 	int16 y2 = in.readSint16BE();
 	int16 x2 = in.readSint16BE();
 	Common::Rect outer(x1, y1, x2, y2);
 
+	plotData pd(surface, &patterns, borderFillType, x1, y1);
+
 	if (mask) {
-		surface->fillRect(outer, kColorBlack);
+		drawFilledRect(outer, kColorBlack, drawPixelPlain, &pd);
 		return;
 	}
-	fillType = 7;
 	Common::Rect inner(x1 + borderThickness, y1 + borderThickness, x2 - borderThickness, y2 - borderThickness);
-
-	plotData pd;
-
-	pd.surface = surface;
-	pd.patterns = &patterns;
-	pd.fillType = borderFillType;
-	pd.x0 = x1;
-	pd.y0 = y1;
 
 	drawFilledRect(outer, kColorBlack, drawPixel, &pd);
 
@@ -163,13 +166,8 @@ void Design::drawRect(Graphics::Surface *surface, Common::ReadStream &in, bool m
 void Design::drawPolygon(Graphics::Surface *surface, Common::ReadStream &in, bool mask,
 	Patterns &patterns, byte fillType, byte borderThickness, byte borderFillType) {
 
-	//surface->setColor(Color.BLACK);
-	//in.readUint16BE();
 	warning("ignored => %d", in.readSint16BE());
 	int numBytes = in.readSint16BE(); // #bytes used by polygon data, including the numBytes
-	warning("Num bytes is %d", numBytes);
-	// Ignoring these values works!!!
-	//in.readUint16BE(); in.readUint16BE(); in.readUint16BE(); in.readUint16BE();
 	int16 by1 = in.readSint16BE();
 	int16 bx1 = in.readSint16BE();
 	int16 by2 = in.readSint16BE();
@@ -254,13 +252,7 @@ void Design::drawPolygon(Graphics::Surface *surface, Common::ReadStream &in, boo
 		//if (borderThickness != 1)
 		surface->setStroke(new BasicStroke(borderThickness - 0.5f, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_BEVEL));
 */
-	plotData pd;
-
-	pd.surface = surface;
-	pd.patterns = &patterns;
-	pd.fillType = fillType;
-	pd.x0 = bx1;
-	pd.y0 = by1;
+	plotData pd(surface, &patterns, fillType, bx1, by1);
 
 	drawPolygonScan(xpoints, ypoints, npoints, bbox, kColorBlack, drawPixel, &pd);
 	//	surface->setStroke(oldStroke);
@@ -399,13 +391,12 @@ void Design::drawOval(Graphics::Surface *surface, Common::ReadStream &in, bool m
 	int16 y2 = in.readSint16BE();
 	int16 x2 = in.readSint16BE();
 
-	plotData pd;
+	plotData pd(surface, &patterns, borderFillType, x1, y1);
 
-	pd.surface = surface;
-	pd.patterns = &patterns;
-	pd.fillType = borderFillType;
-	pd.x0 = x1;
-	pd.y0 = y1;
+	if (mask) {
+		drawFilledEllipse(x1, y1, x2, y2, drawPixelPlain, &pd);
+		return;
+	}
 
 	drawFilledEllipse(x1, y1, x2, y2, drawPixel, &pd);
 
