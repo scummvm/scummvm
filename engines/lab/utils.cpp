@@ -121,32 +121,12 @@ Common::Point Utils::vgaUnscale(Common::Point pos) {
 
 /**
  * Undiffs a piece of memory when header size is a byte, and copy/skip size
- * is also a byte.
+ * is also a byte or a word.
  */
-void Utils::unDiffByteByte(byte *dest, Common::File *sourceFile) {
-	while (1) {
-		uint16 skip = sourceFile->readByte();
-		uint16 copy = sourceFile->readByte();
+template<typename T>
+void Utils::unDiff(T *dest, Common::File *sourceFile) {
+	byte bytesPerWord = sizeof(T);
 
-		if (skip == 255) {
-			if (copy == 0) {
-				skip = sourceFile->readUint16LE();
-				copy = sourceFile->readUint16LE();
-			} else if (copy == 255)
-				return;
-		}
-
-		dest += skip;
-		sourceFile->read(dest, copy);
-		dest += copy;
-	}
-}
-
-/**
- * Undiffs a piece of memory when header size is a byte, and copy/skip size
- * is a word.
- */
-void Utils::unDiffByteWord(uint16 *dest, Common::File *sourceFile) {
 	while (1) {
 		uint16 skip = sourceFile->readByte();
 		uint16 copy = sourceFile->readByte();
@@ -161,18 +141,15 @@ void Utils::unDiffByteWord(uint16 *dest, Common::File *sourceFile) {
 
 		dest += skip;
 
-		while (copy > 3) {
-			for (int i = 0; i < 4; i++) {
+		if (bytesPerWord == 1) {
+			sourceFile->read(dest, copy);
+			dest += copy;
+		} else {
+			while (copy) {
 				*dest = sourceFile->readUint16LE();
 				dest++;
+				copy--;
 			}
-
-			copy -= 4;
-		}
-
-		while (copy) {
-			*dest++ = sourceFile->readUint16LE();
-			copy--;
 		}
 	}
 }
@@ -181,42 +158,16 @@ void Utils::unDiffByteWord(uint16 *dest, Common::File *sourceFile) {
 
 /**
  * Undiffs a piece of memory when header size is a byte, and copy/skip size
- * is a byte.
+ * is a byte or a word or a double word.
  */
-void Utils::VUnDiffByteByte(byte *dest, Common::File *sourceFile, uint16 bytesPerRow) {
-	for (uint16 counter = 0; counter < _dataBytesPerRow; ) {
-		byte *curPtr = dest + counter;
-
-		for (;;) {
-			uint16 skip = sourceFile->readByte();
-			uint16 copy = sourceFile->readByte();
-
-			if (skip == 255) {
-				counter += copy;
-				break;
-			} else {
-				curPtr += (skip * bytesPerRow);
-
-				while (copy) {
-					copy--;
-					*curPtr = sourceFile->readByte();
-					curPtr += bytesPerRow;
-				}
-			}
-		}
-	}
-}
-
-/**
- * Undiffs a piece of memory when header size is a byte, and copy/skip size
- * is a word.
- */
-void Utils::VUnDiffByteWord(uint16 *dest, Common::File *sourceFile, uint16 bytesPerRow) {
+template<typename T>
+void Utils::verticalUnDiff(T *dest, Common::File *sourceFile, uint16 bytesPerRow) {
 	uint16 counter = 0;
-	uint16 wordsPerRow = bytesPerRow / 2;
+	byte bytesPerWord = sizeof(T);
+	uint16 wordsPerRow = bytesPerRow / bytesPerWord;
 
-	while (counter < (_dataBytesPerRow >> 1)) {
-		uint16 *curPtr = dest + counter;
+	while (counter < wordsPerRow) {
+		T *curPtr = dest + counter;
 
 		for (;;) {
 			uint16 skip = sourceFile->readByte();
@@ -229,7 +180,14 @@ void Utils::VUnDiffByteWord(uint16 *dest, Common::File *sourceFile, uint16 bytes
 				curPtr += (skip * wordsPerRow);
 
 				while (copy) {
-					*curPtr = sourceFile->readUint16LE();
+					if (bytesPerWord == 1)
+						*curPtr++ = sourceFile->readByte();
+					else if (bytesPerWord == 2)
+						*curPtr = sourceFile->readUint16LE();
+					else if (bytesPerWord == 4)
+						*curPtr = sourceFile->readUint32LE();
+					else
+						error("verticalUnDiff: Invalid bytesPerWord (%d)", bytesPerWord);
 					curPtr += wordsPerRow;
 					copy--;
 				}
@@ -238,40 +196,6 @@ void Utils::VUnDiffByteWord(uint16 *dest, Common::File *sourceFile, uint16 bytes
 	}
 }
 
-/**
- * Undiffs a piece of memory when header size is a byte, and copy/skip size
- * is a long.
- */
-void Utils::VUnDiffByteLong(uint32 *dest, Common::File *sourceFile, uint16 bytesPerRow) {
-	uint16 counter = 0;
-	uint16 longsperrow = bytesPerRow / 4;
-
-	while (counter < (_dataBytesPerRow >> 2)) {
-		uint32 *curPtr = dest + counter;
-
-		for (;;) {
-			uint16 skip = sourceFile->readByte();
-			uint16 copy = sourceFile->readByte();
-
-			if (skip == 255) {
-				counter += copy;
-				break;
-			} else {
-				curPtr += (skip * longsperrow);
-
-				while (copy) {
-					*curPtr = sourceFile->readUint32LE();
-					curPtr += longsperrow;
-					copy--;
-				}
-			}
-		}
-	}
-}
-
-/**
- * Runlength decodes a chunk of memory.
- */
 void Utils::runLengthDecode(byte *dest, Common::File *sourceFile) {
 	int8 num;
 	int16 count;
@@ -289,17 +213,15 @@ void Utils::runLengthDecode(byte *dest, Common::File *sourceFile) {
 			num = sourceFile->readSByte();
 
 			while (count) {
-				*dest++ = num;
+				*dest = num;
+				dest++;
 				count--;
 			}
 		}
 	}
 }
 
-/**
- * Does a vertical run length decode.
- */
-void Utils::VRunLengthDecode(byte *dest, Common::File *sourceFile, uint16 bytesPerRow) {
+void Utils::verticalRunLengthDecode(byte *dest, Common::File *sourceFile, uint16 bytesPerRow) {
 	int16 count;
 	byte *top = dest;
 
@@ -335,24 +257,24 @@ void Utils::VRunLengthDecode(byte *dest, Common::File *sourceFile, uint16 bytesP
 /**
  * Does the undiffing between the bitmaps.
  */
-void Utils::unDiff(byte *newBuf, byte *oldBuf, Common::File *sourceFile, uint16 bytesPerRow, bool isV) {
+void Utils::unDiff(byte *newBuf, byte *oldBuf, Common::File *sourceFile, uint16 bytesPerRow, bool isVertical) {
 	sourceFile->skip(1);
 	byte bufType = sourceFile->readByte();
 
-	if (isV) {
+	if (isVertical) {
 		if (bufType == 0)
-			VUnDiffByteByte(newBuf, sourceFile, bytesPerRow);
+			verticalUnDiff<byte>(newBuf, sourceFile, bytesPerRow);
 		else if (bufType == 1)
-			VUnDiffByteWord((uint16 *)newBuf, sourceFile, bytesPerRow);
+			verticalUnDiff<uint16>((uint16 *)newBuf, sourceFile, bytesPerRow);
 		else if (bufType == 3)
-			VUnDiffByteLong((uint32 *)newBuf, sourceFile, bytesPerRow);
+			verticalUnDiff<uint32>((uint32 *)newBuf, sourceFile, bytesPerRow);
 		else
 			error("Unexpected variable compression scheme %d", bufType);
 	} else {
 		if (bufType == 0)
-			unDiffByteByte(newBuf, sourceFile);
+			unDiff<byte>(newBuf, sourceFile);
 		else if (bufType == 1)
-			unDiffByteWord((uint16 *)newBuf, sourceFile);
+			unDiff<uint16>((uint16 *)newBuf, sourceFile);
 		else
 			error("Unexpected compression scheme %d", bufType);
 	}

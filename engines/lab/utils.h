@@ -38,11 +38,11 @@ private:
 	LabEngine *_vm;
 	uint16 _dataBytesPerRow;
 
-	void unDiffByteByte(byte *dest, Common::File *sourceFile);
-	void unDiffByteWord(uint16 *dest, Common::File *sourceFile);
-	void VUnDiffByteByte(byte *dest, Common::File *sourceFile, uint16 bytesPerRow);
-	void VUnDiffByteWord(uint16 *dest, Common::File *sourceFile, uint16 bytesPerRow);
-	void VUnDiffByteLong(uint32 *dest, Common::File *sourceFile, uint16 bytesPerRow);
+	template<typename T>
+	void unDiff(T *dest, Common::File *sourceFile);
+
+	template<typename T>
+	void verticalUnDiff(T *dest, Common::File *sourceFile, uint16 bytesPerRow);
 
 public:
 	Utils(LabEngine *vm);
@@ -58,9 +58,9 @@ public:
 	uint16 mapScaleX(uint16 x);
 	uint16 mapScaleY(uint16 y);
 	Common::Point vgaUnscale(Common::Point pos);
-	void unDiff(byte *newBuf, byte *oldBuf, Common::File *sourceFile, uint16 bytesPerRow, bool isV);
+	void unDiff(byte *newBuf, byte *oldBuf, Common::File *sourceFile, uint16 bytesPerRow, bool isVertical);
 	void runLengthDecode(byte *dest, Common::File *sourceFile);
-	void VRunLengthDecode(byte *dest, Common::File *sourceFile, uint16 bytesPerRow);
+	void verticalRunLengthDecode(byte *dest, Common::File *sourceFile, uint16 bytesPerRow);
 	void setBytesPerRow(int num);
 	uint16 getRandom(uint16 max);
 };

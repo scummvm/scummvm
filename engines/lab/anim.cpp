@@ -160,7 +160,7 @@ void Anim::diffNextFrame(bool onlyDiffData) {
 		case 12:
 			curPos = _diffFile->pos();
 			_diffFile->skip(4);
-			_vm->_utils->VRunLengthDecode(DrawBitMap->_planes[_curBit], _diffFile, DrawBitMap->_bytesPerRow);
+			_vm->_utils->verticalRunLengthDecode(DrawBitMap->_planes[_curBit], _diffFile, DrawBitMap->_bytesPerRow);
 			_curBit++;
 			_diffFile->seek(curPos + _size, SEEK_SET);
 			break;
