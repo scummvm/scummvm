@@ -241,12 +241,12 @@ void Intro::introSequence() {
 
 	_vm->_anim->_doBlack = true;
 
-	if (_vm->getPlatform() != Common::kPlatformWindows) {
+	if (_vm->getPlatform() == Common::kPlatformDOS) {
 		nReadPict("EA0", true);
 		nReadPict("EA1", true);
 		nReadPict("EA2", true);
 		nReadPict("EA3", true);
-	} else {
+	} else if (_vm->getPlatform() == Common::kPlatformWindows) {
 		nReadPict("WYRMKEEP", true);
 		// Wait 4 seconds
 		for (uint16 i = 0; i < 4 * 1000 / 10; i++) {
@@ -258,10 +258,14 @@ void Intro::introSequence() {
 	}
 
 	_vm->_graphics->blackAllScreen();
-	_vm->_music->initMusic("Music:BackGrou");
+	
+	if (_vm->getPlatform() == Common::kPlatformAmiga)
+		_vm->_music->initMusic("Music:BackGround");
+	else
+		_vm->_music->initMusic("Music:BackGrou");
 
 	_vm->_anim->_noPalChange = true;
-	if (_vm->getPlatform() != Common::kPlatformWindows)
+	if (_vm->getPlatform() == Common::kPlatformDOS)
 		nReadPict("TNDcycle.pic", true);
 	else
 		nReadPict("TNDcycle2.pic", true);
