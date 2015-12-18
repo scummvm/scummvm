@@ -338,8 +338,10 @@ void Intro::introSequence() {
 	}
 
 	doPictText("i.1", msgFont, true);
-	doPictText("i.2A", msgFont, true);
-	doPictText("i.2B", msgFont, true);
+	if (_vm->getPlatform() == Common::kPlatformWindows) {
+		doPictText("i.2A", msgFont, true);
+		doPictText("i.2B", msgFont, true);
+	}
 
 	_vm->_graphics->blackAllScreen();
 	_vm->_music->updateMusic();
@@ -357,7 +359,10 @@ void Intro::introSequence() {
 	nReadPict("Stiles3", true);
 	doPictText("i.6", msgFont, false);
 
-	nReadPict("Platform2", true);
+	if (_vm->getPlatform() == Common::kPlatformWindows)
+		nReadPict("Platform2", true);
+	else
+		nReadPict("Platform", true);
 	doPictText("i.7", msgFont, false);
 
 	nReadPict("Subway.1", true);
