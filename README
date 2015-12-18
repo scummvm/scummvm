@@ -2619,43 +2619,12 @@ debug messages (see https://technet.microsoft.com/en-us/sysinternals/debugview.a
       http://wiki.scummvm.org/index.php/Compiling_ScummVM/Windows_CE
 
   Mac OS X:
-    * Make sure you have the developer tools installed.
-    * The SDL developer package for OS X available on the SDL web site is
-      _not_ suitable. Rather, you require a unix-style build of SDL. One
-      way to get that is to install SDL via Fink (http://fink.sf.net).
-      Alternatively you could compile SDL manually from source using its
-      unix build system (configure && make).
-    * Type "./configure" in the ScummVM directory.
-    * You can now type 'make' to create a command line binary.
-    * To get a version you can run from Finder, type 'make bundle' which
-      will create ScummVM.app (this tries to detect where the static libraries
-      are installed, which should work in most cases, but if it doesn't you
-      will need to specify this path with --with-staticlib-prefix= when calling
-      configure - for example "./configure --with-staticlib-prefix=/Users/foo"
-      if the libraries are in /Users/foo/lib).
-    * For more information refer to:
-      http://wiki.scummvm.org/index.php/Compiling_ScummVM/MacOS_X_Crosscompiling
+    * Please refer to:
+      http://wiki.scummvm.org/index.php/Mac_OS_X
 
-AmigaOS 4:
-    * Get and install the latest SDK from here:
-    <http://hyperion-entertainment.biz/index.php/downloads?view=files&parent=30>
-    * Make sure that you have SDL installed, you may also need
-      libogg, libvorbis, libvorbisfile, libFLAC, libtheoradec, libfaad,
-      libmpeg2, libfreetype, libmad and libGL.
-    * In a shell, run 'sh'.
-    * Type './configure'.
-    * Check the 'config.mk' and 'config.log' files and if everything seems to be fine:
-    * Run 'make'.
-
-  AmigaOS 4 (Cross-compiling with Cygwin):
-    * Make sure that you have SDL installed, you may also need
-      libogg, libvorbis, libvorbisfile, zlib, libmad.
-    * Type ./configure --host=ppc-amigaos
-    * If you got an error about sdl-config, use --with-sdl-prefix
-      parameter to set the path.
-    * Check 'config.mk' file and if everything seems to be fine:
-    * Run 'make'.
-    * Cross-compiling with Linux may be as easy.
+  AmigaOS 4:
+    * Please refer to:
+      http://wiki.scummvm.org/index.php/AmigaOS
 
   iPhone:
     * Please refer to:
