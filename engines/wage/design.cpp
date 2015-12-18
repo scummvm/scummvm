@@ -111,6 +111,7 @@ void Design::paint(Graphics::Surface *canvas, Patterns &patterns, bool mask) {
 			while (true) {
 				((WageEngine *)g_engine)->processEvents();
 				g_system->updateScreen();
+				g_system->delayMillis(50);
 			}
 			return;
 		}
