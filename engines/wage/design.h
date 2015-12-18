@@ -94,10 +94,11 @@ private:
 		Common::Rect &inner, byte borderFillType, byte fillType);
 
 	void patternRect(Graphics::Surface *surface, Patterns &patterns, Common::Rect &rect, byte fillType);
-	void patternThickPolygon(Graphics::Surface *surface, Patterns &patterns, int *xpoints,
-		int *ypoints, int npoints, Common::Rect &bbox, byte borderFillType, byte fillType);
+	void drawPolygonScan(int *polyX, int *polyY, int npoints, Common::Rect &bbox, int color,
+									void (*plotProc)(int, int, int, void *), void *data);
 	void plotEllipseRect(Graphics::Surface *surface, Patterns &patterns,
 		int x0, int y0, int x1, int y1, byte fillType);
+	void drawHLine(int x1, int x2, int y, int color, void (*plotProc)(int, int, int, void *), void *data);
 	void patternHLine(Graphics::Surface *surface, Patterns &patterns, byte fillType, int x1, int x2, int y, int x0, int y0);
 	void patternVLine(Graphics::Surface *surface, Patterns &patterns, byte fillType, int x, int y1, int y2, int x0, int y0);
 	void drawThickLine (int x1, int y1, int x2, int y2, int thick, int color,

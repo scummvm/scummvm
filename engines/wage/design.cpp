@@ -121,10 +121,13 @@ void Design::paint(Graphics::Surface *canvas, Patterns &patterns, bool mask) {
 void drawPixel(int x, int y, int color, void *data) {
 	plotData *p = (plotData *)data;
 
+	if (p->fillType > (*p->patterns).size())
+		return;
+
 	if (x >= 0 && x < p->surface->w && y >= 0 && y < p->surface->h)
 		*((byte *)p->surface->getBasePtr(x, y)) =
 			((*p->patterns)[p->fillType - 1][(y - p->y0) % 8] & (1 << (7 - (x - p->x0) % 8))) ?
-				kColorBlack : kColorWhite;
+				color : kColorWhite;
 }
 
 void Design::drawRect(Graphics::Surface *surface, Common::ReadStream &in, bool mask,
@@ -146,7 +149,6 @@ void Design::drawRect(Graphics::Surface *surface, Common::ReadStream &in, bool m
 
 void Design::drawPolygon(Graphics::Surface *surface, Common::ReadStream &in, bool mask,
 	Patterns &patterns, byte fillType, byte borderThickness, byte borderFillType) {
-	plotData pd;
 
 	//surface->setColor(Color.BLACK);
 	//in.readUint16BE();
@@ -161,12 +163,6 @@ void Design::drawPolygon(Graphics::Surface *surface, Common::ReadStream &in, boo
 	int16 bx2 = in.readSint16BE();
 	Common::Rect bbox(bx1, by1, bx2, by2);
 	warning("Bbox: %d, %d, %d, %d", bx1, by1, bx2, by2);
-
-	pd.surface = surface;
-	pd.patterns = &patterns;
-	pd.fillType = fillType;
-	pd.x0 = bx1;
-	pd.y0 = by1;
 
 	numBytes -= 8;
 
@@ -245,7 +241,15 @@ void Design::drawPolygon(Graphics::Surface *surface, Common::ReadStream &in, boo
 		//if (borderThickness != 1)
 		surface->setStroke(new BasicStroke(borderThickness - 0.5f, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_BEVEL));
 */
-	patternThickPolygon(surface, patterns, xpoints, ypoints, npoints, bbox, borderFillType, fillType);
+	plotData pd;
+
+	pd.surface = surface;
+	pd.patterns = &patterns;
+	pd.fillType = fillType;
+	pd.x0 = bx1;
+	pd.y0 = by1;
+
+	drawPolygonScan(xpoints, ypoints, npoints, bbox, kColorBlack, drawPixel, &pd);
 	//	surface->setStroke(oldStroke);
 //	}
 
@@ -335,8 +339,8 @@ void Design::patternRect(Graphics::Surface *surface, Patterns &patterns, Common:
 
 // Based on public-domain code by Darel Rex Finley, 2007
 // http://alienryderflex.com/polygon_fill/
-void Design::patternThickPolygon(Graphics::Surface *surface, Patterns &patterns, int *polyX,
-	int *polyY, int npoints, Common::Rect &bbox, byte borderFillType, byte fillType) {
+void Design::drawPolygonScan(int *polyX, int *polyY, int npoints, Common::Rect &bbox, int color,
+								void (*plotProc)(int, int, int, void *), void *data) {
 	int *nodeX = (int *)calloc(npoints, sizeof(int));
 	int i, j;
 
@@ -374,7 +378,7 @@ void Design::patternThickPolygon(Graphics::Surface *surface, Patterns &patterns,
 				nodeX[i] = MAX<int16>(nodeX[i], bbox.left);
 				nodeX[i + 1] = MIN<int16>(nodeX[i + 1], bbox.right);
 
-				patternHLine(surface, patterns, fillType, nodeX[i], nodeX[i + 1], pixelY, bbox.left, bbox.top);
+				drawHLine(nodeX[i], nodeX[i + 1], pixelY, color, plotProc, data);
 			}
 		}
 	}
@@ -422,6 +426,14 @@ void Design::plotEllipseRect(Graphics::Surface *surface, Patterns &patterns,
 		patternHLine(surface, patterns, fillType, x1+1, x1+1, y1, xO, yO);
 		y1--;
 	}
+}
+
+void Design::drawHLine(int x1, int x2, int y, int color, void (*plotProc)(int, int, int, void *), void *data) {
+	if (x1 > x2)
+		SWAP(x1, x2);
+
+	for (int x = x1; x < x2; x++)
+		(*plotProc)(x, y, color, data);
 }
 
 void Design::patternHLine(Graphics::Surface *surface, Patterns &patterns, byte fillType, int x1, int x2, int y, int x0, int y0) {
