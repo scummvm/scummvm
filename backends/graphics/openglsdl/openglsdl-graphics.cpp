@@ -49,20 +49,26 @@ OpenGLSdlGraphicsManager::OpenGLSdlGraphicsManager(uint desktopWidth, uint deskt
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	OpenGL::ContextType glContextType;
 
+	// Context version 1.4 is choosen arbitrarily based on what most shader
+	// extensions were written against.
+#define DEFAULT_GL_MAJOR 1
+#define DEFAULT_GL_MINOR 4
+
+#define DEFAULT_GLES_MAJOR 1
+#define DEFAULT_GLES_MINOR 1
+
 #if USE_FORCED_GL
 	glContextType = OpenGL::kContextGL;
 	_glContextProfileMask = SDL_GL_CONTEXT_PROFILE_COMPATIBILITY;
-	// Context version 1.4 is choosen arbitrarily based on what most shader
-	// extensions were written against.
-	_glContextMajor = 1;
-	_glContextMinor = 4;
+	_glContextMajor = DEFAULT_GL_MAJOR;
+	_glContextMinor = DEFAULT_GL_MINOR;
 #elif USE_FORCED_GLES
 	glContextType = OpenGL::kContextGLES;
 	_glContextProfileMask = SDL_GL_CONTEXT_PROFILE_ES;
-	_glContextMajor = 1;
-	_glContextMinor = 1;
+	_glContextMajor = DEFAULT_GLES_MAJOR;
+	_glContextMinor = DEFAULT_GLES_MINOR;
 #else
-	int forceMode = -1;
+	bool noDefaults = false;
 
 	// Obtain the default GL(ES) context SDL2 tries to setup.
 	//
@@ -73,35 +79,26 @@ OpenGLSdlGraphicsManager::OpenGLSdlGraphicsManager(uint desktopWidth, uint deskt
 	// In case no defaults are given we prefer OpenGL over OpenGL ES.
 	if (SDL_GL_GetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, &_glContextProfileMask) != 0) {
 		_glContextProfileMask = SDL_GL_CONTEXT_PROFILE_COMPATIBILITY;
-		forceMode = 0;
+		noDefaults = true;
 	}
 
 	if (SDL_GL_GetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, &_glContextMajor) != 0) {
-		if (_glContextProfileMask == SDL_GL_CONTEXT_PROFILE_ES) {
-			forceMode = 1;
-		} else {
-			forceMode = 0;
-		}
+		noDefaults = true;
 	}
 
 	if (SDL_GL_GetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, &_glContextMinor) != 0) {
-		if (_glContextProfileMask == SDL_GL_CONTEXT_PROFILE_ES) {
-			forceMode = 1;
-		} else {
-			forceMode = 0;
-		}
+		noDefaults = true;
 	}
 
-	if (forceMode == 1) {
-		_glContextProfileMask = SDL_GL_CONTEXT_PROFILE_ES;
-		_glContextMajor = 1;
-		_glContextMinor = 1;
-	} else if (forceMode == 0) {
-		_glContextProfileMask = SDL_GL_CONTEXT_PROFILE_COMPATIBILITY;
-		// Context version 1.4 is choosen arbitrarily based on what most shader
-		// extensions were written against.
-		_glContextMajor = 1;
-		_glContextMinor = 4;
+	if (noDefaults) {
+		if (_glContextProfileMask == SDL_GL_CONTEXT_PROFILE_ES) {
+			_glContextMajor = DEFAULT_GLES_MAJOR;
+			_glContextMinor = DEFAULT_GLES_MINOR;
+		} else {
+			_glContextProfileMask = SDL_GL_CONTEXT_PROFILE_COMPATIBILITY;
+			_glContextMajor = DEFAULT_GL_MAJOR;
+			_glContextMinor = DEFAULT_GL_MINOR;
+		}
 	}
 
 	if (_glContextProfileMask == SDL_GL_CONTEXT_PROFILE_ES) {
@@ -109,8 +106,8 @@ OpenGLSdlGraphicsManager::OpenGLSdlGraphicsManager(uint desktopWidth, uint deskt
 
 		// We do not support GLES2 contexts right now. Force a GLES1 context.
 		if (_glContextMajor >= 2) {
-			_glContextMajor = 1;
-			_glContextMinor = 1;
+			_glContextMajor = DEFAULT_GLES_MAJOR;
+			_glContextMinor = DEFAULT_GLES_MINOR;
 		}
 	} else if (_glContextProfileMask == SDL_GL_CONTEXT_PROFILE_CORE) {
 		glContextType = OpenGL::kContextGL;
@@ -118,14 +115,17 @@ OpenGLSdlGraphicsManager::OpenGLSdlGraphicsManager(uint desktopWidth, uint deskt
 		// Core profile does not allow legacy functionality, which we use.
 		// Thus we always request a compatibility profile.
 		_glContextProfileMask = SDL_GL_CONTEXT_PROFILE_COMPATIBILITY;
-		// Context version 1.4 is choosen arbitrarily based on what most shader
-		// extensions were written against.
-		_glContextMajor = 1;
-		_glContextMinor = 4;
+		_glContextMajor = DEFAULT_GL_MAJOR;
+		_glContextMinor = DEFAULT_GL_MINOR;
 	} else {
 		glContextType = OpenGL::kContextGL;
 	}
+#undef DEFAULT_GL_MAJOR
+#undef DEFAULT_GL_MINOR
+#undef DEFAULT_GLES_MAJOR
+#undef DEFAULT_GLES_MINOR
 #endif
+
 	setContextType(glContextType);
 #else
 	setContextType(OpenGL::kContextGL);
