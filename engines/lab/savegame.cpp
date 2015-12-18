@@ -231,6 +231,7 @@ bool LabEngine::saveRestoreGame() {
 
 			isOK = saveGame(slot, desc);
 		}
+		delete dialog;
 	} else {
 		// Restore
 		GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Restore game:"), _("Restore"), false);
@@ -240,6 +241,7 @@ bool LabEngine::saveRestoreGame() {
 			if (isOK)
 				_music->resetMusic();
 		}
+		delete dialog;
 	}
 
 	_alternate = false;
