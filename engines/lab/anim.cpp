@@ -62,7 +62,6 @@ Anim::Anim(LabEngine *vm) : _vm(vm) {
 	_rawDiffBM._drawOnScreen = false;
 	for (int i = 0; i < 16; i++)
 		_rawDiffBM._planes[i] = nullptr;
-	_rawDiffBM._rows = 0;
 	_waitForEffect = false;
 	_stopPlayingEnd = false;
 	_sampleSpeed = 0;
@@ -298,10 +297,12 @@ void Anim::readDiff(Common::File *diffFile, bool playOnce, bool onlyDiffData) {
 
 	if (_header == 0) {
 		// sizeof(headerdata) != 18, but the padding might be at the end
-		_headerdata._version = _diffFile->readUint16LE();
+		// 2 bytes, version, unused.
+		_diffFile->skip(2);
 		_headerdata._width = _diffFile->readUint16LE();
 		_headerdata._height = _diffFile->readUint16LE();
-		_headerdata._depth = _diffFile->readByte();
+		// 1 byte, depth, unused
+		_diffFile->skip(1);
 		_headerdata._fps = _diffFile->readByte();
 
 		// HACK: The original game defines a 1 second delay when changing screens, which is
@@ -313,8 +314,9 @@ void Anim::readDiff(Common::File *diffFile, bool playOnce, bool onlyDiffData) {
 
 		if (_headerdata._fps == 1)
 			_headerdata._fps = 0;
-		_headerdata._bufferSize = _diffFile->readUint32LE();
-		_headerdata._machine = _diffFile->readUint16LE();
+
+		// 4 + 2 bytes, buffer size and machine, unused
+		_diffFile->skip(6);
 		_headerdata._flags = _diffFile->readUint32LE();
 
 		_diffFile->skip(_size - 18);
