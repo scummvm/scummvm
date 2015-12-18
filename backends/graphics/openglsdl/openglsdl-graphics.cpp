@@ -45,6 +45,87 @@ OpenGLSdlGraphicsManager::OpenGLSdlGraphicsManager(uint desktopWidth, uint deskt
 	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 16);
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 
+	// Setup proper SDL OpenGL context creation.
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+#if USE_FORCED_GL
+	_glContextType = OpenGL::kContextGL;
+	_glContextProfileMask = SDL_GL_CONTEXT_PROFILE_COMPATIBILITY;
+	// Context version 1.4 is choosen arbitrarily based on what most shader
+	// extensions were written against.
+	_glContextMajor = 1;
+	_glContextMinor = 4;
+#elif USE_FORCED_GLES
+	_glContextType = OpenGL::kContextGLES;
+	_glContextProfileMask = SDL_GL_CONTEXT_PROFILE_ES;
+	_glContextMajor = 1;
+	_glContextMinor = 1;
+#else
+	int forceMode = -1;
+
+	// Obtain the default GL(ES) context SDL2 tries to setup.
+	//
+	// Please note this might not actually be SDL2's defaults when multiple
+	// instances of this object have been created. But that is no issue
+	// because then we already set up what we want to use.
+	//
+	// In case no defaults are given we prefer OpenGL over OpenGL ES.
+	if (SDL_GL_GetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, &_glContextProfileMask) != 0) {
+		_glContextProfileMask = SDL_GL_CONTEXT_PROFILE_COMPATIBILITY;
+		forceMode = 0;
+	}
+
+	if (SDL_GL_GetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, &_glContextMajor) != 0) {
+		if (_glContextProfileMask == SDL_GL_CONTEXT_PROFILE_ES) {
+			forceMode = 1;
+		} else {
+			forceMode = 0;
+		}
+	}
+
+	if (SDL_GL_GetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, &_glContextMinor) != 0) {
+		if (_glContextProfileMask == SDL_GL_CONTEXT_PROFILE_ES) {
+			forceMode = 1;
+		} else {
+			forceMode = 0;
+		}
+	}
+
+	if (forceMode == 1) {
+		_glContextProfileMask = SDL_GL_CONTEXT_PROFILE_ES;
+		_glContextMajor = 1;
+		_glContextMinor = 1;
+	} else if (forceMode == 0) {
+		_glContextProfileMask = SDL_GL_CONTEXT_PROFILE_COMPATIBILITY;
+		// Context version 1.4 is choosen arbitrarily based on what most shader
+		// extensions were written against.
+		_glContextMajor = 1;
+		_glContextMinor = 4;
+	}
+
+	if (_glContextProfileMask == SDL_GL_CONTEXT_PROFILE_ES) {
+		_glContextType = OpenGL::kContextGLES;
+
+		// We do not support GLES2 contexts right now. Force a GLES1 context.
+		if (_glContextMajor >= 2) {
+			_glContextMajor = 1;
+			_glContextMinor = 1;
+		}
+	} else if (_glContextProfileMask == SDL_GL_CONTEXT_PROFILE_CORE) {
+		_glContextType = OpenGL::kContextGL;
+
+		// Core profile does not allow legacy functionality, which we use.
+		// Thus we always request a compatibility profile.
+		_glContextProfileMask = SDL_GL_CONTEXT_PROFILE_COMPATIBILITY;
+		// Context version 1.4 is choosen arbitrarily based on what most shader
+		// extensions were written against.
+		_glContextMajor = 1;
+		_glContextMinor = 4;
+	} else {
+		_glContextType = OpenGL::kContextGL;
+	}
+#endif
+#endif
+
 	// Retrieve a list of working fullscreen modes
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	const int numModes = SDL_GetNumDisplayModes(0);
@@ -388,6 +469,11 @@ bool OpenGLSdlGraphicsManager::setupMode(uint width, uint height) {
 		flags |= SDL_WINDOW_RESIZABLE;
 	}
 
+	// Request a OpenGL (ES) context we can use.
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, _glContextProfileMask);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, _glContextMajor);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, _glContextMinor);
+
 	if (!_window->createWindow(width, height, flags)) {
 		// We treat fullscreen requests as a "hint" for now. This means in
 		// case it is not available we simply ignore it.
@@ -400,25 +486,12 @@ bool OpenGLSdlGraphicsManager::setupMode(uint width, uint height) {
 		}
 	}
 
-#if USE_FORCED_GLES
-	// SDL2 will create a GLES2 context by default, so this is needed for GLES1-profile
-	// functions to work.
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 1);
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
-#endif
 	_glContext = SDL_GL_CreateContext(_window->getSDLWindow());
 	if (!_glContext) {
 		return false;
 	}
 
-	notifyContextCreate(rgba8888, rgba8888,
-#if USE_FORCED_GLES
-	                    OpenGL::kContextGLES
-#else
-	                    OpenGL::kContextGL
-#endif
-	                   );
+	notifyContextCreate(rgba8888, rgba8888, _glContextType);
 	int actualWidth, actualHeight;
 	getWindowDimensions(&actualWidth, &actualHeight);
 	setActualScreenSize(actualWidth, actualHeight);
