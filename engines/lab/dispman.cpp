@@ -103,7 +103,6 @@ void DisplayMan::readPict(const char *filename, bool playOnce, bool onlyDiffData
 		_vm->_music->stopSoundEffect();
 
 	_dispBitMap->_bytesPerRow  = _screenWidth;
-	_dispBitMap->_rows         = (maxHeight > 0) ? maxHeight : _screenHeight;
 	_dispBitMap->_drawOnScreen = (memoryBuffer == nullptr);
 	if (memoryBuffer)
 		_dispBitMap->_planes[0] = memoryBuffer;

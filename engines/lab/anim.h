@@ -37,19 +37,14 @@ class LabEngine;
 #define CONTINUOUS      0xFFFF
 
 struct DIFFHeader {
-	uint16 _version;    // unused
 	uint16 _width;
 	uint16 _height;
-	char _depth;        // unused
 	char _fps;
-	uint32 _bufferSize; // unused
-	uint16 _machine;    // unused
 	uint32 _flags;
 };
 
 struct BitMap {
 	uint16 _bytesPerRow;
-	uint16 _rows;       // unused
 	bool _drawOnScreen;
 	byte *_planes[16];
 };
