@@ -90,8 +90,6 @@ void Music::updateMusic() {
 			soundFlags |= Audio::FLAG_16BITS;
 		else if (_vm->getPlatform() == Common::kPlatformDOS)
 			soundFlags |= Audio::FLAG_UNSIGNED;
-		else if (_vm->getPlatform() == Common::kPlatformAmiga)
-			soundFlags = 0;
 
 		_queuingAudioStream->queueBuffer(musicBuffer, MUSICBUFSIZE, DisposeAfterUse::YES, soundFlags);
 
