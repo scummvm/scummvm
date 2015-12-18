@@ -74,6 +74,10 @@ uint16 Utils::mapScaleY(uint16 y) {
 		return ((y - 35) >> 1) - (y >> 6);
 }
 
+Common::Rect Utils::mapRectScale(int16 x1, int16 y1, int16 x2, int16 y2) {
+	return Common::Rect(mapScaleX(x1), mapScaleY(y1), mapScaleX(x2), mapScaleY(y2));
+}
+
 /**
  * Scales the VGA coords to SVGA if necessary; otherwise, returns VGA coords.
  */

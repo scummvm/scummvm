@@ -503,33 +503,29 @@ void LabEngine::processMap(uint16 curRoom) {
 					}
 				}
 			} else if (msgClass == kMessageLeftClick) {
-				if ((curFloor == kFloorLower) && (mouseX >= _utils->mapScaleX(538)) && (mouseY >= _utils->mapScaleY(277))
-					  && (mouseX <= _utils->mapScaleX(633)) && (mouseY <= _utils->mapScaleY(352))
+				if ((curFloor == kFloorLower) && _utils->mapRectScale(538, 277, 633, 352).contains(mouseX, mouseY)
 					  && floorVisited(kFloorSurMaze)) {
 					curFloor = kFloorSurMaze;
 
 					_graphics->fade(false, 0);
 					drawMap(curRoom, curMsg, curFloor, false, false);
 					_graphics->fade(true, 0);
-				} else if ((curFloor == kFloorMiddle) && (mouseX >= _utils->mapScaleX(358)) && (mouseY >= _utils->mapScaleY(71))
-							  && (mouseX <= _utils->mapScaleX(452)) && (mouseY <= _utils->mapScaleY(147))
-							  && floorVisited(kFloorCarnival)) {
+				} else if ((curFloor == kFloorMiddle) && _utils->mapRectScale(358, 71, 452, 147).contains(mouseX, mouseY)
+							&& floorVisited(kFloorCarnival)) {
 					curFloor = kFloorCarnival;
 
 					_graphics->fade(false, 0);
 					drawMap(curRoom, curMsg, curFloor, false, false);
 					_graphics->fade(true, 0);
-				} else if ((curFloor == kFloorMiddle) && (mouseX >= _utils->mapScaleX(557)) && (mouseY >= _utils->mapScaleY(325))
-						  && (mouseX <= _utils->mapScaleX(653)) && (mouseY <= _utils->mapScaleY(401))
-						  && floorVisited(kFloorMedMaze)) {
+				} else if ((curFloor == kFloorMiddle) && _utils->mapRectScale(557, 325, 653, 401).contains(mouseX, mouseY)
+							&& floorVisited(kFloorMedMaze)) {
 					curFloor = kFloorMedMaze;
 
 					_graphics->fade(false, 0);
 					drawMap(curRoom, curMsg, curFloor, false, false);
 					_graphics->fade(true, 0);
-				} else if ((curFloor == kFloorUpper) && (mouseX >= _utils->mapScaleX(524)) && (mouseY >=  _utils->mapScaleY(97))
-						  && (mouseX <= _utils->mapScaleX(645)) && (mouseY <= _utils->mapScaleY(207))
-						  && floorVisited(kFloorHedgeMaze)) {
+				} else if ((curFloor == kFloorUpper) && _utils->mapRectScale(524, 97, 645, 207).contains(mouseX, mouseY)
+							&& floorVisited(kFloorHedgeMaze)) {
 					curFloor = kFloorHedgeMaze;
 
 					_graphics->fade(false, 0);
