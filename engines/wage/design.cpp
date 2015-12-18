@@ -321,7 +321,6 @@ void Design::drawBitmap(Graphics::Surface *surface, Common::ReadStream &in, bool
 
 			}
 		}
-
 	}
 }
 
@@ -393,14 +392,22 @@ void Design::drawOval(Graphics::Surface *surface, Common::ReadStream &in, bool m
 	int16 y2 = in.readSint16BE();
 	int16 x2 = in.readSint16BE();
 
-	plotEllipseRect(surface, patterns, x1, y1, x2, y2, borderFillType);
-	plotEllipseRect(surface, patterns, x1+borderThickness, y1+borderThickness, x2-2*borderThickness, y2-2*borderThickness, fillType);
+	plotData pd;
+
+	pd.surface = surface;
+	pd.patterns = &patterns;
+	pd.fillType = borderFillType;
+	pd.x0 = x1;
+	pd.y0 = y1;
+
+	drawFilledEllipse(x1, y1, x2, y2, drawPixel, &pd);
+
+	pd.fillType = fillType;
+	drawFilledEllipse(x1+borderThickness, y1+borderThickness, x2-2*borderThickness, y2-2*borderThickness, drawPixel, &pd);
 }
 
 
-void Design::plotEllipseRect(Graphics::Surface *surface, Patterns &patterns,
-			int x0, int y0, int x1, int y1, byte fillType) {
-	int xO = x0, yO = y0;
+void Design::drawFilledEllipse(int x0, int y0, int x1, int y1, void (*plotProc)(int, int, int, void *), void *data) {
 	int a = abs(x1-x0), b = abs(y1-y0), b1 = b&1; /* values of diameter */
 	long dx = 4*(1-a)*b*b, dy = 4*(b1+1)*a*a; /* error increment */
 	long err = dx+dy+b1*a*a, e2; /* error of 1.step */
@@ -411,19 +418,19 @@ void Design::plotEllipseRect(Graphics::Surface *surface, Patterns &patterns,
 	a *= 8*a; b1 = 8*b*b;
 
 	do {
-		patternHLine(surface, patterns, fillType, x0, x1 + 1, y0, xO, yO);
-		patternHLine(surface, patterns, fillType, x0, x1 + 1, y1, xO, yO);
+		drawHLine(x0, x1 + 1, y0, kColorBlack, plotProc, data);
+		drawHLine(x0, x1 + 1, y1, kColorBlack, plotProc, data);
 		e2 = 2*err;
 		if (e2 <= dy) { y0++; y1--; err += dy += a; }  /* y step */
 		if (e2 >= dx || 2*err > dy) { x0++; x1--; err += dx += b1; } /* x step */
 	} while (x0 <= x1);
 
 	while (y0-y1 < b) {  /* too early stop of flat ellipses a=1 */
-		patternHLine(surface, patterns, fillType, x0-1, x0-1, y0, xO, yO); /* -> finish tip of ellipse */
-		patternHLine(surface, patterns, fillType, x1+1, x1+1, y0, xO, yO);
+		drawHLine(x0-1, x0-1, y0, kColorBlack, plotProc, data); /* -> finish tip of ellipse */
+		drawHLine(x1+1, x1+1, y0, kColorBlack, plotProc, data);
 		y0++;
-		patternHLine(surface, patterns, fillType, x0-1, x0-1, y1, xO, yO);
-		patternHLine(surface, patterns, fillType, x1+1, x1+1, y1, xO, yO);
+		drawHLine(x0-1, x0-1, y1, kColorBlack, plotProc, data);
+		drawHLine(x1+1, x1+1, y1, kColorBlack, plotProc, data);
 		y1--;
 	}
 }
