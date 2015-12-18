@@ -227,7 +227,7 @@ int DisplayMan::flowText(
 			x += (width - textLength(msgFont, lineBuffer, strlen(lineBuffer))) / 2;
 
 		if (output)
-			text(msgFont, x, y, penColor, lineBuffer, strlen(lineBuffer));
+			drawText(msgFont, x, y, penColor, lineBuffer, strlen(lineBuffer));
 
 		numLines--;
 		y += fontHeight;
@@ -325,7 +325,7 @@ void DisplayMan::drawMessage(const char *str) {
 
 			_vm->_event->mouseHide();
 			createBox(168);
-			text(_vm->_msgFont, _vm->_utils->vgaScaleX(7), _vm->_utils->vgaScaleY(155) + _vm->_utils->svgaCord(2), 1, str, strlen(str));
+			drawText(_vm->_msgFont, _vm->_utils->vgaScaleX(7), _vm->_utils->vgaScaleY(155) + _vm->_utils->svgaCord(2), 1, str, strlen(str));
 			_vm->_event->mouseShow();
 			_lastMessageLong = false;
 		}
@@ -668,7 +668,7 @@ uint16 DisplayMan::textHeight(TextFont *tf) {
 /**
  * Draws the text to the screen.
  */
-void DisplayMan::text(TextFont *tf, uint16 x, uint16 y, uint16 color, const char *text, uint16 numChars) {
+void DisplayMan::drawText(TextFont *tf, uint16 x, uint16 y, uint16 color, const char *text, uint16 numChars) {
 	byte *vgaTop = getCurrentDrawingBuffer();
 
 	for (uint16 i = 0; i < numChars; i++) {
