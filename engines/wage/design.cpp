@@ -387,8 +387,8 @@ void Design::drawFilledEllipse(int x0, int y0, int x1, int y1, void (*plotProc)(
 	a *= 8*a; b1 = 8*b*b;
 
 	do {
-		drawHLine(x0, x1 + 1, y0, kColorBlack, plotProc, data);
-		drawHLine(x0, x1 + 1, y1, kColorBlack, plotProc, data);
+		drawHLine(x0, x1, y0, kColorBlack, plotProc, data);
+		drawHLine(x0, x1, y1, kColorBlack, plotProc, data);
 		e2 = 2*err;
 		if (e2 <= dy) { y0++; y1--; err += dy += a; }  /* y step */
 		if (e2 >= dx || 2*err > dy) { x0++; x1--; err += dx += b1; } /* x step */
@@ -408,7 +408,7 @@ void Design::drawHLine(int x1, int x2, int y, int color, void (*plotProc)(int, i
 	if (x1 > x2)
 		SWAP(x1, x2);
 
-	for (int x = x1; x < x2; x++)
+	for (int x = x1; x <= x2; x++)
 		(*plotProc)(x, y, color, data);
 }
 
@@ -416,7 +416,7 @@ void Design::drawVLine(int x, int y1, int y2, int color, void (*plotProc)(int, i
 	if (y1 > y2)
 		SWAP(y1, y2);
 
-	for (int y = y1; y < y2; y++)
+	for (int y = y1; y <= y2; y++)
 		(*plotProc)(x, y, color, data);
 }
 
