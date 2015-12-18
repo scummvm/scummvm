@@ -1154,7 +1154,10 @@ void LabEngine::go() {
 	_graphics->setUpScreens();
 
 	_event->initMouse();
-	_msgFont = _resource->getFont("P:AvanteG.12");
+	if (getPlatform() != Common::kPlatformAmiga)
+		_msgFont = _resource->getFont("F:AvanteG.12");
+	else
+		_msgFont = _resource->getFont("F:Map.fon");
 	_event->mouseHide();
 
 	Intro *intro = new Intro(this);

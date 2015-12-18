@@ -51,7 +51,7 @@ namespace Lab {
  * Does the things to properly set up the detective notes.
  */
 void LabEngine::doNotes() {
-	TextFont *noteFont = _resource->getFont("P:Note.fon");
+	TextFont *noteFont = _resource->getFont("F:Note.fon");
 	char *noteText = _resource->getText("Lab:Rooms/Notes");
 
 	Common::Rect textRect = Common::Rect(_utils->vgaScaleX(25) + _utils->svgaCord(15), _utils->vgaScaleY(50), _utils->vgaScaleX(295) - _utils->svgaCord(15), _utils->vgaScaleY(148));
@@ -66,7 +66,7 @@ void LabEngine::doNotes() {
  * OpenHiRes already called.
  */
 void LabEngine::doWestPaper() {
-	TextFont *paperFont = _resource->getFont("P:News22.fon");
+	TextFont *paperFont = _resource->getFont("F:News22.fon");
 	char *paperText = _resource->getText("Lab:Rooms/Date");
 
 	Common::Rect textRect = Common::Rect(_utils->vgaScaleX(57), _utils->vgaScaleY(77) + _utils->svgaCord(2), _utils->vgaScaleX(262), _utils->vgaScaleY(91));
@@ -74,7 +74,7 @@ void LabEngine::doWestPaper() {
 	_graphics->closeFont(paperFont);
 	delete[] paperText;
 
-	paperFont = _resource->getFont("P:News32.fon");
+	paperFont = _resource->getFont("F:News32.fon");
 	paperText = _resource->getText("Lab:Rooms/Headline");
 
 	int fileLen = strlen(paperText) - 1;
@@ -93,7 +93,7 @@ void LabEngine::doWestPaper() {
 	_graphics->closeFont(paperFont);
 	delete[] paperText;
 
-	paperFont = _resource->getFont("P:Note.fon");
+	paperFont = _resource->getFont("F:Note.fon");
 	paperText = _resource->getText("Lab:Rooms/Col1");
 	charsPrinted = _graphics->flowText(paperFont, -4, 0, 0, false, false, false, true, _utils->vgaRectScale(45, y, 158, 148), paperText);
 	delete[] paperText;
@@ -109,7 +109,7 @@ void LabEngine::doWestPaper() {
  * Loads in the data for the journal.
  */
 void LabEngine::loadJournalData() {
-	_journalFont = _resource->getFont("P:Journal.fon");
+	_journalFont = _resource->getFont("F:Journal.fon");
 	_music->updateMusic();
 
 	char filename[20];
@@ -496,7 +496,7 @@ void LabEngine::doMonitor(char *background, char *textfile, bool isinteractive, 
 	_lastPage = false;
 	_graphics->_fadePalette = _highPalette;
 
-	TextFont *monitorFont = _resource->getFont("P:Map.fon");
+	TextFont *monitorFont = _resource->getFont("F:Map.fon");
 	Common::File *buttonFile = _resource->openDataFile("P:MonImage");
 	_monitorButton = new Image(buttonFile, this);
 	delete buttonFile;

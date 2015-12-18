@@ -405,6 +405,7 @@ void DisplayMan::setUpScreens() {
 
 	createScreen(_vm->_isHiRes);
 
+	// TODO: The CONTROL file is not present in the Amiga version
 	Common::File *controlFile = _vm->_resource->openDataFile("P:Control");
 	for (uint16 i = 0; i < 20; i++)
 		_vm->_moveImages[i] = new Image(controlFile, _vm);
@@ -426,6 +427,7 @@ void DisplayMan::setUpScreens() {
 	moveButtonList->push_back(e->createButton(257, y, 8, VKEY_RTARROW, moveImages[18], moveImages[19]));
 	moveButtonList->push_back(e->createButton(289, y, 9,          'p', moveImages[10], moveImages[11]));
 
+	// TODO: The INV file is not present in the Amiga version
 	Common::File *invFile = _vm->_resource->openDataFile("P:Inv");
 	if (_vm->getPlatform() == Common::kPlatformWindows) {
 		for (uint16 imgIdx = 0; imgIdx < 10; imgIdx++)
