@@ -699,20 +699,16 @@ bool LabEngine::fromCrumbs(uint32 tmpClass, uint16 code, uint16 qualifier, Commo
 	} else if (msgClass == kMessageDeltaMove) {
 		ViewData *vptr = getViewData(_roomNum, _direction);
 		CloseDataPtr oldClosePtr = vptr->_closeUps;
+		CloseDataPtr tmpClosePtr = _closeDataPtr;
+		setCurrentClose(curPos, &tmpClosePtr, true);
 
-		if (!wrkClosePtr) { // CHECKME: Always true?
-			CloseDataPtr tmpClosePtr = _closeDataPtr;
-			setCurrentClose(curPos, &tmpClosePtr, true);
-
-			if (!tmpClosePtr || (tmpClosePtr == _closeDataPtr)) {
-				if (!_closeDataPtr)
-					wrkClosePtr = oldClosePtr;
-				else
-					wrkClosePtr = _closeDataPtr->_subCloseUps;
-			} else
-				wrkClosePtr = tmpClosePtr->_nextCloseUp;
+		if (!tmpClosePtr || (tmpClosePtr == _closeDataPtr)) {
+			if (!_closeDataPtr)
+				wrkClosePtr = oldClosePtr;
+			else
+				wrkClosePtr = _closeDataPtr->_subCloseUps;
 		} else
-			wrkClosePtr = wrkClosePtr->_nextCloseUp;
+			wrkClosePtr = tmpClosePtr->_nextCloseUp;
 
 
 		if (!wrkClosePtr) {
