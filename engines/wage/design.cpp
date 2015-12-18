@@ -450,18 +450,12 @@ void Design::drawHLine(int x1, int x2, int y, int color, void (*plotProc)(int, i
 		(*plotProc)(x, y, color, data);
 }
 
-void Design::patternVLine(Graphics::Surface *surface, Patterns &patterns, byte fillType, int x, int y1, int y2, int x0, int y0) {
+void Design::drawVLine(int x, int y1, int y2, int color, void (*plotProc)(int, int, int, void *), void *data) {
 	if (y1 > y2)
 		SWAP(y1, y2);
 
-	if (fillType > patterns.size())
-		return;
-
-	for (int y = y1; y < y2; y++)
-		if (x >= 0 && x < surface->w && y >= 0 && y < surface->h)
-			*((byte *)surface->getBasePtr(x, y)) =
-				(patterns[fillType - 1][(y - y0) % 8] & (1 << (7 - (x - x0) % 8))) ?
-					kColorBlack : kColorWhite;
+	for (int y = y1; y < y2; x++)
+		(*plotProc)(x, y, color, data);
 }
 
 /* Bresenham as presented in Foley & Van Dam */
@@ -475,15 +469,14 @@ void Design::drawThickLine (int x1, int y1, int x2, int y2, int thick, int color
 	int dx = abs(x2 - x1);
 	int dy = abs(y2 - y1);
 
-/*
 	if (dx == 0) {
-		patternVLine(surface, patterns, fillType, x1, y1, y2, x1, y1);
+		drawVLine(x1, y1, y2, color, plotProc, data);
 		return;
 	} else if (dy == 0) {
-		patternHLine(surface, patterns, fillType, x1, x2, y1, x1, y1);
+		drawHLine(x1, x2, y1, color, plotProc, data);
 		return;
 	}
-*/
+
 	if (dy <= dx) {
 		/* More-or-less horizontal. use wid for vertical stroke */
 		/* Doug Claar: watch out for NaN in atan2 (2.0.5) */

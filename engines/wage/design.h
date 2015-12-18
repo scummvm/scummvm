@@ -98,7 +98,7 @@ private:
 									void (*plotProc)(int, int, int, void *), void *data);
 	void drawFilledEllipse(int x0, int y0, int x1, int y1, void (*plotProc)(int, int, int, void *), void *data);
 	void drawHLine(int x1, int x2, int y, int color, void (*plotProc)(int, int, int, void *), void *data);
-	void patternVLine(Graphics::Surface *surface, Patterns &patterns, byte fillType, int x, int y1, int y2, int x0, int y0);
+	void drawVLine(int x, int y1, int y2, int color, void (*plotProc)(int, int, int, void *), void *data);
 	void drawThickLine (int x1, int y1, int x2, int y2, int thick, int color,
 									void (*plotProc)(int, int, int, void *), void *data);
 };
