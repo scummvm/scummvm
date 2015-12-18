@@ -51,6 +51,14 @@
 
 namespace Wage {
 
+struct plotData {
+	Graphics::Surface *surface;
+	Patterns *patterns;
+	int fillType;
+	int x0;
+	int y0;
+};
+
 Design::Design(Common::SeekableReadStream *data) {
 	_len = data->readUint16BE() - 2;
 	_data = (byte *)malloc(_len);
@@ -110,6 +118,15 @@ void Design::paint(Graphics::Surface *canvas, Patterns &patterns, bool mask) {
 	}
 }
 
+void drawPixel(int x, int y, int color, void *data) {
+	plotData *p = (plotData *)data;
+
+	if (x >= 0 && x < p->surface->w && y >= 0 && y < p->surface->h)
+		*((byte *)p->surface->getBasePtr(x, y)) =
+			((*p->patterns)[p->fillType - 1][(y - p->y0) % 8] & (1 << (7 - (x - p->x0) % 8))) ?
+				kColorBlack : kColorWhite;
+}
+
 void Design::drawRect(Graphics::Surface *surface, Common::ReadStream &in, bool mask,
 	Patterns &patterns, byte fillType, byte borderThickness, byte borderFillType) {
 	int16 y1 = in.readSint16BE();
@@ -129,6 +146,8 @@ void Design::drawRect(Graphics::Surface *surface, Common::ReadStream &in, bool m
 
 void Design::drawPolygon(Graphics::Surface *surface, Common::ReadStream &in, bool mask,
 	Patterns &patterns, byte fillType, byte borderThickness, byte borderFillType) {
+	plotData pd;
+
 	//surface->setColor(Color.BLACK);
 	//in.readUint16BE();
 	warning("ignored => %d", in.readSint16BE());
@@ -142,6 +161,12 @@ void Design::drawPolygon(Graphics::Surface *surface, Common::ReadStream &in, boo
 	int16 bx2 = in.readSint16BE();
 	Common::Rect bbox(bx1, by1, bx2, by2);
 	warning("Bbox: %d, %d, %d, %d", bx1, by1, bx2, by2);
+
+	pd.surface = surface;
+	pd.patterns = &patterns;
+	pd.fillType = fillType;
+	pd.x0 = bx1;
+	pd.y0 = by1;
 
 	numBytes -= 8;
 
@@ -223,6 +248,12 @@ void Design::drawPolygon(Graphics::Surface *surface, Common::ReadStream &in, boo
 	patternThickPolygon(surface, patterns, xpoints, ypoints, npoints, bbox, borderFillType, fillType);
 	//	surface->setStroke(oldStroke);
 //	}
+
+	pd.fillType = borderFillType;
+	if (borderThickness > 0) {
+		for (int i = 1; i < npoints; i++)
+			drawThickLine(xpoints[i-1], ypoints[i-1], xpoints[i], ypoints[i], borderThickness, kColorBlack, drawPixel, &pd);
+	}
 
 	free(xpoints);
 	free(ypoints);
@@ -349,9 +380,6 @@ void Design::patternThickPolygon(Graphics::Surface *surface, Patterns &patterns,
 	}
 
 	free(nodeX);
-
-	for (i = 1; i < npoints; i++)
-			surface->drawLine(polyX[i-1], polyY[i-1], polyX[i], polyY[i], kColorBlack);
 }
 
 void Design::drawOval(Graphics::Surface *surface, Common::ReadStream &in, bool mask,
@@ -408,6 +436,165 @@ void Design::patternHLine(Graphics::Surface *surface, Patterns &patterns, byte f
 			*((byte *)surface->getBasePtr(x, y)) =
 				(patterns[fillType - 1][(y - y0) % 8] & (1 << (7 - (x - x0) % 8))) ?
 					kColorBlack : kColorWhite;
+}
+
+void Design::patternVLine(Graphics::Surface *surface, Patterns &patterns, byte fillType, int x, int y1, int y2, int x0, int y0) {
+	if (y1 > y2)
+		SWAP(y1, y2);
+
+	if (fillType > patterns.size())
+		return;
+
+	for (int y = y1; y < y2; y++)
+		if (x >= 0 && x < surface->w && y >= 0 && y < surface->h)
+			*((byte *)surface->getBasePtr(x, y)) =
+				(patterns[fillType - 1][(y - y0) % 8] & (1 << (7 - (x - x0) % 8))) ?
+					kColorBlack : kColorWhite;
+}
+
+/* Bresenham as presented in Foley & Van Dam */
+/* Code is based on GD lib http://libgd.github.io/ */
+void Design::drawThickLine (int x1, int y1, int x2, int y2, int thick, int color,
+								void (*plotProc)(int, int, int, void *), void *data) {
+	int incr1, incr2, d, x, y, xend, yend, xdirflag, ydirflag;
+	int wid;
+	int w, wstart;
+
+	int dx = abs(x2 - x1);
+	int dy = abs(y2 - y1);
+
+/*
+	if (dx == 0) {
+		patternVLine(surface, patterns, fillType, x1, y1, y2, x1, y1);
+		return;
+	} else if (dy == 0) {
+		patternHLine(surface, patterns, fillType, x1, x2, y1, x1, y1);
+		return;
+	}
+*/
+	if (dy <= dx) {
+		/* More-or-less horizontal. use wid for vertical stroke */
+		/* Doug Claar: watch out for NaN in atan2 (2.0.5) */
+
+		/* 2.0.12: Michael Schwartz: divide rather than multiply;
+			  TBB: but watch out for /0! */
+		double ac = cos(atan2 (dy, dx));
+		if (ac != 0) {
+			wid = thick / ac;
+		} else {
+			wid = 1;
+		}
+		if (wid == 0) {
+			wid = 1;
+		}
+		d = 2 * dy - dx;
+		incr1 = 2 * dy;
+		incr2 = 2 * (dy - dx);
+		if (x1 > x2) {
+			x = x2;
+			y = y2;
+			ydirflag = (-1);
+			xend = x1;
+		} else {
+			x = x1;
+			y = y1;
+			ydirflag = 1;
+			xend = x2;
+		}
+
+		/* Set up line thickness */
+		wstart = y - wid / 2;
+		for (w = wstart; w < wstart + wid; w++)
+			(*plotProc)(x, y, color, data);
+
+		if (((y2 - y1) * ydirflag) > 0) {
+			while (x < xend) {
+				x++;
+				if (d < 0) {
+					d += incr1;
+				} else {
+					y++;
+					d += incr2;
+				}
+				wstart = y - wid / 2;
+				for (w = wstart; w < wstart + wid; w++)
+					(*plotProc)(x, w, color, data);
+			}
+		} else {
+			while (x < xend) {
+				x++;
+				if (d < 0) {
+					d += incr1;
+				} else {
+					y--;
+					d += incr2;
+				}
+				wstart = y - wid / 2;
+				for (w = wstart; w < wstart + wid; w++)
+					(*plotProc)(x, w, color, data);
+			}
+		}
+	} else {
+		/* More-or-less vertical. use wid for horizontal stroke */
+		/* 2.0.12: Michael Schwartz: divide rather than multiply;
+		   TBB: but watch out for /0! */
+		double as = sin(atan2(dy, dx));
+		if (as != 0) {
+			wid = thick / as;
+		} else {
+			wid = 1;
+		}
+		if (wid == 0)
+			wid = 1;
+
+		d = 2 * dx - dy;
+		incr1 = 2 * dx;
+		incr2 = 2 * (dx - dy);
+		if (y1 > y2) {
+			y = y2;
+			x = x2;
+			yend = y1;
+			xdirflag = (-1);
+		} else {
+			y = y1;
+			x = x1;
+			yend = y2;
+			xdirflag = 1;
+		}
+
+		/* Set up line thickness */
+		wstart = x - wid / 2;
+		for (w = wstart; w < wstart + wid; w++)
+			(*plotProc)(w, y, color, data);
+
+		if (((x2 - x1) * xdirflag) > 0) {
+			while (y < yend) {
+				y++;
+				if (d < 0) {
+					d += incr1;
+				} else {
+					x++;
+					d += incr2;
+				}
+				wstart = x - wid / 2;
+				for (w = wstart; w < wstart + wid; w++)
+					(*plotProc)(w, y, color, data);
+			}
+		} else {
+			while (y < yend) {
+				y++;
+				if (d < 0) {
+					d += incr1;
+				} else {
+					x--;
+					d += incr2;
+				}
+				wstart = x - wid / 2;
+				for (w = wstart; w < wstart + wid; w++)
+					(*plotProc)(w, y, color, data);
+			}
+		}
+	}
 }
 
 
