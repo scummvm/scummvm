@@ -389,12 +389,10 @@ bool LabEngine::doUse(uint16 curInv) {
  * Decrements the current inventory number.
  */
 void LabEngine::decIncInv(uint16 *curInv, bool decreaseFl) {
+	int8 step = (decreaseFl) ? -1 : 1;
 	interfaceOff();
-
-	if (decreaseFl)
-		(*curInv)--;
-	else
-		(*curInv)++;
+	
+	(*curInv) += step;
 
 	while (*curInv && (*curInv <= _numInv)) {
 		if (_conditions->in(*curInv) && _inventory[*curInv]._bitmapName) {
@@ -402,17 +400,11 @@ void LabEngine::decIncInv(uint16 *curInv, bool decreaseFl) {
 			break;
 		}
 
-		if (decreaseFl)
-			(*curInv)--;
-		else
-			(*curInv)++;
+		(*curInv) += step;
 	}
 
 	if ((*curInv == 0) || (*curInv > _numInv)) {
-		if (decreaseFl)
-			*curInv = _numInv;
-		else
-			*curInv = 1;
+		(*curInv) += step;
 
 		while (*curInv && (*curInv <= _numInv)) {
 			if (_conditions->in(*curInv) && _inventory[*curInv]._bitmapName) {
@@ -420,10 +412,7 @@ void LabEngine::decIncInv(uint16 *curInv, bool decreaseFl) {
 				break;
 			}
 
-			if (decreaseFl)
-				(*curInv)--;
-			else
-				(*curInv)++;
+			(*curInv) += step;
 		}
 	}
 }
@@ -667,8 +656,6 @@ bool LabEngine::fromCrumbs(uint32 tmpClass, uint16 code, uint16 qualifier, Commo
 		interfaceOff();
 		_mainDisplay = true;
 
-		bool doit = false;
-
 		if (_closeDataPtr) {
 			switch (_closeDataPtr->_closeUpType) {
 			case SPECIALLOCK:
@@ -680,77 +667,11 @@ bool LabEngine::fromCrumbs(uint32 tmpClass, uint16 code, uint16 qualifier, Commo
 					_tilePuzzle->mouseTile(curPos);
 				break;
 			default:
-				doit = true;
+				performAction(wrkClosePtr, actionMode, curPos, curInv);
 				break;
 			}
 		} else
-			doit = true;
-
-
-		if (doit) {
-			wrkClosePtr = nullptr;
-			eatMessages();
-
-			switch (actionMode) {
-			case 0:
-				// Take something.
-				if (doActionRule(curPos, actionMode, _roomNum, &_closeDataPtr))
-					_curFileName = _newFileName;
-				else if (takeItem(curPos, &_closeDataPtr))
-					drawStaticMessage(kTextTakeItem);
-				else if (doActionRule(curPos, TAKEDEF - 1, _roomNum, &_closeDataPtr))
-					_curFileName = _newFileName;
-				else if (doActionRule(curPos, TAKE - 1, 0, &_closeDataPtr))
-					_curFileName = _newFileName;
-				else if (curPos.y < (_utils->vgaScaleY(149) + _utils->svgaCord(2)))
-					drawStaticMessage(kTextNothing);
-
-				break;
-
-			case 1:
-			case 2:
-			case 3:
-				// Manipulate an object, Open up a "door" or Close a "door"
-				if (doActionRule(curPos, actionMode, _roomNum, &_closeDataPtr))
-					_curFileName = _newFileName;
-				else if (!doActionRule(curPos, actionMode, 0, &_closeDataPtr)) {
-					if (curPos.y < (_utils->vgaScaleY(149) + _utils->svgaCord(2)))
-						drawStaticMessage(kTextNothing);
-				}
-				break;
-
-			case 4: {
-					// Look at closeups
-					CloseDataPtr tmpClosePtr = _closeDataPtr;
-					setCurrentClose(curPos, &tmpClosePtr, true);
-
-					if (_closeDataPtr == tmpClosePtr) {
-						if (curPos.y < (_utils->vgaScaleY(149) + _utils->svgaCord(2)))
-							drawStaticMessage(kTextNothing);
-					} else if (tmpClosePtr->_graphicName) {
-						if (*(tmpClosePtr->_graphicName)) {
-							_anim->_doBlack = true;
-							_closeDataPtr = tmpClosePtr;
-						} else if (curPos.y < (_utils->vgaScaleY(149) + _utils->svgaCord(2)))
-							drawStaticMessage(kTextNothing);
-					} else if (curPos.y < (_utils->vgaScaleY(149) + _utils->svgaCord(2)))
-						drawStaticMessage(kTextNothing);
-				}
-				break;
-
-			case 5:
-				if (_conditions->in(curInv)) {
-					// Use an item on something else
-					if (doOperateRule(curPos, curInv, &_closeDataPtr)) {
-						_curFileName = _newFileName;
-
-						if (!_conditions->in(curInv))
-							decIncInv(&curInv, false);
-					} else if (curPos.y < (_utils->vgaScaleY(149) + _utils->svgaCord(2)))
-						drawStaticMessage(kTextNothing);
-				}
-			}
-		}
+			performAction(wrkClosePtr, actionMode, curPos, curInv);
 
 		mayShowCrumbIndicator();
 		_graphics->screenUpdate();
@@ -1157,6 +1078,75 @@ void LabEngine::processAltButton(uint16 &curInv, uint16 &lastInv, uint16 buttonI
 	}
 
 	_graphics->screenUpdate();
+}
+
+void LabEngine::performAction(CloseDataPtr wrkClosePtr, uint16 actionMode, Common::Point curPos, uint16 &curInv) {
+	wrkClosePtr = nullptr;
+	eatMessages();
+
+	switch (actionMode) {
+	case 0:
+		// Take something.
+		if (doActionRule(curPos, actionMode, _roomNum, &_closeDataPtr))
+			_curFileName = _newFileName;
+		else if (takeItem(curPos, &_closeDataPtr))
+			drawStaticMessage(kTextTakeItem);
+		else if (doActionRule(curPos, TAKEDEF - 1, _roomNum, &_closeDataPtr))
+			_curFileName = _newFileName;
+		else if (doActionRule(curPos, TAKE - 1, 0, &_closeDataPtr))
+			_curFileName = _newFileName;
+		else if (curPos.y < (_utils->vgaScaleY(149) + _utils->svgaCord(2)))
+			drawStaticMessage(kTextNothing);
+
+		break;
+
+	case 1:
+	case 2:
+	case 3:
+		// Manipulate an object, Open up a "door" or Close a "door"
+		if (doActionRule(curPos, actionMode, _roomNum, &_closeDataPtr))
+			_curFileName = _newFileName;
+		else if (!doActionRule(curPos, actionMode, 0, &_closeDataPtr)) {
+			if (curPos.y < (_utils->vgaScaleY(149) + _utils->svgaCord(2)))
+				drawStaticMessage(kTextNothing);
+		}
+		break;
+
+	case 4: {
+		// Look at closeups
+		CloseDataPtr tmpClosePtr = _closeDataPtr;
+		setCurrentClose(curPos, &tmpClosePtr, true);
+
+		if (_closeDataPtr == tmpClosePtr) {
+			if (curPos.y < (_utils->vgaScaleY(149) + _utils->svgaCord(2)))
+				drawStaticMessage(kTextNothing);
+		}
+		else if (tmpClosePtr->_graphicName) {
+			if (*(tmpClosePtr->_graphicName)) {
+				_anim->_doBlack = true;
+				_closeDataPtr = tmpClosePtr;
+			}
+			else if (curPos.y < (_utils->vgaScaleY(149) + _utils->svgaCord(2)))
+				drawStaticMessage(kTextNothing);
+		}
+		else if (curPos.y < (_utils->vgaScaleY(149) + _utils->svgaCord(2)))
+			drawStaticMessage(kTextNothing);
+	}
+			break;
+
+	case 5:
+		if (_conditions->in(curInv)) {
+			// Use an item on something else
+			if (doOperateRule(curPos, curInv, &_closeDataPtr)) {
+				_curFileName = _newFileName;
+
+				if (!_conditions->in(curInv))
+					decIncInv(&curInv, false);
+			}
+			else if (curPos.y < (_utils->vgaScaleY(149) + _utils->svgaCord(2)))
+				drawStaticMessage(kTextNothing);
+		}
+	}
 }
 
 void LabEngine::go() {
