@@ -173,7 +173,6 @@ void Design::drawPolygon(Graphics::Surface *surface, Common::ReadStream &in, boo
 	int16 by2 = in.readSint16BE();
 	int16 bx2 = in.readSint16BE();
 	Common::Rect bbox(bx1, by1, bx2, by2);
-	warning("Bbox: %d, %d, %d, %d", bx1, by1, bx2, by2);
 
 	numBytes -= 8;
 
@@ -183,38 +182,29 @@ void Design::drawPolygon(Graphics::Surface *surface, Common::ReadStream &in, boo
 	Common::Array<int> xcoords;
 	Common::Array<int> ycoords;
 
-	warning("Start point is (%d,%d)", x1, y1);
 	numBytes -= 6;
 
 	while (numBytes > 0) {
 		int y2 = y1;
 		int x2 = x1;
 		int b = in.readSByte();
-		//warning("YB = %x", b);
 		if (b == (byte)0x80) {
 			y2 = in.readSint16BE();
 			numBytes -= 3;
 		} else {
-			//warning("Y");
 			y2 += b;
 			numBytes -= 1;
 		}
 		b = in.readSByte();
-		//warning("XB = %x", b);
 		if (b == (byte) 0x80) {
 			x2 = in.readSint16BE();
 			numBytes -= 3;
 		} else {
-			//warning("X");
 			x2 += b;
 			numBytes -= 1;
 		}
-		//surface->setColor(colors[c++]);
-		//surface->setColor(Color.black);
 		xcoords.push_back(x1);
 		ycoords.push_back(y1);
-		debug(8, "%d %d %d %d", x1, y1, x2, y2);
-		//surface->drawLine(x1, y1, x2, y2);
 		x1 = x2;
 		y1 = y2;
 	}
@@ -228,35 +218,15 @@ void Design::drawPolygon(Graphics::Surface *surface, Common::ReadStream &in, boo
 		xpoints[i] = xcoords[i];
 		ypoints[i] = ycoords[i];
 	}
-	//	warning(fillType);
-/*
-	if (mask) {
-		surface->fillPolygon(xpoints, ypoints, npoints);
-		if (borderThickness > 0) {
-			Stroke oldStroke = surface->getStroke();
-			surface->setStroke(new BasicStroke(borderThickness - 0.5f, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_BEVEL));
-			for (int i = 1; i < npoints; i++)
-				surface->drawLine(xpoints[i-1], ypoints[i-1], xpoints[i], ypoints[i]);
-			surface->setStroke(oldStroke);
-		}
-		return;
-	}
-	if (setPattern(g2d, patterns, fillType - 1)) {
-		surface->fillPolygon(xpoints, ypoints, npoints);
-	}
-	//	warning(borderFillType);
-	//surface->setColor(Color.black);
-	//if (1==0)
-	if (borderThickness > 0 && setPattern(g2d, patterns, borderFillType - 1)) {
-		Stroke oldStroke = surface->getStroke();
-		//if (borderThickness != 1)
-		surface->setStroke(new BasicStroke(borderThickness - 0.5f, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_BEVEL));
-*/
+
 	plotData pd(surface, &patterns, fillType, bx1, by1);
 
+	if (mask) {
+		drawPolygonScan(xpoints, ypoints, npoints, bbox, kColorBlack, drawPixelPlain, &pd);
+		return;
+	}
+
 	drawPolygonScan(xpoints, ypoints, npoints, bbox, kColorBlack, drawPixel, &pd);
-	//	surface->setStroke(oldStroke);
-//	}
 
 	pd.fillType = borderFillType;
 	if (borderThickness > 0) {
