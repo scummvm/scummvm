@@ -78,11 +78,11 @@ void Music::updateMusic() {
 		fillbuffer(musicBuffer);
 
 		// Queue a music block, and start the music, if needed
-		bool startMusic = false;
+		bool startMusicFlag = false;
 
 		if (!_queuingAudioStream) {
 			_queuingAudioStream = Audio::makeQueuingAudioStream(SAMPLESPEED, false);
-			startMusic = true;
+			startMusicFlag = true;
 		}
 
 		byte soundFlags = Audio::FLAG_LITTLE_ENDIAN;
@@ -93,7 +93,7 @@ void Music::updateMusic() {
 
 		_queuingAudioStream->queueBuffer(musicBuffer, MUSICBUFSIZE, DisposeAfterUse::YES, soundFlags);
 
-		if (startMusic)
+		if (startMusicFlag)
 			_vm->_mixer->playStream(Audio::Mixer::kMusicSoundType, &_musicHandle, _queuingAudioStream);
 	}
 }
