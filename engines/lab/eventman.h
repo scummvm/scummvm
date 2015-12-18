@@ -98,9 +98,8 @@ public:
 
 	void attachButtonList(ButtonList *buttonList);
 	Button *createButton(uint16 x, uint16 y, uint16 id, uint16 key, Image *image, Image *altImage);
-	void disableButton(Button *button, uint16 penColor);
+	void toggleButton(Button *button, uint16 penColor, bool enable);
 	void drawButtonList(ButtonList *buttonList);
-	void enableButton(Button *button);
 	void freeButtonList(ButtonList *buttonList);
 	Button *getButton(uint16 id);
 	Common::Point getMousePos();

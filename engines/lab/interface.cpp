@@ -72,27 +72,20 @@ void EventManager::freeButtonList(ButtonList *buttonList) {
  */
 void EventManager::drawButtonList(ButtonList *buttonList) {
 	for (ButtonList::iterator button = buttonList->begin(); button != buttonList->end(); ++button) {
-		(*button)->_image->drawImage((*button)->_x, (*button)->_y);
+		toggleButton((*button), 1, true);
 
 		if (!(*button)->_isEnabled)
-			disableButton((*button), 1);
+			toggleButton((*button), 1, false);
 	}
 }
 
-/**
- * Dims a button, and makes it unavailable for using.
- */
-void EventManager::disableButton(Button *button, uint16 penColor) {
-	_vm->_graphics->overlayRect(penColor, button->_x, button->_y, button->_x + button->_image->_width - 1, button->_y + button->_image->_height - 1);
-	button->_isEnabled = false;
-}
+void EventManager::toggleButton(Button *button, uint16 disabledPenColor, bool enable) {
+	if (!enable)
+		_vm->_graphics->overlayRect(disabledPenColor, button->_x, button->_y, button->_x + button->_image->_width - 1, button->_y + button->_image->_height - 1);
+	else
+		button->_image->drawImage(button->_x, button->_y);
 
-/**
- * Undims a button, and makes it available again.
- */
-void EventManager::enableButton(Button *button) {
-	button->_image->drawImage(button->_x, button->_y);
-	button->_isEnabled = true;
+	button->_isEnabled = enable;
 }
 
 /**

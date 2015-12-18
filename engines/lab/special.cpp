@@ -234,18 +234,8 @@ void LabEngine::drawJournal(uint16 wipenum, bool needFade) {
 	else
 		turnPage((wipenum == 1));
 
-	Button *backButton = _event->getButton(0);
-	Button *forwardButton = _event->getButton(2);
-
-	if (_journalPage == 0)
-		_event->disableButton(backButton, 15);
-	else
-		_event->enableButton(backButton);
-
-	if (_lastPage)
-		_event->disableButton(forwardButton, 15);
-	else
-		_event->enableButton(forwardButton);
+	_event->toggleButton(_event->getButton(0), 15, (_journalPage > 0));	// back button
+	_event->toggleButton(_event->getButton(2), 15, (!_lastPage));	// forward button
 
 	if (needFade)
 		_graphics->fade(true, 0);
