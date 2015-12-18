@@ -1229,8 +1229,7 @@ int LabEngine::followCrumbs() {
 
 
 void LabEngine::mayShowCrumbIndicator() {
-	static byte dropCrumbs[] = { 0x00 };
-	static Image dropCrumbsImage(24, 24, dropCrumbs, this);
+	static Image dropCrumbsImage(24, 24, nullptr, this);
 	if (getPlatform() != Common::kPlatformWindows)
 		return;
 
@@ -1242,8 +1241,7 @@ void LabEngine::mayShowCrumbIndicator() {
 }
 
 void LabEngine::mayShowCrumbIndicatorOff() {
-	static byte dropCrumbsOff[] = { 0x00 };
-	static Image dropCrumbsOffImage(24, 24, dropCrumbsOff, this);
+	static Image dropCrumbsOffImage(24, 24, nullptr, this);
 
 	if (getPlatform() != Common::kPlatformWindows)
 		return;

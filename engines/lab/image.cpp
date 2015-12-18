@@ -49,8 +49,12 @@ Image::Image(Common::File *s, LabEngine *vm) : _vm(vm) {
 	if (size & 1)
 		size++;
 
-	_imageData = new byte[size];	// FIXME: Memory leak!
+	_imageData = new byte[size];
 	s->read(_imageData, size);
+}
+
+Image::~Image() {
+	delete _imageData;
 }
 
 /**

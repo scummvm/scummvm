@@ -47,9 +47,10 @@ public:
 	uint16 _height;
 	byte *_imageData;
 
-	Image(LabEngine *vm) : _width(0), _height(0), _imageData(0), _vm(vm) {}
+	Image(LabEngine *vm) : _width(0), _height(0), _imageData(nullptr), _vm(vm) {}
 	Image(int w, int h, byte *d, LabEngine *vm) : _width(w), _height(h), _imageData(d), _vm(vm) {}
 	Image(Common::File *s, LabEngine *vm);
+	virtual ~Image();
 
 	void drawImage(uint16 x, uint16 y);
 	void drawMaskImage(uint16 x, uint16 y);
