@@ -51,6 +51,7 @@ void Resource::readStaticText() {
 }
 
 TextFont *Resource::getFont(const char *fileName) {
+	// TODO: Add support for the font format of the Amiga version
 	Common::File *dataFile = openDataFile(fileName, MKTAG('V', 'G', 'A', 'F'));
 
 	uint32 headerSize = 4 + 2 + 256 * 3 + 4;
@@ -154,15 +155,29 @@ Common::String Resource::translateFileName(Common::String filename) {
 	filename.toUppercase();
 	Common::String fileNameStrFinal;
 
-	if (filename.hasPrefix("P:")) {
+	if (filename.hasPrefix("P:") || filename.hasPrefix("F:")) {
 		if (_vm->_isHiRes)
 			fileNameStrFinal = "GAME/SPICT/";
 		else
 			fileNameStrFinal = "GAME/PICT/";
-	} else if (filename.hasPrefix("LAB:"))
-		fileNameStrFinal = "GAME/";
-	else if (filename.hasPrefix("MUSIC:"))
-		fileNameStrFinal = "GAME/MUSIC/";
+
+		if (_vm->getPlatform() == Common::kPlatformAmiga) {
+			if (filename.hasPrefix("P:")) {
+				fileNameStrFinal = "PICT/";
+			} else {
+				fileNameStrFinal = "LABFONTS/";
+				filename += "T";	// all the Amiga fonts have a ".FONT" suffix
+			}
+		}
+	} else if (filename.hasPrefix("LAB:")) {
+		if (_vm->getPlatform() != Common::kPlatformAmiga)
+			fileNameStrFinal = "GAME/";
+	} else if (filename.hasPrefix("MUSIC:")) {
+		if (_vm->getPlatform() != Common::kPlatformAmiga)
+			fileNameStrFinal = "GAME/MUSIC/";
+		else
+			fileNameStrFinal = "MUSIC/";
+	}
 
 	if (filename.contains(':')) {
 		while (filename[0] != ':') {

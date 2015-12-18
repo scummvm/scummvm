@@ -325,7 +325,7 @@ void Intro::introSequence() {
 	_vm->_graphics->blackAllScreen();
 	_vm->_music->updateMusic();
 
-	TextFont *msgFont = _vm->_resource->getFont("P:Map.fon");
+	TextFont *msgFont = _vm->_resource->getFont("F:Map.fon");
 
 	_vm->_anim->_noPalChange = true;
 	nReadPict("Intro.1", true);
