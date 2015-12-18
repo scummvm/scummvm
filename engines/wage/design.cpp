@@ -445,7 +445,7 @@ void Design::drawVLine(int x, int y1, int y2, int color, void (*plotProc)(int, i
 	if (y1 > y2)
 		SWAP(y1, y2);
 
-	for (int y = y1; y < y2; x++)
+	for (int y = y1; y < y2; y++)
 		(*plotProc)(x, y, color, data);
 }
 
