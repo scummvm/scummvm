@@ -92,11 +92,9 @@ void Design::paint(Graphics::Surface *canvas, Patterns &patterns, bool mask) {
 		case 20:
 			drawPolygon(canvas, in, mask, patterns, fillType, borderThickness, borderFillType);
 			break;
-/*
 		case 24:
 			drawBitmap(canvas, in, mask);
 			break;
-*/
 		default:
 			warning("Unknown type => %d", type);
 			while (true) {
@@ -228,6 +226,68 @@ void Design::drawPolygon(Graphics::Surface *surface, Common::ReadStream &in, boo
 
 	free(xpoints);
 	free(ypoints);
+}
+
+void Design::drawBitmap(Graphics::Surface *surface, Common::ReadStream &in, bool mask) {
+	int numBytes = in.readSint16BE();
+	int y1 = in.readSint16BE();
+	int x1 = in.readSint16BE();
+	int y2 = in.readSint16BE();
+	int x2 = in.readSint16BE();
+	int w = x2 - x1;
+	int h = y2 - y1;
+
+	numBytes -= 10;
+
+	int x = 0, y = 0;
+	while (numBytes) {
+		int n = in.readSByte();
+		int count;
+		int b;
+		int state;
+
+		numBytes--;
+
+		if ((n >= 0) && (n <= 127)) { // If n is between 0 and 127 inclusive, copy the next n+1 bytes literally.
+			count = n + 1;
+			state = 1;
+		} else if ((n >= -127) && (n <= -1)) { // Else if n is between -127 and -1 inclusive, copy the next byte -n+1 times.
+			b = in.readByte();
+			numBytes--;
+			count = -n + 1;
+			state = 2;
+		} else { // Else if n is -128, noop.
+			count = 0;
+		}
+
+		for (int i = 0; i < count; i++) {
+			byte color;
+			if (state == 1) {
+				color = in.readByte();
+				numBytes--;
+			} else if (state == 2)
+				color = b;
+
+			for (int c = 0; c < 8; c++) {
+				if (x1 + x >= 0 && x1 + x < surface->w && y1 + y >= 0 && y1 + y < surface->h)
+					*((byte *)surface->getBasePtr(x1 + x, y1 + y)) =
+						(color & (1 << (7 - c % 8))) ?
+							kColorBlack : kColorWhite;
+				x++;
+				if (x == w) {
+					y++;
+
+					if (y == h)
+						return;
+
+					x = 0;
+					break;
+				}
+
+			}
+		}
+
+	}
 }
 
 void Design::patternThickRect(Graphics::Surface *surface, Patterns &patterns, Common::Rect &outer,
