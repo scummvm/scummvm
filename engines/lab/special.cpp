@@ -437,7 +437,6 @@ void LabEngine::processMonitor(char *ntext, TextFont *monitorFont, bool isIntera
 			_music->updateMusic();
 		} else {
 			uint32 msgClass  = msg->_msgClass;
-			uint16 qualifier = msg->_qualifier;
 			uint16 mouseX    = msg->_mouse.x;
 			uint16 mouseY    = msg->_mouse.y;
 			uint16 code      = msg->_code;
