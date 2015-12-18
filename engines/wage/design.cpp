@@ -144,7 +144,20 @@ void Design::drawRect(Graphics::Surface *surface, Common::ReadStream &in, bool m
 	}
 	fillType = 7;
 	Common::Rect inner(x1 + borderThickness, y1 + borderThickness, x2 - borderThickness, y2 - borderThickness);
-	patternThickRect(surface, patterns, outer, inner, borderFillType, fillType);
+
+	plotData pd;
+
+	pd.surface = surface;
+	pd.patterns = &patterns;
+	pd.fillType = borderFillType;
+	pd.x0 = x1;
+	pd.y0 = y1;
+
+	drawFilledRect(outer, kColorBlack, drawPixel, &pd);
+
+	pd.fillType = fillType;
+
+	drawFilledRect(inner, kColorBlack, drawPixel, &pd);
 }
 
 void Design::drawPolygon(Graphics::Surface *surface, Common::ReadStream &in, bool mask,
@@ -324,15 +337,9 @@ void Design::drawBitmap(Graphics::Surface *surface, Common::ReadStream &in, bool
 	}
 }
 
-void Design::patternThickRect(Graphics::Surface *surface, Patterns &patterns, Common::Rect &outer,
-	Common::Rect &inner, byte borderFillType, byte fillType) {
-	patternRect(surface, patterns, outer, borderFillType);
-	patternRect(surface, patterns, inner, fillType);
-}
-
-void Design::patternRect(Graphics::Surface *surface, Patterns &patterns, Common::Rect &rect, byte fillType) {
+void Design::drawFilledRect(Common::Rect &rect, int color, void (*plotProc)(int, int, int, void *), void *data) {
 	for (int y = rect.top; y < rect.bottom; y++)
-		patternHLine(surface, patterns, fillType, rect.left, rect.right, y, rect.left, rect.top);
+		drawHLine(rect.left, rect.right, y, color, plotProc, data);
 }
 
 
@@ -441,20 +448,6 @@ void Design::drawHLine(int x1, int x2, int y, int color, void (*plotProc)(int, i
 
 	for (int x = x1; x < x2; x++)
 		(*plotProc)(x, y, color, data);
-}
-
-void Design::patternHLine(Graphics::Surface *surface, Patterns &patterns, byte fillType, int x1, int x2, int y, int x0, int y0) {
-	if (x1 > x2)
-		SWAP(x1, x2);
-
-	if (fillType > patterns.size())
-		return;
-
-	for (int x = x1; x < x2; x++)
-		if (x >= 0 && x < surface->w && y >= 0 && y < surface->h)
-			*((byte *)surface->getBasePtr(x, y)) =
-				(patterns[fillType - 1][(y - y0) % 8] & (1 << (7 - (x - x0) % 8))) ?
-					kColorBlack : kColorWhite;
 }
 
 void Design::patternVLine(Graphics::Surface *surface, Patterns &patterns, byte fillType, int x, int y1, int y2, int x0, int y0) {
