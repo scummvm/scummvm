@@ -649,7 +649,7 @@ bool LabEngine::fromCrumbs(uint32 tmpClass, uint16 code, uint16 qualifier, Commo
 			_graphics->screenUpdate();
 		}
 	} else if ((msgClass == kMessageButtonUp) && !_alternate) {
-		processMainButton(wrkClosePtr, curInv, lastInv, oldDirection, forceDraw, buttonId, actionMode);
+		processMainButton(curInv, lastInv, oldDirection, forceDraw, buttonId, actionMode);
 	} else if ((msgClass == kMessageButtonUp) && _alternate) {
 		processAltButton(curInv, lastInv, buttonId, actionMode);
 	} else if (leftButtonClick && _mainDisplay) {
@@ -667,11 +667,11 @@ bool LabEngine::fromCrumbs(uint32 tmpClass, uint16 code, uint16 qualifier, Commo
 					_tilePuzzle->mouseTile(curPos);
 				break;
 			default:
-				performAction(wrkClosePtr, actionMode, curPos, curInv);
+				performAction(actionMode, curPos, curInv);
 				break;
 			}
 		} else
-			performAction(wrkClosePtr, actionMode, curPos, curInv);
+			performAction(actionMode, curPos, curInv);
 
 		mayShowCrumbIndicator();
 		_graphics->screenUpdate();
@@ -700,7 +700,7 @@ bool LabEngine::fromCrumbs(uint32 tmpClass, uint16 code, uint16 qualifier, Commo
 		ViewData *vptr = getViewData(_roomNum, _direction);
 		CloseDataPtr oldClosePtr = vptr->_closeUps;
 
-		if (!wrkClosePtr) {
+		if (!wrkClosePtr) { // CHECKME: Always true?
 			CloseDataPtr tmpClosePtr = _closeDataPtr;
 			setCurrentClose(curPos, &tmpClosePtr, true);
 
@@ -815,7 +815,7 @@ bool LabEngine::processKey(IntuiMessage *curMsg, uint32 &msgClass, uint16 &quali
 	return true;
 }
 
-void LabEngine::processMainButton(CloseDataPtr wrkClosePtr, uint16 &curInv, uint16 &lastInv, uint16 &oldDirection, bool &forceDraw, uint16 buttonId, uint16 &actionMode) {
+void LabEngine::processMainButton(uint16 &curInv, uint16 &lastInv, uint16 &oldDirection, bool &forceDraw, uint16 buttonId, uint16 &actionMode) {
 	uint16 newDir;
 	uint16 oldRoomNum;
 
@@ -829,7 +829,6 @@ void LabEngine::processMainButton(CloseDataPtr wrkClosePtr, uint16 &curInv, uint
 			doMainView(&_closeDataPtr);
 
 			_anim->_doBlack = true;
-			wrkClosePtr = nullptr;
 			_closeDataPtr = nullptr;
 			mayShowCrumbIndicator();
 		} else {
@@ -868,7 +867,6 @@ void LabEngine::processMainButton(CloseDataPtr wrkClosePtr, uint16 &curInv, uint
 	case kButtonLeft:
 	case kButtonRight:
 		_closeDataPtr = nullptr;
-		wrkClosePtr = nullptr;
 		if (buttonId == kButtonLeft)
 			drawStaticMessage(kTextTurnLeft);
 		else
@@ -887,7 +885,6 @@ void LabEngine::processMainButton(CloseDataPtr wrkClosePtr, uint16 &curInv, uint
 
 	case kButtonForward:
 		_closeDataPtr = nullptr;
-		wrkClosePtr = nullptr;
 		oldRoomNum = _roomNum;
 
 		if (doGoForward(&_closeDataPtr)) {
@@ -1080,8 +1077,7 @@ void LabEngine::processAltButton(uint16 &curInv, uint16 &lastInv, uint16 buttonI
 	_graphics->screenUpdate();
 }
 
-void LabEngine::performAction(CloseDataPtr wrkClosePtr, uint16 actionMode, Common::Point curPos, uint16 &curInv) {
-	wrkClosePtr = nullptr;
+void LabEngine::performAction(uint16 actionMode, Common::Point curPos, uint16 &curInv) {
 	eatMessages();
 
 	switch (actionMode) {
