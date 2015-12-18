@@ -47,15 +47,17 @@ OpenGLSdlGraphicsManager::OpenGLSdlGraphicsManager(uint desktopWidth, uint deskt
 
 	// Setup proper SDL OpenGL context creation.
 #if SDL_VERSION_ATLEAST(2, 0, 0)
+	OpenGL::ContextType glContextType;
+
 #if USE_FORCED_GL
-	_glContextType = OpenGL::kContextGL;
+	glContextType = OpenGL::kContextGL;
 	_glContextProfileMask = SDL_GL_CONTEXT_PROFILE_COMPATIBILITY;
 	// Context version 1.4 is choosen arbitrarily based on what most shader
 	// extensions were written against.
 	_glContextMajor = 1;
 	_glContextMinor = 4;
 #elif USE_FORCED_GLES
-	_glContextType = OpenGL::kContextGLES;
+	glContextType = OpenGL::kContextGLES;
 	_glContextProfileMask = SDL_GL_CONTEXT_PROFILE_ES;
 	_glContextMajor = 1;
 	_glContextMinor = 1;
@@ -103,7 +105,7 @@ OpenGLSdlGraphicsManager::OpenGLSdlGraphicsManager(uint desktopWidth, uint deskt
 	}
 
 	if (_glContextProfileMask == SDL_GL_CONTEXT_PROFILE_ES) {
-		_glContextType = OpenGL::kContextGLES;
+		glContextType = OpenGL::kContextGLES;
 
 		// We do not support GLES2 contexts right now. Force a GLES1 context.
 		if (_glContextMajor >= 2) {
@@ -111,7 +113,7 @@ OpenGLSdlGraphicsManager::OpenGLSdlGraphicsManager(uint desktopWidth, uint deskt
 			_glContextMinor = 1;
 		}
 	} else if (_glContextProfileMask == SDL_GL_CONTEXT_PROFILE_CORE) {
-		_glContextType = OpenGL::kContextGL;
+		glContextType = OpenGL::kContextGL;
 
 		// Core profile does not allow legacy functionality, which we use.
 		// Thus we always request a compatibility profile.
@@ -121,9 +123,12 @@ OpenGLSdlGraphicsManager::OpenGLSdlGraphicsManager(uint desktopWidth, uint deskt
 		_glContextMajor = 1;
 		_glContextMinor = 4;
 	} else {
-		_glContextType = OpenGL::kContextGL;
+		glContextType = OpenGL::kContextGL;
 	}
 #endif
+	setContextType(glContextType);
+#else
+	setContextType(OpenGL::kContextGL);
 #endif
 
 	// Retrieve a list of working fullscreen modes
@@ -293,7 +298,7 @@ Common::List<Graphics::PixelFormat> OpenGLSdlGraphicsManager::getSupportedFormat
 
 #if !USE_FORCED_GLES
 #if !USE_FORCED_GL
-	if (isInitialized() && !isGLESContext()) {
+	if (!isGLESContext()) {
 #endif
 #ifdef SCUMM_LITTLE_ENDIAN
 		// RGBA8888
@@ -491,7 +496,7 @@ bool OpenGLSdlGraphicsManager::setupMode(uint width, uint height) {
 		return false;
 	}
 
-	notifyContextCreate(rgba8888, rgba8888, _glContextType);
+	notifyContextCreate(rgba8888, rgba8888);
 	int actualWidth, actualHeight;
 	getWindowDimensions(&actualWidth, &actualHeight);
 	setActualScreenSize(actualWidth, actualHeight);
@@ -539,7 +544,7 @@ bool OpenGLSdlGraphicsManager::setupMode(uint width, uint height) {
 	_lastVideoModeLoad = SDL_GetTicks();
 
 	if (_hwScreen) {
-		notifyContextCreate(rgba8888, rgba8888, OpenGL::kContextGL);
+		notifyContextCreate(rgba8888, rgba8888);
 		setActualScreenSize(_hwScreen->w, _hwScreen->h);
 		_eventSource->resetKeyboadEmulation(_hwScreen->w - 1, _hwScreen->h - 1);
 	}

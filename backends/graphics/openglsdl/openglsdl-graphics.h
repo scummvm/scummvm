@@ -74,7 +74,6 @@ private:
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	int _glContextProfileMask, _glContextMajor, _glContextMinor;
-	OpenGL::ContextType _glContextType;
 	SDL_GLContext _glContext;
 #else
 	uint32 _lastVideoModeLoad;

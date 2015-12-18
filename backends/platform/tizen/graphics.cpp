@@ -56,10 +56,11 @@ result TizenGraphicsManager::Construct() {
 	loadEgl();
 
 	// Notify the OpenGL code about our context.
+	setContextType(OpenGL::kContextGLES);
 
 	// We default to RGB565 and RGBA5551 which is closest to the actual output
 	// mode we setup.
-	notifyContextCreate(Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0), Graphics::PixelFormat(2, 5, 5, 5, 1, 11, 6, 1, 0), OpenGL::kContextGLES);
+	notifyContextCreate(Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0), Graphics::PixelFormat(2, 5, 5, 5, 1, 11, 6, 1, 0));
 
 	// Tell our size.
 	int x, y, width, height;

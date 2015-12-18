@@ -76,9 +76,6 @@ enum ContextType {
  * Description structure of the OpenGL (ES) context.
  */
 struct Context {
-	/** Whether the context is properly initalized or not. */
-	bool ready;
-
 	/** The type of the active context. */
 	ContextType type;
 
@@ -87,7 +84,7 @@ struct Context {
 	 *
 	 * This marks all extensions as unavailable.
 	 */
-	void reset();
+	void reset(bool full = false);
 
 	/** Whether GL_ARB_texture_non_power_of_two is available or not. */
 	bool NPOTSupported;

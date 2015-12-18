@@ -27,23 +27,31 @@
 
 namespace OpenGL {
 
-void Context::reset() {
-	ready = false;
-	type = kContextGL;
+void Context::reset(bool full) {
+	if (full) {
+		// GLES supports least features, thus we initialize the context type
+		// to this on full reset.
+		type = kContextGLES;
+	}
+
 	NPOTSupported = false;
 }
 
 Context g_context;
 
-void OpenGLGraphicsManager::initializeGLContext(ContextType type) {
-	// Initialize default state.
-	g_context.reset();
-
+void OpenGLGraphicsManager::setContextType(ContextType type) {
 #if USE_FORCED_GL
 	type = kContextGL;
 #elif USE_FORCED_GLES
 	type = kContextGLES;
 #endif
+
+	g_context.type = type;
+}
+
+void OpenGLGraphicsManager::initializeGLContext() {
+	// Initialize default state.
+	g_context.reset();
 
 	// Load all functions.
 	// We use horrible trickery to silence C++ compilers.
@@ -72,9 +80,6 @@ void OpenGLGraphicsManager::initializeGLContext(ContextType type) {
 			g_context.NPOTSupported = true;
 		}
 	}
-
-	g_context.ready = true;
-	g_context.type = type;
 }
 
 } // End of namespace OpenGL

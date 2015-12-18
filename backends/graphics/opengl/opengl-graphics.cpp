@@ -56,7 +56,7 @@ OpenGLGraphicsManager::OpenGLGraphicsManager()
 #endif
     {
 	memset(_gamePalette, 0, sizeof(_gamePalette));
-	g_context.reset();
+	g_context.reset(true);
 }
 
 OpenGLGraphicsManager::~OpenGLGraphicsManager() {
@@ -840,9 +840,9 @@ void OpenGLGraphicsManager::setActualScreenSize(uint width, uint height) {
 	++_screenChangeID;
 }
 
-void OpenGLGraphicsManager::notifyContextCreate(const Graphics::PixelFormat &defaultFormat, const Graphics::PixelFormat &defaultFormatAlpha, ContextType type) {
+void OpenGLGraphicsManager::notifyContextCreate(const Graphics::PixelFormat &defaultFormat, const Graphics::PixelFormat &defaultFormatAlpha) {
 	// Initialize context for use.
-	initializeGLContext(type);
+	initializeGLContext();
 
 	// Disable 3D properties.
 	GL_CALL(glDisable(GL_CULL_FACE));
