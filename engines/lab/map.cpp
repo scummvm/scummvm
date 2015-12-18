@@ -377,18 +377,8 @@ void LabEngine::drawMap(uint16 curRoom, uint16 curMsg, uint16 floorNum, bool fad
 	if ((_maps[curRoom]._pageNumber == floorNum) && _roomsFound->in(curRoom) && _maps[curRoom]._x)
 		drawRoomMap(curRoom, true);
 
-	Button *upButton = _event->getButton(1);
-	Button *downButton = _event->getButton(2);
-
-	if (getUpperFloor(floorNum) != kFloorNone)
-		_event->enableButton(upButton);
-	else
-		_event->disableButton(upButton, 12);
-
-	if (getLowerFloor(floorNum) != kFloorNone)
-		_event->enableButton(downButton);
-	else
-		_event->disableButton(downButton, 12);
+	_event->toggleButton(_event->getButton(1), 12, (getUpperFloor(floorNum) != kFloorNone));	// up button
+	_event->toggleButton(_event->getButton(2), 12, (getLowerFloor(floorNum) != kFloorNone));	// down button
 
 	// Labyrinth specific code
 	if (floorNum == kFloorLower) {
