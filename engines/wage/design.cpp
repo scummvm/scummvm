@@ -270,14 +270,23 @@ void Design::drawOval(Graphics::Surface *surface, Common::ReadStream &in, bool m
 	plotData pd(surface, &patterns, borderFillType);
 
 	if (mask) {
-		drawFilledEllipse(x1, y1, x2, y2, drawPixelPlain, &pd);
+		drawEllipse(x1, y1, x2, y2, true, drawPixelPlain, &pd);
 		return;
 	}
 
-	drawFilledEllipse(x1, y1, x2-1, y2-1, drawPixel, &pd);
+	if (borderThickness > 0) {
+		if (borderThickness == 1) {
+			drawEllipse(x1, y1, x2-1, y2-1, false, drawPixel, &pd);
+		} else {
+			drawEllipse(x1, y1, x2-1, y2-1, true, drawPixel, &pd);
+			warning("Ellips thickness >1: borderThickness");
+		}
+	}
 
-	pd.fillType = fillType;
-	drawFilledEllipse(x1+borderThickness, y1+borderThickness, x2-1-2*borderThickness, y2-2*borderThickness, drawPixel, &pd);
+	if (fillType <= patterns.size()) {
+		pd.fillType = fillType;
+		drawEllipse(x1+borderThickness, y1+borderThickness, x2-1-2*borderThickness, y2-2*borderThickness, true, drawPixel, &pd);
+	}
 }
 
 void Design::drawBitmap(Graphics::Surface *surface, Common::ReadStream &in, bool mask) {
@@ -414,7 +423,7 @@ void Design::drawPolygonScan(int *polyX, int *polyY, int npoints, Common::Rect &
 }
 
 // http://members.chello.at/easyfilter/bresenham.html
-void Design::drawFilledEllipse(int x0, int y0, int x1, int y1, void (*plotProc)(int, int, int, void *), void *data) {
+void Design::drawEllipse(int x0, int y0, int x1, int y1, bool filled, void (*plotProc)(int, int, int, void *), void *data) {
 	int a = abs(x1-x0), b = abs(y1-y0), b1 = b&1; /* values of diameter */
 	long dx = 4*(1-a)*b*b, dy = 4*(b1+1)*a*a; /* error increment */
 	long err = dx+dy+b1*a*a, e2; /* error of 1.step */
@@ -425,19 +434,33 @@ void Design::drawFilledEllipse(int x0, int y0, int x1, int y1, void (*plotProc)(
 	a *= 8*a; b1 = 8*b*b;
 
 	do {
-		drawHLine(x0, x1, y0, kColorBlack, plotProc, data);
-		drawHLine(x0, x1, y1, kColorBlack, plotProc, data);
+		if (filled) {
+			drawHLine(x0, x1, y0, kColorBlack, plotProc, data);
+			drawHLine(x0, x1, y1, kColorBlack, plotProc, data);
+		} else {
+			(*plotProc)(x1, y0, kColorBlack, data); /*   I. Quadrant */
+			(*plotProc)(x0, y0, kColorBlack, data); /*  II. Quadrant */
+			(*plotProc)(x0, y1, kColorBlack, data); /* III. Quadrant */
+			(*plotProc)(x1, y1, kColorBlack, data); /*  IV. Quadrant */
+		}
 		e2 = 2*err;
 		if (e2 <= dy) { y0++; y1--; err += dy += a; }  /* y step */
 		if (e2 >= dx || 2*err > dy) { x0++; x1--; err += dx += b1; } /* x step */
 	} while (x0 <= x1);
 
 	while (y0-y1 < b) {  /* too early stop of flat ellipses a=1 */
-		drawHLine(x0-1, x0-1, y0, kColorBlack, plotProc, data); /* -> finish tip of ellipse */
-		drawHLine(x1+1, x1+1, y0, kColorBlack, plotProc, data);
+		if (filled) {
+			drawHLine(x0-1, x0-1, y0, kColorBlack, plotProc, data); /* -> finish tip of ellipse */
+			drawHLine(x1+1, x1+1, y0, kColorBlack, plotProc, data);
+			drawHLine(x0-1, x0-1, y1, kColorBlack, plotProc, data);
+			drawHLine(x1+1, x1+1, y1, kColorBlack, plotProc, data);
+		} else {
+			(*plotProc)(x0-1, y0, kColorBlack, data); /* -> finish tip of ellipse */
+			(*plotProc)(x1+1, y0, kColorBlack, data);
+			(*plotProc)(x0-1, y1, kColorBlack, data);
+			(*plotProc)(x1+1, y1, kColorBlack, data);
+		}
 		y0++;
-		drawHLine(x0-1, x0-1, y1, kColorBlack, plotProc, data);
-		drawHLine(x1+1, x1+1, y1, kColorBlack, plotProc, data);
 		y1--;
 	}
 }
