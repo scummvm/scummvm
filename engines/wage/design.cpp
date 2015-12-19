@@ -76,9 +76,7 @@ void Design::paint(Graphics::Surface *canvas, Patterns &patterns, bool mask) {
 	Common::MemoryReadStream in(_data, _len);
 
 	if (mask || 1) {
-		//canvas.setColor(Color.WHITE);
 		canvas->fillRect(Common::Rect(0, 0, _bounds->width(), _bounds->height()), kColorWhite);
-		//canvas.setColor(Color.BLACK);
 	}
 
 	while (!in.eos()) {
@@ -239,6 +237,26 @@ void Design::drawPolygon(Graphics::Surface *surface, Common::ReadStream &in, boo
 	free(ypoints);
 }
 
+void Design::drawOval(Graphics::Surface *surface, Common::ReadStream &in, bool mask,
+			Patterns &patterns, byte fillType, byte borderThickness, byte borderFillType) {
+	int16 y1 = in.readSint16BE();
+	int16 x1 = in.readSint16BE();
+	int16 y2 = in.readSint16BE();
+	int16 x2 = in.readSint16BE();
+
+	plotData pd(surface, &patterns, borderFillType, x1, y1);
+
+	if (mask) {
+		drawFilledEllipse(x1, y1, x2, y2, drawPixelPlain, &pd);
+		return;
+	}
+
+	drawFilledEllipse(x1, y1, x2-1, y2-1, drawPixel, &pd);
+
+	pd.fillType = fillType;
+	drawFilledEllipse(x1+borderThickness, y1+borderThickness, x2-1-2*borderThickness, y2-2*borderThickness, drawPixel, &pd);
+}
+
 void Design::drawBitmap(Graphics::Surface *surface, Common::ReadStream &in, bool mask) {
 	int numBytes = in.readSint16BE();
 	int y1 = in.readSint16BE();
@@ -355,27 +373,7 @@ void Design::drawPolygonScan(int *polyX, int *polyY, int npoints, Common::Rect &
 	free(nodeX);
 }
 
-void Design::drawOval(Graphics::Surface *surface, Common::ReadStream &in, bool mask,
-	Patterns &patterns, byte fillType, byte borderThickness, byte borderFillType) {
-	int16 y1 = in.readSint16BE();
-	int16 x1 = in.readSint16BE();
-	int16 y2 = in.readSint16BE();
-	int16 x2 = in.readSint16BE();
-
-	plotData pd(surface, &patterns, borderFillType, x1, y1);
-
-	if (mask) {
-		drawFilledEllipse(x1, y1, x2, y2, drawPixelPlain, &pd);
-		return;
-	}
-
-	drawFilledEllipse(x1, y1, x2, y2, drawPixel, &pd);
-
-	pd.fillType = fillType;
-	drawFilledEllipse(x1+borderThickness, y1+borderThickness, x2-2*borderThickness, y2-2*borderThickness, drawPixel, &pd);
-}
-
-
+// http://members.chello.at/easyfilter/bresenham.html
 void Design::drawFilledEllipse(int x0, int y0, int x1, int y1, void (*plotProc)(int, int, int, void *), void *data) {
 	int a = abs(x1-x0), b = abs(y1-y0), b1 = b&1; /* values of diameter */
 	long dx = 4*(1-a)*b*b, dy = 4*(b1+1)*a*a; /* error increment */

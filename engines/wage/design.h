@@ -89,10 +89,6 @@ private:
 		Patterns &patterns, byte fillType, byte borderThickness, byte borderFillType);
 	void drawBitmap(Graphics::Surface *surface, Common::ReadStream &in, bool mask);
 
-
-	void patternThickRect(Graphics::Surface *surface, Patterns &patterns, Common::Rect &outer,
-		Common::Rect &inner, byte borderFillType, byte fillType);
-
 	void drawFilledRect(Common::Rect &rect, int color, void (*plotProc)(int, int, int, void *), void *data);
 	void drawPolygonScan(int *polyX, int *polyY, int npoints, Common::Rect &bbox, int color,
 									void (*plotProc)(int, int, int, void *), void *data);
