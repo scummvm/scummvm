@@ -216,13 +216,17 @@ void ImageText::initVisual() {
 		return; // The visual is already there
 	}
 
-	VisualText *text = new VisualText(StarkGfx);
-	text->setText(_text);
-	text->setColor(_color | 0xFF000000);
-	text->setTargetWidth(_size.x);
-	text->setFont(FontProvider::kCustomFont, _font);
-
-	_visual = text;
+	if (_text.hasPrefix("GFX_")) {
+		warning("TODO: Implement '%s'", _text.c_str());
+		_visual = nullptr;
+	} else {
+		VisualText *text = new VisualText(StarkGfx);
+		text->setText(_text);
+		text->setColor(_color | 0xFF000000);
+		text->setTargetWidth(_size.x);
+		text->setFont(FontProvider::kCustomFont, _font);
+		_visual = text;
+	}
 }
 
 void ImageText::printData() {
