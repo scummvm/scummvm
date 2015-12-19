@@ -185,9 +185,8 @@ bool World::loadWorld(Common::MacResManager *resMan) {
 
 		for (int i = 0; i < count; i++) {
 			byte *pattern = (byte *)malloc(8);
-			for (int j = 0; j < 8; j++) {
-				pattern[j] = res->readByte();
-			}
+
+			res->read(pattern, 8);
 			_patterns.push_back(pattern);
 		}
 
