@@ -150,8 +150,6 @@ LabEngine::~LabEngine() {
 	delete _utils;
 	delete _journalBackImage;
 	delete _screenImage;
-
-	_CrtDumpMemoryLeaks();
 }
 
 Common::Error LabEngine::run() {
