@@ -111,6 +111,7 @@ void Design::paint(Graphics::Surface *canvas, Patterns &patterns, bool mask) {
 		}
 
 		g_system->copyRectToScreen(canvas->getPixels(), canvas->pitch, 0, 0, canvas->w, canvas->h);
+		((WageEngine *)g_engine)->processEvents();
 		g_system->updateScreen();
 	}
 }
