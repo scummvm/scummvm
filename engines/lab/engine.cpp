@@ -130,15 +130,15 @@ void LabEngine::drawRoomMessage(uint16 curInv, CloseDataPtr closePtr) {
 	}
 
 	if (_alternate) {
-		if ((curInv <= _numInv) && _conditions->in(curInv) && _inventory[curInv]._bitmapName) {
+		if ((curInv <= _numInv) && _conditions->in(curInv) && _inventory[curInv]._bitmapName != "") {
 			if ((curInv == kItemLamp) && _conditions->in(kCondLampOn))
 				// LAB: Labyrinth specific
 				drawStaticMessage(kTextkLampOn);
 			else if (_inventory[curInv]._many > 1) {
-				Common::String roomMessage = Common::String(_inventory[curInv]._name) + "  (" + Common::String::format("%d", _inventory[curInv]._many) + ")";
+				Common::String roomMessage = _inventory[curInv]._name + "  (" + Common::String::format("%d", _inventory[curInv]._many) + ")";
 				_graphics->drawMessage(roomMessage.c_str());
 			} else
-				_graphics->drawMessage(_inventory[curInv]._name);
+				_graphics->drawMessage(_inventory[curInv]._name.c_str());
 		}
 	} else
 		drawDirection(closePtr);
@@ -219,7 +219,7 @@ bool LabEngine::doCloseUp(CloseDataPtr closePtr) {
 	case kMonitorMuseum:
 	case kMonitorLibrary:
 	case kMonitorWindow:
-		doMonitor(closePtr->_graphicName, closePtr->_message, false, textRect);
+		doMonitor(closePtr->_graphicName.c_str(), closePtr->_message.c_str(), false, textRect);
 		break;
 	case kMonitorGramophone:
 		textRect.right = 171;
@@ -261,7 +261,7 @@ bool LabEngine::doCloseUp(CloseDataPtr closePtr) {
 /**
  * Gets the current inventory name.
  */
-const char *LabEngine::getInvName(uint16 curInv) {
+Common::String LabEngine::getInvName(uint16 curInv) {
 	if (_mainDisplay)
 		return _inventory[curInv]._bitmapName;
 
@@ -401,7 +401,7 @@ void LabEngine::decIncInv(uint16 *curInv, bool decreaseFl) {
 	interfaceOff();
 	
 	while (newInv && (newInv <= _numInv)) {
-		if (_conditions->in(newInv) && _inventory[newInv]._bitmapName) {
+		if (_conditions->in(newInv) && _inventory[newInv]._bitmapName != "") {
 			_nextFileName = getInvName(newInv);
 			*curInv = newInv;
 			break;
@@ -477,11 +477,11 @@ void LabEngine::mainGameLoop() {
 			if (_noUpdateDiff) {
 				// Potentially entered another room
 				_roomsFound->inclElement(_roomNum);
-				forceDraw |= (strcmp(_nextFileName, _curFileName) != 0);
+				forceDraw |= (_nextFileName != _curFileName);
 
 				_noUpdateDiff = false;
 				_curFileName = _nextFileName;
-			} else if (strcmp(_nextFileName, _curFileName) != 0) {
+			} else if (_nextFileName != _curFileName) {
 				interfaceOff();
 				// Potentially entered another room
 				_roomsFound->inclElement(_roomNum);
@@ -491,19 +491,19 @@ void LabEngine::mainGameLoop() {
 					switch (_closeDataPtr->_closeUpType) {
 					case SPECIALLOCK:
 						if (_mainDisplay)
-							_tilePuzzle->showCombination(_curFileName);
+							_tilePuzzle->showCombination(_curFileName.c_str());
 						break;
 					case SPECIALBRICK:
 					case SPECIALBRICKNOMOUSE:
 						if (_mainDisplay)
-							_tilePuzzle->showTile(_curFileName, (_closeDataPtr->_closeUpType == SPECIALBRICKNOMOUSE));
+							_tilePuzzle->showTile(_curFileName.c_str(), (_closeDataPtr->_closeUpType == SPECIALBRICKNOMOUSE));
 						break;
 					default:
-						_graphics->readPict(_curFileName, false);
+						_graphics->readPict(_curFileName.c_str(), false);
 						break;
 					}
 				} else
-					_graphics->readPict(_curFileName, false);
+					_graphics->readPict(_curFileName.c_str(), false);
 
 				drawRoomMessage(curInv, _closeDataPtr);
 				forceDraw = false;
@@ -577,23 +577,8 @@ void LabEngine::mainGameLoop() {
 
 	delete _conditions;
 	delete _roomsFound;
-
-	if (_rooms) {
-		delete[] _rooms;
-		_rooms = nullptr;
-	}
-
-	if (_inventory) {
-		for (int i = 1; i <= _numInv; i++) {
-			if (_inventory[i]._name)
-				delete[] _inventory[i]._name;
-
-			if (_inventory[i]._bitmapName)
-				delete[] _inventory[i]._bitmapName;
-		}
-
-		delete[] _inventory;
-	}
+	delete[] _rooms;
+	delete[] _inventory;
 }
 
 void LabEngine::showLab2Teaser() {
@@ -1014,7 +999,7 @@ void LabEngine::processAltButton(uint16 &curInv, uint16 &lastInv, uint16 buttonI
 				curInv++;
 		}
 
-		if ((curInv <= _numInv) && _conditions->in(curInv) && _inventory[curInv]._bitmapName)
+		if ((curInv <= _numInv) && _conditions->in(curInv) && _inventory[curInv]._bitmapName != "")
 			_nextFileName = getInvName(curInv);
 
 		break;
@@ -1112,16 +1097,10 @@ void LabEngine::performAction(uint16 actionMode, Common::Point curPos, uint16 &c
 		if (_closeDataPtr == tmpClosePtr) {
 			if (curPos.y < (_utils->vgaScaleY(149) + _utils->svgaCord(2)))
 				drawStaticMessage(kTextNothing);
-		}
-		else if (tmpClosePtr->_graphicName) {
-			if (*(tmpClosePtr->_graphicName)) {
-				_anim->_doBlack = true;
-				_closeDataPtr = tmpClosePtr;
-			}
-			else if (curPos.y < (_utils->vgaScaleY(149) + _utils->svgaCord(2)))
-				drawStaticMessage(kTextNothing);
-		}
-		else if (curPos.y < (_utils->vgaScaleY(149) + _utils->svgaCord(2)))
+		} else if (tmpClosePtr->_graphicName != "") {
+			_anim->_doBlack = true;
+			_closeDataPtr = tmpClosePtr;
+		} else if (curPos.y < (_utils->vgaScaleY(149) + _utils->svgaCord(2)))
 			drawStaticMessage(kTextNothing);
 	}
 			break;

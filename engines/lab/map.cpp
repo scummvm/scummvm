@@ -404,8 +404,8 @@ void LabEngine::drawMap(uint16 curRoom, uint16 curMsg, uint16 floorNum, bool fad
 		_graphics->flowText(_msgFont, 0, 5, 3, true, true, true, true, _utils->vgaRectScale(14, 75, 134, 97), textPrt);
 	}
 
-	if (_rooms[curMsg]._roomMsg)
-		_graphics->flowText(_msgFont, 0, 5, 3, true, true, true, true, _utils->vgaRectScale(14, 148, 134, 186), _rooms[curMsg]._roomMsg);
+	if (_rooms[curMsg]._roomMsg != "")
+		_graphics->flowText(_msgFont, 0, 5, 3, true, true, true, true, _utils->vgaRectScale(14, 148, 134, 186), _rooms[curMsg]._roomMsg.c_str());
 
 	if (fadeIn)
 		_graphics->fade(true, 0);
@@ -535,11 +535,11 @@ void LabEngine::processMap(uint16 curRoom) {
 					}
 
 					if (oldMsg != curMsg) {
-						if (_rooms[curMsg]._roomMsg == nullptr)
+						if (_rooms[curMsg]._roomMsg != "")
 							_resource->readViews(curMsg);
 
-						char *sptr;
-						if ((sptr = _rooms[curMsg]._roomMsg)) {
+						const char *sptr;
+						if ((sptr = _rooms[curMsg]._roomMsg.c_str())) {
 							_event->mouseHide();
 							_graphics->setPen(3);
 							_graphics->rectFillScaled(13, 148, 135, 186);

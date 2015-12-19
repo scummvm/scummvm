@@ -73,7 +73,7 @@ TextFont *Resource::getFont(const char *fileName) {
 	return textfont;
 }
 
-char *Resource::getText(const char *fileName) {
+Common::String Resource::getText(const char *fileName) {
 	Common::File *dataFile = openDataFile(fileName);
 
 	_vm->_music->updateMusic();
@@ -87,7 +87,11 @@ char *Resource::getText(const char *fileName) {
 		*text++ -= (byte)95;
 
 	delete dataFile;
-	return (char *)buffer;
+
+	Common::String str = (char *)buffer;
+	delete[] buffer;
+
+	return str;
 }
 
 bool Resource::readRoomData(const char *fileName) {
@@ -110,7 +114,7 @@ bool Resource::readRoomData(const char *fileName) {
 		_vm->_rooms[i]._view[EAST] = nullptr;
 		_vm->_rooms[i]._view[WEST] = nullptr;
 		_vm->_rooms[i]._rules = nullptr;
-		_vm->_rooms[i]._roomMsg = nullptr;
+		_vm->_rooms[i]._roomMsg = "";
 	}
 
 	delete dataFile;
@@ -138,6 +142,8 @@ bool Resource::readViews(uint16 roomNum) {
 	Common::String fileName = "LAB:Rooms/" + Common::String::format("%d", roomNum);
 	Common::File *dataFile = openDataFile(fileName.c_str(), MKTAG('R', 'O', 'M', '4'));
 
+	freeViews(roomNum);
+
 	_vm->_rooms[roomNum]._roomMsg = readString(dataFile);
 	_vm->_rooms[roomNum]._view[NORTH] = readView(dataFile);
 	_vm->_rooms[roomNum]._view[SOUTH] = readView(dataFile);
@@ -149,6 +155,25 @@ bool Resource::readViews(uint16 roomNum) {
 
 	delete dataFile;
 	return true;
+}
+
+void Resource::freeViews(uint16 roomNum) {
+	for (uint16 i = 0; i < 4; i++) {
+		delete _vm->_rooms[roomNum]._view[i];
+		_vm->_rooms[roomNum]._view[i] = nullptr;
+	}
+
+	if (_vm->_rooms[roomNum]._rules) {
+		for (RuleList::iterator rule = _vm->_rooms[roomNum]._rules->begin(); rule != _vm->_rooms[roomNum]._rules->end(); ++rule) {
+			delete (*rule)->_actionList;
+			delete[](*rule)->_condition;
+			delete *rule;
+			*rule = nullptr;
+		}
+
+		delete _vm->_rooms[roomNum]._rules;
+		_vm->_rooms[roomNum]._rules = nullptr;
+	}
 }
 
 Common::String Resource::translateFileName(Common::String filename) {
@@ -209,18 +234,18 @@ Common::File *Resource::openDataFile(const char *fileName, uint32 fileHeader) {
 	return dataFile;
 }
 
-char *Resource::readString(Common::File *file) {
+Common::String Resource::readString(Common::File *file) {
 	byte size = file->readByte();
 	if (!size)
 		return nullptr;
 
-	char *str = new char[size];
-	char *c = str;
+	Common::String str;
+	char c;
 	for (int i = 0; i < size; i++) {
-		*c = file->readByte();
+		c = file->readByte();
 		// Decrypt char
-		*c = (i < size - 1) ? *c - 95 : '\0';
-		c++;
+		c = (i < size - 1) ? c - 95 : '\0';
+		str += c;
 	}
 
 	return str;
@@ -248,7 +273,7 @@ RuleList *Resource::readRule(Common::File *file) {
 		c = file->readByte();
 
 		if (c == 1) {
-			Rule *rule = new Rule();;
+			Rule *rule = new Rule();
 			rule->_ruleType = file->readSint16LE();
 			rule->_param1 = file->readSint16LE();
 			rule->_param2 = file->readSint16LE();
@@ -283,13 +308,20 @@ Action *Resource::readAction(Common::File *file) {
 
 			if (action->_actionType == SHOWMESSAGES) {
 				char **messages = (char **)malloc(action->_param1 * 4);
+				Common::String tmp;
 
-				for (int i = 0; i < action->_param1; i++)
-					messages[i] = readString(file);
+				for (int i = 0; i < action->_param1; i++) {
+					tmp = readString(file);
+					messages[i] = (char *)malloc(tmp.size());	// FIXME: memory leak!
+					memcpy(messages[i], tmp.c_str(), tmp.size());
+				}
 
 				action->_data = (byte *)messages;
 			} else {
-				action->_data = (byte *)readString(file);
+				Common::String tmp;
+				tmp = readString(file);
+				action->_data =  (byte *)malloc(tmp.size());	// FIXME: memory leak!
+				memcpy(action->_data, tmp.c_str(), tmp.size());
 			}
 
 			action->_nextAction = nullptr;

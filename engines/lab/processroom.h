@@ -95,15 +95,15 @@ struct CloseData {
 	uint16 _x1, _y1, _x2, _y2;
 	int16 _closeUpType;          // if > 0, an object.  If < 0, an item
 	uint16 _depth;               // Level of the closeup.
-	char *_graphicName;
-	char *_message;
+	Common::String _graphicName;
+	Common::String _message;
 	CloseData *_nextCloseUp;
 	CloseData *_subCloseUps;
 };
 
 struct ViewData {
 	int16 *_condition;
-	char *_graphicName;
+	Common::String _graphicName;
 	ViewData *_nextCondition;
 	CloseDataPtr _closeUps;
 };
@@ -131,13 +131,13 @@ struct RoomData {
 	byte _transitionType;
 	ViewData *_view[4];
 	RuleList *_rules;
-	char *_roomMsg;
+	Common::String _roomMsg;
 };
 
 struct InventoryData {
 	uint16 _many;
-	char *_name;
-	char *_bitmapName;
+	Common::String _name;
+	Common::String _bitmapName;
 };
 
 // Map Flags

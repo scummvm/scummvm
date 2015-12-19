@@ -69,7 +69,7 @@ bool LabEngine::checkConditions(int16 *condition) {
  * Gets the current ViewDataPointer.
  */
 ViewData *LabEngine::getViewData(uint16 roomNum, uint16 direction) {
-	if (!_rooms[roomNum]._roomMsg)
+	if (_rooms[roomNum]._roomMsg == "")
 		_resource->readViews(roomNum);
 
 	ViewData *view = _rooms[roomNum]._view[direction];
@@ -135,7 +135,7 @@ CloseDataPtr LabEngine::findClosePtrMatch(CloseDataPtr closePtr, CloseDataPtr cl
 /**
  * Returns the current picture name.
  */
-char *LabEngine::getPictName(CloseDataPtr *closePtrList) {
+Common::String LabEngine::getPictName(CloseDataPtr *closePtrList) {
 	ViewData *viewPtr = getViewData(_roomNum, _direction);
 
 	if (*closePtrList) {
@@ -152,15 +152,15 @@ char *LabEngine::getPictName(CloseDataPtr *closePtrList) {
  * Draws the current direction to the screen.
  */
 void LabEngine::drawDirection(CloseDataPtr closePtr) {
-	if (closePtr && closePtr->_message) {
-		_graphics->drawMessage(closePtr->_message);
+	if (closePtr && closePtr->_message != "") {
+		_graphics->drawMessage(closePtr->_message.c_str());
 		return;
 	}
 
 	Common::String message;
 
-	if (_rooms[_roomNum]._roomMsg) {
-		message += _rooms[_roomNum]._roomMsg;
+	if (_rooms[_roomNum]._roomMsg != "") {
+		message = Common::String(_rooms[_roomNum]._roomMsg).c_str();
 		message += ", ";
 	}
 
@@ -228,7 +228,7 @@ void LabEngine::setCurrentClose(Common::Point pos, CloseDataPtr *closePtrList, b
 		else
 			target = Common::Rect(_utils->scaleX(closePtr->_x1), _utils->scaleY(closePtr->_y1), _utils->scaleX(closePtr->_x2), _utils->scaleY(closePtr->_y2));
 
-		if (target.contains(pos) && closePtr->_graphicName) {
+		if (target.contains(pos) && closePtr->_graphicName != "") {
 			*closePtrList = closePtr;
 			return;
 		}
@@ -320,11 +320,11 @@ void LabEngine::doActions(Action *actionList, CloseDataPtr *closePtrList) {
 			break;
 
 		case SHOWCURPICT: {
-			char *test = getPictName(closePtrList);
+			Common::String test = getPictName(closePtrList);
 
-			if (strcmp(test, _curFileName) != 0) {
+			if (test != _curFileName) {
 				_curFileName = test;
-				_graphics->readPict(_curFileName, true);
+				_graphics->readPict(_curFileName.c_str(), true);
 			}
 			}
 			break;

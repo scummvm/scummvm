@@ -74,7 +74,7 @@ public:
 
 	void loadPict(const char *filename);
 	void loadBackPict(const char *fileName, uint16 *highPal);
-	void readPict(const char *filename, bool playOnce, bool onlyDiffData = false, byte *memoryBuffer = nullptr, uint16 maxHeight = 0);
+	void readPict(Common::String filename, bool playOnce, bool onlyDiffData = false, byte *memoryBuffer = nullptr, uint16 maxHeight = 0);
 	void freePict();
 	void doScrollBlack();
 	void copyPage(uint16 width, uint16 height, uint16 nheight, uint16 startline, byte *mem);

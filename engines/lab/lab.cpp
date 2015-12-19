@@ -96,10 +96,6 @@ LabEngine::LabEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	for (int i = 0; i < 10; i++)
 		_invImages[i] = nullptr;
 
-	_curFileName = nullptr;
-	_nextFileName = nullptr;
-	_newFileName = nullptr;
-
 	_curFileName = " ";
 	_msgFont = nullptr;
 	_inventory = nullptr;
@@ -120,8 +116,6 @@ LabEngine::LabEngine(OSystem *syst, const ADGameDescription *gameDesc)
 
 	_blankJournal = nullptr;
 	_journalFont = nullptr;
-	_journalText = nullptr;
-	_journalTextTitle = nullptr;
 	_journalPage = 0;
 	_lastPage = false;
 	_monitorPage = 0;
@@ -143,16 +137,21 @@ LabEngine::~LabEngine() {
 	DebugMan.clearAllDebugChannels();
 
 	freeMapData();
+	for (uint16 i = 1; i <= _manyRooms; i++)
+		_resource->freeViews(i);
+	delete[] _rooms;
+
 	delete _event;
 	delete _resource;
 	delete _music;
 	delete _anim;
 	delete _graphics;
-	delete[] _rooms;
 	delete _tilePuzzle;
 	delete _utils;
 	delete _journalBackImage;
 	delete _screenImage;
+
+	_CrtDumpMemoryLeaks();
 }
 
 Common::Error LabEngine::run() {
