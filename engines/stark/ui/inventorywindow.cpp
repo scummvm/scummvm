@@ -44,7 +44,8 @@ namespace Stark {
 InventoryWindow::InventoryWindow(Gfx::Driver *gfx, Cursor *cursor, ActionMenu *actionMenu) :
 	Window(gfx, cursor),
 	_actionMenu(actionMenu),
-	_selectedInventoryItem(-1) {
+	_selectedInventoryItem(-1),
+	_firstVisibleSlot(0) {
 	// The window has the same size as the game window
 	_position = Common::Rect(Gfx::Driver::kGameViewportWidth, Gfx::Driver::kGameViewportHeight);
 	_position.translate(0, Gfx::Driver::kTopBorderHeight);
@@ -55,6 +56,16 @@ InventoryWindow::InventoryWindow(Gfx::Driver *gfx, Cursor *cursor, ActionMenu *a
 	_backgroundRect = Common::Rect(_backgroundTexture->getWidth(), _backgroundTexture->getHeight());
 	_backgroundRect.translate((_position.width() - _backgroundRect.width()) / 2,
 			(_position.height() - _backgroundRect.height()) / 2);
+
+	_scrollUpArrowImage = StarkStaticProvider->getUIElement(StaticProvider::kInventoryScrollUpArrow);
+	_scrollDownArrowImage = StarkStaticProvider->getUIElement(StaticProvider::kInventoryScrollDownArrow);
+
+	_scrollUpArrowRect = Common::Rect(_scrollUpArrowImage->getWidth(), _scrollUpArrowImage->getHeight());
+	_scrollUpArrowRect.translate(_backgroundRect.right - _scrollUpArrowRect.width(),
+	                             _backgroundRect.top + 2);
+	_scrollDownArrowRect = Common::Rect(_scrollDownArrowImage->getWidth(), _scrollDownArrowImage->getHeight());
+	_scrollDownArrowRect.translate(_backgroundRect.right - _scrollDownArrowRect.width(),
+	                               _backgroundRect.bottom - _scrollDownArrowRect.height() - 2);
 }
 
 void InventoryWindow::open() {
@@ -82,7 +93,7 @@ Common::Rect InventoryWindow::getSlotRect(uint32 slot) const {
 }
 
 Common::Rect InventoryWindow::getItemRect(uint32 slot, VisualImageXMG *image) const {
-	Common::Rect rect = getSlotRect(slot);
+	Common::Rect rect = getSlotRect(slot % _visibleSlotsCount);
 
 	// Center the image in the inventory slot
 	rect.translate((rect.width() - image->getWidth()) / 2,
@@ -95,8 +106,9 @@ void InventoryWindow::onRender() {
 	_renderEntries = StarkGlobal->getInventory()->getInventoryRenderEntries();
 
 	_backgroundTexture->render(Common::Point(_backgroundRect.left, _backgroundRect.top), false);
-	
-	for (uint i = 0; i < _renderEntries.size(); i++) {
+	drawScrollArrows();
+
+	for (uint i = _firstVisibleSlot; i < _renderEntries.size() && isSlotVisible(i); i++) {
 		VisualImageXMG *image = _renderEntries[i]->getImage();
 
 		// Get the item rect
@@ -106,12 +118,21 @@ void InventoryWindow::onRender() {
 	}
 }
 
+void InventoryWindow::drawScrollArrows() const {
+	if (canScrollUp()) {
+		_scrollUpArrowImage->render(Common::Point(_scrollUpArrowRect.left, _scrollUpArrowRect.top), false);
+	}
+	if (canScrollDown()) {
+		_scrollDownArrowImage->render(Common::Point(_scrollDownArrowRect.left, _scrollDownArrowRect.top), false);
+	}
+}
+
 void InventoryWindow::checkObjectAtPos(Common::Point pos, Resources::ItemVisual **item, int16 selectedInventoryItem, int16 &singlePossibleAction) {
 	*item = nullptr;
 	singlePossibleAction = -1;
 
 	// Check for inventory mouse overs
-	for (uint i = 0; i < _renderEntries.size(); i++) {
+	for (uint i = _firstVisibleSlot; i < _renderEntries.size() && isSlotVisible(i); i++) {
 		VisualImageXMG *image = _renderEntries[i]->getImage();
 		Common::Rect itemRect = getItemRect(i, image);
 
@@ -181,6 +202,10 @@ void InventoryWindow::onClick(const Common::Point &pos) {
 				_actionMenu->open(clickedItem, Common::Point());
 			}
 		}
+	} else if (canScrollDown() && _scrollDownArrowRect.contains(pos)) {
+		scrollDown();
+	} else if (canScrollUp() && _scrollUpArrowRect.contains(pos)) {
+		scrollUp();
 	} else {
 		// Nothing was under the mouse cursor, close the inventory
 		close();
@@ -199,4 +224,27 @@ void InventoryWindow::reset() {
 	_renderEntries.clear();
 }
 
+bool InventoryWindow::isSlotVisible(uint32 slot) const {
+	return slot < _firstVisibleSlot + _visibleSlotsCount;
+}
+
+bool InventoryWindow::canScrollDown() const {
+	return _renderEntries.size() - _firstVisibleSlot > _visibleSlotsCount;
+}
+
+bool InventoryWindow::canScrollUp() const {
+	return _firstVisibleSlot > 0;
+}
+
+void InventoryWindow::scrollDown() {
+	if (canScrollDown()) {
+		_firstVisibleSlot += _visibleSlotsCount;
+	}
+}
+
+void InventoryWindow::scrollUp() {
+	if (canScrollUp()) {
+		_firstVisibleSlot -= _visibleSlotsCount;
+	}
+}
 } // End of namespace Stark

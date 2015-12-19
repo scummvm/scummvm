@@ -49,6 +49,8 @@ public:
 	StaticProvider(ArchiveLoader *archiveLoader, Global *global);
 
 	enum UIElement {
+		kInventoryScrollUpArrow = 1,
+		kInventoryScrollDownArrow = 2,
 		kImages = 4,
 		kActionMenuBg = 5,
 		kTextScrollUpArrow = 6,

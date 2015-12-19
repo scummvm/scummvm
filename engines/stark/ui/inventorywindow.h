@@ -62,12 +62,26 @@ protected:
 	void checkObjectAtPos(Common::Point pos, Resources::ItemVisual **item, int16 selectedInventoryItem, int16 &singlePossibleAction);
 	Common::Rect getSlotRect(uint32 slot) const;
 	Common::Rect getItemRect(uint32 slot, VisualImageXMG *image) const;
+	bool isSlotVisible(uint32 slot) const;
+	void scrollDown();
+	void scrollUp();
+	bool canScrollUp() const;
+	bool canScrollDown() const;
+	void drawScrollArrows() const;
 
 private:
 	ActionMenu *_actionMenu;
 
 	VisualImageXMG *_backgroundTexture;
 	Common::Rect _backgroundRect;
+
+	VisualImageXMG *_scrollUpArrowImage;
+	VisualImageXMG *_scrollDownArrowImage;
+	Common::Rect _scrollUpArrowRect;
+	Common::Rect _scrollDownArrowRect;
+
+	uint32 _firstVisibleSlot;
+	static const uint32 _visibleSlotsCount = 15;
 
 	Gfx::RenderEntryArray _renderEntries;
 	int16 _selectedInventoryItem;
