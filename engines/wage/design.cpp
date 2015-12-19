@@ -127,7 +127,7 @@ void drawPixel(int x, int y, int color, void *data) {
 
 	if (x >= 0 && x < p->surface->w && y >= 0 && y < p->surface->h) {
 		*((byte *)p->surface->getBasePtr(x, y)) =
-			(pat[(y - p->y0) % 8] & (1 << (7 - (x - p->x0) % 8))) ?
+			(pat[y % 8] & (1 << (7 - x % 8))) ?
 				color : kColorWhite;
 	}
 }
