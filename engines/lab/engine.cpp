@@ -390,30 +390,30 @@ bool LabEngine::doUse(uint16 curInv) {
  */
 void LabEngine::decIncInv(uint16 *curInv, bool decreaseFl) {
 	int8 step = (decreaseFl) ? -1 : 1;
+	uint newInv = *curInv + step;
+
+	// Handle wrapping
+	if (newInv < 1)
+		newInv = _numInv;
+	if (newInv > _numInv)
+		newInv = 1;
+
 	interfaceOff();
 	
-	(*curInv) += step;
-
-	while (*curInv && (*curInv <= _numInv)) {
-		if (_conditions->in(*curInv) && _inventory[*curInv]._bitmapName) {
-			_nextFileName = getInvName(*curInv);
+	while (newInv && (newInv <= _numInv)) {
+		if (_conditions->in(newInv) && _inventory[newInv]._bitmapName) {
+			_nextFileName = getInvName(newInv);
+			*curInv = newInv;
 			break;
 		}
 
-		(*curInv) += step;
-	}
+		newInv += step;
 
-	if ((*curInv == 0) || (*curInv > _numInv)) {
-		(*curInv) += step;
-
-		while (*curInv && (*curInv <= _numInv)) {
-			if (_conditions->in(*curInv) && _inventory[*curInv]._bitmapName) {
-				_nextFileName = getInvName(*curInv);
-				break;
-			}
-
-			(*curInv) += step;
-		}
+		// Handle wrapping
+		if (newInv < 1)
+			newInv = _numInv;
+		if (newInv > _numInv)
+			newInv = 1;
 	}
 }
 
