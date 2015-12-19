@@ -120,7 +120,7 @@ void Music::playSoundEffect(uint16 sampleSpeed, uint32 length, Common::File *dat
 	byte *soundData = (byte *)malloc(length);
 	dataFile->read(soundData, length);
 
-	Audio::SeekableAudioStream *audioStream = Audio::makeRawStream((const byte *)soundData, length, sampleSpeed, soundFlags, DisposeAfterUse::NO);
+	Audio::SeekableAudioStream *audioStream = Audio::makeRawStream((const byte *)soundData, length, sampleSpeed, soundFlags);
 	uint loops = (_loopSoundEffect) ? 0 : 1;
 	Audio::LoopingAudioStream *loopingAudioStream = new Audio::LoopingAudioStream(audioStream, loops);
 	_vm->_mixer->playStream(Audio::Mixer::kSFXSoundType, &_sfxHandle, loopingAudioStream);
