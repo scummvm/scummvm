@@ -55,11 +55,9 @@ struct plotData {
 	Graphics::Surface *surface;
 	Patterns *patterns;
 	int fillType;
-	int x0;
-	int y0;
 
-	plotData(Graphics::Surface *s, Patterns *p, int f, int x, int y) :
-		surface(s), patterns(p), fillType(f), x0(x), y0(y) {}
+	plotData(Graphics::Surface *s, Patterns *p, int f) :
+		surface(s), patterns(p), fillType(f) {}
 };
 
 Design::Design(Common::SeekableReadStream *data) {
@@ -147,7 +145,7 @@ void Design::drawRect(Graphics::Surface *surface, Common::ReadStream &in, bool m
 	int16 x2 = in.readSint16BE();
 	Common::Rect outer(x1, y1, x2, y2);
 
-	plotData pd(surface, &patterns, borderFillType, x1, y1);
+	plotData pd(surface, &patterns, borderFillType);
 
 	if (mask) {
 		drawFilledRect(outer, kColorBlack, drawPixelPlain, &pd);
@@ -171,7 +169,7 @@ void Design::drawRoundRect(Graphics::Surface *surface, Common::ReadStream &in, b
 	int16 arc = in.readSint16BE();
 	Common::Rect outer(x1, y1, x2, y2);
 
-	plotData pd(surface, &patterns, borderFillType, x1, y1);
+	plotData pd(surface, &patterns, borderFillType);
 
 	if (mask) {
 		drawFilledRoundRect(outer, arc, kColorBlack, drawPixelPlain, &pd);
@@ -242,7 +240,7 @@ void Design::drawPolygon(Graphics::Surface *surface, Common::ReadStream &in, boo
 		ypoints[i] = ycoords[i];
 	}
 
-	plotData pd(surface, &patterns, fillType, bx1, by1);
+	plotData pd(surface, &patterns, fillType);
 
 	if (mask) {
 		drawPolygonScan(xpoints, ypoints, npoints, bbox, kColorBlack, drawPixelPlain, &pd);
@@ -268,7 +266,7 @@ void Design::drawOval(Graphics::Surface *surface, Common::ReadStream &in, bool m
 	int16 y2 = in.readSint16BE();
 	int16 x2 = in.readSint16BE();
 
-	plotData pd(surface, &patterns, borderFillType, x1, y1);
+	plotData pd(surface, &patterns, borderFillType);
 
 	if (mask) {
 		drawFilledEllipse(x1, y1, x2, y2, drawPixelPlain, &pd);
