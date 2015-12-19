@@ -39,6 +39,7 @@ const char *WageEngine::getGameFile() const {
 
 static const PlainGameDescriptor wageGames[] = {
 	{"afm", "Another Fine Mess"},
+	{"amot", "A Mess O' Trouble"},
 	{"cantitoe", "Camp Cantitoe"},
 	{"wage", "World Adventure Game Engine game"},
 	{0, 0}
@@ -51,6 +52,15 @@ static const ADGameDescription gameDescriptions[] = {
 		"afm",
 		"v1.8",
 		AD_ENTRY1s("Another Fine Mess 1.8", "8e5aa915f3253efb2aab52435647b25e", 1456000),
+		Common::EN_ANY,
+		Common::kPlatformMacintosh,
+		ADGF_NO_FLAGS,
+		GUIO0()
+	},
+	{
+		"amot",
+		"v1.8",
+		AD_ENTRY1s("A Mess O' Trouble 1.8", "b3ef53afed282671b704e45df829350c", 1895552),
 		Common::EN_ANY,
 		Common::kPlatformMacintosh,
 		ADGF_NO_FLAGS,
