@@ -449,7 +449,7 @@ void Intro::introSequence() {
 		_vm->_anim->_doBlack = true;
 	}
 
-	_vm->_graphics->closeFont(msgFont);
+	_vm->_graphics->closeFont(&msgFont);
 }
 
 } // End of namespace Lab
