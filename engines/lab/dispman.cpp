@@ -288,9 +288,6 @@ int DisplayMan::longDrawMessage(const char *str) {
 	_vm->_event->attachButtonList(nullptr);
 	_vm->_event->mouseHide();
 
-	char newText[512];
-	strcpy(newText, str);
-
 	if (!_longWinInFront) {
 		_longWinInFront = true;
 		// Clear Area
