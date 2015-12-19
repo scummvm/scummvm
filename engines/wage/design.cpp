@@ -180,19 +180,11 @@ void Design::drawRoundRect(Graphics::Surface *surface, Common::ReadStream &in, b
 	}
 	Common::Rect inner(x1 + borderThickness, y1 + borderThickness, x2 - borderThickness, y2 - borderThickness);
 
-	drawFilledRoundRect(outer, arc, kColorBlack, drawPixel, &pd);
+	drawFilledRoundRect(outer, arc/2, kColorBlack, drawPixel, &pd);
 
 	pd.fillType = fillType;
 
-	drawFilledRoundRect(inner, arc, kColorBlack, drawPixel, &pd);
-/*
-	Common::Rect inn(50, 50, 400, 400);
-	pd.fillType = 8;
-	pd.x0 = 50;
-	pd.y0 = 50;
-	drawFilledRect(inn, kColorBlack, drawPixel, &pd);
-	drawFilledRoundRect(inn, arc, kColorGray, drawPixel, &pd);
-*/
+	drawFilledRoundRect(inner, arc/2, kColorBlack, drawPixel, &pd);
 }
 
 void Design::drawPolygon(Graphics::Surface *surface, Common::ReadStream &in, bool mask,
