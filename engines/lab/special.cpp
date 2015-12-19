@@ -110,8 +110,7 @@ void LabEngine::loadJournalData() {
 	_journalFont = _resource->getFont("F:Journal.fon");
 	_music->updateMusic();
 
-	char filename[20];
-	strcpy(filename, "Lab:Rooms/j0");
+	Common::String filename = "Lab:Rooms/j0";
 
 	bool bridge = _conditions->in(BRIDGE0) || _conditions->in(BRIDGE1);
 	bool dirty  = _conditions->in(DIRTY);
@@ -119,25 +118,25 @@ void LabEngine::loadJournalData() {
 	bool clean  = !_conditions->in(NOCLEAN);
 
 	if (bridge && clean && news)
-		filename[11] = '8';
+		filename += '8';
 	else if (clean && news)
-		filename[11] = '9';
+		filename += '9';
 	else if (bridge && clean)
-		filename[11] = '6';
+		filename += '6';
 	else if (clean)
-		filename[11] = '7';
+		filename += '7';
 	else if (bridge && dirty && news)
-		filename[11] = '4';
+		filename += '4';
 	else if (dirty && news)
-		filename[11] = '5';
+		filename += '5';
 	else if (bridge && dirty)
-		filename[11] = '2';
+		filename += '2';
 	else if (dirty)
-		filename[11] = '3';
+		filename += '3';
 	else if (bridge)
-		filename[11] = '1';
+		filename += '1';
 
-	_journalText = _resource->getText(filename);
+	_journalText = _resource->getText(filename.c_str());
 	_journalTextTitle = _resource->getText("Lab:Rooms/jt");
 
 	Common::File *journalFile = _resource->openDataFile("P:JImage");
