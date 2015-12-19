@@ -46,6 +46,9 @@ public:
 	/** Move the walk target forward according to the position */
 	Math::Vector3d computeWalkTarget(const Math::Vector3d &fromPosition);
 
+	/** Returns true if this path is not degenerated (empty or single point) */
+	bool hasSteps() const;
+
 private:
 	Common::Array<Math::Vector3d> _steps;
 	uint32 _targetStep;

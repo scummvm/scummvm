@@ -90,6 +90,12 @@ void Walk::updatePath() const {
 }
 
 void Walk::onGameLoop() {
+	if (!_path->hasSteps()) {
+		// There is no path to the destination
+		stop();
+		return;
+	}
+
 	Resources::Floor *floor = StarkGlobal->getCurrent()->getFloor();
 
 	// Get the target to walk to
