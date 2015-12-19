@@ -298,4 +298,5 @@ Common::Point EventManager::updateAndGetMousePos() {
 
 	return _mousePos;
 }
+
 } // End of namespace Lab

@@ -232,4 +232,5 @@ void LabEngine::waitTOF() {
 
 	_lastWaitTOFTicks = now;
 }
+
 } // End of namespace Lab
