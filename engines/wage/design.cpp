@@ -89,11 +89,9 @@ void Design::paint(Graphics::Surface *canvas, Patterns &patterns, bool mask) {
 		case 4:
 			drawRect(canvas, in, mask, patterns, fillType, borderThickness, borderFillType);
 			break;
-			/*
 		case 8:
 			drawRoundRect(canvas, in, mask, patterns, fillType, borderThickness, borderFillType);
 			break;
-			*/
 		case 12:
 			drawOval(canvas, in, mask, patterns, fillType, borderThickness, borderFillType);
 			break;
@@ -123,13 +121,15 @@ void Design::paint(Graphics::Surface *canvas, Patterns &patterns, bool mask) {
 void drawPixel(int x, int y, int color, void *data) {
 	plotData *p = (plotData *)data;
 
-	if (p->fillType > (*p->patterns).size())
+	if (p->fillType > p->patterns->size())
 		return;
 
-	if (x >= 0 && x < p->surface->w && y >= 0 && y < p->surface->h)
+	if (x >= 0 && x < p->surface->w && y >= 0 && y < p->surface->h) {
+		byte *pat = p->patterns->operator[](p->fillType - 1);
 		*((byte *)p->surface->getBasePtr(x, y)) =
-			((*p->patterns)[p->fillType - 1][(y - p->y0) % 8] & (1 << (7 - (x - p->x0) % 8))) ?
+			(pat[(y - p->y0) % 8] & (1 << (7 - (x - p->x0) % 8))) ?
 				color : kColorWhite;
+	}
 }
 
 void drawPixelPlain(int x, int y, int color, void *data) {
@@ -160,6 +160,36 @@ void Design::drawRect(Graphics::Surface *surface, Common::ReadStream &in, bool m
 	pd.fillType = fillType;
 
 	drawFilledRect(inner, kColorBlack, drawPixel, &pd);
+}
+
+void Design::drawRoundRect(Graphics::Surface *surface, Common::ReadStream &in, bool mask,
+				Patterns &patterns, byte fillType, byte borderThickness, byte borderFillType) {
+	int16 y1 = in.readSint16BE();
+	int16 x1 = in.readSint16BE();
+	int16 y2 = in.readSint16BE();
+	int16 x2 = in.readSint16BE();
+	int16 arc = in.readSint16BE();
+	Common::Rect outer(x1, y1, x2, y2);
+
+	plotData pd(surface, &patterns, borderFillType, x1, y1);
+
+	if (mask) {
+		drawFilledRoundRect(outer, arc, kColorBlack, drawPixelPlain, &pd);
+		return;
+	}
+	Common::Rect inner(x1 + borderThickness, y1 + borderThickness, x2 - borderThickness, y2 - borderThickness);
+
+	//drawFilledRoundRect(outer, arc, kColorBlack, drawPixel, &pd);
+
+	pd.fillType = fillType;
+
+	//drawFilledRoundRect(inner, arc, kColorBlack, drawPixel, &pd);
+
+
+	Common::Rect inn(50, 50, 400, 400);
+	pd.fillType = 8;
+	drawFilledRect(inn, kColorBlack, drawPixel, &pd);
+	//drawFilledRoundRect(inn, arc, kColorBlack, drawPixel, &pd);
 }
 
 void Design::drawPolygon(Graphics::Surface *surface, Common::ReadStream &in, bool mask,
@@ -323,6 +353,33 @@ void Design::drawFilledRect(Common::Rect &rect, int color, void (*plotProc)(int,
 		drawHLine(rect.left, rect.right, y, color, plotProc, data);
 }
 
+// http://members.chello.at/easyfilter/bresenham.html
+void Design::drawFilledRoundRect(Common::Rect &rect, int arc, int color, void (*plotProc)(int, int, int, void *), void *data) {
+	//drawFilledRect(rect, color, plotProc, data);
+	//return;
+	int x = -arc, y = 0, err = 2-2*arc; /* II. Quadrant */
+	int dx = rect.width() - arc * 2;
+	int dy = rect.height() - arc * 2;
+
+	do {
+		//drawHLine(rect.left, rect.right, y, color, plotProc, data);
+
+		//drawPixelPlain(rect.left-x, rect.top-y, color, data); /*   I. Quadrant */
+		//drawPixelPlain(rect.left+x, rect.top-y, color, data); /*  II. Quadrant */
+		drawHLine(rect.left+x, rect.right-x, rect.top-y, color, drawPixelPlain, data);
+		drawHLine(rect.left+x, rect.right-x, rect.top+y+dy, color, drawPixelPlain, data);
+		//drawPixelPlain(rect.left-y, rect.top-x, color, data); /*  II. Quadrant */
+		//drawPixelPlain(rect.left+x, rect.top-y, color, data); /* III. Quadrant */
+		//drawPixelPlain(rect.left+y, rect.top+x, color, data); /*  IV. Quadrant */
+		arc = err;
+		if (arc <= y) err += ++y*2+1;           /* e_xy+e_y < 0 */
+		if (arc > x || err > y) err += ++x*2+1; /* e_xy+e_x > 0 or no 2nd y-step */
+	} while (x < 0);
+
+
+	for (int i = 0; i < dy; i++)
+		drawHLine(rect.left, rect.right, rect.top + arc + i, color, drawPixelPlain, data);
+}
 
 // Based on public-domain code by Darel Rex Finley, 2007
 // http://alienryderflex.com/polygon_fill/

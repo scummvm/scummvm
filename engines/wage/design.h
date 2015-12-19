@@ -83,6 +83,8 @@ private:
 private:
     void drawRect(Graphics::Surface *surface, Common::ReadStream &in, bool mask,
         Patterns &patterns, byte fillType, byte borderThickness, byte borderFillType);
+	void drawRoundRect(Graphics::Surface *surface, Common::ReadStream &in, bool mask,
+        Patterns &patterns, byte fillType, byte borderThickness, byte borderFillType);
 	void drawPolygon(Graphics::Surface *surface, Common::ReadStream &in, bool mask,
         Patterns &patterns, byte fillType, byte borderThickness, byte borderFillType);
 	void drawOval(Graphics::Surface *surface, Common::ReadStream &in, bool mask,
@@ -90,6 +92,7 @@ private:
 	void drawBitmap(Graphics::Surface *surface, Common::ReadStream &in, bool mask);
 
 	void drawFilledRect(Common::Rect &rect, int color, void (*plotProc)(int, int, int, void *), void *data);
+	void drawFilledRoundRect(Common::Rect &rect, int arc, int color, void (*plotProc)(int, int, int, void *), void *data);
 	void drawPolygonScan(int *polyX, int *polyY, int npoints, Common::Rect &bbox, int color,
 									void (*plotProc)(int, int, int, void *), void *data);
 	void drawFilledEllipse(int x0, int y0, int x1, int y1, void (*plotProc)(int, int, int, void *), void *data);

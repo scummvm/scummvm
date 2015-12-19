@@ -108,8 +108,12 @@ Common::Error WageEngine::run() {
 	Graphics::Surface screen;
 	screen.create(640, 480, Graphics::PixelFormat::createFormatCLUT8());
 	Common::Rect r(0, 0, screen.w, screen.h);
-	_world->_scenes["entry"]->_design->setBounds(&r);
-	_world->_scenes["entry"]->_design->paint(&screen, _world->_patterns, false);
+	//_world->_objs["frank.1"]->_design->setBounds(&r);
+	//_world->_objs["frank.1"]->_design->paint(&screen, _world->_patterns, false);
+	//_world->_scenes["temple of the holy mackeral"]->_design->setBounds(&r);
+	//_world->_scenes["temple of the holy mackeral"]->_design->paint(&screen, _world->_patterns, false);
+	_world->_scenes["tower level 3"]->_design->setBounds(&r);
+	_world->_scenes["tower level 3"]->_design->paint(&screen, _world->_patterns, false);
 
 	return Common::kNoError;
 }
