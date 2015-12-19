@@ -180,18 +180,19 @@ void Design::drawRoundRect(Graphics::Surface *surface, Common::ReadStream &in, b
 	}
 	Common::Rect inner(x1 + borderThickness, y1 + borderThickness, x2 - borderThickness, y2 - borderThickness);
 
-	//drawFilledRoundRect(outer, arc, kColorBlack, drawPixel, &pd);
+	drawFilledRoundRect(outer, arc, kColorBlack, drawPixel, &pd);
 
 	pd.fillType = fillType;
 
-	//drawFilledRoundRect(inner, arc, kColorBlack, drawPixel, &pd);
-
+	drawFilledRoundRect(inner, arc, kColorBlack, drawPixel, &pd);
+/*
 	Common::Rect inn(50, 50, 400, 400);
 	pd.fillType = 8;
 	pd.x0 = 50;
 	pd.y0 = 50;
 	drawFilledRect(inn, kColorBlack, drawPixel, &pd);
 	drawFilledRoundRect(inn, arc, kColorGray, drawPixel, &pd);
+*/
 }
 
 void Design::drawPolygon(Graphics::Surface *surface, Common::ReadStream &in, bool mask,
@@ -357,31 +358,20 @@ void Design::drawFilledRect(Common::Rect &rect, int color, void (*plotProc)(int,
 
 // http://members.chello.at/easyfilter/bresenham.html
 void Design::drawFilledRoundRect(Common::Rect &rect, int arc, int color, void (*plotProc)(int, int, int, void *), void *data) {
-	//drawFilledRect(rect, color, plotProc, data);
-	//return;
 	int x = -arc, y = 0, err = 2-2*arc; /* II. Quadrant */
-	int dx = rect.width() - arc * 2;
 	int dy = rect.height() - arc * 2;
 	int r = arc;
 
 	do {
-		//drawHLine(rect.left, rect.right, y, color, plotProc, data);
-
-		//drawPixelPlain(rect.left-x, rect.top-y, color, data); /*   I. Quadrant */
-		//drawPixelPlain(rect.left+x, rect.top-y, color, data); /*  II. Quadrant */
-		drawHLine(rect.left+x+r, rect.right-x-r, rect.top-y+r, color, drawPixelPlain, data);
-		drawHLine(rect.left+x+r, rect.right-x-r, rect.top+y+dy+r, color, drawPixelPlain, data);
-		//drawPixelPlain(rect.left-y, rect.top-x, color, data); /*  II. Quadrant */
-		//drawPixelPlain(rect.left+x, rect.top-y, color, data); /* III. Quadrant */
-		//drawPixelPlain(rect.left+y, rect.top+x, color, data); /*  IV. Quadrant */
+		drawHLine(rect.left+x+r, rect.right-x-r, rect.top-y+r, color, plotProc, data);
+		drawHLine(rect.left+x+r, rect.right-x-r, rect.top+y+dy+r, color, plotProc, data);
 		arc = err;
 		if (arc <= y) err += ++y*2+1;           /* e_xy+e_y < 0 */
 		if (arc > x || err > y) err += ++x*2+1; /* e_xy+e_x > 0 or no 2nd y-step */
 	} while (x < 0);
 
-
 	for (int i = 0; i < dy; i++)
-		drawHLine(rect.left, rect.right, rect.top + r + i, color, drawPixelPlain, data);
+		drawHLine(rect.left, rect.right, rect.top + r + i, color, plotProc, data);
 }
 
 // Based on public-domain code by Darel Rex Finley, 2007
