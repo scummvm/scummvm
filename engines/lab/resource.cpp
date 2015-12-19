@@ -158,22 +158,10 @@ bool Resource::readViews(uint16 roomNum) {
 }
 
 void Resource::freeViews(uint16 roomNum) {
-	for (uint16 i = 0; i < 4; i++) {
-		delete _vm->_rooms[roomNum]._view[i];
-		_vm->_rooms[roomNum]._view[i] = nullptr;
-	}
+	for (uint16 i = 0; i < 4; i++)
+		freeView(_vm->_rooms[roomNum]._view[i]);
 
-	if (_vm->_rooms[roomNum]._rules) {
-		for (RuleList::iterator rule = _vm->_rooms[roomNum]._rules->begin(); rule != _vm->_rooms[roomNum]._rules->end(); ++rule) {
-			delete (*rule)->_actionList;
-			delete[](*rule)->_condition;
-			delete *rule;
-			*rule = nullptr;
-		}
-
-		delete _vm->_rooms[roomNum]._rules;
-		_vm->_rooms[roomNum]._rules = nullptr;
-	}
+	freeRule(_vm->_rooms[roomNum]._rules);
 }
 
 Common::String Resource::translateFileName(Common::String filename) {
@@ -286,6 +274,21 @@ RuleList *Resource::readRule(Common::File *file) {
 	return rules;
 }
 
+void Resource::freeRule(RuleList *ruleList) {
+	if (!ruleList)
+		return;
+
+	for (RuleList::iterator rule = ruleList->begin(); rule != ruleList->end(); ++rule) {
+		freeAction((*rule)->_actionList);
+		delete[](*rule)->_condition;
+		delete *rule;
+		*rule = nullptr;
+	}
+
+	delete ruleList;
+	ruleList = nullptr;
+}
+
 Action *Resource::readAction(Common::File *file) {
 	char c;
 	Action *action = nullptr;
@@ -312,7 +315,7 @@ Action *Resource::readAction(Common::File *file) {
 
 				for (int i = 0; i < action->_param1; i++) {
 					tmp = readString(file);
-					messages[i] = (char *)malloc(tmp.size());	// FIXME: memory leak!
+					messages[i] = (char *)malloc(tmp.size());
 					memcpy(messages[i], tmp.c_str(), tmp.size());
 				}
 
@@ -320,7 +323,7 @@ Action *Resource::readAction(Common::File *file) {
 			} else {
 				Common::String tmp;
 				tmp = readString(file);
-				action->_data =  (byte *)malloc(tmp.size());	// FIXME: memory leak!
+				action->_data =  (byte *)malloc(tmp.size());
 				memcpy(action->_data, tmp.c_str(), tmp.size());
 			}
 
@@ -330,6 +333,21 @@ Action *Resource::readAction(Common::File *file) {
 	} while (c == 1);
 
 	return head;
+}
+
+void Resource::freeAction(Action *action) {
+	while (action) {
+		Action *nextAction = action->_nextAction;
+		if (action->_actionType == SHOWMESSAGES) {
+			char **messages = (char **)action->_data;
+			for (int i = 0; i < action->_param1; i++)
+				free(messages[i]);
+			free(messages);
+		} else
+			free(action->_data);
+		delete action;
+		action = nextAction;
+	}
 }
 
 CloseData *Resource::readCloseUps(uint16 depth, Common::File *file) {
@@ -364,6 +382,15 @@ CloseData *Resource::readCloseUps(uint16 depth, Common::File *file) {
 	return head;
 }
 
+void Resource::freeCloseUps(CloseData *closeUps) {
+	while (closeUps) {
+		CloseData *nextCloseUp = closeUps->_nextCloseUp;
+		freeCloseUps(closeUps->_subCloseUps);
+		delete closeUps;
+		closeUps = nextCloseUp;
+	}
+}
+
 ViewData *Resource::readView(Common::File *file) {
 	char c;
 	ViewData *view = nullptr;
@@ -388,6 +415,16 @@ ViewData *Resource::readView(Common::File *file) {
 	} while (c == 1);
 
 	return head;
+}
+
+void Resource::freeView(ViewData *view) {
+	while (view) {
+		ViewData *nextView = view->_nextCondition;
+		delete[] view->_condition;
+		freeCloseUps(view->_closeUps);
+		delete view;
+		view = nextView;
+	}
 }
 
 } // End of namespace Lab
