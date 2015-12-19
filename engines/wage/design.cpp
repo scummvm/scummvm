@@ -124,8 +124,9 @@ void drawPixel(int x, int y, int color, void *data) {
 	if (p->fillType > p->patterns->size())
 		return;
 
+	byte *pat = p->patterns->operator[](p->fillType - 1);
+
 	if (x >= 0 && x < p->surface->w && y >= 0 && y < p->surface->h) {
-		byte *pat = p->patterns->operator[](p->fillType - 1);
 		*((byte *)p->surface->getBasePtr(x, y)) =
 			(pat[(y - p->y0) % 8] & (1 << (7 - (x - p->x0) % 8))) ?
 				color : kColorWhite;
@@ -185,11 +186,12 @@ void Design::drawRoundRect(Graphics::Surface *surface, Common::ReadStream &in, b
 
 	//drawFilledRoundRect(inner, arc, kColorBlack, drawPixel, &pd);
 
-
 	Common::Rect inn(50, 50, 400, 400);
 	pd.fillType = 8;
+	pd.x0 = 50;
+	pd.y0 = 50;
 	drawFilledRect(inn, kColorBlack, drawPixel, &pd);
-	//drawFilledRoundRect(inn, arc, kColorBlack, drawPixel, &pd);
+	drawFilledRoundRect(inn, arc, kColorGray, drawPixel, &pd);
 }
 
 void Design::drawPolygon(Graphics::Surface *surface, Common::ReadStream &in, bool mask,
@@ -360,14 +362,15 @@ void Design::drawFilledRoundRect(Common::Rect &rect, int arc, int color, void (*
 	int x = -arc, y = 0, err = 2-2*arc; /* II. Quadrant */
 	int dx = rect.width() - arc * 2;
 	int dy = rect.height() - arc * 2;
+	int r = arc;
 
 	do {
 		//drawHLine(rect.left, rect.right, y, color, plotProc, data);
 
 		//drawPixelPlain(rect.left-x, rect.top-y, color, data); /*   I. Quadrant */
 		//drawPixelPlain(rect.left+x, rect.top-y, color, data); /*  II. Quadrant */
-		drawHLine(rect.left+x, rect.right-x, rect.top-y, color, drawPixelPlain, data);
-		drawHLine(rect.left+x, rect.right-x, rect.top+y+dy, color, drawPixelPlain, data);
+		drawHLine(rect.left+x+r, rect.right-x-r, rect.top-y+r, color, drawPixelPlain, data);
+		drawHLine(rect.left+x+r, rect.right-x-r, rect.top+y+dy+r, color, drawPixelPlain, data);
 		//drawPixelPlain(rect.left-y, rect.top-x, color, data); /*  II. Quadrant */
 		//drawPixelPlain(rect.left+x, rect.top-y, color, data); /* III. Quadrant */
 		//drawPixelPlain(rect.left+y, rect.top+x, color, data); /*  IV. Quadrant */
@@ -378,7 +381,7 @@ void Design::drawFilledRoundRect(Common::Rect &rect, int arc, int color, void (*
 
 
 	for (int i = 0; i < dy; i++)
-		drawHLine(rect.left, rect.right, rect.top + arc + i, color, drawPixelPlain, data);
+		drawHLine(rect.left, rect.right, rect.top + r + i, color, drawPixelPlain, data);
 }
 
 // Based on public-domain code by Darel Rex Finley, 2007
