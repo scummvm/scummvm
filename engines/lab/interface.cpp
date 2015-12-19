@@ -128,6 +128,8 @@ IntuiMessage *EventManager::getMsg() {
 
 	updateMouse();
 
+	Common::KeyCode curKey;
+
 	if (_lastButtonHit) {
 		updateMouse();
 		message._msgClass = kMessageButtonUp;
@@ -143,7 +145,8 @@ IntuiMessage *EventManager::getMsg() {
 			message._mouse.x /= 2;
 		_leftClick = _rightClick = false;
 		return &message;
-	} else if (keyPress(&message._code)) {
+	} else if (keyPress(&curKey)) {
+		message._code = curKey;
 		Button *curButton = checkNumButtonHit(_screenButtonList, message._code);
 
 		if (curButton) {

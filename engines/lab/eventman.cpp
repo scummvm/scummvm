@@ -211,7 +211,7 @@ void EventManager::setMousePos(Common::Point pos) {
 /**
  * Checks whether or not a key has been pressed.
  */
-bool EventManager::keyPress(uint16 *keyCode) {
+bool EventManager::keyPress(Common::KeyCode *keyCode) {
 	if (haveNextChar()) {
 		*keyCode = getNextChar();
 		return true;
@@ -280,8 +280,8 @@ void EventManager::processInput() {
 	}
 }
 
-uint16 EventManager::getNextChar() {
-	uint16 chr = 0;
+Common::KeyCode EventManager::getNextChar() {
+	Common::KeyCode chr = Common::KEYCODE_INVALID;
 
 	processInput();
 	if (_nextKeyIn != _nextKeyOut) {
