@@ -101,13 +101,14 @@ public:
 	bool readRoomData(const char *fileName);
 	InventoryData *readInventory(const char *fileName);
 	bool readViews(uint16 roomNum);
+	void freeViews(uint16 roomNum);
 	TextFont *getFont(const char *fileName);
-	char *getText(const char *fileName);
+	Common::String getText(const char *fileName);
 	Common::String getStaticText(byte index) const { return _staticText[index]; }
 
 private:
 	LabEngine *_vm;
-	char *readString(Common::File *file);
+	Common::String readString(Common::File *file);
 	int16 *readConditions(Common::File *file);
 	RuleList *readRule(Common::File *file);
 	Action *readAction(Common::File *file);

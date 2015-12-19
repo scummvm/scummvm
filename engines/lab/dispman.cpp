@@ -66,7 +66,7 @@ DisplayMan::DisplayMan(LabEngine *vm) : _vm(vm) {
 DisplayMan::~DisplayMan() {
 	freePict();
 	delete _dispBitMap;
-	delete[]_displayBuffer;
+	delete[] _displayBuffer;
 }
 
 // From readPict.c.  Reads in pictures and animations from disk.
@@ -92,10 +92,10 @@ void DisplayMan::loadBackPict(const char *fileName, uint16 *highPal) {
 /**
  * Reads in a picture into the display bitmap.
  */
-void DisplayMan::readPict(const char *filename, bool playOnce, bool onlyDiffData, byte *memoryBuffer, uint16 maxHeight) {
+void DisplayMan::readPict(Common::String filename, bool playOnce, bool onlyDiffData, byte *memoryBuffer, uint16 maxHeight) {
 	_vm->_anim->stopDiff();
 
-	loadPict(filename);
+	loadPict(filename.c_str());
 
 	_vm->_music->updateMusic();
 

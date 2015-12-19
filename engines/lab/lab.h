@@ -31,7 +31,10 @@
 #ifndef LAB_LAB_H
 #define LAB_LAB_H
 
+#define _CRTDBG_MAP_ALLOC
 #include "common/system.h"
+#include <crtdbg.h>
+
 #include "common/random.h"
 #include "common/rect.h"
 #include "common/savefile.h"
@@ -118,11 +121,11 @@ private:
 
 	uint32 _extraGameFeatures;
 
-	char *_journalText;
-	char *_journalTextTitle;
-	const char *_nextFileName;
-	const char *_newFileName;
-	const char *_monitorTextFilename;
+	Common::String _journalText;
+	Common::String _journalTextTitle;
+	Common::String _nextFileName;
+	Common::String _newFileName;
+	Common::String _monitorTextFilename;
 
 	CloseDataPtr _closeDataPtr;
 	ButtonList _journalButtonList;
@@ -154,7 +157,7 @@ public:
 
 	uint32 _crumbTimestamp;
 
-	const char *_curFileName;
+	Common::String _curFileName;
 
 	Anim *_anim;
 	CrumbData _breadCrumbs[MAX_CRUMBS];
@@ -188,7 +191,7 @@ public:
 
 	void changeVolume(int delta);
 	uint16 getDirection() { return _direction; }
-	char *getPictName(CloseDataPtr *closePtrList);
+	Common::String getPictName(CloseDataPtr *closePtrList);
 	uint16 getQuarters();
 	void setDirection(uint16 direction) { _direction = direction; };
 	void setQuarters(uint16 quarters);
@@ -205,7 +208,7 @@ private:
 	void doJournal();
 	bool doMainView(CloseDataPtr *closePtrList);
 	void doMap(uint16 curRoom);
-	void doMonitor(char *background, char *textfile, bool isinteractive, Common::Rect textRect);
+	void doMonitor(Common::String background, Common::String textfile, bool isinteractive, Common::Rect textRect);
 	void doNotes();
 	bool doOperateRuleSub(int16 itemNum, int16 roomNum, CloseDataPtr closePtr, CloseDataPtr *setCloseList, bool allowDefaults);
 	bool doOperateRule(Common::Point pos, int16 ItemNum, CloseDataPtr *closePtrList);
@@ -228,7 +231,7 @@ private:
 	void freeScreens();
 	bool fromCrumbs(uint32 tmpClass, uint16 code, uint16 qualifier, Common::Point tmpPos,
 		uint16 &curInv, IntuiMessage *curMsg, bool &forceDraw, uint16 buttonId, uint16 &actionMode);
-	const char *getInvName(uint16 curInv);
+	Common::String getInvName(uint16 curInv);
 	uint16 getLowerFloor(uint16 floorNum);
 	CloseData *getObject(Common::Point pos, CloseDataPtr closePtr);
 	uint16 getUpperFloor(uint16 floorNum);
