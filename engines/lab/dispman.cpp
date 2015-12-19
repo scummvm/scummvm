@@ -633,12 +633,13 @@ void DisplayMan::overlayRect(uint16 penColor, uint16 x1, uint16 y1, uint16 x2, u
 /**
  * Closes a font and frees all memory associated with it.
  */
-void DisplayMan::closeFont(TextFont *font) {
-	if (font) {
-		if (font->_data && font->_dataLength)
-			delete[] font->_data;
+void DisplayMan::closeFont(TextFont **font) {
+	if (*font) {
+		if ((*font)->_data)
+			delete[] (*font)->_data;
 
-		delete font;
+		delete *font;
+		*font = nullptr;
 	}
 }
 

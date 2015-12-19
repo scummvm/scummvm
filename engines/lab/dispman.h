@@ -130,7 +130,7 @@ public:
 	void scrollDisplayX(int16 dx, uint16 x1, uint16 y1, uint16 x2, uint16 y2, byte *buffer);
 	void scrollDisplayY(int16 dy, uint16 x1, uint16 y1, uint16 x2, uint16 y2, byte *buffer);
 	void fade(bool fadein, uint16 res);
-	void closeFont(TextFont *font);
+	void closeFont(TextFont **font);
 	uint16 textLength(TextFont *font, const char *text, uint16 numChars);
 	uint16 textHeight(TextFont *tf);
 	void drawText(TextFont *tf, uint16 x, uint16 y, uint16 color, const char *text, uint16 numChars);
