@@ -154,11 +154,18 @@ void Design::drawRect(Graphics::Surface *surface, Common::ReadStream &in, bool m
 	}
 	Common::Rect inner(x1 + borderThickness, y1 + borderThickness, x2 - borderThickness, y2 - borderThickness);
 
-	drawFilledRect(outer, kColorBlack, drawPixel, &pd);
+	if (fillType <= patterns.size()) {
+		drawFilledRect(outer, kColorBlack, drawPixel, &pd);
 
-	pd.fillType = fillType;
+		pd.fillType = fillType;
 
-	drawFilledRect(inner, kColorBlack, drawPixel, &pd);
+		drawFilledRect(inner, kColorBlack, drawPixel, &pd);
+	} else {
+		drawThickLine(x1, y1, x2, y1, borderThickness, kColorBlack, drawPixel, &pd);
+		drawThickLine(x2, y1, x2, y2, borderThickness, kColorBlack, drawPixel, &pd);
+		drawThickLine(x2, y2, x1, y2, borderThickness, kColorBlack, drawPixel, &pd);
+		drawThickLine(x1, y2, x1, y1, borderThickness, kColorBlack, drawPixel, &pd);
+	}
 }
 
 void Design::drawRoundRect(Graphics::Surface *surface, Common::ReadStream &in, bool mask,
@@ -181,6 +188,10 @@ void Design::drawRoundRect(Graphics::Surface *surface, Common::ReadStream &in, b
 	drawFilledRoundRect(outer, arc/2, kColorBlack, drawPixel, &pd);
 
 	pd.fillType = fillType;
+
+	if (fillType > patterns.size()) {
+		warning("Transparent roundrect");
+	}
 
 	drawFilledRoundRect(inner, arc/2, kColorBlack, drawPixel, &pd);
 }
@@ -248,10 +259,12 @@ void Design::drawPolygon(Graphics::Surface *surface, Common::ReadStream &in, boo
 		return;
 	}
 
-	drawPolygonScan(xpoints, ypoints, npoints, bbox, kColorBlack, drawPixel, &pd);
+	if (fillType <= patterns.size()) {
+		drawPolygonScan(xpoints, ypoints, npoints, bbox, kColorBlack, drawPixel, &pd);
+	}
 
 	pd.fillType = borderFillType;
-	if (borderThickness > 0) {
+	if (borderThickness > 0 && borderFillType <= patterns.size()) {
 		for (int i = 1; i < npoints; i++)
 			drawThickLine(xpoints[i-1], ypoints[i-1], xpoints[i], ypoints[i], borderThickness, kColorBlack, drawPixel, &pd);
 	}
@@ -274,12 +287,12 @@ void Design::drawOval(Graphics::Surface *surface, Common::ReadStream &in, bool m
 		return;
 	}
 
-	if (borderThickness > 0) {
+	if (borderThickness > 0 && borderFillType <= patterns.size()) {
 		if (borderThickness == 1) {
 			drawEllipse(x1, y1, x2-1, y2-1, false, drawPixel, &pd);
 		} else {
 			drawEllipse(x1, y1, x2-1, y2-1, true, drawPixel, &pd);
-			warning("Ellips thickness >1: borderThickness");
+			warning("Ellipse thickness >1: borderThickness");
 		}
 	}
 
