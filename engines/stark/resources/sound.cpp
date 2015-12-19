@@ -61,7 +61,6 @@ Audio::RewindableAudioStream *Sound::makeAudioStream() {
 		audioStream = Formats::makeISSStream(stream, DisposeAfterUse::YES);
 	}
 
-#ifdef USE_VORBIS
 	if (!audioStream) {
 		// The 2 CD version uses Ogg Vorbis
 		Common::String filename = _filename;
@@ -71,10 +70,14 @@ Audio::RewindableAudioStream *Sound::makeAudioStream() {
 
 		stream = StarkArchiveLoader->getExternalFile(filename, _archiveName);
 		if (stream) {
+#ifdef USE_VORBIS
 			audioStream = Audio::makeVorbisStream(stream, DisposeAfterUse::YES);
+#else
+			warning("Cannot decode sound '%s', Vorbis support is not compiled in", filename.c_str());
+			delete stream;
+#endif
 		}
 	}
-#endif
 
 	if (!audioStream) {
 		warning("Unable to load sound '%s'", _filename.c_str());
