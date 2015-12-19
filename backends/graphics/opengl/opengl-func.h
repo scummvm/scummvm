@@ -70,12 +70,7 @@ GL_FUNC_DEF(void, glColor4f, (GLfloat red, GLfloat green, GLfloat blue, GLfloat 
 GL_FUNC_DEF(void, glViewport, (GLint x, GLint y, GLsizei width, GLsizei height));
 GL_FUNC_DEF(void, glMatrixMode, (GLenum mode));
 GL_FUNC_DEF(void, glLoadIdentity, ());
-#if !USE_FORCED_GL
-GL_FUNC_DEF(void, glOrthof, (GLfloat left, GLfloat right, GLfloat bottom, GLfloat top, GLfloat zNear, GLfloat zFar));
-#endif
-#if !USE_FORCED_GLES
-GL_FUNC_DEF(void, glOrtho, (GLdouble left, GLdouble right, GLdouble bottom, GLdouble top, GLdouble near_val, GLdouble far_val));
-#endif
+GL_FUNC_DEF(void, glLoadMatrixf, (const GLfloat *m));
 GL_FUNC_DEF(void, glShadeModel, (GLenum mode));
 GL_FUNC_DEF(void, glHint, (GLenum target, GLenum mode));
 GL_FUNC_DEF(void, glClearColor, (GLclampf red, GLclampf green, GLclampf blue, GLclampf alpha));

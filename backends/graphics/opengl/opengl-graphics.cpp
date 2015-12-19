@@ -757,19 +757,17 @@ void OpenGLGraphicsManager::setActualScreenSize(uint width, uint height) {
 	// Setup coordinates system.
 	GL_CALL(glViewport(0, 0, _outputScreenWidth, _outputScreenHeight));
 
+	// Orthogonal projection matrix in column major order.
+	const GLfloat orthoProjection[4*4] = {
+		 2.0f / _outputScreenWidth,  0.0f                      ,  0.0f, 0.0f,
+		 0.0f                     , -2.0f / _outputScreenHeight,  0.0f, 0.0f,
+		 0.0f                     ,  0.0f                      , -1.0f, 0.0f,
+		-1.0f                     ,  1.0f                      ,  0.0f, 1.0f
+	};
+
 	GL_CALL(glMatrixMode(GL_PROJECTION));
-	GL_CALL(glLoadIdentity());
-#if   USE_FORCED_GLES
-	GL_CALL(glOrthof(0, _outputScreenWidth, _outputScreenHeight, 0, -1, 1));
-#elif USE_FORCED_GL
-	GL_CALL(glOrtho(0, _outputScreenWidth, _outputScreenHeight, 0, -1, 1));
-#else
-	if (isGLESContext()) {
-		GL_CALL(glOrthof(0, _outputScreenWidth, _outputScreenHeight, 0, -1, 1));
-	} else {
-		GL_CALL(glOrtho(0, _outputScreenWidth, _outputScreenHeight, 0, -1, 1));
-	}
-#endif
+	GL_CALL(glLoadMatrixf(orthoProjection));
+
 	GL_CALL(glMatrixMode(GL_MODELVIEW));
 	GL_CALL(glLoadIdentity());
 
