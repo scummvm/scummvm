@@ -53,7 +53,8 @@ enum MessageClasses {
 
 struct IntuiMessage {
 	uint32 _msgClass;
-	uint16 _code, _qualifier;
+	uint16 _code; // KeyCode or Button Id
+	uint16 _qualifier;
 	Common::Point _mouse;
 };
 
@@ -87,9 +88,9 @@ private:
 
 private:
 	Button *checkButtonHit(ButtonList *buttonList, Common::Point pos);
-	bool keyPress(uint16 *keyCode);
+	bool keyPress(Common::KeyCode *keyCode);
 	bool haveNextChar();
-	uint16 getNextChar();
+	Common::KeyCode getNextChar();
 	Button *checkNumButtonHit(ButtonList *buttonList, uint16 key);
 	uint16 makeButtonKeyEquiv(uint16 key);
 
