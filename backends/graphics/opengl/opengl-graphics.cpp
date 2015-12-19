@@ -754,7 +754,7 @@ void OpenGLGraphicsManager::setActualScreenSize(uint width, uint height) {
 	_outputScreenWidth = width;
 	_outputScreenHeight = height;
 
-	// Setup coordinates system.
+	// Setup coordinate system.
 	GL_CALL(glViewport(0, 0, _outputScreenWidth, _outputScreenHeight));
 
 	// Orthogonal projection matrix in column major order.
