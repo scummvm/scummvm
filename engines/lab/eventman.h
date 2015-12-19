@@ -77,7 +77,7 @@ private:
 
 	uint16 _nextKeyIn;
 	uint16 _nextKeyOut;
-	uint16 _keyBuf[64];
+	Common::KeyCode _keyBuf[64];
 
 	Button *_hitButton;
 	Button *_lastButtonHit;

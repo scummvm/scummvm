@@ -116,12 +116,13 @@ EventManager::EventManager(LabEngine *vm) : _vm(vm) {
 	_lastButtonHit = nullptr;
 	_screenButtonList = nullptr;
 	_hitButton = nullptr;
-	_nextKeyIn = 0;
-	_nextKeyOut = 0;
 	_mousePos = Common::Point(0, 0);
 
+	_nextKeyIn = 0;
+	_nextKeyOut = 0;
+
 	for (int i = 0; i < 64; i++)
-		_keyBuf[i] = 0;
+		_keyBuf[i] = Common::KEYCODE_INVALID;
 
 }
 
@@ -260,8 +261,7 @@ void EventManager::processInput() {
 				break;
 
 			default: {
-				int n = ((((unsigned int)((_nextKeyIn + 1) >> 31) >> 26) + (byte)_nextKeyIn + 1) & 0x3F)
-					- ((unsigned int)((_nextKeyIn + 1) >> 31) >> 26);
+				int n = (_nextKeyIn + 1) % 64;
 				if (n != _nextKeyOut) {
 					_keyBuf[_nextKeyIn] = event.kbd.keycode;
 					_nextKeyIn = n;
@@ -286,8 +286,7 @@ uint16 EventManager::getNextChar() {
 	processInput();
 	if (_nextKeyIn != _nextKeyOut) {
 		chr = _keyBuf[_nextKeyOut];
-		_nextKeyOut = ((((unsigned int)((_nextKeyOut + 1) >> 31) >> 26) + (byte)_nextKeyOut + 1) & 0x3F)
-			- ((unsigned int)((_nextKeyOut + 1) >> 31) >> 26);
+		_nextKeyOut = (_nextKeyOut + 1) % 64;
 	}
 
 	return chr;
