@@ -71,8 +71,7 @@ void Intro::introEatMessages() {
  * Reads in a picture.
  */
 void Intro::doPictText(const char *filename, TextFont *msgFont, bool isScreen) {
-	char path[50] = "Lab:rooms/Intro/";
-	strcat(path, filename);
+	Common::String path = Common::String("Lab:rooms/Intro/") + filename;
 
 	uint timeDelay = (isScreen) ? 35 : 7;
 	_vm->_music->updateMusic();
@@ -85,7 +84,7 @@ void Intro::doPictText(const char *filename, TextFont *msgFont, bool isScreen) {
 	bool doneFl = false;
 	bool begin = true;
 
-	Common::File *textFile = _vm->_resource->openDataFile(path);
+	Common::File *textFile = _vm->_resource->openDataFile(path.c_str());
 	byte *textBuffer = new byte[textFile->size()];
 	textFile->read(textBuffer, textFile->size());
 	delete textFile;

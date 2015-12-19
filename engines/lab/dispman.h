@@ -62,7 +62,7 @@ private:
 
 	uint16 fadeNumIn(uint16 num, uint16 res, uint16 counter);
 	uint16 fadeNumOut(uint16 num, uint16 res, uint16 counter);
-	void getWord(char *wordBuffer, const char *mainBuffer, uint16 *wordWidth);
+	Common::String getWord(const char *mainBuffer, uint16 *wordWidth);
 
 	byte _curPen;
 	Common::File *_curBitmap;
@@ -134,7 +134,7 @@ public:
 	uint16 textLength(TextFont *font, const char *text, uint16 numChars);
 	uint16 textHeight(TextFont *tf);
 	void drawText(TextFont *tf, uint16 x, uint16 y, uint16 color, const char *text, uint16 numChars);
-	void getLine(TextFont *tf, char *lineBuffer, const char **mainBuffer, uint16 lineWidth);
+	Common::String getLine(TextFont *tf, const char **mainBuffer, uint16 lineWidth);
 
 	bool _longWinInFront;
 	bool _lastMessageLong;

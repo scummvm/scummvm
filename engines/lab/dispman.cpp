@@ -122,38 +122,37 @@ void DisplayMan::freePict() {
 /**
  * Extracts the first word from a string.
  */
-void DisplayMan::getWord(char *wordBuffer, const char *mainBuffer, uint16 *wordWidth) {
+Common::String DisplayMan::getWord(const char *mainBuffer, uint16 *wordWidth) {
 	uint16 width = 0;
+	Common::String result;
 
 	while ((mainBuffer[width] != ' ') && mainBuffer[width] && (mainBuffer[width] != '\n')) {
-		wordBuffer[width] = mainBuffer[width];
+		result += mainBuffer[width];
 		width++;
 	}
 
-	wordBuffer[width] = 0;
-
 	*wordWidth = width;
+	return result;
 }
 
 /**
  * Gets a line of text for flowText; makes sure that its length is less than
  * or equal to the maximum width.
  */
-void DisplayMan::getLine(TextFont *tf, char *lineBuffer, const char **mainBuffer, uint16 lineWidth) {
+Common::String DisplayMan::getLine(TextFont *tf, const char **mainBuffer, uint16 lineWidth) {
 	uint16 curWidth = 0, wordWidth;
 	char wordBuffer[100];
+	Common::String result;
 	bool doit = true;
 
 	lineWidth += textLength(tf, " ", 1);
 
-	lineBuffer[0] = 0;
-
 	while ((*mainBuffer)[0] && doit) {
-		getWord(wordBuffer, *mainBuffer, &wordWidth);
-		strcat(wordBuffer, " ");
+		Common::String wordBuffer = getWord(*mainBuffer, &wordWidth);
+		wordBuffer += " ";
 
-		if ((curWidth + textLength(tf, wordBuffer, wordWidth + 1)) <= lineWidth) {
-			strcat(lineBuffer, wordBuffer);
+		if ((curWidth + textLength(tf, wordBuffer.c_str(), wordWidth + 1)) <= lineWidth) {
+			result += wordBuffer;
 			(*mainBuffer) += wordWidth;
 
 			if ((*mainBuffer)[0] == '\n')
@@ -162,10 +161,12 @@ void DisplayMan::getLine(TextFont *tf, char *lineBuffer, const char **mainBuffer
 			if ((*mainBuffer)[0])
 				(*mainBuffer)++;
 
-			curWidth = textLength(tf, lineBuffer, strlen(lineBuffer));
+			curWidth = textLength(tf, result.c_str(), result.size());
 		} else
 			doit = false;
 	}
+
+	return result;
 }
 
 /**
@@ -201,14 +202,14 @@ int DisplayMan::flowText(
 	uint16 numLines   = (textRect.height() + 1) / fontHeight;
 	uint16 width      = textRect.width() + 1;
 	uint16 y          = textRect.top;
-	char lineBuffer[256];
+	Common::String lineBuffer;
 
 	if (centerv && output) {
 		const char *temp = str;
 		uint16 actlines = 0;
 
 		while (temp[0]) {
-			getLine(msgFont, lineBuffer, &temp, width);
+			lineBuffer = getLine(msgFont, &temp, width);
 			actlines++;
 		}
 
@@ -218,16 +219,16 @@ int DisplayMan::flowText(
 
 	int len = 0;
 	while (numLines && str[0]) {
-		getLine(msgFont, lineBuffer, &str, width);
+		lineBuffer = getLine(msgFont, &str, width);
 
 		uint16 x = textRect.left;
-		len += strlen(lineBuffer);
+		len += lineBuffer.size();
 
 		if (centerh)
-			x += (width - textLength(msgFont, lineBuffer, strlen(lineBuffer))) / 2;
+			x += (width - textLength(msgFont, lineBuffer.c_str(), lineBuffer.size())) / 2;
 
 		if (output)
-			drawText(msgFont, x, y, penColor, lineBuffer, strlen(lineBuffer));
+			drawText(msgFont, x, y, penColor, lineBuffer.c_str(), lineBuffer.size());
 
 		numLines--;
 		y += fontHeight;
