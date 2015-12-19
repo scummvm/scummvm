@@ -83,8 +83,8 @@ void Design::paint(Graphics::Surface *canvas, Patterns &patterns, bool mask) {
 		byte fillType = in.readByte();
 		byte borderThickness = in.readByte();
 		byte borderFillType = in.readByte();
-		warning("fill: %d border: %d borderFill: %d", fillType, borderThickness, borderFillType);
 		int type = in.readByte();
+		warning("fill: %d border: %d borderFill: %d type: %d", fillType, borderThickness, borderFillType, type);
 		switch (type) {
 		case 4:
 			drawRect(canvas, in, mask, patterns, fillType, borderThickness, borderFillType);
@@ -114,7 +114,6 @@ void Design::paint(Graphics::Surface *canvas, Patterns &patterns, bool mask) {
 
 		g_system->copyRectToScreen(canvas->getPixels(), canvas->pitch, 0, 0, canvas->w, canvas->h);
 		g_system->updateScreen();
-
 	}
 }
 
