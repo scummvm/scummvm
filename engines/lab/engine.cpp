@@ -113,11 +113,11 @@ static char initcolors[] = { '\x00', '\x00', '\x00', '\x30',
 							 '\x2c', '\x08', '\x08', '\x08' };
 
 uint16 LabEngine::getQuarters() {
-	return _inventory[kItemQuarter]._many;
+	return _inventory[kItemQuarter]._quantity;
 }
 
 void LabEngine::setQuarters(uint16 quarters) {
-	_inventory[kItemQuarter]._many = quarters;
+	_inventory[kItemQuarter]._quantity = quarters;
 }
 
 /**
@@ -134,8 +134,8 @@ void LabEngine::drawRoomMessage(uint16 curInv, CloseDataPtr closePtr) {
 			if ((curInv == kItemLamp) && _conditions->in(kCondLampOn))
 				// LAB: Labyrinth specific
 				drawStaticMessage(kTextkLampOn);
-			else if (_inventory[curInv]._many > 1) {
-				Common::String roomMessage = _inventory[curInv]._name + "  (" + Common::String::format("%d", _inventory[curInv]._many) + ")";
+			else if (_inventory[curInv]._quantity > 1) {
+				Common::String roomMessage = _inventory[curInv]._name + "  (" + Common::String::format("%d", _inventory[curInv]._quantity) + ")";
 				_graphics->drawMessage(roomMessage.c_str());
 			} else
 				_graphics->drawMessage(_inventory[curInv]._name.c_str());
@@ -593,8 +593,7 @@ void LabEngine::showLab2Teaser() {
 	_graphics->readPict("P:End/L2In.9", true);
 	_graphics->readPict("P:End/Lost", true);
 
-	warning("STUB: waitForPress");
-	while (!1) { // 1 means ignore SDL_ProcessInput calls
+	while (!_event->getMsg() && !shouldQuit()) {
 		_music->updateMusic();
 		_anim->diffNextFrame();
 		waitTOF();

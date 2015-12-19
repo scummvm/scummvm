@@ -135,7 +135,7 @@ struct RoomData {
 };
 
 struct InventoryData {
-	uint16 _many;
+	uint16 _quantity;
 	Common::String _name;
 	Common::String _bitmapName;
 };

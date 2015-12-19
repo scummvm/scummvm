@@ -396,16 +396,16 @@ void LabEngine::doActions(Action *actionList, CloseDataPtr *closePtrList) {
 			break;
 
 		case SUBINV:
-			if (_inventory[actionList->_param1]._many)
-				(_inventory[actionList->_param1]._many)--;
+			if (_inventory[actionList->_param1]._quantity)
+				(_inventory[actionList->_param1]._quantity)--;
 
-			if (_inventory[actionList->_param1]._many == 0)
+			if (_inventory[actionList->_param1]._quantity == 0)
 				_conditions->exclElement(actionList->_param1);
 
 			break;
 
 		case ADDINV:
-			(_inventory[actionList->_param1]._many) += actionList->_param2;
+			(_inventory[actionList->_param1]._quantity) += actionList->_param2;
 			_conditions->inclElement(actionList->_param1);
 			break;
 
