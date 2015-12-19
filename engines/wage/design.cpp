@@ -212,7 +212,7 @@ void Design::drawPolygon(Graphics::Surface *surface, Common::ReadStream &in, boo
 		int y2 = y1;
 		int x2 = x1;
 		int b = in.readSByte();
-		if (b == (byte)0x80) {
+		if ((b & 0xff) == 0x80) {
 			y2 = in.readSint16BE();
 			numBytes -= 3;
 		} else {
@@ -220,7 +220,7 @@ void Design::drawPolygon(Graphics::Surface *surface, Common::ReadStream &in, boo
 			numBytes -= 1;
 		}
 		b = in.readSByte();
-		if (b == (byte) 0x80) {
+		if ((b & 0xff) == 0x80) {
 			x2 = in.readSint16BE();
 			numBytes -= 3;
 		} else {
