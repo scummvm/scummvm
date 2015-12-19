@@ -23,6 +23,8 @@
 #include "engines/stark/gfx/renderentry.h"
 #include "engines/stark/gfx/driver.h"
 
+#include "engines/stark/resources/item.h"
+
 #include "engines/stark/visual/actor.h"
 #include "engines/stark/visual/image.h"
 #include "engines/stark/visual/prop.h"
@@ -96,7 +98,15 @@ void RenderEntry::setClickable(bool clickable) {
 }
 
 bool RenderEntry::compare(const RenderEntry *x, const RenderEntry *y) {
-	return x->_sortKey < y->_sortKey;
+	if (x->_sortKey != y->_sortKey) {
+		return x->_sortKey < y->_sortKey;
+	} else if (x->_owner && y->_owner) {
+		// The original used a stable sort. Common::sort is not.
+		// This should ensure the items remain in the same order if they have the same sort key
+		return x->_owner->getIndex() < y->_owner->getIndex();
+	} else {
+		return -1;
+	}
 }
 
 bool RenderEntry::containsPoint(const Common::Point &position, Common::Point &relativePosition) const {
