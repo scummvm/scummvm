@@ -87,7 +87,7 @@ static byte palette[] = {
 };
 
 Common::Error WageEngine::run() {
-	initGraphics(640, 400, true);
+	initGraphics(640, 480, true);
 
 	g_system->getPaletteManager()->setPalette(palette, 0, 3);
 
@@ -106,7 +106,7 @@ Common::Error WageEngine::run() {
 		return Common::kNoGameDataFoundError;
 
 	Graphics::Surface screen;
-	screen.create(640, 400, Graphics::PixelFormat::createFormatCLUT8());
+	screen.create(640, 480, Graphics::PixelFormat::createFormatCLUT8());
 	Common::Rect r(0, 0, screen.w, screen.h);
 	_world->_scenes["entry"]->_design->setBounds(&r);
 	_world->_scenes["entry"]->_design->paint(&screen, _world->_patterns, false);
