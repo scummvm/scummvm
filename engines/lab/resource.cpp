@@ -128,7 +128,7 @@ InventoryData *Resource::readInventory(const char *fileName) {
 	InventoryData *inventory = new InventoryData[_vm->_numInv + 1];
 
 	for (uint16 i = 1; i <= _vm->_numInv; i++) {
-		inventory[i]._many = dataFile->readUint16LE();
+		inventory[i]._quantity = dataFile->readUint16LE();
 		inventory[i]._name = readString(dataFile);
 		inventory[i]._bitmapName = readString(dataFile);
 	}
