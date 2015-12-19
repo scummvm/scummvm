@@ -111,9 +111,13 @@ private:
 	Common::String readString(Common::File *file);
 	int16 *readConditions(Common::File *file);
 	RuleList *readRule(Common::File *file);
+	void freeRule(RuleList *ruleList);
 	Action *readAction(Common::File *file);
+	void freeAction(Action *action);
 	CloseData *readCloseUps(uint16 depth, Common::File *file);
+	void freeCloseUps(CloseData *closeUps);
 	ViewData *readView(Common::File *file);
+	void freeView(ViewData *view);
 	void readStaticText();
 	Common::String translateFileName(Common::String filename);
 
