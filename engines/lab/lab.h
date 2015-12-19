@@ -31,10 +31,7 @@
 #ifndef LAB_LAB_H
 #define LAB_LAB_H
 
-#define _CRTDBG_MAP_ALLOC
 #include "common/system.h"
-#include <crtdbg.h>
-
 #include "common/random.h"
 #include "common/rect.h"
 #include "common/savefile.h"
