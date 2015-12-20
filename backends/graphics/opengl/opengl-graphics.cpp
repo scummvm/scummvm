@@ -1004,6 +1004,9 @@ void OpenGLGraphicsManager::notifyContextDestroy() {
 		_shader->destroy();
 	}
 #endif
+
+	// Rest our context description since the context is gone soon.
+	g_context.reset();
 }
 
 void OpenGLGraphicsManager::adjustMousePosition(int16 &x, int16 &y) {
