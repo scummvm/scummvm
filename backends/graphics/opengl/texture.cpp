@@ -54,7 +54,7 @@ Texture::Texture(GLenum glIntFormat, GLenum glFormat, GLenum glType, const Graph
 }
 
 Texture::~Texture() {
-	releaseInternalTexture();
+	GL_CALL_SAFE(glDeleteTextures, (1, &_glTexture));
 	_textureData.free();
 }
 

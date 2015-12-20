@@ -74,6 +74,15 @@ ShaderARB::ShaderARB(const Common::String &vertex, const Common::String &fragmen
     : Shader(vertex, fragment), _program(0), _projectionLocation(-1), _textureLocation(-1) {
 }
 
+ShaderARB::~ShaderARB() {
+	// According to extension specification glDeleteObjectARB silently ignores
+	// 0. However, with nVidia drivers this can cause GL_INVALID_VALUE, thus
+	// we do not call it with 0 as parameter to avoid warnings.
+	if (_program) {
+		GL_CALL_SAFE(glDeleteObjectARB, (_program));
+	}
+}
+
 void ShaderARB::destroy() {
 	// According to extension specification glDeleteObjectARB silently ignores
 	// 0. However, with nVidia drivers this can cause GL_INVALID_VALUE, thus
@@ -198,6 +207,10 @@ GLhandleARB ShaderARB::compileShader(const char *source, GLenum shaderType) {
 
 ShaderGLES2::ShaderGLES2(const Common::String &vertex, const Common::String &fragment)
     : Shader(vertex, fragment), _program(0), _projectionLocation(-1), _textureLocation(-1) {
+}
+
+ShaderGLES2::~ShaderGLES2() {
+	GL_CALL_SAFE(glDeleteProgram, (_program));
 }
 
 void ShaderGLES2::destroy() {

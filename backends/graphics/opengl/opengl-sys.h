@@ -111,7 +111,13 @@ extern Context g_context;
 
 } // End of namespace OpenGL
 
-#define GL_CALL(x)        GL_WRAP_DEBUG(g_context.x, x)
-#define GL_ASSIGN(var, x) GL_WRAP_DEBUG(var = g_context.x, x)
+#define GL_CALL(x)                 GL_WRAP_DEBUG(g_context.x, x)
+#define GL_CALL_SAFE(func, params) \
+	do { \
+		if (g_context.func) { \
+			GL_CALL(func params); \
+		} \
+	} while (0)
+#define GL_ASSIGN(var, x)          GL_WRAP_DEBUG(var = g_context.x, x)
 
 #endif

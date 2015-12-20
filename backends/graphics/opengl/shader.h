@@ -88,7 +88,7 @@ protected:
 class ShaderARB : public Shader {
 public:
 	ShaderARB(const Common::String &vertex, const Common::String &fragment);
-	virtual ~ShaderARB() { destroy(); }
+	virtual ~ShaderARB();
 
 	virtual void destroy();
 
@@ -127,7 +127,7 @@ private:
 class ShaderGLES2 : public Shader {
 public:
 	ShaderGLES2(const Common::String &vertex, const Common::String &fragment);
-	virtual ~ShaderGLES2() { destroy(); }
+	virtual ~ShaderGLES2();
 
 	virtual void destroy();
 
