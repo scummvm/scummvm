@@ -85,7 +85,7 @@ public:
 	/**
 	 * Reads in a picture into the display bitmap.
 	 */
-	void readPict(Common::String filename, bool playOnce = true, bool onlyDiffData = false, byte *memoryBuffer = nullptr, uint16 maxHeight = 0);
+	void readPict(const Common::String filename, bool playOnce = true, bool onlyDiffData = false, byte *memoryBuffer = nullptr, uint16 maxHeight = 0);
 	void freePict();
 
 	/**
@@ -97,7 +97,7 @@ public:
 	/**
 	 * Scrolls the display to a new picture from a black screen.
 	 */
-	void doScrollWipe(Common::String filename);
+	void doScrollWipe(const Common::String filename);
 
 	/**
 	 * Does the scroll bounce.  Assumes bitmap already in memory.
@@ -107,12 +107,12 @@ public:
 	/**
 	 * Does the transporter wipe.
 	 */
-	void doTransWipe(CloseDataPtr *closePtrList, Common::String filename);
+	void doTransWipe(CloseDataPtr *closePtrList, const Common::String filename);
 
 	/**
 	 * Does a certain number of pre-programmed wipes.
 	 */
-	void doTransition(TransitionType transitionType, CloseDataPtr *closePtrList, Common::String filename);
+	void doTransition(TransitionType transitionType, CloseDataPtr *closePtrList, const Common::String filename);
 
 	/**
 	 * Changes the front screen to black.
@@ -259,7 +259,7 @@ public:
 	/**
 	 * Returns the length of a text in the specified font.
 	 */
-	uint16 textLength(TextFont *font, Common::String text);
+	uint16 textLength(TextFont *font, const Common::String text);
 
 	/**
 	 * Returns the height of a specified font.
@@ -269,7 +269,7 @@ public:
 	/**
 	 * Draws the text to the screen.
 	 */
-	void drawText(TextFont *tf, uint16 x, uint16 y, uint16 color, Common::String text);
+	void drawText(TextFont *tf, uint16 x, uint16 y, uint16 color, const Common::String text);
 
 	/**
 	 * Gets a line of text for flowText; makes sure that its length is less than
