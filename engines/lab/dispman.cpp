@@ -108,7 +108,7 @@ void DisplayMan::readPict(Common::String filename, bool playOnce, bool onlyDiffD
 }
 
 void DisplayMan::freePict() {
-	delete _curBitmap;
+	delete[] _curBitmap;
 	_curBitmap = nullptr;
 }
 
