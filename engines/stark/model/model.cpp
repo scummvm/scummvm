@@ -141,8 +141,7 @@ void Model::readFromStream(ArchiveReadStream *stream) {
 	buildBonesBoundingBoxes();
 }
 
-void Model::setAnim(SkeletonAnim *anim)
-{
+void Model::setAnim(SkeletonAnim *anim) {
 	_skeleton->setAnim(anim);
 }
 

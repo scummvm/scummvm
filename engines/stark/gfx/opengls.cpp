@@ -157,7 +157,7 @@ void OpenGLSDriver::drawSurface(const Texture *texture, const Common::Point &des
 	_boxShader->setUniform("color", Math::Vector4d(1.0f, 1.0f, 1.0f, 1.0f));
 	_boxShader->setUniform("verOffsetXY", scaled(sLeft, sTop));
 	if (noScalingOverride) {
-		_boxShader->setUniform("verSizeWH", Math::Vector2d(sWidth / (float) _viewport.width(), sHeight / (float) _viewport.height()));
+		_boxShader->setUniform("verSizeWH", Math::Vector2d(sWidth / (float)_viewport.width(), sHeight / (float)_viewport.height()));
 	} else {
 		_boxShader->setUniform("verSizeWH", scaled(sWidth, sHeight));
 	}

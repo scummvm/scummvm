@@ -8,11 +8,10 @@ uniform vec2 verSizeWH;
 
 out vec2 Texcoord;
 
-void main()
-{
+void main() {
 	Texcoord = texOffsetXY + texcoord * texSizeWH;
 	
-	// Coordinates are [0.0;1.0], transform to [-1.0; 1.0]
+	// Coordinates are [0.0; 1.0], transform to [-1.0; 1.0]
 	vec2 pos = verOffsetXY + position * verSizeWH;
 	pos.x = pos.x * 2.0 - 1.0;
 	pos.y = -1.0 * (pos.y * 2.0 - 1.0);

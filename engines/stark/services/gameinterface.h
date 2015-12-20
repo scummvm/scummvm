@@ -76,10 +76,10 @@ public:
 	Resources::ActionArray listStockActionsPossibleForObjectAt(Resources::ItemVisual *item, const Common::Point &pos);
 
 	/** Check if April is doing a walk movement */
-    bool isAprilWalking() const;
+	bool isAprilWalking() const;
 
 	/** Make April run if she is walking */
-    void setAprilRunning();
+	void setAprilRunning();
 };
 
 } // End of namespace Stark

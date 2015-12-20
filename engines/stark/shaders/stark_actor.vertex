@@ -36,8 +36,7 @@ uniform bool textured;
 vec4 eyePosition;
 vec3 eyeNormal;
 
-vec3 qrot(vec4 q, vec3 v)
-{
+vec3 qrot(vec4 q, vec3 v) {
 	return v + 2.0 * cross(q.xyz, cross(q.xyz, v) + q.w * v);
 }
 

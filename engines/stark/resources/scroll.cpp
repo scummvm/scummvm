@@ -33,12 +33,12 @@ Scroll::~Scroll() {
 }
 
 Scroll::Scroll(Object *parent, byte subType, uint16 index, const Common::String &name) :
-				Object(parent, subType, index, name),
-				_coordinate(0),
-				_field_30(0),
-				_field_34(0),
-				_bookmarkIndex(0),
-				_active(false) {
+		Object(parent, subType, index, name),
+		_coordinate(0),
+		_field_30(0),
+		_field_34(0),
+		_bookmarkIndex(0),
+		_active(false) {
 	_type = TYPE;
 }
 

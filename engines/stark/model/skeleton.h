@@ -38,7 +38,7 @@ class SkeletonAnim;
 
 class BoneNode {
 public:
-	BoneNode() : _parent(-1) { }
+	BoneNode() : _parent(-1) {}
 	~BoneNode() { }
 
 	/** Perform a collision test with the ray */

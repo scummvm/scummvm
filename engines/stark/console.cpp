@@ -137,9 +137,9 @@ bool Console::Cmd_DumpLevel(int argc, const char **argv) {
 bool Console::Cmd_DumpKnowledge(int argc, const char **argv) {
 	Resources::Level *level = StarkGlobal->getCurrent()->getLevel();
 	Resources::Location *location = StarkGlobal->getCurrent()->getLocation();
-	Common::Array<Resources::Knowledge*> knowledge = level->listChildrenRecursive<Resources::Knowledge>();
+	Common::Array<Resources::Knowledge *> knowledge = level->listChildrenRecursive<Resources::Knowledge>();
 	knowledge.insert_at(knowledge.size(), location->listChildrenRecursive<Resources::Knowledge>());
-	Common::Array<Resources::Knowledge*>::iterator it;
+	Common::Array<Resources::Knowledge *>::iterator it;
 	for (it = knowledge.begin(); it != knowledge.end(); ++it) {
 		(*it)->print();
 	}
@@ -156,7 +156,7 @@ bool Console::Cmd_ChangeKnowledge(int argc, const char **argv) {
 		if (type == 'b' || type == 'i') {
 			Resources::Level *level = StarkGlobal->getCurrent()->getLevel();
 			Resources::Location *location = StarkGlobal->getCurrent()->getLocation();
-			Common::Array<Resources::Knowledge*> knowledgeArr = level->listChildrenRecursive<Resources::Knowledge>();
+			Common::Array<Resources::Knowledge *> knowledgeArr = level->listChildrenRecursive<Resources::Knowledge>();
 			knowledgeArr.insert_at(knowledgeArr.size(), location->listChildrenRecursive<Resources::Knowledge>());
 			if (index < knowledgeArr.size() ) {
 				Resources::Knowledge *knowledge = knowledgeArr[index];
@@ -186,9 +186,9 @@ bool Console::Cmd_ChangeKnowledge(int argc, const char **argv) {
 bool Console::Cmd_ListScripts(int argc, const char **argv) {
 	Resources::Level *level = StarkGlobal->getCurrent()->getLevel();
 	Resources::Location *location = StarkGlobal->getCurrent()->getLocation();
-	Common::Array<Resources::Script*> scriptArr = level->listChildrenRecursive<Resources::Script>();
+	Common::Array<Resources::Script *> scriptArr = level->listChildrenRecursive<Resources::Script>();
 	scriptArr.insert_at(scriptArr.size(), location->listChildrenRecursive<Resources::Script>());
-	Common::Array<Resources::Script*>::iterator it;
+	Common::Array<Resources::Script *>::iterator it;
 	int i = 0;
 	for (it = scriptArr.begin(); it != scriptArr.end(); ++it) {
 		debugPrintf("%d: %s - enabled: %d\n", i++, (*it)->getName().c_str(), (*it)->isEnabled());
@@ -208,7 +208,7 @@ bool Console::Cmd_EnableScript(int argc, const char **argv) {
 		}
 		Resources::Level *level = StarkGlobal->getCurrent()->getLevel();
 		Resources::Location *location = StarkGlobal->getCurrent()->getLocation();
-		Common::Array<Resources::Script*> scriptArr = level->listChildrenRecursive<Resources::Script>();
+		Common::Array<Resources::Script *> scriptArr = level->listChildrenRecursive<Resources::Script>();
 		scriptArr.insert_at(scriptArr.size(), location->listChildrenRecursive<Resources::Script>());
 		if (index < scriptArr.size() ) {
 			Resources::Script *script = scriptArr[index];
@@ -239,7 +239,7 @@ bool Console::Cmd_ForceScript(int argc, const char **argv) {
 		}
 		Resources::Level *level = StarkGlobal->getCurrent()->getLevel();
 		Resources::Location *location = StarkGlobal->getCurrent()->getLocation();
-		Common::Array<Resources::Script*> scriptArr = level->listChildrenRecursive<Resources::Script>();
+		Common::Array<Resources::Script *> scriptArr = level->listChildrenRecursive<Resources::Script>();
 		scriptArr.insert_at(scriptArr.size(), location->listChildrenRecursive<Resources::Script>());
 		if (index < scriptArr.size() ) {
 			Resources::Script *script = scriptArr[index];

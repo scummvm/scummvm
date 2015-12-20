@@ -40,9 +40,9 @@ Dialog::~Dialog() {
 }
 
 Dialog::Dialog(Object *parent, byte subType, uint16 index, const Common::String &name) :
-				Object(parent, subType, index, name),
-				_character(0),
-				_hasAskAbout(0) {
+		Object(parent, subType, index, name),
+		_character(0),
+		_hasAskAbout(0) {
 	_type = TYPE;
 }
 
@@ -226,7 +226,6 @@ Dialog::Reply::Reply() :
 		_noCaption(0),
 		_nextDialogIndex(-1),
 		_nextSpeechIndex(-1) {
-
 }
 
 void Dialog::Reply::start() {

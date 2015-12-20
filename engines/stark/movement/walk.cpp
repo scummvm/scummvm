@@ -37,10 +37,10 @@
 namespace Stark {
 
 Walk::Walk(Resources::FloorPositionedItem *item) :
-	Movement(item),
-	_item3D(item),
-	_running(false),
-	_turnDirection(kTurnNone) {
+		Movement(item),
+		_item3D(item),
+		_running(false),
+		_turnDirection(kTurnNone) {
 	_path = new StringPullingPath();
 }
 

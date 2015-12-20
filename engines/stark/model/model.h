@@ -57,7 +57,7 @@ public:
 
 class FaceNode {
 public:
-	FaceNode() { }
+	FaceNode() {}
 
 	~FaceNode() {
 		for (Common::Array<VertNode *>::iterator it = _verts.begin(); it != _verts.end(); ++it)
@@ -75,7 +75,7 @@ public:
 
 class MeshNode {
 public:
-	MeshNode() { }
+	MeshNode() {}
 	~MeshNode() {
 		Common::Array<FaceNode *>::iterator it = _faces.begin();
 		while (it != _faces.end()) {

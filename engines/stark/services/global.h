@@ -107,14 +107,14 @@ public:
 	/** Change the current chapter */
 	void setCurrentChapter(int32 value);
 private:
-    uint _millisecondsPerGameloop;
-    Resources::Root *_root;
-    Resources::Level *_level;
-    Resources::KnowledgeSet *_inventory;
-    Resources::GlobalItemTemplate *_april;
-    Current *_current;
-    bool _debug;
-    bool _fastForward;
+	uint _millisecondsPerGameloop;
+	Resources::Root *_root;
+	Resources::Level *_level;
+	Resources::KnowledgeSet *_inventory;
+	Resources::GlobalItemTemplate *_april;
+	Current *_current;
+	bool _debug;
+	bool _fastForward;
 };
 
 } // End of namespace Stark

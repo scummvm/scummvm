@@ -34,12 +34,12 @@ Light::~Light() {
 }
 
 Light::Light(Object *parent, byte subType, uint16 index, const Common::String &name) :
-				Object(parent, subType, index, name),
-				_outerConeAngle(0),
-				_innerConeAngle(0),
-				_falloffNear(100.0),
-				_falloffFar(500.0),
-				_lightEntry(nullptr) {
+		Object(parent, subType, index, name),
+		_outerConeAngle(0),
+		_innerConeAngle(0),
+		_falloffNear(100.0),
+		_falloffFar(500.0),
+		_lightEntry(nullptr) {
 	_type = TYPE;
 }
 

@@ -28,8 +28,8 @@ namespace Stark {
 namespace Gfx {
 
 Texture::Texture() :
-	_width(0),
-	_height(0) {
+		_width(0),
+		_height(0) {
 }
 
 Texture::~Texture() {
@@ -57,7 +57,7 @@ const Texture *TextureSet::getTexture(const Common::String &name) const {
 	if (it != _texMap.end())
 		return it->_value;
 
-	return 0;
+	return nullptr;
 }
 
 } // End of namespace Gfx

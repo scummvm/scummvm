@@ -42,7 +42,7 @@
 namespace Stark {
 
 InventoryWindow::InventoryWindow(Gfx::Driver *gfx, Cursor *cursor, ActionMenu *actionMenu) :
-	Window(gfx, cursor),
+		Window(gfx, cursor),
 	_actionMenu(actionMenu),
 	_selectedInventoryItem(-1),
 	_firstVisibleSlot(0) {

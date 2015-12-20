@@ -36,9 +36,9 @@ PATTable::~PATTable() {
 }
 
 PATTable::PATTable(Object *parent, byte subType, uint16 index, const Common::String &name) :
-				Object(parent, subType, index, name),
-				_defaultAction(-1),
-				_tooltipOverrideIndex(-1) {
+		Object(parent, subType, index, name),
+		_defaultAction(-1),
+		_tooltipOverrideIndex(-1) {
 	_type = TYPE;
 }
 

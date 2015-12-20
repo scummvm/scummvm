@@ -36,8 +36,8 @@ TextureSet::~TextureSet() {
 }
 
 TextureSet::TextureSet(Object *parent, byte subType, uint16 index, const Common::String &name) :
-				Object(parent, subType, index, name),
-				_textureSet(nullptr) {
+		Object(parent, subType, index, name),
+		_textureSet(nullptr) {
 	_type = TYPE;
 }
 

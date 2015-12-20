@@ -37,11 +37,11 @@ AnimHierarchy::~AnimHierarchy() {
 }
 
 AnimHierarchy::AnimHierarchy(Object *parent, byte subType, uint16 index, const Common::String &name) :
-				Object(parent, subType, index, name),
-				_animUsage(0),
-				_currentAnim(nullptr),
-				_animHierarchy(nullptr),
-				_field_5C(0) {
+		Object(parent, subType, index, name),
+		_animUsage(0),
+		_currentAnim(nullptr),
+		_animHierarchy(nullptr),
+		_field_5C(0) {
 	_type = TYPE;
 }
 

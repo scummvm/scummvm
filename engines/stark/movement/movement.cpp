@@ -25,9 +25,9 @@
 namespace Stark {
 
 Movement::Movement(Resources::ItemVisual *item) :
-	_ended(false),
-	_item(item),
-	_defaultTurnAngleSpeed(18.0) {
+		_ended(false),
+		_item(item),
+		_defaultTurnAngleSpeed(18.0) {
 }
 
 Movement::~Movement() {

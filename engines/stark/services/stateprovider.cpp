@@ -31,7 +31,7 @@
 namespace Stark {
 
 StateReadStream::StateReadStream(Common::SeekableReadStream *parentStream, DisposeAfterUse::Flag disposeParentStream) :
-				SeekableSubReadStream(parentStream, 0, parentStream->size(), disposeParentStream) {
+		SeekableSubReadStream(parentStream, 0, parentStream->size(), disposeParentStream) {
 }
 
 StateReadStream::~StateReadStream() {

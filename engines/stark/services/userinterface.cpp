@@ -41,18 +41,17 @@
 namespace Stark {
 
 UserInterface::UserInterface(Gfx::Driver *gfx, Cursor *cursor) :
-	_gfx(gfx),
-	_cursor(cursor),
-	_topMenu(nullptr),
-	_dialogPanel(nullptr),
-	_inventoryWindow(nullptr),
-	_exitGame(false),
-	_fmvPlayer(nullptr),
-	_actionMenu(nullptr),
-	_gameWindow(nullptr),
-	_interactive(true),
-	_currentScreen(kScreenGame)
-	{
+		_gfx(gfx),
+		_cursor(cursor),
+		_topMenu(nullptr),
+		_dialogPanel(nullptr),
+		_inventoryWindow(nullptr),
+		_exitGame(false),
+		_fmvPlayer(nullptr),
+		_actionMenu(nullptr),
+		_gameWindow(nullptr),
+		_interactive(true),
+		_currentScreen(kScreenGame) {
 }
 
 UserInterface::~UserInterface() {

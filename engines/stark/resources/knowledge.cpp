@@ -33,9 +33,9 @@ Knowledge::~Knowledge() {
 }
 
 Knowledge::Knowledge(Object *parent, byte subType, uint16 index, const Common::String &name) :
-				Object(parent, subType, index, name),
-				_booleanValue(false),
-				_integerValue(0) {
+		Object(parent, subType, index, name),
+		_booleanValue(false),
+		_integerValue(0) {
 	_type = TYPE;
 }
 

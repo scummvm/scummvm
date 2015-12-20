@@ -30,9 +30,9 @@
 namespace Stark {
 
 Turn::Turn(Resources::FloorPositionedItem *item) :
-	Movement(item),
-	_item3D(item),
-	_turnSpeed(_defaultTurnAngleSpeed) {
+		Movement(item),
+		_item3D(item),
+		_turnSpeed(_defaultTurnAngleSpeed) {
 }
 
 Turn::~Turn() {

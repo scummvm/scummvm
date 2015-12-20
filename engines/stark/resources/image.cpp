@@ -53,12 +53,12 @@ Image::~Image() {
 }
 
 Image::Image(Object *parent, byte subType, uint16 index, const Common::String &name) :
-				Object(parent, subType, index, name),
-				_transparent(false),
-				_transparency(0),
-				_field_44_ADF(0),
-				_field_48_ADF(30),
-				_visual(nullptr) {
+		Object(parent, subType, index, name),
+		_transparent(false),
+		_transparency(0),
+		_field_44_ADF(0),
+		_field_48_ADF(30),
+		_visual(nullptr) {
 	_type = TYPE;
 }
 
@@ -148,8 +148,8 @@ ImageStill::~ImageStill() {
 }
 
 ImageStill::ImageStill(Object *parent, byte subType, uint16 index, const Common::String &name) :
-				Image(parent, subType, index, name),
-				_noName(false) {
+		Image(parent, subType, index, name),
+		_noName(false) {
 }
 
 void ImageStill::readData(Formats::XRCReadStream *stream) {

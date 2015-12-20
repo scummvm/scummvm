@@ -32,11 +32,11 @@
 namespace Stark {
 
 FollowPath::FollowPath(Resources::ItemVisual *item) :
-	Movement(item),
-	_path(nullptr),
-	_speed(0.0),
-	_position(0.0),
-	_previouslyEnabled(true) {
+		Movement(item),
+		_path(nullptr),
+		_speed(0.0),
+		_position(0.0),
+		_previouslyEnabled(true) {
 }
 
 FollowPath::~FollowPath() {

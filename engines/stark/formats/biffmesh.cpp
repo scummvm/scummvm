@@ -395,9 +395,9 @@ BiffObject *BiffMeshReader::biffObjectBuilder(uint32 type) {
 
 BiffMesh::BiffMesh(const Common::Array<Vertex> &vertices, const Common::Array<Face> &faces,
                    const Common::Array<Material> &materials) :
-	_vertices(vertices),
-    _faces(faces),
-    _materials(materials) {
+		_vertices(vertices),
+		_faces(faces),
+		_materials(materials) {
 }
 
 const Common::Array<BiffMesh::Vertex> &BiffMesh::getVertices() const {

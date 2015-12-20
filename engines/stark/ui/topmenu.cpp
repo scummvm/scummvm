@@ -36,7 +36,7 @@
 namespace Stark {
 
 TopMenu::TopMenu(Gfx::Driver *gfx, Cursor *cursor) :
-	Window(gfx, cursor),
+		Window(gfx, cursor),
 	_widgetsVisible(false) {
 
 	_position = Common::Rect(Gfx::Driver::kOriginalWidth, Gfx::Driver::kTopBorderHeight);

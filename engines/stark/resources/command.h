@@ -239,7 +239,7 @@ protected:
 	Command *opPlayFullMotionVideo(Script *script, const ResourceReference &movieRef, int32 unknown);
 	Command *opAnimSetFrame(const ResourceReference &animRef, const ResourceReference &knowledgeRef);
 	Command *opEnableDiaryEntry(const ResourceReference &knowledgeRef);
-    Command *opPATChangeTooltip(const ResourceReference &patRef, const ResourceReference &stringRef);
+	Command *opPATChangeTooltip(const ResourceReference &patRef, const ResourceReference &stringRef);
 	Command *opSoundChange(Script *script, const ResourceReference &soundRef, int32 volume, int32 pan, int32 duration, bool pause);
 	Command *opLightSetColor(const ResourceReference &lightRef, int32 red, int32 green, int32 blue);
 	Command *opItem3DRunTo(Script *script, const ResourceReference &itemRef, const ResourceReference &targetRef, int32 suspend);

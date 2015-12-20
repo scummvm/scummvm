@@ -34,7 +34,7 @@
 namespace Stark {
 
 FMVPlayer::FMVPlayer(Gfx::Driver *gfx, Cursor *cursor) :
-	Window(gfx, cursor) {
+		Window(gfx, cursor) {
 	_position = Common::Rect(Gfx::Driver::kOriginalWidth, Gfx::Driver::kOriginalHeight);
 	_visible = true;
 

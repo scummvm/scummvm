@@ -30,14 +30,14 @@
 namespace Stark {
 
 Global::Global() :
-	_millisecondsPerGameloop(0),
-	_april(nullptr),
-	_root(nullptr),
-	_level(nullptr),
-	_current(nullptr),
-	_debug(false),
-	_fastForward(false),
-	_inventory(nullptr) {
+		_millisecondsPerGameloop(0),
+		_april(nullptr),
+		_root(nullptr),
+		_level(nullptr),
+		_current(nullptr),
+		_debug(false),
+		_fastForward(false),
+		_inventory(nullptr) {
 }
 
 int32 Global::getCurrentChapter() {

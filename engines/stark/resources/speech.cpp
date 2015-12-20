@@ -40,11 +40,11 @@ Speech::~Speech() {
 }
 
 Speech::Speech(Object *parent, byte subType, uint16 index, const Common::String &name) :
-				Object(parent, subType, index, name),
-				_character(0),
-				_soundResource(nullptr),
-				_playTalkAnim(true),
-				_removeTalkAnimWhenComplete(true) {
+		Object(parent, subType, index, name),
+		_character(0),
+		_soundResource(nullptr),
+		_playTalkAnim(true),
+		_removeTalkAnimWhenComplete(true) {
 	_type = TYPE;
 }
 

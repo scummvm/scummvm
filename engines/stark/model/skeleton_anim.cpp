@@ -29,7 +29,6 @@ namespace Stark {
 
 
 SkeletonAnim::SkeletonAnim() {
-
 }
 
 SkeletonAnim::~SkeletonAnim() {

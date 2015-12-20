@@ -43,17 +43,17 @@ Script::~Script() {
 }
 
 Script::Script(Object *parent, byte subType, uint16 index, const Common::String &name) :
-				Object(parent, subType, index, name),
-				_scriptType(0),
-				_runEvent(0),
-				_minChapter(0),
-				_maxChapter(999),
-				_shouldResetGameSpeed(false),
-				_enabled(false),
-				_nextCommand(nullptr),
-				_pauseTimeLeft(-1),
-				_suspendingResource(nullptr),
-				_resumeStatus(kResumeSuspend) {
+		Object(parent, subType, index, name),
+		_scriptType(0),
+		_runEvent(0),
+		_minChapter(0),
+		_maxChapter(999),
+		_shouldResetGameSpeed(false),
+		_enabled(false),
+		_nextCommand(nullptr),
+		_pauseTimeLeft(-1),
+		_suspendingResource(nullptr),
+		_resumeStatus(kResumeSuspend) {
 	_type = TYPE;
 }
 

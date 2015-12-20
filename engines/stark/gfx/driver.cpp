@@ -72,6 +72,7 @@ Common::Rect Driver::gameViewport() const {
 Common::Point Driver::getScreenPosBounded(const Common::Point &point) const {
 	Common::Point boundedPos = point;
 	boundedPos.x = CLIP<int16>(boundedPos.x, _screenViewport.left, _screenViewport.right);
+
 	return boundedPos;
 }
 

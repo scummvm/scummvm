@@ -6,10 +6,8 @@ uniform bool textured;
 uniform vec3 color;
 uniform sampler2D tex;
 
-void main()
-{
-	if (textured)
-	{
+void main() {
+	if (textured) {
 		outColor = texture(tex, Texcoord);
 	} else {
 		outColor = vec4(color, 1.0);

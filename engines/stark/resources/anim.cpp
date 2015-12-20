@@ -66,11 +66,11 @@ Anim::~Anim() {
 }
 
 Anim::Anim(Object *parent, byte subType, uint16 index, const Common::String &name) :
-				Object(parent, subType, index, name),
-				_usage(0),
-				_currentFrame(0),
-				_numFrames(0),
-				_refCount(0) {
+		Object(parent, subType, index, name),
+		_usage(0),
+		_currentFrame(0),
+		_numFrames(0),
+		_refCount(0) {
 	_type = TYPE;
 }
 
@@ -132,10 +132,10 @@ AnimImages::~AnimImages() {
 }
 
 AnimImages::AnimImages(Object *parent, byte subType, uint16 index, const Common::String &name) :
-				Anim(parent, subType, index, name),
-				_field_3C(0),
-				_currentDirection(0),
-				_currentFrameImage(nullptr) {
+		Anim(parent, subType, index, name),
+		_field_3C(0),
+		_currentDirection(0),
+		_currentFrameImage(nullptr) {
 }
 
 void AnimImages::readData(Formats::XRCReadStream *stream) {
@@ -194,8 +194,8 @@ AnimSub2::~AnimSub2() {
 }
 
 AnimSub2::AnimSub2(Object *parent, byte subType, uint16 index, const Common::String &name) :
-				Anim(parent, subType, index, name),
-				_movementSpeed(100) {
+		Anim(parent, subType, index, name),
+		_movementSpeed(100) {
 	_visual = StarkGfx->createPropRenderer();
 }
 
@@ -254,14 +254,14 @@ AnimVideo::~AnimVideo() {
 }
 
 AnimVideo::AnimVideo(Object *parent, byte subType, uint16 index, const Common::String &name) :
-				Anim(parent, subType, index, name),
-				_width(0),
-				_height(0),
-				_smacker(nullptr),
-				_field_4C(-1),
-				_field_50(0),
-				_loop(false),
-				_actionItem(nullptr) {
+		Anim(parent, subType, index, name),
+		_width(0),
+		_height(0),
+		_smacker(nullptr),
+		_field_4C(-1),
+		_field_50(0),
+		_loop(false),
+		_actionItem(nullptr) {
 }
 
 void AnimVideo::readData(Formats::XRCReadStream *stream) {
@@ -381,15 +381,15 @@ AnimSkeleton::~AnimSkeleton() {
 }
 
 AnimSkeleton::AnimSkeleton(Object *parent, byte subType, uint16 index, const Common::String &name) :
-				Anim(parent, subType, index, name),
-				_castsShadow(true),
-				_loop(false),
-				_movementSpeed(100),
-				_field_6C(1),
-				_seletonAnim(nullptr),
-				_currentTime(0),
-				_totalTime(0),
-				_actionItem(nullptr) {
+		Anim(parent, subType, index, name),
+		_castsShadow(true),
+		_loop(false),
+		_movementSpeed(100),
+		_field_6C(1),
+		_seletonAnim(nullptr),
+		_currentTime(0),
+		_totalTime(0),
+		_actionItem(nullptr) {
 	_visual = StarkGfx->createActorRenderer();
 }
 

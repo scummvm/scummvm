@@ -40,11 +40,11 @@ Location::~Location() {
 }
 
 Location::Location(Object *parent, byte subType, uint16 index, const Common::String &name) :
-				Object(parent, subType, index, name),
-				_canScroll(false),
-				_currentLayer(nullptr),
-				_hasActiveScroll(false),
-				_scrollFollowCharacter(false) {
+		Object(parent, subType, index, name),
+		_canScroll(false),
+		_currentLayer(nullptr),
+		_hasActiveScroll(false),
+		_scrollFollowCharacter(false) {
 	_type = TYPE;
 }
 

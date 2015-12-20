@@ -44,7 +44,7 @@
 namespace Stark {
 
 GameWindow::GameWindow(Gfx::Driver *gfx, Cursor *cursor, ActionMenu *actionMenu, InventoryWindow *inventory) :
-	Window(gfx, cursor),
+		Window(gfx, cursor),
 	_actionMenu(actionMenu),
 	_inventory(inventory),
 	_objectUnderCursor(nullptr) {

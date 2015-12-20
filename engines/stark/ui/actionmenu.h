@@ -77,7 +77,6 @@ private:
 	void enableAction(uint32 action);
 };
 
-
 } // End of namespace Stark
 
 #endif

@@ -32,7 +32,7 @@ KnowledgeSet::~KnowledgeSet() {
 }
 
 KnowledgeSet::KnowledgeSet(Object *parent, byte subType, uint16 index, const Common::String &name) :
-				Object(parent, subType, index, name) {
+		Object(parent, subType, index, name) {
 	_type = TYPE;
 }
 
@@ -47,7 +47,7 @@ Gfx::RenderEntryArray KnowledgeSet::getInventoryRenderEntries() {
 
 	int i = 0;
 	for (; it != inventoryItems.end(); ++it, ++i) {
-		if (i < 4) continue; 	// HACK: The first 4 elements are UI elements, so skip them for now.
+		if (i < 4) continue; // HACK: The first 4 elements are UI elements, so skip them for now.
 		if ((*it)->isEnabled()) {
 			result.push_back((*it)->getRenderEntry(Common::Point(0, 0)));
 		}

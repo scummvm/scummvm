@@ -36,12 +36,12 @@ namespace Stark {
 namespace Gfx {
 
 RenderEntry::RenderEntry(Resources::ItemVisual *owner, const Common::String &name) :
-	_visual(nullptr),
-	_name(name),
-	_owner(owner),
-	_direction3D(0.0),
-	_sortKey(0.0),
-	_clickable(true) {
+		_visual(nullptr),
+		_name(name),
+		_owner(owner),
+		_direction3D(0.0),
+		_sortKey(0.0),
+		_clickable(true) {
 }
 
 void RenderEntry::render(const LightEntryArray &lights) {

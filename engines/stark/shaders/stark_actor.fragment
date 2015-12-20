@@ -6,8 +6,7 @@ OUTPUT
 uniform bool textured;
 uniform sampler2D tex;
 
-void main()
-{
+void main() {
 	outColor = vec4(Color, 1.0);
 
 	if (textured) {

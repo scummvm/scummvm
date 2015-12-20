@@ -37,7 +37,6 @@ FontProvider::FontProvider() {
 }
 
 FontProvider::~FontProvider() {
-
 }
 
 void FontProvider::initFonts() {

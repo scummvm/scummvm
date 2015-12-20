@@ -297,12 +297,12 @@ void XRCReader::importResourceData(XRCReadStream *stream, Resources::Object *res
 
 		if (xrcDataStream->isDataLeft()) {
 			warning("Not all XRC data was read. Type %s, subtype %d, name %s",
-					resource->getType().getName(), resource->getSubType(), resource->getName().c_str());
+				resource->getType().getName(), resource->getSubType(), resource->getName().c_str());
 		}
 
 		if (xrcDataStream->eos()) {
 			warning("Too much XRC data was read. Type %s, subtype %d, name %s",
-			        resource->getType().getName(), resource->getSubType(), resource->getName().c_str());
+				resource->getType().getName(), resource->getSubType(), resource->getName().c_str());
 		}
 
 		delete xrcDataStream;

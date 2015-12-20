@@ -39,10 +39,10 @@ AnimScript::~AnimScript() {
 }
 
 AnimScript::AnimScript(Object *parent, byte subType, uint16 index, const Common::String &name) :
-				Object(parent, subType, index, name),
-				_anim(nullptr),
-				_msecsToNextUpdate(0),
-				_nextItemIndex(-1) {
+		Object(parent, subType, index, name),
+		_anim(nullptr),
+		_msecsToNextUpdate(0),
+		_nextItemIndex(-1) {
 	_type = TYPE;
 }
 
@@ -189,10 +189,10 @@ AnimScriptItem::~AnimScriptItem() {
 }
 
 AnimScriptItem::AnimScriptItem(Object *parent, byte subType, uint16 index, const Common::String &name) :
-				Object(parent, subType, index, name),
-				_opcode(0),
-				_duration(0),
-				_operand(0) {
+		Object(parent, subType, index, name),
+		_opcode(0),
+		_duration(0),
+		_operand(0) {
 	_type = TYPE;
 }
 
