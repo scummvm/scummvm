@@ -150,14 +150,13 @@ void TilePuzzle::changeTile(uint16 col, uint16 row) {
 	}
 
 	if (scrolltype != -1) {
-		doTileScroll(col, row, scrolltype);
-
 		if (_vm->getFeatures() & GF_WINDOWS_TRIAL) {
 			GUI::MessageDialog trialMessage("This puzzle is not available in the trial version of the game");
 			trialMessage.runModal();
 			return;
 		}
 
+		doTileScroll(col, row, scrolltype);
 		bool check = true;
 		row = 0;
 		col = 0;
