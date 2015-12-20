@@ -159,7 +159,7 @@ int32 Dialog::Topic::getNextReplyIndex() const {
 	uint32 currentChapter = StarkGlobal->getCurrentChapter();
 
 	// Skip replies from previous chapters
-	while (_replies[nextIndex]._maxChapter < currentChapter && nextIndex < _replies.size()) {
+	while (nextIndex < _replies.size() && _replies[nextIndex]._maxChapter < currentChapter) {
 		nextIndex++;
 	}
 
