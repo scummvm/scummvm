@@ -299,7 +299,7 @@ void LabEngine::drawRoomMap(uint16 curRoom, bool drawMarkFl) {
 }
 
 bool LabEngine::floorVisited(uint16 floorNum) {
-	for (uint16 i = 1; i <= _maxRooms; i++) {
+	for (uint16 i = 0; i < _maxRooms; i++) {
 		if ((_maps[i]._pageNumber == floorNum) && _roomsFound->in(i) && _maps[i]._x)
 			return true;
 	}
