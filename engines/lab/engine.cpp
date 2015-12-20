@@ -207,7 +207,7 @@ bool LabEngine::doCloseUp(CloseDataPtr closePtr) {
 	case kMonitorMuseum:
 	case kMonitorLibrary:
 	case kMonitorWindow:
-		doMonitor(closePtr->_graphicName.c_str(), closePtr->_message.c_str(), false, textRect);
+		doMonitor(closePtr->_graphicName, closePtr->_message, false, textRect);
 		break;
 	case kMonitorGramophone:
 		textRect.right = 171;
