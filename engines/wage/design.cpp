@@ -82,12 +82,16 @@ void Design::paint(Graphics::Surface *canvas, Patterns &patterns, bool mask) {
 
 /*
 	plotData pd(canvas, &patterns, 8);
-	Common::Rect inn(50, 50, 80, 150);
+	int x1 = 50, y1 = 50, x2 = 200, y2 = 200, borderThickness = 30;
+	Common::Rect inn(x1-5, y1-5, x2+5, y2+5);
 	drawFilledRect(inn, kColorGray, drawPixelPlain, &pd);
-	drawFilledRoundRect(inn, 10, kColorBlack, drawPixelPlain, &pd);
-	Common::Rect inn2(100, 100, 200, 110);
-	drawFilledRect(inn2, kColorGray, drawPixelPlain, &pd);
-	drawFilledRoundRect(inn2, 10, kColorBlack, drawPixelPlain, &pd);
+
+	drawThickLine(x1, y1, x2-borderThickness, y1, borderThickness, kColorBlack, drawPixel, &pd);
+	drawThickLine(x2-borderThickness, y1, x2-borderThickness, y2, borderThickness, kColorBlack, drawPixel, &pd);
+	drawThickLine(x2-borderThickness, y2-borderThickness, x1, y2-borderThickness, borderThickness, kColorBlack, drawPixel, &pd);
+	drawThickLine(x1, y2-borderThickness, x1, y1, borderThickness, kColorBlack, drawPixel, &pd);
+	drawThickLine(x2+10, y2+10, x2+100, y2+100, borderThickness, kColorBlack, drawPixel, &pd);
+
 	g_system->copyRectToScreen(canvas->getPixels(), canvas->pitch, 0, 0, canvas->w, canvas->h);
 
 	while (true) {
@@ -182,10 +186,10 @@ void Design::drawRect(Graphics::Surface *surface, Common::ReadStream &in, bool m
 
 		drawFilledRect(inner, kColorBlack, drawPixel, &pd);
 	} else {
-		drawThickLine(x1, y1, x2, y1, borderThickness, kColorBlack, drawPixel, &pd);
-		drawThickLine(x2, y1, x2, y2, borderThickness, kColorBlack, drawPixel, &pd);
-		drawThickLine(x2, y2, x1, y2, borderThickness, kColorBlack, drawPixel, &pd);
-		drawThickLine(x1, y2, x1, y1, borderThickness, kColorBlack, drawPixel, &pd);
+		drawThickLine(x1, y1, x2-borderThickness, y1, borderThickness, kColorBlack, drawPixel, &pd);
+		drawThickLine(x2-borderThickness, y1, x2-borderThickness, y2, borderThickness, kColorBlack, drawPixel, &pd);
+		drawThickLine(x2-borderThickness, y2-borderThickness, x1, y2-borderThickness, borderThickness, kColorBlack, drawPixel, &pd);
+		drawThickLine(x1, y2-borderThickness, x1, y1, borderThickness, kColorBlack, drawPixel, &pd);
 	}
 }
 
