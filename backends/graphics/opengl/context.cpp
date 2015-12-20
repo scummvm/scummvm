@@ -28,13 +28,13 @@
 namespace OpenGL {
 
 void Context::reset(bool full) {
-	if (full) {
-		// GLES supports least features, thus we initialize the context type
-		// to this on full reset.
-		type = kContextGLES;
-	}
+	// GLES supports least features, thus we initialize the context type
+	// to this on full reset.
+	const ContextType savedType = full ? kContextGLES : type;
 
-	NPOTSupported = false;
+	memset(this, 0, sizeof(Context));
+
+	type = savedType;
 }
 
 Context g_context;
