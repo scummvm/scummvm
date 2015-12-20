@@ -835,6 +835,10 @@ void ModelItem::onEnterLocation() {
 	FloorPositionedItem::onEnterLocation();
 
 	if (_referencedItem) {
+		_referencedItem->setInstanciatedItem(this);
+	}
+
+	if (_referencedItem) {
 		_animHierarchy = _referencedItem->findStockAnimHierarchy();
 	}
 
@@ -955,5 +959,12 @@ void ModelItem::printData() {
 	debug("reference: %s", _reference.describe().c_str());
 }
 
+void ItemTemplate::onEnterLocation() {
+	Object::onEnterLocation();
+
+	if (_referencedItem) {
+		_referencedItem->setInstanciatedItem(this);
+	}
+}
 } // End of namespace Resources
 } // End of namespace Stark

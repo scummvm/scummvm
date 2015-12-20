@@ -299,7 +299,7 @@ void ResourceProvider::setScrollInitialPosition() {
 }
 
 void ResourceProvider::purgeOldLocations() {
-	while (_locations.size() >= 2) {
+	while (_locations.size() > 2) {
 		Current *location = _locations.front();
 
 		_stateProvider->saveLocationState(location->getLevel(), location->getLocation());
