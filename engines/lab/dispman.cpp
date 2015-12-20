@@ -70,15 +70,15 @@ DisplayMan::~DisplayMan() {
 }
 
 // From readPict.c.  Reads in pictures and animations from disk.
-void DisplayMan::loadPict(const char *filename) {
+void DisplayMan::loadPict(const Common::String filename) {
 	freePict();
 	_curBitmap = _vm->_resource->openDataFile(filename);
 }
 
-void DisplayMan::loadBackPict(const char *fileName, uint16 *highPal) {
+void DisplayMan::loadBackPict(const Common::String fileName, uint16 *highPal) {
 	_fadePalette = highPal;
 	_vm->_anim->_noPalChange = true;
-	readPict(fileName, true);
+	readPict(fileName.c_str(), true);
 
 	for (uint16 i = 0; i < 16; i++) {
 		highPal[i] = ((_vm->_anim->_diffPalette[i * 3] >> 2) << 8) +

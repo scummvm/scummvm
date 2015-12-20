@@ -52,13 +52,13 @@ private:
 	/**
 	 * Reads in a picture.
 	 */
-	void doPictText(const char *Filename, TextFont *msgFont, bool isscreen);
+	void doPictText(const Common::String Filename, TextFont *msgFont, bool isScreen);
 
 	/**
 	 * Does a one second delay, but checks the music while doing it.
 	 */
 	void musicDelay();
-	void nReadPict(const char *Filename, bool PlayOnce);
+	void nReadPict(const Common::String Filename, bool PlayOnce);
 
 	LabEngine *_vm;
 	bool _quitIntro, _introDoBlack;

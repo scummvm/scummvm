@@ -170,7 +170,7 @@ void Music::startMusic(bool restartFl) {
 /**
  * Initializes the music buffers.
  */
-bool Music::initMusic(const char *filename) {
+bool Music::initMusic(const Common::String filename) {
 	_musicOn = true;
 	_musicPaused = false;
 	_file = _vm->_resource->openDataFile(filename);
@@ -268,7 +268,7 @@ void Music::changeMusic(const Common::String filename) {
 			_tLeftInFile = _leftInFile;
 	}
 
-	_file = _vm->_resource->openDataFile(filename.c_str());
+	_file = _vm->_resource->openDataFile(filename);
 	// turn music off
 	_musicOn = true;
 	setMusic(false);
@@ -311,7 +311,7 @@ void Music::resetMusic() {
 /**
  * Reads in a music file.  Ignores any graphics.
  */
-bool Music::readMusic(const char *filename, bool waitTillFinished) {
+bool Music::readMusic(const Common::String filename, bool waitTillFinished) {
 	Common::File *file = _vm->_resource->openDataFile(filename, MKTAG('D', 'I', 'F', 'F'));
 	updateMusic();
 	if (!_loopSoundEffect)

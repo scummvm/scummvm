@@ -61,7 +61,7 @@ void LargeSet::exclElement(uint16 element) {
 	_array[(element - 1) >> 4] &= ~(1 << ((element - 1) % 16));
 }
 
-bool LargeSet::readInitialConditions(const char *fileName) {
+bool LargeSet::readInitialConditions(const Common::String fileName) {
 	Common::File *file = _vm->_resource->openDataFile(fileName, MKTAG('C', 'O', 'N', '0'));
 
 	uint16 conditions = file->readUint16LE();

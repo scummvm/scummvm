@@ -46,7 +46,7 @@ public:
 	bool in(uint16 element);
 	void inclElement(uint16 element);
 	void exclElement(uint16 element);
-	bool readInitialConditions(const char *fileName);
+	bool readInitialConditions(const Common::String fileName);
 
 private:
 	LabEngine *_vm;
