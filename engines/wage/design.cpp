@@ -60,6 +60,9 @@ struct plotData {
 		surface(s), patterns(p), fillType(f) {}
 };
 
+void drawPixel(int x, int y, int color, void *data);
+void drawPixelPlain(int x, int y, int color, void *data);
+
 Design::Design(Common::SeekableReadStream *data) {
 	_len = data->readUint16BE() - 2;
 	_data = (byte *)malloc(_len);
@@ -76,6 +79,24 @@ void Design::paint(Graphics::Surface *canvas, Patterns &patterns, bool mask) {
 	if (mask || 1) {
 		canvas->fillRect(Common::Rect(0, 0, _bounds->width(), _bounds->height()), kColorWhite);
 	}
+
+/*
+	plotData pd(canvas, &patterns, 8);
+	Common::Rect inn(50, 50, 80, 150);
+	drawFilledRect(inn, kColorGray, drawPixelPlain, &pd);
+	drawFilledRoundRect(inn, 10, kColorBlack, drawPixelPlain, &pd);
+	Common::Rect inn2(100, 100, 200, 110);
+	drawFilledRect(inn2, kColorGray, drawPixelPlain, &pd);
+	drawFilledRoundRect(inn2, 10, kColorBlack, drawPixelPlain, &pd);
+	g_system->copyRectToScreen(canvas->getPixels(), canvas->pitch, 0, 0, canvas->w, canvas->h);
+
+	while (true) {
+		((WageEngine *)g_engine)->processEvents();
+		g_system->updateScreen();
+		g_system->delayMillis(50);
+	}
+	return;
+*/
 
 	while (!in.eos()) {
 		byte fillType = in.readByte();
@@ -370,20 +391,48 @@ void Design::drawFilledRect(Common::Rect &rect, int color, void (*plotProc)(int,
 
 // http://members.chello.at/easyfilter/bresenham.html
 void Design::drawFilledRoundRect(Common::Rect &rect, int arc, int color, void (*plotProc)(int, int, int, void *), void *data) {
-	int x = -arc, y = 0, err = 2-2*arc; /* II. Quadrant */
-	int dy = rect.height() - arc * 2;
-	int r = arc;
+	if (rect.height() < rect.width()) {
+		int x = -arc, y = 0, err = 2-2*arc; /* II. Quadrant */
+		int dy = rect.height() - arc * 2;
+		int r = arc;
+		int stop = 0;
+		if (dy < 0)
+			stop = -dy / 2;
 
-	do {
-		drawHLine(rect.left+x+r, rect.right-x-r, rect.top-y+r, color, plotProc, data);
-		drawHLine(rect.left+x+r, rect.right-x-r, rect.top+y+dy+r, color, plotProc, data);
-		arc = err;
-		if (arc <= y) err += ++y*2+1;           /* e_xy+e_y < 0 */
-		if (arc > x || err > y) err += ++x*2+1; /* e_xy+e_x > 0 or no 2nd y-step */
-	} while (x < 0);
+		do {
+			drawHLine(rect.left+x+r, rect.right-x-r, rect.top-y+r-stop, color, plotProc, data);
+			drawHLine(rect.left+x+r, rect.right-x-r, rect.bottom+y-r+stop, color, plotProc, data);
+			arc = err;
+			if (arc <= y) err += ++y*2+1;           /* e_xy+e_y < 0 */
+			if (arc > x || err > y) err += ++x*2+1; /* e_xy+e_x > 0 or no 2nd y-step */
+			if (stop && y > stop)
+				break;
+		} while (x < 0);
 
-	for (int i = 0; i < dy; i++)
-		drawHLine(rect.left, rect.right, rect.top + r + i, color, plotProc, data);
+		for (int i = 0; i < dy; i++)
+			drawHLine(rect.left, rect.right, rect.top + r + i, color, plotProc, data);
+	} else {
+		int y = -arc, x = 0, err = 2-2*arc; /* II. Quadrant */
+		int dx = rect.width() - arc * 2;
+		int r = arc;
+		int stop = 0;
+		if (dx < 0)
+			stop = -dx / 2;
+
+		do {
+			drawVLine(rect.left-x+r-stop, rect.top+y+r, rect.bottom-y-r, color, plotProc, data);
+			drawVLine(rect.right+x-r+stop, rect.top+y+r, rect.bottom-y-r, color, plotProc, data);
+
+			arc = err;
+			if (arc <= x) err += ++x*2+1;           /* e_xy+e_y < 0 */
+			if (arc > y || err > x) err += ++y*2+1; /* e_xy+e_x > 0 or no 2nd y-step */
+			if (stop && x > stop)
+				break;
+		} while (y < 0);
+
+		for (int i = 0; i < dx; i++)
+			drawVLine(rect.left + r + i, rect.top, rect.bottom, color, plotProc, data);
+	}
 }
 
 // Based on public-domain code by Darel Rex Finley, 2007
