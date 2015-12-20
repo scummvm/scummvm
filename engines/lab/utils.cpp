@@ -60,6 +60,10 @@ uint16 Utils::scaleY(uint16 y) {
 		return ((y * 10) / 24);
 }
 
+Common::Rect Utils::rectScale(int16 x1, int16 y1, int16 x2, int16 y2) {
+	return Common::Rect(scaleX(x1), scaleY(y1), scaleX(x2), scaleY(y2));
+}
+
 uint16 Utils::mapScaleX(uint16 x) {
 	if (_vm->_isHiRes)
 		return (x - 45);

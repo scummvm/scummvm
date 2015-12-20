@@ -87,7 +87,7 @@ CloseData *LabEngine::getObject(Common::Point pos, CloseDataPtr closePtr) {
 
 	Common::Rect objRect;
 	while (wrkClosePtr) {
-		objRect = Common::Rect(_utils->scaleX(wrkClosePtr->_x1), _utils->scaleX(wrkClosePtr->_y1), _utils->scaleX(wrkClosePtr->_x2), _utils->scaleX(wrkClosePtr->_y2));
+		objRect = _utils->rectScale(wrkClosePtr->_x1, wrkClosePtr->_y1, wrkClosePtr->_x2, wrkClosePtr->_y2);
 		if (objRect.contains(pos))
 			return wrkClosePtr;
 
