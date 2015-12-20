@@ -62,7 +62,7 @@ private:
 
 	uint16 fadeNumIn(uint16 num, uint16 res, uint16 counter);
 	uint16 fadeNumOut(uint16 num, uint16 res, uint16 counter);
-	Common::String getWord(const char *mainBuffer, uint16 *wordWidth);
+	Common::String getWord(const char *mainBuffer);
 
 	byte _curPen;
 	Common::File *_curBitmap;
@@ -88,8 +88,8 @@ public:
 	void createBox(uint16 y2);
 	void drawPanel();
 	void setUpScreens();
-	int32 longDrawMessage(const char *str);
-	void drawMessage(const char *str);
+	int32 longDrawMessage(Common::String str);
+	void drawMessage(Common::String str);
 	void setPen(byte pennum);
 	void rectFill(uint16 x1, uint16 y1, uint16 x2, uint16 y2);
 	void rectFill(Common::Rect fillRect);
@@ -131,9 +131,9 @@ public:
 	void scrollDisplayY(int16 dy, uint16 x1, uint16 y1, uint16 x2, uint16 y2, byte *buffer);
 	void fade(bool fadein, uint16 res);
 	void closeFont(TextFont **font);
-	uint16 textLength(TextFont *font, const char *text, uint16 numChars);
+	uint16 textLength(TextFont *font, Common::String text);
 	uint16 textHeight(TextFont *tf);
-	void drawText(TextFont *tf, uint16 x, uint16 y, uint16 color, const char *text, uint16 numChars);
+	void drawText(TextFont *tf, uint16 x, uint16 y, uint16 color, Common::String text);
 	Common::String getLine(TextFont *tf, const char **mainBuffer, uint16 lineWidth);
 
 	bool _longWinInFront;

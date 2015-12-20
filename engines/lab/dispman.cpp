@@ -122,16 +122,12 @@ void DisplayMan::freePict() {
 /**
  * Extracts the first word from a string.
  */
-Common::String DisplayMan::getWord(const char *mainBuffer, uint16 *wordWidth) {
-	uint16 width = 0;
+Common::String DisplayMan::getWord(const char *mainBuffer) {
 	Common::String result;
 
-	while ((mainBuffer[width] != ' ') && mainBuffer[width] && (mainBuffer[width] != '\n')) {
-		result += mainBuffer[width];
-		width++;
-	}
+	for (int i = 0; mainBuffer[i] && (mainBuffer[i] != ' ') && (mainBuffer[i] != '\n'); i++)
+		result += mainBuffer[i];
 
-	*wordWidth = width;
 	return result;
 }
 
@@ -140,20 +136,18 @@ Common::String DisplayMan::getWord(const char *mainBuffer, uint16 *wordWidth) {
  * or equal to the maximum width.
  */
 Common::String DisplayMan::getLine(TextFont *tf, const char **mainBuffer, uint16 lineWidth) {
-	uint16 curWidth = 0, wordWidth;
-	char wordBuffer[100];
+	uint16 curWidth = 0;
 	Common::String result;
 	bool doit = true;
 
-	lineWidth += textLength(tf, " ", 1);
+	lineWidth += textLength(tf, " ");
 
 	while ((*mainBuffer)[0] && doit) {
-		Common::String wordBuffer = getWord(*mainBuffer, &wordWidth);
-		wordBuffer += " ";
+		Common::String wordBuffer = getWord(*mainBuffer) + " ";
 
-		if ((curWidth + textLength(tf, wordBuffer.c_str(), wordWidth + 1)) <= lineWidth) {
+		if ((curWidth + textLength(tf, wordBuffer)) <= lineWidth) {
 			result += wordBuffer;
-			(*mainBuffer) += wordWidth;
+			(*mainBuffer) += wordBuffer.size() - 1;
 
 			if ((*mainBuffer)[0] == '\n')
 				doit = false;
@@ -161,7 +155,7 @@ Common::String DisplayMan::getLine(TextFont *tf, const char **mainBuffer, uint16
 			if ((*mainBuffer)[0])
 				(*mainBuffer)++;
 
-			curWidth = textLength(tf, result.c_str(), result.size());
+			curWidth = textLength(tf, result);
 		} else
 			doit = false;
 	}
@@ -225,10 +219,10 @@ int DisplayMan::flowText(
 		len += lineBuffer.size();
 
 		if (centerh)
-			x += (width - textLength(msgFont, lineBuffer.c_str(), lineBuffer.size())) / 2;
+			x += (width - textLength(msgFont, lineBuffer)) / 2;
 
 		if (output)
-			drawText(msgFont, x, y, penColor, lineBuffer.c_str(), lineBuffer.size());
+			drawText(msgFont, x, y, penColor, lineBuffer);
 
 		numLines--;
 		y += fontHeight;
@@ -282,8 +276,8 @@ void DisplayMan::createBox(uint16 y2) {
 	drawVLine(_vm->_utils->vgaScaleX(2), _vm->_utils->vgaScaleY(152), _vm->_utils->vgaScaleY(y2));
 }
 
-int DisplayMan::longDrawMessage(const char *str) {
-	if (!str)
+int DisplayMan::longDrawMessage(Common::String str) {
+	if (!str.size())
 		return 0;
 
 	_vm->_event->attachButtonList(nullptr);
@@ -299,20 +293,20 @@ int DisplayMan::longDrawMessage(const char *str) {
 	createBox(198);
 	_vm->_event->mouseShow();
 
-	return flowText(_vm->_msgFont, 0, 1, 7, false, true, true, true, _vm->_utils->vgaRectScale(6, 155, 313, 195), str);
+	return flowText(_vm->_msgFont, 0, 1, 7, false, true, true, true, _vm->_utils->vgaRectScale(6, 155, 313, 195), str.c_str());
 }
 
 /**
  * Draws a message to the message box.
  */
-void DisplayMan::drawMessage(const char *str) {
+void DisplayMan::drawMessage(Common::String str) {
 	if (_doNotDrawMessage) {
 		_doNotDrawMessage = false;
 		return;
 	}
 
-	if (str) {
-		if ((textLength(_vm->_msgFont, str, strlen(str)) > _vm->_utils->vgaScaleX(306))) {
+	if (str.size()) {
+		if ((textLength(_vm->_msgFont, str) > _vm->_utils->vgaScaleX(306))) {
 			longDrawMessage(str);
 			_lastMessageLong = true;
 		} else {
@@ -323,7 +317,7 @@ void DisplayMan::drawMessage(const char *str) {
 
 			_vm->_event->mouseHide();
 			createBox(168);
-			drawText(_vm->_msgFont, _vm->_utils->vgaScaleX(7), _vm->_utils->vgaScaleY(155) + _vm->_utils->svgaCord(2), 1, str, strlen(str));
+			drawText(_vm->_msgFont, _vm->_utils->vgaScaleX(7), _vm->_utils->vgaScaleY(155) + _vm->_utils->svgaCord(2), 1, str);
 			_vm->_event->mouseShow();
 			_lastMessageLong = false;
 		}
@@ -644,13 +638,13 @@ void DisplayMan::closeFont(TextFont **font) {
 /**
  * Returns the length of a text in the specified font.
  */
-uint16 DisplayMan::textLength(TextFont *font, const char *text, uint16 numChars) {
+uint16 DisplayMan::textLength(TextFont *font, Common::String text) {
 	uint16 length = 0;
 
 	if (font) {
+		int numChars = text.size();
 		for (uint16 i = 0; i < numChars; i++) {
-			length += font->_widths[(uint)*text];
-			text++;
+			length += font->_widths[text[i]];
 		}
 	}
 
@@ -667,8 +661,9 @@ uint16 DisplayMan::textHeight(TextFont *tf) {
 /**
  * Draws the text to the screen.
  */
-void DisplayMan::drawText(TextFont *tf, uint16 x, uint16 y, uint16 color, const char *text, uint16 numChars) {
+void DisplayMan::drawText(TextFont *tf, uint16 x, uint16 y, uint16 color, Common::String text) {
 	byte *vgaTop = getCurrentDrawingBuffer();
+	int numChars = text.size();
 
 	for (uint16 i = 0; i < numChars; i++) {
 		uint32 realOffset = (_screenWidth * y) + x;
@@ -677,8 +672,8 @@ void DisplayMan::drawText(TextFont *tf, uint16 x, uint16 y, uint16 color, const 
 		int32 leftInSegment = _screenBytesPerPage - segmentOffset;
 		byte *vgaCur = vgaTop + segmentOffset;
 
-		if (tf->_widths[(uint)*text]) {
-			byte *cdata = tf->_data + tf->_offsets[(uint)*text];
+		if (tf->_widths[text[i]]) {
+			byte *cdata = tf->_data + tf->_offsets[text[i]];
 			uint16 bwidth = *cdata++;
 			byte *vgaTemp = vgaCur;
 			byte *vgaTempLine = vgaCur;
@@ -739,8 +734,7 @@ void DisplayMan::drawText(TextFont *tf, uint16 x, uint16 y, uint16 color, const 
 			}
 		}
 
-		x += tf->_widths[(int)*text];
-		text++;
+		x += tf->_widths[text[i]];
 	}
 }
 
