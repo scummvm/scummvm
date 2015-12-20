@@ -50,7 +50,7 @@ void Resource::readStaticText() {
 	delete labTextFile;
 }
 
-TextFont *Resource::getFont(const char *fileName) {
+TextFont *Resource::getFont(const Common::String fileName) {
 	// TODO: Add support for the font format of the Amiga version
 	Common::File *dataFile = openDataFile(fileName, MKTAG('V', 'G', 'A', 'F'));
 
@@ -73,7 +73,7 @@ TextFont *Resource::getFont(const char *fileName) {
 	return textfont;
 }
 
-Common::String Resource::getText(const char *fileName) {
+Common::String Resource::getText(const Common::String fileName) {
 	Common::File *dataFile = openDataFile(fileName);
 
 	_vm->_music->updateMusic();
@@ -94,7 +94,7 @@ Common::String Resource::getText(const char *fileName) {
 	return str;
 }
 
-bool Resource::readRoomData(const char *fileName) {
+bool Resource::readRoomData(const Common::String fileName) {
 	Common::File *dataFile = openDataFile(fileName, MKTAG('D', 'O', 'R', '1'));
 
 	_vm->_manyRooms = dataFile->readUint16LE();
@@ -121,7 +121,7 @@ bool Resource::readRoomData(const char *fileName) {
 	return true;
 }
 
-InventoryData *Resource::readInventory(const char *fileName) {
+InventoryData *Resource::readInventory(const Common::String fileName) {
 	Common::File *dataFile = openDataFile(fileName, MKTAG('I', 'N', 'V', '1'));
 
 	_vm->_numInv = dataFile->readUint16LE();
@@ -140,7 +140,7 @@ InventoryData *Resource::readInventory(const char *fileName) {
 
 bool Resource::readViews(uint16 roomNum) {
 	Common::String fileName = "LAB:Rooms/" + Common::String::format("%d", roomNum);
-	Common::File *dataFile = openDataFile(fileName.c_str(), MKTAG('R', 'O', 'M', '4'));
+	Common::File *dataFile = openDataFile(fileName, MKTAG('R', 'O', 'M', '4'));
 
 	freeViews(roomNum);
 
@@ -205,7 +205,7 @@ Common::String Resource::translateFileName(Common::String filename) {
 	return fileNameStrFinal;
 }
 
-Common::File *Resource::openDataFile(const char *fileName, uint32 fileHeader) {
+Common::File *Resource::openDataFile(const Common::String fileName, uint32 fileHeader) {
 	Common::File *dataFile = new Common::File();
 	dataFile->open(translateFileName(fileName));
 	if (!dataFile->isOpen())
@@ -310,21 +310,13 @@ Action *Resource::readAction(Common::File *file) {
 			action->_param3 = file->readSint16LE();
 
 			if (action->_actionType == SHOWMESSAGES) {
-				char **messages = (char **)malloc(action->_param1 * sizeof(char *));
-				Common::String tmp;
+				action->_messages = new Common::String[action->_param1];
 
-				for (int i = 0; i < action->_param1; i++) {
-					tmp = readString(file);
-					messages[i] = (char *)malloc(tmp.size());
-					memcpy(messages[i], tmp.c_str(), tmp.size());
-				}
-
-				action->_data = (byte *)messages;
+				for (int i = 0; i < action->_param1; i++)
+					action->_messages[i] = readString(file);
 			} else {
-				Common::String tmp;
-				tmp = readString(file);
-				action->_data =  (byte *)malloc(tmp.size());
-				memcpy(action->_data, tmp.c_str(), tmp.size());
+				action->_messages = new Common::String[1];
+				action->_messages[0] = readString(file);
 			}
 
 			action->_nextAction = nullptr;
@@ -338,13 +330,7 @@ Action *Resource::readAction(Common::File *file) {
 void Resource::freeAction(Action *action) {
 	while (action) {
 		Action *nextAction = action->_nextAction;
-		if (action->_actionType == SHOWMESSAGES) {
-			char **messages = (char **)action->_data;
-			for (int i = 0; i < action->_param1; i++)
-				free(messages[i]);
-			free(messages);
-		} else
-			free(action->_data);
+		delete[] action->_messages;
 		delete action;
 		action = nextAction;
 	}

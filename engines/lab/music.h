@@ -83,10 +83,10 @@ public:
 	void changeMusic(const Common::String filename);
 	void checkRoomMusic();
 	void freeMusic();
-	bool initMusic(const char *filename);
+	bool initMusic(const Common::String filename);
 	bool isSoundEffectActive() const;
 	void playSoundEffect(uint16 sampleSpeed, uint32 length, Common::File *dataFile);
-	bool readMusic(const char *filename, bool waitTillFinished);
+	bool readMusic(const Common::String filename, bool waitTillFinished);
 	void resetMusic();
 	void resumeBackMusic();
 	void setMusic(bool on);

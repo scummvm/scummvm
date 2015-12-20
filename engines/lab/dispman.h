@@ -79,8 +79,8 @@ public:
 	DisplayMan(LabEngine *lab);
 	virtual ~DisplayMan();
 
-	void loadPict(const char *filename);
-	void loadBackPict(const char *fileName, uint16 *highPal);
+	void loadPict(const Common::String filename);
+	void loadBackPict(const Common::String fileName, uint16 *highPal);
 
 	/**
 	 * Reads in a picture into the display bitmap.

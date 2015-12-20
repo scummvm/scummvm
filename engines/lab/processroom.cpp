@@ -243,19 +243,19 @@ void LabEngine::doActions(Action *actionList, CloseDataPtr *closePtrList) {
 		case PLAYSOUND:
 			_music->_loopSoundEffect = false;
 			_music->_waitTillFinished = true;
-			_music->readMusic(actionList->_messages[0].c_str(), true);
+			_music->readMusic(actionList->_messages[0], true);
 			_music->_waitTillFinished = false;
 			break;
 
 		case PLAYSOUNDB:
 			_music->_loopSoundEffect = false;
 			_music->_waitTillFinished = false;
-			_music->readMusic(actionList->_messages[0].c_str(), false);
+			_music->readMusic(actionList->_messages[0], false);
 			break;
 
 		case PLAYSOUNDCONT:
 			_music->_loopSoundEffect = true;
-			_music->readMusic(actionList->_messages[0].c_str(), _music->_waitTillFinished);
+			_music->readMusic(actionList->_messages[0], _music->_waitTillFinished);
 			break;
 
 		case SHOWDIFF:

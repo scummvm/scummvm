@@ -63,7 +63,7 @@ void Intro::introEatMessages() {
 	}
 }
 
-void Intro::doPictText(const char *filename, TextFont *msgFont, bool isScreen) {
+void Intro::doPictText(const Common::String filename, TextFont *msgFont, bool isScreen) {
 	Common::String path = Common::String("Lab:rooms/Intro/") + filename;
 
 	uint timeDelay = (isScreen) ? 35 : 7;
@@ -77,7 +77,7 @@ void Intro::doPictText(const char *filename, TextFont *msgFont, bool isScreen) {
 	bool doneFl = false;
 	bool begin = true;
 
-	Common::File *textFile = _vm->_resource->openDataFile(path.c_str());
+	Common::File *textFile = _vm->_resource->openDataFile(path);
 	byte *textBuffer = new byte[textFile->size()];
 	textFile->read(textBuffer, textFile->size());
 	delete textFile;
@@ -203,7 +203,7 @@ void Intro::musicDelay() {
 	}
 }
 
-void Intro::nReadPict(const char *filename, bool playOnce) {
+void Intro::nReadPict(const Common::String filename, bool playOnce) {
 	Common::String finalFileName = Common::String("P:Intro/") + filename;
 
 	_vm->_music->updateMusic();

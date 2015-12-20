@@ -126,7 +126,7 @@ void LabEngine::loadJournalData() {
 	else if (bridge)
 		filename += '1';
 
-	_journalText = _resource->getText(filename.c_str());
+	_journalText = _resource->getText(filename);
 	_journalTextTitle = _resource->getText("Lab:Rooms/jt");
 
 	Common::File *journalFile = _resource->openDataFile("P:JImage");
@@ -463,8 +463,8 @@ void LabEngine::doMonitor(Common::String background, Common::String textfile, bo
 	_monitorButton = new Image(buttonFile, this);
 	delete buttonFile;
 
-	Common::String ntext = _resource->getText(textfile.c_str());
-	_graphics->loadBackPict(background.c_str(), _highPalette);
+	Common::String ntext = _resource->getText(textfile);
+	_graphics->loadBackPict(background, _highPalette);
 	drawMonText((char *)ntext.c_str(), monitorFont, scaledRect, isinteractive);
 	_event->mouseShow();
 	_graphics->fade(true, 0);
