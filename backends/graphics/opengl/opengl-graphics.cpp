@@ -23,6 +23,7 @@
 
 #include "backends/graphics/opengl/opengl-graphics.h"
 #include "backends/graphics/opengl/texture.h"
+#include "backends/graphics/opengl/shader.h"
 
 #include "common/textconsole.h"
 #include "common/translation.h"
@@ -54,6 +55,9 @@ OpenGLGraphicsManager::OpenGLGraphicsManager()
 #ifdef USE_OSD
       , _osdAlpha(0), _osdFadeStartTime(0), _osd(nullptr)
 #endif
+#if !USE_FORCED_GL && !USE_FORCED_GLES
+      , _shader(nullptr), _projectionMatrix()
+#endif
     {
 	memset(_gamePalette, 0, sizeof(_gamePalette));
 	g_context.reset(true);
@@ -65,6 +69,9 @@ OpenGLGraphicsManager::~OpenGLGraphicsManager() {
 	delete _cursor;
 #ifdef USE_OSD
 	delete _osd;
+#endif
+#if !USE_FORCED_GL && !USE_FORCED_GLES
+	delete _shader;
 #endif
 }
 
@@ -418,13 +425,13 @@ void OpenGLGraphicsManager::updateScreen() {
 		}
 
 		// Set the OSD transparency.
-		GL_CALL(glColor4f(1.0f, 1.0f, 1.0f, _osdAlpha / 100.0f));
+		setColor(1.0f, 1.0f, 1.0f, _osdAlpha / 100.0f);
 
 		// Draw the OSD texture.
 		_osd->draw(0, 0, _outputScreenWidth, _outputScreenHeight);
 
 		// Reset color.
-		GL_CALL(glColor4f(1.0f, 1.0f, 1.0f, 1.0f));
+		setColor(1.0f, 1.0f, 1.0f, 1.0f);
 	}
 #endif
 
@@ -765,11 +772,29 @@ void OpenGLGraphicsManager::setActualScreenSize(uint width, uint height) {
 		-1.0f                     ,  1.0f                      ,  0.0f, 1.0f
 	};
 
-	GL_CALL(glMatrixMode(GL_PROJECTION));
-	GL_CALL(glLoadMatrixf(orthoProjection));
+#if !USE_FORCED_GL && !USE_FORCED_GLES && !USE_FORCED_GLES2
+	if (g_context.type != kContextGLES2) {
+#endif
+#if !USE_FORCED_GLES2
+		GL_CALL(glMatrixMode(GL_PROJECTION));
+		GL_CALL(glLoadMatrixf(orthoProjection));
 
-	GL_CALL(glMatrixMode(GL_MODELVIEW));
-	GL_CALL(glLoadIdentity());
+		GL_CALL(glMatrixMode(GL_MODELVIEW));
+		GL_CALL(glLoadIdentity());
+#endif
+#if !USE_FORCED_GL && !USE_FORCED_GLES && !USE_FORCED_GLES2
+	} else {
+#endif
+#if !USE_FORCED_GL && !USE_FORCED_GLES
+		assert(sizeof(_projectionMatrix) == sizeof(orthoProjection));
+		memcpy(_projectionMatrix, orthoProjection, sizeof(_projectionMatrix));
+		if (_shader) {
+			_shader->activate(_projectionMatrix);
+		}
+#endif
+#if !USE_FORCED_GL && !USE_FORCED_GLES && !USE_FORCED_GLES2
+	}
+#endif
 
 	uint overlayWidth = width;
 	uint overlayHeight = height;
@@ -845,25 +870,51 @@ void OpenGLGraphicsManager::notifyContextCreate(const Graphics::PixelFormat &def
 	// Disable 3D properties.
 	GL_CALL(glDisable(GL_CULL_FACE));
 	GL_CALL(glDisable(GL_DEPTH_TEST));
-	GL_CALL(glDisable(GL_LIGHTING));
-	GL_CALL(glDisable(GL_FOG));
 	GL_CALL(glDisable(GL_DITHER));
-	GL_CALL(glShadeModel(GL_FLAT));
-	GL_CALL(glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_FASTEST));
+
+#if !USE_FORCED_GL && !USE_FORCED_GLES && !USE_FORCED_GLES2
+	if (g_context.type != kContextGLES2) {
+#endif
+#if !USE_FORCED_GLES2
+		GL_CALL(glDisable(GL_LIGHTING));
+		GL_CALL(glDisable(GL_FOG));
+		GL_CALL(glShadeModel(GL_FLAT));
+		GL_CALL(glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_FASTEST));
+#endif
+#if !USE_FORCED_GL && !USE_FORCED_GLES && !USE_FORCED_GLES2
+	}
+#endif
 
 	// Default to black as clear color.
 	GL_CALL(glClearColor(0.0f, 0.0f, 0.0f, 0.0f));
-	GL_CALL(glColor4f(1.0f, 1.0f, 1.0f, 1.0f));
+	setColor(1.0f, 1.0f, 1.0f, 1.0f);
 
 	// Setup alpha blend (for overlay and cursor).
 	GL_CALL(glEnable(GL_BLEND));
 	GL_CALL(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 
-	// Enable rendering with vertex and coord arrays.
-	GL_CALL(glEnableClientState(GL_VERTEX_ARRAY));
-	GL_CALL(glEnableClientState(GL_TEXTURE_COORD_ARRAY));
+#if !USE_FORCED_GL && !USE_FORCED_GLES && !USE_FORCED_GLES2
+	if (g_context.type != kContextGLES2) {
+#endif
+#if !USE_FORCED_GLES2
+		// Enable rendering with vertex and coord arrays.
+		GL_CALL(glEnableClientState(GL_VERTEX_ARRAY));
+		GL_CALL(glEnableClientState(GL_TEXTURE_COORD_ARRAY));
 
-	GL_CALL(glEnable(GL_TEXTURE_2D));
+		GL_CALL(glEnable(GL_TEXTURE_2D));
+#endif
+#if !USE_FORCED_GL && !USE_FORCED_GLES && !USE_FORCED_GLES2
+	} else {
+#endif
+#if !USE_FORCED_GL && !USE_FORCED_GLES
+		GL_CALL(glEnableVertexAttribArray(kPositionAttribLocation));
+		GL_CALL(glEnableVertexAttribArray(kTexCoordAttribLocation));
+
+		GL_CALL(glActiveTexture(GL_TEXTURE0));
+#endif
+#if !USE_FORCED_GL && !USE_FORCED_GLES && !USE_FORCED_GLES2
+	}
+#endif
 
 	// Setup scissor state accordingly.
 	if (_overlayVisible) {
@@ -882,6 +933,22 @@ void OpenGLGraphicsManager::notifyContextCreate(const Graphics::PixelFormat &def
 
 	// Query information needed by textures.
 	Texture::queryTextureInformation();
+
+#if !USE_FORCED_GL && !USE_FORCED_GLES && !USE_FORCED_GLES2
+	if (g_context.type == kContextGLES2) {
+#endif
+#if !USE_FORCED_GL && !USE_FORCED_GLES
+		if (!_shader) {
+			_shader = new Shader(g_defaultVertexShader, g_defaultFragmentShader);
+		}
+
+		// TODO: What do we do on failure?
+		_shader->recreate();
+		_shader->activate(_projectionMatrix);
+#endif
+#if !USE_FORCED_GL && !USE_FORCED_GLES && !USE_FORCED_GLES2
+	}
+#endif
 
 	// Refresh the output screen dimensions if some are set up.
 	if (_outputScreenWidth != 0 && _outputScreenHeight != 0) {
@@ -929,6 +996,12 @@ void OpenGLGraphicsManager::notifyContextDestroy() {
 #ifdef USE_OSD
 	if (_osd) {
 		_osd->releaseInternalTexture();
+	}
+#endif
+
+#if !USE_FORCED_GL && !USE_FORCED_GLES
+	if (_shader) {
+		_shader->destroy();
 	}
 #endif
 }
@@ -1002,6 +1075,24 @@ Texture *OpenGLGraphicsManager::createTexture(const Graphics::PixelFormat &forma
 	}
 }
 
+void OpenGLGraphicsManager::setColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a) {
+#if !USE_FORCED_GL && !USE_FORCED_GLES && !USE_FORCED_GLES2
+	if (g_context.type != kContextGLES2) {
+#endif
+#if !USE_FORCED_GLES2
+		GL_CALL(glColor4f(r, g, b, a));
+#endif
+#if !USE_FORCED_GL && !USE_FORCED_GLES && !USE_FORCED_GLES2
+	} else {
+#endif
+#if !USE_FORCED_GL && !USE_FORCED_GLES
+		GL_CALL(glVertexAttrib4f(kColorAttribLocation, r, g, b, a));
+#endif
+#if !USE_FORCED_GL && !USE_FORCED_GLES && !USE_FORCED_GLES2
+	}
+#endif
+}
+
 bool OpenGLGraphicsManager::getGLPixelFormat(const Graphics::PixelFormat &pixelFormat, GLenum &glIntFormat, GLenum &glFormat, GLenum &glType) const {
 #ifdef SCUMM_LITTLE_ENDIAN
 	if (pixelFormat == Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24)) { // ABGR8888
@@ -1027,7 +1118,7 @@ bool OpenGLGraphicsManager::getGLPixelFormat(const Graphics::PixelFormat &pixelF
 		glFormat = GL_RGBA;
 		glType = GL_UNSIGNED_SHORT_4_4_4_4;
 		return true;
-#if !USE_FORCED_GLES
+#if !USE_FORCED_GLES && !USE_FORCED_GLES2
 	// The formats below are not supported by every GLES implementation.
 	// Thus, we do not mark them as supported when a GLES context is setup.
 	} else if (isGLESContext()) {
@@ -1081,7 +1172,7 @@ bool OpenGLGraphicsManager::getGLPixelFormat(const Graphics::PixelFormat &pixelF
 		glFormat = GL_BGRA;
 		glType = GL_UNSIGNED_SHORT_4_4_4_4;
 		return true;
-#endif // !USE_FORCED_GLES
+#endif // !USE_FORCED_GLES && !USE_FORCED_GLES2
 	} else {
 		return false;
 	}

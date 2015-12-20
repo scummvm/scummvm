@@ -44,6 +44,8 @@ void OpenGLGraphicsManager::setContextType(ContextType type) {
 	type = kContextGL;
 #elif USE_FORCED_GLES
 	type = kContextGLES;
+#elif USE_FORCED_GLES2
+	type = kContextGLES2;
 #endif
 
 	g_context.type = type;

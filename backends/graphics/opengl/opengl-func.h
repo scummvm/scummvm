@@ -91,3 +91,28 @@ GL_FUNC_DEF(void, glDrawArrays, (GLenum mode, GLint first, GLsizei count));
 GL_FUNC_DEF(void, glTexSubImage2D, (GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLenum type, const GLvoid *pixels));
 GL_FUNC_DEF(const GLubyte *, glGetString, (GLenum name));
 GL_FUNC_DEF(GLenum, glGetError, ());
+
+#if !USE_FORCED_GL && !USE_FORCED_GLES
+GL_FUNC_DEF(void, glVertexAttrib4f, (GLuint index, GLfloat x, GLfloat y, GLfloat z, GLfloat w));
+GL_FUNC_DEF(void, glVertexAttribPointer, (GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const void *pointer));
+GL_FUNC_DEF(void, glUniformMatrix4fv, (GLint location, GLsizei count, GLboolean transpose, const GLfloat *value));
+GL_FUNC_DEF(void, glUniform1i, (GLint location, GLint v0));
+GL_FUNC_DEF(void, glDeleteProgram, (GLuint program));
+GL_FUNC_DEF(void, glDeleteShader, (GLuint shader));
+GL_FUNC_DEF(GLuint, glCreateProgram, ());
+GL_FUNC_DEF(void, glAttachShader, (GLuint program, GLuint shader));
+GL_FUNC_DEF(void, glBindAttribLocation, (GLuint program, GLuint index, const GLchar *name));
+GL_FUNC_DEF(void, glLinkProgram, (GLuint program));
+GL_FUNC_DEF(void, glDetachShader, (GLuint program, GLuint shader));
+GL_FUNC_DEF(void, glGetProgramiv, (GLuint program, GLenum pname, GLint *params));
+GL_FUNC_DEF(void, glGetProgramInfoLog, (GLuint program, GLsizei bufSize, GLsizei *length, GLchar *infoLog));
+GL_FUNC_DEF(GLint, glGetUniformLocation, (GLuint program, const GLchar *name));
+GL_FUNC_DEF(void, glUseProgram, (GLuint program));
+GL_FUNC_DEF(GLuint, glCreateShader, (GLenum type));
+GL_FUNC_DEF(void, glShaderSource, (GLuint shader, GLsizei count, const GLchar *const *string, const GLint *length));
+GL_FUNC_DEF(void, glCompileShader, (GLuint shader));
+GL_FUNC_DEF(void, glGetShaderiv, (GLuint shader, GLenum pname, GLint *params));
+GL_FUNC_DEF(void, glGetShaderInfoLog, (GLuint shader, GLsizei bufSize, GLsizei *length, GLchar *infoLog));
+GL_FUNC_DEF(void, glEnableVertexAttribArray, (GLuint index));
+GL_FUNC_DEF(void, glActiveTexture, (GLenum texture));
+#endif

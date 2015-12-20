@@ -35,8 +35,10 @@
 // the given selection choices:
 //  0 - Force OpenGL context
 //  1 - Force OpenGL ES context
-#define USE_FORCED_GL   (defined(USE_GLES_MODE) && USE_GLES_MODE == 0)
-#define USE_FORCED_GLES (defined(USE_GLES_MODE) && USE_GLES_MODE == 1)
+//  2 - Force OpenGL ES 2.0 context
+#define USE_FORCED_GL    (defined(USE_GLES_MODE) && USE_GLES_MODE == 0)
+#define USE_FORCED_GLES  (defined(USE_GLES_MODE) && USE_GLES_MODE == 1)
+#define USE_FORCED_GLES2 (defined(USE_GLES_MODE) && USE_GLES_MODE == 2)
 
 // On Tizen we include the toolchain's OpenGL file. This is something we
 // actually want to avoid. However, since Tizen uses eglGetProcAddress which
@@ -69,7 +71,8 @@ namespace OpenGL {
 
 enum ContextType {
 	kContextGL,
-	kContextGLES
+	kContextGLES,
+	kContextGLES2
 };
 
 /**
@@ -103,6 +106,7 @@ extern Context g_context;
 
 } // End of namespace OpenGL
 
-#define GL_CALL(x) GL_WRAP_DEBUG(g_context.x, x)
+#define GL_CALL(x)        GL_WRAP_DEBUG(g_context.x, x)
+#define GL_ASSIGN(var, x) GL_WRAP_DEBUG(var = g_context.x, x)
 
 #endif

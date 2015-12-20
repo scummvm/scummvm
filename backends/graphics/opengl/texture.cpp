@@ -21,6 +21,7 @@
  */
 
 #include "backends/graphics/opengl/texture.h"
+#include "backends/graphics/opengl/shader.h"
 
 #include "common/rect.h"
 #include "common/textconsole.h"
@@ -185,7 +186,6 @@ void Texture::draw(GLfloat x, GLfloat y, GLfloat w, GLfloat h) {
 		0,        texHeight,
 		texWidth, texHeight
 	};
-	GL_CALL(glTexCoordPointer(2, GL_FLOAT, 0, texcoords));
 
 	// Calculate the screen rect where the texture will be drawn.
 	const GLfloat vertices[4*2] = {
@@ -194,7 +194,24 @@ void Texture::draw(GLfloat x, GLfloat y, GLfloat w, GLfloat h) {
 		x,     y + h,
 		x + w, y + h
 	};
-	GL_CALL(glVertexPointer(2, GL_FLOAT, 0, vertices));
+
+#if !USE_FORCED_GL && !USE_FORCED_GLES && !USE_FORCED_GLES2
+	if (g_context.type != kContextGLES2) {
+#endif
+#if !USE_FORCED_GLES2
+		GL_CALL(glTexCoordPointer(2, GL_FLOAT, 0, texcoords));
+		GL_CALL(glVertexPointer(2, GL_FLOAT, 0, vertices));
+#endif
+#if !USE_FORCED_GL && !USE_FORCED_GLES && !USE_FORCED_GLES2
+	} else {
+#endif
+#if !USE_FORCED_GL && !USE_FORCED_GLES
+		GL_CALL(glVertexAttribPointer(kTexCoordAttribLocation, 2, GL_FLOAT, GL_FALSE, 0, texcoords));
+		GL_CALL(glVertexAttribPointer(kPositionAttribLocation, 2, GL_FLOAT, GL_FALSE, 0, vertices));
+#endif
+#if !USE_FORCED_GL && !USE_FORCED_GLES && !USE_FORCED_GLES2
+	}
+#endif
 
 	// Draw the texture to the screen buffer.
 	GL_CALL(glDrawArrays(GL_TRIANGLE_STRIP, 0, 4));

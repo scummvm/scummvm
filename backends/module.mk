@@ -55,6 +55,7 @@ MODULE_OBJS += \
 	graphics/opengl/context.o \
 	graphics/opengl/debug.o \
 	graphics/opengl/opengl-graphics.o \
+	graphics/opengl/shader.o \
 	graphics/opengl/texture.o
 endif
 

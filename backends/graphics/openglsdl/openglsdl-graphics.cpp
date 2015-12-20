@@ -57,6 +57,9 @@ OpenGLSdlGraphicsManager::OpenGLSdlGraphicsManager(uint desktopWidth, uint deskt
 #define DEFAULT_GLES_MAJOR 1
 #define DEFAULT_GLES_MINOR 1
 
+#define DEFAULT_GLES2_MAJOR 2
+#define DEFAULT_GLES2_MINOR 0
+
 #if USE_FORCED_GL
 	glContextType = OpenGL::kContextGL;
 	_glContextProfileMask = SDL_GL_CONTEXT_PROFILE_COMPATIBILITY;
@@ -67,6 +70,11 @@ OpenGLSdlGraphicsManager::OpenGLSdlGraphicsManager(uint desktopWidth, uint deskt
 	_glContextProfileMask = SDL_GL_CONTEXT_PROFILE_ES;
 	_glContextMajor = DEFAULT_GLES_MAJOR;
 	_glContextMinor = DEFAULT_GLES_MINOR;
+#elif USE_FORCED_GLES2
+	glContextType = OpenGL::kContextGLES2;
+	_glContextProfileMask = SDL_GL_CONTEXT_PROFILE_ES;
+	_glContextMajor = DEFAULT_GLES2_MAJOR;
+	_glContextMinor = DEFAULT_GLES2_MINOR;
 #else
 	bool noDefaults = false;
 
@@ -102,12 +110,10 @@ OpenGLSdlGraphicsManager::OpenGLSdlGraphicsManager(uint desktopWidth, uint deskt
 	}
 
 	if (_glContextProfileMask == SDL_GL_CONTEXT_PROFILE_ES) {
-		glContextType = OpenGL::kContextGLES;
-
-		// We do not support GLES2 contexts right now. Force a GLES1 context.
 		if (_glContextMajor >= 2) {
-			_glContextMajor = DEFAULT_GLES_MAJOR;
-			_glContextMinor = DEFAULT_GLES_MINOR;
+			glContextType = OpenGL::kContextGLES2;
+		} else {
+			glContextType = OpenGL::kContextGLES;
 		}
 	} else if (_glContextProfileMask == SDL_GL_CONTEXT_PROFILE_CORE) {
 		glContextType = OpenGL::kContextGL;
@@ -124,6 +130,8 @@ OpenGLSdlGraphicsManager::OpenGLSdlGraphicsManager(uint desktopWidth, uint deskt
 #undef DEFAULT_GL_MINOR
 #undef DEFAULT_GLES_MAJOR
 #undef DEFAULT_GLES_MINOR
+#undef DEFAULT_GLES2_MAJOR
+#undef DEFAULT_GLES2_MINOR
 #endif
 
 	setContextType(glContextType);
@@ -296,7 +304,7 @@ Common::List<Graphics::PixelFormat> OpenGLSdlGraphicsManager::getSupportedFormat
 	// RGBA4444
 	formats.push_back(Graphics::PixelFormat(2, 4, 4, 4, 4, 12, 8, 4, 0));
 
-#if !USE_FORCED_GLES
+#if !USE_FORCED_GLES && !USE_FORCED_GLES2
 #if !USE_FORCED_GL
 	if (!isGLESContext()) {
 #endif

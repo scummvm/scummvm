@@ -41,6 +41,9 @@ namespace OpenGL {
 #define USE_OSD 1
 
 class Texture;
+#if !USE_FORCED_GL && !USE_FORCED_GLES
+class Shader;
+#endif
 
 enum {
 	GFX_LINEAR = 0,
@@ -117,9 +120,9 @@ public:
 
 protected:
 	/**
-	 * Whether an GLES context is active.
+	 * Whether an GLES or GLES2 context is active.
 	 */
-	bool isGLESContext() const { return g_context.type == kContextGLES; }
+	bool isGLESContext() const { return g_context.type == kContextGLES || g_context.type == kContextGLES2; }
 
 	/**
 	 * Set up the actual screen size available for the OpenGL code to do any
@@ -299,6 +302,14 @@ private:
 	 * Initialize the active context for use.
 	 */
 	void initializeGLContext();
+
+	/**
+	 * Set color which shall be multiplied with each pixel.
+	 *
+	 * This serves as a wrapper around glColor4f for fixed-function and our
+	 * shader pipeline.
+	 */
+	void setColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a);
 
 protected:
 	/**
@@ -517,6 +528,22 @@ private:
 	 * Number of frames glClear shall ignore scissor testing.
 	 */
 	uint _scissorOverride;
+
+#if !USE_FORCED_GL && !USE_FORCED_GLES
+	//
+	// Shaders
+	//
+
+	/**
+	 * Active shader.
+	 */
+	Shader *_shader;
+
+	/**
+	 * Projection matrix used.
+	 */
+	GLfloat _projectionMatrix[4*4];
+#endif
 
 #ifdef USE_OSD
 	//

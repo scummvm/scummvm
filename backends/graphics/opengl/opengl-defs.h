@@ -75,10 +75,15 @@ typedef float  GLfloat;  /* single precision float */
 typedef float  GLclampf; /* single precision float in [0,1] */
 typedef double GLdouble; /* double precision float */
 typedef double GLclampd; /* double precision float in [0,1] */
+typedef char   GLchar;
 
 /*
  * Constants
  */
+
+/* Boolean constants */
+#define GL_FALSE                          0
+#define GL_TRUE                           1
 
 /* StringName */
 #define GL_VENDOR                         0x1F00
@@ -215,5 +220,17 @@ typedef double GLclampd; /* double precision float in [0,1] */
 #define GL_TRIANGLES                      0x0004
 #define GL_TRIANGLE_STRIP                 0x0005
 #define GL_TRIANGLE_FAN                   0x0006
+
+/* Shaders */
+#define GL_FRAGMENT_SHADER                0x8B30
+#define GL_VERTEX_SHADER                  0x8B31
+
+/* Programs */
+#define GL_COMPILE_STATUS                 0x8B81
+#define GL_LINK_STATUS                    0x8B82
+#define GL_INFO_LOG_LENGTH                0x8B84
+
+/* Textures */
+#define GL_TEXTURE0                       0x84C0
 
 #endif
