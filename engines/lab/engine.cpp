@@ -466,7 +466,7 @@ void LabEngine::mainGameLoop() {
 					case SPECIALBRICK:
 					case SPECIALBRICKNOMOUSE:
 						if (_mainDisplay)
-							_tilePuzzle->showTile(_curFileName.c_str(), (_closeDataPtr->_closeUpType == SPECIALBRICKNOMOUSE));
+							_tilePuzzle->showTile(_curFileName, (_closeDataPtr->_closeUpType == SPECIALBRICKNOMOUSE));
 						break;
 					default:
 						_graphics->readPict(_curFileName.c_str(), false);

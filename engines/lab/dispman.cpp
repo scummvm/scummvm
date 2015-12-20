@@ -78,7 +78,7 @@ void DisplayMan::loadPict(const Common::String filename) {
 void DisplayMan::loadBackPict(const Common::String fileName, uint16 *highPal) {
 	_fadePalette = highPal;
 	_vm->_anim->_noPalChange = true;
-	readPict(fileName.c_str(), true);
+	readPict(fileName, true);
 
 	for (uint16 i = 0; i < 16; i++) {
 		highPal[i] = ((_vm->_anim->_diffPalette[i * 3] >> 2) << 8) +
@@ -92,7 +92,7 @@ void DisplayMan::loadBackPict(const Common::String fileName, uint16 *highPal) {
 void DisplayMan::readPict(Common::String filename, bool playOnce, bool onlyDiffData, byte *memoryBuffer, uint16 maxHeight) {
 	_vm->_anim->stopDiff();
 
-	loadPict(filename.c_str());
+	loadPict(filename);
 
 	_vm->_music->updateMusic();
 
@@ -740,7 +740,7 @@ void DisplayMan::doScrollWipe(Common::String filename) {
 		_vm->waitTOF();
 	}
 
-	readPict(filename.c_str(), true, true);
+	readPict(filename, true, true);
 	setPalette(_vm->_anim->_diffPalette, 256);
 	byte *mem = _vm->_anim->_rawDiffBM._planes[0];
 

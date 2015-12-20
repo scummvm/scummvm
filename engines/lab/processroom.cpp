@@ -259,17 +259,17 @@ void LabEngine::doActions(Action *actionList, CloseDataPtr *closePtrList) {
 			break;
 
 		case SHOWDIFF:
-			_graphics->readPict(actionList->_messages[0].c_str(), true);
+			_graphics->readPict(actionList->_messages[0], true);
 			break;
 
 		case SHOWDIFFCONT:
-			_graphics->readPict(actionList->_messages[0].c_str(), false);
+			_graphics->readPict(actionList->_messages[0], false);
 			break;
 
 		case LOADDIFF:
 			if (actionList->_messages[0].size())
 				// Puts a file into memory
-				_graphics->loadPict(actionList->_messages[0].c_str());
+				_graphics->loadPict(actionList->_messages[0]);
 
 			break;
 
@@ -291,7 +291,7 @@ void LabEngine::doActions(Action *actionList, CloseDataPtr *closePtrList) {
 
 			if (test != _curFileName) {
 				_curFileName = test;
-				_graphics->readPict(_curFileName.c_str(), true);
+				_graphics->readPict(_curFileName, true);
 			}
 			}
 			break;

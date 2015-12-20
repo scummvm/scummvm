@@ -58,7 +58,7 @@ private:
 	 * Does a one second delay, but checks the music while doing it.
 	 */
 	void musicDelay();
-	void nReadPict(const Common::String Filename, bool PlayOnce);
+	void nReadPict(const Common::String Filename, bool PlayOnce = true);
 
 	LabEngine *_vm;
 	bool _quitIntro, _introDoBlack;
