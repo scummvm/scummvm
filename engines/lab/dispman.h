@@ -97,7 +97,7 @@ public:
 	/**
 	 * Scrolls the display to a new picture from a black screen.
 	 */
-	void doScrollWipe(char *filename);
+	void doScrollWipe(Common::String filename);
 
 	/**
 	 * Does the scroll bounce.  Assumes bitmap already in memory.
@@ -107,12 +107,12 @@ public:
 	/**
 	 * Does the transporter wipe.
 	 */
-	void doTransWipe(CloseDataPtr *closePtrList, char *filename);
+	void doTransWipe(CloseDataPtr *closePtrList, Common::String filename);
 
 	/**
 	 * Does a certain number of pre-programmed wipes.
 	 */
-	void doTransition(TransitionType transitionType, CloseDataPtr *closePtrList, char *filename);
+	void doTransition(TransitionType transitionType, CloseDataPtr *closePtrList, Common::String filename);
 
 	/**
 	 * Changes the front screen to black.

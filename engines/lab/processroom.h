@@ -113,7 +113,7 @@ struct Action {
 	int16 _param1;
 	int16 _param2;
 	int16 _param3;
-	byte *_data;            // Message, or a pointer to array of messages.
+	Common::String *_messages;
 	Action *_nextAction;
 };
 

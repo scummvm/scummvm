@@ -730,7 +730,7 @@ void DisplayMan::copyPage(uint16 width, uint16 height, uint16 nheight, uint16 st
 	}
 }
 
-void DisplayMan::doScrollWipe(char *filename) {
+void DisplayMan::doScrollWipe(Common::String filename) {
 	_vm->_event->mouseHide();
 	uint16 width = _vm->_utils->vgaScaleX(320);
 	uint16 height = _vm->_utils->vgaScaleY(149) + _vm->_utils->svgaCord(2);
@@ -740,7 +740,7 @@ void DisplayMan::doScrollWipe(char *filename) {
 		_vm->waitTOF();
 	}
 
-	readPict(filename, true, true);
+	readPict(filename.c_str(), true, true);
 	setPalette(_vm->_anim->_diffPalette, 256);
 	byte *mem = _vm->_anim->_rawDiffBM._planes[0];
 
@@ -824,7 +824,7 @@ void DisplayMan::doScrollBounce() {
 	_vm->_event->mouseShow();
 }
 
-void DisplayMan::doTransWipe(CloseDataPtr *closePtrList, char *filename) {
+void DisplayMan::doTransWipe(CloseDataPtr *closePtrList, Common::String filename) {
 	uint16 lastY, linesLast;
 
 	if (_vm->_isHiRes) {
@@ -860,7 +860,7 @@ void DisplayMan::doTransWipe(CloseDataPtr *closePtrList, char *filename) {
 		setPen(0);
 	}	// for j
 
-	if (!filename)
+	if (!filename.size())
 		_vm->_curFileName = _vm->getPictName(closePtrList);
 	else if (filename[0] > ' ')
 		_vm->_curFileName = filename;
@@ -911,7 +911,7 @@ void DisplayMan::doTransWipe(CloseDataPtr *closePtrList, char *filename) {
 	delete[] bitMapBuffer;
 }
 
-void DisplayMan::doTransition(TransitionType transitionType, CloseDataPtr *closePtrList, char *filename) {
+void DisplayMan::doTransition(TransitionType transitionType, CloseDataPtr *closePtrList, Common::String filename) {
 	switch (transitionType) {
 	case kTransitionWipe:
 	case kTransitionTransporter:

@@ -80,7 +80,7 @@ public:
 public:
 	Music(LabEngine *vm);
 
-	void changeMusic(const char *filename);
+	void changeMusic(const Common::String filename);
 	void checkRoomMusic();
 	void freeMusic();
 	bool initMusic(const char *filename);
