@@ -378,7 +378,6 @@ void Design::drawBitmap(Graphics::Surface *surface, Common::ReadStream &in, bool
 					x = 0;
 					break;
 				}
-
 			}
 		}
 	}
@@ -555,10 +554,16 @@ void Design::drawThickLine (int x1, int y1, int x2, int y2, int thick, int color
 	int dy = abs(y2 - y1);
 
 	if (dx == 0) {
-		drawVLine(x1, y1, y2, color, plotProc, data);
+		if (y1 > y2)
+			SWAP(y1, y2);
+		Common::Rect r(x1, y1, x1 + thick, y2);
+		drawFilledRect(r, color, plotProc, data);
 		return;
 	} else if (dy == 0) {
-		drawHLine(x1, x2, y1, color, plotProc, data);
+		if (x1 > x2)
+			SWAP(x1, x2);
+		Common::Rect r(x1, y1, x2, y1 + thick);
+		drawFilledRect(r, color, plotProc, data);
 		return;
 	}
 
