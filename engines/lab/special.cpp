@@ -373,7 +373,7 @@ void LabEngine::processMonitor(char *ntext, TextFont *monitorFont, bool isIntera
 				_monitorPage = 0;
 				_monitorTextFilename = test;
 
-				Common::String text = _resource->getText(_monitorTextFilename.c_str());
+				Common::String text = _resource->getText(_monitorTextFilename);
 				_graphics->fade(false, 0);
 				drawMonText((char *)text.c_str(), monitorFont, textRect, isInteractive);
 				_graphics->fade(true, 0);
