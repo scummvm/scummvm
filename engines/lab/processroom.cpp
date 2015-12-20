@@ -199,7 +199,7 @@ void LabEngine::setCurrentClose(Common::Point pos, CloseDataPtr *closePtrList, b
 		if (!useAbsoluteCoords)
 			target = Common::Rect(closePtr->_x1, closePtr->_y1, closePtr->_x2, closePtr->_y2);
 		else
-			target = Common::Rect(_utils->scaleX(closePtr->_x1), _utils->scaleY(closePtr->_y1), _utils->scaleX(closePtr->_x2), _utils->scaleY(closePtr->_y2));
+			target = _utils->rectScale(closePtr->_x1, closePtr->_y1, closePtr->_x2, closePtr->_y2);
 
 		if (target.contains(pos) && closePtr->_graphicName != "") {
 			*closePtrList = closePtr;
@@ -223,7 +223,7 @@ bool LabEngine::takeItem(Common::Point pos, CloseDataPtr *closePtrList) {
 
 	Common::Rect objRect;
 	while (closePtr) {
-		objRect = Common::Rect(_utils->scaleX(closePtr->_x1), _utils->scaleX(closePtr->_y1), _utils->scaleX(closePtr->_x2), _utils->scaleX(closePtr->_y2));
+		objRect = _utils->rectScale(closePtr->_x1, closePtr->_y1, closePtr->_x2, closePtr->_y2);
 		if (objRect.contains(pos) && (closePtr->_closeUpType < 0)) {
 			_conditions->inclElement(abs(closePtr->_closeUpType));
 			return true;
