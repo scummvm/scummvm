@@ -243,38 +243,38 @@ void LabEngine::doActions(Action *actionList, CloseDataPtr *closePtrList) {
 		case PLAYSOUND:
 			_music->_loopSoundEffect = false;
 			_music->_waitTillFinished = true;
-			_music->readMusic((char *)actionList->_data, true);
+			_music->readMusic(actionList->_messages[0].c_str(), true);
 			_music->_waitTillFinished = false;
 			break;
 
 		case PLAYSOUNDB:
 			_music->_loopSoundEffect = false;
 			_music->_waitTillFinished = false;
-			_music->readMusic((char *)actionList->_data, false);
+			_music->readMusic(actionList->_messages[0].c_str(), false);
 			break;
 
 		case PLAYSOUNDCONT:
 			_music->_loopSoundEffect = true;
-			_music->readMusic((char *)actionList->_data, _music->_waitTillFinished);
+			_music->readMusic(actionList->_messages[0].c_str(), _music->_waitTillFinished);
 			break;
 
 		case SHOWDIFF:
-			_graphics->readPict((char *)actionList->_data, true);
+			_graphics->readPict(actionList->_messages[0].c_str(), true);
 			break;
 
 		case SHOWDIFFCONT:
-			_graphics->readPict((char *)actionList->_data, false);
+			_graphics->readPict(actionList->_messages[0].c_str(), false);
 			break;
 
 		case LOADDIFF:
-			if (actionList->_data)
+			if (actionList->_messages[0].size())
 				// Puts a file into memory
-				_graphics->loadPict((char *)actionList->_data);
+				_graphics->loadPict(actionList->_messages[0].c_str());
 
 			break;
 
 		case TRANSITION:
-			_graphics->doTransition((TransitionType)actionList->_param1, closePtrList, (char *)actionList->_data);
+			_graphics->doTransition((TransitionType)actionList->_param1, closePtrList, actionList->_messages[0].c_str());
 			break;
 
 		case NOUPDATE:
@@ -307,7 +307,7 @@ void LabEngine::doActions(Action *actionList, CloseDataPtr *closePtrList) {
 		case SHOWMESSAGE: {
 			_graphics->_doNotDrawMessage = false;
 
-			Common::String text = Common::String((char *)actionList->_data);
+			Common::String text = actionList->_messages[0];
 			if (_graphics->_longWinInFront)
 				_graphics->longDrawMessage(text);
 			else
@@ -319,7 +319,7 @@ void LabEngine::doActions(Action *actionList, CloseDataPtr *closePtrList) {
 
 		case CSHOWMESSAGE:
 			if (!*closePtrList) {
-				Common::String text = Common::String((char *)actionList->_data);
+				Common::String text = actionList->_messages[0];
 				_graphics->_doNotDrawMessage = false;
 				_graphics->drawMessage(text);
 				_graphics->_doNotDrawMessage = true;
@@ -328,10 +328,10 @@ void LabEngine::doActions(Action *actionList, CloseDataPtr *closePtrList) {
 			break;
 
 		case SHOWMESSAGES: {
-				char **str = (char **)actionList->_data;
-				_graphics->_doNotDrawMessage = false;
-				_graphics->drawMessage(Common::String(str[_utils->getRandom(actionList->_param1)]));
-				_graphics->_doNotDrawMessage = true;
+			Common::String *str = actionList->_messages;
+			_graphics->_doNotDrawMessage = false;
+			_graphics->drawMessage(str[_utils->getRandom(actionList->_param1)]);
+			_graphics->_doNotDrawMessage = true;
 			}
 			break;
 
@@ -404,7 +404,7 @@ void LabEngine::doActions(Action *actionList, CloseDataPtr *closePtrList) {
 			break;
 
 		case CHANGEMUSIC:
-			_music->changeMusic((const char *)actionList->_data);
+			_music->changeMusic(actionList->_messages[0]);
 			_music->setMusicReset(false);
 			break;
 

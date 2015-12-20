@@ -258,7 +258,7 @@ void Music::checkRoomMusic() {
 /**
  * Changes the background music to something else.
  */
-void Music::changeMusic(const char *filename) {
+void Music::changeMusic(const Common::String filename) {
 	if (!_tFile) {
 		_tFile = _file;
 		_oldMusicOn = _musicOn;
@@ -268,7 +268,7 @@ void Music::changeMusic(const char *filename) {
 			_tLeftInFile = _leftInFile;
 	}
 
-	_file = _vm->_resource->openDataFile(filename);
+	_file = _vm->_resource->openDataFile(filename.c_str());
 	// turn music off
 	_musicOn = true;
 	setMusic(false);
