@@ -175,7 +175,7 @@ void TilePuzzle::changeTile(uint16 col, uint16 row) {
 			// unlocked combination
 			_vm->_conditions->inclElement(BRICKOPEN);
 			_vm->_anim->_doBlack = true;
-			_vm->_graphics->readPict("p:Up/BDOpen", true);
+			_vm->_graphics->readPict("p:Up/BDOpen");
 		}
 	}
 }
@@ -254,7 +254,7 @@ void TilePuzzle::doTile(bool showsolution) {
 void TilePuzzle::showTile(const Common::String filename, bool showSolution) {
 	_vm->_anim->_doBlack = true;
 	_vm->_anim->_noPalChange = true;
-	_vm->_graphics->readPict(filename, true);
+	_vm->_graphics->readPict(filename);
 	_vm->_anim->_noPalChange = false;
 	_vm->_graphics->blackScreen();
 
@@ -379,10 +379,10 @@ void TilePuzzle::doCombination() {
 /**
  * Reads in a backdrop picture.
  */
-void TilePuzzle::showCombination(const char *filename) {
+void TilePuzzle::showCombination(const Common::String filename) {
 	_vm->_anim->_doBlack = true;
 	_vm->_anim->_noPalChange = true;
-	_vm->_graphics->readPict(filename, true);
+	_vm->_graphics->readPict(filename);
 	_vm->_anim->_noPalChange = false;
 
 	_vm->_graphics->blackScreen();
