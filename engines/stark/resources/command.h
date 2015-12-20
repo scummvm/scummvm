@@ -78,7 +78,7 @@ public:
 		kFadeScene = 20,
 
 		kLocationGoToNewCD = 22,
-
+		kGameEnd = 23,
 		kInventoryOpen = 24,
 
 		kItem3DPlaceOn = 81,
@@ -206,6 +206,7 @@ protected:
 	Command *opGoto2DLocation(const Common::String &level, const Common::String &location);
 	Command *opRumbleScene(int32 unknown1, int32 unknown2);
 	Command *opFadeScene(int32 unknown1, int32 unknown2, int32 unknown3);
+	Command *opGameEnd();
 	Command *opInventoryOpen(bool open);
 	Command *opItem3DPlaceOn(const ResourceReference &itemRef, const ResourceReference &targetRef);
 	Command *opItem3DWalkTo(Script *script, const ResourceReference &itemRef, const ResourceReference &targetRef, bool suspend);

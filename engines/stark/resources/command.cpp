@@ -104,6 +104,8 @@ Command *Command::execute(uint32 callMode, Script *script) {
 		return opRumbleScene(_arguments[1].intValue, _arguments[2].intValue);
 	case kFadeScene:
 		return opFadeScene(_arguments[1].intValue, _arguments[2].intValue, _arguments[3].intValue);
+	case kGameEnd:
+		return opGameEnd();
 	case kInventoryOpen:
 		return opInventoryOpen(_arguments[1].intValue);
 	case kItem3DPlaceOn:
@@ -404,6 +406,13 @@ Math::Vector3d Command::getObjectPosition(const ResourceReference &targetRef, in
 	}
 
 	return position;
+}
+
+Command *Command::opGameEnd() {
+	// TODO: Display the main menu instead of exiting
+	StarkUserInterface->notifyShouldExit();
+
+	return nextCommand();
 }
 
 Command *Command::opInventoryOpen(bool open) {
