@@ -560,13 +560,13 @@ void Design::drawThickLine (int x1, int y1, int x2, int y2, int thick, int color
 	if (dx == 0) {
 		if (y1 > y2)
 			SWAP(y1, y2);
-		Common::Rect r(x1, y1, x1 + thick, y2);
+		Common::Rect r(x1, y1, x1 + thick - 1, y2);
 		drawFilledRect(r, color, plotProc, data);
 		return;
 	} else if (dy == 0) {
 		if (x1 > x2)
 			SWAP(x1, x2);
-		Common::Rect r(x1, y1, x2, y1 + thick);
+		Common::Rect r(x1, y1, x2, y1 + thick - 1);
 		drawFilledRect(r, color, plotProc, data);
 		return;
 	}
