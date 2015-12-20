@@ -50,7 +50,7 @@ public:
 	virtual ~TilePuzzle();
 
 	void mouseTile(Common::Point pos);
-	void showTile(const char *filename, bool showSolution);
+	void showTile(const Common::String filename, bool showSolution);
 	void mouseCombination(Common::Point pos);
 	void showCombination(const char *filename);
 	void save(Common::OutSaveFile *file);

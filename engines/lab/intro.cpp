@@ -214,7 +214,7 @@ void Intro::nReadPict(const Common::String filename, bool playOnce) {
 
 	_vm->_anim->_doBlack = _introDoBlack;
 	_vm->_anim->stopDiffEnd();
-	_vm->_graphics->readPict(finalFileName.c_str(), playOnce);
+	_vm->_graphics->readPict(finalFileName, playOnce);
 }
 
 void Intro::introSequence() {
@@ -228,12 +228,12 @@ void Intro::introSequence() {
 	_vm->_anim->_doBlack = true;
 
 	if (_vm->getPlatform() == Common::kPlatformDOS) {
-		nReadPict("EA0", true);
-		nReadPict("EA1", true);
-		nReadPict("EA2", true);
-		nReadPict("EA3", true);
+		nReadPict("EA0");
+		nReadPict("EA1");
+		nReadPict("EA2");
+		nReadPict("EA3");
 	} else if (_vm->getPlatform() == Common::kPlatformWindows) {
-		nReadPict("WYRMKEEP", true);
+		nReadPict("WYRMKEEP");
 		// Wait 4 seconds
 		for (uint16 i = 0; i < 4 * 1000 / 10; i++) {
 			introEatMessages();
@@ -252,9 +252,9 @@ void Intro::introSequence() {
 
 	_vm->_anim->_noPalChange = true;
 	if (_vm->getPlatform() == Common::kPlatformDOS)
-		nReadPict("TNDcycle.pic", true);
+		nReadPict("TNDcycle.pic");
 	else
-		nReadPict("TNDcycle2.pic", true);
+		nReadPict("TNDcycle2.pic");
 	_vm->_anim->_noPalChange = false;
 
 	_vm->_graphics->_fadePalette = palette;
@@ -291,24 +291,24 @@ void Intro::introSequence() {
 	_vm->_graphics->blackAllScreen();
 	_vm->_music->updateMusic();
 
-	nReadPict("Title.A", true);
-	nReadPict("AB", true);
+	nReadPict("Title.A");
+	nReadPict("AB");
 	musicDelay();
-	nReadPict("BA", true);
-	nReadPict("AC", true);
-	musicDelay();
-
-	if (_vm->getPlatform() == Common::kPlatformWindows)
-		musicDelay(); // more credits on this page now
-
-	nReadPict("CA", true);
-	nReadPict("AD", true);
+	nReadPict("BA");
+	nReadPict("AC");
 	musicDelay();
 
 	if (_vm->getPlatform() == Common::kPlatformWindows)
 		musicDelay(); // more credits on this page now
 
-	nReadPict("DA", true);
+	nReadPict("CA");
+	nReadPict("AD");
+	musicDelay();
+
+	if (_vm->getPlatform() == Common::kPlatformWindows)
+		musicDelay(); // more credits on this page now
+
+	nReadPict("DA");
 	musicDelay();
 
 	_vm->_music->updateMusic();
@@ -318,7 +318,7 @@ void Intro::introSequence() {
 	TextFont *msgFont = _vm->_resource->getFont("F:Map.fon");
 
 	_vm->_anim->_noPalChange = true;
-	nReadPict("Intro.1", true);
+	nReadPict("Intro.1");
 	_vm->_anim->_noPalChange = false;
 
 	for (uint16 i = 0; i < 16; i++) {
@@ -337,28 +337,28 @@ void Intro::introSequence() {
 	_vm->_music->updateMusic();
 
 	_introDoBlack = true;
-	nReadPict("Station1", true);
+	nReadPict("Station1");
 	doPictText("i.3", msgFont, false);
 
-	nReadPict("Station2", true);
+	nReadPict("Station2");
 	doPictText("i.4", msgFont, false);
 
-	nReadPict("Stiles4", true);
+	nReadPict("Stiles4");
 	doPictText("i.5", msgFont, false);
 
-	nReadPict("Stiles3", true);
+	nReadPict("Stiles3");
 	doPictText("i.6", msgFont, false);
 
 	if (_vm->getPlatform() == Common::kPlatformWindows)
-		nReadPict("Platform2", true);
+		nReadPict("Platform2");
 	else
-		nReadPict("Platform", true);
+		nReadPict("Platform");
 	doPictText("i.7", msgFont, false);
 
-	nReadPict("Subway.1", true);
+	nReadPict("Subway.1");
 	doPictText("i.8", msgFont, false);
 
-	nReadPict("Subway.2", true);
+	nReadPict("Subway.2");
 
 	doPictText("i.9", msgFont, false);
 	doPictText("i.10", msgFont, false);
@@ -380,30 +380,30 @@ void Intro::introSequence() {
 	doPictText("i.13", msgFont, false);
 
 	_introDoBlack = false;
-	nReadPict("Daed0", true);
+	nReadPict("Daed0");
 	doPictText("i.14", msgFont, false);
 
-	nReadPict("Daed1", true);
+	nReadPict("Daed1");
 	doPictText("i.15", msgFont, false);
 
-	nReadPict("Daed2", true);
+	nReadPict("Daed2");
 	doPictText("i.16", msgFont, false);
 	doPictText("i.17", msgFont, false);
 	doPictText("i.18", msgFont, false);
 
-	nReadPict("Daed3", true);
+	nReadPict("Daed3");
 	doPictText("i.19", msgFont, false);
 	doPictText("i.20", msgFont, false);
 
-	nReadPict("Daed4", true);
+	nReadPict("Daed4");
 	doPictText("i.21", msgFont, false);
 
-	nReadPict("Daed5", true);
+	nReadPict("Daed5");
 	doPictText("i.22", msgFont, false);
 	doPictText("i.23", msgFont, false);
 	doPictText("i.24", msgFont, false);
 
-	nReadPict("Daed6", true);
+	nReadPict("Daed6");
 	doPictText("i.25", msgFont, false);
 	doPictText("i.26", msgFont, false);
 
@@ -412,22 +412,22 @@ void Intro::introSequence() {
 	doPictText("i.28", msgFont, false);
 	_vm->_anim->stopDiffEnd();
 
-	nReadPict("Daed8", true);
+	nReadPict("Daed8");
 	doPictText("i.29", msgFont, false);
 	doPictText("i.30", msgFont, false);
 
-	nReadPict("Daed9", true);
+	nReadPict("Daed9");
 	doPictText("i.31", msgFont, false);
 	doPictText("i.32", msgFont, false);
 	doPictText("i.33", msgFont, false);
 
-	nReadPict("Daed9a", true);
-	nReadPict("Daed10", true);
+	nReadPict("Daed9a");
+	nReadPict("Daed10");
 	doPictText("i.34", msgFont, false);
 	doPictText("i.35", msgFont, false);
 	doPictText("i.36", msgFont, false);
 
-	nReadPict("SubX", true);
+	nReadPict("SubX");
 
 	if (_quitIntro) {
 		_vm->_graphics->setPen(0);

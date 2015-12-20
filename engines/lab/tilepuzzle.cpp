@@ -251,7 +251,7 @@ void TilePuzzle::doTile(bool showsolution) {
 /**
  * Reads in a backdrop picture.
  */
-void TilePuzzle::showTile(const char *filename, bool showSolution) {
+void TilePuzzle::showTile(const Common::String filename, bool showSolution) {
 	_vm->_anim->_doBlack = true;
 	_vm->_anim->_noPalChange = true;
 	_vm->_graphics->readPict(filename, true);
