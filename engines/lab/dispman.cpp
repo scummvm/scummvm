@@ -105,8 +105,11 @@ void DisplayMan::readPict(const Common::String filename, bool playOnce, bool onl
 }
 
 void DisplayMan::freePict() {
-	delete _curBitmap;
-	_curBitmap = nullptr;
+	if (_curBitmap) {
+		_curBitmap->close();
+		delete _curBitmap;
+		_curBitmap = nullptr;
+	}
 }
 
 Common::String DisplayMan::getWord(const char *mainBuffer) {
