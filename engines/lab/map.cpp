@@ -56,9 +56,6 @@ enum MapFloor {
 	kFloorCarnival
 };
 
-/**
- * Loads in the map data.
- */
 void LabEngine::loadMapData() {
 	Common::File *mapImages = _resource->openDataFile("P:MapImage");
 
@@ -134,9 +131,6 @@ void LabEngine::freeMapData() {
 	_maps = nullptr;
 }
 
-/**
- * Figures out what a room's coordinates should be.
- */
 Common::Rect LabEngine::roomCoords(uint16 curRoom) {
 	Image *curRoomImg = nullptr;
 
@@ -173,9 +167,6 @@ Common::Rect LabEngine::roomCoords(uint16 curRoom) {
 	return Common::Rect(x1, y1, x2, y2);
 }
 
-/**
- * Draws a room map.
- */
 void LabEngine::drawRoomMap(uint16 curRoom, bool drawMarkFl) {
 	uint16 drawX, drawY, offset;
 
@@ -307,9 +298,6 @@ void LabEngine::drawRoomMap(uint16 curRoom, bool drawMarkFl) {
 		_imgMapX[_direction]->drawImage(drawX, drawY);
 }
 
-/**
- * Checks if a floor has been visited.
- */
 bool LabEngine::floorVisited(uint16 floorNum) {
 	for (uint16 i = 1; i <= _maxRooms; i++) {
 		if ((_maps[i]._pageNumber == floorNum) && _roomsFound->in(i) && _maps[i]._x)
@@ -319,10 +307,6 @@ bool LabEngine::floorVisited(uint16 floorNum) {
 	return false;
 }
 
-/**
- * Returns the floor to show when the up arrow is pressed
- * Note: The original did not show all the visited floors, but we do
- */
 uint16 LabEngine::getUpperFloor(uint16 floorNum) {
 	if ((floorNum == kFloorCarnival) || (floorNum == kFloorNone))
 		return kFloorNone;
@@ -334,10 +318,6 @@ uint16 LabEngine::getUpperFloor(uint16 floorNum) {
 	return kFloorNone;
 }
 
-/**
- * Returns the floor to show when the down arrow is pressed
- * Note: The original did not show all the visited floors, but we do
- */
 uint16 LabEngine::getLowerFloor(uint16 floorNum) {
 	if ((floorNum == kFloorLower) || (floorNum == kFloorNone))
 		return kFloorNone;
@@ -349,9 +329,6 @@ uint16 LabEngine::getLowerFloor(uint16 floorNum) {
 	return kFloorNone;
 }
 
-/**
- * Draws the map
- */
 void LabEngine::drawMap(uint16 curRoom, uint16 curMsg, uint16 floorNum, bool fadeOut, bool fadeIn) {
 	_event->mouseHide();
 
@@ -413,9 +390,6 @@ void LabEngine::drawMap(uint16 curRoom, uint16 curMsg, uint16 floorNum, bool fad
 	_event->mouseShow();
 }
 
-/**
- * Processes the map.
- */
 void LabEngine::processMap(uint16 curRoom) {
 	byte place = 1;
 	uint16 curMsg = curRoom;
@@ -570,9 +544,6 @@ void LabEngine::processMap(uint16 curRoom) {
 	}
 }
 
-/**
- * Does the map processing.
- */
 void LabEngine::doMap(uint16 curRoom) {
 	static uint16 amigaMapPalette[] = {
 		0x0BA8, 0x0C11, 0x0A74, 0x0076,

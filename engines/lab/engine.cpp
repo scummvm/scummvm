@@ -120,9 +120,6 @@ void LabEngine::setQuarters(uint16 quarters) {
 	_inventory[kItemQuarter]._quantity = quarters;
 }
 
-/**
- * Draws the message for the room.
- */
 void LabEngine::drawRoomMessage(uint16 curInv, CloseDataPtr closePtr) {
 	if (_lastTooLong) {
 		_lastTooLong = false;
@@ -158,9 +155,6 @@ void LabEngine::freeScreens() {
 	}
 }
 
-/**
- * Permanently flips the imagery of a button.
- */
 void LabEngine::perFlipButton(uint16 buttonId) {
 	for (ButtonList::iterator button = _moveButtonList.begin(); button != _moveButtonList.end(); ++button) {
 		Button *topButton = *button;
@@ -180,9 +174,6 @@ void LabEngine::perFlipButton(uint16 buttonId) {
 	}
 }
 
-/**
- * Eats all the available messages.
- */
 void LabEngine::eatMessages() {
 	IntuiMessage *msg;
 
@@ -191,9 +182,6 @@ void LabEngine::eatMessages() {
 	} while (msg && !g_engine->shouldQuit());
 }
 
-/**
- * Checks whether the close up is one of the special case closeups.
- */
 bool LabEngine::doCloseUp(CloseDataPtr closePtr) {
 	if (!closePtr)
 		return false;
@@ -258,9 +246,6 @@ bool LabEngine::doCloseUp(CloseDataPtr closePtr) {
 	return true;
 }
 
-/**
- * Gets the current inventory name.
- */
 Common::String LabEngine::getInvName(uint16 curInv) {
 	if (_mainDisplay)
 		return _inventory[curInv]._bitmapName;
@@ -288,9 +273,6 @@ Common::String LabEngine::getInvName(uint16 curInv) {
 	return _inventory[curInv]._bitmapName;
 }
 
-/**
- * Turns the interface off.
- */
 void LabEngine::interfaceOff() {
 	if (!_interfaceOff) {
 		_event->attachButtonList(nullptr);
@@ -299,9 +281,6 @@ void LabEngine::interfaceOff() {
 	}
 }
 
-/**
- * Turns the interface on.
- */
 void LabEngine::interfaceOn() {
 	if (_interfaceOff) {
 		_interfaceOff = false;
@@ -316,9 +295,6 @@ void LabEngine::interfaceOn() {
 		_event->attachButtonList(&_moveButtonList);
 }
 
-/**
- * If the user hits the "Use" button; things that can get used on themselves.
- */
 bool LabEngine::doUse(uint16 curInv) {
 	switch (curInv) {
 	case kItemMap:
@@ -385,9 +361,6 @@ bool LabEngine::doUse(uint16 curInv) {
 	}
 }
 
-/**
- * Decrements the current inventory number.
- */
 void LabEngine::decIncInv(uint16 *curInv, bool decreaseFl) {
 	int8 step = (decreaseFl) ? -1 : 1;
 	uint newInv = *curInv + step;
@@ -417,9 +390,6 @@ void LabEngine::decIncInv(uint16 *curInv, bool decreaseFl) {
 	}
 }
 
-/**
- * The main game loop.
- */
 void LabEngine::mainGameLoop() {
 	uint16 actionMode = 4;
 	uint16 curInv = kItemMap;
@@ -1148,9 +1118,6 @@ void LabEngine::go() {
 	_music->freeMusic();
 }
 
-/**
- * New code to allow quick(er) return navigation in game.
- */
 int LabEngine::followCrumbs() {
 	// NORTH, SOUTH, EAST, WEST
 	int movement[4][4] = {

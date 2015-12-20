@@ -47,9 +47,6 @@ namespace Lab {
 #define NONEWS      135
 #define NOCLEAN     152
 
-/**
- * Does the things to properly set up the detective notes.
- */
 void LabEngine::doNotes() {
 	TextFont *noteFont = _resource->getFont("F:Note.fon");
 	Common::String noteText = _resource->getText("Lab:Rooms/Notes");
@@ -60,10 +57,6 @@ void LabEngine::doNotes() {
 	_graphics->closeFont(&noteFont);
 }
 
-/**
- * Does the things to properly set up the old west newspaper.  Assumes that
- * OpenHiRes already called.
- */
 void LabEngine::doWestPaper() {
 	TextFont *paperFont = _resource->getFont("F:News22.fon");
 	Common::String paperText = _resource->getText("Lab:Rooms/Date");
@@ -100,9 +93,6 @@ void LabEngine::doWestPaper() {
 	_graphics->setPalette(_anim->_diffPalette, 256);
 }
 
-/**
- * Loads in the data for the journal.
- */
 void LabEngine::loadJournalData() {
 	if (_journalFont)
 		_graphics->closeFont(&_journalFont);
@@ -158,9 +148,6 @@ void LabEngine::loadJournalData() {
 	_screenImage->_imageData = _graphics->getCurrentDrawingBuffer();
 }
 
-/**
- * Draws the text to the back journal screen to the appropriate Page number
- */
 void LabEngine::drawJournalText() {
 	uint16 drawingToPage = 1;
 	int charsDrawn = 0;
@@ -196,9 +183,6 @@ void LabEngine::drawJournalText() {
 	_lastPage = (*curText == 0);
 }
 
-/**
- * Does the turn page wipe.
- */
 void LabEngine::turnPage(bool fromLeft) {
 	if (fromLeft) {
 		for (int i = 0; i < _graphics->_screenWidth; i += 8) {
@@ -217,9 +201,6 @@ void LabEngine::turnPage(bool fromLeft) {
 	}
 }
 
-/**
- * Draws the journal from page x.
- */
 void LabEngine::drawJournal(uint16 wipenum, bool needFade) {
 	_event->mouseHide();
 	_music->updateMusic();
@@ -244,9 +225,6 @@ void LabEngine::drawJournal(uint16 wipenum, bool needFade) {
 	_event->mouseShow();
 }
 
-/**
- * Processes user input.
- */
 void LabEngine::processJournal() {
 	while (1) {
 		// Make sure we check the music at least after every message
@@ -285,9 +263,6 @@ void LabEngine::processJournal() {
 	}
 }
 
-/**
- * Does the journal processing.
- */
 void LabEngine::doJournal() {
 	_graphics->blackAllScreen();
 	_lastPage = false;
@@ -319,9 +294,6 @@ void LabEngine::doJournal() {
 	_graphics->blackScreen();
 }
 
-/**
- * Draws the text for the monitor.
- */
 void LabEngine::drawMonText(char *text, TextFont *monitorFont, Common::Rect textRect, bool isinteractive) {
 	uint16 drawingToPage = 0, yspacing = 0;
 	int charsDrawn = 0;
@@ -379,9 +351,6 @@ void LabEngine::drawMonText(char *text, TextFont *monitorFont, Common::Rect text
 	_event->mouseShow();
 }
 
-/**
- * Processes user input.
- */
 void LabEngine::processMonitor(char *ntext, TextFont *monitorFont, bool isInteractive, Common::Rect textRect) {
 	Common::String startFileName = _monitorTextFilename;
 	CloseDataPtr startClosePtr = _closeDataPtr, lastClosePtr[10];
@@ -474,9 +443,6 @@ void LabEngine::processMonitor(char *ntext, TextFont *monitorFont, bool isIntera
 	}
 }
 
-/**
- * Does what's necessary for the monitor.
- */
 void LabEngine::doMonitor(Common::String background, Common::String textfile, bool isinteractive, Common::Rect textRect) {
 	Common::Rect scaledRect = _utils->vgaRectScale(textRect.left, textRect.top, textRect.right, textRect.bottom);
 	_monitorTextFilename = textfile;

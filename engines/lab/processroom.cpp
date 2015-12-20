@@ -44,9 +44,6 @@ namespace Lab {
 
 #define NOFILE         "no file"
 
-/**
- * Checks whether all the conditions in a condition list are met.
- */
 bool LabEngine::checkConditions(int16 *condition) {
 	if (!condition)
 		return true;
@@ -65,9 +62,6 @@ bool LabEngine::checkConditions(int16 *condition) {
 	return res;
 }
 
-/**
- * Gets the current ViewDataPointer.
- */
 ViewData *LabEngine::getViewData(uint16 roomNum, uint16 direction) {
 	if (_rooms[roomNum]._roomMsg == "")
 		_resource->readViews(roomNum);
@@ -84,9 +78,6 @@ ViewData *LabEngine::getViewData(uint16 roomNum, uint16 direction) {
 	return view;
 }
 
-/**
- * Gets an object, if any, from the user's click on the screen.
- */
 CloseData *LabEngine::getObject(Common::Point pos, CloseDataPtr closePtr) {
 	CloseDataPtr wrkClosePtr;
 	if (!closePtr)
@@ -106,12 +97,6 @@ CloseData *LabEngine::getObject(Common::Point pos, CloseDataPtr closePtr) {
 	return nullptr;
 }
 
-/**
- * Goes through the list of closeups to find a match.
- * NYI: Known bug here.  If there are two objects that have closeups, and
- *      some of the closeups have the same hit boxes, then this returns the
- *      first occurrence of the object with the same hit box.
- */
 CloseDataPtr LabEngine::findClosePtrMatch(CloseDataPtr closePtr, CloseDataPtr closePtrList) {
 	CloseDataPtr resClosePtr;
 
@@ -132,9 +117,6 @@ CloseDataPtr LabEngine::findClosePtrMatch(CloseDataPtr closePtr, CloseDataPtr cl
 	return nullptr;
 }
 
-/**
- * Returns the current picture name.
- */
 Common::String LabEngine::getPictName(CloseDataPtr *closePtrList) {
 	ViewData *viewPtr = getViewData(_roomNum, _direction);
 
@@ -148,9 +130,6 @@ Common::String LabEngine::getPictName(CloseDataPtr *closePtrList) {
 	return viewPtr->_graphicName;
 }
 
-/**
- * Draws the current direction to the screen.
- */
 void LabEngine::drawDirection(CloseDataPtr closePtr) {
 	if (closePtr && closePtr->_message != "") {
 		_graphics->drawMessage(closePtr->_message.c_str());
@@ -176,9 +155,6 @@ void LabEngine::drawDirection(CloseDataPtr closePtr) {
 	_graphics->drawMessage(message.c_str());
 }
 
-/**
- * process a arrow button movement.
- */
 uint16 LabEngine::processArrow(uint16 curDirection, uint16 arrow) {
 	if (arrow == 1) { // Forward
 		uint16 room = _rooms[_roomNum]._doors[curDirection];
@@ -210,9 +186,6 @@ uint16 LabEngine::processArrow(uint16 curDirection, uint16 arrow) {
 	return curDirection;
 }
 
-/**
- * Sets the current close up data.
- */
 void LabEngine::setCurrentClose(Common::Point pos, CloseDataPtr *closePtrList, bool useAbsoluteCoords) {
 	CloseDataPtr closePtr;
 
@@ -237,9 +210,6 @@ void LabEngine::setCurrentClose(Common::Point pos, CloseDataPtr *closePtrList, b
 	}
 }
 
-/**
- * Takes the currently selected item.
- */
 bool LabEngine::takeItem(Common::Point pos, CloseDataPtr *closePtrList) {
 	CloseDataPtr closePtr;
 
@@ -265,9 +235,6 @@ bool LabEngine::takeItem(Common::Point pos, CloseDataPtr *closePtrList) {
 	return false;
 }
 
-/**
- * Processes the action list.
- */
 void LabEngine::doActions(Action *actionList, CloseDataPtr *closePtrList) {
 	while (actionList) {
 		_music->updateMusic();
@@ -539,9 +506,6 @@ void LabEngine::doActions(Action *actionList, CloseDataPtr *closePtrList) {
 	}
 }
 
-/**
- * Does the work for doActionRule.
- */
 bool LabEngine::doActionRuleSub(int16 action, int16 roomNum, CloseDataPtr closePtr, CloseDataPtr *setCloseList, bool allowDefaults) {
 	action++;
 
@@ -571,9 +535,6 @@ bool LabEngine::doActionRuleSub(int16 action, int16 roomNum, CloseDataPtr closeP
 	return false;
 }
 
-/**
- * Goes through the rules if an action is taken.
- */
 bool LabEngine::doActionRule(Common::Point pos, int16 action, int16 roomNum, CloseDataPtr *closePtrList) {
 	if (roomNum)
 		_newFileName = NOFILE;
@@ -594,9 +555,6 @@ bool LabEngine::doActionRule(Common::Point pos, int16 action, int16 roomNum, Clo
 	return false;
 }
 
-/**
- * Does the work for doActionRule.
- */
 bool LabEngine::doOperateRuleSub(int16 itemNum, int16 roomNum, CloseDataPtr closePtr, CloseDataPtr *setCloseList, bool allowDefaults) {
 	if (closePtr)
 		if (closePtr->_closeUpType > 0) {
@@ -622,9 +580,6 @@ bool LabEngine::doOperateRuleSub(int16 itemNum, int16 roomNum, CloseDataPtr clos
 	return false;
 }
 
-/**
- * Goes through the rules if the user tries to operate an item on an object.
- */
 bool LabEngine::doOperateRule(Common::Point pos, int16 ItemNum, CloseDataPtr *closePtrList) {
 	_newFileName = NOFILE;
 	CloseDataPtr closePtr = getObject(pos, *closePtrList);
@@ -653,9 +608,6 @@ bool LabEngine::doOperateRule(Common::Point pos, int16 ItemNum, CloseDataPtr *cl
 	return false;
 }
 
-/**
- * Goes through the rules if the user tries to go forward.
- */
 bool LabEngine::doGoForward(CloseDataPtr *closePtrList) {
 	RuleList *rules = _rooms[_roomNum]._rules;
 
@@ -672,9 +624,6 @@ bool LabEngine::doGoForward(CloseDataPtr *closePtrList) {
 	return false;
 }
 
-/**
- * Goes through the rules if the user tries to turn.
- */
 bool LabEngine::doTurn(uint16 from, uint16 to, CloseDataPtr *closePtrList) {
 	from++;
 	to++;
@@ -695,9 +644,6 @@ bool LabEngine::doTurn(uint16 from, uint16 to, CloseDataPtr *closePtrList) {
 	return false;
 }
 
-/**
- * Goes through the rules if the user tries to go to the main view
- */
 bool LabEngine::doMainView(CloseDataPtr *closePtrList) {
 	RuleList *rules = _rooms[_roomNum]._rules;
 	for (RuleList::iterator rule = rules->begin(); rule != rules->end(); ++rule) {
