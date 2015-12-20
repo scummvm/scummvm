@@ -164,6 +164,10 @@ bool UserInterface::isInGameScreen() const {
 	return _currentScreen == kScreenGame;
 }
 
+bool UserInterface::isInventoryOpen() const {
+	return _inventoryWindow->isVisible();
+}
+
 void UserInterface::skipFMV() {
 	if (_currentScreen == kScreenFMV) {
 		_fmvPlayer->stop();

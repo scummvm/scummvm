@@ -221,6 +221,8 @@ Command *Command::execute(uint32 callMode, Script *script) {
 		return opIsAnimAtTime(_arguments[2].referenceValue, _arguments[3].intValue);
 	case kIsLocation2D:
 		return opIsLocation2D();
+	case kIsInventoryOpen:
+		return opIsInventoryOpen();
 	default:
 		warning("Unimplemented command %d - %s", _subType, _name.c_str());
 		printData();
@@ -1102,6 +1104,12 @@ Command *Command::opIsLocation2D() {
 	Location *location = current->getLocation();
 
 	return nextCommandIf(!location->has3DLayer());
+}
+
+Command *Command::opIsInventoryOpen() {
+	bool invOpen = StarkUserInterface->isInventoryOpen();
+
+	return nextCommandIf(invOpen);
 }
 
 Command *Command::nextCommand() {

@@ -82,6 +82,9 @@ public:
 	/** Is the game screen currently displayed? */
 	bool isInGameScreen() const;
 
+	/** Is the inventory panel being displayed? */
+	bool isInventoryOpen() const;
+
 	/** Can the player interact with the game world? */
 	bool isInteractive() const;
 

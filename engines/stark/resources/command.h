@@ -157,7 +157,8 @@ public:
 		kIsItemNearPlace = 183,
 
 		kIsAnimAtTime = 185,
-		kIsLocation2D = 186
+		kIsLocation2D = 186,
+		kIsInventoryOpen = 187
 	};
 
 	struct Argument {
@@ -263,6 +264,7 @@ protected:
 	Command *opIsItemActivity(const ResourceReference &itemRef, int32 value);
 	Command *opIsAnimAtTime(const ResourceReference &animRef, int32 time);
 	Command *opIsLocation2D();
+	Command *opIsInventoryOpen();
 	
 	Common::Array<Argument> _arguments;
 };
