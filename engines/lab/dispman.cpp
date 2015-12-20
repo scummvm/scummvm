@@ -550,7 +550,7 @@ uint16 DisplayMan::textLength(TextFont *font, Common::String text) {
 	if (font) {
 		int numChars = text.size();
 		for (uint16 i = 0; i < numChars; i++) {
-			length += font->_widths[text[i]];
+			length += font->_widths[(byte)text[i]];
 		}
 	}
 
@@ -572,8 +572,8 @@ void DisplayMan::drawText(TextFont *tf, uint16 x, uint16 y, uint16 color, Common
 		int32 leftInSegment = _screenBytesPerPage - segmentOffset;
 		byte *vgaCur = vgaTop + segmentOffset;
 
-		if (tf->_widths[text[i]]) {
-			byte *cdata = tf->_data + tf->_offsets[text[i]];
+		if (tf->_widths[(byte)text[i]]) {
+			byte *cdata = tf->_data + tf->_offsets[(byte)text[i]];
 			uint16 bwidth = *cdata++;
 			byte *vgaTemp = vgaCur;
 			byte *vgaTempLine = vgaCur;
@@ -634,7 +634,7 @@ void DisplayMan::drawText(TextFont *tf, uint16 x, uint16 y, uint16 color, Common
 			}
 		}
 
-		x += tf->_widths[text[i]];
+		x += tf->_widths[(byte)text[i]];
 	}
 }
 
