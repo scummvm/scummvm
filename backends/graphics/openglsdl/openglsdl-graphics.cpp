@@ -194,6 +194,10 @@ OpenGLSdlGraphicsManager::OpenGLSdlGraphicsManager(uint desktopWidth, uint deskt
 }
 
 OpenGLSdlGraphicsManager::~OpenGLSdlGraphicsManager() {
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	notifyContextDestroy();
+	SDL_GL_DeleteContext(_glContext);
+#endif
 }
 
 void OpenGLSdlGraphicsManager::activateManager() {
