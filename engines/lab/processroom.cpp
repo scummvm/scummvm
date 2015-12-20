@@ -291,7 +291,7 @@ void LabEngine::doActions(Action *actionList, CloseDataPtr *closePtrList) {
 
 			if (test != _curFileName) {
 				_curFileName = test;
-				_graphics->readPict(_curFileName, true);
+				_graphics->readPict(_curFileName);
 			}
 			}
 			break;
@@ -339,7 +339,7 @@ void LabEngine::doActions(Action *actionList, CloseDataPtr *closePtrList) {
 			if (actionList->_param1 & 0x8000) {
 				// This is a Wyrmkeep Windows trial version, thus stop at this
 				// point, since we can't check for game payment status
-				_graphics->readPict(getPictName(closePtrList), true);
+				_graphics->readPict(getPictName(closePtrList));
 				actionList = nullptr;
 				GUI::MessageDialog trialMessage("This is the end of the trial version. You can play the full game using the original interpreter from Wyrmkeep");
 				trialMessage.runModal();

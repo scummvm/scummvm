@@ -448,10 +448,10 @@ void LabEngine::doMonitor(Common::String background, Common::String textfile, bo
 	_monitorTextFilename = textfile;
 
 	_graphics->blackAllScreen();
-	_graphics->readPict("P:Mon/Monitor.1", true);
-	_graphics->readPict("P:Mon/NWD1", true);
-	_graphics->readPict("P:Mon/NWD2", true);
-	_graphics->readPict("P:Mon/NWD3", true);
+	_graphics->readPict("P:Mon/Monitor.1");
+	_graphics->readPict("P:Mon/NWD1");
+	_graphics->readPict("P:Mon/NWD2");
+	_graphics->readPict("P:Mon/NWD3");
 	_graphics->blackAllScreen();
 
 	_monitorPage = 0;

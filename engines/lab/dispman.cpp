@@ -78,7 +78,7 @@ void DisplayMan::loadPict(const Common::String filename) {
 void DisplayMan::loadBackPict(const Common::String fileName, uint16 *highPal) {
 	_fadePalette = highPal;
 	_vm->_anim->_noPalChange = true;
-	readPict(fileName, true);
+	readPict(fileName);
 
 	for (uint16 i = 0; i < 16; i++) {
 		highPal[i] = ((_vm->_anim->_diffPalette[i * 3] >> 2) << 8) +

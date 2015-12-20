@@ -331,7 +331,7 @@ bool LabEngine::doUse(uint16 curInv) {
 
 		_anim->_doBlack = false;
 		_anim->_waitForEffect = true;
-		_graphics->readPict("Music:Click", true);
+		_graphics->readPict("Music:Click");
 		_anim->_waitForEffect = false;
 
 		_anim->_doBlack = false;
@@ -461,7 +461,7 @@ void LabEngine::mainGameLoop() {
 					switch (_closeDataPtr->_closeUpType) {
 					case SPECIALLOCK:
 						if (_mainDisplay)
-							_tilePuzzle->showCombination(_curFileName.c_str());
+							_tilePuzzle->showCombination(_curFileName);
 						break;
 					case SPECIALBRICK:
 					case SPECIALBRICKNOMOUSE:
@@ -469,11 +469,11 @@ void LabEngine::mainGameLoop() {
 							_tilePuzzle->showTile(_curFileName, (_closeDataPtr->_closeUpType == SPECIALBRICKNOMOUSE));
 						break;
 					default:
-						_graphics->readPict(_curFileName.c_str(), false);
+						_graphics->readPict(_curFileName, false);
 						break;
 					}
 				} else
-					_graphics->readPict(_curFileName.c_str(), false);
+					_graphics->readPict(_curFileName, false);
 
 				drawRoomMessage(curInv, _closeDataPtr);
 				forceDraw = false;
@@ -553,15 +553,15 @@ void LabEngine::mainGameLoop() {
 
 void LabEngine::showLab2Teaser() {
 	_graphics->blackAllScreen();
-	_graphics->readPict("P:End/L2In.1", true);
+	_graphics->readPict("P:End/L2In.1");
 
 	for (uint16 i = 0; i < 120; i++) {
 		_music->updateMusic();
 		waitTOF();
 	}
 
-	_graphics->readPict("P:End/L2In.9", true);
-	_graphics->readPict("P:End/Lost", true);
+	_graphics->readPict("P:End/L2In.9");
+	_graphics->readPict("P:End/Lost");
 
 	while (!_event->getMsg() && !shouldQuit()) {
 		_music->updateMusic();

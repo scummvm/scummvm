@@ -132,7 +132,7 @@ bool LabEngine::saveGame(int slot, Common::String desc) {
 
 	// Load scene pic
 	CloseDataPtr closePtr = nullptr;
-	_graphics->readPict(getPictName(&closePtr), true);
+	_graphics->readPict(getPictName(&closePtr));
 
 	writeSaveGameHeader(file, desc);
 	file->writeUint16LE(_roomNum);

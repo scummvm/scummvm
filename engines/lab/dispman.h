@@ -85,7 +85,7 @@ public:
 	/**
 	 * Reads in a picture into the display bitmap.
 	 */
-	void readPict(Common::String filename, bool playOnce, bool onlyDiffData = false, byte *memoryBuffer = nullptr, uint16 maxHeight = 0);
+	void readPict(Common::String filename, bool playOnce = true, bool onlyDiffData = false, byte *memoryBuffer = nullptr, uint16 maxHeight = 0);
 	void freePict();
 
 	/**

@@ -52,7 +52,7 @@ public:
 	void mouseTile(Common::Point pos);
 	void showTile(const Common::String filename, bool showSolution);
 	void mouseCombination(Common::Point pos);
-	void showCombination(const char *filename);
+	void showCombination(const Common::String filename);
 	void save(Common::OutSaveFile *file);
 	void load(Common::InSaveFile *file);
 
