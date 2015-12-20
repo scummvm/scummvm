@@ -119,7 +119,7 @@ private:
 	ViewData *readView(Common::File *file);
 	void freeView(ViewData *view);
 	void readStaticText();
-	Common::String translateFileName(Common::String filename);
+	Common::String translateFileName(const Common::String filename);
 
 	Common::String _staticText[48];
 };

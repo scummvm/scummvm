@@ -164,43 +164,44 @@ void Resource::freeViews(uint16 roomNum) {
 	freeRule(_vm->_rooms[roomNum]._rules);
 }
 
-Common::String Resource::translateFileName(Common::String filename) {
-	filename.toUppercase();
+Common::String Resource::translateFileName(const Common::String filename) {
+	Common::String upperFilename = filename;
+	upperFilename.toUppercase();
 	Common::String fileNameStrFinal;
 
-	if (filename.hasPrefix("P:") || filename.hasPrefix("F:")) {
+	if (upperFilename.hasPrefix("P:") || upperFilename.hasPrefix("F:")) {
 		if (_vm->_isHiRes)
 			fileNameStrFinal = "GAME/SPICT/";
 		else
 			fileNameStrFinal = "GAME/PICT/";
 
 		if (_vm->getPlatform() == Common::kPlatformAmiga) {
-			if (filename.hasPrefix("P:")) {
+			if (upperFilename.hasPrefix("P:")) {
 				fileNameStrFinal = "PICT/";
 			} else {
 				fileNameStrFinal = "LABFONTS/";
-				filename += "T";	// all the Amiga fonts have a ".FONT" suffix
+				upperFilename += "T";	// all the Amiga fonts have a ".FONT" suffix
 			}
 		}
-	} else if (filename.hasPrefix("LAB:")) {
+	} else if (upperFilename.hasPrefix("LAB:")) {
 		if (_vm->getPlatform() != Common::kPlatformAmiga)
 			fileNameStrFinal = "GAME/";
-	} else if (filename.hasPrefix("MUSIC:")) {
+	} else if (upperFilename.hasPrefix("MUSIC:")) {
 		if (_vm->getPlatform() != Common::kPlatformAmiga)
 			fileNameStrFinal = "GAME/MUSIC/";
 		else
 			fileNameStrFinal = "MUSIC/";
 	}
 
-	if (filename.contains(':')) {
-		while (filename[0] != ':') {
-			filename.deleteChar(0);
+	if (upperFilename.contains(':')) {
+		while (upperFilename[0] != ':') {
+			upperFilename.deleteChar(0);
 		}
 
-		filename.deleteChar(0);
+		upperFilename.deleteChar(0);
 	}
 
-	fileNameStrFinal += filename;
+	fileNameStrFinal += upperFilename;
 
 	return fileNameStrFinal;
 }
