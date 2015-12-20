@@ -1720,7 +1720,17 @@ if test "$have_gcc" = yes; then
 	_cxx_minor=`gcc_get_define __GNUC_MINOR__`
 	cxx_version="`( $CXX -dumpversion ) 2>&1`"
 
-	if test "$_cxx_major" -eq 2 && test "$_cxx_minor" -ge 95 || \
+	if test "$have_clang" = yes; then
+		# Clang sets a gcc version number for compatibility.
+		# We keep that as _cxx_minor/_cxx_major for later
+		# compiler version checks.
+
+		# For the version reported in the configure log (cxx_version),
+		# we get the actual clang version.
+		cxx_version=`gcc_get_define __clang_version__`
+		cxx_version="`echo "${cxx_version}" | sed -e 's/"\([^ ]\+\) .*/\1/'`"
+		cxx_version="clang $cxx_version, ok"
+	elif test "$_cxx_major" -eq 2 && test "$_cxx_minor" -ge 95 || \
 	   test "$_cxx_major" -gt 2 ; then
 		cxx_version="$cxx_version, ok"
 		cxx_verc_fail=no
