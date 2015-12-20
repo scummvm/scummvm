@@ -89,9 +89,6 @@ void DisplayMan::loadBackPict(const char *fileName, uint16 *highPal) {
 	_vm->_anim->_noPalChange = false;
 }
 
-/**
- * Reads in a picture into the display bitmap.
- */
 void DisplayMan::readPict(Common::String filename, bool playOnce, bool onlyDiffData, byte *memoryBuffer, uint16 maxHeight) {
 	_vm->_anim->stopDiff();
 
@@ -115,13 +112,6 @@ void DisplayMan::freePict() {
 	_curBitmap = nullptr;
 }
 
-//---------------------------------------------------------------------------
-//------------ Does all the text rendering to the message boxes. ------------
-//---------------------------------------------------------------------------
-
-/**
- * Extracts the first word from a string.
- */
 Common::String DisplayMan::getWord(const char *mainBuffer) {
 	Common::String result;
 
@@ -131,10 +121,6 @@ Common::String DisplayMan::getWord(const char *mainBuffer) {
 	return result;
 }
 
-/**
- * Gets a line of text for flowText; makes sure that its length is less than
- * or equal to the maximum width.
- */
 Common::String DisplayMan::getLine(TextFont *tf, const char **mainBuffer, uint16 lineWidth) {
 	uint16 curWidth = 0;
 	Common::String result;
@@ -163,24 +149,8 @@ Common::String DisplayMan::getLine(TextFont *tf, const char **mainBuffer, uint16
 	return result;
 }
 
-/**
- * Dumps a chunk of text to an arbitrary box; flows it within that box and
- * optionally centers it. Returns the number of characters that were
- * processed.
- * Note: Every individual word MUST be int16 enough to fit on a line, and
- * each line less than 255 characters.
- */
-int DisplayMan::flowText(
-			TextFont *font,        // the TextAttr pointer
-			int16 spacing,         // How much vertical spacing between the lines
-			byte penColor,         // pen number to use for text
-			byte backPen,          // the background color
-			bool fillBack,         // Whether to fill the background
-			bool centerh,          // Whether to center the text horizontally
-			bool centerv,          // Whether to center the text vertically
-			bool output,           // Whether to output any text
-			Common::Rect textRect,	// Cords
-			const char *str) {     // The text itself
+int DisplayMan::flowText(TextFont *font, int16 spacing, byte penColor, byte backPen,
+			bool fillBack, bool centerh, bool centerv, bool output, Common::Rect textRect, const char *str) {
 	if (fillBack) {
 		setPen(backPen);
 		rectFill(textRect);
@@ -233,20 +203,9 @@ int DisplayMan::flowText(
 	return len;
 }
 
-/**
- * Calls flowText, but flows it to memory.  Same restrictions as flowText.
- */
-int DisplayMan::flowTextToMem(Image *destIm,
-			TextFont *font,        // the TextAttr pointer
-			int16 spacing,         // How much vertical spacing between the lines
-			byte penColor,         // pen number to use for text
-			byte backPen,          // the background color
-			bool fillBack,         // Whether to fill the background
-			bool centerh,          // Whether to center the text horizontally
-			bool centerv,          // Whether to center the text vertically
-			bool output,           // Whether to output any text
-			Common::Rect textRect,  // Cords
-			const char *str) {     // The text itself
+int DisplayMan::flowTextToMem(Image *destIm, TextFont *font, int16 spacing, byte penColor,
+			byte backPen, bool fillBack, bool centerh, bool centerv, bool output, Common::Rect textRect,
+			const char *str) {
 	byte *saveDisplayBuffer = _currentDisplayBuffer;
 	uint32 bytesPerPage = _screenBytesPerPage;
 
@@ -260,8 +219,6 @@ int DisplayMan::flowTextToMem(Image *destIm,
 
 	return res;
 }
-
-//----- The control panel stuff -----
 
 void DisplayMan::createBox(uint16 y2) {
 	// Message box area
@@ -296,9 +253,6 @@ int DisplayMan::longDrawMessage(Common::String str) {
 	return flowText(_vm->_msgFont, 0, 1, 7, false, true, true, true, _vm->_utils->vgaRectScale(6, 155, 313, 195), str.c_str());
 }
 
-/**
- * Draws a message to the message box.
- */
 void DisplayMan::drawMessage(Common::String str) {
 	if (_doNotDrawMessage) {
 		_doNotDrawMessage = false;
@@ -324,9 +278,6 @@ void DisplayMan::drawMessage(Common::String str) {
 	}
 }
 
-/**
- * Draws the control panel display.
- */
 void DisplayMan::drawPanel() {
 	_vm->_event->mouseHide();
 
@@ -385,9 +336,6 @@ void DisplayMan::drawPanel() {
 	_vm->_event->mouseShow();
 }
 
-/**
- * Sets up the Labyrinth screens, and opens up the initial windows.
- */
 void DisplayMan::setUpScreens() {
 	EventManager *e = _vm->_event;
 	ButtonList *moveButtonList = &_vm->_moveButtonList;
@@ -445,16 +393,10 @@ void DisplayMan::setUpScreens() {
 	delete invFile;
 }
 
-/**
- * Sets the pen number to use on all the drawing operations.
- */
 void DisplayMan::setPen(byte penNum) {
 	_curPen = penNum;
 }
 
-/**
- * Fills in a rectangle.
- */
 void DisplayMan::rectFill(Common::Rect fillRect) {
 	int width = fillRect.width() + 1;
 	int height = fillRect.height() + 1;
@@ -489,16 +431,10 @@ void DisplayMan::rectFillScaled(uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
 	rectFill(_vm->_utils->vgaRectScale(x1, y1, x2, y2));
 }
 
-/**
- * Draws a horizontal line.
- */
 void DisplayMan::drawVLine(uint16 x, uint16 y1, uint16 y2) {
 	rectFill(x, y1, x, y2);
 }
 
-/**
- * Draws a vertical line.
- */
 void DisplayMan::drawHLine(uint16 x1, uint16 y, uint16 x2) {
 	rectFill(x1, y, x2, y);
 }
@@ -510,9 +446,6 @@ void DisplayMan::screenUpdate() {
 	_vm->_event->processInput();
 }
 
-/**
- * Sets up either a low-res or a high-res 256 color screen.
- */
 void DisplayMan::createScreen(bool hiRes) {
 	if (hiRes) {
 		_screenWidth  = 640;
@@ -528,10 +461,6 @@ void DisplayMan::createScreen(bool hiRes) {
 	_displayBuffer = new byte[_screenBytesPerPage];
 }
 
-/**
- * Converts an Amiga palette (up to 16 colors) to a VGA palette, then sets
- * the VGA palette.
- */
 void DisplayMan::setAmigaPal(uint16 *pal, uint16 numColors) {
 	byte vgaPal[16 * 3];
 	uint16 vgaIdx = 0;
@@ -549,17 +478,6 @@ void DisplayMan::setAmigaPal(uint16 *pal, uint16 numColors) {
 	_vm->waitTOF();
 }
 
-/**
- * Writes any number of the 256 color registers.
- * first:    the number of the first color register to write.
- * numReg:   the number of registers to write
- * buf:      a char pointer which contains the selected color registers.
- *           Each value representing a color register occupies 3 bytes in
- *           the array.  The order is red, green then blue.  The first byte
- *           in the array is the red component of the first element selected.
- *           The length of the buffer is 3 times the number of registers
- *           selected.
- */
 void DisplayMan::writeColorRegs(byte *buf, uint16 first, uint16 numReg) {
 	byte tmp[256 * 3];
 
@@ -575,9 +493,6 @@ void DisplayMan::setPalette(void *newPal, uint16 numColors) {
 		writeColorRegs((byte *)newPal, 0, numColors);
 }
 
-/**
- * Returns the base address of the current VGA display.
- */
 byte *DisplayMan::getCurrentDrawingBuffer() {
 	if (_currentDisplayBuffer)
 		return _currentDisplayBuffer;
@@ -585,9 +500,6 @@ byte *DisplayMan::getCurrentDrawingBuffer() {
 	return _displayBuffer;
 }
 
-/**
- * Overlays a region on the screen using the desired pen color.
- */
 void DisplayMan::overlayRect(uint16 penColor, uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
 	int w = x2 - x1 + 1;
 	int h = y2 - y1 + 1;
@@ -622,9 +534,6 @@ void DisplayMan::overlayRect(uint16 penColor, uint16 x1, uint16 y1, uint16 x2, u
 	}
 }
 
-/**
- * Closes a font and frees all memory associated with it.
- */
 void DisplayMan::closeFont(TextFont **font) {
 	if (*font) {
 		if ((*font)->_data)
@@ -635,9 +544,6 @@ void DisplayMan::closeFont(TextFont **font) {
 	}
 }
 
-/**
- * Returns the length of a text in the specified font.
- */
 uint16 DisplayMan::textLength(TextFont *font, Common::String text) {
 	uint16 length = 0;
 
@@ -651,16 +557,10 @@ uint16 DisplayMan::textLength(TextFont *font, Common::String text) {
 	return length;
 }
 
-/**
- * Returns the height of a specified font.
- */
 uint16 DisplayMan::textHeight(TextFont *tf) {
 	return (tf) ? tf->_height : 0;
 }
 
-/**
- * Draws the text to the screen.
- */
 void DisplayMan::drawText(TextFont *tf, uint16 x, uint16 y, uint16 color, Common::String text) {
 	byte *vgaTop = getCurrentDrawingBuffer();
 	int numChars = text.size();
@@ -738,9 +638,6 @@ void DisplayMan::drawText(TextFont *tf, uint16 x, uint16 y, uint16 color, Common
 	}
 }
 
-/**
- * Scrolls the display to black.
- */
 void DisplayMan::doScrollBlack() {
 	uint16 width = _vm->_utils->vgaScaleX(320);
 	uint16 height = _vm->_utils->vgaScaleY(149) + _vm->_utils->svgaCord(2);
@@ -833,9 +730,6 @@ void DisplayMan::copyPage(uint16 width, uint16 height, uint16 nheight, uint16 st
 	}
 }
 
-/**
- * Scrolls the display to a new picture from a black screen.
- */
 void DisplayMan::doScrollWipe(char *filename) {
 	_vm->_event->mouseHide();
 	uint16 width = _vm->_utils->vgaScaleX(320);
@@ -887,9 +781,6 @@ void DisplayMan::doScrollWipe(char *filename) {
 	_vm->_event->mouseShow();
 }
 
-/**
- * Does the scroll bounce.  Assumes bitmap already in memory.
- */
 void DisplayMan::doScrollBounce() {
 	const uint16 *newby, *newby1;
 
@@ -933,9 +824,6 @@ void DisplayMan::doScrollBounce() {
 	_vm->_event->mouseShow();
 }
 
-/**
- * Does the transporter wipe.
- */
 void DisplayMan::doTransWipe(CloseDataPtr *closePtrList, char *filename) {
 	uint16 lastY, linesLast;
 
@@ -1023,9 +911,6 @@ void DisplayMan::doTransWipe(CloseDataPtr *closePtrList, char *filename) {
 	delete[] bitMapBuffer;
 }
 
-/**
- * Does a certain number of pre-programmed wipes.
- */
 void DisplayMan::doTransition(TransitionType transitionType, CloseDataPtr *closePtrList, char *filename) {
 	switch (transitionType) {
 	case kTransitionWipe:
@@ -1053,9 +938,6 @@ void DisplayMan::doTransition(TransitionType transitionType, CloseDataPtr *close
 	}
 }
 
-/**
- * Changes the front screen to black.
- */
 void DisplayMan::blackScreen() {
 	byte pal[256 * 3];
 	memset(pal, 0, 248 * 3);
@@ -1064,18 +946,12 @@ void DisplayMan::blackScreen() {
 	g_system->delayMillis(32);
 }
 
-/**
- * Changes the front screen to white.
- */
 void DisplayMan::whiteScreen() {
 	byte pal[256 * 3];
 	memset(pal, 255, 248 * 3);
 	writeColorRegs(pal, 8, 248);
 }
 
-/**
- * Changes the entire screen to black.
-*/
 void DisplayMan::blackAllScreen() {
 	byte pal[256 * 3];
 	memset(pal, 0, 256 * 3);
@@ -1084,11 +960,6 @@ void DisplayMan::blackAllScreen() {
 	g_system->delayMillis(32);
 }
 
-/**
- * Scrolls the display in the x direction by blitting.
- * The _tempScrollData variable must be initialized to some memory, or this
- * function will fail.
- */
 void DisplayMan::scrollDisplayX(int16 dx, uint16 x1, uint16 y1, uint16 x2, uint16 y2, byte *buffer) {
 	Image im(_vm);
 	im._imageData = buffer;
@@ -1120,9 +991,6 @@ void DisplayMan::scrollDisplayX(int16 dx, uint16 x1, uint16 y1, uint16 x2, uint1
 	}
 }
 
-/**
- * Scrolls the display in the y direction by blitting.
- */
 void DisplayMan::scrollDisplayY(int16 dy, uint16 x1, uint16 y1, uint16 x2, uint16 y2, byte *buffer) {
 	Image im(_vm);
 	im._imageData = buffer;
@@ -1154,9 +1022,6 @@ void DisplayMan::scrollDisplayY(int16 dy, uint16 x1, uint16 y1, uint16 x2, uint1
 	}
 }
 
-/**
- * Does the fading of the Palette on the screen.
- */
 uint16 DisplayMan::fadeNumIn(uint16 num, uint16 res, uint16 counter) {
 	return (num - ((((int32)(15 - counter)) * ((int32)(num - res))) / 15));
 }

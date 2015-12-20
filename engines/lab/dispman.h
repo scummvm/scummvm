@@ -60,8 +60,15 @@ class DisplayMan {
 private:
 	LabEngine *_vm;
 
+	/**
+	 * Does the fading of the Palette on the screen.
+	 */
 	uint16 fadeNumIn(uint16 num, uint16 res, uint16 counter);
 	uint16 fadeNumOut(uint16 num, uint16 res, uint16 counter);
+
+	/**
+	 * Extracts the first word from a string.
+	 */
 	Common::String getWord(const char *mainBuffer);
 
 	byte _curPen;
@@ -74,66 +81,200 @@ public:
 
 	void loadPict(const char *filename);
 	void loadBackPict(const char *fileName, uint16 *highPal);
+
+	/**
+	 * Reads in a picture into the display bitmap.
+	 */
 	void readPict(Common::String filename, bool playOnce, bool onlyDiffData = false, byte *memoryBuffer = nullptr, uint16 maxHeight = 0);
 	void freePict();
+
+	/**
+	 * Scrolls the display to black.
+	 */
 	void doScrollBlack();
 	void copyPage(uint16 width, uint16 height, uint16 nheight, uint16 startline, byte *mem);
+
+	/**
+	 * Scrolls the display to a new picture from a black screen.
+	 */
 	void doScrollWipe(char *filename);
+
+	/**
+	 * Does the scroll bounce.  Assumes bitmap already in memory.
+	 */
 	void doScrollBounce();
+
+	/**
+	 * Does the transporter wipe.
+	 */
 	void doTransWipe(CloseDataPtr *closePtrList, char *filename);
+
+	/**
+	 * Does a certain number of pre-programmed wipes.
+	 */
 	void doTransition(TransitionType transitionType, CloseDataPtr *closePtrList, char *filename);
+
+	/**
+	 * Changes the front screen to black.
+	 */
 	void blackScreen();
+
+	/**
+	 * Changes the front screen to white.
+	 */
 	void whiteScreen();
+
+	/**
+	 * Changes the entire screen to black.
+	*/
 	void blackAllScreen();
 	void createBox(uint16 y2);
+
+	/**
+	 * Draws the control panel display.
+	 */
 	void drawPanel();
+
+	/**
+	 * Sets up the Labyrinth screens, and opens up the initial windows.
+	 */
 	void setUpScreens();
 	int32 longDrawMessage(Common::String str);
+
+	/**
+	 * Draws a message to the message box.
+	 */
 	void drawMessage(Common::String str);
+
+	/**
+	 * Sets the pen number to use on all the drawing operations.
+	 */
 	void setPen(byte pennum);
+
+	/**
+	 * Fills in a rectangle.
+	 */
 	void rectFill(uint16 x1, uint16 y1, uint16 x2, uint16 y2);
 	void rectFill(Common::Rect fillRect);
 	void rectFillScaled(uint16 x1, uint16 y1, uint16 x2, uint16 y2);
-	// Window text stuff
-	int flowText(TextFont *font,		// the TextAttr pointer
-				int16 spacing,			// How much vertical spacing between the lines
-				byte penColor,			// pen number to use for text
-				byte backPen,			// the background color
-				bool fillBack,			// Whether to fill the background
-				bool centerh,			// Whether to center the text horizontally
-				bool centerv,			// Whether to center the text vertically
-				bool output,			// Whether to output any text
-				Common::Rect textRect,	// Cords
-				const char *text);		// The text itself
+	/**
+	 * Dumps a chunk of text to an arbitrary box; flows it within that box and
+	 * optionally centers it. Returns the number of characters that were processed.
+	 * @note Every individual word MUST be int16 enough to fit on a line, and
+	 * each line less than 255 characters.
+	 * @param font Pointer on the font used
+	 * @param spacing How much vertical spacing between the lines
+	 * @param penColor Pen number to use for text
+	 * @param backPen Background color
+	 * @param fillBack Whether to fill the background
+	 * @param centerh Whether to center the text horizontally
+	 * @param centerv Whether to center the text vertically
+	 * @param output Whether to output any text
+	 * @param textRect Coords
+	 * @param text The text itself
+	 */
+	int flowText(TextFont *font, int16 spacing, byte penColor, byte backPen, bool fillBack,
+				bool centerh, bool centerv, bool output, Common::Rect textRect, const char *text);
 
-	int flowTextToMem(Image *destIm,
-				TextFont *font,			// the TextAttr pointer
-				int16 spacing,			// How much vertical spacing between the lines
-				byte penColor,			// pen number to use for text
-				byte backPen,			// the background color
-				bool fillBack,			// Whether to fill the background
-				bool centerh,			// Whether to center the text horizontally
-				bool centerv,			// Whether to center the text vertically
-				bool output,			// Whether to output any text
-				Common::Rect textRect,	// Cords
-				const char *str);		// The text itself
+	/**
+	 * Calls flowText, but flows it to memory.  Same restrictions as flowText.
+	 * @param destIm Destination buffer
+	 * @param font Pointer on the font used
+	 * @param penColor Pen number to use for text
+	 * @param backPen Background color
+	 * @param fillBack Whether to fill the background
+	 * @param centerh Whether to center the text horizontally
+	 * @param centerv Whether to center the text vertically
+	 * @param output Whether to output any text
+	 * @param textRect Coords
+	 * @param text The text itself
+	 */
+	int flowTextToMem(Image *destIm, TextFont *font, int16 spacing, byte penColor, byte backPen,
+				bool fillBack, bool centerh, bool centerv, bool output, Common::Rect textRect,
+				const char *text);
 
+	/**
+	 * Draws a vertical line.
+	 */
 	void drawHLine(uint16 x, uint16 y1, uint16 y2);
+
+	/**
+	 * Draws a horizontal line.
+	 */
 	void drawVLine(uint16 x1, uint16 y, uint16 x2);
 	void screenUpdate();
+
+	/**
+	 * Sets up either a low-res or a high-res 256 color screen.
+	 */
 	void createScreen(bool hiRes);
+
+	/**
+	 * Converts an Amiga palette (up to 16 colors) to a VGA palette, then sets
+	 * the VGA palette.
+	 */
 	void setAmigaPal(uint16 *pal, uint16 numColors);
+
+	/**
+	 * Writes any number of the 256 color registers.
+	 * @param buf A char pointer which contains the selected color registers.
+	 * Each value representing a color register occupies 3 bytes in the array.  The
+	 * order is red, green then blue. The first byte in the array is the red component
+	 * of the first element selected. The length of the buffer is 3 times the number
+	 * of registers selected.
+	 * @param first The number of the first color register to write.
+	 * @param numReg The number of registers to write.
+	 */
 	void writeColorRegs(byte *buf, uint16 first, uint16 numReg);
 	void setPalette(void *newPal, uint16 numColors);
+
+	/**
+	 * Overlays a region on the screen using the desired pen color.
+	 */
 	void overlayRect(uint16 penColor, uint16 x1, uint16 y1, uint16 x2, uint16 y2);
+
+	/**
+	 * Returns the base address of the current VGA display.
+	 */
 	byte *getCurrentDrawingBuffer();
+
+	/**
+	 * Scrolls the display in the x direction by blitting.
+	 * The _tempScrollData variable must be initialized to some memory, or this
+	 * function will fail.
+	 */
 	void scrollDisplayX(int16 dx, uint16 x1, uint16 y1, uint16 x2, uint16 y2, byte *buffer);
+
+	/**
+	 * Scrolls the display in the y direction by blitting.
+	 */
 	void scrollDisplayY(int16 dy, uint16 x1, uint16 y1, uint16 x2, uint16 y2, byte *buffer);
 	void fade(bool fadein, uint16 res);
+
+	/**
+	 * Closes a font and frees all memory associated with it.
+	 */
 	void closeFont(TextFont **font);
+
+	/**
+	 * Returns the length of a text in the specified font.
+	 */
 	uint16 textLength(TextFont *font, Common::String text);
+
+	/**
+	 * Returns the height of a specified font.
+	 */
 	uint16 textHeight(TextFont *tf);
+
+	/**
+	 * Draws the text to the screen.
+	 */
 	void drawText(TextFont *tf, uint16 x, uint16 y, uint16 color, Common::String text);
+
+	/**
+	 * Gets a line of text for flowText; makes sure that its length is less than
+	 * or equal to the maximum width.
+	 */
 	Common::String getLine(TextFont *tf, const char **mainBuffer, uint16 lineWidth);
 
 	bool _longWinInFront;
