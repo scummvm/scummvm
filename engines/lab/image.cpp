@@ -54,7 +54,7 @@ Image::Image(Common::File *s, LabEngine *vm) : _vm(vm) {
 }
 
 Image::~Image() {
-	delete _imageData;
+	delete[] _imageData;
 }
 
 /**
