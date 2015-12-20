@@ -1686,33 +1686,39 @@ LD=$CXX
 #
 echocheck "compiler version"
 
-# We first check whether we have an Intel compiler here, since the Intel compiler
-# can also fake itself as an gcc (to ease compatibility with common Linux etc.
-# programs).
+# Some compilers pretend to be gcc to ease compatibility with
+# common Linux etc. programs. We first check for some of these here.
+have_gcc=no
+cc_check_define __GNUC__ && have_gcc=yes
 have_icc=no
 cc_check_define __INTEL_COMPILER && have_icc=yes
+have_clang=no
+cc_check_define __clang__ && have_clang=yes
 
 if test "$have_icc" = yes; then
 	add_line_to_config_mk 'HAVE_ICC = 1'
 
-	# Make ICC error our on unknown command line options instead of printing
+	# Make ICC error out on unknown command line options instead of printing
 	# a warning. This is for example required to make the -Wglobal-destructors
 	# detection work correctly.
 	append_var CXXFLAGS "-diag-error 10006,10148"
+
+	# ICC doesn't accept all gcc options, so we disable have_gcc, even if
+	# ICC does have the gcc-compatibility defines.
+	have_gcc=no
 fi
 
-have_gcc=no
-cc_check_define __GNUC__ && have_gcc=yes
+if test "$have_clang" = yes; then
+	add_line_to_config_mk 'HAVE_CLANG = 1'
+
+	# clang does accept all gcc options we use, so we keep have_gcc
+fi
 
 if test "$have_gcc" = yes; then
 	add_line_to_config_mk 'HAVE_GCC = 1'
 	_cxx_major=`gcc_get_define __GNUC__`
 	_cxx_minor=`gcc_get_define __GNUC_MINOR__`
 	cxx_version="`( $CXX -dumpversion ) 2>&1`"
-
-	if test -n "`gcc_get_define __clang__`"; then
-		add_line_to_config_mk 'HAVE_CLANG = 1'
-	fi
 
 	if test "$_cxx_major" -eq 2 && test "$_cxx_minor" -ge 95 || \
 	   test "$_cxx_major" -gt 2 ; then
