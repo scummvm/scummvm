@@ -68,7 +68,11 @@ void Walk::updatePath() const {
 	Resources::Floor *floor = StarkGlobal->getCurrent()->getFloor();
 
 	Math::Vector3d startPosition = _item3D->getPosition3D();
-	int32 startFloorFaceIndex = _item3D->getFloorFaceIndex();
+	int32 startFloorFaceIndex = floor->findFaceContainingPoint(startPosition);
+	if (startFloorFaceIndex == -1) {
+		startFloorFaceIndex = 0;
+	}
+
 	Resources::FloorFace *startFloorFace = floor->getFace(startFloorFaceIndex);
 	Resources::FloorEdge *startFloorEdge = startFloorFace->findNearestEdge(startPosition);
 
