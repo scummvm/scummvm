@@ -36,11 +36,27 @@ namespace Lab {
 class Intro {
 public:
 	Intro(LabEngine *vm);
+
+	/**
+	 * Does the introduction sequence for Labyrinth.
+	 */
 	void introSequence();
 
 private:
+	/**
+	 * Goes through, and responds to all the intuition messages currently in the
+	 * message queue.
+	 */
 	void introEatMessages();
+
+	/**
+	 * Reads in a picture.
+	 */
 	void doPictText(const char *Filename, TextFont *msgFont, bool isscreen);
+
+	/**
+	 * Does a one second delay, but checks the music while doing it.
+	 */
 	void musicDelay();
 	void nReadPict(const char *Filename, bool PlayOnce);
 

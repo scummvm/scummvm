@@ -188,6 +188,10 @@ public:
 
 	void changeVolume(int delta);
 	uint16 getDirection() { return _direction; }
+
+	/**
+	 * Returns the current picture name.
+	 */
 	Common::String getPictName(CloseDataPtr *closePtrList);
 	uint16 getQuarters();
 	void setDirection(uint16 direction) { _direction = direction; };
@@ -195,61 +199,254 @@ public:
 	void waitTOF();
 
 private:
+	/**
+	 * Checks whether all the conditions in a condition list are met.
+	 */
 	bool checkConditions(int16 *condition);
+
+	/**
+	 * Decrements the current inventory number.
+	 */
 	void decIncInv(uint16 *CurInv, bool dec);
+
+	/**
+	 * Processes the action list.
+	 */
 	void doActions(Action *actionList, CloseDataPtr *closePtrList);
+
+	/**
+	 * Goes through the rules if an action is taken.
+	 */
 	bool doActionRule(Common::Point pos, int16 action, int16 roomNum, CloseDataPtr *closePtrList);
+
+	/**
+	 * Does the work for doActionRule.
+	 */
 	bool doActionRuleSub(int16 action, int16 roomNum, CloseDataPtr closePtr, CloseDataPtr *setCloseList, bool allowDefaults);
+
+	/**
+	 * Checks whether the close up is one of the special case closeups.
+	 */
 	bool doCloseUp(CloseDataPtr closePtr);
+
+	/**
+	 * Goes through the rules if the user tries to go forward.
+	 */
 	bool doGoForward(CloseDataPtr *closePtrList);
+
+	/**
+	 * Does the journal processing.
+	 */
 	void doJournal();
+
+	/**
+	 * Goes through the rules if the user tries to go to the main view
+	 */
 	bool doMainView(CloseDataPtr *closePtrList);
+
+	/**
+	 * Does the map processing.
+	 */
 	void doMap(uint16 curRoom);
+
+	/**
+	 * Does what's necessary for the monitor.
+	 */
 	void doMonitor(Common::String background, Common::String textfile, bool isinteractive, Common::Rect textRect);
+
+	/**
+	 * Does the things to properly set up the detective notes.
+	 */
 	void doNotes();
+
+	/**
+	 * Does the work for doActionRule.
+	 */
 	bool doOperateRuleSub(int16 itemNum, int16 roomNum, CloseDataPtr closePtr, CloseDataPtr *setCloseList, bool allowDefaults);
+
+	/**
+	 * Goes through the rules if the user tries to operate an item on an object.
+	 */
 	bool doOperateRule(Common::Point pos, int16 ItemNum, CloseDataPtr *closePtrList);
+
+	/**
+	 * Goes through the rules if the user tries to turn.
+	 */
 	bool doTurn(uint16 from, uint16 to, CloseDataPtr *closePtrList);
+
+	/**
+	 * If the user hits the "Use" button; things that can get used on themselves.
+	 */
 	bool doUse(uint16 curInv);
+
+	/**
+	 * Does the things to properly set up the old west newspaper.  Assumes that
+	 * OpenHiRes already called.
+	 */
 	void doWestPaper();
+
+	/**
+	 * Draws the current direction to the screen.
+	 */
 	void drawDirection(CloseDataPtr closePtr);
+
+	/**
+	 * Draws the journal from page x.
+	 */
 	void drawJournal(uint16 wipenum, bool needFade);
+
+	/**
+	 * Draws the text to the back journal screen to the appropriate Page number
+	 */
 	void drawJournalText();
+
+	/**
+	 * Draws the map
+	 */
 	void drawMap(uint16 curRoom, uint16 curMsg, uint16 floorNum, bool fadeOut, bool fadeIn);
+
+	/**
+	 * Draws the text for the monitor.
+	 */
 	void drawMonText(char *text, TextFont *monitorFont, Common::Rect textRect, bool isinteractive);
+
+	/**
+	 * Draws a room map.
+	 */
 	void drawRoomMap(uint16 curRoom, bool drawMarkFl);
+
+	/**
+	 * Draws the message for the room.
+	 */
 	void drawRoomMessage(uint16 curInv, CloseDataPtr closePtr);
 	void drawStaticMessage(byte index);
+
+	/**
+	 * Eats all the available messages.
+	 */
 	void eatMessages();
+
+	/**
+	 * Goes through the list of closeups to find a match.
+	 * @note Known bug here.  If there are two objects that have closeups, and
+	 * some of the closeups have the same hit boxes, then this returns the first
+	 * occurrence of the object with the same hit box.
+	 */
 	CloseDataPtr findClosePtrMatch(CloseDataPtr closePtr, CloseDataPtr closePtrList);
+
+	/**
+	 * Checks if a floor has been visited.
+	 */
 	bool floorVisited(uint16 floorNum);
+
+	/**
+	 * New code to allow quick(er) return navigation in game.
+	 */
 	int followCrumbs();
 	void freeMapData();
 	void freeScreens();
 	bool fromCrumbs(uint32 tmpClass, uint16 code, uint16 qualifier, Common::Point tmpPos,
 		uint16 &curInv, IntuiMessage *curMsg, bool &forceDraw, uint16 buttonId, uint16 &actionMode);
+
+	/**
+	 * Gets the current inventory name.
+	 */
 	Common::String getInvName(uint16 curInv);
+
+	/**
+	 * Returns the floor to show when the down arrow is pressed
+	 * @note The original did not show all the visited floors, but we do
+	 */
 	uint16 getLowerFloor(uint16 floorNum);
+
+	/**
+	 * Gets an object, if any, from the user's click on the screen.
+	 */
 	CloseData *getObject(Common::Point pos, CloseDataPtr closePtr);
+
+	/**
+	 * Returns the floor to show when the up arrow is pressed
+	 * @note The original did not show all the visited floors, but we do
+	 */
 	uint16 getUpperFloor(uint16 floorNum);
+
+	/**
+	 * Gets the current ViewDataPointer.
+	 */
 	ViewData *getViewData(uint16 roomNum, uint16 direction);
+
+	/**
+	 * Turns the interface off.
+	 */
 	void interfaceOff();
+
+	/**
+	 * Turns the interface on.
+	 */
 	void interfaceOn();
+
+	/**
+	 * Loads in the data for the journal.
+	 */
 	void loadJournalData();
+
+	/**
+	 * Loads in the map data.
+	 */
 	void loadMapData();
+
+	/**
+	 * The main game loop.
+	 */
 	void mainGameLoop();
 	void showLab2Teaser();
 	void mayShowCrumbIndicator();
 	void mayShowCrumbIndicatorOff();
+
+	/**
+	 * Permanently flips the imagery of a button.
+	 */
 	void perFlipButton(uint16 buttonId);
+
+	/**
+	 * process a arrow button movement.
+	 */
 	uint16 processArrow(uint16 curDirection, uint16 arrow);
+
+	/**
+	 * Processes user input.
+	 */
 	void processJournal();
+
+	/**
+	 * Processes the map.
+	 */
 	void processMap(uint16 curRoom);
+
+	/**
+	 * Processes user input.
+	 */
 	void processMonitor(char *ntext, TextFont *monitorFont, bool isInteractive, Common::Rect textRect);
+
+	/**
+	 * Figures out what a room's coordinates should be.
+	 */
 	Common::Rect roomCoords(uint16 curRoom);
 	bool saveRestoreGame();
+
+	/**
+	 * Sets the current close up data.
+	 */
 	void setCurrentClose(Common::Point pos, CloseDataPtr *closePtrList, bool useAbsoluteCoords);
+
+	/**
+	 * Takes the currently selected item.
+	 */
 	bool takeItem(Common::Point pos, CloseDataPtr *closePtrList);
+
+	/**
+	 * Does the turn page wipe.
+	 */
 	void turnPage(bool fromLeft);
 	bool processKey(IntuiMessage *curMsg, uint32 &msgClass, uint16 &qualifier, Common::Point &curPos, uint16 &curInv, bool &forceDraw, uint16 code);
 	void processMainButton(uint16 &curInv, uint16 &lastInv, uint16 &oldDirection, bool &forceDraw, uint16 buttonId, uint16 &actionMode);

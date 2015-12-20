@@ -240,17 +240,11 @@ void Anim::diffNextFrame(bool onlyDiffData) {
 	}
 }
 
-/**
- * Stops an animation from running.
- */
 void Anim::stopDiff() {
 	if (_isPlaying && _isAnim)
 		_vm->_graphics->blackScreen();
 }
 
-/**
- * Stops an animation from running.
- */
 void Anim::stopDiffEnd() {
 	if (!_isPlaying)
 		return;
@@ -262,9 +256,6 @@ void Anim::stopDiffEnd() {
 	}
 }
 
-/**
- * Reads in a DIFF file.
- */
 void Anim::readDiff(Common::File *diffFile, bool playOnce, bool onlyDiffData) {
 	_playOnce = playOnce;
 	_delayMicros = 0;

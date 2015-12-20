@@ -83,9 +83,20 @@ public:
 	bool _noPalChange;   // Don't change the palette.
 	BitMap _rawDiffBM;
 
+	/**
+	 * Reads in a DIFF file.
+	 */
 	void readDiff(Common::File *diffFile, bool playOnce, bool onlyDiffData = false);
 	void diffNextFrame(bool onlyDiffData = false);
+
+	/**
+	 * Stops an animation from running.
+	 */
 	void stopDiff();
+
+	/**
+	 * Stops an animation from running.
+	 */
 	void stopDiffEnd();
 };
 

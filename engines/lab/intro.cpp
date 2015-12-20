@@ -45,10 +45,6 @@ Intro::Intro(LabEngine *vm) : _vm(vm) {
 	_introDoBlack = false;
 }
 
-/**
- * Goes through, and responds to all the intuition messages currently in the
- * message queue.
- */
 void Intro::introEatMessages() {
 	while (1) {
 		IntuiMessage *msg = _vm->_event->getMsg();
@@ -67,9 +63,6 @@ void Intro::introEatMessages() {
 	}
 }
 
-/**
- * Reads in a picture.
- */
 void Intro::doPictText(const char *filename, TextFont *msgFont, bool isScreen) {
 	Common::String path = Common::String("Lab:rooms/Intro/") + filename;
 
@@ -196,9 +189,6 @@ void Intro::doPictText(const char *filename, TextFont *msgFont, bool isScreen) {
 	}	// while(1)
 }
 
-/**
- * Does a one second delay, but checks the music while doing it.
- */
 void Intro::musicDelay() {
 	_vm->_music->updateMusic();
 
@@ -227,9 +217,6 @@ void Intro::nReadPict(const char *filename, bool playOnce) {
 	_vm->_graphics->readPict(finalFileName.c_str(), playOnce);
 }
 
-/**
- * Does the introduction sequence for Labyrinth.
- */
 void Intro::introSequence() {
 	uint16 palette[16] = {
 		0x0000, 0x0855, 0x0FF9, 0x0EE7,
