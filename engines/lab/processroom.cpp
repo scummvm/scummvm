@@ -337,21 +337,24 @@ void LabEngine::doActions(Action *actionList, CloseDataPtr *closePtrList) {
 			_conditions->exclElement(actionList->_param1);
 			break;
 
-		case SHOWMESSAGE:
+		case SHOWMESSAGE: {
 			_graphics->_doNotDrawMessage = false;
 
+			Common::String text = Common::String((char *)actionList->_data);
 			if (_graphics->_longWinInFront)
-				_graphics->longDrawMessage((char *)actionList->_data);
+				_graphics->longDrawMessage(text);
 			else
-				_graphics->drawMessage((char *)actionList->_data);
+				_graphics->drawMessage(text);
 
 			_graphics->_doNotDrawMessage = true;
+			}
 			break;
 
 		case CSHOWMESSAGE:
 			if (!*closePtrList) {
+				Common::String text = Common::String((char *)actionList->_data);
 				_graphics->_doNotDrawMessage = false;
-				_graphics->drawMessage((char *)actionList->_data);
+				_graphics->drawMessage(text);
 				_graphics->_doNotDrawMessage = true;
 			}
 
@@ -360,7 +363,7 @@ void LabEngine::doActions(Action *actionList, CloseDataPtr *closePtrList) {
 		case SHOWMESSAGES: {
 				char **str = (char **)actionList->_data;
 				_graphics->_doNotDrawMessage = false;
-				_graphics->drawMessage(str[_utils->getRandom(actionList->_param1)]);
+				_graphics->drawMessage(Common::String(str[_utils->getRandom(actionList->_param1)]));
 				_graphics->_doNotDrawMessage = true;
 			}
 			break;
