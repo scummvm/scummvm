@@ -41,7 +41,7 @@ namespace OpenGL {
 #define USE_OSD 1
 
 class Texture;
-#if !USE_FORCED_GL && !USE_FORCED_GLES
+#if !USE_FORCED_GLES
 class Shader;
 #endif
 
@@ -529,7 +529,7 @@ private:
 	 */
 	uint _scissorOverride;
 
-#if !USE_FORCED_GL && !USE_FORCED_GLES
+#if !USE_FORCED_GLES
 	//
 	// Shaders
 	//

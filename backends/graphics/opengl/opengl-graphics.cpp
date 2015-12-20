@@ -55,7 +55,7 @@ OpenGLGraphicsManager::OpenGLGraphicsManager()
 #ifdef USE_OSD
       , _osdAlpha(0), _osdFadeStartTime(0), _osd(nullptr)
 #endif
-#if !USE_FORCED_GL && !USE_FORCED_GLES
+#if !USE_FORCED_GLES
       , _shader(nullptr), _projectionMatrix()
 #endif
     {
@@ -70,7 +70,7 @@ OpenGLGraphicsManager::~OpenGLGraphicsManager() {
 #ifdef USE_OSD
 	delete _osd;
 #endif
-#if !USE_FORCED_GL && !USE_FORCED_GLES
+#if !USE_FORCED_GLES
 	delete _shader;
 #endif
 }
@@ -773,7 +773,8 @@ void OpenGLGraphicsManager::setActualScreenSize(uint width, uint height) {
 	};
 
 #if !USE_FORCED_GL && !USE_FORCED_GLES && !USE_FORCED_GLES2
-	if (g_context.type != kContextGLES2) {
+	if (g_context.type == kContextGLES
+	    || (g_context.type == kContextGL && !g_context.shadersSupported)) {
 #endif
 #if !USE_FORCED_GLES2
 		GL_CALL(glMatrixMode(GL_PROJECTION));
@@ -785,7 +786,7 @@ void OpenGLGraphicsManager::setActualScreenSize(uint width, uint height) {
 #if !USE_FORCED_GL && !USE_FORCED_GLES && !USE_FORCED_GLES2
 	} else {
 #endif
-#if !USE_FORCED_GL && !USE_FORCED_GLES
+#if !USE_FORCED_GLES
 		assert(sizeof(_projectionMatrix) == sizeof(orthoProjection));
 		memcpy(_projectionMatrix, orthoProjection, sizeof(_projectionMatrix));
 		if (_shader) {
@@ -894,23 +895,32 @@ void OpenGLGraphicsManager::notifyContextCreate(const Graphics::PixelFormat &def
 	GL_CALL(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 
 #if !USE_FORCED_GL && !USE_FORCED_GLES && !USE_FORCED_GLES2
-	if (g_context.type != kContextGLES2) {
-#endif
-#if !USE_FORCED_GLES2
-		// Enable rendering with vertex and coord arrays.
-		GL_CALL(glEnableClientState(GL_VERTEX_ARRAY));
-		GL_CALL(glEnableClientState(GL_TEXTURE_COORD_ARRAY));
-
-		GL_CALL(glEnable(GL_TEXTURE_2D));
-#endif
-#if !USE_FORCED_GL && !USE_FORCED_GLES && !USE_FORCED_GLES2
-	} else {
+	if (g_context.type == kContextGLES2) {
 #endif
 #if !USE_FORCED_GL && !USE_FORCED_GLES
 		GL_CALL(glEnableVertexAttribArray(kPositionAttribLocation));
 		GL_CALL(glEnableVertexAttribArray(kTexCoordAttribLocation));
 
 		GL_CALL(glActiveTexture(GL_TEXTURE0));
+#endif
+#if !USE_FORCED_GL && !USE_FORCED_GLES && !USE_FORCED_GLES2
+	} else {
+#endif
+#if !USE_FORCED_GLES2
+#if !USE_FORCED_GLES
+		if (g_context.shadersSupported) {
+			GL_CALL(glEnableVertexAttribArrayARB(kPositionAttribLocation));
+			GL_CALL(glEnableVertexAttribArrayARB(kTexCoordAttribLocation));
+		} else {
+#endif
+			// Enable rendering with vertex and coord arrays.
+			GL_CALL(glEnableClientState(GL_VERTEX_ARRAY));
+			GL_CALL(glEnableClientState(GL_TEXTURE_COORD_ARRAY));
+#if !USE_FORCED_GLES
+		}
+#endif
+
+		GL_CALL(glEnable(GL_TEXTURE_2D));
 #endif
 #if !USE_FORCED_GL && !USE_FORCED_GLES && !USE_FORCED_GLES2
 	}
@@ -934,19 +944,33 @@ void OpenGLGraphicsManager::notifyContextCreate(const Graphics::PixelFormat &def
 	// Query information needed by textures.
 	Texture::queryTextureInformation();
 
-#if !USE_FORCED_GL && !USE_FORCED_GLES && !USE_FORCED_GLES2
-	if (g_context.type == kContextGLES2) {
+#if !USE_FORCED_GLES
+	if (!_shader) {
+#if !USE_FORCED_GL && !USE_FORCED_GLES2
+		if (g_context.type == kContextGLES2) {
 #endif
-#if !USE_FORCED_GL && !USE_FORCED_GLES
-		if (!_shader) {
-			_shader = new Shader(g_defaultVertexShader, g_defaultFragmentShader);
+#if !USE_FORCED_GL
+			_shader = new ShaderGLES2(g_defaultVertexShader, g_defaultFragmentShaderGLES2);
+#endif
+#if !USE_FORCED_GL && !USE_FORCED_GLES2
+		} else {
+#endif
+#if !USE_FORCED_GLES2
+			if (g_context.shadersSupported) {
+				_shader = new ShaderARB(g_defaultVertexShader, g_defaultFragmentShaderGL);
+			}
+#endif
+#if !USE_FORCED_GL && !USE_FORCED_GLES2
 		}
+#endif
+	}
+#endif
 
+#if !USE_FORCED_GLES
+	if (_shader) {
 		// TODO: What do we do on failure?
 		_shader->recreate();
 		_shader->activate(_projectionMatrix);
-#endif
-#if !USE_FORCED_GL && !USE_FORCED_GLES && !USE_FORCED_GLES2
 	}
 #endif
 
@@ -999,7 +1023,7 @@ void OpenGLGraphicsManager::notifyContextDestroy() {
 	}
 #endif
 
-#if !USE_FORCED_GL && !USE_FORCED_GLES
+#if !USE_FORCED_GLES
 	if (_shader) {
 		_shader->destroy();
 	}
@@ -1080,16 +1104,24 @@ Texture *OpenGLGraphicsManager::createTexture(const Graphics::PixelFormat &forma
 
 void OpenGLGraphicsManager::setColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a) {
 #if !USE_FORCED_GL && !USE_FORCED_GLES && !USE_FORCED_GLES2
-	if (g_context.type != kContextGLES2) {
+	if (g_context.type == kContextGLES2) {
 #endif
-#if !USE_FORCED_GLES2
-		GL_CALL(glColor4f(r, g, b, a));
+#if !USE_FORCED_GL && !USE_FORCED_GLES
+		GL_CALL(glVertexAttrib4f(kColorAttribLocation, r, g, b, a));
 #endif
 #if !USE_FORCED_GL && !USE_FORCED_GLES && !USE_FORCED_GLES2
 	} else {
 #endif
-#if !USE_FORCED_GL && !USE_FORCED_GLES
-		GL_CALL(glVertexAttrib4f(kColorAttribLocation, r, g, b, a));
+#if !USE_FORCED_GLES2
+#if !USE_FORCED_GLES
+		if (g_context.shadersSupported) {
+			GL_CALL(glVertexAttrib4fARB(kColorAttribLocation, r, g, b, a));
+		} else {
+#endif
+			GL_CALL(glColor4f(r, g, b, a));
+#if !USE_FORCED_GLES
+		}
+#endif
 #endif
 #if !USE_FORCED_GL && !USE_FORCED_GLES && !USE_FORCED_GLES2
 	}

@@ -76,6 +76,12 @@ typedef float  GLclampf; /* single precision float in [0,1] */
 typedef double GLdouble; /* double precision float */
 typedef double GLclampd; /* double precision float in [0,1] */
 typedef char   GLchar;
+typedef GLchar GLcharARB;
+#if defined(__APPLE__) || defined(MACOSX)
+typedef void  *GLhandleARB;
+#else
+typedef uint   GLhandleARB;
+#endif
 
 /*
  * Constants
@@ -223,12 +229,19 @@ typedef char   GLchar;
 
 /* Shaders */
 #define GL_FRAGMENT_SHADER                0x8B30
+#define GL_FRAGMENT_SHADER_ARB            0x8B30
+
 #define GL_VERTEX_SHADER                  0x8B31
+#define GL_VERTEX_SHADER_ARB              0x8B31
 
 /* Programs */
 #define GL_COMPILE_STATUS                 0x8B81
 #define GL_LINK_STATUS                    0x8B82
 #define GL_INFO_LOG_LENGTH                0x8B84
+
+#define GL_OBJECT_COMPILE_STATUS_ARB      0x8B81
+#define GL_OBJECT_LINK_STATUS_ARB         0x8B82
+#define GL_OBJECT_INFO_LOG_LENGTH_ARB     0x8B84
 
 /* Textures */
 #define GL_TEXTURE0                       0x84C0

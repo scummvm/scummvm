@@ -116,3 +116,24 @@ GL_FUNC_DEF(void, glGetShaderInfoLog, (GLuint shader, GLsizei bufSize, GLsizei *
 GL_FUNC_DEF(void, glEnableVertexAttribArray, (GLuint index));
 GL_FUNC_DEF(void, glActiveTexture, (GLenum texture));
 #endif
+
+#if !USE_FORCED_GLES && !USE_FORCED_GLES2
+GL_EXT_FUNC_DEF(void, glDeleteObjectARB, (GLhandleARB obj));
+GL_EXT_FUNC_DEF(GLhandleARB, glCreateProgramObjectARB, ());
+GL_EXT_FUNC_DEF(void, glAttachObjectARB, (GLhandleARB containerObj, GLhandleARB obj));
+GL_EXT_FUNC_DEF(void, glBindAttribLocationARB, (GLhandleARB programObj, GLuint index, const GLcharARB *name));
+GL_EXT_FUNC_DEF(void, glLinkProgramARB, (GLhandleARB programObj));
+GL_EXT_FUNC_DEF(void, glDetachObjectARB, (GLhandleARB containerObj, GLhandleARB attachedObj));
+GL_EXT_FUNC_DEF(void, glGetObjectParameterivARB, (GLhandleARB obj, GLenum pname, GLint *params));
+GL_EXT_FUNC_DEF(GLint, glGetUniformLocationARB, (GLhandleARB programObj, const GLcharARB *name));
+GL_EXT_FUNC_DEF(void, glGetInfoLogARB, (GLhandleARB obj, GLsizei maxLength, GLsizei *length, GLcharARB *infoLog));
+GL_EXT_FUNC_DEF(void, glUseProgramObjectARB, (GLhandleARB programObj));
+GL_EXT_FUNC_DEF(void, glUniformMatrix4fvARB, (GLint location, GLsizei count, GLboolean transpose, const GLfloat *value));
+GL_EXT_FUNC_DEF(void, glUniform1iARB, (GLint location, GLint v0));
+GL_EXT_FUNC_DEF(GLhandleARB, glCreateShaderObjectARB, (GLenum shaderType));
+GL_EXT_FUNC_DEF(void, glShaderSourceARB, (GLhandleARB shaderObj, GLsizei count, const GLcharARB **string, const GLint *length));
+GL_EXT_FUNC_DEF(void, glCompileShaderARB, (GLhandleARB shaderObj));
+GL_EXT_FUNC_DEF(void, glVertexAttribPointerARB, (GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const void *pointer));
+GL_EXT_FUNC_DEF(void, glVertexAttrib4fARB, (GLuint index, GLfloat x, GLfloat y, GLfloat z, GLfloat w));
+GL_EXT_FUNC_DEF(void, glEnableVertexAttribArrayARB, (GLuint index));
+#endif

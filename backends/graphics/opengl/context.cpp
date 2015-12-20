@@ -74,14 +74,35 @@ void OpenGLGraphicsManager::initializeGLContext() {
 
 	const char *extString = (const char *)g_context.glGetString(GL_EXTENSIONS);
 
+#if !USE_FORCED_GLES && !USE_FORCED_GLES2
+	bool ARBShaderObjects = false;
+	bool ARBShadingLanguage100 = false;
+	bool ARBVertexShader = false;
+	bool ARBFragmentShader = false;
+#endif
+
 	Common::StringTokenizer tokenizer(extString, " ");
 	while (!tokenizer.empty()) {
 		Common::String token = tokenizer.nextToken();
 
 		if (token == "GL_ARB_texture_non_power_of_two") {
 			g_context.NPOTSupported = true;
+#if !USE_FORCED_GLES && !USE_FORCED_GLES2
+		} else if (token == "GL_ARB_shader_objects") {
+			ARBShaderObjects = true;
+		} else if (token == "GL_ARB_shading_language_100") {
+			ARBShadingLanguage100 = true;
+		} else if (token == "GL_ARB_vertex_shader") {
+			ARBVertexShader = true;
+		} else if (token == "GL_ARB_fragment_shader") {
+			ARBFragmentShader = true;
+#endif
 		}
 	}
+
+#if !USE_FORCED_GLES && !USE_FORCED_GLES2
+	g_context.shadersSupported = ARBShaderObjects & ARBShadingLanguage100 & ARBVertexShader & ARBFragmentShader;
+#endif
 }
 
 } // End of namespace OpenGL
