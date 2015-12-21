@@ -63,7 +63,7 @@ bool LabEngine::checkConditions(int16 *condition) {
 }
 
 ViewData *LabEngine::getViewData(uint16 roomNum, uint16 direction) {
-	if (_rooms[roomNum]._roomMsg == "")
+	if (!_rooms[roomNum]._roomMsg.empty())
 		_resource->readViews(roomNum);
 
 	ViewData *view = _rooms[roomNum]._view[direction];
@@ -131,17 +131,15 @@ Common::String LabEngine::getPictName(CloseDataPtr *closePtrList) {
 }
 
 void LabEngine::drawDirection(CloseDataPtr closePtr) {
-	if (closePtr && closePtr->_message != "") {
-		_graphics->drawMessage(closePtr->_message.c_str());
+	if (closePtr && !closePtr->_message.empty()) {
+		_graphics->drawMessage(closePtr->_message);
 		return;
 	}
 
 	Common::String message;
 
-	if (_rooms[_roomNum]._roomMsg != "") {
-		message = Common::String(_rooms[_roomNum]._roomMsg).c_str();
-		message += ", ";
-	}
+	if (!_rooms[_roomNum]._roomMsg.empty())
+		message = _rooms[_roomNum]._roomMsg + ", ";
 
 	if (_direction == NORTH)
 		message += _resource->getStaticText(kTextFacingNorth);
@@ -152,7 +150,7 @@ void LabEngine::drawDirection(CloseDataPtr closePtr) {
 	else if (_direction == WEST)
 		message += _resource->getStaticText(kTextFacingWest);
 
-	_graphics->drawMessage(message.c_str());
+	_graphics->drawMessage(message);
 }
 
 uint16 LabEngine::processArrow(uint16 curDirection, uint16 arrow) {
@@ -201,7 +199,7 @@ void LabEngine::setCurrentClose(Common::Point pos, CloseDataPtr *closePtrList, b
 		else
 			target = _utils->rectScale(closePtr->_x1, closePtr->_y1, closePtr->_x2, closePtr->_y2);
 
-		if (target.contains(pos) && closePtr->_graphicName != "") {
+		if (target.contains(pos) && !closePtr->_graphicName.empty()) {
 			*closePtrList = closePtr;
 			return;
 		}
@@ -267,7 +265,7 @@ void LabEngine::doActions(Action *actionList, CloseDataPtr *closePtrList) {
 			break;
 
 		case LOADDIFF:
-			if (actionList->_messages[0].size())
+			if (!actionList->_messages[0].empty())
 				// Puts a file into memory
 				_graphics->loadPict(actionList->_messages[0]);
 
