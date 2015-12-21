@@ -63,10 +63,6 @@ Music::Music(LabEngine *vm) : _vm(vm) {
 	_waitTillFinished = false;
 }
 
-/**
- * Figures out which buffer is currently playing based on messages sent to
- * it from the Audio device.
- */
 void Music::updateMusic() {
 	_vm->_event->processInput();
 	_vm->_event->updateMouse();
@@ -149,9 +145,6 @@ void Music::fillbuffer(byte *musicBuffer) {
 	}
 }
 
-/**
- * Starts up the music initially.
- */
 void Music::startMusic(bool restartFl) {
 	if (!_musicOn)
 		return;
@@ -167,9 +160,6 @@ void Music::startMusic(bool restartFl) {
 	updateMusic();
 }
 
-/**
- * Initializes the music buffers.
- */
 bool Music::initMusic(const Common::String filename) {
 	_musicOn = true;
 	_musicPaused = false;
@@ -178,9 +168,6 @@ bool Music::initMusic(const Common::String filename) {
 	return true;
 }
 
-/**
- * Frees up the music buffers and closes the file.
- */
 void Music::freeMusic() {
 	_musicOn = false;
 
@@ -192,9 +179,6 @@ void Music::freeMusic() {
 	_file = nullptr;
 }
 
-/**
- * Pauses the background music.
- */
 void Music::pauseBackMusic() {
 	if (!_musicPaused && _musicOn) {
 		updateMusic();
@@ -207,9 +191,6 @@ void Music::pauseBackMusic() {
 	}
 }
 
-/**
- * Resumes the paused background music.
- */
 void Music::resumeBackMusic() {
 	if (_musicPaused) {
 		stopSoundEffect();
@@ -222,9 +203,6 @@ void Music::resumeBackMusic() {
 	}
 }
 
-/**
- * Turns the music on and off.
- */
 void Music::setMusic(bool on) {
 	stopSoundEffect();
 
@@ -238,9 +216,6 @@ void Music::setMusic(bool on) {
 		_musicOn = on;
 }
 
-/**
- * Checks the music that should be playing in a particular room.
- */
 void Music::checkRoomMusic() {
 	if ((_lastMusicRoom == _vm->_roomNum) || !_musicOn)
 		return;
@@ -255,9 +230,6 @@ void Music::checkRoomMusic() {
 	_lastMusicRoom = _vm->_roomNum;
 }
 
-/**
- * Changes the background music to something else.
- */
 void Music::changeMusic(const Common::String filename) {
 	if (!_tFile) {
 		_tFile = _file;
@@ -278,9 +250,6 @@ void Music::changeMusic(const Common::String filename) {
 	setMusic(true);
 }
 
-/**
- * Changes the background music to the original piece playing.
- */
 void Music::resetMusic() {
 	if (!_tFile)
 		return;
@@ -308,9 +277,6 @@ void Music::resetMusic() {
 	_tFile = 0;
 }
 
-/**
- * Reads in a music file.  Ignores any graphics.
- */
 bool Music::readMusic(const Common::String filename, bool waitTillFinished) {
 	Common::File *file = _vm->_resource->openDataFile(filename, MKTAG('D', 'I', 'F', 'F'));
 	updateMusic();

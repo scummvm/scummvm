@@ -52,9 +52,24 @@ public:
 	Image(Common::File *s, LabEngine *vm);
 	virtual ~Image();
 
+	/**
+	 * Draws an image to the screen.
+	 */
 	void drawImage(uint16 x, uint16 y);
+
+	/**
+	 * Draws an image to the screen with transparency.
+	 */
 	void drawMaskImage(uint16 x, uint16 y);
+
+	/**
+	 * Reads an image from the screen.
+	 */
 	void readScreenImage(uint16 x, uint16 y);
+
+	/**
+	 * Blits a piece of one image to another.
+	 */
 	void blitBitmap(uint16 xs, uint16 ys, Image *ImDest, uint16 xd, uint16 yd, uint16 width, uint16 height, byte masked);
 };
 
