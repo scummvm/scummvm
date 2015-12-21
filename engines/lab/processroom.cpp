@@ -63,7 +63,7 @@ bool LabEngine::checkConditions(int16 *condition) {
 }
 
 ViewData *LabEngine::getViewData(uint16 roomNum, uint16 direction) {
-	if (!_rooms[roomNum]._roomMsg.empty())
+	if (_rooms[roomNum]._roomMsg.empty())
 		_resource->readViews(roomNum);
 
 	ViewData *view = _rooms[roomNum]._view[direction];
