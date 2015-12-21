@@ -234,7 +234,10 @@ public:
 
 private:
 	Graphics::PixelFormat _pixelFormat;
+
+#ifdef USE_TRANSLATION
 	Common::String _oldGUILanguage;
+#endif
 
 public:
 	Common::RandomSource *_random;
