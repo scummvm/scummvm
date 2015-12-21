@@ -30,14 +30,15 @@ namespace Image {
 
 #define CHECK_STREAM_PTR(n) \
   if ((stream.pos() + n) > stream.size() ) { \
-	warning ("MS Video-1: Stream out of bounds (%d >= %d)", stream.pos() + n, stream.size()); \
+	warning ("MS Video-1: Stream out of bounds (%d >= %d) d%d", stream.pos() + n, stream.size(), n); \
     return; \
   }
 
 MSVideo1Decoder::MSVideo1Decoder(uint16 width, uint16 height, byte bitsPerPixel) : Codec() {
 	_surface = new Graphics::Surface();
-	// TODO: Specify the correct pixel format for 2Bpp mode.
-	_surface->create(width, height, (bitsPerPixel == 8) ? Graphics::PixelFormat::createFormatCLUT8() : Graphics::PixelFormat(2, 0, 0, 0, 0, 0, 0, 0, 0));
+	_surface->create(width, height, (bitsPerPixel == 8) ? Graphics::PixelFormat::createFormatCLUT8() :
+                                                          Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0));
+
 	_bitsPerPixel = bitsPerPixel;
 }
 
@@ -125,13 +126,98 @@ void MSVideo1Decoder::decode8(Common::SeekableReadStream &stream) {
     }
 }
 
+void MSVideo1Decoder::decode16(Common::SeekableReadStream &stream) {
+    /* decoding parameters */
+    uint16 colors[8];
+    uint16 *pixels = (uint16 *)_surface->getPixels();
+    int32 stride = _surface->w;
+
+    int32 skip_blocks = 0;
+    int32 blocks_wide = _surface->w / 4;
+    int32 blocks_high = _surface->h / 4;
+    int32 total_blocks = blocks_wide * blocks_high;
+    int32 block_inc = 4;
+    int32 row_dec = stride + 4;
+
+    for (int32 block_y = blocks_high; block_y > 0; block_y--) {
+        int32 block_ptr = ((block_y * 4) - 1) * stride;
+        for (int32 block_x = blocks_wide; block_x > 0; block_x--) {
+            /* check if this block should be skipped */
+            if (skip_blocks) {
+                block_ptr += block_inc;
+                skip_blocks--;
+                total_blocks--;
+                continue;
+            }
+
+            int32 pixel_ptr = block_ptr;
+
+            /* get the next two bytes in the encoded data stream */
+            CHECK_STREAM_PTR(2);
+            byte byte_a = stream.readByte();
+            byte byte_b = stream.readByte();
+
+            /* check if the decode is finished */
+            if ((byte_a == 0) && (byte_b == 0) && (total_blocks == 0)) {
+                return;
+            } else if ((byte_b & 0xFC) == 0x84) {
+                /* skip code, but don't count the current block */
+                skip_blocks = ((byte_b - 0x84) << 8) + byte_a - 1;
+            } else if (byte_b < 0x80) {
+                /* 2- or 8-color encoding modes */
+                uint16 flags = (byte_b << 8) | byte_a;
+
+                CHECK_STREAM_PTR(4);
+                colors[0] = stream.readUint16LE();
+                colors[1] = stream.readUint16LE();
+
+                if (colors[0] & 0x8000) {
+                    /* 8-color encoding */
+                    CHECK_STREAM_PTR(12);
+                    colors[2] = stream.readUint16LE();
+                    colors[3] = stream.readUint16LE();
+                    colors[4] = stream.readUint16LE();
+                    colors[5] = stream.readUint16LE();
+                    colors[6] = stream.readUint16LE();
+                    colors[7] = stream.readUint16LE();
+
+                    for (int pixel_y = 0; pixel_y < 4; pixel_y++) {
+                        for (int pixel_x = 0; pixel_x < 4; pixel_x++, flags >>= 1)
+                            pixels[pixel_ptr++] =
+                                colors[((pixel_y & 0x2) << 1) +
+                                    (pixel_x & 0x2) + ((flags & 0x1) ^ 1)];
+                        pixel_ptr -= row_dec;
+                    }
+                } else {
+                    /* 2-color encoding */
+                    for (int pixel_y = 0; pixel_y < 4; pixel_y++) {
+                        for (int pixel_x = 0; pixel_x < 4; pixel_x++, flags >>= 1)
+                            pixels[pixel_ptr++] = colors[(flags & 0x1) ^ 1];
+                        pixel_ptr -= row_dec;
+                    }
+                }
+            } else {
+                /* otherwise, it's a 1-color block */
+                colors[0] = (byte_b << 8) | byte_a;
+
+                for (int pixel_y = 0; pixel_y < 4; pixel_y++) {
+                    for (int pixel_x = 0; pixel_x < 4; pixel_x++)
+                        pixels[pixel_ptr++] = colors[0];
+                    pixel_ptr -= row_dec;
+                }
+            }
+
+            block_ptr += block_inc;
+            total_blocks--;
+        }
+    }
+}
+
 const Graphics::Surface *MSVideo1Decoder::decodeFrame(Common::SeekableReadStream &stream) {
 	if (_bitsPerPixel == 8)
 		decode8(stream);
-	else {
-    //	decode16(stream);
-		error ("Unhandled MS Video-1 16bpp encoding");
-	}
+	else
+        decode16(stream);
 
     return _surface;
 }

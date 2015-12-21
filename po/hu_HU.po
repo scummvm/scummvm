@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2015-09-06 15:14+0200\n"
-"PO-Revision-Date: 2014-02-18 06:30+0100\n"
+"POT-Creation-Date: 2015-10-11 18:59+0100\n"
+"PO-Revision-Date: 2015-10-12 11:10+0200\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian\n"
 "Language: Magyar\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Poedit-SourceCharset: iso-8859-1\n"
-"X-Generator: Poedit 1.6.4\n"
+"X-Generator: Poedit 1.8.5\n"
 
 #: gui/about.cpp:94
 #, c-format
@@ -75,7 +75,7 @@ msgstr "Választ"
 
 #: gui/editrecorddialog.cpp:58
 msgid "Author:"
-msgstr ""
+msgstr "Szerzõ:"
 
 #: gui/editrecorddialog.cpp:59 gui/launcher.cpp:204
 msgid "Name:"
@@ -83,11 +83,11 @@ msgstr "Név:"
 
 #: gui/editrecorddialog.cpp:60
 msgid "Notes:"
-msgstr ""
+msgstr "Megjegyzés:"
 
 #: gui/editrecorddialog.cpp:68 gui/predictivedialog.cpp:75
 msgid "Ok"
-msgstr ""
+msgstr "Ok"
 
 #: gui/gui-manager.cpp:117 backends/keymapper/remap-dialog.cpp:53
 #: engines/scumm/help.cpp:126 engines/scumm/help.cpp:141
@@ -414,7 +414,7 @@ msgstr "A választott játék indítása"
 
 #: gui/launcher.cpp:633
 msgid "~L~oad..."
-msgstr "Betöltés"
+msgstr "~B~etölt..."
 
 #: gui/launcher.cpp:633
 msgid "Load saved game for selected game"
@@ -545,7 +545,7 @@ msgstr "Masszív mód..."
 
 #: gui/launcher.cpp:1161
 msgid "Record..."
-msgstr ""
+msgstr "Felvétel..."
 
 #: gui/massadd.cpp:79 gui/massadd.cpp:82
 msgid "... progress ..."
@@ -572,21 +572,19 @@ msgstr "%d új játékot találtam, %d elõzõleg hozzáadott játék kihagyva..."
 
 #: gui/onscreendialog.cpp:101 gui/onscreendialog.cpp:103
 msgid "Stop"
-msgstr ""
+msgstr "Állj"
 
 #: gui/onscreendialog.cpp:106
 msgid "Edit record description"
-msgstr ""
+msgstr "Felvétel leírás szerkesztése"
 
 #: gui/onscreendialog.cpp:108
-#, fuzzy
 msgid "Switch to Game"
-msgstr "Kapcsol"
+msgstr "Átvált játékra"
 
 #: gui/onscreendialog.cpp:110
-#, fuzzy
 msgid "Fast replay"
-msgstr "Gyors mód"
+msgstr "Gyors visszajátszás"
 
 #: gui/options.cpp:85
 msgid "Never"
@@ -980,29 +978,28 @@ msgstr ""
 #. I18N: You must leave "#" as is, only word 'next' is translatable
 #: gui/predictivedialog.cpp:87
 msgid "#  next"
-msgstr ""
+msgstr "#  következõ"
 
 #: gui/predictivedialog.cpp:88
 msgid "add"
-msgstr ""
+msgstr "hozzáad"
 
 #: gui/predictivedialog.cpp:92
-#, fuzzy
 msgid "Delete char"
-msgstr "Töröl"
+msgstr "Karakter törlés"
 
 #: gui/predictivedialog.cpp:96
 msgid "<"
-msgstr ""
+msgstr "<"
 
 #. I18N: Pre means 'Predictive', leave '*' as is
 #: gui/predictivedialog.cpp:98
 msgid "*  Pre"
-msgstr ""
+msgstr "*  Elõzõ"
 
 #: gui/recorderdialog.cpp:64
 msgid "Recorder or Playback Gameplay"
-msgstr ""
+msgstr "Játékmenet felvétel vagy lejátszás"
 
 #: gui/recorderdialog.cpp:69 gui/recorderdialog.cpp:156
 #: gui/saveload-dialog.cpp:220 gui/saveload-dialog.cpp:276
@@ -1011,31 +1008,33 @@ msgstr "Töröl"
 
 #: gui/recorderdialog.cpp:71
 msgid "Record"
-msgstr ""
+msgstr "Felvétel"
 
 #: gui/recorderdialog.cpp:72
-#, fuzzy
 msgid "Playback"
-msgstr "Játék"
+msgstr "Visszajátszás"
 
 #: gui/recorderdialog.cpp:74
 msgid "Edit"
-msgstr ""
+msgstr "Javít"
 
 #: gui/recorderdialog.cpp:86 gui/recorderdialog.cpp:243
 #: gui/recorderdialog.cpp:253
 msgid "Author: "
-msgstr ""
+msgstr "Szerzõ:"
 
 #: gui/recorderdialog.cpp:87 gui/recorderdialog.cpp:244
 #: gui/recorderdialog.cpp:254
 msgid "Notes: "
-msgstr ""
+msgstr "Megjegyzés:"
 
 #: gui/recorderdialog.cpp:155
-#, fuzzy
 msgid "Do you really want to delete this record?"
-msgstr "Biztos hogy törölni akarod ezt a játékállást?"
+msgstr "Biztos hogy törölni akarod ezt a felvételt?"
+
+#: gui/recorderdialog.cpp:174
+msgid "Unknown Author"
+msgstr "Ismeretlen Szerzõ"
 
 #: gui/saveload-dialog.cpp:167
 msgid "List view"
@@ -1336,7 +1335,7 @@ msgstr "Folytatás"
 
 #: engines/dialogs.cpp:87
 msgid "~L~oad"
-msgstr "Betöltés"
+msgstr "~B~etöltés"
 
 #: engines/dialogs.cpp:91
 msgid "~S~ave"
@@ -1410,7 +1409,7 @@ msgstr "~O~K"
 #: engines/dialogs.cpp:308 engines/mohawk/dialogs.cpp:110
 #: engines/mohawk/dialogs.cpp:171 engines/tsage/dialogs.cpp:107
 msgid "~C~ancel"
-msgstr "Mégse"
+msgstr "~M~égse"
 
 #: engines/dialogs.cpp:311
 msgid "~K~eys"
@@ -1493,7 +1492,7 @@ msgstr "DOSBox OPL emulátor"
 
 #: audio/fmopl.cpp:67
 msgid "ALSA Direct FM"
-msgstr ""
+msgstr "ALSA Direct FM"
 
 #: audio/mididrv.cpp:209
 #, c-format
@@ -1609,7 +1608,7 @@ msgstr "ScummVM Fõmenü"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:63
 msgid "~L~eft handed mode"
-msgstr "Balkezes mód:"
+msgstr "~B~alkezes mód"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:64
 msgid "~I~ndy fight controls"
@@ -1814,8 +1813,9 @@ msgstr "Gyors mód"
 #: backends/platform/symbian/src/SymbianActions.cpp:52
 #: backends/platform/wince/CEActionsPocket.cpp:44
 #: backends/platform/wince/CEActionsSmartphone.cpp:52
-#: backends/events/default/default-events.cpp:218 engines/scumm/dialogs.cpp:192
-#: engines/scumm/help.cpp:83 engines/scumm/help.cpp:85
+#: backends/events/default/default-events.cpp:218
+#: engines/scumm/dialogs.cpp:192 engines/scumm/help.cpp:83
+#: engines/scumm/help.cpp:85
 msgid "Quit"
 msgstr "Kilépés"
 
@@ -2069,7 +2069,7 @@ msgstr "Válassz egy billentyût az 'Eszköztár rejtés' mûvelethez"
 
 #: backends/platform/wince/wince-sdl.cpp:542
 msgid "Map Zoom Up action (optional)"
-msgstr "Nagyítás mûvelet (opcionális)"
+msgstr "Térkép nagyítás mûvelet (opcionális)"
 
 #: backends/platform/wince/wince-sdl.cpp:545
 msgid "Map Zoom Down action (optional)"
@@ -2182,25 +2182,27 @@ msgid "Use the original save/load screens, instead of the ScummVM ones"
 msgstr "Az eredeti mentés/betöltés képernyõ használata a ScummVM képek helyett"
 
 #: engines/agi/detection.cpp:157
-#, fuzzy
 msgid "Use an alternative palette"
-msgstr "Alternatív játékintro használata (csak CD verziónál)"
+msgstr "Alternatív paletta használat"
 
 #: engines/agi/detection.cpp:158
 msgid ""
 "Use an alternative palette, common for all Amiga games. This was the old "
 "behavior"
 msgstr ""
+"Alternatív paletta használat, közös minden Amiga játéknál. Ez egy régi "
+"megoldás"
 
 #: engines/agi/detection.cpp:167
-#, fuzzy
 msgid "Mouse support"
-msgstr "Átugrás támogatás"
+msgstr "Egér támogatás"
 
 #: engines/agi/detection.cpp:168
 msgid ""
 "Enables mouse support. Allows to use mouse for movement and in game menus."
 msgstr ""
+"Egérmód engélyezve. Lehetõvé teszi az egérrel mozgatást játékban és "
+"játékmenükben."
 
 #: engines/agi/saveload.cpp:816 engines/drascula/saveload.cpp:349
 #: engines/dreamweb/saveload.cpp:169 engines/neverhood/menumodule.cpp:886
@@ -2253,13 +2255,12 @@ msgid "Cutscene file '%s' not found!"
 msgstr "'%s' átvezetõ fájl nem található"
 
 #: engines/cge/detection.cpp:105 engines/cge2/detection.cpp:101
-#, fuzzy
 msgid "Color Blind Mode"
-msgstr "Kattintás Mód"
+msgstr "Színvak Mód"
 
 #: engines/cge/detection.cpp:106 engines/cge2/detection.cpp:102
 msgid "Enable Color Blind Mode by default"
-msgstr ""
+msgstr "Szinvak mód engedélyezve alapértelmezett"
 
 #: engines/drascula/saveload.cpp:47
 msgid ""
@@ -2314,11 +2315,11 @@ msgstr "Játék mentés nem sikerült"
 
 #: engines/hopkins/detection.cpp:76 engines/hopkins/detection.cpp:86
 msgid "Gore Mode"
-msgstr ""
+msgstr "Gore Mód"
 
 #: engines/hopkins/detection.cpp:77 engines/hopkins/detection.cpp:87
 msgid "Enable Gore Mode when available"
-msgstr ""
+msgstr "Gore mód engedélyezés ha elérhetõ"
 
 #. I18N: Studio audience adds an applause and cheering sounds whenever
 #. Malcolm makes a joke.
@@ -2450,6 +2451,12 @@ msgid ""
 "Do you wish to use this save game file with ScummVM?\n"
 "\n"
 msgstr ""
+"A következõ eredeti játékmentés fájlt találtam a játékkönyvtárban:\n"
+"\n"
+"%s %s\n"
+"\n"
+"Akarod hogy ezt a játékmentés fájlt használja a ScummVM?\n"
+"\n"
 
 #: engines/kyra/saveload_eob.cpp:590
 #, c-format
@@ -2457,6 +2464,8 @@ msgid ""
 "A save game file was found in the specified slot %d. Overwrite?\n"
 "\n"
 msgstr ""
+"Játékmentés található a választott %d slotban. Felülírjam?\n"
+"\n"
 
 #: engines/kyra/saveload_eob.cpp:623
 #, c-format
@@ -2468,6 +2477,11 @@ msgid ""
 "'import_savefile'.\n"
 "\n"
 msgstr ""
+"%d eredeti játékmentés fájlt sikeresen importálta a\n"
+"ScummVM. Ha késõbb manuálisan akarod importálni az eredeti játékmentéseket\n"
+"meg kell nyitnod a ScummVM debug konzolt és használd az 'import_savefile' "
+"utasítást.\n"
+"\n"
 
 #. I18N: Option for fast scene switching
 #: engines/mohawk/dialogs.cpp:92 engines/mohawk/dialogs.cpp:167
@@ -2476,7 +2490,7 @@ msgstr "~Z~ip Mód aktiválva"
 
 #: engines/mohawk/dialogs.cpp:93
 msgid "~T~ransitions Enabled"
-msgstr "Átmenetek engedélyezve"
+msgstr "~Á~tmenetek engedélyezve"
 
 #. I18N: Drop book page
 #: engines/mohawk/dialogs.cpp:95
@@ -2607,11 +2621,12 @@ msgstr "Alternatív játékintro használata (csak CD verziónál)"
 
 #: engines/sci/detection.cpp:374
 msgid "Skip EGA dithering pass (full color backgrounds)"
-msgstr ""
+msgstr "EGA színmoduláció átugrása (Színes háttereknél)"
 
 #: engines/sci/detection.cpp:375
 msgid "Skip dithering pass in EGA games, graphics are shown with full colors"
 msgstr ""
+"Színmoduláció átugrása EGA játékoknál, grafikák teljes színben láthatók"
 
 #: engines/sci/detection.cpp:384
 msgid "Prefer digital sound effects"
@@ -2682,15 +2697,13 @@ msgstr "Játék szünetel.  SPACE a folytatáshoz."
 #. "Moechten Sie wirklich neu starten?  (J/N)J"
 #. Will react to J as 'Yes'
 #: engines/scumm/dialogs.cpp:183
-#, fuzzy
 msgid "Are you sure you want to restart?  (Y/N)Y"
-msgstr "Biztos hogy újra akarod indítani?  (Y/N)"
+msgstr "Biztos hogy újra akarod indítani?  (I/N)I"
 
 #. I18N: you may specify 'Yes' symbol at the end of the line. See previous comment
 #: engines/scumm/dialogs.cpp:185
-#, fuzzy
 msgid "Are you sure you want to quit?  (Y/N)Y"
-msgstr "Biztos hogy ki akarsz lépni?  (Y/N)"
+msgstr "Biztos hogy ki akarsz lépni?  (I/N)I"
 
 #: engines/scumm/dialogs.cpp:190
 msgid "Play"
@@ -2737,7 +2750,7 @@ msgstr "Játék címe)"
 #. I18N: Previous page button
 #: engines/scumm/dialogs.cpp:288
 msgid "~P~revious"
-msgstr "Elõzõ"
+msgstr "~E~lõzõ"
 
 #. I18N: Next page button
 #: engines/scumm/dialogs.cpp:290
@@ -3198,25 +3211,24 @@ msgid "Third kid"
 msgstr "Harmadik gyerek"
 
 #: engines/scumm/help.cpp:292
-#, fuzzy
 msgid "Toggle Inventory/IQ Points display"
-msgstr "Adatképernyõ kapcsoló"
+msgstr "Leltár/IQ pont kijelzõ kapcsoló"
 
 #: engines/scumm/help.cpp:293
 msgid "Toggle Keyboard/Mouse Fighting (*)"
-msgstr ""
+msgstr "Billentyûzet/Egér harc kapcsoló (*)"
 
 #: engines/scumm/help.cpp:295
 msgid "* Keyboard Fighting is always on,"
-msgstr ""
+msgstr "* Harc billentyûzetrõl mindíg aktív,"
 
 #: engines/scumm/help.cpp:296
 msgid "  so despite the in-game message this"
-msgstr ""
+msgstr "  so despite the in-game message this"
 
 #: engines/scumm/help.cpp:297
 msgid "  actually toggles Mouse Fighting Off/On"
-msgstr ""
+msgstr "  egérrel harcolás mód átkapcsolás Be/Ki"
 
 #: engines/scumm/help.cpp:304
 msgid "Fighting controls (numpad):"
@@ -3253,7 +3265,7 @@ msgstr "Alsó ütés"
 
 #: engines/scumm/help.cpp:315
 msgid "Sucker punch"
-msgstr ""
+msgstr "Váratlan ütés"
 
 #: engines/scumm/help.cpp:318
 msgid "These are for Indy on left."
@@ -3311,6 +3323,22 @@ msgstr "Jobbra repülés"
 msgid "Fly to lower right"
 msgstr "Jobbra le repülés"
 
+#: engines/scumm/input.cpp:572
+msgid "Snap scroll on"
+msgstr "Finomgörgetés be"
+
+#: engines/scumm/input.cpp:574
+msgid "Snap scroll off"
+msgstr "Finomgörgetés ki"
+
+#: engines/scumm/input.cpp:587
+msgid "Music volume: "
+msgstr "Zene hangereje:"
+
+#: engines/scumm/input.cpp:604
+msgid "Subtitle speed: "
+msgstr "Felirat sebesség:"
+
 #: engines/scumm/scumm.cpp:1832
 #, c-format
 msgid ""
@@ -3321,27 +3349,30 @@ msgstr ""
 "a %s hiányzik. AdLib-ot használok helyette."
 
 #: engines/scumm/scumm.cpp:2644
-#, fuzzy
 msgid ""
 "Usually, Maniac Mansion would start now. But for that to work, the game "
 "files for Maniac Mansion have to be in the 'Maniac' directory inside the "
 "Tentacle game directory, and the game has to be added to ScummVM."
 msgstr ""
-"Általában a Maniac Mansion indulna itt. De a ScummVM most nem indítja el. Ha "
-"játszani akarsz vele menj a ScummVM fõmenüben a 'Játék hozzáadás' ra és "
-"válaszd a 'Maniac' mappát a 'Tentacle' könyvtárában."
+"Általában a Maniac Mansion indulna most. De a mûködéshez a Maniac Mansion "
+"fájljainak, a 'Maniac' mappában kell lenni a Tentacle játékmappáján belül, "
+"és a játékot így adja hozzá a ScummVM a listához."
 
 #: engines/scumm/players/player_v3m.cpp:129
 msgid ""
 "Could not find the 'Loom' Macintosh executable to read the\n"
 "instruments from. Music will be disabled."
 msgstr ""
+"Nem található a 'Loom' Macintosh futtató állomány, hogy \n"
+"beolvassa a hangszereket. Zene le lessz tiltva."
 
 #: engines/scumm/players/player_v5m.cpp:107
 msgid ""
 "Could not find the 'Monkey Island' Macintosh executable to read the\n"
 "instruments from. Music will be disabled."
 msgstr ""
+"Nem található a 'Monkey Island' Macintosh futtató állomány, hogy \n"
+"beolvassa a hangszereket. Zene le lessz tiltva."
 
 #: engines/sky/compact.cpp:130
 msgid ""
@@ -3457,51 +3488,48 @@ msgstr ""
 
 #: engines/wintermute/detection.cpp:58
 msgid "Show FPS-counter"
-msgstr ""
+msgstr "FPS számláló látszik"
 
 #: engines/wintermute/detection.cpp:59
 msgid "Show the current number of frames per second in the upper left corner"
 msgstr ""
+"A jelenlegi másodpercenkénti képkocka szám kijelzése a bal felsõ sarokban"
 
 #: engines/zvision/detection_tables.h:52
-#, fuzzy
 msgid "Use the original save/load screens instead of the ScummVM interface"
-msgstr "Az eredeti mentés/betöltés képernyõ használata a ScummVM képek helyett"
+msgstr "Használd az eredeti mentés/töltés képet a ScummVM felület helyett"
 
 #: engines/zvision/detection_tables.h:61
 msgid "Double FPS"
-msgstr ""
+msgstr "Dupla FPS"
 
 #: engines/zvision/detection_tables.h:62
 msgid "Increase framerate from 30 to 60 FPS"
-msgstr ""
+msgstr "Növeli a képfrissítést 30 ról 60 FPS-re"
 
 #: engines/zvision/detection_tables.h:71
-#, fuzzy
 msgid "Enable Venus"
-msgstr "Helium mód engedélyezve"
+msgstr "Venus engedélyezve"
 
 #: engines/zvision/detection_tables.h:72
-#, fuzzy
 msgid "Enable the Venus help system"
-msgstr "Helium mód engedélyezve"
+msgstr "Venus súgórendszer engedélyezve"
 
 #: engines/zvision/detection_tables.h:81
 msgid "Disable animation while turning"
-msgstr ""
+msgstr "Animáció tiltás bekapcsolás közben"
 
 #: engines/zvision/detection_tables.h:82
 msgid "Disable animation while turning in panorama mode"
-msgstr ""
+msgstr "Animáció tiltása panoráma mód bekapcsolása közben"
 
 #: engines/zvision/detection_tables.h:91
 msgid "Use high resolution MPEG video"
-msgstr ""
+msgstr "Nagyfelbontású MPEG videó használat"
 
 #: engines/zvision/detection_tables.h:92
-#, fuzzy
 msgid "Use MPEG video from the DVD version, instead of lower resolution AVI"
-msgstr "Alternatív ezüst kurzorszett használata, a normál arany helyett"
+msgstr "MPEG videót használ DVD verziónál, a kisebb felbontású AVI helyett"
 
 #~ msgid "EGA undithering"
 #~ msgstr "EGA szinjavítás"

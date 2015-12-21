@@ -8,6 +8,7 @@ MODULE_OBJS := \
 	dialog.o \
 	error.o \
 	EventRecorder.o \
+	filebrowser-dialog.o \
 	gui-manager.o \
 	launcher.o \
 	massadd.o \

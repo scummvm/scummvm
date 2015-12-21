@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.7.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2015-09-06 15:14+0200\n"
+"POT-Creation-Date: 2015-10-11 18:59+0100\n"
 "PO-Revision-Date: 2015-07-26 18:51+0200\n"
 "Last-Translator: Zbynìk Schwarz <zbynek.schwarz@gmail.com>\n"
 "Language-Team: \n"
@@ -1039,6 +1039,11 @@ msgstr "Poznámky:"
 msgid "Do you really want to delete this record?"
 msgstr "Opravdu chcete tento záznam smazat?"
 
+#: gui/recorderdialog.cpp:174
+#, fuzzy
+msgid "Unknown Author"
+msgstr "Neznámá chyba"
+
 #: gui/saveload-dialog.cpp:167
 msgid "List view"
 msgstr "Seznam"
@@ -1820,8 +1825,9 @@ msgstr "Rychlý re¾im"
 #: backends/platform/symbian/src/SymbianActions.cpp:52
 #: backends/platform/wince/CEActionsPocket.cpp:44
 #: backends/platform/wince/CEActionsSmartphone.cpp:52
-#: backends/events/default/default-events.cpp:218 engines/scumm/dialogs.cpp:192
-#: engines/scumm/help.cpp:83 engines/scumm/help.cpp:85
+#: backends/events/default/default-events.cpp:218
+#: engines/scumm/dialogs.cpp:192 engines/scumm/help.cpp:83
+#: engines/scumm/help.cpp:85
 msgid "Quit"
 msgstr "Ukonèit"
 
@@ -3331,6 +3337,25 @@ msgstr "Letìt doprava"
 #: engines/scumm/help.cpp:337
 msgid "Fly to lower right"
 msgstr "Letìt doprava dolù"
+
+#: engines/scumm/input.cpp:572
+#, fuzzy
+msgid "Snap scroll on"
+msgstr "Plynulé posunování"
+
+#: engines/scumm/input.cpp:574
+msgid "Snap scroll off"
+msgstr ""
+
+#: engines/scumm/input.cpp:587
+#, fuzzy
+msgid "Music volume: "
+msgstr "Hlasitost hudby"
+
+#: engines/scumm/input.cpp:604
+#, fuzzy
+msgid "Subtitle speed: "
+msgstr "Rychlost titulkù:"
 
 #: engines/scumm/scumm.cpp:1832
 #, c-format

@@ -23,8 +23,8 @@
 #ifndef COMMON_SCUMMSYS_H
 #define COMMON_SCUMMSYS_H
 
-#ifndef __has_feature         // Optional of course.
-  #define __has_feature(x) 0  // Compatibility with non-clang compilers.
+#ifndef __has_feature           // Optional of course.
+	#define __has_feature(x) 0  // Compatibility with non-clang compilers.
 #endif
 
 // This is a convenience macro to test whether the compiler used is a GCC
@@ -46,7 +46,7 @@
 
 	#if defined(WIN32)
 
-		#ifdef _MSC_VER
+		#if defined(_MSC_VER) && _MSC_VER <= 1800
 
 		// FIXME: The placement of the workaround functions for MSVC below
 		// require us to include stdio.h and stdarg.h for MSVC here. This
@@ -367,11 +367,11 @@
 #endif
 
 #ifndef STRINGBUFLEN
-  #if defined(__N64__) || defined(__DS__)
-    #define STRINGBUFLEN 256
-  #else
-    #define STRINGBUFLEN 1024
-  #endif
+	#if defined(__N64__) || defined(__DS__)
+		#define STRINGBUFLEN 256
+	#else
+		#define STRINGBUFLEN 1024
+	#endif
 #endif
 
 // ResidualVM specific:

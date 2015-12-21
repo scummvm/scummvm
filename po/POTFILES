@@ -6,6 +6,7 @@ gui/browser_osx.mm
 gui/chooser.cpp
 gui/editrecorddialog.cpp
 gui/error.cpp
+gui/filebrowser-dialog.cpp
 gui/gui-manager.cpp
 gui/KeysDialog.h
 gui/KeysDialog.cpp

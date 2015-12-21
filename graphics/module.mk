@@ -12,6 +12,7 @@ MODULE_OBJS := \
 	fonts/ttf.o \
 	fonts/winfont.o \
 	maccursor.o \
+	pixelformat.o \
 	primitives.o \
 	sjis.o \
 	surface.o \

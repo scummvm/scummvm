@@ -20,48 +20,45 @@
  *
  */
 
-#ifndef BACKENDS_MIXER_SDL13_H
-#define BACKENDS_MIXER_SDL13_H
+#ifndef FILEBROWSER_DIALOG_H
+#define FILEBROWSER_DIALOG_H
 
-#include "backends/mixer/sdl/sdl-mixer.h"
+#include "gui/dialog.h"
+#include "gui/widgets/edittext.h"
 
-/**
- * SDL mixer manager. It wraps the actual implementation
- * of the Audio:Mixer used by the engine, and setups
- * the SDL audio subsystem and the callback for the
- * audio mixer implementation.
- */
-class Sdl13MixerManager : public SdlMixerManager {
+namespace GUI {
+
+class ListWidget;
+class EditTextWidget;
+class CommandSender;
+
+enum {
+	kFBModeLoad = 0,
+	kFBModeSave
+};
+
+class FileBrowserDialog : public Dialog {
 public:
-	Sdl13MixerManager();
-	virtual ~Sdl13MixerManager();
+	FileBrowserDialog(const char *title, const char *fileExtension, int mode);
 
-	/**
-	 * Initialize and setups the mixer
-	 */
-	virtual void init();
+	virtual void open();
 
-	/**
-	 * Pauses the audio system
-	 */
-	virtual void suspendAudio();
+	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
 
-	/**
-	 * Resumes the audio system
-	 */
-	virtual int resumeAudio();
+	const char *getResult() { return Dialog::getResult() ? _fileName->getEditString().c_str() : NULL; }
 
 protected:
+	EditTextWidget *_fileName;
+	ListWidget	   *_fileList;
+	Common::String _fileMask;
+	Common::String _fileExt;
+	int            _mode;
 
-	/**
-	 * The opened SDL audio device
-	 */
-	SDL_AudioDeviceID _device;
-
-	/**
-	 * Starts SDL audio
-	 */
-	virtual void startAudio();
+	void updateListing();
+	void normalieFileName();
+	bool isProceedSave();
 };
+
+} // End of namespace GUI
 
 #endif

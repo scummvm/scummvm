@@ -41,8 +41,6 @@
 
 namespace Graphics {
 
-static const int kAShift = 0;//img->format.aShift;
-
 static const int kBModShift = 0;//img->format.bShift;
 static const int kGModShift = 8;//img->format.gShift;
 static const int kRModShift = 16;//img->format.rShift;
@@ -118,7 +116,7 @@ void doBlitBinaryFast(byte *ino, byte *outo, uint32 width, uint32 height, uint32
 		in = ino;
 		for (uint32 j = 0; j < width; j++) {
 			uint32 pix = *(uint32 *)in;
-			int a = (pix >> kAShift) & 0xff;
+			int a = in[kAIndex];
 
 			if (a != 0) {   // Full opacity (Any value not exactly 0 is Opaque here)
 				*(uint32 *)out = pix;
@@ -338,7 +336,7 @@ Common::Rect TransparentSurface::blit(Graphics::Surface &target, int posX, int p
 	retSize.setWidth(0);
 	retSize.setHeight(0);
 	// Check if we need to draw anything at all
-	int ca = (color >> 24) & 0xff;
+	int ca = (color >> kAModShift) & 0xff;
 
 	if (ca == 0) {
 		return retSize;

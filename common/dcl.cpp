@@ -449,6 +449,8 @@ bool DecompressorDCL::unpack(SeekableReadStream *sourceStream, WriteStream *targ
 	}
 
 	if (_targetFixedSize) {
+		if (_bytesWritten != _targetSize)
+			warning("DCL-INFLATE Error: Inconsistent bytes written (%d) and target buffer size (%d)", _bytesWritten, _targetSize);
 		return _bytesWritten == _targetSize;
 	}
 	return true; // For targets featuring dynamic size we always succeed

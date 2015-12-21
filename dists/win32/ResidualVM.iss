@@ -40,7 +40,6 @@ Name: {group}\KnownBugs; Filename: {app}\KNOWN_BUGS.txt; WorkingDir: {app}; Comm
 ;NEWS
 Name: {group}\News; Filename: {app}\NEWS.txt; WorkingDir: {app}; Comment: NEWS; Flags: createonlyiffileexists
 ;QUICKSTART
-Name: {group}\QuickStart; Filename: {app}\QUICKSTART.txt; WorkingDir: {app}; Comment: QUICKSTART; Flags: createonlyiffileexists
 ;README
 Name: {group}\Readme; Filename: {app}\README.txt; WorkingDir: {app}; Comment: README; Flags: createonlyiffileexists
 
@@ -71,7 +70,6 @@ Source: KNOWN_BUGS.txt; DestDir: {app}; Flags: ignoreversion
 ;NEWS
 Source: NEWS.txt; DestDir: {app}; Flags: ignoreversion
 ;QUICKSTART
-Source: doc/QUICKSTART.txt; DestDir: {app}; Flags: ignoreversion isreadme
 ;README
 Source: README.txt; DestDir: {app}; Flags: ignoreversion isreadme
 Source: README-SDL.txt; DestDir: {app}; Flags: ignoreversion

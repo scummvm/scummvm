@@ -328,7 +328,7 @@ Common::KeyCode SdlEventSource::SDLToOSystemKeycode(const SDLKey key) {
 	case SDLK_y: return Common::KEYCODE_y;
 	case SDLK_z: return Common::KEYCODE_z;
 	case SDLK_DELETE: return Common::KEYCODE_DELETE;
-#if SDL_VERSION_ATLEAST(1, 3, 0)
+#if SDL_VERSION_ATLEAST(2, 0, 0)
 	case SDL_SCANCODE_TO_KEYCODE(SDL_SCANCODE_GRAVE): return Common::KEYCODE_TILDE;
 #else
 	case SDLK_WORLD_16: return Common::KEYCODE_TILDE;
@@ -751,16 +751,16 @@ bool SdlEventSource::handleJoyButtonUp(SDL_Event &ev, Common::Event &event) {
 
 bool SdlEventSource::handleJoyAxisMotion(SDL_Event &ev, Common::Event &event) {
 	int axis = ev.jaxis.value;
-	if ( axis > JOY_DEADZONE) {
+	if (axis > JOY_DEADZONE) {
 		axis -= JOY_DEADZONE;
 		event.type = Common::EVENT_MOUSEMOVE;
-	} else if ( axis < -JOY_DEADZONE ) {
+	} else if (axis < -JOY_DEADZONE) {
 		axis += JOY_DEADZONE;
 		event.type = Common::EVENT_MOUSEMOVE;
 	} else
 		axis = 0;
 
-	if ( ev.jaxis.axis == JOY_XAXIS) {
+	if (ev.jaxis.axis == JOY_XAXIS) {
 #ifdef JOY_ANALOG
 		_km.x_vel = axis / 2000;
 		_km.x_down_count = 0;
@@ -773,7 +773,6 @@ bool SdlEventSource::handleJoyAxisMotion(SDL_Event &ev, Common::Event &event) {
 			_km.x_down_count = 0;
 		}
 #endif
-
 	} else if (ev.jaxis.axis == JOY_YAXIS) {
 #ifndef JOY_INVERT_Y
 		axis = -axis;

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2015-09-06 15:14+0200\n"
+"POT-Creation-Date: 2015-10-11 18:59+0100\n"
 "PO-Revision-Date: 2011-12-15 14:53+0100\n"
 "Last-Translator: Mikel Iturbe Urretxa <mikel@hamahiru.org>\n"
 "Language-Team: Librezale <librezale@librezale.org>\n"
@@ -1045,6 +1045,11 @@ msgstr ""
 msgid "Do you really want to delete this record?"
 msgstr "Ezabatu partida gorde hau?"
 
+#: gui/recorderdialog.cpp:174
+#, fuzzy
+msgid "Unknown Author"
+msgstr "Errore ezezaguna"
+
 #: gui/saveload-dialog.cpp:167
 msgid "List view"
 msgstr ""
@@ -1834,8 +1839,9 @@ msgstr "Modu bizkorra"
 #: backends/platform/symbian/src/SymbianActions.cpp:52
 #: backends/platform/wince/CEActionsPocket.cpp:44
 #: backends/platform/wince/CEActionsSmartphone.cpp:52
-#: backends/events/default/default-events.cpp:218 engines/scumm/dialogs.cpp:192
-#: engines/scumm/help.cpp:83 engines/scumm/help.cpp:85
+#: backends/events/default/default-events.cpp:218
+#: engines/scumm/dialogs.cpp:192 engines/scumm/help.cpp:83
+#: engines/scumm/help.cpp:85
 msgid "Quit"
 msgstr "Irten"
 
@@ -3339,6 +3345,25 @@ msgstr "Eskuinera hegan egin"
 #: engines/scumm/help.cpp:337
 msgid "Fly to lower right"
 msgstr "Behera eta eskuinera hegan egin"
+
+#: engines/scumm/input.cpp:572
+#, fuzzy
+msgid "Snap scroll on"
+msgstr "Behera"
+
+#: engines/scumm/input.cpp:574
+msgid "Snap scroll off"
+msgstr ""
+
+#: engines/scumm/input.cpp:587
+#, fuzzy
+msgid "Music volume: "
+msgstr "Musika:"
+
+#: engines/scumm/input.cpp:604
+#, fuzzy
+msgid "Subtitle speed: "
+msgstr "Azpitit. abiadura:"
 
 #: engines/scumm/scumm.cpp:1832
 #, c-format

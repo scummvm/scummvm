@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2015-09-06 15:14+0200\n"
+"POT-Creation-Date: 2015-10-11 18:59+0100\n"
 "PO-Revision-Date: 2011-10-21 21:30-0300\n"
 "Last-Translator: Saulo Benigno <saulobenigno@gmail.com>\n"
 "Language-Team: ScummBR (www.scummbr.com) <scummbr@yahoo.com.br>\n"
@@ -1051,6 +1051,11 @@ msgstr ""
 msgid "Do you really want to delete this record?"
 msgstr "Você realmente quer excluir este jogo salvo?"
 
+#: gui/recorderdialog.cpp:174
+#, fuzzy
+msgid "Unknown Author"
+msgstr "Erro desconhecido"
+
 #: gui/saveload-dialog.cpp:167
 msgid "List view"
 msgstr ""
@@ -1849,8 +1854,9 @@ msgstr "Modo rápido"
 #: backends/platform/symbian/src/SymbianActions.cpp:52
 #: backends/platform/wince/CEActionsPocket.cpp:44
 #: backends/platform/wince/CEActionsSmartphone.cpp:52
-#: backends/events/default/default-events.cpp:218 engines/scumm/dialogs.cpp:192
-#: engines/scumm/help.cpp:83 engines/scumm/help.cpp:85
+#: backends/events/default/default-events.cpp:218
+#: engines/scumm/dialogs.cpp:192 engines/scumm/help.cpp:83
+#: engines/scumm/help.cpp:85
 msgid "Quit"
 msgstr "Sair"
 
@@ -3365,6 +3371,25 @@ msgstr "Voar para direita"
 #: engines/scumm/help.cpp:337
 msgid "Fly to lower right"
 msgstr "Voar para direita inferior"
+
+#: engines/scumm/input.cpp:572
+#, fuzzy
+msgid "Snap scroll on"
+msgstr "Descer na lista"
+
+#: engines/scumm/input.cpp:574
+msgid "Snap scroll off"
+msgstr ""
+
+#: engines/scumm/input.cpp:587
+#, fuzzy
+msgid "Music volume: "
+msgstr "Volume da Música:"
+
+#: engines/scumm/input.cpp:604
+#, fuzzy
+msgid "Subtitle speed: "
+msgstr "Rapidez legendas:"
 
 #: engines/scumm/scumm.cpp:1832
 #, c-format
