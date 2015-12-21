@@ -127,7 +127,7 @@ void LabEngine::drawRoomMessage(uint16 curInv, CloseDataPtr closePtr) {
 	}
 
 	if (_alternate) {
-		if ((curInv <= _numInv) && _conditions->in(curInv) && _inventory[curInv]._bitmapName != "") {
+		if ((curInv <= _numInv) && _conditions->in(curInv) && !_inventory[curInv]._bitmapName.empty()) {
 			if ((curInv == kItemLamp) && _conditions->in(kCondLampOn))
 				// LAB: Labyrinth specific
 				drawStaticMessage(kTextkLampOn);
@@ -374,7 +374,7 @@ void LabEngine::decIncInv(uint16 *curInv, bool decreaseFl) {
 	interfaceOff();
 	
 	while (newInv && (newInv <= _numInv)) {
-		if (_conditions->in(newInv) && _inventory[newInv]._bitmapName != "") {
+		if (_conditions->in(newInv) && !_inventory[newInv]._bitmapName.empty()) {
 			_nextFileName = getInvName(newInv);
 			*curInv = newInv;
 			break;
@@ -968,7 +968,7 @@ void LabEngine::processAltButton(uint16 &curInv, uint16 &lastInv, uint16 buttonI
 				curInv++;
 		}
 
-		if ((curInv <= _numInv) && _conditions->in(curInv) && _inventory[curInv]._bitmapName != "")
+		if ((curInv <= _numInv) && _conditions->in(curInv) && !_inventory[curInv]._bitmapName.empty())
 			_nextFileName = getInvName(curInv);
 
 		break;
@@ -1066,7 +1066,7 @@ void LabEngine::performAction(uint16 actionMode, Common::Point curPos, uint16 &c
 		if (_closeDataPtr == tmpClosePtr) {
 			if (curPos.y < (_utils->vgaScaleY(149) + _utils->svgaCord(2)))
 				drawStaticMessage(kTextNothing);
-		} else if (tmpClosePtr->_graphicName != "") {
+		} else if (!tmpClosePtr->_graphicName.empty()) {
 			_anim->_doBlack = true;
 			_closeDataPtr = tmpClosePtr;
 		} else if (curPos.y < (_utils->vgaScaleY(149) + _utils->svgaCord(2)))

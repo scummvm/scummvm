@@ -231,7 +231,7 @@ void DisplayMan::createBox(uint16 y2) {
 }
 
 int DisplayMan::longDrawMessage(Common::String str) {
-	if (!str.size())
+	if (str.empty())
 		return 0;
 
 	_vm->_event->attachButtonList(nullptr);
@@ -256,22 +256,23 @@ void DisplayMan::drawMessage(Common::String str) {
 		return;
 	}
 
-	if (str.size()) {
-		if ((textLength(_vm->_msgFont, str) > _vm->_utils->vgaScaleX(306))) {
-			longDrawMessage(str);
-			_lastMessageLong = true;
-		} else {
-			if (_longWinInFront) {
-				_longWinInFront = false;
-				drawPanel();
-			}
+	if (str.empty())
+		return;
 
-			_vm->_event->mouseHide();
-			createBox(168);
-			drawText(_vm->_msgFont, _vm->_utils->vgaScaleX(7), _vm->_utils->vgaScaleY(155) + _vm->_utils->svgaCord(2), 1, str);
-			_vm->_event->mouseShow();
-			_lastMessageLong = false;
+	if ((textLength(_vm->_msgFont, str) > _vm->_utils->vgaScaleX(306))) {
+		longDrawMessage(str);
+		_lastMessageLong = true;
+	} else {
+		if (_longWinInFront) {
+			_longWinInFront = false;
+			drawPanel();
 		}
+
+		_vm->_event->mouseHide();
+		createBox(168);
+		drawText(_vm->_msgFont, _vm->_utils->vgaScaleX(7), _vm->_utils->vgaScaleY(155) + _vm->_utils->svgaCord(2), 1, str);
+		_vm->_event->mouseShow();
+		_lastMessageLong = false;
 	}
 }
 
@@ -857,7 +858,7 @@ void DisplayMan::doTransWipe(CloseDataPtr *closePtrList, const Common::String fi
 		setPen(0);
 	}	// for j
 
-	if (!filename.size())
+	if (filename.empty())
 		_vm->_curFileName = _vm->getPictName(closePtrList);
 	else if (filename[0] > ' ')
 		_vm->_curFileName = filename;

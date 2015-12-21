@@ -212,7 +212,7 @@ Common::String LabEngine::generateSaveFileName(uint slot) {
 }
 
 void LabEngine::drawStaticMessage(byte index) {
-	_graphics->drawMessage(_resource->getStaticText((StaticText)index).c_str());
+	_graphics->drawMessage(_resource->getStaticText((StaticText)index));
 }
 
 void LabEngine::changeVolume(int delta) {
