@@ -98,9 +98,7 @@ struct Context {
 #endif
 
 #define GL_FUNC_DEF(ret, name, param) ret (GL_CALL_CONV *name)param
-#define GL_EXT_FUNC_DEF GL_FUNC_DEF
 #include "backends/graphics/opengl/opengl-func.h"
-#undef GL_EXT_FUNC_DEF
 #undef GL_FUNC_DEF
 };
 

@@ -63,6 +63,11 @@
  * GL_EXT_FUNC_DEF: Define an OpenGL (ES) extension function.
  */
 
+#if !defined(GL_EXT_FUNC_DEF)
+#define GL_EXT_FUNC_DEF(ret, name, param) GL_FUNC_DEF(ret, name, param)
+#define DEFINED_GL_EXT_FUNC_DEF
+#endif
+
 GL_FUNC_DEF(void, glEnable, (GLenum cap));
 GL_FUNC_DEF(void, glDisable, (GLenum cap));
 GL_FUNC_DEF(void, glClear, (GLbitfield mask));
@@ -136,4 +141,9 @@ GL_EXT_FUNC_DEF(void, glCompileShaderARB, (GLhandleARB shaderObj));
 GL_EXT_FUNC_DEF(void, glVertexAttribPointerARB, (GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const void *pointer));
 GL_EXT_FUNC_DEF(void, glVertexAttrib4fARB, (GLuint index, GLfloat x, GLfloat y, GLfloat z, GLfloat w));
 GL_EXT_FUNC_DEF(void, glEnableVertexAttribArrayARB, (GLuint index));
+#endif
+
+#ifdef DEFINED_GL_EXT_FUNC_DEF
+#undef DEFINED_GL_EXT_FUNC_DEF
+#undef GL_EXT_FUNC_DEF
 #endif
