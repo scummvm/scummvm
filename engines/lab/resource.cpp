@@ -226,18 +226,19 @@ Common::File *Resource::openDataFile(const Common::String fileName, uint32 fileH
 Common::String Resource::readString(Common::File *file) {
 	byte size = file->readByte();
 	if (!size)
-		return nullptr;
+		return Common::String("");
 
-	Common::String str;
-	char c;
+	char *str = new char[size];
 	for (int i = 0; i < size; i++) {
-		c = file->readByte();
+		char c = file->readByte();
 		// Decrypt char
 		c = (i < size - 1) ? c - 95 : '\0';
-		str += c;
+		str[i] = c;
 	}
 
-	return str;
+	Common::String result = str;
+	delete str;
+	return result;
 }
 
 int16 *Resource::readConditions(Common::File *file) {
