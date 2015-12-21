@@ -218,6 +218,18 @@ bool World::loadWorld(Common::MacResManager *resMan) {
 		}
 
 		delete res;
+	} else {
+		/* Enchanted Scepters did not use the PAT# resource for the textures. */
+		res = resMan->getResource(MKTAG('C','O','D','E'), 1);
+		if (res != NULL) {
+			res->skip(0x55ac);
+			for (int i = 0; i < 29; i++) {
+				byte *pattern = (byte *)malloc(8);
+
+				res->read(pattern, 8);
+				_patterns.push_back(pattern);
+			}
+		}
 	}
 
 	return true;
