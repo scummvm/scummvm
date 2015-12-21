@@ -38,10 +38,6 @@ Utils::Utils(LabEngine *vm) : _vm(vm), _rnd("lab") {
 	_dataBytesPerRow = 0;
 }
 
-/**
- * Scales the x co-ordinates to that of the new display.  In the room parser
- * file, co-ordinates are set up on a 360x336 display.
- */
 uint16 Utils::scaleX(uint16 x) {
 	if (_vm->_isHiRes)
 		return (uint16)((x * 16) / 9);
@@ -49,10 +45,6 @@ uint16 Utils::scaleX(uint16 x) {
 		return (uint16)((x * 8) / 9);
 }
 
-/**
- * Scales the y co-ordinates to that of the new display.  In the room parser
- * file, co-ordinates are set up on a 368x336 display.
- */
 uint16 Utils::scaleY(uint16 y) {
 	if (_vm->_isHiRes)
 		return (y + (y / 14));
@@ -82,9 +74,6 @@ Common::Rect Utils::mapRectScale(int16 x1, int16 y1, int16 x2, int16 y2) {
 	return Common::Rect(mapScaleX(x1), mapScaleY(y1), mapScaleX(x2), mapScaleY(y2));
 }
 
-/**
- * Scales the VGA coords to SVGA if necessary; otherwise, returns VGA coords.
- */
 int16 Utils::vgaScaleX(int16 x) {
 	if (_vm->_isHiRes)
 		return (x * 2);
@@ -92,9 +81,6 @@ int16 Utils::vgaScaleX(int16 x) {
 		return x;
 }
 
-/**
- * Scales the VGA coords to SVGA if necessary; otherwise, returns VGA coords.
- */
 int16 Utils::vgaScaleY(int16 y) {
 	if (_vm->_isHiRes)
 		return ((y * 12) / 5);
@@ -113,9 +99,6 @@ uint16 Utils::svgaCord(uint16 cord) {
 		return 0;
 }
 
-/**
- * Converts SVGA coords to VGA if necessary, otherwise returns VGA coords.
- */
 Common::Point Utils::vgaUnscale(Common::Point pos) {
 	Common::Point result;
 	if (_vm->_isHiRes) {
@@ -127,10 +110,6 @@ Common::Point Utils::vgaUnscale(Common::Point pos) {
 	return result;
 }
 
-/**
- * Undiffs a piece of memory when header size is a byte, and copy/skip size
- * is also a byte or a word.
- */
 template<typename T>
 void Utils::unDiff(T *dest, Common::File *sourceFile) {
 	byte bytesPerWord = sizeof(T);
@@ -162,12 +141,6 @@ void Utils::unDiff(T *dest, Common::File *sourceFile) {
 	}
 }
 
-/*------------------------- unDiff Vertical Memory --------------------------*/
-
-/**
- * Undiffs a piece of memory when header size is a byte, and copy/skip size
- * is a byte or a word or a double word.
- */
 template<typename T>
 void Utils::verticalUnDiff(T *dest, Common::File *sourceFile, uint16 bytesPerRow) {
 	uint16 counter = 0;
@@ -262,9 +235,6 @@ void Utils::verticalRunLengthDecode(byte *dest, Common::File *sourceFile, uint16
 	}
 }
 
-/**
- * Does the undiffing between the bitmaps.
- */
 void Utils::unDiff(byte *newBuf, byte *oldBuf, Common::File *sourceFile, uint16 bytesPerRow, bool isVertical) {
 	sourceFile->skip(1);
 	byte bufType = sourceFile->readByte();

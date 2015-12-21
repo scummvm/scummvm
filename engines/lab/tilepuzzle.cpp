@@ -95,9 +95,6 @@ TilePuzzle::~TilePuzzle() {
 	}
 }
 
-/**
- * Processes mouse clicks and changes the combination.
- */
 void TilePuzzle::mouseTile(Common::Point pos) {
 	Common::Point realPos = _vm->_utils->vgaUnscale(pos);
 
@@ -111,9 +108,6 @@ void TilePuzzle::mouseTile(Common::Point pos) {
 		changeTile(tileX, tileY);
 }
 
-/**
- * Changes the combination number of one of the slots
- */
 void TilePuzzle::changeTile(uint16 col, uint16 row) {
 	int16 scrolltype = -1;
 
@@ -180,9 +174,6 @@ void TilePuzzle::changeTile(uint16 col, uint16 row) {
 	}
 }
 
-/**
- * Processes mouse clicks and changes the combination.
- */
 void TilePuzzle::mouseCombination(Common::Point pos) {
 	Common::Point realPos = _vm->_utils->vgaUnscale(pos);
 
@@ -206,9 +197,6 @@ void TilePuzzle::mouseCombination(Common::Point pos) {
 	changeCombination(number);
 }
 
-/**
- * Draws the images of the combination lock to the display bitmap.
- */
 void TilePuzzle::doTile(bool showsolution) {
 	uint16 row = 0, col = 0, rowm, colm, num;
 	int16 rows, cols;
@@ -248,9 +236,6 @@ void TilePuzzle::doTile(bool showsolution) {
 	}
 }
 
-/**
- * Reads in a backdrop picture.
- */
 void TilePuzzle::showTile(const Common::String filename, bool showSolution) {
 	_vm->_anim->_doBlack = true;
 	_vm->_anim->_noPalChange = true;
@@ -271,9 +256,6 @@ void TilePuzzle::showTile(const Common::String filename, bool showSolution) {
 	_vm->_graphics->setPalette(_vm->_anim->_diffPalette, 256);
 }
 
-/**
- * Does the scrolling for the tiles on the tile puzzle.
- */
 void TilePuzzle::doTileScroll(uint16 col, uint16 row, uint16 scrolltype) {
 	int16 dX = 0, dY = 0, dx = 0, dy = 0, sx = 0, sy = 0;
 	int last = 0;
@@ -315,9 +297,6 @@ void TilePuzzle::doTileScroll(uint16 col, uint16 row, uint16 scrolltype) {
 	delete[] buffer;
 }
 
-/**
- * Changes the combination number of one of the slots
- */
 void TilePuzzle::changeCombination(uint16 number) {
 	const int solution[6] = { 0, 4, 0, 8, 7, 2 };
 
@@ -368,17 +347,11 @@ void TilePuzzle::scrollRaster(int16 dx, int16 dy, uint16 x1, uint16 y1, uint16 x
 		_vm->_graphics->scrollDisplayY(dy, x1, y1, x2, y2, buffer);
 }
 
-/**
- * Draws the images of the combination lock to the display bitmap.
- */
 void TilePuzzle::doCombination() {
 	for (int i = 0; i <= 5; i++)
 		_numberImages[_combination[i]]->drawImage(_vm->_utils->vgaScaleX(COMBINATION_X[i]), _vm->_utils->vgaScaleY(65));
 }
 
-/**
- * Reads in a backdrop picture.
- */
 void TilePuzzle::showCombination(const Common::String filename) {
 	_vm->_anim->_doBlack = true;
 	_vm->_anim->_noPalChange = true;

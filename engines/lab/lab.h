@@ -454,7 +454,14 @@ private:
 	void performAction(uint16 actionMode, Common::Point curPos, uint16 &curInv);
 
 private:
+	/**
+	 * Writes the game out to disk.
+	 */
 	bool saveGame(int slot, const Common::String desc);
+
+	/**
+	 * Reads the game from disk.
+	 */
 	bool loadGame(int slot);
 	void writeSaveGameHeader(Common::OutSaveFile *out, const Common::String &saveName);
 };
