@@ -87,11 +87,28 @@ private:
 	Common::KeyState _keyPressed;
 
 private:
+	/**
+	 * Checks whether or not the cords fall within one of the buttons in a list
+	 * of buttons.
+	 */
 	Button *checkButtonHit(ButtonList *buttonList, Common::Point pos);
+
+	/**
+	 * Checks whether or not a key has been pressed.
+	 */
 	bool keyPress(Common::KeyCode *keyCode);
 	bool haveNextChar();
 	Common::KeyCode getNextChar();
+
+	/**
+	 * Checks whether or not the coords fall within one of the buttons in a list
+	 * of buttons.
+	 */
 	Button *checkNumButtonHit(ButtonList *buttonList, uint16 key);
+
+	/**
+	 * Make a key press have the right case for a button KeyEquiv value.
+	 */
 	uint16 makeButtonKeyEquiv(uint16 key);
 
 public:
@@ -100,15 +117,40 @@ public:
 	void attachButtonList(ButtonList *buttonList);
 	Button *createButton(uint16 x, uint16 y, uint16 id, uint16 key, Image *image, Image *altImage);
 	void toggleButton(Button *button, uint16 penColor, bool enable);
+
+	/**
+	 * Draws a button list to the screen.
+	 */
 	void drawButtonList(ButtonList *buttonList);
 	void freeButtonList(ButtonList *buttonList);
 	Button *getButton(uint16 id);
+
+	/**
+	 * Gets the current mouse co-ordinates.  NOTE: On IBM version, will scale
+	 * from virtual to screen co-ordinates automatically.
+	 */
 	Common::Point getMousePos();
 	IntuiMessage *getMsg();
+
+	/**
+	 * Initializes the mouse.
+	 */
 	void initMouse();
+
+	/**
+	 * Shows the mouse.
+	 */
 	void mouseShow();
+
+	/**
+	 * Hides the mouse.
+	 */
 	void mouseHide();
 	void processInput();
+
+	/**
+	 * Moves the mouse to new co-ordinates.
+	 */
 	void setMousePos(Common::Point pos);
 	void updateMouse();
 	Common::Point updateAndGetMousePos();

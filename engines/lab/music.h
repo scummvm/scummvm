@@ -69,8 +69,16 @@ private:
 private:
 	void fillbuffer(byte *musicBuffer);
 	uint16 getPlayingBufferCount();
+
+	/**
+	 * Pauses the background music.
+	 */
 	void pauseBackMusic();
 	void readSound(bool waitTillFinished, Common::File *file);
+
+	/**
+	 * Starts up the music initially.
+	 */
 	void startMusic(bool restartFl);
 
 public:
@@ -80,18 +88,54 @@ public:
 public:
 	Music(LabEngine *vm);
 
+	/**
+	 * Changes the background music to something else.
+	 */
 	void changeMusic(const Common::String filename);
+
+	/**
+	 * Checks the music that should be playing in a particular room.
+	 */
 	void checkRoomMusic();
+
+	/**
+	 * Frees up the music buffers and closes the file.
+	 */
 	void freeMusic();
+
+	/**
+	 * Initializes the music buffers.
+	 */
 	bool initMusic(const Common::String filename);
 	bool isSoundEffectActive() const;
 	void playSoundEffect(uint16 sampleSpeed, uint32 length, Common::File *dataFile);
+
+	/**
+	 * Reads in a music file.  Ignores any graphics.
+	 */
 	bool readMusic(const Common::String filename, bool waitTillFinished);
+
+	/**
+	 * Changes the background music to the original piece playing.
+	 */
 	void resetMusic();
+
+	/**
+	 * Resumes the paused background music.
+	 */
 	void resumeBackMusic();
+
+	/**
+	 * Turns the music on and off.
+	 */
 	void setMusic(bool on);
 	void setMusicReset(bool reset) { _doReset = reset; }
 	void stopSoundEffect();
+
+	/**
+	 * Figures out which buffer is currently playing based on messages sent to
+	 * it from the Audio device.
+	 */
 	void updateMusic();
 };
 

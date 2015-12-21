@@ -67,9 +67,6 @@ void EventManager::freeButtonList(ButtonList *buttonList) {
 	buttonList->clear();
 }
 
-/**
- * Draws a button list to the screen.
- */
 void EventManager::drawButtonList(ButtonList *buttonList) {
 	for (ButtonList::iterator button = buttonList->begin(); button != buttonList->end(); ++button) {
 		toggleButton((*button), 1, true);
@@ -88,9 +85,6 @@ void EventManager::toggleButton(Button *button, uint16 disabledPenColor, bool en
 	button->_isEnabled = enable;
 }
 
-/**
- * Make a key press have the right case for a button KeyEquiv value.
- */
 uint16 EventManager::makeButtonKeyEquiv(uint16 key) {
 	if (Common::isAlnum(key))
 		key = tolower(key);
@@ -98,10 +92,6 @@ uint16 EventManager::makeButtonKeyEquiv(uint16 key) {
 	return key;
 }
 
-/**
- * Checks whether or not the coords fall within one of the buttons in a list
- * of buttons.
- */
 Button *EventManager::checkNumButtonHit(ButtonList *buttonList, uint16 key) {
 	uint16 gkey = key - '0';
 
