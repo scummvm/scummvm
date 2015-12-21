@@ -58,10 +58,17 @@
  * does not contain include guards because it can be required to include it
  * multiple times in a source file.
  *
- * Functions are defined by two different user supplied macros:
- * GL_FUNC_DEF: Define a (builtin) OpenGL (ES) function.
+ * Functions are defined by three different user supplied macros:
+ * GL_FUNC_DEF:     Define a (builtin) OpenGL (ES) function.
+ * GL_FUNC_2_DEF:   Define a OpenGL (ES) 2.0 function which can be provided by
+ *                  extensions in OpenGL 1.x contexts.
  * GL_EXT_FUNC_DEF: Define an OpenGL (ES) extension function.
  */
+
+#if !defined(GL_FUNC_2_DEF)
+#define GL_FUNC_2_DEF(ret, name, extName, param) GL_FUNC_DEF(ret, name, param)
+#define DEFINED_GL_FUNC_2_DEF
+#endif
 
 #if !defined(GL_EXT_FUNC_DEF)
 #define GL_EXT_FUNC_DEF(ret, name, param) GL_FUNC_DEF(ret, name, param)
@@ -97,11 +104,15 @@ GL_FUNC_DEF(void, glTexSubImage2D, (GLenum target, GLint level, GLint xoffset, G
 GL_FUNC_DEF(const GLubyte *, glGetString, (GLenum name));
 GL_FUNC_DEF(GLenum, glGetError, ());
 
+#if !USE_FORCED_GLES
+GL_FUNC_2_DEF(void, glEnableVertexAttribArray, glEnableVertexAttribArrayARB, (GLuint index));
+GL_FUNC_2_DEF(void, glUniform1i, glUniform1iARB, (GLint location, GLint v0));
+GL_FUNC_2_DEF(void, glUniformMatrix4fv, glUniformMatrix4fvARB, (GLint location, GLsizei count, GLboolean transpose, const GLfloat *value));
+GL_FUNC_2_DEF(void, glVertexAttrib4f, glVertexAttrib4fARB, (GLuint index, GLfloat x, GLfloat y, GLfloat z, GLfloat w));
+GL_FUNC_2_DEF(void, glVertexAttribPointer, glVertexAttribPointerARB, (GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const void *pointer));
+#endif
+
 #if !USE_FORCED_GL && !USE_FORCED_GLES
-GL_FUNC_DEF(void, glVertexAttrib4f, (GLuint index, GLfloat x, GLfloat y, GLfloat z, GLfloat w));
-GL_FUNC_DEF(void, glVertexAttribPointer, (GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const void *pointer));
-GL_FUNC_DEF(void, glUniformMatrix4fv, (GLint location, GLsizei count, GLboolean transpose, const GLfloat *value));
-GL_FUNC_DEF(void, glUniform1i, (GLint location, GLint v0));
 GL_FUNC_DEF(void, glDeleteProgram, (GLuint program));
 GL_FUNC_DEF(void, glDeleteShader, (GLuint shader));
 GL_FUNC_DEF(GLuint, glCreateProgram, ());
@@ -118,7 +129,6 @@ GL_FUNC_DEF(void, glShaderSource, (GLuint shader, GLsizei count, const GLchar *c
 GL_FUNC_DEF(void, glCompileShader, (GLuint shader));
 GL_FUNC_DEF(void, glGetShaderiv, (GLuint shader, GLenum pname, GLint *params));
 GL_FUNC_DEF(void, glGetShaderInfoLog, (GLuint shader, GLsizei bufSize, GLsizei *length, GLchar *infoLog));
-GL_FUNC_DEF(void, glEnableVertexAttribArray, (GLuint index));
 GL_FUNC_DEF(void, glActiveTexture, (GLenum texture));
 #endif
 
@@ -133,17 +143,17 @@ GL_EXT_FUNC_DEF(void, glGetObjectParameterivARB, (GLhandleARB obj, GLenum pname,
 GL_EXT_FUNC_DEF(GLint, glGetUniformLocationARB, (GLhandleARB programObj, const GLcharARB *name));
 GL_EXT_FUNC_DEF(void, glGetInfoLogARB, (GLhandleARB obj, GLsizei maxLength, GLsizei *length, GLcharARB *infoLog));
 GL_EXT_FUNC_DEF(void, glUseProgramObjectARB, (GLhandleARB programObj));
-GL_EXT_FUNC_DEF(void, glUniformMatrix4fvARB, (GLint location, GLsizei count, GLboolean transpose, const GLfloat *value));
-GL_EXT_FUNC_DEF(void, glUniform1iARB, (GLint location, GLint v0));
 GL_EXT_FUNC_DEF(GLhandleARB, glCreateShaderObjectARB, (GLenum shaderType));
 GL_EXT_FUNC_DEF(void, glShaderSourceARB, (GLhandleARB shaderObj, GLsizei count, const GLcharARB **string, const GLint *length));
 GL_EXT_FUNC_DEF(void, glCompileShaderARB, (GLhandleARB shaderObj));
-GL_EXT_FUNC_DEF(void, glVertexAttribPointerARB, (GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const void *pointer));
-GL_EXT_FUNC_DEF(void, glVertexAttrib4fARB, (GLuint index, GLfloat x, GLfloat y, GLfloat z, GLfloat w));
-GL_EXT_FUNC_DEF(void, glEnableVertexAttribArrayARB, (GLuint index));
 #endif
 
 #ifdef DEFINED_GL_EXT_FUNC_DEF
 #undef DEFINED_GL_EXT_FUNC_DEF
 #undef GL_EXT_FUNC_DEF
+#endif
+
+#ifdef DEFINED_GL_FUNC_2_DEF
+#undef DEFINED_GL_FUNC_2_DEF
+#undef GL_FUNC_2_DEF
 #endif

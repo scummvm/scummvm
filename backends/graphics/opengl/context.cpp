@@ -28,6 +28,16 @@
 
 namespace OpenGL {
 
+#if USE_FORCED_GL
+#define HAS_SHADERS_CHECK shadersSupported
+#elif USE_FORCED_GLES
+#define HAS_SHADERS_CHECK false
+#elif USE_FORCED_GLES2
+#define HAS_SHADERS_CHECK true
+#else
+#define HAS_SHADERS_CHECK (type == kContextGLES2 || shadersSupported)
+#endif
+
 void Context::reset() {
 	NPOTSupported = false;
 #if !USE_FORCED_GLES && !USE_FORCED_GLES2
@@ -53,32 +63,35 @@ void Context::initializePipeline() {
 	}
 #endif
 
+	// Enable rendering with vertex and coord arrays.
+#if !USE_FORCED_GLES && !USE_FORCED_GLES2
+	if (HAS_SHADERS_CHECK) {
+#endif
+#if !USE_FORCED_GLES
+		GL_CALL(glEnableVertexAttribArray(kPositionAttribLocation));
+		GL_CALL(glEnableVertexAttribArray(kTexCoordAttribLocation));
+#endif
+#if !USE_FORCED_GLES && !USE_FORCED_GLES2
+	} else {
+#endif
+#if !USE_FORCED_GLES2
+		GL_CALL(glEnableClientState(GL_VERTEX_ARRAY));
+		GL_CALL(glEnableClientState(GL_TEXTURE_COORD_ARRAY));
+#endif
+#if !USE_FORCED_GLES && !USE_FORCED_GLES2
+	}
+#endif
+
 #if !USE_FORCED_GL && !USE_FORCED_GLES && !USE_FORCED_GLES2
 	if (g_context.type == kContextGLES2) {
 #endif
 #if !USE_FORCED_GL && !USE_FORCED_GLES
-		GL_CALL(glEnableVertexAttribArray(kPositionAttribLocation));
-		GL_CALL(glEnableVertexAttribArray(kTexCoordAttribLocation));
-
 		GL_CALL(glActiveTexture(GL_TEXTURE0));
 #endif
 #if !USE_FORCED_GL && !USE_FORCED_GLES && !USE_FORCED_GLES2
 	} else {
 #endif
 #if !USE_FORCED_GLES2
-#if !USE_FORCED_GLES
-		if (g_context.shadersSupported) {
-			GL_CALL(glEnableVertexAttribArrayARB(kPositionAttribLocation));
-			GL_CALL(glEnableVertexAttribArrayARB(kTexCoordAttribLocation));
-		} else {
-#endif
-			// Enable rendering with vertex and coord arrays.
-			GL_CALL(glEnableClientState(GL_VERTEX_ARRAY));
-			GL_CALL(glEnableClientState(GL_TEXTURE_COORD_ARRAY));
-#if !USE_FORCED_GLES
-		}
-#endif
-
 		GL_CALL(glEnable(GL_TEXTURE_2D));
 #endif
 #if !USE_FORCED_GL && !USE_FORCED_GLES && !USE_FORCED_GLES2
@@ -87,56 +100,39 @@ void Context::initializePipeline() {
 }
 
 void Context::setColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a) {
-#if !USE_FORCED_GL && !USE_FORCED_GLES && !USE_FORCED_GLES2
-	if (g_context.type == kContextGLES2) {
+#if !USE_FORCED_GLES && !USE_FORCED_GLES2
+	if (HAS_SHADERS_CHECK) {
 #endif
-#if !USE_FORCED_GL && !USE_FORCED_GLES
+#if !USE_FORCED_GLES
 		GL_CALL(glVertexAttrib4f(kColorAttribLocation, r, g, b, a));
 #endif
-#if !USE_FORCED_GL && !USE_FORCED_GLES && !USE_FORCED_GLES2
+#if !USE_FORCED_GLES && !USE_FORCED_GLES2
 	} else {
 #endif
 #if !USE_FORCED_GLES2
-#if !USE_FORCED_GLES
-		if (g_context.shadersSupported) {
-			GL_CALL(glVertexAttrib4fARB(kColorAttribLocation, r, g, b, a));
-		} else {
+		GL_CALL(glColor4f(r, g, b, a));
 #endif
-			GL_CALL(glColor4f(r, g, b, a));
-#if !USE_FORCED_GLES
-		}
-#endif
-#endif
-#if !USE_FORCED_GL && !USE_FORCED_GLES && !USE_FORCED_GLES2
+#if !USE_FORCED_GLES && !USE_FORCED_GLES2
 	}
 #endif
 }
 
 void Context::setDrawCoordinates(const GLfloat *vertices, const GLfloat *texCoords) {
-#if !USE_FORCED_GL && !USE_FORCED_GLES && !USE_FORCED_GLES2
-	if (g_context.type == kContextGLES2) {
+#if !USE_FORCED_GLES && !USE_FORCED_GLES2
+	if (HAS_SHADERS_CHECK) {
 #endif
-#if !USE_FORCED_GL && !USE_FORCED_GLES
+#if !USE_FORCED_GLES
 		GL_CALL(glVertexAttribPointer(kTexCoordAttribLocation, 2, GL_FLOAT, GL_FALSE, 0, texCoords));
 		GL_CALL(glVertexAttribPointer(kPositionAttribLocation, 2, GL_FLOAT, GL_FALSE, 0, vertices));
 #endif
-#if !USE_FORCED_GL && !USE_FORCED_GLES && !USE_FORCED_GLES2
+#if !USE_FORCED_GLES && !USE_FORCED_GLES2
 	} else {
 #endif
 #if !USE_FORCED_GLES2
-#if !USE_FORCED_GLES
-		if (g_context.shadersSupported) {
-			GL_CALL(glVertexAttribPointerARB(kTexCoordAttribLocation, 2, GL_FLOAT, GL_FALSE, 0, texCoords));
-			GL_CALL(glVertexAttribPointerARB(kPositionAttribLocation, 2, GL_FLOAT, GL_FALSE, 0, vertices));
-		} else {
+		GL_CALL(glTexCoordPointer(2, GL_FLOAT, 0, texCoords));
+		GL_CALL(glVertexPointer(2, GL_FLOAT, 0, vertices));
 #endif
-			GL_CALL(glTexCoordPointer(2, GL_FLOAT, 0, texCoords));
-			GL_CALL(glVertexPointer(2, GL_FLOAT, 0, vertices));
-#if !USE_FORCED_GLES
-		}
-#endif
-#endif
-#if !USE_FORCED_GL && !USE_FORCED_GLES && !USE_FORCED_GLES2
+#if !USE_FORCED_GLES && !USE_FORCED_GLES2
 	}
 #endif
 }
@@ -164,17 +160,30 @@ void OpenGLGraphicsManager::initializeGLContext() {
 	// See backends/plugins/sdl/sdl-provider.cpp for more information.
 	assert(sizeof(void (*)()) == sizeof(void *));
 	void *fn = nullptr;
-#define GL_EXT_FUNC_DEF(ret, name, param) \
-	fn = getProcAddress(#name); \
+
+#define LOAD_FUNC(name, loadName) \
+	fn = getProcAddress(#loadName); \
 	memcpy(&g_context.name, &fn, sizeof(fn))
+
+#define GL_EXT_FUNC_DEF(ret, name, param) LOAD_FUNC(name, name)
+
 #ifdef USE_BUILTIN_OPENGL
 #define GL_FUNC_DEF(ret, name, param) g_context.name = &name
+#define GL_FUNC_2_DEF GL_FUNC_DEF
 #else
 #define GL_FUNC_DEF GL_EXT_FUNC_DEF
+#define GL_FUNC_2_DEF(ret, name, extName, param) \
+	if (g_context.type == kContextGL) { \
+		LOAD_FUNC(name, extName); \
+	} else { \
+		LOAD_FUNC(name, name); \
+	}
 #endif
 #include "backends/graphics/opengl/opengl-func.h"
-#undef GL_EXT_FUNC_DEF
+#undef GL_FUNC_2_DEF
 #undef GL_FUNC_DEF
+#undef GL_EXT_FUNC_DEF
+#undef LOAD_FUNC
 
 	const char *extString = (const char *)g_context.glGetString(GL_EXTENSIONS);
 

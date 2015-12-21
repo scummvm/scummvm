@@ -167,10 +167,10 @@ void ShaderARB::activate(const GLfloat *projectionMatrix) {
 	GL_CALL(glUseProgramObjectARB(_program));
 
 	// Set projection matrix.
-	GL_CALL(glUniformMatrix4fvARB(_projectionLocation, 1, GL_FALSE, projectionMatrix));
+	GL_CALL(glUniformMatrix4fv(_projectionLocation, 1, GL_FALSE, projectionMatrix));
 
 	// We always use texture unit 0.
-	GL_CALL(glUniform1iARB(_textureLocation, 0));
+	GL_CALL(glUniform1i(_textureLocation, 0));
 }
 
 GLhandleARB ShaderARB::compileShader(const char *source, GLenum shaderType) {
