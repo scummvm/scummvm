@@ -130,9 +130,12 @@ private:
 	bool execute(World *world, int loopCount, String *inputText, Designed *inputClick, WageEngine *callbacks);
 	Operand *readOperand();
 	Operand *readStringOperand();
+	const char *readOperator();
 	void processIf();
 	void processMove();
 	void processLet();
+
+	void assign(byte operandType, int uservar, uint16 value);
 
 	void appendText(String str);
 	void handleMoveCommand(Scene::Directions dir, const char *dirName);

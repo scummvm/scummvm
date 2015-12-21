@@ -190,6 +190,7 @@ bool Script::execute(World *world, int loopCount, String *inputText, Designed *i
 
 Script::Operand *Script::readOperand() {
 	byte operandType = _data->readByte();
+	Context *cont = &_world->_player->_context;
 	switch (operandType) {
 	case 0xA0: // TEXT$
 		return new Operand(_inputText, Operand::TEXT_INPUT);
@@ -210,7 +211,7 @@ Script::Operand *Script::readOperand() {
 	case 0xC6: // RANDOMOBJ@
 		return new Operand(_world->_orderedObjs[_callbacks->_rnd->getRandomNumber(_world->_orderedObjs.size())], Operand::OBJ);
 	case 0xB0: // VISITS#
-		return new Operand(_world->_player->_context._visits, Operand::NUMBER);
+		return new Operand(cont->_visits, Operand::NUMBER);
 	case 0xB1: // RANDOM# for Star Trek, but VISITS# for some other games?
 		return new Operand(1 + _callbacks->_rnd->getRandomNumber(100), Operand::NUMBER);
 	case 0xB5: // RANDOM# // A random number between 1 and 100.
@@ -218,55 +219,55 @@ Script::Operand *Script::readOperand() {
 	case 0xB2: // LOOP#
 		return new Operand(_loopCount, Operand::NUMBER);
 	case 0xB3: // VICTORY#
-		return new Operand(_world->_player->_context._kills, Operand::NUMBER);
+		return new Operand(cont->_kills, Operand::NUMBER);
 	case 0xB4: // BADCOPY#
 		return new Operand(0, Operand::NUMBER); // ????
 	case 0xFF:
 		{
 			// user variable
-			int value = _data->readByte();
+			int value = _data->readSByte();
 			if (value < 0)
 				value += 256;
 
 			// TODO: Verify that we're using the right index.
-			return new Operand(_world->_player->_context._userVariables[value], Operand::NUMBER);
+			return new Operand(cont->_userVariables[value - 1], Operand::NUMBER);
 		}
 	case 0xD0:
-		return new Operand(_world->_player->_context._statVariables[Context::PHYS_STR_BAS], Operand::NUMBER);
+		return new Operand(cont->_statVariables[Context::PHYS_STR_BAS], Operand::NUMBER);
 	case 0xD1:
-		return new Operand(_world->_player->_context._statVariables[Context::PHYS_HIT_BAS], Operand::NUMBER);
+		return new Operand(cont->_statVariables[Context::PHYS_HIT_BAS], Operand::NUMBER);
 	case 0xD2:
-		return new Operand(_world->_player->_context._statVariables[Context::PHYS_ARM_BAS], Operand::NUMBER);
+		return new Operand(cont->_statVariables[Context::PHYS_ARM_BAS], Operand::NUMBER);
 	case 0xD3:
-		return new Operand(_world->_player->_context._statVariables[Context::PHYS_ACC_BAS], Operand::NUMBER);
+		return new Operand(cont->_statVariables[Context::PHYS_ACC_BAS], Operand::NUMBER);
 	case 0xD4:
-		return new Operand(_world->_player->_context._statVariables[Context::SPIR_STR_BAS], Operand::NUMBER);
+		return new Operand(cont->_statVariables[Context::SPIR_STR_BAS], Operand::NUMBER);
 	case 0xD5:
-		return new Operand(_world->_player->_context._statVariables[Context::SPIR_HIT_BAS], Operand::NUMBER);
+		return new Operand(cont->_statVariables[Context::SPIR_HIT_BAS], Operand::NUMBER);
 	case 0xD6:
-		return new Operand(_world->_player->_context._statVariables[Context::SPIR_ARM_BAS], Operand::NUMBER);
+		return new Operand(cont->_statVariables[Context::SPIR_ARM_BAS], Operand::NUMBER);
 	case 0xD7:
-		return new Operand(_world->_player->_context._statVariables[Context::SPIR_ACC_BAS], Operand::NUMBER);
+		return new Operand(cont->_statVariables[Context::SPIR_ACC_BAS], Operand::NUMBER);
 	case 0xD8:
-		return new Operand(_world->_player->_context._statVariables[Context::PHYS_SPE_BAS], Operand::NUMBER);
+		return new Operand(cont->_statVariables[Context::PHYS_SPE_BAS], Operand::NUMBER);
 	case 0xE0:
-		return new Operand(_world->_player->_context._statVariables[Context::PHYS_STR_CUR], Operand::NUMBER);
+		return new Operand(cont->_statVariables[Context::PHYS_STR_CUR], Operand::NUMBER);
 	case 0xE1:
-		return new Operand(_world->_player->_context._statVariables[Context::PHYS_HIT_CUR], Operand::NUMBER);
+		return new Operand(cont->_statVariables[Context::PHYS_HIT_CUR], Operand::NUMBER);
 	case 0xE2:
-		return new Operand(_world->_player->_context._statVariables[Context::PHYS_ARM_CUR], Operand::NUMBER);
+		return new Operand(cont->_statVariables[Context::PHYS_ARM_CUR], Operand::NUMBER);
 	case 0xE3:
-		return new Operand(_world->_player->_context._statVariables[Context::PHYS_ACC_CUR], Operand::NUMBER);
+		return new Operand(cont->_statVariables[Context::PHYS_ACC_CUR], Operand::NUMBER);
 	case 0xE4:
-		return new Operand(_world->_player->_context._statVariables[Context::SPIR_STR_CUR], Operand::NUMBER);
+		return new Operand(cont->_statVariables[Context::SPIR_STR_CUR], Operand::NUMBER);
 	case 0xE5:
-		return new Operand(_world->_player->_context._statVariables[Context::SPIR_HIT_CUR], Operand::NUMBER);
+		return new Operand(cont->_statVariables[Context::SPIR_HIT_CUR], Operand::NUMBER);
 	case 0xE6:
-		return new Operand(_world->_player->_context._statVariables[Context::SPIR_ARM_CUR], Operand::NUMBER);
+		return new Operand(cont->_statVariables[Context::SPIR_ARM_CUR], Operand::NUMBER);
 	case 0xE7:
-		return new Operand(_world->_player->_context._statVariables[Context::SPIR_ACC_CUR], Operand::NUMBER);
+		return new Operand(cont->_statVariables[Context::SPIR_ACC_CUR], Operand::NUMBER);
 	case 0xE8:
-		return new Operand(_world->_player->_context._statVariables[Context::PHYS_SPE_CUR], Operand::NUMBER);
+		return new Operand(cont->_statVariables[Context::PHYS_SPE_CUR], Operand::NUMBER);
 	default:
 		if (operandType >= 0x20 && operandType < 0x80) {
 			return readStringOperand();
@@ -274,6 +275,77 @@ Script::Operand *Script::readOperand() {
 			debug("Dunno what %x is (index=%d)!\n", operandType, _data->pos()-1);
 		}
 		return NULL;
+	}
+}
+
+void Script::assign(byte operandType, int uservar, uint16 value) {
+	Context *cont = &_world->_player->_context;
+
+	switch (operandType) {
+	case 0xFF:
+		{
+			// user variable
+			if (uservar < 0)
+				uservar += 256;
+
+			cont->_userVariables[uservar - 1] = value;
+		}
+	case 0xD0:
+		cont->_statVariables[Context::PHYS_STR_BAS] = value;
+		break;
+	case 0xD1:
+		cont->_statVariables[Context::PHYS_HIT_BAS] = value;
+		break;
+	case 0xD2:
+		cont->_statVariables[Context::PHYS_ARM_BAS] = value;
+		break;
+	case 0xD3:
+		cont->_statVariables[Context::PHYS_ACC_BAS] = value;
+		break;
+	case 0xD4:
+		cont->_statVariables[Context::SPIR_STR_BAS] = value;
+		break;
+	case 0xD5:
+		cont->_statVariables[Context::SPIR_HIT_BAS] = value;
+		break;
+	case 0xD6:
+		cont->_statVariables[Context::SPIR_ARM_BAS] = value;
+		break;
+	case 0xD7:
+		cont->_statVariables[Context::SPIR_ACC_BAS] = value;
+		break;
+	case 0xD8:
+		cont->_statVariables[Context::PHYS_SPE_BAS] = value;
+		break;
+	case 0xE0:
+		cont->_statVariables[Context::PHYS_STR_CUR] = value;
+		break;
+	case 0xE1:
+		cont->_statVariables[Context::PHYS_HIT_CUR] = value;
+		break;
+	case 0xE2:
+		cont->_statVariables[Context::PHYS_ARM_CUR] = value;
+		break;
+	case 0xE3:
+		cont->_statVariables[Context::PHYS_ACC_CUR] = value;
+		break;
+	case 0xE4:
+		cont->_statVariables[Context::SPIR_STR_CUR] = value;
+		break;
+	case 0xE5:
+		cont->_statVariables[Context::SPIR_HIT_CUR] = value;
+		break;
+	case 0xE6:
+		cont->_statVariables[Context::SPIR_ARM_CUR] = value;
+		break;
+	case 0xE7:
+		cont->_statVariables[Context::SPIR_ACC_CUR] = value;
+		break;
+	case 0xE8:
+		cont->_statVariables[Context::PHYS_SPE_CUR] = value;
+		break;
+	default:
+		debug("No idea what I'm supposed to assign! (%x at %d)!\n", operandType, _data->pos()-1);
 	}
 }
 
@@ -304,13 +376,78 @@ Script::Operand *Script::readStringOperand() {
 	}
 }
 
+const char *Script::readOperator() {
+	byte cmd = _data->readByte();
+
+	switch (cmd) {
+	case 0x81:
+		return "=";
+	case 0x82:
+		return "<";
+	case 0x83:
+		return ">";
+	case 0x8f:
+		return "+";
+	case 0x90:
+		return "-";
+	case 0x91:
+		return "*";
+	case 0x92:
+		return "/";
+	case 0x93:
+		return "==";
+	case 0x94:
+		return ">>";
+	case 0xfd:
+		return ";";
+	default:
+		warning("UNKNOWN OP %x", cmd);
+	}
+	return NULL;
+}
+
 void Script::processIf() {
+	warning("STUB: processIf");
 }
 
 void Script::processMove() {
+	warning("STUB: processMove");
 }
 
 void Script::processLet() {
+	const char *lastOp = NULL;
+	int16 result = 0;
+	int operandType = _data->readByte();
+	int uservar = 0;
+
+	if (operandType == 0xff)
+		uservar = _data->readSByte();
+
+	_data->readByte(); // skip "=" operator
+	do {
+		Operand *operand = readOperand();
+		// TODO assert that value is NUMBER
+		int16 value = operand->_value.number;
+		if (lastOp != NULL) {
+			if (lastOp[0] == '+')
+				result += value;
+			else if (lastOp[0] == '-')
+				result -= value;
+			else if (lastOp[0] == '/')
+				result = (int16)(value == 0 ? 0 : result / value);
+			else if (lastOp[0] == '*')
+				result *= value;
+		} else {
+			result = value;
+		}
+		lastOp = readOperator();
+
+		if (lastOp[0] == ';')
+			break;
+	} while (true);
+	//System.out.println("processLet " + buildStringFromOffset(oldIndex - 1, index - oldIndex + 1) + "}");
+
+	assign(operandType, uservar, result);
 }
 
 void Script::appendText(String str) {
@@ -319,36 +456,47 @@ void Script::appendText(String str) {
 }
 
 void Script::handleMoveCommand(Scene::Directions dir, const char *dirName) {
+	warning("STUB: handleMoveCommand");
 }
 
 void Script::handleLookCommand() {
+	warning("STUB: handleLookCommand");
 }
 
 void Script::handleInventoryCommand() {
+	warning("STUB: handleInventoryCommand");
 }
 
 void Script::handleStatusCommand() {
+	warning("STUB: handleStatusCommand");
 }
 
 void Script::handleRestCommand() {
+	warning("STUB: handleRestCommand");
 }
 
 void Script::handleAcceptCommand() {
+	warning("STUB: handleAcceptCommand");
 }
 
 void Script::handleTakeCommand(const char *target) {
+	warning("STUB: handleTakeCommand");
 }
 
 void Script::handleDropCommand(const char *target) {
+	warning("STUB: handleDropCommand");
 }
 
 void Script::handleAimCommand(const char *target) {
+	warning("STUB: handleAimCommand");
 }
 
 void Script::handleWearCommand(const char *target) {
+	warning("STUB: handleWearCommand");
 }
 
 void Script::handleOfferCommand(const char *target) {
+	warning("STUB: handleOfferCommand");
 }
 
 } // End of namespace Wage
