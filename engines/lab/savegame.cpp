@@ -119,9 +119,6 @@ bool readSaveGameHeader(Common::InSaveFile *in, SaveGameHeader &header) {
 	return true;
 }
 
-/**
- * Writes the game out to disk.
- */
 bool LabEngine::saveGame(int slot, const Common::String desc) {
 	Common::String fileName = generateSaveFileName(slot);
 	Common::SaveFileManager *saveFileManager = g_system->getSavefileManager();
@@ -162,9 +159,6 @@ bool LabEngine::saveGame(int slot, const Common::String desc) {
 	return true;
 }
 
-/**
- * Reads the game from disk.
- */
 bool LabEngine::loadGame(int slot) {
 	Common::String fileName = generateSaveFileName(slot);
 	Common::SaveFileManager *saveFileManager = g_system->getSavefileManager();

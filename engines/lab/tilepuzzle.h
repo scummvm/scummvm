@@ -49,20 +49,54 @@ public:
 	TilePuzzle(LabEngine *vm);
 	virtual ~TilePuzzle();
 
+	/**
+	 * Processes mouse clicks and changes the combination.
+	 */
 	void mouseTile(Common::Point pos);
-	void showTile(const Common::String filename, bool showSolution);
+
+	/**
+	 * Processes mouse clicks and changes the combination.
+	 */
 	void mouseCombination(Common::Point pos);
+
+	/**
+	 * Reads in a backdrop picture.
+	 */
 	void showCombination(const Common::String filename);
+
+	/**
+	 * Reads in a backdrop picture.
+	 */
+	void showTile(const Common::String filename, bool showSolution);
 	void save(Common::OutSaveFile *file);
 	void load(Common::InSaveFile *file);
 
 private:
-	void doTile(bool showsolution);
-	void doTileScroll(uint16 col, uint16 row, uint16 scrolltype);
+	/**
+	 * Changes the combination number of one of the slots
+	 */
 	void changeCombination(uint16 number);
-	void scrollRaster(int16 dx, int16 dy, uint16 x1, uint16 y1, uint16 x2, uint16 y2, byte *buffer);
-	void doCombination();
+
+	/**
+	 * Changes the combination number of one of the slots
+	 */
 	void changeTile(uint16 col, uint16 row);
+
+	/**
+	 * Draws the images of the combination lock to the display bitmap.
+	 */
+	void doCombination();
+
+	/**
+	 * Draws the images of the combination lock to the display bitmap.
+	 */
+	void doTile(bool showsolution);
+
+	/**
+	 * Does the scrolling for the tiles on the tile puzzle.
+	 */
+	void doTileScroll(uint16 col, uint16 row, uint16 scrolltype);
+	void scrollRaster(int16 dx, int16 dy, uint16 x1, uint16 y1, uint16 x2, uint16 y2, byte *buffer);
 };
 
 } // End of namespace Lab

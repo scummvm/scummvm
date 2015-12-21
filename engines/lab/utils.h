@@ -38,9 +38,16 @@ private:
 	LabEngine *_vm;
 	uint16 _dataBytesPerRow;
 
+	/**
+	 * Undiffs a piece of memory based on the header size.
+	 */
 	template<typename T>
 	void unDiff(T *dest, Common::File *sourceFile);
 
+	/**
+	 * Undiffs a piece of memory when header size is a byte, and copy/skip size
+	 * is a byte or a word or a double word.
+	 */
 	template<typename T>
 	void verticalUnDiff(T *dest, Common::File *sourceFile, uint16 bytesPerRow);
 
@@ -49,17 +56,42 @@ public:
 
 	Common::RandomSource _rnd;
 
+	/**
+	 * Scales the x co-ordinates to that of the new display.  In the room parser
+	 * file, co-ordinates are set up on a 360x336 display.
+	 */
 	uint16 scaleX(uint16 x);
+
+	/**
+	 * Scales the y co-ordinates to that of the new display.  In the room parser
+	 * file, co-ordinates are set up on a 368x336 display.
+	 */
 	uint16 scaleY(uint16 y);
 	Common::Rect rectScale(int16 x1, int16 y1, int16 x2, int16 y2);
+
+	/**
+	 * Scales the VGA x coords to SVGA if necessary; otherwise, returns VGA coords.
+	 */
 	int16 vgaScaleX(int16 x);
+
+	/**
+	 * Scales the VGA y coords to SVGA if necessary; otherwise, returns VGA coords.
+	 */
 	int16 vgaScaleY(int16 y);
 	Common::Rect vgaRectScale(int16 x1, int16 y1, int16 x2, int16 y2);
 	uint16 svgaCord(uint16 cord);
 	uint16 mapScaleX(uint16 x);
 	uint16 mapScaleY(uint16 y);
 	Common::Rect mapRectScale(int16 x1, int16 y1, int16 x2, int16 y2);
+
+	/**
+	 * Converts SVGA coords to VGA if necessary, otherwise returns VGA coords.
+	 */
 	Common::Point vgaUnscale(Common::Point pos);
+
+	/**
+	 * Does the undiffing between the bitmaps.
+	 */
 	void unDiff(byte *newBuf, byte *oldBuf, Common::File *sourceFile, uint16 bytesPerRow, bool isVertical);
 	void runLengthDecode(byte *dest, Common::File *sourceFile);
 	void verticalRunLengthDecode(byte *dest, Common::File *sourceFile, uint16 bytesPerRow);
