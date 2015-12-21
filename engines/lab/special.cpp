@@ -85,9 +85,9 @@ void LabEngine::doWestPaper() {
 
 	paperFont = _resource->getFont("F:Note.fon");
 	paperText = _resource->getText("Lab:Rooms/Col1");
-	charsPrinted = _graphics->flowText(paperFont, -4, 0, 0, false, false, false, true, _utils->vgaRectScale(45, y, 158, 148), paperText.c_str());
+	_graphics->flowText(paperFont, -4, 0, 0, false, false, false, true, _utils->vgaRectScale(45, y, 158, 148), paperText.c_str());
 	paperText = _resource->getText("Lab:Rooms/Col2");
-	charsPrinted = _graphics->flowText(paperFont, -4, 0, 0, false, false, false, true, _utils->vgaRectScale(162, y, 275, 148), paperText.c_str());
+	_graphics->flowText(paperFont, -4, 0, 0, false, false, false, true, _utils->vgaRectScale(162, y, 275, 148), paperText.c_str());
 	_graphics->closeFont(&paperFont);
 
 	_graphics->setPalette(_anim->_diffPalette, 256);
