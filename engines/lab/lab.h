@@ -39,6 +39,7 @@
 #include "engines/savestate.h"
 
 #include "lab/image.h"
+#include "lab/labsets.h"
 
 struct ADGameDescription;
 
@@ -59,7 +60,6 @@ class Anim;
 class DisplayMan;
 class EventManager;
 class Image;
-class LargeSet;
 class Music;
 class Resource;
 class TilePuzzle;
