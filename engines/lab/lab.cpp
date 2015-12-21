@@ -152,6 +152,9 @@ LabEngine::~LabEngine() {
 	delete _tilePuzzle;
 	delete _utils;
 	delete _journalBackImage;
+	// _screenImage->_imageData is always pointing to the current drawing buffer.
+	// It shouldn't be deleted there.
+	_screenImage->_imageData = nullptr;
 	delete _screenImage;
 }
 
