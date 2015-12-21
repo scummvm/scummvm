@@ -169,6 +169,12 @@ void Design::drawRect(Graphics::Surface *surface, Common::ReadStream &in, bool m
 	int16 x1 = in.readSint16BE();
 	int16 y2 = in.readSint16BE();
 	int16 x2 = in.readSint16BE();
+
+	if (x1 > x2)
+		SWAP(x1, x2);
+	if (y1 > y2)
+		SWAP(y1, y2);
+
 	Common::Rect outer(x1, y1, x2, y2);
 
 	plotData pd(surface, &patterns, borderFillType);
@@ -200,6 +206,12 @@ void Design::drawRoundRect(Graphics::Surface *surface, Common::ReadStream &in, b
 	int16 y2 = in.readSint16BE();
 	int16 x2 = in.readSint16BE();
 	int16 arc = in.readSint16BE();
+
+	if (x1 > x2)
+		SWAP(x1, x2);
+	if (y1 > y2)
+		SWAP(y1, y2);
+
 	Common::Rect outer(x1, y1, x2, y2);
 
 	plotData pd(surface, &patterns, borderFillType);
@@ -215,7 +227,7 @@ void Design::drawRoundRect(Graphics::Surface *surface, Common::ReadStream &in, b
 	pd.fillType = fillType;
 
 	if (fillType > patterns.size()) {
-		warning("Transparent roundrect");
+		warning("Transparent roundrect, border: %d", borderThickness);
 	}
 
 	drawFilledRoundRect(inner, arc/2, kColorBlack, drawPixel, &pd);
