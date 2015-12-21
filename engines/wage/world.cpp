@@ -60,6 +60,11 @@ World::World() {
 	_storageScene._name = STORAGESCENE;
 	_orderedScenes.push_back(&_storageScene);
 	_scenes[STORAGESCENE] = &_storageScene;
+
+	_gameOverMessage = nullptr;
+	_saveBeforeQuitMessage = nullptr;
+	_saveBeforeCloseMessage = nullptr;
+	_revertMessage = nullptr;
 }
 
 bool World::loadWorld(Common::MacResManager *resMan) {
@@ -104,6 +109,28 @@ bool World::loadWorld(Common::MacResManager *resMan) {
 		_soundLibrary2 = readPascalString(res);
 
 		delete res;
+	}
+
+	Common::String *message;
+	if ((message = loadStringFromDITL(resMan, 2910, 1)) != NULL) {
+		message->trim();
+		warning("_gameOverMessage: %s", message->c_str());
+		_gameOverMessage = message;
+	}
+	if ((message = loadStringFromDITL(resMan, 2480, 3)) != NULL) {
+		message->trim();
+		warning("_saveBeforeQuitMessage: %s", message->c_str());
+		_saveBeforeQuitMessage = message;
+	}
+	if ((message = loadStringFromDITL(resMan, 2490, 3)) != NULL) {
+		message->trim();
+		warning("_saveBeforeCloseMessage: %s", message->c_str());
+		_saveBeforeCloseMessage = message;
+	}
+	if ((message = loadStringFromDITL(resMan, 2940, 2)) != NULL) {
+		message->trim();
+		warning("_revertMessage: %s", message->c_str());
+		_revertMessage = message;
 	}
 
 	// Load scenes
@@ -219,6 +246,24 @@ void World::loadExternalSounds(String fname) {
 		res = resMan->getResource(MKTAG('A','S','N','D'), *iter);
 		addSound(new Sound(resMan->getResName(MKTAG('A','S','N','D'), *iter), res));
 	}
+}
+
+Common::String *World::loadStringFromDITL(Common::MacResManager *resMan, int resourceId, int itemIndex) {
+	Common::SeekableReadStream *res = resMan->getResource(MKTAG('D','I','T','L'), resourceId);
+	if (res) {
+		int itemCount = res->readSint16BE();
+		for (int i = 0; i <= itemCount; i++) {
+			// int placeholder; short rect[4]; byte flags; pstring str;
+			res->skip(13);
+			Common::String message = readPascalString(res);
+			if (i == itemIndex) {
+				Common::String *msg = new Common::String(message);
+				return msg;
+			}
+		}
+	}
+
+	return NULL;
 }
 
 } // End of namespace Wage

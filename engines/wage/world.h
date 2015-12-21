@@ -59,6 +59,7 @@ public:
 
 	bool loadWorld(Common::MacResManager *resMan);
 	void loadExternalSounds(String fname);
+	Common::String *loadStringFromDITL(Common::MacResManager *resMan, int resourceId, int itemIndex);
 
 	String _name;
 	String _aboutMessage;
@@ -79,6 +80,11 @@ public:
 	Scene _storageScene;
 	Chr *_player;
 	//List<MoveListener> moveListeners;
+
+	Common::String *_gameOverMessage;
+	Common::String *_saveBeforeQuitMessage;
+	Common::String *_saveBeforeCloseMessage;
+	Common::String *_revertMessage;
 
 	void addScene(Scene *room) {
 		if (room->_name.size() != 0) {
