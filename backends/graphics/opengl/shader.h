@@ -47,9 +47,8 @@ extern const char *const g_defaultFragmentShaderGLES2;
 
 class Shader {
 public:
-	Shader(const Common::String &vertex, const Common::String &fragment)
-	    : _vertex(vertex), _fragment(fragment) {}
-	virtual ~Shader() {}
+	Shader(const Common::String &vertex, const Common::String &fragment);
+	~Shader();
 
 	/**
 	 * Destroy the shader program.
@@ -57,21 +56,21 @@ public:
 	 * This keeps the vertex and fragment shader sources around and thus
 	 * allows for recreating the shader on context recreation.
 	 */
-	virtual void destroy() = 0;
+	void destroy();
 
 	/**
 	 * Recreate shader program.
 	 *
 	 * @return true on success, false on failure.
 	 */
-	virtual bool recreate() = 0;
+	bool recreate();
 
 	/**
 	 * Make shader active.
 	 *
 	 * @param projectionMatrix Projection matrix to use.
 	 */
-	virtual void activate(const GLfloat *projectionMatrix) = 0;
+	void activate(const GLfloat *projectionMatrix);
 protected:
 	/**
 	 * Vertex shader sources.
@@ -82,24 +81,11 @@ protected:
 	 * Fragment shader sources.
 	 */
 	const Common::String _fragment;
-};
 
-#if !USE_FORCED_GLES2
-class ShaderARB : public Shader {
-public:
-	ShaderARB(const Common::String &vertex, const Common::String &fragment);
-	virtual ~ShaderARB();
-
-	virtual void destroy();
-
-	virtual bool recreate();
-
-	virtual void activate(const GLfloat *projectionMatrix);
-private:
 	/**
 	 * Shader program handle.
 	 */
-	GLhandleARB _program;
+	GLprogram _program;
 
 	/**
 	 * Location of the matrix uniform in the shader program.
@@ -119,48 +105,8 @@ private:
 	 *                   GL_VERTEX_SHADER_ARB)
 	 * @return The shader object or 0 on failure.
 	 */
-	static GLhandleARB compileShader(const char *source, GLenum shaderType);
+	static GLshader compileShader(const char *source, GLenum shaderType);
 };
-#endif // !USE_FORCED_GLES2
-
-#if !USE_FORCED_GL
-class ShaderGLES2 : public Shader {
-public:
-	ShaderGLES2(const Common::String &vertex, const Common::String &fragment);
-	virtual ~ShaderGLES2();
-
-	virtual void destroy();
-
-	virtual bool recreate();
-
-	virtual void activate(const GLfloat *projectionMatrix);
-private:
-	/**
-	 * Shader program handle.
-	 */
-	GLuint _program;
-
-	/**
-	 * Location of the matrix uniform in the shader program.
-	 */
-	GLint _projectionLocation;
-
-	/**
-	 * Location of the texture sampler location in the shader program.
-	 */
-	GLint _textureLocation;
-
-	/**
-	 * Compile a vertex or fragment shader.
-	 *
-	 * @param source     Sources to the shader.
-	 * @param shaderType Type of shader to compile (GL_FRAGMENT_SHADER or
-	 *                   GL_VERTEX_SHADER)
-	 * @return The shader object or 0 on failure.
-	 */
-	static GLuint compileShader(const char *source, GLenum shaderType);
-};
-#endif
 
 } // End of namespace OpenGL
 

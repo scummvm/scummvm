@@ -30,6 +30,18 @@
 #include "backends/platform/sdl/sdl-sys.h"
 #endif
 
+// On OS X we only support GL contexts. The reason is that Apple's GL interface
+// uses "void *" for GLhandleARB which is not type compatible with GLint. This
+// kills our aliasing trick for extension functions and thus would force us to
+// supply two different Shader class implementations or introduce other
+// wrappers. OS X only supports GL contexts right now anyway (at least
+// according to SDL2 sources), thus it is not much of an issue.
+#if defined(MACOSX) && (!defined(USE_GLES_MODE) || USE_GLES_MODE != 0)
+//#warning "Only forced OpenGL mode is supported on Mac OS X. Overriding settings."
+#undef USE_GLES_MODE
+#define USE_GLES_MODE 0
+#endif
+
 // We allow to force GL or GLES modes on compile time.
 // For this the USE_GLES_MODE define is used. The following values represent
 // the given selection choices:

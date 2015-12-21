@@ -908,14 +908,14 @@ void OpenGLGraphicsManager::notifyContextCreate(const Graphics::PixelFormat &def
 		if (g_context.type == kContextGLES2) {
 #endif
 #if !USE_FORCED_GL
-			_shader = new ShaderGLES2(g_defaultVertexShader, g_defaultFragmentShaderGLES2);
+			_shader = new Shader(g_defaultVertexShader, g_defaultFragmentShaderGLES2);
 #endif
 #if !USE_FORCED_GL && !USE_FORCED_GLES2
 		} else {
 #endif
 #if !USE_FORCED_GLES2
 			if (g_context.shadersSupported) {
-				_shader = new ShaderARB(g_defaultVertexShader, g_defaultFragmentShaderGL);
+				_shader = new Shader(g_defaultVertexShader, g_defaultFragmentShaderGL);
 			}
 #endif
 #if !USE_FORCED_GL && !USE_FORCED_GLES2

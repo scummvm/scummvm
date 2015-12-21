@@ -77,11 +77,17 @@ typedef double GLdouble; /* double precision float */
 typedef double GLclampd; /* double precision float in [0,1] */
 typedef char   GLchar;
 typedef GLchar GLcharARB;
-#if defined(__APPLE__) || defined(MACOSX)
+#if defined(MACOSX)
 typedef void  *GLhandleARB;
 #else
 typedef uint   GLhandleARB;
 #endif
+
+// This is an addition from us to alias ARB shader object extensions to
+// OpenGL (ES) 2.0 style functions. It only works when GLhandleARB and GLuint
+// are type compatible.
+typedef GLhandleARB GLprogram;
+typedef GLhandleARB GLshader;
 
 /*
  * Constants

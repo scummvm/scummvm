@@ -110,42 +110,28 @@ GL_FUNC_2_DEF(void, glUniform1i, glUniform1iARB, (GLint location, GLint v0));
 GL_FUNC_2_DEF(void, glUniformMatrix4fv, glUniformMatrix4fvARB, (GLint location, GLsizei count, GLboolean transpose, const GLfloat *value));
 GL_FUNC_2_DEF(void, glVertexAttrib4f, glVertexAttrib4fARB, (GLuint index, GLfloat x, GLfloat y, GLfloat z, GLfloat w));
 GL_FUNC_2_DEF(void, glVertexAttribPointer, glVertexAttribPointerARB, (GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const void *pointer));
+
+GL_FUNC_2_DEF(GLprogram, glCreateProgram, glCreateProgramObjectARB, ());
+GL_FUNC_2_DEF(void, glDeleteProgram, glDeleteObjectARB, (GLprogram program));
+GL_FUNC_2_DEF(void, glAttachShader, glAttachObjectARB, (GLprogram program, GLshader shader));
+GL_FUNC_2_DEF(void, glDetachShader, glDetachObjectARB, (GLprogram program, GLshader shader));
+GL_FUNC_2_DEF(void, glLinkProgram, glLinkProgramARB, (GLprogram program));
+GL_FUNC_2_DEF(void, glUseProgram, glUseProgramObjectARB, (GLprogram program));
+GL_FUNC_2_DEF(void, glGetProgramiv, glGetObjectParameterivARB, (GLprogram program, GLenum pname, GLint *params));
+GL_FUNC_2_DEF(void, glGetProgramInfoLog, glGetInfoLogARB, (GLprogram program, GLsizei bufSize, GLsizei *length, GLchar *infoLog));
+GL_FUNC_2_DEF(void, glBindAttribLocation, glBindAttribLocationARB, (GLprogram program, GLuint index, const GLchar *name));
+GL_FUNC_2_DEF(GLint, glGetUniformLocation, glGetUniformLocationARB, (GLprogram program, const GLchar *name));
+
+GL_FUNC_2_DEF(GLshader, glCreateShader, glCreateShaderObjectARB, (GLenum type));
+GL_FUNC_2_DEF(void, glDeleteShader, glDeleteObjectARB, (GLshader shader));
+GL_FUNC_2_DEF(void, glGetShaderiv, glGetObjectParameterivARB, (GLshader shader, GLenum pname, GLint *params));
+GL_FUNC_2_DEF(void, glGetShaderInfoLog, glGetInfoLogARB, (GLshader shader, GLsizei bufSize, GLsizei *length, GLchar *infoLog));
+GL_FUNC_2_DEF(void, glShaderSource, glShaderSourceARB, (GLshader shader, GLsizei count, const GLchar *const *string, const GLint *length));
+GL_FUNC_2_DEF(void, glCompileShader, glCompileShaderARB, (GLshader shader));
 #endif
 
 #if !USE_FORCED_GL && !USE_FORCED_GLES
-GL_FUNC_DEF(void, glDeleteProgram, (GLuint program));
-GL_FUNC_DEF(void, glDeleteShader, (GLuint shader));
-GL_FUNC_DEF(GLuint, glCreateProgram, ());
-GL_FUNC_DEF(void, glAttachShader, (GLuint program, GLuint shader));
-GL_FUNC_DEF(void, glBindAttribLocation, (GLuint program, GLuint index, const GLchar *name));
-GL_FUNC_DEF(void, glLinkProgram, (GLuint program));
-GL_FUNC_DEF(void, glDetachShader, (GLuint program, GLuint shader));
-GL_FUNC_DEF(void, glGetProgramiv, (GLuint program, GLenum pname, GLint *params));
-GL_FUNC_DEF(void, glGetProgramInfoLog, (GLuint program, GLsizei bufSize, GLsizei *length, GLchar *infoLog));
-GL_FUNC_DEF(GLint, glGetUniformLocation, (GLuint program, const GLchar *name));
-GL_FUNC_DEF(void, glUseProgram, (GLuint program));
-GL_FUNC_DEF(GLuint, glCreateShader, (GLenum type));
-GL_FUNC_DEF(void, glShaderSource, (GLuint shader, GLsizei count, const GLchar *const *string, const GLint *length));
-GL_FUNC_DEF(void, glCompileShader, (GLuint shader));
-GL_FUNC_DEF(void, glGetShaderiv, (GLuint shader, GLenum pname, GLint *params));
-GL_FUNC_DEF(void, glGetShaderInfoLog, (GLuint shader, GLsizei bufSize, GLsizei *length, GLchar *infoLog));
 GL_FUNC_DEF(void, glActiveTexture, (GLenum texture));
-#endif
-
-#if !USE_FORCED_GLES && !USE_FORCED_GLES2
-GL_EXT_FUNC_DEF(void, glDeleteObjectARB, (GLhandleARB obj));
-GL_EXT_FUNC_DEF(GLhandleARB, glCreateProgramObjectARB, ());
-GL_EXT_FUNC_DEF(void, glAttachObjectARB, (GLhandleARB containerObj, GLhandleARB obj));
-GL_EXT_FUNC_DEF(void, glBindAttribLocationARB, (GLhandleARB programObj, GLuint index, const GLcharARB *name));
-GL_EXT_FUNC_DEF(void, glLinkProgramARB, (GLhandleARB programObj));
-GL_EXT_FUNC_DEF(void, glDetachObjectARB, (GLhandleARB containerObj, GLhandleARB attachedObj));
-GL_EXT_FUNC_DEF(void, glGetObjectParameterivARB, (GLhandleARB obj, GLenum pname, GLint *params));
-GL_EXT_FUNC_DEF(GLint, glGetUniformLocationARB, (GLhandleARB programObj, const GLcharARB *name));
-GL_EXT_FUNC_DEF(void, glGetInfoLogARB, (GLhandleARB obj, GLsizei maxLength, GLsizei *length, GLcharARB *infoLog));
-GL_EXT_FUNC_DEF(void, glUseProgramObjectARB, (GLhandleARB programObj));
-GL_EXT_FUNC_DEF(GLhandleARB, glCreateShaderObjectARB, (GLenum shaderType));
-GL_EXT_FUNC_DEF(void, glShaderSourceARB, (GLhandleARB shaderObj, GLsizei count, const GLcharARB **string, const GLint *length));
-GL_EXT_FUNC_DEF(void, glCompileShaderARB, (GLhandleARB shaderObj));
 #endif
 
 #ifdef DEFINED_GL_EXT_FUNC_DEF
