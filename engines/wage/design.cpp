@@ -102,12 +102,16 @@ void Design::paint(Graphics::Surface *canvas, Patterns &patterns, bool mask) {
 	return;
 */
 
-	while (!in.eos()) {
+	while (true) {
 		byte fillType = in.readByte();
+
+		if (in.eos())
+			return;
+
 		byte borderThickness = in.readByte();
 		byte borderFillType = in.readByte();
 		int type = in.readByte();
-		warning("fill: %d border: %d borderFill: %d type: %d", fillType, borderThickness, borderFillType, type);
+		debug(2, "fill: %d borderFill: %d border: %d type: %d", fillType, borderFillType, borderThickness, type);
 		switch (type) {
 		case 4:
 			drawRect(canvas, in, mask, patterns, fillType, borderThickness, borderFillType);
