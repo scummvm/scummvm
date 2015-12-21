@@ -425,13 +425,13 @@ void OpenGLGraphicsManager::updateScreen() {
 		}
 
 		// Set the OSD transparency.
-		setColor(1.0f, 1.0f, 1.0f, _osdAlpha / 100.0f);
+		g_context.setColor(1.0f, 1.0f, 1.0f, _osdAlpha / 100.0f);
 
 		// Draw the OSD texture.
 		_osd->draw(0, 0, _outputScreenWidth, _outputScreenHeight);
 
 		// Reset color.
-		setColor(1.0f, 1.0f, 1.0f, 1.0f);
+		g_context.setColor(1.0f, 1.0f, 1.0f, 1.0f);
 	}
 #endif
 
@@ -873,58 +873,16 @@ void OpenGLGraphicsManager::notifyContextCreate(const Graphics::PixelFormat &def
 	GL_CALL(glDisable(GL_DEPTH_TEST));
 	GL_CALL(glDisable(GL_DITHER));
 
-#if !USE_FORCED_GL && !USE_FORCED_GLES && !USE_FORCED_GLES2
-	if (g_context.type != kContextGLES2) {
-#endif
-#if !USE_FORCED_GLES2
-		GL_CALL(glDisable(GL_LIGHTING));
-		GL_CALL(glDisable(GL_FOG));
-		GL_CALL(glShadeModel(GL_FLAT));
-		GL_CALL(glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_FASTEST));
-#endif
-#if !USE_FORCED_GL && !USE_FORCED_GLES && !USE_FORCED_GLES2
-	}
-#endif
-
 	// Default to black as clear color.
 	GL_CALL(glClearColor(0.0f, 0.0f, 0.0f, 0.0f));
-	setColor(1.0f, 1.0f, 1.0f, 1.0f);
+	g_context.setColor(1.0f, 1.0f, 1.0f, 1.0f);
 
 	// Setup alpha blend (for overlay and cursor).
 	GL_CALL(glEnable(GL_BLEND));
 	GL_CALL(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 
-#if !USE_FORCED_GL && !USE_FORCED_GLES && !USE_FORCED_GLES2
-	if (g_context.type == kContextGLES2) {
-#endif
-#if !USE_FORCED_GL && !USE_FORCED_GLES
-		GL_CALL(glEnableVertexAttribArray(kPositionAttribLocation));
-		GL_CALL(glEnableVertexAttribArray(kTexCoordAttribLocation));
-
-		GL_CALL(glActiveTexture(GL_TEXTURE0));
-#endif
-#if !USE_FORCED_GL && !USE_FORCED_GLES && !USE_FORCED_GLES2
-	} else {
-#endif
-#if !USE_FORCED_GLES2
-#if !USE_FORCED_GLES
-		if (g_context.shadersSupported) {
-			GL_CALL(glEnableVertexAttribArrayARB(kPositionAttribLocation));
-			GL_CALL(glEnableVertexAttribArrayARB(kTexCoordAttribLocation));
-		} else {
-#endif
-			// Enable rendering with vertex and coord arrays.
-			GL_CALL(glEnableClientState(GL_VERTEX_ARRAY));
-			GL_CALL(glEnableClientState(GL_TEXTURE_COORD_ARRAY));
-#if !USE_FORCED_GLES
-		}
-#endif
-
-		GL_CALL(glEnable(GL_TEXTURE_2D));
-#endif
-#if !USE_FORCED_GL && !USE_FORCED_GLES && !USE_FORCED_GLES2
-	}
-#endif
+	// Initialize the context specific state of the pipeline.
+	g_context.initializePipeline();
 
 	// Setup scissor state accordingly.
 	if (_overlayVisible) {
@@ -1100,32 +1058,6 @@ Texture *OpenGLGraphicsManager::createTexture(const Graphics::PixelFormat &forma
 			return new Texture(glIntFormat, glFormat, glType, format);
 		}
 	}
-}
-
-void OpenGLGraphicsManager::setColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a) {
-#if !USE_FORCED_GL && !USE_FORCED_GLES && !USE_FORCED_GLES2
-	if (g_context.type == kContextGLES2) {
-#endif
-#if !USE_FORCED_GL && !USE_FORCED_GLES
-		GL_CALL(glVertexAttrib4f(kColorAttribLocation, r, g, b, a));
-#endif
-#if !USE_FORCED_GL && !USE_FORCED_GLES && !USE_FORCED_GLES2
-	} else {
-#endif
-#if !USE_FORCED_GLES2
-#if !USE_FORCED_GLES
-		if (g_context.shadersSupported) {
-			GL_CALL(glVertexAttrib4fARB(kColorAttribLocation, r, g, b, a));
-		} else {
-#endif
-			GL_CALL(glColor4f(r, g, b, a));
-#if !USE_FORCED_GLES
-		}
-#endif
-#endif
-#if !USE_FORCED_GL && !USE_FORCED_GLES && !USE_FORCED_GLES2
-	}
-#endif
 }
 
 bool OpenGLGraphicsManager::getGLPixelFormat(const Graphics::PixelFormat &pixelFormat, GLenum &glIntFormat, GLenum &glFormat, GLenum &glType) const {

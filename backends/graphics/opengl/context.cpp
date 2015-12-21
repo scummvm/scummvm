@@ -22,6 +22,7 @@
 
 #include "backends/graphics/opengl/opengl-sys.h"
 #include "backends/graphics/opengl/opengl-graphics.h"
+#include "backends/graphics/opengl/shader.h"
 
 #include "common/tokenizer.h"
 
@@ -36,6 +37,108 @@ void Context::reset() {
 #define GL_FUNC_DEF(ret, name, param) name = nullptr;
 #include "backends/graphics/opengl/opengl-func.h"
 #undef GL_FUNC_DEF
+}
+
+void Context::initializePipeline() {
+#if !USE_FORCED_GL && !USE_FORCED_GLES && !USE_FORCED_GLES2
+	if (g_context.type != kContextGLES2) {
+#endif
+#if !USE_FORCED_GLES2
+		GL_CALL(glDisable(GL_LIGHTING));
+		GL_CALL(glDisable(GL_FOG));
+		GL_CALL(glShadeModel(GL_FLAT));
+		GL_CALL(glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_FASTEST));
+#endif
+#if !USE_FORCED_GL && !USE_FORCED_GLES && !USE_FORCED_GLES2
+	}
+#endif
+
+#if !USE_FORCED_GL && !USE_FORCED_GLES && !USE_FORCED_GLES2
+	if (g_context.type == kContextGLES2) {
+#endif
+#if !USE_FORCED_GL && !USE_FORCED_GLES
+		GL_CALL(glEnableVertexAttribArray(kPositionAttribLocation));
+		GL_CALL(glEnableVertexAttribArray(kTexCoordAttribLocation));
+
+		GL_CALL(glActiveTexture(GL_TEXTURE0));
+#endif
+#if !USE_FORCED_GL && !USE_FORCED_GLES && !USE_FORCED_GLES2
+	} else {
+#endif
+#if !USE_FORCED_GLES2
+#if !USE_FORCED_GLES
+		if (g_context.shadersSupported) {
+			GL_CALL(glEnableVertexAttribArrayARB(kPositionAttribLocation));
+			GL_CALL(glEnableVertexAttribArrayARB(kTexCoordAttribLocation));
+		} else {
+#endif
+			// Enable rendering with vertex and coord arrays.
+			GL_CALL(glEnableClientState(GL_VERTEX_ARRAY));
+			GL_CALL(glEnableClientState(GL_TEXTURE_COORD_ARRAY));
+#if !USE_FORCED_GLES
+		}
+#endif
+
+		GL_CALL(glEnable(GL_TEXTURE_2D));
+#endif
+#if !USE_FORCED_GL && !USE_FORCED_GLES && !USE_FORCED_GLES2
+	}
+#endif
+}
+
+void Context::setColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a) {
+#if !USE_FORCED_GL && !USE_FORCED_GLES && !USE_FORCED_GLES2
+	if (g_context.type == kContextGLES2) {
+#endif
+#if !USE_FORCED_GL && !USE_FORCED_GLES
+		GL_CALL(glVertexAttrib4f(kColorAttribLocation, r, g, b, a));
+#endif
+#if !USE_FORCED_GL && !USE_FORCED_GLES && !USE_FORCED_GLES2
+	} else {
+#endif
+#if !USE_FORCED_GLES2
+#if !USE_FORCED_GLES
+		if (g_context.shadersSupported) {
+			GL_CALL(glVertexAttrib4fARB(kColorAttribLocation, r, g, b, a));
+		} else {
+#endif
+			GL_CALL(glColor4f(r, g, b, a));
+#if !USE_FORCED_GLES
+		}
+#endif
+#endif
+#if !USE_FORCED_GL && !USE_FORCED_GLES && !USE_FORCED_GLES2
+	}
+#endif
+}
+
+void Context::setDrawCoordinates(const GLfloat *vertices, const GLfloat *texCoords) {
+#if !USE_FORCED_GL && !USE_FORCED_GLES && !USE_FORCED_GLES2
+	if (g_context.type == kContextGLES2) {
+#endif
+#if !USE_FORCED_GL && !USE_FORCED_GLES
+		GL_CALL(glVertexAttribPointer(kTexCoordAttribLocation, 2, GL_FLOAT, GL_FALSE, 0, texCoords));
+		GL_CALL(glVertexAttribPointer(kPositionAttribLocation, 2, GL_FLOAT, GL_FALSE, 0, vertices));
+#endif
+#if !USE_FORCED_GL && !USE_FORCED_GLES && !USE_FORCED_GLES2
+	} else {
+#endif
+#if !USE_FORCED_GLES2
+#if !USE_FORCED_GLES
+		if (g_context.shadersSupported) {
+			GL_CALL(glVertexAttribPointerARB(kTexCoordAttribLocation, 2, GL_FLOAT, GL_FALSE, 0, texCoords));
+			GL_CALL(glVertexAttribPointerARB(kPositionAttribLocation, 2, GL_FLOAT, GL_FALSE, 0, vertices));
+		} else {
+#endif
+			GL_CALL(glTexCoordPointer(2, GL_FLOAT, 0, texCoords));
+			GL_CALL(glVertexPointer(2, GL_FLOAT, 0, vertices));
+#if !USE_FORCED_GLES
+		}
+#endif
+#endif
+#if !USE_FORCED_GL && !USE_FORCED_GLES && !USE_FORCED_GLES2
+	}
+#endif
 }
 
 Context g_context;

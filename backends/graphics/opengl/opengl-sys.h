@@ -101,6 +101,26 @@ struct Context {
 #define GL_FUNC_DEF(ret, name, param) ret (GL_CALL_CONV *name)param
 #include "backends/graphics/opengl/opengl-func.h"
 #undef GL_FUNC_DEF
+
+	//
+	// Wrapper functionality to handle fixed-function pipelines and
+	// programmable pipelines in the same fashion.
+	//
+
+	/**
+	 * Initializes the pipeline state.
+	 */
+	void initializePipeline();
+
+	/**
+	 * Set color which shall be multiplied with each pixel.
+	 */
+	void setColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a);
+
+	/**
+	 * Set vertex and texture coordinates.
+	 */
+	void setDrawCoordinates(const GLfloat *vertices, const GLfloat *texCoords);
 };
 
 /**

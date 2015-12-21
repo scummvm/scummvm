@@ -195,32 +195,8 @@ void Texture::draw(GLfloat x, GLfloat y, GLfloat w, GLfloat h) {
 		x + w, y + h
 	};
 
-#if !USE_FORCED_GL && !USE_FORCED_GLES && !USE_FORCED_GLES2
-	if (g_context.type == kContextGLES2) {
-#endif
-#if !USE_FORCED_GL && !USE_FORCED_GLES
-		GL_CALL(glVertexAttribPointer(kTexCoordAttribLocation, 2, GL_FLOAT, GL_FALSE, 0, texcoords));
-		GL_CALL(glVertexAttribPointer(kPositionAttribLocation, 2, GL_FLOAT, GL_FALSE, 0, vertices));
-#endif
-#if !USE_FORCED_GL && !USE_FORCED_GLES && !USE_FORCED_GLES2
-	} else {
-#endif
-#if !USE_FORCED_GLES2
-#if !USE_FORCED_GLES
-		if (g_context.shadersSupported) {
-			GL_CALL(glVertexAttribPointerARB(kTexCoordAttribLocation, 2, GL_FLOAT, GL_FALSE, 0, texcoords));
-			GL_CALL(glVertexAttribPointerARB(kPositionAttribLocation, 2, GL_FLOAT, GL_FALSE, 0, vertices));
-		} else {
-#endif
-			GL_CALL(glTexCoordPointer(2, GL_FLOAT, 0, texcoords));
-			GL_CALL(glVertexPointer(2, GL_FLOAT, 0, vertices));
-#if !USE_FORCED_GLES
-		}
-#endif
-#endif
-#if !USE_FORCED_GL && !USE_FORCED_GLES && !USE_FORCED_GLES2
-	}
-#endif
+	// Setup coordinates for drawing.
+	g_context.setDrawCoordinates(vertices, texcoords);
 
 	// Draw the texture to the screen buffer.
 	GL_CALL(glDrawArrays(GL_TRIANGLE_STRIP, 0, 4));

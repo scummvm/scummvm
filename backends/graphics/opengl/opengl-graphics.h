@@ -303,14 +303,6 @@ private:
 	 */
 	void initializeGLContext();
 
-	/**
-	 * Set color which shall be multiplied with each pixel.
-	 *
-	 * This serves as a wrapper around glColor4f for fixed-function and our
-	 * shader pipeline.
-	 */
-	void setColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a);
-
 protected:
 	/**
 	 * Query the address of an OpenGL function by name.
