@@ -158,6 +158,9 @@ bool Resource::readViews(uint16 roomNum) {
 }
 
 void Resource::freeViews(uint16 roomNum) {
+	if (!_vm->_rooms)
+		return;
+
 	for (uint16 i = 0; i < 4; i++)
 		freeView(_vm->_rooms[roomNum]._view[i]);
 

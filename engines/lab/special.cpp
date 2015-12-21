@@ -284,6 +284,8 @@ void LabEngine::doJournal() {
 
 	delete[] _blankJournal;
 	delete[] _journalBackImage->_imageData;
+	_blankJournal = _journalBackImage->_imageData = nullptr;
+
 	_event->freeButtonList(&_journalButtonList);
 	_graphics->closeFont(&_journalFont);
 
