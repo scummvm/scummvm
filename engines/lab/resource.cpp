@@ -237,7 +237,7 @@ Common::String Resource::readString(Common::File *file) {
 	}
 
 	Common::String result = str;
-	delete str;
+	delete[] str;
 	return result;
 }
 
