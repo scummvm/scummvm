@@ -2595,47 +2595,98 @@ On Win9x/NT/XP, you can define USE_WINDBG and attach WinDbg to browse
 debug messages (see https://technet.microsoft.com/en-us/sysinternals/debugview.aspx).
 
 
-  GCC and MinGW32:
-    * Type "./configure"
-    * Type "make" (or "gmake", or "gnumake", depending on what GNU make is
-      called on your system) and hopefully ScummVM will compile for you.
-    * For more information refer to:
-      http://wiki.scummvm.org/index.php/Compiling_ScummVM/GCC
-      respectively
+   Windows:
+   * Dev-C++
+      Please refer to:
+      http://wiki.scummvm.org/index.php/Compiling_ScummVM/DevCPP
+   * MinGW
+      Please refer to:
       http://wiki.scummvm.org/index.php/Compiling_ScummVM/MinGW
-
-  Microsoft Visual C++ 9+:
-    * Read up on how to create the project files in the appropriate
-      "dists\msvc*" directory.
-    * Open the resulting solution file.
-    * Enter the path to the needed libraries and includes in
-      Tools|Options|Projects and Solutions|VC++ Directories".
-    * Now it should compile successfully.
-    * For more information refer to:
+   * Visual Studio (MSVC)
+      Please refer to:
       http://wiki.scummvm.org/index.php/Compiling_ScummVM/Visual_Studio
-
-  Windows Mobile:
-    * Please refer to:
+   * Windows CE/Mobile
+      Please refer to:
       http://wiki.scummvm.org/index.php/Compiling_ScummVM/Windows_CE
 
-  Mac OS X:
-    * Please refer to:
-      http://wiki.scummvm.org/index.php/Mac_OS_X
+   Linux:
+   * GCC
+      Please refer to:
+      http://wiki.scummvm.org/index.php/Compiling_ScummVM/GCC
 
-  AmigaOS 4:
-    * Please refer to:
+   AmigaOS4:
+      Please refer to:
       http://wiki.scummvm.org/index.php/AmigaOS
 
-  iPhone:
-    * Please refer to:
+   Apple iPhone:
+      Please refer to:
       http://wiki.scummvm.org/index.php/Compiling_ScummVM/iPhone
 
-  Maemo:
-    * Install Maemo SDK with 4.1.2 rootstrap
-    * Install libmad, Tremor, FLAC from source
-    * run 'ln -s backends/platform/maemo/debian'
-    * update debian/changelog
-    * run 'sb2 dpkg-buildpackage -b'
+   Atari/FreeMiNT:
+      Please refer to:
+      http://wiki.scummvm.org/index.php/Compiling_ScummVM/Atari/FreeMiNT
+
+   Bada/Tizen:
+      Please refer to:
+      http://wiki.scummvm.org/index.php/Compiling_ScummVM/Bada/Tizen
+
+   BeOS/ZETA/Haiku:
+      Please refer to:
+      http://wiki.scummvm.org/index.php/Compiling_ScummVM/BeOS/ZETA/Haiku
+
+   Google Android:
+      Please refer to:
+      http://wiki.scummvm.org/index.php/Compiling_ScummVM/Android
+
+   HP webOS:
+      Please refer to:
+      http://wiki.scummvm.org/index.php/Compiling_ScummVM/WebOS
+
+   Mac OS:
+   * Mac OS X
+      Please refer to:
+      http://wiki.scummvm.org/index.php/Mac_OS_X
+    * Mac OS X 10.2.8
+      Please refer to:
+      http://wiki.scummvm.org/index.php/Compiling_ScummVM/Mac_OS_X_10.2.8
+    * Mac OS X Crosscompiling
+      Please refer to:
+      http://wiki.scummvm.org/index.php/Compiling_ScummVM/Mac_OS_X_Crosscompiling
+
+   Maemo:
+      Please refer to:
+      http://wiki.scummvm.org/index.php/Compiling_ScummVM/Maemo
+
+   Nintendo DS:
+      Please refer to:
+      http://wiki.scummvm.org/index.php/Compiling_ScummVM/Nintendo_DS
+
+   Nintendo Wii and Gamecube:
+      Please refer to:
+      http://wiki.scummvm.org/index.php/Compiling_ScummVM/Wii
+
+   RaspberryPi:
+      Please refer to:
+      http://wiki.scummvm.org/index.php/Compiling_ScummVM/RPI
+
+   Sega Dreamcast:
+      Please refer to:
+      http://wiki.scummvm.org/index.php/Compiling_ScummVM/Dreamcast
+
+   Sony Playstation:
+   * Sony PlayStation 2
+      Please refer to:
+      http://wiki.scummvm.org/index.php/Compiling_ScummVM/PlayStation_2
+   * Sony PlayStation 3
+      Please refer to:
+      http://wiki.scummvm.org/index.php/PlayStation_3#Building_from_source
+   * Sony PlayStation Portable
+      Please refer to:
+      http://wiki.scummvm.org/index.php/Compiling_ScummVM/PlayStation_Portable
+
+   Symbian:
+      Please refer to:
+      http://wiki.scummvm.org/index.php/Compiling_ScummVM/Symbian
 
 ------------------------------------------------------------------------
 Good Luck and Happy Adventuring!
