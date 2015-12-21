@@ -27,14 +27,15 @@
 
 namespace OpenGL {
 
-void Context::reset(bool full) {
-	// GLES supports least features, thus we initialize the context type
-	// to this on full reset.
-	const ContextType savedType = full ? kContextGLES : type;
+void Context::reset() {
+	NPOTSupported = false;
+#if !USE_FORCED_GLES && !USE_FORCED_GLES2
+	shadersSupported = false;
+#endif
 
-	memset(this, 0, sizeof(Context));
-
-	type = savedType;
+#define GL_FUNC_DEF(ret, name, param) name = nullptr;
+#include "backends/graphics/opengl/opengl-func.h"
+#undef GL_FUNC_DEF
 }
 
 Context g_context;

@@ -60,7 +60,7 @@ OpenGLGraphicsManager::OpenGLGraphicsManager()
 #endif
     {
 	memset(_gamePalette, 0, sizeof(_gamePalette));
-	g_context.reset(true);
+	g_context.reset();
 }
 
 OpenGLGraphicsManager::~OpenGLGraphicsManager() {

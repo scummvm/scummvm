@@ -85,9 +85,10 @@ struct Context {
 	/**
 	 * Reset context.
 	 *
-	 * This marks all extensions as unavailable.
+	 * This marks all extensions as unavailable and clears all function
+	 * pointers.
 	 */
-	void reset(bool full = false);
+	void reset();
 
 	/** Whether GL_ARB_texture_non_power_of_two is available or not. */
 	bool NPOTSupported;
