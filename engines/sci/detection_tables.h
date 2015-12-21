@@ -1651,7 +1651,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.000", 0, "4948e4e1506f1e1c4e1d47abfa06b7f8", 204385195},
 		{"resource.map", 0, "40ccafb2195301504eba2e4f4f2c7f3d", 18925},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformWindows, ADGF_UNSTABLE, GUIO5(GUIO_NOSPEECH, GUIO_NOASPECT, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
+		Common::EN_ANY, Common::kPlatformWindows, ADGF_UNSTABLE | ADGF_CD, GUIO4(GUIO_NOASPECT, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
 	// King's Quest 7 - English Windows (from the King's Quest Collection)
 	// Executable scanning reports "2.100.002", VERSION file reports "1.4"
@@ -1659,7 +1659,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.map", 0, "2be9ab94429c721af8e05c507e048a15", 18697},
 		{"resource.000", 0, "eb63ea3a2c2469dc2d777d351c626404", 203882535},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformWindows, ADGF_UNSTABLE, GUIO5(GUIO_NOSPEECH, GUIO_NOASPECT, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
+		Common::EN_ANY, Common::kPlatformWindows, ADGF_UNSTABLE | ADGF_CD, GUIO4(GUIO_NOASPECT, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
 	// King's Quest 7 - English DOS (from FRG)
 	// SCI interpreter version 2.100.002, VERSION file reports "2.00b"
@@ -1667,7 +1667,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.map", 0, "8676b0fbbd7362989a029fe72fea14c6", 18709},
 		{"resource.000", 0, "51c1ead1163e19a2de8f121c39df7a76", 200764100},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformDOS, ADGF_UNSTABLE, GUIO5(GUIO_NOSPEECH, GUIO_NOASPECT, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
+		Common::EN_ANY, Common::kPlatformDOS, ADGF_UNSTABLE | ADGF_CD, GUIO4(GUIO_NOASPECT, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
 	// King's Quest 7 - English Windows (from FRG)
 	// SCI interpreter version 2.100.002, VERSION file reports "2.00b"
@@ -1675,7 +1675,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.map", 0, "8676b0fbbd7362989a029fe72fea14c6", 18709},
 		{"resource.000", 0, "51c1ead1163e19a2de8f121c39df7a76", 200764100},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformWindows, ADGF_UNSTABLE, GUIO5(GUIO_NOSPEECH, GUIO_NOASPECT, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
+		Common::EN_ANY, Common::kPlatformWindows, ADGF_UNSTABLE | ADGF_CD, GUIO4(GUIO_NOASPECT, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
 	// King's Quest 7 - German Windows (supplied by markcoolio in bug report #2727402)
 	// SCI interpreter version 2.100.002
@@ -1683,7 +1683,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.map", 0, "838b9ff132bd6962026fee832e8a7ddb", 18697},
 		{"resource.000", 0, "eb63ea3a2c2469dc2d777d351c626404", 206626576},
 		AD_LISTEND},
-		Common::DE_DEU, Common::kPlatformDOS, ADGF_UNSTABLE, GUIO5(GUIO_NOSPEECH, GUIO_NOASPECT, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
+		Common::DE_DEU, Common::kPlatformDOS, ADGF_UNSTABLE | ADGF_CD, GUIO4(GUIO_NOASPECT, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
 	// King's Quest 7 - Spanish DOS (from jvprat)
 	// Executable scanning reports "2.100.002", VERSION file reports "2.00"
@@ -1691,7 +1691,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.map", 0, "0b62693cbe87e3aaca3e8655a437f27f", 18709},
 		{"resource.000", 0, "51c1ead1163e19a2de8f121c39df7a76", 200764100},
 		AD_LISTEND},
-		Common::ES_ESP, Common::kPlatformDOS, ADGF_UNSTABLE, GUIO5(GUIO_NOSPEECH, GUIO_NOASPECT, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
+		Common::ES_ESP, Common::kPlatformDOS, ADGF_UNSTABLE | ADGF_CD, GUIO4(GUIO_NOASPECT, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
 	// King's Quest 7 - English DOS Non-Interactive Demo
 	// SCI interpreter version 2.100.002
@@ -1707,7 +1707,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.map", 0, "38e627a37a975aea40cc72b0518b0709", 18412},
 		{"resource.000", 0, "bad61d50aaa64298fa57a7c6ccd3bccf", 84020382},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformWindows, ADGF_DEMO | ADGF_UNSTABLE, GUIO5(GUIO_NOSPEECH, GUIO_NOASPECT, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
+		Common::EN_ANY, Common::kPlatformWindows, ADGF_DEMO | ADGF_UNSTABLE | ADGF_CD, GUIO4(GUIO_NOASPECT, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
 	// King's Questions mini-game from the King's Quest Collection
 	// SCI interpreter version 2.000.000
