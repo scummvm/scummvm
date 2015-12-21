@@ -140,7 +140,10 @@ LabEngine::~LabEngine() {
 	for (uint16 i = 1; i <= _manyRooms; i++)
 		_resource->freeViews(i);
 	delete[] _rooms;
+	delete[] _inventory;
 
+	delete _conditions;
+	delete _roomsFound;
 	delete _event;
 	delete _resource;
 	delete _music;
