@@ -47,7 +47,7 @@
 
 #ifndef WAGE_SCRIPT_H
 #define WAGE_SCRIPT_H
- 
+
 namespace Wage {
 
 class Script {
@@ -77,7 +77,7 @@ private:
 			CLICK_INPUT = 5,
 			TEXT_INPUT = 6
 		};
-		
+
 		union {
 			Obj *obj;
 			Chr *chr;
@@ -88,7 +88,7 @@ private:
 		} _value;
 		OperandTypes _type;
 		String _str;
-		
+
 		Operand(Obj *value, OperandTypes type) {
 			_value.obj = value;
 			_str = value->toString();
@@ -135,9 +135,20 @@ private:
 	void processLet();
 
 	void appendText(String str);
+	void handleMoveCommand(Scene::Directions dir, const char *dirName);
+	void handleLookCommand();
+	void handleInventoryCommand();
+	void handleStatusCommand();
+	void handleRestCommand();
+	void handleAcceptCommand();
 
+	void handleTakeCommand(const char *target);
+	void handleDropCommand(const char *target);
+	void handleAimCommand(const char *target);
+	void handleWearCommand(const char *target);
+	void handleOfferCommand(const char *target);
 };
 
 } // End of namespace Wage
- 
+
 #endif

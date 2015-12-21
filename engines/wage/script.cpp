@@ -120,41 +120,38 @@ bool Script::execute(World *world, int loopCount, String *inputText, Designed *i
 		}
 	}
 
-
 	if (_world->_globalScript != this) {
 		debug(0, "Executing global script...");
 		bool globalHandled = _world->_globalScript->execute(_world, _loopCount, _inputText, _inputClick, _callbacks);
 		if (globalHandled)
 			_handled = true;
-	}
-
-#if 0
-	else if (inputText != null) {
-		String input = inputText.toLowerCase();
+	} else if (inputText != NULL) {
+		Common::String input(*inputText);
+		input.toLowercase();
 		if (input.equals("n") || input.contains("north")) {
-			handleMoveCommand(Scene.NORTH, "north");
+			handleMoveCommand(Scene::NORTH, "north");
 		} else if (input.equals("e") || input.contains("east")) {
-			handleMoveCommand(Scene.EAST, "east");
+			handleMoveCommand(Scene::EAST, "east");
 		} else if (input.equals("s") || input.contains("south")) {
-			handleMoveCommand(Scene.SOUTH, "south");
+			handleMoveCommand(Scene::SOUTH, "south");
 		} else if (input.equals("w") || input.contains("west")) {
-			handleMoveCommand(Scene.WEST, "west");
-		} else if (input.startsWith("take ")) {
-			handleTakeCommand(input.substring(5));
-		} else if (input.startsWith("get ")) {
-			handleTakeCommand(input.substring(4));
-		} else if (input.startsWith("pick up ")) {
-			handleTakeCommand(input.substring(8));
-		} else if (input.startsWith("drop ")) {
-			handleDropCommand(input.substring(5));
-		} else if (input.startsWith("aim ")) {
-			handleAimCommand(input.substring(4));
-		} else if (input.startsWith("wear ")) {
-			handleWearCommand(input.substring(5));
-		} else if (input.startsWith("put on ")) {
-			handleWearCommand(input.substring(7));
-		} else if (input.startsWith("offer ")) {
-			handleOfferCommand(input.substring(6));
+			handleMoveCommand(Scene::WEST, "west");
+		} else if (input.hasPrefix("take ")) {
+			handleTakeCommand(&input.c_str()[5]);
+		} else if (input.hasPrefix("get ")) {
+			handleTakeCommand(&input.c_str()[4]);
+		} else if (input.hasPrefix("pick up ")) {
+			handleTakeCommand(&input.c_str()[8]);
+		} else if (input.hasPrefix("drop ")) {
+			handleDropCommand(&input.c_str()[5]);
+		} else if (input.hasPrefix("aim ")) {
+			handleAimCommand(&input.c_str()[4]);
+		} else if (input.hasPrefix("wear ")) {
+			handleWearCommand(&input.c_str()[5]);
+		} else if (input.hasPrefix("put on ")) {
+			handleWearCommand(&input.c_str()[7]);
+		} else if (input.hasPrefix("offer ")) {
+			handleOfferCommand(&input.c_str()[6]);
 		} else if (input.contains("look")) {
 			handleLookCommand();
 		} else if (input.contains("inventory")) {
@@ -163,7 +160,8 @@ bool Script::execute(World *world, int loopCount, String *inputText, Designed *i
 			handleStatusCommand();
 		} else if (input.contains("rest") || input.equals("wait")) {
 			handleRestCommand();
-		} else if (callbacks.getOffer() != null && input.contains("accept")) {
+			/*
+		} else if (callbacks.getOffer() != NULL && input.contains("accept")) {
 			handleAcceptCommand();
 		} else {
 			Chr player = world.getPlayer();
@@ -173,7 +171,9 @@ bool Script::execute(World *world, int loopCount, String *inputText, Designed *i
 					break;
 				}
 			}
+			*/
 		}
+/*
 	// TODO: weapons, offer, etc...
 	} else if (inputClick instanceof Obj) {
 		Obj obj = (Obj) inputClick;
@@ -182,12 +182,12 @@ bool Script::execute(World *world, int loopCount, String *inputText, Designed *i
 		} else {
 			appendText(obj.getClickMessage());
 		}
+*/
 	}
-#endif
 
 	return _handled;
 }
-	
+
 Script::Operand *Script::readOperand() {
 	byte operandType = _data->readByte();
 	switch (operandType) {
@@ -316,6 +316,39 @@ void Script::processLet() {
 void Script::appendText(String str) {
 	_handled = true;
 	_callbacks->appendText(str);
+}
+
+void Script::handleMoveCommand(Scene::Directions dir, const char *dirName) {
+}
+
+void Script::handleLookCommand() {
+}
+
+void Script::handleInventoryCommand() {
+}
+
+void Script::handleStatusCommand() {
+}
+
+void Script::handleRestCommand() {
+}
+
+void Script::handleAcceptCommand() {
+}
+
+void Script::handleTakeCommand(const char *target) {
+}
+
+void Script::handleDropCommand(const char *target) {
+}
+
+void Script::handleAimCommand(const char *target) {
+}
+
+void Script::handleWearCommand(const char *target) {
+}
+
+void Script::handleOfferCommand(const char *target) {
 }
 
 } // End of namespace Wage
