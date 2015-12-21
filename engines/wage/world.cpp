@@ -45,14 +45,15 @@
  *
  */
 
+#include "common/file.h"
+#include "common/macresman.h"
+#include "common/memstream.h"
+#include "common/str-array.h"
+
 #include "wage/wage.h"
 #include "wage/entities.h"
 #include "wage/script.h"
 #include "wage/world.h"
-
-#include "common/file.h"
-#include "common/macresman.h"
-#include "common/memstream.h"
 
 namespace Wage {
 
@@ -235,6 +236,7 @@ bool World::loadWorld(Common::MacResManager *resMan) {
 
 	res = resMan->getResource(MKTAG('M','E','N','U'), 2001);
 	if (res != NULL) {
+		readMenu(res);
 		warning("STUB: aboutMenu");
 		//String aboutMenuItemName = appleMenu[1].split(";")[0];
 		//world.setAboutMenuItemName(aboutMenuItemName);
@@ -242,6 +244,7 @@ bool World::loadWorld(Common::MacResManager *resMan) {
 	}
 	res = resMan->getResource(MKTAG('M','E','N','U'), 2004);
 	if (res != NULL) {
+		readMenu(res);
 		warning("STUB: commandsMenu");
 		//world.setCommandsMenuName(commandsMenu[0]);
 		//world.setDefaultCommandsMenu(commandsMenu[1]);
@@ -249,6 +252,7 @@ bool World::loadWorld(Common::MacResManager *resMan) {
 	}
 	res = resMan->getResource(MKTAG('M','E','N','U'), 2005);
 	if (res != NULL) {
+		readMenu(res);
 		warning("STUB: weaponsMenu");
 		//world.setWeaponsMenuName(weaponsMenu[0]);
 		delete res;
@@ -259,6 +263,48 @@ bool World::loadWorld(Common::MacResManager *resMan) {
 	//world.setCurrentState(initialState);	// pass off the state object to the world
 
 	return true;
+}
+
+Common::StringArray World::readMenu(Common::SeekableReadStream *res) {
+	res->skip(10);
+	int enableFlags = res->readUint32BE();
+	String menuName = readPascalString(res);
+	String menuItem = readPascalString(res);
+	int menuItemNumber = 1;
+	Common::String sb;
+	byte itemData[4];
+
+	while (menuItem.size() > 0) {
+		if (sb.size() > 0) {
+			sb += ';';
+		}
+		if ((enableFlags & (1 << menuItemNumber)) == 0) {
+			sb += '(';
+		}
+		sb += menuItem;
+		res->read(itemData, 4);
+		static const char styles[] = {'B', 'I', 'U', 'O', 'S', 'C', 'E', 0};
+		for (int i = 0; styles[i] != 0; i++) {
+			if ((itemData[3] & (1 << i)) != 0) {
+				sb += '<';
+				sb += styles[i];
+			}
+		}
+		if (itemData[1] != 0) {
+			sb += '/';
+			sb += (char)itemData[1];
+		}
+		menuItem = readPascalString(res);
+		menuItemNumber++;
+	}
+
+	Common::StringArray result;
+	result.push_back(menuName);
+	result.push_back(sb);
+
+	warning("menuName: %s", menuName.c_str());
+	warning("sb: %s", sb.c_str());
+	return result;
 }
 
 void World::loadExternalSounds(String fname) {

@@ -117,6 +117,9 @@ public:
 		_sounds[s] = sound;
 		_orderedSounds.push_back(sound);
 	}
+
+private:
+	Common::StringArray readMenu(Common::SeekableReadStream *res);
 };
 
 } // End of namespace Wage
