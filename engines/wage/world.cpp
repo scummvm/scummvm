@@ -230,7 +230,33 @@ bool World::loadWorld(Common::MacResManager *resMan) {
 				_patterns.push_back(pattern);
 			}
 		}
+		delete res;
 	}
+
+	res = resMan->getResource(MKTAG('M','E','N','U'), 2001);
+	if (res != NULL) {
+		warning("STUB: aboutMenu");
+		//String aboutMenuItemName = appleMenu[1].split(";")[0];
+		//world.setAboutMenuItemName(aboutMenuItemName);
+		delete res;
+	}
+	res = resMan->getResource(MKTAG('M','E','N','U'), 2004);
+	if (res != NULL) {
+		warning("STUB: commandsMenu");
+		//world.setCommandsMenuName(commandsMenu[0]);
+		//world.setDefaultCommandsMenu(commandsMenu[1]);
+		delete res;
+	}
+	res = resMan->getResource(MKTAG('M','E','N','U'), 2005);
+	if (res != NULL) {
+		warning("STUB: weaponsMenu");
+		//world.setWeaponsMenuName(weaponsMenu[0]);
+		delete res;
+	}
+	// TODO: Read Apple menu and get the name of that menu item..
+
+	// store global info in state object for use with save/load actions
+	//world.setCurrentState(initialState);	// pass off the state object to the world
 
 	return true;
 }
