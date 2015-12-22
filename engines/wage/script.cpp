@@ -225,9 +225,7 @@ Script::Operand *Script::readOperand() {
 	case 0xFF:
 		{
 			// user variable
-			int value = _data->readSByte();
-			if (value < 0)
-				value += 256;
+			int value = _data->readByte();
 
 			// TODO: Verify that we're using the right index.
 			return new Operand(cont->_userVariables[value - 1], Operand::NUMBER);
@@ -283,13 +281,8 @@ void Script::assign(byte operandType, int uservar, uint16 value) {
 
 	switch (operandType) {
 	case 0xFF:
-		{
-			// user variable
-			if (uservar < 0)
-				uservar += 256;
-
-			cont->_userVariables[uservar - 1] = value;
-		}
+		cont->_userVariables[uservar - 1] = value;
+		break;
 	case 0xD0:
 		cont->_statVariables[Context::PHYS_STR_BAS] = value;
 		break;
@@ -421,7 +414,7 @@ void Script::processLet() {
 	int uservar = 0;
 
 	if (operandType == 0xff)
-		uservar = _data->readSByte();
+		uservar = _data->readByte();
 
 	_data->readByte(); // skip "=" operator
 	do {
