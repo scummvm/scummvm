@@ -28,8 +28,8 @@
  *
  */
 
-#ifndef LAB_DIFF_H
-#define LAB_DIFF_H
+#ifndef LAB_ANIM_H
+#define LAB_ANIM_H
 
 namespace Lab {
 
@@ -101,4 +101,4 @@ public:
 
 } // End of namespace Lab
 
-#endif // LAB_DIFF_H
+#endif // LAB_ANIM_H
