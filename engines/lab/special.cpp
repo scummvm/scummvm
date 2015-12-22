@@ -86,10 +86,11 @@ void LabEngine::doWestPaper() {
 	paperFont = _resource->getFont("F:Note.fon");
 	paperText = _resource->getText("Lab:Rooms/Col1");
 	_graphics->flowText(paperFont, -4, 0, 0, false, false, false, true, _utils->vgaRectScale(45, y, 158, 148), paperText.c_str());
+
 	paperText = _resource->getText("Lab:Rooms/Col2");
 	_graphics->flowText(paperFont, -4, 0, 0, false, false, false, true, _utils->vgaRectScale(162, y, 275, 148), paperText.c_str());
-	_graphics->closeFont(&paperFont);
 
+	_graphics->closeFont(&paperFont);
 	_graphics->setPalette(_anim->_diffPalette, 256);
 }
 
@@ -130,10 +131,9 @@ void LabEngine::loadJournalData() {
 	_journalTextTitle = _resource->getText("Lab:Rooms/jt");
 
 	Common::File *journalFile = _resource->openDataFile("P:JImage");
-	Utils *utils = _utils;
-	_journalButtonList.push_back(_event->createButton( 80, utils->vgaScaleY(162) + utils->svgaCord(1), 0, VKEY_LTARROW, new Image(journalFile, this), new Image(journalFile, this)));	// back
-	_journalButtonList.push_back(_event->createButton(194, utils->vgaScaleY(162) + utils->svgaCord(1), 2,            0, new Image(journalFile, this), new Image(journalFile, this)));	// cancel
-	_journalButtonList.push_back(_event->createButton(144, utils->vgaScaleY(164) - utils->svgaCord(1), 1, VKEY_RTARROW, new Image(journalFile, this), new Image(journalFile, this)));	// forward
+	_journalButtonList.push_back(_event->createButton( 80, _utils->vgaScaleY(162) + _utils->svgaCord(1), 0, VKEY_LTARROW, new Image(journalFile, this), new Image(journalFile, this)));	// back
+	_journalButtonList.push_back(_event->createButton(194, _utils->vgaScaleY(162) + _utils->svgaCord(1), 2,            0, new Image(journalFile, this), new Image(journalFile, this)));	// cancel
+	_journalButtonList.push_back(_event->createButton(144, _utils->vgaScaleY(164) - _utils->svgaCord(1), 1, VKEY_RTARROW, new Image(journalFile, this), new Image(journalFile, this)));	// forward
 	delete journalFile;
 
 	_anim->_noPalChange = true;
@@ -155,7 +155,7 @@ void LabEngine::drawJournalText() {
 
 	while (drawingToPage < _journalPage) {
 		_music->updateMusic();
-		curText = (char *)(_journalText.c_str() + charsDrawn);
+		curText = _journalText.c_str() + charsDrawn;
 		charsDrawn += _graphics->flowText(_journalFont, -2, 2, 0, false, false, false, false, _utils->vgaRectScale(52, 32, 152, 148), curText);
 
 		_lastPage = (*curText == 0);
@@ -170,17 +170,14 @@ void LabEngine::drawJournalText() {
 		curText = _journalTextTitle.c_str();
 		_graphics->flowTextToMem(_journalBackImage, _journalFont, -2, 2, 0, false, true, true, true, _utils->vgaRectScale(52, 32, 152, 148), curText);
 	} else {
-		curText = (char *)(_journalText.c_str() + charsDrawn);
+		curText = _journalText.c_str() + charsDrawn;
 		charsDrawn += _graphics->flowTextToMem(_journalBackImage, _journalFont, -2, 2, 0, false, false, false, true, _utils->vgaRectScale(52, 32, 152, 148), curText);
 	}
 
 	_music->updateMusic();
-	curText = (char *)(_journalText.c_str() + charsDrawn);
+	curText = _journalText.c_str() + charsDrawn;
 	_lastPage = (*curText == 0);
 	_graphics->flowTextToMem(_journalBackImage, _journalFont, -2, 2, 0, false, false, false, true, _utils->vgaRectScale(171, 32, 271, 148), curText);
-
-	curText = (char *)(_journalText.c_str() + charsDrawn);
-	_lastPage = (*curText == 0);
 }
 
 void LabEngine::turnPage(bool fromLeft) {
@@ -334,7 +331,7 @@ void LabEngine::drawMonText(char *text, TextFont *monitorFont, Common::Rect text
 
 	while (drawingToPage < _monitorPage) {
 		_music->updateMusic();
-		curText = (char *)(text + charsDrawn);
+		curText = text + charsDrawn;
 		charsDrawn += _graphics->flowText(monitorFont, yspacing, 0, 0, false, false, false, false, textRect, curText);
 		_lastPage = (*curText == 0);
 
@@ -344,12 +341,9 @@ void LabEngine::drawMonText(char *text, TextFont *monitorFont, Common::Rect text
 			drawingToPage++;
 	}
 
-	curText = (char *)(text + charsDrawn);
+	curText = text + charsDrawn;
 	_lastPage = (*curText == 0);
 	charsDrawn = _graphics->flowText(monitorFont, yspacing, 2, 0, false, false, false, true, textRect, curText);
-	curText += charsDrawn;
-	_lastPage |= (*curText == 0);
-
 	_event->mouseShow();
 }
 
