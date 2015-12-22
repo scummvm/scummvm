@@ -33,59 +33,63 @@
 
 namespace Lab {
 
-//------------------------------- Action types ------------------------------
-#define PLAYSOUND     1
-#define PLAYSOUNDCONT 2
-#define SHOWDIFF      3
-#define SHOWDIFFCONT  4
-#define LOADDIFF      5
-#define LOADBM        6
-#define SHOWBM        7
-#define TRANSITION    8
-#define NOUPDATE      9
-#define FORCEUPDATE  10
-#define SHOWCURPICT  11
-#define SETELEMENT   12
-#define UNSETELEMENT 13
-#define SHOWMESSAGE  14
-#define SHOWMESSAGES 15
-#define SETPOSITION  16
-#define SETCLOSEUP   17
-#define MAINVIEW     18
-#define SUBINV       19
-#define ADDINV       20
-#define SHOWDIR      21
-#define WAITSECS     22
-#define STOPMUSIC    23
-#define STARTMUSIC   24
-#define CHANGEMUSIC  25
-#define RESETMUSIC   26
-#define FILLMUSIC    27
-#define WAITSOUND    28
-#define CLEARSOUND   29
-#define WINMUSIC     30
-#define WINGAME      31
-#define LOSTGAME     32
-#define RESETBUFFER  33
-#define SPECIALCMD   34
-#define CSHOWMESSAGE 35
-#define PLAYSOUNDB   36
+enum ActionType {
+	kActionPlaySound = 1,
+	kActionPlaySoundLooping = 2,
+	kActionShowDiff = 3,
+	kActionShowDiffLooping = 4,
+	kActionLoadDiff = 5,
+	kActionLoadBitmap = 6,	// unused?
+	kActionShowBitmap = 7,	// unused?
+	kActionTransition = 8,
+	kActionNoUpdate = 9,
+	kActionForceUpdate = 10,
+	kActionShowCurPict = 11,
+	kActionSetElement = 12,
+	kActionUnsetElement = 13,
+	kActionShowMessage = 14,
+	kActionShowMessages = 15,
+	kActionChangeRoom = 16,
+	kActionSetCloseup = 17,
+	kActionMainView = 18,
+	kActionSubInv = 19,
+	kActionAddInv = 20,
+	kActionShowDir = 21,
+	kActionWaitSecs = 22,
+	kActionStopMusic = 23,
+	kActionStartMusic = 24,
+	kActionChangeMusic = 25,
+	kActionResetMusic = 26,
+	kActionFillMusic = 27,
+	kActionWaitSound = 28,
+	kActionClearSound = 29,
+	kActionWinMusic = 30,
+	kActionWinGame = 31,
+	kActionLostGame = 32,
+	kActionResetBuffer = 33,
+	kActionSpecialCmd = 34,
+	kActionCShowMessage = 35,
+	kActionPlaySoundNoWait = 36
+};
 
-// Rule Types
-#define ACTION      1
-#define OPERATE     2
-#define GOFORWARD   3
-#define CONDITIONS  4
-#define TURN        5
-#define GOMAINVIEW  6
-#define TURNFROMTO  7
+enum RuleType {
+	kRuleTypeNone = 0,
+	kRuleTypeAction = 1,
+	kRuleTypeOperate = 2,
+	kRuleTypeGoForward = 3,
+	kRuleTypeConditions = 4,	// unused?
+	kRuleTypeTurn = 5,
+	kRuleTypeGoMainView = 6,
+	kRuleTypeTurnFromTo = 7
+};
 
-//----------------------------- Rule Type Action ----------------------------
-#define TAKE        1
-#define MOVE        2
-#define OPENDOOR    3
-#define CLOSEDOOR   4
-#define TAKEDEF     5
+enum RuleAction {
+	kRuleActionTake = 0,
+	kRuleActionMove = 1,	// unused?
+	kRuleActionOpenDoor = 2,	// unused?
+	kRuleActionCloseDoor = 3,	// unused?
+	kRuleActionTakeDef = 4
+};
 
 #if defined(WIN32)
 #pragma pack(push, 1)
@@ -109,7 +113,7 @@ struct ViewData {
 };
 
 struct Action {
-	int16 _actionType;
+	ActionType _actionType;
 	int16 _param1;
 	int16 _param2;
 	int16 _param3;
@@ -118,12 +122,11 @@ struct Action {
 };
 
 struct Rule {
-	int16 _ruleType;
+	RuleType _ruleType;
 	int16 _param1;
 	int16 _param2;
 	int16 *_condition;
 	Action *_actionList;
-	Rule *_nextRule;
 };
 
 struct RoomData {

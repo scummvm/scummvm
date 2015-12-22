@@ -265,7 +265,7 @@ RuleList *Resource::readRule(Common::File *file) {
 
 		if (c == 1) {
 			Rule rule;
-			rule._ruleType = file->readSint16LE();
+			rule._ruleType = (RuleType)file->readSint16LE();
 			rule._param1 = file->readSint16LE();
 			rule._param2 = file->readSint16LE();
 			rule._condition = readConditions(file);
@@ -305,12 +305,12 @@ Action *Resource::readAction(Common::File *file) {
 				head = action;
 			if (prev)
 				prev->_nextAction = action;
-			action->_actionType = file->readSint16LE();
+			action->_actionType = (ActionType)file->readSint16LE();
 			action->_param1 = file->readSint16LE();
 			action->_param2 = file->readSint16LE();
 			action->_param3 = file->readSint16LE();
 
-			if (action->_actionType == SHOWMESSAGES) {
+			if (action->_actionType == kActionShowMessages) {
 				action->_messages = new Common::String[action->_param1];
 
 				for (int i = 0; i < action->_param1; i++)

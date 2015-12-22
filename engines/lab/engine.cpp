@@ -1023,9 +1023,9 @@ void LabEngine::performAction(uint16 actionMode, Common::Point curPos, uint16 &c
 			_curFileName = _newFileName;
 		else if (takeItem(curPos, &_closeDataPtr))
 			drawStaticMessage(kTextTakeItem);
-		else if (doActionRule(curPos, TAKEDEF - 1, _roomNum, &_closeDataPtr))
+		else if (doActionRule(curPos, kRuleActionTakeDef, _roomNum, &_closeDataPtr))
 			_curFileName = _newFileName;
-		else if (doActionRule(curPos, TAKE - 1, 0, &_closeDataPtr))
+		else if (doActionRule(curPos, kRuleActionTake, 0, &_closeDataPtr))
 			_curFileName = _newFileName;
 		else if (curPos.y < (_utils->vgaScaleY(149) + _utils->svgaCord(2)))
 			drawStaticMessage(kTextNothing);
