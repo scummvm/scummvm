@@ -62,7 +62,7 @@ OpenGLSdlGraphicsManager::OpenGLSdlGraphicsManager(uint desktopWidth, uint deskt
 
 #if USE_FORCED_GL
 	glContextType = OpenGL::kContextGL;
-	_glContextProfileMask = SDL_GL_CONTEXT_PROFILE_COMPATIBILITY;
+	_glContextProfileMask = 0;
 	_glContextMajor = DEFAULT_GL_MAJOR;
 	_glContextMinor = DEFAULT_GL_MINOR;
 #elif USE_FORCED_GLES
@@ -86,7 +86,7 @@ OpenGLSdlGraphicsManager::OpenGLSdlGraphicsManager(uint desktopWidth, uint deskt
 	//
 	// In case no defaults are given we prefer OpenGL over OpenGL ES.
 	if (SDL_GL_GetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, &_glContextProfileMask) != 0) {
-		_glContextProfileMask = SDL_GL_CONTEXT_PROFILE_COMPATIBILITY;
+		_glContextProfileMask = 0;
 		noDefaults = true;
 	}
 
@@ -103,7 +103,7 @@ OpenGLSdlGraphicsManager::OpenGLSdlGraphicsManager(uint desktopWidth, uint deskt
 			_glContextMajor = DEFAULT_GLES_MAJOR;
 			_glContextMinor = DEFAULT_GLES_MINOR;
 		} else {
-			_glContextProfileMask = SDL_GL_CONTEXT_PROFILE_COMPATIBILITY;
+			_glContextProfileMask = 0;
 			_glContextMajor = DEFAULT_GL_MAJOR;
 			_glContextMinor = DEFAULT_GL_MINOR;
 		}
@@ -119,8 +119,8 @@ OpenGLSdlGraphicsManager::OpenGLSdlGraphicsManager(uint desktopWidth, uint deskt
 		glContextType = OpenGL::kContextGL;
 
 		// Core profile does not allow legacy functionality, which we use.
-		// Thus we always request a compatibility profile.
-		_glContextProfileMask = SDL_GL_CONTEXT_PROFILE_COMPATIBILITY;
+		// Thus we request a standard OpenGL context.
+		_glContextProfileMask = 0;
 		_glContextMajor = DEFAULT_GL_MAJOR;
 		_glContextMinor = DEFAULT_GL_MINOR;
 	} else {
