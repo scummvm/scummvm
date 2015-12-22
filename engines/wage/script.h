@@ -126,8 +126,10 @@ private:
 		}
 	};
 
-
+public:
 	bool execute(World *world, int loopCount, String *inputText, Designed *inputClick, WageEngine *callbacks);
+
+private:
 	Operand *readOperand();
 	Operand *readStringOperand();
 	const char *readOperator();

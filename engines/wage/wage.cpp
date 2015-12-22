@@ -59,9 +59,10 @@
 #include "graphics/palette.h"
 
 #include "wage/wage.h"
-#include "wage/entities.h"
-#include "wage/world.h"
 #include "wage/design.h"
+#include "wage/entities.h"
+#include "wage/script.h"
+#include "wage/world.h"
 
 namespace Wage {
 
@@ -108,6 +109,9 @@ Common::Error WageEngine::run() {
 	Graphics::Surface screen;
 	screen.create(640, 480, Graphics::PixelFormat::createFormatCLUT8());
 	Common::Rect r(0, 0, screen.w, screen.h);
+
+	Common::String input("look");
+	_world->_globalScript->execute(_world, 1, &input, NULL, this);
 
 	_world->_orderedScenes[1]->_design->paint(&screen, _world->_patterns, false);
 	_world->_objs["frank.1"]->_design->setBounds(&r);

@@ -64,7 +64,11 @@ bool Script::execute(World *world, int loopCount, String *inputText, Designed *i
 
 	_data->skip(12);
 	while (_data->pos() < _data->size()) {
-		switch(_data->readByte()) {
+		byte command = _data->readByte();
+
+		debug(1, "Command: %x", command);
+
+		switch(command) {
 		case 0x80: // IF
 			processIf();
 			break;
