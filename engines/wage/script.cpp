@@ -195,6 +195,9 @@ bool Script::execute(World *world, int loopCount, String *inputText, Designed *i
 
 Script::Operand *Script::readOperand() {
 	byte operandType = _data->readByte();
+
+	debug(2, "readOperand: 0x%x", operandType);
+
 	Context *cont = &_world->_player->_context;
 	switch (operandType) {
 	case 0xA0: // TEXT$
@@ -273,6 +276,7 @@ Script::Operand *Script::readOperand() {
 		return new Operand(cont->_statVariables[Context::PHYS_SPE_CUR], Operand::NUMBER);
 	default:
 		if (operandType >= 0x20 && operandType < 0x80) {
+			_data->seek(-1, SEEK_CUR);
 			return readStringOperand();
 		} else {
 			debug("Dunno what %x is (index=%d)!\n", operandType, _data->pos()-1);
@@ -360,6 +364,7 @@ Script::Operand *Script::readStringOperand() {
 			allDigits = false;
 		*sb += c;
 	}
+	_data->seek(-1, SEEK_CUR);
 
 	if (allDigits && sb->size() > 0) {
 		debug(0, "Read number %s", sb->c_str());
@@ -377,6 +382,7 @@ Script::Operand *Script::readStringOperand() {
 const char *Script::readOperator() {
 	byte cmd = _data->readByte();
 
+	debug(2, "readOperator: 0x%x", cmd);
 	switch (cmd) {
 	case 0x81:
 		return "=";
@@ -418,10 +424,14 @@ void Script::processLet() {
 	int operandType = _data->readByte();
 	int uservar = 0;
 
-	if (operandType == 0xff)
+	if (operandType == 0xff) {
 		uservar = _data->readByte();
+	}
 
-	_data->readByte(); // skip "=" operator
+	byte eq = _data->readByte(); // skip "=" operator
+
+	debug(2, "processLet: 0x%x, uservar: 0x%x, eq: 0x%x", operandType, uservar, eq);
+
 	do {
 		Operand *operand = readOperand();
 		// TODO assert that value is NUMBER
