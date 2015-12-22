@@ -130,7 +130,7 @@ void Anim::diffNextFrame(bool onlyDiffData) {
 			return;
 		}
 
-		_vm->_music->updateMusic();
+		_vm->updateMusicAndEvents();
 		_header = _diffFile->readUint32LE();
 		_size = _diffFile->readUint32LE();
 
@@ -191,7 +191,7 @@ void Anim::diffNextFrame(bool onlyDiffData) {
 		case 31:
 			if (_waitForEffect) {
 				while (_vm->_music->isSoundEffectActive()) {
-					_vm->_music->updateMusic();
+					_vm->updateMusicAndEvents();
 					_vm->waitTOF();
 				}
 			}
@@ -211,7 +211,7 @@ void Anim::diffNextFrame(bool onlyDiffData) {
 
 				if (_waitForEffect) {
 					while (_vm->_music->isSoundEffectActive()) {
-						_vm->_music->updateMusic();
+						_vm->updateMusicAndEvents();
 						_vm->waitTOF();
 
 						if (_vm->_graphics->_dispBitMap->_drawOnScreen)
@@ -251,7 +251,7 @@ void Anim::stopDiffEnd() {
 
 	_stopPlayingEnd = true;
 	while (_isPlaying) {
-		_vm->_music->updateMusic();
+		_vm->updateMusicAndEvents();
 		diffNextFrame();
 	}
 }

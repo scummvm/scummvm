@@ -235,7 +235,7 @@ bool LabEngine::takeItem(Common::Point pos, CloseDataPtr *closePtrList) {
 
 void LabEngine::doActions(Action *actionList, CloseDataPtr *closePtrList) {
 	while (actionList) {
-		_music->updateMusic();
+		updateMusicAndEvents();
 
 		switch (actionList->_actionType) {
 		case PLAYSOUND:
@@ -387,7 +387,7 @@ void LabEngine::doActions(Action *actionList, CloseDataPtr *closePtrList) {
 				_graphics->screenUpdate();
 
 				while (g_system->getMillis() < targetMillis) {
-					_music->updateMusic();
+					updateMusicAndEvents();
 					_anim->diffNextFrame();
 				}
 			}
@@ -412,12 +412,12 @@ void LabEngine::doActions(Action *actionList, CloseDataPtr *closePtrList) {
 			break;
 
 		case FILLMUSIC:
-			_music->updateMusic();
+			updateMusicAndEvents();
 			break;
 
 		case WAITSOUND:
 			while (_music->isSoundEffectActive()) {
-				_music->updateMusic();
+				updateMusicAndEvents();
 				_anim->diffNextFrame();
 				waitTOF();
 			}
@@ -497,7 +497,7 @@ void LabEngine::doActions(Action *actionList, CloseDataPtr *closePtrList) {
 		_music->stopSoundEffect();
 	} else {
 		while (_music->isSoundEffectActive()) {
-			_music->updateMusic();
+			updateMusicAndEvents();
 			_anim->diffNextFrame();
 			waitTOF();
 		}

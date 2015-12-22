@@ -196,6 +196,7 @@ public:
 	uint16 getQuarters();
 	void setDirection(uint16 direction) { _direction = direction; };
 	void setQuarters(uint16 quarters);
+	void updateMusicAndEvents();
 	void waitTOF();
 
 private:

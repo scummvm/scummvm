@@ -82,7 +82,7 @@ void LabEngine::loadMapData() {
 	delete mapImages;
 
 	Common::File *mapFile = _resource->openDataFile("Lab:Maps", MKTAG('M', 'A', 'P', '0'));
-	_music->updateMusic();
+	updateMusicAndEvents();
 	if (!_music->_loopSoundEffect)
 		_music->stopSoundEffect();
 
@@ -344,7 +344,7 @@ void LabEngine::drawMap(uint16 curRoom, uint16 curMsg, uint16 floorNum, bool fad
 	for (uint16 i = 1; i <= _maxRooms; i++) {
 		if ((_maps[i]._pageNumber == floorNum) && _roomsFound->in(i) && _maps[i]._x) {
 			drawRoomMap(i, (bool)(i == curRoom));
-			_music->updateMusic();
+			updateMusicAndEvents();
 		}
 	}
 
@@ -397,7 +397,7 @@ void LabEngine::processMap(uint16 curRoom) {
 
 	while (1) {
 		// Make sure we check the music at least after every message
-		_music->updateMusic();
+		updateMusicAndEvents();
 		IntuiMessage *msg = _event->getMsg();
 		if (g_engine->shouldQuit()) {
 			_quitLab = true;
@@ -405,7 +405,7 @@ void LabEngine::processMap(uint16 curRoom) {
 		}
 
 		if (!msg) {
-			_music->updateMusic();
+			updateMusicAndEvents();
 
 			byte newcolor[3];
 
@@ -554,7 +554,7 @@ void LabEngine::doMap(uint16 curRoom) {
 
 	_graphics->_fadePalette = amigaMapPalette;
 
-	_music->updateMusic();
+	updateMusicAndEvents();
 	loadMapData();
 	_graphics->blackAllScreen();
 	_event->attachButtonList(&_mapButtonList);
