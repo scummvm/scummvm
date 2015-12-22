@@ -53,7 +53,7 @@ class Anim {
 private:
 	LabEngine *_vm;
 
-	uint32 _header;
+	uint32 _lastBlockHeader;
 	uint16 _curBit;
 	uint16 _numChunks;
 	uint32 _delayMicros;
