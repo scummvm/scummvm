@@ -189,7 +189,6 @@ Resources::ActionArray GameInterface::listActionsPossibleForObjectAt(Resources::
 
 	int index = item->getHotspotIndexForPoint(pos);
 	if (index < 0) {
-		warning("Position is outside of item '%s'", item->getName().c_str());
 		return Resources::ActionArray();
 	}
 
