@@ -38,6 +38,7 @@
 #include "engines/engine.h"
 #include "engines/savestate.h"
 
+#include "lab/console.h"
 #include "lab/image.h"
 #include "lab/labsets.h"
 
@@ -171,6 +172,8 @@ public:
 	TextFont *_msgFont;
 	TilePuzzle *_tilePuzzle;
 	Utils *_utils;
+	Console *_console;
+	GUI::Debugger *getDebugger() { return _console; }
 
 public:
 	LabEngine(OSystem *syst, const ADGameDescription *gameDesc);

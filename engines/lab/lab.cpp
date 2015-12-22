@@ -37,6 +37,7 @@
 #include "lab/lab.h"
 
 #include "lab/anim.h"
+#include "lab/console.h"
 #include "lab/dispman.h"
 #include "lab/eventman.h"
 #include "lab/image.h"
@@ -83,6 +84,7 @@ LabEngine::LabEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	_rooms = nullptr;
 	_tilePuzzle = nullptr;
 	_utils = nullptr;
+	_console = nullptr;
 	_journalBackImage = nullptr;
 	_screenImage = nullptr;
 
@@ -151,6 +153,7 @@ LabEngine::~LabEngine() {
 	delete _graphics;
 	delete _tilePuzzle;
 	delete _utils;
+	delete _console;
 	delete _journalBackImage;
 	// _screenImage->_imageData is always pointing to the current drawing buffer.
 	// It shouldn't be deleted there.
@@ -171,6 +174,7 @@ Common::Error LabEngine::run() {
 	_anim = new Anim(this);
 	_tilePuzzle = new TilePuzzle(this);
 	_utils = new Utils(this);
+	_console = new Console(this);
 	_journalBackImage = new Image(this);
 	_screenImage = new Image(this);
 
