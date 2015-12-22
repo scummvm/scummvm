@@ -107,16 +107,16 @@ public:
 	//PrintStream out;
 	int _loopCount;
 	int _turn;
-	//Callbacks callbacks;
 	Chr *_monster;
 	Obj *_offer;
 	bool _commandWasQuick;
 	int _aim;
 	bool _temporarilyHidden;
 
-	void playSound(String soundName) {}
-	void setMenu(String soundName) {}
-	void appendText(String str) {}
+	void playSound(String soundName);
+	void setMenu(String soundName);
+	void appendText(String str);
+	Obj *getOffer();
 	void processEvents();
 
 private:

@@ -54,6 +54,9 @@ class Design;
 class Obj;
 class Scene;
 class Script;
+class Weapon;
+
+typedef Common::Array<Weapon *> WeaponArray;
 
 class Context {
 public:
@@ -111,7 +114,7 @@ public:
 	Design *_design;
 	Common::Rect *_designBounds;
 
-	Common::Rect *getDesignBounds() { 
+	Common::Rect *getDesignBounds() {
 		return _designBounds == NULL ? NULL : new Common::Rect(*_designBounds);
 	}
 
@@ -139,7 +142,7 @@ public:
 		BODY_ARMOR = 1,
 		SHIELD_ARMOR = 2
 	};
-	
+
 	Chr(String name, Common::SeekableReadStream *data);
 
 	int _index;
@@ -149,7 +152,7 @@ public:
 	bool _playerCharacter;
 	int _maximumCarriedObjects;
 	int _returnTo;
-	
+
 	int _physicalStrength;
 	int _physicalHp;
 	int _naturalArmor;
@@ -161,7 +164,7 @@ public:
 	int _runningSpeed;
 	int _rejectsOffers;
 	int _followsOpponent;
-	
+
 	String _initialSound;
 	String _scoresHitSound;
 	String _receivesHitSound;
@@ -171,12 +174,12 @@ public:
 	String _operativeVerb1;
 	int _weaponDamage1;
 	String _weaponSound1;
-	
+
 	String _nativeWeapon2;
 	String _operativeVerb2;
 	int _weaponDamage2;
 	String _weaponSound2;
-	
+
 	int _winningWeapons;
 	int _winningMagic;
 	int _winningRun;
@@ -185,7 +188,7 @@ public:
 	int _losingMagic;
 	int _losingRun;
 	int _losingOffer;
-	
+
 	String _initialComment;
 	String _scoresHitComment;
 	String _receivesHitComment;
@@ -200,6 +203,8 @@ public:
 	Obj *_armor[3];
 
 	Context _context;
+
+	WeaponArray *getWeapons();
 
 public:
 #if 0
@@ -283,7 +288,7 @@ public:
 
 	Weapon() : _numberOfUses(0) {}
 
-	void decrementNumberOfUses() { 
+	void decrementNumberOfUses() {
 		if (_numberOfUses != -1) {
 			_numberOfUses--;
 		}
@@ -328,7 +333,7 @@ public:
 	String _clickMessage;
 	String _failureMessage;
 	String _useMessage;
-	
+
 	Scene *_currentScene;
 	Chr *_currentOwner;
 
@@ -355,7 +360,7 @@ public:
 		EAST = 2,
 		WEST = 3
 	};
-	
+
 	enum SceneTypes {
 		PERIODIC = 0,
 		RANDOM = 1
@@ -373,7 +378,7 @@ public:
 	String _soundName;
 	int _worldX;
 	int _worldY;
-	
+
 	Common::List<Obj> _objs;
 	Common::List<Chr> _chrs;
 
@@ -385,7 +390,7 @@ public:
 	}
 
 #if 0
-	String getFontName() { 
+	String getFontName() {
 		String[] fonts = {
 			"Chicago",	// system font
 			"Geneva",	// application font
@@ -396,7 +401,7 @@ public:
 			"Venice",
 			"London",
 			"Athens",
-	
+
 			"San Francisco",
 			"Toronto",
 			"Cairo",
@@ -448,5 +453,5 @@ public:
 };
 
 } // End of namespace Wage
- 
+
 #endif

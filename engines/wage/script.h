@@ -150,6 +150,10 @@ private:
 	void handleAimCommand(const char *target);
 	void handleWearCommand(const char *target);
 	void handleOfferCommand(const char *target);
+
+	bool tryAttack(Weapon *weapon, Common::String &input);
+	void handleAttack(Weapon *weapon);
+
 };
 
 } // End of namespace Wage

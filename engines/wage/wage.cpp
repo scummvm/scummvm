@@ -134,4 +134,23 @@ void WageEngine::processEvents() {
 	}
 }
 
+void WageEngine::playSound(String soundName) {
+	warning("STUB: playSound");
+}
+
+void WageEngine::setMenu(String soundName) {
+	warning("STUB: setMenu");
+}
+
+void WageEngine::appendText(String str) {
+	warning("STUB: appendText");
+}
+
+Obj *WageEngine::getOffer() {
+	warning("STUB: getOffer");
+
+	return NULL;
+}
+
+
 } // End of namespace Wage

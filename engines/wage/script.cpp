@@ -160,18 +160,19 @@ bool Script::execute(World *world, int loopCount, String *inputText, Designed *i
 			handleStatusCommand();
 		} else if (input.contains("rest") || input.equals("wait")) {
 			handleRestCommand();
-			/*
-		} else if (callbacks.getOffer() != NULL && input.contains("accept")) {
+		} else if (callbacks->getOffer() != NULL && input.contains("accept")) {
 			handleAcceptCommand();
 		} else {
-			Chr player = world.getPlayer();
-			for (Weapon weapon : player.getWeapons()) {
-				if (tryAttack(weapon, input)) {
-					handleAttack(weapon);
+			Chr *player = _world->_player;
+			WeaponArray *weapons = player->getWeapons();
+			for (WeaponArray::const_iterator weapon = weapons->begin(); weapon != weapons->end(); ++weapon) {
+				if (tryAttack(*weapon, input)) {
+					handleAttack(*weapon);
 					break;
 				}
 			}
-			*/
+
+			delete weapons;
 		}
 /*
 	// TODO: weapons, offer, etc...
@@ -490,6 +491,16 @@ void Script::handleWearCommand(const char *target) {
 
 void Script::handleOfferCommand(const char *target) {
 	warning("STUB: handleOfferCommand");
+}
+
+bool Script::tryAttack(Weapon *weapon, Common::String &input) {
+	warning("STUB: tryAttack");
+
+	return false;
+}
+
+void Script::handleAttack(Weapon *weapon) {
+	warning("STUB: handleAttack");
 }
 
 } // End of namespace Wage

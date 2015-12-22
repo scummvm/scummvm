@@ -192,4 +192,12 @@ Chr::Chr(String name, Common::SeekableReadStream *data) {
 	_weaponSound2 = readPascalString(data);
 }
 
+WeaponArray *Chr::getWeapons() {
+	WeaponArray *list = new WeaponArray;
+
+	warning("STUB: getWeapons");
+
+	return list;
+}
+
 } // End of namespace Wage
