@@ -98,9 +98,9 @@ public:
 	~Resource() {}
 
 	Common::File *openDataFile(const Common::String fileName, uint32 fileHeader = 0);
-	bool readRoomData(const Common::String fileName);
+	void readRoomData(const Common::String fileName);
 	InventoryData *readInventory(const Common::String fileName);
-	bool readViews(uint16 roomNum);
+	void readViews(uint16 roomNum);
 	void freeViews(uint16 roomNum);
 	TextFont *getFont(const Common::String fileName);
 	Common::String getText(const Common::String fileName);

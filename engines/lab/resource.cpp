@@ -94,7 +94,7 @@ Common::String Resource::getText(const Common::String fileName) {
 	return str;
 }
 
-bool Resource::readRoomData(const Common::String fileName) {
+void Resource::readRoomData(const Common::String fileName) {
 	Common::File *dataFile = openDataFile(fileName, MKTAG('D', 'O', 'R', '1'));
 
 	_vm->_manyRooms = dataFile->readUint16LE();
@@ -103,22 +103,22 @@ bool Resource::readRoomData(const Common::String fileName) {
 	memset(_vm->_rooms, 0, (_vm->_manyRooms + 1) * sizeof(RoomData));
 
 	for (uint16 i = 1; i <= _vm->_manyRooms; i++) {
-		_vm->_rooms[i]._doors[NORTH] = dataFile->readUint16LE();
-		_vm->_rooms[i]._doors[SOUTH] = dataFile->readUint16LE();
-		_vm->_rooms[i]._doors[EAST] = dataFile->readUint16LE();
-		_vm->_rooms[i]._doors[WEST] = dataFile->readUint16LE();
-		_vm->_rooms[i]._transitionType = dataFile->readByte();
+		RoomData curRoom = _vm->_rooms[i];
+		curRoom._doors[NORTH] = dataFile->readUint16LE();
+		curRoom._doors[SOUTH] = dataFile->readUint16LE();
+		curRoom._doors[EAST] = dataFile->readUint16LE();
+		curRoom._doors[WEST] = dataFile->readUint16LE();
+		curRoom._transitionType = dataFile->readByte();
 
-		_vm->_rooms[i]._view[NORTH] = nullptr;
-		_vm->_rooms[i]._view[SOUTH] = nullptr;
-		_vm->_rooms[i]._view[EAST] = nullptr;
-		_vm->_rooms[i]._view[WEST] = nullptr;
-		_vm->_rooms[i]._rules = nullptr;
-		_vm->_rooms[i]._roomMsg = "";
+		curRoom._view[NORTH] = nullptr;
+		curRoom._view[SOUTH] = nullptr;
+		curRoom._view[EAST] = nullptr;
+		curRoom._view[WEST] = nullptr;
+		curRoom._rules = nullptr;
+		curRoom._roomMsg = "";
 	}
 
 	delete dataFile;
-	return true;
 }
 
 InventoryData *Resource::readInventory(const Common::String fileName) {
@@ -134,27 +134,25 @@ InventoryData *Resource::readInventory(const Common::String fileName) {
 	}
 
 	delete dataFile;
-
 	return inventory;
 }
 
-bool Resource::readViews(uint16 roomNum) {
+void Resource::readViews(uint16 roomNum) {
 	Common::String fileName = "LAB:Rooms/" + Common::String::format("%d", roomNum);
 	Common::File *dataFile = openDataFile(fileName, MKTAG('R', 'O', 'M', '4'));
 
 	freeViews(roomNum);
+	RoomData curRoom = _vm->_rooms[roomNum];
 
-	_vm->_rooms[roomNum]._roomMsg = readString(dataFile);
-	_vm->_rooms[roomNum]._view[NORTH] = readView(dataFile);
-	_vm->_rooms[roomNum]._view[SOUTH] = readView(dataFile);
-	_vm->_rooms[roomNum]._view[EAST] = readView(dataFile);
-	_vm->_rooms[roomNum]._view[WEST] = readView(dataFile);
-	_vm->_rooms[roomNum]._rules = readRule(dataFile);
+	curRoom._roomMsg = readString(dataFile);
+	curRoom._view[NORTH] = readView(dataFile);
+	curRoom._view[SOUTH] = readView(dataFile);
+	curRoom._view[EAST] = readView(dataFile);
+	curRoom._view[WEST] = readView(dataFile);
+	curRoom._rules = readRule(dataFile);
 
 	_vm->_music->updateMusic();
-
 	delete dataFile;
-	return true;
 }
 
 void Resource::freeViews(uint16 roomNum) {
@@ -247,7 +245,7 @@ Common::String Resource::readString(Common::File *file) {
 int16 *Resource::readConditions(Common::File *file) {
 	int16 i = 0, cond;
 	int16 *list = new int16[25];
-	memset(list, 0, 25 * 2);
+	memset(list, 0, 25 * sizeof(int16));
 
 	do {
 		cond = file->readUint16LE();
@@ -287,7 +285,6 @@ void Resource::freeRule(RuleList *ruleList) {
 		freeAction((*rule)->_actionList);
 		delete[](*rule)->_condition;
 		delete *rule;
-		*rule = nullptr;
 	}
 
 	delete ruleList;
