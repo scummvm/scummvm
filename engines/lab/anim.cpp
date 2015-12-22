@@ -68,7 +68,7 @@ Anim::Anim(LabEngine *vm) : _vm(vm) {
 	_doBlack = false;
 	_diffWidth = 0;
 	_diffHeight = 0;
-	DrawBitMap = _vm->_graphics->_dispBitMap;
+	_drawBitMap = _vm->_graphics->_dispBitMap;
 
 	for (int i = 0; i < 3 * 256; i++)
 		_diffPalette[i] = 0;
@@ -145,14 +145,14 @@ void Anim::diffNextFrame(bool onlyDiffData) {
 		case 10:
 			if (onlyDiffData)
 				warning("Boom");
-			_diffFile->read(DrawBitMap->_planes[_curBit], _size);
+			_diffFile->read(_drawBitMap->_planes[_curBit], _size);
 			_curBit++;
 			break;
 
 		case 11:
 			curPos = _diffFile->pos();
 			_diffFile->skip(4);
-			_vm->_utils->runLengthDecode(DrawBitMap->_planes[_curBit], _diffFile);
+			_vm->_utils->runLengthDecode(_drawBitMap->_planes[_curBit], _diffFile);
 			_curBit++;
 			_diffFile->seek(curPos + _size, SEEK_SET);
 			break;
@@ -160,21 +160,21 @@ void Anim::diffNextFrame(bool onlyDiffData) {
 		case 12:
 			curPos = _diffFile->pos();
 			_diffFile->skip(4);
-			_vm->_utils->verticalRunLengthDecode(DrawBitMap->_planes[_curBit], _diffFile, DrawBitMap->_bytesPerRow);
+			_vm->_utils->verticalRunLengthDecode(_drawBitMap->_planes[_curBit], _diffFile, _drawBitMap->_bytesPerRow);
 			_curBit++;
 			_diffFile->seek(curPos + _size, SEEK_SET);
 			break;
 
 		case 20:
 			curPos = _diffFile->pos();
-			_vm->_utils->unDiff(DrawBitMap->_planes[_curBit], _vm->_graphics->_dispBitMap->_planes[_curBit], _diffFile, DrawBitMap->_bytesPerRow, false);
+			_vm->_utils->unDiff(_drawBitMap->_planes[_curBit], _vm->_graphics->_dispBitMap->_planes[_curBit], _diffFile, _drawBitMap->_bytesPerRow, false);
 			_curBit++;
 			_diffFile->seek(curPos + _size, SEEK_SET);
 			break;
 
 		case 21:
 			curPos = _diffFile->pos();
-			_vm->_utils->unDiff(DrawBitMap->_planes[_curBit], _vm->_graphics->_dispBitMap->_planes[_curBit], _diffFile, DrawBitMap->_bytesPerRow, true);
+			_vm->_utils->unDiff(_drawBitMap->_planes[_curBit], _vm->_graphics->_dispBitMap->_planes[_curBit], _diffFile, _drawBitMap->_bytesPerRow, true);
 			_curBit++;
 			_diffFile->seek(curPos + _size, SEEK_SET);
 			break;
