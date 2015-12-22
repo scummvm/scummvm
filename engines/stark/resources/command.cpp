@@ -1151,8 +1151,7 @@ void Command::readData(Formats::XRCReadStream *stream) {
 		argument.type = stream->readUint32LE();
 
 		switch (argument.type) {
-		case 0: // WORKAROUND: This case fixes what seems like a bug in the game data
-			warning("Command argument type 0 found");
+		case 0: // A shortcut for an int with value 0
 			argument.type = Argument::kTypeInteger1;
 			argument.intValue = 0;
 			break;
@@ -1160,7 +1159,6 @@ void Command::readData(Formats::XRCReadStream *stream) {
 		case Argument::kTypeInteger2:
 			argument.intValue = stream->readUint32LE();
 			break;
-
 		case Argument::kTypeResourceReference:
 			argument.referenceValue = stream->readResourceReference();
 			break;
