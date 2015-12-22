@@ -39,7 +39,7 @@
 namespace Lab {
 
 Anim::Anim(LabEngine *vm) : _vm(vm) {
-	_header = 0;
+	_lastBlockHeader = 0;
 	_curBit = 0;
 	_numChunks = 1;
 	_headerdata._width = 0;
@@ -74,7 +74,7 @@ Anim::Anim(LabEngine *vm) : _vm(vm) {
 }
 
 void Anim::diffNextFrame(bool onlyDiffData) {
-	if (_header == 65535)
+	if (_lastBlockHeader == 65535)
 		// Already done.
 		return;
 
@@ -131,12 +131,12 @@ void Anim::diffNextFrame(bool onlyDiffData) {
 		}
 
 		_vm->updateMusicAndEvents();
-		_header = _diffFile->readUint32LE();
+		_lastBlockHeader = _diffFile->readUint32LE();
 		_size = _diffFile->readUint32LE();
 
 		uint32 curPos = 0;
 
-		switch (_header) {
+		switch (_lastBlockHeader) {
 		case 8:
 			_diffFile->read(_diffPalette, _size);
 			_isPal = true;
@@ -259,7 +259,6 @@ void Anim::stopDiffEnd() {
 void Anim::readDiff(Common::File *diffFile, bool playOnce, bool onlyDiffData) {
 	_playOnce = playOnce;
 	_delayMicros = 0;
-	_header = 0;
 	_curBit = 0;
 	_frameNum = 0;
 	_numChunks = 1;
@@ -275,65 +274,66 @@ void Anim::readDiff(Common::File *diffFile, bool playOnce, bool onlyDiffData) {
 	_diffFile = diffFile;
 
 	_continuous = false;
-	uint32 signature = _diffFile->readUint32BE();
-	_header = _diffFile->readUint32LE();
+	uint32 signature1 = _diffFile->readUint32BE();
+	uint32 signature2 = _diffFile->readUint32LE();
 
-	if ((signature != MKTAG('D', 'I', 'F', 'F')) || (_header != 1219009121L)) {
+	if ((signature1 != MKTAG('D', 'I', 'F', 'F')) || (signature2 != 1219009121L)) {
 		_isPlaying = false;
 		return;
 	}
 
-	_header = _diffFile->readUint32LE();
+	uint32 signature3 = _diffFile->readUint32LE();
 	_size = _diffFile->readUint32LE();
 
-	if (_header == 0) {
-		// sizeof(headerdata) != 18, but the padding might be at the end
-		// 2 bytes, version, unused.
-		_diffFile->skip(2);
-		_headerdata._width = _diffFile->readUint16LE();
-		_headerdata._height = _diffFile->readUint16LE();
-		// 1 byte, depth, unused
-		_diffFile->skip(1);
-		_headerdata._fps = _diffFile->readByte();
-
-		// HACK: The original game defines a 1 second delay when changing screens, which is
-		// very annoying. We first removed the delay, but it looked wrong when changing screens
-		// as it was possible to see that something was displayed, without being able to tell
-		// what it was. A shorter delay (150ms) makes it acceptable during gameplay and
-		// readable. The big question is: do we need that message?
-		g_system->delayMillis(150);
-
-		if (_headerdata._fps == 1)
-			_headerdata._fps = 0;
-
-		// 4 + 2 bytes, buffer size and machine, unused
-		_diffFile->skip(6);
-		_headerdata._flags = _diffFile->readUint32LE();
-
-		_diffFile->skip(_size - 18);
-
-		_continuous = CONTINUOUS & _headerdata._flags;
-		_diffWidth = _headerdata._width;
-		_diffHeight = _headerdata._height;
-		_vm->_utils->setBytesPerRow(_diffWidth);
-
-		_numChunks = (((int32)_diffWidth) * _diffHeight) / 0x10000;
-
-		if ((uint32)(_numChunks * 0x10000) < (uint32)(((int32)_diffWidth) * _diffHeight))
-			_numChunks++;
-
-		assert (_numChunks < 16);
-	} else
+	if (signature3 != 0)
 		return;
 
-	for (_header = 0; _header < 8; _header++)
-		_rawDiffBM._planes[_header] = nullptr;
+	// sizeof(headerdata) != 18, but the padding might be at the end
+	// 2 bytes, version, unused.
+	_diffFile->skip(2);
+	_headerdata._width = _diffFile->readUint16LE();
+	_headerdata._height = _diffFile->readUint16LE();
+	// 1 byte, depth, unused
+	_diffFile->skip(1);
+	_headerdata._fps = _diffFile->readByte();
+
+	// HACK: The original game defines a 1 second delay when changing screens, which is
+	// very annoying. We first removed the delay, but it looked wrong when changing screens
+	// as it was possible to see that something was displayed, without being able to tell
+	// what it was. A shorter delay (150ms) makes it acceptable during gameplay and
+	// readable. The big question is: do we need that message?
+	g_system->delayMillis(150);
+
+	if (_headerdata._fps == 1)
+		_headerdata._fps = 0;
+
+	// 4 + 2 bytes, buffer size and machine, unused
+	_diffFile->skip(6);
+	_headerdata._flags = _diffFile->readUint32LE();
+
+	_diffFile->skip(_size - 18);
+
+	_continuous = CONTINUOUS & _headerdata._flags;
+	_diffWidth = _headerdata._width;
+	_diffHeight = _headerdata._height;
+	_vm->_utils->setBytesPerRow(_diffWidth);
+
+	_numChunks = (((int32)_diffWidth) * _diffHeight) / 0x10000;
+
+	if ((uint32)(_numChunks * 0x10000) < (uint32)(((int32)_diffWidth) * _diffHeight))
+		_numChunks++;
+
+	assert(_numChunks < 16);
+
+	for (int i = 0; i < 8; i++)
+		_rawDiffBM._planes[i] = nullptr;
 
 	if (_headerdata._fps)
 		_delayMicros = 1000 / _headerdata._fps;
 
+	_lastBlockHeader = signature3;
 	if (_playOnce) {
-		while (_header != 65535)
+		while (_lastBlockHeader != 65535)
 			diffNextFrame(onlyDiffData);
 	} else
 		diffNextFrame(onlyDiffData);
