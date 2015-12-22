@@ -99,7 +99,7 @@ void LabEngine::loadJournalData() {
 		_graphics->closeFont(&_journalFont);
 
 	_journalFont = _resource->getFont("F:Journal.fon");
-	_music->updateMusic();
+	updateMusicAndEvents();
 
 	Common::String filename = "Lab:Rooms/j0";
 
@@ -154,7 +154,7 @@ void LabEngine::drawJournalText() {
 	const char *curText = _journalText.c_str();
 
 	while (drawingToPage < _journalPage) {
-		_music->updateMusic();
+		updateMusicAndEvents();
 		curText = _journalText.c_str() + charsDrawn;
 		charsDrawn += _graphics->flowText(_journalFont, -2, 2, 0, false, false, false, false, _utils->vgaRectScale(52, 32, 152, 148), curText);
 
@@ -174,7 +174,7 @@ void LabEngine::drawJournalText() {
 		charsDrawn += _graphics->flowTextToMem(_journalBackImage, _journalFont, -2, 2, 0, false, false, false, true, _utils->vgaRectScale(52, 32, 152, 148), curText);
 	}
 
-	_music->updateMusic();
+	updateMusicAndEvents();
 	curText = _journalText.c_str() + charsDrawn;
 	_lastPage = (*curText == 0);
 	_graphics->flowTextToMem(_journalBackImage, _journalFont, -2, 2, 0, false, false, false, true, _utils->vgaRectScale(171, 32, 271, 148), curText);
@@ -183,14 +183,14 @@ void LabEngine::drawJournalText() {
 void LabEngine::turnPage(bool fromLeft) {
 	if (fromLeft) {
 		for (int i = 0; i < _graphics->_screenWidth; i += 8) {
-			_music->updateMusic();
+			updateMusicAndEvents();
 			waitTOF();
 			_screenImage->_imageData = _graphics->getCurrentDrawingBuffer();
 			_journalBackImage->blitBitmap(i, 0, _screenImage, i, 0, 8, _graphics->_screenHeight, false);
 		}
 	} else {
 		for (int i = (_graphics->_screenWidth - 8); i > 0; i -= 8) {
-			_music->updateMusic();
+			updateMusicAndEvents();
 			waitTOF();
 			_screenImage->_imageData = _graphics->getCurrentDrawingBuffer();
 			_journalBackImage->blitBitmap(i, 0, _screenImage, i, 0, 8, _graphics->_screenHeight, false);
@@ -200,7 +200,7 @@ void LabEngine::turnPage(bool fromLeft) {
 
 void LabEngine::drawJournal(uint16 wipenum, bool needFade) {
 	_event->mouseHide();
-	_music->updateMusic();
+	updateMusicAndEvents();
 	drawJournalText();
 	_graphics->loadBackPict("P:Journal.pic", _highPalette);
 
@@ -225,7 +225,7 @@ void LabEngine::drawJournal(uint16 wipenum, bool needFade) {
 void LabEngine::processJournal() {
 	while (1) {
 		// Make sure we check the music at least after every message
-		_music->updateMusic();
+		updateMusicAndEvents();
 		IntuiMessage *msg = _event->getMsg();
 		if (g_engine->shouldQuit()) {
 			_quitLab = true;
@@ -233,7 +233,7 @@ void LabEngine::processJournal() {
 		}
 
 		if (!msg)
-			_music->updateMusic();
+			updateMusicAndEvents();
 		else {
 			uint32 msgClass  = msg->_msgClass;
 			uint16 buttonId  = msg->_code;
@@ -269,7 +269,7 @@ void LabEngine::doJournal() {
 	_journalBackImage->_imageData = nullptr;
 	_screenImage->_imageData = _graphics->getCurrentDrawingBuffer();
 
-	_music->updateMusic();
+	updateMusicAndEvents();
 	loadJournalData();
 	_event->attachButtonList(&_journalButtonList);
 	drawJournal(0, true);
@@ -330,7 +330,7 @@ void LabEngine::drawMonText(char *text, TextFont *monitorFont, Common::Rect text
 	}
 
 	while (drawingToPage < _monitorPage) {
-		_music->updateMusic();
+		updateMusicAndEvents();
 		curText = text + charsDrawn;
 		charsDrawn += _graphics->flowText(monitorFont, yspacing, 0, 0, false, false, false, false, textRect, curText);
 		_lastPage = (*curText == 0);
@@ -377,7 +377,7 @@ void LabEngine::processMonitor(char *ntext, TextFont *monitorFont, bool isIntera
 		}
 
 		// Make sure we check the music at least after every message
-		_music->updateMusic();
+		updateMusicAndEvents();
 		IntuiMessage *msg = _event->getMsg();
 		if (g_engine->shouldQuit()) {
 			_quitLab = true;
@@ -385,7 +385,7 @@ void LabEngine::processMonitor(char *ntext, TextFont *monitorFont, bool isIntera
 		}
 
 		if (!msg) {
-			_music->updateMusic();
+			updateMusicAndEvents();
 		} else {
 			uint32 msgClass  = msg->_msgClass;
 			uint16 mouseX    = msg->_mouse.x;

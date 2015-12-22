@@ -67,7 +67,7 @@ void Intro::doPictText(const Common::String filename, TextFont *msgFont, bool is
 	Common::String path = Common::String("Lab:rooms/Intro/") + filename;
 
 	uint timeDelay = (isScreen) ? 35 : 7;
-	_vm->_music->updateMusic();
+	_vm->updateMusicAndEvents();
 
 	if (_quitIntro)
 		return;
@@ -124,7 +124,7 @@ void Intro::doPictText(const Common::String filename, TextFont *msgFont, bool is
 		}
 
 		if (!msg) {
-			_vm->_music->updateMusic();
+			_vm->updateMusicAndEvents();
 			_vm->_anim->diffNextFrame();
 
 			uint32 elapsedSeconds = (g_system->getMillis() - lastMillis) / 1000;
@@ -190,13 +190,13 @@ void Intro::doPictText(const Common::String filename, TextFont *msgFont, bool is
 }
 
 void Intro::musicDelay() {
-	_vm->_music->updateMusic();
+	_vm->updateMusicAndEvents();
 
 	if (_quitIntro)
 		return;
 
 	for (uint16 i = 0; i < 20; i++) {
-		_vm->_music->updateMusic();
+		_vm->updateMusicAndEvents();
 		_vm->waitTOF();
 		_vm->waitTOF();
 		_vm->waitTOF();
@@ -206,7 +206,7 @@ void Intro::musicDelay() {
 void Intro::nReadPict(const Common::String filename, bool playOnce) {
 	Common::String finalFileName = Common::String("P:Intro/") + filename;
 
-	_vm->_music->updateMusic();
+	_vm->updateMusicAndEvents();
 	introEatMessages();
 
 	if (_quitIntro)
@@ -268,14 +268,14 @@ void Intro::introSequence() {
 					(_vm->_anim->_diffPalette[i * 3 + 2] >> 2);
 	}
 
-	_vm->_music->updateMusic();
+	_vm->updateMusicAndEvents();
 	_vm->_graphics->fade(true, 0);
 
 	for (int times = 0; times < 150; times++) {
 		if (_quitIntro)
 			break;
 
-		_vm->_music->updateMusic();
+		_vm->updateMusicAndEvents();
 		uint16 temp = palette[2];
 
 		for (uint16 i = 2; i < 15; i++)
@@ -289,7 +289,7 @@ void Intro::introSequence() {
 
 	_vm->_graphics->fade(false, 0);
 	_vm->_graphics->blackAllScreen();
-	_vm->_music->updateMusic();
+	_vm->updateMusicAndEvents();
 
 	nReadPict("Title.A");
 	nReadPict("AB");
@@ -311,9 +311,9 @@ void Intro::introSequence() {
 	nReadPict("DA");
 	musicDelay();
 
-	_vm->_music->updateMusic();
+	_vm->updateMusicAndEvents();
 	_vm->_graphics->blackAllScreen();
-	_vm->_music->updateMusic();
+	_vm->updateMusicAndEvents();
 
 	TextFont *msgFont = _vm->_resource->getFont("F:Map.fon");
 
@@ -334,7 +334,7 @@ void Intro::introSequence() {
 	}
 
 	_vm->_graphics->blackAllScreen();
-	_vm->_music->updateMusic();
+	_vm->updateMusicAndEvents();
 
 	_introDoBlack = true;
 	nReadPict("Station1");
@@ -369,7 +369,7 @@ void Intro::introSequence() {
 			for (uint16 idx = (8 * 3); idx < (255 * 3); idx++)
 				_vm->_anim->_diffPalette[idx] = 255 - _vm->_anim->_diffPalette[idx];
 
-			_vm->_music->updateMusic();
+			_vm->updateMusicAndEvents();
 			_vm->waitTOF();
 			_vm->_graphics->setPalette(_vm->_anim->_diffPalette, 256);
 			_vm->waitTOF();

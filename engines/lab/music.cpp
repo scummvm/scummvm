@@ -64,34 +64,32 @@ Music::Music(LabEngine *vm) : _vm(vm) {
 }
 
 void Music::updateMusic() {
-	_vm->_event->processInput();
-	_vm->_event->updateMouse();
+	if (!_musicOn || (getPlayingBufferCount() >= MAXBUFFERS))
+		return;
 
-	if (_musicOn && (getPlayingBufferCount() < MAXBUFFERS)) {
-		// NOTE: We need to use malloc(), cause this will be freed with free()
-		// by the music code
-		byte *musicBuffer = (byte *)malloc(MUSICBUFSIZE);
-		fillbuffer(musicBuffer);
+	// NOTE: We need to use malloc(), cause this will be freed with free()
+	// by the music code
+	byte *musicBuffer = (byte *)malloc(MUSICBUFSIZE);
+	fillbuffer(musicBuffer);
 
-		// Queue a music block, and start the music, if needed
-		bool startMusicFlag = false;
+	// Queue a music block, and start the music, if needed
+	bool startMusicFlag = false;
 
-		if (!_queuingAudioStream) {
-			_queuingAudioStream = Audio::makeQueuingAudioStream(SAMPLESPEED, false);
-			startMusicFlag = true;
-		}
-
-		byte soundFlags = Audio::FLAG_LITTLE_ENDIAN;
-		if (_vm->getPlatform() == Common::kPlatformWindows)
-			soundFlags |= Audio::FLAG_16BITS;
-		else if (_vm->getPlatform() == Common::kPlatformDOS)
-			soundFlags |= Audio::FLAG_UNSIGNED;
-
-		_queuingAudioStream->queueBuffer(musicBuffer, MUSICBUFSIZE, DisposeAfterUse::YES, soundFlags);
-
-		if (startMusicFlag)
-			_vm->_mixer->playStream(Audio::Mixer::kMusicSoundType, &_musicHandle, _queuingAudioStream);
+	if (!_queuingAudioStream) {
+		_queuingAudioStream = Audio::makeQueuingAudioStream(SAMPLESPEED, false);
+		startMusicFlag = true;
 	}
+
+	byte soundFlags = Audio::FLAG_LITTLE_ENDIAN;
+	if (_vm->getPlatform() == Common::kPlatformWindows)
+		soundFlags |= Audio::FLAG_16BITS;
+	else if (_vm->getPlatform() == Common::kPlatformDOS)
+		soundFlags |= Audio::FLAG_UNSIGNED;
+
+	_queuingAudioStream->queueBuffer(musicBuffer, MUSICBUFSIZE, DisposeAfterUse::YES, soundFlags);
+
+	if (startMusicFlag)
+		_vm->_mixer->playStream(Audio::Mixer::kMusicSoundType, &_musicHandle, _queuingAudioStream);
 }
 
 uint16 Music::getPlayingBufferCount() {
@@ -157,7 +155,7 @@ void Music::startMusic(bool restartFl) {
 	}
 
 	_musicOn = true;
-	updateMusic();
+	_vm->updateMusicAndEvents();
 }
 
 bool Music::initMusic(const Common::String filename) {
@@ -181,7 +179,7 @@ void Music::freeMusic() {
 
 void Music::pauseBackMusic() {
 	if (!_musicPaused && _musicOn) {
-		updateMusic();
+		_vm->updateMusicAndEvents();
 		_musicOn = false;
 		stopSoundEffect();
 
@@ -198,7 +196,7 @@ void Music::resumeBackMusic() {
 
 		_vm->_mixer->pauseHandle(_musicHandle, false);
 
-		updateMusic();
+		_vm->updateMusicAndEvents();
 		_musicPaused = false;
 	}
 }
@@ -211,7 +209,7 @@ void Music::setMusic(bool on) {
 		startMusic(true);
 	} else if (!on && _musicOn) {
 		_musicOn = false;
-		updateMusic();
+		_vm->updateMusicAndEvents();
 	} else
 		_musicOn = on;
 }
@@ -264,7 +262,7 @@ void Music::resetMusic() {
 
 	_musicOn = true;
 	setMusic(false);
-	updateMusic();
+	_vm->updateMusicAndEvents();
 
 	if (!_oldMusicOn) {
 		_tFile = 0;
@@ -279,7 +277,7 @@ void Music::resetMusic() {
 
 bool Music::readMusic(const Common::String filename, bool waitTillFinished) {
 	Common::File *file = _vm->_resource->openDataFile(filename, MKTAG('D', 'I', 'F', 'F'));
-	updateMusic();
+	_vm->updateMusicAndEvents();
 	if (!_loopSoundEffect)
 		stopSoundEffect();
 
@@ -307,14 +305,14 @@ void Music::readSound(bool waitTillFinished, Common::File *file) {
 		return;
 
 	while (soundTag != 65535) {
-		updateMusic();
+		_vm->updateMusicAndEvents();
 		soundTag = file->readUint32LE();
 		soundSize = file->readUint32LE() - 8;
 
 		if ((soundTag == 30) || (soundTag == 31)) {
 			if (waitTillFinished) {
 				while (isSoundEffectActive()) {
-					updateMusic();
+					_vm->updateMusicAndEvents();
 					_vm->waitTOF();
 				}
 			}
@@ -327,7 +325,7 @@ void Music::readSound(bool waitTillFinished, Common::File *file) {
 		} else if (soundTag == 65535L) {
 			if (waitTillFinished) {
 				while (isSoundEffectActive()) {
-					updateMusic();
+					_vm->updateMusicAndEvents();
 					_vm->waitTOF();
 				}
 			}

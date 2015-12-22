@@ -91,7 +91,7 @@ void DisplayMan::loadBackPict(const Common::String fileName, uint16 *highPal) {
 void DisplayMan::readPict(const Common::String filename, bool playOnce, bool onlyDiffData, byte *memoryBuffer, uint16 maxHeight) {
 	_vm->_anim->stopDiff();
 	loadPict(filename);
-	_vm->_music->updateMusic();
+	_vm->updateMusicAndEvents();
 
 	if (!_vm->_music->_loopSoundEffect)
 		_vm->_music->stopSoundEffect();
@@ -647,16 +647,16 @@ void DisplayMan::doScrollBlack() {
 	img._width = width;
 	img._height = height;
 	img._imageData = mem;
-	_vm->_music->updateMusic();
+	_vm->updateMusicAndEvents();
 	img.readScreenImage(0, 0);
-	_vm->_music->updateMusic();
+	_vm->updateMusicAndEvents();
 
 	byte *baseAddr = getCurrentDrawingBuffer();
 	uint16 by = _vm->_utils->vgaScaleX(4);
 	uint16 nheight = height;
 
 	while (nheight) {
-		_vm->_music->updateMusic();
+		_vm->updateMusicAndEvents();
 
 		if (!_vm->_isHiRes)
 			_vm->waitTOF();
@@ -734,7 +734,7 @@ void DisplayMan::doScrollWipe(const Common::String filename) {
 	uint16 height = _vm->_utils->vgaScaleY(149) + _vm->_utils->svgaCord(2);
 
 	while (_vm->_music->isSoundEffectActive()) {
-		_vm->_music->updateMusic();
+		_vm->updateMusicAndEvents();
 		_vm->waitTOF();
 	}
 
@@ -742,13 +742,13 @@ void DisplayMan::doScrollWipe(const Common::String filename) {
 	setPalette(_vm->_anim->_diffPalette, 256);
 	byte *mem = _vm->_anim->_rawDiffBM._planes[0];
 
-	_vm->_music->updateMusic();
+	_vm->updateMusicAndEvents();
 	uint16 by = _vm->_utils->vgaScaleX(3);
 	uint16 nheight = height;
 	uint16 startLine = 0, onRow = 0;
 
 	while (onRow < _vm->_anim->_headerdata._height) {
-		_vm->_music->updateMusic();
+		_vm->updateMusicAndEvents();
 
 		if ((by > nheight) && nheight)
 			by = nheight;
@@ -798,11 +798,11 @@ void DisplayMan::doScrollBounce() {
 	int height = _vm->_utils->vgaScaleY(149) + _vm->_utils->svgaCord(2);
 	byte *mem = _vm->_anim->_rawDiffBM._planes[0];
 
-	_vm->_music->updateMusic();
+	_vm->updateMusicAndEvents();
 	int startLine = _vm->_anim->_headerdata._height - height - 1;
 
 	for (int i = 0; i < 5; i++) {
-		_vm->_music->updateMusic();
+		_vm->updateMusicAndEvents();
 		startLine -= newby[i];
 		copyPage(width, height, 0, startLine, mem);
 
@@ -811,7 +811,7 @@ void DisplayMan::doScrollBounce() {
 	}
 
 	for (int i = 8; i > 0; i--) {
-		_vm->_music->updateMusic();
+		_vm->updateMusicAndEvents();
 		startLine += newby1[i - 1];
 		copyPage(width, height, 0, startLine, mem);
 
@@ -841,7 +841,7 @@ void DisplayMan::doTransWipe(CloseDataPtr *closePtrList, const Common::String fi
 
 			while (curY < lastY) {
 				if (linesDone >= linesLast) {
-					_vm->_music->updateMusic();
+					_vm->updateMusicAndEvents();
 					_vm->waitTOF();
 					linesDone = 0;
 				}
@@ -886,7 +886,7 @@ void DisplayMan::doTransWipe(CloseDataPtr *closePtrList, const Common::String fi
 
 			while (curY < lastY) {
 				if (linesDone >= linesLast) {
-					_vm->_music->updateMusic();
+					_vm->updateMusicAndEvents();
 					_vm->waitTOF();
 					linesDone = 0;
 				}
@@ -1045,7 +1045,7 @@ void DisplayMan::fade(bool fadeIn, uint16 res) {
 
 		setAmigaPal(newPal, 16);
 		_vm->waitTOF();
-		_vm->_music->updateMusic();
+		_vm->updateMusicAndEvents();
 	}
 }
 
