@@ -49,7 +49,6 @@ FMVPlayer::~FMVPlayer() {
 }
 
 void FMVPlayer::play(const Common::String &name) {
-	// TODO: Clear existing
 	Common::SeekableReadStream *stream = StarkArchiveLoader->getExternalFile(name, "Global/");
 	if (!stream) {
 		warning("Could not open %s", name.c_str());

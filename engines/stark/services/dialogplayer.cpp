@@ -104,8 +104,6 @@ void DialogPlayer::removeLastOnlyOption() {
 void DialogPlayer::buildOptions() {
 	Resources::Dialog::TopicArray availableTopics = _currentDialog->listAvailableTopics();
 
-	// TODO: This is very minimal, complete
-
 	for (uint i = 0; i < availableTopics.size(); i++) {
 		Option option;
 

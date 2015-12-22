@@ -295,7 +295,6 @@ Visual *ItemVisual::getVisual() {
 }
 
 int ItemVisual::getHotspotIndexForPoint(const Common::Point &point) {
-	// TODO: This breaks rather weirdly on subtype 6 and 10
 	Anim *anim = getAnim();
 	if (anim) {
 		return anim->getPointHotspotIndex(point);

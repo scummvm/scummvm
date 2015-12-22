@@ -123,8 +123,8 @@ Resources::Location *ResourceProvider::getLocation(uint16 level, uint16 location
 	return nullptr;
 }
 
-// TODO: This approach doesn't carry over all the stuff that it should, perhaps we should avoid reloading?
 void ResourceProvider::pushAndChangeLocation(int16 level, int16 location) {
+	// TODO: Keep track of the inventory state
 	pushCurrentLocation();
 	requestLocationChange(level, location);
 }

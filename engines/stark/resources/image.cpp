@@ -106,7 +106,6 @@ void Image::printData() {
 }
 
 int Image::indexForPoint(const Common::Point &point) const {
-	// TODO: This doesn't necessarily get the innermost polygon
 	int index = -1;
 	for (uint32 i = 0; i < _polygons.size(); i++) {
 		if (isPointInPolygon(_polygons[i], point)) {
