@@ -411,7 +411,83 @@ const char *Script::readOperator() {
 }
 
 void Script::processIf() {
-	warning("STUB: processIf");
+	int logicalOp = 0; // 0 => initial, 1 => and, 2 => or
+	bool result = true;
+	bool done = false;
+
+	do {
+		Operand *lhs = readOperand();
+		const char *op = readOperator();
+		Operand *rhs = readOperand();
+
+		bool condResult = eval(lhs, op, rhs);
+
+		if (logicalOp == 1) {
+			result = (result && condResult);
+		} else if (logicalOp == 2) {
+			result = (result || condResult);
+		} else { // logicalOp == 0
+			result = condResult;
+		}
+
+		byte logical = _data->readByte();
+
+		if (logical == 0x84) {
+			logicalOp = 1; // and
+		} else if (logical == 0x85) {
+			logicalOp = 2; // or
+		} else if (logical == 0xFE) {
+			done = true; // then
+		}
+	} while (!done);
+
+	if (result == false) {
+		skipBlock();
+	}
+}
+
+void Script::skipIf() {
+	do {
+		readOperand();
+		readOperator();
+		readOperand();
+	} while (_data->readByte() != 0xFE);
+}
+
+void Script::skipBlock() {
+	int nesting = 1;
+
+	while (true) {
+		byte op = _data->readByte();
+
+		if (_data->eos())
+			return;
+
+		if (op == 0x80) { // IF
+			nesting++;
+			skipIf();
+		} else if (op == 0x88 || op == 0x87) { // END or EXIT
+			_data->seek(-1, SEEK_CUR); // We need to reread it higher
+			nesting--;
+			if (nesting == 0) {
+				_data->readByte(); // skiping
+				return;
+			}
+		} else switch (op) {
+			case 0x8B: // PRINT
+			case 0x8C: // SOUND
+			case 0x8E: // LET
+			case 0x95: // MENU
+				while (_data->readByte() != 0xFD)
+					;
+		}
+	}
+}
+
+bool Script::eval(Operand *lhs, const char *op, Operand *rhs) {
+	warning("STUB: eval");
+
+	return false;
 }
 
 void Script::processMove() {

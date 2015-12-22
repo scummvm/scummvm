@@ -134,6 +134,9 @@ private:
 	Operand *readStringOperand();
 	const char *readOperator();
 	void processIf();
+	void skipBlock();
+	void skipIf();
+	bool eval(Operand *lhs, const char *op, Operand *rhs);
 	void processMove();
 	void processLet();
 
