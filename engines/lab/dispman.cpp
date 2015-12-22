@@ -45,7 +45,6 @@ namespace Lab {
 DisplayMan::DisplayMan(LabEngine *vm) : _vm(vm) {
 	_longWinInFront = false;
 	_lastMessageLong = false;
-	_doNotDrawMessage = false;
 
 	_screenBytesPerPage = 65536;
 	_curPen = 0;
@@ -251,11 +250,6 @@ int DisplayMan::longDrawMessage(Common::String str) {
 }
 
 void DisplayMan::drawMessage(Common::String str) {
-	if (_doNotDrawMessage) {
-		_doNotDrawMessage = false;
-		return;
-	}
-
 	if (str.empty())
 		return;
 

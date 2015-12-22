@@ -592,7 +592,6 @@ bool LabEngine::fromCrumbs(uint32 tmpClass, uint16 code, uint16 qualifier, Commo
 	if (_graphics->_longWinInFront) {
 		if ((msgClass == kMessageRawKey) || (leftButtonClick || rightButtonClick)) {
 			_graphics->_longWinInFront = false;
-			_graphics->_doNotDrawMessage = false;
 			_graphics->drawPanel();
 			drawRoomMessage(curInv, _closeDataPtr);
 			_graphics->screenUpdate();
@@ -628,7 +627,6 @@ bool LabEngine::fromCrumbs(uint32 tmpClass, uint16 code, uint16 qualifier, Commo
 		eatMessages();
 		_alternate = !_alternate;
 		_anim->_doBlack = true;
-		_graphics->_doNotDrawMessage = false;
 		_mainDisplay = true;
 		// Sets the correct button list
 		interfaceOn();
@@ -701,7 +699,6 @@ bool LabEngine::processKey(IntuiMessage *curMsg, uint32 &msgClass, uint16 &quali
 					eatMessages();
 					_alternate = false;
 					_anim->_doBlack = true;
-					_graphics->_doNotDrawMessage = false;
 
 					_mainDisplay = true;
 					// Sets the correct button list
@@ -721,7 +718,6 @@ bool LabEngine::processKey(IntuiMessage *curMsg, uint32 &msgClass, uint16 &quali
 		}
 	} else if ((code == Common::KEYCODE_x) || (code == Common::KEYCODE_q)) {
 		// Quit?
-		_graphics->_doNotDrawMessage = false;
 		_graphics->drawMessage("Do you want to quit? (Y/N)");
 		eatMessages();
 		interfaceOff();
@@ -792,7 +788,6 @@ void LabEngine::processMainButton(uint16 &curInv, uint16 &lastInv, uint16 &oldDi
 
 		_alternate = true;
 		_anim->_doBlack = true;
-		_graphics->_doNotDrawMessage = false;
 		// Sets the correct button list
 		interfaceOn();
 		_mainDisplay = false;
@@ -909,7 +904,6 @@ void LabEngine::processAltButton(uint16 &curInv, uint16 &lastInv, uint16 buttonI
 		eatMessages();
 		_alternate = false;
 		_anim->_doBlack = true;
-		_graphics->_doNotDrawMessage = false;
 
 		_mainDisplay = true;
 		// Sets the correct button list
@@ -971,14 +965,12 @@ void LabEngine::processAltButton(uint16 &curInv, uint16 &lastInv, uint16 buttonI
 	case kButtonPrevItem:
 		decIncInv(&curInv, true);
 		lastInv = curInv;
-		_graphics->_doNotDrawMessage = false;
 		drawRoomMessage(curInv, _closeDataPtr);
 		break;
 
 	case kButtonNextItem:
 		decIncInv(&curInv, false);
 		lastInv = curInv;
-		_graphics->_doNotDrawMessage = false;
 		drawRoomMessage(curInv, _closeDataPtr);
 		break;
 
@@ -1001,7 +993,6 @@ void LabEngine::processAltButton(uint16 &curInv, uint16 &lastInv, uint16 buttonI
 				eatMessages();
 				_alternate = false;
 				_anim->_doBlack = true;
-				_graphics->_doNotDrawMessage = false;
 
 				_mainDisplay = true;
 				// Sets the correct button list
