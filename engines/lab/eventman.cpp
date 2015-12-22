@@ -228,15 +228,19 @@ void EventManager::processInput() {
 			case Common::KEYCODE_LEFTBRACKET:
 				_vm->changeVolume(-1);
 				break;
-
 			case Common::KEYCODE_RIGHTBRACKET:
 				_vm->changeVolume(1);
 				break;
-
 			case Common::KEYCODE_z:
 				//saveSettings();
 				break;
-
+			case Common::KEYCODE_d:
+				if (event.kbd.hasFlags(Common::KBD_CTRL)) {
+					// Open debugger console
+					_vm->_console->attach();
+					continue;
+				}
+				// Intentional fall through
 			default: {
 				int n = (_nextKeyIn + 1) % 64;
 				if (n != _nextKeyOut) {
@@ -251,10 +255,11 @@ void EventManager::processInput() {
 		default:
 			break;
 		}
-
-		g_system->copyRectToScreen(_vm->_graphics->_displayBuffer, _vm->_graphics->_screenWidth, 0, 0, _vm->_graphics->_screenWidth, _vm->_graphics->_screenHeight);
-		g_system->updateScreen();
 	}
+
+	g_system->copyRectToScreen(_vm->_graphics->_displayBuffer, _vm->_graphics->_screenWidth, 0, 0, _vm->_graphics->_screenWidth, _vm->_graphics->_screenHeight);
+	_vm->_console->onFrame();
+	g_system->updateScreen();
 }
 
 Common::KeyCode EventManager::getNextChar() {
