@@ -321,6 +321,8 @@ void Anim::readDiff(Common::File *diffFile, bool playOnce, bool onlyDiffData) {
 
 		if ((uint32)(_numChunks * 0x10000) < (uint32)(((int32)_diffWidth) * _diffHeight))
 			_numChunks++;
+
+		assert (_numChunks < 16);
 	} else
 		return;
 
