@@ -3,7 +3,7 @@ ScummVM README
 
 For more information, compatibility lists, details on donating, the latest
 release, progress reports and more, please visit the ScummVM home page
-at: http://www.scummvm.org/
+at: <http://www.scummvm.org/>
 
 
 Table of Contents:
@@ -147,7 +147,7 @@ you want to play.
 datafiles (do not try to select the datafiles themselves!) and press
 'Choose'.
 
-4. A dialog should popup allowing you to configure various settings if
+4. A dialog should pop up allowing you to configure various settings if
 you wish to (it should be just fine to leave everything at its default,
 though). Confirm the dialog.
 
@@ -157,7 +157,7 @@ In the future, you should be able to directly skip to step 5, unless you
 want to add more games.
 
 Hint: If you want to add multiple games in one go, try pressing and
-holding the shift key before clicking 'Add game' -- its label will
+holding the shift key before clicking 'Add game' -- it's label will
 change to 'Mass Add' and if you press it, you are again asked to select
 a directory, only this time ScummVM will search through all
 subdirectories for supported games.
@@ -166,7 +166,7 @@ subdirectories for supported games.
 2.0) Contact:
 ---- --------
 The easiest way to contact the ScummVM team is by submitting bug reports
-(see section 2.1) or by using our forums at http://forums.scummvm.org.
+(see section 2.1) or by using our forums at <http://forums.scummvm.org>.
 You can also join and e-mail the scummvm-devel mailing list, or chat
 with us on IRC (#scummvm on irc.freenode.net) Please do not ask us to
 support an unsupported game -- read the FAQ on our web site first.
@@ -180,7 +180,7 @@ reproducible, and still occurs in the latest git/Daily build version.
 Also check the known problems list (below) and the compatibility list
 on our website for that game, to ensure the issue is not already known:
 
-  http://scummvm.org/compatibility/
+  <http://scummvm.org/compatibility/>
 
 Please do not report bugs on games that are not listed as being
 completeable in the 'Supported Games' section, or compatibility list. We
@@ -208,21 +208,21 @@ At the moment the following games have been reported to work, and should
 be playable to the end:
 
 SCUMM Games by LucasArts:
-     Maniac Mansion                              [maniac]
-     Zak McKracken and the Alien Mindbenders     [zak]
+     Day of the Tentacle                         [tentacle]
+     Full Throttle                               [ft]
+     Indiana Jones and the Fate of Atlantis      [atlantis]
      Indiana Jones and the Last Crusade          [indy3]
      Loom                                        [loom]
-     The Secret of Monkey Island                 [monkey]
+     Maniac Mansion                              [maniac]
      Monkey Island 2: LeChuck's Revenge          [monkey2]
-     Indiana Jones and the Fate of Atlantis      [atlantis]
-     Day of the Tentacle                         [tentacle]
      Sam & Max Hit the Road                      [samnmax]
-     Full Throttle                               [ft]
-     The Dig                                     [dig]
      The Curse of Monkey Island                  [comi]
+     The Dig                                     [dig]
+     The Secret of Monkey Island                 [monkey]
+     Zak McKracken and the Alien Mindbenders     [zak]
 
 AGI and preAGI Games by Sierra:
-     The Black Cauldron                          [bc]
+     Fanmade Games                               [agi-fanmade]
      Gold Rush!                                  [goldrush]
      King's Quest I                              [kq1]
      King's Quest II                             [kq2]
@@ -230,15 +230,15 @@ AGI and preAGI Games by Sierra:
      King's Quest IV                             [kq4]
      Leisure Suit Larry in the Land of the
      Lounge Lizards                              [lsl1]
-     Mixed-Up Mother Goose                       [mixedup]
      Manhunter 1: New York                       [mh1]
      Manhunter 2: San Francisco                  [mh2]
+     Mickey's Space Adventure                    [mickey]
+     Mixed-Up Mother Goose                       [mixedup]
      Police Quest I: In Pursuit of the Death
      Angel                                       [pq1]
      Space Quest I: The Sarien Encounter         [sq1]
      Space Quest II: Vohaul's Revenge            [sq2]
-     Fanmade Games                               [agi-fanmade]
-     Mickey's Space Adventure                    [mickey]
+     The Black Cauldron                          [bc]
      Troll's Tale                                [troll]
      Winnie the Pooh in the Hundred Acre Wood    [winnie]
 
@@ -246,7 +246,6 @@ AGOS Games by Adventuresoft/Horrorsoft:
      Elvira - Mistress of the Dark               [elvira1]
      Elvira II - The Jaws of Cerberus            [elvira2]
      Personal Nightmare                          [pn]
-     Waxworks                                    [waxworks]
      Simon the Sorcerer 1                        [simon1]
      Simon the Sorcerer 2                        [simon2]
      Simon the Sorcerer's Puzzle Pack
@@ -258,13 +257,14 @@ AGOS Games by Adventuresoft/Horrorsoft:
      Simon the Sorcerer's Puzzle Pack
          - Swampy Adventures                     [swampy]
      The Feeble Files                            [feeble]
+     Waxworks                                    [waxworks]
 
 Composer Games by Animation Magic:
      Darby the Dragon                            [darby]
      Gregory and the Hot Air Balloon             [gregory]
      Magic Tales: Liam Finds a Story             [liam]
-     The Princess and the Crab                   [princess]
      Sleeping Cub's Test of Courage              [sleepingcub]
+     The Princess and the Crab                   [princess]
 
 GOB Games by Coktel Vision:
      Bambou le sauveur de la jungle              [bambou]
@@ -305,8 +305,8 @@ MADE Games by Activision:
 
 Other Games:
      3 Skulls of the Toltecs                     [toltecs]
-     Blue Force                                  [blueforce]
      Beneath a Steel Sky                         [sky]
+     Blue Force                                  [blueforce]
      Broken Sword: The Shadow of the Templars    [sword1]
      Broken Sword II: The Smoking Mirror         [sword2]
      Bud Tucker in Double Trouble                [tucker]
@@ -327,21 +327,20 @@ Other Games:
      Hugo 3: Jungle of Doom                      [hugo3]
      I Have No Mouth, and I Must Scream          [ihnm]
      Inherit the Earth: Quest for the Orb        [ite]
-     Nippon Safes Inc.                           [nippon]
      Lands of Lore: The Throne of Chaos          [lol]
      Lure of the Temptress                       [lure]
      Mortville Manor                             [mortevielle]
      Nippon Safes Inc.                           [nippon]
-     Ringworld: Revenge Of The Patriarch         [ringworld]
      Return to Ringworld                         [ringworld2]
+     Ringworld: Revenge Of The Patriarch         [ringworld]
      Sfinx                                       [sfinx]
      Soltys                                      [soltys]
      TeenAgent                                   [teenagent]
+     The 7th Guest                               [t7g]
      The Journeyman Project: Pegasus Prime       [pegasus]
      The Legend of Kyrandia                      [kyra1]
      The Legend of Kyrandia: The Hand of Fate    [kyra2]
      The Legend of Kyrandia: Malcolm's Revenge   [kyra3]
-     The 7th Guest                               [t7g]
      The Neverhood                               [neverhood]
      Tony Tough and the Night of Roasted Moths   [tony]
      Toonstruck                                  [toon]
@@ -548,39 +547,39 @@ site, please see the section on reporting bugs.
       your hard disk to avoid this.
 
   FM-TOWNS versions:
-    - The Kanji versions require the FM-TOWNS Font ROM
+    - The Kanji versions require the FM-TOWNS Font ROM.
 
   Loom:
     - Turning off the subtitles via the config file does not work reliably
-      as the Loom scripts automatically turn them on again
+      as the Loom scripts automatically turn them on again.
     - MIDI support in the EGA version requires the Roland update from
-      LucasArts
-    - The PC-Engine Kanji version requires the system card rom
+      LucasArts.
+    - The PC-Engine Kanji version requires the system card rom.
 
   The Secret of Monkey Island:
     - MIDI support in the EGA version requires the Roland update from
-      LucasArts
+      LucasArts.
 
   Beneath a Steel Sky:
-    - Amiga versions aren't supported
-    - Floppy demos aren't supported
+    - Amiga versions aren't supported.
+    - Floppy demos aren't supported.
     - Not a bug: CD version is missing speech for some dialogs, this is
       normal.
 
   Elvira - Mistress of the Dark
-    - No music in the Atari ST version
+    - No music in the Atari ST version.
 
   Elvira II - The Jaws of Cerberus
-    - No music in the Atari ST version
-    - No sound effects in the PC version
-    - Palette issues in the Atari ST version
+    - No music in the Atari ST version.
+    - No sound effects in the PC version.
+    - Palette issues in the Atari ST version.
 
   Inherit the Earth: Quest for the Orb
-    - Amiga versions aren't supported
+    - Amiga versions aren't supported.
 
   Lure of the Temptress
-    - No Roland MT-32 support
-    - Sound support is incomplete and doesn't sound like original
+    - No Roland MT-32 support.
+    - Sound support is incomplete and doesn't sound like original.
 
  Simon the Sorcerer 1:
     - Subtitles aren't available in the English and German CD versions
@@ -607,7 +606,7 @@ site, please see the section on reporting bugs.
 
   Humongous Entertainment games:
     - Only the original load and save interface can be used.
-    - No support for multiplayer or printing images
+    - No support for multiplayer or printing images.
 
 
 3.5) Beneath a Steel Sky notes:
@@ -679,13 +678,13 @@ may also use the re-encoded cutscenes mentioned below instead, but this
 will not work for all videos in Broken Sword II. For more information,
 see:
 
-  http://wiki.scummvm.org/index.php/HOWTO-PlayStation_Videos
+  <http://wiki.scummvm.org/index.php/HOWTO-PlayStation_Videos>
 
 Some re-releases of the games, as well as the PlayStation version, do
 not have Smacker videos. Revolution Software has kindly allowed us to
 provide re-encoded cutscenes for download on our website:
 
-  http://www.scummvm.org/downloads.php
+  <http://www.scummvm.org/downloads.php>
 
 These cutscenes are provided in DXA format with FLAC audio. Their
 quality is equal to the original games due to the use of lossless
@@ -777,7 +776,7 @@ directory of the game.  You can listen to the Czech dubbing with all
 language variants of the game, while reading the subtitles.
 
 All game files and the walkthrough can be downloaded from
-http://www.ucw.cz/draci-historie/index-en.html
+<http://www.ucw.cz/draci-historie/index-en.html>
 
 
 3.10) Flight of the Amazon Queen notes:
@@ -811,7 +810,7 @@ In order to run the Mac OS X Wyrmkeep re-release of the game you will
 need to copy over data from the CD to your hard disk. If you're on a PC
 then consult:
 
-  http://wiki.scummvm.org/index.php/HOWTO-Mac_Games
+  <http://wiki.scummvm.org/index.php/HOWTO-Mac_Games>
 
 Although it primarily talks about SCUMM games, it mentions the
 "HFVExplorer" utility which you need to extract the files. Note that you
@@ -1199,7 +1198,7 @@ nor recommended.
 For further information on copying Macintosh game files to your hard
 disk see:
 
-  http://wiki.scummvm.org/index.php/HOWTO-Mac_Games
+  <http://wiki.scummvm.org/index.php/HOWTO-Mac_Games>
 
 
 4.0) Supported Platforms:
@@ -1237,7 +1236,7 @@ The Dreamcast port does not support The Curse of Monkey Island, nor The
 Dig. The Nintendo DS port does not support Full Throttle, The Dig, or
 The Curse of Monkey Island.
 For more platform specific limitations, please refer to our Wiki:
-  http://wiki.scummvm.org/index.php/Platforms
+  <http://wiki.scummvm.org/index.php/Platforms>
 
 In the Macintosh port, the right mouse button is emulated via Cmd-Click
 (that is, you click the mouse button while holding the
@@ -1890,7 +1889,7 @@ offers the best compatibility between machines and games.
 
 
 7.2) Playing sound with FluidSynth MIDI emulation:
----- ----------------------------------------------
+---- ---------------------------------------------
 If ScummVM was build with libfluidsynth support it will be able to play
 MIDI music through the FluidSynth driver. You will have to specify a
 SoundFont to use, however.
@@ -2082,7 +2081,7 @@ SCUMMVM_PORT=Software Synth in your environment.
 ---- -----------------------------
 If your system lacks any MIDI sequencer, but you still want better MIDI
 quality than default AdLib emulation can offer, you can try the
-TiMidity++ MIDI server. See http://timidity.sourceforge.net/ for
+TiMidity++ MIDI server. See <http://timidity.sourceforge.net/> for
 download and install instructions.
 
 First, you need to start a daemon:
@@ -2380,7 +2379,8 @@ The following keywords are recognized:
     aspect_ratio       bool     Enable aspect ratio correction
     gfx_mode           string   Graphics mode (normal, 2x, 3x, 2xsai,
                                 super2xsai, supereagle, advmame2x, advmame3x,
-                                hq2x, hq3x, tv2x, dotmatrix)
+                                hq2x, hq3x, tv2x, dotmatrix, opengl_linear,
+                                opengl_nearest)
 
     confirm_exit       bool     Ask for confirmation by the user before
                                 quitting (SDL backend only).
@@ -2575,7 +2575,7 @@ configuration of each entry, allowing the custom options to be shown.
 ---- ----------
 For an up-to-date overview on how to compile ScummVM for various
 platforms, please consult our Wiki, in particular this page:
-   http://wiki.scummvm.org/index.php/Compiling_ScummVM
+   <http://wiki.scummvm.org/index.php/Compiling_ScummVM>
 
 If you are compiling for Windows, Linux or Mac OS X, you need SDL-1.2.2
 or newer (older versions may work, but are unsupported), and a supported
@@ -2587,109 +2587,109 @@ compressed sound. For compressed save states, zlib is required.
 
 Some parts of ScummVM, particularly scalers, have highly optimized
 versions written in assembler. If you wish to use this option, you will
-need to install nasm assembler (see http://www.nasm.us/). Note that
-currently we have only x86 MMX optimized versions, and they will not
+need to install nasm assembler (see <http://www.nasm.us/>). Note that
+we currently only have x86 MMX optimized versions, and they will not
 compile on other processors.
 
 On Win9x/NT/XP, you can define USE_WINDBG and attach WinDbg to browse
-debug messages (see https://technet.microsoft.com/en-us/sysinternals/debugview.aspx).
+debug messages (see <https://technet.microsoft.com/en-us/sysinternals/debugview.aspx>).
 
 
    Windows:
    * Dev-C++
       Please refer to:
-      http://wiki.scummvm.org/index.php/Compiling_ScummVM/DevCPP
+      <http://wiki.scummvm.org/index.php/Compiling_ScummVM/DevCPP>
    * MinGW
       Please refer to:
-      http://wiki.scummvm.org/index.php/Compiling_ScummVM/MinGW
+      <http://wiki.scummvm.org/index.php/Compiling_ScummVM/MinGW>
    * Visual Studio (MSVC)
       Please refer to:
-      http://wiki.scummvm.org/index.php/Compiling_ScummVM/Visual_Studio
+      <http://wiki.scummvm.org/index.php/Compiling_ScummVM/Visual_Studio>
    * Windows CE/Mobile
       Please refer to:
-      http://wiki.scummvm.org/index.php/Compiling_ScummVM/Windows_CE
+      <http://wiki.scummvm.org/index.php/Compiling_ScummVM/Windows_CE>
 
    Linux:
    * GCC
       Please refer to:
-      http://wiki.scummvm.org/index.php/Compiling_ScummVM/GCC
+      <http://wiki.scummvm.org/index.php/Compiling_ScummVM/GCC>
 
    AmigaOS4:
       Please refer to:
-      http://wiki.scummvm.org/index.php/AmigaOS
+      <http://wiki.scummvm.org/index.php/AmigaOS>
 
    Apple iPhone:
       Please refer to:
-      http://wiki.scummvm.org/index.php/Compiling_ScummVM/iPhone
+      <http://wiki.scummvm.org/index.php/Compiling_ScummVM/iPhone>
 
    Atari/FreeMiNT:
       Please refer to:
-      http://wiki.scummvm.org/index.php/Compiling_ScummVM/Atari/FreeMiNT
+      <http://wiki.scummvm.org/index.php/Compiling_ScummVM/Atari/FreeMiNT>
 
    Bada/Tizen:
       Please refer to:
-      http://wiki.scummvm.org/index.php/Compiling_ScummVM/Bada/Tizen
+      <http://wiki.scummvm.org/index.php/Compiling_ScummVM/Bada/Tizen>
 
    BeOS/ZETA/Haiku:
       Please refer to:
-      http://wiki.scummvm.org/index.php/Compiling_ScummVM/BeOS/ZETA/Haiku
+      <http://wiki.scummvm.org/index.php/Compiling_ScummVM/BeOS/ZETA/Haiku>
 
    Google Android:
       Please refer to:
-      http://wiki.scummvm.org/index.php/Compiling_ScummVM/Android
+      <http://wiki.scummvm.org/index.php/Compiling_ScummVM/Android>
 
    HP webOS:
       Please refer to:
-      http://wiki.scummvm.org/index.php/Compiling_ScummVM/WebOS
+      <http://wiki.scummvm.org/index.php/Compiling_ScummVM/WebOS>
 
    Mac OS:
    * Mac OS X
       Please refer to:
-      http://wiki.scummvm.org/index.php/Mac_OS_X
+      <http://wiki.scummvm.org/index.php/Mac_OS_X>
     * Mac OS X 10.2.8
       Please refer to:
-      http://wiki.scummvm.org/index.php/Compiling_ScummVM/Mac_OS_X_10.2.8
+      <http://wiki.scummvm.org/index.php/Compiling_ScummVM/Mac_OS_X_10.2.8>
     * Mac OS X Crosscompiling
       Please refer to:
-      http://wiki.scummvm.org/index.php/Compiling_ScummVM/Mac_OS_X_Crosscompiling
+      <http://wiki.scummvm.org/index.php/Compiling_ScummVM/Mac_OS_X_Crosscompiling>
 
    Maemo:
       Please refer to:
-      http://wiki.scummvm.org/index.php/Compiling_ScummVM/Maemo
+      <http://wiki.scummvm.org/index.php/Compiling_ScummVM/Maemo>
 
    Nintendo DS:
       Please refer to:
-      http://wiki.scummvm.org/index.php/Compiling_ScummVM/Nintendo_DS
+      <http://wiki.scummvm.org/index.php/Compiling_ScummVM/Nintendo_DS>
 
    Nintendo Wii and Gamecube:
       Please refer to:
-      http://wiki.scummvm.org/index.php/Compiling_ScummVM/Wii
+      <http://wiki.scummvm.org/index.php/Compiling_ScummVM/Wii>
 
    RaspberryPi:
       Please refer to:
-      http://wiki.scummvm.org/index.php/Compiling_ScummVM/RPI
+      <http://wiki.scummvm.org/index.php/Compiling_ScummVM/RPI>
 
    Sega Dreamcast:
       Please refer to:
-      http://wiki.scummvm.org/index.php/Compiling_ScummVM/Dreamcast
+      <http://wiki.scummvm.org/index.php/Compiling_ScummVM/Dreamcast>
 
    Sony Playstation:
    * Sony PlayStation 2
       Please refer to:
-      http://wiki.scummvm.org/index.php/Compiling_ScummVM/PlayStation_2
+      <http://wiki.scummvm.org/index.php/Compiling_ScummVM/PlayStation_2>
    * Sony PlayStation 3
       Please refer to:
-      http://wiki.scummvm.org/index.php/PlayStation_3#Building_from_source
+      <http://wiki.scummvm.org/index.php/PlayStation_3#Building_from_source>
    * Sony PlayStation Portable
       Please refer to:
-      http://wiki.scummvm.org/index.php/Compiling_ScummVM/PlayStation_Portable
+      <http://wiki.scummvm.org/index.php/Compiling_ScummVM/PlayStation_Portable>
 
    Symbian:
       Please refer to:
-      http://wiki.scummvm.org/index.php/Compiling_ScummVM/Symbian
+      <http://wiki.scummvm.org/index.php/Compiling_ScummVM/Symbian>
 
 ------------------------------------------------------------------------
 Good Luck and Happy Adventuring!
 The ScummVM team.
-http://www.scummvm.org/
+<http://www.scummvm.org/>
 ------------------------------------------------------------------------
