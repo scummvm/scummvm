@@ -302,35 +302,20 @@ void LabEngine::doActions(Action *actionList, CloseDataPtr *closePtrList) {
 			_conditions->exclElement(actionList->_param1);
 			break;
 
-		case SHOWMESSAGE: {
-			_graphics->_doNotDrawMessage = false;
-
-			Common::String text = actionList->_messages[0];
+		case SHOWMESSAGE:
 			if (_graphics->_longWinInFront)
-				_graphics->longDrawMessage(text);
+				_graphics->longDrawMessage(actionList->_messages[0]);
 			else
-				_graphics->drawMessage(text);
-
-			_graphics->_doNotDrawMessage = true;
-			}
+				_graphics->drawMessage(actionList->_messages[0]);
 			break;
 
 		case CSHOWMESSAGE:
-			if (!*closePtrList) {
-				Common::String text = actionList->_messages[0];
-				_graphics->_doNotDrawMessage = false;
-				_graphics->drawMessage(text);
-				_graphics->_doNotDrawMessage = true;
-			}
-
+			if (!*closePtrList)
+				_graphics->drawMessage(actionList->_messages[0]);
 			break;
 
-		case SHOWMESSAGES: {
-			Common::String *str = actionList->_messages;
-			_graphics->_doNotDrawMessage = false;
-			_graphics->drawMessage(str[_utils->getRandom(actionList->_param1)]);
-			_graphics->_doNotDrawMessage = true;
-			}
+		case SHOWMESSAGES:
+			_graphics->drawMessage(actionList->_messages[_utils->getRandom(actionList->_param1)]);
 			break;
 
 		case SETPOSITION:
@@ -378,7 +363,11 @@ void LabEngine::doActions(Action *actionList, CloseDataPtr *closePtrList) {
 			break;
 
 		case SHOWDIR:
-			_graphics->_doNotDrawMessage = false;
+			// Originally, this set _doNotDrawMessage to false, so that the
+			// message would be shown by drawMessage(). However, _doNotDrawMEssage
+			// ended up hiding subsequent game messages, so this call is actually
+			// a nasty hack, and has been removed in ScummVM without any notable
+			// side-effects.
 			break;
 
 		case WAITSECS: {

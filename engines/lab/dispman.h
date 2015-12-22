@@ -284,7 +284,6 @@ public:
 	int _screenHeight;
 	byte *_displayBuffer;
 	byte *_currentDisplayBuffer;
-	bool _doNotDrawMessage;
 	uint16 *_fadePalette;
 	BitMap *_dispBitMap;
 };
