@@ -544,16 +544,6 @@ void LabEngine::mainGameLoop() {
 				break;
 		}
 	}
-
-	delete _conditions;
-	delete _roomsFound;
-	delete[] _rooms;
-	delete[] _inventory;
-
-	_conditions = nullptr;
-	_roomsFound = nullptr;
-	_rooms = nullptr;
-	_inventory = nullptr;
 }
 
 void LabEngine::showLab2Teaser() {
