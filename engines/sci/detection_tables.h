@@ -4110,7 +4110,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resmap.000", 0, "9a3e172cde9963d0a969f26469318cec", 3403},
 		{"ressci.000", 0, "db3e290481c35c3224e9602e71e4a1f1", 5073868},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformWindows, ADGF_DEMO | ADGF_UNSTABLE, GUIO4(GUIO_NOASPECT, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
+		Common::EN_ANY, Common::kPlatformWindows, ADGF_DEMO | ADGF_UNSTABLE | ADGF_CD, GUIO4(GUIO_NOASPECT, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
 	// Torin's Passage (Multilingual) - English Windows CD
 	// SCI interpreter version 2.100.002
@@ -4118,7 +4118,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resmap.000", 0, "bb3b0b22ff08df54fbe2d06263409be6", 9799},
 		{"ressci.000", 0, "693a259d346c9360f4a0c11fdaae430a", 55973887},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformWindows, ADGF_UNSTABLE, GUIO4(GUIO_NOASPECT, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
+		Common::EN_ANY, Common::kPlatformWindows, ADGF_UNSTABLE | ADGF_CD, GUIO4(GUIO_NOASPECT, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
 	// Torin's Passage (Multilingual) - Spanish Windows CD (from jvprat)
 	// Executable scanning reports "2.100.002", VERSION file reports "1.0"
@@ -4127,7 +4127,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"ressci.000", 0, "693a259d346c9360f4a0c11fdaae430a", 55973887},
 		// TODO: depend on one of the patches?
 		AD_LISTEND},
-		Common::ES_ESP, Common::kPlatformWindows, ADGF_UNSTABLE, GUIO4(GUIO_NOASPECT, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
+		Common::ES_ESP, Common::kPlatformWindows, ADGF_UNSTABLE | ADGF_CD, GUIO4(GUIO_NOASPECT, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
 	// Torin's Passage (Multilingual) - French Windows CD
 	// SCI interpreter version 2.100.002
@@ -4135,7 +4135,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resmap.000", 0, "bb3b0b22ff08df54fbe2d06263409be6", 9799},
 		{"ressci.000", 0, "693a259d346c9360f4a0c11fdaae430a", 55973887},
 		AD_LISTEND},
-		Common::FR_FRA, Common::kPlatformWindows, ADGF_UNSTABLE, GUIO4(GUIO_NOASPECT, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
+		Common::FR_FRA, Common::kPlatformWindows, ADGF_UNSTABLE | ADGF_CD, GUIO4(GUIO_NOASPECT, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
 	// Torin's Passage - German Windows CD (from m_kiewitz)
 	// SCI interpreter version 2.100.002
@@ -4144,7 +4144,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resmap.000", 0, "e55c3097329b3c53752301e01c6af2fb", 9787},
 		{"ressci.000", 0, "118f9bec04bfe17c4f87bbb5ddb43c18", 56127540},
 		AD_LISTEND},
-		Common::DE_DEU, Common::kPlatformWindows, ADGF_UNSTABLE, GUIO4(GUIO_NOASPECT, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
+		Common::DE_DEU, Common::kPlatformWindows, ADGF_UNSTABLE | ADGF_CD, GUIO4(GUIO_NOASPECT, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
 	// Torin's Passage (Multilingual) - German Windows CD
 	// SCI interpreter version 2.100.002
@@ -4152,7 +4152,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resmap.000", 0, "bb3b0b22ff08df54fbe2d06263409be6", 9799},
 		{"ressci.000", 0, "693a259d346c9360f4a0c11fdaae430a", 55973887},
 		AD_LISTEND},
-		Common::DE_DEU, Common::kPlatformWindows, ADGF_UNSTABLE, GUIO4(GUIO_NOASPECT, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
+		Common::DE_DEU, Common::kPlatformWindows, ADGF_UNSTABLE | ADGF_CD, GUIO4(GUIO_NOASPECT, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
 	// Torin's Passage (Multilingual) - Italian Windows CD (from glorifindel)
 	// SCI interpreter version 2.100.002
@@ -4160,7 +4160,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resmap.000", 0, "bb3b0b22ff08df54fbe2d06263409be6", 9799},
 		{"ressci.000", 0, "693a259d346c9360f4a0c11fdaae430a", 55973887},
 		AD_LISTEND},
-		Common::IT_ITA, Common::kPlatformWindows, ADGF_UNSTABLE, GUIO4(GUIO_NOASPECT, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
+		Common::IT_ITA, Common::kPlatformWindows, ADGF_UNSTABLE | ADGF_CD, GUIO4(GUIO_NOASPECT, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
 	// Torin's Passage - French Windows (from LePhilousophe)
 	// SCI interpreter version 2.100.002
@@ -4168,7 +4168,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resmap.000", 0, "66ed46e3e56f487e688d52f05b33d0ba", 9787},
 		{"ressci.000", 0, "118f9bec04bfe17c4f87bbb5ddb43c18", 56126981},
 		AD_LISTEND},
-		Common::FR_FRA, Common::kPlatformWindows, ADGF_UNSTABLE, GUIO4(GUIO_NOASPECT, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
+		Common::FR_FRA, Common::kPlatformWindows, ADGF_UNSTABLE | ADGF_CD, GUIO4(GUIO_NOASPECT, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
 	// Torin's Passage - English Macintosh
 	{"torin", "", {
@@ -4180,7 +4180,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"Data6", 0, "b639487c83d1dae0e001e700f3631566", 7594881},
 		{"Data7", 0, "2afd9b5434102b89610916b904c3f73a", 7627374},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformMacintosh, ADGF_MACRESFORK | ADGF_UNSTABLE, GUIO4(GUIO_NOASPECT, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI) },
+		Common::EN_ANY, Common::kPlatformMacintosh, ADGF_MACRESFORK | ADGF_UNSTABLE | ADGF_CD, GUIO4(GUIO_NOASPECT, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI) },
 #endif // ENABLE_SCI32
 
 	// SCI Fanmade Games
