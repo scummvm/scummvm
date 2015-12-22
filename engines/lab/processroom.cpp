@@ -238,53 +238,53 @@ void LabEngine::doActions(Action *actionList, CloseDataPtr *closePtrList) {
 		updateMusicAndEvents();
 
 		switch (actionList->_actionType) {
-		case PLAYSOUND:
+		case kActionPlaySound:
 			_music->_loopSoundEffect = false;
 			_music->_waitTillFinished = true;
 			_music->readMusic(actionList->_messages[0], true);
 			_music->_waitTillFinished = false;
 			break;
 
-		case PLAYSOUNDB:
+		case kActionPlaySoundNoWait:
 			_music->_loopSoundEffect = false;
 			_music->_waitTillFinished = false;
 			_music->readMusic(actionList->_messages[0], false);
 			break;
 
-		case PLAYSOUNDCONT:
+		case kActionPlaySoundLooping:
 			_music->_loopSoundEffect = true;
 			_music->readMusic(actionList->_messages[0], _music->_waitTillFinished);
 			break;
 
-		case SHOWDIFF:
+		case kActionShowDiff:
 			_graphics->readPict(actionList->_messages[0], true);
 			break;
 
-		case SHOWDIFFCONT:
+		case kActionShowDiffLooping:
 			_graphics->readPict(actionList->_messages[0], false);
 			break;
 
-		case LOADDIFF:
+		case kActionLoadDiff:
 			if (!actionList->_messages[0].empty())
 				// Puts a file into memory
 				_graphics->loadPict(actionList->_messages[0]);
 
 			break;
 
-		case TRANSITION:
+		case kActionTransition:
 			_graphics->doTransition((TransitionType)actionList->_param1, closePtrList, actionList->_messages[0].c_str());
 			break;
 
-		case NOUPDATE:
+		case kActionNoUpdate:
 			_noUpdateDiff = true;
 			_anim->_doBlack = false;
 			break;
 
-		case FORCEUPDATE:
+		case kActionForceUpdate:
 			_curFileName = " ";
 			break;
 
-		case SHOWCURPICT: {
+		case kActionShowCurPict: {
 			Common::String test = getPictName(closePtrList);
 
 			if (test != _curFileName) {
@@ -294,31 +294,31 @@ void LabEngine::doActions(Action *actionList, CloseDataPtr *closePtrList) {
 			}
 			break;
 
-		case SETELEMENT:
+		case kActionSetElement:
 			_conditions->inclElement(actionList->_param1);
 			break;
 
-		case UNSETELEMENT:
+		case kActionUnsetElement:
 			_conditions->exclElement(actionList->_param1);
 			break;
 
-		case SHOWMESSAGE:
+		case kActionShowMessage:
 			if (_graphics->_longWinInFront)
 				_graphics->longDrawMessage(actionList->_messages[0]);
 			else
 				_graphics->drawMessage(actionList->_messages[0]);
 			break;
 
-		case CSHOWMESSAGE:
+		case kActionCShowMessage:
 			if (!*closePtrList)
 				_graphics->drawMessage(actionList->_messages[0]);
 			break;
 
-		case SHOWMESSAGES:
+		case kActionShowMessages:
 			_graphics->drawMessage(actionList->_messages[_utils->getRandom(actionList->_param1)]);
 			break;
 
-		case SETPOSITION:
+		case kActionChangeRoom:
 			if (actionList->_param1 & 0x8000) {
 				// This is a Wyrmkeep Windows trial version, thus stop at this
 				// point, since we can't check for game payment status
@@ -335,7 +335,7 @@ void LabEngine::doActions(Action *actionList, CloseDataPtr *closePtrList) {
 			_anim->_doBlack = true;
 			break;
 
-		case SETCLOSEUP: {
+		case kActionSetCloseup: {
 			Common::Point curPos = Common::Point(_utils->scaleX(actionList->_param1), _utils->scaleY(actionList->_param2));
 				CloseDataPtr tmpClosePtr = getObject(curPos, *closePtrList);
 
@@ -344,11 +344,11 @@ void LabEngine::doActions(Action *actionList, CloseDataPtr *closePtrList) {
 			}
 			break;
 
-		case MAINVIEW:
+		case kActionMainView:
 			*closePtrList = nullptr;
 			break;
 
-		case SUBINV:
+		case kActionSubInv:
 			if (_inventory[actionList->_param1]._quantity)
 				(_inventory[actionList->_param1]._quantity)--;
 
@@ -357,12 +357,12 @@ void LabEngine::doActions(Action *actionList, CloseDataPtr *closePtrList) {
 
 			break;
 
-		case ADDINV:
+		case kActionAddInv:
 			(_inventory[actionList->_param1]._quantity) += actionList->_param2;
 			_conditions->inclElement(actionList->_param1);
 			break;
 
-		case SHOWDIR:
+		case kActionShowDir:
 			// Originally, this set _doNotDrawMessage to false, so that the
 			// message would be shown by drawMessage(). However, _doNotDrawMEssage
 			// ended up hiding subsequent game messages, so this call is actually
@@ -370,7 +370,7 @@ void LabEngine::doActions(Action *actionList, CloseDataPtr *closePtrList) {
 			// side-effects.
 			break;
 
-		case WAITSECS: {
+		case kActionWaitSecs: {
 				uint32 targetMillis = g_system->getMillis() + actionList->_param1 * 1000;
 
 				_graphics->screenUpdate();
@@ -382,29 +382,29 @@ void LabEngine::doActions(Action *actionList, CloseDataPtr *closePtrList) {
 			}
 			break;
 
-		case STOPMUSIC:
+		case kActionStopMusic:
 			_music->setMusic(false);
 			break;
 
-		case STARTMUSIC:
+		case kActionStartMusic:
 			_music->setMusic(true);
 			break;
 
-		case CHANGEMUSIC:
+		case kActionChangeMusic:
 			_music->changeMusic(actionList->_messages[0]);
 			_music->setMusicReset(false);
 			break;
 
-		case RESETMUSIC:
+		case kActionResetMusic:
 			_music->resetMusic();
 			_music->setMusicReset(true);
 			break;
 
-		case FILLMUSIC:
+		case kActionFillMusic:
 			updateMusicAndEvents();
 			break;
 
-		case WAITSOUND:
+		case kActionWaitSound:
 			while (_music->isSoundEffectActive()) {
 				updateMusicAndEvents();
 				_anim->diffNextFrame();
@@ -413,7 +413,7 @@ void LabEngine::doActions(Action *actionList, CloseDataPtr *closePtrList) {
 
 			break;
 
-		case CLEARSOUND:
+		case kActionClearSound:
 			if (_music->_loopSoundEffect) {
 				_music->_loopSoundEffect = false;
 				_music->stopSoundEffect();
@@ -422,26 +422,26 @@ void LabEngine::doActions(Action *actionList, CloseDataPtr *closePtrList) {
 
 			break;
 
-		case WINMUSIC:
+		case kActionWinMusic:
 			_music->freeMusic();
 			_music->initMusic("Music:WinGame");
 			break;
 
-		case WINGAME:
+		case kActionWinGame:
 			_quitLab = true;
 			showLab2Teaser();
 			break;
 
-		case LOSTGAME:
+		case kActionLostGame:
 			// This seems to be unused?
 			error("Unused opcode LOSTGAME has been called");
 			break;
 
-		case RESETBUFFER:
+		case kActionResetBuffer:
 			_graphics->freePict();
 			break;
 
-		case SPECIALCMD:
+		case kActionSpecialCmd:
 			if (actionList->_param1 == 0)
 				_anim->_doBlack = true;
 			else if (actionList->_param1 == 1)
@@ -505,7 +505,7 @@ bool LabEngine::doActionRuleSub(int16 action, int16 roomNum, CloseDataPtr closeP
 		}
 
 		for (RuleList::iterator rule = rules->begin(); rule != rules->end(); ++rule) {
-			if ((rule->_ruleType == ACTION) &&
+			if ((rule->_ruleType == kRuleTypeAction) &&
 				((rule->_param1 == action) || ((rule->_param1 == 0) && allowDefaults))) {
 				if (((rule->_param2 == closePtr->_closeUpType) ||
 					  ((rule->_param2 == 0) && allowDefaults)) ||
@@ -553,7 +553,7 @@ bool LabEngine::doOperateRuleSub(int16 itemNum, int16 roomNum, CloseDataPtr clos
 			}
 
 			for (RuleList::iterator rule = rules->begin(); rule != rules->end(); ++rule) {
-				if ((rule->_ruleType == OPERATE) &&
+				if ((rule->_ruleType == kRuleTypeOperate) &&
 					  ((rule->_param1 == itemNum) || ((rule->_param1 == 0) && allowDefaults)) &&
 						((rule->_param2 == closePtr->_closeUpType) || ((rule->_param2 == 0) && allowDefaults))) {
 					if (checkConditions(rule->_condition)) {
@@ -599,7 +599,7 @@ bool LabEngine::doGoForward(CloseDataPtr *closePtrList) {
 	RuleList *rules = _rooms[_roomNum]._rules;
 
 	for (RuleList::iterator rule = rules->begin(); rule != rules->end(); ++rule) {
-		if ((rule->_ruleType == GOFORWARD) && (rule->_param1 == (_direction + 1))) {
+		if ((rule->_ruleType == kRuleTypeGoForward) && (rule->_param1 == (_direction + 1))) {
 			if (checkConditions(rule->_condition)) {
 				doActions(rule->_actionList, closePtrList);
 				return true;
@@ -617,8 +617,8 @@ bool LabEngine::doTurn(uint16 from, uint16 to, CloseDataPtr *closePtrList) {
 	RuleList *rules = _rooms[_roomNum]._rules;
 
 	for (RuleList::iterator rule = rules->begin(); rule != rules->end(); ++rule) {
-		if ((rule->_ruleType == TURN) ||
-			  ((rule->_ruleType == TURNFROMTO) &&
+		if ((rule->_ruleType == kRuleTypeTurn) ||
+			  ((rule->_ruleType == kRuleTypeTurnFromTo) &&
 			  (rule->_param1 == from) && (rule->_param2 == to))) {
 			if (checkConditions(rule->_condition)) {
 				doActions(rule->_actionList, closePtrList);
@@ -633,7 +633,7 @@ bool LabEngine::doTurn(uint16 from, uint16 to, CloseDataPtr *closePtrList) {
 bool LabEngine::doMainView(CloseDataPtr *closePtrList) {
 	RuleList *rules = _rooms[_roomNum]._rules;
 	for (RuleList::iterator rule = rules->begin(); rule != rules->end(); ++rule) {
-		if (rule->_ruleType == GOMAINVIEW) {
+		if (rule->_ruleType == kRuleTypeGoMainView) {
 			if (checkConditions(rule->_condition)) {
 				doActions(rule->_actionList, closePtrList);
 				return true;
