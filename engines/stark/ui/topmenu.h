@@ -50,7 +50,7 @@ private:
 
 	Button *_inventoryButton;
 	Button *_exitButton;
-	Button *_diaryButton;
+	Button *_optionsButton;
 };
 
 } // End of namespace Stark

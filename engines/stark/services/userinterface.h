@@ -98,6 +98,10 @@ public:
 
 	/** Clears all the pointers to data that may be location dependent */
 	void clearLocationDependentState();
+
+	/** Open the in game options menu */
+	void optionsOpen();
+
 private:
 	typedef void (Window::*WindowHandler)();
 	void dispatchEvent(WindowHandler handler);

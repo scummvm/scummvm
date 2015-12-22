@@ -202,5 +202,11 @@ void UserInterface::clearLocationDependentState() {
 	_inventoryWindow->reset();
 }
 
+void UserInterface::optionsOpen() {
+	// TODO: Open the TLJ menu instead of the ResidualVM one
+	Common::Event event;
+	event.type = Common::EVENT_MAINMENU;
+	g_system->getEventManager()->pushEvent(event);
+}
 } // End of namespace Stark
 

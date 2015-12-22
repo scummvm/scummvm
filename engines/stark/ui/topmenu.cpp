@@ -43,14 +43,14 @@ TopMenu::TopMenu(Gfx::Driver *gfx, Cursor *cursor) :
 	_visible = true;
 
 	_inventoryButton = new Button("Inventory", StaticProvider::kInventory, Common::Point(0, 0));
-	_exitButton = new Button("Exit", StaticProvider::kQuit, Common::Point(600, 0));
-	_diaryButton = new Button("Diary", StaticProvider::kDiaryNormal, Common::Point(560, 0));
+	_exitButton = new Button("Quit", StaticProvider::kQuit, Common::Point(600, 0));
+	_optionsButton = new Button("Options", StaticProvider::kDiaryNormal, Common::Point(560, 0));
 }
 
 TopMenu::~TopMenu() {
 	delete _exitButton;
 	delete _inventoryButton;
-	delete _diaryButton;
+	delete _optionsButton;
 }
 
 void TopMenu::onRender() {
@@ -62,12 +62,14 @@ void TopMenu::onRender() {
 
 	_inventoryButton->render();
 	_exitButton->render();
-	_diaryButton->render();
+	_optionsButton->render();
 }
 
 void TopMenu::onMouseMove(const Common::Point &pos) {
 	if (_widgetsVisible && StarkUserInterface->isInteractive()) {
-		if (_exitButton->containsPoint(pos) || _inventoryButton->containsPoint(pos)) {
+		if (_exitButton->containsPoint(pos)
+		    || _inventoryButton->containsPoint(pos)
+		    || _optionsButton->containsPoint(pos)) {
 			_cursor->setCursorType(Cursor::kActive);
 			_cursor->setMouseHint(getMouseHintAtPosition(pos));
 		} else {
@@ -93,14 +95,18 @@ void TopMenu::onClick(const Common::Point &pos) {
 	if (_inventoryButton->containsPoint(pos)) {
 		StarkUserInterface->inventoryOpen(true);
 	}
+
+	if (_optionsButton->containsPoint(pos)) {
+		StarkUserInterface->optionsOpen();
+	}
 }
 
 Common::String TopMenu::getMouseHintAtPosition(Common::Point point) {
 	if (_exitButton->containsPoint(point)) {
 		return _exitButton->getText();
 	}
-	if (_diaryButton->containsPoint(point)) {
-		return _diaryButton->getText();
+	if (_optionsButton->containsPoint(point)) {
+		return _optionsButton->getText();
 	}
 	if (_inventoryButton->containsPoint(point)) {
 		return _inventoryButton->getText();
