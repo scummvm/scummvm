@@ -42,11 +42,18 @@ public:
 private:
 	XMGDecoder() {}
 
-	Graphics::Surface *decodeImage(Common::ReadStream *stream);
+	struct Block {
+		uint32 a1, a2;
+		uint32 b1, b2;
+	};
 
-	void processYCrCb();
-	void processTrans();
-	void processRGB();
+	Graphics::Surface *decodeImage(Common::ReadStream *stream);
+	Block decodeBlock(byte op);
+	void drawBlock(const Block &block, Graphics::Surface *surface);
+
+	Block processYCrCb();
+	Block processTrans();
+	Block processRGB();
 
 	uint32 _width;
 	uint32 _height;
@@ -54,11 +61,9 @@ private:
 	uint32 _currX;
 	uint32 _currY;
 
-	uint32 *_pixels;
 	Common::ReadStream *_stream;
 
 	uint32 _transColor;
-	uint32 _scanLen;
 };
 
 } // End of namespace Formats
