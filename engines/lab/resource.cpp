@@ -264,12 +264,12 @@ RuleList *Resource::readRule(Common::File *file) {
 		c = file->readByte();
 
 		if (c == 1) {
-			Rule *rule = new Rule();
-			rule->_ruleType = file->readSint16LE();
-			rule->_param1 = file->readSint16LE();
-			rule->_param2 = file->readSint16LE();
-			rule->_condition = readConditions(file);
-			rule->_actionList = readAction(file);
+			Rule rule;
+			rule._ruleType = file->readSint16LE();
+			rule._param1 = file->readSint16LE();
+			rule._param2 = file->readSint16LE();
+			rule._condition = readConditions(file);
+			rule._actionList = readAction(file);
 			rules->push_back(rule);
 		}
 	} while (c == 1);
@@ -282,9 +282,8 @@ void Resource::freeRule(RuleList *ruleList) {
 		return;
 
 	for (RuleList::iterator rule = ruleList->begin(); rule != ruleList->end(); ++rule) {
-		freeAction((*rule)->_actionList);
-		delete[](*rule)->_condition;
-		delete *rule;
+		freeAction(rule->_actionList);
+		delete[] rule->_condition;
 	}
 
 	delete ruleList;

@@ -516,13 +516,13 @@ bool LabEngine::doActionRuleSub(int16 action, int16 roomNum, CloseDataPtr closeP
 		}
 
 		for (RuleList::iterator rule = rules->begin(); rule != rules->end(); ++rule) {
-			if (((*rule)->_ruleType == ACTION) &&
-				(((*rule)->_param1 == action) || (((*rule)->_param1 == 0) && allowDefaults))) {
-				if ((((*rule)->_param2 == closePtr->_closeUpType) ||
-					  (((*rule)->_param2 == 0) && allowDefaults)) ||
-					  ((action == 1) && ((*rule)->_param2 == (-closePtr->_closeUpType)))) {
-					if (checkConditions((*rule)->_condition)) {
-						doActions((*rule)->_actionList, setCloseList);
+			if ((rule->_ruleType == ACTION) &&
+				((rule->_param1 == action) || ((rule->_param1 == 0) && allowDefaults))) {
+				if (((rule->_param2 == closePtr->_closeUpType) ||
+					  ((rule->_param2 == 0) && allowDefaults)) ||
+					  ((action == 1) && (rule->_param2 == -closePtr->_closeUpType))) {
+					if (checkConditions(rule->_condition)) {
+						doActions(rule->_actionList, setCloseList);
 						return true;
 					}
 				}
@@ -564,11 +564,11 @@ bool LabEngine::doOperateRuleSub(int16 itemNum, int16 roomNum, CloseDataPtr clos
 			}
 
 			for (RuleList::iterator rule = rules->begin(); rule != rules->end(); ++rule) {
-				if (((*rule)->_ruleType == OPERATE) &&
-					  (((*rule)->_param1 == itemNum) || (((*rule)->_param1 == 0) && allowDefaults)) &&
-						(((*rule)->_param2 == closePtr->_closeUpType) || (((*rule)->_param2 == 0) && allowDefaults))) {
-					if (checkConditions((*rule)->_condition)) {
-						doActions((*rule)->_actionList, setCloseList);
+				if ((rule->_ruleType == OPERATE) &&
+					  ((rule->_param1 == itemNum) || ((rule->_param1 == 0) && allowDefaults)) &&
+						((rule->_param2 == closePtr->_closeUpType) || ((rule->_param2 == 0) && allowDefaults))) {
+					if (checkConditions(rule->_condition)) {
+						doActions(rule->_actionList, setCloseList);
 						return true;
 					}
 				}
@@ -609,8 +609,7 @@ bool LabEngine::doOperateRule(Common::Point pos, int16 ItemNum, CloseDataPtr *cl
 bool LabEngine::doGoForward(CloseDataPtr *closePtrList) {
 	RuleList *rules = _rooms[_roomNum]._rules;
 
-	for (RuleList::iterator ruleIter = rules->begin(); ruleIter != rules->end(); ++ruleIter) {
-		Rule *rule = *ruleIter;
+	for (RuleList::iterator rule = rules->begin(); rule != rules->end(); ++rule) {
 		if ((rule->_ruleType == GOFORWARD) && (rule->_param1 == (_direction + 1))) {
 			if (checkConditions(rule->_condition)) {
 				doActions(rule->_actionList, closePtrList);
@@ -629,11 +628,11 @@ bool LabEngine::doTurn(uint16 from, uint16 to, CloseDataPtr *closePtrList) {
 	RuleList *rules = _rooms[_roomNum]._rules;
 
 	for (RuleList::iterator rule = rules->begin(); rule != rules->end(); ++rule) {
-		if (((*rule)->_ruleType == TURN) ||
-			  (((*rule)->_ruleType == TURNFROMTO) &&
-			  ((*rule)->_param1 == from) && ((*rule)->_param2 == to))) {
-			if (checkConditions((*rule)->_condition)) {
-				doActions((*rule)->_actionList, closePtrList);
+		if ((rule->_ruleType == TURN) ||
+			  ((rule->_ruleType == TURNFROMTO) &&
+			  (rule->_param1 == from) && (rule->_param2 == to))) {
+			if (checkConditions(rule->_condition)) {
+				doActions(rule->_actionList, closePtrList);
 				return true;
 			}
 		}
@@ -645,9 +644,9 @@ bool LabEngine::doTurn(uint16 from, uint16 to, CloseDataPtr *closePtrList) {
 bool LabEngine::doMainView(CloseDataPtr *closePtrList) {
 	RuleList *rules = _rooms[_roomNum]._rules;
 	for (RuleList::iterator rule = rules->begin(); rule != rules->end(); ++rule) {
-		if ((*rule)->_ruleType == GOMAINVIEW) {
-			if (checkConditions((*rule)->_condition)) {
-				doActions((*rule)->_actionList, closePtrList);
+		if (rule->_ruleType == GOMAINVIEW) {
+			if (checkConditions(rule->_condition)) {
+				doActions(rule->_actionList, closePtrList);
 				return true;
 			}
 		}
