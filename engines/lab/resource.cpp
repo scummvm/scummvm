@@ -103,19 +103,19 @@ void Resource::readRoomData(const Common::String fileName) {
 	memset(_vm->_rooms, 0, (_vm->_manyRooms + 1) * sizeof(RoomData));
 
 	for (uint16 i = 1; i <= _vm->_manyRooms; i++) {
-		RoomData curRoom = _vm->_rooms[i];
-		curRoom._doors[NORTH] = dataFile->readUint16LE();
-		curRoom._doors[SOUTH] = dataFile->readUint16LE();
-		curRoom._doors[EAST] = dataFile->readUint16LE();
-		curRoom._doors[WEST] = dataFile->readUint16LE();
-		curRoom._transitionType = dataFile->readByte();
+		RoomData *curRoom = &_vm->_rooms[i];
+		curRoom->_doors[NORTH] = dataFile->readUint16LE();
+		curRoom->_doors[SOUTH] = dataFile->readUint16LE();
+		curRoom->_doors[EAST] = dataFile->readUint16LE();
+		curRoom->_doors[WEST] = dataFile->readUint16LE();
+		curRoom->_transitionType = dataFile->readByte();
 
-		curRoom._view[NORTH] = nullptr;
-		curRoom._view[SOUTH] = nullptr;
-		curRoom._view[EAST] = nullptr;
-		curRoom._view[WEST] = nullptr;
-		curRoom._rules = nullptr;
-		curRoom._roomMsg = "";
+		curRoom->_view[NORTH] = nullptr;
+		curRoom->_view[SOUTH] = nullptr;
+		curRoom->_view[EAST] = nullptr;
+		curRoom->_view[WEST] = nullptr;
+		curRoom->_rules = nullptr;
+		curRoom->_roomMsg = "";
 	}
 
 	delete dataFile;
@@ -142,14 +142,14 @@ void Resource::readViews(uint16 roomNum) {
 	Common::File *dataFile = openDataFile(fileName, MKTAG('R', 'O', 'M', '4'));
 
 	freeViews(roomNum);
-	RoomData curRoom = _vm->_rooms[roomNum];
+	RoomData *curRoom = &_vm->_rooms[roomNum];
 
-	curRoom._roomMsg = readString(dataFile);
-	curRoom._view[NORTH] = readView(dataFile);
-	curRoom._view[SOUTH] = readView(dataFile);
-	curRoom._view[EAST] = readView(dataFile);
-	curRoom._view[WEST] = readView(dataFile);
-	curRoom._rules = readRule(dataFile);
+	curRoom->_roomMsg = readString(dataFile);
+	curRoom->_view[NORTH] = readView(dataFile);
+	curRoom->_view[SOUTH] = readView(dataFile);
+	curRoom->_view[EAST] = readView(dataFile);
+	curRoom->_view[WEST] = readView(dataFile);
+	curRoom->_rules = readRule(dataFile);
 
 	_vm->_music->updateMusic();
 	delete dataFile;
