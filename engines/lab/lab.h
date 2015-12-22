@@ -87,7 +87,7 @@ struct CrumbData {
 #define MAX_CRUMBS          128
 
 typedef CloseData *CloseDataPtr;
-typedef Common::List<Rule *> RuleList;
+typedef Common::List<Rule> RuleList;
 
 // Direction defines
 #define NORTH   0
