@@ -68,7 +68,6 @@ Anim::Anim(LabEngine *vm) : _vm(vm) {
 	_doBlack = false;
 	_diffWidth = 0;
 	_diffHeight = 0;
-	_drawBitMap = _vm->_graphics->_dispBitMap;
 
 	for (int i = 0; i < 3 * 256; i++)
 		_diffPalette[i] = 0;
@@ -79,13 +78,14 @@ void Anim::diffNextFrame(bool onlyDiffData) {
 		// Already done.
 		return;
 
-	if (_vm->_graphics->_dispBitMap->_drawOnScreen)
-		_vm->_graphics->_dispBitMap->_planes[0] = _vm->_graphics->getCurrentDrawingBuffer();
+	BitMap *disp = _vm->_graphics->_dispBitMap;
+	if (disp->_drawOnScreen)
+		disp->_planes[0] = _vm->_graphics->getCurrentDrawingBuffer();
 
-	_vm->_graphics->_dispBitMap->_planes[1] = _vm->_graphics->_dispBitMap->_planes[0] + 0x10000;
-	_vm->_graphics->_dispBitMap->_planes[2] = _vm->_graphics->_dispBitMap->_planes[1] + 0x10000;
-	_vm->_graphics->_dispBitMap->_planes[3] = _vm->_graphics->_dispBitMap->_planes[2] + 0x10000;
-	_vm->_graphics->_dispBitMap->_planes[4] = _vm->_graphics->_dispBitMap->_planes[3] + 0x10000;
+	disp->_planes[1] = disp->_planes[0] + 0x10000;
+	disp->_planes[2] = disp->_planes[1] + 0x10000;
+	disp->_planes[3] = disp->_planes[2] + 0x10000;
+	disp->_planes[4] = disp->_planes[3] + 0x10000;
 
 	_vm->_event->mouseHide();
 
@@ -123,7 +123,7 @@ void Anim::diffNextFrame(bool onlyDiffData) {
 			_isAnim = (_frameNum >= 3) && (!_playOnce);
 			_curBit = 0;
 
-			if (_vm->_graphics->_dispBitMap->_drawOnScreen)
+			if (disp->_drawOnScreen)
 				_vm->_graphics->screenUpdate();
 
 			// done with the next frame.
@@ -145,14 +145,14 @@ void Anim::diffNextFrame(bool onlyDiffData) {
 		case 10:
 			if (onlyDiffData)
 				warning("Boom");
-			_diffFile->read(_drawBitMap->_planes[_curBit], _size);
+			_diffFile->read(disp->_planes[_curBit], _size);
 			_curBit++;
 			break;
 
 		case 11:
 			curPos = _diffFile->pos();
 			_diffFile->skip(4);
-			_vm->_utils->runLengthDecode(_drawBitMap->_planes[_curBit], _diffFile);
+			_vm->_utils->runLengthDecode(disp->_planes[_curBit], _diffFile);
 			_curBit++;
 			_diffFile->seek(curPos + _size, SEEK_SET);
 			break;
@@ -160,21 +160,21 @@ void Anim::diffNextFrame(bool onlyDiffData) {
 		case 12:
 			curPos = _diffFile->pos();
 			_diffFile->skip(4);
-			_vm->_utils->verticalRunLengthDecode(_drawBitMap->_planes[_curBit], _diffFile, _drawBitMap->_bytesPerRow);
+			_vm->_utils->verticalRunLengthDecode(disp->_planes[_curBit], _diffFile, disp->_bytesPerRow);
 			_curBit++;
 			_diffFile->seek(curPos + _size, SEEK_SET);
 			break;
 
 		case 20:
 			curPos = _diffFile->pos();
-			_vm->_utils->unDiff(_drawBitMap->_planes[_curBit], _vm->_graphics->_dispBitMap->_planes[_curBit], _diffFile, _drawBitMap->_bytesPerRow, false);
+			_vm->_utils->unDiff(disp->_planes[_curBit], disp->_planes[_curBit], _diffFile, disp->_bytesPerRow, false);
 			_curBit++;
 			_diffFile->seek(curPos + _size, SEEK_SET);
 			break;
 
 		case 21:
 			curPos = _diffFile->pos();
-			_vm->_utils->unDiff(_drawBitMap->_planes[_curBit], _vm->_graphics->_dispBitMap->_planes[_curBit], _diffFile, _drawBitMap->_bytesPerRow, true);
+			_vm->_utils->unDiff(disp->_planes[_curBit], disp->_planes[_curBit], _diffFile, disp->_bytesPerRow, true);
 			_curBit++;
 			_diffFile->seek(curPos + _size, SEEK_SET);
 			break;
@@ -214,7 +214,7 @@ void Anim::diffNextFrame(bool onlyDiffData) {
 						_vm->updateMusicAndEvents();
 						_vm->waitTOF();
 
-						if (_vm->_graphics->_dispBitMap->_drawOnScreen)
+						if (disp->_drawOnScreen)
 							didTOF = true;
 					}
 				}

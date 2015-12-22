@@ -71,7 +71,6 @@ private:
 	uint16 _sampleSpeed;
 	uint32 _diffWidth;
 	uint32 _diffHeight;
-	BitMap *_drawBitMap;
 
 public:
 	Anim(LabEngine *vm);
