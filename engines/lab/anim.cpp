@@ -188,9 +188,6 @@ void Anim::diffNextFrame(bool onlyDiffData) {
 			break;
 
 		case 25:
-			_curBit++;
-			break;
-
 		case 26:
 			_curBit++;
 			break;
