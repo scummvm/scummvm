@@ -4612,6 +4612,7 @@ STAGINGPATH=$_stagingpath
 WIN32PATH=$_win32path
 AMIGAOSPATH=$_amigaospath
 STATICLIBPATH=$_staticlibpath
+SDLCONFIG=$_sdlconfig
 
 ABI := $ABI
 
