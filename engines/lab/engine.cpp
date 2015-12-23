@@ -105,7 +105,7 @@ enum AltButtons {
 	kButtonFollowCrumbs
 };
 
-static char initcolors[] = { '\x00', '\x00', '\x00', '\x30',
+static char initColors[] = { '\x00', '\x00', '\x00', '\x30',
 							 '\x30', '\x30', '\x10', '\x10',
 							 '\x10', '\x14', '\x14', '\x14',
 							 '\x20', '\x20', '\x20', '\x24',
@@ -304,7 +304,7 @@ bool LabEngine::doUse(uint16 curInv) {
 		_curFileName = " ";
 		_closeDataPtr = nullptr;
 		doMap(_roomNum);
-		_graphics->setPalette(initcolors, 8);
+		_graphics->setPalette(initColors, 8);
 		_graphics->drawMessage(nullptr, false);
 		_graphics->drawPanel();
 		return true;
@@ -397,7 +397,7 @@ void LabEngine::mainGameLoop() {
 	bool forceDraw = false;
 	bool gotMessage = true;
 
-	_graphics->setPalette(initcolors, 8);
+	_graphics->setPalette(initColors, 8);
 
 	_closeDataPtr = nullptr;
 	_roomNum = 1;
@@ -928,7 +928,7 @@ void LabEngine::processAltButton(uint16 &curInv, uint16 &lastInv, uint16 buttonI
 
 		if (doit) {
 			_graphics->drawMessage("Disk operation failed.", false);
-			_graphics->setPalette(initcolors, 8);
+			_graphics->setPalette(initColors, 8);
 			_system->delayMillis(1000);
 		}
 		break;
