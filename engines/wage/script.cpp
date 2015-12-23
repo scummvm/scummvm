@@ -651,34 +651,38 @@ bool Script::eval(Operand *lhs, const char *op, Operand *rhs) {
 					return compare(lhs, rhs, comparators[cmp].cmp);
 		}
 
-#if 0
 		// Now, try partial matches.
+		Operand *c1, *c2;
 		for (int cmp = 0; comparators[cmp].op != 0; cmp++) {
-			if (comparators[cmp].op == op[0])
-				if (lhs->_typecomparators[cmp].o1 == lhs->_type)
-		}
+			if (comparators[cmp].op == op[0]) {
+				if (comparators[cmp].o1 == lhs->_type &&
+						(c2 = convertOperand(rhs, comparators[cmp].o2)) != NULL) {
+					bool res = compare(lhs, c2, comparators[cmp].cmp);
+					delete c2;
 
-		for (PairEvaluator e : handlers) {
-			Operand converted;
-			if (e.lhsType == o1.type && (converted = convertOperand(o2, e.rhsType)) != null) {
-				e.evaluatePair(o1, converted);
-				return;
-			} else if (e.rhsType == o2.type && (converted = convertOperand(o1, e.lhsType)) != null) {
-				e.evaluatePair(converted, o2);
-				return;
+					return res;
+				} else if (comparators[cmp].o2 == rhs->_type &&
+						(c1 = convertOperand(lhs, comparators[cmp].o1)) != NULL) {
+					bool res = compare(c1, rhs, comparators[cmp].cmp);
+					delete c1;
+					return res;
+				}
 			}
 		}
 
 		// Now, try double conversion.
-		for (PairEvaluator e : handlers) {
-			Operand c1, c2;
-			if ((c1 = convertOperand(o1, e.lhsType)) != null &&
-				(c2 = convertOperand(o2, e.rhsType)) != null) {
-				e.evaluatePair(c1, c2);
-				return;
+		for (int cmp = 0; comparators[cmp].op != 0; cmp++) {
+			if ((c1 = convertOperand(lhs, comparators[cmp].o1)) != NULL) {
+				if ((c2 = convertOperand(rhs, comparators[cmp].o2)) != NULL) {
+					bool res = compare(c1, c2, comparators[cmp].cmp);
+					delete c1;
+					delete c2;
+
+					return res;
+				}
+				delete c1;
 			}
 		}
-#endif
 	}
 
 	return false;
