@@ -1728,7 +1728,7 @@ if test "$have_gcc" = yes; then
 		# For the version reported in the configure log (cxx_version),
 		# we get the actual clang version.
 		cxx_version=`gcc_get_define __clang_version__`
-		cxx_version="`echo "${cxx_version}" | sed -e 's/"\([^ ]\+\) .*/\1/'`"
+		cxx_version="`echo "${cxx_version}" | sed -e 's/"\([^ ]*\) .*/\1/'`"
 		cxx_version="clang $cxx_version, ok"
 	elif test "$_cxx_major" -eq 2 && test "$_cxx_minor" -ge 95 || \
 	   test "$_cxx_major" -gt 2 ; then
