@@ -690,7 +690,7 @@ bool Script::eval(Operand *lhs, const char *op, Operand *rhs) {
 
 Script::Operand *Script::convertOperand(Operand *operand, int type) {
 	if (operand->_type == type)
-		return operand;
+		return new Operand(*operand);
 
 	if (type == SCENE) {
 		if (operand->_type == STRING || operand->_type == NUMBER) {
