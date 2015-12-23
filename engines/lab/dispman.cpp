@@ -996,6 +996,9 @@ void DisplayMan::scrollDisplayX(int16 dx, uint16 x1, uint16 y1, uint16 x2, uint1
 		setPen(0);
 		rectFill(x2 + dx + 1, y1, x2, y2);
 	}
+
+	// Prevent the Image destructor from deleting the external buffer
+	im._imageData = nullptr;
 }
 
 void DisplayMan::scrollDisplayY(int16 dy, uint16 x1, uint16 y1, uint16 x2, uint16 y2, byte *buffer) {
@@ -1027,6 +1030,9 @@ void DisplayMan::scrollDisplayY(int16 dy, uint16 x1, uint16 y1, uint16 x2, uint1
 		setPen(0);
 		rectFill(x1, y2 + dy + 1, x2, y2);
 	}
+
+	// Prevent the Image destructor from deleting the external buffer
+	im._imageData = nullptr;
 }
 
 uint16 DisplayMan::fadeNumIn(uint16 num, uint16 res, uint16 counter) {
