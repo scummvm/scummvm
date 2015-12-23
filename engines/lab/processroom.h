@@ -146,21 +146,21 @@ struct InventoryData {
 // Map Flags
 
 // Where the doors are; in a corridor, assumed to be left doors
-#define     NORTHDOOR        1L
-#define     EASTDOOR         2L
-#define     SOUTHDOOR        4L
-#define     WESTDOOR         8L
+#define     NORTHDOOR        1
+#define     EASTDOOR         2
+#define     SOUTHDOOR        4
+#define     WESTDOOR         8
 
 // Where the doors are in corridors; M means middle, R means right, B means bottom
-#define     NORTHMDOOR      16L
-#define     NORTHRDOOR      32L
-#define     SOUTHMDOOR      64L
-#define     SOUTHRDOOR     128L
+#define     NORTHMDOOR      16
+#define     NORTHRDOOR      32
+#define     SOUTHMDOOR      64
+#define     SOUTHRDOOR     128
 
-#define     EASTMDOOR       16L
-#define     EASTBDOOR       32L
-#define     WESTMDOOR       64L
-#define     WESTBDOOR      128L
+#define     EASTMDOOR       16
+#define     EASTBDOOR       32
+#define     WESTMDOOR       64
+#define     WESTBDOOR      128
 
 // Special Map ID's
 #define     NORMAL           0
