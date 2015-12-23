@@ -79,7 +79,7 @@ void DisplayMan::loadBackPict(const Common::String fileName, uint16 *highPal) {
 	_vm->_anim->_noPalChange = true;
 	readPict(fileName);
 
-	for (uint16 i = 0; i < 16; i++) {
+	for (int i = 0; i < 16; i++) {
 		highPal[i] = ((_vm->_anim->_diffPalette[i * 3] >> 2) << 8) +
 			((_vm->_anim->_diffPalette[i * 3 + 1] >> 2) << 4) +
 			((_vm->_anim->_diffPalette[i * 3 + 2] >> 2));
@@ -354,7 +354,7 @@ void DisplayMan::setUpScreens() {
 
 	// TODO: The CONTROL file is not present in the Amiga version
 	Common::File *controlFile = _vm->_resource->openDataFile("P:Control");
-	for (uint16 i = 0; i < 20; i++)
+	for (int i = 0; i < 20; i++)
 		_vm->_moveImages[i] = new Image(controlFile, _vm);
 	delete controlFile;
 
@@ -377,10 +377,10 @@ void DisplayMan::setUpScreens() {
 	// TODO: The INV file is not present in the Amiga version
 	Common::File *invFile = _vm->_resource->openDataFile("P:Inv");
 	if (_vm->getPlatform() == Common::kPlatformWindows) {
-		for (uint16 imgIdx = 0; imgIdx < 10; imgIdx++)
+		for (int imgIdx = 0; imgIdx < 10; imgIdx++)
 			_vm->_invImages[imgIdx] = new Image(invFile, _vm);
 	} else {
-		for (uint16 imgIdx = 0; imgIdx < 6; imgIdx++)
+		for (int imgIdx = 0; imgIdx < 6; imgIdx++)
 			_vm->_invImages[imgIdx] = new Image(invFile, _vm);
 	}
 	invButtonList->push_back(e->createButton( 24, y, 0,          'm', invImages[0],   invImages[1]));
@@ -475,7 +475,7 @@ void DisplayMan::setAmigaPal(uint16 *pal, uint16 numColors) {
 	if (numColors > 16)
 		numColors = 16;
 
-	for (uint16 i = 0; i < numColors; i++) {
+	for (int i = 0; i < numColors; i++) {
 		vgaPal[vgaIdx++] = (byte)(((pal[i] & 0xf00) >> 8) << 2);
 		vgaPal[vgaIdx++] = (byte)(((pal[i] & 0x0f0) >> 4) << 2);
 		vgaPal[vgaIdx++] = (byte)(((pal[i] & 0x00f)) << 2);
@@ -556,7 +556,7 @@ uint16 DisplayMan::textLength(TextFont *font, const Common::String text) {
 
 	if (font) {
 		int numChars = text.size();
-		for (uint16 i = 0; i < numChars; i++) {
+		for (int i = 0; i < numChars; i++) {
 			length += font->_widths[(byte)text[i]];
 		}
 	}
@@ -572,7 +572,7 @@ void DisplayMan::drawText(TextFont *tf, uint16 x, uint16 y, uint16 color, const 
 	byte *vgaTop = getCurrentDrawingBuffer();
 	int numChars = text.size();
 
-	for (uint16 i = 0; i < numChars; i++) {
+	for (int i = 0; i < numChars; i++) {
 		uint32 realOffset = (_screenWidth * y) + x;
 		uint16 curPage    = realOffset / _screenBytesPerPage;
 		uint32 segmentOffset = realOffset - (curPage * _screenBytesPerPage);
@@ -585,12 +585,12 @@ void DisplayMan::drawText(TextFont *tf, uint16 x, uint16 y, uint16 color, const 
 			byte *vgaTemp = vgaCur;
 			byte *vgaTempLine = vgaCur;
 
-			for (uint16 rows = 0; rows < tf->_height; rows++) {
+			for (int rows = 0; rows < tf->_height; rows++) {
 				int32 templeft = leftInSegment;
 
 				vgaTemp = vgaTempLine;
 
-				for (uint16 cols = 0; cols < bwidth; cols++) {
+				for (int cols = 0; cols < bwidth; cols++) {
 					uint16 data = *cdata++;
 
 					if (data && (templeft >= 8)) {
@@ -605,7 +605,7 @@ void DisplayMan::drawText(TextFont *tf, uint16 x, uint16 y, uint16 color, const 
 						uint16 mask = 0x80;
 						templeft = leftInSegment;
 
-						for (uint16 counterb = 0; counterb < 8; counterb++) {
+						for (int counterb = 0; counterb < 8; counterb++) {
 							if (templeft <= 0) {
 								curPage++;
 								vgaTemp = (byte *)(vgaTop - templeft);
@@ -785,8 +785,8 @@ void DisplayMan::doTransWipe(CloseDataPtr *closePtrList, const Common::String fi
 
 	uint16 linesDone = 0;
 
-	for (uint16 j = 0; j < 2; j++) {
-		for (uint16 i = 0; i < 2; i++) {
+	for (int j = 0; j < 2; j++) {
+		for (int i = 0; i < 2; i++) {
 			uint16 curY = i * 2;
 
 			while (curY < lastY) {
@@ -830,8 +830,8 @@ void DisplayMan::doTransWipe(CloseDataPtr *closePtrList, const Common::String fi
 	imDest._height = _screenHeight;
 	imDest._imageData = getCurrentDrawingBuffer();
 
-	for (uint16 j = 0; j < 2; j++) {
-		for (uint16 i = 0; i < 2; i++) {
+	for (int j = 0; j < 2; j++) {
+		for (int i = 0; i < 2; i++) {
 			uint16 curY = i * 2;
 
 			while (curY < lastY) {
@@ -987,8 +987,8 @@ uint16 DisplayMan::fadeNumOut(uint16 num, uint16 res, uint16 counter) {
 void DisplayMan::fade(bool fadeIn, uint16 res) {
 	uint16 newPal[16];
 
-	for (uint16 i = 0; i < 16; i++) {
-		for (uint16 palIdx = 0; palIdx < 16; palIdx++) {
+	for (int i = 0; i < 16; i++) {
+		for (int palIdx = 0; palIdx < 16; palIdx++) {
 			if (fadeIn)
 				newPal[palIdx] = (0x00F & fadeNumIn(0x00F & _fadePalette[palIdx], 0x00F & res, i)) +
 				(0x0F0 & fadeNumIn(0x0F0 & _fadePalette[palIdx], 0x0F0 & res, i)) +

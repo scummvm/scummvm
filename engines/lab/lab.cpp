@@ -139,7 +139,7 @@ LabEngine::~LabEngine() {
 	DebugMan.clearAllDebugChannels();
 
 	freeMapData();
-	for (uint16 i = 1; i <= _manyRooms; i++)
+	for (int i = 1; i <= _manyRooms; i++)
 		_resource->freeViews(i);
 	delete[] _rooms;
 	delete[] _inventory;

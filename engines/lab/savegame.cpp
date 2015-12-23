@@ -174,17 +174,17 @@ bool LabEngine::loadGame(int slot) {
 	setQuarters(file->readUint16LE());
 
 	// Conditions
-	for (uint16 i = 0; i < _conditions->_lastElement / (8 * 2); i++)
+	for (int i = 0; i < _conditions->_lastElement / (8 * 2); i++)
 		_conditions->_array[i] = file->readUint16LE();
 
 	// Rooms found
-	for (uint16 i = 0; i < _roomsFound->_lastElement / (8 * 2); i++)
+	for (int i = 0; i < _roomsFound->_lastElement / (8 * 2); i++)
 		_roomsFound->_array[i] = file->readUint16LE();
 
 	_tilePuzzle->load(file);
 
 	// Breadcrumbs
-	for (uint16 i = 0; i < 128; i++) {
+	for (int i = 0; i < 128; i++) {
 		_breadCrumbs[i]._roomNum = file->readUint16LE();
 		_breadCrumbs[i]._direction = file->readUint16LE();
 	}
@@ -192,7 +192,7 @@ bool LabEngine::loadGame(int slot) {
 	_droppingCrumbs = (_breadCrumbs[0]._roomNum != 0);
 	_followingCrumbs = false;
 
-	for (uint16 i = 0; i < 128; i++) {
+	for (int i = 0; i < 128; i++) {
 		if (_breadCrumbs[i]._roomNum == 0)
 			break;
 		_numCrumbs = i;

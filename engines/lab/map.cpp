@@ -299,7 +299,7 @@ void LabEngine::drawRoomMap(uint16 curRoom, bool drawMarkFl) {
 }
 
 bool LabEngine::floorVisited(uint16 floorNum) {
-	for (uint16 i = 0; i < _maxRooms; i++) {
+	for (int i = 0; i < _maxRooms; i++) {
 		if ((_maps[i]._pageNumber == floorNum) && _roomsFound->in(i) && _maps[i]._x)
 			return true;
 	}
@@ -311,7 +311,7 @@ uint16 LabEngine::getUpperFloor(uint16 floorNum) {
 	if ((floorNum == kFloorCarnival) || (floorNum == kFloorNone))
 		return kFloorNone;
 
-	for (uint16 i = floorNum; i < kFloorCarnival; i++)
+	for (int i = floorNum; i < kFloorCarnival; i++)
 		if (floorVisited(i + 1))
 			return i + 1;
 
@@ -322,7 +322,7 @@ uint16 LabEngine::getLowerFloor(uint16 floorNum) {
 	if ((floorNum == kFloorLower) || (floorNum == kFloorNone))
 		return kFloorNone;
 
-	for (uint16 i = floorNum; i > kFloorLower; i--)
+	for (int i = floorNum; i > kFloorLower; i--)
 		if (floorVisited(i - 1))
 			return i - 1;
 
@@ -341,7 +341,7 @@ void LabEngine::drawMap(uint16 curRoom, uint16 curMsg, uint16 floorNum, bool fad
 	_imgMap->drawImage(0, 0);
 	_event->drawButtonList(&_mapButtonList);
 
-	for (uint16 i = 1; i <= _maxRooms; i++) {
+	for (int i = 1; i <= _maxRooms; i++) {
 		if ((_maps[i]._pageNumber == floorNum) && _roomsFound->in(i) && _maps[i]._x) {
 			drawRoomMap(i, (bool)(i == curRoom));
 			updateMusicAndEvents();
@@ -499,7 +499,7 @@ void LabEngine::processMap(uint16 curRoom) {
 					uint16 oldMsg = curMsg;
 					Common::Rect curCoords;
 
-					for (uint16 i = 1; i <= _maxRooms; i++) {
+					for (int i = 1; i <= _maxRooms; i++) {
 						curCoords = roomCoords(i);
 
 						if ((_maps[i]._pageNumber == curFloor)

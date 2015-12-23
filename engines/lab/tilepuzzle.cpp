@@ -315,7 +315,7 @@ void TilePuzzle::changeCombination(uint16 number) {
 
 	byte *buffer = new byte[_tiles[1]->_width * _tiles[1]->_height * 2];
 
-	for (uint16 i = 1; i <= (_numberImages[combnum]->_height / 2); i++) {
+	for (int i = 1; i <= (_numberImages[combnum]->_height / 2); i++) {
 		if (_vm->_isHiRes) {
 			if (i & 1)
 				_vm->waitTOF();
@@ -362,7 +362,7 @@ void TilePuzzle::showCombination(const Common::String filename) {
 
 	Common::File *numFile = _vm->_resource->openDataFile("P:Numbers");
 
-	for (uint16 CurBit = 0; CurBit < 10; CurBit++)
+	for (int CurBit = 0; CurBit < 10; CurBit++)
 		_numberImages[CurBit] = new Image(numFile, _vm);
 
 	delete numFile;

@@ -144,12 +144,12 @@ void LabEngine::drawRoomMessage(uint16 curInv, CloseDataPtr closePtr) {
 }
 
 void LabEngine::freeScreens() {
-	for (uint16 i = 0; i < 20; i++) {
+	for (int i = 0; i < 20; i++) {
 		delete _moveImages[i];
 		_moveImages[i] = nullptr;
 	}
 
-	for (uint16 imgIdx = 0; imgIdx < 10; imgIdx++) {
+	for (int imgIdx = 0; imgIdx < 10; imgIdx++) {
 		delete _invImages[imgIdx];
 		_invImages[imgIdx] = nullptr;
 	}
@@ -550,7 +550,7 @@ void LabEngine::showLab2Teaser() {
 	_graphics->blackAllScreen();
 	_graphics->readPict("P:End/L2In.1");
 
-	for (uint16 i = 0; i < 120; i++) {
+	for (int i = 0; i < 120; i++) {
 		updateMusicAndEvents();
 		waitTOF();
 	}

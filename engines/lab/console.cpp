@@ -107,7 +107,7 @@ bool Console::Cmd_FindAction(int argc, const char **argv) {
 	int param2 = (argc > 3) ? atoi(argv[3]) : -1;
 	int param3 = (argc > 4) ? atoi(argv[4]) : -1;
 
-	for (uint16 i = 1; i <= _vm->_manyRooms; i++) {
+	for (int i = 1; i <= _vm->_manyRooms; i++) {
 		_vm->_resource->readViews(i);
 
 		for (RuleList::iterator rule = _vm->_rooms[i]._rules->begin(); rule != _vm->_rooms[i]._rules->end(); ++rule) {

@@ -319,7 +319,7 @@ void LabEngine::drawMonText(char *text, TextFont *monitorFont, Common::Rect text
 		_graphics->setPen(0);
 		_graphics->rectFill(0, 0, _graphics->_screenWidth - 1, textRect.bottom);
 
-		for (uint16 i = 0; i < numlines; i++)
+		for (int i = 0; i < numlines; i++)
 			_monitorButton->drawImage(0, i * _monitorButtonHeight);
 	} else if (isinteractive) {
 		_graphics->setPen(0);
