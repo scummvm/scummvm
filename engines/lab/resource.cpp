@@ -257,22 +257,17 @@ int16 *Resource::readConditions(Common::File *file) {
 }
 
 RuleList *Resource::readRule(Common::File *file) {
-	char c;
 	RuleList *rules = new RuleList();
 
-	do {
-		c = file->readByte();
-
-		if (c == 1) {
-			Rule rule;
-			rule._ruleType = (RuleType)file->readSint16LE();
-			rule._param1 = file->readSint16LE();
-			rule._param2 = file->readSint16LE();
-			rule._condition = readConditions(file);
-			rule._actionList = readAction(file);
-			rules->push_back(rule);
-		}
-	} while (c == 1);
+	while (file->readByte() == 1) {
+		Rule rule;
+		rule._ruleType = (RuleType)file->readSint16LE();
+		rule._param1 = file->readSint16LE();
+		rule._param2 = file->readSint16LE();
+		rule._condition = readConditions(file);
+		rule._actionList = readAction(file);
+		rules->push_back(rule);
+	}
 
 	return rules;
 }
@@ -291,39 +286,34 @@ void Resource::freeRule(RuleList *ruleList) {
 }
 
 Action *Resource::readAction(Common::File *file) {
-	char c;
 	Action *action = nullptr;
 	Action *prev = nullptr;
 	Action *head = nullptr;
 
-	do {
-		c = file->readByte();
+	while (file->readByte() == 1) {
+		action = new Action();
+		if (!head)
+			head = action;
+		if (prev)
+			prev->_nextAction = action;
+		action->_actionType = (ActionType)file->readSint16LE();
+		action->_param1 = file->readSint16LE();
+		action->_param2 = file->readSint16LE();
+		action->_param3 = file->readSint16LE();
 
-		if (c == 1) {
-			action = new Action();
-			if (!head)
-				head = action;
-			if (prev)
-				prev->_nextAction = action;
-			action->_actionType = (ActionType)file->readSint16LE();
-			action->_param1 = file->readSint16LE();
-			action->_param2 = file->readSint16LE();
-			action->_param3 = file->readSint16LE();
+		if (action->_actionType == kActionShowMessages) {
+			action->_messages = new Common::String[action->_param1];
 
-			if (action->_actionType == kActionShowMessages) {
-				action->_messages = new Common::String[action->_param1];
-
-				for (int i = 0; i < action->_param1; i++)
-					action->_messages[i] = readString(file);
-			} else {
-				action->_messages = new Common::String[1];
-				action->_messages[0] = readString(file);
-			}
-
-			action->_nextAction = nullptr;
-			prev = action;
+			for (int i = 0; i < action->_param1; i++)
+				action->_messages[i] = readString(file);
+		} else {
+			action->_messages = new Common::String[1];
+			action->_messages[0] = readString(file);
 		}
-	} while (c == 1);
+
+		action->_nextAction = nullptr;
+		prev = action;
+	}
 
 	return head;
 }
@@ -338,33 +328,28 @@ void Resource::freeAction(Action *action) {
 }
 
 CloseData *Resource::readCloseUps(uint16 depth, Common::File *file) {
-	char c;
 	CloseData *closeup = nullptr;
 	CloseData *prev = nullptr;
 	CloseData *head = nullptr;
 
-	do {
-		c = file->readByte();
-
-		if (c != '\0') {
-			closeup = new CloseData();
-			if (!head)
-				head = closeup;
-			if (prev)
-				prev->_nextCloseUp = closeup;
-			closeup->_x1 = file->readUint16LE();
-			closeup->_y1 = file->readUint16LE();
-			closeup->_x2 = file->readUint16LE();
-			closeup->_y2 = file->readUint16LE();
-			closeup->_closeUpType = file->readSint16LE();
-			closeup->_depth = depth;
-			closeup->_graphicName = readString(file);
-			closeup->_message = readString(file);
-			closeup->_subCloseUps = readCloseUps(depth + 1, file);
-			closeup->_nextCloseUp = nullptr;
-			prev = closeup;
-		}
-	} while (c != '\0');
+	while (file->readByte() != '\0') {
+		closeup = new CloseData();
+		if (!head)
+			head = closeup;
+		if (prev)
+			prev->_nextCloseUp = closeup;
+		closeup->_x1 = file->readUint16LE();
+		closeup->_y1 = file->readUint16LE();
+		closeup->_x2 = file->readUint16LE();
+		closeup->_y2 = file->readUint16LE();
+		closeup->_closeUpType = file->readSint16LE();
+		closeup->_depth = depth;
+		closeup->_graphicName = readString(file);
+		closeup->_message = readString(file);
+		closeup->_subCloseUps = readCloseUps(depth + 1, file);
+		closeup->_nextCloseUp = nullptr;
+		prev = closeup;
+	}
 
 	return head;
 }
@@ -379,27 +364,22 @@ void Resource::freeCloseUps(CloseData *closeUps) {
 }
 
 ViewData *Resource::readView(Common::File *file) {
-	char c;
 	ViewData *view = nullptr;
 	ViewData *prev = nullptr;
 	ViewData *head = nullptr;
 
-	do {
-		c = file->readByte();
-
-		if (c == 1) {
-			view = new ViewData();
-			if (!head)
-				head = view;
-			if (prev)
-				prev->_nextCondition = view;
-			view->_condition = readConditions(file);
-			view->_graphicName = readString(file);
-			view->_closeUps = readCloseUps(0, file);
-			view->_nextCondition = nullptr;
-			prev = view;
-		}
-	} while (c == 1);
+	while (file->readByte() == 1) {
+		view = new ViewData();
+		if (!head)
+			head = view;
+		if (prev)
+			prev->_nextCondition = view;
+		view->_condition = readConditions(file);
+		view->_graphicName = readString(file);
+		view->_closeUps = readCloseUps(0, file);
+		view->_nextCondition = nullptr;
+		prev = view;
+	}
 
 	return head;
 }
