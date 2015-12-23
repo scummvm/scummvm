@@ -74,13 +74,14 @@ private:
 
 public:
 	Anim(LabEngine *vm);
+	virtual ~Anim();
 
 	DIFFHeader _headerdata;
 	char _diffPalette[256 * 3];
 	bool _waitForEffect; // Wait for each sound effect to finish before continuing.
 	bool _doBlack;       // Black the screen before new picture
 	bool _noPalChange;   // Don't change the palette.
-	BitMap _rawDiffBM;
+	byte *_scrollScreenBuffer;
 
 	/**
 	 * Reads in a DIFF file.

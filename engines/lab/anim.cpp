@@ -58,10 +58,7 @@ Anim::Anim(LabEngine *vm) : _vm(vm) {
 	_diffFile = nullptr;
 	_diffFileStart = 0;
 	_size = 0;
-	_rawDiffBM._bytesPerRow = 0;
-	_rawDiffBM._drawOnScreen = false;
-	for (int i = 0; i < 16; i++)
-		_rawDiffBM._planes[i] = nullptr;
+	_scrollScreenBuffer = nullptr;
 	_waitForEffect = false;
 	_stopPlayingEnd = false;
 	_sampleSpeed = 0;
@@ -71,6 +68,11 @@ Anim::Anim(LabEngine *vm) : _vm(vm) {
 
 	for (int i = 0; i < 3 * 256; i++)
 		_diffPalette[i] = 0;
+}
+
+Anim::~Anim() {
+	delete[] _vm->_anim->_scrollScreenBuffer;
+	_vm->_anim->_scrollScreenBuffer = nullptr;
 }
 
 void Anim::diffNextFrame(bool onlyDiffData) {
@@ -143,9 +145,15 @@ void Anim::diffNextFrame(bool onlyDiffData) {
 			break;
 
 		case 10:
-			if (onlyDiffData)
-				warning("Boom");
-			_diffFile->read(disp->_planes[_curBit], _size);
+			if (onlyDiffData) {
+				if (_curBit > 0)
+					error("diffNextFrame: attempt to read screen to non-zero plane (%d)", _curBit);
+				delete[] _scrollScreenBuffer;
+				_scrollScreenBuffer = new byte[_headerdata._width * _headerdata._height];
+				_diffFile->read(_scrollScreenBuffer, _size);
+			} else {
+				_diffFile->read(disp->_planes[_curBit], _size);
+			}
 			_curBit++;
 			break;
 
@@ -325,8 +333,8 @@ void Anim::readDiff(Common::File *diffFile, bool playOnce, bool onlyDiffData) {
 
 	assert(_numChunks < 16);
 
-	for (int i = 0; i < 8; i++)
-		_rawDiffBM._planes[i] = nullptr;
+	delete[] _scrollScreenBuffer;
+	_scrollScreenBuffer = nullptr;
 
 	if (_headerdata._fps)
 		_delayMicros = 1000 / _headerdata._fps;
