@@ -39,8 +39,8 @@ enum ActionType {
 	kActionShowDiff = 3,
 	kActionShowDiffLooping = 4,
 	kActionLoadDiff = 5,
-	kActionLoadBitmap = 6,	// unused?
-	kActionShowBitmap = 7,	// unused?
+	kActionLoadBitmap = 6,	// unused
+	kActionShowBitmap = 7,	// unused
 	kActionTransition = 8,
 	kActionNoUpdate = 9,
 	kActionForceUpdate = 10,
@@ -65,7 +65,7 @@ enum ActionType {
 	kActionClearSound = 29,
 	kActionWinMusic = 30,
 	kActionWinGame = 31,
-	kActionLostGame = 32,
+	kActionLostGame = 32,	// unused
 	kActionResetBuffer = 33,
 	kActionSpecialCmd = 34,
 	kActionCShowMessage = 35,

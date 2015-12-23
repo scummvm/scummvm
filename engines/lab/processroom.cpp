@@ -267,6 +267,12 @@ void LabEngine::doActions(Action *actionList, CloseDataPtr *closePtrList) {
 				_graphics->loadPict(actionList->_messages[0]);
 
 			break;
+		
+		case kActionLoadBitmap:
+			error("Unused opcode kActionLoadBitmap has been called");
+
+		case kActionShowBitmap:
+			error("Unused opcode kActionShowBitmap has been called");
 
 		case kActionTransition:
 			_graphics->doTransition((TransitionType)actionList->_param1, closePtrList, actionList->_messages[0].c_str());
@@ -426,9 +432,7 @@ void LabEngine::doActions(Action *actionList, CloseDataPtr *closePtrList) {
 			break;
 
 		case kActionLostGame:
-			// This seems to be unused?
-			error("Unused opcode LOSTGAME has been called");
-			break;
+			error("Unused opcode kActionLostGame has been called");
 
 		case kActionResetBuffer:
 			_graphics->freePict();
