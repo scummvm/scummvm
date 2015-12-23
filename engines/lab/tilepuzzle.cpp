@@ -327,6 +327,9 @@ void TilePuzzle::changeCombination(uint16 number) {
 		_numberImages[combnum]->blitBitmap(0, (_numberImages[combnum])->_height - (2 * i), &(display), _vm->_utils->vgaScaleX(COMBINATION_X[number]), _vm->_utils->vgaScaleY(65), (_numberImages[combnum])->_width, 2, false);
 	}
 
+	// Prevent the Image destructor from deleting the display buffer
+	display._imageData = nullptr;
+
 	delete[] buffer;
 
 	bool unlocked = true;

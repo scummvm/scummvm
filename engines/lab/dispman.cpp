@@ -853,7 +853,10 @@ void DisplayMan::doTransWipe(CloseDataPtr *closePtrList, const Common::String fi
 		}	// for i
 	}	// for j
 
-	delete[] bitMapBuffer;
+	// Prevent the Image destructor from deleting the drawing buffer
+	imDest._imageData = nullptr;
+
+	// bitMapBuffer will be deleted by the Image destructor
 }
 
 void DisplayMan::doTransition(TransitionType transitionType, CloseDataPtr *closePtrList, const Common::String filename) {
