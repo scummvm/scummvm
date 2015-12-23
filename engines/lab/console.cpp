@@ -98,7 +98,7 @@ bool Console::Cmd_DumpSceneResources(int argc, const char **argv) {
 
 bool Console::Cmd_FindAction(int argc, const char **argv) {
 	if (argc < 2) {
-		debugPrintf("Usage: %s <action id> [param 1] [param 2]\n", argv[0]);
+		debugPrintf("Usage: %s <action id> [param 1] [param 2] [param 3]\n", argv[0]);
 		return true;
 	}
 
