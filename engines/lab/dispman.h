@@ -234,7 +234,7 @@ public:
 	/**
 	 * Overlays a region on the screen using the desired pen color.
 	 */
-	void overlayRect(uint16 penColor, uint16 x1, uint16 y1, uint16 x2, uint16 y2);
+	void checkerboardEffect(uint16 penColor, uint16 x1, uint16 y1, uint16 x2, uint16 y2);
 
 	/**
 	 * Returns the base address of the current VGA display.

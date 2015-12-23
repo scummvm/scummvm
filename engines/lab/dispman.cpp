@@ -504,7 +504,7 @@ byte *DisplayMan::getCurrentDrawingBuffer() {
 	return _displayBuffer;
 }
 
-void DisplayMan::overlayRect(uint16 penColor, uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
+void DisplayMan::checkerboardEffect(uint16 penColor, uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
 	int w = x2 - x1 + 1;
 	int h = y2 - y1 + 1;
 
@@ -794,7 +794,7 @@ void DisplayMan::doTransWipe(CloseDataPtr *closePtrList, const Common::String fi
 				}
 
 				if (j == 9)
-					overlayRect(0, 0, curY, _screenWidth - 1, curY + 1);
+					checkerboardEffect(0, 0, curY, _screenWidth - 1, curY + 1);
 				else
 					rectFill(0, curY, _screenWidth - 1, curY + 1);
 				curY += 4;
@@ -842,7 +842,7 @@ void DisplayMan::doTransWipe(CloseDataPtr *closePtrList, const Common::String fi
 
 				if (j == 0) {
 					imSource.blitBitmap(0, curY, &imDest, 0, curY, _screenWidth, 2, false);
-					overlayRect(0, 0, curY, _screenWidth - 1, curY + 1);
+					checkerboardEffect(0, 0, curY, _screenWidth - 1, curY + 1);
 				} else {
 					uint16 bitmapHeight = (curY == lastY) ? 1 : 2;
 					imSource.blitBitmap(0, curY, &imDest, 0, curY, _screenWidth, bitmapHeight, false);
