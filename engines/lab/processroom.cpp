@@ -132,7 +132,7 @@ Common::String LabEngine::getPictName(CloseDataPtr *closePtrList) {
 
 void LabEngine::drawDirection(CloseDataPtr closePtr) {
 	if (closePtr && !closePtr->_message.empty()) {
-		_graphics->drawMessage(closePtr->_message);
+		_graphics->drawMessage(closePtr->_message, false);
 		return;
 	}
 
@@ -150,7 +150,7 @@ void LabEngine::drawDirection(CloseDataPtr closePtr) {
 	else if (_direction == WEST)
 		message += _resource->getStaticText(kTextFacingWest);
 
-	_graphics->drawMessage(message);
+	_graphics->drawMessage(message, false);
 }
 
 uint16 LabEngine::processArrow(uint16 curDirection, uint16 arrow) {
@@ -304,18 +304,18 @@ void LabEngine::doActions(Action *actionList, CloseDataPtr *closePtrList) {
 
 		case kActionShowMessage:
 			if (_graphics->_longWinInFront)
-				_graphics->longDrawMessage(actionList->_messages[0]);
+				_graphics->longDrawMessage(actionList->_messages[0], true);
 			else
-				_graphics->drawMessage(actionList->_messages[0]);
+				_graphics->drawMessage(actionList->_messages[0], true);
 			break;
 
 		case kActionCShowMessage:
 			if (!*closePtrList)
-				_graphics->drawMessage(actionList->_messages[0]);
+				_graphics->drawMessage(actionList->_messages[0], true);
 			break;
 
 		case kActionShowMessages:
-			_graphics->drawMessage(actionList->_messages[_utils->getRandom(actionList->_param1)]);
+			_graphics->drawMessage(actionList->_messages[_utils->getRandom(actionList->_param1)], true);
 			break;
 
 		case kActionChangeRoom:
@@ -363,11 +363,7 @@ void LabEngine::doActions(Action *actionList, CloseDataPtr *closePtrList) {
 			break;
 
 		case kActionShowDir:
-			// Originally, this set _doNotDrawMessage to false, so that the
-			// message would be shown by drawMessage(). However, _doNotDrawMEssage
-			// ended up hiding subsequent game messages, so this call is actually
-			// a nasty hack, and has been removed in ScummVM without any notable
-			// side-effects.
+			_graphics->setActionMessage(false);
 			break;
 
 		case kActionWaitSecs: {

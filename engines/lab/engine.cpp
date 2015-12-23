@@ -133,9 +133,9 @@ void LabEngine::drawRoomMessage(uint16 curInv, CloseDataPtr closePtr) {
 				drawStaticMessage(kTextkLampOn);
 			else if (_inventory[curInv]._quantity > 1) {
 				Common::String roomMessage = _inventory[curInv]._name + "  (" + Common::String::format("%d", _inventory[curInv]._quantity) + ")";
-				_graphics->drawMessage(roomMessage.c_str());
+				_graphics->drawMessage(roomMessage.c_str(), false);
 			} else
-				_graphics->drawMessage(_inventory[curInv]._name.c_str());
+				_graphics->drawMessage(_inventory[curInv]._name.c_str(), false);
 		}
 	} else
 		drawDirection(closePtr);
@@ -305,7 +305,7 @@ bool LabEngine::doUse(uint16 curInv) {
 		_closeDataPtr = nullptr;
 		doMap(_roomNum);
 		_graphics->setPalette(initcolors, 8);
-		_graphics->drawMessage(nullptr);
+		_graphics->drawMessage(nullptr, false);
 		_graphics->drawPanel();
 		return true;
 	case kItemJournal:
@@ -316,7 +316,7 @@ bool LabEngine::doUse(uint16 curInv) {
 		_closeDataPtr = nullptr;
 		doJournal();
 		_graphics->drawPanel();
-		_graphics->drawMessage(nullptr);
+		_graphics->drawMessage(nullptr, false);
 		return true;
 	case kItemLamp:
 		interfaceOff();
@@ -718,7 +718,7 @@ bool LabEngine::processKey(IntuiMessage *curMsg, uint32 &msgClass, uint16 &quali
 		}
 	} else if ((code == Common::KEYCODE_x) || (code == Common::KEYCODE_q)) {
 		// Quit?
-		_graphics->drawMessage("Do you want to quit? (Y/N)");
+		_graphics->drawMessage("Do you want to quit? (Y/N)", false);
 		eatMessages();
 		interfaceOff();
 
@@ -927,7 +927,7 @@ void LabEngine::processAltButton(uint16 &curInv, uint16 &lastInv, uint16 buttonI
 		_graphics->drawPanel();
 
 		if (doit) {
-			_graphics->drawMessage("Disk operation failed.");
+			_graphics->drawMessage("Disk operation failed.", false);
 			_graphics->setPalette(initcolors, 8);
 			g_system->delayMillis(1000);
 		}

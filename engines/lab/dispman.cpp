@@ -45,6 +45,7 @@ namespace Lab {
 DisplayMan::DisplayMan(LabEngine *vm) : _vm(vm) {
 	_longWinInFront = false;
 	_lastMessageLong = false;
+	_actionMessageShown = false;
 
 	_screenBytesPerPage = 65536;
 	_curPen = 0;
@@ -229,7 +230,14 @@ void DisplayMan::createBox(uint16 y2) {
 	drawVLine(_vm->_utils->vgaScaleX(2), _vm->_utils->vgaScaleY(152), _vm->_utils->vgaScaleY(y2));
 }
 
-int DisplayMan::longDrawMessage(Common::String str) {
+int DisplayMan::longDrawMessage(Common::String str, bool isActionMessage) {
+	if (isActionMessage) {
+		_actionMessageShown = true;
+	} else if (_actionMessageShown) {
+		_actionMessageShown = false;
+		return 0;
+	}
+
 	if (str.empty())
 		return 0;
 
@@ -249,12 +257,19 @@ int DisplayMan::longDrawMessage(Common::String str) {
 	return flowText(_vm->_msgFont, 0, 1, 7, false, true, true, true, _vm->_utils->vgaRectScale(6, 155, 313, 195), str.c_str());
 }
 
-void DisplayMan::drawMessage(Common::String str) {
+void DisplayMan::drawMessage(Common::String str, bool isActionMessage) {
+	if (isActionMessage) {
+		_actionMessageShown = true;
+	} else if (_actionMessageShown) {
+		_actionMessageShown = false;
+		return;
+	}
+
 	if (str.empty())
 		return;
 
 	if ((textLength(_vm->_msgFont, str) > _vm->_utils->vgaScaleX(306))) {
-		longDrawMessage(str);
+		longDrawMessage(str, isActionMessage);
 		_lastMessageLong = true;
 	} else {
 		if (_longWinInFront) {
