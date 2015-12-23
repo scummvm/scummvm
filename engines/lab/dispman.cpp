@@ -486,7 +486,7 @@ void DisplayMan::writeColorRegs(byte *buf, uint16 first, uint16 numReg) {
 	byte tmp[256 * 3];
 
 	for (int i = 0; i < 256 * 3; i++)
-		tmp[i] = buf[i] * 4;
+		tmp[i] = (buf[i] << 2) | (buf[i] >> 4);	// better results than buf[i] * 4
 
 	_vm->_system->getPaletteManager()->setPalette(tmp, first, numReg);
 	memcpy(&(_curvgapal[first * 3]), buf, numReg * 3);
