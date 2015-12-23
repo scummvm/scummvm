@@ -213,10 +213,10 @@ public:
 	void createScreen(bool hiRes);
 
 	/**
-	 * Converts an Amiga palette (up to 16 colors) to a VGA palette, then sets
+	 * Converts a 16-color Amiga palette to a VGA palette, then sets
 	 * the VGA palette.
 	 */
-	void setAmigaPal(uint16 *pal, uint16 numColors);
+	void setAmigaPal(uint16 *pal);
 
 	/**
 	 * Writes any number of the 256 color registers.

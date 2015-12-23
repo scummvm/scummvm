@@ -468,14 +468,11 @@ void DisplayMan::createScreen(bool hiRes) {
 	_displayBuffer = new byte[_screenBytesPerPage];
 }
 
-void DisplayMan::setAmigaPal(uint16 *pal, uint16 numColors) {
+void DisplayMan::setAmigaPal(uint16 *pal) {
 	byte vgaPal[16 * 3];
 	uint16 vgaIdx = 0;
 
-	if (numColors > 16)
-		numColors = 16;
-
-	for (int i = 0; i < numColors; i++) {
+	for (int i = 0; i < 16; i++) {
 		vgaPal[vgaIdx++] = (byte)(((pal[i] & 0xf00) >> 8) << 2);
 		vgaPal[vgaIdx++] = (byte)(((pal[i] & 0x0f0) >> 4) << 2);
 		vgaPal[vgaIdx++] = (byte)(((pal[i] & 0x00f)) << 2);
@@ -999,7 +996,7 @@ void DisplayMan::fade(bool fadeIn, uint16 res) {
 				(0xF00 & fadeNumOut(0xF00 & _fadePalette[palIdx], 0xF00 & res, i));
 		}
 
-		setAmigaPal(newPal, 16);
+		setAmigaPal(newPal);
 		_vm->waitTOF();
 		_vm->updateMusicAndEvents();
 	}
