@@ -283,7 +283,7 @@ void Intro::introSequence() {
 
 		palette[15] = temp;
 
-		_vm->_graphics->setAmigaPal(palette, 16);
+		_vm->_graphics->setAmigaPal(palette);
 		_vm->waitTOF();
 	}
 
