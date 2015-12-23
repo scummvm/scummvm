@@ -305,7 +305,7 @@ bool LabEngine::doUse(uint16 curInv) {
 		_closeDataPtr = nullptr;
 		doMap(_roomNum);
 		_graphics->setPalette(initColors, 8);
-		_graphics->drawMessage(nullptr, false);
+		_graphics->drawMessage("", false);
 		_graphics->drawPanel();
 		return true;
 	case kItemJournal:
@@ -316,7 +316,7 @@ bool LabEngine::doUse(uint16 curInv) {
 		_closeDataPtr = nullptr;
 		doJournal();
 		_graphics->drawPanel();
-		_graphics->drawMessage(nullptr, false);
+		_graphics->drawMessage("", false);
 		return true;
 	case kItemLamp:
 		interfaceOff();
