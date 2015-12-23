@@ -201,79 +201,79 @@ Script::Operand *Script::readOperand() {
 	Context *cont = &_world->_player->_context;
 	switch (operandType) {
 	case 0xA0: // TEXT$
-		return new Operand(_inputText, Operand::TEXT_INPUT);
+		return new Operand(_inputText, TEXT_INPUT);
 	case 0xA1:
-		return new Operand(_inputClick, Operand::CLICK_INPUT);
+		return new Operand(_inputClick, CLICK_INPUT);
 	case 0xC0: // STORAGE@
-		return new Operand(&_world->_storageScene, Operand::SCENE);
+		return new Operand(&_world->_storageScene, SCENE);
 	case 0xC1: // SCENE@
-		return new Operand(_world->_player->_currentScene, Operand::SCENE);
+		return new Operand(_world->_player->_currentScene, SCENE);
 	case 0xC2: // PLAYER@
-		return new Operand(_world->_player, Operand::CHR);
+		return new Operand(_world->_player, CHR);
 	case 0xC3: // MONSTER@
-		return new Operand(_callbacks->_monster, Operand::CHR);
+		return new Operand(_callbacks->_monster, CHR);
 	case 0xC4: // RANDOMSCN@
-		return new Operand(_world->_orderedScenes[_callbacks->_rnd->getRandomNumber(_world->_orderedScenes.size())], Operand::SCENE);
+		return new Operand(_world->_orderedScenes[_callbacks->_rnd->getRandomNumber(_world->_orderedScenes.size())], SCENE);
 	case 0xC5: // RANDOMCHR@
-		return new Operand(_world->_orderedChrs[_callbacks->_rnd->getRandomNumber(_world->_orderedChrs.size())], Operand::CHR);
+		return new Operand(_world->_orderedChrs[_callbacks->_rnd->getRandomNumber(_world->_orderedChrs.size())], CHR);
 	case 0xC6: // RANDOMOBJ@
-		return new Operand(_world->_orderedObjs[_callbacks->_rnd->getRandomNumber(_world->_orderedObjs.size())], Operand::OBJ);
+		return new Operand(_world->_orderedObjs[_callbacks->_rnd->getRandomNumber(_world->_orderedObjs.size())], OBJ);
 	case 0xB0: // VISITS#
-		return new Operand(cont->_visits, Operand::NUMBER);
+		return new Operand(cont->_visits, NUMBER);
 	case 0xB1: // RANDOM# for Star Trek, but VISITS# for some other games?
-		return new Operand(1 + _callbacks->_rnd->getRandomNumber(100), Operand::NUMBER);
+		return new Operand(1 + _callbacks->_rnd->getRandomNumber(100), NUMBER);
 	case 0xB5: // RANDOM# // A random number between 1 and 100.
-		return new Operand(1 + _callbacks->_rnd->getRandomNumber(100), Operand::NUMBER);
+		return new Operand(1 + _callbacks->_rnd->getRandomNumber(100), NUMBER);
 	case 0xB2: // LOOP#
-		return new Operand(_loopCount, Operand::NUMBER);
+		return new Operand(_loopCount, NUMBER);
 	case 0xB3: // VICTORY#
-		return new Operand(cont->_kills, Operand::NUMBER);
+		return new Operand(cont->_kills, NUMBER);
 	case 0xB4: // BADCOPY#
-		return new Operand(0, Operand::NUMBER); // ????
+		return new Operand(0, NUMBER); // ????
 	case 0xFF:
 		{
 			// user variable
 			int value = _data->readByte();
 
 			// TODO: Verify that we're using the right index.
-			return new Operand(cont->_userVariables[value - 1], Operand::NUMBER);
+			return new Operand(cont->_userVariables[value - 1], NUMBER);
 		}
 	case 0xD0:
-		return new Operand(cont->_statVariables[Context::PHYS_STR_BAS], Operand::NUMBER);
+		return new Operand(cont->_statVariables[Context::PHYS_STR_BAS], NUMBER);
 	case 0xD1:
-		return new Operand(cont->_statVariables[Context::PHYS_HIT_BAS], Operand::NUMBER);
+		return new Operand(cont->_statVariables[Context::PHYS_HIT_BAS], NUMBER);
 	case 0xD2:
-		return new Operand(cont->_statVariables[Context::PHYS_ARM_BAS], Operand::NUMBER);
+		return new Operand(cont->_statVariables[Context::PHYS_ARM_BAS], NUMBER);
 	case 0xD3:
-		return new Operand(cont->_statVariables[Context::PHYS_ACC_BAS], Operand::NUMBER);
+		return new Operand(cont->_statVariables[Context::PHYS_ACC_BAS], NUMBER);
 	case 0xD4:
-		return new Operand(cont->_statVariables[Context::SPIR_STR_BAS], Operand::NUMBER);
+		return new Operand(cont->_statVariables[Context::SPIR_STR_BAS], NUMBER);
 	case 0xD5:
-		return new Operand(cont->_statVariables[Context::SPIR_HIT_BAS], Operand::NUMBER);
+		return new Operand(cont->_statVariables[Context::SPIR_HIT_BAS], NUMBER);
 	case 0xD6:
-		return new Operand(cont->_statVariables[Context::SPIR_ARM_BAS], Operand::NUMBER);
+		return new Operand(cont->_statVariables[Context::SPIR_ARM_BAS], NUMBER);
 	case 0xD7:
-		return new Operand(cont->_statVariables[Context::SPIR_ACC_BAS], Operand::NUMBER);
+		return new Operand(cont->_statVariables[Context::SPIR_ACC_BAS], NUMBER);
 	case 0xD8:
-		return new Operand(cont->_statVariables[Context::PHYS_SPE_BAS], Operand::NUMBER);
+		return new Operand(cont->_statVariables[Context::PHYS_SPE_BAS], NUMBER);
 	case 0xE0:
-		return new Operand(cont->_statVariables[Context::PHYS_STR_CUR], Operand::NUMBER);
+		return new Operand(cont->_statVariables[Context::PHYS_STR_CUR], NUMBER);
 	case 0xE1:
-		return new Operand(cont->_statVariables[Context::PHYS_HIT_CUR], Operand::NUMBER);
+		return new Operand(cont->_statVariables[Context::PHYS_HIT_CUR], NUMBER);
 	case 0xE2:
-		return new Operand(cont->_statVariables[Context::PHYS_ARM_CUR], Operand::NUMBER);
+		return new Operand(cont->_statVariables[Context::PHYS_ARM_CUR], NUMBER);
 	case 0xE3:
-		return new Operand(cont->_statVariables[Context::PHYS_ACC_CUR], Operand::NUMBER);
+		return new Operand(cont->_statVariables[Context::PHYS_ACC_CUR], NUMBER);
 	case 0xE4:
-		return new Operand(cont->_statVariables[Context::SPIR_STR_CUR], Operand::NUMBER);
+		return new Operand(cont->_statVariables[Context::SPIR_STR_CUR], NUMBER);
 	case 0xE5:
-		return new Operand(cont->_statVariables[Context::SPIR_HIT_CUR], Operand::NUMBER);
+		return new Operand(cont->_statVariables[Context::SPIR_HIT_CUR], NUMBER);
 	case 0xE6:
-		return new Operand(cont->_statVariables[Context::SPIR_ARM_CUR], Operand::NUMBER);
+		return new Operand(cont->_statVariables[Context::SPIR_ARM_CUR], NUMBER);
 	case 0xE7:
-		return new Operand(cont->_statVariables[Context::SPIR_ACC_CUR], Operand::NUMBER);
+		return new Operand(cont->_statVariables[Context::SPIR_ACC_CUR], NUMBER);
 	case 0xE8:
-		return new Operand(cont->_statVariables[Context::PHYS_SPE_CUR], Operand::NUMBER);
+		return new Operand(cont->_statVariables[Context::PHYS_SPE_CUR], NUMBER);
 	default:
 		if (operandType >= 0x20 && operandType < 0x80) {
 			_data->seek(-1, SEEK_CUR);
@@ -371,11 +371,11 @@ Script::Operand *Script::readStringOperand() {
 		int r = atol(sb->c_str());
 		delete sb;
 
-		return new Operand(r, Operand::NUMBER);
+		return new Operand(r, NUMBER);
 	} else {
 		// TODO: This string could be a room name or something like that.
 		debug(0, "Read string %s", sb->c_str());
-		return new Operand(sb, Operand::STRING);
+		return new Operand(sb, STRING);
 	}
 }
 
@@ -484,8 +484,173 @@ void Script::skipBlock() {
 	}
 }
 
+enum {
+	kCompEqNumNum,
+	kCompEqObjScene,
+	kCompEqChrScene,
+	kCompEqObjChr,
+	kCompEqChrChr,
+	kCompEqSceneScene,
+	kCompEqStringTextInput,
+	kCompEqTextInputString,
+	kCompEqNumberTextInput,
+	kCompEqTextInputNumber,
+	kCompLtNumNum,
+	kCompLtStringTextInput,
+	kCompLtTextInputString,
+	kCompLtObjChr,
+	kCompLtChrObj,
+	kCompLtObjScene,
+	kCompGtNumNum,
+	kCompGtStringString,
+	kCompGtChrScene
+};
+
+struct Comparator {
+	char operation;
+	OperandTypes o1;
+	OperandTypes o2;
+	int compfunc;
+} static comparators[] = {
+	{ '=', NUMBER, NUMBER, kCompEqNumNum },
+	{ '=', OBJ, SCENE, kCompEqObjScene },
+	{ '=', CHR, SCENE, kCompEqChrScene },
+	{ '=', OBJ, CHR, kCompEqObjChr },
+	{ '=', CHR, CHR, kCompEqChrChr },
+	{ '=', SCENE, SCENE, kCompEqSceneScene },
+	{ '=', STRING, TEXT_INPUT, kCompEqStringTextInput },
+	{ '=', TEXT_INPUT, STRING, kCompEqTextInputString },
+	{ '=', NUMBER, TEXT_INPUT, kCompEqNumberTextInput },
+	{ '=', TEXT_INPUT, NUMBER, kCompEqTextInputNumber },
+
+	{ '<', NUMBER, NUMBER, kCompLtNumNum },
+	{ '<', STRING, TEXT_INPUT, kCompLtStringTextInput },
+	{ '<', TEXT_INPUT, STRING, kCompLtTextInputString },
+	{ '<', OBJ, CHR, kCompLtObjChr },
+	{ '<', CHR, OBJ, kCompLtChrObj },
+	{ '<', OBJ, SCENE, kCompLtObjScene },
+	{ '<', CHR, CHR, kCompEqChrChr }, // Same logic as =
+	{ '<', SCENE, SCENE, kCompEqSceneScene },
+
+	{ '>', NUMBER, NUMBER, kCompGtNumNum },
+	{ '>', TEXT_INPUT, STRING, kCompLtTextInputString }, // Same logic as <
+	//FIXME: this prevents the below cases from working due to exact
+	//matches taking precedence over conversions...
+	//{ '>', STRING, STRING, kCompGtStringString }, // Same logic as <
+	{ '>', OBJ, CHR, kCompLtObjChr }, // Same logic as <
+	{ '>', OBJ, SCENE, kCompLtObjScene }, // Same logic as <
+	{ '>', CHR, SCENE, kCompGtChrScene },
+	{ 0, OBJ, OBJ, 0 }
+};
+
+bool Script::compare(Operand *o1, Operand *o2, int comparator) {
+	switch(comparator) {
+	case kCompEqNumNum:
+		return o1->_value.number == o2->_value.number;
+	case kCompEqObjScene:
+		error("FIXME kCompEqObjScene");
+		//return o2->_value.scene->_objs.contains(*o1->_value.obj);
+	case kCompEqChrScene:
+		error("FIXME kCompEqChrScene");
+		//return o2->_value.scene->_chrs.contains(*o1->_value.chr);
+	case kCompEqObjChr:
+		error("FIXME kCompEqObjChr");
+		//return o2->_value.chr->_inventory.contains(*o1->_value.obj);
+	case kCompEqChrChr:
+		return o1->_value.chr == o2->_value.chr;
+	case kCompEqSceneScene:
+		return o1->_value.scene == o2->_value.scene;
+	case kCompEqStringTextInput:
+		if (_inputText == NULL) {
+			return false;
+		} else {
+			Common::String s1(*_inputText), s2(*o1->_value.string);
+			s1.toLowercase();
+			s2.toLowercase();
+
+			return s1.contains(s2);
+		}
+	case kCompEqTextInputString:
+		return compare(o2, o1, kCompEqStringTextInput);
+	case kCompEqNumberTextInput:
+		if (_inputText == NULL) {
+			return false;
+		} else {
+			Common::String s1(*_inputText), s2(o1->toString());
+			s1.toLowercase();
+			s2.toLowercase();
+
+			return s1.contains(s2);
+		}
+	case kCompEqTextInputNumber:
+		if (_inputText == NULL) {
+			return false;
+		} else {
+			Common::String s1(*_inputText), s2(o2->toString());
+			s1.toLowercase();
+			s2.toLowercase();
+
+			return s1.contains(s2);
+		}
+	case kCompLtNumNum:
+		return o1->_value.number < o2->_value.number;
+	case kCompLtStringTextInput:
+		return !compare(o1, o2, kCompEqStringTextInput);
+	case kCompLtTextInputString:
+		return !compare(o2, o1, kCompEqStringTextInput);
+	case kCompLtObjChr:
+		return o1->_value.obj->_currentOwner != o2->_value.chr;
+	case kCompLtChrObj:
+		return compare(o2, o1, kCompLtObjChr);
+	case kCompLtObjScene:
+		return o1->_value.obj->_currentScene != o2->_value.scene;
+	case kCompGtNumNum:
+		return o1->_value.number > o2->_value.number;
+	case kCompGtStringString:
+		return o1->_value.string == o2->_value.string;
+	case kCompGtChrScene:
+		return (o1->_value.chr != NULL && o1->_value.chr->_currentScene != o2->_value.scene);
+	}
+
+	return false;
+}
+
 bool Script::eval(Operand *lhs, const char *op, Operand *rhs) {
-	warning("STUB: eval");
+	bool result = false;
+
+	if (lhs->_type == CLICK_INPUT || rhs->_type == CLICK_INPUT) {
+		return evalClickCondition(lhs, op, rhs);
+	} else if (!strcmp(op, "==") || !strcmp(op, ">>")) {
+		// TODO: check if >> can be used for click inputs and if == can be used for other things
+		// exact string match
+		if (lhs->_type == TEXT_INPUT) {
+			if ((rhs->_type != STRING && rhs->_type != NUMBER) || _inputText == NULL) {
+				result = false;
+			} else {
+				result = _inputText->equalsIgnoreCase(rhs->toString());
+			}
+		} else if (rhs->_type == TEXT_INPUT) {
+			if ((lhs->_type != STRING && lhs->_type != NUMBER) || _inputText == NULL) {
+				result = false;
+			} else {
+				result = _inputText->equalsIgnoreCase(lhs->toString());
+			}
+		} else {
+			error("UNHANDLED CASE: [lhs=%d/%s, rhs=%d/%s]",
+				lhs->_type, lhs->toString().c_str(), rhs->_type, rhs->toString().c_str());
+		}
+		if (!strcmp(op, ">>")) {
+			result = !result;
+		}
+
+		return result;
+	}
+
+	return false;
+}
+
+bool Script::evalClickCondition(Operand *lhs, const char *op, Operand *rhs) {
+	warning("STUB: evalClickCondition");
 
 	return false;
 }

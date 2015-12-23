@@ -50,6 +50,16 @@
 
 namespace Wage {
 
+enum OperandTypes {
+	OBJ = 0,
+	CHR = 1,
+	SCENE = 2,
+	NUMBER = 3,
+	STRING = 4,
+	CLICK_INPUT = 5,
+	TEXT_INPUT = 6
+};
+
 class Script {
 public:
 	Script(Common::SeekableReadStream *data) : _data(data) {}
@@ -68,16 +78,6 @@ private:
 
 	class Operand {
 	public:
-		enum OperandTypes {
-			OBJ = 0,
-			CHR = 1,
-			SCENE = 2,
-			NUMBER = 3,
-			STRING = 4,
-			CLICK_INPUT = 5,
-			TEXT_INPUT = 6
-		};
-
 		union {
 			Obj *obj;
 			Chr *chr;
@@ -156,7 +156,9 @@ private:
 	void processIf();
 	void skipBlock();
 	void skipIf();
+	bool compare(Operand *o1, Operand *o2, int comparator);
 	bool eval(Operand *lhs, const char *op, Operand *rhs);
+	bool evalClickCondition(Operand *lhs, const char *op, Operand *rhs);
 	void processMove();
 	void processLet();
 

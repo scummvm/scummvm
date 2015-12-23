@@ -113,11 +113,11 @@ Common::Error WageEngine::run() {
 	Common::String input("look");
 	_world->_globalScript->execute(_world, 1, &input, NULL, this);
 
-	_world->_orderedScenes[1]->_design->paint(&screen, _world->_patterns, false);
-	_world->_objs["frank.1"]->_design->setBounds(&r);
-	_world->_objs["frank.1"]->_design->paint(&screen, _world->_patterns, false);
-	_world->_scenes["temple of the holy mackeral"]->_design->setBounds(&r);
-	_world->_scenes["temple of the holy mackeral"]->_design->paint(&screen, _world->_patterns, false);
+	//_world->_orderedScenes[1]->_design->paint(&screen, _world->_patterns, false);
+	//_world->_objs["frank.1"]->_design->setBounds(&r);
+	//_world->_objs["frank.1"]->_design->paint(&screen, _world->_patterns, false);
+	//_world->_scenes["temple of the holy mackeral"]->_design->setBounds(&r);
+	//_world->_scenes["temple of the holy mackeral"]->_design->paint(&screen, _world->_patterns, false);
 	//_world->_scenes["tower level 3"]->_design->setBounds(&r);
 	//_world->_scenes["tower level 3"]->_design->paint(&screen, _world->_patterns, false);
 
