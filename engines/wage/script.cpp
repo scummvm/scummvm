@@ -646,38 +646,45 @@ bool Script::eval(Operand *lhs, const char *op, Operand *rhs) {
 		return result;
 	} else {
 		for (int cmp = 0; comparators[cmp].op != 0; cmp++) {
-			if (comparators[cmp].op == op[0] &&
-				comparators[cmp].o1 == lhs->_type && comparators[cmp].o2 == rhs->_type)
-					return compare(lhs, rhs, comparators[cmp].cmp);
+			if (comparators[cmp].op != op[0])
+			 	continue;
+
+			if (comparators[cmp].o1 == lhs->_type && comparators[cmp].o2 == rhs->_type)
+				return compare(lhs, rhs, comparators[cmp].cmp);
 		}
 
 		// Now, try partial matches.
 		Operand *c1, *c2;
 		for (int cmp = 0; comparators[cmp].op != 0; cmp++) {
-			if (comparators[cmp].op == op[0]) {
-				if (comparators[cmp].o1 == lhs->_type &&
-						(c2 = convertOperand(rhs, comparators[cmp].o2)) != NULL) {
-					bool res = compare(lhs, c2, comparators[cmp].cmp);
-					delete c2;
+			if (comparators[cmp].op != op[0])
+				continue;
 
-					return res;
-				} else if (comparators[cmp].o2 == rhs->_type &&
-						(c1 = convertOperand(lhs, comparators[cmp].o1)) != NULL) {
-					bool res = compare(c1, rhs, comparators[cmp].cmp);
-					delete c1;
-					return res;
-				}
+			if (comparators[cmp].o1 == lhs->_type &&
+					(c2 = convertOperand(rhs, comparators[cmp].o2)) != NULL) {
+				bool res = compare(lhs, c2, comparators[cmp].cmp);
+				delete c2;
+				return res;
+			} else if (comparators[cmp].o2 == rhs->_type &&
+					(c1 = convertOperand(lhs, comparators[cmp].o1)) != NULL) {
+				bool res = compare(c1, rhs, comparators[cmp].cmp);
+				delete c1;
+				return res;
 			}
 		}
 
 		// Now, try double conversion.
 		for (int cmp = 0; comparators[cmp].op != 0; cmp++) {
+			if (comparators[cmp].op != op[0])
+				continue;
+
+			if (comparators[cmp].o1 == lhs->_type || comparators[cmp].o2 == rhs->_type)
+				continue;
+
 			if ((c1 = convertOperand(lhs, comparators[cmp].o1)) != NULL) {
 				if ((c2 = convertOperand(rhs, comparators[cmp].o2)) != NULL) {
 					bool res = compare(c1, c2, comparators[cmp].cmp);
 					delete c1;
 					delete c2;
-
 					return res;
 				}
 				delete c1;
@@ -690,7 +697,7 @@ bool Script::eval(Operand *lhs, const char *op, Operand *rhs) {
 
 Script::Operand *Script::convertOperand(Operand *operand, int type) {
 	if (operand->_type == type)
-		return new Operand(*operand);
+		error("Incorrect conversion to type %d", type);
 
 	if (type == SCENE) {
 		if (operand->_type == STRING || operand->_type == NUMBER) {
