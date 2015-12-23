@@ -104,7 +104,7 @@ Button *EventManager::checkNumButtonHit(ButtonList *buttonList, uint16 key) {
 		 || ((button->_keyEquiv != 0) && (makeButtonKeyEquiv(key) == button->_keyEquiv)))
 			  && button->_isEnabled) {
 			button->_altImage->drawImage(button->_x, button->_y);
-			g_system->delayMillis(80);
+			_vm->_system->delayMillis(80);
 			button->_image->drawImage(button->_x, button->_y);
 			return button;
 		}

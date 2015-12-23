@@ -364,11 +364,11 @@ void LabEngine::doActions(Action *actionList, CloseDataPtr *closePtrList) {
 			break;
 
 		case kActionWaitSecs: {
-				uint32 targetMillis = g_system->getMillis() + actionList->_param1 * 1000;
+				uint32 targetMillis = _system->getMillis() + actionList->_param1 * 1000;
 
 				_graphics->screenUpdate();
 
-				while (g_system->getMillis() < targetMillis) {
+				while (_system->getMillis() < targetMillis) {
 					updateMusicAndEvents();
 					_anim->diffNextFrame();
 				}

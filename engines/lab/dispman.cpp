@@ -447,8 +447,8 @@ void DisplayMan::drawHLine(uint16 x1, uint16 y, uint16 x2) {
 }
 
 void DisplayMan::screenUpdate() {
-	g_system->copyRectToScreen(_displayBuffer, _screenWidth, 0, 0, _screenWidth, _screenHeight);
-	g_system->updateScreen();
+	_vm->_system->copyRectToScreen(_displayBuffer, _screenWidth, 0, 0, _screenWidth, _screenHeight);
+	_vm->_system->updateScreen();
 
 	_vm->_event->processInput();
 }
@@ -491,7 +491,7 @@ void DisplayMan::writeColorRegs(byte *buf, uint16 first, uint16 numReg) {
 	for (int i = 0; i < 256 * 3; i++)
 		tmp[i] = buf[i] * 4;
 
-	g_system->getPaletteManager()->setPalette(tmp, first, numReg);
+	_vm->_system->getPaletteManager()->setPalette(tmp, first, numReg);
 	memcpy(&(_curvgapal[first * 3]), buf, numReg * 3);
 }
 
@@ -905,7 +905,7 @@ void DisplayMan::blackScreen() {
 	memset(pal, 0, 248 * 3);
 	writeColorRegs(pal, 8, 248);
 
-	g_system->delayMillis(32);
+	_vm->_system->delayMillis(32);
 }
 
 void DisplayMan::whiteScreen() {
@@ -919,7 +919,7 @@ void DisplayMan::blackAllScreen() {
 	memset(pal, 0, 256 * 3);
 	writeColorRegs(pal, 0, 256);
 
-	g_system->delayMillis(32);
+	_vm->_system->delayMillis(32);
 }
 
 void DisplayMan::scrollDisplayX(int16 dx, uint16 x1, uint16 y1, uint16 x2, uint16 y2, byte *buffer) {

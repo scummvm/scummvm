@@ -148,8 +148,8 @@ void EventManager::updateMouse() {
 }
 
 void EventManager::initMouse() {
-	g_system->setMouseCursor(mouseData, MOUSE_WIDTH, MOUSE_HEIGHT, 0, 0, 0);
-	g_system->showMouse(false);
+	_vm->_system->setMouseCursor(mouseData, MOUSE_WIDTH, MOUSE_HEIGHT, 0, 0, 0);
+	_vm->_system->showMouse(false);
 
 	setMousePos(Common::Point(0, 0));
 }
@@ -160,14 +160,14 @@ void EventManager::mouseShow() {
 		_mouseHidden = false;
 	}
 
-	g_system->showMouse(true);
+	_vm->_system->showMouse(true);
 }
 
 void EventManager::mouseHide() {
 	if (!_mouseHidden) {
 		_mouseHidden = true;
 
-		g_system->showMouse(false);
+		_vm->_system->showMouse(false);
 	}
 }
 
@@ -180,9 +180,9 @@ Common::Point EventManager::getMousePos() {
 
 void EventManager::setMousePos(Common::Point pos) {
 	if (_vm->_isHiRes)
-		g_system->warpMouse(pos.x, pos.y);
+		_vm->_system->warpMouse(pos.x, pos.y);
 	else
-		g_system->warpMouse(pos.x * 2, pos.y);
+		_vm->_system->warpMouse(pos.x * 2, pos.y);
 
 	if (!_mouseHidden)
 		processInput();
@@ -206,7 +206,7 @@ void EventManager::processInput() {
 	Common::Event event;
 	Button *curButton = nullptr;
 
-	while (g_system->getEventManager()->pollEvent(event)) {
+	while (_vm->_system->getEventManager()->pollEvent(event)) {
 		switch (event.type) {
 		case Common::EVENT_LBUTTONDOWN:
 			if (_screenButtonList)
@@ -257,9 +257,9 @@ void EventManager::processInput() {
 		}
 	}
 
-	g_system->copyRectToScreen(_vm->_graphics->_displayBuffer, _vm->_graphics->_screenWidth, 0, 0, _vm->_graphics->_screenWidth, _vm->_graphics->_screenHeight);
+	_vm->_system->copyRectToScreen(_vm->_graphics->_displayBuffer, _vm->_graphics->_screenWidth, 0, 0, _vm->_graphics->_screenWidth, _vm->_graphics->_screenHeight);
 	_vm->_console->onFrame();
-	g_system->updateScreen();
+	_vm->_system->updateScreen();
 }
 
 Common::KeyCode EventManager::getNextChar() {

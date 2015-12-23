@@ -423,7 +423,7 @@ void LabEngine::mainGameLoop() {
 	// Set up initial picture.
 	while (1) {
 		_event->processInput();
-		g_system->delayMillis(10);
+		_system->delayMillis(10);
 
 		if (gotMessage) {
 			if (_quitLab || g_engine->shouldQuit()) {
@@ -693,7 +693,7 @@ bool LabEngine::processKey(IntuiMessage *curMsg, uint32 &msgClass, uint16 &quali
 				_followCrumbsFast = (code == Common::KEYCODE_r);
 				_isCrumbTurning = false;
 				_isCrumbWaiting = false;
-				_crumbTimestamp = g_system->getMillis();
+				_crumbTimestamp = _system->getMillis();
 
 				if (_alternate) {
 					eatMessages();
@@ -929,7 +929,7 @@ void LabEngine::processAltButton(uint16 &curInv, uint16 &lastInv, uint16 buttonI
 		if (doit) {
 			_graphics->drawMessage("Disk operation failed.", false);
 			_graphics->setPalette(initcolors, 8);
-			g_system->delayMillis(1000);
+			_system->delayMillis(1000);
 		}
 		break;
 
@@ -988,7 +988,7 @@ void LabEngine::processAltButton(uint16 &curInv, uint16 &lastInv, uint16 buttonI
 				_followCrumbsFast = false;
 				_isCrumbTurning = false;
 				_isCrumbWaiting = false;
-				_crumbTimestamp = g_system->getMillis();
+				_crumbTimestamp = _system->getMillis();
 
 				eatMessages();
 				_alternate = false;
@@ -1114,7 +1114,7 @@ int LabEngine::followCrumbs() {
 	};
 
 	if (_isCrumbWaiting) {
-		if (g_system->getMillis() <= _crumbTimestamp)
+		if (_system->getMillis() <= _crumbTimestamp)
 			return 0;
 
 		_isCrumbWaiting = false;
@@ -1155,7 +1155,7 @@ int LabEngine::followCrumbs() {
 		_isCrumbWaiting = true;
 
 		int theDelay = (_followCrumbsFast ? 1000 / 4 : 1000);
-		_crumbTimestamp = theDelay + g_system->getMillis();
+		_crumbTimestamp = theDelay + _system->getMillis();
 	}
 
 	return moveDir;

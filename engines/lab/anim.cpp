@@ -95,9 +95,9 @@ void Anim::diffNextFrame(bool onlyDiffData) {
 
 			if (!onlyDiffData) {
 				if (_headerdata._fps) {
-					uint32 targetMillis = g_system->getMillis() + _delayMicros;
-					while (g_system->getMillis() < targetMillis)
-						g_system->delayMillis(10);
+					uint32 targetMillis = _vm->_system->getMillis() + _delayMicros;
+					while (_vm->_system->getMillis() < targetMillis)
+						_vm->_system->delayMillis(10);
 				}
 
 				if (_isPal && !_noPalChange) {
@@ -302,7 +302,7 @@ void Anim::readDiff(Common::File *diffFile, bool playOnce, bool onlyDiffData) {
 	// as it was possible to see that something was displayed, without being able to tell
 	// what it was. A shorter delay (150ms) makes it acceptable during gameplay and
 	// readable. The big question is: do we need that message?
-	g_system->delayMillis(150);
+	_vm->_system->delayMillis(150);
 
 	if (_headerdata._fps == 1)
 		_headerdata._fps = 0;
