@@ -2,6 +2,7 @@ MODULE := engines/lab
 
 MODULE_OBJS := \
 	anim.o \
+	console.o \
 	detection.o \
 	dispman.o \
 	engine.o \
