@@ -60,7 +60,6 @@ Music::Music(LabEngine *vm) : _vm(vm) {
 	_queuingAudioStream = nullptr;
 	_lastMusicRoom = 1;
 	_doReset = true;
-	_waitTillFinished = false;
 }
 
 void Music::updateMusic() {

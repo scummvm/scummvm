@@ -83,7 +83,6 @@ private:
 
 public:
 	bool _loopSoundEffect;
-	bool _waitTillFinished;
 
 public:
 	Music(LabEngine *vm);
