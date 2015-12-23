@@ -88,7 +88,7 @@ bool Script::execute(World *world, int loopCount, String *inputText, Designed *i
 			{
 				Operand *op = readOperand();
 				// TODO check op type is string or number, or something good...
-				appendText(op->_str);
+				appendText(op->toString());
 				byte d = _data->readByte();
 				if (d != 0xFD)
 					warning("Operand 0x8B (PRINT) End Byte != 0xFD");
@@ -99,7 +99,7 @@ bool Script::execute(World *world, int loopCount, String *inputText, Designed *i
 				Operand *op = readOperand();
 				// TODO check op type is string.
 				_handled = true;
-				callbacks->playSound(op->_str);
+				callbacks->playSound(op->toString());
 				byte d = _data->readByte();
 				if (d != 0xFD)
 					warning("Operand 0x8B (PRINT) End Byte != 0xFD");
@@ -112,7 +112,7 @@ bool Script::execute(World *world, int loopCount, String *inputText, Designed *i
 			{
 				Operand *op = readStringOperand(); // allows empty menu
 				// TODO check op type is string.
-				_callbacks->setMenu(op->_str);
+				_callbacks->setMenu(op->toString());
 				byte d = _data->readByte();
 				if (d != 0xFD)
 					warning("Operand 0x8B (PRINT) End Byte != 0xFD");
@@ -196,7 +196,7 @@ bool Script::execute(World *world, int loopCount, String *inputText, Designed *i
 Script::Operand *Script::readOperand() {
 	byte operandType = _data->readByte();
 
-	debug(2, "readOperand: 0x%x", operandType);
+	debug(2, "%x: readOperand: 0x%x", _data->pos(), operandType);
 
 	Context *cont = &_world->_player->_context;
 	switch (operandType) {

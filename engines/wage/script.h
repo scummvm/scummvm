@@ -87,42 +87,62 @@ private:
 			Designed *inputClick;
 		} _value;
 		OperandTypes _type;
-		String _str;
+		Common::String _str;
 
 		Operand(Obj *value, OperandTypes type) {
 			_value.obj = value;
-			_str = value->toString();
 			_type = type;
 		}
 
 		Operand(Chr *value, OperandTypes type) {
 			_value.chr = value;
-			_str = value->toString();
 			_type = type;
 		}
 
 		Operand(Scene *value, OperandTypes type) {
 			_value.scene = value;
-			_str = value->toString();
 			_type = type;
 		}
 
 		Operand(int value, OperandTypes type) {
 			_value.number = value;
-			_str = value;
 			_type = type;
 		}
 
 		Operand(String *value, OperandTypes type) {
 			_value.string = value;
-			_str = *value;
 			_type = type;
 		}
 
 		Operand(Designed *value, OperandTypes type) {
 			_value.inputClick = value;
-			_str = value->toString();
 			_type = type;
+		}
+
+		Common::String toString() {
+			char buf[128];
+
+			if (_value.obj == NULL)
+				_str = "";
+
+			switch(_type) {
+			case NUMBER:
+				_str = snprintf(buf, 128, "%d", _value.number);
+				return _str;
+			case STRING:
+			case TEXT_INPUT:
+				return *_value.string;
+			case OBJ:
+				return _value.obj->toString();
+			case CHR:
+				return _value.chr->toString();
+			case SCENE:
+				return _value.scene->toString();
+			case CLICK_INPUT:
+				return _value.inputClick->toString();
+			default:
+				error("Unhandled operand type: _type");
+			}
 		}
 	};
 
