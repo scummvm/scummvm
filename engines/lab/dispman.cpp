@@ -704,7 +704,7 @@ void DisplayMan::doScrollWipe(const Common::String filename) {
 
 	readPict(filename, true, true);
 	setPalette(_vm->_anim->_diffPalette, 256);
-	byte *mem = _vm->_anim->_rawDiffBM._planes[0];
+	byte *mem = _vm->_anim->_scrollScreenBuffer;
 
 	_vm->updateMusicAndEvents();
 	uint16 by = _vm->_utils->vgaScaleX(3);
@@ -744,42 +744,28 @@ void DisplayMan::doScrollWipe(const Common::String filename) {
 }
 
 void DisplayMan::doScrollBounce() {
-	const uint16 *newby, *newby1;
-
-	const uint16 newbyd[5] = {5, 4, 3, 2, 1}, newby1d[8] = {3, 3, 2, 2, 2, 1, 1, 1};
-	const uint16 newbyw[5] = {10, 8, 6, 4, 2}, newby1w[8] = {6, 6, 4, 4, 4, 2, 2, 2};
-
-	if (_vm->getPlatform() != Common::kPlatformWindows) {
-		newby = newbyd;
-		newby1 = newby1d;
-	} else {
-		newby = newbyw;
-		newby1 = newby1w;
-	}
+	const uint16 offsets[8] = { 3, 3, 2, 2, 2, 1, 1, 1 };
+	const int multiplier = (_vm->_isHiRes) ? 2 : 1;
 
 	_vm->_event->mouseHide();
 	int width = _vm->_utils->vgaScaleX(320);
 	int height = _vm->_utils->vgaScaleY(149) + _vm->_utils->svgaCord(2);
-	byte *mem = _vm->_anim->_rawDiffBM._planes[0];
+	byte *mem = _vm->_anim->_scrollScreenBuffer;
 
 	_vm->updateMusicAndEvents();
 	int startLine = _vm->_anim->_headerdata._height - height - 1;
 
 	for (int i = 0; i < 5; i++) {
 		_vm->updateMusicAndEvents();
-		startLine -= newby[i];
+		startLine -= (5 - i) * multiplier;
 		copyPage(width, height, 0, startLine, mem);
-
-		screenUpdate();
 		_vm->waitTOF();
 	}
 
 	for (int i = 8; i > 0; i--) {
 		_vm->updateMusicAndEvents();
-		startLine += newby1[i - 1];
+		startLine += offsets[i - 1] * multiplier;
 		copyPage(width, height, 0, startLine, mem);
-
-		screenUpdate();
 		_vm->waitTOF();
 	}
 
