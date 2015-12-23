@@ -39,8 +39,8 @@
 
 namespace Lab {
 
-#define MUSICBUFSIZE   (2 * 65536L)
-#define SAMPLESPEED    15000L
+#define MUSICBUFSIZE   (2 * 65536)
+#define SAMPLESPEED    15000
 
 #define CLOWNROOM           123
 #define DIMROOM              80
@@ -231,7 +231,7 @@ void Music::changeMusic(const Common::String filename) {
 	if (!_tFile) {
 		_tFile = _file;
 		_oldMusicOn = _musicOn;
-		_tLeftInFile = _leftInFile + 65536L;
+		_tLeftInFile = _leftInFile + 65536;
 
 		if (_tLeftInFile > (uint32)_tFile->size())
 			_tLeftInFile = _leftInFile;
@@ -291,7 +291,7 @@ bool Music::readMusic(const Common::String filename, bool waitTillFinished) {
 
 void Music::readSound(bool waitTillFinished, Common::File *file) {
 	uint32 magicBytes = file->readUint32LE();
-	if (magicBytes != 1219009121L) {
+	if (magicBytes != 1219009121) {
 		warning("readSound: Bad signature, skipping");
 		return;
 	}
@@ -321,7 +321,7 @@ void Music::readSound(bool waitTillFinished, Common::File *file) {
 			uint16 sampleRate = file->readUint16LE();
 			file->skip(2);
 			playSoundEffect(sampleRate, soundSize, file);
-		} else if (soundTag == 65535L) {
+		} else if (soundTag == 65535) {
 			if (waitTillFinished) {
 				while (isSoundEffectActive()) {
 					_vm->updateMusicAndEvents();

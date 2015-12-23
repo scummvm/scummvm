@@ -285,7 +285,7 @@ void TilePuzzle::doTileScroll(uint16 col, uint16 row, uint16 scrolltype) {
 	uint16 x1 = _vm->_utils->vgaScaleX(100) + (col * _vm->_utils->vgaScaleX(30)) + dx;
 	uint16 y1 = _vm->_utils->vgaScaleY(25) + (row * _vm->_utils->vgaScaleY(25)) + dy;
 
-	byte *buffer = new byte[_tiles[1]->_width * _tiles[1]->_height * 2L];
+	byte *buffer = new byte[_tiles[1]->_width * _tiles[1]->_height * 2];
 
 	for (int i = 0; i < last; i++) {
 		_vm->waitTOF();
@@ -313,7 +313,7 @@ void TilePuzzle::changeCombination(uint16 number) {
 	display._width     = _vm->_graphics->_screenWidth;
 	display._height    = _vm->_graphics->_screenHeight;
 
-	byte *buffer = new byte[_tiles[1]->_width * _tiles[1]->_height * 2L];
+	byte *buffer = new byte[_tiles[1]->_width * _tiles[1]->_height * 2];
 
 	for (uint16 i = 1; i <= (_numberImages[combnum]->_height / 2); i++) {
 		if (_vm->_isHiRes) {
