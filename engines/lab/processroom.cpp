@@ -443,7 +443,7 @@ void LabEngine::doActions(Action *actionList, CloseDataPtr *closePtrList) {
 				_anim->_doBlack = (_closeDataPtr != nullptr);
 			else if (actionList->_param1 == 5) {
 				// inverse the palette
-				for (uint16 idx = (8 * 3); idx < (255 * 3); idx++)
+				for (int idx = (8 * 3); idx < (255 * 3); idx++)
 					_anim->_diffPalette[idx] = 255 - _anim->_diffPalette[idx];
 
 				waitTOF();

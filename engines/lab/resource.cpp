@@ -102,7 +102,7 @@ void Resource::readRoomData(const Common::String fileName) {
 	_vm->_rooms = new RoomData[_vm->_manyRooms + 1];
 	memset(_vm->_rooms, 0, (_vm->_manyRooms + 1) * sizeof(RoomData));
 
-	for (uint16 i = 1; i <= _vm->_manyRooms; i++) {
+	for (int i = 1; i <= _vm->_manyRooms; i++) {
 		RoomData *curRoom = &_vm->_rooms[i];
 		curRoom->_doors[NORTH] = dataFile->readUint16LE();
 		curRoom->_doors[SOUTH] = dataFile->readUint16LE();
@@ -127,7 +127,7 @@ InventoryData *Resource::readInventory(const Common::String fileName) {
 	_vm->_numInv = dataFile->readUint16LE();
 	InventoryData *inventory = new InventoryData[_vm->_numInv + 1];
 
-	for (uint16 i = 1; i <= _vm->_numInv; i++) {
+	for (int i = 1; i <= _vm->_numInv; i++) {
 		inventory[i]._quantity = dataFile->readUint16LE();
 		inventory[i]._name = readString(dataFile);
 		inventory[i]._bitmapName = readString(dataFile);
@@ -159,7 +159,7 @@ void Resource::freeViews(uint16 roomNum) {
 	if (!_vm->_rooms)
 		return;
 
-	for (uint16 i = 0; i < 4; i++)
+	for (int i = 0; i < 4; i++)
 		freeView(_vm->_rooms[roomNum]._view[i]);
 
 	freeRule(_vm->_rooms[roomNum]._rules);

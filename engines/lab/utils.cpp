@@ -206,7 +206,7 @@ void Utils::verticalRunLengthDecode(byte *dest, Common::File *sourceFile, uint16
 	int16 count;
 	byte *top = dest;
 
-	for (uint16 i = 0; i < _dataBytesPerRow; i++) {
+	for (int i = 0; i < _dataBytesPerRow; i++) {
 		dest = top;
 		dest += i;
 

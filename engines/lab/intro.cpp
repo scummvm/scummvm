@@ -195,7 +195,7 @@ void Intro::musicDelay() {
 	if (_quitIntro)
 		return;
 
-	for (uint16 i = 0; i < 20; i++) {
+	for (int i = 0; i < 20; i++) {
 		_vm->updateMusicAndEvents();
 		_vm->waitTOF();
 		_vm->waitTOF();
@@ -235,7 +235,7 @@ void Intro::introSequence() {
 	} else if (_vm->getPlatform() == Common::kPlatformWindows) {
 		nReadPict("WYRMKEEP");
 		// Wait 4 seconds
-		for (uint16 i = 0; i < 4 * 1000 / 10; i++) {
+		for (int i = 0; i < 4 * 1000 / 10; i++) {
 			introEatMessages();
 			if (_quitIntro)
 				break;
@@ -259,7 +259,7 @@ void Intro::introSequence() {
 
 	_vm->_graphics->_fadePalette = palette;
 
-	for (uint16 i = 0; i < 16; i++) {
+	for (int i = 0; i < 16; i++) {
 		if (_quitIntro)
 			break;
 
@@ -278,7 +278,7 @@ void Intro::introSequence() {
 		_vm->updateMusicAndEvents();
 		uint16 temp = palette[2];
 
-		for (uint16 i = 2; i < 15; i++)
+		for (int i = 2; i < 15; i++)
 			palette[i] = palette[i + 1];
 
 		palette[15] = temp;
@@ -321,7 +321,7 @@ void Intro::introSequence() {
 	nReadPict("Intro.1");
 	_vm->_anim->_noPalChange = false;
 
-	for (uint16 i = 0; i < 16; i++) {
+	for (int i = 0; i < 16; i++) {
 		palette[i] = ((_vm->_anim->_diffPalette[i * 3] >> 2) << 8) +
 					((_vm->_anim->_diffPalette[i * 3 + 1] >> 2) << 4) +
 					(_vm->_anim->_diffPalette[i * 3 + 2] >> 2);
@@ -365,8 +365,8 @@ void Intro::introSequence() {
 	doPictText("i.11", msgFont, false);
 
 	if (!_quitIntro)
-		for (uint16 i = 0; i < 50; i++) {
-			for (uint16 idx = (8 * 3); idx < (255 * 3); idx++)
+		for (int i = 0; i < 50; i++) {
+			for (int idx = (8 * 3); idx < (255 * 3); idx++)
 				_vm->_anim->_diffPalette[idx] = 255 - _vm->_anim->_diffPalette[idx];
 
 			_vm->updateMusicAndEvents();

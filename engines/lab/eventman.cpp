@@ -72,7 +72,7 @@ Button *EventManager::checkButtonHit(ButtonList *buttonList, Common::Point pos) 
 				button->_altImage->drawImage(button->_x, button->_y);
 				mouseShow();
 
-				for (uint16 i = 0; i < 3; i++)
+				for (int i = 0; i < 3; i++)
 					_vm->waitTOF();
 
 				mouseHide();
@@ -133,7 +133,7 @@ void EventManager::updateMouse() {
 		_hitButton->_altImage->drawImage(_hitButton->_x, _hitButton->_y);
 		mouseShow();
 
-		for (uint16 i = 0; i < 3; i++)
+		for (int i = 0; i < 3; i++)
 			_vm->waitTOF();
 
 		mouseHide();
