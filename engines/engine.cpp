@@ -49,6 +49,7 @@
 #include "common/singleton.h"
 
 #include "backends/keymapper/keymapper.h"
+#include "base/version.h"
 
 #include "gui/gui-manager.h"
 #include "gui/debugger.h"
@@ -58,6 +59,7 @@
 #include "audio/mixer.h"
 
 #include "graphics/cursorman.h"
+#include "graphics/fontman.h"
 #include "graphics/pixelformat.h"
 #include "image/bmp.h"
 
@@ -265,13 +267,23 @@ void splashScreen() {
 	Graphics::Surface screen;
 	screen.create(g_system->getOverlayWidth(), g_system->getOverlayHeight(), g_system->getOverlayFormat());
 	screen.fillRect(Common::Rect(screen.w, screen.h), screen.format.ARGBToColor(0xff, 0xd4, 0x75, 0x0b));
+
+	// Load logo
+	Graphics::Surface *logo = bitmap.getSurface()->convertTo(g_system->getOverlayFormat(), bitmap.getPalette());
+	int lx = (g_system->getOverlayWidth() - logo->w) / 2;
+	int ly = (g_system->getOverlayHeight() - logo->h) / 2;
+
+	// Print version information
+	const Graphics::Font *font = FontMan.getFontByUsage(Graphics::FontManager::kConsoleFont);
+	int w = font->getStringWidth(gScummVMVersionDate);
+	int x = g_system->getOverlayWidth() - w - 5; // lx + logo->w - w + 5;
+	int y = g_system->getOverlayHeight() - font->getFontHeight() - 5; //ly + logo->h + 5;
+	font->drawString(&screen, gScummVMVersionDate, x, y, w, screen.format.ARGBToColor(0xff, 0, 0, 0));
+
 	g_system->copyRectToOverlay(screen.getPixels(), screen.pitch, 0, 0, screen.w, screen.h);
 
 	// Draw logo
-	Graphics::Surface *logo = bitmap.getSurface()->convertTo(g_system->getOverlayFormat(), bitmap.getPalette());
-	int x = (g_system->getOverlayWidth() - logo->w) / 2;
-	int y = (g_system->getOverlayHeight() - logo->h) / 2;
-	g_system->copyRectToOverlay(logo->getPixels(), logo->pitch, x, y, logo->w, logo->h);
+	g_system->copyRectToOverlay(logo->getPixels(), logo->pitch, lx, ly, logo->w, logo->h);
 
 	// Delay 0.6 secs
 	uint time0 = g_system->getMillis();
