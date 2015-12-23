@@ -131,7 +131,7 @@ public:
 	}
 
 	virtual const char *getOriginalCopyright() const {
-		return "Labyrinth of Time (c) 2004 The Wyrmkeep Entertainment Co.";
+		return "Labyrinth of Time (c) 2004 The Wyrmkeep Entertainment Co. and Terra Nova Development";
 	}
 
 	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
