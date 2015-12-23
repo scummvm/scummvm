@@ -648,68 +648,23 @@ void DisplayMan::drawText(TextFont *tf, uint16 x, uint16 y, uint16 color, const 
 void DisplayMan::doScrollBlack() {
 	uint16 width = _vm->_utils->vgaScaleX(320);
 	uint16 height = _vm->_utils->vgaScaleY(149) + _vm->_utils->svgaCord(2);
-	byte *mem = new byte[width * height];
 
 	_vm->_event->mouseHide();
 
-	Image img(_vm);
-	img._width = width;
-	img._height = height;
-	img._imageData = mem;
-	_vm->updateMusicAndEvents();
-	img.readScreenImage(0, 0);
-	_vm->updateMusicAndEvents();
+	byte *mem = new byte[width * height];
+	int16 by = _vm->_utils->vgaScaleX(4);
+	int16 verticalScroll = height;
 
-	byte *baseAddr = getCurrentDrawingBuffer();
-	uint16 by = _vm->_utils->vgaScaleX(4);
-	uint16 nheight = height;
+	while (verticalScroll > 0) {
+		scrollDisplayY(-by, 0, 0, width - 1, height - 1, mem);
+		verticalScroll -= by;
 
-	while (nheight) {
 		_vm->updateMusicAndEvents();
-
-		if (!_vm->_isHiRes)
-			_vm->waitTOF();
-
-		baseAddr = getCurrentDrawingBuffer();
-
-		if (by > nheight)
-			by = nheight;
-
-		mem += by * width;
-		nheight -= by;
-		uint32 copySize;
-		uint32 size = (int32)nheight * (int32)width;
-		byte *tempMem = mem;
-
-		while (size) {
-			if (size > _screenBytesPerPage)
-				copySize = _screenBytesPerPage;
-			else
-				copySize = size;
-
-			size -= copySize;
-
-			memcpy(baseAddr, tempMem, copySize);
-			tempMem += copySize;
-		}
-
-		setPen(0);
-		rectFill(0, nheight, width - 1, nheight + by - 1);
-
-		screenUpdate();
-
-		if (!_vm->_isHiRes) {
-			if (nheight <= (height / 8))
-				by = 1;
-			else if (nheight <= (height / 4))
-				by = 2;
-			else if (nheight <= (height / 2))
-				by = 3;
-		}
+		_vm->waitTOF();
 	}
 
 	delete[] mem;
-	freePict();
+
 	_vm->_event->mouseShow();
 }
 
