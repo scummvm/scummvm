@@ -230,15 +230,15 @@ void LabEngine::changeVolume(int delta) {
 }
 
 void LabEngine::waitTOF() {
-	g_system->copyRectToScreen(_graphics->_displayBuffer, _graphics->_screenWidth, 0, 0, _graphics->_screenWidth, _graphics->_screenHeight);
-	g_system->updateScreen();
+	_system->copyRectToScreen(_graphics->_displayBuffer, _graphics->_screenWidth, 0, 0, _graphics->_screenWidth, _graphics->_screenHeight);
+	_system->updateScreen();
 
 	_event->processInput();
 
 	uint32 now;
 
-	for (now = g_system->getMillis(); now - _lastWaitTOFTicks <= 0xF; now = g_system->getMillis() )
-		g_system->delayMillis(_lastWaitTOFTicks - now + 17);
+	for (now = _system->getMillis(); now - _lastWaitTOFTicks <= 0xF; now = _system->getMillis() )
+		_system->delayMillis(_lastWaitTOFTicks - now + 17);
 
 	_lastWaitTOFTicks = now;
 }

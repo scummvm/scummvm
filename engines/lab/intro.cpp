@@ -114,7 +114,7 @@ void Intro::doPictText(const Common::String filename, TextFont *msgFont, bool is
 				return;
 			}
 
-			lastMillis = g_system->getMillis();
+			lastMillis = _vm->_system->getMillis();
 		}
 
 		IntuiMessage *msg = _vm->_event->getMsg();
@@ -127,7 +127,7 @@ void Intro::doPictText(const Common::String filename, TextFont *msgFont, bool is
 			_vm->updateMusicAndEvents();
 			_vm->_anim->diffNextFrame();
 
-			uint32 elapsedSeconds = (g_system->getMillis() - lastMillis) / 1000;
+			uint32 elapsedSeconds = (_vm->_system->getMillis() - lastMillis) / 1000;
 
 			if (elapsedSeconds > timeDelay) {
 				if (doneFl) {
@@ -239,7 +239,7 @@ void Intro::introSequence() {
 			introEatMessages();
 			if (_quitIntro)
 				break;
-			g_system->delayMillis(10);
+			_vm->_system->delayMillis(10);
 		}
 	}
 

@@ -65,7 +65,7 @@ void LabEngine::writeSaveGameHeader(Common::OutSaveFile *out, const Common::Stri
 
 	// Creation date/time
 	TimeDate curTime;
-	g_system->getTimeAndDate(curTime);
+	_system->getTimeAndDate(curTime);
 
 	uint32 saveDate = ((curTime.tm_mday & 0xFF) << 24) | (((curTime.tm_mon + 1) & 0xFF) << 16) | ((curTime.tm_year + 1900) & 0xFFFF);
 	uint16 saveTime = ((curTime.tm_hour & 0xFF) << 8) | ((curTime.tm_min) & 0xFF);
@@ -121,7 +121,7 @@ bool readSaveGameHeader(Common::InSaveFile *in, SaveGameHeader &header) {
 
 bool LabEngine::saveGame(int slot, const Common::String desc) {
 	Common::String fileName = generateSaveFileName(slot);
-	Common::SaveFileManager *saveFileManager = g_system->getSavefileManager();
+	Common::SaveFileManager *saveFileManager = _system->getSavefileManager();
 	Common::OutSaveFile *file = saveFileManager->openForSaving(fileName);
 
 	if (!file)
@@ -161,7 +161,7 @@ bool LabEngine::saveGame(int slot, const Common::String desc) {
 
 bool LabEngine::loadGame(int slot) {
 	Common::String fileName = generateSaveFileName(slot);
-	Common::SaveFileManager *saveFileManager = g_system->getSavefileManager();
+	Common::SaveFileManager *saveFileManager = _system->getSavefileManager();
 	Common::InSaveFile *file = saveFileManager->openForLoading(fileName);
 
 	if (!file)
