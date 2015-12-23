@@ -140,7 +140,7 @@ public:
 	 */
 	void setUpScreens();
 
-	int32 longDrawMessage(Common::String str, bool isActionMessage);
+	int longDrawMessage(Common::String str, bool isActionMessage);
 
 	/**
 	 * Draws a message to the message box.
