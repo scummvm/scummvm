@@ -39,6 +39,7 @@ private:
 
 	bool Cmd_Scene(int argc, const char **argv);
 	bool Cmd_DumpSceneResources(int argc, const char **argv);
+	bool Cmd_FindAction(int argc, const char **argv);
 };
 
 } // End of namespace Lab

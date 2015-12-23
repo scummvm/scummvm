@@ -32,6 +32,7 @@ namespace Lab {
 Console::Console(LabEngine *vm) : GUI::Debugger(), _vm(vm) {
 	registerCmd("scene",			WRAP_METHOD(Console, Cmd_Scene));
 	registerCmd("scene_resources",  WRAP_METHOD(Console, Cmd_DumpSceneResources));
+	registerCmd("find_action",      WRAP_METHOD(Console, Cmd_FindAction));
 }
 
 Console::~Console() {
@@ -62,14 +63,59 @@ bool Console::Cmd_DumpSceneResources(int argc, const char **argv) {
 	RuleList *rules = roomData->_rules;
 	const char *transitions[] = { "None", "Wipe", "ScrollWipe", "ScrollBlack", "ScrollBounce", "Transporter", "ReadFirstFrame", "ReadNextFrame" };
 	const char *ruleTypes[] = { "None", "Action", "Operate", "Go forward", "Conditions", "Turn", "Go main view", "Turn from to" };
+	const char *directions[] = { "", "North", "South", "East", "West" };
+	const char *actionTypes[] = {
+		"", "PlaySound", "PlaySoundLooping", "ShowDiff", "ShowDiffLooping", "LoadDiff", "LoadBitmap", "ShowBitmap", "Transition", "NoUpdate", "ForceUpdate",
+		"ShowCurPict", "SetElement", "UnsetElement", "ShowMessage", "ShowMessages", "ChangeRoom", "SetCloseup", "MainView", "SubInv", "AddInv", "ShowDir",
+		"WaitSecs", "StopMusic", "StartMusic", "ChangeMusic", "ResetMusic", "FillMusic", "WaitSound", "ClearSound", "WinMusic", "WinGame", "LostGame",
+		"ResetBuffer", "SpecialCmd", "CShowMessage", "PlaySoundNoWait"
+	};
 
 	debugPrintf("Room mesage: %s\n", roomData->_roomMsg.c_str());
 	debugPrintf("Transition: %s (%d)\n", transitions[roomData->_transitionType], roomData->_transitionType);
 
 	debugPrintf("Script:\n");
-	for (RuleList::iterator rule = rules->begin(); rule != rules->end(); ++rule) {
-		debugPrintf("Rule type: %s\n", ruleTypes[rule->_ruleType]);
 
+	for (RuleList::iterator rule = rules->begin(); rule != rules->end(); ++rule) {
+		debugPrintf("Rule type: %s", ruleTypes[rule->_ruleType]);
+		if (rule->_ruleType == kRuleTypeAction || rule->_ruleType == kRuleTypeOperate)
+			debugPrintf(" (item %d, closeup %d)", rule->_param1, rule->_param2);
+		else if (rule->_ruleType == kRuleTypeGoForward)
+			debugPrintf(" (%s)", directions[rule->_param1]);
+		else if (rule->_ruleType == kRuleTypeTurnFromTo)
+			debugPrintf(" (from %s to %s)", directions[rule->_param1], directions[rule->_param2]);
+		debugPrintf("\n");
+
+		while (rule->_actionList) {
+			Action *action = rule->_actionList;
+			debugPrintf("  - %s (%s, %d, %d, %d)\n", actionTypes[action->_actionType], action->_messages[0].c_str(), action->_param1, action->_param2, action->_param3);
+			rule->_actionList = rule->_actionList->_nextAction;
+		}
+	}
+
+	return true;
+}
+
+bool Console::Cmd_FindAction(int argc, const char **argv) {
+	if (argc < 2) {
+		debugPrintf("Usage: %s <action id> [param 1] [param 2]\n", argv[0]);
+		return true;
+	}
+
+	int actionId = atoi(argv[1]);
+	int param1 = (argc > 2) ? atoi(argv[2]) : -1;
+	int param2 = (argc > 3) ? atoi(argv[3]) : -1;
+
+	for (uint16 i = 1; i <= _vm->_manyRooms; i++) {
+		_vm->_resource->readViews(i);
+
+		for (RuleList::iterator rule = _vm->_rooms[i]._rules->begin(); rule != _vm->_rooms[i]._rules->end(); ++rule) {
+			if (rule->_ruleType == actionId &&
+				(rule->_param1 == param1 || param1 == -1) &&
+				(rule->_param2 == param2 || param2 == -1)) {
+				debugPrintf("Found at script %d\n", i);
+			}
+		}
 	}
 
 	return true;
