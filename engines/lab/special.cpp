@@ -213,7 +213,7 @@ void LabEngine::drawJournal(uint16 wipenum, bool needFade) {
 	_event->toggleButton(_event->getButton(2), 15, (!_lastPage));	// forward button
 
 	if (needFade)
-		_graphics->fade(true, 0);
+		_graphics->fade(true);
 
 	// Reset the journal background, so that all the text that has been blitted on it is erased
 	memcpy(_journalBackImage->_imageData, _blankJournal, _graphics->_screenWidth * _graphics->_screenHeight);
@@ -276,7 +276,7 @@ void LabEngine::doJournal() {
 	_event->mouseShow();
 	processJournal();
 	_event->attachButtonList(nullptr);
-	_graphics->fade(false, 0);
+	_graphics->fade(false);
 	_event->mouseHide();
 
 	delete[] _blankJournal;
@@ -370,9 +370,9 @@ void LabEngine::processMonitor(const char *ntext, TextFont *monitorFont, bool is
 				_monitorTextFilename = test;
 
 				Common::String text = _resource->getText(_monitorTextFilename);
-				_graphics->fade(false, 0);
+				_graphics->fade(false);
 				drawMonText(text.c_str(), monitorFont, textRect, isInteractive);
-				_graphics->fade(true, 0);
+				_graphics->fade(true);
 			}
 		}
 
@@ -463,9 +463,9 @@ void LabEngine::doMonitor(const Common::String background, const Common::String 
 	_graphics->loadBackPict(background, _highPalette);
 	drawMonText(ntext.c_str(), monitorFont, scaledRect, isinteractive);
 	_event->mouseShow();
-	_graphics->fade(true, 0);
+	_graphics->fade(true);
 	processMonitor(ntext.c_str(), monitorFont, isinteractive, scaledRect);
-	_graphics->fade(false, 0);
+	_graphics->fade(false);
 	_event->mouseHide();
 	_graphics->closeFont(&monitorFont);
 

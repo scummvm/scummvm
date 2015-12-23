@@ -981,19 +981,19 @@ uint16 DisplayMan::fadeNumOut(uint16 num, uint16 res, uint16 counter) {
 	return (num - ((((int32) counter) * ((int32)(num - res))) / 15));
 }
 
-void DisplayMan::fade(bool fadeIn, uint16 res) {
+void DisplayMan::fade(bool fadeIn) {
 	uint16 newPal[16];
 
 	for (int i = 0; i < 16; i++) {
 		for (int palIdx = 0; palIdx < 16; palIdx++) {
 			if (fadeIn)
-				newPal[palIdx] = (0x00F & fadeNumIn(0x00F & _fadePalette[palIdx], 0x00F & res, i)) +
-				(0x0F0 & fadeNumIn(0x0F0 & _fadePalette[palIdx], 0x0F0 & res, i)) +
-				(0xF00 & fadeNumIn(0xF00 & _fadePalette[palIdx], 0xF00 & res, i));
+				newPal[palIdx] = (0x00F & fadeNumIn(0x00F & _fadePalette[palIdx], 0, i)) +
+				(0x0F0 & fadeNumIn(0x0F0 & _fadePalette[palIdx], 0, i)) +
+				(0xF00 & fadeNumIn(0xF00 & _fadePalette[palIdx], 0, i));
 			else
-				newPal[palIdx] = (0x00F & fadeNumOut(0x00F & _fadePalette[palIdx], 0x00F & res, i)) +
-				(0x0F0 & fadeNumOut(0x0F0 & _fadePalette[palIdx], 0x0F0 & res, i)) +
-				(0xF00 & fadeNumOut(0xF00 & _fadePalette[palIdx], 0xF00 & res, i));
+				newPal[palIdx] = (0x00F & fadeNumOut(0x00F & _fadePalette[palIdx], 0, i)) +
+				(0x0F0 & fadeNumOut(0x0F0 & _fadePalette[palIdx], 0, i)) +
+				(0xF00 & fadeNumOut(0xF00 & _fadePalette[palIdx], 0, i));
 		}
 
 		setAmigaPal(newPal);

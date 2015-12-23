@@ -88,7 +88,7 @@ void Intro::doPictText(const Common::String filename, TextFont *msgFont, bool is
 			if (begin)
 				begin = false;
 			else if (isScreen)
-				_vm->_graphics->fade(false, 0);
+				_vm->_graphics->fade(false);
 
 			int charDrawn = 0;
 			if (isScreen) {
@@ -96,7 +96,7 @@ void Intro::doPictText(const Common::String filename, TextFont *msgFont, bool is
 				_vm->_graphics->rectFillScaled(10, 10, 310, 190);
 
 				charDrawn = _vm->_graphics->flowText(msgFont, (!_vm->_isHiRes) * -1, 5, 7, false, false, true, true, _vm->_utils->vgaRectScale(14, 11, 306, 189), (char *)curText);
-				_vm->_graphics->fade(true, 0);
+				_vm->_graphics->fade(true);
 			} else
 				charDrawn = _vm->_graphics->longDrawMessage(Common::String((char *)curText), false);
 
@@ -108,7 +108,7 @@ void Intro::doPictText(const Common::String filename, TextFont *msgFont, bool is
 
 			if (_quitIntro) {
 				if (isScreen)
-					_vm->_graphics->fade(false, 0);
+					_vm->_graphics->fade(false);
 
 				delete[] textBuffer;
 				return;
@@ -132,7 +132,7 @@ void Intro::doPictText(const Common::String filename, TextFont *msgFont, bool is
 			if (elapsedSeconds > timeDelay) {
 				if (doneFl) {
 					if (isScreen)
-						_vm->_graphics->fade(false, 0);
+						_vm->_graphics->fade(false);
 
 					delete[] textBuffer;
 					return;
@@ -150,7 +150,7 @@ void Intro::doPictText(const Common::String filename, TextFont *msgFont, bool is
 				_quitIntro = true;
 
 				if (isScreen)
-					_vm->_graphics->fade(false, 0);
+					_vm->_graphics->fade(false);
 
 				delete[] textBuffer;
 				return;
@@ -158,7 +158,7 @@ void Intro::doPictText(const Common::String filename, TextFont *msgFont, bool is
 				if (msgClass == kMessageLeftClick) {
 					if (doneFl) {
 						if (isScreen)
-							_vm->_graphics->fade(false, 0);
+							_vm->_graphics->fade(false);
 
 						delete[] textBuffer;
 						return;
@@ -170,7 +170,7 @@ void Intro::doPictText(const Common::String filename, TextFont *msgFont, bool is
 
 				if (_quitIntro) {
 					if (isScreen)
-						_vm->_graphics->fade(false, 0);
+						_vm->_graphics->fade(false);
 
 					delete[] textBuffer;
 					return;
@@ -179,7 +179,7 @@ void Intro::doPictText(const Common::String filename, TextFont *msgFont, bool is
 
 			if (doneFl) {
 				if (isScreen)
-					_vm->_graphics->fade(false, 0);
+					_vm->_graphics->fade(false);
 
 				delete[] textBuffer;
 				return;
@@ -269,7 +269,7 @@ void Intro::introSequence() {
 	}
 
 	_vm->updateMusicAndEvents();
-	_vm->_graphics->fade(true, 0);
+	_vm->_graphics->fade(true);
 
 	for (int times = 0; times < 150; times++) {
 		if (_quitIntro)
@@ -287,7 +287,7 @@ void Intro::introSequence() {
 		_vm->waitTOF();
 	}
 
-	_vm->_graphics->fade(false, 0);
+	_vm->_graphics->fade(false);
 	_vm->_graphics->blackAllScreen();
 	_vm->updateMusicAndEvents();
 

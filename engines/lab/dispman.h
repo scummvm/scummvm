@@ -252,7 +252,7 @@ public:
 	 * Scrolls the display in the y direction by blitting.
 	 */
 	void scrollDisplayY(int16 dy, uint16 x1, uint16 y1, uint16 x2, uint16 y2, byte *buffer);
-	void fade(bool fadein, uint16 res);
+	void fade(bool fadein);
 
 	/**
 	 * Closes a font and frees all memory associated with it.

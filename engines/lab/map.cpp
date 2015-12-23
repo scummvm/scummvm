@@ -333,7 +333,7 @@ void LabEngine::drawMap(uint16 curRoom, uint16 curMsg, uint16 floorNum, bool fad
 	_event->mouseHide();
 
 	if (fadeOut)
-		_graphics->fade(false, 0);
+		_graphics->fade(false);
 
 	_graphics->setPen(0);
 	_graphics->rectFill(0, 0, _graphics->_screenWidth - 1, _graphics->_screenHeight - 1);
@@ -385,7 +385,7 @@ void LabEngine::drawMap(uint16 curRoom, uint16 curMsg, uint16 floorNum, bool fad
 		_graphics->flowText(_msgFont, 0, 5, 3, true, true, true, true, _utils->vgaRectScale(14, 148, 134, 186), _rooms[curMsg]._roomMsg.c_str());
 
 	if (fadeIn)
-		_graphics->fade(true, 0);
+		_graphics->fade(true);
 
 	_event->mouseShow();
 }
@@ -452,18 +452,18 @@ void LabEngine::processMap(uint16 curRoom) {
 					uint16 upperFloor = getUpperFloor(curFloor);
 					if (upperFloor != kFloorNone) {
 						curFloor = upperFloor;
-						_graphics->fade(false, 0);
+						_graphics->fade(false);
 						drawMap(curRoom, curMsg, curFloor, false, false);
-						_graphics->fade(true, 0);
+						_graphics->fade(true);
 					}
 				} else if (msgCode == 2) {
 					// Down arrow
 					uint16 lowerFloor = getLowerFloor(curFloor);
 					if (lowerFloor != kFloorNone) {
 						curFloor = lowerFloor;
-						_graphics->fade(false, 0);
+						_graphics->fade(false);
 						drawMap(curRoom, curMsg, curFloor, false, false);
-						_graphics->fade(true, 0);
+						_graphics->fade(true);
 					}
 				}
 			} else if (msgClass == kMessageLeftClick) {
@@ -471,30 +471,30 @@ void LabEngine::processMap(uint16 curRoom) {
 					  && floorVisited(kFloorSurMaze)) {
 					curFloor = kFloorSurMaze;
 
-					_graphics->fade(false, 0);
+					_graphics->fade(false);
 					drawMap(curRoom, curMsg, curFloor, false, false);
-					_graphics->fade(true, 0);
+					_graphics->fade(true);
 				} else if ((curFloor == kFloorMiddle) && _utils->mapRectScale(358, 71, 452, 147).contains(mouseX, mouseY)
 							&& floorVisited(kFloorCarnival)) {
 					curFloor = kFloorCarnival;
 
-					_graphics->fade(false, 0);
+					_graphics->fade(false);
 					drawMap(curRoom, curMsg, curFloor, false, false);
-					_graphics->fade(true, 0);
+					_graphics->fade(true);
 				} else if ((curFloor == kFloorMiddle) && _utils->mapRectScale(557, 325, 653, 401).contains(mouseX, mouseY)
 							&& floorVisited(kFloorMedMaze)) {
 					curFloor = kFloorMedMaze;
 
-					_graphics->fade(false, 0);
+					_graphics->fade(false);
 					drawMap(curRoom, curMsg, curFloor, false, false);
-					_graphics->fade(true, 0);
+					_graphics->fade(true);
 				} else if ((curFloor == kFloorUpper) && _utils->mapRectScale(524, 97, 645, 207).contains(mouseX, mouseY)
 							&& floorVisited(kFloorHedgeMaze)) {
 					curFloor = kFloorHedgeMaze;
 
-					_graphics->fade(false, 0);
+					_graphics->fade(false);
 					drawMap(curRoom, curMsg, curFloor, false, false);
-					_graphics->fade(true, 0);
+					_graphics->fade(true);
 				} else if (mouseX > _utils->mapScaleX(314)) {
 					uint16 oldMsg = curMsg;
 					Common::Rect curCoords;
@@ -563,7 +563,7 @@ void LabEngine::doMap(uint16 curRoom) {
 	_graphics->screenUpdate();
 	processMap(curRoom);
 	_event->attachButtonList(nullptr);
-	_graphics->fade(false, 0);
+	_graphics->fade(false);
 	_graphics->blackAllScreen();
 	_event->mouseHide();
 	_graphics->setPen(0);
