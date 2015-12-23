@@ -401,7 +401,7 @@ void LabEngine::mainGameLoop() {
 
 	_closeDataPtr = nullptr;
 	_roomNum = 1;
-	_direction = NORTH;
+	_direction = kDirectionNorth;
 
 	_resource->readRoomData("LAB:Doors");
 	if (!(_inventory = _resource->readInventory("LAB:Inventor")))
@@ -1105,7 +1105,7 @@ void LabEngine::go() {
 }
 
 int LabEngine::followCrumbs() {
-	// NORTH, SOUTH, EAST, WEST
+	// kDirectionNorth, kDirectionSouth, kDirectionEast, kDirectionWest
 	int movement[4][4] = {
 		{ VKEY_UPARROW, VKEY_RTARROW, VKEY_RTARROW, VKEY_LTARROW },
 		{ VKEY_RTARROW, VKEY_UPARROW, VKEY_LTARROW, VKEY_RTARROW },
@@ -1134,14 +1134,14 @@ int LabEngine::followCrumbs() {
 
 	int exitDir;
 	// which direction is last crumb
-	if (_breadCrumbs[_numCrumbs]._direction == EAST)
-		exitDir = WEST;
-	else if (_breadCrumbs[_numCrumbs]._direction == WEST)
-		exitDir = EAST;
-	else if (_breadCrumbs[_numCrumbs]._direction == NORTH)
-		exitDir = SOUTH;
+	if (_breadCrumbs[_numCrumbs]._direction == kDirectionEast)
+		exitDir = kDirectionWest;
+	else if (_breadCrumbs[_numCrumbs]._direction == kDirectionWest)
+		exitDir = kDirectionEast;
+	else if (_breadCrumbs[_numCrumbs]._direction == kDirectionNorth)
+		exitDir = kDirectionSouth;
 	else
-		exitDir = NORTH;
+		exitDir = kDirectionNorth;
 
 	int moveDir = movement[_direction][exitDir];
 

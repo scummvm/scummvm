@@ -68,10 +68,10 @@ void LabEngine::loadMapData() {
 	_imgMaze = new Image(mapImages, this);
 	_imgHugeMaze = new Image(mapImages, this);
 
-	_imgMapX[NORTH] = new Image(mapImages, this);
-	_imgMapX[EAST] = new Image(mapImages, this);
-	_imgMapX[SOUTH] = new Image(mapImages, this);
-	_imgMapX[WEST] = new Image(mapImages, this);
+	_imgMapX[kDirectionNorth] = new Image(mapImages, this);
+	_imgMapX[kDirectionEast] = new Image(mapImages, this);
+	_imgMapX[kDirectionSouth] = new Image(mapImages, this);
+	_imgMapX[kDirectionWest] = new Image(mapImages, this);
 	_imgPath = new Image(mapImages, this);
 	_imgBridge = new Image(mapImages, this);
 
@@ -187,18 +187,18 @@ void LabEngine::drawRoomMap(uint16 curRoom, bool drawMarkFl) {
 
 		offset = (_imgRoom->_width - _imgPath->_width) / 2;
 
-		if ((NORTHDOOR & flags) && (y >= _imgPath->_height))
+		if ((kDoorLeftNorth & flags) && (y >= _imgPath->_height))
 			_imgPath->drawImage(x + offset, y - _imgPath->_height);
 
-		if (SOUTHDOOR & flags)
+		if (kDoorLeftSouth & flags)
 			_imgPath->drawImage(x + offset, y + _imgRoom->_height);
 
 		offset = (_imgRoom->_height - _imgPath->_height) / 2;
 
-		if (EASTDOOR & flags)
+		if (kDoorLeftEast & flags)
 			_imgPath->drawImage(x + _imgRoom->_width, y + offset);
 
-		if (WESTDOOR & flags)
+		if (kDoorLeftWest & flags)
 			_imgPath->drawImage(x - _imgPath->_width, y + offset);
 
 		drawX = x + (_imgRoom->_width - _imgMapX[_direction]->_width) / 2;
@@ -219,32 +219,32 @@ void LabEngine::drawRoomMap(uint16 curRoom, bool drawMarkFl) {
 
 		offset = (_imgVRoom->_width - _imgPath->_width) / 2;
 
-		if (NORTHDOOR & flags)
+		if (kDoorLeftNorth & flags)
 			_imgPath->drawImage(x + offset, y - _imgPath->_height);
 
-		if (SOUTHDOOR & flags)
+		if (kDoorLeftSouth & flags)
 			_imgPath->drawImage(x + offset, y + _imgVRoom->_height);
 
 		offset = (_imgRoom->_height - _imgPath->_height) / 2;
 
-		if (EASTDOOR & flags)
+		if (kDoorLeftEast & flags)
 			_imgPath->drawImage(x + _imgVRoom->_width, y + offset);
 
-		if (WESTDOOR & flags)
+		if (kDoorLeftWest & flags)
 			_imgPath->drawImage(x - _imgPath->_width, y + offset);
 
-		if (EASTBDOOR & flags)
+		if (kDoorBottomEast & flags)
 			_imgPath->drawImage(x + _imgVRoom->_width, y - offset - _imgPath->_height + _imgVRoom->_height);
 
-		if (WESTBDOOR & flags)
+		if (kDoorBottomWest & flags)
 			_imgPath->drawImage(x - _imgPath->_width, y - offset - _imgPath->_height + _imgVRoom->_height);
 
 		offset = (_imgVRoom->_height - _imgPath->_height) / 2;
 
-		if (EASTMDOOR & flags)
+		if (kDoorMiddleEast & flags)
 			_imgPath->drawImage(x + _imgVRoom->_width, y - offset - _imgPath->_height + _imgVRoom->_height);
 
-		if (WESTMDOOR & flags)
+		if (kDoorMiddleWest & flags)
 			_imgPath->drawImage(x - _imgPath->_width, y - offset - _imgPath->_height + _imgVRoom->_height);
 
 		drawX = x + (_imgVRoom->_width - _imgMapX[_direction]->_width) / 2;
@@ -257,32 +257,32 @@ void LabEngine::drawRoomMap(uint16 curRoom, bool drawMarkFl) {
 
 		offset = (_imgRoom->_width - _imgPath->_width) / 2;
 
-		if (NORTHDOOR & flags)
+		if (kDoorLeftNorth & flags)
 			_imgPath->drawImage(x + offset, y - _imgPath->_height);
 
-		if (SOUTHDOOR & flags)
+		if (kDoorLeftSouth & flags)
 			_imgPath->drawImage(x + offset, y + _imgRoom->_height);
 
-		if (NORTHRDOOR & flags)
+		if (kDoorRightNorth & flags)
 			_imgPath->drawImage(x - offset - _imgPath->_width + _imgHRoom->_width, y - _imgPath->_height);
 
-		if (SOUTHRDOOR & flags)
+		if (kDoorRightSouth & flags)
 			_imgPath->drawImage(x - offset - _imgPath->_width + _imgHRoom->_width, y + _imgRoom->_height);
 
 		offset = (_imgHRoom->_width - _imgPath->_width) / 2;
 
-		if (NORTHMDOOR & flags)
+		if (kDoorMiddleNorth & flags)
 			_imgPath->drawImage(x - offset - _imgPath->_width + _imgHRoom->_width, y - _imgPath->_height);
 
-		if (SOUTHMDOOR & flags)
+		if (kDoorMiddleSouth & flags)
 			_imgPath->drawImage(x - offset - _imgPath->_width + _imgHRoom->_width, y + _imgRoom->_height);
 
 		offset = (_imgRoom->_height - _imgPath->_height) / 2;
 
-		if (EASTDOOR & flags)
+		if (kDoorLeftEast & flags)
 			_imgPath->drawImage(x + _imgHRoom->_width, y + offset);
 
-		if (WESTDOOR & flags)
+		if (kDoorLeftWest & flags)
 			_imgPath->drawImage(x - _imgPath->_width, y + offset);
 
 		drawX = x + (_imgHRoom->_width - _imgMapX[_direction]->_width) / 2;

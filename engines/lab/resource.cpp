@@ -104,16 +104,16 @@ void Resource::readRoomData(const Common::String fileName) {
 
 	for (int i = 1; i <= _vm->_manyRooms; i++) {
 		RoomData *curRoom = &_vm->_rooms[i];
-		curRoom->_doors[NORTH] = dataFile->readUint16LE();
-		curRoom->_doors[SOUTH] = dataFile->readUint16LE();
-		curRoom->_doors[EAST] = dataFile->readUint16LE();
-		curRoom->_doors[WEST] = dataFile->readUint16LE();
+		curRoom->_doors[kDirectionNorth] = dataFile->readUint16LE();
+		curRoom->_doors[kDirectionSouth] = dataFile->readUint16LE();
+		curRoom->_doors[kDirectionEast] = dataFile->readUint16LE();
+		curRoom->_doors[kDirectionWest] = dataFile->readUint16LE();
 		curRoom->_transitionType = dataFile->readByte();
 
-		curRoom->_view[NORTH] = nullptr;
-		curRoom->_view[SOUTH] = nullptr;
-		curRoom->_view[EAST] = nullptr;
-		curRoom->_view[WEST] = nullptr;
+		curRoom->_view[kDirectionNorth] = nullptr;
+		curRoom->_view[kDirectionSouth] = nullptr;
+		curRoom->_view[kDirectionEast] = nullptr;
+		curRoom->_view[kDirectionWest] = nullptr;
 		curRoom->_rules = nullptr;
 		curRoom->_roomMsg = "";
 	}
@@ -145,10 +145,10 @@ void Resource::readViews(uint16 roomNum) {
 	RoomData *curRoom = &_vm->_rooms[roomNum];
 
 	curRoom->_roomMsg = readString(dataFile);
-	curRoom->_view[NORTH] = readView(dataFile);
-	curRoom->_view[SOUTH] = readView(dataFile);
-	curRoom->_view[EAST] = readView(dataFile);
-	curRoom->_view[WEST] = readView(dataFile);
+	curRoom->_view[kDirectionNorth] = readView(dataFile);
+	curRoom->_view[kDirectionSouth] = readView(dataFile);
+	curRoom->_view[kDirectionEast] = readView(dataFile);
+	curRoom->_view[kDirectionWest] = readView(dataFile);
 	curRoom->_rules = readRule(dataFile);
 
 	_vm->updateMusicAndEvents();

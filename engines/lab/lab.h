@@ -90,11 +90,12 @@ struct CrumbData {
 typedef CloseData *CloseDataPtr;
 typedef Common::List<Rule> RuleList;
 
-// Direction defines
-#define NORTH   0
-#define SOUTH   1
-#define EAST    2
-#define WEST    3
+enum Direction {
+	kDirectionNorth,
+	kDirectionSouth,
+	kDirectionEast,
+	kDirectionWest
+};
 
 class LabEngine : public Engine {
 private:

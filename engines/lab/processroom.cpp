@@ -141,13 +141,13 @@ void LabEngine::drawDirection(CloseDataPtr closePtr) {
 	if (!_rooms[_roomNum]._roomMsg.empty())
 		message = _rooms[_roomNum]._roomMsg + ", ";
 
-	if (_direction == NORTH)
+	if (_direction == kDirectionNorth)
 		message += _resource->getStaticText(kTextFacingNorth);
-	else if (_direction == EAST)
+	else if (_direction == kDirectionEast)
 		message += _resource->getStaticText(kTextFacingEast);
-	else if (_direction == SOUTH)
+	else if (_direction == kDirectionSouth)
 		message += _resource->getStaticText(kTextFacingSouth);
-	else if (_direction == WEST)
+	else if (_direction == kDirectionWest)
 		message += _resource->getStaticText(kTextFacingWest);
 
 	_graphics->drawMessage(message, false);
@@ -161,23 +161,23 @@ uint16 LabEngine::processArrow(uint16 curDirection, uint16 arrow) {
 
 		return curDirection;
 	} else if (arrow == 0) { // Left
-		if (curDirection == NORTH)
-			return WEST;
-		else if (curDirection == WEST)
-			return SOUTH;
-		else if (curDirection == SOUTH)
-			return EAST;
+		if (curDirection == kDirectionNorth)
+			return kDirectionWest;
+		else if (curDirection == kDirectionWest)
+			return kDirectionSouth;
+		else if (curDirection == kDirectionSouth)
+			return kDirectionEast;
 		else
-			return NORTH;
+			return kDirectionNorth;
 	} else if (arrow == 2) { // Right
-		if (curDirection == NORTH)
-			return EAST;
-		else if (curDirection == EAST)
-			return SOUTH;
-		else if (curDirection == SOUTH)
-			return WEST;
+		if (curDirection == kDirectionNorth)
+			return kDirectionEast;
+		else if (curDirection == kDirectionEast)
+			return kDirectionSouth;
+		else if (curDirection == kDirectionSouth)
+			return kDirectionWest;
 		else
-			return NORTH;
+			return kDirectionNorth;
 	}
 
 	// Should never reach here!

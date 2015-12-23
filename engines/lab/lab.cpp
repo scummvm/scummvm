@@ -56,7 +56,7 @@ LabEngine::LabEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	_roomNum = -1;
 	for (int i = 0; i < MAX_CRUMBS; i++) {
 		_breadCrumbs[i]._roomNum = 0;
-		_breadCrumbs[i]._direction = NORTH;
+		_breadCrumbs[i]._direction = kDirectionNorth;
 	}
 
 	_numCrumbs = 0;
