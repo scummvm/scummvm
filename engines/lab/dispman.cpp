@@ -88,7 +88,7 @@ void DisplayMan::loadBackPict(const Common::String fileName, uint16 *highPal) {
 	_vm->_anim->_noPalChange = false;
 }
 
-void DisplayMan::readPict(const Common::String filename, bool playOnce, bool onlyDiffData, byte *memoryBuffer, uint16 maxHeight) {
+void DisplayMan::readPict(const Common::String filename, bool playOnce, bool onlyDiffData, byte *memoryBuffer) {
 	_vm->_anim->stopDiff();
 	loadPict(filename);
 	_vm->updateMusicAndEvents();
@@ -813,7 +813,7 @@ void DisplayMan::doTransWipe(CloseDataPtr *closePtrList, const Common::String fi
 		_vm->_curFileName = _vm->getPictName(closePtrList);
 
 	byte *bitMapBuffer = new byte[_screenWidth * (lastY + 5)];
-	readPict(_vm->_curFileName, true, false, bitMapBuffer, lastY + 5);
+	readPict(_vm->_curFileName, true, false, bitMapBuffer);
 
 	setPalette(_vm->_anim->_diffPalette, 256);
 
