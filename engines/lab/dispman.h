@@ -139,12 +139,15 @@ public:
 	 * Sets up the Labyrinth screens, and opens up the initial windows.
 	 */
 	void setUpScreens();
-	int32 longDrawMessage(Common::String str);
+
+	int32 longDrawMessage(Common::String str, bool isActionMessage);
 
 	/**
 	 * Draws a message to the message box.
 	 */
-	void drawMessage(Common::String str);
+	void drawMessage(Common::String str, bool isActionMessage);
+
+	void setActionMessage(bool val) { _actionMessageShown = val; }
 
 	/**
 	 * Sets the pen number to use on all the drawing operations.
@@ -279,6 +282,7 @@ public:
 
 	bool _longWinInFront;
 	bool _lastMessageLong;
+	bool _actionMessageShown;
 	uint32 _screenBytesPerPage;
 	int _screenWidth;
 	int _screenHeight;

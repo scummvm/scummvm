@@ -98,7 +98,7 @@ void Intro::doPictText(const Common::String filename, TextFont *msgFont, bool is
 				charDrawn = _vm->_graphics->flowText(msgFont, (!_vm->_isHiRes) * -1, 5, 7, false, false, true, true, _vm->_utils->vgaRectScale(14, 11, 306, 189), (char *)curText);
 				_vm->_graphics->fade(true, 0);
 			} else
-				charDrawn = _vm->_graphics->longDrawMessage(Common::String((char *)curText));
+				charDrawn = _vm->_graphics->longDrawMessage(Common::String((char *)curText), false);
 
 			curText += charDrawn;
 			doneFl = (*curText == 0);
