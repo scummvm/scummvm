@@ -507,10 +507,10 @@ enum {
 };
 
 struct Comparator {
-	char operation;
-	OperandTypes o1;
-	OperandTypes o2;
-	int compfunc;
+	char op;
+	OperandType o1;
+	OperandType o2;
+	int cmp;
 } static comparators[] = {
 	{ '=', NUMBER, NUMBER, kCompEqNumNum },
 	{ '=', OBJ, SCENE, kCompEqObjScene },
@@ -644,9 +644,80 @@ bool Script::eval(Operand *lhs, const char *op, Operand *rhs) {
 		}
 
 		return result;
+	} else {
+		for (int cmp = 0; comparators[cmp].op != 0; cmp++) {
+			if (comparators[cmp].op == op[0] &&
+				comparators[cmp].o1 == lhs->_type && comparators[cmp].o2 == rhs->_type)
+					return compare(lhs, rhs, comparators[cmp].cmp);
+		}
+
+#if 0
+		// Now, try partial matches.
+		for (int cmp = 0; comparators[cmp].op != 0; cmp++) {
+			if (comparators[cmp].op == op[0])
+				if (lhs->_typecomparators[cmp].o1 == lhs->_type)
+		}
+
+		for (PairEvaluator e : handlers) {
+			Operand converted;
+			if (e.lhsType == o1.type && (converted = convertOperand(o2, e.rhsType)) != null) {
+				e.evaluatePair(o1, converted);
+				return;
+			} else if (e.rhsType == o2.type && (converted = convertOperand(o1, e.lhsType)) != null) {
+				e.evaluatePair(converted, o2);
+				return;
+			}
+		}
+
+		// Now, try double conversion.
+		for (PairEvaluator e : handlers) {
+			Operand c1, c2;
+			if ((c1 = convertOperand(o1, e.lhsType)) != null &&
+				(c2 = convertOperand(o2, e.rhsType)) != null) {
+				e.evaluatePair(c1, c2);
+				return;
+			}
+		}
+#endif
 	}
 
 	return false;
+}
+
+Script::Operand *Script::convertOperand(Operand *operand, int type) {
+	if (operand->_type == type)
+		return operand;
+
+	if (type == SCENE) {
+		if (operand->_type == STRING || operand->_type == NUMBER) {
+			Common::String key(operand->toString());
+			key.toLowercase();
+			if (_world->_scenes.contains(key))
+				return new Operand(_world->_scenes[key], SCENE);
+		}
+	} else if (type == OBJ) {
+		if (operand->_type == STRING || operand->_type == NUMBER) {
+			Common::String key = operand->toString();
+			key.toLowercase();
+			if (_world->_objs.contains(key))
+				return new Operand(_world->_objs[key], OBJ);
+		} else if (operand->_type == CLICK_INPUT) {
+			if (_inputClick->_classType == OBJ)
+				return new Operand(_inputClick, OBJ);
+		}
+	} else if (type == CHR) {
+		if (operand->_type == STRING || operand->_type == NUMBER) {
+			Common::String key = operand->toString();
+			key.toLowercase();
+			if (_world->_chrs.contains(key))
+				return new Operand(_world->_chrs[key], CHR);
+		} else if (operand->_type == CLICK_INPUT) {
+			if (_inputClick->_classType == CHR)
+				return new Operand(_inputClick, CHR);
+		}
+	}
+
+	return NULL;
 }
 
 bool Script::evalClickCondition(Operand *lhs, const char *op, Operand *rhs) {

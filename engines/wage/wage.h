@@ -68,6 +68,17 @@ class Chr;
 
 using Common::String;
 
+enum OperandType {
+	OBJ = 0,
+	CHR = 1,
+	SCENE = 2,
+	NUMBER = 3,
+	STRING = 4,
+	CLICK_INPUT = 5,
+	TEXT_INPUT = 6,
+	UNKNOWN = 100
+};
+
 // our engine debug levels
 enum {
 	kWageDebugExample = 1 << 0,

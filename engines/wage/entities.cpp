@@ -60,6 +60,7 @@ void Designed::setDesignBounds(Common::Rect *bounds) {
 
 Scene::Scene(String name, Common::SeekableReadStream *data) {
 	_name = name;
+	_classType = SCENE;
 	_design = new Design(data);
 
 	setDesignBounds(readRect(data));
@@ -81,7 +82,7 @@ Scene::Scene(String name, Common::SeekableReadStream *data) {
 
 Obj::Obj(String name, Common::SeekableReadStream *data) : _currentOwner(NULL), _currentScene(NULL) {
 	_name = name;
-
+	_classType = OBJ;
 	_design = new Design(data);
 
 	setDesignBounds(readRect(data));
@@ -125,6 +126,7 @@ Obj::Obj(String name, Common::SeekableReadStream *data) : _currentOwner(NULL), _
 
 Chr::Chr(String name, Common::SeekableReadStream *data) {
 	_name = name;
+	_classType = CHR;
 	_design = new Design(data);
 
 	setDesignBounds(readRect(data));

@@ -50,16 +50,6 @@
 
 namespace Wage {
 
-enum OperandTypes {
-	OBJ = 0,
-	CHR = 1,
-	SCENE = 2,
-	NUMBER = 3,
-	STRING = 4,
-	CLICK_INPUT = 5,
-	TEXT_INPUT = 6
-};
-
 class Script {
 public:
 	Script(Common::SeekableReadStream *data) : _data(data) {}
@@ -86,35 +76,35 @@ private:
 			String *string;
 			Designed *inputClick;
 		} _value;
-		OperandTypes _type;
+		OperandType _type;
 		Common::String _str;
 
-		Operand(Obj *value, OperandTypes type) {
+		Operand(Obj *value, OperandType type) {
 			_value.obj = value;
 			_type = type;
 		}
 
-		Operand(Chr *value, OperandTypes type) {
+		Operand(Chr *value, OperandType type) {
 			_value.chr = value;
 			_type = type;
 		}
 
-		Operand(Scene *value, OperandTypes type) {
+		Operand(Scene *value, OperandType type) {
 			_value.scene = value;
 			_type = type;
 		}
 
-		Operand(int value, OperandTypes type) {
+		Operand(int value, OperandType type) {
 			_value.number = value;
 			_type = type;
 		}
 
-		Operand(String *value, OperandTypes type) {
+		Operand(String *value, OperandType type) {
 			_value.string = value;
 			_type = type;
 		}
 
-		Operand(Designed *value, OperandTypes type) {
+		Operand(Designed *value, OperandType type) {
 			_value.inputClick = value;
 			_type = type;
 		}
@@ -158,6 +148,7 @@ private:
 	void skipIf();
 	bool compare(Operand *o1, Operand *o2, int comparator);
 	bool eval(Operand *lhs, const char *op, Operand *rhs);
+	Operand *convertOperand(Operand *operand, int type);
 	bool evalClickCondition(Operand *lhs, const char *op, Operand *rhs);
 	void processMove();
 	void processLet();

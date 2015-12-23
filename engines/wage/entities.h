@@ -108,11 +108,12 @@ public:
 
 class Designed {
 public:
-	Designed() : _design(NULL), _designBounds(NULL) {}
+	Designed() : _design(NULL), _designBounds(NULL), _classType(UNKNOWN) {}
 
 	String _name;
 	Design *_design;
 	Common::Rect *_designBounds;
+	OperandType _classType;
 
 	Common::Rect *getDesignBounds() {
 		return _designBounds == NULL ? NULL : new Common::Rect(*_designBounds);
