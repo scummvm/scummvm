@@ -293,10 +293,10 @@ void LabEngine::doJournal() {
 	_graphics->blackScreen();
 }
 
-void LabEngine::drawMonText(char *text, TextFont *monitorFont, Common::Rect textRect, bool isinteractive) {
+void LabEngine::drawMonText(const char *text, TextFont *monitorFont, Common::Rect textRect, bool isinteractive) {
 	uint16 drawingToPage = 0, yspacing = 0;
 	int charsDrawn = 0;
-	char *curText = text;
+	const char *curText = text;
 
 	_event->mouseHide();
 
@@ -347,7 +347,7 @@ void LabEngine::drawMonText(char *text, TextFont *monitorFont, Common::Rect text
 	_event->mouseShow();
 }
 
-void LabEngine::processMonitor(char *ntext, TextFont *monitorFont, bool isInteractive, Common::Rect textRect) {
+void LabEngine::processMonitor(const char *ntext, TextFont *monitorFont, bool isInteractive, Common::Rect textRect) {
 	Common::String startFileName = _monitorTextFilename;
 	CloseDataPtr startClosePtr = _closeDataPtr, lastClosePtr[10];
 	uint16 depth = 0;
@@ -371,7 +371,7 @@ void LabEngine::processMonitor(char *ntext, TextFont *monitorFont, bool isIntera
 
 				Common::String text = _resource->getText(_monitorTextFilename);
 				_graphics->fade(false, 0);
-				drawMonText((char *)text.c_str(), monitorFont, textRect, isInteractive);
+				drawMonText(text.c_str(), monitorFont, textRect, isInteractive);
 				_graphics->fade(true, 0);
 			}
 		}
@@ -461,10 +461,10 @@ void LabEngine::doMonitor(const Common::String background, const Common::String 
 
 	Common::String ntext = _resource->getText(textfile);
 	_graphics->loadBackPict(background, _highPalette);
-	drawMonText((char *)ntext.c_str(), monitorFont, scaledRect, isinteractive);
+	drawMonText(ntext.c_str(), monitorFont, scaledRect, isinteractive);
 	_event->mouseShow();
 	_graphics->fade(true, 0);
-	processMonitor((char *)ntext.c_str(), monitorFont, isinteractive, scaledRect);
+	processMonitor(ntext.c_str(), monitorFont, isinteractive, scaledRect);
 	_graphics->fade(false, 0);
 	_event->mouseHide();
 	_graphics->closeFont(&monitorFont);

@@ -312,7 +312,7 @@ private:
 	/**
 	 * Draws the text for the monitor.
 	 */
-	void drawMonText(char *text, TextFont *monitorFont, Common::Rect textRect, bool isinteractive);
+	void drawMonText(const char *text, TextFont *monitorFont, Common::Rect textRect, bool isinteractive);
 
 	/**
 	 * Draws a room map.
@@ -430,7 +430,7 @@ private:
 	/**
 	 * Processes user input.
 	 */
-	void processMonitor(char *ntext, TextFont *monitorFont, bool isInteractive, Common::Rect textRect);
+	void processMonitor(const char *ntext, TextFont *monitorFont, bool isInteractive, Common::Rect textRect);
 
 	/**
 	 * Figures out what a room's coordinates should be.
