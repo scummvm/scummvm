@@ -895,7 +895,7 @@ void LabEngine::processMainButton(uint16 &curInv, uint16 &lastInv, uint16 &oldDi
 }
 
 void LabEngine::processAltButton(uint16 &curInv, uint16 &lastInv, uint16 buttonId, uint16 &actionMode) {
-	bool doit;
+	bool saveRestoreSuccessful = true;
 
 	_anim->_doBlack = true;
 
@@ -917,7 +917,7 @@ void LabEngine::processAltButton(uint16 &curInv, uint16 &lastInv, uint16 buttonI
 		_anim->stopDiff();
 		_curFileName = " ";
 
-		doit = !saveRestoreGame();
+		saveRestoreSuccessful = saveRestoreGame();
 		_closeDataPtr = nullptr;
 		_mainDisplay = true;
 
@@ -926,8 +926,8 @@ void LabEngine::processAltButton(uint16 &curInv, uint16 &lastInv, uint16 buttonI
 
 		_graphics->drawPanel();
 
-		if (doit) {
-			_graphics->drawMessage("Disk operation failed.", false);
+		if (!saveRestoreSuccessful) {
+			_graphics->drawMessage("Save/restore aborted", false);
 			_graphics->setPalette(initColors, 8);
 			_system->delayMillis(1000);
 		}
