@@ -240,20 +240,17 @@ void LabEngine::doActions(Action *actionList, CloseDataPtr *closePtrList) {
 		switch (actionList->_actionType) {
 		case kActionPlaySound:
 			_music->_loopSoundEffect = false;
-			_music->_waitTillFinished = true;
 			_music->readMusic(actionList->_messages[0], true);
-			_music->_waitTillFinished = false;
 			break;
 
 		case kActionPlaySoundNoWait:
 			_music->_loopSoundEffect = false;
-			_music->_waitTillFinished = false;
 			_music->readMusic(actionList->_messages[0], false);
 			break;
 
 		case kActionPlaySoundLooping:
 			_music->_loopSoundEffect = true;
-			_music->readMusic(actionList->_messages[0], _music->_waitTillFinished);
+			_music->readMusic(actionList->_messages[0], false);
 			break;
 
 		case kActionShowDiff:
