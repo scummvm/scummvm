@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2015-10-11 18:59+0100\n"
+"POT-Creation-Date: 2015-12-23 00:28+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -52,13 +52,13 @@ msgid "Go up"
 msgstr ""
 
 #: gui/browser.cpp:75 gui/chooser.cpp:46 gui/editrecorddialog.cpp:67
-#: gui/KeysDialog.cpp:43 gui/launcher.cpp:351 gui/massadd.cpp:95
-#: gui/options.cpp:1237 gui/predictivedialog.cpp:74 gui/recorderdialog.cpp:70
-#: gui/recorderdialog.cpp:156 gui/saveload-dialog.cpp:216
-#: gui/saveload-dialog.cpp:276 gui/saveload-dialog.cpp:547
-#: gui/saveload-dialog.cpp:931 gui/themebrowser.cpp:55
-#: gui/fluidsynth-dialog.cpp:152 engines/engine.cpp:483
-#: backends/platform/wii/options.cpp:48
+#: gui/filebrowser-dialog.cpp:64 gui/KeysDialog.cpp:43 gui/launcher.cpp:351
+#: gui/massadd.cpp:95 gui/options.cpp:1237 gui/predictivedialog.cpp:74
+#: gui/recorderdialog.cpp:70 gui/recorderdialog.cpp:156
+#: gui/saveload-dialog.cpp:216 gui/saveload-dialog.cpp:276
+#: gui/saveload-dialog.cpp:547 gui/saveload-dialog.cpp:931
+#: gui/themebrowser.cpp:55 gui/fluidsynth-dialog.cpp:152
+#: engines/engine.cpp:483 backends/platform/wii/options.cpp:48
 #: backends/events/default/default-events.cpp:196
 #: backends/events/default/default-events.cpp:218
 #: engines/drascula/saveload.cpp:49 engines/parallaction/saveload.cpp:274
@@ -67,7 +67,7 @@ msgid "Cancel"
 msgstr ""
 
 #: gui/browser.cpp:76 gui/browser_osx.mm:103 gui/chooser.cpp:47
-#: gui/themebrowser.cpp:56
+#: gui/filebrowser-dialog.cpp:65 gui/themebrowser.cpp:56
 msgid "Choose"
 msgstr ""
 
@@ -85,6 +85,38 @@ msgstr ""
 
 #: gui/editrecorddialog.cpp:68 gui/predictivedialog.cpp:75
 msgid "Ok"
+msgstr ""
+
+#: gui/filebrowser-dialog.cpp:49
+msgid "Choose file for loading"
+msgstr ""
+
+#: gui/filebrowser-dialog.cpp:49
+msgid "Enter filename for saving"
+msgstr ""
+
+#: gui/filebrowser-dialog.cpp:132
+msgid "Do you really want to overwrite the file?"
+msgstr ""
+
+#: gui/filebrowser-dialog.cpp:132 gui/launcher.cpp:793 gui/launcher.cpp:941
+#: gui/launcher.cpp:1000 gui/fluidsynth-dialog.cpp:217
+#: backends/events/symbiansdl/symbiansdl-events.cpp:186
+#: backends/platform/wince/CEActionsPocket.cpp:326
+#: backends/platform/wince/CEActionsSmartphone.cpp:287
+#: backends/platform/wince/CELauncherDialog.cpp:83
+#: engines/kyra/saveload_eob.cpp:557 engines/kyra/saveload_eob.cpp:590
+msgid "Yes"
+msgstr ""
+
+#: gui/filebrowser-dialog.cpp:132 gui/launcher.cpp:793 gui/launcher.cpp:941
+#: gui/launcher.cpp:1000 gui/fluidsynth-dialog.cpp:217
+#: backends/events/symbiansdl/symbiansdl-events.cpp:186
+#: backends/platform/wince/CEActionsPocket.cpp:326
+#: backends/platform/wince/CEActionsSmartphone.cpp:287
+#: backends/platform/wince/CELauncherDialog.cpp:83
+#: engines/kyra/saveload_eob.cpp:557 engines/kyra/saveload_eob.cpp:590
+msgid "No"
 msgstr ""
 
 #: gui/gui-manager.cpp:117 backends/keymapper/remap-dialog.cpp:53
@@ -380,7 +412,7 @@ msgstr ""
 msgid "~Q~uit"
 msgstr ""
 
-#: gui/launcher.cpp:626 backends/platform/sdl/macosx/appmenu_osx.mm:95
+#: gui/launcher.cpp:626 backends/platform/sdl/macosx/appmenu_osx.mm:106
 msgid "Quit ScummVM"
 msgstr ""
 
@@ -388,7 +420,7 @@ msgstr ""
 msgid "A~b~out..."
 msgstr ""
 
-#: gui/launcher.cpp:627 backends/platform/sdl/macosx/appmenu_osx.mm:69
+#: gui/launcher.cpp:627 backends/platform/sdl/macosx/appmenu_osx.mm:80
 msgid "About ScummVM"
 msgstr ""
 
@@ -482,26 +514,6 @@ msgstr ""
 msgid ""
 "Do you really want to run the mass game detector? This could potentially add "
 "a huge number of games."
-msgstr ""
-
-#: gui/launcher.cpp:793 gui/launcher.cpp:941 gui/launcher.cpp:1000
-#: gui/fluidsynth-dialog.cpp:217
-#: backends/events/symbiansdl/symbiansdl-events.cpp:186
-#: backends/platform/wince/CEActionsPocket.cpp:326
-#: backends/platform/wince/CEActionsSmartphone.cpp:287
-#: backends/platform/wince/CELauncherDialog.cpp:83
-#: engines/kyra/saveload_eob.cpp:557 engines/kyra/saveload_eob.cpp:590
-msgid "Yes"
-msgstr ""
-
-#: gui/launcher.cpp:793 gui/launcher.cpp:941 gui/launcher.cpp:1000
-#: gui/fluidsynth-dialog.cpp:217
-#: backends/events/symbiansdl/symbiansdl-events.cpp:186
-#: backends/platform/wince/CEActionsPocket.cpp:326
-#: backends/platform/wince/CEActionsSmartphone.cpp:287
-#: backends/platform/wince/CELauncherDialog.cpp:83
-#: engines/kyra/saveload_eob.cpp:557 engines/kyra/saveload_eob.cpp:590
-msgid "No"
 msgstr ""
 
 #: gui/launcher.cpp:841
@@ -654,7 +666,7 @@ msgid "Special dithering modes supported by some games"
 msgstr ""
 
 #: gui/options.cpp:758
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2298
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2313
 msgid "Fullscreen mode"
 msgstr ""
 
@@ -1103,7 +1115,7 @@ msgstr ""
 msgid "Standard Renderer"
 msgstr ""
 
-#: gui/ThemeEngine.cpp:348 engines/scumm/dialogs.cpp:661
+#: gui/ThemeEngine.cpp:348 engines/scumm/dialogs.cpp:663
 msgid "Standard"
 msgstr ""
 
@@ -1348,7 +1360,7 @@ msgstr ""
 
 #: engines/dialogs.cpp:116 engines/agi/saveload.cpp:803
 #: engines/cruise/menu.cpp:212 engines/drascula/saveload.cpp:336
-#: engines/dreamweb/saveload.cpp:261 engines/neverhood/menumodule.cpp:873
+#: engines/dreamweb/saveload.cpp:261 engines/neverhood/menumodule.cpp:877
 #: engines/pegasus/pegasus.cpp:377 engines/sci/engine/kfile.cpp:759
 #: engines/toltecs/menu.cpp:281 engines/tsage/scenes.cpp:598
 msgid "Save game:"
@@ -1361,7 +1373,7 @@ msgstr ""
 #: backends/platform/wince/CEActionsSmartphone.cpp:231
 #: engines/agi/saveload.cpp:803 engines/cruise/menu.cpp:212
 #: engines/drascula/saveload.cpp:336 engines/dreamweb/saveload.cpp:261
-#: engines/neverhood/menumodule.cpp:873 engines/pegasus/pegasus.cpp:377
+#: engines/neverhood/menumodule.cpp:877 engines/pegasus/pegasus.cpp:377
 #: engines/sci/engine/kfile.cpp:759 engines/scumm/dialogs.cpp:188
 #: engines/toltecs/menu.cpp:281 engines/tsage/scenes.cpp:598
 msgid "Save"
@@ -1672,57 +1684,57 @@ msgstr ""
 msgid "Right Click"
 msgstr ""
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:77
+#: backends/platform/sdl/macosx/appmenu_osx.mm:88
 msgid "Hide ScummVM"
 msgstr ""
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:82
+#: backends/platform/sdl/macosx/appmenu_osx.mm:93
 msgid "Hide Others"
 msgstr ""
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:87
+#: backends/platform/sdl/macosx/appmenu_osx.mm:98
 msgid "Show All"
 msgstr ""
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:109
 #: backends/platform/sdl/macosx/appmenu_osx.mm:120
+#: backends/platform/sdl/macosx/appmenu_osx.mm:131
 msgid "Window"
 msgstr ""
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:114
+#: backends/platform/sdl/macosx/appmenu_osx.mm:125
 msgid "Minimize"
 msgstr ""
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:46
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:47
 msgid "Normal (no scaling)"
 msgstr ""
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:65
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:66
 msgctxt "lowres"
 msgid "Normal (no scaling)"
 msgstr ""
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2197
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2212
 msgid "Enabled aspect ratio correction"
 msgstr ""
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2203
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2218
 msgid "Disabled aspect ratio correction"
 msgstr ""
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2258
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2273
 msgid "Active graphics filter:"
 msgstr ""
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2300
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2315
 msgid "Windowed mode"
 msgstr ""
 
-#: backends/graphics/opengl/opengl-graphics.cpp:118
+#: backends/graphics/opengl/opengl-graphics.cpp:119
 msgid "OpenGL"
 msgstr ""
 
-#: backends/graphics/opengl/opengl-graphics.cpp:119
+#: backends/graphics/opengl/opengl-graphics.cpp:120
 msgid "OpenGL (No filtering)"
 msgstr ""
 
@@ -2158,13 +2170,13 @@ msgid ""
 msgstr ""
 
 #: engines/agi/saveload.cpp:816 engines/drascula/saveload.cpp:349
-#: engines/dreamweb/saveload.cpp:169 engines/neverhood/menumodule.cpp:886
+#: engines/dreamweb/saveload.cpp:169 engines/neverhood/menumodule.cpp:890
 #: engines/sci/engine/kfile.cpp:858 engines/toltecs/menu.cpp:256
 msgid "Restore game:"
 msgstr ""
 
 #: engines/agi/saveload.cpp:816 engines/drascula/saveload.cpp:349
-#: engines/dreamweb/saveload.cpp:169 engines/neverhood/menumodule.cpp:886
+#: engines/dreamweb/saveload.cpp:169 engines/neverhood/menumodule.cpp:890
 #: engines/sci/engine/kfile.cpp:858 engines/toltecs/menu.cpp:256
 msgid "Restore"
 msgstr ""
@@ -2661,36 +2673,36 @@ msgstr ""
 msgid "~N~ext"
 msgstr ""
 
-#: engines/scumm/dialogs.cpp:600
+#: engines/scumm/dialogs.cpp:602
 msgid "Speech Only"
 msgstr ""
 
-#: engines/scumm/dialogs.cpp:601
+#: engines/scumm/dialogs.cpp:603
 msgid "Speech and Subtitles"
 msgstr ""
 
-#: engines/scumm/dialogs.cpp:602
+#: engines/scumm/dialogs.cpp:604
 msgid "Subtitles Only"
 msgstr ""
 
-#: engines/scumm/dialogs.cpp:610
+#: engines/scumm/dialogs.cpp:612
 msgctxt "lowres"
 msgid "Speech & Subs"
 msgstr ""
 
-#: engines/scumm/dialogs.cpp:656
+#: engines/scumm/dialogs.cpp:658
 msgid "Select a Proficiency Level."
 msgstr ""
 
-#: engines/scumm/dialogs.cpp:658
+#: engines/scumm/dialogs.cpp:660
 msgid "Refer to your Loom(TM) manual for help."
 msgstr ""
 
-#: engines/scumm/dialogs.cpp:662
+#: engines/scumm/dialogs.cpp:664
 msgid "Practice"
 msgstr ""
 
-#: engines/scumm/dialogs.cpp:663
+#: engines/scumm/dialogs.cpp:665
 msgid "Expert"
 msgstr ""
 
