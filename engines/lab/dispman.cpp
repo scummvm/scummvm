@@ -515,10 +515,10 @@ void DisplayMan::overlayRect(uint16 penColor, uint16 x1, uint16 y1, uint16 x2, u
 		h = _screenHeight - y1;
 
 	if ((w > 0) && (h > 0)) {
-		char *d = (char *)getCurrentDrawingBuffer() + y1 * _screenWidth + x1;
+		byte *d = (byte *)getCurrentDrawingBuffer() + y1 * _screenWidth + x1;
 
 		while (h-- > 0) {
-			char *dd = d;
+			byte *dd = d;
 			int ww = w;
 
 			if (y1 & 1) {
