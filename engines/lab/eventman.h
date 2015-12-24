@@ -74,7 +74,6 @@ private:
 
 	bool _leftClick;
 	bool _rightClick;
-	bool _mouseHidden;
 
 	uint16 _nextKeyIn;
 	uint16 _nextKeyOut;
@@ -96,9 +95,7 @@ private:
 	/**
 	 * Checks whether or not a key has been pressed.
 	 */
-	bool keyPress(Common::KeyCode *keyCode);
-	bool haveNextChar();
-	Common::KeyCode getNextChar();
+	Common::KeyCode keyPress();
 
 	/**
 	 * Checks whether or not the coords fall within one of the buttons in a list
