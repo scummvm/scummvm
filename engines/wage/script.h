@@ -52,7 +52,7 @@ namespace Wage {
 
 class Script {
 public:
-	Script(Common::SeekableReadStream *data) : _data(data) {}
+	Script(Common::SeekableReadStream *data);
 	~Script();
 
 private:
@@ -136,7 +136,14 @@ private:
 		}
 	};
 
+	struct ScriptText {
+		int offset;
+		Common::String line;
+	};
+
 public:
+	void print();
+	void printLine(int offset);
 	bool execute(World *world, int loopCount, String *inputText, Designed *inputClick, WageEngine *callbacks);
 
 private:
@@ -173,6 +180,8 @@ private:
 	bool tryAttack(Weapon *weapon, Common::String &input);
 	void handleAttack(Weapon *weapon);
 
+	Common::Array<ScriptText *> _scriptText;
+	void convertToText();
 };
 
 } // End of namespace Wage

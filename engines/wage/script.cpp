@@ -54,6 +54,30 @@
 
 namespace Wage {
 
+Script::Script(Common::SeekableReadStream *data) : _data(data) {
+	convertToText();
+}
+
+Script::~Script() {
+	for (int i = 0; i < _scriptText.size(); i++) {
+		delete _scriptText[i];
+	}
+}
+
+void Script::print() {
+	for (int i = 0; i < _scriptText.size(); i++) {
+		debug(0, "%d [%04x]: %s", i, _scriptText[i]->offset, _scriptText[i]->line.c_str());
+	}
+}
+
+void Script::printLine(int offset) {
+	for (int i = 0; i < _scriptText.size(); i++)
+		if (_scriptText[i]->offset >= offset) {
+			debug(0, "%d [%04x]: %s", i, _scriptText[i]->offset, _scriptText[i]->line.c_str());
+			break;
+		}
+}
+
 bool Script::execute(World *world, int loopCount, String *inputText, Designed *inputClick, WageEngine *callbacks) {
 	_world = world;
 	_loopCount = loopCount;
@@ -62,11 +86,11 @@ bool Script::execute(World *world, int loopCount, String *inputText, Designed *i
 	_callbacks = callbacks;
 	_handled = false;
 
-	_data->skip(12);
+	_data->seek(12);
 	while (_data->pos() < _data->size()) {
-		byte command = _data->readByte();
+		printLine(_data->pos());
 
-		debug(1, "Command: %x", command);
+		byte command = _data->readByte();
 
 		switch(command) {
 		case 0x80: // IF
@@ -227,7 +251,7 @@ Script::Operand *Script::readOperand() {
 	case 0xB3: // VICTORY#
 		return new Operand(cont->_kills, NUMBER);
 	case 0xB4: // BADCOPY#
-		return new Operand(0, NUMBER); // ????
+		return new Operand(0, NUMBER); // \?\?\??
 	case 0xFF:
 		{
 			// user variable
@@ -857,6 +881,206 @@ bool Script::tryAttack(Weapon *weapon, Common::String &input) {
 
 void Script::handleAttack(Weapon *weapon) {
 	warning("STUB: handleAttack");
+}
+
+enum {
+	BLOCK_START,
+	BLOCK_END,
+	STATEMENT,
+	OPERATOR,
+	OPCODE
+};
+
+struct {
+	const char *cmd;
+	int type;
+} mapping[] = {
+	{ "IF{", STATEMENT }, // 0x80
+	{ "=", OPERATOR },
+	{ "<", OPERATOR },
+	{ ">", OPERATOR },
+	{ "}AND{", OPCODE },
+	{ "}OR{", OPCODE },
+	{ "\?\?\?(0x86)", OPCODE },
+	{ "EXIT\n", BLOCK_END },
+	{ "END\n", BLOCK_END }, // 0x88
+	{ "MOVE{", STATEMENT },
+	{ "}TO{", OPCODE },
+	{ "PRINT{", STATEMENT },
+	{ "SOUND{", STATEMENT },
+	{ "\?\?\?(0x8d)", OPCODE },
+	{ "LET{", STATEMENT },
+	{ "+", OPERATOR },
+	{ "-", OPERATOR }, // 0x90
+	{ "*", OPERATOR },
+	{ "/", OPERATOR },
+	{ "==", OPERATOR },
+	{ ">>", OPERATOR },
+	{ "MENU{", STATEMENT },
+	{ "\?\?\?(0x96)", OPCODE },
+	{ "\?\?\?(0x97)", OPCODE },
+	{ "\?\?\?(0x98)", OPCODE }, // 0x98
+	{ "\?\?\?(0x99)", OPCODE },
+	{ "\?\?\?(0x9a)", OPCODE },
+	{ "\?\?\?(0x9b)", OPCODE },
+	{ "\?\?\?(0x9c)", OPCODE },
+	{ "\?\?\?(0x9d)", OPCODE },
+	{ "\?\?\?(0x9e)", OPCODE },
+	{ "\?\?\?(0x9f)", OPCODE },
+	{ "TEXT$", OPCODE }, // 0xa0
+	{ "CLICK$", OPCODE },
+	{ "\?\?\?(0xa2)", OPCODE },
+	{ "\?\?\?(0xa3)", OPCODE },
+	{ "\?\?\?(0xa4)", OPCODE },
+	{ "\?\?\?(0xa5)", OPCODE },
+	{ "\?\?\?(0xa6)", OPCODE },
+	{ "\?\?\?(0xa7)", OPCODE },
+	{ "\?\?\?(0xa8)", OPCODE }, // 0xa8
+	{ "\?\?\?(0xa9)", OPCODE },
+	{ "\?\?\?(0xaa)", OPCODE },
+	{ "\?\?\?(0xab)", OPCODE },
+	{ "\?\?\?(0xac)", OPCODE },
+	{ "\?\?\?(0xad)", OPCODE },
+	{ "\?\?\?(0xae)", OPCODE },
+	{ "\?\?\?(0xaf)", OPCODE },
+	{ "VISITS#", OPCODE }, // 0xb0 // The number of scenes the player has visited, including repeated visits.
+	{ "RANDOM#", OPCODE }, // RANDOM# for Star Trek, but VISITS# for some other games?
+	{ "LOOP#", OPCODE },   // The number of commands the player has given in the current scene.
+	{ "VICTORY#", OPCODE }, // The number of characters killed.
+	{ "BADCOPY#", OPCODE },
+	{ "RANDOM#", OPCODE }, // A random number between 1 and 100.
+	{ "\?\?\?(0xb6)", OPCODE },
+	{ "\?\?\?(0xb7)", OPCODE },
+	{ "\?\?\?(0xb8)", OPCODE }, // 0xb8
+	{ "\?\?\?(0xb9)", OPCODE },
+	{ "\?\?\?(0xba)", OPCODE },
+	{ "\?\?\?(0xbb)", OPCODE },
+	{ "\?\?\?(0xbc)", OPCODE },
+	{ "\?\?\?(0xbd)", OPCODE },
+	{ "\?\?\?(0xbe)", OPCODE },
+	{ "\?\?\?(0xbf)", OPCODE },
+	{ "STORAGE@", OPCODE }, // 0xc0
+	{ "SCENE@", OPCODE },
+	{ "PLAYER@", OPCODE },
+	{ "MONSTER@", OPCODE },
+	{ "RANDOMSCN@", OPCODE },
+	{ "RANDOMCHR@", OPCODE },
+	{ "RANDOMOBJ@", OPCODE },
+	{ "\?\?\?(0xc7)", OPCODE },
+	{ "\?\?\?(0xc8)", OPCODE }, // 0xc8
+	{ "\?\?\?(0xc9)", OPCODE },
+	{ "\?\?\?(0xca)", OPCODE },
+	{ "\?\?\?(0xcb)", OPCODE },
+	{ "\?\?\?(0xcc)", OPCODE },
+	{ "\?\?\?(0xcd)", OPCODE },
+	{ "\?\?\?(0xce)", OPCODE },
+	{ "\?\?\?(0xcf)", OPCODE },
+	{ "PHYS.STR.BAS#", OPCODE }, // 0xd0
+	{ "PHYS.HIT.BAS#", OPCODE },
+	{ "PHYS.ARM.BAS#", OPCODE },
+	{ "PHYS.ACC.BAS#", OPCODE },
+	{ "SPIR.STR.BAS#", OPCODE },
+	{ "SPIR.HIT.BAS#", OPCODE },
+	{ "SPIR.ARM.BAS#", OPCODE },
+	{ "SPIR.ACC.BAS#", OPCODE },
+	{ "PHYS.SPE.BAS#", OPCODE }, // 0xd8
+	{ "\?\?\?(0xd9)", OPCODE },
+	{ "\?\?\?(0xda)", OPCODE },
+	{ "\?\?\?(0xdb)", OPCODE },
+	{ "\?\?\?(0xdc)", OPCODE },
+	{ "\?\?\?(0xdd)", OPCODE },
+	{ "\?\?\?(0xde)", OPCODE },
+	{ "\?\?\?(0xdf)", OPCODE },
+	{ "PHYS.STR.CUR#", OPCODE }, // 0xe0
+	{ "PHYS.HIT.CUR#", OPCODE },
+	{ "PHYS.ARM.CUR#", OPCODE },
+	{ "PHYS.ACC.CUR#", OPCODE },
+	{ "SPIR.STR.CUR#", OPCODE },
+	{ "SPIR.HIT.CUR#", OPCODE },
+	{ "SPIR.ARM.CUR#", OPCODE },
+	{ "SPIR.ACC.CUR#", OPCODE },
+	{ "PHYS.SPE.CUR#", OPCODE }, // 0xe8
+	{ "\?\?\?(0xe9)", OPCODE },
+	{ "\?\?\?(0xea)", OPCODE },
+	{ "\?\?\?(0xeb)", OPCODE },
+	{ "\?\?\?(0xec)", OPCODE },
+	{ "\?\?\?(0xed)", OPCODE },
+	{ "\?\?\?(0xee)", OPCODE },
+	{ "\?\?\?(0xef)", OPCODE },
+	{ "\?\?\?(0xf0)", OPCODE },
+	{ "\?\?\?(0xf1)", OPCODE },
+	{ "\?\?\?(0xf2)", OPCODE },
+	{ "\?\?\?(0xf3)", OPCODE },
+	{ "\?\?\?(0xf4)", OPCODE },
+	{ "\?\?\?(0xf5)", OPCODE },
+	{ "\?\?\?(0xf6)", OPCODE },
+	{ "\?\?\?(0xf7)", OPCODE },
+	{ "\?\?\?(0xf8)", OPCODE }, // 0xa8
+	{ "\?\?\?(0xf9)", OPCODE },
+	{ "\?\?\?(0xfa)", OPCODE },
+	{ "\?\?\?(0xfb)", OPCODE },
+	{ "\?\?\?(0xfc)", OPCODE },
+	{ "}\n", OPCODE },
+	{ "}THEN\n", BLOCK_START },
+	{ "\?\?\?(0xff)", OPCODE } // Uservar
+};
+
+void Script::convertToText() {
+	_data->seek(12);
+
+	int indentLevel = 0;
+	ScriptText *scr = new ScriptText;
+	scr->offset = _data->pos();
+
+	while(true) {
+		int c = _data->readByte();
+
+		if (_data->eos())
+			break;
+
+		if (c < 0x80) {
+			if (c < 0x20)
+				error("Unknown code 0x%02x at %d", c, _data->pos());
+
+			do {
+				scr->line += c;
+				c = _data->readByte();
+			} while (c < 0x80);
+
+			_data->seek(-1, SEEK_CUR);
+		} else if (c == 0xff) {
+			int value = _data->readByte();
+			value -= 1;
+			scr->line += (char)('A' + (value / 9));
+			scr->line += (char)('0' + (value % 9) + 1);
+			scr->line += '#';
+		} else {
+			const char *cmd = mapping[c - 0x80].cmd;
+			int type = mapping[c - 0x80].type;
+
+			if (type == STATEMENT) {
+				for (int i = 0; i < indentLevel; i++)
+					scr->line += ' ';
+			} else if (type == BLOCK_START) {
+				indentLevel += 2;
+			} else if (type == BLOCK_END) {
+				indentLevel -= 2;
+				for (int i = 0; i < indentLevel; i++)
+					scr->line += ' ';
+			}
+
+			scr->line += cmd;
+
+			if (strchr(cmd, '\n')) {
+				scr->line.deleteLastChar();
+
+				_scriptText.push_back(scr);
+
+				scr = new ScriptText;
+				scr->offset = _data->pos();
+			}
+		}
+	}
 }
 
 } // End of namespace Wage

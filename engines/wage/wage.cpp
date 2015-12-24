@@ -111,6 +111,7 @@ Common::Error WageEngine::run() {
 	Common::Rect r(0, 0, screen.w, screen.h);
 
 	Common::String input("look");
+	_world->_globalScript->print();
 	_world->_globalScript->execute(_world, 1, &input, NULL, this);
 
 	//_world->_orderedScenes[1]->_design->paint(&screen, _world->_patterns, false);
