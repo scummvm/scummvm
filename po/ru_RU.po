@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2015-10-11 18:59+0100\n"
+"POT-Creation-Date: 2015-12-23 00:28+0000\n"
 "PO-Revision-Date: 2015-11-06 09:23+0300\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian\n"
@@ -15,7 +15,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-5\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
+"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
 "X-Generator: Poedit 1.5.5\n"
 
 #: gui/about.cpp:94
@@ -53,13 +54,13 @@ msgid "Go up"
 msgstr "Вверх"
 
 #: gui/browser.cpp:75 gui/chooser.cpp:46 gui/editrecorddialog.cpp:67
-#: gui/KeysDialog.cpp:43 gui/launcher.cpp:351 gui/massadd.cpp:95
-#: gui/options.cpp:1237 gui/predictivedialog.cpp:74 gui/recorderdialog.cpp:70
-#: gui/recorderdialog.cpp:156 gui/saveload-dialog.cpp:216
-#: gui/saveload-dialog.cpp:276 gui/saveload-dialog.cpp:547
-#: gui/saveload-dialog.cpp:931 gui/themebrowser.cpp:55
-#: gui/fluidsynth-dialog.cpp:152 engines/engine.cpp:483
-#: backends/platform/wii/options.cpp:48
+#: gui/filebrowser-dialog.cpp:64 gui/KeysDialog.cpp:43 gui/launcher.cpp:351
+#: gui/massadd.cpp:95 gui/options.cpp:1237 gui/predictivedialog.cpp:74
+#: gui/recorderdialog.cpp:70 gui/recorderdialog.cpp:156
+#: gui/saveload-dialog.cpp:216 gui/saveload-dialog.cpp:276
+#: gui/saveload-dialog.cpp:547 gui/saveload-dialog.cpp:931
+#: gui/themebrowser.cpp:55 gui/fluidsynth-dialog.cpp:152
+#: engines/engine.cpp:483 backends/platform/wii/options.cpp:48
 #: backends/events/default/default-events.cpp:196
 #: backends/events/default/default-events.cpp:218
 #: engines/drascula/saveload.cpp:49 engines/parallaction/saveload.cpp:274
@@ -68,7 +69,7 @@ msgid "Cancel"
 msgstr "Отмена"
 
 #: gui/browser.cpp:76 gui/browser_osx.mm:103 gui/chooser.cpp:47
-#: gui/themebrowser.cpp:56
+#: gui/filebrowser-dialog.cpp:65 gui/themebrowser.cpp:56
 msgid "Choose"
 msgstr "Выбрать"
 
@@ -87,6 +88,39 @@ msgstr "Заметки:"
 #: gui/editrecorddialog.cpp:68 gui/predictivedialog.cpp:75
 msgid "Ok"
 msgstr "Ok"
+
+#: gui/filebrowser-dialog.cpp:49
+msgid "Choose file for loading"
+msgstr ""
+
+#: gui/filebrowser-dialog.cpp:49
+msgid "Enter filename for saving"
+msgstr ""
+
+#: gui/filebrowser-dialog.cpp:132
+#, fuzzy
+msgid "Do you really want to overwrite the file?"
+msgstr "Вы действительно хотите удалить эту запись?"
+
+#: gui/filebrowser-dialog.cpp:132 gui/launcher.cpp:793 gui/launcher.cpp:941
+#: gui/launcher.cpp:1000 gui/fluidsynth-dialog.cpp:217
+#: backends/events/symbiansdl/symbiansdl-events.cpp:186
+#: backends/platform/wince/CEActionsPocket.cpp:326
+#: backends/platform/wince/CEActionsSmartphone.cpp:287
+#: backends/platform/wince/CELauncherDialog.cpp:83
+#: engines/kyra/saveload_eob.cpp:557 engines/kyra/saveload_eob.cpp:590
+msgid "Yes"
+msgstr "Да"
+
+#: gui/filebrowser-dialog.cpp:132 gui/launcher.cpp:793 gui/launcher.cpp:941
+#: gui/launcher.cpp:1000 gui/fluidsynth-dialog.cpp:217
+#: backends/events/symbiansdl/symbiansdl-events.cpp:186
+#: backends/platform/wince/CEActionsPocket.cpp:326
+#: backends/platform/wince/CEActionsSmartphone.cpp:287
+#: backends/platform/wince/CELauncherDialog.cpp:83
+#: engines/kyra/saveload_eob.cpp:557 engines/kyra/saveload_eob.cpp:590
+msgid "No"
+msgstr "Нет"
 
 #: gui/gui-manager.cpp:117 backends/keymapper/remap-dialog.cpp:53
 #: engines/scumm/help.cpp:126 engines/scumm/help.cpp:141
@@ -384,7 +418,7 @@ msgstr "Этот ID игры уже используется. Пожалуйста, выберите другой."
 msgid "~Q~uit"
 msgstr "~В~ыход"
 
-#: gui/launcher.cpp:626 backends/platform/sdl/macosx/appmenu_osx.mm:95
+#: gui/launcher.cpp:626 backends/platform/sdl/macosx/appmenu_osx.mm:106
 msgid "Quit ScummVM"
 msgstr "Завершить ScummVM"
 
@@ -392,7 +426,7 @@ msgstr "Завершить ScummVM"
 msgid "A~b~out..."
 msgstr "О п~р~ограмме..."
 
-#: gui/launcher.cpp:627 backends/platform/sdl/macosx/appmenu_osx.mm:69
+#: gui/launcher.cpp:627 backends/platform/sdl/macosx/appmenu_osx.mm:80
 msgid "About ScummVM"
 msgstr "О программе ScummVM"
 
@@ -489,26 +523,6 @@ msgid ""
 msgstr ""
 "Вы действительно хотите запустить детектор всех игр? Это потенциально может "
 "добавить большое количество игр."
-
-#: gui/launcher.cpp:793 gui/launcher.cpp:941 gui/launcher.cpp:1000
-#: gui/fluidsynth-dialog.cpp:217
-#: backends/events/symbiansdl/symbiansdl-events.cpp:186
-#: backends/platform/wince/CEActionsPocket.cpp:326
-#: backends/platform/wince/CEActionsSmartphone.cpp:287
-#: backends/platform/wince/CELauncherDialog.cpp:83
-#: engines/kyra/saveload_eob.cpp:557 engines/kyra/saveload_eob.cpp:590
-msgid "Yes"
-msgstr "Да"
-
-#: gui/launcher.cpp:793 gui/launcher.cpp:941 gui/launcher.cpp:1000
-#: gui/fluidsynth-dialog.cpp:217
-#: backends/events/symbiansdl/symbiansdl-events.cpp:186
-#: backends/platform/wince/CEActionsPocket.cpp:326
-#: backends/platform/wince/CEActionsSmartphone.cpp:287
-#: backends/platform/wince/CELauncherDialog.cpp:83
-#: engines/kyra/saveload_eob.cpp:557 engines/kyra/saveload_eob.cpp:590
-msgid "No"
-msgstr "Нет"
 
 #: gui/launcher.cpp:841
 msgid "ScummVM couldn't open the specified directory!"
@@ -660,7 +674,7 @@ msgid "Special dithering modes supported by some games"
 msgstr "Специальные режимы рендеринга, поддерживаемые некоторыми играми"
 
 #: gui/options.cpp:758
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2298
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2313
 msgid "Fullscreen mode"
 msgstr "Полноэкранный режим"
 
@@ -1124,7 +1138,7 @@ msgstr "Без графики"
 msgid "Standard Renderer"
 msgstr "Стандартный растеризатор"
 
-#: gui/ThemeEngine.cpp:348 engines/scumm/dialogs.cpp:661
+#: gui/ThemeEngine.cpp:348 engines/scumm/dialogs.cpp:663
 msgid "Standard"
 msgstr "Стандартный"
 
@@ -1372,7 +1386,7 @@ msgstr "~В~ главное меню"
 
 #: engines/dialogs.cpp:116 engines/agi/saveload.cpp:803
 #: engines/cruise/menu.cpp:212 engines/drascula/saveload.cpp:336
-#: engines/dreamweb/saveload.cpp:261 engines/neverhood/menumodule.cpp:873
+#: engines/dreamweb/saveload.cpp:261 engines/neverhood/menumodule.cpp:877
 #: engines/pegasus/pegasus.cpp:377 engines/sci/engine/kfile.cpp:759
 #: engines/toltecs/menu.cpp:281 engines/tsage/scenes.cpp:598
 msgid "Save game:"
@@ -1385,7 +1399,7 @@ msgstr "Сохранить игру:"
 #: backends/platform/wince/CEActionsSmartphone.cpp:231
 #: engines/agi/saveload.cpp:803 engines/cruise/menu.cpp:212
 #: engines/drascula/saveload.cpp:336 engines/dreamweb/saveload.cpp:261
-#: engines/neverhood/menumodule.cpp:873 engines/pegasus/pegasus.cpp:377
+#: engines/neverhood/menumodule.cpp:877 engines/pegasus/pegasus.cpp:377
 #: engines/sci/engine/kfile.cpp:759 engines/scumm/dialogs.cpp:188
 #: engines/toltecs/menu.cpp:281 engines/tsage/scenes.cpp:598
 msgid "Save"
@@ -1727,57 +1741,57 @@ msgstr "Средний щелчок"
 msgid "Right Click"
 msgstr "Правый щелчок"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:77
+#: backends/platform/sdl/macosx/appmenu_osx.mm:88
 msgid "Hide ScummVM"
 msgstr "Скрыть ScummVM"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:82
+#: backends/platform/sdl/macosx/appmenu_osx.mm:93
 msgid "Hide Others"
 msgstr "Скрыть остальные"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:87
+#: backends/platform/sdl/macosx/appmenu_osx.mm:98
 msgid "Show All"
 msgstr "Показать все"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:109
 #: backends/platform/sdl/macosx/appmenu_osx.mm:120
+#: backends/platform/sdl/macosx/appmenu_osx.mm:131
 msgid "Window"
 msgstr "Окно"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:114
+#: backends/platform/sdl/macosx/appmenu_osx.mm:125
 msgid "Minimize"
 msgstr "Убрать в Dock"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:46
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:47
 msgid "Normal (no scaling)"
 msgstr "Без увеличения"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:65
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:66
 msgctxt "lowres"
 msgid "Normal (no scaling)"
 msgstr "Без увеличения"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2197
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2212
 msgid "Enabled aspect ratio correction"
 msgstr "Коррекция соотношения сторон включена"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2203
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2218
 msgid "Disabled aspect ratio correction"
 msgstr "Коррекция соотношения сторон выключена"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2258
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2273
 msgid "Active graphics filter:"
 msgstr "Активный графический фильтр:"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2300
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2315
 msgid "Windowed mode"
 msgstr "Оконный режим"
 
-#: backends/graphics/opengl/opengl-graphics.cpp:118
+#: backends/graphics/opengl/opengl-graphics.cpp:119
 msgid "OpenGL"
 msgstr "OpenGL"
 
-#: backends/graphics/opengl/opengl-graphics.cpp:119
+#: backends/graphics/opengl/opengl-graphics.cpp:120
 msgid "OpenGL (No filtering)"
 msgstr "OpenGL (без фильтров)"
 
@@ -2206,7 +2220,8 @@ msgid ""
 "Use an alternative palette, common for all Amiga games. This was the old "
 "behavior"
 msgstr ""
-"Использовать альтернативную палитру для всех игр Amiga. Это было старое поведение"
+"Использовать альтернативную палитру для всех игр Amiga. Это было старое "
+"поведение"
 
 #: engines/agi/detection.cpp:167
 msgid "Mouse support"
@@ -2216,16 +2231,17 @@ msgstr "Поддержка мыши"
 msgid ""
 "Enables mouse support. Allows to use mouse for movement and in game menus."
 msgstr ""
-"Включает поддержку мыши. Позволяет использовать мышь для перемещения и в меню игры."
+"Включает поддержку мыши. Позволяет использовать мышь для перемещения и в "
+"меню игры."
 
 #: engines/agi/saveload.cpp:816 engines/drascula/saveload.cpp:349
-#: engines/dreamweb/saveload.cpp:169 engines/neverhood/menumodule.cpp:886
+#: engines/dreamweb/saveload.cpp:169 engines/neverhood/menumodule.cpp:890
 #: engines/sci/engine/kfile.cpp:858 engines/toltecs/menu.cpp:256
 msgid "Restore game:"
 msgstr "Восстановить игру:"
 
 #: engines/agi/saveload.cpp:816 engines/drascula/saveload.cpp:349
-#: engines/dreamweb/saveload.cpp:169 engines/neverhood/menumodule.cpp:886
+#: engines/dreamweb/saveload.cpp:169 engines/neverhood/menumodule.cpp:890
 #: engines/sci/engine/kfile.cpp:858 engines/toltecs/menu.cpp:256
 msgid "Restore"
 msgstr "Восстановить"
@@ -2467,7 +2483,8 @@ msgid ""
 "Do you wish to use this save game file with ScummVM?\n"
 "\n"
 msgstr ""
-"Нижеследующий файл сохранения из оригинальной игры был найден в вашей игровой директории:\n"
+"Нижеследующий файл сохранения из оригинальной игры был найден в вашей "
+"игровой директории:\n"
 "\n"
 "%s %s\n"
 "\n"
@@ -2639,7 +2656,9 @@ msgstr "Не делать аппроксимацию цветов EGA (полноцветные фоны)"
 
 #: engines/sci/detection.cpp:375
 msgid "Skip dithering pass in EGA games, graphics are shown with full colors"
-msgstr "Пропускает проход аппроксимации цветов EGA, графика будет показана со всеми цветами"
+msgstr ""
+"Пропускает проход аппроксимации цветов EGA, графика будет показана со всеми "
+"цветами"
 
 #: engines/sci/detection.cpp:384
 msgid "Prefer digital sound effects"
@@ -2776,36 +2795,36 @@ msgstr "~П~ред"
 msgid "~N~ext"
 msgstr "~С~лед"
 
-#: engines/scumm/dialogs.cpp:600
+#: engines/scumm/dialogs.cpp:602
 msgid "Speech Only"
 msgstr "Только озвучка"
 
-#: engines/scumm/dialogs.cpp:601
+#: engines/scumm/dialogs.cpp:603
 msgid "Speech and Subtitles"
 msgstr "Озвучка и субтитры"
 
-#: engines/scumm/dialogs.cpp:602
+#: engines/scumm/dialogs.cpp:604
 msgid "Subtitles Only"
 msgstr "Только субтитры"
 
-#: engines/scumm/dialogs.cpp:610
+#: engines/scumm/dialogs.cpp:612
 msgctxt "lowres"
 msgid "Speech & Subs"
 msgstr "Озвучка и текст"
 
-#: engines/scumm/dialogs.cpp:656
+#: engines/scumm/dialogs.cpp:658
 msgid "Select a Proficiency Level."
 msgstr "Выберите уровень сложности."
 
-#: engines/scumm/dialogs.cpp:658
+#: engines/scumm/dialogs.cpp:660
 msgid "Refer to your Loom(TM) manual for help."
 msgstr "За помощью обратитесь к инстукции Loom(TM)"
 
-#: engines/scumm/dialogs.cpp:662
+#: engines/scumm/dialogs.cpp:664
 msgid "Practice"
 msgstr "Практикант"
 
-#: engines/scumm/dialogs.cpp:663
+#: engines/scumm/dialogs.cpp:665
 msgid "Expert"
 msgstr "Эксперт"
 
@@ -3550,7 +3569,8 @@ msgstr "Использовать видео MPEG высокого разрешения"
 #: engines/zvision/detection_tables.h:92
 msgid "Use MPEG video from the DVD version, instead of lower resolution AVI"
 msgstr ""
-"Использовать MPEG видео из DVD версии, вместо видео низкого разрешения в формате AVI"
+"Использовать MPEG видео из DVD версии, вместо видео низкого разрешения в "
+"формате AVI"
 
 #~ msgid "EGA undithering"
 #~ msgstr "EGA без растра"

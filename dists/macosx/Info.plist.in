@@ -7,15 +7,20 @@
 	<key>CFBundleLocalizations</key>
 	<array>
 		<string>en</string>
+		<string>be</string>
 		<string>ca</string>
 		<string>cs</string>
 		<string>da</string>
 		<string>de</string>
 		<string>es</string>
+		<string>eu</string>
+		<string>fi</string>
 		<string>fr</string>
+		<string>gl</string>
 		<string>hu</string>
 		<string>it</string>
 		<string>nb</string>
+		<string>nl</string>
 		<string>nn</string>
 		<string>pl</string>
 		<string>pt</string>

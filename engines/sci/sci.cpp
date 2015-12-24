@@ -892,29 +892,77 @@ bool SciEngine::speechAndSubtitlesEnabled() {
 }
 
 void SciEngine::syncIngameAudioOptions() {
+	bool useGlobal90 = false;
+
 	// Sync the in-game speech/subtitles settings for SCI1.1 CD games
-	if (isCD() && getSciVersion() == SCI_VERSION_1_1) {
+	if (isCD()) {
+		switch (getSciVersion()) {
+		case SCI_VERSION_1_1:
+			// All SCI1.1 CD games use global 90
+			useGlobal90 = true;
+			break;
+#ifdef ENABLE_SCI32
+		case SCI_VERSION_2:
+		case SCI_VERSION_2_1:
+			// Only use global 90 for some specific games, not all SCI32 games used this method
+			switch (_gameId) {
+			case GID_KQ7: // SCI2.1
+			case GID_GK1: // SCI2
+			case GID_GK2: // SCI2.1
+			case GID_SQ6: // SCI2.1
+			case GID_TORIN: // SCI2.1
+			case GID_QFG4: // SCI2.1
+				useGlobal90 = true;
+				break;
+			case GID_LSL6: // SCI2.1
+				// TODO: Uses gameFlags array
+				break;
+			// TODO: Unknown at the moment:
+			// Shivers - seems not to use global 90
+			// Police Quest: SWAT - unable to check
+			// Police Quest 4 - unable to check
+			// Mixed Up Mother Goose - unable to check
+			// Phantasmagoria - seems to use global 90, unable to check for subtitles atm
+			default:
+				return;
+			}
+			break;
+#endif // ENABLE_SCI32
+		default:
+			return;
+		}
+
 		bool subtitlesOn = ConfMan.getBool("subtitles");
 		bool speechOn = !ConfMan.getBool("speech_mute");
 
-		if (subtitlesOn && !speechOn) {
-			_gamestate->variables[VAR_GLOBAL][90] = make_reg(0, 1);	// subtitles
-		} else if (!subtitlesOn && speechOn) {
-			_gamestate->variables[VAR_GLOBAL][90] = make_reg(0, 2);	// speech
-		} else if (subtitlesOn && speechOn) {
-			// Is it a game that supports simultaneous speech and subtitles?
-			switch (_gameId) {
-			case GID_SQ4:
-			case GID_FREDDYPHARKAS:
-			case GID_ECOQUEST:
-			case GID_LSL6:
-			case GID_LAURABOW2:
-			case GID_KQ6:
-				_gamestate->variables[VAR_GLOBAL][90] = make_reg(0, 3);	// speech + subtitles
-				break;
-			default:
-				// Game does not support speech and subtitles, set it to speech
+		if (useGlobal90) {
+			if (subtitlesOn && !speechOn) {
+				_gamestate->variables[VAR_GLOBAL][90] = make_reg(0, 1);	// subtitles
+			} else if (!subtitlesOn && speechOn) {
 				_gamestate->variables[VAR_GLOBAL][90] = make_reg(0, 2);	// speech
+			} else if (subtitlesOn && speechOn) {
+				// Is it a game that supports simultaneous speech and subtitles?
+				switch (_gameId) {
+				case GID_SQ4:
+				case GID_FREDDYPHARKAS:
+				case GID_ECOQUEST:
+				case GID_LSL6:
+				case GID_LAURABOW2:
+				case GID_KQ6:
+#ifdef ENABLE_SCI32
+				// Unsure about Gabriel Knight 2
+				case GID_KQ7: // SCI2.1
+				case GID_GK1: // SCI2
+				case GID_SQ6: // SCI2.1, SQ6 seems to always use subtitles anyway
+				case GID_TORIN: // SCI2.1
+				case GID_QFG4: // SCI2.1
+#endif // ENABLE_SCI32
+					_gamestate->variables[VAR_GLOBAL][90] = make_reg(0, 3);	// speech + subtitles
+					break;
+				default:
+					// Game does not support speech and subtitles, set it to speech
+					_gamestate->variables[VAR_GLOBAL][90] = make_reg(0, 2);	// speech
+				}
 			}
 		}
 	}
