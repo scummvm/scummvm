@@ -69,7 +69,7 @@ void LabEngine::writeSaveGameHeader(Common::OutSaveFile *out, const Common::Stri
 
 	uint32 saveDate = ((curTime.tm_mday & 0xFF) << 24) | (((curTime.tm_mon + 1) & 0xFF) << 16) | ((curTime.tm_year + 1900) & 0xFFFF);
 	uint16 saveTime = ((curTime.tm_hour & 0xFF) << 8) | ((curTime.tm_min) & 0xFF);
-	uint32 playTime = g_engine->getTotalPlayTime() / 1000;
+	uint32 playTime = getTotalPlayTime() / 1000;
 
 	out->writeUint32BE(saveDate);
 	out->writeUint16BE(saveTime);

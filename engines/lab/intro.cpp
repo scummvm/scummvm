@@ -49,7 +49,7 @@ void Intro::introEatMessages() {
 	while (1) {
 		IntuiMessage *msg = _vm->_event->getMsg();
 
-		if (g_engine->shouldQuit()) {
+		if (_vm->shouldQuit()) {
 			_quitIntro = true;
 			return;
 		}
@@ -118,7 +118,7 @@ void Intro::doPictText(const Common::String filename, TextFont *msgFont, bool is
 		}
 
 		IntuiMessage *msg = _vm->_event->getMsg();
-		if (g_engine->shouldQuit()) {
+		if (_vm->shouldQuit()) {
 			_quitIntro = true;
 			return;
 		}

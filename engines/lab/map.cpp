@@ -399,7 +399,7 @@ void LabEngine::processMap(uint16 curRoom) {
 		// Make sure we check the music at least after every message
 		updateMusicAndEvents();
 		IntuiMessage *msg = _event->getMsg();
-		if (g_engine->shouldQuit()) {
+		if (shouldQuit()) {
 			_quitLab = true;
 			return;
 		}

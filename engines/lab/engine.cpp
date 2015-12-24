@@ -179,7 +179,7 @@ void LabEngine::eatMessages() {
 
 	do {
 		msg = _event->getMsg();
-	} while (msg && !g_engine->shouldQuit());
+	} while (msg && !shouldQuit());
 }
 
 bool LabEngine::doCloseUp(CloseDataPtr closePtr) {
@@ -426,7 +426,7 @@ void LabEngine::mainGameLoop() {
 		_system->delayMillis(10);
 
 		if (gotMessage) {
-			if (_quitLab || g_engine->shouldQuit()) {
+			if (_quitLab || shouldQuit()) {
 				_anim->stopDiff();
 				break;
 			}
@@ -496,7 +496,7 @@ void LabEngine::mainGameLoop() {
 		updateMusicAndEvents();
 		interfaceOn();
 		IntuiMessage *curMsg = _event->getMsg();
-		if (g_engine->shouldQuit()) {
+		if (shouldQuit()) {
 			_quitLab = true;
 			return;
 		}
@@ -578,7 +578,7 @@ bool LabEngine::fromCrumbs(uint32 tmpClass, uint16 code, uint16 qualifier, Commo
 
 	_anim->_doBlack = false;
 
-	if (g_engine->shouldQuit())
+	if (shouldQuit())
 		return false;
 
 	if ((msgClass == kMessageRawKey) && !_graphics->_longWinInFront) {
@@ -727,7 +727,7 @@ bool LabEngine::processKey(IntuiMessage *curMsg, uint32 &msgClass, uint16 &quali
 			updateMusicAndEvents();
 			curMsg = _event->getMsg();
 
-			if (g_engine->shouldQuit())
+			if (shouldQuit())
 				return false;
 
 			if (!curMsg) {

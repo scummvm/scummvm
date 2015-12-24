@@ -227,7 +227,7 @@ void LabEngine::processJournal() {
 		// Make sure we check the music at least after every message
 		updateMusicAndEvents();
 		IntuiMessage *msg = _event->getMsg();
-		if (g_engine->shouldQuit()) {
+		if (shouldQuit()) {
 			_quitLab = true;
 			return;
 		}
@@ -379,7 +379,7 @@ void LabEngine::processMonitor(const char *ntext, TextFont *monitorFont, bool is
 		// Make sure we check the music at least after every message
 		updateMusicAndEvents();
 		IntuiMessage *msg = _event->getMsg();
-		if (g_engine->shouldQuit()) {
+		if (shouldQuit()) {
 			_quitLab = true;
 			return;
 		}
