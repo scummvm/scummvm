@@ -422,11 +422,6 @@ void LabEngine::processMap(uint16 curRoom) {
 			_graphics->writeColorRegs(newcolor, 1, 1);
 			_event->updateMouse();
 			waitTOF();
-			_event->updateMouse();
-			waitTOF();
-			_event->updateMouse();
-			waitTOF();
-			_event->updateMouse();
 
 			place++;
 
