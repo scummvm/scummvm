@@ -145,34 +145,38 @@ void LabEngine::loadJournalData() {
 
 void LabEngine::drawJournalText() {
 	uint16 drawingToPage = 1;
-	int charsDrawn = 0;
 	const char *curText = _journalText.c_str();
+
+	assert((_journalPage & 1) == 0);
 
 	while (drawingToPage < _journalPage) {
 		updateMusicAndEvents();
-		curText = _journalText.c_str() + charsDrawn;
-		charsDrawn += _graphics->flowText(_journalFont, -2, 2, 0, false, false, false, false, _utils->vgaRectScale(52, 32, 152, 148), curText);
+
+		// flowText without output
+		curText += _graphics->flowText(_journalFont, -2, 2, 0, false, false, false, false, _utils->vgaRectScale(52, 32, 152, 148), curText);
 
 		_lastPage = (*curText == 0);
 
-		if (_lastPage)
+		if (_lastPage) {
+			// Reset _journalPage to this page, in case it was set too high
 			_journalPage = (drawingToPage / 2) * 2;
-		else
-			drawingToPage++;
+			break;
+		}
+
+		drawingToPage++;
 	}
 
-	if (_journalPage <= 1) {
-		curText = _journalTextTitle.c_str();
-		_graphics->flowText(_journalFont, -2, 2, 0, false, true, true, true, _utils->vgaRectScale(52, 32, 152, 148), curText, _journalBackImage);
+	if (_journalPage == 0) {
+		// draw title page centered
+		_graphics->flowText(_journalFont, -2, 2, 0, false, true, true, true, _utils->vgaRectScale(52, 32, 152, 148), _journalTextTitle.c_str(), _journalBackImage);
 	} else {
-		curText = _journalText.c_str() + charsDrawn;
-		charsDrawn += _graphics->flowText(_journalFont, -2, 2, 0, false, false, false, true, _utils->vgaRectScale(52, 32, 152, 148), curText, _journalBackImage);
+		curText += _graphics->flowText(_journalFont, -2, 2, 0, false, false, false, true, _utils->vgaRectScale(52, 32, 152, 148), curText, _journalBackImage);
 	}
 
 	updateMusicAndEvents();
-	curText = _journalText.c_str() + charsDrawn;
+	curText += _graphics->flowText(_journalFont, -2, 2, 0, false, false, false, true, _utils->vgaRectScale(171, 32, 271, 148), curText, _journalBackImage);
+
 	_lastPage = (*curText == 0);
-	_graphics->flowText(_journalFont, -2, 2, 0, false, false, false, true, _utils->vgaRectScale(171, 32, 271, 148), curText, _journalBackImage);
 }
 
 void LabEngine::turnPage(bool fromLeft) {
