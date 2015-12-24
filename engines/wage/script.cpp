@@ -178,16 +178,14 @@ bool Script::execute(World *world, int loopCount, String *inputText, Designed *i
 
 			delete weapons;
 		}
-/*
 	// TODO: weapons, offer, etc...
-	} else if (inputClick instanceof Obj) {
-		Obj obj = (Obj) inputClick;
-		if (obj.getType() != Obj.IMMOBILE_OBJECT) {
+	} else if (_inputClick->_classType == OBJ) {
+		Obj *obj = (Obj *)_inputClick;
+		if (obj->_type != Obj::IMMOBILE_OBJECT) {
 			takeObj(obj);
 		} else {
-			appendText(obj.getClickMessage());
+			appendText(obj->_clickMessage);
 		}
-*/
 	}
 
 	return _handled;
@@ -735,6 +733,27 @@ bool Script::evalClickCondition(Operand *lhs, const char *op, Operand *rhs) {
 	warning("STUB: evalClickCondition");
 
 	return false;
+}
+
+void Script::takeObj(Obj *obj) {
+	if (_world->_player->_inventory.size() >= _world->_player->_maximumCarriedObjects) {
+		appendText("Your pack is full, you must drop something.");
+	} else {
+		_world->move(obj, _world->_player);
+		int type = _world->_player->wearObjIfPossible(obj);
+		if (type == Chr::HEAD_ARMOR) {
+			appendText(String("You are now wearing the ") + obj->_name + ".");
+		} else if (type == Chr::BODY_ARMOR) {
+			appendText(String("You are now wearing the ") + obj->_name + ".");
+		} else if (type == Chr::SHIELD_ARMOR) {
+			appendText(String("You are now wearing the ") + obj->_name + ".");
+		} else if (type == Chr::MAGIC_ARMOR) {
+			appendText(String("You are now wearing the ") + obj->_name + ".");
+		} else {
+			appendText(String("You now have the ") + obj->_name + ".");
+		}
+		appendText(obj->_clickMessage);
+	}
 }
 
 void Script::processMove() {

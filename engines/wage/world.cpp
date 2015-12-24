@@ -350,4 +350,8 @@ Common::String *World::loadStringFromDITL(Common::MacResManager *resMan, int res
 	return NULL;
 }
 
+void World::move(Obj *obj, Chr *chr) {
+	warning("STUB: World::move()");
+}
+
 } // End of namespace Wage

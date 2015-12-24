@@ -60,6 +60,7 @@ public:
 	bool loadWorld(Common::MacResManager *resMan);
 	void loadExternalSounds(String fname);
 	Common::String *loadStringFromDITL(Common::MacResManager *resMan, int resourceId, int itemIndex);
+	void move(Obj *obj, Chr *chr);
 
 	String _name;
 	String _aboutMessage;

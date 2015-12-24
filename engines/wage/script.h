@@ -150,6 +150,7 @@ private:
 	bool eval(Operand *lhs, const char *op, Operand *rhs);
 	Operand *convertOperand(Operand *operand, int type);
 	bool evalClickCondition(Operand *lhs, const char *op, Operand *rhs);
+	void takeObj(Obj *obj);
 	void processMove();
 	void processLet();
 

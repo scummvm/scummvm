@@ -192,6 +192,9 @@ Chr::Chr(String name, Common::SeekableReadStream *data) {
 
 	_weaponSound1 = readPascalString(data);
 	_weaponSound2 = readPascalString(data);
+
+	for (int i = 0; i < NUMBER_OF_ARMOR_TYPES; i++)
+		_armor[i] = NULL;
 }
 
 WeaponArray *Chr::getWeapons() {
@@ -201,5 +204,39 @@ WeaponArray *Chr::getWeapons() {
 
 	return list;
 }
+
+int Chr::wearObjIfPossible(Obj *obj) {
+	switch (obj->_type) {
+	case Obj::HELMET:
+		if (_armor[HEAD_ARMOR] == NULL) {
+			_armor[HEAD_ARMOR] = obj;
+			return Chr::HEAD_ARMOR;
+		}
+		break;
+	case Obj::CHEST_ARMOR:
+		if (_armor[BODY_ARMOR] == NULL) {
+			_armor[BODY_ARMOR] = obj;
+			return Chr::BODY_ARMOR;
+		}
+		break;
+	case Obj::SHIELD:
+		if (_armor[SHIELD_ARMOR] == NULL) {
+			_armor[SHIELD_ARMOR] = obj;
+			return Chr::SHIELD_ARMOR;
+		}
+		break;
+	case Obj::SPIRITUAL_ARMOR:
+		if (_armor[MAGIC_ARMOR] == NULL) {
+			_armor[MAGIC_ARMOR] = obj;
+			return Chr::MAGIC_ARMOR;
+		}
+		break;
+	default:
+		return -1;
+	}
+
+	return -1;
+}
+
 
 } // End of namespace Wage

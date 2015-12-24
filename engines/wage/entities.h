@@ -60,7 +60,7 @@ typedef Common::Array<Weapon *> WeaponArray;
 
 class Context {
 public:
-	enum StatVariables {
+	enum StatVariable {
 	/** The base physical accuracy of the player. */
 		PHYS_ACC_BAS = 0,
 	/** The current physical accuracy of the player. */
@@ -141,7 +141,9 @@ public:
 	enum ChrArmorType {
 		HEAD_ARMOR = 0,
 		BODY_ARMOR = 1,
-		SHIELD_ARMOR = 2
+		SHIELD_ARMOR = 2,
+		MAGIC_ARMOR = 3,
+		NUMBER_OF_ARMOR_TYPES = 4
 	};
 
 	Chr(String name, Common::SeekableReadStream *data);
@@ -201,7 +203,7 @@ public:
 	Scene *_currentScene;
 	Common::List<Obj> _inventory;
 
-	Obj *_armor[3];
+	Obj *_armor[NUMBER_OF_ARMOR_TYPES];
 
 	Context _context;
 
@@ -276,6 +278,7 @@ public:
 	bool hasNativeWeapon2() {
 		return (_nativeWeapon2.size() > 0 && _operativeVerb2.size() > 0);
 	}
+	int wearObjIfPossible(Obj *obj);
 };
 
 class Weapon {
@@ -301,7 +304,7 @@ public:
 	Obj() : _currentOwner(NULL), _currentScene(NULL) {}
 	Obj(String name, Common::SeekableReadStream *data);
 
-	enum ObjectTypes {
+	enum ObjectType {
 		REGULAR_WEAPON = 1,
 		THROW_WEAPON = 2,
 		MAGICAL_OBJECT = 3,
@@ -313,7 +316,7 @@ public:
 		IMMOBILE_OBJECT = 9
 	};
 
-	enum AttackTypes {
+	enum AttackType {
 		CAUSES_PHYSICAL_DAMAGE = 0,
 		CAUSES_SPIRITUAL_DAMAGE = 1,
 		CAUSES_PHYSICAL_AND_SPIRITUAL_DAMAGE = 2,
@@ -350,7 +353,6 @@ public:
 		if (currentScene != NULL)
 			_currentOwner = NULL;
 	}
-
 };
 
 class Scene : public Designed {
