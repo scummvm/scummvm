@@ -185,13 +185,11 @@ int DisplayMan::flowText(TextFont *font, int16 spacing, byte penColor, byte back
 			y += ((textRect.height() + 1) - (actlines * fontHeight)) / 2;
 	}
 
-	int len = 0;
 	while (numLines && str[0]) {
 		Common::String lineBuffer;
 		lineBuffer = getLine(msgFont, &str, width);
 
 		uint16 x = textRect.left;
-		len += lineBuffer.size();
 
 		if (centerh)
 			x += (width - textLength(msgFont, lineBuffer)) / 2;
