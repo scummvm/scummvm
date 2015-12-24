@@ -80,17 +80,24 @@ void Anim::diffNextFrame(bool onlyDiffData) {
 		return;
 
 	BitMap *disp = _vm->_graphics->_dispBitMap;
-	if (disp->_drawOnScreen)
-		disp->_buffer = _vm->_graphics->getCurrentDrawingBuffer();
+	bool drawOnScreen = disp->_drawOnScreen;
+	byte *startOfBuf = disp->_buffer;
+	int bufPitch = disp->_bytesPerRow;
 
-	byte *endOfBuf = disp->_buffer + (int)_diffWidth * _diffHeight;
+	if (drawOnScreen) {
+		startOfBuf = _vm->_graphics->getCurrentDrawingBuffer();
+		bufPitch = _vm->_graphics->_screenWidth;
+	} else {
+		assert(startOfBuf);
+	}
+	byte *endOfBuf = startOfBuf + (int)_diffWidth * _diffHeight;
 
 	_vm->_event->mouseHide();
 
 	int curBit = 0;
 
 	while (1) {
-		byte *buf = disp->_buffer + 0x10000 * curBit;
+		byte *buf = startOfBuf + 0x10000 * curBit;
 
 		if (buf >= endOfBuf) {
 			_vm->_event->mouseShow();
@@ -124,7 +131,7 @@ void Anim::diffNextFrame(bool onlyDiffData) {
 
 			_isAnim = (_frameNum >= 3) && (!_playOnce);
 
-			if (disp->_drawOnScreen)
+			if (drawOnScreen)
 				_vm->_graphics->screenUpdate();
 
 			// done with the next frame.
@@ -167,21 +174,21 @@ void Anim::diffNextFrame(bool onlyDiffData) {
 		case 12:
 			curPos = _diffFile->pos();
 			_diffFile->skip(4);
-			_vm->_utils->verticalRunLengthDecode(buf, _diffFile, disp->_bytesPerRow);
+			_vm->_utils->verticalRunLengthDecode(buf, _diffFile, bufPitch);
 			curBit++;
 			_diffFile->seek(curPos + _size, SEEK_SET);
 			break;
 
 		case 20:
 			curPos = _diffFile->pos();
-			_vm->_utils->unDiff(buf, buf, _diffFile, disp->_bytesPerRow, false);
+			_vm->_utils->unDiff(buf, buf, _diffFile, bufPitch, false);
 			curBit++;
 			_diffFile->seek(curPos + _size, SEEK_SET);
 			break;
 
 		case 21:
 			curPos = _diffFile->pos();
-			_vm->_utils->unDiff(buf, buf, _diffFile, disp->_bytesPerRow, true);
+			_vm->_utils->unDiff(buf, buf, _diffFile, bufPitch, true);
 			curBit++;
 			_diffFile->seek(curPos + _size, SEEK_SET);
 			break;
@@ -218,7 +225,7 @@ void Anim::diffNextFrame(bool onlyDiffData) {
 						_vm->updateMusicAndEvents();
 						_vm->waitTOF();
 
-						if (disp->_drawOnScreen)
+						if (drawOnScreen)
 							didTOF = true;
 					}
 				}

@@ -97,8 +97,7 @@ void DisplayMan::readPict(const Common::String filename, bool playOnce, bool onl
 
 	_dispBitMap->_bytesPerRow  = _screenWidth;
 	_dispBitMap->_drawOnScreen = (memoryBuffer == nullptr);
-	if (memoryBuffer)
-		_dispBitMap->_buffer = memoryBuffer;
+	_dispBitMap->_buffer       = memoryBuffer;
 
 	_vm->_anim->readDiff(_curBitmap, playOnce, onlyDiffData);
 }
