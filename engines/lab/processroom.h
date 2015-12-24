@@ -148,7 +148,7 @@ struct CloseData {
 };
 
 struct ViewData {
-	int16 *_condition;
+	Common::Array<int16> _condition;
 	Common::String _graphicName;
 	ViewData *_nextCondition;
 	CloseDataPtr _closeUps;
@@ -159,16 +159,15 @@ struct Action {
 	int16 _param1;
 	int16 _param2;
 	int16 _param3;
-	Common::String *_messages;
-	Action *_nextAction;
+	Common::Array<Common::String> _messages;
 };
 
 struct Rule {
 	RuleType _ruleType;
 	int16 _param1;
 	int16 _param2;
-	int16 *_condition;
-	Action *_actionList;
+	Common::Array<int16> _condition;
+	Common::List<Action> _actionList;
 };
 
 struct RoomData {

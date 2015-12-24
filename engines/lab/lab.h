@@ -206,7 +206,7 @@ private:
 	/**
 	 * Checks whether all the conditions in a condition list are met.
 	 */
-	bool checkConditions(int16 *condition);
+	bool checkConditions(const Common::Array<int16> &cond);
 
 	/**
 	 * Decrements the current inventory number.
@@ -216,7 +216,7 @@ private:
 	/**
 	 * Processes the action list.
 	 */
-	void doActions(Action *actionList, CloseDataPtr *closePtrList);
+	void doActions(const Common::List<Action> &actionList, CloseDataPtr *closePtrList);
 
 	/**
 	 * Goes through the rules if an action is taken.

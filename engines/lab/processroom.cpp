@@ -44,22 +44,12 @@ namespace Lab {
 
 #define NOFILE         "no file"
 
-bool LabEngine::checkConditions(int16 *condition) {
-	if (!condition)
-		return true;
+bool LabEngine::checkConditions(const Common::Array<int16> &condition) {
+	for (unsigned int i = 0; i < condition.size(); ++i)
+		if (!_conditions->in(condition[i]))
+			return false;
 
-	if (condition[0] == 0)
-		return true;
-
-	int counter = 1;
-	bool res = _conditions->in(condition[0]);
-
-	while (condition[counter] && res) {
-		res = _conditions->in(condition[counter]);
-		counter++;
-	}
-
-	return res;
+	return true;
 }
 
 ViewData *LabEngine::getViewData(uint16 roomNum, uint16 direction) {
@@ -233,38 +223,39 @@ bool LabEngine::takeItem(Common::Point pos, CloseDataPtr *closePtrList) {
 	return false;
 }
 
-void LabEngine::doActions(Action *actionList, CloseDataPtr *closePtrList) {
-	while (actionList) {
+void LabEngine::doActions(const Common::List<Action> &actionList, CloseDataPtr *closePtrList) {
+	Common::List<Action>::const_iterator action;
+	for (action = actionList.begin(); action != actionList.end(); ++action) {
 		updateMusicAndEvents();
 
-		switch (actionList->_actionType) {
+		switch (action->_actionType) {
 		case kActionPlaySound:
 			_music->_loopSoundEffect = false;
-			_music->readMusic(actionList->_messages[0], true);
+			_music->readMusic(action->_messages[0], true);
 			break;
 
 		case kActionPlaySoundNoWait:
 			_music->_loopSoundEffect = false;
-			_music->readMusic(actionList->_messages[0], false);
+			_music->readMusic(action->_messages[0], false);
 			break;
 
 		case kActionPlaySoundLooping:
 			_music->_loopSoundEffect = true;
-			_music->readMusic(actionList->_messages[0], false);
+			_music->readMusic(action->_messages[0], false);
 			break;
 
 		case kActionShowDiff:
-			_graphics->readPict(actionList->_messages[0], true);
+			_graphics->readPict(action->_messages[0], true);
 			break;
 
 		case kActionShowDiffLooping:
-			_graphics->readPict(actionList->_messages[0], false);
+			_graphics->readPict(action->_messages[0], false);
 			break;
 
 		case kActionLoadDiff:
-			if (!actionList->_messages[0].empty())
+			if (!action->_messages[0].empty())
 				// Puts a file into memory
-				_graphics->loadPict(actionList->_messages[0]);
+				_graphics->loadPict(action->_messages[0]);
 
 			break;
 		
@@ -275,7 +266,7 @@ void LabEngine::doActions(Action *actionList, CloseDataPtr *closePtrList) {
 			error("Unused opcode kActionShowBitmap has been called");
 
 		case kActionTransition:
-			_graphics->doTransition((TransitionType)actionList->_param1, closePtrList, actionList->_messages[0].c_str());
+			_graphics->doTransition((TransitionType)action->_param1, closePtrList, action->_messages[0].c_str());
 			break;
 
 		case kActionNoUpdate:
@@ -298,48 +289,47 @@ void LabEngine::doActions(Action *actionList, CloseDataPtr *closePtrList) {
 			break;
 
 		case kActionSetElement:
-			_conditions->inclElement(actionList->_param1);
+			_conditions->inclElement(action->_param1);
 			break;
 
 		case kActionUnsetElement:
-			_conditions->exclElement(actionList->_param1);
+			_conditions->exclElement(action->_param1);
 			break;
 
 		case kActionShowMessage:
 			if (_graphics->_longWinInFront)
-				_graphics->longDrawMessage(actionList->_messages[0], true);
+				_graphics->longDrawMessage(action->_messages[0], true);
 			else
-				_graphics->drawMessage(actionList->_messages[0], true);
+				_graphics->drawMessage(action->_messages[0], true);
 			break;
 
 		case kActionCShowMessage:
 			if (!*closePtrList)
-				_graphics->drawMessage(actionList->_messages[0], true);
+				_graphics->drawMessage(action->_messages[0], true);
 			break;
 
 		case kActionShowMessages:
-			_graphics->drawMessage(actionList->_messages[_utils->getRandom(actionList->_param1)], true);
+			_graphics->drawMessage(action->_messages[_utils->getRandom(action->_param1)], true);
 			break;
 
 		case kActionChangeRoom:
-			if (actionList->_param1 & 0x8000) {
+			if (action->_param1 & 0x8000) {
 				// This is a Wyrmkeep Windows trial version, thus stop at this
 				// point, since we can't check for game payment status
 				_graphics->readPict(getPictName(closePtrList));
-				actionList = nullptr;
 				GUI::MessageDialog trialMessage("This is the end of the trial version. You can play the full game using the original interpreter from Wyrmkeep");
 				trialMessage.runModal();
-				continue;
+				break;
 			}
 
-			_roomNum   = actionList->_param1;
-			_direction = actionList->_param2 - 1;
+			_roomNum   = action->_param1;
+			_direction = action->_param2 - 1;
 			*closePtrList = nullptr;
 			_anim->_doBlack = true;
 			break;
 
 		case kActionSetCloseup: {
-			Common::Point curPos = Common::Point(_utils->scaleX(actionList->_param1), _utils->scaleY(actionList->_param2));
+			Common::Point curPos = Common::Point(_utils->scaleX(action->_param1), _utils->scaleY(action->_param2));
 				CloseDataPtr tmpClosePtr = getObject(curPos, *closePtrList);
 
 				if (tmpClosePtr)
@@ -352,17 +342,17 @@ void LabEngine::doActions(Action *actionList, CloseDataPtr *closePtrList) {
 			break;
 
 		case kActionSubInv:
-			if (_inventory[actionList->_param1]._quantity)
-				(_inventory[actionList->_param1]._quantity)--;
+			if (_inventory[action->_param1]._quantity)
+				(_inventory[action->_param1]._quantity)--;
 
-			if (_inventory[actionList->_param1]._quantity == 0)
-				_conditions->exclElement(actionList->_param1);
+			if (_inventory[action->_param1]._quantity == 0)
+				_conditions->exclElement(action->_param1);
 
 			break;
 
 		case kActionAddInv:
-			(_inventory[actionList->_param1]._quantity) += actionList->_param2;
-			_conditions->inclElement(actionList->_param1);
+			(_inventory[action->_param1]._quantity) += action->_param2;
+			_conditions->inclElement(action->_param1);
 			break;
 
 		case kActionShowDir:
@@ -370,7 +360,7 @@ void LabEngine::doActions(Action *actionList, CloseDataPtr *closePtrList) {
 			break;
 
 		case kActionWaitSecs: {
-				uint32 targetMillis = _system->getMillis() + actionList->_param1 * 1000;
+				uint32 targetMillis = _system->getMillis() + action->_param1 * 1000;
 
 				_graphics->screenUpdate();
 
@@ -390,7 +380,7 @@ void LabEngine::doActions(Action *actionList, CloseDataPtr *closePtrList) {
 			break;
 
 		case kActionChangeMusic:
-			_music->changeMusic(actionList->_messages[0]);
+			_music->changeMusic(action->_messages[0]);
 			_music->setMusicReset(false);
 			break;
 
@@ -439,13 +429,13 @@ void LabEngine::doActions(Action *actionList, CloseDataPtr *closePtrList) {
 			break;
 
 		case kActionSpecialCmd:
-			if (actionList->_param1 == 0)
+			if (action->_param1 == 0)
 				_anim->_doBlack = true;
-			else if (actionList->_param1 == 1)
+			else if (action->_param1 == 1)
 				_anim->_doBlack = (_closeDataPtr == nullptr);
-			else if (actionList->_param1 == 2)
+			else if (action->_param1 == 2)
 				_anim->_doBlack = (_closeDataPtr != nullptr);
-			else if (actionList->_param1 == 5) {
+			else if (action->_param1 == 5) {
 				// inverse the palette
 				for (int idx = (8 * 3); idx < (255 * 3); idx++)
 					_anim->_diffPalette[idx] = 255 - _anim->_diffPalette[idx];
@@ -454,18 +444,18 @@ void LabEngine::doActions(Action *actionList, CloseDataPtr *closePtrList) {
 				_graphics->setPalette(_anim->_diffPalette, 256);
 				waitTOF();
 				waitTOF();
-			} else if (actionList->_param1 == 4) {
+			} else if (action->_param1 == 4) {
 				// white the palette
 				_graphics->whiteScreen();
 				waitTOF();
 				waitTOF();
-			} else if (actionList->_param1 == 6) {
+			} else if (action->_param1 == 6) {
 				// Restore the palette
 				waitTOF();
 				_graphics->setPalette(_anim->_diffPalette, 256);
 				waitTOF();
 				waitTOF();
-			} else if (actionList->_param1 == 7) {
+			} else if (action->_param1 == 7) {
 				// Quick pause
 				waitTOF();
 				waitTOF();
@@ -474,8 +464,6 @@ void LabEngine::doActions(Action *actionList, CloseDataPtr *closePtrList) {
 
 			break;
 		}
-
-		actionList = actionList->_nextAction;
 	}
 
 	if (_music->_loopSoundEffect) {

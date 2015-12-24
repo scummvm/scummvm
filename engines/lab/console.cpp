@@ -86,10 +86,9 @@ bool Console::Cmd_DumpSceneResources(int argc, const char **argv) {
 			debugPrintf(" (from %s to %s)", directions[rule->_param1], directions[rule->_param2]);
 		debugPrintf("\n");
 
-		while (rule->_actionList) {
-			Action *action = rule->_actionList;
+		Common::List<Action>::iterator action;
+		for (action = rule->_actionList.begin(); action != rule->_actionList.end(); ++action) {
 			debugPrintf("  - %s ('%s', %d, %d, %d)\n", actionTypes[action->_actionType], action->_messages[0].c_str(), action->_param1, action->_param2, action->_param3);
-			rule->_actionList = rule->_actionList->_nextAction;
 		}
 	}
 
@@ -111,15 +110,14 @@ bool Console::Cmd_FindAction(int argc, const char **argv) {
 		_vm->_resource->readViews(i);
 
 		for (RuleList::iterator rule = _vm->_rooms[i]._rules->begin(); rule != _vm->_rooms[i]._rules->end(); ++rule) {
-			while (rule->_actionList) {
-				if (rule->_actionList->_actionType == actionId &&
-					(rule->_actionList->_param1 == param1 || param1 == -1) &&
-					(rule->_actionList->_param2 == param2 || param2 == -1) &&
-					(rule->_actionList->_param3 == param3 || param3 == -1)) {
+			Common::List<Action>::iterator action;
+			for (action = rule->_actionList.begin(); action != rule->_actionList.end(); ++action) {
+				if (action->_actionType == actionId &&
+					(action->_param1 == param1 || param1 == -1) &&
+					(action->_param2 == param2 || param2 == -1) &&
+					(action->_param3 == param3 || param3 == -1)) {
 						debugPrintf("Found at script %d\n", i);
 				}
-
-				rule->_actionList = rule->_actionList->_nextAction;
 			}
 		}
 	}
