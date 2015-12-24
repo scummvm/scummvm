@@ -147,7 +147,7 @@ bool LabEngine::saveGame(int slot, const Common::String desc) {
 	_tilePuzzle->save(file);
 
 	// Breadcrumbs
-	for (uint i = 0; i < sizeof(_breadCrumbs); i++) {
+	for (uint i = 0; i < 128; i++) {
 		file->writeUint16LE(_breadCrumbs[i]._roomNum);
 		file->writeUint16LE(_breadCrumbs[i]._direction);
 	}
