@@ -36,6 +36,7 @@ namespace Lab {
 class Intro {
 public:
 	Intro(LabEngine *vm);
+	~Intro();
 
 	/**
 	 * Does the introduction sequence for Labyrinth.

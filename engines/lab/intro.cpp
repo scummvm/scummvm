@@ -43,7 +43,11 @@ namespace Lab {
 Intro::Intro(LabEngine *vm) : _vm(vm) {
 	_quitIntro = false;
 	_introDoBlack = false;
-	_font = nullptr;
+	_font = _vm->_resource->getFont("F:Map.fon");
+}
+
+Intro::~Intro() {
+	_vm->_graphics->closeFont(&_font);
 }
 
 void Intro::introEatMessages() {
@@ -316,8 +320,6 @@ void Intro::play() {
 	_vm->_graphics->blackAllScreen();
 	_vm->updateMusicAndEvents();
 
-	_font = _vm->_resource->getFont("F:Map.fon");
-
 	_vm->_anim->_noPalChange = true;
 	nReadPict("Intro.1");
 	_vm->_anim->_noPalChange = false;
@@ -435,8 +437,6 @@ void Intro::play() {
 		_vm->_graphics->rectFill(0, 0, _vm->_graphics->_screenWidth - 1, _vm->_graphics->_screenHeight - 1);
 		_vm->_anim->_doBlack = true;
 	}
-
-	_vm->_graphics->closeFont(&_font);
 }
 
 } // End of namespace Lab
