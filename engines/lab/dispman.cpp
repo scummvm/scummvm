@@ -149,11 +149,10 @@ int DisplayMan::flowText(TextFont *font, int16 spacing, byte penColor, byte back
 			bool fillBack, bool centerh, bool centerv, bool output, Common::Rect textRect, const char *str, Image *targetImage) {
 
 	byte *saveDisplayBuffer = _currentDisplayBuffer;
-	uint32 bytesPerPage = _screenBytesPerPage;
 
 	if (targetImage) {
 		_currentDisplayBuffer = targetImage->_imageData;
-		_screenBytesPerPage = (uint32)targetImage->_width * (int32)targetImage->_height;
+		assert(_screenBytesPerPage == (uint32)(targetImage->_width * targetImage->_height));
 	}
 
 	if (fillBack)
@@ -201,7 +200,6 @@ int DisplayMan::flowText(TextFont *font, int16 spacing, byte penColor, byte back
 
 	len--;
 
-	_screenBytesPerPage = bytesPerPage;
 	_currentDisplayBuffer = saveDisplayBuffer;
 
 	return len;
