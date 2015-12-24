@@ -36,6 +36,7 @@ namespace Stark {
 
 namespace Gfx {
 class Driver;
+class SurfaceRenderer;
 class Texture;
 }
 
@@ -65,6 +66,7 @@ private:
 	int _width;
 	int _height;
 	Gfx::Driver *_gfx;
+	Gfx::SurfaceRenderer *_surfaceRenderer;
 	Gfx::Texture *_texture;
 	Graphics::Surface *_surface;
 	Common::Point _hotspot;

@@ -40,6 +40,7 @@ namespace Stark {
 
 namespace Gfx {
 class Driver;
+class SurfaceRenderer;
 class Texture;
 }
 
@@ -80,6 +81,7 @@ private:
 
 	Common::Point _position;
 	Gfx::Driver *_gfx;
+	Gfx::SurfaceRenderer *_surfaceRenderer;
 	Gfx::Texture *_texture;
 };
 

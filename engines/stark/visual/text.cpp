@@ -28,6 +28,7 @@
 
 #include "engines/stark/debug.h"
 #include "engines/stark/gfx/driver.h"
+#include "engines/stark/gfx/surfacerenderer.h"
 #include "engines/stark/gfx/texture.h"
 #include "engines/stark/scene.h"
 #include "engines/stark/services/services.h"
@@ -43,10 +44,13 @@ VisualText::VisualText(Gfx::Driver *gfx) :
 		_originalRect(600, 0),
 		_fontCustomIndex(-1),
 		_fontType(FontProvider::kBigFont) {
+	_surfaceRenderer = _gfx->createSurfaceRenderer();
+	_surfaceRenderer->setNoScalingOverride(true);
 }
 
 VisualText::~VisualText() {
 	freeTexture();
+	delete _surfaceRenderer;
 }
 
 Common::Rect VisualText::getRect() {
@@ -123,7 +127,7 @@ void VisualText::render(const Common::Point &position) {
 		createTexture();
 	}
 
-	_gfx->drawSurface(_texture, position, true);
+	_surfaceRenderer->render(_texture, position);
 }
 
 } // End of namespace Stark

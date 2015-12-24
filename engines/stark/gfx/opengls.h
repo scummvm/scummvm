@@ -50,22 +50,25 @@ public:
 	void setScreenViewport(bool noScaling) override;
 	void setViewport(Common::Rect rect, bool noScaling) override;
 
-	void clearScreen();
-	void flipBuffer();
+	void clearScreen() override;
+	void flipBuffer() override;
 
 	Texture *createTexture(const Graphics::Surface *surface = nullptr, const byte *palette = nullptr) override;
 	VisualActor *createActorRenderer() override;
 	VisualProp *createPropRenderer() override;
+	SurfaceRenderer *createSurfaceRenderer() override;
+
 	Graphics::Shader *createActorShaderInstance();
+	Graphics::Shader *createSurfaceShaderInstance();
 
-	void drawSurface(const Texture *texture, const Common::Point &dest, bool noScalingOverride = false) override;
-
-	void set3DMode();
-
-private:
 	void start2DMode();
 	void end2DMode();
+	void set3DMode();
 
+	Common::Rect getViewport() const;
+	Common::Rect getUnscaledViewport() const;
+
+private:
 	Math::Vector2d scaled(float x, float y) const;
 
 	Common::Rect _viewport;

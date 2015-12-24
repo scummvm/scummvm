@@ -25,6 +25,7 @@
 #include "engines/stark/ui/fmvplayer.h"
 
 #include "engines/stark/gfx/driver.h"
+#include "engines/stark/gfx/surfacerenderer.h"
 #include "engines/stark/gfx/texture.h"
 
 #include "engines/stark/services/archiveloader.h"
@@ -40,12 +41,14 @@ FMVPlayer::FMVPlayer(Gfx::Driver *gfx, Cursor *cursor) :
 
 	_decoder = new Video::BinkDecoder();
 	_texture = _gfx->createTexture();
+	_surfaceRenderer = _gfx->createSurfaceRenderer();
 	_decoder->setDefaultHighColorFormat(_gfx->getScreenFormat());
 }
 
 FMVPlayer::~FMVPlayer() {
 	delete _decoder;
 	delete _texture;
+	delete _surfaceRenderer;
 }
 
 void FMVPlayer::play(const Common::String &name) {
@@ -72,7 +75,7 @@ void FMVPlayer::onRender() {
 		stop();
 	}
 
-	_gfx->drawSurface(_texture, Common::Point(0, Gfx::Driver::kTopBorderHeight));
+	_surfaceRenderer->render(_texture, Common::Point(0, Gfx::Driver::kTopBorderHeight));
 }
 
 bool FMVPlayer::isPlaying() {

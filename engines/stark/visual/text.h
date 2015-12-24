@@ -33,6 +33,7 @@ namespace Stark {
 
 namespace Gfx {
 class Driver;
+class SurfaceRenderer;
 class Texture;
 }
 
@@ -61,11 +62,12 @@ private:
 	void freeTexture();
 
 	Gfx::Driver *_gfx;
+	Gfx::SurfaceRenderer *_surfaceRenderer;
+	Gfx::Texture *_texture;
 
 	Common::String _text;
 	uint32 _color;
 	uint32 _backgroundColor;
-	Gfx::Texture *_texture;
 	Common::Rect _originalRect;
 
 	FontProvider::FontType _fontType;

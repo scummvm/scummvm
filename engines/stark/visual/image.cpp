@@ -30,6 +30,7 @@
 #include "engines/stark/debug.h"
 #include "engines/stark/formats/xmg.h"
 #include "engines/stark/gfx/driver.h"
+#include "engines/stark/gfx/surfacerenderer.h"
 #include "engines/stark/gfx/texture.h"
 #include "engines/stark/scene.h"
 #include "engines/stark/services/services.h"
@@ -43,6 +44,7 @@ VisualImageXMG::VisualImageXMG(Gfx::Driver *gfx) :
 		_surface(nullptr),
 		_width(0),
 		_height(0) {
+	_surfaceRenderer = _gfx->createSurfaceRenderer();
 }
 
 VisualImageXMG::~VisualImageXMG() {
@@ -51,6 +53,7 @@ VisualImageXMG::~VisualImageXMG() {
 	}
 	delete _surface;
 	delete _texture;
+	delete _surfaceRenderer;
 }
 
 void VisualImageXMG::setHotSpot(const Common::Point &hotspot) {
@@ -69,7 +72,7 @@ void VisualImageXMG::load(Common::ReadStream *stream) {
 
 void VisualImageXMG::render(const Common::Point &position, bool useOffset) {
 	Common::Point drawPos = useOffset ? position - _hotspot : position;
-	_gfx->drawSurface(_texture, drawPos);
+	_surfaceRenderer->render(_texture, drawPos);
 }
 
 bool VisualImageXMG::isPointSolid(const Common::Point &point) const {

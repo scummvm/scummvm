@@ -20,49 +20,42 @@
  *
  */
 
-#ifndef STARK_UI_FMV_PLAYER_H
-#define STARK_UI_FMV_PLAYER_H
+#ifndef STARK_GFX_SURFACE_RENDERER_H
+#define STARK_GFX_SURFACE_RENDERER_H
 
-#include "engines/stark/ui/window.h"
-
-#include "video/bink_decoder.h"
-
-namespace Video {
-class BinkDecoder;
-}
+#include "common/rect.h"
 
 namespace Stark {
-
 namespace Gfx {
-class SurfaceRenderer;
+
 class Texture;
-}
 
 /**
- * FMV Player
- *
- * Handles the state of the currently running FMV.
+ * A renderer to draw textures as two dimensional surfaces to the current viewport
  */
-class FMVPlayer : public Window {
+class SurfaceRenderer {
 public:
-	FMVPlayer(Gfx::Driver *gfx, Cursor *cursor);
-	virtual ~FMVPlayer();
-	void play(const Common::String &name);
-	void stop();
+	SurfaceRenderer();
+	virtual ~SurfaceRenderer();
+
+	/**
+	 * Draw a 2D surface from the specified texture
+	 */
+	virtual void render(const Texture *texture, const Common::Point &dest) = 0;
+
+	/**
+	 * When this is set to true, the texture size is expected to be in current
+	 * coordinates, and is to be drawn without scaling.
+	 *
+	 * This setting does not affect the destination point coordinates
+	 */
+	void setNoScalingOverride(bool noScalingOverride);
 
 protected:
-	void onRender() override;
-	void onMouseMove(const Common::Point &pos) override {}
-	void onClick(const Common::Point &pos) override {}
-
-private:
-	bool isPlaying();
-
-	Video::BinkDecoder *_decoder;
-	Gfx::SurfaceRenderer *_surfaceRenderer;
-	Gfx::Texture *_texture;
+	bool _noScalingOverride;
 };
 
+} // End of namespace Gfx
 } // End of namespace Stark
 
-#endif // STARK_UI_FMV_PLAYER_H
+#endif // STARK_GFX_SURFACE_RENDERER_H

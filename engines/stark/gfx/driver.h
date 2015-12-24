@@ -35,6 +35,7 @@ class VisualProp;
 
 namespace Gfx {
 
+class SurfaceRenderer;
 class Texture;
 
 class Driver {
@@ -79,6 +80,13 @@ public:
 	 */
 	virtual VisualProp *createPropRenderer() = 0;
 
+	/**
+	 * Create a new surface renderer
+	 *
+	 * The caller is responsible for freeing it.
+	 */
+	virtual SurfaceRenderer *createSurfaceRenderer() = 0;
+
 	/** Bound a screen coordinate coord within the actual game area */
 	Common::Point getScreenPosBounded(const Common::Point &point) const;
 
@@ -90,11 +98,6 @@ public:
 
 	/** Scale a height value from original resolution to current resolution */
 	uint scaleHeightOriginalToCurrent(uint height) const;
-
-	/**
-	 * Draw a 2D surface from the specified texture
-	 */
-	virtual void drawSurface(const Texture *texture, const Common::Point &dest, bool noScalingOverride = false) = 0;
 
 	virtual Graphics::PixelFormat getScreenFormat();
 

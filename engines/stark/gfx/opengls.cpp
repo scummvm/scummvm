@@ -31,6 +31,7 @@
 
 #include "engines/stark/gfx/openglsactor.h"
 #include "engines/stark/gfx/openglsprop.h"
+#include "engines/stark/gfx/openglssurface.h"
 #include "engines/stark/gfx/opengltexture.h"
 
 #include "graphics/pixelbuffer.h"
@@ -137,37 +138,8 @@ VisualProp *OpenGLSDriver::createPropRenderer() {
 	return new OpenGLSPropRenderer(this);
 }
 
-void OpenGLSDriver::drawSurface(const Texture *texture, const Common::Point &dest, bool noScalingOverride) {
-	// Source texture rectangle
-	const float tLeft = 0.0;
-	const float tWidth = 1.0;
-	const float tTop = 0.0;
-	const float tHeight = 1.0;
-
-	// Destination rectangle
-	const float sLeft = dest.x;
-	const float sTop = dest.y;
-	const float sWidth = texture->width();
-	const float sHeight = texture->height();
-
-	start2DMode();
-
-	_boxShader->use();
-	_boxShader->setUniform("textured", true);
-	_boxShader->setUniform("color", Math::Vector4d(1.0f, 1.0f, 1.0f, 1.0f));
-	_boxShader->setUniform("verOffsetXY", scaled(sLeft, sTop));
-	if (noScalingOverride) {
-		_boxShader->setUniform("verSizeWH", Math::Vector2d(sWidth / (float)_viewport.width(), sHeight / (float)_viewport.height()));
-	} else {
-		_boxShader->setUniform("verSizeWH", scaled(sWidth, sHeight));
-	}
-	_boxShader->setUniform("texOffsetXY", Math::Vector2d(tLeft, tTop));
-	_boxShader->setUniform("texSizeWH", Math::Vector2d(tWidth, tHeight));
-
-	texture->bind();
-	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-
-	end2DMode();
+SurfaceRenderer *OpenGLSDriver::createSurfaceRenderer() {
+	return new OpenGLSSurfaceRenderer(this);
 }
 
 void OpenGLSDriver::start2DMode() {
@@ -191,8 +163,20 @@ void OpenGLSDriver::set3DMode() {
 	glDepthFunc(GL_LESS);
 }
 
+Common::Rect OpenGLSDriver::getViewport() const {
+	return _viewport;
+}
+
+Common::Rect OpenGLSDriver::getUnscaledViewport() const {
+	return _unscaledViewport;
+}
+
 Graphics::Shader *OpenGLSDriver::createActorShaderInstance() {
 	return _actorShader->clone();
+}
+
+Graphics::Shader *OpenGLSDriver::createSurfaceShaderInstance() {
+	return _boxShader->clone();
 }
 
 } // End of namespace Gfx

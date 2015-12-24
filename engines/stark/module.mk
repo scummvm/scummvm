@@ -8,8 +8,10 @@ MODULE_OBJS := \
 	gfx/opengls.o \
 	gfx/openglsactor.o \
 	gfx/openglsprop.o \
+	gfx/openglssurface.o \
 	gfx/opengltexture.o \
 	gfx/renderentry.o \
+	gfx/surfacerenderer.o \
 	gfx/texture.o \
 	formats/biff.o \
 	formats/biffmesh.o \

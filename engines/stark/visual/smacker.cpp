@@ -23,6 +23,7 @@
 #include "engines/stark/visual/smacker.h"
 
 #include "engines/stark/gfx/driver.h"
+#include "engines/stark/gfx/surfacerenderer.h"
 #include "engines/stark/gfx/texture.h"
 #include "engines/stark/scene.h"
 #include "engines/stark/services/services.h"
@@ -41,11 +42,13 @@ VisualSmacker::VisualSmacker(Gfx::Driver *gfx) :
 		_texture(nullptr),
 		_smacker(nullptr),
 		_position(0, 0) {
+	_surfaceRenderer = _gfx->createSurfaceRenderer();
 }
 
 VisualSmacker::~VisualSmacker() {
 	delete _texture;
 	delete _smacker;
+	delete _surfaceRenderer;
 }
 
 void VisualSmacker::load(Common::SeekableReadStream *stream) {
@@ -63,7 +66,7 @@ void VisualSmacker::load(Common::SeekableReadStream *stream) {
 
 void VisualSmacker::render(const Common::Point &position) {
 	// The position argument contains the scroll offset
-	_gfx->drawSurface(_texture, _position - position);
+	_surfaceRenderer->render(_texture, _position - position);
 }
 
 void VisualSmacker::update() {

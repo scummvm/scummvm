@@ -20,49 +20,43 @@
  *
  */
 
-#ifndef STARK_UI_FMV_PLAYER_H
-#define STARK_UI_FMV_PLAYER_H
+#ifndef STARK_GFX_OPENGL_S_SURFACE_H
+#define STARK_GFX_OPENGL_S_SURFACE_H
 
-#include "engines/stark/ui/window.h"
+#include "engines/stark/gfx/surfacerenderer.h"
 
-#include "video/bink_decoder.h"
+#include "math/vector2d.h"
 
-namespace Video {
-class BinkDecoder;
+namespace Graphics {
+class Shader;
 }
 
 namespace Stark {
-
 namespace Gfx {
-class SurfaceRenderer;
+
+class OpenGLSDriver;
 class Texture;
-}
 
 /**
- * FMV Player
- *
- * Handles the state of the currently running FMV.
+ * An programmable pipeline OpenGL surface renderer
  */
-class FMVPlayer : public Window {
+class OpenGLSSurfaceRenderer : public SurfaceRenderer {
 public:
-	FMVPlayer(Gfx::Driver *gfx, Cursor *cursor);
-	virtual ~FMVPlayer();
-	void play(const Common::String &name);
-	void stop();
+	OpenGLSSurfaceRenderer(OpenGLSDriver *gfx);
+	virtual ~OpenGLSSurfaceRenderer();
 
-protected:
-	void onRender() override;
-	void onMouseMove(const Common::Point &pos) override {}
-	void onClick(const Common::Point &pos) override {}
+	// SurfaceRenderer API
+	void render(const Texture *texture, const Common::Point &dest);
 
 private:
-	bool isPlaying();
+	Math::Vector2d normalizeOriginalCoordinates(float x, float y) const;
+	Math::Vector2d normalizeCurrentCoordinates(float x, float y) const;
 
-	Video::BinkDecoder *_decoder;
-	Gfx::SurfaceRenderer *_surfaceRenderer;
-	Gfx::Texture *_texture;
+	OpenGLSDriver *_gfx;
+	Graphics::Shader *_shader;
 };
 
+} // End of namespace Gfx
 } // End of namespace Stark
 
-#endif // STARK_UI_FMV_PLAYER_H
+#endif // STARK_GFX_OPENGL_S_SURFACE_H

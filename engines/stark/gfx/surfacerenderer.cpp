@@ -20,49 +20,23 @@
  *
  */
 
-#ifndef STARK_UI_FMV_PLAYER_H
-#define STARK_UI_FMV_PLAYER_H
-
-#include "engines/stark/ui/window.h"
-
-#include "video/bink_decoder.h"
-
-namespace Video {
-class BinkDecoder;
-}
+#include "engines/stark/gfx/surfacerenderer.h"
 
 namespace Stark {
-
 namespace Gfx {
-class SurfaceRenderer;
-class Texture;
+
+SurfaceRenderer::SurfaceRenderer() :
+	_noScalingOverride(false) {
+
 }
 
-/**
- * FMV Player
- *
- * Handles the state of the currently running FMV.
- */
-class FMVPlayer : public Window {
-public:
-	FMVPlayer(Gfx::Driver *gfx, Cursor *cursor);
-	virtual ~FMVPlayer();
-	void play(const Common::String &name);
-	void stop();
+SurfaceRenderer::~SurfaceRenderer() {
 
-protected:
-	void onRender() override;
-	void onMouseMove(const Common::Point &pos) override {}
-	void onClick(const Common::Point &pos) override {}
+}
 
-private:
-	bool isPlaying();
+void SurfaceRenderer::setNoScalingOverride(bool noScalingOverride) {
+	_noScalingOverride = noScalingOverride;
+}
 
-	Video::BinkDecoder *_decoder;
-	Gfx::SurfaceRenderer *_surfaceRenderer;
-	Gfx::Texture *_texture;
-};
-
+} // End of namespace Gfx
 } // End of namespace Stark
-
-#endif // STARK_UI_FMV_PLAYER_H
