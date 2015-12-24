@@ -40,7 +40,6 @@ namespace Lab {
 
 Anim::Anim(LabEngine *vm) : _vm(vm) {
 	_lastBlockHeader = 0;
-	_curBit = 0;
 	_numChunks = 1;
 	_headerdata._width = 0;
 	_headerdata._height = 0;
@@ -82,17 +81,18 @@ void Anim::diffNextFrame(bool onlyDiffData) {
 
 	BitMap *disp = _vm->_graphics->_dispBitMap;
 	if (disp->_drawOnScreen)
-		disp->_planes[0] = _vm->_graphics->getCurrentDrawingBuffer();
+		disp->_buffer = _vm->_graphics->getCurrentDrawingBuffer();
 
-	disp->_planes[1] = disp->_planes[0] + 0x10000;
-	disp->_planes[2] = disp->_planes[1] + 0x10000;
-	disp->_planes[3] = disp->_planes[2] + 0x10000;
-	disp->_planes[4] = disp->_planes[3] + 0x10000;
+	byte *endOfBuf = disp->_buffer + (int)_diffWidth * _diffHeight;
 
 	_vm->_event->mouseHide();
 
+	int curBit = 0;
+
 	while (1) {
-		if (_curBit >= _numChunks) {
+		byte *buf = disp->_buffer + 0x10000 * curBit;
+
+		if (buf >= endOfBuf) {
 			_vm->_event->mouseShow();
 
 			if (!onlyDiffData) {
@@ -123,7 +123,6 @@ void Anim::diffNextFrame(bool onlyDiffData) {
 				_diffFileStart = _diffFile->pos();
 
 			_isAnim = (_frameNum >= 3) && (!_playOnce);
-			_curBit = 0;
 
 			if (disp->_drawOnScreen)
 				_vm->_graphics->screenUpdate();
@@ -146,50 +145,50 @@ void Anim::diffNextFrame(bool onlyDiffData) {
 
 		case 10:
 			if (onlyDiffData) {
-				if (_curBit > 0)
-					error("diffNextFrame: attempt to read screen to non-zero plane (%d)", _curBit);
+				if (curBit > 0)
+					error("diffNextFrame: attempt to read screen to non-zero plane (%d)", curBit);
 				delete[] _scrollScreenBuffer;
 				_scrollScreenBuffer = new byte[_headerdata._width * _headerdata._height];
 				_diffFile->read(_scrollScreenBuffer, _size);
 			} else {
-				_diffFile->read(disp->_planes[_curBit], _size);
+				_diffFile->read(buf, _size);
 			}
-			_curBit++;
+			curBit++;
 			break;
 
 		case 11:
 			curPos = _diffFile->pos();
 			_diffFile->skip(4);
-			_vm->_utils->runLengthDecode(disp->_planes[_curBit], _diffFile);
-			_curBit++;
+			_vm->_utils->runLengthDecode(buf, _diffFile);
+			curBit++;
 			_diffFile->seek(curPos + _size, SEEK_SET);
 			break;
 
 		case 12:
 			curPos = _diffFile->pos();
 			_diffFile->skip(4);
-			_vm->_utils->verticalRunLengthDecode(disp->_planes[_curBit], _diffFile, disp->_bytesPerRow);
-			_curBit++;
+			_vm->_utils->verticalRunLengthDecode(buf, _diffFile, disp->_bytesPerRow);
+			curBit++;
 			_diffFile->seek(curPos + _size, SEEK_SET);
 			break;
 
 		case 20:
 			curPos = _diffFile->pos();
-			_vm->_utils->unDiff(disp->_planes[_curBit], disp->_planes[_curBit], _diffFile, disp->_bytesPerRow, false);
-			_curBit++;
+			_vm->_utils->unDiff(buf, buf, _diffFile, disp->_bytesPerRow, false);
+			curBit++;
 			_diffFile->seek(curPos + _size, SEEK_SET);
 			break;
 
 		case 21:
 			curPos = _diffFile->pos();
-			_vm->_utils->unDiff(disp->_planes[_curBit], disp->_planes[_curBit], _diffFile, disp->_bytesPerRow, true);
-			_curBit++;
+			_vm->_utils->unDiff(buf, buf, _diffFile, disp->_bytesPerRow, true);
+			curBit++;
 			_diffFile->seek(curPos + _size, SEEK_SET);
 			break;
 
 		case 25:
 		case 26:
-			_curBit++;
+			curBit++;
 			break;
 
 		case 30:
@@ -264,7 +263,6 @@ void Anim::stopDiffEnd() {
 void Anim::readDiff(Common::File *diffFile, bool playOnce, bool onlyDiffData) {
 	_playOnce = playOnce;
 	_delayMicros = 0;
-	_curBit = 0;
 	_frameNum = 0;
 	_numChunks = 1;
 	_donePal = false;
@@ -322,13 +320,6 @@ void Anim::readDiff(Common::File *diffFile, bool playOnce, bool onlyDiffData) {
 	_diffWidth = _headerdata._width;
 	_diffHeight = _headerdata._height;
 	_vm->_utils->setBytesPerRow(_diffWidth);
-
-	_numChunks = (((int32)_diffWidth) * _diffHeight) / 0x10000;
-
-	if ((uint32)(_numChunks * 0x10000) < (uint32)(((int32)_diffWidth) * _diffHeight))
-		_numChunks++;
-
-	assert(_numChunks < 16);
 
 	delete[] _scrollScreenBuffer;
 	_scrollScreenBuffer = nullptr;

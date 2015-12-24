@@ -46,7 +46,7 @@ struct DIFFHeader {
 struct BitMap {
 	uint16 _bytesPerRow;
 	bool _drawOnScreen;
-	byte *_planes[16];
+	byte *_buffer;
 };
 
 class Anim {
@@ -54,7 +54,6 @@ private:
 	LabEngine *_vm;
 
 	uint32 _lastBlockHeader;
-	uint16 _curBit;
 	uint16 _numChunks;
 	uint32 _delayMicros;
 	bool _continuous;
