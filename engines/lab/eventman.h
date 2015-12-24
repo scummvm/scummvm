@@ -43,7 +43,7 @@ enum MessageClasses {
 	kMessageRightClick,
 	kMessageButtonUp,
 	kMessageRawKey,
-	kMessageDeltaMove
+	kMessageMoveCursorToCloseup
 };
 
 struct IntuiMessage {
@@ -56,7 +56,7 @@ struct IntuiMessage {
 
 struct Button {
 	uint16 _x, _y, _buttonId;
-	Common::KeyCode _keyEquiv; // if not zero, a key that activates button
+	Common::KeyCode _keyEquiv; // the key which activates this button
 	bool _isEnabled;
 	Image *_image, *_altImage;
 };

@@ -611,7 +611,7 @@ bool LabEngine::fromCrumbs(uint32 tmpClass, uint16 code, uint16 qualifier, Commo
 
 		mayShowCrumbIndicator();
 		_graphics->screenUpdate();
-	} else if (msgClass == kMessageDeltaMove) {
+	} else if (msgClass == kMessageMoveCursorToCloseup) {
 		ViewData *vptr = getViewData(_roomNum, _direction);
 		CloseDataPtr oldClosePtr = vptr->_closeUps;
 		CloseDataPtr tmpClosePtr = _closeDataPtr;
@@ -715,7 +715,7 @@ bool LabEngine::processKey(IntuiMessage *curMsg, uint32 &msgClass, uint16 &quali
 		forceDraw = true;
 		interfaceOn();
 	} else if (code == Common::KEYCODE_TAB)
-		msgClass = kMessageDeltaMove;
+		msgClass = kMessageMoveCursorToCloseup;
 	else if (code == Common::KEYCODE_ESCAPE)
 		_closeDataPtr = nullptr;
 
