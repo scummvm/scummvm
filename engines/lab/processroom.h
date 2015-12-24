@@ -102,6 +102,37 @@ enum Condition {
 	kCondUsedHelmet = 184
 };
 
+enum MapDoors {
+	kDoorLeftNorth = 1,
+	kDoorLeftEast = 2,
+	kDoorLeftSouth = 4,
+	kDoorLeftWest = 8,
+
+	kDoorMiddleNorth = 16,
+	kDoorRightNorth = 32,
+	kDoorMiddleSouth = 64,
+	kDoorRightSouth = 128,
+
+	kDoorMiddleEast = 16,
+	kDoorBottomEast = 32,
+	kDoorMiddleWest = 64,
+	kDoorBottomWest = 128
+};
+
+// Special Map ID's
+#define     NORMAL           0
+#define     UPARROWROOM      1
+#define     DOWNARROWROOM    2
+#define     BRIDGEROOM       3
+#define     VCORRIDOR        4
+#define     HCORRIDOR        5
+#define     MEDMAZE          6
+#define     HEDGEMAZE        7
+#define     SURMAZE          8
+#define     MULTIMAZEF1      9
+#define     MULTIMAZEF2     10
+#define     MULTIMAZEF3     11
+
 #if defined(WIN32)
 #pragma pack(push, 1)
 #endif
@@ -153,39 +184,6 @@ struct InventoryData {
 	Common::String _name;
 	Common::String _bitmapName;
 };
-
-// Map Flags
-
-enum MapDoors {
-	kDoorLeftNorth = 1,
-	kDoorLeftEast = 2,
-	kDoorLeftSouth = 4,
-	kDoorLeftWest = 8,
-
-	kDoorMiddleNorth = 16,
-	kDoorRightNorth = 32,
-	kDoorMiddleSouth = 64,
-	kDoorRightSouth = 128,
-
-	kDoorMiddleEast = 16,
-	kDoorBottomEast = 32,
-	kDoorMiddleWest = 64,
-	kDoorBottomWest = 128
-};
-
-// Special Map ID's
-#define     NORMAL           0
-#define     UPARROWROOM      1
-#define     DOWNARROWROOM    2
-#define     BRIDGEROOM       3
-#define     VCORRIDOR        4
-#define     HCORRIDOR        5
-#define     MEDMAZE          6
-#define     HEDGEMAZE        7
-#define     SURMAZE          8
-#define     MULTIMAZEF1      9
-#define     MULTIMAZEF2     10
-#define     MULTIMAZEF3     11
 
 struct MapData {
 	uint16 _x, _y, _pageNumber, _specialID;
