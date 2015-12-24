@@ -46,11 +46,6 @@ enum MessageClasses {
 	kMessageDeltaMove
 };
 
-#define VKEY_UPARROW    273
-#define VKEY_DNARROW    274
-#define VKEY_RTARROW    275
-#define VKEY_LTARROW    276
-
 struct IntuiMessage {
 	uint32 _msgClass;
 	uint16 _code; // KeyCode or Button Id
@@ -61,7 +56,7 @@ struct IntuiMessage {
 
 struct Button {
 	uint16 _x, _y, _buttonId;
-	uint16 _keyEquiv; // if not zero, a key that activates button
+	Common::KeyCode _keyEquiv; // if not zero, a key that activates button
 	bool _isEnabled;
 	Image *_image, *_altImage;
 };
@@ -95,7 +90,7 @@ private:
 	 * Checks whether or not the coords fall within one of the buttons in a list
 	 * of buttons.
 	 */
-	Button *checkNumButtonHit(ButtonList *buttonList, uint16 key);
+	Button *checkNumButtonHit(ButtonList *buttonList, Common::KeyCode key);
 
 	/**
 	 * Make a key press have the right case for a button KeyEquiv value.
@@ -106,7 +101,7 @@ public:
 	EventManager (LabEngine *vm);
 
 	void attachButtonList(ButtonList *buttonList);
-	Button *createButton(uint16 x, uint16 y, uint16 id, uint16 key, Image *image, Image *altImage);
+	Button *createButton(uint16 x, uint16 y, uint16 id, Common::KeyCode key, Image *image, Image *altImage);
 	void toggleButton(Button *button, uint16 penColor, bool enable);
 
 	/**

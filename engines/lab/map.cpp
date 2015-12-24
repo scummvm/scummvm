@@ -75,9 +75,9 @@ void LabEngine::loadMapData() {
 	_imgPath = new Image(mapImages, this);
 	_imgBridge = new Image(mapImages, this);
 
-	_mapButtonList.push_back(_event->createButton( 8,  _utils->vgaScaleY(105), 0, VKEY_LTARROW, new Image(mapImages, this), new Image(mapImages, this)));	// back
-	_mapButtonList.push_back(_event->createButton( 55, _utils->vgaScaleY(105), 1, VKEY_UPARROW, new Image(mapImages, this), new Image(mapImages, this)));	// up
-	_mapButtonList.push_back(_event->createButton(101, _utils->vgaScaleY(105), 2, VKEY_DNARROW, new Image(mapImages, this), new Image(mapImages, this)));	// down
+	_mapButtonList.push_back(_event->createButton( 8,  _utils->vgaScaleY(105), 0, Common::KEYCODE_ESCAPE, new Image(mapImages, this), new Image(mapImages, this)));	// back
+	_mapButtonList.push_back(_event->createButton( 55, _utils->vgaScaleY(105), 1, Common::KEYCODE_UP,     new Image(mapImages, this), new Image(mapImages, this)));	// up
+	_mapButtonList.push_back(_event->createButton(101, _utils->vgaScaleY(105), 2, Common::KEYCODE_DOWN,   new Image(mapImages, this), new Image(mapImages, this)));	// down
 
 	delete mapImages;
 

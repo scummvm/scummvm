@@ -39,7 +39,7 @@
 
 namespace Lab {
 
-Button *EventManager::createButton(uint16 x, uint16 y, uint16 id, uint16 key, Image *image, Image *altImage) {
+Button *EventManager::createButton(uint16 x, uint16 y, uint16 id, Common::KeyCode key, Image *image, Image *altImage) {
 	Button *button = new Button();
 
 	if (button) {
@@ -92,7 +92,7 @@ uint16 EventManager::makeButtonKeyEquiv(uint16 key) {
 	return key;
 }
 
-Button *EventManager::checkNumButtonHit(ButtonList *buttonList, uint16 key) {
+Button *EventManager::checkNumButtonHit(ButtonList *buttonList, Common::KeyCode key) {
 	uint16 gkey = key - '0';
 
 	if (!buttonList)
@@ -100,9 +100,10 @@ Button *EventManager::checkNumButtonHit(ButtonList *buttonList, uint16 key) {
 
 	for (ButtonList::iterator buttonItr = buttonList->begin(); buttonItr != buttonList->end(); ++buttonItr) {
 		Button *button = *buttonItr;
-		if (((gkey - 1 == button->_buttonId) || ((gkey == 0) && (button->_buttonId == 9))
-		 || ((button->_keyEquiv != 0) && (makeButtonKeyEquiv(key) == button->_keyEquiv)))
-			  && button->_isEnabled) {
+		if (!button->_isEnabled)
+			continue;
+
+		if ((gkey - 1 == button->_buttonId) || (gkey == 0 && button->_buttonId == 9) || (button->_keyEquiv != Common::KEYCODE_INVALID && key == button->_keyEquiv)) {
 			button->_altImage->drawImage(button->_x, button->_y);
 			_vm->_system->delayMillis(80);
 			button->_image->drawImage(button->_x, button->_y);
