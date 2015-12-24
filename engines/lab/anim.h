@@ -43,12 +43,6 @@ struct DIFFHeader {
 	uint32 _flags;
 };
 
-struct BitMap {
-	uint16 _bytesPerRow;
-	bool _drawOnScreen;
-	byte *_buffer;
-};
-
 class Anim {
 private:
 	LabEngine *_vm;
@@ -71,7 +65,7 @@ private:
 	uint32 _diffWidth;
 	uint32 _diffHeight;
 
-	BitMap _dispBitMap;
+	byte *_outputBuffer;
 
 public:
 	Anim(LabEngine *vm);

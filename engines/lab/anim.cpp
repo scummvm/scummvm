@@ -68,9 +68,7 @@ Anim::Anim(LabEngine *vm) : _vm(vm) {
 	for (int i = 0; i < 3 * 256; i++)
 		_diffPalette[i] = 0;
 
-	_dispBitMap._bytesPerRow  = _vm->_graphics->_screenWidth;
-	_dispBitMap._drawOnScreen = true;
-	_dispBitMap._buffer = nullptr;
+	_outputBuffer = nullptr; // output to screen
 }
 
 Anim::~Anim() {
@@ -79,9 +77,7 @@ Anim::~Anim() {
 }
 
 void Anim::setOutputBuffer(byte *memoryBuffer) {
-	_dispBitMap._bytesPerRow  = _vm->_graphics->_screenWidth;
-	_dispBitMap._drawOnScreen = (memoryBuffer == nullptr);
-	_dispBitMap._buffer       = memoryBuffer;
+	_outputBuffer = memoryBuffer;
 }
 
 
@@ -90,15 +86,13 @@ void Anim::diffNextFrame(bool onlyDiffData) {
 		// Already done.
 		return;
 
-	bool drawOnScreen = _dispBitMap._drawOnScreen;
-	byte *startOfBuf = _dispBitMap._buffer;
-	int bufPitch = _dispBitMap._bytesPerRow;
+	bool drawOnScreen = false;
+	byte *startOfBuf = _outputBuffer;
+	int bufPitch = _vm->_graphics->_screenWidth;
 
-	if (drawOnScreen) {
+	if (!_outputBuffer) {
 		startOfBuf = _vm->_graphics->getCurrentDrawingBuffer();
-		bufPitch = _vm->_graphics->_screenWidth;
-	} else {
-		assert(startOfBuf);
+		drawOnScreen = true;
 	}
 	byte *endOfBuf = startOfBuf + (int)_diffWidth * _diffHeight;
 
