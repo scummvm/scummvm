@@ -137,6 +137,7 @@ IntuiMessage *EventManager::getMsg() {
 		return &message;
 	} else if (keyPress(&curKey)) {
 		message._code = curKey;
+		message._mouse = _mousePos;
 		Button *curButton = checkNumButtonHit(_screenButtonList, message._code);
 
 		if (curButton) {
