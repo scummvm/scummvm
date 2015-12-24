@@ -41,9 +41,7 @@ VisualImageXMG::VisualImageXMG(Gfx::Driver *gfx) :
 		Visual(TYPE),
 		_gfx(gfx),
 		_texture(nullptr),
-		_surface(nullptr),
-		_width(0),
-		_height(0) {
+		_surface(nullptr) {
 	_surfaceRenderer = _gfx->createSurfaceRenderer();
 }
 
@@ -61,12 +59,10 @@ void VisualImageXMG::setHotSpot(const Common::Point &hotspot) {
 }
 
 void VisualImageXMG::load(Common::ReadStream *stream) {
-	delete _texture;
+	assert(!_surface && !_texture);
 
 	// Decode the XMG
 	_surface = Formats::XMGDecoder::decode(stream);
-	_width = _surface->w;
-	_height = _surface->h;
 	_texture = _gfx->createTexture(_surface);
 }
 
@@ -76,13 +72,25 @@ void VisualImageXMG::render(const Common::Point &position, bool useOffset) {
 }
 
 bool VisualImageXMG::isPointSolid(const Common::Point &point) const {
-	if (_width < 32 && _height < 32) {
+	assert(_surface);
+
+	if (_surface->w < 32 && _surface->h < 32) {
 		return true; // Small images are always solid
 	}
 
 	// Maybe implement this method in some other way to avoid having to keep the surface in memory
 	const uint32 *ptr = (const uint32 *) _surface->getBasePtr(point.x, point.y);
 	return ((*ptr) & 0xFF000000) == 0xFF000000;
+}
+
+int VisualImageXMG::getWidth() const {
+	assert(_surface);
+	return _surface->w;
+}
+
+int VisualImageXMG::getHeight() const {
+	assert(_surface);
+	return _surface->h;
 }
 
 } // End of namespace Stark

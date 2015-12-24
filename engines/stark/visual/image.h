@@ -60,11 +60,13 @@ public:
 	/** Perform a transparency hit test on an image point */
 	bool isPointSolid(const Common::Point &point) const;
 
-	int getWidth() const { return _width; }
-	int getHeight() const { return _height; }
+	/** Get the width in pixels */
+	int getWidth() const;
+
+	/** Get the height in pixels */
+	int getHeight() const;
+
 private:
-	int _width;
-	int _height;
 	Gfx::Driver *_gfx;
 	Gfx::SurfaceRenderer *_surfaceRenderer;
 	Gfx::Texture *_texture;
