@@ -120,26 +120,29 @@ Common::String DisplayMan::getWord(const char *mainBuffer) {
 Common::String DisplayMan::getLine(TextFont *tf, const char **mainBuffer, uint16 lineWidth) {
 	uint16 curWidth = 0;
 	Common::String result;
-	bool doit = true;
 
-	lineWidth += textLength(tf, " ");
-
-	while ((*mainBuffer)[0] && doit) {
-		Common::String wordBuffer = getWord(*mainBuffer) + " ";
+	while ((*mainBuffer)[0]) {
+		Common::String wordBuffer = getWord(*mainBuffer);
 
 		if ((curWidth + textLength(tf, wordBuffer)) <= lineWidth) {
 			result += wordBuffer;
-			(*mainBuffer) += wordBuffer.size() - 1;
+			(*mainBuffer) += wordBuffer.size();
 
-			if ((*mainBuffer)[0] == '\n')
-				doit = false;
-
-			if ((*mainBuffer)[0])
+			// end of line
+			if ((*mainBuffer)[0] == '\n') {
 				(*mainBuffer)++;
+				break;
+			}
+
+			// append any space after the word
+			if ((*mainBuffer)[0]) {
+				result += (*mainBuffer)[0];
+				(*mainBuffer)++;
+			}
 
 			curWidth = textLength(tf, result);
 		} else
-			doit = false;
+			break;
 	}
 
 	return result;
@@ -161,19 +164,20 @@ int DisplayMan::flowText(TextFont *font, int16 spacing, byte penColor, byte back
 	if (!str)
 		return 0;
 
+	const char *orig = str;
+
 	TextFont *msgFont = font;
 	uint16 fontHeight = textHeight(msgFont) + spacing;
 	uint16 numLines   = (textRect.height() + 1) / fontHeight;
 	uint16 width      = textRect.width() + 1;
 	uint16 y          = textRect.top;
-	Common::String lineBuffer;
 
 	if (centerv && output) {
 		const char *temp = str;
 		uint16 actlines = 0;
 
 		while (temp[0]) {
-			lineBuffer = getLine(msgFont, &temp, width);
+			getLine(msgFont, &temp, width);
 			actlines++;
 		}
 
@@ -183,6 +187,7 @@ int DisplayMan::flowText(TextFont *font, int16 spacing, byte penColor, byte back
 
 	int len = 0;
 	while (numLines && str[0]) {
+		Common::String lineBuffer;
 		lineBuffer = getLine(msgFont, &str, width);
 
 		uint16 x = textRect.left;
@@ -198,11 +203,9 @@ int DisplayMan::flowText(TextFont *font, int16 spacing, byte penColor, byte back
 		y += fontHeight;
 	}
 
-	len--;
-
 	_currentDisplayBuffer = saveDisplayBuffer;
 
-	return len;
+	return (str - orig);
 }
 
 void DisplayMan::createBox(uint16 y2) {
