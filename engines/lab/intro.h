@@ -52,7 +52,7 @@ private:
 	/**
 	 * Reads in a picture.
 	 */
-	void doPictText(const Common::String filename, TextFont *msgFont, bool isScreen);
+	void doPictText(const Common::String filename, bool isScreen = false);
 
 	/**
 	 * Does a one second delay, but checks the music while doing it.
@@ -62,6 +62,7 @@ private:
 
 	LabEngine *_vm;
 	bool _quitIntro, _introDoBlack;
+	TextFont *_font;
 };
 
 } // End of namespace Lab

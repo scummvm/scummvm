@@ -43,6 +43,7 @@ namespace Lab {
 Intro::Intro(LabEngine *vm) : _vm(vm) {
 	_quitIntro = false;
 	_introDoBlack = false;
+	_font = nullptr;
 }
 
 void Intro::introEatMessages() {
@@ -63,7 +64,7 @@ void Intro::introEatMessages() {
 	}
 }
 
-void Intro::doPictText(const Common::String filename, TextFont *msgFont, bool isScreen) {
+void Intro::doPictText(const Common::String filename, bool isScreen) {
 	Common::String path = Common::String("Lab:rooms/Intro/") + filename;
 
 	uint timeDelay = (isScreen) ? 35 : 7;
@@ -95,7 +96,7 @@ void Intro::doPictText(const Common::String filename, TextFont *msgFont, bool is
 				_vm->_graphics->setPen(7);
 				_vm->_graphics->rectFillScaled(10, 10, 310, 190);
 
-				charDrawn = _vm->_graphics->flowText(msgFont, (!_vm->_isHiRes) * -1, 5, 7, false, false, true, true, _vm->_utils->vgaRectScale(14, 11, 306, 189), (char *)curText);
+				charDrawn = _vm->_graphics->flowText(_font, (!_vm->_isHiRes) * -1, 5, 7, false, false, true, true, _vm->_utils->vgaRectScale(14, 11, 306, 189), (char *)curText);
 				_vm->_graphics->fade(true);
 			} else
 				charDrawn = _vm->_graphics->longDrawMessage(Common::String((char *)curText), false);
@@ -315,7 +316,7 @@ void Intro::introSequence() {
 	_vm->_graphics->blackAllScreen();
 	_vm->updateMusicAndEvents();
 
-	TextFont *msgFont = _vm->_resource->getFont("F:Map.fon");
+	_font = _vm->_resource->getFont("F:Map.fon");
 
 	_vm->_anim->_noPalChange = true;
 	nReadPict("Intro.1");
@@ -327,10 +328,10 @@ void Intro::introSequence() {
 					(_vm->_anim->_diffPalette[i * 3 + 2] >> 2);
 	}
 
-	doPictText("i.1", msgFont, true);
+	doPictText("i.1", true);
 	if (_vm->getPlatform() == Common::kPlatformWindows) {
-		doPictText("i.2A", msgFont, true);
-		doPictText("i.2B", msgFont, true);
+		doPictText("i.2A", true);
+		doPictText("i.2B", true);
 	}
 
 	_vm->_graphics->blackAllScreen();
@@ -338,31 +339,31 @@ void Intro::introSequence() {
 
 	_introDoBlack = true;
 	nReadPict("Station1");
-	doPictText("i.3", msgFont, false);
+	doPictText("i.3");
 
 	nReadPict("Station2");
-	doPictText("i.4", msgFont, false);
+	doPictText("i.4");
 
 	nReadPict("Stiles4");
-	doPictText("i.5", msgFont, false);
+	doPictText("i.5");
 
 	nReadPict("Stiles3");
-	doPictText("i.6", msgFont, false);
+	doPictText("i.6");
 
 	if (_vm->getPlatform() == Common::kPlatformWindows)
 		nReadPict("Platform2");
 	else
 		nReadPict("Platform");
-	doPictText("i.7", msgFont, false);
+	doPictText("i.7");
 
 	nReadPict("Subway.1");
-	doPictText("i.8", msgFont, false);
+	doPictText("i.8");
 
 	nReadPict("Subway.2");
 
-	doPictText("i.9", msgFont, false);
-	doPictText("i.10", msgFont, false);
-	doPictText("i.11", msgFont, false);
+	doPictText("i.9");
+	doPictText("i.10");
+	doPictText("i.11");
 
 	if (!_quitIntro)
 		for (int i = 0; i < 50; i++) {
@@ -376,56 +377,56 @@ void Intro::introSequence() {
 			_vm->waitTOF();
 		}
 
-	doPictText("i.12", msgFont, false);
-	doPictText("i.13", msgFont, false);
+	doPictText("i.12");
+	doPictText("i.13");
 
 	_introDoBlack = false;
 	nReadPict("Daed0");
-	doPictText("i.14", msgFont, false);
+	doPictText("i.14");
 
 	nReadPict("Daed1");
-	doPictText("i.15", msgFont, false);
+	doPictText("i.15");
 
 	nReadPict("Daed2");
-	doPictText("i.16", msgFont, false);
-	doPictText("i.17", msgFont, false);
-	doPictText("i.18", msgFont, false);
+	doPictText("i.16");
+	doPictText("i.17");
+	doPictText("i.18");
 
 	nReadPict("Daed3");
-	doPictText("i.19", msgFont, false);
-	doPictText("i.20", msgFont, false);
+	doPictText("i.19");
+	doPictText("i.20");
 
 	nReadPict("Daed4");
-	doPictText("i.21", msgFont, false);
+	doPictText("i.21");
 
 	nReadPict("Daed5");
-	doPictText("i.22", msgFont, false);
-	doPictText("i.23", msgFont, false);
-	doPictText("i.24", msgFont, false);
+	doPictText("i.22");
+	doPictText("i.23");
+	doPictText("i.24");
 
 	nReadPict("Daed6");
-	doPictText("i.25", msgFont, false);
-	doPictText("i.26", msgFont, false);
+	doPictText("i.25");
+	doPictText("i.26");
 
 	nReadPict("Daed7", false);
-	doPictText("i.27", msgFont, false);
-	doPictText("i.28", msgFont, false);
+	doPictText("i.27");
+	doPictText("i.28");
 	_vm->_anim->stopDiffEnd();
 
 	nReadPict("Daed8");
-	doPictText("i.29", msgFont, false);
-	doPictText("i.30", msgFont, false);
+	doPictText("i.29");
+	doPictText("i.30");
 
 	nReadPict("Daed9");
-	doPictText("i.31", msgFont, false);
-	doPictText("i.32", msgFont, false);
-	doPictText("i.33", msgFont, false);
+	doPictText("i.31");
+	doPictText("i.32");
+	doPictText("i.33");
 
 	nReadPict("Daed9a");
 	nReadPict("Daed10");
-	doPictText("i.34", msgFont, false);
-	doPictText("i.35", msgFont, false);
-	doPictText("i.36", msgFont, false);
+	doPictText("i.34");
+	doPictText("i.35");
+	doPictText("i.36");
 
 	nReadPict("SubX");
 
@@ -435,7 +436,7 @@ void Intro::introSequence() {
 		_vm->_anim->_doBlack = true;
 	}
 
-	_vm->_graphics->closeFont(&msgFont);
+	_vm->_graphics->closeFont(&_font);
 }
 
 } // End of namespace Lab
