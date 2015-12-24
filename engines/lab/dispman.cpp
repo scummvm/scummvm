@@ -483,9 +483,10 @@ void DisplayMan::setAmigaPal(uint16 *pal) {
 }
 
 void DisplayMan::writeColorRegs(byte *buf, uint16 first, uint16 numReg) {
+	assert(first + numReg <= 256);
 	byte tmp[256 * 3];
 
-	for (int i = 0; i < 256 * 3; i++)
+	for (int i = 0; i < numReg * 3; i++)
 		tmp[i] = (buf[i] << 2) | (buf[i] >> 4);	// better results than buf[i] * 4
 
 	_vm->_system->getPaletteManager()->setPalette(tmp, first, numReg);
