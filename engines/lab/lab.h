@@ -336,7 +336,7 @@ private:
 	 * some of the closeups have the same hit boxes, then this returns the first
 	 * occurrence of the object with the same hit box.
 	 */
-	CloseDataPtr findClosePtrMatch(CloseDataPtr closePtr, CloseDataPtr closePtrList);
+	CloseDataPtr findClosePtrMatch(CloseDataPtr closePtr, Common::List<CloseData> &list);
 
 	/**
 	 * Checks if a floor has been visited.
@@ -441,7 +441,7 @@ private:
 	/**
 	 * Sets the current close up data.
 	 */
-	void setCurrentClose(Common::Point pos, CloseDataPtr *closePtrList, bool useAbsoluteCoords);
+	void setCurrentClose(Common::Point pos, CloseDataPtr *closePtrList, bool useAbsoluteCoords, bool next=false);
 
 	/**
 	 * Takes the currently selected item.

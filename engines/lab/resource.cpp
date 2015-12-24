@@ -133,7 +133,6 @@ void Resource::readViews(uint16 roomNum) {
 	Common::String fileName = "LAB:Rooms/" + Common::String::format("%d", roomNum);
 	Common::File *dataFile = openDataFile(fileName, MKTAG('R', 'O', 'M', '4'));
 
-	freeViews(roomNum);
 	RoomData *curRoom = &_vm->_rooms[roomNum];
 
 	curRoom->_roomMsg = readString(dataFile);
@@ -145,14 +144,6 @@ void Resource::readViews(uint16 roomNum) {
 
 	_vm->updateMusicAndEvents();
 	delete dataFile;
-}
-
-void Resource::freeViews(uint16 roomNum) {
-	if (!_vm->_rooms)
-		return;
-
-	for (int i = 0; i < 4; i++)
-		freeView(_vm->_rooms[roomNum]._view[i]);
 }
 
 Common::String Resource::translateFileName(const Common::String filename) {
@@ -285,39 +276,21 @@ Common::List<Action> Resource::readAction(Common::File *file) {
 	return list;
 }
 
-CloseData *Resource::readCloseUps(uint16 depth, Common::File *file) {
-	CloseData *closeup = nullptr;
-	CloseData *prev = nullptr;
-	CloseData *head = nullptr;
-
+void Resource::readCloseUps(uint16 depth, Common::File *file, Common::List<CloseData> &list) {
+	list.clear();
 	while (file->readByte() != '\0') {
-		closeup = new CloseData();
-		if (!head)
-			head = closeup;
-		if (prev)
-			prev->_nextCloseUp = closeup;
-		closeup->_x1 = file->readUint16LE();
-		closeup->_y1 = file->readUint16LE();
-		closeup->_x2 = file->readUint16LE();
-		closeup->_y2 = file->readUint16LE();
-		closeup->_closeUpType = file->readSint16LE();
-		closeup->_depth = depth;
-		closeup->_graphicName = readString(file);
-		closeup->_message = readString(file);
-		closeup->_subCloseUps = readCloseUps(depth + 1, file);
-		closeup->_nextCloseUp = nullptr;
-		prev = closeup;
-	}
+		list.push_back(CloseData());
+		CloseData &closeup = list.back();
 
-	return head;
-}
-
-void Resource::freeCloseUps(CloseData *closeUps) {
-	while (closeUps) {
-		CloseData *nextCloseUp = closeUps->_nextCloseUp;
-		freeCloseUps(closeUps->_subCloseUps);
-		delete closeUps;
-		closeUps = nextCloseUp;
+		closeup._x1 = file->readUint16LE();
+		closeup._y1 = file->readUint16LE();
+		closeup._x2 = file->readUint16LE();
+		closeup._y2 = file->readUint16LE();
+		closeup._closeUpType = file->readSint16LE();
+		closeup._depth = depth;
+		closeup._graphicName = readString(file);
+		closeup._message = readString(file);
+		readCloseUps(depth + 1, file, closeup._subCloseUps);
 	}
 }
 
@@ -329,14 +302,8 @@ void Resource::readView(Common::File *file, Common::List<ViewData> &list) {
 
 		view._condition = readConditions(file);
 		view._graphicName = readString(file);
-		view._closeUps = readCloseUps(0, file);
+		readCloseUps(0, file, view._closeUps);
 	}
-}
-
-void Resource::freeView(Common::List<ViewData> &view) {
-	Common::List<ViewData>::iterator i;
-	for (i = view.begin(); i != view.end(); ++i)
-		freeCloseUps(i->_closeUps);
 }
 
 } // End of namespace Lab

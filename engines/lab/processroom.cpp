@@ -69,39 +69,37 @@ ViewData *LabEngine::getViewData(uint16 roomNum, uint16 direction) {
 }
 
 CloseData *LabEngine::getObject(Common::Point pos, CloseDataPtr closePtr) {
-	CloseDataPtr wrkClosePtr;
+	Common::List<CloseData> *list;
 	if (!closePtr)
-		wrkClosePtr = getViewData(_roomNum, _direction)->_closeUps;
+		list = &(getViewData(_roomNum, _direction)->_closeUps);
 	else
-		wrkClosePtr = closePtr->_subCloseUps;
+		list = &(closePtr->_subCloseUps);
 
-	Common::Rect objRect;
-	while (wrkClosePtr) {
+	Common::List<CloseData>::iterator wrkClosePtr;
+	for (wrkClosePtr = list->begin(); wrkClosePtr != list->end(); ++wrkClosePtr) {
+		Common::Rect objRect;
 		objRect = _utils->rectScale(wrkClosePtr->_x1, wrkClosePtr->_y1, wrkClosePtr->_x2, wrkClosePtr->_y2);
 		if (objRect.contains(pos))
-			return wrkClosePtr;
-
-		wrkClosePtr = wrkClosePtr->_nextCloseUp;
+			return &(*wrkClosePtr);
 	}
 
 	return nullptr;
 }
 
-CloseDataPtr LabEngine::findClosePtrMatch(CloseDataPtr closePtr, CloseDataPtr closePtrList) {
-	CloseDataPtr resClosePtr;
+CloseDataPtr LabEngine::findClosePtrMatch(CloseDataPtr closePtr, Common::List<CloseData> &list) {
+	Common::List<CloseData>::iterator i;
 
-	while (closePtrList) {
-		if ((closePtr->_x1 == closePtrList->_x1) && (closePtr->_x2 == closePtrList->_x2) &&
-			  (closePtr->_y1 == closePtrList->_y1) && (closePtr->_y2 == closePtrList->_y2) &&
-			  (closePtr->_depth == closePtrList->_depth))
-			return closePtrList;
+	for (i = list.begin(); i != list.end(); ++i) {
+		if ((closePtr->_x1 == i->_x1) && (closePtr->_x2 == i->_x2) &&
+			  (closePtr->_y1 == i->_y1) && (closePtr->_y2 == i->_y2) &&
+			  (closePtr->_depth == i->_depth))
+			return &(*i);
 
-		resClosePtr = findClosePtrMatch(closePtr, closePtrList->_subCloseUps);
+		CloseDataPtr resClosePtr;
+		resClosePtr = findClosePtrMatch(closePtr, i->_subCloseUps);
 
 		if (resClosePtr)
 			return resClosePtr;
-		else
-			closePtrList = closePtrList->_nextCloseUp;
 	}
 
 	return nullptr;
@@ -174,50 +172,56 @@ uint16 LabEngine::processArrow(uint16 curDirection, uint16 arrow) {
 	return curDirection;
 }
 
-void LabEngine::setCurrentClose(Common::Point pos, CloseDataPtr *closePtrList, bool useAbsoluteCoords) {
-	CloseDataPtr closePtr;
+void LabEngine::setCurrentClose(Common::Point pos, CloseDataPtr *closePtrList, bool useAbsoluteCoords, bool next) {
+
+	Common::List<CloseData> *list;
 
 	if (!*closePtrList)
-		closePtr = getViewData(_roomNum, _direction)->_closeUps;
+		list = &(getViewData(_roomNum, _direction)->_closeUps);
 	else
-		closePtr = (*closePtrList)->_subCloseUps;
+		list = &((*closePtrList)->_subCloseUps);
 
-	Common::Rect target;
-	while (closePtr) {
+	Common::List<CloseData>::iterator closePtr;
+	for (closePtr = list->begin(); closePtr != list->end(); ++closePtr) {
+		Common::Rect target;
 		if (!useAbsoluteCoords)
 			target = Common::Rect(closePtr->_x1, closePtr->_y1, closePtr->_x2, closePtr->_y2);
 		else
 			target = _utils->rectScale(closePtr->_x1, closePtr->_y1, closePtr->_x2, closePtr->_y2);
 
 		if (target.contains(pos) && !closePtr->_graphicName.empty()) {
-			*closePtrList = closePtr;
+
+			if (next) {
+				// cycle to the next one
+				++closePtr;
+				if (closePtr == list->end())
+					closePtr = list->begin();
+			}
+			*closePtrList = &(*closePtr);
+
 			return;
 		}
-
-		closePtr = closePtr->_nextCloseUp;
 	}
 }
 
 bool LabEngine::takeItem(Common::Point pos, CloseDataPtr *closePtrList) {
-	CloseDataPtr closePtr;
-
+	Common::List<CloseData> *list;
 	if (!*closePtrList) {
-		closePtr = getViewData(_roomNum, _direction)->_closeUps;
+		list = &(getViewData(_roomNum, _direction)->_closeUps);
 	} else if ((*closePtrList)->_closeUpType < 0) {
 		_conditions->inclElement(abs((*closePtrList)->_closeUpType));
 		return true;
 	} else
-		closePtr = (*closePtrList)->_subCloseUps;
+		list = &((*closePtrList)->_subCloseUps);
 
-	Common::Rect objRect;
-	while (closePtr) {
+	Common::List<CloseData>::iterator closePtr;
+	for (closePtr = list->begin(); closePtr != list->end(); ++closePtr) {
+		Common::Rect objRect;
 		objRect = _utils->rectScale(closePtr->_x1, closePtr->_y1, closePtr->_x2, closePtr->_y2);
 		if (objRect.contains(pos) && (closePtr->_closeUpType < 0)) {
 			_conditions->inclElement(abs(closePtr->_closeUpType));
 			return true;
 		}
-
-		closePtr = closePtr->_nextCloseUp;
 	}
 
 	return false;

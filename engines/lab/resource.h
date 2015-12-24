@@ -101,7 +101,6 @@ public:
 	void readRoomData(const Common::String fileName);
 	InventoryData *readInventory(const Common::String fileName);
 	void readViews(uint16 roomNum);
-	void freeViews(uint16 roomNum);
 	TextFont *getFont(const Common::String fileName);
 	Common::String getText(const Common::String fileName);
 	Common::String getStaticText(byte index) const { return _staticText[index]; }
@@ -112,11 +111,8 @@ private:
 	Common::Array<int16> readConditions(Common::File *file);
 	void readRule(Common::File *file, RuleList &rules);
 	Common::List<Action> readAction(Common::File *file);
-	void freeAction(Action *action);
-	CloseData *readCloseUps(uint16 depth, Common::File *file);
-	void freeCloseUps(CloseData *closeUps);
+	void readCloseUps(uint16 depth, Common::File *file, Common::List<CloseData> &close);
 	void readView(Common::File *file, Common::List<ViewData> &view);
-	void freeView(Common::List<ViewData> &view);
 	void readStaticText();
 	Common::String translateFileName(const Common::String filename);
 

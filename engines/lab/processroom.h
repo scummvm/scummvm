@@ -143,14 +143,13 @@ struct CloseData {
 	uint16 _depth;               // Level of the closeup.
 	Common::String _graphicName;
 	Common::String _message;
-	CloseData *_nextCloseUp;
-	CloseData *_subCloseUps;
+	Common::List<CloseData> _subCloseUps;
 };
 
 struct ViewData {
 	Common::Array<int16> _condition;
 	Common::String _graphicName;
-	CloseDataPtr _closeUps;
+	Common::List<CloseData> _closeUps;
 };
 
 struct Action {

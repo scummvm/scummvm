@@ -568,7 +568,6 @@ bool LabEngine::fromCrumbs(uint32 tmpClass, uint16 code, uint16 qualifier, Commo
 
 	uint16 oldDirection = 0;
 	uint16 lastInv = kItemMap;
-	CloseDataPtr wrkClosePtr = nullptr;
 	bool leftButtonClick = false;
 	bool rightButtonClick = false;
 
@@ -640,29 +639,24 @@ bool LabEngine::fromCrumbs(uint32 tmpClass, uint16 code, uint16 qualifier, Commo
 		mayShowCrumbIndicator();
 		_graphics->screenUpdate();
 	} else if (msgClass == kMessageDeltaMove) {
-		ViewData *vptr = getViewData(_roomNum, _direction);
-		CloseDataPtr oldClosePtr = vptr->_closeUps;
 		CloseDataPtr tmpClosePtr = _closeDataPtr;
-		setCurrentClose(curPos, &tmpClosePtr, true);
 
-		if (!tmpClosePtr || (tmpClosePtr == _closeDataPtr)) {
-			if (!_closeDataPtr)
-				wrkClosePtr = oldClosePtr;
-			else
-				wrkClosePtr = _closeDataPtr->_subCloseUps;
-		} else
-			wrkClosePtr = tmpClosePtr->_nextCloseUp;
+		// get next close-up in list after the one pointed to by curPos
+		setCurrentClose(curPos, &tmpClosePtr, true, true);
 
-
-		if (!wrkClosePtr) {
-			if (!_closeDataPtr)
-				wrkClosePtr = oldClosePtr;
-			else
-				wrkClosePtr = _closeDataPtr->_subCloseUps;
+		if (tmpClosePtr == _closeDataPtr) {
+			tmpClosePtr = nullptr;
+			if (!_closeDataPtr) {
+				ViewData *vptr = getViewData(_roomNum, _direction);
+				if (!vptr->_closeUps.empty())
+					tmpClosePtr = &(*vptr->_closeUps.begin());
+			} else {
+				if (!_closeDataPtr->_subCloseUps.empty())
+					tmpClosePtr = &(*_closeDataPtr->_subCloseUps.begin());
+			}
 		}
-
-		if (wrkClosePtr)
-			_event->setMousePos(Common::Point(_utils->scaleX((wrkClosePtr->_x1 + wrkClosePtr->_x2) / 2), _utils->scaleY((wrkClosePtr->_y1 + wrkClosePtr->_y2) / 2)));
+		if (tmpClosePtr)
+			_event->setMousePos(Common::Point(_utils->scaleX((tmpClosePtr->_x1 + tmpClosePtr->_x2) / 2), _utils->scaleY((tmpClosePtr->_y1 + tmpClosePtr->_y2) / 2)));
 	}
 
 	return true;
