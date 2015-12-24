@@ -507,7 +507,7 @@ void DisplayMan::checkerboardEffect(uint16 penColor, uint16 x1, uint16 y1, uint1
 	}
 }
 
-void DisplayMan::closeFont(TextFont **font) {
+void DisplayMan::freeFont(TextFont **font) {
 	if (*font) {
 		if ((*font)->_data)
 			delete[] (*font)->_data;

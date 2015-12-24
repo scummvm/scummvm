@@ -47,7 +47,7 @@ Intro::Intro(LabEngine *vm) : _vm(vm) {
 }
 
 Intro::~Intro() {
-	_vm->_graphics->closeFont(&_font);
+	_vm->_graphics->freeFont(&_font);
 }
 
 void Intro::introEatMessages() {

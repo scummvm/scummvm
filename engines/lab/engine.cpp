@@ -1077,7 +1077,7 @@ void LabEngine::go() {
 
 	_event->initMouse();
 	if (_msgFont)
-		_graphics->closeFont(&_msgFont);
+		_graphics->freeFont(&_msgFont);
 
 	if (getPlatform() != Common::kPlatformAmiga)
 		_msgFont = _resource->getFont("F:AvanteG.12");
@@ -1092,7 +1092,7 @@ void LabEngine::go() {
 	_event->mouseShow();
 	mainGameLoop();
 
-	_graphics->closeFont(&_msgFont);
+	_graphics->freeFont(&_msgFont);
 	_graphics->freePict();
 
 	freeScreens();

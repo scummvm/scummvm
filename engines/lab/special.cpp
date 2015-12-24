@@ -49,7 +49,7 @@ void LabEngine::doNotes() {
 	Common::Rect textRect = Common::Rect(_utils->vgaScaleX(25) + _utils->svgaCord(15), _utils->vgaScaleY(50), _utils->vgaScaleX(295) - _utils->svgaCord(15), _utils->vgaScaleY(148));
 	_graphics->flowText(noteFont, -2 + _utils->svgaCord(1), 0, 0, false, false, true, true, textRect, noteText.c_str());
 	_graphics->setPalette(_anim->_diffPalette, 256);
-	_graphics->closeFont(&noteFont);
+	_graphics->freeFont(&noteFont);
 }
 
 void LabEngine::doWestPaper() {
@@ -58,7 +58,7 @@ void LabEngine::doWestPaper() {
 
 	Common::Rect textRect = Common::Rect(_utils->vgaScaleX(57), _utils->vgaScaleY(77) + _utils->svgaCord(2), _utils->vgaScaleX(262), _utils->vgaScaleY(91));
 	_graphics->flowText(paperFont, 0, 0, 0, false, true, false, true, textRect, paperText.c_str());
-	_graphics->closeFont(&paperFont);
+	_graphics->freeFont(&paperFont);
 
 	paperFont = _resource->getFont("F:News32.fon");
 	paperText = _resource->getText("Lab:Rooms/Headline");
@@ -76,7 +76,7 @@ void LabEngine::doWestPaper() {
 	} else
 		y = 115 - _utils->svgaCord(5);
 
-	_graphics->closeFont(&paperFont);
+	_graphics->freeFont(&paperFont);
 
 	paperFont = _resource->getFont("F:Note.fon");
 	paperText = _resource->getText("Lab:Rooms/Col1");
@@ -85,13 +85,13 @@ void LabEngine::doWestPaper() {
 	paperText = _resource->getText("Lab:Rooms/Col2");
 	_graphics->flowText(paperFont, -4, 0, 0, false, false, false, true, _utils->vgaRectScale(162, y, 275, 148), paperText.c_str());
 
-	_graphics->closeFont(&paperFont);
+	_graphics->freeFont(&paperFont);
 	_graphics->setPalette(_anim->_diffPalette, 256);
 }
 
 void LabEngine::loadJournalData() {
 	if (_journalFont)
-		_graphics->closeFont(&_journalFont);
+		_graphics->freeFont(&_journalFont);
 
 	_journalFont = _resource->getFont("F:Journal.fon");
 	updateMusicAndEvents();
@@ -280,7 +280,7 @@ void LabEngine::doJournal() {
 	_blankJournal = _journalBackImage->_imageData = nullptr;
 
 	_event->freeButtonList(&_journalButtonList);
-	_graphics->closeFont(&_journalFont);
+	_graphics->freeFont(&_journalFont);
 
 	_graphics->rectFill(0, 0, _graphics->_screenWidth - 1, _graphics->_screenHeight - 1, 0);
 	_graphics->blackScreen();
@@ -457,7 +457,7 @@ void LabEngine::doMonitor(const Common::String background, const Common::String 
 	processMonitor(ntext.c_str(), monitorFont, isinteractive, scaledRect);
 	_graphics->fade(false);
 	_event->mouseHide();
-	_graphics->closeFont(&monitorFont);
+	_graphics->freeFont(&monitorFont);
 
 	_graphics->rectFill(0, 0, _graphics->_screenWidth - 1, _graphics->_screenHeight - 1, 0);
 	_graphics->blackAllScreen();
