@@ -110,7 +110,7 @@ private:
 	LabEngine *_vm;
 	Common::String readString(Common::File *file);
 	Common::Array<int16> readConditions(Common::File *file);
-	RuleList *readRule(Common::File *file);
+	void readRule(Common::File *file, RuleList &rules);
 	Common::List<Action> readAction(Common::File *file);
 	void freeAction(Action *action);
 	CloseData *readCloseUps(uint16 depth, Common::File *file);

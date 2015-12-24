@@ -174,7 +174,7 @@ struct RoomData {
 	uint16 _doors[4];
 	byte _transitionType;
 	ViewData *_view[4];
-	RuleList *_rules;
+	RuleList _rules;
 	Common::String _roomMsg;
 };
 

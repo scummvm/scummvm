@@ -100,7 +100,6 @@ void Resource::readRoomData(const Common::String fileName) {
 	_vm->_manyRooms = dataFile->readUint16LE();
 	_vm->_highestCondition = dataFile->readUint16LE();
 	_vm->_rooms = new RoomData[_vm->_manyRooms + 1];
-	memset(_vm->_rooms, 0, (_vm->_manyRooms + 1) * sizeof(RoomData));
 
 	for (int i = 1; i <= _vm->_manyRooms; i++) {
 		RoomData *curRoom = &_vm->_rooms[i];
@@ -114,8 +113,6 @@ void Resource::readRoomData(const Common::String fileName) {
 		curRoom->_view[kDirectionSouth] = nullptr;
 		curRoom->_view[kDirectionEast] = nullptr;
 		curRoom->_view[kDirectionWest] = nullptr;
-		curRoom->_rules = nullptr;
-		curRoom->_roomMsg = "";
 	}
 
 	delete dataFile;
@@ -149,7 +146,7 @@ void Resource::readViews(uint16 roomNum) {
 	curRoom->_view[kDirectionSouth] = readView(dataFile);
 	curRoom->_view[kDirectionEast] = readView(dataFile);
 	curRoom->_view[kDirectionWest] = readView(dataFile);
-	curRoom->_rules = readRule(dataFile);
+	readRule(dataFile, curRoom->_rules);
 
 	_vm->updateMusicAndEvents();
 	delete dataFile;
@@ -161,8 +158,6 @@ void Resource::freeViews(uint16 roomNum) {
 
 	for (int i = 0; i < 4; i++)
 		freeView(_vm->_rooms[roomNum]._view[i]);
-
-	delete _vm->_rooms[roomNum]._rules;
 }
 
 Common::String Resource::translateFileName(const Common::String filename) {
@@ -258,9 +253,8 @@ Common::Array<int16> Resource::readConditions(Common::File *file) {
 	return list;
 }
 
-RuleList *Resource::readRule(Common::File *file) {
-	RuleList *rules = new RuleList();
-
+void Resource::readRule(Common::File *file, RuleList &rules) {
+	rules.clear();
 	while (file->readByte() == 1) {
 		Rule rule;
 		rule._ruleType = (RuleType)file->readSint16LE();
@@ -268,10 +262,8 @@ RuleList *Resource::readRule(Common::File *file) {
 		rule._param2 = file->readSint16LE();
 		rule._condition = readConditions(file);
 		rule._actionList = readAction(file);
-		rules->push_back(rule);
+		rules.push_back(rule);
 	}
-
-	return rules;
 }
 
 Common::List<Action> Resource::readAction(Common::File *file) {

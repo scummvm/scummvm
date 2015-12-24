@@ -60,7 +60,7 @@ bool Console::Cmd_DumpSceneResources(int argc, const char **argv) {
 	int scene = atoi(argv[1]);
 	_vm->_resource->readViews(scene);
 	RoomData *roomData = &_vm->_rooms[scene];
-	RuleList *rules = roomData->_rules;
+	RuleList &rules = roomData->_rules;
 	const char *transitions[] = { "None", "Wipe", "ScrollWipe", "ScrollBlack", "ScrollBounce", "Transporter", "ReadFirstFrame", "ReadNextFrame" };
 	const char *ruleTypes[] = { "None", "Action", "Operate", "Go forward", "Conditions", "Turn", "Go main view", "Turn from to" };
 	const char *directions[] = { "", "North", "South", "East", "West" };
@@ -76,7 +76,7 @@ bool Console::Cmd_DumpSceneResources(int argc, const char **argv) {
 
 	debugPrintf("Script:\n");
 
-	for (RuleList::iterator rule = rules->begin(); rule != rules->end(); ++rule) {
+	for (RuleList::iterator rule = rules.begin(); rule != rules.end(); ++rule) {
 		debugPrintf("Rule type: %s", ruleTypes[rule->_ruleType]);
 		if (rule->_ruleType == kRuleTypeAction || rule->_ruleType == kRuleTypeOperate)
 			debugPrintf(" (item %d, closeup %d)", rule->_param1, rule->_param2);
@@ -109,7 +109,7 @@ bool Console::Cmd_FindAction(int argc, const char **argv) {
 	for (int i = 1; i <= _vm->_manyRooms; i++) {
 		_vm->_resource->readViews(i);
 
-		for (RuleList::iterator rule = _vm->_rooms[i]._rules->begin(); rule != _vm->_rooms[i]._rules->end(); ++rule) {
+		for (RuleList::iterator rule = _vm->_rooms[i]._rules.begin(); rule != _vm->_rooms[i]._rules.end(); ++rule) {
 			Common::List<Action>::iterator action;
 			for (action = rule->_actionList.begin(); action != rule->_actionList.end(); ++action) {
 				if (action->_actionType == actionId &&
