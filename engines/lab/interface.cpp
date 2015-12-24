@@ -135,18 +135,20 @@ IntuiMessage *EventManager::getMsg() {
 		_leftClick = _rightClick = false;
 		return &message;
 	} else if (_keyPressed.keycode != Common::KEYCODE_INVALID) {
-		message._code = _keyPressed.keycode;
-		_keyPressed.keycode = Common::KEYCODE_INVALID;
-
-		Button *curButton = checkNumButtonHit(_screenButtonList, message._code);
+		Button *curButton = checkNumButtonHit(_screenButtonList, _keyPressed.keycode);
 
 		if (curButton) {
 			message._msgClass = kMessageButtonUp;
 			message._code = curButton->_buttonId;
-		} else
+		} else {
 			message._msgClass = kMessageRawKey;
+			message._code = _keyPressed.keycode;
+		}
 
 		message._qualifier = _keyPressed.flags;
+
+		_keyPressed.keycode = Common::KEYCODE_INVALID;
+
 		return &message;
 	} else
 		return nullptr;
