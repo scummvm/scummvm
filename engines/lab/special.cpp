@@ -101,7 +101,7 @@ void LabEngine::loadJournalData() {
 	_journalFont = _resource->getFont("F:Journal.fon");
 	updateMusicAndEvents();
 
-	Common::String filename = "Lab:Rooms/j0";
+	Common::String filename = "Lab:Rooms/j";
 
 	bool bridge = _conditions->in(BRIDGE0) || _conditions->in(BRIDGE1);
 	bool dirty  = _conditions->in(DIRTY);
@@ -126,6 +126,8 @@ void LabEngine::loadJournalData() {
 		filename += '3';
 	else if (bridge)
 		filename += '1';
+	else
+		filename += '0';
 
 	_journalText = _resource->getText(filename);
 	_journalTextTitle = _resource->getText("Lab:Rooms/jt");
