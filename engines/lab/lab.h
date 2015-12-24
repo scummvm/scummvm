@@ -136,7 +136,6 @@ private:
 	MapData *_maps;
 	Image *_monitorButton;
 	Image *_journalBackImage;
-	Image *_screenImage;
 	TextFont *_journalFont;
 
 public:

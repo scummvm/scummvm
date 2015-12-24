@@ -141,8 +141,6 @@ void LabEngine::loadJournalData() {
 	// Keep a copy of the blank journal
 	_blankJournal = new byte[_graphics->_screenBytesPerPage];
 	memcpy(_blankJournal, _journalBackImage->_imageData, _graphics->_screenBytesPerPage);
-
-	_screenImage->_imageData = _graphics->getCurrentDrawingBuffer();
 }
 
 void LabEngine::drawJournalText() {
@@ -182,15 +180,13 @@ void LabEngine::turnPage(bool fromLeft) {
 		for (int i = 0; i < _graphics->_screenWidth; i += 8) {
 			updateMusicAndEvents();
 			waitTOF();
-			_screenImage->_imageData = _graphics->getCurrentDrawingBuffer();
-			_journalBackImage->blitBitmap(i, 0, _screenImage, i, 0, 8, _graphics->_screenHeight, false);
+			_journalBackImage->blitBitmap(i, 0, nullptr, i, 0, 8, _graphics->_screenHeight, false);
 		}
 	} else {
 		for (int i = (_graphics->_screenWidth - 8); i > 0; i -= 8) {
 			updateMusicAndEvents();
 			waitTOF();
-			_screenImage->_imageData = _graphics->getCurrentDrawingBuffer();
-			_journalBackImage->blitBitmap(i, 0, _screenImage, i, 0, 8, _graphics->_screenHeight, false);
+			_journalBackImage->blitBitmap(i, 0, nullptr, i, 0, 8, _graphics->_screenHeight, false);
 		}
 	}
 }
@@ -202,7 +198,7 @@ void LabEngine::drawJournal(uint16 wipenum, bool needFade) {
 	_graphics->loadBackPict("P:Journal.pic", _highPalette);
 
 	if (wipenum == 0)
-		_journalBackImage->blitBitmap(0, 0, _screenImage, 0, 0, _graphics->_screenWidth, _graphics->_screenHeight, false);
+		_journalBackImage->blitBitmap(0, 0, nullptr, 0, 0, _graphics->_screenWidth, _graphics->_screenHeight, false);
 	else
 		turnPage((wipenum == 1));
 
@@ -261,10 +257,9 @@ void LabEngine::doJournal() {
 	_graphics->blackAllScreen();
 	_lastPage = false;
 
-	_screenImage->_width = _journalBackImage->_width = _graphics->_screenWidth;
-	_screenImage->_height = _journalBackImage->_height = _graphics->_screenHeight;
+	_journalBackImage->_width = _graphics->_screenWidth;
+	_journalBackImage->_height = _graphics->_screenHeight;
 	_journalBackImage->_imageData = nullptr;
-	_screenImage->_imageData = _graphics->getCurrentDrawingBuffer();
 
 	updateMusicAndEvents();
 	loadJournalData();
@@ -282,8 +277,6 @@ void LabEngine::doJournal() {
 
 	_event->freeButtonList(&_journalButtonList);
 	_graphics->closeFont(&_journalFont);
-
-	_screenImage->_imageData = _graphics->getCurrentDrawingBuffer();
 
 	_graphics->rectFill(0, 0, _graphics->_screenWidth - 1, _graphics->_screenHeight - 1, 0);
 	_graphics->blackScreen();

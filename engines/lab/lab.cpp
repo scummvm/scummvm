@@ -89,7 +89,6 @@ LabEngine::LabEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	_utils = nullptr;
 	_console = nullptr;
 	_journalBackImage = nullptr;
-	_screenImage = nullptr;
 
 	_lastTooLong = false;
 	_interfaceOff = false;
@@ -158,10 +157,6 @@ LabEngine::~LabEngine() {
 	delete _utils;
 	delete _console;
 	delete _journalBackImage;
-	// _screenImage->_imageData is always pointing to the current drawing buffer.
-	// It shouldn't be deleted there.
-	_screenImage->_imageData = nullptr;
-	delete _screenImage;
 }
 
 Common::Error LabEngine::run() {
@@ -179,7 +174,6 @@ Common::Error LabEngine::run() {
 	_utils = new Utils(this);
 	_console = new Console(this);
 	_journalBackImage = new Image(this);
-	_screenImage = new Image(this);
 
 	if (getPlatform() == Common::kPlatformWindows) {
 		// Check if this is the Wyrmkeep trial
