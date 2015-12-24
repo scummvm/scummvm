@@ -1090,7 +1090,7 @@ void LabEngine::go() {
 	_event->mouseHide();
 
 	Intro *intro = new Intro(this);
-	intro->introSequence();
+	intro->play();
 	delete intro;
 
 	_event->mouseShow();

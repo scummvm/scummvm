@@ -40,7 +40,7 @@ public:
 	/**
 	 * Does the introduction sequence for Labyrinth.
 	 */
-	void introSequence();
+	void play();
 
 private:
 	/**

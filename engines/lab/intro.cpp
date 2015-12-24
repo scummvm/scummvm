@@ -218,7 +218,7 @@ void Intro::nReadPict(const Common::String filename, bool playOnce) {
 	_vm->_graphics->readPict(finalFileName, playOnce);
 }
 
-void Intro::introSequence() {
+void Intro::play() {
 	uint16 palette[16] = {
 		0x0000, 0x0855, 0x0FF9, 0x0EE7,
 		0x0ED5, 0x0DB4, 0x0CA2, 0x0C91,
