@@ -62,10 +62,6 @@ enum Items {
 	kItemQuarter = 30
 };
 
-#define kCondLampOn         151
-#define kCondBeltGlowing     70
-#define kCondUsedHelmet     184
-
 enum Monitors {
 	kMonitorMuseum = 71,
 	kMonitorGramophone = 72,

@@ -91,6 +91,17 @@ enum RuleAction {
 	kRuleActionTakeDef = 4
 };
 
+enum Condition {
+	kCondBeltGlowing = 70,
+	kCondBridge1 = 104,
+	kCondNoNews = 135,
+	kCondBridge0 = 148,
+	kCondLampOn = 151,
+	kCondNoClean = 152,
+	kCondDirty = 175,
+	kCondUsedHelmet = 184
+};
+
 #if defined(WIN32)
 #pragma pack(push, 1)
 #endif

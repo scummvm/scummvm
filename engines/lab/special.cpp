@@ -41,11 +41,6 @@
 #include "lab/utils.h"
 
 namespace Lab {
-#define BRIDGE0     148
-#define BRIDGE1     104
-#define DIRTY       175
-#define NONEWS      135
-#define NOCLEAN     152
 
 void LabEngine::doNotes() {
 	TextFont *noteFont = _resource->getFont("F:Note.fon");
@@ -103,10 +98,10 @@ void LabEngine::loadJournalData() {
 
 	Common::String filename = "Lab:Rooms/j";
 
-	bool bridge = _conditions->in(BRIDGE0) || _conditions->in(BRIDGE1);
-	bool dirty  = _conditions->in(DIRTY);
-	bool news   = !_conditions->in(NONEWS);
-	bool clean  = !_conditions->in(NOCLEAN);
+	bool bridge = _conditions->in(kCondBridge0) || _conditions->in(kCondBridge1);
+	bool dirty  = _conditions->in(kCondDirty);
+	bool news   = !_conditions->in(kCondNoNews);
+	bool clean  = !_conditions->in(kCondNoClean);
 
 	if (bridge && clean && news)
 		filename += '8';
