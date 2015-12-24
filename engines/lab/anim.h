@@ -71,6 +71,8 @@ private:
 	uint32 _diffWidth;
 	uint32 _diffHeight;
 
+	BitMap _dispBitMap;
+
 public:
 	Anim(LabEngine *vm);
 	virtual ~Anim();
@@ -85,7 +87,8 @@ public:
 	/**
 	 * Reads in a DIFF file.
 	 */
-	void readDiff(Common::File *diffFile, bool playOnce, bool onlyDiffData = false);
+	void setOutputBuffer(byte *memoryBuffer); // nullptr for output to screen
+	void readDiff(Common::File *diffFile, bool playOnce, bool onlyDiffData);
 	void diffNextFrame(bool onlyDiffData = false);
 
 	/**

@@ -58,13 +58,10 @@ DisplayMan::DisplayMan(LabEngine *vm) : _vm(vm) {
 
 	for (int i = 0; i < 256 * 3; i++)
 		_curvgapal[i] = 0;
-
-	_dispBitMap = new BitMap;
 }
 
 DisplayMan::~DisplayMan() {
 	freePict();
-	delete _dispBitMap;
 	delete[] _displayBuffer;
 }
 
@@ -95,10 +92,7 @@ void DisplayMan::readPict(const Common::String filename, bool playOnce, bool onl
 	if (!_vm->_music->_loopSoundEffect)
 		_vm->_music->stopSoundEffect();
 
-	_dispBitMap->_bytesPerRow  = _screenWidth;
-	_dispBitMap->_drawOnScreen = (memoryBuffer == nullptr);
-	_dispBitMap->_buffer       = memoryBuffer;
-
+	_vm->_anim->setOutputBuffer(memoryBuffer);
 	_vm->_anim->readDiff(_curBitmap, playOnce, onlyDiffData);
 }
 
