@@ -59,6 +59,17 @@ static const byte mouseData[] = {
 #define MOUSE_WIDTH 10
 #define MOUSE_HEIGHT 15
 
+EventManager::EventManager(LabEngine *vm) : _vm(vm) {
+	_leftClick = false;
+	_rightClick = false;
+
+	_lastButtonHit = nullptr;
+	_screenButtonList = nullptr;
+	_hitButton = nullptr;
+	_mousePos = Common::Point(0, 0);
+	_keyPressed = Common::KEYCODE_INVALID;
+}
+
 Button *EventManager::checkButtonHit(ButtonList *buttonList, Common::Point pos) {
 	for (ButtonList::iterator buttonItr = buttonList->begin(); buttonItr != buttonList->end(); ++buttonItr) {
 		Button *button = *buttonItr;
@@ -102,23 +113,6 @@ Button *EventManager::getButton(uint16 id) {
 	}
 
 	return nullptr;
-}
-
-EventManager::EventManager(LabEngine *vm) : _vm(vm) {
-	_leftClick = false;
-	_rightClick = false;
-
-	_lastButtonHit = nullptr;
-	_screenButtonList = nullptr;
-	_hitButton = nullptr;
-	_mousePos = Common::Point(0, 0);
-
-	_nextKeyIn = 0;
-	_nextKeyOut = 0;
-
-	for (int i = 0; i < 64; i++)
-		_keyBuf[i] = Common::KEYCODE_INVALID;
-
 }
 
 void EventManager::updateMouse() {
@@ -168,19 +162,6 @@ void EventManager::setMousePos(Common::Point pos) {
 		_vm->_system->warpMouse(pos.x * 2, pos.y);
 }
 
-Common::KeyCode EventManager::keyPress() {
-	Common::KeyCode key = Common::KEYCODE_INVALID;
-
-	processInput();
-
-	if (_nextKeyIn != _nextKeyOut) {
-		key = _keyBuf[_nextKeyOut];
-		_nextKeyOut = (_nextKeyOut + 1) % 64;
-	}
-
-	return key;
-}
-
 void EventManager::processInput() {
 	Common::Event event;
 	Button *curButton = nullptr;
@@ -220,13 +201,9 @@ void EventManager::processInput() {
 					continue;
 				}
 				// Intentional fall through
-			default: {
-				int n = (_nextKeyIn + 1) % 64;
-				if (n != _nextKeyOut) {
-					_keyBuf[_nextKeyIn] = event.kbd.keycode;
-					_nextKeyIn = n;
-				}
-				}
+			default:
+				_keyPressed = event.kbd;
+				break;
 			}
 			break;
 		case Common::EVENT_QUIT:

@@ -117,8 +117,7 @@ IntuiMessage *EventManager::getMsg() {
 	static IntuiMessage message;
 
 	updateMouse();
-
-	Common::KeyCode curKey = keyPress();
+	processInput();
 
 	if (_lastButtonHit) {
 		updateMouse();
@@ -135,8 +134,10 @@ IntuiMessage *EventManager::getMsg() {
 			message._mouse.x /= 2;
 		_leftClick = _rightClick = false;
 		return &message;
-	} else if (curKey != Common::KEYCODE_INVALID) {
-		message._code = curKey;
+	} else if (_keyPressed.keycode != Common::KEYCODE_INVALID) {
+		message._code = _keyPressed.keycode;
+		_keyPressed.keycode = Common::KEYCODE_INVALID;
+
 		Button *curButton = checkNumButtonHit(_screenButtonList, message._code);
 
 		if (curButton) {

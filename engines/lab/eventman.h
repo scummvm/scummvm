@@ -77,7 +77,6 @@ private:
 
 	uint16 _nextKeyIn;
 	uint16 _nextKeyOut;
-	Common::KeyCode _keyBuf[64];
 
 	Button *_hitButton;
 	Button *_lastButtonHit;
@@ -91,11 +90,6 @@ private:
 	 * of buttons.
 	 */
 	Button *checkButtonHit(ButtonList *buttonList, Common::Point pos);
-
-	/**
-	 * Checks whether or not a key has been pressed.
-	 */
-	Common::KeyCode keyPress();
 
 	/**
 	 * Checks whether or not the coords fall within one of the buttons in a list
