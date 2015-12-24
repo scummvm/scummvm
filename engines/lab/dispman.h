@@ -177,24 +177,7 @@ public:
 	 * @param text The text itself
 	 */
 	int flowText(TextFont *font, int16 spacing, byte penColor, byte backPen, bool fillBack,
-				bool centerh, bool centerv, bool output, Common::Rect textRect, const char *text);
-
-	/**
-	 * Calls flowText, but flows it to memory.  Same restrictions as flowText.
-	 * @param destIm Destination buffer
-	 * @param font Pointer on the font used
-	 * @param penColor Pen number to use for text
-	 * @param backPen Background color
-	 * @param fillBack Whether to fill the background
-	 * @param centerh Whether to center the text horizontally
-	 * @param centerv Whether to center the text vertically
-	 * @param output Whether to output any text
-	 * @param textRect Coords
-	 * @param text The text itself
-	 */
-	int flowTextToMem(Image *destIm, TextFont *font, int16 spacing, byte penColor, byte backPen,
-				bool fillBack, bool centerh, bool centerv, bool output, Common::Rect textRect,
-				const char *text);
+				bool centerh, bool centerv, bool output, Common::Rect textRect, const char *text, Image *targetImage = nullptr);
 
 	/**
 	 * Draws a vertical line.

@@ -146,7 +146,16 @@ Common::String DisplayMan::getLine(TextFont *tf, const char **mainBuffer, uint16
 }
 
 int DisplayMan::flowText(TextFont *font, int16 spacing, byte penColor, byte backPen,
-			bool fillBack, bool centerh, bool centerv, bool output, Common::Rect textRect, const char *str) {
+			bool fillBack, bool centerh, bool centerv, bool output, Common::Rect textRect, const char *str, Image *targetImage) {
+
+	byte *saveDisplayBuffer = _currentDisplayBuffer;
+	uint32 bytesPerPage = _screenBytesPerPage;
+
+	if (targetImage) {
+		_currentDisplayBuffer = targetImage->_imageData;
+		_screenBytesPerPage = (uint32)targetImage->_width * (int32)targetImage->_height;
+	}
+
 	if (fillBack)
 		rectFill(textRect, backPen);
 
@@ -192,24 +201,10 @@ int DisplayMan::flowText(TextFont *font, int16 spacing, byte penColor, byte back
 
 	len--;
 
-	return len;
-}
-
-int DisplayMan::flowTextToMem(Image *destIm, TextFont *font, int16 spacing, byte penColor,
-			byte backPen, bool fillBack, bool centerh, bool centerv, bool output, Common::Rect textRect,
-			const char *str) {
-	byte *saveDisplayBuffer = _currentDisplayBuffer;
-	uint32 bytesPerPage = _screenBytesPerPage;
-
-	_currentDisplayBuffer = destIm->_imageData;
-	_screenBytesPerPage = (uint32)destIm->_width * (int32)destIm->_height;
-
-	int res = flowText(font, spacing, penColor, backPen, fillBack, centerh, centerv, output, textRect, str);
-
 	_screenBytesPerPage = bytesPerPage;
 	_currentDisplayBuffer = saveDisplayBuffer;
 
-	return res;
+	return len;
 }
 
 void DisplayMan::createBox(uint16 y2) {

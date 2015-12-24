@@ -168,16 +168,16 @@ void LabEngine::drawJournalText() {
 
 	if (_journalPage <= 1) {
 		curText = _journalTextTitle.c_str();
-		_graphics->flowTextToMem(_journalBackImage, _journalFont, -2, 2, 0, false, true, true, true, _utils->vgaRectScale(52, 32, 152, 148), curText);
+		_graphics->flowText(_journalFont, -2, 2, 0, false, true, true, true, _utils->vgaRectScale(52, 32, 152, 148), curText, _journalBackImage);
 	} else {
 		curText = _journalText.c_str() + charsDrawn;
-		charsDrawn += _graphics->flowTextToMem(_journalBackImage, _journalFont, -2, 2, 0, false, false, false, true, _utils->vgaRectScale(52, 32, 152, 148), curText);
+		charsDrawn += _graphics->flowText(_journalFont, -2, 2, 0, false, false, false, true, _utils->vgaRectScale(52, 32, 152, 148), curText, _journalBackImage);
 	}
 
 	updateMusicAndEvents();
 	curText = _journalText.c_str() + charsDrawn;
 	_lastPage = (*curText == 0);
-	_graphics->flowTextToMem(_journalBackImage, _journalFont, -2, 2, 0, false, false, false, true, _utils->vgaRectScale(171, 32, 271, 148), curText);
+	_graphics->flowText(_journalFont, -2, 2, 0, false, false, false, true, _utils->vgaRectScale(171, 32, 271, 148), curText, _journalBackImage);
 }
 
 void LabEngine::turnPage(bool fromLeft) {
