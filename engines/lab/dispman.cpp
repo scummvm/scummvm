@@ -793,7 +793,7 @@ void DisplayMan::doTransWipe(CloseDataPtr *closePtrList, const Common::String fi
 					linesDone = 0;
 				}
 
-				if (j == 9)
+				if (j == 0)
 					checkerboardEffect(0, 0, curY, _screenWidth - 1, curY + 1);
 				else
 					rectFill(0, curY, _screenWidth - 1, curY + 1);
