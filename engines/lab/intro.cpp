@@ -95,17 +95,15 @@ void Intro::doPictText(const Common::String filename, bool isScreen) {
 			else if (isScreen)
 				_vm->_graphics->fade(false);
 
-			int charDrawn = 0;
 			if (isScreen) {
 				_vm->_graphics->setPen(7);
 				_vm->_graphics->rectFillScaled(10, 10, 310, 190);
 
-				charDrawn = _vm->_graphics->flowText(_font, _vm->_isHiRes ? 0 : -1, 5, 7, false, false, true, true, _vm->_utils->vgaRectScale(14, 11, 306, 189), (char *)curText);
+				curText += _vm->_graphics->flowText(_font, _vm->_isHiRes ? 0 : -1, 5, 7, false, false, true, true, _vm->_utils->vgaRectScale(14, 11, 306, 189), (char *)curText);
 				_vm->_graphics->fade(true);
 			} else
-				charDrawn = _vm->_graphics->longDrawMessage(Common::String((char *)curText), false);
+				curText += _vm->_graphics->longDrawMessage(Common::String((char *)curText), false);
 
-			curText += charDrawn;
 			doneFl = (*curText == 0);
 
 			drawNextText = false;
