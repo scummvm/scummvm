@@ -35,7 +35,7 @@ namespace Gfx {
 class Driver;
 }
 
-/** 
+/**
  * Manager for the current game Cursor
  */
 class Cursor {
@@ -45,13 +45,14 @@ public:
 
 	void init();
 
-	/**
-	 * Render the Cursor
-	 */
+	/** Render the Cursor */
 	void render();
 
 	/** Update the mouse position */
 	void setMousePosition(Common::Point pos);
+
+	/** Make cycle the cursor's brightness */
+	void setFading(bool fading);
 
 	Common::Point getMousePosition(bool unscaled = false) const;
 
@@ -69,7 +70,8 @@ public:
 	void setCursorImage(VisualImageXMG *image);
 	void setMouseHint(const Common::String &hint);
 private:
-	
+	void updateFadeLevel();
+
 	Gfx::Driver *_gfx;
 
 	Common::String _currentHint;
@@ -77,6 +79,11 @@ private:
 	VisualImageXMG *_cursorImage;
 	VisualText *_mouseText;
 	CursorType _currentCursorType;
+
+	bool _fading;
+	float _fadeLevel;
+	bool _fadeLevelIncreasing;
+	static const float _fadeValueMax;
 };
 
 } // End of namespace Stark

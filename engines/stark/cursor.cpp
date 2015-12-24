@@ -35,12 +35,17 @@
 
 namespace Stark {
 
+const float Cursor::_fadeValueMax = 0.7f;
+
 Cursor::Cursor(Gfx::Driver *gfx) :
 		_gfx(gfx),
 		_cursorImage(nullptr),
 		_mouseText(nullptr),
 		_currentCursorType(kNone),
-		_currentHint("") {
+		_currentHint(""),
+		_fading(false),
+		_fadeLevelIncreasing(true),
+		_fadeLevel(0) {
 }
 
 Cursor::~Cursor() {
@@ -74,9 +79,32 @@ void Cursor::setMousePosition(Common::Point pos) {
 	_mousePos = _gfx->getScreenPosBounded(pos);
 }
 
+void Cursor::setFading(bool fading) {
+	_fading = fading;
+}
+
+void Cursor::updateFadeLevel() {
+	if (_fading) {
+		if (_fadeLevelIncreasing) {
+			_fadeLevel += 0.1f;
+		} else {
+			_fadeLevel -= 0.1f;
+		}
+		if (ABS(_fadeLevel) >= _fadeValueMax) {
+			_fadeLevelIncreasing = !_fadeLevelIncreasing;
+			_fadeLevel = CLIP(_fadeLevel, -_fadeValueMax, _fadeValueMax);
+		}
+	} else {
+		_fadeLevel = 0;
+	}
+}
+
 void Cursor::render() {
+	updateFadeLevel();
+
 	_gfx->setScreenViewport(true); // The cursor is drawn unscaled
 	if (_cursorImage) {
+		_cursorImage->setFadeLevel(_fadeLevel);
 		_cursorImage->render(_mousePos, false);
 	}
 	if (_mouseText) {

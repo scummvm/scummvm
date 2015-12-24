@@ -71,6 +71,10 @@ void VisualImageXMG::render(const Common::Point &position, bool useOffset) {
 	_surfaceRenderer->render(_texture, drawPos);
 }
 
+void VisualImageXMG::setFadeLevel(float fadeLevel) {
+	_surfaceRenderer->setFadeLevel(fadeLevel);
+}
+
 bool VisualImageXMG::isPointSolid(const Common::Point &point) const {
 	assert(_surface);
 

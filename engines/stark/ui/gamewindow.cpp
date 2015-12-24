@@ -72,6 +72,7 @@ void GameWindow::onRender() {
 
 void GameWindow::onMouseMove(const Common::Point &pos) {
 	_renderEntries = StarkGlobal->getCurrent()->getLocation()->listRenderEntries();
+	_cursor->setFading(false);
 
 	if (!StarkUserInterface->isInteractive()) {
 		_objectUnderCursor = nullptr;
@@ -91,6 +92,7 @@ void GameWindow::onMouseMove(const Common::Point &pos) {
 	if (selectedInventoryItem != -1 && !defaultAction) {
 		VisualImageXMG *cursorImage = StarkGameInterface->getCursorImage(selectedInventoryItem);
 		_cursor->setCursorImage(cursorImage);
+		_cursor->setFading(singlePossibleAction == selectedInventoryItem);
 	} else if (_objectUnderCursor) {
 		switch (singlePossibleAction) {
 			case -1:

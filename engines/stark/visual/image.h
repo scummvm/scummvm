@@ -57,6 +57,13 @@ public:
 	void setHotSpot(const Common::Point &hotspot);
 	Common::Point getHotspot() const { return _hotspot; }
 
+	/**
+	 * The fade level is added to the color value of each pixel
+	 *
+	 * It is a value between -1 and 1
+	 */
+	void setFadeLevel(float fadeLevel);
+
 	/** Perform a transparency hit test on an image point */
 	bool isPointSolid(const Common::Point &point) const;
 

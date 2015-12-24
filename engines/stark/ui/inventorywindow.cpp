@@ -174,9 +174,11 @@ void InventoryWindow::onMouseMove(const Common::Point &pos) {
 		} else {
 			_cursor->setCursorType(Cursor::kDefault);
 		}
+		_cursor->setFading(false);
 	} else {
-        VisualImageXMG *cursorImage = StarkGameInterface->getCursorImage(_selectedInventoryItem);
+		VisualImageXMG *cursorImage = StarkGameInterface->getCursorImage(_selectedInventoryItem);
 		_cursor->setCursorImage(cursorImage);
+		_cursor->setFading(hoveredItemAction == _selectedInventoryItem);
 	}
 }
 
