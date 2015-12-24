@@ -242,18 +242,19 @@ Common::Array<int16> Resource::readConditions(Common::File *file) {
 void Resource::readRule(Common::File *file, RuleList &rules) {
 	rules.clear();
 	while (file->readByte() == 1) {
-		Rule rule;
+		rules.push_back(Rule());
+		Rule &rule = rules.back();
+
 		rule._ruleType = (RuleType)file->readSint16LE();
 		rule._param1 = file->readSint16LE();
 		rule._param2 = file->readSint16LE();
 		rule._condition = readConditions(file);
-		rule._actionList = readAction(file);
-		rules.push_back(rule);
+		readAction(file, rule._actionList);
 	}
 }
 
-Common::List<Action> Resource::readAction(Common::File *file) {
-	Common::List<Action> list;
+void Resource::readAction(Common::File *file, Common::List<Action>& list) {
+	list.clear();
 
 	while (file->readByte() == 1) {
 		list.push_back(Action());
@@ -272,8 +273,6 @@ Common::List<Action> Resource::readAction(Common::File *file) {
 			action._messages.push_back(readString(file));
 		}
 	}
-
-	return list;
 }
 
 void Resource::readCloseUps(uint16 depth, Common::File *file, Common::List<CloseData> &list) {

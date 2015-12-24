@@ -110,7 +110,7 @@ private:
 	Common::String readString(Common::File *file);
 	Common::Array<int16> readConditions(Common::File *file);
 	void readRule(Common::File *file, RuleList &rules);
-	Common::List<Action> readAction(Common::File *file);
+	void readAction(Common::File *file, Common::List<Action> &action);
 	void readCloseUps(uint16 depth, Common::File *file, Common::List<CloseData> &close);
 	void readView(Common::File *file, Common::List<ViewData> &view);
 	void readStaticText();
