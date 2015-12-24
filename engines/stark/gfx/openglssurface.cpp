@@ -56,8 +56,7 @@ void OpenGLSSurfaceRenderer::render(const Texture *texture, const Common::Point 
 	_gfx->start2DMode();
 
 	_shader->use();
-	_shader->setUniform("textured", true);
-	_shader->setUniform("color", Math::Vector4d(1.0f, 1.0f, 1.0f, 1.0f));
+	_shader->setUniform1f("fadeLevel", _fadeLevel);
 	_shader->setUniform("verOffsetXY", normalizeOriginalCoordinates(sLeft, sTop));
 	if (_noScalingOverride) {
 		_shader->setUniform("verSizeWH", normalizeCurrentCoordinates(sWidth, sHeight));

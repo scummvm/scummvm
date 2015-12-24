@@ -2,12 +2,9 @@ in vec2 Texcoord;
 
 OUTPUT
 
-uniform bool textured;
-uniform vec4 color;
+uniform float fadeLevel;
 uniform sampler2D tex;
 
 void main() {
-	outColor = color;
-	if (textured)
-		outColor = outColor * texture(tex, Texcoord);
+	outColor = texture(tex, Texcoord) + vec4(fadeLevel, fadeLevel, fadeLevel, 0);
 }

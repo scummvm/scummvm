@@ -26,7 +26,8 @@ namespace Stark {
 namespace Gfx {
 
 SurfaceRenderer::SurfaceRenderer() :
-	_noScalingOverride(false) {
+	_noScalingOverride(false),
+	_fadeLevel(0) {
 
 }
 
@@ -36,6 +37,10 @@ SurfaceRenderer::~SurfaceRenderer() {
 
 void SurfaceRenderer::setNoScalingOverride(bool noScalingOverride) {
 	_noScalingOverride = noScalingOverride;
+}
+
+void SurfaceRenderer::setFadeLevel(float fadeLevel) {
+	_fadeLevel = fadeLevel;
 }
 
 } // End of namespace Gfx

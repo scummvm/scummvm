@@ -51,8 +51,16 @@ public:
 	 */
 	void setNoScalingOverride(bool noScalingOverride);
 
+	/**
+	 * The fade level is added to the color value of each pixel
+	 *
+	 * It is a value between -1 and 1
+	 */
+	void setFadeLevel(float fadeLevel);
+
 protected:
 	bool _noScalingOverride;
+	float _fadeLevel;
 };
 
 } // End of namespace Gfx
