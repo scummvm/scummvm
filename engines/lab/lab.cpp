@@ -80,8 +80,11 @@ LabEngine::LabEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	_resource = nullptr;
 	_music = nullptr;
 	_anim = nullptr;
+	_closeDataPtr = nullptr;
+	_conditions = nullptr;
 	_graphics = nullptr;
 	_rooms = nullptr;
+	_roomsFound = nullptr;
 	_tilePuzzle = nullptr;
 	_utils = nullptr;
 	_console = nullptr;
