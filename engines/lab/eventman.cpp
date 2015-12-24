@@ -59,6 +59,17 @@ static const byte mouseData[] = {
 #define MOUSE_WIDTH 10
 #define MOUSE_HEIGHT 15
 
+EventManager::EventManager(LabEngine *vm) : _vm(vm) {
+	_leftClick = false;
+	_rightClick = false;
+
+	_lastButtonHit = nullptr;
+	_screenButtonList = nullptr;
+	_hitButton = nullptr;
+	_mousePos = Common::Point(0, 0);
+	_keyPressed = Common::KEYCODE_INVALID;
+}
+
 Button *EventManager::checkButtonHit(ButtonList *buttonList, Common::Point pos) {
 	for (ButtonList::iterator buttonItr = buttonList->begin(); buttonItr != buttonList->end(); ++buttonItr) {
 		Button *button = *buttonItr;
@@ -104,47 +115,22 @@ Button *EventManager::getButton(uint16 id) {
 	return nullptr;
 }
 
-EventManager::EventManager(LabEngine *vm) : _vm(vm) {
-	_leftClick = false;
-	_rightClick = false;
-
-	_mouseHidden = true;
-	_lastButtonHit = nullptr;
-	_screenButtonList = nullptr;
-	_hitButton = nullptr;
-	_mousePos = Common::Point(0, 0);
-
-	_nextKeyIn = 0;
-	_nextKeyOut = 0;
-
-	for (int i = 0; i < 64; i++)
-		_keyBuf[i] = Common::KEYCODE_INVALID;
-
-}
-
 void EventManager::updateMouse() {
-	bool doUpdateDisplay = false;
+	if (!_hitButton)
+		return;
 
-	if (!_mouseHidden)
-		doUpdateDisplay = true;
+	mouseHide();
+	_hitButton->_altImage->drawImage(_hitButton->_x, _hitButton->_y);
+	mouseShow();
 
-	if (_hitButton) {
-		mouseHide();
-		_hitButton->_altImage->drawImage(_hitButton->_x, _hitButton->_y);
-		mouseShow();
+	for (int i = 0; i < 3; i++)
+		_vm->waitTOF();
 
-		for (int i = 0; i < 3; i++)
-			_vm->waitTOF();
-
-		mouseHide();
-		_hitButton->_image->drawImage(_hitButton->_x, _hitButton->_y);
-		mouseShow();
-		doUpdateDisplay = true;
-		_hitButton = nullptr;
-	}
-
-	if (doUpdateDisplay)
-		_vm->_graphics->screenUpdate();
+	mouseHide();
+	_hitButton->_image->drawImage(_hitButton->_x, _hitButton->_y);
+	mouseShow();
+	_hitButton = nullptr;
+	_vm->_graphics->screenUpdate();
 }
 
 void EventManager::initMouse() {
@@ -155,20 +141,11 @@ void EventManager::initMouse() {
 }
 
 void EventManager::mouseShow() {
-	if (_mouseHidden) {
-		processInput();
-		_mouseHidden = false;
-	}
-
 	_vm->_system->showMouse(true);
 }
 
 void EventManager::mouseHide() {
-	if (!_mouseHidden) {
-		_mouseHidden = true;
-
-		_vm->_system->showMouse(false);
-	}
+	_vm->_system->showMouse(false);
 }
 
 Common::Point EventManager::getMousePos() {
@@ -183,23 +160,6 @@ void EventManager::setMousePos(Common::Point pos) {
 		_vm->_system->warpMouse(pos.x, pos.y);
 	else
 		_vm->_system->warpMouse(pos.x * 2, pos.y);
-
-	if (!_mouseHidden)
-		processInput();
-}
-
-bool EventManager::keyPress(Common::KeyCode *keyCode) {
-	if (haveNextChar()) {
-		*keyCode = getNextChar();
-		return true;
-	}
-
-	return false;
-}
-
-bool EventManager::haveNextChar() {
-	processInput();
-	return _nextKeyIn != _nextKeyOut;
 }
 
 void EventManager::processInput() {
@@ -241,13 +201,9 @@ void EventManager::processInput() {
 					continue;
 				}
 				// Intentional fall through
-			default: {
-				int n = (_nextKeyIn + 1) % 64;
-				if (n != _nextKeyOut) {
-					_keyBuf[_nextKeyIn] = event.kbd.keycode;
-					_nextKeyIn = n;
-				}
-				}
+			default:
+				_keyPressed = event.kbd;
+				break;
 			}
 			break;
 		case Common::EVENT_QUIT:
@@ -260,18 +216,6 @@ void EventManager::processInput() {
 	_vm->_system->copyRectToScreen(_vm->_graphics->_displayBuffer, _vm->_graphics->_screenWidth, 0, 0, _vm->_graphics->_screenWidth, _vm->_graphics->_screenHeight);
 	_vm->_console->onFrame();
 	_vm->_system->updateScreen();
-}
-
-Common::KeyCode EventManager::getNextChar() {
-	Common::KeyCode chr = Common::KEYCODE_INVALID;
-
-	processInput();
-	if (_nextKeyIn != _nextKeyOut) {
-		chr = _keyBuf[_nextKeyOut];
-		_nextKeyOut = (_nextKeyOut + 1) % 64;
-	}
-
-	return chr;
 }
 
 Common::Point EventManager::updateAndGetMousePos() {

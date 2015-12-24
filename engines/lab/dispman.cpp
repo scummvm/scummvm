@@ -335,16 +335,16 @@ void DisplayMan::setUpScreens() {
 	// It's very convenient to have those shortcut, so I added them
 	// for all versions. (Strangerke)
 	uint16 y = _vm->_utils->vgaScaleY(173) - _vm->_utils->svgaCord(2);
-	moveButtonList->push_back(e->createButton(  1, y, 0,          't', moveImages[0],  moveImages[1]));
-	moveButtonList->push_back(e->createButton( 33, y, 1,          'm', moveImages[2],  moveImages[3]));
-	moveButtonList->push_back(e->createButton( 65, y, 2,          'o', moveImages[4],  moveImages[5]));
-	moveButtonList->push_back(e->createButton( 97, y, 3,          'c', moveImages[6],  moveImages[7]));
-	moveButtonList->push_back(e->createButton(129, y, 4,          'l', moveImages[8],  moveImages[9]));
-	moveButtonList->push_back(e->createButton(161, y, 5,          'i', moveImages[12], moveImages[13]));
-	moveButtonList->push_back(e->createButton(193, y, 6, VKEY_LTARROW, moveImages[14], moveImages[15]));
-	moveButtonList->push_back(e->createButton(225, y, 7, VKEY_UPARROW, moveImages[16], moveImages[17]));
-	moveButtonList->push_back(e->createButton(257, y, 8, VKEY_RTARROW, moveImages[18], moveImages[19]));
-	moveButtonList->push_back(e->createButton(289, y, 9,          'p', moveImages[10], moveImages[11]));
+	moveButtonList->push_back(e->createButton(  1, y, 0, Common::KEYCODE_t,     moveImages[0],  moveImages[1]));
+	moveButtonList->push_back(e->createButton( 33, y, 1, Common::KEYCODE_m,     moveImages[2],  moveImages[3]));
+	moveButtonList->push_back(e->createButton( 65, y, 2, Common::KEYCODE_o,     moveImages[4],  moveImages[5]));
+	moveButtonList->push_back(e->createButton( 97, y, 3, Common::KEYCODE_c,     moveImages[6],  moveImages[7]));
+	moveButtonList->push_back(e->createButton(129, y, 4, Common::KEYCODE_l,     moveImages[8],  moveImages[9]));
+	moveButtonList->push_back(e->createButton(161, y, 5, Common::KEYCODE_i,     moveImages[12], moveImages[13]));
+	moveButtonList->push_back(e->createButton(193, y, 6, Common::KEYCODE_LEFT,  moveImages[14], moveImages[15]));
+	moveButtonList->push_back(e->createButton(225, y, 7, Common::KEYCODE_UP,    moveImages[16], moveImages[17]));
+	moveButtonList->push_back(e->createButton(257, y, 8, Common::KEYCODE_RIGHT, moveImages[18], moveImages[19]));
+	moveButtonList->push_back(e->createButton(289, y, 9, Common::KEYCODE_p,     moveImages[10], moveImages[11]));
 
 	// TODO: The INV file is not present in the Amiga version
 	Common::File *invFile = _vm->_resource->openDataFile("P:Inv");
@@ -355,18 +355,18 @@ void DisplayMan::setUpScreens() {
 		for (int imgIdx = 0; imgIdx < 6; imgIdx++)
 			_vm->_invImages[imgIdx] = new Image(invFile, _vm);
 	}
-	invButtonList->push_back(e->createButton( 24, y, 0,          'm', invImages[0],   invImages[1]));
-	invButtonList->push_back(e->createButton( 56, y, 1,          'g', invImages[2],   invImages[3]));
-	invButtonList->push_back(e->createButton( 94, y, 2,          'u', invImages[4],   invImages[5]));
-	invButtonList->push_back(e->createButton(126, y, 3,          'l', moveImages[8],  moveImages[9]));
-	invButtonList->push_back(e->createButton(164, y, 4, VKEY_LTARROW, moveImages[14], moveImages[15]));
-	invButtonList->push_back(e->createButton(196, y, 5, VKEY_RTARROW, moveImages[18], moveImages[19]));
+	invButtonList->push_back(e->createButton( 24, y, 0, Common::KEYCODE_ESCAPE, invImages[0],   invImages[1]));
+	invButtonList->push_back(e->createButton( 56, y, 1, Common::KEYCODE_g,      invImages[2],   invImages[3]));
+	invButtonList->push_back(e->createButton( 94, y, 2, Common::KEYCODE_u,      invImages[4],   invImages[5]));
+	invButtonList->push_back(e->createButton(126, y, 3, Common::KEYCODE_l,      moveImages[8],  moveImages[9]));
+	invButtonList->push_back(e->createButton(164, y, 4, Common::KEYCODE_LEFT,   moveImages[14], moveImages[15]));
+	invButtonList->push_back(e->createButton(196, y, 5, Common::KEYCODE_RIGHT,  moveImages[18], moveImages[19]));
 
 	// The windows version has 2 extra buttons for breadcrumb trail
 	// CHECKME: the game is really hard to play without those, maybe we could add something to enable that.
 	if (_vm->getPlatform() == Common::kPlatformWindows) {
-		invButtonList->push_back(e->createButton(234, y, 6, 'b', invImages[6], invImages[7]));
-		invButtonList->push_back(e->createButton(266, y, 7, 'f', invImages[8], invImages[9]));
+		invButtonList->push_back(e->createButton(234, y, 6, Common::KEYCODE_b, invImages[6], invImages[7]));
+		invButtonList->push_back(e->createButton(266, y, 7, Common::KEYCODE_f, invImages[8], invImages[9]));
 	}
 
 	delete invFile;
@@ -507,7 +507,7 @@ void DisplayMan::checkerboardEffect(uint16 penColor, uint16 x1, uint16 y1, uint1
 	}
 }
 
-void DisplayMan::closeFont(TextFont **font) {
+void DisplayMan::freeFont(TextFont **font) {
 	if (*font) {
 		if ((*font)->_data)
 			delete[] (*font)->_data;

@@ -43,13 +43,8 @@ enum MessageClasses {
 	kMessageRightClick,
 	kMessageButtonUp,
 	kMessageRawKey,
-	kMessageDeltaMove
+	kMessageMoveCursorToCloseup
 };
-
-#define VKEY_UPARROW    273
-#define VKEY_DNARROW    274
-#define VKEY_RTARROW    275
-#define VKEY_LTARROW    276
 
 struct IntuiMessage {
 	uint32 _msgClass;
@@ -61,7 +56,7 @@ struct IntuiMessage {
 
 struct Button {
 	uint16 _x, _y, _buttonId;
-	uint16 _keyEquiv; // if not zero, a key that activates button
+	Common::KeyCode _keyEquiv; // the key which activates this button
 	bool _isEnabled;
 	Image *_image, *_altImage;
 };
@@ -74,11 +69,9 @@ private:
 
 	bool _leftClick;
 	bool _rightClick;
-	bool _mouseHidden;
 
 	uint16 _nextKeyIn;
 	uint16 _nextKeyOut;
-	Common::KeyCode _keyBuf[64];
 
 	Button *_hitButton;
 	Button *_lastButtonHit;
@@ -94,17 +87,10 @@ private:
 	Button *checkButtonHit(ButtonList *buttonList, Common::Point pos);
 
 	/**
-	 * Checks whether or not a key has been pressed.
-	 */
-	bool keyPress(Common::KeyCode *keyCode);
-	bool haveNextChar();
-	Common::KeyCode getNextChar();
-
-	/**
 	 * Checks whether or not the coords fall within one of the buttons in a list
 	 * of buttons.
 	 */
-	Button *checkNumButtonHit(ButtonList *buttonList, uint16 key);
+	Button *checkNumButtonHit(ButtonList *buttonList, Common::KeyCode key);
 
 	/**
 	 * Make a key press have the right case for a button KeyEquiv value.
@@ -115,7 +101,7 @@ public:
 	EventManager (LabEngine *vm);
 
 	void attachButtonList(ButtonList *buttonList);
-	Button *createButton(uint16 x, uint16 y, uint16 id, uint16 key, Image *image, Image *altImage);
+	Button *createButton(uint16 x, uint16 y, uint16 id, Common::KeyCode key, Image *image, Image *altImage);
 	void toggleButton(Button *button, uint16 penColor, bool enable);
 
 	/**

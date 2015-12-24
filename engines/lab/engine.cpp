@@ -77,19 +77,6 @@ enum Monitors {
 	//kMonitorLevers = 82
 };
 
-enum MainButtons {
-	kButtonPickup,
-	kButtonUse,
-	kButtonOpen,
-	kButtonClose,
-	kButtonLook,
-	kButtonInventory,
-	kButtonLeft,
-	kButtonForward,
-	kButtonRight,
-	kButtonMap
-};
-
 enum AltButtons {
 	kButtonMainDisplay,
 	kButtonSaveLoad,
@@ -505,24 +492,9 @@ void LabEngine::mainGameLoop() {
 			_anim->diffNextFrame();
 
 			if (_followingCrumbs) {
-				int result = followCrumbs();
+				MainButton code = followCrumbs();
 
-				if (result != 0) {
-					uint16 code = 0;
-					switch (result) {
-					case VKEY_UPARROW:
-						code = kButtonForward;
-						break;
-					case VKEY_LTARROW:
-						code = kButtonLeft;
-						break;
-					case VKEY_RTARROW:
-						code = kButtonRight;
-						break;
-					default:
-						break;
-					}
-
+				if (code == kButtonForward || code == kButtonLeft || code == kButtonRight) {
 					gotMessage = true;
 					mayShowCrumbIndicator();
 					_graphics->screenUpdate();
@@ -638,7 +610,7 @@ bool LabEngine::fromCrumbs(uint32 tmpClass, uint16 code, uint16 qualifier, Commo
 
 		mayShowCrumbIndicator();
 		_graphics->screenUpdate();
-	} else if (msgClass == kMessageDeltaMove) {
+	} else if (msgClass == kMessageMoveCursorToCloseup) {
 		CloseDataPtr tmpClosePtr = _closeDataPtr;
 
 		// get next close-up in list after the one pointed to by curPos
@@ -737,7 +709,7 @@ bool LabEngine::processKey(IntuiMessage *curMsg, uint32 &msgClass, uint16 &quali
 		forceDraw = true;
 		interfaceOn();
 	} else if (code == Common::KEYCODE_TAB)
-		msgClass = kMessageDeltaMove;
+		msgClass = kMessageMoveCursorToCloseup;
 	else if (code == Common::KEYCODE_ESCAPE)
 		_closeDataPtr = nullptr;
 
@@ -1071,7 +1043,7 @@ void LabEngine::go() {
 
 	_event->initMouse();
 	if (_msgFont)
-		_graphics->closeFont(&_msgFont);
+		_graphics->freeFont(&_msgFont);
 
 	if (getPlatform() != Common::kPlatformAmiga)
 		_msgFont = _resource->getFont("F:AvanteG.12");
@@ -1086,7 +1058,7 @@ void LabEngine::go() {
 	_event->mouseShow();
 	mainGameLoop();
 
-	_graphics->closeFont(&_msgFont);
+	_graphics->freeFont(&_msgFont);
 	_graphics->freePict();
 
 	freeScreens();
@@ -1094,18 +1066,18 @@ void LabEngine::go() {
 	_music->freeMusic();
 }
 
-int LabEngine::followCrumbs() {
+MainButton LabEngine::followCrumbs() {
 	// kDirectionNorth, kDirectionSouth, kDirectionEast, kDirectionWest
-	int movement[4][4] = {
-		{ VKEY_UPARROW, VKEY_RTARROW, VKEY_RTARROW, VKEY_LTARROW },
-		{ VKEY_RTARROW, VKEY_UPARROW, VKEY_LTARROW, VKEY_RTARROW },
-		{ VKEY_LTARROW, VKEY_RTARROW, VKEY_UPARROW, VKEY_RTARROW },
-		{ VKEY_RTARROW, VKEY_LTARROW, VKEY_RTARROW, VKEY_UPARROW }
+	MainButton movement[4][4] = {
+		{ kButtonForward, kButtonRight, kButtonRight, kButtonLeft },
+		{ kButtonRight, kButtonForward, kButtonLeft, kButtonRight },
+		{ kButtonLeft, kButtonRight, kButtonForward, kButtonRight },
+		{ kButtonRight, kButtonLeft, kButtonRight, kButtonForward }
 	};
 
 	if (_isCrumbWaiting) {
 		if (_system->getMillis() <= _crumbTimestamp)
-			return 0;
+			return kButtonNone;
 
 		_isCrumbWaiting = false;
 	}
@@ -1119,10 +1091,10 @@ int LabEngine::followCrumbs() {
 		_breadCrumbs[0]._roomNum = 0;
 		_droppingCrumbs = false;
 		_followingCrumbs = false;
-		return 0;
+		return kButtonNone;
 	}
 
-	int exitDir;
+	Direction exitDir;
 	// which direction is last crumb
 	if (_breadCrumbs[_numCrumbs]._direction == kDirectionEast)
 		exitDir = kDirectionWest;
@@ -1133,7 +1105,7 @@ int LabEngine::followCrumbs() {
 	else
 		exitDir = kDirectionNorth;
 
-	int moveDir = movement[_direction][exitDir];
+	MainButton moveDir = movement[_direction][exitDir];
 
 	if (_numCrumbs == 0) {
 		_isCrumbTurning = false;
@@ -1141,7 +1113,7 @@ int LabEngine::followCrumbs() {
 		_droppingCrumbs = false;
 		_followingCrumbs = false;
 	} else {
-		_isCrumbTurning = (moveDir != VKEY_UPARROW);
+		_isCrumbTurning = (moveDir != kButtonForward);
 		_isCrumbWaiting = true;
 
 		int theDelay = (_followCrumbsFast ? 1000 / 4 : 1000);

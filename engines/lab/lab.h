@@ -97,6 +97,20 @@ enum Direction {
 	kDirectionWest
 };
 
+enum MainButton {
+	kButtonNone = -1,
+	kButtonPickup,
+	kButtonUse,
+	kButtonOpen,
+	kButtonClose,
+	kButtonLook,
+	kButtonInventory,
+	kButtonLeft,
+	kButtonForward,
+	kButtonRight,
+	kButtonMap
+};
+
 class LabEngine : public Engine {
 private:
 	bool _interfaceOff;
@@ -307,7 +321,7 @@ private:
 	/**
 	 * Draws the map
 	 */
-	void drawMap(uint16 curRoom, uint16 curMsg, uint16 floorNum, bool fadeOut, bool fadeIn);
+	void drawMap(uint16 curRoom, uint16 curMsg, uint16 floorNum, bool fadeIn);
 
 	/**
 	 * Draws the text for the monitor.
@@ -346,7 +360,7 @@ private:
 	/**
 	 * New code to allow quick(er) return navigation in game.
 	 */
-	int followCrumbs();
+	MainButton followCrumbs();
 	void freeMapData();
 	void freeScreens();
 	bool fromCrumbs(uint32 tmpClass, uint16 code, uint16 qualifier, Common::Point tmpPos,

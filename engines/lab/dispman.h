@@ -239,7 +239,7 @@ public:
 	/**
 	 * Closes a font and frees all memory associated with it.
 	 */
-	void closeFont(TextFont **font);
+	void freeFont(TextFont **font);
 
 	/**
 	 * Returns the length of a text in the specified font.
