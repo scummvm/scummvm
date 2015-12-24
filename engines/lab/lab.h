@@ -321,7 +321,7 @@ private:
 	/**
 	 * Draws the map
 	 */
-	void drawMap(uint16 curRoom, uint16 curMsg, uint16 floorNum, bool fadeOut, bool fadeIn);
+	void drawMap(uint16 curRoom, uint16 curMsg, uint16 floorNum, bool fadeIn);
 
 	/**
 	 * Draws the text for the monitor.
