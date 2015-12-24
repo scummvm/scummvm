@@ -96,8 +96,7 @@ void Intro::doPictText(const Common::String filename, bool isScreen) {
 				_vm->_graphics->fade(false);
 
 			if (isScreen) {
-				_vm->_graphics->setPen(7);
-				_vm->_graphics->rectFillScaled(10, 10, 310, 190);
+				_vm->_graphics->rectFillScaled(10, 10, 310, 190, 7);
 
 				curText += _vm->_graphics->flowText(_font, _vm->_isHiRes ? 0 : -1, 5, 7, false, false, true, true, _vm->_utils->vgaRectScale(14, 11, 306, 189), (char *)curText);
 				_vm->_graphics->fade(true);
@@ -431,8 +430,7 @@ void Intro::play() {
 	nReadPict("SubX");
 
 	if (_quitIntro) {
-		_vm->_graphics->setPen(0);
-		_vm->_graphics->rectFill(0, 0, _vm->_graphics->_screenWidth - 1, _vm->_graphics->_screenHeight - 1);
+		_vm->_graphics->rectFill(0, 0, _vm->_graphics->_screenWidth - 1, _vm->_graphics->_screenHeight - 1, 0);
 		_vm->_anim->_doBlack = true;
 	}
 }

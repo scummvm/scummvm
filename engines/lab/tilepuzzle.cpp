@@ -208,8 +208,7 @@ void TilePuzzle::doTile(bool showsolution) {
 		rows = _vm->_utils->vgaScaleY(31);
 		cols = _vm->_utils->vgaScaleX(105);
 	} else {
-		_vm->_graphics->setPen(0);
-		_vm->_graphics->rectFillScaled(97, 22, 220, 126);
+		_vm->_graphics->rectFillScaled(97, 22, 220, 126, 0);
 
 		rowm = _vm->_utils->vgaScaleY(25);
 		colm = _vm->_utils->vgaScaleX(30);

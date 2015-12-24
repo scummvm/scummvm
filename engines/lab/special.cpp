@@ -288,8 +288,7 @@ void LabEngine::doJournal() {
 
 	_screenImage->_imageData = _graphics->getCurrentDrawingBuffer();
 
-	_graphics->setPen(0);
-	_graphics->rectFill(0, 0, _graphics->_screenWidth - 1, _graphics->_screenHeight - 1);
+	_graphics->rectFill(0, 0, _graphics->_screenWidth - 1, _graphics->_screenHeight - 1, 0);
 	_graphics->blackScreen();
 }
 
@@ -316,17 +315,14 @@ void LabEngine::drawMonText(const char *text, TextFont *monitorFont, Common::Rec
 		else
 			_monitorButtonHeight = fheight;
 
-		_graphics->setPen(0);
-		_graphics->rectFill(0, 0, _graphics->_screenWidth - 1, textRect.bottom);
+		_graphics->rectFill(0, 0, _graphics->_screenWidth - 1, textRect.bottom, 0);
 
 		for (int i = 0; i < numlines; i++)
 			_monitorButton->drawImage(0, i * _monitorButtonHeight);
 	} else if (isinteractive) {
-		_graphics->setPen(0);
-		_graphics->rectFill(0, 0, _graphics->_screenWidth - 1, textRect.bottom);
+		_graphics->rectFill(0, 0, _graphics->_screenWidth - 1, textRect.bottom, 0);
 	} else {
-		_graphics->setPen(0);
-		_graphics->rectFill(textRect);
+		_graphics->rectFill(textRect, 0);
 	}
 
 	while (drawingToPage < _monitorPage) {
@@ -469,8 +465,7 @@ void LabEngine::doMonitor(const Common::String background, const Common::String 
 	_event->mouseHide();
 	_graphics->closeFont(&monitorFont);
 
-	_graphics->setPen(0);
-	_graphics->rectFill(0, 0, _graphics->_screenWidth - 1, _graphics->_screenHeight - 1);
+	_graphics->rectFill(0, 0, _graphics->_screenWidth - 1, _graphics->_screenHeight - 1, 0);
 	_graphics->blackAllScreen();
 	_graphics->freePict();
 }

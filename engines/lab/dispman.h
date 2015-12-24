@@ -157,9 +157,9 @@ public:
 	/**
 	 * Fills in a rectangle.
 	 */
-	void rectFill(uint16 x1, uint16 y1, uint16 x2, uint16 y2);
-	void rectFill(Common::Rect fillRect);
-	void rectFillScaled(uint16 x1, uint16 y1, uint16 x2, uint16 y2);
+	void rectFill(uint16 x1, uint16 y1, uint16 x2, uint16 y2, byte color);
+	void rectFill(Common::Rect fillRect, byte color);
+	void rectFillScaled(uint16 x1, uint16 y1, uint16 x2, uint16 y2, byte color);
 	/**
 	 * Dumps a chunk of text to an arbitrary box; flows it within that box and
 	 * optionally centers it. Returns the number of characters that were processed.
@@ -199,12 +199,12 @@ public:
 	/**
 	 * Draws a vertical line.
 	 */
-	void drawHLine(uint16 x, uint16 y1, uint16 y2);
+	void drawHLine(uint16 x, uint16 y1, uint16 y2, byte color);
 
 	/**
 	 * Draws a horizontal line.
 	 */
-	void drawVLine(uint16 x1, uint16 y, uint16 x2);
+	void drawVLine(uint16 x1, uint16 y, uint16 x2, byte color);
 	void screenUpdate();
 
 	/**

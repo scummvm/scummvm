@@ -48,7 +48,6 @@ DisplayMan::DisplayMan(LabEngine *vm) : _vm(vm) {
 	_actionMessageShown = false;
 
 	_screenBytesPerPage = 0;
-	_curPen = 0;
 	_curBitmap = nullptr;
 	_displayBuffer = nullptr;
 	_currentDisplayBuffer = nullptr;
@@ -148,15 +147,11 @@ Common::String DisplayMan::getLine(TextFont *tf, const char **mainBuffer, uint16
 
 int DisplayMan::flowText(TextFont *font, int16 spacing, byte penColor, byte backPen,
 			bool fillBack, bool centerh, bool centerv, bool output, Common::Rect textRect, const char *str) {
-	if (fillBack) {
-		setPen(backPen);
-		rectFill(textRect);
-	}
+	if (fillBack)
+		rectFill(textRect, backPen);
 
 	if (!str)
 		return 0;
-
-	setPen(penColor);
 
 	TextFont *msgFont = font;
 	uint16 fontHeight = textHeight(msgFont) + spacing;
@@ -219,15 +214,13 @@ int DisplayMan::flowTextToMem(Image *destIm, TextFont *font, int16 spacing, byte
 
 void DisplayMan::createBox(uint16 y2) {
 	// Message box area
-	setPen(7);
-	rectFillScaled(4, 154, 315, y2 - 2);
+	rectFillScaled(4, 154, 315, y2 - 2, 7);
 
 	// Box around message area
-	setPen(0);
-	drawHLine(_vm->_utils->vgaScaleX(2), _vm->_utils->vgaScaleY(152), _vm->_utils->vgaScaleX(317));
-	drawVLine(_vm->_utils->vgaScaleX(317), _vm->_utils->vgaScaleY(152), _vm->_utils->vgaScaleY(y2));
-	drawHLine(_vm->_utils->vgaScaleX(2), _vm->_utils->vgaScaleY(y2), _vm->_utils->vgaScaleX(317));
-	drawVLine(_vm->_utils->vgaScaleX(2), _vm->_utils->vgaScaleY(152), _vm->_utils->vgaScaleY(y2));
+	drawHLine(_vm->_utils->vgaScaleX(2), _vm->_utils->vgaScaleY(152), _vm->_utils->vgaScaleX(317), 0);
+	drawVLine(_vm->_utils->vgaScaleX(317), _vm->_utils->vgaScaleY(152), _vm->_utils->vgaScaleY(y2), 0);
+	drawHLine(_vm->_utils->vgaScaleX(2), _vm->_utils->vgaScaleY(y2), _vm->_utils->vgaScaleX(317), 0);
+	drawVLine(_vm->_utils->vgaScaleX(2), _vm->_utils->vgaScaleY(152), _vm->_utils->vgaScaleY(y2), 0);
 }
 
 int DisplayMan::longDrawMessage(Common::String str, bool isActionMessage) {
@@ -247,8 +240,7 @@ int DisplayMan::longDrawMessage(Common::String str, bool isActionMessage) {
 	if (!_longWinInFront) {
 		_longWinInFront = true;
 		// Clear Area
-		setPen(3);
-		rectFill(0, _vm->_utils->vgaScaleY(149) + _vm->_utils->svgaCord(2), _vm->_utils->vgaScaleX(319), _vm->_utils->vgaScaleY(199));
+		rectFill(0, _vm->_utils->vgaScaleY(149) + _vm->_utils->svgaCord(2), _vm->_utils->vgaScaleX(319), _vm->_utils->vgaScaleY(199), 3);
 	}
 
 	createBox(198);
@@ -289,52 +281,45 @@ void DisplayMan::drawPanel() {
 	_vm->_event->mouseHide();
 
 	// Clear Area
-	setPen(3);
-	rectFill(0, _vm->_utils->vgaScaleY(149) + _vm->_utils->svgaCord(2), _vm->_utils->vgaScaleX(319), _vm->_utils->vgaScaleY(199));
+	rectFill(0, _vm->_utils->vgaScaleY(149) + _vm->_utils->svgaCord(2), _vm->_utils->vgaScaleX(319), _vm->_utils->vgaScaleY(199), 3);
 
 	// First Line
-	setPen(0);
-	drawHLine(0, _vm->_utils->vgaScaleY(149) + _vm->_utils->svgaCord(2), _vm->_utils->vgaScaleX(319));
+	drawHLine(0, _vm->_utils->vgaScaleY(149) + _vm->_utils->svgaCord(2), _vm->_utils->vgaScaleX(319), 0);
 	// Second Line
-	setPen(5);
-	drawHLine(0, _vm->_utils->vgaScaleY(149) + 1 + _vm->_utils->svgaCord(2), _vm->_utils->vgaScaleX(319));
+	drawHLine(0, _vm->_utils->vgaScaleY(149) + 1 + _vm->_utils->svgaCord(2), _vm->_utils->vgaScaleX(319), 5);
 	// Button Separators
-	setPen(0);
-	// First black line to separate buttons
-	drawHLine(0, _vm->_utils->vgaScaleY(170), _vm->_utils->vgaScaleX(319));
+	drawHLine(0, _vm->_utils->vgaScaleY(170), _vm->_utils->vgaScaleX(319), 0);
 
 	if (!_vm->_alternate) {
-		setPen(4);
 		// The horizontal lines under the black one
-		drawHLine(0, _vm->_utils->vgaScaleY(170) + 1, _vm->_utils->vgaScaleX(319));
+		drawHLine(0, _vm->_utils->vgaScaleY(170) + 1, _vm->_utils->vgaScaleX(319), 4);
 		_vm->_event->drawButtonList(&_vm->_moveButtonList);
 	} else {
 		if (_vm->getPlatform() != Common::kPlatformWindows) {
 			// Vertical Black lines
-			drawVLine(_vm->_utils->vgaScaleX(124), _vm->_utils->vgaScaleY(170) + 1, _vm->_utils->vgaScaleY(199));
-			drawVLine(_vm->_utils->vgaScaleX(194), _vm->_utils->vgaScaleY(170) + 1, _vm->_utils->vgaScaleY(199));
+			drawVLine(_vm->_utils->vgaScaleX(124), _vm->_utils->vgaScaleY(170) + 1, _vm->_utils->vgaScaleY(199), 0);
+			drawVLine(_vm->_utils->vgaScaleX(194), _vm->_utils->vgaScaleY(170) + 1, _vm->_utils->vgaScaleY(199), 0);
 		} else {
 			// Vertical Black lines
-			drawVLine(_vm->_utils->vgaScaleX(90), _vm->_utils->vgaScaleY(170) + 1, _vm->_utils->vgaScaleY(199));
-			drawVLine(_vm->_utils->vgaScaleX(160), _vm->_utils->vgaScaleY(170) + 1, _vm->_utils->vgaScaleY(199));
-			drawVLine(_vm->_utils->vgaScaleX(230), _vm->_utils->vgaScaleY(170) + 1, _vm->_utils->vgaScaleY(199));
+			drawVLine(_vm->_utils->vgaScaleX(90), _vm->_utils->vgaScaleY(170) + 1, _vm->_utils->vgaScaleY(199), 0);
+			drawVLine(_vm->_utils->vgaScaleX(160), _vm->_utils->vgaScaleY(170) + 1, _vm->_utils->vgaScaleY(199), 0);
+			drawVLine(_vm->_utils->vgaScaleX(230), _vm->_utils->vgaScaleY(170) + 1, _vm->_utils->vgaScaleY(199), 0);
 		}
 
-		setPen(4);
 		// The horizontal lines under the black one
-		drawHLine(0, _vm->_utils->vgaScaleY(170) + 1, _vm->_utils->vgaScaleX(122));
-		drawHLine(_vm->_utils->vgaScaleX(126), _vm->_utils->vgaScaleY(170) + 1, _vm->_utils->vgaScaleX(192));
-		drawHLine(_vm->_utils->vgaScaleX(196), _vm->_utils->vgaScaleY(170) + 1, _vm->_utils->vgaScaleX(319));
+		drawHLine(0, _vm->_utils->vgaScaleY(170) + 1, _vm->_utils->vgaScaleX(122), 4);
+		drawHLine(_vm->_utils->vgaScaleX(126), _vm->_utils->vgaScaleY(170) + 1, _vm->_utils->vgaScaleX(192), 4);
+		drawHLine(_vm->_utils->vgaScaleX(196), _vm->_utils->vgaScaleY(170) + 1, _vm->_utils->vgaScaleX(319), 4);
 		// The vertical high light lines
-		drawVLine(_vm->_utils->vgaScaleX(1), _vm->_utils->vgaScaleY(170) + 2, _vm->_utils->vgaScaleY(198));
+		drawVLine(_vm->_utils->vgaScaleX(1), _vm->_utils->vgaScaleY(170) + 2, _vm->_utils->vgaScaleY(198), 4);
 
 		if (_vm->getPlatform() != Common::kPlatformWindows) {
-			drawVLine(_vm->_utils->vgaScaleX(126), _vm->_utils->vgaScaleY(170) + 2, _vm->_utils->vgaScaleY(198));
-			drawVLine(_vm->_utils->vgaScaleX(196), _vm->_utils->vgaScaleY(170) + 2, _vm->_utils->vgaScaleY(198));
+			drawVLine(_vm->_utils->vgaScaleX(126), _vm->_utils->vgaScaleY(170) + 2, _vm->_utils->vgaScaleY(198), 4);
+			drawVLine(_vm->_utils->vgaScaleX(196), _vm->_utils->vgaScaleY(170) + 2, _vm->_utils->vgaScaleY(198), 4);
 		} else {
-			drawVLine(_vm->_utils->vgaScaleX(92), _vm->_utils->vgaScaleY(170) + 2, _vm->_utils->vgaScaleY(198));
-			drawVLine(_vm->_utils->vgaScaleX(162), _vm->_utils->vgaScaleY(170) + 2, _vm->_utils->vgaScaleY(198));
-			drawVLine(_vm->_utils->vgaScaleX(232), _vm->_utils->vgaScaleY(170) + 2, _vm->_utils->vgaScaleY(198));
+			drawVLine(_vm->_utils->vgaScaleX(92), _vm->_utils->vgaScaleY(170) + 2, _vm->_utils->vgaScaleY(198), 4);
+			drawVLine(_vm->_utils->vgaScaleX(162), _vm->_utils->vgaScaleY(170) + 2, _vm->_utils->vgaScaleY(198), 4);
+			drawVLine(_vm->_utils->vgaScaleX(232), _vm->_utils->vgaScaleY(170) + 2, _vm->_utils->vgaScaleY(198), 4);
 		}
 
 		_vm->_event->drawButtonList(&_vm->_invButtonList);
@@ -400,11 +385,7 @@ void DisplayMan::setUpScreens() {
 	delete invFile;
 }
 
-void DisplayMan::setPen(byte penNum) {
-	_curPen = penNum;
-}
-
-void DisplayMan::rectFill(Common::Rect fillRect) {
+void DisplayMan::rectFill(Common::Rect fillRect, byte color) {
 	int width = fillRect.width() + 1;
 	int height = fillRect.height() + 1;
 
@@ -422,7 +403,7 @@ void DisplayMan::rectFill(Common::Rect fillRect) {
 			int ww = width;
 
 			while (ww-- > 0) {
-				*dd++ = _curPen;
+				*dd++ = color;
 			}
 
 			d += _screenWidth;
@@ -430,20 +411,20 @@ void DisplayMan::rectFill(Common::Rect fillRect) {
 	}
 }
 
-void DisplayMan::rectFill(uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
-	rectFill(Common::Rect(x1, y1, x2, y2));
+void DisplayMan::rectFill(uint16 x1, uint16 y1, uint16 x2, uint16 y2, byte color) {
+	rectFill(Common::Rect(x1, y1, x2, y2), color);
 }
 
-void DisplayMan::rectFillScaled(uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
-	rectFill(_vm->_utils->vgaRectScale(x1, y1, x2, y2));
+void DisplayMan::rectFillScaled(uint16 x1, uint16 y1, uint16 x2, uint16 y2, byte color) {
+	rectFill(_vm->_utils->vgaRectScale(x1, y1, x2, y2), color);
 }
 
-void DisplayMan::drawVLine(uint16 x, uint16 y1, uint16 y2) {
-	rectFill(x, y1, x, y2);
+void DisplayMan::drawVLine(uint16 x, uint16 y1, uint16 y2, byte color) {
+	rectFill(x, y1, x, y2, color);
 }
 
-void DisplayMan::drawHLine(uint16 x1, uint16 y, uint16 x2) {
-	rectFill(x1, y, x2, y);
+void DisplayMan::drawHLine(uint16 x1, uint16 y, uint16 x2, byte color) {
+	rectFill(x1, y, x2, y, color);
 }
 
 void DisplayMan::screenUpdate() {
@@ -797,13 +778,11 @@ void DisplayMan::doTransWipe(CloseDataPtr *closePtrList, const Common::String fi
 				if (j == 0)
 					checkerboardEffect(0, 0, curY, _screenWidth - 1, curY + 1);
 				else
-					rectFill(0, curY, _screenWidth - 1, curY + 1);
+					rectFill(0, curY, _screenWidth - 1, curY + 1, 0);
 				curY += 4;
 				linesDone++;
 			}	// while
 		}	// for i
-
-		setPen(0);
 	}	// for j
 
 	if (filename.empty())
@@ -926,8 +905,7 @@ void DisplayMan::scrollDisplayX(int16 dx, uint16 x1, uint16 y1, uint16 x2, uint1
 		im.readScreenImage(x1, y1);
 		im.drawImage(x1 + dx, y1);
 
-		setPen(0);
-		rectFill(x1, y1, x1 + dx - 1, y2);
+		rectFill(x1, y1, x1 + dx - 1, y2, 0);
 	} else if (dx < 0) {
 		im._width = x2 - x1 + 1 + dx;
 		im._height = y2 - y1 + 1;
@@ -935,8 +913,7 @@ void DisplayMan::scrollDisplayX(int16 dx, uint16 x1, uint16 y1, uint16 x2, uint1
 		im.readScreenImage(x1 - dx, y1);
 		im.drawImage(x1, y1);
 
-		setPen(0);
-		rectFill(x2 + dx + 1, y1, x2, y2);
+		rectFill(x2 + dx + 1, y1, x2, y2, 0);
 	}
 
 	// Prevent the Image destructor from deleting the external buffer
@@ -960,8 +937,7 @@ void DisplayMan::scrollDisplayY(int16 dy, uint16 x1, uint16 y1, uint16 x2, uint1
 		im.readScreenImage(x1, y1);
 		im.drawImage(x1, y1 + dy);
 
-		setPen(0);
-		rectFill(x1, y1, x2, y1 + dy - 1);
+		rectFill(x1, y1, x2, y1 + dy - 1, 0);
 	} else if (dy < 0) {
 		im._width = x2 - x1 + 1;
 		im._height = y2 - y1 + 1 + dy;
@@ -969,8 +945,7 @@ void DisplayMan::scrollDisplayY(int16 dy, uint16 x1, uint16 y1, uint16 x2, uint1
 		im.readScreenImage(x1, y1 - dy);
 		im.drawImage(x1, y1);
 
-		setPen(0);
-		rectFill(x1, y2 + dy + 1, x2, y2);
+		rectFill(x1, y2 + dy + 1, x2, y2, 0);
 	}
 
 	// Prevent the Image destructor from deleting the external buffer
