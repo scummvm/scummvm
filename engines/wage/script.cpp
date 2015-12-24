@@ -489,10 +489,8 @@ void Script::skipBlock() {
 			nesting++;
 			skipIf();
 		} else if (op == 0x88 || op == 0x87) { // END or EXIT
-			_data->seek(-1, SEEK_CUR); // We need to reread it higher
 			nesting--;
 			if (nesting == 0) {
-				_data->readByte(); // skiping
 				return;
 			}
 		} else switch (op) {
