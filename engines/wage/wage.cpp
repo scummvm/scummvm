@@ -111,6 +111,8 @@ Common::Error WageEngine::run() {
 	Common::Rect r(0, 0, screen.w, screen.h);
 
 	Common::String input("look");
+
+	_world->_player->_currentScene = _world->_orderedScenes[1];
 	_world->_globalScript->print();
 	_world->_globalScript->execute(_world, 1, &input, NULL, this);
 
@@ -148,7 +150,7 @@ void WageEngine::setMenu(String soundName) {
 }
 
 void WageEngine::appendText(String str) {
-	warning("STUB: appendText");
+	warning("STUB: appendText(%s)", str.c_str());
 }
 
 Obj *WageEngine::getOffer() {

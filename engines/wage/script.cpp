@@ -832,8 +832,21 @@ void Script::handleMoveCommand(Scene::Directions dir, const char *dirName) {
 }
 
 void Script::handleLookCommand() {
-	warning("STUB: handleLookCommand");
+	appendText(_world->_player->_currentScene->_text);
+
+	Common::String *items = getGroundItemsList(_world->_player->_currentScene);
+	if (items != NULL) {
+		appendText(*items);
+
+		delete items;
+	}
 }
+
+Common::String *Script::getGroundItemsList(Scene *scene) {
+	warning("STUB: getGroundItemsList");
+	return NULL;
+}
+
 
 void Script::handleInventoryCommand() {
 	warning("STUB: handleInventoryCommand");

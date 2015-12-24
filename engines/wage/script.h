@@ -166,6 +166,7 @@ private:
 	void appendText(String str);
 	void handleMoveCommand(Scene::Directions dir, const char *dirName);
 	void handleLookCommand();
+	Common::String *getGroundItemsList(Scene *scene);
 	void handleInventoryCommand();
 	void handleStatusCommand();
 	void handleRestCommand();
