@@ -63,7 +63,6 @@ private:
 	int _loopCount;
 	String *_inputText;
 	Designed *_inputClick;
-	bool _evalResult;
 	bool _handled;
 
 	class Operand {

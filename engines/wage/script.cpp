@@ -389,14 +389,12 @@ Script::Operand *Script::readStringOperand() {
 	_data->seek(-1, SEEK_CUR);
 
 	if (allDigits && sb->size() > 0) {
-		debug(0, "Read number %s", sb->c_str());
 		int r = atol(sb->c_str());
 		delete sb;
 
 		return new Operand(r, NUMBER);
 	} else {
 		// TODO: This string could be a room name or something like that.
-		debug(0, "Read string %s", sb->c_str());
 		return new Operand(sb, STRING);
 	}
 }
