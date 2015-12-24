@@ -137,13 +137,13 @@ void LabEngine::loadJournalData() {
 	delete journalFile;
 
 	_anim->_noPalChange = true;
-	_journalBackImage->_imageData = new byte[_graphics->_screenWidth * _graphics->_screenHeight];
+	_journalBackImage->_imageData = new byte[_graphics->_screenBytesPerPage];
 	_graphics->readPict("P:Journal.pic", true, false, _journalBackImage->_imageData);
 	_anim->_noPalChange = false;
 
 	// Keep a copy of the blank journal
-	_blankJournal = new byte[_graphics->_screenWidth * _graphics->_screenHeight];
-	memcpy(_blankJournal, _journalBackImage->_imageData, _graphics->_screenWidth * _graphics->_screenHeight);
+	_blankJournal = new byte[_graphics->_screenBytesPerPage];
+	memcpy(_blankJournal, _journalBackImage->_imageData, _graphics->_screenBytesPerPage);
 
 	_screenImage->_imageData = _graphics->getCurrentDrawingBuffer();
 }
@@ -216,7 +216,7 @@ void LabEngine::drawJournal(uint16 wipenum, bool needFade) {
 		_graphics->fade(true);
 
 	// Reset the journal background, so that all the text that has been blitted on it is erased
-	memcpy(_journalBackImage->_imageData, _blankJournal, _graphics->_screenWidth * _graphics->_screenHeight);
+	memcpy(_journalBackImage->_imageData, _blankJournal, _graphics->_screenBytesPerPage);
 
 	eatMessages();
 	_event->mouseShow();

@@ -47,7 +47,7 @@ DisplayMan::DisplayMan(LabEngine *vm) : _vm(vm) {
 	_lastMessageLong = false;
 	_actionMessageShown = false;
 
-	_screenBytesPerPage = 65536;
+	_screenBytesPerPage = 0;
 	_curPen = 0;
 	_curBitmap = nullptr;
 	_displayBuffer = nullptr;
