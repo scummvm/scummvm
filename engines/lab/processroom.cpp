@@ -189,7 +189,7 @@ void LabEngine::setCurrentClose(Common::Point pos, CloseDataPtr *closePtrList, b
 		else
 			target = _utils->rectScale(closePtr->_x1, closePtr->_y1, closePtr->_x2, closePtr->_y2);
 
-		if (target.contains(pos) && !closePtr->_graphicName.empty()) {
+		if (target.contains(pos) && (next || !closePtr->_graphicName.empty())) {
 
 			if (next) {
 				// cycle to the next one
