@@ -108,11 +108,6 @@ void Resource::readRoomData(const Common::String fileName) {
 		curRoom->_doors[kDirectionEast] = dataFile->readUint16LE();
 		curRoom->_doors[kDirectionWest] = dataFile->readUint16LE();
 		curRoom->_transitionType = dataFile->readByte();
-
-		curRoom->_view[kDirectionNorth] = nullptr;
-		curRoom->_view[kDirectionSouth] = nullptr;
-		curRoom->_view[kDirectionEast] = nullptr;
-		curRoom->_view[kDirectionWest] = nullptr;
 	}
 
 	delete dataFile;
@@ -142,10 +137,10 @@ void Resource::readViews(uint16 roomNum) {
 	RoomData *curRoom = &_vm->_rooms[roomNum];
 
 	curRoom->_roomMsg = readString(dataFile);
-	curRoom->_view[kDirectionNorth] = readView(dataFile);
-	curRoom->_view[kDirectionSouth] = readView(dataFile);
-	curRoom->_view[kDirectionEast] = readView(dataFile);
-	curRoom->_view[kDirectionWest] = readView(dataFile);
+	readView(dataFile, curRoom->_view[kDirectionNorth]);
+	readView(dataFile, curRoom->_view[kDirectionSouth]);
+	readView(dataFile, curRoom->_view[kDirectionEast]);
+	readView(dataFile, curRoom->_view[kDirectionWest]);
 	readRule(dataFile, curRoom->_rules);
 
 	_vm->updateMusicAndEvents();
@@ -326,34 +321,22 @@ void Resource::freeCloseUps(CloseData *closeUps) {
 	}
 }
 
-ViewData *Resource::readView(Common::File *file) {
-	ViewData *view = nullptr;
-	ViewData *prev = nullptr;
-	ViewData *head = nullptr;
-
+void Resource::readView(Common::File *file, Common::List<ViewData> &list) {
+	list.clear();
 	while (file->readByte() == 1) {
-		view = new ViewData();
-		if (!head)
-			head = view;
-		if (prev)
-			prev->_nextCondition = view;
-		view->_condition = readConditions(file);
-		view->_graphicName = readString(file);
-		view->_closeUps = readCloseUps(0, file);
-		view->_nextCondition = nullptr;
-		prev = view;
-	}
+		list.push_back(ViewData());
+		ViewData &view = list.back();
 
-	return head;
+		view._condition = readConditions(file);
+		view._graphicName = readString(file);
+		view._closeUps = readCloseUps(0, file);
+	}
 }
 
-void Resource::freeView(ViewData *view) {
-	while (view) {
-		ViewData *nextView = view->_nextCondition;
-		freeCloseUps(view->_closeUps);
-		delete view;
-		view = nextView;
-	}
+void Resource::freeView(Common::List<ViewData> &view) {
+	Common::List<ViewData>::iterator i;
+	for (i = view.begin(); i != view.end(); ++i)
+		freeCloseUps(i->_closeUps);
 }
 
 } // End of namespace Lab

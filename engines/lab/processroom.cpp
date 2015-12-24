@@ -56,16 +56,16 @@ ViewData *LabEngine::getViewData(uint16 roomNum, uint16 direction) {
 	if (_rooms[roomNum]._roomMsg.empty())
 		_resource->readViews(roomNum);
 
-	ViewData *view = _rooms[roomNum]._view[direction];
+	Common::List<ViewData> &views = _rooms[roomNum]._view[direction];
 
-	do {
+	Common::List<ViewData>::iterator view;
+
+	for (view = views.begin(); view != views.end(); ++view) {
 		if (checkConditions(view->_condition))
-			break;
+			return &(*view);
+	}
 
-		view = view->_nextCondition;
-	} while (true);
-
-	return view;
+	error("No view with matching condition found");
 }
 
 CloseData *LabEngine::getObject(Common::Point pos, CloseDataPtr closePtr) {

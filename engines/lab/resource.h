@@ -115,8 +115,8 @@ private:
 	void freeAction(Action *action);
 	CloseData *readCloseUps(uint16 depth, Common::File *file);
 	void freeCloseUps(CloseData *closeUps);
-	ViewData *readView(Common::File *file);
-	void freeView(ViewData *view);
+	void readView(Common::File *file, Common::List<ViewData> &view);
+	void freeView(Common::List<ViewData> &view);
 	void readStaticText();
 	Common::String translateFileName(const Common::String filename);
 
