@@ -51,8 +51,8 @@ Object *Anim::construct(Object *parent, byte subType, uint16 index, const Common
 	switch (subType) {
 	case kAnimImages:
 		return new AnimImages(parent, subType, index, name);
-	case kAnimSub2:
-		return new AnimSub2(parent, subType, index, name);
+	case kAnimProp:
+		return new AnimProp(parent, subType, index, name);
 	case kAnimVideo:
 		return new AnimVideo(parent, subType, index, name);
 	case kAnimSkeleton:
@@ -189,25 +189,25 @@ void AnimImages::saveLoad(ResourceSerializer *serializer) {
 	}
 }
 
-AnimSub2::~AnimSub2() {
+AnimProp::~AnimProp() {
 	delete _visual;
 }
 
-AnimSub2::AnimSub2(Object *parent, byte subType, uint16 index, const Common::String &name) :
+AnimProp::AnimProp(Object *parent, byte subType, uint16 index, const Common::String &name) :
 		Anim(parent, subType, index, name),
 		_movementSpeed(100) {
 	_visual = StarkGfx->createPropRenderer();
 }
 
-Visual *AnimSub2::getVisual() {
+Visual *AnimProp::getVisual() {
 	return _visual;
 }
 
-uint32 AnimSub2::getMovementSpeed() const {
+uint32 AnimProp::getMovementSpeed() const {
 	return _movementSpeed;
 }
 
-void AnimSub2::readData(Formats::XRCReadStream *stream) {
+void AnimProp::readData(Formats::XRCReadStream *stream) {
 	Anim::readData(stream);
 
 	_field_3C = stream->readString();
@@ -222,7 +222,7 @@ void AnimSub2::readData(Formats::XRCReadStream *stream) {
 	_archiveName = stream->getArchiveName();
 }
 
-void AnimSub2::onPostRead() {
+void AnimProp::onPostRead() {
 	if (_meshFilenames.size() != 1) {
 		error("Unexpected mesh count in prop anim: '%d'", _meshFilenames.size());
 	}
@@ -236,7 +236,7 @@ void AnimSub2::onPostRead() {
 	delete stream;
 }
 
-void AnimSub2::printData() {
+void AnimProp::printData() {
 	Anim::printData();
 
 	debug("field_3C: %s", _field_3C.c_str());

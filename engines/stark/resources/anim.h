@@ -57,7 +57,7 @@ public:
 
 	enum SubType {
 		kAnimImages   = 1,
-		kAnimSub2     = 2,
+		kAnimProp     = 2,
 		kAnimVideo    = 3,
 		kAnimSkeleton = 4
 	};
@@ -164,10 +164,10 @@ protected:
 	Image *_currentFrameImage;
 };
 
-class AnimSub2 : public Anim {
+class AnimProp : public Anim {
 public:
-	AnimSub2(Object *parent, byte subType, uint16 index, const Common::String &name);
-	virtual ~AnimSub2();
+	AnimProp(Object *parent, byte subType, uint16 index, const Common::String &name);
+	virtual ~AnimProp();
 
 	// Resource API
 	void readData(Formats::XRCReadStream *stream) override;
