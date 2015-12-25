@@ -616,18 +616,7 @@ bool LabEngine::fromCrumbs(uint32 tmpClass, uint16 code, uint16 qualifier, Commo
 		// get next close-up in list after the one pointed to by curPos
 		setCurrentClose(curPos, &tmpClosePtr, true, true);
 
-		if (tmpClosePtr == _closeDataPtr) {
-			tmpClosePtr = nullptr;
-			if (!_closeDataPtr) {
-				ViewData *vptr = getViewData(_roomNum, _direction);
-				if (!vptr->_closeUps.empty())
-					tmpClosePtr = &(*vptr->_closeUps.begin());
-			} else {
-				if (!_closeDataPtr->_subCloseUps.empty())
-					tmpClosePtr = &(*_closeDataPtr->_subCloseUps.begin());
-			}
-		}
-		if (tmpClosePtr)
+		if (tmpClosePtr != _closeDataPtr)
 			_event->setMousePos(Common::Point(_utils->scaleX((tmpClosePtr->_x1 + tmpClosePtr->_x2) / 2), _utils->scaleY((tmpClosePtr->_y1 + tmpClosePtr->_y2) / 2)));
 	}
 

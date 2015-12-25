@@ -202,6 +202,13 @@ void LabEngine::setCurrentClose(Common::Point pos, CloseDataPtr *closePtrList, b
 			return;
 		}
 	}
+
+	// If we got here, no match was found. If we want the "next" close-up,
+	// return the first one in the list, if any.
+	if (next) {
+		if (!list->empty())
+			*closePtrList = &(*list->begin());
+	}
 }
 
 bool LabEngine::takeItem(Common::Point pos, CloseDataPtr *closePtrList) {
