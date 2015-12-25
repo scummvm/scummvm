@@ -32,6 +32,7 @@
 #include "engines/stark/services/gameinterface.h"
 
 #include "engines/stark/ui/actionmenu.h"
+#include "engines/stark/ui/cursor.h"
 #include "engines/stark/ui/dialogpanel.h"
 #include "engines/stark/ui/fmvplayer.h"
 #include "engines/stark/ui/gamewindow.h"
@@ -40,9 +41,9 @@
 
 namespace Stark {
 
-UserInterface::UserInterface(Gfx::Driver *gfx, Cursor *cursor) :
+UserInterface::UserInterface(Gfx::Driver *gfx) :
 		_gfx(gfx),
-		_cursor(cursor),
+		_cursor(nullptr),
 		_topMenu(nullptr),
 		_dialogPanel(nullptr),
 		_inventoryWindow(nullptr),
@@ -61,10 +62,12 @@ UserInterface::~UserInterface() {
 	delete _dialogPanel;
 	delete _inventoryWindow;
 	delete _fmvPlayer;
+	delete _cursor;
 }
 
 void UserInterface::init() {
 	// Game screen windows
+	_cursor = new Cursor(_gfx);
 	_topMenu = new TopMenu(_gfx, _cursor);
 	_dialogPanel = new DialogPanel(_gfx, _cursor);
 	_actionMenu = new ActionMenu(_gfx, _cursor);
@@ -87,6 +90,10 @@ void UserInterface::update() {
 
 	// Check for UI mouse overs
 	dispatchEvent(&Window::handleMouseMove);
+}
+
+void UserInterface::handleMouseMove(const Common::Point &pos) {
+	_cursor->setMousePosition(pos);
 }
 
 void UserInterface::handleClick() {
@@ -186,6 +193,9 @@ void UserInterface::render() {
 		default: // Nothing goes here
 			break;
 	}
+
+	// The cursor depends on the UI being done.
+	_cursor->render();
 }
 
 bool UserInterface::isInteractive() const {

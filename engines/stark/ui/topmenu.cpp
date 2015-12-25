@@ -22,9 +22,8 @@
 
 #include "engines/stark/ui/topmenu.h"
 
-#include "engines/stark/cursor.h"
-
 #include "engines/stark/ui/button.h"
+#include "engines/stark/ui/cursor.h"
 
 #include "engines/stark/gfx/driver.h"
 

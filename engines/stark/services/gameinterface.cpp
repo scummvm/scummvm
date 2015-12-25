@@ -39,7 +39,6 @@
 
 #include "engines/stark/visual/image.h"
 
-#include "engines/stark/cursor.h"
 #include "engines/stark/scene.h"
 #include "engines/stark/services/userinterface.h"
 

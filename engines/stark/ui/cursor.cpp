@@ -20,7 +20,7 @@
  *
  */
 
-#include "engines/stark/cursor.h"
+#include "engines/stark/ui/cursor.h"
 
 #include "engines/stark/gfx/driver.h"
 
@@ -46,14 +46,11 @@ Cursor::Cursor(Gfx::Driver *gfx) :
 		_fading(false),
 		_fadeLevelIncreasing(true),
 		_fadeLevel(0) {
+	setCursorType(kDefault);
 }
 
 Cursor::~Cursor() {
 	delete _mouseText;
-}
-
-void Cursor::init() {
-	setCursorType(kDefault);
 }
 
 void Cursor::setCursorType(CursorType type) {

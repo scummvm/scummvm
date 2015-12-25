@@ -22,7 +22,6 @@
 
 #include "engines/stark/ui/gamewindow.h"
 
-#include "engines/stark/cursor.h"
 #include "engines/stark/scene.h"
 
 #include "engines/stark/gfx/driver.h"
@@ -39,6 +38,7 @@
 #include "engines/stark/services/userinterface.h"
 
 #include "engines/stark/ui/actionmenu.h"
+#include "engines/stark/ui/cursor.h"
 #include "engines/stark/ui/inventorywindow.h"
 
 namespace Stark {

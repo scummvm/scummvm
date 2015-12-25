@@ -22,6 +22,7 @@
 
 #include "engines/stark/ui/actionmenu.h"
 
+#include "engines/stark/ui/cursor.h"
 #include "engines/stark/ui/inventorywindow.h"
 
 #include "engines/stark/resources/anim.h"
@@ -35,7 +36,6 @@
 #include "engines/stark/services/staticprovider.h"
 #include "engines/stark/services/global.h"
 
-#include "engines/stark/cursor.h"
 #include "engines/stark/scene.h"
 
 #include "engines/stark/visual/image.h"

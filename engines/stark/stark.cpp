@@ -23,7 +23,6 @@
 #include "engines/stark/stark.h"
 
 #include "engines/stark/console.h"
-#include "engines/stark/cursor.h"
 #include "engines/stark/debug.h"
 #include "engines/stark/resources/level.h"
 #include "engines/stark/resources/location.h"
@@ -56,7 +55,6 @@ StarkEngine::StarkEngine(OSystem *syst, const ADGameDescription *gameDesc) :
 		_gfx(nullptr),
 		_scene(nullptr),
 		_console(nullptr),
-		_cursor(nullptr),
 		_global(nullptr),
 		_gameInterface(nullptr),
 		_archiveLoader(nullptr),
@@ -82,7 +80,6 @@ StarkEngine::StarkEngine(OSystem *syst, const ADGameDescription *gameDesc) :
 
 StarkEngine::~StarkEngine() {
 	delete _gameInterface;
-	delete _cursor;
 	delete _dialogPlayer;
 	delete _randomSource;
 	delete _scene;
@@ -115,9 +112,8 @@ Common::Error StarkEngine::run() {
 	_fontProvider = new FontProvider();
 	_scene = new Scene(_gfx);
 	_dialogPlayer = new DialogPlayer();
-	_cursor = new Cursor(_gfx);
 	_gameInterface = new GameInterface();
-	_userInterface = new UserInterface(_gfx, _cursor);
+	_userInterface = new UserInterface(_gfx);
 
 	// Setup the public services
 	StarkServices &services = StarkServices::instance();
@@ -137,7 +133,6 @@ Common::Error StarkEngine::run() {
 	_resourceProvider->initGlobal();
 	_staticProvider->init();
 	_fontProvider->initFonts();
-	_cursor->init();
 	// Initialize the UI
 	_userInterface->init();
 
@@ -205,7 +200,7 @@ void StarkEngine::mainLoop() {
 			} else if (e.type == Common::EVENT_LBUTTONUP) {
 				// Do nothing for now
 			} else if (e.type == Common::EVENT_MOUSEMOVE) {
-				_cursor->setMousePosition(e.mouse);
+				_userInterface->handleMouseMove(e.mouse);
 			} else if (e.type == Common::EVENT_LBUTTONDOWN) {
 				_userInterface->handleClick();
 				if (_system->getMillis() - _lastClickTime < _doubleClickDelay) {
@@ -254,9 +249,6 @@ void StarkEngine::updateDisplayScene() {
 
 	// Tell the UI to render, and update implicitly, if this leads to new mouse-over events.
 	_userInterface->render();
-
-	// The cursor depends on the UI being done.
-	_cursor->render();
 
 	// Swap buffers
 	_gfx->flipBuffer();

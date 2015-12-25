@@ -42,7 +42,6 @@ enum StarkGameFeatures {
 
 class ArchiveLoader;
 class Console;
-class Cursor;
 class DialogPlayer;
 class FontProvider;
 class Global;
@@ -91,7 +90,6 @@ private:
 	const ADGameDescription *_gameDescription;
 
 	UserInterface *_userInterface;
-	Cursor *_cursor;
 	Scene *_scene;
 
 	// Double click handling

@@ -23,7 +23,7 @@
 #ifndef STARK_SERVICES_USER_INTERFACE_H
 #define STARK_SERVICES_USER_INTERFACE_H
 
-#include "common/scummsys.h"
+#include "common/rect.h"
 #include "common/str-array.h"
 
 namespace Stark {
@@ -49,7 +49,7 @@ class Window;
  */
 class UserInterface {
 public:
-	UserInterface(Gfx::Driver *gfx, Cursor *cursor);
+	UserInterface(Gfx::Driver *gfx);
 	virtual ~UserInterface();
 
 	enum Screen {
@@ -60,6 +60,7 @@ public:
 	void init();
 	void update();
 	void render();
+	void handleMouseMove(const Common::Point &pos);
 	void handleClick();
 	void handleRightClick();
 	void handleDoubleClick();

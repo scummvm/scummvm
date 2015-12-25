@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef STARK_CURSOR_H
-#define STARK_CURSOR_H
+#ifndef STARK_UI_CURSOR_H
+#define STARK_UI_CURSOR_H
 
 #include "common/rect.h"
 #include "common/scummsys.h"
@@ -42,8 +42,6 @@ class Cursor {
 public:
 	Cursor(Gfx::Driver *gfx);
 	~Cursor();
-
-	void init();
 
 	/** Render the Cursor */
 	void render();
@@ -88,4 +86,4 @@ private:
 
 } // End of namespace Stark
 
-#endif // STARK_CURSOR_H
+#endif // STARK_UI_CURSOR_H

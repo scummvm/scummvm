@@ -2,7 +2,6 @@ MODULE := engines/stark
 
 MODULE_OBJS := \
 	console.o \
-	cursor.o \
 	detection.o \
 	gfx/driver.o \
 	gfx/opengls.o \
@@ -77,6 +76,7 @@ MODULE_OBJS := \
 	ui/actionmenu.o \
 	ui/button.o \
 	ui/clicktext.o \
+	ui/cursor.o \
 	ui/dialogpanel.o \
 	ui/fmvplayer.o \
 	ui/gamewindow.o \
