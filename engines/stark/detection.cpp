@@ -119,7 +119,7 @@ static const ADGameDescription gameDescriptions[] = {
 		ADGF_DEMO,
 		GUIO_NONE
 	},
-	
+
 	// The Longest Journey
 	// Norwegian DLC-edition (DVD?)
 	{
@@ -133,7 +133,7 @@ static const ADGameDescription gameDescriptions[] = {
 		ADGF_NO_FLAGS,
 		GUIO_NONE
 	},
-	
+
 	// The Longest Journey
 	// Spanish 4CD
 	{
@@ -204,22 +204,23 @@ public:
 		_singleid = "stark";
 		_guioptions = GUIO1(GUIO_NOMIDI);
 	}
-	
-	virtual const char *getName() const {
+
+	const char *getName() const override {
 		return "Stark Engine";
 	}
 
-	virtual const char *getOriginalCopyright() const {
+	const char *getOriginalCopyright() const override {
 		return "(C) Funcom";
 	}
 
-	virtual bool hasFeature(MetaEngineFeature f) const {
+	bool hasFeature(MetaEngineFeature f) const override {
 		return
 			(f == kSupportsListSaves) ||
-			(f == kSupportsLoadingDuringStartup);
+			(f == kSupportsLoadingDuringStartup) ||
+			(f == kSupportsDeleteSave);
 	}
 
-	int getMaximumSaveSlot() const {
+	int getMaximumSaveSlot() const override {
 		return 99;
 	}
 
@@ -227,7 +228,7 @@ public:
 		return x.getSaveSlot() < y.getSaveSlot();
 	}
 
-	virtual SaveStateList listSaves(const char *target) const {
+	SaveStateList listSaves(const char *target) const override {
 		SaveStateList saveList;
 		Common::StringArray filenames = g_system->getSavefileManager()->listSavefiles("Save??.tlj");
 
@@ -254,15 +255,18 @@ public:
 		return saveList;
 	}
 
-	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
+	void removeSaveState(const char *target, int slot) const override {
+		Common::String filename = Common::String::format("Save%02d.tlj", slot);
+		g_system->getSavefileManager()->removeSavefile(filename);
+	}
+
+	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override {
+		if (desc)
+			*engine = new StarkEngine(syst, desc);
+
+		return desc != 0;
+	}
 };
-
-bool StarkMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	if (desc)
-		*engine = new StarkEngine(syst, desc);
-
-	return desc != 0;
-}
 
 } // End of namespace Stark
 
