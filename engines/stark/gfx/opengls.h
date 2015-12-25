@@ -69,8 +69,6 @@ public:
 	Common::Rect getUnscaledViewport() const;
 
 private:
-	Math::Vector2d scaled(float x, float y) const;
-
 	Common::Rect _viewport;
 	Common::Rect _unscaledViewport;
 

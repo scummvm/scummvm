@@ -109,10 +109,6 @@ void OpenGLSDriver::setViewport(Common::Rect rect, bool noScaling) {
 	glViewport(_viewport.left, g_system->getHeight() - _viewport.bottom, _viewport.width(), _viewport.height());
 }
 
-Math::Vector2d OpenGLSDriver::scaled(float x, float y) const {
-	return Math::Vector2d(x / (float) _unscaledViewport.width(), y / (float) _unscaledViewport.height());
-}
-
 void OpenGLSDriver::clearScreen() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
