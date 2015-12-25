@@ -498,7 +498,7 @@ void LabEngine::mainGameLoop() {
 					gotMessage = true;
 					mayShowCrumbIndicator();
 					_graphics->screenUpdate();
-					if (!fromCrumbs(kMessageButtonUp, code, 0, _event->updateAndGetMousePos(), curInv, curMsg, forceDraw, code, actionMode))
+					if (!processEvent(kMessageButtonUp, code, 0, _event->updateAndGetMousePos(), curInv, curMsg, forceDraw, code, actionMode))
 						break;
 				}
 			}
@@ -508,7 +508,7 @@ void LabEngine::mainGameLoop() {
 		} else {
 			gotMessage = true;
 			_followingCrumbs = false;
-			if (!fromCrumbs(curMsg->_msgClass, curMsg->_code, curMsg->_qualifier, curMsg->_mouse, curInv, curMsg, forceDraw, curMsg->_code, actionMode))
+			if (!processEvent(curMsg->_msgClass, curMsg->_code, curMsg->_qualifier, curMsg->_mouse, curInv, curMsg, forceDraw, curMsg->_code, actionMode))
 				break;
 		}
 	}
@@ -533,59 +533,46 @@ void LabEngine::showLab2Teaser() {
 	}
 }
 
-bool LabEngine::fromCrumbs(uint32 tmpClass, uint16 code, uint16 qualifier, Common::Point tmpPos,
+bool LabEngine::processEvent(MessageClass tmpClass, uint16 code, uint16 qualifier, Common::Point tmpPos,
 			uint16 &curInv, IntuiMessage *curMsg, bool &forceDraw, uint16 buttonId, uint16 &actionMode) {
-	uint32 msgClass = tmpClass;
+	MessageClass msgClass = tmpClass;
 	Common::Point curPos = tmpPos;
-
 	uint16 oldDirection = 0;
 	uint16 lastInv = kItemMap;
-	bool leftButtonClick = false;
-	bool rightButtonClick = false;
+
+	if (code == Common::KEYCODE_RETURN)
+		msgClass = kMessageLeftClick;
+
+	bool leftButtonClick = (msgClass == kMessageLeftClick);
+	bool rightButtonClick = (msgClass == kMessageRightClick);
 
 	_anim->_doBlack = false;
 
 	if (shouldQuit())
 		return false;
 
-	if ((msgClass == kMessageRawKey) && !_graphics->_longWinInFront) {
+	if (msgClass == kMessageRawKey && !_graphics->_longWinInFront) {
 		if (!processKey(curMsg, msgClass, qualifier, curPos, curInv, forceDraw, code))
 			return false;
-	}
-
-	leftButtonClick = (msgClass == kMessageLeftClick);
-	rightButtonClick = (msgClass == kMessageRightClick);
-
-	if (_graphics->_longWinInFront) {
-		if ((msgClass == kMessageRawKey) || (leftButtonClick || rightButtonClick)) {
-			_graphics->_longWinInFront = false;
-			_graphics->drawPanel();
-			drawRoomMessage(curInv, _closeDataPtr);
-			_graphics->screenUpdate();
-		}
-	} else if ((msgClass == kMessageButtonUp) && !_alternate) {
-		processMainButton(curInv, lastInv, oldDirection, forceDraw, buttonId, actionMode);
-	} else if ((msgClass == kMessageButtonUp) && _alternate) {
-		processAltButton(curInv, lastInv, buttonId, actionMode);
+	} else if ((msgClass == kMessageRawKey || leftButtonClick || rightButtonClick) && _graphics->_longWinInFront) {
+		_graphics->_longWinInFront = false;
+		_graphics->drawPanel();
+		drawRoomMessage(curInv, _closeDataPtr);
+		_graphics->screenUpdate();
+	} else if (msgClass == kMessageButtonUp) {
+		if (!_alternate)
+			processMainButton(curInv, lastInv, oldDirection, forceDraw, buttonId, actionMode);
+		else
+			processAltButton(curInv, lastInv, buttonId, actionMode);
 	} else if (leftButtonClick && _mainDisplay) {
 		interfaceOff();
 		_mainDisplay = true;
 
-		if (_closeDataPtr) {
-			switch (_closeDataPtr->_closeUpType) {
-			case SPECIALLOCK:
-				if (_mainDisplay)
-					_tilePuzzle->mouseCombination(curPos);
-				break;
-			case SPECIALBRICK:
-				if (_mainDisplay)
-					_tilePuzzle->mouseTile(curPos);
-				break;
-			default:
-				performAction(actionMode, curPos, curInv);
-				break;
-			}
-		} else
+		if (_closeDataPtr && _closeDataPtr->_closeUpType == SPECIALLOCK)
+			_tilePuzzle->mouseCombination(curPos);
+		else if (_closeDataPtr && _closeDataPtr->_closeUpType == SPECIALBRICK)
+			_tilePuzzle->mouseTile(curPos);
+		else
 			performAction(actionMode, curPos, curInv);
 
 		mayShowCrumbIndicator();
@@ -610,7 +597,7 @@ bool LabEngine::fromCrumbs(uint32 tmpClass, uint16 code, uint16 qualifier, Commo
 
 		mayShowCrumbIndicator();
 		_graphics->screenUpdate();
-	} else if (msgClass == kMessageMoveCursorToCloseup) {
+	} else if (code == Common::KEYCODE_TAB) {
 		CloseDataPtr tmpClosePtr = _closeDataPtr;
 
 		// get next close-up in list after the one pointed to by curPos
@@ -623,13 +610,8 @@ bool LabEngine::fromCrumbs(uint32 tmpClass, uint16 code, uint16 qualifier, Commo
 	return true;
 }
 
-bool LabEngine::processKey(IntuiMessage *curMsg, uint32 &msgClass, uint16 &qualifier, Common::Point &curPos, uint16 &curInv, bool &forceDraw, uint16 code) {
-	if (code == Common::KEYCODE_RETURN) {
-		// The return key
-		msgClass = kMessageLeftClick;
-		qualifier = 0;
-		curPos = _event->getMousePos();
-	} else if ((getPlatform() == Common::kPlatformWindows) && (code == Common::KEYCODE_b)) {
+bool LabEngine::processKey(IntuiMessage *curMsg, uint32 msgClass, uint16 &qualifier, Common::Point &curPos, uint16 &curInv, bool &forceDraw, uint16 code) {
+	if ((getPlatform() == Common::kPlatformWindows) && (code == Common::KEYCODE_b)) {
 		// Start bread crumbs
 		_breadCrumbs[0]._roomNum = 0;
 		_numCrumbs = 0;
@@ -697,9 +679,7 @@ bool LabEngine::processKey(IntuiMessage *curMsg, uint32 &msgClass, uint16 &quali
 
 		forceDraw = true;
 		interfaceOn();
-	} else if (code == Common::KEYCODE_TAB)
-		msgClass = kMessageMoveCursorToCloseup;
-	else if (code == Common::KEYCODE_ESCAPE)
+	} else if (code == Common::KEYCODE_ESCAPE)
 		_closeDataPtr = nullptr;
 
 	eatMessages();
@@ -734,6 +714,7 @@ void LabEngine::processMainButton(uint16 &curInv, uint16 &lastInv, uint16 &oldDi
 			drawStaticMessage(kTextTakeWhat + buttonId);
 		}
 		break;
+
 	case kButtonInventory:
 		eatMessages();
 
@@ -835,6 +816,7 @@ void LabEngine::processMainButton(uint16 &curInv, uint16 &lastInv, uint16 &oldDi
 
 		mayShowCrumbIndicator();
 		break;
+
 	case kButtonMap:
 		doUse(kItemMap);
 

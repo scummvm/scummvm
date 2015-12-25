@@ -38,14 +38,6 @@ namespace Lab {
 class LabEngine;
 class Image;
 
-enum MessageClass {
-	kMessageLeftClick,
-	kMessageRightClick,
-	kMessageButtonUp,
-	kMessageRawKey,
-	kMessageMoveCursorToCloseup
-};
-
 struct IntuiMessage {
 	MessageClass _msgClass;
 	uint16 _code; // KeyCode or Button Id

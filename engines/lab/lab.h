@@ -114,6 +114,13 @@ enum MainButton {
 	kButtonMap
 };
 
+enum MessageClass {
+	kMessageLeftClick,
+	kMessageRightClick,
+	kMessageButtonUp,
+	kMessageRawKey
+};
+
 class LabEngine : public Engine {
 private:
 	bool _interfaceOff;
@@ -366,7 +373,7 @@ private:
 	MainButton followCrumbs();
 	void freeMapData();
 	void freeScreens();
-	bool fromCrumbs(uint32 tmpClass, uint16 code, uint16 qualifier, Common::Point tmpPos,
+	bool processEvent(MessageClass tmpClass, uint16 code, uint16 qualifier, Common::Point tmpPos,
 		uint16 &curInv, IntuiMessage *curMsg, bool &forceDraw, uint16 buttonId, uint16 &actionMode);
 
 	/**
@@ -469,7 +476,7 @@ private:
 	 * Does the turn page wipe.
 	 */
 	void turnPage(bool fromLeft);
-	bool processKey(IntuiMessage *curMsg, uint32 &msgClass, uint16 &qualifier, Common::Point &curPos, uint16 &curInv, bool &forceDraw, uint16 code);
+	bool processKey(IntuiMessage *curMsg, uint32 msgClass, uint16 &qualifier, Common::Point &curPos, uint16 &curInv, bool &forceDraw, uint16 code);
 	void processMainButton(uint16 &curInv, uint16 &lastInv, uint16 &oldDirection, bool &forceDraw, uint16 buttonId, uint16 &actionMode);
 	void processAltButton(uint16 &curInv, uint16 &lastInv, uint16 buttonId, uint16 &actionMode);
 	void performAction(uint16 actionMode, Common::Point curPos, uint16 &curInv);
