@@ -258,7 +258,8 @@ bool StarkEngine::hasFeature(EngineFeature f) const {
 	return
 		(f == kSupportsLoadingDuringRuntime) ||
 		(f == kSupportsSavingDuringRuntime) ||
-		(f == kSupportsArbitraryResolutions);
+		(f == kSupportsArbitraryResolutions) ||
+		(f == kSupportsRTL);
 }
 
 bool StarkEngine::canLoadGameStateCurrently() {
