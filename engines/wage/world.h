@@ -54,13 +54,18 @@ namespace Wage {
 
 class World {
 public:
-	World();
+	World(WageEngine *engine);
 	~World();
 
 	bool loadWorld(Common::MacResManager *resMan);
 	void loadExternalSounds(String fname);
 	Common::String *loadStringFromDITL(Common::MacResManager *resMan, int resourceId, int itemIndex);
 	void move(Obj *obj, Chr *chr);
+	void move(Obj *obj, Scene *scene);
+	void move(Chr *chr, Scene *scene);
+	Scene *getRandomScene();
+
+	WageEngine *_engine;
 
 	String _name;
 	String _aboutMessage;

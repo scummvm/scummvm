@@ -201,7 +201,7 @@ public:
 	String _dyingWords;
 
 	Scene *_currentScene;
-	Common::List<Obj> _inventory;
+	Common::Array<Obj> _inventory;
 
 	Obj *_armor[NUMBER_OF_ARMOR_TYPES];
 
@@ -279,6 +279,7 @@ public:
 		return (_nativeWeapon2.size() > 0 && _operativeVerb2.size() > 0);
 	}
 	int wearObjIfPossible(Obj *obj);
+	void wearObjs();
 };
 
 class Weapon {

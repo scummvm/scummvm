@@ -108,6 +108,8 @@ public:
 
 private:
 	bool loadWorld(Common::MacResManager *resMan);
+	void performInitialSetup();
+	void wearObjs(Chr *chr);
 
 public:
 	Common::RandomSource *_rnd;

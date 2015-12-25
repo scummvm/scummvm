@@ -57,7 +57,7 @@
 
 namespace Wage {
 
-World::World() {
+World::World(WageEngine *engine) {
 	_storageScene._name = STORAGESCENE;
 	_orderedScenes.push_back(&_storageScene);
 	_scenes[STORAGESCENE] = &_storageScene;
@@ -66,6 +66,8 @@ World::World() {
 	_saveBeforeQuitMessage = nullptr;
 	_saveBeforeCloseMessage = nullptr;
 	_revertMessage = nullptr;
+
+	_engine = engine;
 }
 
 bool World::loadWorld(Common::MacResManager *resMan) {
@@ -351,7 +353,20 @@ Common::String *World::loadStringFromDITL(Common::MacResManager *resMan, int res
 }
 
 void World::move(Obj *obj, Chr *chr) {
-	warning("STUB: World::move()");
+	warning("STUB: World::move(obj, chr)");
+}
+
+void World::move(Obj *obj, Scene *scene) {
+	warning("STUB: World::move(obj, scene)");
+}
+
+void World::move(Chr *chr, Scene *scene) {
+	warning("STUB: World::move(chr, scene)");
+}
+
+Scene *World::getRandomScene() {
+	// Not including storage:
+	return _orderedScenes[1 + _engine->_rnd->getRandomNumber(_orderedScenes.size() - 1)];
 }
 
 } // End of namespace Wage

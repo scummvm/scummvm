@@ -101,7 +101,7 @@ Common::Error WageEngine::run() {
 	_resManager = new Common::MacResManager();
 	_resManager->open(getGameFile());
 
-	_world = new World();
+	_world = new World(this);
 
 	if (!_world->loadWorld(_resManager))
 		return Common::kNoGameDataFoundError;
@@ -109,6 +109,8 @@ Common::Error WageEngine::run() {
 	Graphics::Surface screen;
 	screen.create(640, 480, Graphics::PixelFormat::createFormatCLUT8());
 	Common::Rect r(0, 0, screen.w, screen.h);
+
+	performInitialSetup();
 
 	Common::String input("look");
 
@@ -158,5 +160,57 @@ Obj *WageEngine::getOffer() {
 	return NULL;
 }
 
+void WageEngine::performInitialSetup() {
+	for (int i = 0; i < _world->_orderedObjs.size(); i++)
+		_world->move(_world->_orderedObjs[i], &_world->_storageScene);
+	for (int i = 0; i < _world->_orderedChrs.size(); i++)
+		_world->move(_world->_orderedChrs[i], &_world->_storageScene);
+
+	warning("STUB: performInitialSetup");
+/*
+	for (int i = 0; i < _world->_orderedObjs.size(); i++)
+		Obj obj = _world->_orderedObjs[i];
+		if (!obj.getSceneOrOwner().equalsIgnoreCase(World.STORAGE)) {
+			String location = obj.getSceneOrOwner().toLowerCase();
+			Scene scene = getSceneByName(location);
+			if (scene != null) {
+				world.move(obj, scene);
+			} else {
+				Chr chr = world.getChrs().get(location);
+				if (chr == null) {
+					// Note: PLAYER@ is not a valid target here.
+					System.err.printf("Couldn't move %s to %s\n", obj.getName(), obj.getSceneOrOwner());
+				} else {
+					// TODO: Add check for max items.
+					world.move(obj, chr);
+				}
+			}
+		}
+	}
+*/
+	bool playerPlaced = false;
+	for (int i = 0; i < _world->_orderedChrs.size(); i++) {
+		Chr *chr = _world->_orderedChrs[i];
+		if (!chr->_initialScene.equalsIgnoreCase(STORAGESCENE)) {
+			String key = chr->_initialScene;
+			key.toLowercase();
+			if (_world->_scenes.contains(key)) {
+				_world->move(chr, _world->_scenes[key]);
+
+				if (chr->_playerCharacter)
+					warning("Initial scene: %s", key.c_str());
+			} else {
+				_world->move(chr, _world->getRandomScene());
+			}
+			if (chr->_playerCharacter) {
+				playerPlaced = true;
+			}
+		}
+		chr->wearObjs();
+	}
+	if (!playerPlaced) {
+		_world->move(_world->_player, _world->getRandomScene());
+	}
+}
 
 } // End of namespace Wage

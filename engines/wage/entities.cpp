@@ -205,6 +205,11 @@ WeaponArray *Chr::getWeapons() {
 	return list;
 }
 
+void Chr::wearObjs() {
+	for (int i = 0; i < _inventory.size(); i++)
+		wearObjIfPossible(&_inventory[i]);
+}
+
 int Chr::wearObjIfPossible(Obj *obj) {
 	switch (obj->_type) {
 	case Obj::HELMET:
