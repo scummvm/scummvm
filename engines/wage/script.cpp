@@ -233,7 +233,7 @@ Script::Operand *Script::readOperand() {
 	case 0xC2: // PLAYER@
 		return new Operand(_world->_player, CHR);
 	case 0xC3: // MONSTER@
-		return new Operand(_callbacks->_monster, CHR);
+		return new Operand(_callbacks->getMonster(), CHR);
 	case 0xC4: // RANDOMSCN@
 		return new Operand(_world->_orderedScenes[_callbacks->_rnd->getRandomNumber(_world->_orderedScenes.size())], SCENE);
 	case 0xC5: // RANDOMCHR@

@@ -70,6 +70,10 @@ WageEngine::WageEngine(OSystem *syst, const ADGameDescription *desc) : Engine(sy
 	_rnd = new Common::RandomSource("wage");
 
 	_aim = -1;
+	_temporarilyHidden = false;
+	_isGameOver = false;
+	_monster = NULL;
+	_lastScene = NULL;
 
 	debug("WageEngine::WageEngine()");
 }
@@ -110,7 +114,9 @@ Common::Error WageEngine::run() {
 	screen.create(640, 480, Graphics::PixelFormat::createFormatCLUT8());
 	Common::Rect r(0, 0, screen.w, screen.h);
 
+	_temporarilyHidden = true;
 	performInitialSetup();
+	_temporarilyHidden = false;
 
 	Common::String input("look");
 
@@ -143,21 +149,32 @@ void WageEngine::processEvents() {
 }
 
 void WageEngine::playSound(String soundName) {
-	warning("STUB: playSound");
+	warning("STUB: WageEngine::playSound(%s)", soundName.c_str());
 }
 
 void WageEngine::setMenu(String soundName) {
-	warning("STUB: setMenu");
+	warning("STUB: WageEngine::setMenu");
 }
 
 void WageEngine::appendText(String str) {
-	warning("STUB: appendText(%s)", str.c_str());
+	warning("STUB: WageEngine::appendText(%s)", str.c_str());
 }
 
 Obj *WageEngine::getOffer() {
-	warning("STUB: getOffer");
+	warning("STUB: WageEngine::getOffer");
 
 	return NULL;
+}
+
+Chr *WageEngine::getMonster() {
+	if (_monster != NULL && _monster->_currentScene != _world->_player->_currentScene) {
+		_monster = NULL;
+	}
+	return _monster;
+}
+
+void WageEngine::gameOver() {
+	warning("STUB: WageEngine::gameOver()");
 }
 
 void WageEngine::performInitialSetup() {
@@ -210,8 +227,82 @@ void WageEngine::performInitialSetup() {
 	}
 }
 
+Scene *WageEngine::getSceneByName(String &location) {
+	Scene *scene;
+	if (location.equals("random@")) {
+		scene = _world->getRandomScene();
+	} else {
+		scene = _world->_scenes[location];
+	}
+	return scene;
+}
+
 void WageEngine::onMove(Designed *what, Designed *from, Designed *to) {
-	warning("STUB WageEngine::onMove()");
+	Chr *player = _world->_player;
+	Scene *currentScene = player->_currentScene;
+	if (currentScene == _world->_storageScene && !_temporarilyHidden) {
+		if (!_isGameOver) {
+			_isGameOver = true;
+			gameOver();
+		}
+		return;
+	}
+
+	if (what != player && what->_classType == CHR) {
+		Chr *chr = (Chr *)what;
+		if (to == _world->_storageScene) {
+			int returnTo = chr->_returnTo;
+			if (returnTo != Chr::RETURN_TO_STORAGE) {
+				String returnToSceneName;
+				if (returnTo == Chr::RETURN_TO_INITIAL_SCENE) {
+					returnToSceneName = chr->_initialScene;
+					returnToSceneName.toLowercase();
+				} else {
+					returnToSceneName = "random@";
+				}
+				Scene *scene = getSceneByName(returnToSceneName);
+				if (scene != NULL && scene != _world->_storageScene) {
+					_world->move(chr, scene);
+					// To avoid sleeping twice, return if the above move command would cause a sleep.
+					if (scene == currentScene)
+						return;
+				}
+			}
+		} else if (to == player->_currentScene) {
+			if (getMonster() == NULL) {
+				_monster = chr;
+				encounter(player, chr);
+			}
+		}
+	}
+	if (!_temporarilyHidden) {
+		if (to == currentScene || from == currentScene) {
+			redrawScene();
+			g_system->delayMillis(100);
+		}
+	}
+}
+
+void WageEngine::encounter(Chr *player, Chr *chr) {
+	warning("STUB WageEngine::encounter()");
+}
+
+void WageEngine::redrawScene() {
+	Scene *currentScene = _world->_player->_currentScene;
+	if (currentScene != NULL) {
+		//bool firstTime = (_lastScene != currentScene);
+		_lastScene = currentScene;
+
+		warning("STUB: WageEngine::redrawScene()");
+
+		//updateConsoleForScene(console, currentScene);
+		//updateSceneViewerForScene(viewer, currentScene);
+		//viewer.paintImmediately(viewer.getBounds());
+		//getContentPane().validate();
+		//getContentPane().repaint();
+		//console.postUpdateUI();
+		//soundManager.updateSoundTimerForScene(currentScene, firstTime);
+	}
 }
 
 } // End of namespace Wage

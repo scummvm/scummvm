@@ -126,13 +126,19 @@ public:
 	bool _commandWasQuick;
 	int _aim;
 	bool _temporarilyHidden;
+	bool _isGameOver;
 
 	void playSound(String soundName);
 	void setMenu(String soundName);
 	void appendText(String str);
+	void gameOver();
 	Obj *getOffer();
+	Chr *getMonster();
 	void processEvents();
+	Scene *getSceneByName(String &location);
 	void onMove(Designed *what, Designed *from, Designed *to);
+	void encounter(Chr *player, Chr *chr);
+	void redrawScene();
 
 private:
 	Console *_console;
