@@ -166,28 +166,25 @@ void WageEngine::performInitialSetup() {
 	for (int i = 0; i < _world->_orderedChrs.size(); i++)
 		_world->move(_world->_orderedChrs[i], &_world->_storageScene);
 
-	warning("STUB: performInitialSetup");
-/*
-	for (int i = 0; i < _world->_orderedObjs.size(); i++)
-		Obj obj = _world->_orderedObjs[i];
-		if (!obj.getSceneOrOwner().equalsIgnoreCase(World.STORAGE)) {
-			String location = obj.getSceneOrOwner().toLowerCase();
-			Scene scene = getSceneByName(location);
-			if (scene != null) {
-				world.move(obj, scene);
+	for (int i = 0; i < _world->_orderedObjs.size(); i++) {
+		Obj *obj = _world->_orderedObjs[i];
+		if (!obj->_sceneOrOwner.equalsIgnoreCase(STORAGESCENE)) {
+			String location = obj->_sceneOrOwner;
+			location.toLowercase();
+			if (_world->_scenes.contains(location)) {
+				_world->move(obj, _world->_scenes[location]);
 			} else {
-				Chr chr = world.getChrs().get(location);
-				if (chr == null) {
+				if (!_world->_chrs.contains(location)) {
 					// Note: PLAYER@ is not a valid target here.
-					System.err.printf("Couldn't move %s to %s\n", obj.getName(), obj.getSceneOrOwner());
+					warning("Couldn't move %s to %s", obj->_name.c_str(), obj->_sceneOrOwner.c_str());
 				} else {
 					// TODO: Add check for max items.
-					world.move(obj, chr);
+					_world->move(obj, _world->_chrs[location]);
 				}
 			}
 		}
 	}
-*/
+
 	bool playerPlaced = false;
 	for (int i = 0; i < _world->_orderedChrs.size(); i++) {
 		Chr *chr = _world->_orderedChrs[i];
