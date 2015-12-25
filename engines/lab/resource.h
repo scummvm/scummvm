@@ -110,9 +110,9 @@ private:
 	Common::String readString(Common::File *file);
 	Common::Array<int16> readConditions(Common::File *file);
 	void readRule(Common::File *file, RuleList &rules);
-	void readAction(Common::File *file, Common::List<Action> &action);
-	void readCloseUps(uint16 depth, Common::File *file, Common::List<CloseData> &close);
-	void readView(Common::File *file, Common::List<ViewData> &view);
+	void readAction(Common::File *file, ActionList &action);
+	void readCloseUps(uint16 depth, Common::File *file, CloseDataList &close);
+	void readView(Common::File *file, ViewDataList &view);
 	void readStaticText();
 	Common::String translateFileName(const Common::String filename);
 

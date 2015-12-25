@@ -89,6 +89,9 @@ struct CrumbData {
 
 typedef CloseData *CloseDataPtr;
 typedef Common::List<Rule> RuleList;
+typedef Common::List<Action> ActionList;
+typedef Common::List<CloseData> CloseDataList;
+typedef Common::List<ViewData> ViewDataList;
 
 enum Direction {
 	kDirectionNorth,
@@ -230,7 +233,7 @@ private:
 	/**
 	 * Processes the action list.
 	 */
-	void doActions(const Common::List<Action> &actionList, CloseDataPtr *closePtrList);
+	void doActions(const ActionList &actionList, CloseDataPtr *closePtrList);
 
 	/**
 	 * Goes through the rules if an action is taken.
@@ -350,7 +353,7 @@ private:
 	 * some of the closeups have the same hit boxes, then this returns the first
 	 * occurrence of the object with the same hit box.
 	 */
-	CloseDataPtr findClosePtrMatch(CloseDataPtr closePtr, Common::List<CloseData> &list);
+	CloseDataPtr findClosePtrMatch(CloseDataPtr closePtr, CloseDataList &list);
 
 	/**
 	 * Checks if a floor has been visited.

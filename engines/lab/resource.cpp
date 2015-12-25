@@ -253,7 +253,7 @@ void Resource::readRule(Common::File *file, RuleList &rules) {
 	}
 }
 
-void Resource::readAction(Common::File *file, Common::List<Action>& list) {
+void Resource::readAction(Common::File *file, ActionList &list) {
 	list.clear();
 
 	while (file->readByte() == 1) {
@@ -275,7 +275,7 @@ void Resource::readAction(Common::File *file, Common::List<Action>& list) {
 	}
 }
 
-void Resource::readCloseUps(uint16 depth, Common::File *file, Common::List<CloseData> &list) {
+void Resource::readCloseUps(uint16 depth, Common::File *file, CloseDataList &list) {
 	list.clear();
 	while (file->readByte() != '\0') {
 		list.push_back(CloseData());
@@ -293,7 +293,7 @@ void Resource::readCloseUps(uint16 depth, Common::File *file, Common::List<Close
 	}
 }
 
-void Resource::readView(Common::File *file, Common::List<ViewData> &list) {
+void Resource::readView(Common::File *file, ViewDataList &list) {
 	list.clear();
 	while (file->readByte() == 1) {
 		list.push_back(ViewData());

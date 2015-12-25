@@ -143,13 +143,13 @@ struct CloseData {
 	uint16 _depth;               // Level of the closeup.
 	Common::String _graphicName;
 	Common::String _message;
-	Common::List<CloseData> _subCloseUps;
+	CloseDataList _subCloseUps;
 };
 
 struct ViewData {
 	Common::Array<int16> _condition;
 	Common::String _graphicName;
-	Common::List<CloseData> _closeUps;
+	CloseDataList _closeUps;
 };
 
 struct Action {
@@ -165,13 +165,13 @@ struct Rule {
 	int16 _param1;
 	int16 _param2;
 	Common::Array<int16> _condition;
-	Common::List<Action> _actionList;
+	ActionList _actionList;
 };
 
 struct RoomData {
 	uint16 _doors[4];
 	byte _transitionType;
-	Common::List<ViewData> _view[4];
+	ViewDataList _view[4];
 	RuleList _rules;
 	Common::String _roomMsg;
 };

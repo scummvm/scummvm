@@ -56,9 +56,8 @@ ViewData *LabEngine::getViewData(uint16 roomNum, uint16 direction) {
 	if (_rooms[roomNum]._roomMsg.empty())
 		_resource->readViews(roomNum);
 
-	Common::List<ViewData> &views = _rooms[roomNum]._view[direction];
-
-	Common::List<ViewData>::iterator view;
+	ViewDataList &views = _rooms[roomNum]._view[direction];
+	ViewDataList::iterator view;
 
 	for (view = views.begin(); view != views.end(); ++view) {
 		if (checkConditions(view->_condition))
@@ -69,13 +68,14 @@ ViewData *LabEngine::getViewData(uint16 roomNum, uint16 direction) {
 }
 
 CloseData *LabEngine::getObject(Common::Point pos, CloseDataPtr closePtr) {
-	Common::List<CloseData> *list;
+	CloseDataList *list;
 	if (!closePtr)
 		list = &(getViewData(_roomNum, _direction)->_closeUps);
 	else
 		list = &(closePtr->_subCloseUps);
 
-	Common::List<CloseData>::iterator wrkClosePtr;
+	CloseDataList::iterator wrkClosePtr;
+
 	for (wrkClosePtr = list->begin(); wrkClosePtr != list->end(); ++wrkClosePtr) {
 		Common::Rect objRect;
 		objRect = _utils->rectScale(wrkClosePtr->_x1, wrkClosePtr->_y1, wrkClosePtr->_x2, wrkClosePtr->_y2);
@@ -86,8 +86,8 @@ CloseData *LabEngine::getObject(Common::Point pos, CloseDataPtr closePtr) {
 	return nullptr;
 }
 
-CloseDataPtr LabEngine::findClosePtrMatch(CloseDataPtr closePtr, Common::List<CloseData> &list) {
-	Common::List<CloseData>::iterator i;
+CloseDataPtr LabEngine::findClosePtrMatch(CloseDataPtr closePtr, CloseDataList &list) {
+	CloseDataList::iterator i;
 
 	for (i = list.begin(); i != list.end(); ++i) {
 		if ((closePtr->_x1 == i->_x1) && (closePtr->_x2 == i->_x2) &&
@@ -95,8 +95,7 @@ CloseDataPtr LabEngine::findClosePtrMatch(CloseDataPtr closePtr, Common::List<Cl
 			  (closePtr->_depth == i->_depth))
 			return &(*i);
 
-		CloseDataPtr resClosePtr;
-		resClosePtr = findClosePtrMatch(closePtr, i->_subCloseUps);
+		CloseDataPtr resClosePtr = findClosePtrMatch(closePtr, i->_subCloseUps);
 
 		if (resClosePtr)
 			return resClosePtr;
@@ -173,15 +172,14 @@ uint16 LabEngine::processArrow(uint16 curDirection, uint16 arrow) {
 }
 
 void LabEngine::setCurrentClose(Common::Point pos, CloseDataPtr *closePtrList, bool useAbsoluteCoords, bool next) {
-
-	Common::List<CloseData> *list;
+	CloseDataList *list;
 
 	if (!*closePtrList)
 		list = &(getViewData(_roomNum, _direction)->_closeUps);
 	else
 		list = &((*closePtrList)->_subCloseUps);
 
-	Common::List<CloseData>::iterator closePtr;
+	CloseDataList::iterator closePtr;
 	for (closePtr = list->begin(); closePtr != list->end(); ++closePtr) {
 		Common::Rect target;
 		if (!useAbsoluteCoords)
@@ -212,7 +210,7 @@ void LabEngine::setCurrentClose(Common::Point pos, CloseDataPtr *closePtrList, b
 }
 
 bool LabEngine::takeItem(Common::Point pos, CloseDataPtr *closePtrList) {
-	Common::List<CloseData> *list;
+	CloseDataList *list;
 	if (!*closePtrList) {
 		list = &(getViewData(_roomNum, _direction)->_closeUps);
 	} else if ((*closePtrList)->_closeUpType < 0) {
@@ -221,7 +219,7 @@ bool LabEngine::takeItem(Common::Point pos, CloseDataPtr *closePtrList) {
 	} else
 		list = &((*closePtrList)->_subCloseUps);
 
-	Common::List<CloseData>::iterator closePtr;
+	CloseDataList::iterator closePtr;
 	for (closePtr = list->begin(); closePtr != list->end(); ++closePtr) {
 		Common::Rect objRect;
 		objRect = _utils->rectScale(closePtr->_x1, closePtr->_y1, closePtr->_x2, closePtr->_y2);
@@ -234,8 +232,8 @@ bool LabEngine::takeItem(Common::Point pos, CloseDataPtr *closePtrList) {
 	return false;
 }
 
-void LabEngine::doActions(const Common::List<Action> &actionList, CloseDataPtr *closePtrList) {
-	Common::List<Action>::const_iterator action;
+void LabEngine::doActions(const ActionList &actionList, CloseDataPtr *closePtrList) {
+	ActionList::const_iterator action;
 	for (action = actionList.begin(); action != actionList.end(); ++action) {
 		updateMusicAndEvents();
 
@@ -267,7 +265,6 @@ void LabEngine::doActions(const Common::List<Action> &actionList, CloseDataPtr *
 			if (!action->_messages[0].empty())
 				// Puts a file into memory
 				_graphics->loadPict(action->_messages[0]);
-
 			break;
 		
 		case kActionLoadBitmap:
