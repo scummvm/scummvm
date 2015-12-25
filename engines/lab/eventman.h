@@ -38,7 +38,7 @@ namespace Lab {
 class LabEngine;
 class Image;
 
-enum MessageClasses {
+enum MessageClass {
 	kMessageLeftClick,
 	kMessageRightClick,
 	kMessageButtonUp,
@@ -47,12 +47,11 @@ enum MessageClasses {
 };
 
 struct IntuiMessage {
-	uint32 _msgClass;
+	MessageClass _msgClass;
 	uint16 _code; // KeyCode or Button Id
 	uint16 _qualifier;
 	Common::Point _mouse;
 };
-
 
 struct Button {
 	uint16 _x, _y, _buttonId;
