@@ -352,7 +352,7 @@ Common::String *World::loadStringFromDITL(Common::MacResManager *resMan, int res
 	return NULL;
 }
 
-bool ChrComparator(Obj *l, Obj *r) {
+bool InvComparator(Obj *l, Obj *r) {
     return l->_index < r->_index;
 }
 
@@ -364,13 +364,31 @@ void World::move(Obj *obj, Chr *chr) {
 	obj->_currentOwner = chr;
 	chr->_inventory.push_back(obj);
 
-	Common::sort(chr->_inventory.begin(), chr->_inventory.end(), ChrComparator);
+	Common::sort(chr->_inventory.begin(), chr->_inventory.end(), InvComparator);
 
 	_engine->onMove(obj, from, chr);
 }
 
+bool ObjComparator(Obj *o1, Obj *o2) {
+	bool o1Immobile = (o1->_type == Obj::IMMOBILE_OBJECT);
+	bool o2Immobile = (o2->_type == Obj::IMMOBILE_OBJECT);
+	if (o1Immobile == o2Immobile) {
+		return o1->_index - o2->_index;
+	}
+	return o1Immobile;
+}
+
 void World::move(Obj *obj, Scene *scene) {
-	warning("STUB: World::move(obj, scene)");
+	if (obj == NULL)
+		return;
+
+	Designed *from = obj->removeFromCharOrScene();
+	obj->_currentScene = scene;
+	scene->_objs.push_back(obj);
+
+	Common::sort(scene->_objs.begin(), scene->_objs.end(), ObjComparator);
+
+	_engine->onMove(obj, from, scene);
 }
 
 void World::move(Chr *chr, Scene *scene) {
