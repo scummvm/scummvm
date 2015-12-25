@@ -83,7 +83,7 @@ public:
 	Common::Array<Chr *> _orderedChrs;
 	Common::Array<Sound *> _orderedSounds;
 	Patterns _patterns;
-	Scene _storageScene;
+	Scene *_storageScene;
 	Chr *_player;
 	//List<MoveListener> moveListeners;
 

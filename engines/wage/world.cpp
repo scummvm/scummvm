@@ -58,9 +58,11 @@
 namespace Wage {
 
 World::World(WageEngine *engine) {
-	_storageScene._name = STORAGESCENE;
-	_orderedScenes.push_back(&_storageScene);
-	_scenes[STORAGESCENE] = &_storageScene;
+	_storageScene = new Scene;
+	_storageScene->_name = STORAGESCENE;
+
+	_orderedScenes.push_back(_storageScene);
+	_scenes[STORAGESCENE] = _storageScene;
 
 	_gameOverMessage = nullptr;
 	_saveBeforeQuitMessage = nullptr;
@@ -68,6 +70,10 @@ World::World(WageEngine *engine) {
 	_revertMessage = nullptr;
 
 	_engine = engine;
+}
+
+World::~World() {
+	delete _storageScene;
 }
 
 bool World::loadWorld(Common::MacResManager *resMan) {
@@ -391,8 +397,34 @@ void World::move(Obj *obj, Scene *scene) {
 	_engine->onMove(obj, from, scene);
 }
 
+bool ChrComparator(Chr *l, Chr *r) {
+    return l->_index < r->_index;
+}
+
 void World::move(Chr *chr, Scene *scene) {
-	warning("STUB: World::move(chr, scene)");
+	if (chr == NULL)
+		return;
+	Scene *from = chr->_currentScene;
+	if (from == scene)
+		return;
+	if (from != NULL)
+		from->_chrs.remove(chr);
+	scene->_chrs.push_back(chr);
+
+	Common::sort(scene->_chrs.begin(), scene->_chrs.end(), ChrComparator);
+
+	if (scene == _storageScene) {
+		warning("STUB: World::move (chrState)");
+		//chr.setState(new Chr.State(chr));
+	} else if (chr->_playerCharacter) {
+		scene->_visited = true;
+		warning("STUB: World::move (visits)");
+		//Context context = getPlayerContext();
+		//context.setVisits(context.getVisits() + 1);
+	}
+	chr->_currentScene = scene;
+
+	_engine->onMove(chr, from, scene);
 }
 
 Scene *World::getRandomScene() {

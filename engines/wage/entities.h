@@ -385,6 +385,7 @@ public:
 	String _soundName;
 	int _worldX;
 	int _worldY;
+	bool _visited;
 
 	Common::List<Obj *> _objs;
 	Common::List<Chr *> _chrs;

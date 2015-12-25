@@ -227,7 +227,7 @@ Script::Operand *Script::readOperand() {
 	case 0xA1:
 		return new Operand(_inputClick, CLICK_INPUT);
 	case 0xC0: // STORAGE@
-		return new Operand(&_world->_storageScene, SCENE);
+		return new Operand(_world->_storageScene, SCENE);
 	case 0xC1: // SCENE@
 		return new Operand(_world->_player->_currentScene, SCENE);
 	case 0xC2: // PLAYER@

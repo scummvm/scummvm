@@ -162,9 +162,9 @@ Obj *WageEngine::getOffer() {
 
 void WageEngine::performInitialSetup() {
 	for (int i = 0; i < _world->_orderedObjs.size(); i++)
-		_world->move(_world->_orderedObjs[i], &_world->_storageScene);
+		_world->move(_world->_orderedObjs[i], _world->_storageScene);
 	for (int i = 0; i < _world->_orderedChrs.size(); i++)
-		_world->move(_world->_orderedChrs[i], &_world->_storageScene);
+		_world->move(_world->_orderedChrs[i], _world->_storageScene);
 
 	for (int i = 0; i < _world->_orderedObjs.size(); i++) {
 		Obj *obj = _world->_orderedObjs[i];

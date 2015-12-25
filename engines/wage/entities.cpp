@@ -78,6 +78,8 @@ Scene::Scene(String name, Common::SeekableReadStream *data) {
 	_messages[Scene::EAST] = readPascalString(data);
 	_messages[Scene::WEST] = readPascalString(data);
 	_soundName = readPascalString(data);
+
+	_visited = false;
 }
 
 Obj::Obj(String name, Common::SeekableReadStream *data) : _currentOwner(NULL), _currentScene(NULL) {
