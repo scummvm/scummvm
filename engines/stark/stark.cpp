@@ -311,7 +311,7 @@ Common::Error StarkEngine::loadGameState(int slot) {
 }
 
 bool StarkEngine::canSaveGameStateCurrently() {
-	return true;
+	return _userInterface->isInteractive();
 }
 
 Common::Error StarkEngine::saveGameState(int slot, const Common::String &desc) {
