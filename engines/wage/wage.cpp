@@ -210,4 +210,8 @@ void WageEngine::performInitialSetup() {
 	}
 }
 
+void WageEngine::onMove(Designed *what, Designed *from, Designed *to) {
+	warning("STUB WageEngine::onMove()");
+}
+
 } // End of namespace Wage

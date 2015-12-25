@@ -352,8 +352,21 @@ Common::String *World::loadStringFromDITL(Common::MacResManager *resMan, int res
 	return NULL;
 }
 
+bool ChrComparator(Obj *l, Obj *r) {
+    return l->_index < r->_index;
+}
+
 void World::move(Obj *obj, Chr *chr) {
-	warning("STUB: World::move(obj, chr)");
+	if (obj == NULL)
+		return;
+
+	Designed *from = obj->removeFromCharOrScene();
+	obj->_currentOwner = chr;
+	chr->_inventory.push_back(obj);
+
+	Common::sort(chr->_inventory.begin(), chr->_inventory.end(), ChrComparator);
+
+	_engine->onMove(obj, from, chr);
 }
 
 void World::move(Obj *obj, Scene *scene) {

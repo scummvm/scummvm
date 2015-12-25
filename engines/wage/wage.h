@@ -61,10 +61,11 @@ struct ADGameDescription;
 namespace Wage {
 
 class Console;
-class World;
-class Scene;
-class Obj;
 class Chr;
+class Designed;
+class Obj;
+class Scene;
+class World;
 
 using Common::String;
 
@@ -131,6 +132,7 @@ public:
 	void appendText(String str);
 	Obj *getOffer();
 	void processEvents();
+	void onMove(Designed *what, Designed *from, Designed *to);
 
 private:
 	Console *_console;

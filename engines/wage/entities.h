@@ -201,7 +201,7 @@ public:
 	String _dyingWords;
 
 	Scene *_currentScene;
-	Common::Array<Obj> _inventory;
+	Common::Array<Obj *> _inventory;
 
 	Obj *_armor[NUMBER_OF_ARMOR_TYPES];
 
@@ -354,6 +354,9 @@ public:
 		if (currentScene != NULL)
 			_currentOwner = NULL;
 	}
+
+	Chr *removeFromChr();
+	Designed *removeFromCharOrScene();
 };
 
 class Scene : public Designed {
@@ -383,8 +386,8 @@ public:
 	int _worldX;
 	int _worldY;
 
-	Common::List<Obj> _objs;
-	Common::List<Chr> _chrs;
+	Common::List<Obj *> _objs;
+	Common::List<Chr *> _chrs;
 
 	Scene() {}
 	Scene(String name, Common::SeekableReadStream *data);

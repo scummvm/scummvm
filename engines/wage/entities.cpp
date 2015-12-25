@@ -124,6 +124,33 @@ Obj::Obj(String name, Common::SeekableReadStream *data) : _currentOwner(NULL), _
 	_sound = readPascalString(data);
 }
 
+Chr *Obj::removeFromChr() {
+	if (_currentOwner != NULL) {
+		for (int i = _currentOwner->_inventory.size() - 1; i >= 0; i--)
+			if (_currentOwner->_inventory[i] == this)
+				_currentOwner->_inventory.remove_at(i);
+
+		for (int i = 0; i < Chr::NUMBER_OF_ARMOR_TYPES; i++) {
+			if (_currentOwner->_armor[i] == this) {
+				_currentOwner->_armor[i] = NULL;
+			}
+		}
+	}
+
+	return _currentOwner;
+}
+
+Designed *Obj::removeFromCharOrScene() {
+	Designed *from = removeFromChr();
+
+	if (_currentScene != NULL) {
+		_currentScene->_objs.remove(this);
+		from = _currentScene;
+	}
+
+	return from;
+}
+
 Chr::Chr(String name, Common::SeekableReadStream *data) {
 	_name = name;
 	_classType = CHR;
@@ -207,7 +234,7 @@ WeaponArray *Chr::getWeapons() {
 
 void Chr::wearObjs() {
 	for (int i = 0; i < _inventory.size(); i++)
-		wearObjIfPossible(&_inventory[i]);
+		wearObjIfPossible(_inventory[i]);
 }
 
 int Chr::wearObjIfPossible(Obj *obj) {
