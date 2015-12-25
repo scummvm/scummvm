@@ -40,7 +40,7 @@
 namespace Stark {
 namespace Gfx {
 
-static const GLfloat boxVertices[] = {
+static const GLfloat surfaceVertices[] = {
 	// XS   YT
 	0.0, 0.0,
 	1.0, 0.0,
@@ -49,13 +49,14 @@ static const GLfloat boxVertices[] = {
 };
 
 OpenGLSDriver::OpenGLSDriver() :
-	_boxShader(nullptr),
-	_boxVBO(0) {
+	_surfaceShader(nullptr),
+	_actorShader(nullptr),
+	_surfaceVBO(0) {
 }
 
 OpenGLSDriver::~OpenGLSDriver() {
-	Graphics::Shader::freeBuffer(_boxVBO);
-	delete _boxShader;
+	Graphics::Shader::freeBuffer(_surfaceVBO);
+	delete _surfaceShader;
 	delete _actorShader;
 }
 
@@ -66,10 +67,10 @@ void OpenGLSDriver::init() {
 	computeScreenViewport();
 
 	static const char* attributes[] = { "position", "texcoord", nullptr };
-	_boxShader = Graphics::Shader::fromFiles("stark_box", attributes);
-	_boxVBO = Graphics::Shader::createBuffer(GL_ARRAY_BUFFER, sizeof(boxVertices), boxVertices);
-	_boxShader->enableVertexAttribute("position", _boxVBO, 2, GL_FLOAT, GL_TRUE, 2 * sizeof(float), 0);
-	_boxShader->enableVertexAttribute("texcoord", _boxVBO, 2, GL_FLOAT, GL_TRUE, 2 * sizeof(float), 0);
+	_surfaceShader = Graphics::Shader::fromFiles("stark_surface", attributes);
+	_surfaceVBO = Graphics::Shader::createBuffer(GL_ARRAY_BUFFER, sizeof(surfaceVertices), surfaceVertices);
+	_surfaceShader->enableVertexAttribute("position", _surfaceVBO, 2, GL_FLOAT, GL_TRUE, 2 * sizeof(float), 0);
+	_surfaceShader->enableVertexAttribute("texcoord", _surfaceVBO, 2, GL_FLOAT, GL_TRUE, 2 * sizeof(float), 0);
 
 	static const char* actorAttributes[] = { "position1", "position2", "bone1", "bone2", "boneWeight", "normal", "texcoord", nullptr };
 	_actorShader = Graphics::Shader::fromFiles("stark_actor", actorAttributes);
@@ -176,7 +177,7 @@ Graphics::Shader *OpenGLSDriver::createActorShaderInstance() {
 }
 
 Graphics::Shader *OpenGLSDriver::createSurfaceShaderInstance() {
-	return _boxShader->clone();
+	return _surfaceShader->clone();
 }
 
 } // End of namespace Gfx

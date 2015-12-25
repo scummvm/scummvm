@@ -41,12 +41,6 @@ OpenGLSSurfaceRenderer::~OpenGLSSurfaceRenderer() {
 }
 
 void OpenGLSSurfaceRenderer::render(const Texture *texture, const Common::Point &dest) {
-	// Source texture rectangle
-	const float tLeft = 0.0;
-	const float tWidth = 1.0;
-	const float tTop = 0.0;
-	const float tHeight = 1.0;
-
 	// Destination rectangle
 	const float sLeft = dest.x;
 	const float sTop = dest.y;
@@ -63,8 +57,6 @@ void OpenGLSSurfaceRenderer::render(const Texture *texture, const Common::Point 
 	} else {
 		_shader->setUniform("verSizeWH", normalizeOriginalCoordinates(sWidth, sHeight));
 	}
-	_shader->setUniform("texOffsetXY", Math::Vector2d(tLeft, tTop));
-	_shader->setUniform("texSizeWH", Math::Vector2d(tWidth, tHeight));
 
 	texture->bind();
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);

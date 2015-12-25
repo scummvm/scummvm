@@ -74,9 +74,9 @@ private:
 	Common::Rect _viewport;
 	Common::Rect _unscaledViewport;
 
-	Graphics::Shader *_boxShader;
+	Graphics::Shader *_surfaceShader;
 	Graphics::Shader *_actorShader;
-	uint32 _boxVBO;
+	uint32 _surfaceVBO;
 };
 
 } // End of namespace Gfx
