@@ -31,8 +31,8 @@ namespace Stark {
 namespace Gfx {
 
 OpenGLSSurfaceRenderer::OpenGLSSurfaceRenderer(OpenGLSDriver *gfx) :
-	SurfaceRenderer(),
-	_gfx(gfx) {
+		SurfaceRenderer(),
+		_gfx(gfx) {
 	_shader = _gfx->createSurfaceShaderInstance();
 }
 
@@ -66,12 +66,12 @@ void OpenGLSSurfaceRenderer::render(const Texture *texture, const Common::Point 
 
 Math::Vector2d OpenGLSSurfaceRenderer::normalizeOriginalCoordinates(float x, float y) const {
 	Common::Rect viewport = _gfx->getUnscaledViewport();
-	return Math::Vector2d(x / (float) viewport.width(), y / (float) viewport.height());
+	return Math::Vector2d(x / (float)viewport.width(), y / (float)viewport.height());
 }
 
 Math::Vector2d OpenGLSSurfaceRenderer::normalizeCurrentCoordinates(float x, float y) const {
 	Common::Rect viewport = _gfx->getViewport();
-	return Math::Vector2d(x / (float) viewport.width(), y / (float) viewport.height());
+	return Math::Vector2d(x / (float)viewport.width(), y / (float)viewport.height());
 }
 
 } // End of namespace Gfx

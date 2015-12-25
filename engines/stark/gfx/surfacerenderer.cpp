@@ -26,13 +26,11 @@ namespace Stark {
 namespace Gfx {
 
 SurfaceRenderer::SurfaceRenderer() :
-	_noScalingOverride(false),
-	_fadeLevel(0) {
-
+		_noScalingOverride(false),
+		_fadeLevel(0) {
 }
 
 SurfaceRenderer::~SurfaceRenderer() {
-
 }
 
 void SurfaceRenderer::setNoScalingOverride(bool noScalingOverride) {
