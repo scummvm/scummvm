@@ -47,7 +47,7 @@ private:
 
 public:
 	TilePuzzle(LabEngine *vm);
-	virtual ~TilePuzzle();
+	~TilePuzzle();
 
 	/**
 	 * Processes mouse clicks and changes the combination.

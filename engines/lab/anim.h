@@ -70,7 +70,7 @@ private:
 
 public:
 	Anim(LabEngine *vm);
-	virtual ~Anim();
+	~Anim();
 
 	char _diffPalette[256 * 3];
 	bool _waitForEffect; // Wait for each sound effect to finish before continuing.

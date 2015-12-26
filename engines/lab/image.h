@@ -50,7 +50,7 @@ public:
 	Image(LabEngine *vm) : _width(0), _height(0), _imageData(nullptr), _vm(vm) {}
 	Image(int w, int h, byte *d, LabEngine *vm) : _width(w), _height(h), _imageData(d), _vm(vm) {}
 	Image(Common::File *s, LabEngine *vm);
-	virtual ~Image();
+	~Image();
 
 	/**
 	 * Draws an image to the screen.
