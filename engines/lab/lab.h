@@ -219,7 +219,7 @@ public:
 	/**
 	 * Returns the current picture name.
 	 */
-	Common::String getPictName(CloseDataPtr *closePtrList);
+	Common::String getPictName(bool useClose);
 	uint16 getQuarters();
 	void setDirection(uint16 direction) { _direction = direction; };
 	void setQuarters(uint16 quarters);
@@ -470,7 +470,7 @@ private:
 	/**
 	 * Takes the currently selected item.
 	 */
-	bool takeItem(Common::Point pos, CloseDataPtr *closePtrList);
+	bool takeItem(Common::Point pos);
 
 	/**
 	 * Does the turn page wipe.

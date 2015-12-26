@@ -425,7 +425,7 @@ void LabEngine::mainGameLoop() {
 
 			// Sets the current picture properly on the screen
 			if (_mainDisplay)
-				_nextFileName = getPictName(&_closeDataPtr);
+				_nextFileName = getPictName(true);
 
 			if (_noUpdateDiff) {
 				// Potentially entered another room
@@ -954,7 +954,7 @@ void LabEngine::performAction(uint16 actionMode, Common::Point curPos, uint16 &c
 		// Take something.
 		if (doActionRule(curPos, actionMode, _roomNum))
 			_curFileName = _newFileName;
-		else if (takeItem(curPos, &_closeDataPtr))
+		else if (takeItem(curPos))
 			drawStaticMessage(kTextTakeItem);
 		else if (doActionRule(curPos, kRuleActionTakeDef, _roomNum))
 			_curFileName = _newFileName;

@@ -738,7 +738,7 @@ void DisplayMan::doScrollBounce() {
 	_vm->_event->mouseShow();
 }
 
-void DisplayMan::doTransWipe(CloseDataPtr *closePtrList, const Common::String filename) {
+void DisplayMan::doTransWipe(const Common::String filename) {
 	uint16 lastY, linesLast;
 
 	if (_vm->_isHiRes) {
@@ -773,11 +773,11 @@ void DisplayMan::doTransWipe(CloseDataPtr *closePtrList, const Common::String fi
 	}	// for j
 
 	if (filename.empty())
-		_vm->_curFileName = _vm->getPictName(closePtrList);
+		_vm->_curFileName = _vm->getPictName(true);
 	else if (filename[0] > ' ')
 		_vm->_curFileName = filename;
 	else
-		_vm->_curFileName = _vm->getPictName(closePtrList);
+		_vm->_curFileName = _vm->getPictName(true);
 
 	byte *bitMapBuffer = new byte[_screenWidth * (lastY + 5)];
 	readPict(_vm->_curFileName, true, false, bitMapBuffer);
@@ -826,11 +826,11 @@ void DisplayMan::doTransWipe(CloseDataPtr *closePtrList, const Common::String fi
 	// bitMapBuffer will be deleted by the Image destructor
 }
 
-void DisplayMan::doTransition(TransitionType transitionType, CloseDataPtr *closePtrList, const Common::String filename) {
+void DisplayMan::doTransition(TransitionType transitionType, const Common::String filename) {
 	switch (transitionType) {
 	case kTransitionWipe:
 	case kTransitionTransporter:
-		doTransWipe(closePtrList, filename);
+		doTransWipe(filename);
 		break;
 	case kTransitionScrollWipe:
 		doScrollWipe(filename);

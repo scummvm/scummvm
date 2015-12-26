@@ -104,14 +104,14 @@ CloseDataPtr LabEngine::findClosePtrMatch(CloseDataPtr closePtr, CloseDataList &
 	return nullptr;
 }
 
-Common::String LabEngine::getPictName(CloseDataPtr *closePtrList) {
+Common::String LabEngine::getPictName(bool useClose) {
 	ViewData *viewPtr = getViewData(_roomNum, _direction);
 
-	if (*closePtrList) {
-		*closePtrList = findClosePtrMatch(*closePtrList, viewPtr->_closeUps);
+	if (useClose && _closeDataPtr) {
+		_closeDataPtr = findClosePtrMatch(_closeDataPtr, viewPtr->_closeUps);
 
-		if (*closePtrList)
-			return (*closePtrList)->_graphicName;
+		if (_closeDataPtr)
+			return _closeDataPtr->_graphicName;
 	}
 
 	return viewPtr->_graphicName;
@@ -209,15 +209,15 @@ void LabEngine::setCurrentClose(Common::Point pos, CloseDataPtr *closePtrList, b
 	}
 }
 
-bool LabEngine::takeItem(Common::Point pos, CloseDataPtr *closePtrList) {
+bool LabEngine::takeItem(Common::Point pos) {
 	CloseDataList *list;
-	if (!*closePtrList) {
+	if (!_closeDataPtr) {
 		list = &(getViewData(_roomNum, _direction)->_closeUps);
-	} else if ((*closePtrList)->_closeUpType < 0) {
-		_conditions->inclElement(abs((*closePtrList)->_closeUpType));
+	} else if (_closeDataPtr->_closeUpType < 0) {
+		_conditions->inclElement(abs(_closeDataPtr->_closeUpType));
 		return true;
 	} else
-		list = &((*closePtrList)->_subCloseUps);
+		list = &(_closeDataPtr->_subCloseUps);
 
 	CloseDataList::iterator closePtr;
 	for (closePtr = list->begin(); closePtr != list->end(); ++closePtr) {
@@ -274,7 +274,7 @@ void LabEngine::doActions(const ActionList &actionList) {
 			error("Unused opcode kActionShowBitmap has been called");
 
 		case kActionTransition:
-			_graphics->doTransition((TransitionType)action->_param1, &_closeDataPtr, action->_messages[0].c_str());
+			_graphics->doTransition((TransitionType)action->_param1, action->_messages[0].c_str());
 			break;
 
 		case kActionNoUpdate:
@@ -287,7 +287,7 @@ void LabEngine::doActions(const ActionList &actionList) {
 			break;
 
 		case kActionShowCurPict: {
-			Common::String test = getPictName(&_closeDataPtr);
+			Common::String test = getPictName(true);
 
 			if (test != _curFileName) {
 				_curFileName = test;
@@ -324,7 +324,7 @@ void LabEngine::doActions(const ActionList &actionList) {
 			if (action->_param1 & 0x8000) {
 				// This is a Wyrmkeep Windows trial version, thus stop at this
 				// point, since we can't check for game payment status
-				_graphics->readPict(getPictName(&_closeDataPtr));
+				_graphics->readPict(getPictName(true));
 				GUI::MessageDialog trialMessage("This is the end of the trial version. You can play the full game using the original interpreter from Wyrmkeep");
 				trialMessage.runModal();
 				break;

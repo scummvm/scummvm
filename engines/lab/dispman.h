@@ -106,12 +106,12 @@ public:
 	/**
 	 * Does the transporter wipe.
 	 */
-	void doTransWipe(CloseDataPtr *closePtrList, const Common::String filename);
+	void doTransWipe(const Common::String filename);
 
 	/**
 	 * Does a certain number of pre-programmed wipes.
 	 */
-	void doTransition(TransitionType transitionType, CloseDataPtr *closePtrList, const Common::String filename);
+	void doTransition(TransitionType transitionType, const Common::String filename);
 
 	/**
 	 * Changes the front screen to black.
