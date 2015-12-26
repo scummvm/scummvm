@@ -554,8 +554,7 @@ bool LabEngine::processEvent(MessageClass tmpClass, uint16 code, uint16 qualifie
 		return false;
 
 	if (msgClass == kMessageRawKey && !_graphics->_longWinInFront) {
-		if (!processKey(curMsg, msgClass, qualifier, curPos, curInv, forceDraw, code))
-			return false;
+		return processKey(curMsg, msgClass, qualifier, curPos, curInv, forceDraw, code);
 	} else if ((msgClass == kMessageRawKey || leftButtonClick || rightButtonClick) && _graphics->_longWinInFront) {
 		_graphics->_longWinInFront = false;
 		_graphics->drawPanel();
@@ -599,14 +598,6 @@ bool LabEngine::processEvent(MessageClass tmpClass, uint16 code, uint16 qualifie
 
 		mayShowCrumbIndicator();
 		_graphics->screenUpdate();
-	} else if (code == Common::KEYCODE_TAB) {
-		const CloseData *tmpClosePtr = _closeDataPtr;
-
-		// get next close-up in list after the one pointed to by curPos
-		setCurrentClose(curPos, &tmpClosePtr, true, true);
-
-		if (tmpClosePtr != _closeDataPtr)
-			_event->setMousePos(Common::Point(_utils->scaleX((tmpClosePtr->_x1 + tmpClosePtr->_x2) / 2), _utils->scaleY((tmpClosePtr->_y1 + tmpClosePtr->_y2) / 2)));
 	}
 
 	return true;
@@ -681,8 +672,17 @@ bool LabEngine::processKey(IntuiMessage *curMsg, uint32 msgClass, uint16 &qualif
 
 		forceDraw = true;
 		interfaceOn();
-	} else if (code == Common::KEYCODE_ESCAPE)
+	} else if (code == Common::KEYCODE_ESCAPE) {
 		_closeDataPtr = nullptr;
+	} else if (code == Common::KEYCODE_TAB) {
+		const CloseData *tmpClosePtr = _closeDataPtr;
+
+		// get next close-up in list after the one pointed to by curPos
+		setCurrentClose(curPos, &tmpClosePtr, true, true);
+
+		if (tmpClosePtr != _closeDataPtr)
+			_event->setMousePos(Common::Point(_utils->scaleX((tmpClosePtr->_x1 + tmpClosePtr->_x2) / 2), _utils->scaleY((tmpClosePtr->_y1 + tmpClosePtr->_y2) / 2)));
+	}
 
 	eatMessages();
 
