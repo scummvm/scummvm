@@ -88,10 +88,6 @@ void DisplayMan::readPict(const Common::String filename, bool playOnce, bool onl
 	_vm->_anim->stopDiff();
 	loadPict(filename);
 	_vm->updateMusicAndEvents();
-
-	if (!_vm->_music->_loopSoundEffect)
-		_vm->_music->stopSoundEffect();
-
 	_vm->_anim->setOutputBuffer(memoryBuffer);
 	_vm->_anim->readDiff(_curBitmap, playOnce, onlyDiffData);
 }

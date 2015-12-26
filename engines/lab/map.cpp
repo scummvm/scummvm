@@ -83,8 +83,6 @@ void LabEngine::loadMapData() {
 
 	Common::File *mapFile = _resource->openDataFile("Lab:Maps", MKTAG('M', 'A', 'P', '0'));
 	updateMusicAndEvents();
-	if (!_music->_loopSoundEffect)
-		_music->stopSoundEffect();
 
 	_maxRooms = mapFile->readUint16LE();
 	_maps = new MapData[_maxRooms + 1];	// will be freed when the user exits the map
