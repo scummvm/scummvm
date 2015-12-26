@@ -832,19 +832,19 @@ void DisplayMan::doTransition(TransitionType transitionType, CloseDataPtr *close
 	case kTransitionTransporter:
 		doTransWipe(closePtrList, filename);
 		break;
-	case kTransitionScrollWipe:
+	case kTransitionScrollWipe:		// only used in scene 7 (street, when teleporting to the surreal maze)
 		doScrollWipe(filename);
 		break;
-	case kTransitionScrollBlack:
+	case kTransitionScrollBlack:	// only used in scene 7 (street, when teleporting to the surreal maze)
 		doScrollBlack();
 		break;
-	case kTransitionScrollBounce:
+	case kTransitionScrollBounce:	// only used in scene 7 (street, when teleporting to the surreal maze)
 		doScrollBounce();
 		break;
-	case kTransitionReadFirstFrame:
+	case kTransitionReadFirstFrame:	// only used in scene 7 (street, when teleporting to the surreal maze)
 		readPict(filename, false);
 		break;
-	case kTransitionReadNextFrame:
+	case kTransitionReadNextFrame:	// only used in scene 7 (street, when teleporting to the surreal maze)
 		_vm->_anim->diffNextFrame();
 		break;
 	case kTransitionNone:
