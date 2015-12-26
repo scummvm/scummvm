@@ -63,7 +63,25 @@ void Gui::drawBox(Graphics::Surface *g, int x, int y, int w, int h) {
 	g->frameRect(r, kColorBlack);
 }
 
-void Gui::paintBorder(Graphics::Surface *g, int x, int y, int width, int height) {
+void Gui::fillRect(Graphics::Surface *g, int x, int y, int w, int h) {
+	Common::Rect r(x, y, x + w + 1, y + h + 1);
+
+	g->fillRect(r, kColorBlack);
+}
+
+#define ARROW_W 12
+#define ARROW_H 6
+const int arrowPixels[ARROW_H][ARROW_W] = {
+		{0,0,0,0,0,1,1,0,0,0,0,0},
+		{0,0,0,0,1,1,1,1,0,0,0,0},
+		{0,0,0,1,1,1,1,1,1,0,0,0},
+		{0,0,1,1,1,1,1,1,1,1,0,0},
+		{0,1,1,1,1,1,1,1,1,1,1,0},
+		{1,1,1,1,1,1,1,1,1,1,1,1}};
+
+
+void Gui::paintBorder(Graphics::Surface *g, int x, int y, int width, int height,
+			bool active, bool scrollable, bool closeable, bool closeBoxPressed) {
 	int size = 17;
 	drawBox(g, x, y, size, size);
 	drawBox(g, x+width-size-1, y, size, size);
@@ -74,52 +92,42 @@ void Gui::paintBorder(Graphics::Surface *g, int x, int y, int width, int height)
 	drawBox(g, x + 2, y + size, size - 4, height - 2*size - 1);
 	drawBox(g, x + width - size + 1, y + size, size - 4, height - 2*size-1);
 
-#if 0
 	if (active) {
-		g.setColor(Color.BLACK);
-		g.fillRect(x + size, y + 5, width - 2*size - 1, 8);
-		g.fillRect(x + size, y + height - 13, width - 2*size - 1, 8);
-		g.fillRect(x + 5, y + size, 8, height - 2*size - 1);
+		fillRect(g, x + size, y + 5, width - 2*size - 1, 8);
+		fillRect(g, x + size, y + height - 13, width - 2*size - 1, 8);
+		fillRect(g, x + 5, y + size, 8, height - 2*size - 1);
 		if (!scrollable) {
-			g.fillRect(x + width - 13, y + size, 8, height - 2*size - 1);
+			fillRect(g, x + width - 13, y + size, 8, height - 2*size - 1);
 		} else {
-			int pixels[][] = new int[][] {
-					{0,0,0,0,0,1,1,0,0,0,0,0},
-					{0,0,0,0,1,1,1,1,0,0,0,0},
-					{0,0,0,1,1,1,1,1,1,0,0,0},
-					{0,0,1,1,1,1,1,1,1,1,0,0},
-					{0,1,1,1,1,1,1,1,1,1,1,0},
-					{1,1,1,1,1,1,1,1,1,1,1,1}};
-			final int h = pixels.length;
-			final int w = pixels[0].length;
 			int x1 = x + width - 15;
 			int y1 = y + size + 1;
-			for (int yy = 0; yy < h; yy++) {
-				for (int xx = 0; xx < w; xx++) {
-					if (pixels[yy][xx] != 0) {
-						g.drawRect(x1+xx, y1+yy, 0, 0);
+			for (int yy = 0; yy < ARROW_H; yy++) {
+				for (int xx = 0; xx < ARROW_W; xx++) {
+					if (arrowPixels[yy][xx] != 0) {
+						g->hLine(x1+xx, y1+yy, 1, 0);
 					}
 				}
 			}
-			g.fillRect(x + width - 13, y + size + h, 8, height - 2*size - 1 - h*2);
-			y1 += height - 2*size - h - 2;
-			for (int yy = 0; yy < h; yy++) {
-				for (int xx = 0; xx < w; xx++) {
-					if (pixels[h-yy-1][xx] != 0) {
-						g.drawRect(x1+xx, y1+yy, 0, 0);
+			fillRect(g, x + width - 13, y + size + ARROW_H, 8, height - 2*size - 1 - ARROW_H*2);
+			y1 += height - 2*size - ARROW_H - 2;
+			for (int yy = 0; yy < ARROW_H; yy++) {
+				for (int xx = 0; xx < ARROW_W; xx++) {
+					if (arrowPixels[ARROW_H-yy-1][xx] != 0) {
+						g->hLine(x1+xx, y1+yy, 1, 0);
 					}
 				}
 			}
 		}
 		if (closeable) {
 			if (closeBoxPressed) {
-				g.fillRect(x + 6, y + 6, 6, 6);
+				fillRect(g, x + 6, y + 6, 6, 6);
 			} else {
 				drawBox(g, x + 5, y + 5, 7, 7);
 			}
 		}
 	}
 
+#if 0
 	if (title != null) {
 		// TODO: This "Chicago" is not faithful to the original one on the Mac.
 		Font f = new Font("Chicago", Font.BOLD, 12);

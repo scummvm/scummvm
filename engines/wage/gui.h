@@ -58,10 +58,12 @@ public:
 	Gui();
 	~Gui();
 
-	void paintBorder(Graphics::Surface *g, int x, int y, int width, int height);
+	void paintBorder(Graphics::Surface *g, int x, int y, int width, int height,
+			bool active, bool scrollable, bool closeable, bool closeBoxPressed);
 
 private:
 	void drawBox(Graphics::Surface *g, int x, int y, int w, int h);
+	void fillRect(Graphics::Surface *g, int x, int y, int w, int h);
 
 };
 
