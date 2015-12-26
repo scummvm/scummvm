@@ -80,6 +80,9 @@ void Anim::setOutputBuffer(byte *memoryBuffer) {
 	_outputBuffer = memoryBuffer;
 }
 
+uint16 Anim::getDIFFHeight() {
+	return _headerdata._height;
+}
 
 void Anim::diffNextFrame(bool onlyDiffData) {
 	if (_lastBlockHeader == 65535)
@@ -90,7 +93,7 @@ void Anim::diffNextFrame(bool onlyDiffData) {
 	byte *startOfBuf = _outputBuffer;
 	int bufPitch = _vm->_graphics->_screenWidth;
 
-	if (!_outputBuffer) {
+	if (!startOfBuf) {
 		startOfBuf = _vm->_graphics->getCurrentDrawingBuffer();
 		drawOnScreen = true;
 	}

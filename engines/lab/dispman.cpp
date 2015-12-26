@@ -673,20 +673,19 @@ void DisplayMan::doScrollWipe(const Common::String filename) {
 	uint16 nheight = height;
 	uint16 startLine = 0, onRow = 0;
 
-	while (onRow < _vm->_anim->_headerdata._height) {
+	while (onRow < _vm->_anim->getDIFFHeight()) {
 		_vm->updateMusicAndEvents();
 
 		if ((by > nheight) && nheight)
 			by = nheight;
 
-		if ((startLine + by) > (_vm->_anim->_headerdata._height - height - 1))
+		if ((startLine + by) > (_vm->_anim->getDIFFHeight() - height - 1))
 			break;
 
 		if (nheight)
 			nheight -= by;
 
 		copyPage(width, height, nheight, startLine, mem);
-
 		screenUpdate();
 
 		if (!nheight)
@@ -715,7 +714,7 @@ void DisplayMan::doScrollBounce() {
 	byte *mem = _vm->_anim->_scrollScreenBuffer;
 
 	_vm->updateMusicAndEvents();
-	int startLine = _vm->_anim->_headerdata._height - height - 1;
+	int startLine = _vm->_anim->getDIFFHeight() - height - 1;
 
 	for (int i = 0; i < 5; i++) {
 		_vm->updateMusicAndEvents();

@@ -66,12 +66,12 @@ private:
 	uint32 _diffHeight;
 
 	byte *_outputBuffer;
+	DIFFHeader _headerdata;
 
 public:
 	Anim(LabEngine *vm);
 	virtual ~Anim();
 
-	DIFFHeader _headerdata;
 	char _diffPalette[256 * 3];
 	bool _waitForEffect; // Wait for each sound effect to finish before continuing.
 	bool _doBlack;       // Black the screen before new picture
@@ -94,6 +94,8 @@ public:
 	 * Stops an animation from running.
 	 */
 	void stopDiffEnd();
+
+	uint16 getDIFFHeight();
 };
 
 } // End of namespace Lab
