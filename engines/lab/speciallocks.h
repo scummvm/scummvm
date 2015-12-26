@@ -37,7 +37,7 @@ namespace Lab {
 
 class LabEngine;
 
-class TilePuzzle {
+class SpecialLocks {
 private:
 	LabEngine *_vm;
 	Image *_tiles[16];
@@ -46,28 +46,23 @@ private:
 	byte _combination[6];
 
 public:
-	TilePuzzle(LabEngine *vm);
-	~TilePuzzle();
+	SpecialLocks(LabEngine *vm);
+	~SpecialLocks();
+
+	void showTileLock(const Common::String filename, bool showSolution);
 
 	/**
-	 * Processes mouse clicks and changes the combination.
+	 * Processes mouse clicks and changes tile positions.
 	 */
-	void mouseTile(Common::Point pos);
+	void tileClick(Common::Point pos);
+
+	void showCombinationLock(const Common::String filename);
 
 	/**
-	 * Processes mouse clicks and changes the combination.
+	 * Processes mouse clicks and changes the door combination.
 	 */
-	void mouseCombination(Common::Point pos);
+	void combinationClick(Common::Point pos);
 
-	/**
-	 * Reads in a backdrop picture.
-	 */
-	void showCombination(const Common::String filename);
-
-	/**
-	 * Reads in a backdrop picture.
-	 */
-	void showTile(const Common::String filename, bool showSolution);
 	void save(Common::OutSaveFile *file);
 	void load(Common::InSaveFile *file);
 
@@ -78,14 +73,9 @@ private:
 	void changeCombination(uint16 number);
 
 	/**
-	 * Changes the combination number of one of the slots
+	 * Changes the tile positions in the tile puzzle
 	 */
 	void changeTile(uint16 col, uint16 row);
-
-	/**
-	 * Draws the images of the combination lock to the display bitmap.
-	 */
-	void doCombination();
 
 	/**
 	 * Draws the images of the combination lock to the display bitmap.

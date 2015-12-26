@@ -43,7 +43,7 @@
 #include "lab/labsets.h"
 #include "lab/music.h"
 #include "lab/processroom.h"
-#include "lab/tilepuzzle.h"
+#include "lab/speciallocks.h"
 
 namespace Lab {
 
@@ -144,7 +144,7 @@ bool LabEngine::saveGame(int slot, const Common::String desc) {
 	for (int i = 0; i < _roomsFound->_lastElement / (8 * 2); i++)
 		file->writeUint16LE(_roomsFound->_array[i]);
 
-	_tilePuzzle->save(file);
+	_specialLocks->save(file);
 
 	// Breadcrumbs
 	for (uint i = 0; i < MAX_CRUMBS; i++) {
@@ -181,7 +181,7 @@ bool LabEngine::loadGame(int slot) {
 	for (int i = 0; i < _roomsFound->_lastElement / (8 * 2); i++)
 		_roomsFound->_array[i] = file->readUint16LE();
 
-	_tilePuzzle->load(file);
+	_specialLocks->load(file);
 
 	// Breadcrumbs
 	for (int i = 0; i < MAX_CRUMBS; i++) {

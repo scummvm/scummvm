@@ -39,18 +39,20 @@
 #include "lab/music.h"
 #include "lab/processroom.h"
 #include "lab/resource.h"
-#include "lab/tilepuzzle.h"
+#include "lab/speciallocks.h"
 #include "lab/utils.h"
 
 namespace Lab {
 
-// LAB: Labyrinth specific code for the special puzzles
-#define SPECIALLOCK         100
-#define SPECIALBRICK        101
-#define SPECIALBRICKNOMOUSE 102
-
 #define CRUMBSWIDTH 24
 #define CRUMBSHEIGHT 24
+
+enum SpecialLock {
+	kLockCombination = 100,
+	kLockTiles = 101,
+	kLockTileSolution = 102
+};
+
 enum Items {
 	kItemHelmet = 1,
 	kItemBelt = 3,
@@ -442,16 +444,14 @@ void LabEngine::mainGameLoop() {
 				_roomsFound->inclElement(_roomNum);
 				_curFileName = _nextFileName;
 
-				if (_closeDataPtr) {
+				if (_closeDataPtr && _mainDisplay) {
 					switch (_closeDataPtr->_closeUpType) {
-					case SPECIALLOCK:
-						if (_mainDisplay)
-							_tilePuzzle->showCombination(_curFileName);
+					case kLockCombination:
+						_specialLocks->showCombinationLock(_curFileName);
 						break;
-					case SPECIALBRICK:
-					case SPECIALBRICKNOMOUSE:
-						if (_mainDisplay)
-							_tilePuzzle->showTile(_curFileName, (_closeDataPtr->_closeUpType == SPECIALBRICKNOMOUSE));
+					case kLockTiles:
+					case kLockTileSolution:
+						_specialLocks->showTileLock(_curFileName, (_closeDataPtr->_closeUpType == kLockTileSolution));
 						break;
 					default:
 						_graphics->readPict(_curFileName, false);
@@ -571,10 +571,10 @@ bool LabEngine::processEvent(MessageClass tmpClass, uint16 code, uint16 qualifie
 		interfaceOff();
 		_mainDisplay = true;
 
-		if (_closeDataPtr && _closeDataPtr->_closeUpType == SPECIALLOCK)
-			_tilePuzzle->mouseCombination(curPos);
-		else if (_closeDataPtr && _closeDataPtr->_closeUpType == SPECIALBRICK)
-			_tilePuzzle->mouseTile(curPos);
+		if (_closeDataPtr && _closeDataPtr->_closeUpType == kLockCombination)
+			_specialLocks->combinationClick(curPos);
+		else if (_closeDataPtr && _closeDataPtr->_closeUpType == kLockTiles)
+			_specialLocks->tileClick(curPos);
 		else
 			performAction(actionMode, curPos, curInv);
 

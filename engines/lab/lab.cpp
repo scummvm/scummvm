@@ -44,7 +44,7 @@
 #include "lab/music.h"
 #include "lab/processroom.h"
 #include "lab/resource.h"
-#include "lab/tilepuzzle.h"
+#include "lab/speciallocks.h"
 #include "lab/utils.h"
 
 namespace Lab {
@@ -85,7 +85,7 @@ LabEngine::LabEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	_graphics = nullptr;
 	_rooms = nullptr;
 	_roomsFound = nullptr;
-	_tilePuzzle = nullptr;
+	_specialLocks = nullptr;
 	_utils = nullptr;
 	_console = nullptr;
 	_journalBackImage = nullptr;
@@ -151,7 +151,7 @@ LabEngine::~LabEngine() {
 	delete _music;
 	delete _anim;
 	delete _graphics;
-	delete _tilePuzzle;
+	delete _specialLocks;
 	delete _utils;
 	delete _console;
 	delete _journalBackImage;
@@ -168,7 +168,7 @@ Common::Error LabEngine::run() {
 	_music = new Music(this);
 	_graphics = new DisplayMan(this);
 	_anim = new Anim(this);
-	_tilePuzzle = new TilePuzzle(this);
+	_specialLocks = new SpecialLocks(this);
 	_utils = new Utils(this);
 	_console = new Console(this);
 	_journalBackImage = new Image(this);

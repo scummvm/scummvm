@@ -38,7 +38,7 @@
 #include "lab/image.h"
 #include "lab/labsets.h"
 #include "lab/resource.h"
-#include "lab/tilepuzzle.h"
+#include "lab/speciallocks.h"
 #include "lab/utils.h"
 
 namespace Lab {
@@ -69,7 +69,7 @@ const uint16 SOLUTION[4][4] = {
 
 const int COMBINATION_X[6] = { 45, 83, 129, 166, 211, 248 };
 
-TilePuzzle::TilePuzzle(LabEngine *vm) : _vm(vm) {
+SpecialLocks::SpecialLocks(LabEngine *vm) : _vm(vm) {
 	for (int i = 0; i < 16; i++)
 		_tiles[i] = nullptr;
 
@@ -85,7 +85,7 @@ TilePuzzle::TilePuzzle(LabEngine *vm) : _vm(vm) {
 		_numberImages[i] = nullptr;
 }
 
-TilePuzzle::~TilePuzzle() {
+SpecialLocks::~SpecialLocks() {
 	for (int i = 0; i < 16; i++)
 		delete _tiles[i];
 
@@ -95,7 +95,7 @@ TilePuzzle::~TilePuzzle() {
 	}
 }
 
-void TilePuzzle::mouseTile(Common::Point pos) {
+void SpecialLocks::tileClick(Common::Point pos) {
 	Common::Point realPos = _vm->_utils->vgaUnscale(pos);
 
 	if ((realPos.x < 101) || (realPos.y < 26))
@@ -108,7 +108,7 @@ void TilePuzzle::mouseTile(Common::Point pos) {
 		changeTile(tileX, tileY);
 }
 
-void TilePuzzle::changeTile(uint16 col, uint16 row) {
+void SpecialLocks::changeTile(uint16 col, uint16 row) {
 	int16 scrolltype = -1;
 
 	if (row > 0) {
@@ -174,7 +174,7 @@ void TilePuzzle::changeTile(uint16 col, uint16 row) {
 	}
 }
 
-void TilePuzzle::mouseCombination(Common::Point pos) {
+void SpecialLocks::combinationClick(Common::Point pos) {
 	Common::Point realPos = _vm->_utils->vgaUnscale(pos);
 
 	if (!Common::Rect(44, 63, 285, 99).contains(realPos))
@@ -197,7 +197,7 @@ void TilePuzzle::mouseCombination(Common::Point pos) {
 	changeCombination(number);
 }
 
-void TilePuzzle::doTile(bool showsolution) {
+void SpecialLocks::doTile(bool showsolution) {
 	uint16 row = 0, col = 0, rowm, colm, num;
 	int16 rows, cols;
 
@@ -235,7 +235,7 @@ void TilePuzzle::doTile(bool showsolution) {
 	}
 }
 
-void TilePuzzle::showTile(const Common::String filename, bool showSolution) {
+void SpecialLocks::showTileLock(const Common::String filename, bool showSolution) {
 	_vm->_anim->_doBlack = true;
 	_vm->_anim->_noPalChange = true;
 	_vm->_graphics->readPict(filename);
@@ -255,7 +255,7 @@ void TilePuzzle::showTile(const Common::String filename, bool showSolution) {
 	_vm->_graphics->setPalette(_vm->_anim->_diffPalette, 256);
 }
 
-void TilePuzzle::doTileScroll(uint16 col, uint16 row, uint16 scrolltype) {
+void SpecialLocks::doTileScroll(uint16 col, uint16 row, uint16 scrolltype) {
 	int16 dX = 0, dY = 0, dx = 0, dy = 0, sx = 0, sy = 0;
 	int last = 0;
 
@@ -296,7 +296,15 @@ void TilePuzzle::doTileScroll(uint16 col, uint16 row, uint16 scrolltype) {
 	delete[] buffer;
 }
 
-void TilePuzzle::changeCombination(uint16 number) {
+void SpecialLocks::scrollRaster(int16 dx, int16 dy, uint16 x1, uint16 y1, uint16 x2, uint16 y2, byte *buffer) {
+	if (dx)
+		_vm->_graphics->scrollDisplayX(dx, x1, y1, x2, y2, buffer);
+
+	if (dy)
+		_vm->_graphics->scrollDisplayY(dy, x1, y1, x2, y2, buffer);
+}
+
+void SpecialLocks::changeCombination(uint16 number) {
 	const int solution[6] = { 0, 4, 0, 8, 7, 2 };
 
 	Image display(_vm);
@@ -309,8 +317,8 @@ void TilePuzzle::changeCombination(uint16 number) {
 	uint16 combnum = _combination[number];
 
 	display.setData(_vm->_graphics->getCurrentDrawingBuffer(), false);
-	display._width     = _vm->_graphics->_screenWidth;
-	display._height    = _vm->_graphics->_screenHeight;
+	display._width = _vm->_graphics->_screenWidth;
+	display._height = _vm->_graphics->_screenHeight;
 
 	byte *buffer = new byte[_numberImages[1]->_width * _numberImages[1]->_height * 2];
 
@@ -318,7 +326,8 @@ void TilePuzzle::changeCombination(uint16 number) {
 		if (_vm->_isHiRes) {
 			if (i & 1)
 				_vm->waitTOF();
-		} else
+		}
+		else
 			_vm->waitTOF();
 
 		display.setData(_vm->_graphics->getCurrentDrawingBuffer(), false);
@@ -338,20 +347,7 @@ void TilePuzzle::changeCombination(uint16 number) {
 		_vm->_conditions->exclElement(COMBINATIONUNLOCKED);
 }
 
-void TilePuzzle::scrollRaster(int16 dx, int16 dy, uint16 x1, uint16 y1, uint16 x2, uint16 y2, byte *buffer) {
-	if (dx)
-		_vm->_graphics->scrollDisplayX(dx, x1, y1, x2, y2, buffer);
-
-	if (dy)
-		_vm->_graphics->scrollDisplayY(dy, x1, y1, x2, y2, buffer);
-}
-
-void TilePuzzle::doCombination() {
-	for (int i = 0; i <= 5; i++)
-		_numberImages[_combination[i]]->drawImage(_vm->_utils->vgaScaleX(COMBINATION_X[i]), _vm->_utils->vgaScaleY(65));
-}
-
-void TilePuzzle::showCombination(const Common::String filename) {
+void SpecialLocks::showCombinationLock(const Common::String filename) {
 	_vm->_anim->_doBlack = true;
 	_vm->_anim->_noPalChange = true;
 	_vm->_graphics->readPict(filename);
@@ -361,18 +357,20 @@ void TilePuzzle::showCombination(const Common::String filename) {
 
 	Common::File *numFile = _vm->_resource->openDataFile("P:Numbers");
 
-	for (int CurBit = 0; CurBit < 10; CurBit++)
-		_numberImages[CurBit] = new Image(numFile, _vm);
+	for (int i = 0; i < 10; i++) {
+		_numberImages[i] = new Image(numFile, _vm);
+	}
 
 	delete numFile;
 
-	doCombination();
+	for (int i = 0; i <= 5; i++)
+		_numberImages[_combination[i]]->drawImage(_vm->_utils->vgaScaleX(COMBINATION_X[i]), _vm->_utils->vgaScaleY(65));
 
 	_vm->_graphics->setPalette(_vm->_anim->_diffPalette, 256);
 }
 
-void TilePuzzle::save(Common::OutSaveFile *file) {
-	// Combination lock and tile stuff
+void SpecialLocks::save(Common::OutSaveFile *file) {
+	// Combination lock
 	for (int i = 0; i < 6; i++)
 		file->writeByte(_combination[i]);
 
@@ -382,8 +380,8 @@ void TilePuzzle::save(Common::OutSaveFile *file) {
 			file->writeUint16LE(_curTile[i][j]);
 }
 
-void TilePuzzle::load(Common::InSaveFile *file) {
-	// Combination lock and tile stuff
+void SpecialLocks::load(Common::InSaveFile *file) {
+	// Combination lock
 	for (int i = 0; i < 6; i++)
 		_combination[i] = file->readByte();
 

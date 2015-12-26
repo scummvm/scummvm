@@ -63,7 +63,7 @@ class EventManager;
 class Image;
 class Music;
 class Resource;
-class TilePuzzle;
+class SpecialLocks;
 class Utils;
 
 struct SaveGameHeader {
@@ -193,7 +193,7 @@ public:
 	Resource *_resource;
 	RoomData *_rooms;
 	TextFont *_msgFont;
-	TilePuzzle *_tilePuzzle;
+	SpecialLocks *_specialLocks;
 	Utils *_utils;
 	Console *_console;
 	GUI::Debugger *getDebugger() { return _console; }
