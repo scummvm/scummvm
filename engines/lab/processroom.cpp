@@ -486,7 +486,7 @@ void LabEngine::doActions(const ActionList &actionList, CloseDataPtr *closePtrLi
 	}
 }
 
-bool LabEngine::doActionRuleSub(int16 action, int16 roomNum, CloseDataPtr closePtr, CloseDataPtr *setCloseList, bool allowDefaults) {
+bool LabEngine::doActionRuleSub(int16 action, int16 roomNum, CloseDataPtr closePtr, bool allowDefaults) {
 	action++;
 
 	if (closePtr) {
@@ -504,7 +504,7 @@ bool LabEngine::doActionRuleSub(int16 action, int16 roomNum, CloseDataPtr closeP
 					  ((rule->_param2 == 0) && allowDefaults)) ||
 					  ((action == 1) && (rule->_param2 == -closePtr->_closeUpType))) {
 					if (checkConditions(rule->_condition)) {
-						doActions(rule->_actionList, setCloseList);
+						doActions(rule->_actionList, &_closeDataPtr);
 						return true;
 					}
 				}
@@ -515,27 +515,27 @@ bool LabEngine::doActionRuleSub(int16 action, int16 roomNum, CloseDataPtr closeP
 	return false;
 }
 
-bool LabEngine::doActionRule(Common::Point pos, int16 action, int16 roomNum, CloseDataPtr *closePtrList) {
+bool LabEngine::doActionRule(Common::Point pos, int16 action, int16 roomNum) {
 	if (roomNum)
 		_newFileName = NOFILE;
 	else
 		_newFileName = _curFileName;
 
-	CloseDataPtr curClosePtr = getObject(pos, *closePtrList);
+	CloseDataPtr curClosePtr = getObject(pos, _closeDataPtr);
 
-	if (doActionRuleSub(action, roomNum, curClosePtr, closePtrList, false))
+	if (doActionRuleSub(action, roomNum, curClosePtr, false))
 		return true;
-	else if (doActionRuleSub(action, roomNum, *closePtrList, closePtrList, false))
+	else if (doActionRuleSub(action, roomNum, _closeDataPtr, false))
 		return true;
-	else if (doActionRuleSub(action, roomNum, curClosePtr, closePtrList, true))
+	else if (doActionRuleSub(action, roomNum, curClosePtr, true))
 		return true;
-	else if (doActionRuleSub(action, roomNum, *closePtrList, closePtrList, true))
+	else if (doActionRuleSub(action, roomNum, _closeDataPtr, true))
 		return true;
 
 	return false;
 }
 
-bool LabEngine::doOperateRuleSub(int16 itemNum, int16 roomNum, CloseDataPtr closePtr, CloseDataPtr *setCloseList, bool allowDefaults) {
+bool LabEngine::doOperateRuleSub(int16 itemNum, int16 roomNum, CloseDataPtr closePtr, bool allowDefaults) {
 	if (closePtr)
 		if (closePtr->_closeUpType > 0) {
 			RuleList *rules = &(_rooms[roomNum]._rules);
@@ -550,7 +550,7 @@ bool LabEngine::doOperateRuleSub(int16 itemNum, int16 roomNum, CloseDataPtr clos
 					  ((rule->_param1 == itemNum) || ((rule->_param1 == 0) && allowDefaults)) &&
 						((rule->_param2 == closePtr->_closeUpType) || ((rule->_param2 == 0) && allowDefaults))) {
 					if (checkConditions(rule->_condition)) {
-						doActions(rule->_actionList, setCloseList);
+						doActions(rule->_actionList, &_closeDataPtr);
 						return true;
 					}
 				}
@@ -564,24 +564,24 @@ bool LabEngine::doOperateRule(Common::Point pos, int16 ItemNum) {
 	_newFileName = NOFILE;
 	CloseDataPtr closePtr = getObject(pos, _closeDataPtr);
 
-	if (doOperateRuleSub(ItemNum, _roomNum, closePtr, &_closeDataPtr, false))
+	if (doOperateRuleSub(ItemNum, _roomNum, closePtr, false))
 		return true;
-	else if (doOperateRuleSub(ItemNum, _roomNum, _closeDataPtr, &_closeDataPtr, false))
+	else if (doOperateRuleSub(ItemNum, _roomNum, _closeDataPtr, false))
 		return true;
-	else if (doOperateRuleSub(ItemNum, _roomNum, closePtr, &_closeDataPtr, true))
+	else if (doOperateRuleSub(ItemNum, _roomNum, closePtr, true))
 		return true;
-	else if (doOperateRuleSub(ItemNum, _roomNum, _closeDataPtr, &_closeDataPtr, true))
+	else if (doOperateRuleSub(ItemNum, _roomNum, _closeDataPtr, true))
 		return true;
 	else {
 		_newFileName = _curFileName;
 
-		if (doOperateRuleSub(ItemNum, 0, closePtr, &_closeDataPtr, false))
+		if (doOperateRuleSub(ItemNum, 0, closePtr, false))
 			return true;
-		else if (doOperateRuleSub(ItemNum, 0, _closeDataPtr, &_closeDataPtr, false))
+		else if (doOperateRuleSub(ItemNum, 0, _closeDataPtr, false))
 			return true;
-		else if (doOperateRuleSub(ItemNum, 0, closePtr, &_closeDataPtr, true))
+		else if (doOperateRuleSub(ItemNum, 0, closePtr, true))
 			return true;
-		else if (doOperateRuleSub(ItemNum, 0, _closeDataPtr, &_closeDataPtr, true))
+		else if (doOperateRuleSub(ItemNum, 0, _closeDataPtr, true))
 			return true;
 	}
 

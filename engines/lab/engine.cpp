@@ -952,13 +952,13 @@ void LabEngine::performAction(uint16 actionMode, Common::Point curPos, uint16 &c
 	switch (actionMode) {
 	case 0:
 		// Take something.
-		if (doActionRule(curPos, actionMode, _roomNum, &_closeDataPtr))
+		if (doActionRule(curPos, actionMode, _roomNum))
 			_curFileName = _newFileName;
 		else if (takeItem(curPos, &_closeDataPtr))
 			drawStaticMessage(kTextTakeItem);
-		else if (doActionRule(curPos, kRuleActionTakeDef, _roomNum, &_closeDataPtr))
+		else if (doActionRule(curPos, kRuleActionTakeDef, _roomNum))
 			_curFileName = _newFileName;
-		else if (doActionRule(curPos, kRuleActionTake, 0, &_closeDataPtr))
+		else if (doActionRule(curPos, kRuleActionTake, 0))
 			_curFileName = _newFileName;
 		else if (curPos.y < (_utils->vgaScaleY(149) + _utils->svgaCord(2)))
 			drawStaticMessage(kTextNothing);
@@ -969,9 +969,9 @@ void LabEngine::performAction(uint16 actionMode, Common::Point curPos, uint16 &c
 	case 2:
 	case 3:
 		// Manipulate an object, Open up a "door" or Close a "door"
-		if (doActionRule(curPos, actionMode, _roomNum, &_closeDataPtr))
+		if (doActionRule(curPos, actionMode, _roomNum))
 			_curFileName = _newFileName;
-		else if (!doActionRule(curPos, actionMode, 0, &_closeDataPtr)) {
+		else if (!doActionRule(curPos, actionMode, 0)) {
 			if (curPos.y < (_utils->vgaScaleY(149) + _utils->svgaCord(2)))
 				drawStaticMessage(kTextNothing);
 		}

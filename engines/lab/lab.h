@@ -245,12 +245,12 @@ private:
 	/**
 	 * Goes through the rules if an action is taken.
 	 */
-	bool doActionRule(Common::Point pos, int16 action, int16 roomNum, CloseDataPtr *closePtrList);
+	bool doActionRule(Common::Point pos, int16 action, int16 roomNum);
 
 	/**
 	 * Does the work for doActionRule.
 	 */
-	bool doActionRuleSub(int16 action, int16 roomNum, CloseDataPtr closePtr, CloseDataPtr *setCloseList, bool allowDefaults);
+	bool doActionRuleSub(int16 action, int16 roomNum, CloseDataPtr closePtr, bool allowDefaults);
 
 	/**
 	 * Checks whether the close up is one of the special case closeups.
@@ -290,7 +290,7 @@ private:
 	/**
 	 * Does the work for doActionRule.
 	 */
-	bool doOperateRuleSub(int16 itemNum, int16 roomNum, CloseDataPtr closePtr, CloseDataPtr *setCloseList, bool allowDefaults);
+	bool doOperateRuleSub(int16 itemNum, int16 roomNum, CloseDataPtr closePtr, bool allowDefaults);
 
 	/**
 	 * Goes through the rules if the user tries to operate an item on an object.
