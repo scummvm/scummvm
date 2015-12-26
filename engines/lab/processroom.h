@@ -126,12 +126,6 @@ enum MapDoors {
 #define     BRIDGEROOM       3
 #define     VCORRIDOR        4
 #define     HCORRIDOR        5
-#define     MEDMAZE          6
-#define     HEDGEMAZE        7
-#define     SURMAZE          8
-#define     MULTIMAZEF1      9
-#define     MULTIMAZEF2     10
-#define     MULTIMAZEF3     11
 
 #if defined(WIN32)
 #pragma pack(push, 1)
