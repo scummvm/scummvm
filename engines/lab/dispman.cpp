@@ -57,7 +57,7 @@ DisplayMan::DisplayMan(LabEngine *vm) : _vm(vm) {
 	_screenHeight = 0;
 
 	for (int i = 0; i < 256 * 3; i++)
-		_curvgapal[i] = 0;
+		_curVgaPal[i] = 0;
 }
 
 DisplayMan::~DisplayMan() {
@@ -454,11 +454,11 @@ void DisplayMan::writeColorRegs(byte *buf, uint16 first, uint16 numReg) {
 		tmp[i] = (buf[i] << 2) | (buf[i] >> 4);	// better results than buf[i] * 4
 
 	_vm->_system->getPaletteManager()->setPalette(tmp, first, numReg);
-	memcpy(&(_curvgapal[first * 3]), buf, numReg * 3);
+	memcpy(&(_curVgaPal[first * 3]), buf, numReg * 3);
 }
 
 void DisplayMan::setPalette(void *newPal, uint16 numColors) {
-	if (memcmp(newPal, _curvgapal, numColors * 3) != 0)
+	if (memcmp(newPal, _curVgaPal, numColors * 3) != 0)
 		writeColorRegs((byte *)newPal, 0, numColors);
 }
 
@@ -469,7 +469,7 @@ byte *DisplayMan::getCurrentDrawingBuffer() {
 	return _displayBuffer;
 }
 
-void DisplayMan::checkerboardEffect(uint16 penColor, uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
+void DisplayMan::checkerBoardEffect(uint16 penColor, uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
 	int w = x2 - x1 + 1;
 	int h = y2 - y1 + 1;
 
@@ -758,7 +758,7 @@ void DisplayMan::doTransWipe(const Common::String filename) {
 				}
 
 				if (j == 0)
-					checkerboardEffect(0, 0, curY, _screenWidth - 1, curY + 1);
+					checkerBoardEffect(0, 0, curY, _screenWidth - 1, curY + 1);
 				else
 					rectFill(0, curY, _screenWidth - 1, curY + 1, 0);
 				curY += 4;
@@ -804,7 +804,7 @@ void DisplayMan::doTransWipe(const Common::String filename) {
 
 				if (j == 0) {
 					imSource.blitBitmap(0, curY, &imDest, 0, curY, _screenWidth, 2, false);
-					checkerboardEffect(0, 0, curY, _screenWidth - 1, curY + 1);
+					checkerBoardEffect(0, 0, curY, _screenWidth - 1, curY + 1);
 				} else {
 					uint16 bitmapHeight = (curY == lastY) ? 1 : 2;
 					imSource.blitBitmap(0, curY, &imDest, 0, curY, _screenWidth, bitmapHeight, false);

@@ -78,7 +78,7 @@ void EventManager::drawButtonList(ButtonList *buttonList) {
 
 void EventManager::toggleButton(Button *button, uint16 disabledPenColor, bool enable) {
 	if (!enable)
-		_vm->_graphics->checkerboardEffect(disabledPenColor, button->_x, button->_y, button->_x + button->_image->_width - 1, button->_y + button->_image->_height - 1);
+		_vm->_graphics->checkerBoardEffect(disabledPenColor, button->_x, button->_y, button->_x + button->_image->_width - 1, button->_y + button->_image->_height - 1);
 	else
 		button->_image->drawImage(button->_x, button->_y);
 

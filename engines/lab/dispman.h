@@ -70,22 +70,12 @@ private:
 	 */
 	Common::String getWord(const char *mainBuffer);
 
-	byte _curPen;
-	Common::File *_curBitmap;
-	byte _curvgapal[256 * 3];
-
-public:
-	DisplayMan(LabEngine *lab);
-	virtual ~DisplayMan();
-
-	void loadPict(const Common::String filename);
-	void loadBackPict(const Common::String fileName, uint16 *highPal);
+	void createBox(uint16 y2);
 
 	/**
-	 * Reads in a picture into the display bitmap.
+	 * Sets up either a low-res or a high-res 256 color screen.
 	 */
-	void readPict(const Common::String filename, bool playOnce = true, bool onlyDiffData = false, byte *memoryBuffer = nullptr);
-	void freePict();
+	void createScreen(bool hiRes);
 
 	/**
 	 * Scrolls the display to black.
@@ -109,6 +99,51 @@ public:
 	void doTransWipe(const Common::String filename);
 
 	/**
+	 * Draws a vertical line.
+	 */
+	void drawHLine(uint16 x, uint16 y1, uint16 y2, byte color);
+
+	/**
+	 * Draws a horizontal line.
+	 */
+	void drawVLine(uint16 x1, uint16 y, uint16 x2, byte color);
+
+	/**
+	 * Draws the text to the screen.
+	 */
+	void drawText(TextFont *tf, uint16 x, uint16 y, uint16 color, const Common::String text);
+
+	/**
+	 * Gets a line of text for flowText; makes sure that its length is less than
+	 * or equal to the maximum width.
+	 */
+	Common::String getLine(TextFont *tf, const char **mainBuffer, uint16 lineWidth);
+
+	/**
+	 * Returns the length of a text in the specified font.
+	 */
+	uint16 textLength(TextFont *font, const Common::String text);
+
+	bool _actionMessageShown;
+	byte _curPen;
+	Common::File *_curBitmap;
+	byte _curVgaPal[256 * 3];
+	byte *_currentDisplayBuffer;
+
+public:
+	DisplayMan(LabEngine *lab);
+	virtual ~DisplayMan();
+
+	void loadPict(const Common::String filename);
+	void loadBackPict(const Common::String fileName, uint16 *highPal);
+
+	/**
+	 * Reads in a picture into the display bitmap.
+	 */
+	void readPict(const Common::String filename, bool playOnce = true, bool onlyDiffData = false, byte *memoryBuffer = nullptr);
+	void freePict();
+
+	/**
 	 * Does a certain number of pre-programmed wipes.
 	 */
 	void doTransition(TransitionType transitionType, const Common::String filename);
@@ -127,7 +162,6 @@ public:
 	 * Changes the entire screen to black.
 	*/
 	void blackAllScreen();
-	void createBox(uint16 y2);
 
 	/**
 	 * Draws the control panel display.
@@ -147,11 +181,6 @@ public:
 	void drawMessage(Common::String str, bool isActionMessage);
 
 	void setActionMessage(bool val) { _actionMessageShown = val; }
-
-	/**
-	 * Sets the pen number to use on all the drawing operations.
-	 */
-	void setPen(byte pennum);
 
 	/**
 	 * Fills in a rectangle.
@@ -178,21 +207,7 @@ public:
 	int flowText(TextFont *font, int16 spacing, byte penColor, byte backPen, bool fillBack,
 				bool centerh, bool centerv, bool output, Common::Rect textRect, const char *text, Image *targetImage = nullptr);
 
-	/**
-	 * Draws a vertical line.
-	 */
-	void drawHLine(uint16 x, uint16 y1, uint16 y2, byte color);
-
-	/**
-	 * Draws a horizontal line.
-	 */
-	void drawVLine(uint16 x1, uint16 y, uint16 x2, byte color);
 	void screenUpdate();
-
-	/**
-	 * Sets up either a low-res or a high-res 256 color screen.
-	 */
-	void createScreen(bool hiRes);
 
 	/**
 	 * Converts a 16-color Amiga palette to a VGA palette, then sets
@@ -216,7 +231,7 @@ public:
 	/**
 	 * Overlays a region on the screen using the desired pen color.
 	 */
-	void checkerboardEffect(uint16 penColor, uint16 x1, uint16 y1, uint16 x2, uint16 y2);
+	void checkerBoardEffect(uint16 penColor, uint16 x1, uint16 y1, uint16 x2, uint16 y2);
 
 	/**
 	 * Returns the base address of the current VGA display.
@@ -242,34 +257,16 @@ public:
 	void freeFont(TextFont **font);
 
 	/**
-	 * Returns the length of a text in the specified font.
-	 */
-	uint16 textLength(TextFont *font, const Common::String text);
-
-	/**
 	 * Returns the height of a specified font.
 	 */
 	uint16 textHeight(TextFont *tf);
 
-	/**
-	 * Draws the text to the screen.
-	 */
-	void drawText(TextFont *tf, uint16 x, uint16 y, uint16 color, const Common::String text);
-
-	/**
-	 * Gets a line of text for flowText; makes sure that its length is less than
-	 * or equal to the maximum width.
-	 */
-	Common::String getLine(TextFont *tf, const char **mainBuffer, uint16 lineWidth);
-
 	bool _longWinInFront;
 	bool _lastMessageLong;
-	bool _actionMessageShown;
 	uint32 _screenBytesPerPage;
 	int _screenWidth;
 	int _screenHeight;
 	byte *_displayBuffer;
-	byte *_currentDisplayBuffer;
 	uint16 *_fadePalette;
 };
 
