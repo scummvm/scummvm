@@ -148,13 +148,6 @@ void EventManager::mouseHide() {
 	_vm->_system->showMouse(false);
 }
 
-Common::Point EventManager::getMousePos() {
-	if (_vm->_isHiRes)
-		return _mousePos;
-	else
-		return Common::Point(_mousePos.x / 2, _mousePos.y);
-}
-
 void EventManager::setMousePos(Common::Point pos) {
 	if (_vm->_isHiRes)
 		_vm->_system->warpMouse(pos.x, pos.y);

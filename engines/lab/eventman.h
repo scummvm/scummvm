@@ -102,11 +102,6 @@ public:
 	void freeButtonList(ButtonList *buttonList);
 	Button *getButton(uint16 id);
 
-	/**
-	 * Gets the current mouse co-ordinates.  NOTE: On IBM version, will scale
-	 * from virtual to screen co-ordinates automatically.
-	 */
-	Common::Point getMousePos();
 	IntuiMessage *getMsg();
 
 	/**
