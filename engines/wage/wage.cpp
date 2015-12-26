@@ -112,7 +112,6 @@ Common::Error WageEngine::run() {
 
 	Graphics::Surface screen;
 	screen.create(640, 480, Graphics::PixelFormat::createFormatCLUT8());
-	Common::Rect r(0, 0, screen.w, screen.h);
 
 	_temporarilyHidden = true;
 	performInitialSetup();
@@ -121,7 +120,16 @@ Common::Error WageEngine::run() {
 	Common::String input("look");
 
 	_world->_player->_currentScene = _world->_orderedScenes[1];
-	_world->_globalScript->execute(_world, 1, &input, NULL, this);
+	//_world->_globalScript->execute(_world, 1, &input, NULL, this);
+
+	_world->_orderedScenes[4]->paint(&screen);
+	g_system->copyRectToScreen(screen.getPixels(), screen.pitch, 0, 0, screen.w, screen.h);
+
+	while (true) {
+		processEvents();
+		g_system->updateScreen();
+		g_system->delayMillis(50);
+	}
 
 	//_world->_orderedScenes[1]->_design->paint(&screen, _world->_patterns, false);
 	//_world->_objs["frank.1"]->_design->setBounds(&r);

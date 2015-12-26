@@ -73,11 +73,11 @@ Design::~Design() {
 	free(_data);
 }
 
-void Design::paint(Graphics::Surface *canvas, Patterns &patterns, bool mask) {
+void Design::paint(Graphics::Surface *surface, Patterns &patterns, bool mask) {
 	Common::MemoryReadStream in(_data, _len);
 
-	if (mask || 1) {
-		canvas->fillRect(Common::Rect(0, 0, _bounds->width(), _bounds->height()), kColorWhite);
+	if (mask) {
+		surface->fillRect(Common::Rect(0, 0, _bounds->width(), _bounds->height()), kColorWhite);
 	}
 
 /*
@@ -104,30 +104,30 @@ void Design::paint(Graphics::Surface *canvas, Patterns &patterns, bool mask) {
 
 	while (true) {
 		byte fillType = in.readByte();
+		byte borderThickness = in.readByte();
+		byte borderFillType = in.readByte();
+		int type = in.readByte();
 
 		if (in.eos())
 			return;
 
-		byte borderThickness = in.readByte();
-		byte borderFillType = in.readByte();
-		int type = in.readByte();
 		debug(2, "fill: %d borderFill: %d border: %d type: %d", fillType, borderFillType, borderThickness, type);
 		switch (type) {
 		case 4:
-			drawRect(canvas, in, mask, patterns, fillType, borderThickness, borderFillType);
+			drawRect(surface, in, mask, patterns, fillType, borderThickness, borderFillType);
 			break;
 		case 8:
-			drawRoundRect(canvas, in, mask, patterns, fillType, borderThickness, borderFillType);
+			drawRoundRect(surface, in, mask, patterns, fillType, borderThickness, borderFillType);
 			break;
 		case 12:
-			drawOval(canvas, in, mask, patterns, fillType, borderThickness, borderFillType);
+			drawOval(surface, in, mask, patterns, fillType, borderThickness, borderFillType);
 			break;
 		case 16:
 		case 20:
-			drawPolygon(canvas, in, mask, patterns, fillType, borderThickness, borderFillType);
+			drawPolygon(surface, in, mask, patterns, fillType, borderThickness, borderFillType);
 			break;
 		case 24:
-			drawBitmap(canvas, in, mask);
+			drawBitmap(surface, in, mask);
 			break;
 		default:
 			warning("Unknown type => %d", type);
@@ -139,9 +139,9 @@ void Design::paint(Graphics::Surface *canvas, Patterns &patterns, bool mask) {
 			return;
 		}
 
-		g_system->copyRectToScreen(canvas->getPixels(), canvas->pitch, 0, 0, canvas->w, canvas->h);
-		((WageEngine *)g_engine)->processEvents();
-		g_system->updateScreen();
+		//g_system->copyRectToScreen(surface->getPixels(), surface->pitch, 0, 0, surface->w, surface->h);
+		//((WageEngine *)g_engine)->processEvents();
+		//g_system->updateScreen();
 	}
 }
 
@@ -240,7 +240,9 @@ void Design::drawRoundRect(Graphics::Surface *surface, Common::ReadStream &in, b
 void Design::drawPolygon(Graphics::Surface *surface, Common::ReadStream &in, bool mask,
 	Patterns &patterns, byte fillType, byte borderThickness, byte borderFillType) {
 
-	warning("ignored => %d", in.readSint16BE());
+	byte ignored = in.readSint16BE(); // ignored
+	assert(ignored == 0);
+
 	int numBytes = in.readSint16BE(); // #bytes used by polygon data, including the numBytes
 	int16 by1 = in.readSint16BE();
 	int16 bx1 = in.readSint16BE();

@@ -48,6 +48,10 @@
 #ifndef WAGE_ENTITIES_H
 #define WAGE_ENTITIES_H
 
+namespace Graphics {
+	struct Surface;
+}
+
 namespace Wage {
 
 class Design;
@@ -396,6 +400,8 @@ public:
 	Common::Rect *getTextBounds() {
 		return _textBounds == NULL ? NULL : new Common::Rect(*_textBounds);
 	}
+
+	void paint(Graphics::Surface *screen);
 
 #if 0
 	String getFontName() {

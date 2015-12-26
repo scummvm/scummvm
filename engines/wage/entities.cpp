@@ -48,6 +48,7 @@
 #include "wage/wage.h"
 #include "wage/entities.h"
 #include "wage/design.h"
+#include "wage/world.h"
 
 #include "common/memstream.h"
 
@@ -80,6 +81,22 @@ Scene::Scene(String name, Common::SeekableReadStream *data) {
 	_soundName = readPascalString(data);
 
 	_visited = false;
+}
+
+void Scene::paint(Graphics::Surface *surface) {
+	surface->fillRect(Common::Rect(0, 0, _design->getBounds()->width(), _design->getBounds()->height()), kColorWhite);
+
+	_design->paint(surface, ((WageEngine *)g_engine)->_world->_patterns, false);
+
+	for (Common::List<Obj *>::const_iterator it = _objs.begin(); it != _objs.end(); ++it) {
+		debug(2, "paining Obj: %s", (*it)->_name.c_str());
+		(*it)->_design->paint(surface, ((WageEngine *)g_engine)->_world->_patterns, false);
+	}
+
+	for (Common::List<Chr *>::const_iterator it = _chrs.begin(); it != _chrs.end(); ++it) {
+		debug(2, "paining Chr: %s", (*it)->_name.c_str());
+		(*it)->_design->paint(surface, ((WageEngine *)g_engine)->_world->_patterns, false);
+	}
 }
 
 Obj::Obj(String name, Common::SeekableReadStream *data) : _currentOwner(NULL), _currentScene(NULL) {

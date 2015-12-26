@@ -70,7 +70,7 @@ public:
 	}
 
 	Common::Rect *getBounds() {
-		return new Common::Rect(*_bounds);
+		return _bounds;
 	}
 
     void paint(Graphics::Surface *canvas, Patterns &patterns, bool mask);
