@@ -560,41 +560,41 @@ bool LabEngine::doOperateRuleSub(int16 itemNum, int16 roomNum, CloseDataPtr clos
 	return false;
 }
 
-bool LabEngine::doOperateRule(Common::Point pos, int16 ItemNum, CloseDataPtr *closePtrList) {
+bool LabEngine::doOperateRule(Common::Point pos, int16 ItemNum) {
 	_newFileName = NOFILE;
-	CloseDataPtr closePtr = getObject(pos, *closePtrList);
+	CloseDataPtr closePtr = getObject(pos, _closeDataPtr);
 
-	if (doOperateRuleSub(ItemNum, _roomNum, closePtr, closePtrList, false))
+	if (doOperateRuleSub(ItemNum, _roomNum, closePtr, &_closeDataPtr, false))
 		return true;
-	else if (doOperateRuleSub(ItemNum, _roomNum, *closePtrList, closePtrList, false))
+	else if (doOperateRuleSub(ItemNum, _roomNum, _closeDataPtr, &_closeDataPtr, false))
 		return true;
-	else if (doOperateRuleSub(ItemNum, _roomNum, closePtr, closePtrList, true))
+	else if (doOperateRuleSub(ItemNum, _roomNum, closePtr, &_closeDataPtr, true))
 		return true;
-	else if (doOperateRuleSub(ItemNum, _roomNum, *closePtrList, closePtrList, true))
+	else if (doOperateRuleSub(ItemNum, _roomNum, _closeDataPtr, &_closeDataPtr, true))
 		return true;
 	else {
 		_newFileName = _curFileName;
 
-		if (doOperateRuleSub(ItemNum, 0, closePtr, closePtrList, false))
+		if (doOperateRuleSub(ItemNum, 0, closePtr, &_closeDataPtr, false))
 			return true;
-		else if (doOperateRuleSub(ItemNum, 0, *closePtrList, closePtrList, false))
+		else if (doOperateRuleSub(ItemNum, 0, _closeDataPtr, &_closeDataPtr, false))
 			return true;
-		else if (doOperateRuleSub(ItemNum, 0, closePtr, closePtrList, true))
+		else if (doOperateRuleSub(ItemNum, 0, closePtr, &_closeDataPtr, true))
 			return true;
-		else if (doOperateRuleSub(ItemNum, 0, *closePtrList, closePtrList, true))
+		else if (doOperateRuleSub(ItemNum, 0, _closeDataPtr, &_closeDataPtr, true))
 			return true;
 	}
 
 	return false;
 }
 
-bool LabEngine::doGoForward(CloseDataPtr *closePtrList) {
+bool LabEngine::doGoForward() {
 	RuleList &rules = _rooms[_roomNum]._rules;
 
 	for (RuleList::iterator rule = rules.begin(); rule != rules.end(); ++rule) {
 		if ((rule->_ruleType == kRuleTypeGoForward) && (rule->_param1 == (_direction + 1))) {
 			if (checkConditions(rule->_condition)) {
-				doActions(rule->_actionList, closePtrList);
+				doActions(rule->_actionList, &_closeDataPtr);
 				return true;
 			}
 		}
@@ -603,7 +603,7 @@ bool LabEngine::doGoForward(CloseDataPtr *closePtrList) {
 	return false;
 }
 
-bool LabEngine::doTurn(uint16 from, uint16 to, CloseDataPtr *closePtrList) {
+bool LabEngine::doTurn(uint16 from, uint16 to) {
 	from++;
 	to++;
 
@@ -614,7 +614,7 @@ bool LabEngine::doTurn(uint16 from, uint16 to, CloseDataPtr *closePtrList) {
 			  ((rule->_ruleType == kRuleTypeTurnFromTo) &&
 			  (rule->_param1 == from) && (rule->_param2 == to))) {
 			if (checkConditions(rule->_condition)) {
-				doActions(rule->_actionList, closePtrList);
+				doActions(rule->_actionList, &_closeDataPtr);
 				return true;
 			}
 		}
@@ -623,12 +623,12 @@ bool LabEngine::doTurn(uint16 from, uint16 to, CloseDataPtr *closePtrList) {
 	return false;
 }
 
-bool LabEngine::doMainView(CloseDataPtr *closePtrList) {
+bool LabEngine::doMainView() {
 	RuleList &rules = _rooms[_roomNum]._rules;
 	for (RuleList::iterator rule = rules.begin(); rule != rules.end(); ++rule) {
 		if (rule->_ruleType == kRuleTypeGoMainView) {
 			if (checkConditions(rule->_condition)) {
-				doActions(rule->_actionList, closePtrList);
+				doActions(rule->_actionList, &_closeDataPtr);
 				return true;
 			}
 		}

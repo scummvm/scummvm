@@ -260,7 +260,7 @@ private:
 	/**
 	 * Goes through the rules if the user tries to go forward.
 	 */
-	bool doGoForward(CloseDataPtr *closePtrList);
+	bool doGoForward();
 
 	/**
 	 * Does the journal processing.
@@ -270,7 +270,7 @@ private:
 	/**
 	 * Goes through the rules if the user tries to go to the main view
 	 */
-	bool doMainView(CloseDataPtr *closePtrList);
+	bool doMainView();
 
 	/**
 	 * Does the map processing.
@@ -295,12 +295,12 @@ private:
 	/**
 	 * Goes through the rules if the user tries to operate an item on an object.
 	 */
-	bool doOperateRule(Common::Point pos, int16 ItemNum, CloseDataPtr *closePtrList);
+	bool doOperateRule(Common::Point pos, int16 ItemNum);
 
 	/**
 	 * Goes through the rules if the user tries to turn.
 	 */
-	bool doTurn(uint16 from, uint16 to, CloseDataPtr *closePtrList);
+	bool doTurn(uint16 from, uint16 to);
 
 	/**
 	 * If the user hits the "Use" button; things that can get used on themselves.

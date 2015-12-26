@@ -698,7 +698,7 @@ void LabEngine::processMainButton(uint16 &curInv, uint16 &lastInv, uint16 &oldDi
 	case kButtonClose:
 	case kButtonLook:
 		if ((actionMode == 4) && (buttonId == kButtonLook) && _closeDataPtr) {
-			doMainView(&_closeDataPtr);
+			doMainView();
 
 			_anim->_doBlack = true;
 			_closeDataPtr = nullptr;
@@ -748,7 +748,7 @@ void LabEngine::processMainButton(uint16 &curInv, uint16 &lastInv, uint16 &oldDi
 		oldDirection = _direction;
 
 		newDir = processArrow(_direction, buttonId - 6);
-		doTurn(_direction, newDir, &_closeDataPtr);
+		doTurn(_direction, newDir);
 		_anim->_doBlack = true;
 		_direction = newDir;
 		forceDraw = true;
@@ -759,7 +759,7 @@ void LabEngine::processMainButton(uint16 &curInv, uint16 &lastInv, uint16 &oldDi
 		_closeDataPtr = nullptr;
 		oldRoomNum = _roomNum;
 
-		if (doGoForward(&_closeDataPtr)) {
+		if (doGoForward()) {
 			if (oldRoomNum == _roomNum)
 				_anim->_doBlack = true;
 		} else {
@@ -996,7 +996,7 @@ void LabEngine::performAction(uint16 actionMode, Common::Point curPos, uint16 &c
 	case 5:
 		if (_conditions->in(curInv)) {
 			// Use an item on something else
-			if (doOperateRule(curPos, curInv, &_closeDataPtr)) {
+			if (doOperateRule(curPos, curInv)) {
 				_curFileName = _newFileName;
 
 				if (!_conditions->in(curInv))
