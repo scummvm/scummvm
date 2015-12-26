@@ -232,7 +232,7 @@ bool LabEngine::takeItem(Common::Point pos, CloseDataPtr *closePtrList) {
 	return false;
 }
 
-void LabEngine::doActions(const ActionList &actionList, CloseDataPtr *closePtrList) {
+void LabEngine::doActions(const ActionList &actionList) {
 	ActionList::const_iterator action;
 	for (action = actionList.begin(); action != actionList.end(); ++action) {
 		updateMusicAndEvents();
@@ -274,7 +274,7 @@ void LabEngine::doActions(const ActionList &actionList, CloseDataPtr *closePtrLi
 			error("Unused opcode kActionShowBitmap has been called");
 
 		case kActionTransition:
-			_graphics->doTransition((TransitionType)action->_param1, closePtrList, action->_messages[0].c_str());
+			_graphics->doTransition((TransitionType)action->_param1, &_closeDataPtr, action->_messages[0].c_str());
 			break;
 
 		case kActionNoUpdate:
@@ -287,7 +287,7 @@ void LabEngine::doActions(const ActionList &actionList, CloseDataPtr *closePtrLi
 			break;
 
 		case kActionShowCurPict: {
-			Common::String test = getPictName(closePtrList);
+			Common::String test = getPictName(&_closeDataPtr);
 
 			if (test != _curFileName) {
 				_curFileName = test;
@@ -312,7 +312,7 @@ void LabEngine::doActions(const ActionList &actionList, CloseDataPtr *closePtrLi
 			break;
 
 		case kActionCShowMessage:
-			if (!*closePtrList)
+			if (!_closeDataPtr)
 				_graphics->drawMessage(action->_messages[0], true);
 			break;
 
@@ -324,7 +324,7 @@ void LabEngine::doActions(const ActionList &actionList, CloseDataPtr *closePtrLi
 			if (action->_param1 & 0x8000) {
 				// This is a Wyrmkeep Windows trial version, thus stop at this
 				// point, since we can't check for game payment status
-				_graphics->readPict(getPictName(closePtrList));
+				_graphics->readPict(getPictName(&_closeDataPtr));
 				GUI::MessageDialog trialMessage("This is the end of the trial version. You can play the full game using the original interpreter from Wyrmkeep");
 				trialMessage.runModal();
 				break;
@@ -332,21 +332,21 @@ void LabEngine::doActions(const ActionList &actionList, CloseDataPtr *closePtrLi
 
 			_roomNum   = action->_param1;
 			_direction = action->_param2 - 1;
-			*closePtrList = nullptr;
+			_closeDataPtr = nullptr;
 			_anim->_doBlack = true;
 			break;
 
 		case kActionSetCloseup: {
 			Common::Point curPos = Common::Point(_utils->scaleX(action->_param1), _utils->scaleY(action->_param2));
-				CloseDataPtr tmpClosePtr = getObject(curPos, *closePtrList);
+				CloseDataPtr tmpClosePtr = getObject(curPos, _closeDataPtr);
 
 				if (tmpClosePtr)
-					*closePtrList = tmpClosePtr;
+					_closeDataPtr = tmpClosePtr;
 			}
 			break;
 
 		case kActionMainView:
-			*closePtrList = nullptr;
+			_closeDataPtr = nullptr;
 			break;
 
 		case kActionSubInv:
@@ -504,7 +504,7 @@ bool LabEngine::doActionRuleSub(int16 action, int16 roomNum, CloseDataPtr closeP
 					  ((rule->_param2 == 0) && allowDefaults)) ||
 					  ((action == 1) && (rule->_param2 == -closePtr->_closeUpType))) {
 					if (checkConditions(rule->_condition)) {
-						doActions(rule->_actionList, &_closeDataPtr);
+						doActions(rule->_actionList);
 						return true;
 					}
 				}
@@ -550,7 +550,7 @@ bool LabEngine::doOperateRuleSub(int16 itemNum, int16 roomNum, CloseDataPtr clos
 					  ((rule->_param1 == itemNum) || ((rule->_param1 == 0) && allowDefaults)) &&
 						((rule->_param2 == closePtr->_closeUpType) || ((rule->_param2 == 0) && allowDefaults))) {
 					if (checkConditions(rule->_condition)) {
-						doActions(rule->_actionList, &_closeDataPtr);
+						doActions(rule->_actionList);
 						return true;
 					}
 				}
@@ -594,7 +594,7 @@ bool LabEngine::doGoForward() {
 	for (RuleList::iterator rule = rules.begin(); rule != rules.end(); ++rule) {
 		if ((rule->_ruleType == kRuleTypeGoForward) && (rule->_param1 == (_direction + 1))) {
 			if (checkConditions(rule->_condition)) {
-				doActions(rule->_actionList, &_closeDataPtr);
+				doActions(rule->_actionList);
 				return true;
 			}
 		}
@@ -614,7 +614,7 @@ bool LabEngine::doTurn(uint16 from, uint16 to) {
 			  ((rule->_ruleType == kRuleTypeTurnFromTo) &&
 			  (rule->_param1 == from) && (rule->_param2 == to))) {
 			if (checkConditions(rule->_condition)) {
-				doActions(rule->_actionList, &_closeDataPtr);
+				doActions(rule->_actionList);
 				return true;
 			}
 		}
@@ -628,7 +628,7 @@ bool LabEngine::doMainView() {
 	for (RuleList::iterator rule = rules.begin(); rule != rules.end(); ++rule) {
 		if (rule->_ruleType == kRuleTypeGoMainView) {
 			if (checkConditions(rule->_condition)) {
-				doActions(rule->_actionList, &_closeDataPtr);
+				doActions(rule->_actionList);
 				return true;
 			}
 		}

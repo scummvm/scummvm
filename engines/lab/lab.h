@@ -240,7 +240,7 @@ private:
 	/**
 	 * Processes the action list.
 	 */
-	void doActions(const ActionList &actionList, CloseDataPtr *closePtrList);
+	void doActions(const ActionList &actionList);
 
 	/**
 	 * Goes through the rules if an action is taken.
