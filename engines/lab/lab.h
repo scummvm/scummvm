@@ -87,7 +87,6 @@ struct CrumbData {
 
 #define MAX_CRUMBS          128
 
-typedef CloseData *CloseDataPtr;
 typedef Common::List<Rule> RuleList;
 typedef Common::List<Action> ActionList;
 typedef Common::List<CloseData> CloseDataList;
@@ -150,7 +149,7 @@ private:
 	Common::String _newFileName;
 	Common::String _monitorTextFilename;
 
-	CloseDataPtr _closeDataPtr;
+	const CloseData *_closeDataPtr;
 	ButtonList _journalButtonList;
 	ButtonList _mapButtonList;
 	Image *_imgMap, *_imgRoom, *_imgUpArrowRoom, *_imgDownArrowRoom, *_imgBridge;
@@ -250,12 +249,12 @@ private:
 	/**
 	 * Does the work for doActionRule.
 	 */
-	bool doActionRuleSub(int16 action, int16 roomNum, CloseDataPtr closePtr, bool allowDefaults);
+	bool doActionRuleSub(int16 action, int16 roomNum, const CloseData *closePtr, bool allowDefaults);
 
 	/**
 	 * Checks whether the close up is one of the special case closeups.
 	 */
-	bool doCloseUp(CloseDataPtr closePtr);
+	bool doCloseUp(const CloseData *closePtr);
 
 	/**
 	 * Goes through the rules if the user tries to go forward.
@@ -290,7 +289,7 @@ private:
 	/**
 	 * Does the work for doActionRule.
 	 */
-	bool doOperateRuleSub(int16 itemNum, int16 roomNum, CloseDataPtr closePtr, bool allowDefaults);
+	bool doOperateRuleSub(int16 itemNum, int16 roomNum, const CloseData *closePtr, bool allowDefaults);
 
 	/**
 	 * Goes through the rules if the user tries to operate an item on an object.
@@ -316,7 +315,7 @@ private:
 	/**
 	 * Draws the current direction to the screen.
 	 */
-	void drawDirection(CloseDataPtr closePtr);
+	void drawDirection(const CloseData *closePtr);
 
 	/**
 	 * Draws the journal from page x.
@@ -346,7 +345,7 @@ private:
 	/**
 	 * Draws the message for the room.
 	 */
-	void drawRoomMessage(uint16 curInv, CloseDataPtr closePtr);
+	void drawRoomMessage(uint16 curInv, const CloseData *closePtr);
 	void drawStaticMessage(byte index);
 
 	/**
@@ -360,7 +359,7 @@ private:
 	 * some of the closeups have the same hit boxes, then this returns the first
 	 * occurrence of the object with the same hit box.
 	 */
-	CloseDataPtr findClosePtrMatch(CloseDataPtr closePtr, CloseDataList &list);
+	const CloseData *findClosePtrMatch(const CloseData *closePtr, const CloseDataList &list);
 
 	/**
 	 * Checks if a floor has been visited.
@@ -390,7 +389,7 @@ private:
 	/**
 	 * Gets an object, if any, from the user's click on the screen.
 	 */
-	CloseData *getObject(Common::Point pos, CloseDataPtr closePtr);
+	const CloseData *getObject(Common::Point pos, const CloseData *closePtr);
 
 	/**
 	 * Returns the floor to show when the up arrow is pressed
@@ -465,7 +464,7 @@ private:
 	/**
 	 * Sets the current close up data.
 	 */
-	void setCurrentClose(Common::Point pos, CloseDataPtr *closePtrList, bool useAbsoluteCoords, bool next=false);
+	void setCurrentClose(Common::Point pos, const CloseData **closePtrList, bool useAbsoluteCoords, bool next=false);
 
 	/**
 	 * Takes the currently selected item.

@@ -103,7 +103,7 @@ void LabEngine::setQuarters(uint16 quarters) {
 	_inventory[kItemQuarter]._quantity = quarters;
 }
 
-void LabEngine::drawRoomMessage(uint16 curInv, CloseDataPtr closePtr) {
+void LabEngine::drawRoomMessage(uint16 curInv, const CloseData *closePtr) {
 	if (_lastTooLong) {
 		_lastTooLong = false;
 		return;
@@ -165,7 +165,7 @@ void LabEngine::eatMessages() {
 	} while (msg && !shouldQuit());
 }
 
-bool LabEngine::doCloseUp(CloseDataPtr closePtr) {
+bool LabEngine::doCloseUp(const CloseData *closePtr) {
 	if (!closePtr)
 		return false;
 
@@ -598,7 +598,7 @@ bool LabEngine::processEvent(MessageClass tmpClass, uint16 code, uint16 qualifie
 		mayShowCrumbIndicator();
 		_graphics->screenUpdate();
 	} else if (code == Common::KEYCODE_TAB) {
-		CloseDataPtr tmpClosePtr = _closeDataPtr;
+		const CloseData *tmpClosePtr = _closeDataPtr;
 
 		// get next close-up in list after the one pointed to by curPos
 		setCurrentClose(curPos, &tmpClosePtr, true, true);
@@ -979,7 +979,7 @@ void LabEngine::performAction(uint16 actionMode, Common::Point curPos, uint16 &c
 
 	case 4: {
 		// Look at closeups
-		CloseDataPtr tmpClosePtr = _closeDataPtr;
+		const CloseData *tmpClosePtr = _closeDataPtr;
 		setCurrentClose(curPos, &tmpClosePtr, true);
 
 		if (_closeDataPtr == tmpClosePtr) {

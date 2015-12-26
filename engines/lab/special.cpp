@@ -339,7 +339,7 @@ void LabEngine::drawMonText(const char *text, TextFont *monitorFont, Common::Rec
 
 void LabEngine::processMonitor(const char *ntext, TextFont *monitorFont, bool isInteractive, Common::Rect textRect) {
 	Common::String startFileName = _monitorTextFilename;
-	CloseDataPtr startClosePtr = _closeDataPtr, lastClosePtr[10];
+	const CloseData *startClosePtr = _closeDataPtr, *lastClosePtr[10];
 	uint16 depth = 0;
 
 	lastClosePtr[0] = _closeDataPtr;
@@ -414,7 +414,7 @@ void LabEngine::processMonitor(const char *ntext, TextFont *monitorFont, bool is
 						drawMonText(ntext, monitorFont, textRect, isInteractive);
 					}
 				} else if (isInteractive) {
-					CloseDataPtr tmpClosePtr = _closeDataPtr;
+					const CloseData *tmpClosePtr = _closeDataPtr;
 					mouseY = 64 + (mouseY / _monitorButtonHeight) * 42;
 					mouseX = 101;
 					setCurrentClose(Common::Point(mouseX, mouseY), &_closeDataPtr, false);

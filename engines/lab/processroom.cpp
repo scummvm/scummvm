@@ -67,14 +67,14 @@ ViewData *LabEngine::getViewData(uint16 roomNum, uint16 direction) {
 	error("No view with matching condition found");
 }
 
-CloseData *LabEngine::getObject(Common::Point pos, CloseDataPtr closePtr) {
-	CloseDataList *list;
+const CloseData *LabEngine::getObject(Common::Point pos, const CloseData *closePtr) {
+	const CloseDataList *list;
 	if (!closePtr)
 		list = &(getViewData(_roomNum, _direction)->_closeUps);
 	else
 		list = &(closePtr->_subCloseUps);
 
-	CloseDataList::iterator wrkClosePtr;
+	CloseDataList::const_iterator wrkClosePtr;
 
 	for (wrkClosePtr = list->begin(); wrkClosePtr != list->end(); ++wrkClosePtr) {
 		Common::Rect objRect;
@@ -86,8 +86,8 @@ CloseData *LabEngine::getObject(Common::Point pos, CloseDataPtr closePtr) {
 	return nullptr;
 }
 
-CloseDataPtr LabEngine::findClosePtrMatch(CloseDataPtr closePtr, CloseDataList &list) {
-	CloseDataList::iterator i;
+const CloseData *LabEngine::findClosePtrMatch(const CloseData *closePtr, const CloseDataList &list) {
+	CloseDataList::const_iterator i;
 
 	for (i = list.begin(); i != list.end(); ++i) {
 		if ((closePtr->_x1 == i->_x1) && (closePtr->_x2 == i->_x2) &&
@@ -95,7 +95,7 @@ CloseDataPtr LabEngine::findClosePtrMatch(CloseDataPtr closePtr, CloseDataList &
 			  (closePtr->_depth == i->_depth))
 			return &(*i);
 
-		CloseDataPtr resClosePtr = findClosePtrMatch(closePtr, i->_subCloseUps);
+		const CloseData *resClosePtr = findClosePtrMatch(closePtr, i->_subCloseUps);
 
 		if (resClosePtr)
 			return resClosePtr;
@@ -117,7 +117,7 @@ Common::String LabEngine::getPictName(bool useClose) {
 	return viewPtr->_graphicName;
 }
 
-void LabEngine::drawDirection(CloseDataPtr closePtr) {
+void LabEngine::drawDirection(const CloseData *closePtr) {
 	if (closePtr && !closePtr->_message.empty()) {
 		_graphics->drawMessage(closePtr->_message, false);
 		return;
@@ -171,15 +171,15 @@ uint16 LabEngine::processArrow(uint16 curDirection, uint16 arrow) {
 	return curDirection;
 }
 
-void LabEngine::setCurrentClose(Common::Point pos, CloseDataPtr *closePtrList, bool useAbsoluteCoords, bool next) {
-	CloseDataList *list;
+void LabEngine::setCurrentClose(Common::Point pos, const CloseData **closePtrList, bool useAbsoluteCoords, bool next) {
+	const CloseDataList *list;
 
 	if (!*closePtrList)
 		list = &(getViewData(_roomNum, _direction)->_closeUps);
 	else
 		list = &((*closePtrList)->_subCloseUps);
 
-	CloseDataList::iterator closePtr;
+	CloseDataList::const_iterator closePtr;
 	for (closePtr = list->begin(); closePtr != list->end(); ++closePtr) {
 		Common::Rect target;
 		if (!useAbsoluteCoords)
@@ -210,7 +210,7 @@ void LabEngine::setCurrentClose(Common::Point pos, CloseDataPtr *closePtrList, b
 }
 
 bool LabEngine::takeItem(Common::Point pos) {
-	CloseDataList *list;
+	const CloseDataList *list;
 	if (!_closeDataPtr) {
 		list = &(getViewData(_roomNum, _direction)->_closeUps);
 	} else if (_closeDataPtr->_closeUpType < 0) {
@@ -219,7 +219,7 @@ bool LabEngine::takeItem(Common::Point pos) {
 	} else
 		list = &(_closeDataPtr->_subCloseUps);
 
-	CloseDataList::iterator closePtr;
+	CloseDataList::const_iterator closePtr;
 	for (closePtr = list->begin(); closePtr != list->end(); ++closePtr) {
 		Common::Rect objRect;
 		objRect = _utils->rectScale(closePtr->_x1, closePtr->_y1, closePtr->_x2, closePtr->_y2);
@@ -335,7 +335,7 @@ void LabEngine::doActions(const ActionList &actionList) {
 
 		case kActionSetCloseup: {
 			Common::Point curPos = Common::Point(_utils->scaleX(action->_param1), _utils->scaleY(action->_param2));
-				CloseDataPtr tmpClosePtr = getObject(curPos, _closeDataPtr);
+				const CloseData *tmpClosePtr = getObject(curPos, _closeDataPtr);
 
 				if (tmpClosePtr)
 					_closeDataPtr = tmpClosePtr;
@@ -469,7 +469,7 @@ void LabEngine::doActions(const ActionList &actionList) {
 	_music->stopSoundEffect();
 }
 
-bool LabEngine::doActionRuleSub(int16 action, int16 roomNum, CloseDataPtr closePtr, bool allowDefaults) {
+bool LabEngine::doActionRuleSub(int16 action, int16 roomNum, const CloseData *closePtr, bool allowDefaults) {
 	action++;
 
 	if (closePtr) {
@@ -504,7 +504,7 @@ bool LabEngine::doActionRule(Common::Point pos, int16 action, int16 roomNum) {
 	else
 		_newFileName = _curFileName;
 
-	CloseDataPtr curClosePtr = getObject(pos, _closeDataPtr);
+	const CloseData *curClosePtr = getObject(pos, _closeDataPtr);
 
 	if (doActionRuleSub(action, roomNum, curClosePtr, false))
 		return true;
@@ -518,7 +518,7 @@ bool LabEngine::doActionRule(Common::Point pos, int16 action, int16 roomNum) {
 	return false;
 }
 
-bool LabEngine::doOperateRuleSub(int16 itemNum, int16 roomNum, CloseDataPtr closePtr, bool allowDefaults) {
+bool LabEngine::doOperateRuleSub(int16 itemNum, int16 roomNum, const CloseData *closePtr, bool allowDefaults) {
 	if (closePtr)
 		if (closePtr->_closeUpType > 0) {
 			RuleList *rules = &(_rooms[roomNum]._rules);
@@ -545,7 +545,7 @@ bool LabEngine::doOperateRuleSub(int16 itemNum, int16 roomNum, CloseDataPtr clos
 
 bool LabEngine::doOperateRule(Common::Point pos, int16 ItemNum) {
 	_newFileName = NOFILE;
-	CloseDataPtr closePtr = getObject(pos, _closeDataPtr);
+	const CloseData *closePtr = getObject(pos, _closeDataPtr);
 
 	if (doOperateRuleSub(ItemNum, _roomNum, closePtr, false))
 		return true;
