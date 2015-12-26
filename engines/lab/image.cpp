@@ -73,24 +73,18 @@ void Image::blitBitmap(uint16 srcX, uint16 srcY, Image *imgDest,
 		byte *dest = destBuffer + destY * destWidth + destX;
 
 		if (!masked) {
-			while (clipHeight-- > 0) {
+			for (int i = 0; i < clipHeight; i++) {
 				memcpy(dest, img, clipWidth);
 				img += _width;
 				dest += destWidth;
 			}
 		} else {
-			while (clipHeight-- > 0) {
-				byte *maskedImg = img;
-				byte *maskedDest = dest;
-				int maskedWidth = clipWidth;
-
-				while (maskedWidth-- > 0) {
-					byte c = *maskedImg++;
+			for (int i = 0; i < clipHeight; i++) {
+				for (int j = 0; j < clipWidth; j++) {
+					byte c = img[j];
 
 					if (c)
-						*maskedDest++ = c - 1;
-					else
-						maskedDest++;
+						dest[j] = c - 1;
 				}
 
 				img += _width;
