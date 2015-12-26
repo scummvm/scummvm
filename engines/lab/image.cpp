@@ -54,47 +54,47 @@ Image::~Image() {
 	delete[] _imageData;
 }
 
-void Image::blitBitmap(uint16 xs, uint16 ys, Image *imDest,
-	uint16 xd, uint16 yd, uint16 width, uint16 height, byte masked) {
-	int w = width;
-	int h = height;
-	int destWidth = (imDest) ? imDest->_width : _vm->_graphics->_screenWidth;
-	int destHeight = (imDest) ? imDest->_height : _vm->_graphics->_screenHeight;
-	byte *destBuffer = (imDest) ? imDest->_imageData : _vm->_graphics->getCurrentDrawingBuffer();
+void Image::blitBitmap(uint16 srcX, uint16 srcY, Image *imgDest,
+	uint16 destX, uint16 destY, uint16 width, uint16 height, byte masked) {
+	int clipWidth = width;
+	int clipHeight = height;
+	int destWidth = (imgDest) ? imgDest->_width : _vm->_graphics->_screenWidth;
+	int destHeight = (imgDest) ? imgDest->_height : _vm->_graphics->_screenHeight;
+	byte *destBuffer = (imgDest) ? imgDest->_imageData : _vm->_graphics->getCurrentDrawingBuffer();
 
-	if (xd + w > destWidth)
-		w = destWidth - xd;
+	if (destX + clipWidth > destWidth)
+		clipWidth = destWidth - destX;
 
-	if (yd + h > destHeight)
-		h = destHeight - yd;
+	if (destY + clipHeight > destHeight)
+		clipHeight = destHeight - destY;
 
-	if ((w > 0) && (h > 0)) {
-		byte *s = _imageData + ys * _width + xs;
-		byte *d = destBuffer + yd * destWidth + xd;
+	if ((clipWidth > 0) && (clipHeight > 0)) {
+		byte *img = _imageData + srcY * _width + srcX;
+		byte *dest = destBuffer + destY * destWidth + destX;
 
 		if (!masked) {
-			while (h-- > 0) {
-				memcpy(d, s, w);
-				s += _width;
-				d += destWidth;
+			while (clipHeight-- > 0) {
+				memcpy(dest, img, clipWidth);
+				img += _width;
+				dest += destWidth;
 			}
 		} else {
-			while (h-- > 0) {
-				byte *ss = s;
-				byte *dd = d;
-				int ww = w;
+			while (clipHeight-- > 0) {
+				byte *maskedImg = img;
+				byte *maskedDest = dest;
+				int maskedWidth = clipWidth;
 
-				while (ww-- > 0) {
-					byte c = *ss++;
+				while (maskedWidth-- > 0) {
+					byte c = *maskedImg++;
 
 					if (c)
-						*dd++ = c - 1;
+						*maskedDest++ = c - 1;
 					else
-						dd++;
+						maskedDest++;
 				}
 
-				s += _width;
-				d += destWidth;
+				img += _width;
+				dest += destWidth;
 			}
 		}
 	}
@@ -109,23 +109,23 @@ void Image::drawMaskImage(uint16 x, uint16 y) {
 }
 
 void Image::readScreenImage(uint16 x, uint16 y) {
-	int w = _width;
-	int h = _height;
+	int clipWidth = _width;
+	int clipHeight = _height;
 
-	if (x + w > _vm->_graphics->_screenWidth)
-		w = _vm->_graphics->_screenWidth - x;
+	if (x + clipWidth > _vm->_graphics->_screenWidth)
+		clipWidth = _vm->_graphics->_screenWidth - x;
 
-	if (y + h > _vm->_graphics->_screenHeight)
-		h = _vm->_graphics->_screenHeight - y;
+	if (y + clipHeight > _vm->_graphics->_screenHeight)
+		clipHeight = _vm->_graphics->_screenHeight - y;
 
-	if ((w > 0) && (h > 0)) {
-		byte *s = _imageData;
-		byte *d = _vm->_graphics->getCurrentDrawingBuffer() + y * _vm->_graphics->_screenWidth + x;
+	if ((clipWidth > 0) && (clipHeight > 0)) {
+		byte *img = _imageData;
+		byte *screen = _vm->_graphics->getCurrentDrawingBuffer() + y * _vm->_graphics->_screenWidth + x;
 
-		while (h-- > 0) {
-			memcpy(s, d, w);
-			s += _width;
-			d += _vm->_graphics->_screenWidth;
+		while (clipHeight-- > 0) {
+			memcpy(img, screen, clipWidth);
+			img += _width;
+			screen += _vm->_graphics->_screenWidth;
 		}
 	}
 }

@@ -70,7 +70,7 @@ public:
 	/**
 	 * Blits a piece of one image to another.
 	 */
-	void blitBitmap(uint16 xs, uint16 ys, Image *ImDest, uint16 xd, uint16 yd, uint16 width, uint16 height, byte masked);
+	void blitBitmap(uint16 srcX, uint16 srcY, Image *imgDest, uint16 destX, uint16 destY, uint16 width, uint16 height, byte masked);
 };
 
 } // End of namespace Lab
