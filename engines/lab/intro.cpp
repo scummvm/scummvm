@@ -262,16 +262,13 @@ void Intro::play() {
 	_vm->_graphics->_fadePalette = palette;
 
 	for (int i = 0; i < 16; i++) {
-		if (_quitIntro)
-			break;
-
 		palette[i] = ((_vm->_anim->_diffPalette[i * 3] >> 2) << 8) +
 					((_vm->_anim->_diffPalette[i * 3 + 1] >> 2) << 4) +
 					(_vm->_anim->_diffPalette[i * 3 + 2] >> 2);
 	}
-
 	_vm->updateMusicAndEvents();
-	_vm->_graphics->fade(true);
+	if (!_quitIntro)
+		_vm->_graphics->fade(true);
 
 	for (int times = 0; times < 150; times++) {
 		if (_quitIntro)
@@ -289,9 +286,11 @@ void Intro::play() {
 		_vm->waitTOF();
 	}
 
-	_vm->_graphics->fade(false);
-	_vm->_graphics->blackAllScreen();
-	_vm->updateMusicAndEvents();
+	if (!_quitIntro) {
+		_vm->_graphics->fade(false);
+		_vm->_graphics->blackAllScreen();
+		_vm->updateMusicAndEvents();
+	}
 
 	nReadPict("Title.A");
 	nReadPict("AB");
