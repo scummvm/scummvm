@@ -57,8 +57,9 @@ Gui::~Gui() {
 }
 
 void Gui::drawBox(Graphics::Surface *g, int x, int y, int w, int h) {
-	Common::Rect r(x, y, x + w, y + h);
+	Common::Rect r(x, y, x + w + 1, y + h + 1);
 
+	g->fillRect(r, kColorWhite);
 	g->frameRect(r, kColorBlack);
 }
 
