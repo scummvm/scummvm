@@ -620,7 +620,7 @@ bool LabEngine::processKey(IntuiMessage *curMsg, uint32 msgClass, uint16 &qualif
 		_droppingCrumbs = true;
 		mayShowCrumbIndicator();
 		_graphics->screenUpdate();
-	} else if ((code == Common::KEYCODE_f) || (code == Common::KEYCODE_r)) {
+	} else if (getPlatform() == Common::kPlatformWindows && (code == Common::KEYCODE_f || code == Common::KEYCODE_r)) {
 		// Follow bread crumbs
 		if (_droppingCrumbs) {
 			if (_numCrumbs > 0) {
