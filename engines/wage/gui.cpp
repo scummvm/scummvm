@@ -104,7 +104,9 @@ void Gui::paintBorder(Graphics::Surface *g, int x, int y, int width, int height,
 			for (int yy = 0; yy < ARROW_H; yy++) {
 				for (int xx = 0; xx < ARROW_W; xx++) {
 					if (arrowPixels[yy][xx] != 0) {
-						g->hLine(x1+xx, y1+yy, 1, 0);
+						g->hLine(x1+xx, y1+yy, x1+xx+1, kColorBlack);
+					} else {
+						g->hLine(x1+xx, y1+yy, x1+xx+1, kColorWhite);
 					}
 				}
 			}
@@ -113,7 +115,9 @@ void Gui::paintBorder(Graphics::Surface *g, int x, int y, int width, int height,
 			for (int yy = 0; yy < ARROW_H; yy++) {
 				for (int xx = 0; xx < ARROW_W; xx++) {
 					if (arrowPixels[ARROW_H-yy-1][xx] != 0) {
-						g->hLine(x1+xx, y1+yy, 1, 0);
+						g->hLine(x1+xx, y1+yy, x1+xx+1, kColorBlack);
+					} else {
+						g->hLine(x1+xx, y1+yy, x1+xx+1, kColorWhite);
 					}
 				}
 			}

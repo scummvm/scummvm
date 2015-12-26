@@ -129,7 +129,7 @@ Common::Error WageEngine::run() {
 
 	scene->paint(&screen);
 	_gui->paintBorder(&screen, 0, 0, scene->_design->getBounds()->width(), scene->_design->getBounds()->height(),
-				true, false, true, false);
+				true, true, true, false);
 
 	g_system->copyRectToScreen(screen.getPixels(), screen.pitch, 0, 0, screen.w, screen.h);
 
