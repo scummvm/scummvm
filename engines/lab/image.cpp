@@ -48,10 +48,19 @@ Image::Image(Common::File *s, LabEngine *vm) : _vm(vm) {
 
 	_imageData = new byte[size];
 	s->read(_imageData, size);
+	_autoFree = true;
 }
 
 Image::~Image() {
-	delete[] _imageData;
+	if (_autoFree)
+		delete[] _imageData;
+}
+
+void Image::setData(byte *d, bool autoFree) {
+	if (_autoFree)
+		delete[] _imageData;
+	_imageData = d;
+	_autoFree = autoFree;
 }
 
 void Image::blitBitmap(uint16 srcX, uint16 srcY, Image *imgDest,

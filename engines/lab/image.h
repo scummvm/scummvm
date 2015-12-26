@@ -47,10 +47,12 @@ public:
 	uint16 _height;
 	byte *_imageData;
 
-	Image(LabEngine *vm) : _width(0), _height(0), _imageData(nullptr), _vm(vm) {}
-	Image(int w, int h, byte *d, LabEngine *vm) : _width(w), _height(h), _imageData(d), _vm(vm) {}
+	Image(LabEngine *vm) : _width(0), _height(0), _imageData(nullptr), _vm(vm), _autoFree(true) {}
+	Image(int w, int h, byte *d, LabEngine *vm, bool autoFree = true) : _width(w), _height(h), _imageData(d), _vm(vm), _autoFree(autoFree) {}
 	Image(Common::File *s, LabEngine *vm);
 	~Image();
+
+	void setData(byte *d, bool autoFree = true);
 
 	/**
 	 * Draws an image to the screen.
@@ -71,6 +73,9 @@ public:
 	 * Blits a piece of one image to another.
 	 */
 	void blitBitmap(uint16 srcX, uint16 srcY, Image *imgDest, uint16 destX, uint16 destY, uint16 width, uint16 height, byte masked);
+
+private:
+	bool _autoFree; ///< Free _imageData in destructor?
 };
 
 } // End of namespace Lab

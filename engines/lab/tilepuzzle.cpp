@@ -308,7 +308,7 @@ void TilePuzzle::changeCombination(uint16 number) {
 
 	uint16 combnum = _combination[number];
 
-	display._imageData = _vm->_graphics->getCurrentDrawingBuffer();
+	display.setData(_vm->_graphics->getCurrentDrawingBuffer(), false);
 	display._width     = _vm->_graphics->_screenWidth;
 	display._height    = _vm->_graphics->_screenHeight;
 
@@ -321,13 +321,10 @@ void TilePuzzle::changeCombination(uint16 number) {
 		} else
 			_vm->waitTOF();
 
-		display._imageData = _vm->_graphics->getCurrentDrawingBuffer();
+		display.setData(_vm->_graphics->getCurrentDrawingBuffer(), false);
 		_vm->_graphics->scrollDisplayY(2, _vm->_utils->vgaScaleX(COMBINATION_X[number]), _vm->_utils->vgaScaleY(65), _vm->_utils->vgaScaleX(COMBINATION_X[number]) + (_numberImages[combnum])->_width - 1, _vm->_utils->vgaScaleY(65) + (_numberImages[combnum])->_height, buffer);
 		_numberImages[combnum]->blitBitmap(0, (_numberImages[combnum])->_height - (2 * i), &(display), _vm->_utils->vgaScaleX(COMBINATION_X[number]), _vm->_utils->vgaScaleY(65), (_numberImages[combnum])->_width, 2, false);
 	}
-
-	// Prevent the Image destructor from deleting the display buffer
-	display._imageData = nullptr;
 
 	delete[] buffer;
 

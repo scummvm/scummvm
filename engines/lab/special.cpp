@@ -134,7 +134,7 @@ void LabEngine::loadJournalData() {
 	delete journalFile;
 
 	_anim->_noPalChange = true;
-	_journalBackImage->_imageData = new byte[_graphics->_screenBytesPerPage];
+	_journalBackImage->setData(new byte[_graphics->_screenBytesPerPage]);
 	_graphics->readPict("P:Journal.pic", true, false, _journalBackImage->_imageData);
 	_anim->_noPalChange = false;
 
@@ -263,7 +263,7 @@ void LabEngine::doJournal() {
 
 	_journalBackImage->_width = _graphics->_screenWidth;
 	_journalBackImage->_height = _graphics->_screenHeight;
-	_journalBackImage->_imageData = nullptr;
+	_journalBackImage->setData(nullptr, true);
 
 	updateMusicAndEvents();
 	loadJournalData();
@@ -276,8 +276,8 @@ void LabEngine::doJournal() {
 	_event->mouseHide();
 
 	delete[] _blankJournal;
-	delete[] _journalBackImage->_imageData;
-	_blankJournal = _journalBackImage->_imageData = nullptr;
+	_blankJournal = nullptr;
+	_journalBackImage->setData(nullptr, true);
 
 	_event->freeButtonList(&_journalButtonList);
 	_graphics->freeFont(&_journalFont);

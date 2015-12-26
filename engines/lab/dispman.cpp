@@ -782,12 +782,12 @@ void DisplayMan::doTransWipe(const Common::String filename) {
 	Image imgSource(_vm);
 	imgSource._width = _screenWidth;
 	imgSource._height = lastY;
-	imgSource._imageData = bitMapBuffer;
+	imgSource.setData(bitMapBuffer, true);
 
 	Image imgDest(_vm);
 	imgDest._width = _screenWidth;
 	imgDest._height = _screenHeight;
-	imgDest._imageData = getCurrentDrawingBuffer();
+	imgDest.setData(getCurrentDrawingBuffer(), false);
 
 	for (int j = 0; j < 2; j++) {
 		for (int i = 0; i < 2; i++) {
@@ -800,7 +800,7 @@ void DisplayMan::doTransWipe(const Common::String filename) {
 					linesDone = 0;
 				}
 
-				imgDest._imageData = getCurrentDrawingBuffer();
+				imgDest.setData(getCurrentDrawingBuffer(), false);
 
 				if (j == 0) {
 					imgSource.blitBitmap(0, curY, &imgDest, 0, curY, _screenWidth, 2, false);
@@ -814,9 +814,6 @@ void DisplayMan::doTransWipe(const Common::String filename) {
 			}	// while
 		}	// for i
 	}	// for j
-
-	// Prevent the Image destructor from deleting the drawing buffer
-	imgDest._imageData = nullptr;
 
 	// bitMapBuffer will be deleted by the Image destructor
 }
@@ -872,7 +869,7 @@ void DisplayMan::blackAllScreen() {
 
 void DisplayMan::scrollDisplayX(int16 dx, uint16 x1, uint16 y1, uint16 x2, uint16 y2, byte *buffer) {
 	Image img(_vm);
-	img._imageData = buffer;
+	img.setData(buffer, false);
 
 	if (x1 > x2)
 		SWAP<uint16>(x1, x2);
@@ -897,14 +894,11 @@ void DisplayMan::scrollDisplayX(int16 dx, uint16 x1, uint16 y1, uint16 x2, uint1
 
 		rectFill(x2 + dx + 1, y1, x2, y2, 0);
 	}
-
-	// Prevent the Image destructor from deleting the external buffer
-	img._imageData = nullptr;
 }
 
 void DisplayMan::scrollDisplayY(int16 dy, uint16 x1, uint16 y1, uint16 x2, uint16 y2, byte *buffer) {
 	Image img(_vm);
-	img._imageData = buffer;
+	img.setData(buffer, false);
 
 	if (x1 > x2)
 		SWAP<uint16>(x1, x2);
@@ -929,9 +923,6 @@ void DisplayMan::scrollDisplayY(int16 dy, uint16 x1, uint16 y1, uint16 x2, uint1
 
 		rectFill(x1, y2 + dy + 1, x2, y2, 0);
 	}
-
-	// Prevent the Image destructor from deleting the external buffer
-	img._imageData = nullptr;
 }
 
 uint16 DisplayMan::fadeNumIn(uint16 num, uint16 res, uint16 counter) {
