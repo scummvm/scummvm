@@ -555,11 +555,13 @@ bool LabEngine::processEvent(MessageClass tmpClass, uint16 code, uint16 qualifie
 
 	if (msgClass == kMessageRawKey && !_graphics->_longWinInFront) {
 		return processKey(curMsg, msgClass, qualifier, curPos, curInv, forceDraw, code);
-	} else if ((msgClass == kMessageRawKey || leftButtonClick || rightButtonClick) && _graphics->_longWinInFront) {
-		_graphics->_longWinInFront = false;
-		_graphics->drawPanel();
-		drawRoomMessage(curInv, _closeDataPtr);
-		_graphics->screenUpdate();
+	} else if (_graphics->_longWinInFront) {
+		if (msgClass == kMessageRawKey || leftButtonClick || rightButtonClick) {
+			_graphics->_longWinInFront = false;
+			_graphics->drawPanel();
+			drawRoomMessage(curInv, _closeDataPtr);
+			_graphics->screenUpdate();
+		}
 	} else if (msgClass == kMessageButtonUp) {
 		if (!_alternate)
 			processMainButton(curInv, lastInv, oldDirection, forceDraw, buttonId, actionMode);
