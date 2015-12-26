@@ -83,8 +83,6 @@ void LabEngine::loadMapData() {
 
 	Common::File *mapFile = _resource->openDataFile("Lab:Maps", MKTAG('M', 'A', 'P', '0'));
 	updateMusicAndEvents();
-	if (!_music->_loopSoundEffect)
-		_music->stopSoundEffect();
 
 	_maxRooms = mapFile->readUint16LE();
 	_maps = new MapData[_maxRooms + 1];	// will be freed when the user exits the map
@@ -339,9 +337,10 @@ void LabEngine::drawMap(uint16 curRoom, uint16 curMsg, uint16 floorNum, bool fad
 	for (int i = 1; i <= _maxRooms; i++) {
 		if ((_maps[i]._pageNumber == floorNum) && _roomsFound->in(i) && _maps[i]._x) {
 			drawRoomMap(i, (bool)(i == curRoom));
-			updateMusicAndEvents();
 		}
 	}
+
+	updateMusicAndEvents();
 
 	// Makes sure the X is drawn in corridors
 	// NOTE: this here on purpose just in case there's some weird

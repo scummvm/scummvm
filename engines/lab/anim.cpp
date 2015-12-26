@@ -80,6 +80,9 @@ void Anim::setOutputBuffer(byte *memoryBuffer) {
 	_outputBuffer = memoryBuffer;
 }
 
+uint16 Anim::getDIFFHeight() {
+	return _headerdata._height;
+}
 
 void Anim::diffNextFrame(bool onlyDiffData) {
 	if (_lastBlockHeader == 65535)
@@ -90,7 +93,7 @@ void Anim::diffNextFrame(bool onlyDiffData) {
 	byte *startOfBuf = _outputBuffer;
 	int bufPitch = _vm->_graphics->_screenWidth;
 
-	if (!_outputBuffer) {
+	if (!startOfBuf) {
 		startOfBuf = _vm->_graphics->getCurrentDrawingBuffer();
 		drawOnScreen = true;
 	}
@@ -217,7 +220,9 @@ void Anim::diffNextFrame(bool onlyDiffData) {
 			_sampleSpeed = _diffFile->readUint16LE();
 			_diffFile->skip(2);
 
-			_vm->_music->playSoundEffect(_sampleSpeed, _size, _diffFile);
+			// Sound effects embedded in animations are started here. These are
+			// usually animation-specific, like door opening sounds, and are not looped
+			_vm->_music->playSoundEffect(_sampleSpeed, _size, false, _diffFile);
 			break;
 
 		case 65535:

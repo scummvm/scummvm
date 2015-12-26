@@ -88,10 +88,6 @@ void DisplayMan::readPict(const Common::String filename, bool playOnce, bool onl
 	_vm->_anim->stopDiff();
 	loadPict(filename);
 	_vm->updateMusicAndEvents();
-
-	if (!_vm->_music->_loopSoundEffect)
-		_vm->_music->stopSoundEffect();
-
 	_vm->_anim->setOutputBuffer(memoryBuffer);
 	_vm->_anim->readDiff(_curBitmap, playOnce, onlyDiffData);
 }
@@ -677,20 +673,19 @@ void DisplayMan::doScrollWipe(const Common::String filename) {
 	uint16 nheight = height;
 	uint16 startLine = 0, onRow = 0;
 
-	while (onRow < _vm->_anim->_headerdata._height) {
+	while (onRow < _vm->_anim->getDIFFHeight()) {
 		_vm->updateMusicAndEvents();
 
 		if ((by > nheight) && nheight)
 			by = nheight;
 
-		if ((startLine + by) > (_vm->_anim->_headerdata._height - height - 1))
+		if ((startLine + by) > (_vm->_anim->getDIFFHeight() - height - 1))
 			break;
 
 		if (nheight)
 			nheight -= by;
 
 		copyPage(width, height, nheight, startLine, mem);
-
 		screenUpdate();
 
 		if (!nheight)
@@ -719,7 +714,7 @@ void DisplayMan::doScrollBounce() {
 	byte *mem = _vm->_anim->_scrollScreenBuffer;
 
 	_vm->updateMusicAndEvents();
-	int startLine = _vm->_anim->_headerdata._height - height - 1;
+	int startLine = _vm->_anim->getDIFFHeight() - height - 1;
 
 	for (int i = 0; i < 5; i++) {
 		_vm->updateMusicAndEvents();
@@ -832,19 +827,19 @@ void DisplayMan::doTransition(TransitionType transitionType, const Common::Strin
 	case kTransitionTransporter:
 		doTransWipe(filename);
 		break;
-	case kTransitionScrollWipe:
+	case kTransitionScrollWipe:		// only used in scene 7 (street, when teleporting to the surreal maze)
 		doScrollWipe(filename);
 		break;
-	case kTransitionScrollBlack:
+	case kTransitionScrollBlack:	// only used in scene 7 (street, when teleporting to the surreal maze)
 		doScrollBlack();
 		break;
-	case kTransitionScrollBounce:
+	case kTransitionScrollBounce:	// only used in scene 7 (street, when teleporting to the surreal maze)
 		doScrollBounce();
 		break;
-	case kTransitionReadFirstFrame:
+	case kTransitionReadFirstFrame:	// only used in scene 7 (street, when teleporting to the surreal maze)
 		readPict(filename, false);
 		break;
-	case kTransitionReadNextFrame:
+	case kTransitionReadNextFrame:	// only used in scene 7 (street, when teleporting to the surreal maze)
 		_vm->_anim->diffNextFrame();
 		break;
 	case kTransitionNone:

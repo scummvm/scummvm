@@ -221,7 +221,12 @@ void LabEngine::drawStaticMessage(byte index) {
 }
 
 void LabEngine::changeVolume(int delta) {
-	warning("STUB: changeVolume()");
+	int sfxPrev = _mixer->getVolumeForSoundType(Audio::Mixer::kSFXSoundType);
+	int musicPrev = _mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType);
+	int sfxNew = (delta > 0) ? MIN<int>(sfxPrev + 10, Audio::Mixer::kMaxMixerVolume) : MAX<int>(sfxPrev - 10, 0);
+	int musicNew = (delta > 0) ? MIN<int>(musicPrev + 10, Audio::Mixer::kMaxMixerVolume) : MAX<int>(musicPrev - 10, 0);
+	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, sfxNew);
+	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, musicNew);
 }
 
 void LabEngine::waitTOF() {
