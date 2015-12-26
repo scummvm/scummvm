@@ -312,7 +312,7 @@ void TilePuzzle::changeCombination(uint16 number) {
 	display._width     = _vm->_graphics->_screenWidth;
 	display._height    = _vm->_graphics->_screenHeight;
 
-	byte *buffer = new byte[_tiles[1]->_width * _tiles[1]->_height * 2];
+	byte *buffer = new byte[_numberImages[1]->_width * _numberImages[1]->_height * 2];
 
 	for (int i = 1; i <= (_numberImages[combnum]->_height / 2); i++) {
 		if (_vm->_isHiRes) {
