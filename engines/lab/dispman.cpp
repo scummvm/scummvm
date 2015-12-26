@@ -779,15 +779,15 @@ void DisplayMan::doTransWipe(const Common::String filename) {
 
 	setPalette(_vm->_anim->_diffPalette, 256);
 
-	Image imSource(_vm);
-	imSource._width = _screenWidth;
-	imSource._height = lastY;
-	imSource._imageData = bitMapBuffer;
+	Image imgSource(_vm);
+	imgSource._width = _screenWidth;
+	imgSource._height = lastY;
+	imgSource._imageData = bitMapBuffer;
 
-	Image imDest(_vm);
-	imDest._width = _screenWidth;
-	imDest._height = _screenHeight;
-	imDest._imageData = getCurrentDrawingBuffer();
+	Image imgDest(_vm);
+	imgDest._width = _screenWidth;
+	imgDest._height = _screenHeight;
+	imgDest._imageData = getCurrentDrawingBuffer();
 
 	for (int j = 0; j < 2; j++) {
 		for (int i = 0; i < 2; i++) {
@@ -800,14 +800,14 @@ void DisplayMan::doTransWipe(const Common::String filename) {
 					linesDone = 0;
 				}
 
-				imDest._imageData = getCurrentDrawingBuffer();
+				imgDest._imageData = getCurrentDrawingBuffer();
 
 				if (j == 0) {
-					imSource.blitBitmap(0, curY, &imDest, 0, curY, _screenWidth, 2, false);
+					imgSource.blitBitmap(0, curY, &imgDest, 0, curY, _screenWidth, 2, false);
 					checkerBoardEffect(0, 0, curY, _screenWidth - 1, curY + 1);
 				} else {
 					uint16 bitmapHeight = (curY == lastY) ? 1 : 2;
-					imSource.blitBitmap(0, curY, &imDest, 0, curY, _screenWidth, bitmapHeight, false);
+					imgSource.blitBitmap(0, curY, &imgDest, 0, curY, _screenWidth, bitmapHeight, false);
 				}
 				curY += 4;
 				linesDone++;
@@ -816,7 +816,7 @@ void DisplayMan::doTransWipe(const Common::String filename) {
 	}	// for j
 
 	// Prevent the Image destructor from deleting the drawing buffer
-	imDest._imageData = nullptr;
+	imgDest._imageData = nullptr;
 
 	// bitMapBuffer will be deleted by the Image destructor
 }
@@ -871,8 +871,8 @@ void DisplayMan::blackAllScreen() {
 }
 
 void DisplayMan::scrollDisplayX(int16 dx, uint16 x1, uint16 y1, uint16 x2, uint16 y2, byte *buffer) {
-	Image im(_vm);
-	im._imageData = buffer;
+	Image img(_vm);
+	img._imageData = buffer;
 
 	if (x1 > x2)
 		SWAP<uint16>(x1, x2);
@@ -881,30 +881,30 @@ void DisplayMan::scrollDisplayX(int16 dx, uint16 x1, uint16 y1, uint16 x2, uint1
 		SWAP<uint16>(y1, y2);
 
 	if (dx > 0) {
-		im._width = x2 - x1 + 1 - dx;
-		im._height = y2 - y1 + 1;
+		img._width = x2 - x1 + 1 - dx;
+		img._height = y2 - y1 + 1;
 
-		im.readScreenImage(x1, y1);
-		im.drawImage(x1 + dx, y1);
+		img.readScreenImage(x1, y1);
+		img.drawImage(x1 + dx, y1);
 
 		rectFill(x1, y1, x1 + dx - 1, y2, 0);
 	} else if (dx < 0) {
-		im._width = x2 - x1 + 1 + dx;
-		im._height = y2 - y1 + 1;
+		img._width = x2 - x1 + 1 + dx;
+		img._height = y2 - y1 + 1;
 
-		im.readScreenImage(x1 - dx, y1);
-		im.drawImage(x1, y1);
+		img.readScreenImage(x1 - dx, y1);
+		img.drawImage(x1, y1);
 
 		rectFill(x2 + dx + 1, y1, x2, y2, 0);
 	}
 
 	// Prevent the Image destructor from deleting the external buffer
-	im._imageData = nullptr;
+	img._imageData = nullptr;
 }
 
 void DisplayMan::scrollDisplayY(int16 dy, uint16 x1, uint16 y1, uint16 x2, uint16 y2, byte *buffer) {
-	Image im(_vm);
-	im._imageData = buffer;
+	Image img(_vm);
+	img._imageData = buffer;
 
 	if (x1 > x2)
 		SWAP<uint16>(x1, x2);
@@ -913,25 +913,25 @@ void DisplayMan::scrollDisplayY(int16 dy, uint16 x1, uint16 y1, uint16 x2, uint1
 		SWAP<uint16>(y1, y2);
 
 	if (dy > 0) {
-		im._width = x2 - x1 + 1;
-		im._height = y2 - y1 + 1 - dy;
+		img._width = x2 - x1 + 1;
+		img._height = y2 - y1 + 1 - dy;
 
-		im.readScreenImage(x1, y1);
-		im.drawImage(x1, y1 + dy);
+		img.readScreenImage(x1, y1);
+		img.drawImage(x1, y1 + dy);
 
 		rectFill(x1, y1, x2, y1 + dy - 1, 0);
 	} else if (dy < 0) {
-		im._width = x2 - x1 + 1;
-		im._height = y2 - y1 + 1 + dy;
+		img._width = x2 - x1 + 1;
+		img._height = y2 - y1 + 1 + dy;
 
-		im.readScreenImage(x1, y1 - dy);
-		im.drawImage(x1, y1);
+		img.readScreenImage(x1, y1 - dy);
+		img.drawImage(x1, y1);
 
 		rectFill(x1, y2 + dy + 1, x2, y2, 0);
 	}
 
 	// Prevent the Image destructor from deleting the external buffer
-	im._imageData = nullptr;
+	img._imageData = nullptr;
 }
 
 uint16 DisplayMan::fadeNumIn(uint16 num, uint16 res, uint16 counter) {
