@@ -61,6 +61,7 @@
 #include "wage/wage.h"
 #include "wage/design.h"
 #include "wage/entities.h"
+#include "wage/gui.h"
 #include "wage/script.h"
 #include "wage/world.h"
 
@@ -101,6 +102,8 @@ Common::Error WageEngine::run() {
 
 	debug("WageEngine::init");
 
+	_gui = new Gui();
+
 	// Your main event loop should be (invoked from) here.
 	_resManager = new Common::MacResManager();
 	_resManager->open(getGameFile());
@@ -122,7 +125,11 @@ Common::Error WageEngine::run() {
 	_world->_player->_currentScene = _world->_orderedScenes[1];
 	//_world->_globalScript->execute(_world, 1, &input, NULL, this);
 
-	_world->_orderedScenes[4]->paint(&screen);
+	Scene *scene = _world->_orderedScenes[1];
+
+	scene->paint(&screen);
+	_gui->paintBorder(&screen, 0, 0, scene->_design->getBounds()->width(), scene->_design->getBounds()->height());
+
 	g_system->copyRectToScreen(screen.getPixels(), screen.pitch, 0, 0, screen.w, screen.h);
 
 	while (true) {

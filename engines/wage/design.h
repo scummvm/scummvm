@@ -54,12 +54,6 @@
 
 namespace Wage {
 
-enum {
-    kColorBlack = 0,
-    kColorGray  = 1,
-    kColorWhite = 2
-};
-
 class Design {
 public:
 	Design(Common::SeekableReadStream *data);

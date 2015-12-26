@@ -45,123 +45,24 @@
  *
  */
 
-#ifndef WAGE_H
-#define WAGE_H
+#ifndef WAGE_GUI_H
+#define WAGE_GUI_H
 
-#include "engines/engine.h"
-#include "common/debug.h"
-#include "gui/debugger.h"
-#include "common/endian.h"
+#include "graphics/surface.h"
 #include "common/rect.h"
-#include "common/macresman.h"
-#include "common/random.h"
-
-struct ADGameDescription;
 
 namespace Wage {
 
-class Console;
-class Chr;
-class Designed;
-class Gui;
-class Obj;
-class Scene;
-class World;
-
-using Common::String;
-
-enum OperandType {
-	OBJ = 0,
-	CHR = 1,
-	SCENE = 2,
-	NUMBER = 3,
-	STRING = 4,
-	CLICK_INPUT = 5,
-	TEXT_INPUT = 6,
-	UNKNOWN = 100
-};
-
-// our engine debug levels
-enum {
-	kWageDebugExample = 1 << 0,
-	kWageDebugExample2 = 1 << 1
-	// next new level must be 1 << 2 (4)
-	// the current limitation is 32 debug levels (1 << 31 is the last one)
-};
-
-enum {
-    kColorBlack = 0,
-    kColorGray  = 1,
-    kColorWhite = 2
-};
-
-Common::String readPascalString(Common::SeekableReadStream *in);
-Common::Rect *readRect(Common::SeekableReadStream *in);
-
-typedef Common::Array<byte *> Patterns;
-
-class WageEngine : public Engine {
+class Gui {
 public:
-	WageEngine(OSystem *syst, const ADGameDescription *gameDesc);
-	~WageEngine();
+	Gui();
+	~Gui();
 
-	virtual bool hasFeature(EngineFeature f) const;
-
-	virtual Common::Error run();
-
-	bool canLoadGameStateCurrently();
-	bool canSaveGameStateCurrently();
-
-	const char *getGameFile() const;
+	void paintBorder(Graphics::Surface *g, int x, int y, int width, int height);
 
 private:
-	bool loadWorld(Common::MacResManager *resMan);
-	void performInitialSetup();
-	void wearObjs(Chr *chr);
+	void drawBox(Graphics::Surface *g, int x, int y, int w, int h);
 
-public:
-	Common::RandomSource *_rnd;
-
-	Gui *_gui;
-	World *_world;
-
-	Scene *_lastScene;
-	//PrintStream out;
-	int _loopCount;
-	int _turn;
-	Chr *_monster;
-	Obj *_offer;
-	bool _commandWasQuick;
-	int _aim;
-	bool _temporarilyHidden;
-	bool _isGameOver;
-
-	void playSound(String soundName);
-	void setMenu(String soundName);
-	void appendText(String str);
-	void gameOver();
-	Obj *getOffer();
-	Chr *getMonster();
-	void processEvents();
-	Scene *getSceneByName(String &location);
-	void onMove(Designed *what, Designed *from, Designed *to);
-	void encounter(Chr *player, Chr *chr);
-	void redrawScene();
-
-private:
-	Console *_console;
-
-	const ADGameDescription *_gameDescription;
-
-	Common::MacResManager *_resManager;
-
-};
-
-// Example console class
-class Console : public GUI::Debugger {
-public:
-	Console(WageEngine *vm) {}
-	virtual ~Console(void) {}
 };
 
 } // End of namespace Wage
