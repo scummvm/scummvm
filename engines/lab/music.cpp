@@ -56,7 +56,6 @@ Music::Music(LabEngine *vm) : _vm(vm) {
 	_leftInFile = 0;
 
 	_musicOn = false;
-	_loopSoundEffect = false;
 	_queuingAudioStream = nullptr;
 	_lastMusicRoom = 1;
 	_doReset = true;
@@ -95,7 +94,7 @@ uint16 Music::getPlayingBufferCount() {
 	return (_queuingAudioStream) ? _queuingAudioStream->numQueuedStreams() : 0;
 }
 
-void Music::playSoundEffect(uint16 sampleSpeed, uint32 length, Common::File *dataFile) {
+void Music::playSoundEffect(uint16 sampleSpeed, uint32 length, bool loop, Common::File *dataFile) {
 	pauseBackMusic();
 	stopSoundEffect();
 
@@ -114,7 +113,7 @@ void Music::playSoundEffect(uint16 sampleSpeed, uint32 length, Common::File *dat
 	dataFile->read(soundData, length);
 
 	Audio::SeekableAudioStream *audioStream = Audio::makeRawStream((const byte *)soundData, length, sampleSpeed, soundFlags);
-	uint loops = (_loopSoundEffect) ? 0 : 1;
+	uint loops = (loop) ? 0 : 1;
 	Audio::LoopingAudioStream *loopingAudioStream = new Audio::LoopingAudioStream(audioStream, loops);
 	_vm->_mixer->playStream(Audio::Mixer::kSFXSoundType, &_sfxHandle, loopingAudioStream);
 }
@@ -274,22 +273,21 @@ void Music::resetMusic() {
 	_tFile = 0;
 }
 
-bool Music::readMusic(const Common::String filename, bool waitTillFinished) {
+bool Music::readMusic(const Common::String filename, bool loop, bool waitTillFinished) {
 	Common::File *file = _vm->_resource->openDataFile(filename, MKTAG('D', 'I', 'F', 'F'));
 	_vm->updateMusicAndEvents();
-	if (!_loopSoundEffect)
-		stopSoundEffect();
+	stopSoundEffect();
 
 	if (!file)
 		return false;
 
 	_vm->_anim->_doBlack = false;
-	readSound(waitTillFinished, file);
+	readSound(waitTillFinished, loop, file);
 
 	return true;
 }
 
-void Music::readSound(bool waitTillFinished, Common::File *file) {
+void Music::readSound(bool waitTillFinished, bool loop, Common::File *file) {
 	uint32 magicBytes = file->readUint32LE();
 	if (magicBytes != 1219009121) {
 		warning("readSound: Bad signature, skipping");
@@ -320,7 +318,7 @@ void Music::readSound(bool waitTillFinished, Common::File *file) {
 
 			uint16 sampleRate = file->readUint16LE();
 			file->skip(2);
-			playSoundEffect(sampleRate, soundSize, file);
+			playSoundEffect(sampleRate, soundSize, loop, file);
 		} else if (soundTag == 65535) {
 			if (waitTillFinished) {
 				while (isSoundEffectActive()) {

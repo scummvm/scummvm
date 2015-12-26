@@ -74,15 +74,12 @@ private:
 	 * Pauses the background music.
 	 */
 	void pauseBackMusic();
-	void readSound(bool waitTillFinished, Common::File *file);
+	void readSound(bool waitTillFinished, bool loop, Common::File *file);
 
 	/**
 	 * Starts up the music initially.
 	 */
 	void startMusic(bool restartFl);
-
-public:
-	bool _loopSoundEffect;
 
 public:
 	Music(LabEngine *vm);
@@ -107,12 +104,12 @@ public:
 	 */
 	bool initMusic(const Common::String filename);
 	bool isSoundEffectActive() const;
-	void playSoundEffect(uint16 sampleSpeed, uint32 length, Common::File *dataFile);
+	void playSoundEffect(uint16 sampleSpeed, uint32 length, bool loop, Common::File *dataFile);
 
 	/**
 	 * Reads in a music file.  Ignores any graphics.
 	 */
-	bool readMusic(const Common::String filename, bool waitTillFinished);
+	bool readMusic(const Common::String filename, bool loop, bool waitTillFinished);
 
 	/**
 	 * Changes the background music to the original piece playing.

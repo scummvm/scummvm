@@ -239,18 +239,15 @@ void LabEngine::doActions(const ActionList &actionList, CloseDataPtr *closePtrLi
 
 		switch (action->_actionType) {
 		case kActionPlaySound:
-			_music->_loopSoundEffect = false;
-			_music->readMusic(action->_messages[0], true);
+			_music->readMusic(action->_messages[0], false, true);
 			break;
 
-		case kActionPlaySoundNoWait:
-			_music->_loopSoundEffect = false;
-			_music->readMusic(action->_messages[0], false);
+		case kActionPlaySoundNoWait:	// only used in scene 7 (street, when teleporting to the surreal maze)
+			_music->readMusic(action->_messages[0], false, false);
 			break;
 
 		case kActionPlaySoundLooping:
-			_music->_loopSoundEffect = true;
-			_music->readMusic(action->_messages[0], false);
+			_music->readMusic(action->_messages[0], true, false);
 			break;
 
 		case kActionShowDiff:
@@ -411,12 +408,7 @@ void LabEngine::doActions(const ActionList &actionList, CloseDataPtr *closePtrLi
 			break;
 
 		case kActionClearSound:
-			if (_music->_loopSoundEffect) {
-				_music->_loopSoundEffect = false;
-				_music->stopSoundEffect();
-			} else if (_music->isSoundEffectActive())
-				_music->stopSoundEffect();
-
+			_music->stopSoundEffect();
 			break;
 
 		case kActionWinMusic:
@@ -474,16 +466,7 @@ void LabEngine::doActions(const ActionList &actionList, CloseDataPtr *closePtrLi
 		}
 	}
 
-	if (_music->_loopSoundEffect) {
-		_music->_loopSoundEffect = false;
-		_music->stopSoundEffect();
-	} else {
-		while (_music->isSoundEffectActive()) {
-			updateMusicAndEvents();
-			_anim->diffNextFrame();
-			waitTOF();
-		}
-	}
+	_music->stopSoundEffect();
 }
 
 bool LabEngine::doActionRuleSub(int16 action, int16 roomNum, CloseDataPtr closePtr, CloseDataPtr *setCloseList, bool allowDefaults) {
