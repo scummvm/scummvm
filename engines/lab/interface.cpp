@@ -85,13 +85,6 @@ void EventManager::toggleButton(Button *button, uint16 disabledPenColor, bool en
 	button->_isEnabled = enable;
 }
 
-uint16 EventManager::makeButtonKeyEquiv(uint16 key) {
-	if (Common::isAlnum(key))
-		key = tolower(key);
-
-	return key;
-}
-
 Button *EventManager::checkNumButtonHit(ButtonList *buttonList, Common::KeyCode key) {
 	uint16 gkey = key - '0';
 

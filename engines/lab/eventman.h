@@ -83,11 +83,6 @@ private:
 	 */
 	Button *checkNumButtonHit(ButtonList *buttonList, Common::KeyCode key);
 
-	/**
-	 * Make a key press have the right case for a button KeyEquiv value.
-	 */
-	uint16 makeButtonKeyEquiv(uint16 key);
-
 public:
 	EventManager (LabEngine *vm);
 
