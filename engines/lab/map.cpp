@@ -86,7 +86,7 @@ void LabEngine::loadMapData() {
 
 	_maxRooms = mapFile->readUint16LE();
 	_maps = new MapData[_maxRooms + 1];	// will be freed when the user exits the map
-	for (int i = 1; i <= _maxRooms; i++) {
+	for (int i = 0; i <= _maxRooms; i++) {
 		_maps[i]._x = mapFile->readUint16LE();
 		_maps[i]._y = mapFile->readUint16LE();
 		_maps[i]._pageNumber = mapFile->readUint16LE();
