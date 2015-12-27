@@ -52,9 +52,6 @@ CineEngine::CineEngine(OSystem *syst, const CINEGameDescription *gameDesc)
 	// Setup mixer
 	syncSoundSettings();
 
-	// Assign default values to the config manager, in case settings are missing
-	ConfMan.registerDefault("originalsaveload", "false");
-
 	DebugMan.addDebugChannel(kCineDebugScript,    "Script",    "Script debug level");
 	DebugMan.addDebugChannel(kCineDebugPart,      "Part",      "Part debug level");
 	DebugMan.addDebugChannel(kCineDebugSound,     "Sound",     "Sound debug level");
