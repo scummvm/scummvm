@@ -134,10 +134,6 @@ enum SpecialRoom {
 	kMultiMazeF3
 };
 
-#if defined(WIN32)
-#pragma pack(push, 1)
-#endif
-
 struct CloseData {
 	uint16 _x1, _y1, _x2, _y2;
 	int16 _closeUpType;          // if > 0, an object.  If < 0, an item
@@ -188,10 +184,6 @@ struct MapData {
 	SpecialRoom _specialID;
 	uint32 _mapFlags;
 };
-
-#if defined(WIN32)
-#pragma pack(pop)
-#endif
 
 } // End of namespace Lab
 
