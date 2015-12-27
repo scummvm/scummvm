@@ -44,93 +44,80 @@ namespace Lab {
 
 #define NOFILE         "no file"
 
-bool LabEngine::checkConditions(int16 *condition) {
-	if (!condition)
-		return true;
+bool LabEngine::checkConditions(const Common::Array<int16> &condition) {
+	for (unsigned int i = 0; i < condition.size(); ++i)
+		if (!_conditions->in(condition[i]))
+			return false;
 
-	if (condition[0] == 0)
-		return true;
-
-	int counter = 1;
-	bool res = _conditions->in(condition[0]);
-
-	while (condition[counter] && res) {
-		res = _conditions->in(condition[counter]);
-		counter++;
-	}
-
-	return res;
+	return true;
 }
 
 ViewData *LabEngine::getViewData(uint16 roomNum, uint16 direction) {
 	if (_rooms[roomNum]._roomMsg.empty())
 		_resource->readViews(roomNum);
 
-	ViewData *view = _rooms[roomNum]._view[direction];
+	ViewDataList &views = _rooms[roomNum]._view[direction];
+	ViewDataList::iterator view;
 
-	do {
+	for (view = views.begin(); view != views.end(); ++view) {
 		if (checkConditions(view->_condition))
-			break;
+			return &(*view);
+	}
 
-		view = view->_nextCondition;
-	} while (true);
-
-	return view;
+	error("No view with matching condition found");
 }
 
-CloseData *LabEngine::getObject(Common::Point pos, CloseDataPtr closePtr) {
-	CloseDataPtr wrkClosePtr;
+const CloseData *LabEngine::getObject(Common::Point pos, const CloseData *closePtr) {
+	const CloseDataList *list;
 	if (!closePtr)
-		wrkClosePtr = getViewData(_roomNum, _direction)->_closeUps;
+		list = &(getViewData(_roomNum, _direction)->_closeUps);
 	else
-		wrkClosePtr = closePtr->_subCloseUps;
+		list = &(closePtr->_subCloseUps);
 
-	Common::Rect objRect;
-	while (wrkClosePtr) {
+	CloseDataList::const_iterator wrkClosePtr;
+
+	for (wrkClosePtr = list->begin(); wrkClosePtr != list->end(); ++wrkClosePtr) {
+		Common::Rect objRect;
 		objRect = _utils->rectScale(wrkClosePtr->_x1, wrkClosePtr->_y1, wrkClosePtr->_x2, wrkClosePtr->_y2);
 		if (objRect.contains(pos))
-			return wrkClosePtr;
-
-		wrkClosePtr = wrkClosePtr->_nextCloseUp;
+			return &(*wrkClosePtr);
 	}
 
 	return nullptr;
 }
 
-CloseDataPtr LabEngine::findClosePtrMatch(CloseDataPtr closePtr, CloseDataPtr closePtrList) {
-	CloseDataPtr resClosePtr;
+const CloseData *LabEngine::findClosePtrMatch(const CloseData *closePtr, const CloseDataList &list) {
+	CloseDataList::const_iterator i;
 
-	while (closePtrList) {
-		if ((closePtr->_x1 == closePtrList->_x1) && (closePtr->_x2 == closePtrList->_x2) &&
-			  (closePtr->_y1 == closePtrList->_y1) && (closePtr->_y2 == closePtrList->_y2) &&
-			  (closePtr->_depth == closePtrList->_depth))
-			return closePtrList;
+	for (i = list.begin(); i != list.end(); ++i) {
+		if ((closePtr->_x1 == i->_x1) && (closePtr->_x2 == i->_x2) &&
+			  (closePtr->_y1 == i->_y1) && (closePtr->_y2 == i->_y2) &&
+			  (closePtr->_depth == i->_depth))
+			return &(*i);
 
-		resClosePtr = findClosePtrMatch(closePtr, closePtrList->_subCloseUps);
+		const CloseData *resClosePtr = findClosePtrMatch(closePtr, i->_subCloseUps);
 
 		if (resClosePtr)
 			return resClosePtr;
-		else
-			closePtrList = closePtrList->_nextCloseUp;
 	}
 
 	return nullptr;
 }
 
-Common::String LabEngine::getPictName(CloseDataPtr *closePtrList) {
+Common::String LabEngine::getPictName(bool useClose) {
 	ViewData *viewPtr = getViewData(_roomNum, _direction);
 
-	if (*closePtrList) {
-		*closePtrList = findClosePtrMatch(*closePtrList, viewPtr->_closeUps);
+	if (useClose && _closeDataPtr) {
+		_closeDataPtr = findClosePtrMatch(_closeDataPtr, viewPtr->_closeUps);
 
-		if (*closePtrList)
-			return (*closePtrList)->_graphicName;
+		if (_closeDataPtr)
+			return _closeDataPtr->_graphicName;
 	}
 
 	return viewPtr->_graphicName;
 }
 
-void LabEngine::drawDirection(CloseDataPtr closePtr) {
+void LabEngine::drawDirection(const CloseData *closePtr) {
 	if (closePtr && !closePtr->_message.empty()) {
 		_graphics->drawMessage(closePtr->_message, false);
 		return;
@@ -184,88 +171,97 @@ uint16 LabEngine::processArrow(uint16 curDirection, uint16 arrow) {
 	return curDirection;
 }
 
-void LabEngine::setCurrentClose(Common::Point pos, CloseDataPtr *closePtrList, bool useAbsoluteCoords) {
-	CloseDataPtr closePtr;
+void LabEngine::setCurrentClose(Common::Point pos, const CloseData **closePtrList, bool useAbsoluteCoords, bool next) {
+	const CloseDataList *list;
 
 	if (!*closePtrList)
-		closePtr = getViewData(_roomNum, _direction)->_closeUps;
+		list = &(getViewData(_roomNum, _direction)->_closeUps);
 	else
-		closePtr = (*closePtrList)->_subCloseUps;
+		list = &((*closePtrList)->_subCloseUps);
 
-	Common::Rect target;
-	while (closePtr) {
+	CloseDataList::const_iterator closePtr;
+	for (closePtr = list->begin(); closePtr != list->end(); ++closePtr) {
+		Common::Rect target;
 		if (!useAbsoluteCoords)
 			target = Common::Rect(closePtr->_x1, closePtr->_y1, closePtr->_x2, closePtr->_y2);
 		else
 			target = _utils->rectScale(closePtr->_x1, closePtr->_y1, closePtr->_x2, closePtr->_y2);
 
-		if (target.contains(pos) && !closePtr->_graphicName.empty()) {
-			*closePtrList = closePtr;
+		if (target.contains(pos) && (next || !closePtr->_graphicName.empty())) {
+
+			if (next) {
+				// cycle to the next one
+				++closePtr;
+				if (closePtr == list->end())
+					closePtr = list->begin();
+			}
+			*closePtrList = &(*closePtr);
+
 			return;
 		}
+	}
 
-		closePtr = closePtr->_nextCloseUp;
+	// If we got here, no match was found. If we want the "next" close-up,
+	// return the first one in the list, if any.
+	if (next) {
+		if (!list->empty())
+			*closePtrList = &(*list->begin());
 	}
 }
 
-bool LabEngine::takeItem(Common::Point pos, CloseDataPtr *closePtrList) {
-	CloseDataPtr closePtr;
-
-	if (!*closePtrList) {
-		closePtr = getViewData(_roomNum, _direction)->_closeUps;
-	} else if ((*closePtrList)->_closeUpType < 0) {
-		_conditions->inclElement(abs((*closePtrList)->_closeUpType));
+bool LabEngine::takeItem(Common::Point pos) {
+	const CloseDataList *list;
+	if (!_closeDataPtr) {
+		list = &(getViewData(_roomNum, _direction)->_closeUps);
+	} else if (_closeDataPtr->_closeUpType < 0) {
+		_conditions->inclElement(abs(_closeDataPtr->_closeUpType));
 		return true;
 	} else
-		closePtr = (*closePtrList)->_subCloseUps;
+		list = &(_closeDataPtr->_subCloseUps);
 
-	Common::Rect objRect;
-	while (closePtr) {
+	CloseDataList::const_iterator closePtr;
+	for (closePtr = list->begin(); closePtr != list->end(); ++closePtr) {
+		Common::Rect objRect;
 		objRect = _utils->rectScale(closePtr->_x1, closePtr->_y1, closePtr->_x2, closePtr->_y2);
 		if (objRect.contains(pos) && (closePtr->_closeUpType < 0)) {
 			_conditions->inclElement(abs(closePtr->_closeUpType));
 			return true;
 		}
-
-		closePtr = closePtr->_nextCloseUp;
 	}
 
 	return false;
 }
 
-void LabEngine::doActions(Action *actionList, CloseDataPtr *closePtrList) {
-	while (actionList) {
+void LabEngine::doActions(const ActionList &actionList) {
+	ActionList::const_iterator action;
+	for (action = actionList.begin(); action != actionList.end(); ++action) {
 		updateMusicAndEvents();
 
-		switch (actionList->_actionType) {
+		switch (action->_actionType) {
 		case kActionPlaySound:
-			_music->_loopSoundEffect = false;
-			_music->readMusic(actionList->_messages[0], true);
+			_music->readMusic(action->_messages[0], false, true);
 			break;
 
-		case kActionPlaySoundNoWait:
-			_music->_loopSoundEffect = false;
-			_music->readMusic(actionList->_messages[0], false);
+		case kActionPlaySoundNoWait:	// only used in scene 7 (street, when teleporting to the surreal maze)
+			_music->readMusic(action->_messages[0], false, false);
 			break;
 
 		case kActionPlaySoundLooping:
-			_music->_loopSoundEffect = true;
-			_music->readMusic(actionList->_messages[0], false);
+			_music->readMusic(action->_messages[0], true, false);
 			break;
 
 		case kActionShowDiff:
-			_graphics->readPict(actionList->_messages[0], true);
+			_graphics->readPict(action->_messages[0], true);
 			break;
 
 		case kActionShowDiffLooping:
-			_graphics->readPict(actionList->_messages[0], false);
+			_graphics->readPict(action->_messages[0], false);
 			break;
 
 		case kActionLoadDiff:
-			if (!actionList->_messages[0].empty())
+			if (!action->_messages[0].empty())
 				// Puts a file into memory
-				_graphics->loadPict(actionList->_messages[0]);
-
+				_graphics->loadPict(action->_messages[0]);
 			break;
 		
 		case kActionLoadBitmap:
@@ -275,7 +271,7 @@ void LabEngine::doActions(Action *actionList, CloseDataPtr *closePtrList) {
 			error("Unused opcode kActionShowBitmap has been called");
 
 		case kActionTransition:
-			_graphics->doTransition((TransitionType)actionList->_param1, closePtrList, actionList->_messages[0].c_str());
+			_graphics->doTransition((TransitionType)action->_param1, action->_messages[0].c_str());
 			break;
 
 		case kActionNoUpdate:
@@ -288,7 +284,7 @@ void LabEngine::doActions(Action *actionList, CloseDataPtr *closePtrList) {
 			break;
 
 		case kActionShowCurPict: {
-			Common::String test = getPictName(closePtrList);
+			Common::String test = getPictName(true);
 
 			if (test != _curFileName) {
 				_curFileName = test;
@@ -298,71 +294,70 @@ void LabEngine::doActions(Action *actionList, CloseDataPtr *closePtrList) {
 			break;
 
 		case kActionSetElement:
-			_conditions->inclElement(actionList->_param1);
+			_conditions->inclElement(action->_param1);
 			break;
 
 		case kActionUnsetElement:
-			_conditions->exclElement(actionList->_param1);
+			_conditions->exclElement(action->_param1);
 			break;
 
 		case kActionShowMessage:
 			if (_graphics->_longWinInFront)
-				_graphics->longDrawMessage(actionList->_messages[0], true);
+				_graphics->longDrawMessage(action->_messages[0], true);
 			else
-				_graphics->drawMessage(actionList->_messages[0], true);
+				_graphics->drawMessage(action->_messages[0], true);
 			break;
 
 		case kActionCShowMessage:
-			if (!*closePtrList)
-				_graphics->drawMessage(actionList->_messages[0], true);
+			if (!_closeDataPtr)
+				_graphics->drawMessage(action->_messages[0], true);
 			break;
 
 		case kActionShowMessages:
-			_graphics->drawMessage(actionList->_messages[_utils->getRandom(actionList->_param1)], true);
+			_graphics->drawMessage(action->_messages[_utils->getRandom(action->_param1)], true);
 			break;
 
 		case kActionChangeRoom:
-			if (actionList->_param1 & 0x8000) {
+			if (action->_param1 & 0x8000) {
 				// This is a Wyrmkeep Windows trial version, thus stop at this
 				// point, since we can't check for game payment status
-				_graphics->readPict(getPictName(closePtrList));
-				actionList = nullptr;
+				_graphics->readPict(getPictName(true));
 				GUI::MessageDialog trialMessage("This is the end of the trial version. You can play the full game using the original interpreter from Wyrmkeep");
 				trialMessage.runModal();
-				continue;
+				break;
 			}
 
-			_roomNum   = actionList->_param1;
-			_direction = actionList->_param2 - 1;
-			*closePtrList = nullptr;
+			_roomNum   = action->_param1;
+			_direction = action->_param2 - 1;
+			_closeDataPtr = nullptr;
 			_anim->_doBlack = true;
 			break;
 
 		case kActionSetCloseup: {
-			Common::Point curPos = Common::Point(_utils->scaleX(actionList->_param1), _utils->scaleY(actionList->_param2));
-				CloseDataPtr tmpClosePtr = getObject(curPos, *closePtrList);
+			Common::Point curPos = Common::Point(_utils->scaleX(action->_param1), _utils->scaleY(action->_param2));
+				const CloseData *tmpClosePtr = getObject(curPos, _closeDataPtr);
 
 				if (tmpClosePtr)
-					*closePtrList = tmpClosePtr;
+					_closeDataPtr = tmpClosePtr;
 			}
 			break;
 
 		case kActionMainView:
-			*closePtrList = nullptr;
+			_closeDataPtr = nullptr;
 			break;
 
 		case kActionSubInv:
-			if (_inventory[actionList->_param1]._quantity)
-				(_inventory[actionList->_param1]._quantity)--;
+			if (_inventory[action->_param1]._quantity)
+				(_inventory[action->_param1]._quantity)--;
 
-			if (_inventory[actionList->_param1]._quantity == 0)
-				_conditions->exclElement(actionList->_param1);
+			if (_inventory[action->_param1]._quantity == 0)
+				_conditions->exclElement(action->_param1);
 
 			break;
 
 		case kActionAddInv:
-			(_inventory[actionList->_param1]._quantity) += actionList->_param2;
-			_conditions->inclElement(actionList->_param1);
+			(_inventory[action->_param1]._quantity) += action->_param2;
+			_conditions->inclElement(action->_param1);
 			break;
 
 		case kActionShowDir:
@@ -370,7 +365,7 @@ void LabEngine::doActions(Action *actionList, CloseDataPtr *closePtrList) {
 			break;
 
 		case kActionWaitSecs: {
-				uint32 targetMillis = _system->getMillis() + actionList->_param1 * 1000;
+				uint32 targetMillis = _system->getMillis() + action->_param1 * 1000;
 
 				_graphics->screenUpdate();
 
@@ -390,7 +385,7 @@ void LabEngine::doActions(Action *actionList, CloseDataPtr *closePtrList) {
 			break;
 
 		case kActionChangeMusic:
-			_music->changeMusic(actionList->_messages[0]);
+			_music->changeMusic(action->_messages[0]);
 			_music->setMusicReset(false);
 			break;
 
@@ -413,12 +408,7 @@ void LabEngine::doActions(Action *actionList, CloseDataPtr *closePtrList) {
 			break;
 
 		case kActionClearSound:
-			if (_music->_loopSoundEffect) {
-				_music->_loopSoundEffect = false;
-				_music->stopSoundEffect();
-			} else if (_music->isSoundEffectActive())
-				_music->stopSoundEffect();
-
+			_music->stopSoundEffect();
 			break;
 
 		case kActionWinMusic:
@@ -439,13 +429,13 @@ void LabEngine::doActions(Action *actionList, CloseDataPtr *closePtrList) {
 			break;
 
 		case kActionSpecialCmd:
-			if (actionList->_param1 == 0)
+			if (action->_param1 == 0)
 				_anim->_doBlack = true;
-			else if (actionList->_param1 == 1)
+			else if (action->_param1 == 1)
 				_anim->_doBlack = (_closeDataPtr == nullptr);
-			else if (actionList->_param1 == 2)
+			else if (action->_param1 == 2)
 				_anim->_doBlack = (_closeDataPtr != nullptr);
-			else if (actionList->_param1 == 5) {
+			else if (action->_param1 == 5) {
 				// inverse the palette
 				for (int idx = (8 * 3); idx < (255 * 3); idx++)
 					_anim->_diffPalette[idx] = 255 - _anim->_diffPalette[idx];
@@ -454,18 +444,18 @@ void LabEngine::doActions(Action *actionList, CloseDataPtr *closePtrList) {
 				_graphics->setPalette(_anim->_diffPalette, 256);
 				waitTOF();
 				waitTOF();
-			} else if (actionList->_param1 == 4) {
+			} else if (action->_param1 == 4) {
 				// white the palette
 				_graphics->whiteScreen();
 				waitTOF();
 				waitTOF();
-			} else if (actionList->_param1 == 6) {
+			} else if (action->_param1 == 6) {
 				// Restore the palette
 				waitTOF();
 				_graphics->setPalette(_anim->_diffPalette, 256);
 				waitTOF();
 				waitTOF();
-			} else if (actionList->_param1 == 7) {
+			} else if (action->_param1 == 7) {
 				// Quick pause
 				waitTOF();
 				waitTOF();
@@ -474,31 +464,20 @@ void LabEngine::doActions(Action *actionList, CloseDataPtr *closePtrList) {
 
 			break;
 		}
-
-		actionList = actionList->_nextAction;
 	}
 
-	if (_music->_loopSoundEffect) {
-		_music->_loopSoundEffect = false;
-		_music->stopSoundEffect();
-	} else {
-		while (_music->isSoundEffectActive()) {
-			updateMusicAndEvents();
-			_anim->diffNextFrame();
-			waitTOF();
-		}
-	}
+	_music->stopSoundEffect();
 }
 
-bool LabEngine::doActionRuleSub(int16 action, int16 roomNum, CloseDataPtr closePtr, CloseDataPtr *setCloseList, bool allowDefaults) {
+bool LabEngine::doActionRuleSub(int16 action, int16 roomNum, const CloseData *closePtr, bool allowDefaults) {
 	action++;
 
 	if (closePtr) {
-		RuleList *rules = _rooms[_roomNum]._rules;
+		RuleList *rules = &(_rooms[_roomNum]._rules);
 
 		if (!rules && (roomNum == 0)) {
 			_resource->readViews(roomNum);
-			rules = _rooms[roomNum]._rules;
+			rules = &(_rooms[roomNum]._rules);
 		}
 
 		for (RuleList::iterator rule = rules->begin(); rule != rules->end(); ++rule) {
@@ -508,7 +487,7 @@ bool LabEngine::doActionRuleSub(int16 action, int16 roomNum, CloseDataPtr closeP
 					  ((rule->_param2 == 0) && allowDefaults)) ||
 					  ((action == 1) && (rule->_param2 == -closePtr->_closeUpType))) {
 					if (checkConditions(rule->_condition)) {
-						doActions(rule->_actionList, setCloseList);
+						doActions(rule->_actionList);
 						return true;
 					}
 				}
@@ -519,34 +498,34 @@ bool LabEngine::doActionRuleSub(int16 action, int16 roomNum, CloseDataPtr closeP
 	return false;
 }
 
-bool LabEngine::doActionRule(Common::Point pos, int16 action, int16 roomNum, CloseDataPtr *closePtrList) {
+bool LabEngine::doActionRule(Common::Point pos, int16 action, int16 roomNum) {
 	if (roomNum)
 		_newFileName = NOFILE;
 	else
 		_newFileName = _curFileName;
 
-	CloseDataPtr curClosePtr = getObject(pos, *closePtrList);
+	const CloseData *curClosePtr = getObject(pos, _closeDataPtr);
 
-	if (doActionRuleSub(action, roomNum, curClosePtr, closePtrList, false))
+	if (doActionRuleSub(action, roomNum, curClosePtr, false))
 		return true;
-	else if (doActionRuleSub(action, roomNum, *closePtrList, closePtrList, false))
+	else if (doActionRuleSub(action, roomNum, _closeDataPtr, false))
 		return true;
-	else if (doActionRuleSub(action, roomNum, curClosePtr, closePtrList, true))
+	else if (doActionRuleSub(action, roomNum, curClosePtr, true))
 		return true;
-	else if (doActionRuleSub(action, roomNum, *closePtrList, closePtrList, true))
+	else if (doActionRuleSub(action, roomNum, _closeDataPtr, true))
 		return true;
 
 	return false;
 }
 
-bool LabEngine::doOperateRuleSub(int16 itemNum, int16 roomNum, CloseDataPtr closePtr, CloseDataPtr *setCloseList, bool allowDefaults) {
+bool LabEngine::doOperateRuleSub(int16 itemNum, int16 roomNum, const CloseData *closePtr, bool allowDefaults) {
 	if (closePtr)
 		if (closePtr->_closeUpType > 0) {
-			RuleList *rules = _rooms[roomNum]._rules;
+			RuleList *rules = &(_rooms[roomNum]._rules);
 
 			if (!rules && (roomNum == 0)) {
 				_resource->readViews(roomNum);
-				rules = _rooms[roomNum]._rules;
+				rules = &(_rooms[roomNum]._rules);
 			}
 
 			for (RuleList::iterator rule = rules->begin(); rule != rules->end(); ++rule) {
@@ -554,7 +533,7 @@ bool LabEngine::doOperateRuleSub(int16 itemNum, int16 roomNum, CloseDataPtr clos
 					  ((rule->_param1 == itemNum) || ((rule->_param1 == 0) && allowDefaults)) &&
 						((rule->_param2 == closePtr->_closeUpType) || ((rule->_param2 == 0) && allowDefaults))) {
 					if (checkConditions(rule->_condition)) {
-						doActions(rule->_actionList, setCloseList);
+						doActions(rule->_actionList);
 						return true;
 					}
 				}
@@ -564,41 +543,41 @@ bool LabEngine::doOperateRuleSub(int16 itemNum, int16 roomNum, CloseDataPtr clos
 	return false;
 }
 
-bool LabEngine::doOperateRule(Common::Point pos, int16 ItemNum, CloseDataPtr *closePtrList) {
+bool LabEngine::doOperateRule(Common::Point pos, int16 ItemNum) {
 	_newFileName = NOFILE;
-	CloseDataPtr closePtr = getObject(pos, *closePtrList);
+	const CloseData *closePtr = getObject(pos, _closeDataPtr);
 
-	if (doOperateRuleSub(ItemNum, _roomNum, closePtr, closePtrList, false))
+	if (doOperateRuleSub(ItemNum, _roomNum, closePtr, false))
 		return true;
-	else if (doOperateRuleSub(ItemNum, _roomNum, *closePtrList, closePtrList, false))
+	else if (doOperateRuleSub(ItemNum, _roomNum, _closeDataPtr, false))
 		return true;
-	else if (doOperateRuleSub(ItemNum, _roomNum, closePtr, closePtrList, true))
+	else if (doOperateRuleSub(ItemNum, _roomNum, closePtr, true))
 		return true;
-	else if (doOperateRuleSub(ItemNum, _roomNum, *closePtrList, closePtrList, true))
+	else if (doOperateRuleSub(ItemNum, _roomNum, _closeDataPtr, true))
 		return true;
 	else {
 		_newFileName = _curFileName;
 
-		if (doOperateRuleSub(ItemNum, 0, closePtr, closePtrList, false))
+		if (doOperateRuleSub(ItemNum, 0, closePtr, false))
 			return true;
-		else if (doOperateRuleSub(ItemNum, 0, *closePtrList, closePtrList, false))
+		else if (doOperateRuleSub(ItemNum, 0, _closeDataPtr, false))
 			return true;
-		else if (doOperateRuleSub(ItemNum, 0, closePtr, closePtrList, true))
+		else if (doOperateRuleSub(ItemNum, 0, closePtr, true))
 			return true;
-		else if (doOperateRuleSub(ItemNum, 0, *closePtrList, closePtrList, true))
+		else if (doOperateRuleSub(ItemNum, 0, _closeDataPtr, true))
 			return true;
 	}
 
 	return false;
 }
 
-bool LabEngine::doGoForward(CloseDataPtr *closePtrList) {
-	RuleList *rules = _rooms[_roomNum]._rules;
+bool LabEngine::doGoForward() {
+	RuleList &rules = _rooms[_roomNum]._rules;
 
-	for (RuleList::iterator rule = rules->begin(); rule != rules->end(); ++rule) {
+	for (RuleList::iterator rule = rules.begin(); rule != rules.end(); ++rule) {
 		if ((rule->_ruleType == kRuleTypeGoForward) && (rule->_param1 == (_direction + 1))) {
 			if (checkConditions(rule->_condition)) {
-				doActions(rule->_actionList, closePtrList);
+				doActions(rule->_actionList);
 				return true;
 			}
 		}
@@ -607,18 +586,18 @@ bool LabEngine::doGoForward(CloseDataPtr *closePtrList) {
 	return false;
 }
 
-bool LabEngine::doTurn(uint16 from, uint16 to, CloseDataPtr *closePtrList) {
+bool LabEngine::doTurn(uint16 from, uint16 to) {
 	from++;
 	to++;
 
-	RuleList *rules = _rooms[_roomNum]._rules;
+	RuleList &rules = _rooms[_roomNum]._rules;
 
-	for (RuleList::iterator rule = rules->begin(); rule != rules->end(); ++rule) {
+	for (RuleList::iterator rule = rules.begin(); rule != rules.end(); ++rule) {
 		if ((rule->_ruleType == kRuleTypeTurn) ||
 			  ((rule->_ruleType == kRuleTypeTurnFromTo) &&
 			  (rule->_param1 == from) && (rule->_param2 == to))) {
 			if (checkConditions(rule->_condition)) {
-				doActions(rule->_actionList, closePtrList);
+				doActions(rule->_actionList);
 				return true;
 			}
 		}
@@ -627,12 +606,12 @@ bool LabEngine::doTurn(uint16 from, uint16 to, CloseDataPtr *closePtrList) {
 	return false;
 }
 
-bool LabEngine::doMainView(CloseDataPtr *closePtrList) {
-	RuleList *rules = _rooms[_roomNum]._rules;
-	for (RuleList::iterator rule = rules->begin(); rule != rules->end(); ++rule) {
+bool LabEngine::doMainView() {
+	RuleList &rules = _rooms[_roomNum]._rules;
+	for (RuleList::iterator rule = rules.begin(); rule != rules.end(); ++rule) {
 		if (rule->_ruleType == kRuleTypeGoMainView) {
 			if (checkConditions(rule->_condition)) {
-				doActions(rule->_actionList, closePtrList);
+				doActions(rule->_actionList);
 				return true;
 			}
 		}

@@ -43,7 +43,7 @@
 #include "lab/labsets.h"
 #include "lab/music.h"
 #include "lab/processroom.h"
-#include "lab/tilepuzzle.h"
+#include "lab/speciallocks.h"
 
 namespace Lab {
 
@@ -128,8 +128,8 @@ bool LabEngine::saveGame(int slot, const Common::String desc) {
 		return false;
 
 	// Load scene pic
-	CloseDataPtr closePtr = nullptr;
-	_graphics->readPict(getPictName(&closePtr));
+	_graphics->readPict(getPictName(false));
+
 
 	writeSaveGameHeader(file, desc);
 	file->writeUint16LE(_roomNum);
@@ -144,10 +144,10 @@ bool LabEngine::saveGame(int slot, const Common::String desc) {
 	for (int i = 0; i < _roomsFound->_lastElement / (8 * 2); i++)
 		file->writeUint16LE(_roomsFound->_array[i]);
 
-	_tilePuzzle->save(file);
+	_specialLocks->save(file);
 
 	// Breadcrumbs
-	for (uint i = 0; i < 128; i++) {
+	for (uint i = 0; i < MAX_CRUMBS; i++) {
 		file->writeUint16LE(_breadCrumbs[i]._roomNum);
 		file->writeUint16LE(_breadCrumbs[i]._direction);
 	}
@@ -181,10 +181,10 @@ bool LabEngine::loadGame(int slot) {
 	for (int i = 0; i < _roomsFound->_lastElement / (8 * 2); i++)
 		_roomsFound->_array[i] = file->readUint16LE();
 
-	_tilePuzzle->load(file);
+	_specialLocks->load(file);
 
 	// Breadcrumbs
-	for (int i = 0; i < 128; i++) {
+	for (int i = 0; i < MAX_CRUMBS; i++) {
 		_breadCrumbs[i]._roomNum = file->readUint16LE();
 		_breadCrumbs[i]._direction = file->readUint16LE();
 	}
@@ -192,7 +192,7 @@ bool LabEngine::loadGame(int slot) {
 	_droppingCrumbs = (_breadCrumbs[0]._roomNum != 0);
 	_followingCrumbs = false;
 
-	for (int i = 0; i < 128; i++) {
+	for (int i = 0; i < MAX_CRUMBS; i++) {
 		if (_breadCrumbs[i]._roomNum == 0)
 			break;
 		_numCrumbs = i;

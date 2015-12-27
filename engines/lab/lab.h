@@ -63,7 +63,7 @@ class EventManager;
 class Image;
 class Music;
 class Resource;
-class TilePuzzle;
+class SpecialLocks;
 class Utils;
 
 struct SaveGameHeader {
@@ -87,14 +87,37 @@ struct CrumbData {
 
 #define MAX_CRUMBS          128
 
-typedef CloseData *CloseDataPtr;
 typedef Common::List<Rule> RuleList;
+typedef Common::List<Action> ActionList;
+typedef Common::List<CloseData> CloseDataList;
+typedef Common::List<ViewData> ViewDataList;
 
 enum Direction {
 	kDirectionNorth,
 	kDirectionSouth,
 	kDirectionEast,
 	kDirectionWest
+};
+
+enum MainButton {
+	kButtonNone = -1,
+	kButtonPickup,
+	kButtonUse,
+	kButtonOpen,
+	kButtonClose,
+	kButtonLook,
+	kButtonInventory,
+	kButtonLeft,
+	kButtonForward,
+	kButtonRight,
+	kButtonMap
+};
+
+enum MessageClass {
+	kMessageLeftClick,
+	kMessageRightClick,
+	kMessageButtonUp,
+	kMessageRawKey
 };
 
 class LabEngine : public Engine {
@@ -126,7 +149,7 @@ private:
 	Common::String _newFileName;
 	Common::String _monitorTextFilename;
 
-	CloseDataPtr _closeDataPtr;
+	const CloseData *_closeDataPtr;
 	ButtonList _journalButtonList;
 	ButtonList _mapButtonList;
 	Image *_imgMap, *_imgRoom, *_imgUpArrowRoom, *_imgDownArrowRoom, *_imgBridge;
@@ -136,7 +159,6 @@ private:
 	MapData *_maps;
 	Image *_monitorButton;
 	Image *_journalBackImage;
-	Image *_screenImage;
 	TextFont *_journalFont;
 
 public:
@@ -171,7 +193,7 @@ public:
 	Resource *_resource;
 	RoomData *_rooms;
 	TextFont *_msgFont;
-	TilePuzzle *_tilePuzzle;
+	SpecialLocks *_specialLocks;
 	Utils *_utils;
 	Console *_console;
 	GUI::Debugger *getDebugger() { return _console; }
@@ -196,7 +218,7 @@ public:
 	/**
 	 * Returns the current picture name.
 	 */
-	Common::String getPictName(CloseDataPtr *closePtrList);
+	Common::String getPictName(bool useClose);
 	uint16 getQuarters();
 	void setDirection(uint16 direction) { _direction = direction; };
 	void setQuarters(uint16 quarters);
@@ -207,7 +229,7 @@ private:
 	/**
 	 * Checks whether all the conditions in a condition list are met.
 	 */
-	bool checkConditions(int16 *condition);
+	bool checkConditions(const Common::Array<int16> &cond);
 
 	/**
 	 * Decrements the current inventory number.
@@ -217,27 +239,27 @@ private:
 	/**
 	 * Processes the action list.
 	 */
-	void doActions(Action *actionList, CloseDataPtr *closePtrList);
+	void doActions(const ActionList &actionList);
 
 	/**
 	 * Goes through the rules if an action is taken.
 	 */
-	bool doActionRule(Common::Point pos, int16 action, int16 roomNum, CloseDataPtr *closePtrList);
+	bool doActionRule(Common::Point pos, int16 action, int16 roomNum);
 
 	/**
 	 * Does the work for doActionRule.
 	 */
-	bool doActionRuleSub(int16 action, int16 roomNum, CloseDataPtr closePtr, CloseDataPtr *setCloseList, bool allowDefaults);
+	bool doActionRuleSub(int16 action, int16 roomNum, const CloseData *closePtr, bool allowDefaults);
 
 	/**
 	 * Checks whether the close up is one of the special case closeups.
 	 */
-	bool doCloseUp(CloseDataPtr closePtr);
+	bool doCloseUp(const CloseData *closePtr);
 
 	/**
 	 * Goes through the rules if the user tries to go forward.
 	 */
-	bool doGoForward(CloseDataPtr *closePtrList);
+	bool doGoForward();
 
 	/**
 	 * Does the journal processing.
@@ -247,7 +269,7 @@ private:
 	/**
 	 * Goes through the rules if the user tries to go to the main view
 	 */
-	bool doMainView(CloseDataPtr *closePtrList);
+	bool doMainView();
 
 	/**
 	 * Does the map processing.
@@ -267,17 +289,17 @@ private:
 	/**
 	 * Does the work for doActionRule.
 	 */
-	bool doOperateRuleSub(int16 itemNum, int16 roomNum, CloseDataPtr closePtr, CloseDataPtr *setCloseList, bool allowDefaults);
+	bool doOperateRuleSub(int16 itemNum, int16 roomNum, const CloseData *closePtr, bool allowDefaults);
 
 	/**
 	 * Goes through the rules if the user tries to operate an item on an object.
 	 */
-	bool doOperateRule(Common::Point pos, int16 ItemNum, CloseDataPtr *closePtrList);
+	bool doOperateRule(Common::Point pos, int16 ItemNum);
 
 	/**
 	 * Goes through the rules if the user tries to turn.
 	 */
-	bool doTurn(uint16 from, uint16 to, CloseDataPtr *closePtrList);
+	bool doTurn(uint16 from, uint16 to);
 
 	/**
 	 * If the user hits the "Use" button; things that can get used on themselves.
@@ -293,7 +315,7 @@ private:
 	/**
 	 * Draws the current direction to the screen.
 	 */
-	void drawDirection(CloseDataPtr closePtr);
+	void drawDirection(const CloseData *closePtr);
 
 	/**
 	 * Draws the journal from page x.
@@ -308,7 +330,7 @@ private:
 	/**
 	 * Draws the map
 	 */
-	void drawMap(uint16 curRoom, uint16 curMsg, uint16 floorNum, bool fadeOut, bool fadeIn);
+	void drawMap(uint16 curRoom, uint16 curMsg, uint16 floorNum, bool fadeIn);
 
 	/**
 	 * Draws the text for the monitor.
@@ -323,7 +345,7 @@ private:
 	/**
 	 * Draws the message for the room.
 	 */
-	void drawRoomMessage(uint16 curInv, CloseDataPtr closePtr);
+	void drawRoomMessage(uint16 curInv, const CloseData *closePtr);
 	void drawStaticMessage(byte index);
 
 	/**
@@ -337,7 +359,7 @@ private:
 	 * some of the closeups have the same hit boxes, then this returns the first
 	 * occurrence of the object with the same hit box.
 	 */
-	CloseDataPtr findClosePtrMatch(CloseDataPtr closePtr, CloseDataPtr closePtrList);
+	const CloseData *findClosePtrMatch(const CloseData *closePtr, const CloseDataList &list);
 
 	/**
 	 * Checks if a floor has been visited.
@@ -347,10 +369,10 @@ private:
 	/**
 	 * New code to allow quick(er) return navigation in game.
 	 */
-	int followCrumbs();
+	MainButton followCrumbs();
 	void freeMapData();
 	void freeScreens();
-	bool fromCrumbs(uint32 tmpClass, uint16 code, uint16 qualifier, Common::Point tmpPos,
+	bool processEvent(MessageClass tmpClass, uint16 code, uint16 qualifier, Common::Point tmpPos,
 		uint16 &curInv, IntuiMessage *curMsg, bool &forceDraw, uint16 buttonId, uint16 &actionMode);
 
 	/**
@@ -367,7 +389,7 @@ private:
 	/**
 	 * Gets an object, if any, from the user's click on the screen.
 	 */
-	CloseData *getObject(Common::Point pos, CloseDataPtr closePtr);
+	const CloseData *getObject(Common::Point pos, const CloseData *closePtr);
 
 	/**
 	 * Returns the floor to show when the up arrow is pressed
@@ -442,18 +464,18 @@ private:
 	/**
 	 * Sets the current close up data.
 	 */
-	void setCurrentClose(Common::Point pos, CloseDataPtr *closePtrList, bool useAbsoluteCoords);
+	void setCurrentClose(Common::Point pos, const CloseData **closePtrList, bool useAbsoluteCoords, bool next=false);
 
 	/**
 	 * Takes the currently selected item.
 	 */
-	bool takeItem(Common::Point pos, CloseDataPtr *closePtrList);
+	bool takeItem(Common::Point pos);
 
 	/**
 	 * Does the turn page wipe.
 	 */
 	void turnPage(bool fromLeft);
-	bool processKey(IntuiMessage *curMsg, uint32 &msgClass, uint16 &qualifier, Common::Point &curPos, uint16 &curInv, bool &forceDraw, uint16 code);
+	bool processKey(IntuiMessage *curMsg, uint32 msgClass, uint16 &qualifier, Common::Point &curPos, uint16 &curInv, bool &forceDraw, uint16 code);
 	void processMainButton(uint16 &curInv, uint16 &lastInv, uint16 &oldDirection, bool &forceDraw, uint16 buttonId, uint16 &actionMode);
 	void processAltButton(uint16 &curInv, uint16 &lastInv, uint16 buttonId, uint16 &actionMode);
 	void performAction(uint16 actionMode, Common::Point curPos, uint16 &curInv);

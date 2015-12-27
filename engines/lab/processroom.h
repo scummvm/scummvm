@@ -91,59 +91,16 @@ enum RuleAction {
 	kRuleActionTakeDef = 4
 };
 
-#if defined(WIN32)
-#pragma pack(push, 1)
-#endif
-
-struct CloseData {
-	uint16 _x1, _y1, _x2, _y2;
-	int16 _closeUpType;          // if > 0, an object.  If < 0, an item
-	uint16 _depth;               // Level of the closeup.
-	Common::String _graphicName;
-	Common::String _message;
-	CloseData *_nextCloseUp;
-	CloseData *_subCloseUps;
+enum Condition {
+	kCondBeltGlowing = 70,
+	kCondBridge1 = 104,
+	kCondNoNews = 135,
+	kCondBridge0 = 148,
+	kCondLampOn = 151,
+	kCondNoClean = 152,
+	kCondDirty = 175,
+	kCondUsedHelmet = 184
 };
-
-struct ViewData {
-	int16 *_condition;
-	Common::String _graphicName;
-	ViewData *_nextCondition;
-	CloseDataPtr _closeUps;
-};
-
-struct Action {
-	ActionType _actionType;
-	int16 _param1;
-	int16 _param2;
-	int16 _param3;
-	Common::String *_messages;
-	Action *_nextAction;
-};
-
-struct Rule {
-	RuleType _ruleType;
-	int16 _param1;
-	int16 _param2;
-	int16 *_condition;
-	Action *_actionList;
-};
-
-struct RoomData {
-	uint16 _doors[4];
-	byte _transitionType;
-	ViewData *_view[4];
-	RuleList *_rules;
-	Common::String _roomMsg;
-};
-
-struct InventoryData {
-	uint16 _quantity;
-	Common::String _name;
-	Common::String _bitmapName;
-};
-
-// Map Flags
 
 enum MapDoors {
 	kDoorLeftNorth = 1,
@@ -162,28 +119,71 @@ enum MapDoors {
 	kDoorBottomWest = 128
 };
 
-// Special Map ID's
-#define     NORMAL           0
-#define     UPARROWROOM      1
-#define     DOWNARROWROOM    2
-#define     BRIDGEROOM       3
-#define     VCORRIDOR        4
-#define     HCORRIDOR        5
-#define     MEDMAZE          6
-#define     HEDGEMAZE        7
-#define     SURMAZE          8
-#define     MULTIMAZEF1      9
-#define     MULTIMAZEF2     10
-#define     MULTIMAZEF3     11
-
-struct MapData {
-	uint16 _x, _y, _pageNumber, _specialID;
-	uint32 _mapFlags;
+enum SpecialRoom {
+	kNormalRoom = 0,
+	kUpArrowRoom,
+	kDownArrowRoom,
+	kBridgeRoom,
+	kVerticalCorridor,
+	kHorizontalCorridor,
+	kMedMaze,
+	kHedgeMaze,
+	kSurMaze,
+	kMultiMazeF1,
+	kMultiMazeF2,
+	kMultiMazeF3
 };
 
-#if defined(WIN32)
-#pragma pack(pop)
-#endif
+struct CloseData {
+	uint16 _x1, _y1, _x2, _y2;
+	int16 _closeUpType;          // if > 0, an object.  If < 0, an item
+	uint16 _depth;               // Level of the closeup.
+	Common::String _graphicName;
+	Common::String _message;
+	CloseDataList _subCloseUps;
+};
+
+struct ViewData {
+	Common::Array<int16> _condition;
+	Common::String _graphicName;
+	CloseDataList _closeUps;
+};
+
+struct Action {
+	ActionType _actionType;
+	int16 _param1;
+	int16 _param2;
+	int16 _param3;
+	Common::Array<Common::String> _messages;
+};
+
+struct Rule {
+	RuleType _ruleType;
+	int16 _param1;
+	int16 _param2;
+	Common::Array<int16> _condition;
+	ActionList _actionList;
+};
+
+struct RoomData {
+	uint16 _doors[4];
+	byte _transitionType;
+	ViewDataList _view[4];
+	RuleList _rules;
+	Common::String _roomMsg;
+};
+
+struct InventoryData {
+	uint16 _quantity;
+	Common::String _name;
+	Common::String _bitmapName;
+};
+
+struct MapData {
+	uint16 _x, _y, _pageNumber;
+	SpecialRoom _specialID;
+	uint32 _mapFlags;
+};
 
 } // End of namespace Lab
 

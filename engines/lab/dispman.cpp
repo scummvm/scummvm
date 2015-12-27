@@ -48,7 +48,6 @@ DisplayMan::DisplayMan(LabEngine *vm) : _vm(vm) {
 	_actionMessageShown = false;
 
 	_screenBytesPerPage = 0;
-	_curPen = 0;
 	_curBitmap = nullptr;
 	_displayBuffer = nullptr;
 	_currentDisplayBuffer = nullptr;
@@ -58,14 +57,11 @@ DisplayMan::DisplayMan(LabEngine *vm) : _vm(vm) {
 	_screenHeight = 0;
 
 	for (int i = 0; i < 256 * 3; i++)
-		_curvgapal[i] = 0;
-
-	_dispBitMap = new BitMap;
+		_curVgaPal[i] = 0;
 }
 
 DisplayMan::~DisplayMan() {
 	freePict();
-	delete _dispBitMap;
 	delete[] _displayBuffer;
 }
 
@@ -92,15 +88,7 @@ void DisplayMan::readPict(const Common::String filename, bool playOnce, bool onl
 	_vm->_anim->stopDiff();
 	loadPict(filename);
 	_vm->updateMusicAndEvents();
-
-	if (!_vm->_music->_loopSoundEffect)
-		_vm->_music->stopSoundEffect();
-
-	_dispBitMap->_bytesPerRow  = _screenWidth;
-	_dispBitMap->_drawOnScreen = (memoryBuffer == nullptr);
-	if (memoryBuffer)
-		_dispBitMap->_planes[0] = memoryBuffer;
-
+	_vm->_anim->setOutputBuffer(memoryBuffer);
 	_vm->_anim->readDiff(_curBitmap, playOnce, onlyDiffData);
 }
 
@@ -121,56 +109,64 @@ Common::String DisplayMan::getWord(const char *mainBuffer) {
 Common::String DisplayMan::getLine(TextFont *tf, const char **mainBuffer, uint16 lineWidth) {
 	uint16 curWidth = 0;
 	Common::String result;
-	bool doit = true;
 
-	lineWidth += textLength(tf, " ");
-
-	while ((*mainBuffer)[0] && doit) {
-		Common::String wordBuffer = getWord(*mainBuffer) + " ";
+	while ((*mainBuffer)[0]) {
+		Common::String wordBuffer = getWord(*mainBuffer);
 
 		if ((curWidth + textLength(tf, wordBuffer)) <= lineWidth) {
 			result += wordBuffer;
-			(*mainBuffer) += wordBuffer.size() - 1;
+			(*mainBuffer) += wordBuffer.size();
 
-			if ((*mainBuffer)[0] == '\n')
-				doit = false;
-
-			if ((*mainBuffer)[0])
+			// end of line
+			if ((*mainBuffer)[0] == '\n') {
 				(*mainBuffer)++;
+				break;
+			}
+
+			// append any space after the word
+			if ((*mainBuffer)[0]) {
+				result += (*mainBuffer)[0];
+				(*mainBuffer)++;
+			}
 
 			curWidth = textLength(tf, result);
 		} else
-			doit = false;
+			break;
 	}
 
 	return result;
 }
 
 int DisplayMan::flowText(TextFont *font, int16 spacing, byte penColor, byte backPen,
-			bool fillBack, bool centerh, bool centerv, bool output, Common::Rect textRect, const char *str) {
-	if (fillBack) {
-		setPen(backPen);
-		rectFill(textRect);
+			bool fillBack, bool centerh, bool centerv, bool output, Common::Rect textRect, const char *str, Image *targetImage) {
+
+	byte *saveDisplayBuffer = _currentDisplayBuffer;
+
+	if (targetImage) {
+		_currentDisplayBuffer = targetImage->_imageData;
+		assert(_screenBytesPerPage == (uint32)(targetImage->_width * targetImage->_height));
 	}
+
+	if (fillBack)
+		rectFill(textRect, backPen);
 
 	if (!str)
 		return 0;
 
-	setPen(penColor);
+	const char *orig = str;
 
 	TextFont *msgFont = font;
 	uint16 fontHeight = textHeight(msgFont) + spacing;
 	uint16 numLines   = (textRect.height() + 1) / fontHeight;
 	uint16 width      = textRect.width() + 1;
 	uint16 y          = textRect.top;
-	Common::String lineBuffer;
 
 	if (centerv && output) {
 		const char *temp = str;
 		uint16 actlines = 0;
 
 		while (temp[0]) {
-			lineBuffer = getLine(msgFont, &temp, width);
+			getLine(msgFont, &temp, width);
 			actlines++;
 		}
 
@@ -178,12 +174,11 @@ int DisplayMan::flowText(TextFont *font, int16 spacing, byte penColor, byte back
 			y += ((textRect.height() + 1) - (actlines * fontHeight)) / 2;
 	}
 
-	int len = 0;
 	while (numLines && str[0]) {
+		Common::String lineBuffer;
 		lineBuffer = getLine(msgFont, &str, width);
 
 		uint16 x = textRect.left;
-		len += lineBuffer.size();
 
 		if (centerh)
 			x += (width - textLength(msgFont, lineBuffer)) / 2;
@@ -195,39 +190,20 @@ int DisplayMan::flowText(TextFont *font, int16 spacing, byte penColor, byte back
 		y += fontHeight;
 	}
 
-	len--;
-
-	return len;
-}
-
-int DisplayMan::flowTextToMem(Image *destIm, TextFont *font, int16 spacing, byte penColor,
-			byte backPen, bool fillBack, bool centerh, bool centerv, bool output, Common::Rect textRect,
-			const char *str) {
-	byte *saveDisplayBuffer = _currentDisplayBuffer;
-	uint32 bytesPerPage = _screenBytesPerPage;
-
-	_currentDisplayBuffer = destIm->_imageData;
-	_screenBytesPerPage = (uint32)destIm->_width * (int32)destIm->_height;
-
-	int res = flowText(font, spacing, penColor, backPen, fillBack, centerh, centerv, output, textRect, str);
-
-	_screenBytesPerPage = bytesPerPage;
 	_currentDisplayBuffer = saveDisplayBuffer;
 
-	return res;
+	return (str - orig);
 }
 
 void DisplayMan::createBox(uint16 y2) {
 	// Message box area
-	setPen(7);
-	rectFillScaled(4, 154, 315, y2 - 2);
+	rectFillScaled(4, 154, 315, y2 - 2, 7);
 
 	// Box around message area
-	setPen(0);
-	drawHLine(_vm->_utils->vgaScaleX(2), _vm->_utils->vgaScaleY(152), _vm->_utils->vgaScaleX(317));
-	drawVLine(_vm->_utils->vgaScaleX(317), _vm->_utils->vgaScaleY(152), _vm->_utils->vgaScaleY(y2));
-	drawHLine(_vm->_utils->vgaScaleX(2), _vm->_utils->vgaScaleY(y2), _vm->_utils->vgaScaleX(317));
-	drawVLine(_vm->_utils->vgaScaleX(2), _vm->_utils->vgaScaleY(152), _vm->_utils->vgaScaleY(y2));
+	drawHLine(_vm->_utils->vgaScaleX(2), _vm->_utils->vgaScaleY(152), _vm->_utils->vgaScaleX(317), 0);
+	drawVLine(_vm->_utils->vgaScaleX(317), _vm->_utils->vgaScaleY(152), _vm->_utils->vgaScaleY(y2), 0);
+	drawHLine(_vm->_utils->vgaScaleX(2), _vm->_utils->vgaScaleY(y2), _vm->_utils->vgaScaleX(317), 0);
+	drawVLine(_vm->_utils->vgaScaleX(2), _vm->_utils->vgaScaleY(152), _vm->_utils->vgaScaleY(y2), 0);
 }
 
 int DisplayMan::longDrawMessage(Common::String str, bool isActionMessage) {
@@ -247,8 +223,7 @@ int DisplayMan::longDrawMessage(Common::String str, bool isActionMessage) {
 	if (!_longWinInFront) {
 		_longWinInFront = true;
 		// Clear Area
-		setPen(3);
-		rectFill(0, _vm->_utils->vgaScaleY(149) + _vm->_utils->svgaCord(2), _vm->_utils->vgaScaleX(319), _vm->_utils->vgaScaleY(199));
+		rectFill(0, _vm->_utils->vgaScaleY(149) + _vm->_utils->svgaCord(2), _vm->_utils->vgaScaleX(319), _vm->_utils->vgaScaleY(199), 3);
 	}
 
 	createBox(198);
@@ -289,52 +264,45 @@ void DisplayMan::drawPanel() {
 	_vm->_event->mouseHide();
 
 	// Clear Area
-	setPen(3);
-	rectFill(0, _vm->_utils->vgaScaleY(149) + _vm->_utils->svgaCord(2), _vm->_utils->vgaScaleX(319), _vm->_utils->vgaScaleY(199));
+	rectFill(0, _vm->_utils->vgaScaleY(149) + _vm->_utils->svgaCord(2), _vm->_utils->vgaScaleX(319), _vm->_utils->vgaScaleY(199), 3);
 
 	// First Line
-	setPen(0);
-	drawHLine(0, _vm->_utils->vgaScaleY(149) + _vm->_utils->svgaCord(2), _vm->_utils->vgaScaleX(319));
+	drawHLine(0, _vm->_utils->vgaScaleY(149) + _vm->_utils->svgaCord(2), _vm->_utils->vgaScaleX(319), 0);
 	// Second Line
-	setPen(5);
-	drawHLine(0, _vm->_utils->vgaScaleY(149) + 1 + _vm->_utils->svgaCord(2), _vm->_utils->vgaScaleX(319));
+	drawHLine(0, _vm->_utils->vgaScaleY(149) + 1 + _vm->_utils->svgaCord(2), _vm->_utils->vgaScaleX(319), 5);
 	// Button Separators
-	setPen(0);
-	// First black line to separate buttons
-	drawHLine(0, _vm->_utils->vgaScaleY(170), _vm->_utils->vgaScaleX(319));
+	drawHLine(0, _vm->_utils->vgaScaleY(170), _vm->_utils->vgaScaleX(319), 0);
 
 	if (!_vm->_alternate) {
-		setPen(4);
 		// The horizontal lines under the black one
-		drawHLine(0, _vm->_utils->vgaScaleY(170) + 1, _vm->_utils->vgaScaleX(319));
+		drawHLine(0, _vm->_utils->vgaScaleY(170) + 1, _vm->_utils->vgaScaleX(319), 4);
 		_vm->_event->drawButtonList(&_vm->_moveButtonList);
 	} else {
 		if (_vm->getPlatform() != Common::kPlatformWindows) {
 			// Vertical Black lines
-			drawVLine(_vm->_utils->vgaScaleX(124), _vm->_utils->vgaScaleY(170) + 1, _vm->_utils->vgaScaleY(199));
-			drawVLine(_vm->_utils->vgaScaleX(194), _vm->_utils->vgaScaleY(170) + 1, _vm->_utils->vgaScaleY(199));
+			drawVLine(_vm->_utils->vgaScaleX(124), _vm->_utils->vgaScaleY(170) + 1, _vm->_utils->vgaScaleY(199), 0);
+			drawVLine(_vm->_utils->vgaScaleX(194), _vm->_utils->vgaScaleY(170) + 1, _vm->_utils->vgaScaleY(199), 0);
 		} else {
 			// Vertical Black lines
-			drawVLine(_vm->_utils->vgaScaleX(90), _vm->_utils->vgaScaleY(170) + 1, _vm->_utils->vgaScaleY(199));
-			drawVLine(_vm->_utils->vgaScaleX(160), _vm->_utils->vgaScaleY(170) + 1, _vm->_utils->vgaScaleY(199));
-			drawVLine(_vm->_utils->vgaScaleX(230), _vm->_utils->vgaScaleY(170) + 1, _vm->_utils->vgaScaleY(199));
+			drawVLine(_vm->_utils->vgaScaleX(90), _vm->_utils->vgaScaleY(170) + 1, _vm->_utils->vgaScaleY(199), 0);
+			drawVLine(_vm->_utils->vgaScaleX(160), _vm->_utils->vgaScaleY(170) + 1, _vm->_utils->vgaScaleY(199), 0);
+			drawVLine(_vm->_utils->vgaScaleX(230), _vm->_utils->vgaScaleY(170) + 1, _vm->_utils->vgaScaleY(199), 0);
 		}
 
-		setPen(4);
 		// The horizontal lines under the black one
-		drawHLine(0, _vm->_utils->vgaScaleY(170) + 1, _vm->_utils->vgaScaleX(122));
-		drawHLine(_vm->_utils->vgaScaleX(126), _vm->_utils->vgaScaleY(170) + 1, _vm->_utils->vgaScaleX(192));
-		drawHLine(_vm->_utils->vgaScaleX(196), _vm->_utils->vgaScaleY(170) + 1, _vm->_utils->vgaScaleX(319));
+		drawHLine(0, _vm->_utils->vgaScaleY(170) + 1, _vm->_utils->vgaScaleX(122), 4);
+		drawHLine(_vm->_utils->vgaScaleX(126), _vm->_utils->vgaScaleY(170) + 1, _vm->_utils->vgaScaleX(192), 4);
+		drawHLine(_vm->_utils->vgaScaleX(196), _vm->_utils->vgaScaleY(170) + 1, _vm->_utils->vgaScaleX(319), 4);
 		// The vertical high light lines
-		drawVLine(_vm->_utils->vgaScaleX(1), _vm->_utils->vgaScaleY(170) + 2, _vm->_utils->vgaScaleY(198));
+		drawVLine(_vm->_utils->vgaScaleX(1), _vm->_utils->vgaScaleY(170) + 2, _vm->_utils->vgaScaleY(198), 4);
 
 		if (_vm->getPlatform() != Common::kPlatformWindows) {
-			drawVLine(_vm->_utils->vgaScaleX(126), _vm->_utils->vgaScaleY(170) + 2, _vm->_utils->vgaScaleY(198));
-			drawVLine(_vm->_utils->vgaScaleX(196), _vm->_utils->vgaScaleY(170) + 2, _vm->_utils->vgaScaleY(198));
+			drawVLine(_vm->_utils->vgaScaleX(126), _vm->_utils->vgaScaleY(170) + 2, _vm->_utils->vgaScaleY(198), 4);
+			drawVLine(_vm->_utils->vgaScaleX(196), _vm->_utils->vgaScaleY(170) + 2, _vm->_utils->vgaScaleY(198), 4);
 		} else {
-			drawVLine(_vm->_utils->vgaScaleX(92), _vm->_utils->vgaScaleY(170) + 2, _vm->_utils->vgaScaleY(198));
-			drawVLine(_vm->_utils->vgaScaleX(162), _vm->_utils->vgaScaleY(170) + 2, _vm->_utils->vgaScaleY(198));
-			drawVLine(_vm->_utils->vgaScaleX(232), _vm->_utils->vgaScaleY(170) + 2, _vm->_utils->vgaScaleY(198));
+			drawVLine(_vm->_utils->vgaScaleX(92), _vm->_utils->vgaScaleY(170) + 2, _vm->_utils->vgaScaleY(198), 4);
+			drawVLine(_vm->_utils->vgaScaleX(162), _vm->_utils->vgaScaleY(170) + 2, _vm->_utils->vgaScaleY(198), 4);
+			drawVLine(_vm->_utils->vgaScaleX(232), _vm->_utils->vgaScaleY(170) + 2, _vm->_utils->vgaScaleY(198), 4);
 		}
 
 		_vm->_event->drawButtonList(&_vm->_invButtonList);
@@ -363,16 +331,16 @@ void DisplayMan::setUpScreens() {
 	// It's very convenient to have those shortcut, so I added them
 	// for all versions. (Strangerke)
 	uint16 y = _vm->_utils->vgaScaleY(173) - _vm->_utils->svgaCord(2);
-	moveButtonList->push_back(e->createButton(  1, y, 0,          't', moveImages[0],  moveImages[1]));
-	moveButtonList->push_back(e->createButton( 33, y, 1,          'm', moveImages[2],  moveImages[3]));
-	moveButtonList->push_back(e->createButton( 65, y, 2,          'o', moveImages[4],  moveImages[5]));
-	moveButtonList->push_back(e->createButton( 97, y, 3,          'c', moveImages[6],  moveImages[7]));
-	moveButtonList->push_back(e->createButton(129, y, 4,          'l', moveImages[8],  moveImages[9]));
-	moveButtonList->push_back(e->createButton(161, y, 5,          'i', moveImages[12], moveImages[13]));
-	moveButtonList->push_back(e->createButton(193, y, 6, VKEY_LTARROW, moveImages[14], moveImages[15]));
-	moveButtonList->push_back(e->createButton(225, y, 7, VKEY_UPARROW, moveImages[16], moveImages[17]));
-	moveButtonList->push_back(e->createButton(257, y, 8, VKEY_RTARROW, moveImages[18], moveImages[19]));
-	moveButtonList->push_back(e->createButton(289, y, 9,          'p', moveImages[10], moveImages[11]));
+	moveButtonList->push_back(e->createButton(  1, y, 0, Common::KEYCODE_t,     moveImages[0],  moveImages[1]));
+	moveButtonList->push_back(e->createButton( 33, y, 1, Common::KEYCODE_m,     moveImages[2],  moveImages[3]));
+	moveButtonList->push_back(e->createButton( 65, y, 2, Common::KEYCODE_o,     moveImages[4],  moveImages[5]));
+	moveButtonList->push_back(e->createButton( 97, y, 3, Common::KEYCODE_c,     moveImages[6],  moveImages[7]));
+	moveButtonList->push_back(e->createButton(129, y, 4, Common::KEYCODE_l,     moveImages[8],  moveImages[9]));
+	moveButtonList->push_back(e->createButton(161, y, 5, Common::KEYCODE_i,     moveImages[12], moveImages[13]));
+	moveButtonList->push_back(e->createButton(193, y, 6, Common::KEYCODE_LEFT,  moveImages[14], moveImages[15]));
+	moveButtonList->push_back(e->createButton(225, y, 7, Common::KEYCODE_UP,    moveImages[16], moveImages[17]));
+	moveButtonList->push_back(e->createButton(257, y, 8, Common::KEYCODE_RIGHT, moveImages[18], moveImages[19]));
+	moveButtonList->push_back(e->createButton(289, y, 9, Common::KEYCODE_p,     moveImages[10], moveImages[11]));
 
 	// TODO: The INV file is not present in the Amiga version
 	Common::File *invFile = _vm->_resource->openDataFile("P:Inv");
@@ -383,28 +351,24 @@ void DisplayMan::setUpScreens() {
 		for (int imgIdx = 0; imgIdx < 6; imgIdx++)
 			_vm->_invImages[imgIdx] = new Image(invFile, _vm);
 	}
-	invButtonList->push_back(e->createButton( 24, y, 0,          'm', invImages[0],   invImages[1]));
-	invButtonList->push_back(e->createButton( 56, y, 1,          'g', invImages[2],   invImages[3]));
-	invButtonList->push_back(e->createButton( 94, y, 2,          'u', invImages[4],   invImages[5]));
-	invButtonList->push_back(e->createButton(126, y, 3,          'l', moveImages[8],  moveImages[9]));
-	invButtonList->push_back(e->createButton(164, y, 4, VKEY_LTARROW, moveImages[14], moveImages[15]));
-	invButtonList->push_back(e->createButton(196, y, 5, VKEY_RTARROW, moveImages[18], moveImages[19]));
+	invButtonList->push_back(e->createButton( 24, y, 0, Common::KEYCODE_ESCAPE, invImages[0],   invImages[1]));
+	invButtonList->push_back(e->createButton( 56, y, 1, Common::KEYCODE_g,      invImages[2],   invImages[3]));
+	invButtonList->push_back(e->createButton( 94, y, 2, Common::KEYCODE_u,      invImages[4],   invImages[5]));
+	invButtonList->push_back(e->createButton(126, y, 3, Common::KEYCODE_l,      moveImages[8],  moveImages[9]));
+	invButtonList->push_back(e->createButton(164, y, 4, Common::KEYCODE_LEFT,   moveImages[14], moveImages[15]));
+	invButtonList->push_back(e->createButton(196, y, 5, Common::KEYCODE_RIGHT,  moveImages[18], moveImages[19]));
 
 	// The windows version has 2 extra buttons for breadcrumb trail
 	// CHECKME: the game is really hard to play without those, maybe we could add something to enable that.
 	if (_vm->getPlatform() == Common::kPlatformWindows) {
-		invButtonList->push_back(e->createButton(234, y, 6, 'b', invImages[6], invImages[7]));
-		invButtonList->push_back(e->createButton(266, y, 7, 'f', invImages[8], invImages[9]));
+		invButtonList->push_back(e->createButton(234, y, 6, Common::KEYCODE_b, invImages[6], invImages[7]));
+		invButtonList->push_back(e->createButton(266, y, 7, Common::KEYCODE_f, invImages[8], invImages[9]));
 	}
 
 	delete invFile;
 }
 
-void DisplayMan::setPen(byte penNum) {
-	_curPen = penNum;
-}
-
-void DisplayMan::rectFill(Common::Rect fillRect) {
+void DisplayMan::rectFill(Common::Rect fillRect, byte color) {
 	int width = fillRect.width() + 1;
 	int height = fillRect.height() + 1;
 
@@ -422,7 +386,7 @@ void DisplayMan::rectFill(Common::Rect fillRect) {
 			int ww = width;
 
 			while (ww-- > 0) {
-				*dd++ = _curPen;
+				*dd++ = color;
 			}
 
 			d += _screenWidth;
@@ -430,20 +394,20 @@ void DisplayMan::rectFill(Common::Rect fillRect) {
 	}
 }
 
-void DisplayMan::rectFill(uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
-	rectFill(Common::Rect(x1, y1, x2, y2));
+void DisplayMan::rectFill(uint16 x1, uint16 y1, uint16 x2, uint16 y2, byte color) {
+	rectFill(Common::Rect(x1, y1, x2, y2), color);
 }
 
-void DisplayMan::rectFillScaled(uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
-	rectFill(_vm->_utils->vgaRectScale(x1, y1, x2, y2));
+void DisplayMan::rectFillScaled(uint16 x1, uint16 y1, uint16 x2, uint16 y2, byte color) {
+	rectFill(_vm->_utils->vgaRectScale(x1, y1, x2, y2), color);
 }
 
-void DisplayMan::drawVLine(uint16 x, uint16 y1, uint16 y2) {
-	rectFill(x, y1, x, y2);
+void DisplayMan::drawVLine(uint16 x, uint16 y1, uint16 y2, byte color) {
+	rectFill(x, y1, x, y2, color);
 }
 
-void DisplayMan::drawHLine(uint16 x1, uint16 y, uint16 x2) {
-	rectFill(x1, y, x2, y);
+void DisplayMan::drawHLine(uint16 x1, uint16 y, uint16 x2, byte color) {
+	rectFill(x1, y, x2, y, color);
 }
 
 void DisplayMan::screenUpdate() {
@@ -490,11 +454,11 @@ void DisplayMan::writeColorRegs(byte *buf, uint16 first, uint16 numReg) {
 		tmp[i] = (buf[i] << 2) | (buf[i] >> 4);	// better results than buf[i] * 4
 
 	_vm->_system->getPaletteManager()->setPalette(tmp, first, numReg);
-	memcpy(&(_curvgapal[first * 3]), buf, numReg * 3);
+	memcpy(&(_curVgaPal[first * 3]), buf, numReg * 3);
 }
 
 void DisplayMan::setPalette(void *newPal, uint16 numColors) {
-	if (memcmp(newPal, _curvgapal, numColors * 3) != 0)
+	if (memcmp(newPal, _curVgaPal, numColors * 3) != 0)
 		writeColorRegs((byte *)newPal, 0, numColors);
 }
 
@@ -505,7 +469,7 @@ byte *DisplayMan::getCurrentDrawingBuffer() {
 	return _displayBuffer;
 }
 
-void DisplayMan::checkerboardEffect(uint16 penColor, uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
+void DisplayMan::checkerBoardEffect(uint16 penColor, uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
 	int w = x2 - x1 + 1;
 	int h = y2 - y1 + 1;
 
@@ -539,7 +503,7 @@ void DisplayMan::checkerboardEffect(uint16 penColor, uint16 x1, uint16 y1, uint1
 	}
 }
 
-void DisplayMan::closeFont(TextFont **font) {
+void DisplayMan::freeFont(TextFont **font) {
 	if (*font) {
 		if ((*font)->_data)
 			delete[] (*font)->_data;
@@ -709,20 +673,19 @@ void DisplayMan::doScrollWipe(const Common::String filename) {
 	uint16 nheight = height;
 	uint16 startLine = 0, onRow = 0;
 
-	while (onRow < _vm->_anim->_headerdata._height) {
+	while (onRow < _vm->_anim->getDIFFHeight()) {
 		_vm->updateMusicAndEvents();
 
 		if ((by > nheight) && nheight)
 			by = nheight;
 
-		if ((startLine + by) > (_vm->_anim->_headerdata._height - height - 1))
+		if ((startLine + by) > (_vm->_anim->getDIFFHeight() - height - 1))
 			break;
 
 		if (nheight)
 			nheight -= by;
 
 		copyPage(width, height, nheight, startLine, mem);
-
 		screenUpdate();
 
 		if (!nheight)
@@ -751,7 +714,7 @@ void DisplayMan::doScrollBounce() {
 	byte *mem = _vm->_anim->_scrollScreenBuffer;
 
 	_vm->updateMusicAndEvents();
-	int startLine = _vm->_anim->_headerdata._height - height - 1;
+	int startLine = _vm->_anim->getDIFFHeight() - height - 1;
 
 	for (int i = 0; i < 5; i++) {
 		_vm->updateMusicAndEvents();
@@ -770,7 +733,7 @@ void DisplayMan::doScrollBounce() {
 	_vm->_event->mouseShow();
 }
 
-void DisplayMan::doTransWipe(CloseDataPtr *closePtrList, const Common::String filename) {
+void DisplayMan::doTransWipe(const Common::String filename) {
 	uint16 lastY, linesLast;
 
 	if (_vm->_isHiRes) {
@@ -795,38 +758,36 @@ void DisplayMan::doTransWipe(CloseDataPtr *closePtrList, const Common::String fi
 				}
 
 				if (j == 0)
-					checkerboardEffect(0, 0, curY, _screenWidth - 1, curY + 1);
+					checkerBoardEffect(0, 0, curY, _screenWidth - 1, curY + 1);
 				else
-					rectFill(0, curY, _screenWidth - 1, curY + 1);
+					rectFill(0, curY, _screenWidth - 1, curY + 1, 0);
 				curY += 4;
 				linesDone++;
 			}	// while
 		}	// for i
-
-		setPen(0);
 	}	// for j
 
 	if (filename.empty())
-		_vm->_curFileName = _vm->getPictName(closePtrList);
+		_vm->_curFileName = _vm->getPictName(true);
 	else if (filename[0] > ' ')
 		_vm->_curFileName = filename;
 	else
-		_vm->_curFileName = _vm->getPictName(closePtrList);
+		_vm->_curFileName = _vm->getPictName(true);
 
 	byte *bitMapBuffer = new byte[_screenWidth * (lastY + 5)];
 	readPict(_vm->_curFileName, true, false, bitMapBuffer);
 
 	setPalette(_vm->_anim->_diffPalette, 256);
 
-	Image imSource(_vm);
-	imSource._width = _screenWidth;
-	imSource._height = lastY;
-	imSource._imageData = bitMapBuffer;
+	Image imgSource(_vm);
+	imgSource._width = _screenWidth;
+	imgSource._height = lastY;
+	imgSource.setData(bitMapBuffer, true);
 
-	Image imDest(_vm);
-	imDest._width = _screenWidth;
-	imDest._height = _screenHeight;
-	imDest._imageData = getCurrentDrawingBuffer();
+	Image imgDest(_vm);
+	imgDest._width = _screenWidth;
+	imgDest._height = _screenHeight;
+	imgDest.setData(getCurrentDrawingBuffer(), false);
 
 	for (int j = 0; j < 2; j++) {
 		for (int i = 0; i < 2; i++) {
@@ -839,14 +800,14 @@ void DisplayMan::doTransWipe(CloseDataPtr *closePtrList, const Common::String fi
 					linesDone = 0;
 				}
 
-				imDest._imageData = getCurrentDrawingBuffer();
+				imgDest.setData(getCurrentDrawingBuffer(), false);
 
 				if (j == 0) {
-					imSource.blitBitmap(0, curY, &imDest, 0, curY, _screenWidth, 2, false);
-					checkerboardEffect(0, 0, curY, _screenWidth - 1, curY + 1);
+					imgSource.blitBitmap(0, curY, &imgDest, 0, curY, _screenWidth, 2, false);
+					checkerBoardEffect(0, 0, curY, _screenWidth - 1, curY + 1);
 				} else {
 					uint16 bitmapHeight = (curY == lastY) ? 1 : 2;
-					imSource.blitBitmap(0, curY, &imDest, 0, curY, _screenWidth, bitmapHeight, false);
+					imgSource.blitBitmap(0, curY, &imgDest, 0, curY, _screenWidth, bitmapHeight, false);
 				}
 				curY += 4;
 				linesDone++;
@@ -854,31 +815,28 @@ void DisplayMan::doTransWipe(CloseDataPtr *closePtrList, const Common::String fi
 		}	// for i
 	}	// for j
 
-	// Prevent the Image destructor from deleting the drawing buffer
-	imDest._imageData = nullptr;
-
 	// bitMapBuffer will be deleted by the Image destructor
 }
 
-void DisplayMan::doTransition(TransitionType transitionType, CloseDataPtr *closePtrList, const Common::String filename) {
+void DisplayMan::doTransition(TransitionType transitionType, const Common::String filename) {
 	switch (transitionType) {
 	case kTransitionWipe:
 	case kTransitionTransporter:
-		doTransWipe(closePtrList, filename);
+		doTransWipe(filename);
 		break;
-	case kTransitionScrollWipe:
+	case kTransitionScrollWipe:		// only used in scene 7 (street, when teleporting to the surreal maze)
 		doScrollWipe(filename);
 		break;
-	case kTransitionScrollBlack:
+	case kTransitionScrollBlack:	// only used in scene 7 (street, when teleporting to the surreal maze)
 		doScrollBlack();
 		break;
-	case kTransitionScrollBounce:
+	case kTransitionScrollBounce:	// only used in scene 7 (street, when teleporting to the surreal maze)
 		doScrollBounce();
 		break;
-	case kTransitionReadFirstFrame:
+	case kTransitionReadFirstFrame:	// only used in scene 7 (street, when teleporting to the surreal maze)
 		readPict(filename, false);
 		break;
-	case kTransitionReadNextFrame:
+	case kTransitionReadNextFrame:	// only used in scene 7 (street, when teleporting to the surreal maze)
 		_vm->_anim->diffNextFrame();
 		break;
 	case kTransitionNone:
@@ -910,8 +868,8 @@ void DisplayMan::blackAllScreen() {
 }
 
 void DisplayMan::scrollDisplayX(int16 dx, uint16 x1, uint16 y1, uint16 x2, uint16 y2, byte *buffer) {
-	Image im(_vm);
-	im._imageData = buffer;
+	Image img(_vm);
+	img.setData(buffer, false);
 
 	if (x1 > x2)
 		SWAP<uint16>(x1, x2);
@@ -920,32 +878,27 @@ void DisplayMan::scrollDisplayX(int16 dx, uint16 x1, uint16 y1, uint16 x2, uint1
 		SWAP<uint16>(y1, y2);
 
 	if (dx > 0) {
-		im._width = x2 - x1 + 1 - dx;
-		im._height = y2 - y1 + 1;
+		img._width = x2 - x1 + 1 - dx;
+		img._height = y2 - y1 + 1;
 
-		im.readScreenImage(x1, y1);
-		im.drawImage(x1 + dx, y1);
+		img.readScreenImage(x1, y1);
+		img.drawImage(x1 + dx, y1);
 
-		setPen(0);
-		rectFill(x1, y1, x1 + dx - 1, y2);
+		rectFill(x1, y1, x1 + dx - 1, y2, 0);
 	} else if (dx < 0) {
-		im._width = x2 - x1 + 1 + dx;
-		im._height = y2 - y1 + 1;
+		img._width = x2 - x1 + 1 + dx;
+		img._height = y2 - y1 + 1;
 
-		im.readScreenImage(x1 - dx, y1);
-		im.drawImage(x1, y1);
+		img.readScreenImage(x1 - dx, y1);
+		img.drawImage(x1, y1);
 
-		setPen(0);
-		rectFill(x2 + dx + 1, y1, x2, y2);
+		rectFill(x2 + dx + 1, y1, x2, y2, 0);
 	}
-
-	// Prevent the Image destructor from deleting the external buffer
-	im._imageData = nullptr;
 }
 
 void DisplayMan::scrollDisplayY(int16 dy, uint16 x1, uint16 y1, uint16 x2, uint16 y2, byte *buffer) {
-	Image im(_vm);
-	im._imageData = buffer;
+	Image img(_vm);
+	img.setData(buffer, false);
 
 	if (x1 > x2)
 		SWAP<uint16>(x1, x2);
@@ -954,27 +907,22 @@ void DisplayMan::scrollDisplayY(int16 dy, uint16 x1, uint16 y1, uint16 x2, uint1
 		SWAP<uint16>(y1, y2);
 
 	if (dy > 0) {
-		im._width = x2 - x1 + 1;
-		im._height = y2 - y1 + 1 - dy;
+		img._width = x2 - x1 + 1;
+		img._height = y2 - y1 + 1 - dy;
 
-		im.readScreenImage(x1, y1);
-		im.drawImage(x1, y1 + dy);
+		img.readScreenImage(x1, y1);
+		img.drawImage(x1, y1 + dy);
 
-		setPen(0);
-		rectFill(x1, y1, x2, y1 + dy - 1);
+		rectFill(x1, y1, x2, y1 + dy - 1, 0);
 	} else if (dy < 0) {
-		im._width = x2 - x1 + 1;
-		im._height = y2 - y1 + 1 + dy;
+		img._width = x2 - x1 + 1;
+		img._height = y2 - y1 + 1 + dy;
 
-		im.readScreenImage(x1, y1 - dy);
-		im.drawImage(x1, y1);
+		img.readScreenImage(x1, y1 - dy);
+		img.drawImage(x1, y1);
 
-		setPen(0);
-		rectFill(x1, y2 + dy + 1, x2, y2);
+		rectFill(x1, y2 + dy + 1, x2, y2, 0);
 	}
-
-	// Prevent the Image destructor from deleting the external buffer
-	im._imageData = nullptr;
 }
 
 uint16 DisplayMan::fadeNumIn(uint16 num, uint16 res, uint16 counter) {

@@ -43,7 +43,6 @@ static const ADGameDescription labDescriptions[] = {
 		"",
 		{
 			{ "doors",       0, "d77536010e7e5ae17ee066323ceb9585", 2537 }, // game/doors
-			{ "notes11",     0, "63e873f659f8f46f9809d16a2bf653c7", 3562 }, // fonts/notes11
 			{ "noteold.fon", 0, "6c1d90ad55149556e79d3f7bfddb4bd7", 9252 }, // game/spict/noteold.fon
 			{ NULL, 0, NULL, 0 }
 		},
@@ -57,7 +56,6 @@ static const ADGameDescription labDescriptions[] = {
 		"Lowres",
 		{
 			{ "doors",   0, "d77536010e7e5ae17ee066323ceb9585", 2537 }, // game/doors
-			{ "notes11", 0, "63e873f659f8f46f9809d16a2bf653c7", 3562 }, // fonts/notes11
 			{ "64b",     0, "3a84d41bcc6a782f22e8e954bce09721", 39916 }, // game/pict/h2/64b
 			{ NULL, 0, NULL, 0 }
 		},
@@ -71,7 +69,6 @@ static const ADGameDescription labDescriptions[] = {
 		"Rerelease",
 		{
 			{ "doors",   0, "d77536010e7e5ae17ee066323ceb9585", 2537 }, // game/doors
-			{ "notes11", 0, "63e873f659f8f46f9809d16a2bf653c7", 3562 }, // fonts/notes11
 			{ "noteold.fon", 0, "6c1d90ad55149556e79d3f7bfddb4bd7", 9252 }, // game/spict/noteold.fon
 			{ "wyrmkeep",0, "97c7064c54c28b952d37c4ebff6efa50", 52286 }, // game/spict/intro
 			{ NULL, 0, NULL, 0 }
@@ -94,7 +91,6 @@ static const ADGameDescription labDescriptions[] = {
 };
 
 static const char *const directoryGlobs[] = {
-		"fonts",
 		"game",
 		"pict",
 		"spict",

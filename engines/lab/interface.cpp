@@ -39,7 +39,7 @@
 
 namespace Lab {
 
-Button *EventManager::createButton(uint16 x, uint16 y, uint16 id, uint16 key, Image *image, Image *altImage) {
+Button *EventManager::createButton(uint16 x, uint16 y, uint16 id, Common::KeyCode key, Image *image, Image *altImage) {
 	Button *button = new Button();
 
 	if (button) {
@@ -78,21 +78,14 @@ void EventManager::drawButtonList(ButtonList *buttonList) {
 
 void EventManager::toggleButton(Button *button, uint16 disabledPenColor, bool enable) {
 	if (!enable)
-		_vm->_graphics->checkerboardEffect(disabledPenColor, button->_x, button->_y, button->_x + button->_image->_width - 1, button->_y + button->_image->_height - 1);
+		_vm->_graphics->checkerBoardEffect(disabledPenColor, button->_x, button->_y, button->_x + button->_image->_width - 1, button->_y + button->_image->_height - 1);
 	else
 		button->_image->drawImage(button->_x, button->_y);
 
 	button->_isEnabled = enable;
 }
 
-uint16 EventManager::makeButtonKeyEquiv(uint16 key) {
-	if (Common::isAlnum(key))
-		key = tolower(key);
-
-	return key;
-}
-
-Button *EventManager::checkNumButtonHit(ButtonList *buttonList, uint16 key) {
+Button *EventManager::checkNumButtonHit(ButtonList *buttonList, Common::KeyCode key) {
 	uint16 gkey = key - '0';
 
 	if (!buttonList)
@@ -100,9 +93,10 @@ Button *EventManager::checkNumButtonHit(ButtonList *buttonList, uint16 key) {
 
 	for (ButtonList::iterator buttonItr = buttonList->begin(); buttonItr != buttonList->end(); ++buttonItr) {
 		Button *button = *buttonItr;
-		if (((gkey - 1 == button->_buttonId) || ((gkey == 0) && (button->_buttonId == 9))
-		 || ((button->_keyEquiv != 0) && (makeButtonKeyEquiv(key) == button->_keyEquiv)))
-			  && button->_isEnabled) {
+		if (!button->_isEnabled)
+			continue;
+
+		if ((gkey - 1 == button->_buttonId) || (gkey == 0 && button->_buttonId == 9) || (button->_keyEquiv != Common::KEYCODE_INVALID && key == button->_keyEquiv)) {
 			button->_altImage->drawImage(button->_x, button->_y);
 			_vm->_system->delayMillis(80);
 			button->_image->drawImage(button->_x, button->_y);
@@ -117,8 +111,7 @@ IntuiMessage *EventManager::getMsg() {
 	static IntuiMessage message;
 
 	updateMouse();
-
-	Common::KeyCode curKey;
+	processInput();
 
 	if (_lastButtonHit) {
 		updateMouse();
@@ -135,17 +128,22 @@ IntuiMessage *EventManager::getMsg() {
 			message._mouse.x /= 2;
 		_leftClick = _rightClick = false;
 		return &message;
-	} else if (keyPress(&curKey)) {
-		message._code = curKey;
-		Button *curButton = checkNumButtonHit(_screenButtonList, message._code);
+	} else if (_keyPressed.keycode != Common::KEYCODE_INVALID) {
+		Button *curButton = checkNumButtonHit(_screenButtonList, _keyPressed.keycode);
 
 		if (curButton) {
 			message._msgClass = kMessageButtonUp;
 			message._code = curButton->_buttonId;
-		} else
+		} else {
 			message._msgClass = kMessageRawKey;
+			message._code = _keyPressed.keycode;
+		}
 
 		message._qualifier = _keyPressed.flags;
+		message._mouse = _mousePos;
+
+		_keyPressed.keycode = Common::KEYCODE_INVALID;
+
 		return &message;
 	} else
 		return nullptr;

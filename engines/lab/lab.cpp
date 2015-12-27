@@ -44,7 +44,7 @@
 #include "lab/music.h"
 #include "lab/processroom.h"
 #include "lab/resource.h"
-#include "lab/tilepuzzle.h"
+#include "lab/speciallocks.h"
 #include "lab/utils.h"
 
 namespace Lab {
@@ -85,11 +85,10 @@ LabEngine::LabEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	_graphics = nullptr;
 	_rooms = nullptr;
 	_roomsFound = nullptr;
-	_tilePuzzle = nullptr;
+	_specialLocks = nullptr;
 	_utils = nullptr;
 	_console = nullptr;
 	_journalBackImage = nullptr;
-	_screenImage = nullptr;
 
 	_lastTooLong = false;
 	_interfaceOff = false;
@@ -142,8 +141,6 @@ LabEngine::~LabEngine() {
 	DebugMan.clearAllDebugChannels();
 
 	freeMapData();
-	for (int i = 1; i <= _manyRooms; i++)
-		_resource->freeViews(i);
 	delete[] _rooms;
 	delete[] _inventory;
 
@@ -154,14 +151,10 @@ LabEngine::~LabEngine() {
 	delete _music;
 	delete _anim;
 	delete _graphics;
-	delete _tilePuzzle;
+	delete _specialLocks;
 	delete _utils;
 	delete _console;
 	delete _journalBackImage;
-	// _screenImage->_imageData is always pointing to the current drawing buffer.
-	// It shouldn't be deleted there.
-	_screenImage->_imageData = nullptr;
-	delete _screenImage;
 }
 
 Common::Error LabEngine::run() {
@@ -175,11 +168,10 @@ Common::Error LabEngine::run() {
 	_music = new Music(this);
 	_graphics = new DisplayMan(this);
 	_anim = new Anim(this);
-	_tilePuzzle = new TilePuzzle(this);
+	_specialLocks = new SpecialLocks(this);
 	_utils = new Utils(this);
 	_console = new Console(this);
 	_journalBackImage = new Image(this);
-	_screenImage = new Image(this);
 
 	if (getPlatform() == Common::kPlatformWindows) {
 		// Check if this is the Wyrmkeep trial
@@ -229,7 +221,12 @@ void LabEngine::drawStaticMessage(byte index) {
 }
 
 void LabEngine::changeVolume(int delta) {
-	warning("STUB: changeVolume()");
+	int sfxPrev = _mixer->getVolumeForSoundType(Audio::Mixer::kSFXSoundType);
+	int musicPrev = _mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType);
+	int sfxNew = (delta > 0) ? MIN<int>(sfxPrev + 10, Audio::Mixer::kMaxMixerVolume) : MAX<int>(sfxPrev - 10, 0);
+	int musicNew = (delta > 0) ? MIN<int>(musicPrev + 10, Audio::Mixer::kMaxMixerVolume) : MAX<int>(musicPrev - 10, 0);
+	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, sfxNew);
+	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, musicNew);
 }
 
 void LabEngine::waitTOF() {

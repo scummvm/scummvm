@@ -101,7 +101,6 @@ public:
 	void readRoomData(const Common::String fileName);
 	InventoryData *readInventory(const Common::String fileName);
 	void readViews(uint16 roomNum);
-	void freeViews(uint16 roomNum);
 	TextFont *getFont(const Common::String fileName);
 	Common::String getText(const Common::String fileName);
 	Common::String getStaticText(byte index) const { return _staticText[index]; }
@@ -109,15 +108,11 @@ public:
 private:
 	LabEngine *_vm;
 	Common::String readString(Common::File *file);
-	int16 *readConditions(Common::File *file);
-	RuleList *readRule(Common::File *file);
-	void freeRule(RuleList *ruleList);
-	Action *readAction(Common::File *file);
-	void freeAction(Action *action);
-	CloseData *readCloseUps(uint16 depth, Common::File *file);
-	void freeCloseUps(CloseData *closeUps);
-	ViewData *readView(Common::File *file);
-	void freeView(ViewData *view);
+	Common::Array<int16> readConditions(Common::File *file);
+	void readRule(Common::File *file, RuleList &rules);
+	void readAction(Common::File *file, ActionList &action);
+	void readCloseUps(uint16 depth, Common::File *file, CloseDataList &close);
+	void readView(Common::File *file, ViewDataList &view);
 	void readStaticText();
 	Common::String translateFileName(const Common::String filename);
 

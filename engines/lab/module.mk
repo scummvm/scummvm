@@ -18,7 +18,7 @@ MODULE_OBJS := \
 	resource.o \
 	savegame.o \
 	special.o \
-	tilepuzzle.o \
+	speciallocks.o \
 	utils.o
 
 # This module can be built as a plugin

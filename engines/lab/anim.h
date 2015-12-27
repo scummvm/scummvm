@@ -43,18 +43,11 @@ struct DIFFHeader {
 	uint32 _flags;
 };
 
-struct BitMap {
-	uint16 _bytesPerRow;
-	bool _drawOnScreen;
-	byte *_planes[16];
-};
-
 class Anim {
 private:
 	LabEngine *_vm;
 
 	uint32 _lastBlockHeader;
-	uint16 _curBit;
 	uint16 _numChunks;
 	uint32 _delayMicros;
 	bool _continuous;
@@ -72,11 +65,13 @@ private:
 	uint32 _diffWidth;
 	uint32 _diffHeight;
 
+	byte *_outputBuffer;
+	DIFFHeader _headerdata;
+
 public:
 	Anim(LabEngine *vm);
-	virtual ~Anim();
+	~Anim();
 
-	DIFFHeader _headerdata;
 	char _diffPalette[256 * 3];
 	bool _waitForEffect; // Wait for each sound effect to finish before continuing.
 	bool _doBlack;       // Black the screen before new picture
@@ -86,7 +81,8 @@ public:
 	/**
 	 * Reads in a DIFF file.
 	 */
-	void readDiff(Common::File *diffFile, bool playOnce, bool onlyDiffData = false);
+	void setOutputBuffer(byte *memoryBuffer); // nullptr for output to screen
+	void readDiff(Common::File *diffFile, bool playOnce, bool onlyDiffData);
 	void diffNextFrame(bool onlyDiffData = false);
 
 	/**
@@ -98,6 +94,8 @@ public:
 	 * Stops an animation from running.
 	 */
 	void stopDiffEnd();
+
+	uint16 getDIFFHeight();
 };
 
 } // End of namespace Lab

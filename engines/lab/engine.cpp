@@ -39,15 +39,19 @@
 #include "lab/music.h"
 #include "lab/processroom.h"
 #include "lab/resource.h"
-#include "lab/tilepuzzle.h"
+#include "lab/speciallocks.h"
 #include "lab/utils.h"
 
 namespace Lab {
 
-// LAB: Labyrinth specific code for the special puzzles
-#define SPECIALLOCK         100
-#define SPECIALBRICK        101
-#define SPECIALBRICKNOMOUSE 102
+#define CRUMBSWIDTH 24
+#define CRUMBSHEIGHT 24
+
+enum SpecialLock {
+	kLockCombination = 100,
+	kLockTiles = 101,
+	kLockTileSolution = 102
+};
 
 enum Items {
 	kItemHelmet = 1,
@@ -62,10 +66,6 @@ enum Items {
 	kItemQuarter = 30
 };
 
-#define kCondLampOn         151
-#define kCondBeltGlowing     70
-#define kCondUsedHelmet     184
-
 enum Monitors {
 	kMonitorMuseum = 71,
 	kMonitorGramophone = 72,
@@ -79,19 +79,6 @@ enum Monitors {
 	kMonitorLibrary = 80,
 	kMonitorTerminal = 81
 	//kMonitorLevers = 82
-};
-
-enum MainButtons {
-	kButtonPickup,
-	kButtonUse,
-	kButtonOpen,
-	kButtonClose,
-	kButtonLook,
-	kButtonInventory,
-	kButtonLeft,
-	kButtonForward,
-	kButtonRight,
-	kButtonMap
 };
 
 enum AltButtons {
@@ -120,7 +107,7 @@ void LabEngine::setQuarters(uint16 quarters) {
 	_inventory[kItemQuarter]._quantity = quarters;
 }
 
-void LabEngine::drawRoomMessage(uint16 curInv, CloseDataPtr closePtr) {
+void LabEngine::drawRoomMessage(uint16 curInv, const CloseData *closePtr) {
 	if (_lastTooLong) {
 		_lastTooLong = false;
 		return;
@@ -182,7 +169,7 @@ void LabEngine::eatMessages() {
 	} while (msg && !shouldQuit());
 }
 
-bool LabEngine::doCloseUp(CloseDataPtr closePtr) {
+bool LabEngine::doCloseUp(const CloseData *closePtr) {
 	if (!closePtr)
 		return false;
 
@@ -442,7 +429,7 @@ void LabEngine::mainGameLoop() {
 
 			// Sets the current picture properly on the screen
 			if (_mainDisplay)
-				_nextFileName = getPictName(&_closeDataPtr);
+				_nextFileName = getPictName(true);
 
 			if (_noUpdateDiff) {
 				// Potentially entered another room
@@ -457,16 +444,14 @@ void LabEngine::mainGameLoop() {
 				_roomsFound->inclElement(_roomNum);
 				_curFileName = _nextFileName;
 
-				if (_closeDataPtr) {
+				if (_closeDataPtr && _mainDisplay) {
 					switch (_closeDataPtr->_closeUpType) {
-					case SPECIALLOCK:
-						if (_mainDisplay)
-							_tilePuzzle->showCombination(_curFileName);
+					case kLockCombination:
+						_specialLocks->showCombinationLock(_curFileName);
 						break;
-					case SPECIALBRICK:
-					case SPECIALBRICKNOMOUSE:
-						if (_mainDisplay)
-							_tilePuzzle->showTile(_curFileName, (_closeDataPtr->_closeUpType == SPECIALBRICKNOMOUSE));
+					case kLockTiles:
+					case kLockTileSolution:
+						_specialLocks->showTileLock(_curFileName, (_closeDataPtr->_closeUpType == kLockTileSolution));
 						break;
 					default:
 						_graphics->readPict(_curFileName, false);
@@ -509,28 +494,13 @@ void LabEngine::mainGameLoop() {
 			_anim->diffNextFrame();
 
 			if (_followingCrumbs) {
-				int result = followCrumbs();
+				MainButton code = followCrumbs();
 
-				if (result != 0) {
-					uint16 code = 0;
-					switch (result) {
-					case VKEY_UPARROW:
-						code = kButtonForward;
-						break;
-					case VKEY_LTARROW:
-						code = kButtonLeft;
-						break;
-					case VKEY_RTARROW:
-						code = kButtonRight;
-						break;
-					default:
-						break;
-					}
-
+				if (code == kButtonForward || code == kButtonLeft || code == kButtonRight) {
 					gotMessage = true;
 					mayShowCrumbIndicator();
 					_graphics->screenUpdate();
-					if (!fromCrumbs(kMessageButtonUp, code, 0, _event->updateAndGetMousePos(), curInv, curMsg, forceDraw, code, actionMode))
+					if (!processEvent(kMessageButtonUp, code, 0, _event->updateAndGetMousePos(), curInv, curMsg, forceDraw, code, actionMode))
 						break;
 				}
 			}
@@ -540,7 +510,7 @@ void LabEngine::mainGameLoop() {
 		} else {
 			gotMessage = true;
 			_followingCrumbs = false;
-			if (!fromCrumbs(curMsg->_msgClass, curMsg->_code, curMsg->_qualifier, curMsg->_mouse, curInv, curMsg, forceDraw, curMsg->_code, actionMode))
+			if (!processEvent(curMsg->_msgClass, curMsg->_code, curMsg->_qualifier, curMsg->_mouse, curInv, curMsg, forceDraw, curMsg->_code, actionMode))
 				break;
 		}
 	}
@@ -565,60 +535,47 @@ void LabEngine::showLab2Teaser() {
 	}
 }
 
-bool LabEngine::fromCrumbs(uint32 tmpClass, uint16 code, uint16 qualifier, Common::Point tmpPos,
+bool LabEngine::processEvent(MessageClass tmpClass, uint16 code, uint16 qualifier, Common::Point tmpPos,
 			uint16 &curInv, IntuiMessage *curMsg, bool &forceDraw, uint16 buttonId, uint16 &actionMode) {
-	uint32 msgClass = tmpClass;
+	MessageClass msgClass = tmpClass;
 	Common::Point curPos = tmpPos;
-
 	uint16 oldDirection = 0;
 	uint16 lastInv = kItemMap;
-	CloseDataPtr wrkClosePtr = nullptr;
-	bool leftButtonClick = false;
-	bool rightButtonClick = false;
+
+	if (code == Common::KEYCODE_RETURN)
+		msgClass = kMessageLeftClick;
+
+	bool leftButtonClick = (msgClass == kMessageLeftClick);
+	bool rightButtonClick = (msgClass == kMessageRightClick);
 
 	_anim->_doBlack = false;
 
 	if (shouldQuit())
 		return false;
 
-	if ((msgClass == kMessageRawKey) && !_graphics->_longWinInFront) {
-		if (!processKey(curMsg, msgClass, qualifier, curPos, curInv, forceDraw, code))
-			return false;
-	}
-
-	leftButtonClick = (msgClass == kMessageLeftClick);
-	rightButtonClick = (msgClass == kMessageRightClick);
-
-	if (_graphics->_longWinInFront) {
-		if ((msgClass == kMessageRawKey) || (leftButtonClick || rightButtonClick)) {
+	if (msgClass == kMessageRawKey && !_graphics->_longWinInFront) {
+		return processKey(curMsg, msgClass, qualifier, curPos, curInv, forceDraw, code);
+	} else if (_graphics->_longWinInFront) {
+		if (msgClass == kMessageRawKey || leftButtonClick || rightButtonClick) {
 			_graphics->_longWinInFront = false;
 			_graphics->drawPanel();
 			drawRoomMessage(curInv, _closeDataPtr);
 			_graphics->screenUpdate();
 		}
-	} else if ((msgClass == kMessageButtonUp) && !_alternate) {
-		processMainButton(curInv, lastInv, oldDirection, forceDraw, buttonId, actionMode);
-	} else if ((msgClass == kMessageButtonUp) && _alternate) {
-		processAltButton(curInv, lastInv, buttonId, actionMode);
+	} else if (msgClass == kMessageButtonUp) {
+		if (!_alternate)
+			processMainButton(curInv, lastInv, oldDirection, forceDraw, buttonId, actionMode);
+		else
+			processAltButton(curInv, lastInv, buttonId, actionMode);
 	} else if (leftButtonClick && _mainDisplay) {
 		interfaceOff();
 		_mainDisplay = true;
 
-		if (_closeDataPtr) {
-			switch (_closeDataPtr->_closeUpType) {
-			case SPECIALLOCK:
-				if (_mainDisplay)
-					_tilePuzzle->mouseCombination(curPos);
-				break;
-			case SPECIALBRICK:
-				if (_mainDisplay)
-					_tilePuzzle->mouseTile(curPos);
-				break;
-			default:
-				performAction(actionMode, curPos, curInv);
-				break;
-			}
-		} else
+		if (_closeDataPtr && _closeDataPtr->_closeUpType == kLockCombination)
+			_specialLocks->combinationClick(curPos);
+		else if (_closeDataPtr && _closeDataPtr->_closeUpType == kLockTiles)
+			_specialLocks->tileClick(curPos);
+		else
 			performAction(actionMode, curPos, curInv);
 
 		mayShowCrumbIndicator();
@@ -643,49 +600,20 @@ bool LabEngine::fromCrumbs(uint32 tmpClass, uint16 code, uint16 qualifier, Commo
 
 		mayShowCrumbIndicator();
 		_graphics->screenUpdate();
-	} else if (msgClass == kMessageDeltaMove) {
-		ViewData *vptr = getViewData(_roomNum, _direction);
-		CloseDataPtr oldClosePtr = vptr->_closeUps;
-		CloseDataPtr tmpClosePtr = _closeDataPtr;
-		setCurrentClose(curPos, &tmpClosePtr, true);
-
-		if (!tmpClosePtr || (tmpClosePtr == _closeDataPtr)) {
-			if (!_closeDataPtr)
-				wrkClosePtr = oldClosePtr;
-			else
-				wrkClosePtr = _closeDataPtr->_subCloseUps;
-		} else
-			wrkClosePtr = tmpClosePtr->_nextCloseUp;
-
-
-		if (!wrkClosePtr) {
-			if (!_closeDataPtr)
-				wrkClosePtr = oldClosePtr;
-			else
-				wrkClosePtr = _closeDataPtr->_subCloseUps;
-		}
-
-		if (wrkClosePtr)
-			_event->setMousePos(Common::Point(_utils->scaleX((wrkClosePtr->_x1 + wrkClosePtr->_x2) / 2), _utils->scaleY((wrkClosePtr->_y1 + wrkClosePtr->_y2) / 2)));
 	}
 
 	return true;
 }
 
-bool LabEngine::processKey(IntuiMessage *curMsg, uint32 &msgClass, uint16 &qualifier, Common::Point &curPos, uint16 &curInv, bool &forceDraw, uint16 code) {
-	if (code == Common::KEYCODE_RETURN) {
-		// The return key
-		msgClass = kMessageLeftClick;
-		qualifier = 0;
-		curPos = _event->getMousePos();
-	} else if ((getPlatform() == Common::kPlatformWindows) && (code == Common::KEYCODE_b)) {
+bool LabEngine::processKey(IntuiMessage *curMsg, uint32 msgClass, uint16 &qualifier, Common::Point &curPos, uint16 &curInv, bool &forceDraw, uint16 code) {
+	if ((getPlatform() == Common::kPlatformWindows) && (code == Common::KEYCODE_b)) {
 		// Start bread crumbs
 		_breadCrumbs[0]._roomNum = 0;
 		_numCrumbs = 0;
 		_droppingCrumbs = true;
 		mayShowCrumbIndicator();
 		_graphics->screenUpdate();
-	} else if ((code == Common::KEYCODE_f) || (code == Common::KEYCODE_r)) {
+	} else if (getPlatform() == Common::kPlatformWindows && (code == Common::KEYCODE_f || code == Common::KEYCODE_r)) {
 		// Follow bread crumbs
 		if (_droppingCrumbs) {
 			if (_numCrumbs > 0) {
@@ -746,10 +674,17 @@ bool LabEngine::processKey(IntuiMessage *curMsg, uint32 &msgClass, uint16 &quali
 
 		forceDraw = true;
 		interfaceOn();
-	} else if (code == Common::KEYCODE_TAB)
-		msgClass = kMessageDeltaMove;
-	else if (code == Common::KEYCODE_ESCAPE)
+	} else if (code == Common::KEYCODE_ESCAPE) {
 		_closeDataPtr = nullptr;
+	} else if (code == Common::KEYCODE_TAB) {
+		const CloseData *tmpClosePtr = _closeDataPtr;
+
+		// get next close-up in list after the one pointed to by curPos
+		setCurrentClose(curPos, &tmpClosePtr, true, true);
+
+		if (tmpClosePtr != _closeDataPtr)
+			_event->setMousePos(Common::Point(_utils->scaleX((tmpClosePtr->_x1 + tmpClosePtr->_x2) / 2), _utils->scaleY((tmpClosePtr->_y1 + tmpClosePtr->_y2) / 2)));
+	}
 
 	eatMessages();
 
@@ -767,7 +702,7 @@ void LabEngine::processMainButton(uint16 &curInv, uint16 &lastInv, uint16 &oldDi
 	case kButtonClose:
 	case kButtonLook:
 		if ((actionMode == 4) && (buttonId == kButtonLook) && _closeDataPtr) {
-			doMainView(&_closeDataPtr);
+			doMainView();
 
 			_anim->_doBlack = true;
 			_closeDataPtr = nullptr;
@@ -783,6 +718,7 @@ void LabEngine::processMainButton(uint16 &curInv, uint16 &lastInv, uint16 &oldDi
 			drawStaticMessage(kTextTakeWhat + buttonId);
 		}
 		break;
+
 	case kButtonInventory:
 		eatMessages();
 
@@ -816,7 +752,7 @@ void LabEngine::processMainButton(uint16 &curInv, uint16 &lastInv, uint16 &oldDi
 		oldDirection = _direction;
 
 		newDir = processArrow(_direction, buttonId - 6);
-		doTurn(_direction, newDir, &_closeDataPtr);
+		doTurn(_direction, newDir);
 		_anim->_doBlack = true;
 		_direction = newDir;
 		forceDraw = true;
@@ -827,7 +763,7 @@ void LabEngine::processMainButton(uint16 &curInv, uint16 &lastInv, uint16 &oldDi
 		_closeDataPtr = nullptr;
 		oldRoomNum = _roomNum;
 
-		if (doGoForward(&_closeDataPtr)) {
+		if (doGoForward()) {
 			if (oldRoomNum == _roomNum)
 				_anim->_doBlack = true;
 		} else {
@@ -884,6 +820,7 @@ void LabEngine::processMainButton(uint16 &curInv, uint16 &lastInv, uint16 &oldDi
 
 		mayShowCrumbIndicator();
 		break;
+
 	case kButtonMap:
 		doUse(kItemMap);
 
@@ -1019,13 +956,13 @@ void LabEngine::performAction(uint16 actionMode, Common::Point curPos, uint16 &c
 	switch (actionMode) {
 	case 0:
 		// Take something.
-		if (doActionRule(curPos, actionMode, _roomNum, &_closeDataPtr))
+		if (doActionRule(curPos, actionMode, _roomNum))
 			_curFileName = _newFileName;
-		else if (takeItem(curPos, &_closeDataPtr))
+		else if (takeItem(curPos))
 			drawStaticMessage(kTextTakeItem);
-		else if (doActionRule(curPos, kRuleActionTakeDef, _roomNum, &_closeDataPtr))
+		else if (doActionRule(curPos, kRuleActionTakeDef, _roomNum))
 			_curFileName = _newFileName;
-		else if (doActionRule(curPos, kRuleActionTake, 0, &_closeDataPtr))
+		else if (doActionRule(curPos, kRuleActionTake, 0))
 			_curFileName = _newFileName;
 		else if (curPos.y < (_utils->vgaScaleY(149) + _utils->svgaCord(2)))
 			drawStaticMessage(kTextNothing);
@@ -1036,9 +973,9 @@ void LabEngine::performAction(uint16 actionMode, Common::Point curPos, uint16 &c
 	case 2:
 	case 3:
 		// Manipulate an object, Open up a "door" or Close a "door"
-		if (doActionRule(curPos, actionMode, _roomNum, &_closeDataPtr))
+		if (doActionRule(curPos, actionMode, _roomNum))
 			_curFileName = _newFileName;
-		else if (!doActionRule(curPos, actionMode, 0, &_closeDataPtr)) {
+		else if (!doActionRule(curPos, actionMode, 0)) {
 			if (curPos.y < (_utils->vgaScaleY(149) + _utils->svgaCord(2)))
 				drawStaticMessage(kTextNothing);
 		}
@@ -1046,7 +983,7 @@ void LabEngine::performAction(uint16 actionMode, Common::Point curPos, uint16 &c
 
 	case 4: {
 		// Look at closeups
-		CloseDataPtr tmpClosePtr = _closeDataPtr;
+		const CloseData *tmpClosePtr = _closeDataPtr;
 		setCurrentClose(curPos, &tmpClosePtr, true);
 
 		if (_closeDataPtr == tmpClosePtr) {
@@ -1063,7 +1000,7 @@ void LabEngine::performAction(uint16 actionMode, Common::Point curPos, uint16 &c
 	case 5:
 		if (_conditions->in(curInv)) {
 			// Use an item on something else
-			if (doOperateRule(curPos, curInv, &_closeDataPtr)) {
+			if (doOperateRule(curPos, curInv)) {
 				_curFileName = _newFileName;
 
 				if (!_conditions->in(curInv))
@@ -1081,7 +1018,7 @@ void LabEngine::go() {
 
 	_event->initMouse();
 	if (_msgFont)
-		_graphics->closeFont(&_msgFont);
+		_graphics->freeFont(&_msgFont);
 
 	if (getPlatform() != Common::kPlatformAmiga)
 		_msgFont = _resource->getFont("F:AvanteG.12");
@@ -1096,7 +1033,7 @@ void LabEngine::go() {
 	_event->mouseShow();
 	mainGameLoop();
 
-	_graphics->closeFont(&_msgFont);
+	_graphics->freeFont(&_msgFont);
 	_graphics->freePict();
 
 	freeScreens();
@@ -1104,18 +1041,18 @@ void LabEngine::go() {
 	_music->freeMusic();
 }
 
-int LabEngine::followCrumbs() {
+MainButton LabEngine::followCrumbs() {
 	// kDirectionNorth, kDirectionSouth, kDirectionEast, kDirectionWest
-	int movement[4][4] = {
-		{ VKEY_UPARROW, VKEY_RTARROW, VKEY_RTARROW, VKEY_LTARROW },
-		{ VKEY_RTARROW, VKEY_UPARROW, VKEY_LTARROW, VKEY_RTARROW },
-		{ VKEY_LTARROW, VKEY_RTARROW, VKEY_UPARROW, VKEY_RTARROW },
-		{ VKEY_RTARROW, VKEY_LTARROW, VKEY_RTARROW, VKEY_UPARROW }
+	MainButton movement[4][4] = {
+		{ kButtonForward, kButtonRight, kButtonRight, kButtonLeft },
+		{ kButtonRight, kButtonForward, kButtonLeft, kButtonRight },
+		{ kButtonLeft, kButtonRight, kButtonForward, kButtonRight },
+		{ kButtonRight, kButtonLeft, kButtonRight, kButtonForward }
 	};
 
 	if (_isCrumbWaiting) {
 		if (_system->getMillis() <= _crumbTimestamp)
-			return 0;
+			return kButtonNone;
 
 		_isCrumbWaiting = false;
 	}
@@ -1129,10 +1066,10 @@ int LabEngine::followCrumbs() {
 		_breadCrumbs[0]._roomNum = 0;
 		_droppingCrumbs = false;
 		_followingCrumbs = false;
-		return 0;
+		return kButtonNone;
 	}
 
-	int exitDir;
+	Direction exitDir;
 	// which direction is last crumb
 	if (_breadCrumbs[_numCrumbs]._direction == kDirectionEast)
 		exitDir = kDirectionWest;
@@ -1143,7 +1080,7 @@ int LabEngine::followCrumbs() {
 	else
 		exitDir = kDirectionNorth;
 
-	int moveDir = movement[_direction][exitDir];
+	MainButton moveDir = movement[_direction][exitDir];
 
 	if (_numCrumbs == 0) {
 		_isCrumbTurning = false;
@@ -1151,7 +1088,7 @@ int LabEngine::followCrumbs() {
 		_droppingCrumbs = false;
 		_followingCrumbs = false;
 	} else {
-		_isCrumbTurning = (moveDir != VKEY_UPARROW);
+		_isCrumbTurning = (moveDir != kButtonForward);
 		_isCrumbWaiting = true;
 
 		int theDelay = (_followCrumbsFast ? 1000 / 4 : 1000);
@@ -1163,11 +1100,41 @@ int LabEngine::followCrumbs() {
 
 
 void LabEngine::mayShowCrumbIndicator() {
-	static Image dropCrumbsImage(24, 24, nullptr, this);
+	static byte dropCrumbsImageData[CRUMBSWIDTH * CRUMBSHEIGHT] = {
+		0, 0, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 0, 0,
+		0, 4, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 4, 0,
+		4, 7, 7, 3, 4, 4, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3, 7, 7, 4,
+		4, 7, 4, 4, 0, 0, 3, 2, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 4, 7, 4,
+		4, 7, 4, 0, 0, 0, 3, 2, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 4, 7, 4,
+		4, 7, 4, 0, 0, 3, 2, 2, 2, 3, 0, 0, 0, 0, 0, 0, 0, 3, 2, 3, 0, 4, 7, 4,
+		4, 7, 4, 0, 0, 0, 3, 3, 3, 4, 4, 4, 4, 4, 4, 0, 0, 3, 2, 3, 0, 4, 7, 4,
+		4, 7, 4, 0, 0, 0, 0, 0, 4, 7, 7, 7, 7, 7, 7, 4, 3, 2, 2, 2, 3, 4, 7, 4,
+		4, 7, 4, 0, 0, 0, 0, 4, 7, 7, 4, 4, 4, 4, 7, 7, 4, 3, 3, 3, 0, 4, 7, 4,
+		4, 7, 4, 0, 0, 0, 0, 4, 7, 4, 4, 0, 0, 4, 4, 7, 4, 0, 0, 0, 0, 4, 7, 4,
+		4, 7, 4, 0, 0, 0, 0, 4, 7, 4, 0, 0, 0, 0, 4, 7, 4, 0, 0, 0, 0, 4, 7, 4,
+		4, 7, 4, 0, 0, 0, 0, 4, 4, 4, 3, 0, 0, 0, 4, 7, 4, 0, 0, 0, 0, 4, 7, 4,
+		4, 7, 4, 0, 0, 0, 0, 0, 4, 3, 2, 3, 0, 0, 4, 7, 4, 0, 0, 0, 0, 4, 7, 4,
+		4, 7, 4, 0, 0, 0, 0, 0, 0, 3, 2, 3, 0, 0, 4, 7, 4, 0, 0, 0, 0, 4, 7, 4,
+		4, 7, 4, 0, 0, 0, 0, 0, 3, 2, 2, 2, 3, 4, 4, 7, 4, 0, 0, 0, 0, 4, 7, 4,
+		4, 7, 7, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 7, 7, 4, 0, 0, 0, 0, 4, 7, 4,
+		0, 4, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 4, 0, 0, 0, 0, 0, 4, 7, 4,
+		0, 0, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3, 0, 0, 0, 0, 0, 4, 7, 4,
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 2, 3, 0, 0, 0, 0, 4, 7, 4,
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 2, 3, 0, 0, 0, 0, 4, 7, 4,
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 2, 2, 2, 3, 0, 0, 4, 4, 7, 4,
+		0, 0, 0, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 7, 7, 4,
+		0, 0, 4, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 4, 0,
+		0, 0, 0, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 0, 0
+	};
+
 	if (getPlatform() != Common::kPlatformWindows)
 		return;
 
 	if (_droppingCrumbs && _mainDisplay) {
+		static byte *imgData = new byte[CRUMBSWIDTH * CRUMBSHEIGHT];
+		memcpy(imgData, dropCrumbsImageData, CRUMBSWIDTH * CRUMBSHEIGHT);
+		static Image dropCrumbsImage(CRUMBSWIDTH, CRUMBSHEIGHT, imgData, this);
+
 		_event->mouseHide();
 		dropCrumbsImage.drawMaskImage(612, 4);
 		_event->mouseShow();
@@ -1175,12 +1142,41 @@ void LabEngine::mayShowCrumbIndicator() {
 }
 
 void LabEngine::mayShowCrumbIndicatorOff() {
-	static Image dropCrumbsOffImage(24, 24, nullptr, this);
+	static byte dropCrumbsOffImageData[CRUMBSWIDTH * CRUMBSHEIGHT] = {
+		0, 0, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 0, 0,
+		0, 4, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 4, 0,
+		4, 8, 8, 3, 4, 4, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3, 8, 8, 4,
+		4, 8, 4, 4, 0, 0, 3, 8, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 4, 8, 4,
+		4, 8, 4, 0, 0, 0, 3, 8, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 4, 8, 4,
+		4, 8, 4, 0, 0, 3, 8, 8, 8, 3, 0, 0, 0, 0, 0, 0, 0, 3, 8, 3, 0, 4, 8, 4,
+		4, 8, 4, 0, 0, 0, 3, 3, 3, 4, 4, 4, 4, 4, 4, 0, 0, 3, 8, 3, 0, 4, 8, 4,
+		4, 8, 4, 0, 0, 0, 0, 0, 4, 8, 8, 8, 8, 8, 8, 4, 3, 8, 8, 8, 3, 4, 8, 4,
+		4, 8, 4, 0, 0, 0, 0, 4, 8, 8, 4, 4, 4, 4, 8, 8, 4, 3, 3, 3, 0, 4, 8, 4,
+		4, 8, 4, 0, 0, 0, 0, 4, 8, 4, 4, 0, 0, 4, 4, 8, 4, 0, 0, 0, 0, 4, 8, 4,
+		4, 8, 4, 0, 0, 0, 0, 4, 8, 4, 0, 0, 0, 0, 4, 8, 4, 0, 0, 0, 0, 4, 8, 4,
+		4, 8, 4, 0, 0, 0, 0, 4, 4, 4, 3, 0, 0, 0, 4, 8, 4, 0, 0, 0, 0, 4, 8, 4,
+		4, 8, 4, 0, 0, 0, 0, 0, 4, 3, 8, 3, 0, 0, 4, 8, 4, 0, 0, 0, 0, 4, 8, 4,
+		4, 8, 4, 0, 0, 0, 0, 0, 0, 3, 8, 3, 0, 0, 4, 8, 4, 0, 0, 0, 0, 4, 8, 4,
+		4, 8, 4, 0, 0, 0, 0, 0, 3, 8, 8, 8, 3, 4, 4, 8, 4, 0, 0, 0, 0, 4, 8, 4,
+		4, 8, 8, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 8, 8, 4, 0, 0, 0, 0, 4, 8, 4,
+		0, 4, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 4, 0, 0, 0, 0, 0, 4, 8, 4,
+		0, 0, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3, 0, 0, 0, 0, 0, 4, 8, 4,
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 8, 3, 0, 0, 0, 0, 4, 8, 4,
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 8, 3, 0, 0, 0, 0, 4, 8, 4,
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 8, 8, 8, 3, 0, 0, 4, 4, 8, 4,
+		0, 0, 0, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 8, 8, 4,
+		0, 0, 4, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 4, 0,
+		0, 0, 0, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 0, 0
+	};
 
 	if (getPlatform() != Common::kPlatformWindows)
 		return;
 
 	if (_mainDisplay) {
+		static byte *imgData = new byte[CRUMBSWIDTH * CRUMBSHEIGHT];
+		memcpy(imgData, dropCrumbsOffImageData, CRUMBSWIDTH * CRUMBSHEIGHT);
+		static Image dropCrumbsOffImage(CRUMBSWIDTH, CRUMBSHEIGHT, imgData, this);
+
 		_event->mouseHide();
 		dropCrumbsOffImage.drawMaskImage(612, 4);
 		_event->mouseShow();

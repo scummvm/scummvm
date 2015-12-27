@@ -47,7 +47,7 @@ Intro::Intro(LabEngine *vm) : _vm(vm) {
 }
 
 Intro::~Intro() {
-	_vm->_graphics->closeFont(&_font);
+	_vm->_graphics->freeFont(&_font);
 }
 
 void Intro::introEatMessages() {
@@ -95,17 +95,14 @@ void Intro::doPictText(const Common::String filename, bool isScreen) {
 			else if (isScreen)
 				_vm->_graphics->fade(false);
 
-			int charDrawn = 0;
 			if (isScreen) {
-				_vm->_graphics->setPen(7);
-				_vm->_graphics->rectFillScaled(10, 10, 310, 190);
+				_vm->_graphics->rectFillScaled(10, 10, 310, 190, 7);
 
-				charDrawn = _vm->_graphics->flowText(_font, _vm->_isHiRes ? 0 : -1, 5, 7, false, false, true, true, _vm->_utils->vgaRectScale(14, 11, 306, 189), (char *)curText);
+				curText += _vm->_graphics->flowText(_font, _vm->_isHiRes ? 0 : -1, 5, 7, false, false, true, true, _vm->_utils->vgaRectScale(14, 11, 306, 189), (char *)curText);
 				_vm->_graphics->fade(true);
 			} else
-				charDrawn = _vm->_graphics->longDrawMessage(Common::String((char *)curText), false);
+				curText += _vm->_graphics->longDrawMessage(Common::String((char *)curText), false);
 
-			curText += charDrawn;
 			doneFl = (*curText == 0);
 
 			drawNextText = false;
@@ -265,16 +262,13 @@ void Intro::play() {
 	_vm->_graphics->_fadePalette = palette;
 
 	for (int i = 0; i < 16; i++) {
-		if (_quitIntro)
-			break;
-
 		palette[i] = ((_vm->_anim->_diffPalette[i * 3] >> 2) << 8) +
 					((_vm->_anim->_diffPalette[i * 3 + 1] >> 2) << 4) +
 					(_vm->_anim->_diffPalette[i * 3 + 2] >> 2);
 	}
-
 	_vm->updateMusicAndEvents();
-	_vm->_graphics->fade(true);
+	if (!_quitIntro)
+		_vm->_graphics->fade(true);
 
 	for (int times = 0; times < 150; times++) {
 		if (_quitIntro)
@@ -292,9 +286,11 @@ void Intro::play() {
 		_vm->waitTOF();
 	}
 
-	_vm->_graphics->fade(false);
-	_vm->_graphics->blackAllScreen();
-	_vm->updateMusicAndEvents();
+	if (!_quitIntro) {
+		_vm->_graphics->fade(false);
+		_vm->_graphics->blackAllScreen();
+		_vm->updateMusicAndEvents();
+	}
 
 	nReadPict("Title.A");
 	nReadPict("AB");
@@ -433,8 +429,7 @@ void Intro::play() {
 	nReadPict("SubX");
 
 	if (_quitIntro) {
-		_vm->_graphics->setPen(0);
-		_vm->_graphics->rectFill(0, 0, _vm->_graphics->_screenWidth - 1, _vm->_graphics->_screenHeight - 1);
+		_vm->_graphics->rectFill(0, 0, _vm->_graphics->_screenWidth - 1, _vm->_graphics->_screenHeight - 1, 0);
 		_vm->_anim->_doBlack = true;
 	}
 }

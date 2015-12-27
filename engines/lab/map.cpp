@@ -75,24 +75,22 @@ void LabEngine::loadMapData() {
 	_imgPath = new Image(mapImages, this);
 	_imgBridge = new Image(mapImages, this);
 
-	_mapButtonList.push_back(_event->createButton( 8,  _utils->vgaScaleY(105), 0, VKEY_LTARROW, new Image(mapImages, this), new Image(mapImages, this)));	// back
-	_mapButtonList.push_back(_event->createButton( 55, _utils->vgaScaleY(105), 1, VKEY_UPARROW, new Image(mapImages, this), new Image(mapImages, this)));	// up
-	_mapButtonList.push_back(_event->createButton(101, _utils->vgaScaleY(105), 2, VKEY_DNARROW, new Image(mapImages, this), new Image(mapImages, this)));	// down
+	_mapButtonList.push_back(_event->createButton( 8,  _utils->vgaScaleY(105), 0, Common::KEYCODE_ESCAPE, new Image(mapImages, this), new Image(mapImages, this)));	// back
+	_mapButtonList.push_back(_event->createButton( 55, _utils->vgaScaleY(105), 1, Common::KEYCODE_UP,     new Image(mapImages, this), new Image(mapImages, this)));	// up
+	_mapButtonList.push_back(_event->createButton(101, _utils->vgaScaleY(105), 2, Common::KEYCODE_DOWN,   new Image(mapImages, this), new Image(mapImages, this)));	// down
 
 	delete mapImages;
 
 	Common::File *mapFile = _resource->openDataFile("Lab:Maps", MKTAG('M', 'A', 'P', '0'));
 	updateMusicAndEvents();
-	if (!_music->_loopSoundEffect)
-		_music->stopSoundEffect();
 
 	_maxRooms = mapFile->readUint16LE();
 	_maps = new MapData[_maxRooms + 1];	// will be freed when the user exits the map
-	for (int i = 1; i <= _maxRooms; i++) {
+	for (int i = 0; i <= _maxRooms; i++) {
 		_maps[i]._x = mapFile->readUint16LE();
 		_maps[i]._y = mapFile->readUint16LE();
 		_maps[i]._pageNumber = mapFile->readUint16LE();
-		_maps[i]._specialID = mapFile->readUint16LE();
+		_maps[i]._specialID = (SpecialRoom) mapFile->readUint16LE();
 		_maps[i]._mapFlags = mapFile->readUint32LE();
 	}
 
@@ -135,18 +133,18 @@ Common::Rect LabEngine::roomCoords(uint16 curRoom) {
 	Image *curRoomImg = nullptr;
 
 	switch (_maps[curRoom]._specialID) {
-	case NORMAL:
-	case UPARROWROOM:
-	case DOWNARROWROOM:
+	case kNormalRoom:
+	case kUpArrowRoom:
+	case kDownArrowRoom:
 		curRoomImg = _imgRoom;
 		break;
-	case BRIDGEROOM:
+	case kBridgeRoom:
 		curRoomImg = _imgBridge;
 		break;
-	case VCORRIDOR:
+	case kVerticalCorridor:
 		curRoomImg = _imgVRoom;
 		break;
-	case HCORRIDOR:
+	case kHorizontalCorridor:
 		curRoomImg = _imgHRoom;
 		break;
 	default:
@@ -175,12 +173,12 @@ void LabEngine::drawRoomMap(uint16 curRoom, bool drawMarkFl) {
 	uint32 flags = _maps[curRoom]._mapFlags;
 
 	switch (_maps[curRoom]._specialID) {
-	case NORMAL:
-	case UPARROWROOM:
-	case DOWNARROWROOM:
-		if (_maps[curRoom]._specialID == NORMAL)
+	case kNormalRoom:
+	case kUpArrowRoom:
+	case kDownArrowRoom:
+		if (_maps[curRoom]._specialID == kNormalRoom)
 			_imgRoom->drawImage(x, y);
-		else if (_maps[curRoom]._specialID == DOWNARROWROOM)
+		else if (_maps[curRoom]._specialID == kDownArrowRoom)
 			_imgDownArrowRoom->drawImage(x, y);
 		else
 			_imgUpArrowRoom->drawImage(x, y);
@@ -206,7 +204,7 @@ void LabEngine::drawRoomMap(uint16 curRoom, bool drawMarkFl) {
 
 		break;
 
-	case BRIDGEROOM:
+	case kBridgeRoom:
 		_imgBridge->drawImage(x, y);
 
 		drawX = x + (_imgBridge->_width - _imgMapX[_direction]->_width) / 2;
@@ -214,7 +212,7 @@ void LabEngine::drawRoomMap(uint16 curRoom, bool drawMarkFl) {
 
 		break;
 
-	case VCORRIDOR:
+	case kVerticalCorridor:
 		_imgVRoom->drawImage(x, y);
 
 		offset = (_imgVRoom->_width - _imgPath->_width) / 2;
@@ -252,7 +250,7 @@ void LabEngine::drawRoomMap(uint16 curRoom, bool drawMarkFl) {
 
 		break;
 
-	case HCORRIDOR:
+	case kHorizontalCorridor:
 		_imgHRoom->drawImage(x, y);
 
 		offset = (_imgRoom->_width - _imgPath->_width) / 2;
@@ -329,24 +327,20 @@ uint16 LabEngine::getLowerFloor(uint16 floorNum) {
 	return kFloorNone;
 }
 
-void LabEngine::drawMap(uint16 curRoom, uint16 curMsg, uint16 floorNum, bool fadeOut, bool fadeIn) {
+void LabEngine::drawMap(uint16 curRoom, uint16 curMsg, uint16 floorNum, bool fadeIn) {
 	_event->mouseHide();
 
-	if (fadeOut)
-		_graphics->fade(false);
-
-	_graphics->setPen(0);
-	_graphics->rectFill(0, 0, _graphics->_screenWidth - 1, _graphics->_screenHeight - 1);
-
+	_graphics->rectFill(0, 0, _graphics->_screenWidth - 1, _graphics->_screenHeight - 1, 0);
 	_imgMap->drawImage(0, 0);
 	_event->drawButtonList(&_mapButtonList);
 
 	for (int i = 1; i <= _maxRooms; i++) {
 		if ((_maps[i]._pageNumber == floorNum) && _roomsFound->in(i) && _maps[i]._x) {
 			drawRoomMap(i, (bool)(i == curRoom));
-			updateMusicAndEvents();
 		}
 	}
+
+	updateMusicAndEvents();
 
 	// Makes sure the X is drawn in corridors
 	// NOTE: this here on purpose just in case there's some weird
@@ -423,11 +417,6 @@ void LabEngine::processMap(uint16 curRoom) {
 			_graphics->writeColorRegs(newcolor, 1, 1);
 			_event->updateMouse();
 			waitTOF();
-			_event->updateMouse();
-			waitTOF();
-			_event->updateMouse();
-			waitTOF();
-			_event->updateMouse();
 
 			place++;
 
@@ -453,7 +442,7 @@ void LabEngine::processMap(uint16 curRoom) {
 					if (upperFloor != kFloorNone) {
 						curFloor = upperFloor;
 						_graphics->fade(false);
-						drawMap(curRoom, curMsg, curFloor, false, false);
+						drawMap(curRoom, curMsg, curFloor, false);
 						_graphics->fade(true);
 					}
 				} else if (msgCode == 2) {
@@ -462,7 +451,7 @@ void LabEngine::processMap(uint16 curRoom) {
 					if (lowerFloor != kFloorNone) {
 						curFloor = lowerFloor;
 						_graphics->fade(false);
-						drawMap(curRoom, curMsg, curFloor, false, false);
+						drawMap(curRoom, curMsg, curFloor, false);
 						_graphics->fade(true);
 					}
 				}
@@ -472,28 +461,28 @@ void LabEngine::processMap(uint16 curRoom) {
 					curFloor = kFloorSurMaze;
 
 					_graphics->fade(false);
-					drawMap(curRoom, curMsg, curFloor, false, false);
+					drawMap(curRoom, curMsg, curFloor, false);
 					_graphics->fade(true);
 				} else if ((curFloor == kFloorMiddle) && _utils->mapRectScale(358, 71, 452, 147).contains(mouseX, mouseY)
 							&& floorVisited(kFloorCarnival)) {
 					curFloor = kFloorCarnival;
 
 					_graphics->fade(false);
-					drawMap(curRoom, curMsg, curFloor, false, false);
+					drawMap(curRoom, curMsg, curFloor, false);
 					_graphics->fade(true);
 				} else if ((curFloor == kFloorMiddle) && _utils->mapRectScale(557, 325, 653, 401).contains(mouseX, mouseY)
 							&& floorVisited(kFloorMedMaze)) {
 					curFloor = kFloorMedMaze;
 
 					_graphics->fade(false);
-					drawMap(curRoom, curMsg, curFloor, false, false);
+					drawMap(curRoom, curMsg, curFloor, false);
 					_graphics->fade(true);
 				} else if ((curFloor == kFloorUpper) && _utils->mapRectScale(524, 97, 645, 207).contains(mouseX, mouseY)
 							&& floorVisited(kFloorHedgeMaze)) {
 					curFloor = kFloorHedgeMaze;
 
 					_graphics->fade(false);
-					drawMap(curRoom, curMsg, curFloor, false, false);
+					drawMap(curRoom, curMsg, curFloor, false);
 					_graphics->fade(true);
 				} else if (mouseX > _utils->mapScaleX(314)) {
 					uint16 oldMsg = curMsg;
@@ -515,8 +504,7 @@ void LabEngine::processMap(uint16 curRoom) {
 						const char *sptr;
 						if ((sptr = _rooms[curMsg]._roomMsg.c_str())) {
 							_event->mouseHide();
-							_graphics->setPen(3);
-							_graphics->rectFillScaled(13, 148, 135, 186);
+							_graphics->rectFillScaled(13, 148, 135, 186, 3);
 							_graphics->flowText(_msgFont, 0, 5, 3, true, true, true, true, _utils->vgaRectScale(14, 148, 134, 186), sptr);
 
 							if (_maps[oldMsg]._pageNumber == curFloor)
@@ -529,8 +517,7 @@ void LabEngine::processMap(uint16 curRoom) {
 							top = bottom = (curCoords.top + curCoords.bottom) / 2;
 
 							if ((curMsg != curRoom) && (_maps[curMsg]._pageNumber == curFloor)) {
-								_graphics->setPen(1);
-								_graphics->rectFill(left, top, right, bottom);
+								_graphics->rectFill(left, top, right, bottom, 1);
 							}
 
 							_event->mouseShow();
@@ -558,7 +545,7 @@ void LabEngine::doMap(uint16 curRoom) {
 	loadMapData();
 	_graphics->blackAllScreen();
 	_event->attachButtonList(&_mapButtonList);
-	drawMap(curRoom, curRoom, _maps[curRoom]._pageNumber, false, true);
+	drawMap(curRoom, curRoom, _maps[curRoom]._pageNumber, true);
 	_event->mouseShow();
 	_graphics->screenUpdate();
 	processMap(curRoom);
@@ -566,8 +553,7 @@ void LabEngine::doMap(uint16 curRoom) {
 	_graphics->fade(false);
 	_graphics->blackAllScreen();
 	_event->mouseHide();
-	_graphics->setPen(0);
-	_graphics->rectFill(0, 0, _graphics->_screenWidth - 1, _graphics->_screenHeight - 1);
+	_graphics->rectFill(0, 0, _graphics->_screenWidth - 1, _graphics->_screenHeight - 1, 0);
 	freeMapData();
 	_graphics->blackAllScreen();
 	_event->mouseShow();

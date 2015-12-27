@@ -100,7 +100,6 @@ void Resource::readRoomData(const Common::String fileName) {
 	_vm->_manyRooms = dataFile->readUint16LE();
 	_vm->_highestCondition = dataFile->readUint16LE();
 	_vm->_rooms = new RoomData[_vm->_manyRooms + 1];
-	memset(_vm->_rooms, 0, (_vm->_manyRooms + 1) * sizeof(RoomData));
 
 	for (int i = 1; i <= _vm->_manyRooms; i++) {
 		RoomData *curRoom = &_vm->_rooms[i];
@@ -109,13 +108,6 @@ void Resource::readRoomData(const Common::String fileName) {
 		curRoom->_doors[kDirectionEast] = dataFile->readUint16LE();
 		curRoom->_doors[kDirectionWest] = dataFile->readUint16LE();
 		curRoom->_transitionType = dataFile->readByte();
-
-		curRoom->_view[kDirectionNorth] = nullptr;
-		curRoom->_view[kDirectionSouth] = nullptr;
-		curRoom->_view[kDirectionEast] = nullptr;
-		curRoom->_view[kDirectionWest] = nullptr;
-		curRoom->_rules = nullptr;
-		curRoom->_roomMsg = "";
 	}
 
 	delete dataFile;
@@ -141,28 +133,17 @@ void Resource::readViews(uint16 roomNum) {
 	Common::String fileName = "LAB:Rooms/" + Common::String::format("%d", roomNum);
 	Common::File *dataFile = openDataFile(fileName, MKTAG('R', 'O', 'M', '4'));
 
-	freeViews(roomNum);
 	RoomData *curRoom = &_vm->_rooms[roomNum];
 
 	curRoom->_roomMsg = readString(dataFile);
-	curRoom->_view[kDirectionNorth] = readView(dataFile);
-	curRoom->_view[kDirectionSouth] = readView(dataFile);
-	curRoom->_view[kDirectionEast] = readView(dataFile);
-	curRoom->_view[kDirectionWest] = readView(dataFile);
-	curRoom->_rules = readRule(dataFile);
+	readView(dataFile, curRoom->_view[kDirectionNorth]);
+	readView(dataFile, curRoom->_view[kDirectionSouth]);
+	readView(dataFile, curRoom->_view[kDirectionEast]);
+	readView(dataFile, curRoom->_view[kDirectionWest]);
+	readRule(dataFile, curRoom->_rules);
 
 	_vm->updateMusicAndEvents();
 	delete dataFile;
-}
-
-void Resource::freeViews(uint16 roomNum) {
-	if (!_vm->_rooms)
-		return;
-
-	for (int i = 0; i < 4; i++)
-		freeView(_vm->_rooms[roomNum]._view[i]);
-
-	freeRule(_vm->_rooms[roomNum]._rules);
 }
 
 Common::String Resource::translateFileName(const Common::String filename) {
@@ -242,155 +223,85 @@ Common::String Resource::readString(Common::File *file) {
 	return result;
 }
 
-int16 *Resource::readConditions(Common::File *file) {
-	int16 i = 0, cond;
-	int16 *list = new int16[25];
-	memset(list, 0, 25 * sizeof(int16));
+Common::Array<int16> Resource::readConditions(Common::File *file) {
+	int16 cond;
+	Common::Array<int16> list;
 
-	do {
-		cond = file->readUint16LE();
-		if (i < 25)
-			list[i++] = cond;
-	} while (cond);
+	while ((cond = file->readUint16LE()) != 0)
+		list.push_back(cond);
+
+	if (list.size() > 24) {
+		// The original only allocated 24 elements, and silently
+		// dropped remaining parts.
+		warning("More than 24 parts in condition");
+	}
 
 	return list;
 }
 
-RuleList *Resource::readRule(Common::File *file) {
-	RuleList *rules = new RuleList();
-
+void Resource::readRule(Common::File *file, RuleList &rules) {
+	rules.clear();
 	while (file->readByte() == 1) {
-		Rule rule;
+		rules.push_back(Rule());
+		Rule &rule = rules.back();
+
 		rule._ruleType = (RuleType)file->readSint16LE();
 		rule._param1 = file->readSint16LE();
 		rule._param2 = file->readSint16LE();
 		rule._condition = readConditions(file);
-		rule._actionList = readAction(file);
-		rules->push_back(rule);
+		readAction(file, rule._actionList);
 	}
-
-	return rules;
 }
 
-void Resource::freeRule(RuleList *ruleList) {
-	if (!ruleList)
-		return;
-
-	for (RuleList::iterator rule = ruleList->begin(); rule != ruleList->end(); ++rule) {
-		freeAction(rule->_actionList);
-		delete[] rule->_condition;
-	}
-
-	delete ruleList;
-	ruleList = nullptr;
-}
-
-Action *Resource::readAction(Common::File *file) {
-	Action *action = nullptr;
-	Action *prev = nullptr;
-	Action *head = nullptr;
+void Resource::readAction(Common::File *file, ActionList &list) {
+	list.clear();
 
 	while (file->readByte() == 1) {
-		action = new Action();
-		if (!head)
-			head = action;
-		if (prev)
-			prev->_nextAction = action;
-		action->_actionType = (ActionType)file->readSint16LE();
-		action->_param1 = file->readSint16LE();
-		action->_param2 = file->readSint16LE();
-		action->_param3 = file->readSint16LE();
+		list.push_back(Action());
+		Action &action = list.back();
 
-		if (action->_actionType == kActionShowMessages) {
-			action->_messages = new Common::String[action->_param1];
+		action._actionType = (ActionType)file->readSint16LE();
+		action._param1 = file->readSint16LE();
+		action._param2 = file->readSint16LE();
+		action._param3 = file->readSint16LE();
 
-			for (int i = 0; i < action->_param1; i++)
-				action->_messages[i] = readString(file);
+		if (action._actionType == kActionShowMessages) {
+			action._messages.reserve(action._param1);
+			for (int i = 0; i < action._param1; i++)
+				action._messages.push_back(readString(file));
 		} else {
-			action->_messages = new Common::String[1];
-			action->_messages[0] = readString(file);
+			action._messages.push_back(readString(file));
 		}
-
-		action->_nextAction = nullptr;
-		prev = action;
-	}
-
-	return head;
-}
-
-void Resource::freeAction(Action *action) {
-	while (action) {
-		Action *nextAction = action->_nextAction;
-		delete[] action->_messages;
-		delete action;
-		action = nextAction;
 	}
 }
 
-CloseData *Resource::readCloseUps(uint16 depth, Common::File *file) {
-	CloseData *closeup = nullptr;
-	CloseData *prev = nullptr;
-	CloseData *head = nullptr;
-
+void Resource::readCloseUps(uint16 depth, Common::File *file, CloseDataList &list) {
+	list.clear();
 	while (file->readByte() != '\0') {
-		closeup = new CloseData();
-		if (!head)
-			head = closeup;
-		if (prev)
-			prev->_nextCloseUp = closeup;
-		closeup->_x1 = file->readUint16LE();
-		closeup->_y1 = file->readUint16LE();
-		closeup->_x2 = file->readUint16LE();
-		closeup->_y2 = file->readUint16LE();
-		closeup->_closeUpType = file->readSint16LE();
-		closeup->_depth = depth;
-		closeup->_graphicName = readString(file);
-		closeup->_message = readString(file);
-		closeup->_subCloseUps = readCloseUps(depth + 1, file);
-		closeup->_nextCloseUp = nullptr;
-		prev = closeup;
-	}
+		list.push_back(CloseData());
+		CloseData &closeup = list.back();
 
-	return head;
-}
-
-void Resource::freeCloseUps(CloseData *closeUps) {
-	while (closeUps) {
-		CloseData *nextCloseUp = closeUps->_nextCloseUp;
-		freeCloseUps(closeUps->_subCloseUps);
-		delete closeUps;
-		closeUps = nextCloseUp;
+		closeup._x1 = file->readUint16LE();
+		closeup._y1 = file->readUint16LE();
+		closeup._x2 = file->readUint16LE();
+		closeup._y2 = file->readUint16LE();
+		closeup._closeUpType = file->readSint16LE();
+		closeup._depth = depth;
+		closeup._graphicName = readString(file);
+		closeup._message = readString(file);
+		readCloseUps(depth + 1, file, closeup._subCloseUps);
 	}
 }
 
-ViewData *Resource::readView(Common::File *file) {
-	ViewData *view = nullptr;
-	ViewData *prev = nullptr;
-	ViewData *head = nullptr;
-
+void Resource::readView(Common::File *file, ViewDataList &list) {
+	list.clear();
 	while (file->readByte() == 1) {
-		view = new ViewData();
-		if (!head)
-			head = view;
-		if (prev)
-			prev->_nextCondition = view;
-		view->_condition = readConditions(file);
-		view->_graphicName = readString(file);
-		view->_closeUps = readCloseUps(0, file);
-		view->_nextCondition = nullptr;
-		prev = view;
-	}
+		list.push_back(ViewData());
+		ViewData &view = list.back();
 
-	return head;
-}
-
-void Resource::freeView(ViewData *view) {
-	while (view) {
-		ViewData *nextView = view->_nextCondition;
-		delete[] view->_condition;
-		freeCloseUps(view->_closeUps);
-		delete view;
-		view = nextView;
+		view._condition = readConditions(file);
+		view._graphicName = readString(file);
+		readCloseUps(0, file, view._closeUps);
 	}
 }
 

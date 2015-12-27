@@ -40,7 +40,6 @@ namespace Lab {
 
 Anim::Anim(LabEngine *vm) : _vm(vm) {
 	_lastBlockHeader = 0;
-	_curBit = 0;
 	_numChunks = 1;
 	_headerdata._width = 0;
 	_headerdata._height = 0;
@@ -68,6 +67,8 @@ Anim::Anim(LabEngine *vm) : _vm(vm) {
 
 	for (int i = 0; i < 3 * 256; i++)
 		_diffPalette[i] = 0;
+
+	_outputBuffer = nullptr; // output to screen
 }
 
 Anim::~Anim() {
@@ -75,24 +76,37 @@ Anim::~Anim() {
 	_vm->_anim->_scrollScreenBuffer = nullptr;
 }
 
+void Anim::setOutputBuffer(byte *memoryBuffer) {
+	_outputBuffer = memoryBuffer;
+}
+
+uint16 Anim::getDIFFHeight() {
+	return _headerdata._height;
+}
+
 void Anim::diffNextFrame(bool onlyDiffData) {
 	if (_lastBlockHeader == 65535)
 		// Already done.
 		return;
 
-	BitMap *disp = _vm->_graphics->_dispBitMap;
-	if (disp->_drawOnScreen)
-		disp->_planes[0] = _vm->_graphics->getCurrentDrawingBuffer();
+	bool drawOnScreen = false;
+	byte *startOfBuf = _outputBuffer;
+	int bufPitch = _vm->_graphics->_screenWidth;
 
-	disp->_planes[1] = disp->_planes[0] + 0x10000;
-	disp->_planes[2] = disp->_planes[1] + 0x10000;
-	disp->_planes[3] = disp->_planes[2] + 0x10000;
-	disp->_planes[4] = disp->_planes[3] + 0x10000;
+	if (!startOfBuf) {
+		startOfBuf = _vm->_graphics->getCurrentDrawingBuffer();
+		drawOnScreen = true;
+	}
+	byte *endOfBuf = startOfBuf + (int)_diffWidth * _diffHeight;
 
 	_vm->_event->mouseHide();
 
+	int curBit = 0;
+
 	while (1) {
-		if (_curBit >= _numChunks) {
+		byte *buf = startOfBuf + 0x10000 * curBit;
+
+		if (buf >= endOfBuf) {
 			_vm->_event->mouseShow();
 
 			if (!onlyDiffData) {
@@ -123,9 +137,8 @@ void Anim::diffNextFrame(bool onlyDiffData) {
 				_diffFileStart = _diffFile->pos();
 
 			_isAnim = (_frameNum >= 3) && (!_playOnce);
-			_curBit = 0;
 
-			if (disp->_drawOnScreen)
+			if (drawOnScreen)
 				_vm->_graphics->screenUpdate();
 
 			// done with the next frame.
@@ -146,50 +159,50 @@ void Anim::diffNextFrame(bool onlyDiffData) {
 
 		case 10:
 			if (onlyDiffData) {
-				if (_curBit > 0)
-					error("diffNextFrame: attempt to read screen to non-zero plane (%d)", _curBit);
+				if (curBit > 0)
+					error("diffNextFrame: attempt to read screen to non-zero plane (%d)", curBit);
 				delete[] _scrollScreenBuffer;
 				_scrollScreenBuffer = new byte[_headerdata._width * _headerdata._height];
 				_diffFile->read(_scrollScreenBuffer, _size);
 			} else {
-				_diffFile->read(disp->_planes[_curBit], _size);
+				_diffFile->read(buf, _size);
 			}
-			_curBit++;
+			curBit++;
 			break;
 
 		case 11:
 			curPos = _diffFile->pos();
 			_diffFile->skip(4);
-			_vm->_utils->runLengthDecode(disp->_planes[_curBit], _diffFile);
-			_curBit++;
+			_vm->_utils->runLengthDecode(buf, _diffFile);
+			curBit++;
 			_diffFile->seek(curPos + _size, SEEK_SET);
 			break;
 
 		case 12:
 			curPos = _diffFile->pos();
 			_diffFile->skip(4);
-			_vm->_utils->verticalRunLengthDecode(disp->_planes[_curBit], _diffFile, disp->_bytesPerRow);
-			_curBit++;
+			_vm->_utils->verticalRunLengthDecode(buf, _diffFile, bufPitch);
+			curBit++;
 			_diffFile->seek(curPos + _size, SEEK_SET);
 			break;
 
 		case 20:
 			curPos = _diffFile->pos();
-			_vm->_utils->unDiff(disp->_planes[_curBit], disp->_planes[_curBit], _diffFile, disp->_bytesPerRow, false);
-			_curBit++;
+			_vm->_utils->unDiff(buf, buf, _diffFile, bufPitch, false);
+			curBit++;
 			_diffFile->seek(curPos + _size, SEEK_SET);
 			break;
 
 		case 21:
 			curPos = _diffFile->pos();
-			_vm->_utils->unDiff(disp->_planes[_curBit], disp->_planes[_curBit], _diffFile, disp->_bytesPerRow, true);
-			_curBit++;
+			_vm->_utils->unDiff(buf, buf, _diffFile, bufPitch, true);
+			curBit++;
 			_diffFile->seek(curPos + _size, SEEK_SET);
 			break;
 
 		case 25:
 		case 26:
-			_curBit++;
+			curBit++;
 			break;
 
 		case 30:
@@ -207,7 +220,9 @@ void Anim::diffNextFrame(bool onlyDiffData) {
 			_sampleSpeed = _diffFile->readUint16LE();
 			_diffFile->skip(2);
 
-			_vm->_music->playSoundEffect(_sampleSpeed, _size, _diffFile);
+			// Sound effects embedded in animations are started here. These are
+			// usually animation-specific, like door opening sounds, and are not looped
+			_vm->_music->playSoundEffect(_sampleSpeed, _size, false, _diffFile);
 			break;
 
 		case 65535:
@@ -219,7 +234,7 @@ void Anim::diffNextFrame(bool onlyDiffData) {
 						_vm->updateMusicAndEvents();
 						_vm->waitTOF();
 
-						if (disp->_drawOnScreen)
+						if (drawOnScreen)
 							didTOF = true;
 					}
 				}
@@ -264,7 +279,6 @@ void Anim::stopDiffEnd() {
 void Anim::readDiff(Common::File *diffFile, bool playOnce, bool onlyDiffData) {
 	_playOnce = playOnce;
 	_delayMicros = 0;
-	_curBit = 0;
 	_frameNum = 0;
 	_numChunks = 1;
 	_donePal = false;
@@ -322,13 +336,6 @@ void Anim::readDiff(Common::File *diffFile, bool playOnce, bool onlyDiffData) {
 	_diffWidth = _headerdata._width;
 	_diffHeight = _headerdata._height;
 	_vm->_utils->setBytesPerRow(_diffWidth);
-
-	_numChunks = (((int32)_diffWidth) * _diffHeight) / 0x10000;
-
-	if ((uint32)(_numChunks * 0x10000) < (uint32)(((int32)_diffWidth) * _diffHeight))
-		_numChunks++;
-
-	assert(_numChunks < 16);
 
 	delete[] _scrollScreenBuffer;
 	_scrollScreenBuffer = nullptr;
