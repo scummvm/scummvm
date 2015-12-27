@@ -90,7 +90,7 @@ void LabEngine::loadMapData() {
 		_maps[i]._x = mapFile->readUint16LE();
 		_maps[i]._y = mapFile->readUint16LE();
 		_maps[i]._pageNumber = mapFile->readUint16LE();
-		_maps[i]._specialID = mapFile->readUint16LE();
+		_maps[i]._specialID = (SpecialRoom) mapFile->readUint16LE();
 		_maps[i]._mapFlags = mapFile->readUint32LE();
 	}
 
@@ -133,18 +133,18 @@ Common::Rect LabEngine::roomCoords(uint16 curRoom) {
 	Image *curRoomImg = nullptr;
 
 	switch (_maps[curRoom]._specialID) {
-	case NORMAL:
-	case UPARROWROOM:
-	case DOWNARROWROOM:
+	case kNormalRoom:
+	case kUpArrowRoom:
+	case kDownArrowRoom:
 		curRoomImg = _imgRoom;
 		break;
-	case BRIDGEROOM:
+	case kBridgeRoom:
 		curRoomImg = _imgBridge;
 		break;
-	case VCORRIDOR:
+	case kVerticalCorridor:
 		curRoomImg = _imgVRoom;
 		break;
-	case HCORRIDOR:
+	case kHorizontalCorridor:
 		curRoomImg = _imgHRoom;
 		break;
 	default:
@@ -173,12 +173,12 @@ void LabEngine::drawRoomMap(uint16 curRoom, bool drawMarkFl) {
 	uint32 flags = _maps[curRoom]._mapFlags;
 
 	switch (_maps[curRoom]._specialID) {
-	case NORMAL:
-	case UPARROWROOM:
-	case DOWNARROWROOM:
-		if (_maps[curRoom]._specialID == NORMAL)
+	case kNormalRoom:
+	case kUpArrowRoom:
+	case kDownArrowRoom:
+		if (_maps[curRoom]._specialID == kNormalRoom)
 			_imgRoom->drawImage(x, y);
-		else if (_maps[curRoom]._specialID == DOWNARROWROOM)
+		else if (_maps[curRoom]._specialID == kDownArrowRoom)
 			_imgDownArrowRoom->drawImage(x, y);
 		else
 			_imgUpArrowRoom->drawImage(x, y);
@@ -204,7 +204,7 @@ void LabEngine::drawRoomMap(uint16 curRoom, bool drawMarkFl) {
 
 		break;
 
-	case BRIDGEROOM:
+	case kBridgeRoom:
 		_imgBridge->drawImage(x, y);
 
 		drawX = x + (_imgBridge->_width - _imgMapX[_direction]->_width) / 2;
@@ -212,7 +212,7 @@ void LabEngine::drawRoomMap(uint16 curRoom, bool drawMarkFl) {
 
 		break;
 
-	case VCORRIDOR:
+	case kVerticalCorridor:
 		_imgVRoom->drawImage(x, y);
 
 		offset = (_imgVRoom->_width - _imgPath->_width) / 2;
@@ -250,7 +250,7 @@ void LabEngine::drawRoomMap(uint16 curRoom, bool drawMarkFl) {
 
 		break;
 
-	case HCORRIDOR:
+	case kHorizontalCorridor:
 		_imgHRoom->drawImage(x, y);
 
 		offset = (_imgRoom->_width - _imgPath->_width) / 2;

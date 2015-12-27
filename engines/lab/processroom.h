@@ -119,13 +119,20 @@ enum MapDoors {
 	kDoorBottomWest = 128
 };
 
-// Special Map ID's
-#define     NORMAL           0
-#define     UPARROWROOM      1
-#define     DOWNARROWROOM    2
-#define     BRIDGEROOM       3
-#define     VCORRIDOR        4
-#define     HCORRIDOR        5
+enum SpecialRoom {
+	kNormalRoom = 0,
+	kUpArrowRoom,
+	kDownArrowRoom,
+	kBridgeRoom,
+	kVerticalCorridor,
+	kHorizontalCorridor,
+	kMedMaze,
+	kHedgeMaze,
+	kSurMaze,
+	kMultiMazeF1,
+	kMultiMazeF2,
+	kMultiMazeF3
+};
 
 #if defined(WIN32)
 #pragma pack(push, 1)
@@ -177,7 +184,8 @@ struct InventoryData {
 };
 
 struct MapData {
-	uint16 _x, _y, _pageNumber, _specialID;
+	uint16 _x, _y, _pageNumber;
+	SpecialRoom _specialID;
 	uint32 _mapFlags;
 };
 
