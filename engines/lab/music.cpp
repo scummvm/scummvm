@@ -74,11 +74,6 @@ void Music::updateMusic() {
 	if (!_musicOn || (getPlayingBufferCount() >= MAXBUFFERS))
 		return;
 
-	// NOTE: We need to use malloc(), cause this will be freed with free()
-	// by the music code
-	byte *musicBuffer = (byte *)malloc(MUSICBUFSIZE);
-	fillbuffer(musicBuffer);
-
 	// Queue a music block, and start the music, if needed
 	bool startMusicFlag = false;
 
@@ -87,7 +82,7 @@ void Music::updateMusic() {
 		startMusicFlag = true;
 	}
 
-	_queuingAudioStream->queueBuffer(musicBuffer, MUSICBUFSIZE, DisposeAfterUse::YES, getSoundFlags());
+	_queuingAudioStream->queueBuffer(fillBuffer(), MUSICBUFSIZE, DisposeAfterUse::YES, getSoundFlags());
 
 	if (startMusicFlag)
 		_vm->_mixer->playStream(Audio::Mixer::kMusicSoundType, &_musicHandle, _queuingAudioStream);
@@ -124,7 +119,11 @@ bool Music::isSoundEffectActive() const {
 	return _vm->_mixer->isSoundHandleActive(_sfxHandle);
 }
 
-void Music::fillbuffer(byte *musicBuffer) {
+byte *Music::fillBuffer() {
+	// NOTE: We need to use malloc(), cause this will be freed with free()
+	// by the music code
+	byte *musicBuffer = (byte *)malloc(MUSICBUFSIZE);
+
 	if (MUSICBUFSIZE < _leftInFile) {
 		_file->read(musicBuffer, MUSICBUFSIZE);
 		_leftInFile -= MUSICBUFSIZE;
@@ -136,6 +135,8 @@ void Music::fillbuffer(byte *musicBuffer) {
 		_file->seek(0);
 		_leftInFile = _file->size();
 	}
+
+	return musicBuffer;
 }
 
 void Music::startMusic(bool restartFl) {

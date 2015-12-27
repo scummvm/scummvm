@@ -66,7 +66,7 @@ private:
 	Audio::QueuingAudioStream *_queuingAudioStream;
 
 private:
-	void fillbuffer(byte *musicBuffer);
+	byte *fillBuffer();
 	uint16 getPlayingBufferCount();
 
 	/**
