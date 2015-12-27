@@ -137,7 +137,7 @@ void EventManager::initMouse() {
 	_vm->_system->setMouseCursor(mouseData, MOUSE_WIDTH, MOUSE_HEIGHT, 0, 0, 0);
 	_vm->_system->showMouse(false);
 
-	setMousePos(Common::Point(0, 0));
+	setMousePos(Common::Point(_vm->_graphics->_screenWidth / 2, _vm->_graphics->_screenHeight / 2));
 }
 
 void EventManager::mouseShow() {
