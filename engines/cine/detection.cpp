@@ -95,7 +95,7 @@ public:
 	}
 	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
 
-	const ExtraGuiOptions CineMetaEngine::getExtraGuiOptions(const Common::String &target) const {
+	const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const {
 		ExtraGuiOptions options;
 		options.push_back(cineExtraGuiOption);
 		return options;
