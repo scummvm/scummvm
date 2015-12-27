@@ -62,6 +62,22 @@ byte Music::getSoundFlags() {
 	return soundFlags;
 }
 
+void Music::changeMusic(const Common::String filename, bool storeCurPos, bool seektoStoredPos) {
+	if (storeCurPos)
+		_storedPos = _musicFile->pos();
+
+	_musicPaused = false;
+	stopSoundEffect();
+	freeMusic();
+	_musicFile = _vm->_resource->openDataFile(filename);
+	if (seektoStoredPos)
+		_musicFile->seek(_storedPos);
+
+	Audio::SeekableAudioStream *audioStream = Audio::makeRawStream(_musicFile, SAMPLESPEED, getSoundFlags());
+	Audio::LoopingAudioStream *loopingAudioStream = new Audio::LoopingAudioStream(audioStream, 0);
+	_vm->_mixer->playStream(Audio::Mixer::kMusicSoundType, &_musicHandle, loopingAudioStream);
+}
+
 void Music::playSoundEffect(uint16 sampleSpeed, uint32 length, bool loop, Common::File *dataFile) {
 	pauseBackMusic();
 	stopSoundEffect();
@@ -128,22 +144,6 @@ void Music::checkRoomMusic() {
 	}
 
 	_curRoomMusic = _vm->_roomNum;
-}
-
-void Music::changeMusic(const Common::String filename, bool storeCurPos, bool seektoStoredPos) {
-	if (storeCurPos)
-		_storedPos = _musicFile->pos();
-
-	_musicPaused = false;
-	stopSoundEffect();
-	freeMusic();
-	_musicFile = _vm->_resource->openDataFile(filename);
-	if (seektoStoredPos)
-		_musicFile->seek(_storedPos);
-
-	Audio::SeekableAudioStream *audioStream = Audio::makeRawStream(_musicFile, SAMPLESPEED, getSoundFlags());
-	Audio::LoopingAudioStream *loopingAudioStream = new Audio::LoopingAudioStream(audioStream, 0);
-	_vm->_mixer->playStream(Audio::Mixer::kMusicSoundType, &_musicHandle, loopingAudioStream);
 }
 
 bool Music::loadSoundEffect(const Common::String filename, bool loop, bool waitTillFinished) {
