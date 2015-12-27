@@ -1,4 +1,4 @@
-#bash
+#!bash
 #
 # Based on instructions posted at
 # http://apple.stackexchange.com/questions/58243/can-i-get-the-original-mac-font-chicago-on-a-mountain-lion-mac
