@@ -128,12 +128,7 @@ LabEngine::LabEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	_monitorButtonHeight = 1;
 	for (int i = 0; i < 20; i++)
 		_highPalette[i] = 0;
-
-	//const Common::FSNode gameDataDir(ConfMan.get("path"));
-	//SearchMan.addSubDirectoryMatching(gameDataDir, "game");
-	//SearchMan.addSubDirectoryMatching(gameDataDir, "game/pict");
-	//SearchMan.addSubDirectoryMatching(gameDataDir, "game/spict");
-	//SearchMan.addSubDirectoryMatching(gameDataDir, "music");
+	_introPlaying = false;
 }
 
 LabEngine::~LabEngine() {
@@ -246,6 +241,24 @@ void LabEngine::waitTOF() {
 void LabEngine::updateEvents() {
 	_event->processInput();
 	_event->updateMouse();
+}
+
+Common::Error LabEngine::loadGameState(int slot) {
+	bool result = loadGame(slot);
+	return (result) ? Common::kNoError : Common::kUserCanceled;
+}
+
+Common::Error LabEngine::saveGameState(int slot, const Common::String &desc) {
+	bool result = saveGame(slot, desc);
+	return (result) ? Common::kNoError : Common::kUserCanceled;
+}
+
+bool LabEngine::canLoadGameStateCurrently() {
+	return !_anim->isPlaying() && !_introPlaying;
+}
+
+bool LabEngine::canSaveGameStateCurrently() {
+	return !_anim->isPlaying() && !_introPlaying;
 }
 
 } // End of namespace Lab

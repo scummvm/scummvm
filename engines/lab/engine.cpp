@@ -1036,9 +1036,11 @@ void LabEngine::go() {
 	// If the user has requested to load a game from the launcher, skip the intro
 	if (!ConfMan.hasKey("save_slot")) {
 		_event->mouseHide();
+		_introPlaying = true;
 		Intro *intro = new Intro(this);
 		intro->play();
 		delete intro;
+		_introPlaying = false;
 		_event->mouseShow();
 	}
 

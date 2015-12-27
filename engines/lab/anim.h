@@ -96,6 +96,8 @@ public:
 	void stopDiffEnd();
 
 	uint16 getDIFFHeight();
+
+	bool isPlaying() const { return _isPlaying;  }
 };
 
 } // End of namespace Lab

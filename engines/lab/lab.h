@@ -160,6 +160,7 @@ private:
 	Image *_monitorButton;
 	Image *_journalBackImage;
 	TextFont *_journalFont;
+	bool _introPlaying;
 
 public:
 	bool _alternate;
@@ -224,6 +225,11 @@ public:
 	void setQuarters(uint16 quarters);
 	void updateEvents();
 	void waitTOF();
+
+	Common::Error loadGameState(int slot);
+	Common::Error saveGameState(int slot, const Common::String &desc);
+	bool canLoadGameStateCurrently();
+	bool canSaveGameStateCurrently();
 
 private:
 	/**
