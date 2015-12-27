@@ -233,7 +233,7 @@ bool LabEngine::saveRestoreGame() {
 		if (slot >= 0) {
 			isOK = loadGame(slot);
 			if (isOK)
-				_music->resetMusic();
+				_music->checkRoomMusic();
 		}
 		delete dialog;
 	}

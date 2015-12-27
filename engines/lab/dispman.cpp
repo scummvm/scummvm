@@ -87,7 +87,7 @@ void DisplayMan::loadBackPict(const Common::String fileName, uint16 *highPal) {
 void DisplayMan::readPict(const Common::String filename, bool playOnce, bool onlyDiffData, byte *memoryBuffer) {
 	_vm->_anim->stopDiff();
 	loadPict(filename);
-	_vm->updateMusicAndEvents();
+	_vm->updateEvents();
 	_vm->_anim->setOutputBuffer(memoryBuffer);
 	_vm->_anim->readDiff(_curBitmap, playOnce, onlyDiffData);
 }
@@ -480,7 +480,7 @@ void DisplayMan::checkerBoardEffect(uint16 penColor, uint16 x1, uint16 y1, uint1
 		h = _screenHeight - y1;
 
 	if ((w > 0) && (h > 0)) {
-		byte *d = (byte *)getCurrentDrawingBuffer() + y1 * _screenWidth + x1;
+		byte *d = getCurrentDrawingBuffer() + y1 * _screenWidth + x1;
 
 		while (h-- > 0) {
 			byte *dd = d;
@@ -570,7 +570,7 @@ void DisplayMan::drawText(TextFont *tf, uint16 x, uint16 y, uint16 color, const 
 						for (int counterb = 0; counterb < 8; counterb++) {
 							if (templeft <= 0) {
 								curPage++;
-								vgaTemp = (byte *)(vgaTop - templeft);
+								vgaTemp = vgaTop - templeft;
 								// Set up VGATempLine for next line
 								vgaTempLine -= _screenBytesPerPage;
 								// Set up LeftInSegment for next line
@@ -621,7 +621,7 @@ void DisplayMan::doScrollBlack() {
 		scrollDisplayY(-by, 0, 0, width - 1, height - 1, mem);
 		verticalScroll -= by;
 
-		_vm->updateMusicAndEvents();
+		_vm->updateEvents();
 		_vm->waitTOF();
 	}
 
@@ -660,7 +660,7 @@ void DisplayMan::doScrollWipe(const Common::String filename) {
 	uint16 height = _vm->_utils->vgaScaleY(149) + _vm->_utils->svgaCord(2);
 
 	while (_vm->_music->isSoundEffectActive()) {
-		_vm->updateMusicAndEvents();
+		_vm->updateEvents();
 		_vm->waitTOF();
 	}
 
@@ -668,13 +668,13 @@ void DisplayMan::doScrollWipe(const Common::String filename) {
 	setPalette(_vm->_anim->_diffPalette, 256);
 	byte *mem = _vm->_anim->_scrollScreenBuffer;
 
-	_vm->updateMusicAndEvents();
+	_vm->updateEvents();
 	uint16 by = _vm->_utils->vgaScaleX(3);
 	uint16 nheight = height;
 	uint16 startLine = 0, onRow = 0;
 
 	while (onRow < _vm->_anim->getDIFFHeight()) {
-		_vm->updateMusicAndEvents();
+		_vm->updateEvents();
 
 		if ((by > nheight) && nheight)
 			by = nheight;
@@ -713,18 +713,18 @@ void DisplayMan::doScrollBounce() {
 	int height = _vm->_utils->vgaScaleY(149) + _vm->_utils->svgaCord(2);
 	byte *mem = _vm->_anim->_scrollScreenBuffer;
 
-	_vm->updateMusicAndEvents();
+	_vm->updateEvents();
 	int startLine = _vm->_anim->getDIFFHeight() - height - 1;
 
 	for (int i = 0; i < 5; i++) {
-		_vm->updateMusicAndEvents();
+		_vm->updateEvents();
 		startLine -= (5 - i) * multiplier;
 		copyPage(width, height, 0, startLine, mem);
 		_vm->waitTOF();
 	}
 
 	for (int i = 8; i > 0; i--) {
-		_vm->updateMusicAndEvents();
+		_vm->updateEvents();
 		startLine += offsets[i - 1] * multiplier;
 		copyPage(width, height, 0, startLine, mem);
 		_vm->waitTOF();
@@ -752,7 +752,7 @@ void DisplayMan::doTransWipe(const Common::String filename) {
 
 			while (curY < lastY) {
 				if (linesDone >= linesLast) {
-					_vm->updateMusicAndEvents();
+					_vm->updateEvents();
 					_vm->waitTOF();
 					linesDone = 0;
 				}
@@ -795,7 +795,7 @@ void DisplayMan::doTransWipe(const Common::String filename) {
 
 			while (curY < lastY) {
 				if (linesDone >= linesLast) {
-					_vm->updateMusicAndEvents();
+					_vm->updateEvents();
 					_vm->waitTOF();
 					linesDone = 0;
 				}
@@ -950,7 +950,7 @@ void DisplayMan::fade(bool fadeIn) {
 
 		setAmigaPal(newPal);
 		_vm->waitTOF();
-		_vm->updateMusicAndEvents();
+		_vm->updateEvents();
 	}
 }
 

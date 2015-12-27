@@ -478,7 +478,7 @@ void LabEngine::mainGameLoop() {
 		}
 
 		// Make sure we check the music at least after every message
-		updateMusicAndEvents();
+		updateEvents();
 		interfaceOn();
 		IntuiMessage *curMsg = _event->getMsg();
 		if (shouldQuit()) {
@@ -490,7 +490,7 @@ void LabEngine::mainGameLoop() {
 			// Does music load and next animation frame when you've run out of messages
 			gotMessage = false;
 			_music->checkRoomMusic();
-			updateMusicAndEvents();
+			updateEvents();
 			_anim->diffNextFrame();
 
 			if (_followingCrumbs) {
@@ -521,7 +521,7 @@ void LabEngine::showLab2Teaser() {
 	_graphics->readPict("P:End/L2In.1");
 
 	for (int i = 0; i < 120; i++) {
-		updateMusicAndEvents();
+		updateEvents();
 		waitTOF();
 	}
 
@@ -529,7 +529,7 @@ void LabEngine::showLab2Teaser() {
 	_graphics->readPict("P:End/Lost");
 
 	while (!_event->getMsg() && !shouldQuit()) {
-		updateMusicAndEvents();
+		updateEvents();
 		_anim->diffNextFrame();
 		waitTOF();
 	}
@@ -652,7 +652,7 @@ bool LabEngine::processKey(IntuiMessage *curMsg, uint32 msgClass, uint16 &qualif
 
 		while (1) {
 			// Make sure we check the music at least after every message
-			updateMusicAndEvents();
+			updateEvents();
 			curMsg = _event->getMsg();
 
 			if (shouldQuit())
@@ -660,7 +660,7 @@ bool LabEngine::processKey(IntuiMessage *curMsg, uint32 msgClass, uint16 &qualif
 
 			if (!curMsg) {
 				// Does music load and next animation frame when you've run out of messages
-				updateMusicAndEvents();
+				updateEvents();
 				_anim->diffNextFrame();
 			} else if (curMsg->_msgClass == kMessageRawKey) {
 				if ((curMsg->_code == Common::KEYCODE_y) || (curMsg->_code == Common::KEYCODE_q)) {

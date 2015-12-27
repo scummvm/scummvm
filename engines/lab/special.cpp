@@ -94,7 +94,7 @@ void LabEngine::loadJournalData() {
 		_graphics->freeFont(&_journalFont);
 
 	_journalFont = _resource->getFont("F:Journal.fon");
-	updateMusicAndEvents();
+	updateEvents();
 
 	Common::String filename = "Lab:Rooms/j";
 
@@ -150,7 +150,7 @@ void LabEngine::drawJournalText() {
 	assert((_journalPage & 1) == 0);
 
 	while (drawingToPage < _journalPage) {
-		updateMusicAndEvents();
+		updateEvents();
 
 		// flowText without output
 		curText += _graphics->flowText(_journalFont, -2, 2, 0, false, false, false, false, _utils->vgaRectScale(52, 32, 152, 148), curText);
@@ -173,7 +173,7 @@ void LabEngine::drawJournalText() {
 		curText += _graphics->flowText(_journalFont, -2, 2, 0, false, false, false, true, _utils->vgaRectScale(52, 32, 152, 148), curText, _journalBackImage);
 	}
 
-	updateMusicAndEvents();
+	updateEvents();
 	curText += _graphics->flowText(_journalFont, -2, 2, 0, false, false, false, true, _utils->vgaRectScale(171, 32, 271, 148), curText, _journalBackImage);
 
 	_lastPage = (*curText == 0);
@@ -182,13 +182,13 @@ void LabEngine::drawJournalText() {
 void LabEngine::turnPage(bool fromLeft) {
 	if (fromLeft) {
 		for (int i = 0; i < _graphics->_screenWidth; i += 8) {
-			updateMusicAndEvents();
+			updateEvents();
 			waitTOF();
 			_journalBackImage->blitBitmap(i, 0, nullptr, i, 0, 8, _graphics->_screenHeight, false);
 		}
 	} else {
 		for (int i = (_graphics->_screenWidth - 8); i > 0; i -= 8) {
-			updateMusicAndEvents();
+			updateEvents();
 			waitTOF();
 			_journalBackImage->blitBitmap(i, 0, nullptr, i, 0, 8, _graphics->_screenHeight, false);
 		}
@@ -197,7 +197,7 @@ void LabEngine::turnPage(bool fromLeft) {
 
 void LabEngine::drawJournal(uint16 wipenum, bool needFade) {
 	_event->mouseHide();
-	updateMusicAndEvents();
+	updateEvents();
 	drawJournalText();
 	_graphics->loadBackPict("P:Journal.pic", _highPalette);
 
@@ -222,7 +222,7 @@ void LabEngine::drawJournal(uint16 wipenum, bool needFade) {
 void LabEngine::processJournal() {
 	while (1) {
 		// Make sure we check the music at least after every message
-		updateMusicAndEvents();
+		updateEvents();
 		IntuiMessage *msg = _event->getMsg();
 		if (shouldQuit()) {
 			_quitLab = true;
@@ -230,7 +230,7 @@ void LabEngine::processJournal() {
 		}
 
 		if (!msg)
-			updateMusicAndEvents();
+			updateEvents();
 		else {
 			MessageClass msgClass  = msg->_msgClass;
 
@@ -265,7 +265,7 @@ void LabEngine::doJournal() {
 	_journalBackImage->_height = _graphics->_screenHeight;
 	_journalBackImage->setData(nullptr, true);
 
-	updateMusicAndEvents();
+	updateEvents();
 	loadJournalData();
 	_event->attachButtonList(&_journalButtonList);
 	drawJournal(0, true);
@@ -320,7 +320,7 @@ void LabEngine::drawMonText(const char *text, TextFont *monitorFont, Common::Rec
 	}
 
 	while (drawingToPage < _monitorPage) {
-		updateMusicAndEvents();
+		updateEvents();
 		curText = text + charsDrawn;
 		charsDrawn += _graphics->flowText(monitorFont, yspacing, 0, 0, false, false, false, false, textRect, curText);
 		_lastPage = (*curText == 0);
@@ -367,7 +367,7 @@ void LabEngine::processMonitor(const char *ntext, TextFont *monitorFont, bool is
 		}
 
 		// Make sure we check the music at least after every message
-		updateMusicAndEvents();
+		updateEvents();
 		IntuiMessage *msg = _event->getMsg();
 		if (shouldQuit()) {
 			_quitLab = true;
@@ -375,7 +375,7 @@ void LabEngine::processMonitor(const char *ntext, TextFont *monitorFont, bool is
 		}
 
 		if (!msg)
-			updateMusicAndEvents();
+			updateEvents();
 		else {
 			MessageClass msgClass  = msg->_msgClass;
 

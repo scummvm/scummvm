@@ -46,18 +46,10 @@ namespace Lab {
 #define DIMROOM              80
 
 Music::Music(LabEngine *vm) : _vm(vm) {
-	_file = 0;
-	_tFile = 0;
+	_musicFile = nullptr;
 	_musicPaused = false;
-
-	_oldMusicOn = false;
-	_tLeftInFile = 0;
-
-	_leftInFile = 0;
-
-	_musicOn = false;
-	_queuingAudioStream = nullptr;
 	_curRoomMusic = 1;
+	_storedPos = 0;
 }
 
 byte Music::getSoundFlags() {
@@ -68,28 +60,6 @@ byte Music::getSoundFlags() {
 		soundFlags |= Audio::FLAG_UNSIGNED;
 
 	return soundFlags;
-}
-
-void Music::updateMusic() {
-	if (!_musicOn || (getPlayingBufferCount() >= MAXBUFFERS))
-		return;
-
-	// Queue a music block, and start the music, if needed
-	bool startMusicFlag = false;
-
-	if (!_queuingAudioStream) {
-		_queuingAudioStream = Audio::makeQueuingAudioStream(SAMPLESPEED, false);
-		startMusicFlag = true;
-	}
-
-	_queuingAudioStream->queueBuffer(fillBuffer(), MUSICBUFSIZE, DisposeAfterUse::YES, getSoundFlags());
-
-	if (startMusicFlag)
-		_vm->_mixer->playStream(Audio::Mixer::kMusicSoundType, &_musicHandle, _queuingAudioStream);
-}
-
-uint16 Music::getPlayingBufferCount() {
-	return (_queuingAudioStream) ? _queuingAudioStream->numQueuedStreams() : 0;
 }
 
 void Music::playSoundEffect(uint16 sampleSpeed, uint32 length, bool loop, Common::File *dataFile) {
@@ -104,7 +74,7 @@ void Music::playSoundEffect(uint16 sampleSpeed, uint32 length, bool loop, Common
 	byte *soundData = (byte *)malloc(length);
 	dataFile->read(soundData, length);
 
-	Audio::SeekableAudioStream *audioStream = Audio::makeRawStream(soundData, length, sampleSpeed, getSoundFlags());
+	Audio::SeekableAudioStream *audioStream = Audio::makeRawStream((const byte *)soundData, length, sampleSpeed, getSoundFlags());
 	uint loops = (loop) ? 0 : 1;
 	Audio::LoopingAudioStream *loopingAudioStream = new Audio::LoopingAudioStream(audioStream, loops);
 	_vm->_mixer->playStream(Audio::Mixer::kSFXSoundType, &_sfxHandle, loopingAudioStream);
@@ -119,68 +89,17 @@ bool Music::isSoundEffectActive() const {
 	return _vm->_mixer->isSoundHandleActive(_sfxHandle);
 }
 
-byte *Music::fillBuffer() {
-	// NOTE: We need to use malloc(), cause this will be freed with free()
-	// by the music code
-	byte *musicBuffer = (byte *)malloc(MUSICBUFSIZE);
-
-	if (MUSICBUFSIZE < _leftInFile) {
-		_file->read(musicBuffer, MUSICBUFSIZE);
-		_leftInFile -= MUSICBUFSIZE;
-	} else {
-		_file->read(musicBuffer, _leftInFile);
-
-		memset(musicBuffer + _leftInFile, 0, MUSICBUFSIZE - _leftInFile);
-
-		_file->seek(0);
-		_leftInFile = _file->size();
-	}
-
-	return musicBuffer;
-}
-
-void Music::startMusic(bool restartFl) {
-	if (!_musicOn)
-		return;
-
-	stopSoundEffect();
-
-	if (restartFl) {
-		_file->seek(0);
-		_leftInFile  = _file->size();
-	}
-
-	_musicOn = true;
-	_vm->updateMusicAndEvents();
-}
-
-bool Music::initMusic(const Common::String filename) {
-	_musicOn = true;
-	_musicPaused = false;
-	_file = _vm->_resource->openDataFile(filename);
-	startMusic(true);
-	return true;
-}
-
 void Music::freeMusic() {
-	_musicOn = false;
-
 	_vm->_mixer->stopHandle(_musicHandle);
-	_queuingAudioStream = nullptr;
 	_vm->_mixer->stopHandle(_sfxHandle);
-
-	delete _file;
-	_file = nullptr;
+	_musicPaused = false;
+	_musicFile = nullptr;
 }
 
 void Music::pauseBackMusic() {
-	if (!_musicPaused && _musicOn) {
-		_vm->updateMusicAndEvents();
-		_musicOn = false;
+	if (!_musicPaused) {
 		stopSoundEffect();
-
 		_vm->_mixer->pauseHandle(_musicHandle, true);
-
 		_musicPaused = true;
 	}
 }
@@ -188,85 +107,47 @@ void Music::pauseBackMusic() {
 void Music::resumeBackMusic() {
 	if (_musicPaused) {
 		stopSoundEffect();
-		_musicOn = true;
-
 		_vm->_mixer->pauseHandle(_musicHandle, false);
-
-		_vm->updateMusicAndEvents();
 		_musicPaused = false;
 	}
 }
 
-void Music::setMusic(bool on) {
-	stopSoundEffect();
-
-	if (on && !_musicOn) {
-		_musicOn = true;
-		startMusic(true);
-	} else if (!on && _musicOn) {
-		_musicOn = false;
-		_vm->updateMusicAndEvents();
-	} else
-		_musicOn = on;
-}
-
 void Music::checkRoomMusic() {
-	if ((_curRoomMusic == _vm->_roomNum) || !_musicOn)
+	if ((_curRoomMusic == _vm->_roomNum) || !_musicFile)
 		return;
 
-	if (_vm->_roomNum == CLOWNROOM)
-		changeMusic("Music:Laugh");
-	else if (_vm->_roomNum == DIMROOM)
-		changeMusic("Music:Rm81");
+	if (_vm->_roomNum == CLOWNROOM) {
+		changeMusic("Music:Laugh", true, false);
+	} else if (_vm->_roomNum == DIMROOM) {
+		changeMusic("Music:Rm81", true, false);
+	} else if (_curRoomMusic == CLOWNROOM || _curRoomMusic == DIMROOM) {
+		if (_vm->getPlatform() != Common::kPlatformAmiga)
+			changeMusic("Music:Backgrou", false, true);
+		else
+			changeMusic("Music:Background", false, true);
+	}
 
 	_curRoomMusic = _vm->_roomNum;
 }
 
-void Music::changeMusic(const Common::String filename) {
-	if (!_tFile) {
-		_tFile = _file;
-		_oldMusicOn = _musicOn;
-		_tLeftInFile = _leftInFile + 65536;
+void Music::changeMusic(const Common::String filename, bool storeCurPos, bool seektoStoredPos) {
+	if (storeCurPos)
+		_storedPos = _musicFile->pos();
 
-		if (_tLeftInFile > (uint32)_tFile->size())
-			_tLeftInFile = _leftInFile;
-	}
+	_musicPaused = false;
+	stopSoundEffect();
+	freeMusic();
+	_musicFile = _vm->_resource->openDataFile(filename);
+	if (seektoStoredPos)
+		_musicFile->seek(_storedPos);
 
-	_file = _vm->_resource->openDataFile(filename);
-	// turn music off
-	_musicOn = true;
-	setMusic(false);
-
-	// turn it back on
-	_musicOn = false;
-	setMusic(true);
+	Audio::SeekableAudioStream *audioStream = Audio::makeRawStream(_musicFile, SAMPLESPEED, getSoundFlags());
+	Audio::LoopingAudioStream *loopingAudioStream = new Audio::LoopingAudioStream(audioStream, 0);
+	_vm->_mixer->playStream(Audio::Mixer::kMusicSoundType, &_musicHandle, loopingAudioStream);
 }
 
-void Music::resetMusic() {
-	if (!_tFile)
-		return;
-
-	if (_file->isOpen())
-		_file->close();
-
-	_file      = _tFile;
-	_leftInFile = _tLeftInFile;
-
-	_file->seek(_file->size() - _leftInFile);
-
-	_musicOn = true;
-	setMusic(false);
-	_vm->updateMusicAndEvents();
-
-	if (_oldMusicOn)
-		startMusic(false);
-
-	_tFile = 0;
-}
-
-bool Music::readMusic(const Common::String filename, bool loop, bool waitTillFinished) {
+bool Music::loadSoundEffect(const Common::String filename, bool loop, bool waitTillFinished) {
 	Common::File *file = _vm->_resource->openDataFile(filename, MKTAG('D', 'I', 'F', 'F'));
-	_vm->updateMusicAndEvents();
 	stopSoundEffect();
 
 	if (!file)
@@ -293,14 +174,14 @@ void Music::readSound(bool waitTillFinished, bool loop, Common::File *file) {
 		return;
 
 	while (soundTag != 65535) {
-		_vm->updateMusicAndEvents();
+		_vm->updateEvents();
 		soundTag = file->readUint32LE();
 		soundSize = file->readUint32LE() - 8;
 
 		if ((soundTag == 30) || (soundTag == 31)) {
 			if (waitTillFinished) {
 				while (isSoundEffectActive()) {
-					_vm->updateMusicAndEvents();
+					_vm->updateEvents();
 					_vm->waitTOF();
 				}
 			}
@@ -313,7 +194,7 @@ void Music::readSound(bool waitTillFinished, bool loop, Common::File *file) {
 		} else if (soundTag == 65535) {
 			if (waitTillFinished) {
 				while (isSoundEffectActive()) {
-					_vm->updateMusicAndEvents();
+					_vm->updateEvents();
 					_vm->waitTOF();
 				}
 			}

@@ -243,10 +243,9 @@ void LabEngine::waitTOF() {
 	_lastWaitTOFTicks = now;
 }
 
-void LabEngine::updateMusicAndEvents() {
+void LabEngine::updateEvents() {
 	_event->processInput();
 	_event->updateMouse();
-	_music->updateMusic();
 }
 
 } // End of namespace Lab

@@ -49,36 +49,20 @@ class Music {
 private:
 	LabEngine *_vm;
 
-	Common::File *_file;
-	Common::File *_tFile;
-
-	bool _musicOn;
+	Common::File *_musicFile;
 	bool _musicPaused;
-	bool _oldMusicOn;
-
-	uint16 _curRoomMusic ;
-
-	uint32 _tLeftInFile;
-	uint32 _leftInFile;
+	uint16 _curRoomMusic;
+	uint32 _storedPos;
 
 	Audio::SoundHandle _musicHandle;
 	Audio::SoundHandle _sfxHandle;
-	Audio::QueuingAudioStream *_queuingAudioStream;
 
 private:
-	byte *fillBuffer();
-	uint16 getPlayingBufferCount();
-
 	/**
 	 * Pauses the background music.
 	 */
 	void pauseBackMusic();
 	void readSound(bool waitTillFinished, bool loop, Common::File *file);
-
-	/**
-	 * Starts up the music initially.
-	 */
-	void startMusic(bool restartFl);
 
 	byte getSoundFlags();
 
@@ -88,7 +72,7 @@ public:
 	/**
 	 * Changes the background music to something else.
 	 */
-	void changeMusic(const Common::String filename);
+	void changeMusic(const Common::String filename, bool storeCurPos, bool seektoStoredPos);
 
 	/**
 	 * Checks the music that should be playing in a particular room.
@@ -100,39 +84,20 @@ public:
 	 */
 	void freeMusic();
 
-	/**
-	 * Initializes the music buffers.
-	 */
-	bool initMusic(const Common::String filename);
 	bool isSoundEffectActive() const;
 	void playSoundEffect(uint16 sampleSpeed, uint32 length, bool loop, Common::File *dataFile);
 
 	/**
-	 * Reads in a music file.  Ignores any graphics.
+	 * Reads in a sound effect file.  Ignores any graphics.
 	 */
-	bool readMusic(const Common::String filename, bool loop, bool waitTillFinished);
-
-	/**
-	 * Changes the background music to the original piece playing.
-	 */
-	void resetMusic();
+	bool loadSoundEffect(const Common::String filename, bool loop, bool waitTillFinished);
 
 	/**
 	 * Resumes the paused background music.
 	 */
 	void resumeBackMusic();
 
-	/**
-	 * Turns the music on and off.
-	 */
-	void setMusic(bool on);
 	void stopSoundEffect();
-
-	/**
-	 * Figures out which buffer is currently playing based on messages sent to
-	 * it from the Audio device.
-	 */
-	void updateMusic();
 };
 
 } // End of namespace Lab

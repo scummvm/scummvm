@@ -82,7 +82,7 @@ void LabEngine::loadMapData() {
 	delete mapImages;
 
 	Common::File *mapFile = _resource->openDataFile("Lab:Maps", MKTAG('M', 'A', 'P', '0'));
-	updateMusicAndEvents();
+	updateEvents();
 
 	_maxRooms = mapFile->readUint16LE();
 	_maps = new MapData[_maxRooms + 1];	// will be freed when the user exits the map
@@ -340,7 +340,7 @@ void LabEngine::drawMap(uint16 curRoom, uint16 curMsg, uint16 floorNum, bool fad
 		}
 	}
 
-	updateMusicAndEvents();
+	updateEvents();
 
 	// Makes sure the X is drawn in corridors
 	// NOTE: this here on purpose just in case there's some weird
@@ -391,7 +391,7 @@ void LabEngine::processMap(uint16 curRoom) {
 
 	while (1) {
 		// Make sure we check the music at least after every message
-		updateMusicAndEvents();
+		updateEvents();
 		IntuiMessage *msg = _event->getMsg();
 		if (shouldQuit()) {
 			_quitLab = true;
@@ -399,7 +399,7 @@ void LabEngine::processMap(uint16 curRoom) {
 		}
 
 		if (!msg) {
-			updateMusicAndEvents();
+			updateEvents();
 
 			byte newcolor[3];
 
@@ -541,7 +541,7 @@ void LabEngine::doMap(uint16 curRoom) {
 
 	_graphics->_fadePalette = amigaMapPalette;
 
-	updateMusicAndEvents();
+	updateEvents();
 	loadMapData();
 	_graphics->blackAllScreen();
 	_event->attachButtonList(&_mapButtonList);

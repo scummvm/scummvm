@@ -235,19 +235,19 @@ bool LabEngine::takeItem(Common::Point pos) {
 void LabEngine::doActions(const ActionList &actionList) {
 	ActionList::const_iterator action;
 	for (action = actionList.begin(); action != actionList.end(); ++action) {
-		updateMusicAndEvents();
+		updateEvents();
 
 		switch (action->_actionType) {
 		case kActionPlaySound:
-			_music->readMusic(action->_messages[0], false, true);
+			_music->loadSoundEffect(action->_messages[0], false, true);
 			break;
 
 		case kActionPlaySoundNoWait:	// only used in scene 7 (street, when teleporting to the surreal maze)
-			_music->readMusic(action->_messages[0], false, false);
+			_music->loadSoundEffect(action->_messages[0], false, false);
 			break;
 
 		case kActionPlaySoundLooping:
-			_music->readMusic(action->_messages[0], true, false);
+			_music->loadSoundEffect(action->_messages[0], true, false);
 			break;
 
 		case kActionShowDiff:
@@ -370,26 +370,29 @@ void LabEngine::doActions(const ActionList &actionList) {
 				_graphics->screenUpdate();
 
 				while (_system->getMillis() < targetMillis) {
-					updateMusicAndEvents();
+					updateEvents();
 					_anim->diffNextFrame();
 				}
 			}
 			break;
 
 		case kActionStopMusic:	// used in scene 44 (heart of the labyrinth, minotaur)
-			_music->setMusic(false);
+			_music->freeMusic();
 			break;
 
-		case kActionStartMusic:
+		case kActionStartMusic:	// unused
 			error("Unused opcode kActionStartMusic has been called");
 			break;
 
 		case kActionChangeMusic:	// used in scene 46 (museum exhibit, for the alarm)
-			_music->changeMusic(action->_messages[0]);
+			_music->changeMusic(action->_messages[0], true, false);
 			break;
 
-		case kActionResetMusic:	// used in scene 45
-			_music->resetMusic();
+		case kActionResetMusic:	// used in scene 45 (sheriff's office, after museum)
+			if (getPlatform() != Common::kPlatformAmiga)
+				_music->changeMusic("Music:BackGrou", false, true);
+			else
+				_music->changeMusic("Music:BackGround", false, true);
 			break;
 
 		case kActionFillMusic:
@@ -398,7 +401,7 @@ void LabEngine::doActions(const ActionList &actionList) {
 
 		case kActionWaitSound:	// used in scene 44 (heart of the labyrinth / ending)
 			while (_music->isSoundEffectActive()) {
-				updateMusicAndEvents();
+				updateEvents();
 				_anim->diffNextFrame();
 				waitTOF();
 			}
@@ -410,7 +413,7 @@ void LabEngine::doActions(const ActionList &actionList) {
 
 		case kActionWinMusic:	// used in scene 44 (heart of the labyrinth / ending)
 			_music->freeMusic();
-			_music->initMusic("Music:WinGame");
+			_music->changeMusic("Music:WinGame", false, false);
 			break;
 
 		case kActionWinGame:	// used in scene 44 (heart of the labyrinth / ending)
