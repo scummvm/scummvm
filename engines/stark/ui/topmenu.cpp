@@ -41,9 +41,9 @@ TopMenu::TopMenu(Gfx::Driver *gfx, Cursor *cursor) :
 	_position = Common::Rect(Gfx::Driver::kOriginalWidth, Gfx::Driver::kTopBorderHeight);
 	_visible = true;
 
-	_inventoryButton = new Button("Inventory", StaticProvider::kInventory, Common::Point(0, 0));
-	_exitButton = new Button("Quit", StaticProvider::kQuit, Common::Point(600, 0));
-	_optionsButton = new Button("Options", StaticProvider::kDiaryNormal, Common::Point(560, 0));
+	_inventoryButton = new Button("Inventory", StaticProvider::kInventory, Common::Point(32, 2));
+	_optionsButton = new Button("Options", StaticProvider::kDiaryNormal, Common::Point(560, 2));
+	_exitButton = new Button("Quit", StaticProvider::kQuit, Common::Point(608, 2));
 }
 
 TopMenu::~TopMenu() {
@@ -66,11 +66,10 @@ void TopMenu::onRender() {
 
 void TopMenu::onMouseMove(const Common::Point &pos) {
 	if (_widgetsVisible && StarkUserInterface->isInteractive()) {
-		if (_exitButton->containsPoint(pos)
-		    || _inventoryButton->containsPoint(pos)
-		    || _optionsButton->containsPoint(pos)) {
+		Button *hoveredButton = getButtonAtPosition(pos);
+		if (hoveredButton) {
 			_cursor->setCursorType(Cursor::kActive);
-			_cursor->setMouseHint(getMouseHintAtPosition(pos));
+			_cursor->setMouseHint(hoveredButton->getText());
 		} else {
 			_cursor->setCursorType(Cursor::kDefault);
 			_cursor->setMouseHint("");
@@ -100,17 +99,16 @@ void TopMenu::onClick(const Common::Point &pos) {
 	}
 }
 
-Common::String TopMenu::getMouseHintAtPosition(Common::Point point) {
+Button *TopMenu::getButtonAtPosition(const Common::Point &point) const {
 	if (_exitButton->containsPoint(point)) {
-		return _exitButton->getText();
+		return _exitButton;
+	} else if (_optionsButton->containsPoint(point)) {
+		return _optionsButton;
+	} else if (_inventoryButton->containsPoint(point)) {
+		return _inventoryButton;
 	}
-	if (_optionsButton->containsPoint(point)) {
-		return _optionsButton->getText();
-	}
-	if (_inventoryButton->containsPoint(point)) {
-		return _inventoryButton->getText();
-	}
-	return "";
+
+	return nullptr;
 }
 
 } // End of namespace Stark

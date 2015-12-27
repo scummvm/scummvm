@@ -44,7 +44,7 @@ public:
 	void onClick(const Common::Point &pos) override;
 
 private:
-	Common::String getMouseHintAtPosition(Common::Point point);
+	Button *getButtonAtPosition(const Common::Point &point) const;
 
 	bool _widgetsVisible;
 
