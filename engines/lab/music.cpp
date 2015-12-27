@@ -60,6 +60,16 @@ Music::Music(LabEngine *vm) : _vm(vm) {
 	_curRoomMusic = 1;
 }
 
+byte Music::getSoundFlags() {
+	byte soundFlags = Audio::FLAG_LITTLE_ENDIAN;
+	if (_vm->getPlatform() == Common::kPlatformWindows)
+		soundFlags |= Audio::FLAG_16BITS;
+	else if (_vm->getPlatform() == Common::kPlatformDOS)
+		soundFlags |= Audio::FLAG_UNSIGNED;
+
+	return soundFlags;
+}
+
 void Music::updateMusic() {
 	if (!_musicOn || (getPlayingBufferCount() >= MAXBUFFERS))
 		return;
@@ -77,13 +87,7 @@ void Music::updateMusic() {
 		startMusicFlag = true;
 	}
 
-	byte soundFlags = Audio::FLAG_LITTLE_ENDIAN;
-	if (_vm->getPlatform() == Common::kPlatformWindows)
-		soundFlags |= Audio::FLAG_16BITS;
-	else if (_vm->getPlatform() == Common::kPlatformDOS)
-		soundFlags |= Audio::FLAG_UNSIGNED;
-
-	_queuingAudioStream->queueBuffer(musicBuffer, MUSICBUFSIZE, DisposeAfterUse::YES, soundFlags);
+	_queuingAudioStream->queueBuffer(musicBuffer, MUSICBUFSIZE, DisposeAfterUse::YES, getSoundFlags());
 
 	if (startMusicFlag)
 		_vm->_mixer->playStream(Audio::Mixer::kMusicSoundType, &_musicHandle, _queuingAudioStream);
@@ -100,18 +104,12 @@ void Music::playSoundEffect(uint16 sampleSpeed, uint32 length, bool loop, Common
 	if (sampleSpeed < 4000)
 		sampleSpeed = 4000;
 
-	byte soundFlags = Audio::FLAG_LITTLE_ENDIAN;
-	if (_vm->getPlatform() == Common::kPlatformWindows)
-		soundFlags |= Audio::FLAG_16BITS;
-	else
-		soundFlags |= Audio::FLAG_UNSIGNED;
-
 	// NOTE: We need to use malloc(), cause this will be freed with free()
 	// by the music code
 	byte *soundData = (byte *)malloc(length);
 	dataFile->read(soundData, length);
 
-	Audio::SeekableAudioStream *audioStream = Audio::makeRawStream((const byte *)soundData, length, sampleSpeed, soundFlags);
+	Audio::SeekableAudioStream *audioStream = Audio::makeRawStream((const byte *)soundData, length, sampleSpeed, getSoundFlags());
 	uint loops = (loop) ? 0 : 1;
 	Audio::LoopingAudioStream *loopingAudioStream = new Audio::LoopingAudioStream(audioStream, loops);
 	_vm->_mixer->playStream(Audio::Mixer::kSFXSoundType, &_sfxHandle, loopingAudioStream);

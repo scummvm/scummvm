@@ -80,6 +80,8 @@ private:
 	 */
 	void startMusic(bool restartFl);
 
+	byte getSoundFlags();
+
 public:
 	Music(LabEngine *vm);
 
