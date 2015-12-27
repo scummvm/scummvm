@@ -249,7 +249,8 @@ Common::Error LabEngine::loadGameState(int slot) {
 	_closeDataPtr = nullptr;
 	_mainDisplay = true;
 	_followingCrumbs = false;
-	_event->simulateLeftClick();
+	_event->simulateEvent();
+	_graphics->_longWinInFront = false;
 	return (result) ? Common::kNoError : Common::kUserCanceled;
 }
 

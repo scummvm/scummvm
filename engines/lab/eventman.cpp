@@ -205,4 +205,9 @@ Common::Point EventManager::updateAndGetMousePos() {
 	return _mousePos;
 }
 
+void EventManager::simulateEvent() {
+	// Simulate an event by setting an unused key
+	_keyPressed = Common::KeyState(Common::KEYCODE_SEMICOLON);
+}
+
 } // End of namespace Lab

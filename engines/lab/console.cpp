@@ -53,7 +53,8 @@ bool Console::Cmd_Scene(int argc, const char **argv) {
 	_vm->_closeDataPtr = nullptr;
 	_vm->_mainDisplay = true;
 	_vm->_followingCrumbs = false;
-	_vm->_event->simulateLeftClick();
+	_vm->_event->simulateEvent();
+	_vm->_graphics->_longWinInFront = false;
 
 	return false;
 }
