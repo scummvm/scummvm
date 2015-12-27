@@ -333,7 +333,7 @@ void LabEngine::drawMonText(const char *text, TextFont *monitorFont, Common::Rec
 
 	curText = text + charsDrawn;
 	_lastPage = (*curText == 0);
-	charsDrawn = _graphics->flowText(monitorFont, yspacing, 2, 0, false, false, false, true, textRect, curText);
+	_graphics->flowText(monitorFont, yspacing, 2, 0, false, false, false, true, textRect, curText);
 	_event->mouseShow();
 }
 
