@@ -52,7 +52,6 @@ private:
 	Common::File *_file;
 	Common::File *_tFile;
 
-	bool _doReset;
 	bool _musicOn;
 	bool _musicPaused;
 	bool _oldMusicOn;
@@ -125,7 +124,6 @@ public:
 	 * Turns the music on and off.
 	 */
 	void setMusic(bool on);
-	void setMusicReset(bool reset) { _doReset = reset; }
 	void stopSoundEffect();
 
 	/**

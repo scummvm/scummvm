@@ -386,12 +386,10 @@ void LabEngine::doActions(const ActionList &actionList) {
 
 		case kActionChangeMusic:
 			_music->changeMusic(action->_messages[0]);
-			_music->setMusicReset(false);
 			break;
 
 		case kActionResetMusic:
 			_music->resetMusic();
-			_music->setMusicReset(true);
 			break;
 
 		case kActionFillMusic:

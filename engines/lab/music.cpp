@@ -58,7 +58,6 @@ Music::Music(LabEngine *vm) : _vm(vm) {
 	_musicOn = false;
 	_queuingAudioStream = nullptr;
 	_lastMusicRoom = 1;
-	_doReset = true;
 }
 
 void Music::updateMusic() {
@@ -220,8 +219,6 @@ void Music::checkRoomMusic() {
 		changeMusic("Music:Laugh");
 	else if (_vm->_roomNum == DIMROOM)
 		changeMusic("Music:Rm81");
-	else if (_doReset)
-		resetMusic();
 
 	_lastMusicRoom = _vm->_roomNum;
 }
