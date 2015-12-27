@@ -128,9 +128,9 @@ void LabEngine::loadJournalData() {
 	_journalTextTitle = _resource->getText("Lab:Rooms/jt");
 
 	Common::File *journalFile = _resource->openDataFile("P:JImage");
-	_journalButtonList.push_back(_event->createButton( 80, _utils->vgaScaleY(162) + _utils->svgaCord(1), 0,  Common::KEYCODE_LEFT,   new Image(journalFile, this), new Image(journalFile, this)));	// back
-	_journalButtonList.push_back(_event->createButton(194, _utils->vgaScaleY(162) + _utils->svgaCord(1), 2,  Common::KEYCODE_ESCAPE, new Image(journalFile, this), new Image(journalFile, this)));	// cancel
-	_journalButtonList.push_back(_event->createButton(144, _utils->vgaScaleY(164) - _utils->svgaCord(1), 1,  Common::KEYCODE_RIGHT,  new Image(journalFile, this), new Image(journalFile, this)));	// forward
+	_journalButtonList.push_back(_event->createButton( 80, _utils->vgaScaleY(162) + _utils->svgaCord(1), 0,  Common::KEYCODE_LEFT,  new Image(journalFile, this), new Image(journalFile, this)));	// back
+	_journalButtonList.push_back(_event->createButton(194, _utils->vgaScaleY(162) + _utils->svgaCord(1), 2,  Common::KEYCODE_RIGHT, new Image(journalFile, this), new Image(journalFile, this)));	// forward
+	_journalButtonList.push_back(_event->createButton(144, _utils->vgaScaleY(164) - _utils->svgaCord(1), 1, Common::KEYCODE_ESCAPE, new Image(journalFile, this), new Image(journalFile, this)));	// cancel
 	delete journalFile;
 
 	_anim->_noPalChange = true;
