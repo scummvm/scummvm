@@ -2610,8 +2610,10 @@ if test -n "$_host"; then
 			# since SDL2 manages dispmanx/GLES2 very well internally.
 			# SDL1 is bit-rotten on this platform.
 			_sdlconfig=sdl2-config
-			# We should add _opengles=yes later here if we wanted the GLES renderer.
-			# For now, we use plain SDL2 only, which in turn uses GLES2 by default.
+			# OpenGL(ES) support is mature enough as to be the best option on
+			# the Raspberry Pi, so it's enabled by default.
+			_opengl=yes
+			_opengles=yes
 			;;
 		dreamcast)
 			append_var DEFINES "-DDISABLE_DEFAULT_SAVEFILEMANAGER"
