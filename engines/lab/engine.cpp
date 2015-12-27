@@ -418,8 +418,6 @@ void LabEngine::mainGameLoop() {
 				break;
 			}
 
-			_music->resumeBackMusic();
-
 			// Sees what kind of close up we're in and does the appropriate stuff, if any.
 			if (doCloseUp(_closeDataPtr)) {
 				_closeDataPtr = nullptr;

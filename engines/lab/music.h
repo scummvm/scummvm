@@ -50,7 +50,6 @@ private:
 	LabEngine *_vm;
 
 	Common::File *_musicFile;
-	bool _musicPaused;
 	uint16 _curRoomMusic;
 	uint32 _storedPos;
 
@@ -58,12 +57,7 @@ private:
 	Audio::SoundHandle _sfxHandle;
 
 private:
-	/**
-	 * Pauses the background music.
-	 */
-	void pauseBackMusic();
 	void readSound(bool waitTillFinished, bool loop, Common::File *file);
-
 	byte getSoundFlags();
 
 public:
@@ -91,11 +85,6 @@ public:
 	 * Reads in a sound effect file.  Ignores any graphics.
 	 */
 	bool loadSoundEffect(const Common::String filename, bool loop, bool waitTillFinished);
-
-	/**
-	 * Resumes the paused background music.
-	 */
-	void resumeBackMusic();
 
 	void stopSoundEffect();
 };

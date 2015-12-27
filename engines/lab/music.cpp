@@ -45,7 +45,6 @@ namespace Lab {
 
 Music::Music(LabEngine *vm) : _vm(vm) {
 	_musicFile = nullptr;
-	_musicPaused = false;
 	_curRoomMusic = 1;
 	_storedPos = 0;
 }
@@ -64,7 +63,6 @@ void Music::changeMusic(const Common::String filename, bool storeCurPos, bool se
 	if (storeCurPos)
 		_storedPos = _musicFile->pos();
 
-	_musicPaused = false;
 	stopSoundEffect();
 	freeMusic();
 	_musicFile = _vm->_resource->openDataFile(filename);
@@ -76,7 +74,6 @@ void Music::changeMusic(const Common::String filename, bool storeCurPos, bool se
 }
 
 void Music::playSoundEffect(uint16 sampleSpeed, uint32 length, bool loop, Common::File *dataFile) {
-	pauseBackMusic();
 	stopSoundEffect();
 
 	// NOTE: We need to use malloc(), cause this will be freed with free()
@@ -100,24 +97,7 @@ bool Music::isSoundEffectActive() const {
 void Music::freeMusic() {
 	_vm->_mixer->stopHandle(_musicHandle);
 	_vm->_mixer->stopHandle(_sfxHandle);
-	_musicPaused = false;
 	_musicFile = nullptr;
-}
-
-void Music::pauseBackMusic() {
-	if (!_musicPaused) {
-		stopSoundEffect();
-		_vm->_mixer->pauseHandle(_musicHandle, true);
-		_musicPaused = true;
-	}
-}
-
-void Music::resumeBackMusic() {
-	if (_musicPaused) {
-		stopSoundEffect();
-		_vm->_mixer->pauseHandle(_musicHandle, false);
-		_musicPaused = false;
-	}
 }
 
 void Music::checkRoomMusic() {
