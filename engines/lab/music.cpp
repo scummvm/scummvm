@@ -259,13 +259,8 @@ void Music::resetMusic() {
 	setMusic(false);
 	_vm->updateMusicAndEvents();
 
-	if (!_oldMusicOn) {
-		_tFile = 0;
-		return;
-	}
-
-	_musicOn = _oldMusicOn;
-	startMusic(false);
+	if (_oldMusicOn)
+		startMusic(false);
 
 	_tFile = 0;
 }
