@@ -99,6 +99,40 @@ void Scene::paint(Graphics::Surface *surface) {
 	}
 }
 
+// Source: Apple IIGS Technical Note #41, "Font Family Numbers"
+// http://apple2.boldt.ca/?page=til/tn.iigs.041
+const char *fontNames[] = {
+	"Chicago",	// system font
+	"Geneva",	// application font
+	"New York",
+	"Geneva",
+
+	"Monaco",
+	"Venice",
+	"London",
+	"Athens",
+
+	"San Francisco",
+	"Toronto",
+	"Cairo",
+	"Los Angeles", // 12
+
+	NULL, NULL, NULL, NULL, NULL, NULL, NULL, // not in Inside Macintosh
+
+	"Times", // 20
+	"Helvetica",
+	"Courier",
+	"Symbol",
+	"Taliesin" // mobile?
+};
+
+const char *Scene::getFontName() {
+	if (_fontType >= 0 && _fontType < ARRAYSIZE(fontNames) && fontNames[_fontType] != NULL) {
+		return fontNames[_fontType];
+	}
+	return "Unknown";
+}
+
 Obj::Obj(String name, Common::SeekableReadStream *data) : _currentOwner(NULL), _currentScene(NULL) {
 	_name = name;
 	_classType = OBJ;
