@@ -121,6 +121,8 @@ enum MessageClass {
 };
 
 class LabEngine : public Engine {
+	friend class Console;
+
 private:
 	bool _interfaceOff;
 	bool _isCrumbWaiting;

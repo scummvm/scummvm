@@ -245,6 +245,11 @@ void LabEngine::updateEvents() {
 
 Common::Error LabEngine::loadGameState(int slot) {
 	bool result = loadGame(slot);
+	_curFileName = " ";
+	_closeDataPtr = nullptr;
+	_mainDisplay = true;
+	_followingCrumbs = false;
+	_event->simulateLeftClick();
 	return (result) ? Common::kNoError : Common::kUserCanceled;
 }
 

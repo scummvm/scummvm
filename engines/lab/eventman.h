@@ -121,6 +121,12 @@ public:
 	void setMousePos(Common::Point pos);
 	void updateMouse();
 	Common::Point updateAndGetMousePos();
+
+	/**
+	 * Simulates a left click for the game main loop, when a game is
+	 * loaded or when the user teleports to a scene
+	 */
+	void simulateLeftClick() { _leftClick = true; }
 };
 
 } // End of namespace Lab
