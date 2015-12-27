@@ -63,18 +63,25 @@ static const Engines::ObsoleteGameID obsoleteGameIDsTable[] = {
 
 #include "cine/detection_tables.h"
 
-static const ExtraGuiOption cineExtraGuiOption = {
-	_s("Use original save/load screens"),
-	_s("Use the original save/load screens, instead of the ScummVM ones"),
-	"originalsaveload",
-	false
+static const ADExtraGuiOptionsMap optionsList[] = {
+	{
+		GAMEOPTION_ORIGINAL_SAVELOAD,
+		{
+			_s("Use original save/load screens"),
+			_s("Use the original save/load screens, instead of the ScummVM ones"),
+			"originalsaveload",
+			false
+		}
+	},
+
+	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
 
 class CineMetaEngine : public AdvancedMetaEngine {
 public:
-	CineMetaEngine() : AdvancedMetaEngine(Cine::gameDescriptions, sizeof(Cine::CINEGameDescription), cineGames) {
+	CineMetaEngine() : AdvancedMetaEngine(Cine::gameDescriptions, sizeof(Cine::CINEGameDescription), cineGames, optionsList) {
 		_singleid = "cine";
-		_guioptions = GUIO1(GUIO_NOSPEECH);
+		_guioptions = GUIO2(GUIO_NOSPEECH, GAMEOPTION_ORIGINAL_SAVELOAD);
 	}
 
 	virtual GameDescriptor findGame(const char *gameid) const {
@@ -94,12 +101,6 @@ public:
 		return AdvancedMetaEngine::createInstance(syst, engine);
 	}
 	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
-
-	const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const {
-		ExtraGuiOptions options;
-		options.push_back(cineExtraGuiOption);
-		return options;
-	}
 
 	virtual bool hasFeature(MetaEngineFeature f) const;
 	virtual SaveStateList listSaves(const char *target) const;
