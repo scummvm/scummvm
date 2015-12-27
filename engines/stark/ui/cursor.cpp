@@ -35,7 +35,7 @@
 
 namespace Stark {
 
-const float Cursor::_fadeValueMax = 0.7f;
+const float Cursor::_fadeValueMax = 0.3f;
 
 Cursor::Cursor(Gfx::Driver *gfx) :
 		_gfx(gfx),
@@ -83,9 +83,9 @@ void Cursor::setFading(bool fading) {
 void Cursor::updateFadeLevel() {
 	if (_fading) {
 		if (_fadeLevelIncreasing) {
-			_fadeLevel += 0.1f;
+			_fadeLevel += 0.05f;
 		} else {
-			_fadeLevel -= 0.1f;
+			_fadeLevel -= 0.05f;
 		}
 		if (ABS(_fadeLevel) >= _fadeValueMax) {
 			_fadeLevelIncreasing = !_fadeLevelIncreasing;
