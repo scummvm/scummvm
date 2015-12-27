@@ -153,7 +153,7 @@ private:
 	bool makeLoad(const Common::String &saveName);
 	void makeSaveFW(Common::OutSaveFile &out);
 	void makeSaveOS(Common::OutSaveFile &out);
-	void makeSave(char *saveFileName);
+	void makeSave(const Common::String &saveFileName);
 	void mainLoop(int bootScriptIdx);
 	void readVolCnf();
 
