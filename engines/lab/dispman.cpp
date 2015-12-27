@@ -379,10 +379,10 @@ void DisplayMan::rectFill(Common::Rect fillRect, byte color) {
 		height = _screenHeight - fillRect.top;
 
 	if ((width > 0) && (height > 0)) {
-		char *d = (char *)getCurrentDrawingBuffer() + fillRect.top * _screenWidth + fillRect.left;
+		byte *d = getCurrentDrawingBuffer() + fillRect.top * _screenWidth + fillRect.left;
 
 		while (height-- > 0) {
-			char *dd = d;
+			byte *dd = d;
 			int ww = width;
 
 			while (ww-- > 0) {

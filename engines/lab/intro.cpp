@@ -83,10 +83,10 @@ void Intro::doPictText(const Common::String filename, bool isScreen) {
 	bool begin = true;
 
 	Common::File *textFile = _vm->_resource->openDataFile(path);
-	byte *textBuffer = new byte[textFile->size()];
+	char *textBuffer = new char[textFile->size()];
 	textFile->read(textBuffer, textFile->size());
 	delete textFile;
-	byte *curText = textBuffer;
+	const char *curText = textBuffer;
 
 	while (1) {
 		if (drawNextText) {
@@ -98,10 +98,10 @@ void Intro::doPictText(const Common::String filename, bool isScreen) {
 			if (isScreen) {
 				_vm->_graphics->rectFillScaled(10, 10, 310, 190, 7);
 
-				curText += _vm->_graphics->flowText(_font, _vm->_isHiRes ? 0 : -1, 5, 7, false, false, true, true, _vm->_utils->vgaRectScale(14, 11, 306, 189), (char *)curText);
+				curText += _vm->_graphics->flowText(_font, _vm->_isHiRes ? 0 : -1, 5, 7, false, false, true, true, _vm->_utils->vgaRectScale(14, 11, 306, 189), curText);
 				_vm->_graphics->fade(true);
 			} else
-				curText += _vm->_graphics->longDrawMessage(Common::String((char *)curText), false);
+				curText += _vm->_graphics->longDrawMessage(Common::String(curText), false);
 
 			doneFl = (*curText == 0);
 

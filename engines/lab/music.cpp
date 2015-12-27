@@ -104,7 +104,7 @@ void Music::playSoundEffect(uint16 sampleSpeed, uint32 length, bool loop, Common
 	byte *soundData = (byte *)malloc(length);
 	dataFile->read(soundData, length);
 
-	Audio::SeekableAudioStream *audioStream = Audio::makeRawStream((const byte *)soundData, length, sampleSpeed, getSoundFlags());
+	Audio::SeekableAudioStream *audioStream = Audio::makeRawStream(soundData, length, sampleSpeed, getSoundFlags());
 	uint loops = (loop) ? 0 : 1;
 	Audio::LoopingAudioStream *loopingAudioStream = new Audio::LoopingAudioStream(audioStream, loops);
 	_vm->_mixer->playStream(Audio::Mixer::kSFXSoundType, &_sfxHandle, loopingAudioStream);
@@ -130,7 +130,7 @@ byte *Music::fillBuffer() {
 	} else {
 		_file->read(musicBuffer, _leftInFile);
 
-		memset((char *)musicBuffer + _leftInFile, 0, MUSICBUFSIZE - _leftInFile);
+		memset(musicBuffer + _leftInFile, 0, MUSICBUFSIZE - _leftInFile);
 
 		_file->seek(0);
 		_leftInFile = _file->size();
