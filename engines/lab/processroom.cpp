@@ -254,7 +254,7 @@ void LabEngine::doActions(const ActionList &actionList) {
 			_graphics->readPict(action->_messages[0], true);
 			break;
 
-		case kActionShowDiffLooping:
+		case kActionShowDiffLooping:	// used in scene 44 (heart of the labyrinth, minotaur)
 			_graphics->readPict(action->_messages[0], false);
 			break;
 
@@ -376,45 +376,44 @@ void LabEngine::doActions(const ActionList &actionList) {
 			}
 			break;
 
-		case kActionStopMusic:
+		case kActionStopMusic:	// used in scene 44 (heart of the labyrinth, minotaur)
 			_music->setMusic(false);
 			break;
 
 		case kActionStartMusic:
-			_music->setMusic(true);
+			error("Unused opcode kActionStartMusic has been called");
 			break;
 
-		case kActionChangeMusic:
+		case kActionChangeMusic:	// used in scene 46 (museum exhibit, for the alarm)
 			_music->changeMusic(action->_messages[0]);
 			break;
 
-		case kActionResetMusic:
+		case kActionResetMusic:	// used in scene 45
 			_music->resetMusic();
 			break;
 
 		case kActionFillMusic:
-			updateMusicAndEvents();
+			error("Unused opcode kActionFillMusic has been called");
 			break;
 
-		case kActionWaitSound:
+		case kActionWaitSound:	// used in scene 44 (heart of the labyrinth / ending)
 			while (_music->isSoundEffectActive()) {
 				updateMusicAndEvents();
 				_anim->diffNextFrame();
 				waitTOF();
 			}
-
 			break;
 
 		case kActionClearSound:
 			_music->stopSoundEffect();
 			break;
 
-		case kActionWinMusic:
+		case kActionWinMusic:	// used in scene 44 (heart of the labyrinth / ending)
 			_music->freeMusic();
 			_music->initMusic("Music:WinGame");
 			break;
 
-		case kActionWinGame:
+		case kActionWinGame:	// used in scene 44 (heart of the labyrinth / ending)
 			_quitLab = true;
 			showLab2Teaser();
 			break;
