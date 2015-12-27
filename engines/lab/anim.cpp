@@ -105,8 +105,6 @@ void Anim::diffNextFrame(bool onlyDiffData) {
 		byte *buf = startOfBuf + 0x10000 * curBit;
 
 		if (buf >= endOfBuf) {
-			_vm->_event->mouseShow();
-
 			if (!onlyDiffData) {
 				if (_headerdata._fps) {
 					uint32 targetMillis = _vm->_system->getMillis() + _delayMicros;
@@ -238,7 +236,6 @@ void Anim::diffNextFrame(bool onlyDiffData) {
 				}
 
 				_isPlaying = false;
-				_vm->_event->mouseShow();
 
 				if (!didTOF)
 					_vm->_graphics->screenUpdate();
