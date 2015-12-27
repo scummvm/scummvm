@@ -232,13 +232,13 @@ void LabEngine::processJournal() {
 		if (!msg)
 			updateMusicAndEvents();
 		else {
-			uint32 msgClass  = msg->_msgClass;
-			uint16 buttonId  = msg->_code;
+			MessageClass msgClass  = msg->_msgClass;
 
 			if ((msgClass == kMessageRightClick) ||
-				((msgClass == kMessageRawKey) && (buttonId == Common::KEYCODE_ESCAPE)))
+				((msgClass == kMessageRawKey) && (msg->_code == Common::KEYCODE_ESCAPE)))
 				return;
 			else if (msgClass == kMessageButtonUp) {
+				uint16 buttonId  = msg->_code;
 				if (buttonId == 0) {
 					if (_journalPage >= 2) {
 						_journalPage -= 2;
@@ -349,15 +349,15 @@ void LabEngine::processMonitor(const char *ntext, TextFont *monitorFont, bool is
 			if (!_closeDataPtr)
 				_closeDataPtr = startClosePtr;
 
-			Common::String test;
+			Common::String filename;
 			if (_closeDataPtr == startClosePtr)
-				test = startFileName;
+				filename = startFileName;
 			else
-				test = _closeDataPtr->_graphicName;
+				filename = _closeDataPtr->_graphicName;
 
-			if (test != _monitorTextFilename) {
+			if (filename != _monitorTextFilename) {
 				_monitorPage = 0;
-				_monitorTextFilename = test;
+				_monitorTextFilename = filename;
 
 				Common::String text = _resource->getText(_monitorTextFilename);
 				_graphics->fade(false);
@@ -374,22 +374,24 @@ void LabEngine::processMonitor(const char *ntext, TextFont *monitorFont, bool is
 			return;
 		}
 
-		if (!msg) {
+		if (!msg)
 			updateMusicAndEvents();
-		} else {
-			uint32 msgClass  = msg->_msgClass;
-			uint16 mouseX    = msg->_mouse.x;
-			uint16 mouseY    = msg->_mouse.y;
-			uint16 code      = msg->_code;
+		else {
+			MessageClass msgClass  = msg->_msgClass;
 
 			if ((msgClass == kMessageRightClick) ||
-				  ((msgClass == kMessageRawKey) && (code == Common::KEYCODE_ESCAPE)))
+				  ((msgClass == kMessageRawKey) && (msg->_code == Common::KEYCODE_ESCAPE)))
 				return;
-			else if (msgClass == kMessageLeftClick) {
+
+			if (msgClass == kMessageLeftClick) {
+				int16 mouseX = msg->_mouse.x;
+				int16 mouseY = msg->_mouse.y;
+
 				if ((mouseY >= _utils->vgaScaleY(171)) && (mouseY <= _utils->vgaScaleY(200))) {
-					if (mouseX <= _utils->vgaScaleX(31)) {
+					if (mouseX <= _utils->vgaScaleX(31))
 						return;
-					} else if (mouseX <= _utils->vgaScaleX(59)) {
+					
+					if (mouseX <= _utils->vgaScaleX(59)) {
 						if (isInteractive) {
 							_monitorPage = 0;
 
@@ -409,7 +411,7 @@ void LabEngine::processMonitor(const char *ntext, TextFont *monitorFont, bool is
 							drawMonText(ntext, monitorFont, textRect, isInteractive);
 						}
 					} else if (_monitorPage >= 1) {
-						// mouseX between 290 and 320 (scaled)
+						// mouseX is greater than 290 (scaled)
 						_monitorPage -= 1;
 						drawMonText(ntext, monitorFont, textRect, isInteractive);
 					}
