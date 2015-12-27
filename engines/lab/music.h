@@ -56,7 +56,7 @@ private:
 	bool _musicPaused;
 	bool _oldMusicOn;
 
-	uint16 _lastMusicRoom ;
+	uint16 _curRoomMusic ;
 
 	uint32 _tLeftInFile;
 	uint32 _leftInFile;

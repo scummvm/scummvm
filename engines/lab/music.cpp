@@ -57,7 +57,7 @@ Music::Music(LabEngine *vm) : _vm(vm) {
 
 	_musicOn = false;
 	_queuingAudioStream = nullptr;
-	_lastMusicRoom = 1;
+	_curRoomMusic = 1;
 }
 
 void Music::updateMusic() {
@@ -212,7 +212,7 @@ void Music::setMusic(bool on) {
 }
 
 void Music::checkRoomMusic() {
-	if ((_lastMusicRoom == _vm->_roomNum) || !_musicOn)
+	if ((_curRoomMusic == _vm->_roomNum) || !_musicOn)
 		return;
 
 	if (_vm->_roomNum == CLOWNROOM)
@@ -220,7 +220,7 @@ void Music::checkRoomMusic() {
 	else if (_vm->_roomNum == DIMROOM)
 		changeMusic("Music:Rm81");
 
-	_lastMusicRoom = _vm->_roomNum;
+	_curRoomMusic = _vm->_roomNum;
 }
 
 void Music::changeMusic(const Common::String filename) {
