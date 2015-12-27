@@ -236,8 +236,8 @@ void Intro::play() {
 		nReadPict("EA3");
 	} else if (_vm->getPlatform() == Common::kPlatformWindows) {
 		nReadPict("WYRMKEEP");
-		// Wait 4 seconds
-		for (int i = 0; i < 4 * 1000 / 10; i++) {
+		// Wait 4 seconds (400 x 10ms)
+		for (int i = 0; i < 400; i++) {
 			introEatMessages();
 			if (_quitIntro)
 				break;
@@ -271,6 +271,7 @@ void Intro::play() {
 		_vm->_graphics->fade(true);
 
 	for (int times = 0; times < 150; times++) {
+		introEatMessages();
 		if (_quitIntro)
 			break;
 
