@@ -99,8 +99,6 @@ void Anim::diffNextFrame(bool onlyDiffData) {
 	}
 	byte *endOfBuf = startOfBuf + (int)_diffWidth * _diffHeight;
 
-	_vm->_event->mouseHide();
-
 	int curBit = 0;
 
 	while (1) {
