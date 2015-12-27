@@ -160,6 +160,9 @@ bool World::loadWorld(Common::MacResManager *resMan) {
 			scene->_fontType = res->readUint16BE();
 			scene->_fontSize = res->readUint16BE();
 
+			if (scene->_fontType != 3 || scene->_fontSize != 9)
+				warning("scene: %s font: %s size: %d", scene->_name.c_str(), scene->getFontName(), scene->_fontSize);
+
 			String text;
 			while (res->pos() < res->size()) {
 				char c = res->readByte();
