@@ -39,9 +39,7 @@
 
 namespace Lab {
 
-#define MUSICBUFSIZE   (2 * 65536)
-#define SAMPLESPEED    15000
-
+#define SAMPLESPEED       15000
 #define CLOWNROOM           123
 #define DIMROOM              80
 
