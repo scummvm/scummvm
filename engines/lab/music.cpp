@@ -72,26 +72,20 @@ void Music::changeMusic(const Common::String filename, bool storeCurPos, bool se
 		_musicFile->seek(_storedPos);
 
 	Audio::SeekableAudioStream *audioStream = Audio::makeRawStream(_musicFile, SAMPLESPEED, getSoundFlags());
-	Audio::LoopingAudioStream *loopingAudioStream = new Audio::LoopingAudioStream(audioStream, 0);
-	_vm->_mixer->playStream(Audio::Mixer::kMusicSoundType, &_musicHandle, loopingAudioStream);
+	_vm->_mixer->playStream(Audio::Mixer::kMusicSoundType, &_musicHandle, new Audio::LoopingAudioStream(audioStream, 0));
 }
 
 void Music::playSoundEffect(uint16 sampleSpeed, uint32 length, bool loop, Common::File *dataFile) {
 	pauseBackMusic();
 	stopSoundEffect();
 
-	if (sampleSpeed < 4000)
-		sampleSpeed = 4000;
-
 	// NOTE: We need to use malloc(), cause this will be freed with free()
 	// by the music code
 	byte *soundData = (byte *)malloc(length);
 	dataFile->read(soundData, length);
 
-	Audio::SeekableAudioStream *audioStream = Audio::makeRawStream((const byte *)soundData, length, sampleSpeed, getSoundFlags());
-	uint loops = (loop) ? 0 : 1;
-	Audio::LoopingAudioStream *loopingAudioStream = new Audio::LoopingAudioStream(audioStream, loops);
-	_vm->_mixer->playStream(Audio::Mixer::kSFXSoundType, &_sfxHandle, loopingAudioStream);
+	Audio::SeekableAudioStream *audioStream = Audio::makeRawStream((const byte *)soundData, length, MAX<uint16>(sampleSpeed, 4000), getSoundFlags());
+	_vm->_mixer->playStream(Audio::Mixer::kSFXSoundType, &_sfxHandle, new Audio::LoopingAudioStream(audioStream, (loop) ? 0 : 1));
 }
 
 void Music::stopSoundEffect() {
