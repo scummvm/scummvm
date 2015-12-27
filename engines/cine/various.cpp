@@ -365,8 +365,7 @@ int CineEngine::scummVMSaveLoadDialog(bool isSave) {
 	if (slot < 0)
 		return true;
 
-	char saveFileName[256];
-	sprintf(saveFileName, "%s.%1d", _targetName.c_str(), slot);
+	Common::String saveFileName(Common::String::format("%s.%1d", _targetName.c_str(), slot));
 
 	if (isSave) {
 		Common::String tmp = Common::String::format("%s.dir", _targetName.c_str());
