@@ -24,8 +24,10 @@
 
 #include "engines/advancedDetector.h"
 #include "engines/obsolete.h"
+
 #include "common/system.h"
 #include "common/textconsole.h"
+#include "common/translation.h"
 
 #include "cine/cine.h"
 #include "cine/various.h"
@@ -61,6 +63,13 @@ static const Engines::ObsoleteGameID obsoleteGameIDsTable[] = {
 
 #include "cine/detection_tables.h"
 
+static const ExtraGuiOption cineExtraGuiOption = {
+	_s("Use original save/load screens"),
+	_s("Use the original save/load screens, instead of the ScummVM ones"),
+	"originalsaveload",
+	false
+};
+
 class CineMetaEngine : public AdvancedMetaEngine {
 public:
 	CineMetaEngine() : AdvancedMetaEngine(Cine::gameDescriptions, sizeof(Cine::CINEGameDescription), cineGames) {
@@ -85,6 +94,12 @@ public:
 		return AdvancedMetaEngine::createInstance(syst, engine);
 	}
 	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
+
+	const ExtraGuiOptions CineMetaEngine::getExtraGuiOptions(const Common::String &target) const {
+		ExtraGuiOptions options;
+		options.push_back(cineExtraGuiOption);
+		return options;
+	}
 
 	virtual bool hasFeature(MetaEngineFeature f) const;
 	virtual SaveStateList listSaves(const char *target) const;

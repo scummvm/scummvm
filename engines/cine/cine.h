@@ -123,6 +123,7 @@ public:
 
 	bool loadSaveDirectory();
 	void makeSystemMenu();
+	int scummVMSaveLoadDialog(bool isSave);
 	int modifyGameSpeed(int speedChange);
 	int getTimerDelay() const;
 	Common::Error loadGameState(int slot);

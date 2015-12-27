@@ -21,11 +21,15 @@
  */
 
 
+#include "common/config-manager.h"
 #include "common/endian.h"
 #include "common/events.h"
 #include "common/textconsole.h"
+#include "common/translation.h"
 
 #include "graphics/cursorman.h"
+
+#include "gui/saveload.h"
 
 #include "cine/cine.h"
 #include "cine/main_loop.h"
@@ -335,6 +339,56 @@ void CineEngine::resetEngine() {
 	}
 }
 
+int CineEngine::scummVMSaveLoadDialog(bool isSave) {
+	GUI::SaveLoadChooser *dialog;
+	Common::String desc;
+	int slot;
+
+	if (isSave) {
+		dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
+
+		slot = dialog->runModalWithCurrentTarget();
+		desc = dialog->getResultString();
+
+		if (desc.empty()) {
+			// create our own description for the saved game, the user didnt enter it
+			desc = dialog->createDefaultSaveDescription(slot);
+		}
+	}
+	else {
+		dialog = new GUI::SaveLoadChooser(_("Restore game:"), _("Restore"), false);
+		slot = dialog->runModalWithCurrentTarget();
+	}
+
+	delete dialog;
+
+	if (slot < 0)
+		return true;
+
+	char saveFileName[256];
+	sprintf(saveFileName, "%s.%1d", _targetName.c_str(), slot);
+
+	if (isSave) {
+		Common::String tmp = Common::String::format("%s.dir", _targetName.c_str());
+
+		Common::OutSaveFile *fHandle = _saveFileMan->openForSaving(tmp);
+		if (!fHandle) {
+			warning("Unable to open file %s for saving", tmp.c_str());
+			return false;
+		}
+
+		Common::strlcpy(currentSaveName[slot], desc.c_str(), 20);
+
+		fHandle->write(currentSaveName, 200);
+		delete fHandle;
+
+		makeSave(saveFileName);
+		return true;
+	} else {
+		return makeLoad(saveFileName);
+	}
+}
+
 void CineEngine::makeSystemMenu() {
 	int16 numEntry, systemCommand;
 	int16 mouseX, mouseY, mouseButton;
@@ -381,7 +435,11 @@ void CineEngine::makeSystemMenu() {
 		}
 		case 4: { // load game
 			if (loadSaveDirectory()) {
-//					int16 selectedSave;
+				if (!ConfMan.getBool("originalsaveload")) {
+					scummVMSaveLoadDialog(false);
+					inMenu = false;
+					return;
+				}
 
 				getMouseData(mouseUpdateStatus, (uint16 *)&mouseButton, (uint16 *)&mouseX, (uint16 *)&mouseY);
 				selectedSave = makeMenuChoice(currentSaveName, 10, mouseX, mouseY + 8, 180);
@@ -417,6 +475,13 @@ void CineEngine::makeSystemMenu() {
 		}
 		case 5: { // Save game
 			loadSaveDirectory();
+
+			if (!ConfMan.getBool("originalsaveload")) {
+				scummVMSaveLoadDialog(true);
+				inMenu = false;
+				return;
+			}
+
 			selectedSave = makeMenuChoice(currentSaveName, 10, mouseX, mouseY + 8, 180);
 
 			if (selectedSave >= 0) {
