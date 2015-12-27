@@ -150,11 +150,8 @@ void LabEngine::perFlipButton(uint16 buttonId) {
 			topButton->_image = topButton->_altImage;
 			topButton->_altImage = tmpImage;
 
-			if (!_alternate) {
-				_event->mouseHide();
+			if (!_alternate)
 				topButton->_image->drawImage(topButton->_x, topButton->_y);
-				_event->mouseShow();
-			}
 
 			break;
 		}
@@ -1022,13 +1019,13 @@ void LabEngine::go() {
 		_msgFont = _resource->getFont("F:AvanteG.12");
 	else
 		_msgFont = _resource->getFont("F:Map.fon");
-	_event->mouseHide();
 
+	_event->mouseHide();
 	Intro *intro = new Intro(this);
 	intro->play();
 	delete intro;
-
 	_event->mouseShow();
+
 	mainGameLoop();
 
 	_graphics->freeFont(&_msgFont);
@@ -1133,9 +1130,7 @@ void LabEngine::mayShowCrumbIndicator() {
 		memcpy(imgData, dropCrumbsImageData, CRUMBSWIDTH * CRUMBSHEIGHT);
 		static Image dropCrumbsImage(CRUMBSWIDTH, CRUMBSHEIGHT, imgData, this);
 
-		_event->mouseHide();
 		dropCrumbsImage.drawMaskImage(612, 4);
-		_event->mouseShow();
 	}
 }
 
@@ -1175,9 +1170,7 @@ void LabEngine::mayShowCrumbIndicatorOff() {
 		memcpy(imgData, dropCrumbsOffImageData, CRUMBSWIDTH * CRUMBSHEIGHT);
 		static Image dropCrumbsOffImage(CRUMBSWIDTH, CRUMBSHEIGHT, imgData, this);
 
-		_event->mouseHide();
 		dropCrumbsOffImage.drawMaskImage(612, 4);
-		_event->mouseShow();
 	}
 }
 

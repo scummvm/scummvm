@@ -218,7 +218,6 @@ int DisplayMan::longDrawMessage(Common::String str, bool isActionMessage) {
 		return 0;
 
 	_vm->_event->attachButtonList(nullptr);
-	_vm->_event->mouseHide();
 
 	if (!_longWinInFront) {
 		_longWinInFront = true;
@@ -227,7 +226,6 @@ int DisplayMan::longDrawMessage(Common::String str, bool isActionMessage) {
 	}
 
 	createBox(198);
-	_vm->_event->mouseShow();
 
 	return flowText(_vm->_msgFont, 0, 1, 7, false, true, true, true, _vm->_utils->vgaRectScale(6, 155, 313, 195), str.c_str());
 }
@@ -252,17 +250,13 @@ void DisplayMan::drawMessage(Common::String str, bool isActionMessage) {
 			drawPanel();
 		}
 
-		_vm->_event->mouseHide();
 		createBox(168);
 		drawText(_vm->_msgFont, _vm->_utils->vgaScaleX(7), _vm->_utils->vgaScaleY(155) + _vm->_utils->svgaCord(2), 1, str);
-		_vm->_event->mouseShow();
 		_lastMessageLong = false;
 	}
 }
 
 void DisplayMan::drawPanel() {
-	_vm->_event->mouseHide();
-
 	// Clear Area
 	rectFill(0, _vm->_utils->vgaScaleY(149) + _vm->_utils->svgaCord(2), _vm->_utils->vgaScaleX(319), _vm->_utils->vgaScaleY(199), 3);
 
@@ -307,8 +301,6 @@ void DisplayMan::drawPanel() {
 
 		_vm->_event->drawButtonList(&_vm->_invButtonList);
 	}
-
-	_vm->_event->mouseShow();
 }
 
 void DisplayMan::setUpScreens() {

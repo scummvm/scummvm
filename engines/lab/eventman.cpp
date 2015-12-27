@@ -79,16 +79,12 @@ Button *EventManager::checkButtonHit(ButtonList *buttonList, Common::Point pos) 
 			if (_vm->_isHiRes) {
 				_hitButton = button;
 			} else {
-				mouseHide();
 				button->_altImage->drawImage(button->_x, button->_y);
-				mouseShow();
 
 				for (int i = 0; i < 3; i++)
 					_vm->waitTOF();
 
-				mouseHide();
 				button->_image->drawImage(button->_x, button->_y);
-				mouseShow();
 			}
 
 			return button;
@@ -119,16 +115,11 @@ void EventManager::updateMouse() {
 	if (!_hitButton)
 		return;
 
-	mouseHide();
 	_hitButton->_altImage->drawImage(_hitButton->_x, _hitButton->_y);
-	mouseShow();
-
 	for (int i = 0; i < 3; i++)
 		_vm->waitTOF();
-
-	mouseHide();
 	_hitButton->_image->drawImage(_hitButton->_x, _hitButton->_y);
-	mouseShow();
+
 	_hitButton = nullptr;
 	_vm->_graphics->screenUpdate();
 }
