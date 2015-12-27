@@ -145,13 +145,13 @@ public:
 
 bool LabMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
-	(f == kSupportsListSaves) ||
-	//(f == kSupportsLoadingDuringStartup) ||
-	(f == kSupportsDeleteSave) ||
-	(f == kSavesSupportMetaInfo) ||
-	(f == kSavesSupportThumbnail) ||
-	(f == kSavesSupportCreationDate) ||
-	(f == kSavesSupportPlayTime);
+		(f == kSupportsListSaves) ||
+		(f == kSupportsLoadingDuringStartup) ||
+		(f == kSupportsDeleteSave) ||
+		(f == kSavesSupportMetaInfo) ||
+		(f == kSavesSupportThumbnail) ||
+		(f == kSavesSupportCreationDate) ||
+		(f == kSavesSupportPlayTime);
 }
 
 bool Lab::LabEngine::hasFeature(EngineFeature f) const {

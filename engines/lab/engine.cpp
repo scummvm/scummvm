@@ -28,8 +28,9 @@
  *
  */
 
-#include "lab/lab.h"
+#include "common/config-manager.h"
 
+#include "lab/lab.h"
 #include "lab/anim.h"
 #include "lab/dispman.h"
 #include "lab/eventman.h"
@@ -403,6 +404,18 @@ void LabEngine::mainGameLoop() {
 	_graphics->drawPanel();
 
 	perFlipButton(actionMode);
+
+	// Load saved slot from the launcher, if requested
+	if (ConfMan.hasKey("save_slot")) {
+		loadGame(ConfMan.getInt("save_slot"));
+
+		// Since the intro hasn't been shown, init the background music here
+		if (getPlatform() != Common::kPlatformAmiga)
+			_music->changeMusic("Music:BackGrou", false, false);
+		else
+			_music->changeMusic("Music:BackGround", false, false);
+		_music->checkRoomMusic();
+	}
 
 	// Set up initial picture.
 	while (1) {
@@ -1020,11 +1033,14 @@ void LabEngine::go() {
 	else
 		_msgFont = _resource->getFont("F:Map.fon");
 
-	_event->mouseHide();
-	Intro *intro = new Intro(this);
-	intro->play();
-	delete intro;
-	_event->mouseShow();
+	// If the user has requested to load a game from the launcher, skip the intro
+	if (!ConfMan.hasKey("save_slot")) {
+		_event->mouseHide();
+		Intro *intro = new Intro(this);
+		intro->play();
+		delete intro;
+		_event->mouseShow();
+	}
 
 	mainGameLoop();
 
