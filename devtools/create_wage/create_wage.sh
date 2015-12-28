@@ -8,6 +8,9 @@
 #
 # More information could be found in the vMac documentation: http://www.gryphel.com/c/image/
 #
+# Alternatively you may use vMac instructions for extracting these disk images:
+#   http://www.gryphel.com/c/minivmac/recipes/sys7inst/
+#
 # Based on instructions posted at
 # http://apple.stackexchange.com/questions/58243/can-i-get-the-original-mac-font-chicago-on-a-mountain-lion-mac
 
@@ -22,7 +25,7 @@ fi
 
 echo_n "Downloading System 7.0.1 image..."
 if test ! -f System_7.0.1.smi.bin; then
-  curl -s http://download.info.apple.com/Apple_Support_Area/Apple_Software_Updates/English-North_American/Macintosh/System/Older_System/System_7.0.x/System_7.0.1.smi.bin -o System_7.0.1.smi.bin
+	curl -s http://download.info.apple.com/Apple_Support_Area/Apple_Software_Updates/English-North_American/Macintosh/System/Older_System/System_7.0.x/System_7.0.1.smi.bin -o System_7.0.1.smi.bin
 fi
 
 if test ! -f System_7.0.1.smi.bin; then
@@ -62,8 +65,8 @@ echo_n "Copying fonts..."
 
 for i in Athens Cairo Chicago Courier Geneva Helvetica London "Los Angeles" Monaco "New York" Palatino "San Francisco" Symbol Times Venice
 do
-  echo $i
-  macbinary encode "/Volumes/Fonts/$i" -o "$i.bin" -n
+	echo $i
+	macbinary encode "/Volumes/Fonts/$i" -o "$i.bin" -n
 done
 
 echo ...Done
@@ -71,9 +74,9 @@ echo ...Done
 hdiutil detach -quiet `hdiutil info|grep "/Volumes/Fonts"|cut -f 1`
 
 if test ! -f fondu_src-060102.tgz; then
-  echo_n "Getting fondu_src-060102.tgz..."
-  curl -s http://fondu.sourceforge.net/fondu_src-060102.tgz -o fondu_src-060102.tgz
-  tar xf fondu_src-060102.tgz
+	echo_n "Getting fondu_src-060102.tgz..."
+	curl -s http://fondu.sourceforge.net/fondu_src-060102.tgz -o fondu_src-060102.tgz
+	tar xf fondu_src-060102.tgz
 fi
 
 if test ! -d fondu-060102; then
@@ -84,10 +87,10 @@ fi
 echo done
 
 if test ! -x fondu-060102/fondu; then
-  echo_n "Compiling fondu..."
-  cd fondu-060102
-  ./configure >configure.log 2>&1 && make 2>&1 >make.log
-  cd ..
+	echo_n "Compiling fondu..."
+	cd fondu-060102
+	./configure >configure.log 2>&1 && make 2>&1 >make.log
+	cd ..
 fi
 
 if test ! -x fondu-060102/fondu; then
@@ -112,3 +115,5 @@ rm *.ttf
 rm *.bin
 rm *.dmg
 echo done
+
+ls -l wage.dat
