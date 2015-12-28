@@ -17,7 +17,6 @@
 
 //#include <cstring>
 #include "ROMInfo.h"
-#include "sha1/sha1.h"
 
 namespace MT32Emu {
 
@@ -53,27 +52,14 @@ static const ROMInfo *getKnownROMInfoFromList(unsigned int index) {
 	return ROM_INFOS[index];
 }
 
-static void getSHA1(Common::File *file, char *fileDigest) {
-	size_t fileSize = file->size();
-	byte *data = new byte[fileSize];
-	file->read(data, fileSize);
-	file->seek(0);
-	SHA1 sha1;
-	uint intDigest[5];
-	sha1.Input((const char *)data, fileSize);
-	if (sha1.Result(intDigest))
-		sprintf(fileDigest, "%08x%08x%08x%08x%08x", intDigest[0], intDigest[1], intDigest[2], intDigest[3], intDigest[4]);
-	delete[] data;
-}
-
 const ROMInfo* ROMInfo::getROMInfo(Common::File *file) {
 	size_t fileSize = file->size();
-	char fileDigest[41];	// Includes terminator char
-	getSHA1(file, fileDigest);
-
+	// We haven't added the SHA1 checksum code in ScummVM, as the file size
+	// suffices for our needs for now.
+	//const char *fileDigest = file->getSHA1();
 	for (int i = 0; getKnownROMInfoFromList(i) != NULL; i++) {
 		const ROMInfo *romInfo = getKnownROMInfoFromList(i);
-		if (fileSize == romInfo->fileSize && !strcmp(fileDigest, romInfo->sha1Digest)) {
+		if (fileSize == romInfo->fileSize /*&& !strcmp(fileDigest, romInfo->sha1Digest)*/) {
 			return romInfo;
 		}
 	}
