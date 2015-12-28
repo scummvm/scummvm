@@ -70,6 +70,7 @@ TextFont *Resource::getFont(const Common::String fileName) {
 	dataFile->skip(4);
 	textfont->_data = new byte[textfont->_dataLength + 4];
 	dataFile->read(textfont->_data, textfont->_dataLength);
+	delete dataFile;
 	return textfont;
 }
 
