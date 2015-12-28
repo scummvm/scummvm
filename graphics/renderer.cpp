@@ -27,10 +27,11 @@
 namespace Graphics {
 
 static const RendererTypeDescription rendererTypes[] = {
-#if defined(USE_GLES2) || defined(USE_OPENGL_SHADERS)
-	{ "opengl_shaders", _s("OpenGL with shaders"), kRendererTypeOpenGLShaders },
-#elif defined(USE_OPENGL)
+#if defined(USE_OPENGL) && !defined(USE_GLES2)
 	{ "opengl", _s("OpenGL"), kRendererTypeOpenGL },
+#endif
+#if defined(USE_OPENGL_SHADERS) || defined(USE_GLES2)
+	{ "opengl_shaders", _s("OpenGL with shaders"), kRendererTypeOpenGLShaders },
 #endif
 	{ "software", "Software", kRendererTypeTinyGL },
 	{ 0, 0, kRendererTypeDefault }
@@ -65,19 +66,29 @@ Common::String getRendererTypeCode(RendererType type) {
 }
 
 RendererType getBestMatchingAvailableRendererType(RendererType desired) {
-#if defined(USE_GLES2) || defined(USE_OPENGL_SHADERS)
-	if (desired == kRendererTypeDefault || desired == kRendererTypeOpenGL) {
-		return kRendererTypeOpenGLShaders;
+	if (desired == kRendererTypeDefault) {
+		desired = kRendererTypeOpenGL;
 	}
-	return desired;
-#elif defined(USE_OPENGL)
-	if (desired == kRendererTypeDefault || desired == kRendererTypeOpenGLShaders) {
-		return kRendererTypeOpenGL;
+
+#if !defined(USE_OPENGL_SHADERS) && !defined(USE_GLES2)
+	if (desired == kRendererTypeOpenGLShaders) {
+		desired = kRendererTypeOpenGL;
 	}
-	return desired;
-#else
-	return kRendererTypeTinyGL;
 #endif
+
+#if (!defined(USE_OPENGL) && defined(USE_OPENGL_SHADERS)) || defined(USE_GLES2)
+	if (desired == kRendererTypeOpenGL) {
+		desired = kRendererTypeOpenGLShaders;
+	}
+#endif
+
+#if !defined(USE_OPENGL) && !defined(USE_GLES2) && !defined(USE_OPENGL_SHADERS)
+	if (desired == kRendererTypeOpenGL || desired == kRendererTypeOpenGLShaders) {
+		desired = kRendererTypeTinyGL;
+	}
+#endif
+
+	return desired;
 }
 
 } // End of namespace Graphics

@@ -225,7 +225,8 @@ Renderer *createRenderer(OSystem *system) {
 	if (matchingRendererType == Graphics::kRendererTypeOpenGLShaders) {
 		return CreateGfxOpenGLShader(system);
 	}
-#elif defined(USE_OPENGL)
+#endif
+#if defined(USE_OPENGL) && !defined(USE_GLES2)
 	if (matchingRendererType == Graphics::kRendererTypeOpenGL) {
 		return CreateGfxOpenGL(system);
 	}

@@ -244,7 +244,8 @@ GfxBase *GrimEngine::createRenderer() {
 	if (matchingRendererType == Graphics::kRendererTypeOpenGLShaders) {
 		return CreateGfxOpenGLShader();
 	}
-#elif defined(USE_OPENGL)
+#endif
+#if defined(USE_OPENGL) && !defined(USE_GLES2)
 	if (matchingRendererType == Graphics::kRendererTypeOpenGL) {
 		return CreateGfxOpenGL();
 	}
