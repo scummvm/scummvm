@@ -42,6 +42,8 @@
 
 #include "audio/musicplugin.h"
 
+#include "graphics/renderer.h"
+
 #define DETECTOR_TESTING_HACK
 #define UPGRADE_ALL_TARGETS_HACK
 
@@ -115,8 +117,7 @@ static const char HELP_STRING[] =
 	"  --talkspeed=NUM          Set talk speed for games (default: 179)\n"
 	"  --show-fps               Set the turn on display FPS info\n"
 	"  --no-show-fps            Set the turn off display FPS info\n"
-	"  --soft-renderer          Switch to 3D software renderer\n"
-	"  --no-soft-renderer       Switch to 3D hardware renderer\n"
+	"  --renderer=RENDERER      Select renderer (software, opengl, opengl_shaders)\n"
 	"  --aspect-ratio           Enable aspect ratio correction\n"
 #ifdef ENABLE_EVENTRECORDER
 	"  --record-mode=MODE       Specify record mode for event recorder (record, playback,\n"
@@ -158,7 +159,6 @@ void registerDefaults() {
 
 	// Graphics
 	ConfMan.registerDefault("fullscreen", false);
-	ConfMan.registerDefault("soft_renderer", false);
 	ConfMan.registerDefault("show_fps", false);
 	ConfMan.registerDefault("aspect_ratio", false);
 
@@ -490,7 +490,10 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 			DO_LONG_OPTION("gamma")
 			END_OPTION
 
-			DO_LONG_OPTION_BOOL("soft-renderer")
+			DO_LONG_OPTION("renderer")
+				Graphics::RendererType renderer = Graphics::parseRendererTypeCode(option);
+				if (renderer == Graphics::kRendererTypeDefault)
+					usage("Unrecognized renderer type '%s'", option);
 			END_OPTION
 
 			DO_LONG_OPTION_BOOL("show-fps")
