@@ -254,9 +254,16 @@
 			<widget name = 'grFullscreenCheckbox'
 					type = 'Checkbox'
 			/>
-			<widget name = 'grSoftwareRendering'
-					type = 'Checkbox'
-			/>
+			<!-- ResidualVM specific - Start -->
+			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '6' center = 'true'>
+				<widget name = 'grRendererTypePopupDesc'
+						type = 'OptionsLabel'
+				/>
+				<widget name = 'grRendererTypePopup'
+						type = 'PopUp'
+				/>
+			</layout>
+			<!-- ResidualVM specific - End -->
 		</layout>
 	</dialog>
 

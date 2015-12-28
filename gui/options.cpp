@@ -42,6 +42,8 @@
 #include "audio/mixer.h"
 #include "audio/fmopl.h"
 
+#include "graphics/renderer.h"
+
 namespace GUI {
 
 enum {
@@ -110,7 +112,8 @@ void OptionsDialog::init() {
 	_renderModePopUpDesc = 0;
 	_fullscreenCheckbox = 0;
 	_aspectCheckbox = 0;
-	_softwareRenderingCheckbox = 0; // ResidualVM specific
+	_rendererTypePopUpDesc = 0; // ResidualVM specific
+	_rendererTypePopUp = 0; // ResidualVM specific
 	_enableAudioSettings = false;
 	_midiPopUp = 0;
 	_midiPopUpDesc = 0;
@@ -226,9 +229,9 @@ void OptionsDialog::open() {
 		}
 #endif // SMALL_SCREEN_DEVICE
 
-		// Software rendering setting - ResidualVM specific lines
-		_softwareRenderingCheckbox->setEnabled(true);
-		_softwareRenderingCheckbox->setState(ConfMan.getBool("soft_renderer", _domain));
+		// Renderer selection setting - ResidualVM specific lines
+		_rendererTypePopUp->setEnabled(true);
+		_rendererTypePopUp->setSelectedTag(Graphics::parseRendererTypeCode(ConfMan.get("renderer", _domain)));
 	}
 
 	// Audio options
@@ -362,7 +365,12 @@ void OptionsDialog::close() {
 #endif
 
 // ResidualVM specific
-				ConfMan.setBool("soft_renderer", _softwareRenderingCheckbox->getState(), _domain);
+				if (_rendererTypePopUp->getSelectedTag() > 0) {
+					Graphics::RendererType selected = (Graphics::RendererType) _rendererTypePopUp->getSelectedTag();
+					ConfMan.set("renderer", Graphics::getRendererTypeCode(selected), _domain);
+				} else {
+					ConfMan.removeKey("renderer", _domain);
+				}
 			} else {
 				ConfMan.removeKey("fullscreen", _domain);
 				ConfMan.removeKey("aspect_ratio", _domain);
@@ -371,7 +379,7 @@ void OptionsDialog::close() {
 				ConfMan.removeKey("render_mode", _domain);
 #endif
 // ResidualVM specific
-				ConfMan.removeKey("soft_renderer", _domain);
+				ConfMan.removeKey("renderer", _domain);
 			}
 		}
 
@@ -633,10 +641,7 @@ void OptionsDialog::setGraphicSettingsState(bool enabled) {
 		_aspectCheckbox->setEnabled(enabled);
 #endif
 // ResidualVM specific:
-	if (enabled)
-		_softwareRenderingCheckbox->setEnabled(true);
-	else
-		_softwareRenderingCheckbox->setEnabled(false);
+	_rendererTypePopUp->setEnabled(enabled);
 }
 
 void OptionsDialog::setAudioSettingsState(bool enabled) {
@@ -789,8 +794,17 @@ void OptionsDialog::addGraphicControls(GuiObject *boss, const Common::String &pr
 
 	// ResidualVM specific description
 	_aspectCheckbox = new CheckboxWidget(boss, prefix + "grAspectCheckbox", _("Preserve aspect ratio"), _("Preserve the aspect ratio in fullscreen mode"));
-// ResidualVM specific option:
-	_softwareRenderingCheckbox = new CheckboxWidget(boss, prefix + "grSoftwareRendering", _("Software Rendering"), _("Enable software rendering"));
+	// ResidualVM specific -- Start
+	_rendererTypePopUpDesc = new StaticTextWidget(boss, prefix + "grRendererTypePopupDesc", _("Game Renderer:"));
+	_rendererTypePopUp = new PopUpWidget(boss, prefix + "grRendererTypePopup");
+	_rendererTypePopUp->appendEntry(_("<default>"), Graphics::kRendererTypeDefault);
+	_rendererTypePopUp->appendEntry("");
+	const Graphics::RendererTypeDescription *rt = Graphics::listRendererTypes();
+	for (; rt->code; ++rt) {
+		_rendererTypePopUp->appendEntry(_(rt->description), rt->id);
+	}
+	// ResidualVM specific -- End
+
 	_enableGraphicSettings = true;
 }
 
