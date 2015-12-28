@@ -394,16 +394,20 @@ public:
 	Common::List<Obj *> _objs;
 	Common::List<Chr *> _chrs;
 
-	Scene() {}
+	Scene();
 	Scene(String name, Common::SeekableReadStream *data);
+	~Scene();
 
 	Common::Rect *getTextBounds() {
 		return _textBounds == NULL ? NULL : new Common::Rect(*_textBounds);
 	}
 
-	void paint(Graphics::Surface *screen);
+	void paint(Graphics::Surface *screen, int x, int y);
 
 	const char *getFontName();
+
+private:
+	Graphics::Surface *_surface;
 };
 
 class Sound {

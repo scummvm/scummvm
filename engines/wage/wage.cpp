@@ -93,7 +93,7 @@ static byte palette[] = {
 };
 
 Common::Error WageEngine::run() {
-	initGraphics(640, 480, true);
+	initGraphics(444, 333, true);
 
 	g_system->getPaletteManager()->setPalette(palette, 0, 3);
 
@@ -113,9 +113,6 @@ Common::Error WageEngine::run() {
 	if (!_world->loadWorld(_resManager))
 		return Common::kNoGameDataFoundError;
 
-	Graphics::Surface screen;
-	screen.create(640, 480, Graphics::PixelFormat::createFormatCLUT8());
-
 	_temporarilyHidden = true;
 	performInitialSetup();
 	_temporarilyHidden = false;
@@ -125,13 +122,8 @@ Common::Error WageEngine::run() {
 	_world->_player->_currentScene = _world->_orderedScenes[1];
 	//_world->_globalScript->execute(_world, 1, &input, NULL, this);
 
-	Scene *scene = _world->_orderedScenes[1];
-
-	scene->paint(&screen);
-	_gui->paintBorder(&screen, 0, 0, scene->_design->getBounds()->width(), scene->_design->getBounds()->height(),
-				true, true, true, false);
-
-	g_system->copyRectToScreen(screen.getPixels(), screen.pitch, 0, 0, screen.w, screen.h);
+	_gui->setScene(_world->_orderedScenes[1]);
+	_gui->draw();
 
 	while (true) {
 		processEvents();

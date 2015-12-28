@@ -58,13 +58,20 @@ public:
 	Gui();
 	~Gui();
 
+	void draw();
+	void setScene(Scene *scene);
+
+private:
 	void paintBorder(Graphics::Surface *g, int x, int y, int width, int height,
 			bool active, bool scrollable, bool closeable, bool closeBoxPressed);
 
-private:
 	void drawBox(Graphics::Surface *g, int x, int y, int w, int h);
 	void fillRect(Graphics::Surface *g, int x, int y, int w, int h);
 
+private:
+	Graphics::Surface _screen;
+	Scene *_scene;
+	bool _sceneDirty;
 };
 
 } // End of namespace Wage

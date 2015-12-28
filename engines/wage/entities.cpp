@@ -59,10 +59,35 @@ void Designed::setDesignBounds(Common::Rect *bounds) {
 	_design->setBounds(bounds);
 }
 
+Scene::Scene() {
+	_script = NULL;
+	_surface = NULL;
+	_design = NULL;
+	_textBounds = NULL;
+	_fontSize = 0;
+	_fontType = 0;
+
+	for (int i = 0; i < 4; i++)
+		_blocked[i] = false;
+
+	_soundFrequency = 0;
+	_soundType = 0;
+	_worldX = 0;
+	_worldY = 0;
+
+	_visited = false;
+}
+
 Scene::Scene(String name, Common::SeekableReadStream *data) {
 	_name = name;
 	_classType = SCENE;
 	_design = new Design(data);
+
+	_script = NULL;
+	_surface = NULL;
+	_textBounds = NULL;
+	_fontSize = 0;
+	_fontType = 0;
 
 	setDesignBounds(readRect(data));
 	_worldY = data->readSint16BE();
@@ -83,20 +108,32 @@ Scene::Scene(String name, Common::SeekableReadStream *data) {
 	_visited = false;
 }
 
-void Scene::paint(Graphics::Surface *surface) {
-	surface->fillRect(Common::Rect(0, 0, _design->getBounds()->width(), _design->getBounds()->height()), kColorWhite);
+Scene::~Scene() {
+	delete _surface;
+}
 
-	_design->paint(surface, ((WageEngine *)g_engine)->_world->_patterns, false);
+void Scene::paint(Graphics::Surface *surface, int x, int y) {
+	if (_surface == NULL) {
+		_surface = new Graphics::Surface;
+		_surface->create(_design->getBounds()->width(), _design->getBounds()->height(), Graphics::PixelFormat::createFormatCLUT8());
+	}
+
+	Common::Rect r(0, 0, _design->getBounds()->width(), _design->getBounds()->height());
+	_surface->fillRect(r, kColorWhite);
+
+	_design->paint(_surface, ((WageEngine *)g_engine)->_world->_patterns, false);
 
 	for (Common::List<Obj *>::const_iterator it = _objs.begin(); it != _objs.end(); ++it) {
 		debug(2, "paining Obj: %s", (*it)->_name.c_str());
-		(*it)->_design->paint(surface, ((WageEngine *)g_engine)->_world->_patterns, false);
+		(*it)->_design->paint(_surface, ((WageEngine *)g_engine)->_world->_patterns, false);
 	}
 
 	for (Common::List<Chr *>::const_iterator it = _chrs.begin(); it != _chrs.end(); ++it) {
 		debug(2, "paining Chr: %s", (*it)->_name.c_str());
-		(*it)->_design->paint(surface, ((WageEngine *)g_engine)->_world->_patterns, false);
+		(*it)->_design->paint(_surface, ((WageEngine *)g_engine)->_world->_patterns, false);
 	}
+
+	surface->copyRectToSurface(*_surface, x, y, r);
 }
 
 // Source: Apple IIGS Technical Note #41, "Font Family Numbers"

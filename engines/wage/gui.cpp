@@ -45,15 +45,46 @@
  *
  */
 
+#include "common/system.h"
 #include "wage/wage.h"
+#include "wage/design.h"
+#include "wage/entities.h"
 #include "wage/gui.h"
 
 namespace Wage {
 
+enum {
+	kMenuHeight = 19,
+	kMenuPadding = 6,
+	kMenuItemHeight = 19
+};
+
 Gui::Gui() {
+	_scene = NULL;
+	_sceneDirty = true;
+	_screen.create(g_system->getWidth(), g_system->getHeight(), Graphics::PixelFormat::createFormatCLUT8());
 }
 
 Gui::~Gui() {
+}
+
+void Gui::setScene(Scene *scene) {
+	if (_scene != scene)
+		_sceneDirty = true;
+
+	_scene = scene;
+}
+
+void Gui::draw() {
+	if (_scene != NULL && _sceneDirty) {
+		_scene->paint(&_screen, 0, kMenuHeight);
+		paintBorder(&_screen, 0, kMenuHeight, _scene->_design->getBounds()->width(), _scene->_design->getBounds()->height(),
+				true, true, true, false);
+
+		_sceneDirty = false;
+	}
+
+	g_system->copyRectToScreen(_screen.getPixels(), _screen.pitch, 0, 0, _screen.w, _screen.h);
 }
 
 void Gui::drawBox(Graphics::Surface *g, int x, int y, int w, int h) {
