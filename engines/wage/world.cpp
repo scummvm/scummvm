@@ -387,7 +387,7 @@ bool ObjComparator(Obj *o1, Obj *o2) {
 	return o1Immobile;
 }
 
-void World::move(Obj *obj, Scene *scene) {
+void World::move(Obj *obj, Scene *scene, bool skipSort) {
 	if (obj == NULL)
 		return;
 
@@ -395,7 +395,8 @@ void World::move(Obj *obj, Scene *scene) {
 	obj->_currentScene = scene;
 	scene->_objs.push_back(obj);
 
-	Common::sort(scene->_objs.begin(), scene->_objs.end(), ObjComparator);
+	if (!skipSort)
+		Common::sort(scene->_objs.begin(), scene->_objs.end(), ObjComparator);
 
 	_engine->onMove(obj, from, scene);
 }
@@ -404,7 +405,7 @@ bool ChrComparator(Chr *l, Chr *r) {
     return l->_index < r->_index;
 }
 
-void World::move(Chr *chr, Scene *scene) {
+void World::move(Chr *chr, Scene *scene, bool skipSort) {
 	if (chr == NULL)
 		return;
 	Scene *from = chr->_currentScene;
@@ -414,7 +415,8 @@ void World::move(Chr *chr, Scene *scene) {
 		from->_chrs.remove(chr);
 	scene->_chrs.push_back(chr);
 
-	Common::sort(scene->_chrs.begin(), scene->_chrs.end(), ChrComparator);
+	if (!skipSort)
+		Common::sort(scene->_chrs.begin(), scene->_chrs.end(), ChrComparator);
 
 	if (scene == _storageScene) {
 		warning("STUB: World::move (chrState)");

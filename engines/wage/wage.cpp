@@ -186,11 +186,19 @@ void WageEngine::gameOver() {
 }
 
 void WageEngine::performInitialSetup() {
-	for (int i = 0; i < _world->_orderedObjs.size(); i++)
-		_world->move(_world->_orderedObjs[i], _world->_storageScene);
-	for (int i = 0; i < _world->_orderedChrs.size(); i++)
-		_world->move(_world->_orderedChrs[i], _world->_storageScene);
+	debug(5, "Resetting Objs: %d", _world->_orderedObjs.size());
+	for (int i = 0; i < _world->_orderedObjs.size() - 1; i++)
+		_world->move(_world->_orderedObjs[i], _world->_storageScene, true);
 
+	_world->move(_world->_orderedObjs[_world->_orderedObjs.size() - 1], _world->_storageScene);
+
+	debug(5, "Resetting Chrs: %d", _world->_orderedChrs.size());
+	for (int i = 0; i < _world->_orderedChrs.size() - 1; i++)
+		_world->move(_world->_orderedChrs[i], _world->_storageScene, true);
+
+	_world->move(_world->_orderedChrs[_world->_orderedChrs.size() - 1], _world->_storageScene);
+
+	debug(5, "Resetting Owners: %d", _world->_orderedObjs.size());
 	for (int i = 0; i < _world->_orderedObjs.size(); i++) {
 		Obj *obj = _world->_orderedObjs[i];
 		if (!obj->_sceneOrOwner.equalsIgnoreCase(STORAGESCENE)) {

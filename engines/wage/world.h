@@ -61,8 +61,8 @@ public:
 	void loadExternalSounds(String fname);
 	Common::String *loadStringFromDITL(Common::MacResManager *resMan, int resourceId, int itemIndex);
 	void move(Obj *obj, Chr *chr);
-	void move(Obj *obj, Scene *scene);
-	void move(Chr *chr, Scene *scene);
+	void move(Obj *obj, Scene *scene, bool skipSort = false);
+	void move(Chr *chr, Scene *scene, bool skipSort = false);
 	Scene *getRandomScene();
 
 	WageEngine *_engine;
