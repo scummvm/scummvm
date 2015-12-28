@@ -141,7 +141,7 @@ _glew=auto
 _opengl=auto
 _opengles=no
 _opengles2=no
-_opengl_shaders=no
+_opengl_shaders=auto
 _readline=auto
 _freetype2=auto
 _iconv=auto
@@ -933,8 +933,8 @@ Optional Libraries:
 
   --with-opengl-prefix=DIR Prefix where OpenGL (ES) is installed (optional)
   --disable-opengl         disable OpenGL (ES) support [autodetect]
-  --enable-opengl-shaders  enable use of modern OpenGL with shaders
-  --force-opengles2        only deteect OpenGL ES2
+  --disable-opengl-shaders disable use of modern OpenGL with shaders
+  --force-opengles2        only detect OpenGL ES2
 
   --with-jpeg-prefix=DIR   Prefix where libjpeg is installed (optional)
   --disable-jpeg           disable JPEG decoder [autodetect]
@@ -4220,6 +4220,9 @@ EOF
 	if test "$_opengl" = yes ; then
 		append_var LIBS "$OPENGL_LIBS"
 		append_var INCLUDES "$OPENGL_CFLAGS"
+		if test "$_opengl_shaders" = auto; then
+			_opengl_shaders=$_glew
+		fi
 		if test "$_opengl_shaders" = yes && test "$_opengles2" = no && test "$_glew" = no; then
 			echo "WARNING: OpenGL Shader support requires GLEW!"
 			_opengl_shaders=no
