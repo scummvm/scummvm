@@ -141,6 +141,18 @@ void LabEngine::freeScreens() {
 		delete _invImages[imgIdx];
 		_invImages[imgIdx] = nullptr;
 	}
+
+	// We can't use freeButtonList() here, because some buttons are shared
+	// between the two lists.
+	for (ButtonList::iterator buttonIter = _moveButtonList.begin(); buttonIter != _moveButtonList.end(); ++buttonIter) {
+		delete *buttonIter;
+	}
+	_moveButtonList.clear();
+
+	for (ButtonList::iterator buttonIter = _invButtonList.begin(); buttonIter != _invButtonList.end(); ++buttonIter) {
+		delete *buttonIter;
+	}
+	_invButtonList.clear();
 }
 
 void LabEngine::perFlipButton(uint16 buttonId) {
