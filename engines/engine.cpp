@@ -281,9 +281,12 @@ void splashScreen() {
 	font->drawString(&screen, gScummVMVersionDate, x, y, w, screen.format.ARGBToColor(0xff, 0, 0, 0));
 
 	g_system->copyRectToOverlay(screen.getPixels(), screen.pitch, 0, 0, screen.w, screen.h);
+	screen.free();
 
 	// Draw logo
 	g_system->copyRectToOverlay(logo->getPixels(), logo->pitch, lx, ly, logo->w, logo->h);
+	logo->free();
+	delete logo;
 
 	// Delay 0.6 secs
 	uint time0 = g_system->getMillis();
