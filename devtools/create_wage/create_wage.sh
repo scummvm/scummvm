@@ -1,4 +1,12 @@
-#!bash
+#!/bin/bash
+#
+# This script downloads System 7.0.1 image from Apple and extracts fonts
+# from it. Mac only, unfortunately.
+#
+# On Windows you perhaps can perform the extraction manually with use of
+# HFV Explorer: https://web.archive.org/web/20011202005455/http://gamma.nic.fi/~lpesonen/HFVExplorer/
+#
+# More information could be found in the vMac documentation: http://www.gryphel.com/c/image/
 #
 # Based on instructions posted at
 # http://apple.stackexchange.com/questions/58243/can-i-get-the-original-mac-font-chicago-on-a-mountain-lion-mac
@@ -6,6 +14,11 @@
 echo_n() {
 	printf "$@"
 }
+
+if test `uname` != "Darwin"; then
+	echo This script is Mac OS X-only
+	exit
+fi
 
 echo_n "Downloading System 7.0.1 image..."
 if test ! -f System_7.0.1.smi.bin; then
