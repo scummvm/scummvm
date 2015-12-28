@@ -99,10 +99,8 @@ int16 GfxText16::CodeProcessing(const char *&text, GuiResourceId orgFontId, int1
 	//  c -> sets textColor to current port pen color
 	//  cX -> sets textColor to _textColors[X-1]
 	curCode = textCode[0];
-	curCodeParm = textCode[1];
-	if (Common::isDigit(curCodeParm)) {
-		curCodeParm -= '0';
-	} else {
+	curCodeParm = strtol(textCode+1, NULL, 10);
+	if (!Common::isDigit(textCode[1])) {
 		curCodeParm = -1;
 	}
 	switch (curCode) {
