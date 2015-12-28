@@ -83,8 +83,7 @@ void GfxText16::ClearChar(int16 chr) {
 }
 
 // This internal function gets called as soon as a '|' is found in a text. It
-// will process the encountered code and set new font/set color. We only support
-// one-digit codes currently, don't know if multi-digit codes are possible.
+// will process the encountered code and set new font/set color. 
 // Returns textcode character count.
 int16 GfxText16::CodeProcessing(const char *&text, GuiResourceId orgFontId, int16 orgPenColor, bool doingDrawing) {
 	const char *textCode = text;
