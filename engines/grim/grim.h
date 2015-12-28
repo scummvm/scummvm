@@ -55,8 +55,6 @@ enum GrimGameType {
 
 struct GrimGameDescription;
 
-typedef Common::HashMap<Common::String, const char *>StringPtrHashMap;
-
 struct ControlDescriptor {
 	const char *name;
 	int key;
@@ -67,7 +65,7 @@ class GrimEngine : public Engine {
 protected:
 	// Engine APIs
 	virtual Common::Error run() override;
-	virtual GUI::Debugger *getDebugger() { return (GUI::Debugger *)_debugger; }
+	virtual GUI::Debugger *getDebugger() override { return (GUI::Debugger *)_debugger; }
 
 public:
 	enum EngineMode {
@@ -95,11 +93,6 @@ public:
 	virtual const char *getUpdateFilename();
 	bool canLoadGameStateCurrently() override { return true; }
 	Common::Error loadGameState(int slot) override;
-
-	bool loadSaveDirectory(void);
-	void makeSystemMenu(void);
-	int modifyGameSpeed(int speedChange);
-	int getTimerDelay() const;
 
 	void setMode(EngineMode mode);
 	EngineMode getMode() { return _mode; }
