@@ -61,7 +61,7 @@ Effect::~Effect() {
 	}
 }
 
-bool Effect::loadMasks(const char *room, uint32 id, DirectorySubEntry::ResourceType type) {
+bool Effect::loadMasks(const Common::String &room, uint32 id, DirectorySubEntry::ResourceType type) {
 	bool isFrame = _vm->_state->getViewType() == kFrame;
 
 	// Load the mask of each face
@@ -167,7 +167,7 @@ WaterEffect::~WaterEffect() {
 WaterEffect *WaterEffect::create(Myst3Engine *vm, uint32 id) {
 	WaterEffect *s = new WaterEffect(vm);
 
-	if (!s->loadMasks(0, id, DirectorySubEntry::kWaterEffectMask)) {
+	if (!s->loadMasks("", id, DirectorySubEntry::kWaterEffectMask)) {
 		delete s;
 		return 0;
 	}
@@ -336,7 +336,7 @@ LavaEffect::~LavaEffect() {
 LavaEffect *LavaEffect::create(Myst3Engine *vm, uint32 id) {
 	LavaEffect *s = new LavaEffect(vm);
 
-	if (!s->loadMasks(0, id, DirectorySubEntry::kLavaEffectMask)) {
+	if (!s->loadMasks("", id, DirectorySubEntry::kLavaEffectMask)) {
 		delete s;
 		return 0;
 	}
@@ -432,7 +432,7 @@ MagnetEffect::~MagnetEffect() {
 MagnetEffect *MagnetEffect::create(Myst3Engine *vm, uint32 id) {
 	MagnetEffect *s = new MagnetEffect(vm);
 
-	if (!s->loadMasks(0, id, DirectorySubEntry::kMagneticEffectMask)) {
+	if (!s->loadMasks("", id, DirectorySubEntry::kMagneticEffectMask)) {
 		delete s;
 		return 0;
 	}
@@ -459,7 +459,7 @@ bool MagnetEffect::update() {
 		// The sound changed since last update
 		_lastSoundId = soundId;
 
-		const DirectorySubEntry *desc = _vm->getFileDescription(0, _vm->_state->getMagnetEffectNode(), 0, DirectorySubEntry::kRawData);
+		const DirectorySubEntry *desc = _vm->getFileDescription("", _vm->_state->getMagnetEffectNode(), 0, DirectorySubEntry::kRawData);
 		if (!desc)
 			error("Magnet effect support file %d does not exist", _vm->_state->getMagnetEffectNode());
 

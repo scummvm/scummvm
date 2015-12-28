@@ -47,16 +47,16 @@ Movie::Movie(Myst3Engine *vm, uint16 id) :
 		_additiveBlending(false),
 		_transparency(100) {
 
-	const DirectorySubEntry *binkDesc = _vm->getFileDescription(0, id, 0, DirectorySubEntry::kMultitrackMovie);
+	const DirectorySubEntry *binkDesc = _vm->getFileDescription("", id, 0, DirectorySubEntry::kMultitrackMovie);
 
 	if (!binkDesc)
-		binkDesc = _vm->getFileDescription(0, id, 0, DirectorySubEntry::kDialogMovie);
+		binkDesc = _vm->getFileDescription("", id, 0, DirectorySubEntry::kDialogMovie);
 
 	if (!binkDesc)
-		binkDesc = _vm->getFileDescription(0, id, 0, DirectorySubEntry::kStillMovie);
+		binkDesc = _vm->getFileDescription("", id, 0, DirectorySubEntry::kStillMovie);
 
 	if (!binkDesc)
-		binkDesc = _vm->getFileDescription(0, id, 0, DirectorySubEntry::kMovie);
+		binkDesc = _vm->getFileDescription("", id, 0, DirectorySubEntry::kMovie);
 
 	// Check whether the video is optional
 	bool optional = false;

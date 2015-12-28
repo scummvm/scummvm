@@ -54,7 +54,7 @@ typedef Common::SharedPtr<NodeData> NodePtr;
 
 struct RoomData {
 	uint32 id;
-	char name[8];
+	Common::String name;
 	uint32 scriptsOffset;
 	uint32 ambSoundsOffset;
 	uint32 unkOffset;
@@ -111,7 +111,7 @@ public:
 	/**
 	 * Returns the name of the currently loaded room
 	 */
-	void getRoomName(char name[8], uint32 roomID = 0);
+	Common::String getRoomName(uint32 roomID = 0);
 
 	/**
 	 * Returns the id of a room from its name

@@ -555,7 +555,9 @@ RoomData Database::loadRoomDescription(Common::ReadStreamEndian &s) {
 
 	if (_vm->getPlatform() == Common::kPlatformPS2) {
 		room.id = s.readUint32LE(); s.readUint32LE();
-		s.read(&room.name, 8);
+		char name[8];
+		s.read(&name, ARRAYSIZE(name));
+		room.name = Common::String(name);
 		room.scriptsOffset = s.readUint32LE(); s.readUint32LE();
 		room.ambSoundsOffset = s.readUint32LE(); s.readUint32LE();
 		room.unkOffset = s.readUint32LE(); // not 64-bit -- otherwise roomUnk5 is incorrect
@@ -563,7 +565,9 @@ RoomData Database::loadRoomDescription(Common::ReadStreamEndian &s) {
 		room.roomUnk5 = s.readUint32LE();
 	} else {
 		room.id = s.readUint32();
-		s.read(&room.name, 8);
+		char name[8];
+		s.read(&name, ARRAYSIZE(name));
+		room.name = Common::String(name);
 		room.scriptsOffset = s.readUint32();
 		room.ambSoundsOffset = s.readUint32();
 		room.unkOffset = s.readUint32();
@@ -583,19 +587,21 @@ RoomData Database::loadRoomDescription(Common::ReadStreamEndian &s) {
 	return room;
 }
 
-void Database::getRoomName(char name[8], uint32 roomID) {
+Common::String Database::getRoomName(uint32 roomID) {
 	if (roomID != 0 && roomID != _currentRoomID) {
 		RoomData *data = findRoomData(roomID);
-		memcpy(&name[0], &data->name, 8);
+		return data->name;
 	} else if (_currentRoomData) {
-		memcpy(&name[0], &_currentRoomData->name, 8);
+		return _currentRoomData->name;
 	}
+
+	return "";
 }
 
 uint32 Database::getRoomId(const char *name) {
 	for (uint i = 0; i < _ages.size(); i++)
 		for (uint j = 0; j < _ages[i].rooms.size(); j++) {
-			if (!scumm_stricmp(_ages[i].rooms[j].name, name)) {
+			if (_ages[i].rooms[j].name.equalsIgnoreCase(name)) {
 				return _ages[i].rooms[j].id;
 			}
 		}

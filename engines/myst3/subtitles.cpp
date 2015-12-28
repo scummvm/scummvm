@@ -293,7 +293,7 @@ const DirectorySubEntry *MovieSubtitles::loadMovie(int32 id, bool overriden) {
 	if (overriden) {
 		desc = _vm->getFileDescription("IMGR", 200000 + id, 0, DirectorySubEntry::kMovie);
 	} else {
-		desc = _vm->getFileDescription(0, 200000 + id, 0, DirectorySubEntry::kMovie);
+		desc = _vm->getFileDescription("", 200000 + id, 0, DirectorySubEntry::kMovie);
 	}
 	return desc;
 }
@@ -382,7 +382,7 @@ const DirectorySubEntry *Subtitles::loadText(int32 id, bool overriden) {
 	if (overriden) {
 		desc = _vm->getFileDescription("IMGR", 100000 + id, 0, DirectorySubEntry::kText);
 	} else {
-		desc = _vm->getFileDescription(0, 100000 + id, 0, DirectorySubEntry::kText);
+		desc = _vm->getFileDescription("", 100000 + id, 0, DirectorySubEntry::kText);
 	}
 	return desc;
 }

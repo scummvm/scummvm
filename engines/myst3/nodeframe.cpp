@@ -30,13 +30,13 @@ namespace Myst3 {
 
 NodeFrame::NodeFrame(Myst3Engine *vm, uint16 id) :
 		Node(vm, id) {
-	const DirectorySubEntry *jpegDesc = _vm->getFileDescription(0, id, 1, DirectorySubEntry::kLocalizedFrame);
+	const DirectorySubEntry *jpegDesc = _vm->getFileDescription("", id, 1, DirectorySubEntry::kLocalizedFrame);
 
 	if (!jpegDesc)
-		jpegDesc = _vm->getFileDescription(0, id, 0, DirectorySubEntry::kFrame);
+		jpegDesc = _vm->getFileDescription("", id, 0, DirectorySubEntry::kFrame);
 
 	if (!jpegDesc)
-		jpegDesc = _vm->getFileDescription(0, id, 1, DirectorySubEntry::kFrame);
+		jpegDesc = _vm->getFileDescription("", id, 1, DirectorySubEntry::kFrame);
 
 	if (!jpegDesc)
 		error("Frame %d does not exist", id);

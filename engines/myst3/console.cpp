@@ -77,10 +77,9 @@ bool Console::Cmd_Infos(int argc, const char **argv) {
 		return true;
 	}
 
-	char roomName[8];
-	_vm->_db->getRoomName(roomName, roomId);
+	Common::String roomName = _vm->_db->getRoomName(roomId);
 
-	debugPrintf("node: %s %d    ", roomName, nodeId);
+	debugPrintf("node: %s %d    ", roomName.c_str(), nodeId);
 
 	for (uint i = 0; i < nodeData->scripts.size(); i++) {
 		debugPrintf("\ninit %d > %s (%s)\n", i,
@@ -279,7 +278,7 @@ bool Console::Cmd_Extract(int argc, const char **argv) {
 	uint16 face = atoi(argv[3]);
 	DirectorySubEntry::ResourceType type = (DirectorySubEntry::ResourceType) atoi(argv[4]);
 
-	const DirectorySubEntry *desc = _vm->getFileDescription(room.c_str(), id, face, type);
+	const DirectorySubEntry *desc = _vm->getFileDescription(room, id, face, type);
 
 	if (!desc) {
 		debugPrintf("File with room %s, id %d, face %d and type %d does not exist\n", room.c_str(), id, face, type);
@@ -381,7 +380,7 @@ bool Console::Cmd_DumpMasks(int argc, const char **argv) {
 }
 
 bool Console::dumpFaceMask(uint16 index, int face, DirectorySubEntry::ResourceType type) {
-	const DirectorySubEntry *maskDesc = _vm->getFileDescription(0, index, face, type);
+	const DirectorySubEntry *maskDesc = _vm->getFileDescription("", index, face, type);
 
 	if (!maskDesc)
 		return false;

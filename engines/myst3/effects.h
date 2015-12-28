@@ -62,7 +62,7 @@ public:
 protected:
 	Effect(Myst3Engine *vm);
 
-	bool loadMasks(const char *room, uint32 id, DirectorySubEntry::ResourceType type);
+	bool loadMasks(const Common::String &room, uint32 id, DirectorySubEntry::ResourceType type);
 
 	Myst3Engine *_vm;
 

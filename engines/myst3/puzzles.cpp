@@ -1138,7 +1138,7 @@ void Puzzles::journalSaavedro(int16 move) {
 
 		// Does the left page need to be loaded from a different node?
 		if (nodeLeft != nodeRight) {
-			const DirectorySubEntry *jpegDesc = _vm->getFileDescription(0, nodeLeft, 0, DirectorySubEntry::kFrame);
+			const DirectorySubEntry *jpegDesc = _vm->getFileDescription("", nodeLeft, 0, DirectorySubEntry::kFrame);
 
 			if (!jpegDesc)
 				error("Frame %d does not exist", nodeLeft);
@@ -1180,7 +1180,7 @@ int16 Puzzles::_journalSaavedroLastPageLastChapterValue() {
 }
 
 uint16 Puzzles::_journalSaavedroGetNode(uint16 chapter) {
-	const DirectorySubEntry *desc = _vm->getFileDescription(0, 1200, 0, DirectorySubEntry::kNumMetadata);
+	const DirectorySubEntry *desc = _vm->getFileDescription("", 1200, 0, DirectorySubEntry::kNumMetadata);
 
 	if (!desc)
 		error("Node 1200 does not exist");
@@ -1214,7 +1214,7 @@ uint16 Puzzles::_journalSaavedroNextChapter(uint16 chapter, bool forward) {
 void Puzzles::journalAtrus(uint16 node, uint16 var) {
 	uint numPages = 0;
 
-	while (_vm->getFileDescription(0, node++, 0, DirectorySubEntry::kFrame))
+	while (_vm->getFileDescription("", node++, 0, DirectorySubEntry::kFrame))
 		numPages++;
 
 	_vm->_state->setVar(var, numPages - 1);
@@ -1523,7 +1523,7 @@ void Puzzles::projectorLoadBitmap(uint16 bitmap) {
 	_vm->_projectorBackground = new Graphics::Surface();
 	_vm->_projectorBackground->create(1024, 1024, Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
 
-	const DirectorySubEntry *movieDesc = _vm->getFileDescription(0, bitmap, 0, DirectorySubEntry::kStillMovie);
+	const DirectorySubEntry *movieDesc = _vm->getFileDescription("", bitmap, 0, DirectorySubEntry::kStillMovie);
 
 	if (!movieDesc)
 		error("Movie %d does not exist", bitmap);
@@ -1550,7 +1550,7 @@ void Puzzles::projectorAddSpotItem(uint16 bitmap, uint16 x, uint16 y) {
 	if (!_vm->_state->getVar(26))
 		return;
 
-	const DirectorySubEntry *movieDesc = _vm->getFileDescription(0, bitmap, 0, DirectorySubEntry::kStillMovie);
+	const DirectorySubEntry *movieDesc = _vm->getFileDescription("", bitmap, 0, DirectorySubEntry::kStillMovie);
 
 	if (!movieDesc)
 		error("Movie %d does not exist", bitmap);

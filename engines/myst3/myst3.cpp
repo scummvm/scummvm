@@ -772,19 +772,17 @@ void Myst3Engine::loadNode(uint16 nodeID, uint32 roomID, uint32 ageID) {
 	if (ageID)
 		_state->setLocationAge(_state->valueOrVarValue(ageID));
 
-	char oldRoomName[8];
-	char newRoomName[8];
-	_db->getRoomName(oldRoomName);
-	_db->getRoomName(newRoomName, roomID);
+	Common::String oldRoomName = _db->getRoomName();
+	Common::String newRoomName = _db->getRoomName(roomID);
 
-	if (strcmp(newRoomName, "JRNL") && strcmp(newRoomName, "XXXX")
-			 && strcmp(newRoomName, "MENU") && strcmp(newRoomName, oldRoomName)) {
+	if (newRoomName != "JRNL" && newRoomName != "XXXX"
+			 && newRoomName != "MENU" && newRoomName != oldRoomName) {
 
 		_db->setCurrentRoom(roomID);
-		Common::String nodeFile = Common::String::format("%snodes.m3a", newRoomName);
+		Common::String nodeFile = Common::String::format("%snodes.m3a", newRoomName.c_str());
 
 		_archiveNode->close();
-		if (!_archiveNode->open(nodeFile.c_str(), newRoomName)) {
+		if (!_archiveNode->open(nodeFile.c_str(), newRoomName.c_str())) {
 			error("Unable to open archive %s", nodeFile.c_str());
 		}
 	}
@@ -1230,11 +1228,11 @@ void Myst3Engine::loadNodeSubtitles(uint32 id) {
 	_node->loadSubtitles(id);
 }
 
-const DirectorySubEntry *Myst3Engine::getFileDescription(const char* room, uint32 index, uint16 face, DirectorySubEntry::ResourceType type) {
-	char currentRoom[8];
-	if (!room) {
-		_db->getRoomName(currentRoom, _state->getLocationRoom());
-		room = currentRoom;
+const DirectorySubEntry *Myst3Engine::getFileDescription(const Common::String &room, uint32 index, uint16 face,
+                                                         DirectorySubEntry::ResourceType type) {
+	Common::String archiveRoom = room;
+	if (archiveRoom == "") {
+		archiveRoom = _db->getRoomName(_state->getLocationRoom());
 	}
 
 	const DirectorySubEntry *desc = 0;
@@ -1242,13 +1240,13 @@ const DirectorySubEntry *Myst3Engine::getFileDescription(const char* room, uint3
 	// Search common archives
 	uint i = 0;
 	while (!desc && i < _archivesCommon.size()) {
-		desc = _archivesCommon[i]->getDescription(room, index, face, type);
+		desc = _archivesCommon[i]->getDescription(archiveRoom, index, face, type);
 		i++;
 	}
 
 	// Search currently loaded node archive
 	if (!desc && _archiveNode)
-		desc = _archiveNode->getDescription(room, index, face, type);
+		desc = _archiveNode->getDescription(archiveRoom, index, face, type);
 
 	return desc;
 }
@@ -1480,10 +1478,10 @@ void Myst3Engine::animateDirectionChange(float targetPitch, float targetHeading,
 }
 
 void Myst3Engine::getMovieLookAt(uint16 id, bool start, float &pitch, float &heading) {
-	const DirectorySubEntry *desc = getFileDescription(0, id, 0, DirectorySubEntry::kMovie);
+	const DirectorySubEntry *desc = getFileDescription("", id, 0, DirectorySubEntry::kMovie);
 
 	if (!desc)
-		desc = getFileDescription(0, id, 0, DirectorySubEntry::kMultitrackMovie);
+		desc = getFileDescription("", id, 0, DirectorySubEntry::kMultitrackMovie);
 
 	if (!desc)
 		error("Movie %d does not exist", id);
