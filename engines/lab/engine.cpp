@@ -380,12 +380,6 @@ void LabEngine::decIncInv(uint16 *curInv, bool decreaseFl) {
 }
 
 void LabEngine::mainGameLoop() {
-	uint16 actionMode = 4;
-	uint16 curInv = kItemMap;
-
-	bool forceDraw = false;
-	bool gotMessage = true;
-
 	_graphics->setPalette(initColors, 8);
 
 	_closeDataPtr = nullptr;
@@ -407,6 +401,7 @@ void LabEngine::mainGameLoop() {
 	_graphics->_longWinInFront = false;
 	_graphics->drawPanel();
 
+	uint16 actionMode = 4;
 	perFlipButton(actionMode);
 
 	// Load saved slot from the launcher, if requested
@@ -421,6 +416,9 @@ void LabEngine::mainGameLoop() {
 		_music->checkRoomMusic();
 	}
 
+	uint16 curInv = kItemMap;
+	bool forceDraw = false;
+	bool gotMessage = true;
 	// Set up initial picture.
 	while (1) {
 		_event->processInput();
@@ -549,6 +547,10 @@ void LabEngine::showLab2Teaser() {
 
 bool LabEngine::processEvent(MessageClass tmpClass, uint16 code, uint16 qualifier, Common::Point tmpPos,
 			uint16 &curInv, IntuiMessage *curMsg, bool &forceDraw, uint16 buttonId, uint16 &actionMode) {
+
+	if (shouldQuit())
+		return false;
+
 	MessageClass msgClass = tmpClass;
 	Common::Point curPos = tmpPos;
 	uint16 oldDirection = 0;
@@ -561,9 +563,6 @@ bool LabEngine::processEvent(MessageClass tmpClass, uint16 code, uint16 qualifie
 	bool rightButtonClick = (msgClass == kMessageRightClick);
 
 	_anim->_doBlack = false;
-
-	if (shouldQuit())
-		return false;
 
 	if (_graphics->_longWinInFront) {
 		if (msgClass == kMessageRawKey || leftButtonClick || rightButtonClick) {
@@ -704,9 +703,6 @@ bool LabEngine::processKey(IntuiMessage *curMsg, uint32 msgClass, uint16 &qualif
 }
 
 void LabEngine::processMainButton(uint16 &curInv, uint16 &lastInv, uint16 &oldDirection, bool &forceDraw, uint16 buttonId, uint16 &actionMode) {
-	uint16 newDir;
-	uint16 oldRoomNum;
-
 	switch (buttonId) {
 	case kButtonPickup:
 	case kButtonUse:
@@ -753,7 +749,7 @@ void LabEngine::processMainButton(uint16 &curInv, uint16 &lastInv, uint16 &oldDi
 		break;
 
 	case kButtonLeft:
-	case kButtonRight:
+	case kButtonRight: {
 		_closeDataPtr = nullptr;
 		if (buttonId == kButtonLeft)
 			drawStaticMessage(kTextTurnLeft);
@@ -763,17 +759,18 @@ void LabEngine::processMainButton(uint16 &curInv, uint16 &lastInv, uint16 &oldDi
 		_curFileName = " ";
 		oldDirection = _direction;
 
-		newDir = processArrow(_direction, buttonId - 6);
+		uint16 newDir = processArrow(_direction, buttonId - 6);
 		doTurn(_direction, newDir);
 		_anim->_doBlack = true;
 		_direction = newDir;
 		forceDraw = true;
 		mayShowCrumbIndicator();
+		}
 		break;
 
-	case kButtonForward:
+	case kButtonForward: {
 		_closeDataPtr = nullptr;
-		oldRoomNum = _roomNum;
+		int oldRoomNum = _roomNum;
 
 		if (doGoForward()) {
 			if (oldRoomNum == _roomNum)
@@ -831,6 +828,7 @@ void LabEngine::processMainButton(uint16 &curInv, uint16 &lastInv, uint16 &oldDi
 		}
 
 		mayShowCrumbIndicator();
+		}
 		break;
 
 	case kButtonMap:
@@ -844,8 +842,6 @@ void LabEngine::processMainButton(uint16 &curInv, uint16 &lastInv, uint16 &oldDi
 }
 
 void LabEngine::processAltButton(uint16 &curInv, uint16 &lastInv, uint16 buttonId, uint16 &actionMode) {
-	bool saveRestoreSuccessful = true;
-
 	_anim->_doBlack = true;
 
 	switch (buttonId) {
@@ -861,12 +857,12 @@ void LabEngine::processAltButton(uint16 &curInv, uint16 &lastInv, uint16 buttonI
 		drawRoomMessage(curInv, _closeDataPtr);
 		break;
 
-	case kButtonSaveLoad:
+	case kButtonSaveLoad: {
 		interfaceOff();
 		_anim->stopDiff();
 		_curFileName = " ";
 
-		saveRestoreSuccessful = saveRestoreGame();
+		bool saveRestoreSuccessful = saveRestoreGame();
 		_closeDataPtr = nullptr;
 		_mainDisplay = true;
 
@@ -879,6 +875,7 @@ void LabEngine::processAltButton(uint16 &curInv, uint16 &lastInv, uint16 buttonI
 			_graphics->drawMessage("Save/restore aborted", false);
 			_graphics->setPalette(initColors, 8);
 			_system->delayMillis(1000);
+		}
 		}
 		break;
 
@@ -1006,8 +1003,8 @@ void LabEngine::performAction(uint16 actionMode, Common::Point curPos, uint16 &c
 			_closeDataPtr = tmpClosePtr;
 		} else if (curPos.y < (_utils->vgaScaleY(149) + _utils->svgaCord(2)))
 			drawStaticMessage(kTextNothing);
-	}
-			break;
+		}
+		break;
 
 	case 5:
 		if (_conditions->in(curInv)) {
