@@ -125,7 +125,6 @@ private:
 	uint16 textLength(TextFont *font, const Common::String text);
 
 	bool _actionMessageShown;
-	byte _curPen;
 	Common::File *_curBitmap;
 	byte _curVgaPal[256 * 3];
 	byte *_currentDisplayBuffer;
