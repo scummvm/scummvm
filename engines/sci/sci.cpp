@@ -897,7 +897,9 @@ void SciEngine::syncIngameAudioOptions() {
 			break;
 #ifdef ENABLE_SCI32
 		case SCI_VERSION_2:
-		case SCI_VERSION_2_1:
+		case SCI_VERSION_2_1_EARLY:
+		case SCI_VERSION_2_1_MIDDLE:
+		case SCI_VERSION_2_1_LATE:
 			// Only use global 90 for some specific games, not all SCI32 games used this method
 			switch (_gameId) {
 			case GID_KQ7: // SCI2.1

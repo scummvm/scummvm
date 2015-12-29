@@ -49,7 +49,7 @@ uint16 READ_SCI11ENDIAN_UINT16(const void *ptr) {
 }
 
 uint16 READ_SCI32ENDIAN_UINT16(const void *ptr) {
-	if (g_sci->getPlatform() == Common::kPlatformMacintosh && getSciVersion() >= SCI_VERSION_2_1)
+	if (g_sci->getPlatform() == Common::kPlatformMacintosh && getSciVersion() >= SCI_VERSION_2_1_EARLY)
 		return READ_BE_UINT16(ptr);
 	else
 		return READ_LE_UINT16(ptr);

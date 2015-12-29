@@ -182,7 +182,7 @@ bool MessageState::getRecord(CursorStack &stack, bool recurse, MessageRecord &re
 #ifdef ENABLE_SCI32
 	case 5: // v5 seems to be compatible with v4
 		// SCI32 Mac is different than SCI32 DOS/Win here
-		if (g_sci->getPlatform() == Common::kPlatformMacintosh && getSciVersion() >= SCI_VERSION_2_1)
+		if (g_sci->getPlatform() == Common::kPlatformMacintosh && getSciVersion() >= SCI_VERSION_2_1_EARLY)
 			reader = new MessageReaderV4_MacSCI32(res->data, res->size);
 		else
 #endif

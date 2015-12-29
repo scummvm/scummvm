@@ -79,42 +79,42 @@ public:
 	}
 
 	reg_t getSpeciesSelector() const {
-		if (getSciVersion() <= SCI_VERSION_2_1)
+		if (getSciVersion() < SCI_VERSION_3)
 			return _variables[_offset];
 		else	// SCI3
 			return _speciesSelectorSci3;
 	}
 
 	void setSpeciesSelector(reg_t value) {
-		if (getSciVersion() <= SCI_VERSION_2_1)
+		if (getSciVersion() < SCI_VERSION_3)
 			_variables[_offset] = value;
 		else	// SCI3
 			_speciesSelectorSci3 = value;
 	}
 
 	reg_t getSuperClassSelector() const {
-		if (getSciVersion() <= SCI_VERSION_2_1)
+		if (getSciVersion() < SCI_VERSION_3)
 			return _variables[_offset + 1];
 		else	// SCI3
 			return _superClassPosSci3;
 	}
 
 	void setSuperClassSelector(reg_t value) {
-		if (getSciVersion() <= SCI_VERSION_2_1)
+		if (getSciVersion() < SCI_VERSION_3)
 			_variables[_offset + 1] = value;
 		else	// SCI3
 			_superClassPosSci3 = value;
 	}
 
 	reg_t getInfoSelector() const {
-		if (getSciVersion() <= SCI_VERSION_2_1)
+		if (getSciVersion() < SCI_VERSION_3)
 			return _variables[_offset + 2];
 		else	// SCI3
 			return _infoSelectorSci3;
 	}
 
 	void setInfoSelector(reg_t info) {
-		if (getSciVersion() <= SCI_VERSION_2_1)
+		if (getSciVersion() < SCI_VERSION_3)
 			_variables[_offset + 2] = info;
 		else	// SCI3
 			_infoSelectorSci3 = info;
@@ -123,7 +123,7 @@ public:
 	// No setter for the -info- selector
 
 	reg_t getNameSelector() const {
-		if (getSciVersion() <= SCI_VERSION_2_1)
+		if (getSciVersion() < SCI_VERSION_3)
 			return _offset + 3 < (uint16)_variables.size() ? _variables[_offset + 3] : NULL_REG;
 		else	// SCI3
 			return _variables.size() ? _variables[0] : NULL_REG;
@@ -132,7 +132,7 @@ public:
 	// No setter for the name selector
 
 	reg_t getPropDictSelector() const {
-		if (getSciVersion() <= SCI_VERSION_2_1)
+		if (getSciVersion() < SCI_VERSION_3)
 			return _variables[2];
 		else
 			// This should never occur, this is called from a SCI1.1 - SCI2.1 only function
@@ -140,7 +140,7 @@ public:
 	}
 
 	void setPropDictSelector(reg_t value) {
-		if (getSciVersion() <= SCI_VERSION_2_1)
+		if (getSciVersion() < SCI_VERSION_3)
 			_variables[2] = value;
 		else
 			// This should never occur, this is called from a SCI1.1 - SCI2.1 only function
@@ -148,14 +148,14 @@ public:
 	}
 
 	reg_t getClassScriptSelector() const {
-		if (getSciVersion() <= SCI_VERSION_2_1)
+		if (getSciVersion() < SCI_VERSION_3)
 			return _variables[4];
 		else	// SCI3
 			return make_reg(0, READ_SCI11ENDIAN_UINT16(_baseObj + 6));
 	}
 
 	void setClassScriptSelector(reg_t value) {
-		if (getSciVersion() <= SCI_VERSION_2_1)
+		if (getSciVersion() < SCI_VERSION_3)
 			_variables[4] = value;
 		else	// SCI3
 			// This should never occur, this is called from a SCI1.1 - SCI2.1 only function
