@@ -2157,7 +2157,7 @@ bool ResourceManager::checkResourceDataForSignature(Resource *resource, const by
 	if (signatureSize > resource->size)
 		return false;
 
-	const uint32 signatureDWord = *((uint32 *)signature);
+	const uint32 signatureDWord = *((const uint32 *)signature);
 	signature += 4; signatureSize -= 4;
 
 	const uint32 searchLimit = resource->size - signatureSize + 1;
