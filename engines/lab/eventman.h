@@ -61,9 +61,6 @@ private:
 	bool _leftClick;
 	bool _rightClick;
 
-	uint16 _nextKeyIn;
-	uint16 _nextKeyOut;
-
 	Button *_hitButton;
 	Button *_lastButtonHit;
 	ButtonList *_screenButtonList;
