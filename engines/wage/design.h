@@ -67,13 +67,14 @@ public:
 		return _bounds;
 	}
 
-    void paint(Graphics::Surface *canvas, Patterns &patterns, bool mask);
+    void paint(Graphics::Surface *canvas, Patterns &patterns, bool mask, int x, int y);
 	static void drawFilledRect(Graphics::Surface *surface, Common::Rect &rect, int color, Patterns &patterns, byte fillType);
 
 private:
 	byte *_data;
     int _len;
 	Common::Rect *_bounds;
+	Graphics::Surface *_surface;
 
 private:
     void drawRect(Graphics::Surface *surface, Common::ReadStream &in, bool mask,

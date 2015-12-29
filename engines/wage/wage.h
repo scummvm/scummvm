@@ -90,9 +90,10 @@ enum {
 };
 
 enum {
-    kColorBlack = 0,
-    kColorGray  = 1,
-    kColorWhite = 2
+	kColorBlack = 0,
+	kColorGray  = 1,
+	kColorWhite = 2,
+	kColorGreen = 3
 };
 
 Common::String readPascalString(Common::SeekableReadStream *in);

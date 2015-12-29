@@ -67,17 +67,30 @@ Design::Design(Common::SeekableReadStream *data) {
 	_len = data->readUint16BE() - 2;
 	_data = (byte *)malloc(_len);
 	data->read(_data, _len);
+
+	_surface = NULL;
 }
 
 Design::~Design() {
 	free(_data);
+	delete _surface;
 }
 
-void Design::paint(Graphics::Surface *surface, Patterns &patterns, bool mask) {
+void Design::paint(Graphics::Surface *surface, Patterns &patterns, bool mask, int x, int y) {
 	Common::MemoryReadStream in(_data, _len);
+	Common::Rect r(0, 0, _bounds->width(), _bounds->height());
+	bool needRender = false;
+
+	if (_surface == NULL) {
+		_surface = new Graphics::Surface;
+		_surface->create(_bounds->width(), _bounds->height(), Graphics::PixelFormat::createFormatCLUT8());
+		_surface->fillRect(r, kColorGreen);
+
+		needRender = true;
+	}
 
 	if (mask) {
-		surface->fillRect(Common::Rect(0, 0, _bounds->width(), _bounds->height()), kColorWhite);
+		_surface->fillRect(r, kColorWhite);
 	}
 
 /*
@@ -102,32 +115,32 @@ void Design::paint(Graphics::Surface *surface, Patterns &patterns, bool mask) {
 	return;
 */
 
-	while (true) {
+	while (true && needRender) {
 		byte fillType = in.readByte();
 		byte borderThickness = in.readByte();
 		byte borderFillType = in.readByte();
 		int type = in.readByte();
 
 		if (in.eos())
-			return;
+			break;
 
 		debug(2, "fill: %d borderFill: %d border: %d type: %d", fillType, borderFillType, borderThickness, type);
 		switch (type) {
 		case 4:
-			drawRect(surface, in, mask, patterns, fillType, borderThickness, borderFillType);
+			drawRect(_surface, in, mask, patterns, fillType, borderThickness, borderFillType);
 			break;
 		case 8:
-			drawRoundRect(surface, in, mask, patterns, fillType, borderThickness, borderFillType);
+			drawRoundRect(_surface, in, mask, patterns, fillType, borderThickness, borderFillType);
 			break;
 		case 12:
-			drawOval(surface, in, mask, patterns, fillType, borderThickness, borderFillType);
+			drawOval(_surface, in, mask, patterns, fillType, borderThickness, borderFillType);
 			break;
 		case 16:
 		case 20:
-			drawPolygon(surface, in, mask, patterns, fillType, borderThickness, borderFillType);
+			drawPolygon(_surface, in, mask, patterns, fillType, borderThickness, borderFillType);
 			break;
 		case 24:
-			drawBitmap(surface, in, mask);
+			drawBitmap(_surface, in, mask);
 			break;
 		default:
 			warning("Unknown type => %d", type);
@@ -136,12 +149,23 @@ void Design::paint(Graphics::Surface *surface, Patterns &patterns, bool mask) {
 				g_system->updateScreen();
 				g_system->delayMillis(50);
 			}
-			return;
+			break;
 		}
 
-		//g_system->copyRectToScreen(surface->getPixels(), surface->pitch, 0, 0, surface->w, surface->h);
+		//g_system->copyRectToScreen(_surface->getPixels(), _surface->pitch, 0, 0, _surface->w, _surface->h);
 		//((WageEngine *)g_engine)->processEvents();
 		//g_system->updateScreen();
+	}
+
+	for (int i = 0; i < _bounds->height(); i++) {
+		const byte *src = (const byte *)_surface->getBasePtr(0, i);
+		byte *dst = (byte *)surface->getBasePtr(0, i);
+		for (int j = 0; j < _bounds->width(); j++) {
+			if (*src != kColorGreen)
+				*dst = *src;
+			src++;
+			dst++;
+		}
 	}
 }
 

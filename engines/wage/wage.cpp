@@ -87,15 +87,16 @@ WageEngine::~WageEngine() {
 }
 
 static byte palette[] = {
-	0, 0, 0,
-	0x80, 0x80, 0x80,
-	0xff, 0xff, 0xff
+	0, 0, 0,           // Black
+	0x80, 0x80, 0x80,  // Gray
+	0xff, 0xff, 0xff,  // White
+	0x00, 0xff, 0x00   // Green
 };
 
 Common::Error WageEngine::run() {
 	initGraphics(444, 333, true);
 
-	g_system->getPaletteManager()->setPalette(palette, 0, 3);
+	g_system->getPaletteManager()->setPalette(palette, 0, 4);
 
 	// Create debugger console. It requires GFX to be initialized
 	_console = new Console(this);

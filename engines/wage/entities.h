@@ -405,9 +405,6 @@ public:
 	void paint(Graphics::Surface *screen, int x, int y);
 
 	const char *getFontName();
-
-private:
-	Graphics::Surface *_surface;
 };
 
 class Sound {
