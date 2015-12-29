@@ -185,16 +185,10 @@ bool LabEngine::doCloseUp(const CloseData *closePtr) {
 	Common::Rect textRect;
 
 	if (getPlatform() != Common::kPlatformWindows) {
-		textRect.left = 0;
-		textRect.right = 319;
-		textRect.top = 0;
-		textRect.bottom = 165;
+		textRect = Common::Rect(0, 0, 319, 165);
 		luteRight = 124;
 	} else {
-		textRect.left = 2;
-		textRect.right = 317;
-		textRect.top = 2;
-		textRect.bottom = 165;
+		textRect = Common::Rect(2, 2, 317, 165);
 		luteRight = 128;
 	}
 
