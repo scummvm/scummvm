@@ -68,6 +68,7 @@ public:
 	}
 
     void paint(Graphics::Surface *canvas, Patterns &patterns, bool mask);
+	static void drawFilledRect(Graphics::Surface *surface, Common::Rect &rect, int color, Patterns &patterns, byte fillType);
 
 private:
 	byte *_data;
@@ -90,7 +91,7 @@ private:
 	void drawPolygonScan(int *polyX, int *polyY, int npoints, Common::Rect &bbox, int color,
 									void (*plotProc)(int, int, int, void *), void *data);
 	void drawEllipse(int x0, int y0, int x1, int y1, bool filled, void (*plotProc)(int, int, int, void *), void *data);
-	void drawHLine(int x1, int x2, int y, int color, void (*plotProc)(int, int, int, void *), void *data);
+	static void drawHLine(int x1, int x2, int y, int color, void (*plotProc)(int, int, int, void *), void *data);
 	void drawVLine(int x, int y1, int y2, int color, void (*plotProc)(int, int, int, void *), void *data);
 	void drawThickLine (int x1, int y1, int x2, int y2, int thick, int color,
 									void (*plotProc)(int, int, int, void *), void *data);

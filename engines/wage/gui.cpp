@@ -59,10 +59,18 @@ enum {
 	kMenuItemHeight = 19
 };
 
+byte checkers[8] = { 0x55, 0xaa, 0x55, 0xaa, 0x55, 0xaa, 0x55, 0xaa };
+
 Gui::Gui() {
 	_scene = NULL;
 	_sceneDirty = true;
 	_screen.create(g_system->getWidth(), g_system->getHeight(), Graphics::PixelFormat::createFormatCLUT8());
+
+	Patterns p;
+	p.push_back(checkers);
+	Common::Rect r(0, 0, _screen.w, _screen.h);
+
+	Design::drawFilledRect(&_screen, r, kColorBlack, p, 1);
 }
 
 Gui::~Gui() {
