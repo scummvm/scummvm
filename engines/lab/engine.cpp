@@ -159,9 +159,7 @@ void LabEngine::perFlipButton(uint16 buttonId) {
 	for (ButtonList::iterator button = _moveButtonList.begin(); button != _moveButtonList.end(); ++button) {
 		Button *topButton = *button;
 		if (topButton->_buttonId == buttonId) {
-			Image *tmpImage = topButton->_image;
-			topButton->_image = topButton->_altImage;
-			topButton->_altImage = tmpImage;
+			SWAP<Image *>(topButton->_image, topButton->_altImage);
 
 			if (!_alternate)
 				topButton->_image->drawImage(topButton->_x, topButton->_y);
