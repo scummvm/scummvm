@@ -159,7 +159,7 @@ void Design::paint(Graphics::Surface *surface, Patterns &patterns, bool mask, in
 
 	for (int i = 0; i < _bounds->height(); i++) {
 		const byte *src = (const byte *)_surface->getBasePtr(0, i);
-		byte *dst = (byte *)surface->getBasePtr(0, i);
+		byte *dst = (byte *)surface->getBasePtr(x, y+i);
 		for (int j = 0; j < _bounds->width(); j++) {
 			if (*src != kColorGreen)
 				*dst = *src;

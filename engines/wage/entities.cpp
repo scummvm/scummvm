@@ -110,7 +110,7 @@ Scene::~Scene() {
 }
 
 void Scene::paint(Graphics::Surface *surface, int x, int y) {
-	Common::Rect r(0, 0, _design->getBounds()->width(), _design->getBounds()->height());
+	Common::Rect r(x + 5, y + 5, _design->getBounds()->width() + x - 10, _design->getBounds()->height() + y - 10);
 	surface->fillRect(r, kColorWhite);
 
 	_design->paint(surface, ((WageEngine *)g_engine)->_world->_patterns, false, x, y);

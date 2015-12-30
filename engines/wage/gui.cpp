@@ -103,7 +103,7 @@ void Gui::drawBox(Graphics::Surface *g, int x, int y, int w, int h) {
 }
 
 void Gui::fillRect(Graphics::Surface *g, int x, int y, int w, int h) {
-	Common::Rect r(x, y, x + w + 1, y + h + 1);
+	Common::Rect r(x, y, x + w, y + h);
 
 	g->fillRect(r, kColorBlack);
 }
@@ -143,9 +143,9 @@ void Gui::paintBorder(Graphics::Surface *g, int x, int y, int width, int height,
 			for (int yy = 0; yy < ARROW_H; yy++) {
 				for (int xx = 0; xx < ARROW_W; xx++) {
 					if (arrowPixels[yy][xx] != 0) {
-						g->hLine(x1+xx, y1+yy, x1+xx+1, kColorBlack);
+						g->hLine(x1+xx, y1+yy, x1+xx, kColorBlack);
 					} else {
-						g->hLine(x1+xx, y1+yy, x1+xx+1, kColorWhite);
+						g->hLine(x1+xx, y1+yy, x1+xx, kColorWhite);
 					}
 				}
 			}
@@ -154,9 +154,9 @@ void Gui::paintBorder(Graphics::Surface *g, int x, int y, int width, int height,
 			for (int yy = 0; yy < ARROW_H; yy++) {
 				for (int xx = 0; xx < ARROW_W; xx++) {
 					if (arrowPixels[ARROW_H-yy-1][xx] != 0) {
-						g->hLine(x1+xx, y1+yy, x1+xx+1, kColorBlack);
+						g->hLine(x1+xx, y1+yy, x1+xx, kColorBlack);
 					} else {
-						g->hLine(x1+xx, y1+yy, x1+xx+1, kColorWhite);
+						g->hLine(x1+xx, y1+yy, x1+xx, kColorWhite);
 					}
 				}
 			}
