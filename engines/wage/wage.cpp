@@ -165,8 +165,8 @@ void WageEngine::setMenu(String soundName) {
 	warning("STUB: WageEngine::setMenu");
 }
 
-void WageEngine::appendText(String str) {
-	warning("STUB: WageEngine::appendText(%s)", str.c_str());
+void WageEngine::appendText(String &str) {
+	_gui->appendText(str);
 }
 
 Obj *WageEngine::getOffer() {

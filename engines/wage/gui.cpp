@@ -83,6 +83,11 @@ void Gui::setScene(Scene *scene) {
 	_scene = scene;
 }
 
+void Gui::appendText(String &str) {
+	_out += str;
+	_out += '\n';
+}
+
 void Gui::draw() {
 	if (_scene != NULL && _sceneDirty) {
 		_scene->paint(&_screen, 0, kMenuHeight);
@@ -92,11 +97,12 @@ void Gui::draw() {
 		_sceneDirty = false;
 	}
 
+	// Render console
 	int sceneW = _scene->_design->getBounds()->width();
 	paintBorder(&_screen, sceneW, kMenuHeight, _screen.w - sceneW, _scene->_design->getBounds()->height(),
 			true, true, true, false);
 
-
+	// Blit to screen
 	g_system->copyRectToScreen(_screen.getPixels(), _screen.pitch, 0, 0, _screen.w, _screen.h);
 }
 

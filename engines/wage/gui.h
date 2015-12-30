@@ -60,6 +60,7 @@ public:
 
 	void draw();
 	void setScene(Scene *scene);
+	void appendText(Common::String &str);
 
 private:
 	void paintBorder(Graphics::Surface *g, int x, int y, int width, int height,
@@ -72,6 +73,8 @@ private:
 	Graphics::Surface _screen;
 	Scene *_scene;
 	bool _sceneDirty;
+
+	Common::String _out;
 };
 
 } // End of namespace Wage
