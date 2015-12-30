@@ -87,10 +87,15 @@ void Gui::draw() {
 	if (_scene != NULL && _sceneDirty) {
 		_scene->paint(&_screen, 0, kMenuHeight);
 		paintBorder(&_screen, 0, kMenuHeight, _scene->_design->getBounds()->width(), _scene->_design->getBounds()->height(),
-				true, true, true, false);
+				false, false, false, false);
 
 		_sceneDirty = false;
 	}
+
+	int sceneW = _scene->_design->getBounds()->width();
+	paintBorder(&_screen, sceneW, kMenuHeight, _screen.w - sceneW, _scene->_design->getBounds()->height(),
+			true, true, true, false);
+
 
 	g_system->copyRectToScreen(_screen.getPixels(), _screen.pitch, 0, 0, _screen.w, _screen.h);
 }
