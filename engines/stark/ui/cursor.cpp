@@ -102,7 +102,7 @@ void Cursor::render() {
 	_gfx->setScreenViewport(true); // The cursor is drawn unscaled
 	if (_cursorImage) {
 		_cursorImage->setFadeLevel(_fadeLevel);
-		_cursorImage->render(_mousePos, false);
+		_cursorImage->render(_mousePos, true);
 	}
 	if (_mouseText) {
 		// TODO: Should probably query the image for the width of the cursor
