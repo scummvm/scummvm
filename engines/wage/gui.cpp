@@ -56,7 +56,8 @@ namespace Wage {
 enum {
 	kMenuHeight = 19,
 	kMenuPadding = 6,
-	kMenuItemHeight = 19
+	kMenuItemHeight = 19,
+	kBorderWidth = 17
 };
 
 byte checkers[8] = { 0x55, 0xaa, 0x55, 0xaa, 0x55, 0xaa, 0x55, 0xaa };
@@ -99,6 +100,10 @@ void Gui::draw() {
 
 	// Render console
 	int sceneW = _scene->_design->getBounds()->width();
+	int consoleW = _screen.w - sceneW - 2 * kBorderWidth;
+	int consoleH = _scene->_design->getBounds()->height() - 2 * kBorderWidth;
+
+	renderConsole(&_screen, sceneW + kBorderWidth, kMenuHeight + kBorderWidth, consoleW, consoleH);
 	paintBorder(&_screen, sceneW, kMenuHeight, _screen.w - sceneW, _scene->_design->getBounds()->height(),
 			true, true, true, false);
 
@@ -132,7 +137,7 @@ const int arrowPixels[ARROW_H][ARROW_W] = {
 
 void Gui::paintBorder(Graphics::Surface *g, int x, int y, int width, int height,
 			bool active, bool scrollable, bool closeable, bool closeBoxPressed) {
-	int size = 17;
+	const int size = kBorderWidth;
 	drawBox(g, x, y, size, size);
 	drawBox(g, x+width-size-1, y, size, size);
 	drawBox(g, x+width-size-1, y+height-size-1, size, size);
@@ -198,6 +203,23 @@ void Gui::paintBorder(Graphics::Surface *g, int x, int y, int width, int height,
 		g.setClip(clip);
 	}
 #endif
+}
+
+void Gui::renderConsole(Graphics::Surface *g, int x, int y, int width, int height) {
+	bool fullRedraw = false;
+	Common::Rect fullR(0, 0, width, height);
+
+	if (_console.w != width || _console.h != height) {
+		_console.free();
+
+		_console.create(width, height, Graphics::PixelFormat::createFormatCLUT8());
+		fullRedraw = true;
+	}
+
+	if (fullRedraw)
+		_console.fillRect(fullR, kColorWhite);
+
+	g->copyRectToSurface(_console, x, y, fullR);
 }
 
 
