@@ -206,43 +206,31 @@ each individual bug).
 ---- ----------------
 At the moment the following games have been reported to work, and should
 be playable to the end:
+(A more detailed compatibility list of the supported games can be found here
+<http://www.scummvm.org/compatibility/>)
 
-SCUMM Games by LucasArts:
-     Day of the Tentacle                         [tentacle]
-     Full Throttle                               [ft]
-     Indiana Jones and the Fate of Atlantis      [atlantis]
+LucasArts (SCUMM) Games:
+     Maniac Mansion                              [maniac]
+     Zak McKracken and the Alien Mindbenders     [zak]
      Indiana Jones and the Last Crusade          [indy3]
      Loom                                        [loom]
-     Maniac Mansion                              [maniac]
-     Monkey Island 2: LeChuck's Revenge          [monkey2]
-     Sam & Max Hit the Road                      [samnmax]
-     The Curse of Monkey Island                  [comi]
-     The Dig                                     [dig]
+     Passport to Adventure                       [pass]
      The Secret of Monkey Island                 [monkey]
-     Zak McKracken and the Alien Mindbenders     [zak]
+     Monkey Island 2: LeChuck's Revenge          [monkey2]
+     Indiana Jones and the Fate of Atlantis      [atlantis]
+     Day of the Tentacle                         [tentacle]
+     Sam & Max Hit the Road                      [samnmax]
+     Full Throttle                               [ft]
+     The Dig                                     [dig]
+     The Curse of Monkey Island                  [comi]
 
-AGI and preAGI Games by Sierra:
-     Fanmade Games                               [agi-fanmade]
-     Gold Rush!                                  [goldrush]
-     King's Quest I                              [kq1]
-     King's Quest II                             [kq2]
-     King's Quest III                            [kq3]
-     King's Quest IV                             [kq4]
-     Leisure Suit Larry in the Land of the
-     Lounge Lizards                              [lsl1]
-     Manhunter 1: New York                       [mh1]
-     Manhunter 2: San Francisco                  [mh2]
-     Mickey's Space Adventure                    [mickey]
-     Mixed-Up Mother Goose                       [mixedup]
-     Police Quest I: In Pursuit of the Death
-     Angel                                       [pq1]
-     Space Quest I: The Sarien Encounter         [sq1]
-     Space Quest II: Vohaul's Revenge            [sq2]
-     The Black Cauldron                          [bc]
-     Troll's Tale                                [troll]
-     Winnie the Pooh in the Hundred Acre Wood    [winnie]
+Activision (MADE) Games:
+     Leather Goddesses of Phobos 2               [lgop2]
+     The Manhole                                 [manhole]
+     Return to Zork                              [rtz]
+     Rodney's Funscreen                          [rodney]
 
-AGOS Games by Adventuresoft/Horrorsoft:
+Adventuresoft/Horrorsoft (AGOS) Games:
      Elvira - Mistress of the Dark               [elvira1]
      Elvira II - The Jaws of Cerberus            [elvira2]
      Personal Nightmare                          [pn]
@@ -259,15 +247,7 @@ AGOS Games by Adventuresoft/Horrorsoft:
      The Feeble Files                            [feeble]
      Waxworks                                    [waxworks]
 
-Composer Games by Animation Magic:
-     Darby the Dragon                            [darby]
-     Gregory and the Hot Air Balloon             [gregory]
-     Magic Tales: Liam Finds a Story             [liam]
-     Sleeping Cub's Test of Courage              [sleepingcub]
-     The Princess and the Crab                   [princess]
-
-GOB Games by Coktel Vision:
-     Bambou le sauveur de la jungle              [bambou]
+Coktel Vision (GOB) Games:
      Bargon Attack                               [bargon]
      Fascination                                 [fascination]
      Geisha                                      [geisha]
@@ -276,79 +256,40 @@ GOB Games by Coktel Vision:
      Goblins 3                                   [gob3]
      Lost in Time                                [lostintime]
      Once Upon A Time: Little Red Riding Hood    [littlered]
+     Playtoons: Bambou le sauveur de la jungle   [bambou]
      The Bizarre Adventures of Woodruff
          and the Schnibble                       [woodruff]
      Urban Runner                                [urban]
      Ween: The Prophecy                          [ween]
 
-Living Books Games:
-     Aesop's Fables: The Tortoise and the Hare   [tortoise]
-     Arthur's Birthday                           [arthurbday]
-     Arthur's Teacher Trouble                    [arthur]
-     Dr. Seuss's ABC                             [seussabc]
-     Green Eggs and Ham                          [greeneggs]
-     Harry and the Haunted House                 [harryhh]
-     Just Grandma and Me                         [grandma]
-     Little Monster at School                    [lilmonster]
-     Ruff's Bone                                 [ruff]
-     Sheila Rae, the Brave                       [sheila]
-     Stellaluna                                  [stellaluna]
-     The Berenstain Bears Get in a Fight         [bearfight]
-     The Berenstain Bears in the Dark            [beardark]
-     The New Kid on the Block                    [newkid]
-
-MADE Games by Activision:
-     Leather Goddesses of Phobos 2               [lgop2]
-     Return to Zork                              [rtz]
-     Rodney's Funscreen                          [rodney]
-     The Manhole                                 [manhole]
-
-Other Games:
-     3 Skulls of the Toltecs                     [toltecs]
+Revolution Software (Various) Games:
      Beneath a Steel Sky                         [sky]
-     Blue Force                                  [blueforce]
      Broken Sword: The Shadow of the Templars    [sword1]
      Broken Sword II: The Smoking Mirror         [sword2]
-     Bud Tucker in Double Trouble                [tucker]
-     Cruise for a Corpse                         [cruise]
-     Discworld                                   [dw]
-     Discworld 2: Missing Presumed ...!?         [dw2]
-     Dragon History                              [draci]
-     Drascula: The Vampire Strikes Back          [drascula]
-     DreamWeb                                    [dreamweb]
-     Eye of the Beholder                         [eob]
-     Eye of the Beholder II: The Legend of
-         Darkmoon                                [eob2]
-     Flight of the Amazon Queen                  [queen]
-     Future Wars                                 [fw]
-     Hopkins FBI                                 [hopkins]
-     Hugo's House of Horrors                     [hugo1]
-     Hugo 2: Whodunit?                           [hugo2]
-     Hugo 3: Jungle of Doom                      [hugo3]
-     I Have No Mouth, and I Must Scream          [ihnm]
-     Inherit the Earth: Quest for the Orb        [ite]
-     Lands of Lore: The Throne of Chaos          [lol]
      Lure of the Temptress                       [lure]
-     Mortville Manor                             [mortevielle]
-     Nippon Safes Inc.                           [nippon]
-     Return to Ringworld                         [ringworld2]
-     Ringworld: Revenge Of The Patriarch         [ringworld]
-     Sfinx                                       [sfinx]
-     Soltys                                      [soltys]
-     TeenAgent                                   [teenagent]
-     The 7th Guest                               [t7g]
-     The Journeyman Project: Pegasus Prime       [pegasus]
-     The Legend of Kyrandia                      [kyra1]
-     The Legend of Kyrandia: The Hand of Fate    [kyra2]
-     The Legend of Kyrandia: Malcolm's Revenge   [kyra3]
-     The Neverhood                               [neverhood]
-     Tony Tough and the Night of Roasted Moths   [tony]
-     Toonstruck                                  [toon]
-     Touche: The Adventures of the Fifth
-         Musketeer                               [touche]
-     Voyeur                                      [voyeur]
 
-SCI Games by Sierra Entertainment:
+Sierra (AGI/preAGI) Games:
+     The Black Cauldron                          [bc]
+     Gold Rush!                                  [goldrush]
+     King's Quest I                              [kq1]
+     King's Quest II                             [kq2]
+     King's Quest III                            [kq3]
+     King's Quest IV                             [kq4]
+     Leisure Suit Larry in the Land of the
+     Lounge Lizards                              [lsl1]
+     Mixed-Up Mother Goose                       [mixedup]
+     Manhunter 1: New York                       [mh1]
+     Manhunter 2: San Francisco                  [mh2]
+     Police Quest I: In Pursuit of the Death
+     Angel                                       [pq1]
+     Space Quest I: The Sarien Encounter         [sq1]
+     Space Quest II: Vohaul's Revenge            [sq2]
+     Fanmade Games                               [agi-fanmade]
+     Mickey's Space Adventure                    [mickey]
+     Troll's Tale                                [troll]
+     Winnie the Pooh in the Hundred Acre Wood    [winnie]
+
+Sierra (SCI) Games:
      Castle of Dr. Brain                         [castlebrain]
      Codename: ICEMAN                            [iceman]
      Conquests of Camelot                        [camelot]
@@ -389,14 +330,59 @@ SCI Games by Sierra Entertainment:
      Space Quest V                               [sq5]
      The Island of Dr. Brain                     [islandbrain]
 
-Wintermute Games:
+Other Games:
+     3 Skulls of the Toltecs                     [toltecs]
+     Amazon: Guardians of Eden                   [access]
+     Beavis and Butt-head in Virtual Stupidity   [bbvs]
+     Blue Force                                  [blueforce]
+     Broken Sword: The Return of the Templars    [sword25]
+     Bud Tucker in Double Trouble                [tucker]
      Chivalry is Not Dead                        [chivalry]
-
-Z-Vision Games by Activision:
-     Zork Nemesis: The Forbidden Lands           [znemesis]
+     Cruise for a Corpse                         [cruise]
+     DreamWeb                                    [dreamweb]
+     Discworld                                   [dw]
+     Discworld 2: Missing Presumed ...!?         [dw2]
+     Dragon History                              [draci]
+     Drascula: The Vampire Strikes Back          [drascula]
+     Eye of the Beholder                         [eob]
+     Eye of the Beholder II: The Legend of
+         Darkmoon                                [eob2]
+     Flight of the Amazon Queen                  [queen]
+     Future Wars                                 [fw]
+     Hopkins FBI                                 [hopkins]
+     Hugo's House of Horrors                     [hugo1]
+     Hugo 2: Whodunit?                           [hugo2]
+     Hugo 3: Jungle of Doom                      [hugo3]
+     I Have No Mouth, and I Must Scream          [ihnm]
+     Inherit the Earth: Quest for the Orb        [ite]
+     Lands of Lore: The Throne of Chaos          [lol]
+     Mortville Manor                             [mortevielle]
+     Nippon Safes Inc.                           [nippon]
+     Rex Nebular and the Cosmic Gender Bender	   [nebular]
+     Ringworld: Revenge Of The Patriarch         [ringworld]
+     Return to Ringworld                         [ringworld2]
+     Sfinx                                       [sfinx]
+     Soltys                                      [soltys]
+     The Journeyman Project: Pegasus Prime       [pegasus]
+     The Legend of Kyrandia                      [kyra1]
+     The Legend of Kyrandia: The Hand of Fate    [kyra2]
+     The Legend of Kyrandia: Malcolm's Revenge   [kyra3]
+     The Lost Files of Sherlock Holmes: The Case
+        of the Serrated Scalpel                  [scalpel]
+     The Lost Files of Sherlock Holmes: The Case
+        of the Rose Tattoo                       [rosetattoo]
+     The Neverhood                               [neverhood]
+     The 7th Guest                               [t7g]
+     TeenAgent                                   [teenagent]
+     Toonstruck                                  [toon]
+     Tony Tough and the Night of Roasted Moths   [tony]
+     Touche: The Adventures of the Fifth
+         Musketeer                               [touche]
+     Voyeur                                      [voyeur]
      Zork: Grand Inquisitor                      [zgi]
+     Zork Nemesis: The Forbidden Lands           [znemesis]
 
-SCUMM Games by Humongous Entertainment:
+Humongous Entertainment (SCUMM) Games:
      Backyard Baseball                           [baseball]
      Backyard Baseball 2001                      [baseball2001]
      Backyard Baseball 2003                      [baseball2003]
@@ -436,12 +422,12 @@ SCUMM Games by Humongous Entertainment:
          From Your Head to Your Feet             [pajama3]
      Pajama Sam's Lost & Found                   [lost]
      Pajama Sam's Sock Works                     [socks]
-     Putt-Putt Joins the Parade                  [puttputt]
+     Putt-Putt Enters the Race                   [puttrace]
      Putt-Putt Goes to the Moon                  [puttmoon]
+     Putt-Putt Joins the Circus                  [puttcircus]
+     Putt-Putt Joins the Parade                  [puttputt]
      Putt-Putt Saves the Zoo                     [puttzoo]
      Putt-Putt Travels Through Time              [putttime]
-     Putt-Putt Enters the Race                   [puttrace]
-     Putt-Putt Joins the Circus                  [puttcircus]
      Putt-Putt and Pep's Balloon-O-Rama          [balloon]
      Putt-Putt and Pep's Dog on a Stick          [dog]
      Putt-Putt & Fatty Bear's Activity Pack      [activity]
@@ -461,6 +447,29 @@ and view the compatibility chart.
      Backyard Soccer MLS                         [soccermls]
      Backyard Soccer 2004                        [soccer2004]
      Blue's Treasure Hunt                        [BluesTreasureHunt]
+
+Animation Magic (Composer) Games:
+     Darby the Dragon                            [darby]
+     Gregory and the Hot Air Balloon             [gregory]
+     Magic Tales: Liam Finds a Story             [liam]
+     The Princess and the Crab                   [princess]
+     Sleeping Cub's Test of Courage              [sleepingcub]
+
+Living Books Games:
+     Aesop's Fables: The Tortoise and the Hare   [tortoise]
+     Arthur's Birthday                           [arthurbday]
+     Arthur's Teacher Trouble                    [arthur]
+     Dr. Seuss's ABC                             [seussabc]
+     Green Eggs and Ham                          [greeneggs]
+     Harry and the Haunted House                 [harryhh]
+     Just Grandma and Me                         [grandma]
+     Little Monster at School                    [lilmonster]
+     Ruff's Bone                                 [ruff]
+     Sheila Rae, the Brave                       [sheila]
+     Stellaluna                                  [stellaluna]
+     The Berenstain Bears Get in a Fight         [bearfight]
+     The Berenstain Bears in the Dark            [beardark]
+     The New Kid on the Block                    [newkid]
 
 The following games are based on the SCUMM engine, but NOT supported
 by ScummVM (yet):
