@@ -382,7 +382,12 @@ public:
 		DSF_Y_FLIPPED  = 0x02,
 		DSF_SCALE      = 0x04,
 		DSF_WND_COORDS = 0x10,
-		DSF_CENTER     = 0x20
+		DSF_CENTER     = 0x20,
+
+		DSF_SHAPE_FADING		= 0x100,
+		DSF_TRANSPARENCY		= 0x1000,
+		DSF_BACKGROUND_FADING	= 0x2000,
+		DSF_CUSTOM_PALETTE		= 0x8000
 	};
 
 	enum FontId {
@@ -668,12 +673,12 @@ protected:
 	DsLineFunc _dsProcessLine;
 	DsPlotFunc _dsPlot;
 
-	const uint8 *_dsTable;
-	int _dsTableLoopCount;
-	const uint8 *_dsTable2;
-	const uint8 *_dsTable3;
-	const uint8 *_dsTable4;
-	const uint8 *_dsTable5;
+	const uint8 *_dsShapeFadingTable;
+	int _dsShapeFadingLevel;
+	const uint8 *_dsColorTable;
+	const uint8 *_dsTransparencyTable1;
+	const uint8 *_dsTransparencyTable2;
+	const uint8 *_dsBackgroundFadingTable;
 	int _dsDrawLayer;
 	uint8 *_dsDstPage;
 	int _dsTmpWidth;

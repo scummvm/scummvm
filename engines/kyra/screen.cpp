@@ -1388,28 +1388,28 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 		1, 3, 2, 5, 4, 3, 2, 1
 	};
 
-	_dsTable = 0;
-	_dsTableLoopCount = 0;
-	_dsTable2 = 0;
-	_dsTable3 = 0;
-	_dsTable4 = 0;
-	_dsTable5 = 0;
+	_dsShapeFadingTable = 0;
+	_dsShapeFadingLevel = 0;
+	_dsColorTable = 0;
+	_dsTransparencyTable1 = 0;
+	_dsTransparencyTable2 = 0;
+	_dsBackgroundFadingTable = 0;
 	_dsDrawLayer = 0;
 
-	if (flags & 0x8000) {
-		_dsTable2 = va_arg(args, uint8 *);
+	if (flags & DSF_CUSTOM_PALETTE) {
+		_dsColorTable = va_arg(args, uint8 *);
 	}
 
-	if (flags & 0x100) {
-		_dsTable = va_arg(args, uint8 *);
-		_dsTableLoopCount = va_arg(args, int);
-		if (!_dsTableLoopCount)
-			flags &= ~0x100;
+	if (flags & DSF_SHAPE_FADING) {
+		_dsShapeFadingTable = va_arg(args, uint8 *);
+		_dsShapeFadingLevel = va_arg(args, int);
+		if (!_dsShapeFadingLevel)
+			flags &= ~DSF_SHAPE_FADING;
 	}
 
-	if (flags & 0x1000) {
-		_dsTable3 = va_arg(args, uint8 *);
-		_dsTable4 = va_arg(args, uint8 *);
+	if (flags & DSF_TRANSPARENCY) {
+		_dsTransparencyTable1 = va_arg(args, uint8 *);
+		_dsTransparencyTable2 = va_arg(args, uint8 *);
 	}
 
 	if (flags & 0x200) {
@@ -1433,8 +1433,8 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 		_dsScaleH = 0x100;
 	}
 
-	if ((flags & 0x2000) && _vm->game() != GI_KYRA1)
-		_dsTable5 = va_arg(args, uint8 *);
+	if ((flags & DSF_BACKGROUND_FADING) && _vm->game() != GI_KYRA1)
+		_dsBackgroundFadingTable = va_arg(args, uint8 *);
 
 	va_end(args);
 
@@ -1571,7 +1571,7 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 	int colorTableColors = ((_vm->game() != GI_KYRA1) && (shapeFlags & 4)) ? *src++ : 16;
 
 	if (!(flags & 0x8000) && (shapeFlags & 1))
-		_dsTable2 = src;
+		_dsColorTable = src;
 
 	if (flags & 0x400)
 		src += colorTableColors;
@@ -1924,8 +1924,8 @@ void Screen::drawShapePlotType0(uint8 *dst, uint8 cmd) {
 }
 
 void Screen::drawShapePlotType1(uint8 *dst, uint8 cmd) {
-	for (int i = 0; i < _dsTableLoopCount; ++i)
-		cmd = _dsTable[cmd];
+	for (int i = 0; i < _dsShapeFadingLevel; ++i)
+		cmd = _dsShapeFadingTable[cmd];
 
 	if (cmd)
 		*dst = cmd;
@@ -1933,21 +1933,21 @@ void Screen::drawShapePlotType1(uint8 *dst, uint8 cmd) {
 
 void Screen::drawShapePlotType3_7(uint8 *dst, uint8 cmd) {
 	cmd = *dst;
-	for (int i = 0; i < _dsTableLoopCount; ++i)
-		cmd = _dsTable[cmd];
+	for (int i = 0; i < _dsShapeFadingLevel; ++i)
+		cmd = _dsShapeFadingTable[cmd];
 
 	if (cmd)
 		*dst = cmd;
 }
 
 void Screen::drawShapePlotType4(uint8 *dst, uint8 cmd) {
-	*dst = _dsTable2[cmd];
+	*dst = _dsColorTable[cmd];
 }
 
 void Screen::drawShapePlotType5(uint8 *dst, uint8 cmd) {
-	cmd = _dsTable2[cmd];
-	for (int i = 0; i < _dsTableLoopCount; ++i)
-		cmd = _dsTable[cmd];
+	cmd = _dsColorTable[cmd];
+	for (int i = 0; i < _dsShapeFadingLevel; ++i)
+		cmd = _dsShapeFadingTable[cmd];
 
 	if (cmd)
 		*dst = cmd;
@@ -1959,7 +1959,7 @@ void Screen::drawShapePlotType6(uint8 *dst, uint8 cmd) {
 		cmd = dst[_drawShapeVar3];
 		t &= 0xFF;
 	} else {
-		cmd = _dsTable2[cmd];
+		cmd = _dsColorTable[cmd];
 	}
 
 	_drawShapeVar4 = t;
@@ -1981,8 +1981,8 @@ void Screen::drawShapePlotType9(uint8 *dst, uint8 cmd) {
 	if (_dsDrawLayer < t) {
 		cmd = _shapePages[1][relOffs];
 	} else {
-		for (int i = 0; i < _dsTableLoopCount; ++i)
-			cmd = _dsTable[cmd];
+		for (int i = 0; i < _dsShapeFadingLevel; ++i)
+			cmd = _dsShapeFadingTable[cmd];
 	}
 
 	if (cmd)
@@ -1997,8 +1997,8 @@ void Screen::drawShapePlotType11_15(uint8 *dst, uint8 cmd) {
 		cmd = _shapePages[1][relOffs];
 	} else {
 		cmd = *dst;
-		for (int i = 0; i < _dsTableLoopCount; ++i)
-			cmd = _dsTable[cmd];
+		for (int i = 0; i < _dsShapeFadingLevel; ++i)
+			cmd = _dsShapeFadingTable[cmd];
 	}
 
 	if (cmd)
@@ -2011,7 +2011,7 @@ void Screen::drawShapePlotType12(uint8 *dst, uint8 cmd) {
 	if (_dsDrawLayer < t) {
 		cmd = _shapePages[1][relOffs];
 	} else {
-		cmd = _dsTable2[cmd];
+		cmd = _dsColorTable[cmd];
 	}
 
 	*dst = cmd;
@@ -2023,9 +2023,9 @@ void Screen::drawShapePlotType13(uint8 *dst, uint8 cmd) {
 	if (_dsDrawLayer < t) {
 		cmd = _shapePages[1][relOffs];
 	} else {
-		cmd = _dsTable2[cmd];
-		for (int i = 0; i < _dsTableLoopCount; ++i)
-			cmd = _dsTable[cmd];
+		cmd = _dsColorTable[cmd];
+		for (int i = 0; i < _dsShapeFadingLevel; ++i)
+			cmd = _dsShapeFadingTable[cmd];
 	}
 
 	if (cmd)
@@ -2043,7 +2043,7 @@ void Screen::drawShapePlotType14(uint8 *dst, uint8 cmd) {
 			cmd = dst[_drawShapeVar3];
 			t &= 0xFF;
 		} else {
-			cmd = _dsTable2[cmd];
+			cmd = _dsColorTable[cmd];
 		}
 	}
 
@@ -2052,29 +2052,29 @@ void Screen::drawShapePlotType14(uint8 *dst, uint8 cmd) {
 }
 
 void Screen::drawShapePlotType16(uint8 *dst, uint8 cmd) {
-	uint8 tOffs = _dsTable3[cmd];
+	uint8 tOffs = _dsTransparencyTable1[cmd];
 	if (!(tOffs & 0x80))
-		cmd = _dsTable4[tOffs << 8 | *dst];
+		cmd = _dsTransparencyTable2[tOffs << 8 | *dst];
 	*dst = cmd;
 }
 
 void Screen::drawShapePlotType20(uint8 *dst, uint8 cmd) {
-	cmd = _dsTable2[cmd];
-	uint8 tOffs = _dsTable3[cmd];
+	cmd = _dsColorTable[cmd];
+	uint8 tOffs = _dsTransparencyTable1[cmd];
 	if (!(tOffs & 0x80))
-		cmd = _dsTable4[tOffs << 8 | *dst];
+		cmd = _dsTransparencyTable2[tOffs << 8 | *dst];
 
 	*dst = cmd;
 }
 
 void Screen::drawShapePlotType21(uint8 *dst, uint8 cmd) {
-	cmd = _dsTable2[cmd];
-	uint8 tOffs = _dsTable3[cmd];
+	cmd = _dsColorTable[cmd];
+	uint8 tOffs = _dsTransparencyTable1[cmd];
 	if (!(tOffs & 0x80))
-		cmd = _dsTable4[tOffs << 8 | *dst];
+		cmd = _dsTransparencyTable2[tOffs << 8 | *dst];
 
-	for (int i = 0; i < _dsTableLoopCount; ++i)
-		cmd = _dsTable[cmd];
+	for (int i = 0; i < _dsShapeFadingLevel; ++i)
+		cmd = _dsShapeFadingTable[cmd];
 
 	if (cmd)
 		*dst = cmd;
@@ -2082,23 +2082,23 @@ void Screen::drawShapePlotType21(uint8 *dst, uint8 cmd) {
 
 void Screen::drawShapePlotType33(uint8 *dst, uint8 cmd) {
 	if (cmd == 255) {
-		*dst = _dsTable5[*dst];
+		*dst = _dsBackgroundFadingTable[*dst];
 	} else {
-		for (int i = 0; i < _dsTableLoopCount; ++i)
-			cmd = _dsTable[cmd];
+		for (int i = 0; i < _dsShapeFadingLevel; ++i)
+			cmd = _dsShapeFadingTable[cmd];
 		if (cmd)
 			*dst = cmd;
 	}
 }
 
 void Screen::drawShapePlotType37(uint8 *dst, uint8 cmd) {
-	cmd = _dsTable2[cmd];
+	cmd = _dsColorTable[cmd];
 
 	if (cmd == 255) {
-		cmd = _dsTable5[*dst];
+		cmd = _dsBackgroundFadingTable[*dst];
 	} else {
-		for (int i = 0; i < _dsTableLoopCount; ++i)
-			cmd = _dsTable[cmd];
+		for (int i = 0; i < _dsShapeFadingLevel; ++i)
+			cmd = _dsShapeFadingTable[cmd];
 	}
 
 	if (cmd)
@@ -2106,18 +2106,18 @@ void Screen::drawShapePlotType37(uint8 *dst, uint8 cmd) {
 }
 
 void Screen::drawShapePlotType48(uint8 *dst, uint8 cmd) {
-	uint8 offs = _dsTable3[cmd];
+	uint8 offs = _dsTransparencyTable1[cmd];
 	if (!(offs & 0x80))
-		cmd = _dsTable4[(offs << 8) | *dst];
+		cmd = _dsTransparencyTable2[(offs << 8) | *dst];
 	*dst = cmd;
 }
 
 void Screen::drawShapePlotType52(uint8 *dst, uint8 cmd) {
-	cmd = _dsTable2[cmd];
-	uint8 offs = _dsTable3[cmd];
+	cmd = _dsColorTable[cmd];
+	uint8 offs = _dsTransparencyTable1[cmd];
 
 	if (!(offs & 0x80))
-		cmd = _dsTable4[(offs << 8) | *dst];
+		cmd = _dsTransparencyTable2[(offs << 8) | *dst];
 
 	*dst = cmd;
 }
