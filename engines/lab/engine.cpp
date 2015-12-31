@@ -28,8 +28,9 @@
  *
  */
 
-#include "lab/lab.h"
+#include "common/config-manager.h"
 
+#include "lab/lab.h"
 #include "lab/anim.h"
 #include "lab/dispman.h"
 #include "lab/eventman.h"
@@ -140,21 +141,28 @@ void LabEngine::freeScreens() {
 		delete _invImages[imgIdx];
 		_invImages[imgIdx] = nullptr;
 	}
+
+	// We can't use freeButtonList() here, because some buttons are shared
+	// between the two lists.
+	for (ButtonList::iterator buttonIter = _moveButtonList.begin(); buttonIter != _moveButtonList.end(); ++buttonIter) {
+		delete *buttonIter;
+	}
+	_moveButtonList.clear();
+
+	for (ButtonList::iterator buttonIter = _invButtonList.begin(); buttonIter != _invButtonList.end(); ++buttonIter) {
+		delete *buttonIter;
+	}
+	_invButtonList.clear();
 }
 
 void LabEngine::perFlipButton(uint16 buttonId) {
 	for (ButtonList::iterator button = _moveButtonList.begin(); button != _moveButtonList.end(); ++button) {
 		Button *topButton = *button;
 		if (topButton->_buttonId == buttonId) {
-			Image *tmpImage = topButton->_image;
-			topButton->_image = topButton->_altImage;
-			topButton->_altImage = tmpImage;
+			SWAP<Image *>(topButton->_image, topButton->_altImage);
 
-			if (!_alternate) {
-				_event->mouseHide();
+			if (!_alternate)
 				topButton->_image->drawImage(topButton->_x, topButton->_y);
-				_event->mouseShow();
-			}
 
 			break;
 		}
@@ -177,16 +185,10 @@ bool LabEngine::doCloseUp(const CloseData *closePtr) {
 	Common::Rect textRect;
 
 	if (getPlatform() != Common::kPlatformWindows) {
-		textRect.left = 0;
-		textRect.right = 319;
-		textRect.top = 0;
-		textRect.bottom = 165;
+		textRect = Common::Rect(0, 0, 319, 165);
 		luteRight = 124;
 	} else {
-		textRect.left = 2;
-		textRect.right = 317;
-		textRect.top = 2;
-		textRect.bottom = 165;
+		textRect = Common::Rect(2, 2, 317, 165);
 		luteRight = 128;
 	}
 
@@ -378,12 +380,6 @@ void LabEngine::decIncInv(uint16 *curInv, bool decreaseFl) {
 }
 
 void LabEngine::mainGameLoop() {
-	uint16 actionMode = 4;
-	uint16 curInv = kItemMap;
-
-	bool forceDraw = false;
-	bool gotMessage = true;
-
 	_graphics->setPalette(initColors, 8);
 
 	_closeDataPtr = nullptr;
@@ -405,8 +401,24 @@ void LabEngine::mainGameLoop() {
 	_graphics->_longWinInFront = false;
 	_graphics->drawPanel();
 
+	uint16 actionMode = 4;
 	perFlipButton(actionMode);
 
+	// Load saved slot from the launcher, if requested
+	if (ConfMan.hasKey("save_slot")) {
+		loadGame(ConfMan.getInt("save_slot"));
+
+		// Since the intro hasn't been shown, init the background music here
+		if (getPlatform() != Common::kPlatformAmiga)
+			_music->changeMusic("Music:BackGrou", false, false);
+		else
+			_music->changeMusic("Music:BackGround", false, false);
+		_music->checkRoomMusic();
+	}
+
+	uint16 curInv = kItemMap;
+	bool forceDraw = false;
+	bool gotMessage = true;
 	// Set up initial picture.
 	while (1) {
 		_event->processInput();
@@ -417,8 +429,6 @@ void LabEngine::mainGameLoop() {
 				_anim->stopDiff();
 				break;
 			}
-
-			_music->resumeBackMusic();
 
 			// Sees what kind of close up we're in and does the appropriate stuff, if any.
 			if (doCloseUp(_closeDataPtr)) {
@@ -478,7 +488,7 @@ void LabEngine::mainGameLoop() {
 		}
 
 		// Make sure we check the music at least after every message
-		updateMusicAndEvents();
+		updateEvents();
 		interfaceOn();
 		IntuiMessage *curMsg = _event->getMsg();
 		if (shouldQuit()) {
@@ -490,7 +500,7 @@ void LabEngine::mainGameLoop() {
 			// Does music load and next animation frame when you've run out of messages
 			gotMessage = false;
 			_music->checkRoomMusic();
-			updateMusicAndEvents();
+			updateEvents();
 			_anim->diffNextFrame();
 
 			if (_followingCrumbs) {
@@ -521,7 +531,7 @@ void LabEngine::showLab2Teaser() {
 	_graphics->readPict("P:End/L2In.1");
 
 	for (int i = 0; i < 120; i++) {
-		updateMusicAndEvents();
+		updateEvents();
 		waitTOF();
 	}
 
@@ -529,7 +539,7 @@ void LabEngine::showLab2Teaser() {
 	_graphics->readPict("P:End/Lost");
 
 	while (!_event->getMsg() && !shouldQuit()) {
-		updateMusicAndEvents();
+		updateEvents();
 		_anim->diffNextFrame();
 		waitTOF();
 	}
@@ -537,6 +547,10 @@ void LabEngine::showLab2Teaser() {
 
 bool LabEngine::processEvent(MessageClass tmpClass, uint16 code, uint16 qualifier, Common::Point tmpPos,
 			uint16 &curInv, IntuiMessage *curMsg, bool &forceDraw, uint16 buttonId, uint16 &actionMode) {
+
+	if (shouldQuit())
+		return false;
+
 	MessageClass msgClass = tmpClass;
 	Common::Point curPos = tmpPos;
 	uint16 oldDirection = 0;
@@ -550,18 +564,15 @@ bool LabEngine::processEvent(MessageClass tmpClass, uint16 code, uint16 qualifie
 
 	_anim->_doBlack = false;
 
-	if (shouldQuit())
-		return false;
-
-	if (msgClass == kMessageRawKey && !_graphics->_longWinInFront) {
-		return processKey(curMsg, msgClass, qualifier, curPos, curInv, forceDraw, code);
-	} else if (_graphics->_longWinInFront) {
+	if (_graphics->_longWinInFront) {
 		if (msgClass == kMessageRawKey || leftButtonClick || rightButtonClick) {
 			_graphics->_longWinInFront = false;
 			_graphics->drawPanel();
 			drawRoomMessage(curInv, _closeDataPtr);
 			_graphics->screenUpdate();
 		}
+	} else if (msgClass == kMessageRawKey) {
+		return processKey(curMsg, msgClass, qualifier, curPos, curInv, forceDraw, code);
 	} else if (msgClass == kMessageButtonUp) {
 		if (!_alternate)
 			processMainButton(curInv, lastInv, oldDirection, forceDraw, buttonId, actionMode);
@@ -652,7 +663,7 @@ bool LabEngine::processKey(IntuiMessage *curMsg, uint32 msgClass, uint16 &qualif
 
 		while (1) {
 			// Make sure we check the music at least after every message
-			updateMusicAndEvents();
+			updateEvents();
 			curMsg = _event->getMsg();
 
 			if (shouldQuit())
@@ -660,7 +671,7 @@ bool LabEngine::processKey(IntuiMessage *curMsg, uint32 msgClass, uint16 &qualif
 
 			if (!curMsg) {
 				// Does music load and next animation frame when you've run out of messages
-				updateMusicAndEvents();
+				updateEvents();
 				_anim->diffNextFrame();
 			} else if (curMsg->_msgClass == kMessageRawKey) {
 				if ((curMsg->_code == Common::KEYCODE_y) || (curMsg->_code == Common::KEYCODE_q)) {
@@ -692,9 +703,6 @@ bool LabEngine::processKey(IntuiMessage *curMsg, uint32 msgClass, uint16 &qualif
 }
 
 void LabEngine::processMainButton(uint16 &curInv, uint16 &lastInv, uint16 &oldDirection, bool &forceDraw, uint16 buttonId, uint16 &actionMode) {
-	uint16 newDir;
-	uint16 oldRoomNum;
-
 	switch (buttonId) {
 	case kButtonPickup:
 	case kButtonUse:
@@ -741,7 +749,7 @@ void LabEngine::processMainButton(uint16 &curInv, uint16 &lastInv, uint16 &oldDi
 		break;
 
 	case kButtonLeft:
-	case kButtonRight:
+	case kButtonRight: {
 		_closeDataPtr = nullptr;
 		if (buttonId == kButtonLeft)
 			drawStaticMessage(kTextTurnLeft);
@@ -751,17 +759,18 @@ void LabEngine::processMainButton(uint16 &curInv, uint16 &lastInv, uint16 &oldDi
 		_curFileName = " ";
 		oldDirection = _direction;
 
-		newDir = processArrow(_direction, buttonId - 6);
+		uint16 newDir = processArrow(_direction, buttonId - 6);
 		doTurn(_direction, newDir);
 		_anim->_doBlack = true;
 		_direction = newDir;
 		forceDraw = true;
 		mayShowCrumbIndicator();
+		}
 		break;
 
-	case kButtonForward:
+	case kButtonForward: {
 		_closeDataPtr = nullptr;
-		oldRoomNum = _roomNum;
+		int oldRoomNum = _roomNum;
 
 		if (doGoForward()) {
 			if (oldRoomNum == _roomNum)
@@ -819,6 +828,7 @@ void LabEngine::processMainButton(uint16 &curInv, uint16 &lastInv, uint16 &oldDi
 		}
 
 		mayShowCrumbIndicator();
+		}
 		break;
 
 	case kButtonMap:
@@ -832,8 +842,6 @@ void LabEngine::processMainButton(uint16 &curInv, uint16 &lastInv, uint16 &oldDi
 }
 
 void LabEngine::processAltButton(uint16 &curInv, uint16 &lastInv, uint16 buttonId, uint16 &actionMode) {
-	bool saveRestoreSuccessful = true;
-
 	_anim->_doBlack = true;
 
 	switch (buttonId) {
@@ -849,12 +857,12 @@ void LabEngine::processAltButton(uint16 &curInv, uint16 &lastInv, uint16 buttonI
 		drawRoomMessage(curInv, _closeDataPtr);
 		break;
 
-	case kButtonSaveLoad:
+	case kButtonSaveLoad: {
 		interfaceOff();
 		_anim->stopDiff();
 		_curFileName = " ";
 
-		saveRestoreSuccessful = saveRestoreGame();
+		bool saveRestoreSuccessful = saveRestoreGame();
 		_closeDataPtr = nullptr;
 		_mainDisplay = true;
 
@@ -867,6 +875,7 @@ void LabEngine::processAltButton(uint16 &curInv, uint16 &lastInv, uint16 buttonI
 			_graphics->drawMessage("Save/restore aborted", false);
 			_graphics->setPalette(initColors, 8);
 			_system->delayMillis(1000);
+		}
 		}
 		break;
 
@@ -994,8 +1003,8 @@ void LabEngine::performAction(uint16 actionMode, Common::Point curPos, uint16 &c
 			_closeDataPtr = tmpClosePtr;
 		} else if (curPos.y < (_utils->vgaScaleY(149) + _utils->svgaCord(2)))
 			drawStaticMessage(kTextNothing);
-	}
-			break;
+		}
+		break;
 
 	case 5:
 		if (_conditions->in(curInv)) {
@@ -1024,13 +1033,18 @@ void LabEngine::go() {
 		_msgFont = _resource->getFont("F:AvanteG.12");
 	else
 		_msgFont = _resource->getFont("F:Map.fon");
-	_event->mouseHide();
 
-	Intro *intro = new Intro(this);
-	intro->play();
-	delete intro;
+	// If the user has requested to load a game from the launcher, skip the intro
+	if (!ConfMan.hasKey("save_slot")) {
+		_event->mouseHide();
+		_introPlaying = true;
+		Intro *intro = new Intro(this);
+		intro->play();
+		delete intro;
+		_introPlaying = false;
+		_event->mouseShow();
+	}
 
-	_event->mouseShow();
 	mainGameLoop();
 
 	_graphics->freeFont(&_msgFont);
@@ -1135,9 +1149,7 @@ void LabEngine::mayShowCrumbIndicator() {
 		memcpy(imgData, dropCrumbsImageData, CRUMBSWIDTH * CRUMBSHEIGHT);
 		static Image dropCrumbsImage(CRUMBSWIDTH, CRUMBSHEIGHT, imgData, this);
 
-		_event->mouseHide();
 		dropCrumbsImage.drawMaskImage(612, 4);
-		_event->mouseShow();
 	}
 }
 
@@ -1177,9 +1189,7 @@ void LabEngine::mayShowCrumbIndicatorOff() {
 		memcpy(imgData, dropCrumbsOffImageData, CRUMBSWIDTH * CRUMBSHEIGHT);
 		static Image dropCrumbsOffImage(CRUMBSWIDTH, CRUMBSHEIGHT, imgData, this);
 
-		_event->mouseHide();
 		dropCrumbsOffImage.drawMaskImage(612, 4);
-		_event->mouseShow();
 	}
 }
 

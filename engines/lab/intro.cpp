@@ -72,7 +72,7 @@ void Intro::doPictText(const Common::String filename, bool isScreen) {
 	Common::String path = Common::String("Lab:rooms/Intro/") + filename;
 
 	uint timeDelay = (isScreen) ? 35 : 7;
-	_vm->updateMusicAndEvents();
+	_vm->updateEvents();
 
 	if (_quitIntro)
 		return;
@@ -83,10 +83,10 @@ void Intro::doPictText(const Common::String filename, bool isScreen) {
 	bool begin = true;
 
 	Common::File *textFile = _vm->_resource->openDataFile(path);
-	byte *textBuffer = new byte[textFile->size()];
+	char *textBuffer = new char[textFile->size()];
 	textFile->read(textBuffer, textFile->size());
 	delete textFile;
-	byte *curText = textBuffer;
+	const char *curText = textBuffer;
 
 	while (1) {
 		if (drawNextText) {
@@ -98,10 +98,10 @@ void Intro::doPictText(const Common::String filename, bool isScreen) {
 			if (isScreen) {
 				_vm->_graphics->rectFillScaled(10, 10, 310, 190, 7);
 
-				curText += _vm->_graphics->flowText(_font, _vm->_isHiRes ? 0 : -1, 5, 7, false, false, true, true, _vm->_utils->vgaRectScale(14, 11, 306, 189), (char *)curText);
+				curText += _vm->_graphics->flowText(_font, _vm->_isHiRes ? 0 : -1, 5, 7, false, false, true, true, _vm->_utils->vgaRectScale(14, 11, 306, 189), curText);
 				_vm->_graphics->fade(true);
 			} else
-				curText += _vm->_graphics->longDrawMessage(Common::String((char *)curText), false);
+				curText += _vm->_graphics->longDrawMessage(Common::String(curText), false);
 
 			doneFl = (*curText == 0);
 
@@ -126,7 +126,7 @@ void Intro::doPictText(const Common::String filename, bool isScreen) {
 		}
 
 		if (!msg) {
-			_vm->updateMusicAndEvents();
+			_vm->updateEvents();
 			_vm->_anim->diffNextFrame();
 
 			uint32 elapsedSeconds = (_vm->_system->getMillis() - lastMillis) / 1000;
@@ -192,13 +192,13 @@ void Intro::doPictText(const Common::String filename, bool isScreen) {
 }
 
 void Intro::musicDelay() {
-	_vm->updateMusicAndEvents();
+	_vm->updateEvents();
 
 	if (_quitIntro)
 		return;
 
 	for (int i = 0; i < 20; i++) {
-		_vm->updateMusicAndEvents();
+		_vm->updateEvents();
 		_vm->waitTOF();
 		_vm->waitTOF();
 		_vm->waitTOF();
@@ -208,7 +208,7 @@ void Intro::musicDelay() {
 void Intro::nReadPict(const Common::String filename, bool playOnce) {
 	Common::String finalFileName = Common::String("P:Intro/") + filename;
 
-	_vm->updateMusicAndEvents();
+	_vm->updateEvents();
 	introEatMessages();
 
 	if (_quitIntro)
@@ -236,8 +236,8 @@ void Intro::play() {
 		nReadPict("EA3");
 	} else if (_vm->getPlatform() == Common::kPlatformWindows) {
 		nReadPict("WYRMKEEP");
-		// Wait 4 seconds
-		for (int i = 0; i < 4 * 1000 / 10; i++) {
+		// Wait 4 seconds (400 x 10ms)
+		for (int i = 0; i < 400; i++) {
 			introEatMessages();
 			if (_quitIntro)
 				break;
@@ -247,10 +247,10 @@ void Intro::play() {
 
 	_vm->_graphics->blackAllScreen();
 	
-	if (_vm->getPlatform() == Common::kPlatformAmiga)
-		_vm->_music->initMusic("Music:BackGround");
+	if (_vm->getPlatform() != Common::kPlatformAmiga)
+		_vm->_music->changeMusic("Music:BackGrou", false, false);
 	else
-		_vm->_music->initMusic("Music:BackGrou");
+		_vm->_music->changeMusic("Music:BackGround", false, false);
 
 	_vm->_anim->_noPalChange = true;
 	if (_vm->getPlatform() == Common::kPlatformDOS)
@@ -266,15 +266,16 @@ void Intro::play() {
 					((_vm->_anim->_diffPalette[i * 3 + 1] >> 2) << 4) +
 					(_vm->_anim->_diffPalette[i * 3 + 2] >> 2);
 	}
-	_vm->updateMusicAndEvents();
+	_vm->updateEvents();
 	if (!_quitIntro)
 		_vm->_graphics->fade(true);
 
 	for (int times = 0; times < 150; times++) {
+		introEatMessages();
 		if (_quitIntro)
 			break;
 
-		_vm->updateMusicAndEvents();
+		_vm->updateEvents();
 		uint16 temp = palette[2];
 
 		for (int i = 2; i < 15; i++)
@@ -289,7 +290,7 @@ void Intro::play() {
 	if (!_quitIntro) {
 		_vm->_graphics->fade(false);
 		_vm->_graphics->blackAllScreen();
-		_vm->updateMusicAndEvents();
+		_vm->updateEvents();
 	}
 
 	nReadPict("Title.A");
@@ -312,9 +313,9 @@ void Intro::play() {
 	nReadPict("DA");
 	musicDelay();
 
-	_vm->updateMusicAndEvents();
+	_vm->updateEvents();
 	_vm->_graphics->blackAllScreen();
-	_vm->updateMusicAndEvents();
+	_vm->updateEvents();
 
 	_vm->_anim->_noPalChange = true;
 	nReadPict("Intro.1");
@@ -333,7 +334,7 @@ void Intro::play() {
 	}
 
 	_vm->_graphics->blackAllScreen();
-	_vm->updateMusicAndEvents();
+	_vm->updateEvents();
 
 	_introDoBlack = true;
 	nReadPict("Station1");
@@ -368,7 +369,7 @@ void Intro::play() {
 			for (int idx = (8 * 3); idx < (255 * 3); idx++)
 				_vm->_anim->_diffPalette[idx] = 255 - _vm->_anim->_diffPalette[idx];
 
-			_vm->updateMusicAndEvents();
+			_vm->updateEvents();
 			_vm->waitTOF();
 			_vm->_graphics->setPalette(_vm->_anim->_diffPalette, 256);
 			_vm->waitTOF();

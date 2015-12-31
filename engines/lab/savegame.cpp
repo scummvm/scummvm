@@ -114,7 +114,8 @@ bool readSaveGameHeader(Common::InSaveFile *in, SaveGameHeader &header) {
 	header._descr.setSaveTime(hour, minutes);
 
 	header._descr.setPlayTime(playTime * 1000);
-	g_engine->setTotalPlayTime(playTime * 1000);
+	if (g_engine)
+		g_engine->setTotalPlayTime(playTime * 1000);
 
 	return true;
 }
@@ -233,7 +234,7 @@ bool LabEngine::saveRestoreGame() {
 		if (slot >= 0) {
 			isOK = loadGame(slot);
 			if (isOK)
-				_music->resetMusic();
+				_music->checkRoomMusic();
 		}
 		delete dialog;
 	}

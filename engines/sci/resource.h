@@ -559,6 +559,8 @@ protected:
 	ViewType detectViewType();
 	bool hasSci0Voc999();
 	bool hasSci1Voc900();
+	bool checkResourceDataForSignature(Resource *resource, const byte *signature);
+	bool checkResourceForSignatures(ResourceType resourceType, uint16 resourceNr, const byte *signature1, const byte *signature2);
 	void detectSciVersion();
 };
 

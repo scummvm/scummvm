@@ -121,6 +121,8 @@ enum MessageClass {
 };
 
 class LabEngine : public Engine {
+	friend class Console;
+
 private:
 	bool _interfaceOff;
 	bool _isCrumbWaiting;
@@ -160,6 +162,7 @@ private:
 	Image *_monitorButton;
 	Image *_journalBackImage;
 	TextFont *_journalFont;
+	bool _introPlaying;
 
 public:
 	bool _alternate;
@@ -222,8 +225,13 @@ public:
 	uint16 getQuarters();
 	void setDirection(uint16 direction) { _direction = direction; };
 	void setQuarters(uint16 quarters);
-	void updateMusicAndEvents();
+	void updateEvents();
 	void waitTOF();
+
+	Common::Error loadGameState(int slot);
+	Common::Error saveGameState(int slot, const Common::String &desc);
+	bool canLoadGameStateCurrently();
+	bool canSaveGameStateCurrently();
 
 private:
 	/**

@@ -1019,7 +1019,7 @@ int MidiPlayer_Midi::open(ResourceManager *resMan) {
 				if (!isMt32GmPatch(res->data, res->size)) {
 					mapMt32ToGm(res->data, res->size);
 				} else {
-					if (getSciVersion() <= SCI_VERSION_2_1) {
+					if (getSciVersion() < SCI_VERSION_3) {
 						error("MT-32 patch has wrong type");
 					} else {
 						// Happens in the SCI3 interactive demo of Lighthouse

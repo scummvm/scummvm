@@ -217,7 +217,7 @@ static void deDPCM8Nibble(byte *soundBuf, int32 &s, byte b) {
 	if (b & 8) {
 #ifdef ENABLE_SCI32
 		// SCI2.1 reverses the order of the table values here
-		if (getSciVersion() >= SCI_VERSION_2_1)
+		if (getSciVersion() >= SCI_VERSION_2_1_EARLY)
 			s -= tableDPCM8[b & 7];
 		else
 #endif

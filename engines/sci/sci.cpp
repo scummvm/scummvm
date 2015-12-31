@@ -194,12 +194,6 @@ SciEngine::~SciEngine() {
 extern void showScummVMDialog(const Common::String &message);
 
 Common::Error SciEngine::run() {
-	// Assign default values to the config manager, in case settings are missing
-	ConfMan.registerDefault("originalsaveload", "false");
-	ConfMan.registerDefault("native_fb01", "false");
-	ConfMan.registerDefault("windows_cursors", "false");	// Windows cursors for KQ6 Windows
-	ConfMan.registerDefault("silver_cursors", "false");	// Silver cursors for SQ4 CD
-
 	_resMan = new ResourceManager();
 	assert(_resMan);
 	_resMan->addAppropriateSources();
@@ -903,7 +897,9 @@ void SciEngine::syncIngameAudioOptions() {
 			break;
 #ifdef ENABLE_SCI32
 		case SCI_VERSION_2:
-		case SCI_VERSION_2_1:
+		case SCI_VERSION_2_1_EARLY:
+		case SCI_VERSION_2_1_MIDDLE:
+		case SCI_VERSION_2_1_LATE:
 			// Only use global 90 for some specific games, not all SCI32 games used this method
 			switch (_gameId) {
 			case GID_KQ7: // SCI2.1

@@ -59,7 +59,7 @@ TextFont *Resource::getFont(const Common::String fileName) {
 	if (fileSize <= headerSize)
 		return nullptr;
 
-	_vm->updateMusicAndEvents();
+	_vm->updateEvents();
 
 	TextFont *textfont = new TextFont();
 	textfont->_dataLength = fileSize - headerSize;
@@ -70,13 +70,14 @@ TextFont *Resource::getFont(const Common::String fileName) {
 	dataFile->skip(4);
 	textfont->_data = new byte[textfont->_dataLength + 4];
 	dataFile->read(textfont->_data, textfont->_dataLength);
+	delete dataFile;
 	return textfont;
 }
 
 Common::String Resource::getText(const Common::String fileName) {
 	Common::File *dataFile = openDataFile(fileName);
 
-	_vm->updateMusicAndEvents();
+	_vm->updateEvents();
 
 	uint32 count = dataFile->size();
 	byte *buffer = new byte[count];
@@ -142,7 +143,7 @@ void Resource::readViews(uint16 roomNum) {
 	readView(dataFile, curRoom->_view[kDirectionWest]);
 	readRule(dataFile, curRoom->_rules);
 
-	_vm->updateMusicAndEvents();
+	_vm->updateEvents();
 	delete dataFile;
 }
 

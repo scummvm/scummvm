@@ -82,20 +82,20 @@ public:
 
 bool ZVisionMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
-	(f == kSupportsListSaves) ||
-	(f == kSupportsLoadingDuringStartup) ||
-	(f == kSupportsDeleteSave) ||
-	(f == kSavesSupportMetaInfo) ||
-	(f == kSavesSupportThumbnail) ||
-	(f == kSavesSupportCreationDate);
-	//(f == kSavesSupportPlayTime);
+		(f == kSupportsListSaves) ||
+		(f == kSupportsLoadingDuringStartup) ||
+		(f == kSupportsDeleteSave) ||
+		(f == kSavesSupportMetaInfo) ||
+		(f == kSavesSupportThumbnail) ||
+		(f == kSavesSupportCreationDate);
+		//(f == kSavesSupportPlayTime);
 }
 
 bool ZVision::ZVision::hasFeature(EngineFeature f) const {
-    return
-        (f == kSupportsRTL) ||
-        (f == kSupportsLoadingDuringRuntime) ||
-        (f == kSupportsSavingDuringRuntime);
+	return
+		(f == kSupportsRTL) ||
+		(f == kSupportsLoadingDuringRuntime) ||
+		(f == kSupportsSavingDuringRuntime);
 }
 
 Common::Error ZVision::ZVision::loadGameState(int slot) {
@@ -139,18 +139,18 @@ SaveStateList ZVisionMetaEngine::listSaves(const char *target) const {
 	ZVision::SaveManager *zvisionSaveMan = new ZVision::SaveManager(NULL);
 
 	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); file++) {
-	        // Obtain the last 3 digits of the filename, since they correspond to the save slot
-	        int slotNum = atoi(file->c_str() + file->size() - 3);
+		// Obtain the last 3 digits of the filename, since they correspond to the save slot
+		int slotNum = atoi(file->c_str() + file->size() - 3);
 
-	        if (slotNum >= 0 && slotNum <= 999) {
-	            Common::InSaveFile *in = saveFileMan->openForLoading(file->c_str());
-	            if (in) {
-	                if (zvisionSaveMan->readSaveGameHeader(in, header)) {
-	                    saveList.push_back(SaveStateDescriptor(slotNum, header.saveName));
-	                }
-	                delete in;
-	            }
-	        }
+		if (slotNum >= 0 && slotNum <= 999) {
+			Common::InSaveFile *in = saveFileMan->openForLoading(file->c_str());
+			if (in) {
+				if (zvisionSaveMan->readSaveGameHeader(in, header)) {
+					saveList.push_back(SaveStateDescriptor(slotNum, header.saveName));
+				}
+				delete in;
+			}
+		}
 	}
 
 	delete zvisionSaveMan;
@@ -175,14 +175,14 @@ void ZVisionMetaEngine::removeSaveState(const char *target, int slot) const {
 	Common::sort(filenames.begin(), filenames.end());   // Sort (hopefully ensuring we are sorted numerically..)
 
 	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
-	    // Obtain the last 3 digits of the filename, since they correspond to the save slot
-	    int slotNum = atoi(file->c_str() + file->size() - 3);
+		// Obtain the last 3 digits of the filename, since they correspond to the save slot
+		int slotNum = atoi(file->c_str() + file->size() - 3);
 
-	    // Rename every slot greater than the deleted slot,
-	    if (slotNum > slot) {
-	        saveFileMan->renameSavefile(file->c_str(), filename.c_str());
-	        filename = Common::String::format("%s.%03u", target, ++slot);
-	    }
+		// Rename every slot greater than the deleted slot,
+		if (slotNum > slot) {
+			saveFileMan->renameSavefile(file->c_str(), filename.c_str());
+			filename = Common::String::format("%s.%03u", target, ++slot);
+		}
 	}
 }
 
@@ -191,48 +191,48 @@ SaveStateDescriptor ZVisionMetaEngine::querySaveMetaInfos(const char *target, in
 	Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(filename.c_str());
 
 	if (in) {
-	    ZVision::SaveGameHeader header;
+		ZVision::SaveGameHeader header;
 
 		// We only use readSaveGameHeader() here, which doesn't need an engine callback
 		ZVision::SaveManager *zvisionSaveMan = new ZVision::SaveManager(NULL);
 		bool successfulRead = zvisionSaveMan->readSaveGameHeader(in, header);
 		delete zvisionSaveMan;
-	    delete in;
+		delete in;
 
-	    if (successfulRead) {
-	        SaveStateDescriptor desc(slot, header.saveName);
+		if (successfulRead) {
+			SaveStateDescriptor desc(slot, header.saveName);
 
 			// Do not allow save slot 0 (used for auto-saving) to be deleted or
 			// overwritten.
 			desc.setDeletableFlag(slot != 0);
 			desc.setWriteProtectedFlag(slot == 0);
 
-	        desc.setThumbnail(header.thumbnail);
+			desc.setThumbnail(header.thumbnail);
 
-	        if (header.version > 0) {
-	            int day = header.saveDay;
-	            int month = header.saveMonth;
-	            int year = header.saveYear;
+			if (header.version > 0) {
+				int day = header.saveDay;
+				int month = header.saveMonth;
+				int year = header.saveYear;
 
-	            desc.setSaveDate(year, month, day);
+				desc.setSaveDate(year, month, day);
 
-	            int hour = header.saveHour;
-	            int minutes = header.saveMinutes;
+				int hour = header.saveHour;
+				int minutes = header.saveMinutes;
 
-	            desc.setSaveTime(hour, minutes);
+				desc.setSaveTime(hour, minutes);
 
-	            //desc.setPlayTime(header.playTime * 1000);
-	        }
+				//desc.setPlayTime(header.playTime * 1000);
+			}
 
-	        return desc;
-	    }
+			return desc;
+		}
 	}
 
 	return SaveStateDescriptor();
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(ZVISION)
-REGISTER_PLUGIN_DYNAMIC(ZVISION, PLUGIN_TYPE_ENGINE, ZVisionMetaEngine);
+	REGISTER_PLUGIN_DYNAMIC(ZVISION, PLUGIN_TYPE_ENGINE, ZVisionMetaEngine);
 #else
-REGISTER_PLUGIN_STATIC(ZVISION, PLUGIN_TYPE_ENGINE, ZVisionMetaEngine);
+	REGISTER_PLUGIN_STATIC(ZVISION, PLUGIN_TYPE_ENGINE, ZVisionMetaEngine);
 #endif

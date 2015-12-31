@@ -61,9 +61,6 @@ private:
 	bool _leftClick;
 	bool _rightClick;
 
-	uint16 _nextKeyIn;
-	uint16 _nextKeyOut;
-
 	Button *_hitButton;
 	Button *_lastButtonHit;
 	ButtonList *_screenButtonList;
@@ -121,6 +118,12 @@ public:
 	void setMousePos(Common::Point pos);
 	void updateMouse();
 	Common::Point updateAndGetMousePos();
+
+	/**
+	 * Simulates an event for the game main loop, when a game is
+	 * loaded or when the user teleports to a scene
+	 */
+	void simulateEvent();
 };
 
 } // End of namespace Lab

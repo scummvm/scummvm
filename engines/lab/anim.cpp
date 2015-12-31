@@ -99,16 +99,12 @@ void Anim::diffNextFrame(bool onlyDiffData) {
 	}
 	byte *endOfBuf = startOfBuf + (int)_diffWidth * _diffHeight;
 
-	_vm->_event->mouseHide();
-
 	int curBit = 0;
 
 	while (1) {
 		byte *buf = startOfBuf + 0x10000 * curBit;
 
 		if (buf >= endOfBuf) {
-			_vm->_event->mouseShow();
-
 			if (!onlyDiffData) {
 				if (_headerdata._fps) {
 					uint32 targetMillis = _vm->_system->getMillis() + _delayMicros;
@@ -145,7 +141,7 @@ void Anim::diffNextFrame(bool onlyDiffData) {
 			return;
 		}
 
-		_vm->updateMusicAndEvents();
+		_vm->updateEvents();
 		_lastBlockHeader = _diffFile->readUint32LE();
 		_size = _diffFile->readUint32LE();
 
@@ -209,7 +205,7 @@ void Anim::diffNextFrame(bool onlyDiffData) {
 		case 31:
 			if (_waitForEffect) {
 				while (_vm->_music->isSoundEffectActive()) {
-					_vm->updateMusicAndEvents();
+					_vm->updateEvents();
 					_vm->waitTOF();
 				}
 			}
@@ -231,7 +227,7 @@ void Anim::diffNextFrame(bool onlyDiffData) {
 
 				if (_waitForEffect) {
 					while (_vm->_music->isSoundEffectActive()) {
-						_vm->updateMusicAndEvents();
+						_vm->updateEvents();
 						_vm->waitTOF();
 
 						if (drawOnScreen)
@@ -240,7 +236,6 @@ void Anim::diffNextFrame(bool onlyDiffData) {
 				}
 
 				_isPlaying = false;
-				_vm->_event->mouseShow();
 
 				if (!didTOF)
 					_vm->_graphics->screenUpdate();
@@ -271,7 +266,7 @@ void Anim::stopDiffEnd() {
 
 	_stopPlayingEnd = true;
 	while (_isPlaying) {
-		_vm->updateMusicAndEvents();
+		_vm->updateEvents();
 		diffNextFrame();
 	}
 }

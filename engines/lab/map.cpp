@@ -82,7 +82,7 @@ void LabEngine::loadMapData() {
 	delete mapImages;
 
 	Common::File *mapFile = _resource->openDataFile("Lab:Maps", MKTAG('M', 'A', 'P', '0'));
-	updateMusicAndEvents();
+	updateEvents();
 
 	_maxRooms = mapFile->readUint16LE();
 	_maps = new MapData[_maxRooms + 1];	// will be freed when the user exits the map
@@ -328,8 +328,6 @@ uint16 LabEngine::getLowerFloor(uint16 floorNum) {
 }
 
 void LabEngine::drawMap(uint16 curRoom, uint16 curMsg, uint16 floorNum, bool fadeIn) {
-	_event->mouseHide();
-
 	_graphics->rectFill(0, 0, _graphics->_screenWidth - 1, _graphics->_screenHeight - 1, 0);
 	_imgMap->drawImage(0, 0);
 	_event->drawButtonList(&_mapButtonList);
@@ -340,7 +338,7 @@ void LabEngine::drawMap(uint16 curRoom, uint16 curMsg, uint16 floorNum, bool fad
 		}
 	}
 
-	updateMusicAndEvents();
+	updateEvents();
 
 	// Makes sure the X is drawn in corridors
 	// NOTE: this here on purpose just in case there's some weird
@@ -380,8 +378,6 @@ void LabEngine::drawMap(uint16 curRoom, uint16 curMsg, uint16 floorNum, bool fad
 
 	if (fadeIn)
 		_graphics->fade(true);
-
-	_event->mouseShow();
 }
 
 void LabEngine::processMap(uint16 curRoom) {
@@ -391,7 +387,7 @@ void LabEngine::processMap(uint16 curRoom) {
 
 	while (1) {
 		// Make sure we check the music at least after every message
-		updateMusicAndEvents();
+		updateEvents();
 		IntuiMessage *msg = _event->getMsg();
 		if (shouldQuit()) {
 			_quitLab = true;
@@ -399,7 +395,7 @@ void LabEngine::processMap(uint16 curRoom) {
 		}
 
 		if (!msg) {
-			updateMusicAndEvents();
+			updateEvents();
 
 			byte newcolor[3];
 
@@ -503,7 +499,6 @@ void LabEngine::processMap(uint16 curRoom) {
 
 						const char *sptr;
 						if ((sptr = _rooms[curMsg]._roomMsg.c_str())) {
-							_event->mouseHide();
 							_graphics->rectFillScaled(13, 148, 135, 186, 3);
 							_graphics->flowText(_msgFont, 0, 5, 3, true, true, true, true, _utils->vgaRectScale(14, 148, 134, 186), sptr);
 
@@ -516,11 +511,8 @@ void LabEngine::processMap(uint16 curRoom) {
 							int top, bottom;
 							top = bottom = (curCoords.top + curCoords.bottom) / 2;
 
-							if ((curMsg != curRoom) && (_maps[curMsg]._pageNumber == curFloor)) {
+							if ((curMsg != curRoom) && (_maps[curMsg]._pageNumber == curFloor))
 								_graphics->rectFill(left, top, right, bottom, 1);
-							}
-
-							_event->mouseShow();
 						}
 					}
 				}
@@ -541,7 +533,7 @@ void LabEngine::doMap(uint16 curRoom) {
 
 	_graphics->_fadePalette = amigaMapPalette;
 
-	updateMusicAndEvents();
+	updateEvents();
 	loadMapData();
 	_graphics->blackAllScreen();
 	_event->attachButtonList(&_mapButtonList);
@@ -552,11 +544,9 @@ void LabEngine::doMap(uint16 curRoom) {
 	_event->attachButtonList(nullptr);
 	_graphics->fade(false);
 	_graphics->blackAllScreen();
-	_event->mouseHide();
 	_graphics->rectFill(0, 0, _graphics->_screenWidth - 1, _graphics->_screenHeight - 1, 0);
 	freeMapData();
 	_graphics->blackAllScreen();
-	_event->mouseShow();
 	_graphics->screenUpdate();
 }
 

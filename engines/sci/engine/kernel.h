@@ -414,6 +414,27 @@ reg_t kIsHiRes(EngineState *s, int argc, reg_t *argv);
 reg_t kArray(EngineState *s, int argc, reg_t *argv);
 reg_t kListAt(EngineState *s, int argc, reg_t *argv);
 reg_t kString(EngineState *s, int argc, reg_t *argv);
+
+reg_t kStringNew(EngineState *s, int argc, reg_t *argv);
+reg_t kStringSize(EngineState *s, int argc, reg_t *argv);
+reg_t kStringAt(EngineState *s, int argc, reg_t *argv);
+reg_t kStringPutAt(EngineState *s, int argc, reg_t *argv);
+reg_t kStringFree(EngineState *s, int argc, reg_t *argv);
+reg_t kStringFill(EngineState *s, int argc, reg_t *argv);
+reg_t kStringCopy(EngineState *s, int argc, reg_t *argv);
+reg_t kStringCompare(EngineState *s, int argc, reg_t *argv);
+reg_t kStringDup(EngineState *s, int argc, reg_t *argv);
+reg_t kStringGetData(EngineState *s, int argc, reg_t *argv);
+reg_t kStringLen(EngineState *s, int argc, reg_t *argv);
+reg_t kStringPrintf(EngineState *s, int argc, reg_t *argv);
+reg_t kStringPrintfBuf(EngineState *s, int argc, reg_t *argv);
+reg_t kStringAtoi(EngineState *s, int argc, reg_t *argv);
+reg_t kStringTrim(EngineState *s, int argc, reg_t *argv);
+reg_t kStringUpper(EngineState *s, int argc, reg_t *argv);
+reg_t kStringLower(EngineState *s, int argc, reg_t *argv);
+reg_t kStringTrn(EngineState *s, int argc, reg_t *argv);
+reg_t kStringTrnExclude(EngineState *s, int argc, reg_t *argv);
+
 reg_t kMulDiv(EngineState *s, int argc, reg_t *argv);
 reg_t kCantBeHere32(EngineState *s, int argc, reg_t *argv);
 reg_t kRemapColors32(EngineState *s, int argc, reg_t *argv);

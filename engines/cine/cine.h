@@ -123,6 +123,7 @@ public:
 
 	bool loadSaveDirectory();
 	void makeSystemMenu();
+	int scummVMSaveLoadDialog(bool isSave);
 	int modifyGameSpeed(int speedChange);
 	int getTimerDelay() const;
 	Common::Error loadGameState(int slot);
@@ -152,7 +153,7 @@ private:
 	bool makeLoad(const Common::String &saveName);
 	void makeSaveFW(Common::OutSaveFile &out);
 	void makeSaveOS(Common::OutSaveFile &out);
-	void makeSave(char *saveFileName);
+	void makeSave(const Common::String &saveFileName);
 	void mainLoop(int bootScriptIdx);
 	void readVolCnf();
 

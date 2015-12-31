@@ -29,7 +29,7 @@
 namespace Sci {
 
 SegmentId reg_t::getSegment() const {
-	if (getSciVersion() <= SCI_VERSION_2_1) {
+	if (getSciVersion() < SCI_VERSION_3) {
 		return _segment;
 	} else {
 		// Return the lower 14 bits of the segment
@@ -38,7 +38,7 @@ SegmentId reg_t::getSegment() const {
 }
 
 void reg_t::setSegment(SegmentId segment) {
-	if (getSciVersion() <= SCI_VERSION_2_1) {
+	if (getSciVersion() < SCI_VERSION_3) {
 		_segment = segment;
 	} else {
 		// Set the lower 14 bits of the segment, and preserve the upper 2 ones for the offset
@@ -47,7 +47,7 @@ void reg_t::setSegment(SegmentId segment) {
 }
 
 uint32 reg_t::getOffset() const {
-	if (getSciVersion() <= SCI_VERSION_2_1) {
+	if (getSciVersion() < SCI_VERSION_3) {
 		return _offset;
 	} else {
 		// Return the lower 16 bits from the offset, and the 17th and 18th bits from the segment
@@ -56,7 +56,7 @@ uint32 reg_t::getOffset() const {
 }
 
 void reg_t::setOffset(uint32 offset) {
-	if (getSciVersion() <= SCI_VERSION_2_1) {
+	if (getSciVersion() < SCI_VERSION_3) {
 		_offset = offset;
 	} else {
 		// Store the lower 16 bits in the offset, and the 17th and 18th bits in the segment

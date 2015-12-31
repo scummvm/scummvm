@@ -24,6 +24,8 @@
 
 #include "lab/lab.h"
 #include "lab/console.h"
+#include "lab/dispman.h"
+#include "lab/eventman.h"
 #include "lab/processroom.h"
 #include "lab/resource.h"
 
@@ -47,6 +49,12 @@ bool Console::Cmd_Scene(int argc, const char **argv) {
 	}
 
 	_vm->_roomNum = atoi(argv[1]);
+	_vm->_curFileName = " ";
+	_vm->_closeDataPtr = nullptr;
+	_vm->_mainDisplay = true;
+	_vm->_followingCrumbs = false;
+	_vm->_event->simulateEvent();
+	_vm->_graphics->_longWinInFront = false;
 
 	return false;
 }
