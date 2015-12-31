@@ -179,7 +179,7 @@ public:
 	 * @returns             True is everything is OK, False otherwise
 	 */
 
-	bool loadFile(const char *fileName, uint32 codec = FPCODEC_RAW);
+	bool loadFile(const char *fileName);
 	bool loadWave(Common::SeekableReadStream *stream);
 	bool loadVoiceFromVDB(Common::File &vdbFP);
 

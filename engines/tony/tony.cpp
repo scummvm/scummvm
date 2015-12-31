@@ -433,7 +433,7 @@ void TonyEngine::preloadSFX(int nChannel, const char *fn) {
 
 	_theSound.createSfx(&_sfx[nChannel]);
 
-	_sfx[nChannel]->loadFile(fn, FPCODEC_ADPCM);
+	_sfx[nChannel]->loadFile(fn);
 }
 
 FPSfx *TonyEngine::createSFX(Common::SeekableReadStream *stream) {
@@ -453,7 +453,7 @@ void TonyEngine::preloadUtilSFX(int nChannel, const char *fn) {
 
 	_theSound.createSfx(&_utilSfx[nChannel]);
 
-	_utilSfx[nChannel]->loadFile(fn, FPCODEC_ADPCM);
+	_utilSfx[nChannel]->loadFile(fn);
 	_utilSfx[nChannel]->setVolume(63);
 }
 

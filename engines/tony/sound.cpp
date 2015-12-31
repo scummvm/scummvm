@@ -219,11 +219,10 @@ bool FPSfx::loadVoiceFromVDB(Common::File &vdbFP) {
  * Opens a file and loads a sound effect.
  *
  * @param fileName         Sfx filename
- * @param codec            CODEC used to uncompress the samples
  *
  * @returns                True is everything is OK, False otherwise
  */
-bool FPSfx::loadFile(const char *fileName, uint32 codec) {
+bool FPSfx::loadFile(const char *fileName) {
 	if (!_soundSupported)
 		return true;
 
@@ -242,18 +241,7 @@ bool FPSfx::loadFile(const char *fileName, uint32 codec) {
 	uint32 channels = file.readUint32LE();
 
 	Common::SeekableReadStream *buffer = file.readStream(file.size() - file.pos());
-
-	if (codec == FPCODEC_ADPCM) {
-		_rewindableStream = Audio::makeADPCMStream(buffer, DisposeAfterUse::YES, 0, Audio::kADPCMDVI, rate, channels);
-	} else {
-		byte flags = Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN;
-
-		if (channels == 2)
-			flags |= Audio::FLAG_STEREO;
-
-		_rewindableStream = Audio::makeRawStream(buffer, rate, flags, DisposeAfterUse::YES);
-	}
-
+	_rewindableStream = Audio::makeADPCMStream(buffer, DisposeAfterUse::YES, 0, Audio::kADPCMDVI, rate, channels);
 	_fileLoaded = true;
 	return true;
 }
