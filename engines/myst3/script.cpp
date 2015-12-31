@@ -27,6 +27,7 @@
 #include "engines/myst3/cursor.h"
 #include "engines/myst3/inventory.h"
 #include "engines/myst3/puzzles.h"
+#include "engines/myst3/scene.h"
 #include "engines/myst3/sound.h"
 #include "engines/myst3/ambient.h"
 

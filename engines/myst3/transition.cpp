@@ -28,6 +28,7 @@
 #include "engines/myst3/state.h"
 
 #include "graphics/colormasks.h"
+#include "graphics/surface.h"
 
 namespace Myst3 {
 

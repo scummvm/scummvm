@@ -31,6 +31,7 @@
 #include "audio/decoders/mp3.h"
 #include "audio/decoders/wave.h"
 
+#include "common/archive.h"
 #include "common/config-manager.h"
 
 namespace Myst3 {

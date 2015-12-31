@@ -142,7 +142,7 @@ public:
 	/**
 	 * Retrieve an ambient cue from its id
 	 */
-	const AmbientCue& getAmbientCue(uint16 id);
+	const AmbientCue &getAmbientCue(uint16 id);
 private:
 	Myst3Engine *_vm;
 
@@ -174,12 +174,12 @@ private:
 	void initializeZipBitIndexTable();
 	void patchLanguageMenu();
 
-	Common::Array<CondScript> loadCondScripts(Common::SeekableReadStream & s);
-	Common::Array<Opcode> loadOpcodes(Common::SeekableReadStream & s);
-	Common::Array<HotSpot> loadHotspots(Common::SeekableReadStream & s);
-	Common::Array<PolarRect> loadRects(Common::SeekableReadStream & s);
-	CondScript loadCondScript(Common::SeekableReadStream & s);
-	HotSpot loadHotspot(Common::SeekableReadStream & s);
+	Common::Array<CondScript> loadCondScripts(Common::SeekableReadStream &s);
+	Common::Array<Opcode> loadOpcodes(Common::SeekableReadStream &s);
+	Common::Array<HotSpot> loadHotspots(Common::SeekableReadStream &s);
+	Common::Array<PolarRect> loadRects(Common::SeekableReadStream &s);
+	CondScript loadCondScript(Common::SeekableReadStream &s);
+	HotSpot loadHotspot(Common::SeekableReadStream &s);
 
 	// 'myst3.dat' read methods
 	void readScriptIndex(Common::SeekableReadStream *stream, bool load);

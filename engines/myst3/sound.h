@@ -23,6 +23,9 @@
 #ifndef SOUND_H_
 #define SOUND_H_
 
+#include "audio/audiostream.h"
+#include "audio/mixer.h"
+
 #include "common/str.h"
 
 namespace Myst3 {

@@ -25,6 +25,8 @@
 #include "engines/myst3/inventory.h"
 #include "engines/myst3/menu.h"
 #include "engines/myst3/myst3.h"
+#include "engines/myst3/node.h"
+#include "engines/myst3/scene.h"
 #include "engines/myst3/sound.h"
 #include "engines/myst3/state.h"
 

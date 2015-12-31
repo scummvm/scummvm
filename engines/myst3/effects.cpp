@@ -21,9 +21,12 @@
  */
 
 #include "engines/myst3/effects.h"
+#include "engines/myst3/gfx.h"
 #include "engines/myst3/myst3.h"
 #include "engines/myst3/state.h"
 #include "engines/myst3/sound.h"
+
+#include "graphics/surface.h"
 
 namespace Myst3 {
 

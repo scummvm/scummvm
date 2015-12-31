@@ -24,6 +24,7 @@
 #include "engines/myst3/ambient.h"
 #include "engines/myst3/menu.h"
 #include "engines/myst3/myst3.h"
+#include "engines/myst3/node.h"
 #include "engines/myst3/state.h"
 #include "engines/myst3/sound.h"
 

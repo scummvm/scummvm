@@ -24,7 +24,9 @@
 #include "common/config-manager.h"
 
 #include "engines/myst3/scene.h"
+#include "engines/myst3/gfx.h"
 #include "engines/myst3/myst3.h"
+#include "engines/myst3/node.h"
 #include "engines/myst3/state.h"
 
 #include "graphics/colormasks.h"

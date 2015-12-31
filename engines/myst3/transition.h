@@ -25,6 +25,8 @@
 
 #include "engines/myst3/myst3.h"
 
+#include "engines/myst3/gfx.h"
+
 namespace Myst3 {
 
 class FrameLimiter;

@@ -21,6 +21,8 @@
  */
 
 #include "engines/myst3/console.h"
+
+#include "engines/myst3/archive.h"
 #include "engines/myst3/database.h"
 #include "engines/myst3/effects.h"
 #include "engines/myst3/inventory.h"

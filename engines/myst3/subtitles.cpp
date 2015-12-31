@@ -24,6 +24,7 @@
 #include "engines/myst3/myst3.h"
 #include "engines/myst3/state.h"
 
+#include "common/archive.h"
 #include "common/iconv.h"
 
 #include "graphics/fontman.h"

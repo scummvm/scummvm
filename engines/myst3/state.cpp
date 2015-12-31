@@ -26,6 +26,8 @@
 #include "common/debug-channels.h"
 #include "common/savefile.h"
 
+#include "graphics/surface.h"
+
 namespace Myst3 {
 
 GameState::StateData::StateData() {

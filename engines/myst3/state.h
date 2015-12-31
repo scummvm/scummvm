@@ -24,6 +24,7 @@
 #define VARIABLES_H_
 
 #include "common/hashmap.h"
+#include "common/hash-str.h"
 #include "common/savefile.h"
 #include "common/serializer.h"
 

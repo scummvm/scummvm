@@ -23,6 +23,7 @@
 #include "engines/myst3/database.h"
 #include "engines/myst3/myst3.h"
 
+#include "common/archive.h"
 #include "common/debug.h"
 #include "common/substream.h"
 
@@ -639,7 +640,7 @@ void Database::loadAmbientCues(Common::ReadStream *s) {
 	}
 }
 
-const AmbientCue& Database::getAmbientCue(uint16 id) {
+const AmbientCue &Database::getAmbientCue(uint16 id) {
 	if (!_ambientCues.contains(id))
 		error("Unable to find an ambient cue with id %d", id);
 

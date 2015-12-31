@@ -25,13 +25,12 @@
 
 #include "engines/engine.h"
 
+#include "common/array.h"
+#include "common/ptr.h"
 #include "common/system.h"
 #include "common/random.h"
 
-#include "engines/myst3/archive.h"
-#include "engines/myst3/movie.h"
-#include "engines/myst3/node.h"
-#include "engines/myst3/scene.h"
+#include "engines/myst3/directorysubentry.h"
 
 namespace Graphics {
 struct Surface;
@@ -65,17 +64,24 @@ enum TransitionType {
 	kTransitionRightToLeft
 };
 
+class Archive;
 class Console;
+class Drawable;
 class GameState;
 class HotSpot;
 class Cursor;
 class Inventory;
 class Database;
+class Scene;
 class Script;
+class SpotItemFace;
+class SunSpot;
 class Renderer;
 class Menu;
+class Node;
 class Sound;
 class Ambient;
+class ScriptedMovie;
 class ShakeEffect;
 class RotationEffect;
 class Transition;

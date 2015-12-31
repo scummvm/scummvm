@@ -22,8 +22,12 @@
 
 #include "engines/myst3/cursor.h"
 #include "engines/myst3/directorysubentry.h"
+#include "engines/myst3/gfx.h"
 #include "engines/myst3/myst3.h"
+#include "engines/myst3/scene.h"
 #include "engines/myst3/state.h"
+
+#include "graphics/surface.h"
 
 #include "image/bmp.h"
 
