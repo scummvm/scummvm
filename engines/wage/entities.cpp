@@ -160,9 +160,12 @@ const char *Scene::getFontName() {
 	return "Unknown";
 }
 
-Obj::Obj(String name, Common::SeekableReadStream *data) : _currentOwner(NULL), _currentScene(NULL) {
+Obj::Obj(String name, Common::SeekableReadStream *data) {
 	_name = name;
 	_classType = OBJ;
+	_currentOwner = NULL;
+	_currentScene = NULL;
+
 	_design = new Design(data);
 
 	setDesignBounds(readRect(data));
@@ -235,6 +238,8 @@ Chr::Chr(String name, Common::SeekableReadStream *data) {
 	_name = name;
 	_classType = CHR;
 	_design = new Design(data);
+
+	_currentScene = NULL;
 
 	setDesignBounds(readRect(data));
 
