@@ -94,7 +94,7 @@ static byte palette[] = {
 };
 
 Common::Error WageEngine::run() {
-	initGraphics(444, 333, true);
+	initGraphics(512, 342, true);
 
 	g_system->getPaletteManager()->setPalette(palette, 0, 4);
 

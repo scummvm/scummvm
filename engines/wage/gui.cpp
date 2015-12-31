@@ -261,7 +261,7 @@ enum {
 	kConWPadding = 2,
 	kConHPadding = 10,
 	kConOverscan = 3,
-	kLineSpacing = 1
+	kLineSpacing = 0
 };
 
 void Gui::renderConsole(Graphics::Surface *g, int x, int y, int width, int height) {
