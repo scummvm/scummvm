@@ -323,10 +323,10 @@ void TonyEngine::playMusic(int nChannel, const Common::String &fname, int nFX, b
 		_stream[GLOBALS._nextChannel]->unloadFile();
 
 		if (!getIsDemo()) {
-			if (!_stream[GLOBALS._nextChannel]->loadFile(fname, FPCODEC_ADPCM, nSync))
+			if (!_stream[GLOBALS._nextChannel]->loadFile(fname, nSync))
 				error("failed to open music file '%s'", fname.c_str());
 		} else {
-			_stream[GLOBALS._nextChannel]->loadFile(fname, FPCODEC_ADPCM, nSync);
+			_stream[GLOBALS._nextChannel]->loadFile(fname, nSync);
 		}
 
 		_stream[GLOBALS._nextChannel]->setLoop(bLoop);
@@ -335,10 +335,10 @@ void TonyEngine::playMusic(int nChannel, const Common::String &fname, int nFX, b
 		GLOBALS._flipflop = 1 - GLOBALS._flipflop;
 	} else {
 		if (!getIsDemo()) {
-			if (!_stream[nChannel]->loadFile(fname, FPCODEC_ADPCM, nSync))
+			if (!_stream[nChannel]->loadFile(fname, nSync))
 				error("failed to open music file '%s'", fname.c_str());
 		} else {
-			_stream[nChannel]->loadFile(fname, FPCODEC_ADPCM, nSync);
+			_stream[nChannel]->loadFile(fname, nSync);
 		}
 
 		_stream[nChannel]->setLoop(bLoop);
@@ -356,10 +356,10 @@ void TonyEngine::doNextMusic(CORO_PARAM, const void *param) {
 	CORO_BEGIN_CODE(_ctx);
 
 	if (!g_vm->getIsDemo()) {
-		if (!streams[GLOBALS._nextChannel]->loadFile(GLOBALS._nextMusic, FPCODEC_ADPCM, GLOBALS._nextSync))
+		if (!streams[GLOBALS._nextChannel]->loadFile(GLOBALS._nextMusic, GLOBALS._nextSync))
 			error("failed to open next music file '%s'", GLOBALS._nextMusic.c_str());
 	} else {
-		streams[GLOBALS._nextChannel]->loadFile(GLOBALS._nextMusic, FPCODEC_ADPCM, GLOBALS._nextSync);
+		streams[GLOBALS._nextChannel]->loadFile(GLOBALS._nextMusic, GLOBALS._nextSync);
 	}
 
 	streams[GLOBALS._nextChannel]->setLoop(GLOBALS._nextLoop);
