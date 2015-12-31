@@ -124,7 +124,7 @@ void Design::paint(Graphics::Surface *surface, Patterns &patterns, bool mask, in
 		if (in.eos())
 			break;
 
-		debug(2, "fill: %d borderFill: %d border: %d type: %d", fillType, borderFillType, borderThickness, type);
+		debug(8, "fill: %d borderFill: %d border: %d type: %d", fillType, borderFillType, borderThickness, type);
 		switch (type) {
 		case 4:
 			drawRect(_surface, in, mask, patterns, fillType, borderThickness, borderFillType);

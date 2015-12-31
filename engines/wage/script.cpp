@@ -66,14 +66,14 @@ Script::~Script() {
 
 void Script::print() {
 	for (int i = 0; i < _scriptText.size(); i++) {
-		debug(0, "%d [%04x]: %s", i, _scriptText[i]->offset, _scriptText[i]->line.c_str());
+		debug(4, "%d [%04x]: %s", i, _scriptText[i]->offset, _scriptText[i]->line.c_str());
 	}
 }
 
 void Script::printLine(int offset) {
 	for (int i = 0; i < _scriptText.size(); i++)
 		if (_scriptText[i]->offset >= offset) {
-			debug(0, "%d [%04x]: %s", i, _scriptText[i]->offset, _scriptText[i]->line.c_str());
+			debug(4, "%d [%04x]: %s", i, _scriptText[i]->offset, _scriptText[i]->line.c_str());
 			break;
 		}
 }
@@ -97,7 +97,7 @@ bool Script::execute(World *world, int loopCount, String *inputText, Designed *i
 			processIf();
 			break;
 		case 0x87: // EXIT
-			debug(0, "exit at offset %d", _data->pos() - 1);
+			debug(6, "exit at offset %d", _data->pos() - 1);
 
 			return true;
 		case 0x89: // MOVE
@@ -149,7 +149,7 @@ bool Script::execute(World *world, int loopCount, String *inputText, Designed *i
 	}
 
 	if (_world->_globalScript != this) {
-		debug(0, "Executing global script...");
+		debug(1, "Executing global script...");
 		bool globalHandled = _world->_globalScript->execute(_world, _loopCount, _inputText, _inputClick, _callbacks);
 		if (globalHandled)
 			_handled = true;
@@ -218,7 +218,7 @@ bool Script::execute(World *world, int loopCount, String *inputText, Designed *i
 Script::Operand *Script::readOperand() {
 	byte operandType = _data->readByte();
 
-	debug(2, "%x: readOperand: 0x%x", _data->pos(), operandType);
+	debug(7, "%x: readOperand: 0x%x", _data->pos(), operandType);
 
 	Context *cont = &_world->_player->_context;
 	switch (operandType) {
@@ -402,7 +402,7 @@ Script::Operand *Script::readStringOperand() {
 const char *Script::readOperator() {
 	byte cmd = _data->readByte();
 
-	debug(2, "readOperator: 0x%x", cmd);
+	debug(7, "readOperator: 0x%x", cmd);
 	switch (cmd) {
 	case 0x81:
 		return "=";
@@ -792,7 +792,7 @@ void Script::processLet() {
 
 	byte eq = _data->readByte(); // skip "=" operator
 
-	debug(2, "processLet: 0x%x, uservar: 0x%x, eq: 0x%x", operandType, uservar, eq);
+	debug(7, "processLet: 0x%x, uservar: 0x%x, eq: 0x%x", operandType, uservar, eq);
 
 	do {
 		Operand *operand = readOperand();
