@@ -66,7 +66,7 @@ void Screen::clear() {
 
 void Screen::drawDrawList(DrawList &drawList, SpriteModule *spriteModule) {
 	for (uint i = 0; i < drawList.size(); ++i) {
-		debug(1, "index: %d; x: %d; y: %d; priority: %d", drawList[i].index, drawList[i].x, drawList[i].y, drawList[i].priority);
+		debug(4, "index: %d; x: %d; y: %d; priority: %d", drawList[i].index, drawList[i].x, drawList[i].y, drawList[i].priority);
 		Sprite sprite = spriteModule->getSprite(drawList[i].index);
 		drawSprite(sprite, drawList[i].x, drawList[i].y);
 	}
@@ -105,7 +105,7 @@ void Screen::drawSprite(Sprite &sprite, int x, int y) {
 	if (destX + width >= _surface->w)
 		width = _surface->w - destX;
 
-	debug(0, "drawSprite() (%d, %d, %d, %d); skipX: %d; skipY: %d; %d", destX, destY, width, height, skipX, skipY, sprite.type);
+	debug(6, "drawSprite() (%d, %d, %d, %d); skipX: %d; skipY: %d; %d", destX, destY, width, height, skipX, skipY, sprite.type);
 
 	if (sprite.type == 1) {
 		for (int yc = 0; yc < height; ++yc) {
