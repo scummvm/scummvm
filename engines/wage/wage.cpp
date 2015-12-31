@@ -121,7 +121,7 @@ Common::Error WageEngine::run() {
 	Common::String input("look");
 
 	_world->_player->_currentScene = _world->_orderedScenes[1];
-	//_world->_globalScript->execute(_world, 1, &input, NULL, this);
+	_world->_globalScript->execute(_world, 1, &input, NULL, this);
 
 	_gui->setScene(_world->_orderedScenes[1]);
 	_gui->draw();

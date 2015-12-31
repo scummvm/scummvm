@@ -48,6 +48,7 @@
 #ifndef WAGE_GUI_H
 #define WAGE_GUI_H
 
+#include "common/str-array.h"
 #include "graphics/surface.h"
 #include "common/rect.h"
 
@@ -76,7 +77,9 @@ private:
 	Scene *_scene;
 	bool _sceneDirty;
 
-	Common::String _out;
+	Common::StringArray _out;
+	Common::StringArray _lines;
+	uint _scrollPos;
 };
 
 } // End of namespace Wage

@@ -46,6 +46,8 @@
  */
 
 #include "common/system.h"
+#include "graphics/fontman.h"
+#include "graphics/font.h"
 #include "wage/wage.h"
 #include "wage/design.h"
 #include "wage/entities.h"
@@ -71,6 +73,8 @@ Gui::Gui() {
 	p.push_back(checkers);
 	Common::Rect r(0, 0, _screen.w, _screen.h);
 
+	_scrollPos = 0;
+
 	Design::drawFilledRect(&_screen, r, kColorBlack, p, 1);
 }
 
@@ -85,8 +89,26 @@ void Gui::setScene(Scene *scene) {
 }
 
 void Gui::appendText(String &str) {
-	_out += str;
-	_out += '\n';
+	if (!str.contains('\n')) {
+		_out.push_back(str);
+		return;
+	}
+
+	// Okay, we got new lines, need to split it
+	// and push substrings individually
+	Common::String tmp = "";
+
+	for (int i = 0; i < str.size(); i++) {
+		if (str[i] == '\n') {
+			_out.push_back(tmp);
+			tmp = "";
+			continue;
+		}
+
+		tmp += str[i];
+	}
+
+	_out.push_back(tmp);
 }
 
 void Gui::draw() {
@@ -205,21 +227,72 @@ void Gui::paintBorder(Graphics::Surface *g, int x, int y, int width, int height,
 #endif
 }
 
+enum {
+	kConWOverlap = 20,
+	kConHOverlap = 20,
+	kConWPadding = 2,
+	kConHPadding = 10,
+	kConOverscan = 3,
+	kLineSpacing = 1
+};
+
 void Gui::renderConsole(Graphics::Surface *g, int x, int y, int width, int height) {
 	bool fullRedraw = false;
-	Common::Rect fullR(0, 0, width, height);
+	bool textReflow = false;
+	int surfW = width + kConWOverlap * 2;
+	int surfH = height + kConHOverlap * 2;
 
-	if (_console.w != width || _console.h != height) {
+	Common::Rect boundsR(kConWOverlap - kConOverscan, kConHOverlap - kConOverscan, width + kConWOverlap + kConOverscan, height + kConHOverlap + kConOverscan);
+	Common::Rect fullR(0, 0, surfW, surfH);
+
+	if (_console.w != surfW || _console.h != surfH) {
+		if (_console.w != surfW)
+			textReflow = true;
+
 		_console.free();
 
-		_console.create(width, height, Graphics::PixelFormat::createFormatCLUT8());
+		_console.create(surfW, surfH, Graphics::PixelFormat::createFormatCLUT8());
 		fullRedraw = true;
 	}
 
 	if (fullRedraw)
 		_console.fillRect(fullR, kColorWhite);
 
-	g->copyRectToSurface(_console, x, y, fullR);
+	const Graphics::Font *font = FontMan.getFontByUsage(Graphics::FontManager::kConsoleFont);
+	int lineHeight = font->getFontHeight() + kLineSpacing;
+	int textW = width - kConWPadding * 2;
+	int textH = height - kConHPadding * 2;
+
+	if (textReflow) {
+		_lines.clear();
+
+		for (int i = 0; i < _out.size(); i++) {
+			Common::StringArray wrappedLines;
+
+			font->wordWrapText(_out[i], textW, wrappedLines);
+
+			for (Common::StringArray::const_iterator j = wrappedLines.begin(); j != wrappedLines.end(); ++j)
+				_lines.push_back(*j);
+		}
+	}
+
+	const int firstLine = _scrollPos / lineHeight;
+	const int lastLine = MIN((_scrollPos + textH) / lineHeight + 1, _lines.size());
+	const int xOff = kConWOverlap;
+	const int yOff = kConHOverlap;
+	int x1 = xOff + kConWPadding;
+	int y1 = yOff - (_scrollPos % lineHeight) + kConHPadding;
+
+	for (int line = firstLine; line < lastLine; line++) {
+		const char *str = _lines[line].c_str();
+
+		if (*str)
+			font->drawString(&_console, _lines[line], x1, y1, textW, kColorBlack);
+
+		y1 += lineHeight;
+	}
+
+	g->copyRectToSurface(_console, x - kConOverscan, y - kConOverscan, boundsR);
 }
 
 
