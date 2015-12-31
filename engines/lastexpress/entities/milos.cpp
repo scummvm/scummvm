@@ -1352,7 +1352,7 @@ IMPLEMENT_FUNCTION(25, Milos, function25)
 				break;
 			}
 
-			RESET_ENTITY_STATE(kEntityVesna, Vesna, setup_chapter3Handler);
+			RESET_ENTITY_STATE(kEntityVesna, Vesna, setup_inCompartment);
 
 			getData()->location = kLocationInsideCompartment;
 
