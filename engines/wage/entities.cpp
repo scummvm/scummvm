@@ -59,6 +59,19 @@ void Designed::setDesignBounds(Common::Rect *bounds) {
 	_design->setBounds(bounds);
 }
 
+Context::Context() {
+	_visits = 0;
+	_kills = 0;
+	_experience = 0;
+	_frozen = false;
+
+	for (int i = 0; i < 26 * 9; i++)
+		 _userVariables[i] = 0;
+
+	for (int i = 0; i < 18; i++)
+		_statVariables[i] = 0;
+}
+
 Scene::Scene() {
 	_script = NULL;
 	_design = NULL;
@@ -315,6 +328,20 @@ Chr::Chr(String name, Common::SeekableReadStream *data) {
 
 	for (int i = 0; i < NUMBER_OF_ARMOR_TYPES; i++)
 		_armor[i] = NULL;
+}
+
+void Chr::resetState() {
+	_context._statVariables[PHYS_STR_BAS] = _context._statVariables[PHYS_STR_CUR] = _physicalStrength;
+	_context._statVariables[PHYS_HIT_BAS] = _context._statVariables[PHYS_HIT_CUR] = _physicalHp;
+	_context._statVariables[PHYS_ARM_BAS] = _context._statVariables[PHYS_ARM_CUR] = _naturalArmor;
+	_context._statVariables[PHYS_ACC_BAS] = _context._statVariables[PHYS_ACC_CUR] = _physicalAccuracy;
+
+	_context._statVariables[SPIR_STR_BAS] = _context._statVariables[SPIR_STR_CUR] = _spiritualStength;
+	_context._statVariables[SPIR_HIT_BAS] = _context._statVariables[SPIR_HIT_CUR] = _spiritialHp;
+	_context._statVariables[SPIR_ARM_BAS] = _context._statVariables[SPIR_ARM_CUR] = _naturalArmor;
+	_context._statVariables[SPIR_ACC_BAS] = _context._statVariables[SPIR_ACC_CUR] = _physicalAccuracy;
+
+	_context._statVariables[PHYS_SPE_BAS] = _context._statVariables[PHYS_SPE_CUR] = _runningSpeed;
 }
 
 WeaponArray *Chr::getWeapons() {

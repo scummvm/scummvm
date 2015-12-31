@@ -261,41 +261,41 @@ Script::Operand *Script::readOperand() {
 			return new Operand(cont->_userVariables[value - 1], NUMBER);
 		}
 	case 0xD0:
-		return new Operand(cont->_statVariables[Context::PHYS_STR_BAS], NUMBER);
+		return new Operand(cont->_statVariables[PHYS_STR_BAS], NUMBER);
 	case 0xD1:
-		return new Operand(cont->_statVariables[Context::PHYS_HIT_BAS], NUMBER);
+		return new Operand(cont->_statVariables[PHYS_HIT_BAS], NUMBER);
 	case 0xD2:
-		return new Operand(cont->_statVariables[Context::PHYS_ARM_BAS], NUMBER);
+		return new Operand(cont->_statVariables[PHYS_ARM_BAS], NUMBER);
 	case 0xD3:
-		return new Operand(cont->_statVariables[Context::PHYS_ACC_BAS], NUMBER);
+		return new Operand(cont->_statVariables[PHYS_ACC_BAS], NUMBER);
 	case 0xD4:
-		return new Operand(cont->_statVariables[Context::SPIR_STR_BAS], NUMBER);
+		return new Operand(cont->_statVariables[SPIR_STR_BAS], NUMBER);
 	case 0xD5:
-		return new Operand(cont->_statVariables[Context::SPIR_HIT_BAS], NUMBER);
+		return new Operand(cont->_statVariables[SPIR_HIT_BAS], NUMBER);
 	case 0xD6:
-		return new Operand(cont->_statVariables[Context::SPIR_ARM_BAS], NUMBER);
+		return new Operand(cont->_statVariables[SPIR_ARM_BAS], NUMBER);
 	case 0xD7:
-		return new Operand(cont->_statVariables[Context::SPIR_ACC_BAS], NUMBER);
+		return new Operand(cont->_statVariables[SPIR_ACC_BAS], NUMBER);
 	case 0xD8:
-		return new Operand(cont->_statVariables[Context::PHYS_SPE_BAS], NUMBER);
+		return new Operand(cont->_statVariables[PHYS_SPE_BAS], NUMBER);
 	case 0xE0:
-		return new Operand(cont->_statVariables[Context::PHYS_STR_CUR], NUMBER);
+		return new Operand(cont->_statVariables[PHYS_STR_CUR], NUMBER);
 	case 0xE1:
-		return new Operand(cont->_statVariables[Context::PHYS_HIT_CUR], NUMBER);
+		return new Operand(cont->_statVariables[PHYS_HIT_CUR], NUMBER);
 	case 0xE2:
-		return new Operand(cont->_statVariables[Context::PHYS_ARM_CUR], NUMBER);
+		return new Operand(cont->_statVariables[PHYS_ARM_CUR], NUMBER);
 	case 0xE3:
-		return new Operand(cont->_statVariables[Context::PHYS_ACC_CUR], NUMBER);
+		return new Operand(cont->_statVariables[PHYS_ACC_CUR], NUMBER);
 	case 0xE4:
-		return new Operand(cont->_statVariables[Context::SPIR_STR_CUR], NUMBER);
+		return new Operand(cont->_statVariables[SPIR_STR_CUR], NUMBER);
 	case 0xE5:
-		return new Operand(cont->_statVariables[Context::SPIR_HIT_CUR], NUMBER);
+		return new Operand(cont->_statVariables[SPIR_HIT_CUR], NUMBER);
 	case 0xE6:
-		return new Operand(cont->_statVariables[Context::SPIR_ARM_CUR], NUMBER);
+		return new Operand(cont->_statVariables[SPIR_ARM_CUR], NUMBER);
 	case 0xE7:
-		return new Operand(cont->_statVariables[Context::SPIR_ACC_CUR], NUMBER);
+		return new Operand(cont->_statVariables[SPIR_ACC_CUR], NUMBER);
 	case 0xE8:
-		return new Operand(cont->_statVariables[Context::PHYS_SPE_CUR], NUMBER);
+		return new Operand(cont->_statVariables[PHYS_SPE_CUR], NUMBER);
 	default:
 		if (operandType >= 0x20 && operandType < 0x80) {
 			_data->seek(-1, SEEK_CUR);
@@ -315,58 +315,58 @@ void Script::assign(byte operandType, int uservar, uint16 value) {
 		cont->_userVariables[uservar - 1] = value;
 		break;
 	case 0xD0:
-		cont->_statVariables[Context::PHYS_STR_BAS] = value;
+		cont->_statVariables[PHYS_STR_BAS] = value;
 		break;
 	case 0xD1:
-		cont->_statVariables[Context::PHYS_HIT_BAS] = value;
+		cont->_statVariables[PHYS_HIT_BAS] = value;
 		break;
 	case 0xD2:
-		cont->_statVariables[Context::PHYS_ARM_BAS] = value;
+		cont->_statVariables[PHYS_ARM_BAS] = value;
 		break;
 	case 0xD3:
-		cont->_statVariables[Context::PHYS_ACC_BAS] = value;
+		cont->_statVariables[PHYS_ACC_BAS] = value;
 		break;
 	case 0xD4:
-		cont->_statVariables[Context::SPIR_STR_BAS] = value;
+		cont->_statVariables[SPIR_STR_BAS] = value;
 		break;
 	case 0xD5:
-		cont->_statVariables[Context::SPIR_HIT_BAS] = value;
+		cont->_statVariables[SPIR_HIT_BAS] = value;
 		break;
 	case 0xD6:
-		cont->_statVariables[Context::SPIR_ARM_BAS] = value;
+		cont->_statVariables[SPIR_ARM_BAS] = value;
 		break;
 	case 0xD7:
-		cont->_statVariables[Context::SPIR_ACC_BAS] = value;
+		cont->_statVariables[SPIR_ACC_BAS] = value;
 		break;
 	case 0xD8:
-		cont->_statVariables[Context::PHYS_SPE_BAS] = value;
+		cont->_statVariables[PHYS_SPE_BAS] = value;
 		break;
 	case 0xE0:
-		cont->_statVariables[Context::PHYS_STR_CUR] = value;
+		cont->_statVariables[PHYS_STR_CUR] = value;
 		break;
 	case 0xE1:
-		cont->_statVariables[Context::PHYS_HIT_CUR] = value;
+		cont->_statVariables[PHYS_HIT_CUR] = value;
 		break;
 	case 0xE2:
-		cont->_statVariables[Context::PHYS_ARM_CUR] = value;
+		cont->_statVariables[PHYS_ARM_CUR] = value;
 		break;
 	case 0xE3:
-		cont->_statVariables[Context::PHYS_ACC_CUR] = value;
+		cont->_statVariables[PHYS_ACC_CUR] = value;
 		break;
 	case 0xE4:
-		cont->_statVariables[Context::SPIR_STR_CUR] = value;
+		cont->_statVariables[SPIR_STR_CUR] = value;
 		break;
 	case 0xE5:
-		cont->_statVariables[Context::SPIR_HIT_CUR] = value;
+		cont->_statVariables[SPIR_HIT_CUR] = value;
 		break;
 	case 0xE6:
-		cont->_statVariables[Context::SPIR_ARM_CUR] = value;
+		cont->_statVariables[SPIR_ARM_CUR] = value;
 		break;
 	case 0xE7:
-		cont->_statVariables[Context::SPIR_ACC_CUR] = value;
+		cont->_statVariables[SPIR_ACC_CUR] = value;
 		break;
 	case 0xE8:
-		cont->_statVariables[Context::PHYS_SPE_CUR] = value;
+		cont->_statVariables[PHYS_SPE_CUR] = value;
 		break;
 	default:
 		debug("No idea what I'm supposed to assign! (%x at %d)!\n", operandType, _data->pos()-1);

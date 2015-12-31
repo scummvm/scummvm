@@ -419,13 +419,10 @@ void World::move(Chr *chr, Scene *scene, bool skipSort) {
 		Common::sort(scene->_chrs.begin(), scene->_chrs.end(), ChrComparator);
 
 	if (scene == _storageScene) {
-		warning("STUB: World::move (chrState)");
-		//chr.setState(new Chr.State(chr));
+		chr->resetState();
 	} else if (chr->_playerCharacter) {
 		scene->_visited = true;
-		warning("STUB: World::move (visits)");
-		//Context context = getPlayerContext();
-		//context.setVisits(context.getVisits() + 1);
+		_player->_context._visits++;
 	}
 	chr->_currentScene = scene;
 
