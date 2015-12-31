@@ -21,7 +21,6 @@
  */
 
 #include "engines/myst3/database.h"
-#include "engines/myst3/myst3.h"
 
 #include "common/archive.h"
 #include "common/debug.h"
@@ -110,8 +109,10 @@ const AgeData Database::_ages[] = {
 	{ 11, 0, 1, roomsLOGO, 0 }
 };
 
-Database::Database(Myst3Engine *vm) :
-		_vm(vm),
+Database::Database(const Common::Platform platform, const Common::Language language, const uint32 localizationType) :
+		_platform(platform),
+		_language(language),
+		_localizationType(localizationType),
 		_currentRoomID(0),
 		_currentRoomData(0) {
 
@@ -130,18 +131,18 @@ Database::Database(Myst3Engine *vm) :
 		error("Incorrect 'myst3.dat' version. Expected '%d', found '%d'", kDatVersion, version);
 	}
 
-	bool isWindowMacVersion = _vm->getPlatform() == Common::kPlatformWindows || _vm->getPlatform() == Common::kPlatformMacintosh;
-	bool isXboxVersion = _vm->getPlatform() == Common::kPlatformXbox;
+	bool isWindowMacVersion = _platform == Common::kPlatformWindows || _platform == Common::kPlatformMacintosh;
+	bool isXboxVersion = _platform == Common::kPlatformXbox;
 
-	readScriptIndex(_datFile, isWindowMacVersion);                                                  // Main scripts
-	readScriptIndex(_datFile, isWindowMacVersion && _vm->isMulti6Version());                           // Menu scripts 6 languages version
-	readScriptIndex(_datFile, isWindowMacVersion && !_vm->isMulti6Version() && !_vm->isMonolingual()); // Menu scripts 2 languages CD version
-	readScriptIndex(_datFile, isWindowMacVersion && !_vm->isMulti6Version() && _vm->isMonolingual());  // Menu scripts english CD version
-	readScriptIndex(_datFile, isXboxVersion);                                                       // Main scripts Xbox version
-	readScriptIndex(_datFile, isXboxVersion && !_vm->isMonolingual());                              // Menu scripts PAL Xbox version
-	readScriptIndex(_datFile, isXboxVersion && _vm->isMonolingual());                               // Menu scripts NTSC Xbox version
-	readSoundNames(_datFile, isWindowMacVersion);                                                   // Sound names
-	readSoundNames(_datFile, isXboxVersion);                                                        // Sound names Xbox
+	readScriptIndex(_datFile, isWindowMacVersion);                                          // Main scripts
+	readScriptIndex(_datFile, isWindowMacVersion && _localizationType == kLocMulti6);      // Menu scripts 6 languages version
+	readScriptIndex(_datFile, isWindowMacVersion && _localizationType == kLocMulti2);      // Menu scripts 2 languages CD version
+	readScriptIndex(_datFile, isWindowMacVersion && _localizationType == kLocMonolingual); // Menu scripts english CD version
+	readScriptIndex(_datFile, isXboxVersion);                                               // Main scripts Xbox version
+	readScriptIndex(_datFile, isXboxVersion && _localizationType != kLocMonolingual);      // Menu scripts PAL Xbox version
+	readScriptIndex(_datFile, isXboxVersion && _localizationType == kLocMonolingual);      // Menu scripts NTSC Xbox version
+	readSoundNames(_datFile, isWindowMacVersion);                                           // Sound names
+	readSoundNames(_datFile, isXboxVersion);                                                // Sound names Xbox
 
 	_roomScriptsStartOffset = _datFile->pos();
 
@@ -156,7 +157,7 @@ Database::Database(Myst3Engine *vm) :
 	preloadCommonRooms();
 	initializeZipBitIndexTable();
 
-	if (isWindowMacVersion && !_vm->isMulti6Version() && !_vm->isMonolingual()) {
+	if (isWindowMacVersion && _localizationType == kLocMulti2) {
 		patchLanguageMenu();
 	}
 }
@@ -698,6 +699,28 @@ Common::SeekableReadStream *Database::getRoomScriptStream(const char *room, Scri
 	return nullptr;
 }
 
+int16 Database::getGameLanguageCode() const {
+	// The monolingual versions of the game always use 0 as the language code
+	if (_localizationType == kLocMonolingual) {
+		return kEnglish;
+	}
+
+	switch (_language) {
+		case Common::FR_FRA:
+			return kFrench;
+		case Common::DE_DEU:
+			return kGerman;
+		case Common::IT_ITA:
+			return kItalian;
+		case Common::ES_ESP:
+			return kSpanish;
+		case Common::EN_ANY:
+			return kEnglish;
+		default:
+			return kOther;
+	}
+}
+
 void Database::patchLanguageMenu() {
 	// The menu scripts in 'myst3.dat" for the non English CD versions come from the French version
 	// The scripts for the other languages only differ by the value set for AudioLanguage variable
@@ -714,7 +737,7 @@ void Database::patchLanguageMenu() {
 	//	op 194, runPuzzle1 ( 19 )
 
 	NodePtr languageMenu = getNodeData(530, 901, 9);
-	languageMenu->hotspots[5].script[1].args[1] = _vm->getGameLanguageCode();
+	languageMenu->hotspots[5].script[1].args[1] = getGameLanguageCode();
 }
 
 } // End of namespace Myst3

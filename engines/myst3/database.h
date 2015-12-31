@@ -26,12 +26,30 @@
 #include "common/scummsys.h"
 #include "engines/myst3/hotspot.h"
 #include "common/str.h"
+#include "common/language.h"
+#include "common/platform.h"
 #include "common/ptr.h"
 #include "common/array.h"
 #include "common/hashmap.h"
 #include "common/stream.h"
 
 namespace Myst3 {
+
+enum GameLocalizationType {
+	kLocMonolingual,
+	kLocMulti2,
+	kLocMulti6,
+};
+
+enum MystLanguage {
+	kEnglish = 0,
+	kOther   = 1, // Dutch, Japanese or Polish
+	kDutch   = 1,
+	kFrench  = 2,
+	kGerman  = 3,
+	kItalian = 4,
+	kSpanish = 5
+};
 
 struct NodeData {
 	int16 id;
@@ -91,7 +109,7 @@ class Myst3Engine;
 
 class Database {
 public:
-	Database(Myst3Engine *vm);
+	Database(const Common::Platform platform, const Common::Language language, const uint32 localizationType);
 	~Database();
 
 	/**
@@ -143,8 +161,12 @@ public:
 	 * Retrieve an ambient cue from its id
 	 */
 	const AmbientCue &getAmbientCue(uint16 id);
+
+	int16 getGameLanguageCode() const;
 private:
-	Myst3Engine *_vm;
+	const Common::Platform _platform;
+	const Common::Language _language;
+	const uint32 _localizationType;
 
 	static const AgeData _ages[];
 

@@ -62,16 +62,6 @@
 
 namespace Myst3 {
 
-enum MystLanguage {
-	kEnglish = 0,
-	kOther   = 1, // Dutch, Japanese or Polish
-	kDutch   = 1,
-	kFrench  = 2,
-	kGerman  = 3,
-	kItalian = 4,
-	kSpanish = 5
-};
-
 Myst3Engine::Myst3Engine(OSystem *syst, const Myst3GameDescription *version) :
 		Engine(syst), _system(syst), _gameDescription(version),
 		_db(0), _console(0), _scriptEngine(0),
@@ -115,9 +105,6 @@ Myst3Engine::Myst3Engine(OSystem *syst, const Myst3GameDescription *version) :
 	SearchMan.addSubDirectoryMatching(gameDataDir, "MYST3BIN/M3DATA/TEXT");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "MYST3BIN/M3DATA/TEXT/NTSC");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "MYST3BIN/M3DATA/TEXT/PAL");
-
-	settingsInitDefaults();
-	syncSoundSettings();
 }
 
 Myst3Engine::~Myst3Engine() {
@@ -168,7 +155,7 @@ Common::Error Myst3Engine::run() {
 	_console = new Console(this);
 	_scriptEngine = new Script(this);
 	_state = new GameState(this);
-	_db = new Database(this);
+	_db = new Database(getPlatform(), getGameLanguage(), getGameLocalizationType());
 	_scene = new Scene(this);
 	if (getPlatform() == Common::kPlatformXbox) {
 		_menu = new AlbumMenu(this);
@@ -185,6 +172,9 @@ Common::Error Myst3Engine::run() {
 
 	_cursor = new Cursor(this);
 	_inventory = new Inventory(this);
+
+	settingsInitDefaults();
+	syncSoundSettings();
 
 	// Init the font
 	Graphics::Surface *font = loadTexture(1206);
@@ -282,7 +272,7 @@ void Myst3Engine::openArchives() {
 		break;
 	}
 
-	if (isMulti6Version()) {
+	if (getGameLocalizationType() == kLocMulti6) {
 		switch (ConfMan.getInt("text_language")) {
 		case kDutch:
 			textLanguage = "DUTCH";
@@ -305,14 +295,14 @@ void Myst3Engine::openArchives() {
 			break;
 		}
 	} else {
-		if (isMonolingual() || ConfMan.getInt("text_language")) {
+		if (getGameLocalizationType() == kLocMonolingual || ConfMan.getInt("text_language")) {
 			textLanguage = menuLanguage;
 		} else {
 			textLanguage = "ENGLISH";
 		}
 	}
 
-	if (!isMonolingual() && getPlatform() != Common::kPlatformXbox && textLanguage == "ENGLISH") {
+	if (getGameLocalizationType() != kLocMonolingual && getPlatform() != Common::kPlatformXbox && textLanguage == "ENGLISH") {
 		textLanguage = "ENGLISHjp";
 	}
 
@@ -330,7 +320,7 @@ void Myst3Engine::openArchives() {
 
 	addArchive(textLanguage + ".m3t", true);
 
-	if (!isMonolingual() || getPlatform() == Common::kPlatformXbox) {
+	if (getGameLocalizationType() != kLocMonolingual || getPlatform() == Common::kPlatformXbox) {
 		addArchive(menuLanguage + ".m3u", true);
 	}
 
@@ -1654,10 +1644,10 @@ SunSpot Myst3Engine::computeSunspotsIntensity(float pitch, float heading) {
 }
 
 void Myst3Engine::settingsInitDefaults() {
-	int defaultLanguage = getGameLanguageCode();
+	int defaultLanguage = _db->getGameLanguageCode();
 
 	int defaultTextLanguage;
-	if (isMulti6Version())
+	if (getGameLocalizationType() == kLocMulti6)
 		defaultTextLanguage = defaultLanguage;
 	else
 		defaultTextLanguage = getGameLanguage() != Common::EN_ANY;
@@ -1673,28 +1663,6 @@ void Myst3Engine::settingsInitDefaults() {
 	ConfMan.registerDefault("zip_mode", false);
 	ConfMan.registerDefault("subtitles", false);
 	ConfMan.registerDefault("vibrations", true); // Xbox specific
-}
-
-int16 Myst3Engine::getGameLanguageCode() const {
-	// The monolingual versions of the game always use 0 as the language code
-	if (isMonolingual()) {
-		return kEnglish;
-	}
-
-	switch (getGameLanguage()) {
-	case Common::FR_FRA:
-		return kFrench;
-	case Common::DE_DEU:
-		return kGerman;
-	case Common::IT_ITA:
-		return kItalian;
-	case Common::ES_ESP:
-		return kSpanish;
-	case Common::EN_ANY:
-		return kEnglish;
-	default:
-		return kOther;
-	}
 }
 
 void Myst3Engine::settingsLoadToVars() {

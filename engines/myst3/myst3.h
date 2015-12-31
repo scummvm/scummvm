@@ -42,12 +42,6 @@ struct Event;
 
 namespace Myst3 {
 
-enum GameVersionFlags {
-	kFlagNone        = 0,
-	kFlagMulti6      = (1 << 1), // 6 languages version
-	kFlagMonolingual = (1 << 2)  // Monolingual version
-};
-
 // Engine Debug Flags
 enum {
 	kDebugVariable = (1 << 0),
@@ -122,9 +116,7 @@ public:
 	bool hasFeature(EngineFeature f) const override;
 	Common::Platform getPlatform() const;
 	Common::Language getGameLanguage() const;
-	int16 getGameLanguageCode() const;
-	bool isMonolingual() const;
-	bool isMulti6Version() const;
+	uint32 getGameLocalizationType() const;
 	bool isWideScreenModEnabled() const;
 
 	bool canLoadGameStateCurrently() override;

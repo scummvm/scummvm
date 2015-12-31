@@ -22,6 +22,7 @@
 
 #include "engines/advancedDetector.h"
 
+#include "engines/myst3/database.h"
 #include "engines/myst3/state.h"
 
 #include "common/config-manager.h"
@@ -34,7 +35,7 @@ namespace Myst3 {
 
 struct Myst3GameDescription {
 	ADGameDescription desc;
-	uint32 flags;
+	uint32 localizationType;
 };
 
 static const PlainGameDescriptor myst3Games[] = {
@@ -81,43 +82,43 @@ static const char *directoryGlobs[] = {
 		ADGF_UNSTABLE,															\
 		GUIO_NONE																\
 	},																			\
-	kFlagMulti6																	\
+	kLocMulti6																	\
 },
 
 
 static const Myst3GameDescription gameDescriptions[] = {
 	// Initial US release (English only)
-	MYST3ENTRY(Common::EN_ANY, "ENGLISH.m3t",  "3ca92b097c4319a2ace7fd6e911d6b0f", 0, kFlagMonolingual)
+	MYST3ENTRY(Common::EN_ANY, "ENGLISH.m3t",  "3ca92b097c4319a2ace7fd6e911d6b0f", 0, kLocMonolingual)
 
 	// European releases (Country language + English) (1.2)
-	MYST3ENTRY(Common::NL_NLD, "DUTCH.m3u",    "0e8019cfaeb58c2de00ac114cf122220", 0, kFlagNone)
-	MYST3ENTRY(Common::FR_FRA, "FRENCH.m3u",   "3a7e270c686806dfc31c2091e09c03ec", 0, kFlagNone)
-	MYST3ENTRY(Common::DE_DEU, "GERMAN.m3u",   "00000000000000000000000000000000", 0, kFlagNone)
-	MYST3ENTRY(Common::ES_ESP, "SPANISH.m3u",  "00000000000000000000000000000000", 0, kFlagNone)
-	MYST3ENTRY(Common::PL_POL, "POLISH.m3u",   "00000000000000000000000000000000", 0, kFlagNone)
+	MYST3ENTRY(Common::NL_NLD, "DUTCH.m3u",    "0e8019cfaeb58c2de00ac114cf122220", 0, kLocMulti2)
+	MYST3ENTRY(Common::FR_FRA, "FRENCH.m3u",   "3a7e270c686806dfc31c2091e09c03ec", 0, kLocMulti2)
+	MYST3ENTRY(Common::DE_DEU, "GERMAN.m3u",   "00000000000000000000000000000000", 0, kLocMulti2)
+	MYST3ENTRY(Common::ES_ESP, "SPANISH.m3u",  "00000000000000000000000000000000", 0, kLocMulti2)
+	MYST3ENTRY(Common::PL_POL, "POLISH.m3u",   "00000000000000000000000000000000", 0, kLocMulti2)
 
 	// Russian release (Russian only) (1.2)
-	MYST3ENTRY(Common::RU_RUS, "ENGLISH.m3t",  "57d36d8610043fda554a0708d71d2681", 0, kFlagMonolingual)
+	MYST3ENTRY(Common::RU_RUS, "ENGLISH.m3t",  "57d36d8610043fda554a0708d71d2681", 0, kLocMonolingual)
 
 	// Japanese release (1.2)
-	MYST3ENTRY(Common::JA_JPN, "JAPANESE.m3u", "21bbd040bcfadd13b9dc84360c3de01d", 0, kFlagNone)
-	MYST3ENTRY(Common::JA_JPN, "JAPANESE.m3u", "1e7c3156417978a1187fa6bc0e2cfafc", "Subtitles only", kFlagNone)
+	MYST3ENTRY(Common::JA_JPN, "JAPANESE.m3u", "21bbd040bcfadd13b9dc84360c3de01d", 0, kLocMulti2)
+	MYST3ENTRY(Common::JA_JPN, "JAPANESE.m3u", "1e7c3156417978a1187fa6bc0e2cfafc", "Subtitles only", kLocMulti2)
 
 	// Multilingual CD release (1.21)
-	MYST3ENTRY(Common::EN_ANY, "ENGLISH.m3u",  "b62ca55aa17724cddbbcc78cba988337", 0, kFlagMulti6)
-	MYST3ENTRY(Common::FR_FRA, "FRENCH.m3u",   "73519070cba1c7bea599adbddeae304f", 0, kFlagMulti6)
-	MYST3ENTRY(Common::NL_NLD, "DUTCH.m3u",    "c4a8d8fb0eb3fecb9c435a8517bc1f9a", 0, kFlagMulti6)
-	MYST3ENTRY(Common::DE_DEU, "GERMAN.m3u",   "5b3be343dd20f03ebdf16381b873f035", 0, kFlagMulti6)
-	MYST3ENTRY(Common::IT_ITA, "ITALIAN.m3u",  "73db43aac3fe8671e2c4e227977fbb61", 0, kFlagMulti6)
-	MYST3ENTRY(Common::ES_ESP, "SPANISH.m3u",  "55ceb165dad02211ef2d25946c3aac8e", 0, kFlagMulti6)
+	MYST3ENTRY(Common::EN_ANY, "ENGLISH.m3u",  "b62ca55aa17724cddbbcc78cba988337", 0, kLocMulti6)
+	MYST3ENTRY(Common::FR_FRA, "FRENCH.m3u",   "73519070cba1c7bea599adbddeae304f", 0, kLocMulti6)
+	MYST3ENTRY(Common::NL_NLD, "DUTCH.m3u",    "c4a8d8fb0eb3fecb9c435a8517bc1f9a", 0, kLocMulti6)
+	MYST3ENTRY(Common::DE_DEU, "GERMAN.m3u",   "5b3be343dd20f03ebdf16381b873f035", 0, kLocMulti6)
+	MYST3ENTRY(Common::IT_ITA, "ITALIAN.m3u",  "73db43aac3fe8671e2c4e227977fbb61", 0, kLocMulti6)
+	MYST3ENTRY(Common::ES_ESP, "SPANISH.m3u",  "55ceb165dad02211ef2d25946c3aac8e", 0, kLocMulti6)
 
 	// DVD releases (1.27)
-	MYST3ENTRY(Common::EN_ANY, "ENGLISH.m3u",  "e200b416f43e70fee76148a80d195d5c", "DVD", kFlagMulti6)
-	MYST3ENTRY(Common::FR_FRA, "FRENCH.m3u",   "5679ce65c5e9af8899835ef9af398f1a", "DVD", kFlagMulti6)
-	MYST3ENTRY(Common::NL_NLD, "DUTCH.m3u",    "2997afdb4306c573153fdbb391ed2fff", "DVD", kFlagMulti6)
-	MYST3ENTRY(Common::DE_DEU, "GERMAN.m3u",   "09f32e6ceb414463e8fc22ca1a9564d3", "DVD", kFlagMulti6)
-	MYST3ENTRY(Common::IT_ITA, "ITALIAN.m3u",  "51fb02f6bf37dde811d7cde648365260", "DVD", kFlagMulti6)
-	MYST3ENTRY(Common::ES_ESP, "SPANISH.m3u",  "e27e610fe8ce35223a3239ff170a85ec", "DVD", kFlagMulti6)
+	MYST3ENTRY(Common::EN_ANY, "ENGLISH.m3u",  "e200b416f43e70fee76148a80d195d5c", "DVD", kLocMulti6)
+	MYST3ENTRY(Common::FR_FRA, "FRENCH.m3u",   "5679ce65c5e9af8899835ef9af398f1a", "DVD", kLocMulti6)
+	MYST3ENTRY(Common::NL_NLD, "DUTCH.m3u",    "2997afdb4306c573153fdbb391ed2fff", "DVD", kLocMulti6)
+	MYST3ENTRY(Common::DE_DEU, "GERMAN.m3u",   "09f32e6ceb414463e8fc22ca1a9564d3", "DVD", kLocMulti6)
+	MYST3ENTRY(Common::IT_ITA, "ITALIAN.m3u",  "51fb02f6bf37dde811d7cde648365260", "DVD", kLocMulti6)
+	MYST3ENTRY(Common::ES_ESP, "SPANISH.m3u",  "e27e610fe8ce35223a3239ff170a85ec", "DVD", kLocMulti6)
 
 	// Myst 3 Xbox (PAL)
 	MYST3ENTRY_XBOX(Common::EN_ANY, "ENGLISHX.m3t", "c4d012ab02b8ca7d0c7e79f4dbd4e676")
@@ -308,12 +309,8 @@ Common::Language Myst3Engine::getGameLanguage() const {
 	return _gameDescription->desc.language;
 }
 
-bool Myst3Engine::isMulti6Version() const {
-	return (_gameDescription->flags & kFlagMulti6) != 0;
-}
-
-bool Myst3Engine::isMonolingual() const {
-	return (_gameDescription->flags & kFlagMonolingual) != 0;
+uint32 Myst3Engine::getGameLocalizationType() const {
+	return _gameDescription->localizationType;
 }
 
 } // End of namespace Myst3
