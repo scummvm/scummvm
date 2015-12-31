@@ -156,9 +156,8 @@ const int arrowPixels[ARROW_H][ARROW_W] = {
 		{0,1,1,1,1,1,1,1,1,1,1,0},
 		{1,1,1,1,1,1,1,1,1,1,1,1}};
 
-
 void Gui::paintBorder(Graphics::Surface *g, int x, int y, int width, int height, WindowType windowType) {
-	bool active, scrollable, closeable, closeBoxPressed;
+	bool active, scrollable, closeable, closeBoxPressed, drawTitle;
 
 	switch (windowType) {
 	case kWindowScene:
@@ -166,12 +165,14 @@ void Gui::paintBorder(Graphics::Surface *g, int x, int y, int width, int height,
 		scrollable = false;
 		closeable = false;
 		closeBoxPressed = false;
+		drawTitle = true;
 		break;
 	case kWindowConsole:
 		active = true;
 		scrollable = true;
 		closeable = true;
 		closeBoxPressed = false;
+		drawTitle = false;
 		break;
 	}
 
@@ -224,23 +225,18 @@ void Gui::paintBorder(Graphics::Surface *g, int x, int y, int width, int height,
 		}
 	}
 
-#if 0
-	if (title != null) {
+	if (drawTitle) {
 		// TODO: This "Chicago" is not faithful to the original one on the Mac.
-		Font f = new Font("Chicago", Font.BOLD, 12);
-		int w = g.getFontMetrics(f).stringWidth(title) + 6;
+		//Font f = new Font("Chicago", Font.BOLD, 12);
+		const Graphics::Font *font = FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
+
+		int w = font->getStringWidth(_scene->_name) + 6;
 		int maxWidth = width - size*2 - 7;
-		if (w > maxWidth) {
+		if (w > maxWidth)
 			w = maxWidth;
-		}
 		drawBox(g, x + (width - w) / 2, y, w, size);
-		g.setFont(f);
-		Shape clip = g.getClip();
-		g.setClip(x + (width - w) / 2, y, w, size);
-		g.drawString(title, x + (width - w) / 2 + 3, y + size - 4);
-		g.setClip(clip);
+		font->drawString(g, _scene->_name, x + (width - w) / 2 + 3, y + 3, w, kColorBlack);
 	}
-#endif
 }
 
 enum {
