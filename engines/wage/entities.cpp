@@ -166,6 +166,8 @@ Obj::Obj(String name, Common::SeekableReadStream *data) {
 	_currentOwner = NULL;
 	_currentScene = NULL;
 
+	_index = 0;
+
 	_design = new Design(data);
 
 	setDesignBounds(readRect(data));
@@ -239,6 +241,7 @@ Chr::Chr(String name, Common::SeekableReadStream *data) {
 	_classType = CHR;
 	_design = new Design(data);
 
+	_index = 0;
 	_currentScene = NULL;
 
 	setDesignBounds(readRect(data));
@@ -267,6 +270,9 @@ Chr::Chr(String name, Common::SeekableReadStream *data) {
 
 	if (data->readSByte() == 1)
 		_playerCharacter = true;
+	else
+		_playerCharacter = false;
+
 	_maximumCarriedObjects = data->readByte();
 	_returnTo = data->readSByte();
 
@@ -282,6 +288,8 @@ Chr::Chr(String name, Common::SeekableReadStream *data) {
 	_gender = data->readSByte();
 	if (data->readSByte() == 1)
 		_nameProperNoun = true;
+	else
+		_nameProperNoun = false;
 
 	_initialScene = readPascalString(data);
 	_nativeWeapon1 = readPascalString(data);
