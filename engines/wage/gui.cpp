@@ -231,16 +231,27 @@ void Gui::paintBorder(Graphics::Surface *g, int x, int y, int width, int height,
 	}
 
 	if (drawTitle) {
-		// TODO: This "Chicago" is not faithful to the original one on the Mac.
-		//Font f = new Font("Chicago", Font.BOLD, 12);
-		const Graphics::Font *font = FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
+		const Graphics::Font *font;
+		int yOff = 1;
+
+		if (!_builtInFonts) {
+			font = FontMan.getFontByName("Chicago-12");
+
+			if (!font)
+				warning("Cannot load font Chicago-12");
+		}
+
+		if (_builtInFonts || !font) {
+			font = FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
+			yOff = 3;
+		}
 
 		int w = font->getStringWidth(_scene->_name) + 6;
 		int maxWidth = width - size*2 - 7;
 		if (w > maxWidth)
 			w = maxWidth;
 		drawBox(g, x + (width - w) / 2, y, w, size);
-		font->drawString(g, _scene->_name, x + (width - w) / 2 + 3, y + 3, w, kColorBlack);
+		font->drawString(g, _scene->_name, x + (width - w) / 2 + 3, y + yOff, w, kColorBlack);
 	}
 }
 
@@ -276,7 +287,21 @@ void Gui::renderConsole(Graphics::Surface *g, int x, int y, int width, int heigh
 	if (fullRedraw)
 		_console.fillRect(fullR, kColorWhite);
 
-	const Graphics::Font *font = FontMan.getFontByUsage(Graphics::FontManager::kConsoleFont);
+	const Graphics::Font *font;
+
+	if (!_builtInFonts) {
+		char fontName[128];
+
+		snprintf(fontName, 128, "%s-%d", _scene->getFontName(), _scene->_fontSize);
+		font = FontMan.getFontByName(fontName);
+
+		if (!font)
+			warning("Cannot load font %s", fontName);
+	}
+
+	if (_builtInFonts || !font)
+		font = FontMan.getFontByUsage(Graphics::FontManager::kConsoleFont);
+
 	int lineHeight = font->getFontHeight() + kLineSpacing;
 	int textW = width - kConWPadding * 2;
 	int textH = height - kConHPadding * 2;
