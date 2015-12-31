@@ -54,6 +54,11 @@
 
 namespace Wage {
 
+enum WindowType {
+	kWindowScene,
+	kWindowConsole
+};
+
 class Gui {
 public:
 	Gui();
@@ -64,9 +69,7 @@ public:
 	void appendText(Common::String &str);
 
 private:
-	void paintBorder(Graphics::Surface *g, int x, int y, int width, int height,
-			bool active, bool scrollable, bool closeable, bool closeBoxPressed);
-
+	void paintBorder(Graphics::Surface *g, int x, int y, int width, int height, WindowType windowType);
 	void renderConsole(Graphics::Surface *g, int x, int y, int width, int height);
 	void drawBox(Graphics::Surface *g, int x, int y, int w, int h);
 	void fillRect(Graphics::Surface *g, int x, int y, int w, int h);

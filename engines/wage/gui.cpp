@@ -115,7 +115,7 @@ void Gui::draw() {
 	if (_scene != NULL && _sceneDirty) {
 		_scene->paint(&_screen, 0, kMenuHeight);
 		paintBorder(&_screen, 0, kMenuHeight, _scene->_design->getBounds()->width(), _scene->_design->getBounds()->height(),
-				false, false, false, false);
+				kWindowScene);
 
 		_sceneDirty = false;
 	}
@@ -127,7 +127,7 @@ void Gui::draw() {
 
 	renderConsole(&_screen, sceneW + kBorderWidth, kMenuHeight + kBorderWidth, consoleW, consoleH);
 	paintBorder(&_screen, sceneW, kMenuHeight, _screen.w - sceneW, _scene->_design->getBounds()->height(),
-			true, true, true, false);
+		kWindowConsole);
 
 	// Blit to screen
 	g_system->copyRectToScreen(_screen.getPixels(), _screen.pitch, 0, 0, _screen.w, _screen.h);
@@ -157,8 +157,24 @@ const int arrowPixels[ARROW_H][ARROW_W] = {
 		{1,1,1,1,1,1,1,1,1,1,1,1}};
 
 
-void Gui::paintBorder(Graphics::Surface *g, int x, int y, int width, int height,
-			bool active, bool scrollable, bool closeable, bool closeBoxPressed) {
+void Gui::paintBorder(Graphics::Surface *g, int x, int y, int width, int height, WindowType windowType) {
+	bool active, scrollable, closeable, closeBoxPressed;
+
+	switch (windowType) {
+	case kWindowScene:
+		active = false;
+		scrollable = false;
+		closeable = false;
+		closeBoxPressed = false;
+		break;
+	case kWindowConsole:
+		active = true;
+		scrollable = true;
+		closeable = true;
+		closeBoxPressed = false;
+		break;
+	}
+
 	const int size = kBorderWidth;
 	drawBox(g, x, y, size, size);
 	drawBox(g, x+width-size-1, y, size, size);
@@ -242,7 +258,8 @@ void Gui::renderConsole(Graphics::Surface *g, int x, int y, int width, int heigh
 	int surfW = width + kConWOverlap * 2;
 	int surfH = height + kConHOverlap * 2;
 
-	Common::Rect boundsR(kConWOverlap - kConOverscan, kConHOverlap - kConOverscan, width + kConWOverlap + kConOverscan, height + kConHOverlap + kConOverscan);
+	Common::Rect boundsR(kConWOverlap - kConOverscan, kConHOverlap - kConOverscan,
+					width + kConWOverlap + kConOverscan, height + kConHOverlap + kConOverscan);
 	Common::Rect fullR(0, 0, surfW, surfH);
 
 	if (_console.w != surfW || _console.h != surfH) {
