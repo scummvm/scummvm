@@ -46,8 +46,10 @@
  */
 
 #include "common/system.h"
+#include "common/unzip.h"
 #include "graphics/fontman.h"
 #include "graphics/font.h"
+#include "graphics/fonts/bdf.h"
 #include "wage/wage.h"
 #include "wage/design.h"
 #include "wage/entities.h"
@@ -74,8 +76,11 @@ Gui::Gui() {
 	Common::Rect r(0, 0, _screen.w, _screen.h);
 
 	_scrollPos = 0;
+	_builtInFonts = false;
 
 	Design::drawFilledRect(&_screen, r, kColorBlack, p, 1);
+
+	loadFonts();
 }
 
 Gui::~Gui() {
@@ -308,5 +313,46 @@ void Gui::renderConsole(Graphics::Surface *g, int x, int y, int width, int heigh
 	g->copyRectToSurface(_console, x - kConOverscan, y - kConOverscan, boundsR);
 }
 
+void Gui::loadFonts() {
+	Common::Archive *dat;
+
+	dat = Common::makeZipArchive("wage.dat");
+
+	if (!dat) {
+		warning("Could not find wage.dat. Falling back to built-in fonts");
+		_builtInFonts = true;
+	}
+
+	Common::ArchiveMemberList list;
+	dat->listMembers(list);
+
+	for (Common::ArchiveMemberList::iterator it = list.begin(); it != list.end(); ++it) {
+		Common::SeekableReadStream *stream = dat->createReadStreamForMember((*it)->getName());
+
+		Graphics::BdfFont *font = Graphics::BdfFont::loadFont(*stream);
+
+		delete stream;
+
+		Common::String fontName = (*it)->getName();
+
+		// Trim the .bdf extension
+		for (int i = fontName.size() - 1; i >= 0; --i) {
+			if (fontName[i] == '.') {
+				while ((uint)i < fontName.size()) {
+					fontName.deleteLastChar();
+				}
+				break;
+			}
+		}
+
+		FontMan.assignFontToName(fontName, font);
+
+		debug(2, " %s", fontName.c_str());
+	}
+
+	_builtInFonts = false;
+
+	delete dat;
+}
 
 } // End of namespace Wage

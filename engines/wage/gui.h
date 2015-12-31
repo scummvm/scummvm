@@ -73,6 +73,7 @@ private:
 	void renderConsole(Graphics::Surface *g, int x, int y, int width, int height);
 	void drawBox(Graphics::Surface *g, int x, int y, int w, int h);
 	void fillRect(Graphics::Surface *g, int x, int y, int w, int h);
+	void loadFonts();
 
 private:
 	Graphics::Surface _screen;
@@ -83,6 +84,8 @@ private:
 	Common::StringArray _out;
 	Common::StringArray _lines;
 	uint _scrollPos;
+
+	bool _builtInFonts;
 };
 
 } // End of namespace Wage
