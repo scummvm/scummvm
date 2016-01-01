@@ -468,9 +468,6 @@ bool FPStream::loadFile(const Common::String &fileName, int bufSize) {
 	if (_fileLoaded)
 		unloadFile();
 
-	// Save the codec type
-	_codec = FPCODEC_ADPCM;
-
 	// Open the file stream for reading
 	if (!_file.open(fileName)) {
 		// Fallback: try with an extra '0' prefix

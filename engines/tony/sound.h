@@ -246,7 +246,6 @@ class FPStream {
 private:
 	uint32 _bufferSize;                  // Buffer size (bytes)
 	uint32 _size;                        // Stream size (bytes)
-	uint32 _codec;                       // CODEC used
 
 	Common::File _file;                  // File handle used for the stream
 
