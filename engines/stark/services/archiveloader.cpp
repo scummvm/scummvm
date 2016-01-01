@@ -82,7 +82,13 @@ void ArchiveLoader::unloadUnused() {
 ArchiveReadStream *ArchiveLoader::getFile(const Common::String &fileName, const Common::String &archiveName) {
 	LoadedArchive *archive = findArchive(archiveName);
 	Formats::XARCArchive &xarc = archive->getXArc();
-	return new ArchiveReadStream(xarc.createReadStreamForMember(fileName));
+
+	Common::SeekableReadStream *stream = xarc.createReadStreamForMember(fileName);
+	if (!stream) {
+		return nullptr;
+	}
+
+	return new ArchiveReadStream(stream);
 }
 
 bool ArchiveLoader::returnRoot(const Common::String &archiveName) {

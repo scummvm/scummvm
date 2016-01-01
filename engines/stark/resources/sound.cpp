@@ -40,9 +40,10 @@ Sound::~Sound() {
 Sound::Sound(Object *parent, byte subType, uint16 index, const Common::String &name) :
 		Object(parent, subType, index, name),
 		_enabled(0),
-		_looping(0),
+		_looping(false),
 		_field_64(0),
-		_loopIndefinitely(0),
+		_loopIndefinitely(false),
+		_loadFromFile(true),
 		_maxDuration(0),
 		_stockSoundType(0),
 		_field_6C(0),
@@ -53,10 +54,16 @@ Sound::Sound(Object *parent, byte subType, uint16 index, const Common::String &n
 }
 
 Audio::RewindableAudioStream *Sound::makeAudioStream() {
+	Common::SeekableReadStream *stream = nullptr;
 	Audio::RewindableAudioStream *audioStream = nullptr;
 
 	// First try the .iss / isn files
-	Common::SeekableReadStream *stream = StarkArchiveLoader->getExternalFile(_filename, _archiveName);
+	if (_loadFromFile) {
+		stream = StarkArchiveLoader->getExternalFile(_filename, _archiveName);
+	} else {
+		stream = StarkArchiveLoader->getFile(_filename, _archiveName);
+	}
+
 	if (stream) {
 		audioStream = Formats::makeISSStream(stream, DisposeAfterUse::YES);
 	}
@@ -137,7 +144,7 @@ void Sound::readData(Formats::XRCReadStream *stream) {
 	_field_64 = stream->readUint32LE();
 	_loopIndefinitely = stream->readBool();
 	_maxDuration = stream->readUint32LE();
-	stream->readUint32LE(); // Skipped ?
+	_loadFromFile = stream->readBool(); // Used only in the 4CD version
 	_stockSoundType = stream->readUint32LE();
 	_soundName = stream->readString();
 	_field_6C = stream->readUint32LE();
@@ -154,6 +161,7 @@ void Sound::printData() {
 	debug("field_64: %d", _field_64);
 	debug("loopIndefinitely: %d", _loopIndefinitely);
 	debug("maxDuration: %d", _maxDuration);
+	debug("loadFromFile: %d", _loadFromFile);
 	debug("stockSoundType: %d", _stockSoundType);
 	debug("soundName: %s", _soundName.c_str());
 	debug("field_6C: %d", _field_6C);

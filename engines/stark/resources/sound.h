@@ -84,6 +84,7 @@ protected:
 	uint32 _field_64;
 	bool _loopIndefinitely;
 	uint32 _maxDuration;
+	bool _loadFromFile;
 	uint32 _stockSoundType;
 	Common::String _soundName;
 	uint32 _field_6C;
