@@ -167,7 +167,9 @@ subdirectories for supported games.
 
 1.3) F.A.Q.
 ---- ------
-We've compiled a list of F.A.Q. at <http://www.scummvm.org/faq/>
+We've compiled a list of F.A.Q. at:
+
+  <http://www.scummvm.org/faq/>
 
 
 2.0) Contact:
@@ -213,8 +215,9 @@ each individual bug).
 ---- ----------------
 At the moment the following games have been reported to work, and should
 be playable to the end:
-(A more detailed compatibility list of the supported games can be found here
-<http://www.scummvm.org/compatibility/>)
+A more detailed compatibility list of the supported games can be found here:
+
+  <http://www.scummvm.org/compatibility/>)
 
 LucasArts (SCUMM) Games:
      Maniac Mansion                              [maniac]
@@ -530,7 +533,9 @@ ScummVM will skip copy protection in the following games:
 3.2) Datafiles:
 ---- ----------
 For a comprehensive list of required Datafiles for supported games
-visit: <http://wiki.scummvm.org/index.php/Datafiles>
+visit:
+
+  <http://wiki.scummvm.org/index.php/Datafiles>
 
 
 3.3) Multi-CD games notes:
@@ -582,7 +587,7 @@ site, please see the section on reporting bugs.
     - Not a bug: CD version is missing speech for some dialogs, this is
       normal.
 
-  Elvira - Mistress of the Dark
+  Elvira - Mistress of the Dark:
     - No music in the Atari ST version.
 
   Elvira II - The Jaws of Cerberus
@@ -590,10 +595,10 @@ site, please see the section on reporting bugs.
     - No sound effects in the PC version.
     - Palette issues in the Atari ST version.
 
-  Inherit the Earth: Quest for the Orb
+  Inherit the Earth: Quest for the Orb:
     - Amiga versions aren't supported.
 
-  Lure of the Temptress
+  Lure of the Temptress:
     - No Roland MT-32 support.
     - Sound support is incomplete and doesn't sound like original.
 
@@ -791,8 +796,9 @@ reasons, you can download it separately and then unpack it to the
 directory of the game.  You can listen to the Czech dubbing with all
 language variants of the game, while reading the subtitles.
 
-All game files and the walkthrough can be downloaded from
-<http://www.ucw.cz/draci-historie/index-en.html>
+All game files and the walkthrough can be downloaded from:
+
+  <http://www.ucw.cz/draci-historie/index-en.html>
 
 
 3.10) Flight of the Amazon Queen notes:
@@ -924,7 +930,8 @@ You need to install a small pack of cutscenes that are missing in both
 of these versions of The Feeble Files.
 It's called "The Feeble Files - Omni TV and epilogue cutscenes for the
 Amiga and Macintosh versions" and you can get it here:
-<http://www.scummvm.org/games/#feeble>
+
+  <http://www.scummvm.org/games/#feeble>
 
 Windows:
 If you have the Windows version of The Feeble Files, there are several
@@ -1253,6 +1260,7 @@ The Dreamcast port does not support The Curse of Monkey Island, nor The
 Dig. The Nintendo DS port does not support Full Throttle, The Dig, or
 The Curse of Monkey Island.
 For more platform specific limitations, please refer to our Wiki:
+
   <http://wiki.scummvm.org/index.php/Platforms>
 
 In the Macintosh port, the right mouse button is emulated via Cmd-Click
@@ -1555,7 +1563,7 @@ other games.
     Escape                 - Skips cutscenes
     Space                  - Skips current line of text
 
-  Future Wars
+  Future Wars:
     F1                     - Examine
     F2                     - Take
     F3                     - Inventory
@@ -1566,7 +1574,7 @@ other games.
     F10                    - "Use" menu
     Escape                 - Bring on command menu
 
-  Nippon Safes
+  Nippon Safes:
     Ctrl-d                 - Starts the debugger
     l                      - Load game
     s                      - Save game
@@ -1594,7 +1602,7 @@ other games.
                              combined speech and subtitles
                              [Simon the Sorcerer 2 CD only]
 
-  Simon the Sorcerer's Puzzle Pack
+  Simon the Sorcerer's Puzzle Pack:
     Ctrl-d                 - Starts the debugger
     Ctrl-f                 - Toggle fast mode
     F12                    - High speed mode on/off in Swampy Adventures
@@ -1603,7 +1611,7 @@ other games.
     s                      - Sound effects on/off
     Pause                  - Pauses
 
-  The Feeble Files
+  The Feeble Files:
     Ctrl-d                 - Starts the debugger
     Ctrl-f                 - Toggle fast mode
     F7                     - Switch characters
@@ -1632,7 +1640,7 @@ other games.
     t                      - Switch between 'Voice only',
                              'Voice and Text' and 'Text only'
 
-  Zork: Grand Inquisitor
+  Zork: Grand Inquisitor:
     Ctrl-s                 - Save
     Ctrl-r                 - Restore
     Ctrl-q                 - Quit
@@ -1645,7 +1653,7 @@ other games.
     F9                     - Extract coin (must have the coin bag)
     Space                  - Skips movies
 
-  Zork Nemesis: The Forbidden Lands
+  Zork Nemesis: The Forbidden Lands:
     Ctrl-s                 - Save
     Ctrl-r                 - Restore
     Ctrl-q                 - Quit
@@ -2592,7 +2600,8 @@ configuration of each entry, allowing the custom options to be shown.
 ---- ----------
 For an up-to-date overview on how to compile ScummVM for various
 platforms, please consult our Wiki, in particular this page:
-   <http://wiki.scummvm.org/index.php/Compiling_ScummVM>
+
+  <http://wiki.scummvm.org/index.php/Compiling_ScummVM>
 
 If you are compiling for Windows, Linux or Mac OS X, you need SDL-1.2.2
 or newer (older versions may work, but are unsupported), and a supported
@@ -2708,7 +2717,9 @@ debug messages (see <https://technet.microsoft.com/en-us/sysinternals/debugview.
 
 10.0) Credits
 ----- -------
-Please refer to our extensive Credits list at <http://www.scummvm.org/credits/>
+Please refer to our extensive Credits list at:
+
+  <http://www.scummvm.org/credits/>
 
 
 ------------------------------------------------------------------------
