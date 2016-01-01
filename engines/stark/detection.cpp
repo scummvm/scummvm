@@ -162,6 +162,19 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO_NONE
 	},
 
+	// The Longest Journey
+	// French 4CD
+	{
+		"tlj", "4 CD", {
+			{"x.xarc", 0, "a0559457126caadab0cadac02d35f26f", 3032},
+			{"chapters.ini", 0, "e54f6370dca06496069790840409cf95", 506},
+			{NULL, 0, NULL, 0}
+		},
+		Common::FR_FRA,
+		Common::kPlatformWindows,
+		ADGF_NO_FLAGS,
+		GUIO_NONE
+	},
 
 	// The Longest Journey
 	// Swedish Demo
