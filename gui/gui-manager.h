@@ -98,6 +98,8 @@ public:
 	 */
 	bool checkScreenChange();
 
+	bool _launched;
+
 protected:
 	enum RedrawStatus {
 		kRedrawDisabled = 0,
