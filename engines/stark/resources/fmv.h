@@ -52,7 +52,7 @@ protected:
 	void printData() override;
 
 	Common::String _filename;
-	uint32 _diaryAddEntryOnPlay;
+	bool _diaryAddEntryOnPlay;
 	uint32 _gameDisc;
 };
 

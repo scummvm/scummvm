@@ -346,9 +346,6 @@ void ResourceProvider::shutdown() {
 	for (CurrentList::const_iterator it = _locations.begin(); it != _locations.end(); it++) {
 		Current *location = *it;
 
-		_stateProvider->saveLocationState(location->getLevel(), location->getLocation());
-		_stateProvider->saveLevelState(location->getLevel());
-
 		_archiveLoader->returnRoot(_archiveLoader->buildArchiveName(location->getLevel(), location->getLocation()));
 		_archiveLoader->returnRoot(_archiveLoader->buildArchiveName(location->getLevel()));
 
@@ -357,8 +354,6 @@ void ResourceProvider::shutdown() {
 	_locations.clear();
 
 	// Return the global resources
-	_stateProvider->saveLevelState(_global->getLevel());
-
 	_archiveLoader->returnRoot(_archiveLoader->buildArchiveName(_global->getLevel()));
 	_archiveLoader->returnRoot("x.xarc");
 
