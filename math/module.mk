@@ -11,6 +11,7 @@ MODULE_OBJS := \
 	matrix4.o \
 	plane.o \
 	quat.o \
+	ray.o \
 	rect2d.o \
 	vector2d.o \
 	vector3d.o \
