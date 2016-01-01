@@ -319,8 +319,8 @@ void Gui::paintBorder(Graphics::Surface *g, int x, int y, int width, int height,
 enum {
 	kConWOverlap = 20,
 	kConHOverlap = 20,
-	kConWPadding = 2,
-	kConHPadding = 10,
+	kConWPadding = 4,
+	kConHPadding = 4,
 	kConOverscan = 3,
 	kLineSpacing = 0
 };
