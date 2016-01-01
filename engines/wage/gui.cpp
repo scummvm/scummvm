@@ -119,6 +119,7 @@ static const byte macCursorBeam[] = {
 Gui::Gui() {
 	_scene = NULL;
 	_sceneDirty = true;
+	_bordersDirty = true;
 	_screen.create(g_system->getWidth(), g_system->getHeight(), Graphics::PixelFormat::createFormatCLUT8());
 
 	Patterns p;
@@ -126,6 +127,7 @@ Gui::Gui() {
 
 	_scrollPos = 0;
 	_builtInFonts = false;
+	_sceneIsActive = false;
 
 	g_system->getPaletteManager()->setPalette(palette, 0, 4);
 
@@ -177,8 +179,11 @@ void Gui::appendText(String &str) {
 void Gui::draw() {
 	if (_scene != NULL && _sceneDirty) {
 		_scene->paint(&_screen, 0 + kComponentsPadding, kMenuHeight + kComponentsPadding);
-		paintBorder(&_screen, 0 + kComponentsPadding, kMenuHeight + kComponentsPadding, _scene->_design->getBounds()->width(), _scene->_design->getBounds()->height(),
-				kWindowScene);
+
+		_sceneArea.left = 0 + kComponentsPadding + kBorderWidth;
+		_sceneArea.top = kMenuHeight + kComponentsPadding + kBorderWidth;
+		_sceneArea.setWidth(_scene->_design->getBounds()->width() - 2 * kBorderWidth);
+		_sceneArea.setHeight(_scene->_design->getBounds()->height() - 2 * kBorderWidth);
 
 		_sceneDirty = false;
 	}
@@ -191,7 +196,15 @@ void Gui::draw() {
 	int consoleY = kMenuHeight + kComponentsPadding;
 
 	renderConsole(&_screen, consoleX + kBorderWidth , consoleY + kBorderWidth, consoleW - 2 * kBorderWidth, consoleH - 2 * kBorderWidth);
-	paintBorder(&_screen, consoleX, consoleY, consoleW, consoleH, kWindowConsole);
+
+	if (_bordersDirty) {
+		if (_scene)
+			paintBorder(&_screen, 0 + kComponentsPadding, kMenuHeight + kComponentsPadding, _scene->_design->getBounds()->width(), _scene->_design->getBounds()->height(),
+				kWindowScene);
+		paintBorder(&_screen, consoleX, consoleY, consoleW, consoleH, kWindowConsole);
+
+		_bordersDirty = false;
+	}
 
 	renderMenu();
 
@@ -227,16 +240,16 @@ void Gui::paintBorder(Graphics::Surface *g, int x, int y, int width, int height,
 
 	switch (windowType) {
 	case kWindowScene:
-		active = false;
+		active = _sceneIsActive;
 		scrollable = false;
-		closeable = false;
+		closeable = _sceneIsActive;
 		closeBoxPressed = false;
 		drawTitle = true;
 		break;
 	case kWindowConsole:
-		active = true;
+		active = !_sceneIsActive;
 		scrollable = true;
-		closeable = true;
+		closeable = !_sceneIsActive;
 		closeBoxPressed = false;
 		drawTitle = false;
 		break;
@@ -504,6 +517,32 @@ void Gui::renderMenu() {
 
 		x += w + 13;
 	}
+}
+
+Designed *Gui::getClickTarget(int x, int y) {
+	if (_sceneArea.contains(x, y)) {
+		if (!_sceneIsActive) {
+			_sceneIsActive = true;
+			_bordersDirty = true;
+		}
+
+		for (Common::List<Obj *>::const_iterator it = _scene->_objs.begin(); it != _scene->_objs.end(); ++it) {
+			if ((*it)->_design->isPointOpaque(x - _sceneArea.left + kBorderWidth, y - _sceneArea.top + kBorderWidth))
+				return *it;
+		}
+
+		for (Common::List<Chr *>::const_iterator it = _scene->_chrs.begin(); it != _scene->_chrs.end(); ++it) {
+			if ((*it)->_design->isPointOpaque(x - _sceneArea.left + kBorderWidth, y - _sceneArea.top + kBorderWidth))
+				return *it;
+		}
+	} else if (_consoleTextArea.contains(x, y)) {
+		if (_sceneIsActive) {
+			_sceneIsActive = false;
+			_bordersDirty = true;
+		}
+	}
+
+	return NULL;
 }
 
 } // End of namespace Wage

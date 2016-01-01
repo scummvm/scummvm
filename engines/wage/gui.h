@@ -68,6 +68,7 @@ public:
 	void setScene(Scene *scene);
 	void appendText(Common::String &str);
 	void mouseMove(int x, int y);
+	Designed *getClickTarget(int x, int y);
 
 private:
 	void paintBorder(Graphics::Surface *g, int x, int y, int width, int height, WindowType windowType);
@@ -82,6 +83,7 @@ private:
 	Graphics::Surface _console;
 	Scene *_scene;
 	bool _sceneDirty;
+	bool _bordersDirty;
 
 	Common::StringArray _out;
 	Common::StringArray _lines;
@@ -90,6 +92,8 @@ private:
 	bool _builtInFonts;
 
 	Common::Rect _consoleTextArea;
+	Common::Rect _sceneArea;
+	bool _sceneIsActive;
 	bool _cursorIsArrow;
 };
 

@@ -169,6 +169,15 @@ void Design::paint(Graphics::Surface *surface, Patterns &patterns, bool mask, in
 	}
 }
 
+bool Design::isPointOpaque(int x, int y) {
+	if (_surface == NULL)
+		error("Surface is null");
+
+	byte pixel = ((byte *)_surface->getBasePtr(x, y))[0];
+
+	return pixel != kColorGreen;
+}
+
 void drawPixel(int x, int y, int color, void *data) {
 	plotData *p = (plotData *)data;
 
