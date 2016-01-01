@@ -319,7 +319,7 @@ void Gui::paintBorder(Graphics::Surface *g, int x, int y, int width, int height,
 enum {
 	kConWOverlap = 20,
 	kConHOverlap = 20,
-	kConWPadding = 4,
+	kConWPadding = 3,
 	kConHPadding = 4,
 	kConOverscan = 3,
 	kLineSpacing = 0
@@ -374,6 +374,9 @@ void Gui::renderConsole(Graphics::Surface *g, int x, int y, int width, int heigh
 			Common::StringArray wrappedLines;
 
 			font->wordWrapText(_out[i], textW, wrappedLines);
+
+			if (wrappedLines.size() == 0) // Sometimes we have empty lines
+				_lines.push_back("");
 
 			for (Common::StringArray::const_iterator j = wrappedLines.begin(); j != wrappedLines.end(); ++j)
 				_lines.push_back(*j);
