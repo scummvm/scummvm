@@ -32,6 +32,7 @@
 #include "engines/stark/resources/location.h"
 #include "engines/stark/resources/root.h"
 #include "engines/stark/resources/script.h"
+#include "engines/stark/resources/sound.h"
 
 #include "engines/stark/services/services.h"
 #include "engines/stark/services/archiveloader.h"
@@ -253,16 +254,23 @@ void ResourceProvider::performLocationChange() {
 }
 
 void ResourceProvider::runLocationChangeScripts(Resources::Object *resource, uint32 scriptCallMode) {
-	Common::Array<Resources::Script *> script = resource->listChildrenRecursive<Resources::Script>();
+	Common::Array<Resources::Script *> scripts = resource->listChildrenRecursive<Resources::Script>();
 
 	if (scriptCallMode == Resources::Script::kCallModeEnterLocation) {
-		for (uint i = 0; i < script.size(); i++) {
-			script[i]->reset();
+		for (uint i = 0; i < scripts.size(); i++) {
+			scripts[i]->reset();
 		}
 	}
 
-	for (uint i = 0; i < script.size(); i++) {
-		script[i]->execute(scriptCallMode);
+	for (uint i = 0; i < scripts.size(); i++) {
+		scripts[i]->execute(scriptCallMode);
+	}
+
+	if (scriptCallMode == Resources::Script::kCallModeExitLocation) {
+		Common::Array<Resources::Sound *> sounds = resource->listChildrenRecursive<Resources::Sound>();
+		for (uint i = 0; i < sounds.size(); i++) {
+			sounds[i]->stop();
+		}
 	}
 }
 
