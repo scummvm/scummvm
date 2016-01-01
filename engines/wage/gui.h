@@ -75,6 +75,7 @@ private:
 	void drawBox(Graphics::Surface *g, int x, int y, int w, int h);
 	void fillRect(Graphics::Surface *g, int x, int y, int w, int h);
 	void loadFonts();
+	void renderMenu();
 
 private:
 	Graphics::Surface _screen;

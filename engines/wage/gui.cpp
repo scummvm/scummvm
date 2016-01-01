@@ -63,7 +63,8 @@ enum {
 	kMenuHeight = 19,
 	kMenuPadding = 6,
 	kMenuItemHeight = 19,
-	kBorderWidth = 17
+	kBorderWidth = 17,
+	kDesktopArc = 7
 };
 
 static const byte palette[] = {
@@ -73,7 +74,8 @@ static const byte palette[] = {
 	0x00, 0xff, 0x00   // Green
 };
 
-static byte checkers[8] = { 0x55, 0xaa, 0x55, 0xaa, 0x55, 0xaa, 0x55, 0xaa };
+static byte checkersPattern[8] = { 0x55, 0xaa, 0x55, 0xaa, 0x55, 0xaa, 0x55, 0xaa };
+static byte fillPattern[8] = { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff };
 
 static const byte macCursorArrow[] = {
 	2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3,
@@ -119,7 +121,7 @@ Gui::Gui() {
 	_screen.create(g_system->getWidth(), g_system->getHeight(), Graphics::PixelFormat::createFormatCLUT8());
 
 	Patterns p;
-	p.push_back(checkers);
+	p.push_back(checkersPattern);
 
 	_scrollPos = 0;
 	_builtInFonts = false;
@@ -131,8 +133,9 @@ Gui::Gui() {
 	_cursorIsArrow = true;
 	CursorMan.showMouse(true);
 
+	// Draw desktop
 	Common::Rect r(0, 0, _screen.w - 1, _screen.h - 1);
-	Design::drawFilledRoundRect(&_screen, r, 7, kColorBlack, p, 1);
+	Design::drawFilledRoundRect(&_screen, r, kDesktopArc, kColorBlack, p, 1);
 
 	loadFonts();
 }
@@ -187,6 +190,8 @@ void Gui::draw() {
 	renderConsole(&_screen, sceneW + kBorderWidth, kMenuHeight + kBorderWidth, consoleW, consoleH);
 	paintBorder(&_screen, sceneW, kMenuHeight, _screen.w - sceneW, _scene->_design->getBounds()->height(),
 		kWindowConsole);
+
+	renderMenu();
 
 	// Blit to screen
 	g_system->copyRectToScreen(_screen.getPixels(), _screen.pitch, 0, 0, _screen.w, _screen.h);
@@ -449,6 +454,18 @@ void Gui::mouseMove(int x, int y) {
 		CursorMan.replaceCursor(macCursorArrow, 11, 16, 1, 1, 3);
 		_cursorIsArrow = true;
 	}
+}
+
+void Gui::renderMenu() {
+	Common::Rect r(0, 0, _screen.w - 1, kMenuHeight - 1);
+	Patterns p;
+	p.push_back(fillPattern);
+
+	Design::drawFilledRoundRect(&_screen, r, kDesktopArc, kColorWhite, p, 1);
+	r.top = 7;
+	Design::drawFilledRect(&_screen, r, kColorWhite, p, 1);
+	r.top = kMenuHeight - 1;
+	Design::drawFilledRect(&_screen, r, kColorBlack, p, 1);
 }
 
 } // End of namespace Wage
