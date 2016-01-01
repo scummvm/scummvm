@@ -119,6 +119,10 @@ private:
 	bool loadWorld(Common::MacResManager *resMan);
 	void performInitialSetup();
 	void wearObjs(Chr *chr);
+	void processTurn(Common::String *textInput, Designed *clickInput);
+	void processTurnInternal(Common::String *textInput, Designed *clickInput);
+	void regen();
+	void performCombatAction(Chr *npc, Chr *player);
 
 public:
 	Common::RandomSource *_rnd;
@@ -131,8 +135,8 @@ public:
 	int _loopCount;
 	int _turn;
 	Chr *_monster;
+	Chr *_running;
 	Obj *_offer;
-	bool _commandWasQuick;
 	int _aim;
 	bool _temporarilyHidden;
 	bool _isGameOver;
@@ -155,6 +159,8 @@ private:
 	const ADGameDescription *_gameDescription;
 
 	Common::MacResManager *_resManager;
+
+	bool _commandWasQuick;
 
 };
 

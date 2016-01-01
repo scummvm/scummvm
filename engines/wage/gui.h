@@ -67,6 +67,7 @@ public:
 	void draw();
 	void setScene(Scene *scene);
 	void appendText(Common::String &str);
+	void clearOutput();
 	void mouseMove(int x, int y);
 	Designed *getClickTarget(int x, int y);
 

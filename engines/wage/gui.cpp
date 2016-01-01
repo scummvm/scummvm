@@ -153,6 +153,10 @@ void Gui::setScene(Scene *scene) {
 	_scene = scene;
 }
 
+void Gui::clearOutput() {
+	_out.clear();
+}
+
 void Gui::appendText(String &str) {
 	if (!str.contains('\n')) {
 		_out.push_back(str);

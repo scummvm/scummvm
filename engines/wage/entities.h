@@ -215,6 +215,7 @@ public:
 	Context _context;
 
 	WeaponArray *getWeapons();
+	String &getNameWithDefiniteArticle(bool capitalize);
 
 public:
 #if 0

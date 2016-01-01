@@ -73,7 +73,10 @@ WageEngine::WageEngine(OSystem *syst, const ADGameDescription *desc) : Engine(sy
 	_temporarilyHidden = false;
 	_isGameOver = false;
 	_monster = NULL;
+	_running = NULL;
 	_lastScene = NULL;
+
+	_commandWasQuick = false;
 
 	debug("WageEngine::WageEngine()");
 }
@@ -150,7 +153,7 @@ void WageEngine::processEvents() {
 			{
 				Designed *obj = _gui->getClickTarget(event.mouse.x, event.mouse.y);
 				if (obj != NULL)
-					debug(0, "Clicked: %s", obj->_name.c_str());
+					processTurn(NULL, obj);
 			}
 		default:
 			break;
@@ -305,6 +308,10 @@ void WageEngine::encounter(Chr *player, Chr *chr) {
 	warning("STUB WageEngine::encounter()");
 }
 
+void WageEngine::performCombatAction(Chr *npc, Chr *player) {
+	warning("STUB WageEngine::performCombatAction()");
+}
+
 void WageEngine::redrawScene() {
 	Scene *currentScene = _world->_player->_currentScene;
 	if (currentScene != NULL) {
@@ -322,5 +329,105 @@ void WageEngine::redrawScene() {
 		//soundManager.updateSoundTimerForScene(currentScene, firstTime);
 	}
 }
+
+void WageEngine::regen() {
+	warning("STUB WageEngine::regen()");
+}
+
+void WageEngine::processTurnInternal(Common::String *textInput, Designed *clickInput) {
+	Scene *playerScene = _world->_player->_currentScene;
+	if (playerScene == _world->_storageScene)
+		return;
+
+	bool shouldEncounter = false;
+
+	if (playerScene != _lastScene) {
+		_loopCount = 0;
+		_lastScene = playerScene;
+		_monster = NULL;
+		_running = NULL;
+		_offer = NULL;
+
+		for (Common::List<Chr *>::const_iterator it = playerScene->_chrs.begin(); it != playerScene->_chrs.end(); ++it) {
+			if (!(*it)->_playerCharacter) {
+				_monster = *it;
+				shouldEncounter = true;
+				break;
+			}
+		}
+	}
+
+	bool monsterWasNull = (_monster == NULL);
+	bool handled = playerScene->_script->execute(_world, _loopCount++, textInput, clickInput, this);
+
+	playerScene = _world->_player->_currentScene;
+
+	if (playerScene == _world->_storageScene)
+		return;
+
+	if (playerScene != _lastScene) {
+		_temporarilyHidden = true;
+		_gui->clearOutput();
+		regen();
+		Common::String input("look");
+		processTurnInternal(&input, NULL);
+		redrawScene();
+		_temporarilyHidden = false;
+	} else if (_loopCount == 1) {
+		redrawScene();
+		if (shouldEncounter && _monster != NULL) {
+			encounter(_world->_player, _monster);
+		}
+	} else if (textInput != NULL && !handled) {
+		if (monsterWasNull && _monster != NULL)
+			return;
+
+		Common::String rant(_rnd->getRandomNumber(1) ? "What?" : "Huh?");
+
+		appendText(rant);
+		_commandWasQuick = true;
+	}
+}
+
+void WageEngine::processTurn(Common::String *textInput, Designed *clickInput) {
+	_commandWasQuick = false;
+	Scene *prevScene = _world->_player->_currentScene;
+	Chr *prevMonster = _monster;
+	processTurnInternal(textInput, clickInput);
+	Scene *playerScene = _world->_player->_currentScene;
+
+	if (prevScene != playerScene && playerScene != _world->_storageScene) {
+		if (prevMonster != NULL) {
+			bool followed = false;
+			if (_monster == NULL) {
+				warning("STUB: processTurn(), monster");
+				//Set<Scene> scenes = world.getAdjacentScenes(prevMonster.getState().getCurrentScene());
+				// TODO: adjacent scenes doesn't contain up/down etc... verify that monsters can't follow these...
+				//if (scenes.contains(playerScene)) {
+				//	int chance = (int) (Math.random() * 255);
+				//	followed = (chance < prevMonster.getFollowsOpponent());
+				//}
+			}
+
+			Common::String msg;
+
+			if (followed) {
+				msg = prevMonster->getNameWithDefiniteArticle(true);
+				msg += " follows you.";
+				appendText(msg);
+				_world->move(prevMonster, playerScene);
+			} else {
+				msg = "You escape ";
+				msg += prevMonster->getNameWithDefiniteArticle(false);
+				msg += ".";
+				appendText(msg);
+			}
+		}
+	}
+	if (!_commandWasQuick && _monster != NULL) {
+		performCombatAction(_monster, _world->_player);
+	}
+}
+
 
 } // End of namespace Wage
