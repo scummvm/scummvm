@@ -436,10 +436,15 @@ void Design::drawFilledRect(Graphics::Surface *surface, Common::Rect &rect, int 
 		drawHLine(rect.left, rect.right, y, color, drawPixel, &pd);
 }
 
-
 void Design::drawFilledRect(Common::Rect &rect, int color, void (*plotProc)(int, int, int, void *), void *data) {
 	for (int y = rect.top; y <= rect.bottom; y++)
 		drawHLine(rect.left, rect.right, y, color, plotProc, data);
+}
+
+void Design::drawFilledRoundRect(Graphics::Surface *surface, Common::Rect &rect, int arc, int color, Patterns &patterns, byte fillType) {
+	plotData pd(surface, &patterns, fillType);
+
+	drawFilledRoundRect(rect, arc, color, drawPixel, &pd);
 }
 
 // http://members.chello.at/easyfilter/bresenham.html

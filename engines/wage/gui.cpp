@@ -120,7 +120,6 @@ Gui::Gui() {
 
 	Patterns p;
 	p.push_back(checkers);
-	Common::Rect r(0, 0, _screen.w, _screen.h);
 
 	_scrollPos = 0;
 	_builtInFonts = false;
@@ -132,7 +131,8 @@ Gui::Gui() {
 	_cursorIsArrow = true;
 	CursorMan.showMouse(true);
 
-	Design::drawFilledRect(&_screen, r, kColorBlack, p, 1);
+	Common::Rect r(0, 0, _screen.w - 1, _screen.h - 1);
+	Design::drawFilledRoundRect(&_screen, r, 7, kColorBlack, p, 1);
 
 	loadFonts();
 }

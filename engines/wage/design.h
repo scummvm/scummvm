@@ -69,6 +69,7 @@ public:
 
     void paint(Graphics::Surface *canvas, Patterns &patterns, bool mask, int x, int y);
 	static void drawFilledRect(Graphics::Surface *surface, Common::Rect &rect, int color, Patterns &patterns, byte fillType);
+	static void drawFilledRoundRect(Graphics::Surface *surface, Common::Rect &rect, int arc, int color, Patterns &patterns, byte fillType);
 
 private:
 	byte *_data;
@@ -88,12 +89,12 @@ private:
 	void drawBitmap(Graphics::Surface *surface, Common::ReadStream &in, bool mask);
 
 	void drawFilledRect(Common::Rect &rect, int color, void (*plotProc)(int, int, int, void *), void *data);
-	void drawFilledRoundRect(Common::Rect &rect, int arc, int color, void (*plotProc)(int, int, int, void *), void *data);
+	static void drawFilledRoundRect(Common::Rect &rect, int arc, int color, void (*plotProc)(int, int, int, void *), void *data);
 	void drawPolygonScan(int *polyX, int *polyY, int npoints, Common::Rect &bbox, int color,
 									void (*plotProc)(int, int, int, void *), void *data);
 	void drawEllipse(int x0, int y0, int x1, int y1, bool filled, void (*plotProc)(int, int, int, void *), void *data);
 	static void drawHLine(int x1, int x2, int y, int color, void (*plotProc)(int, int, int, void *), void *data);
-	void drawVLine(int x, int y1, int y2, int color, void (*plotProc)(int, int, int, void *), void *data);
+	static void drawVLine(int x, int y1, int y2, int color, void (*plotProc)(int, int, int, void *), void *data);
 	void drawThickLine (int x1, int y1, int x2, int y2, int thick, int color,
 									void (*plotProc)(int, int, int, void *), void *data);
 };
