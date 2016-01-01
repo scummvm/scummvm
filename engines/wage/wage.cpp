@@ -56,7 +56,6 @@
 #include "engines/engine.h"
 #include "engines/util.h"
 #include "gui/EventRecorder.h"
-#include "graphics/palette.h"
 
 #include "wage/wage.h"
 #include "wage/design.h"
@@ -86,17 +85,8 @@ WageEngine::~WageEngine() {
 	delete _rnd;
 }
 
-static byte palette[] = {
-	0, 0, 0,           // Black
-	0x80, 0x80, 0x80,  // Gray
-	0xff, 0xff, 0xff,  // White
-	0x00, 0xff, 0x00   // Green
-};
-
 Common::Error WageEngine::run() {
 	initGraphics(512, 342, true);
-
-	g_system->getPaletteManager()->setPalette(palette, 0, 4);
 
 	// Create debugger console. It requires GFX to be initialized
 	_console = new Console(this);
@@ -150,6 +140,9 @@ void WageEngine::processEvents() {
 		switch (event.type) {
 		case Common::EVENT_QUIT:
 			error("Exiting");
+			break;
+		case Common::EVENT_MOUSEMOVE:
+			_gui->mouseMove(event.mouse.x, event.mouse.y);
 			break;
 		default:
 			break;

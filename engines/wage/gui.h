@@ -67,6 +67,7 @@ public:
 	void draw();
 	void setScene(Scene *scene);
 	void appendText(Common::String &str);
+	void mouseMove(int x, int y);
 
 private:
 	void paintBorder(Graphics::Surface *g, int x, int y, int width, int height, WindowType windowType);
@@ -86,6 +87,9 @@ private:
 	uint _scrollPos;
 
 	bool _builtInFonts;
+
+	Common::Rect _consoleTextArea;
+	bool _cursorIsArrow;
 };
 
 } // End of namespace Wage

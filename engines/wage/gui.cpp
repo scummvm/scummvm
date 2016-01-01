@@ -47,9 +47,11 @@
 
 #include "common/system.h"
 #include "common/unzip.h"
+#include "graphics/cursorman.h"
 #include "graphics/fontman.h"
 #include "graphics/font.h"
 #include "graphics/fonts/bdf.h"
+#include "graphics/palette.h"
 #include "wage/wage.h"
 #include "wage/design.h"
 #include "wage/entities.h"
@@ -64,7 +66,52 @@ enum {
 	kBorderWidth = 17
 };
 
-byte checkers[8] = { 0x55, 0xaa, 0x55, 0xaa, 0x55, 0xaa, 0x55, 0xaa };
+static const byte palette[] = {
+	0, 0, 0,           // Black
+	0x80, 0x80, 0x80,  // Gray
+	0xff, 0xff, 0xff,  // White
+	0x00, 0xff, 0x00   // Green
+};
+
+static byte checkers[8] = { 0x55, 0xaa, 0x55, 0xaa, 0x55, 0xaa, 0x55, 0xaa };
+
+static const byte macCursorArrow[] = {
+	2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3,
+	2, 0, 2, 3, 3, 3, 3, 3, 3, 3, 3,
+	2, 0, 0, 2, 3, 3, 3, 3, 3, 3, 3,
+	2, 0, 0, 0, 2, 3, 3, 3, 3, 3, 3,
+	2, 0, 0, 0, 0, 2, 3, 3, 3, 3, 3,
+	2, 0, 0, 0, 0, 0, 2, 3, 3, 3, 3,
+	2, 0, 0, 0, 0, 0, 0, 2, 3, 3, 3,
+	2, 0, 0, 0, 0, 0, 0, 0, 2, 3, 3,
+	2, 0, 0, 0, 0, 0, 0, 0, 0, 2, 3,
+	2, 0, 0, 0, 0, 0, 2, 2, 2, 2, 2,
+	2, 0, 0, 2, 0, 0, 2, 3, 3, 3, 3,
+	2, 0, 2, 3, 2, 0, 0, 2, 3, 3, 3,
+	2, 2, 3, 3, 2, 0, 0, 2, 3, 3, 3,
+	2, 3, 3, 3, 3, 2, 0, 0, 2, 3, 3,
+	3, 3, 3, 3, 3, 2, 0, 0, 2, 3, 3,
+	3, 3, 3, 3, 3, 3, 2, 2, 2, 3, 3
+};
+
+static const byte macCursorBeam[] = {
+	0, 0, 3, 3, 3, 0, 0, 3, 3, 3, 3,
+	3, 3, 0, 3, 0, 3, 3, 3, 3, 3, 3,
+	3, 3, 3, 0, 3, 3, 3, 3, 3, 3, 3,
+	3, 3, 3, 0, 3, 3, 3, 3, 3, 3, 3,
+	3, 3, 3, 0, 3, 3, 3, 3, 3, 3, 3,
+	3, 3, 3, 0, 3, 3, 3, 3, 3, 3, 3,
+	3, 3, 3, 0, 3, 3, 3, 3, 3, 3, 3,
+	3, 3, 3, 0, 3, 3, 3, 3, 3, 3, 3,
+	3, 3, 3, 0, 3, 3, 3, 3, 3, 3, 3,
+	3, 3, 3, 0, 3, 3, 3, 3, 3, 3, 3,
+	3, 3, 3, 0, 3, 3, 3, 3, 3, 3, 3,
+	3, 3, 3, 0, 3, 3, 3, 3, 3, 3, 3,
+	3, 3, 3, 0, 3, 3, 3, 3, 3, 3, 3,
+	3, 3, 3, 0, 3, 3, 3, 3, 3, 3, 3,
+	3, 3, 0, 3, 0, 3, 3, 3, 3, 3, 3,
+	0, 0, 3, 3, 3, 0, 0, 3, 3, 3, 3,
+};
 
 Gui::Gui() {
 	_scene = NULL;
@@ -77,6 +124,13 @@ Gui::Gui() {
 
 	_scrollPos = 0;
 	_builtInFonts = false;
+
+	g_system->getPaletteManager()->setPalette(palette, 0, 4);
+
+	CursorMan.replaceCursorPalette(palette, 0, 4);
+	CursorMan.replaceCursor(macCursorArrow, 11, 16, 1, 1, 3);
+	_cursorIsArrow = true;
+	CursorMan.showMouse(true);
 
 	Design::drawFilledRect(&_screen, r, kColorBlack, p, 1);
 
@@ -335,6 +389,11 @@ void Gui::renderConsole(Graphics::Surface *g, int x, int y, int width, int heigh
 		y1 += lineHeight;
 	}
 
+	_consoleTextArea.left = x;
+	_consoleTextArea.top = y;
+	_consoleTextArea.right = x + width;
+	_consoleTextArea.bottom = y + height;
+
 	g->copyRectToSurface(_console, x - kConOverscan, y - kConOverscan, boundsR);
 }
 
@@ -378,6 +437,18 @@ void Gui::loadFonts() {
 	_builtInFonts = false;
 
 	delete dat;
+}
+
+void Gui::mouseMove(int x, int y) {
+	if (_consoleTextArea.contains(x, y)) {
+		if (_cursorIsArrow) {
+			CursorMan.replaceCursor(macCursorBeam, 11, 16, 3, 8, 3);
+			_cursorIsArrow = false;
+		}
+	} else if (_cursorIsArrow == false) {
+		CursorMan.replaceCursor(macCursorArrow, 11, 16, 1, 1, 3);
+		_cursorIsArrow = true;
+	}
 }
 
 } // End of namespace Wage
