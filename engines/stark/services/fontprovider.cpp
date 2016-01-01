@@ -46,6 +46,7 @@ void FontProvider::initFonts() {
 	_ttfFileMap["Folkard"] = "folkard.ttf";
 	_ttfFileMap["Arial"] = "ARIAL.TTF";
 	_ttfFileMap["Bradley Hand ITC"] = "bradhitc.ttf";
+	_ttfFileMap["Slurry"] = "SLURRY.TTF";
 
 	// TODO: Read from gui.ini
 	_smallFont = FontHolder(this, "Garamond", 12);
