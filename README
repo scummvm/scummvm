@@ -11,6 +11,7 @@ Table of Contents:
 1.0) Introduction
  * 1.1 About ScummVM
  * 1.2 Quick start
+ * 1.3 F.A.Q.
 2.0) Contact
  * 2.1 Reporting Bugs
 3.0) Supported Games
@@ -81,6 +82,7 @@ Table of Contents:
  * 8.1 Recognized configuration keywords
  * 8.2 Custom game options that can be toggled via the GUI
 9.0) Compiling
+10.0) Credits
 
 
 1.0) Introduction:
@@ -161,6 +163,11 @@ holding the shift key before clicking 'Add game' -- it's label will
 change to 'Mass Add' and if you press it, you are again asked to select
 a directory, only this time ScummVM will search through all
 subdirectories for supported games.
+
+
+1.3) F.A.Q.
+---- ------
+We've compiled a list of F.A.Q. at <http://www.scummvm.org/faq/>
 
 
 2.0) Contact:
@@ -2696,6 +2703,12 @@ debug messages (see <https://technet.microsoft.com/en-us/sysinternals/debugview.
    Symbian:
       Please refer to:
       <http://wiki.scummvm.org/index.php/Compiling_ScummVM/Symbian>
+
+
+10.0) Credits
+----- -------
+Please refer to our extensive Credits list at <http://www.scummvm.org/credits/>
+
 
 ------------------------------------------------------------------------
 Good Luck and Happy Adventuring!
