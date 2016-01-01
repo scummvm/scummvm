@@ -601,7 +601,7 @@ void RMItem::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
 	// Offset direction for scrolling
 	prim->getDst().offset(-_curScroll);
 
-	// We must offset the cordinates of the item inside the primitive
+	// We must offset the coordinates of the item inside the primitive
 	// It is estimated as nonno + (babbo + figlio)
 	prim->getDst().offset(calculatePos());
 
