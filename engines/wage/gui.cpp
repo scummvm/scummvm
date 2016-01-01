@@ -461,6 +461,10 @@ void Gui::mouseMove(int x, int y) {
 	}
 }
 
+static const char *menuItems[] = {
+	"\xf0", "File", "Edit", "Commands", "Weapons", 0
+};
+
 void Gui::renderMenu() {
 	Common::Rect r(0, 0, _screen.w - 1, kMenuHeight - 1);
 	Patterns p;
@@ -471,6 +475,35 @@ void Gui::renderMenu() {
 	Design::drawFilledRect(&_screen, r, kColorWhite, p, 1);
 	r.top = kMenuHeight - 1;
 	Design::drawFilledRect(&_screen, r, kColorBlack, p, 1);
+
+	const Graphics::Font *font = NULL;
+	int y = 1;
+
+	if (!_builtInFonts) {
+		font = FontMan.getFontByName("Chicago-12");
+
+		if (!font)
+			warning("Cannot load font Chicago-12");
+	}
+
+	if (_builtInFonts || !font) {
+		font = FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
+		y = 3;
+	}
+
+	int x = 18;
+
+	for (int i = 0; menuItems[i]; i++) {
+		const char *s = menuItems[i];
+
+		if (i == 0 && _builtInFonts)
+			s = "\xa9"; 				// (c) Symbol as the most resembling apple
+
+		int w = font->getStringWidth(s);
+		font->drawString(&_screen, s, x, y, w, kColorBlack);
+
+		x += w + 13;
+	}
 }
 
 } // End of namespace Wage
