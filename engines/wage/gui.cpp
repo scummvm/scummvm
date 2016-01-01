@@ -64,7 +64,8 @@ enum {
 	kMenuPadding = 6,
 	kMenuItemHeight = 19,
 	kBorderWidth = 17,
-	kDesktopArc = 7
+	kDesktopArc = 7,
+	kComponentsPadding = 10
 };
 
 static const byte palette[] = {
@@ -175,8 +176,8 @@ void Gui::appendText(String &str) {
 
 void Gui::draw() {
 	if (_scene != NULL && _sceneDirty) {
-		_scene->paint(&_screen, 0, kMenuHeight);
-		paintBorder(&_screen, 0, kMenuHeight, _scene->_design->getBounds()->width(), _scene->_design->getBounds()->height(),
+		_scene->paint(&_screen, 0 + kComponentsPadding, kMenuHeight + kComponentsPadding);
+		paintBorder(&_screen, 0 + kComponentsPadding, kMenuHeight + kComponentsPadding, _scene->_design->getBounds()->width(), _scene->_design->getBounds()->height(),
 				kWindowScene);
 
 		_sceneDirty = false;
@@ -184,12 +185,13 @@ void Gui::draw() {
 
 	// Render console
 	int sceneW = _scene->_design->getBounds()->width();
-	int consoleW = _screen.w - sceneW - 2 * kBorderWidth;
-	int consoleH = _scene->_design->getBounds()->height() - 2 * kBorderWidth;
+	int consoleW = _screen.w - sceneW - 2 * kComponentsPadding;
+	int consoleH = _scene->_design->getBounds()->height();
+	int consoleX = sceneW + kComponentsPadding;
+	int consoleY = kMenuHeight + kComponentsPadding;
 
-	renderConsole(&_screen, sceneW + kBorderWidth, kMenuHeight + kBorderWidth, consoleW, consoleH);
-	paintBorder(&_screen, sceneW, kMenuHeight, _screen.w - sceneW, _scene->_design->getBounds()->height(),
-		kWindowConsole);
+	renderConsole(&_screen, consoleX + kBorderWidth , consoleY + kBorderWidth, consoleW - 2 * kBorderWidth, consoleH - 2 * kBorderWidth);
+	paintBorder(&_screen, consoleX, consoleY, consoleW, consoleH, kWindowConsole);
 
 	renderMenu();
 
