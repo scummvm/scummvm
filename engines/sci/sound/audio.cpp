@@ -105,15 +105,32 @@ void AudioPlayer::handleFanmadeSciAudio(reg_t sciAudioObject, SegManager *segMan
 		else if (fileName.hasPrefix("speech"))
 			soundType = Audio::Mixer::kSpeechSoundType;
 
-		Common::File *sciAudio = new Common::File();
+		// Determine compression
+		// TODO: ".wav" and ".aiff"
+		uint32 audioCompressionType = 0;
+		if ((fileName.hasSuffix(".mp3")) || (fileName.hasSuffix(".sciAudio")) || (fileName.hasSuffix(".sciaudio"))) {
+			audioCompressionType = MKTAG('M','P','3',' ');
+		} else {
+			error("sciAudio: unsupported file type");
+		}
+
+		Common::File *sciAudioFile = new Common::File();
 		// Replace backwards slashes
 		for (uint i = 0; i < fileName.size(); i++) {
 			if (fileName[i] == '\\')
 				fileName.setChar('/', i);
 		}
-		sciAudio->open("sciAudio/" + fileName);
+		sciAudioFile->open("sciAudio/" + fileName);
 
-		Audio::SeekableAudioStream *audioStream = Audio::makeMP3Stream(sciAudio, DisposeAfterUse::YES);
+		Audio::SeekableAudioStream *audioStream = nullptr;
+
+		switch (audioCompressionType) {
+		case MKTAG('M','P','3',' '):
+			audioStream = Audio::makeMP3Stream(sciAudioFile, DisposeAfterUse::YES);
+			break;
+		default:
+			break;
+		}
 
 		// We only support one audio handle
 		_mixer->playStream(soundType, &_audioHandle,
