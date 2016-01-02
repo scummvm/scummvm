@@ -70,6 +70,7 @@ private:
 		union {
 			Obj *obj;
 			Chr *chr;
+			Designed *designed;
 			Scene *scene;
 			int16 number;
 			String *string;
@@ -156,6 +157,7 @@ private:
 	bool eval(Operand *lhs, const char *op, Operand *rhs);
 	Operand *convertOperand(Operand *operand, int type);
 	bool evalClickCondition(Operand *lhs, const char *op, Operand *rhs);
+	bool evalClickEquality(Operand *lhs, Operand *rhs, bool partialMatch);
 	void takeObj(Obj *obj);
 	void processMove();
 	void processLet();

@@ -749,10 +749,51 @@ Script::Operand *Script::convertOperand(Operand *operand, int type) {
 	return NULL;
 }
 
-bool Script::evalClickCondition(Operand *lhs, const char *op, Operand *rhs) {
-	warning("STUB: evalClickCondition");
+bool Script::evalClickEquality(Operand *lhs, Operand *rhs, bool partialMatch) {
+	bool result = false;
+	if (lhs->_value.obj == NULL || rhs->_value.obj == NULL) {
+		result = false;
+	} else if (lhs->_value.obj == rhs->_value.obj) {
+		result = true;
+	} else if (rhs->_type == STRING) {
+		Common::String str = rhs->toString();
+		str.toLowercase();
 
-	return false;
+		if (lhs->_type == CHR || lhs->_type == OBJ) {
+			Common::String name = lhs->_value.designed->_name;
+			name.toLowercase();
+
+			if (partialMatch)
+				result = name.contains(str);
+			else
+				result = name.equals(str);
+		}
+	}
+	return result;
+}
+
+bool Script::evalClickCondition(Operand *lhs, const char *op, Operand *rhs) {
+	// TODO: check if >> can be used for click inputs
+	if (strcmp(op, "==") && strcmp(op, "=") && strcmp(op, "<") && strcmp(op, ">")) {
+		error("Unknown operation '%s' for Script::evalClickCondition", op);
+	}
+
+	bool partialMatch = strcmp(op, "==");
+	bool result;
+	if (lhs->_type == CLICK_INPUT) {
+		result = evalClickEquality(lhs, rhs, partialMatch);
+	} else {
+		result = evalClickEquality(rhs, lhs, partialMatch);
+	}
+	if (!strcmp(op, "<") || !strcmp(op, ">")) {
+		// CLICK$<FOO only matches if there was a click
+		if (_inputClick == NULL) {
+			result = false;
+		} else {
+			result = !result;
+		}
+	}
+	return result;
 }
 
 void Script::takeObj(Obj *obj) {
