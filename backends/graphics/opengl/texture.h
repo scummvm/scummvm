@@ -118,70 +118,78 @@ private:
 };
 
 /**
- * An OpenGL texture wrapper. It automatically takes care of all OpenGL
- * texture handling issues and also provides access to the texture data.
+ * Interface for OpenGL implementations of a 2D surface.
  */
-class Texture {
+class Surface {
 public:
-	/**
-	 * Create a new texture with the specific internal format.
-	 *
-	 * @param glIntFormat The internal format to use.
-	 * @param glFormat    The input format.
-	 * @param glType      The input type.
-	 * @param format      The format used for the texture input.
-	 */
-	Texture(GLenum glIntFormat, GLenum glFormat, GLenum glType, const Graphics::PixelFormat &format);
-	virtual ~Texture();
+	Surface();
+	virtual ~Surface() {}
 
 	/**
-	 * Destroy the OpenGL texture name.
+	 * Destroy OpenGL description of surface.
 	 */
-	void releaseInternalTexture();
+	virtual void destroy() = 0;
 
 	/**
-	 * Create the OpenGL texture name and flag the whole texture as dirty.
+	 * Recreate OpenGL description of surface.
 	 */
-	void recreateInternalTexture();
+	virtual void recreate() = 0;
 
 	/**
 	 * Enable or disable linear texture filtering.
 	 *
 	 * @param enable true to enable and false to disable.
 	 */
-	void enableLinearFiltering(bool enable);
+	virtual void enableLinearFiltering(bool enable) = 0;
 
 	/**
-	 * Allocate texture space for the desired dimensions. This wraps any
-	 * handling of requirements for POT textures.
+	 * Allocate storage for surface.
 	 *
 	 * @param width  The desired logical width.
 	 * @param height The desired logical height.
 	 */
-	virtual void allocate(uint width, uint height);
+	virtual void allocate(uint width, uint height) = 0;
 
+	/**
+	 * Copy image data to the surface.
+	 *
+	 * The format of the input data needs to match the format returned by
+	 * getFormat.
+	 *
+	 * @param x        X coordinate of upper left corner to copy data to.
+	 * @param y        Y coordinate of upper left corner to copy data to.
+	 * @param w        Width of the image data to copy.
+	 * @param h        Height of the image data to copy.
+	 * @param src      Pointer to image data.
+	 * @param srcPitch The number of bytes in a row of the image data.
+	 */
 	void copyRectToTexture(uint x, uint y, uint w, uint h, const void *src, uint srcPitch);
 
+	/**
+	 * Fill the surface with a fixed color.
+	 *
+	 * @param color Color value in format returned by getFormat.
+	 */
 	void fill(uint32 color);
 
-	void draw(GLfloat x, GLfloat y, GLfloat w, GLfloat h);
+	virtual void draw(GLfloat x, GLfloat y, GLfloat w, GLfloat h) = 0;
 
 	void flagDirty() { _allDirty = true; }
 	bool isDirty() const { return _allDirty || !_dirtyArea.isEmpty(); }
 
-	uint getWidth() const { return _userPixelData.w; }
-	uint getHeight() const { return _userPixelData.h; }
+	virtual uint getWidth() const = 0;
+	virtual uint getHeight() const = 0;
 
 	/**
 	 * @return The logical format of the texture data.
 	 */
-	virtual Graphics::PixelFormat getFormat() const { return _format; }
+	virtual Graphics::PixelFormat getFormat() const = 0;
 
-	virtual Graphics::Surface *getSurface() { return &_userPixelData; }
-	virtual const Graphics::Surface *getSurface() const { return &_userPixelData; }
+	virtual Graphics::Surface *getSurface() = 0;
+	virtual const Graphics::Surface *getSurface() const = 0;
 
 	/**
-	 * @return Whether the texture data is using a palette.
+	 * @return Whether the surface is having a palette.
 	 */
 	virtual bool hasPalette() const { return false; }
 
@@ -195,20 +203,62 @@ public:
 	virtual void setColorKey(uint colorKey) {}
 	virtual void setPalette(uint start, uint colors, const byte *palData) {}
 protected:
+	void clearDirty() { _allDirty = false; _dirtyArea = Common::Rect(); }
+
+	Common::Rect getDirtyArea() const;
+private:
+	bool _allDirty;
+	Common::Rect _dirtyArea;
+};
+
+/**
+ * An OpenGL texture wrapper. It automatically takes care of all OpenGL
+ * texture handling issues and also provides access to the texture data.
+ */
+class Texture : public Surface {
+public:
+	/**
+	 * Create a new texture with the specific internal format.
+	 *
+	 * @param glIntFormat The internal format to use.
+	 * @param glFormat    The input format.
+	 * @param glType      The input type.
+	 * @param format      The format used for the texture input.
+	 */
+	Texture(GLenum glIntFormat, GLenum glFormat, GLenum glType, const Graphics::PixelFormat &format);
+	virtual ~Texture();
+
+	virtual void destroy();
+
+	virtual void recreate();
+
+	virtual void enableLinearFiltering(bool enable);
+
+	virtual void allocate(uint width, uint height);
+
+	virtual void draw(GLfloat x, GLfloat y, GLfloat w, GLfloat h);
+
+	virtual uint getWidth() const { return _userPixelData.w; }
+	virtual uint getHeight() const { return _userPixelData.h; }
+
+	/**
+	 * @return The logical format of the texture data.
+	 */
+	virtual Graphics::PixelFormat getFormat() const { return _format; }
+
+	virtual Graphics::Surface *getSurface() { return &_userPixelData; }
+	virtual const Graphics::Surface *getSurface() const { return &_userPixelData; }
+
+protected:
 	const Graphics::PixelFormat _format;
 
 	virtual void updateTexture();
 
-	Common::Rect getDirtyArea() const;
 private:
 	GLTexture _glTexture;
 
 	Graphics::Surface _textureData;
 	Graphics::Surface _userPixelData;
-
-	bool _allDirty;
-	Common::Rect _dirtyArea;
-	void clearDirty() { _allDirty = false; _dirtyArea = Common::Rect(); }
 };
 
 class TextureCLUT8 : public Texture {

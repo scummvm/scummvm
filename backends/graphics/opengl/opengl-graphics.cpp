@@ -273,9 +273,9 @@ OSystem::TransactionError OpenGLGraphicsManager::endGFXTransaction() {
 		_gameScreen = nullptr;
 
 #ifdef USE_RGB_COLOR
-		_gameScreen = createTexture(_currentState.gameFormat);
+		_gameScreen = createSurface(_currentState.gameFormat);
 #else
-		_gameScreen = createTexture(Graphics::PixelFormat::createFormatCLUT8());
+		_gameScreen = createSurface(Graphics::PixelFormat::createFormatCLUT8());
 #endif
 		assert(_gameScreen);
 		if (_gameScreen->hasPalette()) {
@@ -615,7 +615,7 @@ void OpenGLGraphicsManager::setMouseCursor(const void *buf, uint w, uint h, int 
 		} else {
 			textureFormat = _defaultFormatAlpha;
 		}
-		_cursor = createTexture(textureFormat, true);
+		_cursor = createSurface(textureFormat, true);
 		assert(_cursor);
 		_cursor->enableLinearFiltering(_currentState.graphicsMode == GFX_LINEAR);
 	}
@@ -830,7 +830,7 @@ void OpenGLGraphicsManager::setActualScreenSize(uint width, uint height) {
 		delete _overlay;
 		_overlay = nullptr;
 
-		_overlay = createTexture(_defaultFormatAlpha);
+		_overlay = createSurface(_defaultFormatAlpha);
 		assert(_overlay);
 		// We always filter the overlay with GL_LINEAR. This assures it's
 		// readable in case it needs to be scaled and does not affect it
@@ -845,7 +845,7 @@ void OpenGLGraphicsManager::setActualScreenSize(uint width, uint height) {
 		delete _osd;
 		_osd = nullptr;
 
-		_osd = createTexture(_defaultFormatAlpha);
+		_osd = createSurface(_defaultFormatAlpha);
 		assert(_osd);
 		// We always filter the osd with GL_LINEAR. This assures it's
 		// readable in case it needs to be scaled and does not affect it
@@ -941,40 +941,40 @@ void OpenGLGraphicsManager::notifyContextCreate(const Graphics::PixelFormat &def
 	_defaultFormatAlpha = defaultFormatAlpha;
 
 	if (_gameScreen) {
-		_gameScreen->recreateInternalTexture();
+		_gameScreen->recreate();
 	}
 
 	if (_overlay) {
-		_overlay->recreateInternalTexture();
+		_overlay->recreate();
 	}
 
 	if (_cursor) {
-		_cursor->recreateInternalTexture();
+		_cursor->recreate();
 	}
 
 #ifdef USE_OSD
 	if (_osd) {
-		_osd->recreateInternalTexture();
+		_osd->recreate();
 	}
 #endif
 }
 
 void OpenGLGraphicsManager::notifyContextDestroy() {
 	if (_gameScreen) {
-		_gameScreen->releaseInternalTexture();
+		_gameScreen->destroy();
 	}
 
 	if (_overlay) {
-		_overlay->releaseInternalTexture();
+		_overlay->destroy();
 	}
 
 	if (_cursor) {
-		_cursor->releaseInternalTexture();
+		_cursor->destroy();
 	}
 
 #ifdef USE_OSD
 	if (_osd) {
-		_osd->releaseInternalTexture();
+		_osd->destroy();
 	}
 #endif
 
@@ -1028,7 +1028,7 @@ void OpenGLGraphicsManager::setMousePosition(int x, int y) {
 	}
 }
 
-Texture *OpenGLGraphicsManager::createTexture(const Graphics::PixelFormat &format, bool wantAlpha) {
+Surface *OpenGLGraphicsManager::createSurface(const Graphics::PixelFormat &format, bool wantAlpha) {
 	GLenum glIntFormat, glFormat, glType;
 	if (format.bytesPerPixel == 1) {
 		const Graphics::PixelFormat &virtFormat = wantAlpha ? _defaultFormatAlpha : _defaultFormat;

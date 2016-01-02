@@ -161,50 +161,15 @@ void GLTexture::updateArea(const Common::Rect &area, const Graphics::Surface &sr
 	                       _glFormat, _glType, src.getBasePtr(0, area.top)));
 }
 
-Texture::Texture(GLenum glIntFormat, GLenum glFormat, GLenum glType, const Graphics::PixelFormat &format)
-    : _format(format), _glTexture(glIntFormat, glFormat, glType),
-      _textureData(), _userPixelData(), _allDirty(false) {
-	recreateInternalTexture();
+//
+// Surface
+//
+
+Surface::Surface()
+    : _allDirty(false), _dirtyArea() {
 }
 
-Texture::~Texture() {
-	_textureData.free();
-}
-
-void Texture::releaseInternalTexture() {
-	_glTexture.destroy();
-}
-
-void Texture::recreateInternalTexture() {
-	_glTexture.create();
-
-	// In case image date exists assure it will be completely refreshed next
-	// time.
-	if (_textureData.getPixels()) {
-		flagDirty();
-	}
-}
-
-void Texture::enableLinearFiltering(bool enable) {
-	_glTexture.enableLinearFiltering(enable);
-}
-
-void Texture::allocate(uint width, uint height) {
-	// Assure the texture can contain our user data.
-	_glTexture.setSize(width, height);
-
-	// In case the needed texture dimension changed we will reinitialize the
-	// texture data buffer.
-	if (_glTexture.getWidth() != _textureData.w || _glTexture.getHeight() != _textureData.h) {
-		// Create a buffer for the texture data.
-		_textureData.create(_glTexture.getWidth(), _glTexture.getHeight(), _format);
-	}
-
-	// Create a sub-buffer for raw access.
-	_userPixelData = _textureData.getSubArea(Common::Rect(width, height));
-}
-
-void Texture::copyRectToTexture(uint x, uint y, uint w, uint h, const void *srcPtr, uint srcPitch) {
+void Surface::copyRectToTexture(uint x, uint y, uint w, uint h, const void *srcPtr, uint srcPitch) {
 	Graphics::Surface *dstSurf = getSurface();
 	assert(x + w <= dstSurf->w);
 	assert(y + h <= dstSurf->h);
@@ -235,11 +200,65 @@ void Texture::copyRectToTexture(uint x, uint y, uint w, uint h, const void *srcP
 	}
 }
 
-void Texture::fill(uint32 color) {
+void Surface::fill(uint32 color) {
 	Graphics::Surface *dst = getSurface();
 	dst->fillRect(Common::Rect(dst->w, dst->h), color);
 
 	flagDirty();
+}
+
+Common::Rect Surface::getDirtyArea() const {
+	if (_allDirty) {
+		return Common::Rect(getWidth(), getHeight());
+	} else {
+		return _dirtyArea;
+	}
+}
+
+//
+// Surface implementations
+//
+
+Texture::Texture(GLenum glIntFormat, GLenum glFormat, GLenum glType, const Graphics::PixelFormat &format)
+    : Surface(), _format(format), _glTexture(glIntFormat, glFormat, glType),
+      _textureData(), _userPixelData() {
+}
+
+Texture::~Texture() {
+	_textureData.free();
+}
+
+void Texture::destroy() {
+	_glTexture.destroy();
+}
+
+void Texture::recreate() {
+	_glTexture.create();
+
+	// In case image date exists assure it will be completely refreshed next
+	// time.
+	if (_textureData.getPixels()) {
+		flagDirty();
+	}
+}
+
+void Texture::enableLinearFiltering(bool enable) {
+	_glTexture.enableLinearFiltering(enable);
+}
+
+void Texture::allocate(uint width, uint height) {
+	// Assure the texture can contain our user data.
+	_glTexture.setSize(width, height);
+
+	// In case the needed texture dimension changed we will reinitialize the
+	// texture data buffer.
+	if (_glTexture.getWidth() != _textureData.w || _glTexture.getHeight() != _textureData.h) {
+		// Create a buffer for the texture data.
+		_textureData.create(_glTexture.getWidth(), _glTexture.getHeight(), _format);
+	}
+
+	// Create a sub-buffer for raw access.
+	_userPixelData = _textureData.getSubArea(Common::Rect(width, height));
 }
 
 void Texture::draw(GLfloat x, GLfloat y, GLfloat w, GLfloat h) {
@@ -309,14 +328,6 @@ void Texture::updateTexture() {
 
 	// We should have handled everything, thus not dirty anymore.
 	clearDirty();
-}
-
-Common::Rect Texture::getDirtyArea() const {
-	if (_allDirty) {
-		return Common::Rect(_userPixelData.w, _userPixelData.h);
-	} else {
-		return _dirtyArea;
-	}
 }
 
 TextureCLUT8::TextureCLUT8(GLenum glIntFormat, GLenum glFormat, GLenum glType, const Graphics::PixelFormat &format)

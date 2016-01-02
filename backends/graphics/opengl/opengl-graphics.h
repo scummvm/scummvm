@@ -40,7 +40,7 @@ namespace OpenGL {
 // SurfaceSDL backend enables it and disabling it can cause issues in sdl.cpp.
 #define USE_OSD 1
 
-class Texture;
+class Surface;
 #if !USE_FORCED_GLES
 class Shader;
 #endif
@@ -190,15 +190,15 @@ protected:
 
 private:
 	/**
-	 * Create a texture with the specified pixel format.
+	 * Create a surface with the specified pixel format.
 	 *
-	 * @param format    The pixel format the Texture object should accept as
+	 * @param format    The pixel format the Surface object should accept as
 	 *                  input.
-	 * @param wantAlpha For CLUT8 textures this marks whether an alpha
+	 * @param wantAlpha For CLUT8 surfaces this marks whether an alpha
 	 *                  channel should be used.
-	 * @return A pointer to the texture or nullptr on failure.
+	 * @return A pointer to the surface or nullptr on failure.
 	 */
-	Texture *createTexture(const Graphics::PixelFormat &format, bool wantAlpha = false);
+	Surface *createSurface(const Graphics::PixelFormat &format, bool wantAlpha = false);
 
 	//
 	// Transaction support
@@ -386,7 +386,7 @@ private:
 	/**
 	 * The virtual game screen.
 	 */
-	Texture *_gameScreen;
+	Surface *_gameScreen;
 
 	/**
 	 * The game palette if in CLUT8 mode.
@@ -405,7 +405,7 @@ private:
 	/**
 	 * The overlay screen.
 	 */
-	Texture *_overlay;
+	Surface *_overlay;
 
 	/**
 	 * Whether the overlay is visible or not.
@@ -424,7 +424,7 @@ private:
 	/**
 	 * The cursor image.
 	 */
-	Texture *_cursor;
+	Surface *_cursor;
 
 	/**
 	 * X coordinate of the cursor in phyiscal coordinates.
@@ -551,7 +551,7 @@ private:
 	/**
 	 * The OSD's contents.
 	 */
-	Texture *_osd;
+	Surface *_osd;
 
 	/**
 	 * Current opacity level of the OSD.
