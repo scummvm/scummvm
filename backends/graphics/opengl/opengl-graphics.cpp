@@ -1208,20 +1208,7 @@ void OpenGLGraphicsManager::updateCursorPalette() {
 		_cursor->setPalette(0, 256, _gamePalette);
 	}
 
-	// We remove all alpha bits from the palette entry of the color key.
-	// This makes sure its properly handled as color key.
-	const Graphics::PixelFormat &hardwareFormat = _cursor->getHardwareFormat();
-	const uint32 aMask = (0xFF >> hardwareFormat.aLoss) << hardwareFormat.aShift;
-
-	if (hardwareFormat.bytesPerPixel == 2) {
-		uint16 *palette = (uint16 *)_cursor->getPalette() + _cursorKeyColor;
-		*palette &= ~aMask;
-	} else if (hardwareFormat.bytesPerPixel == 4) {
-		uint32 *palette = (uint32 *)_cursor->getPalette() + _cursorKeyColor;
-		*palette &= ~aMask;
-	} else {
-		warning("OpenGLGraphicsManager::updateCursorPalette: Unsupported pixel depth %d", hardwareFormat.bytesPerPixel);
-	}
+	_cursor->setColorKey(_cursorKeyColor);
 }
 
 void OpenGLGraphicsManager::recalculateCursorScaling() {

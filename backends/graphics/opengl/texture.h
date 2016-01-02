@@ -190,10 +190,15 @@ public:
 	 */
 	virtual bool hasPalette() const { return false; }
 
+	/**
+	 * Set color key for paletted textures.
+	 *
+	 * This needs to be called after any palette update affecting the color
+	 * key. Calling this multiple times will result in multiple color indices
+	 * to be treated as color keys.
+	 */
+	virtual void setColorKey(uint colorKey) {}
 	virtual void setPalette(uint start, uint colors, const byte *palData) {}
-
-	virtual void *getPalette() { return 0; }
-	virtual const void *getPalette() const { return 0; }
 protected:
 	virtual void updateTexture();
 
@@ -222,10 +227,8 @@ public:
 
 	virtual bool hasPalette() const { return true; }
 
+	virtual void setColorKey(uint colorKey);
 	virtual void setPalette(uint start, uint colors, const byte *palData);
-
-	virtual void *getPalette() { return _palette; }
-	virtual const void *getPalette() const { return _palette; }
 
 	virtual Graphics::Surface *getSurface() { return &_clut8Data; }
 	virtual const Graphics::Surface *getSurface() const { return &_clut8Data; }

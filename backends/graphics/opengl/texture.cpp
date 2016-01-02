@@ -346,6 +346,26 @@ Graphics::PixelFormat TextureCLUT8::getFormat() const {
 	return Graphics::PixelFormat::createFormatCLUT8();
 }
 
+void TextureCLUT8::setColorKey(uint colorKey) {
+	// We remove all alpha bits from the palette entry of the color key.
+	// This makes sure its properly handled as color key.
+	const Graphics::PixelFormat &hardwareFormat = getHardwareFormat();
+	const uint32 aMask = (0xFF >> hardwareFormat.aLoss) << hardwareFormat.aShift;
+
+	if (hardwareFormat.bytesPerPixel == 2) {
+		uint16 *palette = (uint16 *)_palette + colorKey;
+		*palette &= ~aMask;
+	} else if (hardwareFormat.bytesPerPixel == 4) {
+		uint32 *palette = (uint32 *)_palette + colorKey;
+		*palette &= ~aMask;
+	} else {
+		warning("TextureCLUT8::setColorKey: Unsupported pixel depth %d", hardwareFormat.bytesPerPixel);
+	}
+
+	// A palette changes means we need to refresh the whole surface.
+	flagDirty();
+}
+
 namespace {
 template<typename ColorType>
 inline void convertPalette(ColorType *dst, const byte *src, uint colors, const Graphics::PixelFormat &format) {
