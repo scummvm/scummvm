@@ -221,8 +221,8 @@ OSystem::TransactionError OpenGLGraphicsManager::endGFXTransaction() {
 		   // a context existing before, which means we don't know the maximum
 		   // supported texture size before this. Thus, we check whether the
 		   // requested game resolution is supported over here.
-		   || (   _currentState.gameWidth  > (uint)Texture::getMaximumTextureSize()
-		       || _currentState.gameHeight > (uint)Texture::getMaximumTextureSize())) {
+		   || (   _currentState.gameWidth  > (uint)g_context._maxTextureSize
+		       || _currentState.gameHeight > (uint)g_context._maxTextureSize)) {
 			if (_transactionMode == kTransactionActive) {
 				// Try to setup the old state in case its valid and is
 				// actually different from the new one.
@@ -806,15 +806,15 @@ void OpenGLGraphicsManager::setActualScreenSize(uint width, uint height) {
 	// possible and then scale it to the physical display size. This sounds
 	// bad but actually all recent chips should support full HD resolution
 	// anyway. Thus, it should not be a real issue for modern hardware.
-	if (   overlayWidth  > (uint)Texture::getMaximumTextureSize()
-	    || overlayHeight > (uint)Texture::getMaximumTextureSize()) {
+	if (   overlayWidth  > (uint)g_context._maxTextureSize
+	    || overlayHeight > (uint)g_context._maxTextureSize) {
 		const frac_t outputAspect = intToFrac(_outputScreenWidth) / _outputScreenHeight;
 
 		if (outputAspect > (frac_t)FRAC_ONE) {
-			overlayWidth  = Texture::getMaximumTextureSize();
+			overlayWidth  = g_context._maxTextureSize;
 			overlayHeight = intToFrac(overlayWidth) / outputAspect;
 		} else {
-			overlayHeight = Texture::getMaximumTextureSize();
+			overlayHeight = g_context._maxTextureSize;
 			overlayWidth  = fracToInt(overlayHeight * outputAspect);
 		}
 	}
@@ -898,9 +898,6 @@ void OpenGLGraphicsManager::notifyContextCreate(const Graphics::PixelFormat &def
 	// since the only place where we really use it is the BMP screenshot
 	// code and that requires the same alignment too.
 	GL_CALL(glPixelStorei(GL_PACK_ALIGNMENT, 4));
-
-	// Query information needed by textures.
-	Texture::queryTextureInformation();
 
 #if !USE_FORCED_GLES
 	if (!_shader) {

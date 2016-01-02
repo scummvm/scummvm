@@ -102,6 +102,9 @@ struct Context {
 	 */
 	void reset();
 
+	/** The maximum texture size supported by the context. */
+	GLint _maxTextureSize;
+
 	/** Whether GL_ARB_texture_non_power_of_two is available or not. */
 	bool NPOTSupported;
 

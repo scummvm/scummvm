@@ -161,13 +161,6 @@ void GLTexture::updateArea(const Common::Rect &area, const Graphics::Surface &sr
 	                       _glFormat, _glType, src.getBasePtr(0, area.top)));
 }
 
-GLint Texture::_maxTextureSize = 0;
-
-void Texture::queryTextureInformation() {
-	GL_CALL(glGetIntegerv(GL_MAX_TEXTURE_SIZE, &_maxTextureSize));
-	debug(5, "OpenGL maximum texture size: %d", _maxTextureSize);
-}
-
 Texture::Texture(GLenum glIntFormat, GLenum glFormat, GLenum glType, const Graphics::PixelFormat &format)
     : _format(format), _glTexture(glIntFormat, glFormat, glType),
       _textureData(), _userPixelData(), _allDirty(false) {

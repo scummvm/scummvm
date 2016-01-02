@@ -25,6 +25,7 @@
 #include "backends/graphics/opengl/shader.h"
 
 #include "common/tokenizer.h"
+#include "common/debug.h"
 
 namespace OpenGL {
 
@@ -39,6 +40,8 @@ namespace OpenGL {
 #endif
 
 void Context::reset() {
+	_maxTextureSize = 0;
+
 	NPOTSupported = false;
 #if !USE_FORCED_GLES && !USE_FORCED_GLES2
 	shadersSupported = false;
@@ -184,6 +187,10 @@ void OpenGLGraphicsManager::initializeGLContext() {
 #undef GL_FUNC_DEF
 #undef GL_EXT_FUNC_DEF
 #undef LOAD_FUNC
+
+	// Obtain maximum texture size.
+	GL_CALL(glGetIntegerv(GL_MAX_TEXTURE_SIZE, &g_context._maxTextureSize));
+	debug(5, "OpenGL maximum texture size: %d", g_context._maxTextureSize);
 
 	const char *extString = (const char *)g_context.glGetString(GL_EXTENSIONS);
 
