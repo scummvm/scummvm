@@ -574,7 +574,8 @@ bool Script::compare(Operand *o1, Operand *o2, int comparator) {
 		error("FIXME kCompEqChrScene");
 		//return o2->_value.scene->_chrs.contains(*o1->_value.chr);
 	case kCompEqObjChr:
-		error("FIXME kCompEqObjChr");
+		warning("FIXME kCompEqObjChr");
+		return false;
 		//return o2->_value.chr->_inventory.contains(*o1->_value.obj);
 	case kCompEqChrChr:
 		return o1->_value.chr == o2->_value.chr;
