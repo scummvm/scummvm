@@ -83,11 +83,20 @@ void AudioPlayer::handleFanmadeSciAudio(reg_t sciAudioObject, SegManager *segMan
 		reg_t fileNameReg = readSelector(segMan, sciAudioObject, kernel->findSelector("fileName"));
 		Common::String fileName = segMan->getString(fileNameReg);
 
-		int16 loopCount = (int16)readSelectorValue(segMan, sciAudioObject, kernel->findSelector("loopCount"));
-		// When loopCount is -1, we treat it as infinite looping, else no looping is done.
-		// This is observed by game scripts, which can set loopCount to all sorts of random values.
+		reg_t loopCountReg = readSelector(segMan, sciAudioObject, kernel->findSelector("loopCount"));
+		Common::String loopCountStr = segMan->getString(loopCountReg);
+		int16 loopCount = atoi(loopCountStr.c_str());
+
 		// Adjust loopCount for ScummVM's LoopingAudioStream semantics
-		loopCount = (loopCount == -1) ? 0 : 1;
+		if (loopCount == -1) {
+			loopCount = 0; // loop endlessly
+		} else if (loopCount >= 0) {
+			// sciAudio loopCount == 0 -> play 1 time  -> ScummVM's loopCount should be 1
+			// sciAudio loopCount == 1 -> play 2 times -> ScummVM's loopCount should be 2
+			loopCount++;
+		} else {
+			loopCount = 1; // play once in case the value makes no sense
+		}
 
 		// Determine sound type
 		Audio::Mixer::SoundType soundType = Audio::Mixer::kSFXSoundType;
