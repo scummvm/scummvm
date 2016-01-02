@@ -23,7 +23,7 @@
 #include "common/algorithm.h"
 #include "common/events.h"
 #include "common/keyboard.h"
-#include "common/list_intern.h"
+#include "common/list.h"
 #include "common/str.h"
 #include "common/system.h"
 #include "common/textconsole.h"
