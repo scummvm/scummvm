@@ -56,6 +56,7 @@
 #include "wage/design.h"
 #include "wage/entities.h"
 #include "wage/gui.h"
+#include "wage/world.h"
 
 namespace Wage {
 
@@ -116,7 +117,8 @@ static const byte macCursorBeam[] = {
 	0, 0, 3, 3, 3, 0, 0, 3, 3, 3, 3,
 };
 
-Gui::Gui() {
+Gui::Gui(WageEngine *engine) {
+	_engine = engine;
 	_scene = NULL;
 	_sceneDirty = true;
 	_bordersDirty = true;
@@ -144,13 +146,6 @@ Gui::Gui() {
 }
 
 Gui::~Gui() {
-}
-
-void Gui::setScene(Scene *scene) {
-	if (_scene != scene)
-		_sceneDirty = true;
-
-	_scene = scene;
 }
 
 void Gui::clearOutput() {
@@ -181,7 +176,9 @@ void Gui::appendText(String &str) {
 }
 
 void Gui::draw() {
-	if (_scene != NULL && _sceneDirty) {
+	if (_scene != _engine->_world->_player->_currentScene || _sceneDirty) {
+		_scene = _engine->_world->_player->_currentScene;
+
 		_scene->paint(&_screen, 0 + kComponentsPadding, kMenuHeight + kComponentsPadding);
 
 		_sceneArea.left = 0 + kComponentsPadding + kBorderWidth;

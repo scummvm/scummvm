@@ -96,7 +96,7 @@ Common::Error WageEngine::run() {
 
 	debug("WageEngine::init");
 
-	_gui = new Gui();
+	_gui = new Gui(this);
 
 	// Your main event loop should be (invoked from) here.
 	_resManager = new Common::MacResManager();
@@ -116,7 +116,6 @@ Common::Error WageEngine::run() {
 	_world->_player->_currentScene = _world->_orderedScenes[1];
 	_world->_globalScript->execute(_world, 1, &input, NULL, this);
 
-	_gui->setScene(_world->_orderedScenes[1]);
 	_gui->draw();
 
 	while (true) {

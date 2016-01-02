@@ -61,11 +61,10 @@ enum WindowType {
 
 class Gui {
 public:
-	Gui();
+	Gui(WageEngine *engine);
 	~Gui();
 
 	void draw();
-	void setScene(Scene *scene);
 	void appendText(Common::String &str);
 	void clearOutput();
 	void mouseMove(int x, int y);
@@ -80,6 +79,7 @@ private:
 	void renderMenu();
 
 private:
+	WageEngine *_engine;
 	Graphics::Surface _screen;
 	Graphics::Surface _console;
 	Scene *_scene;
