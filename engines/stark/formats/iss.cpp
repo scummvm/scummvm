@@ -23,6 +23,8 @@
 #include "engines/stark/formats/iss.h"
 
 #include "audio/decoders/adpcm_intern.h"
+#include "audio/decoders/raw.h"
+#include "common/substream.h"
 
 namespace Stark {
 namespace Formats {
@@ -75,6 +77,7 @@ Audio::RewindableAudioStream *makeISSStream(Common::SeekableReadStream *stream, 
 	Common::String codec;
 	uint16 blockSize, channels, freq;
 	uint32 size;
+	byte flags;
 
 	codec = readString(stream);
 
@@ -106,6 +109,31 @@ Audio::RewindableAudioStream *makeISSStream(Common::SeekableReadStream *stream, 
 		size = (uint32)strtol(codec.c_str(), 0, 10);
 
 		return new ISSADPCMStream(stream, DisposeAfterUse::YES, size, freq, channels, blockSize);
+	} else if (codec.equals("Sound")) {
+
+		readString(stream);
+		// name ?
+
+		codec = readString(stream);
+		// sample count ?
+
+		codec = readString(stream);
+		channels = (uint16)strtol(codec.c_str(), 0, 10) + 1;
+
+		readString(stream);
+		// ?
+
+		codec = readString(stream);
+		freq = 44100 / (uint16)strtol(codec.c_str(), 0, 10);
+
+		readString(stream);
+
+		readString(stream);
+
+		flags = Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN;
+		if (channels == 2)
+			flags |= Audio::FLAG_STEREO;
+		return Audio::makeRawStream(new Common::SeekableSubReadStream(stream, stream->pos(), stream->size(), DisposeAfterUse::YES), freq, flags, DisposeAfterUse::YES);
 	} else {
 		error("Unknown ISS codec '%s'", codec.c_str());
 	}
