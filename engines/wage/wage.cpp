@@ -112,14 +112,12 @@ Common::Error WageEngine::run() {
 	_temporarilyHidden = false;
 
 	Common::String input("look");
-
-	_world->_player->_currentScene = _world->_orderedScenes[1];
 	_world->_globalScript->execute(_world, 1, &input, NULL, this);
-
-	_gui->draw();
 
 	while (true) {
 		processEvents();
+
+		_gui->draw();
 		g_system->updateScreen();
 		g_system->delayMillis(50);
 	}
