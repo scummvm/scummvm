@@ -557,13 +557,19 @@ bool FPStream::loadFile(const Common::String &fileName, int bufSize) {
 		_rewindableStream = Audio::makeADPCMStream(_file.readStream(_size), DisposeAfterUse::YES, 0, Audio::kADPCMDVI, 44100, 2);
 		break;
 	case FPCODEC_MP3:
+#ifdef USE_MAD
 		_rewindableStream = Audio::makeMP3Stream(&_file, DisposeAfterUse::YES);
+#endif
 		break;
 	case FPCODEC_OGG:
+#ifdef USE_VORBIS
 		_rewindableStream = Audio::makeVorbisStream(&_file, DisposeAfterUse::YES);
+#endif
 		break;
 	case FPCODEC_FLAC:
+#ifdef USE_FLAC
 		_rewindableStream = Audio::makeFLACStream(&_file, DisposeAfterUse::YES);
+#endif
 		break;
 	default:
 		break;
