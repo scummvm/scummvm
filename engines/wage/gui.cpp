@@ -121,7 +121,9 @@ Gui::Gui(WageEngine *engine) {
 	_engine = engine;
 	_scene = NULL;
 	_sceneDirty = true;
+	_consoleDirty = true;
 	_bordersDirty = true;
+	_menuDirty = true;
 	_screen.create(g_system->getWidth(), g_system->getHeight(), Graphics::PixelFormat::createFormatCLUT8());
 
 	Patterns p;
@@ -153,6 +155,8 @@ void Gui::clearOutput() {
 }
 
 void Gui::appendText(String &str) {
+	_consoleDirty = true;
+
 	if (!str.contains('\n')) {
 		_out.push_back(str);
 		return;
@@ -178,6 +182,7 @@ void Gui::appendText(String &str) {
 void Gui::draw() {
 	if (_scene != _engine->_world->_player->_currentScene || _sceneDirty) {
 		_scene = _engine->_world->_player->_currentScene;
+		_sceneDirty = true;
 
 		_scene->paint(&_screen, 0 + kComponentsPadding, kMenuHeight + kComponentsPadding);
 
@@ -185,9 +190,12 @@ void Gui::draw() {
 		_sceneArea.top = kMenuHeight + kComponentsPadding + kBorderWidth;
 		_sceneArea.setWidth(_scene->_design->getBounds()->width() - 2 * kBorderWidth);
 		_sceneArea.setHeight(_scene->_design->getBounds()->height() - 2 * kBorderWidth);
-
-		_sceneDirty = false;
 	}
+
+	if (_scene && (_bordersDirty || _sceneDirty))
+		paintBorder(&_screen, 0 + kComponentsPadding, kMenuHeight + kComponentsPadding, _scene->_design->getBounds()->width(), _scene->_design->getBounds()->height(),
+				kWindowScene);
+
 
 	// Render console
 	int sceneW = _scene->_design->getBounds()->width();
@@ -196,18 +204,19 @@ void Gui::draw() {
 	int consoleX = sceneW + kComponentsPadding;
 	int consoleY = kMenuHeight + kComponentsPadding;
 
-	renderConsole(&_screen, consoleX + kBorderWidth , consoleY + kBorderWidth, consoleW - 2 * kBorderWidth, consoleH - 2 * kBorderWidth);
+	if (_consoleDirty)
+		renderConsole(&_screen, consoleX + kBorderWidth , consoleY + kBorderWidth, consoleW - 2 * kBorderWidth, consoleH - 2 * kBorderWidth);
 
-	if (_bordersDirty) {
-		if (_scene)
-			paintBorder(&_screen, 0 + kComponentsPadding, kMenuHeight + kComponentsPadding, _scene->_design->getBounds()->width(), _scene->_design->getBounds()->height(),
-				kWindowScene);
+	if (_bordersDirty || _consoleDirty)
 		paintBorder(&_screen, consoleX, consoleY, consoleW, consoleH, kWindowConsole);
 
-		_bordersDirty = false;
-	}
+	if (_menuDirty)
+		renderMenu();
 
-	renderMenu();
+	_sceneDirty = false;
+	_consoleDirty = false;
+	_bordersDirty = false;
+	_menuDirty = false;
 
 	// Blit to screen
 	g_system->copyRectToScreen(_screen.getPixels(), _screen.pitch, 0, 0, _screen.w, _screen.h);

@@ -84,7 +84,9 @@ private:
 	Graphics::Surface _console;
 	Scene *_scene;
 	bool _sceneDirty;
+	bool _consoleDirty;
 	bool _bordersDirty;
+	bool _menuDirty;
 
 	Common::StringArray _out;
 	Common::StringArray _lines;
