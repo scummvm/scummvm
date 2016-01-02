@@ -202,6 +202,7 @@ typedef GLhandleARB GLshader;
 #define GL_UNSIGNED_SHORT_5_6_5           0x8363
 
 #define GL_UNSIGNED_SHORT_4_4_4_4_REV     0x8365
+#define GL_UNSIGNED_SHORT_5_6_5_REV       0x8364
 #define GL_UNSIGNED_SHORT_1_5_5_5_REV     0x8366
 #define GL_UNSIGNED_INT_8_8_8_8           0x8035
 #define GL_UNSIGNED_INT_8_8_8_8_REV       0x8367

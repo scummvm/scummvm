@@ -1118,8 +1118,8 @@ bool OpenGLGraphicsManager::getGLPixelFormat(const Graphics::PixelFormat &pixelF
 		return true;
 	} else if (pixelFormat == Graphics::PixelFormat(2, 5, 6, 5, 0, 0, 5, 11, 0)) { // BGR565
 		glIntFormat = GL_RGB;
-		glFormat = GL_BGR;
-		glType = GL_UNSIGNED_SHORT_5_6_5;
+		glFormat = GL_RGB;
+		glType = GL_UNSIGNED_SHORT_5_6_5_REV;
 		return true;
 	} else if (pixelFormat == Graphics::PixelFormat(2, 5, 5, 5, 1, 1, 6, 11, 0)) { // BGRA5551
 		glIntFormat = GL_RGBA;
