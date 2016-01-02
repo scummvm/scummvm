@@ -77,6 +77,7 @@
 
 GL_FUNC_DEF(void, glEnable, (GLenum cap));
 GL_FUNC_DEF(void, glDisable, (GLenum cap));
+GL_FUNC_DEF(GLboolean, glIsEnabled, (GLenum cap));
 GL_FUNC_DEF(void, glClear, (GLbitfield mask));
 GL_FUNC_DEF(void, glColor4f, (GLfloat red, GLfloat green, GLfloat blue, GLfloat alpha));
 GL_FUNC_DEF(void, glViewport, (GLint x, GLint y, GLsizei width, GLsizei height));
@@ -128,10 +129,16 @@ GL_FUNC_2_DEF(void, glGetShaderiv, glGetObjectParameterivARB, (GLshader shader, 
 GL_FUNC_2_DEF(void, glGetShaderInfoLog, glGetInfoLogARB, (GLshader shader, GLsizei bufSize, GLsizei *length, GLchar *infoLog));
 GL_FUNC_2_DEF(void, glShaderSource, glShaderSourceARB, (GLshader shader, GLsizei count, const GLchar *const *string, const GLint *length));
 GL_FUNC_2_DEF(void, glCompileShader, glCompileShaderARB, (GLshader shader));
+
+#if !USE_FORCED_GLES2
+GL_FUNC_2_DEF(void, glBindFramebuffer, glBindFramebufferEXT, (GLenum target, GLuint renderbuffer));
+GL_FUNC_2_DEF(void, glDeleteFramebuffers, glDeleteFramebuffersEXT, (GLsizei n, const GLuint *framebuffers));
+GL_FUNC_2_DEF(void, glGenFramebuffers, glGenFramebuffersEXT, (GLsizei n, GLuint *renderbuffers));
+GL_FUNC_2_DEF(void, glFramebufferTexture2D, glFramebufferTexture2DEXT, (GLenum target, GLenum attachment, GLenum textarget, GLuint texture, GLint level));
+GL_FUNC_2_DEF(GLenum, glCheckFramebufferStatus, glCheckFramebufferStatusEXT, (GLenum target));
 #endif
 
-#if !USE_FORCED_GL && !USE_FORCED_GLES
-GL_FUNC_DEF(void, glActiveTexture, (GLenum texture));
+GL_FUNC_2_DEF(void, glActiveTexture, glActiveTextureARB, (GLenum texture));
 #endif
 
 #ifdef DEFINED_GL_EXT_FUNC_DEF

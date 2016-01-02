@@ -32,6 +32,8 @@
 
 namespace OpenGL {
 
+class Shader;
+
 /**
  * A simple GL texture object abstraction.
  *
@@ -104,6 +106,14 @@ public:
 	 * Obtain texture coordinates for rectangular drawing.
 	 */
 	const GLfloat *getTexCoords() const { return _texCoords; }
+
+	/**
+	 * Obtain texture name.
+	 *
+	 * Beware that the texture name changes whenever create is used.
+	 * destroy will invalidate the texture name.
+	 */
+	GLuint getGLTexture() const { return _glTexture; }
 private:
 	const GLenum _glIntFormat;
 	const GLenum _glFormat;
@@ -175,7 +185,7 @@ public:
 	virtual void draw(GLfloat x, GLfloat y, GLfloat w, GLfloat h) = 0;
 
 	void flagDirty() { _allDirty = true; }
-	bool isDirty() const { return _allDirty || !_dirtyArea.isEmpty(); }
+	virtual bool isDirty() const { return _allDirty || !_dirtyArea.isEmpty(); }
 
 	virtual uint getWidth() const = 0;
 	virtual uint getHeight() const = 0;
@@ -306,6 +316,67 @@ private:
 	Graphics::Surface _rgb555Data;
 };
 #endif // !USE_FORCED_GL
+
+#if !USE_FORCED_GLES && !USE_FORCED_GLES2
+class TextureCLUT8GPU : public Surface {
+public:
+	TextureCLUT8GPU();
+	virtual ~TextureCLUT8GPU();
+
+	virtual void destroy();
+
+	virtual void recreate();
+
+	virtual void enableLinearFiltering(bool enable);
+
+	virtual void allocate(uint width, uint height);
+
+	virtual void draw(GLfloat x, GLfloat y, GLfloat w, GLfloat h);
+
+	virtual bool isDirty() const { return _paletteDirty || Surface::isDirty(); }
+
+	virtual uint getWidth() const { return _userPixelData.w; }
+	virtual uint getHeight() const { return _userPixelData.h; }
+
+	virtual Graphics::PixelFormat getFormat() const;
+
+	virtual bool hasPalette() const { return true; }
+
+	virtual void setColorKey(uint colorKey);
+	virtual void setPalette(uint start, uint colors, const byte *palData);
+
+	virtual Graphics::Surface *getSurface() { return &_userPixelData; }
+	virtual const Graphics::Surface *getSurface() const { return &_userPixelData; }
+
+	static bool isSupportedByContext() {
+		return g_context.shadersSupported
+		    && g_context.multitextureSupported
+		    && g_context.textureRGSupported
+		    && g_context.framebufferObjectSupported;
+	}
+private:
+	void updateTextures();
+	void lookUpColors();
+
+	GLTexture _clut8Texture;
+	GLTexture _paletteTexture;
+	GLTexture _glTexture;
+
+	void setupFBO();
+	GLuint _glFBO;
+	GLfloat _clut8Vertices[4*2];
+	GLfloat _projectionMatrix[4*4];
+
+	Shader *_lookUpShader;
+	GLint _paletteLocation;
+
+	Graphics::Surface _clut8Data;
+	Graphics::Surface _userPixelData;
+
+	byte _palette[4 * 256];
+	bool _paletteDirty;
+};
+#endif // !USE_FORCED_GLES && !USE_FORCED_GLES2
 
 } // End of namespace OpenGL
 

@@ -183,6 +183,9 @@ typedef GLhandleARB GLshader;
 #define GL_BGR                            0x80E0
 #define GL_BGRA                           0x80E1
 
+#define GL_RED                            0x1903
+#define GL_R8                             0x8229
+
 /* PixelStoreParameter */
 #define GL_UNPACK_ALIGNMENT               0x0CF5
 #define GL_PACK_ALIGNMENT                 0x0D05
@@ -242,8 +245,18 @@ typedef GLhandleARB GLshader;
 #define GL_COMPILE_STATUS                 0x8B81
 #define GL_LINK_STATUS                    0x8B82
 #define GL_INFO_LOG_LENGTH                0x8B84
+#define GL_CURRENT_PROGRAM                0x8B8D
 
 /* Textures */
 #define GL_TEXTURE0                       0x84C0
+#define GL_TEXTURE1                       0x84C1
+
+/* GetPName */
+#define GL_VIEWPORT                       0x0BA2
+#define GL_FRAMEBUFFER_BINDING            0x8CA6
+
+/* Framebuffer objects */
+#define GL_COLOR_ATTACHMENT0              0x8CE0
+#define GL_FRAMEBUFFER                    0x8D40
 
 #endif

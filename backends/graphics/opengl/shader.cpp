@@ -171,6 +171,16 @@ void Shader::activate(const GLfloat *projectionMatrix) {
 	GL_CALL(glUniform1i(_textureLocation, 0));
 }
 
+GLint Shader::getUniformLocation(const char *name) const {
+	GLint result = -1;
+	GL_ASSIGN(result, glGetUniformLocation(_program, name));
+	return result;
+}
+
+void Shader::setUniformI(GLint location, GLint value) {
+	GL_CALL(glUniform1i(location, value));
+}
+
 GLshader Shader::compileShader(const char *source, GLenum shaderType) {
 	GLshader handle;
 	GL_ASSIGN(handle, glCreateShader(shaderType));

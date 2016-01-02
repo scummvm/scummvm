@@ -71,6 +71,24 @@ public:
 	 * @param projectionMatrix Projection matrix to use.
 	 */
 	void activate(const GLfloat *projectionMatrix);
+
+	/**
+	 * Return location for uniform with given name.
+	 *
+	 * @param name Name of the uniform to look up in the shader.
+	 * @return The location or -1 if uniform was not found.
+	 */
+	GLint getUniformLocation(const char *name) const;
+
+	/**
+	 * Bind value to uniform.
+	 *
+	 * Note: this only works when the shader is actived by activate.
+	 *
+	 * @param location Location of the uniform.
+	 * @param value    The value to be set.
+	 */
+	void setUniformI(GLint location, GLint value);
 protected:
 	/**
 	 * Vertex shader sources.

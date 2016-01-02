@@ -45,6 +45,9 @@ void Context::reset() {
 	NPOTSupported = false;
 #if !USE_FORCED_GLES && !USE_FORCED_GLES2
 	shadersSupported = false;
+	multitextureSupported = false;
+	framebufferObjectSupported = false;
+	textureRGSupported = false;
 #endif
 
 #define GL_FUNC_DEF(ret, name, param) name = nullptr;
@@ -216,6 +219,12 @@ void OpenGLGraphicsManager::initializeGLContext() {
 			ARBVertexShader = true;
 		} else if (token == "GL_ARB_fragment_shader") {
 			ARBFragmentShader = true;
+		} else if (token == "GL_ARB_multitexture") {
+			g_context.multitextureSupported = true;
+		} else if (token == "GL_ARB_texture_rg") {
+			g_context.textureRGSupported = true;
+		} else if (token == "GL_EXT_framebuffer_object") {
+			g_context.framebufferObjectSupported = true;
 #endif
 		}
 	}

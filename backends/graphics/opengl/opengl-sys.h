@@ -111,6 +111,15 @@ struct Context {
 #if !USE_FORCED_GLES && !USE_FORCED_GLES2
 	/** Whether shader support is available or not. */
 	bool shadersSupported;
+
+	/** Whether multi texture support is available or not. */
+	bool multitextureSupported;
+
+	/** Whether (GLES2) RG texture formats are supported. */
+	bool textureRGSupported;
+
+	/** Whether FBO support is available or not. */
+	bool framebufferObjectSupported;
 #endif
 
 #define GL_FUNC_DEF(ret, name, param) ret (GL_CALL_CONV *name)param
