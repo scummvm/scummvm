@@ -349,17 +349,16 @@ Graphics::PixelFormat TextureCLUT8::getFormat() const {
 void TextureCLUT8::setColorKey(uint colorKey) {
 	// We remove all alpha bits from the palette entry of the color key.
 	// This makes sure its properly handled as color key.
-	const Graphics::PixelFormat &hardwareFormat = getHardwareFormat();
-	const uint32 aMask = (0xFF >> hardwareFormat.aLoss) << hardwareFormat.aShift;
+	const uint32 aMask = (0xFF >> _format.aLoss) << _format.aShift;
 
-	if (hardwareFormat.bytesPerPixel == 2) {
+	if (_format.bytesPerPixel == 2) {
 		uint16 *palette = (uint16 *)_palette + colorKey;
 		*palette &= ~aMask;
-	} else if (hardwareFormat.bytesPerPixel == 4) {
+	} else if (_format.bytesPerPixel == 4) {
 		uint32 *palette = (uint32 *)_palette + colorKey;
 		*palette &= ~aMask;
 	} else {
-		warning("TextureCLUT8::setColorKey: Unsupported pixel depth %d", hardwareFormat.bytesPerPixel);
+		warning("TextureCLUT8::setColorKey: Unsupported pixel depth %d", _format.bytesPerPixel);
 	}
 
 	// A palette changes means we need to refresh the whole surface.
@@ -377,14 +376,12 @@ inline void convertPalette(ColorType *dst, const byte *src, uint colors, const G
 } // End of anonymous namespace
 
 void TextureCLUT8::setPalette(uint start, uint colors, const byte *palData) {
-	const Graphics::PixelFormat &hardwareFormat = getHardwareFormat();
-
-	if (hardwareFormat.bytesPerPixel == 2) {
-		convertPalette<uint16>((uint16 *)_palette + start, palData, colors, hardwareFormat);
-	} else if (hardwareFormat.bytesPerPixel == 4) {
-		convertPalette<uint32>((uint32 *)_palette + start, palData, colors, hardwareFormat);
+	if (_format.bytesPerPixel == 2) {
+		convertPalette<uint16>((uint16 *)_palette + start, palData, colors, _format);
+	} else if (_format.bytesPerPixel == 4) {
+		convertPalette<uint32>((uint32 *)_palette + start, palData, colors, _format);
 	} else {
-		warning("TextureCLUT8::setPalette: Unsupported pixel depth: %d", hardwareFormat.bytesPerPixel);
+		warning("TextureCLUT8::setPalette: Unsupported pixel depth: %d", _format.bytesPerPixel);
 	}
 
 	// A palette changes means we need to refresh the whole surface.

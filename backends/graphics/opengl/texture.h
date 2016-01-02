@@ -173,11 +173,6 @@ public:
 	uint getHeight() const { return _userPixelData.h; }
 
 	/**
-	 * @return The hardware format of the texture data.
-	 */
-	const Graphics::PixelFormat &getHardwareFormat() const { return _format; }
-
-	/**
 	 * @return The logical format of the texture data.
 	 */
 	virtual Graphics::PixelFormat getFormat() const { return _format; }
@@ -200,12 +195,12 @@ public:
 	virtual void setColorKey(uint colorKey) {}
 	virtual void setPalette(uint start, uint colors, const byte *palData) {}
 protected:
+	const Graphics::PixelFormat _format;
+
 	virtual void updateTexture();
 
 	Common::Rect getDirtyArea() const;
 private:
-	const Graphics::PixelFormat _format;
-
 	GLTexture _glTexture;
 
 	Graphics::Surface _textureData;
