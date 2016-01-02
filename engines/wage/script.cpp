@@ -762,15 +762,22 @@ bool Script::evalClickEquality(Operand *lhs, Operand *rhs, bool partialMatch) {
 		Common::String str = rhs->toString();
 		str.toLowercase();
 
+		debug(9, "evalClickEquality(%s, %s, %d)", lhs->_value.designed->_name.c_str(), rhs->_value.designed->_name.c_str(), partialMatch);
+		debug(9, "l: %d r: %d (ch: %d ob: %d)", lhs->_type, rhs->_type, CHR, OBJ);
+		debug(9, "class: %d", lhs->_value.inputClick->_classType);
+
 		if (lhs->_value.inputClick->_classType == CHR || lhs->_value.inputClick->_classType == OBJ) {
 			Common::String name = lhs->_value.designed->_name;
 			name.toLowercase();
 
+			warning("%s <> %s", name.c_str(), str.c_str());
 			if (partialMatch)
 				result = name.contains(str);
 			else
 				result = name.equals(str);
 		}
+
+		debug(9, "result: %d", result);
 	}
 	return result;
 }
