@@ -33,6 +33,91 @@
 namespace OpenGL {
 
 /**
+ * A simple GL texture object abstraction.
+ *
+ * This is used for low-level GL texture handling.
+ */
+class GLTexture {
+public:
+	/**
+	 * Constrcut a new GL texture object.
+	 *
+	 * @param glIntFormat The internal format to use.
+	 * @param glFormat    The input format.
+	 * @param glType      The input type.
+	 */
+	GLTexture(GLenum glIntFormat, GLenum glFormat, GLenum glType);
+	~GLTexture();
+
+	/**
+	 * Enable or disable linear texture filtering.
+	 *
+	 * @param enable true to enable and false to disable.
+	 */
+	void enableLinearFiltering(bool enable);
+
+	/**
+	 * Test whether linear filtering is enabled.
+	 */
+	bool isLinearFilteringEnabled() const { return (_glFilter == GL_LINEAR); }
+
+	/**
+	 * Destroy the OpenGL texture name.
+	 */
+	void destroy();
+
+	/**
+	 * Create the OpenGL texture name.
+	 */
+	void create();
+
+	/**
+	 * Bind the texture to the active texture unit.
+	 */
+	void bind();
+
+	/**
+	 * Sets the size of the texture in pixels.
+	 *
+	 * The internal OpenGL texture might have a different size. To query the
+	 * actual size use getWidth()/getHeight().
+	 *
+	 * @param width  The desired logical width.
+	 * @param height The desired logical height.
+	 */
+	void setSize(uint width, uint height);
+
+	/**
+	 * Copy image data to the texture.
+	 *
+	 * @param area     The area to update.
+	 * @param src      Surface for the whole texture containing the pixel data
+	 *                 to upload. Only the area described by area will be
+	 *                 uploaded.
+	 */
+	void updateArea(const Common::Rect &area, const Graphics::Surface &src);
+
+	uint getWidth() const { return _width; }
+	uint getHeight() const { return _height; }
+
+	/**
+	 * Obtain texture coordinates for rectangular drawing.
+	 */
+	const GLfloat *getTexCoords() const { return _texCoords; }
+private:
+	const GLenum _glIntFormat;
+	const GLenum _glFormat;
+	const GLenum _glType;
+
+	uint _width, _height;
+	GLfloat _texCoords[4*2];
+
+	GLint _glFilter;
+
+	GLuint _glTexture;
+};
+
+/**
  * An OpenGL texture wrapper. It automatically takes care of all OpenGL
  * texture handling issues and also provides access to the texture data.
  */
@@ -125,13 +210,9 @@ protected:
 
 	Common::Rect getDirtyArea() const;
 private:
-	const GLenum _glIntFormat;
-	const GLenum _glFormat;
-	const GLenum _glType;
 	const Graphics::PixelFormat _format;
 
-	GLint _glFilter;
-	GLuint _glTexture;
+	GLTexture _glTexture;
 
 	Graphics::Surface _textureData;
 	Graphics::Surface _userPixelData;

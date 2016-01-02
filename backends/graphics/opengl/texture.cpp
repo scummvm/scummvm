@@ -40,6 +40,127 @@ static GLuint nextHigher2(GLuint v) {
 	return ++v;
 }
 
+
+GLTexture::GLTexture(GLenum glIntFormat, GLenum glFormat, GLenum glType)
+    : _glIntFormat(glIntFormat), _glFormat(glFormat), _glType(glType),
+      _width(0), _height(0), _texCoords(), _glFilter(GL_NEAREST),
+      _glTexture(0) {
+	create();
+}
+
+GLTexture::~GLTexture() {
+	GL_CALL_SAFE(glDeleteTextures, (1, &_glTexture));
+}
+
+void GLTexture::enableLinearFiltering(bool enable) {
+	if (enable) {
+		_glFilter = GL_LINEAR;
+	} else {
+		_glFilter = GL_NEAREST;
+	}
+
+	bind();
+
+	GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, _glFilter));
+	GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, _glFilter));
+}
+
+void GLTexture::destroy() {
+	GL_CALL(glDeleteTextures(1, &_glTexture));
+	_glTexture = 0;
+}
+
+void GLTexture::create() {
+	// Release old texture name in case it exists.
+	destroy();
+
+	// Get a new texture name.
+	GL_CALL(glGenTextures(1, &_glTexture));
+
+	// Set up all texture parameters.
+	bind();
+	GL_CALL(glPixelStorei(GL_UNPACK_ALIGNMENT, 1));
+	GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, _glFilter));
+	GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, _glFilter));
+	GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
+	GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
+
+	// If a size is specified, allocate memory for it.
+	if (_width != 0 && _height != 0) {
+		// Allocate storage for OpenGL texture.
+		GL_CALL(glTexImage2D(GL_TEXTURE_2D, 0, _glIntFormat, _width, _height,
+		                     0, _glFormat, _glType, NULL));
+	}
+}
+
+void GLTexture::bind() {
+	GL_CALL(glBindTexture(GL_TEXTURE_2D, _glTexture));
+}
+
+void GLTexture::setSize(uint width, uint height) {
+	const uint oldWidth  = _width;
+	const uint oldHeight = _height;
+
+	if (!g_context.NPOTSupported) {
+		_width  = nextHigher2(width);
+		_height = nextHigher2(height);
+	} else {
+		_width  = width;
+		_height = height;
+	}
+
+	// If a size is specified, allocate memory for it.
+	if (width != 0 && height != 0) {
+		const GLfloat texWidth = (GLfloat)width / _width;
+		const GLfloat texHeight = (GLfloat)height / _height;
+
+		_texCoords[0] = 0;
+		_texCoords[1] = 0;
+
+		_texCoords[2] = texWidth;
+		_texCoords[3] = 0;
+
+		_texCoords[4] = 0;
+		_texCoords[5] = texHeight;
+
+		_texCoords[6] = texWidth;
+		_texCoords[7] = texHeight;
+
+		// Allocate storage for OpenGL texture if necessary.
+		if (oldWidth != _width || oldHeight != _height) {
+			bind();
+			GL_CALL(glTexImage2D(GL_TEXTURE_2D, 0, _glIntFormat, _width,
+			                     _height, 0, _glFormat, _glType, NULL));
+		}
+	}
+}
+
+void GLTexture::updateArea(const Common::Rect &area, const Graphics::Surface &src) {
+	// Set the texture on the active texture unit.
+	bind();
+
+	// Update the actual texture.
+	// Although we have the area of the texture buffer we want to update we
+	// cannot take advantage of the left/right boundries here because it is
+	// not possible to specify a pitch to glTexSubImage2D. To be precise, with
+	// plain OpenGL we could set GL_UNPACK_ROW_LENGTH to achieve this. However,
+	// OpenGL ES 1.0 does not support GL_UNPACK_ROW_LENGTH. Thus, we are left
+	// with the following options:
+	//
+	// 1) (As we do right now) Simply always update the whole texture lines of
+	//    rect changed. This is simplest to implement. In case performance is
+	//    really an issue we can think of switching to another method.
+	//
+	// 2) Copy the dirty rect to a temporary buffer and upload that by using
+	//    glTexSubImage2D. This is what the Android backend does. It is more
+	//    complicated though.
+	//
+	// 3) Use glTexSubImage2D per line changed. This is what the old OpenGL
+	//    graphics manager did but it is much slower! Thus, we do not use it.
+	GL_CALL(glTexSubImage2D(GL_TEXTURE_2D, 0, 0, area.top, src.w, area.height(),
+	                       _glFormat, _glType, src.getBasePtr(0, area.top)));
+}
+
 GLint Texture::_maxTextureSize = 0;
 
 void Texture::queryTextureInformation() {
@@ -48,79 +169,42 @@ void Texture::queryTextureInformation() {
 }
 
 Texture::Texture(GLenum glIntFormat, GLenum glFormat, GLenum glType, const Graphics::PixelFormat &format)
-    : _glIntFormat(glIntFormat), _glFormat(glFormat), _glType(glType), _format(format), _glFilter(GL_NEAREST),
-      _glTexture(0), _textureData(), _userPixelData(), _allDirty(false) {
+    : _format(format), _glTexture(glIntFormat, glFormat, glType),
+      _textureData(), _userPixelData(), _allDirty(false) {
 	recreateInternalTexture();
 }
 
 Texture::~Texture() {
-	GL_CALL_SAFE(glDeleteTextures, (1, &_glTexture));
 	_textureData.free();
 }
 
 void Texture::releaseInternalTexture() {
-	GL_CALL(glDeleteTextures(1, &_glTexture));
-	_glTexture = 0;
+	_glTexture.destroy();
 }
 
 void Texture::recreateInternalTexture() {
-	// Release old texture name in case it exists.
-	releaseInternalTexture();
+	_glTexture.create();
 
-	// Get a new texture name.
-	GL_CALL(glGenTextures(1, &_glTexture));
-
-	// Set up all texture parameters.
-	GL_CALL(glBindTexture(GL_TEXTURE_2D, _glTexture));
-	GL_CALL(glPixelStorei(GL_UNPACK_ALIGNMENT, 1));
-	GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, _glFilter));
-	GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, _glFilter));
-	GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
-	GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
-
-	// In case there is an actual texture setup we reinitialize it.
+	// In case image date exists assure it will be completely refreshed next
+	// time.
 	if (_textureData.getPixels()) {
-		// Allocate storage for OpenGL texture.
-		GL_CALL(glTexImage2D(GL_TEXTURE_2D, 0, _glIntFormat, _textureData.w,
-		       _textureData.h, 0, _glFormat, _glType, NULL));
-
-		// Mark dirts such that it will be completely refreshed the next time.
 		flagDirty();
 	}
 }
 
 void Texture::enableLinearFiltering(bool enable) {
-	if (enable) {
-		_glFilter = GL_LINEAR;
-	} else {
-		_glFilter = GL_NEAREST;
-	}
-
-	GL_CALL(glBindTexture(GL_TEXTURE_2D, _glTexture));
-
-	GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, _glFilter));
-	GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, _glFilter));
+	_glTexture.enableLinearFiltering(enable);
 }
 
 void Texture::allocate(uint width, uint height) {
-	uint texWidth = width, texHeight = height;
-	if (!g_context.NPOTSupported) {
-		texWidth  = nextHigher2(texWidth);
-		texHeight = nextHigher2(texHeight);
-	}
+	// Assure the texture can contain our user data.
+	_glTexture.setSize(width, height);
 
 	// In case the needed texture dimension changed we will reinitialize the
-	// texture.
-	if (texWidth != _textureData.w || texHeight != _textureData.h) {
+	// texture data buffer.
+	if (_glTexture.getWidth() != _textureData.w || _glTexture.getHeight() != _textureData.h) {
 		// Create a buffer for the texture data.
-		_textureData.create(texWidth, texHeight, _format);
-
-		// Set the texture.
-		GL_CALL(glBindTexture(GL_TEXTURE_2D, _glTexture));
-
-		// Allocate storage for OpenGL texture.
-		GL_CALL(glTexImage2D(GL_TEXTURE_2D, 0, _glIntFormat, _textureData.w,
-		       _textureData.h, 0, _glFormat, _glType, NULL));
+		_textureData.create(_glTexture.getWidth(), _glTexture.getHeight(), _format);
 	}
 
 	// Create a sub-buffer for raw access.
@@ -175,17 +259,7 @@ void Texture::draw(GLfloat x, GLfloat y, GLfloat w, GLfloat h) {
 	updateTexture();
 
 	// Set the texture.
-	GL_CALL(glBindTexture(GL_TEXTURE_2D, _glTexture));
-
-	// Calculate the texture rect that will be drawn.
-	const GLfloat texWidth = (GLfloat)_userPixelData.w / _textureData.w;
-	const GLfloat texHeight = (GLfloat)_userPixelData.h / _textureData.h;
-	const GLfloat texcoords[4*2] = {
-		0,        0,
-		texWidth, 0,
-		0,        texHeight,
-		texWidth, texHeight
-	};
+	_glTexture.bind();
 
 	// Calculate the screen rect where the texture will be drawn.
 	const GLfloat vertices[4*2] = {
@@ -196,7 +270,7 @@ void Texture::draw(GLfloat x, GLfloat y, GLfloat w, GLfloat h) {
 	};
 
 	// Setup coordinates for drawing.
-	g_context.setDrawCoordinates(vertices, texcoords);
+	g_context.setDrawCoordinates(vertices, _glTexture.getTexCoords());
 
 	// Draw the texture to the screen buffer.
 	GL_CALL(glDrawArrays(GL_TRIANGLE_STRIP, 0, 4));
@@ -211,7 +285,7 @@ void Texture::updateTexture() {
 
 	// In case we use linear filtering we might need to duplicate the last
 	// pixel row/column to avoid glitches with filtering.
-	if (_glFilter == GL_LINEAR) {
+	if (_glTexture.isLinearFilteringEnabled()) {
 		if (dirtyArea.right == _userPixelData.w && _userPixelData.w != _textureData.w) {
 			uint height = dirtyArea.height();
 
@@ -238,29 +312,7 @@ void Texture::updateTexture() {
 		}
 	}
 
-	// Set the texture.
-	GL_CALL(glBindTexture(GL_TEXTURE_2D, _glTexture));
-
-	// Update the actual texture.
-	// Although we keep track of the dirty part of the texture buffer we
-	// cannot take advantage of the left/right boundries here because it is
-	// not possible to specify a pitch to glTexSubImage2D. To be precise, with
-	// plain OpenGL we could set GL_UNPACK_ROW_LENGTH to achieve this. However,
-	// OpenGL ES 1.0 does not support GL_UNPACK_ROW_LENGTH. Thus, we are left
-	// with the following options:
-	//
-	// 1) (As we do right now) Simply always update the whole texture lines of
-	//    rect changed. This is simplest to implement. In case performance is
-	//    really an issue we can think of switching to another method.
-	//
-	// 2) Copy the dirty rect to a temporary buffer and upload that by using
-	//    glTexSubImage2D. This is what the Android backend does. It is more
-	//    complicated though.
-	//
-	// 3) Use glTexSubImage2D per line changed. This is what the old OpenGL
-	//    graphics manager did but it is much slower! Thus, we do not use it.
-	GL_CALL(glTexSubImage2D(GL_TEXTURE_2D, 0, 0, dirtyArea.top, _textureData.w, dirtyArea.height(),
-	                       _glFormat, _glType, _textureData.getBasePtr(0, dirtyArea.top)));
+	_glTexture.updateArea(dirtyArea, _textureData);
 
 	// We should have handled everything, thus not dirty anymore.
 	clearDirty();
