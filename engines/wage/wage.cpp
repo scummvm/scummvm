@@ -112,7 +112,7 @@ Common::Error WageEngine::run() {
 	_temporarilyHidden = false;
 
 	Common::String input("look");
-	_world->_globalScript->execute(_world, 1, &input, NULL, this);
+	processTurn(&input, NULL);
 
 	while (true) {
 		processEvents();
