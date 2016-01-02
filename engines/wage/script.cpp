@@ -761,7 +761,7 @@ bool Script::evalClickEquality(Operand *lhs, Operand *rhs, bool partialMatch) {
 		Common::String str = rhs->toString();
 		str.toLowercase();
 
-		if (lhs->_type == CHR || lhs->_type == OBJ) {
+		if (lhs->_value.inputClick->_classType == CHR || lhs->_value.inputClick->_classType == OBJ) {
 			Common::String name = lhs->_value.designed->_name;
 			name.toLowercase();
 
