@@ -79,7 +79,6 @@ void AudioPlayer::handleFanmadeSciAudio(reg_t sciAudioObject, SegManager *segMan
 	Common::String command = segMan->getString(commandReg);
 
 	if (command == "play" || command == "playx") {
-#ifdef USE_MAD
 		reg_t fileNameReg = readSelector(segMan, sciAudioObject, kernel->findSelector("fileName"));
 		Common::String fileName = segMan->getString(fileNameReg);
 
@@ -106,10 +105,13 @@ void AudioPlayer::handleFanmadeSciAudio(reg_t sciAudioObject, SegManager *segMan
 			soundType = Audio::Mixer::kSpeechSoundType;
 
 		// Determine compression
-		// TODO: ".wav" and ".aiff"
 		uint32 audioCompressionType = 0;
 		if ((fileName.hasSuffix(".mp3")) || (fileName.hasSuffix(".sciAudio")) || (fileName.hasSuffix(".sciaudio"))) {
 			audioCompressionType = MKTAG('M','P','3',' ');
+		} else if (fileName.hasSuffix(".wav")) {
+			audioCompressionType = MKTAG('W','A','V',' ');
+		} else if (fileName.hasSuffix(".aiff")) {
+			audioCompressionType = MKTAG('A','I','F','F');
 		} else {
 			error("sciAudio: unsupported file type");
 		}
@@ -122,20 +124,31 @@ void AudioPlayer::handleFanmadeSciAudio(reg_t sciAudioObject, SegManager *segMan
 		}
 		sciAudioFile->open("sciAudio/" + fileName);
 
-		Audio::SeekableAudioStream *audioStream = nullptr;
+		Audio::RewindableAudioStream *audioStream = nullptr;
 
 		switch (audioCompressionType) {
 		case MKTAG('M','P','3',' '):
+#ifdef USE_MAD
 			audioStream = Audio::makeMP3Stream(sciAudioFile, DisposeAfterUse::YES);
+#endif
+			break;
+		case MKTAG('W','A','V',' '):
+			audioStream = Audio::makeWAVStream(sciAudioFile, DisposeAfterUse::YES);
+			break;
+		case MKTAG('A','I','F','F'):
+			audioStream = Audio::makeAIFFStream(sciAudioFile, DisposeAfterUse::YES);
 			break;
 		default:
 			break;
 		}
 
+		if (!audioStream) {
+			error("sciAudio: requested compression not compiled into ScummVM");
+		}
+
 		// We only support one audio handle
 		_mixer->playStream(soundType, &_audioHandle,
 							Audio::makeLoopingAudioStream((Audio::RewindableAudioStream *)audioStream, loopCount));
-#endif
 	} else if (command == "stop") {
 		_mixer->stopHandle(_audioHandle);
 	} else {
