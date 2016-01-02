@@ -45,8 +45,11 @@ class FPStream;
 class FPSfx;
 
 enum SoundCodecs {
-	FPCODEC_RAW,
-	FPCODEC_ADPCM
+	FPCODEC_UNKNOWN,
+	FPCODEC_ADPCM,
+	FPCODEC_MP3,
+	FPCODEC_OGG,
+	FPCODEC_FLAC
 };
 
 /**
