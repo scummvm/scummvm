@@ -489,6 +489,15 @@ void AnimSkeleton::onGameLoop() {
 	}
 }
 
+void AnimSkeleton::onPreDestroy() {
+	if (_actionItem) {
+		_actionItem->resetActionAnim();
+		_actionItem = nullptr;
+	}
+
+	Anim::onPreDestroy();
+}
+
 uint32 AnimSkeleton::getMovementSpeed() const {
 	return _movementSpeed;
 }
