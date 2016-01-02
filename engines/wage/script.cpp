@@ -379,12 +379,14 @@ Script::Operand *Script::readStringOperand() {
 
 	sb = new String();
 
-	byte c = 0x20;
-	while (c >= 0x20 && c < 0x80) {
-		c = _data->readByte();
+	while (true) {
+		byte c = _data->readByte();
 		if (c < '0' || c > '9')
 			allDigits = false;
-		*sb += c;
+		if (c >= 0x20 && c < 0x80)
+			*sb += c;
+		else
+			break;
 	}
 	_data->seek(-1, SEEK_CUR);
 
