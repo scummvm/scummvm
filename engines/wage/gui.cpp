@@ -449,7 +449,7 @@ void Gui::renderConsole(Graphics::Surface *g, Common::Rect &r) {
 	int y1 = yOff - (_scrollPos % _consoleLineHeight) + kConHPadding;
 
 	if (fullRedraw)
-		_consoleNumLines = r.height() / _consoleLineHeight - 1;
+		_consoleNumLines = r.height() / _consoleLineHeight - 2;
 
 	for (int line = firstLine; line < lastLine; line++) {
 		const char *str = _lines[line].c_str();
