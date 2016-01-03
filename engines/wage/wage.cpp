@@ -78,6 +78,8 @@ WageEngine::WageEngine(OSystem *syst, const ADGameDescription *desc) : Engine(sy
 
 	_commandWasQuick = false;
 
+	_shouldQuit = false;
+
 	debug("WageEngine::WageEngine()");
 }
 
@@ -85,6 +87,9 @@ WageEngine::~WageEngine() {
 	debug("WageEngine::~WageEngine()");
 
 	DebugMan.clearAllDebugChannels();
+	delete _world;
+	delete _resManager;
+	delete _gui;
 	delete _rnd;
 }
 
@@ -113,7 +118,9 @@ Common::Error WageEngine::run() {
 	processTurn(&input, NULL);
 	_temporarilyHidden = false;
 
-	while (true) {
+	_shouldQuit = false;
+
+	while (!_shouldQuit) {
 		processEvents();
 
 		_gui->draw();
@@ -138,7 +145,7 @@ void WageEngine::processEvents() {
 	while (_eventMan->pollEvent(event)) {
 		switch (event.type) {
 		case Common::EVENT_QUIT:
-			error("Exiting");
+			_shouldQuit = true;
 			break;
 		case Common::EVENT_MOUSEMOVE:
 			_gui->mouseMove(event.mouse.x, event.mouse.y);

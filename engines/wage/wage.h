@@ -163,6 +163,7 @@ private:
 
 	bool _commandWasQuick;
 
+	bool _shouldQuit;
 };
 
 // Example console class
