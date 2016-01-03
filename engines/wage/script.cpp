@@ -853,9 +853,15 @@ void Script::takeObj(Obj *obj) {
 
 void Script::processMove() {
 	Operand *what = readOperand();
-	// TODO check data[index] == 0x8A
+	byte skip = _data->readByte();
+	if (skip != 0x8a)
+		error("Incorrect operator for MOVE: %02x", skip);
+
 	Operand *to = readOperand();
-	// TODO check data[index] == 0xFD
+
+	skip = _data->readByte();
+	if (skip != 0xfd)
+		error("No end for MOVE: %02x", skip);
 
 	for (int cmp = 0; comparators[cmp].op != 0; cmp++) {
 		if (comparators[cmp].op != 'M')
