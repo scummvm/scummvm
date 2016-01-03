@@ -169,10 +169,12 @@ void WageEngine::processEvents() {
 				break;
 
 			default:
-				if (event.kbd.flags)
+				if (event.kbd.flags & Common::KBD_ALT || event.kbd.flags & Common::KBD_CTRL) {
+					warning("STUB: Shortcuts");
 					break;
+				}
 
-				if (Common::isAlpha(event.kbd.ascii)) {
+				if (event.kbd.ascii >= 0x20 && event.kbd.ascii <= 0x7f) {
 					_inputText += (char)event.kbd.ascii;
 					_gui->drawInput();
 				}
