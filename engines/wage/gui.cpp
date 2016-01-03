@@ -539,6 +539,8 @@ void Gui::loadFonts() {
 	if (!dat) {
 		warning("Could not find wage.dat. Falling back to built-in fonts");
 		_builtInFonts = true;
+
+		return;
 	}
 
 	Common::ArchiveMemberList list;
