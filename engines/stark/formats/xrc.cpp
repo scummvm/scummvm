@@ -29,6 +29,7 @@
 #include "engines/stark/resources/bonesmesh.h"
 #include "engines/stark/resources/bookmark.h"
 #include "engines/stark/resources/camera.h"
+#include "engines/stark/resources/container.h"
 #include "engines/stark/resources/command.h"
 #include "engines/stark/resources/dialog.h"
 #include "engines/stark/resources/direction.h"
@@ -249,6 +250,9 @@ Resources::Object *XRCReader::createResource(XRCReadStream *stream, Resources::O
 		break;
 	case Resources::Type::kPATTable:
 		resource = new Resources::PATTable(parent, subType, index, name);
+		break;
+	case Resources::Type::kContainer:
+		resource = new Resources::Container(parent, subType, index, name);
 		break;
 	case Resources::Type::kDialog:
 		resource = new Resources::Dialog(parent, subType, index, name);

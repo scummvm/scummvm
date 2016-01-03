@@ -20,41 +20,20 @@
  *
  */
 
-#ifndef STARK_RESOURCES_LEVEL_H
-#define STARK_RESOURCES_LEVEL_H
+#include "engines/stark/resources/container.h"
 
-#include "common/str.h"
-
-#include "engines/stark/resources/object.h"
+#include "engines/stark/formats/xrc.h"
 
 namespace Stark {
-
 namespace Resources {
 
-/**
- * Levels are holder resources for the locations
- *
- * Levels are used to share resources between related locations.
- * Resources in a level are kept when switching to another location of the same level.
- */
-class Level : public Object {
-public:
-	static const Type::ResourceType TYPE = Type::kLevel;
+Container::~Container() {
+}
 
-	enum SubType {
-		kGlobal = 1,
-		kGame   = 2,
-		kStatic = 3
-	};
-
-	Level(Object *parent, byte subType, uint16 index, const Common::String &name);
-	virtual ~Level();
-
-protected:
-	void printData() override;
-};
+Container::Container(Object *parent, byte subType, uint16 index, const Common::String &name) :
+		Object(parent, subType, index, name) {
+	_type = TYPE;
+}
 
 } // End of namespace Resources
 } // End of namespace Stark
-
-#endif // STARK_RESOURCES_LEVEL_H

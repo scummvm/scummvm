@@ -34,6 +34,7 @@ MODULE_OBJS := \
 	resources/bonesmesh.o \
 	resources/bookmark.o \
 	resources/camera.o \
+	resources/container.o \
 	resources/command.o \
 	resources/dialog.o \
 	resources/direction.o \

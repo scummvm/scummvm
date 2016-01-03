@@ -26,7 +26,10 @@
 #include "common/random.h"
 
 #include "engines/stark/formats/xrc.h"
+
 #include "engines/stark/resources/anim.h"
+#include "engines/stark/resources/container.h"
+#include "engines/stark/resources/sound.h"
 
 #include "engines/stark/services/global.h"
 #include "engines/stark/services/services.h"
@@ -75,10 +78,14 @@ void AnimScript::onGameLoop() {
 			_anim->selectFrame(item->getOperand());
 			goToNextItem();
 			break;
-		case AnimScriptItem::kPlayAnimSound:
-			// TODO
+		case AnimScriptItem::kPlayAnimSound: {
+			Container *sounds = _parent->findChildWithSubtype<Container>(Container::kSounds);
+			Sound *sound = sounds->findChildWithOrder<Sound>(item->getOperand());
+			sound->play();
+
 			goToNextItem();
 			break;
+		}
 		case AnimScriptItem::kGoToItem:
 			_nextItemIndex = item->getOperand();
 			break;
