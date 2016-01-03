@@ -64,6 +64,7 @@ public:
 	void move(Obj *obj, Scene *scene, bool skipSort = false);
 	void move(Chr *chr, Scene *scene, bool skipSort = false);
 	Scene *getRandomScene();
+	Scene *getSceneAt(int x, int y);
 
 	WageEngine *_engine;
 

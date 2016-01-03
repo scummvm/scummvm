@@ -434,4 +434,15 @@ Scene *World::getRandomScene() {
 	return _orderedScenes[1 + _engine->_rnd->getRandomNumber(_orderedScenes.size() - 1)];
 }
 
+Scene *World::getSceneAt(int x, int y) {
+	for (int i = 0; i < _orderedScenes.size(); i++) {
+		Scene *scene = _orderedScenes[i];
+
+		if (scene != _storageScene && scene->_worldX == x && scene->_worldY == y) {
+			return scene;
+		}
+	}
+	return NULL;
+}
+
 } // End of namespace Wage

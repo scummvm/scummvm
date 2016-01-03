@@ -925,8 +925,37 @@ void Script::appendText(String str) {
 	_callbacks->appendText(str);
 }
 
+static const int directionsX[] = { 0, 0, 1, -1 };
+static const int directionsY[] = { -1, 1, 0, 0 };
+
 void Script::handleMoveCommand(Scene::Directions dir, const char *dirName) {
-	warning("STUB: handleMoveCommand");
+	Scene *playerScene = _world->_player->_currentScene;
+	Common::String msg(playerScene->_messages[dir]);
+
+	warning("Dir: %s  msg: %s", dirName, msg.c_str());
+
+	if (!playerScene->_blocked[dir]) {
+		int destX = playerScene->_worldX + directionsX[dir];
+		int destY = playerScene->_worldY + directionsY[dir];
+
+		Scene *scene = _world->getSceneAt(destX, destY);
+
+		if (scene != NULL) {
+			if (msg.size() > 0) {
+				appendText(msg);
+			}
+			_world->move(_world->_player, scene);
+			return;
+		}
+	}
+	if (msg != NULL && msg.size() > 0) {
+		appendText(msg);
+	} else {
+		Common::String txt("You can't go ");
+		txt += dirName;
+		txt += ".";
+		appendText(txt);
+	}
 }
 
 void Script::handleLookCommand() {
