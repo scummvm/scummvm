@@ -46,6 +46,7 @@
  */
 
 #include "common/system.h"
+#include "common/timer.h"
 #include "common/unzip.h"
 #include "graphics/cursorman.h"
 #include "graphics/fonts/bdf.h"
@@ -115,6 +116,28 @@ static const byte macCursorBeam[] = {
 	0, 0, 3, 3, 3, 0, 0, 3, 3, 3, 3,
 };
 
+static void cursor_timer_handler(void *refCon) {
+    Gui *gui = (Gui *)refCon;
+
+	int x = gui->_cursorX;
+	int y = gui->_cursorY;
+
+	if (x == 0 && y == 0)
+		return;
+
+	if (!gui->_screen.getPixels())
+		return;
+
+	x += gui->_consoleTextArea.left;
+	y += gui->_consoleTextArea.top;
+
+	gui->_screen.vLine(x, y, y + 8, gui->_cursorState ? kColorBlack : kColorWhite);
+    gui->_cursorState = !gui->_cursorState;
+
+	g_system->copyRectToScreen(gui->_screen.getPixels(), gui->_screen.pitch, x, y, 1, 8);
+	g_system->updateScreen();
+}
+
 Gui::Gui(WageEngine *engine) {
 	_engine = engine;
 	_scene = NULL;
@@ -134,6 +157,10 @@ Gui::Gui(WageEngine *engine) {
 	_builtInFonts = false;
 	_sceneIsActive = false;
 
+	_cursorX = 0;
+	_cursorY = 0;
+	_cursorState = false;
+
 	g_system->getPaletteManager()->setPalette(palette, 0, 4);
 
 	CursorMan.replaceCursorPalette(palette, 0, 4);
@@ -146,9 +173,12 @@ Gui::Gui(WageEngine *engine) {
 	Design::drawFilledRoundRect(&_screen, r, kDesktopArc, kColorBlack, p, 1);
 
 	loadFonts();
+
+	g_system->getTimerManager()->installTimerProc(&cursor_timer_handler, 500000, this, "wageCursor");
 }
 
 Gui::~Gui() {
+	g_system->getTimerManager()->removeTimerProc(&cursor_timer_handler);
 }
 
 const Graphics::Font *Gui::getFont(const char *name, Graphics::FontManager::FontUsage fallback) {
@@ -242,7 +272,6 @@ void Gui::draw() {
 
 	if (_scene && (_bordersDirty || _sceneDirty))
 		paintBorder(&_screen, _sceneArea, kWindowScene);
-
 
 	// Render console
 	if (_consoleDirty)
@@ -397,6 +426,13 @@ void Gui::flowText(String &str) {
 
 	int pos = _scrollPos;
 	_scrollPos = MAX<int>(0, (_lines.size() - _consoleNumLines) * _consoleLineHeight);
+
+	_cursorX = 0;
+
+	if (_scrollPos)
+		_cursorY = (_consoleNumLines + 1) * _consoleLineHeight;
+	else
+		_cursorY = (_lines.size() + 1) * _consoleLineHeight;
 
 	if (pos != _scrollPos)
 		_consoleFullRedraw = true;

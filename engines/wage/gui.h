@@ -85,9 +85,14 @@ private:
 	const Graphics::Font *getTitleFont();
 	const Graphics::Font *getFont(const char *name, Graphics::FontManager::FontUsage fallback);
 
+public:
+	Graphics::Surface _screen;
+	int _cursorX, _cursorY;
+	bool _cursorState;
+	Common::Rect _consoleTextArea;
+
 private:
 	WageEngine *_engine;
-	Graphics::Surface _screen;
 	Graphics::Surface _console;
 	Scene *_scene;
 	bool _sceneDirty;
@@ -104,7 +109,6 @@ private:
 
 	bool _builtInFonts;
 
-	Common::Rect _consoleTextArea;
 	Common::Rect _sceneArea;
 	bool _sceneIsActive;
 	bool _cursorIsArrow;
