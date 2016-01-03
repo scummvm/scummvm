@@ -523,7 +523,10 @@ enum {
 	kCompLtObjScene,
 	kCompGtNumNum,
 	kCompGtStringString,
-	kCompGtChrScene
+	kCompGtChrScene,
+	kMoveObjChr,
+	kMoveObjScene,
+	kMoveChrScene
 };
 
 struct Comparator {
@@ -560,6 +563,10 @@ struct Comparator {
 	{ '>', OBJ, CHR, kCompLtObjChr }, // Same logic as <
 	{ '>', OBJ, SCENE, kCompLtObjScene }, // Same logic as <
 	{ '>', CHR, SCENE, kCompGtChrScene },
+
+	{ 'M', OBJ, CHR, kMoveObjChr },
+	{ 'M', OBJ, SCENE, kMoveObjScene },
+	{ 'M', CHR, SCENE, kMoveChrScene },
 	{ 0, OBJ, OBJ, 0 }
 };
 
@@ -631,6 +638,23 @@ bool Script::compare(Operand *o1, Operand *o2, int comparator) {
 		return o1->_value.string == o2->_value.string;
 	case kCompGtChrScene:
 		return (o1->_value.chr != NULL && o1->_value.chr->_currentScene != o2->_value.scene);
+	case kMoveObjChr:
+		if (o1->_value.obj->_currentOwner != o2->_value.chr) {
+			_world->move(o1->_value.obj, o2->_value.chr);
+			_handled = true;  // TODO: Is this correct?
+		}
+		break;
+	case kMoveObjScene:
+		if (o1->_value.obj->_currentScene != o2->_value.scene) {
+			_world->move(o1->_value.obj, o2->_value.scene);
+			// Note: This shouldn't call setHandled() - see
+			// Sultan's Palace 'Food and Drink' scene.
+		}
+		break;
+	case kMoveChrScene:
+		_world->move(o1->_value.chr, o2->_value.scene);
+		_handled = true;  // TODO: Is this correct?
+		break;
 	}
 
 	return false;
@@ -828,7 +852,21 @@ void Script::takeObj(Obj *obj) {
 }
 
 void Script::processMove() {
-	warning("STUB: processMove");
+	Operand *what = readOperand();
+	// TODO check data[index] == 0x8A
+	Operand *to = readOperand();
+	// TODO check data[index] == 0xFD
+
+	for (int cmp = 0; comparators[cmp].op != 0; cmp++) {
+		if (comparators[cmp].op != 'M')
+			continue;
+
+		if (comparators[cmp].o1 == what->_type && comparators[cmp].o2 == to->_type) {
+			compare(what, to, comparators[cmp].cmp);
+
+			break;
+		}
+	}
 }
 
 void Script::processLet() {
