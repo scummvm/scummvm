@@ -124,8 +124,9 @@ reg_t kGetEvent(EngineState *s, int argc, reg_t *argv) {
 		// At least one fan-made game (Betrayed Alliance) requires 0x02 to be in the upper byte,
 		// otherwise the darts game (script 111) will not work properly.
 
-		// It seems Sierra fixed this behaviour (effectively bug) in SCI32
-		if (getSciVersion() <= SCI_VERSION_1_1) {
+		// It seems Sierra fixed this behaviour (effectively bug) in the SCI1 keyboard driver.
+		// SCI32 also resets the upper byte.
+		if (getSciVersion() <= SCI_VERSION_01) {
 			modifiers |= 0x0200;
 		}
 	}
