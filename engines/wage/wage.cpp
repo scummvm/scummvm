@@ -109,10 +109,9 @@ Common::Error WageEngine::run() {
 
 	_temporarilyHidden = true;
 	performInitialSetup();
-	_temporarilyHidden = false;
-
 	Common::String input("look");
 	processTurn(&input, NULL);
+	_temporarilyHidden = false;
 
 	while (true) {
 		processEvents();

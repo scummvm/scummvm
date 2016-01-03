@@ -262,6 +262,7 @@ void Gui::draw() {
 
 	// Blit to screen
 	g_system->copyRectToScreen(_screen.getPixels(), _screen.pitch, 0, 0, _screen.w, _screen.h);
+	g_system->updateScreen();
 }
 
 void Gui::drawBox(Graphics::Surface *g, int x, int y, int w, int h) {
@@ -399,6 +400,9 @@ void Gui::flowText(String &str) {
 
 	if (pos != _scrollPos)
 		_consoleFullRedraw = true;
+
+	if (!_engine->_temporarilyHidden)
+		draw();
 }
 
 void Gui::renderConsole(Graphics::Surface *g, Common::Rect &r) {
