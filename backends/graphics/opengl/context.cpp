@@ -43,12 +43,10 @@ void Context::reset() {
 	_maxTextureSize = 0;
 
 	NPOTSupported = false;
-#if !USE_FORCED_GLES && !USE_FORCED_GLES2
 	shadersSupported = false;
 	multitextureSupported = false;
 	framebufferObjectSupported = false;
 	textureRGSupported = false;
-#endif
 
 #define GL_FUNC_DEF(ret, name, param) name = nullptr;
 #include "backends/graphics/opengl/opengl-func.h"
@@ -197,12 +195,10 @@ void OpenGLGraphicsManager::initializeGLContext() {
 
 	const char *extString = (const char *)g_context.glGetString(GL_EXTENSIONS);
 
-#if !USE_FORCED_GLES && !USE_FORCED_GLES2
 	bool ARBShaderObjects = false;
 	bool ARBShadingLanguage100 = false;
 	bool ARBVertexShader = false;
 	bool ARBFragmentShader = false;
-#endif
 
 	Common::StringTokenizer tokenizer(extString, " ");
 	while (!tokenizer.empty()) {
@@ -210,7 +206,6 @@ void OpenGLGraphicsManager::initializeGLContext() {
 
 		if (token == "GL_ARB_texture_non_power_of_two") {
 			g_context.NPOTSupported = true;
-#if !USE_FORCED_GLES && !USE_FORCED_GLES2
 		} else if (token == "GL_ARB_shader_objects") {
 			ARBShaderObjects = true;
 		} else if (token == "GL_ARB_shading_language_100") {
@@ -225,13 +220,43 @@ void OpenGLGraphicsManager::initializeGLContext() {
 			g_context.textureRGSupported = true;
 		} else if (token == "GL_EXT_framebuffer_object") {
 			g_context.framebufferObjectSupported = true;
-#endif
 		}
 	}
 
-#if !USE_FORCED_GLES && !USE_FORCED_GLES2
-	g_context.shadersSupported = ARBShaderObjects & ARBShadingLanguage100 & ARBVertexShader & ARBFragmentShader;
-#endif
+	if (g_context.type == kContextGLES2) {
+		// GLES2 always has shader support.
+		g_context.shadersSupported = true;
+
+		// GLES2 always has multi texture support.
+		g_context.multitextureSupported = true;
+
+		// GLES2 always has FBO support.
+		g_context.framebufferObjectSupported = true;
+	} else {
+		g_context.shadersSupported = ARBShaderObjects & ARBShadingLanguage100 & ARBVertexShader & ARBFragmentShader;
+	}
+
+	// Log context type.
+	switch (g_context.type) {
+	case kContextGL:
+		debug(5, "OpenGL: GL context initialized");
+		break;
+
+	case kContextGLES:
+		debug(5, "OpenGL: GLES context initialized");
+		break;
+
+	case kContextGLES2:
+		debug(5, "OpenGL: GLES2 context initialized");
+		break;
+	}
+
+	// Log features supported by GL context.
+	debug(5, "OpenGL: NPOT texture support: %d", g_context.NPOTSupported);
+	debug(5, "OpenGL: Shader support: %d", g_context.shadersSupported);
+	debug(5, "OpenGL: Multitexture support: %d", g_context.multitextureSupported);
+	debug(5, "OpenGL: Texture RG support: %d", g_context.textureRGSupported);
+	debug(5, "OpenGL: FBO support: %d", g_context.framebufferObjectSupported);
 }
 
 } // End of namespace OpenGL

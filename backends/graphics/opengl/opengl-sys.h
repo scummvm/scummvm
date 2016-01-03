@@ -108,7 +108,6 @@ struct Context {
 	/** Whether GL_ARB_texture_non_power_of_two is available or not. */
 	bool NPOTSupported;
 
-#if !USE_FORCED_GLES && !USE_FORCED_GLES2
 	/** Whether shader support is available or not. */
 	bool shadersSupported;
 
@@ -120,7 +119,6 @@ struct Context {
 
 	/** Whether FBO support is available or not. */
 	bool framebufferObjectSupported;
-#endif
 
 #define GL_FUNC_DEF(ret, name, param) ret (GL_CALL_CONV *name)param
 #include "backends/graphics/opengl/opengl-func.h"
