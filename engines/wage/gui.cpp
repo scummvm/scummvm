@@ -48,8 +48,6 @@
 #include "common/system.h"
 #include "common/unzip.h"
 #include "graphics/cursorman.h"
-#include "graphics/fontman.h"
-#include "graphics/font.h"
 #include "graphics/fonts/bdf.h"
 #include "graphics/palette.h"
 #include "wage/wage.h"
