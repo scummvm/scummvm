@@ -159,6 +159,7 @@ void Gui::appendText(String &str) {
 
 	if (!str.contains('\n')) {
 		_out.push_back(str);
+		flowText(str);
 		return;
 	}
 
@@ -169,6 +170,7 @@ void Gui::appendText(String &str) {
 	for (int i = 0; i < str.size(); i++) {
 		if (str[i] == '\n') {
 			_out.push_back(tmp);
+			flowText(tmp);
 			tmp = "";
 			continue;
 		}
@@ -177,6 +179,7 @@ void Gui::appendText(String &str) {
 	}
 
 	_out.push_back(tmp);
+	flowText(tmp);
 }
 
 void Gui::draw() {
@@ -190,25 +193,29 @@ void Gui::draw() {
 		_sceneArea.top = kMenuHeight + kComponentsPadding + kBorderWidth;
 		_sceneArea.setWidth(_scene->_design->getBounds()->width() - 2 * kBorderWidth);
 		_sceneArea.setHeight(_scene->_design->getBounds()->height() - 2 * kBorderWidth);
+
+		int sceneW = _scene->_design->getBounds()->width();
+		int consoleW = _screen.w - sceneW - 2 * kComponentsPadding - 2 * kBorderWidth;
+		int consoleH = _scene->_design->getBounds()->height() - 2 * kBorderWidth;
+		int consoleX = sceneW + kComponentsPadding + kBorderWidth;
+		int consoleY = kMenuHeight + kComponentsPadding + kBorderWidth;
+
+		_consoleTextArea.left = consoleX;
+		_consoleTextArea.top = consoleY;
+		_consoleTextArea.right = consoleX + consoleW;
+		_consoleTextArea.bottom = consoleY + consoleH;
 	}
 
 	if (_scene && (_bordersDirty || _sceneDirty))
-		paintBorder(&_screen, 0 + kComponentsPadding, kMenuHeight + kComponentsPadding, _scene->_design->getBounds()->width(), _scene->_design->getBounds()->height(),
-				kWindowScene);
+		paintBorder(&_screen, _sceneArea, kWindowScene);
 
 
 	// Render console
-	int sceneW = _scene->_design->getBounds()->width();
-	int consoleW = _screen.w - sceneW - 2 * kComponentsPadding;
-	int consoleH = _scene->_design->getBounds()->height();
-	int consoleX = sceneW + kComponentsPadding;
-	int consoleY = kMenuHeight + kComponentsPadding;
-
 	if (_consoleDirty)
-		renderConsole(&_screen, consoleX + kBorderWidth , consoleY + kBorderWidth, consoleW - 2 * kBorderWidth, consoleH - 2 * kBorderWidth);
+		renderConsole(&_screen, _consoleTextArea);
 
 	if (_bordersDirty || _consoleDirty)
-		paintBorder(&_screen, consoleX, consoleY, consoleW, consoleH, kWindowConsole);
+		paintBorder(&_screen, _consoleTextArea, kWindowConsole);
 
 	if (_menuDirty)
 		renderMenu();
@@ -245,8 +252,13 @@ const int arrowPixels[ARROW_H][ARROW_W] = {
 		{0,1,1,1,1,1,1,1,1,1,1,0},
 		{1,1,1,1,1,1,1,1,1,1,1,1}};
 
-void Gui::paintBorder(Graphics::Surface *g, int x, int y, int width, int height, WindowType windowType) {
+void Gui::paintBorder(Graphics::Surface *g, Common::Rect &r, WindowType windowType) {
 	bool active, scrollable, closeable, closeBoxPressed, drawTitle;
+	const int size = kBorderWidth;
+	int x = r.left - size;
+	int y = r.top - size;
+	int width = r.width() + 2 * size;
+	int height = r.height() + 2 * size;
 
 	switch (windowType) {
 	case kWindowScene:
@@ -265,7 +277,6 @@ void Gui::paintBorder(Graphics::Surface *g, int x, int y, int width, int height,
 		break;
 	}
 
-	const int size = kBorderWidth;
 	drawBox(g, x, y, size, size);
 	drawBox(g, x+width-size-1, y, size, size);
 	drawBox(g, x+width-size-1, y+height-size-1, size, size);
@@ -348,14 +359,43 @@ enum {
 	kLineSpacing = 0
 };
 
-void Gui::renderConsole(Graphics::Surface *g, int x, int y, int width, int height) {
+void Gui::flowText(String &str) {
+	Common::StringArray wrappedLines;
+	int textW = _consoleTextArea.width() - kConWPadding * 2;
+
+	const Graphics::Font *font;
+
+	if (!_builtInFonts) {
+		char fontName[128];
+		Scene *scene = _engine->_world->_player->_currentScene;
+
+		snprintf(fontName, 128, "%s-%d", scene->getFontName(), scene->_fontSize);
+		font = FontMan.getFontByName(fontName);
+
+		if (!font)
+			warning("Cannot load font %s", fontName);
+	}
+
+	if (_builtInFonts || !font)
+		font = FontMan.getFontByUsage(Graphics::FontManager::kConsoleFont);
+
+	font->wordWrapText(str, textW, wrappedLines);
+
+	if (wrappedLines.size() == 0) // Sometimes we have empty lines
+		_lines.push_back("");
+
+	for (Common::StringArray::const_iterator j = wrappedLines.begin(); j != wrappedLines.end(); ++j)
+		_lines.push_back(*j);
+}
+
+void Gui::renderConsole(Graphics::Surface *g, Common::Rect &r) {
 	bool fullRedraw = false;
 	bool textReflow = false;
-	int surfW = width + kConWOverlap * 2;
-	int surfH = height + kConHOverlap * 2;
+	int surfW = r.width() + kConWOverlap * 2;
+	int surfH = r.height() + kConHOverlap * 2;
 
 	Common::Rect boundsR(kConWOverlap - kConOverscan, kConHOverlap - kConOverscan,
-					width + kConWOverlap + kConOverscan, height + kConHOverlap + kConOverscan);
+					r.width() + kConWOverlap + kConOverscan, r.height() + kConHOverlap + kConOverscan);
 	Common::Rect fullR(0, 0, surfW, surfH);
 
 	if (_console.w != surfW || _console.h != surfH) {
@@ -387,23 +427,14 @@ void Gui::renderConsole(Graphics::Surface *g, int x, int y, int width, int heigh
 		font = FontMan.getFontByUsage(Graphics::FontManager::kConsoleFont);
 
 	int lineHeight = font->getFontHeight() + kLineSpacing;
-	int textW = width - kConWPadding * 2;
-	int textH = height - kConHPadding * 2;
+	int textW = r.width() - kConWPadding * 2;
+	int textH = r.height() - kConHPadding * 2;
 
 	if (textReflow) {
 		_lines.clear();
 
-		for (int i = 0; i < _out.size(); i++) {
-			Common::StringArray wrappedLines;
-
-			font->wordWrapText(_out[i], textW, wrappedLines);
-
-			if (wrappedLines.size() == 0) // Sometimes we have empty lines
-				_lines.push_back("");
-
-			for (Common::StringArray::const_iterator j = wrappedLines.begin(); j != wrappedLines.end(); ++j)
-				_lines.push_back(*j);
-		}
+		for (int i = 0; i < _out.size(); i++)
+			flowText(_out[i]);
 	}
 
 	const int firstLine = _scrollPos / lineHeight;
@@ -422,12 +453,7 @@ void Gui::renderConsole(Graphics::Surface *g, int x, int y, int width, int heigh
 		y1 += lineHeight;
 	}
 
-	_consoleTextArea.left = x;
-	_consoleTextArea.top = y;
-	_consoleTextArea.right = x + width;
-	_consoleTextArea.bottom = y + height;
-
-	g->copyRectToSurface(_console, x - kConOverscan, y - kConOverscan, boundsR);
+	g->copyRectToSurface(_console, r.left - kConOverscan, r.top - kConOverscan, boundsR);
 }
 
 void Gui::loadFonts() {

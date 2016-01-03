@@ -71,12 +71,13 @@ public:
 	Designed *getClickTarget(int x, int y);
 
 private:
-	void paintBorder(Graphics::Surface *g, int x, int y, int width, int height, WindowType windowType);
-	void renderConsole(Graphics::Surface *g, int x, int y, int width, int height);
+	void paintBorder(Graphics::Surface *g, Common::Rect &r, WindowType windowType);
+	void renderConsole(Graphics::Surface *g, Common::Rect &r);
 	void drawBox(Graphics::Surface *g, int x, int y, int w, int h);
 	void fillRect(Graphics::Surface *g, int x, int y, int w, int h);
 	void loadFonts();
 	void renderMenu();
+	void flowText(Common::String &str);
 
 private:
 	WageEngine *_engine;
