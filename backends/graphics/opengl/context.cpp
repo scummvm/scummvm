@@ -194,7 +194,7 @@ void OpenGLGraphicsManager::initializeGLContext() {
 	while (!tokenizer.empty()) {
 		Common::String token = tokenizer.nextToken();
 
-		if (token == "GL_ARB_texture_non_power_of_two") {
+		if (token == "GL_ARB_texture_non_power_of_two" || token == "GL_OES_texture_npot") {
 			g_context.NPOTSupported = true;
 		} else if (token == "GL_ARB_shader_objects") {
 			ARBShaderObjects = true;
@@ -214,6 +214,9 @@ void OpenGLGraphicsManager::initializeGLContext() {
 	}
 
 	if (g_context.type == kContextGLES2) {
+		// GLES2 always has (limited) NPOT support.
+		g_context.NPOTSupported = true;
+
 		// GLES2 always has shader support.
 		g_context.shadersSupported = true;
 
