@@ -71,6 +71,7 @@ public:
 	void clearOutput();
 	void mouseMove(int x, int y);
 	Designed *getClickTarget(int x, int y);
+	void drawInput();
 
 private:
 	void paintBorder(Graphics::Surface *g, Common::Rect &r, WindowType windowType);
@@ -90,6 +91,7 @@ public:
 	int _cursorX, _cursorY;
 	bool _cursorState;
 	Common::Rect _consoleTextArea;
+	bool _cursorOff;
 
 private:
 	WageEngine *_engine;

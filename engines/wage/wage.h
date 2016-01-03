@@ -132,7 +132,6 @@ public:
 	World *_world;
 
 	Scene *_lastScene;
-	//PrintStream out;
 	int _loopCount;
 	int _turn;
 	Chr *_monster;
@@ -141,6 +140,8 @@ public:
 	int _aim;
 	bool _temporarilyHidden;
 	bool _isGameOver;
+
+	Common::String _inputText;
 
 	void playSound(String soundName);
 	void setMenu(String soundName);

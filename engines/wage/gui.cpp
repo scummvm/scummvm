@@ -133,7 +133,9 @@ static void cursor_timer_handler(void *refCon) {
 	y += gui->_consoleTextArea.top;
 
 	gui->_screen.vLine(x, y - kCursorHeight, y, gui->_cursorState ? kColorBlack : kColorWhite);
-    gui->_cursorState = !gui->_cursorState;
+
+	if (!gui->_cursorOff)
+		gui->_cursorState = !gui->_cursorState;
 
 	g_system->copyRectToScreen(gui->_screen.getBasePtr(x, y - kCursorHeight), gui->_screen.pitch, x, y - kCursorHeight, 1, kCursorHeight);
 	g_system->updateScreen();
@@ -161,6 +163,7 @@ Gui::Gui(WageEngine *engine) {
 	_cursorX = 0;
 	_cursorY = 0;
 	_cursorState = false;
+	_cursorOff = false;
 
 	g_system->getPaletteManager()->setPalette(palette, 0, 4);
 
@@ -498,6 +501,34 @@ void Gui::renderConsole(Graphics::Surface *g, Common::Rect &r) {
 
 	g->copyRectToSurface(_console, r.left - kConOverscan, r.top - kConOverscan, boundsR);
 	g_system->copyRectToScreen(g->getBasePtr(r.left, r.top), g->pitch, r.left, r.top, r.width(), r.height());
+}
+
+void Gui::drawInput() {
+	if (!_screen.getPixels())
+		return;
+
+	const Graphics::Font *font = getConsoleFont();
+
+	int x = kConHPadding + _consoleTextArea.left;
+	int y = _cursorY + _consoleTextArea.top;
+	Common::String text(_engine->_inputText);
+	int textW = font->getStringWidth(text);
+
+	// undraw cursor
+	_cursorOff = true;
+	_cursorState = false;
+	cursor_timer_handler(this);
+	_cursorOff = false;
+
+	Common::Rect r(x, y, x + textW + 10, y + font->getFontHeight());
+
+	_screen.fillRect(r, kColorWhite);
+
+	font->drawString(&_screen, text, x, y, _screen.w, kColorBlack);
+
+	g_system->copyRectToScreen(_screen.getBasePtr(x, y), _screen.pitch, x, y, textW + 10, font->getFontHeight());
+
+	_cursorX = font->getStringWidth(_engine->_inputText) + 1;
 }
 
 void Gui::loadFonts() {

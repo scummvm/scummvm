@@ -158,6 +158,29 @@ void WageEngine::processEvents() {
 				if (obj != NULL)
 					processTurn(NULL, obj);
 			}
+			break;
+		case Common::EVENT_KEYDOWN:
+			switch (event.kbd.keycode) {
+			case Common::KEYCODE_BACKSPACE:
+				if (_inputText.size()) {
+					_inputText.deleteLastChar();
+					_gui->drawInput();
+				}
+				break;
+
+			default:
+				if (event.kbd.flags)
+					break;
+
+				if (Common::isAlpha(event.kbd.ascii)) {
+					_inputText += (char)event.kbd.ascii;
+					_gui->drawInput();
+				}
+
+				break;
+			}
+			break;
+
 		default:
 			break;
 		}
