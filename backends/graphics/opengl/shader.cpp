@@ -25,6 +25,7 @@
 #if !USE_FORCED_GLES
 
 #include "common/textconsole.h"
+#include "common/util.h"
 
 namespace OpenGL {
 
@@ -44,8 +45,7 @@ const char *const g_defaultVertexShader =
 	"\tgl_Position = projection * position;\n"
 	"}\n";
 
-#if !USE_FORCED_GLES2
-const char *const g_defaultFragmentShaderGL =
+const char *const g_defaultFragmentShader =
 	"varying vec2 texCoord;\n"
 	"varying vec4 blendColor;\n"
 	"\n"
@@ -54,19 +54,24 @@ const char *const g_defaultFragmentShaderGL =
 	"void main(void) {\n"
 	"\tgl_FragColor = blendColor * texture2D(texture, texCoord);\n"
 	"}\n";
-#endif
 
-#if !USE_FORCED_GL
-const char *const g_defaultFragmentShaderGLES2 =
-	"varying lowp vec2 texCoord;\n"
-	"varying lowp vec4 blendColor;\n"
-	"\n"
-	"uniform sampler2D texture;\n"
-	"\n"
-	"void main(void) {\n"
-	"\tgl_FragColor = blendColor * texture2D(texture, texCoord);\n"
-	"}\n";
-#endif
+namespace {
+
+// Taken from: https://en.wikibooks.org/wiki/OpenGL_Programming/Modern_OpenGL_Tutorial_03#OpenGL_ES_2_portability
+const char *const g_precisionDefines =
+	"#ifdef GL_ES\n"
+	"\t#if defined(GL_FRAGMENT_PRECISION_HIGH) && GL_FRAGMENT_PRECISION_HIGH == 1\n"
+	"\t\tprecision highp float;\n"
+	"\t#else\n"
+	"\t\tprecision mediump float;\n"
+	"\t#endif\n"
+	"#else\n"
+	"\t#define highp\n"
+	"\t#define mediump\n"
+	"\t#define lowp\n"
+	"#endif\n";
+
+} // End of anonymous namespace
 
 Shader::Shader(const Common::String &vertex, const Common::String &fragment)
     : _vertex(vertex), _fragment(fragment), _program(0), _projectionLocation(-1), _textureLocation(-1) {
@@ -188,7 +193,12 @@ GLshader Shader::compileShader(const char *source, GLenum shaderType) {
 		return 0;
 	}
 
-	GL_CALL(glShaderSource(handle, 1, &source, nullptr));
+	const char *const sources[2] = {
+		g_precisionDefines,
+		source
+	};
+
+	GL_CALL(glShaderSource(handle, ARRAYSIZE(sources), sources, nullptr));
 	GL_CALL(glCompileShader(handle));
 
 	GLint result;

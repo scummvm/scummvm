@@ -38,12 +38,7 @@ enum {
 };
 
 extern const char *const g_defaultVertexShader;
-#if !USE_FORCED_GLES2
-extern const char *const g_defaultFragmentShaderGL;
-#endif
-#if !USE_FORCED_GL
-extern const char *const g_defaultFragmentShaderGLES2;
-#endif
+extern const char *const g_defaultFragmentShader;
 
 class Shader {
 public:
