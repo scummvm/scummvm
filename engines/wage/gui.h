@@ -98,6 +98,9 @@ private:
 	Common::StringArray _out;
 	Common::StringArray _lines;
 	uint _scrollPos;
+	int _consoleLineHeight;
+	uint _consoleNumLines;
+	bool _consoleFullRedraw;
 
 	bool _builtInFonts;
 

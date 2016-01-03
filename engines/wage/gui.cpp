@@ -122,12 +122,15 @@ Gui::Gui(WageEngine *engine) {
 	_consoleDirty = true;
 	_bordersDirty = true;
 	_menuDirty = true;
+	_consoleFullRedraw = true;
 	_screen.create(g_system->getWidth(), g_system->getHeight(), Graphics::PixelFormat::createFormatCLUT8());
 
 	Patterns p;
 	p.push_back(checkersPattern);
 
 	_scrollPos = 0;
+	_consoleLineHeight = 8; // Dummy value which makes sense
+	_consoleNumLines = 24; // Dummy value
 	_builtInFonts = false;
 	_sceneIsActive = false;
 
@@ -255,6 +258,7 @@ void Gui::draw() {
 	_consoleDirty = false;
 	_bordersDirty = false;
 	_menuDirty = false;
+	_consoleFullRedraw = false;
 
 	// Blit to screen
 	g_system->copyRectToScreen(_screen.getPixels(), _screen.pitch, 0, 0, _screen.w, _screen.h);
@@ -374,8 +378,7 @@ enum {
 	kConHOverlap = 20,
 	kConWPadding = 3,
 	kConHPadding = 4,
-	kConOverscan = 3,
-	kLineSpacing = 0
+	kConOverscan = 3
 };
 
 void Gui::flowText(String &str) {
@@ -390,10 +393,16 @@ void Gui::flowText(String &str) {
 
 	for (Common::StringArray::const_iterator j = wrappedLines.begin(); j != wrappedLines.end(); ++j)
 		_lines.push_back(*j);
+
+	int pos = _scrollPos;
+	_scrollPos = MAX<int>(0, (_lines.size() - _consoleNumLines) * _consoleLineHeight);
+
+	if (pos != _scrollPos)
+		_consoleFullRedraw = true;
 }
 
 void Gui::renderConsole(Graphics::Surface *g, Common::Rect &r) {
-	bool fullRedraw = false;
+	bool fullRedraw = _consoleFullRedraw;
 	bool textReflow = false;
 	int surfW = r.width() + kConWOverlap * 2;
 	int surfH = r.height() + kConHOverlap * 2;
@@ -417,7 +426,7 @@ void Gui::renderConsole(Graphics::Surface *g, Common::Rect &r) {
 
 	const Graphics::Font *font = getConsoleFont();
 
-	int lineHeight = font->getFontHeight() + kLineSpacing;
+	_consoleLineHeight = font->getFontHeight();
 	int textW = r.width() - kConWPadding * 2;
 	int textH = r.height() - kConHPadding * 2;
 
@@ -428,12 +437,15 @@ void Gui::renderConsole(Graphics::Surface *g, Common::Rect &r) {
 			flowText(_out[i]);
 	}
 
-	const int firstLine = _scrollPos / lineHeight;
-	const int lastLine = MIN((_scrollPos + textH) / lineHeight + 1, _lines.size());
+	const int firstLine = _scrollPos / _consoleLineHeight;
+	const int lastLine = MIN((_scrollPos + textH) / _consoleLineHeight + 1, _lines.size());
 	const int xOff = kConWOverlap;
 	const int yOff = kConHOverlap;
 	int x1 = xOff + kConWPadding;
-	int y1 = yOff - (_scrollPos % lineHeight) + kConHPadding;
+	int y1 = yOff - (_scrollPos % _consoleLineHeight) + kConHPadding;
+
+	if (fullRedraw)
+		_consoleNumLines = r.height() / _consoleLineHeight - 1;
 
 	for (int line = firstLine; line < lastLine; line++) {
 		const char *str = _lines[line].c_str();
@@ -441,7 +453,7 @@ void Gui::renderConsole(Graphics::Surface *g, Common::Rect &r) {
 		if (*str)
 			font->drawString(&_console, _lines[line], x1, y1, textW, kColorBlack);
 
-		y1 += lineHeight;
+		y1 += _consoleLineHeight;
 	}
 
 	g->copyRectToSurface(_console, r.left - kConOverscan, r.top - kConOverscan, boundsR);
