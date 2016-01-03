@@ -65,7 +65,8 @@ enum {
 	kMenuItemHeight = 19,
 	kBorderWidth = 17,
 	kDesktopArc = 7,
-	kComponentsPadding = 10
+	kComponentsPadding = 10,
+	kCursorHeight = 12
 };
 
 static const byte palette[] = {
@@ -131,10 +132,10 @@ static void cursor_timer_handler(void *refCon) {
 	x += gui->_consoleTextArea.left;
 	y += gui->_consoleTextArea.top;
 
-	gui->_screen.vLine(x, y, y + 8, gui->_cursorState ? kColorBlack : kColorWhite);
+	gui->_screen.vLine(x, y - kCursorHeight, y, gui->_cursorState ? kColorBlack : kColorWhite);
     gui->_cursorState = !gui->_cursorState;
 
-	g_system->copyRectToScreen(gui->_screen.getPixels(), gui->_screen.pitch, x, y, 1, 8);
+	g_system->copyRectToScreen(gui->_screen.getBasePtr(x, y - kCursorHeight), gui->_screen.pitch, x, y - kCursorHeight, 1, kCursorHeight);
 	g_system->updateScreen();
 }
 
@@ -171,10 +172,11 @@ Gui::Gui(WageEngine *engine) {
 	// Draw desktop
 	Common::Rect r(0, 0, _screen.w - 1, _screen.h - 1);
 	Design::drawFilledRoundRect(&_screen, r, kDesktopArc, kColorBlack, p, 1);
+	g_system->copyRectToScreen(_screen.getPixels(), _screen.pitch, 0, 0, _screen.w, _screen.h);
 
 	loadFonts();
 
-	g_system->getTimerManager()->installTimerProc(&cursor_timer_handler, 500000, this, "wageCursor");
+	g_system->getTimerManager()->installTimerProc(&cursor_timer_handler, 200000, this, "wageCursor");
 }
 
 Gui::~Gui() {
@@ -288,10 +290,6 @@ void Gui::draw() {
 	_bordersDirty = false;
 	_menuDirty = false;
 	_consoleFullRedraw = false;
-
-	// Blit to screen
-	g_system->copyRectToScreen(_screen.getPixels(), _screen.pitch, 0, 0, _screen.w, _screen.h);
-	g_system->updateScreen();
 }
 
 void Gui::drawBox(Graphics::Surface *g, int x, int y, int w, int h) {
@@ -401,6 +399,8 @@ void Gui::paintBorder(Graphics::Surface *g, Common::Rect &r, WindowType windowTy
 		drawBox(g, x + (width - w) / 2, y, w, size);
 		font->drawString(g, _scene->_name, x + (width - w) / 2 + 3, y + yOff, w, kColorBlack);
 	}
+
+	g_system->copyRectToScreen(g->getBasePtr(x, y), g->pitch, x, y, width, height);
 }
 
 enum {
@@ -497,6 +497,7 @@ void Gui::renderConsole(Graphics::Surface *g, Common::Rect &r) {
 	}
 
 	g->copyRectToSurface(_console, r.left - kConOverscan, r.top - kConOverscan, boundsR);
+	g_system->copyRectToScreen(g->getBasePtr(r.left, r.top), g->pitch, r.left, r.top, r.width(), r.height());
 }
 
 void Gui::loadFonts() {
@@ -583,6 +584,8 @@ void Gui::renderMenu() {
 
 		x += w + 13;
 	}
+
+	g_system->copyRectToScreen(_screen.getPixels(), _screen.pitch, 0, 0, _screen.w, kMenuHeight);
 }
 
 Designed *Gui::getClickTarget(int x, int y) {
