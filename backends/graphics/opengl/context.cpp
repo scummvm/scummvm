@@ -29,16 +29,6 @@
 
 namespace OpenGL {
 
-#if USE_FORCED_GL
-#define HAS_SHADERS_CHECK shadersSupported
-#elif USE_FORCED_GLES
-#define HAS_SHADERS_CHECK false
-#elif USE_FORCED_GLES2
-#define HAS_SHADERS_CHECK true
-#else
-#define HAS_SHADERS_CHECK (type == kContextGLES2 || shadersSupported)
-#endif
-
 void Context::reset() {
 	_maxTextureSize = 0;
 
@@ -69,7 +59,7 @@ void Context::initializePipeline() {
 
 	// Enable rendering with vertex and coord arrays.
 #if !USE_FORCED_GLES && !USE_FORCED_GLES2
-	if (HAS_SHADERS_CHECK) {
+	if (g_context.shadersSupported) {
 #endif
 #if !USE_FORCED_GLES
 		GL_CALL(glEnableVertexAttribArray(kPositionAttribLocation));
@@ -105,7 +95,7 @@ void Context::initializePipeline() {
 
 void Context::setColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a) {
 #if !USE_FORCED_GLES && !USE_FORCED_GLES2
-	if (HAS_SHADERS_CHECK) {
+	if (g_context.shadersSupported) {
 #endif
 #if !USE_FORCED_GLES
 		GL_CALL(glVertexAttrib4f(kColorAttribLocation, r, g, b, a));
@@ -123,7 +113,7 @@ void Context::setColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a) {
 
 void Context::setDrawCoordinates(const GLfloat *vertices, const GLfloat *texCoords) {
 #if !USE_FORCED_GLES && !USE_FORCED_GLES2
-	if (HAS_SHADERS_CHECK) {
+	if (g_context.shadersSupported) {
 #endif
 #if !USE_FORCED_GLES
 		GL_CALL(glVertexAttribPointer(kTexCoordAttribLocation, 2, GL_FLOAT, GL_FALSE, 0, texCoords));

@@ -773,8 +773,7 @@ void OpenGLGraphicsManager::setActualScreenSize(uint width, uint height) {
 	};
 
 #if !USE_FORCED_GL && !USE_FORCED_GLES && !USE_FORCED_GLES2
-	if (g_context.type == kContextGLES
-	    || (g_context.type == kContextGL && !g_context.shadersSupported)) {
+	if (!g_context.shadersSupported) {
 #endif
 #if !USE_FORCED_GLES2
 		GL_CALL(glMatrixMode(GL_PROJECTION));
@@ -901,23 +900,9 @@ void OpenGLGraphicsManager::notifyContextCreate(const Graphics::PixelFormat &def
 
 #if !USE_FORCED_GLES
 	if (!_shader) {
-#if !USE_FORCED_GL && !USE_FORCED_GLES2
-		if (g_context.type == kContextGLES2) {
-#endif
-#if !USE_FORCED_GL
+		if (g_context.shadersSupported) {
 			_shader = new Shader(g_defaultVertexShader, g_defaultFragmentShader);
-#endif
-#if !USE_FORCED_GL && !USE_FORCED_GLES2
-		} else {
-#endif
-#if !USE_FORCED_GLES2
-			if (g_context.shadersSupported) {
-				_shader = new Shader(g_defaultVertexShader, g_defaultFragmentShader);
-			}
-#endif
-#if !USE_FORCED_GL && !USE_FORCED_GLES2
 		}
-#endif
 	}
 #endif
 
