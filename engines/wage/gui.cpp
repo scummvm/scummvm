@@ -132,12 +132,12 @@ static void cursor_timer_handler(void *refCon) {
 	x += gui->_consoleTextArea.left;
 	y += gui->_consoleTextArea.top;
 
-	gui->_screen.vLine(x, y - kCursorHeight, y, gui->_cursorState ? kColorBlack : kColorWhite);
+	gui->_screen.vLine(x, y, y + kCursorHeight, gui->_cursorState ? kColorBlack : kColorWhite);
 
 	if (!gui->_cursorOff)
 		gui->_cursorState = !gui->_cursorState;
 
-	g_system->copyRectToScreen(gui->_screen.getBasePtr(x, y - kCursorHeight), gui->_screen.pitch, x, y - kCursorHeight, 1, kCursorHeight);
+	g_system->copyRectToScreen(gui->_screen.getBasePtr(x, y), gui->_screen.pitch, x, y, 1, kCursorHeight);
 	g_system->updateScreen();
 }
 
@@ -433,9 +433,9 @@ void Gui::flowText(String &str) {
 	_cursorX = kConHPadding;
 
 	if (_scrollPos)
-		_cursorY = (_consoleNumLines + 1) * _consoleLineHeight;
+		_cursorY = (_consoleNumLines) * _consoleLineHeight;
 	else
-		_cursorY = (_lines.size() + 1) * _consoleLineHeight;
+		_cursorY = (_lines.size()) * _consoleLineHeight;
 
 	if (pos != _scrollPos)
 		_consoleFullRedraw = true;
@@ -528,7 +528,7 @@ void Gui::drawInput() {
 
 	g_system->copyRectToScreen(_screen.getBasePtr(x, y), _screen.pitch, x, y, textW + 10, font->getFontHeight());
 
-	_cursorX = font->getStringWidth(_engine->_inputText) + 1;
+	_cursorX = font->getStringWidth(_engine->_inputText) + kConHPadding;
 }
 
 void Gui::loadFonts() {
