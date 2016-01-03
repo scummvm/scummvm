@@ -504,9 +504,9 @@ void TextureRGB555::updateTexture() {
 }
 #endif // !USE_FORCED_GL
 
-#if !USE_FORCED_GLES && !USE_FORCED_GLES2
+#if !USE_FORCED_GLES
 namespace {
-const char *const g_lookUpFragmentShaderGL =
+const char *const g_lookUpFragmentShader =
 	"varying vec2 texCoord;\n"
 	"varying vec4 blendColor;\n"
 	"\n"
@@ -517,12 +517,17 @@ const char *const g_lookUpFragmentShaderGL =
 	"\n"
 	"void main(void) {\n"
 	"\tvec4 index = texture2D(texture, texCoord);\n"
-	"\tgl_FragColor = blendColor * texture2D(palette, vec2(index.x * adjustFactor, 0.0));\n"
+	"\tgl_FragColor = blendColor * texture2D(palette, vec2(index.a * adjustFactor, 0.0));\n"
 	"}\n";
 } // End of anonymous namespace
 
+// _clut8Texture needs 8 bits internal precision, otherwise graphics glitches
+// can occur. GL_ALPHA does not have any internal precision requirements.
+// However, in practice (according to fuzzie) it's 8bit. If we run into
+// problems, we need to switch to GL_R8 and GL_RED, but that is only supported
+// for ARB_texture_rg and GLES3+ (EXT_rexture_rg does not support GL_R8).
 TextureCLUT8GPU::TextureCLUT8GPU()
-    : _clut8Texture(GL_R8, GL_RED, GL_UNSIGNED_BYTE),
+    : _clut8Texture(GL_ALPHA, GL_ALPHA, GL_UNSIGNED_BYTE),
       _paletteTexture(GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE),
       _glTexture(GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE),
       _glFBO(0), _clut8Vertices(), _projectionMatrix(),
@@ -531,7 +536,7 @@ TextureCLUT8GPU::TextureCLUT8GPU()
 	// Allocate space for 256 colors.
 	_paletteTexture.setSize(256, 1);
 
-	_lookUpShader = new Shader(g_defaultVertexShader, g_lookUpFragmentShaderGL);
+	_lookUpShader = new Shader(g_defaultVertexShader, g_lookUpFragmentShader);
 	_lookUpShader->recreate();
 	_paletteLocation = _lookUpShader->getUniformLocation("palette");
 
@@ -772,6 +777,6 @@ void TextureCLUT8GPU::setupFBO() {
 	// Restore old FBO.
 	GL_CALL(glBindFramebuffer(GL_FRAMEBUFFER, oldFBO));
 }
-#endif // !USE_FORCED_GLES && !USE_FORCED_GLES2
+#endif // !USE_FORCED_GLES
 
 } // End of namespace OpenGL

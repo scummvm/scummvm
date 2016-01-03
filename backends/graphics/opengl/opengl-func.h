@@ -130,13 +130,11 @@ GL_FUNC_2_DEF(void, glGetShaderInfoLog, glGetInfoLogARB, (GLshader shader, GLsiz
 GL_FUNC_2_DEF(void, glShaderSource, glShaderSourceARB, (GLshader shader, GLsizei count, const GLchar *const *string, const GLint *length));
 GL_FUNC_2_DEF(void, glCompileShader, glCompileShaderARB, (GLshader shader));
 
-#if !USE_FORCED_GLES2
 GL_FUNC_2_DEF(void, glBindFramebuffer, glBindFramebufferEXT, (GLenum target, GLuint renderbuffer));
 GL_FUNC_2_DEF(void, glDeleteFramebuffers, glDeleteFramebuffersEXT, (GLsizei n, const GLuint *framebuffers));
 GL_FUNC_2_DEF(void, glGenFramebuffers, glGenFramebuffersEXT, (GLsizei n, GLuint *renderbuffers));
 GL_FUNC_2_DEF(void, glFramebufferTexture2D, glFramebufferTexture2DEXT, (GLenum target, GLenum attachment, GLenum textarget, GLuint texture, GLint level));
 GL_FUNC_2_DEF(GLenum, glCheckFramebufferStatus, glCheckFramebufferStatusEXT, (GLenum target));
-#endif
 
 GL_FUNC_2_DEF(void, glActiveTexture, glActiveTextureARB, (GLenum texture));
 #endif

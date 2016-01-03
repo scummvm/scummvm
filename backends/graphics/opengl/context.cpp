@@ -36,7 +36,6 @@ void Context::reset() {
 	shadersSupported = false;
 	multitextureSupported = false;
 	framebufferObjectSupported = false;
-	textureRGSupported = false;
 
 #define GL_FUNC_DEF(ret, name, param) name = nullptr;
 #include "backends/graphics/opengl/opengl-func.h"
@@ -206,8 +205,6 @@ void OpenGLGraphicsManager::initializeGLContext() {
 			ARBFragmentShader = true;
 		} else if (token == "GL_ARB_multitexture") {
 			g_context.multitextureSupported = true;
-		} else if (token == "GL_ARB_texture_rg") {
-			g_context.textureRGSupported = true;
 		} else if (token == "GL_EXT_framebuffer_object") {
 			g_context.framebufferObjectSupported = true;
 		}
@@ -248,7 +245,6 @@ void OpenGLGraphicsManager::initializeGLContext() {
 	debug(5, "OpenGL: NPOT texture support: %d", g_context.NPOTSupported);
 	debug(5, "OpenGL: Shader support: %d", g_context.shadersSupported);
 	debug(5, "OpenGL: Multitexture support: %d", g_context.multitextureSupported);
-	debug(5, "OpenGL: Texture RG support: %d", g_context.textureRGSupported);
 	debug(5, "OpenGL: FBO support: %d", g_context.framebufferObjectSupported);
 }
 

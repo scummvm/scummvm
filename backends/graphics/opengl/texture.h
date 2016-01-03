@@ -317,7 +317,7 @@ private:
 };
 #endif // !USE_FORCED_GL
 
-#if !USE_FORCED_GLES && !USE_FORCED_GLES2
+#if !USE_FORCED_GLES
 class TextureCLUT8GPU : public Surface {
 public:
 	TextureCLUT8GPU();
@@ -351,7 +351,6 @@ public:
 	static bool isSupportedByContext() {
 		return g_context.shadersSupported
 		    && g_context.multitextureSupported
-		    && g_context.textureRGSupported
 		    && g_context.framebufferObjectSupported;
 	}
 private:
@@ -376,7 +375,7 @@ private:
 	byte _palette[4 * 256];
 	bool _paletteDirty;
 };
-#endif // !USE_FORCED_GLES && !USE_FORCED_GLES2
+#endif // !USE_FORCED_GLES
 
 } // End of namespace OpenGL
 

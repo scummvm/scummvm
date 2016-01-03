@@ -1016,7 +1016,7 @@ void OpenGLGraphicsManager::setMousePosition(int x, int y) {
 Surface *OpenGLGraphicsManager::createSurface(const Graphics::PixelFormat &format, bool wantAlpha) {
 	GLenum glIntFormat, glFormat, glType;
 	if (format.bytesPerPixel == 1) {
-#if !USE_FORCED_GLES && !USE_FORCED_GLES2
+#if !USE_FORCED_GLES
 		if (TextureCLUT8GPU::isSupportedByContext()) {
 			return new TextureCLUT8GPU();
 		}

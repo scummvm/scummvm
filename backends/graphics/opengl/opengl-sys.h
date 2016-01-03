@@ -114,9 +114,6 @@ struct Context {
 	/** Whether multi texture support is available or not. */
 	bool multitextureSupported;
 
-	/** Whether (GLES2) RG texture formats are supported. */
-	bool textureRGSupported;
-
 	/** Whether FBO support is available or not. */
 	bool framebufferObjectSupported;
 
