@@ -941,10 +941,42 @@ void Script::handleLookCommand() {
 }
 
 Common::String *Script::getGroundItemsList(Scene *scene) {
-	warning("STUB: getGroundItemsList");
+	Common::Array<Obj *> objs;
+
+	for (Common::List<Obj *>::const_iterator it = scene->_objs.begin(); it != scene->_objs.end(); ++it)
+		if ((*it)->_type != Obj::IMMOBILE_OBJECT)
+			objs.push_back(*it);
+
+	if (objs.size()) {
+		Common::String *res = new Common::String("On the ground you see ");
+		appendObjNames(*res, objs);
+		return res;
+	}
 	return NULL;
 }
 
+void Script::appendObjNames(Common::String &str, Common::Array<Obj *> &objs) {
+	for (int i = 0; i < objs.size(); i++) {
+		Obj *obj = objs[i];
+
+		if (!obj->_namePlural)
+			str += getIndefiniteArticle(obj->_name);
+		else
+			str += "some ";
+
+		str += obj->_name;
+
+		if (i == objs.size() - 1) {
+			str += ".";
+		} else if (i == objs.size() - 2) {
+			if (objs.size() > 2)
+				str += ",";
+			str += " and ";
+		} else {
+			str += ", ";
+		}
+	}
+}
 
 void Script::handleInventoryCommand() {
 	warning("STUB: handleInventoryCommand");

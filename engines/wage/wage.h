@@ -98,6 +98,7 @@ enum {
 
 Common::String readPascalString(Common::SeekableReadStream *in);
 Common::Rect *readRect(Common::SeekableReadStream *in);
+const char *getIndefiniteArticle(String &word);
 
 typedef Common::Array<byte *> Patterns;
 
