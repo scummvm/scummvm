@@ -575,15 +575,20 @@ bool Script::compare(Operand *o1, Operand *o2, int comparator) {
 	case kCompEqNumNum:
 		return o1->_value.number == o2->_value.number;
 	case kCompEqObjScene:
-		error("FIXME kCompEqObjScene");
-		//return o2->_value.scene->_objs.contains(*o1->_value.obj);
-	case kCompEqChrScene:
-		error("FIXME kCompEqChrScene");
-		//return o2->_value.scene->_chrs.contains(*o1->_value.chr);
-	case kCompEqObjChr:
-		warning("FIXME kCompEqObjChr");
+		for (Common::List<Obj *>::const_iterator it = o2->_value.scene->_objs.begin(); it != o2->_value.scene->_objs.end(); ++it)
+			if (*it == o1->_value.obj)
+				return true;
 		return false;
-		//return o2->_value.chr->_inventory.contains(*o1->_value.obj);
+	case kCompEqChrScene:
+		for (Common::List<Chr *>::const_iterator it = o2->_value.scene->_chrs.begin(); it != o2->_value.scene->_chrs.end(); ++it)
+			if (*it == o1->_value.chr)
+				return true;
+		return false;
+	case kCompEqObjChr:
+		for (Common::Array<Obj *>::const_iterator it = o2->_value.chr->_inventory.begin(); it != o2->_value.chr->_inventory.end(); ++it)
+			if (*it == o1->_value.obj)
+				return true;
+		return false;
 	case kCompEqChrChr:
 		return o1->_value.chr == o2->_value.chr;
 	case kCompEqSceneScene:
