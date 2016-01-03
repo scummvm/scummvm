@@ -49,6 +49,8 @@
 #define WAGE_GUI_H
 
 #include "common/str-array.h"
+#include "graphics/font.h"
+#include "graphics/fontman.h"
 #include "graphics/surface.h"
 #include "common/rect.h"
 
@@ -78,6 +80,10 @@ private:
 	void loadFonts();
 	void renderMenu();
 	void flowText(Common::String &str);
+	const Graphics::Font *getConsoleFont();
+	const Graphics::Font *getMenuFont();
+	const Graphics::Font *getTitleFont();
+	const Graphics::Font *getFont(const char *name, Graphics::FontManager::FontUsage fallback);
 
 private:
 	WageEngine *_engine;

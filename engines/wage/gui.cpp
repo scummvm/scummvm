@@ -150,6 +150,39 @@ Gui::Gui(WageEngine *engine) {
 Gui::~Gui() {
 }
 
+const Graphics::Font *Gui::getFont(const char *name, Graphics::FontManager::FontUsage fallback) {
+	const Graphics::Font *font;
+
+	if (!_builtInFonts) {
+		font = FontMan.getFontByName(name);
+
+		if (!font)
+			warning("Cannot load font %s", name);
+	}
+
+	if (_builtInFonts || !font)
+		font = FontMan.getFontByUsage(fallback);
+
+	return font;
+}
+
+const Graphics::Font *Gui::getConsoleFont() {
+	char fontName[128];
+	Scene *scene = _engine->_world->_player->_currentScene;
+
+	snprintf(fontName, 128, "%s-%d", scene->getFontName(), scene->_fontSize);
+
+	return getFont(fontName, Graphics::FontManager::kConsoleFont);
+}
+
+const Graphics::Font *Gui::getMenuFont() {
+	return getFont("Chicago-12", Graphics::FontManager::kBigGUIFont);
+}
+
+const Graphics::Font *Gui::getTitleFont() {
+	return getFont("Chicago-12", Graphics::FontManager::kBigGUIFont);
+}
+
 void Gui::clearOutput() {
 	_out.clear();
 }
@@ -326,20 +359,8 @@ void Gui::paintBorder(Graphics::Surface *g, Common::Rect &r, WindowType windowTy
 	}
 
 	if (drawTitle) {
-		const Graphics::Font *font;
-		int yOff = 1;
-
-		if (!_builtInFonts) {
-			font = FontMan.getFontByName("Chicago-12");
-
-			if (!font)
-				warning("Cannot load font Chicago-12");
-		}
-
-		if (_builtInFonts || !font) {
-			font = FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
-			yOff = 3;
-		}
+		const Graphics::Font *font = getTitleFont();
+		int yOff = _builtInFonts ? 3 : 1;
 
 		int w = font->getStringWidth(_scene->_name) + 6;
 		int maxWidth = width - size*2 - 7;
@@ -362,22 +383,7 @@ enum {
 void Gui::flowText(String &str) {
 	Common::StringArray wrappedLines;
 	int textW = _consoleTextArea.width() - kConWPadding * 2;
-
-	const Graphics::Font *font;
-
-	if (!_builtInFonts) {
-		char fontName[128];
-		Scene *scene = _engine->_world->_player->_currentScene;
-
-		snprintf(fontName, 128, "%s-%d", scene->getFontName(), scene->_fontSize);
-		font = FontMan.getFontByName(fontName);
-
-		if (!font)
-			warning("Cannot load font %s", fontName);
-	}
-
-	if (_builtInFonts || !font)
-		font = FontMan.getFontByUsage(Graphics::FontManager::kConsoleFont);
+	const Graphics::Font *font = getConsoleFont();
 
 	font->wordWrapText(str, textW, wrappedLines);
 
@@ -411,20 +417,7 @@ void Gui::renderConsole(Graphics::Surface *g, Common::Rect &r) {
 	if (fullRedraw)
 		_console.fillRect(fullR, kColorWhite);
 
-	const Graphics::Font *font;
-
-	if (!_builtInFonts) {
-		char fontName[128];
-
-		snprintf(fontName, 128, "%s-%d", _scene->getFontName(), _scene->_fontSize);
-		font = FontMan.getFontByName(fontName);
-
-		if (!font)
-			warning("Cannot load font %s", fontName);
-	}
-
-	if (_builtInFonts || !font)
-		font = FontMan.getFontByUsage(Graphics::FontManager::kConsoleFont);
+	const Graphics::Font *font = getConsoleFont();
 
 	int lineHeight = font->getFontHeight() + kLineSpacing;
 	int textW = r.width() - kConWPadding * 2;
@@ -525,21 +518,8 @@ void Gui::renderMenu() {
 	r.top = kMenuHeight - 1;
 	Design::drawFilledRect(&_screen, r, kColorBlack, p, 1);
 
-	const Graphics::Font *font = NULL;
-	int y = 1;
-
-	if (!_builtInFonts) {
-		font = FontMan.getFontByName("Chicago-12");
-
-		if (!font)
-			warning("Cannot load font Chicago-12");
-	}
-
-	if (_builtInFonts || !font) {
-		font = FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
-		y = 3;
-	}
-
+	const Graphics::Font *font = getMenuFont();
+	int y = _builtInFonts ? 3 : 1;
 	int x = 18;
 
 	for (int i = 0; menuItems[i]; i++) {
