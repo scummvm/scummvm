@@ -72,13 +72,23 @@ void SkeletonAnim::createFromStream(ArchiveReadStream *stream) {
 }
 
 void SkeletonAnim::getCoordForBone(uint32 time, int boneIdx, Math::Vector3d &pos, Math::Quaternion &rot) {
-	for (Common::Array<AnimKey *>::iterator it = _anims[boneIdx]->_keys.begin(); it < _anims[boneIdx]->_keys.end(); ++it) {
+	const Common::Array<AnimKey *> &keys = _anims[boneIdx]->_keys;
+
+	if (keys.size() == 1) {
+		// There is only one key for this bone, don't bother searching which one to use
+		pos = keys[0]->_pos;
+		rot = keys[0]->_rot;
+
+		return;
+	}
+
+	for (Common::Array<AnimKey *>::const_iterator it = keys.begin(); it < keys.end(); ++it) {
 		if ((*it)->_time == time) {
 			AnimKey *key = *it;
 			pos = key->_pos;
 			rot = key->_rot;
-			break;
 
+			return;
 		} else if ((*it)->_time > time) {
 			// Between two key frames, interpolate
 			AnimKey *a = *it;
@@ -90,9 +100,11 @@ void SkeletonAnim::getCoordForBone(uint32 time, int boneIdx, Math::Vector3d &pos
 			pos = b->_pos + (a->_pos - b->_pos) * t;
 			rot = b->_rot.slerpQuat(a->_rot, t);
 
-			break;
+			return;
 		}
 	}
+
+	warning("Unable to animate bone '%d' at %d ms", boneIdx, time);
 }
 
 } // End of namespace Stark
