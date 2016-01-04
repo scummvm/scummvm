@@ -395,11 +395,11 @@ void Design::drawBitmap(Graphics::Surface *surface, Common::ReadStream &in, bool
 	numBytes -= 10;
 
 	int x = 0, y = 0;
-	while (numBytes) {
+	while (numBytes > 0) {
 		int n = in.readSByte();
 		int count;
 		int b;
-		int state;
+		int state = 0;
 
 		numBytes--;
 
@@ -433,14 +433,23 @@ void Design::drawBitmap(Graphics::Surface *surface, Common::ReadStream &in, bool
 					y++;
 
 					if (y == h)
-						return;
+						break;
 
 					x = 0;
 					break;
 				}
 			}
+
+			if (y == h)
+				break;
 		}
+
+		if (y == h)
+			break;
 	}
+
+	while (numBytes--)
+		in.readByte();
 }
 
 void Design::drawFilledRect(Graphics::Surface *surface, Common::Rect &rect, int color, Patterns &patterns, byte fillType) {
