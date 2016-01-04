@@ -238,11 +238,8 @@ void Design::drawRect(Graphics::Surface *surface, Common::ReadStream &in, bool m
 	}
 	Common::Rect inner(x1 + borderThickness, y1 + borderThickness, x2 - borderThickness, y2 - borderThickness);
 
-	if (fillType <= patterns.size()) {
-		pd.fillType = fillType;
-		pd.thickness = 1;
+	if (fillType <= patterns.size())
 		drawFilledRect(outer, kColorBlack, drawPixel, &pd);
-	}
 
 	pd.fillType = borderFillType;
 	pd.thickness = borderThickness;
