@@ -26,6 +26,8 @@
 #include <fstream>
 #include <algorithm>
 
+#define ARRAYSIZE(x) ((int)(sizeof(x) / sizeof(x[0])))
+
 namespace CreateProjectTool {
 
 #define DEBUG_XCODE_HASH 0
@@ -67,6 +69,49 @@ namespace CreateProjectTool {
 	buildFile->addProperty("fileRef", fileRefId, name, kSettingsNoValue); \
 	_buildFile.add(buildFile); \
 	_buildFile._flags = kSettingsSingleItem; \
+}
+
+#ifdef _WIN32
+/**
+ * Shim for checking whether a file or directory exists.
+ * Since detection of files would need to exist on a Mac OS
+ * device that was going to actually use the generated Xcode
+ * project, just assume that if this is running on Win32
+ * that it is a dummy project generation.
+ */
+bool exists(const char *const fileName) {
+	return true;
+}
+#else
+#include <sys/stat.h>
+/**
+ * Checks whether a file or directory exists.
+ */
+bool exists(const char *const fileName) {
+	struct stat unused;
+	return (stat(fileName, &unused) == 0);
+}
+#endif
+
+const char *const DIRECTORIES[] = {
+	/* Homebrew */ "/usr/local/",
+	/* MacPorts */ "/opt/local/",
+	/* Fink     */ "/sw/"
+};
+
+std::string findPath(const char *const lib) {
+	for (int i = 0; i < ARRAYSIZE(DIRECTORIES); ++i) {
+		std::string candidate = std::string(DIRECTORIES[i]) + lib;
+		if (exists(candidate.c_str())) {
+			return candidate;
+		}
+	}
+
+	// If none of the directories were found, just assume that this
+	// project is being pre-generated for someone and use the default
+	// Homebrew paths, which are most common. (The user can change the
+	// paths inside Xcode later if they are wrong.)
+	return std::string(DIRECTORIES[0]) + lib;
 }
 
 bool producesObjectFileOnOSX(const std::string &fileName) {
@@ -323,7 +368,7 @@ void XcodeProvider::setupCopyFilesBuildPhase() {
 #define DEF_SYSFRAMEWORK(framework) properties[framework".framework"] = FileProperty("wrapper.framework", framework".framework", "System/Library/Frameworks/" framework ".framework", "SDKROOT"); \
 	ADD_SETTING_ORDER_NOVALUE(children, getHash(framework".framework"), framework".framework", fwOrder++);
 
-#define DEF_LOCALLIB_STATIC(lib) properties[lib".a"] = FileProperty("archive.ar", lib".a", "/opt/local/lib/" lib ".a", "\"<group>\""); \
+#define DEF_LOCALLIB_STATIC(lib) properties[lib".a"] = FileProperty("archive.ar", lib".a", findPath("lib/"lib".a"), "\"<group>\""); \
 	ADD_SETTING_ORDER_NOVALUE(children, getHash(lib".a"), lib".a", fwOrder++);
 
 /**
@@ -357,7 +402,6 @@ void XcodeProvider::setupFrameworksBuildPhase() {
 	DEF_SYSFRAMEWORK("IOKit");
 	DEF_SYSFRAMEWORK("OpenGLES");
 	DEF_SYSFRAMEWORK("QuartzCore");
-	DEF_SYSFRAMEWORK("QuickTime");
 	DEF_SYSFRAMEWORK("UIKit");
 	// Optionals:
 	DEF_SYSFRAMEWORK("OpenGL");
@@ -432,7 +476,6 @@ void XcodeProvider::setupFrameworksBuildPhase() {
 	frameworks_osx.push_back("CoreFoundation.framework");
 	frameworks_osx.push_back("Foundation.framework");
 	frameworks_osx.push_back("AudioToolbox.framework");
-	frameworks_osx.push_back("QuickTime.framework");
 	frameworks_osx.push_back("CoreMIDI.framework");
 	frameworks_osx.push_back("CoreAudio.framework");
 	frameworks_osx.push_back("QuartzCore.framework");
@@ -545,6 +588,7 @@ void XcodeProvider::setupProject() {
 	project->addProperty("compatibilityVersion", "Xcode 3.2", "", kSettingsNoValue | kSettingsQuoteVariable);
 	project->addProperty("developmentRegion", "English", "", kSettingsNoValue);
 	project->addProperty("hasScannedForEncodings", "1", "", kSettingsNoValue);
+	project->addProperty("attributes", "{ LastUpgradeCheck = 0720; }", "", kSettingsNoValue);
 
 	// List of known regions
 	Property regions;
@@ -763,9 +807,10 @@ void XcodeProvider::setupBuildConfiguration() {
 	Property scummvm_Debug;
 	ADD_SETTING(scummvm_Debug, "ALWAYS_SEARCH_USER_PATHS", "NO");
 	ADD_SETTING_QUOTE(scummvm_Debug, "USER_HEADER_SEARCH_PATHS", "$(SRCROOT) $(SRCROOT)/engines");
-	ADD_SETTING_QUOTE(scummvm_Debug, "ARCHS", "$(ARCHS_STANDARD_32_BIT)");
-	ADD_SETTING_QUOTE(scummvm_Debug, "CODE_SIGN_IDENTITY", "Don't Code Sign");
-	ADD_SETTING_QUOTE_VAR(scummvm_Debug, "CODE_SIGN_IDENTITY[sdk=iphoneos*]", "Don't Code Sign");
+	ADD_SETTING_QUOTE(scummvm_Debug, "CLANG_CXX_LANGUAGE_STANDARD", "c++98");
+	ADD_SETTING_QUOTE(scummvm_Debug, "CODE_SIGN_IDENTITY", "");
+	ADD_SETTING_QUOTE_VAR(scummvm_Debug, "CODE_SIGN_IDENTITY[sdk=iphoneos*]", "");
+	ADD_SETTING(scummvm_Debug, "ENABLE_TESTABILITY", "YES");
 	ADD_SETTING_QUOTE(scummvm_Debug, "FRAMEWORK_SEARCH_PATHS", "");
 	ADD_SETTING(scummvm_Debug, "GCC_C_LANGUAGE_STANDARD", "c99");
 	ADD_SETTING(scummvm_Debug, "GCC_ENABLE_CPP_EXCEPTIONS", "NO");
@@ -787,11 +832,13 @@ void XcodeProvider::setupBuildConfiguration() {
 	scummvm_HeaderPaths.push_back("$(SRCROOT)");
 	ADD_SETTING_LIST(scummvm_Debug, "HEADER_SEARCH_PATHS", scummvm_HeaderPaths, kSettingsQuoteVariable | kSettingsAsList, 5);
 	ADD_SETTING_QUOTE(scummvm_Debug, "LIBRARY_SEARCH_PATHS", "");
+	ADD_SETTING(scummvm_Debug, "MACOSX_DEPLOYMENT_TARGET", "10.6");
 	ADD_SETTING(scummvm_Debug, "ONLY_ACTIVE_ARCH", "YES");
 	ADD_SETTING_QUOTE(scummvm_Debug, "OTHER_CFLAGS", "");
 	ADD_SETTING_QUOTE(scummvm_Debug, "OTHER_LDFLAGS", "-lz");
 	ADD_SETTING(scummvm_Debug, "PREBINDING", "NO");
 	ADD_SETTING(scummvm_Debug, "SDKROOT", "macosx");
+	ADD_SETTING_QUOTE(scummvm_Debug, "WARNING_CFLAGS", "-Wno-multichar");
 
 	scummvm_Debug_Object->addProperty("name", "Debug", "", kSettingsNoValue);
 	scummvm_Debug_Object->_properties["buildSettings"] = scummvm_Debug;
@@ -799,9 +846,6 @@ void XcodeProvider::setupBuildConfiguration() {
 	// Release
 	Object *scummvm_Release_Object = new Object(this, "XCBuildConfiguration_" PROJECT_NAME "_Release", PROJECT_NAME, "XCBuildConfiguration", "PBXProject", "Release");
 	Property scummvm_Release(scummvm_Debug);
-	REMOVE_SETTING(scummvm_Release, "GCC_C_LANGUAGE_STANDARD");       // Not sure why we remove that, or any of the other warnings
-	REMOVE_SETTING(scummvm_Release, "GCC_WARN_ABOUT_RETURN_TYPE");
-	REMOVE_SETTING(scummvm_Release, "GCC_WARN_UNUSED_VARIABLE");
 	REMOVE_SETTING(scummvm_Release, "ONLY_ACTIVE_ARCH");
 
 	scummvm_Release_Object->addProperty("name", "Release", "", kSettingsNoValue);
@@ -817,12 +861,11 @@ void XcodeProvider::setupBuildConfiguration() {
 	// Debug
 	Object *scummvmOSX_Debug_Object = new Object(this, "XCBuildConfiguration_" PROJECT_DESCRIPTION "-OSX_Debug", _targets[OSX_TARGET] /* ScummVM-OS X */, "XCBuildConfiguration", "PBXNativeTarget", "Debug");
 	Property scummvmOSX_Debug;
-	ADD_SETTING_QUOTE(scummvmOSX_Debug, "ARCHS", "$(NATIVE_ARCH)");
+	ADD_SETTING(scummvmOSX_Debug, "COMBINE_HIDPI_IMAGES", "YES");
 	ADD_SETTING(scummvmOSX_Debug, "COMPRESS_PNG_FILES", "NO");
 	ADD_SETTING(scummvmOSX_Debug, "COPY_PHASE_STRIP", "NO");
-	ADD_SETTING_QUOTE(scummvmOSX_Debug, "DEBUG_INFORMATION_FORMAT", "dwarf-with-dsym");
+	ADD_SETTING(scummvmOSX_Debug, "DEBUG_INFORMATION_FORMAT", "dwarf");
 	ADD_SETTING_QUOTE(scummvmOSX_Debug, "FRAMEWORK_SEARCH_PATHS", "");
-	ADD_SETTING(scummvmOSX_Debug, "GCC_C_LANGUAGE_STANDARD", "c99");
 	ADD_SETTING(scummvmOSX_Debug, "GCC_ENABLE_CPP_EXCEPTIONS", "NO");
 	ADD_SETTING(scummvmOSX_Debug, "GCC_ENABLE_CPP_RTTI", "YES");
 	ADD_SETTING(scummvmOSX_Debug, "GCC_DYNAMIC_NO_PIC", "NO");
@@ -836,20 +879,22 @@ void XcodeProvider::setupBuildConfiguration() {
 	ADD_SETTING_LIST(scummvmOSX_Debug, "GCC_PREPROCESSOR_DEFINITIONS", scummvmOSX_defines, kSettingsNoQuote | kSettingsAsList, 5);
 	ADD_SETTING_QUOTE(scummvmOSX_Debug, "GCC_VERSION", "");
 	ValueList scummvmOSX_HeaderPaths;
-	scummvmOSX_HeaderPaths.push_back("/opt/local/include/SDL");
-	scummvmOSX_HeaderPaths.push_back("/opt/local/include");
-	scummvmOSX_HeaderPaths.push_back("/opt/local/include/freetype2");
+	scummvmOSX_HeaderPaths.push_back(findPath("include/SDL"));
+	scummvmOSX_HeaderPaths.push_back(findPath("include"));
+	scummvmOSX_HeaderPaths.push_back(findPath("include/freetype2"));
 	scummvmOSX_HeaderPaths.push_back("include/");
 	scummvmOSX_HeaderPaths.push_back("$(SRCROOT)/engines/");
 	scummvmOSX_HeaderPaths.push_back("$(SRCROOT)");
 	ADD_SETTING_LIST(scummvmOSX_Debug, "HEADER_SEARCH_PATHS", scummvmOSX_HeaderPaths, kSettingsQuoteVariable | kSettingsAsList, 5);
 	ADD_SETTING_QUOTE(scummvmOSX_Debug, "INFOPLIST_FILE", "$(SRCROOT)/dists/macosx/Info.plist");
 	ValueList scummvmOSX_LibPaths;
-	scummvmOSX_LibPaths.push_back("/sw/lib");
-	scummvmOSX_LibPaths.push_back("/opt/local/lib");
+	scummvmOSX_LibPaths.push_back(findPath("lib"));
 	scummvmOSX_LibPaths.push_back("\"$(inherited)\"");
-	scummvmOSX_LibPaths.push_back("\"\\\\\\\"$(SRCROOT)/lib\\\\\\\"\"");  // mmmh, all those slashes, it's almost Christmas \o/
+	if (exists((_projectRoot + "/lib").c_str())) {
+		scummvmOSX_LibPaths.push_back("\"\\\"$(SRCROOT)/lib\\\"\"");  // mmmh, all those slashes, it's almost Christmas \o/
+	}
 	ADD_SETTING_LIST(scummvmOSX_Debug, "LIBRARY_SEARCH_PATHS", scummvmOSX_LibPaths, kSettingsNoQuote | kSettingsAsList, 5);
+	ADD_SETTING(scummvmOSX_Debug, "ONLY_ACTIVE_ARCH", "YES");
 	ADD_SETTING_QUOTE(scummvmOSX_Debug, "OTHER_CFLAGS", "");
 	ValueList scummvmOSX_LdFlags;
 	scummvmOSX_LdFlags.push_back("-lSDLmain");
@@ -948,17 +993,11 @@ void XcodeProvider::setupBuildConfiguration() {
 void XcodeProvider::setupDefines(const BuildSetup &setup) {
 
 	for (StringList::const_iterator i = setup.defines.begin(); i != setup.defines.end(); ++i) {
-		if (*i == "HAVE_NASM")  // Not supported on Mac (TODO: change how it's handled in main class or add it only in MSVC/CodeBlocks providers?)
+		if (*i == "USE_NASM")  // Not supported on Mac (TODO: change how it's handled in main class or add it only in MSVC/CodeBlocks providers?)
 			continue;
 
 		ADD_DEFINE(_defines, *i);
 	}
-	// Add special defines for Mac support
-	ADD_DEFINE(_defines, "CONFIG_H");
-	ADD_DEFINE(_defines, "SCUMM_NEED_ALIGNMENT");
-	ADD_DEFINE(_defines, "SCUMM_LITTLE_ENDIAN");
-	ADD_DEFINE(_defines, "UNIX");
-	ADD_DEFINE(_defines, "SCUMMVM");
 }
 
 //////////////////////////////////////////////////////////////////////////
