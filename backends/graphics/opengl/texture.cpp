@@ -22,6 +22,7 @@
 
 #include "backends/graphics/opengl/texture.h"
 #include "backends/graphics/opengl/shader.h"
+#include "backends/graphics/opengl/pipeline.h"
 
 #include "common/rect.h"
 #include "common/textconsole.h"
@@ -282,7 +283,7 @@ void Texture::draw(GLfloat x, GLfloat y, GLfloat w, GLfloat h) {
 	};
 
 	// Setup coordinates for drawing.
-	g_context.setDrawCoordinates(vertices, _glTexture.getTexCoords());
+	g_context.activePipeline->setDrawCoordinates(vertices, _glTexture.getTexCoords());
 
 	// Draw the texture to the screen buffer.
 	GL_CALL(glDrawArrays(GL_TRIANGLE_STRIP, 0, 4));
@@ -649,7 +650,7 @@ void TextureCLUT8GPU::draw(GLfloat x, GLfloat y, GLfloat w, GLfloat h) {
 	};
 
 	// Setup coordinates for drawing.
-	g_context.setDrawCoordinates(vertices, _glTexture.getTexCoords());
+	g_context.activePipeline->setDrawCoordinates(vertices, _glTexture.getTexCoords());
 
 	// Draw the texture to the screen buffer.
 	GL_CALL(glDrawArrays(GL_TRIANGLE_STRIP, 0, 4));
@@ -744,7 +745,7 @@ void TextureCLUT8GPU::lookUpColors() {
 	// Do color look up.
 	_lookUpShader->activate(_projectionMatrix);
 	_lookUpShader->setUniformI(_paletteLocation, 1);
-	g_context.setDrawCoordinates(_clut8Vertices, _clut8Texture.getTexCoords());
+	g_context.activePipeline->setDrawCoordinates(_clut8Vertices, _clut8Texture.getTexCoords());
 	GL_CALL(glDrawArrays(GL_TRIANGLE_STRIP, 0, 4));
 
 	// Restore old state.

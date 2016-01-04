@@ -41,6 +41,7 @@ namespace OpenGL {
 #define USE_OSD 1
 
 class Surface;
+class Pipeline;
 #if !USE_FORCED_GLES
 class Shader;
 #endif
@@ -302,6 +303,11 @@ private:
 	 * Initialize the active context for use.
 	 */
 	void initializeGLContext();
+
+	/**
+	 * OpenGL pipeline used for rendering.
+	 */
+	Pipeline *_pipeline;
 
 protected:
 	/**

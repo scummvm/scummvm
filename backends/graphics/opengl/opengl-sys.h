@@ -87,6 +87,8 @@ enum ContextType {
 	kContextGLES2
 };
 
+class Pipeline;
+
 /**
  * Description structure of the OpenGL (ES) context.
  */
@@ -126,20 +128,18 @@ struct Context {
 	// programmable pipelines in the same fashion.
 	//
 
-	/**
-	 * Initializes the pipeline state.
-	 */
-	void initializePipeline();
+	/** Currently active rendering pipeline. */
+	Pipeline *activePipeline;
 
 	/**
-	 * Set color which shall be multiplied with each pixel.
+	 * Set new pipeline.
+	 *
+	 * Client is responsible for any memory management related to pipelines.
+	 *
+	 * @param pipeline Pipeline to activate.
+	 * @return Formerly active pipeline.
 	 */
-	void setColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a);
-
-	/**
-	 * Set vertex and texture coordinates.
-	 */
-	void setDrawCoordinates(const GLfloat *vertices, const GLfloat *texCoords);
+	Pipeline *setPipeline(Pipeline *pipeline);
 };
 
 /**

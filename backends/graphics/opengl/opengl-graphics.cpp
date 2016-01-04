@@ -23,6 +23,7 @@
 
 #include "backends/graphics/opengl/opengl-graphics.h"
 #include "backends/graphics/opengl/texture.h"
+#include "backends/graphics/opengl/pipeline.h"
 #include "backends/graphics/opengl/shader.h"
 
 #include "common/textconsole.h"
@@ -44,6 +45,7 @@ namespace OpenGL {
 
 OpenGLGraphicsManager::OpenGLGraphicsManager()
     : _currentState(), _oldState(), _transactionMode(kTransactionNone), _screenChangeID(1 << (sizeof(int) * 8 - 2)),
+      _pipeline(nullptr),
       _outputScreenWidth(0), _outputScreenHeight(0), _displayX(0), _displayY(0),
       _displayWidth(0), _displayHeight(0), _defaultFormat(), _defaultFormatAlpha(),
       _gameScreen(nullptr), _gameScreenShakeOffset(0), _overlay(nullptr),
@@ -425,13 +427,13 @@ void OpenGLGraphicsManager::updateScreen() {
 		}
 
 		// Set the OSD transparency.
-		g_context.setColor(1.0f, 1.0f, 1.0f, _osdAlpha / 100.0f);
+		g_context.activePipeline->setColor(1.0f, 1.0f, 1.0f, _osdAlpha / 100.0f);
 
 		// Draw the OSD texture.
 		_osd->draw(0, 0, _outputScreenWidth, _outputScreenHeight);
 
 		// Reset color.
-		g_context.setColor(1.0f, 1.0f, 1.0f, 1.0f);
+		g_context.activePipeline->setColor(1.0f, 1.0f, 1.0f, 1.0f);
 	}
 #endif
 
@@ -867,6 +869,24 @@ void OpenGLGraphicsManager::notifyContextCreate(const Graphics::PixelFormat &def
 	// Initialize context for use.
 	initializeGLContext();
 
+	// Initialize pipeline.
+	delete _pipeline;
+	_pipeline = nullptr;
+
+#if !USE_FORCED_GLES
+	if (g_context.shadersSupported) {
+		_pipeline = new ShaderPipeline();
+	}
+#endif
+
+#if !USE_FORCED_GLES2
+	if (_pipeline == nullptr) {
+		_pipeline = new FixedPipeline();
+	}
+#endif
+
+	g_context.setPipeline(_pipeline);
+
 	// Disable 3D properties.
 	GL_CALL(glDisable(GL_CULL_FACE));
 	GL_CALL(glDisable(GL_DEPTH_TEST));
@@ -874,14 +894,11 @@ void OpenGLGraphicsManager::notifyContextCreate(const Graphics::PixelFormat &def
 
 	// Default to black as clear color.
 	GL_CALL(glClearColor(0.0f, 0.0f, 0.0f, 0.0f));
-	g_context.setColor(1.0f, 1.0f, 1.0f, 1.0f);
+	g_context.activePipeline->setColor(1.0f, 1.0f, 1.0f, 1.0f);
 
 	// Setup alpha blend (for overlay and cursor).
 	GL_CALL(glEnable(GL_BLEND));
 	GL_CALL(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
-
-	// Initialize the context specific state of the pipeline.
-	g_context.initializePipeline();
 
 	// Setup scissor state accordingly.
 	if (_overlayVisible) {
@@ -968,6 +985,11 @@ void OpenGLGraphicsManager::notifyContextDestroy() {
 		_shader->destroy();
 	}
 #endif
+
+	// Destroy rendering pipeline.
+	g_context.setPipeline(nullptr);
+	delete _pipeline;
+	_pipeline = nullptr;
 
 	// Rest our context description since the context is gone soon.
 	g_context.reset();
