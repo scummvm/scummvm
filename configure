@@ -4232,6 +4232,11 @@ case $_opengl_mode in
 		echo "yes (OpenGL ES 2)"
 		add_line_to_config_h "#define USE_GLES_MODE 2"
 		;;
+
+	*)
+		echo "invalid mode specification '$_opengl_mode'. Aborting."
+		exit 1
+		;;
 esac
 
 define_in_config_if_yes "$_opengl" "USE_OPENGL"
