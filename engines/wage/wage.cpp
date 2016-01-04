@@ -169,7 +169,6 @@ void WageEngine::processEvents() {
 				break;
 
 			case Common::KEYCODE_RETURN:
-				_gui->appendText(_inputText);
 				processTurn(&_inputText, NULL);
 				_inputText = "";
 				_gui->drawInput();
@@ -205,6 +204,11 @@ void WageEngine::setMenu(String soundName) {
 }
 
 void WageEngine::appendText(String &str) {
+	if (_inputText.size())
+		_gui->appendText(_inputText);
+
+	_inputText = "";
+
 	_gui->appendText(str);
 }
 
