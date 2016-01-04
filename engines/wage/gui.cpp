@@ -507,6 +507,11 @@ void Gui::drawInput() {
 	if (!_screen.getPixels())
 		return;
 
+	if (_sceneIsActive) {
+		_sceneIsActive = false;
+		_bordersDirty = true;
+	}
+
 	const Graphics::Font *font = getConsoleFont();
 
 	int x = kConWPadding + _consoleTextArea.left;
