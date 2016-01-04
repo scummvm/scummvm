@@ -218,12 +218,45 @@ bool FPSfx::loadVoiceFromVDB(Common::File &vdbFP) {
 	if (!_soundSupported)
 		return true;
 
-	uint32 size = vdbFP.readUint32LE();
-	uint32 rate = vdbFP.readUint32LE();
+	switch (g_vm->_vdbCodec) {
+	case FPCODEC_ADPCM: {
+		uint32 size = vdbFP.readUint32LE();
+		uint32 rate = vdbFP.readUint32LE();
+
+		_rewindableStream = Audio::makeADPCMStream(vdbFP.readStream(size), DisposeAfterUse::YES, 0, Audio::kADPCMDVI, rate, 1);
+		}
+		break;
+	case FPCODEC_MP3 : {
+#ifdef USE_MAD
+		uint32 size = vdbFP.readUint32LE();
+		_rewindableStream = Audio::makeMP3Stream(vdbFP.readStream(size), DisposeAfterUse::YES);
+#else
+		return false;
+#endif
+		}
+		break;
+	case FPCODEC_OGG : {
+#ifdef USE_VORBIS
+		uint32 size = vdbFP.readUint32LE();
+		_rewindableStream = Audio::makeVorbisStream(vdbFP.readStream(size), DisposeAfterUse::YES);
+#else
+		return false;
+#endif
+		}
+		break;
+	case FPCODEC_FLAC : {
+#ifdef USE_FLAC
+		uint32 size = vdbFP.readUint32LE();
+		_rewindableStream = Audio::makeFLACStream(vdbFP.readStream(size), DisposeAfterUse::YES);
+#else
+		return false;
+#endif
+		}
+		break;
+	default:
+		return false;
+	}
 	_isVoice = true;
-
-	_rewindableStream = Audio::makeADPCMStream(vdbFP.readStream(size), DisposeAfterUse::YES, 0, Audio::kADPCMDVI, rate, 1);
-
 	_fileLoaded = true;
 	setVolume(62);
 	return true;

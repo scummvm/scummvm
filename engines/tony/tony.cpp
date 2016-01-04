@@ -577,18 +577,49 @@ bool TonyEngine::openVoiceDatabase() {
 	uint32 numfiles;
 
 	// Open the voices database
-	if (!_vdbFP.open("voices.vdb"))
+	if (_vdbFP.open("voices.vdb"))
+		_vdbCodec = FPCODEC_ADPCM;
+	else if (_vdbFP.open("voices.mdb"))
+		_vdbCodec = FPCODEC_MP3;
+	else if (_vdbFP.open("voices.odb"))
+		_vdbCodec = FPCODEC_OGG;
+	else if (_vdbFP.open("voices.fdb"))
+		_vdbCodec = FPCODEC_FLAC;
+	else
 		return false;
 
 	_vdbFP.seek(-8, SEEK_END);
 	numfiles = _vdbFP.readUint32LE();
 	_vdbFP.read(id, 4);
 
-	if (id[0] != 'V' || id[1] != 'D' || id[2] != 'B' || id[3] != '1') {
-		_vdbFP.close();
+	switch (_vdbCodec) {
+	case FPCODEC_ADPCM:
+		if (id[0] != 'V' || id[1] != 'D' || id[2] != 'B' || id[3] != '1') {
+			_vdbFP.close();
+			return false;
+		}
+		break;
+	case FPCODEC_MP3:
+		if (id[0] != 'M' || id[1] != 'D' || id[2] != 'B' || id[3] != '1') {
+			_vdbFP.close();
+			return false;
+		}
+		break;
+	case FPCODEC_OGG:
+		if (id[0] != 'O' || id[1] != 'D' || id[2] != 'B' || id[3] != '1') {
+			_vdbFP.close();
+			return false;
+		}
+		break;
+	case FPCODEC_FLAC:
+		if (id[0] != 'F' || id[1] != 'D' || id[2] != 'B' || id[3] != '1') {
+			_vdbFP.close();
+			return false;
+		}
+		break;
+	default:
 		return false;
 	}
-
 	// Read in the index
 	_vdbFP.seek(-8 - (numfiles * VOICE_HEADER_SIZE), SEEK_END);
 
