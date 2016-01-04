@@ -150,10 +150,11 @@ void Design::paint(Graphics::Surface *surface, Patterns &patterns, int x, int y)
 		//g_system->updateScreen();
 	}
 
-	for (int i = 0; i < _bounds->height(); i++) {
-		const byte *src = (const byte *)_surface->getBasePtr(0, i);
-		byte *dst = (byte *)surface->getBasePtr(x, y+i);
-		for (int j = 0; j < _bounds->width(); j++) {
+	const int padding = 3;
+	for (int i = padding; i < _bounds->height() - 2 * padding; i++) {
+		const byte *src = (const byte *)_surface->getBasePtr(padding, i);
+		byte *dst = (byte *)surface->getBasePtr(x + padding, y+i);
+		for (int j = padding; j < _bounds->width() - 2 * padding; j++) {
 			if (*src != kColorGreen)
 				*dst = *src;
 			src++;
