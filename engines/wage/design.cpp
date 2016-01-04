@@ -270,20 +270,19 @@ void Design::drawRoundRect(Graphics::Surface *surface, Common::ReadStream &in, b
 
 	Common::Rect outer(x1, y1, x2, y2);
 
-	plotData pd(surface, &patterns, borderFillType, 1);
+	plotData pd(surface, &patterns, fillType, 1);
 
 	if (mask) {
 		drawRoundRect(outer, arc, kColorBlack, true, drawPixelPlain, &pd);
 		return;
 	}
-	Common::Rect inner(x1 + borderThickness, y1 + borderThickness, x2 - borderThickness, y2 - borderThickness);
 
 	drawRoundRect(outer, arc/2, kColorBlack, true, drawPixel, &pd);
 
-	pd.fillType = fillType;
+	pd.fillType = borderFillType;
 	pd.thickness = borderThickness;
 
-	drawRoundRect(inner, arc/2, kColorBlack, false, drawPixel, &pd);
+	drawRoundRect(outer, arc/2, kColorBlack, false, drawPixel, &pd);
 }
 
 void Design::drawPolygon(Graphics::Surface *surface, Common::ReadStream &in, bool mask,
