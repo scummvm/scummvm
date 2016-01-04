@@ -90,7 +90,7 @@ private:
 	void drawBitmap(Graphics::Surface *surface, Common::ReadStream &in, bool mask);
 
 	void drawFilledRect(Common::Rect &rect, int color, void (*plotProc)(int, int, int, void *), void *data);
-	static void drawFilledRoundRect(Common::Rect &rect, int arc, int color, void (*plotProc)(int, int, int, void *), void *data);
+	static void drawRoundRect(Common::Rect &rect, int arc, int color, bool filled, void (*plotProc)(int, int, int, void *), void *data);
 	void drawPolygonScan(int *polyX, int *polyY, int npoints, Common::Rect &bbox, int color,
 									void (*plotProc)(int, int, int, void *), void *data);
 	void drawEllipse(int x0, int y0, int x1, int y1, bool filled, void (*plotProc)(int, int, int, void *), void *data);

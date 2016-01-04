@@ -273,20 +273,17 @@ void Design::drawRoundRect(Graphics::Surface *surface, Common::ReadStream &in, b
 	plotData pd(surface, &patterns, borderFillType, 1);
 
 	if (mask) {
-		drawFilledRoundRect(outer, arc, kColorBlack, drawPixelPlain, &pd);
+		drawRoundRect(outer, arc, kColorBlack, true, drawPixelPlain, &pd);
 		return;
 	}
 	Common::Rect inner(x1 + borderThickness, y1 + borderThickness, x2 - borderThickness, y2 - borderThickness);
 
-	drawFilledRoundRect(outer, arc/2, kColorBlack, drawPixel, &pd);
+	drawRoundRect(outer, arc/2, kColorBlack, true, drawPixel, &pd);
 
 	pd.fillType = fillType;
+	pd.thickness = borderThickness;
 
-	if (fillType > patterns.size()) {
-		warning("Transparent roundrect, border: %d", borderThickness);
-	}
-
-	drawFilledRoundRect(inner, arc/2, kColorBlack, drawPixel, &pd);
+	drawRoundRect(inner, arc/2, kColorBlack, false, drawPixel, &pd);
 }
 
 void Design::drawPolygon(Graphics::Surface *surface, Common::ReadStream &in, bool mask,
@@ -468,11 +465,11 @@ void Design::drawFilledRect(Common::Rect &rect, int color, void (*plotProc)(int,
 void Design::drawFilledRoundRect(Graphics::Surface *surface, Common::Rect &rect, int arc, int color, Patterns &patterns, byte fillType) {
 	plotData pd(surface, &patterns, fillType, 1);
 
-	drawFilledRoundRect(rect, arc, color, drawPixel, &pd);
+	drawRoundRect(rect, arc, color, true, drawPixel, &pd);
 }
 
 // http://members.chello.at/easyfilter/bresenham.html
-void Design::drawFilledRoundRect(Common::Rect &rect, int arc, int color, void (*plotProc)(int, int, int, void *), void *data) {
+void Design::drawRoundRect(Common::Rect &rect, int arc, int color, bool filled, void (*plotProc)(int, int, int, void *), void *data) {
 	if (rect.height() < rect.width()) {
 		int x = -arc, y = 0, err = 2-2*arc; /* II. Quadrant */
 		int dy = rect.height() - arc * 2;
@@ -482,8 +479,15 @@ void Design::drawFilledRoundRect(Common::Rect &rect, int arc, int color, void (*
 			stop = -dy / 2;
 
 		do {
-			drawHLine(rect.left+x+r, rect.right-x-r, rect.top-y+r-stop, color, plotProc, data);
-			drawHLine(rect.left+x+r, rect.right-x-r, rect.bottom+y-r+stop, color, plotProc, data);
+			if (filled) {
+				drawHLine(rect.left+x+r, rect.right-x-r, rect.top-y+r-stop, color, plotProc, data);
+				drawHLine(rect.left+x+r, rect.right-x-r, rect.bottom+y-r+stop, color, plotProc, data);
+			} else {
+				(*plotProc)(rect.left+x+r, rect.top-y+r-stop, color, data);
+				(*plotProc)(rect.right-x-r, rect.top-y+r-stop, color, data);
+				(*plotProc)(rect.left+x+r, rect.bottom+y-r+stop, color, data);
+				(*plotProc)(rect.right-x-r, rect.bottom+y-r+stop, color, data);
+			}
 			arc = err;
 			if (arc <= y) err += ++y*2+1;           /* e_xy+e_y < 0 */
 			if (arc > x || err > y) err += ++x*2+1; /* e_xy+e_x > 0 or no 2nd y-step */
@@ -491,8 +495,14 @@ void Design::drawFilledRoundRect(Common::Rect &rect, int arc, int color, void (*
 				break;
 		} while (x < 0);
 
-		for (int i = 0; i < dy; i++)
-			drawHLine(rect.left, rect.right, rect.top + r + i, color, plotProc, data);
+		for (int i = 0; i < dy; i++) {
+			if (filled) {
+				drawHLine(rect.left, rect.right, rect.top + r + i, color, plotProc, data);
+			} else {
+				(*plotProc)(rect.left, rect.top + r + i, color, data);
+				(*plotProc)(rect.right, rect.top + r + i, color, data);
+			}
+		}
 	} else {
 		int y = -arc, x = 0, err = 2-2*arc; /* II. Quadrant */
 		int dx = rect.width() - arc * 2;
@@ -502,8 +512,15 @@ void Design::drawFilledRoundRect(Common::Rect &rect, int arc, int color, void (*
 			stop = -dx / 2;
 
 		do {
-			drawVLine(rect.left-x+r-stop, rect.top+y+r, rect.bottom-y-r, color, plotProc, data);
-			drawVLine(rect.right+x-r+stop, rect.top+y+r, rect.bottom-y-r, color, plotProc, data);
+			if (filled) {
+				drawVLine(rect.left-x+r-stop, rect.top+y+r, rect.bottom-y-r, color, plotProc, data);
+				drawVLine(rect.right+x-r+stop, rect.top+y+r, rect.bottom-y-r, color, plotProc, data);
+			} else {
+				(*plotProc)(rect.left-x+r-stop, rect.top+y+r, color, data);
+				(*plotProc)(rect.left-x+r-stop, rect.bottom-y-r, color, data);
+				(*plotProc)(rect.right+x-r+stop, rect.top+y+r, color, data);
+				(*plotProc)(rect.right+x-r+stop, rect.bottom-y-r, color, data);
+			}
 
 			arc = err;
 			if (arc <= x) err += ++x*2+1;           /* e_xy+e_y < 0 */
@@ -512,8 +529,14 @@ void Design::drawFilledRoundRect(Common::Rect &rect, int arc, int color, void (*
 				break;
 		} while (y < 0);
 
-		for (int i = 0; i < dx; i++)
-			drawVLine(rect.left + r + i, rect.top, rect.bottom, color, plotProc, data);
+		for (int i = 0; i < dx; i++) {
+			if (filled) {
+				drawVLine(rect.left + r + i, rect.top, rect.bottom, color, plotProc, data);
+			} else {
+				(*plotProc)(rect.left + r + i, rect.top, color, data);
+				(*plotProc)(rect.left + r + i, rect.bottom, color, data);
+			}
+		}
 	}
 }
 
