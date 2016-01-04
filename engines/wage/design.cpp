@@ -78,7 +78,7 @@ Design::~Design() {
 	delete _surface;
 }
 
-void Design::paint(Graphics::Surface *surface, Patterns &patterns, bool mask, int x, int y) {
+void Design::paint(Graphics::Surface *surface, Patterns &patterns, int x, int y) {
 	Common::MemoryReadStream in(_data, _len);
 	Common::Rect r(0, 0, _bounds->width(), _bounds->height());
 	bool needRender = false;
@@ -89,10 +89,6 @@ void Design::paint(Graphics::Surface *surface, Patterns &patterns, bool mask, in
 		_surface->fillRect(r, kColorGreen);
 
 		needRender = true;
-	}
-
-	if (mask) {
-		_surface->fillRect(r, kColorWhite);
 	}
 
 #if 0
@@ -129,20 +125,20 @@ void Design::paint(Graphics::Surface *surface, Patterns &patterns, bool mask, in
 		debug(8, "fill: %d borderFill: %d border: %d type: %d", fillType, borderFillType, borderThickness, type);
 		switch (type) {
 		case 4:
-			drawRect(_surface, in, mask, patterns, fillType, borderThickness, borderFillType);
+			drawRect(_surface, in, patterns, fillType, borderThickness, borderFillType);
 			break;
 		case 8:
-			drawRoundRect(_surface, in, mask, patterns, fillType, borderThickness, borderFillType);
+			drawRoundRect(_surface, in, patterns, fillType, borderThickness, borderFillType);
 			break;
 		case 12:
-			drawOval(_surface, in, mask, patterns, fillType, borderThickness, borderFillType);
+			drawOval(_surface, in, patterns, fillType, borderThickness, borderFillType);
 			break;
 		case 16:
 		case 20:
-			drawPolygon(_surface, in, mask, patterns, fillType, borderThickness, borderFillType);
+			drawPolygon(_surface, in, patterns, fillType, borderThickness, borderFillType);
 			break;
 		case 24:
-			drawBitmap(_surface, in, mask);
+			drawBitmap(_surface, in);
 			break;
 		default:
 			warning("Unknown type => %d", type);
@@ -211,7 +207,7 @@ void drawPixelPlain(int x, int y, int color, void *data) {
 		*((byte *)p->surface->getBasePtr(x, y)) = (byte)color;
 }
 
-void Design::drawRect(Graphics::Surface *surface, Common::ReadStream &in, bool mask,
+void Design::drawRect(Graphics::Surface *surface, Common::ReadStream &in,
 				Patterns &patterns, byte fillType, byte borderThickness, byte borderFillType) {
 	int16 y1 = in.readSint16BE();
 	int16 x1 = in.readSint16BE();
@@ -223,18 +219,11 @@ void Design::drawRect(Graphics::Surface *surface, Common::ReadStream &in, bool m
 	if (y1 > y2)
 		SWAP(y1, y2);
 
-	Common::Rect outer(x1, y1, x2, y2);
-
+	Common::Rect r(x1, y1, x2, y2);
 	plotData pd(surface, &patterns, fillType, 1);
 
-	if (mask) {
-		drawFilledRect(outer, kColorBlack, drawPixelPlain, &pd);
-		return;
-	}
-	Common::Rect inner(x1 + borderThickness, y1 + borderThickness, x2 - borderThickness, y2 - borderThickness);
-
 	if (fillType <= patterns.size())
-		drawFilledRect(outer, kColorBlack, drawPixel, &pd);
+		drawFilledRect(r, kColorBlack, drawPixel, &pd);
 
 	pd.fillType = borderFillType;
 	pd.thickness = borderThickness;
@@ -247,7 +236,7 @@ void Design::drawRect(Graphics::Surface *surface, Common::ReadStream &in, bool m
 	}
 }
 
-void Design::drawRoundRect(Graphics::Surface *surface, Common::ReadStream &in, bool mask,
+void Design::drawRoundRect(Graphics::Surface *surface, Common::ReadStream &in,
 				Patterns &patterns, byte fillType, byte borderThickness, byte borderFillType) {
 	int16 y1 = in.readSint16BE();
 	int16 x1 = in.readSint16BE();
@@ -260,26 +249,20 @@ void Design::drawRoundRect(Graphics::Surface *surface, Common::ReadStream &in, b
 	if (y1 > y2)
 		SWAP(y1, y2);
 
-	Common::Rect outer(x1, y1, x2, y2);
-
+	Common::Rect r(x1, y1, x2, y2);
 	plotData pd(surface, &patterns, fillType, 1);
 
-	if (mask) {
-		drawRoundRect(outer, arc, kColorBlack, true, drawPixelPlain, &pd);
-		return;
-	}
-
 	if (fillType <= patterns.size())
-		drawRoundRect(outer, arc/2, kColorBlack, true, drawPixel, &pd);
+		drawRoundRect(r, arc/2, kColorBlack, true, drawPixel, &pd);
 
 	pd.fillType = borderFillType;
 	pd.thickness = borderThickness;
 
 	if (borderThickness > 0 && borderFillType <= patterns.size())
-		drawRoundRect(outer, arc/2, kColorBlack, false, drawPixel, &pd);
+		drawRoundRect(r, arc/2, kColorBlack, false, drawPixel, &pd);
 }
 
-void Design::drawPolygon(Graphics::Surface *surface, Common::ReadStream &in, bool mask,
+void Design::drawPolygon(Graphics::Surface *surface, Common::ReadStream &in,
 	Patterns &patterns, byte fillType, byte borderThickness, byte borderFillType) {
 
 	byte ignored = in.readSint16BE(); // ignored
@@ -339,11 +322,6 @@ void Design::drawPolygon(Graphics::Surface *surface, Common::ReadStream &in, boo
 
 	plotData pd(surface, &patterns, fillType, 1);
 
-	if (mask) {
-		drawPolygonScan(xpoints, ypoints, npoints, bbox, kColorBlack, drawPixelPlain, &pd);
-		return;
-	}
-
 	if (fillType <= patterns.size()) {
 		drawPolygonScan(xpoints, ypoints, npoints, bbox, kColorBlack, drawPixel, &pd);
 	}
@@ -359,19 +337,13 @@ void Design::drawPolygon(Graphics::Surface *surface, Common::ReadStream &in, boo
 	free(ypoints);
 }
 
-void Design::drawOval(Graphics::Surface *surface, Common::ReadStream &in, bool mask,
+void Design::drawOval(Graphics::Surface *surface, Common::ReadStream &in,
 			Patterns &patterns, byte fillType, byte borderThickness, byte borderFillType) {
 	int16 y1 = in.readSint16BE();
 	int16 x1 = in.readSint16BE();
 	int16 y2 = in.readSint16BE();
 	int16 x2 = in.readSint16BE();
-
 	plotData pd(surface, &patterns, fillType, 1);
-
-	if (mask) {
-		drawEllipse(x1, y1, x2, y2, true, drawPixelPlain, &pd);
-		return;
-	}
 
 	if (fillType <= patterns.size())
 		drawEllipse(x1, y1, x2-1, y2-1, true, drawPixel, &pd);
@@ -383,7 +355,7 @@ void Design::drawOval(Graphics::Surface *surface, Common::ReadStream &in, bool m
 		drawEllipse(x1, y1, x2-1, y2-1, false, drawPixel, &pd);
 }
 
-void Design::drawBitmap(Graphics::Surface *surface, Common::ReadStream &in, bool mask) {
+void Design::drawBitmap(Graphics::Surface *surface, Common::ReadStream &in) {
 	int numBytes = in.readSint16BE();
 	int y1 = in.readSint16BE();
 	int x1 = in.readSint16BE();

@@ -126,16 +126,16 @@ void Scene::paint(Graphics::Surface *surface, int x, int y) {
 	Common::Rect r(x + 5, y + 5, _design->getBounds()->width() + x - 10, _design->getBounds()->height() + y - 10);
 	surface->fillRect(r, kColorWhite);
 
-	_design->paint(surface, ((WageEngine *)g_engine)->_world->_patterns, false, x, y);
+	_design->paint(surface, ((WageEngine *)g_engine)->_world->_patterns, x, y);
 
 	for (Common::List<Obj *>::const_iterator it = _objs.begin(); it != _objs.end(); ++it) {
 		debug(2, "paining Obj: %s", (*it)->_name.c_str());
-		(*it)->_design->paint(surface, ((WageEngine *)g_engine)->_world->_patterns, false, x, y);
+		(*it)->_design->paint(surface, ((WageEngine *)g_engine)->_world->_patterns, x, y);
 	}
 
 	for (Common::List<Chr *>::const_iterator it = _chrs.begin(); it != _chrs.end(); ++it) {
 		debug(2, "paining Chr: %s", (*it)->_name.c_str());
-		(*it)->_design->paint(surface, ((WageEngine *)g_engine)->_world->_patterns, false, x, y);
+		(*it)->_design->paint(surface, ((WageEngine *)g_engine)->_world->_patterns, x, y);
 	}
 }
 

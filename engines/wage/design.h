@@ -67,7 +67,7 @@ public:
 		return _bounds;
 	}
 
-    void paint(Graphics::Surface *canvas, Patterns &patterns, bool mask, int x, int y);
+    void paint(Graphics::Surface *canvas, Patterns &patterns, int x, int y);
 	bool isPointOpaque(int x, int y);
 	static void drawFilledRect(Graphics::Surface *surface, Common::Rect &rect, int color, Patterns &patterns, byte fillType);
 	static void drawFilledRoundRect(Graphics::Surface *surface, Common::Rect &rect, int arc, int color, Patterns &patterns, byte fillType);
@@ -79,15 +79,15 @@ private:
 	Graphics::Surface *_surface;
 
 private:
-    void drawRect(Graphics::Surface *surface, Common::ReadStream &in, bool mask,
+    void drawRect(Graphics::Surface *surface, Common::ReadStream &in,
         Patterns &patterns, byte fillType, byte borderThickness, byte borderFillType);
-	void drawRoundRect(Graphics::Surface *surface, Common::ReadStream &in, bool mask,
+	void drawRoundRect(Graphics::Surface *surface, Common::ReadStream &in,
         Patterns &patterns, byte fillType, byte borderThickness, byte borderFillType);
-	void drawPolygon(Graphics::Surface *surface, Common::ReadStream &in, bool mask,
+	void drawPolygon(Graphics::Surface *surface, Common::ReadStream &in,
         Patterns &patterns, byte fillType, byte borderThickness, byte borderFillType);
-	void drawOval(Graphics::Surface *surface, Common::ReadStream &in, bool mask,
+	void drawOval(Graphics::Surface *surface, Common::ReadStream &in,
 		Patterns &patterns, byte fillType, byte borderThickness, byte borderFillType);
-	void drawBitmap(Graphics::Surface *surface, Common::ReadStream &in, bool mask);
+	void drawBitmap(Graphics::Surface *surface, Common::ReadStream &in);
 
 	void drawFilledRect(Common::Rect &rect, int color, void (*plotProc)(int, int, int, void *), void *data);
 	static void drawRoundRect(Common::Rect &rect, int arc, int color, bool filled, void (*plotProc)(int, int, int, void *), void *data);
