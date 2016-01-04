@@ -21,6 +21,7 @@
  */
 
 #include "common/config-manager.h"
+#include "graphics/renderer.h"
 
 #include "engines/grim/debugger.h"
 #include "engines/grim/md5check.h"
@@ -34,7 +35,7 @@ Debugger::Debugger() :
 	registerCmd("check_gamedata", WRAP_METHOD(Debugger, cmd_checkFiles));
 	registerCmd("lua_do", WRAP_METHOD(Debugger, cmd_lua_do));
 	registerCmd("jump", WRAP_METHOD(Debugger, cmd_jump));
-	registerCmd("swap_renderer", WRAP_METHOD(Debugger, cmd_swap_renderer));
+	registerCmd("set_renderer", WRAP_METHOD(Debugger, cmd_set_renderer));
 	registerCmd("save", WRAP_METHOD(Debugger, cmd_save));
 	registerCmd("load", WRAP_METHOD(Debugger, cmd_load));
 }
@@ -88,11 +89,22 @@ bool Debugger::cmd_jump(int argc, const char **argv) {
 	return true;
 }
 
-bool Debugger::cmd_swap_renderer(int argc, const char **argv) {
-	bool accel = ConfMan.getBool("soft_renderer");
-	ConfMan.setBool("soft_renderer", !accel);
+bool Debugger::cmd_set_renderer(int argc, const char **argv) {
+	if (argc < 2) {
+		debugPrintf("Usage: set_renderer <renderer>\n");
+		debugPrintf("Where <renderer> is 'software', 'opengl' or 'opengl_shaders'\n");
+		return true;
+	}
+
+	Graphics::RendererType renderer = Graphics::parseRendererTypeCode(argv[1]);
+	if (renderer == Graphics::kRendererTypeDefault) {
+		debugPrintf("Invalid renderer '%s'\n", argv[1]);
+		return true;
+	}
+
+	ConfMan.set("renderer", Graphics::getRendererTypeCode(renderer));
 	g_grim->changeHardwareState();
-	return true;
+	return false;
 }
 
 bool Debugger::cmd_save(int argc, const char **argv) {

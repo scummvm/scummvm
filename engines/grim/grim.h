@@ -47,6 +47,7 @@ class TextObject;
 class PrimitiveObject;
 class Debugger;
 class LuaBase;
+class GfxBase;
 
 enum GrimGameType {
 	GType_GRIM,
@@ -197,7 +198,7 @@ protected:
 	void cameraPostChangeHandle(int num);
 	void buildActiveActorsList();
 	void savegameCallback();
-	void createRenderer();
+	GfxBase *createRenderer();
 	void playAspyrLogo();
 	virtual LuaBase *createLua();
 	virtual void updateNormalMode();

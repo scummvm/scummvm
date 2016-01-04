@@ -34,6 +34,7 @@
 #include "common/translation.h"
 
 #include "graphics/pixelbuffer.h"
+#include "graphics/renderer.h"
 
 #include "gui/error.h"
 #include "gui/gui-manager.h"
@@ -99,7 +100,6 @@ GrimEngine::GrimEngine(OSystem *syst, uint32 gameFlags, GrimGameType gameType, C
 	g_imuse = nullptr;
 
 	//Set default settings
-	ConfMan.registerDefault("soft_renderer", false);
 	ConfMan.registerDefault("engine_speed", 60);
 	ConfMan.registerDefault("fullscreen", false);
 	ConfMan.registerDefault("show_fps", false);
@@ -228,23 +228,33 @@ LuaBase *GrimEngine::createLua() {
 	return new Lua_V1();
 }
 
-void GrimEngine::createRenderer() {
-#ifdef USE_OPENGL
-	_softRenderer = ConfMan.getBool("soft_renderer");
-#endif
+GfxBase *GrimEngine::createRenderer() {
+	Common::String rendererConfig = ConfMan.get("renderer");
+	Graphics::RendererType desiredRendererType = Graphics::parseRendererTypeCode(rendererConfig);
+	Graphics::RendererType matchingRendererType = Graphics::getBestMatchingAvailableRendererType(desiredRendererType);
 
-	if (!_softRenderer && !g_system->hasFeature(OSystem::kFeatureOpenGL)) {
-		warning("gfx backend doesn't support hardware rendering");
-		_softRenderer = true;
+	if (matchingRendererType != desiredRendererType && desiredRendererType != Graphics::kRendererTypeDefault) {
+		// Display a warning if unable to use the desired renderer
+		warning("Unable to create a '%s' renderer", rendererConfig.c_str());
 	}
 
-	if (_softRenderer) {
-		g_driver = CreateGfxTinyGL();
-#ifdef USE_OPENGL
-	} else {
-		g_driver = CreateGfxOpenGL();
-#endif
+	_softRenderer = matchingRendererType == Graphics::kRendererTypeTinyGL;
+
+#if defined(USE_GLES2) || defined(USE_OPENGL_SHADERS)
+	if (matchingRendererType == Graphics::kRendererTypeOpenGLShaders) {
+		return CreateGfxOpenGLShader();
 	}
+#endif
+#if defined(USE_OPENGL) && !defined(USE_GLES2)
+	if (matchingRendererType == Graphics::kRendererTypeOpenGL) {
+		return CreateGfxOpenGL();
+	}
+#endif
+	if (matchingRendererType == Graphics::kRendererTypeTinyGL) {
+		return CreateGfxTinyGL();
+	}
+
+	error("Unable to create a '%s' renderer", rendererConfig.c_str());
 }
 
 const char *GrimEngine::getUpdateFilename() {
@@ -317,7 +327,7 @@ Common::Error GrimEngine::run() {
 	g_sound = new SoundPlayer();
 
 	bool fullscreen = ConfMan.getBool("fullscreen");
-	createRenderer();
+	g_driver = createRenderer();
 	g_driver->setupScreen(640, 480, fullscreen);
 	g_driver->loadEmergFont();
 
@@ -767,7 +777,7 @@ void GrimEngine::mainLoop() {
 			clearPools();
 
 			delete g_driver;
-			createRenderer();
+			g_driver = createRenderer();
 			g_driver->setupScreen(screenWidth, screenHeight, fullscreen);
 			savegameRestore();
 

@@ -28,6 +28,9 @@
 
 #include "engines/myst3/gfx.h"
 
+#include "common/config-manager.h"
+
+#include "graphics/renderer.h"
 #include "graphics/surface.h"
 
 #include "math/glmath.h"
@@ -206,6 +209,33 @@ void BaseRenderer::flipVertical(Graphics::Surface *s) {
 		for (int x = 0; x < s->pitch; ++x)
 			SWAP(line1P[x], line2P[x]);
 	}
+}
+
+Renderer *createRenderer(OSystem *system) {
+	Common::String rendererConfig = ConfMan.get("renderer");
+	Graphics::RendererType desiredRendererType = Graphics::parseRendererTypeCode(rendererConfig);
+	Graphics::RendererType matchingRendererType = Graphics::getBestMatchingAvailableRendererType(desiredRendererType);
+
+	if (matchingRendererType != desiredRendererType && desiredRendererType != Graphics::kRendererTypeDefault) {
+		// Display a warning if unable to use the desired renderer
+		warning("Unable to create a '%s' renderer", rendererConfig.c_str());
+	}
+
+#if defined(USE_GLES2) || defined(USE_OPENGL_SHADERS)
+	if (matchingRendererType == Graphics::kRendererTypeOpenGLShaders) {
+		return CreateGfxOpenGLShader(system);
+	}
+#endif
+#if defined(USE_OPENGL) && !defined(USE_GLES2)
+	if (matchingRendererType == Graphics::kRendererTypeOpenGL) {
+		return CreateGfxOpenGL(system);
+	}
+#endif
+	if (matchingRendererType == Graphics::kRendererTypeTinyGL) {
+		return CreateGfxTinyGL(system);
+	}
+
+	error("Unable to create a '%s' renderer", rendererConfig.c_str());
 }
 
 } // End of namespace Myst3

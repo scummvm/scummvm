@@ -205,7 +205,7 @@ Math::Matrix4 makeFrustumMatrix(double left, double right, double bottom, double
 	return proj;
 }
 
-GfxBase *CreateGfxOpenGL() {
+GfxBase *CreateGfxOpenGLShader() {
 	return new GfxOpenGLS();
 }
 

@@ -30,7 +30,7 @@
 #include "common/system.h"
 #include "common/config-manager.h"
 
-#if defined(USE_OPENGL) && !defined(USE_OPENGL_SHADERS)
+#if defined(USE_OPENGL) && !defined(USE_GLES2)
 
 #include "graphics/surface.h"
 #include "graphics/pixelbuffer.h"

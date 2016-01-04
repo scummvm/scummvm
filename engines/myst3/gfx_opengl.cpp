@@ -30,7 +30,7 @@
 #include "common/rect.h"
 #include "common/textconsole.h"
 
-#if defined(USE_OPENGL) && !defined(USE_GLES2) && !defined(USE_OPENGL_SHADERS)
+#if defined(USE_OPENGL) && !defined(USE_GLES2)
 
 #include "graphics/colormasks.h"
 #include "graphics/pixelbuffer.h"

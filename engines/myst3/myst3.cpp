@@ -52,6 +52,7 @@
 #include "image/jpeg.h"
 
 #include "graphics/conversion.h"
+#include "graphics/renderer.h"
 #include "graphics/yuv_to_rgb.h"
 
 #include "math/vector2d.h"
@@ -136,7 +137,10 @@ Myst3Engine::~Myst3Engine() {
 
 bool Myst3Engine::hasFeature(EngineFeature f) const {
 	// The TinyGL renderer does not support arbitrary resolutions for now
-	bool softRenderer = ConfMan.getBool("soft_renderer");
+	Common::String rendererConfig = ConfMan.get("renderer");
+	Graphics::RendererType desiredRendererType = Graphics::parseRendererTypeCode(rendererConfig);
+	Graphics::RendererType matchingRendererType = Graphics::getBestMatchingAvailableRendererType(desiredRendererType);
+	bool softRenderer = matchingRendererType == Graphics::kRendererTypeTinyGL;
 
 	return
 		(f == kSupportsRTL) ||
@@ -150,19 +154,7 @@ Common::Error Myst3Engine::run() {
 		return Common::kUserCanceled;
 	}
 
-	bool softRenderer = ConfMan.getBool("soft_renderer");
-
-	if (softRenderer) {
-		_gfx = CreateGfxTinyGL(_system);
-	} else {
-#if defined(USE_GLES2) || defined(USE_OPENGL_SHADERS)
-		_gfx = CreateGfxOpenGLShader(_system);
-#elif defined(USE_OPENGL)
-		_gfx = CreateGfxOpenGL(_system);
-#else
-		_gfx = CreateGfxTinyGL(_system);
-#endif
-	}
+	_gfx = createRenderer(_system);
 	_sound = new Sound(this);
 	_ambient = new Ambient(this);
 	_rnd = new Common::RandomSource("sprint");

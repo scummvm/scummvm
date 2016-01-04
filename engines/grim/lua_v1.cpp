@@ -26,6 +26,7 @@
 #include "common/config-manager.h"
 
 #include "graphics/pixelbuffer.h"
+#include "graphics/renderer.h"
 #include "graphics/colormasks.h"
 
 #include "math/matrix3.h"
@@ -289,7 +290,11 @@ void Lua_V1::Is3DHardwareEnabled() {
 void Lua_V1::SetHardwareState() {
 	// changing only in config setup (software/hardware rendering)
 	bool accel = getbool(1);
-	ConfMan.setBool("soft_renderer", !accel);
+
+	Graphics::RendererType renderer = accel ? Graphics::kRendererTypeOpenGL : Graphics::kRendererTypeTinyGL;
+	renderer = Graphics::getBestMatchingAvailableRendererType(renderer);
+	ConfMan.set("renderer", Graphics::getRendererTypeCode(renderer));
+
 	g_grim->changeHardwareState();
 }
 

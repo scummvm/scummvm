@@ -144,6 +144,7 @@ protected:
 Renderer *CreateGfxOpenGL(OSystem *system);
 Renderer *CreateGfxOpenGLShader(OSystem *system);
 Renderer *CreateGfxTinyGL(OSystem *system);
+Renderer *createRenderer(OSystem *system);
 
 } // End of namespace Myst3
 

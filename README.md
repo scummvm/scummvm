@@ -298,7 +298,7 @@ Command       | Description
 jump          | Jump to a section of the game
 lua_do        | Execute a lua command
 openlog       | Show the log of errors/warnings/information from the engine
-swap_renderer | Swap between the software and OpenGL renderers
+set_renderer  | Select a renderer (software, OpenGL or OpenGL with shaders)
 
 The `jump` targets can be found at:
   * http://wiki.residualvm.org/index.php/Grim_Fandango_Debug_Mode#jump_targets

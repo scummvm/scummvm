@@ -14,6 +14,7 @@ MODULE_OBJS := \
 	maccursor.o \
 	pixelformat.o \
 	primitives.o \
+	renderer.o \
 	sjis.o \
 	surface.o \
 	transform_struct.o \
