@@ -433,9 +433,9 @@ void Gui::flowText(String &str) {
 	_cursorX = kConHPadding;
 
 	if (_scrollPos)
-		_cursorY = (_consoleNumLines + 1) * _consoleLineHeight;
+		_cursorY = (_consoleNumLines + 1) * _consoleLineHeight + kConHPadding;
 	else
-		_cursorY = (_lines.size()) * _consoleLineHeight;
+		_cursorY = (_lines.size()) * _consoleLineHeight + kConHPadding;
 
 	if (pos != _scrollPos)
 		_consoleFullRedraw = true;
@@ -488,7 +488,7 @@ void Gui::renderConsole(Graphics::Surface *g, Common::Rect &r) {
 	int y1 = yOff - (_scrollPos % _consoleLineHeight) + kConHPadding;
 
 	if (fullRedraw)
-		_consoleNumLines = r.height() / _consoleLineHeight - 2;
+		_consoleNumLines = (r.height() - 2 * kConWPadding) / _consoleLineHeight - 2;
 
 	for (int line = firstLine; line < lastLine; line++) {
 		const char *str = _lines[line].c_str();
@@ -509,7 +509,7 @@ void Gui::drawInput() {
 
 	const Graphics::Font *font = getConsoleFont();
 
-	int x = kConHPadding + _consoleTextArea.left;
+	int x = kConWPadding + _consoleTextArea.left;
 	int y = _cursorY + _consoleTextArea.top;
 	Common::String text(_engine->_inputText);
 	int textW = font->getStringWidth(text);
