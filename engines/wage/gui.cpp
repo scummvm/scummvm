@@ -60,9 +60,9 @@
 namespace Wage {
 
 enum {
-	kMenuHeight = 19,
+	kMenuHeight = 20,
 	kMenuPadding = 6,
-	kMenuItemHeight = 19,
+	kMenuItemHeight = 20,
 	kBorderWidth = 17,
 	kDesktopArc = 7,
 	kComponentsPadding = 10,
@@ -603,7 +603,7 @@ void Gui::renderMenu() {
 	Design::drawFilledRect(&_screen, r, kColorBlack, p, 1);
 
 	const Graphics::Font *font = getMenuFont();
-	int y = _builtInFonts ? 3 : 1;
+	int y = _builtInFonts ? 3 : 2;
 	int x = 18;
 
 	for (int i = 0; menuItems[i]; i++) {
