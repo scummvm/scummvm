@@ -46,6 +46,7 @@
  */
 
 #include "common/system.h"
+#include "graphics/primitives.h"
 #include "wage/wage.h"
 #include "wage/design.h"
 
@@ -55,9 +56,10 @@ struct plotData {
 	Graphics::Surface *surface;
 	Patterns *patterns;
 	int fillType;
+	int thickness;
 
-	plotData(Graphics::Surface *s, Patterns *p, int f) :
-		surface(s), patterns(p), fillType(f) {}
+	plotData(Graphics::Surface *s, Patterns *p, int f, int t) :
+		surface(s), patterns(p), fillType(f), thickness(t) {}
 };
 
 void drawPixel(int x, int y, int color, void *data);
@@ -186,10 +188,24 @@ void drawPixel(int x, int y, int color, void *data) {
 
 	byte *pat = p->patterns->operator[](p->fillType - 1);
 
-	if (x >= 0 && x < p->surface->w && y >= 0 && y < p->surface->h) {
-		*((byte *)p->surface->getBasePtr(x, y)) =
-			(pat[y % 8] & (1 << (7 - x % 8))) ?
-				color : kColorWhite;
+	if (p->thickness == 1) {
+		if (x >= 0 && x < p->surface->w && y >= 0 && y < p->surface->h) {
+			*((byte *)p->surface->getBasePtr(x, y)) =
+				(pat[y % 8] & (1 << (7 - x % 8))) ?
+					color : kColorWhite;
+		}
+	} else {
+		int x1 = x - p->thickness / 2;
+		int x2 = x1 + p->thickness;
+		int y1 = y - p->thickness / 2;
+		int y2 = y1 + p->thickness;
+
+		for (y = y1; y < y2; y++)
+			for (x = x1; x < x2; x++)
+				if (x >= 0 && x < p->surface->w && y >= 0 && y < p->surface->h)
+					*((byte *)p->surface->getBasePtr(x, y)) =
+						(pat[y % 8] & (1 << (7 - x % 8))) ?
+							color : kColorWhite;
 	}
 }
 
@@ -214,7 +230,7 @@ void Design::drawRect(Graphics::Surface *surface, Common::ReadStream &in, bool m
 
 	Common::Rect outer(x1, y1, x2, y2);
 
-	plotData pd(surface, &patterns, borderFillType);
+	plotData pd(surface, &patterns, fillType, 1);
 
 	if (mask) {
 		drawFilledRect(outer, kColorBlack, drawPixelPlain, &pd);
@@ -223,16 +239,19 @@ void Design::drawRect(Graphics::Surface *surface, Common::ReadStream &in, bool m
 	Common::Rect inner(x1 + borderThickness, y1 + borderThickness, x2 - borderThickness, y2 - borderThickness);
 
 	if (fillType <= patterns.size()) {
-		drawFilledRect(outer, kColorBlack, drawPixel, &pd);
-
 		pd.fillType = fillType;
+		pd.thickness = 1;
+		drawFilledRect(outer, kColorBlack, drawPixel, &pd);
+	}
 
-		drawFilledRect(inner, kColorBlack, drawPixel, &pd);
-	} else {
-		drawThickLine(x1, y1, x2-borderThickness, y1, borderThickness, kColorBlack, drawPixel, &pd);
-		drawThickLine(x2-borderThickness, y1, x2-borderThickness, y2, borderThickness, kColorBlack, drawPixel, &pd);
-		drawThickLine(x2-borderThickness, y2-borderThickness, x1, y2-borderThickness, borderThickness, kColorBlack, drawPixel, &pd);
-		drawThickLine(x1, y2-borderThickness, x1, y1, borderThickness, kColorBlack, drawPixel, &pd);
+	pd.fillType = borderFillType;
+	pd.thickness = borderThickness;
+
+	if (borderThickness > 0 && borderFillType <= patterns.size()) {
+		Graphics::drawLine(x1, y1, x2, y1, kColorBlack, drawPixel, &pd);
+		Graphics::drawLine(x2, y1, x2, y2, kColorBlack, drawPixel, &pd);
+		Graphics::drawLine(x2, y2, x1, y2, kColorBlack, drawPixel, &pd);
+		Graphics::drawLine(x1, y2, x1, y1, kColorBlack, drawPixel, &pd);
 	}
 }
 
@@ -251,7 +270,7 @@ void Design::drawRoundRect(Graphics::Surface *surface, Common::ReadStream &in, b
 
 	Common::Rect outer(x1, y1, x2, y2);
 
-	plotData pd(surface, &patterns, borderFillType);
+	plotData pd(surface, &patterns, borderFillType, 1);
 
 	if (mask) {
 		drawFilledRoundRect(outer, arc, kColorBlack, drawPixelPlain, &pd);
@@ -328,7 +347,7 @@ void Design::drawPolygon(Graphics::Surface *surface, Common::ReadStream &in, boo
 		ypoints[i] = ycoords[i];
 	}
 
-	plotData pd(surface, &patterns, fillType);
+	plotData pd(surface, &patterns, fillType, 1);
 
 	if (mask) {
 		drawPolygonScan(xpoints, ypoints, npoints, bbox, kColorBlack, drawPixelPlain, &pd);
@@ -340,9 +359,10 @@ void Design::drawPolygon(Graphics::Surface *surface, Common::ReadStream &in, boo
 	}
 
 	pd.fillType = borderFillType;
+	pd.thickness = borderThickness;
 	if (borderThickness > 0 && borderFillType <= patterns.size()) {
 		for (int i = 1; i < npoints; i++)
-			drawThickLine(xpoints[i-1], ypoints[i-1], xpoints[i], ypoints[i], borderThickness, kColorBlack, drawPixel, &pd);
+			Graphics::drawLine(xpoints[i-1], ypoints[i-1], xpoints[i], ypoints[i], kColorBlack, drawPixel, &pd);
 	}
 
 	free(xpoints);
@@ -356,26 +376,21 @@ void Design::drawOval(Graphics::Surface *surface, Common::ReadStream &in, bool m
 	int16 y2 = in.readSint16BE();
 	int16 x2 = in.readSint16BE();
 
-	plotData pd(surface, &patterns, borderFillType);
+	plotData pd(surface, &patterns, fillType, 1);
 
 	if (mask) {
 		drawEllipse(x1, y1, x2, y2, true, drawPixelPlain, &pd);
 		return;
 	}
 
-	if (borderThickness > 0 && borderFillType <= patterns.size()) {
-		if (borderThickness == 1) {
-			drawEllipse(x1, y1, x2-1, y2-1, false, drawPixel, &pd);
-		} else {
-			drawEllipse(x1, y1, x2-1, y2-1, true, drawPixel, &pd);
-			warning("Ellipse thickness >1: borderThickness");
-		}
-	}
+	if (fillType <= patterns.size())
+		drawEllipse(x1, y1, x2-1, y2-1, true, drawPixel, &pd);
 
-	if (fillType <= patterns.size()) {
-		pd.fillType = fillType;
-		drawEllipse(x1+borderThickness, y1+borderThickness, x2-1-2*borderThickness, y2-2*borderThickness, true, drawPixel, &pd);
-	}
+	pd.fillType = borderFillType;
+	pd.thickness = borderThickness;
+
+	if (borderThickness > 0 && borderFillType <= patterns.size())
+		drawEllipse(x1, y1, x2-1, y2-1, true, drawPixel, &pd);
 }
 
 void Design::drawBitmap(Graphics::Surface *surface, Common::ReadStream &in, bool mask) {
@@ -439,7 +454,7 @@ void Design::drawBitmap(Graphics::Surface *surface, Common::ReadStream &in, bool
 }
 
 void Design::drawFilledRect(Graphics::Surface *surface, Common::Rect &rect, int color, Patterns &patterns, byte fillType) {
-	plotData pd(surface, &patterns, fillType);
+	plotData pd(surface, &patterns, fillType, 1);
 
 	for (int y = rect.top; y <= rect.bottom; y++)
 		drawHLine(rect.left, rect.right, y, color, drawPixel, &pd);
@@ -451,7 +466,7 @@ void Design::drawFilledRect(Common::Rect &rect, int color, void (*plotProc)(int,
 }
 
 void Design::drawFilledRoundRect(Graphics::Surface *surface, Common::Rect &rect, int arc, int color, Patterns &patterns, byte fillType) {
-	plotData pd(surface, &patterns, fillType);
+	plotData pd(surface, &patterns, fillType, 1);
 
 	drawFilledRoundRect(rect, arc, color, drawPixel, &pd);
 }
