@@ -48,7 +48,7 @@
 #define GL_DEPTH24_STENCIL8 GL_DEPTH24_STENCIL8_OES
 #endif
 
-namespace Graphics {
+namespace OpenGL {
 
 #if defined(SDL_BACKEND) && !defined(USE_GLEW)
 static bool framebuffer_object_functions = false;
@@ -102,10 +102,10 @@ static void grabFramebufferObjectPointers() {
 
 static bool usePackedBuffer() {
 #ifdef USE_GLES2
-	return Graphics::isExtensionSupported("GL_OES_packed_depth_stencil");
+	return isExtensionSupported("GL_OES_packed_depth_stencil");
 #endif
 #ifndef USE_OPENGL_SHADERS
-	return Graphics::isExtensionSupported("GL_EXT_packed_depth_stencil");
+	return isExtensionSupported("GL_EXT_packed_depth_stencil");
 #endif
 	return true;
 }
@@ -113,7 +113,7 @@ static bool usePackedBuffer() {
 FrameBuffer::FrameBuffer(uint width, uint height) :
 		Texture(width, height) {
 #ifdef SDL_BACKEND
-	if (!Graphics::isExtensionSupported("GL_EXT_framebuffer_object")) {
+	if (!isExtensionSupported("GL_EXT_framebuffer_object")) {
 		error("GL_EXT_framebuffer_object extension is not supported!");
 	}
 #endif
@@ -179,6 +179,6 @@ void FrameBuffer::detach() {
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-}
+} // End of namespace OpenGL
 
 #endif

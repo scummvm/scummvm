@@ -216,7 +216,7 @@ void OSystem_Android::initSurface() {
 	JNI::initSurface();
 
 	// Initialize OpenGLES context.
-	Graphics::initExtensions();
+	OpenGL::initExtensions();
 	logExtensions();
 	GLESTexture::initGL();
 
@@ -308,7 +308,7 @@ void OSystem_Android::initSize(uint width, uint height,
 	_game_texture->allocBuffer(width, height);
 #endif
 #ifdef USE_GLES2
-	_frame_buffer = new Graphics::FrameBuffer(_game_texture->getTextureName(), _game_texture->width(), _game_texture->height(), _game_texture->texWidth(), _game_texture->texHeight());
+	_frame_buffer = new OpenGL::FrameBuffer(_game_texture->getTextureName(), _game_texture->width(), _game_texture->height(), _game_texture->texWidth(), _game_texture->texHeight());
 	_frame_buffer->attach();
 #endif
 

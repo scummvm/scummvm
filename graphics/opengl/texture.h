@@ -27,11 +27,11 @@
 
 #include "graphics/surface.h"
 
-namespace Graphics {
+namespace OpenGL {
 
 class Texture {
 public:
-	Texture(const Surface &srf);
+	Texture(const Graphics::Surface &srf);
 	Texture(uint width, uint height);
 	Texture(GLuint texture_name, uint width, uint height, uint texture_width, uint texture_height);
 	~Texture();
@@ -49,6 +49,6 @@ protected:
 	uint _texWidth, _texHeight;
 };
 
-}
+} // End of namespace OpenGL
 
 #endif

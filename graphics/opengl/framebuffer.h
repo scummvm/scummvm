@@ -26,7 +26,7 @@
 #include "graphics/opengl/system_headers.h"
 #include "graphics/opengl/texture.h"
 
-namespace Graphics {
+namespace OpenGL {
 
 class FrameBuffer : public Texture {
 public:
@@ -50,6 +50,6 @@ private:
 	GLuint _frameBuffer;
 };
 
-}
+} // End of namespace OpenGL
 
 #endif

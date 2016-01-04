@@ -179,14 +179,14 @@ protected:
 	GLuint *_overlayTexIds;
 	GLenum _overlayScreenGLFormat;
 
-	Graphics::Texture *_sideTextures[2];
+	OpenGL::Texture *_sideTextures[2];
 
 	void updateOverlayTextures();
 	void drawOverlayOpenGL();
 	void drawSideTexturesOpenGL();
-	void drawTexture(const Graphics::Texture &tex, const Math::Vector2d &topLeft, const Math::Vector2d &bottomRight, bool flip = false);
+	void drawTexture(const OpenGL::Texture &tex, const Math::Vector2d &topLeft, const Math::Vector2d &bottomRight, bool flip = false);
 
-	Graphics::FrameBuffer *_frameBuffer;
+	OpenGL::FrameBuffer *_frameBuffer;
 
 #ifdef USE_OPENGL_SHADERS
 	Graphics::Shader *_boxShader;

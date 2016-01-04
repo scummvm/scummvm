@@ -234,8 +234,8 @@ Graphics::PixelBuffer SurfaceSdlGraphicsManager::setupScreen(uint screenW, uint 
 			SDL_putenv(const_cast<char *>("SDL_VIDEO_WINDOW_POS=9000,9000"));
 			SDL_SetVideoMode(32, 32, 0, SDL_OPENGL);
 			SDL_putenv(const_cast<char *>("SDL_VIDEO_WINDOW_POS=centered"));
-			Graphics::initExtensions();
-			framebufferSupported = Graphics::isExtensionSupported("GL_EXT_framebuffer_object");
+			OpenGL::initExtensions();
+			framebufferSupported = OpenGL::isExtensionSupported("GL_EXT_framebuffer_object");
 			if (_fullscreen && framebufferSupported) {
 				screenW = _desktopW;
 				screenH = _desktopH;
@@ -395,7 +395,7 @@ Graphics::PixelBuffer SurfaceSdlGraphicsManager::setupScreen(uint screenW, uint 
 		_boxShader->enableVertexAttribute("texcoord", _boxVerticesVBO, 2, GL_FLOAT, GL_TRUE, 2 * sizeof(float), 0);
 #endif
 
-		Graphics::initExtensions();
+		OpenGL::initExtensions();
 
 	}
 #endif
@@ -458,7 +458,7 @@ Graphics::PixelBuffer SurfaceSdlGraphicsManager::setupScreen(uint screenW, uint 
 			&& !g_engine->hasFeature(Engine::kSupportsArbitraryResolutions)
 			&& framebufferSupported) {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-		_frameBuffer = new Graphics::FrameBuffer(fbW, fbH);
+		_frameBuffer = new OpenGL::FrameBuffer(fbW, fbH);
 		_frameBuffer->attach();
 	}
 #endif
@@ -592,7 +592,7 @@ void SurfaceSdlGraphicsManager::drawSideTexturesOpenGL() {
 	}
 }
 
-void SurfaceSdlGraphicsManager::drawTexture(const Graphics::Texture &tex, const Math::Vector2d &topLeft, const Math::Vector2d &bottomRight, bool flip) {
+void SurfaceSdlGraphicsManager::drawTexture(const OpenGL::Texture &tex, const Math::Vector2d &topLeft, const Math::Vector2d &bottomRight, bool flip) {
 #ifndef USE_OPENGL_SHADERS
 	// Save current state
 	glPushAttrib(GL_TRANSFORM_BIT | GL_ENABLE_BIT | GL_DEPTH_BUFFER_BIT | GL_SCISSOR_BIT);
@@ -941,10 +941,10 @@ void SurfaceSdlGraphicsManager::setSideTextures(Graphics::Surface *left, Graphic
 		delete _sideTextures[1];
 		_sideTextures[1] = nullptr;
 		if (left) {
-			_sideTextures[0] = new Graphics::Texture(*left);
+			_sideTextures[0] = new OpenGL::Texture(*left);
 		}
 		if (right) {
-			_sideTextures[1] = new Graphics::Texture(*right);
+			_sideTextures[1] = new OpenGL::Texture(*right);
 		}
 	} else
 #endif

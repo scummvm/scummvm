@@ -29,7 +29,7 @@
 
 #ifdef USE_OPENGL
 
-namespace Graphics {
+namespace OpenGL {
 
 static Common::List<Common::String> g_extensions;
 
@@ -47,6 +47,6 @@ bool isExtensionSupported(const char *wanted) {
 	return g_extensions.end() != find(g_extensions.begin(), g_extensions.end(), wanted);
 }
 
-}
+} // End of namespace OpenGL
 
 #endif

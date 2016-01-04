@@ -129,7 +129,7 @@ Texture *ShaderRenderer::createTexture(const Graphics::Surface *surface) {
 	OpenGLTexture *texture = new OpenGLTexture(surface, true);
 
 #if defined(USE_GLES2)
-	texture->setUnpackSubImageSupport(Graphics::isExtensionSupported("GL_EXT_unpack_subimage"));
+	texture->setUnpackSubImageSupport(OpenGL::isExtensionSupported("GL_EXT_unpack_subimage"));
 #endif
 
 	return texture;

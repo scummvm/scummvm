@@ -115,7 +115,7 @@ private:
 	// Game layer
 	GLESBaseTexture *_game_texture;
 	Graphics::PixelBuffer _game_pbuf;
-	Graphics::FrameBuffer *_frame_buffer;
+	OpenGL::FrameBuffer *_frame_buffer;
 
 	Common::Rect _focus_rect;
 

@@ -28,7 +28,7 @@
 #include "graphics/opengl/extensions.h"
 
 
-namespace Graphics {
+namespace OpenGL {
 
 template<class T>
 static T nextHigher2(T k) {
@@ -50,9 +50,9 @@ static const Graphics::PixelFormat getRGBAPixelFormat() {
 #endif
 }
 
-Texture::Texture(const Surface &srf) :
+Texture::Texture(const Graphics::Surface &srf) :
 		_managedTexture(true), _width(srf.w), _height(srf.h) {
-	if (Graphics::isExtensionSupported("GL_ARB_texture_non_power_of_two")) {
+	if (isExtensionSupported("GL_ARB_texture_non_power_of_two")) {
 		_texWidth  = _width;
 		_texHeight = _height;
 	} else {
@@ -80,7 +80,7 @@ Texture::Texture(const Surface &srf) :
 
 Texture::Texture(uint width, uint height) :
 		_managedTexture(true), _width(width), _height(height) {
-	if (Graphics::isExtensionSupported("GL_ARB_texture_non_power_of_two")) {
+	if (isExtensionSupported("GL_ARB_texture_non_power_of_two")) {
 		_texWidth  = _width;
 		_texHeight = _height;
 	} else {
@@ -107,6 +107,6 @@ Texture::~Texture() {
 	}
 }
 
-}
+} // End of namespace OpenGL
 
 #endif

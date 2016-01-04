@@ -23,7 +23,7 @@
 #ifndef GRAPHICS_EXTENSIONS_H
 #define GRAPHICS_EXTENSIONS_H
 
-namespace Graphics {
+namespace OpenGL {
 
 void initExtensions();
 bool isExtensionSupported(const char *extension);

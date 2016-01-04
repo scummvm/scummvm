@@ -83,7 +83,7 @@ const GLfloat vertices[] = {
 };
 
 void GLESBaseTexture::initGL() {
-	npot_supported = Graphics::isExtensionSupported("GL_ARB_texture_non_power_of_two");
+	npot_supported = OpenGL::isExtensionSupported("GL_ARB_texture_non_power_of_two");
 
 	const char* attributes[] = { "position", "texcoord", NULL };
 	g_box_shader = Graphics::Shader::fromStrings("control", Graphics::BuiltinShaders::controlVertex, Graphics::BuiltinShaders::controlFragment, attributes);
