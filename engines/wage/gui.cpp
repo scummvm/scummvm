@@ -430,10 +430,10 @@ void Gui::flowText(String &str) {
 	int pos = _scrollPos;
 	_scrollPos = MAX<int>(0, (_lines.size() - _consoleNumLines) * _consoleLineHeight);
 
-	_cursorX = kConHPadding;
+	_cursorX = kConWPadding;
 
 	if (_scrollPos)
-		_cursorY = (_consoleNumLines + 1) * _consoleLineHeight + kConHPadding;
+		_cursorY = (_consoleNumLines) * _consoleLineHeight + kConHPadding;
 	else
 		_cursorY = (_lines.size()) * _consoleLineHeight + kConHPadding;
 
