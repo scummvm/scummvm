@@ -85,6 +85,10 @@ bool Script::execute(World *world, int loopCount, String *inputText, Designed *i
 	_inputClick = inputClick;
 	_callbacks = callbacks;
 	_handled = false;
+	Common::String input;
+
+	if (inputText)
+		input = *inputText;
 
 	_data->seek(12);
 	while (_data->pos() < _data->size()) {
@@ -150,11 +154,10 @@ bool Script::execute(World *world, int loopCount, String *inputText, Designed *i
 
 	if (_world->_globalScript != this) {
 		debug(1, "Executing global script...");
-		bool globalHandled = _world->_globalScript->execute(_world, _loopCount, _inputText, _inputClick, _callbacks);
+		bool globalHandled = _world->_globalScript->execute(_world, _loopCount, &input, _inputClick, _callbacks);
 		if (globalHandled)
 			_handled = true;
-	} else if (inputText != NULL) {
-		Common::String input(*inputText);
+	} else if (!input.empty()) {
 		input.toLowercase();
 		if (input.equals("n") || input.contains("north")) {
 			handleMoveCommand(Scene::NORTH, "north");
