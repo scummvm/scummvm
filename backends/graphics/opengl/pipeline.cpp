@@ -22,8 +22,28 @@
 
 #include "backends/graphics/opengl/pipeline.h"
 #include "backends/graphics/opengl/shader.h"
+#include "backends/graphics/opengl/framebuffer.h"
 
 namespace OpenGL {
+
+Pipeline::Pipeline()
+    : _activeFramebuffer(nullptr) {
+}
+
+Framebuffer *Pipeline::setFramebuffer(Framebuffer *framebuffer) {
+	Framebuffer *oldFramebuffer = _activeFramebuffer;
+	if (oldFramebuffer) {
+		oldFramebuffer->deactivate();
+	}
+
+	_activeFramebuffer = framebuffer;
+	if (_activeFramebuffer) {
+		_activeFramebuffer->activate();
+		setProjectionMatrix(_activeFramebuffer->getProjectionMatrix());
+	}
+
+	return oldFramebuffer;
+}
 
 #if !USE_FORCED_GLES2
 void FixedPipeline::activate() {
@@ -51,9 +71,21 @@ void FixedPipeline::setDrawCoordinates(const GLfloat *vertices, const GLfloat *t
 	GL_CALL(glTexCoordPointer(2, GL_FLOAT, 0, texCoords));
 	GL_CALL(glVertexPointer(2, GL_FLOAT, 0, vertices));
 }
+
+void FixedPipeline::setProjectionMatrix(const GLfloat *projectionMatrix) {
+	GL_CALL(glMatrixMode(GL_PROJECTION));
+	GL_CALL(glLoadMatrixf(projectionMatrix));
+
+	GL_CALL(glMatrixMode(GL_MODELVIEW));
+	GL_CALL(glLoadIdentity());
+}
 #endif // !USE_FORCED_GLES2
 
 #if !USE_FORCED_GLES
+ShaderPipeline::ShaderPipeline()
+    : _activeShader(nullptr) {
+}
+
 void ShaderPipeline::activate() {
 	GL_CALL(glEnableVertexAttribArray(kPositionAttribLocation));
 	GL_CALL(glEnableVertexAttribArray(kTexCoordAttribLocation));
@@ -63,6 +95,17 @@ void ShaderPipeline::activate() {
 	}
 }
 
+Shader *ShaderPipeline::setShader(Shader *shader) {
+	Shader *oldShader = _activeShader;
+
+	_activeShader = shader;
+	if (_activeShader && _activeFramebuffer) {
+		_activeShader->activate(_activeFramebuffer->getProjectionMatrix());
+	}
+
+	return oldShader;
+}
+
 void ShaderPipeline::setColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a) {
 	GL_CALL(glVertexAttrib4f(kColorAttribLocation, r, g, b, a));
 }
@@ -70,6 +113,12 @@ void ShaderPipeline::setColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a) {
 void ShaderPipeline::setDrawCoordinates(const GLfloat *vertices, const GLfloat *texCoords) {
 	GL_CALL(glVertexAttribPointer(kTexCoordAttribLocation, 2, GL_FLOAT, GL_FALSE, 0, texCoords));
 	GL_CALL(glVertexAttribPointer(kPositionAttribLocation, 2, GL_FLOAT, GL_FALSE, 0, vertices));
+}
+
+void ShaderPipeline::setProjectionMatrix(const GLfloat *projectionMatrix) {
+	if (_activeShader) {
+		_activeShader->activate(projectionMatrix);
+	}
 }
 #endif // !USE_FORCED_GLES
 

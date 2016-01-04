@@ -657,7 +657,7 @@ void TextureCLUT8GPU::updateTextures() {
 		_paletteDirty = false;
 	}
 
-	// In case any data changed, do color look up and save result in _glTexture.
+	// In case any data changed, do color look up and store result in _target.
 	if (needLookUp) {
 		lookUpColors();
 	}
@@ -665,10 +665,11 @@ void TextureCLUT8GPU::updateTextures() {
 
 void TextureCLUT8GPU::lookUpColors() {
 	// Save old state.
-	GLint oldProgram = 0;
-	GL_CALL(glGetIntegerv(GL_CURRENT_PROGRAM, &oldProgram));
+	Framebuffer *oldFramebuffer = g_context.activePipeline->setFramebuffer(_target);
 
-	Framebuffer *oldFramebuffer = g_context.setFramebuffer(_target);
+	Shader *lookUpShader = ShaderMan.query(ShaderManager::kCLUT8LookUp);
+	Shader *oldShader = g_context.activePipeline->setShader(lookUpShader);
+	lookUpShader->setUniformI(_paletteLocation, 1);
 
 	// Set the palette texture.
 	GL_CALL(glActiveTexture(GL_TEXTURE1));
@@ -679,16 +680,12 @@ void TextureCLUT8GPU::lookUpColors() {
 	_clut8Texture.bind();
 
 	// Do color look up.
-	Shader *lookUpShader = ShaderMan.query(ShaderManager::kCLUT8LookUp);
-	lookUpShader->activate(_target->getProjectionMatrix());
-	lookUpShader->setUniformI(_paletteLocation, 1);
 	g_context.activePipeline->setDrawCoordinates(_clut8Vertices, _clut8Texture.getTexCoords());
 	GL_CALL(glDrawArrays(GL_TRIANGLE_STRIP, 0, 4));
 
 	// Restore old state.
-	g_context.setFramebuffer(oldFramebuffer);
-
-	GL_CALL(glUseProgram(oldProgram));
+	g_context.activePipeline->setShader(oldShader);
+	g_context.activePipeline->setFramebuffer(oldFramebuffer);
 }
 #endif // !USE_FORCED_GLES
 

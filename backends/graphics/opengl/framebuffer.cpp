@@ -22,6 +22,7 @@
 
 #include "backends/graphics/opengl/framebuffer.h"
 #include "backends/graphics/opengl/texture.h"
+#include "backends/graphics/opengl/pipeline.h"
 
 namespace OpenGL {
 
@@ -34,6 +35,7 @@ void Framebuffer::activate() {
 	_isActive = true;
 
 	applyViewport();
+	applyProjectionMatrix();
 	applyClearColor();
 	applyBlendState();
 	applyScissorTestState();
@@ -88,6 +90,10 @@ void Framebuffer::setScissorBox(GLint x, GLint y, GLsizei w, GLsizei h) {
 
 void Framebuffer::applyViewport() {
 	GL_CALL(glViewport(_viewport[0], _viewport[1], _viewport[2], _viewport[3]));
+}
+
+void Framebuffer::applyProjectionMatrix() {
+	g_context.activePipeline->setProjectionMatrix(_projectionMatrix);
 }
 
 void Framebuffer::applyClearColor() {
@@ -159,6 +165,7 @@ void Backbuffer::setDimensions(uint width, uint height) {
 	// Directly apply changes when we are active.
 	if (isActive()) {
 		applyViewport();
+		applyProjectionMatrix();
 	}
 }
 
@@ -244,6 +251,7 @@ void TextureTarget::setSize(uint width, uint height) {
 	// Directly apply changes when we are active.
 	if (isActive()) {
 		applyViewport();
+		applyProjectionMatrix();
 	}
 }
 #endif // !USE_FORCED_GLES

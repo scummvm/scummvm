@@ -124,19 +124,6 @@ struct Context {
 #include "backends/graphics/opengl/opengl-func.h"
 #undef GL_FUNC_DEF
 
-	/** Currently active framebuffer. */
-	Framebuffer *activeFramebuffer;
-
-	/**
-	 * Set new framebuffer.
-	 *
-	 * Client is responsible for any memory management related to framebuffers.
-	 *
-	 * @param framebuffer Framebuffer to activate.
-	 * @return Formerly active framebuffer.
-	 */
-	Framebuffer *setFramebuffer(Framebuffer *framebuffer);
-
 	//
 	// Wrapper functionality to handle fixed-function pipelines and
 	// programmable pipelines in the same fashion.

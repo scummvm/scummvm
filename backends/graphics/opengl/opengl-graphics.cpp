@@ -763,26 +763,6 @@ void OpenGLGraphicsManager::setActualScreenSize(uint width, uint height) {
 	// Setup backbuffer size.
 	_backBuffer.setDimensions(width, height);
 
-#if !USE_FORCED_GL && !USE_FORCED_GLES && !USE_FORCED_GLES2
-	if (!g_context.shadersSupported) {
-#endif
-#if !USE_FORCED_GLES2
-		GL_CALL(glMatrixMode(GL_PROJECTION));
-		GL_CALL(glLoadMatrixf(_backBuffer.getProjectionMatrix()));
-
-		GL_CALL(glMatrixMode(GL_MODELVIEW));
-		GL_CALL(glLoadIdentity());
-#endif
-#if !USE_FORCED_GL && !USE_FORCED_GLES && !USE_FORCED_GLES2
-	} else {
-#endif
-#if !USE_FORCED_GLES
-		ShaderMan.query(ShaderManager::kDefault)->activate(_backBuffer.getProjectionMatrix());
-#endif
-#if !USE_FORCED_GL && !USE_FORCED_GLES && !USE_FORCED_GLES2
-	}
-#endif
-
 	uint overlayWidth = width;
 	uint overlayHeight = height;
 
@@ -872,6 +852,14 @@ void OpenGLGraphicsManager::notifyContextCreate(const Graphics::PixelFormat &def
 
 	g_context.setPipeline(_pipeline);
 
+#if !USE_FORCED_GLES
+	if (g_context.shadersSupported) {
+		ShaderMan.notifyCreate();
+
+		g_context.activePipeline->setShader(ShaderMan.query(ShaderManager::kDefault));
+	}
+#endif
+
 	// Disable 3D properties.
 	GL_CALL(glDisable(GL_CULL_FACE));
 	GL_CALL(glDisable(GL_DEPTH_TEST));
@@ -890,7 +878,7 @@ void OpenGLGraphicsManager::notifyContextCreate(const Graphics::PixelFormat &def
 	// Setup scissor state accordingly.
 	_backBuffer.enableScissorTest(!_overlayVisible);
 
-	g_context.setFramebuffer(&_backBuffer);
+	g_context.activePipeline->setFramebuffer(&_backBuffer);
 
 	// Clear the whole screen for the first three frames to assure any
 	// leftovers are cleared.
@@ -900,13 +888,6 @@ void OpenGLGraphicsManager::notifyContextCreate(const Graphics::PixelFormat &def
 	// since the only place where we really use it is the BMP screenshot
 	// code and that requires the same alignment too.
 	GL_CALL(glPixelStorei(GL_PACK_ALIGNMENT, 4));
-
-#if !USE_FORCED_GLES
-	if (g_context.shadersSupported) {
-		ShaderMan.notifyCreate();
-		ShaderMan.query(ShaderManager::kDefault)->activate(_backBuffer.getProjectionMatrix());
-	}
-#endif
 
 	// Refresh the output screen dimensions if some are set up.
 	if (_outputScreenWidth != 0 && _outputScreenHeight != 0) {
@@ -962,9 +943,6 @@ void OpenGLGraphicsManager::notifyContextDestroy() {
 		ShaderMan.notifyDestroy();
 	}
 #endif
-
-	// Unset back buffer.
-	g_context.setFramebuffer(nullptr);
 
 	// Destroy rendering pipeline.
 	g_context.setPipeline(nullptr);

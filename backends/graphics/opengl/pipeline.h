@@ -27,6 +27,11 @@
 
 namespace OpenGL {
 
+class Framebuffer;
+#if !USE_FORCED_GLES
+class Shader;
+#endif
+
 /**
  * Interface for OpenGL pipeline functionality.
  *
@@ -35,6 +40,7 @@ namespace OpenGL {
  */
 class Pipeline {
 public:
+	Pipeline();
 	virtual ~Pipeline() {}
 
 	/**
@@ -44,6 +50,31 @@ public:
 	 * OpenGL pipeline.
 	 */
 	virtual void activate() = 0;
+
+	/**
+	 * Set framebuffer to render to.
+	 *
+	 * Client is responsible for any memory management related to framebuffer.
+	 *
+	 * @param framebuffer Framebuffer to activate.
+	 * @return Formerly active framebuffer.
+	 */
+	Framebuffer *setFramebuffer(Framebuffer *framebuffer);
+
+#if !USE_FORCED_GLES
+	/**
+	 * Set shader program.
+	 *
+	 * Not all pipelines support shader programs. This is method exits at this
+	 * place for convenience only.
+	 *
+	 * Client is responsible for any memory management related to shader.
+	 *
+	 * @param shader Shader program to activate.
+	 * @return Formerly active shader program.
+	 */
+	virtual Shader *setShader(Shader *shader) { return nullptr; }
+#endif
 
 	/**
 	 * Set modulation color.
@@ -63,6 +94,16 @@ public:
 	 *                  each vertex.
 	 */
 	virtual void setDrawCoordinates(const GLfloat *vertices, const GLfloat *texCoords) = 0;
+
+	/**
+	 * Set the projection matrix.
+	 *
+	 * This is intended to be only ever be used by Framebuffer subclasses.
+	 */
+	virtual void setProjectionMatrix(const GLfloat *projectionMatrix) = 0;
+
+protected:
+	Framebuffer *_activeFramebuffer;
 };
 
 #if !USE_FORCED_GLES2
@@ -73,17 +114,28 @@ public:
 	virtual void setColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a);
 
 	virtual void setDrawCoordinates(const GLfloat *vertices, const GLfloat *texCoords);
+
+	virtual void setProjectionMatrix(const GLfloat *projectionMatrix);
 };
 #endif // !USE_FORCED_GLES2
 
 #if !USE_FORCED_GLES
 class ShaderPipeline : public Pipeline {
 public:
+	ShaderPipeline();
+
 	virtual void activate();
+
+	virtual Shader *setShader(Shader *shader);
 
 	virtual void setColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a);
 
 	virtual void setDrawCoordinates(const GLfloat *vertices, const GLfloat *texCoords);
+
+	virtual void setProjectionMatrix(const GLfloat *projectionMatrix);
+
+private:
+	Shader *_activeShader;
 };
 #endif // !USE_FORCED_GLES
 

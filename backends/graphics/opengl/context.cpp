@@ -43,22 +43,7 @@ void Context::reset() {
 #include "backends/graphics/opengl/opengl-func.h"
 #undef GL_FUNC_DEF
 
-	activeFramebuffer = nullptr;
 	activePipeline = nullptr;
-}
-
-Framebuffer *Context::setFramebuffer(Framebuffer *framebuffer) {
-	Framebuffer *oldFramebuffer = activeFramebuffer;
-	if (oldFramebuffer) {
-		oldFramebuffer->deactivate();
-	}
-
-	activeFramebuffer = framebuffer;
-	if (activeFramebuffer) {
-		activeFramebuffer->activate();
-	}
-
-	return oldFramebuffer;
 }
 
 Pipeline *Context::setPipeline(Pipeline *pipeline) {

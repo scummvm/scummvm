@@ -81,6 +81,7 @@ protected:
 	void applyViewport();
 
 	GLfloat _projectionMatrix[4*4];
+	void applyProjectionMatrix();
 private:
 	bool _isActive;
 
