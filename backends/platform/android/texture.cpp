@@ -41,7 +41,7 @@
 
 #include "base/main.h"
 #include "graphics/surface.h"
-#include "graphics/opengles2/shader.h"
+#include "graphics/opengl/shader.h"
 #include "graphics/opengl/extensions.h"
 
 #include "common/rect.h"
@@ -55,7 +55,7 @@
 // Supported GL extensions
 static bool npot_supported = false;
 
-Graphics::Shader * g_box_shader;
+OpenGL::Shader * g_box_shader;
 GLuint g_verticesVBO;
 
 static inline GLfixed xdiv(int numerator, int denominator) {
@@ -86,8 +86,8 @@ void GLESBaseTexture::initGL() {
 	npot_supported = OpenGL::isExtensionSupported("GL_ARB_texture_non_power_of_two");
 
 	const char* attributes[] = { "position", "texcoord", NULL };
-	g_box_shader = Graphics::Shader::fromStrings("control", Graphics::BuiltinShaders::controlVertex, Graphics::BuiltinShaders::controlFragment, attributes);
-	g_verticesVBO = Graphics::Shader::createBuffer(GL_ARRAY_BUFFER, sizeof(vertices), vertices);
+	g_box_shader = OpenGL::Shader::fromStrings("control", OpenGL::BuiltinShaders::controlVertex, OpenGL::BuiltinShaders::controlFragment, attributes);
+	g_verticesVBO = OpenGL::Shader::createBuffer(GL_ARRAY_BUFFER, sizeof(vertices), vertices);
 	g_box_shader->enableVertexAttribute("position", g_verticesVBO, 2, GL_FLOAT, GL_TRUE, 2 * sizeof(float), 0);
 	g_box_shader->enableVertexAttribute("texcoord", g_verticesVBO, 2, GL_FLOAT, GL_TRUE, 2 * sizeof(float), 0);
 }

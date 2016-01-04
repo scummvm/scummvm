@@ -27,7 +27,7 @@
 
 #include "math/vector2d.h"
 
-namespace Graphics {
+namespace OpenGL {
 class Shader;
 }
 
@@ -53,7 +53,7 @@ private:
 	Math::Vector2d normalizeCurrentCoordinates(float x, float y) const;
 
 	OpenGLSDriver *_gfx;
-	Graphics::Shader *_shader;
+	OpenGL::Shader *_shader;
 };
 
 } // End of namespace Gfx

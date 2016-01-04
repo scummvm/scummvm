@@ -35,7 +35,7 @@
 
 #include "graphics/opengl/system_headers.h"
 
-namespace Graphics {
+namespace OpenGL {
 
 namespace BuiltinShaders {
 	extern const char *boxVertex, *boxFragment;
@@ -161,6 +161,6 @@ private:
 	static Shader *_previousShader;
 };
 
-}
+} // End of namespace OpenGL
 
 #endif

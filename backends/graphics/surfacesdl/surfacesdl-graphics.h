@@ -32,7 +32,7 @@
 #undef ARRAYSIZE
 
 #ifdef USE_OPENGL_SHADERS
-#include "graphics/opengles2/shader.h"
+#include "graphics/opengl/shader.h"
 #endif
 
 #include "backends/graphics/graphics.h"
@@ -189,7 +189,7 @@ protected:
 	OpenGL::FrameBuffer *_frameBuffer;
 
 #ifdef USE_OPENGL_SHADERS
-	Graphics::Shader *_boxShader;
+	OpenGL::Shader *_boxShader;
 	GLuint _boxVerticesVBO;
 
 	void drawOverlayOpenGLShaders();

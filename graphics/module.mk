@@ -30,10 +30,10 @@ MODULE_OBJS := \
 	opengl/framebuffer.o \
 	opengl/texture.o \
 	opengl/extensions.o \
-	opengles2/shader.o \
-	opengles2/box_shaders.o \
-	opengles2/control_shaders.o \
-	opengles2/compat_shaders.o \
+	opengl/shader.o \
+	opengl/box_shaders.o \
+	opengl/control_shaders.o \
+	opengl/compat_shaders.o \
 	tinygl/api.o \
 	tinygl/arrays.o \
 	tinygl/clear.o \

@@ -29,7 +29,7 @@
 #include "engines/stark/formats/biffmesh.h"
 #include "engines/stark/visual/prop.h"
 
-namespace Graphics {
+namespace OpenGL {
 	class Shader;
 }
 
@@ -50,7 +50,7 @@ protected:
 	typedef Common::HashMap<const Formats::BiffMesh::Face *, uint32> FaceBufferMap;
 
 	Driver *_gfx;
-	Graphics::Shader *_shader;
+	OpenGL::Shader *_shader;
 
 	int32 _faceVBO;
 	FaceBufferMap _faceEBO;

@@ -29,7 +29,7 @@
 #include "engines/stark/gfx/opengls.h"
 #include "engines/stark/gfx/texture.h"
 
-#include "graphics/opengles2/shader.h"
+#include "graphics/opengl/shader.h"
 
 namespace Stark {
 namespace Gfx {
@@ -120,11 +120,11 @@ void OpenGLSActorRenderer::render(const Math::Vector3d position, float direction
 
 void OpenGLSActorRenderer::clearVertices() {
 	for (FaceBufferMap::iterator it = _faceVBO.begin(); it != _faceVBO.end(); ++it) {
-		Graphics::Shader::freeBuffer(it->_value);
+		OpenGL::Shader::freeBuffer(it->_value);
 	}
 
 	for (FaceBufferMap::iterator it = _faceEBO.begin(); it != _faceEBO.end(); ++it) {
-		Graphics::Shader::freeBuffer(it->_value);
+		OpenGL::Shader::freeBuffer(it->_value);
 	}
 
 	_faceVBO.clear();
@@ -168,7 +168,7 @@ uint32 OpenGLSActorRenderer::createFaceVBO(const FaceNode *face) {
 		*vertPtr++ = (*tri)->_texT;
 	}
 
-	uint32 vbo = Graphics::Shader::createBuffer(GL_ARRAY_BUFFER, sizeof(float) * 14 * face->_verts.size(), vertices);
+	uint32 vbo = OpenGL::Shader::createBuffer(GL_ARRAY_BUFFER, sizeof(float) * 14 * face->_verts.size(), vertices);
 	delete[] vertices;
 
 	return vbo;
@@ -190,7 +190,7 @@ uint32 OpenGLSActorRenderer::createFaceEBO(const FaceNode *face) {
 		}
 	}
 
-	uint32 ebo = Graphics::Shader::createBuffer(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint32) * 3 * face->_tris.size(), indices);
+	uint32 ebo = OpenGL::Shader::createBuffer(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint32) * 3 * face->_tris.size(), indices);
 	delete[] indices;
 
 	return ebo;

@@ -26,7 +26,7 @@
 #include "common/rect.h"
 #include "math/rect2d.h"
 
-#include "graphics/opengles2/shader.h"
+#include "graphics/opengl/shader.h"
 
 #include "engines/myst3/gfx.h"
 
@@ -62,10 +62,10 @@ private:
 	void setupQuadEBO();
 	Math::Vector2d scaled(float x, float y) const;
 
-	Graphics::Shader *_boxShader;
-	Graphics::Shader *_cubeShader;
-	Graphics::Shader *_rect3dShader;
-	Graphics::Shader *_textShader;
+	OpenGL::Shader *_boxShader;
+	OpenGL::Shader *_cubeShader;
+	OpenGL::Shader *_rect3dShader;
+	OpenGL::Shader *_textShader;
 
 	GLuint _boxVBO;
 	GLuint _cubeVBO;

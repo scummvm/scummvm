@@ -36,7 +36,7 @@
 #include "engines/stark/gfx/opengltexture.h"
 
 #include "graphics/pixelbuffer.h"
-#include "graphics/opengles2/shader.h"
+#include "graphics/opengl/shader.h"
 
 namespace Stark {
 namespace Gfx {
@@ -56,7 +56,7 @@ OpenGLSDriver::OpenGLSDriver() :
 }
 
 OpenGLSDriver::~OpenGLSDriver() {
-	Graphics::Shader::freeBuffer(_surfaceVBO);
+	OpenGL::Shader::freeBuffer(_surfaceVBO);
 	delete _surfaceShader;
 	delete _actorShader;
 }
@@ -68,13 +68,13 @@ void OpenGLSDriver::init() {
 	computeScreenViewport();
 
 	static const char* attributes[] = { "position", "texcoord", nullptr };
-	_surfaceShader = Graphics::Shader::fromFiles("stark_surface", attributes);
-	_surfaceVBO = Graphics::Shader::createBuffer(GL_ARRAY_BUFFER, sizeof(surfaceVertices), surfaceVertices);
+	_surfaceShader = OpenGL::Shader::fromFiles("stark_surface", attributes);
+	_surfaceVBO = OpenGL::Shader::createBuffer(GL_ARRAY_BUFFER, sizeof(surfaceVertices), surfaceVertices);
 	_surfaceShader->enableVertexAttribute("position", _surfaceVBO, 2, GL_FLOAT, GL_TRUE, 2 * sizeof(float), 0);
 	_surfaceShader->enableVertexAttribute("texcoord", _surfaceVBO, 2, GL_FLOAT, GL_TRUE, 2 * sizeof(float), 0);
 
 	static const char* actorAttributes[] = { "position1", "position2", "bone1", "bone2", "boneWeight", "normal", "texcoord", nullptr };
-	_actorShader = Graphics::Shader::fromFiles("stark_actor", actorAttributes);
+	_actorShader = OpenGL::Shader::fromFiles("stark_actor", actorAttributes);
 }
 
 void OpenGLSDriver::setScreenViewport(bool noScaling) {
@@ -169,11 +169,11 @@ Common::Rect OpenGLSDriver::getUnscaledViewport() const {
 	return _unscaledViewport;
 }
 
-Graphics::Shader *OpenGLSDriver::createActorShaderInstance() {
+OpenGL::Shader *OpenGLSDriver::createActorShaderInstance() {
 	return _actorShader->clone();
 }
 
-Graphics::Shader *OpenGLSDriver::createSurfaceShaderInstance() {
+OpenGL::Shader *OpenGLSDriver::createSurfaceShaderInstance() {
 	return _surfaceShader->clone();
 }
 

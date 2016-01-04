@@ -389,8 +389,8 @@ Graphics::PixelBuffer SurfaceSdlGraphicsManager::setupScreen(uint screenW, uint 
 
 		// Setup the box shader used to render the overlay
 		const char* attributes[] = { "position", "texcoord", NULL };
-		_boxShader = Graphics::Shader::fromStrings("box", Graphics::BuiltinShaders::boxVertex, Graphics::BuiltinShaders::boxFragment, attributes);
-		_boxVerticesVBO = Graphics::Shader::createBuffer(GL_ARRAY_BUFFER, sizeof(vertices), vertices);
+		_boxShader = OpenGL::Shader::fromStrings("box", OpenGL::BuiltinShaders::boxVertex, OpenGL::BuiltinShaders::boxFragment, attributes);
+		_boxVerticesVBO = OpenGL::Shader::createBuffer(GL_ARRAY_BUFFER, sizeof(vertices), vertices);
 		_boxShader->enableVertexAttribute("position", _boxVerticesVBO, 2, GL_FLOAT, GL_TRUE, 2 * sizeof(float), 0);
 		_boxShader->enableVertexAttribute("texcoord", _boxVerticesVBO, 2, GL_FLOAT, GL_TRUE, 2 * sizeof(float), 0);
 #endif
