@@ -574,48 +574,29 @@ void TonyEngine::loadState(CORO_PARAM, int n) {
 
 bool TonyEngine::openVoiceDatabase() {
 	// Open the voices database
-	if (_vdbFP.open("voices.vdb"))
-		_vdbCodec = FPCODEC_ADPCM;
-	else if (_vdbFP.open("voices.mdb"))
-		_vdbCodec = FPCODEC_MP3;
-	else if (_vdbFP.open("voices.odb"))
-		_vdbCodec = FPCODEC_OGG;
-	else if (_vdbFP.open("voices.fdb"))
-		_vdbCodec = FPCODEC_FLAC;
-	else
-		return false;
+	if (!_vdbFP.open("voices.vdb"))
+		if (!_vdbFP.open("voices.mdb"))
+			if (!_vdbFP.open("voices.odb"))
+				if (!_vdbFP.open("voices.fdb"))
+					return false;
 
 	_vdbFP.seek(-8, SEEK_END);
 	uint32 numfiles = _vdbFP.readUint32LE();
+	int32 id = _vdbFP.readUint32BE();
 
-	switch (_vdbCodec) {
-	case FPCODEC_ADPCM:
-		if (_vdbFP.readUint32BE() != MKTAG('V', 'D', 'B', '1')) {
-			_vdbFP.close();
-			return false;
-		}
-		break;
-	case FPCODEC_MP3:
-		if (_vdbFP.readUint32BE() != MKTAG('M', 'D', 'B', '1')) {
-			_vdbFP.close();
-			return false;
-		}
-		break;
-	case FPCODEC_OGG:
-		if (_vdbFP.readUint32BE() != MKTAG('O', 'D', 'B', '1')) {
-			_vdbFP.close();
-			return false;
-		}
-		break;
-	case FPCODEC_FLAC:
-		if (_vdbFP.readUint32BE() != MKTAG('F', 'D', 'B', '1')) {
-			_vdbFP.close();
-			return false;
-		}
-		break;
-	default:
+	if (id == MKTAG('V', 'D', 'B', '1'))
+		_vdbCodec = FPCODEC_ADPCM;
+	else if (id == MKTAG('M', 'D', 'B', '1'))
+		_vdbCodec = FPCODEC_MP3;
+	else if (id == MKTAG('O', 'D', 'B', '1'))
+		_vdbCodec = FPCODEC_OGG;
+	else if (id == MKTAG('F', 'D', 'B', '1'))
+		_vdbCodec = FPCODEC_FLAC;
+	else {
+		_vdbFP.close();
 		return false;
 	}
+
 	// Read in the index
 	_vdbFP.seek(-8 - (numfiles * VOICE_HEADER_SIZE), SEEK_END);
 
