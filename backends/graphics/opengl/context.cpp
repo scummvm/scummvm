@@ -24,6 +24,7 @@
 #include "backends/graphics/opengl/opengl-graphics.h"
 #include "backends/graphics/opengl/shader.h"
 #include "backends/graphics/opengl/pipeline.h"
+#include "backends/graphics/opengl/framebuffer.h"
 
 #include "common/tokenizer.h"
 #include "common/debug.h"
@@ -42,7 +43,22 @@ void Context::reset() {
 #include "backends/graphics/opengl/opengl-func.h"
 #undef GL_FUNC_DEF
 
+	activeFramebuffer = nullptr;
 	activePipeline = nullptr;
+}
+
+Framebuffer *Context::setFramebuffer(Framebuffer *framebuffer) {
+	Framebuffer *oldFramebuffer = activeFramebuffer;
+	if (oldFramebuffer) {
+		oldFramebuffer->deactivate();
+	}
+
+	activeFramebuffer = framebuffer;
+	if (activeFramebuffer) {
+		activeFramebuffer->activate();
+	}
+
+	return oldFramebuffer;
 }
 
 Pipeline *Context::setPipeline(Pipeline *pipeline) {

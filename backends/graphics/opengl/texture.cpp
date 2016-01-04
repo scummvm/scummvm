@@ -23,6 +23,7 @@
 #include "backends/graphics/opengl/texture.h"
 #include "backends/graphics/opengl/shader.h"
 #include "backends/graphics/opengl/pipeline.h"
+#include "backends/graphics/opengl/framebuffer.h"
 
 #include "common/rect.h"
 #include "common/textconsole.h"
@@ -515,38 +516,30 @@ void TextureRGB555::updateTexture() {
 TextureCLUT8GPU::TextureCLUT8GPU()
     : _clut8Texture(GL_ALPHA, GL_ALPHA, GL_UNSIGNED_BYTE),
       _paletteTexture(GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE),
-      _glTexture(GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE),
-      _glFBO(0), _clut8Vertices(), _projectionMatrix(),
-      _paletteLocation(-1),
+      _target(new TextureTarget()), _clut8Vertices(), _paletteLocation(-1),
       _clut8Data(), _userPixelData(), _palette(), _paletteDirty(false) {
 	// Allocate space for 256 colors.
 	_paletteTexture.setSize(256, 1);
 
 	_paletteLocation = ShaderMan.query(ShaderManager::kCLUT8LookUp)->getUniformLocation("palette");
-
-	setupFBO();
 }
 
 TextureCLUT8GPU::~TextureCLUT8GPU() {
-	GL_CALL_SAFE(glDeleteFramebuffers, (1, &_glFBO));
+	delete _target;
 	_clut8Data.free();
 }
 
 void TextureCLUT8GPU::destroy() {
 	_clut8Texture.destroy();
 	_paletteTexture.destroy();
-	_glTexture.destroy();
-
-	GL_CALL(glDeleteFramebuffers(1, &_glFBO));
-	_glFBO = 0;
+	_target->destroy();
 }
 
 void TextureCLUT8GPU::recreate() {
 	_clut8Texture.create();
 	_paletteTexture.create();
-	_glTexture.create();
 	_paletteLocation = ShaderMan.query(ShaderManager::kCLUT8LookUp)->getUniformLocation("palette");
-	setupFBO();
+	_target->create();
 
 	// In case image date exists assure it will be completely refreshed next
 	// time.
@@ -557,13 +550,13 @@ void TextureCLUT8GPU::recreate() {
 }
 
 void TextureCLUT8GPU::enableLinearFiltering(bool enable) {
-	_glTexture.enableLinearFiltering(enable);
+	_target->getTexture()->enableLinearFiltering(enable);
 }
 
 void TextureCLUT8GPU::allocate(uint width, uint height) {
 	// Assure the texture can contain our user data.
 	_clut8Texture.setSize(width, height);
-	_glTexture.setSize(width, height);
+	_target->setSize(width, height);
 
 	// In case the needed texture dimension changed we will reinitialize the
 	// texture data buffer.
@@ -587,26 +580,6 @@ void TextureCLUT8GPU::allocate(uint width, uint height) {
 
 	_clut8Vertices[6] = width;
 	_clut8Vertices[7] = height;
-
-	_projectionMatrix[ 0] =  2.0f / _glTexture.getWidth();
-	_projectionMatrix[ 1] =  0.0f;
-	_projectionMatrix[ 2] =  0.0f;
-	_projectionMatrix[ 3] =  0.0f;
-
-	_projectionMatrix[ 4] =  0.0f;
-	_projectionMatrix[ 5] =  2.0f / _glTexture.getHeight();
-	_projectionMatrix[ 6] =  0.0f;
-	_projectionMatrix[ 7] =  0.0f;
-
-	_projectionMatrix[ 8] =  0.0f;
-	_projectionMatrix[ 9] =  0.0f;
-	_projectionMatrix[10] =  0.0f;
-	_projectionMatrix[11] =  0.0f;
-
-	_projectionMatrix[12] = -1.0f;
-	_projectionMatrix[13] = -1.0f;
-	_projectionMatrix[14] =  0.0f;
-	_projectionMatrix[15] =  1.0f;
 }
 
 void TextureCLUT8GPU::draw(GLfloat x, GLfloat y, GLfloat w, GLfloat h) {
@@ -619,7 +592,7 @@ void TextureCLUT8GPU::draw(GLfloat x, GLfloat y, GLfloat w, GLfloat h) {
 	updateTextures();
 
 	// Set the texture.
-	_glTexture.bind();
+	_target->getTexture()->bind();
 
 	// Calculate the screen rect where the texture will be drawn.
 	const GLfloat vertices[4*2] = {
@@ -630,7 +603,7 @@ void TextureCLUT8GPU::draw(GLfloat x, GLfloat y, GLfloat w, GLfloat h) {
 	};
 
 	// Setup coordinates for drawing.
-	g_context.activePipeline->setDrawCoordinates(vertices, _glTexture.getTexCoords());
+	g_context.activePipeline->setDrawCoordinates(vertices, _target->getTexture()->getTexCoords());
 
 	// Draw the texture to the screen buffer.
 	GL_CALL(glDrawArrays(GL_TRIANGLE_STRIP, 0, 4));
@@ -695,24 +668,7 @@ void TextureCLUT8GPU::lookUpColors() {
 	GLint oldProgram = 0;
 	GL_CALL(glGetIntegerv(GL_CURRENT_PROGRAM, &oldProgram));
 
-	GLint viewport[4];
-	GL_CALL(glGetIntegerv(GL_VIEWPORT, viewport));
-
-	GLboolean scissorState;
-	GL_ASSIGN(scissorState, glIsEnabled(GL_SCISSOR_TEST));
-	GLboolean blendState;
-	GL_ASSIGN(blendState, glIsEnabled(GL_BLEND));
-
-	GLint oldFBO = 0;
-	GL_CALL(glGetIntegerv(GL_FRAMEBUFFER_BINDING, &oldFBO));
-
-	// Update state.
-	GL_CALL(glViewport(0, 0, _glTexture.getWidth(), _glTexture.getHeight()));
-	GL_CALL(glDisable(GL_SCISSOR_TEST));
-	GL_CALL(glDisable(GL_BLEND));
-
-	// Bind framebuffer.
-	GL_CALL(glBindFramebuffer(GL_FRAMEBUFFER, _glFBO));
+	Framebuffer *oldFramebuffer = g_context.setFramebuffer(_target);
 
 	// Set the palette texture.
 	GL_CALL(glActiveTexture(GL_TEXTURE1));
@@ -724,40 +680,15 @@ void TextureCLUT8GPU::lookUpColors() {
 
 	// Do color look up.
 	Shader *lookUpShader = ShaderMan.query(ShaderManager::kCLUT8LookUp);
-	lookUpShader->activate(_projectionMatrix);
+	lookUpShader->activate(_target->getProjectionMatrix());
 	lookUpShader->setUniformI(_paletteLocation, 1);
 	g_context.activePipeline->setDrawCoordinates(_clut8Vertices, _clut8Texture.getTexCoords());
 	GL_CALL(glDrawArrays(GL_TRIANGLE_STRIP, 0, 4));
 
 	// Restore old state.
+	g_context.setFramebuffer(oldFramebuffer);
+
 	GL_CALL(glUseProgram(oldProgram));
-	GL_CALL(glBindFramebuffer(GL_FRAMEBUFFER, oldFBO));
-
-	if (blendState) {
-		GL_CALL(glEnable(GL_BLEND));
-	}
-	if (scissorState) {
-		GL_CALL(glEnable(GL_SCISSOR_TEST));
-	}
-	GL_CALL(glViewport(viewport[0], viewport[1], viewport[2], viewport[3]));
-}
-
-void TextureCLUT8GPU::setupFBO() {
-	// Allocate framebuffer object if necessary.
-	if (!_glFBO) {
-		GL_CALL(glGenFramebuffers(1, &_glFBO));
-	}
-
-	// Save old FBO.
-	GLint oldFBO = 0;
-	GL_CALL(glGetIntegerv(GL_FRAMEBUFFER_BINDING, &oldFBO));
-
-	// Attach destination texture to FBO.
-	GL_CALL(glBindFramebuffer(GL_FRAMEBUFFER, _glFBO));
-	GL_CALL(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, _glTexture.getGLTexture(), 0));
-
-	// Restore old FBO.
-	GL_CALL(glBindFramebuffer(GL_FRAMEBUFFER, oldFBO));
 }
 #endif // !USE_FORCED_GLES
 

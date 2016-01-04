@@ -57,9 +57,6 @@ OpenGLGraphicsManager::OpenGLGraphicsManager()
 #ifdef USE_OSD
       , _osdAlpha(0), _osdFadeStartTime(0), _osd(nullptr)
 #endif
-#if !USE_FORCED_GLES
-      , _projectionMatrix()
-#endif
     {
 	memset(_gamePalette, 0, sizeof(_gamePalette));
 	g_context.reset();
@@ -379,9 +376,9 @@ void OpenGLGraphicsManager::updateScreen() {
 		// cleared. For example, when switching from overlay visible to
 		// invisible, we need to assure that all contents are cleared to
 		// properly remove all overlay contents.
-		GL_CALL(glDisable(GL_SCISSOR_TEST));
+		_backBuffer.enableScissorTest(false);
 		GL_CALL(glClear(GL_COLOR_BUFFER_BIT));
-		GL_CALL(glEnable(GL_SCISSOR_TEST));
+		_backBuffer.enableScissorTest(true);
 
 		--_scissorOverride;
 	} else {
@@ -475,7 +472,7 @@ void OpenGLGraphicsManager::showOverlay() {
 	_forceRedraw = true;
 
 	// Allow drawing inside full screen area.
-	GL_CALL(glDisable(GL_SCISSOR_TEST));
+	_backBuffer.enableScissorTest(false);
 
 	// Update cursor position.
 	setMousePosition(_cursorX, _cursorY);
@@ -486,7 +483,7 @@ void OpenGLGraphicsManager::hideOverlay() {
 	_forceRedraw = true;
 
 	// Limit drawing to screen area.
-	GL_CALL(glEnable(GL_SCISSOR_TEST));
+	_backBuffer.enableScissorTest(true);
 	_scissorOverride = 3;
 
 	// Update cursor position.
@@ -763,23 +760,15 @@ void OpenGLGraphicsManager::setActualScreenSize(uint width, uint height) {
 	_outputScreenWidth = width;
 	_outputScreenHeight = height;
 
-	// Setup coordinate system.
-	GL_CALL(glViewport(0, 0, _outputScreenWidth, _outputScreenHeight));
-
-	// Orthogonal projection matrix in column major order.
-	const GLfloat orthoProjection[4*4] = {
-		 2.0f / _outputScreenWidth,  0.0f                      ,  0.0f, 0.0f,
-		 0.0f                     , -2.0f / _outputScreenHeight,  0.0f, 0.0f,
-		 0.0f                     ,  0.0f                      , -1.0f, 0.0f,
-		-1.0f                     ,  1.0f                      ,  0.0f, 1.0f
-	};
+	// Setup backbuffer size.
+	_backBuffer.setDimensions(width, height);
 
 #if !USE_FORCED_GL && !USE_FORCED_GLES && !USE_FORCED_GLES2
 	if (!g_context.shadersSupported) {
 #endif
 #if !USE_FORCED_GLES2
 		GL_CALL(glMatrixMode(GL_PROJECTION));
-		GL_CALL(glLoadMatrixf(orthoProjection));
+		GL_CALL(glLoadMatrixf(_backBuffer.getProjectionMatrix()));
 
 		GL_CALL(glMatrixMode(GL_MODELVIEW));
 		GL_CALL(glLoadIdentity());
@@ -788,9 +777,7 @@ void OpenGLGraphicsManager::setActualScreenSize(uint width, uint height) {
 	} else {
 #endif
 #if !USE_FORCED_GLES
-		assert(sizeof(_projectionMatrix) == sizeof(orthoProjection));
-		memcpy(_projectionMatrix, orthoProjection, sizeof(_projectionMatrix));
-		ShaderMan.query(ShaderManager::kDefault)->activate(_projectionMatrix);
+		ShaderMan.query(ShaderManager::kDefault)->activate(_backBuffer.getProjectionMatrix());
 #endif
 #if !USE_FORCED_GL && !USE_FORCED_GLES && !USE_FORCED_GLES2
 	}
@@ -890,20 +877,21 @@ void OpenGLGraphicsManager::notifyContextCreate(const Graphics::PixelFormat &def
 	GL_CALL(glDisable(GL_DEPTH_TEST));
 	GL_CALL(glDisable(GL_DITHER));
 
-	// Default to black as clear color.
-	GL_CALL(glClearColor(0.0f, 0.0f, 0.0f, 0.0f));
 	g_context.activePipeline->setColor(1.0f, 1.0f, 1.0f, 1.0f);
 
-	// Setup alpha blend (for overlay and cursor).
-	GL_CALL(glEnable(GL_BLEND));
 	GL_CALL(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 
+	// Setup backbuffer state.
+
+	// Default to black as clear color.
+	_backBuffer.setClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+	// Setup alpha blend (for overlay and cursor).
+	_backBuffer.enableBlend(true);
 	// Setup scissor state accordingly.
-	if (_overlayVisible) {
-		GL_CALL(glDisable(GL_SCISSOR_TEST));
-	} else {
-		GL_CALL(glEnable(GL_SCISSOR_TEST));
-	}
+	_backBuffer.enableScissorTest(!_overlayVisible);
+
+	g_context.setFramebuffer(&_backBuffer);
+
 	// Clear the whole screen for the first three frames to assure any
 	// leftovers are cleared.
 	_scissorOverride = 3;
@@ -916,7 +904,7 @@ void OpenGLGraphicsManager::notifyContextCreate(const Graphics::PixelFormat &def
 #if !USE_FORCED_GLES
 	if (g_context.shadersSupported) {
 		ShaderMan.notifyCreate();
-		ShaderMan.query(ShaderManager::kDefault)->activate(_projectionMatrix);
+		ShaderMan.query(ShaderManager::kDefault)->activate(_backBuffer.getProjectionMatrix());
 	}
 #endif
 
@@ -974,6 +962,9 @@ void OpenGLGraphicsManager::notifyContextDestroy() {
 		ShaderMan.notifyDestroy();
 	}
 #endif
+
+	// Unset back buffer.
+	g_context.setFramebuffer(nullptr);
 
 	// Destroy rendering pipeline.
 	g_context.setPipeline(nullptr);
@@ -1185,10 +1176,10 @@ void OpenGLGraphicsManager::recalculateDisplayArea() {
 	// Setup drawing limitation for game graphics.
 	// This invovles some trickery because OpenGL's viewport coordinate system
 	// is upside down compared to ours.
-	GL_CALL(glScissor(_displayX,
-	                 _outputScreenHeight - _displayHeight - _displayY,
-	                 _displayWidth,
-	                 _displayHeight));
+	_backBuffer.setScissorBox(_displayX,
+	                          _outputScreenHeight - _displayHeight - _displayY,
+	                          _displayWidth,
+	                          _displayHeight);
 	// Clear the whole screen for the first three frames to remove leftovers.
 	_scissorOverride = 3;
 

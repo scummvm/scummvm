@@ -24,6 +24,7 @@
 #define BACKENDS_GRAPHICS_OPENGL_OPENGL_GRAPHICS_H
 
 #include "backends/graphics/opengl/opengl-sys.h"
+#include "backends/graphics/opengl/framebuffer.h"
 #include "backends/graphics/graphics.h"
 
 #include "common/frac.h"
@@ -305,6 +306,11 @@ private:
 	void initializeGLContext();
 
 	/**
+	 * Render back buffer.
+	 */
+	Backbuffer _backBuffer;
+
+	/**
 	 * OpenGL pipeline used for rendering.
 	 */
 	Pipeline *_pipeline;
@@ -526,17 +532,6 @@ private:
 	 * Number of frames glClear shall ignore scissor testing.
 	 */
 	uint _scissorOverride;
-
-#if !USE_FORCED_GLES
-	//
-	// Shaders
-	//
-
-	/**
-	 * Projection matrix used.
-	 */
-	GLfloat _projectionMatrix[4*4];
-#endif
 
 #ifdef USE_OSD
 	//

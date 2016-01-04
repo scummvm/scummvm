@@ -318,6 +318,8 @@ private:
 #endif // !USE_FORCED_GL
 
 #if !USE_FORCED_GLES
+class TextureTarget;
+
 class TextureCLUT8GPU : public Surface {
 public:
 	TextureCLUT8GPU();
@@ -359,12 +361,10 @@ private:
 
 	GLTexture _clut8Texture;
 	GLTexture _paletteTexture;
-	GLTexture _glTexture;
 
-	void setupFBO();
-	GLuint _glFBO;
+	TextureTarget *_target;
+
 	GLfloat _clut8Vertices[4*2];
-	GLfloat _projectionMatrix[4*4];
 
 	GLint _paletteLocation;
 

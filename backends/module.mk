@@ -54,6 +54,7 @@ ifdef USE_OPENGL
 MODULE_OBJS += \
 	graphics/opengl/context.o \
 	graphics/opengl/debug.o \
+	graphics/opengl/framebuffer.o \
 	graphics/opengl/opengl-graphics.o \
 	graphics/opengl/pipeline.o \
 	graphics/opengl/shader.o \
