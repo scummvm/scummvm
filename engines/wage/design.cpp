@@ -386,7 +386,7 @@ void Design::drawOval(Graphics::Surface *surface, Common::ReadStream &in, bool m
 	pd.thickness = borderThickness;
 
 	if (borderThickness > 0 && borderFillType <= patterns.size())
-		drawEllipse(x1, y1, x2-1, y2-1, true, drawPixel, &pd);
+		drawEllipse(x1, y1, x2-1, y2-1, false, drawPixel, &pd);
 }
 
 void Design::drawBitmap(Graphics::Surface *surface, Common::ReadStream &in, bool mask) {
