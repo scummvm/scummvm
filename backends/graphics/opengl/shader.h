@@ -28,6 +28,7 @@
 #if !USE_FORCED_GLES
 
 #include "common/str.h"
+#include "common/singleton.h"
 
 namespace OpenGL {
 
@@ -36,9 +37,6 @@ enum {
 	kTexCoordAttribLocation = 1,
 	kColorAttribLocation    = 2
 };
-
-extern const char *const g_defaultVertexShader;
-extern const char *const g_defaultFragmentShader;
 
 class Shader {
 public:
@@ -121,7 +119,46 @@ protected:
 	static GLshader compileShader(const char *source, GLenum shaderType);
 };
 
+class ShaderManager : public Common::Singleton<ShaderManager> {
+public:
+	enum ShaderUsage {
+		/** Default shader implementing the GL fixed-function pipeline. */
+		kDefault = 0,
+
+		/** CLUT8 look up shader. */
+		kCLUT8LookUp,
+
+		/** Number of built-in shaders. Should not be used for query. */
+		kMaxUsages
+	};
+
+	/**
+	 * Notify shader manager about context destruction.
+	 */
+	void notifyDestroy();
+
+	/**
+	 * Notify shader manager about context creation.
+	 */
+	void notifyCreate();
+
+	/**
+	 * Query a built-in shader.
+	 */
+	Shader *query(ShaderUsage shader) const;
+
+private:
+	friend class Common::Singleton<SingletonBaseType>;
+	ShaderManager();
+	~ShaderManager();
+
+	Shader *_builtIn[kMaxUsages];
+};
+
 } // End of namespace OpenGL
+
+/** Shortcut for accessing the font manager. */
+#define ShaderMan (OpenGL::ShaderManager::instance())
 
 #endif // !USE_FORCED_GLES
 

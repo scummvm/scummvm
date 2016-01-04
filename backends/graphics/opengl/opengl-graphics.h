@@ -533,11 +533,6 @@ private:
 	//
 
 	/**
-	 * Active shader.
-	 */
-	Shader *_shader;
-
-	/**
 	 * Projection matrix used.
 	 */
 	GLfloat _projectionMatrix[4*4];

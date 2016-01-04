@@ -506,21 +506,6 @@ void TextureRGB555::updateTexture() {
 #endif // !USE_FORCED_GL
 
 #if !USE_FORCED_GLES
-namespace {
-const char *const g_lookUpFragmentShader =
-	"varying vec2 texCoord;\n"
-	"varying vec4 blendColor;\n"
-	"\n"
-	"uniform sampler2D texture;\n"
-	"uniform sampler2D palette;\n"
-	"\n"
-	"const float adjustFactor = 255.0 / 256.0 + 1.0 / (2.0 * 256.0);"
-	"\n"
-	"void main(void) {\n"
-	"\tvec4 index = texture2D(texture, texCoord);\n"
-	"\tgl_FragColor = blendColor * texture2D(palette, vec2(index.a * adjustFactor, 0.0));\n"
-	"}\n";
-} // End of anonymous namespace
 
 // _clut8Texture needs 8 bits internal precision, otherwise graphics glitches
 // can occur. GL_ALPHA does not have any internal precision requirements.
@@ -532,20 +517,17 @@ TextureCLUT8GPU::TextureCLUT8GPU()
       _paletteTexture(GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE),
       _glTexture(GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE),
       _glFBO(0), _clut8Vertices(), _projectionMatrix(),
-      _lookUpShader(nullptr), _paletteLocation(-1),
+      _paletteLocation(-1),
       _clut8Data(), _userPixelData(), _palette(), _paletteDirty(false) {
 	// Allocate space for 256 colors.
 	_paletteTexture.setSize(256, 1);
 
-	_lookUpShader = new Shader(g_defaultVertexShader, g_lookUpFragmentShader);
-	_lookUpShader->recreate();
-	_paletteLocation = _lookUpShader->getUniformLocation("palette");
+	_paletteLocation = ShaderMan.query(ShaderManager::kCLUT8LookUp)->getUniformLocation("palette");
 
 	setupFBO();
 }
 
 TextureCLUT8GPU::~TextureCLUT8GPU() {
-	delete _lookUpShader;
 	GL_CALL_SAFE(glDeleteFramebuffers, (1, &_glFBO));
 	_clut8Data.free();
 }
@@ -554,7 +536,6 @@ void TextureCLUT8GPU::destroy() {
 	_clut8Texture.destroy();
 	_paletteTexture.destroy();
 	_glTexture.destroy();
-	_lookUpShader->destroy();
 
 	GL_CALL(glDeleteFramebuffers(1, &_glFBO));
 	_glFBO = 0;
@@ -564,8 +545,7 @@ void TextureCLUT8GPU::recreate() {
 	_clut8Texture.create();
 	_paletteTexture.create();
 	_glTexture.create();
-	_lookUpShader->recreate();
-	_paletteLocation = _lookUpShader->getUniformLocation("palette");
+	_paletteLocation = ShaderMan.query(ShaderManager::kCLUT8LookUp)->getUniformLocation("palette");
 	setupFBO();
 
 	// In case image date exists assure it will be completely refreshed next
@@ -743,8 +723,9 @@ void TextureCLUT8GPU::lookUpColors() {
 	_clut8Texture.bind();
 
 	// Do color look up.
-	_lookUpShader->activate(_projectionMatrix);
-	_lookUpShader->setUniformI(_paletteLocation, 1);
+	Shader *lookUpShader = ShaderMan.query(ShaderManager::kCLUT8LookUp);
+	lookUpShader->activate(_projectionMatrix);
+	lookUpShader->setUniformI(_paletteLocation, 1);
 	g_context.activePipeline->setDrawCoordinates(_clut8Vertices, _clut8Texture.getTexCoords());
 	GL_CALL(glDrawArrays(GL_TRIANGLE_STRIP, 0, 4));
 

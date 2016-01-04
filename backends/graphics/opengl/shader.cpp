@@ -27,7 +27,13 @@
 #include "common/textconsole.h"
 #include "common/util.h"
 
+namespace Common {
+DECLARE_SINGLETON(OpenGL::ShaderManager);
+}
+
 namespace OpenGL {
+
+namespace {
 
 const char *const g_defaultVertexShader = 
 	"attribute vec4 position;\n"
@@ -55,7 +61,20 @@ const char *const g_defaultFragmentShader =
 	"\tgl_FragColor = blendColor * texture2D(texture, texCoord);\n"
 	"}\n";
 
-namespace {
+const char *const g_lookUpFragmentShader =
+	"varying vec2 texCoord;\n"
+	"varying vec4 blendColor;\n"
+	"\n"
+	"uniform sampler2D texture;\n"
+	"uniform sampler2D palette;\n"
+	"\n"
+	"const float adjustFactor = 255.0 / 256.0 + 1.0 / (2.0 * 256.0);"
+	"\n"
+	"void main(void) {\n"
+	"\tvec4 index = texture2D(texture, texCoord);\n"
+	"\tgl_FragColor = blendColor * texture2D(palette, vec2(index.a * adjustFactor, 0.0));\n"
+	"}\n";
+
 
 // Taken from: https://en.wikibooks.org/wiki/OpenGL_Programming/Modern_OpenGL_Tutorial_03#OpenGL_ES_2_portability
 const char *const g_precisionDefines =
@@ -217,6 +236,38 @@ GLshader Shader::compileShader(const char *source, GLenum shaderType) {
 	}
 
 	return handle;
+}
+
+ShaderManager::ShaderManager() {
+	_builtIn[kDefault] = new Shader(g_defaultVertexShader, g_defaultFragmentShader);
+	_builtIn[kCLUT8LookUp] = new Shader(g_defaultVertexShader, g_lookUpFragmentShader);
+}
+
+ShaderManager::~ShaderManager() {
+	for (int i = 0; i < ARRAYSIZE(_builtIn); ++i) {
+		delete _builtIn[i];
+	}
+}
+
+void ShaderManager::notifyDestroy() {
+	for (int i = 0; i < ARRAYSIZE(_builtIn); ++i) {
+		_builtIn[i]->destroy();
+	}
+}
+
+void ShaderManager::notifyCreate() {
+	for (int i = 0; i < ARRAYSIZE(_builtIn); ++i) {
+		_builtIn[i]->recreate();
+	}
+}
+
+Shader *ShaderManager::query(ShaderUsage shader) const {
+	if (shader == kMaxUsages) {
+		warning("OpenGL: ShaderManager::query used with kMaxUsages");
+		return nullptr;
+	}
+
+	return _builtIn[shader];
 }
 
 } // End of namespace OpenGL

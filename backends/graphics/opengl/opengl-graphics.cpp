@@ -58,7 +58,7 @@ OpenGLGraphicsManager::OpenGLGraphicsManager()
       , _osdAlpha(0), _osdFadeStartTime(0), _osd(nullptr)
 #endif
 #if !USE_FORCED_GLES
-      , _shader(nullptr), _projectionMatrix()
+      , _projectionMatrix()
 #endif
     {
 	memset(_gamePalette, 0, sizeof(_gamePalette));
@@ -73,7 +73,7 @@ OpenGLGraphicsManager::~OpenGLGraphicsManager() {
 	delete _osd;
 #endif
 #if !USE_FORCED_GLES
-	delete _shader;
+	ShaderManager::destroy();
 #endif
 }
 
@@ -790,9 +790,7 @@ void OpenGLGraphicsManager::setActualScreenSize(uint width, uint height) {
 #if !USE_FORCED_GLES
 		assert(sizeof(_projectionMatrix) == sizeof(orthoProjection));
 		memcpy(_projectionMatrix, orthoProjection, sizeof(_projectionMatrix));
-		if (_shader) {
-			_shader->activate(_projectionMatrix);
-		}
+		ShaderMan.query(ShaderManager::kDefault)->activate(_projectionMatrix);
 #endif
 #if !USE_FORCED_GL && !USE_FORCED_GLES && !USE_FORCED_GLES2
 	}
@@ -916,18 +914,9 @@ void OpenGLGraphicsManager::notifyContextCreate(const Graphics::PixelFormat &def
 	GL_CALL(glPixelStorei(GL_PACK_ALIGNMENT, 4));
 
 #if !USE_FORCED_GLES
-	if (!_shader) {
-		if (g_context.shadersSupported) {
-			_shader = new Shader(g_defaultVertexShader, g_defaultFragmentShader);
-		}
-	}
-#endif
-
-#if !USE_FORCED_GLES
-	if (_shader) {
-		// TODO: What do we do on failure?
-		_shader->recreate();
-		_shader->activate(_projectionMatrix);
+	if (g_context.shadersSupported) {
+		ShaderMan.notifyCreate();
+		ShaderMan.query(ShaderManager::kDefault)->activate(_projectionMatrix);
 	}
 #endif
 
@@ -981,8 +970,8 @@ void OpenGLGraphicsManager::notifyContextDestroy() {
 #endif
 
 #if !USE_FORCED_GLES
-	if (_shader) {
-		_shader->destroy();
+	if (g_context.shadersSupported) {
+		ShaderMan.notifyDestroy();
 	}
 #endif
 

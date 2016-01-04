@@ -366,7 +366,6 @@ private:
 	GLfloat _clut8Vertices[4*2];
 	GLfloat _projectionMatrix[4*4];
 
-	Shader *_lookUpShader;
 	GLint _paletteLocation;
 
 	Graphics::Surface _clut8Data;
