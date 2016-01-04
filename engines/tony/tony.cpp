@@ -573,9 +573,6 @@ void TonyEngine::loadState(CORO_PARAM, int n) {
 }
 
 bool TonyEngine::openVoiceDatabase() {
-	char id[4];
-	uint32 numfiles;
-
 	// Open the voices database
 	if (_vdbFP.open("voices.vdb"))
 		_vdbCodec = FPCODEC_ADPCM;
@@ -589,30 +586,29 @@ bool TonyEngine::openVoiceDatabase() {
 		return false;
 
 	_vdbFP.seek(-8, SEEK_END);
-	numfiles = _vdbFP.readUint32LE();
-	_vdbFP.read(id, 4);
+	uint32 numfiles = _vdbFP.readUint32LE();
 
 	switch (_vdbCodec) {
 	case FPCODEC_ADPCM:
-		if (id[0] != 'V' || id[1] != 'D' || id[2] != 'B' || id[3] != '1') {
+		if (_vdbFP.readUint32BE() != MKTAG('V', 'D', 'B', '1')) {
 			_vdbFP.close();
 			return false;
 		}
 		break;
 	case FPCODEC_MP3:
-		if (id[0] != 'M' || id[1] != 'D' || id[2] != 'B' || id[3] != '1') {
+		if (_vdbFP.readUint32BE() != MKTAG('M', 'D', 'B', '1')) {
 			_vdbFP.close();
 			return false;
 		}
 		break;
 	case FPCODEC_OGG:
-		if (id[0] != 'O' || id[1] != 'D' || id[2] != 'B' || id[3] != '1') {
+		if (_vdbFP.readUint32BE() != MKTAG('O', 'D', 'B', '1')) {
 			_vdbFP.close();
 			return false;
 		}
 		break;
 	case FPCODEC_FLAC:
-		if (id[0] != 'F' || id[1] != 'D' || id[2] != 'B' || id[3] != '1') {
+		if (_vdbFP.readUint32BE() != MKTAG('F', 'D', 'B', '1')) {
 			_vdbFP.close();
 			return false;
 		}
