@@ -95,11 +95,11 @@ void Design::paint(Graphics::Surface *surface, Patterns &patterns, bool mask, in
 		_surface->fillRect(r, kColorWhite);
 	}
 
-/*
-	plotData pd(canvas, &patterns, 8);
+#if 0
+	plotData pd(_surface, &patterns, 8, 1);
 	int x1 = 50, y1 = 50, x2 = 200, y2 = 200, borderThickness = 30;
 	Common::Rect inn(x1-5, y1-5, x2+5, y2+5);
-	drawFilledRect(inn, kColorGray, drawPixelPlain, &pd);
+	drawRoundRect(inn, 6, kColorGray, false, drawPixelPlain, &pd);
 
 	drawThickLine(x1, y1, x2-borderThickness, y1, borderThickness, kColorBlack, drawPixel, &pd);
 	drawThickLine(x2-borderThickness, y1, x2-borderThickness, y2, borderThickness, kColorBlack, drawPixel, &pd);
@@ -107,7 +107,7 @@ void Design::paint(Graphics::Surface *surface, Patterns &patterns, bool mask, in
 	drawThickLine(x1, y2-borderThickness, x1, y1, borderThickness, kColorBlack, drawPixel, &pd);
 	drawThickLine(x2+10, y2+10, x2+100, y2+100, borderThickness, kColorBlack, drawPixel, &pd);
 
-	g_system->copyRectToScreen(canvas->getPixels(), canvas->pitch, 0, 0, canvas->w, canvas->h);
+	g_system->copyRectToScreen(_surface->getPixels(), _surface->pitch, 0, 0, _surface->w, _surface->h);
 
 	while (true) {
 		((WageEngine *)g_engine)->processEvents();
@@ -115,9 +115,9 @@ void Design::paint(Graphics::Surface *surface, Patterns &patterns, bool mask, in
 		g_system->delayMillis(50);
 	}
 	return;
-*/
+#endif
 
-	while (true && needRender) {
+	while (needRender) {
 		byte fillType = in.readByte();
 		byte borderThickness = in.readByte();
 		byte borderFillType = in.readByte();
@@ -146,11 +146,6 @@ void Design::paint(Graphics::Surface *surface, Patterns &patterns, bool mask, in
 			break;
 		default:
 			warning("Unknown type => %d", type);
-			while (true) {
-				((WageEngine *)g_engine)->processEvents();
-				g_system->updateScreen();
-				g_system->delayMillis(50);
-			}
 			break;
 		}
 
@@ -274,12 +269,14 @@ void Design::drawRoundRect(Graphics::Surface *surface, Common::ReadStream &in, b
 		return;
 	}
 
-	drawRoundRect(outer, arc/2, kColorBlack, true, drawPixel, &pd);
+	if (fillType <= patterns.size())
+		drawRoundRect(outer, arc/2, kColorBlack, true, drawPixel, &pd);
 
 	pd.fillType = borderFillType;
 	pd.thickness = borderThickness;
 
-	drawRoundRect(outer, arc/2, kColorBlack, false, drawPixel, &pd);
+	if (borderThickness > 0 && borderFillType <= patterns.size())
+		drawRoundRect(outer, arc/2, kColorBlack, false, drawPixel, &pd);
 }
 
 void Design::drawPolygon(Graphics::Surface *surface, Common::ReadStream &in, bool mask,
@@ -471,6 +468,7 @@ void Design::drawRoundRect(Common::Rect &rect, int arc, int color, bool filled, 
 		int dy = rect.height() - arc * 2;
 		int r = arc;
 		int stop = 0;
+		int lastx, lasty;
 		if (dy < 0)
 			stop = -dy / 2;
 
@@ -483,6 +481,9 @@ void Design::drawRoundRect(Common::Rect &rect, int arc, int color, bool filled, 
 				(*plotProc)(rect.right-x-r, rect.top-y+r-stop, color, data);
 				(*plotProc)(rect.left+x+r, rect.bottom+y-r+stop, color, data);
 				(*plotProc)(rect.right-x-r, rect.bottom+y-r+stop, color, data);
+
+				lastx = x;
+				lasty = y;
 			}
 			arc = err;
 			if (arc <= y) err += ++y*2+1;           /* e_xy+e_y < 0 */
@@ -490,6 +491,14 @@ void Design::drawRoundRect(Common::Rect &rect, int arc, int color, bool filled, 
 			if (stop && y > stop)
 				break;
 		} while (x < 0);
+
+		if (!filled) {
+			x = lastx;
+			y = lasty;
+
+			drawHLine(rect.left+x+r, rect.right-x-r, rect.top-y+r-stop, color, plotProc, data);
+			drawHLine(rect.left+x+r, rect.right-x-r, rect.bottom+y-r+stop, color, plotProc, data);
+		}
 
 		for (int i = 0; i < dy; i++) {
 			if (filled) {
@@ -504,6 +513,7 @@ void Design::drawRoundRect(Common::Rect &rect, int arc, int color, bool filled, 
 		int dx = rect.width() - arc * 2;
 		int r = arc;
 		int stop = 0;
+		int lastx, lasty;
 		if (dx < 0)
 			stop = -dx / 2;
 
@@ -516,6 +526,9 @@ void Design::drawRoundRect(Common::Rect &rect, int arc, int color, bool filled, 
 				(*plotProc)(rect.left-x+r-stop, rect.bottom-y-r, color, data);
 				(*plotProc)(rect.right+x-r+stop, rect.top+y+r, color, data);
 				(*plotProc)(rect.right+x-r+stop, rect.bottom-y-r, color, data);
+
+				lastx = x;
+				lasty = y;
 			}
 
 			arc = err;
@@ -524,6 +537,13 @@ void Design::drawRoundRect(Common::Rect &rect, int arc, int color, bool filled, 
 			if (stop && x > stop)
 				break;
 		} while (y < 0);
+
+		if (!filled) {
+			x = lastx;
+			y = lasty;
+			drawVLine(rect.left-x+r-stop, rect.top+y+r, rect.bottom-y-r, color, plotProc, data);
+			drawVLine(rect.right+x-r+stop, rect.top+y+r, rect.bottom-y-r, color, plotProc, data);
+		}
 
 		for (int i = 0; i < dx; i++) {
 			if (filled) {
