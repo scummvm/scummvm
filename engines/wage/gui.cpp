@@ -151,9 +151,6 @@ Gui::Gui(WageEngine *engine) {
 	_consoleFullRedraw = true;
 	_screen.create(g_system->getWidth(), g_system->getHeight(), Graphics::PixelFormat::createFormatCLUT8());
 
-	Patterns p;
-	p.push_back(checkersPattern);
-
 	_scrollPos = 0;
 	_consoleLineHeight = 8; // Dummy value which makes sense
 	_consoleNumLines = 24; // Dummy value
@@ -171,11 +168,6 @@ Gui::Gui(WageEngine *engine) {
 	CursorMan.replaceCursor(macCursorArrow, 11, 16, 1, 1, 3);
 	_cursorIsArrow = true;
 	CursorMan.showMouse(true);
-
-	// Draw desktop
-	Common::Rect r(0, 0, _screen.w - 1, _screen.h - 1);
-	Design::drawFilledRoundRect(&_screen, r, kDesktopArc, kColorBlack, p, 1);
-	g_system->copyRectToScreen(_screen.getPixels(), _screen.pitch, 0, 0, _screen.w, _screen.h);
 
 	loadFonts();
 
@@ -254,7 +246,18 @@ void Gui::appendText(String &str) {
 void Gui::draw() {
 	if (_scene != _engine->_world->_player->_currentScene || _sceneDirty) {
 		_scene = _engine->_world->_player->_currentScene;
+
+		// Draw desktop
+		Patterns p;
+		p.push_back(checkersPattern);
+		Common::Rect r(0, 0, _screen.w - 1, _screen.h - 1);
+		Design::drawFilledRoundRect(&_screen, r, kDesktopArc, kColorBlack, p, 1);
+		g_system->copyRectToScreen(_screen.getPixels(), _screen.pitch, 0, 0, _screen.w, _screen.h);
+
 		_sceneDirty = true;
+		_consoleDirty = true;
+		_menuDirty = true;
+		_consoleFullRedraw = true;
 
 		_scene->paint(&_screen, 0 + kComponentsPadding, kMenuHeight + kComponentsPadding);
 
@@ -279,10 +282,10 @@ void Gui::draw() {
 		paintBorder(&_screen, _sceneArea, kWindowScene);
 
 	// Render console
-	if (_consoleDirty)
+	if (_consoleDirty || _consoleFullRedraw)
 		renderConsole(&_screen, _consoleTextArea);
 
-	if (_bordersDirty || _consoleDirty)
+	if (_bordersDirty || _consoleDirty || _consoleFullRedraw)
 		paintBorder(&_screen, _consoleTextArea, kWindowConsole);
 
 	if (_menuDirty)
