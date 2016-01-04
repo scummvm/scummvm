@@ -665,6 +665,60 @@ bool Script::compare(Operand *o1, Operand *o2, int comparator) {
 	return false;
 }
 
+bool Script::evaluatePair(Operand *lhs, const char *op, Operand *rhs) {
+	for (int cmp = 0; comparators[cmp].op != 0; cmp++) {
+		if (comparators[cmp].op != op[0])
+			continue;
+
+		if (comparators[cmp].o1 == lhs->_type && comparators[cmp].o2 == rhs->_type)
+			return compare(lhs, rhs, comparators[cmp].cmp);
+	}
+
+	// Now, try partial matches.
+	Operand *c1, *c2;
+	for (int cmp = 0; comparators[cmp].op != 0; cmp++) {
+		if (comparators[cmp].op != op[0])
+			continue;
+
+		if (comparators[cmp].o1 == lhs->_type &&
+				(c2 = convertOperand(rhs, comparators[cmp].o2)) != NULL) {
+			bool res = compare(lhs, c2, comparators[cmp].cmp);
+			delete c2;
+			return res;
+		} else if (comparators[cmp].o2 == rhs->_type &&
+				(c1 = convertOperand(lhs, comparators[cmp].o1)) != NULL) {
+			bool res = compare(c1, rhs, comparators[cmp].cmp);
+			delete c1;
+			return res;
+		}
+	}
+
+	// Now, try double conversion.
+	for (int cmp = 0; comparators[cmp].op != 0; cmp++) {
+		if (comparators[cmp].op != op[0])
+			continue;
+
+		if (comparators[cmp].o1 == lhs->_type || comparators[cmp].o2 == rhs->_type)
+			continue;
+
+		if ((c1 = convertOperand(lhs, comparators[cmp].o1)) != NULL) {
+			if ((c2 = convertOperand(rhs, comparators[cmp].o2)) != NULL) {
+				bool res = compare(c1, c2, comparators[cmp].cmp);
+				delete c1;
+				delete c2;
+				return res;
+			}
+			delete c1;
+		}
+	}
+
+	warning("UNHANDLED CASE: [lhs=%d/%s, op=%s rhs=%d/%s]",
+		lhs->_type, lhs->toString().c_str(), op, rhs->_type, rhs->toString().c_str());
+
+
+	return false;
+}
+
 bool Script::eval(Operand *lhs, const char *op, Operand *rhs) {
 	bool result = false;
 
@@ -695,51 +749,7 @@ bool Script::eval(Operand *lhs, const char *op, Operand *rhs) {
 
 		return result;
 	} else {
-		for (int cmp = 0; comparators[cmp].op != 0; cmp++) {
-			if (comparators[cmp].op != op[0])
-			 	continue;
-
-			if (comparators[cmp].o1 == lhs->_type && comparators[cmp].o2 == rhs->_type)
-				return compare(lhs, rhs, comparators[cmp].cmp);
-		}
-
-		// Now, try partial matches.
-		Operand *c1, *c2;
-		for (int cmp = 0; comparators[cmp].op != 0; cmp++) {
-			if (comparators[cmp].op != op[0])
-				continue;
-
-			if (comparators[cmp].o1 == lhs->_type &&
-					(c2 = convertOperand(rhs, comparators[cmp].o2)) != NULL) {
-				bool res = compare(lhs, c2, comparators[cmp].cmp);
-				delete c2;
-				return res;
-			} else if (comparators[cmp].o2 == rhs->_type &&
-					(c1 = convertOperand(lhs, comparators[cmp].o1)) != NULL) {
-				bool res = compare(c1, rhs, comparators[cmp].cmp);
-				delete c1;
-				return res;
-			}
-		}
-
-		// Now, try double conversion.
-		for (int cmp = 0; comparators[cmp].op != 0; cmp++) {
-			if (comparators[cmp].op != op[0])
-				continue;
-
-			if (comparators[cmp].o1 == lhs->_type || comparators[cmp].o2 == rhs->_type)
-				continue;
-
-			if ((c1 = convertOperand(lhs, comparators[cmp].o1)) != NULL) {
-				if ((c2 = convertOperand(rhs, comparators[cmp].o2)) != NULL) {
-					bool res = compare(c1, c2, comparators[cmp].cmp);
-					delete c1;
-					delete c2;
-					return res;
-				}
-				delete c1;
-			}
-		}
+		return evaluatePair(lhs, op, rhs);
 	}
 
 	return false;
@@ -868,16 +878,10 @@ void Script::processMove() {
 	if (skip != 0xfd)
 		error("No end for MOVE: %02x", skip);
 
-	for (int cmp = 0; comparators[cmp].op != 0; cmp++) {
-		if (comparators[cmp].op != 'M')
-			continue;
+	debug(6, "MOVE: [what=%d/%s, to=%d/%s]",
+		what->_type, what->toString().c_str(), to->_type, to->toString().c_str());
 
-		if (comparators[cmp].o1 == what->_type && comparators[cmp].o2 == to->_type) {
-			compare(what, to, comparators[cmp].cmp);
-
-			break;
-		}
-	}
+	evaluatePair(what, "M", to);
 }
 
 void Script::processLet() {

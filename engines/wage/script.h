@@ -155,6 +155,7 @@ private:
 	void skipIf();
 	bool compare(Operand *o1, Operand *o2, int comparator);
 	bool eval(Operand *lhs, const char *op, Operand *rhs);
+	bool evaluatePair(Operand *lhs, const char *op, Operand *rhs);
 	Operand *convertOperand(Operand *operand, int type);
 	bool evalClickCondition(Operand *lhs, const char *op, Operand *rhs);
 	bool evalClickEquality(Operand *lhs, Operand *rhs, bool partialMatch);
