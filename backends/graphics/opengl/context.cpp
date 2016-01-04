@@ -32,7 +32,7 @@
 namespace OpenGL {
 
 void Context::reset() {
-	_maxTextureSize = 0;
+	maxTextureSize = 0;
 
 	NPOTSupported = false;
 	shadersSupported = false;
@@ -121,8 +121,8 @@ void OpenGLGraphicsManager::initializeGLContext() {
 #undef LOAD_FUNC
 
 	// Obtain maximum texture size.
-	GL_CALL(glGetIntegerv(GL_MAX_TEXTURE_SIZE, &g_context._maxTextureSize));
-	debug(5, "OpenGL maximum texture size: %d", g_context._maxTextureSize);
+	GL_CALL(glGetIntegerv(GL_MAX_TEXTURE_SIZE, &g_context.maxTextureSize));
+	debug(5, "OpenGL maximum texture size: %d", g_context.maxTextureSize);
 
 	const char *extString = (const char *)g_context.glGetString(GL_EXTENSIONS);
 

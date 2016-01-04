@@ -220,8 +220,8 @@ OSystem::TransactionError OpenGLGraphicsManager::endGFXTransaction() {
 		   // a context existing before, which means we don't know the maximum
 		   // supported texture size before this. Thus, we check whether the
 		   // requested game resolution is supported over here.
-		   || (   _currentState.gameWidth  > (uint)g_context._maxTextureSize
-		       || _currentState.gameHeight > (uint)g_context._maxTextureSize)) {
+		   || (   _currentState.gameWidth  > (uint)g_context.maxTextureSize
+		       || _currentState.gameHeight > (uint)g_context.maxTextureSize)) {
 			if (_transactionMode == kTransactionActive) {
 				// Try to setup the old state in case its valid and is
 				// actually different from the new one.
@@ -792,15 +792,15 @@ void OpenGLGraphicsManager::setActualScreenSize(uint width, uint height) {
 	// possible and then scale it to the physical display size. This sounds
 	// bad but actually all recent chips should support full HD resolution
 	// anyway. Thus, it should not be a real issue for modern hardware.
-	if (   overlayWidth  > (uint)g_context._maxTextureSize
-	    || overlayHeight > (uint)g_context._maxTextureSize) {
+	if (   overlayWidth  > (uint)g_context.maxTextureSize
+	    || overlayHeight > (uint)g_context.maxTextureSize) {
 		const frac_t outputAspect = intToFrac(_outputScreenWidth) / _outputScreenHeight;
 
 		if (outputAspect > (frac_t)FRAC_ONE) {
-			overlayWidth  = g_context._maxTextureSize;
+			overlayWidth  = g_context.maxTextureSize;
 			overlayHeight = intToFrac(overlayWidth) / outputAspect;
 		} else {
-			overlayHeight = g_context._maxTextureSize;
+			overlayHeight = g_context.maxTextureSize;
 			overlayWidth  = fracToInt(overlayHeight * outputAspect);
 		}
 	}
