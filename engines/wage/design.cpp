@@ -395,7 +395,7 @@ void Design::drawBitmap(Graphics::Surface *surface, Common::ReadStream &in, bool
 	numBytes -= 10;
 
 	int x = 0, y = 0;
-	while (numBytes > 0) {
+	while (numBytes > 0 && y < h) {
 		int n = in.readSByte();
 		int count;
 		int b;
@@ -415,7 +415,7 @@ void Design::drawBitmap(Graphics::Surface *surface, Common::ReadStream &in, bool
 			count = 0;
 		}
 
-		for (int i = 0; i < count; i++) {
+		for (int i = 0; i < count && y < h; i++) {
 			byte color;
 			if (state == 1) {
 				color = in.readByte();
@@ -439,13 +439,7 @@ void Design::drawBitmap(Graphics::Surface *surface, Common::ReadStream &in, bool
 					break;
 				}
 			}
-
-			if (y == h)
-				break;
 		}
-
-		if (y == h)
-			break;
 	}
 
 	while (numBytes--)
