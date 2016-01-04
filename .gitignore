@@ -152,6 +152,7 @@ Thumbs.db
 *.sbr
 *.sdf
 *.opensdf
+*.opendb
 obj/
 _ReSharper*/
 ipch/
