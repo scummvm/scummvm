@@ -55,14 +55,10 @@ private:
 	 */
 	void doPictText(const Common::String filename, bool isScreen = false);
 
-	/**
-	 * Does a one second delay, but checks the music while doing it.
-	 */
-	void musicDelay();
-	void nReadPict(const Common::String filename, bool playOnce = true);
+	void nReadPict(const Common::String filename, bool playOnce = true, bool noPalChange = false, bool doBlack = false, int wait = 0);
 
 	LabEngine *_vm;
-	bool _quitIntro, _introDoBlack;
+	bool _quitIntro;
 	TextFont *_font;
 };
 

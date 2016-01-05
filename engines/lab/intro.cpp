@@ -42,7 +42,6 @@ namespace Lab {
 
 Intro::Intro(LabEngine *vm) : _vm(vm) {
 	_quitIntro = false;
-	_introDoBlack = false;
 	_font = _vm->_resource->getFont("F:Map.fon");
 }
 
@@ -191,21 +190,7 @@ void Intro::doPictText(const Common::String filename, bool isScreen) {
 	}	// while(1)
 }
 
-void Intro::musicDelay() {
-	_vm->updateEvents();
-
-	if (_quitIntro)
-		return;
-
-	for (int i = 0; i < 20; i++) {
-		_vm->updateEvents();
-		_vm->waitTOF();
-		_vm->waitTOF();
-		_vm->waitTOF();
-	}
-}
-
-void Intro::nReadPict(const Common::String filename, bool playOnce) {
+void Intro::nReadPict(const Common::String filename, bool playOnce, bool noPalChange, bool doBlack, int wait) {
 	Common::String finalFileName = Common::String("P:Intro/") + filename;
 
 	_vm->updateEvents();
@@ -214,9 +199,25 @@ void Intro::nReadPict(const Common::String filename, bool playOnce) {
 	if (_quitIntro)
 		return;
 
-	_vm->_anim->_doBlack = _introDoBlack;
+	if (noPalChange)
+		_vm->_anim->_noPalChange = true;
+
+	_vm->_anim->_doBlack = doBlack;
 	_vm->_anim->stopDiffEnd();
 	_vm->_graphics->readPict(finalFileName, playOnce);
+
+	if (wait) {
+		for (int i = 0; i < wait / 10; i++) {
+			_vm->updateEvents();
+			introEatMessages();
+			if (_quitIntro)
+				break;
+			_vm->_system->delayMillis(10);
+		}
+	}
+
+	if (noPalChange)
+		_vm->_anim->_noPalChange = false;
 }
 
 void Intro::play() {
@@ -227,22 +228,13 @@ void Intro::play() {
 		0x0CB3, 0x0DC4, 0x0DD6, 0x0EE7
 	};
 
-	_vm->_anim->_doBlack = true;
-
 	if (_vm->getPlatform() == Common::kPlatformDOS) {
 		nReadPict("EA0");
 		nReadPict("EA1");
 		nReadPict("EA2");
 		nReadPict("EA3");
 	} else if (_vm->getPlatform() == Common::kPlatformWindows) {
-		nReadPict("WYRMKEEP");
-		// Wait 4 seconds (400 x 10ms)
-		for (int i = 0; i < 400; i++) {
-			introEatMessages();
-			if (_quitIntro)
-				break;
-			_vm->_system->delayMillis(10);
-		}
+		nReadPict("WYRMKEEP", true, false, false, 4000);
 	}
 
 	_vm->_graphics->blackAllScreen();
@@ -252,12 +244,10 @@ void Intro::play() {
 	else
 		_vm->_music->changeMusic("Music:BackGround", false, false);
 
-	_vm->_anim->_noPalChange = true;
 	if (_vm->getPlatform() == Common::kPlatformDOS)
-		nReadPict("TNDcycle.pic");
+		nReadPict("TNDcycle.pic", true, true);
 	else
-		nReadPict("TNDcycle2.pic");
-	_vm->_anim->_noPalChange = false;
+		nReadPict("TNDcycle2.pic", true, true);
 
 	_vm->_graphics->_fadePalette = palette;
 
@@ -266,16 +256,18 @@ void Intro::play() {
 					((_vm->_anim->_diffPalette[i * 3 + 1] >> 2) << 4) +
 					(_vm->_anim->_diffPalette[i * 3 + 2] >> 2);
 	}
+
 	_vm->updateEvents();
+	introEatMessages();
 	if (!_quitIntro)
 		_vm->_graphics->fade(true);
 
 	for (int times = 0; times < 150; times++) {
+		_vm->updateEvents();
 		introEatMessages();
 		if (_quitIntro)
 			break;
 
-		_vm->updateEvents();
 		uint16 temp = palette[2];
 
 		for (int i = 2; i < 15; i++)
@@ -291,35 +283,22 @@ void Intro::play() {
 		_vm->_graphics->fade(false);
 		_vm->_graphics->blackAllScreen();
 		_vm->updateEvents();
+		introEatMessages();
 	}
 
 	nReadPict("Title.A");
-	nReadPict("AB");
-	musicDelay();
+	nReadPict("AB", true, false, false, 1000);
 	nReadPict("BA");
-	nReadPict("AC");
-	musicDelay();
-
-	if (_vm->getPlatform() == Common::kPlatformWindows)
-		musicDelay(); // more credits on this page now
-
+	nReadPict("AC", true, false, false, 1000);
 	nReadPict("CA");
-	nReadPict("AD");
-	musicDelay();
-
-	if (_vm->getPlatform() == Common::kPlatformWindows)
-		musicDelay(); // more credits on this page now
-
+	nReadPict("AD", true, false, false, 1000);
 	nReadPict("DA");
-	musicDelay();
 
-	_vm->updateEvents();
 	_vm->_graphics->blackAllScreen();
 	_vm->updateEvents();
+	introEatMessages();
 
-	_vm->_anim->_noPalChange = true;
-	nReadPict("Intro.1");
-	_vm->_anim->_noPalChange = false;
+	nReadPict("Intro.1", true, true);
 
 	for (int i = 0; i < 16; i++) {
 		palette[i] = ((_vm->_anim->_diffPalette[i * 3] >> 2) << 8) +
@@ -335,51 +314,53 @@ void Intro::play() {
 
 	_vm->_graphics->blackAllScreen();
 	_vm->updateEvents();
+	introEatMessages();
 
-	_introDoBlack = true;
-	nReadPict("Station1");
+	nReadPict("Station1", true, false, true);
 	doPictText("i.3");
 
-	nReadPict("Station2");
+	nReadPict("Station2", true, false, true);
 	doPictText("i.4");
 
-	nReadPict("Stiles4");
+	nReadPict("Stiles4", true, false, true);
 	doPictText("i.5");
 
-	nReadPict("Stiles3");
+	nReadPict("Stiles3", true, false, true);
 	doPictText("i.6");
 
 	if (_vm->getPlatform() == Common::kPlatformWindows)
-		nReadPict("Platform2");
+		nReadPict("Platform2", true, false, true);
 	else
-		nReadPict("Platform");
+		nReadPict("Platform", true, false, true);
 	doPictText("i.7");
 
-	nReadPict("Subway.1");
+	nReadPict("Subway.1", true, false, true);
 	doPictText("i.8");
 
-	nReadPict("Subway.2");
+	nReadPict("Subway.2", true, false, true);
 
 	doPictText("i.9");
 	doPictText("i.10");
 	doPictText("i.11");
 
-	if (!_quitIntro)
-		for (int i = 0; i < 50; i++) {
-			for (int idx = (8 * 3); idx < (255 * 3); idx++)
-				_vm->_anim->_diffPalette[idx] = 255 - _vm->_anim->_diffPalette[idx];
+	for (int i = 0; i < 50; i++) {
+		_vm->updateEvents();
+		introEatMessages();
+		if (_quitIntro)
+			break;
 
-			_vm->updateEvents();
-			_vm->waitTOF();
-			_vm->_graphics->setPalette(_vm->_anim->_diffPalette, 256);
-			_vm->waitTOF();
-			_vm->waitTOF();
-		}
+		for (int idx = (8 * 3); idx < (255 * 3); idx++)
+			_vm->_anim->_diffPalette[idx] = 255 - _vm->_anim->_diffPalette[idx];
+
+		_vm->waitTOF();
+		_vm->_graphics->setPalette(_vm->_anim->_diffPalette, 256);
+		_vm->waitTOF();
+		_vm->waitTOF();
+	}
 
 	doPictText("i.12");
 	doPictText("i.13");
 
-	_introDoBlack = false;
 	nReadPict("Daed0");
 	doPictText("i.14");
 
@@ -410,7 +391,6 @@ void Intro::play() {
 	nReadPict("Daed7", false);
 	doPictText("i.27");
 	doPictText("i.28");
-	_vm->_anim->stopDiffEnd();
 
 	nReadPict("Daed8");
 	doPictText("i.29");
