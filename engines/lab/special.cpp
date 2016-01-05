@@ -387,11 +387,15 @@ void LabEngine::processMonitor(const char *ntext, TextFont *monitorFont, bool is
 				int16 mouseX = msg->_mouse.x;
 				int16 mouseY = msg->_mouse.y;
 
+				// Check if mouse was in button bar
 				if ((mouseY >= _utils->vgaScaleY(171)) && (mouseY <= _utils->vgaScaleY(200))) {
-					if (mouseX <= _utils->vgaScaleX(31))
+					if (mouseX <= _utils->vgaScaleX(31)) {
+						// Exit button
 						return;
+					}
 					
 					if (mouseX <= _utils->vgaScaleX(59)) {
+						// Back button
 						if (isInteractive) {
 							_monitorPage = 0;
 
@@ -404,14 +408,15 @@ void LabEngine::processMonitor(const char *ntext, TextFont *monitorFont, bool is
 							drawMonText(ntext, monitorFont, textRect, isInteractive);
 						}
 					} else if (mouseX < _utils->vgaScaleX(259)) {
-						return;
+						// empty region; ignore
 					} else if (mouseX <= _utils->vgaScaleX(289)) {
+						// Page down button
 						if (!_lastPage) {
 							_monitorPage += 1;
 							drawMonText(ntext, monitorFont, textRect, isInteractive);
 						}
 					} else if (_monitorPage >= 1) {
-						// mouseX is greater than 290 (scaled)
+						// Page up button
 						_monitorPage -= 1;
 						drawMonText(ntext, monitorFont, textRect, isInteractive);
 					}
