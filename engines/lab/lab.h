@@ -461,7 +461,7 @@ private:
 	/**
 	 * Processes user input.
 	 */
-	void processMonitor(const char *ntext, TextFont *monitorFont, bool isInteractive, Common::Rect textRect);
+	void processMonitor(const Common::String &ntext, TextFont *monitorFont, bool isInteractive, Common::Rect textRect);
 
 	/**
 	 * Figures out what a room's coordinates should be.

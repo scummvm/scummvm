@@ -334,10 +334,11 @@ void LabEngine::drawMonText(const char *text, TextFont *monitorFont, Common::Rec
 	_event->mouseShow();
 }
 
-void LabEngine::processMonitor(const char *ntext, TextFont *monitorFont, bool isInteractive, Common::Rect textRect) {
+void LabEngine::processMonitor(const Common::String &ntext, TextFont *monitorFont, bool isInteractive, Common::Rect textRect) {
 	Common::String startFileName = _monitorTextFilename;
 	const CloseData *startClosePtr = _closeDataPtr, *lastClosePtr[10];
 	uint16 depth = 0;
+	Common::String text = ntext;
 
 	lastClosePtr[0] = _closeDataPtr;
 
@@ -356,7 +357,7 @@ void LabEngine::processMonitor(const char *ntext, TextFont *monitorFont, bool is
 				_monitorPage = 0;
 				_monitorTextFilename = filename;
 
-				Common::String text = _resource->getText(_monitorTextFilename);
+				text = _resource->getText(_monitorTextFilename);
 				_graphics->fade(false);
 				drawMonText(text.c_str(), monitorFont, textRect, isInteractive);
 				_graphics->fade(true);
@@ -402,7 +403,7 @@ void LabEngine::processMonitor(const char *ntext, TextFont *monitorFont, bool is
 							}
 						} else if (_monitorPage > 0) {
 							_monitorPage = 0;
-							drawMonText(ntext, monitorFont, textRect, isInteractive);
+							drawMonText(text.c_str(), monitorFont, textRect, isInteractive);
 						}
 					} else if (mouseX < _utils->vgaScaleX(259)) {
 						// empty region; ignore
@@ -410,12 +411,12 @@ void LabEngine::processMonitor(const char *ntext, TextFont *monitorFont, bool is
 						// Page down button
 						if (!_lastPage) {
 							_monitorPage += 1;
-							drawMonText(ntext, monitorFont, textRect, isInteractive);
+							drawMonText(text.c_str(), monitorFont, textRect, isInteractive);
 						}
 					} else if (_monitorPage >= 1) {
 						// Page up button
 						_monitorPage -= 1;
-						drawMonText(ntext, monitorFont, textRect, isInteractive);
+						drawMonText(text.c_str(), monitorFont, textRect, isInteractive);
 					}
 				} else if (isInteractive) {
 					const CloseData *tmpClosePtr = _closeDataPtr;
@@ -458,7 +459,7 @@ void LabEngine::doMonitor(const Common::String background, const Common::String 
 	drawMonText(ntext.c_str(), monitorFont, scaledRect, isinteractive);
 	_event->mouseShow();
 	_graphics->fade(true);
-	processMonitor(ntext.c_str(), monitorFont, isinteractive, scaledRect);
+	processMonitor(ntext, monitorFont, isinteractive, scaledRect);
 	_graphics->fade(false);
 	_event->mouseHide();
 	_graphics->freeFont(&monitorFont);
