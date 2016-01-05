@@ -367,7 +367,6 @@ void WageEngine::redrawScene() {
 	Scene *currentScene = _world->_player->_currentScene;
 	if (currentScene != NULL) {
 		//bool firstTime = (_lastScene != currentScene);
-		_lastScene = currentScene;
 
 		warning("STUB: WageEngine::redrawScene()");
 
