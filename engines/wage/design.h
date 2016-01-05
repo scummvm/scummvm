@@ -100,6 +100,21 @@ private:
 									void (*plotProc)(int, int, int, void *), void *data);
 };
 
+class FloodFill {
+public:
+	FloodFill(Graphics::Surface *surface, byte color1, byte color2);
+	~FloodFill();
+	void addSeed(int x, int y);
+	void fill();
+
+private:
+	Common::List<Common::Point *> _queue;
+	Graphics::Surface *_surface;
+	byte _color1, _color2;
+	byte *_visited;
+	int _w, _h;
+};
+
 } // End of namespace Wage
 
 #endif

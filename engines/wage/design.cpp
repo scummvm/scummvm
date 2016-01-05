@@ -148,6 +148,7 @@ void Design::paint(Graphics::Surface *surface, Patterns &patterns, int x, int y)
 		//g_system->copyRectToScreen(_surface->getPixels(), _surface->pitch, 0, 0, _surface->w, _surface->h);
 		//((WageEngine *)g_engine)->processEvents();
 		//g_system->updateScreen();
+		//g_system->delayMillis(500);
 	}
 
 	const int padding = 3;
@@ -364,6 +365,9 @@ void Design::drawBitmap(Graphics::Surface *surface, Common::ReadStream &in) {
 	int x2 = in.readSint16BE();
 	int w = x2 - x1;
 	int h = y2 - y1;
+	Graphics::Surface tmp;
+
+	tmp.create(w, h, Graphics::PixelFormat::createFormatCLUT8());
 
 	numBytes -= 10;
 
@@ -398,16 +402,10 @@ void Design::drawBitmap(Graphics::Surface *surface, Common::ReadStream &in) {
 
 			for (int c = 0; c < 8; c++) {
 				if (x1 + x >= 0 && x1 + x < surface->w && y1 + y >= 0 && y1 + y < surface->h)
-					*((byte *)surface->getBasePtr(x1 + x, y1 + y)) =
-						(color & (1 << (7 - c % 8))) ?
-							kColorBlack : kColorWhite;
+					*((byte *)tmp.getBasePtr(x, y)) = (color & (1 << (7 - c % 8))) ? kColorBlack : kColorWhite;
 				x++;
 				if (x == w) {
 					y++;
-
-					if (y == h)
-						break;
-
 					x = 0;
 					break;
 				}
@@ -417,6 +415,28 @@ void Design::drawBitmap(Graphics::Surface *surface, Common::ReadStream &in) {
 
 	while (numBytes--)
 		in.readByte();
+
+	FloodFill ff(&tmp, kColorWhite, kColorGreen);
+	for (int yy = 0; yy < h; yy++) {
+		ff.addSeed(0, yy);
+		ff.addSeed(w - 1, yy);
+	}
+	for (int xx = 0; xx < w; xx++) {
+		ff.addSeed(xx, 0);
+		ff.addSeed(xx, h - 1);
+	}
+	ff.fill();
+
+	for (y = 0; y < h; y++) {
+		byte *src = (byte *)tmp.getBasePtr(0, y);
+		byte *dst = (byte *)surface->getBasePtr(x1, y1 + y);
+		for (x = 0; x < w; x++) {
+			if (*src != kColorGreen)
+				*dst = *src;
+			src++;
+			dst++;
+		}
+	}
 }
 
 void Design::drawFilledRect(Graphics::Surface *surface, Common::Rect &rect, int color, Patterns &patterns, byte fillType) {
@@ -787,6 +807,55 @@ void Design::drawThickLine (int x1, int y1, int x2, int y2, int thick, int color
 					(*plotProc)(w, y, color, data);
 			}
 		}
+	}
+}
+
+FloodFill::FloodFill(Graphics::Surface *surface, byte color1, byte color2) {
+	_surface = surface;
+	_color1 = color1;
+	_color2 = color2;
+	_w = surface->w;
+	_h = surface->h;
+
+	_visited = (byte *)calloc(_w * _h, 1);
+}
+
+FloodFill::~FloodFill() {
+	while(_queue.size()) {
+		Common::Point *p = _queue.front();
+
+		delete p;
+		_queue.pop_front();
+	}
+
+	free(_visited);
+}
+
+void FloodFill::addSeed(int x, int y) {
+	byte *p;
+
+	if (x >= 0 && x < _w && y >= 0 && y < _h) {
+		if (!_visited[y * _w + x] && *(p = (byte *)_surface->getBasePtr(x, y)) == _color1) {
+			_visited[y * _w + x] = 1;
+			*p = _color2;
+
+			Common::Point *pt = new Common::Point(x, y);
+
+			_queue.push_back(pt);
+		}
+	}
+}
+
+void FloodFill::fill() {
+	while (_queue.size()) {
+		Common::Point *p = _queue.front();
+		_queue.pop_front();
+		addSeed(p->x    , p->y - 1);
+		addSeed(p->x - 1, p->y    );
+		addSeed(p->x    , p->y + 1);
+		addSeed(p->x + 1, p->y    );
+
+		delete p;
 	}
 }
 
