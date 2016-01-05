@@ -213,6 +213,8 @@ const Graphics::Font *Gui::getTitleFont() {
 
 void Gui::clearOutput() {
 	_out.clear();
+	_lines.clear();
+	_consoleFullRedraw = true;
 }
 
 void Gui::appendText(String &str) {
