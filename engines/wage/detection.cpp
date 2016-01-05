@@ -41,6 +41,7 @@ static const PlainGameDescriptor wageGames[] = {
 	{"afm", "Another Fine Mess"},
 	{"amot", "A Mess O' Trouble"},
 	{"cantitoe", "Camp Cantitoe"},
+	{"escapefromschool", "Escape from School!"},
 	{"wage", "World Adventure Game Engine game"},
 	{0, 0}
 };
@@ -70,6 +71,15 @@ static const ADGameDescription gameDescriptions[] = {
 		"cantitoe",
 		"",
 		AD_ENTRY1s("Camp Cantitoe", "098aa5c11c58e1ef274a30a9e01b4755", 621440),
+		Common::EN_ANY,
+		Common::kPlatformMacintosh,
+		ADGF_NO_FLAGS,
+		GUIO0()
+	},
+	{
+		"escapefromschool",
+		"",
+		AD_ENTRY1s("Escape from School!", "a854be48d4af20126d18a9cad93a969b", 51840),
 		Common::EN_ANY,
 		Common::kPlatformMacintosh,
 		ADGF_NO_FLAGS,
