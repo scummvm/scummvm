@@ -288,8 +288,6 @@ void LabEngine::doJournal() {
 
 void LabEngine::drawMonText(const char *text, TextFont *monitorFont, Common::Rect textRect, bool isinteractive) {
 	uint16 drawingToPage = 0, yspacing = 0;
-	int charsDrawn = 0;
-	const char *curText = text;
 
 	_event->mouseHide();
 
@@ -319,10 +317,10 @@ void LabEngine::drawMonText(const char *text, TextFont *monitorFont, Common::Rec
 		_graphics->rectFill(textRect, 0);
 	}
 
+	const char *curText = text;
 	while (drawingToPage < _monitorPage) {
 		updateEvents();
-		curText = text + charsDrawn;
-		charsDrawn += _graphics->flowText(monitorFont, yspacing, 0, 0, false, false, false, false, textRect, curText);
+		curText += _graphics->flowText(monitorFont, yspacing, 0, 0, false, false, false, false, textRect, curText);
 		_lastPage = (*curText == 0);
 
 		if (_lastPage)
@@ -331,9 +329,8 @@ void LabEngine::drawMonText(const char *text, TextFont *monitorFont, Common::Rec
 			drawingToPage++;
 	}
 
-	curText = text + charsDrawn;
+	curText += _graphics->flowText(monitorFont, yspacing, 2, 0, false, false, false, true, textRect, curText);
 	_lastPage = (*curText == 0);
-	_graphics->flowText(monitorFont, yspacing, 2, 0, false, false, false, true, textRect, curText);
 	_event->mouseShow();
 }
 
