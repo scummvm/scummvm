@@ -1236,7 +1236,7 @@ Supported platforms include (but are not limited to):
 
         UNIX            (Linux, Solaris, IRIX, *BSD, ...)
         Windows
-        Windows CE and
+        Windows CE
         Windows Mobile  (including Smartphones and PocketPCs)
         Mac OS X
         AmigaOS
