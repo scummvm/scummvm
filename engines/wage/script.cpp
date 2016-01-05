@@ -881,9 +881,6 @@ void Script::processMove() {
 	if (skip != 0xfd)
 		error("No end for MOVE: %02x", skip);
 
-	debug(6, "MOVE: [what=%d/%s, to=%d/%s]",
-		what->_type, what->toString().c_str(), to->_type, to->toString().c_str());
-
 	evaluatePair(what, "M", to);
 }
 
