@@ -18,6 +18,47 @@ modern.zip        FILE    "gui/themes/modern.zip"
 translations.dat       FILE    "gui/themes/translations.dat"
 #endif
 
+#ifdef USE_OPENGL_SHADERS
+#if ENABLE_GRIM == STATIC_PLUGIN
+shaders/dim.fragment             FILE    "engines/grim/shaders/dim.fragment"
+shaders/dim.vertex               FILE    "engines/grim/shaders/dim.vertex"
+shaders/emerg.fragment           FILE    "engines/grim/shaders/emerg.fragment"
+shaders/emerg.vertex             FILE    "engines/grim/shaders/emerg.vertex"
+shaders/emi_actor.fragment       FILE    "engines/grim/shaders/emi_actor.fragment"
+shaders/emi_actor.vertex         FILE    "engines/grim/shaders/emi_actor.vertex"
+shaders/emi_background.fragment  FILE    "engines/grim/shaders/emi_background.fragment"
+shaders/emi_background.vertex    FILE    "engines/grim/shaders/emi_background.vertex"
+shaders/emi_dimplane.fragment    FILE    "engines/grim/shaders/emi_dimplane.fragment"
+shaders/emi_dimplane.vertex      FILE    "engines/grim/shaders/emi_dimplane.vertex"
+shaders/grim_actor.fragment      FILE    "engines/grim/shaders/grim_actor.fragment"
+shaders/grim_actor.vertex        FILE    "engines/grim/shaders/grim_actor.vertex"
+shaders/grim_background.fragment FILE    "engines/grim/shaders/grim_background.fragment"
+shaders/grim_primitive.vertex    FILE    "engines/grim/shaders/grim_primitive.vertex"
+shaders/shadowplane.fragment     FILE    "engines/grim/shaders/shadowplane.fragment"
+shaders/shadowplane.vertex       FILE    "engines/grim/shaders/shadowplane.vertex"
+shaders/smush.fragment           FILE    "engines/grim/shaders/smush.fragment"
+shaders/smush.vertex             FILE    "engines/grim/shaders/smush.vertex"
+shaders/text.fragment            FILE    "engines/grim/shaders/text.fragment"
+shaders/text.vertex              FILE    "engines/grim/shaders/text.vertex"
+#endif
+#if ENABLE_MYST3 == STATIC_PLUGIN
+shaders/myst3_box.fragment       FILE    "engines/myst3/shaders/myst3_box.fragment"
+shaders/myst3_box.vertex         FILE    "engines/myst3/shaders/myst3_box.vertex"
+shaders/myst3_cube.fragment      FILE    "engines/myst3/shaders/myst3_cube.fragment"
+shaders/myst3_cube.vertex        FILE    "engines/myst3/shaders/myst3_cube.vertex"
+shaders/myst3_text.fragment      FILE    "engines/myst3/shaders/myst3_text.fragment"
+shaders/myst3_text.vertex        FILE    "engines/myst3/shaders/myst3_text.vertex"
+#endif
+#if ENABLE_STARK == STATIC_PLUGIN
+shaders/stark_actor.fragment     FILE    "engines/stark/shaders/stark_actor.fragment"
+shaders/stark_actor.vertex       FILE    "engines/stark/shaders/stark_actor.vertex"
+shaders/stark_prop.fragment      FILE    "engines/stark/shaders/stark_prop.fragment"
+shaders/stark_prop.vertex        FILE    "engines/stark/shaders/stark_prop.vertex"
+shaders/stark_surface.fragment   FILE    "engines/stark/shaders/stark_surface.fragment"
+shaders/stark_surface.vertex     FILE    "engines/stark/shaders/stark_surface.vertex"
+#endif
+#endif
+
 VS_VERSION_INFO VERSIONINFO
  FILEVERSION     @VER_MAJOR@,@VER_MINOR@,@VER_PATCH@,0
  PRODUCTVERSION  @VER_MAJOR@,@VER_MINOR@,@VER_PATCH@,0
