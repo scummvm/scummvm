@@ -30,6 +30,8 @@
 
 #include "common/events.h"
 
+#include "graphics/cursorman.h"
+
 #include "lab/lab.h"
 
 #include "lab/dispman.h"
@@ -125,18 +127,18 @@ void EventManager::updateMouse() {
 }
 
 void EventManager::initMouse() {
-	_vm->_system->setMouseCursor(mouseData, MOUSE_WIDTH, MOUSE_HEIGHT, 0, 0, 0);
-	_vm->_system->showMouse(false);
+	CursorMan.pushCursor(mouseData, MOUSE_WIDTH, MOUSE_HEIGHT, 0, 0, 0);
+	CursorMan.showMouse(false);
 
 	setMousePos(Common::Point(_vm->_graphics->_screenWidth / 2, _vm->_graphics->_screenHeight / 2));
 }
 
 void EventManager::mouseShow() {
-	_vm->_system->showMouse(true);
+	CursorMan.showMouse(true);
 }
 
 void EventManager::mouseHide() {
-	_vm->_system->showMouse(false);
+	CursorMan.showMouse(false);
 }
 
 void EventManager::setMousePos(Common::Point pos) {
