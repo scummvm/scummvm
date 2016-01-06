@@ -116,6 +116,7 @@ public:
 class Designed {
 public:
 	Designed() : _design(NULL), _designBounds(NULL), _classType(UNKNOWN) {}
+	~Designed();
 
 	String _name;
 	Design *_design;

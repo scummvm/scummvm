@@ -59,6 +59,11 @@ void Designed::setDesignBounds(Common::Rect *bounds) {
 	_design->setBounds(bounds);
 }
 
+Designed::~Designed() {
+	delete _design;
+	delete _designBounds;
+}
+
 Context::Context() {
 	_visits = 0;
 	_kills = 0;
