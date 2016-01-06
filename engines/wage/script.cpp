@@ -952,7 +952,7 @@ void Script::handleMoveCommand(Scene::Directions dir, const char *dirName) {
 			return;
 		}
 	}
-	if (msg != NULL && msg.size() > 0) {
+	if (msg.size() > 0) {
 		appendText(msg);
 	} else {
 		Common::String txt("You can't go ");
