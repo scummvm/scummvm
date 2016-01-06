@@ -185,11 +185,9 @@ int MidiDriver_FluidSynth::open() {
 	const char *soundfont = ConfMan.get("soundfont").c_str();
 
 #ifdef IPHONE_OFFICIAL
-	char *soundfont_fullpath[PATH_MAX];
-	const char *document_path = iOS7_getDocumentsDir();
-	strcpy((char *) soundfont_fullpath, document_path);
-	strcat((char *) soundfont_fullpath, soundfont);
-	_soundFont = fluid_synth_sfload(_synth, (const char *) soundfont_fullpath, 1);
+	Common::String soundfont_fullpath = iOS7_getDocumentsDir();
+	soundfont_fullpath += soundfont;
+	_soundFont = fluid_synth_sfload(_synth, soundfont_fullpath.c_str(), 1);
 #else
 	_soundFont = fluid_synth_sfload(_synth, soundfont, 1);
 #endif
