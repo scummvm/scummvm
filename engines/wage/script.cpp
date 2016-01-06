@@ -1257,6 +1257,9 @@ void Script::convertToText() {
 			}
 		}
 	}
+
+	if (scr->line.size())
+	  _scriptText.push_back(scr);
 }
 
 } // End of namespace Wage
