@@ -24,6 +24,7 @@
 #define BACKENDS_GRAPHICS_OPENGL_PIEPLINE_H
 
 #include "backends/graphics/opengl/opengl-sys.h"
+#include "backends/graphics/opengl/texture.h"
 
 namespace OpenGL {
 
@@ -87,13 +88,22 @@ public:
 	virtual void setColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a) = 0;
 
 	/**
-	 * Setup coordinates for drawing with glDrawArrays.
+	 * Draw a texture rectangle to the currently active framebuffer.
 	 *
-	 * @param vertices  The list of vertices, 2 coordinates for each vertex.
-	 * @param texCoords The list of texture coordinates, 2 coordinates for
-	 *                  each vertex.
+	 * @param texture     Texture to use for drawing.
+	 * @param coordinates x1, y1, x2, y2 coordinates where to draw the texture.
 	 */
-	virtual void setDrawCoordinates(const GLfloat *vertices, const GLfloat *texCoords) = 0;
+	virtual void drawTexture(const GLTexture &texture, const GLfloat *coordinates) = 0;
+
+	void drawTexture(const GLTexture &texture, GLfloat x, GLfloat y, GLfloat w, GLfloat h) {
+		const GLfloat coordinates[4*2] = {
+			x,     y,
+			x + w, y,
+			x,     y + h,
+			x + w, y + h
+		};
+		drawTexture(texture, coordinates);
+	}
 
 	/**
 	 * Set the projection matrix.
@@ -113,7 +123,7 @@ public:
 
 	virtual void setColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a);
 
-	virtual void setDrawCoordinates(const GLfloat *vertices, const GLfloat *texCoords);
+	virtual void drawTexture(const GLTexture &texture, const GLfloat *coordinates);
 
 	virtual void setProjectionMatrix(const GLfloat *projectionMatrix);
 };
@@ -130,7 +140,7 @@ public:
 
 	virtual void setColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a);
 
-	virtual void setDrawCoordinates(const GLfloat *vertices, const GLfloat *texCoords);
+	virtual void drawTexture(const GLTexture &texture, const GLfloat *coordinates);
 
 	virtual void setProjectionMatrix(const GLfloat *projectionMatrix);
 

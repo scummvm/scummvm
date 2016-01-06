@@ -76,7 +76,7 @@ public:
 	/**
 	 * Bind the texture to the active texture unit.
 	 */
-	void bind();
+	void bind() const;
 
 	/**
 	 * Sets the size of the texture in pixels.
@@ -182,8 +182,6 @@ public:
 	 */
 	void fill(uint32 color);
 
-	virtual void draw(GLfloat x, GLfloat y, GLfloat w, GLfloat h) = 0;
-
 	void flagDirty() { _allDirty = true; }
 	virtual bool isDirty() const { return _allDirty || !_dirtyArea.isEmpty(); }
 
@@ -212,6 +210,16 @@ public:
 	 */
 	virtual void setColorKey(uint colorKey) {}
 	virtual void setPalette(uint start, uint colors, const byte *palData) {}
+
+	/**
+	 * Update underlying OpenGL texture to reflect current state.
+	 */
+	virtual void updateGLTexture() = 0;
+
+	/**
+	 * Obtain underlying OpenGL texture.
+	 */
+	virtual const GLTexture &getGLTexture() const = 0;
 protected:
 	void clearDirty() { _allDirty = false; _dirtyArea = Common::Rect(); }
 
@@ -246,8 +254,6 @@ public:
 
 	virtual void allocate(uint width, uint height);
 
-	virtual void draw(GLfloat x, GLfloat y, GLfloat w, GLfloat h);
-
 	virtual uint getWidth() const { return _userPixelData.w; }
 	virtual uint getHeight() const { return _userPixelData.h; }
 
@@ -259,10 +265,10 @@ public:
 	virtual Graphics::Surface *getSurface() { return &_userPixelData; }
 	virtual const Graphics::Surface *getSurface() const { return &_userPixelData; }
 
+	virtual void updateGLTexture();
+	virtual const GLTexture &getGLTexture() const { return _glTexture; }
 protected:
 	const Graphics::PixelFormat _format;
-
-	virtual void updateTexture();
 
 private:
 	GLTexture _glTexture;
@@ -288,9 +294,7 @@ public:
 	virtual Graphics::Surface *getSurface() { return &_clut8Data; }
 	virtual const Graphics::Surface *getSurface() const { return &_clut8Data; }
 
-protected:
-	virtual void updateTexture();
-
+	virtual void updateGLTexture();
 private:
 	Graphics::Surface _clut8Data;
 	byte *_palette;
@@ -309,9 +313,7 @@ public:
 	virtual Graphics::Surface *getSurface() { return &_rgb555Data; }
 	virtual const Graphics::Surface *getSurface() const { return &_rgb555Data; }
 
-protected:
 	virtual void updateTexture();
-
 private:
 	Graphics::Surface _rgb555Data;
 };
@@ -333,8 +335,6 @@ public:
 
 	virtual void allocate(uint width, uint height);
 
-	virtual void draw(GLfloat x, GLfloat y, GLfloat w, GLfloat h);
-
 	virtual bool isDirty() const { return _paletteDirty || Surface::isDirty(); }
 
 	virtual uint getWidth() const { return _userPixelData.w; }
@@ -350,13 +350,15 @@ public:
 	virtual Graphics::Surface *getSurface() { return &_userPixelData; }
 	virtual const Graphics::Surface *getSurface() const { return &_userPixelData; }
 
+	virtual void updateGLTexture();
+	virtual const GLTexture &getGLTexture() const;
+
 	static bool isSupportedByContext() {
 		return g_context.shadersSupported
 		    && g_context.multitextureSupported
 		    && g_context.framebufferObjectSupported;
 	}
 private:
-	void updateTextures();
 	void lookUpColors();
 
 	GLTexture _clut8Texture;

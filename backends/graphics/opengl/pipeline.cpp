@@ -67,9 +67,12 @@ void FixedPipeline::setColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a) {
 	GL_CALL(glColor4f(r, g, b, a));
 }
 
-void FixedPipeline::setDrawCoordinates(const GLfloat *vertices, const GLfloat *texCoords) {
-	GL_CALL(glTexCoordPointer(2, GL_FLOAT, 0, texCoords));
-	GL_CALL(glVertexPointer(2, GL_FLOAT, 0, vertices));
+void FixedPipeline::drawTexture(const GLTexture &texture, const GLfloat *coordinates) {
+	texture.bind();
+
+	GL_CALL(glTexCoordPointer(2, GL_FLOAT, 0, texture.getTexCoords()));
+	GL_CALL(glVertexPointer(2, GL_FLOAT, 0, coordinates));
+	GL_CALL(glDrawArrays(GL_TRIANGLE_STRIP, 0, 4));
 }
 
 void FixedPipeline::setProjectionMatrix(const GLfloat *projectionMatrix) {
@@ -110,9 +113,12 @@ void ShaderPipeline::setColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a) {
 	GL_CALL(glVertexAttrib4f(kColorAttribLocation, r, g, b, a));
 }
 
-void ShaderPipeline::setDrawCoordinates(const GLfloat *vertices, const GLfloat *texCoords) {
-	GL_CALL(glVertexAttribPointer(kTexCoordAttribLocation, 2, GL_FLOAT, GL_FALSE, 0, texCoords));
-	GL_CALL(glVertexAttribPointer(kPositionAttribLocation, 2, GL_FLOAT, GL_FALSE, 0, vertices));
+void ShaderPipeline::drawTexture(const GLTexture &texture, const GLfloat *coordinates) {
+	texture.bind();
+
+	GL_CALL(glVertexAttribPointer(kTexCoordAttribLocation, 2, GL_FLOAT, GL_FALSE, 0, texture.getTexCoords()));
+	GL_CALL(glVertexAttribPointer(kPositionAttribLocation, 2, GL_FLOAT, GL_FALSE, 0, coordinates));
+	GL_CALL(glDrawArrays(GL_TRIANGLE_STRIP, 0, 4));
 }
 
 void ShaderPipeline::setProjectionMatrix(const GLfloat *projectionMatrix) {

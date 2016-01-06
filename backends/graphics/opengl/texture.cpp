@@ -95,7 +95,7 @@ void GLTexture::create() {
 	}
 }
 
-void GLTexture::bind() {
+void GLTexture::bind() const {
 	GL_CALL(glBindTexture(GL_TEXTURE_2D, _glTexture));
 }
 
@@ -263,34 +263,7 @@ void Texture::allocate(uint width, uint height) {
 	_userPixelData = _textureData.getSubArea(Common::Rect(width, height));
 }
 
-void Texture::draw(GLfloat x, GLfloat y, GLfloat w, GLfloat h) {
-	// Only do any processing when the Texture is initialized.
-	if (!_textureData.getPixels()) {
-		return;
-	}
-
-	// First update any potentional changes.
-	updateTexture();
-
-	// Set the texture.
-	_glTexture.bind();
-
-	// Calculate the screen rect where the texture will be drawn.
-	const GLfloat vertices[4*2] = {
-		x,     y,
-		x + w, y,
-		x,     y + h,
-		x + w, y + h
-	};
-
-	// Setup coordinates for drawing.
-	g_context.activePipeline->setDrawCoordinates(vertices, _glTexture.getTexCoords());
-
-	// Draw the texture to the screen buffer.
-	GL_CALL(glDrawArrays(GL_TRIANGLE_STRIP, 0, 4));
-}
-
-void Texture::updateTexture() {
+void Texture::updateGLTexture() {
 	if (!isDirty()) {
 		return;
 	}
@@ -418,7 +391,7 @@ inline void doPaletteLookUp(PixelType *dst, const byte *src, uint width, uint he
 }
 } // End of anonymous namespace
 
-void TextureCLUT8::updateTexture() {
+void TextureCLUT8::updateGLTexture() {
 	if (!isDirty()) {
 		return;
 	}
@@ -443,7 +416,7 @@ void TextureCLUT8::updateTexture() {
 	}
 
 	// Do generic handling of updating the texture.
-	Texture::updateTexture();
+	Texture::updateGLTexture();
 }
 
 #if !USE_FORCED_GL
@@ -502,7 +475,7 @@ void TextureRGB555::updateTexture() {
 	}
 
 	// Do generic handling of updating the texture.
-	Texture::updateTexture();
+	Texture::updateGLTexture();
 }
 #endif // !USE_FORCED_GL
 
@@ -582,33 +555,6 @@ void TextureCLUT8GPU::allocate(uint width, uint height) {
 	_clut8Vertices[7] = height;
 }
 
-void TextureCLUT8GPU::draw(GLfloat x, GLfloat y, GLfloat w, GLfloat h) {
-	// Only do any processing when the Texture is initialized.
-	if (!_clut8Data.getPixels()) {
-		return;
-	}
-
-	// First update any potentional changes.
-	updateTextures();
-
-	// Set the texture.
-	_target->getTexture()->bind();
-
-	// Calculate the screen rect where the texture will be drawn.
-	const GLfloat vertices[4*2] = {
-		x,     y,
-		x + w, y,
-		x,     y + h,
-		x + w, y + h
-	};
-
-	// Setup coordinates for drawing.
-	g_context.activePipeline->setDrawCoordinates(vertices, _target->getTexture()->getTexCoords());
-
-	// Draw the texture to the screen buffer.
-	GL_CALL(glDrawArrays(GL_TRIANGLE_STRIP, 0, 4));
-}
-
 Graphics::PixelFormat TextureCLUT8GPU::getFormat() const {
 	return Graphics::PixelFormat::createFormatCLUT8();
 }
@@ -633,7 +579,11 @@ void TextureCLUT8GPU::setPalette(uint start, uint colors, const byte *palData) {
 	_paletteDirty = true;
 }
 
-void TextureCLUT8GPU::updateTextures() {
+const GLTexture &TextureCLUT8GPU::getGLTexture() const {
+	return *_target->getTexture();
+}
+
+void TextureCLUT8GPU::updateGLTexture() {
 	const bool needLookUp = Surface::isDirty() || _paletteDirty;
 
 	// Update CLUT8 texture if necessary.
@@ -674,14 +624,10 @@ void TextureCLUT8GPU::lookUpColors() {
 	// Set the palette texture.
 	GL_CALL(glActiveTexture(GL_TEXTURE1));
 	_paletteTexture.bind();
-
-	// Set the clut8 texture.
 	GL_CALL(glActiveTexture(GL_TEXTURE0));
-	_clut8Texture.bind();
 
 	// Do color look up.
-	g_context.activePipeline->setDrawCoordinates(_clut8Vertices, _clut8Texture.getTexCoords());
-	GL_CALL(glDrawArrays(GL_TRIANGLE_STRIP, 0, 4));
+	g_context.activePipeline->drawTexture(_clut8Texture, _clut8Vertices);
 
 	// Restore old state.
 	g_context.activePipeline->setShader(oldShader);

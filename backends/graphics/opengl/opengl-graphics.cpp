@@ -370,6 +370,14 @@ void OpenGLGraphicsManager::updateScreen() {
 	}
 	_forceRedraw = false;
 
+	// Update changes to textures.
+	_gameScreen->updateGLTexture();
+	if (_cursor) {
+		_cursor->updateGLTexture();
+	}
+	_overlay->updateGLTexture();
+	_osd->updateGLTexture();
+
 	// Clear the screen buffer.
 	if (_scissorOverride && !_overlayVisible) {
 		// In certain cases we need to assure that the whole screen area is
@@ -388,11 +396,11 @@ void OpenGLGraphicsManager::updateScreen() {
 	const GLfloat shakeOffset = _gameScreenShakeOffset * (GLfloat)_displayHeight / _gameScreen->getHeight();
 
 	// First step: Draw the (virtual) game screen.
-	_gameScreen->draw(_displayX, _displayY + shakeOffset, _displayWidth, _displayHeight);
+	g_context.activePipeline->drawTexture(_gameScreen->getGLTexture(), _displayX, _displayY + shakeOffset, _displayWidth, _displayHeight);
 
 	// Second step: Draw the overlay if visible.
 	if (_overlayVisible) {
-		_overlay->draw(0, 0, _outputScreenWidth, _outputScreenHeight);
+		g_context.activePipeline->drawTexture(_overlay->getGLTexture(), 0, 0, _outputScreenWidth, _outputScreenHeight);
 	}
 
 	// Third step: Draw the cursor if visible.
@@ -401,9 +409,10 @@ void OpenGLGraphicsManager::updateScreen() {
 		// visible.
 		const GLfloat cursorOffset = _overlayVisible ? 0 : shakeOffset;
 
-		_cursor->draw(_cursorDisplayX - _cursorHotspotXScaled,
-		              _cursorDisplayY - _cursorHotspotYScaled + cursorOffset,
-		              _cursorWidthScaled, _cursorHeightScaled);
+		g_context.activePipeline->drawTexture(_cursor->getGLTexture(),
+		                         _cursorDisplayX - _cursorHotspotXScaled,
+		                         _cursorDisplayY - _cursorHotspotYScaled + cursorOffset,
+		                         _cursorWidthScaled, _cursorHeightScaled);
 	}
 
 #ifdef USE_OSD
@@ -427,7 +436,7 @@ void OpenGLGraphicsManager::updateScreen() {
 		g_context.activePipeline->setColor(1.0f, 1.0f, 1.0f, _osdAlpha / 100.0f);
 
 		// Draw the OSD texture.
-		_osd->draw(0, 0, _outputScreenWidth, _outputScreenHeight);
+		g_context.activePipeline->drawTexture(_osd->getGLTexture(), 0, 0, _outputScreenWidth, _outputScreenHeight);
 
 		// Reset color.
 		g_context.activePipeline->setColor(1.0f, 1.0f, 1.0f, 1.0f);
