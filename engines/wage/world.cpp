@@ -435,7 +435,7 @@ Scene *World::getRandomScene() {
 }
 
 Scene *World::getSceneAt(int x, int y) {
-	for (int i = 0; i < _orderedScenes.size(); i++) {
+	for (uint i = 0; i < _orderedScenes.size(); i++) {
 		Scene *scene = _orderedScenes[i];
 
 		if (scene != _storageScene && scene->_worldX == x && scene->_worldY == y) {

@@ -234,19 +234,19 @@ void WageEngine::gameOver() {
 
 void WageEngine::performInitialSetup() {
 	debug(5, "Resetting Objs: %d", _world->_orderedObjs.size());
-	for (int i = 0; i < _world->_orderedObjs.size() - 1; i++)
+	for (uint i = 0; i < _world->_orderedObjs.size() - 1; i++)
 		_world->move(_world->_orderedObjs[i], _world->_storageScene, true);
 
 	_world->move(_world->_orderedObjs[_world->_orderedObjs.size() - 1], _world->_storageScene);
 
 	debug(5, "Resetting Chrs: %d", _world->_orderedChrs.size());
-	for (int i = 0; i < _world->_orderedChrs.size() - 1; i++)
+	for (uint i = 0; i < _world->_orderedChrs.size() - 1; i++)
 		_world->move(_world->_orderedChrs[i], _world->_storageScene, true);
 
 	_world->move(_world->_orderedChrs[_world->_orderedChrs.size() - 1], _world->_storageScene);
 
 	debug(5, "Resetting Owners: %d", _world->_orderedObjs.size());
-	for (int i = 0; i < _world->_orderedObjs.size(); i++) {
+	for (uint i = 0; i < _world->_orderedObjs.size(); i++) {
 		Obj *obj = _world->_orderedObjs[i];
 		if (!obj->_sceneOrOwner.equalsIgnoreCase(STORAGESCENE)) {
 			String location = obj->_sceneOrOwner;
@@ -266,7 +266,7 @@ void WageEngine::performInitialSetup() {
 	}
 
 	bool playerPlaced = false;
-	for (int i = 0; i < _world->_orderedChrs.size(); i++) {
+	for (uint i = 0; i < _world->_orderedChrs.size(); i++) {
 		Chr *chr = _world->_orderedChrs[i];
 		if (!chr->_initialScene.equalsIgnoreCase(STORAGESCENE)) {
 			String key = chr->_initialScene;
