@@ -52,7 +52,7 @@ namespace CreateProjectTool {
 	config._settings[key] = Setting(value, "", kSettingsNoQuote);
 
 #define ADD_SETTING_ORDER(config, key, value, order) \
-	config.settings[key] = Setting(value, "", SettingsNoQuote, 0, order);
+	config.settings[key] = Setting(value, "", kSettingsNoQuote, 0, order);
 
 #define ADD_SETTING_ORDER_NOVALUE(config, key, comment, order) \
 	config._settings[key] = Setting("", comment, kSettingsNoValue, 0, order);
