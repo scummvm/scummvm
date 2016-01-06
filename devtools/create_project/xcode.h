@@ -152,7 +152,7 @@ private:
 	struct Object {
 	public:
 		std::string _id;                // Unique identifier for this object
- 		std::string _name;              // Name (may not be unique - for ex. configuration entries)
+		std::string _name;              // Name (may not be unique - for ex. configuration entries)
 		std::string _refType;           // Type of object this references (if any)
 		std::string _comment;           // Main comment (empty for no comment)
 
