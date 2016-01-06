@@ -135,6 +135,20 @@ static const ADGameDescription gameDescriptions[] = {
 	},
 
 	// The Longest Journey
+	// German DVD version supplied by Vorph on the forums
+	{
+		"tlj", "DVD", {
+			{"x.xarc", 0, "de8327850d7bba90b690b141eaa23f61", 3032},
+			{"chapters.ini", 0, "e4611d143a87b263d8d7a54edc7e7cd7", 515},
+			{NULL, 0, NULL, 0}
+		},
+		Common::DE_DEU,
+		Common::kPlatformWindows,
+		ADGF_NO_FLAGS,
+		GUIO_NONE
+	},
+
+	// The Longest Journey
 	// Spanish 4CD
 	{
 		"tlj", "4 CD", {
