@@ -29,9 +29,6 @@
 #include "common/system.h"
 #import "iOS7AppDelegate.h"
 
-static int g_fullWidth;
-static int g_fullHeight;
-
 static int g_needsScreenUpdate = 0;
 
 #if 0
@@ -388,9 +385,6 @@ uint getSizeNextPOT(uint size) {
 #endif
 
 	[self setupGestureRecognizers];
-
-	g_fullWidth = (int)MAX(frame.size.width, frame.size.height);
-	g_fullHeight = (int)MIN(frame.size.width, frame.size.height);
 
 	[self setContentScaleFactor:[[UIScreen mainScreen] scale]];
 
