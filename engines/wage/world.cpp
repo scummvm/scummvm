@@ -441,7 +441,7 @@ void World::move(Chr *chr, Scene *scene, bool skipSort) {
 
 Scene *World::getRandomScene() {
 	// Not including storage:
-	return _orderedScenes[1 + _engine->_rnd->getRandomNumber(_orderedScenes.size() - 1)];
+	return _orderedScenes[1 + _engine->_rnd->getRandomNumber(_orderedScenes.size() - 2)];
 }
 
 Scene *World::getSceneAt(int x, int y) {
