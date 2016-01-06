@@ -160,7 +160,7 @@ reproducible, and still occurs in the latest git/Daily build version.
 Also check the known problems list (below) and the compatibility list
 on our website for that game, to ensure the issue is not already known:
 
-  http://www.scummvm.org/compatibility_stable.php
+  http://scummvm.org/compatibility/
 
 Please do not report bugs on games that are not listed as being
 completeable in the 'Supported Games' section, or compatibility list. We
@@ -2434,7 +2434,7 @@ currently we have only x86 MMX optimized versions, and they will not
 compile on other processors.
 
 On Win9x/NT/XP, you can define USE_WINDBG and attach WinDbg to browse
-debug messages (see http://www.sysinternals.com/ntw2k/freeware/debugview.shtml).
+debug messages (see https://technet.microsoft.com/en-us/sysinternals/debugview.aspx).
 
 
   GCC and MinGW32:

@@ -21,6 +21,7 @@
  */
 
 #include "backends/graphics/openglsdl/openglsdl-graphics.h"
+#include "backends/events/sdl/sdl-events.h"
 
 #include "common/textconsole.h"
 #include "common/config-manager.h"
@@ -236,13 +237,6 @@ void OpenGLSdlGraphicsManager::updateScreen() {
 	}
 
 	OpenGLGraphicsManager::updateScreen();
-
-	// Swap OpenGL buffers
-#if SDL_VERSION_ATLEAST(2, 0, 0)
-	SDL_GL_SwapWindow(_window->getSDLWindow());
-#else
-	SDL_GL_SwapBuffers();
-#endif
 }
 
 void OpenGLSdlGraphicsManager::notifyVideoExpose() {
@@ -251,6 +245,7 @@ void OpenGLSdlGraphicsManager::notifyVideoExpose() {
 void OpenGLSdlGraphicsManager::notifyResize(const uint width, const uint height) {
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	setActualScreenSize(width, height);
+	_eventSource->resetKeyboadEmulation(width - 1, height - 1);
 #else
 	if (!_ignoreResizeEvents && _hwScreen && !(_hwScreen->flags & SDL_FULLSCREEN)) {
 		// We save that we handled a resize event here. We need to know this
@@ -299,6 +294,15 @@ bool OpenGLSdlGraphicsManager::loadVideoMode(uint requestedWidth, uint requested
 
 	// Set up the mode.
 	return setupMode(requestedWidth, requestedHeight);
+}
+
+void OpenGLSdlGraphicsManager::refreshScreen() {
+	// Swap OpenGL buffers
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	SDL_GL_SwapWindow(_window->getSDLWindow());
+#else
+	SDL_GL_SwapBuffers();
+#endif
 }
 
 bool OpenGLSdlGraphicsManager::setupMode(uint width, uint height) {
@@ -386,6 +390,13 @@ bool OpenGLSdlGraphicsManager::setupMode(uint width, uint height) {
 		}
 	}
 
+#ifdef USE_GLES
+	// SDL2 will create a GLES2 context by default, so this is needed for GLES1-profile
+	// functions to work.
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 1);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
+#endif
 	_glContext = SDL_GL_CreateContext(_window->getSDLWindow());
 	if (!_glContext) {
 		return false;
@@ -395,6 +406,7 @@ bool OpenGLSdlGraphicsManager::setupMode(uint width, uint height) {
 	int actualWidth, actualHeight;
 	getWindowDimensions(&actualWidth, &actualHeight);
 	setActualScreenSize(actualWidth, actualHeight);
+	_eventSource->resetKeyboadEmulation(actualWidth - 1, actualHeight - 1);
 	return true;
 #else
 	// WORKAROUND: Working around infamous SDL bugs when switching
@@ -440,6 +452,7 @@ bool OpenGLSdlGraphicsManager::setupMode(uint width, uint height) {
 	if (_hwScreen) {
 		notifyContextCreate(rgba8888, rgba8888);
 		setActualScreenSize(_hwScreen->w, _hwScreen->h);
+		_eventSource->resetKeyboadEmulation(_hwScreen->w - 1, _hwScreen->h - 1);
 	}
 
 	// Ignore resize events (from SDL) for a few frames, if this isn't

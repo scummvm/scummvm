@@ -1711,22 +1711,6 @@ void cmdCallV1(AgiGame *state, uint8 *p) {
 	_v[13] = 1;
 }
 
-void cmdNewRoomV1(AgiGame *state, uint8 *p) {
-	warning("cmdNewRoomV1()");
-	state->_vm->agiLoadResource(rLOGIC, p0);
-	state->max_logics = 1;
-	state->logic_list[1] = p0;
-	_v[13] = 1;
-}
-
-void cmdNewRoomVV1(AgiGame *state, uint8 *p) {
-	warning("cmdNewRoomVV1()");
-	state->_vm->agiLoadResource(rLOGIC, _v[p0]);
-	state->max_logics = 1;
-	state->logic_list[1] = _v[p0];
-	_v[13] = 1;
-}
-
 void cmdUnknown(AgiGame *state, uint8 *p) {
 	warning("Skipping unknown opcode %2X", *(code + ip - 1));
 }

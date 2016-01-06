@@ -316,6 +316,7 @@ int MidiDriver_TIMIDITY::connect_to_server(const char* hostname, unsigned short 
 
 	if (connect(fd, (struct sockaddr *)&in, sizeof(in)) < 0) {
 		warning("TiMidity: connect(): %s", strerror(errno));
+		::close(fd);
 		return -1;
 	}
 

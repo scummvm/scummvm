@@ -263,6 +263,11 @@ protected:
 	virtual bool loadVideoMode(uint requestedWidth, uint requestedHeight, const Graphics::PixelFormat &format) = 0;
 
 	/**
+	 * Refresh the screen contents.
+	 */
+	virtual void refreshScreen() = 0;
+
+	/**
 	 * Save a screenshot of the full display as BMP to the given file. This
 	 * uses Common::DumpFile for writing the screenshot.
 	 *
@@ -464,10 +469,19 @@ private:
 	 */
 	byte _cursorPalette[3 * 256];
 
+	//
+	// Misc
+	//
+
 	/**
-	 * Draws a rectangle
+	 * Whether the screen contents shall be forced to redrawn.
 	 */
-	void drawRect(GLfloat x, GLfloat y, GLfloat w, GLfloat h);
+	bool _forceRedraw;
+
+	/**
+	 * Number of frames glClear shall ignore scissor testing.
+	 */
+	uint _scissorOverride;
 
 #ifdef USE_OSD
 	//

@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef BACKENDS_GRAPHICS_OPENGL_OPENGL_H
-#define BACKENDS_GRAPHICS_OPENGL_OPENGL_H
+#ifndef BACKENDS_GRAPHICS_OPENGL_OPENGL_SYS_H
+#define BACKENDS_GRAPHICS_OPENGL_OPENGL_SYS_H
 
 // The purpose of this header is to include the OpenGL headers in an uniform
 // fashion. A notable example for a non standard port is the Tizen port.

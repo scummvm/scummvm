@@ -27,7 +27,7 @@
 
 #include "backends/platform/sdl/sdl-sys.h"
 
-#if !SDL_VERSION_ATLEAST(1, 3, 0)
+#if !SDL_VERSION_ATLEAST(2, 0, 0)
 
 /**
  * The SDL audio cd manager. Implements real audio cd playback.
@@ -49,6 +49,6 @@ protected:
 	uint32 _cdEndTime, _cdStopTime;
 };
 
-#endif // !SDL_VERSION_ATLEAST(1, 3, 0)
+#endif // !SDL_VERSION_ATLEAST(2, 0, 0)
 
 #endif

@@ -89,6 +89,11 @@ void Screen::setPanel(int num) {
 }
 
 void Screen::updateScreen() {
+	if (_vm->_startup >= 0) {
+		--_vm->_startup;
+		return;
+	}
+
 	// Merge the dirty rects
 	mergeDirtyRects();
 
@@ -181,7 +186,7 @@ void Screen::forceFadeOut() {
 			int v = *srcP;
 			if (v) {
 				repeatFlag = true;
-				*srcP = MAX(*srcP - FADE_AMOUNT, 0);
+				*srcP = MAX((int)*srcP - FADE_AMOUNT, 0);
 			}
 		}
 

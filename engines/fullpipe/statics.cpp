@@ -106,8 +106,13 @@ bool StepArray::gotoNextPoint() {
 }
 
 void StepArray::insertPoints(Common::Point **points, int pointsCount) {
-	if (_currPointIndex + pointsCount >= _pointsCount)
+	if (_currPointIndex + pointsCount >= _pointsCount) {
 		_points = (Common::Point **)realloc(_points, sizeof(Common::Point *) * (_currPointIndex + pointsCount));
+
+		if (!_points) {
+			error("Out of memory at StepArray::insertPoints()");
+		}
+	}
 
 	_maxPointIndex = _currPointIndex + pointsCount;
 

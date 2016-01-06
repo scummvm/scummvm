@@ -1728,12 +1728,12 @@ void MortevielleEngine::showMoveMenuAlert() {
 void MortevielleEngine::showConfigScreen() {
 	// FIXME: need a DOS palette, index 9 (light blue). Also we should show DOS font here
 	Common::String tmpStr;
-	int width, cy = 0;
+	int cy = 0;
 	clearScreen();
  	do {
  		++cy;
  		tmpStr = getString(cy + kStartingScreenStringIndex);
- 		width = _screenSurface->getStringWidth(tmpStr);
+ 		int width = _screenSurface->getStringWidth(tmpStr);
  		_text->displayStr(tmpStr, 320 - width / 2, cy * 8, 80, 1, 2);
  	} while (cy != 20);
 

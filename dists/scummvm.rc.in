@@ -20,6 +20,9 @@ scummmodern.zip        FILE    "gui/themes/scummmodern.zip"
 translations.dat       FILE    "gui/themes/translations.dat"
 #endif
 
+#if ENABLE_ACCESS   == STATIC_PLUGIN
+access.dat           FILE    "dists/engine-data/access.dat"
+#endif
 #if ENABLE_DRASCULA   == STATIC_PLUGIN
 drascula.dat           FILE    "dists/engine-data/drascula.dat"
 #endif

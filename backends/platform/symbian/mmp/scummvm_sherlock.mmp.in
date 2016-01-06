@@ -1,4 +1,9 @@
 /* ScummVM - Graphic Adventure Engine
+ * Copyright (C) 2003-2005 Andreas 'Sprawl' Karlsson - Original EPOC port, ESDL
+ * Copyright (C) 2003-2005 Lars 'AnotherGuest' Persson - Original EPOC port, Audio System
+ * Copyright (C) 2005 Jurgen 'SumthinWicked' Braam - EPOC/CVS maintainer
+ * Copyright (C) 2005-2015 The ScummVM Team
+ * Copyright (C) 2015 Strizniou Fedor
  *
  * ScummVM is the legal property of its developers, whose names
  * are too numerous to list here. Please refer to the COPYRIGHT
@@ -20,23 +25,29 @@
  *
  */
 
-#if defined(DISPMANX)
+//
+// EPOC MMP makefile project for ScummVM
+//
 
-#include "backends/platform/sdl/raspberrypi/raspberrypi.h"
-#include "backends/graphics/dispmanxsdl/dispmanxsdl-graphics.h"
+// *** Definitions
 
-void OSystem_SDL_RaspberryPi::initBackend() {
-	// Create the events manager
-	if (_eventSource == 0)
-		_eventSource = new SdlEventSource();
+TARGET          scummvm_sherlock.lib
+TARGETTYPE      lib
+#include "config.mmh"
 
-	// Create the graphics manager
-	if (_graphicsManager == 0) {
-		_graphicsManager = new DispmanXSdlGraphicsManager(_eventSource, _window);
-	}
+//START_AUTO_MACROS_SLAVE//
 
-	// Call parent implementation of this method
-	OSystem_POSIX::initBackend();
-}
+	// empty base file, will be updated by Perl build scripts
 
-#endif
+//STOP_AUTO_MACROS_SLAVE//
+
+// *** SOURCE files
+
+SOURCEPATH ..\..\..\..\engines\sherlock
+
+//START_AUTO_OBJECTS_SHERLOCK_//
+
+	// empty base file, will be updated by Perl build scripts
+
+//STOP_AUTO_OBJECTS_SHERLOCK_//
+

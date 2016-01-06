@@ -38,6 +38,7 @@ TARGETTYPE      lib
 OPTION			GCCE -I'/Symbian/S60_5th_Edition_SDK_v1.0/epoc32/include/png'
 
 // Note: the LIB:*.lib statements are used by AdaptAllMMPs.pl, so don't remove them!
+MACRO USE_SYSTEM_REMOVE
 //START_AUTO_MACROS_MASTER//
 
 	// empty base file, will be updated by Perl build scripts
@@ -99,6 +100,7 @@ SOURCEPATH ..\..\..\..\audio
 
 //STOP_AUTO_OBJECTS_AUDIO_//
 SOURCE softsynth\fmtowns_pc98\towns_pc98_fmsynth.cpp // Included since its excluded by filter
+SOURCE miles_mt32.cpp
 
 #if defined (WINS)
 SOURCE rate.cpp			// WINS emulator version: add regular .cpp

@@ -62,7 +62,7 @@ Panel::Panel(RenderObjectPtr<RenderObject> parentPtr, int width, int height, uin
 }
 
 Panel::Panel(InputPersistenceBlock &reader, RenderObjectPtr<RenderObject> parentPtr, uint handle) :
-	RenderObject(parentPtr, RenderObject::TYPE_PANEL, handle) {
+	RenderObject(parentPtr, RenderObject::TYPE_PANEL, handle), _color(0) {
 	_initSuccess = unpersist(reader);
 }
 

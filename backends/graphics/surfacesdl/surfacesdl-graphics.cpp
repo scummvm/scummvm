@@ -32,6 +32,7 @@
 #include "common/textconsole.h"
 #include "common/translation.h"
 #include "common/util.h"
+#include "common/frac.h"
 #ifdef USE_RGB_COLOR
 #include "common/list.h"
 #endif
@@ -125,6 +126,7 @@ SurfaceSdlGraphicsManager::SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSou
 	_hwscreen(0),
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	_renderer(nullptr), _screenTexture(nullptr),
+	_viewport(), _windowWidth(1), _windowHeight(1),
 #else
 	_originalBitsPerPixel(0),
 #endif
@@ -889,9 +891,14 @@ bool SurfaceSdlGraphicsManager::loadGFXMode() {
 	SDL_SetColorKey(_osdSurface, SDL_RLEACCEL | SDL_SRCCOLORKEY | SDL_SRCALPHA, kOSDColorKey);
 #endif
 
+#if !SDL_VERSION_ATLEAST(2, 0, 0)
+	// For SDL2 the output resolution might differ from the requested
+	// resolution. We handle resetting the keyboard emulation properly inside
+	// our SDL_SetVideoMode wrapper for SDL2.
 	_eventSource->resetKeyboadEmulation(
 		_videoMode.screenWidth * _videoMode.scaleFactor - 1,
 		effectiveScreenHeight() - 1);
+#endif
 
 	// Distinguish 555 and 565 mode
 	if (_hwscreen->format->Rmask == 0x7C00)
@@ -1756,22 +1763,30 @@ void SurfaceSdlGraphicsManager::setMousePos(int x, int y) {
 }
 
 void SurfaceSdlGraphicsManager::warpMouse(int x, int y) {
-	int y1 = y;
-
 	// Don't change actual mouse position, when mouse is outside of our window (in case of windowed mode)
 	if (!_window->hasMouseFocus()) {
 		setMousePos(x, y); // but change game cursor position
 		return;
 	}
 
+	int x1 = x, y1 = y;
 	if (_videoMode.aspectRatioCorrection && !_overlayVisible)
-		y1 = real2Aspect(y);
+		y1 = real2Aspect(y1);
 
 	if (_mouseCurState.x != x || _mouseCurState.y != y) {
-		if (!_overlayVisible)
-			_window->warpMouseInWindow(x * _videoMode.scaleFactor, y1 * _videoMode.scaleFactor);
-		else
-			_window->warpMouseInWindow(x, y1);
+		if (!_overlayVisible) {
+			x1 *= _videoMode.scaleFactor;
+			y1 *= _videoMode.scaleFactor;
+		}
+
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+		// Transform our coordinates in "virtual" output coordinate space into
+		// actual output coordinate space.
+		x1 = x1 * _windowWidth  / _videoMode.hardwareWidth;
+		y1 = y1 * _windowHeight / _videoMode.hardwareHeight;
+#endif
+
+		_window->warpMouseInWindow(x1, y1);
 
 		// SDL_WarpMouse() generates a mouse movement event, so
 		// setMousePos() would be called eventually. However, the
@@ -2353,6 +2368,16 @@ void SurfaceSdlGraphicsManager::notifyVideoExpose() {
 }
 
 void SurfaceSdlGraphicsManager::transformMouseCoordinates(Common::Point &point) {
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	// In SDL2 the actual output resolution might be different from what we
+	// requested. Thus, we transform the coordinates from actual output
+	// coordinate space into the "virtual" output coordinate space.
+	// Please note that we ignore the possible existence of black bars here,
+	// this avoids the feeling of stickyness to black bars.
+	point.x = point.x * _videoMode.hardwareWidth  / _windowWidth;
+	point.y = point.y * _videoMode.hardwareHeight / _windowHeight;
+#endif
+
 	if (!_overlayVisible) {
 		point.x /= _videoMode.scaleFactor;
 		point.y /= _videoMode.scaleFactor;
@@ -2380,7 +2405,8 @@ void SurfaceSdlGraphicsManager::deinitializeRenderer() {
 SDL_Surface *SurfaceSdlGraphicsManager::SDL_SetVideoMode(int width, int height, int bpp, Uint32 flags) {
 	deinitializeRenderer();
 
-	if (!_window->createWindow(width, height, (flags & SDL_FULLSCREEN) ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0)) {
+	const bool isFullscreen = (flags & SDL_FULLSCREEN) != 0;
+	if (!_window->createWindow(width, height, isFullscreen ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0)) {
 		return nullptr;
 	}
 
@@ -2389,6 +2415,32 @@ SDL_Surface *SurfaceSdlGraphicsManager::SDL_SetVideoMode(int width, int height, 
 		deinitializeRenderer();
 		return nullptr;
 	}
+
+	SDL_GetWindowSize(_window->getSDLWindow(), &_windowWidth, &_windowHeight);
+	// We expect full screen resolution as inputs coming from the event system.
+	_eventSource->resetKeyboadEmulation(_windowWidth - 1, _windowHeight - 1);
+
+	// Calculate the "viewport" for the actual area we draw in. In fullscreen
+	// we can easily get a different resolution than what we requested. In
+	// this case, we add black bars if necessary to assure the aspect ratio
+	// is preserved.
+	const frac_t outputAspect  = intToFrac(_windowWidth) / _windowHeight;
+	const frac_t desiredAspect = intToFrac(width) / height;
+
+	_viewport.w = _windowWidth;
+	_viewport.h = _windowHeight;
+
+	// Adjust one dimension for mantaining the aspect ratio.
+	if (abs(outputAspect - desiredAspect) >= (int)(FRAC_ONE / 1000)) {
+		if (outputAspect < desiredAspect) {
+			_viewport.h = height * _windowWidth / width;
+		} else if (outputAspect > desiredAspect) {
+			_viewport.w = width * _windowHeight / height;
+		}
+	}
+
+	_viewport.x = (_windowWidth  - _viewport.w) / 2;
+	_viewport.y = (_windowHeight - _viewport.h) / 2;
 
 	_screenTexture = SDL_CreateTexture(_renderer, SDL_PIXELFORMAT_RGB565, SDL_TEXTUREACCESS_STREAMING, width, height);
 	if (!_screenTexture) {
@@ -2409,7 +2461,7 @@ void SurfaceSdlGraphicsManager::SDL_UpdateRects(SDL_Surface *screen, int numrect
 	SDL_UpdateTexture(_screenTexture, nullptr, screen->pixels, screen->pitch);
 
 	SDL_RenderClear(_renderer);
-	SDL_RenderCopy(_renderer, _screenTexture, NULL, NULL);
+	SDL_RenderCopy(_renderer, _screenTexture, NULL, &_viewport);
 	SDL_RenderPresent(_renderer);
 }
 #endif // SDL_VERSION_ATLEAST(2, 0, 0)

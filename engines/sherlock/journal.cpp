@@ -715,6 +715,15 @@ void Journal::record(int converseNum, int statementNum, bool replyOnly) {
 		return;
 	}
 
+	// Do a bit of validation here
+	assert(converseNum >= 0 && converseNum < (int)_directory.size());
+	const Common::String &dirFilename = _directory[converseNum];
+	Common::String locStr(dirFilename.c_str() + 4, dirFilename.c_str() + 6);
+	int newLocation = atoi(locStr.c_str());
+	assert(newLocation >= 1 && newLocation <= (int)_locations.size());
+	assert(!_locations[newLocation - 1].empty());
+	assert(statementNum >= 0 && statementNum < (int)_vm->_talk->_statements.size());
+
 	// Record the entry into the list
 	_journal.push_back(JournalEntry(converseNum, statementNum, replyOnly));
 	_index = _journal.size() - 1;
@@ -726,7 +735,7 @@ void Journal::record(int converseNum, int statementNum, bool replyOnly) {
 	_index = saveIndex;
 	_sub = saveSub;
 
-	// If new lines were added to the ournal, update the total number of lines
+	// If new lines were added to the journal, update the total number of lines
 	// the journal continues
 	if (!_lines.empty()) {
 		_maxPage += _lines.size();

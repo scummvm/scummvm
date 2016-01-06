@@ -256,7 +256,7 @@ int32 LogicHErace::op_1102(int32 *args) {
 }
 
 int32 LogicHErace::op_1103(int32 *args) {
-	double angle = args[0] / args[1] * DEG2RAD;
+	double angle = (double)args[0] / (double)args[1] * DEG2RAD;
 
 	writeScummVar(108, (int32)(sin(angle) * args[2]));
 	writeScummVar(109, (int32)(cos(angle) * args[2]));

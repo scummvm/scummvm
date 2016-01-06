@@ -4580,9 +4580,9 @@ void Scene205::actions() {
 	}
 
 	if ((_action.isAction(VERB_ENTER)) || (_action.isAction(VERB_OPEN)) || _action.isAction(VERB_UNLOCK) || _action.isAction(VERB_LOCK)) {
-		if (((_action.isObject(NOUN_BOX_FIVE)) && ((_globals[kDoorsIn205] == 0) || (_globals[kDoorsIn205] == 2))
+		if (((_action.isObject(NOUN_BOX_FIVE) && ((_globals[kDoorsIn205] == 0) || (_globals[kDoorsIn205] == 2)))
 			|| _action.isAction(VERB_UNLOCK) || _action.isAction(VERB_LOCK))
-			|| ((_action.isObject(NOUN_BOX_NINE)) && ((_globals[kDoorsIn205] == 0) || (_globals[kDoorsIn205] == 1)))
+			|| ((_action.isObject(NOUN_BOX_NINE) && ((_globals[kDoorsIn205] == 0) || (_globals[kDoorsIn205] == 1))))
 			|| (_action.isObject(NOUN_BOX_SIX)) || (_action.isObject(NOUN_BOX_SEVEN)) || (_action.isObject(NOUN_BOX_EIGHT))) {
 			switch (_game._trigger) {
 			case (0):

@@ -171,6 +171,8 @@ protected:
 	 * around this API to keep the code paths as close as possible. */
 	SDL_Renderer *_renderer;
 	SDL_Texture *_screenTexture;
+	SDL_Rect _viewport;
+	int _windowWidth, _windowHeight;
 	void deinitializeRenderer();
 
 	SDL_Surface *SDL_SetVideoMode(int width, int height, int bpp, Uint32 flags);

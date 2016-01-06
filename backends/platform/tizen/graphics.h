@@ -61,6 +61,8 @@ protected:
 
 	bool loadVideoMode(uint requestedWidth, uint requestedHeight, const Graphics::PixelFormat &format);
 
+	void refreshScreen();
+
 	const Graphics::Font *getFontOSD();
 
 private:

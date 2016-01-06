@@ -629,11 +629,11 @@ void Sprite::gotoxyz(V2D pos) {
 	if (!_follow) {
 		FXP m = _vm->_eye->_z / (_pos3D._z - _vm->_eye->_z);
 		_pos3D._x = (_vm->_eye->_x + (_vm->_eye->_x - _pos2D.x) / m);
-		_pos3D._x.round();
+		_pos3D._x = _pos3D._x.round();
 
 		if (!_constY) {
 			_pos3D._y = _vm->_eye->_y + (_vm->_eye->_y - _pos2D.y) / m;
-			_pos3D._y.round();
+			_pos3D._y = _pos3D._y.round();
 		}
 	}
 

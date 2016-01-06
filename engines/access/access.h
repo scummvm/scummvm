@@ -42,6 +42,7 @@
 #include "access/font.h"
 #include "access/inventory.h"
 #include "access/player.h"
+#include "access/resources.h"
 #include "access/room.h"
 #include "access/screen.h"
 #include "access/scripts.h"
@@ -147,6 +148,7 @@ public:
 	FileManager *_files;
 	InventoryManager *_inventory;
 	Player *_player;
+	Resources *_res;
 	Room *_room;
 	Screen *_screen;
 	Scripts *_scripts;

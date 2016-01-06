@@ -34,19 +34,24 @@ namespace Access {
 AccessEngine::AccessEngine(OSystem *syst, const AccessGameDescription *gameDesc)
 	: _gameDescription(gameDesc), Engine(syst), _randomSource("Access"),
 	  _useItem(_flags[99]), _startup(_flags[170]), _manScaleOff(_flags[172]) {
+	_aboutBox = nullptr;
 	_animation = nullptr;
 	_bubbleBox = nullptr;
 	_char = nullptr;
 	_debugger = nullptr;
 	_events = nullptr;
 	_files = nullptr;
+	_invBox = nullptr;
 	_inventory = nullptr;
+	_helpBox = nullptr;
 	_midi = nullptr;
 	_player = nullptr;
+	_res = nullptr;
 	_room = nullptr;
 	_screen = nullptr;
 	_scripts = nullptr;
 	_sound = nullptr;
+	_travelBox = nullptr;
 	_video = nullptr;
 
 	_destIn = nullptr;
@@ -130,6 +135,7 @@ AccessEngine::~AccessEngine() {
 	delete _inventory;
 	delete _midi;
 	delete _player;
+	delete _res;
 	delete _room;
 	delete _screen;
 	delete _scripts;
@@ -204,6 +210,13 @@ void AccessEngine::initialize() {
 }
 
 Common::Error AccessEngine::run() {
+	_res = Resources::init(this);
+	Common::String errorMessage;
+	if (!_res->load(errorMessage)) {
+		GUIErrorMessage(errorMessage);
+		return Common::kNoError;
+	}
+
 	setVGA();
 	initialize();
 

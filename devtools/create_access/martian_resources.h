@@ -20,16 +20,33 @@
  *
  */
 
-#ifndef SDL_DISPMANX_COMMON_H
-#define SDL_DISPMANX_COMMON_H
+#ifndef __MARTIAN_RESOURCES_H__
+#define __MARTIAN_RESOURCES_H__
 
-#if defined(DISPMANX)
-#include "backends/platform/sdl/posix/posix.h"
+#include "common/scummsys.h"
 
-class OSystem_SDL_RaspberryPi : public OSystem_POSIX {
-public:
-	void initBackend();
-};
+namespace Martian {
 
-#endif /* DISPMANX */
-#endif /* SDL_DISPMANX_COMMON_H */
+#define MARTIAN_NUM_CURSORS 4
+extern const byte *const CURSORS[MARTIAN_NUM_CURSORS];
+extern const uint CURSOR_SIZES[MARTIAN_NUM_CURSORS];
+
+extern const char *const ROOM_DESCR[48];
+
+extern const char *const DEATH_TEXT_ENG[20];
+extern const byte DEATH_SCREENS_ENG[20];
+extern const char *const INVENTORY_NAMES_ENG[55];
+extern const int COMBO_TABLE[85][4];
+
+extern const char *const NO_HELP_MESSAGE_ENG;
+extern const char *const NO_HINTS_MESSAGE_ENG;
+extern const char *const RIVER_HIT1_ENG;
+extern const char *const RIVER_HIT2_ENG;
+extern const char *const BAR_MESSAGE_ENG;
+extern const char *const HELPLVLTXT_ENG[3];
+extern const char *const IQLABELS_ENG[9];
+extern const char *const CANT_GET_THERE_ENG;
+
+} // End of namespace Amazon
+
+#endif

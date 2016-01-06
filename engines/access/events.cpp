@@ -74,7 +74,7 @@ void EventsManager::setCursor(CursorType cursorId) {
 			_invCursor.w / 2, _invCursor.h / 2, 0);
 	} else {
 		// Get a pointer to the mouse data to use, and get the cursor hotspot
-		const byte *srcP = Amazon::CURSORS[cursorId];
+		const byte *srcP = &_vm->_res->CURSORS[cursorId][0];
 		int hotspotX = (int16)READ_LE_UINT16(srcP);
 		int hotspotY = (int16)READ_LE_UINT16(srcP + 2);
 		srcP += 4;

@@ -994,6 +994,10 @@ OpcodeReturn Talk::cmdAdjustObjectSequence(const byte *&str) {
 	_seqCount = str[1];
 	str += (str[0] & 127) + 2;
 
+	// WORKAROUND: Original German Scalpel crash when moving box at Tobacconists
+	if (_vm->getLanguage() == Common::DE_DEU && _scriptName == "Alfr30Z")
+		_seqCount = 16;
+
 	// Copy in the new sequence
 	for (int idx = 0; idx < _seqCount; ++idx, ++str)
 		scene._bgShapes[objId]._sequences[idx] = str[0] - 1;

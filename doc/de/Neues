@@ -8,6 +8,13 @@ Sie auf Englisch unter:
    - Unterstützung für Sfinx hinzugefügt.
    - Unterstützung für Zork Nemesis: The Forbidden Lands hinzugefügt.
    - Unterstützung für Zork: Grand Inquisitor hinzugefügt.
+   - Unterstützung für The Lost Files of Sherlock Holmes: The Case of the Serrated Scalpel hinzugefügt.
+   - Unterstützung für The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo hinzugefügt.
+   - Unterstützung für Beavis and Butthead in Virtual Stupidity hinzugefügt.
+   - Unterstützung für Amazon: Guardians of Eden hinzugefügt.
+
+ Neue Portierungen:
+   - Portierung auf den Raspberry Pi erfolgt.
 
  Allgemein:
    - Code für Munt-MT-32-Emulation auf Version 1.5.0 aktualisiert.

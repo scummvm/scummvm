@@ -238,7 +238,7 @@ int scene04_updateCursor() {
 		}
 	}
 
-	if (g_fp->_objectIdAtCursor == PIC_CSR_ITN && g_fp->_objectIdAtCursor == PIC_SC4_DOWNTRUBA)
+	if (g_fp->_cursorId == PIC_CSR_ITN && g_fp->_objectIdAtCursor == PIC_SC4_DOWNTRUBA)
 		g_fp->_cursorId = PIC_CSR_GOD;
 
 	return g_fp->_cursorId;

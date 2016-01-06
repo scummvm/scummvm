@@ -37,7 +37,7 @@ TARGETTYPE      exe
 OPTION			GCCE -Wno-multichar -Wno-reorder -Wno-unused -Wno-format -fsigned-char
 
 // fixes error "section .data loaded at [...] overlaps section .text loaded at [...]"
-LINKEROPTION 	GCCE -Tdata 0xAA00000
+LINKEROPTION 	GCCE -Tdata 0xAA00000  --gc-sections --strip-all
 
 UID             0x100039ce 0xA0000657
 
@@ -123,6 +123,7 @@ SOURCEPATH ..\..\..\..
 
 // backend EPOC/SDL/ESDL specific includes
 SOURCE backends\platform\sdl\sdl.cpp
+SOURCE backends\platform\sdl\sdl-window.cpp
 SOURCE backends\audiocd\sdl\sdl-audiocd.cpp
 SOURCE backends\audiocd\default\default-audiocd.cpp
 SOURCE backends\fs\symbian\symbian-fs.cpp

@@ -246,6 +246,9 @@ DIST_FILES_THEMES:=$(addprefix $(srcdir)/gui/themes/,$(DIST_FILES_THEMES))
 
 # Engine data files
 DIST_FILES_ENGINEDATA=
+ifdef ENABLE_ACCESS
+DIST_FILES_ENGINEDATA+=access.dat
+endif
 ifdef ENABLE_DRASCULA
 DIST_FILES_ENGINEDATA+=drascula.dat
 endif

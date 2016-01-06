@@ -35,6 +35,10 @@
 #include "sword25/kernel/common.h"
 #include "sword25/gfx/graphicengine.h"
 
+namespace Graphics {
+struct Surface;
+} // End of namespace Graphics
+
 namespace Sword25 {
 
 /**
@@ -52,25 +56,18 @@ public:
 	 * Decode an image.
 	 * @param[in] fileDatePtr	pointer to the image data
 	 * @param[in] fileSize		size of the image data in bytes
-	 * @param[out] pUncompressedData	if successful, this is set to a pointer containing the decoded image data
-	 * @param[out] width		if successful, this is set to the width of the image
-	 * @param[out] height		if successful, this is set to the height of the image
-	 * @param[out] pitch		if successful, this is set to the number of bytes per scanline in the image
+	 * @param[out] dest         if successful, surface will contain the image
+	 *                          data (storage is allocated via create).
 	 * @return false in case of an error
 	 *
-	 * @remark The size of the output data equals pitch * height.
 	 * @remark This function does not free the image buffer passed to it,
 	 *         it is the callers responsibility to do so.
 	 */
 	static bool decodePNGImage(const byte *pFileData, uint fileSize,
-	                        byte *&pUncompressedData,
-	                        int &width, int &height,
-	                        int &pitch);
+	                           Graphics::Surface *dest);
 
 	static bool decodeThumbnailImage(const byte *pFileData, uint fileSize,
-	                        byte *&pUncompressedData,
-	                        int &width, int &height,
-	                        int &pitch);
+	                           Graphics::Surface *dest);
 };
 
 } // End of namespace Sword25

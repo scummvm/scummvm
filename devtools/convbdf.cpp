@@ -21,7 +21,7 @@
  */
 
 #ifndef __has_feature         // Optional of course.
-  #define __has_feature(x) 0  // Compatibility with non-clang compilers.
+#define __has_feature(x) 0    // Compatibility with non-clang compilers.
 #endif
 
 #include <fstream>
@@ -392,7 +392,7 @@ int main(int argc, char *argv[]) {
 
 		for (int y = 0; y < box.height; ++y) {
 			printf("// |");
-			unsigned char data;
+			unsigned char data = 0;
 			for (int x = 0; x < box.width; ++x) {
 				if (!(x % 8))
 					data = *bitmap++;

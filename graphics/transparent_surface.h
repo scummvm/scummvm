@@ -50,22 +50,22 @@ namespace Graphics {
  @brief The possible flipping parameters for the blit method.
  */
 enum FLIP_FLAGS {
-    /// The image will not be flipped.
-    FLIP_NONE = 0,
-    /// The image will be flipped at the horizontal axis.
-    FLIP_H = 1,
-    /// The image will be flipped at the vertical axis.
-    FLIP_V = 2,
-    /// The image will be flipped at the horizontal and vertical axis.
-    FLIP_HV = FLIP_H | FLIP_V,
-    /// The image will be flipped at the horizontal and vertical axis.
-    FLIP_VH = FLIP_H | FLIP_V
+	/// The image will not be flipped.
+	FLIP_NONE = 0,
+	/// The image will be flipped at the horizontal axis.
+	FLIP_H = 1,
+	/// The image will be flipped at the vertical axis.
+	FLIP_V = 2,
+	/// The image will be flipped at the horizontal and vertical axis.
+	FLIP_HV = FLIP_H | FLIP_V,
+	/// The image will be flipped at the horizontal and vertical axis.
+	FLIP_VH = FLIP_H | FLIP_V
 };
 
 enum AlphaType {
-    ALPHA_OPAQUE = 0,
-    ALPHA_BINARY = 1,
-    ALPHA_FULL = 2
+	ALPHA_OPAQUE = 0,
+	ALPHA_BINARY = 1,
+	ALPHA_FULL = 2
 };
 
 /**
@@ -74,6 +74,18 @@ enum AlphaType {
 struct TransparentSurface : public Graphics::Surface {
 	TransparentSurface();
 	TransparentSurface(const Graphics::Surface &surf, bool copyData = false);
+
+	/**
+	 * Returns the pixel format all operations of TransparentSurface support.
+	 *
+	 * Unlike Surface TransparentSurface only works with a fixed pixel format.
+	 * This format can be queried using this static function.
+	 *
+	 * @return Supported pixel format.
+	 */
+	static PixelFormat getSupportedPixelFormat() {
+		return PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
+	}
 
 	void setColorKey(char r, char g, char b);
 	void disableColorKey();

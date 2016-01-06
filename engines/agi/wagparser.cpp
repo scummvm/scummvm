@@ -79,7 +79,7 @@ bool WagProperty::read(Common::SeekableReadStream &stream) {
 	uint32 readBytes = stream.read(_propData, _propSize); // Read the data in
 	_propData[_propSize] = 0; // Set the trailing zero for easy C-style string access
 
-	_readOk = (_propData != NULL && readBytes == _propSize); // Check that we got the whole data
+	_readOk = (readBytes == _propSize); // Check that we got the whole data
 	return _readOk;
 }
 

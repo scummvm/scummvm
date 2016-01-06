@@ -84,13 +84,23 @@ void AgiEngine::newRoom(int n) {
 		break;
 	}
 
-	_game.vars[vBorderTouchEgo] = 0;
-	setflag(fNewRoomExec, true);
+	if (getVersion() < 0x2000) {
+		warning("STUB: NewRoom(%d)", n);
 
-	_game.exitAllLogics = true;
+		v->flags &= ~fDidntMove;
+		// animateObject(0);
+		agiLoadResource(rVIEW, _game.viewTable[0].currentView);
+		setView(&_game.viewTable[0], _game.viewTable[0].currentView);
 
-	writeStatus();
-	writePrompt();
+	} else {
+		_game.vars[vBorderTouchEgo] = 0;
+		setflag(fNewRoomExec, true);
+
+		_game.exitAllLogics = true;
+
+		writeStatus();
+		writePrompt();
+	}
 }
 
 void AgiEngine::resetControllers() {

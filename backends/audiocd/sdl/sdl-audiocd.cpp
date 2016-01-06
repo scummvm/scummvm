@@ -26,7 +26,7 @@
 
 #include "backends/audiocd/sdl/sdl-audiocd.h"
 
-#if !SDL_VERSION_ATLEAST(1, 3, 0)
+#if !SDL_VERSION_ATLEAST(2, 0, 0)
 
 #include "common/textconsole.h"
 
@@ -136,6 +136,6 @@ void SdlAudioCDManager::updateCD() {
 	}
 }
 
-#endif // !SDL_VERSION_ATLEAST(1, 3, 0)
+#endif // !SDL_VERSION_ATLEAST(2, 0, 0)
 
 #endif
