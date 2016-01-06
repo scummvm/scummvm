@@ -218,11 +218,6 @@ public:
 	 */
 	void trim();
 
-    /**
-     * Add a path component
-     */
-    String stringByAppendingPathComponent(String component, char sep = '/') const;
-
 	uint hash() const;
 
 	/**

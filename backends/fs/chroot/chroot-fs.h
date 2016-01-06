@@ -49,6 +49,9 @@ public:
 
 	virtual Common::SeekableReadStream *createReadStream();
 	virtual Common::WriteStream *createWriteStream();
+
+private:
+	static Common::String addPathComponent(const Common::String &path, const Common::String &component);
 };
 
 #endif /* CHROOT_FS_H */

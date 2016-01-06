@@ -39,7 +39,7 @@ ChRootFilesystemNode::ChRootFilesystemNode(const Common::String &root, POSIXFile
 
 ChRootFilesystemNode::ChRootFilesystemNode(const Common::String &root, const Common::String &path) {
 	_root = Common::normalizePath(root, '/');
-	_realNode = new POSIXFilesystemNode(root.stringByAppendingPathComponent(path));
+	_realNode = new POSIXFilesystemNode(addPathComponent(root, path));
 }
 
 ChRootFilesystemNode::~ChRootFilesystemNode() {
@@ -106,6 +106,19 @@ Common::SeekableReadStream *ChRootFilesystemNode::createReadStream() {
 
 Common::WriteStream *ChRootFilesystemNode::createWriteStream() {
 	return _realNode->createWriteStream();
+}
+
+Common::String ChRootFilesystemNode::addPathComponent(const Common::String &path, const Common::String &component) {
+	const char sep = '/';
+	if (path.lastChar() == sep && component.firstChar() == sep) {
+		return Common::String::format("%s%s", path.c_str(), component.c_str() + 1);
+	}
+
+	if (path.lastChar() == sep || component.firstChar() == sep) {
+		return Common::String::format("%s%s", path.c_str(), component.c_str());
+	}
+
+	return Common::String::format("%s%c%s", path.c_str(), sep, component.c_str());
 }
 
 #endif
