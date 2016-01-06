@@ -234,6 +234,9 @@ Obj::Obj(String name, Common::SeekableReadStream *data) {
 	delete data;
 }
 
+Obj::~Obj() {
+}
+
 Chr *Obj::removeFromChr() {
 	if (_currentOwner != NULL) {
 	  for (int i = (int)_currentOwner->_inventory.size() - 1; i >= 0; i--)

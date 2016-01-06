@@ -315,6 +315,7 @@ class Obj : public Weapon, public Designed {
 public:
 	Obj() : _currentOwner(NULL), _currentScene(NULL) {}
 	Obj(String name, Common::SeekableReadStream *data);
+	~Obj();
 
 	enum ObjectType {
 		REGULAR_WEAPON = 1,

@@ -363,9 +363,12 @@ Common::String *World::loadStringFromDITL(Common::MacResManager *resMan, int res
 			Common::String message = readPascalString(res);
 			if (i == itemIndex) {
 				Common::String *msg = new Common::String(message);
+				delete res;
 				return msg;
 			}
 		}
+
+		delete res;
 	}
 
 	return NULL;
