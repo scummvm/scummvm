@@ -73,7 +73,17 @@ World::World(WageEngine *engine) {
 }
 
 World::~World() {
-	delete _storageScene;
+	for (uint i = 0; i < _orderedObjs.size(); i++)
+		delete _orderedObjs[i];
+
+	for (uint i = 0; i < _orderedChrs.size(); i++)
+		delete _orderedChrs[i];
+
+	for (uint i = 0; i < _orderedSounds.size(); i++)
+		delete _orderedSounds[i];
+
+	for (uint i = 0; i < _orderedScenes.size(); i++)
+		delete _orderedScenes[i];
 }
 
 bool World::loadWorld(Common::MacResManager *resMan) {
