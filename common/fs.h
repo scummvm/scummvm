@@ -60,6 +60,7 @@ private:
 	SharedPtr<AbstractFSNode>	_realNode;
 
 public:
+	// WARNING: Use this constructor with care! FSNode takes the ownership of the pointer and will delete it at some point.
 	FSNode(AbstractFSNode *realNode);
 
 	/**
