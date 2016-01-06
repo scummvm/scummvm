@@ -169,6 +169,9 @@ void WageEngine::processEvents() {
 				break;
 
 			case Common::KEYCODE_RETURN:
+				if (_inputText.empty())
+					break;
+
 				processTurn(&_inputText, NULL);
 				_inputText = "";
 				_gui->drawInput();
