@@ -791,6 +791,7 @@ void XcodeProvider::setupBuildConfiguration(const BuildSetup &setup) {
 	REMOVE_DEFINE(scummvm_defines, "MACOSX");
 	REMOVE_DEFINE(scummvm_defines, "IPHONE");
 	REMOVE_DEFINE(scummvm_defines, "IPHONE_OFFICIAL");
+	REMOVE_DEFINE(scummvm_defines, "IPHONE_OFFICIAL_IOS7");
 	REMOVE_DEFINE(scummvm_defines, "SDL_BACKEND");
 	ADD_SETTING_LIST(scummvm_Debug, "GCC_PREPROCESSOR_DEFINITIONS", scummvm_defines, kSettingsNoQuote | kSettingsAsList, 5);
 	ADD_SETTING(scummvm_Debug, "GCC_THUMB_SUPPORT", "NO");
@@ -877,6 +878,7 @@ void XcodeProvider::setupBuildConfiguration(const BuildSetup &setup) {
 	ADD_DEFINE(scummvmIOS_defines, "\"$(inherited)\"");
 	ADD_DEFINE(scummvmIOS_defines, "IPHONE");
 	ADD_DEFINE(scummvmIOS_defines, "IPHONE_OFFICIAL");
+	ADD_DEFINE(scummvmIOS_defines, "IPHONE_OFFICIAL_IOS7");
 	ADD_SETTING_LIST(iPhone_Debug, "GCC_PREPROCESSOR_DEFINITIONS", scummvmIOS_defines, kSettingsNoQuote | kSettingsAsList, 5);
 	ADD_SETTING(iPhone_Debug, "ASSETCATALOG_COMPILER_APPICON_NAME", "AppIcon");
 	ADD_SETTING(iPhone_Debug, "ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME", "LaunchImage");
@@ -1032,6 +1034,7 @@ void XcodeProvider::setupDefines(const BuildSetup &setup) {
 	REMOVE_DEFINE(_defines, "MACOSX");
 	REMOVE_DEFINE(_defines, "IPHONE");
 	REMOVE_DEFINE(_defines, "IPHONE_OFFICIAL");
+	REMOVE_DEFINE(_defines, "IPHONE_OFFICIAL_IOS7");
 	REMOVE_DEFINE(_defines, "SDL_BACKEND");
 	ADD_DEFINE(_defines, "CONFIG_H");
 	ADD_DEFINE(_defines, "UNIX");
