@@ -79,7 +79,7 @@ bool ChRootFilesystemNode::isWritable() const {
 }
 
 AbstractFSNode *ChRootFilesystemNode::getChild(const Common::String &n) const {
-	return new ChRootFilesystemNode(_root, (POSIXFilesystemNode *) _realNode->getChild(n));
+	return new ChRootFilesystemNode(_root, (POSIXFilesystemNode *)_realNode->getChild(n));
 }
 
 bool ChRootFilesystemNode::getChildren(AbstractFSList &list, ListMode mode, bool hidden) const {
@@ -97,7 +97,7 @@ bool ChRootFilesystemNode::getChildren(AbstractFSList &list, ListMode mode, bool
 
 AbstractFSNode *ChRootFilesystemNode::getParent() const {
 	if (getPath() == "/") return 0;
-	return new ChRootFilesystemNode(_root, (POSIXFilesystemNode *) _realNode->getParent());
+	return new ChRootFilesystemNode(_root, (POSIXFilesystemNode *)_realNode->getParent());
 }
 
 Common::SeekableReadStream *ChRootFilesystemNode::createReadStream() {
