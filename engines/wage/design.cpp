@@ -438,6 +438,8 @@ void Design::drawBitmap(Graphics::Surface *surface, Common::ReadStream &in) {
 			dst++;
 		}
 	}
+
+	tmp.free();
 }
 
 void Design::drawFilledRect(Graphics::Surface *surface, Common::Rect &rect, int color, Patterns &patterns, byte fillType) {

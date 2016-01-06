@@ -48,6 +48,7 @@
 #include "wage/wage.h"
 #include "wage/entities.h"
 #include "wage/design.h"
+#include "wage/script.h"
 #include "wage/world.h"
 
 #include "common/memstream.h"
@@ -127,6 +128,8 @@ Scene::Scene(String name, Common::SeekableReadStream *data) {
 }
 
 Scene::~Scene() {
+	delete _script;
+	delete _textBounds;
 }
 
 void Scene::paint(Graphics::Surface *surface, int x, int y) {
