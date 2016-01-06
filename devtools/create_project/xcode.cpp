@@ -154,7 +154,7 @@ XcodeProvider::Group::Group(XcodeProvider *objectParent, const std::string &grou
 	bool path_is_absolute = (path.length() > 0 && path.at(0) == '/');
 	addProperty("name", _name, "", kSettingsNoValue | kSettingsQuoteVariable);
 	addProperty("sourceTree", path_is_absolute ? "<absolute>" : "<group>", "", kSettingsNoValue | kSettingsQuoteVariable);
-	
+
 	if (path != "") {
 		addProperty("path", path, "", kSettingsNoValue | kSettingsQuoteVariable);
 	}
