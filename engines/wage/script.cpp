@@ -119,6 +119,7 @@ bool Script::execute(World *world, int loopCount, String *inputText, Designed *i
 				Operand *op = readOperand();
 				// TODO check op type is string or number, or something good...
 				appendText(op->toString());
+				delete op;
 				byte d = _data->readByte();
 				if (d != 0xFD)
 					warning("Operand 0x8B (PRINT) End Byte != 0xFD");
@@ -130,6 +131,7 @@ bool Script::execute(World *world, int loopCount, String *inputText, Designed *i
 				// TODO check op type is string.
 				_handled = true;
 				callbacks->playSound(op->toString());
+				delete op;
 				byte d = _data->readByte();
 				if (d != 0xFD)
 					warning("Operand 0x8B (PRINT) End Byte != 0xFD");
@@ -449,6 +451,9 @@ void Script::processIf() {
 
 		bool condResult = eval(lhs, op, rhs);
 
+		delete lhs;
+		delete rhs;
+
 		if (logicalOp == 1) {
 			result = (result && condResult);
 		} else if (logicalOp == 2) {
@@ -475,9 +480,12 @@ void Script::processIf() {
 
 void Script::skipIf() {
 	do {
-		readOperand();
+		Operand *lhs = readOperand();
 		readOperator();
-		readOperand();
+		Operand *rhs = readOperand();
+
+		delete lhs;
+		delete rhs;
 	} while (_data->readByte() != 0xFE);
 }
 
@@ -884,6 +892,9 @@ void Script::processMove() {
 		error("No end for MOVE: %02x", skip);
 
 	evaluatePair(what, "M", to);
+
+	delete what;
+	delete to;
 }
 
 void Script::processLet() {
@@ -904,6 +915,7 @@ void Script::processLet() {
 		Operand *operand = readOperand();
 		// TODO assert that value is NUMBER
 		int16 value = operand->_value.number;
+		delete operand;
 		if (lastOp != NULL) {
 			if (lastOp[0] == '+')
 				result += value;

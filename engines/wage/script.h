@@ -109,6 +109,11 @@ private:
 			_type = type;
 		}
 
+		~Operand() {
+			if (_type == STRING)
+				delete _value.string;
+		}
+
 		Common::String toString() {
 			char buf[128];
 
