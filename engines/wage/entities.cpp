@@ -229,7 +229,7 @@ Obj::Obj(String name, Common::SeekableReadStream *data) {
 
 Chr *Obj::removeFromChr() {
 	if (_currentOwner != NULL) {
-		for (int i = _currentOwner->_inventory.size() - 1; i >= 0; i--)
+	  for (int i = (int)_currentOwner->_inventory.size() - 1; i >= 0; i--)
 			if (_currentOwner->_inventory[i] == this)
 				_currentOwner->_inventory.remove_at(i);
 
@@ -358,7 +358,7 @@ WeaponArray *Chr::getWeapons() {
 }
 
 void Chr::wearObjs() {
-	for (int i = 0; i < _inventory.size(); i++)
+	for (uint i = 0; i < _inventory.size(); i++)
 		wearObjIfPossible(_inventory[i]);
 }
 
