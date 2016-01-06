@@ -62,6 +62,8 @@ Script::~Script() {
 	for (int i = 0; i < _scriptText.size(); i++) {
 		delete _scriptText[i];
 	}
+
+	delete _data;
 }
 
 void Script::print() {

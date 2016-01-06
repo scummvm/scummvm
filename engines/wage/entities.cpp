@@ -122,6 +122,8 @@ Scene::Scene(String name, Common::SeekableReadStream *data) {
 	_soundName = readPascalString(data);
 
 	_visited = false;
+
+	delete data;
 }
 
 Scene::~Scene() {
@@ -225,6 +227,8 @@ Obj::Obj(String name, Common::SeekableReadStream *data) {
 	_failureMessage = readPascalString(data);
 	_useMessage = readPascalString(data);
 	_sound = readPascalString(data);
+
+	delete data;
 }
 
 Chr *Obj::removeFromChr() {
@@ -333,6 +337,8 @@ Chr::Chr(String name, Common::SeekableReadStream *data) {
 
 	for (int i = 0; i < NUMBER_OF_ARMOR_TYPES; i++)
 		_armor[i] = NULL;
+
+	delete data;
 }
 
 void Chr::resetState() {
