@@ -75,6 +75,7 @@ Design::Design(Common::SeekableReadStream *data) {
 
 Design::~Design() {
 	free(_data);
+	_surface->free();
 	delete _surface;
 }
 
