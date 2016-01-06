@@ -292,15 +292,8 @@ scummvm-static: $(OBJS)
 		$(OSX_STATIC_LIBS) \
 		$(OSX_ZLIB)
 
-# Special target to create a static linked binary for the iPhone
+# Special target to create a static linked binary for the iPhone (legacy, and iOS 7+)
 iphone: $(OBJS)
-	$(CXX) $(LDFLAGS) -o scummvm $(OBJS) \
-		$(OSX_STATIC_LIBS) \
-		-framework UIKit -framework CoreGraphics -framework OpenGLES \
-		-framework CoreFoundation -framework QuartzCore -framework Foundation \
-		-framework AudioToolbox -framework CoreAudio -lobjc -lz
-
-ios7: $(OBJS)
 	$(CXX) $(LDFLAGS) -o scummvm $(OBJS) \
 		$(OSX_STATIC_LIBS) \
 		-framework UIKit -framework CoreGraphics -framework OpenGLES \
