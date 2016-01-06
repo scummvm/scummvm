@@ -31,7 +31,7 @@
 #include "audio/musicplugin.h"
 #include "audio/mpu401.h"
 #include "audio/softsynth/emumidi.h"
-#ifdef IPHONE_OFFICIAL
+#ifdef IPHONE_OFFICIAL_IOS7
 #include <string.h>
 #include <sys/syslimits.h>
 #include "backends/platform/ios7/ios7_common.h"
@@ -184,7 +184,10 @@ int MidiDriver_FluidSynth::open() {
 
 	const char *soundfont = ConfMan.get("soundfont").c_str();
 
-#ifdef IPHONE_OFFICIAL
+#ifdef IPHONE_OFFICIAL_IOS7
+	// HACK: Due to the sandbox on non-jailbroken iOS devices, we need to deal with the chroot filesystem.
+	// All the path selected by the user are relative to the Document directory. So, we need to adjust
+	// the path to reflect that.
 	Common::String soundfont_fullpath = iOS7_getDocumentsDir();
 	soundfont_fullpath += soundfont;
 	_soundFont = fluid_synth_sfload(_synth, soundfont_fullpath.c_str(), 1);
