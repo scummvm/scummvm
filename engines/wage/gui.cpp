@@ -230,7 +230,7 @@ void Gui::appendText(String &str) {
 	// and push substrings individually
 	Common::String tmp = "";
 
-	for (int i = 0; i < str.size(); i++) {
+	for (uint i = 0; i < str.size(); i++) {
 		if (str[i] == '\n') {
 			_out.push_back(tmp);
 			flowText(tmp);
@@ -432,7 +432,7 @@ void Gui::flowText(String &str) {
 	for (Common::StringArray::const_iterator j = wrappedLines.begin(); j != wrappedLines.end(); ++j)
 		_lines.push_back(*j);
 
-	int pos = _scrollPos;
+	uint pos = _scrollPos;
 	_scrollPos = MAX<int>(0, (_lines.size() - _consoleNumLines) * _consoleLineHeight);
 
 	_cursorX = kConWPadding;
@@ -481,7 +481,7 @@ void Gui::renderConsole(Graphics::Surface *g, Common::Rect &r) {
 	if (textReflow) {
 		_lines.clear();
 
-		for (int i = 0; i < _out.size(); i++)
+		for (uint i = 0; i < _out.size(); i++)
 			flowText(_out[i]);
 	}
 
