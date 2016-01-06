@@ -59,7 +59,7 @@ Script::Script(Common::SeekableReadStream *data) : _data(data) {
 }
 
 Script::~Script() {
-	for (int i = 0; i < _scriptText.size(); i++) {
+	for (uint i = 0; i < _scriptText.size(); i++) {
 		delete _scriptText[i];
 	}
 
@@ -67,13 +67,13 @@ Script::~Script() {
 }
 
 void Script::print() {
-	for (int i = 0; i < _scriptText.size(); i++) {
+	for (uint i = 0; i < _scriptText.size(); i++) {
 		debug(4, "%d [%04x]: %s", i, _scriptText[i]->offset, _scriptText[i]->line.c_str());
 	}
 }
 
 void Script::printLine(int offset) {
-	for (int i = 0; i < _scriptText.size(); i++)
+	for (uint i = 0; i < _scriptText.size(); i++)
 		if (_scriptText[i]->offset >= offset) {
 			debug(4, "%d [%04x]: %s", i, _scriptText[i]->offset, _scriptText[i]->line.c_str());
 			break;
@@ -851,7 +851,7 @@ bool Script::evalClickCondition(Operand *lhs, const char *op, Operand *rhs) {
 }
 
 void Script::takeObj(Obj *obj) {
-	if (_world->_player->_inventory.size() >= _world->_player->_maximumCarriedObjects) {
+  if ((int)_world->_player->_inventory.size() >= _world->_player->_maximumCarriedObjects) {
 		appendText("Your pack is full, you must drop something.");
 	} else {
 		_world->move(obj, _world->_player);
@@ -991,7 +991,7 @@ Common::String *Script::getGroundItemsList(Scene *scene) {
 }
 
 void Script::appendObjNames(Common::String &str, Common::Array<Obj *> &objs) {
-	for (int i = 0; i < objs.size(); i++) {
+	for (uint i = 0; i < objs.size(); i++) {
 		Obj *obj = objs[i];
 
 		if (!obj->_namePlural)
@@ -1067,7 +1067,7 @@ enum {
 	OPCODE
 };
 
-struct {
+struct Mapping {
 	const char *cmd;
 	int type;
 } mapping[] = {
