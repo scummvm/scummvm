@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef CHROOT_FS_H
-#define CHROOT_FS_H
+#ifndef BACKENDS_FS_CHROOT_CHROOT_FS_H
+#define BACKENDS_FS_CHROOT_CHROOT_FS_H
 
 #include "backends/fs/posix/posix-fs.h"
 
@@ -54,4 +54,4 @@ private:
 	static Common::String addPathComponent(const Common::String &path, const Common::String &component);
 };
 
-#endif /* CHROOT_FS_H */
+#endif /* BACKENDS_FS_CHROOT_CHROOT_FS_H */
