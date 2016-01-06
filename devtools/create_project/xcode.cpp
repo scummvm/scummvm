@@ -1130,7 +1130,7 @@ std::string XcodeProvider::writeProperty(const std::string &variable, Property &
 
 		output += writeSetting(setting->first, setting->second);
 
-		// The combination of SettingsAsList, and kSettingsSingleItem should use "," and not ";" (i.e children
+		// The combination of kSettingsAsList, and kSettingsSingleItem should use "," and not ";" (i.e children
 		// in PBXGroup, so we special case that case here.
 		if ((prop._flags & kSettingsAsList) && (prop._settings.size() > 1 || (prop._flags & kSettingsSingleItem))) {
 			output += (prop._settings.size() > 0) ? ",\n" : "\n";
