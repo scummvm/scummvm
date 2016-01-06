@@ -25,6 +25,9 @@
 
 #include "graphics/surface.h"
 
+// #define ENABLE_IOS7_SCALERS
+
+
 enum InputEvent {
 	kInputMouseDown,
 	kInputMouseUp,

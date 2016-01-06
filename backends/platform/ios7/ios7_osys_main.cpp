@@ -54,6 +54,8 @@
 const OSystem::GraphicsMode OSystem_iOS7::s_supportedGraphicsModes[] = {
 	{ "none", "No filtering", kGraphicsModeNone },
 	{ "linear", "Linear filtering", kGraphicsModeLinear },
+
+#ifdef ENABLE_IOS7_SCALERS
 #ifdef USE_SCALERS
 //	{"2x", "2x", GFX_DOUBLESIZE},
 //	{"3x", "3x", GFX_TRIPLESIZE},
@@ -68,6 +70,7 @@ const OSystem::GraphicsMode OSystem_iOS7::s_supportedGraphicsModes[] = {
 #endif
 	{"tv2x", "TV2x", kGraphicsModeTV2x},
 	{"dotmatrix", "DotMatrix", kGraphicsModeDotMatrix},
+#endif
 #endif
 	{ 0, 0, 0 }
 };
