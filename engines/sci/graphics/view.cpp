@@ -356,7 +356,7 @@ void GfxView::initData(GuiResourceId resourceId) {
 			for (loopNo = 0; loopNo < _loopCount; loopNo++)
 				for (celNo = 0; celNo < _loop[loopNo].celCount; celNo++)
 					_screen->adjustBackUpscaledCoordinates(_loop[loopNo].cel[celNo].scriptWidth, _loop[loopNo].cel[celNo].scriptHeight, _sci2ScaleRes);
-		} else if (getSciVersion() == SCI_VERSION_2_1) {
+		} else if ((getSciVersion() >= SCI_VERSION_2_1_EARLY) && (getSciVersion() <= SCI_VERSION_2_1_LATE)) {
 			for (loopNo = 0; loopNo < _loopCount; loopNo++)
 				for (celNo = 0; celNo < _loop[loopNo].celCount; celNo++)
 					_coordAdjuster->fromDisplayToScript(_loop[loopNo].cel[celNo].scriptHeight, _loop[loopNo].cel[celNo].scriptWidth);

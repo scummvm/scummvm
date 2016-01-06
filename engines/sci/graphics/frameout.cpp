@@ -23,7 +23,7 @@
 #include "common/algorithm.h"
 #include "common/events.h"
 #include "common/keyboard.h"
-#include "common/list_intern.h"
+#include "common/list.h"
 #include "common/str.h"
 #include "common/system.h"
 #include "common/textconsole.h"
@@ -727,7 +727,7 @@ void GfxFrameout::kernelFrameout() {
 				if (view && view->isSci2Hires()) {
 					view->adjustToUpscaledCoordinates(itemEntry->y, itemEntry->x);
 					view->adjustToUpscaledCoordinates(itemEntry->z, dummyX);
-				} else if (getSciVersion() >= SCI_VERSION_2_1) {
+				} else if (getSciVersion() >= SCI_VERSION_2_1_EARLY) {
 					_coordAdjuster->fromScriptToDisplay(itemEntry->y, itemEntry->x);
 					_coordAdjuster->fromScriptToDisplay(itemEntry->z, dummyX);
 				}
@@ -782,7 +782,7 @@ void GfxFrameout::kernelFrameout() {
 						view->adjustBackUpscaledCoordinates(nsRect.top, nsRect.left);
 						view->adjustBackUpscaledCoordinates(nsRect.bottom, nsRect.right);
 						g_sci->_gfxCompare->setNSRect(itemEntry->object, nsRect);
-					} else if (getSciVersion() >= SCI_VERSION_2_1 && _resMan->detectHires()) {
+					} else if (getSciVersion() >= SCI_VERSION_2_1_EARLY && _resMan->detectHires()) {
 						_coordAdjuster->fromDisplayToScript(nsRect.top, nsRect.left);
 						_coordAdjuster->fromDisplayToScript(nsRect.bottom, nsRect.right);
 						g_sci->_gfxCompare->setNSRect(itemEntry->object, nsRect);

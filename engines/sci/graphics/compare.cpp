@@ -130,7 +130,7 @@ void GfxCompare::kernelSetNowSeen(reg_t objectReference) {
 #ifdef ENABLE_SCI32
 	if (view->isSci2Hires())
 		view->adjustToUpscaledCoordinates(y, x);
-	else if (getSciVersion() == SCI_VERSION_2_1)
+	else if ((getSciVersion() >= SCI_VERSION_2_1_EARLY) && (getSciVersion() <= SCI_VERSION_2_1_LATE))
 		_coordAdjuster->fromScriptToDisplay(y, x);
 #endif
 
@@ -140,7 +140,7 @@ void GfxCompare::kernelSetNowSeen(reg_t objectReference) {
 	if (view->isSci2Hires()) {
 		view->adjustBackUpscaledCoordinates(celRect.top, celRect.left);
 		view->adjustBackUpscaledCoordinates(celRect.bottom, celRect.right);
-	} else if (getSciVersion() == SCI_VERSION_2_1) {
+	} else if ((getSciVersion() >= SCI_VERSION_2_1_EARLY) && (getSciVersion() <= SCI_VERSION_2_1_LATE)) {
 		_coordAdjuster->fromDisplayToScript(celRect.top, celRect.left);
 		_coordAdjuster->fromDisplayToScript(celRect.bottom, celRect.right);
 	}

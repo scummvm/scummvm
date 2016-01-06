@@ -683,6 +683,8 @@ LauncherDialog::LauncherDialog()
 
 	// Create Load dialog
 	_loadDialog = new SaveLoadChooser(_("Load game:"), _("Load"), false);
+
+	GUI::GuiManager::instance()._launched = true;
 }
 
 void LauncherDialog::selectTarget(const String &target) {

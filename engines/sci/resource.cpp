@@ -82,8 +82,12 @@ const char *getSciVersionDesc(SciVersion version) {
 		return "SCI1.1";
 	case SCI_VERSION_2:
 		return "SCI2";
-	case SCI_VERSION_2_1:
-		return "SCI2.1";
+	case SCI_VERSION_2_1_EARLY:
+		return "Early SCI2.1";
+	case SCI_VERSION_2_1_MIDDLE:
+		return "Middle SCI2.1";
+	case SCI_VERSION_2_1_LATE:
+		return "Late SCI2.1";
 	case SCI_VERSION_3:
 		return "SCI3";
 	default:
@@ -2121,6 +2125,79 @@ ViewType ResourceManager::detectViewType() {
 	return kViewUnknown;
 }
 
+// to detect selector "wordFail" in LE vocab resource
+static const byte detectSci21EarlySignature[] = {
+	10, // size of signature
+	0x08, 0x00, 'w', 'o', 'r', 'd', 'F', 'a', 'i', 'l'
+};
+
+// to detect selector "wordFail" in BE vocab resource (SCI2.1 Early)
+static const byte detectSci21EarlyBESignature[] = {
+	10, // size of signature
+	0x00, 0x08, 'w', 'o', 'r', 'd', 'F', 'a', 'i', 'l'
+};
+
+// to detect new kString calling to detect SCI2.1 Late
+static const byte detectSci21NewStringSignature[] = {
+	8, // size of signature
+	0x78, // push1
+	0x78, // push1
+	0x39, 0x09, // pushi 09
+	0x59, 0x01, // rest 01
+	0x43, 0x5c, // callk String
+};
+
+bool ResourceManager::checkResourceDataForSignature(Resource *resource, const byte *signature) {
+	byte signatureSize = *signature;
+	const byte *resourceData = resource->data;
+
+	signature++; // skip over size byte
+	if (signatureSize < 4)
+		error("resource signature is too small, internal error");
+	if (signatureSize > resource->size)
+		return false;
+
+	const uint32 signatureDWord = *((const uint32 *)signature);
+	signature += 4; signatureSize -= 4;
+
+	const uint32 searchLimit = resource->size - signatureSize + 1;
+	uint32 DWordOffset = 0;
+	while (DWordOffset < searchLimit) {
+		if (signatureDWord == READ_UINT32(resourceData + DWordOffset)) {
+			// magic DWORD found, check if the rest matches as well
+			uint32 offset = DWordOffset + 4;
+			uint32 signaturePos  = 0;
+			while (signaturePos < signatureSize) {
+				if (resourceData[offset] != signature[signaturePos])
+					break;
+				offset++;
+				signaturePos++;
+			}
+			if (signaturePos >= signatureSize)
+				return true; // signature found
+		}
+		DWordOffset++;
+	}
+	return false;
+}
+
+bool ResourceManager::checkResourceForSignatures(ResourceType resourceType, uint16 resourceNr, const byte *signature1, const byte *signature2) {
+	Resource *resource = findResource(ResourceId(resourceType, resourceNr), false);
+
+	if (resource) {
+		// resource found and loaded, check for signatures
+		if (signature1) {
+			if (checkResourceDataForSignature(resource, signature1))
+				return true;
+		}
+		if (signature2) {
+			if (checkResourceDataForSignature(resource, signature2))
+				return true;
+		}
+	}
+	return false;
+}
+
 void ResourceManager::detectSciVersion() {
 	// We use the view compression to set a preliminary s_sciVersion for the sake of getResourceInfo
 	// Pretend we have a SCI0 game
@@ -2180,31 +2257,52 @@ void ResourceManager::detectSciVersion() {
 		// no Mac SCI2 games. Yes, that means that GK1 Mac is SCI2.1 and not SCI2.
 
 		// TODO: Decide between SCI2.1 and SCI3
-		if (res)
-			s_sciVersion = SCI_VERSION_2_1;
-		else
+		if (res) {
+			s_sciVersion = SCI_VERSION_2_1_EARLY; // we check for SCI2.1 specifics a bit later
+		} else {
 			s_sciVersion = SCI_VERSION_1_1;
-		return;
+			return;
+		}
 	}
 
 	// Handle SCI32 versions here
-	if (_volVersion >= kResVersionSci2) {
-		Common::List<ResourceId> heaps = listResources(kResourceTypeHeap);
-		bool hasHeapResources = !heaps.empty();
+	if (s_sciVersion != SCI_VERSION_2_1_EARLY) {
+		if (_volVersion >= kResVersionSci2) {
+			Common::List<ResourceId> heaps = listResources(kResourceTypeHeap);
+			bool hasHeapResources = !heaps.empty();
 
-		// SCI2.1/3 and SCI1 Late resource maps are the same, except that
-		// SCI1 Late resource maps have the resource types or'd with
-		// 0x80. We differentiate between SCI2 and SCI2.1/3 based on that.
-		if (_mapVersion == kResVersionSci1Late) {
-			s_sciVersion = SCI_VERSION_2;
-			return;
-		} else if (hasHeapResources) {
-			s_sciVersion = SCI_VERSION_2_1;
-			return;
-		} else {
-			s_sciVersion = SCI_VERSION_3;
+			// SCI2.1/3 and SCI1 Late resource maps are the same, except that
+			// SCI1 Late resource maps have the resource types or'd with
+			// 0x80. We differentiate between SCI2 and SCI2.1/3 based on that.
+			if (_mapVersion == kResVersionSci1Late) {
+				s_sciVersion = SCI_VERSION_2;
+				return;
+			} else if (hasHeapResources) {
+				s_sciVersion = SCI_VERSION_2_1_EARLY; // exact SCI2.1 version is checked a bit later
+			} else {
+				s_sciVersion = SCI_VERSION_3;
+				return;
+			}
+		}
+	}
+
+	if (s_sciVersion == SCI_VERSION_2_1_EARLY) {
+		// we only know that it's SCI2.1, not which exact version it is
+
+		// check, if selector "wordFail" inside vocab 997 exists, if it does it's SCI2.1 Early
+		if ((checkResourceForSignatures(kResourceTypeVocab, 997, detectSci21EarlySignature, detectSci21EarlyBESignature))) {
+			// found -> it is SCI2.1 early
 			return;
 		}
+
+		s_sciVersion = SCI_VERSION_2_1_MIDDLE;
+		if (checkResourceForSignatures(kResourceTypeScript, 64918, detectSci21NewStringSignature, nullptr)) {
+			// new kString call detected, it's SCI2.1 late
+			// TODO: this call seems to be different on Mac
+			s_sciVersion = SCI_VERSION_2_1_LATE;
+			return;
+		}
+		return;
 	}
 
 	// Check for transitive SCI1/SCI1.1 games, like PQ1 here
@@ -2537,7 +2635,7 @@ reg_t ResourceManager::findGameObject(bool addSci11ScriptOffset) {
 
 		int16 offset = !isSci11Mac() ? READ_LE_UINT16(offsetPtr) : READ_BE_UINT16(offsetPtr);
 		return make_reg(1, offset);
-	} else if (getSciVersion() >= SCI_VERSION_1_1 && getSciVersion() <= SCI_VERSION_2_1) {
+	} else if (getSciVersion() >= SCI_VERSION_1_1 && getSciVersion() <= SCI_VERSION_2_1_LATE) {
 		offsetPtr = script->data + 4 + 2 + 2;
 
 		// In SCI1.1 - SCI2.1, the heap is appended at the end of the script,
@@ -2565,7 +2663,7 @@ Common::String ResourceManager::findSierraGameId() {
 
 	if (getSciVersion() < SCI_VERSION_1_1) {
 		heap = findResource(ResourceId(kResourceTypeScript, 0), false);
-	} else if (getSciVersion() >= SCI_VERSION_1_1 && getSciVersion() <= SCI_VERSION_2_1) {
+	} else if (getSciVersion() >= SCI_VERSION_1_1 && getSciVersion() <= SCI_VERSION_2_1_LATE) {
 		heap = findResource(ResourceId(kResourceTypeHeap, 0), false);
 		nameSelector += 5;
 	} else if (getSciVersion() == SCI_VERSION_3) {

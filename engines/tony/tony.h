@@ -104,6 +104,7 @@ public:
 	RMResUpdate _resUpdate;
 	uint32 _hEndOfFrame;
 	Common::File _vdbFP;
+	SoundCodecs _vdbCodec;
 	Common::Array<VoiceHeader> _voices;
 	FPSound _theSound;
 	Common::List<FPSfx *> _activeSfx;

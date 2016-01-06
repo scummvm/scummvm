@@ -82,6 +82,7 @@ TonyEngine::TonyEngine(OSystem *syst, const TonyGameDescription *gameDesc) : Eng
 	_bQuitNow = false;
 	_bTimeFreezed = false;
 	_nTimeFreezed = 0;
+	_vdbCodec = FPCODEC_UNKNOWN;
 }
 
 TonyEngine::~TonyEngine() {
@@ -323,10 +324,10 @@ void TonyEngine::playMusic(int nChannel, const Common::String &fname, int nFX, b
 		_stream[GLOBALS._nextChannel]->unloadFile();
 
 		if (!getIsDemo()) {
-			if (!_stream[GLOBALS._nextChannel]->loadFile(fname, FPCODEC_ADPCM, nSync))
+			if (!_stream[GLOBALS._nextChannel]->loadFile(fname, nSync))
 				error("failed to open music file '%s'", fname.c_str());
 		} else {
-			_stream[GLOBALS._nextChannel]->loadFile(fname, FPCODEC_ADPCM, nSync);
+			_stream[GLOBALS._nextChannel]->loadFile(fname, nSync);
 		}
 
 		_stream[GLOBALS._nextChannel]->setLoop(bLoop);
@@ -335,10 +336,10 @@ void TonyEngine::playMusic(int nChannel, const Common::String &fname, int nFX, b
 		GLOBALS._flipflop = 1 - GLOBALS._flipflop;
 	} else {
 		if (!getIsDemo()) {
-			if (!_stream[nChannel]->loadFile(fname, FPCODEC_ADPCM, nSync))
+			if (!_stream[nChannel]->loadFile(fname, nSync))
 				error("failed to open music file '%s'", fname.c_str());
 		} else {
-			_stream[nChannel]->loadFile(fname, FPCODEC_ADPCM, nSync);
+			_stream[nChannel]->loadFile(fname, nSync);
 		}
 
 		_stream[nChannel]->setLoop(bLoop);
@@ -356,10 +357,10 @@ void TonyEngine::doNextMusic(CORO_PARAM, const void *param) {
 	CORO_BEGIN_CODE(_ctx);
 
 	if (!g_vm->getIsDemo()) {
-		if (!streams[GLOBALS._nextChannel]->loadFile(GLOBALS._nextMusic, FPCODEC_ADPCM, GLOBALS._nextSync))
+		if (!streams[GLOBALS._nextChannel]->loadFile(GLOBALS._nextMusic, GLOBALS._nextSync))
 			error("failed to open next music file '%s'", GLOBALS._nextMusic.c_str());
 	} else {
-		streams[GLOBALS._nextChannel]->loadFile(GLOBALS._nextMusic, FPCODEC_ADPCM, GLOBALS._nextSync);
+		streams[GLOBALS._nextChannel]->loadFile(GLOBALS._nextMusic, GLOBALS._nextSync);
 	}
 
 	streams[GLOBALS._nextChannel]->setLoop(GLOBALS._nextLoop);
@@ -433,7 +434,7 @@ void TonyEngine::preloadSFX(int nChannel, const char *fn) {
 
 	_theSound.createSfx(&_sfx[nChannel]);
 
-	_sfx[nChannel]->loadFile(fn, FPCODEC_ADPCM);
+	_sfx[nChannel]->loadFile(fn);
 }
 
 FPSfx *TonyEngine::createSFX(Common::SeekableReadStream *stream) {
@@ -453,7 +454,7 @@ void TonyEngine::preloadUtilSFX(int nChannel, const char *fn) {
 
 	_theSound.createSfx(&_utilSfx[nChannel]);
 
-	_utilSfx[nChannel]->loadFile(fn, FPCODEC_ADPCM);
+	_utilSfx[nChannel]->loadFile(fn);
 	_utilSfx[nChannel]->setVolume(63);
 }
 
@@ -573,18 +574,26 @@ void TonyEngine::loadState(CORO_PARAM, int n) {
 }
 
 bool TonyEngine::openVoiceDatabase() {
-	char id[4];
-	uint32 numfiles;
-
 	// Open the voices database
 	if (!_vdbFP.open("voices.vdb"))
-		return false;
+		if (!_vdbFP.open("voices.mdb"))
+			if (!_vdbFP.open("voices.odb"))
+				if (!_vdbFP.open("voices.fdb"))
+					return false;
 
 	_vdbFP.seek(-8, SEEK_END);
-	numfiles = _vdbFP.readUint32LE();
-	_vdbFP.read(id, 4);
+	uint32 numfiles = _vdbFP.readUint32LE();
+	int32 id = _vdbFP.readUint32BE();
 
-	if (id[0] != 'V' || id[1] != 'D' || id[2] != 'B' || id[3] != '1') {
+	if (id == MKTAG('V', 'D', 'B', '1'))
+		_vdbCodec = FPCODEC_ADPCM;
+	else if (id == MKTAG('M', 'D', 'B', '1'))
+		_vdbCodec = FPCODEC_MP3;
+	else if (id == MKTAG('O', 'D', 'B', '1'))
+		_vdbCodec = FPCODEC_OGG;
+	else if (id == MKTAG('F', 'D', 'B', '1'))
+		_vdbCodec = FPCODEC_FLAC;
+	else {
 		_vdbFP.close();
 		return false;
 	}

@@ -41,8 +41,11 @@ enum {
 	MAX_SAVEGAME_NR = 20 /**< Maximum number of savegames */
 };
 
-#define VIRTUALFILE_HANDLE 200
+#define VIRTUALFILE_HANDLE_START 32000
+#define VIRTUALFILE_HANDLE_SCI32SAVE 32100
 #define PHANTASMAGORIA_SAVEGAME_INDEX "phantsg.dir"
+#define VIRTUALFILE_HANDLE_SCIAUDIO 32300
+#define VIRTUALFILE_HANDLE_END 32300
 
 struct SavegameDesc {
 	int16 id;

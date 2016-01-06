@@ -2367,6 +2367,14 @@ void SurfaceSdlGraphicsManager::notifyVideoExpose() {
 	_forceFull = true;
 }
 
+#ifdef USE_SDL_RESIZABLE_WINDOW
+void SurfaceSdlGraphicsManager::notifyResize(const uint width, const uint height) {
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	setWindowResolution(width, height);
+#endif
+}
+#endif
+
 void SurfaceSdlGraphicsManager::transformMouseCoordinates(Common::Point &point) {
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	// In SDL2 the actual output resolution might be different from what we
@@ -2402,11 +2410,51 @@ void SurfaceSdlGraphicsManager::deinitializeRenderer() {
 	_window->destroyWindow();
 }
 
+void SurfaceSdlGraphicsManager::setWindowResolution(int width, int height) {
+	_windowWidth  = width;
+	_windowHeight = height;
+
+	// We expect full screen resolution as inputs coming from the event system.
+	_eventSource->resetKeyboadEmulation(_windowWidth - 1, _windowHeight - 1);
+
+	// Calculate the "viewport" for the actual area we draw in. In fullscreen
+	// we can easily get a different resolution than what we requested. In
+	// this case, we add black bars if necessary to assure the aspect ratio
+	// is preserved.
+	const frac_t outputAspect  = intToFrac(_windowWidth) / _windowHeight;
+	const frac_t desiredAspect = intToFrac(_videoMode.hardwareWidth) / _videoMode.hardwareHeight;
+
+	_viewport.w = _windowWidth;
+	_viewport.h = _windowHeight;
+
+	// Adjust one dimension for mantaining the aspect ratio.
+	if (abs(outputAspect - desiredAspect) >= (int)(FRAC_ONE / 1000)) {
+		if (outputAspect < desiredAspect) {
+			_viewport.h = _videoMode.hardwareHeight * _windowWidth / _videoMode.hardwareWidth;
+		} else if (outputAspect > desiredAspect) {
+			_viewport.w = _videoMode.hardwareWidth * _windowHeight / _videoMode.hardwareHeight;
+		}
+	}
+
+	_viewport.x = (_windowWidth  - _viewport.w) / 2;
+	_viewport.y = (_windowHeight - _viewport.h) / 2;
+
+	// Force a full redraw because we changed the viewport.
+	_forceFull = true;
+}
+
 SDL_Surface *SurfaceSdlGraphicsManager::SDL_SetVideoMode(int width, int height, int bpp, Uint32 flags) {
 	deinitializeRenderer();
 
-	const bool isFullscreen = (flags & SDL_FULLSCREEN) != 0;
-	if (!_window->createWindow(width, height, isFullscreen ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0)) {
+	uint32 createWindowFlags = 0;
+#ifdef USE_SDL_RESIZABLE_WINDOW
+	createWindowFlags |= SDL_WINDOW_RESIZABLE;
+#endif
+	if ((flags & SDL_FULLSCREEN) != 0) {
+		createWindowFlags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
+	}
+
+	if (!_window->createWindow(width, height, createWindowFlags)) {
 		return nullptr;
 	}
 
@@ -2417,30 +2465,7 @@ SDL_Surface *SurfaceSdlGraphicsManager::SDL_SetVideoMode(int width, int height, 
 	}
 
 	SDL_GetWindowSize(_window->getSDLWindow(), &_windowWidth, &_windowHeight);
-	// We expect full screen resolution as inputs coming from the event system.
-	_eventSource->resetKeyboadEmulation(_windowWidth - 1, _windowHeight - 1);
-
-	// Calculate the "viewport" for the actual area we draw in. In fullscreen
-	// we can easily get a different resolution than what we requested. In
-	// this case, we add black bars if necessary to assure the aspect ratio
-	// is preserved.
-	const frac_t outputAspect  = intToFrac(_windowWidth) / _windowHeight;
-	const frac_t desiredAspect = intToFrac(width) / height;
-
-	_viewport.w = _windowWidth;
-	_viewport.h = _windowHeight;
-
-	// Adjust one dimension for mantaining the aspect ratio.
-	if (abs(outputAspect - desiredAspect) >= (int)(FRAC_ONE / 1000)) {
-		if (outputAspect < desiredAspect) {
-			_viewport.h = height * _windowWidth / width;
-		} else if (outputAspect > desiredAspect) {
-			_viewport.w = width * _windowHeight / height;
-		}
-	}
-
-	_viewport.x = (_windowWidth  - _viewport.w) / 2;
-	_viewport.y = (_windowHeight - _viewport.h) / 2;
+	setWindowResolution(_windowWidth, _windowHeight);
 
 	_screenTexture = SDL_CreateTexture(_renderer, SDL_PIXELFORMAT_RGB565, SDL_TEXTUREACCESS_STREAMING, width, height);
 	if (!_screenTexture) {

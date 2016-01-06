@@ -258,16 +258,21 @@ reg_t kFileIOOpen(EngineState *s, int argc, reg_t *argv) {
 	}
 	debugC(kDebugLevelFile, "kFileIO(open): %s, 0x%x", name.c_str(), mode);
 
+	if (name.hasPrefix("sciAudio\\")) {
+		// fan-made sciAudio extension, don't create those files and instead return a virtual handle
+		return make_reg(0, VIRTUALFILE_HANDLE_SCIAUDIO);
+	}
+
 #ifdef ENABLE_SCI32
 	if (name == PHANTASMAGORIA_SAVEGAME_INDEX) {
 		if (s->_virtualIndexFile) {
-			return make_reg(0, VIRTUALFILE_HANDLE);
+			return make_reg(0, VIRTUALFILE_HANDLE_SCI32SAVE);
 		} else {
 			Common::String englishName = g_sci->getSciLanguageString(name, K_LANG_ENGLISH);
 			Common::String wrappedName = g_sci->wrapFilename(englishName);
 			if (!g_sci->getSaveFileManager()->listSavefiles(wrappedName).empty()) {
 				s->_virtualIndexFile = new VirtualIndexFile(wrappedName);
-				return make_reg(0, VIRTUALFILE_HANDLE);
+				return make_reg(0, VIRTUALFILE_HANDLE_SCI32SAVE);
 			}
 		}
 	}
@@ -320,7 +325,7 @@ reg_t kFileIOOpen(EngineState *s, int argc, reg_t *argv) {
 			s->_virtualIndexFile->write("\0", 1);
 			s->_virtualIndexFile->write("\0", 1);	// Spot description (empty)
 			s->_virtualIndexFile->seek(0, SEEK_SET);
-			return make_reg(0, VIRTUALFILE_HANDLE);
+			return make_reg(0, VIRTUALFILE_HANDLE_SCI32SAVE);
 		}
 	}
 #endif
@@ -346,11 +351,16 @@ reg_t kFileIOClose(EngineState *s, int argc, reg_t *argv) {
 	uint16 handle = argv[0].toUint16();
 
 #ifdef ENABLE_SCI32
-	if (handle == VIRTUALFILE_HANDLE) {
+	if (handle == VIRTUALFILE_HANDLE_SCI32SAVE) {
 		s->_virtualIndexFile->close();
 		return SIGNAL_REG;
 	}
 #endif
+
+	if (handle >= VIRTUALFILE_HANDLE_START) {
+		// it's a virtual handle? ignore it
+		return SIGNAL_REG;
+	}
 
 	FileHandle *f = getFileFromHandle(s, handle);
 	if (f) {
@@ -373,7 +383,7 @@ reg_t kFileIOReadRaw(EngineState *s, int argc, reg_t *argv) {
 	debugC(kDebugLevelFile, "kFileIO(readRaw): %d, %d", handle, size);
 
 #ifdef ENABLE_SCI32
-	if (handle == VIRTUALFILE_HANDLE) {
+	if (handle == VIRTUALFILE_HANDLE_SCI32SAVE) {
 		bytesRead = s->_virtualIndexFile->read(buf, size);
 	} else {
 #endif
@@ -403,7 +413,7 @@ reg_t kFileIOWriteRaw(EngineState *s, int argc, reg_t *argv) {
 	debugC(kDebugLevelFile, "kFileIO(writeRaw): %d, %d", handle, size);
 
 #ifdef ENABLE_SCI32
-	if (handle == VIRTUALFILE_HANDLE) {
+	if (handle == VIRTUALFILE_HANDLE_SCI32SAVE) {
 		s->_virtualIndexFile->write(buf, size);
 		success = true;
 	} else {
@@ -480,7 +490,7 @@ reg_t kFileIOReadString(EngineState *s, int argc, reg_t *argv) {
 	uint32 bytesRead;
 
 #ifdef ENABLE_SCI32
-	if (handle == VIRTUALFILE_HANDLE)
+	if (handle == VIRTUALFILE_HANDLE_SCI32SAVE)
 		bytesRead = s->_virtualIndexFile->readLine(buf, maxsize);
 	else
 #endif
@@ -503,7 +513,7 @@ reg_t kFileIOWriteString(EngineState *s, int argc, reg_t *argv) {
 	// We skip creating these files, and instead handle the calls
 	// directly. Since the sciAudio calls are only creating text files,
 	// this is probably the most straightforward place to handle them.
-	if (handle == 0xFFFF && str.hasPrefix("(sciAudio")) {
+	if (handle == VIRTUALFILE_HANDLE_SCIAUDIO) {
 		Common::List<ExecStack>::const_iterator iter = s->_executionStack.reverse_begin();
 		iter--;	// sciAudio
 		iter--;	// sciAudio child
@@ -512,7 +522,7 @@ reg_t kFileIOWriteString(EngineState *s, int argc, reg_t *argv) {
 	}
 
 #ifdef ENABLE_SCI32
-	if (handle == VIRTUALFILE_HANDLE) {
+	if (handle == VIRTUALFILE_HANDLE_SCI32SAVE) {
 		s->_virtualIndexFile->write(str.c_str(), str.size());
 		return NULL_REG;
 	}
@@ -539,7 +549,7 @@ reg_t kFileIOSeek(EngineState *s, int argc, reg_t *argv) {
 	debugC(kDebugLevelFile, "kFileIO(seek): %d, %d, %d", handle, offset, whence);
 
 #ifdef ENABLE_SCI32
-	if (handle == VIRTUALFILE_HANDLE)
+	if (handle == VIRTUALFILE_HANDLE_SCI32SAVE)
 		return make_reg(0, s->_virtualIndexFile->seek(offset, whence));
 #endif
 

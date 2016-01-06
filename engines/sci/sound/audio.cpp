@@ -79,15 +79,23 @@ void AudioPlayer::handleFanmadeSciAudio(reg_t sciAudioObject, SegManager *segMan
 	Common::String command = segMan->getString(commandReg);
 
 	if (command == "play" || command == "playx") {
-#ifdef USE_MAD
 		reg_t fileNameReg = readSelector(segMan, sciAudioObject, kernel->findSelector("fileName"));
 		Common::String fileName = segMan->getString(fileNameReg);
 
-		int16 loopCount = (int16)readSelectorValue(segMan, sciAudioObject, kernel->findSelector("loopCount"));
-		// When loopCount is -1, we treat it as infinite looping, else no looping is done.
-		// This is observed by game scripts, which can set loopCount to all sorts of random values.
+		reg_t loopCountReg = readSelector(segMan, sciAudioObject, kernel->findSelector("loopCount"));
+		Common::String loopCountStr = segMan->getString(loopCountReg);
+		int16 loopCount = atoi(loopCountStr.c_str());
+
 		// Adjust loopCount for ScummVM's LoopingAudioStream semantics
-		loopCount = (loopCount == -1) ? 0 : 1;
+		if (loopCount == -1) {
+			loopCount = 0; // loop endlessly
+		} else if (loopCount >= 0) {
+			// sciAudio loopCount == 0 -> play 1 time  -> ScummVM's loopCount should be 1
+			// sciAudio loopCount == 1 -> play 2 times -> ScummVM's loopCount should be 2
+			loopCount++;
+		} else {
+			loopCount = 1; // play once in case the value makes no sense
+		}
 
 		// Determine sound type
 		Audio::Mixer::SoundType soundType = Audio::Mixer::kSFXSoundType;
@@ -96,20 +104,51 @@ void AudioPlayer::handleFanmadeSciAudio(reg_t sciAudioObject, SegManager *segMan
 		else if (fileName.hasPrefix("speech"))
 			soundType = Audio::Mixer::kSpeechSoundType;
 
-		Common::File *sciAudio = new Common::File();
+		// Determine compression
+		uint32 audioCompressionType = 0;
+		if ((fileName.hasSuffix(".mp3")) || (fileName.hasSuffix(".sciAudio")) || (fileName.hasSuffix(".sciaudio"))) {
+			audioCompressionType = MKTAG('M','P','3',' ');
+		} else if (fileName.hasSuffix(".wav")) {
+			audioCompressionType = MKTAG('W','A','V',' ');
+		} else if (fileName.hasSuffix(".aiff")) {
+			audioCompressionType = MKTAG('A','I','F','F');
+		} else {
+			error("sciAudio: unsupported file type");
+		}
+
+		Common::File *sciAudioFile = new Common::File();
 		// Replace backwards slashes
 		for (uint i = 0; i < fileName.size(); i++) {
 			if (fileName[i] == '\\')
 				fileName.setChar('/', i);
 		}
-		sciAudio->open("sciAudio/" + fileName);
+		sciAudioFile->open("sciAudio/" + fileName);
 
-		Audio::SeekableAudioStream *audioStream = Audio::makeMP3Stream(sciAudio, DisposeAfterUse::YES);
+		Audio::RewindableAudioStream *audioStream = nullptr;
+
+		switch (audioCompressionType) {
+		case MKTAG('M','P','3',' '):
+#ifdef USE_MAD
+			audioStream = Audio::makeMP3Stream(sciAudioFile, DisposeAfterUse::YES);
+#endif
+			break;
+		case MKTAG('W','A','V',' '):
+			audioStream = Audio::makeWAVStream(sciAudioFile, DisposeAfterUse::YES);
+			break;
+		case MKTAG('A','I','F','F'):
+			audioStream = Audio::makeAIFFStream(sciAudioFile, DisposeAfterUse::YES);
+			break;
+		default:
+			break;
+		}
+
+		if (!audioStream) {
+			error("sciAudio: requested compression not compiled into ScummVM");
+		}
 
 		// We only support one audio handle
 		_mixer->playStream(soundType, &_audioHandle,
 							Audio::makeLoopingAudioStream((Audio::RewindableAudioStream *)audioStream, loopCount));
-#endif
 	} else if (command == "stop") {
 		_mixer->stopHandle(_audioHandle);
 	} else {
@@ -217,7 +256,7 @@ static void deDPCM8Nibble(byte *soundBuf, int32 &s, byte b) {
 	if (b & 8) {
 #ifdef ENABLE_SCI32
 		// SCI2.1 reverses the order of the table values here
-		if (getSciVersion() >= SCI_VERSION_2_1)
+		if (getSciVersion() >= SCI_VERSION_2_1_EARLY)
 			s -= tableDPCM8[b & 7];
 		else
 #endif

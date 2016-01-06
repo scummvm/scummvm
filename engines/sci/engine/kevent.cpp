@@ -42,6 +42,7 @@ reg_t kGetEvent(EngineState *s, int argc, reg_t *argv) {
 	reg_t obj = argv[1];
 	SciEvent curEvent;
 	int modifier_mask = getSciVersion() <= SCI_VERSION_01 ? SCI_KEYMOD_ALL : SCI_KEYMOD_NO_FOOLOCK;
+	uint16 modifiers = 0;
 	SegManager *segMan = s->_segMan;
 	Common::Point mousePos;
 
@@ -58,7 +59,7 @@ reg_t kGetEvent(EngineState *s, int argc, reg_t *argv) {
 		// In case we use a simulated event we query the current mouse position
 		mousePos = g_sci->_gfxCursor->getPosition();
 #ifdef ENABLE_SCI32
-		if (getSciVersion() >= SCI_VERSION_2_1)
+		if (getSciVersion() >= SCI_VERSION_2_1_EARLY)
 			g_sci->_gfxCoordAdjuster->fromDisplayToScript(mousePos.y, mousePos.x);
 #endif
 		// Limit the mouse cursor position, if necessary
@@ -84,7 +85,7 @@ reg_t kGetEvent(EngineState *s, int argc, reg_t *argv) {
 	// For a real event we use its associated mouse position
 	mousePos = curEvent.mousePos;
 #ifdef ENABLE_SCI32
-	if (getSciVersion() >= SCI_VERSION_2_1)
+	if (getSciVersion() >= SCI_VERSION_2_1_EARLY)
 		g_sci->_gfxCoordAdjuster->fromDisplayToScript(mousePos.y, mousePos.x);
 #endif
 	// Limit the mouse cursor position, if necessary
@@ -110,6 +111,26 @@ reg_t kGetEvent(EngineState *s, int argc, reg_t *argv) {
 	writeSelectorValue(segMan, obj, SELECTOR(x), mousePos.x);
 	writeSelectorValue(segMan, obj, SELECTOR(y), mousePos.y);
 
+	// Get current keyboard modifiers, only keep relevant bits
+	modifiers = curEvent.modifiers & modifier_mask;
+	if (g_sci->getPlatform() == Common::kPlatformDOS) {
+		// We are supposed to emulate SCI running in DOS
+
+		// We set the higher byte of the modifiers to 02h
+		// Original SCI also did that indirectly, because it asked BIOS for shift status
+		// via AH=0x02 INT16, which then sets the shift flags in AL
+		// AH is supposed to be destroyed in that case and it's not defined that 0x02
+		// is still in it on return. The value of AX was then set into the modifiers selector.
+		// At least one fan-made game (Betrayed Alliance) requires 0x02 to be in the upper byte,
+		// otherwise the darts game (script 111) will not work properly.
+
+		// It seems Sierra fixed this behaviour (effectively bug) in the SCI1 keyboard driver.
+		// SCI32 also resets the upper byte.
+		if (getSciVersion() <= SCI_VERSION_01) {
+			modifiers |= 0x0200;
+		}
+	}
+
 	//s->_gui->moveCursor(s->gfx_state->pointer_pos.x, s->gfx_state->pointer_pos.y);
 
 	switch (curEvent.type) {
@@ -125,7 +146,7 @@ reg_t kGetEvent(EngineState *s, int argc, reg_t *argv) {
 
 		writeSelectorValue(segMan, obj, SELECTOR(message), curEvent.character);
 		// We only care about the translated character
-		writeSelectorValue(segMan, obj, SELECTOR(modifiers), curEvent.modifiers & modifier_mask);
+		writeSelectorValue(segMan, obj, SELECTOR(modifiers), modifiers);
 		break;
 
 	case SCI_EVENT_MOUSE_RELEASE:
@@ -149,10 +170,11 @@ reg_t kGetEvent(EngineState *s, int argc, reg_t *argv) {
 			default:
 				break;
 			}
+			modifiers |= extra_bits; // add these additional bits to the mix
 
 			writeSelectorValue(segMan, obj, SELECTOR(type), curEvent.type);
 			writeSelectorValue(segMan, obj, SELECTOR(message), 0);
-			writeSelectorValue(segMan, obj, SELECTOR(modifiers), (curEvent.modifiers | extra_bits) & modifier_mask);
+			writeSelectorValue(segMan, obj, SELECTOR(modifiers), modifiers);
 			s->r_acc = make_reg(0, 1);
 		}
 		break;
@@ -161,7 +183,7 @@ reg_t kGetEvent(EngineState *s, int argc, reg_t *argv) {
 		// Return a null event
 		writeSelectorValue(segMan, obj, SELECTOR(type), SCI_EVENT_NONE);
 		writeSelectorValue(segMan, obj, SELECTOR(message), 0);
-		writeSelectorValue(segMan, obj, SELECTOR(modifiers), curEvent.modifiers & modifier_mask);
+		writeSelectorValue(segMan, obj, SELECTOR(modifiers), modifiers);
 		s->r_acc = NULL_REG;
 	}
 

@@ -504,6 +504,8 @@ void  Scene::drawElements(ScreenTransition transitionType, bool surfaceFlag) {
 	// Merge any identified dirty areas
 	_dirtyAreas.merge(1, DIRTY_AREAS_SIZE);
 
+	if (_posAdjust != Common::Point(0, 0))
+		warning("Adjust used %d %d", _posAdjust.x, _posAdjust.y);
 	// Copy background for the dirty areas to the screen
 	_dirtyAreas.copy(&_backgroundSurface, &_vm->_screen, _posAdjust);
 

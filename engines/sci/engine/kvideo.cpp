@@ -181,7 +181,7 @@ reg_t kShowMovie(EngineState *s, int argc, reg_t *argv) {
 		// for the video, so we'll just play it from there for now.
 
 #ifdef ENABLE_SCI32
-		if (getSciVersion() >= SCI_VERSION_2_1) {
+		if (getSciVersion() >= SCI_VERSION_2_1_EARLY) {
 			// SCI2.1 always has argv[0] as 1, the rest of the arguments seem to
 			// follow SCI1.1/2.
 			if (argv[0].toUint16() != 1)

@@ -199,10 +199,10 @@ int MidiDriver_MT32::open() {
 	_initializing = true;
 	debug(4, _s("Initializing MT-32 Emulator"));
 	_controlFile = new Common::File();
-	if (!_controlFile->open("MT32_CONTROL.ROM") && !_controlFile->open("CM32L_CONTROL.ROM"))
+	if (!_controlFile->open("CM32L_CONTROL.ROM") && !_controlFile->open("MT32_CONTROL.ROM"))
 		error("Error opening MT32_CONTROL.ROM / CM32L_CONTROL.ROM");
 	_pcmFile = new Common::File();
-	if (!_pcmFile->open("MT32_PCM.ROM") && !_pcmFile->open("CM32L_PCM.ROM"))
+	if (!_pcmFile->open("CM32L_PCM.ROM") && !_pcmFile->open("MT32_PCM.ROM"))
 		error("Error opening MT32_PCM.ROM / CM32L_PCM.ROM");
 	_controlROM = MT32Emu::ROMImage::makeROMImage(_controlFile);
 	_pcmROM = MT32Emu::ROMImage::makeROMImage(_pcmFile);

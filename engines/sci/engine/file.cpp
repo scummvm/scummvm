@@ -129,7 +129,7 @@ reg_t file_open(EngineState *s, const Common::String &filename, int mode, bool u
 }
 
 FileHandle *getFileFromHandle(EngineState *s, uint handle) {
-	if (handle == 0 || handle == VIRTUALFILE_HANDLE) {
+	if ((handle == 0) || ((handle >= VIRTUALFILE_HANDLE_START) && (handle <= VIRTUALFILE_HANDLE_END))) {
 		error("Attempt to use invalid file handle (%d)", handle);
 		return 0;
 	}

@@ -3506,7 +3506,7 @@ void Scene409::preActions() {
 
 Scene410::Scene410(MADSEngine *vm) : Scene4xx(vm) {
 	for (int i = 0; i < 26; i++)
-		_skullSequence[i];
+		_skullSequence[i] = 0;
 }
 
 void Scene410::synchronize(Common::Serializer &s) {

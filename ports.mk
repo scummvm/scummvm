@@ -222,7 +222,7 @@ endif
 ifneq ($(BACKEND), iphone)
 ifneq ($(BACKEND), ios7)
 # Static libaries, used for the scummvm-static and iphone targets
-OSX_STATIC_LIBS := `$(STATICLIBPATH)/bin/sdl-config --static-libs`
+OSX_STATIC_LIBS := `$(SDLCONFIG) --static-libs`
 endif
 endif
 

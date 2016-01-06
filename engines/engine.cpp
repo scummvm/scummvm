@@ -40,7 +40,7 @@
 #include "common/str.h"
 #include "common/error.h"
 #include "common/list.h"
-#include "common/list_intern.h"
+#include "common/memstream.h"
 #include "common/scummsys.h"
 #include "common/taskbar.h"
 #include "common/textconsole.h"
@@ -48,7 +48,9 @@
 #include "common/singleton.h"
 
 #include "backends/keymapper/keymapper.h"
+#include "base/version.h"
 
+#include "gui/gui-manager.h"
 #include "gui/debugger.h"
 #include "gui/dialog.h"
 #include "gui/message.h"
@@ -56,7 +58,9 @@
 #include "audio/mixer.h"
 
 #include "graphics/cursorman.h"
+#include "graphics/fontman.h"
 #include "graphics/pixelformat.h"
+#include "image/bmp.h"
 
 #ifdef _WIN32_WCE
 extern bool isSmartphone();
@@ -240,6 +244,62 @@ void initCommonGFX(bool defaultTo1XScaler) {
 		g_system->setFeatureState(OSystem::kFeatureFullscreenMode, ConfMan.getBool("fullscreen"));
 }
 
+// Please leave the splash screen in working order for your releases, even if they're commercial.
+// This is a proper and good way to show your appreciation for our hard work over these years.
+bool splash = false;
+
+#include "logo_data.h"
+
+void splashScreen() {
+	Common::MemoryReadStream stream(logo_data, ARRAYSIZE(logo_data));
+
+	Image::BitmapDecoder bitmap;
+
+	if (!bitmap.loadStream(stream)) {
+		warning("Error loading logo file");
+		return;
+	}
+
+	g_system->showOverlay();
+
+	// Fill with orange
+	Graphics::Surface screen;
+	screen.create(g_system->getOverlayWidth(), g_system->getOverlayHeight(), g_system->getOverlayFormat());
+	screen.fillRect(Common::Rect(screen.w, screen.h), screen.format.ARGBToColor(0xff, 0xd4, 0x75, 0x0b));
+
+	// Load logo
+	Graphics::Surface *logo = bitmap.getSurface()->convertTo(g_system->getOverlayFormat(), bitmap.getPalette());
+	int lx = (g_system->getOverlayWidth() - logo->w) / 2;
+	int ly = (g_system->getOverlayHeight() - logo->h) / 2;
+
+	// Print version information
+	const Graphics::Font *font = FontMan.getFontByUsage(Graphics::FontManager::kConsoleFont);
+	int w = font->getStringWidth(gScummVMVersionDate);
+	int x = g_system->getOverlayWidth() - w - 5; // lx + logo->w - w + 5;
+	int y = g_system->getOverlayHeight() - font->getFontHeight() - 5; //ly + logo->h + 5;
+	font->drawString(&screen, gScummVMVersionDate, x, y, w, screen.format.ARGBToColor(0xff, 0, 0, 0));
+
+	g_system->copyRectToOverlay(screen.getPixels(), screen.pitch, 0, 0, screen.w, screen.h);
+	screen.free();
+
+	// Draw logo
+	g_system->copyRectToOverlay(logo->getPixels(), logo->pitch, lx, ly, logo->w, logo->h);
+	logo->free();
+	delete logo;
+
+	// Delay 0.6 secs
+	uint time0 = g_system->getMillis();
+	Common::Event event;
+	while (time0 + 600 > g_system->getMillis()) {
+		g_system->updateScreen();
+		g_system->getEventManager()->pollEvent(event);
+		g_system->delayMillis(10);
+	}
+	g_system->hideOverlay();
+
+	splash = true;
+}
+
 void initGraphics(int width, int height, bool defaultTo1xScaler, const Graphics::PixelFormat *format) {
 
 	g_system->beginGFXTransaction();
@@ -257,6 +317,9 @@ void initGraphics(int width, int height, bool defaultTo1xScaler, const Graphics:
 #endif
 
 	OSystem::TransactionError gfxError = g_system->endGFXTransaction();
+
+	if (!splash && !GUI::GuiManager::instance()._launched)
+		splashScreen();
 
 	if (gfxError == OSystem::kTransactionSuccess)
 		return;

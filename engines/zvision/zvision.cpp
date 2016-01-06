@@ -136,9 +136,6 @@ void ZVision::registerDefaultSettings() {
 				ConfMan.registerDefault(settingsKeys[i].name, settingsKeys[i].defaultBoolValue);
 		}
 	}
-
-	ConfMan.registerDefault("originalsaveload", false);
-	ConfMan.registerDefault("doublefps", false);
 }
 
 void ZVision::loadSettings() {
