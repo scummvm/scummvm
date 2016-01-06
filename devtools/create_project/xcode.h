@@ -65,7 +65,7 @@ private:
 		std::string _sourceTree;
 
 		FileProperty(std::string fileType = "", std::string name = "", std::string path = "", std::string source = "")
-		    : _fileEncoding(""), _lastKnownFileType(fileType), _fileName(name), _filePath(path), _sourceTree(source) {
+				: _fileEncoding(""), _lastKnownFileType(fileType), _fileName(name), _filePath(path), _sourceTree(source) {
 		}
 	};
 
@@ -152,7 +152,7 @@ private:
 	struct Object {
 	public:
 		std::string _id;                // Unique identifier for this object
-		std::string _name;              // Name (may not be unique - for ex. configuration entries)
+ 		std::string _name;              // Name (may not be unique - for ex. configuration entries)
 		std::string _refType;           // Type of object this references (if any)
 		std::string _comment;           // Main comment (empty for no comment)
 
@@ -210,6 +210,7 @@ private:
 			assert(!_properties["isa"]._settings.empty());
 
 			SettingList::iterator it = _properties["isa"]._settings.begin();
+
 			return it->first;
 		}
 	};
@@ -233,8 +234,8 @@ private:
 		}
 
 		Object *find(std::string id) {
-			for (std::vector<Object *>::iterator it = objects.begin(); it != objects.end(); ++it) {
-				if ((*it)->id == id) {
+			for (std::vector<Object *>::iterator it = _objects.begin(); it != _objects.end(); ++it) {
+				if ((*it)->_id == id) {
 					return *it;
 				}
 			}
