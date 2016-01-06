@@ -55,7 +55,7 @@ namespace Wage {
 struct plotData {
 	Graphics::Surface *surface;
 	Patterns *patterns;
-	int fillType;
+	uint fillType;
 	int thickness;
 
 	plotData(Graphics::Surface *s, Patterns *p, int f, int t) :
