@@ -10,8 +10,6 @@
 	<dict/>
 	<key>CFBundleIcons~ipad</key>
 	<dict/>
-	<key>UILaunchImages</key>
-	<array/>
 	<key>CFBundleIdentifier</key>
 	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 	<key>CFBundleInfoDictionaryVersion</key>
@@ -27,9 +25,11 @@
 	<key>CFBundleVersion</key>
 	<string>@VERSION@</string>
 	<key>UIApplicationExitsOnSuspend</key>
-	<true/>
+	<false/>
 	<key>UIFileSharingEnabled</key>
 	<true/>
+	<key>UILaunchImages</key>
+	<array/>
 	<key>UIPrerenderedIcon</key>
 	<true/>
 	<key>UIRequiresFullScreen</key>
