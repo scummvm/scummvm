@@ -44,7 +44,7 @@
 #include "sci/graphics/view.h"
 #include "sci/graphics/screen.h"
 #include "sci/graphics/paint32.h"
-#include "sci/graphics/palette.h"
+#include "sci/graphics/palette32.h"
 #include "sci/graphics/picture.h"
 #include "sci/graphics/text32.h"
 #include "sci/graphics/frameout.h"
@@ -59,7 +59,7 @@ enum SciSpeciaPlanelPictureCodes {
 	kPlanePlainColored = 0xffff		// -1
 };
 
-GfxFrameout::GfxFrameout(SegManager *segMan, ResourceManager *resMan, GfxCoordAdjuster *coordAdjuster, GfxCache *cache, GfxScreen *screen, GfxPalette *palette, GfxPaint32 *paint32)
+GfxFrameout::GfxFrameout(SegManager *segMan, ResourceManager *resMan, GfxCoordAdjuster *coordAdjuster, GfxCache *cache, GfxScreen *screen, GfxPalette32 *palette, GfxPaint32 *paint32)
 	: _segMan(segMan), _resMan(resMan), _cache(cache), _screen(screen), _palette(palette), _paint32(paint32) {
 
 	_coordAdjuster = (GfxCoordAdjuster32 *)coordAdjuster;
@@ -658,6 +658,11 @@ void GfxFrameout::kernelFrameout() {
 	}
 
 	_palette->palVaryUpdate();
+	_palette->applyCycles();
+	_palette->applyFade();
+	// TODO: This should probably not require screen pic invalidation
+	_screen->_picNotValid = 1;
+	_palette->setOnScreen();
 
 	for (PlaneList::iterator it = _planes.begin(); it != _planes.end(); it++) {
 		reg_t planeObject = it->object;

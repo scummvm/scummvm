@@ -84,6 +84,7 @@ MODULE_OBJS += \
 	graphics/controls32.o \
 	graphics/frameout.o \
 	graphics/paint32.o \
+	graphics/palette32.o \
 	graphics/text32.o \
 	video/robot_decoder.o
 endif

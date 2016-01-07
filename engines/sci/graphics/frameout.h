@@ -114,7 +114,7 @@ class GfxScreen;
  */
 class GfxFrameout {
 public:
-	GfxFrameout(SegManager *segMan, ResourceManager *resMan, GfxCoordAdjuster *coordAdjuster, GfxCache *cache, GfxScreen *screen, GfxPalette *palette, GfxPaint32 *paint32);
+	GfxFrameout(SegManager *segMan, ResourceManager *resMan, GfxCoordAdjuster *coordAdjuster, GfxCache *cache, GfxScreen *screen, GfxPalette32 *palette, GfxPaint32 *paint32);
 	~GfxFrameout();
 
 	void kernelAddPlane(reg_t object);
@@ -161,7 +161,7 @@ private:
 	ResourceManager *_resMan;
 	GfxCoordAdjuster32 *_coordAdjuster;
 	GfxCache *_cache;
-	GfxPalette *_palette;
+	GfxPalette32 *_palette;
 	GfxScreen *_screen;
 	GfxPaint32 *_paint32;
 
