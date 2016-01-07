@@ -27,9 +27,8 @@
 #define FORBIDDEN_SYMBOL_EXCEPTION_mkdir
 #define FORBIDDEN_SYMBOL_EXCEPTION_exit		//Needed for IRIX's unistd.h
 
-#include "chroot-fs-factory.h"
+#include "backends/fs/chroot/chroot-fs-factory.h"
 #include "backends/fs/chroot/chroot-fs.h"
-#include "backends/fs/posix/posix-fs-factory.h"
 
 ChRootFilesystemFactory::ChRootFilesystemFactory(Common::String root) {
 	_root = root;
