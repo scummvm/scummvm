@@ -385,7 +385,15 @@ void WageEngine::redrawScene() {
 }
 
 void WageEngine::regen() {
-	warning("STUB WageEngine::regen()");
+	Chr *player = _world->_player;
+	int curHp = player->_context._statVariables[PHYS_HIT_CUR];
+	int maxHp = player->_context._statVariables[PHYS_HIT_BAS];
+	int delta = maxHp - curHp;
+
+	if (delta > 0) {
+		int bonus = (int)(delta / (8 + _rnd->getRandomNumber(2)));
+		player->_context._statVariables[PHYS_HIT_CUR] += bonus;
+	}
 }
 
 void WageEngine::processTurnInternal(Common::String *textInput, Designed *clickInput) {
