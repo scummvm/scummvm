@@ -27,7 +27,7 @@
 #include "ios7_video.h"
 
 #include "graphics/conversion.h"
-#include "iOS7AppDelegate.h"
+#include "ios7_app_delegate.h"
 
 @interface iOS7AlertHandler : NSObject<UIAlertViewDelegate>
 @end

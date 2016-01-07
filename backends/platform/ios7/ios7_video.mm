@@ -27,7 +27,7 @@
 
 #include "graphics/colormasks.h"
 #include "common/system.h"
-#include "iOS7AppDelegate.h"
+#include "ios7_app_delegate.h"
 
 static int g_needsScreenUpdate = 0;
 
