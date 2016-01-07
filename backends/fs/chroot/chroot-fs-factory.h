@@ -33,7 +33,7 @@
  */
 class ChRootFilesystemFactory : public FilesystemFactory {
 public:
-	ChRootFilesystemFactory(const Common::String &root);
+	explicit ChRootFilesystemFactory(const Common::String &root);
 
 	virtual AbstractFSNode *makeRootFileNode() const;
 	virtual AbstractFSNode *makeCurrentDirectoryFileNode() const;
