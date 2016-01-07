@@ -127,6 +127,26 @@ reg_t kGetHighPlanePri(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kFrameOut(EngineState *s, int argc, reg_t *argv) {
+/* TODO: Transcribed from SCI engine disassembly.
+	GraphicsMgr &graphicsMgr = g_sci->_graphicsMgr;
+	if (graphicsMgr.palMorphNeeded) {
+		graphicsMgr.PalMorphFrameOut(&g_PalStyleRanges, false);
+	}
+	else {
+		// TODO: Not sure if this is a pointer or not yet.
+		if (g_ScrollState != nullptr) {
+			kFrameOutDoScroll();
+		}
+
+		bool showBits = true;
+		if (argc == 1) {
+			showBits = (bool) argv[0].toUint16();
+		}
+
+		rect SOL_Rect = { .left = 0, .top = 0, .right = UINT32_MAX, .bottom = UINT32_MAX };
+		graphicsMgr.FrameOut(showBits, &rect);
+	}
+*/
 	g_sci->_gfxFrameout->kernelFrameout();
 	return NULL_REG;
 }
