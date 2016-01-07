@@ -181,53 +181,40 @@ bool LabEngine::doCloseUp(const CloseData *closePtr) {
 	if (!closePtr)
 		return false;
 
-	int luteRight;
-	Common::Rect textRect;
-
-	if (getPlatform() != Common::kPlatformWindows) {
-		textRect = Common::Rect(0, 0, 319, 165);
-		luteRight = 124;
-	} else {
-		textRect = Common::Rect(2, 2, 317, 165);
-		luteRight = 128;
-	}
+	Common::Rect textRect(2, 2, 317, 165);
+	bool isInteractive = false;
 
 	switch (closePtr->_closeUpType) {
 	case kMonitorMuseum:
 	case kMonitorLibrary:
 	case kMonitorWindow:
-		doMonitor(closePtr->_graphicName, closePtr->_message, false, textRect);
 		break;
 	case kMonitorGramophone:
 		textRect.right = 171;
-		doMonitor(closePtr->_graphicName, closePtr->_message, false, textRect);
 		break;
 	case kMonitorUnicycle:
 		textRect.left = 100;
-		doMonitor(closePtr->_graphicName, closePtr->_message, false, textRect);
 		break;
 	case kMonitorStatue:
 		textRect.left = 117;
-		doMonitor(closePtr->_graphicName, closePtr->_message, false, textRect);
 		break;
 	case kMonitorTalisman:
 		textRect.right = 184;
-		doMonitor(closePtr->_graphicName, closePtr->_message, false, textRect);
 		break;
 	case kMonitorLute:
-		textRect.right = luteRight;
-		doMonitor(closePtr->_graphicName, closePtr->_message, false, textRect);
+		textRect.right = 128;
 		break;
 	case kMonitorClock:
 		textRect.right = 206;
-		doMonitor(closePtr->_graphicName, closePtr->_message, false, textRect);
 		break;
 	case kMonitorTerminal:
-		doMonitor(closePtr->_graphicName, closePtr->_message, true, textRect);
+		isInteractive = true;
 		break;
 	default:
 		return false;
 	}
+
+	doMonitor(closePtr->_graphicName, closePtr->_message, isInteractive, textRect);
 
 	_curFileName = " ";
 	_graphics->drawPanel();
