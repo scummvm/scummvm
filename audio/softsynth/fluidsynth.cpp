@@ -32,8 +32,6 @@
 #include "audio/mpu401.h"
 #include "audio/softsynth/emumidi.h"
 #if defined(IPHONE_IOS7) && defined(IPHONE_SANDBOXED)
-#include <string.h>
-#include <sys/syslimits.h>
 #include "backends/platform/ios7/ios7_common.h"
 #endif
 
