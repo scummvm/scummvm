@@ -24,7 +24,7 @@
 #define BACKENDS_PLATFORM_IOS7_IOS7_OSYS_MAIN_H
 
 #include "graphics/surface.h"
-#include "ios7_common.h"
+#include "backends/platform/ios7/ios7_common.h"
 #include "backends/base-backend.h"
 #include "common/events.h"
 #include "audio/mixer_intern.h"

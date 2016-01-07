@@ -23,7 +23,7 @@
 // Disable symbol overrides so that we can use system headers.
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
-#include "ios7_osys_main.h"
+#include "backends/platform/ios7/ios7_osys_main.h"
 
 void OSystem_iOS7::AQBufferCallback(void *in, AudioQueueRef inQ, AudioQueueBufferRef outQB) {
 	//printf("AQBufferCallback()\n");

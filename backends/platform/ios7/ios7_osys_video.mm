@@ -23,11 +23,11 @@
 // Disable symbol overrides so that we can use system headers.
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
-#include "ios7_osys_main.h"
-#include "ios7_video.h"
+#include "backends/platform/ios7/ios7_osys_main.h"
+#include "backends/platform/ios7/ios7_video.h"
 
 #include "graphics/conversion.h"
-#include "ios7_app_delegate.h"
+#include "backends/platform/ios7/ios7_app_delegate.h"
 
 @interface iOS7AlertHandler : NSObject<UIAlertViewDelegate>
 @end

@@ -48,7 +48,7 @@
 #include "graphics/scaler.h"
 #include "graphics/scaler/aspect.h"
 
-#include "ios7_osys_main.h"
+#include "backends/platform/ios7/ios7_osys_main.h"
 
 
 const OSystem::GraphicsMode OSystem_iOS7::s_supportedGraphicsModes[] = {

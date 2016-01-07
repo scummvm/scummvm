@@ -20,7 +20,7 @@
  *
  */
 
-#include "ios7_scummvm_view_controller.h"
+#include "backends/platform/ios7/ios7_scummvm_view_controller.h"
 
 
 @implementation iOS7ScummVMViewController

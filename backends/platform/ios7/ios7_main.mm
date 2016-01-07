@@ -26,7 +26,7 @@
 #include <UIKit/UIKit.h>
 #include <Foundation/NSThread.h>
 
-#include "ios7_video.h"
+#include "backends/platform/ios7/ios7_video.h"
 
 
 int iOS7_argc;

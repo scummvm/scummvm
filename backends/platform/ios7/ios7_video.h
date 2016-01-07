@@ -31,8 +31,8 @@
 #include <OpenGLES/ES2/gl.h>
 #include <OpenGLES/ES2/glext.h>
 
-#include "ios7_keyboard.h"
-#include "ios7_common.h"
+#include "backends/platform/ios7/ios7_keyboard.h"
+#include "backends/platform/ios7/ios7_common.h"
 
 #include "common/list.h"
 #include "graphics/scaler.h"

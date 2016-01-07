@@ -20,7 +20,7 @@
  *
  */
 
-#include "ios7_keyboard.h"
+#include "backends/platform/ios7/ios7_keyboard.h"
 
 @interface UITextInputTraits
 - (void)setAutocorrectionType:(int)type;
