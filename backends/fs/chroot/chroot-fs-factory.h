@@ -32,16 +32,15 @@
  * plugin code.
  */
 class ChRootFilesystemFactory : public FilesystemFactory {
-private:
-	Common::String _root;
+public:
+	ChRootFilesystemFactory(Common::String root);
 
-protected:
 	virtual AbstractFSNode *makeRootFileNode() const;
 	virtual AbstractFSNode *makeCurrentDirectoryFileNode() const;
 	virtual AbstractFSNode *makeFileNodePath(const Common::String &path) const;
 
-public:
-	ChRootFilesystemFactory(Common::String root);
+private:
+	Common::String _root;
 };
 
 #endif /* BACKENDS_FS_CHROOT_CHROOT_FS_FACTORY_H */
