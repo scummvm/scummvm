@@ -145,9 +145,13 @@ void DialogPanel::onRender() {
 void DialogPanel::updateSubtitleVisual() {
 	delete _subtitleVisual;
 
+	uint32 color = _otherColor;
+	if (_currentSpeech->characterIsApril())
+		color = _aprilColor;
+
 	_subtitleVisual = new VisualText(_gfx);
 	_subtitleVisual->setText(_currentSpeech->getPhrase());
-	_subtitleVisual->setColor(_currentSpeech->characterIsApril() ? _aprilColor : _otherColor);
+	_subtitleVisual->setColor(color);
 	_subtitleVisual->setFont(FontProvider::kBigFont);
 	_subtitleVisual->setTargetWidth(600);
 }
