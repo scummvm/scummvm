@@ -505,6 +505,11 @@ begin_credits("Credits");
 	    begin_section("Myst 3 Team");
 		add_person("Bastien Bouclet", "bgK", "Core developer");
 	    end_section();
+
+	    begin_section("Stark Team");
+		add_person("Bastien Bouclet", "bgK", "Core developer");
+		add_person("Einar Johan T. S&oslash;m&aring;en", "somaen", "Core developer (retired)");
+	    end_section();
 	end_section();
 
 	begin_section("Contributors");
@@ -557,6 +562,14 @@ begin_credits("Credits");
 	    begin_section("Myst 3");
 		add_person("Matthew Hoops", "clone2727", "Various engine improvements and code fixes");
 		add_person("Stefano Musumeci", "subr3v", "TinyGL engine driver support");
+	    end_section();
+
+	    begin_section("Stark");
+		add_person("Matthew Hoops", "clone2727", "ADPCM decoder");
+		add_person("Pawe&#322; Ko&#322;odziejski", "aquadran", "Various engine code fixes");
+		add_person("Vincent Pelletier", "vpelletier", "Raw sound support");
+		add_person("Jordi Vilalta Prat", "jvprat", "Initial engine contributor");
+		add_person("Scott Thomas", "ST", "Initial engine author");
 	    end_section();
 	end_section();
 

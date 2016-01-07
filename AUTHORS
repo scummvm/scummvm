@@ -13,12 +13,16 @@ ResidualVM
        Dries Harnie                 - EMI, Android, OpenGL ES developer
        Pawel Kolodziejski           - Core developer (suspended)
        Christian Krause             - EMI developer
-       Einar Johan T. Somaen        - Grim, EMI developer
+       Einar Johan T. Soemaaen      - Grim, EMI developer
        Joel Teichroeb               - EMI, Android developer
        Joni Vahamaki                - EMI developer
 
     Myst 3 Team:
        Bastien Bouclet              - Core developer
+
+    Stark Team:
+       Bastien Bouclet              - Core developer
+       Einar Johan T. Soemaaen      - Core developer (retired)
 
   Contributors
   ------------
@@ -80,6 +84,13 @@ ResidualVM
        Matthew Hoops                - Various engine improvements and code
                                       fixes
        Stefano Musumeci             - TinyGL engine driver support
+
+    Stark:
+       Matthew Hoops                - ADPCM decoder
+       Pawel Kolodziejski           - Various engine code fixes
+       Vincent Pelletier            - Raw sound support
+       Jordi Vilalta Prat           - Initial engine contributor
+       Scott Thomas                 - Initial engine author
 
 ScummVM code
 ************
