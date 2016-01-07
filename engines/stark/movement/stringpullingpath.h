@@ -37,6 +37,8 @@ namespace Stark {
  */
 class StringPullingPath {
 public:
+	StringPullingPath();
+
 	/** Append a step to the path */
 	void addStep(const Math::Vector3d &position);
 

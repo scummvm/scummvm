@@ -195,7 +195,9 @@ void ImageStill::printData() {
 }
 
 ImageText::ImageText(Object *parent, byte subType, uint16 index, const Common::String &name) :
-	Image(parent, subType, index, name) {
+		Image(parent, subType, index, name),
+		_color(0),
+		_font(0) {
 }
 
 ImageText::~ImageText() {

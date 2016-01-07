@@ -42,7 +42,9 @@ public:
 	static const uint32 TYPE = kMeshObjectSceneData;
 
 	MeshObjectSceneData() :
-			BiffObject() {
+			BiffObject(),
+			_animStart(0),
+			_animEnd(0) {
 		_type = TYPE;
 	}
 
@@ -80,7 +82,8 @@ public:
 	static const uint32 TYPE = kMeshObjectTri;
 
 	MeshObjectTri() :
-			BiffObject() {
+			BiffObject(),
+			_hasPhysics(false) {
 		_type = TYPE;
 	}
 
@@ -289,7 +292,16 @@ public:
 	static const uint32 TYPE = kMeshObjectMaterial;
 
 	MeshObjectMaterial() :
-			BiffObject() {
+			BiffObject(),
+			_shading(0),
+			_shininess(0),
+			_opacity(1),
+			_doubleSided(false),
+			_textureTiling(0),
+			_alphaTiling(0),
+			_environementTiling(0),
+			_isColorKey(false),
+			_colorKey(0) {
 		_type = TYPE;
 	}
 

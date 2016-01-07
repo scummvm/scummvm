@@ -57,7 +57,7 @@ public:
 
 class FaceNode {
 public:
-	FaceNode() {}
+	FaceNode() : _matIdx(0) {}
 
 	~FaceNode() {
 		for (Common::Array<VertNode *>::iterator it = _verts.begin(); it != _verts.end(); ++it)
@@ -96,12 +96,6 @@ public:
 	Common::String _texName;
 	float _r, _g, _b;
 };
-
-class UnknownNode {
-public:
-	float _u1, _u2, _u3, _u4;
-};
-
 
 /**
  * A 3D Model

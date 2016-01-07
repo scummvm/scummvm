@@ -31,6 +31,10 @@
 
 namespace Stark {
 
+StringPullingPath::StringPullingPath() :
+		_targetStep(1) {
+}
+
 void StringPullingPath::addStep(const Math::Vector3d &position) {
 	_steps.push_back(position);
 }

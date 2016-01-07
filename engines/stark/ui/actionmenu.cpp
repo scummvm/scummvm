@@ -141,6 +141,8 @@ void ActionMenu::onMouseMove(const Common::Point &pos) {
 }
 
 void ActionMenu::onClick(const Common::Point &pos) {
+	assert(_item);
+
 	for (uint i = 0; i < ARRAYSIZE(_buttons); i++) {
 		if (_buttons[i].enabled && _buttons[i].rect.contains(pos)) {
 

@@ -99,7 +99,8 @@ Common::Array<BiffObject *> BiffArchive::listObjects() {
 BiffObject::BiffObject() :
 	_u3(0),
 	_version(0),
-	_parent(nullptr) {
+	_parent(nullptr),
+	_type(0) {
 
 }
 

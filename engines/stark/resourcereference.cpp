@@ -59,9 +59,19 @@ Resources::Object *ResourceReference::resolve() const {
 			} else {
 				resource = StarkGlobal->getLevel();
 			}
+
+			if (!resource) {
+				error("Level '%d' not found", element.getIndex());
+			}
+
 			break;
 		case Resources::Type::kLocation:
 			resource = StarkResourceProvider->getLocation(resource->getIndex(), element.getIndex());
+
+			if (!resource) {
+				error("Location '%d' not found in level '%d'", element.getIndex(), resource->getIndex());
+			}
+
 			break;
 		default:
 			resource = resource->findChildWithIndex(element.getType(), element.getIndex());

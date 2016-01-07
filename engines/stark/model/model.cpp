@@ -85,13 +85,8 @@ void Model::readFromStream(ArchiveReadStream *stream) {
 	}
 
 	uint32 numUnknowns = stream->readUint32LE();
-
-	for (uint32 i = 0; i < numUnknowns; ++i) {
-		UnknownNode *node = new UnknownNode();
-		node->_u1 = stream->readFloat();
-		node->_u2 = stream->readFloat();
-		node->_u3 = stream->readFloat();
-		node->_u4 = stream->readFloat();
+	if (numUnknowns != 0) {
+		error("Found a mesh with numUnknowns != 0");
 	}
 
 	_skeleton = new Skeleton();
