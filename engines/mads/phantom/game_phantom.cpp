@@ -747,7 +747,7 @@ void GamePhantom::step() {
 	 && (_player._stepEnabled || (_vm->_gameConv->_running >= 0))
 	 && !_player._moving && (_player._facing == _player._turnToFacing)
 	 && (_scene._frameStartTime >= (uint32)_globals[kWalkerTiming])) {
-		if (!_player._stopWalkerIndex)
+		if (_player._stopWalkers.empty())
 			stopWalker();
 
 		_globals[kWalkerTiming] += 6;

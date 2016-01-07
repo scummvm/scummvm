@@ -45,6 +45,23 @@ enum Facing {
 	FACING_NONE = 5, FACING_DUMMY = 0
 };
 
+struct StopWalkerEntry {
+	int _stack;
+	int _trigger;
+
+	StopWalkerEntry() : _stack(0), _trigger(0) {}
+	StopWalkerEntry(int stack, int trigger) : _stack(stack), _trigger(trigger) {}
+
+	void synchronize(Common::Serializer &s);
+};
+
+class StopWalkers : public Common::FixedStack<StopWalkerEntry, 12> {
+public:
+	StopWalkers() : Common::FixedStack<StopWalkerEntry, 12>() {}
+
+	void synchronize(Common::Serializer &s);
+};
+
 class Player {
 private:
 	static const int _directionListIndexes[32];
@@ -58,8 +75,6 @@ private:
 	int _distAccum;
 	int _pixelAccum;
 	int _deltaDistance;
-	int _stopWalkerList[12];
-	int _stopWalkerTrigger[12];
 	int _totalDistance;
 
 	void clearStopList();
@@ -138,12 +153,15 @@ public:
 	bool _readyToWalk;
 	bool _commandsAllowed;
 	bool _enableAtTarget;
-	int _stopWalkerIndex;
 	int _centerOfGravity;
 	int _currentDepth;
 	int _currentScale;
 	Common::String _spritesPrefix;
+
 	int _walkTrigger;
+	TriggerMode _walkTriggerDest;
+	ActionDetails _walkTriggerAction;
+	StopWalkers _stopWalkers;
 public:
 	Player(MADSEngine *vm);
 
