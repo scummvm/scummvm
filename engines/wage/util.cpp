@@ -99,4 +99,28 @@ const char *getIndefiniteArticle(String &word) {
 	return "a ";
 }
 
+enum {
+	GENDER_HE = 0,
+	GENDER_SHE = 1,
+	GENDER_IT = 2
+};
+
+const char *prependGenderSpecificPronoun(int gender) {
+	if (gender == GENDER_HE)
+		return "his ";
+	else if (gender == GENDER_SHE)
+		return "her ";
+	else
+		return "its ";
+}
+
+const char *getGenderSpecificPronoun(int gender, bool capitalize) {
+	if (gender == GENDER_HE)
+		return capitalize ? "He" : "he";
+	else if (gender == GENDER_SHE)
+		return capitalize ? "She" : "she";
+	else
+		return capitalize ? "It" : "it";
+}
+
 } // End of namespace Wage

@@ -360,7 +360,41 @@ void WageEngine::onMove(Designed *what, Designed *from, Designed *to) {
 }
 
 void WageEngine::encounter(Chr *player, Chr *chr) {
-	warning("STUB WageEngine::encounter()");
+	Common::String msg("You encounter ");
+	if (!chr->_nameProperNoun)
+		msg += getIndefiniteArticle(chr->_name);
+	msg += chr->_name;
+	msg += ".";
+	appendText(msg);
+
+	if (!chr->_initialComment.empty())
+		appendText(chr->_initialComment);
+
+	if (chr->_armor[Chr::HEAD_ARMOR] != NULL) {
+		msg = chr->getNameWithDefiniteArticle(true);
+		msg += " is wearing ";
+		msg += getIndefiniteArticle(chr->_armor[Chr::HEAD_ARMOR]->_name);
+		msg += ".";
+		appendText(msg);
+	}
+	if (chr->_armor[Chr::BODY_ARMOR] != NULL) {
+		msg = getGenderSpecificPronoun(chr->_gender, true);
+		msg += " is protected by ";
+		msg += prependGenderSpecificPronoun(chr->_gender);
+		msg += chr->_armor[Chr::BODY_ARMOR]->_name;
+		msg += ".";
+		appendText(msg);
+	}
+	if (chr->_armor[Chr::SHIELD_ARMOR] != NULL) {
+		Obj *obj = chr->_armor[Chr::SHIELD_ARMOR];
+		msg = getGenderSpecificPronoun(chr->_gender, true);
+		msg += " carries ";
+		if (!obj->_namePlural)
+			msg += getIndefiniteArticle(obj->_name);
+		msg += obj->_name;
+		msg += ".";
+		appendText(msg);
+	}
 }
 
 void WageEngine::performCombatAction(Chr *npc, Chr *player) {

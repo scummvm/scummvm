@@ -99,6 +99,9 @@ enum {
 Common::String readPascalString(Common::SeekableReadStream *in);
 Common::Rect *readRect(Common::SeekableReadStream *in);
 const char *getIndefiniteArticle(String &word);
+const char *prependGenderSpecificPronoun(int gender);
+const char *getGenderSpecificPronoun(int gender, bool capitalize);
+
 
 typedef Common::Array<byte *> Patterns;
 
