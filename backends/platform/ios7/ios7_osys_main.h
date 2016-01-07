@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef BACKENDS_PLATFORM_IPHONE_OSYS_MAIN_H
-#define BACKENDS_PLATFORM_IPHONE_OSYS_MAIN_H
+#ifndef BACKENDS_PLATFORM_IOS7_IOS7_OSYS_MAIN_H
+#define BACKENDS_PLATFORM_IOS7_IOS7_OSYS_MAIN_H
 
 #include "graphics/surface.h"
 #include "ios7_common.h"
