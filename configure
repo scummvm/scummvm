@@ -2120,7 +2120,7 @@ echo_n "Checking hosttype... "
 echo $_host_os
 case $_host_os in
 	amigaos*)
-		append_var LDFLAGS "-use-dynld -Wl,--export-dynamic"
+		append_var LDFLAGS "-Wl,--export-dynamic"
 		append_var LDFLAGS "-L/sdk/local/newlib/lib"
 		# We have to use 'long' for our 4 byte typedef because AmigaOS already typedefs (u)int32
 		# as (unsigned) long, and consequently we'd get a compiler error otherwise.
