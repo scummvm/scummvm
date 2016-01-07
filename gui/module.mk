@@ -32,11 +32,14 @@ MODULE_OBJS := \
 	widgets/scrollbar.o \
 	widgets/tab.o
 
-# HACK: Even if it seems redundant, please keep these directives in that order!
-# This is needed by the "create_project" tool, for the OS X / iOS Xcode project.
-# The main problem is that the create_project tool scans the files for both OS X, and iOS targets.
-# It must be able to collect all the files for both targets, so that the backend can later filter
-# them for its own targets (in the Xcode terminology)
+# HACK: create_project's XCode generator relies on the following ifdef
+# structure to pick up the right browser implementations for iOS and Mac OS X.
+# Please keep it like this or XCode project generation will be broken.
+# FIXME: This only works because of a bug in how we handle ifdef statements in
+# create_project's module.mk parser. create_project will think that both
+# browser.o and browser_osx.o is built when both IPHONE and MACOSX is set.
+# When we do proper ifdef handling, only browser.o will be picked up, breaking
+# XCode generation.
 ifdef IPHONE
 MODULE_OBJS += \
 	browser.o
