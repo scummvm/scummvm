@@ -1492,7 +1492,7 @@ uint16 addAni(uint16 param1, uint16 objIdx, const int8 *ptr, SeqListElement &ele
 	int16 di;
 
 	debug(5, "addAni: param1 = %d, objIdx = %d, ptr = %p, element.var8 = %d, element.var14 = %d param3 = %d",
-	      param1, objIdx, ptr, element.var8, element.var14, param3);
+	      param1, objIdx, (const void *)ptr, element.var8, element.var14, param3);
 
 	// In the original an error string is set and 0 is returned if the following doesn't hold
 	assert(ptr);

@@ -748,7 +748,7 @@ byte *ScummEngine::getResourceAddress(ResType type, ResId idx) {
 
 	_res->setResourceCounter(type, idx, 1);
 
-	debugC(DEBUG_RESOURCE, "getResourceAddress(%s,%d) == %p", nameOfResType(type), idx, ptr);
+	debugC(DEBUG_RESOURCE, "getResourceAddress(%s,%d) == %p", nameOfResType(type), idx, (void *)ptr);
 	return ptr;
 }
 
