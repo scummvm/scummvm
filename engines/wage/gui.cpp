@@ -138,7 +138,6 @@ static void cursor_timer_handler(void *refCon) {
 		gui->_cursorState = !gui->_cursorState;
 
 	g_system->copyRectToScreen(gui->_screen.getBasePtr(x, y), gui->_screen.pitch, x, y, 1, kCursorHeight);
-	g_system->updateScreen();
 }
 
 Gui::Gui(WageEngine *engine) {
