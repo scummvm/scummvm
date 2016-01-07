@@ -30,8 +30,8 @@
 #include "backends/fs/chroot/chroot-fs-factory.h"
 #include "backends/fs/chroot/chroot-fs.h"
 
-ChRootFilesystemFactory::ChRootFilesystemFactory(Common::String root) {
-	_root = root;
+ChRootFilesystemFactory::ChRootFilesystemFactory(const Common::String &root)
+    : _root(root) {
 }
 
 AbstractFSNode *ChRootFilesystemFactory::makeRootFileNode() const {
