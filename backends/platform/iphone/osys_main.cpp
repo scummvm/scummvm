@@ -41,7 +41,7 @@
 #include "audio/mixer.h"
 #include "audio/mixer_intern.h"
 
-#include "osys_main.h"
+#include "backends/platform/iphone/osys_main.h"
 
 
 const OSystem::GraphicsMode OSystem_IPHONE::s_supportedGraphicsModes[] = {

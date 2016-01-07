@@ -26,7 +26,7 @@
 #include "gui/message.h"
 #include "common/translation.h"
 
-#include "osys_main.h"
+#include "backends/platform/iphone/osys_main.h"
 
 static const int kQueuedInputEventDelay = 50;
 
