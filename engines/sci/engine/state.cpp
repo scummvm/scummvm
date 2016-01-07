@@ -129,8 +129,6 @@ void EngineState::reset(bool isRestoring) {
 
 	_vmdPalStart = 0;
 	_vmdPalEnd = 256;
-
-	_palCycleToColor = 255;
 }
 
 void EngineState::speedThrottler(uint32 neededSleep) {

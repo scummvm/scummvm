@@ -203,8 +203,6 @@ public:
 	uint16 _vmdPalStart, _vmdPalEnd;
 	bool _syncedAudioOptions;
 
-	uint16 _palCycleToColor;
-
 	/**
 	 * Resets the engine state.
 	 */
