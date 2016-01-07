@@ -56,7 +56,7 @@
 namespace Wage {
 
 void Designed::setDesignBounds(Common::Rect *bounds) {
-	_designBounds = new Common::Rect(*bounds);
+	_designBounds = bounds;
 	_design->setBounds(bounds);
 }
 

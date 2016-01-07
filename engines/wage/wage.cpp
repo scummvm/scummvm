@@ -91,6 +91,7 @@ WageEngine::~WageEngine() {
 	delete _resManager;
 	delete _gui;
 	delete _rnd;
+	delete _console;
 }
 
 Common::Error WageEngine::run() {

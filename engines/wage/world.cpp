@@ -84,6 +84,17 @@ World::~World() {
 
 	for (uint i = 0; i < _orderedScenes.size(); i++)
 		delete _orderedScenes[i];
+
+	for (uint i = 0; i < _patterns.size(); i++)
+		free(_patterns[i]);
+
+	delete _globalScript;
+
+	delete _gameOverMessage;
+	delete _saveBeforeQuitMessage;
+	delete _saveBeforeCloseMessage;
+	delete _revertMessage;
+
 }
 
 bool World::loadWorld(Common::MacResManager *resMan) {

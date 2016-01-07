@@ -60,7 +60,7 @@ public:
 	~Design();
 
 	void setBounds(Common::Rect *bounds) {
-		_bounds = new Common::Rect(*bounds);
+		_bounds = bounds;
 	}
 
 	Common::Rect *getBounds() {

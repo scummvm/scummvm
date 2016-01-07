@@ -176,6 +176,7 @@ Gui::Gui(WageEngine *engine) {
 
 Gui::~Gui() {
 	_screen.free();
+	_console.free();
 	g_system->getTimerManager()->removeTimerProc(&cursor_timer_handler);
 }
 
