@@ -32,8 +32,8 @@
 - (void)applicationDidFinishLaunching:(UIApplication *)application {
 	CGRect rect = [[UIScreen mainScreen] bounds];
 
+#ifdef IPHONE_SANDBOXED
 	// Create the directory for savegames
-#ifdef IPHONE_OFFICIAL
 	NSFileManager *fm = [NSFileManager defaultManager];
 	NSString *documentPath = [NSString stringWithUTF8String:iOS7_getDocumentsDir()];
 	NSString *savePath = [documentPath stringByAppendingPathComponent:@"Savegames"];

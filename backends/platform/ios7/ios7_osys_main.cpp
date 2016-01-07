@@ -88,7 +88,7 @@ OSystem_iOS7::OSystem_iOS7() :
 	_lastErrorMessage(NULL), _mouseCursorPaletteEnabled(false), _gfxTransactionError(kTransactionSuccess) {
 	_queuedInputEvent.type = Common::EVENT_INVALID;
 	_touchpadModeEnabled = !iOS7_isBigDevice();
-#ifdef IPHONE_OFFICIAL
+#ifdef IPHONE_SANDBOXED
 	_fsFactory = new ChRootFilesystemFactory(iOS7_getDocumentsDir());
 #else
 	_fsFactory = new POSIXFilesystemFactory();
@@ -123,7 +123,7 @@ int OSystem_iOS7::timerHandler(int t) {
 }
 
 void OSystem_iOS7::initBackend() {
-#ifdef IPHONE_OFFICIAL
+#ifdef IPHONE_SANDBOXED
 	_savefileManager = new DefaultSaveFileManager("/Savegames");
 #else
 	_savefileManager = new DefaultSaveFileManager(SCUMMVM_SAVE_PATH);
@@ -282,7 +282,7 @@ OSystem_iOS7 *OSystem_iOS7::sharedInstance() {
 }
 
 Common::String OSystem_iOS7::getDefaultConfigFileName() {
-#ifdef IPHONE_OFFICIAL
+#ifdef IPHONE_SANDBOXED
 	Common::String path = "/Preferences";
 	return path;
 #else
@@ -299,13 +299,12 @@ void OSystem_iOS7::addSysArchivesToSearchSet(Common::SearchSet &s, int priority)
 		if (CFURLGetFileSystemRepresentation(fileUrl, true, buf, sizeof(buf))) {
 			// Success: Add it to the search path
 			Common::String bundlePath((const char *)buf);
-#ifdef IPHONE_OFFICIAL
+#ifdef IPHONE_SANDBOXED
 			POSIXFilesystemNode *posixNode = new POSIXFilesystemNode(bundlePath);
 			Common::FSNode *node = new Common::FSNode(posixNode);
-			s.add("__OSX_BUNDLE__", new Common::FSDirectory(*node), priority);
+			s.add("__IOS_BUNDLE__", new Common::FSDirectory(*node), priority);
 #else
-			// OS X
-			s.add("__OSX_BUNDLE__", new Common::FSDirectory(bundlePath), priority);
+			s.add("__IOS_BUNDLE__", new Common::FSDirectory(bundlePath), priority);
 #endif
 		}
 		CFRelease(fileUrl);
@@ -351,7 +350,7 @@ void iOS7_main(int argc, char **argv) {
 		//gDebugLevel = 10;
 	}
 
-#ifdef IPHONE_OFFICIAL
+#ifdef IPHONE_SANDBOXED
 	chdir(iOS7_getDocumentsDir());
 #else
 	system("mkdir " SCUMMVM_ROOT_PATH);
