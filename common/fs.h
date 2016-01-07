@@ -57,12 +57,17 @@ class FSList : public Array<FSNode> {};
  */
 class FSNode : public ArchiveMember {
 private:
+	friend class ::AbstractFSNode;
 	SharedPtr<AbstractFSNode>	_realNode;
-
-public:
-	// WARNING: Use this constructor with care! FSNode takes the ownership of the pointer and will delete it at some point.
+	/**
+	 * Construct a FSNode from a backend's AbstractFSNode implementation.
+	 *
+	 * @param realNode Pointer to a heap allocated instance. FSNode will take
+	 *                 ownership of the pointer.
+	 */
 	FSNode(AbstractFSNode *realNode);
 
+public:
 	/**
 	 * Flag to tell listDir() which kind of files to list.
 	 */

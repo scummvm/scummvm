@@ -301,8 +301,7 @@ void OSystem_iOS7::addSysArchivesToSearchSet(Common::SearchSet &s, int priority)
 			Common::String bundlePath((const char *)buf);
 #ifdef IPHONE_SANDBOXED
 			POSIXFilesystemNode *posixNode = new POSIXFilesystemNode(bundlePath);
-			Common::FSNode *node = new Common::FSNode(posixNode);
-			s.add("__IOS_BUNDLE__", new Common::FSDirectory(*node), priority);
+			s.add("__IOS_BUNDLE__", new Common::FSDirectory(AbstractFSNode::makeFSNode(posixNode)), priority);
 #else
 			s.add("__IOS_BUNDLE__", new Common::FSDirectory(bundlePath), priority);
 #endif
