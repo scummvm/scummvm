@@ -20,15 +20,17 @@
  *
  */
 
-/*
- * FIXME: Warning, using this factory in your backend may silently breaks some features. Instances are, for example, the FluidSynth code, and the POSIX plugin code.
- */
 
 #ifndef BACKENDS_FS_CHROOT_CHROOT_FS_FACTORY_H
 #define BACKENDS_FS_CHROOT_CHROOT_FS_FACTORY_H
 
 #include "backends/fs/fs-factory.h"
 
+/**
+ * FIXME: Warning, using this factory in your backend may silently break some
+ * features. Instances are, for example, the FluidSynth code, and the POSIX
+ * plugin code.
+ */
 class ChRootFilesystemFactory : public FilesystemFactory {
 private:
 	Common::String _root;
