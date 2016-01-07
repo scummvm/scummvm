@@ -62,8 +62,6 @@ private:
 	uint32 _size;
 	bool _stopPlayingEnd;
 	uint16 _sampleSpeed;
-	uint32 _diffWidth;
-	uint32 _diffHeight;
 
 	byte *_outputBuffer;
 	DIFFHeader _headerdata;
