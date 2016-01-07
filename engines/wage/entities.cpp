@@ -164,16 +164,33 @@ const char *fontNames[] = {
 
 	"San Francisco",
 	"Toronto",
+	NULL,
 	"Cairo",
 	"Los Angeles", // 12
 
-	NULL, NULL, NULL, NULL, NULL, NULL, NULL, // not in Inside Macintosh
+	"Zapf Dingbats",
+	"Bookman",
+	"Helvetica Narrow",
+	"Palatino",
+	NULL,
+	"Zapf Chancery",
+	NULL,
 
 	"Times", // 20
 	"Helvetica",
 	"Courier",
 	"Symbol",
-	"Taliesin" // mobile?
+	"Taliesin", // mobile?
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL, // 30
+	NULL,
+	NULL,
+	"Avant Garde",
+	"New Century Schoolbook"
 };
 
 const char *Scene::getFontName() {
