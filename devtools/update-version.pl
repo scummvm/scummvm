@@ -43,7 +43,6 @@ my @subs_files = qw(
 	dists/win32/scummvm.nsi
 	dists/wii/meta.xml
 	dists/android/AndroidManifest.xml
-	dists/android/plugin-manifest.xml
 	dists/openpandora/PXML.xml
 	dists/openpandora/README-OPENPANDORA
 	dists/openpandora/README-PND.txt
