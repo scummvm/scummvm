@@ -340,7 +340,13 @@ int main(int argc, char *argv[]) {
 		setup.defines.push_back("WIN32");
 	} else {
 		setup.defines.push_back("POSIX");
-		setup.defines.push_back("MACOSX"); // This will break iOS, but allows OS X to catch up on browser_osx.
+		// Define both MACOSX, and IPHONE, but only one of them will be associated to the
+		// correct target by the Xcode project provider.
+		// This define will help catching up target dependend files, like "browser_osx.mm"
+		// The suffix ("_osx", or "_ios") will be used by the project provider to filter out
+		// the files, according to the target.
+		setup.defines.push_back("MACOSX");
+		setup.defines.push_back("IPHONE");
 	}
 	setup.defines.push_back("SDL_BACKEND");
 	if (!useSDL2) {
@@ -929,16 +935,17 @@ TokenList tokenize(const std::string &input, char separator) {
 namespace {
 const Feature s_features[] = {
 	// Libraries
-	{    "libz",        "USE_ZLIB", "zlib",             true, "zlib (compression) support" },
-	{     "mad",         "USE_MAD", "libmad",           true, "libmad (MP3) support" },
-	{  "vorbis",      "USE_VORBIS", "libvorbisfile_static libvorbis_static libogg_static", true, "Ogg Vorbis support" },
-	{    "flac",        "USE_FLAC", "libFLAC_static win_utf8_io_static",   true, "FLAC support" },
-	{     "png",         "USE_PNG", "libpng",           true, "libpng support" },
-	{    "faad",        "USE_FAAD", "libfaad",          false, "AAC support" },
-	{   "mpeg2",       "USE_MPEG2", "libmpeg2",         false, "MPEG-2 support" },
-	{  "theora",   "USE_THEORADEC", "libtheora_static", true, "Theora decoding support" },
-	{"freetype",   "USE_FREETYPE2", "freetype",         true, "FreeType support" },
-	{    "jpeg",        "USE_JPEG", "jpeg-static",      true, "libjpeg support" },
+	{      "libz",        "USE_ZLIB", "zlib",             true, "zlib (compression) support" },
+	{       "mad",         "USE_MAD", "libmad",           true, "libmad (MP3) support" },
+	{    "vorbis",      "USE_VORBIS", "libvorbisfile_static libvorbis_static libogg_static", true, "Ogg Vorbis support" },
+	{      "flac",        "USE_FLAC", "libFLAC_static win_utf8_io_static",   true, "FLAC support" },
+	{       "png",         "USE_PNG", "libpng",           true, "libpng support" },
+	{      "faad",        "USE_FAAD", "libfaad",          false, "AAC support" },
+	{     "mpeg2",       "USE_MPEG2", "libmpeg2",         false, "MPEG-2 support" },
+	{    "theora",   "USE_THEORADEC", "libtheora_static", true, "Theora decoding support" },
+	{  "freetype",   "USE_FREETYPE2", "freetype",         true, "FreeType support" },
+	{      "jpeg",        "USE_JPEG", "jpeg-static",      true, "libjpeg support" },
+	{"fluidsynth",  "USE_FLUIDSYNTH", "libfluidsynth",    true, "FluidSynth support" },
 
 	// Feature flags
 	{            "bink",             "USE_BINK",         "", true,  "Bink video support" },
@@ -1048,6 +1055,12 @@ void splitFilename(const std::string &fileName, std::string &name, std::string &
 	const std::string::size_type dot = fileName.find_last_of('.');
 	name = (dot == std::string::npos) ? fileName : fileName.substr(0, dot);
 	ext = (dot == std::string::npos) ? std::string() : fileName.substr(dot + 1);
+}
+
+std::string basename(const std::string &fileName) {
+	const std::string::size_type slash = fileName.find_last_of('/');
+	if (slash == std::string::npos) return fileName;
+	return fileName.substr(slash + 1);
 }
 
 bool producesObjectFile(const std::string &fileName) {
@@ -1334,8 +1347,7 @@ void ProjectProvider::createProject(BuildSetup &setup) {
 		createModuleList(setup.srcDir + "/image", setup.defines, setup.testDirs, in, ex);
 
 		// Resource files
-		in.push_back(setup.srcDir + "/icons/" + setup.projectName + ".ico");
-		in.push_back(setup.srcDir + "/dists/" + setup.projectName + ".rc");
+		addResourceFiles(setup, in, ex);
 
 		// Various text files
 		in.push_back(setup.srcDir + "/AUTHORS");

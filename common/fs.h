@@ -58,9 +58,11 @@ class FSList : public Array<FSNode> {};
 class FSNode : public ArchiveMember {
 private:
 	SharedPtr<AbstractFSNode>	_realNode;
-	FSNode(AbstractFSNode *realNode);
 
 public:
+	// WARNING: Use this constructor with care! FSNode takes the ownership of the pointer and will delete it at some point.
+	FSNode(AbstractFSNode *realNode);
+
 	/**
 	 * Flag to tell listDir() which kind of files to list.
 	 */

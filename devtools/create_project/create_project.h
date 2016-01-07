@@ -316,6 +316,17 @@ std::string convertPathToWin(const std::string &path);
 void splitFilename(const std::string &fileName, std::string &name, std::string &ext);
 
 /**
+ * Returns the basename of a path.
+ * examples:
+ *   a/b/c/d.ext -> d.ext
+ *   d.ext       -> d.ext
+ *
+ * @param fileName Filename
+ * @return The basename
+ */
+std::string basename(const std::string &fileName);
+
+/**
  * Checks whether the given file will produce an object file or not.
  *
  * @param fileName Name of the file.
@@ -417,6 +428,13 @@ protected:
 	 * @param setup Description of the desired build setup.
 	 */
 	virtual void createOtherBuildFiles(const BuildSetup &setup) = 0;
+
+	/**
+	 *  Add resources to the project
+	 *
+	 * @param setup Description of the desired build setup.
+	 */
+	virtual void addResourceFiles(const BuildSetup &setup, StringList &includeList, StringList &excludeList) = 0;
 
 	/**
 	 * Create a project file for the specified list of files.

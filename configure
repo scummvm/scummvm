@@ -834,7 +834,7 @@ Usage: $0 [OPTIONS]...
 Configuration:
   -h, --help              display this help and exit
   --backend=BACKEND       backend to build (android, tizen, dc, dingux, ds, gcw0,
-                          gph, iphone, linuxmoto, maemo, n64, null, openpandora,
+                          gph, iphone, ios7, linuxmoto, maemo, n64, null, openpandora,
                           ps2, psp, samsungtv, sdl, webos, wii, wince) [sdl]
 
 Installation directories:
@@ -874,7 +874,8 @@ Special configuration feature:
                                            gcw0 for GCW Zero
                                            gp2x for GP2X
                                            gp2xwiz for GP2X Wiz
-                                           iphone for Apple iPhone
+                                           iphone for Apple iPhone (iOS <= 6)
+                                           ios7 for Apple iPhone / iPad (iOS >= 7)
                                            linupy for Yopy PDA
                                            maemo for Nokia Maemo
                                            motoezx for MotoEZX
@@ -1358,6 +1359,11 @@ iphone)
 	_host_os=iphone
 	_host_cpu=arm
 	_host_alias=arm-apple-darwin9
+	;;
+ios7)
+	_host_os=iphone
+	_host_cpu=arm
+	_host_alias=arm-apple-darwin11
 	;;
 linupy)
 	_host_os=linux
@@ -2062,21 +2068,28 @@ define_in_config_h_if_yes $_need_memalign 'SCUMM_NEED_ALIGNMENT'
 echo_n "Checking host CPU architecture... "
 case $_host_cpu in
 	arm*)
-		echo "ARM"
-		define_in_config_if_yes yes 'USE_ARM_SCALER_ASM'
-		# FIXME: The following feature exhibits a bug. It produces distorted
-		# sound since 9003ce517ff9906b0288f9f7c02197fd091d4554. The ARM
-		# assembly will need to be properly adapted to the changes to the C
-		# code in 8f5a7cde2f99de9fef849b0ff688906f05f4643e.
-		# See bug #6957: "AUDIO: ARM ASM sound code causes distorted audio on 32 bit armv6"
-		#define_in_config_if_yes yes 'USE_ARM_SOUND_ASM'
-		define_in_config_if_yes yes 'USE_ARM_SMUSH_ASM'
-		define_in_config_if_yes yes 'USE_ARM_GFX_ASM'
-		# FIXME: The following feature exhibits a bug during the intro scene of Indy 4
-		# (on Pandora and iPhone at least)
-		#define_in_config_if_yes yes 'USE_ARM_COSTUME_ASM'
+		case $_host_alias in
+			arm-apple-darwin11)
+				echo "Apple iOS 7+ - ARM assembly disabled"
+				;;
+			*)
+				echo "ARM"
+				define_in_config_if_yes yes 'USE_ARM_SCALER_ASM'
+				# FIXME: The following feature exhibits a bug. It produces distorted
+				# sound since 9003ce517ff9906b0288f9f7c02197fd091d4554. The ARM
+				# assembly will need to be properly adapted to the changes to the C
+				# code in 8f5a7cde2f99de9fef849b0ff688906f05f4643e.
+				# See bug #6957: "AUDIO: ARM ASM sound code causes distorted audio on 32 bit armv6"
+				#define_in_config_if_yes yes 'USE_ARM_SOUND_ASM'
+				define_in_config_if_yes yes 'USE_ARM_SMUSH_ASM'
+				define_in_config_if_yes yes 'USE_ARM_GFX_ASM'
+				# FIXME: The following feature exhibits a bug during the intro scene of Indy 4
+				# (on Pandora and iPhone at least)
+				#define_in_config_if_yes yes 'USE_ARM_COSTUME_ASM'
 
-		append_var DEFINES "-DARM_TARGET"
+				append_var DEFINES "-DARM_TARGET"
+				;;
+		esac
 		;;
 	i[3-6]86)
 		echo "x86"
@@ -2722,6 +2735,16 @@ if test -n "$_host"; then
 			_seq_midi=no
 			_timidity=no
 			;;
+		ios7)
+			append_var DEFINES "-DIPHONE"
+			append_var CFLAGS "-Wno-shift-count-overflow"
+			append_var CXXFLAGS "-Wno-shift-count-overflow"
+			_backend="ios7"
+			_build_scalers=no
+			_mt32emu=no
+			_seq_midi=no
+			_timidity=no
+			;;
 		m68k-atari-mint)
 			append_var DEFINES "-DSYSTEM_NOT_SUPPORTING_D_TYPE"
 			_ranlib=m68k-atari-mint-ranlib
@@ -3015,6 +3038,19 @@ case $_backend in
 		append_var LIBS "-framework QuartzCore -framework CoreFoundation -framework Foundation"
 		append_var LIBS "-framework AudioToolbox -framework CoreAudio"
 		;;
+	ios7)
+		append_var LIBS "-lobjc -framework UIKit -framework CoreGraphics -framework OpenGLES"
+		append_var LIBS "-framework QuartzCore -framework CoreFoundation -framework Foundation"
+		append_var LIBS "-framework AudioToolbox -framework CoreAudio"
+		append_var LDFLAGS "-miphoneos-version-min=7.1 -arch armv7"
+		append_var CFLAGS "-miphoneos-version-min=7.1 -arch armv7"
+		append_var CXXFLAGS "-miphoneos-version-min=7.1 -arch armv7"
+		if test -n "$SDKROOT"; then
+			append_var LDFLAGS "-mlinker-version=134.9 -B/usr/local/bin/arm-apple-darwin11-"
+			append_var CFLAGS "-isysroot $SDKROOT -F$SDKROOT/System/Library/Frameworks"
+			append_var CXXFLAGS "-isysroot $SDKROOT -I$SDKROOT/usr/include/c++/4.2.1 -F$SDKROOT/System/Library/Frameworks"
+		fi
+		;;
 	linuxmoto)
 		append_var DEFINES "-DLINUXMOTO"
 		;;
@@ -3146,7 +3182,7 @@ esac
 # Enable 16bit support only for backends which support it
 #
 case $_backend in
-	android | dingux | dc | gph | iphone | maemo | openpandora | psp | samsungtv | sdl | tizen | webos | wii)
+	android | dingux | dc | gph | iphone | ios7 | maemo | openpandora | psp | samsungtv | sdl | tizen | webos | wii)
 		if test "$_16bit" = auto ; then
 			_16bit=yes
 		else
@@ -3205,7 +3241,7 @@ case $_host_os in
 	amigaos* | cygwin* | dreamcast | ds | gamecube | mingw* | n64 | ps2 | ps3 | psp | wii | wince)
 		_posix=no
 		;;
-	android | beos* | bsd* | darwin* | freebsd* | gnu* | gph-linux | haiku* | hpux* | iphone | irix*| k*bsd*-gnu* | linux* | maemo | mint* | netbsd* | openbsd* | solaris* | sunos* | uclinux* | webos)
+	android | beos* | bsd* | darwin* | freebsd* | gnu* | gph-linux | haiku* | hpux* | iphone | ios7 | irix*| k*bsd*-gnu* | linux* | maemo | mint* | netbsd* | openbsd* | solaris* | sunos* | uclinux* | webos)
 		_posix=yes
 		;;
 	os2-emx*)

@@ -40,6 +40,8 @@ protected:
 
 	void createOtherBuildFiles(const BuildSetup &setup);
 
+	void addResourceFiles(const BuildSetup &setup, StringList &includeList, StringList &excludeList);
+
 	void createProjectFile(const std::string &name, const std::string &uuid, const BuildSetup &setup, const std::string &moduleDir,
 	                       const StringList &includeList, const StringList &excludeList);
 
@@ -63,7 +65,7 @@ private:
 		std::string _sourceTree;
 
 		FileProperty(std::string fileType = "", std::string name = "", std::string path = "", std::string source = "")
-		    : _fileEncoding(""), _lastKnownFileType(fileType), _fileName(name), _filePath(path), _sourceTree(source) {
+				: _fileEncoding(""), _lastKnownFileType(fileType), _fileName(name), _filePath(path), _sourceTree(source) {
 		}
 	};
 
@@ -208,6 +210,7 @@ private:
 			assert(!_properties["isa"]._settings.empty());
 
 			SettingList::iterator it = _properties["isa"]._settings.begin();
+
 			return it->first;
 		}
 	};
@@ -228,6 +231,15 @@ private:
 
 			_objects.push_back(obj);
 			_objectMap[obj->_id] = true;
+		}
+
+		Object *find(std::string id) {
+			for (std::vector<Object *>::iterator it = _objects.begin(); it != _objects.end(); ++it) {
+				if ((*it)->_id == id) {
+					return *it;
+				}
+			}
+			return NULL;
 		}
 
 		std::string toString() {
@@ -300,18 +312,26 @@ private:
 
 	// Setup objects
 	void setupCopyFilesBuildPhase();
-	void setupFrameworksBuildPhase();
+	void setupFrameworksBuildPhase(const BuildSetup &setup);
 	void setupNativeTarget();
 	void setupProject();
 	void setupResourcesBuildPhase();
 	void setupSourcesBuildPhase();
-	void setupBuildConfiguration();
+	void setupBuildConfiguration(const BuildSetup &setup);
+	void setupImageAssetCatalog(const BuildSetup &setup);
+	void setupAdditionalSources(std::string targetName, Property &files, int &order);
 
 	// Misc
 	void setupDefines(const BuildSetup &setup); // Setup the list of defines to be used on build configurations
 
+	// Retrieve information
+	ValueList& getResourceFiles() const;
+
 	// Hash generation
 	std::string getHash(std::string key);
+#ifdef MACOSX
+	std::string md5(std::string key);
+#endif
 	std::string newHash() const;
 
 	// Output

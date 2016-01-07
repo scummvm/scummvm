@@ -90,7 +90,7 @@ int OSystem_IPHONE::timerHandler(int t) {
 }
 
 void OSystem_IPHONE::initBackend() {
-#ifdef IPHONE_OFFICIAL
+#ifdef IPHONE_SANDBOXED
 	_savefileManager = new DefaultSaveFileManager(iPhone_getDocumentsDir());
 #else
 	_savefileManager = new DefaultSaveFileManager(SCUMMVM_SAVE_PATH);
@@ -252,7 +252,7 @@ OSystem *OSystem_IPHONE_create() {
 }
 
 Common::String OSystem_IPHONE::getDefaultConfigFileName() {
-#ifdef IPHONE_OFFICIAL
+#ifdef IPHONE_SANDBOXED
 	Common::String path = iPhone_getDocumentsDir();
 	path += "/Preferences";
 	return path;
@@ -305,7 +305,7 @@ void iphone_main(int argc, char *argv[]) {
 		//gDebugLevel = 10;
 	}
 
-#ifdef IPHONE_OFFICIAL
+#ifdef IPHONE_SANDBOXED
 	chdir(iPhone_getDocumentsDir());
 #else
 	system("mkdir " SCUMMVM_ROOT_PATH);

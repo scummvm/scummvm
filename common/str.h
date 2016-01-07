@@ -180,6 +180,7 @@ public:
 	inline uint size() const         { return _size; }
 
 	inline bool empty() const { return (_size == 0); }
+	char firstChar() const    { return (_size > 0) ? _str[0] : 0; }
 	char lastChar() const     { return (_size > 0) ? _str[_size - 1] : 0; }
 
 	char operator[](int idx) const {
