@@ -65,6 +65,7 @@ public:
 	void move(Chr *chr, Scene *scene, bool skipSort = false);
 	Scene *getRandomScene();
 	Scene *getSceneAt(int x, int y);
+	bool scenesAreConnected(Scene *scene1, Scene *scene2);
 
 	WageEngine *_engine;
 

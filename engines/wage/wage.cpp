@@ -463,13 +463,11 @@ void WageEngine::processTurn(Common::String *textInput, Designed *clickInput) {
 		if (prevMonster != NULL) {
 			bool followed = false;
 			if (_monster == NULL) {
-				warning("STUB: processTurn(), monster");
-				//Set<Scene> scenes = world.getAdjacentScenes(prevMonster.getState().getCurrentScene());
 				// TODO: adjacent scenes doesn't contain up/down etc... verify that monsters can't follow these...
-				//if (scenes.contains(playerScene)) {
-				//	int chance = (int) (Math.random() * 255);
-				//	followed = (chance < prevMonster.getFollowsOpponent());
-				//}
+				if (_world->scenesAreConnected(playerScene, prevMonster->_currentScene)) {
+					int chance = _rnd->getRandomNumber(255);
+					followed = (chance < prevMonster->_followsOpponent);
+				}
 			}
 
 			Common::String msg;

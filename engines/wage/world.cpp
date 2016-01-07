@@ -469,4 +469,22 @@ Scene *World::getSceneAt(int x, int y) {
 	return NULL;
 }
 
+static const int directionsX[] = { 0, 0, 1, -1 };
+static const int directionsY[] = { -1, 1, 0, 0 };
+
+bool World::scenesAreConnected(Scene *scene1, Scene *scene2) {
+	if (!scene1 || !scene2)
+		return false;
+
+	int x = scene2->_worldX;
+	int y = scene2->_worldY;
+
+	for (int dir = 0; dir < 4; dir++)
+		if (!scene2->_blocked[dir])
+			if (getSceneAt(x + directionsX[dir], y + directionsY[dir]) == scene1)
+				return true;
+
+	return false;
+}
+
 } // End of namespace Wage
