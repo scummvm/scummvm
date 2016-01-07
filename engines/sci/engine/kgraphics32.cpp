@@ -131,6 +131,22 @@ reg_t kFrameOut(EngineState *s, int argc, reg_t *argv) {
 	return NULL_REG;
 }
 
+reg_t kSetPalStyleRange(EngineState *s, int argc, reg_t *argv) {
+/* TODO: Transcribed from SCI engine disassembly.
+	 uint16 start = argv[0].toUint16();
+	 uint16 end = argv[1].toUint16();
+	 if (end <= start) {
+		uint16 index = start;
+		while (index <= end) {
+			g_PalStyleRanges[index] = 0;
+		}
+	 }
+*/
+
+	kStub(s, argc, argv);
+	return NULL_REG;
+}
+
 reg_t kObjectIntersect(EngineState *s, int argc, reg_t *argv) {
 	Common::Rect objRect1 = g_sci->_gfxCompare->getNSRect(argv[0]);
 	Common::Rect objRect2 = g_sci->_gfxCompare->getNSRect(argv[1]);
