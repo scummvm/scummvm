@@ -35,7 +35,7 @@
 #include "ios7_common.h"
 
 #include "common/list.h"
-#import "graphics/scaler.h"
+#include "graphics/scaler.h"
 
 typedef struct {
 	GLfloat x, y;

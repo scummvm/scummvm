@@ -20,7 +20,7 @@
  *
  */
 
-#import "iOS7ScummVMViewController.h"
+#include "iOS7ScummVMViewController.h"
 
 
 @implementation iOS7ScummVMViewController

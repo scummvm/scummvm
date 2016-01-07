@@ -21,9 +21,9 @@
  */
 
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
-#import "iOS7AppDelegate.h"
-#import "iOS7ScummVMViewController.h"
-#import "ios7_video.h"
+#include "iOS7AppDelegate.h"
+#include "iOS7ScummVMViewController.h"
+#include "ios7_video.h"
 
 @implementation iOS7AppDelegate {
 	UIWindow *_window;

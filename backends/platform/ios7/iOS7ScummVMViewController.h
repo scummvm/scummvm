@@ -23,7 +23,7 @@
 #ifndef BACKENDS_PLATFORM_IOS7_IOS7_SCUMMVM_VIEW_CONTROLLER_H
 #define BACKENDS_PLATFORM_IOS7_IOS7_SCUMMVM_VIEW_CONTROLLER_H
 
-#import <UIKit/UIKit.h>
+#include <UIKit/UIKit.h>
 
 
 @interface iOS7ScummVMViewController : UIViewController

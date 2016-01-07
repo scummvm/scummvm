@@ -23,7 +23,7 @@
 #ifndef BACKENDS_PLATFORM_IOS7_IOS7_APP_DELEGATE_H
 #define BACKENDS_PLATFORM_IOS7_IOS7_APP_DELEGATE_H
 
-#import <UIKit/UIKit.h>
+#include <UIKit/UIKit.h>
 
 @class iPhoneView;
 
