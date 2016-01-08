@@ -128,7 +128,7 @@ void Scene201::enter() {
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[0], 14);
 	}
 
-	if (_vm->_gameConv->_restoreRunning == 16) {
+	if (_vm->_gameConv->restoreRunning() == 16) {
 		_game._player._playerPos = Common::Point(72, 101);
 		_game._player._facing = FACING_NORTHWEST;
 		_globals._animationIndexes[0] = _scene->loadAnimation(formAnimName('r', 1), 0);
@@ -674,7 +674,7 @@ void Scene202::enter() {
 		_degasStatus = 4;
 	}
 
-	if (_vm->_gameConv->_restoreRunning == 17) {
+	if (_vm->_gameConv->restoreRunning() == 17) {
 		_vm->_gameConv->run(17);
 		_vm->_gameConv->exportValue(_game._objects.isInInventory(OBJ_TICKET));
 		_vm->_gameConv->exportValue(0);
@@ -683,7 +683,7 @@ void Scene202::enter() {
 		_globals[kWalkerConverse] = _vm->getRandomNumber(1, 4);
 	}
 
-	if (_vm->_gameConv->_restoreRunning == 9) {
+	if (_vm->_gameConv->restoreRunning() == 9) {
 		_vm->_gameConv->run(9);
 		_vm->_gameConv->exportPointer(&_globals[kPlayerScore]);
 		_game._player._playerPos = Common::Point(400, 141);
@@ -1588,7 +1588,7 @@ void Scene203::enter() {
 			_scene->_hotspots.activate(NOUN_MANAGERS_CHAIR, true);
 		}
 
-		if ((_scene->_priorSceneId == RETURNING_FROM_LOADING) && (_vm->_gameConv->_restoreRunning == 5)) {
+		if ((_scene->_priorSceneId == RETURNING_FROM_LOADING) && (_vm->_gameConv->restoreRunning() == 5)) {
 			_brieStatus = 4;
 			_raoulStatus = 0;
 			_anim1ActvFl = true;
@@ -1625,7 +1625,7 @@ void Scene203::enter() {
 			_scene->_hotspots.activate(NOUN_MANAGERS_CHAIR, true);
 		}
 
-		if ((_scene->_priorSceneId == RETURNING_FROM_LOADING) && (_vm->_gameConv->_restoreRunning == 8)) {
+		if ((_scene->_priorSceneId == RETURNING_FROM_LOADING) && (_vm->_gameConv->restoreRunning() == 8)) {
 			_globals._animationIndexes[1] = _scene->loadAnimation(formAnimName('c', 1), 0);
 			_scene->setAnimFrame(_globals._animationIndexes[1], 9);
 			_anim1ActvFl = true;
@@ -1652,7 +1652,7 @@ void Scene203::enter() {
 		_scene->_hotspots.activate(NOUN_DESK_LAMP, false);
 	}
 
-	if (_vm->_gameConv->_restoreRunning == 15) {
+	if (_vm->_gameConv->restoreRunning() == 15) {
 		_globals._sequenceIndexes[5] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[5], false, -1);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[5], 14);
 		_game._player._playerPos = Common::Point(98, 137);
@@ -4321,7 +4321,7 @@ void Scene205::enter() {
 		}
 
 		if (_scene->_priorSceneId == RETURNING_FROM_LOADING) {
-			if (_vm->_gameConv->_restoreRunning == 10) {
+			if (_vm->_gameConv->restoreRunning() == 10) {
 				int count = 0;
 
 				if (_game._objects.isInInventory(OBJ_RED_FRAME))
@@ -4349,7 +4349,7 @@ void Scene205::enter() {
 					_scene->setAnimFrame(_globals._animationIndexes[1], 66);
 				else
 					_giryStatus = 2;
-			} else if (_vm->_gameConv->_restoreRunning == 11) {
+			} else if (_vm->_gameConv->restoreRunning() == 11) {
 				_vm->_gameConv->run(11);
 				_vm->_gameConv->exportValue(_game._objects.isInInventory(OBJ_TICKET));
 				_vm->_gameConv->exportValue(0);
@@ -4372,7 +4372,7 @@ void Scene205::enter() {
 			_richardStatus = 3;
 			_scene->_hotspots.activate(NOUN_MONSIEUR_RICHARD, true);
 
-			if (_vm->_gameConv->_restoreRunning == 18) {
+			if (_vm->_gameConv->restoreRunning() == 18) {
 				_globals[kWalkerConverse] = _vm->getRandomNumber(1, 4);
 				_richardStatus = 3;
 				_vm->_gameConv->run(18);

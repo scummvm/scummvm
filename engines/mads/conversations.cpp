@@ -31,11 +31,17 @@ namespace MADS {
 GameConversations::GameConversations(MADSEngine *vm) : _vm(vm) {
 	_runningConv = nullptr;
 	_restoreRunning = 0;
-	_nextStartNode = nullptr;
 	_playerEnabled = false;
 	_inputMode = kInputBuildingSentences;
 	_startFrameNumber = 0;
-	_val1 = _val2 = _val3 = _val4 = _val5 = 0;
+	_speakerVal = 0;
+	_heldVal = _releaseVal = 0;
+	_val1 =_val5 = 0;
+	_vars = _nextStartNode = nullptr;
+	_heroTrigger = 0;
+	_heroTriggerMode = SEQUENCE_TRIGGER_PARSER;
+	_interlocutorTrigger = 0;
+	_interlocutorTriggerMode = SEQUENCE_TRIGGER_PARSER;
 
 	// Mark all conversation slots as empty
 	for (int idx = 0; idx < MAX_CONVERSATIONS; ++idx)
@@ -90,8 +96,10 @@ void GameConversations::run(int id) {
 	_startFrameNumber = _vm->_events->getFrameCounter();
 	_playerEnabled = _vm->_game->_player._stepEnabled;
 	_inputMode = _vm->_game->_screenObjects._inputMode;
-	_val1 = _val2 = _val3 = 0;
-	_val4 = 0;
+	_heroTrigger = 0;
+	_interlocutorTrigger = 0;
+	_val1 = 0;
+	_heldVal = 0;
 	_val5 = -1;
 
 	// Initialize speaker arrays
@@ -105,28 +113,14 @@ void GameConversations::run(int id) {
 	// Start the conversation
 	start();
 
-	// Set variables
-	setVariable(2, 0x4F78);
-	setVariable(3, 0x4F50);
-	setVariable(4, 0x4F52);
-	setVariable(5, 0x4F54);
-	setVariable(6, 0x4F56);
-	setVariable(7, 0x4F58);
-	setVariable(8, 0x4F5A);
-	setVariable(9, 0x4F5C);
-	setVariable(10, 0x4F5E);
-	setVariable(11, 0x4F60);
-	setVariable(12, 0x4F62);
-	setVariable(13, 0x4F64);
-	setVariable(14, 0x4F66);
-	setVariable(15, 0x4F68);
-	setVariable(16, 0x4F6A);
-	setVariable(17, 0x4F6C);
-	setVariable(18, 0x4F6E);
-	setVariable(19, 0x4F70);
-	setVariable(20, 0x4F72);
-	setVariable(21, 0x4F74);
-	setVariable(22, 0x4F76);
+	// Setup variables to point to data in the speaker arrays
+	setVariable(2, &_speakerVal);
+	for (int idx = 0; idx < MAX_SPEAKERS; ++idx) {
+		setVariable(3 + idx, &_speakerExists[idx]);
+		setVariable(8 + idx, &_arr4[idx]);
+		setVariable(13 + idx, &_arr5[idx]);
+		setVariable(18 + idx, &_arr6[idx]);
+	}
 
 	// Load sprite data for speaker portraits
 	for (uint idx = 0; idx < _runningConv->_data._speakerCount; ++idx) {
@@ -145,58 +139,148 @@ void GameConversations::run(int id) {
 }
 
 void GameConversations::start() {
+	assert(_runningConv->_cnd._vars.size() >= 2);
+	_vars = &_runningConv->_cnd._vars[0];
+	_nextStartNode = &_runningConv->_cnd._vars[1];
 
 	warning("TODO: GameConversations::start");
 }
 
-void GameConversations::setVariable(uint idx, int v1, int v2) {
-	if (active()) {
-		_runningConv->_cnd._vars[idx].v1 = v1;
-		_runningConv->_cnd._vars[idx].v2 = v2;
-	}
+void GameConversations::setVariable(uint idx, int val) {
+	if (active())
+		_runningConv->_cnd._vars[idx].setValue(val);
+}
+
+void GameConversations::setVariable(uint idx, int *val) {
+	if (active())
+		_runningConv->_cnd._vars[idx].setValue(val);
+}
+
+void GameConversations::setStartNode(uint nodeIndex) {
+	assert(_nextStartNode && _nextStartNode->_isPtr == false);
+	_nextStartNode->_val = nodeIndex;
 }
 
 void GameConversations::stop() {
-	warning("TODO GameConversations::stop");
+	// Only need to proceed if there is an active conversation
+	if (!active())
+		return;
+
+	// Reset player enabled state if needed
+	if (_vm->_game->_kernelMode == KERNEL_ACTIVE_CODE)
+		_vm->_game->_player._stepEnabled = _playerEnabled;
+
+	// Remove any visible dialog window
+	removeActiveWindow();
+
+	// Release any sprites used for character portraits
+	for (int idx = 0; idx < _runningConv->_data._speakerCount; ++idx) {
+		if (_speakerActive[idx])
+			_vm->_game->_scene._sprites.remove(_speakerPortraits[idx]);
+	}
+
+	// Flag conversation as no longer running
+	_runningConv = nullptr;
+
+	if (_inputMode == kInputConversation)
+		_vm->_game->_scene._userInterface.emptyConversationList();
+
+	_vm->_game->_scene._userInterface.setup(_inputMode);
 }
 
-void GameConversations::exportPointer(int *val) {
-	warning("TODO GameConversations::exportPointer");
+void GameConversations::exportPointer(int *ptr) {
+	// Only need to proceed if there is an active conversation
+	if (!active())
+		return;
+
+	// Also don't proceed if the number of allowed imports has already been reached
+	if (_runningConv->_cnd._numImports >= _runningConv->_data._maxImports)
+		return;
+
+	// Get the variable to use for this next import and set it's value
+	int variableIndex = _runningConv->_cnd._importVariables[
+		_runningConv->_cnd._numImports++];
+	setVariable(variableIndex, ptr);
 }
 
 void GameConversations::exportValue(int val) {
-	warning("TODO GameConversations::exportValue");
+	// Only need to proceed if there is an active conversation
+	if (!active())
+		return;
+
+	// Also don't proceed if the number of allowed imports has already been reached
+	if (_runningConv->_cnd._numImports >= _runningConv->_data._maxImports)
+		return;
+
+	// Get the variable to use for this next import and set it's value
+	int variableIndex = _runningConv->_cnd._importVariables[
+		_runningConv->_cnd._numImports++];
+	setVariable(variableIndex, val);
 }
 
 void GameConversations::setHeroTrigger(int val) {
-	_vm->_game->_trigger = val;	// HACK
-	//_running = -1;	// HACK
-	warning("TODO: GameConversations::setHeroTrigger");
+	_heroTrigger = val;
+	_heroTriggerMode = _vm->_game->_triggerSetupMode;
 }
 
 void GameConversations::setInterlocutorTrigger(int val) {
-	warning("TODO: GameConversations::setInterlocutorTrigger");
+	_interlocutorTrigger = val;
+	_interlocutorTriggerMode = _vm->_game->_triggerSetupMode;
 }
 
-int* GameConversations::getVariable(int idx) {
-	warning("TODO: GameConversations::getVariable");
-	return nullptr;
+int *GameConversations::getVariable(int idx) {
+	return _vars[idx].getValue();
 }
 
 void GameConversations::hold() {
-	warning("TODO: GameConversations::hold");
+	if (_heldVal != -1) {
+		_releaseVal = _heldVal;
+		_heldVal = -1;
+	}
 }
 
 void GameConversations::release() {
-	warning("TODO: GameConversations::release");
+	if (_heldVal == -1) {
+		_heldVal = _releaseVal;
+		if (_heldVal == 1 || _heldVal == 2)
+			update(true);
+	}
+}
+
+void GameConversations::flagEntry(ConvFlagMode mode, int entryIndex) {
+	assert(_runningConv);
+	uint &flags = _runningConv->_cnd._entryFlags[entryIndex];
+
+	switch (mode) {
+	case FLAGMODE_1:
+		flags |= ENTRYFLAG_4000;
+		flags &= ~ENTRYFLAG_8000;
+		break;
+
+	case FLAGMODE_2:
+		flags &= ~ENTRYFLAG_8000;
+		break;
+
+	case FLAGMODE_3:
+		if (!(flags & ENTRYFLAG_4000))
+			flags |= ENTRYFLAG_8000;
+		break;
+
+	default:
+		break;
+	}
 }
 
 void GameConversations::reset(int id) {
 	warning("TODO: GameConversations::reset");
 }
 
-void GameConversations::abortConv() {
-	warning("TODO: GameConversations::abort");
+void GameConversations::update(bool isRelease) {
+	warning("TODO: GameConversations::update");
+}
+
+void GameConversations::removeActiveWindow() {
+	warning("TODO: GameConversations::removeActiveWindow");
 }
 
 /*------------------------------------------------------------------------*/
@@ -207,15 +291,16 @@ void ConversationData::load(const Common::String &filename) {
 
 	inFile.open(filename);
 	MadsPack convFileUnpacked(&inFile);
-	Common::SeekableReadStream *convFile = convFileUnpacked.getItemStream(0);
 
 	// **** Section 0: Header *************************************************
+	Common::SeekableReadStream *convFile = convFileUnpacked.getItemStream(0);
+
 	_nodeCount = convFile->readUint16LE();
 	_dialogCount = convFile->readUint16LE();
 	_messageCount = convFile->readUint16LE();
 	_textLineCount = convFile->readUint16LE();
 	_unk2 = convFile->readUint16LE();
-	_importCount = convFile->readUint16LE();
+	_maxImports = convFile->readUint16LE();
 	_speakerCount = convFile->readUint16LE();
 
 	for (uint idx = 0; idx < MAX_SPEAKERS; ++idx) {
@@ -275,7 +360,7 @@ void ConversationData::load(const Common::String &filename) {
 
 	// **** Section 3: Messages ***********************************************
 	convFile = convFileUnpacked.getItemStream(3);
-	assert(convFile->size() == _messageCount * 8);
+	assert(convFile->size() == _messageCount * 4);
 
 	_messages.resize(_messageCount);
 	for (uint idx = 0; idx < _messageCount; ++idx)
@@ -389,8 +474,74 @@ void ConversationData::load(const Common::String &filename) {
 
 /*------------------------------------------------------------------------*/
 
-void ConversationCnd::load(const Common::String &filename) {
-	// TODO
+void ConversationConditionals::load(const Common::String &filename) {
+	Common::File inFile;
+	Common::SeekableReadStream *convFile;
+
+	inFile.open(filename);
+	MadsPack convFileUnpacked(&inFile);
+
+	// **** Section 0: Header *************************************************
+	convFile = convFileUnpacked.getItemStream(0);
+
+	convFile->skip(2);
+	int entryFlagsCount = convFile->readUint16LE();
+	int varsCount = convFile->readUint16LE();
+	int importsCount = convFile->readUint16LE();
+
+	delete convFile;
+
+	// **** Section: Imports *************************************************
+	int streamNum = 1;
+	
+	_importVariables.resize(importsCount);
+	if (importsCount > 0) {
+		convFile = convFileUnpacked.getItemStream(streamNum++);
+
+		// Read in the variable indexes that each import value will be stored in
+		for (int idx = 0; idx < importsCount; ++idx)
+			_importVariables[idx] = convFile->readUint16LE();
+
+		delete convFile;
+	}
+
+	// **** Section: Entry Flags *********************************************
+	convFile = convFileUnpacked.getItemStream(streamNum++);
+	assert(convFile->size() == (entryFlagsCount * 2));
+
+	_entryFlags.resize(entryFlagsCount);
+	for (int idx = 0; idx < entryFlagsCount; ++idx)
+		_entryFlags[idx] = convFile->readUint16LE();
+
+	delete convFile;
+
+	// **** Section: Variables ***********************************************
+	convFile = convFileUnpacked.getItemStream(streamNum);
+	assert(convFile->size() == (varsCount * 6));
+
+	_vars.resize(varsCount);
+	for (int idx = 0; idx < varsCount; ++idx) {
+		convFile->skip(2);	// Loaded values are never pointers, so don't need this
+		_vars[idx]._isPtr = false;
+		_vars[idx]._val = convFile->readSint16LE();
+		convFile->skip(2);	// Unused segment selector for pointer values
+	}
+
+	delete convFile;
+}
+
+/*------------------------------------------------------------------------*/
+
+void ConversationVar::setValue(int val) {
+	_isPtr = false;
+	_valPtr = nullptr;
+	_val = val;
+}
+
+void ConversationVar::setValue(int *val) {
+	_isPtr = true;
+	_valPtr = val;
+	_val = 0;
 }
 
 } // End of namespace MADS

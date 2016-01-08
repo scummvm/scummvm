@@ -1332,7 +1332,7 @@ void Scene104::enter() {
 		_scene->_dynamicHotspots[idx]._articleNumber = PREP_ON;
 		_scene->setDynamicAnim(idx, _globals._animationIndexes[0], 0);
 
-		if (_vm->_gameConv->_restoreRunning == 1) {
+		if (_vm->_gameConv->restoreRunning() == 1) {
 			_game._player._stepEnabled = false;
 			_vm->_gameConv->run(1);
 			_vm->_gameConv->exportValue(0);
@@ -2304,8 +2304,8 @@ void Scene104::handleFinalConversation() {
 		break;
 
 	case 30:
-		*_vm->_gameConv->_nextStartNode = 31;
-		_vm->_gameConv->abortConv();
+		_vm->_gameConv->setStartNode(31);
+		_vm->_gameConv->stop();
 
 		if (_globals[kLlanieStatus] == 2) {
 			_globals._animationIndexes[3] = _scene->loadAnimation(formAnimName('l', 1), 0);

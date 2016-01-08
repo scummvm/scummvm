@@ -47,6 +47,20 @@ enum DialogCommands {
 	cmdDialogEnd = 255
 };
 
+enum ConvFlagMode {
+	FLAGMODE_1 = 1,
+	FLAGMODE_2 = 2,
+	FLAGMODE_3 = 3
+};
+
+enum ConvEntryFlag {
+	ENTRYFLAG_4000 = 0x4000,
+	ENTRYFLAG_8000 = 0x8000
+};
+
+/**
+ * Reperesents the data for a dialog to be displayed in a conversation
+ */
 struct ConvDialog {
 	int16 _textLineIndex;	// 0-based
 	int16 _speechIndex;		// 1-based
@@ -54,6 +68,9 @@ struct ConvDialog {
 	uint16 _nodeSize;		// size in section 6
 };
 
+/**
+ * Represents a node within the conversation control logic
+ */
 struct ConvNode {
 	uint16 _index;
 	uint16 _dialogCount;
@@ -64,13 +81,16 @@ struct ConvNode {
 	Common::Array<ConvDialog> _dialogs;
 };
 
+/**
+ * Represents the static, non-changing data for a conversation
+ */
 struct ConversationData {
 	uint16 _nodeCount;		// conversation nodes, each one containing several dialog options and messages
 	uint16 _dialogCount;		// messages (non-selectable) + texts (selectable)
 	uint16 _messageCount;	// messages (non-selectable)
 	uint16 _textLineCount;
 	uint16 _unk2;
-	uint16 _importCount;
+	uint16 _maxImports;
 	uint16 _speakerCount;
 	int _textSize;
 	int _commandsSize;
@@ -88,29 +108,66 @@ struct ConversationData {
 	void load(const Common::String &filename);
 };
 
-struct ConversationCnd {
-	struct ConversationVar {
-		int v1;
-		int v2;
-		int v3;
-	};
-
-	Common::Array<ConversationVar> _vars;
+struct ConversationVar {
+	bool _isPtr;
+	int _val;
+	int *_valPtr;
 
 	/**
-	 * Load the specified conversation resource file
+	 * Constructor
+	 */
+	ConversationVar() : _isPtr(false), _val(0), _valPtr(nullptr) {}
+
+	/**
+	 * Sets a numeric value
+	 */
+	void setValue(int val);
+
+	/**
+	 * Sets a pointer value
+	 */
+	void setValue(int *val);
+
+	/**
+	 * Return either the variable's pointer, or a pointer to it's direct value
+	 */
+	int *getValue() { return _isPtr ? _valPtr : &_val; }
+};
+
+/**
+ * Conditional (i.e. changeable) data for the conversation
+ */
+struct ConversationConditionals {
+	Common::Array<uint> _importVariables;
+	Common::Array<uint> _entryFlags;
+	Common::Array<ConversationVar> _vars;
+	int _numImports;
+
+	/**
+	 * Constructor
+	 */
+	ConversationConditionals() : _numImports(0) {}
+
+	/**
+	 * Load the specified conversation conditionals resource file
 	 */
 	void load(const Common::String &filename);
 };
 
+/**
+ * Represents all the data needed for a particular loaded conversation
+ */
 struct ConversationEntry {
 	int _convId;
 	ConversationData _data;
-	ConversationCnd _cnd;
+	ConversationConditionals _cnd;
 };
 
 class MADSEngine;
 
+/**
+ * Manager for loading and running conversations
+ */
 class GameConversations {
 private:
 	MADSEngine *_vm;
@@ -122,8 +179,20 @@ private:
 	int _arr5[MAX_SPEAKERS];
 	int _arr6[MAX_SPEAKERS];
 	InputMode _inputMode;
-	int _val1, _val2, _val3, _val4, _val5;
-
+	int _val1, _val5;
+	int _heldVal, _releaseVal;
+	int _speakerVal;
+	int _heroTrigger;
+	TriggerMode _heroTriggerMode;
+	int _interlocutorTrigger;
+	TriggerMode _interlocutorTriggerMode;
+	ConversationEntry *_runningConv;
+	int _restoreRunning;
+	bool _playerEnabled;
+	uint32 _startFrameNumber;
+	ConversationVar *_vars;
+	ConversationVar *_nextStartNode;
+	
 	/**
 	 * Returns the record for the specified conversation, if it's loaded
 	 */
@@ -133,11 +202,16 @@ private:
 	 * Start a specified conversation slot
 	 */
 	void start();
-public:
-	ConversationEntry *_runningConv;
-	int _restoreRunning;
-	bool _playerEnabled;
-	uint32 _startFrameNumber;
+
+	/**
+	 * Remove any currently active dialog window
+	 */
+	void removeActiveWindow();
+
+	/**
+	 * Flags a conversation option/entry
+	 */
+	void flagEntry(ConvFlagMode mode, int entryIndex);
 public:
 	/**
 	 * Constructor
@@ -162,23 +236,68 @@ public:
 	void run(int id);
 
 	/**
-	 * Sets a variable
+	 * Sets a variable to a numeric value
 	 */
-	void setVariable(uint idx, int v1, int v2 = -1);
+	void setVariable(uint idx, int val);
 
-	int* _nextStartNode;
-	int* getVariable(int idx);
+	/**
+	 * Sets a variable to a pointer value
+	 */
+	void setVariable(uint idx, int *val);
 
-	void stop();
-	void exportPointer(int *val);
-	void exportValue(int val);
+	/**
+	 * Sets the starting node index
+	 */
+	void setStartNode(uint nodeIndex);
+
+	/**
+	 * Set the hero trigger
+	 */
 	void setHeroTrigger(int val);
-	void setInterlocutorTrigger(int val);
-	void hold();
-	void release();
-	void reset(int id);
-	void abortConv();
 	
+	/**
+	 * Set the interlocutor trigger
+	 */
+	void setInterlocutorTrigger(int val);
+
+	/**
+	 * Returns either the pointer value of a variable, or if the variable
+	 * contains a numeric value directly, returns a pointer to it
+	 */
+	int *getVariable(int idx);
+
+	/**
+	 * Hold a ??? value
+	 */
+	void hold();
+
+	/**
+	 * Release a prevoiusly held value
+	 */
+	void release();
+
+	/**
+	 * Stop any currently running conversation
+	 */
+	void stop();
+
+	/**
+	 * Adds the passed pointer into the list of import variables for the given conversation
+	 */
+	void exportPointer(int *ptr);
+
+	/**
+	 * Adds the passed value into the list of import variables for the given conversation
+	 */
+	void exportValue(int val);
+
+	void reset(int id);
+	
+	/**
+	 * Handles updating the conversation display
+	 */
+	void update(bool isRelease);
+
 	/**
 	 * Returns true if any conversation is currently atcive
 	 */
@@ -188,6 +307,11 @@ public:
 	 * Returns the currently active conversation Id
 	 */
 	int activeConvId() const { return !active() ? -1 : _runningConv->_convId; }
+
+	/**
+	 * Returns _restoreRunning value
+	 */
+	int restoreRunning() const { return _restoreRunning; }
 };
 
 } // End of namespace MADS

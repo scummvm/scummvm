@@ -67,7 +67,7 @@ void Scene1xx::sceneEntrySound() {
 			break;
 
 		case 104:
-			if ((_vm->_gameConv->_restoreRunning == 7) || (_scene->_priorSceneId == 301)) {
+			if ((_vm->_gameConv->restoreRunning() == 7) || (_scene->_priorSceneId == 301)) {
 				_vm->_sound->command(33);
 			} else if (!_globals[kRoom103104Transition] && !_globals[kObservedPhan104]) {
 				_vm->_sound->command(37);
@@ -218,7 +218,7 @@ void Scene101::enter() {
 		_talkCounter = 0;
 		_chandelierStatus = 3;
 
-		if (_vm->_gameConv->_restoreRunning == 1) {
+		if (_vm->_gameConv->restoreRunning() == 1) {
 			_vm->_gameConv->run(1);
 			_vm->_gameConv->exportPointer(&_globals[kPlayerScore]);
 			_chandelierStatus = 4;
@@ -1118,7 +1118,7 @@ void Scene103::enter() {
 			_anim3ActvFl = true;
 			_game._player._stepEnabled = true;
 			_scene->setAnimFrame(_globals._animationIndexes[3], 36);
-		} else if (_vm->_gameConv->_restoreRunning == 12) {
+		} else if (_vm->_gameConv->restoreRunning() == 12) {
 			_vm->_gameConv->run(12);
 			_vm->_gameConv->exportPointer(&_globals[kPlayerScore]);
 			_vm->_gameConv->exportValue(_globals[kMusicSelected]);
@@ -2504,7 +2504,7 @@ void Scene104::enter() {
 	}
 
 	if (_scene->_priorSceneId == RETURNING_FROM_LOADING) {
-		if (_vm->_gameConv->_restoreRunning == 7) {
+		if (_vm->_gameConv->restoreRunning() == 7) {
 			_globals._animationIndexes[1] = _scene->loadAnimation(formAnimName('r', 1), 1);
 			_globals._animationIndexes[2] = _scene->loadAnimation(formAnimName('d', 1), 1);
 			_walkStatus = 0;
@@ -7056,7 +7056,7 @@ void Scene112::enter() {
 	_scene->setAnimFrame(_globals._animationIndexes[1], 82);
 	_raoulAction = 2;
 
-	if (_vm->_gameConv->_restoreRunning == 3) {
+	if (_vm->_gameConv->restoreRunning() == 3) {
 		_vm->_gameConv->run(3);
 		_vm->_gameConv->exportPointer(&_globals[kPlayerScore]);
 		_scene->setAnimFrame(_globals._animationIndexes[1], 17);
@@ -7983,7 +7983,7 @@ void Scene113::enter() {
 		_game._player._facing = FACING_NORTH;
 	}
 
-	switch (_vm->_gameConv->_restoreRunning) {
+	switch (_vm->_gameConv->restoreRunning()) {
 	case 4:
 		_vm->_gameConv->run(4);
 		_vm->_gameConv->exportPointer(&_globals[kPlayerScore]);
