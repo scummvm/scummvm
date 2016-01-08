@@ -60,13 +60,14 @@ struct SciKernelMapSubEntry {
 #define SCI_SUBOPENTRY_TERMINATOR { SCI_VERSION_NONE, SCI_VERSION_NONE, 0, NULL, NULL, NULL, NULL }
 
 
-#define SIG_SCIALL         SCI_VERSION_NONE, SCI_VERSION_NONE
-#define SIG_SCI0           SCI_VERSION_NONE, SCI_VERSION_01
-#define SIG_SCI1           SCI_VERSION_1_EGA_ONLY, SCI_VERSION_1_LATE
-#define SIG_SCI11          SCI_VERSION_1_1, SCI_VERSION_1_1
-#define SIG_SINCE_SCI11    SCI_VERSION_1_1, SCI_VERSION_NONE
-#define SIG_SINCE_SCI21    SCI_VERSION_2_1_EARLY, SCI_VERSION_3
-#define SIG_UNTIL_SCI21MID SCI_VERSION_2_1_EARLY, SCI_VERSION_2_1_MIDDLE
+#define SIG_SCIALL          SCI_VERSION_NONE, SCI_VERSION_NONE
+#define SIG_SCI0            SCI_VERSION_NONE, SCI_VERSION_01
+#define SIG_SCI1            SCI_VERSION_1_EGA_ONLY, SCI_VERSION_1_LATE
+#define SIG_SCI11           SCI_VERSION_1_1, SCI_VERSION_1_1
+#define SIG_SINCE_SCI11     SCI_VERSION_1_1, SCI_VERSION_NONE
+#define SIG_SINCE_SCI21     SCI_VERSION_2_1_EARLY, SCI_VERSION_3
+#define SIG_UNTIL_SCI21MID  SCI_VERSION_2, SCI_VERSION_2_1_MIDDLE
+#define SIG_SINCE_SCI21LATE SCI_VERSION_2_1_LATE, SCI_VERSION_3
 
 #define SIG_SCI16          SCI_VERSION_NONE, SCI_VERSION_1_1
 #define SIG_SCI32          SCI_VERSION_2, SCI_VERSION_NONE
@@ -310,7 +311,7 @@ static const SciKernelMapSubEntry kString_subops[] = {
 	{ SIG_SCI32,           6, MAP_CALL(StringCopy),                "[or]i[or]ii",          NULL },
 	{ SIG_SCI32,           7, MAP_CALL(StringCompare),             "[or][or](i)",          NULL },
 
-	// =SCI2.1 Early and SCI2.1 Middle=
+	// =SCI2, SCI2.1 Early and SCI2.1 Middle=
 	{ SIG_UNTIL_SCI21MID,  8, MAP_CALL(StringDup),                 "[or]",                 NULL },
 	{ SIG_UNTIL_SCI21MID,  9, MAP_CALL(StringGetData),             "[or]",                 NULL },
 	{ SIG_UNTIL_SCI21MID, 10, MAP_CALL(StringLen),                 "[or]",                 NULL },
@@ -327,15 +328,15 @@ static const SciKernelMapSubEntry kString_subops[] = {
 	{ SIG_UNTIL_SCI21MID, 18, MAP_CALL(StringTrnExclude),          "[or]",                 NULL },
 
 	// SCI2.1 Late + SCI3 - kStringDup + kStringGetData were removed
-	{ SIG_SCI32,           8, MAP_CALL(StringLen),                 "[or]",                 NULL },
-	{ SIG_SCI32,           9, MAP_CALL(StringPrintf),              "[or](.*)",             NULL },
-	{ SIG_SCI32,          10, MAP_CALL(StringPrintfBuf),           "[or](.*)",             NULL },
-	{ SIG_SCI32,          11, MAP_CALL(StringAtoi),                "[or]",                 NULL },
-	{ SIG_SCI32,          12, MAP_CALL(StringTrim),                "[or]",                 NULL },
-	{ SIG_SCI32,          13, MAP_CALL(StringUpper),               "[or]",                 NULL },
-	{ SIG_SCI32,          14, MAP_CALL(StringLower),               "[or]",                 NULL },
-	{ SIG_SCI32,          15, MAP_CALL(StringTrn),                 "[or]",                 NULL },
-	{ SIG_SCI32,          16, MAP_CALL(StringTrnExclude),          "[or]",                 NULL },
+	{ SIG_SINCE_SCI21LATE, 8, MAP_CALL(StringLen),                 "[or]",                 NULL },
+	{ SIG_SINCE_SCI21LATE, 9, MAP_CALL(StringPrintf),              "[or](.*)",             NULL },
+	{ SIG_SINCE_SCI21LATE,10, MAP_CALL(StringPrintfBuf),           "[or](.*)",             NULL },
+	{ SIG_SINCE_SCI21LATE,11, MAP_CALL(StringAtoi),                "[or]",                 NULL },
+	{ SIG_SINCE_SCI21LATE,12, MAP_CALL(StringTrim),                "[or]",                 NULL },
+	{ SIG_SINCE_SCI21LATE,13, MAP_CALL(StringUpper),               "[or]",                 NULL },
+	{ SIG_SINCE_SCI21LATE,14, MAP_CALL(StringLower),               "[or]",                 NULL },
+	{ SIG_SINCE_SCI21LATE,15, MAP_CALL(StringTrn),                 "[or]",                 NULL },
+	{ SIG_SINCE_SCI21LATE,16, MAP_CALL(StringTrnExclude),          "[or]",                 NULL },
 	SCI_SUBOPENTRY_TERMINATOR
 };
 
