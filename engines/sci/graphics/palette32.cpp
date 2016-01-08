@@ -85,7 +85,7 @@ void GfxPalette32::unloadClut() {
 	_clutTable = 0;
 }
 
-inline void GfxPalette32::_clearCycleMap(const uint16 fromColor, const uint16 numColorsToClear) {
+inline void GfxPalette32::clearCycleMap(const uint16 fromColor, const uint16 numColorsToClear) {
 	bool *mapEntry = _cycleMap + fromColor;
 	const bool *lastEntry = _cycleMap + numColorsToClear;
 	while (mapEntry < lastEntry) {
@@ -93,7 +93,7 @@ inline void GfxPalette32::_clearCycleMap(const uint16 fromColor, const uint16 nu
 	}
 }
 
-inline void GfxPalette32::_setCycleMap(const uint16 fromColor, const uint16 numColorsToSet) {
+inline void GfxPalette32::setCycleMap(const uint16 fromColor, const uint16 numColorsToSet) {
 	bool *mapEntry = _cycleMap + fromColor;
 	const bool *lastEntry = _cycleMap + numColorsToSet;
 	while (mapEntry < lastEntry) {
@@ -104,7 +104,7 @@ inline void GfxPalette32::_setCycleMap(const uint16 fromColor, const uint16 numC
 	}
 }
 
-inline PalCycler *GfxPalette32::_getCycler(const uint16 fromColor) {
+inline PalCycler *GfxPalette32::getCycler(const uint16 fromColor) {
 	const int numCyclers = ARRAYSIZE(_cyclers);
 
 	for (int cyclerIndex = 0; cyclerIndex < numCyclers; ++cyclerIndex) {
@@ -176,11 +176,11 @@ int16 GfxPalette32::setCycle(const uint16 fromColor, const uint16 toColor, const
 	int cyclerIndex;
 	const int numCyclers = ARRAYSIZE(_cyclers);
 
-	PalCycler *cycler = _getCycler(fromColor);
+	PalCycler *cycler = getCycler(fromColor);
 
 	if (cycler != nullptr) {
 		//debug("Resetting existing cycler");
-		_clearCycleMap(fromColor, cycler->numColorsToCycle);
+		clearCycleMap(fromColor, cycler->numColorsToCycle);
 	} else {
 		for (cyclerIndex = 0; cyclerIndex < numCyclers; ++cyclerIndex) {
 			if (_cyclers[cyclerIndex] == nullptr) {
@@ -210,7 +210,7 @@ int16 GfxPalette32::setCycle(const uint16 fromColor, const uint16 toColor, const
 			}
 		}
 
-		_clearCycleMap(cycler->fromColor, cycler->numColorsToCycle);
+		clearCycleMap(cycler->fromColor, cycler->numColorsToCycle);
 	}
 
 	const uint16 numColorsToCycle = 1 + ((uint8) toColor) - fromColor;
@@ -222,7 +222,7 @@ int16 GfxPalette32::setCycle(const uint16 fromColor, const uint16 toColor, const
 	cycler->lastUpdateTick = g_sci->getTickCount();
 	cycler->numTimesPaused = 0;
 
-	_setCycleMap(fromColor, numColorsToCycle);
+	setCycleMap(fromColor, numColorsToCycle);
 
 	// TODO: Validate that this is the correct return value according
 	// to disassembly
@@ -230,7 +230,7 @@ int16 GfxPalette32::setCycle(const uint16 fromColor, const uint16 toColor, const
 }
 
 void GfxPalette32::doCycle(const uint16 fromColor, const int16 speed) {
-	PalCycler *cycler = _getCycler(fromColor);
+	PalCycler *cycler = getCycler(fromColor);
 	if (cycler != nullptr) {
 		cycler->lastUpdateTick = g_sci->getTickCount();
 		_doCycle(cycler, speed);
@@ -238,14 +238,14 @@ void GfxPalette32::doCycle(const uint16 fromColor, const int16 speed) {
 }
 
 void GfxPalette32::cycleOn(const uint16 fromColor) {
-	PalCycler *cycler = _getCycler(fromColor);
+	PalCycler *cycler = getCycler(fromColor);
 	if (cycler != nullptr && cycler->numTimesPaused > 0) {
 		--cycler->numTimesPaused;
 	}
 }
 
 void GfxPalette32::cyclePause(const uint16 fromColor) {
-	PalCycler *cycler = _getCycler(fromColor);
+	PalCycler *cycler = getCycler(fromColor);
 	if (cycler != nullptr) {
 		++cycler->numTimesPaused;
 	}
@@ -293,7 +293,7 @@ void GfxPalette32::cycleOff(const uint16 fromColor) {
 	for (int i = 0, len = ARRAYSIZE(_cyclers); i < len; ++i) {
 		PalCycler *cycler = _cyclers[i];
 		if (cycler != nullptr && cycler->fromColor == fromColor) {
-			_clearCycleMap(fromColor, cycler->numColorsToCycle);
+			clearCycleMap(fromColor, cycler->numColorsToCycle);
 			delete cycler;
 			_cyclers[i] = nullptr;
 			break;
@@ -305,7 +305,7 @@ void GfxPalette32::cycleAllOff() {
 	for (int i = 0, len = ARRAYSIZE(_cyclers); i < len; ++i) {
 		PalCycler *cycler = _cyclers[i];
 		if (cycler != nullptr) {
-			_clearCycleMap(cycler->fromColor, cycler->numColorsToCycle);
+			clearCycleMap(cycler->fromColor, cycler->numColorsToCycle);
 			delete cycler;
 			_cyclers[i] = nullptr;
 		}

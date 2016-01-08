@@ -85,9 +85,9 @@ namespace Sci {
 		 * a fatal error has occurred and the engine will display an error and then exit.
 		 */
 		bool _cycleMap[256];
-		inline void _clearCycleMap(uint16 fromColor, uint16 numColorsToClear);
-		inline void _setCycleMap(uint16 fromColor, uint16 numColorsToClear);
-		inline PalCycler *_getCycler(uint16 fromColor);
+		inline void clearCycleMap(uint16 fromColor, uint16 numColorsToClear);
+		inline void setCycleMap(uint16 fromColor, uint16 numColorsToClear);
+		inline PalCycler *getCycler(uint16 fromColor);
 
 		/**
 		 * The fade table records the expected intensity level of each pixel in the palette that will be displayed on
