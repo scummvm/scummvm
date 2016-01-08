@@ -5,6 +5,7 @@ MODULE_OBJS := \
 	detection.o \
 	entities.o \
 	gui.o \
+	randomhat.o \
 	script.o \
 	util.o \
 	wage.o \

@@ -199,7 +199,7 @@ bool Script::execute(World *world, int loopCount, String *inputText, Designed *i
 			handleAcceptCommand();
 		} else {
 			Chr *player = _world->_player;
-			WeaponArray *weapons = player->getWeapons();
+			WeaponArray *weapons = player->getWeapons(true);
 			for (WeaponArray::const_iterator weapon = weapons->begin(); weapon != weapons->end(); ++weapon) {
 				if (tryAttack(*weapon, input)) {
 					handleAttack(*weapon);

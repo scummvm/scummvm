@@ -378,10 +378,18 @@ void Chr::resetState() {
 	_context._statVariables[PHYS_SPE_BAS] = _context._statVariables[PHYS_SPE_CUR] = _runningSpeed;
 }
 
-WeaponArray *Chr::getWeapons() {
+WeaponArray *Chr::getWeapons(bool includeMagic) {
 	WeaponArray *list = new WeaponArray;
 
 	warning("STUB: getWeapons");
+
+	return list;
+}
+
+ObjArray *Chr::getMagicalObjects() {
+	ObjArray *list = new ObjArray;
+
+	warning("STUB: getMagicalObjects");
 
 	return list;
 }

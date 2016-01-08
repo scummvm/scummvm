@@ -61,6 +61,9 @@ class Script;
 class Weapon;
 
 typedef Common::Array<Weapon *> WeaponArray;
+typedef Common::Array<Obj *> ObjArray;
+typedef Common::Array<Chr *> ChrArray;
+typedef Common::List<Obj *> ObjList;
 
 enum StatVariable {
 /** The base physical accuracy of the player. */
@@ -215,71 +218,11 @@ public:
 
 	Context _context;
 
-	WeaponArray *getWeapons();
+	WeaponArray *getWeapons(bool includeMagic);
+	ObjArray *getMagicalObjects();
 	String &getNameWithDefiniteArticle(bool capitalize);
 
 public:
-#if 0
-	Weapon[] getWeapons() {
-		ArrayList<Weapon> weapons = new ArrayList<Weapon>();
-		if (hasNativeWeapon1()) {
-			weapons.add(new Weapon() {
-				String getName() {
-					return _getNativeWeapon1();
-				}
-				String getOperativeVerb() {
-					return _getOperativeVerb1();
-				}
-				int getType() {
-					return _Obj.REGULAR_WEAPON;
-				}
-				int getAccuracy() {
-					return _0;
-				}
-				int getDamage() {
-					return _getWeaponDamage1();
-				}
-				String getSound() {
-					return _getWeaponSound1();
-				}
-				void decrementNumberOfUses() {}
-			});
-		}
-		if (hasNativeWeapon2()) {
-			weapons.add(new Weapon() {
-				String getName() {
-					return _getNativeWeapon2();
-				}
-				String getOperativeVerb() {
-					return _getOperativeVerb2();
-				}
-				int getType() {
-					return _Obj.REGULAR_WEAPON;
-				}
-				int getAccuracy() {
-					return _0;
-				}
-				int getDamage() {
-					return _getWeaponDamage2();
-				}
-				String getSound() {
-					return _getWeaponSound2();
-				}
-				void decrementNumberOfUses() {}
-			});
-		}
-		for (Obj o : getInventory()) {
-			switch (o.getType()) {
-				case Obj.REGULAR_WEAPON:
-				case Obj.THROW_WEAPON:
-				case Obj.MAGICAL_OBJECT:
-					weapons.add(o);
-			}
-		}
-		return _(Weapon[]) weapons.toArray(new Weapon[0]);
-	}
-#endif
-
 	bool hasNativeWeapon1() {
 		return (_nativeWeapon1.size() > 0 && _operativeVerb1.size() > 0);
 	}

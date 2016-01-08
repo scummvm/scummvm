@@ -399,6 +399,83 @@ void WageEngine::encounter(Chr *player, Chr *chr) {
 
 void WageEngine::performCombatAction(Chr *npc, Chr *player) {
 	warning("STUB WageEngine::performCombatAction()");
+#if 0
+	if (npc->_frozen)
+		return;
+
+	RandomHat hat;
+
+	bool winning = (npc->_context._statVariables[PHYS_HIT_CUR] > player->_context._statVariables[PHYS_HIT_CUR]);
+	int validMoves = getValidMoveDirections(npc);
+	WeaponArray *weapons = npc->getWeapons(false);
+	ObjArray *magics = npc->getMagicalObjects();
+	// TODO: Figure out under what circumstances we need to add +1
+	// for the chance (e.g. only when all values were set to 0?).
+	if (winning) {
+		if (!_world->_weaponsMenuDisabled) {
+			if (weapons->size() > 0)
+				hat.addTokens(kTokWeapons, npc->_winningWeapons + 1);
+			if (magics->size() > 0)
+				hat.addTokens(kTokMagic, npc->_winningMagic);
+		}
+		if (validMoves != 0)
+			hat.addTokens(kTokRun, npc->_winningRun + 1);
+		if (npc->_inventory.size())
+			hat.addTokens(kTokOffer, npc->_winningOffer + 1);
+	} else {
+		if (!_world->_weaponsMenuDisabled) {
+			if (npc.getWeapons(false).length > 0)
+				hat.addTokens(kTokWeapons, npc->_losingWeapons + 1);
+			if (magics->size() > 0)
+				hat.addTokens(kTokMagic, npc->_losingMagic);
+		}
+		if (validMoves != 0)
+			hat.addTokens(kTokRun, npc->_losingRun + 1);
+		if (npc->_inventory.size())
+			hat.addTokens(kTokOffer, npc->_losingOffer + 1);
+	}
+
+	ObjArray *objs = npc->_currentScene->_objs;
+	if (npc->_inventory.size() < npc->_maximumCarriedObjects) {
+		int cnt = 0;
+		for (ObjList::const_iterator it = objs.begin(); it != objs.end(); ++it, ++cnt) {
+			if ((*it)->_type != Obj::IMMOBILE_OBJECT) {
+				// TODO: I'm not sure what the chance should be here.
+				hat.addTokens(cnt, 123);
+			}
+		}
+	}
+
+	int token = hat.drawToken();
+	switch (token) {
+		case kTokWeapons:
+			// TODO: I think the monster should choose the "best" weapon.
+			performAttack(npc, player, weapons[_rnd.getRandomNumber(weapons->size() - 1)]);
+			break;
+		case kTokMagic:
+			// TODO: I think the monster should choose the "best" magic.
+			performMagic(npc, player, magics[_rnd.getRandomNumber(magics->size() - 1)]);
+			break;
+		case kTokRun:
+			performMove(npc, validMoves);
+			break;
+		case kTokOffer:
+			performOffer(npc, player);
+			break;
+		default:
+			performTake(npc, objs.get(token));
+			break;
+	}
+
+	delete weapons;
+	delete magics;
+#endif
+}
+
+int WageEngine::getValidMoveDirections(Chr *npc) {
+	warning("STUB: getValidMoveDirections()");
+
+	return 0;
 }
 
 void WageEngine::redrawScene() {

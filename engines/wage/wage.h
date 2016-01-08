@@ -127,6 +127,7 @@ private:
 	void processTurnInternal(Common::String *textInput, Designed *clickInput);
 	void regen();
 	void performCombatAction(Chr *npc, Chr *player);
+	int getValidMoveDirections(Chr *npc);
 
 public:
 	Common::RandomSource *_rnd;
