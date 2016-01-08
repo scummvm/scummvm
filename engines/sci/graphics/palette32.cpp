@@ -117,7 +117,7 @@ inline PalCycler *GfxPalette32::getCycler(const uint16 fromColor) {
 	return nullptr;
 }
 
-inline void _doCycle(PalCycler *cycler, const int16 speed) {
+inline void doCycleInternal(PalCycler *cycler, const int16 speed) {
 	int16 currentCycle = cycler->currentCycle;
 	const uint16 numColorsToCycle = cycler->numColorsToCycle;
 
@@ -159,7 +159,7 @@ void GfxPalette32::applyCycles() {
 
 		if (cycler->delay != 0 && cycler->numTimesPaused == 0) {
 			while ((cycler->delay + cycler->lastUpdateTick) < g_sci->getTickCount()) {
-				_doCycle(cycler, 1);
+				doCycleInternal(cycler, 1);
 				cycler->lastUpdateTick += cycler->delay;
 			}
 		}
@@ -233,7 +233,7 @@ void GfxPalette32::doCycle(const uint16 fromColor, const int16 speed) {
 	PalCycler *cycler = getCycler(fromColor);
 	if (cycler != nullptr) {
 		cycler->lastUpdateTick = g_sci->getTickCount();
-		_doCycle(cycler, speed);
+		doCycleInternal(cycler, speed);
 	}
 }
 
