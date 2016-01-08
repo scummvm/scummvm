@@ -131,22 +131,26 @@ inline void _doCycle(PalCycler *cycler, const int16 speed) {
 }
 
 void GfxPalette32::applyAllCycles() {
+	Color paletteCopy[256];
+	memcpy(paletteCopy, _sysPalette.colors, sizeof(Color) * 256);
+
 	for (int cyclerIndex = 0, numCyclers = ARRAYSIZE(_cyclers); cyclerIndex < numCyclers; ++cyclerIndex) {
 		PalCycler *cycler = _cyclers[cyclerIndex];
 		if (cycler != nullptr) {
 			cycler->currentCycle = (uint8) ((((int) cycler->currentCycle) + 1) % cycler->numColorsToCycle);
 			// Disassembly was not fully evaluated to verify this is exactly the same
 			// as the code from applyCycles, but it appeared to be at a glance
-			Color paletteCopy[256];
-			memcpy(paletteCopy, _sysPalette.colors, sizeof(Color) * 256);
-			for (int i = 0; i < cycler->numColorsToCycle; i++) {
-				_sysPalette.colors[cycler->fromColor + i] = paletteCopy[cycler->fromColor + (cycler->currentCycle + i) % cycler->numColorsToCycle];
+			for (int j = 0; j < cycler->numColorsToCycle; j++) {
+				_sysPalette.colors[cycler->fromColor + j] = paletteCopy[cycler->fromColor + (cycler->currentCycle + j) % cycler->numColorsToCycle];
 			}
 		}
 	}
 }
 
 void GfxPalette32::applyCycles() {
+	Color paletteCopy[256];
+	memcpy(paletteCopy, _sysPalette.colors, sizeof(Color) * 256);
+
 	for (int i = 0, len = ARRAYSIZE(_cyclers); i < len; ++i) {
 		PalCycler *cycler = _cyclers[i];
 		if (cycler == nullptr) {
@@ -160,8 +164,6 @@ void GfxPalette32::applyCycles() {
 			}
 		}
 
-		Color paletteCopy[256];
-		memcpy(paletteCopy, _sysPalette.colors, sizeof(Color) * 256);
 		for (int j = 0; j < cycler->numColorsToCycle; j++) {
 			_sysPalette.colors[cycler->fromColor + j] = paletteCopy[cycler->fromColor + (cycler->currentCycle + j) % cycler->numColorsToCycle];
 		}
@@ -177,7 +179,7 @@ int16 GfxPalette32::setCycle(const uint16 fromColor, const uint16 toColor, const
 	PalCycler *cycler = _getCycler(fromColor);
 
 	if (cycler != nullptr) {
-		debug("Resetting existing cycler");
+		//debug("Resetting existing cycler");
 		_clearCycleMap(fromColor, cycler->numColorsToCycle);
 	} else {
 		for (cyclerIndex = 0; cyclerIndex < numCyclers; ++cyclerIndex) {
