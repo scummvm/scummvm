@@ -124,8 +124,6 @@ IntuiMessage *EventManager::getMsg() {
 		message._msgClass = (_leftClick) ? kMessageLeftClick : kMessageRightClick;
 		message._qualifier = 0;
 		message._mouse = _mousePos;
-		if (!_vm->_isHiRes)
-			message._mouse.x /= 2;
 		_leftClick = _rightClick = false;
 		return &message;
 	} else if (_keyPressed.keycode != Common::KEYCODE_INVALID) {

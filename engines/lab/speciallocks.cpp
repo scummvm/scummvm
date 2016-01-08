@@ -323,11 +323,7 @@ void SpecialLocks::changeCombination(uint16 number) {
 	byte *buffer = new byte[_numberImages[1]->_width * _numberImages[1]->_height * 2];
 
 	for (int i = 1; i <= (_numberImages[combnum]->_height / 2); i++) {
-		if (_vm->_isHiRes) {
-			if (i & 1)
-				_vm->waitTOF();
-		}
-		else
+		if (i & 1)
 			_vm->waitTOF();
 
 		display.setData(_vm->_graphics->getCurrentDrawingBuffer(), false);

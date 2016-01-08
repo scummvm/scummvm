@@ -162,7 +162,7 @@ void Utils::verticalUnDiff(T *dest, Common::File *sourceFile, uint16 bytesPerRow
 
 				while (copy) {
 					if (bytesPerWord == 1)
-						*curPtr++ = sourceFile->readByte();
+						*curPtr = sourceFile->readByte();
 					else if (bytesPerWord == 2)
 						*curPtr = sourceFile->readUint16LE();
 					else if (bytesPerWord == 4)

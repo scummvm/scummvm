@@ -78,17 +78,7 @@ Button *EventManager::checkButtonHit(ButtonList *buttonList, Common::Point pos) 
 		Common::Rect buttonRect(button->_x, button->_y, button->_x + button->_image->_width - 1, button->_y + button->_image->_height - 1);
 
 		if (buttonRect.contains(pos) && button->_isEnabled) {
-			if (_vm->_isHiRes) {
-				_hitButton = button;
-			} else {
-				button->_altImage->drawImage(button->_x, button->_y);
-
-				for (int i = 0; i < 3; i++)
-					_vm->waitTOF();
-
-				button->_image->drawImage(button->_x, button->_y);
-			}
-
+			_hitButton = button;
 			return button;
 		}
 	}
@@ -156,7 +146,7 @@ void EventManager::processInput() {
 		switch (event.type) {
 		case Common::EVENT_LBUTTONDOWN:
 			if (_screenButtonList)
-				curButton = checkButtonHit(_screenButtonList, _vm->_isHiRes ? _mousePos : Common::Point(_mousePos.x / 2, _mousePos.y));
+				curButton = checkButtonHit(_screenButtonList, _mousePos);
 
 			if (curButton)
 				_lastButtonHit = curButton;
