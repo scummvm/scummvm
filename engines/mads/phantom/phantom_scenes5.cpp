@@ -257,7 +257,7 @@ void Scene501::step() {
 }
 
 void Scene501::actions() {
-	if (_vm->_gameConv->_running == 26) {
+	if (_vm->_gameConv->activeConvId() == 26) {
 		_action._inProgress = false;
 		return;
 	}
@@ -620,7 +620,7 @@ void Scene501::preActions() {
 			break;
 
 		case 1:
-			if (_vm->_gameConv->_running >= 0)
+			if (_vm->_gameConv->activeConvId() >= 0)
 				_scene->_sequences.addTimer(6, 1);
 			else {
 				_game._player._stepEnabled = true;
@@ -2263,7 +2263,7 @@ void Scene504::step() {
 }
 
 void Scene504::actions() {
-	if (_vm->_gameConv->_running == 26) {
+	if (_vm->_gameConv->activeConvId() == 26) {
 		_action._inProgress = false;
 		return;
 	}
@@ -2304,19 +2304,19 @@ void Scene504::actions() {
 		return;
 	}
 
-	if (_vm->_gameConv->_running == 19) {
+	if (_vm->_gameConv->activeConvId() == 19) {
 		handleListenConversation();
 		_action._inProgress = false;
 		return;
 	}
 
-	if (_vm->_gameConv->_running == 27) {
+	if (_vm->_gameConv->activeConvId() == 27) {
 		handlePlayConversation();
 		_action._inProgress = false;
 		return;
 	}
 
-	if (_vm->_gameConv->_running == 21) {
+	if (_vm->_gameConv->activeConvId() == 21) {
 		handleFightConversation();
 		_action._inProgress = false;
 		return;
@@ -2360,7 +2360,7 @@ void Scene504::actions() {
 
 	if (_action.isAction(VERB_WALK_THROUGH, NOUN_RIGHT_DOOR) || _action.isAction(VERB_OPEN, NOUN_RIGHT_DOOR)) {
 		if (_globals[kRightDoorIsOpen504]) {
-			if (_vm->_gameConv->_running == 26)
+			if (_vm->_gameConv->activeConvId() == 26)
 				_vm->_gameConv->abortConv();
 
 			_scene->_nextSceneId = 505;
@@ -2580,7 +2580,7 @@ void Scene504::preActions() {
 					break;
 
 				case 1:
-					if (_vm->_gameConv->_running >= 0)
+					if (_vm->_gameConv->activeConvId() >= 0)
 						_scene->_sequences.addTimer(6, 1);
 					else {
 						_game._player._stepEnabled = true;
@@ -3314,7 +3314,7 @@ void Scene505::actions() {
 		return;
 	}
 
-	if (_vm->_gameConv->_running == 20) {
+	if (_vm->_gameConv->activeConvId() == 20) {
 		handleCoffinDialog();
 		_action._inProgress = false;
 		return;
@@ -4077,7 +4077,7 @@ void Scene506::step() {
 			_scene->_nextSceneId = 501;
 	}
 
-	if (_ascendingFl && (_vm->_gameConv->_running != 26)) {
+	if (_ascendingFl && (_vm->_gameConv->activeConvId() != 26)) {
 		_ascendingFl = false;
 		_game._player._stepEnabled = false;
 	}
@@ -4205,7 +4205,7 @@ void Scene506::actions() {
 		return;
 	}
 
-	if (_vm->_gameConv->_running == 26) {
+	if (_vm->_gameConv->activeConvId() == 26) {
 		_action._inProgress = false;
 		return;
 	}

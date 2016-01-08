@@ -1070,7 +1070,7 @@ void Scene304::step() {
 }
 
 void Scene304::actions() {
-	if (_vm->_gameConv->_running == 23) {
+	if (_vm->_gameConv->activeConvId() == 23) {
 		handleConversation23();
 		_action._inProgress = false;
 		return;

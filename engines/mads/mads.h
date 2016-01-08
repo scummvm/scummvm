@@ -97,7 +97,7 @@ public:
 	EventsManager *_events;
 	Font *_font;
 	Game *_game;
-	GameConversation * _gameConv;
+	GameConversations * _gameConv;
 	Palette *_palette;
 	Resources *_resources;
 	ScreenSurface _screen;

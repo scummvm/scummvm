@@ -104,7 +104,7 @@ void MADSEngine::initialize() {
 		_gameConv = nullptr;
 		break;
 	default:
-		_gameConv = new GameConversation(this);
+		_gameConv = new GameConversations(this);
 	}
 
 	loadOptions();

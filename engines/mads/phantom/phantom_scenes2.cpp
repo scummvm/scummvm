@@ -156,14 +156,14 @@ void Scene201::step() {
 	if (_anim1ActvFl)
 		handleSellerAnimation();
 
-	if ((_needHoldFl) && (_vm->_gameConv->_running != 16)) {
+	if ((_needHoldFl) && (_vm->_gameConv->activeConvId() != 16)) {
 		_game._player._stepEnabled = false;
 		_needHoldFl = false;
 	}
 }
 
 void Scene201::actions() {
-	if (_vm->_gameConv->_running == 16) {
+	if (_vm->_gameConv->activeConvId() == 16) {
 		handleConversation();
 		_action._inProgress = false;
 		return;
@@ -786,13 +786,13 @@ void Scene202::step() {
 }
 
 void Scene202::actions() {
-	if (_vm->_gameConv->_running == 17) {
+	if (_vm->_gameConv->activeConvId() == 17) {
 		handleConversation1();
 		_action._inProgress = false;
 		return;
 	}
 
-	if (_vm->_gameConv->_running == 9) {
+	if (_vm->_gameConv->activeConvId() == 9) {
 		handleConversation2();
 		_action._inProgress = false;
 		return;
@@ -1725,7 +1725,7 @@ void Scene203::step() {
 		_vm->_sound->command(25);
 		_globals._sequenceIndexes[5] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[5], false, -1);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[5], 14);
-		if (_vm->_gameConv->_running != 15)
+		if (_vm->_gameConv->activeConvId() != 15)
 			_game._player._stepEnabled = true;
 		break;
 
@@ -1735,19 +1735,19 @@ void Scene203::step() {
 }
 
 void Scene203::actions() {
-	if (_vm->_gameConv->_running == 5) {
+	if (_vm->_gameConv->activeConvId() == 5) {
 		handleBrieConversation();
 		_action._inProgress = false;
 		return;
 	}
 
-	if (_vm->_gameConv->_running == 8) {
+	if (_vm->_gameConv->activeConvId() == 8) {
 		handleRichardConversation();
 		_action._inProgress = false;
 		return;
 	}
 
-	if (_vm->_gameConv->_running == 15) {
+	if (_vm->_gameConv->activeConvId() == 15) {
 		handleRichardAndDaaeConversation();
 		_action._inProgress = false;
 		return;
@@ -3481,7 +3481,7 @@ void Scene204::step() {
 	if (_game._trigger == 85)
 		_scene->_nextSceneId = 250;
 
-	if ((_vm->_gameConv->_running != 22) && !_skip1Fl && _endGameFl) {
+	if ((_vm->_gameConv->activeConvId() != 22) && !_skip1Fl && _endGameFl) {
 		_game._player._stepEnabled = false;
 		_skip1Fl = true;
 	}
@@ -3500,7 +3500,7 @@ void Scene204::step() {
 }
 
 void Scene204::actions() {
-	if (_vm->_gameConv->_running == 22) {
+	if (_vm->_gameConv->activeConvId() == 22) {
 		handleConversation();
 
 		_action._inProgress = false;
@@ -4525,19 +4525,19 @@ void Scene205::step() {
 }
 
 void Scene205::actions() {
-	if (_vm->_gameConv->_running == 18) {
+	if (_vm->_gameConv->activeConvId() == 18) {
 		handleConversation18();
 		_action._inProgress = false;
 		return;
 	}
 
-	if (_vm->_gameConv->_running == 10) {
+	if (_vm->_gameConv->activeConvId() == 10) {
 		handleConversation10();
 		_action._inProgress = false;
 		return;
 	}
 
-	if (_vm->_gameConv->_running == 11) {
+	if (_vm->_gameConv->activeConvId() == 11) {
 		handleConversation11();
 		_action._inProgress = false;
 		return;

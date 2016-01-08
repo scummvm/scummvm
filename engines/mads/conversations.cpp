@@ -28,187 +28,226 @@
 
 namespace MADS {
 
-#define MAX_SPEAKERS 5
-
-enum DialogCommands {
-	cmdNodeEnd = 0,
-	//
-	cmdHide = 2,
-	cmdUnhide = 3,
-	cmdMessage = 4,
-	//
-	//
-	cmdGoto = 7,
-	//
-	cmdAssign = 9,
-	cmdDialogEnd = 255
-};
-
-struct ConvDialog {
-	int16 textLineIndex;	// 0-based
-	int16 speechIndex;		// 1-based
-	uint16 nodeOffset;		// offset in section 6
-	uint16 nodeSize;		// size in section 6
-};
-
-struct ConvNode {
-	uint16 index;
-	uint16 dialogCount;
-	int16 unk1;
-	int16 unk2;
-	int16 unk3;
-
-	Common::Array<ConvDialog> dialogs;
-};
-
-struct ConvData {
-	uint16 nodeCount;		// conversation nodes, each one containing several dialog options and messages
-	uint16 dialogCount;		// messages (non-selectable) + texts (selectable)
-	uint16 messageCount;	// messages (non-selectable)
-	uint16 textLineCount;
-	uint16 unk2;
-	uint16 importCount;
-	uint16 speakerCount;
-	Common::String portraits[MAX_SPEAKERS];
-	bool speakerExists[MAX_SPEAKERS];
-	Common::String speechFile;
-	Common::Array<Common::String> textLines;
-	Common::Array<ConvNode> convNodes;
-};
-
-GameConversation::GameConversation(MADSEngine *vm)
-	: _vm(vm) {
-	_running = _restoreRunning = 0;
+GameConversations::GameConversations(MADSEngine *vm) : _vm(vm) {
+	_runningConv = nullptr;
+	_restoreRunning = 0;
 	_nextStartNode = nullptr;
+	_playerEnabled = false;
+	_startFrameNumber = 0;
+
+	// Mark all conversation slots as empty
+	for (int idx = 0; idx < MAX_CONVERSATIONS; ++idx)
+		_conversations[idx]._convId = -1;
 }
 
-GameConversation::~GameConversation() {
+GameConversations::~GameConversations() {
 }
 
-void GameConversation::get(int id) {
-	Common::File inFile;
-	Common::String fileName = Common::String::format("CONV%03d.CNV", id);
+void GameConversations::get(int id) {
+	// Scan through the conversation list for a free slot
+	int slotIndex = -1;
+	for (int idx = 0; idx < MAX_CONVERSATIONS && slotIndex == -1; ++idx) {
+		if (_conversations[idx]._convId == -1)
+			slotIndex = idx;
+	}
+	if (slotIndex == -1)
+		error("Too many conversations loaded");
+
+	// Set the conversation the slot will contain
+	_conversations[slotIndex]._convId = id;
+
+	// Load the conversation data
+	Common::String cnvFilename = Common::String::format("CONV%03d.CNV", id);
+	_conversations[slotIndex]._data.load(cnvFilename);
+
 	// TODO: Also handle the .CND file
+}
 
-	inFile.open(fileName);
+ConversationEntry *GameConversations::getConv(int convId) {
+	for (uint idx = 0; idx < MAX_CONVERSATIONS; ++idx) {
+		if (_conversations[idx]._convId == convId)
+			return &_conversations[idx];
+	}
+
+	return nullptr;
+}
+
+
+void GameConversations::run(int id) {
+	// If another conversation is running, then stop it first
+	if (_runningConv)
+		stop();
+
+	// Get the next conversation to run
+	_runningConv = getConv(id);
+	if (!_runningConv)
+		error("Specified conversation %d not loaded", id);
+
+	// Initialize needed fields
+	_startFrameNumber = _vm->_events->getFrameCounter();
+	_playerEnabled = _vm->_game->_player._stepEnabled;
+	//TODO
+
+	// Start the conversation
+	start();
+
+	warning("TODO GameConversations::run");
+}
+
+void GameConversations::start() {
+
+	warning("TODO: GameConversations::start");
+}
+
+void GameConversations::stop() {
+	warning("TODO GameConversations::stop");
+}
+
+void GameConversations::exportPointer(int *val) {
+	warning("TODO GameConversations::exportPointer");
+}
+
+void GameConversations::exportValue(int val) {
+	warning("TODO GameConversations::exportValue");
+}
+
+void GameConversations::setHeroTrigger(int val) {
+	_vm->_game->_trigger = val;	// HACK
+	//_running = -1;	// HACK
+	warning("TODO: GameConversations::setHeroTrigger");
+}
+
+void GameConversations::setInterlocutorTrigger(int val) {
+	warning("TODO: GameConversations::setInterlocutorTrigger");
+}
+
+int* GameConversations::getVariable(int idx) {
+	warning("TODO: GameConversations::getVariable");
+	return nullptr;
+}
+
+void GameConversations::hold() {
+	warning("TODO: GameConversations::hold");
+}
+
+void GameConversations::release() {
+	warning("TODO: GameConversations::release");
+}
+
+void GameConversations::reset(int id) {
+	warning("TODO: GameConversations::reset");
+}
+
+void GameConversations::abortConv() {
+	warning("TODO: GameConversations::abort");
+}
+
+/*------------------------------------------------------------------------*/
+
+void ConversationData::load(const Common::String &filename) {
+	Common::File inFile;
+	char buffer[16];
+
+	inFile.open(filename);
 	MadsPack convFileUnpacked(&inFile);
 	Common::SeekableReadStream *convFile = convFileUnpacked.getItemStream(0);
 
-	char buffer[16];
-
-	ConvData conv;
-
 	// **** Section 0: Header *************************************************
-	conv.nodeCount = convFile->readUint16LE();
-	conv.dialogCount = convFile->readUint16LE();
-	conv.messageCount = convFile->readUint16LE();
-	conv.textLineCount = convFile->readUint16LE();
-	conv.unk2 = convFile->readUint16LE();
-	conv.importCount = convFile->readUint16LE();
-	conv.speakerCount = convFile->readUint16LE();
+	_nodeCount = convFile->readUint16LE();
+	_dialogCount = convFile->readUint16LE();
+	_messageCount = convFile->readUint16LE();
+	_textLineCount = convFile->readUint16LE();
+	_unk2 = convFile->readUint16LE();
+	_importCount = convFile->readUint16LE();
+	_speakerCount = convFile->readUint16LE();
 
-	//debug("Conv %d has %d nodes, %d dialogs, %d messages, %d text lines, %d unk2, %d imports and %d speakers",
-	//		id, conv.nodeCount, conv.dialogCount, conv.messageCount, conv.textLineCount, conv.unk2, conv.importCount, conv.speakerCount);
-
-	for (uint16 i = 0; i < MAX_SPEAKERS; i++) {
+	for (uint idx = 0; idx < MAX_SPEAKERS; ++idx) {
 		convFile->read(buffer, 16);
-		conv.portraits[i] = buffer;
-		//debug("Speaker %d, portrait %s", i, conv.portraits[i].c_str());
+		_portraits[idx] = buffer;
 	}
 
-	for (uint16 i = 0; i < MAX_SPEAKERS; i++) {
-		conv.speakerExists[i] = convFile->readUint16LE();
-		//debug("Speaker %d exists: %d", i, conv.speakerExists[i]);
+	for (uint idx = 0; idx < MAX_SPEAKERS; ++idx) {
+		_speakerExists[idx] = convFile->readUint16LE();
 	}
 
 	convFile->read(buffer, 14);
-	conv.speechFile = Common::String(buffer);
-	//debug("Speech file %s", conv.speechFile.c_str());
+	_speechFile = Common::String(buffer);
 
-	uint16 textLength = convFile->readUint16LE();	// Total text length in section 5
-	convFile->skip(2);	// TODO: unknown
-	uint16 commandLength = convFile->readUint16LE();	// Total length of commands in section 6
-	//debug("Node entry commands length: %d", commandLength);
+	// Total text length in section 5
+	_textSize = convFile->readUint32LE();
+	_commandsSize = convFile->readUint32LE();
 
-#if 0
-	debug("Section 0 unknown bytes");
-	byte *tmp0 = new byte[26];
-	convFile->read(tmp0, 26);
-	Common::hexdump(tmp0, 26);
-	delete[] tmp0;
+	// The rest of the section 0 is padding to allow room for a set of pointers
+	// to the contents of the remaining sections loaded into memory as a
+	// continuous data block containing both the header and the sections
 	delete convFile;
-#else
-	warning("Section 0 unknown bytes");
-#endif
+
 	// **** Section 1: Nodes **************************************************
 	convFile = convFileUnpacked.getItemStream(1);
 
-	for (uint16 i = 0; i < conv.nodeCount; i++) {
+	_convNodes.clear();
+	for (uint i = 0; i < _nodeCount; i++) {
 		ConvNode node;
-		node.index = convFile->readUint16LE();
-		node.dialogCount = convFile->readUint16LE();
-		node.unk1 = convFile->readSint16LE();	// TODO
-		node.unk2 = convFile->readSint16LE();	// TODO
-		node.unk3 = convFile->readSint16LE();	// TODO
-		conv.convNodes.push_back(node);
+		node._index = convFile->readUint16LE();
+		node._dialogCount = convFile->readUint16LE();
+		node._unk1 = convFile->readSint16LE();	// TODO
+		node._unk2 = convFile->readSint16LE();	// TODO
+		node._unk3 = convFile->readSint16LE();	// TODO
+		_convNodes.push_back(node);
 		//debug("Node %d, index %d, entries %d - %d, %d, %d", i, node.index, node.dialogCount, node.unk1, node.unk2, node.unk3);
 	}
 	delete convFile;
 
 	// **** Section 2: Dialogs ************************************************
 	convFile = convFileUnpacked.getItemStream(2);
-	assert(convFile->size() == conv.dialogCount * 8);
+	assert(convFile->size() == _dialogCount * 8);
 
-	for (uint16 i = 0; i < conv.nodeCount; i++) {
-		uint16 dialogCount = conv.convNodes[i].dialogCount;
+	for (uint idx = 0; idx < _nodeCount; ++idx) {
+		uint dialogCount = _convNodes[idx]._dialogCount;
 
-		for (uint16 j = 0; j < dialogCount; j++) {
+		for (uint j = 0; j < dialogCount; ++j) {
 			ConvDialog dialog;
-			dialog.textLineIndex = convFile->readSint16LE();
-			dialog.speechIndex = convFile->readSint16LE();
-			dialog.nodeOffset = convFile->readUint16LE();
-			dialog.nodeSize = convFile->readUint16LE();
-			conv.convNodes[i].dialogs.push_back(dialog);
-			//debug("Node %d, dialog %d: text line %d, speech index %d, node offset %d, node size %d", j, i, dialog.textLineIndex, dialog.speechIndex, dialog.nodeOffset, dialog.nodeSize);
+			dialog._textLineIndex = convFile->readSint16LE();
+			dialog._speechIndex = convFile->readSint16LE();
+			dialog._nodeOffset = convFile->readUint16LE();
+			dialog._nodeSize = convFile->readUint16LE();
+			_convNodes[idx]._dialogs.push_back(dialog);
 		}
 	}
 	delete convFile;
 
-	// **** Section 3: ???? ***************************************************
-#if 0
-	debug("Section 3");
+	// **** Section 3: Messages ***********************************************
 	convFile = convFileUnpacked.getItemStream(3);
-	byte *tmp1 = new byte[convFile->size()];
-	convFile->read(tmp1, convFile->size());
-	Common::hexdump(tmp1, convFile->size());
-	delete[] tmp1;
+	assert(convFile->size() == _messageCount * 8);
+
+	_messages.resize(_messageCount);
+	for (uint idx = 0; idx < _messageCount; ++idx)
+		_messages[idx] = convFile->readUint32LE();
+
 	delete convFile;
-#else
-	warning("Section 3 - TODO");
-#endif
+
 	// **** Section 4: Text line offsets **************************************
 	convFile = convFileUnpacked.getItemStream(4);
-	assert(convFile->size() == conv.textLineCount * 2);
+	assert(convFile->size() == _textLineCount * 2);
 
-	uint16 *textLineOffsets = new uint16[conv.textLineCount];	// deleted below in section 5
-	for (uint16 i = 0; i < conv.textLineCount; i++)
+	uint16 *textLineOffsets = new uint16[_textLineCount];	// deleted below in section 5
+	for (uint16 i = 0; i < _textLineCount; i++)
 		textLineOffsets[i] = convFile->readUint16LE();
 
 	delete convFile;
 
 	// **** Section 5: Text lines *********************************************
 	convFile = convFileUnpacked.getItemStream(5);
-	assert(convFile->size() == textLength);
+	assert(convFile->size() == _textSize);
 
 	Common::String textLine;
-	conv.textLines.resize(conv.textLineCount);
+	_textLines.resize(_textLineCount);
 	char textLineBuffer[256];
 	uint16 nextOffset;
-	for (uint16 i = 0; i < conv.textLineCount; i++) {
-		nextOffset = (i != conv.textLineCount - 1) ? textLineOffsets[i + 1] : convFile->size();
+	for (uint16 i = 0; i < _textLineCount; i++) {
+		nextOffset = (i != _textLineCount - 1) ? textLineOffsets[i + 1] : convFile->size();
 		convFile->read(textLineBuffer, nextOffset - textLineOffsets[i]);
-		conv.textLines[i] = Common::String(textLineBuffer);	
-		//debug("Text line %d: %s", i, conv.textLines[i].c_str());
+		_textLines[i] = Common::String(textLineBuffer);
 	}
 
 	delete[] textLineOffsets;
@@ -216,13 +255,13 @@ void GameConversation::get(int id) {
 
 	// **** Section 6: Node entry commands ************************************
 	convFile = convFileUnpacked.getItemStream(6);
-	assert(convFile->size() == commandLength);
+	assert(convFile->size() == _commandsSize);
 
-	for (uint16 i = 0; i < conv.nodeCount; i++) {
-		uint16 dialogCount = conv.convNodes[i].dialogCount;
+	for (uint16 i = 0; i < _nodeCount; i++) {
+		uint16 dialogCount = _convNodes[i]._dialogCount;
 
 		for (uint16 j = 0; j < dialogCount; j++) {
-			//ConvDialog dialog = conv.convNodes[i].dialogs[j];
+			//ConvDialog dialog = _convNodes[i].dialogs[j];
 			byte command;
 			uint16 chk;
 
@@ -248,8 +287,8 @@ void GameConversation::get(int id) {
 						//debug("Hide node %d", nodeRef);
 					}
 
-					}
-					break;
+				}
+							  break;
 				case cmdUnhide: {
 					byte count = convFile->readByte();
 					for (byte k = 0; k < count; k++) {
@@ -257,8 +296,8 @@ void GameConversation::get(int id) {
 						//debug("Unhide node %d", nodeRef);
 					}
 
-					}
-					break;
+				}
+								break;
 				case cmdMessage:
 					//debug("Message");
 					convFile->skip(7);	// TODO
@@ -267,15 +306,15 @@ void GameConversation::get(int id) {
 					convFile->skip(3);	// unused?
 					/*byte nodeRef = */convFile->readByte();
 					//debug("Goto %d", nodeRef);
-					}
-					break;
+				}
+							  break;
 				case cmdAssign: {
 					convFile->skip(3);	// unused?
 					/*uint16 value = */convFile->readUint16LE();
 					/*uint16 variable = */convFile->readUint16LE();
 					//debug("Variable %d = %d", variable, value);
-					}
-					break;
+				}
+								break;
 				default:
 					error("Unknown conversation command %d", command);
 					break;
@@ -287,76 +326,8 @@ void GameConversation::get(int id) {
 	delete convFile;
 	inFile.close();
 
-	/*
-	// DEBUG: Show the very first message, and play the very first speech
-	_vm->_audio->setSoundGroup(conv.speechFile);
-	uint16 firstText = 0, firstSpeech = 1;
-
-	for (uint16 i = 0; i < conv.convNodes.size(); i++) {
-		for (uint16 k = 0; k < conv.convNodes[i].dialogs.size(); k++) {
-			if (conv.convNodes[i].dialogs[k].textLineIndex >= 0) {
-				firstText = conv.convNodes[i].dialogs[k].textLineIndex;
-				firstSpeech = conv.convNodes[i].dialogs[k].speechIndex;
-				break;
-			}
-		}
-	}
-
-	_vm->_audio->playSound(firstSpeech - 1);
-
-	TextDialog *dialog = new TextDialog(_vm, FONT_INTERFACE, Common::Point(0, 100), 30);
-	dialog->addLine(conv.textLines[firstText]);
-	dialog->show();
-	delete dialog;
-	*/
-
-	warning("TODO GameConversation::get");
+	// TODO: Still stuff to do
+	warning("TODO GameConversations::get");
 }
 
-void GameConversation::run(int id) {
-	warning("TODO GameConversation::run");
-}
-
-void GameConversation::stop() {
-	warning("TODO GameConversation::stop");
-}
-
-void GameConversation::exportPointer(int *val) {
-	warning("TODO GameConversation::exportPointer");
-}
-
-void GameConversation::exportValue(int val) {
-	warning("TODO GameConversation::exportValue");
-}
-
-void GameConversation::setHeroTrigger(int val) {
-	_vm->_game->_trigger = val;	// HACK
-	_running = -1;	// HACK
-	warning("TODO: GameConversation::setHeroTrigger");
-}
-
-void GameConversation::setInterlocutorTrigger(int val) {
-	warning("TODO: GameConversation::setInterlocutorTrigger");
-}
-
-int* GameConversation::getVariable(int idx) {
-	warning("TODO: GameConversation::getVariable");
-	return nullptr;
-}
-
-void GameConversation::hold() {
-	warning("TODO: GameConversation::hold");
-}
-
-void GameConversation::release() {
-	warning("TODO: GameConversation::release");
-}
-
-void GameConversation::reset(int id) {
-	warning("TODO: GameConversation::reset");
-}
-
-void GameConversation::abortConv() {
-	warning("TODO: GameConversation::abort");
-}
 } // End of namespace MADS

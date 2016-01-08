@@ -1486,7 +1486,7 @@ void Scene104::step() {
 }
 
 void Scene104::actions() {
-	if (_vm->_gameConv->_running == 1) {
+	if (_vm->_gameConv->activeConvId() == 1) {
 		handleFinalConversation();
 		_action._inProgress = false;
 		return;
@@ -3341,7 +3341,7 @@ void Scene105::actions() {
 		return;
 	}
 
-	if (_vm->_gameConv->_running == 2) {
+	if (_vm->_gameConv->activeConvId() == 2) {
 		handleConversation();
 		_action._inProgress = false;
 		return;

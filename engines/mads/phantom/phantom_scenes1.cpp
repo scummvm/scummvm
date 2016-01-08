@@ -300,9 +300,9 @@ void Scene101::preActions() {
 }
 
 void Scene101::actions() {
-	if (_vm->_gameConv->_running == 0)
+	if (_vm->_gameConv->activeConvId() == 0)
 		handleConversation0();
-	else if (_vm->_gameConv->_running == 1)
+	else if (_vm->_gameConv->activeConvId() == 1)
 		handleConversation1();
 	else if (_action._lookFlag) {
 		if (_globals[kCurrentYear] == 1993)
@@ -525,7 +525,7 @@ void Scene101::handleAnimation1() {
 		}
 
 		if (_startWalkingFl) {
-			if (_vm->_gameConv->_running == 1) {
+			if (_vm->_gameConv->activeConvId() == 1) {
 				if (_talkCounter > 13)
 					_chandelierStatus = 1;
 			} else
@@ -541,7 +541,7 @@ void Scene101::handleAnimation1() {
 		case 1:
 			_globals[kBrieTalkStatus] = 2;
 			resetFrame = 45;
-			if (_vm->_gameConv->_running == 1)
+			if (_vm->_gameConv->activeConvId() == 1)
 				_vm->_gameConv->stop();
 			_scene->_dynamicHotspots.remove(_brieAnimId);
 			_game._player._stepEnabled = false;
@@ -1376,7 +1376,7 @@ void Scene103::actions() {
 		return;
 	}
 
-	if (_vm->_gameConv->_running == 12) {
+	if (_vm->_gameConv->activeConvId() == 12) {
 		process_conv_jacques();
 		_action._inProgress = false;
 		return;
@@ -2678,7 +2678,7 @@ void Scene104::preActions() {
 }
 
 void Scene104::actions() {
-	if (_vm->_gameConv->_running == 7) {
+	if (_vm->_gameConv->activeConvId() == 7) {
 		processConversations();
 		_action._inProgress = false;
 		return;
@@ -5076,7 +5076,7 @@ void Scene108::enter() {
 		_globals._animationIndexes[0] = _scene->loadAnimation(formAnimName('c', 1), 1);
 		_anim0ActvFl = true;
 
-		if (_vm->_gameConv->_running == 2) {
+		if (_vm->_gameConv->activeConvId() == 2) {
 			_globals[kWalkerConverse] = _vm->getRandomNumber(1, 4);
 			_charAction = 0;
 			_vm->_gameConv->run(2);
@@ -5133,7 +5133,7 @@ void Scene108::step() {
 }
 
 void Scene108::actions() {
-	if (_vm->_gameConv->_running == 2) {
+	if (_vm->_gameConv->activeConvId() == 2) {
 		handleCharlesConversation();
 		_action._inProgress = false;
 		return;
@@ -6641,7 +6641,7 @@ void Scene111::step() {
 }
 
 void Scene111::actions() {
-	if (_vm->_gameConv->_running == 14) {
+	if (_vm->_gameConv->activeConvId() == 14) {
 		handleListenConversation();
 		_action._inProgress = false;
 		return;
@@ -7081,7 +7081,7 @@ void Scene112::step() {
 }
 
 void Scene112::actions() {
-	if (_vm->_gameConv->_running == 3) {
+	if (_vm->_gameConv->activeConvId() == 3) {
 		handleConversation();
 		_action._inProgress = false;
 		return;
@@ -8081,19 +8081,19 @@ void Scene113::step() {
 }
 
 void Scene113::actions() {
-	if (_vm->_gameConv->_running == 13) {
+	if (_vm->_gameConv->activeConvId() == 13) {
 		handleLoveConversation();
 		_action._inProgress = false;
 		return;
 	}
 
-	if (_vm->_gameConv->_running == 4) {
+	if (_vm->_gameConv->activeConvId() == 4) {
 		handleFlorentConversation();
 		_action._inProgress = false;
 		return;
 	}
 
-	if (_vm->_gameConv->_running == 6) {
+	if (_vm->_gameConv->activeConvId() == 6) {
 		handleDeadConversation();
 		_action._inProgress = false;
 		return;
