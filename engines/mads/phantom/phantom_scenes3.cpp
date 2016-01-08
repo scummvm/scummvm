@@ -681,7 +681,7 @@ void Scene303::enter() {
 	_skipFrameCheckFl = false;
 
 	if (_globals[kRightDoorIsOpen504])
-		_vm->_gameConv->get(26);
+		_vm->_gameConv->load(26);
 
 	if (_globals[kCurrentYear] == 1993) {
 		_globals._spriteIndexes[0] = _scene->_sprites.addSprites(formAnimName('z', -1));
@@ -1001,7 +1001,7 @@ void Scene304::enter() {
 	}
 
 	if (_globals[kRightDoorIsOpen504])
-		_vm->_gameConv->get(23);
+		_vm->_gameConv->load(23);
 
 	if (!_globals[kRightDoorIsOpen504]) {
 		_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('f', 1));
@@ -1904,7 +1904,7 @@ void Scene308::enter() {
 	_skip1Fl = false;
 	_skip2Fl = false;
 
-	_vm->_gameConv->get(26);
+	_vm->_gameConv->load(26);
 	_globals._spriteIndexes[0] = _scene->_sprites.addSprites(formAnimName('a', 0));
 	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('b', 0));
 	_scene->_userInterface.setup(kInputLimitedSentences);
@@ -2241,7 +2241,7 @@ void Scene309::enter() {
 
 	_anim0ActvFl = false;
 	_boatStatus = 1;
-	_vm->_gameConv->get(26);
+	_vm->_gameConv->load(26);
 
 	_globals._spriteIndexes[0] = _scene->_sprites.addSprites(formAnimName('x', 0));
 	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('x', 1));

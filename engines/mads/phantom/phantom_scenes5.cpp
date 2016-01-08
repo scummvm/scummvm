@@ -92,7 +92,7 @@ void Scene501::enter() {
 		_skipFl = false;
 	}
 
-	_vm->_gameConv->get(26);
+	_vm->_gameConv->load(26);
 
 	_globals._spriteIndexes[0] = _scene->_sprites.addSprites(formAnimName('x', 0));
 	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('x', 1));
@@ -1853,12 +1853,12 @@ void Scene504::enter() {
 	_scene->_hotspots.activate(NOUN_CHRISTINE, false);
 
 	if (!_globals[kRightDoorIsOpen504]) {
-		_vm->_gameConv->get(19);
-		_vm->_gameConv->get(27);
+		_vm->_gameConv->load(19);
+		_vm->_gameConv->load(27);
 	} else
-		_vm->_gameConv->get(21);
+		_vm->_gameConv->load(21);
 
-	_vm->_gameConv->get(26);
+	_vm->_gameConv->load(26);
 
 	_globals._spriteIndexes[14] = _scene->_sprites.addSprites("*RDR_9");
 	_globals._spriteIndexes[15] = _scene->_sprites.addSprites(formAnimName('x', 8));
@@ -3186,7 +3186,7 @@ void Scene505::enter() {
 		_checkFrame106 = false;
 	}
 
-	_vm->_gameConv->get(20);
+	_vm->_gameConv->load(20);
 	_scene->_hotspots.activateAtPos(NOUN_LID, false, Common::Point(216, 44));
 	_scene->_hotspots.activate(NOUN_CHRISTINE, false);
 
@@ -3939,7 +3939,7 @@ void Scene506::enter() {
 		_ascendingFl = false;
 	}
 
-	_vm->_gameConv->get(26);
+	_vm->_gameConv->load(26);
 
 	_globals._spriteIndexes[0] = _scene->_sprites.addSprites(formAnimName('x', 0));
 	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('x', 1));

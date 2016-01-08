@@ -45,7 +45,7 @@ GameConversations::GameConversations(MADSEngine *vm) : _vm(vm) {
 GameConversations::~GameConversations() {
 }
 
-void GameConversations::get(int id) {
+void GameConversations::load(int id) {
 	// Scan through the conversation list for a free slot
 	int slotIndex = -1;
 	for (int idx = 0; idx < MAX_CONVERSATIONS && slotIndex == -1; ++idx) {
@@ -59,10 +59,12 @@ void GameConversations::get(int id) {
 	_conversations[slotIndex]._convId = id;
 
 	// Load the conversation data
-	Common::String cnvFilename = Common::String::format("CONV%03d.CNV", id);
+	Common::String cnvFilename = Common::String::format("CONV%03d.CNV", id);	
 	_conversations[slotIndex]._data.load(cnvFilename);
 
-	// TODO: Also handle the .CND file
+	// Load the conversation's CND data
+	Common::String cndFilename = Common::String::format("CONV%03d.CND", id);
+	_conversations[slotIndex]._cnd.load(cndFilename);
 }
 
 ConversationEntry *GameConversations::getConv(int convId) {
@@ -73,7 +75,6 @@ ConversationEntry *GameConversations::getConv(int convId) {
 
 	return nullptr;
 }
-
 
 void GameConversations::run(int id) {
 	// If another conversation is running, then stop it first
@@ -150,8 +151,8 @@ void GameConversations::start() {
 
 void GameConversations::setVariable(uint idx, int v1, int v2) {
 	if (active()) {
-		_runningConv->_data2._vars[idx].v1 = v1;
-		_runningConv->_data2._vars[idx].v2 = v2;
+		_runningConv->_cnd._vars[idx].v1 = v1;
+		_runningConv->_cnd._vars[idx].v2 = v2;
 	}
 }
 
@@ -384,6 +385,12 @@ void ConversationData::load(const Common::String &filename) {
 
 	// TODO: Still stuff to do
 	warning("TODO GameConversations::get");
+}
+
+/*------------------------------------------------------------------------*/
+
+void ConversationCnd::load(const Common::String &filename) {
+	// TODO
 }
 
 } // End of namespace MADS

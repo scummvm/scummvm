@@ -1141,7 +1141,7 @@ void Scene104::setup() {
 }
 
 void Scene104::enter() {
-	_vm->_gameConv->get(1);
+	_vm->_gameConv->load(1);
 
 	if (_globals[kPlayerPersona] == 1) {
 		_scene->_sprites.addSprites(formAnimName('e', 8));
@@ -3157,7 +3157,7 @@ void Scene105::enter() {
 		_scene->_dynamicHotspots.setPosition(_boneHotspotId, Common::Point(255, 145), FACING_EAST);
 	}
 
-	_vm->_gameConv->get(2);
+	_vm->_gameConv->load(2);
 	_newStatus = 1;
 	_previousStatus = 0;
 	_maidTalkingFl = false;

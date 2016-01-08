@@ -113,7 +113,7 @@ void Scene201::enter() {
 	_sellerCount = 0;
 	_needHoldFl = false;
 
-	_vm->_gameConv->get(16);
+	_vm->_gameConv->load(16);
 	_globals._spriteIndexes[0] = _scene->_sprites.addSprites(formAnimName('x', 0));
 	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('f', 0));
 
@@ -651,8 +651,8 @@ void Scene202::enter() {
 	}
 
 	_conversationCount = 0;
-	_vm->_gameConv->get(17);
-	_vm->_gameConv->get(9);
+	_vm->_gameConv->load(17);
+	_vm->_gameConv->load(9);
 
 	_globals._spriteIndexes[1] = _scene->_sprites.addSprites("*RDR_9");
 	_globals._spriteIndexes[0] = _scene->_sprites.addSprites(formAnimName('x', 0));
@@ -1563,10 +1563,10 @@ void Scene203::enter() {
 
 	if (_globals[kCurrentYear] == 1993) {
 		_globals._spriteIndexes[0] = _scene->_sprites.addSprites(formAnimName('z', -1));
-		_vm->_gameConv->get(5);
+		_vm->_gameConv->load(5);
 	} else {
-		_vm->_gameConv->get(8);
-		_vm->_gameConv->get(15);
+		_vm->_gameConv->load(8);
+		_vm->_gameConv->load(15);
 	}
 
 	if (_globals[kCurrentYear] == 1993) {
@@ -3323,7 +3323,7 @@ void Scene204::enter() {
 	warning("TODO: If end of game, remove the walking areas");
 
 	_scene->_hotspots.activate(NOUN_BOOK, false);
-	_vm->_gameConv->get(22);
+	_vm->_gameConv->load(22);
 
 	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('p', 0));
 	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('x', 6));
@@ -4277,9 +4277,9 @@ void Scene205::enter() {
 	_scene->_hotspots.activate(NOUN_MADAME_GIRY, false);
 	_scene->_hotspots.activate(NOUN_WOMAN, false);
 
-	_vm->_gameConv->get(18);
-	_vm->_gameConv->get(10);
-	_vm->_gameConv->get(11);
+	_vm->_gameConv->load(18);
+	_vm->_gameConv->load(10);
+	_vm->_gameConv->load(11);
 
 	if (_globals[kCurrentYear] == 1881) {
 		if ((_globals[kMadameGiryShowsUp]) && (_globals[kJacquesStatus] == 0)) {
@@ -5864,7 +5864,7 @@ void Scene206::enter() {
 	_skip2Fl = false;
 
 	_scene->loadSpeech(1);
-	_vm->_gameConv->get(26);
+	_vm->_gameConv->load(26);
 
 	_globals._spriteIndexes[0] = _scene->_sprites.addSprites(formAnimName('x', 0));
 	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('x', 1));

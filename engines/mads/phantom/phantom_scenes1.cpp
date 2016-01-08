@@ -168,9 +168,9 @@ void Scene101::enter() {
 		_startSittingFl = false;
 	}
 
-	// Load Dialogs
-	_vm->_gameConv->get(0);
-	_vm->_gameConv->get(1);
+	// Load conversations
+	_vm->_gameConv->load(0);
+	_vm->_gameConv->load(1);
 
 	if (_globals[kCurrentYear] == 1993) {
 		_globals._spriteIndexes[0] = _scene->_sprites.addSprites(formAnimName('z', -1));
@@ -906,7 +906,7 @@ void Scene103::enter() {
 	_scene->_hotspots.activate(NOUN_JACQUES, false);
 	_scene->_hotspots.activate(NOUN_KEY, false);
 
-	_vm->_gameConv->get(12);
+	_vm->_gameConv->load(12);
 
 	if (_globals[kTrapDoorStatus] == 0) {
 		_globals._sequenceIndexes[0] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[0], false, 5);
@@ -2493,7 +2493,7 @@ void Scene104::enter() {
 	if (_globals[kCurrentYear] == 1993)
 		_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('z', 0));
 
-	_vm->_gameConv->get(7);
+	_vm->_gameConv->load(7);
 
 	if (_globals[kTrapDoorStatus] == 1) {
 		_globals._sequenceIndexes[0] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[0], false, 1);
@@ -5056,7 +5056,7 @@ void Scene108::enter() {
 		_maxTalkCount = 15;
 	}
 
-	_vm->_gameConv->get(2);
+	_vm->_gameConv->load(2);
 
 	if (_globals[kCurrentYear] == 1993) {
 		_globals._spriteIndexes[0] = _scene->_sprites.addSprites(formAnimName('z', -1));
@@ -6508,7 +6508,7 @@ void Scene111::enter() {
 		_scene->_hotspots.activate(NOUN_FIRE_AXE, false);
 	}
 
-	_vm->_gameConv->get(14);
+	_vm->_gameConv->load(14);
 
 	_globals._spriteIndexes[0] = _scene->_sprites.addSprites("*RDR_9");
 	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('a', 1));
@@ -7039,7 +7039,7 @@ void Scene112::enter() {
 		_didOptionFl = 0;
 	}
 
-	_vm->_gameConv->get(3);
+	_vm->_gameConv->load(3);
 
 	_globals._animationIndexes[0] = _scene->loadAnimation(formAnimName('j', 1), 1);
 	_anim0ActvFl = true;
@@ -7763,13 +7763,13 @@ void Scene113::enter() {
 	}
 
 	if (_globals[kCurrentYear] == 1993) {
-		_vm->_gameConv->get(4);
+		_vm->_gameConv->load(4);
 		if ((_globals[kDoneBrieConv203] == 1) || (_globals[kDoneBrieConv203] == 3))
-			_vm->_gameConv->get(6);
+			_vm->_gameConv->load(6);
 	} else {
 		_globals._spriteIndexes[4] = _scene->_sprites.addSprites("*faceral", false);
 		_globals._spriteIndexes[5] = _scene->_sprites.addSprites("*facecrsd", false);
-		_vm->_gameConv->get(13);
+		_vm->_gameConv->load(13);
 	}
 
 	if (_globals[kCurrentYear] == 1993) {

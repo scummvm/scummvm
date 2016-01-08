@@ -88,7 +88,7 @@ struct ConversationData {
 	void load(const Common::String &filename);
 };
 
-struct ConversationData2 {
+struct ConversationCnd {
 	struct ConversationVar {
 		int v1;
 		int v2;
@@ -96,12 +96,17 @@ struct ConversationData2 {
 	};
 
 	Common::Array<ConversationVar> _vars;
+
+	/**
+	 * Load the specified conversation resource file
+	 */
+	void load(const Common::String &filename);
 };
 
 struct ConversationEntry {
 	int _convId;
 	ConversationData _data;
-	ConversationData2 _data2;
+	ConversationCnd _cnd;
 };
 
 class MADSEngine;
@@ -145,6 +150,18 @@ public:
 	virtual ~GameConversations();
 
 	/**
+	 * Gets the specified conversation and loads into into a free slot
+	 * in the conversation list
+	 */
+	void load(int id);
+
+	/**
+	 * Run a specified conversation number. The conversation must have
+	 * previously been loaded by calling the load method
+	 */
+	void run(int id);
+
+	/**
 	 * Sets a variable
 	 */
 	void setVariable(uint idx, int v1, int v2 = -1);
@@ -152,8 +169,6 @@ public:
 	int* _nextStartNode;
 	int* getVariable(int idx);
 
-	void get(int id);
-	void run(int id);
 	void stop();
 	void exportPointer(int *val);
 	void exportValue(int val);
