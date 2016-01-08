@@ -33,7 +33,9 @@ GameConversations::GameConversations(MADSEngine *vm) : _vm(vm) {
 	_restoreRunning = 0;
 	_nextStartNode = nullptr;
 	_playerEnabled = false;
+	_inputMode = kInputBuildingSentences;
 	_startFrameNumber = 0;
+	_val1 = _val2 = _val3 = _val4 = _val5 = 0;
 
 	// Mark all conversation slots as empty
 	for (int idx = 0; idx < MAX_CONVERSATIONS; ++idx)
@@ -86,17 +88,71 @@ void GameConversations::run(int id) {
 	// Initialize needed fields
 	_startFrameNumber = _vm->_events->getFrameCounter();
 	_playerEnabled = _vm->_game->_player._stepEnabled;
-	//TODO
+	_inputMode = _vm->_game->_screenObjects._inputMode;
+	_val1 = _val2 = _val3 = 0;
+	_val4 = 0;
+	_val5 = -1;
+
+	// Initialize speaker arrays
+	Common::fill(&_speakerActive[0], &_speakerActive[MAX_SPEAKERS], false);
+	Common::fill(&_speakerPortraits[0], &_speakerPortraits[MAX_SPEAKERS], -1);
+	Common::fill(&_speakerExists[0], &_speakerExists[MAX_SPEAKERS], 1);
+	Common::fill(&_arr4[0], &_arr4[MAX_SPEAKERS], 0x8000);
+	Common::fill(&_arr5[0], &_arr5[MAX_SPEAKERS], 0x8000);
+	Common::fill(&_arr6[0], &_arr6[MAX_SPEAKERS], 30);
 
 	// Start the conversation
 	start();
 
-	warning("TODO GameConversations::run");
+	// Set variables
+	setVariable(2, 0x4F78);
+	setVariable(3, 0x4F50);
+	setVariable(4, 0x4F52);
+	setVariable(5, 0x4F54);
+	setVariable(6, 0x4F56);
+	setVariable(7, 0x4F58);
+	setVariable(8, 0x4F5A);
+	setVariable(9, 0x4F5C);
+	setVariable(10, 0x4F5E);
+	setVariable(11, 0x4F60);
+	setVariable(12, 0x4F62);
+	setVariable(13, 0x4F64);
+	setVariable(14, 0x4F66);
+	setVariable(15, 0x4F68);
+	setVariable(16, 0x4F6A);
+	setVariable(17, 0x4F6C);
+	setVariable(18, 0x4F6E);
+	setVariable(19, 0x4F70);
+	setVariable(20, 0x4F72);
+	setVariable(21, 0x4F74);
+	setVariable(22, 0x4F76);
+
+	// Load sprite data for speaker portraits
+	for (uint idx = 0; idx < _runningConv->_data._speakerCount; ++idx) {
+		const Common::String &portraitName = _runningConv->_data._portraits[idx];
+		_speakerPortraits[idx] = _vm->_game->_scene._sprites.addSprites(portraitName, PALFLAG_RESERVED);
+
+		if (_speakerPortraits[idx] > 0) {
+			_speakerActive[idx] = true;
+			_speakerExists[idx] = _runningConv->_data._speakerExists[idx];
+		}
+	}
+
+	// Refresh colors if needed
+	if (_vm->_game->_kernelMode == KERNEL_ACTIVE_CODE)
+		_vm->_palette->refreshSceneColors();
 }
 
 void GameConversations::start() {
 
 	warning("TODO: GameConversations::start");
+}
+
+void GameConversations::setVariable(uint idx, int v1, int v2) {
+	if (active()) {
+		_runningConv->_data2._vars[idx].v1 = v1;
+		_runningConv->_data2._vars[idx].v2 = v2;
+	}
 }
 
 void GameConversations::stop() {

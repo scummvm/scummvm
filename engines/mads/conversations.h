@@ -26,6 +26,7 @@
 #include "common/scummsys.h"
 #include "common/array.h"
 #include "common/str-array.h"
+#include "mads/screen.h"
 
 namespace MADS {
 
@@ -88,6 +89,13 @@ struct ConversationData {
 };
 
 struct ConversationData2 {
+	struct ConversationVar {
+		int v1;
+		int v2;
+		int v3;
+	};
+
+	Common::Array<ConversationVar> _vars;
 };
 
 struct ConversationEntry {
@@ -102,6 +110,14 @@ class GameConversations {
 private:
 	MADSEngine *_vm;
 	ConversationEntry _conversations[MAX_CONVERSATIONS];
+	bool _speakerActive[MAX_SPEAKERS];
+	int _speakerPortraits[MAX_SPEAKERS];
+	int _speakerExists[MAX_SPEAKERS];
+	int _arr4[MAX_SPEAKERS];
+	int _arr5[MAX_SPEAKERS];
+	int _arr6[MAX_SPEAKERS];
+	InputMode _inputMode;
+	int _val1, _val2, _val3, _val4, _val5;
 
 	/**
 	 * Returns the record for the specified conversation, if it's loaded
@@ -127,6 +143,11 @@ public:
 	 * Destructor
 	 */
 	virtual ~GameConversations();
+
+	/**
+	 * Sets a variable
+	 */
+	void setVariable(uint idx, int v1, int v2 = -1);
 
 	int* _nextStartNode;
 	int* getVariable(int idx);
