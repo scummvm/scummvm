@@ -134,15 +134,17 @@ inline void _applyCycleToPalette(PalCycler *cycler, Palette *palette) {
 	const int16 currentCycle = cycler->currentCycle;
 	const uint16 numColorsToCycle = cycler->numColorsToCycle;
 
-	Sci::Color tempPalette[numColorsToCycle];
-	Sci::Color *sourceColor = palette->colors + cycler->fromColor;
+	Color *tempPalette = new Color[numColorsToCycle];
+	Color *sourceColor = palette->colors + cycler->fromColor;
 	memcpy(tempPalette, sourceColor, sizeof(tempPalette));
 
-	Sci::Color *targetColor = sourceColor;
+	Color *targetColor = sourceColor;
 	for (int numColorsCycled = 0; numColorsCycled < numColorsToCycle; ++numColorsCycled) {
-		Sci::Color sourceColor = *(tempPalette + ((currentCycle + numColorsCycled) % numColorsToCycle));
+		Color sourceColor = *(tempPalette + ((currentCycle + numColorsCycled) % numColorsToCycle));
 		*(targetColor + numColorsCycled) = sourceColor;
 	}
+
+	delete[] tempPalette;
 }
 
 void GfxPalette32::applyAllCycles() {
@@ -176,8 +178,6 @@ void GfxPalette32::applyCycles() {
 }
 
 int16 GfxPalette32::setCycle(const uint16 fromColor, const uint16 toColor, const int16 direction, const int16 delay) {
-	assert(fromColor <= UINT8_MAX);
-	assert(toColor <= UINT8_MAX);
 	assert(fromColor < toColor);
 
 	int cyclerIndex;
@@ -323,7 +323,7 @@ void GfxPalette32::applyFade() {
 	// TODO: Create and update a _nextPalette, not a single _sysPalette, to
 	// conform to the way the actual SCI32 engine works (writes to a
 	// next-frame-palette and then copies to the current palette on frameout)
-	Sci::Color *color = _sysPalette.colors;
+	Color *color = _sysPalette.colors;
 	uint8 *fadeAmount = _fadeTable;
 	for (int i = 0; i < 256; ++i) {
 		if (*fadeAmount == 100) {

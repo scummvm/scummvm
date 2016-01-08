@@ -977,7 +977,7 @@ void GfxPalette::palVaryProcess(int signal, bool setPalette) {
 		_palVaryResourceId = -1;
 
 	// Calculate inbetween palette
-	Sci::Color inbetween;
+	Color inbetween;
 	int16 color;
 	for (int colorNr = 1; colorNr < 255; colorNr++) {
 		inbetween.used = _sysPalette.colors[colorNr].used;
@@ -988,7 +988,7 @@ void GfxPalette::palVaryProcess(int signal, bool setPalette) {
 		color = _palVaryTargetPalette.colors[colorNr].b - _palVaryOriginPalette.colors[colorNr].b;
 		inbetween.b = ((color * _palVaryStep) / 64) + _palVaryOriginPalette.colors[colorNr].b;
 
-		if (memcmp(&inbetween, &_sysPalette.colors[colorNr], sizeof(Sci::Color))) {
+		if (memcmp(&inbetween, &_sysPalette.colors[colorNr], sizeof(Color))) {
 			_sysPalette.colors[colorNr] = inbetween;
 			_sysPaletteChanged = true;
 		}
