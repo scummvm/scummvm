@@ -320,17 +320,15 @@ void GfxPalette32::applyFade() {
 		// TODO: Create and update a _nextPalette, not a single _sysPalette, to
 		// conform to the way the actual SCI32 engine works (writes to a
 		// next-frame-palette and then copies to the current palette on frameout)
-		_sysPalette.colors[i].r *= _fadeTable[i] / 100;
-		_sysPalette.colors[i].g *= _fadeTable[i] / 100;
-		_sysPalette.colors[i].b *= _fadeTable[i] / 100;
+		_sysPalette.colors[i].r = (_sysPalette.colors[i].r * _fadeTable[i]) / 100;
+		_sysPalette.colors[i].g = (_sysPalette.colors[i].g * _fadeTable[i]) / 100;
+		_sysPalette.colors[i].b = (_sysPalette.colors[i].b * _fadeTable[i]) / 100;
 	}
 }
 
 void GfxPalette32::setFade(uint8 percent, uint16 fromColor, uint16 toColor) {
-	uint8 *fadeAmount = _fadeTable;
-	for (int i = fromColor, len = toColor - fromColor + 1; i < len; ++i) {
-		*fadeAmount++ = percent;
-	}
+	for (int i = fromColor; i <= toColor; i++)
+		_fadeTable[i] = percent;
 }
 
 void GfxPalette32::fadeOff() {
