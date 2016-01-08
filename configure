@@ -2068,12 +2068,18 @@ define_in_config_h_if_yes $_need_memalign 'SCUMM_NEED_ALIGNMENT'
 echo_n "Checking host CPU architecture... "
 case $_host_cpu in
 	arm*)
+		echo "ARM"
 		case $_host_alias in
-			arm-apple-darwin11)
-				echo "Apple iOS 7+ - ARM assembly disabled"
+			# Apple's as does not support the syntax we use in our ARM
+			# assembly. We simply do not enable it.
+			arm-apple-darwin9)
 				;;
+			arm-apple-darwin10)
+				;;
+			arm-apple-darwin11)
+				;;
+
 			*)
-				echo "ARM"
 				define_in_config_if_yes yes 'USE_ARM_SCALER_ASM'
 				# FIXME: The following feature exhibits a bug. It produces distorted
 				# sound since 9003ce517ff9906b0288f9f7c02197fd091d4554. The ARM
@@ -2086,10 +2092,10 @@ case $_host_cpu in
 				# FIXME: The following feature exhibits a bug during the intro scene of Indy 4
 				# (on Pandora and iPhone at least)
 				#define_in_config_if_yes yes 'USE_ARM_COSTUME_ASM'
-
-				append_var DEFINES "-DARM_TARGET"
 				;;
 		esac
+
+		append_var DEFINES "-DARM_TARGET"
 		;;
 	i[3-6]86)
 		echo "x86"
