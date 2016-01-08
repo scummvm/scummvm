@@ -130,23 +130,6 @@ inline void _doCycle(PalCycler *cycler, const int16 speed) {
 	cycler->currentCycle = (uint8) (currentCycle % numColorsToCycle);
 }
 
-inline void _applyCycleToPalette(PalCycler *cycler, Palette *palette) {
-	const int16 currentCycle = cycler->currentCycle;
-	const uint16 numColorsToCycle = cycler->numColorsToCycle;
-
-	Color *tempPalette = new Color[numColorsToCycle];
-	Color *sourceColor = palette->colors + cycler->fromColor;
-	memcpy(tempPalette, sourceColor, sizeof(tempPalette));
-
-	Color *targetColor = sourceColor;
-	for (int numColorsCycled = 0; numColorsCycled < numColorsToCycle; ++numColorsCycled) {
-		Color sourceColor = *(tempPalette + ((currentCycle + numColorsCycled) % numColorsToCycle));
-		*(targetColor + numColorsCycled) = sourceColor;
-	}
-
-	delete[] tempPalette;
-}
-
 void GfxPalette32::applyAllCycles() {
 	for (int cyclerIndex = 0, numCyclers = ARRAYSIZE(_cyclers); cyclerIndex < numCyclers; ++cyclerIndex) {
 		PalCycler *cycler = _cyclers[cyclerIndex];
@@ -154,7 +137,11 @@ void GfxPalette32::applyAllCycles() {
 			cycler->currentCycle = (uint8) ((((int) cycler->currentCycle) + 1) % cycler->numColorsToCycle);
 			// Disassembly was not fully evaluated to verify this is exactly the same
 			// as the code from applyCycles, but it appeared to be at a glance
-			_applyCycleToPalette(cycler, &_sysPalette);
+			Color paletteCopy[256];
+			memcpy(paletteCopy, _sysPalette.colors, sizeof(Color) * 256);
+			for (int i = 0; i < cycler->numColorsToCycle; i++) {
+				_sysPalette.colors[cycler->fromColor + i] = paletteCopy[cycler->fromColor + (cycler->currentCycle + i) % cycler->numColorsToCycle];
+			}
 		}
 	}
 }
@@ -173,7 +160,11 @@ void GfxPalette32::applyCycles() {
 			}
 		}
 
-		_applyCycleToPalette(cycler, &_sysPalette);
+		Color paletteCopy[256];
+		memcpy(paletteCopy, _sysPalette.colors, sizeof(Color) * 256);
+		for (int j = 0; j < cycler->numColorsToCycle; j++) {
+			_sysPalette.colors[cycler->fromColor + j] = paletteCopy[cycler->fromColor + (cycler->currentCycle + j) % cycler->numColorsToCycle];
+		}
 	}
 }
 
