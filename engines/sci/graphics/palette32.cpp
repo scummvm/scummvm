@@ -313,19 +313,16 @@ void GfxPalette32::cycleAllOff() {
 }
 
 void GfxPalette32::applyFade() {
-	// TODO: Create and update a _nextPalette, not a single _sysPalette, to
-	// conform to the way the actual SCI32 engine works (writes to a
-	// next-frame-palette and then copies to the current palette on frameout)
-	Color *color = _sysPalette.colors;
-	uint8 *fadeAmount = _fadeTable;
 	for (int i = 0; i < 256; ++i) {
-		if (*fadeAmount == 100) {
+		if (_fadeTable[i] == 100)
 			continue;
-		}
 
-		color->r = ((int) color->r * ((int) *fadeAmount)) / 100;
-		color->g = ((int) color->r * ((int) *fadeAmount)) / 100;
-		color->b = ((int) color->r * ((int) *fadeAmount)) / 100;
+		// TODO: Create and update a _nextPalette, not a single _sysPalette, to
+		// conform to the way the actual SCI32 engine works (writes to a
+		// next-frame-palette and then copies to the current palette on frameout)
+		_sysPalette.colors->r *= _fadeTable[i] / 100;
+		_sysPalette.colors->g *= _fadeTable[i] / 100;
+		_sysPalette.colors->b *= _fadeTable[i] / 100;
 	}
 }
 
