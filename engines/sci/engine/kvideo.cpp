@@ -231,7 +231,7 @@ reg_t kShowMovie(EngineState *s, int argc, reg_t *argv) {
 			initGraphics(screenWidth, screenHeight, screenWidth > 320);
 		else {
 			g_sci->_gfxScreen->kernelSyncWithFramebuffer();
-			g_sci->_gfxPalette->kernelSyncScreenPalette();
+			g_sci->_gfxPalette16->kernelSyncScreenPalette();
 		}
 	}
 

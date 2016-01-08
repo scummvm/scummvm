@@ -79,6 +79,7 @@ class GfxTransitions;
 #ifdef ENABLE_SCI32
 class RobotDecoder;
 class GfxFrameout;
+class GfxPalette32;
 #endif
 
 // our engine debug levels
@@ -235,6 +236,7 @@ public:
 	bool canLoadGameStateCurrently();
 	bool canSaveGameStateCurrently();
 	void syncSoundSettings();
+	uint32 getTickCount();
 
 	/**
 	 * Syncs the audio options of the ScummVM launcher (speech, subtitles or
@@ -343,7 +345,8 @@ public:
 	GfxCoordAdjuster *_gfxCoordAdjuster;
 	GfxCursor *_gfxCursor;
 	GfxMenu *_gfxMenu; // Menu for 16-bit gfx
-	GfxPalette *_gfxPalette;
+	GfxPalette *_gfxPalette16;
+	GfxPalette32 *_gfxPalette32; // Palette for 32-bit gfx
 	GfxPaint *_gfxPaint;
 	GfxPaint16 *_gfxPaint16; // Painting in 16-bit gfx
 	GfxPaint32 *_gfxPaint32; // Painting in 32-bit gfx

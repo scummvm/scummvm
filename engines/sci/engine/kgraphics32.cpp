@@ -49,6 +49,7 @@
 #include "sci/graphics/text16.h"
 #include "sci/graphics/view.h"
 #ifdef ENABLE_SCI32
+#include "sci/graphics/palette32.h"
 #include "sci/graphics/controls32.h"
 #include "sci/graphics/font.h"	// TODO: remove once kBitmap is moved in a separate class
 #include "sci/graphics/text32.h"
@@ -126,7 +127,43 @@ reg_t kGetHighPlanePri(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kFrameOut(EngineState *s, int argc, reg_t *argv) {
+/* TODO: Transcribed from SCI engine disassembly.
+	GraphicsMgr &graphicsMgr = g_sci->_graphicsMgr;
+	if (graphicsMgr.palMorphNeeded) {
+		graphicsMgr.PalMorphFrameOut(&g_PalStyleRanges, false);
+	}
+	else {
+		// TODO: Not sure if this is a pointer or not yet.
+		if (g_ScrollState != nullptr) {
+			kFrameOutDoScroll();
+		}
+
+		bool showBits = true;
+		if (argc == 1) {
+			showBits = (bool) argv[0].toUint16();
+		}
+
+		rect SOL_Rect = { .left = 0, .top = 0, .right = UINT32_MAX, .bottom = UINT32_MAX };
+		graphicsMgr.FrameOut(showBits, &rect);
+	}
+*/
 	g_sci->_gfxFrameout->kernelFrameout();
+	return NULL_REG;
+}
+
+reg_t kSetPalStyleRange(EngineState *s, int argc, reg_t *argv) {
+/* TODO: Transcribed from SCI engine disassembly.
+	 uint16 start = argv[0].toUint16();
+	 uint16 end = argv[1].toUint16();
+	 if (end <= start) {
+		uint16 index = start;
+		while (index <= end) {
+			g_PalStyleRanges[index] = 0;
+		}
+	 }
+*/
+
+	kStub(s, argc, argv);
 	return NULL_REG;
 }
 
@@ -707,66 +744,64 @@ reg_t kPalVaryUnknown2(EngineState *s, int argc, reg_t *argv) {
 	return kStub(s, argc, argv);
 }
 
+enum {
+	kSetCycle = 0,
+	kDoCycle = 1,
+	kCyclePause = 2,
+	kCycleOn = 3,
+	kCycleOff = 4
+};
+
 reg_t kPalCycle(EngineState *s, int argc, reg_t *argv) {
 	// Examples: GK1 room 480 (Bayou ritual), LSL6 room 100 (title screen)
 
 	switch (argv[0].toUint16()) {
-	case 0: {	// Palette animation initialization
-		// 3 or 4 extra params
-		// Case 1 sends fromColor and speed again, so we don't need them here.
-		// Only toColor is stored
-		//uint16 fromColor = argv[1].toUint16();
-		s->_palCycleToColor = argv[2].toUint16();
-		//uint16 speed = argv[3].toUint16();
-
-		// Invalidate the picture, so that the palette steps calls (case 1
-		// below) can update its palette without it being overwritten by the
-		// view/picture palettes.
-		g_sci->_gfxScreen->_picNotValid = 1;
-
-		// TODO: The fourth optional parameter is an unknown integer, and is 0 by default
-		if (argc == 5) {
-			// When this variant is used, picNotValid doesn't seem to be set
-			// (e.g. GK1 room 480). In this case, the animation step calls are
-			// not made, so perhaps this signifies the palette cycling steps
-			// to make.
-			// GK1 sets this to 6 (6 palette steps?)
-			g_sci->_gfxScreen->_picNotValid = 0;
-		}
-		kStub(s, argc, argv);
-		}
-		break;
-	case 1:	{ // Palette animation step
-		// This is the same as the old kPaletteAnimate call, with 1 set of colors.
-		// The end color is set up during initialization in case 0 above.
-
-		// 1 or 2 extra params
+	case kSetCycle: {
 		uint16 fromColor = argv[1].toUint16();
-		uint16 speed = (argc == 2) ? 1 : argv[2].toUint16();
-		// TODO: For some reason, this doesn't set the color correctly
-		// (e.g. LSL6 intro, room 100, Sierra logo)
-		if (g_sci->_gfxPalette->kernelAnimate(fromColor, s->_palCycleToColor, speed))
-			g_sci->_gfxPalette->kernelAnimateSet();
+		uint16 toColor = argv[2].toUint16();
+		int16 direction = argv[3].toSint16();
+		uint16 delay = (argc == 4 ? 0 : argv[4].toUint16());
+
+		g_sci->_gfxPalette32->setCycle(fromColor, toColor, direction, delay);
 		}
-		// No kStub() call here, as this gets called loads of times, like kPaletteAnimate
 		break;
-	// case 2 hasn't been encountered
-	// case 3 hasn't been encountered
-	case 4:	// reset any palette cycling and make the picture valid again
-		// Gets called when changing rooms and after palette cycling animations finish
-		// 0 or 1 extra params
+	case kDoCycle: {
+		uint16 fromColor = argv[1].toUint16();
+		int16 speed = (argc == 2) ? 1 : argv[2].toSint16();
+		g_sci->_gfxPalette32->doCycle(fromColor, speed);
+		}
+		break;
+	case kCyclePause: {
 		if (argc == 1) {
-			g_sci->_gfxScreen->_picNotValid = 0;
-			// TODO: This also seems to perform more steps
+			g_sci->_gfxPalette32->cycleAllPause();
 		} else {
-			// The variant with the 1 extra param resets remapping to base
-			// TODO
+			uint16 fromColor = argv[1].toUint16();
+			g_sci->_gfxPalette32->cyclePause(fromColor);
 		}
-		kStub(s, argc, argv);
+		}
 		break;
+	case kCycleOn: {
+		if (argc == 1) {
+			g_sci->_gfxPalette32->cycleAllOn();
+		} else {
+			uint16 fromColor = argv[1].toUint16();
+			g_sci->_gfxPalette32->cycleOn(fromColor);
+		}
+		}
+		break;
+	case kCycleOff: {
+		if (argc == 1) {
+			g_sci->_gfxPalette32->cycleAllOff();
+		} else {
+			uint16 fromColor = argv[1].toUint16();
+			g_sci->_gfxPalette32->cycleOff(fromColor);
+		}
+		break;
+		}
 	default:
-		// TODO
-		kStub(s, argc, argv);
+		// In SCI2.1 there are no values above 4, so should never get here;
+		// SCI just returns early if this ever happens.
+		assert(false);
 		break;
 	}
 
@@ -787,7 +822,7 @@ reg_t kRemapColors32(EngineState *s, int argc, reg_t *argv) {
 		int16 base = (argc >= 2) ? argv[1].toSint16() : 0;
 		if (base > 0)
 			warning("kRemapColors(0) called with base %d", base);
-		g_sci->_gfxPalette->resetRemapping();
+		g_sci->_gfxPalette32->resetRemapping();
 		}
 		break;
 	case 1:	{ // remap by range
@@ -798,7 +833,7 @@ reg_t kRemapColors32(EngineState *s, int argc, reg_t *argv) {
 		uint16 unk5 = (argc >= 6) ? argv[5].toUint16() : 0;
 		if (unk5 > 0)
 			warning("kRemapColors(1) called with 6 parameters, unknown parameter is %d", unk5);
-		g_sci->_gfxPalette->setRemappingRange(color, from, to, base);
+		g_sci->_gfxPalette32->setRemappingRange(color, from, to, base);
 		}
 		break;
 	case 2:	{ // remap by percent
@@ -806,7 +841,7 @@ reg_t kRemapColors32(EngineState *s, int argc, reg_t *argv) {
 		uint16 percent = argv[2].toUint16(); // 0 - 100
 		if (argc >= 4)
 			warning("RemapByPercent called with 4 parameters, unknown parameter is %d", argv[3].toUint16());
-		g_sci->_gfxPalette->setRemappingPercent(color, percent);
+		g_sci->_gfxPalette32->setRemappingPercent(color, percent);
 		}
 		break;
 	case 3:	{ // remap to gray
@@ -816,7 +851,7 @@ reg_t kRemapColors32(EngineState *s, int argc, reg_t *argv) {
 		int16 percent = argv[2].toSint16(); // 0 - 100
 		if (argc >= 4)
 			warning("RemapToGray called with 4 parameters, unknown parameter is %d", argv[3].toUint16());
-		g_sci->_gfxPalette->setRemappingPercentGray(color, percent);
+		g_sci->_gfxPalette32->setRemappingPercentGray(color, percent);
 		}
 		break;
 	case 4:	{ // remap to percent gray
@@ -826,7 +861,7 @@ reg_t kRemapColors32(EngineState *s, int argc, reg_t *argv) {
 		// argv[3] is unknown (a number, e.g. 200) - start color, perhaps?
 		if (argc >= 5)
 			warning("RemapToGrayPercent called with 5 parameters, unknown parameter is %d", argv[4].toUint16());
-		g_sci->_gfxPalette->setRemappingPercentGray(color, percent);
+		g_sci->_gfxPalette32->setRemappingPercentGray(color, percent);
 		}
 		break;
 	case 5:	{ // don't map to range
@@ -834,7 +869,7 @@ reg_t kRemapColors32(EngineState *s, int argc, reg_t *argv) {
 		uint16 intensity = argv[2].toUint16();
 		// HACK for PQ4
 		if (g_sci->getGameId() == GID_PQ4)
-			g_sci->_gfxPalette->kernelSetIntensity(0, 255, intensity, true);
+			g_sci->_gfxPalette32->kernelSetIntensity(0, 255, intensity, true);
 
 		kStub(s, argc, argv);
 		}

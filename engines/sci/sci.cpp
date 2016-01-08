@@ -63,6 +63,7 @@
 #include "sci/graphics/transitions.h"
 
 #ifdef ENABLE_SCI32
+#include "sci/graphics/palette32.h"
 #include "sci/graphics/text32.h"
 #include "sci/graphics/frameout.h"
 #include "sci/video/robot_decoder.h"
@@ -153,6 +154,9 @@ SciEngine::~SciEngine() {
 	DebugMan.clearAllDebugChannels();
 
 #ifdef ENABLE_SCI32
+	// _gfxPalette32 is the same as _gfxPalette16
+	// and will be destroyed when _gfxPalette16 is
+	// destroyed
 	delete _gfxControls32;
 	delete _gfxText32;
 	delete _robotDecoder;
@@ -168,7 +172,7 @@ SciEngine::~SciEngine() {
 	delete _gfxCoordAdjuster;
 	delete _gfxPorts;
 	delete _gfxCache;
-	delete _gfxPalette;
+	delete _gfxPalette16;
 	delete _gfxCursor;
 	delete _gfxScreen;
 
@@ -614,7 +618,8 @@ void SciEngine::initGraphics() {
 	_gfxMenu = 0;
 	_gfxPaint = 0;
 	_gfxPaint16 = 0;
-	_gfxPalette = 0;
+	_gfxPalette16 = 0;
+	_gfxPalette32 = 0;
 	_gfxPorts = 0;
 	_gfxText16 = 0;
 	_gfxTransitions = 0;
@@ -629,9 +634,19 @@ void SciEngine::initGraphics() {
 	if (hasMacIconBar())
 		_gfxMacIconBar = new GfxMacIconBar();
 
-	_gfxPalette = new GfxPalette(_resMan, _gfxScreen);
-	_gfxCache = new GfxCache(_resMan, _gfxScreen, _gfxPalette);
-	_gfxCursor = new GfxCursor(_resMan, _gfxPalette, _gfxScreen);
+#ifdef ENABLE_SCI32
+	if (getSciVersion() >= SCI_VERSION_2) {
+		_gfxPalette32 = new GfxPalette32(_resMan, _gfxScreen);
+		_gfxPalette16 = _gfxPalette32;
+	} else {
+#endif
+		_gfxPalette16 = new GfxPalette(_resMan, _gfxScreen);
+#ifdef ENABLE_SCI32
+	}
+#endif
+
+	_gfxCache = new GfxCache(_resMan, _gfxScreen, _gfxPalette16);
+	_gfxCursor = new GfxCursor(_resMan, _gfxPalette16, _gfxScreen);
 
 #ifdef ENABLE_SCI32
 	if (getSciVersion() >= SCI_VERSION_2) {
@@ -639,12 +654,12 @@ void SciEngine::initGraphics() {
 		_gfxCoordAdjuster = new GfxCoordAdjuster32(_gamestate->_segMan);
 		_gfxCursor->init(_gfxCoordAdjuster, _eventMan);
 		_gfxCompare = new GfxCompare(_gamestate->_segMan, _gfxCache, _gfxScreen, _gfxCoordAdjuster);
-		_gfxPaint32 = new GfxPaint32(_resMan, _gfxCoordAdjuster, _gfxScreen, _gfxPalette);
+		_gfxPaint32 = new GfxPaint32(_resMan, _gfxCoordAdjuster, _gfxScreen, _gfxPalette32);
 		_gfxPaint = _gfxPaint32;
 		_gfxText32 = new GfxText32(_gamestate->_segMan, _gfxCache, _gfxScreen);
 		_gfxControls32 = new GfxControls32(_gamestate->_segMan, _gfxCache, _gfxText32);
 		_robotDecoder = new RobotDecoder(getPlatform() == Common::kPlatformMacintosh);
-		_gfxFrameout = new GfxFrameout(_gamestate->_segMan, _resMan, _gfxCoordAdjuster, _gfxCache, _gfxScreen, _gfxPalette, _gfxPaint32);
+		_gfxFrameout = new GfxFrameout(_gamestate->_segMan, _resMan, _gfxCoordAdjuster, _gfxCache, _gfxScreen, _gfxPalette32, _gfxPaint32);
 	} else {
 #endif
 		// SCI0-SCI1.1 graphic objects creation
@@ -652,10 +667,10 @@ void SciEngine::initGraphics() {
 		_gfxCoordAdjuster = new GfxCoordAdjuster16(_gfxPorts);
 		_gfxCursor->init(_gfxCoordAdjuster, _eventMan);
 		_gfxCompare = new GfxCompare(_gamestate->_segMan, _gfxCache, _gfxScreen, _gfxCoordAdjuster);
-		_gfxTransitions = new GfxTransitions(_gfxScreen, _gfxPalette);
-		_gfxPaint16 = new GfxPaint16(_resMan, _gamestate->_segMan, _gfxCache, _gfxPorts, _gfxCoordAdjuster, _gfxScreen, _gfxPalette, _gfxTransitions, _audio);
+		_gfxTransitions = new GfxTransitions(_gfxScreen, _gfxPalette16);
+		_gfxPaint16 = new GfxPaint16(_resMan, _gamestate->_segMan, _gfxCache, _gfxPorts, _gfxCoordAdjuster, _gfxScreen, _gfxPalette16, _gfxTransitions, _audio);
 		_gfxPaint = _gfxPaint16;
-		_gfxAnimate = new GfxAnimate(_gamestate, _gfxCache, _gfxPorts, _gfxPaint16, _gfxScreen, _gfxPalette, _gfxCursor, _gfxTransitions);
+		_gfxAnimate = new GfxAnimate(_gamestate, _gfxCache, _gfxPorts, _gfxPaint16, _gfxScreen, _gfxPalette16, _gfxCursor, _gfxTransitions);
 		_gfxText16 = new GfxText16(_gfxCache, _gfxPorts, _gfxPaint16, _gfxScreen);
 		_gfxControls16 = new GfxControls16(_gamestate->_segMan, _gfxPorts, _gfxPaint16, _gfxText16, _gfxScreen);
 		_gfxMenu = new GfxMenu(_eventMan, _gamestate->_segMan, _gfxPorts, _gfxPaint16, _gfxText16, _gfxScreen, _gfxCursor);
@@ -670,7 +685,7 @@ void SciEngine::initGraphics() {
 #endif
 
 	// Set default (EGA, amiga or resource 999) palette
-	_gfxPalette->setDefault();
+	_gfxPalette16->setDefault();
 }
 
 void SciEngine::initStackBaseWithSelector(Selector selector) {
@@ -1022,4 +1037,9 @@ void SciEngine::loadMacExecutable() {
 	}
 }
 
+// Note that SCI engine also has a corresponding TimeMgr::SetTickCount method
+// which is used by TimeMgr::SaveRestore when loading a save game.
+uint32 SciEngine::getTickCount() {
+	return (uint32) ((g_system->getMillis() * 60) / 1000);
+}
 } // End of namespace Sci
