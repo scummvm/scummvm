@@ -107,7 +107,7 @@ void WageEngine::performCombatAction(Chr *npc, Chr *player) {
 	if (npc->_context._frozen)
 		return;
 
-	RandomHat hat;
+	RandomHat hat(_rnd);
 
 	bool winning = (npc->_context._statVariables[PHYS_HIT_CUR] > player->_context._statVariables[PHYS_HIT_CUR]);
 	int validMoves = getValidMoveDirections(npc);
@@ -165,6 +165,8 @@ void WageEngine::performCombatAction(Chr *npc, Chr *player) {
 			break;
 		case kTokOffer:
 			performOffer(npc, player);
+			break;
+		case kTokNone:
 			break;
 		default:
 			{

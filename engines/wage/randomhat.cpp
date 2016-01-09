@@ -45,6 +45,8 @@
  *
  */
 
+#include "common/random.h"
+
 #include "common/hashmap.h"
 #include "wage/randomhat.h"
 
@@ -54,8 +56,28 @@ void RandomHat::addTokens(int type, int count) {
 	_tokens.setVal(type, _tokens.getVal(type, 0) + count);
 }
 
+int RandomHat::countTokens() {
+	int count = 0;
+	for (Common::HashMap<int, int>::const_iterator it = _tokens.begin(); it != _tokens.end(); ++it)
+		count += it->_value;
+
+	return count;
+}
+
 int RandomHat::drawToken() {
-	return 0;
+	int total = countTokens();
+	if (total > 0) {
+		int random = _rnd->getRandomNumber(total - 1);
+		int count = 0;
+		for (Common::HashMap<int, int>::iterator it = _tokens.begin(); it != _tokens.end(); ++it) {
+			if (random >= count && random < count + it->_value) {
+				it->_value--;
+				return it->_key;
+			}
+			count += it->_value;
+		}
+	}
+	return kTokNone;
 }
 
 } // End of namespace Wage

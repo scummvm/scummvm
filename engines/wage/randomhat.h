@@ -54,18 +54,22 @@ enum {
 	kTokWeapons = -400,
 	kTokMagic = -300,
 	kTokRun = -200,
-	kTokOffer = -100
+	kTokOffer = -100,
+	kTokNone = -100000
 };
 
 class RandomHat {
 public:
-	RandomHat() {}
+	RandomHat(Common::RandomSource *rnd) : _rnd(rnd) {}
 
 	void addTokens(int type, int count);
 	int drawToken();
 
 private:
+	Common::RandomSource *_rnd;
 	Common::HashMap<int, int> _tokens;
+
+	int countTokens();
 };
 
 } // End of namespace Wage
