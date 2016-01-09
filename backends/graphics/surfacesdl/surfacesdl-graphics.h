@@ -27,13 +27,10 @@
 #include "graphics/opengl/system_headers.h"
 #include "graphics/opengl/framebuffer.h"
 #include "graphics/opengl/texture.h"
+#include "graphics/opengl/surfacerenderer.h"
 #endif
 
 #undef ARRAYSIZE
-
-#ifdef USE_OPENGL_SHADERS
-#include "graphics/opengl/shader.h"
-#endif
 
 #include "backends/graphics/graphics.h"
 #include "backends/graphics/sdl/sdl-graphics.h"
@@ -183,14 +180,11 @@ protected:
 	void updateOverlayTextures();
 	void drawOverlayOpenGL();
 	void drawSideTexturesOpenGL();
-	void drawTexture(const OpenGL::Texture &tex, const Math::Vector2d &topLeft, const Math::Vector2d &bottomRight, bool flip = false);
 
 	OpenGL::FrameBuffer *_frameBuffer;
 
-#ifdef USE_OPENGL_SHADERS
-	OpenGL::Shader *_boxShader;
-	GLuint _boxVerticesVBO;
-#endif
+	OpenGL::SurfaceRenderer *_surfaceRenderer;
+
 #endif
 
 	SDL_Surface *_sideSurfaces[2];

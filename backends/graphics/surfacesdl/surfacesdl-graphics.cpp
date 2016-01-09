@@ -70,9 +70,7 @@ SurfaceSdlGraphicsManager::SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSou
 #ifdef USE_OPENGL
 	, _opengl(false)
 	, _frameBuffer(nullptr)
-#endif
-#ifdef USE_OPENGL_SHADERS
-	, _boxShader(nullptr), _boxVerticesVBO(0)
+	, _surfaceRenderer(nullptr)
 #endif
 	{
 		const SDL_VideoInfo *vi = SDL_GetVideoInfo();
@@ -138,7 +136,6 @@ bool SurfaceSdlGraphicsManager::getFeatureState(OSystem::Feature f) {
 			return _fullscreen;
 		case OSystem::kFeatureAspectRatioCorrection:
 			return _lockAspectRatio;
-		break;
 		default:
 			return false;
 	}
@@ -379,24 +376,10 @@ Graphics::PixelBuffer SurfaceSdlGraphicsManager::setupScreen(uint screenW, uint 
 
 #ifdef USE_OPENGL_SHADERS
 		debug("INFO: GLSL version: %s", glGetString(GL_SHADING_LANGUAGE_VERSION));
-
-		const GLfloat vertices[] = {
-			0.0, 0.0,
-			1.0, 0.0,
-			0.0, 1.0,
-			1.0, 1.0,
-		};
-
-		// Setup the box shader used to render the overlay
-		const char* attributes[] = { "position", "texcoord", NULL };
-		_boxShader = OpenGL::Shader::fromStrings("box", OpenGL::BuiltinShaders::boxVertex, OpenGL::BuiltinShaders::boxFragment, attributes);
-		_boxVerticesVBO = OpenGL::Shader::createBuffer(GL_ARRAY_BUFFER, sizeof(vertices), vertices);
-		_boxShader->enableVertexAttribute("position", _boxVerticesVBO, 2, GL_FLOAT, GL_TRUE, 2 * sizeof(float), 0);
-		_boxShader->enableVertexAttribute("texcoord", _boxVerticesVBO, 2, GL_FLOAT, GL_TRUE, 2 * sizeof(float), 0);
 #endif
 
 		OpenGLContext.initialize(OpenGL::kContextGL);
-
+		_surfaceRenderer = OpenGL::createBestSurfaceRenderer();
 	}
 #endif
 
@@ -510,6 +493,8 @@ void SurfaceSdlGraphicsManager::drawOverlayOpenGL() {
 	glViewport(0, 0, _overlayWidth, _overlayHeight);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
+	_surfaceRenderer->prepareState();
+
 	int curTexIdx = 0;
 	for (int y = 0; y < _overlayHeight; y += BITMAP_TEXTURE_SIZE) {
 		for (int x = 0; x < _overlayWidth; x += BITMAP_TEXTURE_SIZE) {
@@ -521,11 +506,13 @@ void SurfaceSdlGraphicsManager::drawOverlayOpenGL() {
 			Math::Vector2d topLeft = Math::Vector2d(textureArea.left / (float)_overlayWidth, textureArea.top / (float)_overlayHeight);
 			Math::Vector2d bottomRight = Math::Vector2d(textureArea.right / (float)_overlayWidth, textureArea.bottom / (float)_overlayHeight);
 
-			drawTexture(*texture, topLeft, bottomRight, true);
+			_surfaceRenderer->render(texture, Math::Rect2d(topLeft, bottomRight), true);
 
 			curTexIdx++;
 		}
 	}
+
+	_surfaceRenderer->restorePreviousState();
 }
 
 void SurfaceSdlGraphicsManager::drawSideTexturesOpenGL() {
@@ -533,92 +520,16 @@ void SurfaceSdlGraphicsManager::drawSideTexturesOpenGL() {
 		const Math::Vector2d nudge(1.0 / float(_screen->w), 0);
 		if (_sideTextures[0] != nullptr) {
 			float left = _gameRect.getBottomLeft().getX() - (float(_screen->h) / float(_sideTextures[0]->getHeight())) * _sideTextures[0]->getWidth() / float(_screen->w);
-			drawTexture(*_sideTextures[0], Math::Vector2d(left, 0.0), _gameRect.getBottomLeft() + nudge, true);
+			Math::Rect2d leftRect(Math::Vector2d(left, 0.0), _gameRect.getBottomLeft() + nudge);
+			_surfaceRenderer->render(_sideTextures[0], leftRect, true);
 		}
 
 		if (_sideTextures[1] != nullptr) {
 			float right = _gameRect.getTopRight().getX() + (float(_screen->h) / float(_sideTextures[1]->getHeight())) * _sideTextures[1]->getWidth() / float(_screen->w);
-			drawTexture(*_sideTextures[1], _gameRect.getTopRight() - nudge, Math::Vector2d(right, 1.0), true);
+			Math::Rect2d rightRect(_gameRect.getTopRight() - nudge, Math::Vector2d(right, 1.0));
+			_surfaceRenderer->render(_sideTextures[1], rightRect, true);
 		}
 	}
-}
-
-void SurfaceSdlGraphicsManager::drawTexture(const OpenGL::Texture &tex, const Math::Vector2d &topLeft, const Math::Vector2d &bottomRight, bool flip) {
-#ifndef USE_OPENGL_SHADERS
-	// Save current state
-	glPushAttrib(GL_TRANSFORM_BIT | GL_ENABLE_BIT | GL_DEPTH_BUFFER_BIT | GL_SCISSOR_BIT);
-
-	// prepare view
-	glMatrixMode(GL_PROJECTION);
-	glPushMatrix();
-	glLoadIdentity();
-	glOrtho(0, 1.0, 1.0, 0, 0, 1);
-
-	glMatrixMode(GL_MODELVIEW);
-	glPushMatrix();
-	glLoadIdentity();
-
-	glMatrixMode(GL_TEXTURE);
-	glPushMatrix();
-	glLoadIdentity();
-
-	glDisable(GL_LIGHTING);
-	glEnable(GL_TEXTURE_2D);
-	glDisable(GL_DEPTH_TEST);
-	glDisable(GL_ALPHA_TEST);
-	glDepthMask(GL_FALSE);
-
-	float texcropX = tex.getWidth() / float(tex.getTexWidth());
-	float texcropY = tex.getHeight() / float(tex.getTexHeight());
-	float texTop    = flip ? 0.0 : texcropY;
-	float texBottom = flip ? texcropY : 0.0;
-
-	float offsetX = topLeft.getX();
-	float offsetY = topLeft.getY();
-	float sizeX   = fabsf(topLeft.getX() - bottomRight.getX());
-	float sizeY   = fabsf(topLeft.getY() - bottomRight.getY());
-
-	glColor4f(1.0, 1.0, 1.0, 1.0);
-
-	glBindTexture(GL_TEXTURE_2D, tex.getTextureName());
-	glBegin(GL_QUADS);
-	glTexCoord2f(0, texTop);
-	glVertex2f(offsetX, offsetY);
-	glTexCoord2f(texcropX, texTop);
-	glVertex2f(offsetX + sizeX, offsetY);
-	glTexCoord2f(texcropX, texBottom);
-	glVertex2f(offsetX + sizeX, offsetY + sizeY);
-	glTexCoord2f(0.0, texBottom);
-	glVertex2f(offsetX, offsetY + sizeY);
-	glEnd();
-
-	// Restore previous state
-	glMatrixMode(GL_PROJECTION);
-	glPopMatrix();
-
-	glMatrixMode(GL_MODELVIEW);
-	glPopMatrix();
-
-	glMatrixMode(GL_TEXTURE);
-	glPopMatrix();
-
-	glPopAttrib();
-#else
-	glBindTexture(GL_TEXTURE_2D, tex.getTextureName());
-
-	_boxShader->use();
-	float texcropX = tex.getWidth() / float(tex.getTexWidth());
-	float texcropY = tex.getHeight() / float(tex.getTexHeight());
-	_boxShader->setUniform("texcrop", Math::Vector2d(texcropX, texcropY));
-	_boxShader->setUniform("flipY", flip);
-
-	_boxShader->setUniform("offsetXY", topLeft);
-	_boxShader->setUniform("sizeWH", Math::Vector2d(fabsf(topLeft.getX() - bottomRight.getX()), fabsf(topLeft.getY() - bottomRight.getY())));
-
-	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-	glBindTexture(GL_TEXTURE_2D, 0);
-	_boxShader->unbind();
-#endif
 }
 
 #endif
@@ -671,8 +582,10 @@ void SurfaceSdlGraphicsManager::updateScreen() {
 			_frameBuffer->detach();
 			glViewport(0, 0, _screen->w, _screen->h);
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+			_surfaceRenderer->prepareState();
 			drawSideTexturesOpenGL();
-			drawTexture(*_frameBuffer, _gameRect.getTopLeft(), _gameRect.getBottomRight());
+			_surfaceRenderer->render(_frameBuffer, _gameRect);
+			_surfaceRenderer->restorePreviousState();
 		}
 
 		if (_overlayVisible) {
@@ -953,6 +866,9 @@ void SurfaceSdlGraphicsManager::closeOverlay() {
 		SDL_FreeSurface(_overlayscreen);
 		_overlayscreen = NULL;
 #ifdef USE_OPENGL
+		delete _surfaceRenderer;
+		_surfaceRenderer = nullptr;
+
 		if (_opengl) {
 			for (uint i = 0; i < _overlayTextures.size(); i++) {
 				delete _overlayTextures[i];
@@ -963,14 +879,6 @@ void SurfaceSdlGraphicsManager::closeOverlay() {
 				delete _frameBuffer;
 				_frameBuffer = nullptr;
 			}
-
-#ifdef USE_OPENGL_SHADERS
-			glDeleteBuffers(1, &_boxVerticesVBO);
-			_boxVerticesVBO = 0;
-
-			delete _boxShader;
-			_boxShader = nullptr;
-#endif
 		} else if (_subScreen) {
 			SDL_FreeSurface(_subScreen);
 			_subScreen = nullptr;
