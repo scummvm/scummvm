@@ -398,11 +398,11 @@ void WageEngine::processTurnInternal(Common::String *textInput, Designed *clickI
 		_temporarilyHidden = false;
 	} else if (_loopCount == 1) {
 		redrawScene();
-		if (shouldEncounter && _monster != NULL) {
+		if (shouldEncounter && getMonster() != NULL) {
 			encounter(_world->_player, _monster);
 		}
 	} else if (textInput != NULL && !handled) {
-		if (monsterWasNull && _monster != NULL)
+		if (monsterWasNull && getMonster() != NULL)
 			return;
 
 		Common::String rant(_rnd->getRandomNumber(1) ? "What?" : "Huh?");
@@ -415,14 +415,14 @@ void WageEngine::processTurnInternal(Common::String *textInput, Designed *clickI
 void WageEngine::processTurn(Common::String *textInput, Designed *clickInput) {
 	_commandWasQuick = false;
 	Scene *prevScene = _world->_player->_currentScene;
-	Chr *prevMonster = _monster;
+	Chr *prevMonster = getMonster();
 	processTurnInternal(textInput, clickInput);
 	Scene *playerScene = _world->_player->_currentScene;
 
 	if (prevScene != playerScene && playerScene != _world->_storageScene) {
 		if (prevMonster != NULL) {
 			bool followed = false;
-			if (_monster == NULL) {
+			if (getMonster() == NULL) {
 				// TODO: adjacent scenes doesn't contain up/down etc... verify that monsters can't follow these...
 				if (_world->scenesAreConnected(playerScene, prevMonster->_currentScene)) {
 					int chance = _rnd->getRandomNumber(255);
@@ -445,8 +445,8 @@ void WageEngine::processTurn(Common::String *textInput, Designed *clickInput) {
 			}
 		}
 	}
-	if (!_commandWasQuick && _monster != NULL) {
-		performCombatAction(_monster, _world->_player);
+	if (!_commandWasQuick && getMonster() != NULL) {
+		performCombatAction(getMonster(), _world->_player);
 	}
 }
 
