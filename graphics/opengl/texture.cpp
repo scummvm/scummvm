@@ -50,6 +50,10 @@ static const Graphics::PixelFormat getRGBAPixelFormat() {
 #endif
 }
 
+static const Graphics::PixelFormat get565PixelFormat() {
+	return Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0);
+}
+
 Texture::Texture(const Graphics::Surface &srf) :
 		_managedTexture(true), _width(srf.w), _height(srf.h) {
 	if (OpenGLContext.NPOTSupported) {
@@ -59,22 +63,60 @@ Texture::Texture(const Graphics::Surface &srf) :
 		_texWidth  = nextHigher2(_width);
 		_texHeight = nextHigher2(_height);
 	}
+
+	const Graphics::Surface *surfaceToUpload = &srf;
+	Graphics::Surface *convertedSurface = nullptr;
+	Graphics::Surface *copiedSurface = nullptr;
+
+	GLenum type;
+	GLenum format;
+
+	if (srf.format == getRGBAPixelFormat()) {
+		type = GL_UNSIGNED_BYTE;
+		format = GL_RGBA;
+	} else if (srf.format == get565PixelFormat()) {
+		type = GL_UNSIGNED_SHORT_5_6_5;
+		format = GL_RGB;
+	} else {
+		type = GL_UNSIGNED_BYTE;
+		format = GL_RGBA;
+		convertedSurface = srf.convertTo(getRGBAPixelFormat());
+		surfaceToUpload = convertedSurface;
+	}
+
+	if (surfaceToUpload->pitch != surfaceToUpload->w * surfaceToUpload->format.bytesPerPixel) {
+		if (OpenGLContext.unpackSubImageSupported) {
+			glPixelStorei(GL_UNPACK_ROW_LENGTH, surfaceToUpload->pitch / surfaceToUpload->format.bytesPerPixel);
+		} else {
+			// When unpack sub-image is not supported we can't specify the pitch
+			// and have to copy the subimage
+			copiedSurface = new Graphics::Surface();
+			copiedSurface->copyFrom(*surfaceToUpload);
+			surfaceToUpload = copiedSurface;
+		}
+	}
+
 	glGenTextures(1, &_texture);
 	glBindTexture(GL_TEXTURE_2D, _texture);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, _texWidth, _texHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+	glTexImage2D(GL_TEXTURE_2D, 0, format, _texWidth, _texHeight, 0, format, type, 0);
+	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, _width, _height, format, type, surfaceToUpload->getPixels());
 
-	if (srf.format != getRGBAPixelFormat()) {
-		Graphics::Surface *srf2 = srf.convertTo(getRGBAPixelFormat());
-		glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, _width, _height, GL_RGBA, GL_UNSIGNED_BYTE, srf2->getPixels());
+	if (OpenGLContext.unpackSubImageSupported) {
+		glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
+	}
 
-		srf2->free();
-		delete srf2;
-	} else {
-		glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, _width, _height, GL_RGBA, GL_UNSIGNED_BYTE, srf.getPixels());
+	if (convertedSurface) {
+		convertedSurface->free();
+		delete convertedSurface;
+	}
+
+	if (copiedSurface) {
+		copiedSurface->free();
+		delete copiedSurface;
 	}
 }
 
