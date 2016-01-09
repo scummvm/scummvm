@@ -39,6 +39,7 @@
 #include "backends/graphics/sdl/sdl-graphics.h"
 #include "graphics/pixelformat.h"
 #include "graphics/scaler.h"
+#include "common/array.h"
 #include "common/events.h"
 #include "common/system.h"
 #include "math/rect2d.h"
@@ -175,9 +176,7 @@ protected:
 	void setAntialiasing(bool enable);
 
 	// Overlay
-	int _overlayNumTex;
-	GLuint *_overlayTexIds;
-	GLenum _overlayScreenGLFormat;
+	Common::Array<OpenGL::Texture *> _overlayTextures;
 
 	OpenGL::Texture *_sideTextures[2];
 
@@ -191,8 +190,6 @@ protected:
 #ifdef USE_OPENGL_SHADERS
 	OpenGL::Shader *_boxShader;
 	GLuint _boxVerticesVBO;
-
-	void drawOverlayOpenGLShaders();
 #endif
 #endif
 
