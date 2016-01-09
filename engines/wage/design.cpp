@@ -45,7 +45,6 @@
  *
  */
 
-#include "common/system.h"
 #include "graphics/primitives.h"
 #include "wage/wage.h"
 #include "wage/design.h"

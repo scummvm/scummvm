@@ -45,12 +45,12 @@
  *
  */
 
-#include "common/system.h"
 #include "common/timer.h"
 #include "common/unzip.h"
 #include "graphics/cursorman.h"
 #include "graphics/fonts/bdf.h"
 #include "graphics/palette.h"
+
 #include "wage/wage.h"
 #include "wage/design.h"
 #include "wage/entities.h"

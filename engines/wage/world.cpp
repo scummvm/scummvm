@@ -46,9 +46,6 @@
  */
 
 #include "common/file.h"
-#include "common/macresman.h"
-#include "common/memstream.h"
-#include "common/str-array.h"
 
 #include "wage/wage.h"
 #include "wage/entities.h"

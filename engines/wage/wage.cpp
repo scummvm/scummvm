@@ -45,13 +45,7 @@
  *
  */
 
-#include "common/scummsys.h"
-
-#include "common/config-manager.h"
 #include "common/debug-channels.h"
-#include "common/error.h"
-#include "common/file.h"
-#include "common/fs.h"
 
 #include "engines/engine.h"
 #include "engines/util.h"

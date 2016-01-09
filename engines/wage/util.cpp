@@ -45,9 +45,9 @@
  *
  */
 
-#include "wage/wage.h"
-
 #include "common/stream.h"
+
+#include "wage/wage.h"
 
 namespace Wage {
 

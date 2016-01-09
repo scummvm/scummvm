@@ -48,7 +48,6 @@
 #include "common/hashmap.h"
 #include "wage/randomhat.h"
 
-
 namespace Wage {
 
 void RandomHat::addTokens(int type, int count) {
