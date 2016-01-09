@@ -66,6 +66,7 @@ class Designed;
 class Gui;
 class Obj;
 class Scene;
+class Weapon;
 class World;
 
 using Common::String;
@@ -128,6 +129,11 @@ private:
 	void regen();
 	void performCombatAction(Chr *npc, Chr *player);
 	int getValidMoveDirections(Chr *npc);
+	void performAttack(Chr *attacker, Chr *victim, Weapon *weapon);
+	void performMagic(Chr *attacker, Chr *victim, Obj *magicalObject);
+	void performMove(Chr *chr, int validMoves);
+	void performOffer(Chr *attacker, Chr *victim);
+	void performTake(Chr *npc, Obj *obj);
 
 public:
 	Common::RandomSource *_rnd;

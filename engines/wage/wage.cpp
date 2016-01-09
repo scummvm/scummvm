@@ -61,6 +61,7 @@
 #include "wage/design.h"
 #include "wage/entities.h"
 #include "wage/gui.h"
+#include "wage/randomhat.h"
 #include "wage/script.h"
 #include "wage/world.h"
 
@@ -398,9 +399,7 @@ void WageEngine::encounter(Chr *player, Chr *chr) {
 }
 
 void WageEngine::performCombatAction(Chr *npc, Chr *player) {
-	warning("STUB WageEngine::performCombatAction()");
-#if 0
-	if (npc->_frozen)
+	if (npc->_context._frozen)
 		return;
 
 	RandomHat hat;
@@ -412,7 +411,7 @@ void WageEngine::performCombatAction(Chr *npc, Chr *player) {
 	// TODO: Figure out under what circumstances we need to add +1
 	// for the chance (e.g. only when all values were set to 0?).
 	if (winning) {
-		if (!_world->_weaponsMenuDisabled) {
+		if (!_world->_weaponMenuDisabled) {
 			if (weapons->size() > 0)
 				hat.addTokens(kTokWeapons, npc->_winningWeapons + 1);
 			if (magics->size() > 0)
@@ -423,8 +422,8 @@ void WageEngine::performCombatAction(Chr *npc, Chr *player) {
 		if (npc->_inventory.size())
 			hat.addTokens(kTokOffer, npc->_winningOffer + 1);
 	} else {
-		if (!_world->_weaponsMenuDisabled) {
-			if (npc.getWeapons(false).length > 0)
+		if (!_world->_weaponMenuDisabled) {
+			if (weapons->size() > 0)
 				hat.addTokens(kTokWeapons, npc->_losingWeapons + 1);
 			if (magics->size() > 0)
 				hat.addTokens(kTokMagic, npc->_losingMagic);
@@ -435,10 +434,10 @@ void WageEngine::performCombatAction(Chr *npc, Chr *player) {
 			hat.addTokens(kTokOffer, npc->_losingOffer + 1);
 	}
 
-	ObjArray *objs = npc->_currentScene->_objs;
+	Common::List<Obj *> *objs = &npc->_currentScene->_objs;
 	if (npc->_inventory.size() < npc->_maximumCarriedObjects) {
 		int cnt = 0;
-		for (ObjList::const_iterator it = objs.begin(); it != objs.end(); ++it, ++cnt) {
+		for (ObjList::const_iterator it = objs->begin(); it != objs->end(); ++it, ++cnt) {
 			if ((*it)->_type != Obj::IMMOBILE_OBJECT) {
 				// TODO: I'm not sure what the chance should be here.
 				hat.addTokens(cnt, 123);
@@ -450,11 +449,11 @@ void WageEngine::performCombatAction(Chr *npc, Chr *player) {
 	switch (token) {
 		case kTokWeapons:
 			// TODO: I think the monster should choose the "best" weapon.
-			performAttack(npc, player, weapons[_rnd.getRandomNumber(weapons->size() - 1)]);
+			performAttack(npc, player, weapons->operator[](_rnd->getRandomNumber(weapons->size() - 1)));
 			break;
 		case kTokMagic:
 			// TODO: I think the monster should choose the "best" magic.
-			performMagic(npc, player, magics[_rnd.getRandomNumber(magics->size() - 1)]);
+			performMagic(npc, player, magics->operator[](_rnd->getRandomNumber(magics->size() - 1)));
 			break;
 		case kTokRun:
 			performMove(npc, validMoves);
@@ -463,13 +462,37 @@ void WageEngine::performCombatAction(Chr *npc, Chr *player) {
 			performOffer(npc, player);
 			break;
 		default:
-			performTake(npc, objs.get(token));
-			break;
+			{
+				int cnt = 0;
+				for (ObjList::const_iterator it = objs->begin(); it != objs->end(); ++it, ++cnt)
+					if (cnt == token)
+						performTake(npc, *it);
+				break;
+			}
 	}
 
 	delete weapons;
 	delete magics;
-#endif
+}
+
+void WageEngine::performAttack(Chr *attacker, Chr *victim, Weapon *weapon) {
+	warning("STUB: performAttack()");
+}
+
+void WageEngine::performMagic(Chr *attacker, Chr *victim, Obj *magicalObject) {
+	warning("STUB: performMagic()");
+}
+
+void WageEngine::performMove(Chr *chr, int validMoves) {
+	warning("STUB: performMove()");
+}
+
+void WageEngine::performOffer(Chr *attacker, Chr *victim) {
+	warning("STUB: performOffer()");
+}
+
+void WageEngine::performTake(Chr *npc, Obj *obj) {
+	warning("STUB: performTake()");
 }
 
 int WageEngine::getValidMoveDirections(Chr *npc) {
