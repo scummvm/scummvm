@@ -122,6 +122,7 @@ struct GameFlags {
 	bool isOldFloppy          : 1;
 	bool useHiRes             : 1;
 	bool use16ColorMode       : 1;
+	bool useHiColorMode       : 1;
 	bool useDigSound          : 1;
 	bool useInstallerPackage  : 1;
 

@@ -76,11 +76,14 @@ public:
 	int getRectSize(int w, int h);
 
 	void setFadeTable(const uint8 *table);
-	void createFadeTable(uint8 *palData, uint8 *dst, uint8 rootColor, uint8 weight);
+	void createFadeTable(const uint8 *palData, uint8 *dst, uint8 rootColor, uint8 weight);
+	void createFadeTable16bit(const uint16 *palData, uint16 *dst, uint16 rootColor, uint8 weight);
 	
 	const uint16 *getCGADitheringTable(int index);
 	const uint8 *getEGADitheringTable();
 
+	void convertToHiColor(int page);
+	void shadeRect(int x1, int y1, int x2, int y2, int shadingLevel);
 private:
 	void updateDirtyRects();
 	void ditherRect(const uint8 *src, uint8 *dst, int dstPitch, int srcW, int srcH, int colorKey = -1);
@@ -106,6 +109,7 @@ private:
 	uint8 _shapeOverlay[16];
 
 	uint8 *_dsTempPage;
+	uint8 *_convertHiColorBuffer;
 
 	uint16 *_cgaDitheringTables[2];
 	const uint8 *_cgaMappingDefault;
