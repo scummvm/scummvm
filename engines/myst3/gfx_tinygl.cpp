@@ -26,7 +26,6 @@
 #undef ARRAYSIZE
 #endif
 
-#include "common/config-manager.h"
 #include "common/rect.h"
 #include "common/textconsole.h"
 
@@ -67,8 +66,6 @@ void TinyGLRenderer::freeTexture(Texture *texture) {
 void TinyGLRenderer::init() {
 	debug("Initializing Software 3D Renderer");
 
-	bool fullscreen = ConfMan.getBool("fullscreen");
-	_system->setupScreen(kOriginalWidth, kOriginalHeight, fullscreen, false);
 	computeScreenViewport();
 
 	Graphics::PixelBuffer screenBuffer = _system->getScreenPixelBuffer();

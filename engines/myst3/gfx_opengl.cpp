@@ -26,7 +26,6 @@
 #undef ARRAYSIZE
 #endif
 
-#include "common/config-manager.h"
 #include "common/rect.h"
 #include "common/textconsole.h"
 
@@ -65,8 +64,6 @@ void OpenGLRenderer::freeTexture(Texture *texture) {
 void OpenGLRenderer::init() {
 	debug("Initializing OpenGL Renderer");
 
-	bool fullscreen = ConfMan.getBool("fullscreen");
-	_system->setupScreen(kOriginalWidth, kOriginalHeight, fullscreen, true);
 	computeScreenViewport();
 
 	// Check the available OpenGL extensions

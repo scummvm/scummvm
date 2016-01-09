@@ -42,7 +42,6 @@
 #undef ARRAYSIZE
 #endif
 
-#include "common/config-manager.h"
 #include "common/rect.h"
 #include "common/textconsole.h"
 
@@ -135,8 +134,6 @@ void ShaderRenderer::freeTexture(Texture *texture) {
 void ShaderRenderer::init() {
 	debug("Initializing OpenGL Renderer with shaders");
 
-	bool fullscreen = ConfMan.getBool("fullscreen");
-	_system->setupScreen(kOriginalWidth, kOriginalHeight, fullscreen, true);
 	computeScreenViewport();
 
 	glEnable(GL_TEXTURE_2D);
