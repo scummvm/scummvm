@@ -184,7 +184,7 @@ void SurfaceSdlGraphicsManager::launcherInitSize(uint w, uint h) {
 	setupScreen(w, h, false, false);
 }
 
-Graphics::PixelBuffer SurfaceSdlGraphicsManager::setupScreen(uint screenW, uint screenH, bool fullscreen, bool accel3d) {
+void SurfaceSdlGraphicsManager::setupScreen(uint screenW, uint screenH, bool fullscreen, bool accel3d) {
 	uint32 sdlflags;
 	int bpp;
 
@@ -446,8 +446,14 @@ Graphics::PixelBuffer SurfaceSdlGraphicsManager::setupScreen(uint screenW, uint 
 #endif
 	if (_fullscreen && !accel3d) {
 		_subScreen = SDL_CreateRGBSurface(SDL_SWSURFACE, fbW, fbH, bpp, _screen->format->Rmask, _screen->format->Gmask, _screen->format->Bmask, _screen->format->Amask);
+	}
+}
+
+Graphics::PixelBuffer SurfaceSdlGraphicsManager::getScreenPixelBuffer() {
+	if (_subScreen) {
 		return Graphics::PixelBuffer(_screenFormat, (byte *)_subScreen->pixels);
 	}
+
 	return Graphics::PixelBuffer(_screenFormat, (byte *)_screen->pixels);
 }
 

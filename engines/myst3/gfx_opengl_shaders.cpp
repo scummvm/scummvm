@@ -49,7 +49,6 @@
 #if defined(USE_GLES2) || defined(USE_OPENGL_SHADERS)
 
 #include "graphics/colormasks.h"
-#include "graphics/pixelbuffer.h"
 #include "graphics/surface.h"
 
 #include "math/glmath.h"

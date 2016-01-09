@@ -73,7 +73,8 @@ public:
 #endif
 	virtual void initSize(uint width, uint height, const Graphics::PixelFormat *format = NULL);
 	virtual void launcherInitSize(uint w, uint h); // ResidualVM specific method
-	virtual Graphics::PixelBuffer setupScreen(uint screenW, uint screenH, bool fullscreen, bool accel3d); // ResidualVM specific method
+	virtual void setupScreen(uint screenW, uint screenH, bool fullscreen, bool accel3d); // ResidualVM specific method
+	virtual Graphics::PixelBuffer getScreenPixelBuffer(); // ResidualVM specific method
 	virtual int getScreenChangeID() const;
 
 	virtual void beginGFXTransaction();

@@ -78,7 +78,9 @@ GfxTinyGL::~GfxTinyGL() {
 }
 
 byte *GfxTinyGL::setupScreen(int screenW, int screenH, bool fullscreen) {
-	Graphics::PixelBuffer buf = g_system->setupScreen(screenW, screenH, fullscreen, false);
+	g_system->setupScreen(screenW, screenH, fullscreen, false);
+
+	Graphics::PixelBuffer buf = g_system->getScreenPixelBuffer();
 	byte *buffer = buf.getRawBuffer();
 
 	_screenWidth = screenW;

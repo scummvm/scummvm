@@ -34,7 +34,6 @@
 
 #include "graphics/colormasks.h"
 #include "graphics/opengl/context.h"
-#include "graphics/pixelbuffer.h"
 #include "graphics/surface.h"
 
 #include "engines/myst3/gfx.h"

@@ -68,9 +68,10 @@ void TinyGLRenderer::init() {
 	debug("Initializing Software 3D Renderer");
 
 	bool fullscreen = ConfMan.getBool("fullscreen");
-	Graphics::PixelBuffer screenBuffer = _system->setupScreen(kOriginalWidth, kOriginalHeight, fullscreen, false);
+	_system->setupScreen(kOriginalWidth, kOriginalHeight, fullscreen, false);
 	computeScreenViewport();
 
+	Graphics::PixelBuffer screenBuffer = _system->getScreenPixelBuffer();
 	_fb = new TinyGL::FrameBuffer(kOriginalWidth, kOriginalHeight, screenBuffer);
 	TinyGL::glInit(_fb, 512);
 

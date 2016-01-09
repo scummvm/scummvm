@@ -666,7 +666,14 @@ public:
 	 * @param fullscreen	the new screen will be displayed in fullscreeen mode
 	 */
 
-	virtual Graphics::PixelBuffer setupScreen(uint screenW, uint screenH, bool fullscreen, bool accel3d) = 0;
+	virtual void setupScreen(uint screenW, uint screenH, bool fullscreen, bool accel3d) = 0;
+
+	/**
+	 * Return a Graphics::PixelBuffer representing the framebuffer.
+	 * The caller can then perform arbitrary graphics transformations
+	 * on the framebuffer (blitting, scrolling, etc.).
+	 */
+	virtual Graphics::PixelBuffer getScreenPixelBuffer() = 0;
 
 	/**
 	 * Suggest textures to render at the side of the game window.

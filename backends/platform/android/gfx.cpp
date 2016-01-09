@@ -459,7 +459,7 @@ void OSystem_Android::copyRectToScreen(const void *buf, int pitch,
 
 
 // ResidualVM specific method
-Graphics::PixelBuffer OSystem_Android::setupScreen(uint screenW, uint screenH, bool fullscreen, bool accel3d, bool isGame) {
+void OSystem_Android::setupScreen(uint screenW, uint screenH, bool fullscreen, bool accel3d, bool isGame) {
 	_opengl = accel3d;
 	initViewport();
 
@@ -481,6 +481,10 @@ Graphics::PixelBuffer OSystem_Android::setupScreen(uint screenW, uint screenH, b
 		_game_pbuf.create(_game_texture->getPixelFormat(),
 				_game_texture->width() * _game_texture->height(), DisposeAfterUse::YES);
 	}
+
+}
+
+Graphics::PixelBuffer OSystem_Android::getScreenPixelBuffer() {
 	return _game_pbuf;
 }
 
