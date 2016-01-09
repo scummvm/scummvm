@@ -165,10 +165,18 @@ public:
 	void initVars();
 
 	/**
+	 * Clears all currently pending keypresses
+	 */
+	void clearEvents();
+
+	/**
 	 * Returns true if there's any pending keys to be processed
 	 */
 	bool isKeyPressed() const { return !_pendingKeys.empty(); }
 
+	/**
+	 * Gets the next pending keypress
+	 */
 	Common::KeyState getKey() { return _pendingKeys.pop(); }
 };
 

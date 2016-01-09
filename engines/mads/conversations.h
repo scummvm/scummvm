@@ -45,7 +45,7 @@ enum ConversationMode {
 	CONVMODE_7 = 7,
 	CONVMODE_8 = 8,
 	CONVMODE_9 = 9,
-	CONVMODE_10 = 10
+	CONVMODE_STOP = 10
 };
 
 enum DialogCommands {
@@ -69,6 +69,7 @@ enum ConvFlagMode {
 };
 
 enum ConvEntryFlag {
+	ENTRYFLAG_2 = 2,
 	ENTRYFLAG_4000 = 0x4000,
 	ENTRYFLAG_8000 = 0x8000
 };
@@ -90,7 +91,7 @@ struct ConvNode {
 	uint16 _index;
 	uint16 _dialogCount;
 	int16 _unk1;
-	int16 _unk2;
+	bool _active;
 	int16 _unk3;
 
 	Common::Array<ConvDialog> _dialogs;
@@ -115,7 +116,8 @@ struct ConversationData {
 	Common::String _speechFile;
 	Common::Array<uint> _messages;
 	Common::StringArray _textLines;
-	Common::Array<ConvNode> _convNodes;
+	Common::Array<ConvNode> _nodes;
+	Common::Array<ConvDialog> _dialogs;
 
 	/**
 	 * Load the specified conversation resource file
@@ -147,6 +149,16 @@ struct ConversationVar {
 	 * Return either the variable's pointer, or a pointer to it's direct value
 	 */
 	int *getValue() { return _isPtr ? _valPtr : &_val; }
+
+	/**
+	 * Returns true if variable is a pointer
+	 */
+	bool isPtr() const { return _isPtr; }
+
+	/**
+	 * Returns true if variable is numeric
+	 */
+	bool isNumeric() const { return !_isPtr; }
 };
 
 /**
@@ -157,6 +169,16 @@ struct ConversationConditionals {
 	Common::Array<uint> _entryFlags;
 	Common::Array<ConversationVar> _vars;
 	int _numImports;
+
+	int _currentNode;
+	int _fieldC;
+	int _fieldE;
+	int _field10;
+	int _field12;
+	int _field28;
+	int _field3C;
+	int _field50;
+	int _field64;
 
 	/**
 	 * Constructor
@@ -194,9 +216,10 @@ private:
 	int _arr5[MAX_SPEAKERS];
 	int _arr6[MAX_SPEAKERS];
 	InputMode _inputMode;
-	int _val1, _val5;
+	int _val1;
 	ConversationMode _currentMode;
 	ConversationMode _priorMode;
+	int _verbId;
 	int _speakerVal;
 	int _heroTrigger;
 	TriggerMode _heroTriggerMode;
@@ -208,6 +231,7 @@ private:
 	uint32 _startFrameNumber;
 	ConversationVar *_vars;
 	ConversationVar *_nextStartNode;
+	int _currentNode;
 	
 	/**
 	 * Returns the record for the specified conversation, if it's loaded
@@ -228,6 +252,31 @@ private:
 	 * Flags a conversation option/entry
 	 */
 	void flagEntry(ConvFlagMode mode, int entryIndex);
+
+	/**
+	 * Generate a menu
+	 */
+	ConversationMode generateMenu();
+
+	/**
+	 * Generate text
+	 */
+	void generateText(int textLineIndex, int v2, int *v3);
+
+	/**
+	 * Generate message
+	 */
+	void generateMessage(int textLineIndex, int v2, int *v3, int *v4);
+
+	/**
+	 * Gets the next node
+	 */
+	bool nextNode();
+
+	/**
+	 * Executes a conversation entry
+	 */
+	void executeEntry(int index);
 public:
 	/**
 	 * Constructor

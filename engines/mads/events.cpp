@@ -269,4 +269,9 @@ void EventsManager::initVars() {
 	_strokeGoing = 0;
 }
 
+void EventsManager::clearEvents() {
+	_pendingKeys.clear();
+}
+
+
 } // End of namespace MADS

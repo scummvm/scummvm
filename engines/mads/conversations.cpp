@@ -37,12 +37,14 @@ GameConversations::GameConversations(MADSEngine *vm) : _vm(vm) {
 	_speakerVal = 0;
 	_currentMode = CONVMODE_NONE;
 	_priorMode = CONVMODE_NONE;
-	_val1 =_val5 = 0;
+	_val1 = 0;
+	_verbId = 0;
 	_vars = _nextStartNode = nullptr;
 	_heroTrigger = 0;
 	_heroTriggerMode = SEQUENCE_TRIGGER_PARSER;
 	_interlocutorTrigger = 0;
 	_interlocutorTriggerMode = SEQUENCE_TRIGGER_PARSER;
+	_currentNode = 0;
 
 	// Mark all conversation slots as empty
 	for (int idx = 0; idx < MAX_CONVERSATIONS; ++idx)
@@ -101,7 +103,7 @@ void GameConversations::run(int id) {
 	_interlocutorTrigger = 0;
 	_val1 = 0;
 	_currentMode = CONVMODE_0;
-	_val5 = -1;
+	_verbId = -1;
 	_speakerVal = 1;
 
 	// Initialize speaker arrays
@@ -278,11 +280,152 @@ void GameConversations::reset(int id) {
 }
 
 void GameConversations::update(bool flag) {
+	// Only need to proceed if there is an active conversation
+	if (!active())
+		return;
+
+	ConversationVar &var0 = _runningConv->_cnd._vars[0];
+
+	switch (_currentMode) {
+	case CONVMODE_0:
+		assert(var0.isNumeric());
+		if (var0._val < 0) {
+			if (_vm->_game->_scene._frameStartTime >= _startFrameNumber) {
+				removeActiveWindow();
+				if (_heroTrigger) {
+					_vm->_game->_scene._action._activeAction._verbId = _verbId;
+					_vm->_game->_trigger = _heroTrigger;
+					_vm->_game->_triggerMode = _heroTriggerMode;
+					_heroTrigger = 0;
+				}
+
+				_currentMode = CONVMODE_STOP;
+			}
+		} else {
+			bool isActive = nextNode();
+			_currentNode = var0._val;
+
+			if (isActive) {
+				_verbId = _runningConv->_data._nodes[_currentNode]._index;
+				_vm->_game->_scene._action._activeAction._verbId = _verbId;
+				_vm->_game->_scene._action._inProgress = true;
+				_vm->_game->_scene._action._savedFields._commandError = false;
+				_currentMode = CONVMODE_1;
+			} else {
+				_currentMode = generateMenu();
+			}
+		}
+		break;
+
+	case CONVMODE_1:
+		if (flag)
+			_currentMode = CONVMODE_3;
+		break;
+
+	case CONVMODE_2:
+		if (flag) {
+			_vm->_game->_player._stepEnabled = false;
+			_verbId = _vm->_game->_scene._action._activeAction._verbId;
+
+			if (!(_runningConv->_cnd._entryFlags[_verbId] & ENTRYFLAG_2))
+				flagEntry(FLAGMODE_2, _verbId);
+
+			removeActiveWindow();
+			_vm->_game->_scene._userInterface.emptyConversationList();
+			_vm->_game->_scene._userInterface.setup(kInputConversation);
+			_vm->_events->clearEvents();
+			executeEntry(_verbId);
+
+			ConvDialog &dialog = _runningConv->_data._dialogs[_verbId];
+			if (dialog._speechIndex) {
+				_runningConv->_cnd._field50 = dialog._speechIndex;
+				_runningConv->_cnd._field10 = 1;
+			}
+
+			generateText(dialog._textLineIndex, _runningConv->_cnd._field10,
+				&_runningConv->_cnd._field50);
+			_currentMode = CONVMODE_0;
+
+			if (_heroTrigger) {
+				_vm->_game->_scene._action._activeAction._verbId = _verbId;
+				_vm->_game->_trigger = _heroTrigger;
+				_vm->_game->_triggerMode = _heroTriggerMode;
+				_heroTrigger = 0;
+			}
+		}
+		break;
+
+	case CONVMODE_3:
+		if (_vm->_game->_scene._frameStartTime >= _startFrameNumber) {
+			removeActiveWindow();
+			_vm->_events->clearEvents();
+			executeEntry(_verbId);
+			generateMessage(_runningConv->_cnd._fieldC, _runningConv->_cnd._field10,
+				&_runningConv->_cnd._field50, &_runningConv->_cnd._field28);
+		
+			if (_heroTrigger && _val1) {
+				_vm->_game->_scene._action._activeAction._verbId = _verbId;
+				_vm->_game->_trigger = _heroTrigger;
+				_vm->_game->_triggerMode = _heroTriggerMode;
+				_heroTrigger = 0;
+			}
+
+			_currentMode = CONVMODE_4;
+		}
+		break;
+
+	case CONVMODE_4:
+		if (_vm->_game->_scene._frameStartTime >= _startFrameNumber) {
+			removeActiveWindow();
+			_vm->_events->clearEvents();
+
+			generateMessage(_runningConv->_cnd._fieldE, _runningConv->_cnd._field12,
+				&_runningConv->_cnd._field64, &_runningConv->_cnd._field3C);
+
+			if (_interlocutorTrigger && _val1) {
+				_vm->_game->_scene._action._activeAction._verbId = _verbId;
+				_vm->_game->_trigger = _interlocutorTrigger;
+				_vm->_game->_triggerMode = _interlocutorTriggerMode;
+				_interlocutorTrigger = 0;
+			}
+		}
+		break;
+
+	case CONVMODE_STOP:
+		stop();
+		break;
+
+	default:
+		break;
+	}
+
 	warning("TODO: GameConversations::update");
 }
 
 void GameConversations::removeActiveWindow() {
 	warning("TODO: GameConversations::removeActiveWindow");
+}
+
+ConversationMode GameConversations::generateMenu() {
+	error("TODO: GameConversations::generateMenu");
+}
+
+void GameConversations::generateText(int textLineIndex, int v2, int *v3) {
+	error("TODO: GameConversations::generateText");
+}
+
+void GameConversations::generateMessage(int textLineIndex, int v2, int *v3, int *v4) {
+	error("TODO: GameConversations::generateMessage");
+}
+
+bool GameConversations::nextNode() {
+	ConversationVar &var0 = _runningConv->_cnd._vars[0];
+	_runningConv->_cnd._currentNode = var0._val;
+	return _runningConv->_data._nodes[var0._val]._active;
+}
+
+void GameConversations::executeEntry(int index) {
+
 }
 
 /*------------------------------------------------------------------------*/
@@ -329,35 +472,31 @@ void ConversationData::load(const Common::String &filename) {
 	// **** Section 1: Nodes **************************************************
 	convFile = convFileUnpacked.getItemStream(1);
 
-	_convNodes.clear();
+	_nodes.clear();
 	for (uint i = 0; i < _nodeCount; i++) {
 		ConvNode node;
 		node._index = convFile->readUint16LE();
 		node._dialogCount = convFile->readUint16LE();
 		node._unk1 = convFile->readSint16LE();	// TODO
-		node._unk2 = convFile->readSint16LE();	// TODO
+		node._active = convFile->readSint16LE() != 0;
 		node._unk3 = convFile->readSint16LE();	// TODO
-		_convNodes.push_back(node);
-		//debug("Node %d, index %d, entries %d - %d, %d, %d", i, node.index, node.dialogCount, node.unk1, node.unk2, node.unk3);
+		_nodes.push_back(node);
 	}
+
 	delete convFile;
 
 	// **** Section 2: Dialogs ************************************************
 	convFile = convFileUnpacked.getItemStream(2);
 	assert(convFile->size() == _dialogCount * 8);
 
-	for (uint idx = 0; idx < _nodeCount; ++idx) {
-		uint dialogCount = _convNodes[idx]._dialogCount;
-
-		for (uint j = 0; j < dialogCount; ++j) {
-			ConvDialog dialog;
-			dialog._textLineIndex = convFile->readSint16LE();
-			dialog._speechIndex = convFile->readSint16LE();
-			dialog._nodeOffset = convFile->readUint16LE();
-			dialog._nodeSize = convFile->readUint16LE();
-			_convNodes[idx]._dialogs.push_back(dialog);
-		}
+	_dialogs.resize(_dialogCount);
+	for (uint idx = 0; idx < _dialogCount; ++idx) {
+		_dialogs[idx]._textLineIndex = convFile->readSint16LE();
+		_dialogs[idx]._speechIndex = convFile->readSint16LE();
+		_dialogs[idx]._nodeOffset = convFile->readUint16LE();
+		_dialogs[idx]._nodeSize = convFile->readUint16LE();
 	}
+
 	delete convFile;
 
 	// **** Section 3: Messages ***********************************************
@@ -402,7 +541,7 @@ void ConversationData::load(const Common::String &filename) {
 	assert(convFile->size() == _commandsSize);
 
 	for (uint16 i = 0; i < _nodeCount; i++) {
-		uint16 dialogCount = _convNodes[i]._dialogCount;
+		uint16 dialogCount = _nodes[i]._dialogCount;
 
 		for (uint16 j = 0; j < dialogCount; j++) {
 			//ConvDialog dialog = _convNodes[i].dialogs[j];
@@ -480,16 +619,31 @@ void ConversationConditionals::load(const Common::String &filename) {
 	Common::File inFile;
 	Common::SeekableReadStream *convFile;
 
+	// Open up the file for access
 	inFile.open(filename);
 	MadsPack convFileUnpacked(&inFile);
 
 	// **** Section 0: Header *************************************************
 	convFile = convFileUnpacked.getItemStream(0);
 
-	convFile->skip(2);
+	_currentNode = convFile->readUint16LE();
 	int entryFlagsCount = convFile->readUint16LE();
 	int varsCount = convFile->readUint16LE();
 	int importsCount = convFile->readUint16LE();
+
+	convFile->skip(2);
+	_fieldC = convFile->readUint16LE();
+	_fieldE = convFile->readUint16LE();
+	_field10 = convFile->readUint16LE();
+	_field12 = convFile->readUint16LE();
+	convFile->seek(0x28);
+	_field28 = convFile->readUint16LE();
+	convFile->seek(0x3C);
+	_field3C = convFile->readUint16LE();
+	convFile->seek(0x50);
+	_field50 = convFile->readUint16LE();
+	convFile->seek(0x64);
+	_field64 = convFile->readUint16LE();
 
 	delete convFile;
 
