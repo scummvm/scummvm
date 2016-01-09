@@ -225,9 +225,9 @@ void gl_shade_vertex(GLContext *c, GLVertex *v) {
 
 		if (l->position.W == 0) {
 			// light at infinity
-			d.X = l->position.X;
-			d.Y = l->position.Y;
-			d.Z = l->position.Z;
+			d.X = l->norm_position.X;
+			d.Y = l->norm_position.Y;
+			d.Z = l->norm_position.Z;
 			att = 1;
 		} else {
 			// distance attenuation
