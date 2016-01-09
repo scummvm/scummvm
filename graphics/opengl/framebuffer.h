@@ -33,12 +33,12 @@ public:
 	FrameBuffer(uint width, uint height);
 	FrameBuffer(GLuint texture_name, uint width, uint height, uint texture_width, uint texture_height);
 #ifdef AMIGAOS
-	~FrameBuffer() {}
+	virtual ~FrameBuffer() {}
 
 	void attach() {}
 	void detach() {}
 #else
-	~FrameBuffer();
+	virtual ~FrameBuffer();
 
 	void attach();
 	void detach();
