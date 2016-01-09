@@ -81,7 +81,7 @@ void KyraRpgEngine::initStaticResource() {
 	_dscTileIndex = _staticres->loadRawData(kRpgCommonDscTileIndex, temp);
 	_dscDim1 = (const int8 *)_staticres->loadRawData(kRpgCommonDscDimData1, temp);
 	_dscDim2 = (const int8 *)_staticres->loadRawData(kRpgCommonDscDimData2, temp);
-	_dscUnk2 = _staticres->loadRawData(kRpgCommonDscUnk2, temp);
+	_dscDoorScaleOffs = _staticres->loadRawData(kRpgCommonDscDoorScaleOffs, temp);
 	_dscBlockMap = _staticres->loadRawData(kRpgCommonDscBlockMap, temp);
 	_dscBlockIndex = (const int8 *)_staticres->loadRawData(kRpgCommonDscBlockIndex, temp);
 	_dscDimMap = _staticres->loadRawData(kRpgCommonDscDimMap, temp);

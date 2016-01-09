@@ -1425,7 +1425,7 @@ void LoLEngine::drawSceneShapes(int) {
 		if (!(w & 8))
 			continue;
 
-		uint16 v = 20 * (s - (s < 23 ? _dscUnk2[s] : 0));
+		uint16 v = 20 * (s - (s < 23 ? _dscDoorScaleOffs[s] : 0));
 		if (v > 80)
 			v = 80;
 

@@ -82,8 +82,13 @@ public:
 	const uint16 *getCGADitheringTable(int index);
 	const uint8 *getEGADitheringTable();
 
+	bool loadFont(FontId fontId, const char *filename);
+
+	// FM-Towns specific
+	void decodeSHP(const uint8 *data, int dstPage);
 	void convertToHiColor(int page);
 	void shadeRect(int x1, int y1, int x2, int y2, int shadingLevel);
+
 private:
 	void updateDirtyRects();
 	void ditherRect(const uint8 *src, uint8 *dst, int dstPitch, int srcW, int srcH, int colorKey = -1);
@@ -93,13 +98,15 @@ private:
 	void scaleShapeProcessLine4Bit(uint8 *&dst, const uint8 *&src);
 	bool posWithinRect(int posX, int posY, int x1, int y1, int x2, int y2);
 
+	void setPagePixel16bit(int pageNum, int x, int y, uint16 color);
+
 	void generateEGADitheringTable(const Palette &pal);
 	void generateCGADitheringTables(const uint8 *mappingData);
 
 	int _dsDiv, _dsRem, _dsScaleTrans;
 	uint8 *_cgaScaleTable;
 	int16 _gfxX, _gfxY;
-	uint8 _gfxCol;
+	uint16 _gfxCol;
 	const uint8 *_gfxMaxY;
 
 	int16 _dsX1, _dsX2, _dsY1, _dsY2;
@@ -109,6 +116,7 @@ private:
 	uint8 _shapeOverlay[16];
 
 	uint8 *_dsTempPage;
+	uint8 *_shpBuffer;
 	uint8 *_convertHiColorBuffer;
 
 	uint16 *_cgaDitheringTables[2];
@@ -120,6 +128,44 @@ private:
 	static const uint8 _egaMatchTable[];
 	static const ScreenDim _screenDimTable[];
 	static const int _screenDimTableCount;
+};
+
+/**
+* SJIS Font variant used in the intro and outro of EOB II FM-Towns. It appears twice as large, since it is not rendered on the hires overlay pages
+*/
+class SJISFontLarge : public SJISFont {
+public:
+	SJISFontLarge(Graphics::FontSJIS *font);
+	virtual ~SJISFontLarge() { unload(); }
+
+	virtual bool usesOverlay() const { return false; }
+	virtual void drawChar(uint16 c, byte *dst, int pitch, int) const;
+};
+
+/**
+* 12 x 12 SJIS font for EOB II FM-Towns. The data for this font comes from a file, not from the font rom.
+*/
+class SJISFont12x12 : public Font {
+public:
+	SJISFont12x12(const uint16 *searchTable);
+	virtual ~SJISFont12x12() { unload(); }
+
+	virtual bool load(Common::SeekableReadStream &file);
+	virtual bool usesOverlay() const { return true; }
+	virtual int getHeight() const { return _height; }
+	virtual int getWidth() const { return _width; }
+	virtual int getCharWidth(uint16 c) const { return _width; }
+	virtual void setColorMap(const uint8 *src) { _colorMap = src; }
+	virtual void drawChar(uint16 c, byte *dst, int pitch, int) const;
+
+private:
+	void unload();
+
+	uint8 *_data;
+	Common::HashMap<uint16, uint8> _searchTable;
+
+	const uint8 *_colorMap;
+	const int _height, _width;
 };
 
 } // End of namespace Kyra

@@ -665,13 +665,13 @@ static const byte kLoLDscTileIndexPC98[18] = {
 
 static const ByteProvider kLoLDscTileIndexPC98Provider = { ARRAYSIZE(kLoLDscTileIndexPC98), kLoLDscTileIndexPC98 };
 
-static const byte kLoLDscUnk2PC98[23] = {
+static const byte kLoLDscDoorScaleOffsPC98[23] = {
 	0x00, 0x00, 0x00, 0x03, 0x03, 0x03, 0x03, 0x03,
 	0x08, 0x08, 0x08, 0x08, 0x08, 0x0D, 0x0D, 0x0D,
 	0x0D, 0x0D, 0x12, 0x12, 0x12, 0x12, 0x12
 };
 
-static const ByteProvider kLoLDscUnk2PC98Provider = { ARRAYSIZE(kLoLDscUnk2PC98), kLoLDscUnk2PC98 };
+static const ByteProvider kLoLDscDoorScaleOffsPC98Provider = { ARRAYSIZE(kLoLDscDoorScaleOffsPC98), kLoLDscDoorScaleOffsPC98 };
 
 static const byte kLoLDscDoorShapeIndexPC98[23] = {
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,

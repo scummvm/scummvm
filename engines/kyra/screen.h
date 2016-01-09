@@ -145,10 +145,10 @@ private:
 
 #ifdef ENABLE_EOB
 /**
- * Implementation of the Font interface for old DOS fonts used
- * in EOB and EOB II.
- *
- */
+* Implementation of the Font interface for old DOS fonts used
+* in EOB and EOB II.
+*
+*/
 class OldDOSFont : public Font {
 public:
 	OldDOSFont(Common::RenderMode mode);
@@ -247,18 +247,6 @@ private:
 	// depend on whether an outline is used or not (neither LOL/PC-9801 nor LOL/FM-TOWNS use an outline, but the first
 	// version uses a font width of 8 where the latter uses a font width of 9).
 	const int _sjisWidthOffset;
-};
-
-/**
-* SJISFont variant used in the intro and outro of EOB II FM-Towns. It appears twice as large, since it is not rendered on the hires overlay pages
-*/
-class SJISFontLarge : public SJISFont {
-public:
-	SJISFontLarge(Graphics::FontSJIS *font);
-	virtual ~SJISFontLarge() { unload(); }
-
-	virtual bool usesOverlay() const { return false; }
-	virtual void drawChar(uint16 c, byte *dst, int pitch) const;
 };
 
 /**
@@ -426,6 +414,7 @@ public:
 		FID_INTRO_FNT,
 		FID_SJIS_FNT,
 		FID_SJIS_LARGE_FNT,
+		FID_SJIS_SMALL_FNT,
 		FID_NUM
 	};
 
@@ -466,7 +455,7 @@ public:
 
 	void clearPage(int pageNum);
 
-	uint8 getPagePixel(int pageNum, int x, int y);
+	int getPagePixel(int pageNum, int x, int y);
 	void setPagePixel(int pageNum, int x, int y, uint8 color);
 
 	const uint8 *getCPagePtr(int pageNum) const;
@@ -499,7 +488,7 @@ public:
 	void drawBox(int x1, int y1, int x2, int y2, int color);
 
 	// font/text handling
-	bool loadFont(FontId fontId, const char *filename);
+	virtual bool loadFont(FontId fontId, const char *filename);
 	FontId setFont(FontId fontId);
 
 	int getFontHeight() const;
@@ -584,6 +573,7 @@ public:
 	// RPG specific, this does not belong here
 	void crossFadeRegion(int x1, int y1, int x2, int y2, int w, int h, int srcPage, int dstPage);
 
+	uint16 *get16bitPalette() { return _16bitPalette; }
 	void set16bitShadingLevel(int lvl) { _16bitShadingLevel = lvl; }
 
 protected:

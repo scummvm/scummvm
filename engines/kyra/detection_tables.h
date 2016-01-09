@@ -22,7 +22,6 @@
 
 namespace {
 
-#define EOB2_SJIS_FLAGS FLAGS(false, false, false, false, true, false, false, false, Kyra::GI_EOB2)
 #define FLAGS(x, y, z, a, b, c, d, e, f, id) { Common::UNK_LANG, Common::UNK_LANG, Common::UNK_LANG, Common::kPlatformUnknown, x, y, z, a, b, c, d, e, f, id }
 #define FLAGS_FAN(fanLang, repLang, x, y, z, a, b, c, d, e, f, id) { Common::UNK_LANG, fanLang, repLang, Common::kPlatformUnknown, x, y, z, a, b, c, d, e, f, id }
 
@@ -62,6 +61,7 @@ namespace {
 
 #define EOB_FLAGS FLAGS(false, false, false, false, false, false, false, false, false, Kyra::GI_EOB1)
 #define EOB2_FLAGS FLAGS(false, false, false, false, false, false, false, false, false, Kyra::GI_EOB2)
+#define EOB2_FMTOWNS_FLAGS FLAGS(false, false, false, false, true, false, true, false, false, Kyra::GI_EOB2)
 
 #define GAMEOPTION_KYRA3_AUDIENCE GUIO_GAMEOPTIONS1
 #define GAMEOPTION_KYRA3_SKIP     GUIO_GAMEOPTIONS2
@@ -1683,6 +1683,22 @@ const KYRAGameDescription adGameDescs[] = {
 			GUIO6(GUIO_NOSPEECH, GUIO_MIDIADLIB, GUIO_MIDIPCSPK, GUIO_RENDERVGA, GUIO_RENDEREGA, GAMEOPTION_EOB_HPGRAPHS)
 		},
 		EOB2_FLAGS
+	},
+
+	{
+		{
+			"eob2",
+			0,
+			{
+				{ "AZURE.SDT", 0, "2915098f2d1bdcfa518f857a26bb3324", -1 },
+				{ 0, 0, 0, 0 }
+			},
+				Common::JA_JPN,
+				Common::kPlatformFMTowns,
+				ADGF_NO_FLAGS,
+				GUIO4(GUIO_NOSPEECH, GUIO_MIDITOWNS, GUIO_RENDERFMTOWNS, GAMEOPTION_EOB_HPGRAPHS)
+		},
+		EOB2_FMTOWNS_FLAGS
 	},
 #endif // ENABLE_EOB
 

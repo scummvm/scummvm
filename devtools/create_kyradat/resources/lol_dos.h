@@ -812,13 +812,13 @@ static const byte kLoLDscTileIndexDOS[18] = {
 
 static const ByteProvider kLoLDscTileIndexDOSProvider = { ARRAYSIZE(kLoLDscTileIndexDOS), kLoLDscTileIndexDOS };
 
-static const byte kLoLDscUnk2DOS[23] = {
+static const byte kLoLDscDoorScaleOffsDOS[23] = {
 	0x00, 0x00, 0x00, 0x03, 0x03, 0x03, 0x03, 0x03,
 	0x08, 0x08, 0x08, 0x08, 0x08, 0x0D, 0x0D, 0x0D,
 	0x0D, 0x0D, 0x12, 0x12, 0x12, 0x12, 0x12
 };
 
-static const ByteProvider kLoLDscUnk2DOSProvider = { ARRAYSIZE(kLoLDscUnk2DOS), kLoLDscUnk2DOS };
+static const ByteProvider kLoLDscDoorScaleOffsDOSProvider = { ARRAYSIZE(kLoLDscDoorScaleOffsDOS), kLoLDscDoorScaleOffsDOS };
 
 static const byte kLoLDscDoorShapeIndexDOS[23] = {
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,

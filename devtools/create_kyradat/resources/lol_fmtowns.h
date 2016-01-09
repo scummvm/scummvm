@@ -666,13 +666,13 @@ static const byte kLoLDscTileIndexFMTowns[18] = {
 
 static const ByteProvider kLoLDscTileIndexFMTownsProvider = { ARRAYSIZE(kLoLDscTileIndexFMTowns), kLoLDscTileIndexFMTowns };
 
-static const byte kLoLDscUnk2FMTowns[23] = {
+static const byte kLoLDscDoorScaleOffsFMTowns[23] = {
 	0x00, 0x00, 0x00, 0x03, 0x03, 0x03, 0x03, 0x03,
 	0x08, 0x08, 0x08, 0x08, 0x08, 0x0D, 0x0D, 0x0D,
 	0x0D, 0x0D, 0x12, 0x12, 0x12, 0x12, 0x12
 };
 
-static const ByteProvider kLoLDscUnk2FMTownsProvider = { ARRAYSIZE(kLoLDscUnk2FMTowns), kLoLDscUnk2FMTowns };
+static const ByteProvider kLoLDscDoorScaleOffsFMTownsProvider = { ARRAYSIZE(kLoLDscDoorScaleOffsFMTowns), kLoLDscDoorScaleOffsFMTowns };
 
 static const byte kLoLDscDoorShapeIndexFMTowns[23] = {
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,

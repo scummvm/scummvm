@@ -154,6 +154,13 @@ private:
 	static const EoBRect16 _highlightFrames[];
 	static const uint8 _highlightColorTableVGA[];
 	static const uint8 _highlightColorTableEGA[];
+
+	// FM-Towns specific
+	int checkKatakanaSelection();
+	void printKatakanaOptions(int page);
+
+	int _currentKanaPage;
+	char _csjis[3];
 };
 
 } // End of namespace Kyra

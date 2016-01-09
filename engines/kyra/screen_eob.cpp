@@ -34,6 +34,7 @@
 
 #include "graphics/cursorman.h"
 #include "graphics/palette.h"
+#include "graphics/sjis.h"
 
 namespace Kyra {
 
@@ -46,7 +47,7 @@ Screen_EoB::Screen_EoB(EoBCoreEngine *vm, OSystem *system) : Screen(vm, system, 
 	_gfxX = _gfxY = 0;
 	_gfxCol = 0;
 	_dsTempPage = 0;
-	_convertHiColorBuffer = 0;
+	_shpBuffer = _convertHiColorBuffer = 0;
 	_dsDiv = 0;
 	_dsRem = 0;
 	_dsScaleTrans = 0;
@@ -61,6 +62,7 @@ Screen_EoB::Screen_EoB(EoBCoreEngine *vm, OSystem *system) : Screen(vm, system, 
 
 Screen_EoB::~Screen_EoB() {
 	delete[] _dsTempPage;
+	delete[] _shpBuffer;
 	delete[] _convertHiColorBuffer;
 	delete[] _cgaScaleTable;
 	delete[] _egaDitheringTable;
@@ -73,12 +75,21 @@ bool Screen_EoB::init() {
 	if (Screen::init()) {
 		int temp;
 		_gfxMaxY = _vm->staticres()->loadRawData(kEoBBaseExpObjectY, temp);
-
 		_dsTempPage = new uint8[12000];
 
 		if (_vm->gameFlags().platform == Common::kPlatformFMTowns) {
+			_shpBuffer = new uint8[SCREEN_H * SCREEN_W];
 			_convertHiColorBuffer = new uint8[SCREEN_H * SCREEN_W];
+			enableHiColorMode(true);
+			
+			Graphics::FontSJIS *font = Graphics::FontSJIS::createFont(Common::kPlatformFMTowns);
+			if (!font)
+				error("Could not load any SJIS font, neither the original nor ScummVM's 'SJIS.FNT'");
+			_fonts[FID_SJIS_LARGE_FNT] = new SJISFontLarge(font);
+
+			loadFont(FID_SJIS_SMALL_FNT, "FONT.DMP");
 		}
+
 		if (_vm->gameFlags().useHiRes && _renderMode == Common::kRenderEGA) {
 			_useHiResEGADithering = true;
 			_egaDitheringTable = new uint8[256];
@@ -124,19 +135,28 @@ void Screen_EoB::setMouseCursor(int x, int y, const byte *shape, const uint8 *ov
 	int mouseH = (shape[3]);
 	int colorKey = (_renderMode == Common::kRenderCGA) ? 0 : _cursorColorKey;
 
-	int scaleFactor = _useHiResEGADithering ? 2 : 1;
+	int scaleFactor = _vm->gameFlags().useHiRes ? 2 : 1;
 	int bpp = _useHiColorScreen ? 2 : 1;
 
 	uint8 *cursor = new uint8[mouseW * scaleFactor * bpp * mouseH * scaleFactor];
-	// We use memset and copyBlockToPage instead of fillRect to make sure that the
-	// color key 0xFF doesn't get converted into EGA color
-	memset(cursor, colorKey, mouseW * scaleFactor * bpp * mouseH * scaleFactor);
+	
+	if (_bytesPerPixel == 2) {
+		colorKey = _16bitPalette[colorKey];
+		for (int s = mouseW * scaleFactor * bpp * mouseH * scaleFactor; s; s -= 2)
+			*(uint16*)(cursor + s - 2) = colorKey;
+	} else {
+		// We don't use fillRect here to make sure that the color key 0xFF doesn't get converted into EGA color
+		memset(cursor, colorKey, mouseW * scaleFactor * bpp * mouseH * scaleFactor);
+	}
+
 	copyBlockToPage(6, 0, 0, mouseW * scaleFactor, mouseH * scaleFactor, cursor);
 	drawShape(6, shape, 0, 0, 0, 2, ovl);
 	CursorMan.showMouse(false);
 
 	if (_useHiResEGADithering)
 		ditherRect(getCPagePtr(6), cursor, mouseW * scaleFactor, mouseW, mouseH, colorKey);
+	else if (_vm->gameFlags().useHiRes)
+		scale2x(cursor, mouseW * scaleFactor, getCPagePtr(6), SCREEN_W, mouseW, mouseH);
 	else
 		copyRegionToBuffer(6, 0, 0, mouseW, mouseH, cursor);
 
@@ -185,9 +205,13 @@ void Screen_EoB::loadFileDataToPage(Common::SeekableReadStream *s, int pageNum, 
 }
 
 void Screen_EoB::printShadedText(const char *string, int x, int y, int col1, int col2) {
-	printText(string, x - 1, y, 12, col2);
-	printText(string, x, y + 1, 12, 0);
-	printText(string, x - 1, y + 1, 12, 0);
+	if (_vm->gameFlags().platform != Common::kPlatformFMTowns) {
+		printText(string, x - 1, y, 12, col2);
+		printText(string, x, y + 1, 12, 0);
+		printText(string, x - 1, y + 1, 12, 0);
+	} else if (col2) {
+		fillRect(x, y, x + getTextWidth(string) - 1, y + getFontHeight() - 1, col2);
+	}
 	printText(string, x, y, col1, 0);
 }
 
@@ -197,21 +221,27 @@ void Screen_EoB::loadShapeSetBitmap(const char *file, int tempPage, int destPage
 }
 
 void Screen_EoB::loadEoBBitmap(const char *file, const uint8 *cgaMapping, int tempPage, int destPage, int convertToPage) {
-	const char *filePattern = (_vm->game() == GI_EOB1 && (_renderMode == Common::kRenderEGA || _renderMode == Common::kRenderCGA)) ? "%s.EGA" : "%s.CPS";
+	const char *filePattern = _vm->gameFlags().platform == Common::kPlatformFMTowns ? "%s.SHP" : ((_vm->game() == GI_EOB1 && (_renderMode == Common::kRenderEGA || _renderMode == Common::kRenderCGA)) ? "%s.EGA" : "%s.CPS");
 	Common::String tmp = Common::String::format(filePattern, file);
 	Common::SeekableReadStream *s = _vm->resource()->createReadStream(tmp);
 	bool loadAlternative = false;
-	if (s) {
+
+	if (_vm->gameFlags().platform == Common::kPlatformFMTowns) {
+		if (!s)
+			error("Screen_EoB::loadEoBBitmap(): Failed to load file '%s'", file);	
+		s->read(_shpBuffer, s->size());
+		decodeSHP(_shpBuffer, destPage);
+	} else if (s) {
 		// This additional check is necessary since some localized versions of EOB II seem to contain invalid (size zero) cps files
 		if (s->size())
 			loadBitmap(tmp.c_str(), tempPage, destPage, 0);
 		else
 			loadAlternative = true;
-
-		delete s;
 	} else {
 		loadAlternative = true;
 	}
+
+	delete s;
 
 	if (loadAlternative) {
 		if (_vm->game() == GI_EOB1) {
@@ -279,7 +309,7 @@ void Screen_EoB::convertPage(int srcPage, int dstPage, const uint8 *cgaMapping) 
 void Screen_EoB::setScreenPalette(const Palette &pal) {
 	if (_bytesPerPixel == 2) {
 		for (int i = 0; i < 4; i++)
-			createFadeTable16bit((const uint16*)(pal.getData()), &_16bitPalette[i * 256], 0, i * 53);
+			createFadeTable16bit((const uint16*)(pal.getData()), &_16bitPalette[i * 256], 0, i * 85);
 	}else if (_useHiResEGADithering && pal.getNumColors() != 16) {
 		generateEGADitheringTable(pal);
 	} else if (_renderMode == Common::kRenderEGA && pal.getNumColors() == 16) {
@@ -315,7 +345,7 @@ uint8 *Screen_EoB::encodeShape(uint16 x, uint16 y, uint16 w, uint16 h, bool enco
 	if (_renderMode == Common::kRenderEGA && !_useHiResEGADithering)
 		encode8bit = false;
 
-	if (_bytesPerPixel == 2) {
+	if (_bytesPerPixel == 2 && encode8bit) {
 		shapesize = h * (w << 3) + 4;
 		shp = new uint8[shapesize];
 		memset(shp, 0, shapesize);
@@ -890,6 +920,12 @@ const uint8 *Screen_EoB::generateShapeOverlay(const uint8 *shp, const uint8 *fad
 	if (*shp != 2)
 		return 0;
 
+	if (_bytesPerPixel == 2) {
+		setFadeTable(fadingTable);
+		setShapeFadingLevel(1);
+		return 0;
+	}
+
 	shp += 4;
 	for (int i = 0; i < 16; i++)
 		_shapeOverlay[i] = fadingTable[shp[i]];
@@ -963,8 +999,12 @@ void Screen_EoB::drawExplosion(int scale, int radius, int numElements, int stepS
 				int16 py = ((ptr3[i] >> 6) >> scale) + gy2;
 				if (py > ymax)
 					py = ymax;
-				if (posWithinRect(px, py, rX1, rY1, rX2, rY2))
-					setPagePixel(0, px, py, ptr6[i]);
+				if (posWithinRect(px, py, rX1, rY1, rX2, rY2)) {
+					if (_bytesPerPixel == 2)
+						setPagePixel16bit(0, px, py, ptr6[i]);
+					else
+						setPagePixel(0, px, py, ptr6[i]);
+				}
 			}
 		}
 
@@ -1094,7 +1134,10 @@ void Screen_EoB::drawVortex(int numElements, int radius, int stepSize, int, int 
 			for (int ii = numElements - 1; ii >= 0; ii--) {
 				int16 px = CLIP((xCoords[ii] >> 6) + cx, 0, SCREEN_W - 1);
 				int16 py = CLIP((yCoords[ii] >> 6) + cy, 0, SCREEN_H - 1);
-				setPagePixel(0, px, py, pixBackup[ii]);
+				if (_bytesPerPixel == 2)
+					setPagePixel16bit(0, px, py, pixBackup[ii]);
+				else
+					setPagePixel(0, px, py, pixBackup[ii]);
 			}
 		}
 
@@ -1219,6 +1262,8 @@ int Screen_EoB::getRectSize(int w, int h) {
 
 void Screen_EoB::setFadeTable(const uint8 *table) {
 	_dsShapeFadingTable = table;
+	if (_bytesPerPixel == 2)
+		memcpy(&_16bitPalette[0x100], table, 512);
 }
 
 void Screen_EoB::createFadeTable(const uint8 *palData, uint8 *dst, uint8 rootColor, uint8 weight) {
@@ -1265,6 +1310,7 @@ void Screen_EoB::createFadeTable(const uint8 *palData, uint8 *dst, uint8 rootCol
 }
 
 void Screen_EoB::createFadeTable16bit(const uint16 *palData, uint16 *dst, uint16 rootColor, uint8 weight) {
+	rootColor = palData[rootColor];
 	uint8 r8 = (rootColor & 0x1f);
 	uint8 g8 = (rootColor & 0x3E0) >> 5;
 	uint8 b8 = (rootColor & 0x7C00) >> 10;
@@ -1320,7 +1366,6 @@ void Screen_EoB::createFadeTable16bit(const uint16 *palData, uint16 *dst, uint16
 
 		*dst++ = (b8 << 10) | (g8 << 5) | r8;
 	}
-
 }
 
 const uint16 *Screen_EoB::getCGADitheringTable(int index) {
@@ -1331,10 +1376,69 @@ const uint8 *Screen_EoB::getEGADitheringTable() {
 	return _egaDitheringTable;
 }
 
+bool Screen_EoB::loadFont(FontId fontId, const char *filename) {
+	if (scumm_stricmp(filename, "FONT.DMP"))
+		return Screen::loadFont(fontId, filename);
+
+	Font *&fnt = _fonts[fontId];
+	int temp;
+
+	const uint16 *tbl = _vm->staticres()->loadRawDataBe16(kEoB2FontDmpSearchTbl, temp);
+	assert(tbl);
+
+	if (!fnt) {
+		fnt = new SJISFont12x12(tbl);
+		assert(fnt);
+	}
+
+	Common::SeekableReadStream *file = _vm->resource()->createReadStream(filename);
+	if (!file)
+		error("Font file '%s' is missing", filename);
+
+	bool ret = fnt->load(*file);
+	fnt->setColorMap(_textColorsMap);
+	delete file;
+	return ret;
+}
+
+void Screen_EoB::decodeSHP(const uint8 *data, int dstPage) {
+	int32 bytesLeft = READ_LE_UINT32(data);
+	const uint8 *src = data + 4;
+	uint8 *dst = getPagePtr(dstPage);
+
+	if (bytesLeft < 0) {
+		memcpy(dst, data, 64000);
+		return;
+	}
+
+	while (bytesLeft > 0) {
+		uint8 code = *src++;
+		bytesLeft--;
+
+		for (int i = 8; i; i--) {
+			if (code & 0x80) {
+				uint16 copyOffs = (src[0] << 4) | (src[1] >> 4);
+				uint8 count = (src[1] & 0x0F) + 3;
+				src += 2;
+				bytesLeft -= 2;
+				const uint8 *copySrc = dst - 1 - copyOffs;
+				while (count--)
+					*dst++ = *copySrc++;
+			} else if (bytesLeft) {
+				*dst++ = *src++;
+				bytesLeft--;
+			} else {
+				break;
+			}
+			code <<= 1;
+		}
+	}
+}
+
 void Screen_EoB::convertToHiColor(int page) {
 	if (!_16bitPalette)
 		return;
-	uint16 *dst = (uint16 *)getCPagePtr(page);
+	uint16 *dst = (uint16 *)getPagePtr(page);
 	memcpy(_convertHiColorBuffer, dst, SCREEN_H * SCREEN_W);
 	uint8 *src = _convertHiColorBuffer;
 	for (int s = SCREEN_H * SCREEN_W; s; --s)
@@ -1481,6 +1585,17 @@ bool Screen_EoB::posWithinRect(int posX, int posY, int x1, int y1, int x2, int y
 	if (posX < x1 || posX > x2 || posY < y1 || posY > y2)
 		return false;
 	return true;
+}
+
+void Screen_EoB::setPagePixel16bit(int pageNum, int x, int y, uint16 color) {
+	assert(pageNum < SCREEN_PAGE_NUM);
+	assert(x >= 0 && x < SCREEN_W && y >= 0 && y < SCREEN_H);
+	assert(_bytesPerPixel == 2);
+
+	if (pageNum == 0 || pageNum == 1)
+		addDirtyRect(x, y, 1, 1);
+
+	((uint16*)_pagePtrs[pageNum])[y * SCREEN_W + x] = color;
 }
 
 void Screen_EoB::generateEGADitheringTable(const Palette &pal) {
@@ -1793,6 +1908,66 @@ void OldDOSFont::unload() {
 	_data = 0;
 	_width = _height = _numGlyphs = 0;
 	_bitmapOffsets = 0;
+}
+
+SJISFontLarge::SJISFontLarge(Graphics::FontSJIS *font) : SJISFont(font, 0, false, false, false, 0) {
+	_sjisWidth = _font->getMaxFontWidth();
+	_fontHeight = _font->getFontHeight();
+	_asciiWidth = _font->getCharWidth('a');
+}
+
+void SJISFontLarge::drawChar(uint16 c, byte *dst, int pitch, int) const {
+	_font->drawChar(dst, c, 320, 1, _colorMap[1], _colorMap[0], 320, 200);
+}
+
+SJISFont12x12::SJISFont12x12(const uint16 *searchTable) : _height(6), _width(6), _data(0) {
+	assert(searchTable);
+	for (int i = 0; i < 148; i++)
+		_searchTable[searchTable[i]] = i + 1;
+}
+
+bool SJISFont12x12::load(Common::SeekableReadStream &file) {
+	delete[] _data;
+	int size = 148 * 24;
+	if (file.size() < size)
+		return false;
+
+	_data = new uint8[size];
+	file.read(_data, size);
+
+	return true;
+}
+
+void SJISFont12x12::unload() {
+	delete[] _data;
+	_data = 0;
+	_searchTable.clear();
+}
+
+void SJISFont12x12::drawChar(uint16 c, byte *dst, int pitch, int) const {
+	int offs = _searchTable[c];
+	if (!offs)
+		return;
+
+	const uint8 *src = _data + (offs - 1) * 24;
+	uint8 color1 = _colorMap[1];
+	
+	int bt = 0;
+	uint16 chr = 0;
+
+	for (int i = 0; i < 192; ++i) {
+		if (!bt) {
+			chr = *src++;
+			bt = 8;
+		}		
+		if (chr & 0x80)
+			*dst = color1;
+		dst++;
+		if (--bt)
+			chr <<= 1;
+		else if (i & 8)
+			dst += (pitch - 16);
+	}
 }
 
 } // End of namespace Kyra

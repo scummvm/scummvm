@@ -206,6 +206,10 @@ bool KyraMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGame
 			flags.lang = Common::EN_ANY;
 	}
 
+#ifndef USE_RGB_COLOR
+	flags.useHiColorMode = false;
+#endif
+
 	switch (flags.gameID) {
 	case Kyra::GI_KYRA1:
 		*engine = new Kyra::KyraEngine_LoK(syst, flags);
@@ -228,6 +232,8 @@ bool KyraMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGame
 	case Kyra::GI_EOB2:
 		 if (Common::parseRenderMode(ConfMan.get("render_mode")) == Common::kRenderEGA)
 			 flags.useHiRes = true;
+		 if (platform == Common::kPlatformFMTowns && !flags.useHiColorMode)
+			 error("EOB ÌI FM-TOWNS requires support of 16bit color modes which has not been activated in your ScummVM build (The 'USE_RGB_COLOR' define has not been set).");
 		*engine = new Kyra::DarkMoonEngine(syst, flags);
 		break;
 #endif // ENABLE_EOB

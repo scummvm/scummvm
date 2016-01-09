@@ -66,7 +66,7 @@ private:
 	int getNextFreeFaceShape(int shpIndex, int charSex, int step, int8 *selectedPortraits);
 	void processFaceMenuSelection(int index);
 	void printStats(int index, int mode);
-	void processNameInput(int index, int len, int textColor);
+	void processNameInput(int index, int textColor);
 	int rollDice();
 	int modifyStat(int index, int8 *stat1, int8 *stat2);
 	int getMaxHp(int cclass, int constitution, int level1, int level2, int level3);
@@ -99,7 +99,10 @@ private:
 	const uint8 *_chargenRaceMinStats;
 	const uint16 *_chargenRaceMaxStats;
 
-	static const EoBChargenButtonDef _chargenButtonDefs[];
+	const EoBChargenButtonDef *_chargenButtonDefs;
+
+	static const EoBChargenButtonDef _chargenButtonDefsDOS[];
+	static const uint16 _chargenButtonKeyCodesFMTOWNS[];
 	static const CreatePartyModButton _chargenModButtons[];
 	static const EoBRect8 _chargenButtonBodyCoords[];
 	static const int16 _chargenBoxX[];
@@ -141,6 +144,19 @@ CharacterGenerator::CharacterGenerator(EoBCoreEngine *vm, Screen_EoB *screen) : 
 	_chargenClassMinStats = _vm->staticres()->loadRawData(kEoBBaseChargenClassMinStats, temp);
 	_chargenRaceMinStats = _vm->staticres()->loadRawData(kEoBBaseChargenRaceMinStats, temp);
 	_chargenRaceMaxStats = _vm->staticres()->loadRawDataBe16(kEoBBaseChargenRaceMaxStats, temp);
+
+	EoBChargenButtonDef *chargenButtonDefs = new EoBChargenButtonDef[41];
+	memcpy(chargenButtonDefs, _chargenButtonDefsDOS, 41 * sizeof(EoBChargenButtonDef));
+
+	if (_vm->gameFlags().platform == Common::kPlatformFMTowns) {
+		const uint16 *c = _chargenButtonKeyCodesFMTOWNS;
+		for (int i = 0; i < 41; ++i) {
+			if (chargenButtonDefs[i].keyCode)
+				chargenButtonDefs[i].keyCode = *c++;
+		}
+	}
+
+	_chargenButtonDefs = chargenButtonDefs;
 }
 
 CharacterGenerator::~CharacterGenerator() {
@@ -152,6 +168,10 @@ CharacterGenerator::~CharacterGenerator() {
 
 	for (int i = 0; i < 17; i++)
 		delete[] _chargenButtonLabels[i];
+
+	delete[] _chargenButtonDefs;
+
+	_screen->clearPage(2);
 }
 
 bool CharacterGenerator::start(EoBCharacter *characters, uint8 ***faceShapes) {
@@ -241,6 +261,10 @@ bool CharacterGenerator::start(EoBCharacter *characters, uint8 ***faceShapes) {
 }
 
 void CharacterGenerator::init() {
+	/*_screen->loadEoBBitmap("MENU", 0, 3, 3, 2);
+	Common::SeekableReadStream *s = _res->createReadStream("facedat.dmp");
+	_screen->loadFileDataToPage(s, 2, 64000);*/
+
 	_screen->loadShapeSetBitmap("CHARGENA", 3, 3);
 	if (_faceShapes) {
 		for (int i = 0; i < 44; i++)
@@ -269,9 +293,11 @@ void CharacterGenerator::init() {
 		const CreatePartyModButton *c = &_chargenModButtons[i];
 		_chargenButtonLabels[i] = c->labelW ? _screen->encodeShape(c->encodeLabelX, c->encodeLabelY, c->labelW, c->labelH, true, _vm->_cgaMappingDefault) : 0;
 	}
-
+	
 	_screen->convertPage(3, 2, _vm->_cgaMappingDefault);
 	_screen->_curPage = 0;
+	_screen->convertToHiColor(2);
+	_screen->shadeRect(142, 63, 306, 193, 4);
 	_screen->copyRegion(144, 64, 0, 0, 180, 128, 0, 2, Screen::CR_NO_P_CHECK);
 	_screen->updateScreen();
 }
@@ -323,7 +349,8 @@ void CharacterGenerator::initButton(int index, int x, int y, int w, int h, int k
 void CharacterGenerator::checkForCompleteParty() {
 	_screen->copyRegion(0, 0, 160, 0, 160, 128, 2, 2, Screen::CR_NO_P_CHECK);
 	int cp = _screen->setCurPage(2);
-	_screen->printShadedText(_chargenStrings1[8], 168, 16, 15, 0);
+	int x = (_vm->gameFlags().platform == Common::kPlatformFMTowns) ? 184 : 168;
+	_screen->printShadedText(_chargenStrings1[8], x, 16, 15, 0);
 	_screen->setCurPage(cp);
 	_screen->copyRegion(160, 0, 144, 64, 160, 128, 2, 0, Screen::CR_NO_P_CHECK);
 
@@ -335,7 +362,7 @@ void CharacterGenerator::checkForCompleteParty() {
 
 	if (numChars == 4) {
 		_screen->setCurPage(2);
-		_screen->printShadedText(_chargenStrings1[0], 168, 61, 15, 0);
+		_screen->printShadedText(_chargenStrings1[0], x, 61, 15, 0);
 		_screen->setCurPage(0);
 		_screen->copyRegion(168, 61, 152, 125, 136, 40, 2, 0, Screen::CR_NO_P_CHECK);
 		toggleSpecialButton(15, 0, 0);
@@ -416,7 +443,7 @@ int CharacterGenerator::viewDeleteCharacter() {
 				if (_characters[_activeBox].name[0]) {
 					processSpecialButton(16);
 					_characters[_activeBox].name[0] = 0;
-					processNameInput(_activeBox, 1, 12);
+					processNameInput(_activeBox, 12);
 					processFaceMenuSelection(_activeBox + 50);
 				}
 			} else {
@@ -478,8 +505,10 @@ void CharacterGenerator::createPartyMember() {
 			processFaceMenuSelection(_chargenMinStats[6]);
 			printStats(_activeBox, 0);
 			_screen->printShadedText(_chargenStrings2[11], 149, 100, 9, 0);
-			if (!_vm->shouldQuit())
-				processNameInput(_activeBox, _vm->_gui->getTextInput(_characters[_activeBox].name, 24, 100, 10, 15, 0, 8), 2);
+			if (!_vm->shouldQuit()) {
+				_vm->_gui->getTextInput(_characters[_activeBox].name, 24, 100, 10, 15, 0, 8);
+				processNameInput(_activeBox, 2);
+			}
 		}
 	}
 }
@@ -887,7 +916,7 @@ void CharacterGenerator::printStats(int index, int mode) {
 	if (mode != 4)
 		_screen->drawShape(2, c->faceShape, 224, 2, 0);
 
-	_screen->printShadedText(c->name, 160 + ((20 - strlen(c->name)) << 2), 35, 15, 0);
+	_screen->printShadedText(c->name, 160 + ((160 - _screen->getTextWidth(c->name)) / 2), 35, 15, 0);
 	_screen->printShadedText(_chargenRaceSexStrings[c->raceSex], 160 + ((20 - strlen(_chargenRaceSexStrings[c->raceSex])) << 2), 45, 15, 0);
 	_screen->printShadedText(_chargenClassStrings[c->cClass], 160 + ((20 - strlen(_chargenClassStrings[c->cClass])) << 2), 54, 15, 0);
 
@@ -937,14 +966,10 @@ void CharacterGenerator::printStats(int index, int mode) {
 	_screen->_curPage = 0;
 }
 
-void CharacterGenerator::processNameInput(int index, int len, int textColor) {
+void CharacterGenerator::processNameInput(int index, int textColor) {
 	Screen::FontId of = _screen->setFont(Screen::FID_6_FNT);
-
-	// WORKAROUND for bug in original code:
-	len = strlen(_characters[index].name);
-
-	int xOffs = (60 - _screen->getFontWidth() * len) >> 1;
-	_screen->printText(_chargenStrings1[1], _chargenNameFieldX[index], _chargenNameFieldY[index], 12, 12);
+	_screen->fillRect(_chargenNameFieldX[index], _chargenNameFieldY[index], _chargenNameFieldX[index] + 59, _chargenNameFieldY[index] + 5, 12);
+	int xOffs = (60 - _screen->getTextWidth(_characters[index].name)) >> 1;
 	_screen->printText(_characters[index].name, _chargenNameFieldX[index] + xOffs, _chargenNameFieldY[index], textColor, 0);
 	_screen->updateScreen();
 	_screen->setFont(of);
@@ -1140,7 +1165,7 @@ int CharacterGenerator::getMinHp(int cclass, int constitution, int level1, int l
 void CharacterGenerator::finish() {
 	_screen->copyRegion(0, 0, 160, 0, 160, 128, 2, 2, Screen::CR_NO_P_CHECK);
 	int cp = _screen->setCurPage(2);
-	_screen->printShadedText(_chargenEnterGameStrings[0], 168, 32, 15, 0);
+	_screen->printShadedText(_chargenEnterGameStrings[0], (_vm->gameFlags().platform == Common::kPlatformFMTowns) ? 184 : 168, 32, 15, 0);
 	_screen->setCurPage(cp);
 	_screen->copyRegion(160, 0, 144, 64, 160, 128, 2, 0, Screen::CR_NO_P_CHECK);
 	_screen->updateScreen();
@@ -1341,7 +1366,7 @@ void CharacterGenerator::finish() {
 	}
 }
 
-const EoBChargenButtonDef CharacterGenerator::_chargenButtonDefs[] = {
+const EoBChargenButtonDef CharacterGenerator::_chargenButtonDefsDOS[] = {
 	{ 0x01, 0x37, 0x31, 0x32, 0x70 },
 	{ 0x09, 0x37, 0x31, 0x32, 0x71 },
 	{ 0x01, 0x77, 0x31, 0x32, 0x72 },
@@ -1383,6 +1408,10 @@ const EoBChargenButtonDef CharacterGenerator::_chargenButtonDefs[] = {
 	{ 0x1B, 0xAC, 0x15, 0x10, 0x0D },
 	{ 0x1E, 0xAC, 0x15, 0x10, 0x0C },
 	{ 0x21, 0xAC, 0x25, 0x10, 0x19 }
+};
+
+const uint16 CharacterGenerator::_chargenButtonKeyCodesFMTOWNS[] = {
+	93, 94, 95, 96, 80, 79, 68, 66, 82, 77, 70, 75, 43, 45, 79
 };
 
 const CreatePartyModButton CharacterGenerator::_chargenModButtons[] = {

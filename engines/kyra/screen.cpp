@@ -739,10 +739,13 @@ void Screen::copyWsaRect(int x, int y, int w, int h, int dimState, int plotFunc,
 	}
 }
 
-uint8 Screen::getPagePixel(int pageNum, int x, int y) {
+int Screen::getPagePixel(int pageNum, int x, int y) {
 	assert(pageNum < SCREEN_PAGE_NUM);
 	assert(x >= 0 && x < SCREEN_W && y >= 0 && y < SCREEN_H);
-	return _pagePtrs[pageNum][y * SCREEN_W + x];
+	if (_bytesPerPixel == 1)
+		return _pagePtrs[pageNum][y * SCREEN_W + x];
+	else
+		return ((uint16*)_pagePtrs[pageNum])[y * SCREEN_W + x];
 }
 
 void Screen::setPagePixel(int pageNum, int x, int y, uint8 color) {
@@ -762,7 +765,7 @@ void Screen::setPagePixel(int pageNum, int x, int y, uint8 color) {
 	} 
 	
 	if (_bytesPerPixel == 2) {
-		*(uint16*)(&_pagePtrs[pageNum][y * SCREEN_W * 2 + x * 2]) = _16bitPalette[color];
+		((uint16*)_pagePtrs[pageNum])[y * SCREEN_W + x] = _16bitPalette[color];
 	} else {
 		_pagePtrs[pageNum][y * SCREEN_W + x] = color;
 	}
@@ -781,12 +784,12 @@ void Screen::fadeToBlack(int delay, const UpdateFunctor *upFunc) {
 }
 
 void Screen::fadePalette(const Palette &pal, int delay, const UpdateFunctor *upFunc) {
-	if (_renderMode == Common::kRenderEGA)
+	if (_renderMode == Common::kRenderEGA || _bytesPerPixel == 2)
 		setScreenPalette(pal);
 
 	updateScreen();
 
-	if (_renderMode == Common::kRenderCGA || _renderMode == Common::kRenderEGA)
+	if (_renderMode == Common::kRenderCGA || _renderMode == Common::kRenderEGA || _bytesPerPixel == 2)
 		return;
 
 	int diff = 0, delayInc = 0;
@@ -1056,7 +1059,7 @@ void Screen::copyRegion(int x1, int y1, int x2, int y2, int w, int h, int srcPag
 
 void Screen::copyRegionToBuffer(int pageNum, int x, int y, int w, int h, uint8 *dest) {
 	if (y < 0) {
-		dest += (-y) * w;
+		dest += (-y) * w * _bytesPerPixel;
 		h += y;
 		y = 0;
 	} else if (y + h > SCREEN_H) {
@@ -1064,7 +1067,7 @@ void Screen::copyRegionToBuffer(int pageNum, int x, int y, int w, int h, uint8 *
 	}
 
 	if (x < 0) {
-		dest += -x;
+		dest += -x * _bytesPerPixel;
 		w += x;
 		x = 0;
 	} else if (x + w > SCREEN_W) {
@@ -1093,7 +1096,7 @@ void Screen::copyPage(uint8 srcPage, uint8 dstPage) {
 
 void Screen::copyBlockToPage(int pageNum, int x, int y, int w, int h, const uint8 *src) {
 	if (y < 0) {
-		src += (-y) * w;
+		src += (-y) * w * _bytesPerPixel;
 		h += y;
 		y = 0;
 	} else if (y + h > SCREEN_H) {
@@ -1101,7 +1104,7 @@ void Screen::copyBlockToPage(int pageNum, int x, int y, int w, int h, const uint
 	}
 
 	if (x < 0) {
-		src += -x;
+		src += -x * _bytesPerPixel;
 		w += x;
 		x = 0;
 	} else if (x + w > SCREEN_W) {
@@ -1398,7 +1401,7 @@ int Screen::getFontWidth() const {
 
 int Screen::getCharWidth(uint16 c) const {
 	const int width = _fonts[_currentFont]->getCharWidth(c);
-	return width + ((_currentFont != FID_SJIS_FNT) ? _charWidth : 0);
+	return width + ((_currentFont != FID_SJIS_FNT && _currentFont != FID_SJIS_LARGE_FNT && _currentFont != FID_SJIS_SMALL_FNT) ? _charWidth : 0);
 }
 
 int Screen::getTextWidth(const char *str) {
@@ -1408,8 +1411,8 @@ int Screen::getTextWidth(const char *str) {
 	FontId curFont = _currentFont;
 
 	while (1) {
-		if (_sjisMixedFontMode)
-			setFont((*str & 0x80) ? FID_SJIS_FNT : curFont);
+		if (_sjisMixedFontMode && curFont != FID_SJIS_FNT && curFont != FID_SJIS_LARGE_FNT && curFont != FID_SJIS_SMALL_FNT)
+			setFont((*str & 0x80) ? ((_vm->game() == GI_EOB2 && curFont == FID_6_FNT) ? FID_SJIS_SMALL_FNT : FID_SJIS_FNT) : curFont);
 
 		uint c = fetchChar(str);
 
@@ -1455,8 +1458,8 @@ void Screen::printText(const char *str, int x, int y, uint8 color1, uint8 color2
 		return;
 
 	while (1) {
-		if (_sjisMixedFontMode)
-			setFont((*str & 0x80) ? FID_SJIS_FNT : curFont);
+		if (_sjisMixedFontMode && curFont != FID_SJIS_FNT && curFont != FID_SJIS_LARGE_FNT && curFont != FID_SJIS_SMALL_FNT)
+			setFont((*str & 0x80) ? ((_vm->game() == GI_EOB2 && curFont == FID_6_FNT) ? FID_SJIS_SMALL_FNT : FID_SJIS_FNT) : curFont);
 
 		uint8 charHeightFnt = getFontHeight();
 
@@ -1483,7 +1486,7 @@ void Screen::printText(const char *str, int x, int y, uint8 color1, uint8 color2
 }
 
 uint16 Screen::fetchChar(const char *&s) const {
-	if (_currentFont != FID_SJIS_FNT)
+	if (_currentFont != FID_SJIS_FNT && _currentFont != FID_SJIS_LARGE_FNT && _currentFont != FID_SJIS_SMALL_FNT)
 		return (uint8)*s++;
 
 	uint16 ch = (uint8)*s++;
@@ -1515,7 +1518,7 @@ void Screen::drawChar(uint16 c, int x, int y) {
 			return;
 		}
 
-		int bpp = (_currentFont == Screen::FID_SJIS_FNT) ? 1 : 2;
+		int bpp = (_currentFont == Screen::FID_SJIS_FNT || _currentFont == Screen::FID_SJIS_SMALL_FNT) ? 1 : 2;
 		destPage += (y * 2) * 640 * bpp + (x * 2 * bpp);
 
 		fnt->drawChar(c, destPage, 640, bpp);
@@ -3472,7 +3475,7 @@ void Screen::copyOverlayRegion(int x, int y, int x2, int y2, int w, int h, int s
 
 		while (h--) {
 			for (x = 0; x < w; ++x)
-				memcpy(dst, src, w);
+				memmove(dst, src, w);
 			dst += 640;
 			src += 640;
 		}
@@ -3486,7 +3489,7 @@ void Screen::crossFadeRegion(int x1, int y1, int x2, int y2, int w, int h, int s
 	hideMouse();
 
 	uint16 *wB = (uint16 *)_pagePtrs[14];
-	uint8 *hB = _pagePtrs[14] + 640;
+	uint8 *hB = _pagePtrs[14] + 640 * _bytesPerPixel;
 
 	for (int i = 0; i < w; i++)
 		wB[i] = i;
@@ -3515,7 +3518,10 @@ void Screen::crossFadeRegion(int x1, int y1, int x2, int y2, int w, int h, int s
 			if (++iH >= h)
 				iH = 0;
 
-			d[dY * 320 + dX] = s[sY * 320 + sX];
+			if (_bytesPerPixel == 2)
+				((uint16*)d)[dY * 320 + dX] = ((uint16*)s)[sY * 320 + sX];
+			else
+				d[dY * 320 + dX] = s[sY * 320 + sX];
 			addDirtyRect(dX, dY, 1, 1);
 		}
 
@@ -3813,16 +3819,6 @@ void SJISFont::drawChar(uint16 c, byte *dst, int pitch, int) const {
 	}
 
 	_font->drawChar(dst, c, 640, 1, color1, color2, 640, 400);
-}
-
-SJISFontLarge::SJISFontLarge(Graphics::FontSJIS *font) : SJISFont(font, 0, false, false, false, 0) {
-	_sjisWidth = _font->getMaxFontWidth();
-	_fontHeight = _font->getFontHeight();
-	_asciiWidth = _font->getCharWidth('a');
-}
-
-void SJISFontLarge::drawChar(uint16 c, byte *dst, int pitch) const {
-	_font->drawChar(dst, c, 320, 1, _colorMap[1], _colorMap[0], 320, 200);
 }
 
 #pragma mark -

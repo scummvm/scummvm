@@ -77,7 +77,7 @@ struct EoBGuiButtonDef {
 struct EoBCharacter {
 	uint8 id;
 	uint8 flags;
-	char name[11];
+	char name[21];
 	int8 strengthCur;
 	int8 strengthMax;
 	int8 strengthExtCur;
@@ -476,11 +476,15 @@ protected:
 	const uint8 *_expObjectAnimTbl3;
 	int _expObjectAnimTbl3Size;
 
+	const char *const *_ascii2SjisTables;
+	const char *const *_ascii2SjisTables2;
+
 	// Monsters
 	void loadMonsterShapes(const char *filename, int monsterIndex, bool hasDecorations, int encodeTableIndex);
 	void releaseMonsterShapes(int first, int num);
+	uint8 *loadTownsShape(Common::SeekableReadStream *stream);
 	virtual void generateMonsterPalettes(const char *file, int16 monsterIndex) {}
-	virtual void loadMonsterDecoration(const char *file, int16 monsterIndex) {}
+	virtual void loadMonsterDecoration(Common::SeekableReadStream *stream, int16 monsterIndex) {}
 	const uint8 *loadMonsterProperties(const uint8 *data);
 	const uint8 *loadActiveMonsterData(const uint8 *data, int level);
 	void initMonster(int index, int unit, uint16 block, int pos, int dir, int type, int shpIndex, int mode, int i, int randItem, int fixedItem);
@@ -632,7 +636,6 @@ protected:
 	const uint8 *_dscItemTileIndex;
 	const uint8 *_dscItemShapeMap;
 
-	const uint8 *_dscDoorScaleOffs;
 	const uint8 *_dscDoorScaleMult1;
 	const uint8 *_dscDoorScaleMult2;
 	const uint8 *_dscDoorScaleMult3;
@@ -745,7 +748,7 @@ protected:
 	static const uint8 _buttonList8[];
 	int _buttonList8Size;
 
-	const EoBGuiButtonDef *_buttonDefs;
+	EoBGuiButtonDef *_buttonDefs;
 
 	const char *const *_characterGuiStringsHp;
 	const char *const *_characterGuiStringsWp;
@@ -831,6 +834,8 @@ protected:
 
 	void seq_portal();
 	bool checkPassword();
+
+	Common::String convertAsciiToSjis(Common::String str);
 
 	virtual int resurrectionSelectDialogue() = 0;
 	virtual void useHorn(int charIndex, int weaponSlot) {}
@@ -1120,6 +1125,7 @@ protected:
 	const EoBMenuButtonDef *_menuButtonDefs;
 
 	bool _configMouse;
+	bool _config2431;
 
 	const char *const *_menuStringsMain;
 	const char *const *_menuStringsSaveLoad;
@@ -1142,12 +1148,15 @@ protected:
 	const char *_errorSlotEmptyString;
 	const char *_errorSlotNoNameString;
 	const char *_menuOkString;
-
+	const char *const *_2431Strings;
+	const char *const *_katakanaLines;
+	const char *const *_katakanaSelectStrings;
 	const char *const *_menuStringsTransfer;
 	const char *const *_transferStringsScummVM;
 	const char *const *_menuStringsSpec;
 	const char *const *_menuStringsSpellNo;
 	const char *const *_menuYesNoStrings;
+	const char *const *_saveNamePatterns;
 
 	const uint8 *_spellLevelsMage;
 	int _spellLevelsMageSize;

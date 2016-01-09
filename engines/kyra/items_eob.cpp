@@ -444,7 +444,7 @@ void EoBCoreEngine::printFullItemName(Item item) {
 		tmpString = (itm->flags & 0x40) ? nameId : nameUnid;
 	}
 
-	_txt->printMessage(tmpString.c_str());
+	_txt->printMessage(convertAsciiToSjis(tmpString).c_str());
 }
 
 void EoBCoreEngine::identifyQueuedItems(Item itemQueue) {

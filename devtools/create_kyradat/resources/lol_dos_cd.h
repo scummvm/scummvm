@@ -877,13 +877,13 @@ static const byte kLoLDscTileIndexDOSCD[18] = {
 
 static const ByteProvider kLoLDscTileIndexDOSCDProvider = { ARRAYSIZE(kLoLDscTileIndexDOSCD), kLoLDscTileIndexDOSCD };
 
-static const byte kLoLDscUnk2DOSCD[23] = {
+static const byte kLoLDscDoorScaleOffsDOSCD[23] = {
 	0x00, 0x00, 0x00, 0x03, 0x03, 0x03, 0x03, 0x03,
 	0x08, 0x08, 0x08, 0x08, 0x08, 0x0D, 0x0D, 0x0D,
 	0x0D, 0x0D, 0x12, 0x12, 0x12, 0x12, 0x12
 };
 
-static const ByteProvider kLoLDscUnk2DOSCDProvider = { ARRAYSIZE(kLoLDscUnk2DOSCD), kLoLDscUnk2DOSCD };
+static const ByteProvider kLoLDscDoorScaleOffsDOSCDProvider = { ARRAYSIZE(kLoLDscDoorScaleOffsDOSCD), kLoLDscDoorScaleOffsDOSCD };
 
 static const byte kLoLDscDoorShapeIndexDOSCD[23] = {
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
