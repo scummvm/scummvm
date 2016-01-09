@@ -312,7 +312,7 @@ public:
 	/**
 	 * Handles updating the conversation display
 	 */
-	void update(bool isRelease);
+	void update(bool flag);
 
 	/**
 	 * Returns true if any conversation is currently atcive
@@ -328,6 +328,11 @@ public:
 	 * Returns _restoreRunning value
 	 */
 	int restoreRunning() const { return _restoreRunning; }
+
+	/**
+	 * Returns the current conversation mode
+	 */
+	ConversationMode currentMode() const { return _currentMode; }
 };
 
 } // End of namespace MADS

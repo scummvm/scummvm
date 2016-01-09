@@ -277,7 +277,7 @@ void GameConversations::reset(int id) {
 	warning("TODO: GameConversations::reset");
 }
 
-void GameConversations::update(bool isRelease) {
+void GameConversations::update(bool flag) {
 	warning("TODO: GameConversations::update");
 }
 

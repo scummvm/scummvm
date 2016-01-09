@@ -419,14 +419,24 @@ void Scene::doFrame() {
 	}
 
 	if (_currentSceneId != _nextSceneId) {
+		_vm->_gameConv->stop();
 		_freeAnimationFlag = true;
+		// TODO: Handle Phantom/Dragonsphere animation list free
 	} else {
 		doSceneStep();
 		checkKeyboard();
 
 		if (_currentSceneId != _nextSceneId) {
+			_vm->_gameConv->stop();
 			_freeAnimationFlag = true;
+			// TODO: Handle Phantom/Dragonsphere animation list free
 		} else {
+			// Handle conversation updates if one is active
+			if (!_vm->_game->_trigger && _vm->_gameConv->active() &&
+				!_vm->_game->_camX._activeFl && !_vm->_game->_camY._activeFl)
+				_vm->_gameConv->update(false);
+
+			// Update the player
 			player.nextFrame();
 
 			// Cursor update code
@@ -548,13 +558,20 @@ void Scene::doPreactions() {
 void Scene::doAction() {
 	bool flag = false;
 
+	// Don't allow the player to move if a conversation is active
+	if (_vm->_gameConv->active()) {
+		_vm->_game->_scene._action._savedFields._lookFlag = false;
+		if (_vm->_gameConv->currentMode() == CONVMODE_2 || _vm->_gameConv->currentMode() == CONVMODE_3)
+			_vm->_game->_player._stepEnabled = false;
+	}
+
 	_vm->_game->_triggerSetupMode = SEQUENCE_TRIGGER_PARSER;
 	if ((_action._inProgress || _vm->_game->_trigger) && !_action._savedFields._commandError) {
 		_sceneLogic->actions();
 		flag = !_action._inProgress;
 	}
 
-	if (_vm->_game->_screenObjects._inputMode == kInputConversation) {
+	if (_vm->_gameConv->active() || _vm->_game->_screenObjects._inputMode == kInputConversation) {
 		_action._inProgress = false;
 	} else {
 		if ((_action._inProgress || _vm->_game->_trigger) ||
@@ -587,6 +604,10 @@ void Scene::doAction() {
 	_action._inProgress = false;
 	if (_vm->_game->_triggerMode == SEQUENCE_TRIGGER_PARSER)
 		_vm->_game->_trigger = 0;
+
+	if (_vm->_gameConv->active() && (_vm->_gameConv->currentMode() == CONVMODE_1 ||
+			_vm->_gameConv->currentMode() == CONVMODE_2))
+		_vm->_gameConv->update(true);
 }
 
 void Scene::doSceneStep() {
