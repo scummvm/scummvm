@@ -588,17 +588,17 @@ bool Script::compare(Operand *o1, Operand *o2, int comparator) {
 	case kCompEqNumNum:
 		return o1->_value.number == o2->_value.number;
 	case kCompEqObjScene:
-		for (Common::List<Obj *>::const_iterator it = o2->_value.scene->_objs.begin(); it != o2->_value.scene->_objs.end(); ++it)
+		for (ObjList::const_iterator it = o2->_value.scene->_objs.begin(); it != o2->_value.scene->_objs.end(); ++it)
 			if (*it == o1->_value.obj)
 				return true;
 		return false;
 	case kCompEqChrScene:
-		for (Common::List<Chr *>::const_iterator it = o2->_value.scene->_chrs.begin(); it != o2->_value.scene->_chrs.end(); ++it)
+		for (ChrList::const_iterator it = o2->_value.scene->_chrs.begin(); it != o2->_value.scene->_chrs.end(); ++it)
 			if (*it == o1->_value.chr)
 				return true;
 		return false;
 	case kCompEqObjChr:
-		for (Common::Array<Obj *>::const_iterator it = o2->_value.chr->_inventory.begin(); it != o2->_value.chr->_inventory.end(); ++it)
+		for (ObjArray::const_iterator it = o2->_value.chr->_inventory.begin(); it != o2->_value.chr->_inventory.end(); ++it)
 			if (*it == o1->_value.obj)
 				return true;
 		return false;
@@ -988,9 +988,9 @@ void Script::handleLookCommand() {
 }
 
 Common::String *Script::getGroundItemsList(Scene *scene) {
-	Common::Array<Obj *> objs;
+	ObjArray objs;
 
-	for (Common::List<Obj *>::const_iterator it = scene->_objs.begin(); it != scene->_objs.end(); ++it)
+	for (ObjList::const_iterator it = scene->_objs.begin(); it != scene->_objs.end(); ++it)
 		if ((*it)->_type != Obj::IMMOBILE_OBJECT)
 			objs.push_back(*it);
 
@@ -1002,7 +1002,7 @@ Common::String *Script::getGroundItemsList(Scene *scene) {
 	return NULL;
 }
 
-void Script::appendObjNames(Common::String &str, Common::Array<Obj *> &objs) {
+void Script::appendObjNames(Common::String &str, ObjArray &objs) {
 	for (uint i = 0; i < objs.size(); i++) {
 		Obj *obj = objs[i];
 

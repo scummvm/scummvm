@@ -64,6 +64,7 @@ typedef Common::Array<Weapon *> WeaponArray;
 typedef Common::Array<Obj *> ObjArray;
 typedef Common::Array<Chr *> ChrArray;
 typedef Common::List<Obj *> ObjList;
+typedef Common::List<Chr *> ChrList;
 
 enum StatVariable {
 /** The base physical accuracy of the player. */
@@ -212,7 +213,7 @@ public:
 	String _dyingWords;
 
 	Scene *_currentScene;
-	Common::Array<Obj *> _inventory;
+	ObjArray _inventory;
 
 	Obj *_armor[NUMBER_OF_ARMOR_TYPES];
 
@@ -342,8 +343,8 @@ public:
 	int _worldY;
 	bool _visited;
 
-	Common::List<Obj *> _objs;
-	Common::List<Chr *> _chrs;
+	ObjList _objs;
+	ChrList _chrs;
 
 	Scene();
 	Scene(String name, Common::SeekableReadStream *data);

@@ -138,12 +138,12 @@ void Scene::paint(Graphics::Surface *surface, int x, int y) {
 
 	_design->paint(surface, ((WageEngine *)g_engine)->_world->_patterns, x, y);
 
-	for (Common::List<Obj *>::const_iterator it = _objs.begin(); it != _objs.end(); ++it) {
+	for (ObjList::const_iterator it = _objs.begin(); it != _objs.end(); ++it) {
 		debug(2, "paining Obj: %s", (*it)->_name.c_str());
 		(*it)->_design->paint(surface, ((WageEngine *)g_engine)->_world->_patterns, x, y);
 	}
 
-	for (Common::List<Chr *>::const_iterator it = _chrs.begin(); it != _chrs.end(); ++it) {
+	for (ChrList::const_iterator it = _chrs.begin(); it != _chrs.end(); ++it) {
 		debug(2, "paining Chr: %s", (*it)->_name.c_str());
 		(*it)->_design->paint(surface, ((WageEngine *)g_engine)->_world->_patterns, x, y);
 	}

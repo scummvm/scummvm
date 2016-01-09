@@ -139,7 +139,7 @@ void WageEngine::performCombatAction(Chr *npc, Chr *player) {
 			hat.addTokens(kTokOffer, npc->_losingOffer + 1);
 	}
 
-	Common::List<Obj *> *objs = &npc->_currentScene->_objs;
+	ObjList *objs = &npc->_currentScene->_objs;
 	if (npc->_inventory.size() < npc->_maximumCarriedObjects) {
 		int cnt = 0;
 		for (ObjList::const_iterator it = objs->begin(); it != objs->end(); ++it, ++cnt) {

@@ -81,8 +81,8 @@ public:
 	Common::HashMap<String, Chr *> _chrs;
 	Common::HashMap<String, Sound *> _sounds;
 	Common::Array<Scene *> _orderedScenes;
-	Common::Array<Obj *> _orderedObjs;
-	Common::Array<Chr *> _orderedChrs;
+	ObjArray _orderedObjs;
+	ChrArray _orderedChrs;
 	Common::Array<Sound *> _orderedSounds;
 	Patterns _patterns;
 	Scene *_storageScene;

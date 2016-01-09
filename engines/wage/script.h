@@ -174,7 +174,7 @@ private:
 	void handleMoveCommand(Scene::Directions dir, const char *dirName);
 	void handleLookCommand();
 	Common::String *getGroundItemsList(Scene *scene);
-	void appendObjNames(Common::String &str, Common::Array<Obj *> &objs);
+	void appendObjNames(Common::String &str, ObjArray &objs);
 	void handleInventoryCommand();
 	void handleStatusCommand();
 	void handleRestCommand();

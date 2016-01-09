@@ -370,7 +370,7 @@ void WageEngine::processTurnInternal(Common::String *textInput, Designed *clickI
 		_running = NULL;
 		_offer = NULL;
 
-		for (Common::List<Chr *>::const_iterator it = playerScene->_chrs.begin(); it != playerScene->_chrs.end(); ++it) {
+		for (ChrList::const_iterator it = playerScene->_chrs.begin(); it != playerScene->_chrs.end(); ++it) {
 			if (!(*it)->_playerCharacter) {
 				_monster = *it;
 				shouldEncounter = true;

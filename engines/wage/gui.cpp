@@ -639,12 +639,12 @@ Designed *Gui::getClickTarget(int x, int y) {
 			_bordersDirty = true;
 		}
 
-		for (Common::List<Obj *>::const_iterator it = _scene->_objs.begin(); it != _scene->_objs.end(); ++it) {
+		for (ObjList::const_iterator it = _scene->_objs.begin(); it != _scene->_objs.end(); ++it) {
 			if ((*it)->_design->isPointOpaque(x - _sceneArea.left + kBorderWidth, y - _sceneArea.top + kBorderWidth))
 				return *it;
 		}
 
-		for (Common::List<Chr *>::const_iterator it = _scene->_chrs.begin(); it != _scene->_chrs.end(); ++it) {
+		for (ChrList::const_iterator it = _scene->_chrs.begin(); it != _scene->_chrs.end(); ++it) {
 			if ((*it)->_design->isPointOpaque(x - _sceneArea.left + kBorderWidth, y - _sceneArea.top + kBorderWidth))
 				return *it;
 		}
