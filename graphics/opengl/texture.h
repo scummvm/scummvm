@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef GRAPHICS_TEXTURE_H
-#define GRAPHICS_TEXTURE_H
+#ifndef GRAPHICS_OPENGL_TEXTURE_H
+#define GRAPHICS_OPENGL_TEXTURE_H
 
 #include "graphics/opengl/system_headers.h"
 

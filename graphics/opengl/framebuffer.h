@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef GRAPHICS_FRAMEBUFFER_H
-#define GRAPHICS_FRAMEBUFFER_H
+#ifndef GRAPHICS_OPENGL_FRAMEBUFFER_H
+#define GRAPHICS_OPENGL_FRAMEBUFFER_H
 
 #include "graphics/opengl/system_headers.h"
 #include "graphics/opengl/texture.h"

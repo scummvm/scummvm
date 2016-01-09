@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef GRAPHICS_SYSTEM_HEADERS_H
-#define GRAPHICS_SYSTEM_HEADERS_H
+#ifndef GRAPHICS_OPENGL_SYSTEM_HEADERS_H
+#define GRAPHICS_OPENGL_SYSTEM_HEADERS_H
 
 #include "common/scummsys.h"
 
