@@ -121,6 +121,20 @@ static const ADGameDescription gameDescriptions[] = {
 	},
 
 	// The Longest Journey
+	// Norwegian 4 CD version - supplied by L0ngcat
+	{
+		"tlj", "4 CD", {
+			{"x.xarc", 0, "a0559457126caadab0cadac02d35f26f", 3032},
+			{"chapters.ini", 0, "f358f604abd1aa1476ed05d6d271ac70", 473},
+			{NULL, 0, NULL, 0}
+		},
+		Common::NB_NOR,
+		Common::kPlatformWindows,
+		ADGF_NO_FLAGS,
+		GUIO_NONE
+	},
+
+	// The Longest Journey
 	// Norwegian DLC-edition (DVD?)
 	{
 		"tlj", "DVD", {
@@ -209,6 +223,20 @@ static const ADGameDescription gameDescriptions[] = {
 	{
 		"tlj", "4 CD", {
 			{"x.xarc", 0, "a0559457126caadab0cadac02d35f26f", 3032},
+			{"chapters.ini", 0, "f6a2007300209492b7b90b4c0467832d", 462},
+			{NULL, 0, NULL, 0}
+		},
+		Common::SE_SWE,
+		Common::kPlatformWindows,
+		ADGF_NO_FLAGS,
+		GUIO_NONE
+	},
+
+	// The Longest Journey
+	// Swedish DVD Nordic Special Edition - supplied by L0ngcat
+	{
+		"tlj", "DVD", {
+			{"x.xarc", 0, "de8327850d7bba90b690b141eaa23f61", 3032},
 			{"chapters.ini", 0, "f6a2007300209492b7b90b4c0467832d", 462},
 			{NULL, 0, NULL, 0}
 		},
