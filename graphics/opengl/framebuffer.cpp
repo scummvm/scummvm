@@ -42,7 +42,7 @@
 #include "backends/platform/sdl/sdl-sys.h"
 #endif // defined(SDL_BACKEND)
 
-#include "graphics/opengl/extensions.h"
+#include "graphics/opengl/context.h"
 
 #ifdef USE_GLES2
 #define GL_DEPTH24_STENCIL8 GL_DEPTH24_STENCIL8_OES
@@ -101,19 +101,13 @@ static void grabFramebufferObjectPointers() {
 
 
 static bool usePackedBuffer() {
-#ifdef USE_GLES2
-	return isExtensionSupported("GL_OES_packed_depth_stencil");
-#endif
-#ifndef USE_OPENGL_SHADERS
-	return isExtensionSupported("GL_EXT_packed_depth_stencil");
-#endif
-	return true;
+	return OpenGLContext.packedDepthStencilSupported;
 }
 
 FrameBuffer::FrameBuffer(uint width, uint height) :
 		Texture(width, height) {
 #ifdef SDL_BACKEND
-	if (!isExtensionSupported("GL_EXT_framebuffer_object")) {
+	if (!OpenGLContext.framebufferObjectSupported) {
 		error("GL_EXT_framebuffer_object extension is not supported!");
 	}
 #endif

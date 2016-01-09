@@ -43,7 +43,7 @@
 #include "common/tokenizer.h"
 #include "graphics/conversion.h"
 #include "graphics/opengl/shader.h"
-#include "graphics/opengl/extensions.h"
+#include "graphics/opengl/context.h"
 
 #include "backends/platform/android/android.h"
 #include "backends/platform/android/jni.h"
@@ -216,7 +216,7 @@ void OSystem_Android::initSurface() {
 	JNI::initSurface();
 
 	// Initialize OpenGLES context.
-	OpenGL::initExtensions();
+	OpenGLContext.initialize(OpenGL::kContextGLES2);
 	logExtensions();
 	GLESTexture::initGL();
 
@@ -251,6 +251,8 @@ void OSystem_Android::deinitSurface() {
 
 	if (_mouse_texture)
 		_mouse_texture->release();
+
+	OpenGL::Context::destroy();
 
 	JNI::deinitSurface();
 }

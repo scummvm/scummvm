@@ -45,7 +45,7 @@
 #include "gui/EventRecorder.h"
 
 #ifdef USE_OPENGL
-#include "graphics/opengl/extensions.h"
+#include "graphics/opengl/context.h"
 #endif
 
 static const OSystem::GraphicsMode s_supportedGraphicsModes[] = {
@@ -234,8 +234,8 @@ Graphics::PixelBuffer SurfaceSdlGraphicsManager::setupScreen(uint screenW, uint 
 			SDL_putenv(const_cast<char *>("SDL_VIDEO_WINDOW_POS=9000,9000"));
 			SDL_SetVideoMode(32, 32, 0, SDL_OPENGL);
 			SDL_putenv(const_cast<char *>("SDL_VIDEO_WINDOW_POS=centered"));
-			OpenGL::initExtensions();
-			framebufferSupported = OpenGL::isExtensionSupported("GL_EXT_framebuffer_object");
+			OpenGLContext.initialize(OpenGL::kContextGL);
+			framebufferSupported = OpenGLContext.framebufferObjectSupported;
 			if (_fullscreen && framebufferSupported) {
 				screenW = _desktopW;
 				screenH = _desktopH;
@@ -395,7 +395,7 @@ Graphics::PixelBuffer SurfaceSdlGraphicsManager::setupScreen(uint screenW, uint 
 		_boxShader->enableVertexAttribute("texcoord", _boxVerticesVBO, 2, GL_FLOAT, GL_TRUE, 2 * sizeof(float), 0);
 #endif
 
-		OpenGL::initExtensions();
+		OpenGLContext.initialize(OpenGL::kContextGL);
 
 	}
 #endif
@@ -1062,6 +1062,8 @@ void SurfaceSdlGraphicsManager::closeOverlay() {
 			SDL_FreeSurface(_subScreen);
 			_subScreen = nullptr;
 		}
+
+		OpenGL::Context::destroy();
 #endif
 	}
 }

@@ -42,7 +42,7 @@
 #include "base/main.h"
 #include "graphics/surface.h"
 #include "graphics/opengl/shader.h"
-#include "graphics/opengl/extensions.h"
+#include "graphics/opengl/context.h"
 
 #include "common/rect.h"
 #include "common/array.h"
@@ -83,7 +83,7 @@ const GLfloat vertices[] = {
 };
 
 void GLESBaseTexture::initGL() {
-	npot_supported = OpenGL::isExtensionSupported("GL_ARB_texture_non_power_of_two");
+	npot_supported = OpenGLContext.NPOTSupported;
 
 	const char* attributes[] = { "position", "texcoord", NULL };
 	g_box_shader = OpenGL::Shader::fromStrings("control", OpenGL::BuiltinShaders::controlVertex, OpenGL::BuiltinShaders::controlFragment, attributes);

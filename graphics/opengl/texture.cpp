@@ -25,7 +25,7 @@
 #if defined(USE_OPENGL)
 
 #include "graphics/opengl/texture.h"
-#include "graphics/opengl/extensions.h"
+#include "graphics/opengl/context.h"
 
 
 namespace OpenGL {
@@ -52,7 +52,7 @@ static const Graphics::PixelFormat getRGBAPixelFormat() {
 
 Texture::Texture(const Graphics::Surface &srf) :
 		_managedTexture(true), _width(srf.w), _height(srf.h) {
-	if (isExtensionSupported("GL_ARB_texture_non_power_of_two")) {
+	if (OpenGLContext.NPOTSupported) {
 		_texWidth  = _width;
 		_texHeight = _height;
 	} else {
@@ -80,7 +80,7 @@ Texture::Texture(const Graphics::Surface &srf) :
 
 Texture::Texture(uint width, uint height) :
 		_managedTexture(true), _width(width), _height(height) {
-	if (isExtensionSupported("GL_ARB_texture_non_power_of_two")) {
+	if (OpenGLContext.NPOTSupported) {
 		_texWidth  = _width;
 		_texHeight = _height;
 	} else {

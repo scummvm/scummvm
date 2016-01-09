@@ -57,7 +57,6 @@
 #include "math/rect2d.h"
 #include "math/quat.h"
 
-#include "graphics/opengl/extensions.h"
 #include "graphics/opengl/shader.h"
 
 #include "engines/myst3/gfx.h"
@@ -126,13 +125,7 @@ ShaderRenderer::~ShaderRenderer() {
 }
 
 Texture *ShaderRenderer::createTexture(const Graphics::Surface *surface) {
-	OpenGLTexture *texture = new OpenGLTexture(surface, true);
-
-#if defined(USE_GLES2)
-	texture->setUnpackSubImageSupport(OpenGL::isExtensionSupported("GL_EXT_unpack_subimage"));
-#endif
-
-	return texture;
+	return new OpenGLTexture(surface);
 }
 
 void ShaderRenderer::freeTexture(Texture *texture) {

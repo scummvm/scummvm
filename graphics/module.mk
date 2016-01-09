@@ -27,9 +27,9 @@ MODULE_OBJS := \
 	yuv_to_rgb.o \
 	yuva_to_rgba.o \
 	pixelbuffer.o \
+	opengl/context.o \
 	opengl/framebuffer.o \
 	opengl/texture.o \
-	opengl/extensions.o \
 	opengl/shader.o \
 	opengl/box_shaders.o \
 	opengl/control_shaders.o \

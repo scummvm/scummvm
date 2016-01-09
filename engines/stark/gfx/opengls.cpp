@@ -20,7 +20,6 @@
  *
  */
 
-#include <graphics/opengl/extensions.h>
 #include "engines/stark/gfx/opengls.h"
 
 #include "common/config-manager.h"

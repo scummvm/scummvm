@@ -58,10 +58,6 @@ public:
 	virtual Graphics::Surface *getScreenshot() override;
 private:
 	void drawFace(uint face, Texture *texture);
-
-	Math::Matrix4 _mvpMatrix;
-
-	bool _nonPowerOfTwoTexSupport;
 };
 
 } // End of namespace Myst3

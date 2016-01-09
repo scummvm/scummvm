@@ -33,13 +33,11 @@ namespace Myst3 {
 
 class OpenGLTexture : public Texture {
 public:
-	OpenGLTexture(const Graphics::Surface *surface, bool nonPoTSupport = false);
+	OpenGLTexture(const Graphics::Surface *surface);
 	virtual ~OpenGLTexture();
 
 	void update(const Graphics::Surface *surface) override;
 	void updatePartial(const Graphics::Surface *surface, const Common::Rect &rect) override;
-
-	void setUnpackSubImageSupport(bool unpackSubImageSupport) { _unpackSubImageSupport = unpackSubImageSupport; }
 
 	static void byteswapSurface(Graphics::Surface *surface);
 
@@ -51,8 +49,6 @@ public:
 
 private:
 	void updateTexture(const Graphics::Surface *surface, const Common::Rect &rect);
-
-	bool _unpackSubImageSupport;
 };
 
 } // End of namespace Myst3
