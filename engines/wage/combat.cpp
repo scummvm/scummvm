@@ -77,7 +77,8 @@ void WageEngine::encounter(Chr *player, Chr *chr) {
 		appendText(chr->_initialComment);
 
 	if (chr->_armor[Chr::HEAD_ARMOR] != NULL) {
-		msg = chr->getNameWithDefiniteArticle(true);
+		msg = chr->getDefiniteArticle(true);
+		msg += chr->_name;
 		msg += " is wearing ";
 		msg += getIndefiniteArticle(chr->_armor[Chr::HEAD_ARMOR]->_name);
 		msg += ".";
@@ -195,14 +196,25 @@ void WageEngine::performMove(Chr *chr, int validMoves) {
 }
 
 void WageEngine::performOffer(Chr *attacker, Chr *victim) {
-	warning("STUB: performOffer()");
+	/* TODO: choose in a smarter way? */
+	Obj *obj = attacker->_inventory[0];
+	Common::String msg(attacker->getDefiniteArticle(true));
+	msg += attacker->_name;
+	msg += " offers ";
+	msg += obj->_namePlural ? "some " : getIndefiniteArticle(obj->_name);
+	msg += obj->_name;
+	msg += ".";
+
+	_offer = obj;
 }
 
 void WageEngine::performTake(Chr *npc, Obj *obj) {
-	Common::String msg(npc->getNameWithDefiniteArticle(true));
+	Common::String msg(npc->getDefiniteArticle(true));
+	msg += npc->_name;
 	msg += " picks up the ";
 	msg += getIndefiniteArticle(obj->_name);
 	msg += obj->_name;
+	msg += ".";
 
 	_world->move(obj, npc);
 }

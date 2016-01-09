@@ -432,14 +432,11 @@ int Chr::wearObjIfPossible(Obj *obj) {
 	return -1;
 }
 
-String &Chr::getNameWithDefiniteArticle(bool capitalize) {
-	Common::String *res = new Common::String;
-
+const char *Chr::getDefiniteArticle(bool capitalize) {
 	if (!_nameProperNoun)
-		*res += capitalize ? "The " : "the ";
-	*res += _name;
+		return capitalize ? "The " : "the ";
 
-	return *res;
+	return "";
 }
 
 

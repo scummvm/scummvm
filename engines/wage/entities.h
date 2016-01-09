@@ -221,7 +221,7 @@ public:
 
 	WeaponArray *getWeapons(bool includeMagic);
 	ObjArray *getMagicalObjects();
-	String &getNameWithDefiniteArticle(bool capitalize);
+	const char *getDefiniteArticle(bool capitalize);
 
 public:
 	bool hasNativeWeapon1() {

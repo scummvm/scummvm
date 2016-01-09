@@ -433,13 +433,15 @@ void WageEngine::processTurn(Common::String *textInput, Designed *clickInput) {
 			Common::String msg;
 
 			if (followed) {
-				msg = prevMonster->getNameWithDefiniteArticle(true);
+				msg = prevMonster->getDefiniteArticle(true);
+				msg += prevMonster->_name;
 				msg += " follows you.";
 				appendText(msg);
 				_world->move(prevMonster, playerScene);
 			} else {
 				msg = "You escape ";
-				msg += prevMonster->getNameWithDefiniteArticle(false);
+				msg += prevMonster->getDefiniteArticle(false);
+				msg += prevMonster->_name;
 				msg += ".";
 				appendText(msg);
 			}
