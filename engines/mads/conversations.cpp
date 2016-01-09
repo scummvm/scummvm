@@ -35,7 +35,8 @@ GameConversations::GameConversations(MADSEngine *vm) : _vm(vm) {
 	_inputMode = kInputBuildingSentences;
 	_startFrameNumber = 0;
 	_speakerVal = 0;
-	_heldVal = _releaseVal = 0;
+	_currentMode = CONVMODE_NONE;
+	_priorMode = CONVMODE_NONE;
 	_val1 =_val5 = 0;
 	_vars = _nextStartNode = nullptr;
 	_heroTrigger = 0;
@@ -99,8 +100,9 @@ void GameConversations::run(int id) {
 	_heroTrigger = 0;
 	_interlocutorTrigger = 0;
 	_val1 = 0;
-	_heldVal = 0;
+	_currentMode = CONVMODE_0;
 	_val5 = -1;
+	_speakerVal = 1;
 
 	// Initialize speaker arrays
 	Common::fill(&_speakerActive[0], &_speakerActive[MAX_SPEAKERS], false);
@@ -233,16 +235,16 @@ int *GameConversations::getVariable(int idx) {
 }
 
 void GameConversations::hold() {
-	if (_heldVal != -1) {
-		_releaseVal = _heldVal;
-		_heldVal = -1;
+	if (_currentMode != CONVMODE_NONE) {
+		_priorMode = _currentMode;
+		_currentMode = CONVMODE_NONE;
 	}
 }
 
 void GameConversations::release() {
-	if (_heldVal == -1) {
-		_heldVal = _releaseVal;
-		if (_heldVal == 1 || _heldVal == 2)
+	if (_currentMode == CONVMODE_NONE) {
+		_currentMode = _priorMode;
+		if (_currentMode == 1 || _currentMode == 2)
 			update(true);
 	}
 }

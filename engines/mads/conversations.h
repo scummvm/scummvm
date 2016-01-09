@@ -33,6 +33,21 @@ namespace MADS {
 #define MAX_CONVERSATIONS 5
 #define MAX_SPEAKERS 5
 
+enum ConversationMode {
+	CONVMODE_NONE = -1,
+	CONVMODE_0 = 0,
+	CONVMODE_1 = 1,
+	CONVMODE_2 = 2,
+	CONVMODE_3 = 3,
+	CONVMODE_4 = 4,
+	CONVMODE_5 = 5,
+	CONVMODE_6 = 6,
+	CONVMODE_7 = 7,
+	CONVMODE_8 = 8,
+	CONVMODE_9 = 9,
+	CONVMODE_10 = 10
+};
+
 enum DialogCommands {
 	cmdNodeEnd = 0,
 	//
@@ -180,7 +195,8 @@ private:
 	int _arr6[MAX_SPEAKERS];
 	InputMode _inputMode;
 	int _val1, _val5;
-	int _heldVal, _releaseVal;
+	ConversationMode _currentMode;
+	ConversationMode _priorMode;
 	int _speakerVal;
 	int _heroTrigger;
 	TriggerMode _heroTriggerMode;
@@ -267,12 +283,12 @@ public:
 	int *getVariable(int idx);
 
 	/**
-	 * Hold a ??? value
+	 * Hold the current mode value
 	 */
 	void hold();
 
 	/**
-	 * Release a prevoiusly held value
+	 * Release the prevoiusly held mode value
 	 */
 	void release();
 
