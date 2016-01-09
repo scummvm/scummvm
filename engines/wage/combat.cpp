@@ -199,7 +199,12 @@ void WageEngine::performOffer(Chr *attacker, Chr *victim) {
 }
 
 void WageEngine::performTake(Chr *npc, Obj *obj) {
-	warning("STUB: performTake()");
+	Common::String msg(npc->getNameWithDefiniteArticle(true));
+	msg += " picks up the ";
+	msg += getIndefiniteArticle(obj->_name);
+	msg += obj->_name;
+
+	_world->move(obj, npc);
 }
 
 int WageEngine::getValidMoveDirections(Chr *npc) {
