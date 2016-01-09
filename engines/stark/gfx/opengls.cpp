@@ -22,7 +22,6 @@
 
 #include "engines/stark/gfx/opengls.h"
 
-#include "common/config-manager.h"
 #include "common/system.h"
 
 #include "math/matrix4.h"
@@ -61,9 +60,6 @@ OpenGLSDriver::~OpenGLSDriver() {
 }
 
 void OpenGLSDriver::init() {
-	bool fullscreen = ConfMan.getBool("fullscreen");
-	g_system->setupScreen(kOriginalWidth, kOriginalHeight, fullscreen, true);
-
 	computeScreenViewport();
 
 	static const char* attributes[] = { "position", "texcoord", nullptr };
