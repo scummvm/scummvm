@@ -31,6 +31,7 @@ MODULE_OBJS := \
 	opengl/framebuffer.o \
 	opengl/texture.o \
 	opengl/shader.o \
+	opengl/surfacerenderer.o \
 	opengl/box_shaders.o \
 	opengl/control_shaders.o \
 	opengl/compat_shaders.o \
