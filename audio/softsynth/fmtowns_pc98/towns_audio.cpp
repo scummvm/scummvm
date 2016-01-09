@@ -187,6 +187,7 @@ private:
 	int intf_pcmPlayEffect(va_list &args);
 	int intf_pcmChanOff(va_list &args);
 	int intf_pcmEffectPlaying(va_list &args);
+	int intf_pcmDisableAllChannels(va_list &args);
 	int intf_fmKeyOn(va_list &args);
 	int intf_fmKeyOff(va_list &args);
 	int intf_fmSetPanPos(va_list &args);
@@ -335,7 +336,7 @@ TownsAudioInterfaceInternal::TownsAudioInterfaceInternal(Audio::Mixer *mixer, To
 		INTCB(pcmChanOff),
 		// 40
 		INTCB(pcmEffectPlaying),
-		INTCB(notImpl),
+		INTCB(pcmDisableAllChannels),
 		INTCB(notImpl),
 		INTCB(notImpl),
 		// 44
@@ -784,6 +785,8 @@ int TownsAudioInterfaceInternal::intf_loadWaveTable(va_list &args) {
 	if (_waveTablesTotalDataSize + w.size > 65504)
 		return 5;
 
+	callback(41);
+
 	for (int i = 0; i < _numWaveTables; i++) {
 		if (_waveTables[i].id == w.id)
 			return 10;
@@ -800,6 +803,7 @@ int TownsAudioInterfaceInternal::intf_loadWaveTable(va_list &args) {
 
 int TownsAudioInterfaceInternal::intf_unloadWaveTable(va_list &args) {
 	int id = va_arg(args, int);
+	callback(41);
 
 	if (id == -1) {
 		for (int i = 0; i < 128; i++)
@@ -817,8 +821,8 @@ int TownsAudioInterfaceInternal::intf_unloadWaveTable(va_list &args) {
 						memcpy(&_waveTables[i], &_waveTables[i + 1], sizeof(TownsAudio_WaveTable));
 					return 0;
 				}
-				return 9;
 			}
+			return 9;
 		}
 	}
 
@@ -874,6 +878,12 @@ int TownsAudioInterfaceInternal::intf_pcmEffectPlaying(va_list &args) {
 		return 1;
 	chan -= 0x40;
 	return _pcmChan[chan]._activeEffect ? 1 : 0;
+}
+
+int TownsAudioInterfaceInternal::intf_pcmDisableAllChannels(va_list &args) {
+	for (int i = 0; i < 8; ++i)
+		_pcmChan[i]._activeOutput = false;
+	return 0;
 }
 
 int TownsAudioInterfaceInternal::intf_fmKeyOn(va_list &args) {
