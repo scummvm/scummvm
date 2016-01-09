@@ -99,7 +99,7 @@ void Set::setupOverworldLights() {
 	l->_pos = Math::Vector3d(0, 0, 0);
 	l->_dir = Math::Vector3d(0, 0, 0);
 	l->_color = Color(255, 255, 255);
-	l->_intensity = 0.5f;
+	l->setIntensity(0.5f);
 	_overworldLightsList.push_back(l);
 
 	l = new Light();
@@ -109,7 +109,7 @@ void Set::setupOverworldLights() {
 	l->_pos = Math::Vector3d(0, 0, 0);
 	l->_dir = Math::Vector3d(0, 0, -1);
 	l->_color = Color(255, 255, 255);
-	l->_intensity = 0.6f;
+	l->setIntensity(0.6f);
 	_overworldLightsList.push_back(l);
 }
 
@@ -488,8 +488,10 @@ bool Set::Setup::restoreState(SaveGame *savedState) {
 	return true;
 }
 
-Light::Light() : _intensity(0.0f), _umbraangle(0.0f), _penumbraangle(0.0f),
-		_falloffNear(0.0f), _falloffFar(0.0f), _enabled(false), _id(0) {
+Light::Light() : _falloffNear(0.0f), _falloffFar(0.0f), _enabled(false), _id(0) {
+	setIntensity(0.0f);
+	setUmbra(0.0f);
+	setPenumbra(0.0f);
 }
 
 void Set::Setup::getRotation(float *x, float *y, float *z) {
@@ -540,8 +542,28 @@ void Set::Setup::setRoll(Math::Angle roll) {
 	}
 }
 
+void Light::setUmbra(float angle) {
+	_umbraangle = angle;
+	_cosumbraangle = cosf(angle * M_PI / 180.0f);
+}
+
+void Light::setPenumbra(float angle) {
+	_penumbraangle = angle;
+	_cospenumbraangle = cosf(angle * M_PI / 180.0f);
+}
+
+void Light::setIntensity(float intensity) {
+	_intensity = intensity;
+	if (g_grim->getGameType() == GType_MONKEY4) {
+		_scaledintensity = intensity / 255;
+	} else {
+		_scaledintensity = intensity / 15;
+	}
+}
+
 void Light::load(TextSplitter &ts) {
 	char buf[256];
+	float tmp;
 
 	// Light names can be null, but ts doesn't seem flexible enough to allow this
 	if (strlen(ts.getCurrentLine()) > strlen(" light"))
@@ -566,9 +588,12 @@ void Light::load(TextSplitter &ts) {
 
 	ts.scanString(" position %f %f %f", 3, &_pos.x(), &_pos.y(), &_pos.z());
 	ts.scanString(" direction %f %f %f", 3, &_dir.x(), &_dir.y(), &_dir.z());
-	ts.scanString(" intensity %f", 1, &_intensity);
-	ts.scanString(" umbraangle %f", 1, &_umbraangle);
-	ts.scanString(" penumbraangle %f", 1, &_penumbraangle);
+	ts.scanString(" intensity %f", 1, &tmp);
+	setIntensity(tmp);
+	ts.scanString(" umbraangle %f", 1, &tmp);
+	setUmbra(tmp);
+	ts.scanString(" penumbraangle %f", 1, &tmp);
+	setPenumbra(tmp);
 
 	int r, g, b;
 	ts.scanString(" color %d %d %d", 3, &r, &g, &b);
@@ -600,7 +625,7 @@ void Light::loadBinary(Common::SeekableReadStream *data) {
 	_type = (LightType)data->readSint32LE();
 
 	data->read(v, sizeof(float));
-	_intensity = get_float(v);
+	setIntensity(get_float(v));
 
 	int j = data->readSint32LE();
 	// This always seems to be 0
@@ -615,8 +640,8 @@ void Light::loadBinary(Common::SeekableReadStream *data) {
 	data->read(v, sizeof(float) * 4);
 	_falloffNear = get_float(v);
 	_falloffFar = get_float(v + 4);
-	_umbraangle = get_float(v + 8);
-	_penumbraangle = get_float(v + 12);
+	setUmbra(get_float(v + 8));
+	setPenumbra(get_float(v + 12));
 
 	_enabled = true;
 }
@@ -676,9 +701,9 @@ bool Light::restoreState(SaveGame *savedState) {
 
 	_color         = savedState->readColor();
 
-	_intensity     = savedState->readFloat();
-	_umbraangle    = savedState->readFloat();
-	_penumbraangle = savedState->readFloat();
+	setIntensity(    savedState->readFloat());
+	setUmbra(        savedState->readFloat());
+	setPenumbra(     savedState->readFloat());
 
 	if (savedState->saveMinorVersion() >= 20) {
 		_falloffNear = savedState->readFloat();
@@ -964,7 +989,7 @@ void Set::setLightIntensity(const char *light, float intensity) {
 	for (int i = 0; i < _numLights; ++i) {
 		Light &l = _lights[i];
 		if (l._name == light) {
-			l._intensity = intensity;
+			l.setIntensity(intensity);
 			return;
 		}
 	}
@@ -972,7 +997,7 @@ void Set::setLightIntensity(const char *light, float intensity) {
 
 void Set::setLightIntensity(int light, float intensity) {
 	Light &l = _lights[light];
-	l._intensity = intensity;
+	l.setIntensity(intensity);
 }
 
 void Set::setLightEnabled(const char *light, bool enabled) {

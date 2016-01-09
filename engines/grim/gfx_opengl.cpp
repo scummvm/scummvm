@@ -979,7 +979,7 @@ void GfxOpenGL::setupLight(Light *light, int lightId) {
 	GLfloat spot_exp = 0.0f;
 	GLfloat q_attenuation = 1.0f;
 
-	GLfloat intensity = light->_intensity / 15.0f;
+	GLfloat intensity = light->_scaledintensity;
 	lightColor[0] = (GLfloat)light->_color.getRed() * intensity;
 	lightColor[1] = (GLfloat)light->_color.getGreen() * intensity;
 	lightColor[2] = (GLfloat)light->_color.getBlue() * intensity;
