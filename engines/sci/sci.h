@@ -70,6 +70,7 @@ class GfxPaint;
 class GfxPaint16;
 class GfxPaint32;
 class GfxPalette;
+class GfxPalette32;
 class GfxPorts;
 class GfxScreen;
 class GfxText16;
@@ -79,7 +80,6 @@ class GfxTransitions;
 #ifdef ENABLE_SCI32
 class RobotDecoder;
 class GfxFrameout;
-class GfxPalette32;
 #endif
 
 // our engine debug levels

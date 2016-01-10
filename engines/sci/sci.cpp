@@ -619,7 +619,6 @@ void SciEngine::initGraphics() {
 	_gfxPaint = 0;
 	_gfxPaint16 = 0;
 	_gfxPalette16 = 0;
-	_gfxPalette32 = 0;
 	_gfxPorts = 0;
 	_gfxText16 = 0;
 	_gfxTransitions = 0;
@@ -629,6 +628,7 @@ void SciEngine::initGraphics() {
 	_robotDecoder = 0;
 	_gfxFrameout = 0;
 	_gfxPaint32 = 0;
+	_gfxPalette32 = 0;
 #endif
 
 	if (hasMacIconBar())
