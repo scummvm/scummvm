@@ -133,7 +133,7 @@ bool Camera::camPan(int16 *picture_view, int16 *player_loc, int display_size, in
 				int lowEdge = *picture_view + _startTolerance;
 				int highEdge = *picture_view - _startTolerance + display_size - 1;
 
-				if ((*player_loc < lowEdge) && (picture_view > 0)) {
+				if ((*player_loc < lowEdge) && (*picture_view > 0)) {
 					_activeFl = true;
 					_direction = -1;
 				}
