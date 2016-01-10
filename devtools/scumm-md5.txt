@@ -84,6 +84,7 @@ maniac	Maniac Mansion
 	f0d294891b813d3dcc525b89bc318815	1988	ru	DOS	V2	V2	-	sev
 
 	40564ec47da48a67787d1f9bd043902a	1988	en	DOS	V2 Demo	V2 Demo	non-interactive	Fingolfin
+	3a988de37118873ad129246b452909c0	1988	ru	DOS	V2 Demo	V2 Demo	non-interactive	sev
 
 zak	Zak McKracken and the Alien Mindbenders
 	254fede2f15dbb32a23760d601b01816	-1	en	C64	V1	-	-	
