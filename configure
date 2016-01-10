@@ -4043,7 +4043,15 @@ int main(int argc, char *argv[]) {
 }
 EOF
 
-			cc_check $FREETYPE2_CFLAGS $FREETYPE2_LIBS && _freetype2=yes
+			cc_check_no_clean $FREETYPE2_CFLAGS $FREETYPE2_LIBS && _freetype2=yes
+			# Modern freetype-config scripts accept --static to get all
+			# required flags for static linking. We abuse this to detect
+			# FreeType2 builds which are static themselves.
+			if test "_freetype2" != "yes"; then
+				FREETYPE2_LIBS=`$_freetypeconfig --prefix="$_freetypepath" --static --libs 2>/dev/null`
+				cc_check_no_clean $FREETYPE2_CFLAGS $FREETYPE2_LIBS && _freetype2=yes
+			fi
+			cc_check_clean
 		fi
 
 		if test "$_freetype2" = "yes"; then
