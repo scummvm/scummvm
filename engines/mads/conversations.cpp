@@ -45,6 +45,7 @@ GameConversations::GameConversations(MADSEngine *vm) : _vm(vm) {
 	_interlocutorTrigger = 0;
 	_interlocutorTriggerMode = SEQUENCE_TRIGGER_PARSER;
 	_currentNode = 0;
+	_dialogNodeOffset = _dialogNodeSize = 0;
 
 	// Mark all conversation slots as empty
 	for (int idx = 0; idx < MAX_CONVERSATIONS; ++idx)
@@ -147,7 +148,9 @@ void GameConversations::start() {
 	_vars = &_runningConv->_cnd._vars[0];
 	_nextStartNode = &_runningConv->_cnd._vars[1];
 
-	warning("TODO: GameConversations::start");
+	_runningConv->_cnd._currentNode = -1;
+	_runningConv->_cnd._numImports = 0;
+	_runningConv->_cnd._vars[0].setValue(_nextStartNode->_val);
 }
 
 void GameConversations::setVariable(uint idx, int val) {
@@ -233,6 +236,7 @@ void GameConversations::setInterlocutorTrigger(int val) {
 }
 
 int *GameConversations::getVariable(int idx) {
+	assert(idx >= 0);	// TODO: Some negative values are allowed? Investigate
 	return _vars[idx].getValue();
 }
 
@@ -251,21 +255,21 @@ void GameConversations::release() {
 	}
 }
 
-void GameConversations::flagEntry(ConvFlagMode mode, int entryIndex) {
+void GameConversations::flagEntry(DialogCommand mode, int entryIndex) {
 	assert(_runningConv);
 	uint &flags = _runningConv->_cnd._entryFlags[entryIndex];
 
 	switch (mode) {
-	case FLAGMODE_1:
+	case CMD_1:
 		flags |= ENTRYFLAG_4000;
 		flags &= ~ENTRYFLAG_8000;
 		break;
 
-	case FLAGMODE_2:
+	case CMD_HIDE:
 		flags &= ~ENTRYFLAG_8000;
 		break;
 
-	case FLAGMODE_3:
+	case CMD_UNHIDE:
 		if (!(flags & ENTRYFLAG_4000))
 			flags |= ENTRYFLAG_8000;
 		break;
@@ -328,7 +332,7 @@ void GameConversations::update(bool flag) {
 			_verbId = _vm->_game->_scene._action._activeAction._verbId;
 
 			if (!(_runningConv->_cnd._entryFlags[_verbId] & ENTRYFLAG_2))
-				flagEntry(FLAGMODE_2, _verbId);
+				flagEntry(CMD_HIDE, _verbId);
 
 			removeActiveWindow();
 			_vm->_game->_scene._userInterface.emptyConversationList();
@@ -424,8 +428,27 @@ bool GameConversations::nextNode() {
 	return _runningConv->_data._nodes[var0._val]._active;
 }
 
-void GameConversations::executeEntry(int index) {
+int GameConversations::executeEntry(int index) {
+	ConvDialog &dlg = _runningConv->_data._dialogs[index];
+	ConversationVar &var0 = _runningConv->_cnd._vars[0];
 
+	_runningConv->_cnd._fieldC = 0;
+	_runningConv->_cnd._fieldE = 0;
+	_runningConv->_cnd._field10 = 0;
+	_runningConv->_cnd._field12 = 0;
+	_nextStartNode->_val = var0._val;
+
+	bool flag = true;
+	for (uint scriptIdx = 0; scriptIdx < dlg._script.size(); ++scriptIdx) {
+		DialogCommand cmd = dlg._script[scriptIdx]._command;
+		// TODO
+	}
+
+	if (flag) {
+		var0._val = -1;
+	}
+
+	return var0._val;
 }
 
 /*------------------------------------------------------------------------*/
@@ -493,8 +516,8 @@ void ConversationData::load(const Common::String &filename) {
 	for (uint idx = 0; idx < _dialogCount; ++idx) {
 		_dialogs[idx]._textLineIndex = convFile->readSint16LE();
 		_dialogs[idx]._speechIndex = convFile->readSint16LE();
-		_dialogs[idx]._nodeOffset = convFile->readUint16LE();
-		_dialogs[idx]._nodeSize = convFile->readUint16LE();
+		_dialogs[idx]._scriptOffset = convFile->readUint16LE();
+		_dialogs[idx]._scriptSize = convFile->readUint16LE();
 	}
 
 	delete convFile;
@@ -536,81 +559,23 @@ void ConversationData::load(const Common::String &filename) {
 	delete[] textLineOffsets;
 	delete convFile;
 
-	// **** Section 6: Node entry commands ************************************
+	// **** Section 6: Scripts ************************************************
 	convFile = convFileUnpacked.getItemStream(6);
 	assert(convFile->size() == _commandsSize);
 
-	for (uint16 i = 0; i < _nodeCount; i++) {
-		uint16 dialogCount = _nodes[i]._dialogCount;
+	for (uint idx = 0; idx < _dialogs.size(); ++idx) {
+		// Move to the correct position for the dialog's script, and create
+		// a memory stream to represent the data for just that script
+		convFile->seek(_dialogs[idx]._scriptOffset);
+		Common::SeekableReadStream *scriptStream = convFile->readStream(_dialogs[idx]._scriptSize);
 
-		for (uint16 j = 0; j < dialogCount; j++) {
-			//ConvDialog dialog = _convNodes[i].dialogs[j];
-			byte command;
-			uint16 chk;
-
-			do {
-				command = convFile->readByte();
-				chk = convFile->readUint16BE();
-				if (chk != 0xFF00 && chk != 0x0000) {
-					warning("Error while reading conversation node entries - bailing out");
-					break;
-				}
-
-				switch (command) {
-				case cmdNodeEnd:
-					//debug("Node end");
-					break;
-				case cmdDialogEnd:
-					//debug("Dialog end");
-					break;
-				case cmdHide: {
-					byte count = convFile->readByte();
-					for (byte k = 0; k < count; k++) {
-						/*uint16 nodeRef = */convFile->readUint16LE();
-						//debug("Hide node %d", nodeRef);
-					}
-
-				}
-							  break;
-				case cmdUnhide: {
-					byte count = convFile->readByte();
-					for (byte k = 0; k < count; k++) {
-						/*uint16 nodeRef = */convFile->readUint16LE();
-						//debug("Unhide node %d", nodeRef);
-					}
-
-				}
-								break;
-				case cmdMessage:
-					//debug("Message");
-					convFile->skip(7);	// TODO
-					break;
-				case cmdGoto: {
-					convFile->skip(3);	// unused?
-					/*byte nodeRef = */convFile->readByte();
-					//debug("Goto %d", nodeRef);
-				}
-							  break;
-				case cmdAssign: {
-					convFile->skip(3);	// unused?
-					/*uint16 value = */convFile->readUint16LE();
-					/*uint16 variable = */convFile->readUint16LE();
-					//debug("Variable %d = %d", variable, value);
-				}
-								break;
-				default:
-					error("Unknown conversation command %d", command);
-					break;
-				}
-			} while (command != cmdNodeEnd && command != cmdDialogEnd);
-		}
+		// Pass it to the dialog's script set class to parse into commands
+		_dialogs[idx]._script.load(*scriptStream, _dialogs[idx]._scriptOffset);
+		delete scriptStream;
 	}
 
 	delete convFile;
 	inFile.close();
-
-	// TODO: Still stuff to do
-	warning("TODO GameConversations::get");
 }
 
 /*------------------------------------------------------------------------*/
@@ -699,5 +664,176 @@ void ConversationVar::setValue(int *val) {
 	_valPtr = val;
 	_val = 0;
 }
+
+/*------------------------------------------------------------------------*/
+
+void DialogScript::load(Common::SeekableReadStream &s, uint startingOffset) {
+	clear();
+	Common::HashMap<uint, uint> instructionOffsets;
+
+	// Iterate getting each instruction in turn
+	while (s.pos() < s.size()) {
+		// Create a new entry for the next script command
+		instructionOffsets[startingOffset + s.pos()] = s.size();
+		push_back(ScriptEntry());
+		ScriptEntry &se = (*this)[size() - 1];
+		
+		// Load the instruction
+		se.load(s);
+	}
+
+	// Do a final iteration over the loaded instructions to convert
+	// any GOTO instructions from original offsets to instruction indexes
+	for (uint idx = 0; idx < size(); ++idx) {
+		ScriptEntry &se = (*this)[idx];
+
+		if (se._command == CMD_GOTO)
+			se._params[0] = instructionOffsets[se._params[0]];
+	}
+}
+
+/*------------------------------------------------------------------------*/
+
+void ScriptEntry::load(Common::SeekableReadStream &s) {
+	// Get the command byte
+	_command = (DialogCommand)s.readByte();
+
+	if (!(_command == CMD_DIALOG_END || (_command >= CMD_NODE_END && _command <= CMD_ASSIGN))) {
+		warning("unknown opcode - %d", _command);
+		s.seek(0, SEEK_END);
+		return;
+	}
+
+	// Get in the conditional values
+	int numConditionals = 1;
+	if (_command == CMD_7)
+		numConditionals = 3;
+	else if (_command == CMD_ERROR)
+		numConditionals = 0;
+
+	for (int idx = 0; idx < numConditionals; ++idx)
+		_conditionals[idx].load(s);
+
+	// Get further parameters
+	switch (_command) {
+	case CMD_1:
+	case CMD_HIDE:
+	case CMD_UNHIDE: {
+		// Read in the list of entries whose flags are to be updated
+		int count = s.readByte();
+		for (int idx = 0; idx < count; ++idx)
+			_params.push_back(s.readSint16LE());
+		break;
+	}
+
+	case CMD_MESSAGE:
+	case CMD_5: {
+		int count1 = s.readByte();
+		int count2 = s.readByte();
+		_params.push_back(count1);
+		_params.push_back(count2);
+
+		for (int idx = 0; idx < count1; ++idx)
+			_params.push_back(s.readByte());
+		for (int idx = 0; idx < count1; ++idx)
+			_params.push_back(s.readUint16LE());
+		for (int idx = 0; idx < count2; ++idx)
+			_params.push_back(s.readUint16LE());
+		break;
+	}
+
+	case CMD_ERROR:
+	case CMD_7:
+		// These opcodes have no extra parameters
+		break;
+
+	case CMD_GOTO:
+	case CMD_ASSIGN:
+		// Goto has a single extra parameter for the destination
+		// Assign has a single extra parameter for the variable index
+		//		that the value resulting from the condition will be set to
+		_params.push_back(s.readUint16LE());
+		break;
+
+	
+
+	default:
+		break;
+	}
+}
+
+void ScriptEntry::Conditional::load(Common::SeekableReadStream &s) {
+	_paramsFlag = s.readUint16LE();
+
+	if (_paramsFlag == 0xff) {
+		_param1._isVariable = false;
+		_param1._val = 0;
+		_param2._isVariable = false;
+		_param2._val = 0;
+	} else {
+		_param1._isVariable = s.readByte() != 0;
+		_param1._val = 0;
+		_param2._isVariable = s.readByte() != 0;
+		_param2._val = 0;
+	}
+}
+
+/*
+do {
+command = convFile->readByte();
+chk = convFile->readUint16BE();
+if (chk != 0xFF00 && chk != 0x0000) {
+warning("Error while reading conversation node entries - bailing out");
+break;
+}
+
+switch (command) {
+case cmdNodeEnd:
+//debug("Node end");
+break;
+case cmdDialogEnd:
+//debug("Dialog end");
+break;
+case cmdHide: {
+byte count = convFile->readByte();
+for (byte k = 0; k < count; k++) {
+//uint16 nodeRef = convFile->readUint16LE();
+//debug("Hide node %d", nodeRef);
+}
+
+}
+break;
+case cmdUnhide: {
+byte count = convFile->readByte();
+for (byte k = 0; k < count; k++) {
+//uint16 nodeRef = convFile->readUint16LE();
+//debug("Unhide node %d", nodeRef);
+}
+
+}
+break;
+case cmdMessage:
+//debug("Message");
+convFile->skip(7);	// TODO
+break;
+case cmdGoto: {
+convFile->skip(3);	// unused?
+//byte nodeRef = convFile->readByte();
+//debug("Goto %d", nodeRef);
+}
+break;
+case cmdAssign: {
+convFile->skip(3);	// unused?
+//uint16 value = convFile->readUint16LE();
+//uint16 variable = convFile->readUint16LE();
+//debug("Variable %d = %d", variable, value);
+}
+break;
+default:
+error("Unknown conversation command %d", command);
+break;
+}
+} while (command != cmdNodeEnd && command != cmdDialogEnd);
+*/
 
 } // End of namespace MADS

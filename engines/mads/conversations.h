@@ -48,24 +48,18 @@ enum ConversationMode {
 	CONVMODE_STOP = 10
 };
 
-enum DialogCommands {
-	cmdNodeEnd = 0,
-	//
-	cmdHide = 2,
-	cmdUnhide = 3,
-	cmdMessage = 4,
-	//
-	//
-	cmdGoto = 7,
-	//
-	cmdAssign = 9,
-	cmdDialogEnd = 255
-};
-
-enum ConvFlagMode {
-	FLAGMODE_1 = 1,
-	FLAGMODE_2 = 2,
-	FLAGMODE_3 = 3
+enum DialogCommand {
+	CMD_NODE_END = 0,
+	CMD_1 = 1,
+	CMD_HIDE = 2,
+	CMD_UNHIDE = 3,
+	CMD_MESSAGE = 4,
+	CMD_5 = 5,
+	CMD_ERROR = 6,
+	CMD_7 = 7,
+	CMD_GOTO = 8,
+	CMD_ASSIGN = 9,
+	CMD_DIALOG_END = 255
 };
 
 enum ConvEntryFlag {
@@ -74,14 +68,73 @@ enum ConvEntryFlag {
 	ENTRYFLAG_8000 = 0x8000
 };
 
+struct ScriptEntry {
+	struct Conditional {
+		struct CondtionalParamEntry {
+			bool _isVariable;
+			int _val;
+
+			/**
+			 * Constructor
+			 */
+			CondtionalParamEntry() : _isVariable(false), _val(0) {}
+		};
+
+		uint _paramsFlag;
+		CondtionalParamEntry _param1;
+		CondtionalParamEntry _param2;
+
+		/**
+		 * Constructor
+		 */
+		Conditional() : _paramsFlag(false) {}
+
+		/**
+		 * Loads data from a passed stream into the parameters structure
+		 */
+		void load(Common::SeekableReadStream &s);
+	};
+
+	DialogCommand _command;
+	Conditional _conditionals[3];
+	Common::Array<int> _params;
+
+	/**
+	 * Constructor
+	 */
+	ScriptEntry() : _command(CMD_NODE_END) {}
+
+	/**
+	 * Loads data from a passed stream into the parameters structure
+	 */
+	void load(Common::SeekableReadStream &s);
+};
+
+/**
+ * Representation of scripts associated with a dialog
+ */
+class DialogScript : public Common::Array<ScriptEntry> {
+public:
+	/**
+	 * Loads a script from the passed stream
+	 */
+	void load(Common::SeekableReadStream &s, uint startingOffset);
+};
+
 /**
  * Reperesents the data for a dialog to be displayed in a conversation
  */
 struct ConvDialog {
+	struct ScriptEntry {
+		DialogCommand _command;
+	};
+
 	int16 _textLineIndex;	// 0-based
 	int16 _speechIndex;		// 1-based
-	uint16 _nodeOffset;		// offset in section 6
-	uint16 _nodeSize;		// size in section 6
+	uint16 _scriptOffset;	// offset of script entry
+	uint16 _scriptSize;		// size of script entry
+
+	DialogScript _script;
 };
 
 /**
@@ -232,6 +285,7 @@ private:
 	ConversationVar *_vars;
 	ConversationVar *_nextStartNode;
 	int _currentNode;
+	int _dialogNodeOffset, _dialogNodeSize;
 	
 	/**
 	 * Returns the record for the specified conversation, if it's loaded
@@ -251,7 +305,7 @@ private:
 	/**
 	 * Flags a conversation option/entry
 	 */
-	void flagEntry(ConvFlagMode mode, int entryIndex);
+	void flagEntry(DialogCommand mode, int entryIndex);
 
 	/**
 	 * Generate a menu
@@ -276,7 +330,7 @@ private:
 	/**
 	 * Executes a conversation entry
 	 */
-	void executeEntry(int index);
+	int executeEntry(int index);
 public:
 	/**
 	 * Constructor
