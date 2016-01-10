@@ -225,10 +225,8 @@ void LabEngine::changeVolume(int delta) {
 }
 
 void LabEngine::waitTOF() {
-	_system->copyRectToScreen(_graphics->_displayBuffer, _graphics->_screenWidth, 0, 0, _graphics->_screenWidth, _graphics->_screenHeight);
-	_system->updateScreen();
-
 	_event->processInput();
+	_graphics->screenUpdate();
 
 	uint32 now;
 

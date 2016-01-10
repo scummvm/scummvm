@@ -185,10 +185,6 @@ void EventManager::processInput() {
 			break;
 		}
 	}
-
-	_vm->_system->copyRectToScreen(_vm->_graphics->_displayBuffer, _vm->_graphics->_screenWidth, 0, 0, _vm->_graphics->_screenWidth, _vm->_graphics->_screenHeight);
-	_vm->_console->onFrame();
-	_vm->_system->updateScreen();
 }
 
 Common::Point EventManager::updateAndGetMousePos() {
