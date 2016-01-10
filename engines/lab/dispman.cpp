@@ -403,11 +403,11 @@ void DisplayMan::drawHLine(uint16 x1, uint16 y, uint16 x2, byte color) {
 }
 
 void DisplayMan::screenUpdate() {
+	_vm->_event->processInput();
+
 	_vm->_system->copyRectToScreen(_displayBuffer, _screenWidth, 0, 0, _screenWidth, _screenHeight);
 	_vm->_console->onFrame();
 	_vm->_system->updateScreen();
-
-	_vm->_event->processInput();
 }
 
 void DisplayMan::createScreen(bool hiRes) {

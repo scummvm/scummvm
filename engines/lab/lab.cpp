@@ -225,7 +225,6 @@ void LabEngine::changeVolume(int delta) {
 }
 
 void LabEngine::waitTOF() {
-	_event->processInput();
 	_graphics->screenUpdate();
 
 	uint32 now;
