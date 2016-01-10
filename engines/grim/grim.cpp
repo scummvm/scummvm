@@ -36,6 +36,10 @@
 #include "graphics/pixelbuffer.h"
 #include "graphics/renderer.h"
 
+#ifdef USE_OPENGL
+#include "graphics/opengl/context.h"
+#endif
+
 #include "gui/error.h"
 #include "gui/gui-manager.h"
 #include "gui/message.h"
@@ -228,33 +232,48 @@ LuaBase *GrimEngine::createLua() {
 	return new Lua_V1();
 }
 
-GfxBase *GrimEngine::createRenderer() {
+GfxBase *GrimEngine::createRenderer(int screenW, int screenH) {
 	Common::String rendererConfig = ConfMan.get("renderer");
 	Graphics::RendererType desiredRendererType = Graphics::parseRendererTypeCode(rendererConfig);
 	Graphics::RendererType matchingRendererType = Graphics::getBestMatchingAvailableRendererType(desiredRendererType);
+
+	bool fullscreen = ConfMan.getBool("fullscreen");
+	_softRenderer = matchingRendererType == Graphics::kRendererTypeTinyGL;
+	_system->setupScreen(screenW, screenH, fullscreen, !_softRenderer);
+
+#if defined(USE_OPENGL)
+	// Check the OpenGL context actually supports shaders
+	if (matchingRendererType == Graphics::kRendererTypeOpenGLShaders && !OpenGLContext.shadersSupported) {
+		matchingRendererType = Graphics::kRendererTypeOpenGL;
+	}
+#endif
 
 	if (matchingRendererType != desiredRendererType && desiredRendererType != Graphics::kRendererTypeDefault) {
 		// Display a warning if unable to use the desired renderer
 		warning("Unable to create a '%s' renderer", rendererConfig.c_str());
 	}
 
-	_softRenderer = matchingRendererType == Graphics::kRendererTypeTinyGL;
-
+	GfxBase *renderer = nullptr;
 #if defined(USE_GLES2) || defined(USE_OPENGL_SHADERS)
 	if (matchingRendererType == Graphics::kRendererTypeOpenGLShaders) {
-		return CreateGfxOpenGLShader();
+		renderer = CreateGfxOpenGLShader();
 	}
 #endif
 #if defined(USE_OPENGL) && !defined(USE_GLES2)
 	if (matchingRendererType == Graphics::kRendererTypeOpenGL) {
-		return CreateGfxOpenGL();
+		renderer = CreateGfxOpenGL();
 	}
 #endif
 	if (matchingRendererType == Graphics::kRendererTypeTinyGL) {
-		return CreateGfxTinyGL();
+		renderer = CreateGfxTinyGL();
 	}
 
-	error("Unable to create a '%s' renderer", rendererConfig.c_str());
+	if (!renderer) {
+		error("Unable to create a '%s' renderer", rendererConfig.c_str());
+	}
+
+	renderer->setupScreen(screenW, screenH, fullscreen);
+	return renderer;
 }
 
 const char *GrimEngine::getUpdateFilename() {
@@ -326,9 +345,7 @@ Common::Error GrimEngine::run() {
 	}
 	g_sound = new SoundPlayer();
 
-	bool fullscreen = ConfMan.getBool("fullscreen");
-	g_driver = createRenderer();
-	g_driver->setupScreen(640, 480, fullscreen);
+	g_driver = createRenderer(640, 480);
 	g_driver->loadEmergFont();
 
 	if (getGameType() == GType_MONKEY4 && SearchMan.hasFile("AMWI.m4b")) {
@@ -777,8 +794,7 @@ void GrimEngine::mainLoop() {
 			clearPools();
 
 			delete g_driver;
-			g_driver = createRenderer();
-			g_driver->setupScreen(screenWidth, screenHeight, fullscreen);
+			g_driver = createRenderer(screenWidth, screenHeight);
 			savegameRestore();
 
 			if (mode == DrawMode) {
