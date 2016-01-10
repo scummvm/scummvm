@@ -92,7 +92,7 @@ endif
 	cp $(srcdir)/dists/iphone/icon-72.png $(bundle_name)/
 	cp $(srcdir)/dists/iphone/Default.png $(bundle_name)/
 
-ios7bundle: ios7
+ios7bundle: iphone
 	mkdir -p $(bundle_name)
 	awk 'BEGIN {s=0}\
 		/<key>CFBundleIcons<\/key>/ {\
