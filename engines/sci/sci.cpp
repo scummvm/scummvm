@@ -619,11 +619,11 @@ void SciEngine::initGraphics() {
 	_gfxPaint = 0;
 	_gfxPaint16 = 0;
 	_gfxPalette16 = 0;
-	_gfxPalette32 = 0;
 	_gfxPorts = 0;
 	_gfxText16 = 0;
 	_gfxTransitions = 0;
 #ifdef ENABLE_SCI32
+	_gfxPalette32 = 0;
 	_gfxControls32 = 0;
 	_gfxText32 = 0;
 	_robotDecoder = 0;
