@@ -963,6 +963,7 @@ void ScummEngine_v2::drawPreposition(int index) {
 			{ " ", " dans", " avec", " sur", " <" }, // French
 			{ " ", " in", " con", " su", " a" },     // Italian
 			{ " ", " en", " con", " en", " a" },     // Spanish
+			{ " ", " \x7f", " \x7f", " na", " \x7f" },// Russian
 			};
 		int lang;
 		switch (_language) {
@@ -977,6 +978,9 @@ void ScummEngine_v2::drawPreposition(int index) {
 			break;
 		case Common::ES_ESP:
 			lang = 4;
+			break;
+		case Common::RU_RUS:
+			lang = 5;
 			break;
 		default:
 			lang = 0;	// Default to english

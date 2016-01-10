@@ -81,6 +81,7 @@ maniac	Maniac Mansion
 	183d7464902d40d00800e8ee1f04117c	1988	de	DOS	V2	V2	-	Fingolfin
 	87f6e8037b7cc996e13474b491a7a98e	-1	it	DOS	V2	V2	from DOTT	Andrea Petrucci
 	0d1b69471605201ef2fa9cec1f5f02d2	-1	es	DOS	V2	V2	-	abnog, Andrea Petrucci
+	f0d294891b813d3dcc525b89bc318815	1988	ru	DOS	V2	V2	-	sev
 
 	40564ec47da48a67787d1f9bd043902a	1988	en	DOS	V2 Demo	V2 Demo	non-interactive	Fingolfin
 

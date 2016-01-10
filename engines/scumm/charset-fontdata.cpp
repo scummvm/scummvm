@@ -484,6 +484,73 @@ static const byte spanishCharsetDataV2[] = {
 	126, 10,
 };
 
+// Russian MM font.
+static const byte russCharsetDataV2[] = {
+	60, 234,
+	62, 158,
+	65, 128,
+	66, 129,
+	67, 150,
+	68, 132,
+	69, 133,
+	70, 148,
+	71, 131,
+	72, 149,
+	73, 136,
+	74, 137,
+	75, 138,
+	76, 139,
+	77, 140,
+	78, 141,
+	79, 142,
+	80, 143,
+	81, 159,
+	82, 144,
+	83, 145,
+	84, 146,
+	85, 147,
+	86, 134,
+	87, 130,
+	88, 156,
+	89, 155,
+	90, 135,
+	91, 152,
+	92, 157,
+	93, 153,
+	94, 151,
+	96, 238,
+	97, 160,
+	98, 161,
+	99, 230,
+	100, 164,
+	101, 165,
+	102, 228,
+	103, 163,
+	104, 229,
+	105, 168,
+	106, 169,
+	107, 170,
+	108, 171,
+	109, 172,
+	110, 173,
+	111, 174,
+	112, 175,
+	113, 239,
+	114, 224,
+	115, 225,
+	116, 226,
+	117, 227,
+	118, 166,
+	119, 162,
+	120, 236,
+	121, 235,
+	122, 167,
+	123, 232,
+	124, 237,
+	125, 233,
+	126, 231,
+};
+
 // Special characters
 static const byte specialCharsetData[] = {
 	0x18, 0x3e, 0x60, 0x3c, 0x06, 0x7c, 0x18, 0x00,
@@ -550,7 +617,12 @@ CharsetRendererV2::CharsetRendererV2(ScummEngine *vm, Common::Language language)
 		replacementChars = sizeof(spanishCharsetDataV2) / 2;
 		break;
 	case Common::RU_RUS:
-		_fontPtr = russianCharsetDataV2;
+		if ((_vm->_game.id == GID_MANIAC) && (_vm->_game.version == 2)) {
+			replacementData = russCharsetDataV2;
+			replacementChars = sizeof(russCharsetDataV2) / 2;
+		} else {
+			_fontPtr = russianCharsetDataV2;
+		}
 		break;
 	default:
 		_fontPtr = englishCharsetDataV2;
@@ -566,7 +638,11 @@ CharsetRendererV2::CharsetRendererV2(ScummEngine *vm, Common::Language language)
 			int ch1 = replacementData[2 * i];
 			int ch2 = replacementData[2 * i + 1];
 
-			memcpy(const_cast<byte *>(_fontPtr) + 8 * ch1, specialCharsetData + 8 * ch2, 8);
+			if ((_vm->_game.id == GID_MANIAC) && (_vm->_game.version == 2)) {
+				memcpy(const_cast<byte *>(_fontPtr) + 8 * ch1, russianCharsetDataV2 + 8 * ch2, 8);
+			} else {
+				memcpy(const_cast<byte *>(_fontPtr) + 8 * ch1, specialCharsetData + 8 * ch2, 8);
+			}
 		}
 	} else
 		_deleteFontPtr = false;
