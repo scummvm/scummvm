@@ -236,7 +236,7 @@ struct ConversationConditionals {
 	/**
 	 * Constructor
 	 */
-	ConversationConditionals() : _numImports(0) {}
+	ConversationConditionals();
 
 	/**
 	 * Load the specified conversation conditionals resource file

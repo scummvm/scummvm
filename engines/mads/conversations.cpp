@@ -580,6 +580,18 @@ void ConversationData::load(const Common::String &filename) {
 
 /*------------------------------------------------------------------------*/
 
+ConversationConditionals::ConversationConditionals() : _numImports(0) {
+	_currentNode = -1;
+	_fieldC = 0;
+	_fieldE = 0;
+	_field10 = 0;
+	_field12 = 0;
+	_field28 = 0;
+	_field3C = 0;
+	_field50 = 0;
+	_field64 = 0;
+}
+
 void ConversationConditionals::load(const Common::String &filename) {
 	Common::File inFile;
 	Common::SeekableReadStream *convFile;
