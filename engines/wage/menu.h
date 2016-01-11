@@ -55,6 +55,7 @@ struct MenuItem;
 class Menu {
 public:
 	Menu(Gui *gui);
+	~Menu();
 
 	void render();
 

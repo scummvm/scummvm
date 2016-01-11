@@ -62,6 +62,7 @@ struct MenuSubItem {
 	int style;
 	char shortcut;
 	bool enabled;
+	Common::Rect bbox;
 
 	MenuSubItem(const char *t, int a, int s = 0, char sh = 0, bool e = true) : text(t), action(a), style(s), shortcut(sh), enabled(e) {}
 };
@@ -69,6 +70,7 @@ struct MenuSubItem {
 struct MenuItem {
 	Common::String name;
 	Common::Array<MenuSubItem *> subitems;
+	Common::Rect bbox;
 
 	MenuItem(const char *n) : name(n) {}
 };
@@ -142,6 +144,14 @@ Menu::Menu(Gui *gui) : _gui(gui) {
 	if (!_gui->_engine->_world->_weaponMenuDisabled) {
 		MenuItem *weapons = new MenuItem("Weapons");
 		_items.push_back(weapons);
+	}
+}
+
+Menu::~Menu() {
+	for (int i = 0; i < _items.size(); i++) {
+		for (int j = 0; j < _items[i]->subitems.size(); j++)
+			delete _items[i]->subitems[j];
+		delete _items[i];
 	}
 }
 
