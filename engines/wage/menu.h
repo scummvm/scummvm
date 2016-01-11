@@ -59,7 +59,10 @@ public:
 
 	void render();
 	bool mouseClick(int x, int y);
+	bool mouseRelease(int x, int y);
+	bool mouseMove(int x, int y);
 
+	bool _menuActivated;
 	Common::Rect _bbox;
 
 private:
@@ -68,8 +71,6 @@ private:
 private:
 	const Graphics::Font *getMenuFont();
 	Common::Array<MenuItem *> _items;
-
-	bool _menuActivated;
 
 	int _activeItem;
 	int _activeSubItem;

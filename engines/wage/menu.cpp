@@ -212,9 +212,30 @@ bool Menu::mouseClick(int x, int y) {
 		for (int i = 0; i < _items.size(); i++)
 			if (_items[i]->bbox.contains(x, y)) {
 				_activeItem = i;
+				_activeSubItem = -1;
+				_menuActivated = true;
 
 				return true;
 			}
+	}
+
+	return false;
+}
+
+bool Menu::mouseMove(int x, int y) {
+	if (_menuActivated)
+		if (mouseClick(x, y))
+			return true;
+
+	return false;
+}
+
+bool Menu::mouseRelease(int x, int y) {
+	if (_menuActivated) {
+		_menuActivated = false;
+		_activeItem = -1;
+
+		return true;
 	}
 
 	return false;

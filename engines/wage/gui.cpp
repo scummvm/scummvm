@@ -576,6 +576,13 @@ void Gui::loadFonts() {
 }
 
 void Gui::mouseMove(int x, int y) {
+	if (_menu->_menuActivated) {
+		if (_menu->mouseMove(x, y))
+			_menuDirty = true;
+
+		return;
+	}
+
 	if (_consoleTextArea.contains(x, y)) {
 		if (_cursorIsArrow) {
 			CursorMan.replaceCursor(macCursorBeam, 11, 16, 3, 8, 3);
@@ -588,6 +595,12 @@ void Gui::mouseMove(int x, int y) {
 }
 
 Designed *Gui::getClickTarget(int x, int y) {
+	if (_menu->_menuActivated) {
+		if (_menu->mouseRelease(x, y))
+			_menuDirty = true;
+
+		return NULL;
+	}
 	if (_sceneArea.contains(x, y)) {
 		if (!_sceneIsActive) {
 			_sceneIsActive = true;
