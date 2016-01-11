@@ -32,35 +32,35 @@ namespace MADS {
 namespace Dragonsphere {
 
 void Scene1xx::setAAName() {
-	int interface;
+	int idx;
 
 	switch (_scene->_nextSceneId) {
 	case 108:
 	case 109:
-		interface = 3;
+		idx = 3;
 		break;
 	case 110:
-		interface = 5;
+		idx = 5;
 		break;
 	case 113:
 	case 114:
 	case 115:
 	case 117:
 	case 119:
-		interface = 1;
+		idx = 1;
 		break;
 	case 116:
-		interface = 2;
+		idx = 2;
 		break;
 	case 120:
-		interface = 8;
+		idx = 8;
 		break;
 	default:
-		interface = 0;
+		idx = 0;
 		break;
 	}
 
-	_game._aaName = Resources::formatAAName(interface);
+	_game._aaName = Resources::formatAAName(idx);
 	_vm->_palette->setEntry(254, 56, 47, 32);
 
 }
