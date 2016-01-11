@@ -467,14 +467,15 @@ void XcodeProvider::setupFrameworksBuildPhase(const BuildSetup &setup) {
 	absoluteOutputDir = "lib";
 #endif
 
-	DEF_LOCALLIB_STATIC_PATH(absoluteOutputDir + "/libFLACiOS.a",    "libFLACiOS",    true);
-	DEF_LOCALLIB_STATIC_PATH(absoluteOutputDir + "/libFreetype2.a",  "libFreetype2",  true);
+	DEF_LOCALLIB_STATIC_PATH(absoluteOutputDir + "/libFLAC.a",       "libFLAC",       true);
+	DEF_LOCALLIB_STATIC_PATH(absoluteOutputDir + "/libfreetype.a",   "libfreetype",   true);
 	DEF_LOCALLIB_STATIC_PATH(absoluteOutputDir + "/libogg.a",        "libogg",        true);
 	DEF_LOCALLIB_STATIC_PATH(absoluteOutputDir + "/libpng.a",        "libpng",        true);
 	DEF_LOCALLIB_STATIC_PATH(absoluteOutputDir + "/libvorbis.a",     "libvorbis",     true);
 	DEF_LOCALLIB_STATIC_PATH(absoluteOutputDir + "/libmad.a",        "libmad",        true);
 	DEF_LOCALLIB_STATIC_PATH(absoluteOutputDir + "/libfluidsynth.a", "libfluidsynth", true);
-	DEF_LOCALLIB_STATIC_PATH(absoluteOutputDir + "/libglib.a",       "libglib",       true);
+    DEF_LOCALLIB_STATIC_PATH(absoluteOutputDir + "/libglib.a",       "libglib",       true);
+    DEF_LOCALLIB_STATIC_PATH(absoluteOutputDir + "/libffi.a",        "libffi",        true);
 
 	frameworksGroup->_properties["children"] = children;
 	_groups.add(frameworksGroup);
@@ -508,10 +509,10 @@ void XcodeProvider::setupFrameworksBuildPhase(const BuildSetup &setup) {
 	frameworks_iOS.push_back("OpenGLES.framework");
 
 	if (CONTAINS_DEFINE(setup.defines, "USE_FLAC")) {
-		frameworks_iOS.push_back("libFLACiOS.a");
+		frameworks_iOS.push_back("libFLAC.a");
 	}
 	if (CONTAINS_DEFINE(setup.defines, "USE_FREETYPE2")) {
-		frameworks_iOS.push_back("libFreetype2.a");
+		frameworks_iOS.push_back("libfreetype.a");
 	}
 	if (CONTAINS_DEFINE(setup.defines, "USE_PNG")) {
 		frameworks_iOS.push_back("libpng.a");
@@ -525,7 +526,8 @@ void XcodeProvider::setupFrameworksBuildPhase(const BuildSetup &setup) {
 	}
 	if (CONTAINS_DEFINE(setup.defines, "USE_FLUIDSYNTH")) {
 		frameworks_iOS.push_back("libfluidsynth.a");
-		frameworks_iOS.push_back("libglib.a");
+        frameworks_iOS.push_back("libglib.a");
+        frameworks_iOS.push_back("libffi.a");
 		frameworks_iOS.push_back("CoreMIDI.framework");
 		frameworks_iOS.push_back("libiconv.tbd");
 	}
