@@ -305,12 +305,9 @@ void Scene102::enter() {
 }
 
 void Scene102::step() {
-	int resetFrame;
-
 	if ((_animRunning == 1) && _scene->_animation[_globals._animationIndexes[0]]) {
 		if (_scene->_animation[_globals._animationIndexes[0]]->getCurrentFrame() != _diaryFrame) {
 			_diaryFrame = _scene->_animation[_globals._animationIndexes[0]]->getCurrentFrame();
-			resetFrame = -1;
 
 			switch (_diaryFrame) {
 			case 6:
@@ -330,13 +327,6 @@ void Scene102::step() {
 
 			default:
 				break;
-			}
-
-			if (resetFrame >= 0) {
-				if (resetFrame != _scene->_animation[_globals._animationIndexes[0]]->getCurrentFrame()) {
-					_scene->setAnimFrame(_globals._animationIndexes[0], resetFrame);
-					_diaryFrame = resetFrame;
-				}
 			}
 		}
 	}
