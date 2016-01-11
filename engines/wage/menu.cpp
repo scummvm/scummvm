@@ -195,9 +195,9 @@ void Menu::render() {
 		font->drawString(&_gui->_screen, _items[i]->name, x, y, w, color);
 
 		if (_items[i]->bbox.bottom == 0) {
-			_items[i]->bbox.left = x;
+			_items[i]->bbox.left = x - 7;
 			_items[i]->bbox.top = y;
-			_items[i]->bbox.right = x + w;
+			_items[i]->bbox.right = x + w + 6;
 			_items[i]->bbox.bottom = y + font->getFontHeight();
 		}
 
