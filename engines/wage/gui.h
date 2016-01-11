@@ -82,6 +82,7 @@ public:
 	void appendText(Common::String &str);
 	void clearOutput();
 	void mouseMove(int x, int y);
+	void mouseClick(int x, int y);
 	Designed *getClickTarget(int x, int y);
 	void drawInput();
 	void setSceneDirty() { _sceneDirty = true; }

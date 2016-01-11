@@ -58,6 +58,9 @@ public:
 	~Menu();
 
 	void render();
+	bool mouseClick(int x, int y);
+
+	Common::Rect _bbox;
 
 private:
 	Gui *_gui;
@@ -65,6 +68,11 @@ private:
 private:
 	const Graphics::Font *getMenuFont();
 	Common::Array<MenuItem *> _items;
+
+	bool _menuActivated;
+
+	int _activeItem;
+	int _activeSubItem;
 };
 
 } // End of namespace Wage

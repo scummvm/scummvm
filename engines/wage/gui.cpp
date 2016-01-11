@@ -613,4 +613,9 @@ Designed *Gui::getClickTarget(int x, int y) {
 	return NULL;
 }
 
+void Gui::mouseClick(int x, int y) {
+	if (_menu->mouseClick(x, y))
+		_menuDirty = true;
+}
+
 } // End of namespace Wage

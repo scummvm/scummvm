@@ -145,6 +145,7 @@ void WageEngine::processEvents() {
 			_gui->mouseMove(event.mouse.x, event.mouse.y);
 			break;
 		case Common::EVENT_LBUTTONDOWN:
+			_gui->mouseClick(event.mouse.x, event.mouse.y);
 			break;
 		case Common::EVENT_LBUTTONUP:
 			{

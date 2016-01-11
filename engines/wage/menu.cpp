@@ -132,7 +132,7 @@ Menu::Menu(Gui *gui) : _gui(gui) {
 	for (int i = 0; menuSubItems[i].menunum; i++) {
 		MenuData *m = &menuSubItems[i];
 
-		_items[i]->subitems.push_back(new MenuSubItem(m->title, m->action, m->shortcut));
+		_items[m->menunum]->subitems.push_back(new MenuSubItem(m->title, m->action, m->shortcut));
 	}
 
 	MenuItem *commands = new MenuItem("Commands");
@@ -145,6 +145,15 @@ Menu::Menu(Gui *gui) : _gui(gui) {
 		MenuItem *weapons = new MenuItem("Weapons");
 		_items.push_back(weapons);
 	}
+
+	_bbox.left = 0;
+	_bbox.top = 0;
+	_bbox.right = _gui->_screen.w - 1;
+	_bbox.bottom = kMenuHeight - 1;
+
+	_menuActivated = false;
+	_activeItem = -1;
+	_activeSubItem = -1;
 }
 
 Menu::~Menu() {
@@ -160,7 +169,7 @@ const Graphics::Font *Menu::getMenuFont() {
 }
 
 void Menu::render() {
-	Common::Rect r(0, 0, _gui->_screen.w - 1, kMenuHeight - 1);
+	Common::Rect r(_bbox);
 	Patterns p;
 	p.push_back(fillPattern);
 
@@ -176,12 +185,39 @@ void Menu::render() {
 
 	for (int i = 0; i < _items.size(); i++) {
 		int w = font->getStringWidth(_items[i]->name);
-		font->drawString(&_gui->_screen, _items[i]->name, x, y, w, kColorBlack);
+		int color = kColorBlack;
+
+		if (_activeItem == i) {
+			Design::drawFilledRect(&_gui->_screen, _items[i]->bbox, kColorBlack, p, 1);
+			color = kColorWhite;
+		}
+
+		font->drawString(&_gui->_screen, _items[i]->name, x, y, w, color);
+
+		if (_items[i]->bbox.bottom == 0) {
+			_items[i]->bbox.left = x;
+			_items[i]->bbox.top = y;
+			_items[i]->bbox.right = x + w;
+			_items[i]->bbox.bottom = y + font->getFontHeight();
+		}
 
 		x += w + 13;
 	}
 
 	g_system->copyRectToScreen(_gui->_screen.getPixels(), _gui->_screen.pitch, 0, 0, _gui->_screen.w, kMenuHeight);
+}
+
+bool Menu::mouseClick(int x, int y) {
+	if (_bbox.contains(x, y)) {
+		for (int i = 0; i < _items.size(); i++)
+			if (_items[i]->bbox.contains(x, y)) {
+				_activeItem = i;
+
+				return true;
+			}
+	}
+
+	return false;
 }
 
 } // End of namespace Wage
