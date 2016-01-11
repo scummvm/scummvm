@@ -171,11 +171,11 @@ bool DialogsNebular::show(int messageId, int objectId) {
 		crFlag = false;
 	}
 
-	if (!centerFlag)
-		dialog->incNumLines();
-
 	if (!dialog)
 		error("DialogsNebular::show - Uninitialized dialog");
+
+	if (!centerFlag)
+		dialog->incNumLines();
 
 	// Show the dialog
 	_vm->_events->setCursor(CURSOR_ARROW);
