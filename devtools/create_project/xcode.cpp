@@ -474,8 +474,8 @@ void XcodeProvider::setupFrameworksBuildPhase(const BuildSetup &setup) {
 	DEF_LOCALLIB_STATIC_PATH(absoluteOutputDir + "/libvorbis.a",     "libvorbis",     true);
 	DEF_LOCALLIB_STATIC_PATH(absoluteOutputDir + "/libmad.a",        "libmad",        true);
 	DEF_LOCALLIB_STATIC_PATH(absoluteOutputDir + "/libfluidsynth.a", "libfluidsynth", true);
-    DEF_LOCALLIB_STATIC_PATH(absoluteOutputDir + "/libglib.a",       "libglib",       true);
-    DEF_LOCALLIB_STATIC_PATH(absoluteOutputDir + "/libffi.a",        "libffi",        true);
+	DEF_LOCALLIB_STATIC_PATH(absoluteOutputDir + "/libglib.a",       "libglib",       true);
+	DEF_LOCALLIB_STATIC_PATH(absoluteOutputDir + "/libffi.a",        "libffi",        true);
 
 	frameworksGroup->_properties["children"] = children;
 	_groups.add(frameworksGroup);
@@ -526,8 +526,8 @@ void XcodeProvider::setupFrameworksBuildPhase(const BuildSetup &setup) {
 	}
 	if (CONTAINS_DEFINE(setup.defines, "USE_FLUIDSYNTH")) {
 		frameworks_iOS.push_back("libfluidsynth.a");
-        frameworks_iOS.push_back("libglib.a");
-        frameworks_iOS.push_back("libffi.a");
+		frameworks_iOS.push_back("libglib.a");
+		frameworks_iOS.push_back("libffi.a");
 		frameworks_iOS.push_back("CoreMIDI.framework");
 		frameworks_iOS.push_back("libiconv.tbd");
 	}
