@@ -58,11 +58,12 @@ namespace Wage {
 
 struct MenuSubItem {
 	Common::String text;
+	int action;
 	int style;
 	char shortcut;
 	bool enabled;
 
-	MenuSubItem(Common::String &t, int s, char sh) : text(t), style(s), shortcut(sh), enabled(true) {}
+	MenuSubItem(const char *t, int a, int s = 0, char sh = 0, bool e = true) : text(t), action(a), style(s), shortcut(sh), enabled(e) {}
 };
 
 struct MenuItem {
@@ -74,15 +75,63 @@ struct MenuItem {
 
 static byte fillPattern[8] = { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff };
 
+enum {
+	kMenuActionAbout,
+	kMenuActionNew,
+	kMenuActionOpen,
+	kMenuActionClose,
+	kMenuActionSave,
+	kMenuActionSaveAs,
+	kMenuActionRevert,
+	kMenuActionQuit,
+
+	kMenuActionUndo,
+	kMenuActionCut,
+	kMenuActionCopy,
+	kMenuActionPaste,
+	kMenuActionClear
+};
+
+struct MenuData {
+	int menunum;
+	const char *title;
+	int action;
+	byte shortcut;
+} menuSubItems[] = {
+	{ 1, "New",			kMenuActionNew, 0 },
+	{ 1, "Open...",		kMenuActionOpen, 0 },
+	{ 1, "Close",		kMenuActionClose, 0 },
+	{ 1, "Save",		kMenuActionSave, 0 },
+	{ 1, "Save as...",	kMenuActionSaveAs, 0 },
+	{ 1, "Revert",		kMenuActionRevert, 0 },
+	{ 1, "Quit",		kMenuActionQuit, 0 },
+
+	{ 2, "Undo",		kMenuActionUndo, 'Z' },
+	{ 2, NULL,			0, 0 },
+	{ 2, "Cut",			kMenuActionCut, 'K' },
+	{ 2, "Copy",		kMenuActionCopy, 'C' },
+	{ 2, "Paste",		kMenuActionPaste, 'V' },
+	{ 2, "Clear",		kMenuActionClear, 'B' },
+
+	{ 0, NULL,			0, 0 }
+};
+
 Menu::Menu(Gui *gui) : _gui(gui) {
 	MenuItem *about = new MenuItem(_gui->_builtInFonts ? "\xa9" : "\xf0"); // (c) Symbol as the most resembling apple
 	_items.push_back(about);
+	_items[0]->subitems.push_back(new MenuSubItem(_gui->_engine->_world->getAboutMenuItemName(), kMenuActionAbout));
 
 	MenuItem *file = new MenuItem("File");
 	_items.push_back(file);
 
 	MenuItem *edit = new MenuItem("Edit");
 	_items.push_back(edit);
+
+	for (int i = 0; menuSubItems[i].menunum; i++) {
+		MenuData *m = &menuSubItems[i];
+
+		_items[i]->subitems.push_back(new MenuSubItem(m->title, m->action, m->shortcut));
+	}
 
 	MenuItem *commands = new MenuItem("Commands");
 	_items.push_back(commands);

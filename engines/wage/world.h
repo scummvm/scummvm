@@ -66,6 +66,7 @@ public:
 	Scene *getRandomScene();
 	Scene *getSceneAt(int x, int y);
 	bool scenesAreConnected(Scene *scene1, Scene *scene2);
+	const char *getAboutMenuItemName();
 
 	WageEngine *_engine;
 

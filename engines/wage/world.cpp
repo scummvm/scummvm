@@ -484,4 +484,10 @@ bool World::scenesAreConnected(Scene *scene1, Scene *scene2) {
 	return false;
 }
 
+const char *World::getAboutMenuItemName() {
+	warning("STUB: getAboutMenuItemName");
+
+	return "About";
+}
+
 } // End of namespace Wage
