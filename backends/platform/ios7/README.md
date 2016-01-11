@@ -8,7 +8,7 @@ I tried to use all the latest iOS features to replace the old code. For instance
 
 First, clone the repository:
 ```
-$ git clone -b ios-fix --recursive https://github.com/bSr43/scummvm.git
+$ git clone https://github.com/scummvm/scummvm.git
 ```
 
 ### Compilation from Xcode ###
