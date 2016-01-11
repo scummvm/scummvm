@@ -596,8 +596,12 @@ void Gui::mouseMove(int x, int y) {
 
 Designed *Gui::getClickTarget(int x, int y) {
 	if (_menu->_menuActivated) {
-		if (_menu->mouseRelease(x, y))
+		if (_menu->mouseRelease(x, y)) {
+			_sceneDirty = true;
+			_consoleDirty = true;
+			_bordersDirty = true;
 			_menuDirty = true;
+		}
 
 		return NULL;
 	}

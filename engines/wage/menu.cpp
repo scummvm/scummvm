@@ -211,6 +211,9 @@ bool Menu::mouseClick(int x, int y) {
 	if (_bbox.contains(x, y)) {
 		for (int i = 0; i < _items.size(); i++)
 			if (_items[i]->bbox.contains(x, y)) {
+				if (_activeItem == i)
+					return false;
+
 				_activeItem = i;
 				_activeSubItem = -1;
 				_menuActivated = true;
