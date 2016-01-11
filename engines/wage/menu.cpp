@@ -146,6 +146,24 @@ Menu::Menu(Gui *gui) : _gui(gui) {
 		_items.push_back(weapons);
 	}
 
+	// Calculate menu dimensions
+	_font = getMenuFont();
+	int y = _gui->_builtInFonts ? 3 : 2;
+	int x = 18;
+
+	for (int i = 0; i < _items.size(); i++) {
+		int w = _font->getStringWidth(_items[i]->name);
+
+		if (_items[i]->bbox.bottom == 0) {
+			_items[i]->bbox.left = x - kMenuLeftMargin;
+			_items[i]->bbox.top = y;
+			_items[i]->bbox.right = x + w + kMenuSpacing - kMenuLeftMargin;
+			_items[i]->bbox.bottom = y + _font->getFontHeight();
+		}
+
+		x += w + kMenuSpacing;
+	}
+
 	_bbox.left = 0;
 	_bbox.top = 0;
 	_bbox.right = _gui->_screen.w - 1;
@@ -179,12 +197,7 @@ void Menu::render() {
 	r.top = kMenuHeight - 1;
 	Design::drawFilledRect(&_gui->_screen, r, kColorBlack, p, 1);
 
-	const Graphics::Font *font = getMenuFont();
-	int y = _gui->_builtInFonts ? 3 : 2;
-	int x = 18;
-
 	for (int i = 0; i < _items.size(); i++) {
-		int w = font->getStringWidth(_items[i]->name);
 		int color = kColorBlack;
 
 		if (_activeItem == i) {
@@ -192,16 +205,7 @@ void Menu::render() {
 			color = kColorWhite;
 		}
 
-		font->drawString(&_gui->_screen, _items[i]->name, x, y, w, color);
-
-		if (_items[i]->bbox.bottom == 0) {
-			_items[i]->bbox.left = x - 7;
-			_items[i]->bbox.top = y;
-			_items[i]->bbox.right = x + w + 6;
-			_items[i]->bbox.bottom = y + font->getFontHeight();
-		}
-
-		x += w + 13;
+		_font->drawString(&_gui->_screen, _items[i]->name, _items[i]->bbox.left + kMenuLeftMargin, _items[i]->bbox.top, _items[i]->bbox.width(), color);
 	}
 
 	g_system->copyRectToScreen(_gui->_screen.getPixels(), _gui->_screen.pitch, 0, 0, _gui->_screen.w, kMenuHeight);

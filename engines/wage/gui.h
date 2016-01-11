@@ -65,6 +65,8 @@ enum WindowType {
 
 enum {
 	kMenuHeight = 20,
+	kMenuLeftMargin = 7,
+	kMenuSpacing = 13,
 	kMenuPadding = 6,
 	kMenuItemHeight = 20,
 	kBorderWidth = 17,

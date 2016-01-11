@@ -72,6 +72,8 @@ private:
 	const Graphics::Font *getMenuFont();
 	Common::Array<MenuItem *> _items;
 
+	const Graphics::Font *_font;
+
 	int _activeItem;
 	int _activeSubItem;
 };
