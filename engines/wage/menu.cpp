@@ -87,6 +87,9 @@ Menu::Menu(Gui *gui) : _gui(gui) {
 	MenuItem *commands = new MenuItem("Commands");
 	_items.push_back(commands);
 
+	assert(_gui->_engine);
+	assert(_gui->_engine->_world);
+
 	if (!_gui->_engine->_world->_weaponMenuDisabled) {
 		MenuItem *weapons = new MenuItem("Weapons");
 		_items.push_back(weapons);
