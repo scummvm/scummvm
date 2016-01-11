@@ -105,9 +105,9 @@ public:
 	bool _cursorOff;
 
 	bool _builtInFonts;
+	WageEngine *_engine;
 
 private:
-	WageEngine *_engine;
 	Graphics::Surface _console;
 	Menu *_menu;
 	Scene *_scene;

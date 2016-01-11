@@ -50,9 +50,11 @@
 
 namespace Wage {
 
+struct MenuItem;
+
 class Menu {
 public:
-	Menu(Gui *gui) : _gui(gui) {}
+	Menu(Gui *gui);
 
 	void render();
 
@@ -61,6 +63,7 @@ private:
 
 private:
 	const Graphics::Font *getMenuFont();
+	Common::Array<MenuItem *> _items;
 };
 
 } // End of namespace Wage

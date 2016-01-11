@@ -48,17 +48,50 @@
 #include "common/system.h"
 
 #include "wage/wage.h"
+#include "wage/entities.h"
 #include "wage/design.h"
 #include "wage/gui.h"
 #include "wage/menu.h"
+#include "wage/world.h"
 
 namespace Wage {
 
-static const char *menuItems[] = {
-	"\xf0", "File", "Edit", "Commands", "Weapons", 0
+struct MenuSubItem {
+	Common::String text;
+	int style;
+	char shortcut;
+	bool enabled;
+
+	MenuSubItem(Common::String &t, int s, char sh) : text(t), style(s), shortcut(sh), enabled(true) {}
+};
+
+struct MenuItem {
+	Common::String name;
+	Common::Array<MenuSubItem *> subitems;
+
+	MenuItem(const char *n) : name(n) {}
 };
 
 static byte fillPattern[8] = { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff };
+
+Menu::Menu(Gui *gui) : _gui(gui) {
+	MenuItem *about = new MenuItem(_gui->_builtInFonts ? "\xa9" : "\xf0"); // (c) Symbol as the most resembling apple
+	_items.push_back(about);
+
+	MenuItem *file = new MenuItem("File");
+	_items.push_back(file);
+
+	MenuItem *edit = new MenuItem("Edit");
+	_items.push_back(edit);
+
+	MenuItem *commands = new MenuItem("Commands");
+	_items.push_back(commands);
+
+	if (!_gui->_engine->_world->_weaponMenuDisabled) {
+		MenuItem *weapons = new MenuItem("Weapons");
+		_items.push_back(weapons);
+	}
+}
 
 const Graphics::Font *Menu::getMenuFont() {
 	return _gui->getFont("Chicago-12", Graphics::FontManager::kBigGUIFont);
@@ -79,14 +112,9 @@ void Menu::render() {
 	int y = _gui->_builtInFonts ? 3 : 2;
 	int x = 18;
 
-	for (int i = 0; menuItems[i]; i++) {
-		const char *s = menuItems[i];
-
-		if (i == 0 && _gui->_builtInFonts)
-			s = "\xa9"; 				// (c) Symbol as the most resembling apple
-
-		int w = font->getStringWidth(s);
-		font->drawString(&_gui->_screen, s, x, y, w, kColorBlack);
+	for (int i = 0; i < _items.size(); i++) {
+		int w = font->getStringWidth(_items[i]->name);
+		font->drawString(&_gui->_screen, _items[i]->name, x, y, w, kColorBlack);
 
 		x += w + 13;
 	}
