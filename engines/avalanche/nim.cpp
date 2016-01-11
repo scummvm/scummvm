@@ -524,7 +524,7 @@ void Nim::dogFood() {
 		// 1) Look for 2 equal lines, then take the odd one out.
 		// 2) Look for A.P.s, and capitalise on them.
 		// 3) Go any old where.
-		const byte other[3][2] = { { 2, 3 }, { 1, 3 }, { 1, 2 } };
+		const byte other[3][2] = { { 1, 2 }, { 0, 2 }, { 0, 1 } };
 
 		for (int i = 0; i < 3; i++) { // Look for 2 equal lines.
 			if (_stones[other[i][0]] == _stones[other[i][1]]) {
