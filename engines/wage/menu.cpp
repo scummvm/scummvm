@@ -199,13 +199,14 @@ void Menu::render() {
 
 	for (int i = 0; i < _items.size(); i++) {
 		int color = kColorBlack;
+		MenuItem *it = _items[i];
 
 		if (_activeItem == i) {
-			Design::drawFilledRect(&_gui->_screen, _items[i]->bbox, kColorBlack, p, 1);
+			Design::drawFilledRect(&_gui->_screen, it->bbox, kColorBlack, p, 1);
 			color = kColorWhite;
 		}
 
-		_font->drawString(&_gui->_screen, _items[i]->name, _items[i]->bbox.left + kMenuLeftMargin, _items[i]->bbox.top, _items[i]->bbox.width(), color);
+		_font->drawString(&_gui->_screen, it->name, it->bbox.left + kMenuLeftMargin, it->bbox.top, it->bbox.width(), color);
 	}
 
 	g_system->copyRectToScreen(_gui->_screen.getPixels(), _gui->_screen.pitch, 0, 0, _gui->_screen.w, kMenuHeight);
