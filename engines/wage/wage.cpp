@@ -95,8 +95,6 @@ Common::Error WageEngine::run() {
 
 	debug("WageEngine::init");
 
-	_gui = new Gui(this);
-
 	// Your main event loop should be (invoked from) here.
 	_resManager = new Common::MacResManager();
 	_resManager->open(getGameFile());
@@ -105,6 +103,8 @@ Common::Error WageEngine::run() {
 
 	if (!_world->loadWorld(_resManager))
 		return Common::kNoGameDataFoundError;
+
+	_gui = new Gui(this);
 
 	_temporarilyHidden = true;
 	performInitialSetup();
