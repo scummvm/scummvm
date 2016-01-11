@@ -45,89 +45,53 @@
  *
  */
 
-#ifndef WAGE_GUI_H
-#define WAGE_GUI_H
+#include "common/system.h"
 
-#include "common/str-array.h"
-#include "graphics/font.h"
-#include "graphics/fontman.h"
-#include "graphics/surface.h"
-#include "common/rect.h"
+#include "wage/wage.h"
+#include "wage/design.h"
+#include "wage/gui.h"
+#include "wage/menu.h"
 
 namespace Wage {
 
-class Menu;
-
-enum WindowType {
-	kWindowScene,
-	kWindowConsole
+static const char *menuItems[] = {
+	"\xf0", "File", "Edit", "Commands", "Weapons", 0
 };
 
-enum {
-	kMenuHeight = 20,
-	kMenuPadding = 6,
-	kMenuItemHeight = 20,
-	kBorderWidth = 17,
-	kDesktopArc = 7,
-	kComponentsPadding = 10,
-	kCursorHeight = 12
-};
+static byte fillPattern[8] = { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff };
 
-class Gui {
-public:
-	Gui(WageEngine *engine);
-	~Gui();
+const Graphics::Font *Menu::getMenuFont() {
+	return _gui->getFont("Chicago-12", Graphics::FontManager::kBigGUIFont);
+}
 
-	void draw();
-	void appendText(Common::String &str);
-	void clearOutput();
-	void mouseMove(int x, int y);
-	Designed *getClickTarget(int x, int y);
-	void drawInput();
-	void setSceneDirty() { _sceneDirty = true; }
-	const Graphics::Font *getFont(const char *name, Graphics::FontManager::FontUsage fallback);
+void Menu::render() {
+	Common::Rect r(0, 0, _gui->_screen.w - 1, kMenuHeight - 1);
+	Patterns p;
+	p.push_back(fillPattern);
 
-private:
-	void paintBorder(Graphics::Surface *g, Common::Rect &r, WindowType windowType);
-	void renderConsole(Graphics::Surface *g, Common::Rect &r);
-	void drawBox(Graphics::Surface *g, int x, int y, int w, int h);
-	void fillRect(Graphics::Surface *g, int x, int y, int w, int h);
-	void loadFonts();
-	void flowText(Common::String &str);
-	const Graphics::Font *getConsoleFont();
-	const Graphics::Font *getTitleFont();
+	Design::drawFilledRoundRect(&_gui->_screen, r, kDesktopArc, kColorWhite, p, 1);
+	r.top = 7;
+	Design::drawFilledRect(&_gui->_screen, r, kColorWhite, p, 1);
+	r.top = kMenuHeight - 1;
+	Design::drawFilledRect(&_gui->_screen, r, kColorBlack, p, 1);
 
-public:
-	Graphics::Surface _screen;
-	int _cursorX, _cursorY;
-	bool _cursorState;
-	Common::Rect _consoleTextArea;
-	bool _cursorOff;
+	const Graphics::Font *font = getMenuFont();
+	int y = _gui->_builtInFonts ? 3 : 2;
+	int x = 18;
 
-	bool _builtInFonts;
+	for (int i = 0; menuItems[i]; i++) {
+		const char *s = menuItems[i];
 
-private:
-	WageEngine *_engine;
-	Graphics::Surface _console;
-	Menu *_menu;
-	Scene *_scene;
-	bool _sceneDirty;
-	bool _consoleDirty;
-	bool _bordersDirty;
-	bool _menuDirty;
+		if (i == 0 && _gui->_builtInFonts)
+			s = "\xa9"; 				// (c) Symbol as the most resembling apple
 
-	Common::StringArray _out;
-	Common::StringArray _lines;
-	uint _scrollPos;
-	int _consoleLineHeight;
-	uint _consoleNumLines;
-	bool _consoleFullRedraw;
+		int w = font->getStringWidth(s);
+		font->drawString(&_gui->_screen, s, x, y, w, kColorBlack);
 
-	Common::Rect _sceneArea;
-	bool _sceneIsActive;
-	bool _cursorIsArrow;
-};
+		x += w + 13;
+	}
+
+	g_system->copyRectToScreen(_gui->_screen.getPixels(), _gui->_screen.pitch, 0, 0, _gui->_screen.w, kMenuHeight);
+}
 
 } // End of namespace Wage
-
-#endif

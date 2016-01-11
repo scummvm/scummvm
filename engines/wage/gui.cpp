@@ -54,20 +54,11 @@
 #include "wage/wage.h"
 #include "wage/design.h"
 #include "wage/entities.h"
+#include "wage/menu.h"
 #include "wage/gui.h"
 #include "wage/world.h"
 
 namespace Wage {
-
-enum {
-	kMenuHeight = 20,
-	kMenuPadding = 6,
-	kMenuItemHeight = 20,
-	kBorderWidth = 17,
-	kDesktopArc = 7,
-	kComponentsPadding = 10,
-	kCursorHeight = 12
-};
 
 static const byte palette[] = {
 	0, 0, 0,           // Black
@@ -77,7 +68,6 @@ static const byte palette[] = {
 };
 
 static byte checkersPattern[8] = { 0x55, 0xaa, 0x55, 0xaa, 0x55, 0xaa, 0x55, 0xaa };
-static byte fillPattern[8] = { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff };
 
 static const byte macCursorArrow[] = {
 	2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3,
@@ -171,12 +161,15 @@ Gui::Gui(WageEngine *engine) {
 	loadFonts();
 
 	g_system->getTimerManager()->installTimerProc(&cursor_timer_handler, 200000, this, "wageCursor");
+
+	_menu = new Menu(this);
 }
 
 Gui::~Gui() {
 	_screen.free();
 	_console.free();
 	g_system->getTimerManager()->removeTimerProc(&cursor_timer_handler);
+	delete _menu;
 }
 
 const Graphics::Font *Gui::getFont(const char *name, Graphics::FontManager::FontUsage fallback) {
@@ -202,10 +195,6 @@ const Graphics::Font *Gui::getConsoleFont() {
 	snprintf(fontName, 128, "%s-%d", scene->getFontName(), scene->_fontSize);
 
 	return getFont(fontName, Graphics::FontManager::kConsoleFont);
-}
-
-const Graphics::Font *Gui::getMenuFont() {
-	return getFont("Chicago-12", Graphics::FontManager::kBigGUIFont);
 }
 
 const Graphics::Font *Gui::getTitleFont() {
@@ -292,7 +281,7 @@ void Gui::draw() {
 		paintBorder(&_screen, _consoleTextArea, kWindowConsole);
 
 	if (_menuDirty)
-		renderMenu();
+		_menu->render();
 
 	_sceneDirty = false;
 	_consoleDirty = false;
@@ -596,40 +585,6 @@ void Gui::mouseMove(int x, int y) {
 		CursorMan.replaceCursor(macCursorArrow, 11, 16, 1, 1, 3);
 		_cursorIsArrow = true;
 	}
-}
-
-static const char *menuItems[] = {
-	"\xf0", "File", "Edit", "Commands", "Weapons", 0
-};
-
-void Gui::renderMenu() {
-	Common::Rect r(0, 0, _screen.w - 1, kMenuHeight - 1);
-	Patterns p;
-	p.push_back(fillPattern);
-
-	Design::drawFilledRoundRect(&_screen, r, kDesktopArc, kColorWhite, p, 1);
-	r.top = 7;
-	Design::drawFilledRect(&_screen, r, kColorWhite, p, 1);
-	r.top = kMenuHeight - 1;
-	Design::drawFilledRect(&_screen, r, kColorBlack, p, 1);
-
-	const Graphics::Font *font = getMenuFont();
-	int y = _builtInFonts ? 3 : 2;
-	int x = 18;
-
-	for (int i = 0; menuItems[i]; i++) {
-		const char *s = menuItems[i];
-
-		if (i == 0 && _builtInFonts)
-			s = "\xa9"; 				// (c) Symbol as the most resembling apple
-
-		int w = font->getStringWidth(s);
-		font->drawString(&_screen, s, x, y, w, kColorBlack);
-
-		x += w + 13;
-	}
-
-	g_system->copyRectToScreen(_screen.getPixels(), _screen.pitch, 0, 0, _screen.w, kMenuHeight);
 }
 
 Designed *Gui::getClickTarget(int x, int y) {

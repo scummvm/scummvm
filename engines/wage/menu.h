@@ -45,87 +45,22 @@
  *
  */
 
-#ifndef WAGE_GUI_H
-#define WAGE_GUI_H
-
-#include "common/str-array.h"
-#include "graphics/font.h"
-#include "graphics/fontman.h"
-#include "graphics/surface.h"
-#include "common/rect.h"
+#ifndef WAGE_MENU_H
+#define WAGE_MENU_H
 
 namespace Wage {
 
-class Menu;
-
-enum WindowType {
-	kWindowScene,
-	kWindowConsole
-};
-
-enum {
-	kMenuHeight = 20,
-	kMenuPadding = 6,
-	kMenuItemHeight = 20,
-	kBorderWidth = 17,
-	kDesktopArc = 7,
-	kComponentsPadding = 10,
-	kCursorHeight = 12
-};
-
-class Gui {
+class Menu {
 public:
-	Gui(WageEngine *engine);
-	~Gui();
+	Menu(Gui *gui) : _gui(gui) {}
 
-	void draw();
-	void appendText(Common::String &str);
-	void clearOutput();
-	void mouseMove(int x, int y);
-	Designed *getClickTarget(int x, int y);
-	void drawInput();
-	void setSceneDirty() { _sceneDirty = true; }
-	const Graphics::Font *getFont(const char *name, Graphics::FontManager::FontUsage fallback);
+	void render();
 
 private:
-	void paintBorder(Graphics::Surface *g, Common::Rect &r, WindowType windowType);
-	void renderConsole(Graphics::Surface *g, Common::Rect &r);
-	void drawBox(Graphics::Surface *g, int x, int y, int w, int h);
-	void fillRect(Graphics::Surface *g, int x, int y, int w, int h);
-	void loadFonts();
-	void flowText(Common::String &str);
-	const Graphics::Font *getConsoleFont();
-	const Graphics::Font *getTitleFont();
-
-public:
-	Graphics::Surface _screen;
-	int _cursorX, _cursorY;
-	bool _cursorState;
-	Common::Rect _consoleTextArea;
-	bool _cursorOff;
-
-	bool _builtInFonts;
+	Gui *_gui;
 
 private:
-	WageEngine *_engine;
-	Graphics::Surface _console;
-	Menu *_menu;
-	Scene *_scene;
-	bool _sceneDirty;
-	bool _consoleDirty;
-	bool _bordersDirty;
-	bool _menuDirty;
-
-	Common::StringArray _out;
-	Common::StringArray _lines;
-	uint _scrollPos;
-	int _consoleLineHeight;
-	uint _consoleNumLines;
-	bool _consoleFullRedraw;
-
-	Common::Rect _sceneArea;
-	bool _sceneIsActive;
-	bool _cursorIsArrow;
+	const Graphics::Font *getMenuFont();
 };
 
 } // End of namespace Wage
