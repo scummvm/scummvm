@@ -109,9 +109,14 @@ Player::Player(MADSEngine *vm)
 	_forcePrefix = false;
 	_commandsAllowed = false;
 	_enableAtTarget = false;
-	_walkTrigger = 0;
 
 	Common::fill(&_spriteSetsPresent[0], &_spriteSetsPresent[PLAYER_SPRITES_FILE_COUNT], false);
+
+	_walkTrigger = 0;
+	_walkTriggerDest = SEQUENCE_TRIGGER_NONE;
+	_walkTriggerAction._verbId = VERB_NONE;
+	_walkTriggerAction._objectNameId = 0;
+	_walkTriggerAction._indirectObjectId = 0;
 }
 
 void Player::cancelWalk() {
