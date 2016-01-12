@@ -120,6 +120,7 @@ static const EntrySizeFix entrySizeFixes[] = {
 	// Fixes for the Russian "Fargus" version
 	{ 0x041137051,   758264,  29037,  49590,  49591 },	// "Options" menu header text
 	{ 0x0c10b2015,   787304,   4414,  15848,  15853 },	// Text on option buttons
+	{ 0x006802920,  1076824,   1010,   5642,   1546 },	// Crash in front of the Aqua House
 	//
 	{          0,        0,         0,     0,         0 }
 };
