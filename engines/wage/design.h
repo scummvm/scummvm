@@ -69,8 +69,10 @@ public:
 
     void paint(Graphics::Surface *canvas, Patterns &patterns, int x, int y);
 	bool isPointOpaque(int x, int y);
+	static void drawRect(Graphics::Surface *surface, Common::Rect &rect, int thickness, int color, Patterns &patterns, byte fillType);
 	static void drawFilledRect(Graphics::Surface *surface, Common::Rect &rect, int color, Patterns &patterns, byte fillType);
 	static void drawFilledRoundRect(Graphics::Surface *surface, Common::Rect &rect, int arc, int color, Patterns &patterns, byte fillType);
+
 
 private:
 	byte *_data;

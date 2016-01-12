@@ -68,12 +68,14 @@ public:
 
 private:
 	Gui *_gui;
+	Patterns _patterns;
 
 private:
 	const Graphics::Font *getMenuFont();
 	const char *getAcceleratorString(MenuSubItem *item);
 	int calculateMenuWidth(MenuItem *menu);
 	void calcMenuBounds(MenuItem *menu);
+	void renderSubmenu(MenuItem *menu);
 
 	Common::Array<MenuItem *> _items;
 

@@ -442,6 +442,20 @@ void Design::drawBitmap(Graphics::Surface *surface, Common::ReadStream &in) {
 	tmp.free();
 }
 
+void Design::drawRect(Graphics::Surface *surface, Common::Rect &rect, int thickness, int color, Patterns &patterns, byte fillType) {
+	plotData pd(surface, &patterns, fillType, thickness);
+	int x1 = rect.left;
+	int y1 = rect.top;
+	int x2 = rect.right;
+	int y2 = rect.bottom;
+
+	Graphics::drawLine(x1, y1, x2, y1, kColorBlack, drawPixel, &pd);
+	Graphics::drawLine(x2, y1, x2, y2, kColorBlack, drawPixel, &pd);
+	Graphics::drawLine(x2, y2, x1, y2, kColorBlack, drawPixel, &pd);
+	Graphics::drawLine(x1, y2, x1, y1, kColorBlack, drawPixel, &pd);
+}
+
+
 void Design::drawFilledRect(Graphics::Surface *surface, Common::Rect &rect, int color, Patterns &patterns, byte fillType) {
 	plotData pd(surface, &patterns, fillType, 1);
 

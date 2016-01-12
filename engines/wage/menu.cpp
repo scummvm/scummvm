@@ -122,6 +122,8 @@ struct MenuData {
 };
 
 Menu::Menu(Gui *gui) : _gui(gui) {
+	_patterns.push_back(fillPattern);
+
 	MenuItem *about = new MenuItem(_gui->_builtInFonts ? "\xa9" : "\xf0"); // (c) Symbol as the most resembling apple
 	_items.push_back(about);
 	_items[0]->subitems.push_back(new MenuSubItem(_gui->_engine->_world->getAboutMenuItemName(), kMenuActionAbout));
@@ -205,7 +207,7 @@ int Menu::calculateMenuWidth(MenuItem *menu) {
 	int maxWidth = 0;
 	for (int i = 0; i < menu->subitems.size(); i++) {
 		MenuSubItem *item = menu->subitems[i];
-		if (item->text != NULL) {
+		if (item->text.size()) {
 			Common::String text(item->text);
 			Common::String acceleratorText(getAcceleratorString(item));
 			if (acceleratorText.size()) {
@@ -237,28 +239,33 @@ void Menu::calcMenuBounds(MenuItem *menu) {
 
 void Menu::render() {
 	Common::Rect r(_bbox);
-	Patterns p;
-	p.push_back(fillPattern);
 
-	Design::drawFilledRoundRect(&_gui->_screen, r, kDesktopArc, kColorWhite, p, 1);
+	Design::drawFilledRoundRect(&_gui->_screen, r, kDesktopArc, kColorWhite, _patterns, 1);
 	r.top = 7;
-	Design::drawFilledRect(&_gui->_screen, r, kColorWhite, p, 1);
+	Design::drawFilledRect(&_gui->_screen, r, kColorWhite, _patterns, 1);
 	r.top = kMenuHeight - 1;
-	Design::drawFilledRect(&_gui->_screen, r, kColorBlack, p, 1);
+	Design::drawFilledRect(&_gui->_screen, r, kColorBlack, _patterns, 1);
 
 	for (int i = 0; i < _items.size(); i++) {
 		int color = kColorBlack;
 		MenuItem *it = _items[i];
 
 		if (_activeItem == i) {
-			Design::drawFilledRect(&_gui->_screen, it->bbox, kColorBlack, p, 1);
+			Design::drawFilledRect(&_gui->_screen, it->bbox, kColorBlack, _patterns, 1);
 			color = kColorWhite;
+
+			renderSubmenu(it);
 		}
 
 		_font->drawString(&_gui->_screen, it->name, it->bbox.left + kMenuLeftMargin, it->bbox.top, it->bbox.width(), color);
 	}
 
 	g_system->copyRectToScreen(_gui->_screen.getPixels(), _gui->_screen.pitch, 0, 0, _gui->_screen.w, kMenuHeight);
+}
+
+void Menu::renderSubmenu(MenuItem *menu) {
+	Design::drawFilledRect(&_gui->_screen, menu->subbbox, kColorWhite, _patterns, 1);
+	Design::drawRect(&_gui->_screen, menu->subbbox, 1, kColorBlack, _patterns, 1);
 }
 
 bool Menu::mouseClick(int x, int y) {
