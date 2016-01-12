@@ -404,8 +404,7 @@ void VoyeurEngine::doPiracy() {
 	fi._justifyHeight = 230;
 
 	// Loop through the piracy message array to draw each line
-	int yp, idx;
-	for (idx = 0, yp = 33; idx < 10; ++idx) {
+	for (int idx = 0, yp = 33; idx < 10; ++idx) {
 		fi._pos = Common::Point(0, yp);
 		_graphicsManager->_vPort->drawText(PIRACY_MESSAGE[idx]);
 
@@ -687,7 +686,7 @@ void VoyeurEngine::reviewTape() {
 			_eventsManager->_intPtr._flashTimer = 0;
 			_voy->_eventFlags &= ~EVTFLAG_TIME_DISABLED;
 
-			// Play suond for the given duration
+			// Play sound for the given duration
 			_soundManager->setVOCOffset(_voy->_vocSecondsOffset);
 			_soundManager->startVOCPlay(_audioVideoId + 159);
 			uint32 secondsDuration = e._computerOff;
