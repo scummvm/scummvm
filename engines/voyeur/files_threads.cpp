@@ -1390,7 +1390,7 @@ int ThreadResource::doInterface() {
 				Common::Point(pt.x - MANSION_VIEW_X, pt.y - MANSION_VIEW_Y);
 		regionIndex = -1;
 
-		for (int hotspotIdx = 0; hotspotIdx < (int)hotspots->size(); ++hotspotIdx) {
+		for (uint hotspotIdx = 0; hotspotIdx < hotspots->size(); ++hotspotIdx) {
 			if ((*hotspots)[hotspotIdx].contains(pt)) {
 				// Rect check done
 				for (int arrIndex = 0; arrIndex < 3; ++arrIndex) {
