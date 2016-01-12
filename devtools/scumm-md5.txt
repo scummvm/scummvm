@@ -372,6 +372,7 @@ dig	The Dig
 	aad201302286c1cfee92321cd406e427	811008	en	Windows	Steam	Steam	Steam Version	Ben Castricum, Filippos Karapetis
 	d93cc8be628ed5d3b3a29188fc7105d3	1061296	en	Mac	Steam	Steam	Steam Version	Filippos Karapetis
 	d62047a6729349ab36f7ee065bf26509	-1	ru	All	-	-	-	sev
+	ebdd2fbc995a321605375dc57766db79	16304	ru	All	-	-	With Subtitles	sev
 	35a2d3040fa512f8232d9e443319d84d	659335495	en	Mac	-	-	Mac bundle	Fingolfin
 	21a6592322f92550f144f68a8a4e685e	-1	fr	Mac	-	-	Mac bundle	kaminari
 
