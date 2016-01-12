@@ -264,8 +264,12 @@ void Menu::render() {
 }
 
 void Menu::renderSubmenu(MenuItem *menu) {
-	Design::drawFilledRect(&_gui->_screen, menu->subbbox, kColorWhite, _patterns, 1);
-	Design::drawRect(&_gui->_screen, menu->subbbox, 1, kColorBlack, _patterns, 1);
+	Common::Rect *r = &menu->subbbox;
+
+	Design::drawFilledRect(&_gui->_screen, *r, kColorWhite, _patterns, 1);
+	Design::drawRect(&_gui->_screen, *r, 1, kColorBlack, _patterns, 1);
+
+	g_system->copyRectToScreen(_gui->_screen.getBasePtr(r->left, r->top), _gui->_screen.pitch, r->left, r->top, r->width() + 1, r->height() + 1);
 }
 
 bool Menu::mouseClick(int x, int y) {
