@@ -3899,12 +3899,9 @@ echocheck "FluidSynth"
 append_var FLUIDSYNTH_LIBS "-lfluidsynth"
 case $_host_os in
 	mingw*)
-		# TODO: Modern FluidSynth requires glib. Our buildbot uses an older
-		# FluidSynth version which does not require glib. Additionally, it
-		# does not contain any glib libraries. We hack the libraries
-		# required for static linking here to make it work with buildbot.
-		# Once we upgraded to a new version, glib and its dependencies
-		# should be added.
+		# NOTE: Windows builds use an older FluidSynth version (1.0.9)
+		# which doesn't require glib, to avoid bundling the complete glib
+		# libraries with Windows builds.
 		FLUIDSYNTH_STATIC_LIBS="$FLUIDSYNTH_LIBS -ldsound -lwinmm"
 	;;
 
