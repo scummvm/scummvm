@@ -67,10 +67,13 @@ struct MenuSubItem {
 	MenuSubItem(const char *t, int a, int s = 0, char sh = 0, bool e = true) : text(t), action(a), style(s), shortcut(sh), enabled(e) {}
 };
 
+typedef Common::Array<MenuSubItem *> SubItemArray;
+
 struct MenuItem {
 	Common::String name;
-	Common::Array<MenuSubItem *> subitems;
+	SubItemArray subitems;
 	Common::Rect bbox;
+	Common::Rect subbbox;
 
 	MenuItem(const char *n) : name(n) {}
 };
@@ -161,6 +164,8 @@ Menu::Menu(Gui *gui) : _gui(gui) {
 			_items[i]->bbox.bottom = y + _font->getFontHeight();
 		}
 
+		calcMenuBounds(_items[i]);
+
 		x += w + kMenuSpacing;
 	}
 
@@ -184,6 +189,50 @@ Menu::~Menu() {
 
 const Graphics::Font *Menu::getMenuFont() {
 	return _gui->getFont("Chicago-12", Graphics::FontManager::kBigGUIFont);
+}
+
+const char *Menu::getAcceleratorString(MenuSubItem *item) {
+	static char res[20];
+	*res = 0;
+
+	if (item->shortcut != 0)
+		sprintf(res, "      \u2318%c", item->shortcut);
+
+	return res;
+}
+
+int Menu::calculateMenuWidth(MenuItem *menu) {
+	int maxWidth = 0;
+	for (int i = 0; i < menu->subitems.size(); i++) {
+		MenuSubItem *item = menu->subitems[i];
+		if (item->text != NULL) {
+			Common::String text(item->text);
+			Common::String acceleratorText(getAcceleratorString(item));
+			if (acceleratorText.size()) {
+				text += acceleratorText;
+			}
+
+			int width = _font->getStringWidth(text);
+			if (width > maxWidth) {
+				maxWidth = width;
+			}
+		}
+	}
+	return maxWidth;
+}
+
+void Menu::calcMenuBounds(MenuItem *menu) {
+	// TODO: cache maxWidth
+	int maxWidth = calculateMenuWidth(menu);
+	int x1 = menu->bbox.left - kMenuDropdownPadding;
+	int y1 = menu->bbox.bottom;
+	int x2 = x1 + maxWidth + kMenuDropdownPadding * 3;
+	int y2 = y1 + menu->subitems.size() * kMenuDropdownItemHeight;
+
+	menu->subbbox.left = x1;
+	menu->subbbox.top = y1;
+	menu->subbbox.right = x2;
+	menu->subbbox.bottom = y2;
 }
 
 void Menu::render() {

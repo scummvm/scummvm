@@ -51,6 +51,7 @@
 namespace Wage {
 
 struct MenuItem;
+struct MenuSubItem;
 
 class Menu {
 public:
@@ -70,6 +71,10 @@ private:
 
 private:
 	const Graphics::Font *getMenuFont();
+	const char *getAcceleratorString(MenuSubItem *item);
+	int calculateMenuWidth(MenuItem *menu);
+	void calcMenuBounds(MenuItem *menu);
+
 	Common::Array<MenuItem *> _items;
 
 	const Graphics::Font *_font;
