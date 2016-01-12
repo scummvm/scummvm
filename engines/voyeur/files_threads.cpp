@@ -1446,7 +1446,7 @@ int ThreadResource::doInterface() {
 		_vm->flipPageAndWait();
 
 		pt = _vm->_eventsManager->getMousePos();
-		if ((_vm->_voy->_RTVNum >= _vm->_voy->_RTVLimit) || ((_vm->_voy->_eventFlags & 0x80) &&
+		if ((_vm->_voy->_RTVNum >= _vm->_voy->_RTVLimit) || ((_vm->_voy->_eventFlags & EVTFLAG_VICTIM_PRESET) &&
 				_vm->_eventsManager->_rightClick && (pt.x == 0))) {
 			// Time to transition to the next time period
 			_vm->_eventsManager->getMouseInfo();
