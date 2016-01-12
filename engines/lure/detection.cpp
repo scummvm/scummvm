@@ -46,6 +46,7 @@ LureLanguage LureEngine::getLureLanguage() const {
 	case Common::FR_FRA: return LANG_FR_FRA;
 	case Common::DE_DEU: return LANG_DE_DEU;
 	case Common::ES_ESP: return LANG_ES_ESP;
+	case Common::RU_RUS: return LANG_RU_RUS;
 	case Common::EN_ANY: return LANG_EN_ANY;
 	case Common::UNK_LANG: return LANG_UNKNOWN;
 	default:
@@ -167,6 +168,21 @@ static const LureGameDescription gameDescriptions[] = {
 		},
 		GF_FLOPPY,
 	},
+
+	// Russian OG Edition
+	{
+		{
+			"lure",
+			"",
+			AD_ENTRY1("disk1.vga", "04cdcaa9f0cadca492f7aff0c8adfe06"),
+			Common::RU_RUS,
+			Common::kPlatformDOS,
+			ADGF_NO_FLAGS,
+			GUIO0()
+		},
+		GF_FLOPPY,
+	},
+
 
 	{ AD_TABLE_END_MARKER, 0 }
 };

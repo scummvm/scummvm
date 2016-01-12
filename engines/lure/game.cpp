@@ -1000,6 +1000,7 @@ bool Game::getYN() {
 	if (l == Common::FR_FRA) y = Common::KEYCODE_o;
 	else if ((l == Common::DE_DEU) || (l == Common::NL_NLD)) y = Common::KEYCODE_j;
 	else if ((l == Common::ES_ESP) || (l == Common::IT_ITA)) y = Common::KEYCODE_s;
+	else if (l == Common::RU_RUS) y = Common::KEYCODE_l;
 
 	bool vKbdFlag = g_system->hasFeature(OSystem::kFeatureVirtualKeyboard);
 	if (!vKbdFlag)
@@ -1018,7 +1019,12 @@ bool Game::getYN() {
 		while (events.pollEvent()) {
 			if (events.event().type == Common::EVENT_KEYDOWN) {
 				Common::KeyCode key = events.event().kbd.keycode;
-				if ((key == y) || (key == Common::KEYCODE_n) ||
+				if (l == Common::RU_RUS) {
+					if ((key == y) || (key == Common::KEYCODE_y) || (key == Common::KEYCODE_ESCAPE)) {
+						breakFlag = true;
+						result = key == y;
+					}
+				} else if ((key == y) || (key == Common::KEYCODE_n) ||
 					(key == Common::KEYCODE_ESCAPE)) {
 					breakFlag = true;
 					result = key == y;

@@ -75,6 +75,7 @@ const MenuRecordLanguage menuList[] = {
 	{Common::FR_FRA, {{40, 90, 3, 7}, {120, 195, 13, 11}, {232, 273, 23, 13}}},
 	{Common::DE_DEU, {{44, 95, 1, 11}, {135, 178, 8, 23}, {232, 273, 22, 15}}},
 	{Common::ES_ESP, {{40, 90, 3, 8}, {120, 195, 11, 13}, {208, 281, 17, 18}}},
+	{Common::RU_RUS, {{40, 87, 3, 7}, {127, 179, 13, 12}, {224, 281, 27, 10}}},
 	{Common::UNK_LANG, {{0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}}}
 };
 
@@ -378,9 +379,13 @@ uint16 PopupMenu::ShowItems(Action contextAction, uint16 roomNumber) {
 		++numItems;
 	}
 
-	if (numItems == 0)
+	if (numItems == 0) {
 		// No items, so add a 'nothing' to the statusLine
-		strcat(room.statusLine(), "(nothing)");
+		if (LureEngine::getReference().getLanguage() == Common::RU_RUS)
+			strcat(room.statusLine(), "(ybxtuj ytn)");
+		else
+			strcat(room.statusLine(), "(nothing)");
+	}
 
 	room.update();
 	screen.update();
