@@ -721,9 +721,7 @@ void MystScriptParser::o_changeBackgroundSound(uint16 op, uint16 var, uint16 arg
 				for (uint16 i = 0; i < condCount; i++) {
 					soundList[i] = argv[decodeIdx++];
 					debugC(kDebugScript, "\t\tCondition %d: Action %d", i, soundList[i]);
-					// CHECKME: At this point, soundAction is always kMystSoundActionConditional (-4)
-					// The soundListVolume is therefore always set to 65535
-					if (soundAction == kMystSoundActionChangeVolume || soundAction > 0) {
+					if (soundList[i] == kMystSoundActionChangeVolume || soundList[i] > 0) {
 						soundListVolume[i] = argv[decodeIdx++];
 					} else
 						soundListVolume[i] = 65535;
