@@ -159,7 +159,7 @@ void GraphicsManager::sDrawPic(DisplayResource *srcDisplay, DisplayResource *des
 	destFlags = destPic->_flags;
 	byte *cursorData = NULL;
 
-	if (srcFlags & 1) {
+	if (srcFlags & DISPFLAG_1) {
 		if (_clipPtr) {
 			int xs = _clipPtr->left - destPic->_bounds.left;
 			int ys = _clipPtr->top - destPic->_bounds.top;
@@ -433,7 +433,7 @@ void GraphicsManager::sDrawPic(DisplayResource *srcDisplay, DisplayResource *des
 						}
 					}
 				} else {
-					if (srcFlags & 0x100) {
+					if (srcFlags & DISPFLAG_100) {
 						// Simple run-length encoded image
 						srcP = srcImgData;
 
@@ -885,13 +885,10 @@ void GraphicsManager::flipPage() {
 	bool flipFlag = false;
 
 	for (uint idx = 0; idx < viewPorts.size(); ++idx) {
-		if (viewPorts[idx]->_flags & DISPFLAG_20) {
-			if ((viewPorts[idx]->_flags & (DISPFLAG_8 || DISPFLAG_1))
-					== (DISPFLAG_8 || DISPFLAG_1)) {
-				if (_planeSelect == idx)
-					sDisplayPic(viewPorts[idx]->_currentPic);
-				flipFlag = true;
-			}
+		if ((viewPorts[idx]->_flags & (DISPFLAG_20 | DISPFLAG_8 | DISPFLAG_1)) == (DISPFLAG_20 | DISPFLAG_8 | DISPFLAG_1)) {
+			if (_planeSelect == idx)
+				sDisplayPic(viewPorts[idx]->_currentPic);
+			flipFlag = true;
 		}
 
 		if (flipFlag) {
