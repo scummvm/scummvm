@@ -272,6 +272,14 @@ void Menu::renderSubmenu(MenuItem *menu) {
 	Design::drawFilledRect(&_gui->_screen, *r, kColorWhite, _patterns, 1);
 	Design::drawRect(&_gui->_screen, *r, 1, kColorBlack, _patterns, 1);
 
+	int x = r->left + kMenuLeftMargin;
+	int y = r->top;
+	for (int i = 0; i < menu->subitems.size(); i++) {
+		_font->drawString(&_gui->_screen, menu->subitems[i]->text, x, y, r->width(), kColorBlack);
+
+		y += kMenuDropdownItemHeight;
+	}
+
 	g_system->copyRectToScreen(_gui->_screen.getBasePtr(r->left, r->top), _gui->_screen.pitch, r->left, r->top, r->width() + 1, r->height() + 1);
 }
 
