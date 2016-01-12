@@ -54,6 +54,7 @@ void SoundManager::setVOCOffset(int offset) {
 }
 
 Common::String SoundManager::getVOCFileName(int idx) {
+	assert (idx >= 0);
 	return Common::String::format("%s.voc", SZ_FILENAMES[idx]);
 }
 
