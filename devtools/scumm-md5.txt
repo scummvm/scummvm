@@ -108,6 +108,7 @@ zak	Zak McKracken and the Alien Mindbenders
 	d06fbe28818fef7bfc45c2cdf0c0849d	-1	de	DOS	V2	V2	from 5.25\" floppies	Nicolas Sauz&egrave;de, Andrea Petrucci
 	1900e501a52fbf55bde6e4196f6d2aa6	-1	it	DOS	V2	V2	-	Andrea Petrucci
 	75ba23fff4fd63fa446c02864f2a5a4b	-1	it	DOS	V2	V2	alt?	Antti Leimi, Andrea Petrucci
+	a77d0efbe786ea7f490c2021dbfa3f2f	-1	ru	DOS	V2	V2	-	sev
 
 	2d4536a56e01da4b02eb021e7770afa2	7520	en	FM-TOWNS	FM-TOWNS	-	-	
 	1ca86e2cf9aaa2068738a1e5ba477e60	-1	jp	FM-TOWNS	FM-TOWNS	-	-	Andrea Petrucci
