@@ -3892,26 +3892,52 @@ fi
 echo "$_sparkle"
 
 #
-# Check for libfluidsynth
+# Check for FluidSynth 
 #
-echocheck "libfluidsynth"
-if test "$_fluidsynth" = auto ; then
+echocheck "FluidSynth"
+
+append_var FLUIDSYNTH_LIBS "-lfluidsynth"
+case $_host_os in
+	mingw*)
+		# TODO: Modern FluidSynth requires glib. Our buildbot uses an older
+		# FluidSynth version which does not require glib. Additionally, it
+		# does not contain any glib libraries. We hack the libraries
+		# required for static linking here to make it work with buildbot.
+		# Once we upgraded to a new version, glib and its dependencies
+		# should be added.
+		FLUIDSYNTH_STATIC_LIBS="$FLUIDSYNTH_LIBS -ldsound -lwinmm"
+	;;
+
+	darwin*)
+		# TODO: Check actual requirements for static FluidSynth and
+		# dependencies linking. This is currently based on iOS dependencies
+		# which might be different due to less features enabled for iOS.
+		FLUIDSYNTH_STATIC_LIBS="$FLUIDSYNTH_LIBS -framework Foundation -framework CoreMIDI -lglib-2.0 -lintl -liconv"
+	;;
+
+	iphone)
+		FLUIDSYNTH_STATIC_LIBS="$FLUIDSYNTH_LIBS -framework Foundation -framework CoreMIDI -lglib-2.0 -lintl -liconv"
+	;;
+
+	*)
+		FLUIDSYNTH_STATIC_LIBS="$FLUIDSYNTH_LIBS -lglib-2.0 -lintl -liconv"
+	;;
+esac
+
+if test "$_fluidsynth" = auto; then
 	_fluidsynth=no
 	cat > $TMPC << EOF
 #include <fluidsynth.h>
-int main(void) { return 0; }
+int main(void) { delete_fluid_settings(new_fluid_settings()); return 0; }
 EOF
-	cc_check $FLUIDSYNTH_CFLAGS $FLUIDSYNTH_LIBS -lfluidsynth && _fluidsynth=yes
+	cc_check_no_clean $FLUIDSYNTH_CFLAGS $FLUIDSYNTH_LIBS && _fluidsynth=yes
+	if test "$_fluidsynth" != yes; then
+		FLUIDSYNTH_LIBS="$FLUIDSYNTH_STATIC_LIBS"
+		cc_check_no_clean $FLUIDSYNTH_CFLAGS $FLUIDSYNTH_LIBS && _fluidsynth=yes
+	fi
 fi
-if test "$_fluidsynth" = yes ; then
-	case $_host_os in
-		mingw*)
-			append_var LIBS "$FLUIDSYNTH_LIBS -lfluidsynth -ldsound -lwinmm"
-		;;
-		*)
-			append_var LIBS "$FLUIDSYNTH_LIBS -lfluidsynth"
-		;;
-	esac
+if test "$_fluidsynth" = yes; then
+	append_var LIBS "$FLUIDSYNTH_LIBS"
 	append_var INCLUDES "$FLUIDSYNTH_CFLAGS"
 fi
 define_in_config_if_yes "$_fluidsynth" 'USE_FLUIDSYNTH'
