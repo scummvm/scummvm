@@ -266,6 +266,9 @@ void Menu::render() {
 void Menu::renderSubmenu(MenuItem *menu) {
 	Common::Rect *r = &menu->subbbox;
 
+	if (r->width() == 0 || r->height() == 0)
+		return;
+
 	Design::drawFilledRect(&_gui->_screen, *r, kColorWhite, _patterns, 1);
 	Design::drawRect(&_gui->_screen, *r, 1, kColorBlack, _patterns, 1);
 
