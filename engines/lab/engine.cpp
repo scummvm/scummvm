@@ -279,7 +279,7 @@ bool LabEngine::doUse(uint16 curInv) {
 		_anim->stopDiff();
 		_curFileName = " ";
 		_closeDataPtr = nullptr;
-		doMap(_roomNum);
+		doMap();
 		_graphics->setPalette(initColors, 8);
 		_graphics->drawMessage("", false);
 		_graphics->drawPanel();

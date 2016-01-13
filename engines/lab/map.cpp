@@ -523,7 +523,7 @@ void LabEngine::processMap(uint16 curRoom) {
 	}
 }
 
-void LabEngine::doMap(uint16 curRoom) {
+void LabEngine::doMap() {
 	static uint16 amigaMapPalette[] = {
 		0x0BA8, 0x0C11, 0x0A74, 0x0076,
 		0x0A96, 0x0DCB, 0x0CCA, 0x0222,
@@ -537,10 +537,10 @@ void LabEngine::doMap(uint16 curRoom) {
 	loadMapData();
 	_graphics->blackAllScreen();
 	_event->attachButtonList(&_mapButtonList);
-	drawMap(curRoom, curRoom, _maps[curRoom]._pageNumber, true);
+	drawMap(_roomNum, _roomNum, _maps[_roomNum]._pageNumber, true);
 	_event->mouseShow();
 	_graphics->screenUpdate();
-	processMap(curRoom);
+	processMap(_roomNum);
 	_event->attachButtonList(nullptr);
 	_graphics->fade(false);
 	_graphics->blackAllScreen();

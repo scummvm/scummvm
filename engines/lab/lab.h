@@ -282,7 +282,7 @@ private:
 	/**
 	 * Does the map processing.
 	 */
-	void doMap(uint16 curRoom);
+	void doMap();
 
 	/**
 	 * Does what's necessary for the monitor.
