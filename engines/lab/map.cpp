@@ -386,13 +386,15 @@ void LabEngine::processMap(uint16 curRoom) {
 	uint16 curFloor = _maps[curRoom]._pageNumber;
 
 	while (1) {
-		// Make sure we check the music at least after every message
-		updateEvents();
 		IntuiMessage *msg = _event->getMsg();
 		if (shouldQuit()) {
 			_quitLab = true;
 			return;
 		}
+
+		updateEvents();
+		_graphics->screenUpdate();
+		_system->delayMillis(10);
 
 		if (!msg) {
 			updateEvents();
@@ -520,7 +522,7 @@ void LabEngine::processMap(uint16 curRoom) {
 
 			_graphics->screenUpdate();
 		}
-	}
+	}	// while
 }
 
 void LabEngine::doMap() {

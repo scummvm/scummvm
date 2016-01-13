@@ -221,40 +221,41 @@ void LabEngine::drawJournal(uint16 wipenum, bool needFade) {
 
 void LabEngine::processJournal() {
 	while (1) {
-		// Make sure we check the music at least after every message
-		updateEvents();
 		IntuiMessage *msg = _event->getMsg();
 		if (shouldQuit()) {
 			_quitLab = true;
 			return;
 		}
 
-		if (!msg)
-			updateEvents();
-		else {
-			MessageClass msgClass  = msg->_msgClass;
+		updateEvents();
+		_graphics->screenUpdate();
+		_system->delayMillis(10);
 
-			if ((msgClass == kMessageRightClick) ||
-				((msgClass == kMessageRawKey) && (msg->_code == Common::KEYCODE_ESCAPE)))
+		if (!msg)
+			continue;
+
+		MessageClass msgClass  = msg->_msgClass;
+
+		if ((msgClass == kMessageRightClick) ||
+			((msgClass == kMessageRawKey) && (msg->_code == Common::KEYCODE_ESCAPE)))
+			return;
+		else if (msgClass == kMessageButtonUp) {
+			uint16 buttonId  = msg->_code;
+			if (buttonId == 0) {
+				if (_journalPage >= 2) {
+					_journalPage -= 2;
+					drawJournal(1, false);
+				}
+			} else if (buttonId == 1) {
 				return;
-			else if (msgClass == kMessageButtonUp) {
-				uint16 buttonId  = msg->_code;
-				if (buttonId == 0) {
-					if (_journalPage >= 2) {
-						_journalPage -= 2;
-						drawJournal(1, false);
-					}
-				} else if (buttonId == 1) {
-					return;
-				} else if (buttonId == 2) {
-					if (!_lastPage) {
-						_journalPage += 2;
-						drawJournal(2, false);
-					}
+			} else if (buttonId == 2) {
+				if (!_lastPage) {
+					_journalPage += 2;
+					drawJournal(2, false);
 				}
 			}
 		}
-	}
+	}	// while
 }
 
 void LabEngine::doJournal() {
@@ -364,74 +365,75 @@ void LabEngine::processMonitor(const Common::String &ntext, TextFont *monitorFon
 			}
 		}
 
-		updateEvents();
-		_graphics->screenUpdate();
-		_system->delayMillis(10);
-
 		IntuiMessage *msg = _event->getMsg();
 		if (shouldQuit()) {
 			_quitLab = true;
 			return;
 		}
 
-		if (msg) {
-			MessageClass msgClass  = msg->_msgClass;
+		updateEvents();
+		_graphics->screenUpdate();
+		_system->delayMillis(10);
 
-			if ((msgClass == kMessageRightClick) ||
-				  ((msgClass == kMessageRawKey) && (msg->_code == Common::KEYCODE_ESCAPE)))
-				return;
+		if (!msg)
+			continue;
 
-			if (msgClass == kMessageLeftClick) {
-				int16 mouseX = msg->_mouse.x;
-				int16 mouseY = msg->_mouse.y;
+		MessageClass msgClass  = msg->_msgClass;
 
-				// Check if mouse was in button bar
-				if ((mouseY >= _utils->vgaScaleY(171)) && (mouseY <= _utils->vgaScaleY(200))) {
-					if (mouseX <= _utils->vgaScaleX(31)) {
-						// Exit button
-						return;
-					}
+		if ((msgClass == kMessageRightClick) ||
+				((msgClass == kMessageRawKey) && (msg->_code == Common::KEYCODE_ESCAPE)))
+			return;
+
+		if (msgClass == kMessageLeftClick) {
+			int16 mouseX = msg->_mouse.x;
+			int16 mouseY = msg->_mouse.y;
+
+			// Check if mouse was in button bar
+			if ((mouseY >= _utils->vgaScaleY(171)) && (mouseY <= _utils->vgaScaleY(200))) {
+				if (mouseX <= _utils->vgaScaleX(31)) {
+					// Exit button
+					return;
+				}
 					
-					if (mouseX <= _utils->vgaScaleX(59)) {
-						// Back button
-						if (isInteractive) {
-							_monitorPage = 0;
+				if (mouseX <= _utils->vgaScaleX(59)) {
+					// Back button
+					if (isInteractive) {
+						_monitorPage = 0;
 
-							if (depth) {
-								depth--;
-								_closeDataPtr = lastClosePtr[depth];
-							}
-						} else if (_monitorPage > 0) {
-							_monitorPage = 0;
-							drawMonText(text.c_str(), monitorFont, textRect, isInteractive);
+						if (depth) {
+							depth--;
+							_closeDataPtr = lastClosePtr[depth];
 						}
-					} else if (mouseX < _utils->vgaScaleX(259)) {
-						// empty region; ignore
-					} else if (mouseX <= _utils->vgaScaleX(289)) {
-						// Page down button
-						if (!_lastPage) {
-							_monitorPage += 1;
-							drawMonText(text.c_str(), monitorFont, textRect, isInteractive);
-						}
-					} else if (_monitorPage >= 1) {
-						// Page up button
-						_monitorPage -= 1;
+					} else if (_monitorPage > 0) {
+						_monitorPage = 0;
 						drawMonText(text.c_str(), monitorFont, textRect, isInteractive);
 					}
-				} else if (isInteractive) {
-					const CloseData *tmpClosePtr = _closeDataPtr;
-					mouseY = 64 + (mouseY / _monitorButtonHeight) * 42;
-					mouseX = 101;
-					setCurrentClose(Common::Point(mouseX, mouseY), &_closeDataPtr, false);
-
-					if (tmpClosePtr != _closeDataPtr) {
-						lastClosePtr[depth] = tmpClosePtr;
-						depth++;
+				} else if (mouseX < _utils->vgaScaleX(259)) {
+					// empty region; ignore
+				} else if (mouseX <= _utils->vgaScaleX(289)) {
+					// Page down button
+					if (!_lastPage) {
+						_monitorPage += 1;
+						drawMonText(text.c_str(), monitorFont, textRect, isInteractive);
 					}
+				} else if (_monitorPage >= 1) {
+					// Page up button
+					_monitorPage -= 1;
+					drawMonText(text.c_str(), monitorFont, textRect, isInteractive);
+				}
+			} else if (isInteractive) {
+				const CloseData *tmpClosePtr = _closeDataPtr;
+				mouseY = 64 + (mouseY / _monitorButtonHeight) * 42;
+				mouseX = 101;
+				setCurrentClose(Common::Point(mouseX, mouseY), &_closeDataPtr, false);
+
+				if (tmpClosePtr != _closeDataPtr) {
+					lastClosePtr[depth] = tmpClosePtr;
+					depth++;
 				}
 			}
 		}
-	}
+	}	// while
 }
 
 void LabEngine::doMonitor(const Common::String background, const Common::String textfile, bool isinteractive, Common::Rect textRect) {
