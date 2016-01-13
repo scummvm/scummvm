@@ -99,16 +99,14 @@ void Music::loadSoundEffect(const Common::String filename, bool loop, bool waitT
 			uint16 sampleRate = file->readUint16LE();
 			file->skip(2);
 			playSoundEffect(sampleRate, soundSize, loop, file);
-		}
-		else if (soundTag == 65535) {
+		} else if (soundTag == 65535) {
 			if (waitTillFinished) {
 				while (isSoundEffectActive()) {
 					_vm->updateEvents();
 					_vm->waitTOF();
 				}
 			}
-		}
-		else
+		} else
 			file->skip(soundSize);
 	}
 }
