@@ -80,10 +80,12 @@ struct MenuItem {
 
 static byte fillPattern[8] = { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff };
 static byte fillPatternStripes[8] = { 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa };
+static byte fillPatternCheckers[8] = { 0x55, 0xaa, 0x55, 0xaa, 0x55, 0xaa, 0x55, 0xaa };
 
 enum {
 	kPatternSolid = 1,
-	kPaternStripes = 2
+	kPatternStripes = 2,
+	kPatternCheckers = 3
 };
 
 enum {
@@ -131,6 +133,7 @@ struct MenuData {
 Menu::Menu(Gui *gui) : _gui(gui) {
 	_patterns.push_back(fillPattern);
 	_patterns.push_back(fillPatternStripes);
+	_patterns.push_back(fillPatternCheckers);
 
 	MenuItem *about = new MenuItem(_gui->_builtInFonts ? "\xa9" : "\xf0"); // (c) Symbol as the most resembling apple
 	_items.push_back(about);
@@ -189,6 +192,7 @@ Menu::Menu(Gui *gui) : _gui(gui) {
 	_activeSubItem = -1;
 
 	_screenCopy.create(_gui->_screen.w, _gui->_screen.h, Graphics::PixelFormat::createFormatCLUT8());
+	_tempSurface.create(_gui->_screen.w, _font->getFontHeight(), Graphics::PixelFormat::createFormatCLUT8());
 }
 
 Menu::~Menu() {
@@ -301,10 +305,30 @@ void Menu::renderSubmenu(MenuItem *menu) {
 
 			Design::drawFilledRect(&_gui->_screen, trect, kColorBlack, _patterns, kPatternSolid);
 		}
-		if (text.size())
-			_font->drawString(&_gui->_screen, text, x, y, r->width(), color);
-		else
-			Design::drawHLine(&_gui->_screen, r->left, r->right, y + kMenuDropdownItemHeight / 2, 1, kColorBlack, _patterns, kPaternStripes);
+		if (text.size()) {
+			if (menu->subitems[i]->enabled) {
+				_font->drawString(&_gui->_screen, text, x, y, r->width(), color);
+			} else {
+				// I am lazy to extend drawString() with plotProc as a parameter, so
+				// fake it here
+				_tempSurface.fillRect(Common::Rect(0, 0, _tempSurface.w, _tempSurface.h), kColorGreen);
+				_font->drawString(&_tempSurface, text, 0, 0, r->width(), kColorBlack);
+
+				for (int ii = 0; ii < _tempSurface.h; ii++) {
+					const byte *src = (const byte *)_tempSurface.getBasePtr(0, ii);
+					byte *dst = (byte *)_gui->_screen.getBasePtr(x, y+ii);
+					byte pat = _patterns[kPatternCheckers - 1][(y + ii) % 8];
+					for (int j = 0; j < r->width(); j++) {
+						if (*src != kColorGreen && (pat & (1 << (7 - (x + j) % 8))))
+							*dst = *src;
+						src++;
+						dst++;
+					}
+				}
+			}
+		} else { // Delimiter
+			Design::drawHLine(&_gui->_screen, r->left, r->right, y + kMenuDropdownItemHeight / 2, 1, kColorBlack, _patterns, kPatternStripes);
+		}
 
 		y += kMenuDropdownItemHeight;
 	}
