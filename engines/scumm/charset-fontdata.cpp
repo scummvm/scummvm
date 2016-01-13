@@ -617,7 +617,7 @@ CharsetRendererV2::CharsetRendererV2(ScummEngine *vm, Common::Language language)
 		replacementChars = sizeof(spanishCharsetDataV2) / 2;
 		break;
 	case Common::RU_RUS:
-		if ((_vm->_game.id == GID_MANIAC) && (_vm->_game.version == 2)) {
+		if (((_vm->_game.id == GID_MANIAC) || (_vm->_game.id == GID_ZAK)) && (_vm->_game.version == 2)) {
 			replacementData = russCharsetDataV2;
 			replacementChars = sizeof(russCharsetDataV2) / 2;
 		} else {
@@ -638,7 +638,7 @@ CharsetRendererV2::CharsetRendererV2(ScummEngine *vm, Common::Language language)
 			int ch1 = replacementData[2 * i];
 			int ch2 = replacementData[2 * i + 1];
 
-			if ((_vm->_game.id == GID_MANIAC) && (_vm->_game.version == 2)) {
+			if (((_vm->_game.id == GID_MANIAC) || (_vm->_game.id == GID_ZAK)) && (_vm->_game.version == 2)) {
 				memcpy(const_cast<byte *>(_fontPtr) + 8 * ch1, russianCharsetDataV2 + 8 * ch2, 8);
 			} else {
 				memcpy(const_cast<byte *>(_fontPtr) + 8 * ch1, specialCharsetData + 8 * ch2, 8);
