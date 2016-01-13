@@ -39,7 +39,6 @@
 
 namespace Lab {
 
-#define SAMPLESPEED       15000
 #define CLOWNROOM           123
 #define DIMROOM              80
 
@@ -142,7 +141,7 @@ void Music::changeMusic(const Common::String filename, bool storeCurPos, bool se
 	if (seektoStoredPos)
 		_musicFile->seek(_storedPos);
 
-	Audio::SeekableAudioStream *audioStream = Audio::makeRawStream(_musicFile, SAMPLESPEED, getSoundFlags());
+	Audio::SeekableAudioStream *audioStream = Audio::makeRawStream(_musicFile, 15000, getSoundFlags());
 	_vm->_mixer->playStream(Audio::Mixer::kMusicSoundType, &_musicHandle, new Audio::LoopingAudioStream(audioStream, 0));
 }
 
