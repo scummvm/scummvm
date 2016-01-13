@@ -82,6 +82,11 @@ static byte fillPattern[8] = { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff };
 static byte fillPatternStripes[8] = { 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa };
 
 enum {
+	kPatternSolid = 1,
+	kPaternStripes = 2
+};
+
+enum {
 	kMenuActionAbout,
 	kMenuActionNew,
 	kMenuActionOpen,
@@ -244,18 +249,18 @@ void Menu::calcMenuBounds(MenuItem *menu) {
 void Menu::render() {
 	Common::Rect r(_bbox);
 
-	Design::drawFilledRoundRect(&_gui->_screen, r, kDesktopArc, kColorWhite, _patterns, 1);
+	Design::drawFilledRoundRect(&_gui->_screen, r, kDesktopArc, kColorWhite, _patterns, kPatternSolid);
 	r.top = 7;
-	Design::drawFilledRect(&_gui->_screen, r, kColorWhite, _patterns, 1);
+	Design::drawFilledRect(&_gui->_screen, r, kColorWhite, _patterns, kPatternSolid);
 	r.top = kMenuHeight - 1;
-	Design::drawFilledRect(&_gui->_screen, r, kColorBlack, _patterns, 1);
+	Design::drawFilledRect(&_gui->_screen, r, kColorBlack, _patterns, kPatternSolid);
 
 	for (int i = 0; i < _items.size(); i++) {
 		int color = kColorBlack;
 		MenuItem *it = _items[i];
 
 		if (_activeItem == i) {
-			Design::drawFilledRect(&_gui->_screen, it->bbox, kColorBlack, _patterns, 1);
+			Design::drawFilledRect(&_gui->_screen, it->bbox, kColorBlack, _patterns, kPatternSolid);
 			color = kColorWhite;
 
 			if (it->subitems.size())
@@ -274,10 +279,10 @@ void Menu::renderSubmenu(MenuItem *menu) {
 	if (r->width() == 0 || r->height() == 0)
 		return;
 
-	Design::drawFilledRect(&_gui->_screen, *r, kColorWhite, _patterns, 1);
-	Design::drawRect(&_gui->_screen, *r, 1, kColorBlack, _patterns, 1);
-	Design::drawVLine(&_gui->_screen, r->right + 1, r->top + 3, r->bottom + 1, 1, kColorBlack, _patterns, 1);
-	Design::drawHLine(&_gui->_screen, r->left + 3, r->right + 1, r->bottom + 1, 1, kColorBlack, _patterns, 1);
+	Design::drawFilledRect(&_gui->_screen, *r, kColorWhite, _patterns, kPatternSolid);
+	Design::drawRect(&_gui->_screen, *r, 1, kColorBlack, _patterns, kPatternSolid);
+	Design::drawVLine(&_gui->_screen, r->right + 1, r->top + 3, r->bottom + 1, 1, kColorBlack, _patterns, kPatternSolid);
+	Design::drawHLine(&_gui->_screen, r->left + 3, r->right + 1, r->bottom + 1, 1, kColorBlack, _patterns, kPatternSolid);
 
 	int x = r->left + kMenuDropdownPadding;
 	int y = r->top + 1;
@@ -293,12 +298,12 @@ void Menu::renderSubmenu(MenuItem *menu) {
 			color = kColorWhite;
 			Common::Rect trect(r->left, y - (_gui->_builtInFonts ? 1 : 0), r->right, y + _font->getFontHeight());
 
-			Design::drawFilledRect(&_gui->_screen, trect, kColorBlack, _patterns, 1);
+			Design::drawFilledRect(&_gui->_screen, trect, kColorBlack, _patterns, kPatternSolid);
 		}
 		if (text.size())
 			_font->drawString(&_gui->_screen, text, x, y, r->width(), color);
 		else
-			Design::drawHLine(&_gui->_screen, r->left, r->right, y + kMenuDropdownItemHeight / 2, 1, kColorBlack, _patterns, 2);
+			Design::drawHLine(&_gui->_screen, r->left, r->right, y + kMenuDropdownItemHeight / 2, 1, kColorBlack, _patterns, kPaternStripes);
 
 		y += kMenuDropdownItemHeight;
 	}
