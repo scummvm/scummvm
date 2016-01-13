@@ -437,7 +437,6 @@ void DisplayMan::setAmigaPal(uint16 *pal) {
 	}
 
 	writeColorRegs(vgaPal, 0, 16);
-	_vm->waitTOF();
 }
 
 void DisplayMan::writeColorRegs(byte *buf, uint16 first, uint16 numReg) {
@@ -933,18 +932,21 @@ void DisplayMan::fade(bool fadeIn) {
 	for (int i = 0; i < 16; i++) {
 		for (int palIdx = 0; palIdx < 16; palIdx++) {
 			if (fadeIn)
-				newPal[palIdx] = (0x00F & fadeNumIn(0x00F & _fadePalette[palIdx], 0, i)) +
-				(0x0F0 & fadeNumIn(0x0F0 & _fadePalette[palIdx], 0, i)) +
-				(0xF00 & fadeNumIn(0xF00 & _fadePalette[palIdx], 0, i));
+				newPal[palIdx] =
+					(0x00F & fadeNumIn(0x00F & _fadePalette[palIdx], 0, i)) +
+					(0x0F0 & fadeNumIn(0x0F0 & _fadePalette[palIdx], 0, i)) +
+					(0xF00 & fadeNumIn(0xF00 & _fadePalette[palIdx], 0, i));
 			else
-				newPal[palIdx] = (0x00F & fadeNumOut(0x00F & _fadePalette[palIdx], 0, i)) +
-				(0x0F0 & fadeNumOut(0x0F0 & _fadePalette[palIdx], 0, i)) +
-				(0xF00 & fadeNumOut(0xF00 & _fadePalette[palIdx], 0, i));
+				newPal[palIdx] =
+					(0x00F & fadeNumOut(0x00F & _fadePalette[palIdx], 0, i)) +
+					(0x0F0 & fadeNumOut(0x0F0 & _fadePalette[palIdx], 0, i)) +
+					(0xF00 & fadeNumOut(0xF00 & _fadePalette[palIdx], 0, i));
 		}
 
 		setAmigaPal(newPal);
-		_vm->waitTOF();
 		_vm->updateEvents();
+		_vm->waitTOF();
+		_vm->waitTOF();
 	}
 }
 

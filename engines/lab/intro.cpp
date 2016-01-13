@@ -273,6 +273,7 @@ void Intro::play() {
 
 		_vm->_graphics->setAmigaPal(palette);
 		_vm->waitTOF();
+		_vm->waitTOF();
 	}
 
 	if (!_quitIntro) {
