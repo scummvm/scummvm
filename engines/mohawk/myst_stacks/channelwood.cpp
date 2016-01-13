@@ -170,7 +170,10 @@ uint16 Channelwood::getVar(uint16 var) {
 
 		return 0;
 	case 32: // Sound - Water Flowing in Pipe to Book Room Elevator
-		return ((_state.waterValveStates & 0xf8) == 0xb0 && _state.pipeState) ? 1 : 0;
+		if ((_state.waterValveStates & 0xf8) == 0xb0)
+			return _state.pipeState ? 2 : 1;
+
+		return 0;
 	case 33: // Channelwood Lower Walkway to Upper Walkway Spiral Stair Upper Door State
 		if (_state.stairsUpperDoorState) {
 			if (_tempVar == 1)
