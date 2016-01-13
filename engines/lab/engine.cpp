@@ -177,14 +177,14 @@ void LabEngine::eatMessages() {
 	} while (msg && !shouldQuit());
 }
 
-bool LabEngine::doCloseUp(const CloseData *closePtr) {
-	if (!closePtr)
-		return false;
+void LabEngine::handleMonitorCloseup() {
+	if (!_closeDataPtr)
+		return;
 
 	Common::Rect textRect(2, 2, 317, 165);
 	bool isInteractive = false;
 
-	switch (closePtr->_closeUpType) {
+	switch (_closeDataPtr->_closeUpType) {
 	case kMonitorMuseum:
 	case kMonitorLibrary:
 	case kMonitorWindow:
@@ -211,15 +211,17 @@ bool LabEngine::doCloseUp(const CloseData *closePtr) {
 		isInteractive = true;
 		break;
 	default:
-		return false;
+		return;
 	}
 
-	doMonitor(closePtr->_graphicName, closePtr->_message, isInteractive, textRect);
+	doMonitor(_closeDataPtr->_graphicName, _closeDataPtr->_message, isInteractive, textRect);
 
 	_curFileName = " ";
 	_graphics->drawPanel();
 
-	return true;
+	_closeDataPtr = nullptr;
+	mayShowCrumbIndicator();
+	_graphics->screenUpdate();
 }
 
 Common::String LabEngine::getInvName(uint16 curInv) {
@@ -414,12 +416,7 @@ void LabEngine::mainGameLoop() {
 				break;
 			}
 
-			// Sees what kind of close up we're in and does the appropriate stuff, if any.
-			if (doCloseUp(_closeDataPtr)) {
-				_closeDataPtr = nullptr;
-				mayShowCrumbIndicator();
-				_graphics->screenUpdate();
-			}
+			handleMonitorCloseup();
 
 			// Sets the current picture properly on the screen
 			if (_mainDisplay)

@@ -259,9 +259,9 @@ private:
 	bool doActionRuleSub(int16 action, int16 roomNum, const CloseData *closePtr, bool allowDefaults);
 
 	/**
-	 * Checks whether the close up is one of the special case closeups.
+	 * Handles monitor closeups
 	 */
-	bool doCloseUp(const CloseData *closePtr);
+	void handleMonitorCloseup();
 
 	/**
 	 * Goes through the rules if the user tries to go forward.
