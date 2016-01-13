@@ -67,7 +67,9 @@ static const byte palette[] = {
 	0x00, 0xff, 0x00   // Green
 };
 
-static byte checkersPattern[8] = { 0x55, 0xaa, 0x55, 0xaa, 0x55, 0xaa, 0x55, 0xaa };
+static byte fillPattern[8] = { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff };
+static byte fillPatternStripes[8] = { 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa };
+static byte fillPatternCheckers[8] = { 0x55, 0xaa, 0x55, 0xaa, 0x55, 0xaa, 0x55, 0xaa };
 
 static const byte macCursorArrow[] = {
 	2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3,
@@ -158,6 +160,10 @@ Gui::Gui(WageEngine *engine) {
 	_cursorIsArrow = true;
 	CursorMan.showMouse(true);
 
+	_patterns.push_back(fillPattern);
+	_patterns.push_back(fillPatternStripes);
+	_patterns.push_back(fillPatternCheckers);
+
 	loadFonts();
 
 	g_system->getTimerManager()->installTimerProc(&cursor_timer_handler, 200000, this, "wageCursor");
@@ -240,10 +246,8 @@ void Gui::draw() {
 		_scene = _engine->_world->_player->_currentScene;
 
 		// Draw desktop
-		Patterns p;
-		p.push_back(checkersPattern);
 		Common::Rect r(0, 0, _screen.w - 1, _screen.h - 1);
-		Design::drawFilledRoundRect(&_screen, r, kDesktopArc, kColorBlack, p, 1);
+		Design::drawFilledRoundRect(&_screen, r, kDesktopArc, kColorBlack, _patterns, kPatternCheckers);
 		g_system->copyRectToScreen(_screen.getPixels(), _screen.pitch, 0, 0, _screen.w, _screen.h);
 
 		_sceneDirty = true;

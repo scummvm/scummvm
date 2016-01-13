@@ -68,7 +68,6 @@ public:
 
 private:
 	Gui *_gui;
-	Patterns _patterns;
 	Graphics::Surface _screenCopy;
 	Graphics::Surface _tempSurface;
 

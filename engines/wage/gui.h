@@ -77,6 +77,12 @@ enum {
 	kCursorHeight = 12
 };
 
+enum {
+	kPatternSolid = 1,
+	kPatternStripes = 2,
+	kPatternCheckers = 3
+};
+
 class Gui {
 public:
 	Gui(WageEngine *engine);
@@ -111,6 +117,8 @@ public:
 
 	bool _builtInFonts;
 	WageEngine *_engine;
+
+	Patterns _patterns;
 
 private:
 	Graphics::Surface _console;
