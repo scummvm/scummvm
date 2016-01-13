@@ -287,7 +287,15 @@ void Menu::renderSubmenu(MenuItem *menu) {
 		if (acceleratorText.size()) {
 			text += acceleratorText;
 		}
-		_font->drawString(&_gui->_screen, text, x, y, r->width(), kColorBlack);
+
+		int color = kColorBlack;
+		if (i == _activeSubItem) {
+			color = kColorWhite;
+			Common::Rect trect(r->left, y, r->right, y + kMenuDropdownItemHeight);
+
+			Design::drawFilledRect(&_gui->_screen, trect, kColorBlack, _patterns, 1);
+		}
+		_font->drawString(&_gui->_screen, text, x, y, r->width(), color);
 
 		y += kMenuDropdownItemHeight;
 	}
@@ -320,6 +328,15 @@ bool Menu::mouseClick(int x, int y) {
 
 				return true;
 			}
+	} else if (_menuActivated && _items[_activeItem]->subbbox.contains(x, y)) {
+		MenuItem *it = _items[_activeItem];
+		int numSubItem = (y - it->subbbox.top) / kMenuDropdownItemHeight;
+
+		if (numSubItem != _activeSubItem) {
+			_activeSubItem = numSubItem;
+
+			renderSubmenu(_items[_activeItem]);
+		}
 	}
 
 	return false;
