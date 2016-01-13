@@ -288,12 +288,20 @@ void Menu::renderSubmenu(MenuItem *menu) {
 
 bool Menu::mouseClick(int x, int y) {
 	if (_bbox.contains(x, y)) {
-		_screenCopy.copyFrom(_gui->_screen);
+		if (!_menuActivated)
+			_screenCopy.copyFrom(_gui->_screen);
 
 		for (int i = 0; i < _items.size(); i++)
 			if (_items[i]->bbox.contains(x, y)) {
 				if (_activeItem == i)
 					return false;
+
+				if (_activeItem != -1) {
+					Common::Rect *r = &_items[_activeItem]->subbbox;
+
+					_gui->_screen.copyRectToSurface(_screenCopy, r->left, r->top, *r);
+					g_system->copyRectToScreen(_gui->_screen.getBasePtr(r->left, r->top), _gui->_screen.pitch, r->left, r->top, r->width() + 1, r->height() + 1);
+				}
 
 				_activeItem = i;
 				_activeSubItem = -1;
