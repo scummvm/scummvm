@@ -153,7 +153,7 @@ Menu::Menu(Gui *gui) : _gui(gui) {
 
 	// Calculate menu dimensions
 	_font = getMenuFont();
-	int y = _gui->_builtInFonts ? 3 : 1;
+	int y = 1;
 	int x = 18;
 
 	for (int i = 0; i < _items.size(); i++) {
@@ -163,7 +163,7 @@ Menu::Menu(Gui *gui) : _gui(gui) {
 			_items[i]->bbox.left = x - kMenuLeftMargin;
 			_items[i]->bbox.top = y;
 			_items[i]->bbox.right = x + w + kMenuSpacing - kMenuLeftMargin;
-			_items[i]->bbox.bottom = y + _font->getFontHeight() + 2;
+			_items[i]->bbox.bottom = y + _font->getFontHeight() + (_gui->_builtInFonts ? 3 : 2);
 		}
 
 		calcMenuBounds(_items[i]);
@@ -260,7 +260,7 @@ void Menu::render() {
 				renderSubmenu(it);
 		}
 
-		_font->drawString(&_gui->_screen, it->name, it->bbox.left + kMenuLeftMargin, it->bbox.top + 1, it->bbox.width(), color);
+		_font->drawString(&_gui->_screen, it->name, it->bbox.left + kMenuLeftMargin, it->bbox.top + (_gui->_builtInFonts ? 2 : 1), it->bbox.width(), color);
 	}
 
 	g_system->copyRectToScreen(_gui->_screen.getPixels(), _gui->_screen.pitch, 0, 0, _gui->_screen.w, kMenuHeight);
@@ -291,7 +291,7 @@ void Menu::renderSubmenu(MenuItem *menu) {
 		int color = kColorBlack;
 		if (i == _activeSubItem && menu->subitems[_activeSubItem]->text.size()) {
 			color = kColorWhite;
-			Common::Rect trect(r->left, y, r->right, y + _font->getFontHeight());
+			Common::Rect trect(r->left, y - (_gui->_builtInFonts ? 1 : 0), r->right, y + _font->getFontHeight());
 
 			Design::drawFilledRect(&_gui->_screen, trect, kColorBlack, _patterns, 1);
 		}
