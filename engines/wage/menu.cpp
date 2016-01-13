@@ -200,7 +200,7 @@ const char *Menu::getAcceleratorString(MenuSubItem *item) {
 	*res = 0;
 
 	if (item->shortcut != 0)
-		sprintf(res, "      \x11%c", item->shortcut);
+		sprintf(res, "      %c%c", (_gui->_builtInFonts ? '^' : '\x11'), item->shortcut);
 
 	return res;
 }
