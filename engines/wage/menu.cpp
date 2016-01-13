@@ -231,7 +231,7 @@ void Menu::calcMenuBounds(MenuItem *menu) {
 	int x1 = menu->bbox.left;
 	int y1 = menu->bbox.bottom + 1;
 	int x2 = x1 + maxWidth + kMenuDropdownPadding * 2;
-	int y2 = y1 + menu->subitems.size() * kMenuDropdownItemHeight - 3;
+	int y2 = y1 + menu->subitems.size() * kMenuDropdownItemHeight + 2;
 
 	menu->subbbox.left = x1;
 	menu->subbbox.top = y1;

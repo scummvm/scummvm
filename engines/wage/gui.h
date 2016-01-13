@@ -69,7 +69,7 @@ enum {
 	kMenuSpacing = 13,
 	kMenuPadding = 16,
 	kMenuDropdownPadding = 12,
-	kMenuDropdownItemHeight = 19,
+	kMenuDropdownItemHeight = 15,
 	kMenuItemHeight = 20,
 	kBorderWidth = 17,
 	kDesktopArc = 7,
