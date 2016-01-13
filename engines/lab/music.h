@@ -57,7 +57,6 @@ private:
 	Audio::SoundHandle _sfxHandle;
 
 private:
-	void readSound(bool waitTillFinished, bool loop, Common::File *file);
 	byte getSoundFlags();
 
 public:
@@ -86,7 +85,7 @@ public:
 	/**
 	 * Reads in a sound effect file.  Ignores any graphics.
 	 */
-	bool loadSoundEffect(const Common::String filename, bool loop, bool waitTillFinished);
+	void loadSoundEffect(const Common::String filename, bool loop, bool waitTillFinished);
 
 	void stopSoundEffect();
 };

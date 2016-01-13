@@ -59,18 +59,58 @@ byte Music::getSoundFlags() {
 	return soundFlags;
 }
 
-void Music::changeMusic(const Common::String filename, bool storeCurPos, bool seektoStoredPos) {
-	if (storeCurPos)
-		_storedPos = _musicFile->pos();
-
+void Music::loadSoundEffect(const Common::String filename, bool loop, bool waitTillFinished) {
 	stopSoundEffect();
-	freeMusic();
-	_musicFile = _vm->_resource->openDataFile(filename);
-	if (seektoStoredPos)
-		_musicFile->seek(_storedPos);
 
-	Audio::SeekableAudioStream *audioStream = Audio::makeRawStream(_musicFile, SAMPLESPEED, getSoundFlags());
-	_vm->_mixer->playStream(Audio::Mixer::kMusicSoundType, &_musicHandle, new Audio::LoopingAudioStream(audioStream, 0));
+	Common::File *file = _vm->_resource->openDataFile(filename, MKTAG('D', 'I', 'F', 'F'));
+	if (!file)
+		return;
+
+	_vm->_anim->_doBlack = false;
+
+	uint32 magicBytes = file->readUint32LE();
+	if (magicBytes != 1219009121) {
+		warning("readSound: Bad signature, skipping");
+		return;
+	}
+	uint32 soundTag = file->readUint32LE();
+	uint32 soundSize = file->readUint32LE();
+
+	if (soundTag != 0)
+		return;
+
+	file->skip(soundSize);	// skip the header
+
+	while (soundTag != 65535) {
+		_vm->updateEvents();
+		soundTag = file->readUint32LE();
+		soundSize = file->readUint32LE() - 8;
+
+		if ((soundTag == 30) || (soundTag == 31)) {
+			if (waitTillFinished) {
+				while (isSoundEffectActive()) {
+					_vm->updateEvents();
+					_vm->waitTOF();
+				}
+			}
+
+			file->skip(4);
+
+			uint16 sampleRate = file->readUint16LE();
+			file->skip(2);
+			playSoundEffect(sampleRate, soundSize, loop, file);
+		}
+		else if (soundTag == 65535) {
+			if (waitTillFinished) {
+				while (isSoundEffectActive()) {
+					_vm->updateEvents();
+					_vm->waitTOF();
+				}
+			}
+		}
+		else
+			file->skip(soundSize);
+	}
 }
 
 void Music::playSoundEffect(uint16 sampleSpeed, uint32 length, bool loop, Common::File *dataFile) {
@@ -94,10 +134,25 @@ bool Music::isSoundEffectActive() const {
 	return _vm->_mixer->isSoundHandleActive(_sfxHandle);
 }
 
-void Music::freeMusic() {
-	_vm->_mixer->stopHandle(_musicHandle);
-	_vm->_mixer->stopHandle(_sfxHandle);
-	_musicFile = nullptr;
+void Music::changeMusic(const Common::String filename, bool storeCurPos, bool seektoStoredPos) {
+	if (storeCurPos)
+		_storedPos = _musicFile->pos();
+
+	stopSoundEffect();
+	freeMusic();
+	_musicFile = _vm->_resource->openDataFile(filename);
+	if (seektoStoredPos)
+		_musicFile->seek(_storedPos);
+
+	Audio::SeekableAudioStream *audioStream = Audio::makeRawStream(_musicFile, SAMPLESPEED, getSoundFlags());
+	_vm->_mixer->playStream(Audio::Mixer::kMusicSoundType, &_musicHandle, new Audio::LoopingAudioStream(audioStream, 0));
+}
+
+void Music::resetMusic(bool seektoStoredPos) {
+	if (_vm->getPlatform() != Common::kPlatformAmiga)
+		changeMusic("Music:BackGrou", false, seektoStoredPos);
+	else
+		changeMusic("Music:BackGround", false, seektoStoredPos);
 }
 
 void Music::checkRoomMusic() {
@@ -114,68 +169,10 @@ void Music::checkRoomMusic() {
 	_curRoomMusic = _vm->_roomNum;
 }
 
-bool Music::loadSoundEffect(const Common::String filename, bool loop, bool waitTillFinished) {
-	Common::File *file = _vm->_resource->openDataFile(filename, MKTAG('D', 'I', 'F', 'F'));
-	stopSoundEffect();
-
-	if (!file)
-		return false;
-
-	_vm->_anim->_doBlack = false;
-	readSound(waitTillFinished, loop, file);
-
-	return true;
-}
-
-void Music::readSound(bool waitTillFinished, bool loop, Common::File *file) {
-	uint32 magicBytes = file->readUint32LE();
-	if (magicBytes != 1219009121) {
-		warning("readSound: Bad signature, skipping");
-		return;
-	}
-	uint32 soundTag = file->readUint32LE();
-	uint32 soundSize = file->readUint32LE();
-
-	if (soundTag == 0)
-		file->skip(soundSize);	// skip the header
-	else
-		return;
-
-	while (soundTag != 65535) {
-		_vm->updateEvents();
-		soundTag = file->readUint32LE();
-		soundSize = file->readUint32LE() - 8;
-
-		if ((soundTag == 30) || (soundTag == 31)) {
-			if (waitTillFinished) {
-				while (isSoundEffectActive()) {
-					_vm->updateEvents();
-					_vm->waitTOF();
-				}
-			}
-
-			file->skip(4);
-
-			uint16 sampleRate = file->readUint16LE();
-			file->skip(2);
-			playSoundEffect(sampleRate, soundSize, loop, file);
-		} else if (soundTag == 65535) {
-			if (waitTillFinished) {
-				while (isSoundEffectActive()) {
-					_vm->updateEvents();
-					_vm->waitTOF();
-				}
-			}
-		} else
-			file->skip(soundSize);
-	}
-}
-
-void Music::resetMusic(bool seektoStoredPos) {
-	if (_vm->getPlatform() != Common::kPlatformAmiga)
-		changeMusic("Music:BackGrou", false, seektoStoredPos);
-	else
-		changeMusic("Music:BackGround", false, seektoStoredPos);
+void Music::freeMusic() {
+	_vm->_mixer->stopHandle(_musicHandle);
+	_vm->_mixer->stopHandle(_sfxHandle);
+	_musicFile = nullptr;
 }
 
 } // End of namespace Lab
