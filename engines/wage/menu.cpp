@@ -193,12 +193,12 @@ const Graphics::Font *Menu::getMenuFont() {
 	return _gui->getFont("Chicago-12", Graphics::FontManager::kBigGUIFont);
 }
 
-const char *Menu::getAcceleratorString(MenuSubItem *item) {
+const char *Menu::getAcceleratorString(MenuSubItem *item, const char *prefix) {
 	static char res[20];
 	*res = 0;
 
 	if (item->shortcut != 0)
-		sprintf(res, "      %c%c", (_gui->_builtInFonts ? '^' : '\x11'), item->shortcut);
+		sprintf(res, "%s%c%c", prefix, (_gui->_builtInFonts ? '^' : '\x11'), item->shortcut);
 
 	return res;
 }
@@ -209,7 +209,7 @@ int Menu::calculateMenuWidth(MenuItem *menu) {
 		MenuSubItem *item = menu->subitems[i];
 		if (item->text.size()) {
 			Common::String text(item->text);
-			Common::String acceleratorText(getAcceleratorString(item));
+			Common::String acceleratorText(getAcceleratorString(item, "  "));
 			if (acceleratorText.size()) {
 				text += acceleratorText;
 			}
@@ -279,10 +279,8 @@ void Menu::renderSubmenu(MenuItem *menu) {
 	int y = r->top + 1;
 	for (int i = 0; i < menu->subitems.size(); i++) {
 		Common::String text(menu->subitems[i]->text);
-		Common::String acceleratorText(getAcceleratorString(menu->subitems[i]));
-		if (acceleratorText.size()) {
-			text += acceleratorText;
-		}
+		Common::String acceleratorText(getAcceleratorString(menu->subitems[i], ""));
+		int accelX = r->right - 25;
 
 		int color = kColorBlack;
 		if (i == _activeSubItem && text.size() && menu->subitems[i]->enabled) {
@@ -291,19 +289,32 @@ void Menu::renderSubmenu(MenuItem *menu) {
 
 			Design::drawFilledRect(&_gui->_screen, trect, kColorBlack, _gui->_patterns, kPatternSolid);
 		}
+
 		if (text.size()) {
-			if (menu->subitems[i]->enabled) {
-				_font->drawString(&_gui->_screen, text, x, y, r->width(), color);
-			} else {
+			Graphics::Surface *s = &_gui->_screen;
+			int tx = x, ty = y;
+
+			if (!menu->subitems[i]->enabled) {
+				s = &_tempSurface;
+				tx = 0;
+				ty = 0;
+				accelX -= x;
+
+				_tempSurface.fillRect(Common::Rect(0, 0, _tempSurface.w, _tempSurface.h), kColorGreen);
+			}
+
+			_font->drawString(s, text, tx, ty, r->width(), color);
+
+			if (acceleratorText.size())
+				_font->drawString(s, acceleratorText, accelX, ty, r->width(), color);
+
+			if (!menu->subitems[i]->enabled) {
 				// I am lazy to extend drawString() with plotProc as a parameter, so
 				// fake it here
-				_tempSurface.fillRect(Common::Rect(0, 0, _tempSurface.w, _tempSurface.h), kColorGreen);
-				_font->drawString(&_tempSurface, text, 0, 0, r->width(), kColorBlack);
-
 				for (int ii = 0; ii < _tempSurface.h; ii++) {
 					const byte *src = (const byte *)_tempSurface.getBasePtr(0, ii);
 					byte *dst = (byte *)_gui->_screen.getBasePtr(x, y+ii);
-					byte pat = _gui->_patterns[kPatternCheckers - 1][(y + ii) % 8];
+					byte pat = _gui->_patterns[kPatternCheckers - 1][ii % 8];
 					for (int j = 0; j < r->width(); j++) {
 						if (*src != kColorGreen && (pat & (1 << (7 - (x + j) % 8))))
 							*dst = *src;

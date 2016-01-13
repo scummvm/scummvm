@@ -73,7 +73,7 @@ private:
 
 private:
 	const Graphics::Font *getMenuFont();
-	const char *getAcceleratorString(MenuSubItem *item);
+	const char *getAcceleratorString(MenuSubItem *item, const char *prefix);
 	int calculateMenuWidth(MenuItem *menu);
 	void calcMenuBounds(MenuItem *menu);
 	void renderSubmenu(MenuItem *menu);
