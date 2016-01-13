@@ -79,6 +79,7 @@ struct MenuItem {
 };
 
 static byte fillPattern[8] = { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff };
+static byte fillPatternStripes[8] = { 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa };
 
 enum {
 	kMenuActionAbout,
@@ -123,6 +124,7 @@ struct MenuData {
 
 Menu::Menu(Gui *gui) : _gui(gui) {
 	_patterns.push_back(fillPattern);
+	_patterns.push_back(fillPatternStripes);
 
 	MenuItem *about = new MenuItem(_gui->_builtInFonts ? "\xa9" : "\xf0"); // (c) Symbol as the most resembling apple
 	_items.push_back(about);
@@ -296,7 +298,7 @@ void Menu::renderSubmenu(MenuItem *menu) {
 		if (text.size())
 			_font->drawString(&_gui->_screen, text, x, y, r->width(), color);
 		else
-			Design::drawHLine(&_gui->_screen, r->left, r->right, y + kMenuDropdownItemHeight / 2, 1, kColorBlack, _patterns, 1);
+			Design::drawHLine(&_gui->_screen, r->left, r->right, y + kMenuDropdownItemHeight / 2, 1, kColorBlack, _patterns, 2);
 
 		y += kMenuDropdownItemHeight;
 	}
