@@ -289,7 +289,7 @@ void Menu::renderSubmenu(MenuItem *menu) {
 		}
 
 		int color = kColorBlack;
-		if (i == _activeSubItem) {
+		if (i == _activeSubItem && menu->subitems[_activeSubItem]->text.size()) {
 			color = kColorWhite;
 			Common::Rect trect(r->left, y, r->right, y + kMenuDropdownItemHeight);
 
