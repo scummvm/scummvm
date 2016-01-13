@@ -69,6 +69,7 @@ public:
 private:
 	Gui *_gui;
 	Patterns _patterns;
+	Graphics::Surface _screenCopy;
 
 private:
 	const Graphics::Font *getMenuFont();

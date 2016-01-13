@@ -179,6 +179,8 @@ Menu::Menu(Gui *gui) : _gui(gui) {
 	_menuActivated = false;
 	_activeItem = -1;
 	_activeSubItem = -1;
+
+	_screenCopy.create(_gui->_screen.w, _gui->_screen.h, Graphics::PixelFormat::createFormatCLUT8());
 }
 
 Menu::~Menu() {
@@ -286,6 +288,8 @@ void Menu::renderSubmenu(MenuItem *menu) {
 
 bool Menu::mouseClick(int x, int y) {
 	if (_bbox.contains(x, y)) {
+		_screenCopy.copyFrom(_gui->_screen);
+
 		for (int i = 0; i < _items.size(); i++)
 			if (_items[i]->bbox.contains(x, y)) {
 				if (_activeItem == i)
