@@ -254,7 +254,8 @@ void Menu::render() {
 			Design::drawFilledRect(&_gui->_screen, it->bbox, kColorBlack, _patterns, 1);
 			color = kColorWhite;
 
-			renderSubmenu(it);
+			if (it->subitems.size())
+				renderSubmenu(it);
 		}
 
 		_font->drawString(&_gui->_screen, it->name, it->bbox.left + kMenuLeftMargin, it->bbox.top, it->bbox.width(), color);
