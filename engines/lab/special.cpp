@@ -364,17 +364,17 @@ void LabEngine::processMonitor(const Common::String &ntext, TextFont *monitorFon
 			}
 		}
 
-		// Make sure we check the music at least after every message
 		updateEvents();
+		_graphics->screenUpdate();
+		_system->delayMillis(10);
+
 		IntuiMessage *msg = _event->getMsg();
 		if (shouldQuit()) {
 			_quitLab = true;
 			return;
 		}
 
-		if (!msg)
-			updateEvents();
-		else {
+		if (msg) {
 			MessageClass msgClass  = msg->_msgClass;
 
 			if ((msgClass == kMessageRightClick) ||
