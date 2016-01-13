@@ -108,23 +108,24 @@ struct MenuData {
 	const char *title;
 	int action;
 	byte shortcut;
+	bool enabled;
 } menuSubItems[] = {
-	{ 1, "New",			kMenuActionNew, 0 },
-	{ 1, "Open...",		kMenuActionOpen, 0 },
-	{ 1, "Close",		kMenuActionClose, 0 },
-	{ 1, "Save",		kMenuActionSave, 0 },
-	{ 1, "Save as...",	kMenuActionSaveAs, 0 },
-	{ 1, "Revert",		kMenuActionRevert, 0 },
-	{ 1, "Quit",		kMenuActionQuit, 0 },
+	{ 1, "New",			kMenuActionNew, 0, false },
+	{ 1, "Open...",		kMenuActionOpen, 0, false },
+	{ 1, "Close",		kMenuActionClose, 0, true },
+	{ 1, "Save",		kMenuActionSave, 0, true },
+	{ 1, "Save as...",	kMenuActionSaveAs, 0, true },
+	{ 1, "Revert",		kMenuActionRevert, 0, true },
+	{ 1, "Quit",		kMenuActionQuit, 0, true },
 
-	{ 2, "Undo",		kMenuActionUndo, 'Z' },
-	{ 2, NULL,			0, 0 },
-	{ 2, "Cut",			kMenuActionCut, 'K' },
-	{ 2, "Copy",		kMenuActionCopy, 'C' },
-	{ 2, "Paste",		kMenuActionPaste, 'V' },
-	{ 2, "Clear",		kMenuActionClear, 'B' },
+	{ 2, "Undo",		kMenuActionUndo, 'Z', false },
+	{ 2, NULL,			0, 0, false },
+	{ 2, "Cut",			kMenuActionCut, 'K', false },
+	{ 2, "Copy",		kMenuActionCopy, 'C', false },
+	{ 2, "Paste",		kMenuActionPaste, 'V', false },
+	{ 2, "Clear",		kMenuActionClear, 'B', false },
 
-	{ 0, NULL,			0, 0 }
+	{ 0, NULL,			0, 0, false }
 };
 
 Menu::Menu(Gui *gui) : _gui(gui) {
@@ -144,7 +145,7 @@ Menu::Menu(Gui *gui) : _gui(gui) {
 	for (int i = 0; menuSubItems[i].menunum; i++) {
 		MenuData *m = &menuSubItems[i];
 
-		_items[m->menunum]->subitems.push_back(new MenuSubItem(m->title, m->action, 0, m->shortcut));
+		_items[m->menunum]->subitems.push_back(new MenuSubItem(m->title, m->action, 0, m->shortcut, m->enabled));
 	}
 
 	MenuItem *commands = new MenuItem("Commands");
@@ -294,7 +295,7 @@ void Menu::renderSubmenu(MenuItem *menu) {
 		}
 
 		int color = kColorBlack;
-		if (i == _activeSubItem && text.size()) {
+		if (i == _activeSubItem && text.size() && menu->subitems[i]->enabled) {
 			color = kColorWhite;
 			Common::Rect trect(r->left, y - (_gui->_builtInFonts ? 1 : 0), r->right, y + _font->getFontHeight());
 
