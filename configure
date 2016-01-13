@@ -3906,10 +3906,7 @@ case $_host_os in
 	;;
 
 	darwin*)
-		# TODO: Check actual requirements for static FluidSynth and
-		# dependencies linking. This is currently based on iOS dependencies
-		# which might be different due to less features enabled for iOS.
-		FLUIDSYNTH_STATIC_LIBS="$FLUIDSYNTH_LIBS -framework Foundation -framework CoreMIDI -lglib-2.0 -lintl -liconv"
+		FLUIDSYNTH_STATIC_LIBS="$FLUIDSYNTH_LIBS -framework Foundation -framework CoreMIDI -framework CoreAudio -lglib-2.0 -lintl -liconv -lreadline"
 	;;
 
 	iphone)
@@ -3932,6 +3929,7 @@ EOF
 		FLUIDSYNTH_LIBS="$FLUIDSYNTH_STATIC_LIBS"
 		cc_check_no_clean $FLUIDSYNTH_CFLAGS $FLUIDSYNTH_LIBS && _fluidsynth=yes
 	fi
+	cc_check_clean
 fi
 if test "$_fluidsynth" = yes; then
 	append_var LIBS "$FLUIDSYNTH_LIBS"
