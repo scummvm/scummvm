@@ -396,10 +396,7 @@ void LabEngine::mainGameLoop() {
 		loadGame(ConfMan.getInt("save_slot"));
 
 		// Since the intro hasn't been shown, init the background music here
-		if (getPlatform() != Common::kPlatformAmiga)
-			_music->changeMusic("Music:BackGrou", false, false);
-		else
-			_music->changeMusic("Music:BackGround", false, false);
+		_music->resetMusic(false);
 		_music->checkRoomMusic();
 	}
 

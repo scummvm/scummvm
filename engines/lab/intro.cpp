@@ -238,11 +238,7 @@ void Intro::play() {
 	}
 
 	_vm->_graphics->blackAllScreen();
-	
-	if (_vm->getPlatform() != Common::kPlatformAmiga)
-		_vm->_music->changeMusic("Music:BackGrou", false, false);
-	else
-		_vm->_music->changeMusic("Music:BackGround", false, false);
+	_vm->_music->resetMusic(false);
 
 	if (_vm->getPlatform() == Common::kPlatformDOS)
 		nReadPict("TNDcycle.pic", true, true);

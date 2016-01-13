@@ -68,6 +68,8 @@ public:
 	 */
 	void changeMusic(const Common::String filename, bool storeCurPos, bool seektoStoredPos);
 
+	void resetMusic(bool seekToStoredPos);
+
 	/**
 	 * Checks the music that should be playing in a particular room.
 	 */

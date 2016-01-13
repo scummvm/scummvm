@@ -104,16 +104,12 @@ void Music::checkRoomMusic() {
 	if ((_curRoomMusic == _vm->_roomNum) || !_musicFile)
 		return;
 
-	if (_vm->_roomNum == CLOWNROOM) {
+	if (_vm->_roomNum == CLOWNROOM)
 		changeMusic("Music:Laugh", true, false);
-	} else if (_vm->_roomNum == DIMROOM) {
+	else if (_vm->_roomNum == DIMROOM)
 		changeMusic("Music:Rm81", true, false);
-	} else if (_curRoomMusic == CLOWNROOM || _curRoomMusic == DIMROOM) {
-		if (_vm->getPlatform() != Common::kPlatformAmiga)
-			changeMusic("Music:Backgrou", false, true);
-		else
-			changeMusic("Music:Background", false, true);
-	}
+	else if (_curRoomMusic == CLOWNROOM || _curRoomMusic == DIMROOM)
+		resetMusic(true);
 
 	_curRoomMusic = _vm->_roomNum;
 }
@@ -173,6 +169,13 @@ void Music::readSound(bool waitTillFinished, bool loop, Common::File *file) {
 		} else
 			file->skip(soundSize);
 	}
+}
+
+void Music::resetMusic(bool seektoStoredPos) {
+	if (_vm->getPlatform() != Common::kPlatformAmiga)
+		changeMusic("Music:BackGrou", false, seektoStoredPos);
+	else
+		changeMusic("Music:BackGround", false, seektoStoredPos);
 }
 
 } // End of namespace Lab

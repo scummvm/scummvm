@@ -389,10 +389,7 @@ void LabEngine::doActions(const ActionList &actionList) {
 			break;
 
 		case kActionResetMusic:	// used in scene 45 (sheriff's office, after museum)
-			if (getPlatform() != Common::kPlatformAmiga)
-				_music->changeMusic("Music:BackGrou", false, true);
-			else
-				_music->changeMusic("Music:BackGround", false, true);
+			_music->resetMusic(true);
 			break;
 
 		case kActionFillMusic:
