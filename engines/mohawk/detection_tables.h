@@ -115,7 +115,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 
 	// Myst
 	// Italian Windows ?
-	// From jvprat
+	// From goodoldgeorg in bug #6895
 	{
 		{
 			"myst",
