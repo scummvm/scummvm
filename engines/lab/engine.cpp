@@ -603,7 +603,7 @@ bool LabEngine::processEvent(MessageClass tmpClass, uint16 code, uint16 qualifie
 bool LabEngine::processKey(IntuiMessage *curMsg, uint32 msgClass, uint16 &qualifier, Common::Point &curPos, uint16 &curInv, bool &forceDraw, uint16 code) {
 	if ((getPlatform() == Common::kPlatformWindows) && (code == Common::KEYCODE_b)) {
 		// Start bread crumbs
-		_breadCrumbs[0]._roomNum = 0;
+		_breadCrumbs[0]._crumbRoomNum = 0;
 		_numCrumbs = 0;
 		_droppingCrumbs = true;
 		mayShowCrumbIndicator();
@@ -631,7 +631,7 @@ bool LabEngine::processKey(IntuiMessage *curMsg, uint32 msgClass, uint16 &qualif
 					_graphics->screenUpdate();
 				}
 			} else {
-				_breadCrumbs[0]._roomNum = 0;
+				_breadCrumbs[0]._crumbRoomNum = 0;
 				_droppingCrumbs = false;
 
 				// Need to hide indicator!!!!
@@ -788,13 +788,13 @@ void LabEngine::processMainButton(uint16 &curInv, uint16 &lastInv, uint16 &oldDi
 				_followingCrumbs = false;
 				_droppingCrumbs = false;
 				_numCrumbs = 0;
-				_breadCrumbs[0]._roomNum = 0;
+				_breadCrumbs[0]._crumbRoomNum = 0;
 			} else {
 				bool intersect = false;
 				for (int idx = 0; idx < _numCrumbs; idx++) {
-					if (_breadCrumbs[idx]._roomNum == _roomNum) {
+					if (_breadCrumbs[idx]._crumbRoomNum == _roomNum) {
 						_numCrumbs = idx + 1;
-						_breadCrumbs[_numCrumbs]._roomNum = 0;
+						_breadCrumbs[_numCrumbs]._crumbRoomNum = 0;
 						intersect = true;
 					}
 				}
@@ -805,8 +805,8 @@ void LabEngine::processMainButton(uint16 &curInv, uint16 &lastInv, uint16 &oldDi
 						memcpy(&_breadCrumbs[0], &_breadCrumbs[1], _numCrumbs * sizeof _breadCrumbs[0]);
 					}
 
-					_breadCrumbs[_numCrumbs]._roomNum = _roomNum;
-					_breadCrumbs[_numCrumbs++]._direction = _direction;
+					_breadCrumbs[_numCrumbs]._crumbRoomNum = _roomNum;
+					_breadCrumbs[_numCrumbs++]._crumbDirection = _direction;
 				}
 			}
 		}
@@ -905,7 +905,7 @@ void LabEngine::processAltButton(uint16 &curInv, uint16 &lastInv, uint16 buttonI
 		break;
 
 	case kButtonBreadCrumbs:
-		_breadCrumbs[0]._roomNum = 0;
+		_breadCrumbs[0]._crumbRoomNum = 0;
 		_numCrumbs = 0;
 		_droppingCrumbs = true;
 		mayShowCrumbIndicator();
@@ -930,7 +930,7 @@ void LabEngine::processAltButton(uint16 &curInv, uint16 &lastInv, uint16 buttonI
 				_graphics->drawPanel();
 				drawRoomMessage(curInv, _closeDataPtr);
 			} else {
-				_breadCrumbs[0]._roomNum = 0;
+				_breadCrumbs[0]._crumbRoomNum = 0;
 				_droppingCrumbs = false;
 
 				// Need to hide indicator!!!!
@@ -1056,12 +1056,12 @@ MainButton LabEngine::followCrumbs() {
 	}
 
 	if (!_isCrumbTurning)
-		_breadCrumbs[_numCrumbs--]._roomNum = 0;
+		_breadCrumbs[_numCrumbs--]._crumbRoomNum = 0;
 
 	// Is the current crumb this room? If not, logic error.
-	if (_roomNum != _breadCrumbs[_numCrumbs]._roomNum) {
+	if (_roomNum != _breadCrumbs[_numCrumbs]._crumbRoomNum) {
 		_numCrumbs = 0;
-		_breadCrumbs[0]._roomNum = 0;
+		_breadCrumbs[0]._crumbRoomNum = 0;
 		_droppingCrumbs = false;
 		_followingCrumbs = false;
 		return kButtonNone;
@@ -1069,11 +1069,11 @@ MainButton LabEngine::followCrumbs() {
 
 	Direction exitDir;
 	// which direction is last crumb
-	if (_breadCrumbs[_numCrumbs]._direction == kDirectionEast)
+	if (_breadCrumbs[_numCrumbs]._crumbDirection == kDirectionEast)
 		exitDir = kDirectionWest;
-	else if (_breadCrumbs[_numCrumbs]._direction == kDirectionWest)
+	else if (_breadCrumbs[_numCrumbs]._crumbDirection == kDirectionWest)
 		exitDir = kDirectionEast;
-	else if (_breadCrumbs[_numCrumbs]._direction == kDirectionNorth)
+	else if (_breadCrumbs[_numCrumbs]._crumbDirection == kDirectionNorth)
 		exitDir = kDirectionSouth;
 	else
 		exitDir = kDirectionNorth;
@@ -1082,7 +1082,7 @@ MainButton LabEngine::followCrumbs() {
 
 	if (_numCrumbs == 0) {
 		_isCrumbTurning = false;
-		_breadCrumbs[0]._roomNum = 0;
+		_breadCrumbs[0]._crumbRoomNum = 0;
 		_droppingCrumbs = false;
 		_followingCrumbs = false;
 	} else {

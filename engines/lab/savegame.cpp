@@ -149,8 +149,8 @@ bool LabEngine::saveGame(int slot, const Common::String desc) {
 
 	// Breadcrumbs
 	for (uint i = 0; i < MAX_CRUMBS; i++) {
-		file->writeUint16LE(_breadCrumbs[i]._roomNum);
-		file->writeUint16LE(_breadCrumbs[i]._direction);
+		file->writeUint16LE(_breadCrumbs[i]._crumbRoomNum);
+		file->writeUint16LE(_breadCrumbs[i]._crumbDirection);
 	}
 
 	file->flush();
@@ -186,15 +186,15 @@ bool LabEngine::loadGame(int slot) {
 
 	// Breadcrumbs
 	for (int i = 0; i < MAX_CRUMBS; i++) {
-		_breadCrumbs[i]._roomNum = file->readUint16LE();
-		_breadCrumbs[i]._direction = file->readUint16LE();
+		_breadCrumbs[i]._crumbRoomNum = file->readUint16LE();
+		_breadCrumbs[i]._crumbDirection = file->readUint16LE();
 	}
 
-	_droppingCrumbs = (_breadCrumbs[0]._roomNum != 0);
+	_droppingCrumbs = (_breadCrumbs[0]._crumbRoomNum != 0);
 	_followingCrumbs = false;
 
 	for (int i = 0; i < MAX_CRUMBS; i++) {
-		if (_breadCrumbs[i]._roomNum == 0)
+		if (_breadCrumbs[i]._crumbRoomNum == 0)
 			break;
 		_numCrumbs = i;
 	}

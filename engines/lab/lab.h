@@ -81,8 +81,8 @@ enum GameFeatures {
 typedef Common::List<Button *> ButtonList;
 
 struct CrumbData {
-	uint16 _roomNum;
-	uint16 _direction;
+	uint16 _crumbRoomNum;
+	uint16 _crumbDirection;
 };
 
 #define MAX_CRUMBS          128
