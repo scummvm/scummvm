@@ -171,7 +171,7 @@ bool LabEngine::loadGame(int slot) {
 	SaveGameHeader header;
 	readSaveGameHeader(file, header);
 	_roomNum = file->readUint16LE();
-	setDirection(file->readUint16LE());
+	_direction = file->readUint16LE();
 	setQuarters(file->readUint16LE());
 
 	// Conditions
