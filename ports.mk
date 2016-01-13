@@ -247,10 +247,16 @@ endif
 
 ifdef USE_FLUIDSYNTH
 OSX_STATIC_LIBS += \
-                -liconv -lreadline -framework CoreMIDI -framework CoreAudio\
+                -liconv -framework CoreMIDI -framework CoreAudio\
                 $(STATICLIBPATH)/lib/libfluidsynth.a \
                 $(STATICLIBPATH)/lib/libglib-2.0.a \
                 $(STATICLIBPATH)/lib/libintl.a
+
+ifneq ($(BACKEND), iphone)
+ifneq ($(BACKEND), ios7)
+OSX_STATIC_LIBS += -lreadline
+endif
+endif
 endif
 
 ifdef USE_MAD
