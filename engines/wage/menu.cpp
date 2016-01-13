@@ -137,7 +137,7 @@ Menu::Menu(Gui *gui) : _gui(gui) {
 	for (int i = 0; menuSubItems[i].menunum; i++) {
 		MenuData *m = &menuSubItems[i];
 
-		_items[m->menunum]->subitems.push_back(new MenuSubItem(m->title, m->action, m->shortcut));
+		_items[m->menunum]->subitems.push_back(new MenuSubItem(m->title, m->action, 0, m->shortcut));
 	}
 
 	MenuItem *commands = new MenuItem("Commands");
@@ -200,7 +200,7 @@ const char *Menu::getAcceleratorString(MenuSubItem *item) {
 	*res = 0;
 
 	if (item->shortcut != 0)
-		sprintf(res, "      \u2318%c", item->shortcut);
+		sprintf(res, "      \x11%c", item->shortcut);
 
 	return res;
 }
@@ -282,7 +282,12 @@ void Menu::renderSubmenu(MenuItem *menu) {
 	int x = r->left + kMenuDropdownPadding;
 	int y = r->top;
 	for (int i = 0; i < menu->subitems.size(); i++) {
-		_font->drawString(&_gui->_screen, menu->subitems[i]->text, x, y, r->width(), kColorBlack);
+		Common::String text(menu->subitems[i]->text);
+		Common::String acceleratorText(getAcceleratorString(menu->subitems[i]));
+		if (acceleratorText.size()) {
+			text += acceleratorText;
+		}
+		_font->drawString(&_gui->_screen, text, x, y, r->width(), kColorBlack);
 
 		y += kMenuDropdownItemHeight;
 	}
