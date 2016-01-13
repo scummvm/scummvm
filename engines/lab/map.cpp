@@ -541,12 +541,13 @@ void LabEngine::doMap() {
 	_event->mouseShow();
 	_graphics->screenUpdate();
 	processMap(_roomNum);
+	_event->mouseHide();
 	_event->attachButtonList(nullptr);
 	_graphics->fade(false);
 	_graphics->blackAllScreen();
 	_graphics->rectFill(0, 0, _graphics->_screenWidth - 1, _graphics->_screenHeight - 1, 0);
 	freeMapData();
-	_graphics->blackAllScreen();
+	_event->mouseShow();
 	_graphics->screenUpdate();
 }
 
