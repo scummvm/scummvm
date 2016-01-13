@@ -114,6 +114,24 @@ static const MohawkGameDescription gameDescriptions[] = {
 	},
 
 	// Myst
+	// Italian Windows ?
+	// From jvprat
+	{
+		{
+			"myst",
+			"",
+			AD_ENTRY1("MYST.DAT", "a5795ce1751fc42525e4f9a1859181d5"),
+			Common::IT_ITA,
+			Common::kPlatformWindows,
+			ADGF_UNSTABLE,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_MYST,
+		0,
+		0,
+	},
+
+	// Myst
 	// Japanese Windows 3.11
 	// From clone2727
 	{
