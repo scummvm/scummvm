@@ -72,6 +72,8 @@ public:
 	static void drawRect(Graphics::Surface *surface, Common::Rect &rect, int thickness, int color, Patterns &patterns, byte fillType);
 	static void drawFilledRect(Graphics::Surface *surface, Common::Rect &rect, int color, Patterns &patterns, byte fillType);
 	static void drawFilledRoundRect(Graphics::Surface *surface, Common::Rect &rect, int arc, int color, Patterns &patterns, byte fillType);
+	static void drawHLine(Graphics::Surface *surface, int x1, int x2, int y, int thickness, int color, Patterns &patterns, byte fillType);
+	static void drawVLine(Graphics::Surface *surface, int x, int y1, int y2, int thickness, int color, Patterns &patterns, byte fillType);
 
 
 private:

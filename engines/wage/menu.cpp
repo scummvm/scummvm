@@ -274,6 +274,10 @@ void Menu::renderSubmenu(MenuItem *menu) {
 
 	Design::drawFilledRect(&_gui->_screen, *r, kColorWhite, _patterns, 1);
 	Design::drawRect(&_gui->_screen, *r, 1, kColorBlack, _patterns, 1);
+	Design::drawVLine(&_gui->_screen, r->right + 1, r->top + 2, r->bottom + 2, 1, kColorBlack, _patterns, 1);
+	Design::drawVLine(&_gui->_screen, r->right + 2, r->top + 2, r->bottom + 2, 1, kColorBlack, _patterns, 1);
+	Design::drawHLine(&_gui->_screen, r->left + 3, r->right + 2, r->bottom + 1, 1, kColorBlack, _patterns, 1);
+	Design::drawHLine(&_gui->_screen, r->left + 3, r->right + 2, r->bottom + 2, 1, kColorBlack, _patterns, 1);
 
 	int x = r->left + kMenuDropdownPadding;
 	int y = r->top;
@@ -283,7 +287,7 @@ void Menu::renderSubmenu(MenuItem *menu) {
 		y += kMenuDropdownItemHeight;
 	}
 
-	g_system->copyRectToScreen(_gui->_screen.getBasePtr(r->left, r->top), _gui->_screen.pitch, r->left, r->top, r->width() + 1, r->height() + 1);
+	g_system->copyRectToScreen(_gui->_screen.getBasePtr(r->left, r->top), _gui->_screen.pitch, r->left, r->top, r->width() + 3, r->height() + 3);
 }
 
 bool Menu::mouseClick(int x, int y) {
@@ -296,11 +300,13 @@ bool Menu::mouseClick(int x, int y) {
 				if (_activeItem == i)
 					return false;
 
-				if (_activeItem != -1) {
-					Common::Rect *r = &_items[_activeItem]->subbbox;
+				if (_activeItem != -1) { // Restore background
+					Common::Rect r(_items[_activeItem]->subbbox);
+					r.right += 3;
+					r.bottom += 3;
 
-					_gui->_screen.copyRectToSurface(_screenCopy, r->left, r->top, *r);
-					g_system->copyRectToScreen(_gui->_screen.getBasePtr(r->left, r->top), _gui->_screen.pitch, r->left, r->top, r->width() + 1, r->height() + 1);
+					_gui->_screen.copyRectToSurface(_screenCopy, r.left, r.top, r);
+					g_system->copyRectToScreen(_gui->_screen.getBasePtr(r.left, r.top), _gui->_screen.pitch, r.left, r.top, r.width() + 1, r.height() + 1);
 				}
 
 				_activeItem = i;

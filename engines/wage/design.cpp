@@ -661,12 +661,24 @@ void Design::drawEllipse(int x0, int y0, int x1, int y1, bool filled, void (*plo
 	}
 }
 
+void Design::drawHLine(Graphics::Surface *surface, int x1, int x2, int y, int thickness, int color, Patterns &patterns, byte fillType) {
+	plotData pd(surface, &patterns, fillType, thickness);
+
+	drawHLine(x1, x2, y, color, drawPixel, &pd);
+}
+
 void Design::drawHLine(int x1, int x2, int y, int color, void (*plotProc)(int, int, int, void *), void *data) {
 	if (x1 > x2)
 		SWAP(x1, x2);
 
 	for (int x = x1; x <= x2; x++)
 		(*plotProc)(x, y, color, data);
+}
+
+void Design::drawVLine(Graphics::Surface *surface, int x, int y1, int y2, int thickness, int color, Patterns &patterns, byte fillType) {
+	plotData pd(surface, &patterns, fillType, thickness);
+
+	drawVLine(x, y1, y2, color, drawPixel, &pd);
 }
 
 void Design::drawVLine(int x, int y1, int y2, int color, void (*plotProc)(int, int, int, void *), void *data) {
