@@ -695,15 +695,16 @@ static SciKernelMapEntry s_kernelMap[] = {
 	// MovePlaneItems - used by SQ6 to scroll through the inventory via the up/down buttons
 	// SetPalStyleRange - 2 integer parameters, start and end. All styles from start-end
 	//   (inclusive) are set to 0
-	{ MAP_CALL(SetPalStyleRange),  SIG_EVERYWHERE,            "ii",                   NULL,            NULL },
+	{ MAP_CALL(SetPalStyleRange),   SIG_EVERYWHERE,           "ii",                   NULL,            NULL },
 
 	// MorphOn - used by SQ6, script 900, the datacorder reprogramming puzzle (from room 270)
+	{ MAP_CALL(MorphOn),            SIG_EVERYWHERE,           "",                     NULL,            NULL },
 
 	// SCI3 Kernel Functions
-	{ MAP_CALL(PlayDuck),         SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+	{ MAP_CALL(PlayDuck),           SIG_EVERYWHERE,           "(.*)",                 NULL,            NULL },
 #endif
 
-	{ NULL, NULL,                  SIG_EVERYWHERE,           NULL,                    NULL,            NULL }
+	{ NULL, NULL,                   SIG_EVERYWHERE,           NULL,                   NULL,            NULL }
 };
 
 /** Default kernel name table. */
