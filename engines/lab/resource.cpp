@@ -154,9 +154,9 @@ Common::String Resource::translateFileName(const Common::String filename) {
 
 	if (upperFilename.hasPrefix("P:") || upperFilename.hasPrefix("F:")) {
 		if (_vm->_isHiRes)
-			fileNameStrFinal = "GAME/SPICT/";
+			fileNameStrFinal = "SPICT/";
 		else
-			fileNameStrFinal = "GAME/PICT/";
+			fileNameStrFinal = "PICT/";
 
 		if (_vm->getPlatform() == Common::kPlatformAmiga) {
 			if (upperFilename.hasPrefix("P:")) {
@@ -167,13 +167,9 @@ Common::String Resource::translateFileName(const Common::String filename) {
 			}
 		}
 	} else if (upperFilename.hasPrefix("LAB:")) {
-		if (_vm->getPlatform() != Common::kPlatformAmiga)
-			fileNameStrFinal = "GAME/";
+		// Look inside the game folder
 	} else if (upperFilename.hasPrefix("MUSIC:")) {
-		if (_vm->getPlatform() != Common::kPlatformAmiga)
-			fileNameStrFinal = "GAME/MUSIC/";
-		else
-			fileNameStrFinal = "MUSIC/";
+		fileNameStrFinal = "MUSIC/";
 	}
 
 	if (upperFilename.contains(':')) {

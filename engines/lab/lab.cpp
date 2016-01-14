@@ -28,6 +28,7 @@
  *
  */
 
+#include "common/config-manager.h"
 #include "common/debug-channels.h"
 #include "common/error.h"
 
@@ -129,6 +130,9 @@ LabEngine::LabEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	for (int i = 0; i < 20; i++)
 		_highPalette[i] = 0;
 	_introPlaying = false;
+
+	const Common::FSNode gameDataDir(ConfMan.get("path"));
+	SearchMan.addSubDirectoryMatching(gameDataDir, "game", 0, 4);
 }
 
 LabEngine::~LabEngine() {
@@ -172,7 +176,7 @@ Common::Error LabEngine::run() {
 		// Check if this is the Wyrmkeep trial
 		Common::File roomFile;
 		bool knownVersion = true;
-		bool roomFileOpened = roomFile.open("game/rooms/48");
+		bool roomFileOpened = roomFile.open("rooms/48");
 
 		if (!roomFileOpened)
 			knownVersion = false;
