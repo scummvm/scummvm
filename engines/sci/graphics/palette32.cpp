@@ -95,7 +95,7 @@ void GfxPalette32::submit(Palette &palette) {
 	palette.timestamp = _version;
 }
 
-override bool GfxPalette32::kernelSetFromResource(GuiResourceId resourceId, bool force) {
+bool GfxPalette32::kernelSetFromResource(GuiResourceId resourceId, bool force) {
 	// TODO: In SCI32, palettes that come from resources come in as
 	// HunkPalette objects, not SOLPalette objects. The HunkPalettes
 	// have some extra persistence stuff associated with them, such that
@@ -113,7 +113,7 @@ override bool GfxPalette32::kernelSetFromResource(GuiResourceId resourceId, bool
 
 // In SCI32 engine this method is SOLPalette::Match(Rgb24 *)
 // and is called as PaletteMgr.Current().Match(color)
-override int16 GfxPalette32::kernelFindColor(uint16 r, uint16 g, uint16 b) {
+int16 GfxPalette32::kernelFindColor(uint16 r, uint16 g, uint16 b) {
 	// SQ6 SCI32 engine takes the 16-bit r, g, b arguments from the
 	// VM and puts them into al, ah, dl. For compatibility, make sure
 	// to discard any high bits here too
@@ -158,7 +158,7 @@ override int16 GfxPalette32::kernelFindColor(uint16 r, uint16 g, uint16 b) {
 // GfxPalette::set is very similar to GfxPalette32::submit, except that SCI32
 // does not do any fancy best-fit merging and so does not accept arguments
 // like `force` and `forceRealMerge`.
-override void GfxPalette32::set(Palette *newPalette, bool force, bool forceRealMerge) {
+void GfxPalette32::set(Palette *newPalette, bool force, bool forceRealMerge) {
 	submit(*newPalette);
 }
 
@@ -371,7 +371,7 @@ void GfxPalette32::kernelPalVaryMergeStart(GuiResourceId paletteId) {
 	mergeStart(&palette);
 }
 
-override void GfxPalette32::kernelPalVaryPause(bool pause) {
+void GfxPalette32::kernelPalVaryPause(bool pause) {
 	if (pause) {
 		varyPause();
 	} else {
@@ -492,7 +492,7 @@ void GfxPalette32::mergeStart(const Palette *const palette) {
 }
 
 void GfxPalette32::applyVary() {
-	while (g_sci->getTickCount() - _varyLastTick > _varyTime && _varyDirection != 0) {
+	while (g_sci->getTickCount() - _varyLastTick > (uint32)_varyTime && _varyDirection != 0) {
 		_varyLastTick += _varyTime;
 
 		if (_varyPercent == _varyTargetPercent) {

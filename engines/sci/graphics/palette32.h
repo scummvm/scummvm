@@ -198,11 +198,11 @@ namespace Sci {
 		void submit(Palette &palette);
 
 	public:
-		override virtual void saveLoadWithSerializer(Common::Serializer &s);
+		virtual void saveLoadWithSerializer(Common::Serializer &s) override;
 
-		override virtual bool kernelSetFromResource(GuiResourceId resourceId, bool force);
-		override virtual int16 kernelFindColor(const uint16 r, const uint16 g, const uint16 b);
-		override virtual void set(Palette *newPalette, bool force, bool forceRealMerge = false);
+		bool kernelSetFromResource(GuiResourceId resourceId, bool force) override;
+		int16 kernelFindColor(uint16 r, uint16 g, uint16 b) override;
+		void set(Palette *newPalette, bool force, bool forceRealMerge = false) override;
 		int16 matchColor(const byte matchRed, const byte matchGreen, const byte matchBlue, const int defaultDifference, int &lastCalculatedDifference, const bool *const matchTable);
 
 		void updateForFrame();
@@ -218,7 +218,7 @@ namespace Sci {
 		void kernelPalVarySetTarget(const GuiResourceId paletteId);
 		void kernelPalVarySetStart(const GuiResourceId paletteId);
 		void kernelPalVaryMergeStart(const GuiResourceId paletteId);
-		override virtual void kernelPalVaryPause(const bool pause);
+		virtual void kernelPalVaryPause(bool pause) override;
 
 		void setVary(const Palette *const targetPalette, const int16 percent, const int time, const int16 fromColor, const int16 toColor);
 		void setVaryPercent(const int16 percent, const int time, const int16 fromColor, const int16 fromColorAlternate);
