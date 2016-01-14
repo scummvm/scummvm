@@ -87,7 +87,6 @@ void DisplayMan::loadBackPict(const Common::String fileName, uint16 *highPal) {
 void DisplayMan::readPict(const Common::String filename, bool playOnce, bool onlyDiffData, byte *memoryBuffer) {
 	_vm->_anim->stopDiff();
 	loadPict(filename);
-	_vm->updateEvents();
 	_vm->_anim->setOutputBuffer(memoryBuffer);
 	_vm->_anim->readDiff(_curBitmap, playOnce, onlyDiffData);
 }
