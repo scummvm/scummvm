@@ -38,8 +38,9 @@ class XRCReadStream;
 
 namespace Resources {
 
-class Layer;
 class ItemVisual;
+class Layer;
+class ModelItem;
 
 /**
  * A location is a scene of the game
@@ -116,8 +117,8 @@ protected:
 
 private:
 	bool scrollToSmooth(const Common::Point &position, bool followCharacter);
-	bool scrollToCharacter();
-	Common::Point getCharacterScrollPosition();
+	bool scrollToCharacter(ModelItem *item);
+	Common::Point getCharacterScrollPosition(ModelItem *item);
 	uint getScrollStepFollow();
 	Common::Point getScrollPointFromCoordinate(uint32 coordinate) const;
 

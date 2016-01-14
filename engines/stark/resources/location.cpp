@@ -25,6 +25,8 @@
 #include "engines/stark/formats/xrc.h"
 #include "engines/stark/gfx/driver.h"
 
+#include "engines/stark/movement/movement.h"
+
 #include "engines/stark/resources/item.h"
 #include "engines/stark/resources/layer.h"
 #include "engines/stark/resources/scroll.h"
@@ -63,8 +65,11 @@ void Location::onGameLoop() {
 	}
 
 	if (_scrollFollowCharacter) {
-		bool complete = scrollToCharacter();
-		if (complete) {
+		ModelItem *april = StarkGlobal->getCurrent()->getInteractive();
+		Movement *movement = april->getMovement();
+
+		bool scrollComplete = scrollToCharacter(april);
+		if (scrollComplete && (!movement || movement->hasEnded())) {
 			_scrollFollowCharacter = false;
 		}
 	}
@@ -142,10 +147,9 @@ void Location::setScrollPosition(const Common::Point &position) {
 	StarkScene->scrollCamera(viewport);
 }
 
-Common::Point Location::getCharacterScrollPosition() {
+Common::Point Location::getCharacterScrollPosition(ModelItem *item) {
 	// TODO: Use April's 2D bounding box
-	ModelItem *april = StarkGlobal->getCurrent()->getInteractive();
-	Common::Point position2D = StarkScene->convertPosition3DToScreen(april->getPosition3D());
+	Common::Point position2D = StarkScene->convertPosition3DToScreen(item->getPosition3D());
 
 	Common::Point newScroll;
 	if (_maxScroll.x > 0) {
@@ -159,12 +163,12 @@ Common::Point Location::getCharacterScrollPosition() {
 	return newScroll;
 }
 
-bool Location::scrollToCharacter() {
+bool Location::scrollToCharacter(ModelItem *item) {
 	if (!_canScroll) {
 		return true;
 	}
 
-	Common::Point newScroll = getCharacterScrollPosition();
+	Common::Point newScroll = getCharacterScrollPosition(item);
 	if (_maxScroll.x > 0) {
 		if (newScroll.x < _scroll.x - 15 || newScroll.x > _scroll.x + 15) {
 			newScroll.x = CLIP<int16>(newScroll.x, 0, _maxScroll.x);
@@ -185,7 +189,8 @@ void Location::scrollToCharacterImmediate() {
 		return;
 	}
 
-	setScrollPosition(getCharacterScrollPosition());
+	ModelItem *april = StarkGlobal->getCurrent()->getInteractive();
+	setScrollPosition(getCharacterScrollPosition(april));
 }
 
 uint Location::getScrollStepFollow() {
