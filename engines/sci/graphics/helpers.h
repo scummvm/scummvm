@@ -121,6 +121,15 @@ struct Window : public Port, public Common::Serializable {
 struct Color {
 	byte used;
 	byte r, g, b;
+
+#ifdef ENABLE_SCI32
+	bool operator==(const Color &other) const {
+		return used == other.used && r == other.r && g == other.g && b == other.b;
+	}
+	inline bool operator!=(const Color &other) const {
+		return !(*this == other);
+	}
+#endif
 };
 
 struct Palette {
@@ -128,6 +137,21 @@ struct Palette {
 	uint32 timestamp;
 	Color colors[256];
 	byte intensity[256];
+
+#ifdef ENABLE_SCI32
+	bool operator==(const Palette &other) const {
+		for (int i = 0; i < ARRAYSIZE(colors); ++i) {
+			if (colors[i] != other.colors[i]) {
+				return false;
+			}
+		}
+
+		return false;
+	}
+	inline bool operator!=(const Palette &other) const {
+		return !(*this == other);
+	}
+#endif
 };
 
 struct PalSchedule {

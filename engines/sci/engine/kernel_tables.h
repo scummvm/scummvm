@@ -201,31 +201,42 @@ static const SciKernelMapSubEntry kGraph_subops[] = {
 
 //    version,         subId, function-mapping,                    signature,              workarounds
 static const SciKernelMapSubEntry kPalVary_subops[] = {
-	{ SIG_SINCE_SCI21,     0, MAP_CALL(PalVaryInit),               "ii(i)(i)(i)",          NULL },
-	{ SIG_SCIALL,          0, MAP_CALL(PalVaryInit),               "ii(i)(i)",             NULL },
-	{ SIG_SCIALL,          1, MAP_CALL(PalVaryReverse),            "(i)(i)(i)",            NULL },
-	{ SIG_SCIALL,          2, MAP_CALL(PalVaryGetCurrentStep),     "",                     NULL },
-	{ SIG_SCIALL,          3, MAP_CALL(PalVaryDeinit),             "",                     NULL },
-	{ SIG_SCIALL,          4, MAP_CALL(PalVaryChangeTarget),       "i",                    NULL },
-	{ SIG_SCIALL,          5, MAP_CALL(PalVaryChangeTicks),        "i",                    NULL },
-	{ SIG_SCIALL,          6, MAP_CALL(PalVaryPauseResume),        "i",                    NULL },
+	{ SIG_SCI16,           0, MAP_CALL(PalVaryInit),               "ii(i)(i)",             NULL },
+	{ SIG_SCI16,           1, MAP_CALL(PalVaryReverse),            "(i)(i)(i)",            NULL },
+	{ SIG_SCI16,           2, MAP_CALL(PalVaryGetCurrentStep),     "",                     NULL },
+	{ SIG_SCI16,           3, MAP_CALL(PalVaryDeinit),             "",                     NULL },
+	{ SIG_SCI16,           4, MAP_CALL(PalVaryChangeTarget),       "i",                    NULL },
+	{ SIG_SCI16,           5, MAP_CALL(PalVaryChangeTicks),        "i",                    NULL },
+	{ SIG_SCI16,           6, MAP_CALL(PalVaryPauseResume),        "i",                    NULL },
 #ifdef ENABLE_SCI32
-	{ SIG_SCI32,           8, MAP_CALL(PalVaryUnknown),            "i",                    NULL },
-	{ SIG_SCI32,           9, MAP_CALL(PalVaryUnknown2),           "i",                    NULL },
+	{ SIG_SCI32,           0, MAP_CALL(PalVarySetVary),            "i(i)(i)(ii)",          NULL },
+	{ SIG_SCI32,           1, MAP_CALL(PalVarySetPercent),         "(i)(i)",               NULL },
+	{ SIG_SCI32,           2, MAP_CALL(PalVaryGetPercent),         "",                     NULL },
+	{ SIG_SCI32,           3, MAP_CALL(PalVaryOff),                "",                     NULL },
+	{ SIG_SCI32,           4, MAP_CALL(PalVaryMergeTarget),        "i",                    NULL },
+	{ SIG_SCI32,           5, MAP_CALL(PalVarySetTime),            "i",                    NULL },
+	{ SIG_SCI32,           6, MAP_CALL(PalVaryPauseResume),        "i",                    NULL },
+	{ SIG_SCI32,           7, MAP_CALL(PalVarySetTarget),          "i",                    NULL },
+	{ SIG_SCI32,           8, MAP_CALL(PalVarySetStart),           "i",                    NULL },
+	{ SIG_SCI32,           9, MAP_CALL(PalVaryMergeStart),         "i",                    NULL },
 #endif
 	SCI_SUBOPENTRY_TERMINATOR
 };
 
 //    version,         subId, function-mapping,                    signature,              workarounds
 static const SciKernelMapSubEntry kPalette_subops[] = {
-	{ SIG_SCIALL,          1, MAP_CALL(PaletteSetFromResource),    "i(i)",                 NULL },
-	{ SIG_SCIALL,          2, MAP_CALL(PaletteSetFlag),            "iii",                  NULL },
-	{ SIG_SCIALL,          3, MAP_CALL(PaletteUnsetFlag),          "iii",                  kPaletteUnsetFlag_workarounds },
-	{ SIG_SCIALL,          4, MAP_CALL(PaletteSetIntensity),       "iii(i)",               NULL },
-	{ SIG_SCIALL,          5, MAP_CALL(PaletteFindColor),          "iii",                  NULL },
-	{ SIG_SCIALL,          6, MAP_CALL(PaletteAnimate),            "i*",                   NULL },
-	{ SIG_SCIALL,          7, MAP_CALL(PaletteSave),               "",                     NULL },
-	{ SIG_SCIALL,          8, MAP_CALL(PaletteRestore),            "[r0]",                 NULL },
+	{ SIG_SCIALL,         1, MAP_CALL(PaletteSetFromResource),    "i(i)",                 NULL },
+	{ SIG_SCI16,          2, MAP_CALL(PaletteSetFlag),            "iii",                  NULL },
+	{ SIG_SCI16,          3, MAP_CALL(PaletteUnsetFlag),          "iii",                  kPaletteUnsetFlag_workarounds },
+#ifdef ENABLE_SCI32
+	{ SIG_SCI32,          2, MAP_CALL(PaletteSetFade),            "iii",                  NULL },
+	{ SIG_SCI32,          3, MAP_CALL(PaletteFindColor),          "iii",                  NULL },
+#endif
+	{ SIG_SCI16,          4, MAP_CALL(PaletteSetIntensity),       "iii(i)",               NULL },
+	{ SIG_SCI16,          5, MAP_CALL(PaletteFindColor),          "iii",                  NULL },
+	{ SIG_SCI16,          6, MAP_CALL(PaletteAnimate),            "i*",                   NULL },
+	{ SIG_SCI16,          7, MAP_CALL(PaletteSave),               "",                     NULL },
+	{ SIG_SCI16,          8, MAP_CALL(PaletteRestore),            "[r0]",                 NULL },
 	SCI_SUBOPENTRY_TERMINATOR
 };
 
@@ -695,15 +706,15 @@ static SciKernelMapEntry s_kernelMap[] = {
 	// MovePlaneItems - used by SQ6 to scroll through the inventory via the up/down buttons
 	// SetPalStyleRange - 2 integer parameters, start and end. All styles from start-end
 	//   (inclusive) are set to 0
-	{ MAP_CALL(SetPalStyleRange),  SIG_EVERYWHERE,            "ii",                   NULL,            NULL },
+	{ MAP_CALL(SetPalStyleRange),   SIG_EVERYWHERE,           "ii",                   NULL,            NULL },
 
-	// MorphOn - used by SQ6, script 900, the datacorder reprogramming puzzle (from room 270)
+	{ MAP_CALL(MorphOn),            SIG_EVERYWHERE,           "",                     NULL,            NULL },
 
 	// SCI3 Kernel Functions
-	{ MAP_CALL(PlayDuck),         SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+	{ MAP_CALL(PlayDuck),           SIG_EVERYWHERE,           "(.*)",                 NULL,            NULL },
 #endif
 
-	{ NULL, NULL,                  SIG_EVERYWHERE,           NULL,                    NULL,            NULL }
+	{ NULL, NULL,                   SIG_EVERYWHERE,           NULL,                   NULL,            NULL }
 };
 
 /** Default kernel name table. */

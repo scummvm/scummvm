@@ -748,12 +748,11 @@ void GfxFrameout::kernelFrameout() {
 		return;
 	}
 
-	_palette->palVaryUpdate();
-	_palette->applyCycles();
-	_palette->applyFade();
-	// TODO: This should probably not require screen pic invalidation
-	_screen->_picNotValid = 1;
-	_palette->setOnScreen();
+	_palette->updateForFrame();
+
+	// TODO: Tons of drawing stuff should be here, see commented out implementation above
+
+	_palette->updateHardware();
 
 	for (PlaneList::iterator it = _planes.begin(); it != _planes.end(); it++) {
 		reg_t planeObject = it->object;

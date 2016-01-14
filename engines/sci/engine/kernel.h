@@ -474,10 +474,19 @@ reg_t kMakeSaveCatName(EngineState *s, int argc, reg_t *argv);
 reg_t kMakeSaveFileName(EngineState *s, int argc, reg_t *argv);
 reg_t kSetScroll(EngineState *s, int argc, reg_t *argv);
 reg_t kPalCycle(EngineState *s, int argc, reg_t *argv);
-reg_t kPalVaryUnknown(EngineState *s, int argc, reg_t *argv);
-reg_t kPalVaryUnknown2(EngineState *s, int argc, reg_t *argv);
+reg_t kPaletteSetFade(EngineState *s, int argc, reg_t *argv);
+reg_t kPalVarySetVary(EngineState *s, int argc, reg_t *argv);
+reg_t kPalVarySetPercent(EngineState *s, int argc, reg_t *argv);
+reg_t kPalVaryGetPercent(EngineState *s, int argc, reg_t *argv);
+reg_t kPalVaryOff(EngineState *s, int argc, reg_t *argv);
+reg_t kPalVaryMergeTarget(EngineState *s, int argc, reg_t *argv);
+reg_t kPalVarySetTime(EngineState *s, int argc, reg_t *argv);
+reg_t kPalVarySetTarget(EngineState *s, int argc, reg_t *argv);
+reg_t kPalVarySetStart(EngineState *s, int argc, reg_t *argv);
+reg_t kPalVaryMergeStart(EngineState *s, int argc, reg_t *argv);
 
 // SCI2.1 Kernel Functions
+reg_t kMorphOn(EngineState *s, int argc, reg_t *argv);
 reg_t kText(EngineState *s, int argc, reg_t *argv);
 reg_t kSave(EngineState *s, int argc, reg_t *argv);
 reg_t kAutoSave(EngineState *s, int argc, reg_t *argv);

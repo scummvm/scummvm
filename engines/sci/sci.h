@@ -237,6 +237,7 @@ public:
 	bool canSaveGameStateCurrently();
 	void syncSoundSettings();
 	uint32 getTickCount();
+	void setTickCount(const uint32 ticks);
 
 	/**
 	 * Syncs the audio options of the ScummVM launcher (speech, subtitles or

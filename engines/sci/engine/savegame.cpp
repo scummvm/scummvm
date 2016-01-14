@@ -47,6 +47,7 @@
 #include "sci/sound/music.h"
 
 #ifdef ENABLE_SCI32
+#include "sci/graphics/palette32.h"
 #include "sci/graphics/frameout.h"
 #endif
 
@@ -272,7 +273,11 @@ static void sync_SavegameMetadata(Common::Serializer &s, SavegameMetadata &obj) 
 		if (s.getVersion() >= 26)
 			s.syncAsUint32LE(obj.playTime);
 	} else {
-		obj.playTime = g_engine->getTotalPlayTime() / 1000;
+		if (s.getVersion() >= 34) {
+			obj.playTime = g_sci->getTickCount();
+		} else {
+			obj.playTime = g_engine->getTotalPlayTime() / 1000;
+		}
 		s.syncAsUint32LE(obj.playTime);
 	}
 }
@@ -304,6 +309,7 @@ void EngineState::saveLoadWithSerializer(Common::Serializer &s) {
 	_segMan->saveLoadWithSerializer(s);
 
 	g_sci->_soundCmd->syncPlayList(s);
+	// NOTE: This will be GfxPalette32 for SCI32 engine games
 	g_sci->_gfxPalette16->saveLoadWithSerializer(s);
 }
 
@@ -721,6 +727,91 @@ void GfxPalette::saveLoadWithSerializer(Common::Serializer &s) {
 	}
 }
 
+#ifdef ENABLE_SCI32
+void saveLoadPalette32(Common::Serializer &s, Palette *const palette) {
+	s.syncAsUint32LE(palette->timestamp);
+	for (int i = 0; i < ARRAYSIZE(palette->colors); ++i) {
+		s.syncAsByte(palette->colors[i].used);
+		s.syncAsByte(palette->colors[i].r);
+		s.syncAsByte(palette->colors[i].g);
+		s.syncAsByte(palette->colors[i].b);
+	}
+}
+
+void saveLoadOptionalPalette32(Common::Serializer &s, Palette **const palette) {
+	bool hasPalette;
+	if (s.isSaving()) {
+		hasPalette = (*palette != nullptr);
+	}
+	s.syncAsByte(hasPalette);
+	if (hasPalette) {
+		if (s.isLoading()) {
+			*palette = new Palette;
+		}
+		saveLoadPalette32(s, *palette);
+	}
+}
+
+void GfxPalette32::saveLoadWithSerializer(Common::Serializer &s) {
+	if (s.getVersion() < 34) {
+		return;
+	}
+
+	if (s.isLoading()) {
+		++_version;
+	}
+
+	s.syncAsSint16LE(_varyDirection);
+	s.syncAsSint16LE(_varyPercent);
+	s.syncAsSint16LE(_varyTargetPercent);
+	s.syncAsSint16LE(_varyFromColor);
+	s.syncAsSint16LE(_varyToColor);
+	s.syncAsUint16LE(_varyNumTimesPaused);
+	s.syncAsByte(_versionUpdated);
+	s.syncAsSint32LE(_varyTime);
+	s.syncAsUint32LE(_varyLastTick);
+
+	for (int i = 0; i < ARRAYSIZE(_fadeTable); ++i) {
+		s.syncAsByte(_fadeTable[i]);
+	}
+	for (int i = 0; i < ARRAYSIZE(_cycleMap); ++i) {
+		s.syncAsByte(_cycleMap[i]);
+	}
+
+	saveLoadOptionalPalette32(s, &_varyTargetPalette);
+	saveLoadOptionalPalette32(s, &_varyStartPalette);
+	// NOTE: _sourcePalette and _nextPalette are not saved
+	// by SCI engine
+
+	for (int i = 0; i < ARRAYSIZE(_cyclers); ++i) {
+		PalCycler *cycler;
+
+		bool hasCycler;
+		if (s.isSaving()) {
+			cycler = _cyclers[i];
+			hasCycler = (cycler != nullptr);
+		}
+		s.syncAsByte(hasCycler);
+
+		if (hasCycler) {
+			if (s.isLoading()) {
+				_cyclers[i] = cycler = new PalCycler;
+			}
+
+			s.syncAsByte(cycler->fromColor);
+			s.syncAsUint16LE(cycler->numColorsToCycle);
+			s.syncAsByte(cycler->currentCycle);
+			s.syncAsByte(cycler->direction);
+			s.syncAsUint32LE(cycler->lastUpdateTick);
+			s.syncAsSint16LE(cycler->delay);
+			s.syncAsUint16LE(cycler->numTimesPaused);
+		}
+	}
+
+	// TODO: _clutTable
+}
+#endif
+
 void GfxPorts::saveLoadWithSerializer(Common::Serializer &s) {
 	// reset() is called directly way earlier in gamestate_restore()
 	if (s.getVersion() >= 27) {
@@ -944,7 +1035,11 @@ void gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	// Time state:
 	s->lastWaitTime = g_system->getMillis();
 	s->_screenUpdateTime = g_system->getMillis();
-	g_engine->setTotalPlayTime(meta.playTime * 1000);
+	if (meta.version >= 34) {
+		g_sci->setTickCount(meta.playTime);
+	} else {
+		g_engine->setTotalPlayTime(meta.playTime * 1000);
+	}
 
 	if (g_sci->_gfxPorts)
 		g_sci->_gfxPorts->saveLoadWithSerializer(ser);
