@@ -110,7 +110,8 @@ class GfxPalette;
 class GfxScreen;
 
 /**
- * Frameout class, kFrameout and relevant functions for SCI32 games
+ * Frameout class, kFrameout and relevant functions for SCI32 games.
+ * Roughly equivalent to GraphicsMgr in the actual SCI engine.
  */
 class GfxFrameout {
 public:

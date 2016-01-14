@@ -297,7 +297,7 @@ byte GfxPalette32::matchClutColor(uint16 color) {
 void GfxPalette32::unloadClut() {
 	// This will only unload the actual table, but not reset any palette
 	delete[] _clutTable;
-	_clutTable = 0;
+	_clutTable = nullptr;
 }
 
 //
