@@ -107,6 +107,37 @@ Button *EventManager::checkNumButtonHit(ButtonList *buttonList, Common::KeyCode 
 	return nullptr;
 }
 
+Button *EventManager::checkButtonHit(ButtonList *buttonList, Common::Point pos) {
+	for (ButtonList::iterator buttonItr = buttonList->begin(); buttonItr != buttonList->end(); ++buttonItr) {
+		Button *button = *buttonItr;
+		Common::Rect buttonRect(button->_x, button->_y, button->_x + button->_image->_width - 1, button->_y + button->_image->_height - 1);
+
+		if (buttonRect.contains(pos) && button->_isEnabled) {
+			_hitButton = button;
+			return button;
+		}
+	}
+
+	return nullptr;
+}
+
+void EventManager::attachButtonList(ButtonList *buttonList) {
+	if (_screenButtonList != buttonList)
+		_lastButtonHit = nullptr;
+
+	_screenButtonList = buttonList;
+}
+
+Button *EventManager::getButton(uint16 id) {
+	for (ButtonList::iterator buttonItr = _screenButtonList->begin(); buttonItr != _screenButtonList->end(); ++buttonItr) {
+		Button *button = *buttonItr;
+		if (button->_buttonId == id)
+			return button;
+	}
+
+	return nullptr;
+}
+
 IntuiMessage *EventManager::getMsg() {
 	static IntuiMessage message;
 

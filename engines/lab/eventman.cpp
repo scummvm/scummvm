@@ -72,50 +72,6 @@ EventManager::EventManager(LabEngine *vm) : _vm(vm) {
 	_keyPressed = Common::KEYCODE_INVALID;
 }
 
-Button *EventManager::checkButtonHit(ButtonList *buttonList, Common::Point pos) {
-	for (ButtonList::iterator buttonItr = buttonList->begin(); buttonItr != buttonList->end(); ++buttonItr) {
-		Button *button = *buttonItr;
-		Common::Rect buttonRect(button->_x, button->_y, button->_x + button->_image->_width - 1, button->_y + button->_image->_height - 1);
-
-		if (buttonRect.contains(pos) && button->_isEnabled) {
-			_hitButton = button;
-			return button;
-		}
-	}
-
-	return nullptr;
-}
-
-void EventManager::attachButtonList(ButtonList *buttonList) {
-	if (_screenButtonList != buttonList)
-		_lastButtonHit = nullptr;
-
-	_screenButtonList = buttonList;
-}
-
-Button *EventManager::getButton(uint16 id) {
-	for (ButtonList::iterator buttonItr = _screenButtonList->begin(); buttonItr != _screenButtonList->end(); ++buttonItr) {
-		Button *button = *buttonItr;
-		if (button->_buttonId == id)
-			return button;
-	}
-
-	return nullptr;
-}
-
-void EventManager::updateMouse() {
-	if (!_hitButton)
-		return;
-
-	_hitButton->_altImage->drawImage(_hitButton->_x, _hitButton->_y);
-	for (int i = 0; i < 3; i++)
-		_vm->waitTOF();
-	_hitButton->_image->drawImage(_hitButton->_x, _hitButton->_y);
-
-	_hitButton = nullptr;
-	_vm->_graphics->screenUpdate();
-}
-
 void EventManager::initMouse() {
 	CursorMan.pushCursor(mouseData, MOUSE_WIDTH, MOUSE_HEIGHT, 0, 0, 0);
 	CursorMan.showMouse(false);
@@ -129,6 +85,19 @@ void EventManager::mouseShow() {
 
 void EventManager::mouseHide() {
 	CursorMan.showMouse(false);
+}
+
+void EventManager::updateMouse() {
+	if (!_hitButton)
+		return;
+
+	_hitButton->_altImage->drawImage(_hitButton->_x, _hitButton->_y);
+	for (int i = 0; i < 3; i++)
+		_vm->waitTOF();
+	_hitButton->_image->drawImage(_hitButton->_x, _hitButton->_y);
+
+	_hitButton = nullptr;
+	_vm->_graphics->screenUpdate();
 }
 
 void EventManager::setMousePos(Common::Point pos) {
