@@ -111,6 +111,45 @@ override bool GfxPalette32::kernelSetFromResource(GuiResourceId resourceId, bool
 	return false;
 }
 
+// In SCI32 engine this method is SOLPalette::Match(Rgb24 *)
+// and is called as PaletteMgr.Current().Match(color)
+override int16 GfxPalette32::kernelFindColor(uint16 r, uint16 g, uint16 b) {
+	// SQ6 SCI32 engine takes the 16-bit r, g, b arguments from the
+	// VM and puts them into al, ah, dl. For compatibility, make sure
+	// to discard any high bits here too
+	r = r & 0xFF;
+	g = g & 0xFF;
+	b = b & 0xFF;
+	int16 bestIndex = 0;
+	int bestDifference = 0xFFFFF;
+	int difference;
+
+	// SQ6 DOS really does check only the first 236 entries
+	for (int i = 0, channelDifference; i < 236; ++i) {
+		difference = _sysPalette.colors[i].r - r;
+		difference *= difference;
+		if (bestDifference <= difference) {
+			continue;
+		}
+
+		channelDifference = _sysPalette.colors[i].g - g;
+		difference += channelDifference * channelDifference;
+		if (bestDifference <= difference) {
+			continue;
+		}
+
+		channelDifference = _sysPalette.colors[i].b - b;
+		difference += channelDifference * channelDifference;
+		if (bestDifference <= difference) {
+			continue;
+		}
+		bestDifference = difference;
+		bestIndex = i;
+	}
+
+	return bestIndex;
+}
+
 // TODO: set is overridden for the time being to send palettes coming from
 // various draw methods like GfxPicture::drawSci32Vga and GfxView::draw to
 // _nextPalette instead of _sysPalette. In the SCI32 engine, CelObj palettes
@@ -121,6 +160,49 @@ override bool GfxPalette32::kernelSetFromResource(GuiResourceId resourceId, bool
 // like `force` and `forceRealMerge`.
 override void GfxPalette32::set(Palette *newPalette, bool force, bool forceRealMerge) {
 	submit(*newPalette);
+}
+
+// In SCI32 engine this method is SOLPalette::Match(Rgb24 *, int, int *, int *)
+// and is used by Remap
+// TODO: Anything that calls GfxPalette::matchColor(int, int, int) is going to
+// match using an algorithm from SCI16 engine right now. This needs to be
+// corrected in the future so either nothing calls
+// GfxPalette::matchColor(int, int, int), or it is fixed to match the other
+// SCI32 algorithms.
+int16 GfxPalette32::matchColor(const byte r, const byte g, const byte b, const int defaultDifference, int &lastCalculatedDifference, const bool *const matchTable) {
+	int16 bestIndex = -1;
+	int bestDifference = 0xFFFFF;
+	int difference = defaultDifference;
+
+	// SQ6 DOS really does check only the first 236 entries
+	for (int i = 0, channelDifference; i < 236; ++i) {
+		if (matchTable[i] == 0) {
+			continue;
+		}
+
+		difference = _sysPalette.colors[i].r - r;
+		difference *= difference;
+		if (bestDifference <= difference) {
+			continue;
+		}
+		channelDifference = _sysPalette.colors[i].g - g;
+		difference += channelDifference * channelDifference;
+		if (bestDifference <= difference) {
+			continue;
+		}
+		channelDifference = _sysPalette.colors[i].b - b;
+		difference += channelDifference * channelDifference;
+		if (bestDifference <= difference) {
+			continue;
+		}
+		bestDifference = difference;
+		bestIndex = i;
+	}
+
+	// NOTE: This value is only valid if the last index to
+	// perform a difference calculation was the best index
+	lastCalculatedDifference = difference;
+	return bestIndex;
 }
 
 void GfxPalette32::updateForFrame() {
