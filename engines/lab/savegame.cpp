@@ -171,6 +171,7 @@ bool LabEngine::loadGame(int slot) {
 	SaveGameHeader header;
 	readSaveGameHeader(file, header);
 	_roomNum = file->readUint16LE();
+	_music->checkRoomMusic(1, _roomNum);
 	_direction = file->readUint16LE();
 	setQuarters(file->readUint16LE());
 
@@ -233,8 +234,6 @@ bool LabEngine::saveRestoreGame() {
 		int slot = dialog->runModalWithCurrentTarget();
 		if (slot >= 0) {
 			isOK = loadGame(slot);
-			if (isOK)
-				_music->checkRoomMusic();
 		}
 		delete dialog;
 	}

@@ -399,7 +399,6 @@ void LabEngine::mainGameLoop() {
 
 		// Since the intro hasn't been shown, init the background music here
 		_music->resetMusic(false);
-		_music->checkRoomMusic();
 	}
 
 	uint16 curInv = kItemMap;
@@ -480,7 +479,6 @@ void LabEngine::mainGameLoop() {
 		if (!curMsg) {
 			// Does music load and next animation frame when you've run out of messages
 			gotMessage = false;
-			_music->checkRoomMusic();
 			updateEvents();
 			_anim->diffNextFrame();
 

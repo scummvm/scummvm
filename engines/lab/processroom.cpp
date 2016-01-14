@@ -143,8 +143,10 @@ void LabEngine::drawDirection(const CloseData *closePtr) {
 uint16 LabEngine::processArrow(uint16 curDirection, uint16 arrow) {
 	if (arrow == 1) { // Forward
 		uint16 room = _rooms[_roomNum]._doors[curDirection];
-		if (room != 0)
+		if (room != 0) {
+			_music->checkRoomMusic(_roomNum, room);
 			_roomNum = room;
+		}
 
 		return curDirection;
 	} else if (arrow == 0) { // Left
@@ -327,6 +329,7 @@ void LabEngine::doActions(const ActionList &actionList) {
 				break;
 			}
 
+			_music->checkRoomMusic(_roomNum, action->_param1);
 			_roomNum   = action->_param1;
 			_direction = action->_param2 - 1;
 			_closeDataPtr = nullptr;

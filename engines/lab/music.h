@@ -50,7 +50,6 @@ private:
 	LabEngine *_vm;
 
 	Common::File *_musicFile;
-	uint16 _curRoomMusic;
 	uint32 _storedPos;
 
 	Audio::SoundHandle _musicHandle;
@@ -72,7 +71,7 @@ public:
 	/**
 	 * Checks the music that should be playing in a particular room.
 	 */
-	void checkRoomMusic();
+	void checkRoomMusic(uint16 prevRoom, uint16 newRoom);
 
 	/**
 	 * Frees up the music buffers and closes the file.

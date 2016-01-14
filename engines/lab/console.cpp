@@ -26,6 +26,7 @@
 #include "lab/console.h"
 #include "lab/dispman.h"
 #include "lab/eventman.h"
+#include "lab/music.h"
 #include "lab/processroom.h"
 #include "lab/resource.h"
 
@@ -49,6 +50,7 @@ bool Console::Cmd_Scene(int argc, const char **argv) {
 	}
 
 	_vm->_roomNum = atoi(argv[1]);
+	_vm->_music->checkRoomMusic(1, _vm->_roomNum);
 	_vm->_curFileName = " ";
 	_vm->_closeDataPtr = nullptr;
 	_vm->_mainDisplay = true;

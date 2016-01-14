@@ -44,7 +44,6 @@ namespace Lab {
 
 Music::Music(LabEngine *vm) : _vm(vm) {
 	_musicFile = nullptr;
-	_curRoomMusic = 1;
 	_storedPos = 0;
 }
 
@@ -152,18 +151,13 @@ void Music::resetMusic(bool seektoStoredPos) {
 		changeMusic("Music:BackGround", false, seektoStoredPos);
 }
 
-void Music::checkRoomMusic() {
-	if ((_curRoomMusic == _vm->_roomNum) || !_musicFile)
-		return;
-
-	if (_vm->_roomNum == CLOWNROOM)
+void Music::checkRoomMusic(uint16 prevRoom, uint16 newRoom) {
+	if (newRoom == CLOWNROOM)
 		changeMusic("Music:Laugh", true, false);
-	else if (_vm->_roomNum == DIMROOM)
+	else if (newRoom == DIMROOM)
 		changeMusic("Music:Rm81", true, false);
-	else if (_curRoomMusic == CLOWNROOM || _curRoomMusic == DIMROOM)
+	else if (prevRoom == CLOWNROOM || prevRoom == DIMROOM)
 		resetMusic(true);
-
-	_curRoomMusic = _vm->_roomNum;
 }
 
 void Music::freeMusic() {
