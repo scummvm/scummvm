@@ -717,8 +717,10 @@ void GfxPorts::kernelGraphAdjustPriority(int top, int bottom) {
 }
 
 byte GfxPorts::kernelCoordinateToPriority(int16 y) {
-	if (y < _priorityTop)
-		return _priorityBands[_priorityTop];
+	if (y < 0) // Sierra did not check this, we do for safety reasons
+		return _priorityBands[0];
+	// do NOT check for _priorityTop in here. Sierra never did that and it would cause
+	// at least priority issues in room 54 of lsl2 (airplane)
 	if (y > _priorityBottom)
 		return _priorityBands[_priorityBottom];
 	return _priorityBands[y];
