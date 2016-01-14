@@ -30,6 +30,8 @@
 
 #include "common/config-manager.h"
 
+#include "gui/message.h"
+
 #include "lab/lab.h"
 #include "lab/anim.h"
 #include "lab/dispman.h"
@@ -99,6 +101,40 @@ static char initColors[] = { '\x00', '\x00', '\x00', '\x30',
 							 '\x20', '\x20', '\x20', '\x24',
 							 '\x24', '\x24', '\x2c', '\x2c',
 							 '\x2c', '\x08', '\x08', '\x08' };
+
+void LabEngine::handleTrialWarning() {
+	// Check if this is the Wyrmkeep trial
+	Common::File roomFile;
+	bool knownVersion = true;
+	bool roomFileOpened = roomFile.open("rooms/48");
+
+	if (!roomFileOpened)
+		knownVersion = false;
+	else if (roomFile.size() != 892)
+		knownVersion = false;
+	else {
+		roomFile.seek(352);
+		byte checkByte = roomFile.readByte();
+		if (checkByte == 0x00) {
+			// Full Windows version
+		}
+		else if (checkByte == 0x80) {
+			// Wyrmkeep trial version
+			_extraGameFeatures = GF_WINDOWS_TRIAL;
+
+			GUI::MessageDialog trialMessage("This is a trial Windows version of the game. To play the full version, you will need to use the original interpreter and purchase a key from Wyrmkeep");
+			trialMessage.runModal();
+		}
+		else {
+			knownVersion = false;
+		}
+
+		roomFile.close();
+	}
+
+	if (!knownVersion)
+		error("Unknown Windows version found, please report this version to the ScummVM team");
+}
 
 uint16 LabEngine::getQuarters() {
 	return _inventory[kItemQuarter]._quantity;
@@ -1001,6 +1037,9 @@ void LabEngine::performAction(uint16 actionMode, Common::Point curPos, uint16 &c
 }
 
 void LabEngine::go() {
+	if (getPlatform() == Common::kPlatformWindows)
+		handleTrialWarning();
+
 	_isHiRes = ((getFeatures() & GF_LOWRES) == 0);
 	_graphics->setUpScreens();
 

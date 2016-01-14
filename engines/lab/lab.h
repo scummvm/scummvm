@@ -487,7 +487,6 @@ private:
 	void processAltButton(uint16 &curInv, uint16 &lastInv, uint16 buttonId, uint16 &actionMode);
 	void performAction(uint16 actionMode, Common::Point curPos, uint16 &curInv);
 
-private:
 	/**
 	 * Writes the game out to disk.
 	 */
@@ -498,6 +497,8 @@ private:
 	 */
 	bool loadGame(int slot);
 	void writeSaveGameHeader(Common::OutSaveFile *out, const Common::String &saveName);
+
+	void handleTrialWarning();
 };
 
 bool readSaveGameHeader(Common::InSaveFile *in, SaveGameHeader &header);

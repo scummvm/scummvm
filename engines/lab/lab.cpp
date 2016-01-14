@@ -33,7 +33,6 @@
 #include "common/error.h"
 
 #include "engines/util.h"
-#include "gui/message.h"
 
 #include "lab/lab.h"
 
@@ -171,40 +170,6 @@ Common::Error LabEngine::run() {
 	_utils = new Utils(this);
 	_console = new Console(this);
 	_journalBackImage = new Image(this);
-
-	if (getPlatform() == Common::kPlatformWindows) {
-		// Check if this is the Wyrmkeep trial
-		Common::File roomFile;
-		bool knownVersion = true;
-		bool roomFileOpened = roomFile.open("rooms/48");
-
-		if (!roomFileOpened)
-			knownVersion = false;
-		else if (roomFile.size() != 892)
-			knownVersion = false;
-		else {
-			roomFile.seek(352);
-			byte checkByte = roomFile.readByte();
-			if (checkByte == 0x00) {
-				// Full Windows version
-			} else if (checkByte == 0x80) {
-				// Wyrmkeep trial version
-				_extraGameFeatures = GF_WINDOWS_TRIAL;
-
-				GUI::MessageDialog trialMessage("This is a trial Windows version of the game. To play the full version, you will need to use the original interpreter and purchase a key from Wyrmkeep");
-				trialMessage.runModal();
-			} else {
-				knownVersion = false;
-			}
-
-			roomFile.close();
-
-			if (!knownVersion) {
-				warning("Unknown Windows version found, please report this version to the ScummVM team");
-				return Common::kNoGameDataFoundError;
-			}
-		}
-	}
 
 	go();
 
