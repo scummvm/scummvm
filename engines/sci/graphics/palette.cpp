@@ -136,7 +136,7 @@ void GfxPalette::setDefault() {
 #define SCI_PAL_FORMAT_CONSTANT 1
 #define SCI_PAL_FORMAT_VARIABLE 0
 
-void GfxPalette::createFromData(byte *data, int bytesLeft, Palette *paletteOut) {
+void GfxPalette::createFromData(byte *data, int bytesLeft, Palette *paletteOut) const {
 	int palFormat = 0;
 	int palOffset = 0;
 	int palColorStart = 0;
@@ -811,8 +811,6 @@ bool GfxPalette::palVaryLoadTargetPalette(GuiResourceId resourceId) {
 	return false;
 }
 
-// TODO: This code should not set up an independent timer in SCI32. SCI32 engine palette varies happen in
-// Palette::UpdateForFrame which is called by GraphicsMgr::FrameOut.
 void GfxPalette::palVaryInstallTimer() {
 	// Remove any possible leftover palVary timer callbacks.
 	// This happens for example in QFG1VGA, when sleeping at Erana's place

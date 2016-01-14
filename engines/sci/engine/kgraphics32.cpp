@@ -737,21 +737,78 @@ reg_t kMorphOn(EngineState *s, int argc, reg_t *argv) {
 	// palMorphIsOn flag back to false.
 	kStub(s, argc, argv);
 	return NULL_REG;
-
-reg_t kPalVaryUnknown(EngineState *s, int argc, reg_t *argv) {
-	// TODO: Unknown (seems to be SCI32 exclusive)
-	return kStub(s, argc, argv);
 }
 
-reg_t kPalVaryUnknown2(EngineState *s, int argc, reg_t *argv) {
-	// TODO: Unknown (seems to be SCI32 exclusive)
-	// It seems to be related to the day/night palette effects in QFG4, and
-	// accepts a palette resource ID. It is triggered right when the night
-	// effect is initially applied (when exiting the caves).
-	// In QFG4, there are two scene palettes: 790 for night, and 791 for day.
-	// Initially, the game starts at night time, but this is called with the
-	// ID of the day time palette (i.e. 791).
-	return kStub(s, argc, argv);
+reg_t kPaletteSetFade(EngineState *s, int argc, reg_t *argv) {
+	uint16 fromColor = argv[0].toUint16();
+	uint16 toColor = argv[1].toUint16();
+	uint16 percent = argv[2].toUint16();
+	g_sci->_gfxPalette32->setFade(percent, fromColor, toColor);
+	return NULL_REG;
+}
+
+reg_t kPalVarySetVary(EngineState *s, int argc, reg_t *argv) {
+	GuiResourceId paletteId = argv[0].toUint16();
+	int time = argc > 1 ? argv[1].toSint16() * 60 : 0;
+	int16 percent = argc > 2 ? argv[2].toSint16() : 100;
+	int16 fromColor;
+	int16 toColor;
+
+	if (argc > 4) {
+		fromColor = argv[3].toSint16();
+		toColor = argv[4].toSint16();
+	} else {
+		fromColor = toColor = -1;
+	}
+
+	g_sci->_gfxPalette32->kernelPalVarySet(paletteId, percent, time, fromColor, toColor);
+	return NULL_REG;
+}
+
+reg_t kPalVarySetPercent(EngineState *s, int argc, reg_t *argv) {
+	int time = argc > 1 ? argv[1].toSint16() * 60 : 0;
+	int16 percent = argc > 2 ? argv[2].toSint16() : 0;
+	g_sci->_gfxPalette32->setVaryPercent(percent, time, -1, -1);
+	return NULL_REG;
+}
+
+reg_t kPalVaryGetPercent(EngineState *s, int argc, reg_t *argv) {
+	return make_reg(0, g_sci->_gfxPalette32->getVaryPercent());
+}
+
+reg_t kPalVaryOff(EngineState *s, int argc, reg_t *argv) {
+	g_sci->_gfxPalette32->varyOff();
+	return NULL_REG;
+}
+
+reg_t kPalVaryMergeTarget(EngineState *s, int argc, reg_t *argv) {
+	GuiResourceId paletteId = argv[1].toUint16();
+	g_sci->_gfxPalette32->kernelPalVaryMergeTarget(paletteId);
+	return make_reg(0, g_sci->_gfxPalette32->getVaryPercent());
+}
+
+reg_t kPalVarySetTime(EngineState *s, int argc, reg_t *argv) {
+	int time = argv[1].toSint16() * 60;
+	g_sci->_gfxPalette32->setVaryTime(time);
+	return NULL_REG;
+}
+
+reg_t kPalVarySetTarget(EngineState *s, int argc, reg_t *argv) {
+	GuiResourceId paletteId = argv[1].toUint16();
+	g_sci->_gfxPalette32->kernelPalVarySetTarget(paletteId);
+	return make_reg(0, g_sci->_gfxPalette32->getVaryPercent());
+}
+
+reg_t kPalVarySetStart(EngineState *s, int argc, reg_t *argv) {
+	GuiResourceId paletteId = argv[1].toUint16();
+	g_sci->_gfxPalette32->kernelPalVarySetStart(paletteId);
+	return make_reg(0, g_sci->_gfxPalette32->getVaryPercent());
+}
+
+reg_t kPalVaryMergeStart(EngineState *s, int argc, reg_t *argv) {
+	GuiResourceId paletteId = argv[1].toUint16();
+	g_sci->_gfxPalette32->kernelPalVaryMergeStart(paletteId);
+	return make_reg(0, g_sci->_gfxPalette32->getVaryPercent());
 }
 
 enum {

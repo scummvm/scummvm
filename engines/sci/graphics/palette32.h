@@ -77,12 +77,42 @@ namespace Sci {
 		GfxPalette32(ResourceManager *resMan, GfxScreen *screen);
 		~GfxPalette32();
 
-	private:
-		// SCI2 (SQ6) defines 10 cyclers
-		PalCycler *_cyclers[10];
+	protected:
 		/**
-		 * The cycle map is used to detect overlapping cyclers. According to SCI engine code, when two cyclers overlap,
-		 * a fatal error has occurred and the engine will display an error and then exit.
+		 * The palette revision version. Increments once per game
+		 * loop that changes the source palette. TODO: Possibly
+		 * other areas also change _version, double-check once it
+		 * is all implemented.
+		 */
+		uint32 _version;
+
+		/**
+		 * Whether or not the palette manager version was updated
+		 * during this loop.
+		 */
+		bool _versionUpdated;
+
+		/**
+		 * The unmodified source palette loaded by kPalette. Additional
+		 * palette entries may be mixed into the source palette by
+		 * CelObj objects, which contain their own palettes.
+		 */
+		Palette _sourcePalette;
+
+		/**
+		 * The palette to be used when the hardware is next updated.
+		 * On update, _nextPalette is transferred to _sysPalette.
+		 */
+		Palette _nextPalette;
+
+		// SQ6 defines 10 cyclers
+		PalCycler *_cyclers[10];
+
+		/**
+		 * The cycle map is used to detect overlapping cyclers.
+		 * According to SCI engine code, when two cyclers overlap,
+		 * a fatal error has occurred and the engine will display
+		 * an error and then exit.
 		 */
 		bool _cycleMap[256];
 		inline void clearCycleMap(uint16 fromColor, uint16 numColorsToClear);
@@ -90,32 +120,138 @@ namespace Sci {
 		inline PalCycler *getCycler(uint16 fromColor);
 
 		/**
-		 * The fade table records the expected intensity level of each pixel in the palette that will be displayed on
-		 * the next frame.
+		 * The fade table records the expected intensity level of each pixel
+		 * in the palette that will be displayed on the next frame.
 		 */
 		byte _fadeTable[256];
+
+		/**
+		 * An optional lookup table used to remap RGB565 colors to a palette
+		 * index. Used by Phantasmagoria 2 in 8-bit color environments.
+		 */
 		byte *_clutTable;
 
+		/**
+		 * An optional palette used to describe the source colors used
+		 * in a palette vary operation. If this palette is not specified,
+		 * sourcePalette is used instead.
+		 */
+		Palette *_varyStartPalette;
+
+		/**
+		 * An optional palette used to describe the target colors used
+		 * in a palette vary operation.
+		 */
+		Palette *_varyTargetPalette;
+
+		/**
+		 * The minimum palette index that has been varied from the
+		 * source palette. 0–255
+		 */
+		uint8 _varyFromColor;
+
+		/**
+		 * The maximum palette index that is has been varied from the
+		 * source palette. 0-255
+		 */
+		uint8 _varyToColor;
+
+		/**
+		 * The tick at the last time the palette vary was updated.
+		 */
+		uint32 _varyLastTick;
+
+		/**
+		 * TODO: Document
+		 * The velocity of change in percent?
+		 */
+		int _varyTime;
+
+		/**
+		 * TODO: Better documentation
+		 * The direction of change, -1, 0, or 1.
+		 */
+		int16 _varyDirection;
+
+		/**
+		 * The amount, in percent, that the vary color is currently
+		 * blended into the source color.
+		 */
+		int16 _varyPercent;
+
+		/**
+		 * The target amount that a vary color will be blended into
+		 * the source color.
+		 */
+		int16 _varyTargetPercent;
+
+		/**
+		 * The number of time palette varying has been paused.
+		 */
+		uint16 _varyNumTimesPaused;
+
+		/**
+		 * Submits a palette to display. Entries marked as “used” in the
+		 * submitted palette are merged into the existing entries of
+		 * _sourcePalette.
+		 */
+		void submit(Palette &palette);
+
 	public:
-		void applyAllCycles();
-		void applyCycles();
-		void applyFade();
+		override virtual void saveLoadWithSerializer(Common::Serializer &s);
+
+		override virtual bool kernelSetFromResource(GuiResourceId resourceId, bool force);
+		override virtual int16 kernelFindColor(const uint16 r, const uint16 g, const uint16 b);
+		override virtual void set(Palette *newPalette, bool force, bool forceRealMerge = false);
+		int16 matchColor(const byte matchRed, const byte matchGreen, const byte matchBlue, const int defaultDifference, int &lastCalculatedDifference, const bool *const matchTable);
+
+		void updateForFrame();
+		void updateHardware();
+		void applyAll();
 
 		bool loadClut(uint16 clutId);
 		byte matchClutColor(uint16 color);
 		void unloadClut();
 
-		int16 setCycle(uint16 fromColor, uint16 toColor, int16 direction, int16 delay);
-		void doCycle(uint16 fromColor, int16 speed);
-		void cycleOn(uint16 fromColor);
-		void cyclePause(uint16 fromColor);
+		void kernelPalVarySet(const GuiResourceId paletteId, const int16 percent, const int time, const int16 fromColor, const int16 toColor);
+		void kernelPalVaryMergeTarget(const GuiResourceId paletteId);
+		void kernelPalVarySetTarget(const GuiResourceId paletteId);
+		void kernelPalVarySetStart(const GuiResourceId paletteId);
+		void kernelPalVaryMergeStart(const GuiResourceId paletteId);
+		override virtual void kernelPalVaryPause(const bool pause);
+
+		void setVary(const Palette *const targetPalette, const int16 percent, const int time, const int16 fromColor, const int16 toColor);
+		void setVaryPercent(const int16 percent, const int time, const int16 fromColor, const int16 fromColorAlternate);
+		int16 getVaryPercent() const;
+		void varyOff();
+		void mergeTarget(const Palette *const palette);
+		void varyPause();
+		void varyOn();
+		void setVaryTime(const int time);
+		void setTarget(const Palette *const palette);
+		void setStart(const Palette *const palette);
+		void mergeStart(const Palette *const palette);
+	private:
+		bool createPaletteFromResourceInternal(const GuiResourceId paletteId, Palette *const out) const;
+		Palette getPaletteFromResourceInternal(const GuiResourceId paletteId) const;
+		void setVaryTimeInternal(const int16 percent, const int time);
+	public:
+		void applyVary();
+
+		void setCycle(const uint8 fromColor, const uint8 toColor, const int16 direction, const int16 delay);
+		void doCycle(const uint8 fromColor, const int16 speed);
+		void cycleOn(const uint8 fromColor);
+		void cyclePause(const uint8 fromColor);
 		void cycleAllOn();
 		void cycleAllPause();
-		void cycleOff(uint16 fromColor);
+		void cycleOff(const uint8 fromColor);
 		void cycleAllOff();
+		void applyAllCycles();
+		void applyCycles();
 
-		void setFade(uint8 percent, uint16 fromColor, uint16 toColor);
+		void setFade(const uint8 percent, const uint8 fromColor, const uint16 toColor);
 		void fadeOff();
+		void applyFade();
 	};
 }
 
