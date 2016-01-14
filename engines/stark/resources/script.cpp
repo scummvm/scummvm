@@ -185,6 +185,10 @@ bool Script::isSuspended() {
 	return _pauseTimeLeft >= 0 || _suspendingResource;
 }
 
+Object *Script::getSuspendingResource() const {
+	return _suspendingResource;
+}
+
 void Script::updateSuspended() {
 	if (_pauseTimeLeft >= 0) {
 		// Decrease the remaining pause time

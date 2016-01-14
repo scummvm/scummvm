@@ -188,11 +188,25 @@ bool Console::Cmd_ListScripts(int argc, const char **argv) {
 	Resources::Location *location = StarkGlobal->getCurrent()->getLocation();
 	Common::Array<Resources::Script *> scriptArr = level->listChildrenRecursive<Resources::Script>();
 	scriptArr.insert_at(scriptArr.size(), location->listChildrenRecursive<Resources::Script>());
+
 	Common::Array<Resources::Script *>::iterator it;
 	int i = 0;
 	for (it = scriptArr.begin(); it != scriptArr.end(); ++it) {
-		debugPrintf("%d: %s - enabled: %d\n", i++, (*it)->getName().c_str(), (*it)->isEnabled());
+		debugPrintf("%d: %s - enabled: %d", i++, (*it)->getName().c_str(), (*it)->isEnabled());
+
+		// Print which resource is causing the script to wait
+		if ((*it)->isSuspended()) {
+			Resources::Object *suspending = (*it)->getSuspendingResource();
+			if (suspending) {
+				debugPrintf(", waiting for: %s (%s)", suspending->getName().c_str(), suspending->getType().getName());
+			} else {
+				debugPrintf(", paused");
+			}
+		}
+
+		debugPrintf("\n");
 	}
+
 	return true;
 }
 

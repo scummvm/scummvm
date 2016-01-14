@@ -128,6 +128,12 @@ public:
 	/** Suspend the script while the specified resource is running */
 	void suspend(Object *cause);
 
+	/** Is the script paused, or waiting for a resource to complete? */
+	bool isSuspended();
+
+	/** Get the resource the script is waiting to complete, if any */
+	Object *getSuspendingResource() const;
+
 	/** Returns true if the script is enabled and valid for this call mode */
 	bool shouldExecute(uint32 callMode);
 
@@ -147,7 +153,6 @@ public:
 protected:
 	void printData() override;
 
-	bool isSuspended();
 	void updateSuspended();
 
 	void resumeCallerExecution(Object *callerObject);
