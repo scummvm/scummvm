@@ -367,6 +367,10 @@ bool Menu::mouseClick(int x, int y) {
 
 			renderSubmenu(_items[_activeItem]);
 		}
+	} else if (_menuActivated && _activeItem != -1) {
+		_activeSubItem = -1;
+
+		renderSubmenu(_items[_activeItem]);
 	}
 
 	return false;
