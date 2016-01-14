@@ -298,7 +298,7 @@ void Location::setHasActiveScroll() {
 }
 
 void Location::stopAllScrolls() {
-	Common::Array<Scroll *> scrolls = listChildren<Scroll>();
+	Common::Array<Scroll *> scrolls = listChildrenRecursive<Scroll>();
 	for (uint i = 0; i < scrolls.size(); i++) {
 		scrolls[i]->stop();
 	}
