@@ -273,7 +273,11 @@ static void sync_SavegameMetadata(Common::Serializer &s, SavegameMetadata &obj) 
 		if (s.getVersion() >= 26)
 			s.syncAsUint32LE(obj.playTime);
 	} else {
-		obj.playTime = g_engine->getTotalPlayTime() / 1000;
+		if (s.getVersion() >= 34) {
+			obj.playTime = g_sci->getTickCount();
+		} else {
+			obj.playTime = g_engine->getTotalPlayTime() / 1000;
+		}
 		s.syncAsUint32LE(obj.playTime);
 	}
 }
@@ -1031,7 +1035,11 @@ void gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	// Time state:
 	s->lastWaitTime = g_system->getMillis();
 	s->_screenUpdateTime = g_system->getMillis();
-	g_engine->setTotalPlayTime(meta.playTime * 1000);
+	if (meta.version >= 34) {
+		g_sci->setTickCount(meta.playTime);
+	} else {
+		g_engine->setTotalPlayTime(meta.playTime * 1000);
+	}
 
 	if (g_sci->_gfxPorts)
 		g_sci->_gfxPorts->saveLoadWithSerializer(ser);

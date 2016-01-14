@@ -1037,9 +1037,10 @@ void SciEngine::loadMacExecutable() {
 	}
 }
 
-// Note that SCI engine also has a corresponding TimeMgr::SetTickCount method
-// which is used by TimeMgr::SaveRestore when loading a save game.
 uint32 SciEngine::getTickCount() {
-	return (uint32) ((g_system->getMillis() * 60) / 1000);
+	return g_engine->getTotalPlayTime() * 60 / 1000;
+}
+void SciEngine::setTickCount(const uint32 ticks) {
+	return g_engine->setTotalPlayTime(ticks * 1000 / 60);
 }
 } // End of namespace Sci

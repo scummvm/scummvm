@@ -773,7 +773,11 @@ SaveStateDescriptor SciMetaEngine::querySaveMetaInfos(const char *target, int sl
 
 		desc.setSaveTime(hour, minutes);
 
-		desc.setPlayTime(meta.playTime * 1000);
+		if (meta.version >= 34) {
+			desc.setPlayTime(meta.playTime * 1000 / 60);
+		} else {
+			desc.setPlayTime(meta.playTime * 1000);
+		}
 
 		delete in;
 

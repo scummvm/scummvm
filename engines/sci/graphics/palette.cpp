@@ -650,7 +650,7 @@ bool GfxPalette::kernelAnimate(byte fromColor, byte toColor, int speed) {
 	Color col;
 	//byte colorNr;
 	int16 colorCount;
-	uint32 now = g_system->getMillis() * 60 / 1000;
+	uint32 now = g_sci->getTickCount();
 
 	// search for sheduled animations with the same 'from' value
 	// schedule animation...
