@@ -286,10 +286,9 @@ void Anim::readDiff(Common::File *diffFile, bool playOnce, bool onlyDiffData) {
 	_diffFile = diffFile;
 
 	_continuous = false;
-	uint32 signature1 = _diffFile->readUint32BE();
-	uint32 signature2 = _diffFile->readUint32LE();
 
-	if ((signature1 != MKTAG('D', 'I', 'F', 'F')) || (signature2 != 1219009121)) {
+	uint32 magicBytes = _diffFile->readUint32LE();
+	if (magicBytes != 1219009121) {
 		_isPlaying = false;
 		return;
 	}

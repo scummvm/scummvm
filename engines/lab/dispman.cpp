@@ -67,7 +67,7 @@ DisplayMan::~DisplayMan() {
 
 void DisplayMan::loadPict(const Common::String filename) {
 	freePict();
-	_curBitmap = _vm->_resource->openDataFile(filename);
+	_curBitmap = _vm->_resource->openDataFile(filename, MKTAG('D', 'I', 'F', 'F'));
 }
 
 void DisplayMan::loadBackPict(const Common::String fileName, uint16 *highPal) {
