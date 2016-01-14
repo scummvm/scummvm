@@ -53,6 +53,16 @@ namespace Wage {
 struct MenuItem;
 struct MenuSubItem;
 
+enum {
+	kFontStyleBold = 1,
+	kFontStyleItalic = 2,
+	kFontStyleUnderline = 4,
+	kFontStyleOutline = 8,
+	kFontStyleShadow = 16,
+	kFontStyleCondensed = 32,
+	kFontStyleExtended = 64
+};
+
 class Menu {
 public:
 	Menu(Gui *gui);
@@ -77,6 +87,7 @@ private:
 	int calculateMenuWidth(MenuItem *menu);
 	void calcMenuBounds(MenuItem *menu);
 	void renderSubmenu(MenuItem *menu);
+	MenuItem *createCommandsMenu();
 
 	Common::Array<MenuItem *> _items;
 

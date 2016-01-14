@@ -273,17 +273,17 @@ bool World::loadWorld(Common::MacResManager *resMan) {
 	}
 	res = resMan->getResource(MKTAG('M','E','N','U'), 2004);
 	if (res != NULL) {
-		readMenu(res);
-		warning("STUB: commandsMenu");
-		//world.setCommandsMenuName(commandsMenu[0]);
-		//world.setDefaultCommandsMenu(commandsMenu[1]);
+		Common::StringArray *menu = readMenu(res);
+		_commandsMenuName = menu->operator[](0);
+		_commandsMenu = menu->operator[](1);
+		delete menu;
 		delete res;
 	}
 	res = resMan->getResource(MKTAG('M','E','N','U'), 2005);
 	if (res != NULL) {
-		readMenu(res);
-		warning("STUB: weaponsMenu");
-		//world.setWeaponsMenuName(weaponsMenu[0]);
+		Common::StringArray *menu = readMenu(res);
+		_weaponsMenuName = menu->operator[](0);
+		delete menu;
 		delete res;
 	}
 	// TODO: Read Apple menu and get the name of that menu item..
@@ -294,7 +294,7 @@ bool World::loadWorld(Common::MacResManager *resMan) {
 	return true;
 }
 
-Common::StringArray World::readMenu(Common::SeekableReadStream *res) {
+Common::StringArray *World::readMenu(Common::SeekableReadStream *res) {
 	res->skip(10);
 	int enableFlags = res->readUint32BE();
 	String menuName = readPascalString(res);
@@ -327,9 +327,9 @@ Common::StringArray World::readMenu(Common::SeekableReadStream *res) {
 		menuItemNumber++;
 	}
 
-	Common::StringArray result;
-	result.push_back(menuName);
-	result.push_back(sb);
+	Common::StringArray *result = new Common::StringArray;
+	result->push_back(menuName);
+	result->push_back(sb);
 
 	warning("menuName: %s", menuName.c_str());
 	warning("sb: %s", sb.c_str());

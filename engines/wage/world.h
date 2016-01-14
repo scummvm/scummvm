@@ -95,6 +95,10 @@ public:
 	Common::String *_saveBeforeCloseMessage;
 	Common::String *_revertMessage;
 
+	Common::String _commandsMenuName;
+	Common::String _commandsMenu;
+	Common::String _weaponsMenuName;
+
 	void addScene(Scene *room) {
 		if (room->_name.size() != 0) {
 			String s = room->_name;
@@ -128,7 +132,7 @@ public:
 	}
 
 private:
-	Common::StringArray readMenu(Common::SeekableReadStream *res);
+	Common::StringArray *readMenu(Common::SeekableReadStream *res);
 };
 
 } // End of namespace Wage

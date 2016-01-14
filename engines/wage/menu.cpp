@@ -92,7 +92,9 @@ enum {
 	kMenuActionCut,
 	kMenuActionCopy,
 	kMenuActionPaste,
-	kMenuActionClear
+	kMenuActionClear,
+
+	kMenuActionCommand
 };
 
 struct MenuData {
@@ -121,6 +123,9 @@ struct MenuData {
 };
 
 Menu::Menu(Gui *gui) : _gui(gui) {
+	assert(_gui->_engine);
+	assert(_gui->_engine->_world);
+
 	MenuItem *about = new MenuItem(_gui->_builtInFonts ? "\xa9" : "\xf0"); // (c) Symbol as the most resembling apple
 	_items.push_back(about);
 	_items[0]->subitems.push_back(new MenuSubItem(_gui->_engine->_world->getAboutMenuItemName(), kMenuActionAbout));
@@ -137,14 +142,11 @@ Menu::Menu(Gui *gui) : _gui(gui) {
 		_items[m->menunum]->subitems.push_back(new MenuSubItem(m->title, m->action, 0, m->shortcut, m->enabled));
 	}
 
-	MenuItem *commands = new MenuItem("Commands");
+	MenuItem *commands = createCommandsMenu();
 	_items.push_back(commands);
 
-	assert(_gui->_engine);
-	assert(_gui->_engine->_world);
-
 	if (!_gui->_engine->_world->_weaponMenuDisabled) {
-		MenuItem *weapons = new MenuItem("Weapons");
+		MenuItem *weapons = new MenuItem(_gui->_engine->_world->_weaponsMenuName.c_str());
 		_items.push_back(weapons);
 	}
 
@@ -187,6 +189,75 @@ Menu::~Menu() {
 			delete _items[i]->subitems[j];
 		delete _items[i];
 	}
+}
+
+MenuItem *Menu::createCommandsMenu() {
+	MenuItem *menu = new MenuItem(_gui->_engine->_world->_commandsMenuName.c_str());
+	Common::String string(_gui->_engine->_world->_commandsMenu);
+
+	Common::String item;
+
+	for (int i = 0; i < string.size(); i++) {
+		while(i < string.size() && string[i] != ';') // Read token
+			item += string[i++];
+
+		if (item == "(-") {
+			menu->subitems.push_back(new MenuSubItem(NULL, 0));
+		} else {
+			bool enabled = true;
+			int style = 0;
+			char shortcut = 0;
+			char *shortptr = strrchr(item.c_str(), '/');
+			if (shortptr != NULL) {
+				if (strlen(shortptr) == 2) {
+					shortcut = shortptr[1];
+					item.deleteLastChar();
+					item.deleteLastChar();
+				} else {
+					error("Unexpected shortcut: '%s', item '%s' in menu '%s'", shortptr, item.c_str(), string.c_str());
+				}
+			}
+
+			while (item.size() >= 2 && item[item.size() - 2] == '<') {
+				char c = item.lastChar();
+				if (c == 'B') {
+					style |= kFontStyleBold;
+				} else if (c == 'I') {
+					style |= kFontStyleItalic;
+				} else if (c == 'U') {
+					style |= kFontStyleUnderline;
+				} else if (c == 'O') {
+					style |= kFontStyleOutline;
+				} else if (c == 'S') {
+					style |= kFontStyleShadow;
+				} else if (c == 'C') {
+					style |= kFontStyleCondensed;
+				} else if (c == 'E') {
+					style |= kFontStyleExtended;
+				}
+				item.deleteLastChar();
+				item.deleteLastChar();
+			}
+
+			Common::String tmpitem(item);
+			tmpitem.trim();
+			if (tmpitem[0] == '(') {
+				enabled = false;
+
+				for (int j = 0; j < item.size(); j++)
+					if (item[j] == '(') {
+						item.deleteChar(j);
+						break;
+					}
+			}
+
+			menu->subitems.push_back(new MenuSubItem(item.c_str(), kMenuActionCommand, style, shortcut, enabled));
+		}
+
+		item = "";
+	}
+
+	return menu;
 }
 
 const Graphics::Font *Menu::getMenuFont() {
