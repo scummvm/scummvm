@@ -484,12 +484,45 @@ bool Menu::mouseMove(int x, int y) {
 bool Menu::mouseRelease(int x, int y) {
 	if (_menuActivated) {
 		_menuActivated = false;
+
+		if (_activeItem != -1 && _activeSubItem != -1 && _items[_activeItem]->subitems[_activeSubItem]->enabled)
+			executeCommand(_items[_activeItem]->subitems[_activeSubItem]);
+
 		_activeItem = -1;
+		_activeSubItem = -1;
 
 		return true;
 	}
 
 	return false;
+}
+
+void Menu::executeCommand(MenuSubItem *subitem) {
+	switch(subitem->action) {
+	case kMenuActionAbout:
+	case kMenuActionNew:
+	case kMenuActionOpen:
+	case kMenuActionClose:
+	case kMenuActionSave:
+	case kMenuActionSaveAs:
+	case kMenuActionRevert:
+	case kMenuActionQuit:
+
+	case kMenuActionUndo:
+	case kMenuActionCut:
+	case kMenuActionCopy:
+	case kMenuActionPaste:
+	case kMenuActionClear:
+		break;
+
+	case kMenuActionCommand:
+		_gui->_engine->processTurn(&subitem->text, NULL);
+		break;
+
+	default:
+		warning("Unknown action: %d", subitem->action);
+
+	}
 }
 
 } // End of namespace Wage

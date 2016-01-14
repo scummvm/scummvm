@@ -119,12 +119,12 @@ public:
 	bool canSaveGameStateCurrently();
 
 	const char *getGameFile() const;
+	void processTurn(Common::String *textInput, Designed *clickInput);
 
 private:
 	bool loadWorld(Common::MacResManager *resMan);
 	void performInitialSetup();
 	void wearObjs(Chr *chr);
-	void processTurn(Common::String *textInput, Designed *clickInput);
 	void processTurnInternal(Common::String *textInput, Designed *clickInput);
 	void regen();
 	void performCombatAction(Chr *npc, Chr *player);
