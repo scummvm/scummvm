@@ -478,6 +478,7 @@ reg_t kPalVaryUnknown(EngineState *s, int argc, reg_t *argv);
 reg_t kPalVaryUnknown2(EngineState *s, int argc, reg_t *argv);
 
 // SCI2.1 Kernel Functions
+reg_t kMorphOn(EngineState *s, int argc, reg_t *argv);
 reg_t kText(EngineState *s, int argc, reg_t *argv);
 reg_t kSave(EngineState *s, int argc, reg_t *argv);
 reg_t kAutoSave(EngineState *s, int argc, reg_t *argv);

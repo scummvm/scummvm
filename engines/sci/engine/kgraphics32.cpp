@@ -728,6 +728,16 @@ reg_t kSetScroll(EngineState *s, int argc, reg_t *argv) {
 	return kStub(s, argc, argv);
 }
 
+// Used by SQ6, script 900, the datacorder reprogramming puzzle (from room 270)
+reg_t kMorphOn(EngineState *s, int argc, reg_t *argv) {
+	// TODO: g_sci->_gfxManager->palMorphIsOn = true
+	// This function sets the palMorphIsOn flag which causes kFrameOut to use
+	// an alternative FrameOut function (GraphicsMgr::PalMorphFrameOut instead
+	// of GraphicsMgr::FrameOut). At the end of the frame, kFrameOut sets the
+	// palMorphIsOn flag back to false.
+	kStub(s, argc, argv);
+	return NULL_REG;
+
 reg_t kPalVaryUnknown(EngineState *s, int argc, reg_t *argv) {
 	// TODO: Unknown (seems to be SCI32 exclusive)
 	return kStub(s, argc, argv);

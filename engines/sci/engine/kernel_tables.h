@@ -697,7 +697,6 @@ static SciKernelMapEntry s_kernelMap[] = {
 	//   (inclusive) are set to 0
 	{ MAP_CALL(SetPalStyleRange),   SIG_EVERYWHERE,           "ii",                   NULL,            NULL },
 
-	// MorphOn - used by SQ6, script 900, the datacorder reprogramming puzzle (from room 270)
 	{ MAP_CALL(MorphOn),            SIG_EVERYWHERE,           "",                     NULL,            NULL },
 
 	// SCI3 Kernel Functions
