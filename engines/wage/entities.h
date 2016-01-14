@@ -237,25 +237,7 @@ public:
 	void resetState();
 };
 
-class Weapon {
-public:
-	uint _accuracy;
-	String _operativeVerb;
-	int _type;
-	int _damage;
-	String _sound;
-	int _numberOfUses;
-
-	Weapon() : _numberOfUses(0) {}
-
-	void decrementNumberOfUses() {
-		if (_numberOfUses != -1) {
-			_numberOfUses--;
-		}
-	}
-};
-
-class Obj : public Weapon, public Designed {
+class Obj : public Designed {
 public:
 	Obj() : _currentOwner(NULL), _currentScene(NULL) {}
 	Obj(String name, Common::SeekableReadStream *data);
@@ -298,6 +280,12 @@ public:
 	Scene *_currentScene;
 	Chr *_currentOwner;
 
+	int _type;
+	uint _accuracy;
+	String _operativeVerb;
+	int _damage;
+	String _sound;
+
 public:
 	void setCurrentOwner(Chr *currentOwner) {
 		_currentOwner = currentOwner;
@@ -313,6 +301,19 @@ public:
 
 	Chr *removeFromChr();
 	Designed *removeFromCharOrScene();
+};
+
+class Weapon : public Obj {
+public:
+	int _numberOfUses;
+
+	Weapon() : _numberOfUses(0) {}
+
+	void decrementNumberOfUses() {
+		if (_numberOfUses != -1) {
+			_numberOfUses--;
+		}
+	}
 };
 
 class Scene : public Designed {

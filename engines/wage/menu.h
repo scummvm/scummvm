@@ -88,6 +88,7 @@ private:
 	void calcMenuBounds(MenuItem *menu);
 	void renderSubmenu(MenuItem *menu);
 	MenuItem *createCommandsMenu();
+	MenuItem *createWeaponsMenu();
 
 	Common::Array<MenuItem *> _items;
 

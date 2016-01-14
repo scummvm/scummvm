@@ -146,7 +146,7 @@ Menu::Menu(Gui *gui) : _gui(gui) {
 	_items.push_back(commands);
 
 	if (!_gui->_engine->_world->_weaponMenuDisabled) {
-		MenuItem *weapons = new MenuItem(_gui->_engine->_world->_weaponsMenuName.c_str());
+		MenuItem *weapons = createWeaponsMenu();
 		_items.push_back(weapons);
 	}
 
@@ -256,6 +256,32 @@ MenuItem *Menu::createCommandsMenu() {
 
 		item = "";
 	}
+
+	return menu;
+}
+
+MenuItem *Menu::createWeaponsMenu() {
+	Chr *player = _gui->_engine->_world->_player;
+	MenuItem *menu = new MenuItem(_gui->_engine->_world->_weaponsMenuName.c_str());
+	WeaponArray *weapons = player->getWeapons(true);
+
+	for (int i = 0; i < weapons->size(); i++) {
+		Weapon *obj = (*weapons)[i];
+		if (obj->_type == Obj::REGULAR_WEAPON ||
+			obj->_type == Obj::THROW_WEAPON ||
+			obj->_type == Obj::MAGICAL_OBJECT) {
+			Common::String command(obj->_operativeVerb);
+			command += " ";
+			command += obj->_name;
+
+			menu->subitems.push_back(new MenuSubItem(command.c_str(), kMenuActionCommand, 0, 0, true));
+
+		}
+	}
+	delete weapons;
+
+	if (menu->subitems.size() == 0)
+		menu->subitems.push_back(new MenuSubItem("You have no weapons", 0, 0, 0, false));
 
 	return menu;
 }
