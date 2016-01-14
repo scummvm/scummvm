@@ -66,9 +66,11 @@ public:
 	Math::Ray makeRayFromMouse(const Common::Point &mouse) const;
 
 	/**
-	 * Convert a 3D position in world coordinates into a point in the screen space
+	 * Convert a 3D position in world coordinates into a point in 2D screen space
+	 *
+	 * The computed 2D point is in original game view coordinates.
 	 */
-	Common::Point convertPosition3DToScreen(const Math::Vector3d &obj) const;
+	Common::Point convertPosition3DToGameScreenOriginal(const Math::Vector3d &obj) const;
 
 private:
 	void computeClippingRect(float *xmin, float *xmax, float *ymin, float *ymax);

@@ -149,7 +149,8 @@ void Location::setScrollPosition(const Common::Point &position) {
 
 Common::Point Location::getCharacterScrollPosition(ModelItem *item) {
 	// TODO: Use April's 2D bounding box
-	Common::Point position2D = StarkScene->convertPosition3DToScreen(item->getPosition3D());
+	Common::Point position2D = StarkScene->convertPosition3DToGameScreenOriginal(item->getPosition3D());
+
 
 	Common::Point newScroll;
 	if (_maxScroll.x > 0) {
@@ -195,7 +196,7 @@ void Location::scrollToCharacterImmediate() {
 
 uint Location::getScrollStepFollow() {
 	ModelItem *april = StarkGlobal->getCurrent()->getInteractive();
-	Common::Point position2D = StarkScene->convertPosition3DToScreen(april->getPosition3D());
+	Common::Point position2D = StarkScene->convertPosition3DToGameScreenOriginal(april->getPosition3D());
 
 	// TODO: Complete
 

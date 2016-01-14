@@ -116,7 +116,7 @@ Math::Ray Scene::makeRayFromMouse(const Common::Point &mouse) const {
 	return Math::Ray(origin, direction);
 }
 
-Common::Point Scene::convertPosition3DToScreen(const Math::Vector3d &obj) const {
+Common::Point Scene::convertPosition3DToGameScreenOriginal(const Math::Vector3d &obj) const {
 	Math::Vector4d in;
 	in.set(obj.x(), obj.y(), obj.z(), 1.0);
 
@@ -125,11 +125,9 @@ Common::Point Scene::convertPosition3DToScreen(const Math::Vector3d &obj) const 
 	out.x() /= out.w();
 	out.y() /= out.w();
 
-	Common::Rect gameViewport = _gfx->gameViewport();
-
 	Common::Point point;
-	point.x = gameViewport.left + (1 + out.x()) * gameViewport.width() / 2;
-	point.y = -gameViewport.top + g_system->getHeight() - (1 + out.y()) * gameViewport.height() / 2;
+	point.x = (1 + out.x()) * Gfx::Driver::kGameViewportWidth / 2;
+	point.y = -Gfx::Driver::kTopBorderHeight + Gfx::Driver::kOriginalHeight - (1 + out.y()) * Gfx::Driver::kGameViewportHeight / 2;
 
 	return point;
 }
