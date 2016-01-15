@@ -860,7 +860,12 @@ reg_t kStringAtoi(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kStringTrim(EngineState *s, int argc, reg_t *argv) {
-	warning("kStringTrim (argc = %d)", argc);
+	Common::String string = s->_segMan->getString(argv[0]);
+
+	string.trim();
+	// TODO: Second parameter (bitfield, trim from left, right, center)
+	warning("kStringTrim (%d)", argv[1].getOffset());
+	s->_segMan->strcpy(argv[0], string.c_str());
 	return NULL_REG;
 }
 

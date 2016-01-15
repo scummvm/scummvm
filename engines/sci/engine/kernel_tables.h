@@ -331,8 +331,7 @@ static const SciKernelMapSubEntry kString_subops[] = {
 	{ SIG_UNTIL_SCI21MID, 11, MAP_CALL(StringPrintf),              "[or](.*)",             NULL },
 	{ SIG_UNTIL_SCI21MID, 12, MAP_CALL(StringPrintfBuf),           "[or](.*)",             NULL },
 	{ SIG_UNTIL_SCI21MID, 13, MAP_CALL(StringAtoi),                "[or]",                 NULL },
-	// exact functionality of Trim is unknown atm
-	{ SIG_UNTIL_SCI21MID, 14, MAP_CALL(StringTrim),                "[or]",                 NULL },
+	{ SIG_UNTIL_SCI21MID, 14, MAP_CALL(StringTrim),                "[or]i",                NULL },
 	{ SIG_UNTIL_SCI21MID, 15, MAP_CALL(StringUpper),               "[or]",                 NULL },
 	{ SIG_UNTIL_SCI21MID, 16, MAP_CALL(StringLower),               "[or]",                 NULL },
 	// the following 2 are unknown atm (happen in Phantasmagoria)
@@ -345,7 +344,7 @@ static const SciKernelMapSubEntry kString_subops[] = {
 	{ SIG_SINCE_SCI21LATE, 9, MAP_CALL(StringPrintf),              "[or](.*)",             NULL },
 	{ SIG_SINCE_SCI21LATE,10, MAP_CALL(StringPrintfBuf),           "[or](.*)",             NULL },
 	{ SIG_SINCE_SCI21LATE,11, MAP_CALL(StringAtoi),                "[or]",                 NULL },
-	{ SIG_SINCE_SCI21LATE,12, MAP_CALL(StringTrim),                "[or]",                 NULL },
+	{ SIG_SINCE_SCI21LATE,12, MAP_CALL(StringTrim),                "[or]i",                NULL },
 	{ SIG_SINCE_SCI21LATE,13, MAP_CALL(StringUpper),               "[or]",                 NULL },
 	{ SIG_SINCE_SCI21LATE,14, MAP_CALL(StringLower),               "[or]",                 NULL },
 	{ SIG_SINCE_SCI21LATE,15, MAP_CALL(StringTrn),                 "[or]",                 NULL },
