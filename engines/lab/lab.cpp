@@ -93,7 +93,6 @@ LabEngine::LabEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	_journalBackImage = nullptr;
 
 	_lastTooLong = false;
-	_interfaceOff = false;
 	_alternate = false;
 
 	for (int i = 0; i < 20; i++)

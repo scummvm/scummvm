@@ -286,18 +286,12 @@ Common::String LabEngine::getInvName(uint16 curInv) {
 }
 
 void LabEngine::interfaceOff() {
-	if (!_interfaceOff) {
-		_interface->attachButtonList(nullptr);
-		_event->mouseHide();
-		_interfaceOff = true;
-	}
+	_interface->attachButtonList(nullptr);
+	_event->mouseHide();
 }
 
 void LabEngine::interfaceOn() {
-	if (_interfaceOff) {
-		_interfaceOff = false;
-		_event->mouseShow();
-	}
+	_event->mouseShow();
 
 	if (_graphics->_longWinInFront)
 		_interface->attachButtonList(nullptr);

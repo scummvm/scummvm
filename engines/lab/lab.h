@@ -125,7 +125,6 @@ class LabEngine : public Engine {
 	friend class Console;
 
 private:
-	bool _interfaceOff;
 	bool _isCrumbWaiting;
 	bool _lastTooLong;
 	bool _lastPage;
