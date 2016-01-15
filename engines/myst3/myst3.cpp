@@ -398,7 +398,7 @@ void Myst3Engine::updateCursor() {
 		return;
 	}
 
-	NodePtr nodeData = _db->getNodeData(_state->getLocationNode(), _state->getLocationRoom());
+	NodePtr nodeData = _db->getNodeData(_state->getLocationNode(), _state->getLocationRoom(), _state->getLocationAge());
 
 	_state->setHotspotIgnoreClick(true);
 	HotSpot *hovered = getHoveredHotspot(nodeData);
@@ -591,7 +591,7 @@ void Myst3Engine::interactWithHoveredElement(bool lookOnly) {
 		return;
 	}
 
-	NodePtr nodeData = _db->getNodeData(_state->getLocationNode(), _state->getLocationRoom());
+	NodePtr nodeData = _db->getNodeData(_state->getLocationNode(), _state->getLocationRoom(), _state->getLocationAge());
 	HotSpot *hovered = getHoveredHotspot(nodeData);
 
 	if (hovered) {
@@ -773,17 +773,14 @@ void Myst3Engine::loadNode(uint16 nodeID, uint32 roomID, uint32 ageID) {
 
 	if (ageID)
 		_state->setLocationAge(_state->valueOrVarValue(ageID));
+	else
+		ageID = _state->getLocationAge();
+
+	_db->cacheRoom(roomID, ageID);
 
 	Common::String newRoomName = _db->getRoomName(roomID);
-	Common::String oldRoomName;
-	if (_archiveNode) {
-		oldRoomName = _archiveNode->getRoomName();
-	}
+	if ((!_archiveNode || _archiveNode->getRoomName() != newRoomName) && !_db->isCommonRoom(roomID, ageID)) {
 
-	if (newRoomName != "JRNL" && newRoomName != "XXXX"
-			 && newRoomName != "MENU" && newRoomName != oldRoomName) {
-
-		_db->setCurrentRoom(roomID);
 		Common::String nodeFile = Common::String::format("%snodes.m3a", newRoomName.c_str());
 
 		_archiveNode->close();
@@ -855,11 +852,12 @@ void Myst3Engine::runNodeInitScripts() {
 	// Mark the node as a reachable zip destination
 	_state->markNodeAsVisited(
 			_state->getLocationNode(),
-			_state->getLocationRoom());
+			_state->getLocationRoom(),
+			_state->getLocationAge());
 }
 
 void Myst3Engine::runNodeBackgroundScripts() {
-	NodePtr nodeDataRoom = _db->getNodeData(32765, _state->getLocationRoom());
+	NodePtr nodeDataRoom = _db->getNodeData(32765, _state->getLocationRoom(), _state->getLocationAge());
 
 	if (nodeDataRoom) {
 		for (uint j = 0; j < nodeDataRoom->hotspots.size(); j++) {
@@ -870,7 +868,7 @@ void Myst3Engine::runNodeBackgroundScripts() {
 		}
 	}
 
-	NodePtr nodeData = _db->getNodeData(_state->getLocationNode(), _state->getLocationRoom());
+	NodePtr nodeData = _db->getNodeData(_state->getLocationNode(), _state->getLocationRoom(), _state->getLocationAge());
 
 	for (uint j = 0; j < nodeData->hotspots.size(); j++) {
 		if (nodeData->hotspots[j].condition == -1) {
@@ -1350,7 +1348,7 @@ void Myst3Engine::dragSymbol(uint16 var, uint16 id) {
 	_cursor->changeCursor(2);
 	_state->setVar(var, -1);
 
-	NodePtr nodeData = _db->getNodeData(_state->getLocationNode(), _state->getLocationRoom());
+	NodePtr nodeData = _db->getNodeData(_state->getLocationNode(), _state->getLocationRoom(), _state->getLocationAge());
 
 	while (inputValidatePressed() && !shouldQuit()) {
 		processInput(true);
@@ -1381,7 +1379,7 @@ void Myst3Engine::dragItem(uint16 statusVar, uint16 movie, uint16 frame, uint16 
 	_state->setVar(statusVar, 0);
 	_state->setVar(itemVar, 1);
 
-	NodePtr nodeData = _db->getNodeData(_state->getLocationNode(), _state->getLocationRoom());
+	NodePtr nodeData = _db->getNodeData(_state->getLocationNode(), _state->getLocationRoom(), _state->getLocationAge());
 
 	while (inputValidatePressed() && !shouldQuit()) {
 		processInput(true);

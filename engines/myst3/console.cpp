@@ -58,6 +58,7 @@ void Console::describeScript(const Common::Array<Opcode> &script) {
 bool Console::Cmd_Infos(int argc, const char **argv) {
 	uint16 nodeId = _vm->_state->getLocationNode();
 	uint32 roomId = _vm->_state->getLocationRoom();
+	uint32 ageID = _vm->_state->getLocationAge();
 
 	if (argc >= 2) {
 		nodeId = atoi(argv[1]);
@@ -72,7 +73,7 @@ bool Console::Cmd_Infos(int argc, const char **argv) {
 		}
 	}
 
-	NodePtr nodeData = _vm->_db->getNodeData(nodeId, roomId);
+	NodePtr nodeData = _vm->_db->getNodeData(nodeId, roomId, ageID);
 
 	if (!nodeData) {
 		debugPrintf("No node with id %d\n", nodeId);
@@ -175,8 +176,8 @@ bool Console::Cmd_Var(int argc, const char **argv) {
 }
 
 bool Console::Cmd_ListNodes(int argc, const char **argv) {
-
-	uint32 roomID = 0;
+	uint32 ageID = _vm->_state->getLocationAge();
+	uint32 roomID = _vm->_state->getLocationRoom();
 
 	if (argc == 2) {
 		roomID = _vm->_db->getRoomId(argv[1]);
@@ -189,7 +190,7 @@ bool Console::Cmd_ListNodes(int argc, const char **argv) {
 
 	debugPrintf("Nodes:\n");
 
-	Common::Array<uint16> list = _vm->_db->listRoomNodes(roomID);
+	Common::Array<uint16> list = _vm->_db->listRoomNodes(roomID, ageID);
 	for (uint i = 0; i < list.size(); i++) {
 		debugPrintf("%d\n", list[i]);
 	}

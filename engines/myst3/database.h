@@ -113,19 +113,26 @@ public:
 	~Database();
 
 	/**
-	 * Loads a room's nodes into the database
+	 * Loads a room's nodes into the database cache
 	 */
-	void setCurrentRoom(uint32 roomID);
+	void cacheRoom(uint32 roomID, uint32 ageID);
+
+	/**
+	 * Tells if a room is a common room
+	 *
+	 * Common rooms are always in the cache
+	 */
+	bool isCommonRoom(uint32 roomID, uint32 ageID) const;
 
 	/**
 	 * Returns a node's hotspots and scripts from the currently loaded room
 	 */
-	NodePtr getNodeData(uint16 nodeID, uint32 roomID = 0, uint32 ageID = 0);
+	NodePtr getNodeData(uint16 nodeID, uint32 roomID, uint32 ageID);
 
 	/**
 	 * Returns a node's zip id, as used by savestates
 	 */
-	int32 getNodeZipBitIndex(uint16 nodeID, uint32 roomID);
+	int32 getNodeZipBitIndex(uint16 nodeID, uint32 roomID, uint32 ageID);
 
 	/**
 	 * Returns the generic node init script
@@ -145,7 +152,7 @@ public:
 	/**
 	 * Returns the list of the nodes of a room
 	 */
-	Common::Array<uint16> listRoomNodes(uint32 roomID = 0, uint32 ageID = 0);
+	Common::Array<uint16> listRoomNodes(uint32 roomID, uint32 ageID);
 
 	/**
 	 * Returns an age's label id, to be used with AGES 1000 metadata
@@ -164,14 +171,15 @@ public:
 
 	int16 getGameLanguageCode() const;
 private:
+	typedef Common::HashMap<uint16, Common::Array<NodePtr>> NodesCache;
+
 	const Common::Platform _platform;
 	const Common::Language _language;
 	const uint32 _localizationType;
 
 	static const AgeData _ages[];
 
-	uint32 _currentRoomID;
-	Common::HashMap< uint16, Common::Array<NodePtr> > _roomNodesCache;
+	NodesCache _roomNodesCache;
 
 	Common::Array<Opcode> _nodeInitScript;
 

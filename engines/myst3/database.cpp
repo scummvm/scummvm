@@ -112,8 +112,7 @@ const AgeData Database::_ages[] = {
 Database::Database(const Common::Platform platform, const Common::Language language, const uint32 localizationType) :
 		_platform(platform),
 		_language(language),
-		_localizationType(localizationType),
-		_currentRoomID(0) {
+		_localizationType(localizationType) {
 
 	_datFile = SearchMan.createReadStreamForMember("myst3.dat");
 	if (!_datFile) {
@@ -166,12 +165,17 @@ Database::~Database() {
 }
 
 void Database::preloadCommonRooms() {
-	// XXXX, MENU, JRNL
-	static const uint32 commonRooms[3] = { 101, 901, 902 };
+	for (uint i = 0; i < ARRAYSIZE(_ages); i++) {
+		const AgeData &age = _ages[i];
 
-	for (uint i = 0; i < 3; i++) {
-		const RoomData *data = findRoomData(commonRooms[i]);
-		_roomNodesCache.setVal(commonRooms[i], loadRoomScripts(data));
+		for (uint j = 0; j < ARRAYSIZE(age.rooms); j++) {
+			const RoomData &room = age.rooms[j];
+
+			if (isCommonRoom(room.id, age.id)) {
+				Common::Array<NodePtr> nodes = loadRoomScripts(&room);
+				_roomNodesCache.setVal(room.id, nodes);
+			}
+		}
 	}
 }
 
@@ -192,9 +196,6 @@ Common::Array<uint16> Database::listRoomNodes(uint32 roomID, uint32 ageID) {
 	Common::Array<NodePtr> nodes;
 	Common::Array<uint16> list;
 
-	if (roomID == 0)
-		roomID = _currentRoomID;
-
 	nodes = getRoomNodes(roomID);
 
 	for (uint i = 0; i < nodes.size(); i++) {
@@ -205,12 +206,7 @@ Common::Array<uint16> Database::listRoomNodes(uint32 roomID, uint32 ageID) {
 }
 
 NodePtr Database::getNodeData(uint16 nodeID, uint32 roomID, uint32 ageID) {
-	Common::Array<NodePtr> nodes;
-
-	if (roomID == 0)
-		roomID = _currentRoomID;
-
-	nodes = getRoomNodes(roomID);
+	Common::Array<NodePtr> nodes = getRoomNodes(roomID);
 
 	for (uint i = 0; i < nodes.size(); i++) {
 		if (nodes[i]->id == nodeID)
@@ -239,11 +235,7 @@ void Database::initializeZipBitIndexTable() {
 	}
 }
 
-int32 Database::getNodeZipBitIndex(uint16 nodeID, uint32 roomID) {
-	if (roomID == 0) {
-		roomID = _currentRoomID;
-	}
-
+int32 Database::getNodeZipBitIndex(uint16 nodeID, uint32 roomID, uint32 ageID) {
 	if (!_roomZipBitIndex.contains(roomID)) {
 		error("Unable to find zip-bit index for room %d", roomID);
 	}
@@ -425,20 +417,28 @@ void Database::loadRoomSoundScripts(Common::SeekableReadStream *file, Common::Ar
 	}
 }
 
-void Database::setCurrentRoom(const uint32 roomID) {
-	if (roomID == _currentRoomID)
+bool Database::isCommonRoom(uint32 roomID, uint32 ageID) const {
+	return roomID == 101 || roomID == 901 || roomID == 902;
+}
+
+void Database::cacheRoom(uint32 roomID, uint32 ageID) {
+	if (_roomNodesCache.contains(roomID)) {
 		return;
+	}
+
+	// Remove old rooms from cache and add the new one
+	for (NodesCache::iterator it = _roomNodesCache.begin(); it != _roomNodesCache.end(); it++) {
+		if (!isCommonRoom(roomID, ageID)) {
+			_roomNodesCache.erase(it);
+		}
+	}
 
 	const RoomData *currentRoomData = findRoomData(roomID);
 
 	if (!currentRoomData)
 		return;
 
-	// Remove old room from cache and add the new one
-	_roomNodesCache.erase(_currentRoomID);
 	_roomNodesCache.setVal(roomID, loadRoomScripts(currentRoomData));
-
-	_currentRoomID = roomID;
 }
 
 Common::Array<CondScript> Database::loadCondScripts(Common::SeekableReadStream &s) {

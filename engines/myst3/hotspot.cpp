@@ -103,7 +103,8 @@ int32 HotSpot::isZipDestinationAvailable(GameState *state) {
 	assert(isZip() && script.size() != 0);
 
 	uint16 node;
-	uint16 room;
+	uint16 room = state->getLocationRoom();
+	uint32 age = state->getLocationAge();
 
 	// Get the zip destination from the script
 	Opcode op = script[0];
@@ -111,7 +112,6 @@ int32 HotSpot::isZipDestinationAvailable(GameState *state) {
 	case 140:
 	case 142:
 		node = op.args[0];
-		room = 0;
 		break;
 	case 141:
 	case 143:
@@ -122,7 +122,7 @@ int32 HotSpot::isZipDestinationAvailable(GameState *state) {
 		error("Expected zip action");
 	}
 
-	return state->isZipDestinationAvailable(node, room);
+	return state->isZipDestinationAvailable(node, room, age);
 }
 
 } // End of namespace Myst3

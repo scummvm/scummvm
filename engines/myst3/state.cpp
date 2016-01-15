@@ -776,8 +776,8 @@ void GameState::pauseEngine(bool pause) {
 	}
 }
 
-bool GameState::isZipDestinationAvailable(uint16 node, uint16 room) {
-	int32 zipBitIndex = _vm->_db->getNodeZipBitIndex(node, room);
+bool GameState::isZipDestinationAvailable(uint16 node, uint16 room, uint32 age) {
+	int32 zipBitIndex = _vm->_db->getNodeZipBitIndex(node, room, age);
 
 	int32 arrayIndex = zipBitIndex / 32;
 	assert(arrayIndex < 64);
@@ -785,8 +785,8 @@ bool GameState::isZipDestinationAvailable(uint16 node, uint16 room) {
 	return (_data.zipDestinations[arrayIndex] & (1 << (zipBitIndex % 32))) != 0;
 }
 
-void GameState::markNodeAsVisited(uint16 node, uint16 room) {
-	int32 zipBitIndex = _vm->_db->getNodeZipBitIndex(node, room);
+void GameState::markNodeAsVisited(uint16 node, uint16 room, uint32 age) {
+	int32 zipBitIndex = _vm->_db->getNodeZipBitIndex(node, room, age);
 
 	int32 arrayIndex = zipBitIndex / 32;
 	assert(arrayIndex < 64);

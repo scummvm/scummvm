@@ -329,8 +329,8 @@ public:
 	float getMinHeading() { return _data.minHeading; }
 	float getMaxHeading() { return _data.maxHeading; }
 
-	void markNodeAsVisited(uint16 node, uint16 room);
-	bool isZipDestinationAvailable(uint16 node, uint16 room);
+	void markNodeAsVisited(uint16 node, uint16 room, uint32 age);
+	bool isZipDestinationAvailable(uint16 node, uint16 room, uint32 age);
 
 	Graphics::Surface *getSaveThumbnail() const;
 	void setSaveThumbnail(Graphics::Surface *thumb);
