@@ -627,11 +627,6 @@ static SciKernelMapEntry s_kernelMap[] = {
 	{ MAP_DUMMY(InputText),        SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
 	{ MAP_DUMMY(TextWidth),        SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
 	{ MAP_DUMMY(PointSize),        SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
-	// SetScroll is called by script 64909, Styler::doit(), but it doesn't seem to
-	// be used at all (plus, it was then changed to a dummy function in SCI3).
-	// Since this is most likely unused, and we got no test case, error out when
-	// it is called in order to find an actual call to it.
-	{ MAP_DUMMY(SetScroll),        SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
 
 	// SCI2.1 Kernel Functions
 	{ MAP_CALL(CD),                SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
