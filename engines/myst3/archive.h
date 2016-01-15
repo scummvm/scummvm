@@ -51,6 +51,8 @@ public:
 
 	bool open(const char *fileName, const char *room);
 	void close();
+
+	Common::String getRoomName() const;
 };
 
 } // End of namespace Myst3

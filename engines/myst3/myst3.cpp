@@ -774,8 +774,11 @@ void Myst3Engine::loadNode(uint16 nodeID, uint32 roomID, uint32 ageID) {
 	if (ageID)
 		_state->setLocationAge(_state->valueOrVarValue(ageID));
 
-	Common::String oldRoomName = _db->getRoomName();
 	Common::String newRoomName = _db->getRoomName(roomID);
+	Common::String oldRoomName;
+	if (_archiveNode) {
+		oldRoomName = _archiveNode->getRoomName();
+	}
 
 	if (newRoomName != "JRNL" && newRoomName != "XXXX"
 			 && newRoomName != "MENU" && newRoomName != oldRoomName) {

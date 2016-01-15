@@ -126,4 +126,11 @@ void Archive::close() {
 	_file.close();
 }
 
+Common::String Archive::getRoomName() const {
+	if (_multipleRoom) {
+		error("'%s' is a multi-room archive", _file.getName());
+	}
+
+	return _roomName;
+}
 } // End of namespace Myst3

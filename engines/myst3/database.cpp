@@ -113,8 +113,7 @@ Database::Database(const Common::Platform platform, const Common::Language langu
 		_platform(platform),
 		_language(language),
 		_localizationType(localizationType),
-		_currentRoomID(0),
-		_currentRoomData(0) {
+		_currentRoomID(0) {
 
 	_datFile = SearchMan.createReadStreamForMember("myst3.dat");
 	if (!_datFile) {
@@ -430,14 +429,14 @@ void Database::setCurrentRoom(const uint32 roomID) {
 	if (roomID == _currentRoomID)
 		return;
 
-	_currentRoomData = findRoomData(roomID);
+	const RoomData *currentRoomData = findRoomData(roomID);
 
-	if (!_currentRoomData)
+	if (!currentRoomData)
 		return;
 
 	// Remove old room from cache and add the new one
 	_roomNodesCache.erase(_currentRoomID);
-	_roomNodesCache.setVal(roomID, loadRoomScripts(_currentRoomData));
+	_roomNodesCache.setVal(roomID, loadRoomScripts(currentRoomData));
 
 	_currentRoomID = roomID;
 }
@@ -577,14 +576,8 @@ Common::Array<PolarRect> Database::loadRects(Common::SeekableReadStream &s) {
 }
 
 Common::String Database::getRoomName(uint32 roomID) {
-	if (roomID != 0 && roomID != _currentRoomID) {
-		const RoomData *data = findRoomData(roomID);
-		return data->name;
-	} else if (_currentRoomData) {
-		return _currentRoomData->name;
-	}
-
-	return "";
+	const RoomData *data = findRoomData(roomID);
+	return data->name;
 }
 
 uint32 Database::getRoomId(const char *name) {

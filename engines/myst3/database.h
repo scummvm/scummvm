@@ -135,7 +135,7 @@ public:
 	/**
 	 * Returns the name of the currently loaded room
 	 */
-	Common::String getRoomName(uint32 roomID = 0);
+	Common::String getRoomName(uint32 roomID);
 
 	/**
 	 * Returns the id of a room from its name
@@ -171,7 +171,6 @@ private:
 	static const AgeData _ages[];
 
 	uint32 _currentRoomID;
-	const RoomData *_currentRoomData;
 	Common::HashMap< uint16, Common::Array<NodePtr> > _roomNodesCache;
 
 	Common::Array<Opcode> _nodeInitScript;
