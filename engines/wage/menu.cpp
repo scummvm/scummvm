@@ -126,6 +126,8 @@ Menu::Menu(Gui *gui) : _gui(gui) {
 	assert(_gui->_engine);
 	assert(_gui->_engine->_world);
 
+	_font = getMenuFont();
+
 	MenuItem *about = new MenuItem(_gui->_builtInFonts ? "\xa9" : "\xf0"); // (c) Symbol as the most resembling apple
 	_items.push_back(about);
 	_items[0]->subitems.push_back(new MenuSubItem(_gui->_engine->_world->getAboutMenuItemName(), kMenuActionAbout));
@@ -146,12 +148,13 @@ Menu::Menu(Gui *gui) : _gui(gui) {
 	_items.push_back(commands);
 
 	if (!_gui->_engine->_world->_weaponMenuDisabled) {
-		MenuItem *weapons = createWeaponsMenu();
-		_items.push_back(weapons);
+		_weapons = new MenuItem(_gui->_engine->_world->_weaponsMenuName.c_str());
+		_items.push_back(_weapons);
+
+		regenWeaponsMenu();
 	}
 
 	// Calculate menu dimensions
-	_font = getMenuFont();
 	int y = 1;
 	int x = 18;
 
@@ -260,9 +263,21 @@ MenuItem *Menu::createCommandsMenu() {
 	return menu;
 }
 
-MenuItem *Menu::createWeaponsMenu() {
+void Menu::regenWeaponsMenu() {
+	if (_gui->_engine->_world->_weaponMenuDisabled)
+		return;
+
+	for (int j = 0; j < _weapons->subitems.size(); j++)
+		delete _weapons->subitems[j];
+
+	_weapons->subitems.clear();
+
+	createWeaponsMenu(_weapons);
+	calcMenuBounds(_weapons);
+}
+
+void Menu::createWeaponsMenu(MenuItem *menu) {
 	Chr *player = _gui->_engine->_world->_player;
-	MenuItem *menu = new MenuItem(_gui->_engine->_world->_weaponsMenuName.c_str());
 	WeaponArray *weapons = player->getWeapons(true);
 
 	for (int i = 0; i < weapons->size(); i++) {
@@ -275,15 +290,12 @@ MenuItem *Menu::createWeaponsMenu() {
 			command += obj->_name;
 
 			menu->subitems.push_back(new MenuSubItem(command.c_str(), kMenuActionCommand, 0, 0, true));
-
 		}
 	}
 	delete weapons;
 
 	if (menu->subitems.size() == 0)
 		menu->subitems.push_back(new MenuSubItem("You have no weapons", 0, 0, 0, false));
-
-	return menu;
 }
 
 const Graphics::Font *Menu::getMenuFont() {

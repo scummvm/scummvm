@@ -579,6 +579,10 @@ void Gui::loadFonts() {
 	delete dat;
 }
 
+void Gui::regenWeaponsMenu() {
+	_menu->regenWeaponsMenu();
+}
+
 void Gui::mouseMove(int x, int y) {
 	if (_menu->_menuActivated) {
 		if (_menu->mouseMove(x, y))

@@ -73,6 +73,8 @@ public:
 	bool mouseRelease(int x, int y);
 	bool mouseMove(int x, int y);
 
+	void regenWeaponsMenu();
+
 	bool _menuActivated;
 	Common::Rect _bbox;
 
@@ -88,10 +90,11 @@ private:
 	void calcMenuBounds(MenuItem *menu);
 	void renderSubmenu(MenuItem *menu);
 	MenuItem *createCommandsMenu();
-	MenuItem *createWeaponsMenu();
+	void createWeaponsMenu(MenuItem *menu);
 	void executeCommand(MenuSubItem *subitem);
 
 	Common::Array<MenuItem *> _items;
+	MenuItem *_weapons;
 
 	const Graphics::Font *_font;
 

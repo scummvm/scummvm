@@ -97,6 +97,7 @@ public:
 	void drawInput();
 	void setSceneDirty() { _sceneDirty = true; }
 	const Graphics::Font *getFont(const char *name, Graphics::FontManager::FontUsage fallback);
+	void regenWeaponsMenu();
 
 private:
 	void paintBorder(Graphics::Surface *g, Common::Rect &r, WindowType windowType);

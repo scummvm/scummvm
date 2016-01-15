@@ -305,6 +305,9 @@ void WageEngine::onMove(Designed *what, Designed *from, Designed *to) {
 			(what->_classType == OBJ && ((Obj *)what)->_currentScene == currentScene))
 		_gui->setSceneDirty();
 
+	if ((from == player || to == player) && !_temporarilyHidden)
+		_gui->regenWeaponsMenu();
+
 	if (what != player && what->_classType == CHR) {
 		Chr *chr = (Chr *)what;
 		if (to == _world->_storageScene) {
