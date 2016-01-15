@@ -95,6 +95,7 @@ public:
 	Common::String *_saveBeforeCloseMessage;
 	Common::String *_revertMessage;
 
+	Common::String _aboutMenuItemName;
 	Common::String _commandsMenuName;
 	Common::String _commandsMenu;
 	Common::String _weaponsMenuName;

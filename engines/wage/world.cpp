@@ -265,10 +265,13 @@ bool World::loadWorld(Common::MacResManager *resMan) {
 
 	res = resMan->getResource(MKTAG('M','E','N','U'), 2001);
 	if (res != NULL) {
-		readMenu(res);
-		warning("STUB: aboutMenu");
-		//String aboutMenuItemName = appleMenu[1].split(";")[0];
-		//world.setAboutMenuItemName(aboutMenuItemName);
+		Common::StringArray *menu = readMenu(res);
+		_aboutMenuItemName = "";
+		Common::String string = menu->operator[](0);
+
+		for (int i = 0; i < string.size() && string[i] != ';'; i++) // Read token
+			_aboutMenuItemName += string[i];
+
 		delete res;
 	}
 	res = resMan->getResource(MKTAG('M','E','N','U'), 2004);
@@ -485,9 +488,23 @@ bool World::scenesAreConnected(Scene *scene1, Scene *scene2) {
 }
 
 const char *World::getAboutMenuItemName() {
-	warning("STUB: getAboutMenuItemName");
+	static char menu[256];
 
-	return "About";
+	*menu = '\0';
+
+	if (_aboutMenuItemName.size() == 0) {
+		sprintf(menu, "About %s...", _name.c_str());
+	} else { // Replace '@' with name
+		const char *str = _aboutMenuItemName.c_str();
+		char *pos = strchr(str, '@');
+		if (pos) {
+			strncat(menu, str, (pos - str));
+			strcat(menu, _name.c_str());
+			strcat(menu, pos + 1);
+		}
+	}
+
+	return menu;
 }
 
 } // End of namespace Wage
