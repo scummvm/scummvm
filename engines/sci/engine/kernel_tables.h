@@ -324,7 +324,9 @@ static const SciKernelMapSubEntry kString_subops[] = {
 
 	// =SCI2, SCI2.1 Early and SCI2.1 Middle=
 	{ SIG_UNTIL_SCI21MID,  8, MAP_CALL(StringDup),                 "[or]",                 NULL },
-	{ SIG_UNTIL_SCI21MID,  9, MAP_CALL(StringGetData),             "[or]",                 NULL },
+	// TODO: This gets called with null references in Torin. Check if this is correct, or it's
+	// caused by missing functionality
+	{ SIG_UNTIL_SCI21MID,  9, MAP_CALL(StringGetData),             "[or0]",                NULL },
 	{ SIG_UNTIL_SCI21MID, 10, MAP_CALL(StringLen),                 "[or]",                 NULL },
 	{ SIG_UNTIL_SCI21MID, 11, MAP_CALL(StringPrintf),              "[or](.*)",             NULL },
 	{ SIG_UNTIL_SCI21MID, 12, MAP_CALL(StringPrintfBuf),           "[or](.*)",             NULL },
