@@ -142,7 +142,7 @@ public:
 	/**
 	 * Returns the name of the currently loaded room
 	 */
-	Common::String getRoomName(uint32 roomID);
+	Common::String getRoomName(uint32 roomID, uint32 ageID) const;
 
 	/**
 	 * Returns the id of a room from its name
@@ -171,7 +171,24 @@ public:
 
 	int16 getGameLanguageCode() const;
 private:
-	typedef Common::HashMap<uint16, Common::Array<NodePtr>> NodesCache;
+	struct RoomKey {
+		uint16 ageID;
+		uint16 roomID;
+
+		RoomKey(uint16 room, uint16 age) : roomID(room), ageID(age) {};
+
+		bool operator==(const RoomKey &k) const {
+			return ageID == k.ageID && roomID == k.roomID;
+		}
+	};
+
+	struct RoomKeyHash {
+		uint operator()(const RoomKey &v) const {
+			return v.ageID + (v.roomID << 16);
+		}
+	};
+
+	typedef Common::HashMap<RoomKey, Common::Array<NodePtr>, RoomKeyHash> NodesCache;
 
 	const Common::Platform _platform;
 	const Common::Language _language;
@@ -193,22 +210,22 @@ private:
 	Common::Array<RoomScripts> _roomScriptsIndex;
 	int32 _roomScriptsStartOffset;
 
-	const RoomData *findRoomData(uint32 roomID);
-	Common::Array<NodePtr> getRoomNodes(uint32 roomID);
+	const RoomData *findRoomData(uint32 roomID, uint32 ageID) const;
+	Common::Array<NodePtr> getRoomNodes(uint32 roomID, uint32 ageID) const;
 
-	Common::Array<NodePtr> loadRoomScripts(const RoomData *room);
-	void loadRoomNodeScripts(Common::SeekableReadStream *file, Common::Array<NodePtr> &nodes);
-	void loadRoomSoundScripts(Common::SeekableReadStream *file, Common::Array<NodePtr> &nodes, bool background);
+	Common::Array<NodePtr> loadRoomScripts(const RoomData *room) const;
+	void loadRoomNodeScripts(Common::SeekableReadStream *file, Common::Array<NodePtr> &nodes) const;
+	void loadRoomSoundScripts(Common::SeekableReadStream *file, Common::Array<NodePtr> &nodes, bool background) const;
 	void preloadCommonRooms();
 	void initializeZipBitIndexTable();
 	void patchLanguageMenu();
 
-	Common::Array<CondScript> loadCondScripts(Common::SeekableReadStream &s);
-	Common::Array<Opcode> loadOpcodes(Common::SeekableReadStream &s);
-	Common::Array<HotSpot> loadHotspots(Common::SeekableReadStream &s);
-	Common::Array<PolarRect> loadRects(Common::SeekableReadStream &s);
-	CondScript loadCondScript(Common::SeekableReadStream &s);
-	HotSpot loadHotspot(Common::SeekableReadStream &s);
+	Common::Array<CondScript> loadCondScripts(Common::SeekableReadStream &s) const;
+	Common::Array<Opcode> loadOpcodes(Common::SeekableReadStream &s) const;
+	Common::Array<HotSpot> loadHotspots(Common::SeekableReadStream &s) const;
+	Common::Array<PolarRect> loadRects(Common::SeekableReadStream &s) const;
+	CondScript loadCondScript(Common::SeekableReadStream &s) const;
+	HotSpot loadHotspot(Common::SeekableReadStream &s) const;
 
 	// 'myst3.dat' read methods
 	void readScriptIndex(Common::SeekableReadStream *stream, bool load);

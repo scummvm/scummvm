@@ -80,7 +80,7 @@ bool Console::Cmd_Infos(int argc, const char **argv) {
 		return true;
 	}
 
-	Common::String roomName = _vm->_db->getRoomName(roomId);
+	Common::String roomName = _vm->_db->getRoomName(roomId, ageID);
 
 	debugPrintf("node: %s %d    ", roomName.c_str(), nodeId);
 

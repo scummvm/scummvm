@@ -778,7 +778,7 @@ void Myst3Engine::loadNode(uint16 nodeID, uint32 roomID, uint32 ageID) {
 
 	_db->cacheRoom(roomID, ageID);
 
-	Common::String newRoomName = _db->getRoomName(roomID);
+	Common::String newRoomName = _db->getRoomName(roomID, ageID);
 	if ((!_archiveNode || _archiveNode->getRoomName() != newRoomName) && !_db->isCommonRoom(roomID, ageID)) {
 
 		Common::String nodeFile = Common::String::format("%snodes.m3a", newRoomName.c_str());
@@ -1237,7 +1237,7 @@ const DirectorySubEntry *Myst3Engine::getFileDescription(const Common::String &r
                                                          DirectorySubEntry::ResourceType type) {
 	Common::String archiveRoom = room;
 	if (archiveRoom == "") {
-		archiveRoom = _db->getRoomName(_state->getLocationRoom());
+		archiveRoom = _db->getRoomName(_state->getLocationRoom(), _state->getLocationAge());
 	}
 
 	const DirectorySubEntry *desc = 0;
@@ -1260,7 +1260,7 @@ DirectorySubEntryList Myst3Engine::listFilesMatching(const Common::String &room,
                                                      DirectorySubEntry::ResourceType type) {
 	Common::String archiveRoom = room;
 	if (archiveRoom == "") {
-		archiveRoom = _db->getRoomName(_state->getLocationRoom());
+		archiveRoom = _db->getRoomName(_state->getLocationRoom(), _state->getLocationAge());
 	}
 
 	for (uint i = 0; i < _archivesCommon.size(); i++) {

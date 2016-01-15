@@ -173,19 +173,19 @@ void Database::preloadCommonRooms() {
 
 			if (isCommonRoom(room.id, age.id)) {
 				Common::Array<NodePtr> nodes = loadRoomScripts(&room);
-				_roomNodesCache.setVal(room.id, nodes);
+				_roomNodesCache.setVal(RoomKey(room.id, age.id), nodes);
 			}
 		}
 	}
 }
 
-Common::Array<NodePtr> Database::getRoomNodes(uint32 roomID) {
+Common::Array<NodePtr> Database::getRoomNodes(uint32 roomID, uint32 ageID) const {
 	Common::Array<NodePtr> nodes;
 
-	if (_roomNodesCache.contains(roomID)) {
-		nodes = _roomNodesCache.getVal(roomID);
+	if (_roomNodesCache.contains(RoomKey(roomID, ageID))) {
+		nodes = _roomNodesCache.getVal(RoomKey(roomID, ageID));
 	} else {
-		const RoomData *data = findRoomData(roomID);
+		const RoomData *data = findRoomData(roomID, ageID);
 		nodes = loadRoomScripts(data);
 	}
 
@@ -196,7 +196,7 @@ Common::Array<uint16> Database::listRoomNodes(uint32 roomID, uint32 ageID) {
 	Common::Array<NodePtr> nodes;
 	Common::Array<uint16> list;
 
-	nodes = getRoomNodes(roomID);
+	nodes = getRoomNodes(roomID, ageID);
 
 	for (uint i = 0; i < nodes.size(); i++) {
 		list.push_back(nodes[i]->id);
@@ -206,7 +206,7 @@ Common::Array<uint16> Database::listRoomNodes(uint32 roomID, uint32 ageID) {
 }
 
 NodePtr Database::getNodeData(uint16 nodeID, uint32 roomID, uint32 ageID) {
-	Common::Array<NodePtr> nodes = getRoomNodes(roomID);
+	Common::Array<NodePtr> nodes = getRoomNodes(roomID, ageID);
 
 	for (uint i = 0; i < nodes.size(); i++) {
 		if (nodes[i]->id == nodeID)
@@ -240,7 +240,7 @@ int32 Database::getNodeZipBitIndex(uint16 nodeID, uint32 roomID, uint32 ageID) {
 		error("Unable to find zip-bit index for room %d", roomID);
 	}
 
-	Common::Array<NodePtr> nodes = getRoomNodes(roomID);
+	Common::Array<NodePtr> nodes = getRoomNodes(roomID, ageID);
 
 	for (uint i = 0; i < nodes.size(); i++) {
 		if (nodes[i]->id == nodeID) {
@@ -251,11 +251,13 @@ int32 Database::getNodeZipBitIndex(uint16 nodeID, uint32 roomID, uint32 ageID) {
 	error("Unable to find zip-bit index for node (%d, %d)", nodeID, roomID);
 }
 
-const RoomData *Database::findRoomData(uint32 roomID) {
+const RoomData *Database::findRoomData(uint32 roomID, uint32 ageID) const {
 	for (uint i = 0; i < ARRAYSIZE(_ages); i++) {
-		for (uint j = 0; j < _ages[i].roomCount; j++) {
-			if (_ages[i].rooms[j].id == roomID) {
-				return &_ages[i].rooms[j];
+		if (_ages[i].id == ageID) {
+			for (uint j = 0; j < _ages[i].roomCount; j++) {
+				if (_ages[i].rooms[j].id == roomID) {
+					return &_ages[i].rooms[j];
+				}
 			}
 		}
 	}
@@ -263,7 +265,7 @@ const RoomData *Database::findRoomData(uint32 roomID) {
 	error("No room with ID %d", roomID);
 }
 
-Common::Array<NodePtr> Database::loadRoomScripts(const RoomData *room) {
+Common::Array<NodePtr> Database::loadRoomScripts(const RoomData *room) const {
 	Common::Array<NodePtr> nodes;
 
 	// Load the node scripts
@@ -289,7 +291,7 @@ Common::Array<NodePtr> Database::loadRoomScripts(const RoomData *room) {
 	return nodes;
 }
 
-void Database::loadRoomNodeScripts(Common::SeekableReadStream *file, Common::Array<NodePtr> &nodes) {
+void Database::loadRoomNodeScripts(Common::SeekableReadStream *file, Common::Array<NodePtr> &nodes) const {
 	uint zipIndex = 0;
 	while (!file->eos()) {
 		int16 id = file->readUint16LE();
@@ -336,7 +338,7 @@ void Database::loadRoomNodeScripts(Common::SeekableReadStream *file, Common::Arr
 	}
 }
 
-void Database::loadRoomSoundScripts(Common::SeekableReadStream *file, Common::Array<NodePtr> &nodes, bool background) {
+void Database::loadRoomSoundScripts(Common::SeekableReadStream *file, Common::Array<NodePtr> &nodes, bool background) const {
 	while (!file->eos()) {
 		int16 id = file->readUint16LE();
 
@@ -422,7 +424,7 @@ bool Database::isCommonRoom(uint32 roomID, uint32 ageID) const {
 }
 
 void Database::cacheRoom(uint32 roomID, uint32 ageID) {
-	if (_roomNodesCache.contains(roomID)) {
+	if (_roomNodesCache.contains(RoomKey(roomID, ageID))) {
 		return;
 	}
 
@@ -433,15 +435,15 @@ void Database::cacheRoom(uint32 roomID, uint32 ageID) {
 		}
 	}
 
-	const RoomData *currentRoomData = findRoomData(roomID);
+	const RoomData *currentRoomData = findRoomData(roomID, ageID);
 
 	if (!currentRoomData)
 		return;
 
-	_roomNodesCache.setVal(roomID, loadRoomScripts(currentRoomData));
+	_roomNodesCache.setVal(RoomKey(roomID, ageID), loadRoomScripts(currentRoomData));
 }
 
-Common::Array<CondScript> Database::loadCondScripts(Common::SeekableReadStream &s) {
+Common::Array<CondScript> Database::loadCondScripts(Common::SeekableReadStream &s) const {
 	Common::Array<CondScript> scripts;
 
 	while (!s.eos()) {
@@ -456,7 +458,7 @@ Common::Array<CondScript> Database::loadCondScripts(Common::SeekableReadStream &
 	return scripts;
 }
 
-Common::Array<HotSpot> Database::loadHotspots(Common::SeekableReadStream &s) {
+Common::Array<HotSpot> Database::loadHotspots(Common::SeekableReadStream &s) const {
 	Common::Array<HotSpot> scripts;
 
 	while (!s.eos()) {
@@ -471,7 +473,7 @@ Common::Array<HotSpot> Database::loadHotspots(Common::SeekableReadStream &s) {
 	return scripts;
 }
 
-Common::Array<Opcode> Database::loadOpcodes(Common::SeekableReadStream &s) {
+Common::Array<Opcode> Database::loadOpcodes(Common::SeekableReadStream &s) const {
 	Common::Array<Opcode> script;
 
 	while (!s.eos()) {
@@ -494,7 +496,7 @@ Common::Array<Opcode> Database::loadOpcodes(Common::SeekableReadStream &s) {
 	return script;
 }
 
-CondScript Database::loadCondScript(Common::SeekableReadStream &s) {
+CondScript Database::loadCondScript(Common::SeekableReadStream &s) const {
 	CondScript script;
 	script.condition = s.readUint16LE();
 	if(!script.condition)
@@ -534,7 +536,7 @@ CondScript Database::loadCondScript(Common::SeekableReadStream &s) {
 	return script;
 }
 
-HotSpot Database::loadHotspot(Common::SeekableReadStream &s) {
+HotSpot Database::loadHotspot(Common::SeekableReadStream &s) const {
 	HotSpot hotspot;
 
 	hotspot.condition = s.readUint16LE();
@@ -552,7 +554,7 @@ HotSpot Database::loadHotspot(Common::SeekableReadStream &s) {
 	return hotspot;
 }
 
-Common::Array<PolarRect> Database::loadRects(Common::SeekableReadStream &s) {
+Common::Array<PolarRect> Database::loadRects(Common::SeekableReadStream &s) const {
 	Common::Array<PolarRect> rects;
 
 	bool lastRect = false;
@@ -575,8 +577,8 @@ Common::Array<PolarRect> Database::loadRects(Common::SeekableReadStream &s) {
 	return rects;
 }
 
-Common::String Database::getRoomName(uint32 roomID) {
-	const RoomData *data = findRoomData(roomID);
+Common::String Database::getRoomName(uint32 roomID, uint32 ageID) const {
+	const RoomData *data = findRoomData(roomID, ageID);
 	return data->name;
 }
 
