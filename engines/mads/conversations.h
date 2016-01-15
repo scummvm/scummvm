@@ -68,6 +68,62 @@ enum ConvEntryFlag {
 	ENTRYFLAG_8000 = 0x8000
 };
 
+enum ConditionalOperation {
+	CNVOP_NONE = 0xff,
+	CNVOP_VALUE = 0,
+	CNVOP_ADD = 1,
+	CNVOP_SUBTRACT = 2,
+	CNVOP_MULTIPLY = 3,
+	CNVOP_DIVIDE = 4,
+	CNVOP_MODULUS = 5,
+	CNVOP_LTEQ = 6,
+	CNVOP_GTEQ = 7,
+	CNVOP_LT = 8,
+	CNVOP_GT = 9,
+	CNVOP_NEQ = 10,
+	CNVOP_EQ = 11,
+	CNVOP_AND = 12,
+	CNVOP_OR = 13,
+	CNVOP_ABORT = 0xff
+};
+
+
+struct ConversationVar {
+	bool _isPtr;
+	int _val;
+	int *_valPtr;
+
+	/**
+	 * Constructor
+	 */
+	ConversationVar() : _isPtr(false), _val(0), _valPtr(nullptr) {}
+
+	/**
+	 * Sets a numeric value
+	 */
+	void setValue(int val);
+
+	/**
+	 * Sets a pointer value
+	 */
+	void setValue(int *val);
+
+	/**
+	 * Return either the variable's pointer, or a pointer to it's direct value
+	 */
+	int *getValue() { return _isPtr ? _valPtr : &_val; }
+
+	/**
+	 * Returns true if variable is a pointer
+	 */
+	bool isPtr() const { return _isPtr; }
+
+	/**
+	 * Returns true if variable is numeric
+	 */
+	bool isNumeric() const { return !_isPtr; }
+};
+
 struct ScriptEntry {
 	struct Conditional {
 		struct CondtionalParamEntry {
@@ -80,19 +136,30 @@ struct ScriptEntry {
 			CondtionalParamEntry() : _isVariable(false), _val(0) {}
 		};
 
-		uint _paramsFlag;
+		static Common::Array<ConversationVar> *_vars;
+		ConditionalOperation _operation;
 		CondtionalParamEntry _param1;
 		CondtionalParamEntry _param2;
 
 		/**
 		 * Constructor
 		 */
-		Conditional() : _paramsFlag(false) {}
+		Conditional() : _operation(CNVOP_NONE) {}
 
 		/**
 		 * Loads data from a passed stream into the parameters structure
 		 */
 		void load(Common::SeekableReadStream &s);
+
+		/**
+		 * Gets the value
+		 */
+		int get(int paramNum) const;
+
+		/**
+		 * Evaluates the conditional
+		 */
+		int evaluate() const;
 	};
 
 	DialogCommand _command;
@@ -176,42 +243,6 @@ struct ConversationData {
 	 * Load the specified conversation resource file
 	 */
 	void load(const Common::String &filename);
-};
-
-struct ConversationVar {
-	bool _isPtr;
-	int _val;
-	int *_valPtr;
-
-	/**
-	 * Constructor
-	 */
-	ConversationVar() : _isPtr(false), _val(0), _valPtr(nullptr) {}
-
-	/**
-	 * Sets a numeric value
-	 */
-	void setValue(int val);
-
-	/**
-	 * Sets a pointer value
-	 */
-	void setValue(int *val);
-
-	/**
-	 * Return either the variable's pointer, or a pointer to it's direct value
-	 */
-	int *getValue() { return _isPtr ? _valPtr : &_val; }
-
-	/**
-	 * Returns true if variable is a pointer
-	 */
-	bool isPtr() const { return _isPtr; }
-
-	/**
-	 * Returns true if variable is numeric
-	 */
-	bool isNumeric() const { return !_isPtr; }
 };
 
 /**

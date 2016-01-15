@@ -151,6 +151,9 @@ void GameConversations::start() {
 	_runningConv->_cnd._currentNode = -1;
 	_runningConv->_cnd._numImports = 0;
 	_runningConv->_cnd._vars[0].setValue(_nextStartNode->_val);
+
+	// Store a reference to the variables list in the script handler for later reference
+	ScriptEntry::Conditional::_vars = &_runningConv->_cnd._vars;
 }
 
 void GameConversations::setVariable(uint idx, int val) {
@@ -441,7 +444,16 @@ int GameConversations::executeEntry(int index) {
 	bool flag = true;
 	for (uint scriptIdx = 0; scriptIdx < dlg._script.size(); ++scriptIdx) {
 		DialogCommand cmd = dlg._script[scriptIdx]._command;
-		// TODO
+		
+		switch (cmd) {
+		case CMD_1:
+		case CMD_HIDE:
+		case CMD_UNHIDE:
+			break;
+
+		default:
+			error("Unknown script opcode");
+		}
 	}
 
 	if (flag) {
@@ -774,10 +786,14 @@ void ScriptEntry::load(Common::SeekableReadStream &s) {
 	}
 }
 
-void ScriptEntry::Conditional::load(Common::SeekableReadStream &s) {
-	_paramsFlag = s.readUint16LE();
+/*------------------------------------------------------------------------*/
 
-	if (_paramsFlag == 0xff) {
+Common::Array<ConversationVar> *ScriptEntry::Conditional::_vars = nullptr;
+
+void ScriptEntry::Conditional::load(Common::SeekableReadStream &s) {
+	_operation = (ConditionalOperation)s.readUint16LE();
+
+	if (_operation == CNVOP_ABORT) {
 		_param1._isVariable = false;
 		_param1._val = 0;
 		_param2._isVariable = false;
@@ -790,62 +806,53 @@ void ScriptEntry::Conditional::load(Common::SeekableReadStream &s) {
 	}
 }
 
-/*
-do {
-command = convFile->readByte();
-chk = convFile->readUint16BE();
-if (chk != 0xFF00 && chk != 0x0000) {
-warning("Error while reading conversation node entries - bailing out");
-break;
+int ScriptEntry::Conditional::evaluate() const {
+	if (_operation == CNVOP_NONE)
+		return -1;
+
+	int param1 = get(0);
+	if (_operation == CNVOP_VALUE)
+		return param1;
+	int param2 = get(1);
+
+	switch (_operation) {
+	case CNVOP_ADD:
+		return param1 + param2;
+	case CNVOP_SUBTRACT:
+		return param1 - param2;
+	case CNVOP_MULTIPLY:
+		return param1 * param2;
+	case CNVOP_DIVIDE:
+		return param1 / param2;
+	case CNVOP_MODULUS:
+		return param1 % param2;
+	case CNVOP_LTEQ:
+		return (param1 <= param2) ? 1 : 0;
+	case CNVOP_GTEQ:
+		return (param1 < param2) ? 1 : 0;
+	case CNVOP_LT:
+		return (param1 < param2) ? 1 : 0;
+	case CNVOP_GT:
+		return (param1 > param2) ? 1 : 0;
+	case CNVOP_NEQ:
+		return (param1 != param2) ? 1 : 0;
+	case CNVOP_EQ:
+		return (param1 == param2) ? 1 : 0;
+	case CNVOP_AND:
+		return (param1 || param2) ? 1 : 0;
+	case CNVOP_OR:
+		return (param1 && param2) ? 1 : 0;
+	default:
+		error("Unknown conditional operation");
+	}
 }
 
-switch (command) {
-case cmdNodeEnd:
-//debug("Node end");
-break;
-case cmdDialogEnd:
-//debug("Dialog end");
-break;
-case cmdHide: {
-byte count = convFile->readByte();
-for (byte k = 0; k < count; k++) {
-//uint16 nodeRef = convFile->readUint16LE();
-//debug("Hide node %d", nodeRef);
+int ScriptEntry::Conditional::get(int paramNum) const {
+	const CondtionalParamEntry &p = (paramNum == 0) ? _param1 : _param2;
+	return p._isVariable ? *(*_vars)[p._val].getValue() : p._val;
 }
 
-}
-break;
-case cmdUnhide: {
-byte count = convFile->readByte();
-for (byte k = 0; k < count; k++) {
-//uint16 nodeRef = convFile->readUint16LE();
-//debug("Unhide node %d", nodeRef);
-}
+/*------------------------------------------------------------------------*/
 
-}
-break;
-case cmdMessage:
-//debug("Message");
-convFile->skip(7);	// TODO
-break;
-case cmdGoto: {
-convFile->skip(3);	// unused?
-//byte nodeRef = convFile->readByte();
-//debug("Goto %d", nodeRef);
-}
-break;
-case cmdAssign: {
-convFile->skip(3);	// unused?
-//uint16 value = convFile->readUint16LE();
-//uint16 variable = convFile->readUint16LE();
-//debug("Variable %d = %d", variable, value);
-}
-break;
-default:
-error("Unknown conversation command %d", command);
-break;
-}
-} while (command != cmdNodeEnd && command != cmdDialogEnd);
-*/
 
 } // End of namespace MADS
