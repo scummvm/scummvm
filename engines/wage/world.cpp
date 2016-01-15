@@ -305,28 +305,28 @@ Common::StringArray *World::readMenu(Common::SeekableReadStream *res) {
 	String menuName = readPascalString(res);
 	String menuItem = readPascalString(res);
 	int menuItemNumber = 1;
-	Common::String sb;
+	Common::String menu;
 	byte itemData[4];
 
 	while (menuItem.size() > 0) {
-		if (sb.size() > 0) {
-			sb += ';';
+		if (menu.size() > 0) {
+			menu += ';';
 		}
 		if ((enableFlags & (1 << menuItemNumber)) == 0) {
-			sb += '(';
+			menu += '(';
 		}
-		sb += menuItem;
+		menu += menuItem;
 		res->read(itemData, 4);
 		static const char styles[] = {'B', 'I', 'U', 'O', 'S', 'C', 'E', 0};
 		for (int i = 0; styles[i] != 0; i++) {
 			if ((itemData[3] & (1 << i)) != 0) {
-				sb += '<';
-				sb += styles[i];
+				menu += '<';
+				menu += styles[i];
 			}
 		}
 		if (itemData[1] != 0) {
-			sb += '/';
-			sb += (char)itemData[1];
+			menu += '/';
+			menu += (char)itemData[1];
 		}
 		menuItem = readPascalString(res);
 		menuItemNumber++;
@@ -334,10 +334,11 @@ Common::StringArray *World::readMenu(Common::SeekableReadStream *res) {
 
 	Common::StringArray *result = new Common::StringArray;
 	result->push_back(menuName);
-	result->push_back(sb);
+	result->push_back(menu);
 
-	warning("menuName: %s", menuName.c_str());
-	warning("sb: %s", sb.c_str());
+	debug(4, "menuName: %s", menuName.c_str());
+	debug(4, "menu: %s", menu.c_str());
+
 	return result;
 }
 
