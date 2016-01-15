@@ -41,6 +41,7 @@
 #include "lab/dispman.h"
 #include "lab/eventman.h"
 #include "lab/image.h"
+#include "lab/interface.h"
 #include "lab/music.h"
 #include "lab/processroom.h"
 #include "lab/resource.h"
@@ -77,6 +78,7 @@ LabEngine::LabEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	_maxRooms = 0;
 
 	_event = nullptr;
+	_interface = nullptr;
 	_resource = nullptr;
 	_music = nullptr;
 	_anim = nullptr;
@@ -145,6 +147,7 @@ LabEngine::~LabEngine() {
 	delete _conditions;
 	delete _roomsFound;
 	delete _event;
+	delete _interface;
 	delete _resource;
 	delete _music;
 	delete _anim;
@@ -161,6 +164,7 @@ Common::Error LabEngine::run() {
 	else
 		initGraphics(640, 480, true);
 
+	_interface = new Interface(this);
 	_event = new EventManager(this);
 	_resource = new Resource(this);
 	_music = new Music(this);
@@ -206,7 +210,7 @@ void LabEngine::waitTOF() {
 
 void LabEngine::updateEvents() {
 	_event->processInput();
-	_event->updateMouse();
+	_interface->handlePressedButton();
 }
 
 Common::Error LabEngine::loadGameState(int slot) {

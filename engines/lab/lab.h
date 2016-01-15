@@ -60,6 +60,7 @@ struct ViewData;
 class Anim;
 class DisplayMan;
 class EventManager;
+class Interface;
 class Image;
 class Music;
 class Resource;
@@ -187,6 +188,7 @@ public:
 	CrumbData _breadCrumbs[MAX_CRUMBS];
 	DisplayMan *_graphics;
 	EventManager *_event;
+	Interface *_interface;
 	ButtonList _invButtonList;
 	ButtonList _moveButtonList;
 	Image *_invImages[10];
@@ -231,6 +233,8 @@ public:
 	Common::Error saveGameState(int slot, const Common::String &desc);
 	bool canLoadGameStateCurrently();
 	bool canSaveGameStateCurrently();
+
+	bool isMainDisplay() const { return _mainDisplay; }
 
 private:
 	/**
@@ -434,8 +438,6 @@ private:
 	 */
 	void mainGameLoop();
 	void showLab2Teaser();
-	void mayShowCrumbIndicator();
-	void mayShowCrumbIndicatorOff();
 
 	/**
 	 * Permanently flips the imagery of a button.

@@ -33,6 +33,7 @@
 #include "lab/dispman.h"
 #include "lab/eventman.h"
 #include "lab/image.h"
+#include "lab/interface.h"
 #include "lab/labsets.h"
 #include "lab/music.h"
 #include "lab/processroom.h"
@@ -75,9 +76,9 @@ void LabEngine::loadMapData() {
 	_imgPath = new Image(mapImages, this);
 	_imgBridge = new Image(mapImages, this);
 
-	_mapButtonList.push_back(_event->createButton( 8,  _utils->vgaScaleY(105), 0, Common::KEYCODE_ESCAPE, new Image(mapImages, this), new Image(mapImages, this)));	// back
-	_mapButtonList.push_back(_event->createButton( 55, _utils->vgaScaleY(105), 1, Common::KEYCODE_UP,     new Image(mapImages, this), new Image(mapImages, this)));	// up
-	_mapButtonList.push_back(_event->createButton(101, _utils->vgaScaleY(105), 2, Common::KEYCODE_DOWN,   new Image(mapImages, this), new Image(mapImages, this)));	// down
+	_mapButtonList.push_back(_interface->createButton( 8,  _utils->vgaScaleY(105), 0, Common::KEYCODE_ESCAPE, new Image(mapImages, this), new Image(mapImages, this)));	// back
+	_mapButtonList.push_back(_interface->createButton( 55, _utils->vgaScaleY(105), 1, Common::KEYCODE_UP,     new Image(mapImages, this), new Image(mapImages, this)));	// up
+	_mapButtonList.push_back(_interface->createButton(101, _utils->vgaScaleY(105), 2, Common::KEYCODE_DOWN,   new Image(mapImages, this), new Image(mapImages, this)));	// down
 
 	delete mapImages;
 
@@ -98,7 +99,7 @@ void LabEngine::loadMapData() {
 }
 
 void LabEngine::freeMapData() {
-	_event->freeButtonList(&_mapButtonList);
+	_interface->freeButtonList(&_mapButtonList);
 
 	delete _imgMap;
 	delete _imgRoom;
@@ -330,7 +331,7 @@ uint16 LabEngine::getLowerFloor(uint16 floorNum) {
 void LabEngine::drawMap(uint16 curRoom, uint16 curMsg, uint16 floorNum, bool fadeIn) {
 	_graphics->rectFill(0, 0, _graphics->_screenWidth - 1, _graphics->_screenHeight - 1, 0);
 	_imgMap->drawImage(0, 0);
-	_event->drawButtonList(&_mapButtonList);
+	_interface->drawButtonList(&_mapButtonList);
 
 	for (int i = 1; i <= _maxRooms; i++) {
 		if ((_maps[i]._pageNumber == floorNum) && _roomsFound->in(i) && _maps[i]._x) {
@@ -346,8 +347,8 @@ void LabEngine::drawMap(uint16 curRoom, uint16 curMsg, uint16 floorNum, bool fad
 	if ((_maps[curRoom]._pageNumber == floorNum) && _roomsFound->in(curRoom) && _maps[curRoom]._x)
 		drawRoomMap(curRoom, true);
 
-	_event->toggleButton(_event->getButton(1), 12, (getUpperFloor(floorNum) != kFloorNone));	// up button
-	_event->toggleButton(_event->getButton(2), 12, (getLowerFloor(floorNum) != kFloorNone));	// down button
+	_interface->toggleButton(_interface->getButton(1), 12, (getUpperFloor(floorNum) != kFloorNone));	// up button
+	_interface->toggleButton(_interface->getButton(2), 12, (getLowerFloor(floorNum) != kFloorNone));	// down button
 
 	// Labyrinth specific code
 	if (floorNum == kFloorLower) {
@@ -413,7 +414,7 @@ void LabEngine::processMap(uint16 curRoom) {
 
 			waitTOF();
 			_graphics->writeColorRegs(newcolor, 1, 1);
-			_event->updateMouse();
+			_interface->handlePressedButton();
 			waitTOF();
 
 			place++;
@@ -538,13 +539,13 @@ void LabEngine::doMap() {
 	updateEvents();
 	loadMapData();
 	_graphics->blackAllScreen();
-	_event->attachButtonList(&_mapButtonList);
+	_interface->attachButtonList(&_mapButtonList);
 	drawMap(_roomNum, _roomNum, _maps[_roomNum]._pageNumber, true);
 	_event->mouseShow();
 	_graphics->screenUpdate();
 	processMap(_roomNum);
 	_event->mouseHide();
-	_event->attachButtonList(nullptr);
+	_interface->attachButtonList(nullptr);
 	_graphics->fade(false);
 	_graphics->blackAllScreen();
 	_graphics->rectFill(0, 0, _graphics->_screenWidth - 1, _graphics->_screenHeight - 1, 0);

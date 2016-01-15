@@ -28,8 +28,8 @@
  *
  */
 
-#ifndef LAB_EVENTMAN_H
-#define LAB_EVENTMAN_H
+#ifndef LAB_INTERFACE_H
+#define LAB_INTERFACE_H
 
 #include "common/events.h"
 
@@ -38,58 +38,54 @@ namespace Lab {
 class LabEngine;
 class Image;
 
-struct IntuiMessage {
-	MessageClass _msgClass;
-	uint16 _code; // KeyCode or Button Id
-	uint16 _qualifier;
-	Common::Point _mouse;
+struct Button {
+	uint16 _x, _y, _buttonId;
+	Common::KeyCode _keyEquiv; // the key which activates this button
+	bool _isEnabled;
+	Image *_image, *_altImage;
 };
 
-class EventManager {
+typedef Common::List<Button *> ButtonList;
+
+class Interface {
 private:
 	LabEngine *_vm;
 
-	bool _leftClick;
-	bool _rightClick;
-	bool _buttonHit;
-
-	Common::Point _mousePos;
-	Common::KeyState _keyPressed;
+	Button *_hitButton;
+	ButtonList *_screenButtonList;
 
 public:
-	EventManager (LabEngine *vm);
+	Interface(LabEngine *vm);
 
-	IntuiMessage *getMsg();
-
-	/**
-	 * Initializes the mouse.
-	 */
-	void initMouse();
+	void attachButtonList(ButtonList *buttonList);
+	Button *createButton(uint16 x, uint16 y, uint16 id, Common::KeyCode key, Image *image, Image *altImage);
+	void toggleButton(Button *button, uint16 penColor, bool enable);
 
 	/**
-	 * Shows the mouse.
+	 * Draws a button list to the screen.
 	 */
-	void mouseShow();
+	void drawButtonList(ButtonList *buttonList);
+	void freeButtonList(ButtonList *buttonList);
+	Button *getButton(uint16 id);
 
 	/**
-	 * Hides the mouse.
-	 */
-	void mouseHide();
-	void processInput();
+	* Checks whether or not the coords fall within one of the buttons in a list
+	* of buttons.
+	*/
+	Button *checkButtonHit(Common::Point pos);
 
 	/**
-	 * Moves the mouse to new co-ordinates.
-	 */
-	void setMousePos(Common::Point pos);
-	Common::Point updateAndGetMousePos();
+	* Checks whether or not the coords fall within one of the buttons in a list
+	* of buttons.
+	*/
+	Button *checkNumButtonHit(Common::KeyCode key);
 
-	/**
-	 * Simulates an event for the game main loop, when a game is
-	 * loaded or when the user teleports to a scene
-	 */
-	void simulateEvent();
+	void handlePressedButton();
+
+	void mayShowCrumbIndicator();
+	void mayShowCrumbIndicatorOff();
 };
 
 } // End of namespace Lab
 
-#endif // LAB_EVENTMAN_H
+#endif // LAB_INTERFACE_H

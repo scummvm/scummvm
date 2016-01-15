@@ -34,6 +34,7 @@
 #include "lab/dispman.h"
 #include "lab/eventman.h"
 #include "lab/image.h"
+#include "lab/interface.h"
 #include "lab/labsets.h"
 #include "lab/music.h"
 #include "lab/processroom.h"
@@ -128,9 +129,9 @@ void LabEngine::loadJournalData() {
 	_journalTextTitle = _resource->getText("Lab:Rooms/jt");
 
 	Common::File *journalFile = _resource->openDataFile("P:JImage");
-	_journalButtonList.push_back(_event->createButton( 80, _utils->vgaScaleY(162) + _utils->svgaCord(1), 0,  Common::KEYCODE_LEFT,  new Image(journalFile, this), new Image(journalFile, this)));	// back
-	_journalButtonList.push_back(_event->createButton(194, _utils->vgaScaleY(162) + _utils->svgaCord(1), 2,  Common::KEYCODE_RIGHT, new Image(journalFile, this), new Image(journalFile, this)));	// forward
-	_journalButtonList.push_back(_event->createButton(144, _utils->vgaScaleY(164) - _utils->svgaCord(1), 1, Common::KEYCODE_ESCAPE, new Image(journalFile, this), new Image(journalFile, this)));	// cancel
+	_journalButtonList.push_back(_interface->createButton( 80, _utils->vgaScaleY(162) + _utils->svgaCord(1), 0,  Common::KEYCODE_LEFT,  new Image(journalFile, this), new Image(journalFile, this)));	// back
+	_journalButtonList.push_back(_interface->createButton(194, _utils->vgaScaleY(162) + _utils->svgaCord(1), 2,  Common::KEYCODE_RIGHT, new Image(journalFile, this), new Image(journalFile, this)));	// forward
+	_journalButtonList.push_back(_interface->createButton(144, _utils->vgaScaleY(164) - _utils->svgaCord(1), 1, Common::KEYCODE_ESCAPE, new Image(journalFile, this), new Image(journalFile, this)));	// cancel
 	delete journalFile;
 
 	_anim->_noPalChange = true;
@@ -206,8 +207,8 @@ void LabEngine::drawJournal(uint16 wipenum, bool needFade) {
 	else
 		turnPage((wipenum == 1));
 
-	_event->toggleButton(_event->getButton(0), 15, (_journalPage > 0));	// back button
-	_event->toggleButton(_event->getButton(2), 15, (!_lastPage));	// forward button
+	_interface->toggleButton(_interface->getButton(0), 15, (_journalPage > 0));	// back button
+	_interface->toggleButton(_interface->getButton(2), 15, (!_lastPage));	// forward button
 
 	if (needFade)
 		_graphics->fade(true);
@@ -268,11 +269,11 @@ void LabEngine::doJournal() {
 
 	updateEvents();
 	loadJournalData();
-	_event->attachButtonList(&_journalButtonList);
+	_interface->attachButtonList(&_journalButtonList);
 	drawJournal(0, true);
 	_event->mouseShow();
 	processJournal();
-	_event->attachButtonList(nullptr);
+	_interface->attachButtonList(nullptr);
 	_graphics->fade(false);
 	_event->mouseHide();
 
@@ -280,7 +281,7 @@ void LabEngine::doJournal() {
 	_blankJournal = nullptr;
 	_journalBackImage->setData(nullptr, true);
 
-	_event->freeButtonList(&_journalButtonList);
+	_interface->freeButtonList(&_journalButtonList);
 	_graphics->freeFont(&_journalFont);
 
 	_graphics->rectFill(0, 0, _graphics->_screenWidth - 1, _graphics->_screenHeight - 1, 0);

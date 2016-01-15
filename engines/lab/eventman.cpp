@@ -37,6 +37,7 @@
 #include "lab/dispman.h"
 #include "lab/eventman.h"
 #include "lab/image.h"
+#include "lab/interface.h"
 
 namespace Lab {
 
@@ -64,10 +65,7 @@ static const byte mouseData[] = {
 EventManager::EventManager(LabEngine *vm) : _vm(vm) {
 	_leftClick = false;
 	_rightClick = false;
-
-	_lastButtonHit = nullptr;
-	_screenButtonList = nullptr;
-	_hitButton = nullptr;
+	_buttonHit = false;
 	_mousePos = Common::Point(0, 0);
 	_keyPressed = Common::KEYCODE_INVALID;
 }
@@ -87,19 +85,6 @@ void EventManager::mouseHide() {
 	CursorMan.showMouse(false);
 }
 
-void EventManager::updateMouse() {
-	if (!_hitButton)
-		return;
-
-	_hitButton->_altImage->drawImage(_hitButton->_x, _hitButton->_y);
-	for (int i = 0; i < 3; i++)
-		_vm->waitTOF();
-	_hitButton->_image->drawImage(_hitButton->_x, _hitButton->_y);
-
-	_hitButton = nullptr;
-	_vm->_graphics->screenUpdate();
-}
-
 void EventManager::setMousePos(Common::Point pos) {
 	if (_vm->_isHiRes)
 		_vm->_system->warpMouse(pos.x, pos.y);
@@ -109,16 +94,12 @@ void EventManager::setMousePos(Common::Point pos) {
 
 void EventManager::processInput() {
 	Common::Event event;
-	Button *curButton = nullptr;
 
 	while (_vm->_system->getEventManager()->pollEvent(event)) {
 		switch (event.type) {
 		case Common::EVENT_LBUTTONDOWN:
-			if (_screenButtonList)
-				curButton = checkButtonHit(_screenButtonList, _mousePos);
-
-			if (curButton)
-				_lastButtonHit = curButton;
+			if (_vm->_interface->checkButtonHit(_mousePos))
+				_buttonHit = true;
 			else
 				_leftClick = true;
 			break;
@@ -154,6 +135,51 @@ void EventManager::processInput() {
 			break;
 		}
 	}
+}
+
+IntuiMessage *EventManager::getMsg() {
+	static IntuiMessage message;
+
+	_vm->_interface->handlePressedButton();
+	processInput();
+
+	if (_buttonHit) {
+		Button *lastButtonHit = _vm->_interface->checkButtonHit(_mousePos);
+		_buttonHit = false;
+		if (lastButtonHit) {
+			_vm->_interface->handlePressedButton();
+			message._msgClass = kMessageButtonUp;
+			message._code = lastButtonHit->_buttonId;
+			message._qualifier = _keyPressed.flags;
+			
+			return &message;
+		} else
+			return nullptr;
+	} else if (_leftClick || _rightClick) {
+		message._msgClass = (_leftClick) ? kMessageLeftClick : kMessageRightClick;
+		message._qualifier = 0;
+		message._mouse = _mousePos;
+		_leftClick = _rightClick = false;
+		return &message;
+	} else if (_keyPressed.keycode != Common::KEYCODE_INVALID) {
+		Button *curButton = _vm->_interface->checkNumButtonHit(_keyPressed.keycode);
+
+		if (curButton) {
+			message._msgClass = kMessageButtonUp;
+			message._code = curButton->_buttonId;
+		} else {
+			message._msgClass = kMessageRawKey;
+			message._code = _keyPressed.keycode;
+		}
+
+		message._qualifier = _keyPressed.flags;
+		message._mouse = _mousePos;
+
+		_keyPressed.keycode = Common::KEYCODE_INVALID;
+
+		return &message;
+	} else
+		return nullptr;
 }
 
 Common::Point EventManager::updateAndGetMousePos() {

@@ -33,13 +33,21 @@
 #include "lab/lab.h"
 
 #include "lab/dispman.h"
-#include "lab/eventman.h"
+#include "lab/interface.h"
 #include "lab/image.h"
 #include "lab/utils.h"
 
 namespace Lab {
 
-Button *EventManager::createButton(uint16 x, uint16 y, uint16 id, Common::KeyCode key, Image *image, Image *altImage) {
+#define CRUMBSWIDTH 24
+#define CRUMBSHEIGHT 24
+
+Interface::Interface(LabEngine *vm) : _vm(vm) {
+	_screenButtonList = nullptr;
+	_hitButton = nullptr;
+}
+
+Button *Interface::createButton(uint16 x, uint16 y, uint16 id, Common::KeyCode key, Image *image, Image *altImage) {
 	Button *button = new Button();
 
 	if (button) {
@@ -56,7 +64,7 @@ Button *EventManager::createButton(uint16 x, uint16 y, uint16 id, Common::KeyCod
 		return nullptr;
 }
 
-void EventManager::freeButtonList(ButtonList *buttonList) {
+void Interface::freeButtonList(ButtonList *buttonList) {
 	for (ButtonList::iterator buttonIter = buttonList->begin(); buttonIter != buttonList->end(); ++buttonIter) {
 		Button *button = *buttonIter;
 		delete button->_image;
@@ -67,7 +75,7 @@ void EventManager::freeButtonList(ButtonList *buttonList) {
 	buttonList->clear();
 }
 
-void EventManager::drawButtonList(ButtonList *buttonList) {
+void Interface::drawButtonList(ButtonList *buttonList) {
 	for (ButtonList::iterator button = buttonList->begin(); button != buttonList->end(); ++button) {
 		toggleButton((*button), 1, true);
 
@@ -76,7 +84,7 @@ void EventManager::drawButtonList(ButtonList *buttonList) {
 	}
 }
 
-void EventManager::toggleButton(Button *button, uint16 disabledPenColor, bool enable) {
+void Interface::toggleButton(Button *button, uint16 disabledPenColor, bool enable) {
 	if (!enable)
 		_vm->_graphics->checkerBoardEffect(disabledPenColor, button->_x, button->_y, button->_x + button->_image->_width - 1, button->_y + button->_image->_height - 1);
 	else
@@ -85,13 +93,13 @@ void EventManager::toggleButton(Button *button, uint16 disabledPenColor, bool en
 	button->_isEnabled = enable;
 }
 
-Button *EventManager::checkNumButtonHit(ButtonList *buttonList, Common::KeyCode key) {
+Button *Interface::checkNumButtonHit(Common::KeyCode key) {
 	uint16 gkey = key - '0';
 
-	if (!buttonList)
+	if (!_screenButtonList)
 		return nullptr;
 
-	for (ButtonList::iterator buttonItr = buttonList->begin(); buttonItr != buttonList->end(); ++buttonItr) {
+	for (ButtonList::iterator buttonItr = _screenButtonList->begin(); buttonItr != _screenButtonList->end(); ++buttonItr) {
 		Button *button = *buttonItr;
 		if (!button->_isEnabled)
 			continue;
@@ -107,8 +115,11 @@ Button *EventManager::checkNumButtonHit(ButtonList *buttonList, Common::KeyCode 
 	return nullptr;
 }
 
-Button *EventManager::checkButtonHit(ButtonList *buttonList, Common::Point pos) {
-	for (ButtonList::iterator buttonItr = buttonList->begin(); buttonItr != buttonList->end(); ++buttonItr) {
+Button *Interface::checkButtonHit(Common::Point pos) {
+	if (!_screenButtonList)
+		return nullptr;
+
+	for (ButtonList::iterator buttonItr = _screenButtonList->begin(); buttonItr != _screenButtonList->end(); ++buttonItr) {
 		Button *button = *buttonItr;
 		Common::Rect buttonRect(button->_x, button->_y, button->_x + button->_image->_width - 1, button->_y + button->_image->_height - 1);
 
@@ -121,14 +132,24 @@ Button *EventManager::checkButtonHit(ButtonList *buttonList, Common::Point pos) 
 	return nullptr;
 }
 
-void EventManager::attachButtonList(ButtonList *buttonList) {
-	if (_screenButtonList != buttonList)
-		_lastButtonHit = nullptr;
+void Interface::handlePressedButton() {
+	if (!_hitButton)
+		return;
 
+	_hitButton->_altImage->drawImage(_hitButton->_x, _hitButton->_y);
+	for (int i = 0; i < 3; i++)
+		_vm->waitTOF();
+	_hitButton->_image->drawImage(_hitButton->_x, _hitButton->_y);
+
+	_hitButton = nullptr;
+	_vm->_graphics->screenUpdate();
+}
+
+void Interface::attachButtonList(ButtonList *buttonList) {
 	_screenButtonList = buttonList;
 }
 
-Button *EventManager::getButton(uint16 id) {
+Button *Interface::getButton(uint16 id) {
 	for (ButtonList::iterator buttonItr = _screenButtonList->begin(); buttonItr != _screenButtonList->end(); ++buttonItr) {
 		Button *button = *buttonItr;
 		if (button->_buttonId == id)
@@ -138,44 +159,84 @@ Button *EventManager::getButton(uint16 id) {
 	return nullptr;
 }
 
-IntuiMessage *EventManager::getMsg() {
-	static IntuiMessage message;
+void Interface::mayShowCrumbIndicator() {
+	static byte dropCrumbsImageData[CRUMBSWIDTH * CRUMBSHEIGHT] = {
+		0, 0, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 0, 0,
+		0, 4, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 4, 0,
+		4, 7, 7, 3, 4, 4, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3, 7, 7, 4,
+		4, 7, 4, 4, 0, 0, 3, 2, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 4, 7, 4,
+		4, 7, 4, 0, 0, 0, 3, 2, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 4, 7, 4,
+		4, 7, 4, 0, 0, 3, 2, 2, 2, 3, 0, 0, 0, 0, 0, 0, 0, 3, 2, 3, 0, 4, 7, 4,
+		4, 7, 4, 0, 0, 0, 3, 3, 3, 4, 4, 4, 4, 4, 4, 0, 0, 3, 2, 3, 0, 4, 7, 4,
+		4, 7, 4, 0, 0, 0, 0, 0, 4, 7, 7, 7, 7, 7, 7, 4, 3, 2, 2, 2, 3, 4, 7, 4,
+		4, 7, 4, 0, 0, 0, 0, 4, 7, 7, 4, 4, 4, 4, 7, 7, 4, 3, 3, 3, 0, 4, 7, 4,
+		4, 7, 4, 0, 0, 0, 0, 4, 7, 4, 4, 0, 0, 4, 4, 7, 4, 0, 0, 0, 0, 4, 7, 4,
+		4, 7, 4, 0, 0, 0, 0, 4, 7, 4, 0, 0, 0, 0, 4, 7, 4, 0, 0, 0, 0, 4, 7, 4,
+		4, 7, 4, 0, 0, 0, 0, 4, 4, 4, 3, 0, 0, 0, 4, 7, 4, 0, 0, 0, 0, 4, 7, 4,
+		4, 7, 4, 0, 0, 0, 0, 0, 4, 3, 2, 3, 0, 0, 4, 7, 4, 0, 0, 0, 0, 4, 7, 4,
+		4, 7, 4, 0, 0, 0, 0, 0, 0, 3, 2, 3, 0, 0, 4, 7, 4, 0, 0, 0, 0, 4, 7, 4,
+		4, 7, 4, 0, 0, 0, 0, 0, 3, 2, 2, 2, 3, 4, 4, 7, 4, 0, 0, 0, 0, 4, 7, 4,
+		4, 7, 7, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 7, 7, 4, 0, 0, 0, 0, 4, 7, 4,
+		0, 4, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 4, 0, 0, 0, 0, 0, 4, 7, 4,
+		0, 0, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3, 0, 0, 0, 0, 0, 4, 7, 4,
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 2, 3, 0, 0, 0, 0, 4, 7, 4,
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 2, 3, 0, 0, 0, 0, 4, 7, 4,
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 2, 2, 2, 3, 0, 0, 4, 4, 7, 4,
+		0, 0, 0, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 7, 7, 4,
+		0, 0, 4, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 4, 0,
+		0, 0, 0, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 0, 0
+	};
 
-	updateMouse();
-	processInput();
+	if (_vm->getPlatform() != Common::kPlatformWindows)
+		return;
 
-	if (_lastButtonHit) {
-		updateMouse();
-		message._msgClass = kMessageButtonUp;
-		message._code = _lastButtonHit->_buttonId;
-		message._qualifier = _keyPressed.flags;
-		_lastButtonHit = nullptr;
-		return &message;
-	} else if (_leftClick || _rightClick) {
-		message._msgClass = (_leftClick) ? kMessageLeftClick : kMessageRightClick;
-		message._qualifier = 0;
-		message._mouse = _mousePos;
-		_leftClick = _rightClick = false;
-		return &message;
-	} else if (_keyPressed.keycode != Common::KEYCODE_INVALID) {
-		Button *curButton = checkNumButtonHit(_screenButtonList, _keyPressed.keycode);
+	if (_vm->_droppingCrumbs && _vm->isMainDisplay()) {
+		static byte *imgData = new byte[CRUMBSWIDTH * CRUMBSHEIGHT];
+		memcpy(imgData, dropCrumbsImageData, CRUMBSWIDTH * CRUMBSHEIGHT);
+		static Image dropCrumbsImage(CRUMBSWIDTH, CRUMBSHEIGHT, imgData, _vm);
 
-		if (curButton) {
-			message._msgClass = kMessageButtonUp;
-			message._code = curButton->_buttonId;
-		} else {
-			message._msgClass = kMessageRawKey;
-			message._code = _keyPressed.keycode;
-		}
+		dropCrumbsImage.drawMaskImage(612, 4);
+	}
+}
 
-		message._qualifier = _keyPressed.flags;
-		message._mouse = _mousePos;
+void Interface::mayShowCrumbIndicatorOff() {
+	static byte dropCrumbsOffImageData[CRUMBSWIDTH * CRUMBSHEIGHT] = {
+		0, 0, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 0, 0,
+		0, 4, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 4, 0,
+		4, 8, 8, 3, 4, 4, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3, 8, 8, 4,
+		4, 8, 4, 4, 0, 0, 3, 8, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 4, 8, 4,
+		4, 8, 4, 0, 0, 0, 3, 8, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 4, 8, 4,
+		4, 8, 4, 0, 0, 3, 8, 8, 8, 3, 0, 0, 0, 0, 0, 0, 0, 3, 8, 3, 0, 4, 8, 4,
+		4, 8, 4, 0, 0, 0, 3, 3, 3, 4, 4, 4, 4, 4, 4, 0, 0, 3, 8, 3, 0, 4, 8, 4,
+		4, 8, 4, 0, 0, 0, 0, 0, 4, 8, 8, 8, 8, 8, 8, 4, 3, 8, 8, 8, 3, 4, 8, 4,
+		4, 8, 4, 0, 0, 0, 0, 4, 8, 8, 4, 4, 4, 4, 8, 8, 4, 3, 3, 3, 0, 4, 8, 4,
+		4, 8, 4, 0, 0, 0, 0, 4, 8, 4, 4, 0, 0, 4, 4, 8, 4, 0, 0, 0, 0, 4, 8, 4,
+		4, 8, 4, 0, 0, 0, 0, 4, 8, 4, 0, 0, 0, 0, 4, 8, 4, 0, 0, 0, 0, 4, 8, 4,
+		4, 8, 4, 0, 0, 0, 0, 4, 4, 4, 3, 0, 0, 0, 4, 8, 4, 0, 0, 0, 0, 4, 8, 4,
+		4, 8, 4, 0, 0, 0, 0, 0, 4, 3, 8, 3, 0, 0, 4, 8, 4, 0, 0, 0, 0, 4, 8, 4,
+		4, 8, 4, 0, 0, 0, 0, 0, 0, 3, 8, 3, 0, 0, 4, 8, 4, 0, 0, 0, 0, 4, 8, 4,
+		4, 8, 4, 0, 0, 0, 0, 0, 3, 8, 8, 8, 3, 4, 4, 8, 4, 0, 0, 0, 0, 4, 8, 4,
+		4, 8, 8, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 8, 8, 4, 0, 0, 0, 0, 4, 8, 4,
+		0, 4, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 4, 0, 0, 0, 0, 0, 4, 8, 4,
+		0, 0, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3, 0, 0, 0, 0, 0, 4, 8, 4,
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 8, 3, 0, 0, 0, 0, 4, 8, 4,
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 8, 3, 0, 0, 0, 0, 4, 8, 4,
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 8, 8, 8, 3, 0, 0, 4, 4, 8, 4,
+		0, 0, 0, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 8, 8, 4,
+		0, 0, 4, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 4, 0,
+		0, 0, 0, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 0, 0
+	};
 
-		_keyPressed.keycode = Common::KEYCODE_INVALID;
+	if (_vm->getPlatform() != Common::kPlatformWindows)
+		return;
 
-		return &message;
-	} else
-		return nullptr;
+	if (_vm->isMainDisplay()) {
+		static byte *imgData = new byte[CRUMBSWIDTH * CRUMBSHEIGHT];
+		memcpy(imgData, dropCrumbsOffImageData, CRUMBSWIDTH * CRUMBSHEIGHT);
+		static Image dropCrumbsOffImage(CRUMBSWIDTH, CRUMBSHEIGHT, imgData, _vm);
+
+		dropCrumbsOffImage.drawMaskImage(612, 4);
+	}
 }
 
 } // End of namespace Lab
