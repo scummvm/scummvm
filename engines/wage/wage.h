@@ -120,13 +120,13 @@ public:
 
 	const char *getGameFile() const;
 	void processTurn(Common::String *textInput, Designed *clickInput);
+	void regen();
 
 private:
 	bool loadWorld(Common::MacResManager *resMan);
 	void performInitialSetup();
 	void wearObjs(Chr *chr);
 	void processTurnInternal(Common::String *textInput, Designed *clickInput);
-	void regen();
 	void performCombatAction(Chr *npc, Chr *player);
 	int getValidMoveDirections(Chr *npc);
 	void performAttack(Chr *attacker, Chr *victim, Weapon *weapon);
@@ -150,6 +150,7 @@ public:
 	int _aim;
 	bool _temporarilyHidden;
 	bool _isGameOver;
+	bool _commandWasQuick;
 
 	Common::String _inputText;
 
@@ -171,8 +172,6 @@ private:
 	const ADGameDescription *_gameDescription;
 
 	Common::MacResManager *_resManager;
-
-	bool _commandWasQuick;
 
 	bool _shouldQuit;
 };

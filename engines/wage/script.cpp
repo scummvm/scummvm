@@ -1034,7 +1034,13 @@ void Script::handleStatusCommand() {
 }
 
 void Script::handleRestCommand() {
-	warning("STUB: handleRestCommand");
+	if (_callbacks->getMonster() != NULL) {
+		appendText("This is no time to rest!");
+		_callbacks->_commandWasQuick = true;
+	} else {
+		_callbacks->regen();
+		_world->_player->printPlayerCondition();
+	}
 }
 
 void Script::handleAcceptCommand() {
