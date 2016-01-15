@@ -144,11 +144,21 @@ Script *SegManager::allocateScript(int script_nr, SegmentId *segid) {
 	return (Script *)mem;
 }
 
+SegmentId SegManager::getActualSegment(SegmentId seg) const {
+	if (getSciVersion() <= SCI_VERSION_2_1_LATE) {
+		return seg;
+	} else {
+		// Return the lower 14 bits of the segment
+		return (seg & 0x3FFF);
+	}
+}
+
 void SegManager::deallocate(SegmentId seg) {
-	if (seg < 1 || (uint)seg >= _heap.size())
+	SegmentId actualSegment = getActualSegment(seg);
+	if (actualSegment < 1 || (uint)actualSegment >= _heap.size())
 		error("Attempt to deallocate an invalid segment ID");
 
-	SegmentObj *mobj = _heap[seg];
+	SegmentObj *mobj = _heap[actualSegment];
 	if (!mobj)
 		error("Attempt to deallocate an already freed segment");
 
@@ -169,7 +179,7 @@ void SegManager::deallocate(SegmentId seg) {
 	}
 
 	delete mobj;
-	_heap[seg] = NULL;
+	_heap[actualSegment] = NULL;
 }
 
 bool SegManager::isHeapObject(reg_t pos) const {
@@ -185,22 +195,24 @@ void SegManager::deallocateScript(int script_nr) {
 }
 
 Script *SegManager::getScript(const SegmentId seg) {
-	if (seg < 1 || (uint)seg >= _heap.size()) {
-		error("SegManager::getScript(): seg id %x out of bounds", seg);
+	SegmentId actualSegment = getActualSegment(seg);
+	if (actualSegment < 1 || (uint)actualSegment >= _heap.size()) {
+		error("SegManager::getScript(): seg id %x out of bounds", actualSegment);
 	}
-	if (!_heap[seg]) {
-		error("SegManager::getScript(): seg id %x is not in memory", seg);
+	if (!_heap[actualSegment]) {
+		error("SegManager::getScript(): seg id %x is not in memory", actualSegment);
 	}
-	if (_heap[seg]->getType() != SEG_TYPE_SCRIPT) {
-		error("SegManager::getScript(): seg id %x refers to type %d != SEG_TYPE_SCRIPT", seg, _heap[seg]->getType());
+	if (_heap[actualSegment]->getType() != SEG_TYPE_SCRIPT) {
+		error("SegManager::getScript(): seg id %x refers to type %d != SEG_TYPE_SCRIPT", actualSegment, _heap[actualSegment]->getType());
 	}
-	return (Script *)_heap[seg];
+	return (Script *)_heap[actualSegment];
 }
 
 Script *SegManager::getScriptIfLoaded(const SegmentId seg) const {
-	if (seg < 1 || (uint)seg >= _heap.size() || !_heap[seg] || _heap[seg]->getType() != SEG_TYPE_SCRIPT)
+	SegmentId actualSegment = getActualSegment(seg);
+	if (actualSegment < 1 || (uint)actualSegment >= _heap.size() || !_heap[actualSegment] || _heap[actualSegment]->getType() != SEG_TYPE_SCRIPT)
 		return 0;
-	return (Script *)_heap[seg];
+	return (Script *)_heap[actualSegment];
 }
 
 SegmentId SegManager::findSegmentByType(int type) const {
@@ -211,19 +223,22 @@ SegmentId SegManager::findSegmentByType(int type) const {
 }
 
 SegmentObj *SegManager::getSegmentObj(SegmentId seg) const {
-	if (seg < 1 || (uint)seg >= _heap.size() || !_heap[seg])
+	SegmentId actualSegment = getActualSegment(seg);
+	if (actualSegment < 1 || (uint)actualSegment >= _heap.size() || !_heap[actualSegment])
 		return 0;
-	return _heap[seg];
+	return _heap[actualSegment];
 }
 
 SegmentType SegManager::getSegmentType(SegmentId seg) const {
-	if (seg < 1 || (uint)seg >= _heap.size() || !_heap[seg])
+	SegmentId actualSegment = getActualSegment(seg);
+	if (actualSegment < 1 || (uint)actualSegment >= _heap.size() || !_heap[actualSegment])
 		return SEG_TYPE_INVALID;
-	return _heap[seg]->getType();
+	return _heap[actualSegment]->getType();
 }
 
 SegmentObj *SegManager::getSegment(SegmentId seg, SegmentType type) const {
-	return getSegmentType(seg) == type ? _heap[seg] : NULL;
+	SegmentId actualSegment = getActualSegment(seg);
+	return getSegmentType(actualSegment) == type ? _heap[actualSegment] : NULL;
 }
 
 Object *SegManager::getObject(reg_t pos) const {

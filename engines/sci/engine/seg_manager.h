@@ -472,6 +472,7 @@ private:
 	void createClassTable();
 
 	SegmentId findFreeSegment() const;
+	SegmentId getActualSegment(SegmentId seg) const;
 };
 
 } // End of namespace Sci
