@@ -457,6 +457,7 @@ int GameConversations::executeEntry(int index) {
 
 		case CMD_MESSAGE:
 		case CMD_5:
+			error("TODO: scriptMessage");
 			break;
 
 		case CMD_ERROR:
@@ -730,7 +731,7 @@ void DialogScript::load(Common::SeekableReadStream &s, uint startingOffset) {
 	// Iterate getting each instruction in turn
 	while (s.pos() < s.size()) {
 		// Create a new entry for the next script command
-		instructionOffsets[startingOffset + s.pos()] = s.size();
+		instructionOffsets[startingOffset + s.pos()] = size();
 		push_back(ScriptEntry());
 		ScriptEntry &se = (*this)[size() - 1];
 		
@@ -764,6 +765,8 @@ void ScriptEntry::load(Common::SeekableReadStream &s) {
 	int numConditionals = 1;
 	if (_command == CMD_7)
 		numConditionals = 3;
+	else if (_command == CMD_ASSIGN)
+		numConditionals = 2;
 	else if (_command == CMD_ERROR)
 		numConditionals = 0;
 
@@ -828,13 +831,17 @@ void ScriptEntry::Conditional::load(Common::SeekableReadStream &s) {
 	if (_operation == CONDOP_ABORT) {
 		_param1._isVariable = false;
 		_param1._val = 0;
+	} else {
+		_param1._isVariable = s.readByte() != 0;
+		_param1._val = s.readUint16LE();
+	}
+
+	if (_operation == CONDOP_ABORT || _operation == CONDOP_VALUE) {
 		_param2._isVariable = false;
 		_param2._val = 0;
 	} else {
-		_param1._isVariable = s.readByte() != 0;
-		_param1._val = 0;
 		_param2._isVariable = s.readByte() != 0;
-		_param2._val = 0;
+		_param2._val = s.readUint16LE();
 	}
 }
 
@@ -842,10 +849,10 @@ int ScriptEntry::Conditional::evaluate() const {
 	if (_operation == CONDOP_NONE)
 		return -1;
 
-	int param1 = get(0);
+	int param1 = get(1);
 	if (_operation == CONDOP_VALUE)
 		return param1;
-	int param2 = get(1);
+	int param2 = get(2);
 
 	switch (_operation) {
 	case CONDOP_ADD:
@@ -880,7 +887,7 @@ int ScriptEntry::Conditional::evaluate() const {
 }
 
 int ScriptEntry::Conditional::get(int paramNum) const {
-	const CondtionalParamEntry &p = (paramNum == 0) ? _param1 : _param2;
+	const CondtionalParamEntry &p = (paramNum == 1) ? _param1 : _param2;
 	return p._isVariable ? *(*_vars)[p._val].getValue() : p._val;
 }
 
