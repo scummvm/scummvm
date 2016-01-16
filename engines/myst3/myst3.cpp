@@ -528,6 +528,11 @@ void Myst3Engine::processInput(bool lookOnly) {
 				_state->setMenuEscapePressed(1);
 		}
 	}
+
+	_state->setInputMousePressed(inputValidatePressed());
+	_state->setInputTildePressed(_inputTildePressed);
+	_state->setInputSpacePressed(_inputSpacePressed);
+	_state->setInputEscapePressed(_inputEscapePressed);
 }
 
 void Myst3Engine::processEventForGamepad(const Common::Event &event) {
