@@ -78,8 +78,9 @@ GameState::StateData::StateData() {
 	saveMinute = 0;
 }
 
-GameState::GameState(Myst3Engine *vm):
-		_vm(vm) {
+GameState::GameState(const Common::Platform platform, Database *database):
+		_platform(platform),
+		_db(database) {
 
 #define VAR(var, x, unk) _varDescriptions.setVal(#x, VarDescription(var, #x, unk));
 
@@ -326,7 +327,7 @@ GameState::GameState(Myst3Engine *vm):
 	VAR(147, MovieUnk147, true)
 	VAR(148, MovieUnk148, true)
 
-	if (_vm->getPlatform() != Common::kPlatformXbox) {
+	if (_platform != Common::kPlatformXbox) {
 		VAR(1337, MenuEscapePressed, false)
 		VAR(1338, MenuNextAction, false)
 		VAR(1339, MenuLoadBack, false)
@@ -757,7 +758,7 @@ void GameState::pauseEngine(bool pause) {
 }
 
 bool GameState::isZipDestinationAvailable(uint16 node, uint16 room, uint32 age) {
-	int32 zipBitIndex = _vm->_db->getNodeZipBitIndex(node, room, age);
+	int32 zipBitIndex = _db->getNodeZipBitIndex(node, room, age);
 
 	int32 arrayIndex = zipBitIndex / 32;
 	assert(arrayIndex < 64);
@@ -766,7 +767,7 @@ bool GameState::isZipDestinationAvailable(uint16 node, uint16 room, uint32 age) 
 }
 
 void GameState::markNodeAsVisited(uint16 node, uint16 room, uint32 age) {
-	int32 zipBitIndex = _vm->_db->getNodeZipBitIndex(node, room, age);
+	int32 zipBitIndex = _db->getNodeZipBitIndex(node, room, age);
 
 	int32 arrayIndex = zipBitIndex / 32;
 	assert(arrayIndex < 64);

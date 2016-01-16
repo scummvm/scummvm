@@ -154,8 +154,8 @@ Common::Error Myst3Engine::run() {
 	_rnd = new Common::RandomSource("sprint");
 	_console = new Console(this);
 	_scriptEngine = new Script(this);
-	_state = new GameState(this);
 	_db = new Database(getPlatform(), getGameLanguage(), getGameLocalizationType());
+	_state = new GameState(getPlatform(), _db);
 	_scene = new Scene(this);
 	if (getPlatform() == Common::kPlatformXbox) {
 		_menu = new AlbumMenu(this);

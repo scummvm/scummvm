@@ -32,6 +32,8 @@
 
 namespace Myst3 {
 
+class Database;
+
 // View type
 enum ViewType {
 	kCube = 1,
@@ -46,7 +48,7 @@ enum ViewType {
 
 class GameState {
 public:
-	GameState(Myst3Engine *vm);
+	GameState(const Common::Platform platform, Database *database);
 	virtual ~GameState();
 
 	void newGame();
@@ -392,7 +394,8 @@ public:
 	static const uint kThumbnailHeight = 135;
 
 private:
-	Myst3Engine *_vm;
+	const Common::Platform _platform;
+	Database *_db;
 
 	static const uint32 kSaveVersion = 149;
 

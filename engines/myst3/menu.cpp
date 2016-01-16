@@ -540,7 +540,7 @@ void PagingMenu::loadMenuSelect(uint16 item) {
 	}
 
 	// Extract the age to load from the savegame
-	GameState *gameState = new GameState(_vm);
+	GameState *gameState = new GameState(_vm->getPlatform(), _vm->_db);
 	gameState->load(saveFile);
 
 	// Update the age name
@@ -914,7 +914,7 @@ void AlbumMenu::loadMenuSelect() {
 	}
 
 	// Extract the age to load from the savegame
-	GameState *gameState = new GameState(_vm);
+	GameState *gameState = new GameState(_vm->getPlatform(), _vm->_db);
 	gameState->load(saveFile);
 
 	// Update the age name and save date
