@@ -62,7 +62,7 @@ Common::String getRendererTypeCode(RendererType type) {
 		rt++;
 	}
 
-	return nullptr;
+	return "";
 }
 
 RendererType getBestMatchingAvailableRendererType(RendererType desired) {
