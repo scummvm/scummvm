@@ -191,6 +191,9 @@ private:
 
 	Common::Array<ScriptText *> _scriptText;
 	void convertToText();
+
+	void printPlayerCondition(Chr *player);
+	const char *getPercentMessage(double percent);
 };
 
 } // End of namespace Wage

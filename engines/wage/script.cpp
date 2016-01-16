@@ -1039,7 +1039,7 @@ void Script::handleRestCommand() {
 		_callbacks->_commandWasQuick = true;
 	} else {
 		_callbacks->regen();
-		_world->_player->printPlayerCondition();
+		printPlayerCondition(_world->_player);
 	}
 }
 
@@ -1280,6 +1280,37 @@ void Script::convertToText() {
 		_scriptText.push_back(scr);
 	else
 		delete scr;
+}
+
+const char *Script::getPercentMessage(double percent) {
+	if (percent < 0.40) {
+		return "very bad";
+	} else if (percent < 0.55) {
+		return "bad";
+	} else if (percent < 0.70) {
+		return "average";
+	} else if (percent < 0.85) {
+		return "good";
+	} else if (percent <= 1.00) {
+		return "very good";
+	} else {
+		return "enhanced";
+	}
+}
+
+void Script::printPlayerCondition(Chr *player) {
+	double physicalPercent = (double)player->_context._statVariables[PHYS_HIT_CUR] / player->_context._statVariables[PHYS_HIT_BAS];
+	double spiritualPercent = (double)player->_context._statVariables[SPIR_HIT_CUR] / player->_context._statVariables[SPIR_HIT_BAS];
+
+	Common::String msg = "Your physical condition is ";
+	msg += getPercentMessage(physicalPercent);
+	msg += ".";
+	appendText(msg);
+
+	msg = "Your spiritual condition is ";
+	msg += getPercentMessage(spiritualPercent);
+	msg += ".";
+	appendText(msg);
 }
 
 } // End of namespace Wage

@@ -439,8 +439,4 @@ const char *Chr::getDefiniteArticle(bool capitalize) {
 	return "";
 }
 
-void Chr::printPlayerCondition() {
-	warning("STUB: printPlayerCondition()");
-}
-
 } // End of namespace Wage

@@ -222,7 +222,6 @@ public:
 	WeaponArray *getWeapons(bool includeMagic);
 	ObjArray *getMagicalObjects();
 	const char *getDefiniteArticle(bool capitalize);
-	void printPlayerCondition();
 
 public:
 	bool hasNativeWeapon1() {
