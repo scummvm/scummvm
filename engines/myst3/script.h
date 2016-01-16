@@ -55,32 +55,21 @@ private:
 	typedef void (Script::*CommandProc)(Context &c, const Opcode &cmd);
 
 	enum ArgumentType {
-		kUnknown,
-		kVar,
-		kValue,
-		kEvalValue,
-		kCondition
+		kUnknown   = 'u',
+		kVar       = 'v',
+		kValue     = 'i',
+		kEvalValue = 'e',
+		kCondition = 'c'
 	};
 
 	struct Command {
-		Command() {}
-		Command(uint16 o, CommandProc p, const char *d, uint8 argc, ...) : op(o), proc(p), desc(d) {
-			va_list types;
-
-			for(int j = 0; j < 5; j++)
-				argType[j] = kUnknown;
-
-			va_start(types, argc);
-			for(int j = 0; j < argc; j++)
-				argType[j] = (ArgumentType) va_arg(types, int);
-			va_end(types);
-		}
+		Command() : op(0), proc(nullptr), desc(nullptr), signature(nullptr)  { }
+		Command(uint16 o, CommandProc p, const char *d, const char *s) : op(o), proc(p), desc(d), signature(s) { }
 
 		uint16 op;
 		CommandProc proc;
 		const char *desc;
-
-		ArgumentType argType[5];
+		const char *signature;
 	};
 
 	Myst3Engine *_vm;
@@ -91,7 +80,7 @@ private:
 	const Command &findCommand(uint16 op);
 	const Command &findCommandByProc(CommandProc proc);
 	const Common::String describeCommand(uint16 op);
-	const Common::String describeArgument(ArgumentType type, int16 value);
+	const Common::String describeArgument(char type, int16 value);
 
 	void shiftCommands(uint16 base, int32 value);
 
