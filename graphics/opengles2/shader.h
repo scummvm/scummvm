@@ -143,6 +143,8 @@ public:
 
 	static Shader* fromStrings(const Common::String &name, const char *vertex, const char *fragment, const char **attributes);
 
+	void unbind();
+
 private:
 	Shader(const Common::String &name, GLuint vertexShader, GLuint fragmentShader, const char **attributes);
 
@@ -155,6 +157,8 @@ private:
 
 	Common::Array<VertexAttrib> _attributes;
 	Common::SharedPtr<UniformsMap> _uniforms;
+
+	static Shader *_previousShader;
 };
 
 }

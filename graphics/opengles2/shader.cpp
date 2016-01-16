@@ -124,6 +124,8 @@ struct SharedPtrProgramDeleter {
 	}
 };
 
+Shader* Shader::_previousShader = nullptr;
+
 Shader::Shader(const Common::String &name, GLuint vertexShader, GLuint fragmentShader, const char **attributes)
 	: _name(name) {
 	assert(attributes);
@@ -163,9 +165,8 @@ Shader *Shader::fromFiles(const char *vertex, const char *fragment, const char *
 }
 
 void Shader::use(bool forceReload) {
-	static Shader *previousShader = nullptr;
 	static uint32 previousNumAttributes = 0;
-	if (this == previousShader && !forceReload)
+	if (this == _previousShader && !forceReload)
 		return;
 
 	// The previous shader might have had more attributes. Disable any extra ones.
@@ -175,7 +176,7 @@ void Shader::use(bool forceReload) {
 		}
 	}
 
-	previousShader = this;
+	_previousShader = this;
 	previousNumAttributes = _attributes.size();
 
 	glUseProgram(*_shaderNo);
@@ -246,6 +247,10 @@ void Shader::disableVertexAttribute(const char *attrib, int size, const float *d
 		va._const[i] = data[i];
 }
 
+void Shader::unbind() {
+	glUseProgram(0);
+	_previousShader = nullptr;
+}
 }
 
 #endif
