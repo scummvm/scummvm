@@ -533,10 +533,15 @@ void PagingMenu::loadMenuSelect(uint16 item) {
 
 	assert(index < _saveLoadFiles.size());
 	Common::String filename = _saveLoadFiles[index];
+	Common::InSaveFile *saveFile = _vm->getSaveFileManager()->openForLoading(filename);
+	if (!saveFile) {
+		warning("Unable to open save '%s'", filename.c_str());
+		return;
+	}
 
 	// Extract the age to load from the savegame
 	GameState *gameState = new GameState(_vm);
-	gameState->load(filename);
+	gameState->load(saveFile);
 
 	// Update the age name
 	_saveLoadAgeName = getAgeLabel(gameState);
@@ -546,6 +551,7 @@ void PagingMenu::loadMenuSelect(uint16 item) {
 		_saveLoadSpotItem->updateData(gameState->getSaveThumbnail());
 
 	delete gameState;
+	delete saveFile;
 }
 
 void PagingMenu::loadMenuLoad() {
@@ -900,9 +906,16 @@ void AlbumMenu::loadMenuSelect() {
 		return;
 	}
 
+	Common::String filename = saveFiles[selectedSave];
+	Common::InSaveFile *saveFile = _vm->getSaveFileManager()->openForLoading(filename);
+	if (!saveFile) {
+		warning("Unable to open save '%s'", filename.c_str());
+		return;
+	}
+
 	// Extract the age to load from the savegame
 	GameState *gameState = new GameState(_vm);
-	gameState->load(saveFiles[selectedSave]);
+	gameState->load(saveFile);
 
 	// Update the age name and save date
 	_saveLoadAgeName = getAgeLabel(gameState);

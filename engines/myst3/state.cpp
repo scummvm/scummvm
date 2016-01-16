@@ -503,11 +503,9 @@ void GameState::newGame() {
 	_lastTickStartTime = g_system->getMillis();
 }
 
-bool GameState::load(const Common::String &file) {
-	Common::InSaveFile *saveFile = _vm->getSaveFileManager()->openForLoading(file);
+bool GameState::load(Common::InSaveFile *saveFile) {
 	Common::Serializer s = Common::Serializer(saveFile, 0);
 	_data.syncWithSaveGame(s);
-	delete saveFile;
 
 	_data.gameRunning = true;
 

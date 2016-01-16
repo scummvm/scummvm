@@ -1417,25 +1417,30 @@ Common::Error Myst3Engine::loadGameState(int slot) {
 }
 
 Common::Error Myst3Engine::loadGameState(Common::String fileName, TransitionType transition) {
-	if (_state->load(fileName)) {
-		_inventory->loadFromState();
-
-		_state->setLocationNextAge(_state->getMenuSavedAge());
-		_state->setLocationNextRoom(_state->getMenuSavedRoom());
-		_state->setLocationNextNode(_state->getMenuSavedNode());
-		_state->setMenuSavedAge(0);
-		_state->setMenuSavedRoom(0);
-		_state->setMenuSavedNode(0);
-
-		_sound->stopMusic(15);
-		_state->setSoundScriptsSuspended(0);
-		_sound->playEffect(696, 60);
-
-		goToNode(0, transition);
-		return Common::kNoError;
+	Common::InSaveFile *saveFile = _saveFileMan->openForLoading(fileName);
+	if (!saveFile) {
+		return _saveFileMan->getError();
 	}
 
-	return Common::kUnknownError;
+	if (!_state->load(saveFile)) {
+		return Common::kUnknownError;
+	}
+
+	_inventory->loadFromState();
+
+	_state->setLocationNextAge(_state->getMenuSavedAge());
+	_state->setLocationNextRoom(_state->getMenuSavedRoom());
+	_state->setLocationNextNode(_state->getMenuSavedNode());
+	_state->setMenuSavedAge(0);
+	_state->setMenuSavedRoom(0);
+	_state->setMenuSavedNode(0);
+
+	_sound->stopMusic(15);
+	_state->setSoundScriptsSuspended(0);
+	_sound->playEffect(696, 60);
+
+	goToNode(0, transition);
+	return Common::kNoError;
 }
 
 void Myst3Engine::animateDirectionChange(float targetPitch, float targetHeading, uint16 scriptTicks) {

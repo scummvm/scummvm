@@ -50,8 +50,8 @@ public:
 	virtual ~GameState();
 
 	void newGame();
-	bool load(const Common::String &file);
-	bool save(Common::OutSaveFile *save);
+	bool load(Common::InSaveFile *saveFile);
+	bool save(Common::OutSaveFile *saveFile);
 
 	int32 getVar(uint16 var);
 	void setVar(uint16 var, int32 value);
