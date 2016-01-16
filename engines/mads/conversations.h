@@ -49,7 +49,7 @@ enum ConversationMode {
 };
 
 enum DialogCommand {
-	CMD_NODE_END = 0,
+	CMD_END = 0,
 	CMD_1 = 1,
 	CMD_HIDE = 2,
 	CMD_UNHIDE = 3,
@@ -69,22 +69,22 @@ enum ConvEntryFlag {
 };
 
 enum ConditionalOperation {
-	CNVOP_NONE = 0xff,
-	CNVOP_VALUE = 0,
-	CNVOP_ADD = 1,
-	CNVOP_SUBTRACT = 2,
-	CNVOP_MULTIPLY = 3,
-	CNVOP_DIVIDE = 4,
-	CNVOP_MODULUS = 5,
-	CNVOP_LTEQ = 6,
-	CNVOP_GTEQ = 7,
-	CNVOP_LT = 8,
-	CNVOP_GT = 9,
-	CNVOP_NEQ = 10,
-	CNVOP_EQ = 11,
-	CNVOP_AND = 12,
-	CNVOP_OR = 13,
-	CNVOP_ABORT = 0xff
+	CONDOP_NONE = 0xff,
+	CONDOP_VALUE = 0,
+	CONDOP_ADD = 1,
+	CONDOP_SUBTRACT = 2,
+	CONDOP_MULTIPLY = 3,
+	CONDOP_DIVIDE = 4,
+	CONDOP_MODULUS = 5,
+	CONDOP_LTEQ = 6,
+	CONDOP_GTEQ = 7,
+	CONDOP_LT = 8,
+	CONDOP_GT = 9,
+	CONDOP_NEQ = 10,
+	CONDOP_EQ = 11,
+	CONDOP_AND = 12,
+	CONDOP_OR = 13,
+	CONDOP_ABORT = 0xff
 };
 
 
@@ -144,7 +144,7 @@ struct ScriptEntry {
 		/**
 		 * Constructor
 		 */
-		Conditional() : _operation(CNVOP_NONE) {}
+		Conditional() : _operation(CONDOP_NONE) {}
 
 		/**
 		 * Loads data from a passed stream into the parameters structure
@@ -169,7 +169,7 @@ struct ScriptEntry {
 	/**
 	 * Constructor
 	 */
-	ScriptEntry() : _command(CMD_NODE_END) {}
+	ScriptEntry() : _command(CMD_END) {}
 
 	/**
 	 * Loads data from a passed stream into the parameters structure

@@ -442,18 +442,50 @@ int GameConversations::executeEntry(int index) {
 	_nextStartNode->_val = var0._val;
 
 	bool flag = true;
-	for (uint scriptIdx = 0; scriptIdx < dlg._script.size(); ++scriptIdx) {
-		DialogCommand cmd = dlg._script[scriptIdx]._command;
-		
-		switch (cmd) {
+	for (uint scriptIdx = 0; scriptIdx < dlg._script.size(); ) {
+		ScriptEntry &scrEntry = dlg._script[scriptIdx];
+		if (scrEntry._command == CMD_END)
+			break;
+
+		switch (scrEntry._command) {
 		case CMD_1:
 		case CMD_HIDE:
 		case CMD_UNHIDE:
+			for (uint idx = 0; scrEntry._params.size(); ++idx)
+				flagEntry(scrEntry._command, scrEntry._params[idx]);
 			break;
+
+		case CMD_MESSAGE:
+		case CMD_5:
+			break;
+
+		case CMD_ERROR:
+			error("Conversation script generated error");
+			break;
+
+		case CMD_GOTO: {
+			bool gotoFlag = scrEntry._conditionals[0].evaluate();
+			if (gotoFlag) {
+				scriptIdx = scrEntry._params[0];
+				continue;
+			}
+			break;
+		}
+
+		case CMD_ASSIGN: {
+			bool setFlag = scrEntry._conditionals[0].evaluate();
+			if (setFlag) {
+				int *ptr = _runningConv->_cnd._vars[scrEntry._params[0]].getValue();
+				*ptr = scrEntry._conditionals[1].evaluate();
+			}
+			break;
+		}
 
 		default:
 			error("Unknown script opcode");
 		}
+
+		++scriptIdx;
 	}
 
 	if (flag) {
@@ -722,7 +754,7 @@ void ScriptEntry::load(Common::SeekableReadStream &s) {
 	// Get the command byte
 	_command = (DialogCommand)s.readByte();
 
-	if (!(_command == CMD_DIALOG_END || (_command >= CMD_NODE_END && _command <= CMD_ASSIGN))) {
+	if (!(_command == CMD_DIALOG_END || (_command >= CMD_END && _command <= CMD_ASSIGN))) {
 		warning("unknown opcode - %d", _command);
 		s.seek(0, SEEK_END);
 		return;
@@ -793,7 +825,7 @@ Common::Array<ConversationVar> *ScriptEntry::Conditional::_vars = nullptr;
 void ScriptEntry::Conditional::load(Common::SeekableReadStream &s) {
 	_operation = (ConditionalOperation)s.readUint16LE();
 
-	if (_operation == CNVOP_ABORT) {
+	if (_operation == CONDOP_ABORT) {
 		_param1._isVariable = false;
 		_param1._val = 0;
 		_param2._isVariable = false;
@@ -807,40 +839,40 @@ void ScriptEntry::Conditional::load(Common::SeekableReadStream &s) {
 }
 
 int ScriptEntry::Conditional::evaluate() const {
-	if (_operation == CNVOP_NONE)
+	if (_operation == CONDOP_NONE)
 		return -1;
 
 	int param1 = get(0);
-	if (_operation == CNVOP_VALUE)
+	if (_operation == CONDOP_VALUE)
 		return param1;
 	int param2 = get(1);
 
 	switch (_operation) {
-	case CNVOP_ADD:
+	case CONDOP_ADD:
 		return param1 + param2;
-	case CNVOP_SUBTRACT:
+	case CONDOP_SUBTRACT:
 		return param1 - param2;
-	case CNVOP_MULTIPLY:
+	case CONDOP_MULTIPLY:
 		return param1 * param2;
-	case CNVOP_DIVIDE:
+	case CONDOP_DIVIDE:
 		return param1 / param2;
-	case CNVOP_MODULUS:
+	case CONDOP_MODULUS:
 		return param1 % param2;
-	case CNVOP_LTEQ:
+	case CONDOP_LTEQ:
 		return (param1 <= param2) ? 1 : 0;
-	case CNVOP_GTEQ:
+	case CONDOP_GTEQ:
 		return (param1 < param2) ? 1 : 0;
-	case CNVOP_LT:
+	case CONDOP_LT:
 		return (param1 < param2) ? 1 : 0;
-	case CNVOP_GT:
+	case CONDOP_GT:
 		return (param1 > param2) ? 1 : 0;
-	case CNVOP_NEQ:
+	case CONDOP_NEQ:
 		return (param1 != param2) ? 1 : 0;
-	case CNVOP_EQ:
+	case CONDOP_EQ:
 		return (param1 == param2) ? 1 : 0;
-	case CNVOP_AND:
+	case CONDOP_AND:
 		return (param1 || param2) ? 1 : 0;
-	case CNVOP_OR:
+	case CONDOP_OR:
 		return (param1 && param2) ? 1 : 0;
 	default:
 		error("Unknown conditional operation");
