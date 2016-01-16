@@ -345,12 +345,11 @@ void GameConversations::update(bool flag) {
 
 			ConvDialog &dialog = _runningConv->_data._dialogs[_verbId];
 			if (dialog._speechIndex) {
-				_runningConv->_cnd._field50 = dialog._speechIndex;
-				_runningConv->_cnd._field10 = 1;
+				_runningConv->_cnd._messageList3.clear();
+				_runningConv->_cnd._messageList3.push_back(dialog._speechIndex);
 			}
 
-			generateText(dialog._textLineIndex, _runningConv->_cnd._field10,
-				&_runningConv->_cnd._field50);
+			generateText(dialog._textLineIndex, _runningConv->_cnd._messageList3);
 			_currentMode = CONVMODE_0;
 
 			if (_heroTrigger) {
@@ -367,8 +366,7 @@ void GameConversations::update(bool flag) {
 			removeActiveWindow();
 			_vm->_events->clearEvents();
 			executeEntry(_verbId);
-			generateMessage(_runningConv->_cnd._fieldC, _runningConv->_cnd._field10,
-				&_runningConv->_cnd._field50, &_runningConv->_cnd._field28);
+			generateMessage(_runningConv->_cnd._messageList1, _runningConv->_cnd._messageList3);
 		
 			if (_heroTrigger && _val1) {
 				_vm->_game->_scene._action._activeAction._verbId = _verbId;
@@ -386,8 +384,7 @@ void GameConversations::update(bool flag) {
 			removeActiveWindow();
 			_vm->_events->clearEvents();
 
-			generateMessage(_runningConv->_cnd._fieldE, _runningConv->_cnd._field12,
-				&_runningConv->_cnd._field64, &_runningConv->_cnd._field3C);
+			generateMessage(_runningConv->_cnd._messageList2, _runningConv->_cnd._messageList4);
 
 			if (_interlocutorTrigger && _val1) {
 				_vm->_game->_scene._action._activeAction._verbId = _verbId;
@@ -417,11 +414,11 @@ ConversationMode GameConversations::generateMenu() {
 	error("TODO: GameConversations::generateMenu");
 }
 
-void GameConversations::generateText(int textLineIndex, int v2, int *v3) {
+void GameConversations::generateText(int textLineIndex, Common::Array<int> &messages) {
 	error("TODO: GameConversations::generateText");
 }
 
-void GameConversations::generateMessage(int textLineIndex, int v2, int *v3, int *v4) {
+void GameConversations::generateMessage(Common::Array<int> &messageList, Common::Array<int> &voiecList) {
 	error("TODO: GameConversations::generateMessage");
 }
 
@@ -435,10 +432,10 @@ int GameConversations::executeEntry(int index) {
 	ConvDialog &dlg = _runningConv->_data._dialogs[index];
 	ConversationVar &var0 = _runningConv->_cnd._vars[0];
 
-	_runningConv->_cnd._fieldC = 0;
-	_runningConv->_cnd._fieldE = 0;
-	_runningConv->_cnd._field10 = 0;
-	_runningConv->_cnd._field12 = 0;
+	_runningConv->_cnd._messageList1.clear();
+	_runningConv->_cnd._messageList2.clear();
+	_runningConv->_cnd._messageList3.clear();
+	_runningConv->_cnd._messageList4.clear();
 	_nextStartNode->_val = var0._val;
 
 	bool flag = true;
@@ -451,13 +448,13 @@ int GameConversations::executeEntry(int index) {
 		case CMD_1:
 		case CMD_HIDE:
 		case CMD_UNHIDE:
-			for (uint idx = 0; scrEntry._params.size(); ++idx)
-				flagEntry(scrEntry._command, scrEntry._params[idx]);
+			for (uint idx = 0; scrEntry._entries.size(); ++idx)
+				flagEntry(scrEntry._command, scrEntry._entries[idx]);
 			break;
 
-		case CMD_MESSAGE:
-		case CMD_5:
-			error("TODO: scriptMessage");
+		case CMD_MESSAGE1:
+		case CMD_MESSAGE2:
+			scriptMessage(scrEntry);
 			break;
 
 		case CMD_ERROR:
@@ -467,7 +464,7 @@ int GameConversations::executeEntry(int index) {
 		case CMD_GOTO: {
 			bool gotoFlag = scrEntry._conditionals[0].evaluate();
 			if (gotoFlag) {
-				scriptIdx = scrEntry._params[0];
+				scriptIdx = scrEntry._index;
 				continue;
 			}
 			break;
@@ -476,7 +473,7 @@ int GameConversations::executeEntry(int index) {
 		case CMD_ASSIGN: {
 			bool setFlag = scrEntry._conditionals[0].evaluate();
 			if (setFlag) {
-				int *ptr = _runningConv->_cnd._vars[scrEntry._params[0]].getValue();
+				int *ptr = _runningConv->_cnd._vars[scrEntry._index].getValue();
 				*ptr = scrEntry._conditionals[1].evaluate();
 			}
 			break;
@@ -494,6 +491,50 @@ int GameConversations::executeEntry(int index) {
 	}
 
 	return var0._val;
+}
+
+void GameConversations::scriptMessage(ScriptEntry &scrEntry) {
+	// Check whether this operation should be done
+	bool doFlag = scrEntry._conditionals[0].evaluate();
+	if (!doFlag)
+		return;
+
+	// Figure out the entire range that messages can be selected from
+	int total = 0;
+	for (uint idx = 0; idx < scrEntry._entries2.size(); ++idx)
+		total += scrEntry._entries2[idx]._size;
+
+	// Choose a random entry from the list of possible values
+	int randomVal = _vm->getRandomNumber(1, total);
+	int randomIndex = -1;
+	while (randomVal > 0 && randomIndex < (int)scrEntry._entries2.size()) {
+		++randomIndex;
+		randomVal -= scrEntry._entries2[randomIndex]._size;
+	}
+	if (randomIndex == (int)scrEntry._entries2.size())
+		randomIndex = 0;
+	int entryVal = scrEntry._entries2[randomIndex]._v2;
+
+	if (scrEntry._command == CMD_MESSAGE1) {
+		_runningConv->_cnd._messageList2.push_back(entryVal);
+
+		if (scrEntry._entries2.size() <= 1) {
+			for (uint idx = 0; idx < scrEntry._entries.size(); ++idx)
+				_runningConv->_cnd._messageList4.push_back(scrEntry._entries[idx]);
+		}
+		else if (scrEntry._entries.size() > 0 && randomIndex < (int)scrEntry._entries.size()) {
+			_runningConv->_cnd._messageList4.push_back(entryVal);
+		}
+	} else {
+		_runningConv->_cnd._messageList1.push_back(entryVal);
+
+		if (scrEntry._entries2.size() <= 1) {
+			for (uint idx = 0; idx < scrEntry._entries.size(); ++idx)
+				_runningConv->_cnd._messageList3.push_back(scrEntry._entries[idx]);
+		} else if (scrEntry._entries.size() > 0 && randomIndex < (int)scrEntry._entries.size()) {
+			_runningConv->_cnd._messageList3.push_back(entryVal);
+		}
+	}
 }
 
 /*------------------------------------------------------------------------*/
@@ -627,14 +668,6 @@ void ConversationData::load(const Common::String &filename) {
 
 ConversationConditionals::ConversationConditionals() : _numImports(0) {
 	_currentNode = -1;
-	_fieldC = 0;
-	_fieldE = 0;
-	_field10 = 0;
-	_field12 = 0;
-	_field28 = 0;
-	_field3C = 0;
-	_field50 = 0;
-	_field64 = 0;
 }
 
 void ConversationConditionals::load(const Common::String &filename) {
@@ -653,19 +686,34 @@ void ConversationConditionals::load(const Common::String &filename) {
 	int varsCount = convFile->readUint16LE();
 	int importsCount = convFile->readUint16LE();
 
-	convFile->skip(2);
-	_fieldC = convFile->readUint16LE();
-	_fieldE = convFile->readUint16LE();
-	_field10 = convFile->readUint16LE();
-	_field12 = convFile->readUint16LE();
-	convFile->seek(0x28);
-	_field28 = convFile->readUint16LE();
-	convFile->seek(0x3C);
-	_field3C = convFile->readUint16LE();
-	convFile->seek(0x50);
-	_field50 = convFile->readUint16LE();
-	convFile->seek(0x64);
-	_field64 = convFile->readUint16LE();
+	convFile->skip(4);
+
+	_messageList1.resize(convFile->readUint16LE());
+	_messageList2.resize(convFile->readUint16LE());
+	_messageList3.resize(convFile->readUint16LE());
+	_messageList4.resize(convFile->readUint16LE());
+	convFile->skip(20);
+
+	for (uint idx = 0; idx < 10; ++idx) {
+		int v = convFile->readUint16LE();
+		if (idx < _messageList1.size())
+			_messageList1[idx] = v;
+	}
+	for (uint idx = 0; idx < 10; ++idx) {
+		int v = convFile->readUint16LE();
+		if (idx < _messageList2.size())
+			_messageList2[idx] = v;
+	}
+	for (uint idx = 0; idx < 10; ++idx) {
+		int v = convFile->readUint16LE();
+		if (idx < _messageList3.size())
+			_messageList3[idx] = v;
+	}
+	for (uint idx = 0; idx < 10; ++idx) {
+		int v = convFile->readUint16LE();
+		if (idx < _messageList4.size())
+			_messageList4[idx] = v;
+	}
 
 	delete convFile;
 
@@ -745,7 +793,7 @@ void DialogScript::load(Common::SeekableReadStream &s, uint startingOffset) {
 		ScriptEntry &se = (*this)[idx];
 
 		if (se._command == CMD_GOTO)
-			se._params[0] = instructionOffsets[se._params[0]];
+			se._index = instructionOffsets[se._index];
 	}
 }
 
@@ -781,23 +829,32 @@ void ScriptEntry::load(Common::SeekableReadStream &s) {
 		// Read in the list of entries whose flags are to be updated
 		int count = s.readByte();
 		for (int idx = 0; idx < count; ++idx)
-			_params.push_back(s.readSint16LE());
+			_entries.push_back(s.readSint16LE());
 		break;
 	}
 
-	case CMD_MESSAGE:
-	case CMD_5: {
-		int count1 = s.readByte();
+	case CMD_MESSAGE1:
+	case CMD_MESSAGE2: {
 		int count2 = s.readByte();
-		_params.push_back(count1);
-		_params.push_back(count2);
+		int count1 = s.readByte();
+		_entries2.resize(count2);
+		_entries.resize(count1);
 
-		for (int idx = 0; idx < count1; ++idx)
-			_params.push_back(s.readByte());
-		for (int idx = 0; idx < count1; ++idx)
-			_params.push_back(s.readUint16LE());
-		for (int idx = 0; idx < count2; ++idx)
-			_params.push_back(s.readUint16LE());
+		for (uint idx = 0; idx < _entries2.size(); ++idx) {
+			int v = s.readByte();
+			if (idx < 10)
+				_entries2[idx]._size = v;
+		}
+		for (uint idx = 0; idx < _entries2.size(); ++idx) {
+			int v = s.readUint16LE();
+			if (idx < 10)
+				_entries2[idx]._v2 = v;
+		}
+		for (uint idx = 0; idx < _entries.size(); ++idx) {
+			int v = s.readUint16LE();
+			if (idx < 10)
+				_entries[idx] = v;
+		}
 		break;
 	}
 
@@ -811,10 +868,8 @@ void ScriptEntry::load(Common::SeekableReadStream &s) {
 		// Goto has a single extra parameter for the destination
 		// Assign has a single extra parameter for the variable index
 		//		that the value resulting from the condition will be set to
-		_params.push_back(s.readUint16LE());
+		_index = s.readUint16LE();
 		break;
-
-	
 
 	default:
 		break;

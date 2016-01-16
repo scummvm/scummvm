@@ -53,8 +53,8 @@ enum DialogCommand {
 	CMD_1 = 1,
 	CMD_HIDE = 2,
 	CMD_UNHIDE = 3,
-	CMD_MESSAGE = 4,
-	CMD_5 = 5,
+	CMD_MESSAGE1 = 4,
+	CMD_MESSAGE2 = 5,
 	CMD_ERROR = 6,
 	CMD_7 = 7,
 	CMD_GOTO = 8,
@@ -162,9 +162,20 @@ struct ScriptEntry {
 		int evaluate() const;
 	};
 
+	struct MessageEntry {
+		int _size;
+		int _v2;
+
+		MessageEntry() : _size(0), _v2(0) {}
+	};
+
 	DialogCommand _command;
 	Conditional _conditionals[3];
-	Common::Array<int> _params;
+	
+	// Extra parameters for different opcodes
+	int _index;
+	Common::Array<int> _entries;
+	Common::Array<MessageEntry> _entries2;
 
 	/**
 	 * Constructor
@@ -255,14 +266,10 @@ struct ConversationConditionals {
 	int _numImports;
 
 	int _currentNode;
-	int _fieldC;
-	int _fieldE;
-	int _field10;
-	int _field12;
-	int _field28;
-	int _field3C;
-	int _field50;
-	int _field64;
+	Common::Array<int> _messageList1;
+	Common::Array<int> _messageList2;
+	Common::Array<int> _messageList3;
+	Common::Array<int> _messageList4;
 
 	/**
 	 * Constructor
@@ -346,12 +353,12 @@ private:
 	/**
 	 * Generate text
 	 */
-	void generateText(int textLineIndex, int v2, int *v3);
+	void generateText(int textLineIndex, Common::Array<int> &messages);
 
 	/**
 	 * Generate message
 	 */
-	void generateMessage(int textLineIndex, int v2, int *v3, int *v4);
+	void generateMessage(Common::Array<int> &messageList, Common::Array<int> &voiecList);
 
 	/**
 	 * Gets the next node
@@ -362,6 +369,11 @@ private:
 	 * Executes a conversation entry
 	 */
 	int executeEntry(int index);
+
+	/**
+	 * Handle messages
+	 */
+	void scriptMessage(ScriptEntry &scrEntry);
 public:
 	/**
 	 * Constructor
