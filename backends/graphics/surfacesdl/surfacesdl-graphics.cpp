@@ -666,6 +666,7 @@ void SurfaceSdlGraphicsManager::drawTexture(const Graphics::Texture &tex, const 
 
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 	glBindTexture(GL_TEXTURE_2D, 0);
+	_boxShader->unbind();
 #endif
 }
 
@@ -697,6 +698,8 @@ void SurfaceSdlGraphicsManager::drawOverlayOpenGLShaders() {
 			curTexIdx++;
 		}
 	}
+
+	_boxShader->unbind();
 }
 
 #endif
