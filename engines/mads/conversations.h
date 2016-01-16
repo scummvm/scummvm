@@ -56,7 +56,7 @@ enum DialogCommand {
 	CMD_MESSAGE1 = 4,
 	CMD_MESSAGE2 = 5,
 	CMD_ERROR = 6,
-	CMD_7 = 7,
+	CMD_NODE = 7,
 	CMD_GOTO = 8,
 	CMD_ASSIGN = 9,
 	CMD_DIALOG_END = 255
@@ -374,6 +374,11 @@ private:
 	 * Handle messages
 	 */
 	void scriptMessage(ScriptEntry &scrEntry);
+
+	/**
+	 * Handle node changes
+	 */
+	bool scriptNode(ScriptEntry &scrEntry);
 public:
 	/**
 	 * Constructor

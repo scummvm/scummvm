@@ -439,7 +439,7 @@ int GameConversations::executeEntry(int index) {
 	_nextStartNode->_val = var0._val;
 
 	bool flag = true;
-	for (uint scriptIdx = 0; scriptIdx < dlg._script.size(); ) {
+	for (uint scriptIdx = 0; scriptIdx < dlg._script.size() && flag; ) {
 		ScriptEntry &scrEntry = dlg._script[scriptIdx];
 		if (scrEntry._command == CMD_END)
 			break;
@@ -459,6 +459,10 @@ int GameConversations::executeEntry(int index) {
 
 		case CMD_ERROR:
 			error("Conversation script generated error");
+			break;
+
+		case CMD_NODE:
+			flag = !scriptNode(scrEntry);
 			break;
 
 		case CMD_GOTO: {
@@ -535,6 +539,24 @@ void GameConversations::scriptMessage(ScriptEntry &scrEntry) {
 			_runningConv->_cnd._messageList3.push_back(entryVal);
 		}
 	}
+}
+
+bool GameConversations::scriptNode(ScriptEntry &scrEntry) {
+	bool doFlag = scrEntry._conditionals[0].evaluate();
+	if (!doFlag)
+		return false;
+
+	ConversationVar &var0 = _runningConv->_cnd._vars[0];
+	int val1 = scrEntry._conditionals[1].evaluate();
+	int val2 = scrEntry._conditionals[2].evaluate();
+
+	var0._val = val1;
+	if (val1 >= 0)
+		_nextStartNode->_val = val1;
+	else if (val2 >= 0)
+		_nextStartNode->_val = val2;
+
+	return true;
 }
 
 /*------------------------------------------------------------------------*/
@@ -811,7 +833,7 @@ void ScriptEntry::load(Common::SeekableReadStream &s) {
 
 	// Get in the conditional values
 	int numConditionals = 1;
-	if (_command == CMD_7)
+	if (_command == CMD_NODE)
 		numConditionals = 3;
 	else if (_command == CMD_ASSIGN)
 		numConditionals = 2;
@@ -859,7 +881,7 @@ void ScriptEntry::load(Common::SeekableReadStream &s) {
 	}
 
 	case CMD_ERROR:
-	case CMD_7:
+	case CMD_NODE:
 		// These opcodes have no extra parameters
 		break;
 
@@ -888,7 +910,7 @@ void ScriptEntry::Conditional::load(Common::SeekableReadStream &s) {
 		_param1._val = 0;
 	} else {
 		_param1._isVariable = s.readByte() != 0;
-		_param1._val = s.readUint16LE();
+		_param1._val = s.readSint16LE();
 	}
 
 	if (_operation == CONDOP_ABORT || _operation == CONDOP_VALUE) {
@@ -896,7 +918,7 @@ void ScriptEntry::Conditional::load(Common::SeekableReadStream &s) {
 		_param2._val = 0;
 	} else {
 		_param2._isVariable = s.readByte() != 0;
-		_param2._val = s.readUint16LE();
+		_param2._val = s.readSint16LE();
 	}
 }
 
