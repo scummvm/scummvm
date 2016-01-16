@@ -31,6 +31,7 @@
 namespace MADS {
 
 #define DIALOG_TOP 22
+#define POPUP_CENTER 0x8000
 
 class Dialog {
 private:

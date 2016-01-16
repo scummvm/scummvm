@@ -303,9 +303,9 @@ private:
 	bool _speakerActive[MAX_SPEAKERS];
 	int _speakerPortraits[MAX_SPEAKERS];
 	int _speakerExists[MAX_SPEAKERS];
-	int _arr4[MAX_SPEAKERS];
-	int _arr5[MAX_SPEAKERS];
-	int _arr6[MAX_SPEAKERS];
+	int _popupX[MAX_SPEAKERS];
+	int _popupY[MAX_SPEAKERS];
+	int _popupMaxLen[MAX_SPEAKERS];
 	InputMode _inputMode;
 	int _val1;
 	ConversationMode _currentMode;

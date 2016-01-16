@@ -111,9 +111,9 @@ void GameConversations::run(int id) {
 	Common::fill(&_speakerActive[0], &_speakerActive[MAX_SPEAKERS], false);
 	Common::fill(&_speakerPortraits[0], &_speakerPortraits[MAX_SPEAKERS], -1);
 	Common::fill(&_speakerExists[0], &_speakerExists[MAX_SPEAKERS], 1);
-	Common::fill(&_arr4[0], &_arr4[MAX_SPEAKERS], 0x8000);
-	Common::fill(&_arr5[0], &_arr5[MAX_SPEAKERS], 0x8000);
-	Common::fill(&_arr6[0], &_arr6[MAX_SPEAKERS], 30);
+	Common::fill(&_popupX[0], &_popupX[MAX_SPEAKERS], POPUP_CENTER);
+	Common::fill(&_popupY[0], &_popupY[MAX_SPEAKERS], POPUP_CENTER);
+	Common::fill(&_popupMaxLen[0], &_popupMaxLen[MAX_SPEAKERS], 30);
 
 	// Start the conversation
 	start();
@@ -122,9 +122,9 @@ void GameConversations::run(int id) {
 	setVariable(2, &_speakerVal);
 	for (int idx = 0; idx < MAX_SPEAKERS; ++idx) {
 		setVariable(3 + idx, &_speakerExists[idx]);
-		setVariable(8 + idx, &_arr4[idx]);
-		setVariable(13 + idx, &_arr5[idx]);
-		setVariable(18 + idx, &_arr6[idx]);
+		setVariable(8 + idx, &_popupX[idx]);
+		setVariable(13 + idx, &_popupY[idx]);
+		setVariable(18 + idx, &_popupMaxLen[idx]);
 	}
 
 	// Load sprite data for speaker portraits
