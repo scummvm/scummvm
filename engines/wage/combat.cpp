@@ -53,9 +53,13 @@
 namespace Wage {
 
 Obj *WageEngine::getOffer() {
-	warning("STUB: WageEngine::getOffer");
-
-	return NULL;
+	if (_offer != NULL) {
+		Chr *owner = _offer->_currentOwner;
+		if (owner == NULL || owner->_playerCharacter || owner->_currentScene != _world->_player->_currentScene) {
+			_offer = NULL;
+		}
+	}
+	return _offer;
 }
 
 Chr *WageEngine::getMonster() {

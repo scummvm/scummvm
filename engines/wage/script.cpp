@@ -1044,7 +1044,16 @@ void Script::handleRestCommand() {
 }
 
 void Script::handleAcceptCommand() {
-	warning("STUB: handleAcceptCommand");
+	Obj *offer = _callbacks->_offer;
+	Chr *chr = offer->_currentOwner;
+
+	char buf[512];
+	snprintf(buf, 512, "%s%s lays the %s on the ground and departs peacefully.",
+		chr->getDefiniteArticle(true), chr->_name.c_str(), offer->_name.c_str());
+	appendText(buf);
+
+	_world->move(offer, chr->_currentScene);
+	_world->move(chr, _world->_storageScene);
 }
 
 void Script::handleTakeCommand(const char *target) {
@@ -1075,6 +1084,37 @@ bool Script::tryAttack(Weapon *weapon, Common::String &input) {
 
 void Script::handleAttack(Weapon *weapon) {
 	warning("STUB: handleAttack");
+}
+
+const char *Script::getPercentMessage(double percent) {
+	if (percent < 0.40) {
+		return "very bad";
+	} else if (percent < 0.55) {
+		return "bad";
+	} else if (percent < 0.70) {
+		return "average";
+	} else if (percent < 0.85) {
+		return "good";
+	} else if (percent <= 1.00) {
+		return "very good";
+	} else {
+		return "enhanced";
+	}
+}
+
+void Script::printPlayerCondition(Chr *player) {
+	double physicalPercent = (double)player->_context._statVariables[PHYS_HIT_CUR] / player->_context._statVariables[PHYS_HIT_BAS];
+	double spiritualPercent = (double)player->_context._statVariables[SPIR_HIT_CUR] / player->_context._statVariables[SPIR_HIT_BAS];
+
+	Common::String msg = "Your physical condition is ";
+	msg += getPercentMessage(physicalPercent);
+	msg += ".";
+	appendText(msg);
+
+	msg = "Your spiritual condition is ";
+	msg += getPercentMessage(spiritualPercent);
+	msg += ".";
+	appendText(msg);
 }
 
 enum {
@@ -1280,37 +1320,6 @@ void Script::convertToText() {
 		_scriptText.push_back(scr);
 	else
 		delete scr;
-}
-
-const char *Script::getPercentMessage(double percent) {
-	if (percent < 0.40) {
-		return "very bad";
-	} else if (percent < 0.55) {
-		return "bad";
-	} else if (percent < 0.70) {
-		return "average";
-	} else if (percent < 0.85) {
-		return "good";
-	} else if (percent <= 1.00) {
-		return "very good";
-	} else {
-		return "enhanced";
-	}
-}
-
-void Script::printPlayerCondition(Chr *player) {
-	double physicalPercent = (double)player->_context._statVariables[PHYS_HIT_CUR] / player->_context._statVariables[PHYS_HIT_BAS];
-	double spiritualPercent = (double)player->_context._statVariables[SPIR_HIT_CUR] / player->_context._statVariables[SPIR_HIT_BAS];
-
-	Common::String msg = "Your physical condition is ";
-	msg += getPercentMessage(physicalPercent);
-	msg += ".";
-	appendText(msg);
-
-	msg = "Your spiritual condition is ";
-	msg += getPercentMessage(spiritualPercent);
-	msg += ".";
-	appendText(msg);
 }
 
 } // End of namespace Wage
