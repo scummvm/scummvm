@@ -617,7 +617,7 @@ void AmazonEngine::startChapter(int chapter) {
 
 	_establishGroup = 1;
 	loadEstablish(0x40 + _chapter);
-	uint16 msgOffset = READ_LE_UINT16(_establish->data() + ((0x40 + _chapter) * 2) + 2);
+	uint16 msgOffset = READ_LE_UINT16(_establish->data() + ((0x40 + _chapter) * 2));
 	_printEnd = 170;
 
 	Common::String msg((const char *)_establish->data() + msgOffset);
