@@ -337,6 +337,7 @@ private:
 	int _dialogNodeOffset, _dialogNodeSize;
 	int _personSpeaking;
 	TextDialog *_dialog;
+	bool _dialogAltFlag;
 	
 	/**
 	 * Returns the record for the specified conversation, if it's loaded

@@ -29,6 +29,12 @@
 
 namespace MADS {
 
+enum PopupEdge {
+	EDGE_UPPER_LEFT = 0, EDGE_UPPER_RIGHT = 1, EDGE_LOWER_LEFT = 2,
+	EDGE_LOWER_RIGHT = 3, EDGE_LEFT = 4, EDGE_RIGHT = 5, EDGE_TOP = 6,
+	EDGE_BOTTOM = 7, EDGE_UPPER_CENTER = 8
+};
+
 Dialog::Dialog(MADSEngine *vm)
 	: _vm(vm), _savedSurface(nullptr), _position(Common::Point(-1, -1)),
 	  _width(0), _height(0) {
@@ -140,15 +146,34 @@ void Dialog::drawContent(const Common::Rect &r, int seed, byte color1, byte colo
 TextDialog::TextDialog(MADSEngine *vm, const Common::String &fontName,
 		const Common::Point &pos, int maxChars)
 	: Dialog(vm) {
-	_vm = vm;
 	_font = _vm->_font->getFont(fontName);
 	_position = pos;
-
+	_icon = nullptr;
+	_edgeSeries = nullptr;
+	_piecesPerCenter = 0;
 	_vm->_font->setColors(TEXTDIALOG_BLACK, TEXTDIALOG_BLACK, TEXTDIALOG_BLACK, TEXTDIALOG_BLACK);
+	_piecesPerCenter = 0;
 
-	_innerWidth = (_font->maxWidth() + 1) * maxChars;
+	init(maxChars);
+}
+
+TextDialog::TextDialog(MADSEngine *vm, const Common::String &fontName,
+		const Common::Point &pos, MSurface *icon, int maxTextChars): Dialog(vm) {
+	_font = _vm->_font->getFont(fontName);
+	_position = pos;
+	_icon = icon;
+	_edgeSeries = new SpriteAsset(_vm, "box.ss", PALFLAG_RESERVED);
+	_vm->_font->setColors(TEXTDIALOG_BLACK, TEXTDIALOG_BLACK, TEXTDIALOG_BLACK, TEXTDIALOG_BLACK);
+	_piecesPerCenter = _edgeSeries->getFrame(EDGE_UPPER_CENTER)->w / _edgeSeries->getFrame(EDGE_BOTTOM)->w;
+
+	int maxLen = estimatePieces(maxTextChars);
+	init(maxLen);
+}
+
+void TextDialog::init(int maxTextChars) {
+	_innerWidth = (_font->maxWidth() + 1) * maxTextChars;
 	_width = _innerWidth + 10;
-	_lineSize = maxChars * 2;
+	_lineSize = maxTextChars * 2;
 	_lineWidth = 0;
 	_currentX = 0;
 	_numLines = 0;
@@ -157,7 +182,16 @@ TextDialog::TextDialog(MADSEngine *vm, const Common::String &fontName,
 	_askXp = 0;
 }
 
+int TextDialog::estimatePieces(int maxLen) {
+	int fontLen = (_font->maxWidth() + 1) * maxLen;
+	int pieces = ((fontLen - 1) / _edgeSeries->getFrame(EDGE_TOP)->w) + 1;
+	int estimate = (maxLen - _piecesPerCenter) / 2;
+
+	return estimate;
+}
+
 TextDialog::~TextDialog() {
+	delete _edgeSeries;
 }
 
 void TextDialog::addLine(const Common::String &line, bool underline) {
@@ -273,10 +307,6 @@ void TextDialog::addBarLine() {
 
 void TextDialog::setLineXp(int xp) {
 	_lineXp[_numLines] = xp;
-}
-
-void TextDialog::addIcon(MSprite *frame) {
-	warning("TODO: addIcon");
 }
 
 void TextDialog::draw() {

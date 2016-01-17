@@ -47,6 +47,7 @@ GameConversations::GameConversations(MADSEngine *vm) : _vm(vm) {
 	_currentNode = 0;
 	_dialogNodeOffset = _dialogNodeSize = 0;
 	_dialog = nullptr;
+	_dialogAltFlag = false;
 
 	// Mark all conversation slots as empty
 	for (int idx = 0; idx < MAX_CONVERSATIONS; ++idx)
@@ -417,23 +418,27 @@ ConversationMode GameConversations::generateMenu() {
 }
 
 void GameConversations::generateText(int textLineIndex, Common::Array<int> &messages) {
+	_dialogAltFlag = true;
+
 	error("TODO: GameConversations::generateText");
 }
 
 void GameConversations::generateMessage(Common::Array<int> &messageList, Common::Array<int> &voiceList) {
+	_dialogAltFlag = false;
 	if (messageList.size() == 0)
 		return;
 
 	if (_dialog)
 		delete _dialog;
 
+	// Get the speaker portrait
+	SpriteAsset &sprites = *_vm->_game->_scene._sprites[_speakerSeries[_personSpeaking]];
+	MSprite *portrait = sprites.getFrame(_speakerFrame[_personSpeaking]);
+
 	// Create the new text dialog
 	_dialog = new TextDialog(_vm, FONT_INTERFACE,
-		Common::Point(_popupX[_personSpeaking], _popupY[_personSpeaking]), _popupMaxLen[_personSpeaking]);
-
-	// Add the sprite for the speaker
-	SpriteAsset &sprites = *_vm->_game->_scene._sprites[_speakerSeries[_personSpeaking]];
-	_dialog->addIcon(sprites.getFrame(_speakerFrame[_personSpeaking]));
+		Common::Point(_popupX[_personSpeaking], _popupY[_personSpeaking]), 
+		portrait, _popupMaxLen[_personSpeaking]);
 
 	// Add in the lines
 	for (uint msgNum = 0; msgNum < messageList.size(); ++msgNum) {
