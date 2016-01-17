@@ -183,6 +183,7 @@ int InventoryManager::newDisplayInv() {
 	_invModeFlag = false;
 	events.debounceLeft();
 	_vm->_timers.restoreTimers();
+	_vm->_startup = 1;
 
 	int result = 0;
 	if (!_invRefreshFlag) {

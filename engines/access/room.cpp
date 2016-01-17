@@ -172,14 +172,14 @@ void Room::doRoom() {
 		reloadFlag = false;
 		_vm->_startup = 8;
 		_function = FN_NONE;
-		bool fadeIn = true;
+		_vm->_screen->_fadeIn = false;
 
 		while (!_vm->shouldQuit()) {
 			_vm->_images.clear();
-			if (_vm->_startup == -1 && !fadeIn) {
+			if (_vm->_screen->_fadeIn) {
 				_vm->_events->showCursor();
 				_vm->_screen->fadeIn();
-				fadeIn = true;
+				_vm->_screen->_fadeIn = false;
 			}
 
 			// Poll for events

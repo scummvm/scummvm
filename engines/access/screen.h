@@ -85,6 +85,7 @@ public:
 	int _bufferBytesWide;
 	int _vWindowLinesTall;
 	bool _screenChangeFlag;
+	bool _fadeIn;
 public:
 	virtual void copyBlock(ASurface *src, const Common::Rect &bounds);
 
