@@ -452,8 +452,10 @@ void GameConversations::generateMessage(Common::Array<int> &messageList, Common:
 	_dialog->show();
 
 	// Play the speech if one was provided
-	if (voiceList.size() > 0)
-		_vm->_sound->playSpeech(_runningConv->_data._speechFile, voiceList[0]);
+	if (voiceList.size() > 0) {
+		_vm->_audio->setSoundGroup(_runningConv->_data._speechFile);
+		_vm->_audio->playSound(voiceList[0] - 1);
+	}
 }
 
 bool GameConversations::nextNode() {

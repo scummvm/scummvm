@@ -177,8 +177,4 @@ void SoundManager::noise() {
 		_driver->noise();
 }
 
-void SoundManager::playSpeech(const Common::String &speechFile, int speechNum) {
-	warning("TODO: playSpeech");
-}
-
 } // End of namespace MADS
