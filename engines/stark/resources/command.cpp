@@ -672,10 +672,12 @@ Command *Command::opKnowledgeSubValue(const ResourceReference &knowledgeRef, con
 	return nextCommand();
 }
 
-Command *Command::opEnableFloorField(const ResourceReference &floorFieldRef, int32 value) {
-	assert(_arguments.size() == 3);
-	Object *floorFieldObj = floorFieldRef.resolve<Object>();
-	warning("(TODO: Implement) opEnableFloorField(%s, %d) : %s", floorFieldObj->getName().c_str(), value, floorFieldRef.describe().c_str());
+Command *Command::opEnableFloorField(const ResourceReference &floorFieldRef, bool enable) {
+	FloorField *floorField = floorFieldRef.resolve<FloorField>();
+	Layer *layer = floorField->findParent<Layer>();
+	Floor *floor = layer->findChild<Floor>();
+
+	floor->enableFloorField(floorField, enable);
 
 	return nextCommand();
 }

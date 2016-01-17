@@ -43,7 +43,7 @@ void FloorField::readData(Formats::XRCReadStream *stream) {
 }
 
 bool FloorField::hasFace(int32 floorFaceIndex) const {
-	if (floorFaceIndex < 0 || floorFaceIndex > (int32) _facesInFloorField.size()) {
+	if (floorFaceIndex < 0 || floorFaceIndex >= (int32) _facesInFloorField.size()) {
 		return false;
 	}
 

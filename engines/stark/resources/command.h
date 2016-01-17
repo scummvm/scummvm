@@ -224,7 +224,7 @@ protected:
 	Command *opKnowledgeSetIntRandom(const ResourceReference &knowledgeRef, uint32 min, uint32 max);
 	Command *opKnowledgeAddInteger(const ResourceReference &knowledgeRef, int32 increment);
 	Command *opKnowledgeSubValue(const ResourceReference &knowledgeRef, const ResourceReference &valueRef);
-	Command *opEnableFloorField(const ResourceReference &floorFieldRef, int32 value);
+	Command *opEnableFloorField(const ResourceReference &floorFieldRef, bool enable);
 	Command *opPlayAnimScriptItem(Script *script, const ResourceReference &animScriptItemRef, int32 suspend);
 	Command *opKnowledgeAssignBool(const ResourceReference &knowledgeRef1, const ResourceReference &knowledgeRef2);
 	Command *opKnowledgeAssignNegatedBool(const ResourceReference &knowledgeRef1, const ResourceReference &knowledgeRef2);

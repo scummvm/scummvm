@@ -100,6 +100,9 @@ public:
 	/** Checks if the face is non degenerate */
 	bool hasVertices() const;
 
+	/** Allow or disallow characters to walk on this face */
+	void enable(bool enable);
+
 protected:
 	void readData(Formats::XRCReadStream *stream) override;
 	void printData() override;

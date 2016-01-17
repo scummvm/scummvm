@@ -42,6 +42,7 @@ namespace Resources {
 
 class Floor;
 class FloorFace;
+class FloorField;
 
 /**
  * A floor face (triangle) edge
@@ -90,6 +91,16 @@ public:
 
 	int32 getFaceIndex1() const;
 	int32 getFaceIndex2() const;
+
+	/** Allow or disallow characters to path using this edge */
+	void enable(bool enable);
+
+	/** Is pathing through this edge allowed for characters? */
+	bool isEnabled() const;
+
+	/** Save or restore the edge's status */
+	void saveLoad(ResourceSerializer *serializer);
+
 private:
 	void addNeighboursFromFace(const FloorFace *face);
 
@@ -98,6 +109,8 @@ private:
 	Math::Vector3d _middle;
 	int32 _faceIndex1;
 	int32 _faceIndex2;
+
+	bool _enabled;
 
 	Common::Array<FloorEdge *> _neighbours;
 };
@@ -117,6 +130,7 @@ public:
 
 	// Resource API
 	void onAllLoaded() override;
+	void saveLoad(ResourceSerializer *serializer) override;
 
 	/** Obtain the vertex for an index */
 	Math::Vector3d getVertex(uint32 index) const;
@@ -158,6 +172,9 @@ public:
 
 	/** Check if the segment is entirely inside the floor */
 	bool isSegmentInside(const Math::Line3d &segment) const;
+
+	/** Allow or disallow characters to walk on some faces of the floor */
+	void enableFloorField(FloorField *floorfield, bool enable);
 
 protected:
 	void readData(Formats::XRCReadStream *stream) override;

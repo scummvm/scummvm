@@ -169,6 +169,12 @@ bool FloorFace::hasVertices() const {
 	return _indices[0] != 0 || _indices[1] != 0 || _indices[2] != 0;
 }
 
+void FloorFace::enable(bool enable) {
+	for (uint i = 0; i < _edges.size(); i++) {
+		_edges[i]->enable(enable);
+	}
+}
+
 void FloorFace::readData(Formats::XRCReadStream *stream) {
 	for (uint i = 0; i < ARRAYSIZE(_indices); i++) {
 		_indices[i] = stream->readSint16LE();

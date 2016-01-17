@@ -23,7 +23,11 @@
 #include "engines/stark/resources/floor.h"
 
 #include "engines/stark/formats/xrc.h"
+
 #include "engines/stark/resources/floorface.h"
+#include "engines/stark/resources/floorfield.h"
+
+#include "engines/stark/services/stateprovider.h"
 
 #include "common/math.h"
 
@@ -135,6 +139,12 @@ void Floor::onAllLoaded() {
 	buildEdgeList();
 }
 
+void Floor::saveLoad(ResourceSerializer *serializer) {
+	for (uint i = 0; i < _edges.size(); i++) {
+		_edges[i].saveLoad(serializer);
+	}
+}
+
 void Floor::buildEdgeList() {
 	_edges.clear();
 
@@ -185,6 +195,14 @@ void Floor::addFaceEdgeToList(uint32 faceIndex, uint32 index1, uint32 index2) {
 	_edges.push_back(FloorEdge(startIndex, endIndex, faceIndex));
 }
 
+void Floor::enableFloorField(FloorField *floorfield, bool enable) {
+	for (uint i = 0; i < _faces.size(); i++) {
+		if (floorfield->hasFace(i)) {
+			_faces[i]->enable(enable);
+		}
+	}
+}
+
 void Floor::printData() {
 	debug("face count: %d", _facesCount);
 
@@ -198,7 +216,8 @@ FloorEdge::FloorEdge(uint16 vertexIndex1, uint16 vertexIndex2, uint32 faceIndex1
         _vertexIndex1(vertexIndex1),
         _vertexIndex2(vertexIndex2),
         _faceIndex1(faceIndex1),
-        _faceIndex2(-1) {
+        _faceIndex2(-1),
+        _enabled(true) {
 }
 
 bool FloorEdge::hasVertices(uint16 vertexIndex1, uint16 vertexIndex2) const {
@@ -266,6 +285,18 @@ bool FloorEdge::intersectsSegment(const Floor *floor, const Math::Line3d &segmen
 	Math::Line3d edgeSement = Math::Line3d(vertex1, vertex2);
 
 	return edgeSement.intersectLine2d(segment, nullptr, false);
+}
+
+void FloorEdge::enable(bool enable) {
+	_enabled = enable;
+}
+
+bool FloorEdge::isEnabled() const {
+	return _enabled;
+}
+
+void FloorEdge::saveLoad(ResourceSerializer *serializer) {
+	serializer->syncAsUint32LE(_enabled);
 }
 
 } // End of namespace Resources

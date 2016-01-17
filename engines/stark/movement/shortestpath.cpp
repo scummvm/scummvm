@@ -45,6 +45,8 @@ ShortestPath::NodeList ShortestPath::search(const Resources::FloorEdge *start, c
 		Common::Array<Resources::FloorEdge *> neighbours = current->getNeighbours();
 		for (uint i = 0; i < neighbours.size(); i++) {
 			const Resources::FloorEdge *next = neighbours[i];
+			if (!next->isEnabled())
+				continue;
 
 			float newCost = costSoFar[current] + current->costTo(next);
 			if (!costSoFar.contains(next) || newCost < costSoFar[next]) {
