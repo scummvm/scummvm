@@ -157,6 +157,7 @@ public:
 	void playSound(String soundName);
 	void setMenu(String soundName);
 	void appendText(String &str);
+	void appendText(char *str);
 	void gameOver();
 	Obj *getOffer();
 	Chr *getMonster();

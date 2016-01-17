@@ -210,6 +210,12 @@ void WageEngine::appendText(String &str) {
 	_gui->appendText(str);
 }
 
+void WageEngine::appendText(char *str) {
+	Common::String s(str);
+
+	appendText(s);
+}
+
 void WageEngine::gameOver() {
 	warning("STUB: WageEngine::gameOver()");
 }
@@ -434,20 +440,16 @@ void WageEngine::processTurn(Common::String *textInput, Designed *clickInput) {
 				}
 			}
 
-			Common::String msg;
+			char buf[512];
 
 			if (followed) {
-				msg = prevMonster->getDefiniteArticle(true);
-				msg += prevMonster->_name;
-				msg += " follows you.";
-				appendText(msg);
+				snprintf(buf, 512, "%s%s follows you.", prevMonster->getDefiniteArticle(true), prevMonster->_name.c_str());
+				appendText(buf);
+
 				_world->move(prevMonster, playerScene);
 			} else {
-				msg = "You escape ";
-				msg += prevMonster->getDefiniteArticle(false);
-				msg += prevMonster->_name;
-				msg += ".";
-				appendText(msg);
+				snprintf(buf, 512, "You escape %s%s.", prevMonster->getDefiniteArticle(false), prevMonster->_name.c_str());
+				appendText(buf);
 			}
 		}
 	}

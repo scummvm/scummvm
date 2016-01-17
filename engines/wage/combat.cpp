@@ -70,41 +70,31 @@ Chr *WageEngine::getMonster() {
 }
 
 void WageEngine::encounter(Chr *player, Chr *chr) {
-	Common::String msg("You encounter ");
-	if (!chr->_nameProperNoun)
-		msg += getIndefiniteArticle(chr->_name);
-	msg += chr->_name;
-	msg += ".";
-	appendText(msg);
+	char buf[512];
+
+	snprintf(buf, 512, "You encounter %s%s.", chr->_nameProperNoun ? "" : getIndefiniteArticle(chr->_name),
+				chr->_name.c_str());
+	appendText(buf);
 
 	if (!chr->_initialComment.empty())
 		appendText(chr->_initialComment);
 
 	if (chr->_armor[Chr::HEAD_ARMOR] != NULL) {
-		msg = chr->getDefiniteArticle(true);
-		msg += chr->_name;
-		msg += " is wearing ";
-		msg += getIndefiniteArticle(chr->_armor[Chr::HEAD_ARMOR]->_name);
-		msg += ".";
-		appendText(msg);
+		snprintf(buf, 512, "%s%s is wearing %s.", chr->getDefiniteArticle(true), chr->_name.c_str(),
+					getIndefiniteArticle(chr->_armor[Chr::HEAD_ARMOR]->_name));
+		appendText(buf);
 	}
 	if (chr->_armor[Chr::BODY_ARMOR] != NULL) {
-		msg = getGenderSpecificPronoun(chr->_gender, true);
-		msg += " is protected by ";
-		msg += prependGenderSpecificPronoun(chr->_gender);
-		msg += chr->_armor[Chr::BODY_ARMOR]->_name;
-		msg += ".";
-		appendText(msg);
+		snprintf(buf, 512, "%s is protected by %s%s.", getGenderSpecificPronoun(chr->_gender, true),
+					prependGenderSpecificPronoun(chr->_gender), chr->_armor[Chr::BODY_ARMOR]->_name.c_str());
+		appendText(buf);
 	}
 	if (chr->_armor[Chr::SHIELD_ARMOR] != NULL) {
 		Obj *obj = chr->_armor[Chr::SHIELD_ARMOR];
-		msg = getGenderSpecificPronoun(chr->_gender, true);
-		msg += " carries ";
-		if (!obj->_namePlural)
-			msg += getIndefiniteArticle(obj->_name);
-		msg += obj->_name;
-		msg += ".";
-		appendText(msg);
+
+		snprintf(buf, 512, "%s carries %s%s.", getGenderSpecificPronoun(chr->_gender, true),
+				obj->_namePlural ? "" : getIndefiniteArticle(obj->_name), obj->_name.c_str());
+		appendText(buf);
 	}
 }
 
@@ -202,23 +192,23 @@ void WageEngine::performMove(Chr *chr, int validMoves) {
 void WageEngine::performOffer(Chr *attacker, Chr *victim) {
 	/* TODO: choose in a smarter way? */
 	Obj *obj = attacker->_inventory[0];
-	Common::String msg(attacker->getDefiniteArticle(true));
-	msg += attacker->_name;
-	msg += " offers ";
-	msg += obj->_namePlural ? "some " : getIndefiniteArticle(obj->_name);
-	msg += obj->_name;
-	msg += ".";
+	char buf[512];
+
+	snprintf(buf, 512, "%s%s offers %s%s.", attacker->getDefiniteArticle(true), attacker->_name.c_str(),
+			obj->_namePlural ? "some " : getIndefiniteArticle(obj->_name), obj->_name.c_str());
+
+	appendText(buf);
 
 	_offer = obj;
 }
 
 void WageEngine::performTake(Chr *npc, Obj *obj) {
-	Common::String msg(npc->getDefiniteArticle(true));
-	msg += npc->_name;
-	msg += " picks up the ";
-	msg += getIndefiniteArticle(obj->_name);
-	msg += obj->_name;
-	msg += ".";
+	char buf[512];
+
+	snprintf(buf, 512, "%s%s picks up the %s%s.", npc->getDefiniteArticle(true), npc->_name.c_str(),
+			getIndefiniteArticle(obj->_name), obj->_name.c_str());
+
+	appendText(buf);
 
 	_world->move(obj, npc);
 }
