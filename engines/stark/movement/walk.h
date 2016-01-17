@@ -46,6 +46,7 @@ public:
 	void start() override;
 	void stop() override;
 	void onGameLoop() override;
+	bool hasReachedDestination() const override;
 
 	/** Set the destination */
 	void setDestination(const Math::Vector3d &destination);
@@ -68,6 +69,7 @@ private:
 	Math::Vector3d _destination;
 
 	bool _running;
+	bool _reachedDestination;
 	TurnDirection _turnDirection;
 };
 

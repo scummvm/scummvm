@@ -40,6 +40,7 @@ Walk::Walk(Resources::FloorPositionedItem *item) :
 		Movement(item),
 		_item3D(item),
 		_running(false),
+		_reachedDestination(false),
 		_turnDirection(kTurnNone) {
 	_path = new StringPullingPath();
 }
@@ -145,6 +146,7 @@ void Walk::onGameLoop() {
 
 	// Some scripts expect the character position to be the exact destination
 	if (newPosition == _destination) {
+		_reachedDestination = true;
 		stop();
 	}
 
@@ -198,4 +200,9 @@ void Walk::changeDestination(const Math::Vector3d &destination) {
 	setDestination(destination);
 	updatePath();
 }
+
+bool Walk::hasReachedDestination() const {
+	return _reachedDestination;
+}
+
 } // End of namespace Stark

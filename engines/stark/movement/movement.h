@@ -55,9 +55,14 @@ public:
 	virtual void onGameLoop() = 0;
 
 	/**
-	 * Is the movement complete?
+	 * Has the movement stopped?
 	 */
 	bool hasEnded() const;
+
+	/**
+	 * Has the movement reached its destination successfully?
+	 */
+	virtual bool hasReachedDestination() const;
 
 protected:
 	enum TurnDirection {

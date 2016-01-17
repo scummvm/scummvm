@@ -131,7 +131,7 @@ Movement *Item::getMovement() const {
 
 void Item::setMovement(Movement *movement) {
 	if (_movementSuspendedScript) {
-		if (_movement &&  _movement->hasEnded()) {
+		if (_movement && _movement->hasReachedDestination()) {
 			_movementSuspendedScript->setResumeStatus(Script::kResumeComplete);
 		} else {
 			_movementSuspendedScript->setResumeStatus(Script::kResumeAbort);

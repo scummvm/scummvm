@@ -61,4 +61,7 @@ float Movement::computeAngleBetweenVectorsXYPlane(const Math::Vector3d &v1, cons
 	return angle.getDegrees();
 }
 
+bool Movement::hasReachedDestination() const {
+	return true;
+}
 } // End of namespace Stark
