@@ -104,6 +104,12 @@ public:
 	 * Some sort of random noise generation?
 	 */
 	void noise();
+
+	/**
+	 * Plays a digital speech resource
+	 */
+	void playSpeech(const Common::String &speechFile, int speechNum);
+
 	//@}
 };
 

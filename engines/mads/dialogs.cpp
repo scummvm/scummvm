@@ -275,6 +275,10 @@ void TextDialog::setLineXp(int xp) {
 	_lineXp[_numLines] = xp;
 }
 
+void TextDialog::addIcon(MSprite *frame) {
+	warning("TODO: addIcon");
+}
+
 void TextDialog::draw() {
 	if (!_lineWidth)
 		--_numLines;

@@ -27,6 +27,7 @@
 #include "common/array.h"
 #include "common/str-array.h"
 #include "mads/screen.h"
+#include "mads/dialogs.h"
 
 namespace MADS {
 
@@ -229,6 +230,16 @@ struct ConvNode {
 };
 
 /**
+ * Represents a message entry
+ */
+struct ConvMessage {
+	uint _stringIndex;
+	uint _count;
+
+	ConvMessage() : _stringIndex(0), _count(0) {}
+};
+
+/**
  * Represents the static, non-changing data for a conversation
  */
 struct ConversationData {
@@ -243,9 +254,9 @@ struct ConversationData {
 	int _commandsSize;
 
 	Common::String _portraits[MAX_SPEAKERS];
-	bool _speakerExists[MAX_SPEAKERS];
+	int _speakerFrame[MAX_SPEAKERS];
 	Common::String _speechFile;
-	Common::Array<uint> _messages;
+	Common::Array<ConvMessage> _messages;
 	Common::StringArray _textLines;
 	Common::Array<ConvNode> _nodes;
 	Common::Array<ConvDialog> _dialogs;
@@ -301,13 +312,13 @@ private:
 	MADSEngine *_vm;
 	ConversationEntry _conversations[MAX_CONVERSATIONS];
 	bool _speakerActive[MAX_SPEAKERS];
-	int _speakerPortraits[MAX_SPEAKERS];
-	int _speakerExists[MAX_SPEAKERS];
+	int _speakerSeries[MAX_SPEAKERS];
+	int _speakerFrame[MAX_SPEAKERS];
 	int _popupX[MAX_SPEAKERS];
 	int _popupY[MAX_SPEAKERS];
 	int _popupMaxLen[MAX_SPEAKERS];
 	InputMode _inputMode;
-	int _val1;
+	bool _popupVisible;
 	ConversationMode _currentMode;
 	ConversationMode _priorMode;
 	int _verbId;
@@ -324,6 +335,8 @@ private:
 	ConversationVar *_nextStartNode;
 	int _currentNode;
 	int _dialogNodeOffset, _dialogNodeSize;
+	int _personSpeaking;
+	TextDialog *_dialog;
 	
 	/**
 	 * Returns the record for the specified conversation, if it's loaded

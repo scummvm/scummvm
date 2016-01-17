@@ -37,7 +37,7 @@ GameConversations::GameConversations(MADSEngine *vm) : _vm(vm) {
 	_speakerVal = 0;
 	_currentMode = CONVMODE_NONE;
 	_priorMode = CONVMODE_NONE;
-	_val1 = 0;
+	_popupVisible = false;
 	_verbId = 0;
 	_vars = _nextStartNode = nullptr;
 	_heroTrigger = 0;
@@ -46,6 +46,7 @@ GameConversations::GameConversations(MADSEngine *vm) : _vm(vm) {
 	_interlocutorTriggerMode = SEQUENCE_TRIGGER_PARSER;
 	_currentNode = 0;
 	_dialogNodeOffset = _dialogNodeSize = 0;
+	_dialog = nullptr;
 
 	// Mark all conversation slots as empty
 	for (int idx = 0; idx < MAX_CONVERSATIONS; ++idx)
@@ -102,15 +103,16 @@ void GameConversations::run(int id) {
 	_inputMode = _vm->_game->_screenObjects._inputMode;
 	_heroTrigger = 0;
 	_interlocutorTrigger = 0;
-	_val1 = 0;
+	_popupVisible = false;
 	_currentMode = CONVMODE_0;
 	_verbId = -1;
 	_speakerVal = 1;
+	_personSpeaking = 1;
 
 	// Initialize speaker arrays
 	Common::fill(&_speakerActive[0], &_speakerActive[MAX_SPEAKERS], false);
-	Common::fill(&_speakerPortraits[0], &_speakerPortraits[MAX_SPEAKERS], -1);
-	Common::fill(&_speakerExists[0], &_speakerExists[MAX_SPEAKERS], 1);
+	Common::fill(&_speakerSeries[0], &_speakerSeries[MAX_SPEAKERS], -1);
+	Common::fill(&_speakerFrame[0], &_speakerFrame[MAX_SPEAKERS], 1);
 	Common::fill(&_popupX[0], &_popupX[MAX_SPEAKERS], POPUP_CENTER);
 	Common::fill(&_popupY[0], &_popupY[MAX_SPEAKERS], POPUP_CENTER);
 	Common::fill(&_popupMaxLen[0], &_popupMaxLen[MAX_SPEAKERS], 30);
@@ -121,7 +123,7 @@ void GameConversations::run(int id) {
 	// Setup variables to point to data in the speaker arrays
 	setVariable(2, &_speakerVal);
 	for (int idx = 0; idx < MAX_SPEAKERS; ++idx) {
-		setVariable(3 + idx, &_speakerExists[idx]);
+		setVariable(3 + idx, &_speakerFrame[idx]);
 		setVariable(8 + idx, &_popupX[idx]);
 		setVariable(13 + idx, &_popupY[idx]);
 		setVariable(18 + idx, &_popupMaxLen[idx]);
@@ -130,11 +132,11 @@ void GameConversations::run(int id) {
 	// Load sprite data for speaker portraits
 	for (uint idx = 0; idx < _runningConv->_data._speakerCount; ++idx) {
 		const Common::String &portraitName = _runningConv->_data._portraits[idx];
-		_speakerPortraits[idx] = _vm->_game->_scene._sprites.addSprites(portraitName, PALFLAG_RESERVED);
+		_speakerSeries[idx] = _vm->_game->_scene._sprites.addSprites(portraitName, PALFLAG_RESERVED);
 
-		if (_speakerPortraits[idx] > 0) {
+		if (_speakerSeries[idx] > 0) {
 			_speakerActive[idx] = true;
-			_speakerExists[idx] = _runningConv->_data._speakerExists[idx];
+			_speakerFrame[idx] = _runningConv->_data._speakerFrame[idx];
 		}
 	}
 
@@ -186,7 +188,7 @@ void GameConversations::stop() {
 	// Release any sprites used for character portraits
 	for (int idx = 0; idx < _runningConv->_data._speakerCount; ++idx) {
 		if (_speakerActive[idx])
-			_vm->_game->_scene._sprites.remove(_speakerPortraits[idx]);
+			_vm->_game->_scene._sprites.remove(_speakerSeries[idx]);
 	}
 
 	// Flag conversation as no longer running
@@ -340,7 +342,7 @@ void GameConversations::update(bool flag) {
 			removeActiveWindow();
 			_vm->_game->_scene._userInterface.emptyConversationList();
 			_vm->_game->_scene._userInterface.setup(kInputConversation);
-			_vm->_events->clearEvents();
+			_personSpeaking = 0;
 			executeEntry(_verbId);
 
 			ConvDialog &dialog = _runningConv->_data._dialogs[_verbId];
@@ -364,11 +366,11 @@ void GameConversations::update(bool flag) {
 	case CONVMODE_3:
 		if (_vm->_game->_scene._frameStartTime >= _startFrameNumber) {
 			removeActiveWindow();
-			_vm->_events->clearEvents();
+			_personSpeaking = 0;
 			executeEntry(_verbId);
 			generateMessage(_runningConv->_cnd._messageList1, _runningConv->_cnd._messageList3);
 		
-			if (_heroTrigger && _val1) {
+			if (_heroTrigger && _popupVisible) {
 				_vm->_game->_scene._action._activeAction._verbId = _verbId;
 				_vm->_game->_trigger = _heroTrigger;
 				_vm->_game->_triggerMode = _heroTriggerMode;
@@ -382,11 +384,11 @@ void GameConversations::update(bool flag) {
 	case CONVMODE_4:
 		if (_vm->_game->_scene._frameStartTime >= _startFrameNumber) {
 			removeActiveWindow();
-			_vm->_events->clearEvents();
+			_personSpeaking = _speakerVal;
 
 			generateMessage(_runningConv->_cnd._messageList2, _runningConv->_cnd._messageList4);
 
-			if (_interlocutorTrigger && _val1) {
+			if (_interlocutorTrigger && _popupVisible) {
 				_vm->_game->_scene._action._activeAction._verbId = _verbId;
 				_vm->_game->_trigger = _interlocutorTrigger;
 				_vm->_game->_triggerMode = _interlocutorTriggerMode;
@@ -418,8 +420,40 @@ void GameConversations::generateText(int textLineIndex, Common::Array<int> &mess
 	error("TODO: GameConversations::generateText");
 }
 
-void GameConversations::generateMessage(Common::Array<int> &messageList, Common::Array<int> &voiecList) {
-	error("TODO: GameConversations::generateMessage");
+void GameConversations::generateMessage(Common::Array<int> &messageList, Common::Array<int> &voiceList) {
+	if (messageList.size() == 0)
+		return;
+
+	if (_dialog)
+		delete _dialog;
+
+	// Create the new text dialog
+	_dialog = new TextDialog(_vm, FONT_INTERFACE,
+		Common::Point(_popupX[_personSpeaking], _popupY[_personSpeaking]), _popupMaxLen[_personSpeaking]);
+
+	// Add the sprite for the speaker
+	SpriteAsset &sprites = *_vm->_game->_scene._sprites[_speakerSeries[_personSpeaking]];
+	_dialog->addIcon(sprites.getFrame(_speakerFrame[_personSpeaking]));
+
+	// Add in the lines
+	for (uint msgNum = 0; msgNum < messageList.size(); ++msgNum) {
+		ConvMessage &msg = _runningConv->_data._messages[messageList[msgNum]];
+		uint stringIndex = msg._stringIndex;
+
+		for (uint strNum = 0; strNum < msg._count; ++strNum, ++stringIndex) {
+			Common::String textLine = _runningConv->_data._textLines[stringIndex];
+			textLine.trim();
+			_dialog->addLine(textLine);
+		}
+	}
+
+	// Show the dialog
+	_popupVisible = true;
+	_dialog->show();
+
+	// Play the speech if one was provided
+	if (voiceList.size() > 0)
+		_vm->_sound->playSpeech(_runningConv->_data._speechFile, voiceList[0]);
 }
 
 bool GameConversations::nextNode() {
@@ -585,7 +619,7 @@ void ConversationData::load(const Common::String &filename) {
 	}
 
 	for (uint idx = 0; idx < MAX_SPEAKERS; ++idx) {
-		_speakerExists[idx] = convFile->readUint16LE();
+		_speakerFrame[idx] = convFile->readUint16LE();
 	}
 
 	convFile->read(buffer, 14);
@@ -635,8 +669,10 @@ void ConversationData::load(const Common::String &filename) {
 	assert(convFile->size() == _messageCount * 4);
 
 	_messages.resize(_messageCount);
-	for (uint idx = 0; idx < _messageCount; ++idx)
-		_messages[idx] = convFile->readUint32LE();
+	for (uint idx = 0; idx < _messageCount; ++idx) {
+		_messages[idx]._stringIndex = convFile->readUint32LE();
+		_messages[idx]._count = convFile->readUint32LE();
+	}
 
 	delete convFile;
 

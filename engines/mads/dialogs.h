@@ -190,8 +190,13 @@ public:
 	void setLineXp(int xp);
 
 	/**
-	* Show the dialog, and wait until a key or mouse press.
-	*/
+	 * Adds an icon to the dialog
+	 */
+	void addIcon(MSprite *frame);
+
+	/**
+	 * Show the dialog, and wait until a key or mouse press.
+	 */
 	virtual void show();
 };
 
