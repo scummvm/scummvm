@@ -43,6 +43,7 @@ static const PlainGameDescriptor wageGames[] = {
 	{"cantitoe", "Camp Cantitoe"},
 	{"escapefromschool", "Escape from School!"},
 	{"queenquest", "Queen Quest"},
+	{"scepters", "Enchanced Scepters"},
 	{"wage", "World Adventure Game Engine game"},
 	{0, 0}
 };
@@ -90,6 +91,15 @@ static const ADGameDescription gameDescriptions[] = {
 		"queenquest",
 		"",
 		AD_ENTRY1s("Queen Quest", "730605d312efedb5e3ff108522fcac18", 59776),
+		Common::EN_ANY,
+		Common::kPlatformMacintosh,
+		ADGF_NO_FLAGS,
+		GUIO0()
+	},
+	{
+		"scepters",
+		"",
+		AD_ENTRY1s("Scepters", "b80bff315897776dda7689cdf829fab4", 360832),
 		Common::EN_ANY,
 		Common::kPlatformMacintosh,
 		ADGF_NO_FLAGS,
