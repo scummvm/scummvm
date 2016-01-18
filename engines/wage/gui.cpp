@@ -389,12 +389,12 @@ void Gui::paintBorder(Graphics::Surface *g, Common::Rect &r, WindowType windowTy
 		const Graphics::Font *font = getTitleFont();
 		int yOff = _builtInFonts ? 3 : 1;
 
-		int w = font->getStringWidth(_scene->_name) + 6;
+		int w = font->getStringWidth(_scene->_name) + 10;
 		int maxWidth = width - size*2 - 7;
 		if (w > maxWidth)
 			w = maxWidth;
 		drawBox(g, x + (width - w) / 2, y, w, size);
-		font->drawString(g, _scene->_name, x + (width - w) / 2 + 3, y + yOff, w, kColorBlack);
+		font->drawString(g, _scene->_name, x + (width - w) / 2 + 5, y + yOff, w, kColorBlack);
 	}
 
 	g_system->copyRectToScreen(g->getBasePtr(x, y), g->pitch, x, y, width, height);
