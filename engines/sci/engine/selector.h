@@ -153,6 +153,8 @@ struct SelectorCache {
 
 	Selector useInsetRect;
 	Selector inTop, inLeft, inBottom, inRight;
+
+	Selector magnifier;
 #endif
 };
 

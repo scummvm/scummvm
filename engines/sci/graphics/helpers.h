@@ -26,6 +26,11 @@
 #include "common/endian.h"	// for READ_LE_UINT16
 #include "common/rect.h"
 #include "common/serializer.h"
+#ifdef ENABLE_SCI32
+#include "common/rational.h"
+#include "graphics/pixelformat.h"
+#include "graphics/surface.h"
+#endif
 #include "sci/engine/vm_types.h"
 
 namespace Sci {
@@ -45,6 +50,9 @@ typedef int16 TextAlignment;
 #define PORTS_FIRSTWINDOWID 2
 #define PORTS_FIRSTSCRIPTWINDOWID 3
 
+#ifdef ENABLE_SCI32
+#define PRINT_RECT(x) (x).left,(x).top,(x).right,(x).bottom
+#endif
 
 struct Port {
 	uint16 id;
@@ -117,6 +125,79 @@ struct Window : public Port, public Common::Serializable {
 		ser.syncAsByte(bDrawn);
 	}
 };
+
+#ifdef ENABLE_SCI32
+/**
+ * Multiplies a number by a rational number, rounding up to
+ * the nearest whole number.
+ */
+inline int mulru(const int value, const Common::Rational &ratio, const int extra = 0) {
+	int num = (value + extra) * ratio.getNumerator();
+	int result = num / ratio.getDenominator();
+	if (num > ratio.getDenominator() && num % ratio.getDenominator()) {
+		++result;
+	}
+	return result - extra;
+}
+
+/**
+ * Multiplies a point by two rational numbers for X and Y,
+ * rounding up to the nearest whole number. Modifies the
+ * point directly.
+ */
+inline void mulru(Common::Point &point, const Common::Rational &ratioX, const Common::Rational &ratioY) {
+	point.x = mulru(point.x, ratioX);
+	point.y = mulru(point.y, ratioY);
+}
+
+/**
+ * Multiplies a point by two rational numbers for X and Y,
+ * rounding up to the nearest whole number. Modifies the
+ * rect directly.
+ */
+inline void mulru(Common::Rect &rect, const Common::Rational &ratioX, const Common::Rational &ratioY, const int brExtra = 0) {
+	rect.left = mulru(rect.left, ratioX);
+	rect.top = mulru(rect.top, ratioY);
+	rect.right = mulru(rect.right, ratioX, brExtra);
+	rect.bottom = mulru(rect.bottom, ratioY, brExtra);
+}
+
+struct Buffer : public Graphics::Surface {
+	uint16 screenWidth;
+	uint16 screenHeight;
+	uint16 scriptWidth;
+	uint16 scriptHeight;
+
+	Buffer(const uint16 width, const uint16 height, uint8 *const pix) :
+		screenWidth(width),
+		screenHeight(height),
+		// TODO: These values are not correct for all games. Script
+		// dimensions were hard-coded per game in the original
+		// interpreter. Search all games for their internal script
+		// dimensions and set appropriately. (This code does not
+		// appear to exist at all in SCI3, which uses 640x480.)
+		scriptWidth(320),
+		scriptHeight(200) {
+		init(width, height, width, pix, Graphics::PixelFormat::createFormatCLUT8());
+	}
+
+	void clear(const uint8 value) {
+		memset(pixels, value, w * h);
+	}
+
+	inline uint8 *getAddress(const uint16 x, const uint16 y) {
+		return (uint8 *)getBasePtr(x, y);
+	}
+
+	inline uint8 *getAddressSimRes(const uint16 x, const uint16 y) {
+		return (uint8*)pixels + (y * w * screenHeight / scriptHeight) + (x * screenWidth / scriptWidth);
+	}
+
+	bool isNull() {
+		return pixels == nullptr;
+	}
+};
+#endif
 
 struct Color {
 	byte used;
