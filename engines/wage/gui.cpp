@@ -255,23 +255,17 @@ void Gui::draw() {
 		_menuDirty = true;
 		_consoleFullRedraw = true;
 
-		_scene->paint(&_screen, 0 + kComponentsPadding, kMenuHeight + kComponentsPadding);
+		_scene->paint(&_screen, _scene->_designBounds->left, _scene->_designBounds->top);
 
-		_sceneArea.left = 0 + kComponentsPadding + kBorderWidth;
-		_sceneArea.top = kMenuHeight + kComponentsPadding + kBorderWidth;
-		_sceneArea.setWidth(_scene->_design->getBounds()->width() - 2 * kBorderWidth);
-		_sceneArea.setHeight(_scene->_design->getBounds()->height() - 2 * kBorderWidth);
+		_sceneArea.left = _scene->_designBounds->left + kBorderWidth;
+		_sceneArea.top = _scene->_designBounds->top + kBorderWidth;
+		_sceneArea.setWidth(_scene->_designBounds->width() - 2 * kBorderWidth);
+		_sceneArea.setHeight(_scene->_designBounds->height() - 2 * kBorderWidth);
 
-		int sceneW = _scene->_design->getBounds()->width();
-		int consoleW = _screen.w - sceneW - 2 * kComponentsPadding - 2 * kBorderWidth;
-		int consoleH = _scene->_design->getBounds()->height() - 2 * kBorderWidth;
-		int consoleX = sceneW + kComponentsPadding + kBorderWidth;
-		int consoleY = kMenuHeight + kComponentsPadding + kBorderWidth;
-
-		_consoleTextArea.left = consoleX;
-		_consoleTextArea.top = consoleY;
-		_consoleTextArea.right = consoleX + consoleW;
-		_consoleTextArea.bottom = consoleY + consoleH;
+		_consoleTextArea.left = _scene->_textBounds->left + kBorderWidth;
+		_consoleTextArea.top = _scene->_textBounds->top + kBorderWidth;
+		_consoleTextArea.setWidth(_scene->_textBounds->width() - 2 * kBorderWidth);
+		_consoleTextArea.setHeight(_scene->_textBounds->height() - 2 * kBorderWidth);
 	}
 
 	if (_scene && (_bordersDirty || _sceneDirty))
