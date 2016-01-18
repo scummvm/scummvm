@@ -257,13 +257,13 @@ void Gui::draw() {
 
 		_scene->paint(&_screen, _scene->_designBounds->left, _scene->_designBounds->top);
 
-		_sceneArea.left = _scene->_designBounds->left + kBorderWidth;
-		_sceneArea.top = _scene->_designBounds->top + kBorderWidth;
+		_sceneArea.left = _scene->_designBounds->left + kBorderWidth - 2;
+		_sceneArea.top = _scene->_designBounds->top + kBorderWidth - 2;
 		_sceneArea.setWidth(_scene->_designBounds->width() - 2 * kBorderWidth);
 		_sceneArea.setHeight(_scene->_designBounds->height() - 2 * kBorderWidth);
 
-		_consoleTextArea.left = _scene->_textBounds->left + kBorderWidth;
-		_consoleTextArea.top = _scene->_textBounds->top + kBorderWidth;
+		_consoleTextArea.left = _scene->_textBounds->left + kBorderWidth - 2;
+		_consoleTextArea.top = _scene->_textBounds->top + kBorderWidth - 2;
 		_consoleTextArea.setWidth(_scene->_textBounds->width() - 2 * kBorderWidth);
 		_consoleTextArea.setHeight(_scene->_textBounds->height() - 2 * kBorderWidth);
 	}

@@ -335,9 +335,9 @@ int Menu::calculateMenuWidth(MenuItem *menu) {
 void Menu::calcMenuBounds(MenuItem *menu) {
 	// TODO: cache maxWidth
 	int maxWidth = calculateMenuWidth(menu);
-	int x1 = menu->bbox.left;
+	int x1 = menu->bbox.left - 1;
 	int y1 = menu->bbox.bottom + 1;
-	int x2 = x1 + maxWidth + kMenuDropdownPadding * 2;
+	int x2 = x1 + maxWidth + kMenuDropdownPadding * 2 - 4;
 	int y2 = y1 + menu->subitems.size() * kMenuDropdownItemHeight + 2;
 
 	menu->subbbox.left = x1;
@@ -360,7 +360,12 @@ void Menu::render() {
 		MenuItem *it = _items[i];
 
 		if (_activeItem == i) {
-			Design::drawFilledRect(&_gui->_screen, it->bbox, kColorBlack, _gui->_patterns, kPatternSolid);
+			Common::Rect hbox = it->bbox;
+
+			hbox.left -= 1;
+			hbox.right += 2;
+
+			Design::drawFilledRect(&_gui->_screen, hbox, kColorBlack, _gui->_patterns, kPatternSolid);
 			color = kColorWhite;
 
 			if (it->subitems.size())
