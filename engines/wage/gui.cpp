@@ -68,8 +68,9 @@ static const byte palette[] = {
 };
 
 static byte fillPattern[8] = { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff };
-static byte fillPatternStripes[8] = { 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa };
+static byte fillPatternStripes[8] = { 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55 };
 static byte fillPatternCheckers[8] = { 0xaa, 0x55, 0xaa, 0x55, 0xaa, 0x55, 0xaa, 0x55 };
+static byte fillPatternCheckers2[8] = { 0x55, 0xaa, 0x55, 0xaa, 0x55, 0xaa, 0x55, 0xaa };
 
 static const byte macCursorArrow[] = {
 	2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3,
@@ -163,6 +164,7 @@ Gui::Gui(WageEngine *engine) {
 	_patterns.push_back(fillPattern);
 	_patterns.push_back(fillPatternStripes);
 	_patterns.push_back(fillPatternCheckers);
+	_patterns.push_back(fillPatternCheckers2);
 
 	loadFonts();
 

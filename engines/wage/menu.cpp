@@ -107,9 +107,9 @@ struct MenuData {
 	{ 1, "New",			kMenuActionNew, 0, false },
 	{ 1, "Open...",		kMenuActionOpen, 0, false },
 	{ 1, "Close",		kMenuActionClose, 0, true },
-	{ 1, "Save",		kMenuActionSave, 0, true },
+	{ 1, "Save",		kMenuActionSave, 0, false },
 	{ 1, "Save as...",	kMenuActionSaveAs, 0, true },
-	{ 1, "Revert",		kMenuActionRevert, 0, true },
+	{ 1, "Revert",		kMenuActionRevert, 0, false },
 	{ 1, "Quit",		kMenuActionQuit, 0, true },
 
 	{ 2, "Undo",		kMenuActionUndo, 'Z', false },
@@ -428,7 +428,7 @@ void Menu::renderSubmenu(MenuItem *menu) {
 				for (int ii = 0; ii < _tempSurface.h; ii++) {
 					const byte *src = (const byte *)_tempSurface.getBasePtr(0, ii);
 					byte *dst = (byte *)_gui->_screen.getBasePtr(x, y+ii);
-					byte pat = _gui->_patterns[kPatternCheckers - 1][ii % 8];
+					byte pat = _gui->_patterns[kPatternCheckers2 - 1][ii % 8];
 					for (int j = 0; j < r->width(); j++) {
 						if (*src != kColorGreen && (pat & (1 << (7 - (x + j) % 8))))
 							*dst = *src;
@@ -438,7 +438,7 @@ void Menu::renderSubmenu(MenuItem *menu) {
 				}
 			}
 		} else { // Delimiter
-			Design::drawHLine(&_gui->_screen, r->left, r->right, y + kMenuDropdownItemHeight / 2, 1, kColorBlack, _gui->_patterns, kPatternStripes);
+			Design::drawHLine(&_gui->_screen, r->left + 1, r->right - 1, y + kMenuDropdownItemHeight / 2, 1, kColorBlack, _gui->_patterns, kPatternStripes);
 		}
 
 		y += kMenuDropdownItemHeight;

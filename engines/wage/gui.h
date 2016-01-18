@@ -80,7 +80,8 @@ enum {
 enum {
 	kPatternSolid = 1,
 	kPatternStripes = 2,
-	kPatternCheckers = 3
+	kPatternCheckers = 3,
+	kPatternCheckers2 = 4
 };
 
 class Gui {
