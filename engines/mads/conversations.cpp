@@ -677,8 +677,8 @@ void ConversationData::load(const Common::String &filename) {
 
 	_messages.resize(_messageCount);
 	for (uint idx = 0; idx < _messageCount; ++idx) {
-		_messages[idx]._stringIndex = convFile->readUint32LE();
-		_messages[idx]._count = convFile->readUint32LE();
+		_messages[idx]._stringIndex = convFile->readUint16LE();
+		_messages[idx]._count = convFile->readUint16LE();
 	}
 
 	delete convFile;
