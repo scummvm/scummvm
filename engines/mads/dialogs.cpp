@@ -151,6 +151,7 @@ TextDialog::TextDialog(MADSEngine *vm, const Common::String &fontName,
 	_icon = nullptr;
 	_edgeSeries = nullptr;
 	_piecesPerCenter = 0;
+	_fontSpacing = 0;
 	_vm->_font->setColors(TEXTDIALOG_BLACK, TEXTDIALOG_BLACK, TEXTDIALOG_BLACK, TEXTDIALOG_BLACK);
 	_piecesPerCenter = 0;
 
@@ -165,6 +166,7 @@ TextDialog::TextDialog(MADSEngine *vm, const Common::String &fontName,
 	_edgeSeries = new SpriteAsset(_vm, "box.ss", PALFLAG_RESERVED);
 	_vm->_font->setColors(TEXTDIALOG_BLACK, TEXTDIALOG_BLACK, TEXTDIALOG_BLACK, TEXTDIALOG_BLACK);
 	_piecesPerCenter = _edgeSeries->getFrame(EDGE_UPPER_CENTER)->w / _edgeSeries->getFrame(EDGE_BOTTOM)->w;
+	_fontSpacing = 0;
 
 	int maxLen = estimatePieces(maxTextChars);
 	init(maxLen);
@@ -183,9 +185,9 @@ void TextDialog::init(int maxTextChars) {
 }
 
 int TextDialog::estimatePieces(int maxLen) {
-	int fontLen = (_font->maxWidth() + 1) * maxLen;
+	int fontLen = (_font->maxWidth() + _fontSpacing) * maxLen;
 	int pieces = ((fontLen - 1) / _edgeSeries->getFrame(EDGE_TOP)->w) + 1;
-	int estimate = (maxLen - _piecesPerCenter) / 2;
+	int estimate = (pieces - _piecesPerCenter) / 2;
 
 	return estimate;
 }

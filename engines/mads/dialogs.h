@@ -129,6 +129,7 @@ protected:
 	SpriteAsset *_edgeSeries;
 	MSurface *_icon;
 	int _piecesPerCenter;
+	int _fontSpacing;
 
 	/**
 	 * Calculate the bounds for the dialog

@@ -48,6 +48,7 @@ GameConversations::GameConversations(MADSEngine *vm) : _vm(vm) {
 	_dialogNodeOffset = _dialogNodeSize = 0;
 	_dialog = nullptr;
 	_dialogAltFlag = false;
+	_personSpeaking = 0;
 
 	// Mark all conversation slots as empty
 	for (int idx = 0; idx < MAX_CONVERSATIONS; ++idx)

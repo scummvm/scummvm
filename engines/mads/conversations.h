@@ -181,7 +181,7 @@ struct ScriptEntry {
 	/**
 	 * Constructor
 	 */
-	ScriptEntry() : _command(CMD_END) {}
+	ScriptEntry() : _command(CMD_END), _index(0) {}
 
 	/**
 	 * Loads data from a passed stream into the parameters structure
