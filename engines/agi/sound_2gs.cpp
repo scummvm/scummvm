@@ -95,8 +95,6 @@ int SoundGen2GS::readBuffer(int16 *buffer, const int numSamples) {
 void SoundGen2GS::play(int resnum) {
 	AgiSoundEmuType type;
 
-	_playingSound = resnum;
-
 	type = (AgiSoundEmuType)_vm->_game.sounds[resnum]->type();
 	assert (type == AGI_SOUND_SAMPLE || type == AGI_SOUND_MIDI);
 
@@ -105,11 +103,12 @@ void SoundGen2GS::play(int resnum) {
 		return;
 	}
 
+	// FIXME: all sorts of things in here are not thread-safe
 	haltGenerators();
 
 	switch (type) {
 	case AGI_SOUND_SAMPLE: {
-		IIgsSample *sampleRes = (IIgsSample *) _vm->_game.sounds[_playingSound];
+		IIgsSample *sampleRes = (IIgsSample *) _vm->_game.sounds[resnum];
 		const IIgsSampleHeader &header = sampleRes->getHeader();
 		_channels[kSfxMidiChannel].setInstrument(&header.instrument);
 		_channels[kSfxMidiChannel].setVolume(header.volume);
@@ -117,18 +116,20 @@ void SoundGen2GS::play(int resnum) {
 		break;
 	}
 	case AGI_SOUND_MIDI:
-		((IIgsMidi *) _vm->_game.sounds[_playingSound])->rewind();
+		((IIgsMidi *) _vm->_game.sounds[resnum])->rewind();
 		_ticks = 0;
 		break;
 	default:
 		break;
 	}
+
+	_playingSound = resnum;
 }
 
 void SoundGen2GS::stop() {
 	haltGenerators();
 	_playingSound = -1;
-	_playing = 0;
+	_playing = false;
 }
 
 /**
@@ -182,10 +183,10 @@ uint SoundGen2GS::generateOutput() {
 				if ((uint)fracToInt(g->osc[0].p) >= g->osc[0].size) {
 					g->osc[0].p -= intToFrac(g->osc[0].size);
 					if (!g->osc[0].loop)
-						g->osc[0].halt = 1;
+						g->osc[0].halt = true;
 					if (g->osc[0].swap) {
-						g->osc[0].halt = 1;
-						g->osc[1].halt = 0;
+						g->osc[0].halt = true;
+						g->osc[1].halt = false;
 					}
 				}
 			}
@@ -195,10 +196,10 @@ uint SoundGen2GS::generateOutput() {
 				if ((uint)fracToInt(g->osc[1].p) >= g->osc[1].size) {
 					g->osc[1].p -= intToFrac(g->osc[1].size);
 					if (!g->osc[1].loop)
-						g->osc[1].halt = 1;
+						g->osc[1].halt = true;
 					if (g->osc[1].swap) {
-						g->osc[0].halt = 0;
-						g->osc[1].halt = 1;
+						g->osc[0].halt = false;
+						g->osc[1].halt = true;
 					}
 				}
 			}
@@ -430,6 +431,9 @@ double SoundGen2GS::midiKeyToFreq(int key, double finetune) {
 
 void SoundGen2GS::haltGenerators() {
 	for (int i = 0; i < MAX_GENERATORS; i++) {
+		// Reset instrument pointer especially for samples, because samples are deleted on unload/room changes
+		// and not resetting them here would cause those invalidated samples get accessed during generateOutput()
+		_generators[i].ins = nullptr;
 		_generators[i].osc[0].halt = true;
 		_generators[i].osc[1].halt = true;
 	}
@@ -525,29 +529,30 @@ bool IIgsInstrumentHeader::read(Common::SeekableReadStream &stream, bool ignoreA
 
 	waveCount[0] = stream.readByte();
 	waveCount[1] = stream.readByte();
-	for (int i = 0; i < 2; i++)
-	for (int k = 0; k < waveCount[i]; k++) {
-		wave[i][k].key = stream.readByte();
-		wave[i][k].offset = stream.readByte() << 8;
-		wave[i][k].size = 0x100 << (stream.readByte() & 7);
-		uint8 b = stream.readByte();
-		wave[i][k].tune = stream.readUint16LE();
+	for (int i = 0; i < 2; i++) {
+		for (int k = 0; k < waveCount[i]; k++) {
+			wave[i][k].key = stream.readByte();
+			wave[i][k].offset = stream.readByte() << 8;
+			wave[i][k].size = 0x100 << (stream.readByte() & 7);
+			uint8 b = stream.readByte();
+			wave[i][k].tune = stream.readUint16LE();
 
-		// For sample resources we ignore the address.
-		if (ignoreAddr)
-			wave[i][k].offset = 0;
+			// For sample resources we ignore the address.
+			if (ignoreAddr)
+				wave[i][k].offset = 0;
 
-		// Check for samples that extend out of the wavetable.
-		if (wave[i][k].offset + wave[i][k].size >= SIERRASTANDARD_SIZE) {
-			warning("Invalid data detected in the instrument set of Apple IIGS AGI. Continuing anyway...");
-			wave[i][k].size = SIERRASTANDARD_SIZE - wave[i][k].offset;
+			// Check for samples that extend out of the wavetable.
+			if (wave[i][k].offset + wave[i][k].size >= SIERRASTANDARD_SIZE) {
+				warning("Invalid data detected in the instrument set of Apple IIGS AGI. Continuing anyway...");
+				wave[i][k].size = SIERRASTANDARD_SIZE - wave[i][k].offset;
+			}
+
+			// Parse the generator mode byte to separate fields.
+			wave[i][k].halt = b & 0x1;			// Bit 0     = HALT
+			wave[i][k].loop = !(b & 0x2);		// Bit 1     =!LOOP
+			wave[i][k].swap = (b & 0x6) == 0x6;	// Bit 1&2   = SWAP
+			wave[i][k].chn = (b >> 4) > 0;		// Output channel (left or right)
 		}
-
-		// Parse the generator mode byte to separate fields.
-		wave[i][k].halt = b & 0x1;			// Bit 0     = HALT
-		wave[i][k].loop = !(b & 0x2);		// Bit 1     =!LOOP
-		wave[i][k].swap = (b & 0x6) == 0x6;	// Bit 1&2   = SWAP
-		wave[k][k].chn = (b >> 4) > 0;		// Output channel (left or right)
 	}
 
 	return !(stream.eos() || stream.err());
