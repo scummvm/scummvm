@@ -28,6 +28,341 @@
 
 namespace Myst3 {
 
+/**
+ * An abstract node transformation.
+ *
+ * Subclasses can read data related to a node from a stream in read,
+ * and transform a node using that data in apply.
+ */
+class NodeTransform {
+public :
+	virtual ~NodeTransform() {};
+
+	virtual void read(Common::SeekableReadStream *file) = 0;
+	virtual void apply(NodePtr &node) = 0;
+};
+
+/**
+ * A node transformation that reads hotspots and scripts,
+ * and adds them to a node.
+ */
+class NodeTransformAddHotspots : public NodeTransform {
+public :
+	NodeTransformAddHotspots();
+
+	void read(Common::SeekableReadStream *file);
+	void apply(NodePtr &node);
+
+private:
+	int32 _zipBitIndex;
+	Common::Array<CondScript> _scripts;
+	Common::Array<HotSpot> _hotspots;
+};
+
+/**
+ * A node transformation that reads scripts, and adds them to a node's
+ * sound scripts.
+ */
+class NodeTransformAddSoundScripts : public NodeTransform {
+public :
+	void read(Common::SeekableReadStream *file) override;
+	void apply(NodePtr &node) override;
+
+private:
+	Common::Array<CondScript> _scripts;
+};
+
+/**
+ * A node transformation that reads scripts, and adds them to a node's
+ * background sound scripts.
+ */
+class NodeTransformAddBackgroundSoundScripts : public NodeTransform {
+public :
+	void read(Common::SeekableReadStream *file) override;
+	void apply(NodePtr &node) override;
+
+private:
+	Common::Array<CondScript> _scripts;
+};
+
+/**
+ * Walks through a stream of nodes. For each encountered node, a NodeTransformer is called.
+ */
+class NodeWalker {
+public :
+	NodeWalker(NodeTransform *transform);
+	~NodeWalker();
+
+	void read(Common::SeekableReadStream *file, Common::Array<NodePtr> &allNodes);
+
+private:
+	NodeTransform *_transform;
+};
+
+/**
+ * A collection of functions used to read script related data
+ */
+class ScriptData {
+public:
+	static Common::Array<CondScript> readCondScripts(Common::SeekableReadStream &s);
+	static Common::Array<Opcode> readOpcodes(Common::ReadStream &s);
+	static Common::Array<HotSpot> readHotspots(Common::ReadStream &s);
+	static Common::Array<PolarRect> readRects(Common::ReadStream &s);
+	static CondScript readCondScript(Common::SeekableReadStream &s);
+	static HotSpot readHotspot(Common::ReadStream &s);
+
+private:
+	ScriptData() {};
+};
+
+Common::Array<PolarRect> ScriptData::readRects(Common::ReadStream &s) {
+	Common::Array<PolarRect> rects;
+
+	bool lastRect = false;
+	do {
+		PolarRect rect;
+		rect.centerPitch = s.readUint16LE();
+		rect.centerHeading = s.readUint16LE();
+		rect.width = s.readUint16LE();
+		rect.height = s.readUint16LE();
+
+		if (rect.width < 0) {
+			rect.width = -rect.width;
+		} else {
+			lastRect = true;
+		}
+
+		rects.push_back(rect);
+	} while (!lastRect && !s.eos());
+
+	return rects;
+}
+
+Common::Array<Opcode> ScriptData::readOpcodes(Common::ReadStream &s) {
+	Common::Array<Opcode> script;
+
+	while (!s.eos()) {
+		Opcode opcode;
+		uint16 code = s.readUint16LE();
+
+		opcode.op = code & 0xff;
+		uint8 count = code >> 8;
+		if (count == 0 && opcode.op == 0)
+			break;
+
+		for (int i = 0; i < count; i++) {
+			int16 value = s.readSint16LE();
+			opcode.args.push_back(value);
+		}
+
+		script.push_back(opcode);
+	}
+
+	return script;
+}
+
+CondScript ScriptData::readCondScript(Common::SeekableReadStream &s) {
+	CondScript script;
+	script.condition = s.readUint16LE();
+	if(!script.condition)
+		return script;
+
+	// WORKAROUND: Original data bug in MATO 32765
+	// The script data for node MATO 32765 is missing its first two bytes
+	// of data, resulting in incorrect opcodes being read
+
+	// Original disassembly:
+	// init 0 > c[v565 != 0]
+	//     op 115, ifVarInRange ( )
+	//     op 45, inventoryAddBack ( )
+	//     op 53, varSetValue ( vSunspotColor 4090 )
+	//     op 53, varSetValue ( vSunspotRadius 40 )
+	//     op 33, waterEffectSetWave ( 100 80 )
+	//     op 32, waterEffectSetAttenuation ( 359 )
+	//     op 31, waterEffectSetSpeed ( 15 )
+
+	// Fixed disassembly
+	// init 0 > c[v1 != 0]
+	//     op 53, varSetValue ( vSunspotIntensity 45 )
+	//     op 53, varSetValue ( vSunspotColor 4090 )
+	//     op 53, varSetValue ( vSunspotRadius 40 )
+	//     op 33, waterEffectSetWave ( 100 80 )
+	//     op 32, waterEffectSetAttenuation ( 359 )
+	//     op 31, waterEffectSetSpeed ( 15 )
+
+	if (script.condition == 565) {
+		script.condition = 1;
+		s.seek(-2, SEEK_CUR);
+	}
+	// END WORKAROUND
+
+	script.script = readOpcodes(s);
+
+	return script;
+}
+
+Common::Array<CondScript> ScriptData::readCondScripts(Common::SeekableReadStream &s) {
+	Common::Array<CondScript> scripts;
+
+	while (!s.eos()) {
+		CondScript script = readCondScript(s);
+
+		if (!script.condition)
+			break;
+
+		scripts.push_back(script);
+	}
+
+	return scripts;
+}
+
+HotSpot ScriptData::readHotspot(Common::ReadStream &s) {
+	HotSpot hotspot;
+
+	hotspot.condition = s.readUint16LE();
+
+	if (hotspot.condition == 0)
+		return hotspot;
+
+	if (hotspot.condition != -1) {
+		hotspot.rects = readRects(s);
+		hotspot.cursor = s.readUint16LE();
+	}
+
+	hotspot.script = readOpcodes(s);
+
+	return hotspot;
+}
+
+Common::Array<HotSpot> ScriptData::readHotspots(Common::ReadStream &s) {
+	Common::Array<HotSpot> scripts;
+
+	while (!s.eos()) {
+		HotSpot hotspot = readHotspot(s);
+
+		if (!hotspot.condition)
+			break;
+
+		scripts.push_back(hotspot);
+	}
+
+	return scripts;
+}
+
+NodeTransformAddHotspots::NodeTransformAddHotspots() : _zipBitIndex(-1) {
+}
+
+void NodeTransformAddHotspots::read(Common::SeekableReadStream *file) {
+	_zipBitIndex++;
+	_scripts = ScriptData::readCondScripts(*file);
+	_hotspots = ScriptData::readHotspots(*file);
+}
+
+void NodeTransformAddHotspots::apply(NodePtr &node) {
+	node->zipBitIndex = _zipBitIndex;
+	node->scripts.push_back(_scripts);
+	node->hotspots.push_back(_hotspots);
+}
+
+void NodeTransformAddSoundScripts::read(Common::SeekableReadStream *file) {
+	_scripts = ScriptData::readCondScripts(*file);
+}
+
+void NodeTransformAddSoundScripts::apply(NodePtr &node) {
+	node->soundScripts.push_back(_scripts);
+}
+
+void NodeTransformAddBackgroundSoundScripts::read(Common::SeekableReadStream *file) {
+	_scripts = ScriptData::readCondScripts(*file);
+}
+
+void NodeTransformAddBackgroundSoundScripts::apply(NodePtr &node) {
+	node->backgroundSoundScripts.push_back(_scripts);
+}
+
+NodeWalker::NodeWalker(NodeTransform *transform) : _transform(transform) {
+}
+
+void NodeWalker::read(Common::SeekableReadStream *file, Common::Array<NodePtr> &allNodes) {
+	while (!file->eos()) {
+		int16 id = file->readUint16LE();
+
+		// End of list
+		if (id == 0)
+			break;
+
+		if (id < -10)
+			error("Unimplemented node list command");
+
+		if (id > 0) {
+			// Normal node, find the node if existing
+			NodePtr node;
+			for (uint i = 0; i < allNodes.size(); i++)
+				if (allNodes[i]->id == id) {
+					node = allNodes[i];
+					break;
+				}
+
+			// Node not found, create a new one
+			if (!node) {
+				node = NodePtr(new NodeData());
+				node->id = id;
+				allNodes.push_back(node);
+			}
+
+			_transform->read(file);
+			_transform->apply(node);
+		} else {
+			// Several nodes sharing the same scripts
+			// Find the node ids the script applies to
+			Common::Array<int16> scriptNodeIds;
+
+			if (id == -10)
+				do {
+					id = file->readUint16LE();
+					if (id < 0) {
+						uint16 end = file->readUint16LE();
+						for (int i = -id; i < end; i++)
+							scriptNodeIds.push_back(i);
+
+					} else if (id > 0) {
+						scriptNodeIds.push_back(id);
+					}
+				} while (id);
+			else
+				for (int i = 0; i < -id; i++) {
+					scriptNodeIds.push_back(file->readUint16LE());
+				}
+
+			// Load the script
+			_transform->read(file);
+
+			// Add the script to each matching node
+			for (uint i = 0; i < scriptNodeIds.size(); i++) {
+				NodePtr node;
+
+				// Find the current node if existing
+				for (uint j = 0; j < allNodes.size(); j++) {
+					if (allNodes[j]->id == scriptNodeIds[i]) {
+						node = allNodes[j];
+						break;
+					}
+				}
+
+				// Node not found, skip it
+				if (!node)
+					continue;
+
+				_transform->apply(node);
+			}
+		}
+	}
+}
+
+NodeWalker::~NodeWalker() {
+	delete _transform;
+}
+
 static const RoomData roomsXXXX[] = {
 		{ 101, "XXXX" }
 };
@@ -145,7 +480,7 @@ Database::Database(const Common::Platform platform, const Common::Language langu
 	_roomScriptsStartOffset = _datFile->pos();
 
 	Common::SeekableReadStream *initScriptStream = getRoomScriptStream("INIT", kScriptTypeNodeInit);
-	_nodeInitScript = readOpcodes(*initScriptStream);
+	_nodeInitScript = ScriptData::readOpcodes(*initScriptStream);
 	delete initScriptStream;
 
 	Common::SeekableReadStream *cuesStream = getRoomScriptStream("INIT", kScriptTypeAmbientCue);
@@ -271,152 +606,30 @@ Common::Array<NodePtr> Database::readRoomScripts(const RoomData *room) const {
 	// Load the node scripts
 	Common::SeekableReadStream *scriptsStream = getRoomScriptStream(room->name, kScriptTypeNode);
 	if (scriptsStream) {
-		readRoomNodeScripts(scriptsStream, nodes);
+		NodeWalker scriptWalker = NodeWalker(new NodeTransformAddHotspots());
+		scriptWalker.read(scriptsStream, nodes);
+
 		delete scriptsStream;
 	}
 
 	// Load the ambient sound scripts, if any
 	Common::SeekableReadStream *ambientSoundsStream = getRoomScriptStream(room->name, kScriptTypeAmbientSound);
 	if (ambientSoundsStream) {
-		readRoomSoundScripts(ambientSoundsStream, nodes, false);
+		NodeWalker scriptWalker = NodeWalker(new NodeTransformAddSoundScripts());
+		scriptWalker.read(ambientSoundsStream, nodes);
+
 		delete ambientSoundsStream;
 	}
 
 	Common::SeekableReadStream *backgroundSoundsStream = getRoomScriptStream(room->name, kScriptTypeBackgroundSound);
 	if (backgroundSoundsStream) {
-		readRoomSoundScripts(backgroundSoundsStream, nodes, true);
+		NodeWalker scriptWalker = NodeWalker(new NodeTransformAddBackgroundSoundScripts());
+		scriptWalker.read(backgroundSoundsStream, nodes);
+
 		delete backgroundSoundsStream;
 	}
 
 	return nodes;
-}
-
-void Database::readRoomNodeScripts(Common::SeekableReadStream *file, Common::Array<NodePtr> &nodes) const {
-	uint zipIndex = 0;
-	while (!file->eos()) {
-		int16 id = file->readUint16LE();
-
-		// End of list
-		if (id == 0)
-			break;
-
-		if (id <= -10)
-			error("Unimplemented node list command");
-
-		if (id > 0) {
-			// Normal node
-			NodePtr node = NodePtr(new NodeData());
-			node->id = id;
-			node->zipBitIndex = zipIndex;
-			node->scripts = readCondScripts(*file);
-			node->hotspots = readHotspots(*file);
-
-			nodes.push_back(node);
-		} else {
-			// Several nodes sharing the same scripts
-			Common::Array<int16> nodeIds;
-
-			for (int i = 0; i < -id; i++) {
-				nodeIds.push_back(file->readUint16LE());
-			}
-
-			Common::Array<CondScript> scripts = readCondScripts(*file);
-			Common::Array<HotSpot> hotspots = readHotspots(*file);
-
-			for (int i = 0; i < -id; i++) {
-				NodePtr node = NodePtr(new NodeData());
-				node->id = nodeIds[i];
-				node->zipBitIndex = zipIndex;
-				node->scripts = scripts;
-				node->hotspots = hotspots;
-
-				nodes.push_back(node);
-			}
-		}
-
-		zipIndex++;
-	}
-}
-
-void Database::readRoomSoundScripts(Common::SeekableReadStream *file, Common::Array<NodePtr> &nodes, bool background) const {
-	while (!file->eos()) {
-		int16 id = file->readUint16LE();
-
-		// End of list
-		if (id == 0)
-			break;
-
-		if (id < -10)
-			error("Unimplemented node list command");
-
-		if (id > 0) {
-			// Normal node, find the node if existing
-			NodePtr node;
-			for (uint i = 0; i < nodes.size(); i++)
-				if (nodes[i]->id == id) {
-					node = nodes[i];
-					break;
-				}
-
-			// Node not found, create a new one
-			if (!node) {
-				node = NodePtr(new NodeData());
-				node->id = id;
-				nodes.push_back(node);
-			}
-
-			if (background)
-				node->backgroundSoundScripts.push_back(readCondScripts(*file));
-			else
-				node->soundScripts.push_back(readCondScripts(*file));
-		} else {
-			// Several nodes sharing the same scripts
-			// Find the node ids the script applies to
-			Common::Array<int16> nodeIds;
-
-			if (id == -10)
-				do {
-					id = file->readUint16LE();
-					if (id < 0) {
-						uint16 end = file->readUint16LE();
-						for (int i = -id; i < end; i++)
-							nodeIds.push_back(i);
-
-					} else if (id > 0) {
-						nodeIds.push_back(id);
-					}
-				} while (id);
-			else
-				for (int i = 0; i < -id; i++) {
-					nodeIds.push_back(file->readUint16LE());
-				}
-
-			// Load the script
-			Common::Array<CondScript> scripts = readCondScripts(*file);
-
-			// Add the script to each matching node
-			for (uint i = 0; i < nodeIds.size(); i++) {
-				NodePtr node;
-
-				// Find the current node if existing
-				for (uint j = 0; j < nodes.size(); j++) {
-					if (nodes[j]->id == nodeIds[i]) {
-						node = nodes[j];
-						break;
-					}
-				}
-
-				// Node not found, skip it
-				if (!node)
-					continue;
-
-				if (background)
-					node->backgroundSoundScripts.push_back(scripts);
-				else
-					node->soundScripts.push_back(scripts);
-			}
-		}
-	}
 }
 
 bool Database::isCommonRoom(uint32 roomID, uint32 ageID) const {
@@ -441,140 +654,6 @@ void Database::cacheRoom(uint32 roomID, uint32 ageID) {
 		return;
 
 	_roomNodesCache.setVal(RoomKey(roomID, ageID), readRoomScripts(currentRoomData));
-}
-
-Common::Array<CondScript> Database::readCondScripts(Common::SeekableReadStream &s) const {
-	Common::Array<CondScript> scripts;
-
-	while (!s.eos()) {
-		CondScript script = readCondScript(s);
-
-		if (!script.condition)
-			break;
-
-		scripts.push_back(script);
-	}
-
-	return scripts;
-}
-
-Common::Array<HotSpot> Database::readHotspots(Common::SeekableReadStream &s) const {
-	Common::Array<HotSpot> scripts;
-
-	while (!s.eos()) {
-		HotSpot hotspot = readHotspot(s);
-
-		if (!hotspot.condition)
-			break;
-
-		scripts.push_back(hotspot);
-	}
-
-	return scripts;
-}
-
-Common::Array<Opcode> Database::readOpcodes(Common::SeekableReadStream &s) const {
-	Common::Array<Opcode> script;
-
-	while (!s.eos()) {
-		Opcode opcode;
-		uint16 code = s.readUint16LE();
-
-		opcode.op = code & 0xff;
-		uint8 count = code >> 8;
-		if (count == 0 && opcode.op == 0)
-			break;
-
-		for (int i = 0; i < count; i++) {
-			int16 value = s.readUint16LE();
-			opcode.args.push_back(value);
-		}
-
-		script.push_back(opcode);
-	}
-
-	return script;
-}
-
-CondScript Database::readCondScript(Common::SeekableReadStream &s) const {
-	CondScript script;
-	script.condition = s.readUint16LE();
-	if(!script.condition)
-		return script;
-
-	// WORKAROUND: Original data bug in MATO 32765
-	// The script data for node MATO 32765 is missing its first two bytes
-	// of data, resulting in incorrect opcodes being read
-
-	// Original disassembly:
-	// init 0 > c[v565 != 0]
-	//     op 115, ifVarInRange ( )
-	//     op 45, inventoryAddBack ( )
-	//     op 53, varSetValue ( vSunspotColor 4090 )
-	//     op 53, varSetValue ( vSunspotRadius 40 )
-	//     op 33, waterEffectSetWave ( 100 80 )
-	//     op 32, waterEffectSetAttenuation ( 359 )
-	//     op 31, waterEffectSetSpeed ( 15 )
-
-	// Fixed disassembly
-	// init 0 > c[v1 != 0]
-	//     op 53, varSetValue ( vSunspotIntensity 45 )
-	//     op 53, varSetValue ( vSunspotColor 4090 )
-	//     op 53, varSetValue ( vSunspotRadius 40 )
-	//     op 33, waterEffectSetWave ( 100 80 )
-	//     op 32, waterEffectSetAttenuation ( 359 )
-	//     op 31, waterEffectSetSpeed ( 15 )
-
-	if (script.condition == 565) {
-		script.condition = 1;
-		s.seek(-2, SEEK_CUR);
-	}
-	// END WORKAROUND
-
-	script.script = readOpcodes(s);
-
-	return script;
-}
-
-HotSpot Database::readHotspot(Common::SeekableReadStream &s) const {
-	HotSpot hotspot;
-
-	hotspot.condition = s.readUint16LE();
-
-	if (hotspot.condition == 0)
-		return hotspot;
-
-	if (hotspot.condition != -1) {
-		hotspot.rects = readRects(s);
-		hotspot.cursor = s.readUint16LE();
-	}
-
-	hotspot.script = readOpcodes(s);
-
-	return hotspot;
-}
-
-Common::Array<PolarRect> Database::readRects(Common::SeekableReadStream &s) const {
-	Common::Array<PolarRect> rects;
-
-	bool lastRect = false;
-	do {
-		PolarRect rect;
-		rect.centerPitch = s.readUint16LE();
-		rect.centerHeading = s.readUint16LE();
-		rect.width = s.readUint16LE();
-		rect.height = s.readUint16LE();
-
-		if (rect.width < 0) {
-			rect.width = -rect.width;
-		} else {
-			lastRect = true;
-		}
-
-		rects.push_back(rect);
-	} while (!lastRect && !s.eos());
-
-	return rects;
 }
 
 Common::String Database::getRoomName(uint32 roomID, uint32 ageID) const {

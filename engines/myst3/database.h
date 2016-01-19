@@ -214,18 +214,9 @@ private:
 	Common::Array<NodePtr> getRoomNodes(uint32 roomID, uint32 ageID) const;
 
 	Common::Array<NodePtr> readRoomScripts(const RoomData *room) const;
-	void readRoomNodeScripts(Common::SeekableReadStream *file, Common::Array<NodePtr> &nodes) const;
-	void readRoomSoundScripts(Common::SeekableReadStream *file, Common::Array<NodePtr> &nodes, bool background) const;
 	void preloadCommonRooms();
 	void initializeZipBitIndexTable();
 	void patchLanguageMenu();
-
-	Common::Array<CondScript> readCondScripts(Common::SeekableReadStream &s) const;
-	Common::Array<Opcode> readOpcodes(Common::SeekableReadStream &s) const;
-	Common::Array<HotSpot> readHotspots(Common::SeekableReadStream &s) const;
-	Common::Array<PolarRect> readRects(Common::SeekableReadStream &s) const;
-	CondScript readCondScript(Common::SeekableReadStream &s) const;
-	HotSpot readHotspot(Common::SeekableReadStream &s) const;
 
 	// 'myst3.dat' read methods
 	void readScriptIndex(Common::SeekableReadStream *stream, bool load);
