@@ -63,6 +63,7 @@ namespace Wage {
 class Console;
 class Chr;
 class Designed;
+class Dialog;
 class Gui;
 class Obj;
 class Scene;
@@ -107,6 +108,7 @@ const char *getGenderSpecificPronoun(int gender, bool capitalize);
 typedef Common::Array<byte *> Patterns;
 
 class WageEngine : public Engine {
+	friend class Dialog;
 public:
 	WageEngine(OSystem *syst, const ADGameDescription *gameDesc);
 	~WageEngine();
@@ -134,6 +136,8 @@ private:
 	void performMove(Chr *chr, int validMoves);
 	void performOffer(Chr *attacker, Chr *victim);
 	void performTake(Chr *npc, Obj *obj);
+
+	void doClose();
 
 public:
 	Common::RandomSource *_rnd;

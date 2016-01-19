@@ -54,6 +54,7 @@
 #include "wage/wage.h"
 #include "wage/entities.h"
 #include "wage/gui.h"
+#include "wage/dialog.h"
 #include "wage/script.h"
 #include "wage/world.h"
 
@@ -139,6 +140,7 @@ void WageEngine::processEvents() {
 	while (_eventMan->pollEvent(event)) {
 		switch (event.type) {
 		case Common::EVENT_QUIT:
+			gameOver();
 			_shouldQuit = true;
 			break;
 		case Common::EVENT_MOUSEMOVE:
@@ -217,7 +219,15 @@ void WageEngine::appendText(char *str) {
 }
 
 void WageEngine::gameOver() {
-	warning("STUB: WageEngine::gameOver()");
+	DialogButtonArray buttons;
+
+	buttons.push_back(new DialogButton("OK", 112, 67, 68, 28));
+
+	Dialog gameOver(_gui, _world->_gameOverMessage->c_str(), &buttons);
+
+	gameOver.run();
+
+	doClose();
 }
 
 void WageEngine::performInitialSetup() {
@@ -276,6 +286,10 @@ void WageEngine::performInitialSetup() {
 	if (!playerPlaced) {
 		_world->move(_world->_player, _world->getRandomScene());
 	}
+}
+
+void WageEngine::doClose() {
+	warning("STUB: doClose()");
 }
 
 Scene *WageEngine::getSceneByName(String &location) {

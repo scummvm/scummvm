@@ -53,6 +53,14 @@ namespace Wage {
 struct DialogButton {
 	Common::String text;
 	Common::Rect bounds;
+
+	DialogButton(const char *t, int x1, int y1, int x2, int y2) {
+		text = t;
+		bounds.left = x1;
+		bounds.top = y1;
+		bounds.right = x2;
+		bounds.bottom = y2;
+	}
 };
 
 typedef Common::Array<DialogButton *> DialogButtonArray;
@@ -61,6 +69,8 @@ class Dialog {
 public:
 	Dialog(Gui *gui, const char *text, DialogButtonArray *buttons);
 	~Dialog();
+
+	void run();
 
 private:
 	Gui *_gui;

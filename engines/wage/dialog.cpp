@@ -46,6 +46,7 @@
  */
 
 #include "common/system.h"
+#include "common/events.h"
 
 #include "wage/wage.h"
 #include "wage/design.h"
@@ -130,6 +131,29 @@ void Dialog::drawOutline(Common::Rect &bounds, int *spec, int speclen) {
 		if (spec[i] != 0)
 			Design::drawRect(&_gui->_screen, bounds.left + i, bounds.top + i, bounds.right - 1 - 2*i, bounds.bottom - 1 - 2*i,
 						1, kColorBlack, _gui->_patterns, kPatternSolid);
+}
+
+void Dialog::run() {
+	bool shouldQuit = false;
+
+	paint();
+
+	while (!shouldQuit) {
+		Common::Event event;
+
+		while (_gui->_engine->_eventMan->pollEvent(event)) {
+			switch (event.type) {
+			case Common::EVENT_QUIT:
+				shouldQuit = true;
+				break;
+			default:
+				break;
+			}
+		}
+
+		g_system->updateScreen();
+		g_system->delayMillis(50);
+	}
 }
 
 } // End of namespace Wage
