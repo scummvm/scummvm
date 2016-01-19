@@ -85,7 +85,7 @@ struct IIgsInstrumentHeader {
 		bool halt;		///< Oscillator halted?
 		bool loop;		///< Loop mode?
 		bool swap;		///< Swap mode?
-		bool chn;		///< Output channel (left / right)
+		bool rightChannel;	///< Output channel (left / right)
 		int16 tune;		///< Fine tune in semitones (8.8 fixed point)
 	} wave[2][MAX_OSCILLATOR_WAVES];
 
@@ -122,7 +122,7 @@ struct IIgsSampleHeader {
 
 class IIgsGenerator {
 public:
-	IIgsGenerator() : ins(NULL), key(-1), chn(-1) {
+	IIgsGenerator() : ins(NULL), key(-1), channel(-1) {
 		memset(&osc, 0, sizeof(osc));
 		seg = 0;
 		a = 0;
@@ -130,8 +130,8 @@ public:
 
 	const IIgsInstrumentHeader *ins; ///< Currently used instrument
 	int key;		///< MIDI key
-	int vel;		///< MIDI velocity (& channel volume)
-	int chn;		///< MIDI channel
+	int velocity;	///< MIDI velocity (& channel volume)
+	int channel;	///< MIDI channel
 	struct {
 		int8 *base;	///< Sample base pointer
 		uint size;	///< Sample size
@@ -140,7 +140,7 @@ public:
 		bool halt;	///< Is oscillator halted?
 		bool loop;	///< Is looping enabled?
 		bool swap;	///< Is swapping enabled?
-		bool chn;	///< Output channel (left / right)
+		bool rightChannel;	///< Output channel (left / right)
 	} osc[2];
 	int seg;		///< Current envelope segment
 	frac_t a;		///< Current envelope amplitude

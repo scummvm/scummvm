@@ -206,16 +206,16 @@ uint SoundGen2GS::generateOutput() {
 
 			// Take envelope and MIDI volume information into account.
 			// Also amplify.
-			s0 *= vol * g->vel / 127 * 80 / 256;
-			s1 *= vol * g->vel / 127 * 80 / 256;
+			s0 *= vol * g->velocity / 127 * 80 / 256;
+			s1 *= vol * g->velocity / 127 * 80 / 256;
 
 			// Select output channel.
-			if (g->osc[0].chn)
+			if (g->osc[0].rightChannel)
 				outl += s0;
 			else
 				outr += s0;
 
-			if (g->osc[1].chn)
+			if (g->osc[1].rightChannel)
 				outl += s1;
 			else
 				outr += s1;
@@ -361,7 +361,7 @@ void SoundGen2GS::advanceMidiPlayer() {
 void SoundGen2GS::midiNoteOff(int channel, int note, int velocity) {
 	// Release keys within the given MIDI channel
 	for (int i = 0; i < MAX_GENERATORS; i++) {
-		if (_generators[i].chn == channel && _generators[i].key == note)
+		if (_generators[i].channel == channel && _generators[i].key == note)
 			_generators[i].seg = _generators[i].ins->seg;
 	}
 }
@@ -384,8 +384,8 @@ void SoundGen2GS::midiNoteOn(int channel, int note, int velocity) {
 		velocity = 127;
 
 	g->key = note;
-	g->vel = velocity * _channels[channel].getVolume() / 127;
-	g->chn = channel;
+	g->velocity = velocity * _channels[channel].getVolume() / 127;
+	g->channel = channel;
 
 	// Instruments can define different samples to be used based on
 	// what the key is. Find the correct samples for our key.
@@ -404,7 +404,7 @@ void SoundGen2GS::midiNoteOn(int channel, int note, int velocity) {
 	g->osc[0].halt	= i->wave[0][wa].halt;
 	g->osc[0].loop	= i->wave[0][wa].loop;
 	g->osc[0].swap	= i->wave[0][wa].swap;
-	g->osc[0].chn	= i->wave[0][wa].chn;
+	g->osc[0].rightChannel = i->wave[0][wa].rightChannel;
 
 	g->osc[1].base	= i->base + i->wave[1][wb].offset;
 	g->osc[1].size	= i->wave[1][wb].size;
@@ -413,7 +413,7 @@ void SoundGen2GS::midiNoteOn(int channel, int note, int velocity) {
 	g->osc[1].halt	= i->wave[1][wb].halt;
 	g->osc[1].loop	= i->wave[1][wb].loop;
 	g->osc[1].swap	= i->wave[1][wb].swap;
-	g->osc[1].chn	= i->wave[1][wb].chn;
+	g->osc[1].rightChannel = i->wave[1][wb].rightChannel;
 
 	g->seg	= 0;
 	g->a	= 0;
@@ -551,7 +551,12 @@ bool IIgsInstrumentHeader::read(Common::SeekableReadStream &stream, bool ignoreA
 			wave[i][k].halt = b & 0x1;			// Bit 0     = HALT
 			wave[i][k].loop = !(b & 0x2);		// Bit 1     =!LOOP
 			wave[i][k].swap = (b & 0x6) == 0x6;	// Bit 1&2   = SWAP
-			wave[i][k].chn = (b >> 4) > 0;		// Output channel (left or right)
+			// channels seem to be reversed, verified with emulator + captured apple IIgs music
+			if (b >> 4) {
+				wave[i][k].rightChannel = false; // Bit 4 set = left channel
+			} else {
+				wave[i][k].rightChannel = true; // Bit 4 not set = right channel
+			}
 		}
 	}
 
