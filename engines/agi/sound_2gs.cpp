@@ -145,8 +145,8 @@ uint SoundGen2GS::generateOutput() {
 	int16 *p = _out;
 	int n = _outSize;
 	while (n--) {
-		int outl = 0;
-		int outr = 0;
+		int outLeft = 0;
+		int outRight = 0;
 		for (int k = 0; k < MAX_GENERATORS; k++) {
 			IIgsGenerator *g = &_generators[k];
 			if (!g->ins)
@@ -211,27 +211,27 @@ uint SoundGen2GS::generateOutput() {
 
 			// Select output channel.
 			if (g->osc[0].rightChannel)
-				outl += s0;
+				outRight += s0;
 			else
-				outr += s0;
+				outLeft += s0;
 
 			if (g->osc[1].rightChannel)
-				outl += s1;
+				outRight += s1;
 			else
-				outr += s1;
+				outLeft += s1;
 		}
 
-		if (outl > 32768)
-			outl = 32768;
-		if (outl < -32767)
-			outl = -32767;
-		if (outr > 32768)
-			outr = 32768;
-		if (outr < -32767)
-			outr = -32767;
+		if (outLeft > 32768)
+			outLeft = 32768;
+		if (outLeft < -32767)
+			outLeft = -32767;
+		if (outRight > 32768)
+			outRight = 32768;
+		if (outRight < -32767)
+			outRight = -32767;
 
-		*p++ = outl;
-		*p++ = outr;
+		*p++ = outLeft;
+		*p++ = outRight;
 	}
 
 	return _outSize * 2;
@@ -552,10 +552,10 @@ bool IIgsInstrumentHeader::read(Common::SeekableReadStream &stream, bool ignoreA
 			wave[i][k].loop = !(b & 0x2);		// Bit 1     =!LOOP
 			wave[i][k].swap = (b & 0x6) == 0x6;	// Bit 1&2   = SWAP
 			// channels seem to be reversed, verified with emulator + captured apple IIgs music
-			if (b >> 4) {
-				wave[i][k].rightChannel = false; // Bit 4 set = left channel
+			if (b & 0x10) {
+				wave[i][k].rightChannel = true; // Bit 4 set = right channel
 			} else {
-				wave[i][k].rightChannel = true; // Bit 4 not set = right channel
+				wave[i][k].rightChannel = false; // Bit 4 not set = left channel
 			}
 		}
 	}
