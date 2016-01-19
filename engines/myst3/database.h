@@ -213,19 +213,19 @@ private:
 	const RoomData *findRoomData(uint32 roomID, uint32 ageID) const;
 	Common::Array<NodePtr> getRoomNodes(uint32 roomID, uint32 ageID) const;
 
-	Common::Array<NodePtr> loadRoomScripts(const RoomData *room) const;
-	void loadRoomNodeScripts(Common::SeekableReadStream *file, Common::Array<NodePtr> &nodes) const;
-	void loadRoomSoundScripts(Common::SeekableReadStream *file, Common::Array<NodePtr> &nodes, bool background) const;
+	Common::Array<NodePtr> readRoomScripts(const RoomData *room) const;
+	void readRoomNodeScripts(Common::SeekableReadStream *file, Common::Array<NodePtr> &nodes) const;
+	void readRoomSoundScripts(Common::SeekableReadStream *file, Common::Array<NodePtr> &nodes, bool background) const;
 	void preloadCommonRooms();
 	void initializeZipBitIndexTable();
 	void patchLanguageMenu();
 
-	Common::Array<CondScript> loadCondScripts(Common::SeekableReadStream &s) const;
-	Common::Array<Opcode> loadOpcodes(Common::SeekableReadStream &s) const;
-	Common::Array<HotSpot> loadHotspots(Common::SeekableReadStream &s) const;
-	Common::Array<PolarRect> loadRects(Common::SeekableReadStream &s) const;
-	CondScript loadCondScript(Common::SeekableReadStream &s) const;
-	HotSpot loadHotspot(Common::SeekableReadStream &s) const;
+	Common::Array<CondScript> readCondScripts(Common::SeekableReadStream &s) const;
+	Common::Array<Opcode> readOpcodes(Common::SeekableReadStream &s) const;
+	Common::Array<HotSpot> readHotspots(Common::SeekableReadStream &s) const;
+	Common::Array<PolarRect> readRects(Common::SeekableReadStream &s) const;
+	CondScript readCondScript(Common::SeekableReadStream &s) const;
+	HotSpot readHotspot(Common::SeekableReadStream &s) const;
 
 	// 'myst3.dat' read methods
 	void readScriptIndex(Common::SeekableReadStream *stream, bool load);

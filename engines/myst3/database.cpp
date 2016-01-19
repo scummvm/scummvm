@@ -145,7 +145,7 @@ Database::Database(const Common::Platform platform, const Common::Language langu
 	_roomScriptsStartOffset = _datFile->pos();
 
 	Common::SeekableReadStream *initScriptStream = getRoomScriptStream("INIT", kScriptTypeNodeInit);
-	_nodeInitScript = loadOpcodes(*initScriptStream);
+	_nodeInitScript = readOpcodes(*initScriptStream);
 	delete initScriptStream;
 
 	Common::SeekableReadStream *cuesStream = getRoomScriptStream("INIT", kScriptTypeAmbientCue);
@@ -172,7 +172,7 @@ void Database::preloadCommonRooms() {
 			const RoomData &room = age.rooms[j];
 
 			if (isCommonRoom(room.id, age.id)) {
-				Common::Array<NodePtr> nodes = loadRoomScripts(&room);
+				Common::Array<NodePtr> nodes = readRoomScripts(&room);
 				_roomNodesCache.setVal(RoomKey(room.id, age.id), nodes);
 			}
 		}
@@ -186,7 +186,7 @@ Common::Array<NodePtr> Database::getRoomNodes(uint32 roomID, uint32 ageID) const
 		nodes = _roomNodesCache.getVal(RoomKey(roomID, ageID));
 	} else {
 		const RoomData *data = findRoomData(roomID, ageID);
-		nodes = loadRoomScripts(data);
+		nodes = readRoomScripts(data);
 	}
 
 	return nodes;
@@ -225,7 +225,7 @@ void Database::initializeZipBitIndexTable() {
 			// Add the highest zip-bit index for the current room
 			// to get the zip-bit index for the next room
 			int16 maxZipBitForRoom = 0;
-			Common::Array<NodePtr> nodes = loadRoomScripts(&_ages[i].rooms[j]);
+			Common::Array<NodePtr> nodes = readRoomScripts(&_ages[i].rooms[j]);
 			for (uint k = 0; k < nodes.size(); k++) {
 				maxZipBitForRoom = MAX(maxZipBitForRoom, nodes[k]->zipBitIndex);
 			}
@@ -265,33 +265,33 @@ const RoomData *Database::findRoomData(uint32 roomID, uint32 ageID) const {
 	error("No room with ID %d", roomID);
 }
 
-Common::Array<NodePtr> Database::loadRoomScripts(const RoomData *room) const {
+Common::Array<NodePtr> Database::readRoomScripts(const RoomData *room) const {
 	Common::Array<NodePtr> nodes;
 
 	// Load the node scripts
 	Common::SeekableReadStream *scriptsStream = getRoomScriptStream(room->name, kScriptTypeNode);
 	if (scriptsStream) {
-		loadRoomNodeScripts(scriptsStream, nodes);
+		readRoomNodeScripts(scriptsStream, nodes);
 		delete scriptsStream;
 	}
 
 	// Load the ambient sound scripts, if any
 	Common::SeekableReadStream *ambientSoundsStream = getRoomScriptStream(room->name, kScriptTypeAmbientSound);
 	if (ambientSoundsStream) {
-		loadRoomSoundScripts(ambientSoundsStream, nodes, false);
+		readRoomSoundScripts(ambientSoundsStream, nodes, false);
 		delete ambientSoundsStream;
 	}
 
 	Common::SeekableReadStream *backgroundSoundsStream = getRoomScriptStream(room->name, kScriptTypeBackgroundSound);
 	if (backgroundSoundsStream) {
-		loadRoomSoundScripts(backgroundSoundsStream, nodes, true);
+		readRoomSoundScripts(backgroundSoundsStream, nodes, true);
 		delete backgroundSoundsStream;
 	}
 
 	return nodes;
 }
 
-void Database::loadRoomNodeScripts(Common::SeekableReadStream *file, Common::Array<NodePtr> &nodes) const {
+void Database::readRoomNodeScripts(Common::SeekableReadStream *file, Common::Array<NodePtr> &nodes) const {
 	uint zipIndex = 0;
 	while (!file->eos()) {
 		int16 id = file->readUint16LE();
@@ -308,8 +308,8 @@ void Database::loadRoomNodeScripts(Common::SeekableReadStream *file, Common::Arr
 			NodePtr node = NodePtr(new NodeData());
 			node->id = id;
 			node->zipBitIndex = zipIndex;
-			node->scripts = loadCondScripts(*file);
-			node->hotspots = loadHotspots(*file);
+			node->scripts = readCondScripts(*file);
+			node->hotspots = readHotspots(*file);
 
 			nodes.push_back(node);
 		} else {
@@ -320,8 +320,8 @@ void Database::loadRoomNodeScripts(Common::SeekableReadStream *file, Common::Arr
 				nodeIds.push_back(file->readUint16LE());
 			}
 
-			Common::Array<CondScript> scripts = loadCondScripts(*file);
-			Common::Array<HotSpot> hotspots = loadHotspots(*file);
+			Common::Array<CondScript> scripts = readCondScripts(*file);
+			Common::Array<HotSpot> hotspots = readHotspots(*file);
 
 			for (int i = 0; i < -id; i++) {
 				NodePtr node = NodePtr(new NodeData());
@@ -338,7 +338,7 @@ void Database::loadRoomNodeScripts(Common::SeekableReadStream *file, Common::Arr
 	}
 }
 
-void Database::loadRoomSoundScripts(Common::SeekableReadStream *file, Common::Array<NodePtr> &nodes, bool background) const {
+void Database::readRoomSoundScripts(Common::SeekableReadStream *file, Common::Array<NodePtr> &nodes, bool background) const {
 	while (!file->eos()) {
 		int16 id = file->readUint16LE();
 
@@ -366,9 +366,9 @@ void Database::loadRoomSoundScripts(Common::SeekableReadStream *file, Common::Ar
 			}
 
 			if (background)
-				node->backgroundSoundScripts.push_back(loadCondScripts(*file));
+				node->backgroundSoundScripts.push_back(readCondScripts(*file));
 			else
-				node->soundScripts.push_back(loadCondScripts(*file));
+				node->soundScripts.push_back(readCondScripts(*file));
 		} else {
 			// Several nodes sharing the same scripts
 			// Find the node ids the script applies to
@@ -392,7 +392,7 @@ void Database::loadRoomSoundScripts(Common::SeekableReadStream *file, Common::Ar
 				}
 
 			// Load the script
-			Common::Array<CondScript> scripts = loadCondScripts(*file);
+			Common::Array<CondScript> scripts = readCondScripts(*file);
 
 			// Add the script to each matching node
 			for (uint i = 0; i < nodeIds.size(); i++) {
@@ -440,14 +440,14 @@ void Database::cacheRoom(uint32 roomID, uint32 ageID) {
 	if (!currentRoomData)
 		return;
 
-	_roomNodesCache.setVal(RoomKey(roomID, ageID), loadRoomScripts(currentRoomData));
+	_roomNodesCache.setVal(RoomKey(roomID, ageID), readRoomScripts(currentRoomData));
 }
 
-Common::Array<CondScript> Database::loadCondScripts(Common::SeekableReadStream &s) const {
+Common::Array<CondScript> Database::readCondScripts(Common::SeekableReadStream &s) const {
 	Common::Array<CondScript> scripts;
 
 	while (!s.eos()) {
-		CondScript script = loadCondScript(s);
+		CondScript script = readCondScript(s);
 
 		if (!script.condition)
 			break;
@@ -458,11 +458,11 @@ Common::Array<CondScript> Database::loadCondScripts(Common::SeekableReadStream &
 	return scripts;
 }
 
-Common::Array<HotSpot> Database::loadHotspots(Common::SeekableReadStream &s) const {
+Common::Array<HotSpot> Database::readHotspots(Common::SeekableReadStream &s) const {
 	Common::Array<HotSpot> scripts;
 
 	while (!s.eos()) {
-		HotSpot hotspot = loadHotspot(s);
+		HotSpot hotspot = readHotspot(s);
 
 		if (!hotspot.condition)
 			break;
@@ -473,7 +473,7 @@ Common::Array<HotSpot> Database::loadHotspots(Common::SeekableReadStream &s) con
 	return scripts;
 }
 
-Common::Array<Opcode> Database::loadOpcodes(Common::SeekableReadStream &s) const {
+Common::Array<Opcode> Database::readOpcodes(Common::SeekableReadStream &s) const {
 	Common::Array<Opcode> script;
 
 	while (!s.eos()) {
@@ -496,7 +496,7 @@ Common::Array<Opcode> Database::loadOpcodes(Common::SeekableReadStream &s) const
 	return script;
 }
 
-CondScript Database::loadCondScript(Common::SeekableReadStream &s) const {
+CondScript Database::readCondScript(Common::SeekableReadStream &s) const {
 	CondScript script;
 	script.condition = s.readUint16LE();
 	if(!script.condition)
@@ -531,12 +531,12 @@ CondScript Database::loadCondScript(Common::SeekableReadStream &s) const {
 	}
 	// END WORKAROUND
 
-	script.script = loadOpcodes(s);
+	script.script = readOpcodes(s);
 
 	return script;
 }
 
-HotSpot Database::loadHotspot(Common::SeekableReadStream &s) const {
+HotSpot Database::readHotspot(Common::SeekableReadStream &s) const {
 	HotSpot hotspot;
 
 	hotspot.condition = s.readUint16LE();
@@ -545,16 +545,16 @@ HotSpot Database::loadHotspot(Common::SeekableReadStream &s) const {
 		return hotspot;
 
 	if (hotspot.condition != -1) {
-		hotspot.rects = loadRects(s);
+		hotspot.rects = readRects(s);
 		hotspot.cursor = s.readUint16LE();
 	}
 
-	hotspot.script = loadOpcodes(s);
+	hotspot.script = readOpcodes(s);
 
 	return hotspot;
 }
 
-Common::Array<PolarRect> Database::loadRects(Common::SeekableReadStream &s) const {
+Common::Array<PolarRect> Database::readRects(Common::SeekableReadStream &s) const {
 	Common::Array<PolarRect> rects;
 
 	bool lastRect = false;
