@@ -4,6 +4,7 @@ MODULE_OBJS := \
 	combat.o \
 	design.o \
 	detection.o \
+	dialog.o \
 	entities.o \
 	gui.o \
 	menu.o \
