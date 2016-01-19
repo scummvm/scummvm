@@ -122,13 +122,13 @@ struct IIgsSampleHeader {
 
 class IIgsGenerator {
 public:
-	IIgsGenerator() : ins(NULL), key(-1), channel(-1) {
+	IIgsGenerator() : curInstrument(nullptr), key(-1), channel(-1) {
 		memset(&osc, 0, sizeof(osc));
 		seg = 0;
 		a = 0;
 	}
 
-	const IIgsInstrumentHeader *ins; ///< Currently used instrument
+	const IIgsInstrumentHeader *curInstrument; ///< Currently used instrument
 	int key;		///< MIDI key
 	int velocity;	///< MIDI velocity (& channel volume)
 	int channel;	///< MIDI channel

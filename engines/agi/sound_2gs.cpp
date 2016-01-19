@@ -149,22 +149,22 @@ uint SoundGen2GS::generateOutput() {
 		int outRight = 0;
 		for (int k = 0; k < MAX_GENERATORS; k++) {
 			IIgsGenerator *g = &_generators[k];
-			if (!g->ins)
+			if (!g->curInstrument)
 				continue;
-			const IIgsInstrumentHeader *i = g->ins;
+			const IIgsInstrumentHeader *curInstrument = g->curInstrument;
 
 			// Advance envelope
 			int vol = fracToInt(g->a);
-			if (g->a <= i->env[g->seg].bp) {
-				g->a += i->env[g->seg].inc * ENVELOPE_COEF;
-				if (g->a > i->env[g->seg].bp) {
-					g->a = i->env[g->seg].bp;
+			if (g->a <= curInstrument->env[g->seg].bp) {
+				g->a += curInstrument->env[g->seg].inc * ENVELOPE_COEF;
+				if (g->a > curInstrument->env[g->seg].bp) {
+					g->a = curInstrument->env[g->seg].bp;
 					g->seg++;
 				}
 			} else {
-				g->a -= i->env[g->seg].inc * ENVELOPE_COEF;
-				if (g->a < i->env[g->seg].bp) {
-					g->a = i->env[g->seg].bp;
+				g->a -= curInstrument->env[g->seg].inc * ENVELOPE_COEF;
+				if (g->a < curInstrument->env[g->seg].bp) {
+					g->a = curInstrument->env[g->seg].bp;
 					g->seg++;
 				}
 			}
@@ -361,8 +361,11 @@ void SoundGen2GS::advanceMidiPlayer() {
 void SoundGen2GS::midiNoteOff(int channel, int note, int velocity) {
 	// Release keys within the given MIDI channel
 	for (int i = 0; i < MAX_GENERATORS; i++) {
-		if (_generators[i].channel == channel && _generators[i].key == note)
-			_generators[i].seg = _generators[i].ins->seg;
+		if (_generators[i].channel == channel && _generators[i].key == note) {
+			if (_generators[i].curInstrument) {
+				_generators[i].seg = _generators[i].curInstrument->seg;
+			}
+		}
 	}
 }
 
@@ -373,9 +376,9 @@ void SoundGen2GS::midiNoteOn(int channel, int note, int velocity) {
 	}
 
 	// Allocate a generator for the note.
-	IIgsGenerator* g = allocateGenerator();
-	g->ins = _channels[channel].getInstrument();
-	const IIgsInstrumentHeader* i = g->ins;
+	IIgsGenerator* generator = allocateGenerator();
+	generator->curInstrument = _channels[channel].getInstrument();
+	const IIgsInstrumentHeader *curInstrument = generator->curInstrument;
 
 	// Pass information from the MIDI channel to the generator. Take
 	// velocity into account, although simplistically.
@@ -383,45 +386,45 @@ void SoundGen2GS::midiNoteOn(int channel, int note, int velocity) {
 	if (velocity > 127)
 		velocity = 127;
 
-	g->key = note;
-	g->velocity = velocity * _channels[channel].getVolume() / 127;
-	g->channel = channel;
+	generator->key = note;
+	generator->velocity = velocity * _channels[channel].getVolume() / 127;
+	generator->channel = channel;
 
 	// Instruments can define different samples to be used based on
 	// what the key is. Find the correct samples for our key.
 	int wa = 0;
 	int wb = 0;
-	while (wa < i->waveCount[0] - 1 && note > i->wave[0][wa].key)
+	while (wa < curInstrument->waveCount[0] - 1 && note > curInstrument->wave[0][wa].key)
 		wa++;
-	while (wb < i->waveCount[1] - 1 && note > i->wave[1][wb].key)
+	while (wb < curInstrument->waveCount[1] - 1 && note > curInstrument->wave[1][wb].key)
 		wb++;
 
 	// Prepare the generator.
-	g->osc[0].base	= i->base + i->wave[0][wa].offset;
-	g->osc[0].size	= i->wave[0][wa].size;
-	g->osc[0].pd	= doubleToFrac(midiKeyToFreq(note, (double)i->wave[0][wa].tune / 256.0) / (double)_sampleRate);
-	g->osc[0].p		= 0;
-	g->osc[0].halt	= i->wave[0][wa].halt;
-	g->osc[0].loop	= i->wave[0][wa].loop;
-	g->osc[0].swap	= i->wave[0][wa].swap;
-	g->osc[0].rightChannel = i->wave[0][wa].rightChannel;
+	generator->osc[0].base	= curInstrument->base + curInstrument->wave[0][wa].offset;
+	generator->osc[0].size	= curInstrument->wave[0][wa].size;
+	generator->osc[0].pd	= doubleToFrac(midiKeyToFreq(note, (double)curInstrument->wave[0][wa].tune / 256.0) / (double)_sampleRate);
+	generator->osc[0].p		= 0;
+	generator->osc[0].halt	= curInstrument->wave[0][wa].halt;
+	generator->osc[0].loop	= curInstrument->wave[0][wa].loop;
+	generator->osc[0].swap	= curInstrument->wave[0][wa].swap;
+	generator->osc[0].rightChannel = curInstrument->wave[0][wa].rightChannel;
 
-	g->osc[1].base	= i->base + i->wave[1][wb].offset;
-	g->osc[1].size	= i->wave[1][wb].size;
-	g->osc[1].pd	= doubleToFrac(midiKeyToFreq(note, (double)i->wave[1][wb].tune / 256.0) / (double)_sampleRate);
-	g->osc[1].p		= 0;
-	g->osc[1].halt	= i->wave[1][wb].halt;
-	g->osc[1].loop	= i->wave[1][wb].loop;
-	g->osc[1].swap	= i->wave[1][wb].swap;
-	g->osc[1].rightChannel = i->wave[1][wb].rightChannel;
+	generator->osc[1].base	= curInstrument->base + curInstrument->wave[1][wb].offset;
+	generator->osc[1].size	= curInstrument->wave[1][wb].size;
+	generator->osc[1].pd	= doubleToFrac(midiKeyToFreq(note, (double)curInstrument->wave[1][wb].tune / 256.0) / (double)_sampleRate);
+	generator->osc[1].p		= 0;
+	generator->osc[1].halt	= curInstrument->wave[1][wb].halt;
+	generator->osc[1].loop	= curInstrument->wave[1][wb].loop;
+	generator->osc[1].swap	= curInstrument->wave[1][wb].swap;
+	generator->osc[1].rightChannel = curInstrument->wave[1][wb].rightChannel;
 
-	g->seg	= 0;
-	g->a	= 0;
+	generator->seg	= 0;
+	generator->a	= 0;
 
 	// Print debug messages for instruments with swap mode or vibrato enabled
-	if (g->osc[0].swap || g->osc[1].swap)
+	if (generator->osc[0].swap || generator->osc[1].swap)
 		debugC(2, kDebugLevelSound, "Detected swap mode in a playing instrument. This is rare and is not tested well...");
-	if (i->vibDepth > 0)
+	if (curInstrument->vibDepth > 0)
 		debugC(2, kDebugLevelSound, "Detected vibrato in a playing instrument. Vibrato is not implemented, playing without...");
 }
 
@@ -433,7 +436,7 @@ void SoundGen2GS::haltGenerators() {
 	for (int i = 0; i < MAX_GENERATORS; i++) {
 		// Reset instrument pointer especially for samples, because samples are deleted on unload/room changes
 		// and not resetting them here would cause those invalidated samples get accessed during generateOutput()
-		_generators[i].ins = nullptr;
+		_generators[i].curInstrument = nullptr;
 		_generators[i].osc[0].halt = true;
 		_generators[i].osc[1].halt = true;
 	}
