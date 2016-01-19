@@ -443,11 +443,11 @@ void Design::drawBitmap(Graphics::Surface *surface, Common::ReadStream &in) {
 }
 
 void Design::drawRect(Graphics::Surface *surface, Common::Rect &rect, int thickness, int color, Patterns &patterns, byte fillType) {
+	drawRect(surface, rect.left, rect.top, rect.right, rect.bottom, thickness, color, patterns, fillType);
+}
+
+void Design::drawRect(Graphics::Surface *surface, int x1, int y1, int x2, int y2, int thickness, int color, Patterns &patterns, byte fillType) {
 	plotData pd(surface, &patterns, fillType, thickness);
-	int x1 = rect.left;
-	int y1 = rect.top;
-	int x2 = rect.right;
-	int y2 = rect.bottom;
 
 	Graphics::drawLine(x1, y1, x2, y1, kColorBlack, drawPixel, &pd);
 	Graphics::drawLine(x2, y1, x2, y2, kColorBlack, drawPixel, &pd);

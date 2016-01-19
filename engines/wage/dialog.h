@@ -50,19 +50,34 @@
 
 namespace Wage {
 
+struct DialogButton {
+	Common::String text;
+	Common::Rect bounds;
+};
+
+typedef Common::Array<DialogButton *> DialogButtonArray;
+
 class Dialog {
 public:
-	Dialog(Gui *gui);
+	Dialog(Gui *gui, const char *text, DialogButtonArray *buttons);
 	~Dialog();
 
 private:
 	Gui *_gui;
 	Graphics::Surface _tempSurface;
+	Common::Rect _bbox;
+	Common::String _text;
 
 	const Graphics::Font *_font;
+	DialogButtonArray *_buttons;
+	DialogButton *_pressedButton;
+	DialogButton *_defaultButton;
+	bool _mouseOverPressedButton;
 
 private:
 	const Graphics::Font *getDialogFont();
+	void drawOutline(Common::Rect &bounds, int *spec, int speclen);
+	void paint();
 };
 
 } // End of namespace Wage
