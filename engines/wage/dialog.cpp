@@ -56,8 +56,8 @@
 namespace Wage {
 
 enum {
-	kDialogWidth = 292,
-	kDialogHeight = 114
+	kDialogWidth = 199,
+	kDialogHeight = 113
 };
 
 Dialog::Dialog(Gui *gui, const char *text, DialogButtonArray *buttons) : _gui(gui), _text(text), _buttons(buttons) {
@@ -73,10 +73,17 @@ Dialog::Dialog(Gui *gui, const char *text, DialogButtonArray *buttons) : _gui(gu
 	_bbox.right = (_gui->_screen.w + kDialogWidth) / 2;
 	_bbox.bottom = (_gui->_screen.h + kDialogHeight) / 2;
 
-	_defaultButton = NULL;
-	_pressedButton = NULL;
+	_defaultButton = -1;
+	_pressedButton = -1;
 
 	_mouseOverPressedButton = false;
+
+	// Adjust button positions
+	for (int i = 0; i < _buttons->size(); i++)
+		_buttons->operator[](i)->bounds.translate(_bbox.left, _bbox.top);
+
+	if (_buttons->size() == 1)
+		_defaultButton = 0;
 }
 
 Dialog::~Dialog() {
@@ -88,7 +95,7 @@ const Graphics::Font *Dialog::getDialogFont() {
 
 void Dialog::paint() {
 	Design::drawFilledRect(&_gui->_screen, _bbox, kColorWhite, _gui->_patterns, kPatternSolid);
-	_font->drawString(&_gui->_screen, _text, _bbox.left + 24, _bbox.right + 32, _bbox.width(), kColorBlack);
+	_font->drawString(&_gui->_screen, _text, _bbox.left + 24, _bbox.top + 16, _bbox.width(), kColorBlack);
 
 	static int boxOutline[] = { 1, 0, 0, 1, 1 };
 	drawOutline(_bbox, boxOutline, ARRAYSIZE(boxOutline));
@@ -97,7 +104,7 @@ void Dialog::paint() {
 		DialogButton *button = _buttons->operator[](i);
 		static int buttonOutline[] = { 0, 0, 0, 0, 1 };
 
-		if (button == _defaultButton) {
+		if (i == _defaultButton) {
 			buttonOutline[0] = buttonOutline[1] = 1;
 		} else {
 			buttonOutline[0] = buttonOutline[1] = 0;
@@ -105,7 +112,7 @@ void Dialog::paint() {
 
 		int color = kColorBlack;
 
-		if (_pressedButton == button && _mouseOverPressedButton) {
+		if (i == _pressedButton && _mouseOverPressedButton) {
 			Common::Rect bb(button->bounds.left + 5, button->bounds.top + 5,
 				button->bounds.right - 5, button->bounds.bottom - 5);
 
@@ -115,21 +122,21 @@ void Dialog::paint() {
 		}
 		int w = _font->getStringWidth(button->text);
 		int x = button->bounds.left + (button->bounds.width() - w) / 2;
-		int y = button->bounds.top + 19;
+		int y = button->bounds.top + 6;
 
-		_font->drawString(&_gui->_screen, button->text, _bbox.left + x, _bbox.right + y, _bbox.width(), color);
+		_font->drawString(&_gui->_screen, button->text, x, y, _bbox.width(), color);
 
 		drawOutline(button->bounds, buttonOutline, ARRAYSIZE(buttonOutline));
 	}
 
 	g_system->copyRectToScreen(_gui->_screen.getBasePtr(_bbox.left, _bbox.top), _gui->_screen.pitch,
-			_bbox.left, _bbox.top, _bbox.width(), _bbox.height());
+			_bbox.left, _bbox.top, _bbox.width() + 1, _bbox.height() + 1);
 }
 
 void Dialog::drawOutline(Common::Rect &bounds, int *spec, int speclen) {
 	for (int i = 0; i < speclen; i++)
 		if (spec[i] != 0)
-			Design::drawRect(&_gui->_screen, bounds.left + i, bounds.top + i, bounds.right - 1 - 2*i, bounds.bottom - 1 - 2*i,
+			Design::drawRect(&_gui->_screen, bounds.left + i, bounds.top + i, bounds.right - i, bounds.bottom - i,
 						1, kColorBlack, _gui->_patterns, kPatternSolid);
 }
 

@@ -140,7 +140,6 @@ void WageEngine::processEvents() {
 	while (_eventMan->pollEvent(event)) {
 		switch (event.type) {
 		case Common::EVENT_QUIT:
-			gameOver();
 			_shouldQuit = true;
 			break;
 		case Common::EVENT_MOUSEMOVE:
@@ -221,7 +220,7 @@ void WageEngine::appendText(char *str) {
 void WageEngine::gameOver() {
 	DialogButtonArray buttons;
 
-	buttons.push_back(new DialogButton("OK", 112, 67, 68, 28));
+	buttons.push_back(new DialogButton("OK", 66, 67, 68, 28));
 
 	Dialog gameOver(_gui, _world->_gameOverMessage->c_str(), &buttons);
 

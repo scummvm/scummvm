@@ -54,12 +54,12 @@ struct DialogButton {
 	Common::String text;
 	Common::Rect bounds;
 
-	DialogButton(const char *t, int x1, int y1, int x2, int y2) {
+	DialogButton(const char *t, int x1, int y1, int w, int h) {
 		text = t;
 		bounds.left = x1;
 		bounds.top = y1;
-		bounds.right = x2;
-		bounds.bottom = y2;
+		bounds.right = x1 + w - 1;
+		bounds.bottom = y1 + h - 1;
 	}
 };
 
@@ -80,8 +80,8 @@ private:
 
 	const Graphics::Font *_font;
 	DialogButtonArray *_buttons;
-	DialogButton *_pressedButton;
-	DialogButton *_defaultButton;
+	int _pressedButton;
+	int _defaultButton;
 	bool _mouseOverPressedButton;
 
 private:
