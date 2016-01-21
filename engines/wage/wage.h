@@ -135,6 +135,8 @@ private:
 	void performMove(Chr *chr, int validMoves);
 	void performOffer(Chr *attacker, Chr *victim);
 	void performTake(Chr *npc, Obj *obj);
+	void decrementUses(Obj *obj);
+	bool attackHit(Chr *attacker, Chr *victim, Obj *weapon, int targetIndex);
 
 	void doClose();
 
@@ -151,6 +153,7 @@ public:
 	Chr *_running;
 	Obj *_offer;
 	int _aim;
+	int _opponentAim;
 	bool _temporarilyHidden;
 	bool _isGameOver;
 	bool _commandWasQuick;

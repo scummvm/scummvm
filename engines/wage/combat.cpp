@@ -177,8 +177,66 @@ void WageEngine::performCombatAction(Chr *npc, Chr *player) {
 	delete magics;
 }
 
+const char *targets[] = { "head", "chest", "side" };
+
 void WageEngine::performAttack(Chr *attacker, Chr *victim, Obj *weapon) {
-	warning("STUB: performAttack()");
+	if (_world->_weaponMenuDisabled)
+		return;
+
+	// TODO: verify that a player not aiming will always target the chest??
+	int targetIndex = -1;
+	char buf[256];
+
+	if (weapon->_type != Obj::MAGICAL_OBJECT) {
+		if (attacker->_playerCharacter) {
+			targetIndex = _aim;
+		} else {
+			targetIndex = _rnd->getRandomNumber(ARRAYSIZE(targets) - 1);
+			_opponentAim = targetIndex + 1;
+		}
+
+		if (!attacker->_playerCharacter) {
+			snprintf(buf, 256, "%s%s %ss %s%s at %s%s's %s.",
+				attacker->getDefiniteArticle(true), attacker->_name.c_str(),
+				weapon->_operativeVerb.c_str(),
+				prependGenderSpecificPronoun(attacker->_gender), weapon->_name.c_str(),
+				victim->getDefiniteArticle(true), victim->_name.c_str(),
+				targets[targetIndex]);
+			appendText(buf);
+		}
+	} else if (!attacker->_playerCharacter) {
+		snprintf(buf, 256, "%s%s %ss %s%s at %s%s.",
+			attacker->getDefiniteArticle(true), attacker->_name.c_str(),
+			weapon->_operativeVerb.c_str(),
+			prependGenderSpecificPronoun(attacker->_gender), weapon->_name.c_str(),
+			victim->getDefiniteArticle(true), victim->_name.c_str());
+		appendText(buf);
+	}
+
+	playSound(weapon->_sound);
+
+	bool usesDecremented = false;
+	int chance = _rnd->getRandomNumber(255);
+	// TODO: what about obj accuracy
+	if (chance < attacker->_physicalAccuracy) {
+		usesDecremented = attackHit(attacker, victim, weapon, targetIndex);
+	} else if (weapon->_type != Obj::MAGICAL_OBJECT) {
+		appendText((char *)"A miss!");
+	} else if (attacker->_playerCharacter) {
+		appendText((char *)"The spell has no effect.");
+	}
+
+	if (!usesDecremented) {
+		decrementUses(weapon);
+	}
+}
+
+void WageEngine::decrementUses(Obj *obj) {
+	warning("STUB: decrementUses()");
+}
+
+bool WageEngine::attackHit(Chr *attacker, Chr *victim, Obj *weapon, int targetIndex) {
+	warning("STUB: attackHit");
 }
 
 void WageEngine::performMagic(Chr *attacker, Chr *victim, Obj *magicalObject) {

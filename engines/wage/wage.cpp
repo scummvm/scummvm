@@ -64,6 +64,7 @@ WageEngine::WageEngine(OSystem *syst, const ADGameDescription *desc) : Engine(sy
 	_rnd = new Common::RandomSource("wage");
 
 	_aim = -1;
+	_opponentAim = -1;
 	_temporarilyHidden = false;
 	_isGameOver = false;
 	_monster = NULL;
