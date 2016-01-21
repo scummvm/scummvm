@@ -162,7 +162,7 @@ public:
 	void appendText(String &str);
 	void appendText(char *str);
 	void gameOver();
-	void saveDialog();
+	bool saveDialog();
 	Obj *getOffer();
 	Chr *getMonster();
 	void processEvents();
@@ -170,6 +170,7 @@ public:
 	void onMove(Designed *what, Designed *from, Designed *to);
 	void encounter(Chr *player, Chr *chr);
 	void redrawScene();
+	void saveGame();
 
 private:
 	Console *_console;

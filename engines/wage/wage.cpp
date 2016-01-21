@@ -140,8 +140,8 @@ void WageEngine::processEvents() {
 	while (_eventMan->pollEvent(event)) {
 		switch (event.type) {
 		case Common::EVENT_QUIT:
-			saveDialog();
-			_shouldQuit = true;
+			if (saveDialog())
+				_shouldQuit = true;
 			break;
 		case Common::EVENT_MOUSEMOVE:
 			_gui->mouseMove(event.mouse.x, event.mouse.y);
@@ -230,7 +230,7 @@ void WageEngine::gameOver() {
 	doClose();
 }
 
-void WageEngine::saveDialog() {
+bool WageEngine::saveDialog() {
 	DialogButtonArray buttons;
 
 	buttons.push_back(new DialogButton("No", 19, 67, 68, 28));
@@ -239,9 +239,21 @@ void WageEngine::saveDialog() {
 
 	Dialog save(_gui, 291, "Save changes before closing?", &buttons, 1);
 
-	save.run();
+	int button = save.run();
+
+	if (button == 2) // Cancel
+		return false;
+
+	if (button == 1)
+		saveGame();
 
 	doClose();
+
+	return true;
+}
+
+void WageEngine::saveGame() {
+	warning("STUB: saveGame()");
 }
 
 void WageEngine::performInitialSetup() {
