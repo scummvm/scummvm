@@ -66,7 +66,7 @@ Dialog::Dialog(Gui *gui, int width, const char *text, DialogButtonArray *buttons
 
 	_font = getDialogFont();
 
-	_tempSurface.create(width, kDialogHeight, Graphics::PixelFormat::createFormatCLUT8());
+	_tempSurface.create(width + 1, kDialogHeight + 1, Graphics::PixelFormat::createFormatCLUT8());
 
 	_bbox.left = (_gui->_screen.w - width) / 2;
 	_bbox.top = (_gui->_screen.h - kDialogHeight) / 2;
@@ -80,6 +80,8 @@ Dialog::Dialog(Gui *gui, int width, const char *text, DialogButtonArray *buttons
 	// Adjust button positions
 	for (int i = 0; i < _buttons->size(); i++)
 		_buttons->operator[](i)->bounds.translate(_bbox.left, _bbox.top);
+
+	_needsRedraw = true;
 }
 
 Dialog::~Dialog() {
@@ -127,6 +129,8 @@ void Dialog::paint() {
 
 	g_system->copyRectToScreen(_gui->_screen.getBasePtr(_bbox.left, _bbox.top), _gui->_screen.pitch,
 			_bbox.left, _bbox.top, _bbox.width() + 1, _bbox.height() + 1);
+
+	_needsRedraw = false;
 }
 
 void Dialog::drawOutline(Common::Rect &bounds, int *spec, int speclen) {
@@ -136,10 +140,14 @@ void Dialog::drawOutline(Common::Rect &bounds, int *spec, int speclen) {
 						1, kColorBlack, _gui->_patterns, kPatternSolid);
 }
 
-void Dialog::run() {
+int Dialog::run() {
 	bool shouldQuit = false;
+	Common::Rect r(_bbox);
 
-	paint();
+	r.right++;
+	r.bottom++;
+
+	_gui->_screen.copyRectToSurface(_tempSurface, r.left, r.top, r);
 
 	while (!shouldQuit) {
 		Common::Event event;
@@ -151,15 +159,82 @@ void Dialog::run() {
 				shouldQuit = true;
 				break;
 			case Common::EVENT_MOUSEMOVE:
-
+				mouseMove(event.mouse.x, event.mouse.y);
+				break;
+			case Common::EVENT_LBUTTONDOWN:
+				mouseClick(event.mouse.x, event.mouse.y);
+				break;
+			case Common::EVENT_LBUTTONUP:
+				shouldQuit = mouseRaise(event.mouse.x, event.mouse.y);
+				break;
+			case Common::EVENT_KEYDOWN:
+				switch (event.kbd.keycode) {
+				case Common::KEYCODE_ESCAPE:
+					_pressedButton = -1;
+					shouldQuit = true;
+				default:
+					break;
+				}
+				break;
 			default:
 				break;
 			}
 		}
 
+		if (_needsRedraw)
+			paint();
+
 		g_system->updateScreen();
 		g_system->delayMillis(50);
 	}
+
+	_tempSurface.copyRectToSurface(_gui->_screen, r.left, r.top, r);
+
+	return _pressedButton;
+}
+
+int Dialog::matchButton(int x, int y) {
+	for (int i = 0; i < _buttons->size(); i++)
+		if (_buttons->operator[](i)->bounds.contains(x, y))
+			return i;
+
+	return -1;
+}
+
+void Dialog::mouseMove(int x, int y) {
+	if (_pressedButton != -1) {
+		int match = matchButton(x, y);
+
+		if (_mouseOverPressedButton && match != _pressedButton) {
+			_mouseOverPressedButton = false;
+			_needsRedraw = true;
+		} else if (!_mouseOverPressedButton && match == _pressedButton) {
+			_mouseOverPressedButton = true;
+			_needsRedraw = true;
+		}
+	}
+}
+
+void Dialog::mouseClick(int x, int y) {
+	int match = matchButton(x, y);
+
+	if (match) {
+		_pressedButton = match;
+		_mouseOverPressedButton = true;
+
+		_needsRedraw = true;
+	}
+}
+
+int Dialog::mouseRaise(int x, int y) {
+	bool res = false;
+
+	if (_pressedButton != -1) {
+		if (matchButton(x, y) == _pressedButton)
+			res = true;
+	}
+
+	return res;
 }
 
 } // End of namespace Wage

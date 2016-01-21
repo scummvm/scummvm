@@ -70,7 +70,7 @@ public:
 	Dialog(Gui *gui, int width, const char *text, DialogButtonArray *buttons, int defaultButton);
 	~Dialog();
 
-	void run();
+	int run();
 
 private:
 	Gui *_gui;
@@ -84,10 +84,16 @@ private:
 	int _defaultButton;
 	bool _mouseOverPressedButton;
 
+	bool _needsRedraw;
+
 private:
 	const Graphics::Font *getDialogFont();
 	void drawOutline(Common::Rect &bounds, int *spec, int speclen);
 	void paint();
+	void mouseMove(int x, int y);
+	void mouseClick(int x, int y);
+	int mouseRaise(int x, int y);
+	int matchButton(int x, int y);
 };
 
 } // End of namespace Wage
