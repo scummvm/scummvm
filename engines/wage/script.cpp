@@ -1149,6 +1149,8 @@ void Script::handleAimCommand(const char *t) {
 	bool wasHandled = true;
 	Common::String target(t);
 
+	target.toLowercase();
+
 	if (target.contains("head")) {
 		_callbacks->_aim = Chr::HEAD;
 	} else if (target.contains("chest")) {
@@ -1166,9 +1168,47 @@ void Script::handleAimCommand(const char *t) {
 	_callbacks->_commandWasQuick = true;
 }
 
-void Script::handleWearCommand(const char *target) {
-	warning("STUB: handleWearCommand");
+void Script::handleWearCommand(const char *t) {
+	Chr *player = _world->_player;
+	char buf[512];
+	Common::String target(t);
+
+	target.toLowercase();
+
+	for (ObjArray::const_iterator it = _world->_player->_inventory.begin(); it != _world->_player->_inventory.end(); ++it) {
+		Common::String n((*it)->_name);
+
+		if (target.contains(n)) {
+			if ((*it)->_type == Obj::HELMET) {
+				wearObj(*it, Chr::HEAD_ARMOR);
+			} else if ((*it)->_type == Obj::CHEST_ARMOR) {
+				wearObj(*it, Chr::BODY_ARMOR);
+			} else if ((*it)->_type == Obj::SHIELD) {
+				wearObj(*it, Chr::SHIELD_ARMOR);
+			} else if ((*it)->_type == Obj::SPIRITUAL_ARMOR) {
+				wearObj(*it, Chr::MAGIC_ARMOR);
+			} else {
+				appendText((char *)"You cannot wear that object.");
+			}
+			break;
+		}
+	}
+
+	for (ObjList::const_iterator it = player->_currentScene->_objs.begin(); it != player->_currentScene->_objs.end(); ++it) {
+		Common::String n((*it)->_name);
+		n.toLowercase();
+		if (target.contains(n)) {
+			snprintf(buf, 512, "First you must get the %s.", (*it)->_name.c_str());
+			appendText(buf);
+			break;
+		}
+	}
 }
+
+void Script::wearObj(Obj *o, int pos) {
+	warning("STUB: wearObj()");
+}
+
 
 void Script::handleOfferCommand(const char *target) {
 	warning("STUB: handleOfferCommand");

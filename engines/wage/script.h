@@ -186,6 +186,8 @@ private:
 	void handleWearCommand(const char *target);
 	void handleOfferCommand(const char *target);
 
+	void wearObj(Obj *o, int pos);
+
 	bool tryAttack(Obj *weapon, Common::String &input);
 	void handleAttack(Obj *weapon);
 
