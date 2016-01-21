@@ -67,7 +67,7 @@ typedef Common::Array<DialogButton *> DialogButtonArray;
 
 class Dialog {
 public:
-	Dialog(Gui *gui, const char *text, DialogButtonArray *buttons);
+	Dialog(Gui *gui, int width, const char *text, DialogButtonArray *buttons, int defaultButton);
 	~Dialog();
 
 	void run();

@@ -56,24 +56,23 @@
 namespace Wage {
 
 enum {
-	kDialogWidth = 199,
 	kDialogHeight = 113
 };
 
-Dialog::Dialog(Gui *gui, const char *text, DialogButtonArray *buttons) : _gui(gui), _text(text), _buttons(buttons) {
+Dialog::Dialog(Gui *gui, int width, const char *text, DialogButtonArray *buttons, int defaultButton) :
+		_gui(gui), _text(text), _buttons(buttons), _defaultButton(defaultButton) {
 	assert(_gui->_engine);
 	assert(_gui->_engine->_world);
 
 	_font = getDialogFont();
 
-	_tempSurface.create(kDialogWidth, kDialogHeight, Graphics::PixelFormat::createFormatCLUT8());
+	_tempSurface.create(width, kDialogHeight, Graphics::PixelFormat::createFormatCLUT8());
 
-	_bbox.left = (_gui->_screen.w - kDialogWidth) / 2;
+	_bbox.left = (_gui->_screen.w - width) / 2;
 	_bbox.top = (_gui->_screen.h - kDialogHeight) / 2;
-	_bbox.right = (_gui->_screen.w + kDialogWidth) / 2;
+	_bbox.right = (_gui->_screen.w + width) / 2;
 	_bbox.bottom = (_gui->_screen.h + kDialogHeight) / 2;
 
-	_defaultButton = -1;
 	_pressedButton = -1;
 
 	_mouseOverPressedButton = false;
@@ -81,9 +80,6 @@ Dialog::Dialog(Gui *gui, const char *text, DialogButtonArray *buttons) : _gui(gu
 	// Adjust button positions
 	for (int i = 0; i < _buttons->size(); i++)
 		_buttons->operator[](i)->bounds.translate(_bbox.left, _bbox.top);
-
-	if (_buttons->size() == 1)
-		_defaultButton = 0;
 }
 
 Dialog::~Dialog() {
@@ -151,8 +147,11 @@ void Dialog::run() {
 		while (_gui->_engine->_eventMan->pollEvent(event)) {
 			switch (event.type) {
 			case Common::EVENT_QUIT:
+				_gui->_engine->_shouldQuit = true;
 				shouldQuit = true;
 				break;
+			case Common::EVENT_MOUSEMOVE:
+
 			default:
 				break;
 			}

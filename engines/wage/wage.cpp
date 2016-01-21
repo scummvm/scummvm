@@ -140,6 +140,7 @@ void WageEngine::processEvents() {
 	while (_eventMan->pollEvent(event)) {
 		switch (event.type) {
 		case Common::EVENT_QUIT:
+			saveDialog();
 			_shouldQuit = true;
 			break;
 		case Common::EVENT_MOUSEMOVE:
@@ -222,9 +223,23 @@ void WageEngine::gameOver() {
 
 	buttons.push_back(new DialogButton("OK", 66, 67, 68, 28));
 
-	Dialog gameOver(_gui, _world->_gameOverMessage->c_str(), &buttons);
+	Dialog gameOver(_gui, 199, _world->_gameOverMessage->c_str(), &buttons, 0);
 
 	gameOver.run();
+
+	doClose();
+}
+
+void WageEngine::saveDialog() {
+	DialogButtonArray buttons;
+
+	buttons.push_back(new DialogButton("No", 19, 67, 68, 28));
+	buttons.push_back(new DialogButton("Yes", 112, 67, 68, 28));
+	buttons.push_back(new DialogButton("Cancel", 205, 67, 68, 28));
+
+	Dialog save(_gui, 291, "Save changes before closing?", &buttons, 1);
+
+	save.run();
 
 	doClose();
 }

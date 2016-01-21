@@ -162,6 +162,7 @@ public:
 	void appendText(String &str);
 	void appendText(char *str);
 	void gameOver();
+	void saveDialog();
 	Obj *getOffer();
 	Chr *getMonster();
 	void processEvents();
