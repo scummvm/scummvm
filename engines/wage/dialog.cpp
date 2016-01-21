@@ -144,10 +144,7 @@ int Dialog::run() {
 	bool shouldQuit = false;
 	Common::Rect r(_bbox);
 
-	r.right++;
-	r.bottom++;
-
-	_gui->_screen.copyRectToSurface(_tempSurface, r.left, r.top, r);
+	_tempSurface.copyRectToSurface(_gui->_screen.getBasePtr(_bbox.left, _bbox.top), _gui->_screen.pitch, 0, 0, _bbox.width() + 1, _bbox.height() + 1);
 
 	while (!shouldQuit) {
 		Common::Event event;
@@ -188,7 +185,8 @@ int Dialog::run() {
 		g_system->delayMillis(50);
 	}
 
-	_tempSurface.copyRectToSurface(_gui->_screen, 0, 0, r);
+	_gui->_screen.copyRectToSurface(_tempSurface.getBasePtr(0, 0), _tempSurface.pitch, _bbox.left, _bbox.top, _bbox.width() + 1, _bbox.height() + 1);
+	g_system->copyRectToScreen(_gui->_screen.getBasePtr(r.left, r.top), _gui->_screen.pitch, r.left, r.top, r.width() + 1, r.height() + 1);
 
 	return _pressedButton;
 }
@@ -218,7 +216,7 @@ void Dialog::mouseMove(int x, int y) {
 void Dialog::mouseClick(int x, int y) {
 	int match = matchButton(x, y);
 
-	if (match) {
+	if (match != -1) {
 		_pressedButton = match;
 		_mouseOverPressedButton = true;
 
