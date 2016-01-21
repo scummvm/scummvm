@@ -278,10 +278,10 @@ void Menu::regenWeaponsMenu() {
 
 void Menu::createWeaponsMenu(MenuItem *menu) {
 	Chr *player = _gui->_engine->_world->_player;
-	WeaponArray *weapons = player->getWeapons(true);
+	ObjArray *weapons = player->getWeapons(true);
 
 	for (int i = 0; i < weapons->size(); i++) {
-		Weapon *obj = (*weapons)[i];
+		Obj *obj = (*weapons)[i];
 		if (obj->_type == Obj::REGULAR_WEAPON ||
 			obj->_type == Obj::THROW_WEAPON ||
 			obj->_type == Obj::MAGICAL_OBJECT) {

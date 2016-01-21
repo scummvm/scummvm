@@ -58,9 +58,7 @@ class Design;
 class Obj;
 class Scene;
 class Script;
-class Weapon;
 
-typedef Common::Array<Weapon *> WeaponArray;
 typedef Common::Array<Obj *> ObjArray;
 typedef Common::Array<Chr *> ChrArray;
 typedef Common::List<Obj *> ObjList;
@@ -219,18 +217,14 @@ public:
 
 	Context _context;
 
-	WeaponArray *getWeapons(bool includeMagic);
+	ObjArray *getWeapons(bool includeMagic);
 	ObjArray *getMagicalObjects();
 	const char *getDefiniteArticle(bool capitalize);
 
-public:
-	bool hasNativeWeapon1() {
-		return (_nativeWeapon1.size() > 0 && _operativeVerb1.size() > 0);
-	}
+	Obj *_weapon1;
+	Obj *_weapon2;
 
-	bool hasNativeWeapon2() {
-		return (_nativeWeapon2.size() > 0 && _operativeVerb2.size() > 0);
-	}
+public:
 	int wearObjIfPossible(Obj *obj);
 	void wearObjs();
 
@@ -299,21 +293,13 @@ public:
 			_currentOwner = NULL;
 	}
 
+	void decrementNumberOfUses() {
+		if (_numberOfUses != -1)
+			_numberOfUses--;
+	}
+
 	Chr *removeFromChr();
 	Designed *removeFromCharOrScene();
-};
-
-class Weapon : public Obj {
-public:
-	int _numberOfUses;
-
-	Weapon() : _numberOfUses(0) {}
-
-	void decrementNumberOfUses() {
-		if (_numberOfUses != -1) {
-			_numberOfUses--;
-		}
-	}
 };
 
 class Scene : public Designed {

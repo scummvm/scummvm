@@ -106,7 +106,7 @@ void WageEngine::performCombatAction(Chr *npc, Chr *player) {
 
 	bool winning = (npc->_context._statVariables[PHYS_HIT_CUR] > player->_context._statVariables[PHYS_HIT_CUR]);
 	int validMoves = getValidMoveDirections(npc);
-	WeaponArray *weapons = npc->getWeapons(false);
+	ObjArray *weapons = npc->getWeapons(false);
 	ObjArray *magics = npc->getMagicalObjects();
 	// TODO: Figure out under what circumstances we need to add +1
 	// for the chance (e.g. only when all values were set to 0?).
@@ -177,7 +177,7 @@ void WageEngine::performCombatAction(Chr *npc, Chr *player) {
 	delete magics;
 }
 
-void WageEngine::performAttack(Chr *attacker, Chr *victim, Weapon *weapon) {
+void WageEngine::performAttack(Chr *attacker, Chr *victim, Obj *weapon) {
 	warning("STUB: performAttack()");
 }
 

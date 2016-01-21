@@ -67,7 +67,6 @@ class Dialog;
 class Gui;
 class Obj;
 class Scene;
-class Weapon;
 class World;
 
 using Common::String;
@@ -131,7 +130,7 @@ private:
 	void processTurnInternal(Common::String *textInput, Designed *clickInput);
 	void performCombatAction(Chr *npc, Chr *player);
 	int getValidMoveDirections(Chr *npc);
-	void performAttack(Chr *attacker, Chr *victim, Weapon *weapon);
+	void performAttack(Chr *attacker, Chr *victim, Obj *weapon);
 	void performMagic(Chr *attacker, Chr *victim, Obj *magicalObject);
 	void performMove(Chr *chr, int validMoves);
 	void performOffer(Chr *attacker, Chr *victim);

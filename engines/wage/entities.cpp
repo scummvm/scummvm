@@ -361,6 +361,32 @@ Chr::Chr(String name, Common::SeekableReadStream *data) {
 	for (int i = 0; i < NUMBER_OF_ARMOR_TYPES; i++)
 		_armor[i] = NULL;
 
+	_weapon1 = NULL;
+	_weapon2 = NULL;
+
+	// Create native weapons
+	if (_nativeWeapon1.size() && _operativeVerb1.size()) {
+		_weapon1 = new Obj;
+
+		_weapon1->_name = _nativeWeapon1;
+		_weapon1->_operativeVerb = _operativeVerb1;
+		_weapon1->_type = Obj::REGULAR_WEAPON;
+		_weapon1->_accuracy = 0;
+		_weapon1->_damage = _weaponDamage1;
+		_weapon1->_sound = _weaponSound1;
+	}
+
+	if (_nativeWeapon2.size() && _operativeVerb2.size()) {
+		_weapon2 = new Obj;
+
+		_weapon2->_name = _nativeWeapon2;
+		_weapon2->_operativeVerb = _operativeVerb2;
+		_weapon2->_type = Obj::REGULAR_WEAPON;
+		_weapon2->_accuracy = 0;
+		_weapon2->_damage = _weaponDamage2;
+		_weapon2->_sound = _weaponSound2;
+	}
+
 	delete data;
 }
 
@@ -378,10 +404,28 @@ void Chr::resetState() {
 	_context._statVariables[PHYS_SPE_BAS] = _context._statVariables[PHYS_SPE_CUR] = _runningSpeed;
 }
 
-WeaponArray *Chr::getWeapons(bool includeMagic) {
-	WeaponArray *list = new WeaponArray;
+ObjArray *Chr::getWeapons(bool includeMagic) {
+	ObjArray *list = new ObjArray;
 
-	warning("STUB: getWeapons");
+	if (_weapon1)
+		list->push_back(_weapon1);
+
+	if (_weapon2)
+		list->push_back(_weapon2);
+
+	for (uint i = 0; i < _inventory.size(); i++)
+		switch (_inventory[i]->_type) {
+		case Obj::REGULAR_WEAPON:
+		case Obj::THROW_WEAPON:
+			list->push_back(_inventory[i]);
+			break;
+		case Obj::MAGICAL_OBJECT:
+			if (includeMagic)
+				list->push_back(_inventory[i]);
+			break;
+		default:
+			break;
+		}
 
 	return list;
 }

@@ -199,8 +199,8 @@ bool Script::execute(World *world, int loopCount, String *inputText, Designed *i
 			handleAcceptCommand();
 		} else {
 			Chr *player = _world->_player;
-			WeaponArray *weapons = player->getWeapons(true);
-			for (WeaponArray::const_iterator weapon = weapons->begin(); weapon != weapons->end(); ++weapon) {
+			ObjArray *weapons = player->getWeapons(true);
+			for (ObjArray::const_iterator weapon = weapons->begin(); weapon != weapons->end(); ++weapon) {
 				if (tryAttack(*weapon, input)) {
 					handleAttack(*weapon);
 					break;
@@ -1076,13 +1076,13 @@ void Script::handleOfferCommand(const char *target) {
 	warning("STUB: handleOfferCommand");
 }
 
-bool Script::tryAttack(Weapon *weapon, Common::String &input) {
+bool Script::tryAttack(Obj *weapon, Common::String &input) {
 	warning("STUB: tryAttack");
 
 	return false;
 }
 
-void Script::handleAttack(Weapon *weapon) {
+void Script::handleAttack(Obj *weapon) {
 	warning("STUB: handleAttack");
 }
 

@@ -186,8 +186,8 @@ private:
 	void handleWearCommand(const char *target);
 	void handleOfferCommand(const char *target);
 
-	bool tryAttack(Weapon *weapon, Common::String &input);
-	void handleAttack(Weapon *weapon);
+	bool tryAttack(Obj *weapon, Common::String &input);
+	void handleAttack(Obj *weapon);
 
 	Common::Array<ScriptText *> _scriptText;
 	void convertToText();
