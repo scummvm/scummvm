@@ -1057,7 +1057,21 @@ void Script::handleAcceptCommand() {
 }
 
 void Script::handleTakeCommand(const char *target) {
-	warning("STUB: handleTakeCommand");
+	Common::String t(target);
+
+	for (ObjList::const_iterator it = _world->_player->_currentScene->_objs.begin(); it != _world->_player->_currentScene->_objs.end(); ++it) {
+		Common::String n((*it)->_name);
+		n.toLowercase();
+
+		if (t.contains(n)) {
+			if ((*it)->_type == Obj::IMMOBILE_OBJECT) {
+				appendText((char *)"You can't move it.");
+			} else {
+				takeObj(*it);
+			}
+			break;
+		}
+	}
 }
 
 void Script::handleDropCommand(const char *target) {
