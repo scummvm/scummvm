@@ -1145,8 +1145,25 @@ void Script::handleDropCommand(const char *target) {
 	}
 }
 
-void Script::handleAimCommand(const char *target) {
-	warning("STUB: handleAimCommand");
+void Script::handleAimCommand(const char *t) {
+	bool wasHandled = true;
+	Common::String target(t);
+
+	if (target.contains("head")) {
+		_callbacks->_aim = Chr::HEAD;
+	} else if (target.contains("chest")) {
+		_callbacks->_aim = Chr::CHEST;
+	} else if (target.contains("side")) {
+		_callbacks->_aim = Chr::SIDE;
+	} else {
+		wasHandled = false;
+		appendText((char *)"Please aim for the head, chest, or side.");
+	}
+
+	if (wasHandled)
+		_handled = true;
+
+	_callbacks->_commandWasQuick = true;
 }
 
 void Script::handleWearCommand(const char *target) {
