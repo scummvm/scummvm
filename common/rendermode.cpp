@@ -38,7 +38,7 @@ const RenderModeDescription g_renderModes[] = {
 	{ "ega", "EGA", kRenderEGA },
 	{ "vga", "VGA", kRenderVGA },
 	{ "amiga", "Amiga", kRenderAmiga },
-	{ "fmtowns", "FM-Towns", kRenderFMTowns },
+	{ "fmtowns", "FM-TOWNS", kRenderFMTowns },
 	{ "pc9821", "PC-9821 (256 Colors)", kRenderPC9821 },
 	{ "pc9801", "PC-9801 (16 Colors)", kRenderPC9801 },
 	{ "2gs", "Apple IIgs", kRenderApple2GS },
