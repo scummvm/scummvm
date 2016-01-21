@@ -1168,8 +1168,9 @@ arguments -- see the next section.
   --output-rate=RATE       Select output sample rate in Hz (e.g. 22050)
   --opl-driver=DRIVER      Select AdLib (OPL) emulator (db, mame)
   --aspect-ratio           Enable aspect ratio correction
-  --render-mode=MODE       Enable additional render modes (cga, ega, hercGreen,
-                           hercAmber, amiga)
+  --render-mode=MODE       Enable additional render modes (hercGreen, hercAmber,
+                           cga, ega, vga, amiga, fmtowns, pc9821, pc9801, 2gs,
+                           atari)
 
   --alt-intro              Use alternative intro for CD versions of Beneath a
                            Steel Sky and Flight of the Amazon Queen

@@ -54,16 +54,18 @@
 #define GUIO_RENDERFMTOWNS	"\036"
 #define GUIO_RENDERPC9821	"\037"
 #define GUIO_RENDERPC9801	"\040"
+#define GUIO_RENDERAPPLE2GS	"\041"
+#define GUIO_RENDERATARIST	"\042"
 
 // Special GUIO flags for the AdvancedDetector's caching of game specific
 // options.
-#define GUIO_GAMEOPTIONS1	"\041"
-#define GUIO_GAMEOPTIONS2	"\042"
-#define GUIO_GAMEOPTIONS3	"\043"
-#define GUIO_GAMEOPTIONS4	"\044"
-#define GUIO_GAMEOPTIONS5	"\045"
-#define GUIO_GAMEOPTIONS6	"\046"
-#define GUIO_GAMEOPTIONS7	"\047"
+#define GUIO_GAMEOPTIONS1	"\050"
+#define GUIO_GAMEOPTIONS2	"\051"
+#define GUIO_GAMEOPTIONS3	"\052"
+#define GUIO_GAMEOPTIONS4	"\053"
+#define GUIO_GAMEOPTIONS5	"\054"
+#define GUIO_GAMEOPTIONS6	"\055"
+#define GUIO_GAMEOPTIONS7	"\056"
 
 #define GUIO0() (GUIO_NONE)
 #define GUIO1(a) (a)

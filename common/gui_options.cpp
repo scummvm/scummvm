@@ -62,6 +62,8 @@ const struct GameOpt {
 	{ GUIO_RENDERFMTOWNS,	"fmtowns" },
 	{ GUIO_RENDERPC9821,	"pc9821" },
 	{ GUIO_RENDERPC9801,	"pc9801" },
+	{ GUIO_RENDERAPPLE2GS,	"2gs" },
+	{ GUIO_RENDERATARIST,	"atari" },
 
 	{ GUIO_GAMEOPTIONS1, "gameOption1" },
 	{ GUIO_GAMEOPTIONS2, "gameOption2" },

@@ -116,8 +116,9 @@ static const char HELP_STRING[] =
 	"  --output-rate=RATE       Select output sample rate in Hz (e.g. 22050)\n"
 	"  --opl-driver=DRIVER      Select AdLib (OPL) emulator (db, mame)\n"
 	"  --aspect-ratio           Enable aspect ratio correction\n"
-	"  --render-mode=MODE       Enable additional render modes (cga, ega, hercGreen,\n"
-	"                           hercAmber, amiga)\n"
+	"  --render-mode=MODE       Enable additional render modes (hercGreen, hercAmber,\n"
+	"                           cga, ega, vga, amiga, fmtowns, pc9821, pc9801, 2gs,\n"
+	"                           atari)\n"
 #ifdef ENABLE_EVENTRECORDER
 	"  --record-mode=MODE       Specify record mode for event recorder (record, playback,\n"
 	"                           passthrough [default])\n"
