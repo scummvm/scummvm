@@ -60,12 +60,19 @@ enum SciSpeciaPlanelPictureCodes {
 };
 
 GfxFrameout::GfxFrameout(SegManager *segMan, ResourceManager *resMan, GfxCoordAdjuster *coordAdjuster, GfxCache *cache, GfxScreen *screen, GfxPalette32 *palette, GfxPaint32 *paint32)
-	: _segMan(segMan), _resMan(resMan), _cache(cache), _screen(screen), _palette(palette), _paint32(paint32) {
+	: _segMan(segMan), _resMan(resMan), _cache(cache), _screen(screen), _palette(palette), _paint32(paint32), _isHiRes(false) {
 
 	_coordAdjuster = (GfxCoordAdjuster32 *)coordAdjuster;
 	_curScrollText = -1;
 	_showScrollText = false;
 	_maxScrollTexts = 0;
+
+	// TODO: Make hires detection work uniformly across all SCI engine
+	// versions (this flag is normally passed by SCI::MakeGraphicsMgr
+	// to the GraphicsMgr constructor depending upon video configuration)
+	if (getSciVersion() >= SCI_VERSION_2_1_EARLY && _resMan->detectHires()) {
+		_isHiRes = true;
+	}
 }
 
 GfxFrameout::~GfxFrameout() {
@@ -877,7 +884,7 @@ void GfxFrameout::kernelFrameout() {
 						view->adjustBackUpscaledCoordinates(nsRect.top, nsRect.left);
 						view->adjustBackUpscaledCoordinates(nsRect.bottom, nsRect.right);
 						g_sci->_gfxCompare->setNSRect(itemEntry->object, nsRect);
-					} else if (getSciVersion() >= SCI_VERSION_2_1_EARLY && _resMan->detectHires()) {
+					} else if (getSciVersion() >= SCI_VERSION_2_1_EARLY && _isHiRes) {
 						_coordAdjuster->fromDisplayToScript(nsRect.top, nsRect.left);
 						_coordAdjuster->fromDisplayToScript(nsRect.bottom, nsRect.right);
 						g_sci->_gfxCompare->setNSRect(itemEntry->object, nsRect);

@@ -153,6 +153,8 @@ public:
 	void printPlaneItemList(Console *con, reg_t planeObject);
 
 private:
+	bool _isHiRes;
+
 	void showVideo();
 	void createPlaneItemList(reg_t planeObject, FrameoutList &itemList);
 	bool isPictureOutOfView(FrameoutEntry *itemEntry, Common::Rect planeRect, int16 planeOffsetX, int16 planeOffsetY);
