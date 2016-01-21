@@ -188,7 +188,7 @@ int Dialog::run() {
 		g_system->delayMillis(50);
 	}
 
-	_tempSurface.copyRectToSurface(_gui->_screen, r.left, r.top, r);
+	_tempSurface.copyRectToSurface(_gui->_screen, 0, 0, r);
 
 	return _pressedButton;
 }
