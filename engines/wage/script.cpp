@@ -1026,7 +1026,20 @@ void Script::appendObjNames(Common::String &str, ObjArray &objs) {
 }
 
 void Script::handleInventoryCommand() {
-	warning("STUB: handleInventoryCommand");
+	Chr *player = _world->_player;
+	ObjArray objs;
+
+	for (ObjArray::const_iterator it = player->_inventory.begin(); it != player->_inventory.end(); ++it)
+		if (!player->isWearing(*it))
+			objs.push_back(*it);
+
+	if (!objs.size()) {
+		appendText("Your pack is empty.");
+	} else {
+		Common::String res("Your pack contains ");
+		appendObjNames(res, objs);
+		appendText(res);
+	}
 }
 
 static const char *armorMessages[] = {

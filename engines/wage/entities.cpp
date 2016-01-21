@@ -483,4 +483,12 @@ const char *Chr::getDefiniteArticle(bool capitalize) {
 	return "";
 }
 
+bool Chr::isWearing(Obj *obj) {
+	for (int i = 0; i < NUMBER_OF_ARMOR_TYPES; i++)
+		if (_armor[i] == obj)
+			return true;
+
+	return false;
+}
+
 } // End of namespace Wage

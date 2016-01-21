@@ -229,6 +229,8 @@ public:
 	void wearObjs();
 
 	void resetState();
+
+	bool isWearing(Obj *obj);
 };
 
 class Obj : public Designed {
