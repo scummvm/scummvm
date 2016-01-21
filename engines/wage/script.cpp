@@ -1029,8 +1029,47 @@ void Script::handleInventoryCommand() {
 	warning("STUB: handleInventoryCommand");
 }
 
+static const char *armorMessages[] = {
+	"Head protection:",
+	"Chest protection:",
+	"Shield protection:", // TODO: check message
+	"Magical protection:"
+};
+
 void Script::handleStatusCommand() {
-	warning("STUB: handleStatusCommand");
+	Chr *player = _world->_player;
+	char buf[512];
+
+	snprintf(buf, 512, "Character name: %s%s", player->getDefiniteArticle(false), player->_name.c_str());
+	appendText(buf);
+	snprintf(buf, 512, "Experience: %d", player->_context._experience);
+	appendText(buf);
+
+	int wealth = 0;
+	for (ObjArray::const_iterator it = player->_inventory.begin(); it != player->_inventory.end(); ++it)
+		wealth += (*it)->_value;
+
+	snprintf(buf, 512, "Wealth: %d", wealth);
+	appendText(buf);
+
+	for (int i = 0; i < Chr::NUMBER_OF_ARMOR_TYPES; i++) {
+		if (player->_armor[i] != NULL) {
+			snprintf(buf, 512, "%s %s", armorMessages[i], player->_armor[i]->_name.c_str());
+			appendText(buf);
+		}
+	}
+
+	for (ObjArray::const_iterator it = player->_inventory.begin(); it != player->_inventory.end(); ++it) {
+		int uses = (*it)->_numberOfUses;
+
+		if (uses > 0) {
+			snprintf(buf, 512, "Your %s has %d uses left.", (*it)->_name.c_str(), uses);
+		}
+	}
+
+	printPlayerCondition(player);
+
+	_callbacks->_commandWasQuick = true;
 }
 
 void Script::handleRestCommand() {
