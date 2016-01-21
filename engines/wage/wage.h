@@ -137,6 +137,7 @@ private:
 	void performTake(Chr *npc, Obj *obj);
 	void decrementUses(Obj *obj);
 	bool attackHit(Chr *attacker, Chr *victim, Obj *weapon, int targetIndex);
+	void performHealingMagic(Chr *chr, Obj *magicalObject);
 
 	void doClose();
 

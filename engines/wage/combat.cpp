@@ -237,10 +237,24 @@ void WageEngine::decrementUses(Obj *obj) {
 
 bool WageEngine::attackHit(Chr *attacker, Chr *victim, Obj *weapon, int targetIndex) {
 	warning("STUB: attackHit");
+
+	return false;
 }
 
 void WageEngine::performMagic(Chr *attacker, Chr *victim, Obj *magicalObject) {
-	warning("STUB: performMagic()");
+	switch (magicalObject->_attackType) {
+	case Obj::HEALS_PHYSICAL_DAMAGE:
+	case Obj::HEALS_SPIRITUAL_DAMAGE:
+	case Obj::HEALS_PHYSICAL_AND_SPIRITUAL_DAMAGE:
+		performHealingMagic(attacker, magicalObject);
+		return;
+	}
+
+	performAttack(attacker, victim, magicalObject);
+}
+
+void WageEngine::performHealingMagic(Chr *chr, Obj *magicalObject) {
+	warning("STUB: performHealingMagic()");
 }
 
 void WageEngine::performMove(Chr *chr, int validMoves) {
