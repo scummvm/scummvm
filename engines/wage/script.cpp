@@ -1061,7 +1061,22 @@ void Script::handleTakeCommand(const char *target) {
 }
 
 void Script::handleDropCommand(const char *target) {
-	warning("STUB: handleDropCommand");
+	Common::String t(target);
+
+	t.toLowercase();
+
+	for (ObjArray::const_iterator it = _world->_player->_inventory.begin(); it != _world->_player->_inventory.end(); ++it) {
+		Common::String n((*it)->_name);
+		n.toLowercase();
+
+		if (t.contains(n)) {
+			char buf[256];
+
+			snprintf(buf, 256, "You no longer have the %s.", (*it)->_name.c_str());
+			_world->move(*it, _world->_player->_currentScene);
+			break;
+		}
+	}
 }
 
 void Script::handleAimCommand(const char *target) {
