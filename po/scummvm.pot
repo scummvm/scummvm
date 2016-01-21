@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2015-12-23 00:28+0000\n"
+"POT-Creation-Date: 2016-01-21 23:30+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -57,12 +57,12 @@ msgstr ""
 #: gui/recorderdialog.cpp:70 gui/recorderdialog.cpp:156
 #: gui/saveload-dialog.cpp:216 gui/saveload-dialog.cpp:276
 #: gui/saveload-dialog.cpp:547 gui/saveload-dialog.cpp:931
-#: gui/themebrowser.cpp:55 gui/fluidsynth-dialog.cpp:152
-#: engines/engine.cpp:483 backends/platform/wii/options.cpp:48
+#: gui/themebrowser.cpp:55 gui/fluidsynth-dialog.cpp:152 engines/engine.cpp:546
+#: backends/platform/wii/options.cpp:48
 #: backends/events/default/default-events.cpp:196
-#: backends/events/default/default-events.cpp:218
-#: engines/drascula/saveload.cpp:49 engines/parallaction/saveload.cpp:274
-#: engines/scumm/dialogs.cpp:191 engines/sword1/control.cpp:865
+#: backends/events/default/default-events.cpp:218 engines/scumm/dialogs.cpp:191
+#: engines/sword1/control.cpp:865 engines/parallaction/saveload.cpp:274
+#: engines/drascula/saveload.cpp:49
 msgid "Cancel"
 msgstr ""
 
@@ -99,8 +99,8 @@ msgstr ""
 msgid "Do you really want to overwrite the file?"
 msgstr ""
 
-#: gui/filebrowser-dialog.cpp:132 gui/launcher.cpp:793 gui/launcher.cpp:941
-#: gui/launcher.cpp:1000 gui/fluidsynth-dialog.cpp:217
+#: gui/filebrowser-dialog.cpp:132 gui/launcher.cpp:795 gui/launcher.cpp:943
+#: gui/launcher.cpp:1002 gui/fluidsynth-dialog.cpp:217
 #: backends/events/symbiansdl/symbiansdl-events.cpp:186
 #: backends/platform/wince/CEActionsPocket.cpp:326
 #: backends/platform/wince/CEActionsSmartphone.cpp:287
@@ -109,8 +109,8 @@ msgstr ""
 msgid "Yes"
 msgstr ""
 
-#: gui/filebrowser-dialog.cpp:132 gui/launcher.cpp:793 gui/launcher.cpp:941
-#: gui/launcher.cpp:1000 gui/fluidsynth-dialog.cpp:217
+#: gui/filebrowser-dialog.cpp:132 gui/launcher.cpp:795 gui/launcher.cpp:943
+#: gui/launcher.cpp:1002 gui/fluidsynth-dialog.cpp:217
 #: backends/events/symbiansdl/symbiansdl-events.cpp:186
 #: backends/platform/wince/CEActionsPocket.cpp:326
 #: backends/platform/wince/CEActionsSmartphone.cpp:287
@@ -119,26 +119,26 @@ msgstr ""
 msgid "No"
 msgstr ""
 
-#: gui/gui-manager.cpp:117 backends/keymapper/remap-dialog.cpp:53
+#: gui/gui-manager.cpp:119 backends/keymapper/remap-dialog.cpp:53
 #: engines/scumm/help.cpp:126 engines/scumm/help.cpp:141
 #: engines/scumm/help.cpp:166 engines/scumm/help.cpp:192
 #: engines/scumm/help.cpp:210
 msgid "Close"
 msgstr ""
 
-#: gui/gui-manager.cpp:120
+#: gui/gui-manager.cpp:122
 msgid "Mouse click"
 msgstr ""
 
-#: gui/gui-manager.cpp:124 base/main.cpp:319
+#: gui/gui-manager.cpp:126 base/main.cpp:322
 msgid "Display keyboard"
 msgstr ""
 
-#: gui/gui-manager.cpp:128 base/main.cpp:323
+#: gui/gui-manager.cpp:130 base/main.cpp:326
 msgid "Remap keys"
 msgstr ""
 
-#: gui/gui-manager.cpp:131 base/main.cpp:326 engines/scumm/help.cpp:87
+#: gui/gui-manager.cpp:133 base/main.cpp:329 engines/scumm/help.cpp:87
 msgid "Toggle fullscreen"
 msgstr ""
 
@@ -150,23 +150,22 @@ msgstr ""
 msgid "Map"
 msgstr ""
 
-#: gui/KeysDialog.cpp:42 gui/launcher.cpp:352 gui/launcher.cpp:1048
-#: gui/launcher.cpp:1052 gui/massadd.cpp:92 gui/options.cpp:1238
+#: gui/KeysDialog.cpp:42 gui/launcher.cpp:352 gui/launcher.cpp:1050
+#: gui/launcher.cpp:1054 gui/massadd.cpp:92 gui/options.cpp:1238
 #: gui/saveload-dialog.cpp:932 gui/fluidsynth-dialog.cpp:153
-#: engines/engine.cpp:402 engines/engine.cpp:413
+#: engines/engine.cpp:465 engines/engine.cpp:476
 #: backends/platform/wii/options.cpp:47
 #: backends/platform/wince/CELauncherDialog.cpp:54
-#: engines/agos/animation.cpp:558 engines/drascula/saveload.cpp:49
-#: engines/groovie/script.cpp:408 engines/parallaction/saveload.cpp:274
-#: engines/scumm/dialogs.cpp:193 engines/scumm/scumm.cpp:1834
-#: engines/scumm/players/player_v3m.cpp:130
-#: engines/scumm/players/player_v5m.cpp:108 engines/sky/compact.cpp:131
-#: engines/sky/compact.cpp:141 engines/sword1/animation.cpp:524
-#: engines/sword1/animation.cpp:545 engines/sword1/animation.cpp:561
-#: engines/sword1/animation.cpp:569 engines/sword1/control.cpp:865
-#: engines/sword1/logic.cpp:1633 engines/sword2/animation.cpp:425
-#: engines/sword2/animation.cpp:445 engines/sword2/animation.cpp:461
-#: engines/sword2/animation.cpp:471
+#: engines/agos/animation.cpp:558 engines/scumm/dialogs.cpp:193
+#: engines/scumm/scumm.cpp:1834 engines/scumm/players/player_v3m.cpp:130
+#: engines/scumm/players/player_v5m.cpp:108 engines/groovie/script.cpp:408
+#: engines/sky/compact.cpp:131 engines/sky/compact.cpp:141
+#: engines/sword2/animation.cpp:425 engines/sword2/animation.cpp:445
+#: engines/sword2/animation.cpp:461 engines/sword2/animation.cpp:471
+#: engines/sword1/animation.cpp:524 engines/sword1/animation.cpp:545
+#: engines/sword1/animation.cpp:561 engines/sword1/animation.cpp:569
+#: engines/sword1/control.cpp:865 engines/sword1/logic.cpp:1633
+#: engines/parallaction/saveload.cpp:274 engines/drascula/saveload.cpp:49
 msgid "OK"
 msgstr ""
 
@@ -491,64 +490,64 @@ msgstr ""
 msgid "Search in game list"
 msgstr ""
 
-#: gui/launcher.cpp:661 gui/launcher.cpp:1222
+#: gui/launcher.cpp:661 gui/launcher.cpp:1224
 msgid "Search:"
 msgstr ""
 
 #: gui/launcher.cpp:685 engines/dialogs.cpp:115 engines/cruise/menu.cpp:214
-#: engines/mohawk/myst.cpp:245 engines/mohawk/riven.cpp:718
 #: engines/pegasus/pegasus.cpp:353 engines/tsage/scenes.cpp:600
+#: engines/mohawk/myst.cpp:245 engines/mohawk/riven.cpp:718
 msgid "Load game:"
 msgstr ""
 
 #: gui/launcher.cpp:685 engines/dialogs.cpp:115
 #: backends/platform/wince/CEActionsPocket.cpp:267
 #: backends/platform/wince/CEActionsSmartphone.cpp:231
-#: engines/cruise/menu.cpp:214 engines/mohawk/myst.cpp:245
-#: engines/mohawk/riven.cpp:718 engines/pegasus/pegasus.cpp:353
-#: engines/scumm/dialogs.cpp:189 engines/tsage/scenes.cpp:600
+#: engines/scumm/dialogs.cpp:189 engines/cruise/menu.cpp:214
+#: engines/pegasus/pegasus.cpp:353 engines/tsage/scenes.cpp:600
+#: engines/mohawk/myst.cpp:245 engines/mohawk/riven.cpp:718
 msgid "Load"
 msgstr ""
 
-#: gui/launcher.cpp:792
+#: gui/launcher.cpp:794
 msgid ""
 "Do you really want to run the mass game detector? This could potentially add "
 "a huge number of games."
 msgstr ""
 
-#: gui/launcher.cpp:841
+#: gui/launcher.cpp:843
 msgid "ScummVM couldn't open the specified directory!"
 msgstr ""
 
-#: gui/launcher.cpp:853
+#: gui/launcher.cpp:855
 msgid "ScummVM could not find any game in the specified directory!"
 msgstr ""
 
-#: gui/launcher.cpp:867
+#: gui/launcher.cpp:869
 msgid "Pick the game:"
 msgstr ""
 
-#: gui/launcher.cpp:941
+#: gui/launcher.cpp:943
 msgid "Do you really want to remove this game configuration?"
 msgstr ""
 
-#: gui/launcher.cpp:999
+#: gui/launcher.cpp:1001
 msgid "Do you want to load saved game?"
 msgstr ""
 
-#: gui/launcher.cpp:1048
+#: gui/launcher.cpp:1050
 msgid "This game does not support loading games from the launcher."
 msgstr ""
 
-#: gui/launcher.cpp:1052
+#: gui/launcher.cpp:1054
 msgid "ScummVM could not find any engine capable of running the selected game!"
 msgstr ""
 
-#: gui/launcher.cpp:1159
+#: gui/launcher.cpp:1161
 msgid "Mass Add..."
 msgstr ""
 
-#: gui/launcher.cpp:1161
+#: gui/launcher.cpp:1163
 msgid "Record..."
 msgstr ""
 
@@ -1216,35 +1215,35 @@ msgid ""
 "Do you really want to reset all FluidSynth settings to their default values?"
 msgstr ""
 
-#: base/main.cpp:228
+#: base/main.cpp:237
 #, c-format
 msgid "Engine does not support debug level '%s'"
 msgstr ""
 
-#: base/main.cpp:306
+#: base/main.cpp:309
 msgid "Menu"
 msgstr ""
 
-#: base/main.cpp:309 backends/platform/symbian/src/SymbianActions.cpp:45
+#: base/main.cpp:312 backends/platform/symbian/src/SymbianActions.cpp:45
 #: backends/platform/wince/CEActionsPocket.cpp:45
 #: backends/platform/wince/CEActionsSmartphone.cpp:46
 msgid "Skip"
 msgstr ""
 
-#: base/main.cpp:312 backends/platform/symbian/src/SymbianActions.cpp:50
+#: base/main.cpp:315 backends/platform/symbian/src/SymbianActions.cpp:50
 #: backends/platform/wince/CEActionsPocket.cpp:42
 msgid "Pause"
 msgstr ""
 
-#: base/main.cpp:315
+#: base/main.cpp:318
 msgid "Skip line"
 msgstr ""
 
-#: base/main.cpp:507
+#: base/main.cpp:510
 msgid "Error running game:"
 msgstr ""
 
-#: base/main.cpp:554
+#: base/main.cpp:557
 msgid "Could not find any engine capable of running the selected game"
 msgstr ""
 
@@ -1358,11 +1357,11 @@ msgctxt "lowres"
 msgid "~R~eturn to Launcher"
 msgstr ""
 
-#: engines/dialogs.cpp:116 engines/agi/saveload.cpp:803
-#: engines/cruise/menu.cpp:212 engines/drascula/saveload.cpp:336
-#: engines/dreamweb/saveload.cpp:261 engines/neverhood/menumodule.cpp:877
-#: engines/pegasus/pegasus.cpp:377 engines/sci/engine/kfile.cpp:759
-#: engines/toltecs/menu.cpp:281 engines/tsage/scenes.cpp:598
+#: engines/dialogs.cpp:116 engines/dreamweb/saveload.cpp:261
+#: engines/agi/saveload.cpp:803 engines/cruise/menu.cpp:212
+#: engines/pegasus/pegasus.cpp:377 engines/tsage/scenes.cpp:598
+#: engines/sci/engine/kfile.cpp:769 engines/toltecs/menu.cpp:281
+#: engines/drascula/saveload.cpp:336 engines/neverhood/menumodule.cpp:877
 msgid "Save game:"
 msgstr ""
 
@@ -1371,11 +1370,11 @@ msgstr ""
 #: backends/platform/wince/CEActionsPocket.cpp:267
 #: backends/platform/wince/CEActionsSmartphone.cpp:45
 #: backends/platform/wince/CEActionsSmartphone.cpp:231
-#: engines/agi/saveload.cpp:803 engines/cruise/menu.cpp:212
-#: engines/drascula/saveload.cpp:336 engines/dreamweb/saveload.cpp:261
-#: engines/neverhood/menumodule.cpp:877 engines/pegasus/pegasus.cpp:377
-#: engines/sci/engine/kfile.cpp:759 engines/scumm/dialogs.cpp:188
-#: engines/toltecs/menu.cpp:281 engines/tsage/scenes.cpp:598
+#: engines/dreamweb/saveload.cpp:261 engines/agi/saveload.cpp:803
+#: engines/scumm/dialogs.cpp:188 engines/cruise/menu.cpp:212
+#: engines/pegasus/pegasus.cpp:377 engines/tsage/scenes.cpp:598
+#: engines/sci/engine/kfile.cpp:769 engines/toltecs/menu.cpp:281
+#: engines/drascula/saveload.cpp:336 engines/neverhood/menumodule.cpp:877
 msgid "Save"
 msgstr ""
 
@@ -1393,13 +1392,13 @@ msgid ""
 "and for instructions on how to obtain further assistance."
 msgstr ""
 
-#: engines/dialogs.cpp:307 engines/mohawk/dialogs.cpp:109
-#: engines/mohawk/dialogs.cpp:170 engines/tsage/dialogs.cpp:106
+#: engines/dialogs.cpp:307 engines/tsage/dialogs.cpp:106
+#: engines/mohawk/dialogs.cpp:109 engines/mohawk/dialogs.cpp:170
 msgid "~O~K"
 msgstr ""
 
-#: engines/dialogs.cpp:308 engines/mohawk/dialogs.cpp:110
-#: engines/mohawk/dialogs.cpp:171 engines/tsage/dialogs.cpp:107
+#: engines/dialogs.cpp:308 engines/tsage/dialogs.cpp:107
+#: engines/mohawk/dialogs.cpp:110 engines/mohawk/dialogs.cpp:171
 msgid "~C~ancel"
 msgstr ""
 
@@ -1407,23 +1406,23 @@ msgstr ""
 msgid "~K~eys"
 msgstr ""
 
-#: engines/engine.cpp:276
+#: engines/engine.cpp:339
 msgid "Could not initialize color format."
 msgstr ""
 
-#: engines/engine.cpp:284
+#: engines/engine.cpp:347
 msgid "Could not switch to video mode: '"
 msgstr ""
 
-#: engines/engine.cpp:293
+#: engines/engine.cpp:356
 msgid "Could not apply aspect ratio setting."
 msgstr ""
 
-#: engines/engine.cpp:298
+#: engines/engine.cpp:361
 msgid "Could not apply fullscreen setting."
 msgstr ""
 
-#: engines/engine.cpp:398
+#: engines/engine.cpp:461
 msgid ""
 "You appear to be playing this game directly\n"
 "from the CD. This is known to cause problems,\n"
@@ -1432,7 +1431,7 @@ msgid ""
 "See the README file for details."
 msgstr ""
 
-#: engines/engine.cpp:409
+#: engines/engine.cpp:472
 msgid ""
 "This game has audio tracks in its disk. These\n"
 "tracks need to be ripped from the disk using\n"
@@ -1441,21 +1440,21 @@ msgid ""
 "See the README file for details."
 msgstr ""
 
-#: engines/engine.cpp:467
+#: engines/engine.cpp:530
 #, c-format
 msgid ""
 "Gamestate load failed (%s)! Please consult the README for basic information, "
 "and for instructions on how to obtain further assistance."
 msgstr ""
 
-#: engines/engine.cpp:480
+#: engines/engine.cpp:543
 msgid ""
 "WARNING: The game you are about to start is not yet fully supported by "
 "ScummVM. As such, it is likely to be unstable, and any saves you make might "
 "not work in future versions of ScummVM."
 msgstr ""
 
-#: engines/engine.cpp:483
+#: engines/engine.cpp:546
 msgid "Start anyway"
 msgstr ""
 
@@ -1784,9 +1783,8 @@ msgstr ""
 #: backends/platform/symbian/src/SymbianActions.cpp:52
 #: backends/platform/wince/CEActionsPocket.cpp:44
 #: backends/platform/wince/CEActionsSmartphone.cpp:52
-#: backends/events/default/default-events.cpp:218
-#: engines/scumm/dialogs.cpp:192 engines/scumm/help.cpp:83
-#: engines/scumm/help.cpp:85
+#: backends/events/default/default-events.cpp:218 engines/scumm/dialogs.cpp:192
+#: engines/scumm/help.cpp:83 engines/scumm/help.cpp:85
 msgid "Quit"
 msgstr ""
 
@@ -2137,48 +2135,46 @@ msgstr ""
 msgid "Clicking Disabled"
 msgstr ""
 
-#: engines/agi/detection.cpp:147 engines/drascula/detection.cpp:302
-#: engines/dreamweb/detection.cpp:47 engines/neverhood/detection.cpp:160
+#: engines/dreamweb/detection.cpp:47 engines/agi/detection.cpp:147
 #: engines/sci/detection.cpp:394 engines/toltecs/detection.cpp:200
-#: engines/zvision/detection_tables.h:51
+#: engines/zvision/detection_tables.h:51 engines/drascula/detection.cpp:302
+#: engines/neverhood/detection.cpp:160 engines/cine/detection.cpp:70
 msgid "Use original save/load screens"
 msgstr ""
 
-#: engines/agi/detection.cpp:148 engines/drascula/detection.cpp:303
-#: engines/dreamweb/detection.cpp:48 engines/neverhood/detection.cpp:161
+#: engines/dreamweb/detection.cpp:48 engines/agi/detection.cpp:148
 #: engines/sci/detection.cpp:395 engines/toltecs/detection.cpp:201
+#: engines/drascula/detection.cpp:303 engines/neverhood/detection.cpp:161
+#: engines/cine/detection.cpp:71
 msgid "Use the original save/load screens, instead of the ScummVM ones"
 msgstr ""
 
-#: engines/agi/detection.cpp:157
-msgid "Use an alternative palette"
+#: engines/dreamweb/detection.cpp:57
+msgid "Use bright palette mode"
 msgstr ""
 
-#: engines/agi/detection.cpp:158
-msgid ""
-"Use an alternative palette, common for all Amiga games. This was the old "
-"behavior"
+#: engines/dreamweb/detection.cpp:58
+msgid "Display graphics using the game's bright palette"
 msgstr ""
 
-#: engines/agi/detection.cpp:167
-msgid "Mouse support"
-msgstr ""
-
-#: engines/agi/detection.cpp:168
-msgid ""
-"Enables mouse support. Allows to use mouse for movement and in game menus."
-msgstr ""
-
-#: engines/agi/saveload.cpp:816 engines/drascula/saveload.cpp:349
-#: engines/dreamweb/saveload.cpp:169 engines/neverhood/menumodule.cpp:890
-#: engines/sci/engine/kfile.cpp:858 engines/toltecs/menu.cpp:256
+#: engines/dreamweb/saveload.cpp:169 engines/agi/saveload.cpp:816
+#: engines/sci/engine/kfile.cpp:868 engines/toltecs/menu.cpp:256
+#: engines/drascula/saveload.cpp:349 engines/neverhood/menumodule.cpp:890
 msgid "Restore game:"
 msgstr ""
 
-#: engines/agi/saveload.cpp:816 engines/drascula/saveload.cpp:349
-#: engines/dreamweb/saveload.cpp:169 engines/neverhood/menumodule.cpp:890
-#: engines/sci/engine/kfile.cpp:858 engines/toltecs/menu.cpp:256
+#: engines/dreamweb/saveload.cpp:169 engines/agi/saveload.cpp:816
+#: engines/sci/engine/kfile.cpp:868 engines/toltecs/menu.cpp:256
+#: engines/drascula/saveload.cpp:349 engines/neverhood/menumodule.cpp:890
 msgid "Restore"
+msgstr ""
+
+#: engines/queen/detection.cpp:56
+msgid "Alternative intro"
+msgstr ""
+
+#: engines/queen/detection.cpp:57
+msgid "Use an alternative game intro (CD version only)"
 msgstr ""
 
 #: engines/agos/saveload.cpp:160 engines/scumm/scumm.cpp:2377
@@ -2210,384 +2206,23 @@ msgstr ""
 msgid "Cutscene file '%s' not found!"
 msgstr ""
 
-#: engines/cge/detection.cpp:105 engines/cge2/detection.cpp:101
-msgid "Color Blind Mode"
+#: engines/agi/detection.cpp:157
+msgid "Use an alternative palette"
 msgstr ""
 
-#: engines/cge/detection.cpp:106 engines/cge2/detection.cpp:102
-msgid "Enable Color Blind Mode by default"
-msgstr ""
-
-#: engines/drascula/saveload.cpp:47
+#: engines/agi/detection.cpp:158
 msgid ""
-"ScummVM found that you have old savefiles for Drascula that should be "
-"converted.\n"
-"The old save game format is no longer supported, so you will not be able to "
-"load your games if you don't convert them.\n"
-"\n"
-"Press OK to convert them now, otherwise you will be asked again the next "
-"time you start the game.\n"
+"Use an alternative palette, common for all Amiga games. This was the old "
+"behavior"
 msgstr ""
 
-#: engines/dreamweb/detection.cpp:57
-msgid "Use bright palette mode"
+#: engines/agi/detection.cpp:167
+msgid "Mouse support"
 msgstr ""
 
-#: engines/dreamweb/detection.cpp:58
-msgid "Display graphics using the game's bright palette"
-msgstr ""
-
-#: engines/gob/inter_playtoons.cpp:256 engines/gob/inter_v2.cpp:1470
-#: engines/gob/inter_geisha.cpp:232 engines/tinsel/saveload.cpp:532
-msgid "Failed to load game state from file."
-msgstr ""
-
-#: engines/gob/inter_v2.cpp:1540 engines/gob/inter_geisha.cpp:263
-#: engines/tinsel/saveload.cpp:545
-msgid "Failed to save game state to file."
-msgstr ""
-
-#: engines/gob/inter_v5.cpp:107
-msgid "Failed to delete file."
-msgstr ""
-
-#: engines/groovie/detection.cpp:312
-msgid "Fast movie speed"
-msgstr ""
-
-#: engines/groovie/detection.cpp:313
-msgid "Play movies at an increased speed"
-msgstr ""
-
-#: engines/groovie/script.cpp:408
-msgid "Failed to save game"
-msgstr ""
-
-#: engines/hopkins/detection.cpp:76 engines/hopkins/detection.cpp:86
-msgid "Gore Mode"
-msgstr ""
-
-#: engines/hopkins/detection.cpp:77 engines/hopkins/detection.cpp:87
-msgid "Enable Gore Mode when available"
-msgstr ""
-
-#. I18N: Studio audience adds an applause and cheering sounds whenever
-#. Malcolm makes a joke.
-#: engines/kyra/detection.cpp:62
-msgid "Studio audience"
-msgstr ""
-
-#: engines/kyra/detection.cpp:63
-msgid "Enable studio audience"
-msgstr ""
-
-#. I18N: This option allows the user to skip text and cutscenes.
-#: engines/kyra/detection.cpp:73
-msgid "Skip support"
-msgstr ""
-
-#: engines/kyra/detection.cpp:74
-msgid "Allow text and cutscenes to be skipped"
-msgstr ""
-
-#. I18N: Helium mode makes people sound like they've inhaled Helium.
-#: engines/kyra/detection.cpp:84
-msgid "Helium mode"
-msgstr ""
-
-#: engines/kyra/detection.cpp:85
-msgid "Enable helium mode"
-msgstr ""
-
-#. I18N: When enabled, this option makes scrolling smoother when
-#. changing from one screen to another.
-#: engines/kyra/detection.cpp:99
-msgid "Smooth scrolling"
-msgstr ""
-
-#: engines/kyra/detection.cpp:100
-msgid "Enable smooth scrolling when walking"
-msgstr ""
-
-#. I18N: When enabled, this option changes the cursor when it floats to the
-#. edge of the screen to a directional arrow. The player can then click to
-#. walk towards that direction.
-#: engines/kyra/detection.cpp:112
-msgid "Floating cursors"
-msgstr ""
-
-#: engines/kyra/detection.cpp:113
-msgid "Enable floating cursors"
-msgstr ""
-
-#. I18N: HP stands for Hit Points
-#: engines/kyra/detection.cpp:127
-msgid "HP bar graphs"
-msgstr ""
-
-#: engines/kyra/detection.cpp:128
-msgid "Enable hit point bar graphs"
-msgstr ""
-
-#: engines/kyra/lol.cpp:478
-msgid "Attack 1"
-msgstr ""
-
-#: engines/kyra/lol.cpp:479
-msgid "Attack 2"
-msgstr ""
-
-#: engines/kyra/lol.cpp:480
-msgid "Attack 3"
-msgstr ""
-
-#: engines/kyra/lol.cpp:481
-msgid "Move Forward"
-msgstr ""
-
-#: engines/kyra/lol.cpp:482
-msgid "Move Back"
-msgstr ""
-
-#: engines/kyra/lol.cpp:483
-msgid "Slide Left"
-msgstr ""
-
-#: engines/kyra/lol.cpp:484
-msgid "Slide Right"
-msgstr ""
-
-#: engines/kyra/lol.cpp:485 engines/pegasus/pegasus.cpp:2509
-msgid "Turn Left"
-msgstr ""
-
-#: engines/kyra/lol.cpp:486 engines/pegasus/pegasus.cpp:2510
-msgid "Turn Right"
-msgstr ""
-
-#: engines/kyra/lol.cpp:487
-msgid "Rest"
-msgstr ""
-
-#: engines/kyra/lol.cpp:488
-msgid "Options"
-msgstr ""
-
-#: engines/kyra/lol.cpp:489
-msgid "Choose Spell"
-msgstr ""
-
-#: engines/kyra/sound_midi.cpp:477
+#: engines/agi/detection.cpp:168
 msgid ""
-"You appear to be using a General MIDI device,\n"
-"but your game only supports Roland MT32 MIDI.\n"
-"We try to map the Roland MT32 instruments to\n"
-"General MIDI ones. It is still possible that\n"
-"some tracks sound incorrect."
-msgstr ""
-
-#: engines/kyra/saveload_eob.cpp:557
-#, c-format
-msgid ""
-"The following original save game file has been found in your game path:\n"
-"\n"
-"%s %s\n"
-"\n"
-"Do you wish to use this save game file with ScummVM?\n"
-"\n"
-msgstr ""
-
-#: engines/kyra/saveload_eob.cpp:590
-#, c-format
-msgid ""
-"A save game file was found in the specified slot %d. Overwrite?\n"
-"\n"
-msgstr ""
-
-#: engines/kyra/saveload_eob.cpp:623
-#, c-format
-msgid ""
-"%d original save game files have been successfully imported into\n"
-"ScummVM. If you want to manually import original save game files later you "
-"will\n"
-"need to open the ScummVM debug console and use the command "
-"'import_savefile'.\n"
-"\n"
-msgstr ""
-
-#. I18N: Option for fast scene switching
-#: engines/mohawk/dialogs.cpp:92 engines/mohawk/dialogs.cpp:167
-msgid "~Z~ip Mode Activated"
-msgstr ""
-
-#: engines/mohawk/dialogs.cpp:93
-msgid "~T~ransitions Enabled"
-msgstr ""
-
-#. I18N: Drop book page
-#: engines/mohawk/dialogs.cpp:95
-msgid "~D~rop Page"
-msgstr ""
-
-#: engines/mohawk/dialogs.cpp:99
-msgid "~S~how Map"
-msgstr ""
-
-#: engines/mohawk/dialogs.cpp:105
-msgid "~M~ain Menu"
-msgstr ""
-
-#: engines/mohawk/dialogs.cpp:168
-msgid "~W~ater Effect Enabled"
-msgstr ""
-
-#: engines/neverhood/detection.cpp:167
-msgid "Skip the Hall of Records storyboard scenes"
-msgstr ""
-
-#: engines/neverhood/detection.cpp:168
-msgid "Allows the player to skip past the Hall of Records storyboard scenes"
-msgstr ""
-
-#: engines/neverhood/detection.cpp:174
-msgid "Scale the making of videos to full screen"
-msgstr ""
-
-#: engines/neverhood/detection.cpp:175
-msgid "Scale the making of videos, so that they use the whole screen"
-msgstr ""
-
-#: engines/parallaction/saveload.cpp:133
-#, c-format
-msgid ""
-"Can't save game in slot %i\n"
-"\n"
-msgstr ""
-
-#: engines/parallaction/saveload.cpp:204
-msgid "Loading game..."
-msgstr ""
-
-#: engines/parallaction/saveload.cpp:219
-msgid "Saving game..."
-msgstr ""
-
-#: engines/parallaction/saveload.cpp:272
-msgid ""
-"ScummVM found that you have old savefiles for Nippon Safes that should be "
-"renamed.\n"
-"The old names are no longer supported, so you will not be able to load your "
-"games if you don't convert them.\n"
-"\n"
-"Press OK to convert them now, otherwise you will be asked next time.\n"
-msgstr ""
-
-#: engines/parallaction/saveload.cpp:319
-msgid "ScummVM successfully converted all your savefiles."
-msgstr ""
-
-#: engines/parallaction/saveload.cpp:321
-msgid ""
-"ScummVM printed some warnings in your console window and can't guarantee all "
-"your files have been converted.\n"
-"\n"
-"Please report to the team."
-msgstr ""
-
-#: engines/pegasus/pegasus.cpp:714
-msgid "Invalid save file name"
-msgstr ""
-
-#: engines/pegasus/pegasus.cpp:2507
-msgid "Up/Zoom In/Move Forward/Open Doors"
-msgstr ""
-
-#: engines/pegasus/pegasus.cpp:2508
-msgid "Down/Zoom Out"
-msgstr ""
-
-#: engines/pegasus/pegasus.cpp:2511
-msgid "Display/Hide Inventory Tray"
-msgstr ""
-
-#: engines/pegasus/pegasus.cpp:2512
-msgid "Display/Hide Biochip Tray"
-msgstr ""
-
-#: engines/pegasus/pegasus.cpp:2513
-msgid "Action/Select"
-msgstr ""
-
-#: engines/pegasus/pegasus.cpp:2514
-msgid "Toggle Center Data Display"
-msgstr ""
-
-#: engines/pegasus/pegasus.cpp:2515
-msgid "Display/Hide Info Screen"
-msgstr ""
-
-#: engines/pegasus/pegasus.cpp:2516
-msgid "Display/Hide Pause Menu"
-msgstr ""
-
-#: engines/queen/detection.cpp:56
-msgid "Alternative intro"
-msgstr ""
-
-#: engines/queen/detection.cpp:57
-msgid "Use an alternative game intro (CD version only)"
-msgstr ""
-
-#: engines/sci/detection.cpp:374
-msgid "Skip EGA dithering pass (full color backgrounds)"
-msgstr ""
-
-#: engines/sci/detection.cpp:375
-msgid "Skip dithering pass in EGA games, graphics are shown with full colors"
-msgstr ""
-
-#: engines/sci/detection.cpp:384
-msgid "Prefer digital sound effects"
-msgstr ""
-
-#: engines/sci/detection.cpp:385
-msgid "Prefer digital sound effects instead of synthesized ones"
-msgstr ""
-
-#: engines/sci/detection.cpp:404
-msgid "Use IMF/Yamaha FB-01 for MIDI output"
-msgstr ""
-
-#: engines/sci/detection.cpp:405
-msgid ""
-"Use an IBM Music Feature card or a Yamaha FB-01 FM synth module for MIDI "
-"output"
-msgstr ""
-
-#: engines/sci/detection.cpp:415
-msgid "Use CD audio"
-msgstr ""
-
-#: engines/sci/detection.cpp:416
-msgid "Use CD audio instead of in-game audio, if available"
-msgstr ""
-
-#: engines/sci/detection.cpp:426
-msgid "Use Windows cursors"
-msgstr ""
-
-#: engines/sci/detection.cpp:427
-msgid ""
-"Use the Windows cursors (smaller and monochrome) instead of the DOS ones"
-msgstr ""
-
-#: engines/sci/detection.cpp:437
-msgid "Use silver cursors"
-msgstr ""
-
-#: engines/sci/detection.cpp:438
-msgid ""
-"Use the alternate set of silver cursors, instead of the normal golden ones"
+"Enables mouse support. Allows to use mouse for movement and in game menus."
 msgstr ""
 
 #: engines/scumm/dialogs.cpp:176
@@ -3281,6 +2916,18 @@ msgid ""
 "instruments from. Music will be disabled."
 msgstr ""
 
+#: engines/groovie/detection.cpp:312
+msgid "Fast movie speed"
+msgstr ""
+
+#: engines/groovie/detection.cpp:313
+msgid "Play movies at an increased speed"
+msgstr ""
+
+#: engines/groovie/script.cpp:408
+msgid "Failed to save game"
+msgstr ""
+
 #: engines/sky/compact.cpp:130
 msgid ""
 "Unable to find \"sky.cpt\" file!\n"
@@ -3301,23 +2948,36 @@ msgstr ""
 msgid "Use the floppy version's intro (CD version only)"
 msgstr ""
 
-#: engines/sword1/animation.cpp:524
-#, c-format
-msgid "PSX stream cutscene '%s' cannot be played in paletted mode"
+#: engines/sword2/animation.cpp:425
+msgid ""
+"PSX cutscenes found but ScummVM has been built without RGB color support"
 msgstr ""
 
-#: engines/sword1/animation.cpp:545 engines/sword2/animation.cpp:445
+#: engines/sword2/animation.cpp:445 engines/sword1/animation.cpp:545
 msgid "DXA cutscenes found but ScummVM has been built without zlib"
 msgstr ""
 
-#: engines/sword1/animation.cpp:561 engines/sword2/animation.cpp:461
+#: engines/sword2/animation.cpp:461 engines/sword1/animation.cpp:561
 msgid ""
 "MPEG-2 cutscenes found but ScummVM has been built without MPEG-2 support"
 msgstr ""
 
-#: engines/sword1/animation.cpp:568 engines/sword2/animation.cpp:470
+#: engines/sword2/animation.cpp:470 engines/sword1/animation.cpp:568
 #, c-format
 msgid "Cutscene '%s' not found"
+msgstr ""
+
+#: engines/sword2/sword2.cpp:79
+msgid "Show object labels"
+msgstr ""
+
+#: engines/sword2/sword2.cpp:80
+msgid "Show labels for objects on mouse hover"
+msgstr ""
+
+#: engines/sword1/animation.cpp:524
+#, c-format
+msgid "PSX stream cutscene '%s' cannot be played in paletted mode"
 msgstr ""
 
 #: engines/sword1/control.cpp:863
@@ -3350,28 +3010,56 @@ msgstr ""
 msgid "This is the end of the Broken Sword 1 Demo"
 msgstr ""
 
-#: engines/sword2/animation.cpp:425
-msgid ""
-"PSX cutscenes found but ScummVM has been built without RGB color support"
+#: engines/hopkins/detection.cpp:76 engines/hopkins/detection.cpp:86
+msgid "Gore Mode"
 msgstr ""
 
-#: engines/sword2/sword2.cpp:79
-msgid "Show object labels"
+#: engines/hopkins/detection.cpp:77 engines/hopkins/detection.cpp:87
+msgid "Enable Gore Mode when available"
 msgstr ""
 
-#: engines/sword2/sword2.cpp:80
-msgid "Show labels for objects on mouse hover"
+#: engines/pegasus/pegasus.cpp:714
+msgid "Invalid save file name"
 msgstr ""
 
-#: engines/teenagent/resources.cpp:95
-msgid ""
-"You're missing the 'teenagent.dat' file. Get it from the ScummVM website"
+#: engines/pegasus/pegasus.cpp:2507
+msgid "Up/Zoom In/Move Forward/Open Doors"
 msgstr ""
 
-#: engines/teenagent/resources.cpp:116
-msgid ""
-"The teenagent.dat file is compressed and zlib hasn't been included in this "
-"executable. Please decompress it"
+#: engines/pegasus/pegasus.cpp:2508
+msgid "Down/Zoom Out"
+msgstr ""
+
+#: engines/pegasus/pegasus.cpp:2509 engines/kyra/lol.cpp:485
+msgid "Turn Left"
+msgstr ""
+
+#: engines/pegasus/pegasus.cpp:2510 engines/kyra/lol.cpp:486
+msgid "Turn Right"
+msgstr ""
+
+#: engines/pegasus/pegasus.cpp:2511
+msgid "Display/Hide Inventory Tray"
+msgstr ""
+
+#: engines/pegasus/pegasus.cpp:2512
+msgid "Display/Hide Biochip Tray"
+msgstr ""
+
+#: engines/pegasus/pegasus.cpp:2513
+msgid "Action/Select"
+msgstr ""
+
+#: engines/pegasus/pegasus.cpp:2514
+msgid "Toggle Center Data Display"
+msgstr ""
+
+#: engines/pegasus/pegasus.cpp:2515
+msgid "Display/Hide Info Screen"
+msgstr ""
+
+#: engines/pegasus/pegasus.cpp:2516
+msgid "Display/Hide Pause Menu"
 msgstr ""
 
 #: engines/wintermute/detection.cpp:58
@@ -3380,6 +3068,113 @@ msgstr ""
 
 #: engines/wintermute/detection.cpp:59
 msgid "Show the current number of frames per second in the upper left corner"
+msgstr ""
+
+#: engines/sci/detection.cpp:374
+msgid "Skip EGA dithering pass (full color backgrounds)"
+msgstr ""
+
+#: engines/sci/detection.cpp:375
+msgid "Skip dithering pass in EGA games, graphics are shown with full colors"
+msgstr ""
+
+#: engines/sci/detection.cpp:384
+msgid "Prefer digital sound effects"
+msgstr ""
+
+#: engines/sci/detection.cpp:385
+msgid "Prefer digital sound effects instead of synthesized ones"
+msgstr ""
+
+#: engines/sci/detection.cpp:404
+msgid "Use IMF/Yamaha FB-01 for MIDI output"
+msgstr ""
+
+#: engines/sci/detection.cpp:405
+msgid ""
+"Use an IBM Music Feature card or a Yamaha FB-01 FM synth module for MIDI "
+"output"
+msgstr ""
+
+#: engines/sci/detection.cpp:415
+msgid "Use CD audio"
+msgstr ""
+
+#: engines/sci/detection.cpp:416
+msgid "Use CD audio instead of in-game audio, if available"
+msgstr ""
+
+#: engines/sci/detection.cpp:426
+msgid "Use Windows cursors"
+msgstr ""
+
+#: engines/sci/detection.cpp:427
+msgid ""
+"Use the Windows cursors (smaller and monochrome) instead of the DOS ones"
+msgstr ""
+
+#: engines/sci/detection.cpp:437
+msgid "Use silver cursors"
+msgstr ""
+
+#: engines/sci/detection.cpp:438
+msgid ""
+"Use the alternate set of silver cursors, instead of the normal golden ones"
+msgstr ""
+
+#: engines/parallaction/saveload.cpp:133
+#, c-format
+msgid ""
+"Can't save game in slot %i\n"
+"\n"
+msgstr ""
+
+#: engines/parallaction/saveload.cpp:204
+msgid "Loading game..."
+msgstr ""
+
+#: engines/parallaction/saveload.cpp:219
+msgid "Saving game..."
+msgstr ""
+
+#: engines/parallaction/saveload.cpp:272
+msgid ""
+"ScummVM found that you have old savefiles for Nippon Safes that should be "
+"renamed.\n"
+"The old names are no longer supported, so you will not be able to load your "
+"games if you don't convert them.\n"
+"\n"
+"Press OK to convert them now, otherwise you will be asked next time.\n"
+msgstr ""
+
+#: engines/parallaction/saveload.cpp:319
+msgid "ScummVM successfully converted all your savefiles."
+msgstr ""
+
+#: engines/parallaction/saveload.cpp:321
+msgid ""
+"ScummVM printed some warnings in your console window and can't guarantee all "
+"your files have been converted.\n"
+"\n"
+"Please report to the team."
+msgstr ""
+
+#: engines/cge/detection.cpp:105 engines/cge2/detection.cpp:101
+msgid "Color Blind Mode"
+msgstr ""
+
+#: engines/cge/detection.cpp:106 engines/cge2/detection.cpp:102
+msgid "Enable Color Blind Mode by default"
+msgstr ""
+
+#: engines/tinsel/saveload.cpp:532 engines/gob/inter_playtoons.cpp:256
+#: engines/gob/inter_v2.cpp:1470 engines/gob/inter_geisha.cpp:232
+msgid "Failed to load game state from file."
+msgstr ""
+
+#: engines/tinsel/saveload.cpp:545 engines/gob/inter_v2.cpp:1540
+#: engines/gob/inter_geisha.cpp:263
+msgid "Failed to save game state to file."
 msgstr ""
 
 #: engines/zvision/detection_tables.h:52
@@ -3416,4 +3211,208 @@ msgstr ""
 
 #: engines/zvision/detection_tables.h:92
 msgid "Use MPEG video from the DVD version, instead of lower resolution AVI"
+msgstr ""
+
+#: engines/teenagent/resources.cpp:95
+msgid ""
+"You're missing the 'teenagent.dat' file. Get it from the ScummVM website"
+msgstr ""
+
+#: engines/teenagent/resources.cpp:116
+msgid ""
+"The teenagent.dat file is compressed and zlib hasn't been included in this "
+"executable. Please decompress it"
+msgstr ""
+
+#: engines/drascula/saveload.cpp:47
+msgid ""
+"ScummVM found that you have old savefiles for Drascula that should be "
+"converted.\n"
+"The old save game format is no longer supported, so you will not be able to "
+"load your games if you don't convert them.\n"
+"\n"
+"Press OK to convert them now, otherwise you will be asked again the next "
+"time you start the game.\n"
+msgstr ""
+
+#. I18N: Studio audience adds an applause and cheering sounds whenever
+#. Malcolm makes a joke.
+#: engines/kyra/detection.cpp:62
+msgid "Studio audience"
+msgstr ""
+
+#: engines/kyra/detection.cpp:63
+msgid "Enable studio audience"
+msgstr ""
+
+#. I18N: This option allows the user to skip text and cutscenes.
+#: engines/kyra/detection.cpp:73
+msgid "Skip support"
+msgstr ""
+
+#: engines/kyra/detection.cpp:74
+msgid "Allow text and cutscenes to be skipped"
+msgstr ""
+
+#. I18N: Helium mode makes people sound like they've inhaled Helium.
+#: engines/kyra/detection.cpp:84
+msgid "Helium mode"
+msgstr ""
+
+#: engines/kyra/detection.cpp:85
+msgid "Enable helium mode"
+msgstr ""
+
+#. I18N: When enabled, this option makes scrolling smoother when
+#. changing from one screen to another.
+#: engines/kyra/detection.cpp:99
+msgid "Smooth scrolling"
+msgstr ""
+
+#: engines/kyra/detection.cpp:100
+msgid "Enable smooth scrolling when walking"
+msgstr ""
+
+#. I18N: When enabled, this option changes the cursor when it floats to the
+#. edge of the screen to a directional arrow. The player can then click to
+#. walk towards that direction.
+#: engines/kyra/detection.cpp:112
+msgid "Floating cursors"
+msgstr ""
+
+#: engines/kyra/detection.cpp:113
+msgid "Enable floating cursors"
+msgstr ""
+
+#. I18N: HP stands for Hit Points
+#: engines/kyra/detection.cpp:127
+msgid "HP bar graphs"
+msgstr ""
+
+#: engines/kyra/detection.cpp:128
+msgid "Enable hit point bar graphs"
+msgstr ""
+
+#: engines/kyra/lol.cpp:478
+msgid "Attack 1"
+msgstr ""
+
+#: engines/kyra/lol.cpp:479
+msgid "Attack 2"
+msgstr ""
+
+#: engines/kyra/lol.cpp:480
+msgid "Attack 3"
+msgstr ""
+
+#: engines/kyra/lol.cpp:481
+msgid "Move Forward"
+msgstr ""
+
+#: engines/kyra/lol.cpp:482
+msgid "Move Back"
+msgstr ""
+
+#: engines/kyra/lol.cpp:483
+msgid "Slide Left"
+msgstr ""
+
+#: engines/kyra/lol.cpp:484
+msgid "Slide Right"
+msgstr ""
+
+#: engines/kyra/lol.cpp:487
+msgid "Rest"
+msgstr ""
+
+#: engines/kyra/lol.cpp:488
+msgid "Options"
+msgstr ""
+
+#: engines/kyra/lol.cpp:489
+msgid "Choose Spell"
+msgstr ""
+
+#: engines/kyra/sound_midi.cpp:477
+msgid ""
+"You appear to be using a General MIDI device,\n"
+"but your game only supports Roland MT32 MIDI.\n"
+"We try to map the Roland MT32 instruments to\n"
+"General MIDI ones. It is still possible that\n"
+"some tracks sound incorrect."
+msgstr ""
+
+#: engines/kyra/saveload_eob.cpp:557
+#, c-format
+msgid ""
+"The following original save game file has been found in your game path:\n"
+"\n"
+"%s %s\n"
+"\n"
+"Do you wish to use this save game file with ScummVM?\n"
+"\n"
+msgstr ""
+
+#: engines/kyra/saveload_eob.cpp:590
+#, c-format
+msgid ""
+"A save game file was found in the specified slot %d. Overwrite?\n"
+"\n"
+msgstr ""
+
+#: engines/kyra/saveload_eob.cpp:623
+#, c-format
+msgid ""
+"%d original save game files have been successfully imported into\n"
+"ScummVM. If you want to manually import original save game files later you "
+"will\n"
+"need to open the ScummVM debug console and use the command "
+"'import_savefile'.\n"
+"\n"
+msgstr ""
+
+#: engines/neverhood/detection.cpp:167
+msgid "Skip the Hall of Records storyboard scenes"
+msgstr ""
+
+#: engines/neverhood/detection.cpp:168
+msgid "Allows the player to skip past the Hall of Records storyboard scenes"
+msgstr ""
+
+#: engines/neverhood/detection.cpp:174
+msgid "Scale the making of videos to full screen"
+msgstr ""
+
+#: engines/neverhood/detection.cpp:175
+msgid "Scale the making of videos, so that they use the whole screen"
+msgstr ""
+
+#: engines/gob/inter_v5.cpp:107
+msgid "Failed to delete file."
+msgstr ""
+
+#. I18N: Option for fast scene switching
+#: engines/mohawk/dialogs.cpp:92 engines/mohawk/dialogs.cpp:167
+msgid "~Z~ip Mode Activated"
+msgstr ""
+
+#: engines/mohawk/dialogs.cpp:93
+msgid "~T~ransitions Enabled"
+msgstr ""
+
+#. I18N: Drop book page
+#: engines/mohawk/dialogs.cpp:95
+msgid "~D~rop Page"
+msgstr ""
+
+#: engines/mohawk/dialogs.cpp:99
+msgid "~S~how Map"
+msgstr ""
+
+#: engines/mohawk/dialogs.cpp:105
+msgid "~M~ain Menu"
+msgstr ""
+
+#: engines/mohawk/dialogs.cpp:168
+msgid "~W~ater Effect Enabled"
 msgstr ""
