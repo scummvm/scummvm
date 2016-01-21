@@ -1055,7 +1055,7 @@ int GfxMgr::initVideo() {
 			// Set the old common alternative Amiga palette
 			initPalette(altAmigaPalette);
 	} else
-		error("initVideo: Unhandled render mode");
+		error("initVideo: Unhandled render mode \"%s\"", Common::getRenderModeDescription(_vm->_renderMode));
 
 	if ((_agiScreen = (uint8 *)calloc(GFX_WIDTH, GFX_HEIGHT)) == NULL)
 		return errNotEnoughMemory;
