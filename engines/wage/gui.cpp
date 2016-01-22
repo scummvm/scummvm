@@ -214,7 +214,8 @@ void Gui::clearOutput() {
 	_consoleFullRedraw = true;
 }
 
-void Gui::appendText(String &str) {
+void Gui::appendText(const char *s) {
+	Common::String str(s);
 	_consoleDirty = true;
 
 	if (!str.contains('\n')) {

@@ -164,38 +164,13 @@ private:
 	Operand *convertOperand(Operand *operand, int type);
 	bool evalClickCondition(Operand *lhs, const char *op, Operand *rhs);
 	bool evalClickEquality(Operand *lhs, Operand *rhs, bool partialMatch);
-	void takeObj(Obj *obj);
 	void processMove();
 	void processLet();
 
 	void assign(byte operandType, int uservar, uint16 value);
 
-	void appendText(String str);
-	void handleMoveCommand(Scene::Directions dir, const char *dirName);
-	void handleLookCommand();
-	Common::String *getGroundItemsList(Scene *scene);
-	void appendObjNames(Common::String &str, ObjArray &objs);
-	void handleInventoryCommand();
-	void handleStatusCommand();
-	void handleRestCommand();
-	void handleAcceptCommand();
-
-	void handleTakeCommand(const char *target);
-	void handleDropCommand(const char *target);
-	void handleAimCommand(const char *target);
-	void handleWearCommand(const char *target);
-	void handleOfferCommand(const char *target);
-
-	void wearObj(Obj *o, int pos);
-
-	bool tryAttack(Obj *weapon, Common::String &input);
-	void handleAttack(Obj *weapon);
-
 	Common::Array<ScriptText *> _scriptText;
 	void convertToText();
-
-	void printPlayerCondition(Chr *player);
-	const char *getPercentMessage(double percent);
 };
 
 } // End of namespace Wage

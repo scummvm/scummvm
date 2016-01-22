@@ -204,19 +204,13 @@ void WageEngine::setMenu(String soundName) {
 	warning("STUB: WageEngine::setMenu");
 }
 
-void WageEngine::appendText(String &str) {
+void WageEngine::appendText(const char *str) {
 	if (_inputText.size())
-		_gui->appendText(_inputText);
+		_gui->appendText(_inputText.c_str());
 
 	_inputText = "";
 
 	_gui->appendText(str);
-}
-
-void WageEngine::appendText(char *str) {
-	Common::String s(str);
-
-	appendText(s);
 }
 
 void WageEngine::gameOver() {
@@ -456,7 +450,7 @@ void WageEngine::processTurnInternal(Common::String *textInput, Designed *clickI
 		if (monsterWasNull && getMonster() != NULL)
 			return;
 
-		Common::String rant(_rnd->getRandomNumber(1) ? "What?" : "Huh?");
+		const char *rant = _rnd->getRandomNumber(1) ? "What?" : "Huh?";
 
 		appendText(rant);
 		_commandWasQuick = true;

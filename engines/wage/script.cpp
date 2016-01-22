@@ -118,7 +118,8 @@ bool Script::execute(World *world, int loopCount, String *inputText, Designed *i
 			{
 				Operand *op = readOperand();
 				// TODO check op type is string or number, or something good...
-				appendText(op->toString());
+				_handled = true;
+				_engine->appendText(op->toString().c_str());
 				delete op;
 				byte d = _data->readByte();
 				if (d != 0xFD)
@@ -164,45 +165,45 @@ bool Script::execute(World *world, int loopCount, String *inputText, Designed *i
 	} else if (!input.empty()) {
 		input.toLowercase();
 		if (input.equals("n") || input.contains("north")) {
-			handleMoveCommand(Scene::NORTH, "north");
+			_handled = _engine->handleMoveCommand(NORTH, "north");
 		} else if (input.equals("e") || input.contains("east")) {
-			handleMoveCommand(Scene::EAST, "east");
+			_handled = _engine->handleMoveCommand(EAST, "east");
 		} else if (input.equals("s") || input.contains("south")) {
-			handleMoveCommand(Scene::SOUTH, "south");
+			_handled = _engine->handleMoveCommand(SOUTH, "south");
 		} else if (input.equals("w") || input.contains("west")) {
-			handleMoveCommand(Scene::WEST, "west");
+			_handled = _engine->handleMoveCommand(WEST, "west");
 		} else if (input.hasPrefix("take ")) {
-			handleTakeCommand(&input.c_str()[5]);
+			_handled = _engine->handleTakeCommand(&input.c_str()[5]);
 		} else if (input.hasPrefix("get ")) {
-			handleTakeCommand(&input.c_str()[4]);
+			_handled = _engine->handleTakeCommand(&input.c_str()[4]);
 		} else if (input.hasPrefix("pick up ")) {
-			handleTakeCommand(&input.c_str()[8]);
+			_handled = _engine->handleTakeCommand(&input.c_str()[8]);
 		} else if (input.hasPrefix("drop ")) {
-			handleDropCommand(&input.c_str()[5]);
+			_handled = _engine->handleDropCommand(&input.c_str()[5]);
 		} else if (input.hasPrefix("aim ")) {
-			handleAimCommand(&input.c_str()[4]);
+			_handled = _engine->handleAimCommand(&input.c_str()[4]);
 		} else if (input.hasPrefix("wear ")) {
-			handleWearCommand(&input.c_str()[5]);
+			_handled = _engine->handleWearCommand(&input.c_str()[5]);
 		} else if (input.hasPrefix("put on ")) {
-			handleWearCommand(&input.c_str()[7]);
+			_handled = _engine->handleWearCommand(&input.c_str()[7]);
 		} else if (input.hasPrefix("offer ")) {
-			handleOfferCommand(&input.c_str()[6]);
+			_handled = _engine->handleOfferCommand(&input.c_str()[6]);
 		} else if (input.contains("look")) {
-			handleLookCommand();
+			_handled = _engine->handleLookCommand();
 		} else if (input.contains("inventory")) {
-			handleInventoryCommand();
+			_handled = _engine->handleInventoryCommand();
 		} else if (input.contains("status")) {
-			handleStatusCommand();
+			_handled = _engine->handleStatusCommand();
 		} else if (input.contains("rest") || input.equals("wait")) {
-			handleRestCommand();
+			_handled = _engine->handleRestCommand();
 		} else if (_engine->getOffer() != NULL && input.contains("accept")) {
-			handleAcceptCommand();
+			_handled = _engine->handleAcceptCommand();
 		} else {
 			Chr *player = _world->_player;
 			ObjArray *weapons = player->getWeapons(true);
 			for (ObjArray::const_iterator weapon = weapons->begin(); weapon != weapons->end(); ++weapon) {
-				if (tryAttack(*weapon, input)) {
-					handleAttack(*weapon);
+				if (_engine->tryAttack(*weapon, input)) {
+					_handled = _engine->handleAttack(*weapon);
 					break;
 				}
 			}
@@ -213,10 +214,12 @@ bool Script::execute(World *world, int loopCount, String *inputText, Designed *i
 	} else if (_inputClick->_classType == OBJ) {
 		Obj *obj = (Obj *)_inputClick;
 		if (obj->_type != Obj::IMMOBILE_OBJECT) {
-			takeObj(obj);
+			_engine->takeObj(obj);
 		} else {
-			appendText(obj->_clickMessage);
+			_engine->appendText(obj->_clickMessage.c_str());
 		}
+
+		_handled = true;
 	}
 
 	return _handled;
@@ -858,27 +861,6 @@ bool Script::evalClickCondition(Operand *lhs, const char *op, Operand *rhs) {
 	return result;
 }
 
-void Script::takeObj(Obj *obj) {
-  if ((int)_world->_player->_inventory.size() >= _world->_player->_maximumCarriedObjects) {
-		appendText("Your pack is full, you must drop something.");
-	} else {
-		_world->move(obj, _world->_player);
-		int type = _world->_player->wearObjIfPossible(obj);
-		if (type == Chr::HEAD_ARMOR) {
-			appendText(String("You are now wearing the ") + obj->_name + ".");
-		} else if (type == Chr::BODY_ARMOR) {
-			appendText(String("You are now wearing the ") + obj->_name + ".");
-		} else if (type == Chr::SHIELD_ARMOR) {
-			appendText(String("You are now wearing the ") + obj->_name + ".");
-		} else if (type == Chr::MAGIC_ARMOR) {
-			appendText(String("You are now wearing the ") + obj->_name + ".");
-		} else {
-			appendText(String("You now have the ") + obj->_name + ".");
-		}
-		appendText(obj->_clickMessage);
-	}
-}
-
 void Script::processMove() {
 	Operand *what = readOperand();
 	byte skip = _data->readByte();
@@ -936,338 +918,6 @@ void Script::processLet() {
 	//System.out.println("processLet " + buildStringFromOffset(oldIndex - 1, index - oldIndex + 1) + "}");
 
 	assign(operandType, uservar, result);
-}
-
-void Script::appendText(String str) {
-	_handled = true;
-	_engine->appendText(str);
-}
-
-static const int directionsX[] = { 0, 0, 1, -1 };
-static const int directionsY[] = { -1, 1, 0, 0 };
-
-void Script::handleMoveCommand(Scene::Directions dir, const char *dirName) {
-	Scene *playerScene = _world->_player->_currentScene;
-	Common::String msg(playerScene->_messages[dir]);
-
-	warning("Dir: %s  msg: %s", dirName, msg.c_str());
-
-	if (!playerScene->_blocked[dir]) {
-		int destX = playerScene->_worldX + directionsX[dir];
-		int destY = playerScene->_worldY + directionsY[dir];
-
-		Scene *scene = _world->getSceneAt(destX, destY);
-
-		if (scene != NULL) {
-			if (msg.size() > 0) {
-				appendText(msg);
-			}
-			_world->move(_world->_player, scene);
-			return;
-		}
-	}
-	if (msg.size() > 0) {
-		appendText(msg);
-	} else {
-		Common::String txt("You can't go ");
-		txt += dirName;
-		txt += ".";
-		appendText(txt);
-	}
-}
-
-void Script::handleLookCommand() {
-	appendText(_world->_player->_currentScene->_text);
-
-	Common::String *items = getGroundItemsList(_world->_player->_currentScene);
-	if (items != NULL) {
-		appendText(*items);
-
-		delete items;
-	}
-}
-
-Common::String *Script::getGroundItemsList(Scene *scene) {
-	ObjArray objs;
-
-	for (ObjList::const_iterator it = scene->_objs.begin(); it != scene->_objs.end(); ++it)
-		if ((*it)->_type != Obj::IMMOBILE_OBJECT)
-			objs.push_back(*it);
-
-	if (objs.size()) {
-		Common::String *res = new Common::String("On the ground you see ");
-		appendObjNames(*res, objs);
-		return res;
-	}
-	return NULL;
-}
-
-void Script::appendObjNames(Common::String &str, ObjArray &objs) {
-	for (uint i = 0; i < objs.size(); i++) {
-		Obj *obj = objs[i];
-
-		if (!obj->_namePlural)
-			str += getIndefiniteArticle(obj->_name);
-		else
-			str += "some ";
-
-		str += obj->_name;
-
-		if (i == objs.size() - 1) {
-			str += ".";
-		} else if (i == objs.size() - 2) {
-			if (objs.size() > 2)
-				str += ",";
-			str += " and ";
-		} else {
-			str += ", ";
-		}
-	}
-}
-
-void Script::handleInventoryCommand() {
-	Chr *player = _world->_player;
-	ObjArray objs;
-
-	for (ObjArray::const_iterator it = player->_inventory.begin(); it != player->_inventory.end(); ++it)
-		if (!player->isWearing(*it))
-			objs.push_back(*it);
-
-	if (!objs.size()) {
-		appendText("Your pack is empty.");
-	} else {
-		Common::String res("Your pack contains ");
-		appendObjNames(res, objs);
-		appendText(res);
-	}
-}
-
-static const char *armorMessages[] = {
-	"Head protection:",
-	"Chest protection:",
-	"Shield protection:", // TODO: check message
-	"Magical protection:"
-};
-
-void Script::handleStatusCommand() {
-	Chr *player = _world->_player;
-	char buf[512];
-
-	snprintf(buf, 512, "Character name: %s%s", player->getDefiniteArticle(false), player->_name.c_str());
-	appendText(buf);
-	snprintf(buf, 512, "Experience: %d", player->_context._experience);
-	appendText(buf);
-
-	int wealth = 0;
-	for (ObjArray::const_iterator it = player->_inventory.begin(); it != player->_inventory.end(); ++it)
-		wealth += (*it)->_value;
-
-	snprintf(buf, 512, "Wealth: %d", wealth);
-	appendText(buf);
-
-	for (int i = 0; i < Chr::NUMBER_OF_ARMOR_TYPES; i++) {
-		if (player->_armor[i] != NULL) {
-			snprintf(buf, 512, "%s %s", armorMessages[i], player->_armor[i]->_name.c_str());
-			appendText(buf);
-		}
-	}
-
-	for (ObjArray::const_iterator it = player->_inventory.begin(); it != player->_inventory.end(); ++it) {
-		int uses = (*it)->_numberOfUses;
-
-		if (uses > 0) {
-			snprintf(buf, 512, "Your %s has %d uses left.", (*it)->_name.c_str(), uses);
-		}
-	}
-
-	printPlayerCondition(player);
-
-	_engine->_commandWasQuick = true;
-}
-
-void Script::handleRestCommand() {
-	if (_engine->getMonster() != NULL) {
-		appendText("This is no time to rest!");
-		_engine->_commandWasQuick = true;
-	} else {
-		_engine->regen();
-		printPlayerCondition(_world->_player);
-	}
-}
-
-void Script::handleAcceptCommand() {
-	Obj *offer = _engine->_offer;
-	Chr *chr = offer->_currentOwner;
-
-	char buf[512];
-	snprintf(buf, 512, "%s%s lays the %s on the ground and departs peacefully.",
-		chr->getDefiniteArticle(true), chr->_name.c_str(), offer->_name.c_str());
-	appendText(buf);
-
-	_world->move(offer, chr->_currentScene);
-	_world->move(chr, _world->_storageScene);
-}
-
-void Script::handleTakeCommand(const char *target) {
-	Common::String t(target);
-
-	for (ObjList::const_iterator it = _world->_player->_currentScene->_objs.begin(); it != _world->_player->_currentScene->_objs.end(); ++it) {
-		Common::String n((*it)->_name);
-		n.toLowercase();
-
-		if (t.contains(n)) {
-			if ((*it)->_type == Obj::IMMOBILE_OBJECT) {
-				appendText((char *)"You can't move it.");
-			} else {
-				takeObj(*it);
-			}
-			break;
-		}
-	}
-}
-
-void Script::handleDropCommand(const char *target) {
-	Common::String t(target);
-
-	t.toLowercase();
-
-	for (ObjArray::const_iterator it = _world->_player->_inventory.begin(); it != _world->_player->_inventory.end(); ++it) {
-		Common::String n((*it)->_name);
-		n.toLowercase();
-
-		if (t.contains(n)) {
-			char buf[256];
-
-			snprintf(buf, 256, "You no longer have the %s.", (*it)->_name.c_str());
-			_world->move(*it, _world->_player->_currentScene);
-			break;
-		}
-	}
-}
-
-void Script::handleAimCommand(const char *t) {
-	bool wasHandled = true;
-	Common::String target(t);
-
-	target.toLowercase();
-
-	if (target.contains("head")) {
-		_engine->_aim = Chr::HEAD;
-	} else if (target.contains("chest")) {
-		_engine->_aim = Chr::CHEST;
-	} else if (target.contains("side")) {
-		_engine->_aim = Chr::SIDE;
-	} else {
-		wasHandled = false;
-		appendText((char *)"Please aim for the head, chest, or side.");
-	}
-
-	if (wasHandled)
-		_handled = true;
-
-	_engine->_commandWasQuick = true;
-}
-
-void Script::handleWearCommand(const char *t) {
-	Chr *player = _world->_player;
-	char buf[512];
-	Common::String target(t);
-
-	target.toLowercase();
-
-	for (ObjArray::const_iterator it = _world->_player->_inventory.begin(); it != _world->_player->_inventory.end(); ++it) {
-		Common::String n((*it)->_name);
-
-		if (target.contains(n)) {
-			if ((*it)->_type == Obj::HELMET) {
-				wearObj(*it, Chr::HEAD_ARMOR);
-			} else if ((*it)->_type == Obj::CHEST_ARMOR) {
-				wearObj(*it, Chr::BODY_ARMOR);
-			} else if ((*it)->_type == Obj::SHIELD) {
-				wearObj(*it, Chr::SHIELD_ARMOR);
-			} else if ((*it)->_type == Obj::SPIRITUAL_ARMOR) {
-				wearObj(*it, Chr::MAGIC_ARMOR);
-			} else {
-				appendText((char *)"You cannot wear that object.");
-			}
-			break;
-		}
-	}
-
-	for (ObjList::const_iterator it = player->_currentScene->_objs.begin(); it != player->_currentScene->_objs.end(); ++it) {
-		Common::String n((*it)->_name);
-		n.toLowercase();
-		if (target.contains(n)) {
-			snprintf(buf, 512, "First you must get the %s.", (*it)->_name.c_str());
-			appendText(buf);
-			break;
-		}
-	}
-}
-
-void Script::wearObj(Obj *o, int pos) {
-	Chr *player = _world->_player;
-	char buf[512];
-
-	if (player->_armor[pos] == o) {
-		snprintf(buf, 512, "You are already wearing the %s.", o->_name.c_str());
-		appendText(buf);
-	} else {
-		if (player->_armor[pos] != NULL) {
-			snprintf(buf, 512, "You are no longer wearing the %s.", player->_armor[pos]->_name.c_str());
-			appendText(buf);
-		}
-
-		player->_armor[pos] = o;
-		snprintf(buf, 512, "You are now wearing the %s.", o->_name.c_str());
-		appendText(buf);
-	}
-}
-
-
-void Script::handleOfferCommand(const char *target) {
-	warning("STUB: handleOfferCommand");
-}
-
-bool Script::tryAttack(Obj *weapon, Common::String &input) {
-	warning("STUB: tryAttack");
-
-	return false;
-}
-
-void Script::handleAttack(Obj *weapon) {
-	warning("STUB: handleAttack");
-}
-
-const char *Script::getPercentMessage(double percent) {
-	if (percent < 0.40) {
-		return "very bad";
-	} else if (percent < 0.55) {
-		return "bad";
-	} else if (percent < 0.70) {
-		return "average";
-	} else if (percent < 0.85) {
-		return "good";
-	} else if (percent <= 1.00) {
-		return "very good";
-	} else {
-		return "enhanced";
-	}
-}
-
-void Script::printPlayerCondition(Chr *player) {
-	double physicalPercent = (double)player->_context._statVariables[PHYS_HIT_CUR] / player->_context._statVariables[PHYS_HIT_BAS];
-	double spiritualPercent = (double)player->_context._statVariables[SPIR_HIT_CUR] / player->_context._statVariables[SPIR_HIT_BAS];
-
-	Common::String msg = "Your physical condition is ";
-	msg += getPercentMessage(physicalPercent);
-	msg += ".";
-	appendText(msg);
-
-	msg = "Your spiritual condition is ";
-	msg += getPercentMessage(spiritualPercent);
-	msg += ".";
-	appendText(msg);
 }
 
 enum {

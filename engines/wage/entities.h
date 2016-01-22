@@ -55,14 +55,7 @@ namespace Graphics {
 namespace Wage {
 
 class Design;
-class Obj;
-class Scene;
 class Script;
-
-typedef Common::Array<Obj *> ObjArray;
-typedef Common::Array<Chr *> ChrArray;
-typedef Common::List<Obj *> ObjList;
-typedef Common::List<Chr *> ChrList;
 
 enum StatVariable {
 /** The base physical accuracy of the player. */
@@ -306,13 +299,6 @@ public:
 
 class Scene : public Designed {
 public:
-	enum Directions {
-		NORTH = 0,
-		SOUTH = 1,
-		EAST = 2,
-		WEST = 3
-	};
-
 	enum SceneTypes {
 		PERIODIC = 0,
 		RANDOM = 1

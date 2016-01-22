@@ -69,6 +69,11 @@ class Obj;
 class Scene;
 class World;
 
+typedef Common::Array<Obj *> ObjArray;
+typedef Common::Array<Chr *> ChrArray;
+typedef Common::List<Obj *> ObjList;
+typedef Common::List<Chr *> ChrList;
+
 using Common::String;
 
 enum OperandType {
@@ -80,6 +85,13 @@ enum OperandType {
 	CLICK_INPUT = 5,
 	TEXT_INPUT = 6,
 	UNKNOWN = 100
+};
+
+enum Directions {
+	NORTH = 0,
+	SOUTH = 1,
+	EAST = 2,
+	WEST = 3
 };
 
 // our engine debug levels
@@ -142,6 +154,32 @@ private:
 	void doClose();
 
 public:
+	void takeObj(Obj *obj);
+
+	bool handleMoveCommand(Directions dir, const char *dirName);
+	bool handleLookCommand();
+	Common::String *getGroundItemsList(Scene *scene);
+	void appendObjNames(Common::String &str, ObjArray &objs);
+	bool handleInventoryCommand();
+	bool handleStatusCommand();
+	bool handleRestCommand();
+	bool handleAcceptCommand();
+
+	bool handleTakeCommand(const char *target);
+	bool handleDropCommand(const char *target);
+	bool handleAimCommand(const char *target);
+	bool handleWearCommand(const char *target);
+	bool handleOfferCommand(const char *target);
+
+	void wearObj(Obj *o, int pos);
+
+	bool tryAttack(Obj *weapon, Common::String &input);
+	bool handleAttack(Obj *weapon);
+
+	void printPlayerCondition(Chr *player);
+	const char *getPercentMessage(double percent);
+
+public:
 	Common::RandomSource *_rnd;
 
 	Gui *_gui;
@@ -163,8 +201,7 @@ public:
 
 	void playSound(String soundName);
 	void setMenu(String soundName);
-	void appendText(String &str);
-	void appendText(char *str);
+	void appendText(const char *str);
 	void gameOver();
 	bool saveDialog();
 	Obj *getOffer();

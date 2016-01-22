@@ -90,7 +90,7 @@ public:
 	~Gui();
 
 	void draw();
-	void appendText(Common::String &str);
+	void appendText(const char *str);
 	void clearOutput();
 	void mouseMove(int x, int y);
 	void mouseClick(int x, int y);

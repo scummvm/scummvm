@@ -77,7 +77,7 @@ void WageEngine::encounter(Chr *player, Chr *chr) {
 	appendText(buf);
 
 	if (!chr->_initialComment.empty())
-		appendText(chr->_initialComment);
+		appendText(chr->_initialComment.c_str());
 
 	if (chr->_armor[Chr::HEAD_ARMOR] != NULL) {
 		snprintf(buf, 512, "%s%s is wearing %s.", chr->getDefiniteArticle(true), chr->_name.c_str(),
@@ -301,6 +301,389 @@ void WageEngine::regen() {
 		int bonus = (int)(delta / (8 + _rnd->getRandomNumber(2)));
 		player->_context._statVariables[PHYS_HIT_CUR] += bonus;
 	}
+}
+
+void WageEngine::takeObj(Obj *obj) {
+  if ((int)_world->_player->_inventory.size() >= _world->_player->_maximumCarriedObjects) {
+		appendText("Your pack is full, you must drop something.");
+	} else {
+		char buf[256];
+
+		_world->move(obj, _world->_player);
+		int type = _world->_player->wearObjIfPossible(obj);
+		if (type == Chr::HEAD_ARMOR) {
+			snprintf(buf, 256, "You are now wearing the %s.", obj->_name.c_str());
+			appendText(buf);
+		} else if (type == Chr::BODY_ARMOR) {
+			snprintf(buf, 256, "You are now wearing the %s.", obj->_name.c_str());
+			appendText(buf);
+		} else if (type == Chr::SHIELD_ARMOR) {
+			snprintf(buf, 256, "You are now wearing the %s.", obj->_name.c_str());
+			appendText(buf);
+		} else if (type == Chr::MAGIC_ARMOR) {
+			snprintf(buf, 256, "You are now wearing the %s.", obj->_name.c_str());
+			appendText(buf);
+		} else {
+			snprintf(buf, 256, "You now have the %s.", obj->_name.c_str());
+			appendText(buf);
+		}
+		appendText(obj->_clickMessage.c_str());
+	}
+}
+
+static const int directionsX[] = { 0, 0, 1, -1 };
+static const int directionsY[] = { -1, 1, 0, 0 };
+
+bool WageEngine::handleMoveCommand(Directions dir, const char *dirName) {
+	Scene *playerScene = _world->_player->_currentScene;
+	const char *msg = playerScene->_messages[dir].c_str();
+
+	warning("Dir: %s  msg: %s", dirName, msg);
+
+	if (!playerScene->_blocked[dir]) {
+		int destX = playerScene->_worldX + directionsX[dir];
+		int destY = playerScene->_worldY + directionsY[dir];
+
+		Scene *scene = _world->getSceneAt(destX, destY);
+
+		if (scene != NULL) {
+			if (strlen(msg) > 0) {
+				appendText(msg);
+			}
+			_world->move(_world->_player, scene);
+			return true;
+		}
+	}
+	if (strlen(msg) > 0) {
+		appendText(msg);
+	} else {
+		Common::String txt("You can't go ");
+		txt += dirName;
+		txt += ".";
+		appendText(txt.c_str());
+	}
+
+	return true;
+}
+
+bool WageEngine::handleLookCommand() {
+	appendText(_world->_player->_currentScene->_text.c_str());
+
+	Common::String *items = getGroundItemsList(_world->_player->_currentScene);
+	if (items != NULL) {
+		appendText(items->c_str());
+
+		delete items;
+	}
+
+	return true;
+}
+
+Common::String *WageEngine::getGroundItemsList(Scene *scene) {
+	ObjArray objs;
+
+	for (ObjList::const_iterator it = scene->_objs.begin(); it != scene->_objs.end(); ++it)
+		if ((*it)->_type != Obj::IMMOBILE_OBJECT)
+			objs.push_back(*it);
+
+	if (objs.size()) {
+		Common::String *res = new Common::String("On the ground you see ");
+		appendObjNames(*res, objs);
+		return res;
+	}
+	return NULL;
+}
+
+void WageEngine::appendObjNames(Common::String &str, ObjArray &objs) {
+	for (uint i = 0; i < objs.size(); i++) {
+		Obj *obj = objs[i];
+
+		if (!obj->_namePlural)
+			str += getIndefiniteArticle(obj->_name);
+		else
+			str += "some ";
+
+		str += obj->_name;
+
+		if (i == objs.size() - 1) {
+			str += ".";
+		} else if (i == objs.size() - 2) {
+			if (objs.size() > 2)
+				str += ",";
+			str += " and ";
+		} else {
+			str += ", ";
+		}
+	}
+}
+
+bool WageEngine::handleInventoryCommand() {
+	Chr *player = _world->_player;
+	ObjArray objs;
+
+	for (ObjArray::const_iterator it = player->_inventory.begin(); it != player->_inventory.end(); ++it)
+		if (!player->isWearing(*it))
+			objs.push_back(*it);
+
+	if (!objs.size()) {
+		appendText((char *)"Your pack is empty.");
+	} else {
+		Common::String res("Your pack contains ");
+		appendObjNames(res, objs);
+		appendText(res.c_str());
+	}
+
+	return true;
+}
+
+static const char *armorMessages[] = {
+	"Head protection:",
+	"Chest protection:",
+	"Shield protection:", // TODO: check message
+	"Magical protection:"
+};
+
+bool WageEngine::handleStatusCommand() {
+	Chr *player = _world->_player;
+	char buf[512];
+
+	snprintf(buf, 512, "Character name: %s%s", player->getDefiniteArticle(false), player->_name.c_str());
+	appendText(buf);
+	snprintf(buf, 512, "Experience: %d", player->_context._experience);
+	appendText(buf);
+
+	int wealth = 0;
+	for (ObjArray::const_iterator it = player->_inventory.begin(); it != player->_inventory.end(); ++it)
+		wealth += (*it)->_value;
+
+	snprintf(buf, 512, "Wealth: %d", wealth);
+	appendText(buf);
+
+	for (int i = 0; i < Chr::NUMBER_OF_ARMOR_TYPES; i++) {
+		if (player->_armor[i] != NULL) {
+			snprintf(buf, 512, "%s %s", armorMessages[i], player->_armor[i]->_name.c_str());
+			appendText(buf);
+		}
+	}
+
+	for (ObjArray::const_iterator it = player->_inventory.begin(); it != player->_inventory.end(); ++it) {
+		int uses = (*it)->_numberOfUses;
+
+		if (uses > 0) {
+			snprintf(buf, 512, "Your %s has %d uses left.", (*it)->_name.c_str(), uses);
+		}
+	}
+
+	printPlayerCondition(player);
+
+	_commandWasQuick = true;
+
+	return true;
+}
+
+bool WageEngine::handleRestCommand() {
+	if (getMonster() != NULL) {
+		appendText((char *)"This is no time to rest!");
+		_commandWasQuick = true;
+	} else {
+		regen();
+		printPlayerCondition(_world->_player);
+	}
+
+	return true;
+}
+
+bool WageEngine::handleAcceptCommand() {
+	Chr *chr = _offer->_currentOwner;
+
+	char buf[512];
+	snprintf(buf, 512, "%s%s lays the %s on the ground and departs peacefully.",
+		chr->getDefiniteArticle(true), chr->_name.c_str(), _offer->_name.c_str());
+	appendText(buf);
+
+	_world->move(_offer, chr->_currentScene);
+	_world->move(chr, _world->_storageScene);
+
+	return true;
+}
+
+bool WageEngine::handleTakeCommand(const char *target) {
+	Common::String t(target);
+	bool handled = false;
+
+	for (ObjList::const_iterator it = _world->_player->_currentScene->_objs.begin(); it != _world->_player->_currentScene->_objs.end(); ++it) {
+		Common::String n((*it)->_name);
+		n.toLowercase();
+
+		if (t.contains(n)) {
+			if ((*it)->_type == Obj::IMMOBILE_OBJECT) {
+				appendText((char *)"You can't move it.");
+			} else {
+				takeObj(*it);
+			}
+
+			handled = true;
+			break;
+		}
+	}
+
+	return handled;
+}
+
+bool WageEngine::handleDropCommand(const char *target) {
+	Common::String t(target);
+	bool handled = false;
+
+	t.toLowercase();
+
+	for (ObjArray::const_iterator it = _world->_player->_inventory.begin(); it != _world->_player->_inventory.end(); ++it) {
+		Common::String n((*it)->_name);
+		n.toLowercase();
+
+		if (t.contains(n)) {
+			char buf[256];
+
+			snprintf(buf, 256, "You no longer have the %s.", (*it)->_name.c_str());
+			_world->move(*it, _world->_player->_currentScene);
+
+			handled = true;
+			break;
+		}
+	}
+
+	return handled;
+}
+
+bool WageEngine::handleAimCommand(const char *t) {
+	bool wasHandled = true;
+	Common::String target(t);
+
+	target.toLowercase();
+
+	if (target.contains("head")) {
+		_aim = Chr::HEAD;
+	} else if (target.contains("chest")) {
+		_aim = Chr::CHEST;
+	} else if (target.contains("side")) {
+		_aim = Chr::SIDE;
+	} else {
+		wasHandled = false;
+		appendText((char *)"Please aim for the head, chest, or side.");
+	}
+
+	_commandWasQuick = true;
+
+	return wasHandled;
+}
+
+bool WageEngine::handleWearCommand(const char *t) {
+	Chr *player = _world->_player;
+	char buf[512];
+	Common::String target(t);
+	bool handled = false;
+
+	target.toLowercase();
+
+	for (ObjArray::const_iterator it = _world->_player->_inventory.begin(); it != _world->_player->_inventory.end(); ++it) {
+		Common::String n((*it)->_name);
+
+		if (target.contains(n)) {
+			if ((*it)->_type == Obj::HELMET) {
+				wearObj(*it, Chr::HEAD_ARMOR);
+			} else if ((*it)->_type == Obj::CHEST_ARMOR) {
+				wearObj(*it, Chr::BODY_ARMOR);
+			} else if ((*it)->_type == Obj::SHIELD) {
+				wearObj(*it, Chr::SHIELD_ARMOR);
+			} else if ((*it)->_type == Obj::SPIRITUAL_ARMOR) {
+				wearObj(*it, Chr::MAGIC_ARMOR);
+			} else {
+				appendText((char *)"You cannot wear that object.");
+			}
+
+			handled = true;
+			break;
+		}
+	}
+
+	for (ObjList::const_iterator it = player->_currentScene->_objs.begin(); it != player->_currentScene->_objs.end(); ++it) {
+		Common::String n((*it)->_name);
+		n.toLowercase();
+		if (target.contains(n)) {
+			snprintf(buf, 512, "First you must get the %s.", (*it)->_name.c_str());
+			appendText(buf);
+
+			handled = true;
+			break;
+		}
+	}
+
+	return handled;
+}
+
+void WageEngine::wearObj(Obj *o, int pos) {
+	Chr *player = _world->_player;
+	char buf[512];
+
+	if (player->_armor[pos] == o) {
+		snprintf(buf, 512, "You are already wearing the %s.", o->_name.c_str());
+		appendText(buf);
+	} else {
+		if (player->_armor[pos] != NULL) {
+			snprintf(buf, 512, "You are no longer wearing the %s.", player->_armor[pos]->_name.c_str());
+			appendText(buf);
+		}
+
+		player->_armor[pos] = o;
+		snprintf(buf, 512, "You are now wearing the %s.", o->_name.c_str());
+		appendText(buf);
+	}
+}
+
+
+bool WageEngine::handleOfferCommand(const char *target) {
+	warning("STUB: handleOfferCommand");
+
+	return false;
+}
+
+bool WageEngine::tryAttack(Obj *weapon, Common::String &input) {
+	warning("STUB: tryAttack");
+
+	return false;
+}
+
+bool WageEngine::handleAttack(Obj *weapon) {
+	warning("STUB: handleAttack");
+
+	return true;
+}
+
+const char *WageEngine::getPercentMessage(double percent) {
+	if (percent < 0.40) {
+		return "very bad";
+	} else if (percent < 0.55) {
+		return "bad";
+	} else if (percent < 0.70) {
+		return "average";
+	} else if (percent < 0.85) {
+		return "good";
+	} else if (percent <= 1.00) {
+		return "very good";
+	} else {
+		return "enhanced";
+	}
+}
+
+void WageEngine::printPlayerCondition(Chr *player) {
+	double physicalPercent = (double)player->_context._statVariables[PHYS_HIT_CUR] / player->_context._statVariables[PHYS_HIT_BAS];
+	double spiritualPercent = (double)player->_context._statVariables[SPIR_HIT_CUR] / player->_context._statVariables[SPIR_HIT_BAS];
+	char buf[256];
+
+	snprintf(buf, 256, "Your physical condition is %s.", getPercentMessage(physicalPercent));
+	appendText(buf);
+
+	snprintf(buf, 256, "Your spiritual condition is %s.", getPercentMessage(spiritualPercent));
+	appendText(buf);
 }
 
 } // End of namespace Wage

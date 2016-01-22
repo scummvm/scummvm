@@ -109,17 +109,17 @@ Scene::Scene(String name, Common::SeekableReadStream *data) {
 	setDesignBounds(readRect(data));
 	_worldY = data->readSint16BE();
 	_worldX = data->readSint16BE();
-	_blocked[Scene::NORTH] = (data->readByte() != 0);
-	_blocked[Scene::SOUTH] = (data->readByte() != 0);
-	_blocked[Scene::EAST] = (data->readByte() != 0);
-	_blocked[Scene::WEST] = (data->readByte() != 0);
+	_blocked[NORTH] = (data->readByte() != 0);
+	_blocked[SOUTH] = (data->readByte() != 0);
+	_blocked[EAST] = (data->readByte() != 0);
+	_blocked[WEST] = (data->readByte() != 0);
 	_soundFrequency = data->readSint16BE();
 	_soundType = data->readByte();
 	data->readByte(); // unknown
-	_messages[Scene::NORTH] = readPascalString(data);
-	_messages[Scene::SOUTH] = readPascalString(data);
-	_messages[Scene::EAST] = readPascalString(data);
-	_messages[Scene::WEST] = readPascalString(data);
+	_messages[NORTH] = readPascalString(data);
+	_messages[SOUTH] = readPascalString(data);
+	_messages[EAST] = readPascalString(data);
+	_messages[WEST] = readPascalString(data);
 	_soundName = readPascalString(data);
 
 	_visited = false;
