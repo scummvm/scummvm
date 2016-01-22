@@ -58,7 +58,7 @@ public:
 private:
 	Common::SeekableReadStream *_data;
 
-	WageEngine *_callbacks;
+	WageEngine *_engine;
 	World *_world;
 	int _loopCount;
 	String *_inputText;
@@ -149,7 +149,7 @@ private:
 public:
 	void print();
 	void printLine(int offset);
-	bool execute(World *world, int loopCount, String *inputText, Designed *inputClick, WageEngine *callbacks);
+	bool execute(World *world, int loopCount, String *inputText, Designed *inputClick, WageEngine *engine);
 
 private:
 	Operand *readOperand();

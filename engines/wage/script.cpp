@@ -80,12 +80,12 @@ void Script::printLine(int offset) {
 		}
 }
 
-bool Script::execute(World *world, int loopCount, String *inputText, Designed *inputClick, WageEngine *callbacks) {
+bool Script::execute(World *world, int loopCount, String *inputText, Designed *inputClick, WageEngine *engine) {
 	_world = world;
 	_loopCount = loopCount;
 	_inputText = inputText;
 	_inputClick = inputClick;
-	_callbacks = callbacks;
+	_engine = engine;
 	_handled = false;
 	Common::String input;
 
@@ -130,7 +130,7 @@ bool Script::execute(World *world, int loopCount, String *inputText, Designed *i
 				Operand *op = readOperand();
 				// TODO check op type is string.
 				_handled = true;
-				callbacks->playSound(op->toString());
+				_engine->playSound(op->toString());
 				delete op;
 				byte d = _data->readByte();
 				if (d != 0xFD)
@@ -144,7 +144,7 @@ bool Script::execute(World *world, int loopCount, String *inputText, Designed *i
 			{
 				Operand *op = readStringOperand(); // allows empty menu
 				// TODO check op type is string.
-				_callbacks->setMenu(op->toString());
+				_engine->setMenu(op->toString());
 				byte d = _data->readByte();
 				if (d != 0xFD)
 					warning("Operand 0x8B (PRINT) End Byte != 0xFD");
@@ -158,7 +158,7 @@ bool Script::execute(World *world, int loopCount, String *inputText, Designed *i
 
 	if (_world->_globalScript != this) {
 		debug(1, "Executing global script...");
-		bool globalHandled = _world->_globalScript->execute(_world, _loopCount, &input, _inputClick, _callbacks);
+		bool globalHandled = _world->_globalScript->execute(_world, _loopCount, &input, _inputClick, _engine);
 		if (globalHandled)
 			_handled = true;
 	} else if (!input.empty()) {
@@ -195,7 +195,7 @@ bool Script::execute(World *world, int loopCount, String *inputText, Designed *i
 			handleStatusCommand();
 		} else if (input.contains("rest") || input.equals("wait")) {
 			handleRestCommand();
-		} else if (callbacks->getOffer() != NULL && input.contains("accept")) {
+		} else if (_engine->getOffer() != NULL && input.contains("accept")) {
 			handleAcceptCommand();
 		} else {
 			Chr *player = _world->_player;
@@ -240,19 +240,19 @@ Script::Operand *Script::readOperand() {
 	case 0xC2: // PLAYER@
 		return new Operand(_world->_player, CHR);
 	case 0xC3: // MONSTER@
-		return new Operand(_callbacks->getMonster(), CHR);
+		return new Operand(_engine->getMonster(), CHR);
 	case 0xC4: // RANDOMSCN@
-		return new Operand(_world->_orderedScenes[_callbacks->_rnd->getRandomNumber(_world->_orderedScenes.size())], SCENE);
+		return new Operand(_world->_orderedScenes[_engine->_rnd->getRandomNumber(_world->_orderedScenes.size())], SCENE);
 	case 0xC5: // RANDOMCHR@
-		return new Operand(_world->_orderedChrs[_callbacks->_rnd->getRandomNumber(_world->_orderedChrs.size())], CHR);
+		return new Operand(_world->_orderedChrs[_engine->_rnd->getRandomNumber(_world->_orderedChrs.size())], CHR);
 	case 0xC6: // RANDOMOBJ@
-		return new Operand(_world->_orderedObjs[_callbacks->_rnd->getRandomNumber(_world->_orderedObjs.size())], OBJ);
+		return new Operand(_world->_orderedObjs[_engine->_rnd->getRandomNumber(_world->_orderedObjs.size())], OBJ);
 	case 0xB0: // VISITS#
 		return new Operand(cont->_visits, NUMBER);
 	case 0xB1: // RANDOM# for Star Trek, but VISITS# for some other games?
-		return new Operand(1 + _callbacks->_rnd->getRandomNumber(100), NUMBER);
+		return new Operand(1 + _engine->_rnd->getRandomNumber(100), NUMBER);
 	case 0xB5: // RANDOM# // A random number between 1 and 100.
-		return new Operand(1 + _callbacks->_rnd->getRandomNumber(100), NUMBER);
+		return new Operand(1 + _engine->_rnd->getRandomNumber(100), NUMBER);
 	case 0xB2: // LOOP#
 		return new Operand(_loopCount, NUMBER);
 	case 0xB3: // VICTORY#
@@ -940,7 +940,7 @@ void Script::processLet() {
 
 void Script::appendText(String str) {
 	_handled = true;
-	_callbacks->appendText(str);
+	_engine->appendText(str);
 }
 
 static const int directionsX[] = { 0, 0, 1, -1 };
@@ -1082,21 +1082,21 @@ void Script::handleStatusCommand() {
 
 	printPlayerCondition(player);
 
-	_callbacks->_commandWasQuick = true;
+	_engine->_commandWasQuick = true;
 }
 
 void Script::handleRestCommand() {
-	if (_callbacks->getMonster() != NULL) {
+	if (_engine->getMonster() != NULL) {
 		appendText("This is no time to rest!");
-		_callbacks->_commandWasQuick = true;
+		_engine->_commandWasQuick = true;
 	} else {
-		_callbacks->regen();
+		_engine->regen();
 		printPlayerCondition(_world->_player);
 	}
 }
 
 void Script::handleAcceptCommand() {
-	Obj *offer = _callbacks->_offer;
+	Obj *offer = _engine->_offer;
 	Chr *chr = offer->_currentOwner;
 
 	char buf[512];
@@ -1152,11 +1152,11 @@ void Script::handleAimCommand(const char *t) {
 	target.toLowercase();
 
 	if (target.contains("head")) {
-		_callbacks->_aim = Chr::HEAD;
+		_engine->_aim = Chr::HEAD;
 	} else if (target.contains("chest")) {
-		_callbacks->_aim = Chr::CHEST;
+		_engine->_aim = Chr::CHEST;
 	} else if (target.contains("side")) {
-		_callbacks->_aim = Chr::SIDE;
+		_engine->_aim = Chr::SIDE;
 	} else {
 		wasHandled = false;
 		appendText((char *)"Please aim for the head, chest, or side.");
@@ -1165,7 +1165,7 @@ void Script::handleAimCommand(const char *t) {
 	if (wasHandled)
 		_handled = true;
 
-	_callbacks->_commandWasQuick = true;
+	_engine->_commandWasQuick = true;
 }
 
 void Script::handleWearCommand(const char *t) {
