@@ -269,6 +269,7 @@ public:
 	Common::Platform getPlatform() const;
 	bool isDemo() const;
 	bool isCD() const;
+	bool forceHiresGraphics() const;
 
 	/** Returns true if the game's original platform is big-endian. */
 	bool isBE() const;
@@ -422,6 +423,7 @@ private:
 	Console *_console;
 	Common::RandomSource _rng;
 	Common::MacResManager _macExecutable;
+	bool _forceHiresGraphics; // user-option for GK1, KQ6, PQ4
 };
 
 

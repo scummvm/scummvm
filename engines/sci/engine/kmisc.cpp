@@ -539,6 +539,11 @@ reg_t kPlatform(EngineState *s, int argc, reg_t *argv) {
 		return NULL_REG;
 	}
 
+	if (g_sci->forceHiresGraphics()) {
+		// force Windows platform, so that hires-graphics are enabled
+		isWindows = true;
+	}
+
 	uint16 operation = (argc == 0) ? 0 : argv[0].toUint16();
 
 	switch (operation) {

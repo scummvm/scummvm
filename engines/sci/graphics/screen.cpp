@@ -50,7 +50,7 @@ GfxScreen::GfxScreen(ResourceManager *resMan) : _resMan(resMan) {
 	// to provide that under DOS as well, but as gk1/floppy does support
 	// upscaled hires scriptswise, but doesn't actually have the hires content
 	// we need to limit it to platform windows.
-	if (g_sci->getPlatform() == Common::kPlatformWindows) {
+	if ((g_sci->getPlatform() == Common::kPlatformWindows) || (g_sci->forceHiresGraphics())) {
 		if (g_sci->getGameId() == GID_KQ6)
 			_upscaledHires = GFX_SCREEN_UPSCALED_640x440;
 #ifdef ENABLE_SCI32

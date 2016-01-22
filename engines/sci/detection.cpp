@@ -379,6 +379,16 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 	},
 
 	{
+		GAMEOPTION_HIGH_RESOLUTION_GRAPHICS,
+		{
+			_s("Enable high resolution graphics"),
+			_s("Enable high resolution graphics/content"),
+			"enable_high_resolution_graphics",
+			true
+		}
+	},
+
+	{
 		GAMEOPTION_PREFER_DIGITAL_SFX,
 		{
 			_s("Prefer digital sound effects"),

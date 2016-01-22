@@ -95,6 +95,8 @@ SciEngine::SciEngine(OSystem *syst, const ADGameDescription *desc, SciGameId gam
 	_console = 0;
 	_opcode_formats = 0;
 
+	_forceHiresGraphics = false;
+
 	// Set up the engine specific debug levels
 	DebugMan.addDebugChannel(kDebugLevelError, "Error", "Script error debugging");
 	DebugMan.addDebugChannel(kDebugLevelNodes, "Lists", "Lists and nodes debugging");
@@ -221,6 +223,34 @@ Common::Error SciEngine::run() {
 
 	_scriptPatcher = new ScriptPatcher();
 	SegManager *segMan = new SegManager(_resMan, _scriptPatcher);
+
+	// Read user option for hires graphics
+	// Only show/selectable for:
+	//  - King's Quest 6 CD
+	//  - King's Quest 6 CD demo
+	//  - Gabriel Knight 1 CD
+	// TODO: Police Quest 4?
+	// TODO: Check, if Gabriel Knight 1 floppy supports high resolution
+	// TODO: Check, if Gabriel Knight 1 on Mac supports high resolution
+	switch (getPlatform()) {
+	case Common::kPlatformDOS:
+	case Common::kPlatformWindows:
+		// Only DOS+Windows
+		switch (_gameId) {
+		case GID_KQ6:
+			if (isCD())
+				_forceHiresGraphics = ConfMan.getBool("enable_high_resolution_graphics");
+			break;
+		case GID_GK1:
+			if ((isCD()) && (!isDemo()))
+				_forceHiresGraphics = ConfMan.getBool("enable_high_resolution_graphics");
+			break;
+		default:
+			break;
+		}
+	default:
+		break;
+	};
 
 	// Initialize the game screen
 	_gfxScreen = new GfxScreen(_resMan);
@@ -803,6 +833,10 @@ bool SciEngine::isDemo() const {
 
 bool SciEngine::isCD() const {
 	return _gameDescription->flags & ADGF_CD;
+}
+
+bool SciEngine::forceHiresGraphics() const {
+	return _forceHiresGraphics;
 }
 
 bool SciEngine::isBE() const{
