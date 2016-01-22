@@ -1206,7 +1206,22 @@ void Script::handleWearCommand(const char *t) {
 }
 
 void Script::wearObj(Obj *o, int pos) {
-	warning("STUB: wearObj()");
+	Chr *player = _world->_player;
+	char buf[512];
+
+	if (player->_armor[pos] == o) {
+		snprintf(buf, 512, "You are already wearing the %s.", o->_name.c_str());
+		appendText(buf);
+	} else {
+		if (player->_armor[pos] != NULL) {
+			snprintf(buf, 512, "You are no longer wearing the %s.", player->_armor[pos]->_name.c_str());
+			appendText(buf);
+		}
+
+		player->_armor[pos] = o;
+		snprintf(buf, 512, "You are now wearing the %s.", o->_name.c_str());
+		appendText(buf);
+	}
 }
 
 
