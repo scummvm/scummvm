@@ -229,7 +229,7 @@ Common::Error SciEngine::run() {
 	//  - King's Quest 6 CD
 	//  - King's Quest 6 CD demo
 	//  - Gabriel Knight 1 CD
-	// TODO: Police Quest 4?
+	//  - Police Quest 4 CD
 	// TODO: Check, if Gabriel Knight 1 floppy supports high resolution
 	// TODO: Check, if Gabriel Knight 1 on Mac supports high resolution
 	switch (getPlatform()) {
@@ -243,6 +243,10 @@ Common::Error SciEngine::run() {
 			break;
 		case GID_GK1:
 			if ((isCD()) && (!isDemo()))
+				_forceHiresGraphics = ConfMan.getBool("enable_high_resolution_graphics");
+			break;
+		case GID_PQ4:
+			if (isCD())
 				_forceHiresGraphics = ConfMan.getBool("enable_high_resolution_graphics");
 			break;
 		default:

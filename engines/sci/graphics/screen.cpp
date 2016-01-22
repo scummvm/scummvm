@@ -56,6 +56,8 @@ GfxScreen::GfxScreen(ResourceManager *resMan) : _resMan(resMan) {
 #ifdef ENABLE_SCI32
 		if (g_sci->getGameId() == GID_GK1)
 			_upscaledHires = GFX_SCREEN_UPSCALED_640x480;
+		if (g_sci->getGameId() == GID_PQ4)
+			_upscaledHires = GFX_SCREEN_UPSCALED_640x480;
 #endif
 	}
 
