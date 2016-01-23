@@ -471,6 +471,7 @@ bool WageEngine::handleStatusCommand() {
 
 		if (uses > 0) {
 			snprintf(buf, 512, "Your %s has %d uses left.", (*it)->_name.c_str(), uses);
+			appendText(buf);
 		}
 	}
 
@@ -544,6 +545,7 @@ bool WageEngine::handleDropCommand(const char *target) {
 			char buf[256];
 
 			snprintf(buf, 256, "You no longer have the %s.", (*it)->_name.c_str());
+			appendText(buf);
 			_world->move(*it, _world->_player->_currentScene);
 
 			handled = true;
