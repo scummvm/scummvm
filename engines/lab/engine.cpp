@@ -266,7 +266,7 @@ Common::String LabEngine::getInvName(uint16 curInv) {
 		return "P:Mines/120";
 
 	if ((curInv == kItemBelt) && _conditions->in(kCondBeltGlowing))
-		return "P:Future/kCondBeltGlowing";
+		return "P:Future/BeltGlow";
 
 	if (curInv == kItemWestPaper) {
 		_curFileName = _inventory[curInv]._bitmapName;
