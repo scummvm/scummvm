@@ -291,14 +291,14 @@ void LabEngine::interfaceOff() {
 }
 
 void LabEngine::interfaceOn() {
-	_event->mouseShow();
-
 	if (_graphics->_longWinInFront)
 		_interface->attachButtonList(nullptr);
 	else if (_alternate)
 		_interface->attachButtonList(&_invButtonList);
 	else
 		_interface->attachButtonList(&_moveButtonList);
+
+	_event->mouseShow();
 }
 
 bool LabEngine::doUse(uint16 curInv) {
