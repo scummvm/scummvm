@@ -92,16 +92,15 @@ msgstr "OK"
 
 #: gui/filebrowser-dialog.cpp:49
 msgid "Choose file for loading"
-msgstr ""
+msgstr "Zu ladende Datei auswählen"
 
 #: gui/filebrowser-dialog.cpp:49
 msgid "Enter filename for saving"
-msgstr ""
+msgstr "Dateiname zum Speichern eingeben"
 
 #: gui/filebrowser-dialog.cpp:132
-#, fuzzy
 msgid "Do you really want to overwrite the file?"
-msgstr "Möchten Sie diese Aufnahme wirklich löschen?"
+msgstr "Möchten Sie diese Datei wirklich überschreiben?"
 
 #: gui/filebrowser-dialog.cpp:132 gui/launcher.cpp:793 gui/launcher.cpp:941
 #: gui/launcher.cpp:1000 gui/fluidsynth-dialog.cpp:217
