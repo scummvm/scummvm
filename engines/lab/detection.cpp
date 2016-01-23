@@ -48,7 +48,7 @@ static const ADGameDescription labDescriptions[] = {
 		},
 		Common::EN_ANY,
 		Common::kPlatformDOS,
-		ADGF_NO_FLAGS,
+		ADGF_TESTING,
 		GUIO0()
 	},
 	{
@@ -61,7 +61,7 @@ static const ADGameDescription labDescriptions[] = {
 		},
 		Common::EN_ANY,
 		Common::kPlatformDOS,
-		Lab::GF_LOWRES,
+		Lab::GF_LOWRES | ADGF_TESTING,
 		GUIO0()
 	},
 	{
@@ -75,7 +75,7 @@ static const ADGameDescription labDescriptions[] = {
 		},
 		Common::EN_ANY,
 		Common::kPlatformWindows,
-		ADGF_NO_FLAGS,
+		ADGF_TESTING,
 		GUIO0()
 	},
 	{
@@ -84,7 +84,7 @@ static const ADGameDescription labDescriptions[] = {
 		AD_ENTRY1s("doors", "7bf458df6ec30cc8ef4665e4d7c77f59", 2537), // game/doors
 		Common::EN_ANY,
 		Common::kPlatformAmiga,
-		Lab::GF_LOWRES,
+		Lab::GF_LOWRES | ADGF_TESTING,
 		GUIO0()
 	},
 	AD_TABLE_END_MARKER
