@@ -258,8 +258,8 @@ AnimVideo::AnimVideo(Object *parent, byte subType, uint16 index, const Common::S
 		_width(0),
 		_height(0),
 		_smacker(nullptr),
-		_field_4C(-1),
-		_field_50(0),
+		_frameRateOverride(-1),
+		_preload(false),
 		_loop(false),
 		_actionItem(nullptr) {
 }
@@ -280,10 +280,10 @@ void AnimVideo::readData(Formats::XRCReadStream *stream) {
 	}
 
 	_loop = stream->readBool();
-	_field_4C = stream->readSint32LE();
+	_frameRateOverride = stream->readUint32LE();
 
 	if (stream->isDataLeft()) {
-		_field_50 = stream->readUint32LE();
+		_preload = stream->readBool();
 	}
 
 	_archiveName = stream->getArchiveName();
@@ -370,8 +370,8 @@ void AnimVideo::printData() {
 	}
 	debug("sizes: %s", description.c_str());
 
-	debug("field_4C: %d", _field_4C);
-	debug("field_50: %d", _field_50);
+	debug("frameRateOverride): %d", _frameRateOverride);
+	debug("preload: %d", _preload);
 	debug("loop: %d", _loop);
 }
 

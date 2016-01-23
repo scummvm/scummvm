@@ -228,8 +228,8 @@ protected:
 	PointArray _positions;
 	RectArray _sizes;
 
-	int32 _field_4C;
-	uint32 _field_50;
+	int32 _frameRateOverride;
+	bool _preload;
 	bool _loop;
 
 	ItemVisual *_actionItem;
