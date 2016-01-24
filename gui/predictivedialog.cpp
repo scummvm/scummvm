@@ -735,7 +735,7 @@ bool PredictiveDialog::matchWord() {
 
 	// The entries in the dictionary consist of a code, a space, and then
 	// a space-separated list of words matching this code.
-	// To ex_curPressedButtonly match a code, we therefore match the code plus the trailing
+	// To exactly match a code, we therefore match the code plus the trailing
 	// space in the dictionary.
 	Common::String code = _currentCode + " ";
 
