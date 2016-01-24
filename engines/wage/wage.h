@@ -152,6 +152,7 @@ private:
 	void performHealingMagic(Chr *chr, Obj *magicalObject);
 
 	void doClose();
+	void updateSoundTimerForScene(Scene *scene, bool firstTime);
 
 public:
 	void takeObj(Obj *obj);

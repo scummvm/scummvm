@@ -386,19 +386,16 @@ void WageEngine::onMove(Designed *what, Designed *from, Designed *to) {
 
 void WageEngine::redrawScene() {
 	Scene *currentScene = _world->_player->_currentScene;
+
 	if (currentScene != NULL) {
-		//bool firstTime = (_lastScene != currentScene);
+		bool firstTime = (_lastScene != currentScene);
 
-		warning("STUB: WageEngine::redrawScene()");
-
-		//updateConsoleForScene(console, currentScene);
-		//updateSceneViewerForScene(viewer, currentScene);
-		//viewer.paintImmediately(viewer.getBounds());
-		//getContentPane().validate();
-		//getContentPane().repaint();
-		//console.postUpdateUI();
-		//soundManager.updateSoundTimerForScene(currentScene, firstTime);
+		updateSoundTimerForScene(currentScene, firstTime);
 	}
+}
+
+void WageEngine::updateSoundTimerForScene(Scene *scene, bool firstTime) {
+	//warning("STUB: WageEngine::updateSoundTimerForScene()");
 }
 
 void WageEngine::processTurnInternal(Common::String *textInput, Designed *clickInput) {
