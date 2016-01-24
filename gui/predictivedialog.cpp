@@ -104,15 +104,15 @@ PredictiveDialog::PredictiveDialog() : Dialog("Predictive") {
 	_userDictHasChanged = false;
 
 	_predictiveDict.nameDict = "predictive_dictionary";
-	_predictiveDict.fnameDict = "pred.dic";
+	_predictiveDict.defaultFilename = "pred.dic";
 	_predictiveDict.dictActLine = NULL;
 
 	_userDict.nameDict = "user_dictionary";
-	_userDict.fnameDict = "user.dic";
+	_userDict.defaultFilename = "user.dic";
 	_userDict.dictActLine = NULL;
 
 	_unitedDict.nameDict = "";
-	_unitedDict.fnameDict = "";
+	_unitedDict.defaultFilename = "";
 
 	_predictiveDict.dictLine = NULL;
 	_predictiveDict.dictText = NULL;
@@ -997,19 +997,19 @@ void PredictiveDialog::loadDictionary(Common::SeekableReadStream *in, Dict &dict
 }
 
 void PredictiveDialog::loadAllDictionary(Dict &dict) {
-	ConfMan.registerDefault(dict.nameDict, dict.fnameDict);
+	ConfMan.registerDefault(dict.nameDict, dict.defaultFilename);
 
 	if (dict.nameDict == "predictive_dictionary") {
 		Common::File *inFile = new Common::File();
 		if (!inFile->open(ConfMan.get(dict.nameDict))) {
-			warning("Predictive Dialog: cannot read file: %s", dict.fnameDict.c_str());
+			warning("Predictive Dialog: cannot read file: %s", dict.defaultFilename.c_str());
 			return;
 		}
 		loadDictionary(inFile, dict);
 	} else {
 		Common::InSaveFile *inFile = g_system->getSavefileManager()->openForLoading(ConfMan.get(dict.nameDict));
 		if (!inFile) {
-			warning("Predictive Dialog: cannot read file: %s", dict.fnameDict.c_str());
+			warning("Predictive Dialog: cannot read file: %s", dict.defaultFilename.c_str());
 			return;
 		}
 		loadDictionary(inFile, dict);

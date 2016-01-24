@@ -84,7 +84,7 @@ private:
 		int32 dictLineCount;
 		int32 dictTextSize;
 		Common::String nameDict;
-		Common::String fnameDict;
+		Common::String defaultFilename;
 	};
 
 	uint8 countWordsInString(const char *const str);
