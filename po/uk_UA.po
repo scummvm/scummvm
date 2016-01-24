@@ -91,16 +91,15 @@ msgstr "Гаразд"
 
 #: gui/filebrowser-dialog.cpp:49
 msgid "Choose file for loading"
-msgstr ""
+msgstr "Оберіть файл для завантаження"
 
 #: gui/filebrowser-dialog.cpp:49
 msgid "Enter filename for saving"
-msgstr ""
+msgstr "Надайте ім'я файлу для запису"
 
 #: gui/filebrowser-dialog.cpp:132
-#, fuzzy
 msgid "Do you really want to overwrite the file?"
-msgstr "Ви дійсно хочете видалити цей запис?"
+msgstr "Ви дійсно хочете замінити цей файл?"
 
 #: gui/filebrowser-dialog.cpp:132 gui/launcher.cpp:795 gui/launcher.cpp:943
 #: gui/launcher.cpp:1002 gui/fluidsynth-dialog.cpp:217
@@ -2647,21 +2646,19 @@ msgstr "Використовувати альтернативний вступ гри (тільки CD версія)"
 
 #: engines/sci/detection.cpp:374
 msgid "Skip EGA dithering pass (full color backgrounds)"
-msgstr ""
+msgstr "Не робити растрування EGA (фони у повному кольорі)"
 
 #: engines/sci/detection.cpp:375
 msgid "Skip dithering pass in EGA games, graphics are shown with full colors"
-msgstr ""
+msgstr "Не робити крок растрування у іграх EGA, графіку буде показано у повному кольорі"
 
 #: engines/sci/detection.cpp:384
-#, fuzzy
 msgid "Enable high resolution graphics"
-msgstr "Уиімкнути графічні стовпички здоров'я"
+msgstr "Увімкнути графіку високого розгалуження"
 
 #: engines/sci/detection.cpp:385
-#, fuzzy
 msgid "Enable high resolution graphics/content"
-msgstr "Уиімкнути графічні стовпички здоров'я"
+msgstr "Увімкнути графіку та контент у високому розгалуженні"
 
 #: engines/sci/detection.cpp:394
 msgid "Prefer digital sound effects"
