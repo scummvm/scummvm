@@ -211,9 +211,15 @@ Common::String Resource::translateFileName(const Common::String filename) {
 Common::File *Resource::openDataFile(const Common::String filename, uint32 fileHeader) {
 	Common::File *dataFile = new Common::File();
 	dataFile->open(translateFileName(filename));
-	if (!dataFile->isOpen())
-		error("openDataFile: Couldn't open %s (%s)", translateFileName(filename).c_str(), filename.c_str());
-
+	warning("%s", filename.c_str());
+	if (!dataFile->isOpen()) {
+		// The DOS version is known to have some missing files
+		if (_vm->getPlatform() == Common::kPlatformDOS) {
+			warning("Incomplete DOS version, skipping file %s", filename.c_str());
+			return nullptr;
+		} else
+			error("openDataFile: Couldn't open %s (%s)", translateFileName(filename).c_str(), filename.c_str());
+	}
 	if (fileHeader > 0) {
 		uint32 headerTag = dataFile->readUint32BE();
 		if (headerTag != fileHeader) {

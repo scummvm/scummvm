@@ -287,6 +287,9 @@ void Anim::readDiff(Common::File *diffFile, bool playOnce, bool onlyDiffData) {
 
 	_continuous = false;
 
+	if (!_diffFile)
+		return;
+
 	uint32 magicBytes = _diffFile->readUint32LE();
 	if (magicBytes != 1219009121) {
 		_isPlaying = false;
