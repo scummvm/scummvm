@@ -84,7 +84,7 @@ static const ADGameDescription labDescriptions[] = {
 		AD_ENTRY1s("doors", "7bf458df6ec30cc8ef4665e4d7c77f59", 2537), // game/doors
 		Common::EN_ANY,
 		Common::kPlatformAmiga,
-		Lab::GF_LOWRES | ADGF_TESTING,
+		Lab::GF_LOWRES | ADGF_UNSTABLE,
 		GUIO0()
 	},
 	AD_TABLE_END_MARKER
