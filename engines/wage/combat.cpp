@@ -285,10 +285,26 @@ void WageEngine::performTake(Chr *npc, Obj *obj) {
 	_world->move(obj, npc);
 }
 
-int WageEngine::getValidMoveDirections(Chr *npc) {
-	warning("STUB: getValidMoveDirections()");
+static const int directionsX[] = { 0, 0, 1, -1 };
+static const int directionsY[] = { -1, 1, 0, 0 };
 
-	return 0;
+int WageEngine::getValidMoveDirections(Chr *npc) {
+	int directions = 0;
+	Scene *currentScene = npc->_currentScene;
+	for (int dir = 0; dir < 4; dir++) {
+		if (!currentScene->_blocked[dir]) {
+			int destX = currentScene->_worldX + directionsX[dir];
+			int destY = currentScene->_worldY + directionsY[dir];
+
+			Scene *scene = _world->getSceneAt(destX, destY);
+
+			if (scene != NULL && scene->_chrs.size() == 0) {
+				directions |= (1 << dir);
+			}
+		}
+	}
+
+	return directions;
 }
 
 void WageEngine::regen() {
@@ -330,9 +346,6 @@ void WageEngine::takeObj(Obj *obj) {
 		appendText(obj->_clickMessage.c_str());
 	}
 }
-
-static const int directionsX[] = { 0, 0, 1, -1 };
-static const int directionsY[] = { -1, 1, 0, 0 };
 
 bool WageEngine::handleMoveCommand(Directions dir, const char *dirName) {
 	Scene *playerScene = _world->_player->_currentScene;
