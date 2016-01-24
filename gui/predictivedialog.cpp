@@ -121,7 +121,7 @@ PredictiveDialog::PredictiveDialog() : Dialog("Predictive") {
 	if (!_predictiveDict.dictText) {
 		loadAllDictionary(_predictiveDict);
 		if (!_predictiveDict.dictText)
-			debug("Predictive Dialog: pred.dic not loaded");
+			debug(5, "Predictive Dialog: pred.dic not loaded");
 	}
 
 	_userDict.dictLine = NULL;
@@ -132,7 +132,7 @@ PredictiveDialog::PredictiveDialog() : Dialog("Predictive") {
 	if (!_userDict.dictText) {
 		loadAllDictionary(_userDict);
 		if (!_userDict.dictText)
-			debug("Predictive Dialog: user.dic not loaded");
+			debug(5, "Predictive Dialog: user.dic not loaded");
 	}
 
 	mergeDicts();
@@ -580,7 +580,7 @@ void PredictiveDialog::processBtnActive(ButtonId button) {
 			if (_mode == kModeAbc)
 				addWordToDict();
 			else
-				debug("Predictive Dialog: button Add doesn't work in this mode");
+				debug(5, "Predictive Dialog: button Add doesn't work in this mode");
 		} else if (button == kOkAct) { // Ok
 			// bring MRU word at the top of the list when ok'ed out of the dialog
 			if (_mode == kModePre && _unitedDict.dictActLine && _numMatchingWords > 1 && _wordNumber != 0)
@@ -643,7 +643,7 @@ void PredictiveDialog::mergeDicts() {
 	_unitedDict.dictLine = (char **)calloc(_unitedDict.dictLineCount, sizeof(char *));
 
 	if (!_unitedDict.dictLine) {
-		debug("Predictive Dialog: cannot allocate memory for united dic");
+		debug(5, "Predictive Dialog: cannot allocate memory for united dic");
 		return;
 	}
 
@@ -680,7 +680,7 @@ uint8 PredictiveDialog::countWordsInString(const char *const str) {
 
 	ptr = strchr(str, ' ');
 	if (!ptr) {
-		debug("Predictive Dialog: Invalid dictionary line");
+		debug(5, "Predictive Dialog: Invalid dictionary line");
 		return 0;
 	}
 
@@ -706,7 +706,7 @@ void PredictiveDialog::bringWordtoTop(char *str, int wordnum) {
 	buf[kMaxLineLen - 1] = 0;
 	char *word = strtok(buf, " ");
 	if (!word) {
-		debug("Predictive Dialog: Invalid dictionary line");
+		debug(5, "Predictive Dialog: Invalid dictionary line");
 		return;
 	}
 
@@ -951,7 +951,7 @@ void PredictiveDialog::loadDictionary(Common::SeekableReadStream *in, Dict &dict
 	in->read(dict.dictText, dict.dictTextSize);
 	dict.dictText[dict.dictTextSize] = 0;
 	uint32 time2 = g_system->getMillis();
-	debug("Predictive Dialog: Time to read %s: %d bytes, %d ms", ConfMan.get(dict.nameDict).c_str(), dict.dictTextSize, time2 - time1);
+	debug(5, "Predictive Dialog: Time to read %s: %d bytes, %d ms", ConfMan.get(dict.nameDict).c_str(), dict.dictTextSize, time2 - time1);
 	delete in;
 
 	char *ptr = dict.dictText;
@@ -982,7 +982,7 @@ void PredictiveDialog::loadDictionary(Common::SeekableReadStream *in, Dict &dict
 		lines--;
 
 	dict.dictLineCount = lines;
-	debug("Predictive Dialog: Loaded %d lines", dict.dictLineCount);
+	debug(5, "Predictive Dialog: Loaded %d lines", dict.dictLineCount);
 
 	// FIXME: We use binary search on _predictiveDict.dictLine, yet we make no at_tempt
 	// to ever sort this array (except for the DS port). That seems risky, doesn't it?
@@ -993,7 +993,7 @@ void PredictiveDialog::loadDictionary(Common::SeekableReadStream *in, Dict &dict
 #endif
 
 	uint32 time3 = g_system->getMillis();
-	debug("Predictive Dialog: Time to parse %s: %d, total: %d", ConfMan.get(dict.nameDict).c_str(), time3 - time2, time3 - time1);
+	debug(5, "Predictive Dialog: Time to parse %s: %d, total: %d", ConfMan.get(dict.nameDict).c_str(), time3 - time2, time3 - time1);
 }
 
 void PredictiveDialog::loadAllDictionary(Dict &dict) {
