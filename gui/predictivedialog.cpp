@@ -70,34 +70,34 @@ enum {
 PredictiveDialog::PredictiveDialog() : Dialog("Predictive") {
 	new StaticTextWidget(this, "Predictive.Headline", "Enter Text");
 
-	_btns[kCancelAct] = new ButtonWidget(this, "Predictive.Cancel",  _("Cancel")   , 0, kCancelCmd);
-	_btns[kOkAct] =     new ButtonWidget(this, "Predictive.OK",      _("Ok")       , 0, kOkCmd);
-	_btns[kBtn1Act] =   new ButtonWidget(this, "Predictive.Button1", "1  `-.&"     , 0, kBut1Cmd);
-	_btns[kBtn2Act] =   new ButtonWidget(this, "Predictive.Button2", "2  abc"      , 0, kBut2Cmd);
-	_btns[kBtn3Act] =   new ButtonWidget(this, "Predictive.Button3", "3  def"      , 0, kBut3Cmd);
-	_btns[kBtn4Act] =   new ButtonWidget(this, "Predictive.Button4", "4  ghi"      , 0, kBut4Cmd);
-	_btns[kBtn5Act] =   new ButtonWidget(this, "Predictive.Button5", "5  jkl"      , 0, kBut5Cmd);
-	_btns[kBtn6Act] =   new ButtonWidget(this, "Predictive.Button6", "6  mno"      , 0, kBut6Cmd);
-	_btns[kBtn7Act] =   new ButtonWidget(this, "Predictive.Button7", "7  pqrs"     , 0, kBut7Cmd);
-	_btns[kBtn8Act] =   new ButtonWidget(this, "Predictive.Button8", "8  tuv"      , 0, kBut8Cmd);
-	_btns[kBtn9Act] =   new ButtonWidget(this, "Predictive.Button9", "9  wxyz"     , 0, kBut9Cmd);
-	_btns[kBtn0Act] =   new ButtonWidget(this, "Predictive.Button0", "0"           , 0, kBut0Cmd);
+	_button[kCancelAct] =  new ButtonWidget(this, "Predictive.Cancel",  _("Cancel")   , 0, kCancelCmd);
+	_button[kOkAct] =      new ButtonWidget(this, "Predictive.OK",      _("Ok")       , 0, kOkCmd);
+	_button[kButton1Act] = new ButtonWidget(this, "Predictive.Button1", "1  `-.&"     , 0, kBut1Cmd);
+	_button[kButton2Act] = new ButtonWidget(this, "Predictive.Button2", "2  abc"      , 0, kBut2Cmd);
+	_button[kButton3Act] = new ButtonWidget(this, "Predictive.Button3", "3  def"      , 0, kBut3Cmd);
+	_button[kButton4Act] = new ButtonWidget(this, "Predictive.Button4", "4  ghi"      , 0, kBut4Cmd);
+	_button[kButton5Act] = new ButtonWidget(this, "Predictive.Button5", "5  jkl"      , 0, kBut5Cmd);
+	_button[kButton6Act] = new ButtonWidget(this, "Predictive.Button6", "6  mno"      , 0, kBut6Cmd);
+	_button[kButton7Act] = new ButtonWidget(this, "Predictive.Button7", "7  pqrs"     , 0, kBut7Cmd);
+	_button[kButton8Act] = new ButtonWidget(this, "Predictive.Button8", "8  tuv"      , 0, kBut8Cmd);
+	_button[kButton9Act] = new ButtonWidget(this, "Predictive.Button9", "9  wxyz"     , 0, kBut9Cmd);
+	_button[kButton0Act] = new ButtonWidget(this, "Predictive.Button0", "0"           , 0, kBut0Cmd);
 	// I18N: You must leave "#" as is, only word 'next' is translatable
-	_btns[kNextAct] =   new ButtonWidget(this, "Predictive.Next",    _("#  next")  , 0, kNextCmd);
-	_btns[kAddAct] =    new ButtonWidget(this, "Predictive.Add",     _("add")      , 0, kAddCmd);
-	_btns[kAddAct]->setEnabled(false);
+	_button[kNextAct] =    new ButtonWidget(this, "Predictive.Next",    _("#  next")  , 0, kNextCmd);
+	_button[kAddAct] =     new ButtonWidget(this, "Predictive.Add",     _("add")      , 0, kAddCmd);
+	_button[kAddAct]->setEnabled(false);
 
 #ifndef DISABLE_FANCY_THEMES
 	if (g_gui.xmlEval()->getVar("Globals.Predictive.ShowDeletePic") == 1 && g_gui.theme()->supportsImages()) {
-		_btns[kDelAct] = new PicButtonWidget(this, "Predictive.Delete", _("Delete char"), kDelCmd);
-		((PicButtonWidget *)_btns[kDelAct])->useThemeTransparency(true);
-		((PicButtonWidget *)_btns[kDelAct])->setGfx(g_gui.theme()->getImageSurface(ThemeEngine::kImageDelbtn));
+		_button[kDelAct] = new PicButtonWidget(this, "Predictive.Delete", _("Delete char"), kDelCmd);
+		((PicButtonWidget *)_button[kDelAct])->useThemeTransparency(true);
+		((PicButtonWidget *)_button[kDelAct])->setGfx(g_gui.theme()->getImageSurface(ThemeEngine::kImageDelbtn));
 	} else
 #endif
-		_btns[kDelAct] = new ButtonWidget(this, "Predictive.Delete" , _("<") , 0, kDelCmd);
+		_button[kDelAct] = new ButtonWidget(this, "Predictive.Delete" , _("<") , 0, kDelCmd);
 	// I18N: Pre means 'Predictive', leave '*' as is
-	_btns[kModeAct] = new ButtonWidget(this, "Predictive.Pre", _("*  Pre"), 0, kModeCmd);
-	_edittext = new EditTextWidget(this, "Predictive.Word", _search, 0, 0, 0);
+	_button[kModeAct] = new ButtonWidget(this, "Predictive.Pre", _("*  Pre"), 0, kModeCmd);
+	_editText = new EditTextWidget(this, "Predictive.Word", _search, 0, 0, 0);
 
 	_userDictHasChanged = false;
 
@@ -130,18 +130,18 @@ PredictiveDialog::PredictiveDialog() : Dialog("Predictive") {
 	_numMatchingWords = 0;
 	memset(_predictiveResult, 0, sizeof(_predictiveResult));
 
-	_lastbutton = kNoAct;
+	_lastButton = kNoAct;
 	_mode = kModePre;
 
 	_lastTime = 0;
 	_curTime = 0;
-	_lastPressBtn = kNoAct;
+	_lastPressedButton = kNoAct;
 
 	_memoryList[0] = _predictiveDict.dictText;
 	_memoryList[1] = _userDict.dictText;
 	_numMemory = 0;
 
-	_navigationwithkeys = false;
+	_navigationWithKeys = false;
 }
 
 PredictiveDialog::~PredictiveDialog() {
@@ -155,17 +155,17 @@ PredictiveDialog::~PredictiveDialog() {
 
 void PredictiveDialog::reflowLayout() {
 #ifndef DISABLE_FANCY_THEMES
-	removeWidget(_btns[kDelAct]);
-	_btns[kDelAct]->setNext(0);
-	delete _btns[kDelAct];
-	_btns[kDelAct] = nullptr;
+	removeWidget(_button[kDelAct]);
+	_button[kDelAct]->setNext(0);
+	delete _button[kDelAct];
+	_button[kDelAct] = nullptr;
 
 	if (g_gui.xmlEval()->getVar("Globals.Predictive.ShowDeletePic") == 1 && g_gui.theme()->supportsImages()) {
-		_btns[kDelAct] = new PicButtonWidget(this, "Predictive.Delete", _("Delete char"), kDelCmd);
-		((PicButtonWidget *)_btns[kDelAct])->useThemeTransparency(true);
-		((PicButtonWidget *)_btns[kDelAct])->setGfx(g_gui.theme()->getImageSurface(ThemeEngine::kImageDelbtn));
+		_button[kDelAct] = new PicButtonWidget(this, "Predictive.Delete", _("Delete char"), kDelCmd);
+		((PicButtonWidget *)_button[kDelAct])->useThemeTransparency(true);
+		((PicButtonWidget *)_button[kDelAct])->setGfx(g_gui.theme()->getImageSurface(ThemeEngine::kImageDelbtn));
 	} else {
-		_btns[kDelAct] = new ButtonWidget(this, "Predictive.Delete" , _("<") , 0, kDelCmd);
+		_button[kDelAct] = new ButtonWidget(this, "Predictive.Delete" , _("<") , 0, kDelCmd);
 	}
 #endif
 
@@ -189,22 +189,22 @@ void PredictiveDialog::saveUserDictToFile() {
 }
 
 void PredictiveDialog::handleKeyUp(Common::KeyState state) {
-	if (_currBtn != kNoAct && !_needRefresh) {
-		_btns[_currBtn]->startAnimatePressedState();
-		processBtnActive(_currBtn);
+	if (_curPressedButton != kNoAct && !_needRefresh) {
+		_button[_curPressedButton]->startAnimatePressedState();
+		processButton(_curPressedButton);
 	}
 }
 
 void PredictiveDialog::handleKeyDown(Common::KeyState state) {
-	_currBtn = kNoAct;
+	_curPressedButton = kNoAct;
 	_needRefresh = false;
 
-	if (getFocusWidget() == _edittext) {
-		setFocusWidget(_btns[kAddAct]);
+	if (getFocusWidget() == _editText) {
+		setFocusWidget(_button[kAddAct]);
 	}
 
-	if (_lastbutton == kNoAct) {
-		_lastbutton = kBtn5Act;
+	if (_lastButton == kNoAct) {
+		_lastButton = kButton5Act;
 	}
 
 	switch (state.keycode) {
@@ -213,128 +213,128 @@ void PredictiveDialog::handleKeyDown(Common::KeyState state) {
 		close();
 		return;
 	case Common::KEYCODE_LEFT:
-		_navigationwithkeys = true;
-		if (_lastbutton == kBtn1Act || _lastbutton == kBtn4Act || _lastbutton == kBtn7Act)
-			_currBtn = ButtonId(_lastbutton + 2);
-		else if (_lastbutton == kDelAct)
-			_currBtn = kBtn1Act;
-		else if (_lastbutton == kModeAct)
-			_currBtn = kNextAct;
-		else if (_lastbutton == kNextAct)
-			_currBtn = kBtn0Act;
-		else if (_lastbutton == kAddAct)
-			_currBtn = kOkAct;
-		else if (_lastbutton == kCancelAct)
-			_currBtn = kAddAct;
+		_navigationWithKeys = true;
+		if (_lastButton == kButton1Act || _lastButton == kButton4Act || _lastButton == kButton7Act)
+			_curPressedButton = ButtonId(_lastButton + 2);
+		else if (_lastButton == kDelAct)
+			_curPressedButton = kButton1Act;
+		else if (_lastButton == kModeAct)
+			_curPressedButton = kNextAct;
+		else if (_lastButton == kNextAct)
+			_curPressedButton = kButton0Act;
+		else if (_lastButton == kAddAct)
+			_curPressedButton = kOkAct;
+		else if (_lastButton == kCancelAct)
+			_curPressedButton = kAddAct;
 		else
-			_currBtn = ButtonId(_lastbutton - 1);
+			_curPressedButton = ButtonId(_lastButton - 1);
 
 
-		if (_mode != kModeAbc && _lastbutton == kCancelAct)
-			_currBtn = kOkAct;
+		if (_mode != kModeAbc && _lastButton == kCancelAct)
+			_curPressedButton = kOkAct;
 
 		_needRefresh = true;
 		break;
 	case Common::KEYCODE_RIGHT:
-		_navigationwithkeys = true;
-		if (_lastbutton == kBtn3Act || _lastbutton == kBtn6Act || _lastbutton == kBtn9Act || _lastbutton == kOkAct)
-			_currBtn = ButtonId(_lastbutton - 2);
-		else if (_lastbutton == kDelAct)
-			_currBtn = kBtn3Act;
-		else if (_lastbutton == kBtn0Act)
-			_currBtn = kNextAct;
-		else if (_lastbutton == kNextAct)
-			_currBtn = kModeAct;
-		else if (_lastbutton == kAddAct)
-			_currBtn = kCancelAct;
-		else if (_lastbutton == kOkAct)
-			_currBtn = kAddAct;
+		_navigationWithKeys = true;
+		if (_lastButton == kButton3Act || _lastButton == kButton6Act || _lastButton == kButton9Act || _lastButton == kOkAct)
+			_curPressedButton = ButtonId(_lastButton - 2);
+		else if (_lastButton == kDelAct)
+			_curPressedButton = kButton3Act;
+		else if (_lastButton == kButton0Act)
+			_curPressedButton = kNextAct;
+		else if (_lastButton == kNextAct)
+			_curPressedButton = kModeAct;
+		else if (_lastButton == kAddAct)
+			_curPressedButton = kCancelAct;
+		else if (_lastButton == kOkAct)
+			_curPressedButton = kAddAct;
 		else
-			_currBtn = ButtonId(_lastbutton + 1);
+			_curPressedButton = ButtonId(_lastButton + 1);
 
-		if (_mode != kModeAbc && _lastbutton == kOkAct)
-			_currBtn = kCancelAct;
+		if (_mode != kModeAbc && _lastButton == kOkAct)
+			_curPressedButton = kCancelAct;
 		_needRefresh = true;
 		break;
 	case Common::KEYCODE_UP:
-		_navigationwithkeys = true;
-		if (_lastbutton <= kBtn3Act)
-			_currBtn = kDelAct;
-		else if (_lastbutton == kDelAct)
-			_currBtn = kOkAct;
-		else if (_lastbutton == kModeAct)
-			_currBtn = kBtn7Act;
-		else if (_lastbutton == kBtn0Act)
-			_currBtn = kBtn8Act;
-		else if (_lastbutton == kNextAct)
-			_currBtn = kBtn9Act;
-		else if (_lastbutton == kAddAct)
-			_currBtn = kModeAct;
-		else if (_lastbutton == kCancelAct)
-			_currBtn = kBtn0Act;
-		else if (_lastbutton == kOkAct)
-			_currBtn = kNextAct;
+		_navigationWithKeys = true;
+		if (_lastButton <= kButton3Act)
+			_curPressedButton = kDelAct;
+		else if (_lastButton == kDelAct)
+			_curPressedButton = kOkAct;
+		else if (_lastButton == kModeAct)
+			_curPressedButton = kButton7Act;
+		else if (_lastButton == kButton0Act)
+			_curPressedButton = kButton8Act;
+		else if (_lastButton == kNextAct)
+			_curPressedButton = kButton9Act;
+		else if (_lastButton == kAddAct)
+			_curPressedButton = kModeAct;
+		else if (_lastButton == kCancelAct)
+			_curPressedButton = kButton0Act;
+		else if (_lastButton == kOkAct)
+			_curPressedButton = kNextAct;
 		else
-			_currBtn = ButtonId(_lastbutton - 3);
+			_curPressedButton = ButtonId(_lastButton - 3);
 		_needRefresh = true;
 		break;
 	case Common::KEYCODE_DOWN:
-		_navigationwithkeys = true;
-		if (_lastbutton == kDelAct)
-			_currBtn = kBtn3Act;
-		else if (_lastbutton == kBtn7Act)
-			_currBtn = kModeAct;
-		else if (_lastbutton == kBtn8Act)
-			_currBtn = kBtn0Act;
-		else if (_lastbutton == kBtn9Act)
-			_currBtn = kNextAct;
-		else if (_lastbutton == kModeAct)
-			_currBtn = kAddAct;
-		else if (_lastbutton == kBtn0Act)
-			_currBtn = kCancelAct;
-		else if (_lastbutton == kNextAct)
-			_currBtn = kOkAct;
-		else if (_lastbutton == kAddAct || _lastbutton == kCancelAct || _lastbutton == kOkAct)
-			_currBtn = kDelAct;
+		_navigationWithKeys = true;
+		if (_lastButton == kDelAct)
+			_curPressedButton = kButton3Act;
+		else if (_lastButton == kButton7Act)
+			_curPressedButton = kModeAct;
+		else if (_lastButton == kButton8Act)
+			_curPressedButton = kButton0Act;
+		else if (_lastButton == kButton9Act)
+			_curPressedButton = kNextAct;
+		else if (_lastButton == kModeAct)
+			_curPressedButton = kAddAct;
+		else if (_lastButton == kButton0Act)
+			_curPressedButton = kCancelAct;
+		else if (_lastButton == kNextAct)
+			_curPressedButton = kOkAct;
+		else if (_lastButton == kAddAct || _lastButton == kCancelAct || _lastButton == kOkAct)
+			_curPressedButton = kDelAct;
 		else
-			_currBtn = ButtonId(_lastbutton + 3);
+			_curPressedButton = ButtonId(_lastButton + 3);
 
-		if (_mode != kModeAbc && _lastbutton == kModeAct)
-			_currBtn = kCancelAct;
+		if (_mode != kModeAbc && _lastButton == kModeAct)
+			_curPressedButton = kCancelAct;
 
 		_needRefresh = true;
 		break;
 	case Common::KEYCODE_KP_ENTER:
 	case Common::KEYCODE_RETURN:
 		if (state.flags & Common::KBD_CTRL) {
-			_currBtn = kOkAct;
+			_curPressedButton = kOkAct;
 			break;
 		}
-		if (_navigationwithkeys) {
+		if (_navigationWithKeys) {
 			// when the user has utilized arrow key navigation,
-			// interpret enter as 'click' on the _currBtn button
-			_currBtn = _lastbutton;
+			// interpret enter as 'click' on the _curPressedButton button
+			_curPressedButton = _lastButton;
 			_needRefresh = false;
 		} else {
 			// else it is a shortcut for 'Ok'
-			_currBtn = kOkAct;
+			_curPressedButton = kOkAct;
 		}
 		break;
 	case Common::KEYCODE_KP_PLUS:
-		_currBtn = kAddAct;
+		_curPressedButton = kAddAct;
 		break;
 	case Common::KEYCODE_BACKSPACE:
 	case Common::KEYCODE_KP_MINUS:
-		_currBtn = kDelAct;
+		_curPressedButton = kDelAct;
 		break;
 	case Common::KEYCODE_KP_DIVIDE:
-		_currBtn = kNextAct;
+		_curPressedButton = kNextAct;
 		break;
 	case Common::KEYCODE_KP_MULTIPLY:
-		_currBtn = kModeAct;
+		_curPressedButton = kModeAct;
 		break;
 	case Common::KEYCODE_KP0:
-		_currBtn = kBtn0Act;
+		_curPressedButton = kButton0Act;
 		break;
 	case Common::KEYCODE_KP1:
 	case Common::KEYCODE_KP2:
@@ -345,79 +345,79 @@ void PredictiveDialog::handleKeyDown(Common::KeyState state) {
 	case Common::KEYCODE_KP7:
 	case Common::KEYCODE_KP8:
 	case Common::KEYCODE_KP9:
-		_currBtn = ButtonId(state.keycode - Common::KEYCODE_KP1);
+		_curPressedButton = ButtonId(state.keycode - Common::KEYCODE_KP1);
 		break;
 	default:
 		Dialog::handleKeyDown(state);
 	}
 
-	if (_lastbutton != _currBtn)
-		_btns[_lastbutton]->stopAnimatePressedState();
+	if (_lastButton != _curPressedButton)
+		_button[_lastButton]->stopAnimatePressedState();
 
-	if (_currBtn != kNoAct && !_needRefresh)
-		_btns[_currBtn]->setPressedState();
+	if (_curPressedButton != kNoAct && !_needRefresh)
+		_button[_curPressedButton]->setPressedState();
 	else
-		updateHighLightedButton(_currBtn);
+		updateHighLightedButton(_curPressedButton);
 }
 
 void PredictiveDialog::updateHighLightedButton(ButtonId act) {
-	if (_currBtn != kNoAct) {
-		_btns[_lastbutton]->setHighLighted(false);
-		_lastbutton = act;
-		_btns[_lastbutton]->setHighLighted(true);
+	if (_curPressedButton != kNoAct) {
+		_button[_lastButton]->setHighLighted(false);
+		_lastButton = act;
+		_button[_lastButton]->setHighLighted(true);
 	}
 }
 
 void PredictiveDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
-	_currBtn = kNoAct;
+	_curPressedButton = kNoAct;
 
-	_navigationwithkeys = false;
+	_navigationWithKeys = false;
 
-	if (_lastbutton != kNoAct)
-		_btns[_lastbutton]->setHighLighted(false);
+	if (_lastButton != kNoAct)
+		_button[_lastButton]->setHighLighted(false);
 
 	switch (cmd) {
 	case kDelCmd:
-		_currBtn = kDelAct;
+		_curPressedButton = kDelAct;
 		break;
 	case kNextCmd:
-		_currBtn = kNextAct;
+		_curPressedButton = kNextAct;
 		break;
 	case kAddCmd:
-		_currBtn = kAddAct;
+		_curPressedButton = kAddAct;
 		break;
 	case kModeCmd:
-		_currBtn = kModeAct;
+		_curPressedButton = kModeAct;
 		break;
 	case kBut1Cmd:
-		_currBtn = kBtn1Act;
+		_curPressedButton = kButton1Act;
 		break;
 	case kBut2Cmd:
-		_currBtn = kBtn2Act;
+		_curPressedButton = kButton2Act;
 		break;
 	case kBut3Cmd:
-		_currBtn = kBtn3Act;
+		_curPressedButton = kButton3Act;
 		break;
 	case kBut4Cmd:
-		_currBtn = kBtn4Act;
+		_curPressedButton = kButton4Act;
 		break;
 	case kBut5Cmd:
-		_currBtn = kBtn5Act;
+		_curPressedButton = kButton5Act;
 		break;
 	case kBut6Cmd:
-		_currBtn = kBtn6Act;
+		_curPressedButton = kButton6Act;
 		break;
 	case kBut7Cmd:
-		_currBtn = kBtn7Act;
+		_curPressedButton = kButton7Act;
 		break;
 	case kBut8Cmd:
-		_currBtn = kBtn8Act;
+		_curPressedButton = kButton8Act;
 		break;
 	case kBut9Cmd:
-		_currBtn = kBtn9Act;
+		_curPressedButton = kButton9Act;
 		break;
 	case kBut0Cmd:
-		_currBtn = kBtn0Act;
+		_curPressedButton = kButton0Act;
 		break;
 	case kCancelCmd:
 		saveUserDictToFile();
@@ -427,18 +427,18 @@ void PredictiveDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 d
 		_predictiveResult[0] = 0;
 		return;
 	case kOkCmd:
-		_currBtn = kOkAct;
+		_curPressedButton = kOkAct;
 		break;
 	default:
 		Dialog::handleCommand(sender, cmd, data);
 	}
 
-	if (_currBtn != kNoAct) {
-		processBtnActive(_currBtn);
+	if (_curPressedButton != kNoAct) {
+		processButton(_curPressedButton);
 	}
 }
 
-void PredictiveDialog::processBtnActive(ButtonId button) {
+void PredictiveDialog::processButton(ButtonId button) {
 	uint8 x;
 	static const char *const buttonStr[] = {
 		"1", "2", "3",
@@ -458,10 +458,10 @@ void PredictiveDialog::processBtnActive(ButtonId button) {
 	};
 
 	if (_mode == kModeAbc) {
-		if (button >= kBtn1Act && button <= kBtn9Act) {
+		if (button >= kButton1Act && button <= kButton9Act) {
 			if (!_lastTime)
 				_lastTime = g_system->getMillis();
-			if (_lastPressBtn == button) {
+			if (_lastPressedButton == button) {
 				_curTime = g_system->getMillis();
 				if ((_curTime - _lastTime) < kRepeatDelay) {
 					button = kNextAct;
@@ -470,15 +470,15 @@ void PredictiveDialog::processBtnActive(ButtonId button) {
 					_lastTime = 0;
 				}
 			} else {
-				_lastPressBtn = button;
+				_lastPressedButton = button;
 				_lastTime = g_system->getMillis();
 			}
 		}
 	}
 
-	if (button >= kBtn1Act) {
-		_lastbutton = button;
-		if (button == kBtn0Act && _mode != kModeNum) { // Space
+	if (button >= kButton1Act) {
+		_lastButton = button;
+		if (button == kButton0Act && _mode != kModeNum) { // Space
 			// bring MRU word at the top of the list when changing words
 			if (_mode == kModePre && _unitedDict.dictActLine && _numMatchingWords > 1 && _wordNumber != 0)
 				bringWordtoTop(_unitedDict.dictActLine, _wordNumber);
@@ -492,9 +492,9 @@ void PredictiveDialog::processBtnActive(ButtonId button) {
 			_numMatchingWords = 0;
 			memset(_repeatcount, 0, sizeof(_repeatcount));
 			_lastTime = 0;
-			_lastPressBtn = kNoAct;
+			_lastPressedButton = kNoAct;
 			_curTime = 0;
-		} else if (button < kNextAct || button == kDelAct || button == kBtn0Act) { // number or backspace
+		} else if (button < kNextAct || button == kDelAct || button == kButton0Act) { // number or backspace
 			if (button == kDelAct) { // backspace
 				if (_currentCode.size()) {
 					_repeatcount[_currentCode.size() - 1] = 0;
@@ -506,7 +506,7 @@ void PredictiveDialog::processBtnActive(ButtonId button) {
 						_prefix.deleteLastChar();
 				}
 			} else if (_prefix.size() + _currentCode.size() < kMaxWordLen - 1) { // don't overflow the dialog line
-				if (button == kBtn0Act) { // zero
+				if (button == kButton0Act) { // zero
 					_currentCode += buttonStr[9];
 				} else {
 					_currentCode += buttonStr[button];
@@ -566,18 +566,18 @@ void PredictiveDialog::processBtnActive(ButtonId button) {
 				bringWordtoTop(_unitedDict.dictActLine, _wordNumber);
 		} else if (button == kModeAct) { // Mode
 			_mode++;
-			_btns[kAddAct]->setEnabled(false);
+			_button[kAddAct]->setEnabled(false);
 			if (_mode > kModeAbc) {
 				_mode = kModePre;
 				// I18N: Pre means 'Predictive', leave '*' as is
-				_btns[kModeAct]->setLabel("*  Pre");
+				_button[kModeAct]->setLabel("*  Pre");
 			} else if (_mode == kModeNum) {
 				// I18N: 'Num' means Numbers
-				_btns[kModeAct]->setLabel("*  Num");
+				_button[kModeAct]->setLabel("*  Num");
 			} else {
 				// I18N: 'Abc' means Latin alphabet input
-				_btns[kModeAct]->setLabel("*  Abc");
-				_btns[kAddAct]->setEnabled(true);
+				_button[kModeAct]->setLabel("*  Abc");
+				_button[kAddAct]->setEnabled(true);
 			}
 
 			// truncate current input at mode change
@@ -589,7 +589,7 @@ void PredictiveDialog::processBtnActive(ButtonId button) {
 			memset(_repeatcount, 0, sizeof(_repeatcount));
 
 			_lastTime = 0;
-			_lastPressBtn = kNoAct;
+			_lastPressedButton = kNoAct;
 			_curTime = 0;
 		}
 	}
@@ -735,7 +735,7 @@ bool PredictiveDialog::matchWord() {
 
 	// The entries in the dictionary consist of a code, a space, and then
 	// a space-separated list of words matching this code.
-	// To ex_currBtnly match a code, we therefore match the code plus the trailing
+	// To ex_curPressedButtonly match a code, we therefore match the code plus the trailing
 	// space in the dictionary.
 	Common::String code = _currentCode + " ";
 
@@ -998,9 +998,9 @@ void PredictiveDialog::loadAllDictionary(Dict &dict) {
 void PredictiveDialog::pressEditText() {
 	Common::strlcpy(_predictiveResult, _prefix.c_str(), sizeof(_predictiveResult));
 	Common::strlcat(_predictiveResult, _currentWord.c_str(), sizeof(_predictiveResult));
-	_edittext->setEditString(_predictiveResult);
-	//_edittext->setCaretPos(_prefix.size() + _currentWord.size());
-	_edittext->draw();
+	_editText->setEditString(_predictiveResult);
+	//_editText->setCaretPos(_prefix.size() + _currentWord.size());
+	_editText->draw();
 }
 
 } // namespace GUI
