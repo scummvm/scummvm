@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2015-12-23 00:28+0000\n"
+"POT-Creation-Date: 2016-01-24 00:40+0000\n"
 "PO-Revision-Date: 2014-07-11 00:04+0100\n"
 "Last-Translator: Einar Johan Trøan Sømåen <einarjohants@gmail.com>\n"
 "Language-Team: somaen <einarjohants@gmail.com>\n"
@@ -60,7 +60,7 @@ msgstr "Oppover"
 #: gui/saveload-dialog.cpp:216 gui/saveload-dialog.cpp:276
 #: gui/saveload-dialog.cpp:547 gui/saveload-dialog.cpp:931
 #: gui/themebrowser.cpp:55 gui/fluidsynth-dialog.cpp:152
-#: engines/engine.cpp:483 backends/platform/wii/options.cpp:48
+#: engines/engine.cpp:546 backends/platform/wii/options.cpp:48
 #: backends/events/default/default-events.cpp:196
 #: backends/events/default/default-events.cpp:218
 #: engines/drascula/saveload.cpp:49 engines/parallaction/saveload.cpp:274
@@ -102,8 +102,8 @@ msgstr ""
 msgid "Do you really want to overwrite the file?"
 msgstr "Vil du verkeleg slette det lagra spelet?"
 
-#: gui/filebrowser-dialog.cpp:132 gui/launcher.cpp:793 gui/launcher.cpp:941
-#: gui/launcher.cpp:1000 gui/fluidsynth-dialog.cpp:217
+#: gui/filebrowser-dialog.cpp:132 gui/launcher.cpp:795 gui/launcher.cpp:943
+#: gui/launcher.cpp:1002 gui/fluidsynth-dialog.cpp:217
 #: backends/events/symbiansdl/symbiansdl-events.cpp:186
 #: backends/platform/wince/CEActionsPocket.cpp:326
 #: backends/platform/wince/CEActionsSmartphone.cpp:287
@@ -112,8 +112,8 @@ msgstr "Vil du verkeleg slette det lagra spelet?"
 msgid "Yes"
 msgstr "Ja"
 
-#: gui/filebrowser-dialog.cpp:132 gui/launcher.cpp:793 gui/launcher.cpp:941
-#: gui/launcher.cpp:1000 gui/fluidsynth-dialog.cpp:217
+#: gui/filebrowser-dialog.cpp:132 gui/launcher.cpp:795 gui/launcher.cpp:943
+#: gui/launcher.cpp:1002 gui/fluidsynth-dialog.cpp:217
 #: backends/events/symbiansdl/symbiansdl-events.cpp:186
 #: backends/platform/wince/CEActionsPocket.cpp:326
 #: backends/platform/wince/CEActionsSmartphone.cpp:287
@@ -122,26 +122,26 @@ msgstr "Ja"
 msgid "No"
 msgstr "Nei"
 
-#: gui/gui-manager.cpp:117 backends/keymapper/remap-dialog.cpp:53
+#: gui/gui-manager.cpp:119 backends/keymapper/remap-dialog.cpp:53
 #: engines/scumm/help.cpp:126 engines/scumm/help.cpp:141
 #: engines/scumm/help.cpp:166 engines/scumm/help.cpp:192
 #: engines/scumm/help.cpp:210
 msgid "Close"
 msgstr "Steng"
 
-#: gui/gui-manager.cpp:120
+#: gui/gui-manager.cpp:122
 msgid "Mouse click"
 msgstr "Musklikk"
 
-#: gui/gui-manager.cpp:124 base/main.cpp:319
+#: gui/gui-manager.cpp:126 base/main.cpp:322
 msgid "Display keyboard"
 msgstr "Syn Tastatur"
 
-#: gui/gui-manager.cpp:128 base/main.cpp:323
+#: gui/gui-manager.cpp:130 base/main.cpp:326
 msgid "Remap keys"
 msgstr "Omkople tastar"
 
-#: gui/gui-manager.cpp:131 base/main.cpp:326 engines/scumm/help.cpp:87
+#: gui/gui-manager.cpp:133 base/main.cpp:329 engines/scumm/help.cpp:87
 msgid "Toggle fullscreen"
 msgstr "Veksle fullskjerm"
 
@@ -153,10 +153,10 @@ msgstr "Vel ei handling for kopling:"
 msgid "Map"
 msgstr "Kople"
 
-#: gui/KeysDialog.cpp:42 gui/launcher.cpp:352 gui/launcher.cpp:1048
-#: gui/launcher.cpp:1052 gui/massadd.cpp:92 gui/options.cpp:1238
+#: gui/KeysDialog.cpp:42 gui/launcher.cpp:352 gui/launcher.cpp:1050
+#: gui/launcher.cpp:1054 gui/massadd.cpp:92 gui/options.cpp:1238
 #: gui/saveload-dialog.cpp:932 gui/fluidsynth-dialog.cpp:153
-#: engines/engine.cpp:402 engines/engine.cpp:413
+#: engines/engine.cpp:465 engines/engine.cpp:476
 #: backends/platform/wii/options.cpp:47
 #: backends/platform/wince/CELauncherDialog.cpp:54
 #: engines/agos/animation.cpp:558 engines/drascula/saveload.cpp:49
@@ -499,7 +499,7 @@ msgstr "~F~jern spel"
 msgid "Search in game list"
 msgstr "Søk i spelliste"
 
-#: gui/launcher.cpp:661 gui/launcher.cpp:1222
+#: gui/launcher.cpp:661 gui/launcher.cpp:1224
 msgid "Search:"
 msgstr "Søk:"
 
@@ -518,47 +518,47 @@ msgstr "Åpne spel:"
 msgid "Load"
 msgstr "Åpne"
 
-#: gui/launcher.cpp:792
+#: gui/launcher.cpp:794
 msgid ""
 "Do you really want to run the mass game detector? This could potentially add "
 "a huge number of games."
 msgstr ""
 
-#: gui/launcher.cpp:841
+#: gui/launcher.cpp:843
 msgid "ScummVM couldn't open the specified directory!"
 msgstr "ScummVM kunne ikkje åpne den velde mappa!"
 
-#: gui/launcher.cpp:853
+#: gui/launcher.cpp:855
 msgid "ScummVM could not find any game in the specified directory!"
 msgstr "ScummVM kunne ikkje finne noko spel i den velde mappa!"
 
-#: gui/launcher.cpp:867
+#: gui/launcher.cpp:869
 msgid "Pick the game:"
 msgstr "Vel spelet:"
 
-#: gui/launcher.cpp:941
+#: gui/launcher.cpp:943
 msgid "Do you really want to remove this game configuration?"
 msgstr "Vil du verkeleg fjerne denne spelkonfigurasjonen?"
 
-#: gui/launcher.cpp:999
+#: gui/launcher.cpp:1001
 msgid "Do you want to load saved game?"
 msgstr "Vil du laste det lagra spelet?"
 
-#: gui/launcher.cpp:1048
+#: gui/launcher.cpp:1050
 msgid "This game does not support loading games from the launcher."
 msgstr "Dette spelet støttar ikkje åpning av lagra spel frå oppstartaren."
 
-#: gui/launcher.cpp:1052
+#: gui/launcher.cpp:1054
 msgid "ScummVM could not find any engine capable of running the selected game!"
 msgstr ""
 "ScummVM kunne ikkje finne nokon motor som var i stand til å køyre det velde "
 "spelet!"
 
-#: gui/launcher.cpp:1159
+#: gui/launcher.cpp:1161
 msgid "Mass Add..."
 msgstr "Legg til fleire..."
 
-#: gui/launcher.cpp:1161
+#: gui/launcher.cpp:1163
 msgid "Record..."
 msgstr ""
 
@@ -1240,35 +1240,35 @@ msgid ""
 "Do you really want to reset all FluidSynth settings to their default values?"
 msgstr "Vil du verkeleg slette det lagra spelet?"
 
-#: base/main.cpp:228
+#: base/main.cpp:237
 #, c-format
 msgid "Engine does not support debug level '%s'"
 msgstr "Motoren støttar ikkje debug-nivå '%s'"
 
-#: base/main.cpp:306
+#: base/main.cpp:309
 msgid "Menu"
 msgstr "Meny"
 
-#: base/main.cpp:309 backends/platform/symbian/src/SymbianActions.cpp:45
+#: base/main.cpp:312 backends/platform/symbian/src/SymbianActions.cpp:45
 #: backends/platform/wince/CEActionsPocket.cpp:45
 #: backends/platform/wince/CEActionsSmartphone.cpp:46
 msgid "Skip"
 msgstr "Hopp over"
 
-#: base/main.cpp:312 backends/platform/symbian/src/SymbianActions.cpp:50
+#: base/main.cpp:315 backends/platform/symbian/src/SymbianActions.cpp:50
 #: backends/platform/wince/CEActionsPocket.cpp:42
 msgid "Pause"
 msgstr "Pause"
 
-#: base/main.cpp:315
+#: base/main.cpp:318
 msgid "Skip line"
 msgstr "Hopp over linje"
 
-#: base/main.cpp:507
+#: base/main.cpp:510
 msgid "Error running game:"
 msgstr "Feil under køyring av spel:"
 
-#: base/main.cpp:554
+#: base/main.cpp:557
 msgid "Could not find any engine capable of running the selected game"
 msgstr "Kunne ikkje finne nokon motor som kunne køyre det velde spelet."
 
@@ -1386,7 +1386,7 @@ msgstr "Tilbake til Oppsta~r~tar"
 #: engines/dialogs.cpp:116 engines/agi/saveload.cpp:803
 #: engines/cruise/menu.cpp:212 engines/drascula/saveload.cpp:336
 #: engines/dreamweb/saveload.cpp:261 engines/neverhood/menumodule.cpp:877
-#: engines/pegasus/pegasus.cpp:377 engines/sci/engine/kfile.cpp:759
+#: engines/pegasus/pegasus.cpp:377 engines/sci/engine/kfile.cpp:769
 #: engines/toltecs/menu.cpp:281 engines/tsage/scenes.cpp:598
 msgid "Save game:"
 msgstr "Lagra spel:"
@@ -1399,7 +1399,7 @@ msgstr "Lagra spel:"
 #: engines/agi/saveload.cpp:803 engines/cruise/menu.cpp:212
 #: engines/drascula/saveload.cpp:336 engines/dreamweb/saveload.cpp:261
 #: engines/neverhood/menumodule.cpp:877 engines/pegasus/pegasus.cpp:377
-#: engines/sci/engine/kfile.cpp:759 engines/scumm/dialogs.cpp:188
+#: engines/sci/engine/kfile.cpp:769 engines/scumm/dialogs.cpp:188
 #: engines/toltecs/menu.cpp:281 engines/tsage/scenes.cpp:598
 msgid "Save"
 msgstr "Lagre"
@@ -1432,24 +1432,24 @@ msgstr "~A~vbryt"
 msgid "~K~eys"
 msgstr "~T~astar"
 
-#: engines/engine.cpp:276
+#: engines/engine.cpp:339
 msgid "Could not initialize color format."
 msgstr ""
 
-#: engines/engine.cpp:284
+#: engines/engine.cpp:347
 msgid "Could not switch to video mode: '"
 msgstr "Kunne ikkje veksle til videomodus: '"
 
-#: engines/engine.cpp:293
+#: engines/engine.cpp:356
 #, fuzzy
 msgid "Could not apply aspect ratio setting."
 msgstr "Veksle aspekt-korrigering"
 
-#: engines/engine.cpp:298
+#: engines/engine.cpp:361
 msgid "Could not apply fullscreen setting."
 msgstr ""
 
-#: engines/engine.cpp:398
+#: engines/engine.cpp:461
 msgid ""
 "You appear to be playing this game directly\n"
 "from the CD. This is known to cause problems,\n"
@@ -1458,7 +1458,7 @@ msgid ""
 "See the README file for details."
 msgstr ""
 
-#: engines/engine.cpp:409
+#: engines/engine.cpp:472
 msgid ""
 "This game has audio tracks in its disk. These\n"
 "tracks need to be ripped from the disk using\n"
@@ -1467,14 +1467,14 @@ msgid ""
 "See the README file for details."
 msgstr ""
 
-#: engines/engine.cpp:467
+#: engines/engine.cpp:530
 #, c-format
 msgid ""
 "Gamestate load failed (%s)! Please consult the README for basic information, "
 "and for instructions on how to obtain further assistance."
 msgstr ""
 
-#: engines/engine.cpp:480
+#: engines/engine.cpp:543
 msgid ""
 "WARNING: The game you are about to start is not yet fully supported by "
 "ScummVM. As such, it is likely to be unstable, and any saves you make might "
@@ -1484,7 +1484,7 @@ msgstr ""
 "ennå. Derfor er det sannsynleg at det er ustabilt, og det er mogleg at lagra "
 "spel ikkje vil fungere med fremtidige versjonar av ScummVM."
 
-#: engines/engine.cpp:483
+#: engines/engine.cpp:546
 msgid "Start anyway"
 msgstr "Start allikevel"
 
@@ -2190,16 +2190,17 @@ msgstr "~O~vergangar aktivert"
 msgid "Clicking Disabled"
 msgstr "Klikking Deaktivert"
 
-#: engines/agi/detection.cpp:147 engines/drascula/detection.cpp:302
-#: engines/dreamweb/detection.cpp:47 engines/neverhood/detection.cpp:160
-#: engines/sci/detection.cpp:394 engines/toltecs/detection.cpp:200
-#: engines/zvision/detection_tables.h:51
+#: engines/agi/detection.cpp:147 engines/cine/detection.cpp:70
+#: engines/drascula/detection.cpp:302 engines/dreamweb/detection.cpp:47
+#: engines/neverhood/detection.cpp:160 engines/sci/detection.cpp:404
+#: engines/toltecs/detection.cpp:200 engines/zvision/detection_tables.h:51
 msgid "Use original save/load screens"
 msgstr "Nytt opprinnelege skjermar for lagring/lasting"
 
-#: engines/agi/detection.cpp:148 engines/drascula/detection.cpp:303
-#: engines/dreamweb/detection.cpp:48 engines/neverhood/detection.cpp:161
-#: engines/sci/detection.cpp:395 engines/toltecs/detection.cpp:201
+#: engines/agi/detection.cpp:148 engines/cine/detection.cpp:71
+#: engines/drascula/detection.cpp:303 engines/dreamweb/detection.cpp:48
+#: engines/neverhood/detection.cpp:161 engines/sci/detection.cpp:405
+#: engines/toltecs/detection.cpp:201
 msgid "Use the original save/load screens, instead of the ScummVM ones"
 msgstr ""
 
@@ -2226,13 +2227,13 @@ msgstr ""
 
 #: engines/agi/saveload.cpp:816 engines/drascula/saveload.cpp:349
 #: engines/dreamweb/saveload.cpp:169 engines/neverhood/menumodule.cpp:890
-#: engines/sci/engine/kfile.cpp:858 engines/toltecs/menu.cpp:256
+#: engines/sci/engine/kfile.cpp:868 engines/toltecs/menu.cpp:256
 msgid "Restore game:"
 msgstr "Gjenopprett spel:"
 
 #: engines/agi/saveload.cpp:816 engines/drascula/saveload.cpp:349
 #: engines/dreamweb/saveload.cpp:169 engines/neverhood/menumodule.cpp:890
-#: engines/sci/engine/kfile.cpp:858 engines/toltecs/menu.cpp:256
+#: engines/sci/engine/kfile.cpp:868 engines/toltecs/menu.cpp:256
 msgid "Restore"
 msgstr "Gjenopprett"
 
@@ -2625,45 +2626,53 @@ msgid "Skip dithering pass in EGA games, graphics are shown with full colors"
 msgstr ""
 
 #: engines/sci/detection.cpp:384
+msgid "Enable high resolution graphics"
+msgstr ""
+
+#: engines/sci/detection.cpp:385
+msgid "Enable high resolution graphics/content"
+msgstr ""
+
+#: engines/sci/detection.cpp:394
 msgid "Prefer digital sound effects"
 msgstr "Foretrekk digitale lydeffekter"
 
-#: engines/sci/detection.cpp:385
+#: engines/sci/detection.cpp:395
 msgid "Prefer digital sound effects instead of synthesized ones"
 msgstr ""
 
-#: engines/sci/detection.cpp:404
+#: engines/sci/detection.cpp:414
 msgid "Use IMF/Yamaha FB-01 for MIDI output"
 msgstr "Nytt IMF/Yamaha FB-01 til MIDI-output"
 
-#: engines/sci/detection.cpp:405
+#: engines/sci/detection.cpp:415
 msgid ""
 "Use an IBM Music Feature card or a Yamaha FB-01 FM synth module for MIDI "
 "output"
 msgstr ""
 
-#: engines/sci/detection.cpp:415
+#: engines/sci/detection.cpp:425
 msgid "Use CD audio"
 msgstr "Nytt CD-lyd"
 
-#: engines/sci/detection.cpp:416
+#: engines/sci/detection.cpp:426
 msgid "Use CD audio instead of in-game audio, if available"
 msgstr "Nytt CD-lyd istaden for spellyd, om den er tilgjengeleg"
 
-#: engines/sci/detection.cpp:426
+#: engines/sci/detection.cpp:436
 msgid "Use Windows cursors"
 msgstr "Nytt Windospeikarar"
 
-#: engines/sci/detection.cpp:427
+#: engines/sci/detection.cpp:437
 msgid ""
 "Use the Windows cursors (smaller and monochrome) instead of the DOS ones"
 msgstr "Nytt windowspeikarane (mindre og monokrome) istaden for DOS-peikarane"
 
-#: engines/sci/detection.cpp:437
+#: engines/sci/detection.cpp:447
 msgid "Use silver cursors"
 msgstr "Nytt sølvpeikarar"
 
-#: engines/sci/detection.cpp:438
+#: engines/sci/detection.cpp:448
 msgid ""
 "Use the alternate set of silver cursors, instead of the normal golden ones"
 msgstr "Nytt det alternative settet med sølvpeikarar, istaden for dei gylne"

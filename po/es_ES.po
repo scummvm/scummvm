@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2015-12-23 00:28+0000\n"
+"POT-Creation-Date: 2016-01-24 00:40+0000\n"
 "PO-Revision-Date: 2014-07-06 20:39+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -58,7 +58,7 @@ msgstr "Arriba"
 #: gui/saveload-dialog.cpp:216 gui/saveload-dialog.cpp:276
 #: gui/saveload-dialog.cpp:547 gui/saveload-dialog.cpp:931
 #: gui/themebrowser.cpp:55 gui/fluidsynth-dialog.cpp:152
-#: engines/engine.cpp:483 backends/platform/wii/options.cpp:48
+#: engines/engine.cpp:546 backends/platform/wii/options.cpp:48
 #: backends/events/default/default-events.cpp:196
 #: backends/events/default/default-events.cpp:218
 #: engines/drascula/saveload.cpp:49 engines/parallaction/saveload.cpp:274
@@ -100,8 +100,8 @@ msgstr ""
 msgid "Do you really want to overwrite the file?"
 msgstr "¿Seguro que quieres borrar esta partida?"
 
-#: gui/filebrowser-dialog.cpp:132 gui/launcher.cpp:793 gui/launcher.cpp:941
-#: gui/launcher.cpp:1000 gui/fluidsynth-dialog.cpp:217
+#: gui/filebrowser-dialog.cpp:132 gui/launcher.cpp:795 gui/launcher.cpp:943
+#: gui/launcher.cpp:1002 gui/fluidsynth-dialog.cpp:217
 #: backends/events/symbiansdl/symbiansdl-events.cpp:186
 #: backends/platform/wince/CEActionsPocket.cpp:326
 #: backends/platform/wince/CEActionsSmartphone.cpp:287
@@ -110,8 +110,8 @@ msgstr "¿Seguro que quieres borrar esta partida?"
 msgid "Yes"
 msgstr "Sí"
 
-#: gui/filebrowser-dialog.cpp:132 gui/launcher.cpp:793 gui/launcher.cpp:941
-#: gui/launcher.cpp:1000 gui/fluidsynth-dialog.cpp:217
+#: gui/filebrowser-dialog.cpp:132 gui/launcher.cpp:795 gui/launcher.cpp:943
+#: gui/launcher.cpp:1002 gui/fluidsynth-dialog.cpp:217
 #: backends/events/symbiansdl/symbiansdl-events.cpp:186
 #: backends/platform/wince/CEActionsPocket.cpp:326
 #: backends/platform/wince/CEActionsSmartphone.cpp:287
@@ -120,26 +120,26 @@ msgstr "Sí"
 msgid "No"
 msgstr "No"
 
-#: gui/gui-manager.cpp:117 backends/keymapper/remap-dialog.cpp:53
+#: gui/gui-manager.cpp:119 backends/keymapper/remap-dialog.cpp:53
 #: engines/scumm/help.cpp:126 engines/scumm/help.cpp:141
 #: engines/scumm/help.cpp:166 engines/scumm/help.cpp:192
 #: engines/scumm/help.cpp:210
 msgid "Close"
 msgstr "Cerrar"
 
-#: gui/gui-manager.cpp:120
+#: gui/gui-manager.cpp:122
 msgid "Mouse click"
 msgstr "Clic de ratón"
 
-#: gui/gui-manager.cpp:124 base/main.cpp:319
+#: gui/gui-manager.cpp:126 base/main.cpp:322
 msgid "Display keyboard"
 msgstr "Mostrar el teclado"
 
-#: gui/gui-manager.cpp:128 base/main.cpp:323
+#: gui/gui-manager.cpp:130 base/main.cpp:326
 msgid "Remap keys"
 msgstr "Asignar teclas"
 
-#: gui/gui-manager.cpp:131 base/main.cpp:326 engines/scumm/help.cpp:87
+#: gui/gui-manager.cpp:133 base/main.cpp:329 engines/scumm/help.cpp:87
 msgid "Toggle fullscreen"
 msgstr "Activar/Desactivar pantalla completa"
 
@@ -151,10 +151,10 @@ msgstr "Elige una acción para asociarla"
 msgid "Map"
 msgstr "Asignar"
 
-#: gui/KeysDialog.cpp:42 gui/launcher.cpp:352 gui/launcher.cpp:1048
-#: gui/launcher.cpp:1052 gui/massadd.cpp:92 gui/options.cpp:1238
+#: gui/KeysDialog.cpp:42 gui/launcher.cpp:352 gui/launcher.cpp:1050
+#: gui/launcher.cpp:1054 gui/massadd.cpp:92 gui/options.cpp:1238
 #: gui/saveload-dialog.cpp:932 gui/fluidsynth-dialog.cpp:153
-#: engines/engine.cpp:402 engines/engine.cpp:413
+#: engines/engine.cpp:465 engines/engine.cpp:476
 #: backends/platform/wii/options.cpp:47
 #: backends/platform/wince/CELauncherDialog.cpp:54
 #: engines/agos/animation.cpp:558 engines/drascula/saveload.cpp:49
@@ -496,7 +496,7 @@ msgstr "E~l~iminar"
 msgid "Search in game list"
 msgstr "Buscar en la lista de juegos"
 
-#: gui/launcher.cpp:661 gui/launcher.cpp:1222
+#: gui/launcher.cpp:661 gui/launcher.cpp:1224
 msgid "Search:"
 msgstr "Buscar:"
 
@@ -515,7 +515,7 @@ msgstr "Cargar juego:"
 msgid "Load"
 msgstr "Cargar"
 
-#: gui/launcher.cpp:792
+#: gui/launcher.cpp:794
 msgid ""
 "Do you really want to run the mass game detector? This could potentially add "
 "a huge number of games."
@@ -523,40 +523,40 @@ msgstr ""
 "¿Seguro que quieres ejecutar la detección masiva? Puede que se añada un gran "
 "número de juegos."
 
-#: gui/launcher.cpp:841
+#: gui/launcher.cpp:843
 msgid "ScummVM couldn't open the specified directory!"
 msgstr "¡ScummVM no ha podido abrir el directorio!"
 
-#: gui/launcher.cpp:853
+#: gui/launcher.cpp:855
 msgid "ScummVM could not find any game in the specified directory!"
 msgstr "¡ScummVM no ha encontrado ningún juego en el directorio!"
 
-#: gui/launcher.cpp:867
+#: gui/launcher.cpp:869
 msgid "Pick the game:"
 msgstr "Elige el juego:"
 
-#: gui/launcher.cpp:941
+#: gui/launcher.cpp:943
 msgid "Do you really want to remove this game configuration?"
 msgstr "¿Seguro que quieres eliminar la configuración de este juego?"
 
-#: gui/launcher.cpp:999
+#: gui/launcher.cpp:1001
 msgid "Do you want to load saved game?"
 msgstr "¿Quieres cargar la partida guardada?"
 
-#: gui/launcher.cpp:1048
+#: gui/launcher.cpp:1050
 msgid "This game does not support loading games from the launcher."
 msgstr "Este juego no permite cargar partidas desde el lanzador."
 
-#: gui/launcher.cpp:1052
+#: gui/launcher.cpp:1054
 msgid "ScummVM could not find any engine capable of running the selected game!"
 msgstr ""
 "¡ScummVM no ha podido encontrar ningún motor capaz de ejecutar el juego!"
 
-#: gui/launcher.cpp:1159
+#: gui/launcher.cpp:1161
 msgid "Mass Add..."
 msgstr "Añadir varios..."
 
-#: gui/launcher.cpp:1161
+#: gui/launcher.cpp:1163
 msgid "Record..."
 msgstr ""
 
@@ -1248,35 +1248,35 @@ msgstr ""
 "¿Seguro que quieres volver a los valores por defecto de las opciones de "
 "FluidSynth?"
 
-#: base/main.cpp:228
+#: base/main.cpp:237
 #, c-format
 msgid "Engine does not support debug level '%s'"
 msgstr "El motor no es compatible con el nivel de debug '%s'"
 
-#: base/main.cpp:306
+#: base/main.cpp:309
 msgid "Menu"
 msgstr "Menú"
 
-#: base/main.cpp:309 backends/platform/symbian/src/SymbianActions.cpp:45
+#: base/main.cpp:312 backends/platform/symbian/src/SymbianActions.cpp:45
 #: backends/platform/wince/CEActionsPocket.cpp:45
 #: backends/platform/wince/CEActionsSmartphone.cpp:46
 msgid "Skip"
 msgstr "Saltar"
 
-#: base/main.cpp:312 backends/platform/symbian/src/SymbianActions.cpp:50
+#: base/main.cpp:315 backends/platform/symbian/src/SymbianActions.cpp:50
 #: backends/platform/wince/CEActionsPocket.cpp:42
 msgid "Pause"
 msgstr "Pausar"
 
-#: base/main.cpp:315
+#: base/main.cpp:318
 msgid "Skip line"
 msgstr "Saltar frase"
 
-#: base/main.cpp:507
+#: base/main.cpp:510
 msgid "Error running game:"
 msgstr "Error al ejecutar el juego:"
 
-#: base/main.cpp:554
+#: base/main.cpp:557
 msgid "Could not find any engine capable of running the selected game"
 msgstr "No se ha podido encontrar ningún motor capaz de ejecutar el juego"
 
@@ -1393,7 +1393,7 @@ msgstr "~V~olver al lanzador"
 #: engines/dialogs.cpp:116 engines/agi/saveload.cpp:803
 #: engines/cruise/menu.cpp:212 engines/drascula/saveload.cpp:336
 #: engines/dreamweb/saveload.cpp:261 engines/neverhood/menumodule.cpp:877
-#: engines/pegasus/pegasus.cpp:377 engines/sci/engine/kfile.cpp:759
+#: engines/pegasus/pegasus.cpp:377 engines/sci/engine/kfile.cpp:769
 #: engines/toltecs/menu.cpp:281 engines/tsage/scenes.cpp:598
 msgid "Save game:"
 msgstr "Guardar partida"
@@ -1406,7 +1406,7 @@ msgstr "Guardar partida"
 #: engines/agi/saveload.cpp:803 engines/cruise/menu.cpp:212
 #: engines/drascula/saveload.cpp:336 engines/dreamweb/saveload.cpp:261
 #: engines/neverhood/menumodule.cpp:877 engines/pegasus/pegasus.cpp:377
-#: engines/sci/engine/kfile.cpp:759 engines/scumm/dialogs.cpp:188
+#: engines/sci/engine/kfile.cpp:769 engines/scumm/dialogs.cpp:188
 #: engines/toltecs/menu.cpp:281 engines/tsage/scenes.cpp:598
 msgid "Save"
 msgstr "Guardar"
@@ -1445,23 +1445,23 @@ msgstr "~C~ancelar"
 msgid "~K~eys"
 msgstr "~T~eclas"
 
-#: engines/engine.cpp:276
+#: engines/engine.cpp:339
 msgid "Could not initialize color format."
 msgstr "No se ha podido iniciar el formato de color."
 
-#: engines/engine.cpp:284
+#: engines/engine.cpp:347
 msgid "Could not switch to video mode: '"
 msgstr "No se ha podido cambiar al modo de video: '"
 
-#: engines/engine.cpp:293
+#: engines/engine.cpp:356
 msgid "Could not apply aspect ratio setting."
 msgstr "No se ha podido aplicar el ajuste de corrección de aspecto"
 
-#: engines/engine.cpp:298
+#: engines/engine.cpp:361
 msgid "Could not apply fullscreen setting."
 msgstr "No se ha podido aplicar el ajuste de pantalla completa."
 
-#: engines/engine.cpp:398
+#: engines/engine.cpp:461
 msgid ""
 "You appear to be playing this game directly\n"
 "from the CD. This is known to cause problems,\n"
@@ -1475,7 +1475,7 @@ msgstr ""
 "copiar los archivos del juego al disco duro.\n"
 "Consulta el archivo README para más detalles."
 
-#: engines/engine.cpp:409
+#: engines/engine.cpp:472
 msgid ""
 "This game has audio tracks in its disk. These\n"
 "tracks need to be ripped from the disk using\n"
@@ -1489,7 +1489,7 @@ msgstr ""
 "poder escuchar la música del juego.\n"
 "Consulta el archivo README para más detalles."
 
-#: engines/engine.cpp:467
+#: engines/engine.cpp:530
 #, c-format
 msgid ""
 "Gamestate load failed (%s)! Please consult the README for basic information, "
@@ -1499,7 +1499,7 @@ msgstr ""
 "README para encontrar información básica e instrucciones sobre cómo obtener "
 "más ayuda."
 
-#: engines/engine.cpp:480
+#: engines/engine.cpp:543
 msgid ""
 "WARNING: The game you are about to start is not yet fully supported by "
 "ScummVM. As such, it is likely to be unstable, and any saves you make might "
@@ -1509,7 +1509,7 @@ msgstr ""
 "ScummVM. Por lo tanto, puede que sea inestable, y que las partidas que "
 "guardes no funcionen en versiones futuras de ScummVM."
 
-#: engines/engine.cpp:483
+#: engines/engine.cpp:546
 msgid "Start anyway"
 msgstr "Jugar aun así"
 
@@ -2204,16 +2204,17 @@ msgstr "Clic activado"
 msgid "Clicking Disabled"
 msgstr "Clic desactivado"
 
-#: engines/agi/detection.cpp:147 engines/drascula/detection.cpp:302
-#: engines/dreamweb/detection.cpp:47 engines/neverhood/detection.cpp:160
-#: engines/sci/detection.cpp:394 engines/toltecs/detection.cpp:200
-#: engines/zvision/detection_tables.h:51
+#: engines/agi/detection.cpp:147 engines/cine/detection.cpp:70
+#: engines/drascula/detection.cpp:302 engines/dreamweb/detection.cpp:47
+#: engines/neverhood/detection.cpp:160 engines/sci/detection.cpp:404
+#: engines/toltecs/detection.cpp:200 engines/zvision/detection_tables.h:51
 msgid "Use original save/load screens"
 msgstr "Usar pantallas de guardar/cargar originales"
 
-#: engines/agi/detection.cpp:148 engines/drascula/detection.cpp:303
-#: engines/dreamweb/detection.cpp:48 engines/neverhood/detection.cpp:161
-#: engines/sci/detection.cpp:395 engines/toltecs/detection.cpp:201
+#: engines/agi/detection.cpp:148 engines/cine/detection.cpp:71
+#: engines/drascula/detection.cpp:303 engines/dreamweb/detection.cpp:48
+#: engines/neverhood/detection.cpp:161 engines/sci/detection.cpp:405
+#: engines/toltecs/detection.cpp:201
 msgid "Use the original save/load screens, instead of the ScummVM ones"
 msgstr ""
 "Utilizar las pantallas de guardar/cargar originales, en vez de las de ScummVM"
@@ -2242,13 +2243,13 @@ msgstr ""
 
 #: engines/agi/saveload.cpp:816 engines/drascula/saveload.cpp:349
 #: engines/dreamweb/saveload.cpp:169 engines/neverhood/menumodule.cpp:890
-#: engines/sci/engine/kfile.cpp:858 engines/toltecs/menu.cpp:256
+#: engines/sci/engine/kfile.cpp:868 engines/toltecs/menu.cpp:256
 msgid "Restore game:"
 msgstr "Cargar partida:"
 
 #: engines/agi/saveload.cpp:816 engines/drascula/saveload.cpp:349
 #: engines/dreamweb/saveload.cpp:169 engines/neverhood/menumodule.cpp:890
-#: engines/sci/engine/kfile.cpp:858 engines/toltecs/menu.cpp:256
+#: engines/sci/engine/kfile.cpp:868 engines/toltecs/menu.cpp:256
 msgid "Restore"
 msgstr "Cargar"
 
@@ -2655,18 +2656,28 @@ msgid "Skip dithering pass in EGA games, graphics are shown with full colors"
 msgstr ""
 
 #: engines/sci/detection.cpp:384
+#, fuzzy
+msgid "Enable high resolution graphics"
+msgstr "Activar las barras de energía"
+
+#: engines/sci/detection.cpp:385
+#, fuzzy
+msgid "Enable high resolution graphics/content"
+msgstr "Activar las barras de energía"
+
+#: engines/sci/detection.cpp:394
 msgid "Prefer digital sound effects"
 msgstr "Preferir efectos de sonido digitales"
 
-#: engines/sci/detection.cpp:385
+#: engines/sci/detection.cpp:395
 msgid "Prefer digital sound effects instead of synthesized ones"
 msgstr "Preferir efectos de sonido digitales en vez de los sintetizados"
 
-#: engines/sci/detection.cpp:404
+#: engines/sci/detection.cpp:414
 msgid "Use IMF/Yamaha FB-01 for MIDI output"
 msgstr "Usar IMF/Yamaha FB-01 para la salida MIDI"
 
-#: engines/sci/detection.cpp:405
+#: engines/sci/detection.cpp:415
 msgid ""
 "Use an IBM Music Feature card or a Yamaha FB-01 FM synth module for MIDI "
 "output"
@@ -2674,29 +2685,29 @@ msgstr ""
 "Usar una tarjeta IBM Music o un módulo sintetizador Yamaha FB-01 FM para la "
 "salida MIDI"
 
-#: engines/sci/detection.cpp:415
+#: engines/sci/detection.cpp:425
 msgid "Use CD audio"
 msgstr "Usar CD audio"
 
-#: engines/sci/detection.cpp:416
+#: engines/sci/detection.cpp:426
 msgid "Use CD audio instead of in-game audio, if available"
 msgstr "Usar CD audio en vez del sonido interno del juego, si está disponible"
 
-#: engines/sci/detection.cpp:426
+#: engines/sci/detection.cpp:436
 msgid "Use Windows cursors"
 msgstr "Usar cursores de Windows"
 
-#: engines/sci/detection.cpp:427
+#: engines/sci/detection.cpp:437
 msgid ""
 "Use the Windows cursors (smaller and monochrome) instead of the DOS ones"
 msgstr ""
 "Usar los cursores de Windows (más pequeños y monocromos) en vez de los de DOS"
 
-#: engines/sci/detection.cpp:437
+#: engines/sci/detection.cpp:447
 msgid "Use silver cursors"
 msgstr "Usar cursores plateados"
 
-#: engines/sci/detection.cpp:438
+#: engines/sci/detection.cpp:448
 msgid ""
 "Use the alternate set of silver cursors, instead of the normal golden ones"
 msgstr ""

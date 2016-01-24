@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2015-12-23 00:28+0000\n"
+"POT-Creation-Date: 2016-01-24 00:40+0000\n"
 "PO-Revision-Date: 2015-11-06 10:07+0300\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian\n"
@@ -60,7 +60,7 @@ msgstr "Вгору"
 #: gui/saveload-dialog.cpp:216 gui/saveload-dialog.cpp:276
 #: gui/saveload-dialog.cpp:547 gui/saveload-dialog.cpp:931
 #: gui/themebrowser.cpp:55 gui/fluidsynth-dialog.cpp:152
-#: engines/engine.cpp:483 backends/platform/wii/options.cpp:48
+#: engines/engine.cpp:546 backends/platform/wii/options.cpp:48
 #: backends/events/default/default-events.cpp:196
 #: backends/events/default/default-events.cpp:218
 #: engines/drascula/saveload.cpp:49 engines/parallaction/saveload.cpp:274
@@ -102,8 +102,8 @@ msgstr ""
 msgid "Do you really want to overwrite the file?"
 msgstr "Ви дійсно хочете видалити цей запис?"
 
-#: gui/filebrowser-dialog.cpp:132 gui/launcher.cpp:793 gui/launcher.cpp:941
-#: gui/launcher.cpp:1000 gui/fluidsynth-dialog.cpp:217
+#: gui/filebrowser-dialog.cpp:132 gui/launcher.cpp:795 gui/launcher.cpp:943
+#: gui/launcher.cpp:1002 gui/fluidsynth-dialog.cpp:217
 #: backends/events/symbiansdl/symbiansdl-events.cpp:186
 #: backends/platform/wince/CEActionsPocket.cpp:326
 #: backends/platform/wince/CEActionsSmartphone.cpp:287
@@ -112,8 +112,8 @@ msgstr "Ви дійсно хочете видалити цей запис?"
 msgid "Yes"
 msgstr "Так"
 
-#: gui/filebrowser-dialog.cpp:132 gui/launcher.cpp:793 gui/launcher.cpp:941
-#: gui/launcher.cpp:1000 gui/fluidsynth-dialog.cpp:217
+#: gui/filebrowser-dialog.cpp:132 gui/launcher.cpp:795 gui/launcher.cpp:943
+#: gui/launcher.cpp:1002 gui/fluidsynth-dialog.cpp:217
 #: backends/events/symbiansdl/symbiansdl-events.cpp:186
 #: backends/platform/wince/CEActionsPocket.cpp:326
 #: backends/platform/wince/CEActionsSmartphone.cpp:287
@@ -122,26 +122,26 @@ msgstr "Так"
 msgid "No"
 msgstr "Ні"
 
-#: gui/gui-manager.cpp:117 backends/keymapper/remap-dialog.cpp:53
+#: gui/gui-manager.cpp:119 backends/keymapper/remap-dialog.cpp:53
 #: engines/scumm/help.cpp:126 engines/scumm/help.cpp:141
 #: engines/scumm/help.cpp:166 engines/scumm/help.cpp:192
 #: engines/scumm/help.cpp:210
 msgid "Close"
 msgstr "Закрити"
 
-#: gui/gui-manager.cpp:120
+#: gui/gui-manager.cpp:122
 msgid "Mouse click"
 msgstr "Клік мишкою"
 
-#: gui/gui-manager.cpp:124 base/main.cpp:319
+#: gui/gui-manager.cpp:126 base/main.cpp:322
 msgid "Display keyboard"
 msgstr "Показати клавіатуру"
 
-#: gui/gui-manager.cpp:128 base/main.cpp:323
+#: gui/gui-manager.cpp:130 base/main.cpp:326
 msgid "Remap keys"
 msgstr "Перепризначити клавіші"
 
-#: gui/gui-manager.cpp:131 base/main.cpp:326 engines/scumm/help.cpp:87
+#: gui/gui-manager.cpp:133 base/main.cpp:329 engines/scumm/help.cpp:87
 msgid "Toggle fullscreen"
 msgstr "Перемкнути повноекранний режим"
 
@@ -153,10 +153,10 @@ msgstr "Виберіть дію для призначення"
 msgid "Map"
 msgstr "Призначити"
 
-#: gui/KeysDialog.cpp:42 gui/launcher.cpp:352 gui/launcher.cpp:1048
-#: gui/launcher.cpp:1052 gui/massadd.cpp:92 gui/options.cpp:1238
+#: gui/KeysDialog.cpp:42 gui/launcher.cpp:352 gui/launcher.cpp:1050
+#: gui/launcher.cpp:1054 gui/massadd.cpp:92 gui/options.cpp:1238
 #: gui/saveload-dialog.cpp:932 gui/fluidsynth-dialog.cpp:153
-#: engines/engine.cpp:402 engines/engine.cpp:413
+#: engines/engine.cpp:465 engines/engine.cpp:476
 #: backends/platform/wii/options.cpp:47
 #: backends/platform/wince/CELauncherDialog.cpp:54
 #: engines/agos/animation.cpp:558 engines/drascula/saveload.cpp:49
@@ -498,7 +498,7 @@ msgstr "~В~идалити гру"
 msgid "Search in game list"
 msgstr "Пошук у списку ігор"
 
-#: gui/launcher.cpp:661 gui/launcher.cpp:1222
+#: gui/launcher.cpp:661 gui/launcher.cpp:1224
 msgid "Search:"
 msgstr "Пошук:"
 
@@ -517,7 +517,7 @@ msgstr "Завантажити гру:"
 msgid "Load"
 msgstr "Завантажити"
 
-#: gui/launcher.cpp:792
+#: gui/launcher.cpp:794
 msgid ""
 "Do you really want to run the mass game detector? This could potentially add "
 "a huge number of games."
@@ -525,39 +525,39 @@ msgstr ""
 "Чи ви дійсно хочете запустити пошук усіх ігор? Це потенційно може додати "
 "велику кількість ігор."
 
-#: gui/launcher.cpp:841
+#: gui/launcher.cpp:843
 msgid "ScummVM couldn't open the specified directory!"
 msgstr "ScummVM не може відкрити вказану папку!"
 
-#: gui/launcher.cpp:853
+#: gui/launcher.cpp:855
 msgid "ScummVM could not find any game in the specified directory!"
 msgstr "ScummVM не може знайти гру у вказаній папці!"
 
-#: gui/launcher.cpp:867
+#: gui/launcher.cpp:869
 msgid "Pick the game:"
 msgstr "Виберіть гру:"
 
-#: gui/launcher.cpp:941
+#: gui/launcher.cpp:943
 msgid "Do you really want to remove this game configuration?"
 msgstr "Ви дійсно хочете видалити установки для цієї гри?"
 
-#: gui/launcher.cpp:999
+#: gui/launcher.cpp:1001
 msgid "Do you want to load saved game?"
 msgstr "Ви хочете завантажити збережену гру?"
 
-#: gui/launcher.cpp:1048
+#: gui/launcher.cpp:1050
 msgid "This game does not support loading games from the launcher."
 msgstr "Ця гра не підтримує завантаження збережень через головне меню."
 
-#: gui/launcher.cpp:1052
+#: gui/launcher.cpp:1054
 msgid "ScummVM could not find any engine capable of running the selected game!"
 msgstr "ScummVM не зміг знайти движок для запуску вибраної гри!"
 
-#: gui/launcher.cpp:1159
+#: gui/launcher.cpp:1161
 msgid "Mass Add..."
 msgstr "Дод. багато..."
 
-#: gui/launcher.cpp:1161
+#: gui/launcher.cpp:1163
 msgid "Record..."
 msgstr "Запис..."
 
@@ -1240,35 +1240,35 @@ msgstr ""
 "Ви дійсно хочете скинути всі налаштування FluidSynth до їх значень за "
 "замовченням?"
 
-#: base/main.cpp:228
+#: base/main.cpp:237
 #, c-format
 msgid "Engine does not support debug level '%s'"
 msgstr "Движок не підтримує рівень відладки '%s'"
 
-#: base/main.cpp:306
+#: base/main.cpp:309
 msgid "Menu"
 msgstr "Меню"
 
-#: base/main.cpp:309 backends/platform/symbian/src/SymbianActions.cpp:45
+#: base/main.cpp:312 backends/platform/symbian/src/SymbianActions.cpp:45
 #: backends/platform/wince/CEActionsPocket.cpp:45
 #: backends/platform/wince/CEActionsSmartphone.cpp:46
 msgid "Skip"
 msgstr "Пропустити"
 
-#: base/main.cpp:312 backends/platform/symbian/src/SymbianActions.cpp:50
+#: base/main.cpp:315 backends/platform/symbian/src/SymbianActions.cpp:50
 #: backends/platform/wince/CEActionsPocket.cpp:42
 msgid "Pause"
 msgstr "Пауза"
 
-#: base/main.cpp:315
+#: base/main.cpp:318
 msgid "Skip line"
 msgstr "Пропустити рядок"
 
-#: base/main.cpp:507
+#: base/main.cpp:510
 msgid "Error running game:"
 msgstr "Помилка запуску гри:"
 
-#: base/main.cpp:554
+#: base/main.cpp:557
 msgid "Could not find any engine capable of running the selected game"
 msgstr "Не можу знайти движок для запуску вибраної гри"
 
@@ -1385,7 +1385,7 @@ msgstr "~П~овер.в головне меню"
 #: engines/dialogs.cpp:116 engines/agi/saveload.cpp:803
 #: engines/cruise/menu.cpp:212 engines/drascula/saveload.cpp:336
 #: engines/dreamweb/saveload.cpp:261 engines/neverhood/menumodule.cpp:877
-#: engines/pegasus/pegasus.cpp:377 engines/sci/engine/kfile.cpp:759
+#: engines/pegasus/pegasus.cpp:377 engines/sci/engine/kfile.cpp:769
 #: engines/toltecs/menu.cpp:281 engines/tsage/scenes.cpp:598
 msgid "Save game:"
 msgstr "Зберегти гру: "
@@ -1398,7 +1398,7 @@ msgstr "Зберегти гру: "
 #: engines/agi/saveload.cpp:803 engines/cruise/menu.cpp:212
 #: engines/drascula/saveload.cpp:336 engines/dreamweb/saveload.cpp:261
 #: engines/neverhood/menumodule.cpp:877 engines/pegasus/pegasus.cpp:377
-#: engines/sci/engine/kfile.cpp:759 engines/scumm/dialogs.cpp:188
+#: engines/sci/engine/kfile.cpp:769 engines/scumm/dialogs.cpp:188
 #: engines/toltecs/menu.cpp:281 engines/tsage/scenes.cpp:598
 msgid "Save"
 msgstr "Записати"
@@ -1436,23 +1436,23 @@ msgstr "Ві~д~міна"
 msgid "~K~eys"
 msgstr "~К~лавіші"
 
-#: engines/engine.cpp:276
+#: engines/engine.cpp:339
 msgid "Could not initialize color format."
 msgstr "Не можу налаштувати формат кольору."
 
-#: engines/engine.cpp:284
+#: engines/engine.cpp:347
 msgid "Could not switch to video mode: '"
 msgstr "Не вдалося переключити відеорежим: '"
 
-#: engines/engine.cpp:293
+#: engines/engine.cpp:356
 msgid "Could not apply aspect ratio setting."
 msgstr "Не вдалося застосувати корекцію співвідношення сторін."
 
-#: engines/engine.cpp:298
+#: engines/engine.cpp:361
 msgid "Could not apply fullscreen setting."
 msgstr "Не вдалося застосувати повноекранний режим."
 
-#: engines/engine.cpp:398
+#: engines/engine.cpp:461
 msgid ""
 "You appear to be playing this game directly\n"
 "from the CD. This is known to cause problems,\n"
@@ -1466,7 +1466,7 @@ msgstr ""
 "гри на жорсткий диск.\n"
 "Дивіться файл README для подальших інструкцій."
 
-#: engines/engine.cpp:409
+#: engines/engine.cpp:472
 msgid ""
 "This game has audio tracks in its disk. These\n"
 "tracks need to be ripped from the disk using\n"
@@ -1480,7 +1480,7 @@ msgstr ""
 "того, щоб можна було слухати музику у грі.\n"
 "Дивіться файл README для подальших інструкцій."
 
-#: engines/engine.cpp:467
+#: engines/engine.cpp:530
 #, c-format
 msgid ""
 "Gamestate load failed (%s)! Please consult the README for basic information, "
@@ -1489,7 +1489,7 @@ msgstr ""
 "Завантаження стану гри не вдалося (%s)! . Будь-ласка, дивіться файл README "
 "для основної інормації, а також інструкцій, як отримати подальшу допомогу."
 
-#: engines/engine.cpp:480
+#: engines/engine.cpp:543
 msgid ""
 "WARNING: The game you are about to start is not yet fully supported by "
 "ScummVM. As such, it is likely to be unstable, and any saves you make might "
@@ -1499,7 +1499,7 @@ msgstr ""
 "ScummVM. Скорше за все вона не буде працювати стабільно, і збереження ігор, "
 "які ви зробите, можуть не працювати у подальших версіях ScummVM."
 
-#: engines/engine.cpp:483
+#: engines/engine.cpp:546
 msgid "Start anyway"
 msgstr "Все одно запустити"
 
@@ -2193,16 +2193,17 @@ msgstr "Кліки увімкнено"
 msgid "Clicking Disabled"
 msgstr "Кліки вимкнено"
 
-#: engines/agi/detection.cpp:147 engines/drascula/detection.cpp:302
-#: engines/dreamweb/detection.cpp:47 engines/neverhood/detection.cpp:160
-#: engines/sci/detection.cpp:394 engines/toltecs/detection.cpp:200
-#: engines/zvision/detection_tables.h:51
+#: engines/agi/detection.cpp:147 engines/cine/detection.cpp:70
+#: engines/drascula/detection.cpp:302 engines/dreamweb/detection.cpp:47
+#: engines/neverhood/detection.cpp:160 engines/sci/detection.cpp:404
+#: engines/toltecs/detection.cpp:200 engines/zvision/detection_tables.h:51
 msgid "Use original save/load screens"
 msgstr "Використовувати ориг. збереження/завантаження екрани"
 
-#: engines/agi/detection.cpp:148 engines/drascula/detection.cpp:303
-#: engines/dreamweb/detection.cpp:48 engines/neverhood/detection.cpp:161
-#: engines/sci/detection.cpp:395 engines/toltecs/detection.cpp:201
+#: engines/agi/detection.cpp:148 engines/cine/detection.cpp:71
+#: engines/drascula/detection.cpp:303 engines/dreamweb/detection.cpp:48
+#: engines/neverhood/detection.cpp:161 engines/sci/detection.cpp:405
+#: engines/toltecs/detection.cpp:201
 msgid "Use the original save/load screens, instead of the ScummVM ones"
 msgstr ""
 "Використовувати оригінальні збереження/завантаження екрани, замість ScummVM"
@@ -2232,13 +2233,13 @@ msgstr ""
 
 #: engines/agi/saveload.cpp:816 engines/drascula/saveload.cpp:349
 #: engines/dreamweb/saveload.cpp:169 engines/neverhood/menumodule.cpp:890
-#: engines/sci/engine/kfile.cpp:858 engines/toltecs/menu.cpp:256
+#: engines/sci/engine/kfile.cpp:868 engines/toltecs/menu.cpp:256
 msgid "Restore game:"
 msgstr "Відновити гру:"
 
 #: engines/agi/saveload.cpp:816 engines/drascula/saveload.cpp:349
 #: engines/dreamweb/saveload.cpp:169 engines/neverhood/menumodule.cpp:890
-#: engines/sci/engine/kfile.cpp:858 engines/toltecs/menu.cpp:256
+#: engines/sci/engine/kfile.cpp:868 engines/toltecs/menu.cpp:256
 msgid "Restore"
 msgstr "Відновити"
 
@@ -2653,18 +2654,28 @@ msgid "Skip dithering pass in EGA games, graphics are shown with full colors"
 msgstr ""
 
 #: engines/sci/detection.cpp:384
+#, fuzzy
+msgid "Enable high resolution graphics"
+msgstr "Уиімкнути графічні стовпички здоров'я"
+
+#: engines/sci/detection.cpp:385
+#, fuzzy
+msgid "Enable high resolution graphics/content"
+msgstr "Уиімкнути графічні стовпички здоров'я"
+
+#: engines/sci/detection.cpp:394
 msgid "Prefer digital sound effects"
 msgstr "Надавати перевагу цифровим звуковим ефектам"
 
-#: engines/sci/detection.cpp:385
+#: engines/sci/detection.cpp:395
 msgid "Prefer digital sound effects instead of synthesized ones"
 msgstr "Віддавати перевагу цифровим звуковим ефектам, а не синтезованим"
 
-#: engines/sci/detection.cpp:404
+#: engines/sci/detection.cpp:414
 msgid "Use IMF/Yamaha FB-01 for MIDI output"
 msgstr "Використовувати IMF/Yahama FB-01 для MIDI виходу"
 
-#: engines/sci/detection.cpp:405
+#: engines/sci/detection.cpp:415
 msgid ""
 "Use an IBM Music Feature card or a Yamaha FB-01 FM synth module for MIDI "
 "output"
@@ -2672,28 +2683,28 @@ msgstr ""
 "Використовувати дляв виводу MIDI режим карти IBM Feature або FM сінтез "
 "Yamaha FB-01"
 
-#: engines/sci/detection.cpp:415
+#: engines/sci/detection.cpp:425
 msgid "Use CD audio"
 msgstr "Використовувати CD аудіо"
 
-#: engines/sci/detection.cpp:416
+#: engines/sci/detection.cpp:426
 msgid "Use CD audio instead of in-game audio, if available"
 msgstr "Використовувати CD аудіо замість у-грі аудіо, якщо такі є"
 
-#: engines/sci/detection.cpp:426
+#: engines/sci/detection.cpp:436
 msgid "Use Windows cursors"
 msgstr "Використовувати Windows курсори"
 
-#: engines/sci/detection.cpp:427
+#: engines/sci/detection.cpp:437
 msgid ""
 "Use the Windows cursors (smaller and monochrome) instead of the DOS ones"
 msgstr "Використовувати Windows курсори (менших і монохромних), замість DOS"
 
-#: engines/sci/detection.cpp:437
+#: engines/sci/detection.cpp:447
 msgid "Use silver cursors"
 msgstr "Використовувати срібні курсори"
 
-#: engines/sci/detection.cpp:438
+#: engines/sci/detection.cpp:448
 msgid ""
 "Use the alternate set of silver cursors, instead of the normal golden ones"
 msgstr ""
