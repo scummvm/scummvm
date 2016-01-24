@@ -143,7 +143,14 @@ void Resource::readViews(uint16 roomNum) {
 }
 
 Common::String Resource::translateFileName(const Common::String filename) {
-	Common::String upperFilename = filename;
+	Common::String upperFilename;
+
+	// The DOS and Windows version aren't looking for the right file, 
+	if (!filename.compareToIgnoreCase("P:ZigInt/BLK") && (_vm->getPlatform() != Common::kPlatformAmiga))
+		upperFilename = "P:ZigInt/ZIGINT.BLK";
+	else
+		upperFilename = filename;
+
 	upperFilename.toUppercase();
 	Common::String fileNameStrFinal;
 
@@ -211,7 +218,7 @@ Common::String Resource::translateFileName(const Common::String filename) {
 Common::File *Resource::openDataFile(const Common::String filename, uint32 fileHeader) {
 	Common::File *dataFile = new Common::File();
 	dataFile->open(translateFileName(filename));
-	warning("%s", filename.c_str());
+
 	if (!dataFile->isOpen()) {
 		// The DOS version is known to have some missing files
 		if (_vm->getPlatform() == Common::kPlatformDOS) {
