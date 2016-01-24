@@ -51,6 +51,7 @@
 
 		<def var = 'Predictive.Button.Width' value = '45' />
 		<def var = 'Predictive.Button.Height' value = '15' />
+		<def var = 'Predictive.ShowDeletePic' value = '0'/>
 
 		<widget name = 'Button'
 				size = '72, 16'

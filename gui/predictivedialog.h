@@ -68,6 +68,8 @@ public:
 	PredictiveDialog();
 	~PredictiveDialog();
 
+	virtual void reflowLayout();
+
 	virtual void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data);
 	virtual void handleKeyUp(Common::KeyState state);
 	virtual void handleKeyDown(Common::KeyState state);

@@ -24,6 +24,7 @@
 #include "gui/widget.h"
 #include "gui/widgets/edittext.h"
 #include "gui/gui-manager.h"
+#include "gui/ThemeEval.h"
 
 #include "common/config-manager.h"
 #include "common/translation.h"
@@ -89,11 +90,13 @@ PredictiveDialog::PredictiveDialog() : Dialog("Predictive") {
 	_btns[kAddAct]->setEnabled(false);
 
 #ifndef DISABLE_FANCY_THEMES
-	_btns[kDelAct] = new PicButtonWidget(this, "Predictive.Delete", _("Delete char"), kDelCmd);
-	((PicButtonWidget *)_btns[kDelAct])->useThemeTransparency(true);
-	((PicButtonWidget *)_btns[kDelAct])->setGfx(g_gui.theme()->getImageSurface(ThemeEngine::kImageDelbtn));
+	if (g_gui.xmlEval()->getVar("Globals.Predictive.ShowDeletePic") == 1 && g_gui.theme()->supportsImages()) {
+		_btns[kDelAct] = new PicButtonWidget(this, "Predictive.Delete", _("Delete char"), kDelCmd);
+		((PicButtonWidget *)_btns[kDelAct])->useThemeTransparency(true);
+		((PicButtonWidget *)_btns[kDelAct])->setGfx(g_gui.theme()->getImageSurface(ThemeEngine::kImageDelbtn));
+	} else
 #endif
-	_btns[kDelAct] = new ButtonWidget(this, "Predictive.Delete" , _("<") , 0, kDelCmd);
+		_btns[kDelAct] = new ButtonWidget(this, "Predictive.Delete" , _("<") , 0, kDelCmd);
 	// I18N: Pre means 'Predictive', leave '*' as is
 	_btns[kModeAct] = new ButtonWidget(this, "Predictive.Pre", _("*  Pre"), 0, kModeCmd);
 	_edittext = new EditTextWidget(this, "Predictive.Word", _search, 0, 0, 0);
@@ -169,6 +172,25 @@ PredictiveDialog::~PredictiveDialog() {
 	free(_unitedDict.dictLine);
 
 	free(_btns);
+}
+
+void PredictiveDialog::reflowLayout() {
+#ifndef DISABLE_FANCY_THEMES
+	removeWidget(_btns[kDelAct]);
+	_btns[kDelAct]->setNext(0);
+	delete _btns[kDelAct];
+	_btns[kDelAct] = nullptr;
+
+	if (g_gui.xmlEval()->getVar("Globals.Predictive.ShowDeletePic") == 1 && g_gui.theme()->supportsImages()) {
+		_btns[kDelAct] = new PicButtonWidget(this, "Predictive.Delete", _("Delete char"), kDelCmd);
+		((PicButtonWidget *)_btns[kDelAct])->useThemeTransparency(true);
+		((PicButtonWidget *)_btns[kDelAct])->setGfx(g_gui.theme()->getImageSurface(ThemeEngine::kImageDelbtn));
+	} else {
+		_btns[kDelAct] = new ButtonWidget(this, "Predictive.Delete" , _("<") , 0, kDelCmd);
+	}
+#endif
+
+	Dialog::reflowLayout();
 }
 
 void PredictiveDialog::saveUserDictToFile() {

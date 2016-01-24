@@ -49,6 +49,7 @@
 		<def var = 'Tooltip.YDelta' value = '16'/>
 
 		<def var = 'Predictive.Button.Width' value = '60' />
+		<def var = 'Predictive.ShowDeletePic' value = '0'/>
 
 		<widget name = 'OptionsLabel'
 				size = '110, Globals.Line.Height'
