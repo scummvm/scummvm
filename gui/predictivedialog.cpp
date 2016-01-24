@@ -105,29 +105,15 @@ PredictiveDialog::PredictiveDialog() : Dialog("Predictive") {
 
 	_predictiveDict.nameDict = "predictive_dictionary";
 	_predictiveDict.defaultFilename = "pred.dic";
-	_predictiveDict.dictActLine = NULL;
 
 	_userDict.nameDict = "user_dictionary";
 	_userDict.defaultFilename = "user.dic";
-	_userDict.dictActLine = NULL;
-
-	_unitedDict.nameDict = "";
-	_unitedDict.defaultFilename = "";
-
-	_predictiveDict.dictLine = NULL;
-	_predictiveDict.dictText = NULL;
-	_predictiveDict.dictLineCount = 0;
 
 	if (!_predictiveDict.dictText) {
 		loadAllDictionary(_predictiveDict);
 		if (!_predictiveDict.dictText)
 			debug(5, "Predictive Dialog: pred.dic not loaded");
 	}
-
-	_userDict.dictLine = NULL;
-	_userDict.dictText = NULL;
-	_userDict.dictTextSize = 0;
-	_userDict.dictLineCount = 0;
 
 	if (!_userDict.dictText) {
 		loadAllDictionary(_userDict);
@@ -136,9 +122,6 @@ PredictiveDialog::PredictiveDialog() : Dialog("Predictive") {
 	}
 
 	mergeDicts();
-
-	_unitedDict.dictActLine = NULL;
-	_unitedDict.dictText = NULL;
 
 	memset(_repeatcount, 0, sizeof(_repeatcount));
 

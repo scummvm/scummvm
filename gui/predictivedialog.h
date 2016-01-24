@@ -78,6 +78,8 @@ public:
 	const char *getResult() const { return _predictiveResult; }
 private:
 	struct Dict {
+		Dict() : dictLine(nullptr), dictText(nullptr), dictActLine(nullptr),
+		         dictLineCount(0), dictTextSize(0) {}
 		char **dictLine;
 		char *dictText;
 		char *dictActLine; // using only for united dict...
