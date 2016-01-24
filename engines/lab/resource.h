@@ -97,7 +97,7 @@ public:
 	Resource(LabEngine *vm);
 	~Resource() {}
 
-	Common::File *openDataFile(const Common::String fileName, uint32 fileHeader = 0);
+	Common::File *openDataFile(const Common::String filename, uint32 fileHeader = 0);
 	void readRoomData(const Common::String fileName);
 	InventoryData *readInventory(const Common::String fileName);
 	void readViews(uint16 roomNum);
