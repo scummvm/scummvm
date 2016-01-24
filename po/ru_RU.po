@@ -91,16 +91,15 @@ msgstr "Ok"
 
 #: gui/filebrowser-dialog.cpp:49
 msgid "Choose file for loading"
-msgstr ""
+msgstr "Выберите файл для загрузки"
 
 #: gui/filebrowser-dialog.cpp:49
 msgid "Enter filename for saving"
-msgstr ""
+msgstr "Введите имя файла для записи"
 
 #: gui/filebrowser-dialog.cpp:132
-#, fuzzy
 msgid "Do you really want to overwrite the file?"
-msgstr "Вы действительно хотите удалить эту запись?"
+msgstr "Вы действительно хотите перезаписать этот файл?"
 
 #: gui/filebrowser-dialog.cpp:132 gui/launcher.cpp:795 gui/launcher.cpp:943
 #: gui/launcher.cpp:1002 gui/fluidsynth-dialog.cpp:217
@@ -2662,14 +2661,12 @@ msgstr ""
 "цветами"
 
 #: engines/sci/detection.cpp:384
-#, fuzzy
 msgid "Enable high resolution graphics"
-msgstr "Включить отображение полосок здоровья"
+msgstr "Включить отображение графики высокого разрешения"
 
 #: engines/sci/detection.cpp:385
-#, fuzzy
 msgid "Enable high resolution graphics/content"
-msgstr "Включить отображение полосок здоровья"
+msgstr "Включить графику и контент высокого рарешения"
 
 #: engines/sci/detection.cpp:394
 msgid "Prefer digital sound effects"
