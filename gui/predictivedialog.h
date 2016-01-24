@@ -33,40 +33,6 @@ class EditTextWidget;
 class ButtonWidget;
 class PicButtonWidget;
 
-enum ButtonId {
-	kButton1Act   = 0,
-	kButton2Act   = 1,
-	kButton3Act   = 2,
-	kButton4Act   = 3,
-	kButton5Act   = 4,
-	kButton6Act   = 5,
-	kButton7Act   = 6,
-	kButton8Act   = 7,
-	kButton9Act   = 8,
-	kNextAct      = 9,
-	kAddAct       = 10,
-	kDelAct       = 11,
-	kCancelAct    = 12,
-	kOkAct        = 13,
-	kModeAct      = 14,
-	kButton0Act   = 15,
-	kNoAct        = -1
-};
-
-enum {
-	kButtonCount = kButton0Act + 1
-};
-
-enum {
-	kRepeatDelay = 500
-};
-
-enum {
-	kMaxLineLen = 80,
-	kMaxWordLen = 24,
-	kMaxWord = 50
-};
-
 class PredictiveDialog : public GUI::Dialog {
 public:
 	PredictiveDialog();
@@ -80,7 +46,42 @@ public:
 	virtual void handleTickle();
 
 	const char *getResult() const { return _predictiveResult; }
+
 private:
+	enum ButtonId {
+		kButton1Act   = 0,
+		kButton2Act   = 1,
+		kButton3Act   = 2,
+		kButton4Act   = 3,
+		kButton5Act   = 4,
+		kButton6Act   = 5,
+		kButton7Act   = 6,
+		kButton8Act   = 7,
+		kButton9Act   = 8,
+		kNextAct      = 9,
+		kAddAct       = 10,
+		kDelAct       = 11,
+		kCancelAct    = 12,
+		kOkAct        = 13,
+		kModeAct      = 14,
+		kButton0Act   = 15,
+		kNoAct        = -1
+	};
+
+	enum {
+		kButtonCount = kButton0Act + 1
+	};
+
+	enum {
+		kRepeatDelay = 500
+	};
+
+	enum {
+		kMaxLineLen = 80,
+		kMaxWordLen = 24,
+		kMaxWord = 50
+	};
+
 	struct Dict {
 		Dict() : dictLine(nullptr), dictText(nullptr), dictActLine(nullptr),
 		         dictLineCount(0), dictTextSize(0) {}
