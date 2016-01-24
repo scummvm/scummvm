@@ -62,37 +62,37 @@ OnScreenDialog::OnScreenDialog(bool isRecord) : Dialog("OnScreenDialog") {
 
 #ifndef DISABLE_FANCY_THEMES
 	if (g_gui.xmlEval()->getVar("Globals.OnScreenDialog.ShowPics") == 1 && g_gui.theme()->supportsImages()) {
-		GUI::PicButtonWidget *btn;
-		btn = new PicButtonWidget(this, "OnScreenDialog.StopButton", 0, kStopCmd, 0);
-		btn->useThemeTransparency(true);
+		GUI::PicButtonWidget *button;
+		button = new PicButtonWidget(this, "OnScreenDialog.StopButton", 0, kStopCmd, 0);
+		button->useThemeTransparency(true);
 
 		if (g_system->getOverlayWidth() > 320)
-			btn->setGfx(g_gui.theme()->getImageSurface(ThemeEngine::kImageStopbtn));
+			button->setGfx(g_gui.theme()->getImageSurface(ThemeEngine::kImageStopButton));
 		else
-			btn->setGfx(g_gui.theme()->getImageSurface(ThemeEngine::kImageStopSmallbtn));
+			button->setGfx(g_gui.theme()->getImageSurface(ThemeEngine::kImageStopSmallButton));
 
 		if (isRecord) {
-			btn = new PicButtonWidget(this, "OnScreenDialog.EditButton", 0, kEditCmd, 0);
-			btn->useThemeTransparency(true);
+			button = new PicButtonWidget(this, "OnScreenDialog.EditButton", 0, kEditCmd, 0);
+			button->useThemeTransparency(true);
 
 			if (g_system->getOverlayWidth() > 320)
-				btn->setGfx(g_gui.theme()->getImageSurface(ThemeEngine::kImageEditbtn));
+				button->setGfx(g_gui.theme()->getImageSurface(ThemeEngine::kImageEditButton));
 			else
-				btn->setGfx(g_gui.theme()->getImageSurface(ThemeEngine::kImageEditSmallbtn));
+				button->setGfx(g_gui.theme()->getImageSurface(ThemeEngine::kImageEditSmallButton));
 		} else {
-			btn = new PicButtonWidget(this, "OnScreenDialog.SwitchModeButton", 0, kSwitchModeCmd, 0);
-			btn->useThemeTransparency(true);
+			button = new PicButtonWidget(this, "OnScreenDialog.SwitchModeButton", 0, kSwitchModeCmd, 0);
+			button->useThemeTransparency(true);
 			if (g_system->getOverlayWidth() > 320)
-				btn->setGfx(g_gui.theme()->getImageSurface(ThemeEngine::kImageSwitchModebtn));
+				button->setGfx(g_gui.theme()->getImageSurface(ThemeEngine::kImageSwitchModeButton));
 			else
-				btn->setGfx(g_gui.theme()->getImageSurface(ThemeEngine::kImageSwitchModeSmallbtn));
+				button->setGfx(g_gui.theme()->getImageSurface(ThemeEngine::kImageSwitchModeSmallButton));
 
-			btn = new PicButtonWidget(this, "OnScreenDialog.FastReplayButton", 0, kFastModeCmd, 0);
-			btn->useThemeTransparency(true);
+			button = new PicButtonWidget(this, "OnScreenDialog.FastReplayButton", 0, kFastModeCmd, 0);
+			button->useThemeTransparency(true);
 			if (g_system->getOverlayWidth() > 320)
-				btn->setGfx(g_gui.theme()->getImageSurface(ThemeEngine::kImageFastReplaybtn));
+				button->setGfx(g_gui.theme()->getImageSurface(ThemeEngine::kImageFastReplayButton));
 			else
-				btn->setGfx(g_gui.theme()->getImageSurface(ThemeEngine::kImageFastReplaySmallbtn));
+				button->setGfx(g_gui.theme()->getImageSurface(ThemeEngine::kImageFastReplaySmallButton));
 		}
 	} else
 #endif

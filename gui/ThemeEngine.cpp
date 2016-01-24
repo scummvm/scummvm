@@ -48,17 +48,17 @@ const char * const ThemeEngine::kImageLogo = "logo.bmp";
 const char * const ThemeEngine::kImageLogoSmall = "logo_small.bmp";
 const char * const ThemeEngine::kImageSearch = "search.bmp";
 const char * const ThemeEngine::kImageEraser = "eraser.bmp";
-const char * const ThemeEngine::kImageDelbtn = "delbtn.bmp";
+const char * const ThemeEngine::kImageDelButton = "delbtn.bmp";
 const char * const ThemeEngine::kImageList = "list.bmp";
 const char * const ThemeEngine::kImageGrid = "grid.bmp";
-const char * const ThemeEngine::kImageStopbtn = "stopbtn.bmp";
-const char * const ThemeEngine::kImageEditbtn = "editbtn.bmp";
-const char * const ThemeEngine::kImageSwitchModebtn = "switchbtn.bmp";
-const char * const ThemeEngine::kImageFastReplaybtn = "fastreplay.bmp";
-const char * const ThemeEngine::kImageStopSmallbtn = "stopbtn_small.bmp";
-const char * const ThemeEngine::kImageEditSmallbtn = "editbtn_small.bmp";
-const char * const ThemeEngine::kImageSwitchModeSmallbtn = "switchbtn_small.bmp";
-const char * const ThemeEngine::kImageFastReplaySmallbtn = "fastreplay_small.bmp";
+const char * const ThemeEngine::kImageStopButton = "stopbtn.bmp";
+const char * const ThemeEngine::kImageEditButton = "editbtn.bmp";
+const char * const ThemeEngine::kImageSwitchModeButton = "switchbtn.bmp";
+const char * const ThemeEngine::kImageFastReplayButton = "fastreplay.bmp";
+const char * const ThemeEngine::kImageStopSmallButton = "stopbtn_small.bmp";
+const char * const ThemeEngine::kImageEditSmallButton = "editbtn_small.bmp";
+const char * const ThemeEngine::kImageSwitchModeSmallButton = "switchbtn_small.bmp";
+const char * const ThemeEngine::kImageFastReplaySmallButton = "fastreplay_small.bmp";
 
 struct TextDrawData {
 	const Graphics::Font *_fontPtr;
