@@ -2671,14 +2671,12 @@ msgstr ""
 "couleurs pleines"
 
 #: engines/sci/detection.cpp:384
-#, fuzzy
 msgid "Enable high resolution graphics"
-msgstr "Activer les bars de santé (Hit Point)"
+msgstr "Utiliser les graphiques haute résolution"
 
 #: engines/sci/detection.cpp:385
-#, fuzzy
 msgid "Enable high resolution graphics/content"
-msgstr "Activer les bars de santé (Hit Point)"
+msgstr "Utiliser les graphiques haute résolution"
 
 #: engines/sci/detection.cpp:394
 msgid "Prefer digital sound effects"
