@@ -54,6 +54,10 @@ enum ButtonId {
 };
 
 enum {
+	kButtonCount = kBtn0Act + 1
+};
+
+enum {
 	kRepeatDelay = 500
 };
 
@@ -140,7 +144,7 @@ private:
 	bool _needRefresh;
 private:
 	EditTextWidget *_edittext;
-	ButtonWidget   **_btns;
+	ButtonWidget   *_btns[kButtonCount];
 };
 
 } // namespace GUI

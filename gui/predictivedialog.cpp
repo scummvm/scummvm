@@ -70,8 +70,6 @@ enum {
 PredictiveDialog::PredictiveDialog() : Dialog("Predictive") {
 	new StaticTextWidget(this, "Predictive.Headline", "Enter Text");
 
-	_btns = (ButtonWidget **)calloc(16, sizeof(ButtonWidget *));
-
 	_btns[kCancelAct] = new ButtonWidget(this, "Predictive.Cancel",  _("Cancel")   , 0, kCancelCmd);
 	_btns[kOkAct] =     new ButtonWidget(this, "Predictive.OK",      _("Ok")       , 0, kOkCmd);
 	_btns[kBtn1Act] =   new ButtonWidget(this, "Predictive.Button1", "1  `-.&"     , 0, kBut1Cmd);
@@ -153,8 +151,6 @@ PredictiveDialog::~PredictiveDialog() {
 	free(_userDict.dictLine);
 	free(_predictiveDict.dictLine);
 	free(_unitedDict.dictLine);
-
-	free(_btns);
 }
 
 void PredictiveDialog::reflowLayout() {
