@@ -242,7 +242,12 @@ void SpecialLocks::showTileLock(const Common::String filename, bool showSolution
 	_vm->_anim->_noPalChange = false;
 	_vm->_graphics->blackScreen();
 
-	Common::File *tileFile = _vm->_resource->openDataFile(showSolution ? "P:TileSolution" : "P:Tile");
+	Common::File *tileFile;
+	if (_vm->getPlatform() == Common::kPlatformDOS)
+		tileFile = _vm->_resource->openDataFile(showSolution ? "P:TileSolu" : "P:Tile");
+	else
+		// Windows and Amiga versions use TileSolution and Tile
+		tileFile = _vm->_resource->openDataFile(showSolution ? "P:TileSolution" : "P:Tile");
 
 	int start = showSolution ? 0 : 1;
 
