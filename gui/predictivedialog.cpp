@@ -72,29 +72,29 @@ PredictiveDialog::PredictiveDialog() : Dialog("Predictive") {
 	_btns = (ButtonWidget **)calloc(16, sizeof(ButtonWidget *));
 
 	_btns[kCancelAct] = new ButtonWidget(this, "Predictive.Cancel",  _("Cancel")   , 0, kCancelCmd);
-	_btns[kOkAct] = 	new ButtonWidget(this, "Predictive.OK",      _("Ok")       , 0, kOkCmd);
-	_btns[kBtn1Act] = 	new ButtonWidget(this, "Predictive.Button1", "1  `-.&" , 0, kBut1Cmd);
-	_btns[kBtn2Act] = 	new ButtonWidget(this, "Predictive.Button2", "2  abc"     , 0, kBut2Cmd);
-	_btns[kBtn3Act] = 	new ButtonWidget(this, "Predictive.Button3", "3  def"     , 0, kBut3Cmd);
-	_btns[kBtn4Act] = 	new ButtonWidget(this, "Predictive.Button4", "4  ghi"     , 0, kBut4Cmd);
-	_btns[kBtn5Act] = 	new ButtonWidget(this, "Predictive.Button5", "5  jkl"     , 0, kBut5Cmd);
-	_btns[kBtn6Act] = 	new ButtonWidget(this, "Predictive.Button6", "6  mno"     , 0, kBut6Cmd);
-	_btns[kBtn7Act] = 	new ButtonWidget(this, "Predictive.Button7", "7  pqrs"    , 0, kBut7Cmd);
-	_btns[kBtn8Act] = 	new ButtonWidget(this, "Predictive.Button8", "8  tuv"     , 0, kBut8Cmd);
-	_btns[kBtn9Act] = 	new ButtonWidget(this, "Predictive.Button9", "9  wxyz"    , 0, kBut9Cmd);
-	_btns[kBtn0Act] = 	new ButtonWidget(this, "Predictive.Button0", "0"        , 0, kBut0Cmd);
-  	// I18N: You must leave "#" as is, only word 'next' is translatable
-	_btns[kNextAct] = 	new ButtonWidget(this, "Predictive.Next",    _("#  next") , 0, kNextCmd);
-	_btns[kAddAct] = 	new ButtonWidget(this, "Predictive.Add",     _("add") , 0, kAddCmd);
+	_btns[kOkAct] =     new ButtonWidget(this, "Predictive.OK",      _("Ok")       , 0, kOkCmd);
+	_btns[kBtn1Act] =   new ButtonWidget(this, "Predictive.Button1", "1  `-.&"     , 0, kBut1Cmd);
+	_btns[kBtn2Act] =   new ButtonWidget(this, "Predictive.Button2", "2  abc"      , 0, kBut2Cmd);
+	_btns[kBtn3Act] =   new ButtonWidget(this, "Predictive.Button3", "3  def"      , 0, kBut3Cmd);
+	_btns[kBtn4Act] =   new ButtonWidget(this, "Predictive.Button4", "4  ghi"      , 0, kBut4Cmd);
+	_btns[kBtn5Act] =   new ButtonWidget(this, "Predictive.Button5", "5  jkl"      , 0, kBut5Cmd);
+	_btns[kBtn6Act] =   new ButtonWidget(this, "Predictive.Button6", "6  mno"      , 0, kBut6Cmd);
+	_btns[kBtn7Act] =   new ButtonWidget(this, "Predictive.Button7", "7  pqrs"     , 0, kBut7Cmd);
+	_btns[kBtn8Act] =   new ButtonWidget(this, "Predictive.Button8", "8  tuv"      , 0, kBut8Cmd);
+	_btns[kBtn9Act] =   new ButtonWidget(this, "Predictive.Button9", "9  wxyz"     , 0, kBut9Cmd);
+	_btns[kBtn0Act] =   new ButtonWidget(this, "Predictive.Button0", "0"           , 0, kBut0Cmd);
+	// I18N: You must leave "#" as is, only word 'next' is translatable
+	_btns[kNextAct] =   new ButtonWidget(this, "Predictive.Next",    _("#  next")  , 0, kNextCmd);
+	_btns[kAddAct] =    new ButtonWidget(this, "Predictive.Add",     _("add")      , 0, kAddCmd);
 	_btns[kAddAct]->setEnabled(false);
 
-  #ifndef DISABLE_FANCY_THEMES
+#ifndef DISABLE_FANCY_THEMES
 	_btns[kDelAct] = new PicButtonWidget(this, "Predictive.Delete", _("Delete char"), kDelCmd);
 	((PicButtonWidget *)_btns[kDelAct])->useThemeTransparency(true);
 	((PicButtonWidget *)_btns[kDelAct])->setGfx(g_gui.theme()->getImageSurface(ThemeEngine::kImageDelbtn));
-  #endif
+#endif
 	_btns[kDelAct] = new ButtonWidget(this, "Predictive.Delete" , _("<") , 0, kDelCmd);
-  	// I18N: Pre means 'Predictive', leave '*' as is
+	// I18N: Pre means 'Predictive', leave '*' as is
 	_btns[kModeAct] = new ButtonWidget(this, "Predictive.Pre", _("*  Pre"), 0, kModeCmd);
 	_edittext = new EditTextWidget(this, "Predictive.Word", _search, 0, 0, 0);
 
@@ -598,10 +598,10 @@ void PredictiveDialog::processBtnActive(ButtonId button) {
 	if (button == kOkAct)
 		close();
 
- 	if (button == kCancelAct) {
- 		saveUserDictToFile();
- 		close();
- 	}
+	if (button == kCancelAct) {
+		saveUserDictToFile();
+		close();
+	}
 }
 
 void PredictiveDialog::handleTickle() {
