@@ -439,7 +439,6 @@ void PredictiveDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 d
 }
 
 void PredictiveDialog::processButton(ButtonId button) {
-	uint8 x;
 	static const char *const buttonStr[] = {
 		"1", "2", "3",
 		"4", "5", "6",
@@ -525,7 +524,7 @@ void PredictiveDialog::processButton(ButtonId button) {
 				_numMatchingWords = countWordsInString(_unitedDict.dictActLine);
 				break;
 			case kModeAbc:
-				for (x = 0; x < _currentCode.size(); x++)
+				for (uint x = 0; x < _currentCode.size(); x++)
 					if (_currentCode[x] >= '1')
 						_temp[x] = buttons[_currentCode[x] - '1'][_repeatcount[x]];
 				_temp[_currentCode.size()] = 0;
@@ -544,7 +543,7 @@ void PredictiveDialog::processButton(ButtonId button) {
 					_currentWord = Common::String(tok, _currentCode.size());
 				}
 			} else if (_mode == kModeAbc) {
-				x = _currentCode.size();
+				uint x = _currentCode.size();
 				if (x) {
 					if (_currentCode.lastChar() == '1' || _currentCode.lastChar() == '7' || _currentCode.lastChar() == '9')
 						_repeatcount[x - 1] = (_repeatcount[x - 1] + 1) % 4;
