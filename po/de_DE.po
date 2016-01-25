@@ -1994,7 +1994,7 @@ msgstr ", öffentliches Verzeichnis nicht eingebunden"
 
 #: backends/platform/wii/options.cpp:174
 msgid "Network down"
-msgstr "Netzwerk ist aus."
+msgstr "Netzwerk ist nicht verfügbar."
 
 #: backends/platform/wii/options.cpp:178
 msgid "Initializing network"
@@ -2688,12 +2688,12 @@ msgstr ""
 #: engines/sci/detection.cpp:384
 #, fuzzy
 msgid "Enable high resolution graphics"
-msgstr "Aktiviert grafische Trefferpunkte-Balken."
+msgstr "Aktiviere hochauflösende Grafik."
 
 #: engines/sci/detection.cpp:385
 #, fuzzy
 msgid "Enable high resolution graphics/content"
-msgstr "Aktiviert grafische Trefferpunkte-Balken."
+msgstr "Aktiviere hochauflösende Grafik/Inhalte"
 
 #: engines/sci/detection.cpp:394
 msgid "Prefer digital sound effects"
