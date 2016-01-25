@@ -343,18 +343,25 @@ void DisplayMan::setUpScreens() {
 		for (int imgIdx = 0; imgIdx < 6; imgIdx++)
 			_vm->_invImages[imgIdx] = new Image(invFile, _vm);
 	}
-	invButtonList->push_back(i->createButton( 24, y, 0, Common::KEYCODE_ESCAPE, invImages[0],   invImages[1]));
-	invButtonList->push_back(i->createButton( 56, y, 1, Common::KEYCODE_g,      invImages[2],   invImages[3]));
-	invButtonList->push_back(i->createButton( 94, y, 2, Common::KEYCODE_u,      invImages[4],   invImages[5]));
-	invButtonList->push_back(i->createButton(126, y, 3, Common::KEYCODE_l,      moveImages[8],  moveImages[9]));
-	invButtonList->push_back(i->createButton(164, y, 4, Common::KEYCODE_LEFT,   moveImages[14], moveImages[15]));
-	invButtonList->push_back(i->createButton(196, y, 5, Common::KEYCODE_RIGHT,  moveImages[18], moveImages[19]));
 
+	if (_vm->getPlatform() == Common::kPlatformWindows) {
+		invButtonList->push_back(i->createButton( 24, y, 0, Common::KEYCODE_ESCAPE, invImages[0],   invImages[1]));
+		invButtonList->push_back(i->createButton( 56, y, 1, Common::KEYCODE_g,      invImages[2],   invImages[3]));
+		invButtonList->push_back(i->createButton( 94, y, 2, Common::KEYCODE_u,      invImages[4],   invImages[5]));
+		invButtonList->push_back(i->createButton(126, y, 3, Common::KEYCODE_l,      moveImages[8],  moveImages[9]));
+		invButtonList->push_back(i->createButton(164, y, 4, Common::KEYCODE_LEFT,   moveImages[14], moveImages[15]));
+		invButtonList->push_back(i->createButton(196, y, 5, Common::KEYCODE_RIGHT,  moveImages[18], moveImages[19]));
 	// The windows version has 2 extra buttons for breadcrumb trail
 	// CHECKME: the game is really hard to play without those, maybe we could add something to enable that.
-	if (_vm->getPlatform() == Common::kPlatformWindows) {
 		invButtonList->push_back(i->createButton(234, y, 6, Common::KEYCODE_b, invImages[6], invImages[7]));
 		invButtonList->push_back(i->createButton(266, y, 7, Common::KEYCODE_f, invImages[8], invImages[9]));
+	} else {
+		invButtonList->push_back(i->createButton( 58, y, 0, Common::KEYCODE_ESCAPE, invImages[0],   invImages[1]));
+		invButtonList->push_back(i->createButton( 90, y, 1, Common::KEYCODE_g,      invImages[2],   invImages[3]));
+		invButtonList->push_back(i->createButton(128, y, 2, Common::KEYCODE_u,      invImages[4],   invImages[5]));
+		invButtonList->push_back(i->createButton(160, y, 3, Common::KEYCODE_l,      moveImages[8],  moveImages[9]));
+		invButtonList->push_back(i->createButton(198, y, 4, Common::KEYCODE_LEFT,   moveImages[14], moveImages[15]));
+		invButtonList->push_back(i->createButton(230, y, 5, Common::KEYCODE_RIGHT,  moveImages[18], moveImages[19]));
 	}
 
 	delete invFile;
