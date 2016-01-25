@@ -254,7 +254,42 @@ void WageEngine::performMagic(Chr *attacker, Chr *victim, Obj *magicalObject) {
 }
 
 void WageEngine::performHealingMagic(Chr *chr, Obj *magicalObject) {
-	warning("STUB: performHealingMagic()");
+	char buf[512];
+
+	if (!chr->_playerCharacter) {
+		snprintf(buf, 512, "%s%s %ss %s%s.",
+			chr->getDefiniteArticle(true), chr->_name.c_str(),
+			magicalObject->_operativeVerb.c_str(),
+			getIndefiniteArticle(magicalObject->_name), magicalObject->_name.c_str());
+		appendText(buf);
+	}
+
+	int chance = _rnd->getRandomNumber(255);
+	if (chance < magicalObject->_accuracy) {
+		int type = magicalObject->_attackType;
+
+		if (type == Obj::HEALS_PHYSICAL_DAMAGE || type == Obj::HEALS_PHYSICAL_AND_SPIRITUAL_DAMAGE)
+			chr->_context._statVariables[PHYS_HIT_CUR] += magicalObject->_damage;
+
+		if (type == Obj::HEALS_SPIRITUAL_DAMAGE || type == Obj::HEALS_PHYSICAL_AND_SPIRITUAL_DAMAGE)
+			chr->_context._statVariables[SPIR_HIT_CUR] += magicalObject->_damage;
+
+		playSound(magicalObject->_sound);
+		appendText(magicalObject->_useMessage.c_str());
+
+		// TODO: what if enemy heals himself?
+		if (chr->_playerCharacter) {
+			double physicalPercent = (double)chr->_context._statVariables[PHYS_HIT_CUR] / chr->_context._statVariables[PHYS_HIT_BAS];
+			double spiritualPercent = (double)chr->_context._statVariables[SPIR_HIT_CUR] / chr->_context._statVariables[SPIR_HIT_BAS];
+			snprintf(buf, 256, "Your physical condition is %s.", getPercentMessage(physicalPercent));
+			appendText(buf);
+
+			snprintf(buf, 256, "Your spiritual condition is %s.", getPercentMessage(spiritualPercent));
+			appendText(buf);
+		}
+	}
+
+	decrementUses(magicalObject);
 }
 
 static const int directionsX[] = { 0, 0, 1, -1 };
