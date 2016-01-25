@@ -281,6 +281,10 @@ Designed *Obj::removeFromCharOrScene() {
 	return from;
 }
 
+void Obj::resetState(Chr *owner, Scene *scene) {
+	warning("STUB: Obj::resetState()");
+}
+
 Chr::Chr(String name, Common::SeekableReadStream *data) {
 	_name = name;
 	_classType = CHR;

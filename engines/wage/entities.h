@@ -288,13 +288,10 @@ public:
 			_currentOwner = NULL;
 	}
 
-	void decrementNumberOfUses() {
-		if (_numberOfUses != -1)
-			_numberOfUses--;
-	}
-
 	Chr *removeFromChr();
 	Designed *removeFromCharOrScene();
+
+	void resetState(Chr *owner, Scene *scene);
 };
 
 class Scene : public Designed {

@@ -232,7 +232,23 @@ void WageEngine::performAttack(Chr *attacker, Chr *victim, Obj *weapon) {
 }
 
 void WageEngine::decrementUses(Obj *obj) {
-	warning("STUB: decrementUses()");
+	int numberOfUses = obj->_numberOfUses;
+	if (numberOfUses != -1) {
+		numberOfUses--;
+		if (numberOfUses > 0) {
+			obj->_numberOfUses = numberOfUses;
+		} else {
+			if (!obj->_failureMessage.empty()) {
+				appendText(obj->_failureMessage.c_str());
+			}
+			if (obj->_returnToRandomScene) {
+				_world->move(obj, _world->getRandomScene());
+			} else {
+				_world->move(obj, _world->_storageScene);
+			}
+			obj->resetState(obj->_currentOwner, obj->_currentScene);
+		}
+	}
 }
 
 bool WageEngine::attackHit(Chr *attacker, Chr *victim, Obj *weapon, int targetIndex) {
