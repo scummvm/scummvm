@@ -2,7 +2,7 @@ POTFILE := $(srcdir)/po/scummvm.pot
 POFILES := $(wildcard $(srcdir)/po/*.po)
 CPFILES := $(wildcard $(srcdir)/po/*.cp)
 
-ENGINE_INPUT_POTFILES := $(wildcard $(srcdir)/engines/*/POTFILES)
+ENGINE_INPUT_POTFILES := $(sort $(wildcard $(srcdir)/engines/*/POTFILES))
 updatepot:
 	cat $(srcdir)/po/POTFILES $(ENGINE_INPUT_POTFILES) | \
 	xgettext -f - -D $(srcdir) -d scummvm --c++ -k_ -k_s -k_c:1,2c -k_sc:1,2c --add-comments=I18N\
