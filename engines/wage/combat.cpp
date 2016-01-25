@@ -257,8 +257,41 @@ void WageEngine::performHealingMagic(Chr *chr, Obj *magicalObject) {
 	warning("STUB: performHealingMagic()");
 }
 
+static const int directionsX[] = { 0, 0, 1, -1 };
+static const int directionsY[] = { -1, 1, 0, 0 };
+static const char *directionsS[] = { "north", "south", "east", "west" };
+
 void WageEngine::performMove(Chr *chr, int validMoves) {
-	warning("STUB: performMove()");
+	// count how many valid moves we have
+	int numValidMoves = 0;
+
+	for (int dir = 0; dir < 4; dir++)
+		if ((validMoves & (1 << dir)) != 0)
+			numValidMoves++;
+
+	// Now pick random dir
+	int dir = _rnd->getRandomNumber(numValidMoves);
+
+	// And get it
+
+	for (int i = 0; i < 4; i++, dir--)
+		if ((validMoves & (1 << i)) != 0) {
+			if (dir == 0) {
+				dir = i;
+				break;
+			}
+		}
+
+	char buf[256];
+	snprintf(buf, 256, "%s%s runs %s.", chr->getDefiniteArticle(true), chr->_name.c_str(), directionsS[dir]);
+	appendText(buf);
+
+	_running = chr;
+	Scene *currentScene = chr->_currentScene;
+	int destX = currentScene->_worldX + directionsX[dir];
+	int destY = currentScene->_worldY + directionsY[dir];
+
+	_world->move(chr, _world->getSceneAt(destX, destY));
 }
 
 void WageEngine::performOffer(Chr *attacker, Chr *victim) {
@@ -284,9 +317,6 @@ void WageEngine::performTake(Chr *npc, Obj *obj) {
 
 	_world->move(obj, npc);
 }
-
-static const int directionsX[] = { 0, 0, 1, -1 };
-static const int directionsY[] = { -1, 1, 0, 0 };
 
 int WageEngine::getValidMoveDirections(Chr *npc) {
 	int directions = 0;
