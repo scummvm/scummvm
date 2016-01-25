@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
 "POT-Creation-Date: 2016-01-25 20:35+0100\n"
-"PO-Revision-Date: 2015-12-26 16:06+0000\n"
+"PO-Revision-Date: 2016-01-25 21:35-0000\n"
 "Last-Translator: Thierry Crozat <criezy@scummvm.org>\n"
 "Language-Team: French <scummvm-devel@lists.sf.net>\n"
 "Language: Francais\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=iso-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n>1;\n"
-"X-Generator: Poedit 1.8.6\n"
+"X-Generator: Poedit 1.6.6\n"
 
 #: gui/about.cpp:94
 #, c-format
@@ -1111,12 +1111,12 @@ msgstr "* Pré"
 #. I18N: 'Num' means Numbers
 #: gui/predictivedialog.cpp:575
 msgid "*  Num"
-msgstr ""
+msgstr "* 123"
 
 #. I18N: 'Abc' means Latin alphabet input
 #: gui/predictivedialog.cpp:578
 msgid "*  Abc"
-msgstr ""
+msgstr "* Abc"
 
 #: gui/recorderdialog.cpp:64
 msgid "Recorder or Playback Gameplay"
@@ -1362,11 +1362,11 @@ msgstr "Hercules Ambre"
 
 #: common/rendermode.cpp:42
 msgid "PC-9821 (256 Colors)"
-msgstr ""
+msgstr "PC-9821 (256 couleurs)"
 
 #: common/rendermode.cpp:43
 msgid "PC-9801 (16 Colors)"
-msgstr ""
+msgstr "PC-9801 (16 couleurs)"
 
 #: common/rendermode.cpp:71
 msgctxt "lowres"
@@ -1618,17 +1618,15 @@ msgstr "Émulateur Apple II GS (PAS IMPLÉMENTÉ)"
 
 #: audio/softsynth/cms.cpp:350
 msgid "Creative Music System Emulator"
-msgstr ""
+msgstr "Émulateur Creative Music System"
 
 #: audio/softsynth/fmtowns_pc98/towns_pc98_plugins.cpp:33
-#, fuzzy
 msgid "FM-Towns Audio"
-msgstr "Émulateur FM Towns"
+msgstr "Audio FM Towns"
 
 #: audio/softsynth/fmtowns_pc98/towns_pc98_plugins.cpp:58
-#, fuzzy
 msgid "PC-98 Audio"
-msgstr "Audio"
+msgstr "Audio PC-98"
 
 #: audio/softsynth/mt32.cpp:200
 msgid "Initializing MT-32 Emulator"
@@ -1723,34 +1721,33 @@ msgstr "Voulez-vous quitter ?"
 
 #. I18N: Trackpad mode toggle status.
 #: backends/events/webossdl/webossdl-events.cpp:308
-#, fuzzy
 msgid "Trackpad mode is now"
-msgstr "Mode touchpad désactivé"
+msgstr "Le mode touchpad est maintenant"
 
 #. I18N: Trackpad mode on or off.
 #. I18N: Auto-drag on or off.
 #: backends/events/webossdl/webossdl-events.cpp:311
 #: backends/events/webossdl/webossdl-events.cpp:338
 msgid "ON"
-msgstr ""
+msgstr "activé"
 
 #: backends/events/webossdl/webossdl-events.cpp:311
 #: backends/events/webossdl/webossdl-events.cpp:338
 msgid "OFF"
-msgstr ""
+msgstr "désactivé"
 
 #: backends/events/webossdl/webossdl-events.cpp:315
 msgid "Swipe two fingers to the right to toggle."
-msgstr ""
+msgstr "Glissez deux doigts vers la droite pour changer de mode."
 
 #. I18N: Auto-drag toggle status.
 #: backends/events/webossdl/webossdl-events.cpp:335
 msgid "Auto-drag mode is now"
-msgstr ""
+msgstr "Le mode glisser-auto est maintenant"
 
 #: backends/events/webossdl/webossdl-events.cpp:342
 msgid "Swipe three fingers to the right to toggle."
-msgstr ""
+msgstr "Glissez trois doigts vers la droite pour changer de mode."
 
 #: backends/graphics/opengl/opengl-graphics.cpp:119
 msgid "OpenGL"
@@ -2045,24 +2042,23 @@ msgstr "Contrôles la Souris"
 
 #: backends/platform/tizen/fs.cpp:259
 msgid "[ Data ]"
-msgstr ""
+msgstr "[ Données ]"
 
 #: backends/platform/tizen/fs.cpp:263
 msgid "[ Resources ]"
-msgstr ""
+msgstr "[ Ressources ]"
 
 #: backends/platform/tizen/fs.cpp:267
 msgid "[ SDCard ]"
-msgstr ""
+msgstr "[ Carte SD ]"
 
 #: backends/platform/tizen/fs.cpp:271
 msgid "[ Media ]"
-msgstr ""
+msgstr "[ Média ]"
 
 #: backends/platform/tizen/fs.cpp:275
-#, fuzzy
 msgid "[ Shared ]"
-msgstr "Disque partagé :"
+msgstr "[ Partagé ]"
 
 #: backends/platform/wii/options.cpp:51
 msgid "Video"
