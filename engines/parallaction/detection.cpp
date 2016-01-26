@@ -271,7 +271,7 @@ bool ParallactionMetaEngine::createInstance(OSystem *syst, Engine **engine, cons
 SaveStateList ParallactionMetaEngine::listSaves(const char *target) const {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 
-	Common::String pattern(ConfMan.getDomain(target)->getVal("gameid") + ".0??");
+	Common::String pattern(ConfMan.getDomain(target)->getVal("gameid") + ".0##");
 	Common::StringArray filenames = saveFileMan->listSavefiles(pattern);
 	sort(filenames.begin(), filenames.end());	// Sort (hopefully ensuring we are sorted numerically..)
 
