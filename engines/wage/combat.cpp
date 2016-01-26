@@ -743,9 +743,14 @@ bool WageEngine::handleOfferCommand(const char *target) {
 }
 
 bool WageEngine::tryAttack(Obj *weapon, Common::String &input) {
-	warning("STUB: tryAttack");
+	Common::String w(weapon->_name);
+	w.toLowercase();
+	Common::String i(input);
+	i.toLowercase();
+	Common::String v(weapon->_operativeVerb);
+	v.toLowercase();
 
-	return false;
+	return i.contains(w) && i.contains(v);
 }
 
 bool WageEngine::handleAttack(Obj *weapon) {
