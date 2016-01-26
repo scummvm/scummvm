@@ -134,7 +134,7 @@ extern int getList(Common::SaveFileManager *saveFileMan, const Common::String &t
 
 SaveStateList TinselMetaEngine::listSaves(const char *target) const {
 	Common::String pattern = target;
-	pattern = pattern + ".???";
+	pattern = pattern + ".###";
 	Common::StringArray files = g_system->getSavefileManager()->listSavefiles(pattern);
 	sort(files.begin(), files.end());	// Sort (hopefully ensuring we are sorted numerically..)
 
