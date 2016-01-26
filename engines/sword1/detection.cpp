@@ -240,7 +240,7 @@ SaveStateList SwordMetaEngine::listSaves(const char *target) const {
 	SaveStateList saveList;
 	char saveName[40];
 
-	Common::StringArray filenames = saveFileMan->listSavefiles("sword1.???");
+	Common::StringArray filenames = saveFileMan->listSavefiles("sword1.###");
 	sort(filenames.begin(), filenames.end());   // Sort (hopefully ensuring we are sorted numerically..)
 
 	int slotNum = 0;
