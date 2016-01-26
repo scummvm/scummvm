@@ -127,7 +127,7 @@ bool DreamWebMetaEngine::createInstance(OSystem *syst, Engine **engine, const AD
 
 SaveStateList DreamWebMetaEngine::listSaves(const char *target) const {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
-	Common::StringArray files = saveFileMan->listSavefiles("DREAMWEB.D??");
+	Common::StringArray files = saveFileMan->listSavefiles("DREAMWEB.D##");
 	Common::sort(files.begin(), files.end());
 
 	SaveStateList saveList;
