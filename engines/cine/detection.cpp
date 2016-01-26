@@ -135,7 +135,7 @@ SaveStateList CineMetaEngine::listSaves(const char *target) const {
 	SaveStateList saveList;
 
 	Common::String pattern = target;
-	pattern += ".?";
+	pattern += ".#";
 	Common::StringArray filenames = saveFileMan->listSavefiles(pattern);
 	sort(filenames.begin(), filenames.end());
 	Common::StringArray::const_iterator file;
@@ -156,10 +156,6 @@ SaveStateList CineMetaEngine::listSaves(const char *target) const {
 		CommandeType saveDesc;
 
 		for (file = filenames.begin(); file != filenames.end(); ++file) {
-			// Jump over savegame files that don't end with a digit (e.g. "fw.3" is ok, "fw.a" is not).
-			if (!Common::isDigit(file->lastChar()))
-				continue;
-
 			// Obtain the last digit of the filename, since they correspond to the save slot
 			int slotNum = atoi(file->c_str() + file->size() - 1);
 
