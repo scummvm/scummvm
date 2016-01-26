@@ -113,7 +113,7 @@ SaveStateList BbvsMetaEngine::listSaves(const char *target) const {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	Bbvs::BbvsEngine::SaveHeader header;
 	Common::String pattern = target;
-	pattern += ".???";
+	pattern += ".###";
 	Common::StringArray filenames;
 	filenames = saveFileMan->listSavefiles(pattern.c_str());
 	Common::sort(filenames.begin(), filenames.end());	// Sort (hopefully ensuring we are sorted numerically..)
