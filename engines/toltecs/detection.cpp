@@ -262,7 +262,7 @@ SaveStateList ToltecsMetaEngine::listSaves(const char *target) const {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	Toltecs::ToltecsEngine::SaveHeader header;
 	Common::String pattern = target;
-	pattern += ".???";
+	pattern += ".###";
 
 	Common::StringArray filenames;
 	filenames = saveFileMan->listSavefiles(pattern.c_str());
@@ -299,7 +299,7 @@ void ToltecsMetaEngine::removeSaveState(const char *target, int slot) const {
 
 	Common::StringArray filenames;
 	Common::String pattern = target;
-	pattern += ".???";
+	pattern += ".###";
 	filenames = saveFileMan->listSavefiles(pattern.c_str());
 	Common::sort(filenames.begin(), filenames.end());	// Sort (hopefully ensuring we are sorted numerically..)
 
