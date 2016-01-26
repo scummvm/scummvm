@@ -863,7 +863,7 @@ Common::String SciEngine::getSavegameName(int nr) const {
 }
 
 Common::String SciEngine::getSavegamePattern() const {
-	return _targetName + ".???";
+	return _targetName + ".###";
 }
 
 Common::String SciEngine::getFilePrefix() const {
