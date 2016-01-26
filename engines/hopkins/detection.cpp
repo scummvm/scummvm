@@ -150,7 +150,7 @@ SaveStateList HopkinsMetaEngine::listSaves(const char *target) const {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	Common::StringArray filenames;
 	Common::String saveDesc;
-	Common::String pattern = Common::String::format("%s.0??", target);
+	Common::String pattern = Common::String::format("%s.0##", target);
 
 	filenames = saveFileMan->listSavefiles(pattern);
 	sort(filenames.begin(), filenames.end());   // Sort to get the files in numerical order
