@@ -222,7 +222,7 @@ SaveStateList SkyMetaEngine::listSaves(const char *target) const {
 
 	// Find all saves
 	Common::StringArray filenames;
-	filenames = saveFileMan->listSavefiles("SKY-VM.???");
+	filenames = saveFileMan->listSavefiles("SKY-VM.###");
 	sort(filenames.begin(), filenames.end());	// Sort (hopefully ensuring we are sorted numerically..)
 
 	// Slot 0 is the autosave, if it exists.
@@ -235,13 +235,11 @@ SaveStateList SkyMetaEngine::listSaves(const char *target) const {
 		// Extract the extension
 		Common::String ext = file->c_str() + file->size() - 3;
 		ext.toUppercase();
-		if (Common::isDigit(ext[0]) && Common::isDigit(ext[1]) && Common::isDigit(ext[2])) {
-			int slotNum = atoi(ext.c_str());
-			Common::InSaveFile *in = saveFileMan->openForLoading(*file);
-			if (in) {
-				saveList.push_back(SaveStateDescriptor(slotNum+1, savenames[slotNum]));
-				delete in;
-			}
+		int slotNum = atoi(ext.c_str());
+		Common::InSaveFile *in = saveFileMan->openForLoading(*file);
+		if (in) {
+			saveList.push_back(SaveStateDescriptor(slotNum+1, savenames[slotNum]));
+			delete in;
 		}
 	}
 
