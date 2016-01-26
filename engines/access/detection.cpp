@@ -142,7 +142,7 @@ SaveStateList AccessMetaEngine::listSaves(const char *target) const {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	Common::StringArray filenames;
 	Common::String saveDesc;
-	Common::String pattern = Common::String::format("%s.0??", target);
+	Common::String pattern = Common::String::format("%s.0##", target);
 	Access::AccessSavegameHeader header;
 
 	filenames = saveFileMan->listSavefiles(pattern);
