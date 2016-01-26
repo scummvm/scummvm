@@ -231,7 +231,7 @@ SaveStateList Sword2MetaEngine::listSaves(const char *target) const {
 	Common::StringArray filenames;
 	char saveDesc[SAVE_DESCRIPTION_LEN];
 	Common::String pattern = target;
-	pattern += ".???";
+	pattern += ".###";
 
 	filenames = saveFileMan->listSavefiles(pattern);
 	sort(filenames.begin(), filenames.end());	// Sort (hopefully ensuring we are sorted numerically..)
