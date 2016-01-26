@@ -228,7 +228,7 @@ bool CruiseMetaEngine::hasFeature(MetaEngineFeature f) const {
 SaveStateList CruiseMetaEngine::listSaves(const char *target) const {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	Common::StringArray filenames;
-	Common::String pattern("cruise.s??");
+	Common::String pattern("cruise.s##");
 
 	filenames = saveFileMan->listSavefiles(pattern);
 	sort(filenames.begin(), filenames.end());	// Sort (hopefully ensuring we are sorted numerically..)
