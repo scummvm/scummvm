@@ -107,7 +107,7 @@ SaveStateList AvalancheMetaEngine::listSaves(const char *target) const {
 	Common::StringArray filenames;
 	Common::String pattern = target;
 	pattern.toUppercase();
-	pattern += ".???";
+	pattern += ".###";
 
 	filenames = saveFileMan->listSavefiles(pattern);
 	sort(filenames.begin(), filenames.end());   // Sort (hopefully ensuring we are sorted numerically..)
