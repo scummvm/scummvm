@@ -114,7 +114,7 @@ public:
 
 	virtual SaveStateList listSaves(const char *target) const {
 		Common::String pattern = target;
-		pattern += ".???";
+		pattern += ".###";
 
 		Common::StringArray filenames = g_system->getSavefileManager()->listSavefiles(pattern);
 		sort(filenames.begin(), filenames.end());
