@@ -259,7 +259,7 @@ SaveStateList AgiMetaEngine::listSaves(const char *target) const {
 	Common::StringArray filenames;
 	char saveDesc[31];
 	Common::String pattern = target;
-	pattern += ".???";
+	pattern += ".###";
 
 	filenames = saveFileMan->listSavefiles(pattern);
 	sort(filenames.begin(), filenames.end());	// Sort (hopefully ensuring we are sorted numerically..)
