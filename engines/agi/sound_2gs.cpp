@@ -400,7 +400,7 @@ void SoundGen2GS::midiNoteOn(int channel, int note, int velocity) {
 		wb++;
 
 	// Prepare the generator.
-	generator->osc[0].base	= curInstrument->base + curInstrument->wave[0][wa].offset;
+	generator->osc[0].base	= curInstrument->wavetableBase + curInstrument->wave[0][wa].offset;
 	generator->osc[0].size	= curInstrument->wave[0][wa].size;
 	generator->osc[0].pd	= doubleToFrac(midiKeyToFreq(note, (double)curInstrument->wave[0][wa].tune / 256.0) / (double)_sampleRate);
 	generator->osc[0].p		= 0;
@@ -409,7 +409,7 @@ void SoundGen2GS::midiNoteOn(int channel, int note, int velocity) {
 	generator->osc[0].swap	= curInstrument->wave[0][wa].swap;
 	generator->osc[0].rightChannel = curInstrument->wave[0][wa].rightChannel;
 
-	generator->osc[1].base	= curInstrument->base + curInstrument->wave[1][wb].offset;
+	generator->osc[1].base	= curInstrument->wavetableBase + curInstrument->wave[1][wb].offset;
 	generator->osc[1].size	= curInstrument->wave[1][wb].size;
 	generator->osc[1].pd	= doubleToFrac(midiKeyToFreq(note, (double)curInstrument->wave[1][wb].tune / 256.0) / (double)_sampleRate);
 	generator->osc[1].p		= 0;
@@ -479,7 +479,7 @@ static bool convertWave(Common::SeekableReadStream &source, int8 *dest, uint len
 	return !(source.eos() || source.err());
 }
 
-IIgsSample::IIgsSample(uint8 *data, uint32 len, int resnum) : AgiSound() {
+IIgsSample::IIgsSample(uint8 *data, uint32 len, int16 resourceNr) : AgiSound() {
 	Common::MemoryReadStream stream(data, len, DisposeAfterUse::YES);
 
 	// Check that the header was read ok and that it's of the correct type
@@ -490,14 +490,14 @@ IIgsSample::IIgsSample(uint8 *data, uint32 len, int resnum) : AgiSound() {
 		if (tailLen < _header.sampleSize) { // Check if there's no room for the sample data in the stream
 			// Apple IIGS Manhunter I: Sound resource 16 has only 16074 bytes
 			// of sample data although header says it should have 16384 bytes.
-			warning("Apple IIGS sample (%d) too short (%d bytes. Should be %d bytes). Using the part that's left",
-				resnum, tailLen, _header.sampleSize);
+			warning("Apple IIGS sample (%d) expected %d bytes, got %d bytes only",
+				resourceNr, _header.sampleSize, tailLen);
 
 			_header.sampleSize = (uint16) tailLen; // Use the part that's left
 		}
 
 		if (_header.pitch > 0x7F) { // Check if the pitch is invalid
-			warning("Apple IIGS sample (%d) has too high pitch (0x%02x)", resnum, _header.pitch);
+			warning("Apple IIGS sample (%d) has too high pitch (0x%02x)", resourceNr, _header.pitch);
 
 			_header.pitch &= 0x7F; // Apple IIGS AGI probably did it this way too
 		}
@@ -508,13 +508,16 @@ IIgsSample::IIgsSample(uint8 *data, uint32 len, int resnum) : AgiSound() {
 
 		if (_sample != NULL) {
 			_isValid = convertWave(stream, _sample, _header.sampleSize);
-			// Finalize header info using sample data
-			_header.finalize(_sample);
+
+			if (_isValid) {
+				// Finalize header info using sample data
+				_header.finalize(_sample);
+			}
 		}
 	}
 
 	if (!_isValid) // Check for errors
-		warning("Error creating Apple IIGS sample from resource %d (Type %d, length %d)", resnum, _header.type, len);
+		warning("Error creating Apple IIGS sample from resource %d (Type %d, length %d)", resourceNr, _header.type, len);
 }
 
 
@@ -544,12 +547,6 @@ bool IIgsInstrumentHeader::read(Common::SeekableReadStream &stream, bool ignoreA
 			if (ignoreAddr)
 				wave[i][k].offset = 0;
 
-			// Check for samples that extend out of the wavetable.
-			if (wave[i][k].offset + wave[i][k].size >= SIERRASTANDARD_SIZE) {
-				warning("Invalid data detected in the instrument set of Apple IIGS AGI. Continuing anyway...");
-				wave[i][k].size = SIERRASTANDARD_SIZE - wave[i][k].offset;
-			}
-
 			// Parse the generator mode byte to separate fields.
 			wave[i][k].halt = b & 0x1;			// Bit 0     = HALT
 			wave[i][k].loop = !(b & 0x2);		// Bit 1     =!LOOP
@@ -566,18 +563,35 @@ bool IIgsInstrumentHeader::read(Common::SeekableReadStream &stream, bool ignoreA
 	return !(stream.eos() || stream.err());
 }
 
-bool IIgsInstrumentHeader::finalize(int8 *wavetable) {
-	// Calculate final pointers to sample data and detect true sample size
-	// in case the sample ends prematurely.
-	for (int i = 0; i < 2; i++)
-	for (int k = 0; k < waveCount[i]; k++) {
-		base = wavetable;
-		int8 *p = base + wave[i][k].offset;
-		uint trueSize;
-		for (trueSize = 0; trueSize < wave[i][k].size; trueSize++)
-			if (p[trueSize] == -ZERO_OFFSET)
-				break;
-		wave[i][k].size = trueSize;
+bool IIgsInstrumentHeader::finalize(int8 *wavetable, uint32 wavetableSize) {
+	wavetableBase = wavetable;
+
+	// Go through all offsets and sizes and make sure, they point to within wavetable
+	for (int i = 0; i < 2; i++) {
+		for (int k = 0; k < waveCount[i]; k++) {
+			uint32 waveOffset = wave[i][k].offset;
+			uint32 waveSize   = wave[i][k].size;
+
+			if (waveOffset >= wavetableSize) {
+				error("Apple IIgs sound: sample data points outside of wavetable");
+			}
+
+			if ((waveOffset + waveSize) > wavetableSize) {
+				// size seems to be incorrect
+				// actually happens for at least Manhunter 1, when looking at corpse at the start
+				warning("Apple IIgs sound: sample exceeds size of wavetable. sample got cut");
+				wave[i][k].size = wavetableSize - waveOffset;
+			}
+
+			// Detect true sample size in case the sample ends prematurely.
+			int8 *p = wavetableBase + wave[i][k].offset;
+			uint32 trueSize;
+			for (trueSize = 0; trueSize < wave[i][k].size; trueSize++) {
+				if (p[trueSize] == -ZERO_OFFSET)
+					break;
+			}
+			wave[i][k].size = trueSize;
+		}
 	}
 
 	return true;
@@ -595,8 +609,8 @@ bool IIgsSampleHeader::read(Common::SeekableReadStream &stream) {
 	return instrument.read(stream, true);
 }
 
-bool IIgsSampleHeader::finalize(int8 *sample) {
-	return instrument.finalize(sample);
+bool IIgsSampleHeader::finalize(int8 *sampleData) {
+	return instrument.finalize(sampleData, sampleSize);
 }
 
 //###
@@ -773,7 +787,7 @@ bool SoundGen2GS::loadInstrumentHeaders(Common::String &exePath, const IIgsExeIn
 					i + 1, exeInfo.instSet->instCount, exePath.c_str());
 			break;
 		}
-		instrument.finalize(_wavetable);
+		instrument.finalize(_wavetable, SIERRASTANDARD_SIZE);
 		_instruments.push_back(instrument);
 	}
 

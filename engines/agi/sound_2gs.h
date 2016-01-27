@@ -80,8 +80,8 @@ struct IIgsInstrumentHeader {
 	uint8 waveCount[2];	///< Wave count for both generators
 	struct {
 		uint8 key;		///< Highest MIDI key to use this wave
-		int offset;		///< Offset of wave data, relative to base
-		uint size;		///< Wave size
+		uint32 offset;		///< Offset of wave data, relative to base
+		uint32 size;		///< Wave size
 		bool halt;		///< Oscillator halted?
 		bool loop;		///< Loop mode?
 		bool swap;		///< Swap mode?
@@ -89,7 +89,7 @@ struct IIgsInstrumentHeader {
 		int16 tune;		///< Fine tune in semitones (8.8 fixed point)
 	} wave[2][MAX_OSCILLATOR_WAVES];
 
-	int8* base; ///< Base of wave data
+	int8* wavetableBase; ///< Base of wave data
 
 	/**
 	 * Read an Apple IIGS instrument header from the given stream.
@@ -98,7 +98,7 @@ struct IIgsInstrumentHeader {
 	 * @return True if successful, false otherwise.
 	 */
 	bool read(Common::SeekableReadStream &stream, bool ignoreAddr = false);
-	bool finalize(int8 *);
+	bool finalize(int8 *wavetable, uint32 wavetableSize);
 };
 
 struct IIgsSampleHeader {
@@ -107,8 +107,8 @@ struct IIgsSampleHeader {
 	uint8  unknownByte_Ofs3; // 0x7F in Gold Rush's sound resource 60, 0 in all others.
 	uint8  volume; ///< Current guess: Logarithmic in 6 dB steps
 	uint8  unknownByte_Ofs5; ///< 0 in all tested samples.
-	uint16 instrumentSize; ///< Little endian. 44 in all tested samples. A guess.
-	uint16 sampleSize; ///< Little endian. Accurate in all tested samples excluding Manhunter I's sound resource 16.
+	uint16 instrumentSize; ///< 44 in all tested samples. A guess.
+	uint16 sampleSize; ///< Accurate in all tested samples excluding Manhunter I's sound resource 16.
 	IIgsInstrumentHeader instrument;
 
 	/**
@@ -117,7 +117,7 @@ struct IIgsSampleHeader {
 	 * @return True if successful, false otherwise.
 	 */
 	bool read(Common::SeekableReadStream &stream);
-	bool finalize(int8 *sample);
+	bool finalize(int8 *sampleData);
 };
 
 class IIgsGenerator {
@@ -165,11 +165,10 @@ public:
 
 class IIgsSample : public AgiSound {
 public:
-	IIgsSample(uint8 *data, uint32 len, int resnum);
+	IIgsSample(uint8 *data, uint32 len, int16 resourceNr);
 	~IIgsSample() { delete[] _sample; }
 	virtual uint16 type() { return _header.type; }
 	const IIgsSampleHeader &getHeader() const { return _header; }
-	const int8 *getSample() const { return _sample; }
 protected:
 	IIgsSampleHeader _header;	///< Apple IIGS AGI sample header
 	int8 *_sample;				///< Sample data (8-bit signed format)
