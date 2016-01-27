@@ -384,15 +384,15 @@ void Script::assign(byte operandType, int uservar, uint16 value) {
 }
 
 Script::Operand *Script::readStringOperand() {
-	Common::String *sb;
+	Common::String *str;
 	bool allDigits = true;
 
-	sb = new Common::String();
+	str = new Common::String();
 
 	while (true) {
 		byte c = _data->readByte();
 		if (c >= 0x20 && c < 0x80)
-			*sb += c;
+			*str += c;
 		else
 			break;
 		if (c < '0' || c > '9')
@@ -400,14 +400,14 @@ Script::Operand *Script::readStringOperand() {
 	}
 	_data->seek(-1, SEEK_CUR);
 
-	if (allDigits && sb->size() > 0) {
-		int r = atol(sb->c_str());
-		delete sb;
+	if (allDigits && str->size() > 0) {
+		int r = atol(str->c_str());
+		delete str;
 
 		return new Operand(r, NUMBER);
 	} else {
 		// TODO: This string could be a room name or something like that.
-		return new Operand(sb, STRING);
+		return new Operand(str, STRING);
 	}
 }
 
