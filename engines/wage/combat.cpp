@@ -252,9 +252,94 @@ void WageEngine::decrementUses(Obj *obj) {
 }
 
 bool WageEngine::attackHit(Chr *attacker, Chr *victim, Obj *weapon, int targetIndex) {
-	warning("STUB: attackHit");
+	bool receivedHitTextPrinted = false;
+	char buf[512];
 
-	return false;
+	if (targetIndex != -1) {
+		Obj *armor = victim->_armor[targetIndex];
+		if (armor != NULL) {
+			// TODO: Absorb some damage.
+			snprintf(buf, 512, "%s%s's %s weakens the impact of %s%s's %s.",
+				victim->getDefiniteArticle(true), victim->_name.c_str(),
+				victim->_armor[targetIndex]->_name.c_str(),
+				attacker->getDefiniteArticle(false), attacker->_name.c_str(),
+				weapon->_name.c_str());
+			appendText(buf);
+			decrementUses(armor);
+		} else {
+			snprintf(buf, 512, "A hit to the %s!", targets[targetIndex]);
+			appendText(buf);
+		}
+		playSound(attacker->_scoresHitSound);
+		appendText(attacker->_scoresHitComment.c_str());
+		playSound(victim->_receivesHitSound);
+		appendText(victim->_receivesHitComment.c_str());
+		receivedHitTextPrinted = true;
+	} else if (weapon->_type == Obj::MAGICAL_OBJECT) {
+		appendText(weapon->_useMessage.c_str());
+		appendText("The spell is effective!");
+	}
+
+	bool causesPhysicalDamage = true;
+	bool causesSpiritualDamage = false;
+	bool freezesOpponent = false;
+	bool usesDecremented = false;
+
+	if (weapon->_type == Obj::THROW_WEAPON) {
+		_world->move(weapon, victim->_currentScene);
+	} else if (weapon->_type == Obj::MAGICAL_OBJECT) {
+		int type = weapon->_attackType;
+		causesPhysicalDamage = (type == Obj::CAUSES_PHYSICAL_DAMAGE || type == Obj::CAUSES_PHYSICAL_AND_SPIRITUAL_DAMAGE);
+		causesSpiritualDamage = (type == Obj::CAUSES_SPIRITUAL_DAMAGE || type == Obj::CAUSES_PHYSICAL_AND_SPIRITUAL_DAMAGE);
+		freezesOpponent = (type == Obj::FREEZES_OPPONENT);
+	}
+
+	if (causesPhysicalDamage) {
+		victim->_context._userVariables[PHYS_HIT_CUR] -= weapon->_damage;
+
+		/* Do it here to get the right order of messages in case of death. */
+		decrementUses(weapon);
+		usesDecremented = true;
+
+		if (victim->_context._userVariables[PHYS_HIT_CUR] < 0) {
+			playSound(victim->_dyingSound);
+			appendText(victim->_dyingWords.c_str());
+			snprintf(buf, 512, "%s%s is dead!", victim->getDefiniteArticle(true), victim->_name.c_str());
+			appendText(buf);
+
+			attacker->_context._kills++;
+			attacker->_context._experience += victim->_context._userVariables[SPIR_HIT_CUR] + victim->_context._userVariables[PHYS_HIT_CUR];
+
+			if (!victim->_playerCharacter && !victim->_inventory.empty()) {
+				Scene *currentScene = victim->_currentScene;
+
+				for (int i = victim->_inventory.size() - 1; i >= 0; i--) {
+					_world->move(victim->_inventory[i], currentScene);
+				}
+				Common::String *s = getGroundItemsList(currentScene);
+				appendText(s->c_str());
+				delete s;
+			}
+			_world->move(victim, _world->_storageScene);
+		} else if (attacker->_playerCharacter && !receivedHitTextPrinted) {
+			double physicalPercent = (double)victim->_context._userVariables[SPIR_HIT_CUR] /
+					victim->_context._userVariables[SPIR_HIT_BAS];
+			snprintf(buf, 512, "%s%s's condition appears to be %s.",
+				victim->getDefiniteArticle(true), victim->_name.c_str(),
+				getPercentMessage(physicalPercent));
+			appendText(buf);
+		}
+	}
+
+	if (causesSpiritualDamage) {
+		/* TODO */
+	}
+
+	if (freezesOpponent) {
+		victim->_context._frozen = true;
+	}
+
+	return usesDecremented;
 }
 
 void WageEngine::performMagic(Chr *attacker, Chr *victim, Obj *magicalObject) {
