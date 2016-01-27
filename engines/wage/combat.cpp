@@ -863,7 +863,24 @@ bool WageEngine::tryAttack(Obj *weapon, Common::String &input) {
 }
 
 bool WageEngine::handleAttack(Obj *weapon) {
-	warning("STUB: handleAttack");
+	Chr *player = _world->_player;
+	Chr *enemy = getMonster();
+
+	if (weapon->_type == Obj::MAGICAL_OBJECT) {
+		switch (weapon->_attackType) {
+		case Obj::HEALS_PHYSICAL_AND_SPIRITUAL_DAMAGE:
+		case Obj::HEALS_PHYSICAL_DAMAGE:
+		case Obj::HEALS_SPIRITUAL_DAMAGE:
+			performMagic(player, enemy, weapon);
+			return true;
+		}
+	}
+	if (enemy != NULL)
+		performAttack(player, enemy, weapon);
+	else if (weapon->_type == Obj::MAGICAL_OBJECT)
+		appendText("There is nobody to cast a spell at.");
+	else
+		appendText("There is no one to fight.");
 
 	return true;
 }
