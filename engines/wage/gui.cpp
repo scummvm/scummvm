@@ -409,7 +409,7 @@ enum {
 	kConOverscan = 3
 };
 
-void Gui::flowText(String &str) {
+void Gui::flowText(Common::String &str) {
 	Common::StringArray wrappedLines;
 	int textW = _consoleTextArea.width() - kConWPadding * 2;
 	const Graphics::Font *font = getConsoleFont();

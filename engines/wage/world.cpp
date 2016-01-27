@@ -180,7 +180,7 @@ bool World::loadWorld(Common::MacResManager *resMan) {
 			scene->_fontType = res->readUint16BE();
 			scene->_fontSize = res->readUint16BE();
 
-			String text;
+			Common::String text;
 			while (res->pos() < res->size()) {
 				char c = res->readByte();
 				if (c == 0x0d)
@@ -299,8 +299,8 @@ bool World::loadWorld(Common::MacResManager *resMan) {
 Common::StringArray *World::readMenu(Common::SeekableReadStream *res) {
 	res->skip(10);
 	int enableFlags = res->readUint32BE();
-	String menuName = readPascalString(res);
-	String menuItem = readPascalString(res);
+	Common::String menuName = readPascalString(res);
+	Common::String menuItem = readPascalString(res);
 	int menuItemNumber = 1;
 	Common::String menu;
 	byte itemData[4];
@@ -339,7 +339,7 @@ Common::StringArray *World::readMenu(Common::SeekableReadStream *res) {
 	return result;
 }
 
-void World::loadExternalSounds(String fname) {
+void World::loadExternalSounds(Common::String fname) {
 	Common::File in;
 
 	in.open(fname);

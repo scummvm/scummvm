@@ -113,7 +113,7 @@ public:
 	Designed() : _design(NULL), _designBounds(NULL), _classType(UNKNOWN) {}
 	~Designed();
 
-	String _name;
+	Common::String _name;
 	Design *_design;
 	Common::Rect *_designBounds;
 	OperandType _classType;
@@ -124,7 +124,7 @@ public:
 
 	void setDesignBounds(Common::Rect *bounds);
 
-	String toString() { return _name; }
+	Common::String toString() { return _name; }
 };
 
 class Chr : public Designed {
@@ -149,10 +149,10 @@ public:
 		NUMBER_OF_ARMOR_TYPES = 4
 	};
 
-	Chr(String name, Common::SeekableReadStream *data);
+	Chr(Common::String name, Common::SeekableReadStream *data);
 
 	int _index;
-	String _initialScene;
+	Common::String _initialScene;
 	int _gender;
 	bool _nameProperNoun;
 	bool _playerCharacter;
@@ -171,20 +171,20 @@ public:
 	int _rejectsOffers;
 	int _followsOpponent;
 
-	String _initialSound;
-	String _scoresHitSound;
-	String _receivesHitSound;
-	String _dyingSound;
+	Common::String _initialSound;
+	Common::String _scoresHitSound;
+	Common::String _receivesHitSound;
+	Common::String _dyingSound;
 
-	String _nativeWeapon1;
-	String _operativeVerb1;
+	Common::String _nativeWeapon1;
+	Common::String _operativeVerb1;
 	int _weaponDamage1;
-	String _weaponSound1;
+	Common::String _weaponSound1;
 
-	String _nativeWeapon2;
-	String _operativeVerb2;
+	Common::String _nativeWeapon2;
+	Common::String _operativeVerb2;
 	int _weaponDamage2;
-	String _weaponSound2;
+	Common::String _weaponSound2;
 
 	int _winningWeapons;
 	int _winningMagic;
@@ -195,13 +195,13 @@ public:
 	int _losingRun;
 	int _losingOffer;
 
-	String _initialComment;
-	String _scoresHitComment;
-	String _receivesHitComment;
-	String _makesOfferComment;
-	String _rejectsOfferComment;
-	String _acceptsOfferComment;
-	String _dyingWords;
+	Common::String _initialComment;
+	Common::String _scoresHitComment;
+	Common::String _receivesHitComment;
+	Common::String _makesOfferComment;
+	Common::String _rejectsOfferComment;
+	Common::String _acceptsOfferComment;
+	Common::String _dyingWords;
 
 	Scene *_currentScene;
 	ObjArray _inventory;
@@ -229,7 +229,7 @@ public:
 class Obj : public Designed {
 public:
 	Obj() : _currentOwner(NULL), _currentScene(NULL) {}
-	Obj(String name, Common::SeekableReadStream *data);
+	Obj(Common::String name, Common::SeekableReadStream *data);
 	~Obj();
 
 	enum ObjectType {
@@ -261,19 +261,19 @@ public:
 	int _attackType;
 	int _numberOfUses;
 	bool _returnToRandomScene;
-	String _sceneOrOwner;
-	String _clickMessage;
-	String _failureMessage;
-	String _useMessage;
+	Common::String _sceneOrOwner;
+	Common::String _clickMessage;
+	Common::String _failureMessage;
+	Common::String _useMessage;
 
 	Scene *_currentScene;
 	Chr *_currentOwner;
 
 	int _type;
 	uint _accuracy;
-	String _operativeVerb;
+	Common::String _operativeVerb;
 	int _damage;
-	String _sound;
+	Common::String _sound;
 
 public:
 	void setCurrentOwner(Chr *currentOwner) {
@@ -302,15 +302,15 @@ public:
 	};
 
 	Script *_script;
-	String _text;
+	Common::String _text;
 	Common::Rect *_textBounds;
 	int _fontSize;
 	int _fontType; // 3 => Geneva, 22 => Courier, param to TextFont() function
 	bool _blocked[4];
-	String _messages[4];
+	Common::String _messages[4];
 	int _soundFrequency; // times a minute, max 3600
 	int _soundType;
-	String _soundName;
+	Common::String _soundName;
 	int _worldX;
 	int _worldY;
 	bool _visited;
@@ -319,7 +319,7 @@ public:
 	ChrList _chrs;
 
 	Scene();
-	Scene(String name, Common::SeekableReadStream *data);
+	Scene(Common::String name, Common::SeekableReadStream *data);
 	~Scene();
 
 	Common::Rect *getTextBounds() {
@@ -333,10 +333,10 @@ public:
 
 class Sound {
 public:
-  Sound(String name, Common::SeekableReadStream *data) : _name(name), _data(data) {}
+  Sound(Common::String name, Common::SeekableReadStream *data) : _name(name), _data(data) {}
 	~Sound() { }
 
-	String _name;
+	Common::String _name;
 	Common::SeekableReadStream *_data;
 };
 

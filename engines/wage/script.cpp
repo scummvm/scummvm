@@ -80,7 +80,7 @@ void Script::printLine(int offset) {
 		}
 }
 
-bool Script::execute(World *world, int loopCount, String *inputText, Designed *inputClick, WageEngine *engine) {
+bool Script::execute(World *world, int loopCount, Common::String *inputText, Designed *inputClick, WageEngine *engine) {
 	_world = world;
 	_loopCount = loopCount;
 	_inputText = inputText;
@@ -384,10 +384,10 @@ void Script::assign(byte operandType, int uservar, uint16 value) {
 }
 
 Script::Operand *Script::readStringOperand() {
-	String *sb;
+	Common::String *sb;
 	bool allDigits = true;
 
-	sb = new String();
+	sb = new Common::String();
 
 	while (true) {
 		byte c = _data->readByte();

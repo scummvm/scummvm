@@ -196,11 +196,11 @@ void WageEngine::processEvents() {
 	}
 }
 
-void WageEngine::playSound(String soundName) {
+void WageEngine::playSound(Common::String soundName) {
 	warning("STUB: WageEngine::playSound(%s)", soundName.c_str());
 }
 
-void WageEngine::setMenu(String soundName) {
+void WageEngine::setMenu(Common::String soundName) {
 	warning("STUB: WageEngine::setMenu");
 }
 
@@ -268,7 +268,7 @@ void WageEngine::performInitialSetup() {
 	for (uint i = 0; i < _world->_orderedObjs.size(); i++) {
 		Obj *obj = _world->_orderedObjs[i];
 		if (!obj->_sceneOrOwner.equalsIgnoreCase(STORAGESCENE)) {
-			String location = obj->_sceneOrOwner;
+			Common::String location = obj->_sceneOrOwner;
 			location.toLowercase();
 			if (_world->_scenes.contains(location)) {
 				_world->move(obj, _world->_scenes[location]);
@@ -288,7 +288,7 @@ void WageEngine::performInitialSetup() {
 	for (uint i = 0; i < _world->_orderedChrs.size(); i++) {
 		Chr *chr = _world->_orderedChrs[i];
 		if (!chr->_initialScene.equalsIgnoreCase(STORAGESCENE)) {
-			String key = chr->_initialScene;
+			Common::String key = chr->_initialScene;
 			key.toLowercase();
 			if (_world->_scenes.contains(key)) {
 				_world->move(chr, _world->_scenes[key]);
@@ -313,7 +313,7 @@ void WageEngine::doClose() {
 	warning("STUB: doClose()");
 }
 
-Scene *WageEngine::getSceneByName(String &location) {
+Scene *WageEngine::getSceneByName(Common::String &location) {
 	Scene *scene;
 	if (location.equals("random@")) {
 		scene = _world->getRandomScene();
@@ -354,7 +354,7 @@ void WageEngine::onMove(Designed *what, Designed *from, Designed *to) {
 		if (to == _world->_storageScene) {
 			int returnTo = chr->_returnTo;
 			if (returnTo != Chr::RETURN_TO_STORAGE) {
-				String returnToSceneName;
+				Common::String returnToSceneName;
 				if (returnTo == Chr::RETURN_TO_INITIAL_SCENE) {
 					returnToSceneName = chr->_initialScene;
 					returnToSceneName.toLowercase();

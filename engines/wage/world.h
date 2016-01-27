@@ -58,7 +58,7 @@ public:
 	~World();
 
 	bool loadWorld(Common::MacResManager *resMan);
-	void loadExternalSounds(String fname);
+	void loadExternalSounds(Common::String fname);
 	Common::String *loadStringFromDITL(Common::MacResManager *resMan, int resourceId, int itemIndex);
 	void move(Obj *obj, Chr *chr);
 	void move(Obj *obj, Scene *scene, bool skipSort = false);
@@ -70,17 +70,17 @@ public:
 
 	WageEngine *_engine;
 
-	String _name;
-	String _aboutMessage;
-	String _soundLibrary1;
-	String _soundLibrary2;
+	Common::String _name;
+	Common::String _aboutMessage;
+	Common::String _soundLibrary1;
+	Common::String _soundLibrary2;
 
 	bool _weaponMenuDisabled;
 	Script *_globalScript;
-	Common::HashMap<String, Scene *> _scenes;
-	Common::HashMap<String, Obj *> _objs;
-	Common::HashMap<String, Chr *> _chrs;
-	Common::HashMap<String, Sound *> _sounds;
+	Common::HashMap<Common::String, Scene *> _scenes;
+	Common::HashMap<Common::String, Obj *> _objs;
+	Common::HashMap<Common::String, Chr *> _chrs;
+	Common::HashMap<Common::String, Sound *> _sounds;
 	Common::Array<Scene *> _orderedScenes;
 	ObjArray _orderedObjs;
 	ChrArray _orderedChrs;
@@ -102,7 +102,7 @@ public:
 
 	void addScene(Scene *room) {
 		if (room->_name.size() != 0) {
-			String s = room->_name;
+			Common::String s = room->_name;
 			s.toLowercase();
 			_scenes[s] = room;
 		}
@@ -110,7 +110,7 @@ public:
 	}
 
 	void addObj(Obj *obj) {
-		String s = obj->_name;
+		Common::String s = obj->_name;
 		s.toLowercase();
 		_objs[s] = obj;
 		obj->_index = _orderedObjs.size();
@@ -118,7 +118,7 @@ public:
 	}
 
 	void addChr(Chr *chr) {
-		String s = chr->_name;
+		Common::String s = chr->_name;
 		s.toLowercase();
 		_chrs[s] = chr;
 		chr->_index = _orderedChrs.size();
@@ -126,7 +126,7 @@ public:
 	}
 
 	void addSound(Sound *sound) {
-		String s = sound->_name;
+		Common::String s = sound->_name;
 		s.toLowercase();
 		_sounds[s] = sound;
 		_orderedSounds.push_back(sound);

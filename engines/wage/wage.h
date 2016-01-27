@@ -74,8 +74,6 @@ typedef Common::Array<Chr *> ChrArray;
 typedef Common::List<Obj *> ObjList;
 typedef Common::List<Chr *> ChrList;
 
-using Common::String;
-
 enum OperandType {
 	OBJ = 0,
 	CHR = 1,
@@ -111,7 +109,7 @@ enum {
 
 Common::String readPascalString(Common::SeekableReadStream *in);
 Common::Rect *readRect(Common::SeekableReadStream *in);
-const char *getIndefiniteArticle(String &word);
+const char *getIndefiniteArticle(Common::String &word);
 const char *prependGenderSpecificPronoun(int gender);
 const char *getGenderSpecificPronoun(int gender, bool capitalize);
 
@@ -200,15 +198,15 @@ public:
 
 	Common::String _inputText;
 
-	void playSound(String soundName);
-	void setMenu(String soundName);
+	void playSound(Common::String soundName);
+	void setMenu(Common::String soundName);
 	void appendText(const char *str);
 	void gameOver();
 	bool saveDialog();
 	Obj *getOffer();
 	Chr *getMonster();
 	void processEvents();
-	Scene *getSceneByName(String &location);
+	Scene *getSceneByName(Common::String &location);
 	void onMove(Designed *what, Designed *from, Designed *to);
 	void encounter(Chr *player, Chr *chr);
 	void redrawScene();

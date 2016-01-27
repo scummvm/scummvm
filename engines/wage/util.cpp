@@ -87,7 +87,7 @@ Common::Rect *readRect(Common::SeekableReadStream *in) {
 	return new Common::Rect(x1, y1, x2, y2);
 }
 
-const char *getIndefiniteArticle(String &word) {
+const char *getIndefiniteArticle(Common::String &word) {
 	switch (word[0]) {
 	case 'a': case 'A':
 	case 'e': case 'E':

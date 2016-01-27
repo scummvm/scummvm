@@ -96,7 +96,7 @@ Scene::Scene() {
 	_visited = false;
 }
 
-Scene::Scene(String name, Common::SeekableReadStream *data) {
+Scene::Scene(Common::String name, Common::SeekableReadStream *data) {
 	_name = name;
 	_classType = SCENE;
 	_design = new Design(data);
@@ -200,7 +200,7 @@ const char *Scene::getFontName() {
 	return "Unknown";
 }
 
-Obj::Obj(String name, Common::SeekableReadStream *data) {
+Obj::Obj(Common::String name, Common::SeekableReadStream *data) {
 	_name = name;
 	_classType = OBJ;
 	_currentOwner = NULL;
@@ -285,7 +285,7 @@ void Obj::resetState(Chr *owner, Scene *scene) {
 	warning("STUB: Obj::resetState()");
 }
 
-Chr::Chr(String name, Common::SeekableReadStream *data) {
+Chr::Chr(Common::String name, Common::SeekableReadStream *data) {
 	_name = name;
 	_classType = CHR;
 	_design = new Design(data);

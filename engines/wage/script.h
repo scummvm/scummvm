@@ -61,7 +61,7 @@ private:
 	WageEngine *_engine;
 	World *_world;
 	int _loopCount;
-	String *_inputText;
+	Common::String *_inputText;
 	Designed *_inputClick;
 	bool _handled;
 
@@ -73,7 +73,7 @@ private:
 			Designed *designed;
 			Scene *scene;
 			int16 number;
-			String *string;
+			Common::String *string;
 			Designed *inputClick;
 		} _value;
 		OperandType _type;
@@ -99,7 +99,7 @@ private:
 			_type = type;
 		}
 
-		Operand(String *value, OperandType type) {
+		Operand(Common::String *value, OperandType type) {
 			_value.string = value;
 			_type = type;
 		}
@@ -149,7 +149,7 @@ private:
 public:
 	void print();
 	void printLine(int offset);
-	bool execute(World *world, int loopCount, String *inputText, Designed *inputClick, WageEngine *engine);
+	bool execute(World *world, int loopCount, Common::String *inputText, Designed *inputClick, WageEngine *engine);
 
 private:
 	Operand *readOperand();
