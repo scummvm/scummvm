@@ -737,7 +737,31 @@ void WageEngine::wearObj(Obj *o, int pos) {
 
 
 bool WageEngine::handleOfferCommand(const char *target) {
-	warning("STUB: handleOfferCommand");
+	Chr *player = _world->_player;
+	Chr *enemy = getMonster();
+
+	if (enemy != NULL) {
+		Common::String t(target);
+		t.toLowercase();
+
+		for (ObjArray::const_iterator it = player->_inventory.begin(); it != player->_inventory.end(); ++it) {
+			Common::String n((*it)->_name);
+			n.toLowercase();
+
+			if (t.contains(n)) {
+				if ((*it)->_value < enemy->_rejectsOffers) {
+					appendText("Your offer is rejected.");
+				} else {
+					appendText("Your offer is accepted.");
+					appendText(enemy->_acceptsOfferComment.c_str());
+					_world->move(*it, enemy);
+					_world->move(enemy, _world->_storageScene);
+				}
+
+				return true;
+			}
+		}
+	}
 
 	return false;
 }
