@@ -577,17 +577,16 @@ bool IIgsInstrumentHeader::finalize(int8 *wavetable, uint32 wavetableSize) {
 			}
 
 			if ((waveOffset + waveSize) > wavetableSize) {
-				// size seems to be incorrect
-				// actually happens for at least Manhunter 1, when looking at corpse at the start
-				warning("Apple IIgs sound: sample exceeds size of wavetable. sample got cut");
+				// fix up size, it's actually saved in a way in the header, that it can't be correct
+				// if we don't fix it here, we would do invalid memory access, which results in potential crashes
 				wave[i][k].size = wavetableSize - waveOffset;
 			}
 
-			// Detect true sample size in case the sample ends prematurely.
-			int8 *p = wavetableBase + wave[i][k].offset;
+			// Detect true sample size
+			int8 *sample = wavetableBase + wave[i][k].offset;
 			uint32 trueSize;
 			for (trueSize = 0; trueSize < wave[i][k].size; trueSize++) {
-				if (p[trueSize] == -ZERO_OFFSET)
+				if (sample[trueSize] == -ZERO_OFFSET)
 					break;
 			}
 			wave[i][k].size = trueSize;
