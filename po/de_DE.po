@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
 "POT-Creation-Date: 2016-01-25 20:35+0100\n"
-"PO-Revision-Date: 2015-10-16 11:00+0200\n"
+"PO-Revision-Date: 2016-01-28 19:00+0100\n"
 "Last-Translator: Lothar Serra Mari <scummvm@rootfather.de>\n"
 "Language-Team: Simon Sawatzki <SimSaw@gmx.de>, Lothar Serra Mari "
 "<scummvm@rootfather.de>\n"
@@ -1116,12 +1116,12 @@ msgstr "*  Vorschau"
 #. I18N: 'Num' means Numbers
 #: gui/predictivedialog.cpp:575
 msgid "*  Num"
-msgstr ""
+msgstr "* Zahlen"
 
 #. I18N: 'Abc' means Latin alphabet input
 #: gui/predictivedialog.cpp:578
 msgid "*  Abc"
-msgstr ""
+msgstr "* ABC"
 
 #: gui/recorderdialog.cpp:64
 msgid "Recorder or Playback Gameplay"
@@ -1359,29 +1359,29 @@ msgstr "Unbekannter Fehler"
 #. I18N: Hercules is graphics card name
 #: common/rendermode.cpp:35
 msgid "Hercules Green"
-msgstr ""
+msgstr "Hercules Grün"
 
 #: common/rendermode.cpp:36
 msgid "Hercules Amber"
-msgstr ""
+msgstr "Hercules Bernstein"
 
 #: common/rendermode.cpp:42
 msgid "PC-9821 (256 Colors)"
-msgstr ""
+msgstr "PC-9821 (256 Farben)"
 
 #: common/rendermode.cpp:43
 msgid "PC-9801 (16 Colors)"
-msgstr ""
+msgstr "PC-9801 (16 Farben)"
 
 #: common/rendermode.cpp:71
 msgctxt "lowres"
 msgid "Hercules Green"
-msgstr ""
+msgstr "Hercules Grün"
 
 #: common/rendermode.cpp:72
 msgctxt "lowres"
 msgid "Hercules Amber"
-msgstr ""
+msgstr "Hercules Bernst."
 
 #: engines/advancedDetector.cpp:317
 #, c-format
@@ -1628,16 +1628,15 @@ msgstr "Apple-II-GS-Emulator (NICHT INTEGRIERT)"
 
 #: audio/softsynth/cms.cpp:350
 msgid "Creative Music System Emulator"
-msgstr ""
+msgstr "Creative-Music-System-Emulator"
 
 #: audio/softsynth/fmtowns_pc98/towns_pc98_plugins.cpp:33
 msgid "FM-Towns Audio"
-msgstr ""
+msgstr "FM-Towns-Audio"
 
 #: audio/softsynth/fmtowns_pc98/towns_pc98_plugins.cpp:58
-#, fuzzy
 msgid "PC-98 Audio"
-msgstr "Audio"
+msgstr "PC-98-Audio"
 
 #: audio/softsynth/mt32.cpp:200
 msgid "Initializing MT-32 Emulator"
@@ -1732,34 +1731,33 @@ msgstr "Möchten Sie beenden?"
 
 #. I18N: Trackpad mode toggle status.
 #: backends/events/webossdl/webossdl-events.cpp:308
-#, fuzzy
 msgid "Trackpad mode is now"
-msgstr "Touchpad-Modus ausgeschaltet."
+msgstr "Trackpad-Modus ist jetzt "
 
 #. I18N: Trackpad mode on or off.
 #. I18N: Auto-drag on or off.
 #: backends/events/webossdl/webossdl-events.cpp:311
 #: backends/events/webossdl/webossdl-events.cpp:338
 msgid "ON"
-msgstr ""
+msgstr "AN"
 
 #: backends/events/webossdl/webossdl-events.cpp:311
 #: backends/events/webossdl/webossdl-events.cpp:338
 msgid "OFF"
-msgstr ""
+msgstr "AUS"
 
 #: backends/events/webossdl/webossdl-events.cpp:315
 msgid "Swipe two fingers to the right to toggle."
-msgstr ""
+msgstr "Zum Umschalten mit zwei Fingern nach rechts wischen."
 
 #. I18N: Auto-drag toggle status.
 #: backends/events/webossdl/webossdl-events.cpp:335
 msgid "Auto-drag mode is now"
-msgstr ""
+msgstr "Automatisches Ziehen ist jetzt "
 
 #: backends/events/webossdl/webossdl-events.cpp:342
 msgid "Swipe three fingers to the right to toggle."
-msgstr ""
+msgstr "Zum Umschalten mit drei Fingern nach rechts wischen."
 
 #: backends/graphics/opengl/opengl-graphics.cpp:119
 msgid "OpenGL"
@@ -2054,24 +2052,23 @@ msgstr "Maus steuern"
 
 #: backends/platform/tizen/fs.cpp:259
 msgid "[ Data ]"
-msgstr ""
+msgstr "[ Daten ]"
 
 #: backends/platform/tizen/fs.cpp:263
 msgid "[ Resources ]"
-msgstr ""
+msgstr "[ Ressourcen ]"
 
 #: backends/platform/tizen/fs.cpp:267
 msgid "[ SDCard ]"
-msgstr ""
+msgstr "[ SD-Karte ]"
 
 #: backends/platform/tizen/fs.cpp:271
 msgid "[ Media ]"
-msgstr ""
+msgstr "[ Datenträger ]"
 
 #: backends/platform/tizen/fs.cpp:275
-#, fuzzy
 msgid "[ Shared ]"
-msgstr "Öffentliches Verzeichnis:"
+msgstr "[ Öffentlich ]"
 
 #: backends/platform/wii/options.cpp:51
 msgid "Video"
