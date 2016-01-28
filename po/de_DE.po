@@ -2797,12 +2797,10 @@ msgstr ""
 "gezeigt"
 
 #: engines/sci/detection.cpp:384
-#, fuzzy
 msgid "Enable high resolution graphics"
 msgstr "Aktiviere hochauflösende Grafik."
 
 #: engines/sci/detection.cpp:385
-#, fuzzy
 msgid "Enable high resolution graphics/content"
 msgstr "Aktiviere hochauflösende Grafik/Inhalte"
 
