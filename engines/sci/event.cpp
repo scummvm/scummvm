@@ -214,7 +214,7 @@ SciEvent EventManager::getScummVMEvent() {
 		//((ev.kbd.flags & Common::KBD_CAPS) ? SCI_KEYMOD_CAPSLOCK : 0) |
 		//((ev.kbd.flags & Common::KBD_SCRL) ? SCI_KEYMOD_SCRLOCK : 0) |
 
-	if (!(input.data & 0xFF00)) {
+	if ((input.character) && (input.character <= 0xFF)) {
 		// Directly accept most common keys without conversion
 		if ((input.character >= 0x80) && (input.character <= 0xFF)) {
 			// If there is no extended font, we will just clear the
