@@ -424,7 +424,7 @@ void Journal::loadJournalFile(bool alreadyLoaded) {
 		}
 
 		// Is it a control character?
-		if (c < opcodes[0]) {
+		if (isPrintable(c)) {
 			// Nope. Set flag for allowing control codes to insert spaces
 			ctrlSpace = true;
 			justChangedSpeaker = false;
@@ -486,7 +486,7 @@ void Journal::loadJournalFile(bool alreadyLoaded) {
 				// Copy text from the place until either the reply ends, a comment
 				// {} block is started, or a control character is encountered
 				journalString += c;
-				while (*replyP && *replyP < opcodes[0] && *replyP != '{' && *replyP != '}') {
+				while (*replyP && isPrintable(*replyP) && *replyP != '{' && *replyP != '}') {
 					journalString += *replyP++;
 				}
 
@@ -704,6 +704,25 @@ void Journal::loadJournalFile(bool alreadyLoaded) {
 	} else {
 		_lines.clear();
 	}
+}
+
+bool Journal::isPrintable(char ch) const {
+	Talk &talk = *_vm->_talk;
+	const byte *opcodes = talk._opcodes;
+
+	// Okay.. there is freaky stuff going among the various different languages
+	// and across the two games as to which characters are printable, and which
+	// are opcodes, and which are not opcodes but shouldn't be printed anyway.
+	// I don't want to end up breaking stuff, so this method acts as a bit of a
+	// kludge to get German accents working in the Journal
+	if (ch < opcodes[0])
+		return true;
+
+	if (_vm->getGameID() == GType_SerratedScalpel && _vm->getLanguage() == Common::DE_DEU
+			&& ch >= 0xe0)
+		return true;
+
+	return false;
 }
 
 void Journal::record(int converseNum, int statementNum, bool replyOnly) {
