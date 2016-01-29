@@ -10,8 +10,9 @@ amigaosdist: $(EXECUTABLE)
 ifdef DIST_FILES_ENGINEDATA
 	cp $(DIST_FILES_ENGINEDATA) $(AMIGAOSPATH)/extras/
 endif
-	cat README | sed -f convertRM.sed > README.conv
-	rx RM2AG.rx README.conv
-	rm README.conv
+	cat README | sed -f dists/amiga/convertRM.sed > dists/amiga/README.conv
+	rx dists/amiga/RM2AG.rx dists/amiga/README.conv
 	cp README.guide $(AMIGAOSPATH)
+	rm dists/amiga/README.conv
+	rm README.guide
 	cp $(DIST_FILES_DOCS) $(AMIGAOSPATH)
