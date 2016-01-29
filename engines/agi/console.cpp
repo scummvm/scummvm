@@ -487,9 +487,6 @@ bool Console::Cmd_ScreenObj(int argc, const char **argv) {
 			break;
 		}
 	}
-#if 0
-	CycleType cycle;
-#endif 
 	return true;
 }
 
