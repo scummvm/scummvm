@@ -155,7 +155,7 @@ void TextMgr::charAttrib_Set(byte foreground, byte background) {
 	} else {
 		// Graphics-mode:
 		switch (_vm->_renderMode) {
-		case RENDERMODE_CGA:
+		case Common::kRenderCGA:
 			// CGA
 			if (background) {
 				_textAttrib.combinedForeground = 3;

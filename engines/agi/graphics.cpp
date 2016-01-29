@@ -63,16 +63,16 @@ int GfxMgr::initVideo() {
 	initPalette(_paletteTextMode, PALETTE_EGA);
 
 	switch (_vm->_renderMode) {
-	case RENDERMODE_EGA:
+	case Common::kRenderEGA:
 		initPalette(_paletteGfxMode, PALETTE_EGA);
 		break;
-	case RENDERMODE_CGA:
+	case Common::kRenderCGA:
 		initPalette(_paletteGfxMode, PALETTE_CGA, 4, 8);
 		break;
-	case RENDERMODE_VGA:
+	case Common::kRenderVGA:
 		initPalette(_paletteGfxMode, PALETTE_VGA, 256, 8);
 		break;
-	case RENDERMODE_AMIGA:
+	case Common::kRenderAmiga:
 		if (!ConfMan.getBool("altamigapalette")) {
 			// Set the correct Amiga palette depending on AGI interpreter version
 			if (_vm->getVersion() < 0x2936)
@@ -86,10 +86,10 @@ int GfxMgr::initVideo() {
 			initPalette(_paletteGfxMode, PALETTE_AMIGA_ALT);
 		}
 		break;
-	case RENDERMODE_APPLE_II_GS:
+	case Common::kRenderApple2GS:
 		initPalette(_paletteGfxMode, PALETTE_APPLE_II_GS, 16, 4);
 		break;
-	case RENDERMODE_ATARI_ST:
+	case Common::kRenderAtariST:
 		initPalette(_paletteGfxMode, PALETTE_ATARI_ST, 16, 3);
 		break;
 	default:
@@ -99,22 +99,22 @@ int GfxMgr::initVideo() {
 
 	// set up mouse cursors
 	switch (_vm->_renderMode) {
-	case RENDERMODE_EGA:
-	case RENDERMODE_CGA:
-	case RENDERMODE_VGA:
+	case Common::kRenderEGA:
+	case Common::kRenderCGA:
+	case Common::kRenderVGA:
 		initMouseCursor(&_mouseCursor, MOUSECURSOR_SCI, 11, 16, 1, 1);
 		initMouseCursor(&_mouseCursorBusy, MOUSECURSOR_SCI_BUSY, 15, 16, 7, 8);
 		break;
-	case RENDERMODE_AMIGA:
+	case Common::kRenderAmiga:
 		initMouseCursor(&_mouseCursor, MOUSECURSOR_AMIGA, 8, 11, 1, 1);
 		initMouseCursor(&_mouseCursorBusy, MOUSECURSOR_AMIGA_BUSY, 13, 16, 7, 8);
 		break;
-	case RENDERMODE_APPLE_II_GS:
+	case Common::kRenderApple2GS:
 		// had no special busy mouse cursor
 		initMouseCursor(&_mouseCursor, MOUSECURSOR_APPLE_II_GS, 9, 11, 1, 1);
 		initMouseCursor(&_mouseCursorBusy, MOUSECURSOR_SCI_BUSY, 15, 16, 7, 8);
 		break;
-	case RENDERMODE_ATARI_ST:
+	case Common::kRenderAtariST:
 		initMouseCursor(&_mouseCursor, MOUSECURSOR_ATARI_ST, 11, 16, 1, 1);
 		initMouseCursor(&_mouseCursorBusy, MOUSECURSOR_SCI_BUSY, 15, 16, 7, 8);
 		break;
@@ -270,10 +270,10 @@ void GfxMgr::render_Block(int16 x, int16 y, int16 width, int16 height, bool copy
 		return;
 
 	switch (_vm->_renderMode) {
-	case RENDERMODE_CGA:
+	case Common::kRenderCGA:
 		render_BlockCGA(x, y, width, height, copyToScreen);
 		break;
-	case RENDERMODE_EGA:
+	case Common::kRenderEGA:
 	default:
 		render_BlockEGA(x, y, width, height, copyToScreen);
 		break;
@@ -546,10 +546,10 @@ void GfxMgr::drawRect(int16 x, int16 y, int16 width, int16 height, byte color) {
 // coordinates are directly for display screen
 void GfxMgr::drawDisplayRect(int16 x, int16 y, int16 width, int16 height, byte color) {
 	switch (_vm->_renderMode) {
-	case RENDERMODE_CGA:
+	case Common::kRenderCGA:
 		drawDisplayRectCGA(x, y, width, height, color);
 		break;
-	case RENDERMODE_EGA:
+	case Common::kRenderEGA:
 	default:
 		drawDisplayRectEGA(x, y, width, height, color);
 		break;

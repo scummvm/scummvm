@@ -321,7 +321,7 @@ void AgiEngine::unpackViewCelData(AgiViewCel *celData, byte *compressedData, uin
 
 	// for CGA rendering, apply dithering
 	switch (_renderMode) {
-	case RENDERMODE_CGA: {
+	case Common::kRenderCGA: {
 		uint16 totalPixels = celData->width * celData->height;
 
 		// dither clear key

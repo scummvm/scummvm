@@ -283,31 +283,31 @@ void AgiBase::initRenderMode() {
 	Common::RenderMode configRenderMode = Common::parseRenderMode(ConfMan.get("render_mode").c_str());
 
 	// Default to EGA PC rendering
-	_renderMode = RENDERMODE_EGA;
+	_renderMode = Common::kRenderEGA;
 
 	switch (platform) {
 	case Common::kPlatformDOS:
 		switch (configRenderMode) {
 		case Common::kRenderCGA:
-			_renderMode = RENDERMODE_CGA;
+			_renderMode = Common::kRenderCGA;
 			break;
 		// Hercules is not supported atm
 		//case Common::kRenderHercA:
 		//case Common::kRenderHercG:
-		//	_renderMode = RENDERMODE_HERCULES;
+		//	_renderMode = Common::kRenderHercG;
 		//	break;
 		default:
 			break;
 		}
 		break;
 	case Common::kPlatformAmiga:
-		_renderMode = RENDERMODE_AMIGA;
+		_renderMode = Common::kRenderAmiga;
 		break;
 	case Common::kPlatformApple2GS:
-		_renderMode = RENDERMODE_APPLE_II_GS;
+		_renderMode = Common::kRenderApple2GS;
 		break;
 	case Common::kPlatformAtariST:
-		_renderMode = RENDERMODE_ATARI_ST;
+		_renderMode = Common::kRenderAtariST;
 		break;
 	default:
 		break;
@@ -316,13 +316,13 @@ void AgiBase::initRenderMode() {
 	// If render mode is explicitly set, force rendermode
 	switch (configRenderMode) {
 	case Common::kRenderAmiga:
-		_renderMode = RENDERMODE_AMIGA;
+		_renderMode = Common::kRenderAmiga;
 		break;
 	case Common::kRenderApple2GS:
-		_renderMode = RENDERMODE_APPLE_II_GS;
+		_renderMode = Common::kRenderApple2GS;
 		break;
 	case Common::kRenderAtariST:
-		_renderMode = RENDERMODE_ATARI_ST;
+		_renderMode = Common::kRenderAtariST;
 		break;
 	default:
 		break;
@@ -330,7 +330,7 @@ void AgiBase::initRenderMode() {
 
 	if (getFeatures() & (GF_AGI256 | GF_AGI256_2)) {
 		// If current game is AGI256, switch (force) to VGA render mode
-		_renderMode = RENDERMODE_VGA;
+		_renderMode = Common::kRenderVGA;
 	}
 }
 
@@ -343,21 +343,21 @@ void AgiBase::initFont() {
 	}
 
 	switch (_renderMode) {
-	case RENDERMODE_AMIGA:
+	case Common::kRenderAmiga:
 		loadFontAmigaPseudoTopaz();
 		//_fontData = fontData_Amiga; // use Amiga Topaz font
 		break;
-	case RENDERMODE_APPLE_II_GS:
+	case Common::kRenderApple2GS:
 		// Special font, stored in file AGIFONT
 		loadFontAppleIIgs();
 		break;
-	case RENDERMODE_ATARI_ST:
+	case Common::kRenderAtariST:
 		// TODO: Atari ST uses another font
 		// Seems to be the standard Atari ST 8x8 system font
 
-	case RENDERMODE_CGA:
-	case RENDERMODE_EGA:
-	case RENDERMODE_VGA:
+	case Common::kRenderCGA:
+	case Common::kRenderEGA:
+	case Common::kRenderVGA:
 		switch (getGameID()) {
 		case GID_MICKEY:
 			// load mickey mouse font from interpreter file

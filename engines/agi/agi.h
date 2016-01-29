@@ -140,16 +140,6 @@ enum AgiGameType {
 	 BooterDisk2 = 1
  };
 
-enum AgiRenderMode {
-	RENDERMODE_EGA = 0,
-	RENDERMODE_CGA = 1,
-	RENDERMODE_VGA = 2,
-	RENDERMODE_HERCULES = 3,
-	RENDERMODE_AMIGA = 4,
-	RENDERMODE_APPLE_II_GS = 5,
-	RENDERMODE_ATARI_ST = 6
-};
-
 //
 // GF_OLDAMIGAV20 means that the interpreter is an old Amiga AGI interpreter that
 // uses value 20 for the computer type (v20 i.e. vComputer) rather than the usual value 5.
@@ -666,7 +656,7 @@ public:
 
 	GfxMgr *_gfx;
 
-	AgiRenderMode _renderMode;
+	Common::RenderMode _renderMode;
 	volatile uint32 _clockCount;
 	AgiDebug _debug;
 	AgiGame _game;

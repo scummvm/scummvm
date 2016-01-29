@@ -494,19 +494,20 @@ int AgiEngine::runGame() {
 
 		// Set monitor type (v26 i.e. vMonitor)
 		switch (_renderMode) {
-		case RENDERMODE_CGA:
+		case Common::kRenderCGA:
 			setVar(VM_VAR_MONITOR, kAgiMonitorCga);
 			break;
-		case RENDERMODE_HERCULES:
+		case Common::kRenderHercA:
+		case Common::kRenderHercG:
 			setVar(VM_VAR_MONITOR, kAgiMonitorHercules);
 			break;
 		// Don't know if Amiga AGI games use a different value than kAgiMonitorEga
 		// for vMonitor so I just use kAgiMonitorEga for them (As was done before too).
-		case RENDERMODE_AMIGA:
-		case RENDERMODE_APPLE_II_GS:
-		case RENDERMODE_ATARI_ST:
-		case RENDERMODE_EGA:
-		case RENDERMODE_VGA:
+		case Common::kRenderAmiga:
+		case Common::kRenderApple2GS:
+		case Common::kRenderAtariST:
+		case Common::kRenderEGA:
+		case Common::kRenderVGA:
 		default:
 			setVar(VM_VAR_MONITOR, kAgiMonitorEga);
 			break;

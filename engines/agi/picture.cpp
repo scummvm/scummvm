@@ -632,7 +632,7 @@ void PictureMgr::draw_SetColor() {
 
 	// For CGA, replace the color with its mixture color
 	switch (_vm->_renderMode) {
-	case RENDERMODE_CGA:
+	case Common::kRenderCGA:
 		_scrColor = _gfx->getCGAMixtureColor(_scrColor);
 		break;
 	default:
@@ -651,7 +651,7 @@ void PictureMgr::draw_SetNibbleColor() {
 
 	// For CGA, replace the color with its mixture color
 	switch (_vm->_renderMode) {
-	case RENDERMODE_CGA:
+	case Common::kRenderCGA:
 		_scrColor = _gfx->getCGAMixtureColor(_scrColor);
 		break;
 	default:
@@ -1030,14 +1030,14 @@ void PictureMgr::showPicWithTransition() {
 		}
 
 		switch (_vm->_renderMode) {
-		case RENDERMODE_AMIGA:
-		case RENDERMODE_APPLE_II_GS:
+		case Common::kRenderAmiga:
+		case Common::kRenderApple2GS:
 			// Platform Amiga/Apple II GS -> render and do Amiga transition
 			_gfx->render_Block(0, 167, SCRIPT_WIDTH, SCRIPT_HEIGHT, false);
 			_gfx->transition_Amiga();
 			return;
 			break;
-		case RENDERMODE_ATARI_ST:
+		case Common::kRenderAtariST:
 			// Platform Atari ST used a different transition, looks "high-res" (full 320x168)
 			_gfx->render_Block(0, 167, SCRIPT_WIDTH, SCRIPT_HEIGHT, false);
 			_gfx->transition_AtariSt();

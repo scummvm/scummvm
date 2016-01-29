@@ -921,7 +921,7 @@ void MickeyEngine::drawLogo() {
 	const byte *BCGColorMapping = BCGColorMappingCGAToEGA;
 
 	// disable color mapping in case we are in CGA mode
-	if (_renderMode == RENDERMODE_CGA)
+	if (_renderMode == Common::kRenderCGA)
 		BCGColorMapping = BCGColorMappingCGAToCGA;
 
 	// read logos.bcg
