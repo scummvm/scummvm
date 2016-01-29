@@ -150,11 +150,54 @@ bool OSystem_POSIX::hasFeature(Feature f) {
 Common::String OSystem_POSIX::getDefaultConfigFileName() {
 	Common::String configFile;
 
-	// On POSIX type systems, by default we store the config file inside
-	// to the HOME directory of the user.
-	const char *home = getenv("HOME");
-	if (home != NULL && (strlen(home) + 1 + _baseConfigName.size()) < MAXPATHLEN) {
-		configFile = Common::String::format("%s/%s", home, _baseConfigName.c_str());
+	Common::String prefix;
+#ifdef MACOSX
+	prefix = getenv("HOME");
+#elif !defined(SAMSUNGTV)
+	const char *envVar;
+	// Our old configuration file path for POSIX systems was ~/.scummvmrc.
+	// If that file exists, we still use it.
+	envVar = getenv("HOME");
+	if (envVar && *envVar) {
+		configFile = envVar;
+		configFile += '/';
+		configFile += ".scummvmrc";
+
+		if (configFile.size() < MAXPATHLEN) {
+			struct stat sb;
+			if (stat(configFile.c_str(), &sb) == 0) {
+				return configFile;
+			}
+		}
+	}
+
+	// On POSIX systems we follow the XDG Base Directory Specification for
+	// where to store files. The version we based our code upon can be found
+	// over here: http://standards.freedesktop.org/basedir-spec/basedir-spec-0.8.html
+	envVar = getenv("XDG_CONFIG_HOME");
+	if (!envVar || !*envVar) {
+		envVar = getenv("HOME");
+		if (!envVar) {
+			return 0;
+		}
+
+		if (assureDirectoryExists(".config", envVar)) {
+			prefix = envVar;
+			prefix += "/.config";
+		}
+	} else {
+		prefix = envVar;
+	}
+
+	if (!prefix.empty() && assureDirectoryExists("scummvm", prefix.c_str())) {
+		prefix += "/scummvm";
+	}
+#endif
+
+	if (!prefix.empty() && (prefix.size() + 1 + _baseConfigName.size()) < MAXPATHLEN) {
+		configFile = prefix;
+		configFile += '/';
+		configFile += _baseConfigName;
 	} else {
 		configFile = _baseConfigName;
 	}
