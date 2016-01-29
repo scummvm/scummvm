@@ -48,17 +48,17 @@ void AgiBase::flipflag(int n) {
 	*set ^= 1 << (n & 0x07);	// flip bit
 }
 
-void AgiEngine::setvar(int var, int val) {
-	_game.vars[var] = val;
+void AgiEngine::setVar(int16 varNr, int val) {
+	_game.vars[varNr] = val;
 
-	if (var == vVolume) {
+	if (varNr == VM_VAR_VOLUME) {
 		_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, val * 17);
 		_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, val * 17);
 	}
 }
 
-int AgiEngine::getvar(int var) {
-	return _game.vars[var];
+int AgiEngine::getVar(int16 varNr) {
+	return _game.vars[varNr];
 }
 
 void AgiEngine::decrypt(uint8 *mem, int len) {

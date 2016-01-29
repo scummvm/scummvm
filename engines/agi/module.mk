@@ -36,6 +36,7 @@ MODULE_OBJS := \
 	sound_pcjr.o \
 	sound_sarien.o \
 	sprite.o \
+	systemui.o \
 	text.o \
 	view.o \
 	wagparser.o \

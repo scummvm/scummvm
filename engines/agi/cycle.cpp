@@ -20,11 +20,16 @@
  *
  */
 
+#include "common/config-manager.h"
+
 #include "agi/agi.h"
 #include "agi/sprite.h"
 #include "agi/graphics.h"
+#include "agi/inv.h"
+#include "agi/text.h"
 #include "agi/keyboard.h"
 #include "agi/menu.h"
+#include "agi/systemui.h"
 
 namespace Agi {
 
@@ -33,124 +38,133 @@ namespace Agi {
  * This function is called when ego enters a new room.
  * @param n room number
  */
-void AgiEngine::newRoom(int n) {
-	VtEntry *v;
+void AgiEngine::newRoom(int16 newRoomNr) {
+	ScreenObjEntry *screenObj;
+	ScreenObjEntry *screenObjEgo = &_game.screenObjTable[SCREENOBJECTS_EGO_ENTRY];
 	int i;
 
-	// Simulate slowww computer.
-	// Many effects rely on it.
-	pause(kPauseRoom);
+	// Loading trigger
+	loadingTrigger_NewRoom(newRoomNr);
 
-	debugC(4, kDebugLevelMain, "*** room %d ***", n);
+	debugC(4, kDebugLevelMain, "*** room %d ***", newRoomNr);
 	_sound->stopSound();
 
 	i = 0;
-	for (v = _game.viewTable; v < &_game.viewTable[MAX_VIEWTABLE]; v++) {
-		v->entry = i++;
-		v->flags &= ~(fAnimated | fDrawn);
-		v->flags |= fUpdate;
-		v->stepTime = 1;
-		v->stepTimeCount = 1;
-		v->cycleTime = 1;
-		v->cycleTimeCount = 1;
-		v->stepSize = 1;
+	for (screenObj = _game.screenObjTable; screenObj < &_game.screenObjTable[SCREENOBJECTS_MAX]; screenObj++) {
+		screenObj->objectNr = i++;
+		screenObj->flags &= ~(fAnimated | fDrawn);
+		screenObj->flags |= fUpdate;
+		screenObj->stepTime = 1;
+		screenObj->stepTimeCount = 1;
+		screenObj->cycleTime = 1;
+		screenObj->cycleTimeCount = 1;
+		screenObj->stepSize = 1;
 	}
 	agiUnloadResources();
 
 	_game.playerControl = true;
 	_game.block.active = false;
 	_game.horizon = 36;
-	_game.vars[vPrevRoom] = _game.vars[vCurRoom];
-	_game.vars[vCurRoom] = n;
-	_game.vars[vBorderTouchObj] = 0;
-	_game.vars[vBorderCode] = 0;
-	_game.vars[vEgoViewResource] = _game.viewTable[0].currentView;
+	_game.vars[VM_VAR_PREVIOUS_ROOM] = _game.vars[VM_VAR_CURRENT_ROOM];
+	_game.vars[VM_VAR_CURRENT_ROOM] = newRoomNr;
+	_game.vars[VM_VAR_BORDER_TOUCH_OBJECT] = 0;
+	_game.vars[VM_VAR_BORDER_CODE] = 0;
+	_game.vars[VM_VAR_EGO_VIEW_RESOURCE] = screenObjEgo->currentViewNr;
 
-	agiLoadResource(rLOGIC, n);
+	agiLoadResource(RESOURCETYPE_LOGIC, newRoomNr);
 
 	// Reposition ego in the new room
-	switch (_game.vars[vBorderTouchEgo]) {
+	switch (_game.vars[VM_VAR_BORDER_TOUCH_EGO]) {
 	case 1:
-		_game.viewTable[0].yPos = _HEIGHT - 1;
+		screenObjEgo->yPos = SCRIPT_HEIGHT - 1;
 		break;
 	case 2:
-		_game.viewTable[0].xPos = 0;
+		screenObjEgo->xPos = 0;
 		break;
 	case 3:
-		_game.viewTable[0].yPos = HORIZON + 1;
+		screenObjEgo->yPos = _game.horizon + 1;
 		break;
 	case 4:
-		_game.viewTable[0].xPos = _WIDTH - _game.viewTable[0].xSize;
+		screenObjEgo->xPos = SCRIPT_WIDTH - screenObjEgo->xSize;
 		break;
 	}
 
 	if (getVersion() < 0x2000) {
-		warning("STUB: NewRoom(%d)", n);
+		warning("STUB: NewRoom(%d)", newRoomNr);
 
-		v->flags &= ~fDidntMove;
+		screenObjEgo->flags &= ~fDidntMove;
 		// animateObject(0);
-		agiLoadResource(rVIEW, _game.viewTable[0].currentView);
-		setView(&_game.viewTable[0], _game.viewTable[0].currentView);
+		agiLoadResource(RESOURCETYPE_VIEW, screenObjEgo->currentViewNr);
+		setView(screenObjEgo, screenObjEgo->currentViewNr);
 
 	} else {
-		_game.vars[vBorderTouchEgo] = 0;
-		setflag(fNewRoomExec, true);
+		if (screenObjEgo->motionType == kMotionEgo) {
+			screenObjEgo->motionType = kMotionNormal;
+			_game.vars[VM_VAR_EGO_DIRECTION] = 0;
+		}
+
+		_game.vars[VM_VAR_BORDER_TOUCH_EGO] = 0;
+		setflag(VM_FLAG_NEW_ROOM_EXEC, true);
 
 		_game.exitAllLogics = true;
 
-		writeStatus();
-		writePrompt();
+		_game._vm->_text->statusDraw();
+		_game._vm->_text->promptRedraw();
 	}
 }
 
 void AgiEngine::resetControllers() {
 	int i;
 
-	for (i = 0; i < MAX_DIRS; i++) {
+	for (i = 0; i < MAX_CONTROLLERS; i++) {
 		_game.controllerOccured[i] = false;
 	}
 }
 
 void AgiEngine::interpretCycle() {
+	ScreenObjEntry *screenObjEgo = &_game.screenObjTable[SCREENOBJECTS_EGO_ENTRY];
 	int oldSound, oldScore;
 
 	if (_game.playerControl)
-		_game.vars[vEgoDir] = _game.viewTable[0].direction;
+		_game.vars[VM_VAR_EGO_DIRECTION] = screenObjEgo->direction;
 	else
-		_game.viewTable[0].direction = _game.vars[vEgoDir];
+		screenObjEgo->direction = _game.vars[VM_VAR_EGO_DIRECTION];
 
 	checkAllMotions();
 
-	oldScore = _game.vars[vScore];
-	oldSound = getflag(fSoundOn);
+	oldScore = _game.vars[VM_VAR_SCORE];
+	oldSound = getflag(VM_FLAG_SOUND_ON);
 
 	_game.exitAllLogics = false;
 	while (runLogic(0) == 0 && !(shouldQuit() || _restartGame)) {
-		_game.vars[vWordNotFound] = 0;
-		_game.vars[vBorderTouchObj] = 0;
-		_game.vars[vBorderCode] = 0;
-		oldScore = _game.vars[vScore];
-		setflag(fEnteredCli, false);
+		_game.vars[VM_VAR_WORD_NOT_FOUND] = 0;
+		_game.vars[VM_VAR_BORDER_TOUCH_OBJECT] = 0;
+		_game.vars[VM_VAR_BORDER_CODE] = 0;
+		oldScore = _game.vars[VM_VAR_SCORE];
+		setflag(VM_FLAG_ENTERED_CLI, false);
 		_game.exitAllLogics = false;
+		nonBlockingText_CycleDone();
 		resetControllers();
 	}
+	nonBlockingText_CycleDone();
 	resetControllers();
 
-	_game.viewTable[0].direction = _game.vars[vEgoDir];
+	screenObjEgo->direction = _game.vars[VM_VAR_EGO_DIRECTION];
 
-	if (_game.vars[vScore] != oldScore || getflag(fSoundOn) != oldSound)
-		writeStatus();
+	if (_game.vars[VM_VAR_SCORE] != oldScore || getflag(VM_FLAG_SOUND_ON) != oldSound)
+		_game._vm->_text->statusDraw();
 
-	_game.vars[vBorderTouchObj] = 0;
-	_game.vars[vBorderCode] = 0;
-	setflag(fNewRoomExec, false);
-	setflag(fRestartGame, false);
-	setflag(fRestoreJustRan, false);
+	_game.vars[VM_VAR_BORDER_TOUCH_OBJECT] = 0;
+	_game.vars[VM_VAR_BORDER_CODE] = 0;
+	setflag(VM_FLAG_NEW_ROOM_EXEC, false);
+	setflag(VM_FLAG_RESTART_GAME, false);
+	setflag(VM_FLAG_RESTORE_JUST_RAN, false);
 
 	if (_game.gfxMode) {
-		updateViewtable();
-		_gfx->doUpdate();
+		updateScreenObjTable();
 	}
+	_gfx->updateScreen();
+	//_gfx->doUpdate();
 }
 
 /**
@@ -166,27 +180,27 @@ void AgiEngine::updateTimer() {
 	if (!_game.clockEnabled)
 		return;
 
-	setvar(vSeconds, getvar(vSeconds) + 1);
-	if (getvar(vSeconds) < 60)
+	setVar(VM_VAR_SECONDS, getVar(VM_VAR_SECONDS) + 1);
+	if (getVar(VM_VAR_SECONDS) < 60)
 		return;
 
-	setvar(vSeconds, 0);
-	setvar(vMinutes, getvar(vMinutes) + 1);
-	if (getvar(vMinutes) < 60)
+	setVar(VM_VAR_SECONDS, 0);
+	setVar(VM_VAR_MINUTES, getVar(VM_VAR_MINUTES) + 1);
+	if (getVar(VM_VAR_MINUTES) < 60)
 		return;
 
-	setvar(vMinutes, 0);
-	setvar(vHours, getvar(vHours) + 1);
-	if (getvar(vHours) < 24)
+	setVar(VM_VAR_MINUTES, 0);
+	setVar(VM_VAR_HOURS, getVar(VM_VAR_HOURS) + 1);
+	if (getVar(VM_VAR_HOURS) < 24)
 		return;
 
-	setvar(vHours, 0);
-	setvar(vDays, getvar(vDays) + 1);
+	setVar(VM_VAR_HOURS, 0);
+	setVar(VM_VAR_DAYS, getVar(VM_VAR_DAYS) + 1);
 }
 
 void AgiEngine::newInputMode(InputMode mode) {
-	if (mode == INPUT_MENU && !getflag(fMenusWork) && !(getFeatures() & GF_MENUS))
-		return;
+	//if (mode == INPUTMODE_MENU && !getflag(VM_FLAG_MENUS_WORK) && !(getFeatures() & GF_MENUS))
+	//	return;
 
 	_oldMode = _game.inputMode;
 	_game.inputMode = mode;
@@ -198,12 +212,17 @@ void AgiEngine::oldInputMode() {
 
 // If main_cycle returns false, don't process more events!
 int AgiEngine::mainCycle(bool onlyCheckForEvents) {
-	unsigned int key, kascii;
-	VtEntry *v = &_game.viewTable[0];
+	uint16 key;
+	byte   keyAscii;
+	ScreenObjEntry *screenObjEgo = &_game.screenObjTable[SCREENOBJECTS_EGO_ENTRY];
 
 	if (!onlyCheckForEvents) {
 		pollTimer();
 		updateTimer();
+	}
+
+	if (_menu->delayedExecuteActive()) {
+		_menu->execute();
 	}
 
 	key = doPollKeyboard();
@@ -217,97 +236,105 @@ int AgiEngine::mainCycle(bool onlyCheckForEvents) {
 		_game.vars[29] = _mouse.y;
 	//}
 
-	if (key == KEY_STATUSLN) {	// F11
-		_debug.statusline = !_debug.statusline;
-		writeStatus();
-		key = 0;
+	switch (_game.inputMode) {
+	case INPUTMODE_NORMAL:
+	case INPUTMODE_NONE:
+		// Click-to-walk mouse interface
+		if (_game.playerControl && (screenObjEgo->flags & fAdjEgoXY)) {
+			int toX = screenObjEgo->move_x;
+			int toY = screenObjEgo->move_y;
+
+			// AGI Mouse games use ego's sprite's bottom left corner for mouse walking target.
+			// Amiga games use ego's sprite's bottom center for mouse walking target.
+			// Atari ST and Apple II GS seem to use the bottom left
+			if (getPlatform() == Common::kPlatformAmiga)
+				toX -= (screenObjEgo->xSize / 2); // Center ego's sprite horizontally
+
+			// Adjust ego's sprite's mouse walking target position (These parameters are
+			// controlled with the adj.ego.move.to.x.y-command). Note that these values rely
+			// on the horizontal centering of the ego's sprite at least on the Amiga platform.
+			toX += _game.adjMouseX;
+			toY += _game.adjMouseY;
+
+			screenObjEgo->direction = getDirection(screenObjEgo->xPos, screenObjEgo->yPos, toX, toY, screenObjEgo->stepSize);
+
+			if (screenObjEgo->direction == 0)
+				inDestination(screenObjEgo);
+		}
+		break;
+	default:
+		break;
 	}
 
-	if (key == KEY_PRIORITY) {	// F12
-		_sprites->eraseBoth();
-		_debug.priority = !_debug.priority;
-		_picture->showPic();
-		_sprites->blitBoth();
-		_sprites->commitBoth();
-		key = 0;
+	keyAscii = key & 0xFF;
+	if (keyAscii) {
+		setVar(VM_VAR_KEY, keyAscii);
 	}
 
-	// Click-to-walk mouse interface
-	if (_game.playerControl && (v->flags & fAdjEgoXY)) {
-		int toX = v->parm1;
-		int toY = v->parm2;
-
-		// AGI Mouse games use ego's sprite's bottom left corner for mouse walking target.
-		// Amiga games use ego's sprite's bottom center for mouse walking target.
-		// TODO: Check what Atari ST AGI and Apple IIGS AGI use for mouse walking target.
-		if (getPlatform() == Common::kPlatformAmiga)
-			toX -= (v->xSize / 2); // Center ego's sprite horizontally
-
-		// Adjust ego's sprite's mouse walking target position (These parameters are
-		// controlled with the adj.ego.move.to.x.y-command). Note that these values rely
-		// on the horizontal centering of the ego's sprite at least on the Amiga platform.
-		toX += _game.adjMouseX;
-		toY += _game.adjMouseY;
-
-		v->direction = getDirection(v->xPos, v->yPos, toX, toY, v->stepSize);
-
-		if (v->direction == 0)
-			inDestination(v);
-	}
-
-	kascii = KEY_ASCII(key);
-
-	if (kascii)
-		setvar(vKey, kascii);
-
-	bool restartProcessKey;
-	do {
-		restartProcessKey = false;
-
+	if (!cycleInnerLoopIsActive()) {
+		// no inner loop active at the moment, regular processing
 		switch (_game.inputMode) {
-		case INPUT_NORMAL:
+		case INPUTMODE_NORMAL:
 			if (!handleController(key)) {
-				if (key == 0 || !_game.inputEnabled)
+				if (key == 0 || (!_text->promptIsEnabled()))
 					break;
-				handleKeys(key);
 
-				// if ESC pressed, activate menu before
-				// accept.input from the interpreter cycle
-				// sets the input mode to normal again
-				// (closes: #540856)
-				if (key == KEY_ESCAPE) {
-					key = 0;
-					restartProcessKey = true;
-				}
-
-				// commented out to close Sarien bug #438872
-				//if (key)
-				//	_game.keypress = key;
+				_text->promptCharPress(key);
 			}
 			break;
-		case INPUT_GETSTRING:
-			handleController(key);
-			handleGetstring(key);
-			setvar(vKey, 0);	// clear ENTER key
-			break;
-		case INPUT_MENU:
-			_menu->keyhandler(key);
-			_gfx->doUpdate();
-			return false;
-		case INPUT_NONE:
+		case INPUTMODE_NONE:
 			handleController(key);
 			if (key)
 				_game.keypress = key;
 			break;
+		default:
+			break;
 		}
-	} while (restartProcessKey);
+
+	} else {
+		// inner loop active
+		// call specific workers
+		setVar(VM_VAR_KEY, 0);	// clear keys, they must not be passed to the scripts
+		_game.keypress = 0;
+
+		switch (_game.cycleInnerLoopType) {
+		case CYCLE_INNERLOOP_GETSTRING: // loop called from TextMgr::stringEdit()
+		case CYCLE_INNERLOOP_GETNUMBER:
+			//handleController(key);
+			if (key) {
+				_text->stringCharPress(key);
+			}
+			break;
+
+		case CYCLE_INNERLOOP_INVENTORY: // loop called from InventoryMgr::show()
+			if (key) {
+				_inventory->charPress(key);
+			}
+			break;
+
+		case CYCLE_INNERLOOP_MENU:
+			if (key) {
+				_menu->charPress(key);
+			}
+			return false;
+
+		case CYCLE_INNERLOOP_SYSTEMUI_SELECTSAVEDGAMESLOT:
+			if (key) {
+				_systemUI->savedGameSlot_CharPress(key);
+			}
+			break;
+
+		default:
+			break;
+		}
+	}
 
 	if (!onlyCheckForEvents) {
-		_gfx->doUpdate();
-
 		if (_game.msgBoxTicks > 0)
 			_game.msgBoxTicks--;
 	}
+
+	_gfx->updateScreen();
 
 	return true;
 }
@@ -319,19 +346,24 @@ int AgiEngine::playGame() {
 	debugC(2, kDebugLevelMain, "game version = 0x%x", getVersion());
 
 	_sound->stopSound();
-	_gfx->clearScreen(0);
 
-	_game.horizon = HORIZON;
+	// We need to do this accurately and reset the AGI priorityscreen to 4
+	// otherwise at least the fan game Nick's Quest will go into an endless
+	// loop, because the game draws views before it draws the first background picture.
+	// For further study see bug #3451122
+	_gfx->clear(0, 4);
+
+	_game.horizon = 36;
 	_game.playerControl = false;
 
-	setflag(fLogicZeroFirsttime, true);	// not in 2.917
-	setflag(fNewRoomExec, true);	// needed for MUMG and SQ2!
-	setflag(fSoundOn, true);	// enable sound
-	setvar(vTimeDelay, 2);	// "normal" speed
+	setflag(VM_FLAG_LOGIC_ZERO_FIRST_TIME, true);	// not in 2.917
+	setflag(VM_FLAG_NEW_ROOM_EXEC, true);	// needed for MUMG and SQ2!
+	setflag(VM_FLAG_SOUND_ON, true);	// enable sound
+	setVar(VM_VAR_TIME_DELAY, 2);	// "normal" speed
 
 	_game.gfxMode = true;
 	_game.clockEnabled = true;
-	_game.lineUserInput = 22;
+	_text->promptRow_Set(22);
 
 	// We run AGIMOUSE always as a side effect
 	//if (getFeatures() & GF_AGIMOUSE)
@@ -342,25 +374,34 @@ int AgiEngine::playGame() {
 
 	debug(0, "Running AGI script.\n");
 
-	setflag(fEnteredCli, false);
-	setflag(fSaidAcceptedInput, false);
-	_game.vars[vWordNotFound] = 0;
-	_game.vars[vKey] = 0;
+	setflag(VM_FLAG_ENTERED_CLI, false);
+	setflag(VM_FLAG_SAID_ACCEPTED_INPUT, false);
+	_game.vars[VM_VAR_WORD_NOT_FOUND] = 0;
+	_game.vars[VM_VAR_KEY] = 0;
 
 	debugC(2, kDebugLevelMain, "Entering main loop");
-	bool firstLoop = !getflag(fRestartGame); // Do not restore on game restart
+	bool firstLoop = !getflag(VM_FLAG_RESTART_GAME); // Do not restore on game restart
+
+	if (firstLoop) {
+		if (ConfMan.hasKey("save_slot")) {
+			// quick restore enabled
+			_game.automaticRestoreGame = true;
+		}
+	}
+
+	nonBlockingText_Forget();
 
 	do {
 
 		if (!mainCycle())
 			continue;
 
-		if (getvar(vTimeDelay) == 0 || (1 + _clockCount) % getvar(vTimeDelay) == 0) {
-			if (!_game.hasPrompt && _game.inputMode == INPUT_NORMAL) {
-				writePrompt();
+		if (getVar(VM_VAR_TIME_DELAY) == 0 || (1 + _clockCount) % getVar(VM_VAR_TIME_DELAY) == 0) {
+			if (!_game.hasPrompt && _game.inputMode == INPUTMODE_NORMAL) {
+				_text->promptRedraw();
 				_game.hasPrompt = 1;
-			} else if (_game.hasPrompt && _game.inputMode == INPUT_NONE) {
-				writePrompt();
+			} else if (_game.hasPrompt && _game.inputMode == INPUTMODE_NONE) {
+				_text->promptRedraw();
 				_game.hasPrompt = 0;
 			}
 
@@ -368,15 +409,15 @@ int AgiEngine::playGame() {
 
 			// Check if the user has asked to load a game from the command line
 			// or the launcher
-			if (firstLoop) {
+			if (_game.automaticRestoreGame) {
+				_game.automaticRestoreGame = false;
 				checkQuickLoad();
-				firstLoop = false;
 			}
 
-			setflag(fEnteredCli, false);
-			setflag(fSaidAcceptedInput, false);
-			_game.vars[vWordNotFound] = 0;
-			_game.vars[vKey] = 0;
+			setflag(VM_FLAG_ENTERED_CLI, false);
+			setflag(VM_FLAG_SAID_ACCEPTED_INPUT, false);
+			_game.vars[VM_VAR_WORD_NOT_FOUND] = 0;
+			_game.vars[VM_VAR_KEY] = 0;
 		}
 
 		if (shouldPerformAutoSave(_lastSaveTime)) {
@@ -393,6 +434,23 @@ int AgiEngine::playGame() {
 int AgiEngine::runGame() {
 	int ec = errOK;
 
+	// figure out the expected menu trigger for the current platform
+	// need to trigger the menu via mouse and via keyboard for platforms except PC
+	if (!(getFeatures() & GF_ESCPAUSE)) {
+		switch (getPlatform()) {
+		case Common::kPlatformAmiga:
+		case Common::kPlatformApple2GS:
+			_game.specialMenuTriggerKey = AGI_MENU_TRIGGER_APPLE2GS;
+			break;
+		case Common::kPlatformAtariST:
+			_game.specialMenuTriggerKey = AGI_MENU_TRIGGER_ATARIST;
+			break;
+		// Macintosh games seem to use ESC key just like PC versions do
+		default:
+			break;
+		}
+	}
+
 	// Execute the game
 	do {
 		debugC(2, kDebugLevelMain, "game loop");
@@ -402,61 +460,62 @@ int AgiEngine::runGame() {
 			break;
 
 		if (_restartGame) {
-			setflag(fRestartGame, true);
-			setvar(vTimeDelay, 2);	// "normal" speed
+			setflag(VM_FLAG_RESTART_GAME, true);
+			setVar(VM_VAR_TIME_DELAY, 2);	// "normal" speed
 			_restartGame = false;
 		}
 
 		// Set computer type (v20 i.e. vComputer) and sound type
 		switch (getPlatform()) {
 		case Common::kPlatformAtariST:
-			setvar(vComputer, kAgiComputerAtariST);
-			setvar(vSoundgen, kAgiSoundPC);
+			setVar(VM_VAR_COMPUTER, kAgiComputerAtariST);
+			setVar(VM_VAR_SOUNDGENERATOR, kAgiSoundPC);
 			break;
 		case Common::kPlatformAmiga:
 			if (getFeatures() & GF_OLDAMIGAV20)
-				setvar(vComputer, kAgiComputerAmigaOld);
+				setVar(VM_VAR_COMPUTER, kAgiComputerAmigaOld);
 			else
-				setvar(vComputer, kAgiComputerAmiga);
-			setvar(vSoundgen, kAgiSoundTandy);
+				setVar(VM_VAR_COMPUTER, kAgiComputerAmiga);
+			setVar(VM_VAR_SOUNDGENERATOR, kAgiSoundTandy);
 			break;
 		case Common::kPlatformApple2GS:
-			setvar(vComputer, kAgiComputerApple2GS);
+			setVar(VM_VAR_COMPUTER, kAgiComputerApple2GS);
 			if (getFeatures() & GF_2GSOLDSOUND)
-				setvar(vSoundgen, kAgiSound2GSOld);
+				setVar(VM_VAR_SOUNDGENERATOR, kAgiSound2GSOld);
 			else
-				setvar(vSoundgen, kAgiSoundTandy);
+				setVar(VM_VAR_SOUNDGENERATOR, kAgiSoundTandy);
 			break;
 		case Common::kPlatformDOS:
 		default:
-			setvar(vComputer, kAgiComputerPC);
-			setvar(vSoundgen, kAgiSoundPC);
+			setVar(VM_VAR_COMPUTER, kAgiComputerPC);
+			setVar(VM_VAR_SOUNDGENERATOR, kAgiSoundPC);
 			break;
 		}
 
 		// Set monitor type (v26 i.e. vMonitor)
 		switch (_renderMode) {
-		case Common::kRenderCGA:
-			setvar(vMonitor, kAgiMonitorCga);
+		case RENDERMODE_CGA:
+			setVar(VM_VAR_MONITOR, kAgiMonitorCga);
 			break;
-		case Common::kRenderHercG:
-		case Common::kRenderHercA:
-			setvar(vMonitor, kAgiMonitorHercules);
+		case RENDERMODE_HERCULES:
+			setVar(VM_VAR_MONITOR, kAgiMonitorHercules);
 			break;
 		// Don't know if Amiga AGI games use a different value than kAgiMonitorEga
 		// for vMonitor so I just use kAgiMonitorEga for them (As was done before too).
-		case Common::kRenderAmiga:
-		case Common::kRenderDefault:
-		case Common::kRenderEGA:
+		case RENDERMODE_AMIGA:
+		case RENDERMODE_APPLE_II_GS:
+		case RENDERMODE_ATARI_ST:
+		case RENDERMODE_EGA:
+		case RENDERMODE_VGA:
 		default:
-			setvar(vMonitor, kAgiMonitorEga);
+			setVar(VM_VAR_MONITOR, kAgiMonitorEga);
 			break;
 		}
 
-		setvar(vFreePages, 180); // Set amount of free memory to realistic value
-		setvar(vMaxInputChars, 38);
-		_game.inputMode = INPUT_NONE;
-		_game.inputEnabled = false;
+		setVar(VM_VAR_FREE_PAGES, 180); // Set amount of free memory to realistic value
+		setVar(VM_VAR_MAX_INPUT_CHARACTERS, 38);
+		_game.inputMode = INPUTMODE_NONE;
+		_text->promptDisable();
 		_game.hasPrompt = 0;
 
 		_game.state = STATE_RUNNING;

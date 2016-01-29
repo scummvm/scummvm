@@ -21,7 +21,6 @@
  */
 
 #include "common/md5.h"
-#include "common/events.h"
 #include "common/file.h"
 #include "common/memstream.h"
 #include "common/savefile.h"
@@ -42,9 +41,13 @@
 
 #include "agi/agi.h"
 #include "agi/graphics.h"
+#include "agi/inv.h"
 #include "agi/sprite.h"
+#include "agi/text.h"
 #include "agi/keyboard.h"
 #include "agi/menu.h"
+#include "agi/systemui.h"
+#include "agi/words.h"
 
 #include "gui/predictivedialog.h"
 
@@ -52,241 +55,6 @@ namespace Agi {
 
 void AgiEngine::allowSynthetic(bool allow) {
 	_allowSynthetic = allow;
-}
-
-void AgiEngine::processEvents() {
-	Common::Event event;
-	int key = 0;
-
-	while (_eventMan->pollEvent(event)) {
-		switch (event.type) {
-		case Common::EVENT_PREDICTIVE_DIALOG: {
-			GUI::PredictiveDialog _predictiveDialog;
-			_predictiveDialog.runModal();
-			strcpy(_predictiveResult, _predictiveDialog.getResult());
-			if (strcmp(_predictiveResult, "")) {
-				if (_game.inputMode == INPUT_NORMAL) {
-					strcpy((char *)_game.inputBuffer, _predictiveResult);
-					handleKeys(KEY_ENTER);
-				} else if (_game.inputMode == INPUT_GETSTRING) {
-					strcpy(_game.strings[_stringdata.str], _predictiveResult);
-					newInputMode(INPUT_NORMAL);
-					_gfx->printCharacter(_stringdata.x + strlen(_game.strings[_stringdata.str]) + 1,
-							_stringdata.y, ' ', _game.colorFg, _game.colorBg);
-				} else if (_game.inputMode == INPUT_NONE) {
-					for (int n = 0; _predictiveResult[n]; n++)
-						keyEnqueue(_predictiveResult[n]);
-				}
-			}
-			/*
-			if (predictiveDialog()) {
-				if (_game.inputMode == INPUT_NORMAL) {
-					strcpy((char *)_game.inputBuffer, _predictiveResult);
-					handleKeys(KEY_ENTER);
-				} else if (_game.inputMode == INPUT_GETSTRING) {
-					strcpy(_game.strings[_stringdata.str], _predictiveResult);
-					newInputMode(INPUT_NORMAL);
-					_gfx->printCharacter(_stringdata.x + strlen(_game.strings[_stringdata.str]) + 1,
-							_stringdata.y, ' ', _game.colorFg, _game.colorBg);
-				} else if (_game.inputMode == INPUT_NONE) {
-					for (int n = 0; _predictiveResult[n]; n++)
-						keyEnqueue(_predictiveResult[n]);
-				}
-			}
-			*/
-			}
-			break;
-		case Common::EVENT_LBUTTONDOWN:
-			if (_game.mouseEnabled) {
-				key = BUTTON_LEFT;
-				_mouse.button = kAgiMouseButtonLeft;
-				keyEnqueue(key);
-				_mouse.x = event.mouse.x;
-				_mouse.y = event.mouse.y;
-			}
-			break;
-		case Common::EVENT_RBUTTONDOWN:
-			if (_game.mouseEnabled) {
-				key = BUTTON_RIGHT;
-				_mouse.button = kAgiMouseButtonRight;
-				keyEnqueue(key);
-				_mouse.x = event.mouse.x;
-				_mouse.y = event.mouse.y;
-			}
-			break;
-		case Common::EVENT_WHEELUP:
-			if (_game.mouseEnabled) {
-				key = WHEEL_UP;
-				keyEnqueue(key);
-			}
-			break;
-		case Common::EVENT_WHEELDOWN:
-			if (_game.mouseEnabled) {
-				key = WHEEL_DOWN;
-				keyEnqueue(key);
-			}
-			break;
-		case Common::EVENT_MOUSEMOVE:
-			if (_game.mouseEnabled) {
-				_mouse.x = event.mouse.x;
-				_mouse.y = event.mouse.y;
-
-				if (!_game.mouseFence.isEmpty()) {
-					if (_mouse.x < _game.mouseFence.left)
-						_mouse.x = _game.mouseFence.left;
-					if (_mouse.x > _game.mouseFence.right)
-						_mouse.x = _game.mouseFence.right;
-					if (_mouse.y < _game.mouseFence.top)
-						_mouse.y = _game.mouseFence.top;
-					if (_mouse.y > _game.mouseFence.bottom)
-						_mouse.y = _game.mouseFence.bottom;
-
-					g_system->warpMouse(_mouse.x, _mouse.y);
-				}
-			}
-
-			break;
-		case Common::EVENT_LBUTTONUP:
-		case Common::EVENT_RBUTTONUP:
-			if (_game.mouseEnabled) {
-				_mouse.button = kAgiMouseButtonUp;
-				_mouse.x = event.mouse.x;
-				_mouse.y = event.mouse.y;
-			}
-			break;
-		case Common::EVENT_KEYDOWN:
-			if (event.kbd.hasFlags(Common::KBD_CTRL) && event.kbd.keycode == Common::KEYCODE_d) {
-				_console->attach();
-				break;
-			}
-
-			switch (key = event.kbd.keycode) {
-			case Common::KEYCODE_LEFT:
-			case Common::KEYCODE_KP4:
-				if (_allowSynthetic || !event.synthetic)
-					key = KEY_LEFT;
-				break;
-			case Common::KEYCODE_RIGHT:
-			case Common::KEYCODE_KP6:
-				if (_allowSynthetic || !event.synthetic)
-					key = KEY_RIGHT;
-				break;
-			case Common::KEYCODE_UP:
-			case Common::KEYCODE_KP8:
-				if (_allowSynthetic || !event.synthetic)
-					key = KEY_UP;
-				break;
-			case Common::KEYCODE_DOWN:
-			case Common::KEYCODE_KP2:
-				if (_allowSynthetic || !event.synthetic)
-					key = KEY_DOWN;
-				break;
-			case Common::KEYCODE_PAGEUP:
-			case Common::KEYCODE_KP9:
-				if (_allowSynthetic || !event.synthetic)
-					key = KEY_UP_RIGHT;
-				break;
-			case Common::KEYCODE_PAGEDOWN:
-			case Common::KEYCODE_KP3:
-				if (_allowSynthetic || !event.synthetic)
-					key = KEY_DOWN_RIGHT;
-				break;
-			case Common::KEYCODE_HOME:
-			case Common::KEYCODE_KP7:
-				if (_allowSynthetic || !event.synthetic)
-					key = KEY_UP_LEFT;
-				break;
-			case Common::KEYCODE_END:
-			case Common::KEYCODE_KP1:
-				if (_allowSynthetic || !event.synthetic)
-					key = KEY_DOWN_LEFT;
-				break;
-			case Common::KEYCODE_KP5:
-				key = KEY_STATIONARY;
-				break;
-			case Common::KEYCODE_PLUS:
-				key = '+';
-				break;
-			case Common::KEYCODE_MINUS:
-				key = '-';
-				break;
-			case Common::KEYCODE_TAB:
-				key = 0x0009;
-				break;
-			case Common::KEYCODE_F1:
-				key = 0x3b00;
-				break;
-			case Common::KEYCODE_F2:
-				key = 0x3c00;
-				break;
-			case Common::KEYCODE_F3:
-				key = 0x3d00;
-				break;
-			case Common::KEYCODE_F4:
-				key = 0x3e00;
-				break;
-			case Common::KEYCODE_F5:
-				key = 0x3f00;
-				break;
-			case Common::KEYCODE_F6:
-				key = 0x4000;
-				break;
-			case Common::KEYCODE_F7:
-				key = 0x4100;
-				break;
-			case Common::KEYCODE_F8:
-				key = 0x4200;
-				break;
-			case Common::KEYCODE_F9:
-				key = 0x4300;
-				break;
-			case Common::KEYCODE_F10:
-				key = 0x4400;
-				break;
-			case Common::KEYCODE_F11:
-				key = KEY_STATUSLN;
-				break;
-			case Common::KEYCODE_F12:
-				key = KEY_PRIORITY;
-				break;
-			case Common::KEYCODE_ESCAPE:
-				key = 0x1b;
-				break;
-			case Common::KEYCODE_RETURN:
-			case Common::KEYCODE_KP_ENTER:
-				key = KEY_ENTER;
-				break;
-			case Common::KEYCODE_BACKSPACE:
-				key = KEY_BACKSPACE;
-				break;
-			default:
-				// Not a special key, so get the ASCII code for it
-				key = event.kbd.ascii;
-
-				if (Common::isAlpha(key)) {
-					// Key is A-Z.
-					// Map Ctrl-A to 1, Ctrl-B to 2, etc.
-					if (event.kbd.flags & Common::KBD_CTRL) {
-						key = toupper(key) - 'A' + 1;
-					} else if (event.kbd.flags & Common::KBD_ALT) {
-						// Map Alt-A, Alt-B etc. to special scancode values according to an internal scancode table.
-						key = scancodeTable[toupper(key) - 'A'] << 8;
-					}
-				}
-				break;
-			}
-			if (key)
-				keyEnqueue(key);
-			break;
-
-		case Common::EVENT_KEYUP:
-			if (_egoHoldKey)
-				_game.viewTable[0].direction = 0;
-
-		default:
-			break;
-		}
-	}
 }
 
 void AgiEngine::pollTimer() {
@@ -305,24 +73,14 @@ void AgiEngine::pollTimer() {
 void AgiEngine::pause(uint32 msec) {
 	uint32 endTime = _system->getMillis() + msec;
 
-	_gfx->setCursor(_renderMode == Common::kRenderAmiga, true);
+	_gfx->setMouseCursor(true); // Busy mouse cursor
 
 	while (_system->getMillis() < endTime) {
 		processEvents();
 		_system->updateScreen();
 		_system->delayMillis(10);
 	}
-	_gfx->setCursor(_renderMode == Common::kRenderAmiga);
-}
-
-void AgiEngine::initPriTable() {
-	int i, p, y = 0;
-
-	for (p = 1; p < 15; p++) {
-		for (i = 0; i < 12; i++) {
-			_game.priTable[y++] = p < 4 ? 4 : p;
-		}
-	}
+	_gfx->setMouseCursor(); // regular mouse cursor
 }
 
 int AgiEngine::agiInit() {
@@ -341,7 +99,7 @@ int AgiEngine::agiInit() {
 		_game.vars[i] = 0;
 
 	// clear all resources and events
-	for (i = 0; i < MAX_DIRS; i++) {
+	for (i = 0; i < MAX_DIRECTORY_ENTRIES; i++) {
 		memset(&_game.views[i], 0, sizeof(struct AgiView));
 		memset(&_game.pictures[i], 0, sizeof(struct AgiPicture));
 		memset(&_game.logics[i], 0, sizeof(struct AgiLogic));
@@ -353,15 +111,17 @@ int AgiEngine::agiInit() {
 	}
 
 	// clear view table
-	for (i = 0; i < MAX_VIEWTABLE; i++)
-		memset(&_game.viewTable[i], 0, sizeof(struct VtEntry));
+	for (i = 0; i < SCREENOBJECTS_MAX; i++)
+		memset(&_game.screenObjTable[i], 0, sizeof(struct ScreenObjEntry));
 
-	initWords();
+	memset(&_game.addToPicView, 0, sizeof(struct ScreenObjEntry));
+
+	_words->clearEgoWords();
 
 	if (!_menu)
-		_menu = new Menu(this, _gfx, _picture);
+		_menu = new GfxMenu(this, _gfx, _picture, _text);
 
-	initPriTable();
+	_gfx->initPriorityTable();
 
 	// Clear the string buffer on startup, but not when the game restarts, as
 	// some scripts expect that the game strings remain unaffected after a
@@ -394,10 +154,6 @@ int AgiEngine::agiInit() {
 	if (getFeatures() & GF_AGDS)
 		_game.gameFlags |= ID_AGDS;
 
-	// Make the 256 color AGI screen the default AGI screen when AGI256 or AGI256-2 is used
-	if (getFeatures() & (GF_AGI256 | GF_AGI256_2))
-		_game.sbuf = _game.sbuf256c;
-
 	if (_game.gameFlags & ID_AMIGA)
 		debug(1, "Amiga padded game detected.");
 
@@ -413,12 +169,9 @@ int AgiEngine::agiInit() {
 	if (ec == errOK)
 		ec = _loader->loadWords(WORDS);
 
-	// FIXME: load IIgs instruments and samples
-	// load_instruments("kq.sys16");
-
 	// Load logic 0 into memory
 	if (ec == errOK)
-		ec = _loader->loadResource(rLOGIC, 0);
+		ec = _loader->loadResource(RESOURCETYPE_LOGIC, 0);
 
 #ifdef __DS__
 	// Normally, the engine loads the predictive text dictionary when the predictive dialog
@@ -443,42 +196,42 @@ void AgiEngine::agiUnloadResources() {
 	int i;
 
 	// Make sure logic 0 is always loaded
-	for (i = 1; i < MAX_DIRS; i++) {
-		_loader->unloadResource(rLOGIC, i);
+	for (i = 1; i < MAX_DIRECTORY_ENTRIES; i++) {
+		_loader->unloadResource(RESOURCETYPE_LOGIC, i);
 	}
-	for (i = 0; i < MAX_DIRS; i++) {
-		_loader->unloadResource(rVIEW, i);
-		_loader->unloadResource(rPICTURE, i);
-		_loader->unloadResource(rSOUND, i);
+	for (i = 0; i < MAX_DIRECTORY_ENTRIES; i++) {
+		_loader->unloadResource(RESOURCETYPE_VIEW, i);
+		_loader->unloadResource(RESOURCETYPE_PICTURE, i);
+		_loader->unloadResource(RESOURCETYPE_SOUND, i);
 	}
 }
 
 int AgiEngine::agiDeinit() {
 	int ec;
 
-	cleanInput();		// remove all words from memory
+	_words->clearEgoWords();		// remove all words from memory
 	agiUnloadResources();	// unload resources in memory
-	_loader->unloadResource(rLOGIC, 0);
+	_loader->unloadResource(RESOURCETYPE_LOGIC, 0);
 	ec = _loader->deinit();
 	unloadObjects();
-	unloadWords();
+	_words->unloadDictionary();
 
 	clearImageStack();
 
 	return ec;
 }
 
-int AgiEngine::agiLoadResource(int r, int n) {
+int AgiEngine::agiLoadResource(int16 resourceType, int16 resourceNr) {
 	int i;
 
-	i = _loader->loadResource(r, n);
+	i = _loader->loadResource(resourceType, resourceNr);
 
 	// WORKAROUND: Patches broken picture 147 in a corrupted Amiga version of Gold Rush! (v2.05 1989-03-09).
 	// The picture can be seen in room 147 after dropping through the outhouse's hole in room 146.
-	if (i == errOK && getGameID() == GID_GOLDRUSH && r == rPICTURE && n == 147 && _game.dirPic[n].len == 1982) {
-		uint8 *pic = _game.pictures[n].rdata;
-		Common::MemoryReadStream picStream(pic, _game.dirPic[n].len);
-		Common::String md5str = Common::computeStreamMD5AsString(picStream, _game.dirPic[n].len);
+	if (i == errOK && getGameID() == GID_GOLDRUSH && resourceType == RESOURCETYPE_PICTURE && resourceNr == 147 && _game.dirPic[resourceNr].len == 1982) {
+		uint8 *pic = _game.pictures[resourceNr].rdata;
+		Common::MemoryReadStream picStream(pic, _game.dirPic[resourceNr].len);
+		Common::String md5str = Common::computeStreamMD5AsString(picStream, _game.dirPic[resourceNr].len);
 		if (md5str == "1c685eb048656cedcee4eb6eca2cecea") {
 			pic[0x042] = 0x4B; // 0x49 -> 0x4B
 			pic[0x043] = 0x66; // 0x26 -> 0x66
@@ -492,8 +245,8 @@ int AgiEngine::agiLoadResource(int r, int n) {
 	return i;
 }
 
-int AgiEngine::agiUnloadResource(int r, int n) {
-	return _loader->unloadResource(r, n);
+int AgiEngine::agiUnloadResource(int16 resourceType, int16 resourceNr) {
+	return _loader->unloadResource(resourceType, resourceNr);
 }
 
 struct GameSettings {
@@ -510,7 +263,8 @@ AgiBase::AgiBase(OSystem *syst, const AGIGameDescription *gameDesc) : Engine(sys
 	_rnd = new Common::RandomSource("agi");
 	_sound = 0;
 
-	_fontData = NULL;
+	_fontData = nullptr;
+	_fontDataAllocated = nullptr;
 
 	initFeatures();
 	initVersion();
@@ -520,29 +274,418 @@ AgiBase::~AgiBase() {
 	delete _rnd;
 
 	delete _sound;
+
+	if (_fontDataAllocated) {
+		free(_fontDataAllocated);
+	}
 }
 
 void AgiBase::initRenderMode() {
-	_renderMode = Common::kRenderEGA;
+	Common::Platform platform = Common::parsePlatform(ConfMan.get("platform"));
+	Common::RenderMode configRenderMode = Common::parseRenderMode(ConfMan.get("render_mode").c_str());
 
-	if (ConfMan.hasKey("platform")) {
-		Common::Platform platform = Common::parsePlatform(ConfMan.get("platform"));
-		_renderMode = (platform == Common::kPlatformAmiga) ? Common::kRenderAmiga : Common::kRenderEGA;
+	// Default to EGA PC rendering
+	_renderMode = RENDERMODE_EGA;
+
+	switch (platform) {
+	case Common::kPlatformDOS:
+		switch (configRenderMode) {
+		case Common::kRenderCGA:
+			_renderMode = RENDERMODE_CGA;
+			break;
+		// Hercules is not supported atm
+		//case Common::kRenderHercA:
+		//case Common::kRenderHercG:
+		//	_renderMode = RENDERMODE_HERCULES;
+		//	break;
+		default:
+			break;
+		}
+		break;
+	case Common::kPlatformAmiga:
+		_renderMode = RENDERMODE_AMIGA;
+		break;
+	case Common::kPlatformApple2GS:
+		_renderMode = RENDERMODE_APPLE_II_GS;
+		break;
+	case Common::kPlatformAtariST:
+		_renderMode = RENDERMODE_ATARI_ST;
+		break;
+	default:
+		break;
 	}
 
-	if (ConfMan.hasKey("render_mode")) {
-		Common::RenderMode tmpMode = Common::parseRenderMode(ConfMan.get("render_mode").c_str());
-		if (tmpMode != Common::kRenderDefault)
-			_renderMode = tmpMode;
+	// If render mode is explicitly set, force rendermode
+	switch (configRenderMode) {
+	case Common::kRenderAmiga:
+		_renderMode = RENDERMODE_AMIGA;
+		break;
+	case Common::kRenderApple2GS:
+		_renderMode = RENDERMODE_APPLE_II_GS;
+		break;
+	case Common::kRenderAtariST:
+		_renderMode = RENDERMODE_ATARI_ST;
+		break;
+	default:
+		break;
 	}
+
+	if (getFeatures() & (GF_AGI256 | GF_AGI256_2)) {
+		// If current game is AGI256, switch (force) to VGA render mode
+		_renderMode = RENDERMODE_VGA;
+	}
+}
+
+void AgiBase::initFont() {
+	// We are currently using the custom font for all fanmade games
+	if (getFeatures() & (GF_FANMADE | GF_AGDS)) {
+		// fanmade game, use custom font for now
+		_fontData = fontData_FanGames; // our (own?) custom font, that supports umlauts etc.
+		return;
+	}
+
+	switch (_renderMode) {
+	case RENDERMODE_AMIGA:
+		loadFontAmigaPseudoTopaz();
+		//_fontData = fontData_Amiga; // use Amiga Topaz font
+		break;
+	case RENDERMODE_APPLE_II_GS:
+		// Special font, stored in file AGIFONT
+		loadFontAppleIIgs();
+		break;
+	case RENDERMODE_ATARI_ST:
+		// TODO: Atari ST uses another font
+		// Seems to be the standard Atari ST 8x8 system font
+
+	case RENDERMODE_CGA:
+	case RENDERMODE_EGA:
+	case RENDERMODE_VGA:
+		switch (getGameID()) {
+		case GID_MICKEY:
+			// load mickey mouse font from interpreter file
+			loadFontMickey();
+			break;
+		default:
+			break;
+		}
+		break;
+
+	default:
+		break;
+	}
+
+	if (!_fontData) {
+		// no font asigned?
+		switch (getGameID()) {
+		case GID_MICKEY:
+		case GID_TROLL:
+		case GID_WINNIE:
+			// use IBM font for pre-AGI games as standard
+			_fontData = fontData_IBM;
+			break;
+		default:
+			// for everything else use Sierra PC font
+			_fontData = fontData_Sierra;
+			break;
+		}
+	}
+}
+
+// We load the Mickey Mouse font from MICKEY.EXE
+void AgiBase::loadFontMickey() {
+	Common::File interpreterFile;
+	int32 interpreterFileSize = 0;
+	byte *fontData = nullptr;
+
+	if (!interpreterFile.open("mickey.exe")) {
+		// Continue, if file not found
+		return;
+	}
+
+	interpreterFileSize = interpreterFile.size();
+	if (interpreterFileSize != 55136) {
+		// unexpected file size
+		interpreterFile.close();
+		warning("mickey.exe unexpected file size");
+		return;
+	}
+	interpreterFile.seek(32476); // offset of font data
+
+	// allocate space for font bitmap data
+	fontData = (uint8 *)calloc(256, 8);
+	_fontData = fontData;
+	_fontDataAllocated = fontData;
+ 
+	// read font data, is already in the format that we need (plain bitmap 8x8)
+	interpreterFile.read(fontData, 256 * 8);
+	interpreterFile.close();
+}
+
+// we create a bitmap out of the topaz data used in parallaction (which is normally found in staticres.cpp)
+// it's a recreation of the Amiga Topaz font but not really accurate
+void AgiBase::loadFontAmigaPseudoTopaz() {
+	const byte *topazStart = fontData_AmigaPseudoTopaz + 32;
+	const byte *topazHeader = topazStart + 78;
+	const byte *topazData = nullptr;
+	const byte *topazLocations = nullptr;
+	byte *fontData = nullptr;
+	uint16 topazHeight = 0;
+	uint16 topazWidth = 0;
+	uint16 topazModulo = 0;
+	uint32 topazDataOffset = 0;
+	uint32 topazLocationOffset = 0;
+	byte   topazLowChar = 0;
+	byte   topazHighChar = 0;
+	uint16 topazTotalChars = 0;
+	uint16 topazBitLength = 0;
+	uint16 topazBitOffset = 0;
+	uint16 topazByteOffset = 0;
+
+	// allocate space for font bitmap data
+	fontData = (uint8 *)calloc(256, 8);
+	_fontData = fontData;
+	_fontDataAllocated = fontData;
+
+	topazHeight = READ_BE_UINT16(topazHeader + 0);
+	topazWidth = READ_BE_UINT16(topazHeader + 4);
+
+	// we expect 8x8
+	assert(topazHeight == 8);
+	assert(topazWidth == 8);
+
+	topazLowChar = topazHeader[12];
+	topazHighChar = topazHeader[13];
+	topazTotalChars = topazHighChar - topazLowChar + 1;
+	topazDataOffset = READ_BE_UINT32(topazHeader + 14);
+	topazModulo = READ_BE_UINT16(topazHeader + 18);
+	topazLocationOffset = READ_BE_UINT32(topazHeader + 20);
+
+	// Security checks
+	assert(topazLowChar == ' ');
+	assert(topazHighChar == 0xFF);
+
+	// copy first 32 characters over
+	memcpy(fontData, fontData_Sierra, FONT_DISPLAY_WIDTH * 32);
+	fontData += FONT_DISPLAY_WIDTH * 32;
+
+	// now actually convert from topaz data
+	topazData = topazStart + topazDataOffset;
+	topazLocations = topazStart + topazLocationOffset;
+
+	for (uint16 curChar = 0; curChar < topazTotalChars; curChar++) {
+		topazBitOffset = READ_BE_UINT16(topazLocations + (curChar * 4) + 0);
+		topazBitLength = READ_BE_UINT16(topazLocations + (curChar * 4) + 2);
+
+		if (topazBitLength == 8) {
+			assert((topazBitOffset & 7) == 0);
+
+			topazByteOffset = topazBitOffset >> 3;
+			for (uint16 curHeight = 0; curHeight < topazHeight; curHeight++) {
+				*fontData = topazData[topazByteOffset];
+				fontData++;
+				topazByteOffset += topazModulo;
+			}
+		} else {
+			memset(fontData, 0, 8);
+			fontData += 8;
+		}
+	}
+}
+
+void AgiBase::loadFontAppleIIgs() {
+	Common::File fontFile;
+	uint16 headerIIgs_OffsetMacHeader = 0;
+	uint16 headerIIgs_Version = 0;
+	uint16 macRecord_FirstChar = 0;
+	uint16 macRecord_LastChar = 0;
+	int16 macRecord_MaxKern = 0;
+	uint16 macRecord_RectHeight = 0;
+	uint16 macRecord_StrikeWidth = 0;
+	uint16 strikeDataLen = 0;
+	byte *strikeDataPtr = nullptr;
+	uint16 actualCharacterCount = 0;
+	uint16 totalCharacterCount = 0;
+	uint16 *locationTablePtr = nullptr;
+	uint16 *offsetWidthTablePtr = nullptr;
+
+	uint16 curCharNr = 0;
+	uint16 curRow = 0;
+	uint16 curLocation = 0;
+	uint16 curLocationBytes = 0;
+	uint16 curLocationBits = 0;
+	uint16 curCharOffsetWidth = 0;
+	uint16 curCharOffset = 0;
+	uint16 curCharWidth = 0;
+	uint16 curStrikeWidth = 0;
+
+	uint16 curPixelNr = 0;
+	uint16 curBitMask = 0;
+	int16 positionAdjust = 0;
+	byte curByte = 0;
+	byte fontByte = 0;
+
+	uint16 strikeRowOffset = 0;
+	uint16 strikeCurOffset = 0;
+
+	byte *fontData = nullptr;
+
+	if (!fontFile.open("agifont")) {
+		// Continue,
+		// This also happens when the user selected Apple IIgs as render for the palette for non-AppleIIgs games
+		warning("could not open agifont for Apple IIgs font");
+		return;
+	}
+
+	// Apple IIgs header
+	headerIIgs_OffsetMacHeader = fontFile.readUint16LE();
+	fontFile.skip(2); // font family
+	fontFile.skip(2); // font style
+	fontFile.skip(2); // point size
+	headerIIgs_Version = fontFile.readUint16LE();
+	fontFile.skip(2); // bounds type
+	// end of Apple IIgs header
+	// Macintosh font record
+	fontFile.skip(2); // font type
+	macRecord_FirstChar = fontFile.readUint16LE();
+	macRecord_LastChar = fontFile.readUint16LE();
+	fontFile.skip(2); // max width
+	macRecord_MaxKern = fontFile.readSint16LE();
+	fontFile.skip(2); // negative descent
+	fontFile.skip(2); // rect width
+	macRecord_RectHeight = fontFile.readUint16LE();
+	fontFile.skip(2); // low word ptr table
+	fontFile.skip(2); // font ascent
+	fontFile.skip(2); // font descent
+	fontFile.skip(2); // leading
+	macRecord_StrikeWidth = fontFile.readUint16LE();
+
+	// security-checks
+	if (headerIIgs_OffsetMacHeader != 6)
+		error("AppleIIgs-font: unexpected header");
+	if (headerIIgs_Version != 0x0101)
+		error("AppleIIgs-font: not a 1.1 font");
+	if ((macRecord_FirstChar != 0) || (macRecord_LastChar != 255))
+		error("AppleIIgs-font: unexpected characters");
+	if (macRecord_RectHeight != 8)
+		error("AppleIIgs-font: expected 8x8 font");
+
+	// Calculate table sizes
+	strikeDataLen = macRecord_StrikeWidth * macRecord_RectHeight * 2;
+	actualCharacterCount = (macRecord_LastChar - macRecord_FirstChar + 1);
+	totalCharacterCount = actualCharacterCount + 2; // replacement-char + extra character
+
+	// Allocate memory for tables
+	strikeDataPtr = (byte *)calloc(strikeDataLen, 1);
+	locationTablePtr = (uint16 *)calloc(totalCharacterCount, 2); // 1 word per character
+	offsetWidthTablePtr = (uint16 *)calloc(totalCharacterCount, 2); // ditto
+
+	// read tables
+	fontFile.read(strikeDataPtr, strikeDataLen);
+	for (curCharNr = 0; curCharNr < totalCharacterCount; curCharNr++) {
+		locationTablePtr[curCharNr] = fontFile.readUint16LE();
+	}
+	for (curCharNr = 0; curCharNr < totalCharacterCount; curCharNr++) {
+		offsetWidthTablePtr[curCharNr] = fontFile.readUint16LE();
+	}
+	fontFile.close();
+
+	// allocate space for font bitmap data
+	fontData = (uint8 *)calloc(256, 8);
+	_fontData = fontData;
+	_fontDataAllocated = fontData;
+
+	// extract font bitmap data
+	for (curCharNr = 0; curCharNr < actualCharacterCount; curCharNr++) {
+		curCharOffsetWidth = offsetWidthTablePtr[curCharNr];
+		curLocation = locationTablePtr[curCharNr];
+		if (curCharOffsetWidth == 0xFFFF) {
+			// character does not exist in font, use replacement character instead
+			curCharOffsetWidth = offsetWidthTablePtr[actualCharacterCount];
+			curLocation = locationTablePtr[actualCharacterCount];
+			curStrikeWidth = locationTablePtr[actualCharacterCount + 1] - curLocation;
+		} else {
+			curStrikeWidth = locationTablePtr[curCharNr + 1] - curLocation;
+		}
+
+		// Figure out bytes + bits location
+		curLocationBytes = curLocation >> 3;
+		curLocationBits = curLocation & 0x0007;
+		curCharWidth = curCharOffsetWidth & 0x00FF; // isolate width
+		curCharOffset = curCharOffsetWidth >> 8; // isolate offset
+
+		if (!curCharWidth) {
+			fontData += 8; // skip over this character
+			continue;
+		}
+
+		if (curCharWidth != 8) {
+			if (curCharNr != 0x3B)
+				error("AppleIIgs-font: expected 8x8 font");
+		}
+
+		// Get all rows of the current character
+		strikeRowOffset = 0;
+		for (curRow = 0; curRow < macRecord_RectHeight; curRow++) {
+			strikeCurOffset = strikeRowOffset + curLocationBytes;
+
+			// Copy over bits
+			fontByte = 0;
+			curByte = strikeDataPtr[strikeCurOffset];
+			curBitMask = 0x80 >> curLocationBits;
+
+			for (curPixelNr = 0; curPixelNr < curStrikeWidth; curPixelNr++) {
+				fontByte = fontByte << 1;
+				if (curByte & curBitMask) {
+					fontByte |= 0x01;
+				}
+				curBitMask = curBitMask >> 1;
+				if (!curBitMask) {
+					curByte = strikeDataPtr[strikeCurOffset + 1];
+					curBitMask = 0x80;
+				}
+			}
+
+			// adjust, so that it's aligned to the left (starting at 0x80 bit)
+			fontByte = fontByte << (8 - curStrikeWidth);
+
+			// now adjust according to offset + MaxKern
+			positionAdjust = macRecord_MaxKern + curCharOffset;
+
+			// adjust may be negative for space, or 8 for "empty" characters
+			if (positionAdjust > 8)
+				error("AppleIIgs-font: invalid character spacing");
+
+			if (positionAdjust < 0) {
+				// negative adjust strangely happens for empty characters like space
+				if (curStrikeWidth)
+					error("AppleIIgs-font: invalid character spacing");
+			}
+
+			if (positionAdjust > 0) {
+				// move the amount of pixels to the right
+				fontByte = fontByte >> positionAdjust;
+			}
+
+			*fontData = fontByte;
+			fontData++;
+
+			strikeRowOffset += macRecord_StrikeWidth * 2;
+		}
+	}
+
+	free(offsetWidthTablePtr);
+	free(locationTablePtr);
+	free(strikeDataPtr);
+
+	// overwrite character 0x1A with the standard Sierra arrow to the right character
+	// required for the original save/restore dialogs
+	memcpy(_fontDataAllocated + (0x1A * 8), fontData_ArrowRightCharacter, sizeof(fontData_ArrowRightCharacter));
 }
 
 AgiEngine::AgiEngine(OSystem *syst, const AGIGameDescription *gameDesc) : AgiBase(syst, gameDesc) {
 
 	// Setup mixer
 	syncSoundSettings();
-
-	parseFeatures();
 
 	DebugMan.addDebugChannel(kDebugLevelMain, "Main", "Generic debug level");
 	DebugMan.addDebugChannel(kDebugLevelResources, "Resources", "Resources debugging");
@@ -561,19 +704,20 @@ AgiEngine::AgiEngine(OSystem *syst, const AGIGameDescription *gameDesc) : AgiBas
 	memset(&_mouse, 0, sizeof(struct Mouse));
 
 	_game.mouseEnabled = true;
+	_game.mouseHidden = false;
+	// don't check for Amiga, Amiga doesn't allow disabling mouse support. It's mandatory.
 	if (!ConfMan.getBool("mousesupport")) {
 		// we effectively disable the mouse for games, that explicitly do not want mouse support to be enabled
 		_game.mouseEnabled = false;
+		_game.mouseHidden = true;
 	}
 
-	// We are currently using the custom font for all fanmade games
-	if (!(getFeatures() & (GF_FANMADE | GF_AGDS))) {
-		_fontData = fontData_Sierra; // original Sierra font
-	} else {
-		_fontData = fontData_FanGames; // our (own?) custom font, that supports umlauts etc.
-	}
+	_fontData = nullptr;
+	_fontDataAllocated = nullptr;
 
 	_game._vm = this;
+
+	_game.gfxMode = true;
 
 	_game.clockEnabled = false;
 	_game.state = STATE_INIT;
@@ -585,17 +729,13 @@ AgiEngine::AgiEngine(OSystem *syst, const AGIGameDescription *gameDesc) : AgiBas
 
 	_intobj = NULL;
 
-	_menu = NULL;
-	_menuSelected = false;
-
-	_lastSentence[0] = 0;
 	memset(&_stringdata, 0, sizeof(struct StringData));
 
 	_objects = NULL;
 
 	_restartGame = false;
 
-	_oldMode = INPUT_NONE;
+	_oldMode = INPUTMODE_NONE;
 
 	_firstSlot = 0;
 
@@ -609,16 +749,17 @@ AgiEngine::AgiEngine(OSystem *syst, const AGIGameDescription *gameDesc) : AgiBas
 	_lastTick = 0;
 
 	memset(_keyQueue, 0, sizeof(_keyQueue));
-	memset(_predictiveResult, 0, sizeof(_predictiveResult));
 
+	_text = NULL;
 	_sprites = NULL;
 	_picture = NULL;
 	_loader = NULL;
 	_console = NULL;
+	_menu = NULL;
+	_gfx = NULL;
+	_systemUI = NULL;
 
 	_egoHoldKey = false;
-
-
 }
 
 void AgiEngine::initialize() {
@@ -657,28 +798,27 @@ void AgiEngine::initialize() {
 	}
 
 	initRenderMode();
+	initFont();
 
-	_buttonStyle = AgiButtonStyle(_renderMode);
-	_defaultButtonStyle = AgiButtonStyle();
 	_console = new Console(this);
+	_words = new Words(this);
 	_gfx = new GfxMgr(this);
 	_sound = new SoundMgr(this, _mixer);
 	_picture = new PictureMgr(this, _gfx);
 	_sprites = new SpritesMgr(this, _gfx);
+	_text = new TextMgr(this, _words, _gfx);
+	_systemUI = new SystemUI(this, _gfx, _text);
+	_inventory = new InventoryMgr(this, _gfx, _text, _systemUI);
+
+	_text->init(_systemUI);
 
 	_gfx->initMachine();
 
 	_game.gameFlags = 0;
 
-	_game.colorFg = 15;
-	_game.colorBg = 0;
+	_text->charAttrib_Set(15, 0);
 
 	_game.name[0] = '\0';
-
-	_game.sbufOrig = (uint8 *)calloc(_WIDTH, _HEIGHT * 2); // Allocate space for two AGI screens vertically
-	_game.sbuf16c  = _game.sbufOrig + SBUF16_OFFSET; // Make sbuf16c point to the 16 color (+control line & priority info) AGI screen
-	_game.sbuf256c = _game.sbufOrig + SBUF256_OFFSET; // Make sbuf256c point to the 256 color AGI screen
-	_game.sbuf     = _game.sbuf16c; // Make sbuf point to the 16 color (+control line & priority info) AGI screen by default
 
 	_gfx->initVideo();
 
@@ -698,6 +838,30 @@ void AgiEngine::initialize() {
 	debugC(2, kDebugLevelMain, "Init sound");
 }
 
+bool AgiEngine::promptIsEnabled() {
+	return _text->promptIsEnabled();
+}
+
+void AgiEngine::redrawScreen() {
+	_game.gfxMode = true; // enable graphics mode
+	_gfx->setPalette(true); // set graphics mode palette
+	_text->charAttrib_Set(_text->_textAttrib.foreground, _text->_textAttrib.background);
+	_gfx->clearDisplay(0);
+	_picture->showPic();
+	_text->statusDraw();
+	_text->promptRedraw();
+}
+
+// Adjust a given coordinate to the local game screen
+// Used on mouse cursor coordinates before passing them to scripts
+void AgiEngine::adjustPosToGameScreen(int16 &x, int16 &y) {
+	x = x / 2; // 320 -> 160
+	y = y - 8; // remove status bar line
+	if (y >= SCRIPT_HEIGHT) {
+		y = SCRIPT_HEIGHT + 1; // 1 beyond
+	}
+}
+
 AgiEngine::~AgiEngine() {
 	// If the engine hasn't been initialized yet via
 	// AgiEngine::initialize(), don't attempt to free any resources, as
@@ -710,22 +874,25 @@ AgiEngine::~AgiEngine() {
 	agiDeinit();
 	delete _loader;
 	_gfx->deinitVideo();
+	delete _inventory;
+	delete _systemUI;
+	delete _text;
 	delete _sprites;
 	delete _picture;
-	free(_game.sbufOrig);
 	_gfx->deinitMachine();
 	delete _gfx;
+	delete _words;
 	delete _console;
 }
 
 Common::Error AgiBase::init() {
 
 	// Initialize backend
-	initGraphics(320, 200, false);
+	//initGraphics(320, 200, false);
 
 	initialize();
 
-	_gfx->gfxSetPalette();
+	_gfx->setPalette(true);
 
 	return Common::kNoError;
 }
@@ -747,74 +914,68 @@ Common::Error AgiEngine::go() {
 	return Common::kNoError;
 }
 
-void AgiEngine::parseFeatures() {
+// Scenes that need this:
+//
+// Manhunter 1:
+//  - intro text screen (DrawPic)
+//  - MAD "zooming in..." during intro and other scenes, for example room 124 (NewRoom)
+//     The NewRoom call is not done during the same cycle as the "zooming in..." print call.
+// Space Quest 1:
+//  - right at the start of the game (NewRoom)
+// Space Quest 2
+//  - right at the start of the game (NewRoom)
+//  - after exiting the very first room, a message pops up, that isn't readable without it (NewRoom)
 
-	/* FIXME: Seems this method doesn't really do anything. It might
-	   be a leftover that could be removed, except that some of its
-	   intended purpose may still need to be reimplemented.
 
-	[0:29] <Fingolfin> can you tell me what the point behind AgiEngine::parseFeatures() is?
-	[0:30] <_sev> when games are created with WAGI studio
-	[0:31] <_sev> it creates .wag site with game-specific features such as full game title, whether to use AGIMOUSE etc
-	[0:32] <Fingolfin> ... and the "features" config key is created by our detector based on the wag file, I guess?
-	[0:33] <_sev> yes
-	[0:33] <Fingolfin> it's just that I cant seem to find a place we do that
-	[0:33] <_sev> it is used for fallback
-	[0:34] <_sev> ah, perhaps it was not updated
-	[0:34] <Fingolfin> I only see us check the value, but never set it
-	[0:34] <Fingolfin> maybe I am grepping wrong, who knows :)
-	[0:44] <Fingolfin> _sev: so, unless I miss something, it seem that function does nothing right now
-	[0:45] <_sev> Fingolfin: it could be unfinished. It was part of GSoC 3 years ago
-	[0:45] <Fingolfin> well
-	[0:45] <_sev> I just don't remember
-	[0:45] <Fingolfin> but don't we just re-parse the wag when the game is loaded anyway?
-	[0:45] <_sev> but it documents the format
-	[0:45] <Fingolfin> the advanced meta engine would re-run the detector, wouldn't it?
-	[0:45] <_sev> yep
-	[0:47] <Fingolfin> so... shouldn't we at least add a comment to the function explaining what it does and that it's unfinished etc.? maybe add a TODO to the wiki?
-	[0:47] <Fingolfin> otherwise it might stay as it is for another 3 years :)
-	*/
+// Games, that must not be triggered:
+//
+// Fanmade Voodoo Girl:
+//  - waterfall (DrawPic, room 17)
+//  - inside shop (NewRoom, changes to same room every new button, room 4)
 
-	if (!ConfMan.hasKey("features"))
-		return;
+void AgiEngine::nonBlockingText_IsShown() {
+	_game.nonBlockingTextShown = true;
+	_game.nonBlockingTextCyclesLeft = 2; // 1 additional script cycle is counted too
+}
+void AgiEngine::nonBlockingText_Forget() {
+	_game.nonBlockingTextShown = false;
+	_game.nonBlockingTextCyclesLeft = 0;
+}
+void AgiEngine::nonBlockingText_CycleDone() {
+	if (_game.nonBlockingTextCyclesLeft) {
+		_game.nonBlockingTextCyclesLeft--;
 
-	char *features = strdup(ConfMan.get("features").c_str());
-	const char *feature[100];
-	int numFeatures = 0;
-
-	char *tok = strtok(features, " ");
-	if (tok) {
-		do {
-			feature[numFeatures++] = tok;
-		} while ((tok = strtok(NULL, " ")) != NULL);
-	} else {
-		feature[numFeatures++] = features;
+		if (!_game.nonBlockingTextCyclesLeft) {
+			// cycle count expired, we assume that non-blocking text won't be a problem for room / pic change
+			_game.nonBlockingTextShown = false;
+		}
 	}
+}
 
-	const struct Flags {
-		const char *name;
-		uint32 flag;
-	} flags[] = {
-		{ "agimouse", GF_AGIMOUSE },
-		{ "agds", GF_AGDS },
-		{ "agi256", GF_AGI256 },
-		{ "agi256-2", GF_AGI256_2 },
-		{ "agipal", GF_AGIPAL },
-		{ 0, 0 }
-	};
+void AgiEngine::loadingTrigger_NewRoom(int16 newRoomNr) {
+	if (_game.nonBlockingTextShown) {
+		_game.nonBlockingTextShown = false;
 
-	for (int i = 0; i < numFeatures; i++) {
-		for (const Flags *flag = flags; flag->name; flag++) {
-			if (!scumm_stricmp(feature[i], flag->name)) {
-				debug(2, "Added feature: %s", flag->name);
+		int16 curRoomNr = _game.vars[VM_VAR_CURRENT_ROOM];
 
-				setFeature(flag->flag);
-				break;
+		if (newRoomNr != curRoomNr) {
+			if (!_game.automaticRestoreGame) {
+				// wait a bit, we detected non-blocking text
+				pause(2000); // 2 seconds
 			}
 		}
 	}
+}
 
-	free(features);
+void AgiEngine::loadingTrigger_DrawPicture() {
+	if (_game.nonBlockingTextShown) {
+		_game.nonBlockingTextShown = false;
+
+		if (!_game.automaticRestoreGame) {
+			// wait a bit, we detected non-blocking text
+			pause(2000); // 2 seconds
+		}
+	}
 }
 
 } // End of namespace Agi

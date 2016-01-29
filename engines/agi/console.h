@@ -62,6 +62,12 @@ private:
 	bool Cmd_Cont(int argc, const char **argv);
 	bool Cmd_Room(int argc, const char **argv);
 	bool Cmd_BT(int argc, const char **argv);
+	bool Cmd_ShowMap(int argc, const char **argv);
+	bool Cmd_ScreenObj(int argc, const char **argv);
+	bool Cmd_VmVars(int argc, const char **argv);
+	bool Cmd_VmFlags(int argc, const char **argv);
+
+	bool parseInteger(const char *argument, int &result);
 
 private:
 	AgiEngine *_vm;

@@ -22,534 +22,456 @@
 
 #include "agi/agi.h"
 #include "agi/graphics.h"
+#include "agi/text.h"
 #include "agi/keyboard.h"
 #include "agi/menu.h"
 
 namespace Agi {
 
-// TODO: add constructor/destructor for agi_menu, agi_menu_option
-
-struct AgiMenuOption {
-	int enabled;			/**< option is enabled or disabled */
-	int event;			/**< menu event */
-	int index;			/**< number of option in this menu */
-	char *text;			/**< text of menu option */
-};
-
-struct AgiMenu {
-	MenuOptionList down;		/**< list head for menu options */
-	int index;			/**< number of menu in menubar */
-	int width;			/**< width of menu in characters */
-	int height;			/**< height of menu in characters */
-	int col;			/**< column of menubar entry */
-	int wincol;			/**< column of menu window */
-	char *text;			/**< menu name */
-};
-
-AgiMenu *Menu::getMenu(int i) {
-	MenuList::iterator iter;
-	for (iter = _menubar.begin(); iter != _menubar.end(); ++iter) {
-		AgiMenu *m = *iter;
-		if (m->index == i)
-			return m;
-	}
-	return NULL;
-}
-
-AgiMenuOption *Menu::getMenuOption(int i, int j) {
-	AgiMenu *m = getMenu(i);
-	MenuOptionList::iterator iter;
-
-	for (iter = m->down.begin(); iter != m->down.end(); ++iter) {
-		AgiMenuOption* d = *iter;
-		if (d->index == j)
-			return d;
-	}
-
-	return NULL;
-}
-
-void Menu::drawMenuBar() {
-	_vm->clearLines(0, 0, MENU_BG);
-	_vm->flushLines(0, 0);
-
-	MenuList::iterator iter;
-	for (iter = _menubar.begin(); iter != _menubar.end(); ++iter) {
-		AgiMenu *m = *iter;
-
-		_vm->printText(m->text, 0, m->col, 0, 40, MENU_FG, MENU_BG);
-	}
-
-}
-
-void Menu::drawMenuHilite(int curMenu) {
-	AgiMenu *m = getMenu(curMenu);
-
-	debugC(6, kDebugLevelMenu, "[%s]", m->text);
-
-	_vm->printText(m->text, 0, m->col, 0, 40, MENU_BG, MENU_FG);
-	_vm->flushLines(0, 0);
-}
-
-// draw box and pulldowns.
-void Menu::drawMenuOption(int hMenu) {
-	// find which vertical menu it is
-	AgiMenu *m = getMenu(hMenu);
-
-	_gfx->drawBox(m->wincol * CHAR_COLS, 1 * CHAR_LINES, (m->wincol + m->width + 2) * CHAR_COLS,
-			(1 + m->height + 2) * CHAR_LINES, MENU_BG, MENU_LINE, 0);
-
-	MenuOptionList::iterator iter;
-
-	for (iter = m->down.begin(); iter != m->down.end(); ++iter) {
-		AgiMenuOption* d = *iter;
-
-		_vm->printText(d->text, 0, m->wincol + 1, d->index + 2, m->width + 2,
-				MENU_FG, MENU_BG, !d->enabled);
-	}
-}
-
-void Menu::drawMenuOptionHilite(int hMenu, int vMenu) {
-	AgiMenu *m = getMenu(hMenu);
-	AgiMenuOption *d = getMenuOption(hMenu, vMenu);
-
-	// Disabled menu items are "greyed out" with a checkerboard effect,
-	// rather than having a different color. -- dsymonds
-	_vm->printText(d->text, 0, m->wincol + 1, vMenu + 2, m->width + 2,
-			MENU_BG, MENU_FG, !d->enabled);
-}
-
-void Menu::newMenuSelected(int i) {
-	_picture->showPic();
-	drawMenuBar();
-	drawMenuHilite(i);
-	drawMenuOption(i);
-}
-
-bool Menu::mouseOverText(int line, int col, char *s) {
-	if (_vm->_mouse.x < col * CHAR_COLS)
-		return false;
-
-	if (_vm->_mouse.x > (int)(col + strlen(s)) * CHAR_COLS)
-		return false;
-
-	if (_vm->_mouse.y < line * CHAR_LINES)
-		return false;
-
-	if (_vm->_mouse.y >= (line + 1) * CHAR_LINES)
-		return false;
-
-	return true;
-}
-
-#if 0
-static void add_about_option() {
-	const char *text = "About AGI engine";
-
-	agi_menu_option *d = new agi_menu_option;
-	d->text = strdup(text);
-	d->enabled = true;
-	d->event = 255;
-	d->index = (v_max_menu[0] += 1);
-
-	agi_menu *m = *menubar.begin();
-	m->down.push_back(d);
-	m->height++;
-	if (m->width < (int)strlen(text))
-		m->width = strlen(text);
-}
-#endif
-
-/*
- * Public functions
- */
-
-Menu::Menu(AgiEngine *vm, GfxMgr *gfx, PictureMgr *picture) {
+GfxMenu::GfxMenu(AgiEngine *vm, GfxMgr *gfx, PictureMgr *picture, TextMgr *text) {
 	_vm = vm;
 	_gfx = gfx;
 	_picture = picture;
-	_hIndex = 0;
-	_hCol = 1;
-	_hMaxMenu = 0;
-	_hCurMenu = 0;
-	_vCurMenu = 0;
+	_text = text;
+
+	_allowed = true;
+	_submitted = false;
+	_delayedExecute = false;
+
+	_setupMenuColumn = 1;
+	_setupMenuItemColumn = 1;
+
+	_selectedMenuNr = 0;
+	_selectedMenuHeight = 0;
+	_selectedMenuWidth = 0;
+	_selectedMenuRow = 0;
+	_selectedMenuColumn = 0;
 }
 
-Menu::~Menu() {
-	MenuList::iterator iterh;
-	for (iterh = _menubar.reverse_begin(); iterh != _menubar.end(); ) {
-		AgiMenu *m = *iterh;
+GfxMenu::~GfxMenu() {
+	for (GuiMenuArray::iterator itemIter = _array.begin(); itemIter != _array.end(); ++itemIter)
+		delete *itemIter;
+	_array.clear();
 
-		debugC(3, kDebugLevelMenu, "deiniting hmenu %s", m->text);
-
-		MenuOptionList::iterator iterv;
-
-		for (iterv = m->down.reverse_begin(); iterv != m->down.end(); ) {
-			AgiMenuOption *d = *iterv;
-
-			debugC(3, kDebugLevelMenu, "  deiniting vmenu %s", d->text);
-
-			free(d->text);
-			delete d;
-
-			iterv = m->down.reverse_erase(iterv);
-		}
-		free(m->text);
-		delete m;
-
-		iterh = _menubar.reverse_erase(iterh);
-	}
+	for (GuiMenuItemArray::iterator menuIter = _itemArray.begin(); menuIter != _itemArray.end(); ++menuIter)
+		delete *menuIter;
+	_itemArray.clear();
 }
 
-void Menu::add(const char *s) {
-	AgiMenu *m = new AgiMenu;
-	m->text = strdup(s);
+void GfxMenu::addMenu(const char *menuText) {
+	// already submitted? in that case no further changes possible
+	if (_submitted)
+		return;
 
-	while (m->text[strlen(m->text) - 1] == ' ')
-		m->text[strlen(m->text) - 1] = 0;
+	GuiMenuEntry *menuEntry = new GuiMenuEntry();
 
-	m->width = 0;
-	m->height = 0;
-	m->index = _hIndex++;
-	m->col = _hCol;
-	m->wincol = _hCol - 1;
-	_vIndex = 0;
-	_vMaxMenu[m->index] = 0;
-	_hCol += strlen(m->text) + 1;
-	_hMaxMenu = m->index;
+	menuEntry->text = menuText;
+	menuEntry->textLen = menuEntry->text.size();
+	menuEntry->row = 0;
+	menuEntry->column = _setupMenuColumn;
+	menuEntry->itemCount = 0;
+	menuEntry->firstItemNr = _itemArray.size();
+	menuEntry->selectedItemNr = menuEntry->firstItemNr;
+	menuEntry->maxItemTextLen = 0;
+	_array.push_back(menuEntry);
 
-	debugC(3, kDebugLevelMenu, "add menu: '%s' %02x", s, m->text[strlen(m->text)]);
-	_menubar.push_back(m);
+	_setupMenuColumn += menuEntry->textLen + 1;
 }
 
-void Menu::addItem(const char *s, int code) {
-	int l;
+void GfxMenu::addMenuItem(const char *menuItemText, uint16 controllerSlot) {
+	int16 arrayCount = _array.size();
 
-	AgiMenuOption* d = new AgiMenuOption;
+	// already submitted? in that case no further changes possible
+	if (_submitted)
+		return;
 
-	d->text = strdup(s);
-	d->enabled = true;
-	d->event = code;
-	d->index = _vIndex++;
+	if (arrayCount == 0)
+		error("tried to add a menu item before adding an actual menu");
 
-	// add to last menu in list
-	assert(_menubar.reverse_begin() != _menubar.end());
-	AgiMenu *m = *_menubar.reverse_begin();
-	m->height++;
+	// go to latest menu entry
+	GuiMenuEntry *curMenuEntry = _array.back();
 
-	_vMaxMenu[m->index] = d->index;
+	GuiMenuItemEntry *menuItemEntry = new GuiMenuItemEntry();
 
-	l = strlen(d->text);
-	if (l > 40)
-		l = 38;
-	if (m->wincol + l > 38)
-		m->wincol = 38 - l;
-	if (l > m->width)
-		m->width = l;
+	menuItemEntry->enabled = true;
+	menuItemEntry->text = menuItemText;
+	menuItemEntry->textLen = menuItemEntry->text.size();
+	menuItemEntry->controllerSlot = controllerSlot;
 
-	debugC(3, kDebugLevelMenu, "Adding menu item: %s (size = %d)", s, m->height);
-
-	m->down.push_back(d);
-}
-
-void Menu::submit() {
-	debugC(3, kDebugLevelMenu, "Submitting menu");
-
-	// add_about_option ();
-
-	// If a menu has no options, delete it
-	MenuList::iterator iter;
-	for (iter = _menubar.reverse_begin(); iter != _menubar.end(); ) {
-		AgiMenu *m = *iter;
-
-		if (m->down.empty()) {
-			free(m->text);
-			delete m;
-
-			_hMaxMenu--;
-
-			iter = _menubar.reverse_erase(iter);
-		} else {
-			--iter;
-		}
-	}
-}
-
-bool Menu::keyhandler(int key) {
-	static int clockVal;
-	static int menuActive = false;
-	static int buttonUsed = 0;
-	bool exitMenu = false;
-
-	if (!_vm->getflag(fMenusWork) && !(_vm->getFeatures() & GF_MENUS))
-		return false;
-
-	if (!menuActive) {
-		clockVal = _vm->_game.clockEnabled;
-		_vm->_game.clockEnabled = false;
-		drawMenuBar();
+	// Original interpreter on PC used the length of the first item for drawing
+	// At least in KQ2 on Apple IIgs follow-up items are longer, which would result in graphic glitches.
+	// That's why we remember the longest item and draw according to that
+	if (curMenuEntry->maxItemTextLen < menuItemEntry->textLen) {
+		curMenuEntry->maxItemTextLen = menuItemEntry->textLen;
 	}
 
-	// Mouse handling
-	if (_vm->_mouse.button) {
-		int hmenu, vmenu;
-
-		buttonUsed = 1;	// Button has been used at least once
-
-		if (_vm->_mouse.y <= CHAR_LINES) {
-			// on the menubar
-			hmenu = 0;
-
-			MenuList::iterator iterh;
-
-			for (iterh = _menubar.begin(); iterh != _menubar.end(); ++iterh) {
-				AgiMenu *m = *iterh;
-
-				if (mouseOverText(0, m->col, m->text)) {
-					break;
-				} else {
-					hmenu++;
-				}
-			}
-
-			if (hmenu <= _hMaxMenu) {
-				if (_hCurMenu != hmenu) {
-					_vCurMenu = -1;
-					newMenuSelected(hmenu);
-				}
-				_hCurMenu = hmenu;
-			}
+	if (curMenuEntry->itemCount == 0) {
+		// for first menu item of menu calculated column
+		if (menuItemEntry->textLen + curMenuEntry->column < (FONT_COLUMN_CHARACTERS - 1)) {
+			_setupMenuItemColumn = curMenuEntry->column;
 		} else {
-			// not in menubar
-			vmenu = 0;
-
-			AgiMenu *m = getMenu(_hCurMenu);
-
-			MenuOptionList::iterator iterv;
-
-			for (iterv = m->down.begin(); iterv != m->down.end(); ++iterv) {
-				AgiMenuOption *do1 = *iterv;
-
-				if (mouseOverText(2 + do1->index, m->wincol + 1, do1->text)) {
-					break;
-				} else {
-					vmenu++;
-				}
-			}
-
-			if (vmenu <= _vMaxMenu[_hCurMenu]) {
-				if (_vCurMenu != vmenu) {
-					drawMenuOption(_hCurMenu);
-					drawMenuOptionHilite(_hCurMenu, vmenu);
-				}
-				_vCurMenu = vmenu;
-			}
+			_setupMenuItemColumn = ( FONT_COLUMN_CHARACTERS - 1 ) - menuItemEntry->textLen;
 		}
-	} else if (buttonUsed) {
-		// Button released
-		buttonUsed = 0;
+	}
 
-		debugC(6, kDebugLevelMenu | kDebugLevelInput, "button released!");
+	menuItemEntry->row = 2 + curMenuEntry->itemCount;
+	menuItemEntry->column = _setupMenuItemColumn;
 
-		if (_vCurMenu < 0)
-			_vCurMenu = 0;
+	_itemArray.push_back(menuItemEntry);
 
-		drawMenuOptionHilite(_hCurMenu, _vCurMenu);
+	curMenuEntry->itemCount++;
+}
 
-		if (_vm->_mouse.y <= CHAR_LINES) {
-			// on the menubar
-		} else {
-			// see which option we selected
-			AgiMenu *m = getMenu(_hCurMenu);
-			MenuOptionList::iterator iterv;
+void GfxMenu::submit() {
+	GuiMenuEntry *menuEntry = nullptr;
+	GuiMenuItemEntry *menuItemEntry = nullptr;
+	int16 menuCount = _array.size();
+	int16 menuNr = 0;
+	int16 menuItemNr = 0;
+	int16 menuItemLastNr = 0;
 
-			for (iterv = m->down.begin(); iterv != m->down.end(); ++iterv) {
-				AgiMenuOption *d = *iterv;
+	if ((_array.size() == 0) || (_itemArray.size() == 0))
+		return;
 
-				if (mouseOverText(2 + d->index, m->wincol + 1, d->text)) {
-					// activate that option
-					if (d->enabled) {
-						debugC(6, kDebugLevelMenu | kDebugLevelInput, "event %d registered", d->event);
-						_vm->_game.controllerOccured[d->event] = true;
-						_vm->_menuSelected = true;
-						break;
+	_submitted = true;
+
+	// WORKAROUND: For Apple II gs we try to fix the menu text
+	// On this platform it seems a system font was used and the menu was drawn differently (probably system menu?)
+	// Still the text was misaligned anyway, but it looks worse in our (the original PC) implementation
+	// Atari ST SQ1 had one bad menu entry as well, we fix that too.
+	switch (_vm->getPlatform()) {
+	case Common::kPlatformApple2GS:
+	case Common::kPlatformAtariST:
+		// Go through all menus
+		for (menuNr = 0; menuNr < menuCount; menuNr++) {
+			menuEntry = _array[menuNr];
+			menuItemLastNr = menuEntry->firstItemNr + menuEntry->itemCount;
+
+			// Go through all items of current menu
+			for (menuItemNr = menuEntry->firstItemNr; menuItemNr < menuItemLastNr; menuItemNr++) {
+				menuItemEntry = _itemArray[menuItemNr];
+
+				if (menuItemEntry->textLen < menuEntry->maxItemTextLen) {
+					// current item text is shorter than the maximum?
+					int16 missingCharCount = menuEntry->maxItemTextLen - menuItemEntry->textLen;
+
+					if (menuItemEntry->text.contains('>')) {
+						// text contains '>', we now try to find a '<'
+						// and then add spaces in case this item is shorter than the first item
+						int16 textPos = menuItemEntry->textLen - 1;
+
+						while (textPos > 0) {
+							if (menuItemEntry->text[textPos] == '<')
+								break;
+							textPos--;
+						}
+
+						if (textPos > 0) {
+							while (missingCharCount) {
+								menuItemEntry->text.insertChar(' ', textPos);
+								missingCharCount--;
+							}
+						}
+					} else {
+						// Also check if text consists only of '-', which is the separator
+						// These were sometimes also too small
+						int16 separatorCount = 0;
+						int16 charPos = 0;
+
+						while (charPos < menuItemEntry->textLen) {
+							if (menuItemEntry->text[charPos] != '-')
+								break;
+							separatorCount++;
+							charPos++;
+						}
+
+						if (separatorCount == menuItemEntry->textLen) {
+							// Separator detected
+							while (missingCharCount) {
+								menuItemEntry->text.insertChar('-', 0);
+								missingCharCount--;
+							}
+						} else {
+							// Append spaces to the end to fill it up
+							int16 textPos = menuItemEntry->textLen;
+							while (missingCharCount) {
+								menuItemEntry->text.insertChar(' ', textPos);
+								textPos++;
+								missingCharCount--;
+							}
+						}
 					}
+
+					menuItemEntry->textLen = menuItemEntry->text.size();
 				}
 			}
-			exitMenu = true;
 		}
-	}
-
-	if (!exitMenu) {
-		if (!menuActive) {
-			if (_hCurMenu >= 0) {
-				drawMenuHilite(_hCurMenu);
-				drawMenuOption(_hCurMenu);
-				if (!buttonUsed && _vCurMenu >= 0)
-					drawMenuOptionHilite(_hCurMenu, _vCurMenu);
-			}
-			menuActive = true;
-		}
-
-		switch (key) {
-		case KEY_ESCAPE:
-			debugC(6, kDebugLevelMenu | kDebugLevelInput, "KEY_ESCAPE");
-			exitMenu = true;
-			break;
-		case KEY_ENTER:
-		{
-			debugC(6, kDebugLevelMenu | kDebugLevelInput, "KEY_ENTER");
-			AgiMenuOption* d = getMenuOption(_hCurMenu, _vCurMenu);
-
-			if (d->enabled) {
-				debugC(6, kDebugLevelMenu | kDebugLevelInput, "event %d registered", d->event);
-				_vm->_game.controllerOccured[d->event] = true;
-				_vm->_menuSelected = true;
-				exitMenu = true;
-			}
-			break;
-		}
-		case KEY_DOWN:
-		case KEY_UP:
-			_vCurMenu += key == KEY_DOWN ? 1 : -1;
-
-			if (_vCurMenu < 0)
-				_vCurMenu = _vMaxMenu[_hCurMenu];
-			if (_vCurMenu > _vMaxMenu[_hCurMenu])
-				_vCurMenu = 0;
-
-			drawMenuOption(_hCurMenu);
-			drawMenuOptionHilite(_hCurMenu, _vCurMenu);
-			break;
-		case KEY_RIGHT:
-		case KEY_LEFT:
-			_hCurMenu += key == KEY_RIGHT ? 1 : -1;
-
-			if (_hCurMenu < 0)
-				_hCurMenu = _hMaxMenu;
-			if (_hCurMenu > _hMaxMenu)
-				_hCurMenu = 0;
-
-			_vCurMenu = 0;
-			newMenuSelected(_hCurMenu);
-			drawMenuOptionHilite(_hCurMenu, _vCurMenu);
-			break;
-		}
-	}
-
-	if (exitMenu) {
-		buttonUsed = 0;
-		_picture->showPic();
-		_vm->writeStatus();
-
-		_vm->setvar(vKey, 0);
-		_vm->_game.keypress = 0;
-		_vm->_game.clockEnabled = clockVal;
-		_vm->oldInputMode();
-
-		debugC(3, kDebugLevelMenu, "exit_menu: input mode reset to %d", _vm->_game.inputMode);
-		menuActive = false;
-	}
-
-	return true;
-}
-
-void Menu::setItem(int event, int state) {
-	// scan all menus for event number #
-
-	debugC(6, kDebugLevelMenu, "event = %d, state = %d", event, state);
-	MenuList::iterator iterh;
-
-	for (iterh = _menubar.begin(); iterh != _menubar.end(); ++iterh) {
-		AgiMenu *m = *iterh;
-		MenuOptionList::iterator iterv;
-
-		for (iterv = m->down.begin(); iterv != m->down.end(); ++iterv) {
-			AgiMenuOption *d = *iterv;
-
-			if (d->event == event) {
-				d->enabled = state;
-				// keep going; we need to set the state of every menu item
-				// with this event code. -- dsymonds
-			}
-		}
+		break;
+	default:
+		break;
 	}
 }
 
-void Menu::enableAll() {
-	MenuList::iterator iterh;
-	for (iterh = _menubar.begin(); iterh != _menubar.end(); ++iterh) {
-		AgiMenu *m = *iterh;
-		MenuOptionList::iterator iterv;
+void GfxMenu::itemEnable(uint16 controllerSlot) {
+	itemEnableDisable(controllerSlot, true);
+}
 
-		for (iterv = m->down.begin(); iterv != m->down.end(); ++iterv) {
-			AgiMenuOption *d = *iterv;
+void GfxMenu::itemDisable(uint16 controllerSlot) {
+	itemEnableDisable(controllerSlot, false);
+}
 
-			d->enabled = true;
+void GfxMenu::itemEnableDisable(uint16 controllerSlot, bool enabled) {
+	GuiMenuItemArray::iterator listIterator;
+	GuiMenuItemArray::iterator listEnd = _itemArray.end();
+	GuiMenuItemEntry *menuItemEntry;
+
+	listIterator = _itemArray.begin();
+	while (listIterator != listEnd) {
+		menuItemEntry = *listIterator;
+		if (menuItemEntry->controllerSlot == controllerSlot) {
+			menuItemEntry->enabled = enabled;
 		}
+
+		listIterator++;
 	}
 }
 
+void GfxMenu::itemEnableAll() {
+	GuiMenuItemArray::iterator listIterator;
+	GuiMenuItemArray::iterator listEnd = _itemArray.end();
+	GuiMenuItemEntry *menuItemEntry;
 
-AgiTextColor AgiButtonStyle::getColor(bool hasFocus, bool pressed, bool positive) const {
-	if (_amigaStyle) {
-		if (positive) {
-			if (pressed) { // Positive pressed Amiga-style button
-				if (_olderAgi) {
-					return AgiTextColor(amigaBlack, amigaOrange);
-				} else {
-					return AgiTextColor(amigaBlack, amigaPurple);
-				}
-			} else { // Positive unpressed Amiga-style button
-				return AgiTextColor(amigaWhite, amigaGreen);
-			}
-		} else { // _amigaStyle && !positive
-			if (pressed) { // Negative pressed Amiga-style button
-				return AgiTextColor(amigaBlack, amigaCyan);
-			} else { // Negative unpressed Amiga-style button
-				return AgiTextColor(amigaWhite, amigaRed);
-			}
-		}
-	} else { // PC-style button
-		if (hasFocus || pressed) { // A pressed or in focus PC-style button
-			return AgiTextColor(pcWhite, pcBlack);
-		} else { // An unpressed PC-style button without focus
-			return AgiTextColor(pcBlack, pcWhite);
-		}
+	listIterator = _itemArray.begin();
+	while (listIterator != listEnd) {
+		menuItemEntry = *listIterator;
+		menuItemEntry->enabled = true;
+
+		listIterator++;
 	}
 }
 
-AgiTextColor AgiButtonStyle::getColor(bool hasFocus, bool pressed, int baseFgColor, int baseBgColor) const {
-	return getColor(hasFocus, pressed, AgiTextColor(baseFgColor, baseBgColor));
+// return true, in case a menu was actually created and submitted by the scripts
+bool GfxMenu::isAvailable() {
+	return _submitted;
 }
 
-AgiTextColor AgiButtonStyle::getColor(bool hasFocus, bool pressed, const AgiTextColor &baseColor) const {
-	if (hasFocus || pressed)
-		return baseColor.swap();
-	else
-		return baseColor;
+void GfxMenu::accessAllow() {
+	_allowed = true;
 }
 
-int AgiButtonStyle::getTextOffset(bool hasFocus, bool pressed) const {
-	return (pressed && !_amigaStyle) ? 1 : 0;
+void GfxMenu::accessDeny() {
+	_allowed = false;
 }
 
-bool AgiButtonStyle::getBorder(bool hasFocus, bool pressed) const {
-	return _amigaStyle && !_authenticAmiga && (hasFocus || pressed);
+void GfxMenu::delayedExecute() {
+	_delayedExecute = true;
 }
 
-void AgiButtonStyle::setAmigaStyle(bool amigaStyle, bool olderAgi, bool authenticAmiga) {
-	_amigaStyle		= amigaStyle;
-	_olderAgi		= olderAgi;
-	_authenticAmiga	= authenticAmiga;
+bool GfxMenu::delayedExecuteActive() {
+	return _delayedExecute;
 }
 
-void AgiButtonStyle::setPcStyle(bool pcStyle) {
-	setAmigaStyle(!pcStyle);
+void GfxMenu::execute() {
+	_delayedExecute = false;
+
+	// got submitted? -> safety check
+	if (!_submitted)
+		return;
+
+	// access allowed at the moment?
+	if (!_allowed)
+		return;
+
+	_text->charPos_Push();
+	_text->charAttrib_Push();
+	_text->clearLine(0, _text->calculateTextBackground(15));
+
+	// Draw all menus
+	for (uint16 menuNr = 0; menuNr < _array.size(); menuNr++) {
+		drawMenuName(menuNr, false);
+	}
+	drawActiveMenu();
+
+	_vm->cycleInnerLoopActive(CYCLE_INNERLOOP_MENU);
+	do {
+		_vm->mainCycle();
+	} while (_vm->cycleInnerLoopIsActive() && !(_vm->shouldQuit() || _vm->_restartGame));
+
+	removeActiveMenu();
+
+	_text->charAttrib_Pop();
+	_text->charPos_Pop();
+
+	// Restore status line
+	if (_text->statusEnabled()) {
+		_text->statusDraw();
+	} else {
+		_text->clearLine(0, 0);
+	}
 }
 
-AgiButtonStyle::AgiButtonStyle(Common::RenderMode renderMode) {
-	setAmigaStyle(renderMode == Common::kRenderAmiga);
+void GfxMenu::drawMenuName(int16 menuNr, bool inverted) {
+	GuiMenuEntry *menuEntry = _array[menuNr];
+	bool disabledLook = false;
+
+	if (!inverted) {
+		_text->charAttrib_Set(0, _text->calculateTextBackground(15));
+	} else {
+		_text->charAttrib_Set(15, _text->calculateTextBackground(0));
+	}
+
+	_text->charPos_Set(menuEntry->row, menuEntry->column);
+
+	if (menuEntry->itemCount == 0)
+		disabledLook = true;
+
+	_text->displayText(menuEntry->text.c_str(), disabledLook);
+}
+
+void GfxMenu::drawItemName(int16 itemNr, bool inverted) {
+	GuiMenuItemEntry *itemEntry = _itemArray[itemNr];
+	bool disabledLook = false;
+
+	if (!inverted) {
+		_text->charAttrib_Set(0, _text->calculateTextBackground(15));
+	} else {
+		_text->charAttrib_Set(15, _text->calculateTextBackground(0));
+	}
+
+	_text->charPos_Set(itemEntry->row, itemEntry->column);
+
+	if (itemEntry->enabled == false)
+		disabledLook = true;
+
+	_text->displayText(itemEntry->text.c_str(), disabledLook);
+}
+
+void GfxMenu::drawActiveMenu() {
+	GuiMenuEntry *menuEntry = _array[_selectedMenuNr];
+	GuiMenuItemEntry *itemEntry = _itemArray[menuEntry->firstItemNr];
+	int16 itemNr = menuEntry->firstItemNr;
+	int16 itemCount = menuEntry->itemCount;
+	
+	// draw menu name as inverted
+	drawMenuName(_selectedMenuNr, true);
+
+	// calculate active menu dimensions
+	_selectedMenuHeight = (menuEntry->itemCount + 2) * FONT_VISUAL_HEIGHT;
+	_selectedMenuWidth  = (menuEntry->maxItemTextLen * FONT_VISUAL_WIDTH) + 8;
+	_selectedMenuRow    = (menuEntry->itemCount + 3 - _text->getWindowRowMin()) * FONT_VISUAL_HEIGHT - 1;
+	_selectedMenuColumn = (itemEntry->column - 1) * FONT_VISUAL_WIDTH;
+
+	_gfx->drawBox(_selectedMenuColumn, _selectedMenuRow, _selectedMenuWidth, _selectedMenuHeight, 15, 0);
+
+	while (itemCount) {
+		if (itemNr == menuEntry->selectedItemNr) {
+			drawItemName(itemNr, true);
+		} else {
+			drawItemName(itemNr, false);
+		}
+		itemNr++;
+		itemCount--;
+	}
+}
+
+void GfxMenu::removeActiveMenu() {
+	// draw menu name normally again
+	drawMenuName(_selectedMenuNr, false);
+
+	// overwrite actual menu items by rendering play screen
+	_gfx->render_Block(_selectedMenuColumn, _selectedMenuRow, _selectedMenuWidth, _selectedMenuHeight);
+}
+
+void GfxMenu::charPress(int16 newChar) {
+	GuiMenuEntry *menuEntry = _array[_selectedMenuNr];
+	GuiMenuItemEntry *itemEntry = _itemArray[menuEntry->selectedItemNr];
+	int16 newMenuNr = _selectedMenuNr;
+	int16 newItemNr = menuEntry->selectedItemNr;
+
+	switch (newChar) {
+	case AGI_KEY_ENTER:
+		// check, if current item is actually enabled
+		if (!itemEntry->enabled)
+			return;
+
+		// Trigger controller
+		_vm->_game.controllerOccured[itemEntry->controllerSlot] = true;
+
+		_vm->cycleInnerLoopInactive(); // exit execute-loop
+		break;
+	case AGI_KEY_ESCAPE:
+		_vm->cycleInnerLoopInactive(); // exit execute-loop
+		break;
+
+	// these here change menu item
+	case AGI_KEY_UP:
+		newItemNr--;
+		break;
+	case AGI_KEY_DOWN:
+		newItemNr++;
+		break;
+	case AGI_KEY_PAGE_UP:
+		// select first item of current menu
+		newItemNr = menuEntry->firstItemNr;
+		break;
+	case AGI_KEY_PAGE_DOWN:
+		// select last item of current menu
+		newItemNr = menuEntry->firstItemNr + menuEntry->itemCount - 1;
+		break;
+
+	case AGI_KEY_LEFT:
+		newMenuNr--;
+		break;
+	case AGI_KEY_RIGHT:
+		newMenuNr++;
+		break;
+	case AGI_KEY_HOME:
+		// select first menu
+		newMenuNr = 0;
+		break;
+	case AGI_KEY_END:
+		// select last menu
+		newMenuNr = _array.size() - 1;
+		break;
+
+	default:
+		break;
+	}
+
+	if (newMenuNr != _selectedMenuNr) {
+		// selected menu was changed
+		int16 lastMenuNr = _array.size() - 1;
+
+		if (newMenuNr < 0) {
+			newMenuNr = lastMenuNr;
+		} else if (newMenuNr > lastMenuNr) {
+			newMenuNr = 0;
+		}
+
+		if (newMenuNr != _selectedMenuNr) {
+			removeActiveMenu();
+			_selectedMenuNr = newMenuNr;
+			drawActiveMenu();
+		}
+	}
+
+	if (newItemNr != menuEntry->selectedItemNr) {
+		// selected item was changed
+		int16 lastItemNr = menuEntry->firstItemNr + menuEntry->itemCount - 1;
+
+		if (newItemNr < menuEntry->firstItemNr) {
+			newItemNr = lastItemNr;
+		} else if (newItemNr > lastItemNr) {
+			newItemNr = menuEntry->firstItemNr;
+		}
+
+		if (newItemNr != menuEntry->selectedItemNr) {
+			// still changed after clip -> draw changes
+			drawItemName(menuEntry->selectedItemNr, false);
+			drawItemName(newItemNr, true);
+			menuEntry->selectedItemNr = newItemNr;
+		}
+	}
 }
 
 } // End of namespace Agi

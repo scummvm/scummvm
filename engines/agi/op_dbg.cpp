@@ -93,7 +93,7 @@ void AgiEngine::debugConsole(int lognum, int mode, const char *str) {
 			if (*c == 'n') {
 				debugN(0, "%d", *(code + (ip + z)));
 			} else {
-				debugN(0, "v%d[%d]", *(code + (ip + z)), getvar(*(code + (ip + z))));
+				debugN(0, "v%d[%d]", *(code + (ip + z)), getVar(*(code + (ip + z))));
 			}
 			c++;
 			z++;

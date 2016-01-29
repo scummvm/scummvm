@@ -192,16 +192,16 @@ void WinnieEngine::randomize() {
 void WinnieEngine::intro() {
 	drawPic(IDS_WTP_FILE_LOGO);
 	printStr(IDS_WTP_INTRO_0);
-	_gfx->doUpdate();
+	g_system->updateScreen();
 	_system->delayMillis(0x640);
 
 	if (getPlatform() == Common::kPlatformAmiga)
-		_gfx->clearScreen(0);
+		_gfx->clearDisplay(0);
 
 	drawPic(IDS_WTP_FILE_TITLE);
 
 	printStr(IDS_WTP_INTRO_1);
-	_gfx->doUpdate();
+	g_system->updateScreen();
 	_system->delayMillis(0x640);
 
 	if (!playSound(IDI_WTP_SND_POOH_0))
@@ -452,7 +452,7 @@ int WinnieEngine::parser(int pc, int index, uint8 *buffer) {
 
 		if (iBlock == 1)
 			return IDI_WTP_PAR_OK;
-		_gfx->doUpdate();
+		g_system->updateScreen();
 	}
 
 	return IDI_WTP_PAR_OK;
@@ -477,7 +477,7 @@ void WinnieEngine::inventory() {
 	Common::String missing = Common::String::format(IDS_WTP_INVENTORY_1, _gameStateWinnie.nObjMiss);
 
 	drawStr(IDI_WTP_ROW_OPTION_4, IDI_WTP_COL_MENU, IDA_DEFAULT, missing.c_str());
-	_gfx->doUpdate();
+	g_system->updateScreen();
 	getSelection(kSelAnyKey);
 }
 
@@ -755,7 +755,7 @@ void WinnieEngine::drawMenu(char *szMenu, int iSel, int fCanSel[]) {
 		break;
 	}
 	drawStr(iRow, iCol - 1, IDA_DEFAULT, ">");
-	_gfx->doUpdate();
+	g_system->updateScreen();
 }
 
 void WinnieEngine::incMenuSel(int *iSel, int fCanSel[]) {
@@ -821,15 +821,16 @@ void WinnieEngine::getMenuSel(char *szMenu, int *iSel, int fCanSel[]) {
 
 				// Change cursor
 				if (fCanSel[IDI_WTP_SEL_NORTH] && hotspotNorth.contains(event.mouse.x, event.mouse.y)) {
-					_gfx->setCursorPalette(true);
+					//_gfx->setCursorPalette(true);
+					// ????
 				} else if (fCanSel[IDI_WTP_SEL_SOUTH] && hotspotSouth.contains(event.mouse.x, event.mouse.y)) {
-					_gfx->setCursorPalette(true);
+					//_gfx->setCursorPalette(true);
 				} else if (fCanSel[IDI_WTP_SEL_WEST] && hotspotWest.contains(event.mouse.x, event.mouse.y)) {
-					_gfx->setCursorPalette(true);
+					//_gfx->setCursorPalette(true);
 				} else if (fCanSel[IDI_WTP_SEL_EAST] && hotspotEast.contains(event.mouse.x, event.mouse.y)) {
-					_gfx->setCursorPalette(true);
+					//_gfx->setCursorPalette(true);
 				} else {
-					_gfx->setCursorPalette(false);
+					//_gfx->setCursorPalette(false);
 				}
 
 				break;
@@ -838,25 +839,30 @@ void WinnieEngine::getMenuSel(char *szMenu, int *iSel, int fCanSel[]) {
 				if (fCanSel[IDI_WTP_SEL_NORTH] && hotspotNorth.contains(event.mouse.x, event.mouse.y)) {
 					*iSel = IDI_WTP_SEL_NORTH;
 					makeSel(iSel, fCanSel);
-					_gfx->setCursorPalette(false);
+					//_gfx->setCursorPalette(false);
+					// TODO???
 					return;
 				} else if (fCanSel[IDI_WTP_SEL_SOUTH] && hotspotSouth.contains(event.mouse.x, event.mouse.y)) {
 					*iSel = IDI_WTP_SEL_SOUTH;
 					makeSel(iSel, fCanSel);
-					_gfx->setCursorPalette(false);
+					//_gfx->setCursorPalette(false);
+					// TODO???
 					return;
 				} else if (fCanSel[IDI_WTP_SEL_WEST] && hotspotWest.contains(event.mouse.x, event.mouse.y)) {
 					*iSel = IDI_WTP_SEL_WEST;
 					makeSel(iSel, fCanSel);
-					_gfx->setCursorPalette(false);
+					//_gfx->setCursorPalette(false);
+					// TODO???
 					return;
 				} else if (fCanSel[IDI_WTP_SEL_EAST] && hotspotEast.contains(event.mouse.x, event.mouse.y)) {
 					*iSel = IDI_WTP_SEL_EAST;
 					makeSel(iSel, fCanSel);
-					_gfx->setCursorPalette(false);
+					//_gfx->setCursorPalette(false);
+					// TODO???
 					return;
 				} else {
-					_gfx->setCursorPalette(false);
+					//_gfx->setCursorPalette(false);
+					// TODO???
 				}
 
 				switch (*iSel) {
@@ -941,7 +947,7 @@ void WinnieEngine::getMenuSel(char *szMenu, int *iSel, int fCanSel[]) {
 					break;
 				case Common::KEYCODE_s:
 					if (event.kbd.flags & Common::KBD_CTRL) {
-						flipflag(fSoundOn);
+						flipflag(VM_FLAG_SOUND_ON);
 					} else {
 						*iSel = IDI_WTP_SEL_SOUTH;
 						makeSel(iSel, fCanSel);
@@ -1016,7 +1022,7 @@ void WinnieEngine::gameLoop() {
 
 			readRoom(_room, roomdata, hdr);
 			drawRoomPic();
-			_gfx->doUpdate();
+			g_system->updateScreen();
 			decodePhase = 1;
 		}
 
@@ -1102,7 +1108,7 @@ void WinnieEngine::drawRoomPic() {
 	int iObj = getObjInRoom(_room);
 
 	// clear gfx screen
-	_gfx->clearScreen(0);
+	_gfx->clearDisplay(0);
 
 	// read room picture
 	readRoom(_room, buffer, roomhdr);
@@ -1175,7 +1181,8 @@ void WinnieEngine::clrMenuSel(int *iSel, int fCanSel[]) {
 	while (!fCanSel[*iSel]) {
 		*iSel += 1;
 	}
-	_gfx->setCursorPalette(false);
+	//_gfx->setCursorPalette(false);
+	// TODO???
 }
 
 void WinnieEngine::printRoomStr(int iRoom, int iStr) {
@@ -1335,7 +1342,7 @@ void WinnieEngine::init() {
 	}
 
 	_sound = new SoundMgr(this, _mixer);
-	setflag(fSoundOn, true); // enable sound
+	setflag(VM_FLAG_SOUND_ON, true); // enable sound
 
 	memset(&_gameStateWinnie, 0, sizeof(_gameStateWinnie));
 	_gameStateWinnie.fSound = 1;
