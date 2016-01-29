@@ -861,14 +861,12 @@ void cmdSetSimple(AgiGame *state, uint8 *parameter) {
 		state->automaticSave = false;
 
 		// Try to get description for automatic saves
-//		if (state->strings_curLogic->texts && state->_curLogic->numTexts >= textNr) {
-			textPtr = state->strings[stringNr];
-			strncpy(state->automaticSaveDescription, textPtr, sizeof(state->automaticSaveDescription));
-			if (state->automaticSaveDescription[0]) {
-				// We got it and it's set, so enable automatic saving
-				state->automaticSave = true;
-			}
-//		}
+		textPtr = state->strings[stringNr];
+		strncpy(state->automaticSaveDescription, textPtr, sizeof(state->automaticSaveDescription));
+		if (state->automaticSaveDescription[0]) {
+			// We got it and it's set, so enable automatic saving
+			state->automaticSave = true;
+		}
 
 	} else { // AGI256 and AGI256-2 use this unknown170 command to load 256 color pictures.
 		// Load the picture. Similar to void cmdLoad_pic(AgiGame *state, uint8 *p).
