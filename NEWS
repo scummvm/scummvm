@@ -23,6 +23,12 @@ For a more comprehensive changelog of the latest experimental code, see:
  SDL:
    - Alt-x no longer quits ScummVM on platforms exhibiting this behavior
      before. A notable example is our Windows port.
+   - On POSIX systems we now follow the XDG Base Directory Specification for
+     placement of files for users. This effectively results in new locations
+     for our configuration file, our log file, and our default savegame path.
+     We still support our previous locations. As long as they are present, we
+     continue to use them. Please refer to the README for the new locations.
+     File locations on Mac OS X are not affected by this change.
 
  3 Skulls of the Toltecs:
    - Improved AdLib music support.
