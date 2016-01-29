@@ -89,12 +89,14 @@ private:
 	int calculateMenuWidth(MenuItem *menu);
 	void calcMenuBounds(MenuItem *menu);
 	void renderSubmenu(MenuItem *menu);
-	MenuItem *createCommandsMenu();
+	void regenCommandsMenu();
+	void createCommandsMenu(MenuItem *menu);
 	void createWeaponsMenu(MenuItem *menu);
 	void executeCommand(MenuSubItem *subitem);
 
 	Common::Array<MenuItem *> _items;
 	MenuItem *_weapons;
+	MenuItem *_commands;
 
 	const Graphics::Font *_font;
 

@@ -144,8 +144,9 @@ Menu::Menu(Gui *gui) : _gui(gui) {
 		_items[m->menunum]->subitems.push_back(new MenuSubItem(m->title, m->action, 0, m->shortcut, m->enabled));
 	}
 
-	MenuItem *commands = createCommandsMenu();
-	_items.push_back(commands);
+	_commands = new MenuItem(_gui->_engine->_world->_commandsMenuName.c_str());
+	_items.push_back(_commands);
+	regenCommandsMenu();
 
 	if (!_gui->_engine->_world->_weaponMenuDisabled) {
 		_weapons = new MenuItem(_gui->_engine->_world->_weaponsMenuName.c_str());
@@ -194,8 +195,17 @@ Menu::~Menu() {
 	}
 }
 
-MenuItem *Menu::createCommandsMenu() {
-	MenuItem *menu = new MenuItem(_gui->_engine->_world->_commandsMenuName.c_str());
+void Menu::regenCommandsMenu() {
+	for (int j = 0; j < _commands->subitems.size(); j++)
+		delete _commands->subitems[j];
+
+	_commands->subitems.clear();
+
+	createWeaponsMenu(_commands);
+	calcMenuBounds(_commands);
+}
+
+void Menu::createCommandsMenu(MenuItem *menu) {
 	Common::String string(_gui->_engine->_world->_commandsMenu);
 
 	Common::String item;
@@ -259,8 +269,6 @@ MenuItem *Menu::createCommandsMenu() {
 
 		item = "";
 	}
-
-	return menu;
 }
 
 void Menu::regenWeaponsMenu() {
