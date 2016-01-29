@@ -40,6 +40,7 @@
 #include "audio/mixer.h"
 
 #include "agi/agi.h"
+#include "agi/font.h"
 #include "agi/graphics.h"
 #include "agi/inv.h"
 #include "agi/sprite.h"
@@ -263,9 +264,6 @@ AgiBase::AgiBase(OSystem *syst, const AGIGameDescription *gameDesc) : Engine(sys
 	_rnd = new Common::RandomSource("agi");
 	_sound = 0;
 
-	_fontData = nullptr;
-	_fontDataAllocated = nullptr;
-
 	initFeatures();
 	initVersion();
 }
@@ -274,8 +272,6 @@ AgiBase::~AgiBase() {
 	delete _rnd;
 
 	delete _sound;
-
-	free(_fontDataAllocated);
 }
 
 void AgiBase::initRenderMode() {
@@ -334,351 +330,8 @@ void AgiBase::initRenderMode() {
 	}
 }
 
-void AgiBase::initFont() {
-	// We are currently using the custom font for all fanmade games
-	if (getFeatures() & (GF_FANMADE | GF_AGDS)) {
-		// fanmade game, use custom font for now
-		_fontData = fontData_FanGames; // our (own?) custom font, that supports umlauts etc.
-		return;
-	}
-
-	switch (_renderMode) {
-	case Common::kRenderAmiga:
-		loadFontAmigaPseudoTopaz();
-		//_fontData = fontData_Amiga; // use Amiga Topaz font
-		break;
-	case Common::kRenderApple2GS:
-		// Special font, stored in file AGIFONT
-		loadFontAppleIIgs();
-		break;
-	case Common::kRenderAtariST:
-		// TODO: Atari ST uses another font
-		// Seems to be the standard Atari ST 8x8 system font
-
-	case Common::kRenderCGA:
-	case Common::kRenderEGA:
-	case Common::kRenderVGA:
-		switch (getGameID()) {
-		case GID_MICKEY:
-			// load mickey mouse font from interpreter file
-			loadFontMickey();
-			break;
-		default:
-			break;
-		}
-		break;
-
-	default:
-		break;
-	}
-
-	if (!_fontData) {
-		// no font asigned?
-		switch (getGameID()) {
-		case GID_MICKEY:
-		case GID_TROLL:
-		case GID_WINNIE:
-			// use IBM font for pre-AGI games as standard
-			_fontData = fontData_IBM;
-			break;
-		default:
-			// for everything else use Sierra PC font
-			_fontData = fontData_Sierra;
-			break;
-		}
-	}
-}
-
-// We load the Mickey Mouse font from MICKEY.EXE
-void AgiBase::loadFontMickey() {
-	Common::File interpreterFile;
-	int32 interpreterFileSize = 0;
-	byte *fontData = nullptr;
-
-	if (!interpreterFile.open("mickey.exe")) {
-		// Continue, if file not found
-		warning("Could not open file 'mickey.exe' for Mickey Mouse font");
-		return;
-	}
-
-	interpreterFileSize = interpreterFile.size();
-	if (interpreterFileSize != 55136) {
-		// unexpected file size
-		interpreterFile.close();
-		warning("File 'mickey.exe': unexpected file size");
-		return;
-	}
-	interpreterFile.seek(32476); // offset of font data
-
-	// allocate space for font bitmap data
-	fontData = (uint8 *)calloc(256, 8);
-	_fontData = fontData;
-	_fontDataAllocated = fontData;
- 
-	// read font data, is already in the format that we need (plain bitmap 8x8)
-	interpreterFile.read(fontData, 256 * 8);
-	interpreterFile.close();
-}
-
-// we create a bitmap out of the topaz data used in parallaction (which is normally found in staticres.cpp)
-// it's a recreation of the Amiga Topaz font but not really accurate
-void AgiBase::loadFontAmigaPseudoTopaz() {
-	const byte *topazStart = fontData_AmigaPseudoTopaz + 32;
-	const byte *topazHeader = topazStart + 78;
-	const byte *topazData = nullptr;
-	const byte *topazLocations = nullptr;
-	byte *fontData = nullptr;
-	uint16 topazHeight = 0;
-	uint16 topazWidth = 0;
-	uint16 topazModulo = 0;
-	uint32 topazDataOffset = 0;
-	uint32 topazLocationOffset = 0;
-	byte   topazLowChar = 0;
-	byte   topazHighChar = 0;
-	uint16 topazTotalChars = 0;
-	uint16 topazBitLength = 0;
-	uint16 topazBitOffset = 0;
-	uint16 topazByteOffset = 0;
-
-	// allocate space for font bitmap data
-	fontData = (uint8 *)calloc(256, 8);
-	_fontData = fontData;
-	_fontDataAllocated = fontData;
-
-	topazHeight = READ_BE_UINT16(topazHeader + 0);
-	topazWidth = READ_BE_UINT16(topazHeader + 4);
-
-	// we expect 8x8
-	assert(topazHeight == 8);
-	assert(topazWidth == 8);
-
-	topazLowChar = topazHeader[12];
-	topazHighChar = topazHeader[13];
-	topazTotalChars = topazHighChar - topazLowChar + 1;
-	topazDataOffset = READ_BE_UINT32(topazHeader + 14);
-	topazModulo = READ_BE_UINT16(topazHeader + 18);
-	topazLocationOffset = READ_BE_UINT32(topazHeader + 20);
-
-	// Security checks
-	assert(topazLowChar == ' ');
-	assert(topazHighChar == 0xFF);
-
-	// copy first 32 characters over
-	memcpy(fontData, fontData_Sierra, FONT_DISPLAY_WIDTH * 32);
-	fontData += FONT_DISPLAY_WIDTH * 32;
-
-	// now actually convert from topaz data
-	topazData = topazStart + topazDataOffset;
-	topazLocations = topazStart + topazLocationOffset;
-
-	for (uint16 curChar = 0; curChar < topazTotalChars; curChar++) {
-		topazBitOffset = READ_BE_UINT16(topazLocations + (curChar * 4) + 0);
-		topazBitLength = READ_BE_UINT16(topazLocations + (curChar * 4) + 2);
-
-		if (topazBitLength == 8) {
-			assert((topazBitOffset & 7) == 0);
-
-			topazByteOffset = topazBitOffset >> 3;
-			for (uint16 curHeight = 0; curHeight < topazHeight; curHeight++) {
-				*fontData = topazData[topazByteOffset];
-				fontData++;
-				topazByteOffset += topazModulo;
-			}
-		} else {
-			memset(fontData, 0, 8);
-			fontData += 8;
-		}
-	}
-}
-
-void AgiBase::loadFontAppleIIgs() {
-	Common::File fontFile;
-	uint16 headerIIgs_OffsetMacHeader = 0;
-	uint16 headerIIgs_Version = 0;
-	uint16 macRecord_FirstChar = 0;
-	uint16 macRecord_LastChar = 0;
-	int16 macRecord_MaxKern = 0;
-	uint16 macRecord_RectHeight = 0;
-	uint16 macRecord_StrikeWidth = 0;
-	uint16 strikeDataLen = 0;
-	byte *strikeDataPtr = nullptr;
-	uint16 actualCharacterCount = 0;
-	uint16 totalCharacterCount = 0;
-	uint16 *locationTablePtr = nullptr;
-	uint16 *offsetWidthTablePtr = nullptr;
-
-	uint16 curCharNr = 0;
-	uint16 curRow = 0;
-	uint16 curLocation = 0;
-	uint16 curLocationBytes = 0;
-	uint16 curLocationBits = 0;
-	uint16 curCharOffsetWidth = 0;
-	uint16 curCharOffset = 0;
-	uint16 curCharWidth = 0;
-	uint16 curStrikeWidth = 0;
-
-	uint16 curPixelNr = 0;
-	uint16 curBitMask = 0;
-	int16 positionAdjust = 0;
-	byte curByte = 0;
-	byte fontByte = 0;
-
-	uint16 strikeRowOffset = 0;
-	uint16 strikeCurOffset = 0;
-
-	byte *fontData = nullptr;
-
-	if (!fontFile.open("agifont")) {
-		// Continue,
-		// This also happens when the user selected Apple IIgs as render for the palette for non-AppleIIgs games
-		warning("Could not open file 'agifont' for Apple IIgs font");
-		return;
-	}
-
-	// Apple IIgs header
-	headerIIgs_OffsetMacHeader = fontFile.readUint16LE();
-	fontFile.skip(2); // font family
-	fontFile.skip(2); // font style
-	fontFile.skip(2); // point size
-	headerIIgs_Version = fontFile.readUint16LE();
-	fontFile.skip(2); // bounds type
-	// end of Apple IIgs header
-	// Macintosh font record
-	fontFile.skip(2); // font type
-	macRecord_FirstChar = fontFile.readUint16LE();
-	macRecord_LastChar = fontFile.readUint16LE();
-	fontFile.skip(2); // max width
-	macRecord_MaxKern = fontFile.readSint16LE();
-	fontFile.skip(2); // negative descent
-	fontFile.skip(2); // rect width
-	macRecord_RectHeight = fontFile.readUint16LE();
-	fontFile.skip(2); // low word ptr table
-	fontFile.skip(2); // font ascent
-	fontFile.skip(2); // font descent
-	fontFile.skip(2); // leading
-	macRecord_StrikeWidth = fontFile.readUint16LE();
-
-	// security-checks
-	if (headerIIgs_OffsetMacHeader != 6)
-		error("AppleIIgs-font: unexpected header");
-	if (headerIIgs_Version != 0x0101)
-		error("AppleIIgs-font: not a 1.1 font");
-	if ((macRecord_FirstChar != 0) || (macRecord_LastChar != 255))
-		error("AppleIIgs-font: unexpected characters");
-	if (macRecord_RectHeight != 8)
-		error("AppleIIgs-font: expected 8x8 font");
-
-	// Calculate table sizes
-	strikeDataLen = macRecord_StrikeWidth * macRecord_RectHeight * 2;
-	actualCharacterCount = (macRecord_LastChar - macRecord_FirstChar + 1);
-	totalCharacterCount = actualCharacterCount + 2; // replacement-char + extra character
-
-	// Allocate memory for tables
-	strikeDataPtr = (byte *)calloc(strikeDataLen, 1);
-	locationTablePtr = (uint16 *)calloc(totalCharacterCount, 2); // 1 word per character
-	offsetWidthTablePtr = (uint16 *)calloc(totalCharacterCount, 2); // ditto
-
-	// read tables
-	fontFile.read(strikeDataPtr, strikeDataLen);
-	for (curCharNr = 0; curCharNr < totalCharacterCount; curCharNr++) {
-		locationTablePtr[curCharNr] = fontFile.readUint16LE();
-	}
-	for (curCharNr = 0; curCharNr < totalCharacterCount; curCharNr++) {
-		offsetWidthTablePtr[curCharNr] = fontFile.readUint16LE();
-	}
-	fontFile.close();
-
-	// allocate space for font bitmap data
-	fontData = (uint8 *)calloc(256, 8);
-	_fontData = fontData;
-	_fontDataAllocated = fontData;
-
-	// extract font bitmap data
-	for (curCharNr = 0; curCharNr < actualCharacterCount; curCharNr++) {
-		curCharOffsetWidth = offsetWidthTablePtr[curCharNr];
-		curLocation = locationTablePtr[curCharNr];
-		if (curCharOffsetWidth == 0xFFFF) {
-			// character does not exist in font, use replacement character instead
-			curCharOffsetWidth = offsetWidthTablePtr[actualCharacterCount];
-			curLocation = locationTablePtr[actualCharacterCount];
-			curStrikeWidth = locationTablePtr[actualCharacterCount + 1] - curLocation;
-		} else {
-			curStrikeWidth = locationTablePtr[curCharNr + 1] - curLocation;
-		}
-
-		// Figure out bytes + bits location
-		curLocationBytes = curLocation >> 3;
-		curLocationBits = curLocation & 0x0007;
-		curCharWidth = curCharOffsetWidth & 0x00FF; // isolate width
-		curCharOffset = curCharOffsetWidth >> 8; // isolate offset
-
-		if (!curCharWidth) {
-			fontData += 8; // skip over this character
-			continue;
-		}
-
-		if (curCharWidth != 8) {
-			if (curCharNr != 0x3B)
-				error("AppleIIgs-font: expected 8x8 font");
-		}
-
-		// Get all rows of the current character
-		strikeRowOffset = 0;
-		for (curRow = 0; curRow < macRecord_RectHeight; curRow++) {
-			strikeCurOffset = strikeRowOffset + curLocationBytes;
-
-			// Copy over bits
-			fontByte = 0;
-			curByte = strikeDataPtr[strikeCurOffset];
-			curBitMask = 0x80 >> curLocationBits;
-
-			for (curPixelNr = 0; curPixelNr < curStrikeWidth; curPixelNr++) {
-				fontByte = fontByte << 1;
-				if (curByte & curBitMask) {
-					fontByte |= 0x01;
-				}
-				curBitMask = curBitMask >> 1;
-				if (!curBitMask) {
-					curByte = strikeDataPtr[strikeCurOffset + 1];
-					curBitMask = 0x80;
-				}
-			}
-
-			// adjust, so that it's aligned to the left (starting at 0x80 bit)
-			fontByte = fontByte << (8 - curStrikeWidth);
-
-			// now adjust according to offset + MaxKern
-			positionAdjust = macRecord_MaxKern + curCharOffset;
-
-			// adjust may be negative for space, or 8 for "empty" characters
-			if (positionAdjust > 8)
-				error("AppleIIgs-font: invalid character spacing");
-
-			if (positionAdjust < 0) {
-				// negative adjust strangely happens for empty characters like space
-				if (curStrikeWidth)
-					error("AppleIIgs-font: invalid character spacing");
-			}
-
-			if (positionAdjust > 0) {
-				// move the amount of pixels to the right
-				fontByte = fontByte >> positionAdjust;
-			}
-
-			*fontData = fontByte;
-			fontData++;
-
-			strikeRowOffset += macRecord_StrikeWidth * 2;
-		}
-	}
-
-	free(offsetWidthTablePtr);
-	free(locationTablePtr);
-	free(strikeDataPtr);
-
-	// overwrite character 0x1A with the standard Sierra arrow to the right character
-	// required for the original save/restore dialogs
-	memcpy(_fontDataAllocated + (0x1A * 8), fontData_ArrowRightCharacter, sizeof(fontData_ArrowRightCharacter));
+const byte *AgiBase::getFontData() {
+	return _font->getFontData();
 }
 
 AgiEngine::AgiEngine(OSystem *syst, const AGIGameDescription *gameDesc) : AgiBase(syst, gameDesc) {
@@ -710,9 +363,6 @@ AgiEngine::AgiEngine(OSystem *syst, const AGIGameDescription *gameDesc) : AgiBas
 		_game.mouseEnabled = false;
 		_game.mouseHidden = true;
 	}
-
-	_fontData = nullptr;
-	_fontDataAllocated = nullptr;
 
 	_game._vm = this;
 
@@ -797,10 +447,10 @@ void AgiEngine::initialize() {
 	}
 
 	initRenderMode();
-	initFont();
 
 	_console = new Console(this);
 	_words = new Words(this);
+	_font = new GfxFont(this);
 	_gfx = new GfxMgr(this);
 	_sound = new SoundMgr(this, _mixer);
 	_picture = new PictureMgr(this, _gfx);
@@ -809,6 +459,7 @@ void AgiEngine::initialize() {
 	_systemUI = new SystemUI(this, _gfx, _text);
 	_inventory = new InventoryMgr(this, _gfx, _text, _systemUI);
 
+	_font->init();
 	_text->init(_systemUI);
 
 	_gfx->initMachine();
@@ -883,6 +534,7 @@ AgiEngine::~AgiEngine() {
 	delete _picture;
 	_gfx->deinitMachine();
 	delete _gfx;
+	delete _font;
 	delete _words;
 	delete _console;
 }

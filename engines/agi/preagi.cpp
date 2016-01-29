@@ -56,11 +56,12 @@ PreAgiEngine::PreAgiEngine(OSystem *syst, const AGIGameDescription *gameDesc) : 
 
 void PreAgiEngine::initialize() {
 	initRenderMode();
-	initFont();
 
+	_font = new GfxFont(this);
 	_gfx = new GfxMgr(this);
 	_picture = new PictureMgr(this, _gfx);
 
+	_font->init();
 	_gfx->initMachine();
 
 	_game.gameFlags = 0;
@@ -93,6 +94,10 @@ void PreAgiEngine::initialize() {
 PreAgiEngine::~PreAgiEngine() {
 	_mixer->stopHandle(_speakerHandle);
 	delete _speakerStream;
+
+	delete _picture;
+	delete _gfx;
+	delete _font;
 }
 
 int PreAgiEngine::rnd(int hi) {

@@ -6,6 +6,7 @@ MODULE_OBJS := \
 	console.o \
 	cycle.o \
 	detection.o \
+	font.o \
 	global.o \
 	graphics.o \
 	id.o \

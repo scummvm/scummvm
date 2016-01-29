@@ -592,7 +592,7 @@ public:
 	virtual int loadWords(const char *);
 };
 
-
+class GfxFont;
 class GfxMgr;
 class SpritesMgr;
 class InventoryMgr;
@@ -642,19 +642,12 @@ protected:
 	virtual void initialize() = 0;
 
 	void initRenderMode();
-	void initFont();
-
-	void loadFontMickey();
-	void loadFontAmigaPseudoTopaz();
-	void loadFontAppleIIgs();
-
-	const uint8 *_fontData; // pointer to the currently used font
-	uint8 *_fontDataAllocated;
 
 public:
 	Words *_words;
 
-	GfxMgr *_gfx;
+	GfxFont *_font;
+	GfxMgr  *_gfx;
 
 	Common::RenderMode _renderMode;
 	volatile uint32 _clockCount;
@@ -715,7 +708,7 @@ public:
 	bool canLoadGameStateCurrently();
 	bool canSaveGameStateCurrently();
 
-	const uint8 *getFontData() { return _fontData; };
+	const byte *getFontData();
 
 	void cycleInnerLoopActive(int16 loopType) {
 		_game.cycleInnerLoopActive = true;
