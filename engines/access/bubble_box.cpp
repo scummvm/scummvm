@@ -46,6 +46,9 @@ BubbleBox::BubbleBox(AccessEngine *vm, Access::BoxType type, int x, int y, int w
 	}
 	_btnUpPos = Common::Rect(0, 0, 0, 0);
 	_btnDownPos = Common::Rect(0, 0, 0, 0);
+	_startItem = _startBox = 0;
+	_charCol = 0;
+	_rowOff = 0;
 }
 
 void BubbleBox::load(Common::SeekableReadStream *stream) {
