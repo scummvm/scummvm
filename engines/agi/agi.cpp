@@ -397,6 +397,7 @@ void AgiBase::loadFontMickey() {
 
 	if (!interpreterFile.open("mickey.exe")) {
 		// Continue, if file not found
+		warning("Could not open file 'mickey.exe' for Mickey Mouse font");
 		return;
 	}
 
@@ -404,7 +405,7 @@ void AgiBase::loadFontMickey() {
 	if (interpreterFileSize != 55136) {
 		// unexpected file size
 		interpreterFile.close();
-		warning("mickey.exe unexpected file size");
+		warning("File 'mickey.exe': unexpected file size");
 		return;
 	}
 	interpreterFile.seek(32476); // offset of font data
@@ -530,7 +531,7 @@ void AgiBase::loadFontAppleIIgs() {
 	if (!fontFile.open("agifont")) {
 		// Continue,
 		// This also happens when the user selected Apple IIgs as render for the palette for non-AppleIIgs games
-		warning("could not open agifont for Apple IIgs font");
+		warning("Could not open file 'agifont' for Apple IIgs font");
 		return;
 	}
 
