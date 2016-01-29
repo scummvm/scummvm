@@ -44,28 +44,66 @@ namespace {
 /**
  * Assure that a directory path exists.
  *
- * @param path The path which is required to exist.
+ * @param dir The path which is required to exist.
+ * @param prefix An (optional) prefix which should not be created if non existent.
+ *               prefix is prepended to dir if supplied.
  * @return true in case the directoy exists (or was created), false otherwise.
  */
-bool assureDirectoryExists(const Common::String &path) {
+bool assureDirectoryExists(const Common::String &dir, const char *prefix = nullptr) {
 	struct stat sb;
 
-	// Check whether the dir exists
-	if (stat(path.c_str(), &sb) == -1) {
-		// The dir does not exist, or stat failed for some other reason.
-		if (errno != ENOENT) {
+	// Check whether the prefix exists if one is supplied.
+	if (prefix) {
+		if (stat(prefix, &sb) != 0) {
 			return false;
+		} else if (!S_ISDIR(sb.st_mode)) {
+			return false;
+		}
+	}
+
+	// Obtain absolute path.
+	Common::String path;
+	if (prefix) {
+		path = prefix;
+		path += '/';
+		path += dir;
+	} else {
+		path = dir;
+	}
+
+	path = Common::normalizePath(path, '/');
+
+	const Common::String::iterator end = path.end();
+	Common::String::iterator cur = path.begin();
+	if (*cur == '/')
+		++cur;
+
+	do {
+		if (cur + 1 != end) {
+			if (*cur != '/') {
+				continue;
+			}
+
+			// It is kind of ugly and against the purpose of Common::String to
+			// insert 0s inside, but this is just for a local string and
+			// simplifies the code a lot.
+			*cur = '\0';
 		}
 
-		// If the problem was that the path pointed to nothing, try
-		// to create the dir.
 		if (mkdir(path.c_str(), 0755) != 0) {
-			return false;
+			if (errno == EEXIST) {
+				if (stat(path.c_str(), &sb) != 0) {
+					return false;
+				} else if (!S_ISDIR(sb.st_mode)) {
+					return false;
+				}
+			} else {
+				return false;
+			}
 		}
-	} else if (!S_ISDIR(sb.st_mode)) {
-		// Path is no directory. Oops
-		return false;
-	}
+
+		*cur = '/';
+	} while (cur++ != end);
 
 	return true;
 }
@@ -133,28 +171,22 @@ Common::WriteStream *OSystem_POSIX::createLogFile() {
 	if (home == NULL)
 		return 0;
 
-	Common::String logFile(home);
+	Common::String logFile;
 #ifdef MACOSX
-	logFile += "/Library";
-#else
-	logFile += "/.scummvm";
-#endif
-#ifdef SAMSUNGTV
+	logFile = "Library/Logs";
+#elif SAMSUNGTV
+	home = nullptr;
 	logFile = "/mtd_ram";
+#else
+	logFile = ".scummvm/logs";
 #endif
 
-	if (!assureDirectoryExists(logFile)) {
+	if (!assureDirectoryExists(logFile, home)) {
 		return 0;
 	}
 
-#ifdef MACOSX
-	logFile += "/Logs";
-#else
-	logFile += "/logs";
-#endif
-
-	if (!assureDirectoryExists(logFile)) {
-		return 0;
+	if (home) {
+		logFile = Common::String::format("%s/%s", home, logFile.c_str());
 	}
 
 	logFile += "/scummvm.log";
