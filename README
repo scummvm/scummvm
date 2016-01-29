@@ -1741,7 +1741,16 @@ The platforms that currently have a different default directory are:
     $HOME/Documents/ScummVM Savegames/
 
     Other unices:
-    $HOME/.scummvm/
+    We follow the XDG Base Directory Specification. This means our
+    configuration can be found in:
+    $XDG_DATA_HOME/scummvm/saves/
+
+    If XDG_DATA_HOME is not defined or empty, ~/.local/share will be used
+    as value of XDG_DATA_HOME in accordance with the specification.
+
+    If an earlier version of ScummVM was installed on your system, the
+    previous default location of '~/.scummvm' will be kept. This is detected
+    based on the presence of the path '~/.scummvm'.
 
     Windows Vista/7:
     \Users\username\AppData\Roaming\ScummVM\Saved games\

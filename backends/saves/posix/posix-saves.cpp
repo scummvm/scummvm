@@ -21,16 +21,19 @@
  */
 
 
-// Enable getenv, mkdir and time.h stuff
-#define FORBIDDEN_SYMBOL_EXCEPTION_getenv
-#define FORBIDDEN_SYMBOL_EXCEPTION_mkdir
+// Re-enable some forbidden symbols to avoid clashes with stat.h and unistd.h.
+// Also with clock() in sys/time.h in some Mac OS X SDKs.
 #define FORBIDDEN_SYMBOL_EXCEPTION_time_h	//On IRIX, sys/stat.h includes sys/time.h
+#define FORBIDDEN_SYMBOL_EXCEPTION_unistd_h
+#define FORBIDDEN_SYMBOL_EXCEPTION_mkdir
+#define FORBIDDEN_SYMBOL_EXCEPTION_getenv
 
 #include "common/scummsys.h"
 
 #if defined(POSIX) && !defined(DISABLE_DEFAULT_SAVEFILEMANAGER)
 
 #include "backends/saves/posix/posix-saves.h"
+#include "backends/fs/posix/posix-fs.h"
 
 #include "common/config-manager.h"
 #include "common/savefile.h"
@@ -41,25 +44,69 @@
 #include <errno.h>
 #include <sys/stat.h>
 
-
-#ifdef MACOSX
-#define DEFAULT_SAVE_PATH "Documents/ScummVM Savegames"
-#else
-#define DEFAULT_SAVE_PATH ".scummvm"
-#endif
-
 POSIXSaveFileManager::POSIXSaveFileManager() {
-	// Register default savepath based on HOME
+	// Register default savepath.
 #if defined(SAMSUNGTV)
 	ConfMan.registerDefault("savepath", "/mtd_wiselink/scummvm savegames");
 #else
 	Common::String savePath;
+
+#if defined(MACOSX)
 	const char *home = getenv("HOME");
 	if (home && *home && strlen(home) < MAXPATHLEN) {
 		savePath = home;
-		savePath += "/" DEFAULT_SAVE_PATH;
+		savePath += "/Documents/ScummVM Savegames";
+
 		ConfMan.registerDefault("savepath", savePath);
 	}
+
+#else
+	const char *envVar;
+
+	// Previously we placed our default savepath in HOME. If the directory
+	// still exists, we will use it for backwards compatability.
+	envVar = getenv("HOME");
+	if (envVar && *envVar) {
+		savePath = envVar;
+		savePath += "/.scummvm";
+
+		struct stat sb;
+		if (stat(savePath.c_str(), &sb) != 0 || !S_ISDIR(sb.st_mode)) {
+			savePath.clear();
+		}
+	}
+
+	if (savePath.empty()) {
+		Common::String prefix;
+
+		// On POSIX systems we follow the XDG Base Directory Specification for
+		// where to store files. The version we based our code upon can be found
+		// over here: http://standards.freedesktop.org/basedir-spec/basedir-spec-0.8.html
+		envVar = getenv("XDG_DATA_HOME");
+		if (!envVar || !*envVar) {
+			envVar = getenv("HOME");
+			if (envVar && *envVar) {
+				prefix = envVar;
+				savePath = ".local/share/";
+			}
+		} else {
+			prefix = envVar;
+		}
+
+		// Our default save path is '$XDG_DATA_HOME/scummvm/saves'
+		savePath += "scummvm/saves";
+
+		if (!Posix::assureDirectoryExists(savePath, prefix.c_str())) {
+			savePath.clear();
+		} else {
+			savePath = prefix + '/' + savePath;
+		}
+	}
+
+	if (!savePath.empty() && savePath.size() < MAXPATHLEN) {
+		ConfMan.registerDefault("savepath", savePath);
+	}
+#endif
 
 	// The user can override the savepath with the SCUMMVM_SAVEPATH
 	// environment variable. This is weaker than a --savepath on the
