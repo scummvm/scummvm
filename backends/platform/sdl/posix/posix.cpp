@@ -167,26 +167,33 @@ Common::WriteStream *OSystem_POSIX::createLogFile() {
 	// of a failure, we know that no log file is open.
 	_logFilePath.clear();
 
-	const char *home = getenv("HOME");
-	if (home == NULL)
-		return 0;
-
+	const char *prefix = nullptr;
 	Common::String logFile;
 #ifdef MACOSX
-	logFile = "Library/Logs";
-#elif SAMSUNGTV
-	home = nullptr;
-	logFile = "/mtd_ram";
-#else
-	logFile = ".scummvm/logs";
-#endif
-
-	if (!assureDirectoryExists(logFile, home)) {
+	prefix = getenv("HOME");
+	if (prefix == nullptr) {
 		return 0;
 	}
 
-	if (home) {
-		logFile = Common::String::format("%s/%s", home, logFile.c_str());
+	logFile = "Library/Logs";
+#elif SAMSUNGTV
+	prefix = nullptr;
+	logFile = "/mtd_ram";
+#else
+	prefix = getenv("HOME");
+	if (prefix == nullptr) {
+		return 0;
+	}
+
+	logFile = ".scummvm/logs";
+#endif
+
+	if (!assureDirectoryExists(logFile, prefix)) {
+		return 0;
+	}
+
+	if (prefix) {
+		logFile = Common::String::format("%s/%s", prefix, logFile.c_str());
 	}
 
 	logFile += "/scummvm.log";
