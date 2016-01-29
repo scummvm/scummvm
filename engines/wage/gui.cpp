@@ -575,6 +575,10 @@ void Gui::loadFonts() {
 	delete dat;
 }
 
+void Gui::regenCommandsMenu() {
+	_menu->regenCommandsMenu();
+}
+
 void Gui::regenWeaponsMenu() {
 	_menu->regenWeaponsMenu();
 }

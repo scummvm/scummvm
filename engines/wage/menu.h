@@ -73,6 +73,7 @@ public:
 	bool mouseRelease(int x, int y);
 	bool mouseMove(int x, int y);
 
+	void regenCommandsMenu();
 	void regenWeaponsMenu();
 
 	bool _menuActivated;
@@ -89,7 +90,6 @@ private:
 	int calculateMenuWidth(MenuItem *menu);
 	void calcMenuBounds(MenuItem *menu);
 	void renderSubmenu(MenuItem *menu);
-	void regenCommandsMenu();
 	void createCommandsMenu(MenuItem *menu);
 	void createWeaponsMenu(MenuItem *menu);
 	void executeCommand(MenuSubItem *subitem);

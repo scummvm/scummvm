@@ -200,8 +200,10 @@ void WageEngine::playSound(Common::String soundName) {
 	warning("STUB: WageEngine::playSound(%s)", soundName.c_str());
 }
 
-void WageEngine::setMenu(Common::String soundName) {
-	warning("STUB: WageEngine::setMenu");
+void WageEngine::setMenu(Common::String menu) {
+	_world->_commandsMenu = menu;
+
+	_gui->regenCommandsMenu();
 }
 
 void WageEngine::appendText(const char *str) {
