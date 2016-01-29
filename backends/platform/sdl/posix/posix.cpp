@@ -33,81 +33,12 @@
 #include "backends/platform/sdl/posix/posix.h"
 #include "backends/saves/posix/posix-saves.h"
 #include "backends/fs/posix/posix-fs-factory.h"
+#include "backends/fs/posix/posix-fs.h"
 #include "backends/taskbar/unity/unity-taskbar.h"
 
-#include <errno.h>
 #include <sys/stat.h>
 #include <sys/wait.h>
 #include <unistd.h>
-
-namespace {
-/**
- * Assure that a directory path exists.
- *
- * @param dir The path which is required to exist.
- * @param prefix An (optional) prefix which should not be created if non existent.
- *               prefix is prepended to dir if supplied.
- * @return true in case the directoy exists (or was created), false otherwise.
- */
-bool assureDirectoryExists(const Common::String &dir, const char *prefix = nullptr) {
-	struct stat sb;
-
-	// Check whether the prefix exists if one is supplied.
-	if (prefix) {
-		if (stat(prefix, &sb) != 0) {
-			return false;
-		} else if (!S_ISDIR(sb.st_mode)) {
-			return false;
-		}
-	}
-
-	// Obtain absolute path.
-	Common::String path;
-	if (prefix) {
-		path = prefix;
-		path += '/';
-		path += dir;
-	} else {
-		path = dir;
-	}
-
-	path = Common::normalizePath(path, '/');
-
-	const Common::String::iterator end = path.end();
-	Common::String::iterator cur = path.begin();
-	if (*cur == '/')
-		++cur;
-
-	do {
-		if (cur + 1 != end) {
-			if (*cur != '/') {
-				continue;
-			}
-
-			// It is kind of ugly and against the purpose of Common::String to
-			// insert 0s inside, but this is just for a local string and
-			// simplifies the code a lot.
-			*cur = '\0';
-		}
-
-		if (mkdir(path.c_str(), 0755) != 0) {
-			if (errno == EEXIST) {
-				if (stat(path.c_str(), &sb) != 0) {
-					return false;
-				} else if (!S_ISDIR(sb.st_mode)) {
-					return false;
-				}
-			} else {
-				return false;
-			}
-		}
-
-		*cur = '/';
-	} while (cur++ != end);
-
-	return true;
-}
-} // End of anonymous namespace
 
 OSystem_POSIX::OSystem_POSIX(Common::String baseConfigName)
 	:
@@ -181,7 +112,7 @@ Common::String OSystem_POSIX::getDefaultConfigFileName() {
 			return 0;
 		}
 
-		if (assureDirectoryExists(".config", envVar)) {
+		if (Posix::assureDirectoryExists(".config", envVar)) {
 			prefix = envVar;
 			prefix += "/.config";
 		}
@@ -189,7 +120,7 @@ Common::String OSystem_POSIX::getDefaultConfigFileName() {
 		prefix = envVar;
 	}
 
-	if (!prefix.empty() && assureDirectoryExists("scummvm", prefix.c_str())) {
+	if (!prefix.empty() && Posix::assureDirectoryExists("scummvm", prefix.c_str())) {
 		prefix += "/scummvm";
 	}
 #endif
@@ -239,7 +170,7 @@ Common::WriteStream *OSystem_POSIX::createLogFile() {
 	logFile += "scummvm/logs";
 #endif
 
-	if (!assureDirectoryExists(logFile, prefix)) {
+	if (!Posix::assureDirectoryExists(logFile, prefix)) {
 		return 0;
 	}
 
