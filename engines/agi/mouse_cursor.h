@@ -156,8 +156,8 @@ static const byte MOUSECURSOR_AMIGA[] = {
  * An Amiga-style busy cursor showing an hourglass (13x16).
  * 0 = Transparent.
  * 1 = Black     (#000000 in 24-bit RGB).
- * 2 = Red       (#DE2021 in 24-bit RGB).
- * 3 = Light red (#FFCFAD in 24-bit RGB).
+ * 3 = Red       (#DE2021 in 24-bit RGB).
+ * 4 = Light red (#FFCFAD in 24-bit RGB).
  */
 static const byte MOUSECURSOR_AMIGA_BUSY[] = {
 	1,1,1,1,1,1,1,1,1,1,1,1,1,
