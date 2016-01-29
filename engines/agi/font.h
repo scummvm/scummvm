@@ -38,6 +38,7 @@ public:
 	const byte *getFontData();
 
 private:
+	void loadFontScummVMFile(Common::String fontFilename);
 	void loadFontMickey();
 	void loadFontAmigaPseudoTopaz();
 	void loadFontAppleIIgs();

@@ -996,14 +996,20 @@ void GfxFont::init() {
 	// We are currently using the custom font for all fanmade games
 	if (_vm->getFeatures() & (GF_FANMADE | GF_AGDS)) {
 		// fanmade game, use custom font for now
-		_fontData = fontData_FanGames; // our (own?) custom font, that supports umlauts etc.
+		loadFontScummVMFile("agi-font-fangame.bin");
+		if (_fontData) {
+			_fontData = fontData_FanGames; // our (own?) custom font, that supports umlauts etc.
+		}
 		return;
 	}
 
 	switch (_vm->_renderMode) {
 	case Common::kRenderAmiga:
-		loadFontAmigaPseudoTopaz();
-		//_fontData = fontData_Amiga; // use Amiga Topaz font
+		// Try user-file first, if that fails use our internal inaccurate topaz font
+		loadFontScummVMFile("agi-font-amiga.bin");
+		if (!_fontData) {
+			loadFontAmigaPseudoTopaz();
+		}
 		break;
 	case Common::kRenderApple2GS:
 		// Special font, stored in file AGIFONT
@@ -1012,7 +1018,11 @@ void GfxFont::init() {
 	case Common::kRenderAtariST:
 		// TODO: Atari ST uses another font
 		// Seems to be the standard Atari ST 8x8 system font
-
+		loadFontScummVMFile("agi-font-atarist.bin");
+		if (!_fontData) {
+			// TODO: in case we find a recreation of the font, add it in here
+		}
+		break;
 	case Common::kRenderCGA:
 	case Common::kRenderEGA:
 	case Common::kRenderVGA:
@@ -1022,6 +1032,7 @@ void GfxFont::init() {
 			loadFontMickey();
 			break;
 		default:
+			loadFontScummVMFile("agi-font-dos.bin");
 			break;
 		}
 		break;
@@ -1049,6 +1060,42 @@ void GfxFont::init() {
 
 const byte *GfxFont::getFontData() {
 	return _fontData;
+}
+
+// This code loads a ScummVM-specific user-supplied binary font file
+// It's assumed that it's a plain binary file, that contains 256 characters. 8 bytes per character.
+// 8x8 pixels per character. File size 2048 bytes.
+//
+// Currently used for:
+//  Atari ST - "agi-font-atarist.bin" -> should be the Atari ST 8x8 system font
+//  Amiga    - "agi-font-amiga.bin"   -> should be the Amiga 8x8 Topaz font
+//  DOS      - "agi-font-dos.bin"
+//  Fangames - "agi-font-fangame.bin"
+void GfxFont::loadFontScummVMFile(Common::String fontFilename) {
+	Common::File fontFile;
+	int32 fontFileSize = 0;
+
+	if (!fontFile.open(fontFilename)) {
+		// Continue, if file not found
+		// These ScummVM font files are totally optional, so don't show a warning
+		return;
+	}
+
+	fontFileSize = fontFile.size();
+	if (fontFileSize != (256 * 8)) {
+		// unexpected file size
+		fontFile.close();
+		warning("Fontfile '%s': unexpected file size", fontFilename.c_str());
+		return;
+	}
+
+	// allocate space for font bitmap data
+	_fontDataAllocated = (uint8 *)calloc(256, 8);
+	_fontData = _fontDataAllocated;
+ 
+	// read font data, is already in the format that we need (plain bitmap 8x8)
+	fontFile.read(_fontDataAllocated, 256 * 8);
+	fontFile.close();
 }
 
 // We load the Mickey Mouse font from MICKEY.EXE
