@@ -706,7 +706,7 @@ void Journal::loadJournalFile(bool alreadyLoaded) {
 	}
 }
 
-bool Journal::isPrintable(char ch) const {
+bool Journal::isPrintable(byte ch) const {
 	Talk &talk = *_vm->_talk;
 	const byte *opcodes = talk._opcodes;
 

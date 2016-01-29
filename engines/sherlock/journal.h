@@ -76,7 +76,7 @@ protected:
 	/**
 	 * Returns true if a given character is printable
 	 */
-	bool isPrintable(char ch) const;
+	bool isPrintable(byte ch) const;
 public:
 	static Journal *init(SherlockEngine *vm);
 	virtual ~Journal() {}
