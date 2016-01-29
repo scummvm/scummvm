@@ -29,28 +29,25 @@ bool AgiEngine::checkPosition(ScreenObjEntry *screenObj) {
 	bool result = true; // position is fine
 	debugC(4, kDebugLevelSprites, "check position @ %d, %d", screenObj->xPos, screenObj->yPos);
 
-	do {
-		if (screenObj->xPos < 0) {
-			result = false;
-			break;
-		}
+	if (screenObj->xPos < 0) {
+		result = false;
+	} else {
 		if (screenObj->xPos + screenObj->xSize > SCRIPT_WIDTH) {
 			result = false;
-			break;
+		} else {
+			if (screenObj->yPos - screenObj->ySize < -1) {
+				result = false;
+			} else {
+				if (screenObj->yPos >= SCRIPT_HEIGHT) {
+					result = false;
+				} else {
+					if (((!(screenObj->flags & fIgnoreHorizon)) && screenObj->yPos <= _game.horizon)) {
+						result = false;
+					}
+				}
+			}
 		}
-		if (screenObj->yPos - screenObj->ySize < -1) {
-			result = false;
-			break;
-		}
-		if (screenObj->yPos >= SCRIPT_HEIGHT) {
-			result = false;
-			break;
-		}
-		if (((!(screenObj->flags & fIgnoreHorizon)) && screenObj->yPos <= _game.horizon)) {
-			result = false;
-			break;
-		}
-	} while (0);
+	}
 
 	// MH1 needs this, but it breaks LSL1
 // TODO: *NOT* in disassembly of AGI3 .149, why was this needed?
