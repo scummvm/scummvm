@@ -44,6 +44,7 @@ private:
 	void loadFontMickey();
 	void loadFontAmigaPseudoTopaz();
 	void loadFontAppleIIgs();
+	void loadFontAtariST(Common::String fontFilename);
 
 	const uint8 *_fontData; // pointer to the currently used font
 	uint8 *_fontDataAllocated;

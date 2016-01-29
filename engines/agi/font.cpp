@@ -997,8 +997,9 @@ void GfxFont::init() {
 	if (_vm->getFeatures() & (GF_FANMADE | GF_AGDS)) {
 		// fanmade game, use custom font for now
 		loadFontScummVMFile("agi-font-fangame.bin");
-		if (_fontData) {
+		if (!_fontData) {
 			_fontData = fontData_FanGames; // our (own?) custom font, that supports umlauts etc.
+			debug("Using fanmade custom font");
 		}
 		return;
 	}
@@ -1020,7 +1021,10 @@ void GfxFont::init() {
 		// Seems to be the standard Atari ST 8x8 system font
 		loadFontScummVMFile("agi-font-atarist.bin");
 		if (!_fontData) {
-			// TODO: in case we find a recreation of the font, add it in here
+			loadFontAtariST("agi-font-atarist-system.fnt");
+			if (!_fontData) {
+				// TODO: in case we find a recreation of the font, add it in here
+			}
 		}
 		break;
 	case Common::kRenderCGA:
@@ -1059,6 +1063,7 @@ void GfxFont::init() {
 }
 
 const byte *GfxFont::getFontData() {
+	assert(_fontData);
 	return _fontData;
 }
 
@@ -1104,6 +1109,8 @@ void GfxFont::loadFontScummVMFile(Common::String fontFilename) {
 	fontFile.close();
 
 	overwriteSaveRestoreDialogCharacter();
+
+	debug("Using user-supplied font");
 }
 
 // We load the Mickey Mouse font from MICKEY.EXE
@@ -1135,6 +1142,8 @@ void GfxFont::loadFontMickey() {
 	// read font data, is already in the format that we need (plain bitmap 8x8)
 	interpreterFile.read(fontData, 256 * 8);
 	interpreterFile.close();
+
+	debug("Using Mickey Mouse font");
 }
 
 // we create a bitmap out of the topaz data used in parallaction (which is normally found in staticres.cpp)
@@ -1208,6 +1217,8 @@ void GfxFont::loadFontAmigaPseudoTopaz() {
 	}
 
 	overwriteSaveRestoreDialogCharacter();
+
+	debug("Using recreation of Amiga Topaz font");
 }
 
 void GfxFont::loadFontAppleIIgs() {
@@ -1396,6 +1407,133 @@ void GfxFont::loadFontAppleIIgs() {
 	free(strikeDataPtr);
 
 	overwriteSaveRestoreDialogCharacter();
+}
+
+// Loads Atari ST font file
+// It's found inside Atari ST ROMs. Just search for "8x8 system font". Font starts 4 bytes before that.
+void GfxFont::loadFontAtariST(Common::String fontFilename) {
+	Common::File fontFile;
+	uint16 header_FirstChar = 0;
+	uint16 header_LastChar = 0;
+	uint16 header_MaxWidth = 0;
+	uint16 header_MaxHeight = 0;
+	uint16 header_Flags = 0;
+	uint32 header_OffsetOfCharOffsets = 0;
+	uint32 header_OffsetOfFontData = 0;
+	uint16 header_FormWidth = 0;
+	uint16 header_FormHeight = 0;
+	uint16 totalCharacterCount = 0;
+	uint16 *charOffsetTablePtr = nullptr;
+	byte *rawDataTablePtr = nullptr;
+
+	uint16 curCharNr = 0;
+	uint16 curCharRawOffset = 0;
+	uint16 curCharDestOffset = 0;
+	uint16 curRow = 0;
+
+	byte *fontData = nullptr;
+
+	if (!fontFile.open(fontFilename)) {
+		// Continue, if file not found
+		warning("Could not open file 'agi-font-atarist-system.bin' for Atari ST 8x8 system font");
+		return;
+	}
+
+	// Atari ST font header
+	fontFile.skip(2); // face identifier
+	fontFile.skip(2); // point size
+	fontFile.skip(32); // font name
+	header_FirstChar = fontFile.readUint16BE();
+	header_LastChar = fontFile.readUint16BE();
+	fontFile.skip(10); // aligntment of cells
+	header_MaxWidth = fontFile.readUint16BE();
+	header_MaxHeight = fontFile.readUint16BE();
+	fontFile.skip(2); // left offset cel
+	fontFile.skip(2); // right offset cel
+	fontFile.skip(2); // number of pixels to thicken pixels
+	fontFile.skip(2); // underline width
+	fontFile.skip(2); // lightening mask
+	fontFile.skip(2); // skewing mask
+	header_Flags = fontFile.readUint16BE();
+	// bit 0 - default system font
+	// bit 1 - horizontal offset table (not supported)
+	// bit 2 - byte orientation word is high->low
+	// bit 3 - mono spaced font
+	fontFile.skip(4); // horizontal table offset
+	header_OffsetOfCharOffsets = fontFile.readUint32BE();
+	header_OffsetOfFontData = fontFile.readUint32BE();
+	header_FormWidth = fontFile.readUint16BE();
+	header_FormHeight = fontFile.readUint16BE();
+	fontFile.skip(4); // pointer to next font
+
+	totalCharacterCount = header_LastChar - header_FirstChar + 1;
+
+	// security-checks
+	if (header_MaxWidth > 8)
+		error("AtariST-font: not a 8x8 font");
+	if (header_MaxHeight != 8)
+		error("AtariST-font: not a 8x8 font");
+	if (header_FormHeight != 8)
+		error("AtariST-font: not a 8x8 font");
+	if ((header_FirstChar != 0) || (header_LastChar != 255))
+		error("AtariST-font: unexpected characters");
+	if (header_FormWidth != totalCharacterCount)
+		error("AtariST-font: header inconsistency");
+	if (!(header_Flags & 0x04))
+		error("AtariST-font: font data not in high->low order");
+	if (!(header_Flags & 0x08))
+		error("AtariST-font: not a mono-spaced font");
+
+	// Now we should normally use the offsets, but they don't make sense to me
+	// So I just read the data directly. For the 8x8 system font that works
+	fontFile.skip(2); // extra bytes
+
+	// Allocate memory for tables
+	charOffsetTablePtr = (uint16 *)calloc(totalCharacterCount, 2); // 1 word per character
+	rawDataTablePtr = (byte *)calloc(header_FormWidth, header_FormHeight);
+
+	// Char-Offset Table (2 * total number of characters)
+	for (curCharNr = 0; curCharNr < totalCharacterCount; curCharNr++) {
+		charOffsetTablePtr[curCharNr] = fontFile.readUint16BE();
+	}
+
+	// Followed by actual font data
+	// Attention: Atari ST fonts contain every same row of all characters after each other.
+	// So it's basically like this:
+	// [character data of first row of first character]
+	// [character data of first row of second character]
+	// ...
+	// [character data of first row of last character]
+	// [character data of second row of first character]
+	fontFile.skip(2); // extra bytes
+	fontFile.read(rawDataTablePtr, header_FormWidth * header_FormHeight);
+	fontFile.close();
+
+	// allocate space for font bitmap data
+	fontData = (uint8 *)calloc(256, 8);
+	_fontData = fontData;
+	_fontDataAllocated = fontData;
+
+	// extract font bitmap data
+	for (curCharNr = 0; curCharNr < totalCharacterCount; curCharNr++) {
+		// Figure out base offset from char offset table
+		curCharRawOffset = charOffsetTablePtr[curCharNr] >> 3;
+		curCharDestOffset = curCharNr * 8; // destination offset into our font data
+
+		// now copy over every row of the character
+		for (curRow = 0; curRow < header_FormHeight; curRow++) {
+			fontData[curCharDestOffset] = rawDataTablePtr[curCharRawOffset];
+			curCharDestOffset++;
+			curCharRawOffset += header_FormWidth;
+		}
+	}
+
+	free(rawDataTablePtr);
+	free(charOffsetTablePtr);
+
+	overwriteSaveRestoreDialogCharacter();
+
+	debug("Using Atari ST 8x8 system font");
 }
 
 } // End of namespace Agi
