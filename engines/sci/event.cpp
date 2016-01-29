@@ -214,6 +214,15 @@ SciEvent EventManager::getScummVMEvent() {
 		//((ev.kbd.flags & Common::KBD_CAPS) ? SCI_KEYMOD_CAPSLOCK : 0) |
 		//((ev.kbd.flags & Common::KBD_SCRL) ? SCI_KEYMOD_SCRLOCK : 0) |
 
+	if (input.data >= Common::KEYCODE_KP0 && input.data <= Common::KEYCODE_KP9) {
+		if (!(ev.kbd.flags & Common::KBD_NUM)) {
+			// HACK: Num-Lock not enabled
+			// We shouldn't get a valid ascii code in these cases. We fix it here, so that cursor keys
+			// on the numpad work properly.
+			input.character = 0;
+		}
+	}
+
 	if ((input.character) && (input.character <= 0xFF)) {
 		// Directly accept most common keys without conversion
 		if ((input.character >= 0x80) && (input.character <= 0xFF)) {
