@@ -172,6 +172,9 @@ void GfxMgr::setRenderStartOffset(uint16 offsetY) {
 
 	_renderStartOffsetY = offsetY;
 }
+uint16 GfxMgr::getRenderStartOffsetY() {
+	return _renderStartOffsetY;
+}
 
 void GfxMgr::debugShowMap(int mapNr) {
 	switch (mapNr) {

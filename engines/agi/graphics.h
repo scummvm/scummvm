@@ -80,6 +80,7 @@ public:
 	int deinitMachine();
 
 	void setRenderStartOffset(uint16 offsetY);
+	uint16 getRenderStartOffsetY();
 
 private:
 	uint _pixels;

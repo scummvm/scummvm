@@ -275,9 +275,7 @@ AgiBase::~AgiBase() {
 
 	delete _sound;
 
-	if (_fontDataAllocated) {
-		free(_fontDataAllocated);
-	}
+	free(_fontDataAllocated);
 }
 
 void AgiBase::initRenderMode() {
@@ -856,7 +854,10 @@ void AgiEngine::redrawScreen() {
 // Used on mouse cursor coordinates before passing them to scripts
 void AgiEngine::adjustPosToGameScreen(int16 &x, int16 &y) {
 	x = x / 2; // 320 -> 160
-	y = y - 8; // remove status bar line
+	y = y - _gfx->getRenderStartOffsetY(); // remove status bar line
+	if (y < 0) {
+		y = 0;
+	}
 	if (y >= SCRIPT_HEIGHT) {
 		y = SCRIPT_HEIGHT + 1; // 1 beyond
 	}
