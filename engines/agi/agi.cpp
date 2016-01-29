@@ -888,10 +888,6 @@ AgiEngine::~AgiEngine() {
 }
 
 Common::Error AgiBase::init() {
-
-	// Initialize backend
-	//initGraphics(320, 200, false);
-
 	initialize();
 
 	_gfx->setPalette(true);
