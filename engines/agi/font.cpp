@@ -1062,6 +1062,12 @@ const byte *GfxFont::getFontData() {
 	return _fontData;
 }
 
+void GfxFont::overwriteSaveRestoreDialogCharacter() {
+	// overwrite character 0x1A with the standard Sierra arrow to the right character
+	// required for the original save/restore dialogs
+	memcpy(_fontDataAllocated + (0x1A * 8), fontData_ArrowRightCharacter, sizeof(fontData_ArrowRightCharacter));
+}
+
 // This code loads a ScummVM-specific user-supplied binary font file
 // It's assumed that it's a plain binary file, that contains 256 characters. 8 bytes per character.
 // 8x8 pixels per character. File size 2048 bytes.
@@ -1096,6 +1102,8 @@ void GfxFont::loadFontScummVMFile(Common::String fontFilename) {
 	// read font data, is already in the format that we need (plain bitmap 8x8)
 	fontFile.read(_fontDataAllocated, 256 * 8);
 	fontFile.close();
+
+	overwriteSaveRestoreDialogCharacter();
 }
 
 // We load the Mickey Mouse font from MICKEY.EXE
@@ -1198,6 +1206,8 @@ void GfxFont::loadFontAmigaPseudoTopaz() {
 			fontData += 8;
 		}
 	}
+
+	overwriteSaveRestoreDialogCharacter();
 }
 
 void GfxFont::loadFontAppleIIgs() {
@@ -1385,9 +1395,7 @@ void GfxFont::loadFontAppleIIgs() {
 	free(locationTablePtr);
 	free(strikeDataPtr);
 
-	// overwrite character 0x1A with the standard Sierra arrow to the right character
-	// required for the original save/restore dialogs
-	memcpy(_fontDataAllocated + (0x1A * 8), fontData_ArrowRightCharacter, sizeof(fontData_ArrowRightCharacter));
+	overwriteSaveRestoreDialogCharacter();
 }
 
 } // End of namespace Agi

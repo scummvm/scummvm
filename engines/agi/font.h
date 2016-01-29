@@ -38,6 +38,8 @@ public:
 	const byte *getFontData();
 
 private:
+	void overwriteSaveRestoreDialogCharacter();
+
 	void loadFontScummVMFile(Common::String fontFilename);
 	void loadFontMickey();
 	void loadFontAmigaPseudoTopaz();
