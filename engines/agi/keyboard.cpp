@@ -171,11 +171,19 @@ void AgiEngine::processEvents() {
 				break;
 			}
 
-			if ((event.kbd.ascii) && (event.kbd.ascii <= 0xFF)) {
+			key = event.kbd.ascii;
+			if (event.kbd.keycode >= Common::KEYCODE_KP0 && event.kbd.keycode <= Common::KEYCODE_KP9) {
+				if (!(event.kbd.flags & Common::KBD_NUM)) {
+					// HACK: Num-Lock not enabled
+					// We shouldn't get a valid ascii code in these cases. We fix it here, so that cursor keys
+					// on the numpad work properly.
+					key = 0;
+				}
+			}
+
+			if ((key) && (key <= 0xFF)) {
 				// No special key, directly accept it
 				// Is ISO-8859-1, we need lower 128 characters only, which is plain ASCII, so no mapping required
-				key = event.kbd.ascii;
-
 				if (Common::isAlpha(key)) {
 					// Key is A-Z.
 					// Map Ctrl-A to 1, Ctrl-B to 2, etc.
@@ -187,7 +195,9 @@ void AgiEngine::processEvents() {
 					}
 				}
 			} else {
-				switch (key = event.kbd.keycode) {
+				key = event.kbd.keycode;
+
+				switch (key) {
 				case Common::KEYCODE_LEFT:
 				case Common::KEYCODE_KP4:
 					if (_allowSynthetic || !event.synthetic)
