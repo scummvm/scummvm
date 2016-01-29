@@ -40,6 +40,36 @@
 #include <sys/wait.h>
 #include <unistd.h>
 
+namespace {
+/**
+ * Assure that a directory path exists.
+ *
+ * @param path The path which is required to exist.
+ * @return true in case the directoy exists (or was created), false otherwise.
+ */
+bool assureDirectoryExists(const Common::String &path) {
+	struct stat sb;
+
+	// Check whether the dir exists
+	if (stat(path.c_str(), &sb) == -1) {
+		// The dir does not exist, or stat failed for some other reason.
+		if (errno != ENOENT) {
+			return false;
+		}
+
+		// If the problem was that the path pointed to nothing, try
+		// to create the dir.
+		if (mkdir(path.c_str(), 0755) != 0) {
+			return false;
+		}
+	} else if (!S_ISDIR(sb.st_mode)) {
+		// Path is no directory. Oops
+		return false;
+	}
+
+	return true;
+}
+} // End of anonymous namespace
 
 OSystem_POSIX::OSystem_POSIX(Common::String baseConfigName)
 	:
@@ -113,20 +143,7 @@ Common::WriteStream *OSystem_POSIX::createLogFile() {
 	logFile = "/mtd_ram";
 #endif
 
-	struct stat sb;
-
-	// Check whether the dir exists
-	if (stat(logFile.c_str(), &sb) == -1) {
-		// The dir does not exist, or stat failed for some other reason.
-		if (errno != ENOENT)
-			return 0;
-
-		// If the problem was that the path pointed to nothing, try
-		// to create the dir.
-		if (mkdir(logFile.c_str(), 0755) != 0)
-			return 0;
-	} else if (!S_ISDIR(sb.st_mode)) {
-		// Path is no directory. Oops
+	if (!assureDirectoryExists(logFile)) {
 		return 0;
 	}
 
@@ -136,18 +153,7 @@ Common::WriteStream *OSystem_POSIX::createLogFile() {
 	logFile += "/logs";
 #endif
 
-	// Check whether the dir exists
-	if (stat(logFile.c_str(), &sb) == -1) {
-		// The dir does not exist, or stat failed for some other reason.
-		if (errno != ENOENT)
-			return 0;
-
-		// If the problem was that the path pointed to nothing, try
-		// to create the dir.
-		if (mkdir(logFile.c_str(), 0755) != 0)
-			return 0;
-	} else if (!S_ISDIR(sb.st_mode)) {
-		// Path is no directory. Oops
+	if (!assureDirectoryExists(logFile)) {
 		return 0;
 	}
 
