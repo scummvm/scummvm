@@ -19,6 +19,10 @@ For a more comprehensive changelog of the latest experimental code, see:
  General:
    - Updated Munt MT-32 emulation code to version 1.5.0.
 
+ SDL:
+   - Alt-x no longer quits ScummVM on platforms exhibiting this behavior
+     before. A notable example is our Windows port.
+
  3 Skulls of the Toltecs:
    - Improved AdLib music support.
 
